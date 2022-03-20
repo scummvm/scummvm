@@ -33,34 +33,34 @@ void Room58::entry() {
 }
 
 void Room58::xit() {
-	_G(spieler).scrollx = _G(spieler).R58TmpSx;
-	_G(spieler).scrolly = _G(spieler).R58TmpSy;
-	_G(spieler_vector)[P_CHEWY].Xypos[0] = _G(spieler).R58TmpX;
-	_G(spieler_vector)[P_CHEWY].Xypos[1] = _G(spieler).R58TmpY;
-	_G(spieler_mi)[P_CHEWY].XyzStart[0] = _G(spieler).R58TmpX;
-	_G(spieler_mi)[P_CHEWY].XyzStart[1] = _G(spieler).R58TmpY;
+	_G(gameState).scrollx = _G(gameState).R58TmpSx;
+	_G(gameState).scrolly = _G(gameState).R58TmpSy;
+	_G(spieler_vector)[P_CHEWY].Xypos[0] = _G(gameState).R58TmpX;
+	_G(spieler_vector)[P_CHEWY].Xypos[1] = _G(gameState).R58TmpY;
+	_G(spieler_mi)[P_CHEWY].XyzStart[0] = _G(gameState).R58TmpX;
+	_G(spieler_mi)[P_CHEWY].XyzStart[1] = _G(gameState).R58TmpY;
 	_G(flags).MainInput = true;
 	_G(flags).LoadGame = true;
 	show_person();
 	set_person_rnr();
-	const int16 tmp = _G(spieler).R58TmpRoom1;
-	_G(spieler)._personRoomNr[P_CHEWY] = _G(spieler).R58TmpRoom;
+	const int16 tmp = _G(gameState).R58TmpRoom1;
+	_G(gameState)._personRoomNr[P_CHEWY] = _G(gameState).R58TmpRoom;
 
 	switchRoom(tmp);
 }
 
 void Room58::look_cut_mag(int16 r_nr) {
-	_G(spieler).R58TmpRoom = r_nr;
-	_G(spieler).R58TmpRoom1 = _G(spieler)._personRoomNr[P_CHEWY];;
+	_G(gameState).R58TmpRoom = r_nr;
+	_G(gameState).R58TmpRoom1 = _G(gameState)._personRoomNr[P_CHEWY];;
 
-	_G(spieler).R58TmpSx = _G(spieler).scrollx;
-	_G(spieler).R58TmpSy = _G(spieler).scrolly;
-	_G(spieler).R58TmpX = _G(spieler_vector)[P_CHEWY].Xypos[0];
-	_G(spieler).R58TmpY = _G(spieler_vector)[P_CHEWY].Xypos[1];
+	_G(gameState).R58TmpSx = _G(gameState).scrollx;
+	_G(gameState).R58TmpSy = _G(gameState).scrolly;
+	_G(gameState).R58TmpX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	_G(gameState).R58TmpY = _G(spieler_vector)[P_CHEWY].Xypos[1];
 	_G(spieler_vector)[P_CHEWY].Xypos[0] = 160;
 	_G(spieler_vector)[P_CHEWY].Xypos[1] = 100;
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 0;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 0;
 	_G(flags).MainInput = false;
 	hide_person();
 	switchRoom(r_nr);

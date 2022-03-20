@@ -29,14 +29,14 @@ namespace Chewy {
 namespace Rooms {
 
 void Room67::entry() {
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
-	_G(spieler).DiaAMov = 7;
-	if (_G(spieler).R67KommodeAuf)
+	_G(gameState).DiaAMov = 7;
+	if (_G(gameState).R67KommodeAuf)
 		_G(det)->showStaticSpr(9);
-	if (!_G(spieler).R67PapageiWeg) {
+	if (!_G(gameState).R67PapageiWeg) {
 		_G(timer_nr)[0] = _G(room)->set_timer(1, 10);
 		_G(det)->set_static_ani(1, -1);
 	} else
@@ -44,7 +44,7 @@ void Room67::entry() {
 	if (!_G(flags).LoadGame) {
 		hideCur();
 		setPersonPos(102, 132, P_CHEWY, P_RIGHT);
-		if (_G(spieler)._personRoomNr[P_HOWARD] == 67) {
+		if (_G(gameState)._personRoomNr[P_HOWARD] == 67) {
 			setPersonPos(12, 100, P_HOWARD, P_RIGHT);
 			setPersonPos(47, 106, P_NICHELLE, P_RIGHT);
 			goAutoXy(214, 112, P_NICHELLE, ANI_GO);
@@ -55,11 +55,11 @@ void Room67::entry() {
 }
 
 void Room67::xit() {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 67) {
-		_G(spieler)._personRoomNr[P_HOWARD] = 66;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 66;
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 67) {
+		_G(gameState)._personRoomNr[P_HOWARD] = 66;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 66;
 	}
 }
 
@@ -84,7 +84,7 @@ int16 Room67::use_grammo() {
 		autoMove(6, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
-		if (_G(spieler)._personRoomNr[P_HOWARD] == 67)
+		if (_G(gameState)._personRoomNr[P_HOWARD] == 67)
 			startAadWait(376);
 		else
 			startAadWait(614);
@@ -105,18 +105,18 @@ void Room67::look_brief() {
 
 int16 Room67::use_kommode() {
 	int16 action_flag = false;
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		hideCur();
-		if (!_G(spieler).R67KommodeAuf) {
+		if (!_G(gameState).R67KommodeAuf) {
 			action_flag = true;
-			_G(spieler).R67KommodeAuf = true;
+			_G(gameState).R67KommodeAuf = true;
 			autoMove(6, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(det)->showStaticSpr(9);
 			_G(atds)->set_ats_str(400, 1, ATS_DATA);
-		} else if (!_G(spieler).R67KostuemWeg) {
+		} else if (!_G(gameState).R67KostuemWeg) {
 			action_flag = true;
-			_G(spieler).R67KostuemWeg = true;
+			_G(gameState).R67KostuemWeg = true;
 			autoMove(6, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(atds)->set_ats_str(400, 2, ATS_DATA);
@@ -129,8 +129,8 @@ int16 Room67::use_kommode() {
 
 void Room67::kostuem_aad(int16 aad_nr) {
 	hideCur();
-	if (_G(spieler).DiaAMov != -1) {
-		autoMove(_G(spieler).DiaAMov, P_CHEWY);
+	if (_G(gameState).DiaAMov != -1) {
+		autoMove(_G(gameState).DiaAMov, P_CHEWY);
 	}
 	startAadWait(aad_nr);
 	showCur();
@@ -138,14 +138,14 @@ void Room67::kostuem_aad(int16 aad_nr) {
 
 int16 Room67::talk_papagei() {
 	int16 action_flag = false;
-	if (!_G(spieler).R67PapageiWeg && !_G(spieler).inv_cur) {
+	if (!_G(gameState).R67PapageiWeg && !_G(gameState).inv_cur) {
 		action_flag = true;
 		hideCur();
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		if (_G(menu_item) == CUR_HOWARD) {
 			showCur();
 
-			_G(atds)->set_split_win(2, 270 - _G(spieler).scrollx, 10);
+			_G(atds)->set_split_win(2, 270 - _G(gameState).scrollx, 10);
 			startAdsWait(19);
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_NICHELLE) {
@@ -155,14 +155,14 @@ int16 Room67::talk_papagei() {
 			autoMove(5, P_CHEWY);
 			showCur();
 
-			_G(atds)->set_split_win(2, 270 - _G(spieler).scrollx, 10);
+			_G(atds)->set_split_win(2, 270 - _G(gameState).scrollx, 10);
 			startAdsWait(18);
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_USE) {
 			hideCur();
 			autoMove(4, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			_G(spieler).R67PapageiWeg = true;
+			_G(gameState).R67PapageiWeg = true;
 			_G(det)->stop_detail(1);
 			_G(det)->del_static_ani(1);
 			_G(det)->showStaticSpr(0);

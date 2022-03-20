@@ -34,11 +34,11 @@ void Room95::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0);
 	_G(SetUpScreenFunc) = setup_func;	
 	_G(zoom_horizont) = 140;
-	_G(spieler).ScrollxStep = 2;
-	_G(spieler).ZoomXy[P_HOWARD][0] = _G(spieler).ZoomXy[P_HOWARD][1] = 30;
+	_G(gameState).ScrollxStep = 2;
+	_G(gameState).ZoomXy[P_HOWARD][0] = _G(gameState).ZoomXy[P_HOWARD][1] = 30;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 
-	if (_G(spieler).flags35_20)
+	if (_G(gameState).flags35_20)
 		_G(det)->showStaticSpr(10);
 
 	if (_G(flags).LoadGame)
@@ -56,12 +56,12 @@ void Room95::entry(int16 eib_nr) {
 }
 
 void Room95::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 
 	if (eib_nr == 139)
-		_G(spieler)._personRoomNr[P_HOWARD] = 94;
+		_G(gameState)._personRoomNr[P_HOWARD] = 94;
 	else if (eib_nr == 140)
-		_G(spieler)._personRoomNr[P_HOWARD] = 96;
+		_G(gameState)._personRoomNr[P_HOWARD] = 96;
 }
 
 void Room95::setup_func() {
@@ -91,28 +91,28 @@ int Room95::proc2() {
 	hideCur();
 	autoMove(3, P_CHEWY);
 	if (isCurInventory(113)) {
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 
 		start_spz_wait(14, 1, false, P_CHEWY);
-		_G(spieler).flags35_20 = true;
+		_G(gameState).flags35_20 = true;
 		_G(det)->showStaticSpr(10);
 
 		showCur();
 		return 1;
 	}
 
-	if (_G(spieler).inv_cur) {
+	if (_G(gameState).inv_cur) {
 		showCur();
 		return 0;
 	}
 
-	if (_G(spieler).flags35_20) {
+	if (_G(gameState).flags35_20) {
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_133);
 		register_cutscene(33);
-		_G(spieler)._personRoomNr[P_HOWARD] = 97;
+		_G(gameState)._personRoomNr[P_HOWARD] = 97;
 		switchRoom(97);
 	} else {
 		start_spz(CH_TALK1, 255, false, P_CHEWY);

@@ -29,12 +29,12 @@ namespace Chewy {
 namespace Rooms {
 
 void Room10::entry() {
-	if (!_G(spieler).R10Surimy) {
+	if (!_G(gameState).R10Surimy) {
 		_G(out)->setPointer(_G(workptr));
-		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
+		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(gameState).scrollx, _G(gameState).scrolly);
 		_G(out)->setPointer(nullptr);
 		_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
-		_G(spieler).R10Surimy = true;
+		_G(gameState).R10Surimy = true;
 		_G(fx_blend) = BLEND_NONE;
 		flic_cut(FCUT_003);
 		setPersonPos(0, 130, P_CHEWY, P_RIGHT);
@@ -44,7 +44,7 @@ void Room10::entry() {
 		startAadWait(101);
 		showCur();
 
-	} else if (_G(spieler).R10SurimyOk) {
+	} else if (_G(gameState).R10SurimyOk) {
 		_G(room)->set_timer_status(3, TIMER_STOP);
 	}
 }
@@ -54,12 +54,12 @@ void Room10::get_surimy() {
 	autoMove(4, P_CHEWY);
 	start_aad(104, 0);
 	flic_cut(FCUT_005);
-	_G(spieler).R10SurimyOk = true;
+	_G(gameState).R10SurimyOk = true;
 	_G(room)->set_timer_status(3, TIMER_STOP);
 	_G(atds)->set_ats_str(77, TXT_MARK_LOOK, 1, ATS_DATA);
 	invent_2_slot(18);
 
-	delInventory(_G(spieler).AkInvent);
+	delInventory(_G(gameState).AkInvent);
 	showCur();
 }
 

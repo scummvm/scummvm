@@ -43,21 +43,21 @@ static const AniBlock ABLOCK27[5] = {
 
 
 void Room29::entry() {
-	if (_G(spieler).R29Schlauch1) {
+	if (_G(gameState).R29Schlauch1) {
 		_G(det)->showStaticSpr(7);
-	} else if (_G(spieler).R29Schlauch2) {
+	} else if (_G(gameState).R29Schlauch2) {
 		_G(det)->showStaticSpr(8);
 		_G(det)->showStaticSpr(10);
 	}
 
-	if (_G(spieler).R29AutoSitz) {
-		if (_G(spieler).ChewyAni == CHEWY_ROCKER)
+	if (_G(gameState).R29AutoSitz) {
+		if (_G(gameState).ChewyAni == CHEWY_ROCKER)
 			_G(atds)->setControlBit(212, ATS_ACTIVE_BIT, ATS_DATA);
 		else
 			_G(det)->showStaticSpr(9);
 	}
 
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 }
 
 void Room29::xit() {
@@ -68,19 +68,19 @@ void Room29::xit() {
 int16 Room29::use_pumpe() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).R29Pumpe) {
+	if (!_G(gameState).R29Pumpe) {
 		hideCur();
 
 		if (isCurInventory(SCHLAUCH_INV)) {
 			action_flag = true;
-			_G(spieler).R29Pumpe = true;
-			_G(spieler).R29Schlauch1 = true;
+			_G(gameState).R29Pumpe = true;
+			_G(gameState).R29Schlauch1 = true;
 			autoMove(1, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(det)->showStaticSpr(7);
 			_G(atds)->delControlBit(218, ATS_ACTIVE_BIT, ATS_DATA);
 			delInventory(SCHLAUCH_INV);
-		} else if (!_G(spieler).inv_cur) {
+		} else if (!_G(gameState).inv_cur) {
 			action_flag = true;
 			startAadWait(62);
 		}
@@ -93,7 +93,7 @@ int16 Room29::use_pumpe() {
 
 int16 Room29::get_schlauch() {
 	int16 action_flag = false;
-	if (_G(spieler).R29Schlauch1 && !_G(spieler).inv_cur) {
+	if (_G(gameState).R29Schlauch1 && !_G(gameState).inv_cur) {
 		action_flag = true;
 		hideCur();
 
@@ -116,18 +116,18 @@ bool Room29::use_schlauch() {
 		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(det)->hideStaticSpr(7);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(4, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(8);
 		_G(det)->showStaticSpr(10);
 		_G(atds)->delControlBit(219, ATS_ACTIVE_BIT, ATS_DATA);
 		_G(atds)->set_ats_str(218, 1, ATS_DATA);
 
-		_G(spieler).R29Schlauch1 = false;
-		_G(spieler).R29Schlauch2 = true;
+		_G(gameState).R29Schlauch1 = false;
+		_G(gameState).R29Schlauch2 = true;
 		delInventory(PUMPE_INV);
 		setPersonPos(308, 105, P_CHEWY, P_RIGHT);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		showCur();
 	}
 
@@ -135,10 +135,10 @@ bool Room29::use_schlauch() {
 }
 
 void Room29::schlitz_sitz() {
-	if (!_G(spieler).R29AutoSitz) {
+	if (!_G(gameState).R29AutoSitz) {
 		hideCur();
-		_G(spieler).R29AutoSitz = true;
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState).R29AutoSitz = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(det)->hideStaticSpr(4);
 		_G(det)->showStaticSpr(11);
 		startAniBlock(3, ABLOCK26);
@@ -149,7 +149,7 @@ void Room29::schlitz_sitz() {
 
 		_G(det)->stop_detail(2);
 		_G(atds)->delControlBit(212, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(mouseLeftClick) = false;
 		g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 
@@ -160,12 +160,12 @@ void Room29::schlitz_sitz() {
 int16 Room29::zaun_sprung() {
 	int16 action_flag = false;
 
-	if (_G(spieler).R29AutoSitz && !_G(spieler).inv_cur) {
+	if (_G(gameState).R29AutoSitz && !_G(gameState).inv_cur) {
 		hideCur();
 		
 		action_flag = true;
 		autoMove(3, P_CHEWY);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startDetailFrame(3, 1, ANI_FRONT, 7);
 		_G(det)->hideStaticSpr(9);
 		startAniBlock(5, ABLOCK27);
@@ -173,7 +173,7 @@ int16 Room29::zaun_sprung() {
 
 		showCur();
 		switchRoom(37);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 
 	}
 

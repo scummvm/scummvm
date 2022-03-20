@@ -29,10 +29,10 @@ namespace Chewy {
 namespace Rooms {
 
 void Room59::look_poster() {
-	if (!_G(spieler).R59PosterWeg) {
+	if (!_G(gameState).R59PosterWeg) {
 		_G(atds)->set_ats_str(302, 1, ATS_DATA);
 		_G(atds)->set_ats_str(301, 1, ATS_DATA);
-		_G(spieler).R59PosterWeg = true;
+		_G(gameState).R59PosterWeg = true;
 		invent_2_slot(SPARK_INV);
 		switchRoom(60);
 	}

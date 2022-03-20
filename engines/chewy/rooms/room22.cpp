@@ -60,10 +60,10 @@ AniBlock ABLOCK14[2] = {
 
 
 void Room22::entry() {
-	if (!_G(spieler).R22BorkPlatt) {
+	if (!_G(gameState).R22BorkPlatt) {
 		_G(det)->load_taf_seq(36, 21, nullptr);
 		_G(room)->set_timer(255, 15);
-	} else if (!_G(spieler).R22GetBork) {
+	} else if (!_G(gameState).R22GetBork) {
 		_G(det)->showStaticSpr(4);
 	}
 }
@@ -78,19 +78,19 @@ bool Room22::timer(int16 t_nr, int16 ani_nr) {
 
 int16 Room22::chewy_amboss() {
 	int16 action_flag = false;
-	if (!_G(spieler).R22ChewyPlatt && !_G(spieler).inv_cur && !_G(flags).AutoAniPlay) {
+	if (!_G(gameState).R22ChewyPlatt && !_G(gameState).inv_cur && !_G(flags).AutoAniPlay) {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
 		hideCur();
 
 		autoMove(5, P_CHEWY);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(1, 1, ANI_FRONT);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		autoMove(2, P_CHEWY);
 		_G(flags).NoPalAfterFlc = false;
 		flic_cut(FCUT_006);
-		_G(spieler).R22ChewyPlatt = true;
+		_G(gameState).R22ChewyPlatt = true;
 		_G(atds)->set_ats_str(79, 1, ATS_DATA);
 		_G(flags).AutoAniPlay = false;
 
@@ -103,7 +103,7 @@ void Room22::bork(int16 t_nr) {
 	if (!_G(flags).AutoAniPlay && !is_chewy_busy()) {
 		_G(flags).AutoAniPlay = true;
 
-		if (!_G(spieler).R22BorkPlatt) {
+		if (!_G(gameState).R22BorkPlatt) {
 			hideCur();
 			start_spz(CH_TALK2, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(10);
@@ -114,15 +114,15 @@ void Room22::bork(int16 t_nr) {
 			_G(mov_phasen)[BORK_OBJ].Repeat = 1;
 			_G(mov_phasen)[BORK_OBJ].ZoomFak = 0;
 			_G(auto_mov_obj)[BORK_OBJ].Id = AUTO_OBJ0;
-			_G(auto_mov_vector)[BORK_OBJ].Delay = _G(spieler).DelaySpeed;
+			_G(auto_mov_vector)[BORK_OBJ].Delay = _G(gameState).DelaySpeed;
 			_G(auto_mov_obj)[BORK_OBJ].Mode = true;
 
-			if (!_G(spieler).R22Paint) {
+			if (!_G(gameState).R22Paint) {
 				bork_walk1();
 			} else {
-				if (!_G(spieler).R22ChewyPlatt) {
+				if (!_G(gameState).R22ChewyPlatt) {
 					_G(atds)->setControlBit(79, ATS_ACTIVE_BIT, ATS_DATA);
-					_G(spieler).R22ChewyPlatt = true;
+					_G(gameState).R22ChewyPlatt = true;
 				}
 
 				bork_walk2();
@@ -155,24 +155,24 @@ void Room22::bork_walk2() {
 	register_cutscene(3);
 	_G(det)->showStaticSpr(4);
 	_G(atds)->delControlBit(81, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(spieler).R22BorkPlatt = true;
+	_G(gameState).R22BorkPlatt = true;
 	_G(atds)->setControlBit(79, ATS_ACTIVE_BIT, ATS_DATA);
 }
 
 void Room22::get_bork() {
-	if (!_G(spieler).R22GetBork && _G(spieler).R22BorkPlatt) {
+	if (!_G(gameState).R22GetBork && _G(gameState).R22BorkPlatt) {
 		autoMove(4, P_CHEWY);
 		_G(det)->hideStaticSpr(4);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startAniBlock(2, ABLOCK14);
 		setPersonPos(171, 120, P_CHEWY, P_LEFT);
 		startAadWait(11);
 		_G(det)->stop_detail(3);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(atds)->setControlBit(81, ATS_ACTIVE_BIT, ATS_DATA);
 		invent_2_slot(BORK_INV);
 
-		_G(spieler).R22GetBork = true;
+		_G(gameState).R22GetBork = true;
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
 	}
@@ -187,15 +187,15 @@ int16 Room22::malen() {
 		autoMove(8, P_CHEWY);
 		flic_cut(FCUT_007);
 		_G(atds)->set_ats_str(82, TXT_MARK_LOOK, 1, ATS_DATA);
-		_G(spieler).R22Paint = true;
+		_G(gameState).R22Paint = true;
 		_G(obj)->calc_rsi_flip_flop(SIB_PAINT_R22);
 		_G(obj)->hide_sib(SIB_PAINT_R22);
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		_G(obj)->calc_all_static_detail();
 		_G(flags).AutoAniPlay = false;
 
-		if (!_G(spieler).R22ChewyPlatt) {
-			_G(spieler).R22ChewyPlatt = true;
+		if (!_G(gameState).R22ChewyPlatt) {
+			_G(gameState).R22ChewyPlatt = true;
 			_G(atds)->setControlBit(79, ATS_ACTIVE_BIT, ATS_DATA);
 		}
 	}

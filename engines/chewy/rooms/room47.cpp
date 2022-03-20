@@ -46,7 +46,7 @@ int16 Room47::use_button(int16 txt_nr) {
 	int16 k_nr = 0;
 	int16 action_ret = false;
 
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		action_ret = true;
 
 		switch (txt_nr) {
@@ -68,17 +68,17 @@ int16 Room47::use_button(int16 txt_nr) {
 
 		g_engine->_sound->playSound(0, 0);
 		g_engine->_sound->playSound(0);
-		++_G(spieler).R47Schloss[k_nr];
+		++_G(gameState).R47Schloss[k_nr];
 
-		if (_G(spieler).R47Schloss[k_nr] > 9)
-			_G(spieler).R47Schloss[k_nr] = 0;
+		if (_G(gameState).R47Schloss[k_nr] > 9)
+			_G(gameState).R47Schloss[k_nr] = 0;
 
-		if (_G(spieler).R47Schloss[0] == 7 &&
-				_G(spieler).R47Schloss[1] == 6 &&
-				_G(spieler).R47Schloss[2] == 2)
-			_G(spieler).R47SchlossOk = true;
+		if (_G(gameState).R47Schloss[0] == 7 &&
+				_G(gameState).R47Schloss[1] == 6 &&
+				_G(gameState).R47Schloss[2] == 2)
+			_G(gameState).R47SchlossOk = true;
 		else
-			_G(spieler).R47SchlossOk = false;
+			_G(gameState).R47SchlossOk = false;
 	}
 
 	return action_ret;
@@ -89,9 +89,9 @@ void Room47::set_detail() {
 		_G(det)->hideStaticSpr(i);
 
 	for (int16 i = 0; i < 3; i++) {
-		_G(det)->showStaticSpr(_G(spieler).R47Schloss[i]);
-		_G(det)->setStaticPos(_G(spieler).R47Schloss[i], 124 + i * 30, 96 - i, false, true);
-		_G(det)->plot_static_details(0, 0, _G(spieler).R47Schloss[i], _G(spieler).R47Schloss[i]);
+		_G(det)->showStaticSpr(_G(gameState).R47Schloss[i]);
+		_G(det)->setStaticPos(_G(gameState).R47Schloss[i], 124 + i * 30, 96 - i, false, true);
+		_G(det)->plot_static_details(0, 0, _G(gameState).R47Schloss[i], _G(gameState).R47Schloss[i]);
 	}
 
 	for (int16 i = 0; i < 10; i++)

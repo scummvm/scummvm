@@ -32,7 +32,7 @@ void Room93::entry() {
 	if (_G(flags).LoadGame)
 		return;
 
-	_G(spieler).scrollx = 0;
+	_G(gameState).scrollx = 0;
 	hide_person();
 	startSetAILWait(3, 0, ANI_GO);
 	_G(det)->set_static_ani(0, -1);
@@ -42,7 +42,7 @@ void Room93::entry() {
 	_G(det)->set_static_ani(1, -1);
 	startAdsWait(27);
 
-	if (!_G(spieler).flags37_40) {
+	if (!_G(gameState).flags37_40) {
 		_G(det)->del_static_ani(1);
 		hideCur();
 		startSetAILWait(3, 1, ANI_GO);
@@ -60,14 +60,14 @@ void Room93::entry() {
 		showCur();
 	}
 
-	_G(spieler).flags35_40 = true;
+	_G(gameState).flags35_40 = true;
 	show_person();
 	switchRoom(94);
 }
 
 void Room93::xit() {
-	_G(spieler)._personRoomNr[P_HOWARD] = 94;
-	_G(spieler).scrollx = _G(spieler).r94Scrollx;
+	_G(gameState)._personRoomNr[P_HOWARD] = 94;
+	_G(gameState).scrollx = _G(gameState).r94Scrollx;
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
 }

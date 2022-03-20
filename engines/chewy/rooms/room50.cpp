@@ -37,9 +37,9 @@ bool Room50::_wasser;
 
 
 void Room50::entry(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 
-	if (_G(spieler).flags32_10) {
+	if (_G(gameState).flags32_10) {
 		hideCur();
 		stop_page();
 		_G(mouseLeftClick) = false;
@@ -54,13 +54,13 @@ void Room50::entry(int16 eib_nr) {
 		switchRoom(51);
 
 	} else {
-		if (_G(spieler).R50Zigarre) {
+		if (_G(gameState).R50Zigarre) {
 			stop_cigar();
 		} else {
 			_G(det)->startDetail(0, 255, ANI_FRONT);
 		}
 
-		if (!_G(spieler).R50KeyOK) {
+		if (!_G(gameState).R50KeyOK) {
 			_G(timer_nr)[0] = _G(room)->set_timer(1, 8);
 			_wasser = false;
 		} else {
@@ -69,7 +69,7 @@ void Room50::entry(int16 eib_nr) {
 
 		_G(SetUpScreenFunc) = setup_func;
 
-		if (_G(spieler)._personRoomNr[P_HOWARD] == 50) {
+		if (_G(gameState)._personRoomNr[P_HOWARD] == 50) {
 			_G(spieler_mi)[P_HOWARD].Mode = true;
 
 			if (!_G(flags).LoadGame) {
@@ -83,13 +83,13 @@ void Room50::entry(int16 eib_nr) {
 }
 
 void Room50::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 50) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 50) {
 		if (eib_nr == 83)
-			_G(spieler)._personRoomNr[P_HOWARD] = 49;
+			_G(gameState)._personRoomNr[P_HOWARD] = 49;
 		else
-			_G(spieler)._personRoomNr[P_HOWARD] = 51;
+			_G(gameState)._personRoomNr[P_HOWARD] = 51;
 
 		_G(spieler_mi)[P_HOWARD].Mode = false;
 	}
@@ -112,7 +112,7 @@ void Room50::stop_cigar() {
 	_G(det)->del_static_ani(0);
 	_G(atds)->set_ats_str(328, 1, ATS_DATA);
 	_G(det)->stop_detail(0);
-	_G(spieler).R50Zigarre = true;
+	_G(gameState).R50Zigarre = true;
 }
 
 void Room50::calc_wasser() {
@@ -139,7 +139,7 @@ void Room50::calc_treppe() {
 	if (!_G(flags).AutoAniPlay) {
 		_G(flags).AutoAniPlay = true;
 
-		if (!_G(spieler).R50KeyOK) {
+		if (!_G(gameState).R50KeyOK) {
 			hideCur();
 			stopPerson(P_CHEWY);
 			_G(room)->set_timer_status(1, TIMER_STOP);
@@ -163,13 +163,13 @@ int16 Room50::use_gutschein() {
 
 	if (isCurInventory(HOTEL_INV)) {
 		action_ret = true;
-		if (!_G(spieler).R50KeyOK) {
+		if (!_G(gameState).R50KeyOK) {
 			hideCur();
 			autoMove(3, P_CHEWY);
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_wasser = false;
 			stop_page();
-			delInventory(_G(spieler).AkInvent);
+			delInventory(_G(gameState).AkInvent);
 			startAniBlock(2, ABLOCK36);
 			aad_page(274, 8);
 		} else {
@@ -186,7 +186,7 @@ int16 Room50::use_gum() {
 	if (isCurInventory(GUM_INV)) {
 		action_ret = true;
 		hideCur();
-		_G(spieler).R50KeyOK = true;
+		_G(gameState).R50KeyOK = true;
 		_G(room)->set_timer_status(1, TIMER_STOP);
 		_wasser = false;
 		stop_page();
@@ -199,7 +199,7 @@ int16 Room50::use_gum() {
 		goAutoXy(112, 57, P_HOWARD, ANI_WAIT);
 
 		setPersonSpr(P_LEFT, P_HOWARD);
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		hide_person();
 		startSetAILWait(2, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(4);
@@ -222,7 +222,7 @@ int16 Room50::use_gum() {
 		inventory_2_cur(KEY_INV);
 		_G(atds)->set_ats_str(323, 1, ATS_DATA);
 		_G(atds)->set_ats_str(327, 1, ATS_DATA);
-		_G(spieler).room_e_obj[84].Attribut = EXIT_TOP;
+		_G(gameState).room_e_obj[84].Attribut = EXIT_TOP;
 		showCur();
 	}
 
@@ -240,7 +240,7 @@ void Room50::aad_page(int16 aad_nr, int16 ani_nr) {
 	startSetAILWait(6, 1, ANI_BACK);
 	go_page();
 
-	if (!_G(spieler).R50KeyOK)
+	if (!_G(gameState).R50KeyOK)
 		_G(room)->set_timer_status(1, TIMER_START);
 
 	showCur();
@@ -252,7 +252,7 @@ void Room50::setup_func() {
 		go_page();
 	}
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 50) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 50) {
 		calc_person_look();
 		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 

@@ -55,9 +55,9 @@ void MainMenu::execute() {
 	_G(cur)->move(152, 92);
 	g_events->_mousePos.x = 152;
 	g_events->_mousePos.y = 92;
-	_G(spieler).inv_cur = false;
+	_G(gameState).inv_cur = false;
 	_G(menu_display) = 0;
-	_G(spieler).soundLoopMode = 1;
+	_G(gameState).soundLoopMode = 1;
 
 	bool done = false;
 	while (!done && !SHOULD_QUIT) {
@@ -66,16 +66,16 @@ void MainMenu::execute() {
 
 		cursorChoice(CUR_ZEIGE);
 		_selection = -1;
-		_G(spieler).scrollx = _G(spieler).scrolly = 0;
-		_G(spieler)._personRoomNr[P_CHEWY] = 98;
-		_G(room)->loadRoom(&_G(room_blk), 98, &_G(spieler));
+		_G(gameState).scrollx = _G(gameState).scrolly = 0;
+		_G(gameState)._personRoomNr[P_CHEWY] = 98;
+		_G(room)->loadRoom(&_G(room_blk), 98, &_G(gameState));
 
 		_G(currentSong) = -1;
 		load_room_music(98);
 		_G(fx)->border(_G(workpage), 100, 0, 0);
 
 		_G(out)->setPalette(_G(pal));
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		showCur();
 
 		// Wait for a selection to be made on the main menu
@@ -133,7 +133,7 @@ void MainMenu::execute() {
 }
 
 void MainMenu::screenFunc() {
-	int vec = _G(det)->maus_vector(g_events->_mousePos.x + _G(spieler).scrollx, g_events->_mousePos.y + _G(spieler).scrolly);
+	int vec = _G(det)->maus_vector(g_events->_mousePos.x + _G(gameState).scrollx, g_events->_mousePos.y + _G(gameState).scrolly);
 
 	if (_G(in)->getSwitchCode() == 28 || _G(minfo)._button == 1) {
 		_selection = vec;
@@ -143,16 +143,16 @@ void MainMenu::screenFunc() {
 void MainMenu::animate() {
 	if (_G(ani_timer)->_timeFlag) {
 		_G(uhr)->resetTimer(0, 0);
-		_G(spieler).DelaySpeed = _G(FrameSpeed) / _G(spieler).FramesPerSecond;
-		_G(spieler_vector)->Delay = _G(spieler).DelaySpeed + _G(spz_delay)[0];
+		_G(gameState).DelaySpeed = _G(FrameSpeed) / _G(gameState).FramesPerSecond;
+		_G(spieler_vector)->Delay = _G(gameState).DelaySpeed + _G(spz_delay)[0];
 		_G(FrameSpeed) = 0;
-		_G(det)->set_global_delay(_G(spieler).DelaySpeed);
+		_G(det)->set_global_delay(_G(gameState).DelaySpeed);
 	}
 
 	++_G(FrameSpeed);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage],
-		_G(spieler).scrollx, _G(spieler).scrolly);
+		_G(gameState).scrollx, _G(gameState).scrolly);
 
 	if (_G(SetUpScreenFunc) && !_G(menu_display) && !_G(flags).InventMenu) {
 		_G(SetUpScreenFunc)();
@@ -177,34 +177,34 @@ void MainMenu::startGame() {
 	animate();
 	exit_room(-1);
 
-	bool soundSwitch = _G(spieler).SoundSwitch;
-	uint8 soundVol = _G(spieler).SoundVol;
-	bool musicSwitch = _G(spieler).MusicSwitch;
-	uint8 musicVol = _G(spieler).MusicVol;
-	bool speechSwitch = _G(spieler).SpeechSwitch;
-	uint8 framesPerSecond = _G(spieler).FramesPerSecond;
-	bool displayText = _G(spieler).DisplayText;
-	int sndLoopMode = _G(spieler).soundLoopMode;
+	bool soundSwitch = _G(gameState).SoundSwitch;
+	uint8 soundVol = _G(gameState).SoundVol;
+	bool musicSwitch = _G(gameState).MusicSwitch;
+	uint8 musicVol = _G(gameState).MusicVol;
+	bool speechSwitch = _G(gameState).SpeechSwitch;
+	uint8 framesPerSecond = _G(gameState).FramesPerSecond;
+	bool displayText = _G(gameState).DisplayText;
+	int sndLoopMode = _G(gameState).soundLoopMode;
 
 	var_init();
 
-	_G(spieler).SoundSwitch = soundSwitch;
-	_G(spieler).SoundVol = soundVol;
-	_G(spieler).MusicSwitch = musicSwitch;
-	_G(spieler).MusicVol = musicVol;
-	_G(spieler).SpeechSwitch = speechSwitch;
-	_G(spieler).FramesPerSecond = framesPerSecond;
-	_G(spieler).DisplayText = displayText;
-	_G(spieler).soundLoopMode = sndLoopMode;
+	_G(gameState).SoundSwitch = soundSwitch;
+	_G(gameState).SoundVol = soundVol;
+	_G(gameState).MusicSwitch = musicSwitch;
+	_G(gameState).MusicVol = musicVol;
+	_G(gameState).SpeechSwitch = speechSwitch;
+	_G(gameState).FramesPerSecond = framesPerSecond;
+	_G(gameState).DisplayText = displayText;
+	_G(gameState).soundLoopMode = sndLoopMode;
 
-	_G(spieler)._personRoomNr[P_CHEWY] = 0;
-	_G(room)->loadRoom(&_G(room_blk), 0, &_G(spieler));
+	_G(gameState)._personRoomNr[P_CHEWY] = 0;
+	_G(room)->loadRoom(&_G(room_blk), 0, &_G(gameState));
 
 	_G(spieler_vector)[P_CHEWY].Phase = 6;
 	_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_nr)[6];
 	setPersonPos(160, 80, P_CHEWY, P_RIGHT);
 	_G(fx_blend) = BLEND3;
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
 	enter_room(-1);
@@ -223,7 +223,7 @@ bool MainMenu::loadGame() {
 	_G(savegameFlag) = true;
 	int result = Dialogs::Files::execute(false);
 
-	cursorChoice((_G(spieler).inv_cur && _G(spieler).AkInvent != -1 &&
+	cursorChoice((_G(gameState).inv_cur && _G(gameState).AkInvent != -1 &&
 		_G(menu_item) == CUR_USE) ? 8 : 0);
 	_G(cur_display) = true;
 	restorePersonAni();
@@ -251,7 +251,7 @@ void MainMenu::playGame() {
 	_G(cur)->show_cur();
 	_G(spieler_vector)[P_CHEWY].Count = 0;
 	_G(uhr)->resetTimer(0, 0);
-	_G(sndPlayer)->setLoopMode(_G(spieler).soundLoopMode);
+	_G(sndPlayer)->setLoopMode(_G(gameState).soundLoopMode);
 
 	while (!SHOULD_QUIT && !mainLoop(1)) {
 	}

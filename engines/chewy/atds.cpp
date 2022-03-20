@@ -463,22 +463,22 @@ void Atdsys::crypt(char *txt, uint32 size) {
 void Atdsys::set_ats_mem(int16 mode) {
 	switch (mode) {
 	case ATS_DATA:
-		_ats_sheader = _G(spieler).Ats;
+		_ats_sheader = _G(gameState).Ats;
 		_atsMem = _atdsMem[mode];
 		break;
 
 	case INV_USE_DATA:
-		_ats_sheader = _G(spieler).InvUse;
+		_ats_sheader = _G(gameState).InvUse;
 		_atsMem = _atdsMem[mode];
 		break;
 
 	case INV_USE_DEF:
-		_ats_sheader = _G(spieler).InvUseDef;
+		_ats_sheader = _G(gameState).InvUseDef;
 		_atsMem = _invUseMem;
 		break;
 
 	case INV_ATS_DATA:
-		_ats_sheader = _G(spieler).InvAts;
+		_ats_sheader = _G(gameState).InvAts;
 		_atsMem = _atdsMem[mode];
 		break;
 
@@ -972,7 +972,7 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 					g_engine->_sound->playSpeech(_atdsv._vocNr,
 						_atdsv._display == DISPLAY_VOC);
 					int16 vocx = _G(spieler_vector)[_aadv._strHeader->_akPerson].Xypos[0] -
-								 _G(spieler).scrollx + _G(spieler_mi)[_aadv._strHeader->_akPerson].HotX;
+								 _G(gameState).scrollx + _G(spieler_mi)[_aadv._strHeader->_akPerson].HotX;
 					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
 
 					if (_atdsv._display == DISPLAY_VOC) {

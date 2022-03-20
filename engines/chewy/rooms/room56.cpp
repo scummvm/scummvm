@@ -30,13 +30,13 @@ namespace Chewy {
 namespace Rooms {
 
 void Room56::entry() {
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	int mode = 0;
 
-	if (_G(spieler).flags32_10) {
+	if (_G(gameState).flags32_10) {
 		_G(det)->showStaticSpr(10);
 		_G(room)->set_timer_status(0, TIMER_STOP);
 		_G(det)->del_static_ani(0);
@@ -45,13 +45,13 @@ void Room56::entry() {
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 25);
 
 	if (!_G(flags).LoadGame) {
-		if (_G(spieler).R48TaxiEntry) {
+		if (_G(gameState).R48TaxiEntry) {
 			hideCur();
-			_G(spieler).R48TaxiEntry = false;
-			_G(spieler).scrollx = 0;
-			_G(spieler).scrolly = 0;
-			_G(spieler)._personHide[P_CHEWY] = true;
-			_G(spieler)._personHide[P_HOWARD] = true;
+			_G(gameState).R48TaxiEntry = false;
+			_G(gameState).scrollx = 0;
+			_G(gameState).scrolly = 0;
+			_G(gameState)._personHide[P_CHEWY] = true;
+			_G(gameState)._personHide[P_HOWARD] = true;
 			_G(det)->hideStaticSpr(2);
 			_G(zoom_horizont) = 0;
 			setPersonPos(-6, 16, P_HOWARD, P_RIGHT);
@@ -65,33 +65,33 @@ void Room56::entry() {
 			startSetAILWait(7, 1, ANI_FRONT);
 			setupScreen(DO_SETUP);
 
-			if (!_G(spieler).R56GetTabak) {
+			if (!_G(gameState).R56GetTabak) {
 				flic_cut(FCUT_074);
 				_G(det)->showStaticSpr(2);
 			}
 
 			_G(room)->set_zoom(23);
-			_G(spieler).ZoomXy[P_HOWARD][0] = 17;
-			_G(spieler).ZoomXy[P_HOWARD][1] = 37;
-			_G(spieler)._personHide[P_CHEWY] = false;
-			_G(spieler)._personHide[P_HOWARD] = false;
+			_G(gameState).ZoomXy[P_HOWARD][0] = 17;
+			_G(gameState).ZoomXy[P_HOWARD][1] = 37;
+			_G(gameState)._personHide[P_CHEWY] = false;
+			_G(gameState)._personHide[P_HOWARD] = false;
 			_G(SetUpScreenFunc) = setup_func;
 			_G(spieler_mi)[P_CHEWY].Mode = true;
 			autoMove(1, P_CHEWY);
 			_G(spieler_mi)[P_CHEWY].Mode = false;
 			_G(mouseLeftClick) = false;
 			showCur();
-		} else if (_G(spieler).R62Flucht && !_G(spieler).flags32_10) {
+		} else if (_G(gameState).R62Flucht && !_G(gameState).flags32_10) {
 			_G(mouseLeftClick) = false;
-			_G(spieler).ZoomXy[P_HOWARD][0] = 40;
-			_G(spieler).ZoomXy[P_HOWARD][1] = 86;
+			_G(gameState).ZoomXy[P_HOWARD][0] = 40;
+			_G(gameState).ZoomXy[P_HOWARD][1] = 86;
 			_G(zoom_horizont) = 114;
 			_G(room)->set_zoom(70);
-			_G(spieler).R62Flucht = false;
+			_G(gameState).R62Flucht = false;
 			setPersonPos(308, 97, P_HOWARD, P_RIGHT);
 			setPersonPos(429, 146, P_CHEWY, P_LEFT);
-			_G(spieler).scrollx = 262;
-			_G(spieler)._personHide[P_HOWARD] = false;
+			_G(gameState).scrollx = 262;
+			_G(gameState)._personHide[P_HOWARD] = false;
 			_G(det)->showStaticSpr(9);
 			_G(det)->showStaticSpr(8);
 			_G(room)->set_timer_status(0, TIMER_STOP);
@@ -111,34 +111,34 @@ void Room56::entry() {
 			remove_inventory(65);
 			remove_inventory(77);
 			remove_inventory(82);
-		} else if (_G(spieler).flags32_10) {
-			if (!_G(spieler).flags34_8) {
-				_G(spieler).flags34_8 = true;
+		} else if (_G(gameState).flags32_10) {
+			if (!_G(gameState).flags34_8) {
+				_G(gameState).flags34_8 = true;
 				mode = 2;
-			} else if (_G(spieler).flags34_40) {
+			} else if (_G(gameState).flags34_40) {
 				_G(atds)->delControlBit(362, ATS_ACTIVE_BIT, ATS_DATA);
 				_G(atds)->setControlBit(367, ATS_ACTIVE_BIT, ATS_DATA);
 				_G(atds)->setControlBit(366, ATS_ACTIVE_BIT, ATS_DATA);
-				_G(spieler).room_e_obj[137].Attribut = 3;
-				if (_G(spieler).flags33_80) {
+				_G(gameState).room_e_obj[137].Attribut = 3;
+				if (_G(gameState).flags33_80) {
 					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
 					flic_cut(FCUT_113);
-					_G(spieler)._personRoomNr[P_HOWARD] = 89;
+					_G(gameState)._personRoomNr[P_HOWARD] = 89;
 					load_chewy_taf(CHEWY_NORMAL);
-					_G(spieler).mi[P_HOWARD] = 0;
-					_G(spieler).SVal2 = 0;
-					_G(spieler).flags35_2 = true;
+					_G(gameState).mi[P_HOWARD] = 0;
+					_G(gameState).SVal2 = 0;
+					_G(gameState).flags35_2 = true;
 					mode = 3;
 				} else {
 					hideCur();
-					_G(spieler).scrollx = _G(spieler).scrolly = 0;
+					_G(gameState).scrollx = _G(gameState).scrolly = 0;
 					_G(zoom_horizont) = 0;
 					setPersonPos(-6, 16, P_HOWARD, P_RIGHT);
 					setPersonPos(3, 42, P_CHEWY, P_RIGHT);
 					_G(room)->set_zoom(23);
-					_G(spieler).ZoomXy[P_HOWARD][0] = 17;
-					_G(spieler).ZoomXy[P_HOWARD][1] = 37;
+					_G(gameState).ZoomXy[P_HOWARD][0] = 17;
+					_G(gameState).ZoomXy[P_HOWARD][1] = 37;
 					_G(SetUpScreenFunc) = setup_func;
 					_G(spieler_mi)[P_CHEWY].Mode = true;
 					autoMove(1, P_CHEWY);
@@ -152,16 +152,16 @@ void Room56::entry() {
 	}
 
 	_G(SetUpScreenFunc) = setup_func;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 40;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 86;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 40;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 86;
 	_G(zoom_horizont) = 114;
 	_G(room)->set_zoom(70);
 
 	switch(mode) {
 	case 1:
-		_G(spieler)._personRoomNr[P_HOWARD] = 66;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 66;
-		_G(spieler).r88DestRoom = 82;
+		_G(gameState)._personRoomNr[P_HOWARD] = 66;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 66;
+		_G(gameState).r88DestRoom = 82;
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
@@ -169,16 +169,16 @@ void Room56::entry() {
 		register_cutscene(21);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
-		_G(spieler).PersonGlobalDia[P_HOWARD] = 10025;
-		_G(spieler).PersonDiaRoom[P_HOWARD] = 1;
+		_G(gameState).PersonGlobalDia[P_HOWARD] = 10025;
+		_G(gameState).PersonDiaRoom[P_HOWARD] = 1;
 		switchRoom(66);
 		break;
 	case 2:
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		flic_cut(FCUT_110);
-		_G(spieler).flags34_20 = true;
-		_G(spieler)._personRoomNr[P_HOWARD] = 90;
+		_G(gameState).flags34_20 = true;
+		_G(gameState)._personRoomNr[P_HOWARD] = 90;
 		switchRoom(90);
 		break;
 	case 3:
@@ -194,7 +194,7 @@ void Room56::entry() {
 
 void Room56::xit() {
 	_G(spieler_mi)[P_HOWARD].Mode = false;
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 }
 
 bool Room56::timer(int16 t_nr, int16 ani_nr) {
@@ -208,7 +208,7 @@ bool Room56::timer(int16 t_nr, int16 ani_nr) {
 
 int16 Room56::use_taxi() {
 	int16 action_ret = false;
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		action_ret = true;
 		hideCur();
 		autoMove(1, P_CHEWY);
@@ -218,17 +218,17 @@ int16 Room56::use_taxi() {
 		_G(det)->startDetail(8, 1, ANI_FRONT);
 		_G(zoom_horizont) = 0;
 		_G(room)->set_zoom(23);
-		_G(spieler).ZoomXy[P_HOWARD][0] = 17;
-		_G(spieler).ZoomXy[P_HOWARD][1] = 37;
+		_G(gameState).ZoomXy[P_HOWARD][0] = 17;
+		_G(gameState).ZoomXy[P_HOWARD][1] = 37;
 		_G(spieler_mi)[P_CHEWY].Mode = true;
 		goAutoXy(3, 42, P_CHEWY, ANI_WAIT);
 		_G(spieler_mi)[P_CHEWY].Mode = false;
-		_G(spieler)._personHide[P_CHEWY] = true;
-		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
-		if (_G(spieler)._personRoomNr[P_HOWARD] == 56) {
-			_G(spieler)._personHide[P_HOWARD] = true;
-			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
-			_G(spieler)._personRoomNr[P_HOWARD] = 48;
+		_G(gameState)._personHide[P_CHEWY] = true;
+		_G(gameState).R48TaxiPerson[P_CHEWY] = true;
+		if (_G(gameState)._personRoomNr[P_HOWARD] == 56) {
+			_G(gameState)._personHide[P_HOWARD] = true;
+			_G(gameState).R48TaxiPerson[P_HOWARD] = true;
+			_G(gameState)._personRoomNr[P_HOWARD] = 48;
 		}
 		showCur();
 		switchRoom(48);
@@ -238,9 +238,9 @@ int16 Room56::use_taxi() {
 
 void Room56::talk_man() {
 	autoMove(3, P_CHEWY);
-	if (!_G(spieler).R56AbfahrtOk) {
+	if (!_G(gameState).R56AbfahrtOk) {
 		startAdsWait(16);
-	} else if (!_G(spieler).R62Flucht) {
+	} else if (!_G(gameState).R62Flucht) {
 		hideCur();
 		startAadWait(343);
 		showCur();
@@ -249,7 +249,7 @@ void Room56::talk_man() {
 
 int16 Room56::use_man() {
 	int16 action_ret = false;
-	if (_G(spieler).flags32_10 || !isCurInventory(FLASCHE_INV))
+	if (_G(gameState).flags32_10 || !isCurInventory(FLASCHE_INV))
 		return action_ret;
 	
 	action_ret = true;
@@ -259,7 +259,7 @@ int16 Room56::use_man() {
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->del_static_ani(0);
 
-	if (!_G(spieler).R56WhiskyMix) {
+	if (!_G(gameState).R56WhiskyMix) {
 		startSetAILWait(4, 1, ANI_FRONT);
 
 		_G(det)->set_static_ani(5, -1);
@@ -268,8 +268,8 @@ int16 Room56::use_man() {
 		_G(room)->set_timer_status(0, TIMER_START);
 		_G(det)->set_static_ani(0, -1);
 	} else {
-		delInventory(_G(spieler).AkInvent);
-		_G(spieler).R56AbfahrtOk = true;
+		delInventory(_G(gameState).AkInvent);
+		_G(gameState).R56AbfahrtOk = true;
 		startSetAILWait(6, 1, ANI_FRONT);
 
 		_G(det)->set_static_ani(1, -1);
@@ -285,19 +285,19 @@ int16 Room56::use_man() {
 
 int16 Room56::use_kneipe() {
 	int16 action_ret = false;
-	if (!_G(spieler).flags32_10) {
-		if (_G(menu_item) == CUR_WALK && !_G(spieler).inv_cur && _G(atds)->getControlBit(362, ATS_ACTIVE_BIT, ATS_DATA) == 0) {
+	if (!_G(gameState).flags32_10) {
+		if (_G(menu_item) == CUR_WALK && !_G(gameState).inv_cur && _G(atds)->getControlBit(362, ATS_ACTIVE_BIT, ATS_DATA) == 0) {
 			action_ret = true;
 			hideCur();
-			if (_G(spieler).R56Kneipe) {
+			if (_G(gameState).R56Kneipe) {
 				startAadWait(344);
 			} else {
 				_G(SetUpScreenFunc) = nullptr;
 				autoMove(4, P_CHEWY);
-				_G(spieler)._personHide[P_CHEWY] = true;
+				_G(gameState)._personHide[P_CHEWY] = true;
 				goAutoXy(160, 58, P_HOWARD, ANI_FRONT);
-				_G(spieler)._personHide[P_HOWARD] = true;
-				_G(spieler).R56Kneipe = true;
+				_G(gameState)._personHide[P_HOWARD] = true;
+				_G(gameState).R56Kneipe = true;
 				_G(flags).NoScroll = true;
 				auto_scroll(0, 0);
 				startSetAILWait(12, 3, ANI_FRONT);
@@ -310,9 +310,9 @@ int16 Room56::use_kneipe() {
 				g_engine->_sound->playSound(10, 0);
 				_G(out)->ausblenden(0);
 				setupScreen(DO_SETUP);
-				_G(spieler)._personHide[P_CHEWY] = false;
-				_G(spieler)._personHide[P_HOWARD] = false;
-				_G(spieler).scrollx = 0;
+				_G(gameState)._personHide[P_CHEWY] = false;
+				_G(gameState)._personHide[P_HOWARD] = false;
+				_G(gameState).scrollx = 0;
 				setPersonPos(23, 70, P_HOWARD, P_RIGHT);
 				setPersonPos(50, 81, P_CHEWY, P_LEFT);
 				_G(fx_blend) = BLEND3;
@@ -329,8 +329,8 @@ int16 Room56::use_kneipe() {
 		}
 	} else if (isCurInventory(18)) {
 		hideCur();
-		if (_G(spieler).flags34_10) {
-			_G(spieler).flags33_80 = true;
+		if (_G(gameState).flags34_10) {
+			_G(gameState).flags33_80 = true;
 			autoMove(4, P_CHEWY);
 			flic_cut(FCUT_111);
 			_G(fx_blend) = BLEND3;
@@ -338,15 +338,15 @@ int16 Room56::use_kneipe() {
 			start_spz_wait(66, 1, false, P_CHEWY);
 			start_spz(67, 255, false, P_CHEWY);
 			startAadWait(524);
-			_G(spieler).SVal1 = 56;
-			_G(spieler).SVal2 = 523;
+			_G(gameState).SVal1 = 56;
+			_G(gameState).SVal2 = 523;
 			cur_2_inventory();
 			switchRoom(92);
 		} else {
 			startAadWait(518);
 		}
 		showCur();
-	} else if (_G(menu_item) == 0 || _G(menu_item) == 2 || (_G(menu_item) == 1 && !_G(spieler).inv_cur)){
+	} else if (_G(menu_item) == 0 || _G(menu_item) == 2 || (_G(menu_item) == 1 && !_G(gameState).inv_cur)){
 		hideCur();
 		action_ret = 1;
 		_G(mouseLeftClick) = false;
@@ -368,7 +368,7 @@ int16 Room56::use_kneipe() {
 }
 
 void Room56::start_flug() {
-	if (!_G(spieler).flags32_10 && !_G(r56koch_flug)) {
+	if (!_G(gameState).flags32_10 && !_G(r56koch_flug)) {
 		_G(r56koch_flug) = 12;
 		_G(det)->startDetail(_G(r56koch_flug), 1, ANI_FRONT);
 	}
@@ -379,7 +379,7 @@ void Room56::setup_func() {
 	if (_G(spieler_mi)[P_HOWARD].Vorschub > 8)
 		_G(spieler_mi)[P_HOWARD].Vorschub = 8;
 
-	if (!_G(spieler).flags32_10) {
+	if (!_G(gameState).flags32_10) {
 		switch (_G(r56koch_flug)) {
 		case 10:
 			if (_G(det)->get_ani_status(10) == false) {
@@ -408,7 +408,7 @@ void Room56::setup_func() {
 		}
 	}
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 56) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 56) {
 		calc_person_look();
 		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
@@ -429,11 +429,11 @@ void Room56::setup_func() {
 		goAutoXy(x, y, P_HOWARD, ANI_GO);
 	}
 
-	if (_G(spieler).flags32_10)
+	if (_G(gameState).flags32_10)
 		return;
 	
 	if (!_G(atds)->getControlBit(362, ATS_ACTIVE_BIT, ATS_DATA) && _G(menu_item) == CUR_WALK) {
-		if (g_events->_mousePos.x + _G(spieler).scrollx >= 157 && g_events->_mousePos.x + _G(spieler).scrollx <= 204 && g_events->_mousePos.y >= 28 && g_events->_mousePos.y <= 89)
+		if (g_events->_mousePos.x + _G(gameState).scrollx >= 157 && g_events->_mousePos.x + _G(gameState).scrollx <= 204 && g_events->_mousePos.y >= 28 && g_events->_mousePos.y <= 89)
 			cursorChoice(CUR_EXIT_TOP);
 		else
 			cursorChoice(CUR_WALK);

@@ -35,20 +35,20 @@ void Room85::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0);
 	g_engine->_sound->playSound(0, 1);
 	g_engine->_sound->playSound(0, 1, false);
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 22;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 37;
-	_G(spieler).ZoomXy[P_NICHELLE][0] = 22;
-	_G(spieler).ZoomXy[P_NICHELLE][1] = 38;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 22;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 37;
+	_G(gameState).ZoomXy[P_NICHELLE][0] = 22;
+	_G(gameState).ZoomXy[P_NICHELLE][1] = 38;
 
 	_G(zoom_horizont) = 0;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 1;
 
-	if (_G(spieler).flags32_10) {
+	if (_G(gameState).flags32_10) {
 		_G(det)->showStaticSpr(4);
 		_G(atds)->delControlBit(495, ATS_ACTIVE_BIT, ATS_DATA);
 	}
@@ -56,31 +56,31 @@ void Room85::entry(int16 eib_nr) {
 	if (_G(flags).LoadGame)
 		return;
 
-	if (_G(spieler).flags30_1 || eib_nr == 124) {
+	if (_G(gameState).flags30_1 || eib_nr == 124) {
 		hideCur();
 		setPersonPos(278, 157, P_CHEWY, P_RIGHT);
 		setPersonPos(296, 142, P_HOWARD, P_RIGHT);
 		setPersonPos(322, 142, P_NICHELLE, P_RIGHT);
-		_G(spieler).flags30_1 = false;
+		_G(gameState).flags30_1 = false;
 		_G(mouseLeftClick) = false;
-		_G(spieler).scrollx = 78;
-		if (_G(spieler).flags32_40) {
+		_G(gameState).scrollx = 78;
+		if (_G(gameState).flags32_40) {
 			_G(atds)->delControlBit(506, ATS_ACTIVE_BIT, ATS_DATA);
 			_G(det)->startDetail(1, 255, false);
 			setPersonPos(195, 146, P_CHEWY, P_RIGHT);
 			setPersonPos(186, 142, P_HOWARD, P_RIGHT);
 		}
 		showCur();
-	} else if (!_G(spieler.flags32_20)) {
+	} else if (!_G(gameState).flags32_20) {
 		setPersonPos(148, 152, P_CHEWY, P_RIGHT);
 		setPersonPos(98, 142, P_HOWARD, P_RIGHT);
 		setPersonPos(128, 142, P_NICHELLE, P_RIGHT);
-		_G(spieler).scrollx = 0;
+		_G(gameState).scrollx = 0;
 	} else {
 		hideCur();
-		_G(spieler).scrollx = 0;
+		_G(gameState).scrollx = 0;
 		setPersonPos(133, 152, P_CHEWY, P_RIGHT);
-		_G(spieler).room_e_obj[127].Attribut = 255;
+		_G(gameState).room_e_obj[127].Attribut = 255;
 		_G(det)->showStaticSpr(5);
 		_G(det)->showStaticSpr(6);
 		startAadWait(474);
@@ -90,7 +90,7 @@ void Room85::entry(int16 eib_nr) {
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_091);
 		_G(det)->hideStaticSpr(6);
-		_G(spieler).scrollx = 25;
+		_G(gameState).scrollx = 25;
 		_G(fx_blend) = BLEND3;
 		startAadWait(475);
 		start_aad(476, -1);
@@ -105,18 +105,18 @@ void Room85::entry(int16 eib_nr) {
 void Room85::xit(int16 eib_nr) {
 	switch (eib_nr) {
 	case 126:
-		if (_G(spieler)._personRoomNr[P_HOWARD] == 85)
-			_G(spieler)._personRoomNr[P_HOWARD] = 84;
+		if (_G(gameState)._personRoomNr[P_HOWARD] == 85)
+			_G(gameState)._personRoomNr[P_HOWARD] = 84;
 		
-		if (_G(spieler)._personRoomNr[P_NICHELLE] == 85)
-			_G(spieler)._personRoomNr[P_NICHELLE] = 84;
+		if (_G(gameState)._personRoomNr[P_NICHELLE] == 85)
+			_G(gameState)._personRoomNr[P_NICHELLE] = 84;
 		break;
 	case 127:
-		if (_G(spieler)._personRoomNr[P_HOWARD] == 85)
-			_G(spieler)._personRoomNr[P_HOWARD] = 86;
+		if (_G(gameState)._personRoomNr[P_HOWARD] == 85)
+			_G(gameState)._personRoomNr[P_HOWARD] = 86;
 
-		if (_G(spieler)._personRoomNr[P_NICHELLE] == 85)
-			_G(spieler)._personRoomNr[P_NICHELLE] = 86;
+		if (_G(gameState)._personRoomNr[P_NICHELLE] == 85)
+			_G(gameState)._personRoomNr[P_NICHELLE] = 86;
 		break;
 	default:
 		break;
@@ -150,13 +150,13 @@ void Room85::setup_func() {
 }
 
 int Room85::proc2() {
-	if (_G(spieler).inv_cur)
+	if (_G(gameState).inv_cur)
 		return 0;
 
 	autoMove(2, P_CHEWY);
 	_G(det)->stop_detail(1);
 	startSetAILWait(2, 1, ANI_FRONT);
-	_G(spieler)._personRoomNr[P_HOWARD] = 89;
+	_G(gameState)._personRoomNr[P_HOWARD] = 89;
 	cur_2_inventory();
 	remove_inventory(109);
 	remove_inventory(98);

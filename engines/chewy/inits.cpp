@@ -37,7 +37,7 @@ void standard_init() {
 	_G(txt) = new Text();
 	_G(ged) = new GedClass(&ged_user_func);
 	_G(room) = new Room();
-	_G(obj) = new Object(&_G(spieler));
+	_G(obj) = new Object(&_G(gameState));
 	_G(uhr) = new Timer(MAX_TIMER_OBJ, _G(ani_timer));
 	_G(det) = new Detail();
 	_G(atds) = new Atdsys();
@@ -97,11 +97,11 @@ void var_init() {
 	_G(menu_item) = CUR_WALK;
 	_G(inventoryNr) = 0;
 	new_game();
-	_G(spieler).MainMenuY = MENU_Y;
-	_G(spieler).DispFlag = true;
-	_G(spieler).AkInvent = -1;
-	_G(spieler).ScrollxStep = 1;
-	_G(spieler).ScrollyStep = 1;
+	_G(gameState).MainMenuY = MENU_Y;
+	_G(gameState).DispFlag = true;
+	_G(gameState).AkInvent = -1;
+	_G(gameState).ScrollxStep = 1;
+	_G(gameState).ScrollyStep = 1;
 
 	_G(spieler_mi)[P_CHEWY].HotX = CH_HOT_X;
 	_G(spieler_mi)[P_CHEWY].HotY = CH_HOT_Y;
@@ -133,16 +133,16 @@ void var_init() {
 
 		_G(ani_stand_flag)[i] = false;
 		_G(spz_delay)[i] = 0;
-		_G(spieler)._personRoomNr[i] = -1;
-		_G(spieler).PersonDia[i] = -1;
+		_G(gameState)._personRoomNr[i] = -1;
+		_G(gameState).PersonDia[i] = -1;
 	}
-	_G(spieler)._personRoomNr[P_CHEWY] = _G(room_start_nr);
+	_G(gameState)._personRoomNr[P_CHEWY] = _G(room_start_nr);
 
 	_G(gpkt).Vorschub = _G(spieler_mi)[P_CHEWY].Vorschub;
 	init_room();
 	init_atds();
-	_G(spieler).FramesPerSecond = 7;
-	_G(spieler).DisplayText = true;
+	_G(gameState).FramesPerSecond = 7;
+	_G(gameState).DisplayText = true;
 	_G(currentSong) = -1;
 	_G(SetUpScreenFunc) = nullptr;
 	_G(pfeil_delay) = 0;
@@ -158,8 +158,8 @@ void init_room() {
 	_G(room_blk).InvFile = INVENTORY_TAF;
 	_G(room_blk).DetFile = DETAILTEST;
 	_G(room_blk).InvSprAdr = &_G(inv_spr)[0];
-	_G(room_blk).Rmo = _G(spieler).room_m_obj;
-	_G(room_blk).Rsi = _G(spieler).room_s_obj;
+	_G(room_blk).Rmo = _G(gameState).room_m_obj;
+	_G(room_blk).Rsi = _G(gameState).room_s_obj;
 	_G(room_blk).AadLoad = true;
 	_G(room_blk).AtsLoad = true;
 	strcpy(_G(room_blk).RoomDir, "room/");
@@ -183,46 +183,46 @@ void init_atds() {
 	_G(atds)->set_handle(ATDS_TXT, AAD_DATA, handle, AAD_TAP_OFF, AAD_TAP_MAX);
 	_G(atds)->set_handle(ATDS_TXT, ADS_DATA, handle, ADS_TAP_OFF, ADS_TAP_MAX);
 	_G(atds)->set_handle(ATDS_TXT, INV_USE_DATA, handle, USE_TAP_OFF, USE_TAP_MAX);
-	_G(spieler).AadSilent = 10;
-	_G(spieler).DelaySpeed = 5;
-	_G(spieler_vector)[P_CHEWY].Delay = _G(spieler).DelaySpeed;
-	_G(atds)->set_delay(&_G(spieler).DelaySpeed, _G(spieler).AadSilent);
+	_G(gameState).AadSilent = 10;
+	_G(gameState).DelaySpeed = 5;
+	_G(spieler_vector)[P_CHEWY].Delay = _G(gameState).DelaySpeed;
+	_G(atds)->set_delay(&_G(gameState).DelaySpeed, _G(gameState).AadSilent);
 	_G(atds)->set_string_end_func(&atdsStringStart);
 }
 
 void new_game() {
-	_G(spieler).clear();
+	_G(gameState).clear();
 
 	for (int16 i = 0; i < MAX_MOV_OBJ; i++) {
-		_G(spieler).room_m_obj[i].RoomNr = -1;
-		_G(spieler).InventSlot[i] = -1;
+		_G(gameState).room_m_obj[i].RoomNr = -1;
+		_G(gameState).InventSlot[i] = -1;
 	}
 	for (int16 i = 0; i < MAX_FEST_OBJ; i++)
-		_G(spieler).room_s_obj[i].RoomNr = -1;
+		_G(gameState).room_s_obj[i].RoomNr = -1;
 	for (int16 i = 0; i < MAX_EXIT; i++)
-		_G(spieler).room_e_obj[i].RoomNr = -1;
+		_G(gameState).room_e_obj[i].RoomNr = -1;
 
-	_G(obj)->load(INVENTORY_IIB, &_G(spieler).room_m_obj[0]);
-	_G(obj)->load(INVENTORY_SIB, &_G(spieler).room_s_obj[0]);
-	_G(obj)->load(EXIT_EIB, &_G(spieler).room_e_obj[0]);
+	_G(obj)->load(INVENTORY_IIB, &_G(gameState).room_m_obj[0]);
+	_G(obj)->load(INVENTORY_SIB, &_G(gameState).room_s_obj[0]);
+	_G(obj)->load(EXIT_EIB, &_G(gameState).room_e_obj[0]);
 
 	Common::File f;
 
 	if (!f.open(ROOM_ATS_STEUER))
 		error("Error reading file: %s", ROOM_ATS_STEUER);
 	for (int16 i = 0; i < ROOM_ATS_MAX; i++)
-		_G(spieler).Ats[i * MAX_ATS_STATUS] = f.readByte();
+		_G(gameState).Ats[i * MAX_ATS_STATUS] = f.readByte();
 	f.close();
 
 	if (!f.open(INV_ATS_STEUER))
 		error("Error reading file: %s", INV_ATS_STEUER);
 	for (int16 i = 0; i < MAX_MOV_OBJ; i++)
-		_G(spieler).InvAts[i * MAX_ATS_STATUS] = f.readByte();
+		_G(gameState).InvAts[i * MAX_ATS_STATUS] = f.readByte();
 	f.close();
 
 	_G(obj)->sort();
 	for (int16 i = 0; i < _G(obj)->spieler_invnr[0]; i++)
-		_G(spieler).InventSlot[i] = _G(obj)->spieler_invnr[i + 1];
+		_G(gameState).InventSlot[i] = _G(obj)->spieler_invnr[i + 1];
 
 	_G(AkChewyTaf) = 0;
 	load_chewy_taf(CHEWY_NORMAL);
@@ -246,7 +246,7 @@ void init_load() {
 	f.read(_G(spblende) + sizeof(uint32), f.size());
 	f.close();
 
-	_G(room)->loadRoom(&_G(room_blk), _G(room_start_nr), &_G(spieler));
+	_G(room)->loadRoom(&_G(room_blk), _G(room_start_nr), &_G(gameState));
 	_G(out)->setPalette(_G(pal));
 }
 
@@ -288,14 +288,14 @@ void tidy() {
 }
 
 void sound_init() {
-	_G(spieler).SoundSwitch = false;
-	_G(spieler).MusicSwitch = false;
+	_G(gameState).SoundSwitch = false;
+	_G(gameState).MusicSwitch = false;
 
 	_G(sndPlayer)->initMixMode();
-	_G(spieler).MusicVol = 63;
-	_G(spieler).SoundVol = 63;
-	g_engine->_sound->setMusicVolume(_G(spieler).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
-	g_engine->_sound->setSoundVolume(_G(spieler).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
+	_G(gameState).MusicVol = 63;
+	_G(gameState).SoundVol = 63;
+	g_engine->_sound->setMusicVolume(_G(gameState).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
+	g_engine->_sound->setSoundVolume(_G(gameState).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
 
 	_G(music_handle) = _G(room)->open_handle(DETAIL_TVP, R_VOC_DATA);
 
@@ -312,10 +312,10 @@ void sound_init() {
 	}
 
 	_G(atds)->setHasSpeech(true);
-	_G(spieler).DisplayText = false;
-	_G(spieler).SoundSwitch = true;
-	_G(spieler).MusicSwitch = true;
-	_G(spieler).SpeechSwitch = true;
+	_G(gameState).DisplayText = false;
+	_G(gameState).SoundSwitch = true;
+	_G(gameState).MusicSwitch = true;
+	_G(gameState).SpeechSwitch = true;
 }
 
 void show_intro() {

@@ -29,7 +29,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room27::entry() {
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 27) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 27) {
 		_G(timer_nr)[0] = _G(room)->set_timer(0, 5);
 		_G(det)->set_static_ani(0, -1);
 		_G(atds)->delControlBit(274, ATS_ACTIVE_BIT, ATS_DATA);
@@ -37,24 +37,24 @@ void Room27::entry() {
 		_G(atds)->setControlBit(274, ATS_ACTIVE_BIT, ATS_DATA);
 	}
 
-	_G(spieler)._personHide[P_HOWARD] = true;
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState)._personHide[P_HOWARD] = true;
+	_G(gameState).ScrollxStep = 2;
 }
 
 void Room27::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 	hideCur();
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 27) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 27) {
 		if (eib_nr == 55) {
 			startAadWait(175);
 			_G(room)->set_timer_status(0, TIMER_STOP);
 			_G(det)->del_static_ani(0);
 			startSetAILWait(2, 1, ANI_FRONT);
-			_G(spieler)._personRoomNr[P_HOWARD] = 28;
+			_G(gameState)._personRoomNr[P_HOWARD] = 28;
 			_G(spieler_mi)[P_HOWARD].Id = HOWARD_OBJ;
-		} else if (_G(spieler).R27HowardGed < 3 && eib_nr != -1) {
-			++_G(spieler).R27HowardGed;
+		} else if (_G(gameState).R27HowardGed < 3 && eib_nr != -1) {
+			++_G(gameState).R27HowardGed;
 			startAadWait(174);
 		}
 	}
@@ -67,7 +67,7 @@ void Room27::get_surimy() {
 	hideCur();
 	autoMove(4, P_CHEWY);
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 27) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 27) {
 		startAadWait(171);
 	}
 
@@ -83,8 +83,8 @@ void Room27::talk_howard() {
 }
 
 void Room27::howard_ged() {
-	if (_G(spieler).R27HowardGed < 3) {
-		++_G(spieler).R27HowardGed;
+	if (_G(gameState).R27HowardGed < 3) {
+		++_G(gameState).R27HowardGed;
 	}
 }
 

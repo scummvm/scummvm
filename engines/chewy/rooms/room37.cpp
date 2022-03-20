@@ -46,27 +46,27 @@ void Room37::entry() {
 	_G(obj)->show_sib(75);
 
 	if (!_G(flags).LoadGame) {
-		_G(spieler).scrollx = 124;
+		_G(gameState).scrollx = 124;
 		setPersonPos(219, 66, P_CHEWY, P_RIGHT);
 	}
 
-	if (!_G(spieler).R37Kloppe) {
+	if (!_G(gameState).R37Kloppe) {
 		_G(timer_nr)[1] = _G(room)->set_timer(7, 5);
 		_G(det)->set_static_ani(7, -1);
 
-		if (!_G(spieler).R37HundScham) {
+		if (!_G(gameState).R37HundScham) {
 			_G(timer_nr)[0] = _G(room)->set_timer(3, 4);
 			_G(det)->set_static_ani(3, -1);
 			g_engine->_sound->playSound(3, 0);
 		}
 	}
 
-	if (_G(spieler).R37Gebiss) {
+	if (_G(gameState).R37Gebiss) {
 		_G(det)->hideStaticSpr(9);
 
-		if (_G(spieler).R37Kloppe) {
+		if (_G(gameState).R37Kloppe) {
 			_G(det)->hideStaticSpr(8);
-		} else if (_G(spieler).R37HundScham) {
+		} else if (_G(gameState).R37HundScham) {
 			_G(det)->showStaticSpr(0);
 		}
 	}
@@ -77,9 +77,9 @@ void Room37::gedAction(int index) {
 		dog_bell();
 
 	} else if (index == 1) {
-		if (_G(spieler).R37Kloppe && !_G(spieler).R37Mes) {
+		if (_G(gameState).R37Kloppe && !_G(gameState).R37Mes) {
 			stopPerson(P_CHEWY);
-			_G(spieler).R37Mes = true;
+			_G(gameState).R37Mes = true;
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(142);
 		}
@@ -87,10 +87,10 @@ void Room37::gedAction(int index) {
 }
 
 void Room37::setup_func() {
-	if (_G(mouseLeftClick) && !_G(spieler).R37Kloppe &&
+	if (_G(mouseLeftClick) && !_G(gameState).R37Kloppe &&
 			_G(menu_item) == CUR_WALK) {
-		if ((g_events->_mousePos.x + _G(spieler).scrollx > 380 && g_events->_mousePos.y > 120) ||
-			(g_events->_mousePos.x + _G(spieler).scrollx > 482)) {
+		if ((g_events->_mousePos.x + _G(gameState).scrollx > 380 && g_events->_mousePos.y > 120) ||
+			(g_events->_mousePos.x + _G(gameState).scrollx > 482)) {
 			// Don't allow moving into chicken coop area
 			// until the rooster has left
 			autoMove(7, P_CHEWY);
@@ -102,7 +102,7 @@ void Room37::setup_func() {
 short Room37::use_wippe() {
 	int16 action_flag = false;
 
-	if (_G(spieler).inv_cur) {
+	if (_G(gameState).inv_cur) {
 		action_flag = true;
 
 		if (isCurInventory(H_FUTTER_INV)) {
@@ -112,11 +112,11 @@ short Room37::use_wippe() {
 			auto_scroll(129, 0);
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(159);
-			delInventory(_G(spieler).AkInvent);
+			delInventory(_G(gameState).AkInvent);
 			flic_cut(FCUT_047);
 			_G(flags).NoScroll = false;
 			showCur();
-			_G(spieler).scrollx = 269;
+			_G(gameState).scrollx = 269;
 			setPersonPos(388, 119, P_CHEWY, P_RIGHT);
 			switchRoom(29);
 			_G(mouseLeftClick) = false;
@@ -133,7 +133,7 @@ short Room37::use_wippe() {
 int16 Room37::use_glas() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).R37Gebiss) {
+	if (!_G(gameState).R37Gebiss) {
 		action_flag = true;
 		if (isCurInventory(ANGEL2_INV)) {
 			_G(flags).NoScroll = true;
@@ -143,7 +143,7 @@ int16 Room37::use_glas() {
 			auto_scroll(146, 0);
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(147);
-			delInventory(_G(spieler).AkInvent);
+			delInventory(_G(gameState).AkInvent);
 			flic_cut(FCUT_048);
 			flic_cut(FCUT_049);
 			invent_2_slot(GEBISS_INV);
@@ -152,7 +152,7 @@ int16 Room37::use_glas() {
 			_G(atds)->set_ats_str(256, 1, ATS_DATA);
 			_G(atds)->delControlBit(251, ATS_ACTIVE_BIT, ATS_DATA);
 			_G(obj)->show_sib(SIB_HFUTTER2_R37);
-			_G(spieler).R37Gebiss = true;
+			_G(gameState).R37Gebiss = true;
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(146);
 			showCur();
@@ -175,7 +175,7 @@ void Room37::dog_bell() {
 		_G(flags).AutoAniPlay = true;
 		g_engine->_sound->stopSound(0); // nr 3, sslot 0
 
-		if (!_G(spieler).R37Gebiss) {
+		if (!_G(gameState).R37Gebiss) {
 			stopPerson(P_CHEWY);
 			_G(flags).ChAutoMov = false;
 			setPersonSpr(P_LEFT, P_CHEWY);
@@ -187,13 +187,13 @@ void Room37::dog_bell() {
 			startSetAILWait(5, 1, ANI_FRONT);
 			_G(det)->hideStaticSpr(9);
 			startSetAILWait(6, 1, ANI_FRONT);
-			_G(spieler)._personHide[P_CHEWY] = true;
+			_G(gameState)._personHide[P_CHEWY] = true;
 			_G(det)->startDetail(11, 255, ANI_FRONT);
 			flic_cut(FCUT_050);
 			startSetAILWait(6, 1, ANI_BACK);
 			_G(det)->stop_detail(11);
 			setPersonPos(326, 85, P_CHEWY, P_LEFT);
-			_G(spieler)._personHide[P_CHEWY] = false;
+			_G(gameState)._personHide[P_CHEWY] = false;
 			_G(det)->showStaticSpr(9);
 			startAniBlock(3, ABLOCK31);
 			_G(det)->set_static_ani(3, -1);
@@ -203,7 +203,7 @@ void Room37::dog_bell() {
 			dia_nr = 149;
 			ani_nr = CH_TALK12;
 
-		} else if (!_G(spieler).R37HundScham) {
+		} else if (!_G(gameState).R37HundScham) {
 			stopPerson(P_CHEWY);
 			setPersonSpr(P_LEFT, P_CHEWY);
 			_G(flags).NoScroll = true;
@@ -213,12 +213,12 @@ void Room37::dog_bell() {
 			_G(det)->stop_detail(3);
 			startSetAILWait(4, 1, ANI_FRONT);
 			flic_cut(FCUT_051);
-			_G(spieler).scrollx = 104;
+			_G(gameState).scrollx = 104;
 			flic_cut(FCUT_054);
 			register_cutscene(10);
 			_G(det)->showStaticSpr(0);
 
-			_G(spieler).R37HundScham = true;
+			_G(gameState).R37HundScham = true;
 			dia_nr = 148;
 			ani_nr = CH_TALK6;
 		}
@@ -240,7 +240,7 @@ void Room37::talk_hahn() {
 	autoMove(7, P_CHEWY);
 	showCur();
 
-	if (!_G(spieler).R37TransHahn) {
+	if (!_G(gameState).R37TransHahn) {
 		_G(cur_hide_flag) = 0;
 		hideCur();
 		startAadWait(145);
@@ -254,7 +254,7 @@ void Room37::use_hahn() {
 	if (isCurInventory(TRANSLATOR_INV)) {
 		hideCur();
 		autoMove(7, P_CHEWY);
-		_G(spieler).R37TransHahn = true;
+		_G(gameState).R37TransHahn = true;
 		start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 		flic_cut(FCUT_052);
 		cur_2_inventory();
@@ -263,9 +263,9 @@ void Room37::use_hahn() {
 		showCur();
 		hahn_dia();
 
-	} else if (_G(spieler).R37TransHahn) {
+	} else if (_G(gameState).R37TransHahn) {
 		if (isCurInventory(GEBISS_INV)) {
-			_G(spieler).R37Kloppe = true;
+			_G(gameState).R37Kloppe = true;
 			hideCur();
 			autoMove(6, P_CHEWY);
 			load_room_music(256);
@@ -290,7 +290,7 @@ void Room37::use_hahn() {
 			flic_cut(FCUT_053);
 			_G(det)->stop_detail(10);
 
-			_G(spieler).scrollx = 320;
+			_G(gameState).scrollx = 320;
 			_G(flags).NoScroll = false;
 			_G(atds)->setControlBit(251, ATS_ACTIVE_BIT, ATS_DATA);
 			_G(atds)->setControlBit(250, ATS_ACTIVE_BIT, ATS_DATA);
@@ -302,23 +302,23 @@ void Room37::use_hahn() {
 			inventory_2_cur(EIER_INV);
 			showCur();
 		}
-	} else if (_G(spieler).inv_cur) {
+	} else if (_G(gameState).inv_cur) {
 		startAadWait(143);
 	}
 }
 
 void Room37::hahn_dia() {
-	_G(spieler)._personHide[P_CHEWY] = true;
-	int16 tmp_scrollx = _G(spieler).scrollx;
-	int16 tmp_scrolly = _G(spieler).scrolly;
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 0;
+	_G(gameState)._personHide[P_CHEWY] = true;
+	int16 tmp_scrollx = _G(gameState).scrollx;
+	int16 tmp_scrolly = _G(gameState).scrolly;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 0;
 	switchRoom(38);
 	startAdsWait(9);
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 	_G(flags).LoadGame = true;
-	_G(spieler).scrollx = tmp_scrollx;
-	_G(spieler).scrolly = tmp_scrolly;
+	_G(gameState).scrollx = tmp_scrollx;
+	_G(gameState).scrolly = tmp_scrolly;
 	switchRoom(37);
 	_G(flags).LoadGame = false;
 }

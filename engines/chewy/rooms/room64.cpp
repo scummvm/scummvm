@@ -31,22 +31,22 @@ namespace Rooms {
 void Room64::entry() {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(r62Delay) = 0;
-	_G(r64TalkAni) = _G(spieler).R64Moni1Ani;
+	_G(r64TalkAni) = _G(gameState).R64Moni1Ani;
 
-	if (_G(spieler).flags38_1)
+	if (_G(gameState).flags38_1)
 		_G(det)->startDetail(0, 255, false);
 	
-	if (!_G(spieler).R64ManWeg) {
+	if (!_G(gameState).R64ManWeg) {
 		_G(timer_nr)[0] = _G(room)->set_timer(1, 10);
 		_G(det)->set_static_ani(1, -1);
 		chewy_entry();
-		if (_G(spieler).R63Feuer) {
+		if (_G(gameState).R63Feuer) {
 			flic_cut(FCUT_078);
-			_G(spieler).R64ManWeg = true;
+			_G(gameState).R64ManWeg = true;
 			_G(det)->del_static_ani(1);
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_G(atds)->setControlBit(376, ATS_ACTIVE_BIT, ATS_DATA);
-			_G(spieler).R64Moni1Ani = 5;
+			_G(gameState).R64Moni1Ani = 5;
 			calc_monitor();
 			hideCur();
 			startAadWait(354);
@@ -69,7 +69,7 @@ void Room64::chewy_entry() {
 
 void Room64::calc_monitor() {
 	int16 str_nr = 0;
-	switch (_G(spieler).R64Moni1Ani) {
+	switch (_G(gameState).R64Moni1Ani) {
 	case 0:
 		str_nr = 2;
 		break;
@@ -89,7 +89,7 @@ void Room64::calc_monitor() {
 	}
 
 	_G(atds)->set_ats_str(373, str_nr, ATS_DATA);
-	switch (_G(spieler).R64Moni2Ani) {
+	switch (_G(gameState).R64Moni2Ani) {
 	case 0:
 		str_nr = 1;
 		break;
@@ -106,15 +106,15 @@ void Room64::calc_monitor() {
 }
 
 void Room64::setup_func() {
-	if (_G(r62Delay) <= 0 && _G(spieler).R62TShow) {
-		_G(r62Delay) = (_G(spieler).DelaySpeed + 1) * 60;
+	if (_G(r62Delay) <= 0 && _G(gameState).R62TShow) {
+		_G(r62Delay) = (_G(gameState).DelaySpeed + 1) * 60;
 		if (_G(r64TalkAni) == 3 || _G(r64TalkAni) == 4)
 			_G(det)->stop_detail(_G(r64TalkAni));
 		
 		if (_G(r64TalkAni) == 4)
-			_G(r64TalkAni) = _G(spieler).R64Moni1Ani;
+			_G(r64TalkAni) = _G(gameState).R64Moni1Ani;
 		else
-			_G(r64TalkAni) = _G(spieler).R64Moni2Ani;
+			_G(r64TalkAni) = _G(gameState).R64Moni2Ani;
 
 		if (_G(r64TalkAni) != 0)
 			_G(det)->startDetail(_G(r64TalkAni), 255, ANI_FRONT);
@@ -127,7 +127,7 @@ void Room64::talk_man() {
 }
 
 void Room64::talk_man(int16 aad_nr) {
-	if (!_G(spieler).R64ManWeg) {
+	if (!_G(gameState).R64ManWeg) {
 		hideCur();
 		autoMove(4, P_CHEWY);
 		_G(room)->set_timer_status(1, TIMER_STOP);
@@ -145,8 +145,8 @@ void Room64::talk_man(int16 aad_nr) {
 int16 Room64::use_tasche() {
 	int16 action_ret = false;
 	hideCur();
-	if (!_G(spieler).inv_cur) {
-		if (_G(spieler).R64ManWeg) {
+	if (!_G(gameState).inv_cur) {
+		if (_G(gameState).R64ManWeg) {
 			if (!_G(atds)->getControlBit(375, ATS_ACTIVE_BIT, ATS_DATA)) {
 				autoMove(3, P_CHEWY);
 				start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);

@@ -45,7 +45,7 @@ static const MovLine R13_BORK_MPKT[3] = {
 };
 
 void Room13::entry() {
-	if (!_G(spieler).R12ChewyBork && !_G(spieler).R13BorkOk) {
+	if (!_G(gameState).R12ChewyBork && !_G(gameState).R13BorkOk) {
 		_G(out)->cls();
 		flic_cut(FCUT_012);
 		setPersonPos(106, 65, P_CHEWY, P_RIGHT);
@@ -53,62 +53,62 @@ void Room13::entry() {
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
 		startAadWait(27);
 	} else {
-		if (_G(spieler).R13MonitorStatus)
-			_G(det)->showStaticSpr(11 - _G(spieler).R13MonitorStatus);
+		if (_G(gameState).R13MonitorStatus)
+			_G(det)->showStaticSpr(11 - _G(gameState).R13MonitorStatus);
 
-		if (!_G(spieler).R13BorkOk) {
+		if (!_G(gameState).R13BorkOk) {
 			_G(det)->showStaticSpr(12);
 			_G(obj)->hide_sib(SIB_BANDBUTTON_R13);
-			_G(spieler).R13Bandlauf = true;
+			_G(gameState).R13Bandlauf = true;
 
-			_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
+			_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(gameState).R13Bandlauf, ATS_DATA);
 
-			_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
+			_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(gameState).R13Bandlauf, ATS_DATA);
 
-			_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
+			_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(gameState).R13Bandlauf, ATS_DATA);
 		}
 
-		if (_G(spieler).R13Bandlauf) {
+		if (_G(gameState).R13Bandlauf) {
 			for (int i = 0; i < 5; ++i)
 				_G(det)->startDetail(i, 255, false);
 		}
 		
-		if (!_G(flags).LoadGame && _G(spieler).R13Band) {
-			_G(spieler).room_e_obj[25].Attribut = EXIT_TOP;
+		if (!_G(flags).LoadGame && _G(gameState).R13Band) {
+			_G(gameState).room_e_obj[25].Attribut = EXIT_TOP;
 			_G(atds)->setControlBit(100, ATS_ACTIVE_BIT, ATS_DATA);
-			_G(spieler).R13Band = false;
+			_G(gameState).R13Band = false;
 		}
 
-		if (_G(spieler).R21GitterMuell)
+		if (_G(gameState).R21GitterMuell)
 			_G(det)->hideStaticSpr(6);
 	}
 }
 
 void Room13::xit() {
-	_G(spieler).room_e_obj[25].Attribut = EXIT_TOP;
+	_G(gameState).room_e_obj[25].Attribut = EXIT_TOP;
 	_G(atds)->setControlBit(100, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(spieler).R13Band = false;
+	_G(gameState).R13Band = false;
 }
 
 void Room13::gedAction(int index) {
-	if (index == 2 && _G(spieler).R12ChewyBork) {
+	if (index == 2 && _G(gameState).R12ChewyBork) {
 		stopPerson(P_CHEWY);
 		talk_bork();
 	}
 }
 
 void Room13::talk_bork() {
-	if (!_G(spieler).R13BorkOk) {
-		_G(spieler).R13BorkOk = true;
-		_G(spieler).R12ChewyBork = false;
+	if (!_G(gameState).R13BorkOk) {
+		_G(gameState).R13BorkOk = true;
+		_G(gameState).R12ChewyBork = false;
 		_G(det)->showStaticSpr(13);
 		_G(det)->setSetailPos(10, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		_G(det)->setStaticPos(12, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1], false, true);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startAadWait(33);
 		_G(det)->stop_detail(9);
 		_G(det)->load_taf_seq(86, 12, nullptr);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(det)->hideStaticSpr(12);
 		_G(auto_obj) = 1;
 
@@ -117,7 +117,7 @@ void Room13::talk_bork() {
 		_G(mov_phasen)[R13_BORK_OBJ].Repeat = 1;
 		_G(mov_phasen)[R13_BORK_OBJ].ZoomFak = 0;
 		_G(auto_mov_obj)[R13_BORK_OBJ].Id = AUTO_OBJ0;
-		_G(auto_mov_vector)[R13_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
+		_G(auto_mov_vector)[R13_BORK_OBJ].Delay = _G(gameState).DelaySpeed;
 		_G(auto_mov_obj)[R13_BORK_OBJ].Mode = true;
 		init_auto_obj(R13_BORK_OBJ, &R13_BORK_PHASEN[0][0], 3, (const MovLine *)R13_BORK_MPKT);
 		autoMove(9, P_CHEWY);
@@ -146,27 +146,27 @@ void Room13::talk_bork() {
 		_G(obj)->show_sib(SIB_TBUTTON2_R11);
 		_G(obj)->show_sib(SIB_TBUTTON3_R11);
 
-		if (_G(spieler).R6DoorRightB)
-			_G(spieler).room_e_obj[20].Attribut = EXIT_LEFT;
-		_G(spieler).room_e_obj[21].Attribut = EXIT_TOP;
+		if (_G(gameState).R6DoorRightB)
+			_G(gameState).room_e_obj[20].Attribut = EXIT_LEFT;
+		_G(gameState).room_e_obj[21].Attribut = EXIT_TOP;
 	}
 }
 
 void Room13::jmp_band() {
-	if (!_G(spieler).R13Band && !_G(spieler).R12ChewyBork) {
-		if (!_G(spieler).R13Bandlauf) {
+	if (!_G(gameState).R13Band && !_G(gameState).R12ChewyBork) {
+		if (!_G(gameState).R13Bandlauf) {
 			_G(obj)->hide_sib(SIB_BANDBUTTON_R13);
-			_G(spieler).room_e_obj[25].Attribut = 255;
+			_G(gameState).room_e_obj[25].Attribut = 255;
 			_G(atds)->delControlBit(100, ATS_ACTIVE_BIT, ATS_DATA);
-			_G(spieler).R13Band = true;
+			_G(gameState).R13Band = true;
 			autoMove(3, P_CHEWY);
-			_G(spieler)._personHide[P_CHEWY] = true;
+			_G(gameState)._personHide[P_CHEWY] = true;
 			startSetAILWait(8, 1, ANI_FRONT);
-			_G(spieler)._personHide[P_CHEWY] = false;
+			_G(gameState)._personHide[P_CHEWY] = false;
 			setPersonPos(292, 98, P_CHEWY, P_RIGHT);
 
 		} else {
-			_G(spieler).R13Surf = true;
+			_G(gameState).R13Surf = true;
 			_G(mouseLeftClick) = false;
 			autoMove(12, P_CHEWY);
 			startAadWait(117);
@@ -176,37 +176,37 @@ void Room13::jmp_band() {
 			_G(flags).NoScroll = false;
 			setPersonPos(195, 226, P_CHEWY, P_LEFT);
 
-			_G(spieler).R13Bandlauf = false;
-			_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
-			_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
-			_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(spieler).R13Bandlauf, ATS_DATA);
+			_G(gameState).R13Bandlauf = false;
+			_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(gameState).R13Bandlauf, ATS_DATA);
+			_G(atds)->set_ats_str(97, TXT_MARK_LOOK, _G(gameState).R13Bandlauf, ATS_DATA);
+			_G(atds)->set_ats_str(93, TXT_MARK_LOOK, _G(gameState).R13Bandlauf, ATS_DATA);
 			_G(obj)->calc_rsi_flip_flop(SIB_BANDBUTTON_R13);
 			_G(obj)->hide_sib(SIB_BANDBUTTON_R13);
 			switchRoom(14);
 
 			flic_cut(FCUT_017);
 			register_cutscene(6);
-			_G(spieler).scrollx = 92;
-			_G(spieler).scrolly = 120;
-			_G(spieler)._personHide[P_CHEWY] = true;
+			_G(gameState).scrollx = 92;
+			_G(gameState).scrolly = 120;
+			_G(gameState)._personHide[P_CHEWY] = true;
 			waitShowScreen(20);
-			_G(spieler)._personHide[P_CHEWY] = false;
+			_G(gameState)._personHide[P_CHEWY] = false;
 		}
 	}
 }
 
 void Room13::jmp_floor() {
-	if (_G(spieler).R13Band) {
-		if (!_G(spieler).R13Surf)
+	if (_G(gameState).R13Band) {
+		if (!_G(gameState).R13Surf)
 			_G(obj)->show_sib(SIB_BANDBUTTON_R13);
 
-		_G(spieler).room_e_obj[25].Attribut = EXIT_TOP;
+		_G(gameState).room_e_obj[25].Attribut = EXIT_TOP;
 		_G(atds)->setControlBit(100, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(spieler).R13Band = false;
+		_G(gameState).R13Band = false;
 		autoMove(5, P_CHEWY);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(7, 1, ANI_FRONT);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		setPersonPos(176, 138, P_CHEWY, P_LEFT);
 	}
 }
@@ -214,28 +214,28 @@ void Room13::jmp_floor() {
 int16 Room13::monitor_button() {
 	int16 action_flag = false;
 	
-	if (!_G(spieler).inv_cur) {
-		if (_G(spieler).R13Band) {
+	if (!_G(gameState).inv_cur) {
+		if (_G(gameState).R13Band) {
 			action_flag = true;
 			startAadWait(620);
 
-		} else if (!_G(spieler).R12ChewyBork) {
+		} else if (!_G(gameState).R12ChewyBork) {
 			action_flag = true;
 			autoMove(8, P_CHEWY);
-			_G(spieler)._personHide[P_CHEWY] = true;
+			_G(gameState)._personHide[P_CHEWY] = true;
 			startSetAILWait(6, 1, ANI_FRONT);
-			_G(spieler)._personHide[P_CHEWY] = false;
+			_G(gameState)._personHide[P_CHEWY] = false;
 
-			if (_G(spieler).R13MonitorStatus)
-				_G(det)->hideStaticSpr(11 - _G(spieler).R13MonitorStatus);
+			if (_G(gameState).R13MonitorStatus)
+				_G(det)->hideStaticSpr(11 - _G(gameState).R13MonitorStatus);
 
-			++_G(spieler).R13MonitorStatus;
-			if (_G(spieler).R13MonitorStatus > 4)
-				_G(spieler).R13MonitorStatus = 0;
+			++_G(gameState).R13MonitorStatus;
+			if (_G(gameState).R13MonitorStatus > 4)
+				_G(gameState).R13MonitorStatus = 0;
 			else
-				_G(det)->showStaticSpr(11 - _G(spieler).R13MonitorStatus);
+				_G(det)->showStaticSpr(11 - _G(gameState).R13MonitorStatus);
 
-			_G(atds)->set_ats_str(96, TXT_MARK_LOOK, _G(spieler).R13MonitorStatus, ATS_DATA);
+			_G(atds)->set_ats_str(96, TXT_MARK_LOOK, _G(gameState).R13MonitorStatus, ATS_DATA);
 		}
 	}
 

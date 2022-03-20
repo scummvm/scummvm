@@ -67,8 +67,8 @@ void Room12::entry() {
 	_G(zoom_horizont) = 150;
 	_G(timer_nr)[1] = _G(room)->set_timer(254, 20);
 
-	if (!_G(spieler).R12Betreten) {
-		_G(spieler).R12Betreten = true;
+	if (!_G(gameState).R12Betreten) {
+		_G(gameState).R12Betreten = true;
 		hideCur();
 
 		for (int16 i = 7; i < 10; i++)
@@ -90,9 +90,9 @@ void Room12::entry() {
 		startAadWait(109);
 		showCur();
 
-	} else if (_G(spieler).R12Talisman && !_G(spieler).R12BorkInRohr)
+	} else if (_G(gameState).R12Talisman && !_G(gameState).R12BorkInRohr)
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 20);
-	else if (_G(spieler).R12BorkInRohr && !_G(spieler).R12RaumOk)
+	else if (_G(gameState).R12BorkInRohr && !_G(gameState).R12RaumOk)
 		_G(det)->showStaticSpr(12);
 }
 
@@ -100,8 +100,8 @@ bool Room12::timer(int16 t_nr, int16 ani_nr) {
 	if (t_nr == _G(timer_nr)[0]) {
 		if (!is_chewy_busy())
 			init_bork();
-	} else if (t_nr == _G(timer_nr)[1] && _G(spieler).R12TransOn) {
-		_G(spieler).R12TransOn = false;
+	} else if (t_nr == _G(timer_nr)[1] && _G(gameState).R12TransOn) {
+		_G(gameState).R12TransOn = false;
 		startAadWait(30);
 	}
 
@@ -109,7 +109,7 @@ bool Room12::timer(int16 t_nr, int16 ani_nr) {
 }
 
 void Room12::init_bork() {
-	if (!auto_obj_status(R12_BORK_OBJ) && !_G(spieler).R12BorkTalk) {
+	if (!auto_obj_status(R12_BORK_OBJ) && !_G(gameState).R12BorkTalk) {
 		if (!_G(auto_obj))
 			_G(det)->load_taf_seq(62, 24, nullptr);
 
@@ -120,18 +120,18 @@ void Room12::init_bork() {
 			_G(mov_phasen)[R12_BORK_OBJ].Repeat = 1;
 			_G(mov_phasen)[R12_BORK_OBJ].ZoomFak = (int16)_G(room)->_roomInfo->_zoomFactor + 20;
 			_G(auto_mov_obj)[R12_BORK_OBJ].Id = AUTO_OBJ0;
-			_G(auto_mov_vector)[R12_BORK_OBJ].Delay = _G(spieler).DelaySpeed;
+			_G(auto_mov_vector)[R12_BORK_OBJ].Delay = _G(gameState).DelaySpeed;
 			_G(auto_mov_obj)[R12_BORK_OBJ].Mode = true;
 			init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], 5, (const MovLine *)R12_BORK_MPKT);
 
-			if (!_G(spieler).R12TalismanOk) {
+			if (!_G(gameState).R12TalismanOk) {
 				hideCur();
 				_G(auto_mov_vector)[R12_BORK_OBJ]._delayCount = 1000;
 				autoMove(5, P_CHEWY);
 				_G(auto_mov_vector)[R12_BORK_OBJ]._delayCount = 0;
 
-				if (_G(spieler).R12BorkCount < 3) {
-					++_G(spieler).R12BorkCount;
+				if (_G(gameState).R12BorkCount < 3) {
+					++_G(gameState).R12BorkCount;
 					_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 					waitShowScreen(10);
 					start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
@@ -150,7 +150,7 @@ void Room12::init_bork() {
 }
 
 void Room12::talk_bork() {
-	if (!_G(spieler).R12TalismanOk) {
+	if (!_G(gameState).R12TalismanOk) {
 		startAadWait(28);
 	}
 }
@@ -161,14 +161,14 @@ void Room12::bork_ok() {
 	_G(auto_mov_vector)[R12_BORK_OBJ]._delayCount = 1000;
 	autoMove(5, P_CHEWY);
 	_G(auto_mov_vector)[R12_BORK_OBJ]._delayCount = 0;
-	_G(spieler).R12BorkTalk = true;
+	_G(gameState).R12BorkTalk = true;
 
 	_G(mov_phasen)[R12_BORK_OBJ].Repeat = 1;
 	_G(mov_phasen)[R12_BORK_OBJ].Lines = 2;
 	init_auto_obj(R12_BORK_OBJ, &R12_BORK_PHASEN[0][0], 2, (const MovLine *)R12_BORK_MPKT1);
 	wait_auto_obj(R12_BORK_OBJ);
 
-	_G(spieler).R12BorkInRohr = true;
+	_G(gameState).R12BorkInRohr = true;
 	_G(det)->setSetailPos(3, 170, 145);
 	_G(det)->startDetail(3, 255, ANI_FRONT);
 	startAadWait(57);
@@ -191,14 +191,14 @@ void Room12::bork_ok() {
 
 int16 Room12::use_terminal() {
 	int16 action_flag = false;
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		action_flag = true;
 
-		if (!_G(spieler).R12ChewyBork) {
+		if (!_G(gameState).R12ChewyBork) {
 			autoMove(6, P_CHEWY);
 			startAadWait(110);
 
-			if (_G(spieler).R12BorkInRohr && !_G(spieler).R12RaumOk) {
+			if (_G(gameState).R12BorkInRohr && !_G(gameState).R12RaumOk) {
 				start_spz(CH_TALK5, 255, false, P_CHEWY);
 				startAadWait(112);
 				_G(flags).NoScroll = true;
@@ -213,17 +213,17 @@ int16 Room12::use_terminal() {
 				_G(menu_item) = CUR_WALK;
 				cursorChoice(_G(menu_item));
 				setPersonPos(108, 90, P_CHEWY, -1);
-				_G(spieler).R12ChewyBork = true;
-				_G(spieler).R12RaumOk = true;
+				_G(gameState).R12ChewyBork = true;
+				_G(gameState).R12RaumOk = true;
 				autoMove(4, P_CHEWY);
 				start_spz(68, 255, false, P_CHEWY);
 				startAadWait(113);
 
-			} else if (_G(spieler).R12TalismanOk && !_G(spieler).R12RaumOk) {
+			} else if (_G(gameState).R12TalismanOk && !_G(gameState).R12RaumOk) {
 				use_linke_rohr();
 
 			} else {
-				_G(spieler).R12TransOn = true;
+				_G(gameState).R12TransOn = true;
 				_G(uhr)->resetTimer(_G(timer_nr)[1], 0);
 			}
 		} else {
@@ -235,8 +235,8 @@ int16 Room12::use_terminal() {
 }
 
 void Room12::use_linke_rohr() {
-	_G(spieler).R12TalismanOk = false;
-	_G(spieler).R12ChainLeft = true;
+	_G(gameState).R12TalismanOk = false;
+	_G(gameState).R12ChainLeft = true;
 	_G(uhr)->disableTimer();
 	_G(obj)->calc_rsi_flip_flop(SIB_L_ROEHRE_R12);
 	_G(obj)->calc_rsi_flip_flop(SIB_ROEHRE_R12);
@@ -248,15 +248,15 @@ void Room12::use_linke_rohr() {
 
 int16 Room12::chewy_trans() {
 	int16 action_flag = false;
-	if (!_G(spieler).inv_cur && _G(spieler).R12TransOn) {
+	if (!_G(gameState).inv_cur && _G(gameState).R12TransOn) {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
 		autoMove(9, P_CHEWY);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startAniBlock(2, ABLOCK16);
 		setPersonPos(108, 82, P_CHEWY, P_RIGHT);
-		_G(spieler)._personHide[P_CHEWY] = false;
-		_G(spieler).R12TransOn = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
+		_G(gameState).R12TransOn = false;
 		_G(flags).AutoAniPlay = false;
 	}
 	return action_flag;
@@ -265,11 +265,11 @@ int16 Room12::chewy_trans() {
 int16 Room12::useTransformerTube() {
 	bool result = false;
 
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		result = true;
 
-		if (_G(spieler).R12ChainLeft) {
-			_G(spieler).R12ChainLeft = false;
+		if (_G(gameState).R12ChainLeft) {
+			_G(gameState).R12ChainLeft = false;
 			_G(uhr)->enableTimer();
 			_G(atds)->set_ats_str(117, 1, AAD_DATA);
 		} else {

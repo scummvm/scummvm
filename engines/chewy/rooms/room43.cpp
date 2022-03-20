@@ -31,64 +31,64 @@ namespace Rooms {
 
 void Room43::night_small() {
 	hide_person();
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 0;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 0;
 	switchRoom(43);
 	_G(sndPlayer)->stopMod();
 	g_engine->_sound->playSound(0);
 	hideCur();
 	_G(flags).NoScroll = true;
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 	startAadWait(188);
 	auto_scroll(320, 0);
 	startAadWait(189);
 	auto_scroll(0, 0);
 	startAadWait(190);
-	_G(spieler).ScrollxStep = 16;
+	_G(gameState).ScrollxStep = 16;
 	auto_scroll(192, 0);
 
 	for (int16 i = 0; i < 3; i++) {
 		if (i)
-			_G(spieler).ScrollxStep = 16 / i;
+			_G(gameState).ScrollxStep = 16 / i;
 		auto_scroll(128 + i * 16, 0);
 		auto_scroll(192, 0);
 	}
 
-	_G(spieler).scrollx = 194;
+	_G(gameState).scrollx = 194;
 	startAadWait(191);
 	flic_cut(FCUT_058);
 	g_engine->_sound->stopSound(0);
 	_G(flags).NoScroll = false;
-	_G(spieler).ScrollxStep = 1;
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 0;
+	_G(gameState).ScrollxStep = 1;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 0;
 	showCur();
 	show_person();
 }
 
 void Room43::catch_pg() {
 	hide_person();
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 0;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 0;
 	switchRoom(43);
 	_G(sndPlayer)->stopMod();
 	g_engine->_sound->playSound(0);
 	hideCur();
 	_G(flags).NoScroll = true;
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 	startAadWait(234);
 	auto_scroll(194, 0);
 	startAadWait(235);
-	_G(spieler).R43GetPgLady = true;
+	_G(gameState).R43GetPgLady = true;
 	flic_cut(FCUT_058);
 
 	g_engine->_sound->stopSound(0);
 	register_cutscene(14);
 	
 	_G(flags).NoScroll = false;
-	_G(spieler).ScrollxStep = 1;
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 0;
+	_G(gameState).ScrollxStep = 1;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 0;
 	showCur();
 	show_person();
 }

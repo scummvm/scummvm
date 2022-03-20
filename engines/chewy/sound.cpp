@@ -276,7 +276,7 @@ void Sound::convertTMFToMod(uint8 *tmfData, uint32 tmfSize, uint8 *modData, uint
 }
 
 void Sound::waitForSpeechToFinish() {
-	if (_G(spieler).SpeechSwitch) {
+	if (_G(gameState).SpeechSwitch) {
 		while (g_engine->_sound->isSpeechActive() && !SHOULD_QUIT) {
 			setupScreen(DO_SETUP);
 		}

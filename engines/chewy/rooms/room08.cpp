@@ -41,8 +41,8 @@ static const AniBlock ABLOCK13[2] = {
 };
 
 void Room8::entry() {
-	_G(spieler).R7ChewyFlug = true;
-	if (!_G(spieler).R8Folter)
+	_G(gameState).R7ChewyFlug = true;
+	if (!_G(gameState).R8Folter)
 		start_folter();
 	else
 		stop_folter();
@@ -61,22 +61,22 @@ void Room8::stop_folter() {
 
 	_G(det)->stop_detail(13);
 
-	_G(spieler).R8Folter = true;
+	_G(gameState).R8Folter = true;
 	_G(obj)->hide_sib(SIB_FOLTER_R8);
 }
 
 void Room8::hole_kohle() {
-	if (_G(spieler).R8Kohle) {
+	if (_G(gameState).R8Kohle) {
 		startAadWait(604);
 	} else {
 		hideCur();
-		_G(spieler).R8Kohle = true;
+		_G(gameState).R8Kohle = true;
 		autoMove(4, P_CHEWY);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(12, 1, ANI_FRONT);
 		cur_2_inventory();
 		invent_2_slot(KOHLE_HEISS_INV);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		showCur();
 	}
 }
@@ -84,10 +84,10 @@ void Room8::hole_kohle() {
 void Room8::start_verbrennen() {
 	hideCur();
 
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		autoMove(3, P_CHEWY);
 		start_aad(102, 0);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startAniBlock(2, ABLOCK12);
 
 		while (_G(det)->get_ani_status(9)) {
@@ -105,7 +105,7 @@ void Room8::start_verbrennen() {
 		setPersonPos(129, 246, P_CHEWY, P_RIGHT);
 		startAniBlock(2, ABLOCK13);
 		_G(atds)->set_ats_str(60, TXT_MARK_LOOK, 1, ATS_DATA);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 	}
 
 	showCur();
@@ -121,18 +121,18 @@ bool Room8::gips_wurf() {
 		autoMove(2, P_CHEWY);
 		_G(mouseLeftClick) = false;
 
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		delInventory(GIPS_EIMER_INV);
 		startSetAILWait(4, 1, ANI_FRONT);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 
 		startDetailFrame(5, 1, ANI_FRONT, 16);
 		startSetAILWait(6, 1, ANI_FRONT);
 		_G(obj)->show_sib(33);
 		_G(det)->showStaticSpr(14);
 		waitDetail(5);
-		_G(spieler).R8GipsWurf = true;
-		_G(spieler).room_m_obj[MASKE_INV].ZEbene = 0;
+		_G(gameState).R8GipsWurf = true;
+		_G(gameState).room_m_obj[MASKE_INV].ZEbene = 0;
 		_G(obj)->setInventory(MASKE_INV, 181, 251, 8, &_G(room_blk));
 		_G(det)->del_taf_tbl(116, 30, nullptr);
 		autoMove(8, P_CHEWY);
@@ -140,9 +140,9 @@ bool Room8::gips_wurf() {
 		_G(menu_item) = CUR_USE;
 		Dialogs::Inventory::look_screen(INVENTORY_NORMAL, 178);
 		_G(flags).AtsAction = true;
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(20, 1, ANI_FRONT);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		invent_2_slot(MASKE_INV);
 		cursorChoice(_G(menu_item));
 		showCur();
@@ -152,28 +152,28 @@ bool Room8::gips_wurf() {
 }
 
 void Room8::open_gdoor() {
-	_G(spieler)._personHide[P_CHEWY] = true;
+	_G(gameState)._personHide[P_CHEWY] = true;
 	_G(det)->showStaticSpr(17);
 	setupScreen(DO_SETUP);
 	startSetAILWait(7, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(15);
 	_G(det)->hideStaticSpr(17);
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 	setPersonPos(204, 274, P_CHEWY, P_LEFT);
 	_G(atds)->delControlBit(69, ATS_ACTIVE_BIT, ATS_DATA);
 	_G(obj)->hide_sib(31);
-	_G(spieler).R8GTuer = true;
-	_G(spieler).room_e_obj[15].Attribut = EXIT_BOTTOM;
+	_G(gameState).R8GTuer = true;
+	_G(gameState).room_e_obj[15].Attribut = EXIT_BOTTOM;
 }
 
 void Room8::talk_nimoy() {
 	autoMove(9, P_CHEWY);
 	_G(flags).NoScroll = true;
 	auto_scroll(0, 120);
-	if (_G(spieler).R8Folter) {
-		int16 diaNr = _G(spieler).R8GipsWurf ? 2 : 1;
+	if (_G(gameState).R8Folter) {
+		int16 diaNr = _G(gameState).R8GipsWurf ? 2 : 1;
 
-		if (!_G(spieler).R8GTuer)
+		if (!_G(gameState).R8GTuer)
 			loadAdsDia(diaNr);
 		else
 			startAadWait(61);

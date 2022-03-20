@@ -30,16 +30,16 @@ namespace Chewy {
 namespace Rooms {
 
 void Room94::entry() {
-	_G(spieler).flags33_80 = true;
+	_G(gameState).flags33_80 = true;
 	_G(zoom_horizont) = 140;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 34;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 48;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 34;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 48;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
-	if (_G(spieler).flags35_10) {
+	if (_G(gameState).flags35_10) {
 		_G(room)->set_timer_status(3, TIMER_STOP);
 		_G(det)->del_static_ani(3);
 	}
@@ -47,11 +47,11 @@ void Room94::entry() {
 	if (_G(flags).LoadGame)
 		return;
 
-	if (_G(spieler).flags35_8) {
+	if (_G(gameState).flags35_8) {
 		// Initial arrival at Ghost Town
 		_G(zoom_horizont) = 140;
-		_G(spieler).flags35_8 = false;
-		_G(spieler).scrollx = 0;
+		_G(gameState).flags35_8 = false;
+		_G(gameState).scrollx = 0;
 		setPersonPos(156, 149, P_CHEWY, P_RIGHT);
 		setPersonPos(153, 122, P_HOWARD, P_RIGHT);
 		_G(out)->setPointer(nullptr);
@@ -60,20 +60,20 @@ void Room94::entry() {
 		register_cutscene(30);
 		_G(fx_blend) = BLEND_NONE;
 		Room66::proc8(2, 3, 0, 539);
-		_G(spieler).r94Scrollx = _G(spieler).scrollx;
+		_G(gameState).r94Scrollx = _G(gameState).scrollx;
 		switchRoom(93);
 		return;
 	}
 
-	if (_G(spieler).flags35_40) {
+	if (_G(gameState).flags35_40) {
 		// Ghost shooting dolls during initial arrival
 		setPersonPos(373, 122, P_CHEWY, P_LEFT);
 		setPersonPos(393, 94, P_HOWARD, P_LEFT);
-		_G(spieler).flags35_40 = false;
-		_G(spieler).scrollx = 150;
+		_G(gameState).flags35_40 = false;
+		_G(gameState).scrollx = 150;
 
-		if (!_G(spieler).flags37_40) {
-			_G(spieler).flags37_40 = true;
+		if (!_G(gameState).flags37_40) {
+			_G(gameState).flags37_40 = true;
 			_G(flags).NoScroll = true;
 			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
@@ -89,7 +89,7 @@ void Room94::entry() {
 	} else {
 		// Normal scene entry after having dealt with Ghost
 		hideCur();
-		_G(spieler).scrollx = 120;
+		_G(gameState).scrollx = 120;
 		setPersonPos(255, 86, P_HOWARD, P_LEFT);
 		autoMove(3, P_CHEWY);
 		showCur();
@@ -97,8 +97,8 @@ void Room94::entry() {
 }
 
 void Room94::xit() {
-	_G(spieler).ScrollxStep = 1;
-	_G(spieler)._personRoomNr[P_HOWARD] = 95;
+	_G(gameState).ScrollxStep = 1;
+	_G(gameState)._personRoomNr[P_HOWARD] = 95;
 }
 
 void Room94::setup_func() {
@@ -119,7 +119,7 @@ void Room94::setup_func() {
 }
 
 void Room94::gedAction(int index) {
-	if (!index && !_G(spieler).flags35_10)
+	if (!index && !_G(gameState).flags35_10)
 		switchRoom(93);
 }
 
@@ -136,7 +136,7 @@ int Room94::giveGhostBottle() {
 	hideCur();
 	autoMove(2, P_CHEWY);
 	auto_scroll(216, 0);
-	delInventory(_G(spieler).AkInvent);
+	delInventory(_G(gameState).AkInvent);
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
 	_G(flags).NoPalAfterFlc = true;
@@ -156,8 +156,8 @@ int Room94::giveGhostBottle() {
 	_G(room)->set_timer_status(3, TIMER_STOP);
 	_G(det)->del_static_ani(3);
 	startSetAILWait(4, 1, ANI_FRONT);
-	_G(spieler).flags35_10 = true;
-	_G(spieler).room_e_obj[138].Attribut = EXIT_TOP;
+	_G(gameState).flags35_10 = true;
+	_G(gameState).room_e_obj[138].Attribut = EXIT_TOP;
 	_G(atds)->setControlBit(522, ATS_ACTIVE_BIT, ATS_DATA);
 	new_invent_2_cur(114);
 	

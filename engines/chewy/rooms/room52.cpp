@@ -33,7 +33,7 @@ void Room52::entry() {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 
-	if (_G(spieler).R52HotDogOk && !_G(spieler).R52KakerWeg) {
+	if (_G(gameState).R52HotDogOk && !_G(gameState).R52KakerWeg) {
 		plot_armee(0);
 		g_engine->_sound->playSound(0, 0);
 		g_engine->_sound->playSound(0);
@@ -41,24 +41,24 @@ void Room52::entry() {
 		g_engine->_sound->stopSound(0);
 	}
 
-	if (_G(spieler).R52KakerWeg)
+	if (_G(gameState).R52KakerWeg)
 		_G(det)->stop_detail(0);
 
 	if (!_G(flags).LoadGame) {
 		_G(det)->showStaticSpr(4);
-		_G(spieler).R52TuerAuf = true;
+		_G(gameState).R52TuerAuf = true;
 		setPersonPos(20, 50, P_HOWARD, P_LEFT);
 		setPersonPos(35, 74, P_CHEWY, P_RIGHT);
 		autoMove(2, P_CHEWY);
-		_G(spieler).R52TuerAuf = false;
+		_G(gameState).R52TuerAuf = false;
 		_G(det)->hideStaticSpr(4);
 		check_shad(2, 1);
 	}
 }
 
 void Room52::xit() {
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 52) {
-		_G(spieler)._personRoomNr[P_HOWARD] = 51;
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 52) {
+		_G(gameState)._personRoomNr[P_HOWARD] = 51;
 		_G(spieler_mi)[P_HOWARD].Mode = false;
 	}
 }
@@ -77,9 +77,9 @@ int16 Room52::use_hot_dog() {
 		autoMove(3, P_CHEWY);
 		start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
 		_G(det)->showStaticSpr(0);
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		autoMove(4, P_CHEWY);
-		_G(spieler).R52HotDogOk = true;
+		_G(gameState).R52HotDogOk = true;
 		plot_armee(20);
 		g_engine->_sound->playSound(0, 0);
 		g_engine->_sound->playSound(0);
@@ -91,7 +91,7 @@ int16 Room52::use_hot_dog() {
 	} else if (isCurInventory(KILLER_INV)) {
 		action_ret = true;
 		autoMove(5, P_CHEWY);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(7, 1, ANI_FRONT);
 		g_engine->_sound->playSound(7, 0);
 		g_engine->_sound->playSound(7);
@@ -107,11 +107,11 @@ int16 Room52::use_hot_dog() {
 		_G(det)->stop_detail(8);
 		startSetAILWait(7, 1, ANI_BACK);
 		g_engine->_sound->stopSound(0);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(atds)->setControlBit(341, ATS_ACTIVE_BIT, ATS_DATA);
 		startAadWait(303);
 		_G(atds)->set_ats_str(KILLER_INV, 1, INV_ATS_DATA);
-		_G(spieler).R52KakerWeg = true;
+		_G(gameState).R52KakerWeg = true;
 	}
 
 	showCur();
@@ -126,8 +126,8 @@ void Room52::plot_armee(int16 frame) {
 }
 
 void Room52::kaker_platt() {
-	if (!_G(spieler).R52KakerJoke && _G(spieler).R52HotDogOk && !_G(spieler).R52KakerWeg && !_G(flags).ExitMov) {
-		_G(spieler).R52KakerJoke = true;
+	if (!_G(gameState).R52KakerJoke && _G(gameState).R52HotDogOk && !_G(gameState).R52KakerWeg && !_G(flags).ExitMov) {
+		_G(gameState).R52KakerJoke = true;
 		stopPerson(P_CHEWY);
 		hideCur();
 		startAadWait(289);
@@ -136,7 +136,7 @@ void Room52::kaker_platt() {
 }
 
 void Room52::setup_func() {
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 52) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 52) {
 		calc_person_look();
 		const int16 y = (_G(spieler_vector)[P_CHEWY].Xypos[1] < 97) ? 44 : 87;
 		goAutoXy(1, y, P_HOWARD, ANI_GO);

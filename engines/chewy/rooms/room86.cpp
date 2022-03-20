@@ -31,17 +31,17 @@ namespace Chewy {
 namespace Rooms {
 
 void Room86::entry(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 20;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 20;
-	_G(spieler).ZoomXy[P_NICHELLE][0] = 20;
-	_G(spieler).ZoomXy[P_NICHELLE][1] = 24;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 20;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 20;
+	_G(gameState).ZoomXy[P_NICHELLE][0] = 20;
+	_G(gameState).ZoomXy[P_NICHELLE][1] = 24;
 	_G(zoom_horizont) = 110;
-	_G(spieler).DiaAMov = 0;
-	if (_G(spieler).flags32_2) {
+	_G(gameState).DiaAMov = 0;
+	if (_G(gameState).flags32_2) {
 		_G(det)->startDetail(0, 255, false);
 		_G(det)->setStaticPos(0, 352, 107, false, false);
 		_G(det)->showStaticSpr(0);
@@ -56,23 +56,23 @@ void Room86::entry(int16 eib_nr) {
 		return;
 	}
 
-	if (!_G(spieler).flags32_10) {
+	if (!_G(gameState).flags32_10) {
 		setPersonPos(260, 66, P_CHEWY, P_RIGHT);
 		setPersonPos(298, 44, P_HOWARD, P_LEFT);
 		setPersonPos(320, 42, P_NICHELLE, P_LEFT);
-		_G(spieler).scrollx = 164;
+		_G(gameState).scrollx = 164;
 	} else {
 		_G(spieler_mi)[P_CHEWY].Vorschub = 16;
 		hideCur();
 		_G(flags).ZoomMov = false;
-		_G(spieler).scrollx = 246;
-		_G(spieler).ScrollxStep = 8;
+		_G(gameState).scrollx = 246;
+		_G(gameState).ScrollxStep = 8;
 		setPersonPos(443, 66, P_CHEWY, P_RIGHT);
-		_G(spieler)._personRoomNr[P_HOWARD] = 84;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 0;
+		_G(gameState)._personRoomNr[P_HOWARD] = 84;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 0;
 		autoMove(2, P_CHEWY);
 		_G(flags).NoScroll = true;
-		_G(spieler.ScrollxStep = 2);
+		_G(gameState).ScrollxStep = 2;
 		auto_scroll(30, 0);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		_G(flags).NoScroll = false;
@@ -88,28 +88,28 @@ void Room86::entry(int16 eib_nr) {
 		flic_cut(FCUT_092);
 		_G(flags).NoScroll = false;
 		autoMove(0, P_CHEWY);
-		_G(spieler).flags32_20 = true;
+		_G(gameState).flags32_20 = true;
 		switchRoom(85);
 		showCur();
 	}
 }
 
 void Room86::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 	switch (eib_nr) {
 	case 128:
-		if (_G(spieler)._personRoomNr[P_HOWARD] == 86)
-			_G(spieler)._personRoomNr[P_HOWARD] = 85;
+		if (_G(gameState)._personRoomNr[P_HOWARD] == 86)
+			_G(gameState)._personRoomNr[P_HOWARD] = 85;
 		
-		if (_G(spieler)._personRoomNr[P_NICHELLE] == 86)
-			_G(spieler)._personRoomNr[P_NICHELLE] = 85;
+		if (_G(gameState)._personRoomNr[P_NICHELLE] == 86)
+			_G(gameState)._personRoomNr[P_NICHELLE] = 85;
 		break;
 	case 132:
-		if (_G(spieler)._personRoomNr[P_HOWARD] == 86)
-			_G(spieler)._personRoomNr[P_HOWARD] = 87;
+		if (_G(gameState)._personRoomNr[P_HOWARD] == 86)
+			_G(gameState)._personRoomNr[P_HOWARD] = 87;
 
-		if (_G(spieler)._personRoomNr[P_NICHELLE] == 86)
-			_G(spieler)._personRoomNr[P_NICHELLE] = 87;
+		if (_G(gameState)._personRoomNr[P_NICHELLE] == 86)
+			_G(gameState)._personRoomNr[P_NICHELLE] = 87;
 		break;
 	default:
 		break;
@@ -152,14 +152,14 @@ int Room86::proc2() {
 	_G(det)->startDetail(0, 255, false);
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
-	delInventory(_G(spieler).AkInvent);
+	delInventory(_G(gameState).AkInvent);
 	autoMove(3, P_CHEWY);
 	proc3(true);
 	_G(atds)->delControlBit(499, ATS_ACTIVE_BIT, ATS_DATA);
 	_G(atds)->set_ats_str(497, 1, ATS_DATA);
 	_G(atds)->set_ats_str(498, 1, ATS_DATA);
-	_G(spieler).flags32_2 = true;
-	_G(spieler).room_e_obj[132].Attribut = EXIT_RIGHT;
+	_G(gameState).flags32_2 = true;
+	_G(gameState).room_e_obj[132].Attribut = EXIT_RIGHT;
 	start_spz(CH_TALK12, 255, false, P_CHEWY);
 	startAadWait(468);
 

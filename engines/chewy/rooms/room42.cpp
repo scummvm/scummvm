@@ -31,19 +31,19 @@ namespace Chewy {
 namespace Rooms {
 
 void Room42::entry() {
-	if (!_G(spieler).R42BeamterWach) {
+	if (!_G(gameState).R42BeamterWach) {
 		g_engine->_sound->playSound(0);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
 	}
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 42) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 42) {
 		_G(SetUpScreenFunc) = setup_func;
 
 		if (!_G(flags).LoadGame) {
 			_G(det)->stop_detail(0);
 			_G(timer_nr)[0] = _G(room)->set_timer(8, 5);
 			_G(det)->set_static_ani(8, -1);
-			_G(spieler).R42BeamterWach = true;
+			_G(gameState).R42BeamterWach = true;
 			g_engine->_sound->stopSound(0);
 
 			_G(SetUpScreenFunc) = setup_func;
@@ -53,40 +53,40 @@ void Room42::entry() {
 			_G(atds)->set_ats_str(264, 1, ATS_DATA);
 		}
 
-		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && !_G(spieler).R42BriefOk)
+		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && !_G(gameState).R42BriefOk)
 			startAadWait(302);
 
-		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(spieler).R42BriefOk)
+		if (_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(gameState).R42BriefOk)
 			startAadWait(301);
 	}
 }
 
 void Room42::xit() {
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 42) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 42) {
 		_G(atds)->set_ats_str(264, 1, ATS_DATA);
 		stop_spz();
-		_G(spieler).R42HoToBeamter = false;
-		_G(spieler)._personRoomNr[P_HOWARD] = 40;
+		_G(gameState).R42HoToBeamter = false;
+		_G(gameState)._personRoomNr[P_HOWARD] = 40;
 	}
 }
 
 void Room42::setup_func() {
-	if (!_G(spieler).R42HoToBeamter)
+	if (!_G(gameState).R42HoToBeamter)
 		calc_person_look();
 }
 
 void Room42::getPumpkin(int16 aad_nr) {
 	hideCur();
 	autoMove(1, P_CHEWY);
-	_G(spieler)._personHide[P_CHEWY] = true;
+	_G(gameState)._personHide[P_CHEWY] = true;
 	startSetAILWait(7, 1, ANI_BACK);
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 	start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 	startAadWait(aad_nr);
 
-	_G(spieler)._personHide[P_CHEWY] = true;
+	_G(gameState)._personHide[P_CHEWY] = true;
 	startSetAILWait(7, 1, ANI_FRONT);
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 	showCur();
 }
 
@@ -97,39 +97,39 @@ int16 Room42::useMailBag() {
 		return action_flag;
 
 	hideCur();
-	if (!_G(spieler).R42BeamterWach && !_G(spieler).inv_cur) {
+	if (!_G(gameState).R42BeamterWach && !_G(gameState).inv_cur) {
 		action_flag = true;
 		getPumpkin(136);
-	} else if (_G(spieler).R42HoToBeamter && !_G(spieler).inv_cur && !_G(spieler).R42MarkeOk) {
+	} else if (_G(gameState).R42HoToBeamter && !_G(gameState).inv_cur && !_G(gameState).R42MarkeOk) {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(10, 1, ANI_FRONT);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		startAadWait(187);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(9, 1, ANI_FRONT);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		new_invent_2_cur(BMARKE_INV);
 		startAadWait(181);
-		_G(spieler).R42MarkeOk = true;
+		_G(gameState).R42MarkeOk = true;
 		autoMove(4, P_CHEWY);
 		startAadWait(185);
-		_G(spieler).R42HoToBeamter = false;
+		_G(gameState).R42HoToBeamter = false;
 	} else if (isCurInventory(BRIEF2_INV)) {
 		action_flag = true;
 		autoMove(3, P_CHEWY);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(10, 1, ANI_FRONT);
-		_G(spieler)._personHide[P_CHEWY] = false;
-		delInventory(_G(spieler).AkInvent);
+		_G(gameState)._personHide[P_CHEWY] = false;
+		delInventory(_G(gameState).AkInvent);
 		startAadWait(183);
 		_G(obj)->calc_rsi_flip_flop(SIB_BKASTEN_R28);
 		_G(atds)->set_ats_str(206, 1, ATS_DATA);
-		_G(spieler).R28Briefkasten = true;
-		_G(spieler).R40TrainMove = true;
-		_G(spieler).R28PostCar = true;
-		_G(spieler).R42BriefOk = true;
+		_G(gameState).R28Briefkasten = true;
+		_G(gameState).R40TrainMove = true;
+		_G(gameState).R28PostCar = true;
+		_G(gameState).R42BriefOk = true;
 
 	} else if (isCurInventory(BRIEF_INV)) {
 		action_flag = true;
@@ -149,7 +149,7 @@ int16 Room42::useStationEmployee() {
 		hideCur();
 		autoMove(4, P_CHEWY);
 		startAadWait(184);
-		_G(spieler).R42HoToBeamter = true;
+		_G(gameState).R42HoToBeamter = true;
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
 		showCur();
@@ -164,9 +164,9 @@ void Room42::talkToStationEmployee() {
 	int16 dia_nr;
 	autoMove(1, P_CHEWY);
 
-	if (!_G(spieler).R42BeamterWach) {
+	if (!_G(gameState).R42BeamterWach) {
 		dia_nr = 10;
-	} else if (!_G(spieler).R42MarkeOk) {
+	} else if (!_G(gameState).R42MarkeOk) {
 		dia_nr = 13;
 	} else {
 		dia_nr = 14;
@@ -184,7 +184,7 @@ void Room42::dialogWithStationEmployee(int16 str_end_nr) {
 			SHOULD_QUIT_RETURN;
 		}
 
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(flags).NoDiaBox = true;
 
 		switch (str_end_nr) {
@@ -226,12 +226,12 @@ void Room42::dialogWithStationEmployee(int16 str_end_nr) {
 		g_engine->_sound->playSound(0);
 	}
 
-	_G(spieler)._personHide[P_CHEWY] = true;
+	_G(gameState)._personHide[P_CHEWY] = true;
 	_G(det)->startDetail(6, 255, ANI_FRONT);
 	startAadWait(135);
 	_G(det)->stop_detail(6);
 	_G(flags).NoDiaBox = false;
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 	showCur();
 }
 

@@ -36,18 +36,18 @@ void Room34::entry() {
 bool Room34::use_kuehlschrank() {
 	bool result = false;
 
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		result = true;
 
 		if (!_G(flags).LoadGame) {
 			hideCur();
 			autoMove(3, P_CHEWY);
 			_G(mouseLeftClick) = false;
-			start_spz_wait((_G(spieler).ChewyAni == CHEWY_ROCKER) ? CH_ROCK_GET2 : CH_LGET_O, 1, false, P_CHEWY);
+			start_spz_wait((_G(gameState).ChewyAni == CHEWY_ROCKER) ? CH_ROCK_GET2 : CH_LGET_O, 1, false, P_CHEWY);
 			showCur();
 		}
 
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(flags).ChewyDontGo = true;
 
 		if (!_G(flags).LoadGame) {
@@ -61,7 +61,7 @@ bool Room34::use_kuehlschrank() {
 }
 
 void Room34::xit_kuehlschrank() {
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 	setPersonPos(54, 111, P_CHEWY, -1);
 	switchRoom(33);
 	_G(flags).ChewyDontGo = false;

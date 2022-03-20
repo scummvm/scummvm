@@ -542,7 +542,7 @@ void load_chewy_taf(int16 taf_nr) {
 
 		}
 		if (filename != nullptr) {
-			_G(spieler).ChewyAni = taf_nr;
+			_G(gameState).ChewyAni = taf_nr;
 			_G(AkChewyTaf) = taf_nr;
 			_G(chewy) = _G(mem)->taf_adr(filename);
 			_G(chewy_kor) = _G(chewy)->_correction;
@@ -553,8 +553,8 @@ void load_chewy_taf(int16 taf_nr) {
 void switchRoom(int16 nr) {
 	_G(fx_blend) = BLEND1;
 	exit_room(-1);
-	_G(spieler)._personRoomNr[P_CHEWY] = nr;
-	_G(room)->loadRoom(&_G(room_blk), _G(spieler)._personRoomNr[P_CHEWY], &_G(spieler));
+	_G(gameState)._personRoomNr[P_CHEWY] = nr;
+	_G(room)->loadRoom(&_G(room_blk), _G(gameState)._personRoomNr[P_CHEWY], &_G(gameState));
 	enter_room(-1);
 	setupScreen(DO_SETUP);
 }

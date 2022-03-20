@@ -47,7 +47,7 @@ int16 Room4::comp_probe() {
 	};
 
 	cur_2_inventory();
-	_G(spieler)._personHide[P_CHEWY] = true;
+	_G(gameState)._personHide[P_CHEWY] = true;
 	_G(cur_display) = false;
 	switchRoom(4);
 	_G(cur_display) = true;
@@ -102,7 +102,7 @@ int16 Room4::comp_probe() {
 			_G(curani)._end = HAND_NORMAL;
 		}
 		cursorChoice(CUR_USER);
-		_G(spieler)._curHeight = 16;
+		_G(gameState)._curHeight = 16;
 
 		if (g_events->_mousePos.y < 124)
 			g_events->_mousePos.y = 123;
@@ -113,15 +113,15 @@ int16 Room4::comp_probe() {
 	g_events->delay(500);
 
 	clear_prog_ani();
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(_G(menu_item));
 
 	_G(spieler_vector)[P_CHEWY]._delayCount = 0;
 	_G(mouseLeftClick) = false;
 	_G(minfo)._button = 0;
-	_G(spieler)._personRoomNr[P_CHEWY] = 3;
-	_G(room)->loadRoom(&_G(room_blk), 3, &_G(spieler));
+	_G(gameState)._personRoomNr[P_CHEWY] = 3;
+	_G(room)->loadRoom(&_G(room_blk), 3, &_G(gameState));
 	setPersonPos(110, 139, P_CHEWY, P_LEFT);
 
 	_G(fx_blend) = BLEND1;

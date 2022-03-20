@@ -31,8 +31,8 @@ namespace Rooms {
 
 void Room48::entry() {
 	_G(mouseLeftClick) = false;
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 0;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 0;
 	showCur();
 	calc_pic();
 	_G(SetUpScreenFunc) = setup_func;
@@ -51,21 +51,21 @@ bool Room48::timer(int16 t_nr, int16 ani_nr) {
 void Room48::calc_pic() {
 	for (int16 i = 0; i < 2; i++) {
 		_G(atds)->setControlBit(312 + i, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(spieler).R48Auswahl[3 + i] = 0;
+		_G(gameState).R48Auswahl[3 + i] = 0;
 	}
 
-	_G(spieler).R48Auswahl[0] = 1;
-	_G(spieler).R48Auswahl[1] = 1;
-	_G(spieler).R48Auswahl[2] = 1;
+	_G(gameState).R48Auswahl[0] = 1;
+	_G(gameState).R48Auswahl[1] = 1;
+	_G(gameState).R48Auswahl[2] = 1;
 
 	if (_G(obj)->checkInventory(VCARD_INV)) {
-		_G(spieler).R48Auswahl[3] = 1;
+		_G(gameState).R48Auswahl[3] = 1;
 		_G(atds)->delControlBit(312, ATS_ACTIVE_BIT, ATS_DATA);
 		_G(det)->showStaticSpr(4);
 	}
 
 	if (_G(obj)->checkInventory(KAPPE_INV)) {
-		_G(spieler).R48Auswahl[4] = 1;
+		_G(gameState).R48Auswahl[4] = 1;
 		_G(atds)->delControlBit(313, ATS_ACTIVE_BIT, ATS_DATA);
 		_G(det)->showStaticSpr(4);
 	}
@@ -97,7 +97,7 @@ void Room48::setup_func() {
 			const int16 idx = _G(det)->maus_vector(g_events->_mousePos.x, g_events->_mousePos.y);
 
 			if (idx != -1) {
-				if (_G(spieler).R48Auswahl[idx]) {
+				if (_G(gameState).R48Auswahl[idx]) {
 					_G(det)->showStaticSpr(1 + idx);
 
 					if (_G(mouseLeftClick)) {
@@ -141,19 +141,19 @@ void Room48::setup_func() {
 							_G(menu_item) = CUR_WALK;
 							cursorChoice(_G(menu_item));
 							showCur();
-							_G(spieler).R48TaxiEntry = true;
+							_G(gameState).R48TaxiEntry = true;
 							_G(mouseLeftClick) = false;
 							setupScreen(DO_SETUP);
 
 							for (int16 i = 0; i < MAX_PERSON; i++) {
-								if (_G(spieler).R48TaxiPerson[i]) {
-									_G(spieler)._personHide[i] = false;
-									_G(spieler).R48TaxiPerson[i] = false;
+								if (_G(gameState).R48TaxiPerson[i]) {
+									_G(gameState)._personHide[i] = false;
+									_G(gameState).R48TaxiPerson[i] = false;
 								}
 							}
 
-							if (_G(spieler)._personRoomNr[P_HOWARD] == 48) {
-								_G(spieler)._personRoomNr[P_HOWARD] = r_nr;
+							if (_G(gameState)._personRoomNr[P_HOWARD] == 48) {
+								_G(gameState)._personRoomNr[P_HOWARD] = r_nr;
 							}
 							switchRoom(r_nr);
 						}

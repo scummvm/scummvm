@@ -69,8 +69,8 @@ void Inventory::plot_menu() {
 			int16 x = (g_events->_mousePos.x - (WIN_INF_X)) / 54;
 			y = (g_events->_mousePos.y - (WIN_INF_Y + 4 + 30)) / 30;
 			k = x + (y * 5);
-			k += _G(spieler).InventY * 5;
-			if (k < (_G(spieler).InventY + 3) * 5)
+			k += _G(gameState).InventY * 5;
+			if (k < (_G(gameState).InventY + 3) * 5)
 				_G(out)->boxFill(WIN_INF_X + 14 + x * 54, WIN_INF_Y + 6 + 30 + y * 32,
 					WIN_INF_X + 14 + x * 54 + 40, WIN_INF_Y + 6 + 30 + y * 32 + 24, 41);
 		}
@@ -109,13 +109,13 @@ void Inventory::plot_menu() {
 	y = WIN_INF_Y + 6 + 30;
 	for (int16 j = 0; j < 3; j++) {
 		for (int16 i = 0; i < 5; i++) {
-			if (_G(spieler).InventSlot[(_G(spieler).InventY + j) * 5 + i] != -1) {
-				int16 *xy = (int16 *)_G(inv_spr)[_G(spieler).InventSlot[(_G(spieler).InventY + j) * 5 + i]];
+			if (_G(gameState).InventSlot[(_G(gameState).InventY + j) * 5 + i] != -1) {
+				int16 *xy = (int16 *)_G(inv_spr)[_G(gameState).InventSlot[(_G(gameState).InventY + j) * 5 + i]];
 				int16 x1 = 40 - xy[0];
 				x1 /= 2;
 				int16 y1 = 24 - xy[1];
 				y1 /= 2;
-				_G(out)->spriteSet(_G(inv_spr)[_G(spieler).InventSlot[(_G(spieler).InventY + j) * 5 + i]],
+				_G(out)->spriteSet(_G(inv_spr)[_G(gameState).InventSlot[(_G(gameState).InventY + j) * 5 + i]],
 					x1 + WIN_INF_X + 14 + i * 54,
 					y1 + y + 32 * j, _G(scr_width));
 			}
@@ -126,8 +126,8 @@ void Inventory::plot_menu() {
 void Inventory::menu() {
 	keyVal = 0;
 	_G(flags).InventMenu = true;
-	const int16 oldDispFlag = _G(spieler).DispFlag;
-	_G(spieler).DispFlag = false;
+	const int16 oldDispFlag = _G(gameState).DispFlag;
+	_G(gameState).DispFlag = false;
 	const uint16 oldAutoAniPlay = _G(flags).AutoAniPlay;
 	_G(flags).AutoAniPlay = true;
 	_G(flags).StopAutoObj = true;
@@ -137,7 +137,7 @@ void Inventory::menu() {
 	g_events->_mousePos.y = 92;
 
 	_G(invent_cur_mode) = CUR_USE;
-	if (_G(spieler).AkInvent != -1) {
+	if (_G(gameState).AkInvent != -1) {
 		cursorChoice(CUR_AK_INVENT);
 
 	} else {
@@ -181,7 +181,7 @@ void Inventory::menu() {
 				case 0:
 					_G(invent_cur_mode) = CUR_USE;
 					_G(menu_item) = CUR_USE;
-					if (_G(spieler).AkInvent == -1) {
+					if (_G(gameState).AkInvent == -1) {
 						cursorChoice(CUR_USE);
 					} else {
 						cursorChoice(CUR_AK_INVENT);
@@ -189,10 +189,10 @@ void Inventory::menu() {
 					break;
 
 				case 1:
-					if (_G(spieler).AkInvent != -1) {
+					if (_G(gameState).AkInvent != -1) {
 						inv_rand_x = -1;
 						inv_rand_y = -1;
-						ret_look = look(_G(spieler).AkInvent, INV_ATS_MODE, -1);
+						ret_look = look(_G(gameState).AkInvent, INV_ATS_MODE, -1);
 
 						taste_flag = Common::KEYCODE_ESCAPE;
 					} else {
@@ -214,28 +214,28 @@ void Inventory::menu() {
 					inv_rand_x = (g_events->_mousePos.x - (WIN_INF_X)) / 54;
 					inv_rand_y = (g_events->_mousePos.y - (WIN_INF_Y + 4 + 30)) / 30;
 					k = inv_rand_x + (inv_rand_y * 5);
-					k += _G(spieler).InventY * 5;
+					k += _G(gameState).InventY * 5;
 					if (_G(invent_cur_mode) == CUR_USE) {
-						if (_G(spieler).AkInvent == -1) {
-							if (_G(spieler).InventSlot[k] != -1 && calc_use_invent(_G(spieler).InventSlot[k]) == false) {
+						if (_G(gameState).AkInvent == -1) {
+							if (_G(gameState).InventSlot[k] != -1 && calc_use_invent(_G(gameState).InventSlot[k]) == false) {
 								_G(menu_item) = CUR_USE;
-								_G(spieler).AkInvent = _G(spieler).InventSlot[k];
+								_G(gameState).AkInvent = _G(gameState).InventSlot[k];
 								cursorChoice(CUR_AK_INVENT);
-								del_invent_slot(_G(spieler).InventSlot[k]);
+								del_invent_slot(_G(gameState).InventSlot[k]);
 							}
-						} else if (_G(spieler).InventSlot[k] != -1)
-							evaluateObj(_G(spieler).InventSlot[k], INVENTORY_NORMAL);
+						} else if (_G(gameState).InventSlot[k] != -1)
+							evaluateObj(_G(gameState).InventSlot[k], INVENTORY_NORMAL);
 						else {
-							_G(spieler).InventSlot[k] = _G(spieler).AkInvent;
+							_G(gameState).InventSlot[k] = _G(gameState).AkInvent;
 							_G(obj)->sort();
-							_G(spieler).AkInvent = -1;
+							_G(gameState).AkInvent = -1;
 							_G(menu_item) = _G(invent_cur_mode);
 							cursorChoice(_G(invent_cur_mode));
 						}
-					} else if (_G(invent_cur_mode) == CUR_LOOK && _G(spieler).InventSlot[k] != -1 && calc_use_invent(_G(spieler).InventSlot[k]) == false) {
-						_G(spieler).AkInvent = _G(spieler).InventSlot[k];
-						ret_look = look(_G(spieler).InventSlot[k], INV_ATS_MODE, -1);
-						_G(spieler).AkInvent = -1;
+					} else if (_G(invent_cur_mode) == CUR_LOOK && _G(gameState).InventSlot[k] != -1 && calc_use_invent(_G(gameState).InventSlot[k]) == false) {
+						_G(gameState).AkInvent = _G(gameState).InventSlot[k];
+						ret_look = look(_G(gameState).InventSlot[k], INV_ATS_MODE, -1);
+						_G(gameState).AkInvent = -1;
 						cursorChoice(_G(invent_cur_mode));
 						taste_flag = Common::KEYCODE_ESCAPE;
 					}
@@ -256,7 +256,7 @@ void Inventory::menu() {
 		if (ret_look == 0) {
 			_G(invent_cur_mode) = CUR_USE;
 			_G(menu_item) = CUR_USE;
-			if (_G(spieler).AkInvent == -1)
+			if (_G(gameState).AkInvent == -1)
 				cursorChoice(CUR_USE);
 			else
 				cursorChoice(CUR_AK_INVENT);
@@ -304,7 +304,7 @@ void Inventory::menu() {
 				break;
 
 			case Common::KEYCODE_RIGHT:
-				if (g_events->_mousePos.x < 320 - _G(spieler)._curWidth)
+				if (g_events->_mousePos.x < 320 - _G(gameState)._curWidth)
 					g_events->_mousePos.x += 3;
 				break;
 
@@ -319,19 +319,19 @@ void Inventory::menu() {
 				break;
 
 			case Common::KEYCODE_DOWN:
-				if (g_events->_mousePos.y < 197 - _G(spieler)._curHeight)
+				if (g_events->_mousePos.y < 197 - _G(gameState)._curHeight)
 					g_events->_mousePos.y += 3;
 				break;
 
 			case Common::KEYCODE_PAGEUP:
-				if (_G(spieler).InventY > 0)
-					--_G(spieler).InventY;
+				if (_G(gameState).InventY > 0)
+					--_G(gameState).InventY;
 				g_events->_kbInfo._keyCode = '\0';
 				break;
 
 			case Common::KEYCODE_PAGEDOWN:
-				if (_G(spieler).InventY < (MAX_MOV_OBJ / 5) - 3)
-					++_G(spieler).InventY;
+				if (_G(gameState).InventY < (MAX_MOV_OBJ / 5) - 3)
+					++_G(gameState).InventY;
 				g_events->_kbInfo._keyCode = '\0';
 				break;
 
@@ -376,7 +376,7 @@ void Inventory::menu() {
 
 	_G(flags).InventMenu = false;
 	_G(flags).AutoAniPlay = oldAutoAniPlay;
-	_G(spieler).DispFlag = oldDispFlag;
+	_G(gameState).DispFlag = oldDispFlag;
 	_G(menu_display) = _G(tmp_menu);
 	_G(flags).StopAutoObj = false;
 }
@@ -576,7 +576,7 @@ void Inventory::look_screen(int16 txt_mode, int16 txt_nr) {
 				case CUR_HOWARD:
 				case CUR_NICHELLE:
 					m_mode = TXT_MARK_USE;
-					if (_G(spieler).inv_cur)
+					if (_G(gameState).inv_cur)
 						ok = false;
 					break;
 
@@ -644,7 +644,7 @@ bool Inventory::calc_use_invent(int16 invNr) {
 		}
 	} else if (_G(menu_item) == CUR_USE && invNr == NOTEBOOK_INV) {
 		int16 id = del_invent_slot(NOTEBOOK_INV);
-		_G(spieler).InventSlot[id] = NOTEBOOK_OPEN_INV;
+		_G(gameState).InventSlot[id] = NOTEBOOK_OPEN_INV;
 		_G(obj)->changeInventory(NOTEBOOK_INV, NOTEBOOK_OPEN_INV, &_G(room_blk));
 		retVal = true;
 	}
@@ -653,14 +653,14 @@ bool Inventory::calc_use_invent(int16 invNr) {
 }
 
 void Inventory::showDiary() {
-	int16 scrollx = _G(spieler).scrollx,
-		scrolly = _G(spieler).scrolly;
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 0;
+	int16 scrollx = _G(gameState).scrollx,
+		scrolly = _G(gameState).scrolly;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 0;
 
 	_G(room)->load_tgp(DIARY_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 	_G(out)->setPointer(_G(workptr));
-	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
+	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(gameState).scrollx, _G(gameState).scrolly);
 	_G(out)->back2screen(_G(workpage));
 	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(out)->setPointer(nullptr);
@@ -675,9 +675,9 @@ void Inventory::showDiary() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	_G(room)->load_tgp(_G(spieler)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
-	_G(spieler).scrollx = scrollx;
-	_G(spieler).scrolly = scrolly;
+	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(gameState).scrollx = scrollx;
+	_G(gameState).scrolly = scrolly;
 	setupScreen(NO_SETUP);
 	plot_menu();
 	_G(out)->setPointer(nullptr);

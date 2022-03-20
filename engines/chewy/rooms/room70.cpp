@@ -32,11 +32,11 @@ namespace Rooms {
 void Room70::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
-	_G(spieler).ScrollxStep = 2;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 70;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 100;
-	_G(spieler).ZoomXy[P_NICHELLE][0] = 70;
-	_G(spieler).ZoomXy[P_NICHELLE][1] = 100;
+	_G(gameState).ScrollxStep = 2;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 70;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 100;
+	_G(gameState).ZoomXy[P_NICHELLE][0] = 70;
+	_G(gameState).ZoomXy[P_NICHELLE][1] = 100;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(zoom_horizont) = 110;
@@ -55,22 +55,22 @@ void Room70::entry(int16 eib_nr) {
 		rightEntry();
 		break;
 	default:
-		_G(spieler).scrollx = 62;
+		_G(gameState).scrollx = 62;
 		topEntry();
 		break;
 	}
 }
 
 void Room70::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 70) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 70) {
 		if (eib_nr == 102) {
-			_G(spieler)._personRoomNr[P_HOWARD] = 69;
-			_G(spieler)._personRoomNr[P_NICHELLE] = 69;
+			_G(gameState)._personRoomNr[P_HOWARD] = 69;
+			_G(gameState)._personRoomNr[P_NICHELLE] = 69;
 		} else if (eib_nr == 103 || eib_nr == 104) {
-			_G(spieler)._personRoomNr[P_HOWARD] = 75;
-			_G(spieler)._personRoomNr[P_NICHELLE] = 75;
+			_G(gameState)._personRoomNr[P_HOWARD] = 75;
+			_G(gameState)._personRoomNr[P_NICHELLE] = 75;
 		}
 	}
 }

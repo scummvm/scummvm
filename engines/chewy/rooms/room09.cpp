@@ -46,21 +46,21 @@ static const MovLine SURIMY_MPKT1[2] = {
 };
 
 void Room9::entry() {
-	_G(spieler).R7ChewyFlug = false;
+	_G(gameState).R7ChewyFlug = false;
 
-	if (!_G(spieler).R9Gitter)
+	if (!_G(gameState).R9Gitter)
 		setPersonPos(138, 91, P_CHEWY, P_LEFT);
 	else
 		_G(det)->showStaticSpr(5);
 
-	if (_G(spieler).R9Surimy) {
+	if (_G(gameState).R9Surimy) {
 		_G(det)->hideStaticSpr(4);
 		_G(room)->set_timer_status(7, TIMER_STOP);
 	}
 }
 
 void Room9::gtuer() {
-	_G(spieler).R9Gitter = true;
+	_G(gameState).R9Gitter = true;
 	_G(det)->showStaticSpr(5);
 	startSetAILWait(6, 1, ANI_FRONT);
 	setPersonPos(74, 93, P_CHEWY, P_LEFT);
@@ -73,7 +73,7 @@ void Room9::gtuer() {
 
 void Room9::surimy() {
 	hideCur();
-	_G(spieler).R9Surimy = true;
+	_G(gameState).R9Surimy = true;
 	const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
 	stopPerson(P_CHEWY);
 	_G(atds)->setControlBit(75, ATS_ACTIVE_BIT, ATS_DATA);
@@ -82,7 +82,7 @@ void Room9::surimy() {
 	surimy_ani();
 	start_spz(CH_TALK11, 255, false, P_CHEWY);
 	startAadWait(56);
-	_G(spieler).room_e_obj[17].Attribut = EXIT_RIGHT;
+	_G(gameState).room_e_obj[17].Attribut = EXIT_RIGHT;
 	_G(spieler_vector)[P_CHEWY].Count = tmp;
 	get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
 	_G(mov)->continue_auto_go();
@@ -97,7 +97,7 @@ void Room9::surimy_ani() {
 	_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
 	_G(mov_phasen)[SURIMY_OBJ].ZoomFak = 0;
 	_G(auto_mov_obj)[SURIMY_OBJ].Id = AUTO_OBJ0;
-	_G(auto_mov_vector)[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_vector)[SURIMY_OBJ].Delay = _G(gameState).DelaySpeed;
 	_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
 	init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], 2, (const MovLine *)SURIMY_MPKT);
 	wait_auto_obj(SURIMY_OBJ);
@@ -114,7 +114,7 @@ void Room9::surimy_ani() {
 }
 
 void Room9::gedAction(int index) {
-	if (index == 0 && !_G(spieler).R9Surimy)
+	if (index == 0 && !_G(gameState).R9Surimy)
 		surimy();
 }
 

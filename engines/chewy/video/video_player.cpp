@@ -110,8 +110,8 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 }
 
 bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
-	const int16 scrollx = _G(spieler).scrollx;
-	const int16 scrolly = _G(spieler).scrolly;
+	const int16 scrollx = _G(gameState).scrollx;
+	const int16 scrolly = _G(gameState).scrolly;
 
 	switch (num) {
 	case FCUT_004:
@@ -126,13 +126,13 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 	case FCUT_009:
 	case FCUT_010:
 		// Room11::cut_serv and Room11::cut_serv_2
-		if (_G(spieler).R11DoorRightF)
+		if (_G(gameState).R11DoorRightF)
 			_G(det)->plot_static_details(0, 0, 0, 0);
 
-		if (_G(spieler).R11DoorRightB)
+		if (_G(gameState).R11DoorRightB)
 			_G(det)->plot_static_details(0, 0, 6, 6);
 
-		if (_G(spieler).R6DoorRightB)
+		if (_G(gameState).R6DoorRightB)
 			_G(det)->plot_static_details(0, 0, 7, 7);
 
 		if (num == FCUT_010) {
@@ -149,7 +149,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 	case FCUT_039:
 	case FCUT_040:
 		// Room39::setup_func
-		if (!_G(spieler).R39TranslatorUsed)
+		if (!_G(gameState).R39TranslatorUsed)
 			return false;
 
 		_G(atds)->print_aad(scrollx, scrolly);
@@ -159,7 +159,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		break;
 	case FCUT_034:
 		// Room39::setup_func
-		if (!_G(spieler).R39TranslatorUsed)
+		if (!_G(gameState).R39TranslatorUsed)
 			return false;
 
 		switch (frame) {
@@ -188,8 +188,8 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		break;
 	case FCUT_047:
 		// Room37::cut_serv1
-		if (!_G(spieler).R37Kloppe) {
-			if (!_G(spieler).R37Gebiss) {
+		if (!_G(gameState).R37Kloppe) {
+			if (!_G(gameState).R37Gebiss) {
 				_G(det)->plot_static_details(scrollx, scrolly, 9, 9);
 				_G(det)->plot_static_details(scrollx, scrolly, 11, 11);
 				_G(det)->showStaticSpr(11);
@@ -230,7 +230,7 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		// Room28::cut_serv2 (FCUT_055)
 		if (num != FCUT_055 || frame < 23) {
 			// Room28::cut_serv1 (FCUT_056 / FCUT_064)
-			if (_G(spieler).R28Briefkasten)
+			if (_G(gameState).R28Briefkasten)
 				_G(det)->plot_static_details(0, 0, 8, 9);
 			else
 				_G(det)->plot_static_details(0, 0, 7, 7);

@@ -35,14 +35,14 @@ void Room72::entry(int16 eib_nr) {
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	
-	if (_G(spieler).flags28_10) {
+	if (_G(gameState).flags28_10) {
 		_G(zoom_horizont) = 110;
 		_G(det)->hideStaticSpr(0);
 	} else {
-		_G(spieler).ZoomXy[P_HOWARD][0] = 20;
-		_G(spieler).ZoomXy[P_HOWARD][1] = 40;
-		_G(spieler).ZoomXy[P_NICHELLE][0] = 20;
-		_G(spieler).ZoomXy[P_NICHELLE][1] = 40;
+		_G(gameState).ZoomXy[P_HOWARD][0] = 20;
+		_G(gameState).ZoomXy[P_HOWARD][1] = 40;
+		_G(gameState).ZoomXy[P_NICHELLE][0] = 20;
+		_G(gameState).ZoomXy[P_NICHELLE][1] = 40;
 		_G(zoom_horizont) = 140;
 		_G(spieler_mi)[P_CHEWY].Mode = true;
 		hideCur();
@@ -51,7 +51,7 @@ void Room72::entry(int16 eib_nr) {
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 
-	if (_G(flags).LoadGame || _G(spieler).flags28_10)
+	if (_G(flags).LoadGame || _G(gameState).flags28_10)
 		return;
 
 	switch (eib_nr) {
@@ -81,21 +81,21 @@ void Room72::entry(int16 eib_nr) {
 }
 
 void Room72::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 }
 
 void Room72::proc1(int16 flicNr) {
 	_G(atds)->setControlBit(389, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(spieler).flags28_10 = true;
+	_G(gameState).flags28_10 = true;
 	waitShowScreen(7);
 	startAadWait(437);
 	flic_cut(flicNr);
-	_G(spieler)._personRoomNr[P_HOWARD] = 76;
-	_G(spieler)._personRoomNr[P_NICHELLE] = 76;
-	_G(spieler)._personHide[P_CHEWY] = true;
+	_G(gameState)._personRoomNr[P_HOWARD] = 76;
+	_G(gameState)._personRoomNr[P_NICHELLE] = 76;
+	_G(gameState)._personHide[P_CHEWY] = true;
 	_G(det)->hideStaticSpr(0);
 	setupScreen(DO_SETUP);
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	showCur();
 	switchRoom(76);

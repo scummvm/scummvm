@@ -29,7 +29,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room26::entry() {
-	if (_G(spieler).R25GleiteLoesch)
+	if (_G(gameState).R25GleiteLoesch)
 		g_engine->_sound->stopSound(0);
 	else
 		g_engine->_sound->playSound(0, 0);

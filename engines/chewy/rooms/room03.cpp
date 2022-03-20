@@ -104,14 +104,14 @@ void Room3::terminal() {
 		_G(spr_info)[0]._y = 2;
 		_G(spr_info)[0]._zLevel = 0;
 
-		if (!_G(spieler).R2ElectrocutedBork) {
+		if (!_G(gameState).R2ElectrocutedBork) {
 			_G(det)->stop_detail(5);
 			startAniBlock(2, ABLOCK3);
-			if (_G(spieler).R2FussSchleim) {
-				_G(spieler).R2FussSchleim = false;
-				_G(spieler).room_s_obj[SIB_SLIME].ZustandFlipFlop = 1;
+			if (_G(gameState).R2FussSchleim) {
+				_G(gameState).R2FussSchleim = false;
+				_G(gameState).room_s_obj[SIB_SLIME].ZustandFlipFlop = 1;
 			}
-			_G(spieler)._personHide[P_CHEWY] = true;
+			_G(gameState)._personHide[P_CHEWY] = true;
 			startSetAILWait(8, 1, ANI_FRONT);
 			setupScreen(DO_SETUP);
 			_G(det)->stop_detail(6);
@@ -119,22 +119,22 @@ void Room3::terminal() {
 			switchRoom(1);
 			startAniBlock(2, ABLOCK0);
 			setPersonPos(92, 131, P_CHEWY, P_LEFT);
-			_G(spieler)._personHide[P_CHEWY] = false;
-		} else if (!_G(spieler).R2FussSchleim) {
+			_G(gameState)._personHide[P_CHEWY] = false;
+		} else if (!_G(gameState).R2FussSchleim) {
 			startAniBlock(2, ABLOCK2);
 			Room2::jump_out_r1(9);
 			startAadWait(45);
 		} else {
-			_G(spieler)._personHide[P_CHEWY] = true;
+			_G(gameState)._personHide[P_CHEWY] = true;
 			startAniBlock(2, ABLOCK1);
-			_G(spieler)._personRoomNr[P_CHEWY] = 5;
+			_G(gameState)._personRoomNr[P_CHEWY] = 5;
 			clear_prog_ani();
 			_G(auto_obj) = 0;
-			_G(room)->loadRoom(&_G(room_blk), _G(spieler)._personRoomNr[P_CHEWY], &_G(spieler));
+			_G(room)->loadRoom(&_G(room_blk), _G(gameState)._personRoomNr[P_CHEWY], &_G(gameState));
 			_G(fx_blend) = BLEND1;
 			startAniBlock(3, ablock5);
 			setPersonPos(91, 107, P_CHEWY, P_LEFT);
-			_G(spieler)._personHide[P_CHEWY] = false;
+			_G(gameState)._personHide[P_CHEWY] = false;
 		}
 		clear_prog_ani();
 		break;
@@ -165,7 +165,7 @@ void Room3::probeInit() {
 	_G(mov_phasen)[SONDE_OBJ].Repeat = 255;
 	_G(mov_phasen)[SONDE_OBJ].ZoomFak = 20;
 	_G(auto_mov_obj)[SONDE_OBJ].Id = AUTO_OBJ0;
-	_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(gameState).DelaySpeed;
 	_G(auto_mov_obj)[SONDE_OBJ].Mode = true;
 	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], 3, (const MovLine *)SONDE_MPKT);
 }
@@ -191,7 +191,7 @@ void Room3::probeCreak() {
 	_G(mov_phasen)[SONDE_OBJ].Repeat = 1;
 	_G(mov_phasen)[SONDE_OBJ].ZoomFak = 20;
 	_G(auto_mov_obj)[SONDE_OBJ].Id = AUTO_OBJ0;
-	_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(gameState).DelaySpeed;
 	_G(auto_mov_obj)[SONDE_OBJ].Mode = true;
 	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], 3, (MovLine*)sonde_mpkt1);
 	_G(flags).AniUserAction = false;
@@ -203,7 +203,7 @@ void Room3::probeCreak() {
 	while (!ende) {
 		clear_prog_ani();
 		if (rdi->Ainfo[SONDE_SHOOT].ani_count == 170) {
-			_G(spieler)._personHide[P_CHEWY] = true;
+			_G(gameState)._personHide[P_CHEWY] = true;
 			_G(det)->startDetail(HEADSHOT, 1, ANI_FRONT);
 		}
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, SONDE_ANI, SONDE_SPR_R, ANI_HIDE);
@@ -238,7 +238,7 @@ void Room3::probeCreak() {
 		_G(spr_info)[1]._zLevel = 190;
 		++ende;
 		if (ende == 3)
-			_G(spieler)._personHide[P_CHEWY] = false;
+			_G(gameState)._personHide[P_CHEWY] = false;
 		set_ani_screen();
 		SHOULD_QUIT_RETURN;
 	}
@@ -302,7 +302,7 @@ void Room3::probeTransfer() {
 	_G(mov_phasen)[SONDE_OBJ].Repeat = 1;
 	_G(mov_phasen)[SONDE_OBJ].ZoomFak = 20;
 	_G(auto_mov_obj)[SONDE_OBJ].Id = AUTO_OBJ0;
-	_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(gameState).DelaySpeed;
 	_G(auto_mov_obj)[SONDE_OBJ].Mode = true;
 	init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], 2, (const MovLine *)SONDE_MPKT1);
 	_G(atds)->set_ats_str(24, ATS_ACTIVE_BIT, ATS_DATA);
@@ -332,14 +332,14 @@ void Room3::probeTransfer() {
 		_G(mov_phasen)[SONDE_OBJ].ZoomFak = 0;
 		_G(auto_mov_obj)[SONDE_OBJ].Id = AUTO_OBJ0;
 		_G(auto_mov_obj)[SONDE_OBJ].Mode = true;
-		_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(spieler).DelaySpeed;
+		_G(auto_mov_vector)[SONDE_OBJ].Delay = _G(gameState).DelaySpeed;
 		init_auto_obj(SONDE_OBJ, &SONDE_PHASEN[0][0], 2, SONDE_MPKT_[i]);
 		_G(mov_phasen)[SONDE_OBJ1].Lines = 2;
 		_G(mov_phasen)[SONDE_OBJ1].Repeat = 1;
 		_G(mov_phasen)[SONDE_OBJ1].ZoomFak = 0;
 		_G(auto_mov_obj)[SONDE_OBJ1].Id = AUTO_OBJ1;
 		_G(auto_mov_obj)[SONDE_OBJ1].Mode = true;
-		_G(auto_mov_vector)[SONDE_OBJ1].Delay = _G(spieler).DelaySpeed;
+		_G(auto_mov_vector)[SONDE_OBJ1].Delay = _G(gameState).DelaySpeed;
 		init_auto_obj(SONDE_OBJ1, &SONDE_PHASEN[0][0], 2, SONDE_MPKT_[i]);
 		_G(mov_phasen)[SONDE_OBJ1].Phase[0][0] = spr_nr;
 		_G(mov_phasen)[SONDE_OBJ1].Phase[0][1] = spr_nr;
@@ -351,13 +351,13 @@ void Room3::probeTransfer() {
 					if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 						if (isCurInventory(SPINAT_INV)) {
 							_G(atds)->set_split_win(0, 120, 100);
-							if (_G(spieler)._personRoomNr[P_CHEWY] == 3)
+							if (_G(gameState)._personRoomNr[P_CHEWY] == 3)
 								start_aad(50);
 							else
 								start_aad(44);
 
-							delInventory(_G(spieler).AkInvent);
-							_G(spieler).R2FussSchleim = true;
+							delInventory(_G(gameState).AkInvent);
+							_G(gameState).R2FussSchleim = true;
 							_G(mov_phasen)[SONDE_OBJ1].Phase[0][0] = 142;
 							_G(mov_phasen)[SONDE_OBJ1].Phase[0][1] = 149;
 							_G(auto_mov_vector)[SONDE_OBJ1].PhAnz = 8;
@@ -386,7 +386,7 @@ void Room3::probeTransfer() {
 			start_aad(52);
 			_G(flags).AniUserAction = true;
 			spr_nr = 141;
-			_G(spieler)._personHide[P_CHEWY] = true;
+			_G(gameState)._personHide[P_CHEWY] = true;
 			_G(det)->load_taf_seq(142, 8, nullptr);
 			break;
 

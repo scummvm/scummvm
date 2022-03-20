@@ -31,18 +31,18 @@ namespace Rooms {
 void Room1::gottenCard() {
 	_G(det)->hideStaticSpr(2);
 	startSetAILWait(4, 1, ANI_FRONT);
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 	_G(atds)->delControlBit(7, ATS_COUNT_BIT, ATS_DATA);
 }
 
 void Room1::gedAction(int index) {
 	#define KABELABDECKUNG 1
 
-	if (index == 0 && !_G(spieler).R2ElectrocutedBork) {
+	if (index == 0 && !_G(gameState).R2ElectrocutedBork) {
 		bool flag = false;
-		if (_G(spieler).AkInvent == KABEL_INV) {
+		if (_G(gameState).AkInvent == KABEL_INV) {
 			flag = true;
-			delInventory(_G(spieler).AkInvent);
+			delInventory(_G(gameState).AkInvent);
 		} else if (_G(obj)->checkInventory(KABEL_INV)) {
 			flag = true;
 			_G(obj)->del_obj_use(KABEL_INV);
@@ -52,7 +52,7 @@ void Room1::gedAction(int index) {
 		if (flag) {
 			startAadWait(54);
 			_G(atds)->set_ats_str(8, TXT_MARK_LOOK, 0, ATS_DATA);
-			_G(spieler).room_s_obj[KABELABDECKUNG].ZustandFlipFlop = 2;
+			_G(gameState).room_s_obj[KABELABDECKUNG].ZustandFlipFlop = 2;
 			_G(obj)->calc_rsi_flip_flop(KABELABDECKUNG);
 			_G(obj)->calc_all_static_detail();
 		}

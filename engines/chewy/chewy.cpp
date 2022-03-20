@@ -94,7 +94,7 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	exit_room(-1);
 
 	Common::Serializer s(stream, nullptr);
-	if (!_G(spieler).synchronize(s)) {
+	if (!_G(gameState).synchronize(s)) {
 		error("loadGameStream error");
 		return Common::kReadingFailed;
 
@@ -106,24 +106,24 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 		_G(flags).LoadGame = true;
 
-		if (_G(spieler).inv_cur && _G(spieler).AkInvent != -1) {
+		if (_G(gameState).inv_cur && _G(gameState).AkInvent != -1) {
 			_G(menu_item) = CUR_USE;
 		}
 
-		if (_G(spieler).AkInvent != -1)
-			_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = -1;
-		_G(room)->loadRoom(&_G(room_blk), _G(spieler)._personRoomNr[P_CHEWY], &_G(spieler));
-		load_chewy_taf(_G(spieler).ChewyAni);
+		if (_G(gameState).AkInvent != -1)
+			_G(gameState).room_m_obj[_G(gameState).AkInvent].RoomNr = -1;
+		_G(room)->loadRoom(&_G(room_blk), _G(gameState)._personRoomNr[P_CHEWY], &_G(gameState));
+		load_chewy_taf(_G(gameState).ChewyAni);
 
 		_G(fx_blend) = BLEND1;
-		_G(room)->calc_invent(&_G(room_blk), &_G(spieler));
+		_G(room)->calc_invent(&_G(room_blk), &_G(gameState));
 
-		if (_G(spieler).AkInvent != -1)
-			_G(spieler).room_m_obj[_G(spieler).AkInvent].RoomNr = 255;
+		if (_G(gameState).AkInvent != -1)
+			_G(gameState).room_m_obj[_G(gameState).AkInvent].RoomNr = 255;
 		_G(obj)->sort();
 
 		for (int i = 0; i < MAX_PERSON; i++) {
-			setPersonPos(_G(spieler).X[i], _G(spieler).Y[i], i, _G(spieler).Phase[i]);
+			setPersonPos(_G(gameState).X[i], _G(gameState).Y[i], i, _G(gameState).Phase[i]);
 		}
 
 		_G(auto_obj) = 0;
@@ -139,12 +139,12 @@ Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 	Common::Serializer s(nullptr, stream);
 
 	for (int i = 0; i < MAX_PERSON; i++) {
-		_G(spieler).X[i] = _G(spieler_vector)[i].Xypos[0];
-		_G(spieler).Y[i] = _G(spieler_vector)[i].Xypos[1];
-		_G(spieler).Phase[i] = _G(person_end_phase)[i];
+		_G(gameState).X[i] = _G(spieler_vector)[i].Xypos[0];
+		_G(gameState).Y[i] = _G(spieler_vector)[i].Xypos[1];
+		_G(gameState).Phase[i] = _G(person_end_phase)[i];
 	}
 
-	if (!_G(spieler).synchronize(s))
+	if (!_G(gameState).synchronize(s))
 		return Common::kWritingFailed;
 
 	stream->writeUint32BE(SCUMMVM_TAG);

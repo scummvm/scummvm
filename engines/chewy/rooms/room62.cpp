@@ -31,13 +31,13 @@ namespace Rooms {
 void Room62::entry() {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
-	_G(spieler).R62LauraVerwandlung = 0;
-	_G(spieler).room_e_obj[91].Attribut = 255;
-	if (!_G(spieler).R62FirstEntry) {
-		_G(spieler).R62TShow = false;
+	_G(gameState).R62LauraVerwandlung = 0;
+	_G(gameState).room_e_obj[91].Attribut = 255;
+	if (!_G(gameState).R62FirstEntry) {
+		_G(gameState).R62TShow = false;
 		_G(cur_hide_flag) = false;
 		hideCur();
-		_G(spieler).R62FirstEntry = true;
+		_G(gameState).R62FirstEntry = true;
 		setPersonPos(49, 113, P_HOWARD, P_RIGHT);
 		_G(det)->startDetail(6, 255, ANI_FRONT);
 		startAadWait(345);
@@ -66,14 +66,14 @@ void Room62::entry() {
 		_G(det)->del_static_ani(5);
 		startSetAILWait(7, 1, ANI_FRONT);
 		showCur();
-		_G(spieler).R64Moni1Ani = 3;
-		_G(spieler).R64Moni2Ani = 4;
+		_G(gameState).R64Moni1Ani = 3;
+		_G(gameState).R64Moni2Ani = 4;
 		setPersonPos(187, 43, P_CHEWY, P_RIGHT);
-		_G(spieler).R62TShow = true;
+		_G(gameState).R62TShow = true;
 		switchRoom(64);
 	} else {
 		_G(det)->del_static_ani(0);
-		_G(spieler)._personHide[P_HOWARD] = true;
+		_G(gameState)._personHide[P_HOWARD] = true;
 		_G(det)->set_static_ani(4, -1);
 		_G(det)->set_static_ani(8, -1);
 		_G(r62Delay) = 0;
@@ -83,8 +83,8 @@ void Room62::entry() {
 }
 
 void Room62::setup_func() {
-	if (_G(r62Delay) <= 0 && _G(spieler).R62TShow) {
-		_G(r62Delay) = (_G(spieler).DelaySpeed + 1) * 60;
+	if (_G(r62Delay) <= 0 && _G(gameState).R62TShow) {
+		_G(r62Delay) = (_G(gameState).DelaySpeed + 1) * 60;
 		_G(det)->stop_detail(_G(r62TalkAni));
 		if (_G(r62TalkAni) == 4)
 			_G(r62TalkAni) = 8;
@@ -105,17 +105,17 @@ int16 Room62::use_laura() {
 		_G(SetUpScreenFunc) = nullptr;
 		_G(det)->del_static_ani(8);
 		_G(det)->stop_detail(8);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(det)->startDetail(2, 255, ANI_FRONT);
 		_G(det)->startDetail(6, 255, ANI_FRONT);
 		startAadWait(399);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		flic_cut(FCUT_077);
 		showCur();
-		_G(spieler).R64Moni1Ani = 0;
-		_G(spieler).R64Moni2Ani = 0;
-		_G(spieler).R62TShow = false;
-		_G(spieler).R62LauraVerwandlung = true;
+		_G(gameState).R64Moni1Ani = 0;
+		_G(gameState).R64Moni2Ani = 0;
+		_G(gameState).R62TShow = false;
+		_G(gameState).R62LauraVerwandlung = true;
 		switchRoom(63);
 	}
 	return action_ret;

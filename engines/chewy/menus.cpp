@@ -66,14 +66,14 @@ void plotMainMenu() {
 
 		_G(out)->scale_set(_G(menutaf)->_image[i],
 			MENU_X + deltaX + correction[i * 2],
-		    _G(spieler).MainMenuY + correction[i * 2 + 1],
+		    _G(gameState).MainMenuY + correction[i * 2 + 1],
 			zoomX, zoomY, 0);
 	}
 
 	zoomX = 16;
 	zoomY = 16;
 	++_G(m_flip);
-	if (_G(m_flip) < 12 * (_G(spieler).DelaySpeed + 1)) {
+	if (_G(m_flip) < 12 * (_G(gameState).DelaySpeed + 1)) {
 		int deltaX = 0;
 		if (_G(menu_item) == CUR_SAVE)
 			deltaX = -40;
@@ -83,10 +83,10 @@ void plotMainMenu() {
 		int img = IMAGES[_G(menu_item)];
 		_G(out)->scale_set(_G(menutaf)->_image[img],
 		    MENU_X + deltaX + correction[img * 2] - 5,
-		    _G(spieler).MainMenuY + correction[img * 2 + 1] - 10,
+		    _G(gameState).MainMenuY + correction[img * 2 + 1] - 10,
 			zoomX, zoomY, 0);
 	} else {
-		if (_G(m_flip) > 15 * (_G(spieler).DelaySpeed + 1))
+		if (_G(m_flip) > 15 * (_G(gameState).DelaySpeed + 1))
 			_G(m_flip) = 0;
 	}
 }
@@ -298,7 +298,7 @@ void adsMenu() {
 
 void stop_ads_dialog() {
 	aadWait(-1);
-	_G(spieler).DispFlag = _G(ads_tmp_dsp);
+	_G(gameState).DispFlag = _G(ads_tmp_dsp);
 	_G(cur_display) = true;
 	_G(flags).ShowAtsInvTxt = true;
 	_G(flags).MainInput = true;
@@ -310,22 +310,22 @@ void stop_ads_dialog() {
 }
 
 void cur_2_inventory() {
-	if (_G(spieler).AkInvent != -1) {
-		invent_2_slot(_G(spieler).AkInvent);
-		_G(spieler).AkInvent = -1;
+	if (_G(gameState).AkInvent != -1) {
+		invent_2_slot(_G(gameState).AkInvent);
+		_G(gameState).AkInvent = -1;
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
 	}
-	_G(spieler).inv_cur = false;
+	_G(gameState).inv_cur = false;
 }
 
 void inventory_2_cur(int16 nr) {
-	if (_G(spieler).AkInvent == -1 && _G(obj)->checkInventory(nr)) {
+	if (_G(gameState).AkInvent == -1 && _G(obj)->checkInventory(nr)) {
 		del_invent_slot(nr);
 		_G(menu_item) = CUR_USE;
-		_G(spieler).AkInvent = nr;
+		_G(gameState).AkInvent = nr;
 		cursorChoice(CUR_AK_INVENT);
-		getDisplayCoord(&_G(spieler).DispZx, &_G(spieler).DispZy, _G(spieler).AkInvent);
+		getDisplayCoord(&_G(gameState).DispZx, &_G(gameState).DispZy, _G(gameState).AkInvent);
 	}
 }
 
@@ -338,8 +338,8 @@ void new_invent_2_cur(int16 inv_nr) {
 void invent_2_slot(int16 nr) {
 	int16 ok = 0;
 	for (int16 i = 0; i < MAX_MOV_OBJ && !ok; i++) {
-		if (_G(spieler).InventSlot[i] == -1) {
-			_G(spieler).InventSlot[i] = nr;
+		if (_G(gameState).InventSlot[i] == -1) {
+			_G(gameState).InventSlot[i] = nr;
 			ok = true;
 		}
 	}
@@ -349,8 +349,8 @@ void invent_2_slot(int16 nr) {
 int16 del_invent_slot(int16 nr) {
 	int16 ok = -1;
 	for (int16 i = 0; i < MAX_MOV_OBJ; i++) {
-		if (_G(spieler).InventSlot[i] == nr) {
-			_G(spieler).InventSlot[i] = -1;
+		if (_G(gameState).InventSlot[i] == nr) {
+			_G(gameState).InventSlot[i] = -1;
 			if (ok == -1)
 				ok = i;
 		}
@@ -360,7 +360,7 @@ int16 del_invent_slot(int16 nr) {
 }
 
 void remove_inventory(int16 nr) {
-	if (nr == _G(spieler).AkInvent) {
+	if (nr == _G(gameState).AkInvent) {
 		delInventory(nr);
 	} else {
 		_G(obj)->delInventory(nr, &_G(room_blk));

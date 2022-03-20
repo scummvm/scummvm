@@ -31,11 +31,11 @@ namespace Rooms {
 void Room75::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
-	_G(spieler).ScrollxStep = 2;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 70;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 100;
-	_G(spieler).ZoomXy[P_NICHELLE][0] = 70;
-	_G(spieler).ZoomXy[P_NICHELLE][1] = 100;
+	_G(gameState).ScrollxStep = 2;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 70;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 100;
+	_G(gameState).ZoomXy[P_NICHELLE][0] = 70;
+	_G(gameState).ZoomXy[P_NICHELLE][1] = 100;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(zoom_horizont) = 110;
@@ -48,7 +48,7 @@ void Room75::entry(int16 eib_nr) {
 
 	switch (eib_nr) {
 	case 103:
-		_G(spieler.scrollx = 188);
+		_G(gameState).scrollx = 188;
 		proc1();
 		break;		
 	case 104:
@@ -63,20 +63,20 @@ void Room75::entry(int16 eib_nr) {
 }
 
 void Room75::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 	
-	if (_G(spieler)._personRoomNr[P_HOWARD] != 75)
+	if (_G(gameState)._personRoomNr[P_HOWARD] != 75)
 		return;
 
 	switch (eib_nr) {
 	case 115:
-		_G(spieler)._personRoomNr[P_HOWARD] = 73;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 73;
+		_G(gameState)._personRoomNr[P_HOWARD] = 73;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 73;
 		break;
 	case 116:
 	case 117:
-		_G(spieler)._personRoomNr[P_HOWARD] = 70;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 70;
+		_G(gameState)._personRoomNr[P_HOWARD] = 70;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 70;
 		break;
 	default:
 		break;

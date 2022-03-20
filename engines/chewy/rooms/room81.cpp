@@ -36,40 +36,40 @@ void Room81::entry() {
 	_G(zoom_horizont) = 140;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	_G(spieler).DiaAMov = 0;
-	if (_G(spieler).r88DestRoom == 84) {
+	_G(gameState).DiaAMov = 0;
+	if (_G(gameState).r88DestRoom == 84) {
 		_G(det)->showStaticSpr(0);
 		_G(atds)->delControlBit(488, ATS_ACTIVE_BIT, ATS_DATA);
 	}
 
 	proc3();
 
-	if (_G(flags).LoadGame || !_G(spieler).flags30_1)
+	if (_G(flags).LoadGame || !_G(gameState).flags30_1)
 		return;
 
 	setPersonPos(155, 146, P_CHEWY, P_LEFT);
 	setPersonPos(103, 115, P_HOWARD, P_RIGHT);
 	setPersonPos(62, 112, P_NICHELLE, P_RIGHT);
-	_G(spieler).flags30_1 = false;
+	_G(gameState).flags30_1 = false;
 	_G(mouseLeftClick) = false;
-	_G(spieler).scrollx = 0;
+	_G(gameState).scrollx = 0;
 }
 
 void Room81::xit(int16 eib_nr) {
-	_G(spieler).R79Val[P_CHEWY] = 1;
-	_G(spieler).R79Val[P_HOWARD] = 1;
-	_G(spieler)._personRoomNr[P_HOWARD] = 80;
-	_G(spieler).R79Val[P_NICHELLE] = 1;
-	_G(spieler)._personRoomNr[P_NICHELLE] = 80;
+	_G(gameState).R79Val[P_CHEWY] = 1;
+	_G(gameState).R79Val[P_HOWARD] = 1;
+	_G(gameState)._personRoomNr[P_HOWARD] = 80;
+	_G(gameState).R79Val[P_NICHELLE] = 1;
+	_G(gameState)._personRoomNr[P_NICHELLE] = 80;
 }
 
 void Room81::proc1() {
 	int diaNr = -1;
 	hideCur();
 	autoMove(1, P_CHEWY);
-	if (!_G(spieler).flags30_2)
+	if (!_G(gameState).flags30_2)
 		diaNr = 458;
-	else if (_G(spieler).flags30_4)
+	else if (_G(gameState).flags30_4)
 		diaNr = 460;
 	else {
 		_G(spieler_mi)[P_CHEWY].Mode = true;
@@ -80,21 +80,21 @@ void Room81::proc1() {
 		goAutoXy(112, 60, P_CHEWY, ANI_WAIT);
 		startAadWait(461);
 		goAutoXy(143, 62, P_CHEWY, ANI_WAIT);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(0, 1, ANI_FRONT);
 		_G(det)->startDetail(1, 255, false);
 		startAadWait(459);
 		_G(det)->stop_detail(1);
 		startSetAILWait(0, 1, ANI_GO);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		goAutoXy(171, 93, P_CHEWY, ANI_WAIT);
 		goAutoXy(100, 96, P_CHEWY, ANI_WAIT);
 		goAutoXy(222, 97, P_CHEWY, ANI_WAIT);
 		autoMove(1, P_CHEWY);
 		_G(spieler_mi)[P_CHEWY].Mode = false;
 		invent_2_slot(DIARY_INV);
-		_G(spieler).R84GoonsPresent = true;
-		_G(spieler).gottenDiary = true;
+		_G(gameState).R84GoonsPresent = true;
+		_G(gameState).gottenDiary = true;
 	}
 	
 	if (diaNr != -1) {
@@ -116,8 +116,8 @@ int Room81::proc2() {
 		start_spz_wait(13, 1, false, P_CHEWY);
 		aniId = 5;
 		diaNr = 462;
-		delInventory(_G(spieler).AkInvent);
-		_G(spieler).flags30_2 = true;
+		delInventory(_G(gameState).AkInvent);
+		_G(gameState).flags30_2 = true;
 	} else if (isCurInventory(104)) {
 		aniId = 4;
 		diaNr = 463;
@@ -138,7 +138,7 @@ int Room81::proc2() {
 }
 
 void Room81::proc3() {
-	if (!_G(spieler).flags30_2) {
+	if (!_G(gameState).flags30_2) {
 		_G(det)->startDetail(2, 255, false);
 		return;
 	}

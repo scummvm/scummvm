@@ -28,9 +28,9 @@ namespace Chewy {
 namespace Rooms {
 
 void Room32::entry() {
-	if (_G(spieler).R32HowardWeg)
+	if (_G(gameState).R32HowardWeg)
 		_G(det)->hideStaticSpr(0);
-	if (!_G(spieler).R32Script && _G(spieler).R32UseSchreib)
+	if (!_G(gameState).R32Script && _G(gameState).R32UseSchreib)
 		_G(det)->showStaticSpr(5);
 }
 
@@ -41,7 +41,7 @@ int16 Room32::use_howard() {
 	hideCur();
 
 	if (isCurInventory(TRICHTER_INV)) {
-		if (_G(spieler).R33MunterGet) {
+		if (_G(gameState).R33MunterGet) {
 			autoMove(1, P_CHEWY);
 			cur_2_inventory();
 			remove_inventory(MUNTER_INV);
@@ -68,8 +68,8 @@ int16 Room32::use_howard() {
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			ani_nr = CH_TALK3;
 			dia_nr = 164;
-			_G(spieler).R32HowardWeg = true;
-			_G(spieler).R39HowardDa = true;
+			_G(gameState).R32HowardWeg = true;
+			_G(gameState).R39HowardDa = true;
 			remove_inventory(TRICHTER_INV);
 		} else {
 			ani_nr = CH_TALK12;
@@ -95,17 +95,17 @@ void Room32::use_schreibmaschine() {
 	int16 ani_nr = -1;
 
 	hideCur();
-	if (_G(spieler).R32HowardWeg) {
-		if (_G(spieler).inv_cur) {
-			switch (_G(spieler).AkInvent) {
+	if (_G(gameState).R32HowardWeg) {
+		if (_G(gameState).inv_cur) {
+			switch (_G(gameState).AkInvent) {
 			case CYB_KRONE_INV:
-				if (!_G(spieler).R32UseSchreib) {
-					if (!_G(spieler).R32PapierOk) {
+				if (!_G(gameState).R32UseSchreib) {
+					if (!_G(gameState).R32PapierOk) {
 						ani_nr = CH_TALK12;
 						dia_nr = 87;
 					} else {
 						autoMove(3, P_CHEWY);
-						_G(spieler).R32UseSchreib = true;
+						_G(gameState).R32UseSchreib = true;
 						cur_2_inventory();
 						flic_cut(FCUT_044);
 						register_cutscene(12);
@@ -120,9 +120,9 @@ void Room32::use_schreibmaschine() {
 
 			case PAPIER_INV:
 				autoMove(2, P_CHEWY);
-				_G(spieler).R32PapierOk = true;
+				_G(gameState).R32PapierOk = true;
 				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-				delInventory(_G(spieler).AkInvent);
+				delInventory(_G(gameState).AkInvent);
 				_G(atds)->set_ats_str(231, TXT_MARK_LOOK, 1, ATS_DATA);
 				ani_nr = CH_TALK3;
 				dia_nr = 86;
@@ -151,9 +151,9 @@ void Room32::use_schreibmaschine() {
 int16 Room32::get_script() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur && !_G(spieler).R32Script && _G(spieler).R32UseSchreib) {
+	if (!_G(gameState).inv_cur && !_G(gameState).R32Script && _G(gameState).R32UseSchreib) {
 		action_flag = true;
-		_G(spieler).R32Script = true;
+		_G(gameState).R32Script = true;
 		autoMove(4, P_CHEWY);
 		invent_2_slot(MANUSKRIPT_INV);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);

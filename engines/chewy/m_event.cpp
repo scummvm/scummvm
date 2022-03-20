@@ -34,10 +34,10 @@ void load_room_music(int16 room_nr) {
 	const int16 seq_end = 0;
 	const int16 pattern = 0;
 	int16 ttp_index = -1;
-	int16 volume = _G(spieler).MusicVol;
+	int16 volume = _G(gameState).MusicVol;
 	const int16 lp_mode = 1;
 	const int16 play_mode = NORMAL_PLAY;
-	if (_G(spieler).MusicSwitch && (_G(music_handle))) {
+	if (_G(gameState).MusicSwitch && (_G(music_handle))) {
 		switch (room_nr) {
 		case 0:
 			ttp_index = 0;
@@ -184,8 +184,8 @@ void load_room_music(int16 room_nr) {
 		if (ttp_index != -1) {
 			if (volume < 0)
 				volume = 0;
-			else if (volume > _G(spieler).MusicVol)
-				volume = _G(spieler).MusicVol;
+			else if (volume > _G(gameState).MusicVol)
+				volume = _G(gameState).MusicVol;
 			g_engine->_sound->setMusicVolume(volume * Audio::Mixer::kMaxChannelVolume / 120);
 			_G(sndPlayer)->setLoopMode(lp_mode);
 			if (ttp_index != _G(currentSong)) {

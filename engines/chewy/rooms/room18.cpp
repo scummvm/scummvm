@@ -87,44 +87,44 @@ static const AniBlock ABLOCK24[2] = {
 
 
 void Room18::entry() {
-	_G(spieler).R18MoniSwitch = false;
+	_G(gameState).R18MoniSwitch = false;
 	_G(atds)->set_ats_str(151, TXT_MARK_LOOK, 0, ATS_DATA);
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 
-	if (_G(spieler).R18CartTerminal)
+	if (_G(gameState).R18CartTerminal)
 		_G(det)->showStaticSpr(23);
 
-	if (!_G(spieler).R18SurimyWurf) {
+	if (!_G(gameState).R18SurimyWurf) {
 		init_borks();
 	} else {
 		for (int16 i = 0; i < 5; i++)
 			_G(det)->hideStaticSpr(BORK_SPR[i]);
 
-		for (int16 i = 0; i < (4 - (_G(spieler).R18Krone ? 1 : 0)); i++)
+		for (int16 i = 0; i < (4 - (_G(gameState).R18Krone ? 1 : 0)); i++)
 			_G(det)->showStaticSpr(BORK_SPR1[i]);
 	}
 
-	if (_G(spieler).R16F5Exit)
+	if (_G(gameState).R16F5Exit)
 		_G(det)->hideStaticSpr(19);
 	
-	if (_G(spieler).R17EnergieOut) {
+	if (_G(gameState).R17EnergieOut) {
 		_G(det)->stop_detail(0);
 		_G(atds)->set_ats_str(150, TXT_MARK_LOOK, 1, ATS_DATA);
 	} else {
 		_G(atds)->set_ats_str(150, TXT_MARK_LOOK, 0, ATS_DATA);
 	}
 
-	if (!_G(spieler).R18FirstEntry && !_G(spieler).R18Gitter) {
+	if (!_G(gameState).R18FirstEntry && !_G(gameState).R18Gitter) {
 		startAadWait(39);
-		_G(spieler).R18FirstEntry = true;
+		_G(gameState).R18FirstEntry = true;
 	}
 
-	if (_G(spieler).R18Gitter)
-		_G(spieler).scrolly = 0;
+	if (_G(gameState).R18Gitter)
+		_G(gameState).scrolly = 0;
 }
 
 bool Room18::timer(int16 t_nr, int16 ani_nr) {
-	if (!_G(spieler).R18SurimyWurf && !_G(flags).AutoAniPlay) {
+	if (!_G(gameState).R18SurimyWurf && !_G(flags).AutoAniPlay) {
 		_G(flags).AutoAniPlay = true;
 
 		if (t_nr == _G(timer_nr)[0]) {
@@ -138,8 +138,8 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 			startSetAILWait(9, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(17);
 
-			if (!_G(spieler).R18SondeMoni) {
-				_G(spieler).R18SondeMoni = true;
+			if (!_G(gameState).R18SondeMoni) {
+				_G(gameState).R18SondeMoni = true;
 				startSetAILWait(2, 1, ANI_FRONT);
 				_G(det)->showStaticSpr(9);
 				startSetAILWait(4, 1, ANI_FRONT);
@@ -162,7 +162,7 @@ bool Room18::timer(int16 t_nr, int16 ani_nr) {
 }
 
 void Room18::gedAction(int index) {
-	if (!index && !_G(spieler).R18SurimyWurf) {
+	if (!index && !_G(gameState).R18SurimyWurf) {
 		stopPerson(P_CHEWY);
 		autoMove(1, P_CHEWY);
 		start_aad(40, 0);
@@ -178,18 +178,18 @@ void Room18::init_borks() {
 
 	_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
 	_G(timer_nr)[1] = _G(room)->set_timer(255, 15);
-	_G(spieler).scrollx = 276;
-	_G(spieler).scrolly = 0;
+	_G(gameState).scrollx = 276;
+	_G(gameState).scrolly = 0;
 	_G(flags).NoScroll = true;
 }
 
 void Room18::monitor() {
-	_G(spieler).R18MoniSwitch ^= 1;
+	_G(gameState).R18MoniSwitch ^= 1;
 
 	int16 nr = 0;
-	if (_G(spieler).R18MoniSwitch) {
+	if (_G(gameState).R18MoniSwitch) {
 		startAniBlock(2, ABLOCK21);
-		nr = (_G(spieler).R17EnergieOut) ? 2 : 1;
+		nr = (_G(gameState).R17EnergieOut) ? 2 : 1;
 	} else {
 		_G(det)->stop_detail(23);
 		_G(atds)->set_ats_str(41, TXT_MARK_LOOK, 1, ATS_DATA);
@@ -201,7 +201,7 @@ void Room18::monitor() {
 int16 Room18::sonden_moni() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur && !_G(spieler).R18Gitter) {
+	if (!_G(gameState).inv_cur && !_G(gameState).R18Gitter) {
 		action_flag = true;
 
 		hideCur();
@@ -230,8 +230,8 @@ int16 Room18::calc_surimy() {
 		action_flag = true;
 
 		hideCur();
-		delInventory(_G(spieler).AkInvent);
-		_G(spieler).R18SurimyWurf = true;
+		delInventory(_G(gameState).AkInvent);
+		_G(gameState).R18SurimyWurf = true;
 		_G(det)->load_taf_seq(245, 50, nullptr);
 		_G(det)->load_taf_seq(116, 55, nullptr);
 		_G(auto_obj) = 1;
@@ -240,7 +240,7 @@ int16 Room18::calc_surimy() {
 		_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
 		_G(mov_phasen)[SURIMY_OBJ].ZoomFak = 0;
 		_G(auto_mov_obj)[SURIMY_OBJ].Id = AUTO_OBJ0;
-		_G(auto_mov_vector)[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed;
+		_G(auto_mov_vector)[SURIMY_OBJ].Delay = _G(gameState).DelaySpeed;
 		_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
 
 		if (_G(spieler_vector)[P_CHEWY].Xypos[1] < 150) {
@@ -251,7 +251,7 @@ int16 Room18::calc_surimy() {
 		} else {
 			autoMove(1, P_CHEWY);
 			stopPerson(P_CHEWY);
-			_G(spieler)._personHide[P_CHEWY] = true;
+			_G(gameState)._personHide[P_CHEWY] = true;
 			startDetailFrame(17, 1, ANI_FRONT, 12);
 			_G(mouseLeftClick) = false;
 
@@ -259,7 +259,7 @@ int16 Room18::calc_surimy() {
 			waitDetail(17);
 		}
 
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		wait_auto_obj(SURIMY_OBJ);
 
 		_G(det)->setSetailPos(21, 392, 170);
@@ -305,10 +305,10 @@ int16 Room18::calc_surimy() {
 		init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT2);
 		auto_scroll(0, 0);
 		wait_auto_obj(SURIMY_OBJ);
-		_G(spieler).ScrollxStep = 6;
+		_G(gameState).ScrollxStep = 6;
 		_G(flags).NoScroll = false;
 		auto_scroll(318, 0);
-		_G(spieler).ScrollxStep = 2;
+		_G(gameState).ScrollxStep = 2;
 		_G(auto_obj) = 0;
 
 		_G(atds)->set_ats_str(153, 1, ATS_DATA);
@@ -328,7 +328,7 @@ int16 Room18::calc_surimy() {
 int16 Room18::calc_schalter() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur && !_G(spieler).R18Gitter) {
+	if (!_G(gameState).inv_cur && !_G(gameState).R18Gitter) {
 		action_flag = true;
 
 		hideCur();
@@ -343,16 +343,16 @@ int16 Room18::calc_schalter() {
 short Room18::use_cart_moni() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		action_flag = true;
 
 		hideCur();
 		autoMove(9, P_CHEWY);
 		setPersonSpr(P_LEFT, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		_G(spieler).R18CartTerminal ^= 1;
+		_G(gameState).R18CartTerminal ^= 1;
 
-		if (!_G(spieler).R18CartTerminal) {
+		if (!_G(gameState).R18CartTerminal) {
 			_G(atds)->set_ats_str(147, TXT_MARK_LOOK, 0, ATS_DATA);
 			_G(det)->hideStaticSpr(23);
 			startSetAILWait(20, 1, ANI_BACK);
@@ -361,8 +361,8 @@ short Room18::use_cart_moni() {
 			startSetAILWait(20, 1, ANI_FRONT);
 			_G(det)->showStaticSpr(23);
 
-			if (_G(spieler).R18CartFach) {
-				_G(spieler).R18CartSave = true;
+			if (_G(gameState).R18CartFach) {
+				_G(gameState).R18CartSave = true;
 				_G(atds)->set_ats_str(CARTRIDGE_INV, TXT_MARK_LOOK, 1, INV_ATS_DATA);
 				startAadWait(120);
 			}
@@ -377,7 +377,7 @@ short Room18::use_cart_moni() {
 int16 Room18::go_cyberspace() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur && !_G(spieler).R18Gitter) {
+	if (!_G(gameState).inv_cur && !_G(gameState).R18Gitter) {
 		action_flag = true;
 
 		hideCur();

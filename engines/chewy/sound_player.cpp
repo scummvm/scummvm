@@ -258,7 +258,7 @@ void SoundPlayer::fadeOut(uint16 delay) {
 	FadeStart = delay;
 	FadeCounter = 0;
 	MusicFade = FADE_OUT;
-	FadeVol = _G(spieler).MusicVol;
+	FadeVol = _G(gameState).MusicVol;
 }
 
 void SoundPlayer::getMusicInfo(musik_info *mi) {
@@ -295,23 +295,23 @@ void mod_irq() {
 			if (MusicFade == FADE_IN) {
 				if (!FadeCounter) {
 					FadeCounter = FadeStart;
-					if ((_G(spieler).MusicVol / 2 + 2) <= FadeVol)
-						_G(spieler).MusicVol += 2;
+					if ((_G(gameState).MusicVol / 2 + 2) <= FadeVol)
+						_G(gameState).MusicVol += 2;
 					else {
 						MusicFade = OFF;
-						_G(spieler).MusicVol = FadeVol;
+						_G(gameState).MusicVol = FadeVol;
 					}
 				} else
 					--FadeCounter;
 			} else if (MusicFade == FADE_OUT) {
 				if (!FadeCounter) {
 					FadeCounter = FadeStart;
-					if (_G(spieler).MusicVol - 2 > 0)
-						_G(spieler).MusicVol -= 2;
+					if (_G(gameState).MusicVol - 2 > 0)
+						_G(gameState).MusicVol -= 2;
 					else {
 						MusicFade = OFF;
 						MusicStatus = OFF;
-						_G(spieler).MusicVol = FadeVol;
+						_G(gameState).MusicVol = FadeVol;
 					}
 				} else
 					--FadeCounter;

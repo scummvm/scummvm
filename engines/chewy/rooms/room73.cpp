@@ -31,19 +31,19 @@ namespace Rooms {
 void Room73::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
-	_G(spieler).ScrollxStep = 2;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 70;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 100;
-	_G(spieler).ZoomXy[P_NICHELLE][0] = 70;
-	_G(spieler).ZoomXy[P_NICHELLE][1] = 100;
+	_G(gameState).ScrollxStep = 2;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 70;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 100;
+	_G(gameState).ZoomXy[P_NICHELLE][0] = 70;
+	_G(gameState).ZoomXy[P_NICHELLE][1] = 100;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(zoom_horizont) = 110;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(SetUpScreenFunc) = setup_func;
-	if (_G(spieler).flags28_20)
-		_G(det)->showStaticSpr(3+ (_G(spieler).R63Feuer ? 1 : 0)); // flags25_40
+	if (_G(gameState).flags28_20)
+		_G(det)->showStaticSpr(3+ (_G(gameState).R63Feuer ? 1 : 0)); // flags25_40
 
 	if (_G(flags).LoadGame)
 		return;
@@ -60,19 +60,19 @@ void Room73::entry(int16 eib_nr) {
 }
 
 void Room73::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] != 73)
+	if (_G(gameState)._personRoomNr[P_HOWARD] != 73)
 		return;
 
 	switch (eib_nr) {
 	case 110:
-		_G(spieler)._personRoomNr[P_HOWARD] = 71;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 71;
+		_G(gameState)._personRoomNr[P_HOWARD] = 71;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 71;
 		break;
 	case 111:
-		_G(spieler)._personRoomNr[P_HOWARD] = 75;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 75;
+		_G(gameState)._personRoomNr[P_HOWARD] = 75;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 75;
 		break;
 	default:
 		break;
@@ -80,11 +80,11 @@ void Room73::xit(int16 eib_nr) {
 }
 
 int Room73::proc1() {
-	if (_G(spieler).inv_cur && !_G(spieler).flags28_20)
+	if (_G(gameState).inv_cur && !_G(gameState).flags28_20)
 		return 0;
 
 	hideCur();
-	_G(spieler).flags28_20 = true;
+	_G(gameState).flags28_20 = true;
 	autoMove(3, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(atds)->delControlBit(433, ATS_ACTIVE_BIT, ATS_DATA);
@@ -97,11 +97,11 @@ int Room73::proc1() {
 }
 
 int Room73::proc2() {
-	if (_G(spieler).inv_cur)
+	if (_G(gameState).inv_cur)
 		return 0;
 
 	hideCur();
-	_G(spieler).flags28_40 = true;
+	_G(gameState).flags28_40 = true;
 	autoMove(4, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->hideStaticSpr(3);

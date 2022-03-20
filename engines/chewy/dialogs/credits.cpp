@@ -195,8 +195,8 @@ void Credits::execute() {
 	int fontCol;
 
 	_G(room)->load_tgp(5, &_G(room_blk), 1, 0, GBOOK);
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 0;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 0;
 	_G(out)->setPointer(_G(screen0));
 	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
@@ -212,7 +212,7 @@ void Credits::execute() {
 		_G(out)->raster_col(38 + i, color, color, color);
 	}
 
-	_G(spieler).DelaySpeed = 2;
+	_G(gameState).DelaySpeed = 2;
 
 	for (;;) {
 		if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE || SHOULD_QUIT)
@@ -221,11 +221,11 @@ void Credits::execute() {
 		// Display the starfield background
 		_G(out)->setPointer(_G(workptr));
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage],
-			_G(spieler).scrollx, _G(spieler).scrolly);
+			_G(gameState).scrollx, _G(gameState).scrolly);
 
 		// Animate moving the background
-		if (++_G(spieler).scrollx >= 320)
-			_G(spieler).scrollx = 0;
+		if (++_G(gameState).scrollx >= 320)
+			_G(gameState).scrollx = 0;
 
 		if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE)
 			break;

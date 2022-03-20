@@ -50,7 +50,7 @@ namespace Rooms {
 #define KOPF3 48
 
 void Room0::entry() {
-	if (isCurInventory(0) || _G(spieler).R0PillowThrow || _G(obj)->checkInventory(0))
+	if (isCurInventory(0) || _G(gameState).R0PillowThrow || _G(obj)->checkInventory(0))
 		_G(det)->hideStaticSpr(6);
 
 	if (!_G(flags).LoadGame) {
@@ -77,40 +77,40 @@ bool Room0::timer(int16 timerNr, int16 aniNr) {
 			_G(uhr)->resetTimer(timerNr, 0);
 			--_G(timer_action_ctr);
 		} else if (!is_chewy_busy()) {
-			if (!_G(spieler).R0FueterLab)
+			if (!_G(gameState).R0FueterLab)
 				_G(timer_action_ctr) = 2;
 
 			_G(flags).AutoAniPlay = true;
-			if (!_G(spieler).R0SlimeUsed) {
+			if (!_G(gameState).R0SlimeUsed) {
 				startAadWait(42);
 				autoMove(5, P_CHEWY);
 				setPersonSpr(P_LEFT, P_CHEWY);
 
-				if (_G(spieler).R0FueterLab < 3) {
+				if (_G(gameState).R0FueterLab < 3) {
 					start_spz(CH_TALK3, 255, false, P_CHEWY);
-					if (_G(spieler).R0FueterLab)
+					if (_G(gameState).R0FueterLab)
 						startAadWait(618);
 					else
 						startAadWait(43);
 
-					++_G(spieler).R0FueterLab;
+					++_G(gameState).R0FueterLab;
 				}
 
 				eyeAnim();
-			} else if (!_G(spieler).R0PillowThrow) {
+			} else if (!_G(gameState).R0PillowThrow) {
 				startAadWait(42);
 				start_spz(CH_TALK3, 255, false, P_CHEWY);
 
-				if (_G(spieler).R0FueterLab < 3) {
+				if (_G(gameState).R0FueterLab < 3) {
 					startAadWait(43);
-					++_G(spieler).R0FueterLab;
+					++_G(gameState).R0FueterLab;
 				}
 
 				autoMove(3, P_CHEWY);
 				setPersonPos(191, 120, P_CHEWY, P_LEFT);
 			}
 
-			if (!_G(spieler).R0PillowThrow)
+			if (!_G(gameState).R0PillowThrow)
 				feederAni();
 
 			_G(uhr)->resetTimer(timerNr, 0);
@@ -125,7 +125,7 @@ bool Room0::timer(int16 timerNr, int16 aniNr) {
 bool Room0::getPillow() {
 	bool retval = false;
 	
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		hideCur();
 		_G(flags).AutoAniPlay = true;
 		autoMove(1, P_CHEWY);
@@ -146,16 +146,16 @@ bool Room0::getPillow() {
 
 bool Room0::pullSlime() {
 	bool retval = false;
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		hideCur();
 		
 		_G(flags).AutoAniPlay = true;
 		autoMove(2, P_CHEWY);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(3, 1, ANI_FRONT);
 		startSetAILWait(17, 2, ANI_FRONT);
 		setPersonPos(222, 106, P_CHEWY, P_LEFT);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		invent_2_slot(1);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(CUR_WALK);
@@ -170,13 +170,13 @@ bool Room0::pullSlime() {
 }
 
 void Room0::eyeAnim() {
-	if (!_G(spieler).R0SlimeUsed) {
+	if (!_G(gameState).R0SlimeUsed) {
 		// Start the eye animation
 		eyeStart(EYE_START);
-		if (!_G(spieler).R0SlimeUsed)
+		if (!_G(gameState).R0SlimeUsed)
 			eyeWait();
 
-		if (_G(spieler).R0SlimeUsed) {
+		if (_G(gameState).R0SlimeUsed) {
 			start_aad(124);
 			checkSlimeEye();
 			eyeSlimeBack();
@@ -243,7 +243,7 @@ void Room0::eyeStart(EyeMode mode) {
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
-			adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
+			adi->delay_count = adi->delay + _G(gameState).DelaySpeed;
 			if (mode == EYE_START) {
 				++adi->ani_count;
 				if (adi->ani_count > 38)
@@ -288,7 +288,7 @@ void Room0::eyeWait() {
 		if (adi->delay_count > 0) {
 			--adi->delay_count;
 		} else {
-			adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
+			adi->delay_count = adi->delay + _G(gameState).DelaySpeed;
 			++adi->ani_count;
 		}
 
@@ -315,8 +315,8 @@ void Room0::calcEyeClick(int16 aniNr) {
 			}
 		} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(SLIME_INV)) {
-				delInventory(_G(spieler).AkInvent);
-				_G(spieler).R0SlimeUsed = true;
+				delInventory(_G(gameState).AkInvent);
+				_G(gameState).R0SlimeUsed = true;
 			} else if (isCurInventory(PILLOW_INV)) {
 				startAtsWait(172, TXT_MARK_WALK, 14, ATS_DATA);
 			}
@@ -333,7 +333,7 @@ void Room0::eyeShoot() {
 
 	while (!ende) {
 		clear_prog_ani();
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
 		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
@@ -355,7 +355,7 @@ void Room0::eyeShoot() {
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
-			adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
+			adi->delay_count = adi->delay + _G(gameState).DelaySpeed;
 			++adi->ani_count;
 		}
 	}
@@ -372,7 +372,7 @@ void Room0::eyeShoot() {
 	waitShowScreen(30);
 	clear_prog_ani();
 	setPersonPos(199 - CH_HOT_MOV_X, 145 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 }
 
 void Room0::eyeSlimeBack() {
@@ -404,7 +404,7 @@ void Room0::eyeSlimeBack() {
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
-			adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
+			adi->delay_count = adi->delay + _G(gameState).DelaySpeed;
 			++adi->ani_count;
 			if (adi->ani_count == 77)
 				ende = true;
@@ -424,7 +424,7 @@ void Room0::checkSlimeEye() {
 
 	while (adi->ani_count < adi->end_ani && !SHOULD_QUIT) {
 		clear_prog_ani();
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
 		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
@@ -438,7 +438,7 @@ void Room0::checkSlimeEye() {
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
-			adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
+			adi->delay_count = adi->delay + _G(gameState).DelaySpeed;
 			++adi->ani_count;
 		}
 	}
@@ -448,7 +448,7 @@ void Room0::checkSlimeEye() {
 	}
 
 	clear_prog_ani();
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 }
 
 void Room0::feederStart(int16 mode) {
@@ -472,7 +472,7 @@ void Room0::feederStart(int16 mode) {
 	}
 
 	bool ende = false;
-	if (_G(spieler).R0SlimeUsed)
+	if (_G(gameState).R0SlimeUsed)
 		_G(flags).AniUserAction = true;
 
 	while (!ende) {
@@ -497,7 +497,7 @@ void Room0::feederStart(int16 mode) {
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
-			adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
+			adi->delay_count = adi->delay + _G(gameState).DelaySpeed;
 			if (!mode) {
 				++adi->ani_count;
 				if (adi->ani_count > 135)
@@ -522,7 +522,7 @@ void Room0::feederStart(int16 mode) {
 }
 
 void Room0::feederExtend() {
-	for (int16 i = 0; i < 30 && !_G(spieler).R0PillowThrow; i++) {
+	for (int16 i = 0; i < 30 && !_G(gameState).R0PillowThrow; i++) {
 		clear_prog_ani();
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
@@ -552,9 +552,9 @@ void Room0::calcPillowClick(int16 aniNr) {
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
 			}
 		} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
-			if (isCurInventory(PILLOW_INV) && _G(spieler).R0SlimeUsed) {
-				delInventory(_G(spieler).AkInvent);
-				_G(spieler).R0PillowThrow = true;
+			if (isCurInventory(PILLOW_INV) && _G(gameState).R0SlimeUsed) {
+				delInventory(_G(gameState).AkInvent);
+				_G(gameState).R0PillowThrow = true;
 			} else if (isCurInventory(SLIME_INV)) {
 				startAtsWait(173, TXT_MARK_WALK, 14, ATS_DATA);
 			}
@@ -569,7 +569,7 @@ void Room0::checkFeed() {
 	int16 i = 152;
 	bool ende = false;
 
-	if (_G(spieler).R0SlimeUsed)
+	if (_G(gameState).R0SlimeUsed)
 		_G(flags).AniUserAction = true;
 
 	while (!ende) {
@@ -578,8 +578,8 @@ void Room0::checkFeed() {
 		_G(spr_info)[0]._zLevel = 190;
 
 		if (adi->ani_count == 136) {
-			_G(spieler)._personHide[P_CHEWY] = true;
-			if (!_G(spieler).R0SlimeUsed)
+			_G(gameState)._personHide[P_CHEWY] = true;
+			if (!_G(gameState).R0SlimeUsed)
 				_G(det)->stop_detail(16);
 		}
 
@@ -606,7 +606,7 @@ void Room0::checkFeed() {
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
-			adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
+			adi->delay_count = adi->delay + _G(gameState).DelaySpeed;
 			if (adi->ani_count > 141)
 				++i;
 			++adi->ani_count;
@@ -645,13 +645,13 @@ void Room0::checkFeed() {
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
-			adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
+			adi->delay_count = adi->delay + _G(gameState).DelaySpeed;
 			if (adi->ani_count > 135)
 				--adi->ani_count;
 		}
 	}
 
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 	_G(flags).AniUserAction = false;
 	clear_prog_ani();
 }
@@ -661,7 +661,7 @@ void Room0::checkPillow() {
 	adi->ani_count = 161;
 
 	bool ende = false;
-	_G(spieler)._personHide[P_CHEWY] = true;
+	_G(gameState)._personHide[P_CHEWY] = true;
 	_G(det)->startDetail(CH_WIRFT_KISSEN, 1, ANI_FRONT);
 	bool mode = false;
 
@@ -669,7 +669,7 @@ void Room0::checkPillow() {
 		clear_prog_ani();
 		if (!_G(det)->get_ani_status(CH_WIRFT_KISSEN)) {
 			mode = true;
-			_G(spieler)._personHide[P_CHEWY] = false;
+			_G(gameState)._personHide[P_CHEWY] = false;
 			setPersonPos(228 - CH_HOT_MOV_X, 143 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
 		}
 
@@ -690,7 +690,7 @@ void Room0::checkPillow() {
 			if (adi->delay_count > 0)
 				--adi->delay_count;
 			else {
-				adi->delay_count = adi->delay + _G(spieler).DelaySpeed;
+				adi->delay_count = adi->delay + _G(gameState).DelaySpeed;
 				--adi->ani_count;
 				if (adi->ani_count == 151)
 					ende = true;
@@ -736,9 +736,9 @@ void Room0::feederAni() {
 	int16 action = false;
 	feederStart(0);
 
-	if (_G(spieler).R0SlimeUsed) {
+	if (_G(gameState).R0SlimeUsed) {
 		feederExtend();
-		if (_G(spieler).R0PillowThrow) {
+		if (_G(gameState).R0PillowThrow) {
 			checkPillow();
 			feederStart(1);
 			autoMove(VERSTECK_POS, P_CHEWY);
@@ -748,8 +748,8 @@ void Room0::feederAni() {
 
 			register_cutscene(1);
 
-			_G(spieler)._personRoomNr[P_CHEWY] = 1;
-			_G(room)->loadRoom(&_G(room_blk), _G(spieler)._personRoomNr[P_CHEWY], &_G(spieler));
+			_G(gameState)._personRoomNr[P_CHEWY] = 1;
+			_G(room)->loadRoom(&_G(room_blk), _G(gameState)._personRoomNr[P_CHEWY], &_G(gameState));
 			setPersonPos(_G(Rdi)->AutoMov[4]._x - CH_HOT_MOV_X,
 			               _G(Rdi)->AutoMov[4]._y - CH_HOT_MOV_Y, P_CHEWY, P_RIGHT);
 			_G(spieler_vector)[P_CHEWY]._delayCount = 0;

@@ -42,19 +42,19 @@ static const AniBlock ABLOCK39[3] = {
 
 
 void Room68::entry() {
-	_G(spieler).ScrollxStep = 2;
-	_G(spieler).DiaAMov = 1;
+	_G(gameState).ScrollxStep = 2;
+	_G(gameState).DiaAMov = 1;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(r68HohesC) = -1;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	
-	if (_G(spieler).R68Papagei) {
+	if (_G(gameState).R68Papagei) {
 		_G(det)->showStaticSpr(12);
 		_G(det)->startDetail(21, 255, ANI_FRONT);
 	}
 
-	if (!_G(spieler).R68DivaWeg) {
+	if (!_G(gameState).R68DivaWeg) {
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
 		_G(det)->set_static_ani(18, -1);
 	} else
@@ -62,7 +62,7 @@ void Room68::entry() {
 	
 	if (!_G(flags).LoadGame) {
 		hideCur();
-		if (_G(spieler)._personRoomNr[P_HOWARD] == 68) {
+		if (_G(gameState)._personRoomNr[P_HOWARD] == 68) {
 			setPersonPos(524, 51, P_HOWARD, P_LEFT);
 			setPersonPos(550, 54, P_NICHELLE, P_LEFT);
 		}
@@ -72,10 +72,10 @@ void Room68::entry() {
 }
 
 void Room68::xit() {
-	_G(spieler).ScrollxStep = 1;
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 68) {
-		_G(spieler)._personRoomNr[P_HOWARD] = 66;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 66;
+	_G(gameState).ScrollxStep = 1;
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 68) {
+		_G(gameState)._personRoomNr[P_HOWARD] = 66;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 66;
 	}
 }
 
@@ -100,7 +100,7 @@ void Room68::setup_func() {
 	case 1:
 		if (_G(det)->get_ani_status(_G(r68HohesC)) == false) {
 			_G(r68HohesC) = 2;
-			if (_G(spieler).SpeechSwitch) {
+			if (_G(gameState).SpeechSwitch) {
 				g_engine->_sound->playSound(2, 0);
 				g_engine->_sound->playSound(_G(r68HohesC));
 				_G(det)->startDetail(_G(r68HohesC), 255, ANI_FRONT);
@@ -165,8 +165,8 @@ void Room68::talk_indigo(int16 aad_nr) {
 	_G(det)->del_static_ani(8);
 	if (aad_nr == -1) {
 		_G(det)->set_static_ani(9, -1);
-		startAadWait(384 + (int16)_G(spieler).R68IndigoDia);
-		_G(spieler).R68IndigoDia ^= 1;
+		startAadWait(384 + (int16)_G(gameState).R68IndigoDia);
+		_G(gameState).R68IndigoDia ^= 1;
 		_G(det)->del_static_ani(9);
 	} else {
 		_G(det)->set_static_ani(12, -1);
@@ -183,11 +183,11 @@ int16 Room68::use_indigo() {
 	hideCur();
 	if (isCurInventory(CLINT_500_INV)) {
 		action_flag = true;
-		if (_G(spieler).R68Lied) {
+		if (_G(gameState).R68Lied) {
 			hideCur();
 			autoMove(3, P_CHEWY);
 			auto_scroll(78, 0);
-			delInventory(_G(spieler).AkInvent);
+			delInventory(_G(gameState).AkInvent);
 			talk_indigo(394);
 			_G(cur_hide_flag) = false;
 			hideCur();
@@ -207,7 +207,7 @@ int16 Room68::use_indigo() {
 			_G(room)->set_timer_status(8, TIMER_START);
 			_G(det)->set_static_ani(8, -1);
 			new_invent_2_cur(KARTE_INV);
-			_G(spieler).R68KarteDa = true;
+			_G(gameState).R68KarteDa = true;
 		} else {
 			talk_indigo(397);
 		}
@@ -227,8 +227,8 @@ void Room68::talk_keeper() {
 	startSetAILWait(15, 1, ANI_FRONT);
 	_G(det)->set_static_ani(16, -1);
 	showCur();
-	int16 x = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[P_CHEWY].HotX;;
-	int16 y = _G(spieler_vector)[P_CHEWY].Xypos[1] - _G(spieler).scrolly;
+	int16 x = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[P_CHEWY].HotX;;
+	int16 y = _G(spieler_vector)[P_CHEWY].Xypos[1] - _G(gameState).scrolly;
 	_G(atds)->set_split_win(3, x, y);
 	startAdsWait(20);
 	_G(cur_hide_flag) = false;
@@ -245,8 +245,8 @@ int16 Room68::use_papagei() {
 	if (isCurInventory(PAPAGEI_INV)) {
 		hideCur();
 		action_flag = true;
-		_G(spieler).R68Papagei = true;
-		delInventory(_G(spieler).AkInvent);
+		_G(gameState).R68Papagei = true;
+		delInventory(_G(gameState).AkInvent);
 		autoMove(5, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->showStaticSpr(12);
@@ -259,8 +259,8 @@ int16 Room68::use_papagei() {
 }
 
 void Room68::calc_diva() {
-	if (!_G(spieler).R68DivaWeg) {
-		if (!_G(spieler).R68Papagei) {
+	if (!_G(gameState).R68DivaWeg) {
+		if (!_G(gameState).R68Papagei) {
 			if (_G(r68HohesC) == -1) {
 				_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 				_G(r68HohesC) = 0;
@@ -268,9 +268,9 @@ void Room68::calc_diva() {
 				_G(det)->startDetail(_G(r68HohesC), 1, ANI_BACK);
 				_G(det)->startDetail(18, 255, ANI_FRONT);
 			}
-		} else if (!_G(spieler).R68Gutschein && !is_chewy_busy()) {
+		} else if (!_G(gameState).R68Gutschein && !is_chewy_busy()) {
 			hideCur();
-			_G(spieler).R68Gutschein = true;
+			_G(gameState).R68Gutschein = true;
 			autoMove(4, P_CHEWY);
 			startAadWait(386);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -285,7 +285,7 @@ int16 Room68::use_keeper() {
 	int16 action_flag = false;
 	if (isCurInventory(BAR_GUT_INV)) {
 		hideCur();
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		action_flag = true;
 		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
@@ -304,20 +304,20 @@ int16 Room68::use_diva() {
 	int16 action_flag;
 	hideCur();
 	if (isCurInventory(B_MARY_INV)) {
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		action_flag = 1;
 		autoMove(4, P_CHEWY);
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 		_G(det)->hideStaticSpr(3);
 		startSetAILWait(4, 1, ANI_FRONT);
-		_G(spieler).R68Gutschein = false;
+		_G(gameState).R68Gutschein = false;
 		_G(det)->showStaticSpr(3);
 	} else if (isCurInventory(B_MARY2_INV)) {
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		action_flag = 1;
 		autoMove(4, P_CHEWY);
 		_G(det)->hideStaticSpr(3);
-		_G(spieler).R68DivaWeg = true;
+		_G(gameState).R68DivaWeg = true;
 		startAniBlock(2, ABLOCK38);
 		flic_cut(FCUT_083);
 		_G(det)->del_static_ani(18);
@@ -336,32 +336,32 @@ int16 Room68::use_diva() {
 
 void Room68::kostuem_aad(int16 aad_nr) {
 	hideCur();
-	if (_G(spieler).DiaAMov != -1) {
-		autoMove(_G(spieler).DiaAMov, P_CHEWY);
+	if (_G(gameState).DiaAMov != -1) {
+		autoMove(_G(gameState).DiaAMov, P_CHEWY);
 	}
 
 	startAadWait(aad_nr);
 
-	if (!_G(spieler).R68DivaWeg)
+	if (!_G(gameState).R68DivaWeg)
 		startAadWait(388);
-	else if (!_G(spieler).R67LiedOk)
+	else if (!_G(gameState).R67LiedOk)
 		startAadWait(389);
 	else {
-		if (_G(spieler).DisplayText == 0)
+		if (_G(gameState).DisplayText == 0)
 			_G(sndPlayer)->fadeOut(5);
 		
 		_G(SetUpScreenFunc) = nullptr;
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		goAutoXy(150, -13, P_NICHELLE, ANI_WAIT);
-		_G(spieler)._personHide[P_NICHELLE] = true;
+		_G(gameState)._personHide[P_NICHELLE] = true;
 		goAutoXy(161, 59, P_HOWARD, ANI_GO);
 		autoMove(4, P_CHEWY);
 		startAadWait(390);
 		startSetAILWait(22, 1, ANI_FRONT);
-		_G(spieler)._personHide[P_HOWARD] = true;
+		_G(gameState)._personHide[P_HOWARD] = true;
 		_G(det)->startDetail(27, 255, ANI_FRONT);
 
-		if (_G(spieler).DisplayText)
+		if (_G(gameState).DisplayText)
 			startSetAILWait(23, 3, ANI_FRONT);
 		else {
 			_G(det)->startDetail(23, 255, ANI_FRONT);
@@ -373,13 +373,13 @@ void Room68::kostuem_aad(int16 aad_nr) {
 			_G(det)->stop_detail(23);
 		}
 
-		if (_G(spieler).DisplayText) {
+		if (_G(gameState).DisplayText) {
 			g_engine->_sound->playSound(108, 1, false);
 		}
 		
 		_G(det)->startDetail(24, 255, ANI_FRONT);
 		setPersonPos(26, 40, P_NICHELLE, P_RIGHT);
-		if (_G(spieler).DisplayText) {
+		if (_G(gameState).DisplayText) {
 			startAadWait(391);
 		} else {
 			waitShowScreen(100);
@@ -405,20 +405,20 @@ void Room68::kostuem_aad(int16 aad_nr) {
 
 		g_engine->_sound->waitForSpeechToFinish();
 		
-		_G(spieler)._personHide[P_HOWARD] = false;
+		_G(gameState)._personHide[P_HOWARD] = false;
 		_G(det)->stop_detail(27);
 		_G(det)->stop_detail(24);
 		_G(det)->showStaticSpr(13);
-		_G(spieler).R68Lied = true;
+		_G(gameState).R68Lied = true;
 		autoMove(1, P_CHEWY);
 		auto_scroll(216, 0);
 		_G(det)->hideStaticSpr(13);
-		_G(spieler)._personHide[P_NICHELLE] = false;
+		_G(gameState)._personHide[P_NICHELLE] = false;
 		setPersonPos(150, -13, P_NICHELLE, P_RIGHT);
 
-		if (_G(spieler).DisplayText) {
+		if (_G(gameState).DisplayText) {
 			_G(currentSong) = -1;
-			load_room_music(_G(spieler)._personRoomNr[0]);
+			load_room_music(_G(gameState)._personRoomNr[0]);
 		}
 	}
 	showCur();

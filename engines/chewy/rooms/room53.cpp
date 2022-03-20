@@ -55,7 +55,7 @@ void Room53::man_go() {
 	_G(det)->del_static_ani(1);
 	startSetAILWait(5, 1, ANI_FRONT);
 	_G(atds)->setControlBit(319, ATS_ACTIVE_BIT, ATS_DATA);
-	if (!_G(spieler).R53Visit)
+	if (!_G(gameState).R53Visit)
 		_G(obj)->show_sib(SIB_VISIT_R53);
 }
 
@@ -66,7 +66,7 @@ void Room53::talk_man() {
 	_G(det)->del_static_ani(1);
 	startSetAILWait(2, 1, ANI_FRONT);
 	_G(det)->set_static_ani(3, -1);
-	startAadWait(269 + (_G(spieler).R53Kostuem ? 1 : 0));
+	startAadWait(269 + (_G(gameState).R53Kostuem ? 1 : 0));
 	_G(det)->del_static_ani(3);
 	startSetAILWait(4, 1, ANI_FRONT);
 	man_go();
@@ -79,8 +79,8 @@ int16 Room53::use_man() {
 	if (isCurInventory(BESTELL_INV)) {
 		action_ret = true;
 		hideCur();
-		_G(spieler).R53Kostuem = true;
-		delInventory(_G(spieler).AkInvent);
+		_G(gameState).R53Kostuem = true;
+		delInventory(_G(gameState).AkInvent);
 		autoMove(2, P_CHEWY);
 		startAadWait(271);
 		_G(room)->set_timer_status(1, TIMER_STOP);

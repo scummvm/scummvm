@@ -30,12 +30,12 @@ namespace Rooms {
 
 void Room63::entry() {
 	_G(zoom_horizont) = 76;
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(r63Schalter) = false;
 	_G(r63RunDia) = 0;
-	if (_G(spieler).R63FxMannWeg)
+	if (_G(gameState).R63FxMannWeg)
 		_G(det)->del_static_ani(5);
-	if (!_G(spieler).R63Uhr) {
+	if (!_G(gameState).R63Uhr) {
 		_G(cur_hide_flag) = false;
 		hideCur();
 		_G(det)->startDetail(12, 255, ANI_FRONT);
@@ -49,24 +49,24 @@ void Room63::entry() {
 		_G(det)->stop_detail(11);
 		_G(det)->startDetail(10, 255, ANI_FRONT);
 		showCur();
-	} else if (!_G(spieler).R63Feuer) {
+	} else if (!_G(gameState).R63Feuer) {
 		_G(det)->showStaticSpr(10);
 		_G(det)->showStaticSpr(12);
-	} else if (_G(spieler).R62LauraVerwandlung) {
+	} else if (_G(gameState).R62LauraVerwandlung) {
 		_G(atds)->setControlBit(383, ATS_ACTIVE_BIT, ATS_DATA);
 		_G(SetUpScreenFunc) = setup_func;
 		cur_2_inventory();
-		_G(spieler).scrollx = 176;
+		_G(gameState).scrollx = 176;
 		setPersonPos(424, 78, P_CHEWY, P_LEFT);
-		_G(spieler)._personHide[P_CHEWY] = true;
-		_G(spieler).room_e_obj[95].Attribut = 255;
+		_G(gameState)._personHide[P_CHEWY] = true;
+		_G(gameState).room_e_obj[95].Attribut = 255;
 		_G(r63ChewyAni) = 0;
 		_G(det)->startDetail(0, 1, ANI_FRONT);
 	}
 }
 
 void Room63::setup_func() {
-	if (!_G(spieler).R62LauraVerwandlung)
+	if (!_G(gameState).R62LauraVerwandlung)
 		return;
 
 	cur_2_inventory();
@@ -86,7 +86,7 @@ void Room63::setup_func() {
 
 	case 1:
 		if (_G(det)->get_ani_status(1) == false) {
-			_G(spieler).ScrollxStep = 4;
+			_G(gameState).ScrollxStep = 4;
 			setPersonPos(0, 0, P_CHEWY, P_RIGHT);
 			_G(det)->startDetail(22, 1, ANI_FRONT);
 			_G(det)->startDetail(2, 1, ANI_FRONT);
@@ -108,12 +108,12 @@ void Room63::setup_func() {
 				_G(flags).AutoAniPlay = true;
 				_G(flags).NoScroll = true;
 
-				_G(spieler).ScrollxStep = 16;
-				_G(spieler).scrollx -= _G(spieler).scrollx % 16;
+				_G(gameState).ScrollxStep = 16;
+				_G(gameState).scrollx -= _G(gameState).scrollx % 16;
 				auto_scroll(176, 0);
 				setPersonPos(424, 78, P_CHEWY, P_LEFT);
 				_G(flags).NoScroll = false;
-				_G(spieler).ScrollxStep = 4;
+				_G(gameState).ScrollxStep = 4;
 				if (!_G(r63Schalter)) {
 					_G(det)->startDetail(0, 1, ANI_FRONT);
 					_G(r63ChewyAni) = 0;
@@ -130,12 +130,12 @@ void Room63::setup_func() {
 }
 
 void Room63::bork_platt() {
-	_G(spieler).R62LauraVerwandlung = false;
+	_G(gameState).R62LauraVerwandlung = false;
 	_G(r63Schalter) = false;
-	_G(spieler).room_e_obj[95].Attribut = EXIT_TOP;
+	_G(gameState).room_e_obj[95].Attribut = EXIT_TOP;
 	flic_cut(FCUT_081);
 	flic_cut(FCUT_082);
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 	check_shad(4, 1);
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	autoMove(6, P_CHEWY);
@@ -150,19 +150,19 @@ void Room63::bork_platt() {
 	_G(fx_blend) = BLEND3;
 	showCur();
 	_G(flags).MainInput = true;
-	_G(spieler).R62Flucht = true;
-	_G(spieler)._personRoomNr[P_HOWARD] = 56;
+	_G(gameState).R62Flucht = true;
+	_G(gameState)._personRoomNr[P_HOWARD] = 56;
 	switchRoom(56);
 }
 
 void Room63::talk_hunter() {
 	hideCur();
 	autoMove(3, P_CHEWY);
-	if (_G(spieler).R63Uhr)
+	if (_G(gameState).R63Uhr)
 		_G(det)->hideStaticSpr(10);
 	_G(det)->startDetail(10, 255, ANI_FRONT);
 	startAadWait(356);
-	if (_G(spieler).R63Uhr) {
+	if (_G(gameState).R63Uhr) {
 		_G(det)->showStaticSpr(10);
 		_G(det)->stop_detail(10);
 	}
@@ -172,13 +172,13 @@ void Room63::talk_hunter() {
 void Room63::talk_regie() {
 	hideCur();
 	autoMove(3, P_CHEWY);
-	if (_G(spieler).R63Uhr)
+	if (_G(gameState).R63Uhr)
 		_G(det)->hideStaticSpr(12);
 	_G(det)->stop_detail(18);
 	_G(det)->startDetail(19, 255, ANI_FRONT);
 	startAadWait(357);
 	_G(det)->stop_detail(19);
-	if (_G(spieler).R63Uhr) {
+	if (_G(gameState).R63Uhr) {
 		_G(det)->showStaticSpr(12);
 	} else {
 		_G(det)->startDetail(18, 255, ANI_FRONT);
@@ -199,7 +199,7 @@ int16 Room63::use_fx_man() {
 		action_ret = true;
 		hideCur();
 		autoMove(1, P_CHEWY);
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		remove_inventory(34);
 		startAadWait(359);
 		_G(det)->del_static_ani(5);
@@ -208,7 +208,7 @@ int16 Room63::use_fx_man() {
 		startAadWait(362);
 		_G(det)->stop_detail(7);
 		startSetAILWait(8, 1, ANI_FRONT);
-		_G(spieler).R63FxMannWeg = true;
+		_G(gameState).R63FxMannWeg = true;
 		_G(atds)->setControlBit(384, ATS_ACTIVE_BIT, ATS_DATA);
 		showCur();
 	}
@@ -217,10 +217,10 @@ int16 Room63::use_fx_man() {
 
 int16 Room63::use_schalter() {
 	int16 action_ret = false;
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		action_ret = true;
-		if (_G(spieler).R63FxMannWeg) {
-			if (_G(spieler).R62LauraVerwandlung) {
+		if (_G(gameState).R63FxMannWeg) {
+			if (_G(gameState).R62LauraVerwandlung) {
 				_G(r63Schalter) = true;
 				hideCur();
 				_G(flags).MainInput = false;
@@ -266,7 +266,7 @@ int16 Room63::use_girl() {
 		action_ret = true;
 		hideCur();
 		autoMove(2, P_CHEWY);
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		_G(det)->stop_detail(12);
 		startSetAILWait(13, 1, ANI_FRONT);
 		_G(det)->set_static_ani(14, -1);
@@ -276,7 +276,7 @@ int16 Room63::use_girl() {
 		startAadWait(360);
 		_G(det)->stop_detail(15);
 		startSetAILWait(16, 1, ANI_FRONT);
-		_G(spieler).R63Uhr = true;
+		_G(gameState).R63Uhr = true;
 		_G(det)->stop_detail(10);
 		_G(det)->stop_detail(18);
 		_G(det)->showStaticSpr(10);
@@ -296,14 +296,14 @@ int16 Room63::use_aschenbecher() {
 		action_ret = true;
 		_G(cur_hide_flag) = false;
 		hideCur();
-		if (_G(spieler).R63Uhr) {
-			if (_G(spieler).R63FxMannWeg) {
+		if (_G(gameState).R63Uhr) {
+			if (_G(gameState).R63FxMannWeg) {
 				autoMove(5, P_CHEWY);
-				delInventory(_G(spieler).AkInvent);
+				delInventory(_G(gameState).AkInvent);
 				_G(flags).NoScroll = true;
 				auto_scroll(70, 0);
 				autoMove(1, P_CHEWY);
-				_G(spieler)._personHide[P_CHEWY] = true;
+				_G(gameState)._personHide[P_CHEWY] = true;
 				_G(det)->startDetail(20, 255, ANI_FRONT);
 				_G(det)->startDetail(10, 255, ANI_FRONT);
 				_G(det)->startDetail(18, 255, ANI_FRONT);
@@ -314,9 +314,9 @@ int16 Room63::use_aschenbecher() {
 				_G(atds)->setControlBit(381, ATS_ACTIVE_BIT, ATS_DATA);
 				_G(atds)->setControlBit(382, ATS_ACTIVE_BIT, ATS_DATA);
 				_G(atds)->set_ats_str(383, 1, ATS_DATA);
-				_G(spieler).R63Feuer = true;
-				_G(spieler)._personHide[P_CHEWY] = false;
-				_G(spieler).scrollx = 0;
+				_G(gameState).R63Feuer = true;
+				_G(gameState)._personHide[P_CHEWY] = false;
+				_G(gameState).scrollx = 0;
 				setPersonPos(187, 42, P_CHEWY, P_RIGHT);
 				switchRoom(64);
 				_G(flags).NoScroll = false;

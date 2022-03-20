@@ -45,11 +45,11 @@ void Room11::entry() {
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
 
-	if (_G(spieler).R12ChewyBork) {
-		if (!_G(spieler).R11DoorRightB) {
+	if (_G(gameState).R12ChewyBork) {
+		if (!_G(gameState).R11DoorRightB) {
 			_G(obj)->calc_rsi_flip_flop(SIB_TBUTTON2_R11);
-			_G(spieler).R11DoorRightB = exit_flip_flop(5, 22, -1, 98, -1, -1,
-				EXIT_TOP, -1, (int16)_G(spieler).R11DoorRightB);
+			_G(gameState).R11DoorRightB = exit_flip_flop(5, 22, -1, 98, -1, -1,
+				EXIT_TOP, -1, (int16)_G(gameState).R11DoorRightB);
 			_G(obj)->calc_all_static_detail();
 		}
 
@@ -57,8 +57,8 @@ void Room11::entry() {
 		_G(obj)->hide_sib(SIB_SCHLITZ_R11);
 		_G(obj)->hide_sib(SIB_TBUTTON2_R11);
 		_G(obj)->hide_sib(SIB_TBUTTON3_R11);
-		_G(spieler).room_e_obj[20].Attribut = 255;
-		_G(spieler).room_e_obj[21].Attribut = 255;
+		_G(gameState).room_e_obj[20].Attribut = 255;
+		_G(gameState).room_e_obj[21].Attribut = 255;
 		_G(atds)->delControlBit(121, ATS_ACTIVE_BIT, ATS_DATA);
 
 		if (!_G(flags).LoadGame) {
@@ -104,7 +104,7 @@ void Room11::bork_zwinkert() {
 }
 
 void Room11::talk_debug() {
-	if (_G(spieler).R12ChewyBork) {
+	if (_G(gameState).R12ChewyBork) {
 		_G(flags).AutoAniPlay = true;
 		autoMove(8, P_CHEWY);
 		startAdsWait(5);
@@ -116,7 +116,7 @@ void Room11::talk_debug() {
 }
 
 void Room11::chewy_bo_use() {
-	if (_G(spieler).R12ChewyBork) {
+	if (_G(gameState).R12ChewyBork) {
 		hideCur();
 		_G(flags).AutoAniPlay = true;
 
@@ -136,10 +136,10 @@ void Room11::chewy_bo_use() {
 int16 Room11::scanner() {
 	int16 actionFl = false;
 
-	if (!_G(spieler).R12ChewyBork) {
+	if (!_G(gameState).R12ChewyBork) {
 		autoMove(7, P_CHEWY);
 
-		if (!_G(spieler).R11CardOk) {
+		if (!_G(gameState).R11CardOk) {
 			actionFl = true;
 			startAadWait(13);
 		} else if (isCurInventory(BORK_INV)) {
@@ -150,15 +150,15 @@ int16 Room11::scanner() {
 			start_aad(105, 0);
 			flic_cut(FCUT_010);
 			register_cutscene(4);
-			_G(spieler).R11TerminalOk = true;
+			_G(gameState).R11TerminalOk = true;
 			cur_2_inventory();
 			_G(menu_item) = CUR_TALK;
 			cursorChoice(_G(menu_item));
 			startAadWait(12);
 			showCur();
 			loadAdsDia(3);
-		} else if (!_G(spieler).inv_cur) {
-			if (!_G(spieler).R11TerminalOk) {
+		} else if (!_G(gameState).inv_cur) {
+			if (!_G(gameState).R11TerminalOk) {
 				actionFl = true;
 				flic_cut(FCUT_009);
 				startAadWait(20);
@@ -176,12 +176,12 @@ int16 Room11::scanner() {
 }
 
 void Room11::get_card() {
-	if (_G(spieler).R11CardOk) {
+	if (_G(gameState).R11CardOk) {
 		cur_2_inventory();
-		_G(spieler).R11CardOk = false;
-		_G(obj)->addInventory(_G(spieler).R11IdCardNr, &_G(room_blk));
+		_G(gameState).R11CardOk = false;
+		_G(obj)->addInventory(_G(gameState).R11IdCardNr, &_G(room_blk));
 
-		_G(spieler).AkInvent = _G(spieler).R11IdCardNr;
+		_G(gameState).AkInvent = _G(gameState).R11IdCardNr;
 		cursorChoice(CUR_AK_INVENT);
 		cursorChoice(CUR_AK_INVENT);
 		_G(det)->stop_detail(0);
@@ -192,14 +192,14 @@ void Room11::get_card() {
 
 void Room11::put_card() {
 	if (isCurInventory(RED_CARD_INV) || isCurInventory(YEL_CARD_INV)) {
-		_G(spieler).R11IdCardNr = _G(spieler).AkInvent;
-		delInventory(_G(spieler).R11IdCardNr);
+		_G(gameState).R11IdCardNr = _G(gameState).AkInvent;
+		delInventory(_G(gameState).R11IdCardNr);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
 		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 1, ATS_DATA);
 		_G(atds)->set_ats_str(84, TXT_MARK_LOOK, 1, ATS_DATA);
-		_G(spieler).R11CardOk = true;
+		_G(gameState).R11CardOk = true;
 
-		if (!_G(spieler).R11TerminalOk)
+		if (!_G(gameState).R11TerminalOk)
 			startAadWait(16);
 	}
 }

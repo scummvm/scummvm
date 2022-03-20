@@ -47,10 +47,10 @@ void Room31::entry() {
 }
 
 void Room31::surimy_go() {
-	if (!_G(spieler).R39ScriptOk && _G(spieler).R25SurimyLauf) {
-		if (_G(spieler).R31SurimyGo >= 3) {
+	if (!_G(gameState).R39ScriptOk && _G(gameState).R25SurimyLauf) {
+		if (_G(gameState).R31SurimyGo >= 3) {
 			hideCur();
-			_G(spieler).R31SurimyGo = 0;
+			_G(gameState).R31SurimyGo = 0;
 			_G(det)->load_taf_seq(39, 8, nullptr);
 			_G(auto_obj) = 1;
 			_G(mov_phasen)[SURIMY_OBJ].AtsText = 0;
@@ -58,7 +58,7 @@ void Room31::surimy_go() {
 			_G(mov_phasen)[SURIMY_OBJ].Repeat = 1;
 			_G(mov_phasen)[SURIMY_OBJ].ZoomFak = 0;
 			_G(auto_mov_obj)[SURIMY_OBJ].Id = AUTO_OBJ0;
-			_G(auto_mov_vector)[SURIMY_OBJ].Delay = _G(spieler).DelaySpeed + 2;
+			_G(auto_mov_vector)[SURIMY_OBJ].Delay = _G(gameState).DelaySpeed + 2;
 			_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
 			init_auto_obj(SURIMY_OBJ, &SURIMY_TAF19_PHASES[0][0], 2, (const MovLine *)SURIMY_MPKT);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
@@ -67,19 +67,19 @@ void Room31::surimy_go() {
 			_G(auto_obj) = 0;
 			showCur();
 		} else {
-			++_G(spieler).R31SurimyGo;
+			++_G(gameState).R31SurimyGo;
 		}
 	}
 }
 
 void Room31::calc_luke() {
-	if (!_G(spieler).R31KlappeZu) {
+	if (!_G(gameState).R31KlappeZu) {
 		for (int16 i = 0; i < 3; i++)
 			_G(det)->showStaticSpr(5 + i);
 
 		_G(atds)->set_ats_str(244, 1, ATS_DATA);
 		_G(atds)->delControlBit(245, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(spieler).room_e_obj[75].Attribut = EXIT_BOTTOM;
+		_G(gameState).room_e_obj[75].Attribut = EXIT_BOTTOM;
 
 	} else {
 		for (int16 i = 0; i < 3; i++)
@@ -87,19 +87,19 @@ void Room31::calc_luke() {
 
 		_G(atds)->set_ats_str(244, 0, ATS_DATA);
 		_G(atds)->setControlBit(245, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(spieler).room_e_obj[75].Attribut = 255;
+		_G(gameState).room_e_obj[75].Attribut = 255;
 	}
 }
 
 int16 Room31::open_luke() {
 	int16 action_flag = false;
 	
-	if (!_G(spieler).inv_cur && _G(spieler).R31KlappeZu) {
+	if (!_G(gameState).inv_cur && _G(gameState).R31KlappeZu) {
 		action_flag = true;
 		hideCur();
 		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
-		_G(spieler).R31KlappeZu = false;
+		_G(gameState).R31KlappeZu = false;
 		g_engine->_sound->playSound(3);
 		calc_luke();
 		showCur();
@@ -111,12 +111,12 @@ int16 Room31::open_luke() {
 int16 Room31::close_luke_proc1() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur && !_G(spieler).R31KlappeZu) {
+	if (!_G(gameState).inv_cur && !_G(gameState).R31KlappeZu) {
 		action_flag = true;
 		hideCur();
 		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		_G(spieler).R31KlappeZu = true;
+		_G(gameState).R31KlappeZu = true;
 		g_engine->_sound->playSound(3);
 		calc_luke();
 		showCur();
@@ -126,11 +126,11 @@ int16 Room31::close_luke_proc1() {
 }
 
 void Room31::close_luke_proc3() {
-	if (!_G(spieler).R31KlappeZu) {
+	if (!_G(gameState).R31KlappeZu) {
 		hideCur();
 		autoMove(2, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
-		_G(spieler).R31KlappeZu = true;
+		_G(gameState).R31KlappeZu = true;
 		g_engine->_sound->playSound(3);
 		g_engine->_sound->playSound(3, 1, false);
 		calc_luke();
@@ -144,25 +144,25 @@ int16 Room31::use_topf() {
 	int16 action_flag = false;
 
 	hideCur();
-	if (_G(spieler).inv_cur) {
-		if (_G(spieler).R31PflanzeWeg) {
+	if (_G(gameState).inv_cur) {
+		if (_G(gameState).R31PflanzeWeg) {
 			if (isCurInventory(K_KERNE_INV)) {
-				_G(spieler).R31KoernerDa = true;
+				_G(gameState).R31KoernerDa = true;
 				autoMove(1, P_CHEWY);
 				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-				delInventory(_G(spieler).AkInvent);
+				delInventory(_G(gameState).AkInvent);
 				ani_nr = CH_TALK3;
 				dia_nr = 150;
 				_G(atds)->set_ats_str(242, 2, ATS_DATA);
 
 			} else if (isCurInventory(MILCH_WAS_INV)) {
-				if (_G(spieler).R31KoernerDa) {
-					_G(spieler).R31Wasser = true;
+				if (_G(gameState).R31KoernerDa) {
+					_G(gameState).R31Wasser = true;
 					autoMove(1, P_CHEWY);
-					_G(spieler)._personHide[P_CHEWY] = true;
+					_G(gameState)._personHide[P_CHEWY] = true;
 					startAniBlock(3, ABLOCK30);
-					_G(spieler)._personHide[P_CHEWY] = false;
-					delInventory(_G(spieler).AkInvent);
+					_G(gameState)._personHide[P_CHEWY] = false;
+					delInventory(_G(gameState).AkInvent);
 					_G(obj)->addInventory(MILCH_LEER_INV, &_G(room_blk));
 					inventory_2_cur(MILCH_LEER_INV);
 					ani_nr = CH_TALK6;
@@ -173,9 +173,9 @@ int16 Room31::use_topf() {
 					dia_nr = 152;
 				}
 			} else if (isCurInventory(SURIMY_INV)) {
-				if (!_G(spieler).R31SurFurz) {
-					if (_G(spieler).R31Wasser) {
-						if (!_G(spieler).R28SurimyCar) {
+				if (!_G(gameState).R31SurFurz) {
+					if (_G(gameState).R31Wasser) {
+						if (!_G(gameState).R28SurimyCar) {
 							ani_nr = CH_TALK5;
 							dia_nr = 180;
 						} else {
@@ -183,7 +183,7 @@ int16 Room31::use_topf() {
 							autoMove(3, P_CHEWY);
 							flic_cut(FCUT_046);
 							register_cutscene(13);
-							_G(spieler).R31SurFurz = true;
+							_G(gameState).R31SurFurz = true;
 							ani_nr = CH_TALK6;
 							dia_nr = 156;
 							_G(atds)->set_ats_str(242, 4, ATS_DATA);

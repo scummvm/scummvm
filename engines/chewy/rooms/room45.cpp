@@ -30,31 +30,31 @@ namespace Chewy {
 namespace Rooms {
 
 void Room45::entry(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(r45_delay) = 0;
 	_G(zoom_horizont) = 150;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 80;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 70;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 80;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 70;
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 46) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 46) {
 		_G(spieler_mi)[P_HOWARD].Mode = true;
-		_G(spieler)._personRoomNr[P_HOWARD] = 45;
+		_G(gameState)._personRoomNr[P_HOWARD] = 45;
 	}
 
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	if (!_G(flags).LoadGame) {
 		int16 ch_x, ch_y;
 		int16 ho_x, ho_y;
-		if (_G(spieler).R48TaxiEntry) {
+		if (_G(gameState).R48TaxiEntry) {
 			ch_x = 67;
 			ch_y = 146;
 			ho_x = 43;
 			ho_y = 129;
 
-			_G(spieler).R48TaxiEntry = false;
+			_G(gameState).R48TaxiEntry = false;
 			_G(mouseLeftClick) = false;
 		} else {
 			if (eib_nr == 72) {
@@ -62,7 +62,7 @@ void Room45::entry(int16 eib_nr) {
 				ch_y = 146;
 				ho_x = 304;
 				ho_y = 130;
-				_G(spieler).scrollx = 130;
+				_G(gameState).scrollx = 130;
 			} else {
 				ch_x = 68;
 				ch_y = 132;
@@ -77,13 +77,13 @@ void Room45::entry(int16 eib_nr) {
 }
 
 void Room45::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 45) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 45) {
 		_G(spieler_mi)[P_HOWARD].Mode = false;
 
 		if (eib_nr == 87) {
-			_G(spieler)._personRoomNr[P_HOWARD] = 40;
+			_G(gameState)._personRoomNr[P_HOWARD] = 40;
 		}
 	}
 
@@ -99,7 +99,7 @@ void Room45::setup_func() {
 
 	if (_G(menu_display) == 0) {
 		if (!_G(r45_delay)) {
-			_G(r45_delay) = _G(spieler).DelaySpeed / 2;
+			_G(r45_delay) = _G(gameState).DelaySpeed / 2;
 
 			for (int16 i = 0; i < R45_MAX_PERSON; i++) {
 				if (_G(r45_pinfo)[i][0] == 1) {
@@ -141,7 +141,7 @@ void Room45::setup_func() {
 			--_G(r45_delay);
 		}
 
-		if (_G(spieler)._personRoomNr[P_HOWARD] == 45 && _G(HowardMov) != 2) {
+		if (_G(gameState)._personRoomNr[P_HOWARD] == 45 && _G(HowardMov) != 2) {
 			calc_person_look();
 			const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
 
@@ -170,14 +170,14 @@ int16 Room45::use_taxi() {
 	hideCur();
 	autoMove(1, P_CHEWY);
 
-	if (!_G(spieler).inv_cur) {
-		if (_G(spieler).ChewyAni == CHEWY_PUMPKIN) {
+	if (!_G(gameState).inv_cur) {
+		if (_G(gameState).ChewyAni == CHEWY_PUMPKIN) {
 			action_ret = true;
 			talk_taxi(254);
-		} else if (!_G(spieler).R45TaxiOk) {
+		} else if (!_G(gameState).R45TaxiOk) {
 			action_ret = true;
 			talk_taxi(260);
-		} else if (_G(spieler).R45TaxiOk) {
+		} else if (_G(gameState).R45TaxiOk) {
 			action_ret = true;
 			taxi_mov();
 		}
@@ -185,7 +185,7 @@ int16 Room45::use_taxi() {
 		action_ret = true;
 		delInventory(RING_INV);
 		talk_taxi(256);
-		_G(spieler).R45TaxiOk = true;
+		_G(gameState).R45TaxiOk = true;
 		taxi_mov();
 	} else if (isCurInventory(UHR_INV)) {
 		action_ret = true;
@@ -215,14 +215,14 @@ void Room45::taxi_mov() {
 	g_engine->_sound->playSound(15, 1);
 	_G(det)->showStaticSpr(11);
 	autoMove(3, P_CHEWY);
-	_G(spieler)._personHide[P_CHEWY] = true;
-	_G(spieler).R48TaxiPerson[P_CHEWY] = true;
+	_G(gameState)._personHide[P_CHEWY] = true;
+	_G(gameState).R48TaxiPerson[P_CHEWY] = true;
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 45) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 45) {
 		goAutoXy(93, 127, P_HOWARD, ANI_WAIT);
-		_G(spieler)._personHide[P_HOWARD] = true;
-		_G(spieler).R48TaxiPerson[P_HOWARD] = true;
-		_G(spieler)._personRoomNr[P_HOWARD] = 48;
+		_G(gameState)._personHide[P_HOWARD] = true;
+		_G(gameState).R48TaxiPerson[P_HOWARD] = true;
+		_G(gameState)._personRoomNr[P_HOWARD] = 48;
 	}
 
 	_G(det)->hideStaticSpr(11);
@@ -239,7 +239,7 @@ int16 Room45::use_boy() {
 	hideCur();
 	autoMove(2, P_CHEWY);
 
-	if (!_G(spieler).R45MagOk) {
+	if (!_G(gameState).R45MagOk) {
 		if (isCurInventory(DOLLAR175_INV)) {
 			action_ret = true;
 			new_invent_2_cur(CUTMAG_INV);
@@ -250,7 +250,7 @@ int16 Room45::use_boy() {
 			startSetAILWait(1, 1, ANI_FRONT);
 			_G(room)->set_timer_status(0, TIMER_START);
 			_G(det)->set_static_ani(0, -1);
-			_G(spieler).R45MagOk = true;
+			_G(gameState).R45MagOk = true;
 		}
 	} else {
 		startAadWait(259);
@@ -264,7 +264,7 @@ void Room45::talk_boy() {
 	int16 aad_nr;
 	hideCur();
 
-	if (!_G(spieler).R45MagOk) {
+	if (!_G(gameState).R45MagOk) {
 		autoMove(2, P_CHEWY);
 		aad_nr = 257;
 	} else {

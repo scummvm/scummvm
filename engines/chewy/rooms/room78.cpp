@@ -30,21 +30,21 @@ namespace Chewy {
 namespace Rooms {
 
 void Room78::entry() {
-	_G(spieler).r76State = -1;
+	_G(gameState).r76State = -1;
 	g_engine->_sound->playSound(0, 1);
 	g_engine->_sound->playSound(0, 1, false);
 	hideCur();
-	_G(spieler).ScrollxStep = 1;
-	_G(spieler)._personHide[P_CHEWY] = true;
-	_G(spieler)._personHide[P_HOWARD] = true;
-	_G(spieler)._personHide[P_NICHELLE] = true;
-	_G(spieler).scrollx = 320;
+	_G(gameState).ScrollxStep = 1;
+	_G(gameState)._personHide[P_CHEWY] = true;
+	_G(gameState)._personHide[P_HOWARD] = true;
+	_G(gameState)._personHide[P_NICHELLE] = true;
+	_G(gameState).scrollx = 320;
 	setPersonPos(0, 0, P_CHEWY, P_RIGHT);
 
 	int delay = 0;
 	int destRoom;
 
-	if (_G(spieler).flags29_80) {
+	if (_G(gameState).flags29_80) {
 		_G(det)->startDetail(3, 255, false);
 
 		int destX = 592;
@@ -53,7 +53,7 @@ void Room78::entry() {
 			if (delay)
 				--delay;
 			else {
-				delay = _G(spieler).DelaySpeed / 2;
+				delay = _G(gameState).DelaySpeed / 2;
 				destX -= 4;
 			}
 			setupScreen(DO_SETUP);
@@ -79,7 +79,7 @@ void Room78::entry() {
 			else {
 				det0DestX -= 4;
 				if (det0DestX <= 276 && flag1 == 0) {
-					if (_G(spieler).flags29_20) {
+					if (_G(gameState).flags29_20) {
 						if (det0DestX > 0)
 							flag1 = true;
 					} else {
@@ -92,7 +92,7 @@ void Room78::entry() {
 				det4DestX -= 4;
 				
 				if (det4DestX <= 222 && flag2 == 0) {
-					if (_G(spieler).flags29_10) {
+					if (_G(gameState).flags29_10) {
 						flag2 = true;
 						_G(det)->stop_detail(4);
 						if (flag1 == 0) {
@@ -106,7 +106,7 @@ void Room78::entry() {
 					}
 				}
 
-				delay = _G(spieler).DelaySpeed / 3;
+				delay = _G(gameState).DelaySpeed / 3;
 			}
 
 			if (flag1 && flag2)
@@ -115,11 +115,11 @@ void Room78::entry() {
 			setupScreen(DO_SETUP);
 		}
 
-		if (_G(spieler).flags29_10 && _G(spieler).flags29_20) {
-			_G(spieler).r76State = 1;
+		if (_G(gameState).flags29_10 && _G(gameState).flags29_20) {
+			_G(gameState).r76State = 1;
 			destRoom = 77;
 		} else {
-			_G(spieler).r76State = 0;
+			_G(gameState).r76State = 0;
 			destRoom = 76;
 		}		
 	}
@@ -129,10 +129,10 @@ void Room78::entry() {
 }
 
 void Room78::xit() {
-	_G(spieler).ScrollxStep = 1;
-	_G(spieler)._personHide[P_CHEWY] = false;
-	_G(spieler)._personHide[P_HOWARD] = false;
-	_G(spieler)._personHide[P_NICHELLE] = false;
+	_G(gameState).ScrollxStep = 1;
+	_G(gameState)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_HOWARD] = false;
+	_G(gameState)._personHide[P_NICHELLE] = false;
 }
 
 } // namespace Rooms

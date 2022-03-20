@@ -51,10 +51,10 @@ static const AniBlock ABLOCK29[2] = {
 };
 
 void Room39::entry() {
-	if (!_G(spieler).R41Einbruch) {
-		if (_G(spieler).R39HowardDa) {
+	if (!_G(gameState).R41Einbruch) {
+		if (_G(gameState).R39HowardDa) {
 			_G(det)->showStaticSpr(10);
-			if (!_G(spieler).R39HowardWach)
+			if (!_G(gameState).R39HowardWach)
 				_G(det)->startDetail(1, 255, ANI_FRONT);
 			else
 				_G(det)->set_static_ani(5, -1);
@@ -72,22 +72,22 @@ short Room39::use_howard() {
 	int16 ani_nr = 0;
 	int16 action_flag = false;
 
-	if (!_G(spieler).R39HowardWach) {
+	if (!_G(gameState).R39HowardWach) {
 		int16 dia_nr;
-		if (_G(spieler).inv_cur) {
+		if (_G(gameState).inv_cur) {
 			if (isCurInventory(MANUSKRIPT_INV)) {
 				hideCur();
-				_G(spieler).R39HowardWach = true;
-				_G(spieler).R39ScriptOk = true;
+				_G(gameState).R39HowardWach = true;
+				_G(gameState).R39ScriptOk = true;
 				autoMove(3, P_CHEWY);
-				_G(spieler)._personHide[P_CHEWY] = true;
+				_G(gameState)._personHide[P_CHEWY] = true;
 				_G(det)->startDetail(6, 255, ANI_FRONT);
 				startAadWait(170);
 				_G(det)->stop_detail(6);
 				startSetAILWait(7, 1, ANI_FRONT);
-				_G(spieler)._personHide[P_CHEWY] = false;
+				_G(gameState)._personHide[P_CHEWY] = false;
 
-				delInventory(_G(spieler).AkInvent);
+				delInventory(_G(gameState).AkInvent);
 				_G(det)->stop_detail(1);
 				startAniBlock(2, ABLOCK33);
 				start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
@@ -99,11 +99,11 @@ short Room39::use_howard() {
 				startAadWait(169);
 				showCur();
 
-				_G(spieler).PersonGlobalDia[P_HOWARD] = 10012;
-				_G(spieler).PersonDiaRoom[P_HOWARD] = true;;
+				_G(gameState).PersonGlobalDia[P_HOWARD] = 10012;
+				_G(gameState).PersonDiaRoom[P_HOWARD] = true;;
 				calc_person_dia(P_HOWARD);
 
-				if (_G(spieler).R41HowardDiaOK) {
+				if (_G(gameState).R41HowardDiaOK) {
 					ok();
 				}
 
@@ -131,13 +131,13 @@ short Room39::use_howard() {
 }
 
 void Room39::talk_howard() {
-	if (_G(spieler).R39HowardWach) {
+	if (_G(gameState).R39HowardWach) {
 		autoMove(3, P_CHEWY);
-		_G(spieler).PersonGlobalDia[P_HOWARD] = 10012;
-		_G(spieler).PersonDiaRoom[P_HOWARD] = true;
+		_G(gameState).PersonGlobalDia[P_HOWARD] = 10012;
+		_G(gameState).PersonDiaRoom[P_HOWARD] = true;
 		calc_person_dia(P_HOWARD);
 
-		if (_G(spieler).R41HowardDiaOK) {
+		if (_G(gameState).R41HowardDiaOK) {
 			ok();
 		}
 	} else {
@@ -147,10 +147,10 @@ void Room39::talk_howard() {
 }
 
 void Room39::ok() {
-	_G(spieler).R41Einbruch = true;
+	_G(gameState).R41Einbruch = true;
 
 	Room43::night_small();
-	_G(spieler)._personRoomNr[P_HOWARD] = 27;
+	_G(gameState)._personRoomNr[P_HOWARD] = 27;
 	_G(obj)->show_sib(SIB_SURIMY_R27);
 	_G(obj)->show_sib(SIB_ZEITUNG_R27);
 	_G(obj)->calc_rsi_flip_flop(SIB_SURIMY_R27);
@@ -175,34 +175,34 @@ int16 Room39::use_tv() {
 	if (isCurInventory(ZAPPER_INV)) {
 		_G(mouseLeftClick) = false;
 		
-		_G(spieler).R39TvOn = true;
-		if (_G(spieler).R39TvKanal >= 5)
-			_G(spieler).R39TvKanal = -1;
+		_G(gameState).R39TvOn = true;
+		if (_G(gameState).R39TvKanal >= 5)
+			_G(gameState).R39TvKanal = -1;
 
 		_G(flags).NoPalAfterFlc = true;
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		flic_cut(FCUT_042);
-		++_G(spieler).R39TvKanal;
+		++_G(gameState).R39TvKanal;
 		_G(flags).NoPalAfterFlc = true;
 
-		if (_G(spieler).R39TvKanal == 2)
+		if (_G(gameState).R39TvKanal == 2)
 			flic_cut(FCUT_036);
-		else if (_G(spieler).R39TvKanal == 5)
+		else if (_G(gameState).R39TvKanal == 5)
 			flic_cut(FCUT_033);
 
 		look_tv(false);
 		set_tv();
 		cls_flag = true;
 
-		if (!_G(spieler).R39TranslatorUsed) {
+		if (!_G(gameState).R39TranslatorUsed) {
 			ani_nr = CH_TALK11;
 			dia_nr = 78;
-		} else if (!_G(spieler).R39TvKanal && _G(spieler).R39ClintNews < 3) {
+		} else if (!_G(gameState).R39TvKanal && _G(gameState).R39ClintNews < 3) {
 			dia_nr = -1;
 			ani_nr = -1;
 		} else {
-			if (80 + _G(spieler).R39TvKanal != 85)
+			if (80 + _G(gameState).R39TvKanal != 85)
 				dia_nr = -1;
 			else
 				dia_nr = 85;
@@ -211,15 +211,15 @@ int16 Room39::use_tv() {
 		}
 
 		action_flag = true;
-	} else if (isCurInventory(TRANSLATOR_INV) && _G(spieler).ChewyAni != CHEWY_ROCKER) {
+	} else if (isCurInventory(TRANSLATOR_INV) && _G(gameState).ChewyAni != CHEWY_ROCKER) {
 		action_flag = true;
-		if (_G(spieler).R39TvOn) {
+		if (_G(gameState).R39TvOn) {
 			start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
-			_G(spieler).R39TranslatorUsed = true;
+			_G(gameState).R39TranslatorUsed = true;
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(FCUT_041);
-			_G(spieler).R39TvKanal = 0;
-			_G(spieler).R39ClintNews = 0;
+			_G(gameState).R39TvKanal = 0;
+			_G(gameState).R39ClintNews = 0;
 			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
 			_G(out)->setPalette(_G(pal));
@@ -243,19 +243,19 @@ int16 Room39::use_tv() {
 
 		set_tv();
 
-	} else if (isCurInventory(RECORDER_INV) && _G(spieler).ChewyAni != CHEWY_ROCKER) {
+	} else if (isCurInventory(RECORDER_INV) && _G(gameState).ChewyAni != CHEWY_ROCKER) {
 		action_flag = true;
-		if (_G(spieler).R39TvOn) {
-			if (_G(spieler).R39TranslatorUsed) {
+		if (_G(gameState).R39TvOn) {
+			if (_G(gameState).R39TranslatorUsed) {
 				start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 				startAadWait(98);
-				_G(spieler)._personHide[P_CHEWY] = true;
+				_G(gameState)._personHide[P_CHEWY] = true;
 				startAniBlock(2, ABLOCK29);
-				_G(spieler)._personHide[P_CHEWY] = false;
+				_G(gameState)._personHide[P_CHEWY] = false;
 				ani_nr = CH_TALK5;
 				dia_nr = 99;
-				_G(atds)->set_ats_str(RECORDER_INV, _G(spieler).R39TvKanal + 1, INV_ATS_DATA);
-				_G(spieler).R39TvRecord = _G(spieler).R39TvKanal + 1;
+				_G(atds)->set_ats_str(RECORDER_INV, _G(gameState).R39TvKanal + 1, INV_ATS_DATA);
+				_G(gameState).R39TvRecord = _G(gameState).R39TvKanal + 1;
 			} else {
 				ani_nr = CH_TALK12;
 				dia_nr = 97;
@@ -286,20 +286,20 @@ int16 Room39::use_tv() {
 }
 
 void Room39::look_tv(bool cls_mode) {
-	if (_G(spieler).R39TvOn) {
+	if (_G(gameState).R39TvOn) {
 		if (!_G(flags).AutoAniPlay) {
 			_G(flags).AutoAniPlay = true;
 			int16 flic_nr;
 			int16 dia_nr;
-			if (!_G(spieler).R39TvKanal && _G(spieler).R39ClintNews < 3) {
+			if (!_G(gameState).R39TvKanal && _G(gameState).R39ClintNews < 3) {
 				flic_nr = FCUT_038;
-				++_G(spieler).R39ClintNews;
+				++_G(gameState).R39ClintNews;
 				dia_nr = 79;
 			} else {
-				flic_nr = TV_FLIC[_G(spieler).R39TvKanal];
-				if (!_G(spieler).R39TvKanal)
-					_G(spieler).R39ClintNews = 0;
-				dia_nr = 80 + _G(spieler).R39TvKanal;
+				flic_nr = TV_FLIC[_G(gameState).R39TvKanal];
+				if (!_G(gameState).R39TvKanal)
+					_G(gameState).R39ClintNews = 0;
+				dia_nr = 80 + _G(gameState).R39TvKanal;
 			}
 
 			if (cls_mode) {
@@ -309,7 +309,7 @@ void Room39::look_tv(bool cls_mode) {
 				_G(flags).NoPalAfterFlc = true;
 			}
 
-			if (_G(spieler).R39TranslatorUsed) {
+			if (_G(gameState).R39TranslatorUsed) {
 				if (dia_nr != 85)
 					start_aad(dia_nr, -1);
 			}
@@ -323,7 +323,7 @@ void Room39::look_tv(bool cls_mode) {
 				_G(out)->setPalette(_G(pal));
 				_G(flags).NoPalAfterFlc = false;
 
-				if (_G(spieler).R39TranslatorUsed && dia_nr == 85)
+				if (_G(gameState).R39TranslatorUsed && dia_nr == 85)
 					startAadWait(dia_nr);
 			}
 		}
@@ -337,16 +337,16 @@ void Room39::set_tv() {
 	for (int16 i = 0; i < 6; i++)
 		_G(det)->hideStaticSpr(i + 4);
 
-	if (_G(spieler).R39TvOn) {
-		if (_G(spieler).R39TvKanal == 2) {
+	if (_G(gameState).R39TvOn) {
+		if (_G(gameState).R39TvKanal == 2) {
 			_G(det)->startDetail(0, 255, ANI_FRONT);
 		} else {
 			_G(det)->stop_detail(0);
-			_G(det)->showStaticSpr(_G(spieler).R39TvKanal + 4);
+			_G(det)->showStaticSpr(_G(gameState).R39TvKanal + 4);
 		}
 
-		if (_G(spieler).R39TranslatorUsed) {
-			_G(atds)->set_ats_str(229, TXT_MARK_LOOK, 2 + _G(spieler).R39TvKanal, ATS_DATA);
+		if (_G(gameState).R39TranslatorUsed) {
+			_G(atds)->set_ats_str(229, TXT_MARK_LOOK, 2 + _G(gameState).R39TvKanal, ATS_DATA);
 		} else {
 			_G(atds)->set_ats_str(229, TXT_MARK_LOOK, 1, ATS_DATA);
 		}

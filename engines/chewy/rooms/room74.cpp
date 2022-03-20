@@ -32,11 +32,11 @@ namespace Rooms {
 void Room74::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
-	_G(spieler).ScrollxStep = 2;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 70;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 100;
-	_G(spieler).ZoomXy[P_NICHELLE][0] = 70;
-	_G(spieler).ZoomXy[P_NICHELLE][1] = 100;
+	_G(gameState).ScrollxStep = 2;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 70;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 100;
+	_G(gameState).ZoomXy[P_NICHELLE][0] = 70;
+	_G(gameState).ZoomXy[P_NICHELLE][1] = 100;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(zoom_horizont) = 110;
@@ -44,7 +44,7 @@ void Room74::entry(int16 eib_nr) {
 	_G(zoom_mov_fak) = 3;
 	_G(SetUpScreenFunc) = setup_func;
 
-	if (_G(spieler).flags29_1)
+	if (_G(gameState).flags29_1)
 		_G(det)->startDetail(0, 255, false);
 
 	if (_G(flags).LoadGame)
@@ -55,7 +55,7 @@ void Room74::entry(int16 eib_nr) {
 		leftEntry();
 		break;
 	case 108:
-		_G(spieler).scrollx = 188;
+		_G(gameState).scrollx = 188;
 		Room75::proc1();
 		break;
 	case 109:
@@ -67,19 +67,19 @@ void Room74::entry(int16 eib_nr) {
 }
 
 void Room74::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] != 74)
+	if (_G(gameState)._personRoomNr[P_HOWARD] != 74)
 		return;
 
 	switch (eib_nr) {
 	case 112:
 	case 113:
-		_G(spieler)._personRoomNr[P_HOWARD] = _G(spieler)._personRoomNr[P_NICHELLE] = 72;
+		_G(gameState)._personRoomNr[P_HOWARD] = _G(gameState)._personRoomNr[P_NICHELLE] = 72;
 		break;
 
 	case 114:
-		_G(spieler)._personRoomNr[P_HOWARD] = _G(spieler)._personRoomNr[P_NICHELLE] = 71;
+		_G(gameState)._personRoomNr[P_HOWARD] = _G(gameState)._personRoomNr[P_NICHELLE] = 71;
 		break;
 
 	default:
@@ -93,17 +93,17 @@ int Room74::proc1() {
 
 	if (isCurInventory(MACHETE_INV)) {
 		retVal = 1;
-		_G(spieler).R74CutRubberPlant = true;
+		_G(gameState).R74CutRubberPlant = true;
 		autoMove(4, P_CHEWY);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(1, 1, ANI_FRONT);
 		setPersonPos(272, 116, P_CHEWY, P_RIGHT);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(det)->startDetail(0, 255, false);
-		_G(spieler).flags29_1 = true;
+		_G(gameState).flags29_1 = true;
 		_G(atds)->set_ats_str(435, 1, ATS_DATA);
 
-	} else if (!_G(spieler).inv_cur && _G(spieler).R74CutRubberPlant) {
+	} else if (!_G(gameState).inv_cur && _G(gameState).R74CutRubberPlant) {
 		_G(atds)->setControlBit(435, ATS_ACTIVE_BIT, ATS_DATA);
 		autoMove(5, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);

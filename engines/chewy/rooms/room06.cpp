@@ -58,18 +58,18 @@ void Room6::entry() {
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 2;
 
-	if (_G(spieler).R6BolaSchild && _G(spieler).R6RaumBetreten < 2) {
+	if (_G(gameState).R6BolaSchild && _G(gameState).R6RaumBetreten < 2) {
 		_G(det)->startDetail(7, 255, ANI_FRONT);
 		_G(atds)->delControlBit(44, ATS_ACTIVE_BIT, ATS_DATA);
 		if (!_G(flags).LoadGame)
-			++_G(spieler).R6RaumBetreten;
+			++_G(gameState).R6RaumBetreten;
 
-		if (_G(spieler).R6RaumBetreten == 2) {
+		if (_G(gameState).R6RaumBetreten == 2) {
 			hideCur();
 			_G(det)->stop_detail(7);
 			init_robo();
 			wait_auto_obj(0);
-			_G(spieler).R6BolaOk = true;
+			_G(gameState).R6BolaOk = true;
 			_G(obj)->show_sib(SIB_BOLA_BUTTON_R6);
 			_G(obj)->hide_sib(SIB_BOLA_R6);
 			_G(atds)->setControlBit(44, ATS_ACTIVE_BIT, ATS_DATA);
@@ -86,17 +86,17 @@ void Room6::init_robo() {
 	_G(mov_phasen)[ROBO_OBJ].Repeat = 1;
 	_G(mov_phasen)[ROBO_OBJ].ZoomFak = 0;
 	_G(auto_mov_obj)[ROBO_OBJ].Id = AUTO_OBJ0;
-	_G(auto_mov_vector)[ROBO_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_vector)[ROBO_OBJ].Delay = _G(gameState).DelaySpeed;
 	_G(auto_mov_obj)[ROBO_OBJ].Mode = true;
 	init_auto_obj(ROBO_OBJ, &ROBO_PHASEN[0][0], 3, (const MovLine *)ROBO_MPKT);
 }
 
 void Room6::bola_button() {
-	if (!_G(spieler).R6BolaBecher) {
+	if (!_G(gameState).R6BolaBecher) {
 		_G(det)->hideStaticSpr(0);
 		startSetAILWait(0, 1, ANI_FRONT);
-		if (_G(spieler).R6BolaOk) {
-			_G(spieler).R6BolaBecher = true;
+		if (_G(gameState).R6BolaOk) {
+			_G(gameState).R6BolaBecher = true;
 			_G(det)->showStaticSpr(0);
 			startAniBlock(2, ABLOCK7);
 			_G(obj)->calc_rsi_flip_flop(SIB_BOLA_FLECK_R6);
@@ -107,18 +107,18 @@ void Room6::bola_button() {
 			_G(obj)->calc_rsi_flip_flop(SIB_BOLA_BUTTON_R6);
 			_G(obj)->hide_sib(SIB_BOLA_BUTTON_R6);
 		} else {
-			_G(spieler)._personHide[P_CHEWY] = true;
+			_G(gameState)._personHide[P_CHEWY] = true;
 			startAniBlock(3, ABLOCK6);
 			while (_G(det)->get_ani_status(3) && !SHOULD_QUIT) {
 				if (!_G(det)->get_ani_status(14)) {
 					setPersonPos(220, 89, P_CHEWY, P_LEFT);
-					_G(spieler)._personHide[P_CHEWY] = false;
+					_G(gameState)._personHide[P_CHEWY] = false;
 				}
 				setupScreen(DO_SETUP);
 			}
 			_G(det)->showStaticSpr(0);
-			++_G(spieler).R6BolaJoke;
-			int16 diaNr = (_G(spieler).R6BolaJoke < 3) ? 3 : 4;
+			++_G(gameState).R6BolaJoke;
+			int16 diaNr = (_G(gameState).R6BolaJoke < 3) ? 3 : 4;
 			start_spz(CH_TALK5, 244, false, 0);
 			startAadWait(diaNr);
 		}

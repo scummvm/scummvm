@@ -38,7 +38,7 @@ static const AniBlock ABLOCK32[2] = {
 void Room41::entry() {
 	hideCur();
 
-	if (!_G(spieler).R41LolaOk) {
+	if (!_G(gameState).R41LolaOk) {
 		g_engine->_sound->playSound(6);
 
 		if (!_G(flags).LoadGame) {
@@ -53,13 +53,13 @@ void Room41::entry() {
 		}
 	}
 
-	if (_G(spieler).R41Einbruch) {
+	if (_G(gameState).R41Einbruch) {
 		_G(atds)->delControlBit(271, ATS_ACTIVE_BIT, ATS_DATA);
 		_G(det)->showStaticSpr(6);
 		_G(det)->showStaticSpr(7);
 	}
 
-	if (_G(spieler).ChewyAni == CHEWY_ROCKER) {
+	if (_G(gameState).ChewyAni == CHEWY_ROCKER) {
 		_G(atds)->setControlBit(269, ATS_ACTIVE_BIT, ATS_DATA);
 	}
 
@@ -71,16 +71,16 @@ void Room41::entry() {
 }
 
 void Room41::xit() {
-	if (_G(spieler).R41TrainCount == 0) {
-		_G(spieler).R41TrainCount = 3;
-		_G(spieler).R40TrainMove = true;
+	if (_G(gameState).R41TrainCount == 0) {
+		_G(gameState).R41TrainCount = 3;
+		_G(gameState).R40TrainMove = true;
 	}
 
-	_G(spieler).R41TrainCount--;
+	_G(gameState).R41TrainCount--;
 }
 
 void Room41::setup_func() {
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 41) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 41) {
 		calc_person_look();
 		if (_G(spieler_vector)->Xypos[P_HOWARD] == 160) {
 			goAutoXy(258, 75, P_HOWARD, ANI_GO);
@@ -94,20 +94,20 @@ void Room41::talk_hoggy1() {
 	stop_hoggy();
 	autoMove(1, P_CHEWY);
 
-	if (!_G(spieler).R41FirstTalk) {
+	if (!_G(gameState).R41FirstTalk) {
 		first_talk();
 
-	} else if (!_G(spieler).R41Einbruch) {
+	} else if (!_G(gameState).R41Einbruch) {
 		showCur();
 		startAdsWait(11);
 
-	} else if (_G(spieler).R41Einbruch) {
-		if (!_G(spieler).R41BruchInfo) {
-			_G(spieler).R41BruchInfo = true;
+	} else if (_G(gameState).R41Einbruch) {
+		if (!_G(gameState).R41BruchInfo) {
+			_G(gameState).R41BruchInfo = true;
 			startAadWait(132);
 			startAadWait(128);
-		} else if (_G(spieler).R31SurFurz && !_G(spieler).R41KuerbisInfo) {
-			_G(spieler).R41KuerbisInfo = true;
+		} else if (_G(gameState).R31SurFurz && !_G(gameState).R41KuerbisInfo) {
+			_G(gameState).R41KuerbisInfo = true;
 			startAadWait(131);
 			autoMove(5, P_CHEWY);
 			new_invent_2_cur(TICKET_INV);
@@ -125,12 +125,12 @@ void Room41::talk_hoggy2() {
 	stop_hoggy();
 	autoMove(2, P_CHEWY);
 
-	if (!_G(spieler).R41FirstTalk) {
+	if (!_G(gameState).R41FirstTalk) {
 		first_talk();
 
-	} else if (_G(spieler).R41BruchInfo) {
-		if (_G(spieler).R31SurFurz && !_G(spieler).R41KuerbisInfo) {
-			_G(spieler).R41KuerbisInfo = true;
+	} else if (_G(gameState).R41BruchInfo) {
+		if (_G(gameState).R31SurFurz && !_G(gameState).R41KuerbisInfo) {
+			_G(gameState).R41KuerbisInfo = true;
 			startAadWait(131);
 			autoMove(5, P_CHEWY);
 			new_invent_2_cur(TICKET_INV);
@@ -146,7 +146,7 @@ void Room41::talk_hoggy2() {
 }
 
 void Room41::first_talk() {
-	_G(spieler).R41FirstTalk = true;
+	_G(gameState).R41FirstTalk = true;
 	startAadWait(134);
 	_G(atds)->set_ats_str(266, TXT_MARK_NAME, 1, ATS_DATA);
 	_G(atds)->set_ats_str(265, TXT_MARK_NAME, 1, ATS_DATA);
@@ -176,7 +176,7 @@ void Room41::stop_hoggy() {
 int16 Room41::use_kasse() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		action_flag = true;
 		stop_hoggy();
 		autoMove(1, P_CHEWY);
@@ -190,10 +190,10 @@ int16 Room41::use_kasse() {
 int16 Room41::use_lola() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur && !_G(spieler).R41LolaOk && _G(spieler).R41RepairInfo) {
+	if (!_G(gameState).inv_cur && !_G(gameState).R41LolaOk && _G(gameState).R41RepairInfo) {
 		hideCur();
 		action_flag = true;
-		_G(spieler).R41LolaOk = true;
+		_G(gameState).R41LolaOk = true;
 		autoMove(4, P_CHEWY);
 		g_engine->_sound->stopSound(0);
 		flic_cut(FCUT_057);
@@ -223,15 +223,15 @@ int16 Room41::use_brief() {
 	} else if (isCurInventory(BRIEF2_INV)) {
 		action_flag = true;
 		autoMove(6, P_CHEWY);
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		stop_hoggy();
 		startAadWait(186);
 		start_hoggy();
 		_G(atds)->set_ats_str(206, 1, ATS_DATA);
-		_G(spieler).R28Briefkasten = true;
-		_G(spieler).R40TrainMove = true;
-		_G(spieler).R28PostCar = true;
-		_G(spieler).R42BriefOk = true;
+		_G(gameState).R28Briefkasten = true;
+		_G(gameState).R40TrainMove = true;
+		_G(gameState).R28PostCar = true;
+		_G(gameState).R42BriefOk = true;
 	}
 
 	showCur();
@@ -242,7 +242,7 @@ void Room41::sub_dia() {
 	aadWait(-1);
 	startAadWait(161);
 
-	if (_G(spieler).R41LolaOk) {
+	if (_G(gameState).R41LolaOk) {
 		startAadWait(163);
 		_G(atds)->hide_item(11, 0, 2);
 		stop_ads_dialog();

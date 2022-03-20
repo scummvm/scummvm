@@ -33,46 +33,46 @@ void Room28::entry(int16 eib_nr) {
 	_G(zoom_horizont) = 140;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 
-	if (_G(spieler).R28RKuerbis)
+	if (_G(gameState).R28RKuerbis)
 		_G(det)->showStaticSpr(6);
 
-	if (_G(spieler).R28Briefkasten) {
+	if (_G(gameState).R28Briefkasten) {
 		_G(det)->showStaticSpr(8);
 		_G(det)->showStaticSpr(9);
 	} else {
 		_G(det)->showStaticSpr(7);
 	}
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 28) {
-		_G(spieler).ZoomXy[P_HOWARD][0] = 40;
-		_G(spieler).ZoomXy[P_HOWARD][1] = 40;
-		_G(spieler)._personHide[P_HOWARD] = false;
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 28) {
+		_G(gameState).ZoomXy[P_HOWARD][0] = 40;
+		_G(gameState).ZoomXy[P_HOWARD][1] = 40;
+		_G(gameState)._personHide[P_HOWARD] = false;
 		hideCur();
 		_G(SetUpScreenFunc) = setup_func;
 
-		if (_G(spieler).R40Wettbewerb) {
-			_G(spieler).scrollx = 320;
-			_G(spieler)._personHide[P_CHEWY] = false;
+		if (_G(gameState).R40Wettbewerb) {
+			_G(gameState).scrollx = 320;
+			_G(gameState)._personHide[P_CHEWY] = false;
 			haendler();
-			_G(spieler).R40Wettbewerb = false;
+			_G(gameState).R40Wettbewerb = false;
 		} else {
 			switch (eib_nr) {
 			case 55:
-				if (!_G(spieler).R28EntryHaus) {
-					_G(spieler).R28EntryHaus = true;
+				if (!_G(gameState).R28EntryHaus) {
+					_G(gameState).R28EntryHaus = true;
 					setPersonPos(232, 100, P_HOWARD, P_RIGHT);
 					autoMove(3, P_HOWARD);
 					goAutoXy(320, _G(spieler_vector)[P_HOWARD].Xypos[1], P_HOWARD, ANI_WAIT);
 					startAadWait(176);
-				} else if (_G(spieler).R31SurFurz && !_G(spieler).R28RKuerbis) {
-					_G(spieler).R28RKuerbis = true;
-					_G(spieler).ScrollxStep = 2;
+				} else if (_G(gameState).R31SurFurz && !_G(gameState).R28RKuerbis) {
+					_G(gameState).R28RKuerbis = true;
+					_G(gameState).ScrollxStep = 2;
 					autoMove(6, P_CHEWY);
 					waitShowScreen(10);
 					startAadWait(194);
-					_G(spieler).room_e_obj[62].Attribut = 255;
+					_G(gameState).room_e_obj[62].Attribut = 255;
 					_G(atds)->set_ats_str(208, 1, ATS_DATA);
 					_G(flags).NoScroll = true;
 
@@ -80,7 +80,7 @@ void Room28::entry(int16 eib_nr) {
 					flic_cut(FCUT_064);
 					_G(det)->showStaticSpr(6);
 
-					if (!_G(spieler).R40TeilKarte) {
+					if (!_G(gameState).R40TeilKarte) {
 						_G(out)->ausblenden(0);
 						_G(out)->set_partialpalette(_G(pal), 255, 1);
 						startAadWait(607);
@@ -89,28 +89,28 @@ void Room28::entry(int16 eib_nr) {
 
 					_G(flags).NoScroll = false;
 
-					if (_G(spieler).R40TeilKarte) {
+					if (_G(gameState).R40TeilKarte) {
 						haendler();
 					} else {
 						waitShowScreen(60);
 						startAadWait(195);
 					}
 
-					_G(spieler).ScrollxStep = 2;
+					_G(gameState).ScrollxStep = 2;
 				}
 				break;
 
 			case 70:
 			case 77:
-				if (_G(spieler).R28PostCar) {
-					_G(spieler).R28PostCar = false;
+				if (_G(gameState).R28PostCar) {
+					_G(gameState).R28PostCar = false;
 					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
 					flic_cut(FCUT_063);
-					_G(spieler).R28ChewyPump = false;
+					_G(gameState).R28ChewyPump = false;
 					invent_2_slot(K_MASKE_INV);
 					_G(atds)->set_ats_str(209, 0, ATS_DATA);
-					_G(spieler).room_e_obj[69].Attribut = 255;
+					_G(gameState).room_e_obj[69].Attribut = 255;
 					load_chewy_taf(CHEWY_NORMAL);
 
 					setPersonPos(480, 118, P_HOWARD, P_LEFT);
@@ -140,20 +140,20 @@ void Room28::entry(int16 eib_nr) {
 }
 
 void Room28::xit(int16 eib_nr) {
-	_G(spieler).R28PostCar = false;
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).R28PostCar = false;
+	_G(gameState).ScrollxStep = 1;
 	hideCur();
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 28 && eib_nr == 69) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 28 && eib_nr == 69) {
 		_G(SetUpScreenFunc) = nullptr;
-		if (!_G(spieler).R28ExitTown) {
+		if (!_G(gameState).R28ExitTown) {
 			startAadWait(178);
-			_G(spieler).R28ExitTown = true;
+			_G(gameState).R28ExitTown = true;
 		}
 
 		_G(flags).ExitMov = false;
 		autoMove(6, P_HOWARD);
-		_G(spieler)._personRoomNr[P_HOWARD] = 40;
+		_G(gameState)._personRoomNr[P_HOWARD] = 40;
 	}
 
 	showCur();
@@ -167,17 +167,17 @@ void Room28::gedAction(int index) {
 void Room28::haendler() {
 	hideCur();
 	_G(SetUpScreenFunc) = nullptr;
-	_G(spieler).R28ChewyPump = true;
+	_G(gameState).R28ChewyPump = true;
 	delInventory(K_MASKE_INV);
 	_G(atds)->set_ats_str(209, 1, ATS_DATA);
-	_G(spieler).room_e_obj[69].Attribut = EXIT_TOP;
+	_G(gameState).room_e_obj[69].Attribut = EXIT_TOP;
 	load_chewy_taf(CHEWY_PUMPKIN);
 
 	setPersonPos(480, 113, P_HOWARD, P_RIGHT);
 	setPersonPos(490, 146, P_CHEWY, P_RIGHT);
 	_G(det)->set_static_ani(2, -1);
 
-	while (_G(spieler).scrollx < 300) {
+	while (_G(gameState).scrollx < 300) {
 		SHOULD_QUIT_RETURN;
 		setupScreen(DO_SETUP);
 	}
@@ -211,11 +211,11 @@ void Room28::use_surimy() {
 	int16 dia_nr;
 	int16 ani_nr;
 
-	if (!_G(spieler).R28SurimyCar) {
+	if (!_G(gameState).R28SurimyCar) {
 		hideCur();
 		_G(flags).NoScroll = true;
 		auto_scroll(0, 0);
-		_G(spieler).R28SurimyCar = true;
+		_G(gameState).R28SurimyCar = true;
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		flic_cut(FCUT_055);
 		flic_cut(FCUT_056);
@@ -240,42 +240,42 @@ void Room28::use_surimy() {
 void Room28::set_pump() {
 	hideCur();
 
-	if (_G(spieler)._personRoomNr[P_CHEWY] == 28) {
+	if (_G(gameState)._personRoomNr[P_CHEWY] == 28) {
 		if (!_G(flags).AutoAniPlay) {
 			_G(flags).AutoAniPlay = true;
 			if (_G(spieler_vector)[P_CHEWY].Xypos[0] < 380)
 				autoMove(5, P_CHEWY);
 
-			_G(spieler)._personHide[P_CHEWY] = true;
+			_G(gameState)._personHide[P_CHEWY] = true;
 			int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
 			delInventory(K_MASKE_INV);
 			_G(det)->setSetailPos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 
-			if (_G(spieler).R28PumpTxt1 < 3) {
+			if (_G(gameState).R28PumpTxt1 < 3) {
 				start_aad(137);
-				++_G(spieler).R28PumpTxt1;
+				++_G(gameState).R28PumpTxt1;
 			}
 
 			startSetAILWait(tmp, 1, ANI_FRONT);
-			_G(spieler)._personHide[P_CHEWY] = false;
+			_G(gameState)._personHide[P_CHEWY] = false;
 
 			load_chewy_taf(CHEWY_PUMPKIN);
-			_G(spieler).R28ChewyPump = true;
+			_G(gameState).R28ChewyPump = true;
 
-			if (_G(spieler).R39TranslatorUsed) {
-				_G(spieler).room_e_obj[69].Attribut = EXIT_TOP;
+			if (_G(gameState).R39TranslatorUsed) {
+				_G(gameState).room_e_obj[69].Attribut = EXIT_TOP;
 			} else {
 				_G(atds)->set_ats_str(209, 1, ATS_DATA);
 			}
 
-			if (_G(spieler)._personRoomNr[P_HOWARD] == 28 && _G(spieler).R28PumpTxt < 3) {
+			if (_G(gameState)._personRoomNr[P_HOWARD] == 28 && _G(gameState).R28PumpTxt < 3) {
 				stopPerson(P_HOWARD);
 				_G(SetUpScreenFunc) = nullptr;
 				g_engine->_sound->waitForSpeechToFinish();
 
 				startAadWait(177);
 				_G(SetUpScreenFunc) = setup_func;
-				++_G(spieler).R28PumpTxt;
+				++_G(gameState).R28PumpTxt;
 			}
 
 			_G(flags).AutoAniPlay = false;
@@ -289,23 +289,23 @@ void Room28::set_pump() {
 
 void Room28::get_pump() {
 
-	if (_G(spieler).R28ChewyPump) {
+	if (_G(gameState).R28ChewyPump) {
 		hideCur();
 
 		stopPerson(P_CHEWY);
-		_G(spieler).R28ChewyPump = false;
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState).R28ChewyPump = false;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
 		_G(det)->setSetailPos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		startSetAILWait(tmp, 1, ANI_BACK);
 
 		invent_2_slot(K_MASKE_INV);
 		_G(atds)->set_ats_str(209, 0, ATS_DATA);
-		_G(spieler).room_e_obj[69].Attribut = 255;
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState).room_e_obj[69].Attribut = 255;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		load_chewy_taf(CHEWY_NORMAL);
 
-		if (_G(spieler).R28PumpTxt1 < 3) {
+		if (_G(gameState).R28PumpTxt1 < 3) {
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(138);
 		}
@@ -317,10 +317,10 @@ void Room28::get_pump() {
 int16 Room28::use_breifkasten() {
 	int16 action_flag = false;
 
-	if (_G(spieler).R28Briefkasten && !_G(spieler).inv_cur) {
+	if (_G(gameState).R28Briefkasten && !_G(gameState).inv_cur) {
 		action_flag = true;
 		hideCur();
-		_G(spieler).R28Briefkasten = false;
+		_G(gameState).R28Briefkasten = false;
 		autoMove(7, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->hideStaticSpr(8);
@@ -332,7 +332,7 @@ int16 Room28::use_breifkasten() {
 		_G(atds)->set_ats_str(206, 0, ATS_DATA);
 		showCur();
 		invent_2_slot(MANUSKRIPT_INV);
-		_G(spieler).R28Manuskript = true;
+		_G(gameState).R28Manuskript = true;
 	}
 
 	return action_flag;

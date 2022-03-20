@@ -33,18 +33,18 @@ void Room69::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
 	
-	_G(spieler).ScrollxStep = 2;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 46;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 90;
-	_G(spieler).ZoomXy[P_NICHELLE][0] = 46;
-	_G(spieler).ZoomXy[P_NICHELLE][1] = 90;
+	_G(gameState).ScrollxStep = 2;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 46;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 90;
+	_G(gameState).ZoomXy[P_NICHELLE][0] = 46;
+	_G(gameState).ZoomXy[P_NICHELLE][1] = 90;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(zoom_horizont) = 110;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(SetUpScreenFunc) = setup_func;
-	_G(spieler).DiaAMov = 2;
+	_G(gameState).DiaAMov = 2;
 	if (_G(flags).LoadGame)
 		return;
 
@@ -63,11 +63,11 @@ void Room69::entry(int16 eib_nr) {
 }
 
 void Room69::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 69 && eib_nr == 97) {
-		_G(spieler)._personRoomNr[P_HOWARD] = 66;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 66;
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 69 && eib_nr == 97) {
+		_G(gameState)._personRoomNr[P_HOWARD] = 66;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 66;
 	}
 }
 
@@ -84,11 +84,11 @@ void Room69::look_schild() {
 
 int16 Room69::use_bruecke() {
 	int16 action_flag = false;
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		hideCur();
 		action_flag = true;
 
-		if (!_G(spieler).R68KarteDa) {
+		if (!_G(gameState).R68KarteDa) {
 			calc_person_dia(P_HOWARD);
 		} else {
 			autoMove(3, P_CHEWY);
@@ -96,21 +96,21 @@ int16 Room69::use_bruecke() {
 			goAutoXy(253, 103, P_CHEWY, ANI_WAIT);
 			goAutoXy(141, 103, P_CHEWY, ANI_WAIT);
 
-			if (_G(spieler)._personRoomNr[P_NICHELLE] == 69)
+			if (_G(gameState)._personRoomNr[P_NICHELLE] == 69)
 				goAutoXy(255, 84, 2, ANI_GO);
 			
 			goAutoXy(82, 95, P_CHEWY, ANI_WAIT);
 			goAutoXy(46, 83, P_CHEWY, ANI_WAIT);
 
-			if (_G(spieler)._personRoomNr[P_HOWARD] == 69) {
+			if (_G(gameState)._personRoomNr[P_HOWARD] == 69) {
 				goAutoXy(258, 86, P_HOWARD, ANI_GO);
 				goAutoXy(147, 84, P_NICHELLE, ANI_WAIT);
 				goAutoXy(140, 86, P_HOWARD, ANI_GO);
 				goAutoXy(94, 77, P_NICHELLE, ANI_WAIT);
 				goAutoXy(94, 82, P_HOWARD, ANI_GO);
 				goAutoXy(59, 68, P_NICHELLE, ANI_WAIT);
-				_G(spieler)._personRoomNr[P_HOWARD] = 70;
-				_G(spieler)._personRoomNr[P_NICHELLE] = 70;
+				_G(gameState)._personRoomNr[P_HOWARD] = 70;
+				_G(gameState)._personRoomNr[P_NICHELLE] = 70;
 			}
 
 			_G(spieler_mi)[P_CHEWY].Mode = false;
@@ -122,7 +122,7 @@ int16 Room69::use_bruecke() {
 }
 
 void Room69::proc1() {
-	_G(spieler).scrollx = 0;
+	_G(gameState).scrollx = 0;
 	_G(spieler_mi)[P_CHEWY].Mode = true;
 	setPersonPos(46, 83, P_CHEWY, P_RIGHT);
 	setPersonPos(59, 68, P_NICHELLE, P_RIGHT);
@@ -131,7 +131,7 @@ void Room69::proc1() {
 	goAutoXy(94, 82, P_HOWARD, ANI_WAIT);
 	goAutoXy(94, 77, P_NICHELLE, ANI_GO);
 	goAutoXy(140, 86, P_HOWARD, ANI_WAIT);
-	goAutoXy(82, 95, P_CHEWY, _G(spieler)._personRoomNr[P_HOWARD] == 69 ? ANI_GO : ANI_WAIT);
+	goAutoXy(82, 95, P_CHEWY, _G(gameState)._personRoomNr[P_HOWARD] == 69 ? ANI_GO : ANI_WAIT);
 	goAutoXy(147, 84, P_NICHELLE, ANI_GO);
 	goAutoXy(278, 86, P_HOWARD, ANI_WAIT);
 	goAutoXy(255, 84, P_NICHELLE, ANI_WAIT);

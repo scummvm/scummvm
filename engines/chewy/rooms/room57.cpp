@@ -34,17 +34,17 @@ void Room57::entry() {
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
 	_G(SetUpScreenFunc) = setup_func;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 46;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 86;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 46;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 86;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
-	if (_G(spieler).R57StudioAuf)
+	if (_G(gameState).R57StudioAuf)
 		_G(det)->hideStaticSpr(4);
 	
-	if (!_G(flags).LoadGame &&_G(spieler).R48TaxiEntry) {
+	if (!_G(flags).LoadGame &&_G(gameState).R48TaxiEntry) {
 		hideCur();
-		_G(spieler).R48TaxiEntry = false;
-		_G(spieler).scrollx = 0;
-		_G(spieler).scrolly = 0;
+		_G(gameState).R48TaxiEntry = false;
+		_G(gameState).scrollx = 0;
+		_G(gameState).scrolly = 0;
 		setPersonPos(4, 144, P_HOWARD, P_LEFT);
 		setPersonPos(40, 160, P_CHEWY, P_RIGHT);
 		autoMove(2, P_CHEWY);
@@ -54,15 +54,15 @@ void Room57::entry() {
 }
 
 void Room57::xit(int16 eib_nr) {
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 57) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 57) {
 		_G(spieler_mi)[P_HOWARD].Mode = false;
 		if (eib_nr == 91)
-			_G(spieler)._personRoomNr[P_HOWARD] = 62;
+			_G(gameState)._personRoomNr[P_HOWARD] = 62;
 	}
 }
 
 void Room57::setup_func() {
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 57) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 57) {
 		calc_person_look();
 		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 		int16 x, y;
@@ -79,7 +79,7 @@ void Room57::setup_func() {
 
 int16 Room57::use_taxi() {
 	int16 action_ret = false;
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		action_ret = true;
 		hideCur();
 		autoMove(3, P_CHEWY);
@@ -87,14 +87,14 @@ int16 Room57::use_taxi() {
 		g_engine->_sound->playSound(3);
 		_G(det)->showStaticSpr(7);
 		goAutoXy(16, 160, P_CHEWY, ANI_WAIT);
-		_G(spieler)._personHide[P_CHEWY] = true;
-		_G(spieler).R48TaxiPerson[P_CHEWY] = true;
-		if (_G(spieler)._personRoomNr[P_HOWARD] == 57) {
+		_G(gameState)._personHide[P_CHEWY] = true;
+		_G(gameState).R48TaxiPerson[P_CHEWY] = true;
+		if (_G(gameState)._personRoomNr[P_HOWARD] == 57) {
 			_G(SetUpScreenFunc) = nullptr;
 			goAutoXy(11, 144, P_HOWARD, ANI_WAIT);
-			_G(spieler)._personHide[P_HOWARD] = true;
-			_G(spieler).R48TaxiPerson[P_HOWARD] = true;
-			_G(spieler)._personRoomNr[P_HOWARD] = 48;
+			_G(gameState)._personHide[P_HOWARD] = true;
+			_G(gameState).R48TaxiPerson[P_HOWARD] = true;
+			_G(gameState)._personRoomNr[P_HOWARD] = 48;
 		}
 		_G(det)->hideStaticSpr(7);
 		g_engine->_sound->playSound(3, 1);
@@ -117,10 +117,10 @@ int16 Room57::use_pfoertner() {
 	autoMove(1, P_CHEWY);
 	if (isCurInventory(CUTMAG_INV)) {
 		action_ret = true;
-		if (_G(spieler).flags37_10)
+		if (_G(gameState).flags37_10)
 			startAadWait(596);
 		else {
-			_G(spieler).flags37_10 = true;
+			_G(gameState).flags37_10 = true;
 			startAadWait(339);
 			new_invent_2_cur(BESTELL_INV);
 		}
@@ -131,12 +131,12 @@ int16 Room57::use_pfoertner() {
 		action_ret = true;
 		_G(SetUpScreenFunc) = nullptr;
 		goAutoXy(132, 130, P_HOWARD, ANI_WAIT);
-		if (_G(spieler).R56AbfahrtOk) {
+		if (_G(gameState).R56AbfahrtOk) {
 			startAadWait(341);
 			goAutoXy(176, 130, P_HOWARD, ANI_WAIT);
-			delInventory(_G(spieler).AkInvent);
-			_G(spieler).R57StudioAuf = true;
-			_G(spieler).room_e_obj[91].Attribut = EXIT_TOP;
+			delInventory(_G(gameState).AkInvent);
+			_G(gameState).R57StudioAuf = true;
+			_G(gameState).room_e_obj[91].Attribut = EXIT_TOP;
 			_G(det)->hideStaticSpr(4);
 			startSetAILWait(6, 1, ANI_WAIT);
 			g_engine->_sound->stopSound(0);
@@ -160,7 +160,7 @@ void Room57::talk_pfoertner() {
 	_G(det)->del_static_ani(1);
 	_G(det)->set_static_ani(3, -1);
 	int16 aad_nr;
-	if (!_G(spieler).R57StudioAuf) {
+	if (!_G(gameState).R57StudioAuf) {
 		aad_nr = 338;
 	} else
 		aad_nr = 342;

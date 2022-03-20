@@ -30,38 +30,38 @@ namespace Chewy {
 namespace Rooms {
 
 void Room88::entry() {
-	_G(spieler).scrollx = 0;
+	_G(gameState).scrollx = 0;
 	setPersonPos(163, 122, P_CHEWY, P_LEFT);
 	setPersonPos(59, 107, P_HOWARD, P_RIGHT);
 	setPersonPos(91, 110, P_NICHELLE, P_RIGHT);
 	
-	_G(det)->showStaticSpr(1 + (_G(spieler).flags30_10 ? 1 : 0));
-	if (_G(spieler).r88DestRoom == 0)
-		_G(spieler).r88DestRoom = 82;
+	_G(det)->showStaticSpr(1 + (_G(gameState).flags30_10 ? 1 : 0));
+	if (_G(gameState).r88DestRoom == 0)
+		_G(gameState).r88DestRoom = 82;
 
 	_G(SetUpScreenFunc) = calc_person_look;
 
-	if (_G(spieler).flags32_10) {
+	if (_G(gameState).flags32_10) {
 		_G(det)->startDetail(4, 255, false);
 		_G(atds)->delControlBit(505, ATS_ACTIVE_BIT, ATS_DATA);
 	}
 }
 
 void Room88::xit() {
-	_G(spieler).flags31_8 = true;
-	_G(spieler)._personRoomNr[P_HOWARD] = _G(spieler).r88DestRoom;
+	_G(gameState).flags31_8 = true;
+	_G(gameState)._personRoomNr[P_HOWARD] = _G(gameState).r88DestRoom;
 
-	if (_G(spieler)._personRoomNr[P_NICHELLE] == 88)
-		_G(spieler)._personRoomNr[P_NICHELLE] = _G(spieler)._personRoomNr[P_HOWARD];
+	if (_G(gameState)._personRoomNr[P_NICHELLE] == 88)
+		_G(gameState)._personRoomNr[P_NICHELLE] = _G(gameState)._personRoomNr[P_HOWARD];
 }
 
 int Room88::proc1() {
-	if (_G(spieler).inv_cur)
+	if (_G(gameState).inv_cur)
 		return 0;
 
 	hideCur();
 	autoMove(0, P_CHEWY);
-	switchRoom(_G(spieler).r88DestRoom);
+	switchRoom(_G(gameState).r88DestRoom);
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
 	showCur();
@@ -70,17 +70,17 @@ int Room88::proc1() {
 }
 
 int Room88::proc2() {
-	if (_G(spieler).inv_cur)
+	if (_G(gameState).inv_cur)
 		return 0;
 
 	hideCur();
 	autoMove(1, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->showStaticSpr(0);
-	startSetAILWait(0, 1, _G(spieler).flags30_10 ? ANI_GO : ANI_FRONT);
-	_G(det)->hideStaticSpr(1 + (_G(spieler).flags30_10 ? 1 : 0));
-	_G(spieler).flags31_10 = false;
-	_G(det)->showStaticSpr(1 + (!_G(spieler).flags30_10 ? 1 : 0));
+	startSetAILWait(0, 1, _G(gameState).flags30_10 ? ANI_GO : ANI_FRONT);
+	_G(det)->hideStaticSpr(1 + (_G(gameState).flags30_10 ? 1 : 0));
+	_G(gameState).flags31_10 = false;
+	_G(det)->showStaticSpr(1 + (!_G(gameState).flags30_10 ? 1 : 0));
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->hideStaticSpr(0);
 	
@@ -89,15 +89,15 @@ int Room88::proc2() {
 }
 
 int Room88::proc3() {
-	if (_G(spieler).inv_cur)
+	if (_G(gameState).inv_cur)
 		return 0;
 
 	hideCur();
 	autoMove(2, P_CHEWY);
 
-	if (!_G(spieler).flags30_80 || _G(spieler).R88UsedMonkey) {
+	if (!_G(gameState).flags30_80 || _G(gameState).R88UsedMonkey) {
 		hideCur();
-		if (_G(spieler).flags32_10) {
+		if (_G(gameState).flags32_10) {
 			startAadWait(480);
 			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
@@ -105,7 +105,7 @@ int Room88::proc3() {
 			flic_cut(FCUT_087);
 			_G(out)->setPointer(nullptr);
 			_G(out)->cls();
-			_G(spieler).flags32_40 = true;
+			_G(gameState).flags32_40 = true;
 			switchRoom(84);
 		} else {
 			startAadWait(465);
@@ -114,7 +114,7 @@ int Room88::proc3() {
 		startAadWait(466);
 		start_spz_wait(13, 1, false, P_CHEWY);
 
-		const int aniNr = 1 + (_G(spieler).flags31_10 ? 1 : 0);
+		const int aniNr = 1 + (_G(gameState).flags31_10 ? 1 : 0);
 
 		for (int i = 0; i < 3; ++i) {
 			startSetAILWait(aniNr, 1, ANI_FRONT);
@@ -125,8 +125,8 @@ int Room88::proc3() {
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_088);
-		_G(spieler)._personHide[P_CHEWY] = true;
-		_G(spieler).flags32_1 = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
+		_G(gameState).flags32_1 = true;
 		_G(out)->raster_col(0, 0, 0, 0);
 		switchRoom(80);
 		hideCur();
@@ -137,13 +137,13 @@ int Room88::proc3() {
 		flic_cut(FCUT_086);
 		register_cutscene(24);
 
-		_G(spieler)._personHide[P_CHEWY] = false;
-		_G(spieler)._personRoomNr[P_HOWARD] = 88;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 88;
+		_G(gameState)._personHide[P_CHEWY] = false;
+		_G(gameState)._personRoomNr[P_HOWARD] = 88;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 88;
 		switchRoom(88);
-		_G(spieler).r88DestRoom = 84;
-		_G(spieler).R88UsedMonkey = true;
-		_G(spieler).flags32_1 = false;
+		_G(gameState).r88DestRoom = 84;
+		_G(gameState).R88UsedMonkey = true;
+		_G(gameState).flags32_1 = false;
 	}
 
 	showCur();

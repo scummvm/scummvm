@@ -28,23 +28,23 @@ namespace Chewy {
 namespace Rooms {
 
 void Room66::entry(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 30;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 50;
-	_G(spieler).ZoomXy[P_NICHELLE][0] = 36;
-	_G(spieler).ZoomXy[P_NICHELLE][1] = 50;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 30;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 50;
+	_G(gameState).ZoomXy[P_NICHELLE][0] = 36;
+	_G(gameState).ZoomXy[P_NICHELLE][1] = 50;
 	_G(zoom_horizont) = 130;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	if (!_G(spieler).flags26_4) {
+	if (!_G(gameState).flags26_4) {
 		_G(det)->showStaticSpr(4);
 		_G(det)->showStaticSpr(8);
 		_G(cur_hide_flag) = false;
 		hideCur();
-		_G(spieler).flags26_4 = true;
-		_G(spieler).scrollx = 476;
+		_G(gameState).flags26_4 = true;
+		_G(gameState).scrollx = 476;
 		setPersonPos(598, 101, P_CHEWY, P_RIGHT);
 		setPersonPos(644, 82, P_NICHELLE, P_LEFT);
 		setPersonPos(623, 81, P_HOWARD, P_LEFT);
@@ -52,19 +52,19 @@ void Room66::entry(int16 eib_nr) {
 		autoMove(9, P_CHEWY);
 		_G(SetUpScreenFunc) = setup_func;
 		startAadWait(403);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(0, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(14);
 		waitShowScreen(15);
 		_G(det)->hideStaticSpr(14);
 		startSetAILWait(1, 1, ANI_FRONT);
 		load_chewy_taf(CHEWY_NORMAL);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		start_spz(CH_TALK12, 255, false, P_CHEWY);
 		startAadWait(404);
 		startAadWait(415);
 		showCur();
-	} else if (!_G(flags).LoadGame && _G(spieler)._personRoomNr[P_HOWARD] == 66) {
+	} else if (!_G(flags).LoadGame && _G(gameState)._personRoomNr[P_HOWARD] == 66) {
 		switch (eib_nr) {
 		case 96:
 			setPersonPos(488, 114, P_HOWARD, P_RIGHT);
@@ -87,26 +87,26 @@ void Room66::entry(int16 eib_nr) {
 }
 
 void Room66::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 	_G(atds)->setControlBit(415, ATS_ACTIVE_BIT, ATS_DATA);
 	_G(atds)->setControlBit(417, ATS_ACTIVE_BIT, ATS_DATA);
-	if (_G(spieler)._personRoomNr[P_HOWARD] != 66)
+	if (_G(gameState)._personRoomNr[P_HOWARD] != 66)
 		return;
 
 	switch (eib_nr) {
 	case 98:
-		_G(spieler)._personRoomNr[P_HOWARD] = 69;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 69;
+		_G(gameState)._personRoomNr[P_HOWARD] = 69;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 69;
 		break;
 
 	case 99:
-		_G(spieler)._personRoomNr[P_HOWARD] = 68;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 68;
+		_G(gameState)._personRoomNr[P_HOWARD] = 68;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 68;
 		break;
 
 	case 100:
-		_G(spieler)._personRoomNr[P_HOWARD] = 67;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 67;
+		_G(gameState)._personRoomNr[P_HOWARD] = 67;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 67;
 		break;
 
 	default:
@@ -139,10 +139,10 @@ void Room66::setup_func() {
 	goAutoXy(edx, 114, P_HOWARD, ANI_GO);
 	goAutoXy(esi, 114, P_NICHELLE, ANI_GO);
 
-	if (posX >= 500 || _G(spieler).flags26_8)
+	if (posX >= 500 || _G(gameState).flags26_8)
 		return;
 
-	_G(spieler).flags26_8 = true;
+	_G(gameState).flags26_8 = true;
 	_G(det)->startDetail(9, 5, false);
 	startAadWait(405);
 }
@@ -163,14 +163,14 @@ void Room66::talk3() {
 }
 
 void Room66::talk4() {
-	proc8(7, 2, 3, _G(spieler).flags26_20 ? 414 : 410);
+	proc8(7, 2, 3, _G(gameState).flags26_20 ? 414 : 410);
 }
 
 int Room66::proc2() {
 	hideCur();
 	autoMove(0, P_CHEWY);
-	_G(spieler).flags26_40 = true;
-	_G(spieler).room_e_obj[100].Attribut = 3;
+	_G(gameState).flags26_40 = true;
+	_G(gameState).room_e_obj[100].Attribut = 3;
 	_G(atds)->set_ats_str(423, 1, ANI_GO);
 	showCur();
 	
@@ -183,18 +183,18 @@ int Room66::proc7() {
 
 	hideCur();
 	autoMove(7, P_CHEWY);
-	if (_G(spieler).flags26_10) {
-		delInventory(_G(spieler).AkInvent);
+	if (_G(gameState).flags26_10) {
+		delInventory(_G(gameState).AkInvent);
 		invent_2_slot(92);
 		invent_2_slot(93);
 		invent_2_slot(94);
-		_G(spieler).flags26_20 = true;
+		_G(gameState).flags26_20 = true;
 	}
 
-	proc8(7, 2, 3, 411 + (_G(spieler).flags26_10 ? 1 : 0));
+	proc8(7, 2, 3, 411 + (_G(gameState).flags26_10 ? 1 : 0));
 	_G(cur_hide_flag) = 0;
 	hideCur();
-	if (_G(spieler).flags26_20)
+	if (_G(gameState).flags26_20)
 		startSetAILWait(4, 1, ANI_FRONT);
 	showCur();
 

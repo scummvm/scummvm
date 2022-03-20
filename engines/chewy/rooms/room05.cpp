@@ -30,24 +30,24 @@ namespace Chewy {
 namespace Rooms {
 
 void Room5::entry() {
-	if (_G(spieler).R5Terminal)
+	if (_G(gameState).R5Terminal)
 		_G(det)->startDetail(6, 255, ANI_FRONT);
 }
 
 void Room5::pushButton() {
-	if (_G(spieler).R5Terminal) {
+	if (_G(gameState).R5Terminal) {
 		int16 strNr;
-		if (_G(spieler).R5Door == false) {
+		if (_G(gameState).R5Door == false) {
 			startSetAILWait(9, 1, ANI_FRONT);
-			_G(spieler).room_e_obj[6].Attribut = EXIT_TOP;
+			_G(gameState).room_e_obj[6].Attribut = EXIT_TOP;
 			strNr = 1;
 		} else {
 			startSetAILWait(9, 1, ANI_BACK);
-			_G(spieler).room_e_obj[6].Attribut = 255;
+			_G(gameState).room_e_obj[6].Attribut = 255;
 			strNr = 0;
 		}
 		_G(atds)->set_ats_str(29, strNr, ATS_DATA);
-		_G(spieler).R5Door ^= 1;
+		_G(gameState).R5Door ^= 1;
 		_G(obj)->calc_rsi_flip_flop(SIB_DOOR_R5);
 	} else {
 		startAadWait(1);

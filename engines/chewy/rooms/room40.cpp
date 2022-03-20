@@ -39,37 +39,37 @@ namespace Rooms {
 #define POLICE_FLASCHE 16
 
 void Room40::entry(int16 eib_nr) {
-	_G(spieler).R40HoUse = false;
+	_G(gameState).R40HoUse = false;
 	_G(zoom_horizont) = 130;
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 
-	if (_G(spieler).R40Geld) {
+	if (_G(gameState).R40Geld) {
 		_G(det)->del_static_ani(6);
 		_G(room)->set_timer_status(6, TIMER_STOP);
 	}
 
-	if (_G(spieler).R40HaendlerOk) {
+	if (_G(gameState).R40HaendlerOk) {
 		_G(det)->del_static_ani(4);
 		_G(room)->set_timer_status(4, TIMER_STOP);
 	}
 
-	if (_G(spieler).R40PoliceWeg == false) {
+	if (_G(gameState).R40PoliceWeg == false) {
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
 		_G(atds)->delControlBit(275, ATS_ACTIVE_BIT, ATS_DATA);
 	} else {
 		_G(det)->hideStaticSpr(15);
 	}
 
-	_G(spieler).R40PoliceAniStatus = 255;
-	_G(spieler).R40PoliceStart = false;
+	_G(gameState).R40PoliceAniStatus = 255;
+	_G(gameState).R40PoliceStart = false;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 41)
-		_G(spieler)._personRoomNr[P_HOWARD] = 40;
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 41)
+		_G(gameState)._personRoomNr[P_HOWARD] = 40;
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 40) {
-		_G(spieler).ZoomXy[P_HOWARD][0] = 40;
-		_G(spieler).ZoomXy[P_HOWARD][1] = 40;
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 40) {
+		_G(gameState).ZoomXy[P_HOWARD][0] = 40;
+		_G(gameState).ZoomXy[P_HOWARD][1] = 40;
 
 		if (!_G(flags).LoadGame) {
 			switch (eib_nr) {
@@ -90,28 +90,28 @@ void Room40::entry(int16 eib_nr) {
 	}
 
 	_G(SetUpScreenFunc) = setup_func;
-	if (_G(spieler).R40TrainMove)
+	if (_G(gameState).R40TrainMove)
 		move_train(0);
 }
 
 void Room40::xit(int16 eib_nr) {
 	hideCur();
-	_G(spieler).ScrollxStep = 1;
-	_G(spieler).R40PoliceAb = false;
-	_G(spieler).R40HoUse = false;
+	_G(gameState).ScrollxStep = 1;
+	_G(gameState).R40PoliceAb = false;
+	_G(gameState).R40HoUse = false;
 	stop_spz();
 	_G(SetUpScreenFunc) = nullptr;
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 40) {
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 40) {
 		if (eib_nr == 70 || eib_nr == 77) {
-			_G(spieler)._personRoomNr[P_HOWARD] = 28;
+			_G(gameState)._personRoomNr[P_HOWARD] = 28;
 
 		} else if (eib_nr == 72) {
-			if ((_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(spieler).R42BriefOk && _G(spieler).R28Manuskript)
-				|| _G(spieler).R40TrainOk) {
-				_G(spieler).R40TrainOk = true;
-				_G(spieler)._personRoomNr[P_HOWARD] = 45;
-				_G(spieler).room_e_obj[72].Exit = 45;
+			if ((_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(gameState).R42BriefOk && _G(gameState).R28Manuskript)
+				|| _G(gameState).R40TrainOk) {
+				_G(gameState).R40TrainOk = true;
+				_G(gameState)._personRoomNr[P_HOWARD] = 45;
+				_G(gameState).room_e_obj[72].Exit = 45;
 				_G(obj)->hide_sib(SIB_MUENZE_R40);
 
 				_G(uhr)->disableTimer();
@@ -129,19 +129,19 @@ void Room40::xit(int16 eib_nr) {
 				_G(flags).NoPalAfterFlc = true;
 				flic_cut(FCUT_073);
 
-				if (_G(spieler).ChewyAni != CHEWY_ROCKER)
-					_G(spieler).PersonGlobalDia[1] = 10023;
+				if (_G(gameState).ChewyAni != CHEWY_ROCKER)
+					_G(gameState).PersonGlobalDia[1] = 10023;
 
 				cur_2_inventory();
 				remove_inventory(57);
-				_G(spieler).PersonDiaRoom[P_HOWARD] = true;
+				_G(gameState).PersonDiaRoom[P_HOWARD] = true;
 				show_person();
 
 			} else {
-				_G(spieler)._personRoomNr[P_HOWARD] = 42;
+				_G(gameState)._personRoomNr[P_HOWARD] = 42;
 			}
 		} else {
-			_G(spieler)._personRoomNr[P_HOWARD] = 41;
+			_G(gameState)._personRoomNr[P_HOWARD] = 41;
 		}
 	}
 
@@ -151,7 +151,7 @@ void Room40::xit(int16 eib_nr) {
 
 bool Room40::timer(int16 t_nr, int16 ani_nr) {
 	if (t_nr == _G(timer_nr)[0])
-		_G(spieler).R40PoliceStart = true;
+		_G(gameState).R40PoliceStart = true;
 	else
 		return true;
 
@@ -159,7 +159,7 @@ bool Room40::timer(int16 t_nr, int16 ani_nr) {
 }
 
 void Room40::move_train(int16 mode) {
-	_G(spieler).R40TrainMove = false;
+	_G(gameState).R40TrainMove = false;
 	hideCur();
 	autoMove(9, P_CHEWY);
 	_G(flags).NoScroll = true;
@@ -174,7 +174,7 @@ void Room40::move_train(int16 mode) {
 	_G(det)->startDetail(7, 20, ANI_FRONT);
 	_G(det)->showStaticSpr(11);
 
-	if (mode && _G(spieler).ChewyAni == CHEWY_PUMPKIN)
+	if (mode && _G(gameState).ChewyAni == CHEWY_PUMPKIN)
 		_G(det)->showStaticSpr(12);
 
 	g_engine->_sound->playSound(7, 0);
@@ -184,13 +184,13 @@ void Room40::move_train(int16 mode) {
 		_G(det)->setSetailPos(7, lx, 46);
 		_G(det)->setStaticPos(11, ax, 62, false, false);
 
-		if (mode && _G(spieler).ChewyAni == CHEWY_PUMPKIN)
+		if (mode && _G(gameState).ChewyAni == CHEWY_PUMPKIN)
 			_G(det)->setStaticPos(12, ax, 62, false, true);
 
 		if (!delay) {
 			lx += SPEED;
 			ax += SPEED;
-			delay = _G(spieler).DelaySpeed / 2;
+			delay = _G(gameState).DelaySpeed / 2;
 		} else {
 			--delay;
 		}
@@ -213,7 +213,7 @@ void Room40::move_train(int16 mode) {
 }
 
 void Room40::setup_func() {
-	if (!_G(spieler).R40HoUse && _G(spieler)._personRoomNr[P_HOWARD] == 40) {
+	if (!_G(gameState).R40HoUse && _G(gameState)._personRoomNr[P_HOWARD] == 40) {
 		calc_person_look();
 
 		int16 x, y;
@@ -238,10 +238,10 @@ void Room40::setup_func() {
 		goAutoXy(x, y, P_HOWARD, ANI_GO);
 	}
 
-	if (_G(spieler).R40PoliceWeg == false) {
-		if (_G(spieler).R40PoliceStart) {
-			_G(spieler).R40PoliceStart = false;
-			_G(spieler).R40PoliceAniStatus = POLICE_LEFT;
+	if (_G(gameState).R40PoliceWeg == false) {
+		if (_G(gameState).R40PoliceStart) {
+			_G(gameState).R40PoliceStart = false;
+			_G(gameState).R40PoliceAniStatus = POLICE_LEFT;
 			_G(room)->set_timer_status(255, TIMER_STOP);
 			_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 			_G(det)->hideStaticSpr(15);
@@ -249,11 +249,11 @@ void Room40::setup_func() {
 			_G(atds)->setControlBit(275, ATS_ACTIVE_BIT, ATS_DATA);
 		}
 
-		switch (_G(spieler).R40PoliceAniStatus) {
+		switch (_G(gameState).R40PoliceAniStatus) {
 		case POLICE_LEFT:
 			if (_G(det)->get_ani_status(POLICE_LEFT) == false) {
 				_G(det)->startDetail(POLICE_OFFEN, 1, ANI_FRONT);
-				_G(spieler).R40PoliceAniStatus = POLICE_OFFEN;
+				_G(gameState).R40PoliceAniStatus = POLICE_OFFEN;
 			}
 			break;
 
@@ -261,14 +261,14 @@ void Room40::setup_func() {
 			if (_G(det)->get_ani_status(POLICE_OFFEN) == false) {
 				_G(det)->showStaticSpr(0);
 				_G(det)->startDetail(POLICE_FLASCHE, 1, ANI_FRONT);
-				_G(spieler).R40PoliceAniStatus = POLICE_FLASCHE;
+				_G(gameState).R40PoliceAniStatus = POLICE_FLASCHE;
 			}
 			break;
 
 		case POLICE_RIGHT:
 			if (_G(det)->get_ani_status(POLICE_RIGHT) == false) {
 				_G(det)->showStaticSpr(15);
-				_G(spieler).R40PoliceAniStatus = 255;
+				_G(gameState).R40PoliceAniStatus = 255;
 				_G(room)->set_timer_status(255, TIMER_START);
 				_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 				_G(atds)->delControlBit(275, ATS_ACTIVE_BIT, ATS_DATA);
@@ -278,28 +278,28 @@ void Room40::setup_func() {
 		case POLICE_FLASCHE:
 			if (_G(det)->get_ani_status(POLICE_FLASCHE) == false) {
 				_G(det)->hideStaticSpr(0);
-				if (_G(spieler).R40DuengerTele) {
+				if (_G(gameState).R40DuengerTele) {
 					hideCur();
-					_G(spieler).R40PoliceWeg = true;
+					_G(gameState).R40PoliceWeg = true;
 					_G(det)->startDetail(17, 255, ANI_FRONT);
 					startAadWait(226);
 					_G(det)->stop_detail(17);
-					_G(spieler).R40HoUse = true;
+					_G(gameState).R40HoUse = true;
 					_G(person_end_phase)[P_CHEWY] = P_RIGHT;
 					startSetAILWait(10, 1, ANI_FRONT);
 					_G(person_end_phase)[P_HOWARD] = P_RIGHT;
 					startAadWait(224);
-					_G(spieler).R40PoliceWeg = true;
+					_G(gameState).R40PoliceWeg = true;
 					showCur();
 
 					_G(flags).MouseLeft = false;
 					_G(flags).MainInput = true;
-					_G(spieler).R40HoUse = false;
+					_G(gameState).R40HoUse = false;
 					_G(atds)->setControlBit(276, ATS_ACTIVE_BIT, ATS_DATA);
 
 				} else {
 					_G(det)->startDetail(POLICE_RIGHT, 1, ANI_FRONT);
-					_G(spieler).R40PoliceAniStatus = POLICE_RIGHT;
+					_G(gameState).R40PoliceAniStatus = POLICE_RIGHT;
 				}
 			}
 			break;
@@ -316,15 +316,15 @@ int16 Room40::use_mr_pumpkin() {
 	if (_G(menu_item) != CUR_HOWARD) {
 		hideCur();
 
-		if (!_G(spieler).inv_cur) {
+		if (!_G(gameState).inv_cur) {
 			action_ret = use_schalter(205);
 
 		} else {
-			switch (_G(spieler).AkInvent) {
+			switch (_G(gameState).AkInvent) {
 			case CENT_INV:
 				action_ret = true;
 				autoMove(5, P_CHEWY);
-				delInventory(_G(spieler).AkInvent);
+				delInventory(_G(gameState).AkInvent);
 				startSetAILWait(15, 1, ANI_FRONT);
 				start_spz(CH_PUMP_TALK, 255, ANI_FRONT, P_CHEWY);
 				startAadWait(200);
@@ -333,14 +333,14 @@ int16 Room40::use_mr_pumpkin() {
 			case RECORDER_INV:
 				action_ret = true;
 
-				if (_G(spieler).R39TvRecord == 6) {
-					if (_G(spieler).R40PoliceWeg == false)
+				if (_G(gameState).R39TvRecord == 6) {
+					if (_G(gameState).R40PoliceWeg == false)
 						use_schalter(227);
 					else {
 						hideCur();
 						autoMove(8, P_CHEWY);
 						start_spz_wait(CH_PUMP_GET1, 1, false, P_CHEWY);
-						delInventory(_G(spieler).AkInvent);
+						delInventory(_G(gameState).AkInvent);
 						_G(out)->ausblenden(1);
 						Room43::catch_pg();
 						remove_inventory(LIKOER_INV);
@@ -350,7 +350,7 @@ int16 Room40::use_mr_pumpkin() {
 						startAadWait(236);
 					}
 				} else {
-					startAadWait(228 + _G(spieler).R39TvRecord);
+					startAadWait(228 + _G(gameState).R39TvRecord);
 				}
 				break;
 
@@ -368,32 +368,32 @@ int16 Room40::use_mr_pumpkin() {
 int16 Room40::use_schalter(int16 aad_nr) {
 	int16 action_flag = false;
 
-	if (_G(menu_item) != CUR_HOWARD &&_G(spieler).R40PoliceWeg == false) {
+	if (_G(menu_item) != CUR_HOWARD &&_G(gameState).R40PoliceWeg == false) {
 		action_flag = true;
 
 		hideCur();
 		autoMove(8, P_CHEWY);
 
-		if (_G(spieler).R40PoliceAniStatus != 255) {
+		if (_G(gameState).R40PoliceAniStatus != 255) {
 			start_spz(CH_PUMP_TALK, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(204);
 
-			while (_G(spieler).R40PoliceAniStatus != 255) {
+			while (_G(gameState).R40PoliceAniStatus != 255) {
 				setupScreen(DO_SETUP);
 				SHOULD_QUIT_RETURN0;
 			}
 		}
 
 		_G(room)->set_timer_status(255, TIMER_STOP);
-		_G(spieler).R40PoliceStart = false;
+		_G(gameState).R40PoliceStart = false;
 		stop_spz();
 		start_spz_wait(CH_PUMP_GET1, 1, false, P_CHEWY);
 
-		if (_G(spieler).R40PoliceAb) {
-			_G(spieler).R40PoliceAb = false;
+		if (_G(gameState).R40PoliceAb) {
+			_G(gameState).R40PoliceAb = false;
 			stop_spz();
 			goAutoXy(308, 100, P_HOWARD, ANI_WAIT);
-			_G(spieler).R40HoUse = false;
+			_G(gameState).R40HoUse = false;
 		}
 
 		_G(det)->hideStaticSpr(15);
@@ -412,9 +412,9 @@ int16 Room40::use_schalter(int16 aad_nr) {
 }
 
 void Room40::talk_police() {
-	if (!_G(spieler).R40PoliceWeg && _G(spieler).R40PoliceAniStatus == 255) {
+	if (!_G(gameState).R40PoliceWeg && _G(gameState).R40PoliceAniStatus == 255) {
 		hideCur();
-		_G(spieler).R40PoliceStart = false;
+		_G(gameState).R40PoliceStart = false;
 		_G(room)->set_timer_status(255, TIMER_STOP);
 		autoMove(7, P_CHEWY);
 		startAadWait(203);
@@ -425,8 +425,8 @@ void Room40::talk_police() {
 }
 
 void Room40::talk_handler() {
-	if (!_G(spieler).R40HaendlerOk) {
-		_G(spieler).flags38_2 = true;
+	if (!_G(gameState).R40HaendlerOk) {
+		_G(gameState).flags38_2 = true;
 		hideCur();
 		autoMove(6, P_CHEWY);
 		_G(det)->del_static_ani(4);
@@ -443,17 +443,17 @@ void Room40::talk_handler() {
 int16 Room40::use_haendler() {
 	int16 action_flag = false;
 
-	if (_G(menu_item) == CUR_HOWARD && !_G(spieler).R40HaendlerOk) {
+	if (_G(menu_item) == CUR_HOWARD && !_G(gameState).R40HaendlerOk) {
 		action_flag = true;
-		if (!_G(spieler).flags38_2) {
+		if (!_G(gameState).flags38_2) {
 			startAadWait(612);
 		} else {
 			hideCur();
 			invent_2_slot(DUENGER_INV);
-			_G(spieler).R40HoUse = true;
-			_G(spieler).R40HaendlerOk = true;
-			_G(spieler).R40TeilKarte = true;
-			_G(spieler).R40DuengerMit = true;
+			_G(gameState).R40HoUse = true;
+			_G(gameState).R40HaendlerOk = true;
+			_G(gameState).R40TeilKarte = true;
+			_G(gameState).R40DuengerMit = true;
 			_G(atds)->setControlBit(283, ATS_ACTIVE_BIT, ATS_DATA);
 			autoMove(10, P_CHEWY);
 			autoMove(11, P_HOWARD);
@@ -470,7 +470,7 @@ int16 Room40::use_haendler() {
 			_G(det)->set_static_ani(5, -1);
 			startAadWait(213);
 
-			if (_G(spieler).R28RKuerbis) {
+			if (_G(gameState).R28RKuerbis) {
 				_G(det)->del_static_ani(5);
 				_G(det)->set_static_ani(3, -1);
 				startAadWait(211);
@@ -478,8 +478,8 @@ int16 Room40::use_haendler() {
 				_G(out)->set_partialpalette(_G(pal), 255, 1);
 				startAadWait(212);
 				_G(out)->ausblenden(0);
-				_G(spieler).R40Wettbewerb = true;
-				_G(spieler)._personRoomNr[P_HOWARD] = 28;
+				_G(gameState).R40Wettbewerb = true;
+				_G(gameState)._personRoomNr[P_HOWARD] = 28;
 				_G(flags).NoScroll = false;
 				_G(out)->setPointer(nullptr);
 				_G(out)->cls();
@@ -496,7 +496,7 @@ int16 Room40::use_haendler() {
 			showCur();
 			_G(flags).NoScroll = false;
 			_G(flags).MouseLeft = false;
-			_G(spieler).R40HoUse = false;
+			_G(gameState).R40HoUse = false;
 		}
 	}
 
@@ -509,13 +509,13 @@ int16 Room40::use_bmeister() {
 	if (_G(menu_item) == CUR_HOWARD) {
 		action_flag = true;
 		hideCur();
-		_G(spieler).R40HoUse = true;
+		_G(gameState).R40HoUse = true;
 		autoMove(9, P_CHEWY);
 		autoMove(11, P_HOWARD);
 		startAadWait(214);
 		bmeister_dia(215);
 		startAadWait(216);
-		_G(spieler).R40HoUse = false;
+		_G(gameState).R40HoUse = false;
 		_G(flags).NoScroll = false;
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
@@ -523,14 +523,14 @@ int16 Room40::use_bmeister() {
 
 	} else if (isCurInventory(LIKOER2_INV)) {
 		action_flag = true;
-		if (_G(spieler).flags37_80) {
+		if (_G(gameState).flags37_80) {
 			startAadWait(605);
 		} else {
 			hideCur();
-			_G(spieler).R40HoUse = true;
+			_G(gameState).R40HoUse = true;
 			new_invent_2_cur(HOTEL_INV);
 			bmeister_dia(237);
-			_G(spieler).flags37_80 = true;
+			_G(gameState).flags37_80 = true;
 			_G(flags).NoScroll = false;
 			showCur();
 		}
@@ -572,13 +572,13 @@ bool Room40::use_police() {
 	bool result = false;
 
 	if (_G(menu_item) == CUR_HOWARD) {
-		if (!_G(spieler).R40PoliceWeg && _G(spieler).R40PoliceAniStatus == 255) {
+		if (!_G(gameState).R40PoliceWeg && _G(gameState).R40PoliceAniStatus == 255) {
 			result = true;
-			_G(spieler).R40PoliceAb = true;
+			_G(gameState).R40PoliceAb = true;
 			hideCur();
-			_G(spieler).R40PoliceStart = false;
+			_G(gameState).R40PoliceStart = false;
 			_G(room)->set_timer_status(255, TIMER_STOP);
-			_G(spieler).R40HoUse = true;
+			_G(gameState).R40HoUse = true;
 			autoMove(9, P_CHEWY);
 			autoMove(11, P_HOWARD);
 			startAadWait(217);
@@ -602,21 +602,21 @@ bool Room40::use_police() {
 int16 Room40::use_tele() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur && _G(spieler).R40PoliceWeg == false) {
+	if (!_G(gameState).inv_cur && _G(gameState).R40PoliceWeg == false) {
 		action_flag = true;
 		hideCur();
 
 		int16 dia_nr1 = -1;
-		if (!_G(spieler).R40PoliceAb) {
+		if (!_G(gameState).R40PoliceAb) {
 			startAadWait(219);
-			_G(spieler).R40HoUse = false;
+			_G(gameState).R40HoUse = false;
 
 		} else {
 			autoMove(13, P_CHEWY);
 			_G(det)->showStaticSpr(0);
 
 			int16 dia_nr;
-			if (!_G(spieler).R40DuengerMit) {
+			if (!_G(gameState).R40DuengerMit) {
 				dia_nr = 220;
 				dia_nr1 = 222;
 			} else {
@@ -629,26 +629,26 @@ int16 Room40::use_tele() {
 			_G(det)->hideStaticSpr(0);
 			autoMove(9, P_CHEWY);
 			startAadWait(dia_nr1);
-			_G(spieler).R40HoUse = false;
+			_G(gameState).R40HoUse = false;
 			int16 timer_wert = 0;
 
 			if (dia_nr1 == 223) {
 				if (isCurInventory(DUENGER_INV)) {
-					delInventory(_G(spieler).AkInvent);
+					delInventory(_G(gameState).AkInvent);
 				} else {
 					remove_inventory(DUENGER_INV);
 				}
 
 				invent_2_slot(LIKOER_INV);
 				autoMove(1, P_CHEWY);
-				_G(spieler).R40DuengerMit = false;
-				_G(spieler).R40DuengerTele = true;
+				_G(gameState).R40DuengerMit = false;
+				_G(gameState).R40DuengerTele = true;
 				_G(flags).MouseLeft = true;
 				_G(flags).MainInput = false;
 				timer_wert = 3;
 			}
 
-			_G(spieler).R40PoliceAb = false;
+			_G(gameState).R40PoliceAb = false;
 			_G(room)->set_timer_status(255, TIMER_START);
 			_G(uhr)->resetTimer(_G(timer_nr)[0], timer_wert);
 		}

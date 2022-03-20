@@ -37,27 +37,27 @@ void Room71::entry(int16 eib_nr) {
 	g_engine->_sound->playSound(0, 1);
 	g_engine->_sound->playSound(0);
 	g_engine->_sound->playSound(0, 1, false);
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 8;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 16;
-	_G(spieler).ZoomXy[P_NICHELLE][0] = 8;
-	_G(spieler).ZoomXy[P_NICHELLE][1] = 16;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 8;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 16;
+	_G(gameState).ZoomXy[P_NICHELLE][0] = 8;
+	_G(gameState).ZoomXy[P_NICHELLE][1] = 16;
 	_G(zoom_horizont) = 0;
 	_state = 0;
 	_delay = 0;
 	_G(SetUpScreenFunc) = setup_func;
-	_G(spieler).DiaAMov = 4;
-	if (!_G(spieler).R71LeopardVined && !_G(spieler).flags28_4) {
+	_G(gameState).DiaAMov = 4;
+	if (!_G(gameState).R71LeopardVined && !_G(gameState).flags28_4) {
 		_G(timer_nr)[0] = _G(room)->set_timer(0, 10);
 		_G(det)->set_static_ani(0, -1);
-	} else if (_G(spieler).R71LeopardVined) {
+	} else if (_G(gameState).R71LeopardVined) {
 		_G(det)->startDetail(2, 255, ANI_FRONT);
 		_G(det)->showStaticSpr(8);
 		_G(det)->hideStaticSpr(2);
 		_G(det)->hideStaticSpr(3);
-	} else if (_G(spieler).flags28_4) {
+	} else if (_G(gameState).flags28_4) {
 		_G(det)->showStaticSpr(5);
 		_G(det)->hideStaticSpr(3);
 	}
@@ -82,18 +82,18 @@ void Room71::entry(int16 eib_nr) {
 }
 
 void Room71::xit(int16 eib_nr) {
-	_G(spieler).ScrollxStep = 1;
-	if (_G(spieler)._personRoomNr[P_HOWARD] != 71)
+	_G(gameState).ScrollxStep = 1;
+	if (_G(gameState)._personRoomNr[P_HOWARD] != 71)
 		return;
 
 	switch (eib_nr) {
 	case 105:
-		_G(spieler)._personRoomNr[P_HOWARD] = 74;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 74;
+		_G(gameState)._personRoomNr[P_HOWARD] = 74;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 74;
 		break;
 	case 106:
-		_G(spieler)._personRoomNr[P_HOWARD] = 73;
-		_G(spieler)._personRoomNr[P_NICHELLE] = 73;
+		_G(gameState)._personRoomNr[P_HOWARD] = 73;
+		_G(gameState)._personRoomNr[P_NICHELLE] = 73;
 	default:
 		break;
 	}
@@ -106,7 +106,7 @@ void Room71::setup_func() {
 		if (_delay)
 			--_delay;
 		else {
-			_delay = (_G(spieler).DelaySpeed + 1) / 2;
+			_delay = (_G(gameState).DelaySpeed + 1) / 2;
 
 			if (_state == 1) {
 				_G(det)->setStaticPos(3, 244 + g_engine->_rnd.getRandomNumber(4), -1 * g_engine->_rnd.getRandomNumber(4), false, false);				
@@ -152,7 +152,7 @@ void Room71::setup_func() {
 }
 
 int Room71::proc1() {
-	if (_G(spieler).inv_cur) {
+	if (_G(gameState).inv_cur) {
 		_G(flags).NoScroll = false;
 		return 0;
 	}
@@ -164,27 +164,27 @@ int Room71::proc1() {
 	_delay = 0;
 	if (_G(menu_item) == CUR_HOWARD) {
 		proc4();
-		if (_G(spieler).flags28_4) {
-			if (_G(spieler).R71Val2)
+		if (_G(gameState).flags28_4) {
+			if (_G(gameState).R71Val2)
 				proc2();
 			else
-				_G(spieler).R71Val1 = 1;
+				_G(gameState).R71Val1 = 1;
 		}
 	} else if (_G(menu_item) == CUR_NICHELLE) {
 		proc3();
-		if (_G(spieler).flags28_4) {
-			if (_G(spieler).R71Val1)
+		if (_G(gameState).flags28_4) {
+			if (_G(gameState).R71Val1)
 				proc2();
 			else
-				_G(spieler).R71Val2 = 1;
+				_G(gameState).R71Val2 = 1;
 		}
 	} else {
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		proc5(3);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 	}
 
-	if (!_G(spieler).R71LeopardVined)
+	if (!_G(gameState).R71LeopardVined)
 		startAadWait(432);
 
 	showCur();
@@ -201,9 +201,9 @@ void Room71::proc2() {
 	_G(SetUpScreenFunc) = setup_func;
 	_G(flags).NoScroll = true;
 	auto_scroll(284, 0);
-	_G(spieler)._personHide[P_CHEWY] = true;
-	_G(spieler)._personHide[P_NICHELLE] = true;
-	_G(spieler)._personHide[P_HOWARD] = true;
+	_G(gameState)._personHide[P_CHEWY] = true;
+	_G(gameState)._personHide[P_NICHELLE] = true;
+	_G(gameState)._personHide[P_HOWARD] = true;
 	proc5(5);
 	_G(det)->hideStaticSpr(2);
 	_G(det)->startDetail(5, 255, false);
@@ -215,10 +215,10 @@ void Room71::proc2() {
 	_G(det)->showStaticSpr(8);
 	_G(atds)->setControlBit(442, ATS_ACTIVE_BIT, ATS_DATA);
 	_G(atds)->setControlBit(446, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(spieler)._personHide[P_HOWARD] = false;
-	_G(spieler)._personHide[P_NICHELLE] = false;
-	_G(spieler)._personHide[P_CHEWY] = false;
-	_G(spieler).R71LeopardVined = true;
+	_G(gameState)._personHide[P_HOWARD] = false;
+	_G(gameState)._personHide[P_NICHELLE] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
+	_G(gameState).R71LeopardVined = true;
 	_G(flags).NoScroll = false;
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
@@ -230,11 +230,11 @@ void Room71::proc3() {
 	_G(SetUpScreenFunc) = nullptr;
 	goAutoXy(510, 34, P_NICHELLE, ANI_WAIT);
 	_G(SetUpScreenFunc) = setup_func;
-	_G(spieler)._personHide[P_CHEWY] = true;
-	_G(spieler)._personHide[P_NICHELLE] = true;
+	_G(gameState)._personHide[P_CHEWY] = true;
+	_G(gameState)._personHide[P_NICHELLE] = true;
 	proc5(6);
-	_G(spieler)._personHide[P_NICHELLE] = false;
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_NICHELLE] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 }
 
 void Room71::proc4() {
@@ -242,15 +242,15 @@ void Room71::proc4() {
 	_G(SetUpScreenFunc) = nullptr;
 	goAutoXy(518, 35, P_HOWARD, ANI_WAIT);
 	_G(SetUpScreenFunc) = setup_func;
-	_G(spieler)._personHide[P_CHEWY] = true;
-	_G(spieler)._personHide[P_HOWARD] = true;
+	_G(gameState)._personHide[P_CHEWY] = true;
+	_G(gameState)._personHide[P_HOWARD] = true;
 	proc5(4);
-	_G(spieler)._personHide[P_HOWARD] = false;
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_HOWARD] = false;
+	_G(gameState)._personHide[P_CHEWY] = false;
 }
 
 void Room71::proc5(int16 val) {
-	_state = 1 + (_G(spieler).flags28_4 ? 1 : 0);
+	_state = 1 + (_G(gameState).flags28_4 ? 1 : 0);
 	_G(det)->hideStaticSpr(2);
 	startSetAILWait(val, 5, ANI_FRONT);
 	_G(det)->showStaticSpr(2);
@@ -258,7 +258,7 @@ void Room71::proc5(int16 val) {
 }
 
 int Room71::proc6() {
-	if (_G(spieler).inv_cur)
+	if (_G(gameState).inv_cur)
 		return 0;
 
 	hideCur();
@@ -271,7 +271,7 @@ int Room71::proc6() {
 	start_spz_wait(14, 1, false, P_CHEWY);
 	_G(det)->hideStaticSpr(4);
 	_G(det)->showStaticSpr(5);
-	_G(spieler).flags28_4 = true;
+	_G(gameState).flags28_4 = true;
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->del_static_ani(0);
 	_G(atds)->setControlBit(443, ATS_ACTIVE_BIT, ATS_DATA);
@@ -291,11 +291,11 @@ void Room71::proc7() {
 	goAutoXy(323, 28, P_NICHELLE, ANI_WAIT);
 	_G(flags).NoScroll = true;
 	auto_scroll(200, 0);
-	_G(spieler)._personHide[P_NICHELLE] = true;
+	_G(gameState)._personHide[P_NICHELLE] = true;
 	_G(det)->startDetail(7, 255, false);
 	startAadWait(624);
 	_G(det)->stop_detail(7);
-	_G(spieler)._personHide[P_NICHELLE] = false;
+	_G(gameState)._personHide[P_NICHELLE] = false;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(flags).NoScroll = false;
 	startAadWait(432);

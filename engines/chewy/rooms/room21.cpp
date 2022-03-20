@@ -63,8 +63,8 @@ static const AniBlock ABLOCK19[3] = {
 };
 
 void Room21::entry() {
-	_G(spieler).ScrollxStep = 2;
-	_G(spieler).ScrollyStep = 2;
+	_G(gameState).ScrollxStep = 2;
+	_G(gameState).ScrollyStep = 2;
 	load_chewy_taf(CHEWY_MINI);
 	calc_laser();
 	init_spinne();
@@ -83,32 +83,32 @@ bool Room21::timer(int16 t_nr, int16 ani_nr) {
 }
 
 void Room21::calc_laser() {
-	if (_G(spieler).R21Hebel1 && !_G(spieler).R21Hebel2 && _G(spieler).R21Hebel3) {
-		_G(spieler).R21Laser1Weg = true;
+	if (_G(gameState).R21Hebel1 && !_G(gameState).R21Hebel2 && _G(gameState).R21Hebel3) {
+		_G(gameState).R21Laser1Weg = true;
 		_G(det)->stop_detail(3);
 		_G(atds)->setControlBit(134, ATS_ACTIVE_BIT, ATS_DATA);
 		_G(atds)->delControlBit(133, ATS_ACTIVE_BIT, ATS_DATA);
 	} else {
-		_G(spieler).R21Laser1Weg = false;
+		_G(gameState).R21Laser1Weg = false;
 		_G(det)->startDetail(3, 255, ANI_FRONT);
 		_G(atds)->delControlBit(134, ATS_ACTIVE_BIT, ATS_DATA);
 		_G(atds)->setControlBit(133, ATS_ACTIVE_BIT, ATS_DATA);
 	}
 
-	if (!_G(spieler).R21Hebel1 && _G(spieler).R21Hebel2 && !_G(spieler).R21Hebel3) {
-		if (!_G(obj)->checkInventory(SEIL_INV) && !_G(spieler).R17Seil) {
+	if (!_G(gameState).R21Hebel1 && _G(gameState).R21Hebel2 && !_G(gameState).R21Hebel3) {
+		if (!_G(obj)->checkInventory(SEIL_INV) && !_G(gameState).R17Seil) {
 			_G(obj)->show_sib(SIB_SEIL_R21);
 			_G(atds)->delControlBit(129, ATS_ACTIVE_BIT, ATS_DATA);
 		}
 
-		_G(spieler).R21Laser2Weg = true;
+		_G(gameState).R21Laser2Weg = true;
 		_G(det)->stop_detail(4);
 		_G(atds)->setControlBit(135, ATS_ACTIVE_BIT, ATS_DATA);
 
 	} else {
 		_G(obj)->hide_sib(SIB_SEIL_R21);
 		_G(atds)->setControlBit(129, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(spieler).R21Laser2Weg = false;
+		_G(gameState).R21Laser2Weg = false;
 		_G(det)->startDetail(4, 255, ANI_FRONT);
 		_G(atds)->delControlBit(135, ATS_ACTIVE_BIT, ATS_DATA);
 	}
@@ -123,7 +123,7 @@ void Room21::init_spinne() {
 	_G(mov_phasen)[SPINNE1_OBJ].Repeat = 255;
 	_G(mov_phasen)[SPINNE1_OBJ].ZoomFak = 0;
 	_G(auto_mov_obj)[SPINNE1_OBJ].Id = AUTO_OBJ0;
-	_G(auto_mov_vector)[SPINNE1_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_vector)[SPINNE1_OBJ].Delay = _G(gameState).DelaySpeed;
 	_G(auto_mov_obj)[SPINNE1_OBJ].Mode = true;
 	init_auto_obj(SPINNE1_OBJ, &SPINNE_PHASEN[0][0], 3, (const MovLine *)SPINNE_MPKT);
 
@@ -132,7 +132,7 @@ void Room21::init_spinne() {
 	_G(mov_phasen)[SPINNE2_OBJ].Repeat = 1;
 	_G(mov_phasen)[SPINNE2_OBJ].ZoomFak = 0;
 	_G(auto_mov_obj)[SPINNE2_OBJ].Id = AUTO_OBJ1;
-	_G(auto_mov_vector)[SPINNE2_OBJ].Delay = _G(spieler).DelaySpeed;
+	_G(auto_mov_vector)[SPINNE2_OBJ].Delay = _G(gameState).DelaySpeed;
 	_G(auto_mov_obj)[SPINNE2_OBJ].Mode = true;
 	init_auto_obj(SPINNE2_OBJ, &SPINNE_PHASEN[0][0], 2, (const MovLine *)SPINNE_MPKT1);
 	_G(timer_nr)[0] = _G(room)->set_timer(255, 21);
@@ -156,7 +156,7 @@ void Room21::setup_func() {
 		_G(mov_phasen)[ENERGIE_OBJ].Repeat = 1;
 		_G(mov_phasen)[ENERGIE_OBJ].ZoomFak = 0;
 		_G(auto_mov_obj)[ENERGIE_OBJ].Id = AUTO_OBJ2;
-		_G(auto_mov_vector)[ENERGIE_OBJ].Delay = _G(spieler).DelaySpeed;
+		_G(auto_mov_vector)[ENERGIE_OBJ].Delay = _G(gameState).DelaySpeed;
 		_G(auto_mov_obj)[ENERGIE_OBJ].Mode = true;
 		init_auto_obj(ENERGIE_OBJ, &SPINNE_PHASEN[0][0], 2, (const MovLine *)SPINNE_MPKT2);
 	}
@@ -192,11 +192,11 @@ void Room21::chewy_kolli() {
 		const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
 		stopPerson(P_CHEWY);
 		_G(flags).AutoAniPlay = true;
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		int16 ani_nr = (_G(spieler_vector)[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
 		_G(det)->setSetailPos(ani_nr, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
 		startSetAILWait(ani_nr, 1, ANI_FRONT);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;
 		_G(spieler_vector)[P_CHEWY].Count = tmp;
 		get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
@@ -205,11 +205,11 @@ void Room21::chewy_kolli() {
 }
 
 void Room21::salto() {
-	if (!_G(spieler).inv_cur && _G(atds)->get_ats_str(134, TXT_MARK_USE, ATS_DATA) == 8
-		&& !_G(spieler).R21Salto && !_G(flags).AutoAniPlay) {
-		_G(spieler).R21Salto = true;
+	if (!_G(gameState).inv_cur && _G(atds)->get_ats_str(134, TXT_MARK_USE, ATS_DATA) == 8
+		&& !_G(gameState).R21Salto && !_G(flags).AutoAniPlay) {
+		_G(gameState).R21Salto = true;
 		_G(flags).AutoAniPlay = true;
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 
 		for (int16 i = 0; i < 3; i++) {
 			_G(det)->setSetailPos(12 + i, _G(spieler_vector)[P_CHEWY].Xypos[0],
@@ -217,44 +217,44 @@ void Room21::salto() {
 		}
 
 		startAniBlock(3, ABLOCK19);
-		_G(spieler)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_CHEWY] = false;
 		startAadWait(36);
 		_G(flags).AutoAniPlay = false;
 	}
 }
 
 void Room21::use_gitter_energie() {
-	_G(spieler).R21GitterEnergie = exit_flip_flop(-1, 47, -1, 131, 138, -1,
-		EXIT_BOTTOM, EXIT_TOP, (int16)_G(spieler).R21GitterEnergie);
+	_G(gameState).R21GitterEnergie = exit_flip_flop(-1, 47, -1, 131, 138, -1,
+		EXIT_BOTTOM, EXIT_TOP, (int16)_G(gameState).R21GitterEnergie);
 	_G(auto_obj) = 0;
-	_G(spieler).R17Location = 1;
-	_G(spieler)._personHide[P_CHEWY] = true;
+	_G(gameState).R17Location = 1;
+	_G(gameState)._personHide[P_CHEWY] = true;
 
 	switchRoom(17);
 	_G(det)->hideStaticSpr(5);
 	startSetAILWait(9, 1, ANI_FRONT);
-	_G(spieler).R17GitterWeg = true;
-	_G(spieler)._personHide[P_CHEWY] = false;
+	_G(gameState).R17GitterWeg = true;
+	_G(gameState)._personHide[P_CHEWY] = false;
 }
 
 int16 Room21::use_fenster() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur && !_G(flags).AutoAniPlay && _G(spieler).R21Laser1Weg) {
+	if (!_G(gameState).inv_cur && !_G(flags).AutoAniPlay && _G(gameState).R21Laser1Weg) {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
-		_G(spieler).R18Gitter = true;
+		_G(gameState).R18Gitter = true;
 		autoMove(13, P_CHEWY);
 		setPersonPos(541, 66, P_CHEWY, P_LEFT);
 		switchRoom(18);
 
-		if (!_G(spieler).R18FirstEntry) {
+		if (!_G(gameState).R18FirstEntry) {
 			startAadWait(39);
-			_G(spieler).R18FirstEntry = true;
+			_G(gameState).R18FirstEntry = true;
 		}
 
-		_G(spieler).room_e_obj[50].Attribut = EXIT_TOP;
-		_G(spieler).room_e_obj[41].Attribut = 255;
+		_G(gameState).room_e_obj[50].Attribut = EXIT_TOP;
+		_G(gameState).room_e_obj[41].Attribut = 255;
 		_G(flags).AutoAniPlay = false;
 	}
 

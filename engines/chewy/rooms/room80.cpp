@@ -30,8 +30,8 @@ namespace Rooms {
 
 void Room80::entry() {
 	_G(mouseLeftClick) = false;
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 0;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 0;
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0, 1);
 	g_engine->_sound->playSound(0, 2);
@@ -39,29 +39,29 @@ void Room80::entry() {
 	g_engine->_sound->playSound(0, 1, false);
 	g_engine->_sound->playSound(0, 2, false);
 
-	if (_G(spieler).gottenDiary) {
+	if (_G(gameState).gottenDiary) {
 		_G(atds)->delControlBit(476, ATS_ACTIVE_BIT, ATS_DATA);
 	} else {
 		_G(atds)->setControlBit(476, ATS_ACTIVE_BIT, ATS_DATA);
 	}
 
-	if (_G(spieler).flags32_1) {
-		_G(spieler).scrollx = 39;
+	if (_G(gameState).flags32_1) {
+		_G(gameState).scrollx = 39;
 		return;
 	}
 
 	setPersonPos(37, 10, P_CHEWY, P_RIGHT);
 	setPersonPos(22, -1, P_HOWARD, P_RIGHT);
 	setPersonPos(6, 2, P_NICHELLE, P_RIGHT);
-	_G(spieler).scrollx = 10;
+	_G(gameState).scrollx = 10;
 	_G(flags).NoScroll = true;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 24;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 40;
-	_G(spieler).ZoomXy[P_NICHELLE][0] = 24;
-	_G(spieler).ZoomXy[P_NICHELLE][1] = 40;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 24;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 40;
+	_G(gameState).ZoomXy[P_NICHELLE][0] = 24;
+	_G(gameState).ZoomXy[P_NICHELLE][1] = 40;
 	_G(zoom_horizont) = 0;
 
-	if (_G(spieler).r88DestRoom == 84)
+	if (_G(gameState).r88DestRoom == 84)
 		_G(det)->showStaticSpr(3);
 	else
 		_G(det)->showStaticSpr(4);
@@ -73,18 +73,18 @@ void Room80::setup_func() {
 	for (int i = 0; i < 3; ++i)
 		_G(det)->hideStaticSpr(i);
 
-	if (_G(spieler).flags32_1 || !_G(flags).ShowAtsInvTxt || _G(menu_display))
+	if (_G(gameState).flags32_1 || !_G(flags).ShowAtsInvTxt || _G(menu_display))
 		return;
 
 	_G(menu_item) = CUR_USE;
 	cur_2_inventory();
 	cursorChoice(CUR_ZEIGE);
-	int vec = _G(det)->maus_vector(_G(spieler).scrollx + g_events->_mousePos.x, g_events->_mousePos.y);
+	int vec = _G(det)->maus_vector(_G(gameState).scrollx + g_events->_mousePos.x, g_events->_mousePos.y);
 	if (vec == -1)
 		return;
 
 	if (vec != 0 && vec != 2) {
-		if (vec != 1 || !_G(spieler).gottenDiary)
+		if (vec != 1 || !_G(gameState).gottenDiary)
 			return;
 	}
 
@@ -98,7 +98,7 @@ void Room80::setup_func() {
 		nextRoom = 82;
 		break;
 	case 1:
-		if (_G(spieler).R88UsedMonkey)
+		if (_G(gameState).R88UsedMonkey)
 			nextRoom = 85;
 		else
 			nextRoom = 84;
@@ -118,22 +118,22 @@ void Room80::setup_func() {
 	_G(det)->hideStaticSpr(vec);
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
-	_G(spieler).flags30_1 = true;
+	_G(gameState).flags30_1 = true;
 	_G(mouseLeftClick) = false;
 	setupScreen(DO_SETUP);
 	
 	for (int i = P_CHEWY; i <= P_NICHELLE; ++i) {
-		if (_G(spieler).R79Val[i] != 0) {
-			_G(spieler)._personHide[i] = false;
-			_G(spieler).R79Val[i] = 0;
+		if (_G(gameState).R79Val[i] != 0) {
+			_G(gameState)._personHide[i] = false;
+			_G(gameState).R79Val[i] = 0;
 		}
 	}
 
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 80)
-		_G(spieler)._personRoomNr[P_HOWARD] = nextRoom;
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 80)
+		_G(gameState)._personRoomNr[P_HOWARD] = nextRoom;
 
-	if (_G(spieler)._personRoomNr[P_NICHELLE] == 80)
-		_G(spieler)._personRoomNr[P_NICHELLE] = nextRoom;
+	if (_G(gameState)._personRoomNr[P_NICHELLE] == 80)
+		_G(gameState)._personRoomNr[P_NICHELLE] = nextRoom;
 
 	_G(flags).NoScroll = false;
 	switchRoom(nextRoom);

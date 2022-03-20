@@ -32,13 +32,13 @@ namespace Rooms {
 void Room16::entry() {
 	_G(zoom_horizont) = 140;
 
-	if (!_G(spieler).R16F5Exit) {
+	if (!_G(gameState).R16F5Exit) {
 		_G(det)->showStaticSpr(4);
-		_G(spieler).room_e_obj[32].Attribut = 255;
+		_G(gameState).room_e_obj[32].Attribut = 255;
 		_G(atds)->delControlBit(124, ATS_ACTIVE_BIT, ATS_DATA);
 	} else {
 		_G(det)->hideStaticSpr(4);
-		_G(spieler).room_e_obj[32].Attribut = EXIT_LEFT;
+		_G(gameState).room_e_obj[32].Attribut = EXIT_LEFT;
 		_G(atds)->setControlBit(124, ATS_ACTIVE_BIT, ATS_DATA);
 	}
 }
@@ -46,10 +46,10 @@ void Room16::entry() {
 int16 Room16::use_gleiter() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		action_flag = true;
 		autoMove(6, P_CHEWY);
-		_G(spieler).R23GleiterExit = 16;
+		_G(gameState).R23GleiterExit = 16;
 		Room23::cockpit();
 	}
 

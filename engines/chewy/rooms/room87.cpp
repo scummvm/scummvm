@@ -29,19 +29,19 @@ namespace Chewy {
 namespace Rooms {
 
 void Room87::entry() {
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
-	_G(spieler).ZoomXy[P_HOWARD][0] = 18;
-	_G(spieler).ZoomXy[P_HOWARD][1] = 28;
-	_G(spieler).ZoomXy[P_NICHELLE][0] = 18;
-	_G(spieler).ZoomXy[P_NICHELLE][1] = 28;
+	_G(gameState).ZoomXy[P_HOWARD][0] = 18;
+	_G(gameState).ZoomXy[P_HOWARD][1] = 28;
+	_G(gameState).ZoomXy[P_NICHELLE][0] = 18;
+	_G(gameState).ZoomXy[P_NICHELLE][1] = 28;
 	_G(zoom_horizont) = 176;
-	if (_G(spieler).flags32_4)
+	if (_G(gameState).flags32_4)
 		_G(det)->showStaticSpr(3);
 
-	if (_G(spieler).flags32_8)
+	if (_G(gameState).flags32_8)
 		_G(det)->showStaticSpr(4);
 
 	if (_G(flags).LoadGame)
@@ -97,12 +97,12 @@ void Room87::xit(int16 eib_nr) {
 	goAutoXy(31, 56, P_CHEWY, ANI_WAIT);
 	goAutoXy(9, 53, P_CHEWY, ANI_WAIT);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
-	_G(spieler).ScrollxStep = 1;
-	if (_G(spieler)._personRoomNr[P_HOWARD] == 87)
-		_G(spieler)._personRoomNr[P_HOWARD] = 86;
+	_G(gameState).ScrollxStep = 1;
+	if (_G(gameState)._personRoomNr[P_HOWARD] == 87)
+		_G(gameState)._personRoomNr[P_HOWARD] = 86;
 
-	if (_G(spieler)._personRoomNr[P_NICHELLE] == 87)
-		_G(spieler)._personRoomNr[P_NICHELLE] = 86;
+	if (_G(gameState)._personRoomNr[P_NICHELLE] == 87)
+		_G(gameState)._personRoomNr[P_NICHELLE] = 86;
 }
 
 int Room87::proc2(int16 txt_nr) {
@@ -115,16 +115,16 @@ int Room87::proc2(int16 txt_nr) {
 	int movNr;
 	if (txt_nr == 501) {
 		movNr = 3;
-		if (_G(spieler).flags32_4)
+		if (_G(gameState).flags32_4)
 			diaNr = 473;
 		else
-			_G(spieler).flags32_4 = true;
+			_G(gameState).flags32_4 = true;
 	} else {
 		movNr = 4;
-		if (_G(spieler).flags32_8)
+		if (_G(gameState).flags32_8)
 			diaNr = 473;
 		else
-			_G(spieler).flags32_8 = true;
+			_G(gameState).flags32_8 = true;
 	}
 
 	if (diaNr) {
@@ -132,11 +132,11 @@ int Room87::proc2(int16 txt_nr) {
 		startAadWait(diaNr);
 	} else {
 		autoMove(movNr, P_CHEWY);
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		start_spz_wait(14, 1, false, P_CHEWY);
 		_G(atds)->set_ats_str(txt_nr, 1, ATS_DATA);
 		_G(det)->showStaticSpr(movNr);
-		if (_G(spieler).flags32_4 && _G(spieler).flags32_8)
+		if (_G(gameState).flags32_4 && _G(gameState).flags32_8)
 			_G(atds)->delControlBit(502, ATS_ACTIVE_BIT, ATS_DATA);
 	}
 	showCur();
@@ -144,7 +144,7 @@ int Room87::proc2(int16 txt_nr) {
 }
 
 int Room87::proc4() {
-	if (_G(spieler).inv_cur)
+	if (_G(gameState).inv_cur)
 		return 0;
 
 	hideCur();
@@ -161,9 +161,9 @@ int Room87::proc4() {
 	flic_cut(FCUT_098);
 	flic_cut(FCUT_099);
 	flic_cut(FCUT_100);
-	_G(spieler).PersonGlobalDia[P_HOWARD] = -1;
-	_G(spieler).PersonDiaRoom[P_HOWARD] = false;
-	_G(spieler).flags32_10 = true;
+	_G(gameState).PersonGlobalDia[P_HOWARD] = -1;
+	_G(gameState).PersonDiaRoom[P_HOWARD] = false;
+	_G(gameState).flags32_10 = true;
 
 	switchRoom(86);
 	showCur();

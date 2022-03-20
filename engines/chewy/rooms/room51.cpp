@@ -51,12 +51,12 @@ void Room51::entry() {
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 4;
 
-	if (_G(spieler).flags32_10) {
+	if (_G(gameState).flags32_10) {
 		_G(atds)->enableEvents(false);
-		_G(spieler)._personHide[P_CHEWY] = true;
-		_G(spieler)._personHide[P_HOWARD] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_HOWARD] = true;
 		_G(mouseLeftClick) = false;
-		_G(spieler).scrollx = 0;
+		_G(gameState).scrollx = 0;
 		setPersonPos(34, 120, P_HOWARD, P_RIGHT);
 		setPersonPos(234, 69, P_CHEWY, P_LEFT);
 		_G(SetUpScreenFunc) = setup_func;
@@ -78,17 +78,17 @@ void Room51::entry() {
 		for (int i = 0; i < 2; i++)
 			_G(det)->startDetail(3 + i, 1, ANI_FRONT);
 
-		if (_G(spieler)._personRoomNr[P_HOWARD] == 51) {
-			_G(spieler).ZoomXy[P_HOWARD][0] = 40;
-			_G(spieler).ZoomXy[P_HOWARD][1] = 30;
+		if (_G(gameState)._personRoomNr[P_HOWARD] == 51) {
+			_G(gameState).ZoomXy[P_HOWARD][0] = 40;
+			_G(gameState).ZoomXy[P_HOWARD][1] = 30;
 
 			if (!_G(flags).LoadGame) {
 				setPersonPos(88, 93, P_HOWARD, P_RIGHT);
 			}
 
-			if (!_G(spieler).R51FirstEntry) {
+			if (!_G(gameState).R51FirstEntry) {
 				hideCur();
-				_G(spieler).R51FirstEntry = true;
+				_G(gameState).R51FirstEntry = true;
 				setPersonSpr(P_LEFT, P_CHEWY);
 				startAadWait(283);
 				showCur();
@@ -103,20 +103,20 @@ void Room51::entry() {
 void Room51::xit(int16 eib_nr) {
 	_G(atds)->enableEvents(true);
 
-	if (_G(spieler).flags32_10) {
+	if (_G(gameState).flags32_10) {
 		_G(flags).MainInput = true;
-		_G(spieler)._personHide[P_CHEWY] = false;
-		_G(spieler)._personHide[P_HOWARD] = false;
-		_G(spieler)._personRoomNr[P_HOWARD] = 91;
+		_G(gameState)._personHide[P_CHEWY] = false;
+		_G(gameState)._personHide[P_HOWARD] = false;
+		_G(gameState)._personRoomNr[P_HOWARD] = 91;
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
 		showCur();
 
-	} else if (_G(spieler)._personRoomNr[P_HOWARD] == 51) {
+	} else if (_G(gameState)._personRoomNr[P_HOWARD] == 51) {
 		if (eib_nr == 85) {
-			_G(spieler)._personRoomNr[P_HOWARD] = 50;
+			_G(gameState)._personRoomNr[P_HOWARD] = 50;
 		} else {
-			_G(spieler)._personRoomNr[P_HOWARD] = 52;
+			_G(gameState)._personRoomNr[P_HOWARD] = 52;
 		}
 
 		_G(spieler_mi)[P_HOWARD].Mode = false;
@@ -124,7 +124,7 @@ void Room51::xit(int16 eib_nr) {
 }
 
 bool Room51::timer(int16 t_nr, int16 ani_nr) {
-	if (_G(spieler).flags32_10)
+	if (_G(gameState).flags32_10)
 		timer_action(t_nr, _G(room)->_roomTimer._objNr[ani_nr]);
 	else
 		return true;
@@ -133,7 +133,7 @@ bool Room51::timer(int16 t_nr, int16 ani_nr) {
 }
 
 void Room51::setup_func() {
-	if (_G(spieler).flags32_10) {
+	if (_G(gameState).flags32_10) {
 		_tmpx = g_events->_mousePos.x;
 		_tmpy = g_events->_mousePos.y;
 		if (_tmpx > 215)
@@ -182,7 +182,7 @@ void Room51::setup_func() {
 				break;
 			}
 		}
-	} else if (_G(spieler)._personRoomNr[P_HOWARD] == 51) {
+	} else if (_G(gameState)._personRoomNr[P_HOWARD] == 51) {
 		calc_person_look();
 		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
 
@@ -218,11 +218,11 @@ int16 Room51::use_door(int16 txt_nr) {
 			_G(SetUpScreenFunc) = nullptr;
 			_G(det)->showStaticSpr(0);
 
-			if (!_G(spieler).R51HotelRoom) {
+			if (!_G(gameState).R51HotelRoom) {
 				autoMove(11, P_HOWARD);
 				setPersonSpr(P_LEFT, P_HOWARD);
-				_G(spieler).R51HotelRoom = true;
-				_G(spieler).room_e_obj[86].Attribut = EXIT_LEFT;
+				_G(gameState).R51HotelRoom = true;
+				_G(gameState).room_e_obj[86].Attribut = EXIT_LEFT;
 				startAadWait(285);
 				_G(atds)->set_ats_str(329, 1, ATS_DATA);
 				_G(SetUpScreenFunc) = setup_func;
@@ -236,14 +236,14 @@ int16 Room51::use_door(int16 txt_nr) {
 		case 330:
 			autoMove(9, P_CHEWY);
 
-			if (!_G(spieler).R51KillerWeg) {
+			if (!_G(gameState).R51KillerWeg) {
 				g_engine->_sound->playSound(2, 0);
 				g_engine->_sound->playSound(2);
 				_G(det)->showStaticSpr(1);
 				startSetAILWait(2, 1, ANI_FRONT);
 				_G(det)->startDetail(5, 255, ANI_FRONT);
 
-				if (!_G(spieler).R52HotDogOk) {
+				if (!_G(gameState).R52HotDogOk) {
 					startAadWait(287);
 					autoMove(12, P_CHEWY);
 					_G(det)->stop_detail(5);
@@ -252,7 +252,7 @@ int16 Room51::use_door(int16 txt_nr) {
 					g_engine->_sound->stopSound(0);
 					startAadWait(284);
 				} else {
-					_G(spieler).R51KillerWeg = true;
+					_G(gameState).R51KillerWeg = true;
 					startAadWait(290);
 					g_engine->_sound->stopSound(0);
 					_G(out)->ausblenden(1);
@@ -300,7 +300,7 @@ int16 Room51::use_door(int16 txt_nr) {
 		case 333:
 			autoMove(4, P_CHEWY);
 
-			switch (_G(spieler).R51DoorCount) {
+			switch (_G(gameState).R51DoorCount) {
 			case 0:
 				_G(det)->showStaticSpr(3);
 				startAadWait(278);
@@ -310,7 +310,7 @@ int16 Room51::use_door(int16 txt_nr) {
 
 				_G(det)->showStaticSpr(14);
 				startAadWait(279);
-				++_G(spieler).R51DoorCount;
+				++_G(gameState).R51DoorCount;
 				_G(obj)->show_sib(SIB_FLASCHE_R51);
 				_G(obj)->calc_rsi_flip_flop(SIB_FLASCHE_R51);
 				_G(det)->hideStaticSpr(3);
@@ -320,7 +320,7 @@ int16 Room51::use_door(int16 txt_nr) {
 				_G(det)->showStaticSpr(3);
 				startAadWait(280);
 				startSetAILWait(1, 1, ANI_FRONT);
-				++_G(spieler).R51DoorCount;
+				++_G(gameState).R51DoorCount;
 				_G(obj)->show_sib(SIB_KAPPE_R51);
 				_G(obj)->calc_rsi_flip_flop(SIB_KAPPE_R51);
 				_G(det)->hideStaticSpr(3);
@@ -329,7 +329,7 @@ int16 Room51::use_door(int16 txt_nr) {
 
 			default:
 				startAadWait(281);
-				if (_G(spieler)._personRoomNr[P_HOWARD] == 51)
+				if (_G(gameState)._personRoomNr[P_HOWARD] == 51)
 					startAadWait(282);
 				break;
 			}

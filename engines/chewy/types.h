@@ -386,7 +386,7 @@ struct GameState : public GameFlags {
 	void clear();
 
 	/**
-	 * For loading or savign the structure data
+	 * For loading or saving the structure data
 	 */
 	bool synchronize(Common::Serializer &s);
 

@@ -29,13 +29,13 @@ namespace Chewy {
 namespace Rooms {
 
 void Room92::entry() {
-	const int oldScrollX = _G(spieler.scrollx);
-	_G(spieler).scrollx = 0;
+	const int oldScrollX = _G(gameState).scrollx;
+	_G(gameState).scrollx = 0;
 	cur_2_inventory();
 	hideCur();
 	hide_person();
-	startAadWait(_G(spieler).SVal2);
-	switch (_G(spieler).SVal2) {
+	startAadWait(_G(gameState).SVal2);
+	switch (_G(gameState).SVal2) {
 	case 487:
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
@@ -43,9 +43,9 @@ void Room92::entry() {
 		flic_cut(FCUT_103);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
-		_G(spieler).scrollx = oldScrollX;
+		_G(gameState).scrollx = oldScrollX;
 		show_person();
-		switchRoom(_G(spieler).SVal1);
+		switchRoom(_G(gameState).SVal1);
 		break;
 	case 488:
 		_G(flags).StaticUseTxt = true;
@@ -65,8 +65,8 @@ void Room92::entry() {
 		flic_cut(FCUT_103);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
-		_G(spieler)._personRoomNr[P_HOWARD] = 46;
-		_G(spieler).flags33_8 = true;
+		_G(gameState)._personRoomNr[P_HOWARD] = 46;
+		_G(gameState).flags33_8 = true;
 		show_person();
 		switchRoom(46);
 		break;
@@ -74,17 +74,17 @@ void Room92::entry() {
 		_G(flags).StaticUseTxt = true;
 		flic_cut(FCUT_106);
 		show_person();
-		_G(spieler)._personRoomNr[P_HOWARD] = 94;
-		_G(spieler).flags35_8 = true;
+		_G(gameState)._personRoomNr[P_HOWARD] = 94;
+		_G(gameState).flags35_8 = true;
 		switchRoom(94);
 		break;
 	default:
 		show_person();
-		_G(spieler).scrollx = oldScrollX;
-		switchRoom(_G(spieler).SVal1);
+		_G(gameState).scrollx = oldScrollX;
+		switchRoom(_G(gameState).SVal1);
 		break;
 	}
-	_G(spieler).SVal2 = 5000;
+	_G(gameState).SVal2 = 5000;
 }
 
 } // namespace Rooms

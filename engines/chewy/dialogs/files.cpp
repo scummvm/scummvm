@@ -295,7 +295,7 @@ enter:
 
 	free(ti);
 
-	_G(room)->load_tgp(_G(spieler)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
 
 	_G(fx_blend) = BLEND1;
 	_G(room)->set_ak_pal(&_G(room_blk));

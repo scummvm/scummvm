@@ -37,17 +37,17 @@ static const AniBlock ABLOCK15[4] = {
 
 
 void Room23::entry() {
-	_G(spieler)._personHide[P_CHEWY] = true;
+	_G(gameState)._personHide[P_CHEWY] = true;
 	setPersonPos(135, 69, P_CHEWY, -1);
 }
 
 void Room23::cockpit() {
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 0;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 0;
 	_G(mouseLeftClick) = false;
 	switchRoom(23);
 
-	if (!_G(spieler).R23Cartridge || !_G(spieler).R25GleiteLoesch)
+	if (!_G(gameState).R23Cartridge || !_G(gameState).R25GleiteLoesch)
 		_G(det)->hideStaticSpr(3);
 	else
 		_G(det)->showStaticSpr(3);
@@ -56,21 +56,21 @@ void Room23::cockpit() {
 int16 Room23::start_gleiter() {
 	int16 action_flag = false;
 
-	if (!_G(spieler).inv_cur) {
+	if (!_G(gameState).inv_cur) {
 		action_flag = true;
-		if (!_G(spieler).R23FluxoFlex)
+		if (!_G(gameState).R23FluxoFlex)
 			startAadWait(23);
 		else {
 			bool start_ok = true;
 
-			if (_G(spieler).R23GleiterExit == 16) {
-				if (!_G(spieler).R16F5Exit) {
+			if (_G(gameState).R23GleiterExit == 16) {
+				if (!_G(gameState).R16F5Exit) {
 					start_ok = false;
 					startAadWait(35);
-				} else if (!_G(spieler).R23Cartridge || !_G(spieler).R18CartSave) {
+				} else if (!_G(gameState).R23Cartridge || !_G(gameState).R18CartSave) {
 					start_ok = false;
 					startAadWait(41);
-				} else if (!_G(spieler).R17EnergieOut) {
+				} else if (!_G(gameState).R17EnergieOut) {
 					start_ok = false;
 					startAadWait(300);
 				}
@@ -84,30 +84,30 @@ int16 Room23::start_gleiter() {
 				for (int16 i = 0; i < 4; i++)
 					_G(det)->stop_detail(i);
 
-				if (_G(spieler).R23GleiterExit == 14) {
+				if (_G(gameState).R23GleiterExit == 14) {
 					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
 					_G(flags).NoPalAfterFlc = true;
 					flic_cut(FCUT_011);
 					register_cutscene(7);
 					_G(out)->cls();
-					_G(spieler).R23GleiterExit = 16;
+					_G(gameState).R23GleiterExit = 16;
 					setPersonPos(126, 110, P_CHEWY, P_RIGHT);
 
-					switchRoom(_G(spieler).R23GleiterExit);
+					switchRoom(_G(gameState).R23GleiterExit);
 					start_spz_wait(CH_WONDER1, 2, false, P_CHEWY);
 					start_spz(CH_TALK2, 255, ANI_FRONT, P_CHEWY);
 
-					_G(spieler).DelaySpeed = 10;
+					_G(gameState).DelaySpeed = 10;
 					startAadWait(59);
 					stopPerson(P_CHEWY);
 					_G(mouseLeftClick) = false;
 
-				} else if (_G(spieler).R23GleiterExit == 16) {
+				} else if (_G(gameState).R23GleiterExit == 16) {
 					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
 					flic_cut(FCUT_SPACECHASE_18);
-					_G(spieler).R23GleiterExit = 25;
+					_G(gameState).R23GleiterExit = 25;
 					register_cutscene(9);
 
 					cur_2_inventory();
@@ -116,7 +116,7 @@ int16 Room23::start_gleiter() {
 					remove_inventory(4);
 					remove_inventory(15);
 					remove_inventory(16);
-					switchRoom(_G(spieler).R23GleiterExit);
+					switchRoom(_G(gameState).R23GleiterExit);
 				}
 
 				showCur();
@@ -128,10 +128,10 @@ int16 Room23::start_gleiter() {
 }
 
 void Room23::use_cartridge() {
-	delInventory(_G(spieler).AkInvent);
-	_G(spieler).R23Cartridge = true;
+	delInventory(_G(gameState).AkInvent);
+	_G(gameState).R23Cartridge = true;
 
-	if (_G(spieler).R18CartSave) {
+	if (_G(gameState).R18CartSave) {
 		_G(atds)->delControlBit(171, ATS_ACTIVE_BIT, ATS_DATA);
 		_G(atds)->set_ats_str(111, 2, ATS_DATA);
 		startSetAILWait(4, 1, ANI_FRONT);
@@ -147,7 +147,7 @@ void Room23::get_cartridge() {
 	_G(atds)->set_ats_str(111, 0, ATS_DATA);
 	_G(atds)->setControlBit(171, ATS_ACTIVE_BIT, ATS_DATA);
 
-	_G(spieler).R23Cartridge = false;
+	_G(gameState).R23Cartridge = false;
 	_G(det)->hideStaticSpr(3);
 }
 

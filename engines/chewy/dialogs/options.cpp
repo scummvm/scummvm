@@ -74,7 +74,7 @@ void Options::execute(TafInfo *ti) {
 	int16 tdisp_delay = 3;
 	int16 tdisp_count = tdisp_delay;
 	_G(FrameSpeed) = 0;
-	int16 delay_count = _G(spieler).DelaySpeed;
+	int16 delay_count = _G(gameState).DelaySpeed;
 	warning("stop_clock = (clock() / CLK_TCK) + 1;");
 	while (key != Common::KEYCODE_ESCAPE) {
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
@@ -82,7 +82,7 @@ void Options::execute(TafInfo *ti) {
 		warning("akt_clock = clock() / CLK_TCK;");
 		if (akt_clock >= stop_clock) {
 			//TmpFrame = _G(FrameSpeed);
-			_G(spieler).DelaySpeed = (_G(FrameSpeed) >> 1) / _G(spieler).FramesPerSecond;
+			_G(gameState).DelaySpeed = (_G(FrameSpeed) >> 1) / _G(gameState).FramesPerSecond;
 
 			_G(FrameSpeed) = 0;
 			warning("stop_clock = (clock() / CLK_TCK) + 1;");
@@ -90,12 +90,12 @@ void Options::execute(TafInfo *ti) {
 
 		_G(out)->spriteSet(ti->_image[surimy_ani], 18 + ti->_correction[surimy_ani << 1],
 			8 + ti->_correction[(surimy_ani << 1) + 1], 0);
-		short bar_off = (_G(spieler).FramesPerSecond - 6) * 16;
+		short bar_off = (_G(gameState).FramesPerSecond - 6) * 16;
 		_G(out)->boxFill(33 + bar_off, 65, 33 + 17 + bar_off, 65 + 8, 0);
-		Common::String fps = Common::String::format("%d", _G(spieler).FramesPerSecond << 1);
+		Common::String fps = Common::String::format("%d", _G(gameState).FramesPerSecond << 1);
 		_G(out)->printxy(36 + bar_off, 65, 255, 300, 0, fps.c_str());
 
-		if (_G(spieler).SoundSwitch) {
+		if (_G(gameState).SoundSwitch) {
 			_G(out)->spriteSet(ti->_image[mund_ani],
 				18 + ti->_correction[mund_ani << 1],
 				8 + ti->_correction[(mund_ani << 1) + 1], 0);
@@ -112,12 +112,12 @@ void Options::execute(TafInfo *ti) {
 		}
 		_G(out)->pop_box(32 - 2, 104 - 12, 42 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(32 + 3, 104 - 10, 15, 300, 0, "S");
-		_G(out)->boxFill(33, 136 - (_G(spieler).SoundVol >> 1), 42, 136, 15);
+		_G(out)->boxFill(33, 136 - (_G(gameState).SoundVol >> 1), 42, 136, 15);
 
 		_G(out)->pop_box(52 - 2, 104 - 12, 62 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(52 + 3, 104 - 10, 31, 300, 0, "M");
-		_G(out)->boxFill(53, 136 - (_G(spieler).MusicVol >> 1), 62, 136, 31);
-		if (_G(spieler).MusicSwitch) {
+		_G(out)->boxFill(53, 136 - (_G(gameState).MusicVol >> 1), 62, 136, 31);
+		if (_G(gameState).MusicSwitch) {
 			_G(out)->spriteSet(ti->_image[MUSIC_ON1],
 				18 + ti->_correction[MUSIC_ON1 << 1],
 				8 + ti->_correction[(MUSIC_ON1 << 1) + 1], 0);
@@ -129,7 +129,7 @@ void Options::execute(TafInfo *ti) {
 				18 + ti->_correction[MUSIC_OFF << 1],
 				8 + ti->_correction[(MUSIC_OFF << 1) + 1], 0);
 
-		if (_G(spieler).DisplayText) {
+		if (_G(gameState).DisplayText) {
 			_G(out)->spriteSet(ti->_image[tdisp_ani],
 				18 + ti->_correction[tdisp_ani << 1],
 				8 + ti->_correction[(tdisp_ani << 1) + 1], 0);
@@ -152,54 +152,54 @@ void Options::execute(TafInfo *ti) {
 			int16 rect = _G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, OPTION_ICONS, 9);
 			switch (rect) {
 			case 0:
-				if (_G(spieler).FramesPerSecond > 6)
-					--_G(spieler).FramesPerSecond;
+				if (_G(gameState).FramesPerSecond > 6)
+					--_G(gameState).FramesPerSecond;
 				break;
 			case 1:
-				if (_G(spieler).FramesPerSecond < 10)
-					++_G(spieler).FramesPerSecond;
+				if (_G(gameState).FramesPerSecond < 10)
+					++_G(gameState).FramesPerSecond;
 				break;
 			case 2:
-				if (_G(spieler).SoundSwitch) {
-					_G(spieler).SoundSwitch = false;
+				if (_G(gameState).SoundSwitch) {
+					_G(gameState).SoundSwitch = false;
 					_G(det)->disable_room_sound();
 				} else {
-					_G(spieler).SoundSwitch = true;
+					_G(gameState).SoundSwitch = true;
 					_G(det)->enable_room_sound();
 				}
 				break;
 			case 3:
 			case 4:
-				if (_G(spieler).DisplayText) {
-					_G(spieler).DisplayText = false;
+				if (_G(gameState).DisplayText) {
+					_G(gameState).DisplayText = false;
 					_G(atds)->setHasSpeech(true);
-					_G(spieler).SpeechSwitch = true;
+					_G(gameState).SpeechSwitch = true;
 				} else {
-					_G(spieler).DisplayText = true;
+					_G(gameState).DisplayText = true;
 					_G(atds)->setHasSpeech(false);
-					_G(spieler).SpeechSwitch = false;
+					_G(gameState).SpeechSwitch = false;
 				}
 				break;
 			case 5:
-				if (_G(spieler).MusicSwitch) {
-					_G(spieler).MusicSwitch = false;
+				if (_G(gameState).MusicSwitch) {
+					_G(gameState).MusicSwitch = false;
 					_G(sndPlayer)->stopMod();
 				} else {
-					_G(spieler).MusicSwitch = true;
+					_G(gameState).MusicSwitch = true;
 					_G(currentSong) = -1;
-					load_room_music(_G(spieler)._personRoomNr[P_CHEWY]);
+					load_room_music(_G(gameState)._personRoomNr[P_CHEWY]);
 				}
 				break;
 			case 6:
 				key = Common::KEYCODE_ESCAPE;
 				break;
 			case 7:
-				_G(spieler).SoundVol = (136 - g_events->_mousePos.y) << 1;
-				g_engine->_sound->setSoundVolume(_G(spieler).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
+				_G(gameState).SoundVol = (136 - g_events->_mousePos.y) << 1;
+				g_engine->_sound->setSoundVolume(_G(gameState).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
 				break;
 			case 8:
-				_G(spieler).MusicVol = (136 - g_events->_mousePos.y) << 1;
-				g_engine->_sound->setMusicVolume(_G(spieler).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
+				_G(gameState).MusicVol = (136 - g_events->_mousePos.y) << 1;
+				g_engine->_sound->setMusicVolume(_G(gameState).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
 				break;
 
 			default:
@@ -257,7 +257,7 @@ void Options::execute(TafInfo *ti) {
 					tdisp_ani = TDISP_START;
 				tdisp_count = tdisp_delay;
 			}
-			delay_count = _G(spieler).DelaySpeed;
+			delay_count = _G(gameState).DelaySpeed;
 		} else
 			--delay_count;
 	}

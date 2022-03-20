@@ -33,10 +33,10 @@ int16 Room65::_scrollY[2];
 
 void Room65::entry() {
 	hide_person();
-	_G(r65tmp_scrollx) = _G(spieler).scrollx;
-	_G(r65tmp_scrolly) = _G(spieler).scrolly;
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 0;
+	_G(r65tmp_scrollx) = _G(gameState).scrollx;
+	_G(r65tmp_scrolly) = _G(gameState).scrolly;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 0;
 	_G(r65tmp_ch_x) = _G(spieler_vector)[P_CHEWY].Xypos[0];;
 	_G(r65tmp_ch_y) = _G(spieler_vector)[P_CHEWY].Xypos[1];;
 	_G(r65tmp_ho_x) = _G(spieler_vector)[P_HOWARD].Xypos[0];;
@@ -45,22 +45,22 @@ void Room65::entry() {
 	_G(spieler_vector)[P_CHEWY].Xypos[1] = 80;
 	_G(spieler_vector)[P_HOWARD].Xypos[0] = 150;
 	_G(spieler_vector)[P_HOWARD].Xypos[1] = 10;
-	if (_G(spieler).PersonDia[P_HOWARD] < 10000) {
+	if (_G(gameState).PersonDia[P_HOWARD] < 10000) {
 		_G(cur_hide_flag) = false;
 		hideCur();
-		startAadWait(_G(spieler).PersonDia[P_HOWARD]);
+		startAadWait(_G(gameState).PersonDia[P_HOWARD]);
 		showCur();
 	} else {
-		startAdsWait(_G(spieler).PersonDia[P_HOWARD] - 10000);
+		startAdsWait(_G(gameState).PersonDia[P_HOWARD] - 10000);
 	}
 	_G(flags).LoadGame = true;
 	show_person();
-	switchRoom(_G(spieler).PersonDiaTmpRoom[P_HOWARD]);
+	switchRoom(_G(gameState).PersonDiaTmpRoom[P_HOWARD]);
 }
 
 void Room65::xit() {
-	_G(spieler).scrollx = _G(r65tmp_scrollx);
-	_G(spieler).scrolly = _G(r65tmp_scrolly);
+	_G(gameState).scrollx = _G(r65tmp_scrollx);
+	_G(gameState).scrolly = _G(r65tmp_scrolly);
 	set_person_rnr();
 	setPersonPos(_G(r65tmp_ch_x), _G(r65tmp_ch_y), P_CHEWY, -1);
 	setPersonPos(_G(r65tmp_ho_x), _G(r65tmp_ho_y), P_HOWARD, -1);
@@ -70,12 +70,12 @@ void Room65::xit() {
 }
 
 void Room65::atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int16 mode) {
-	if (!_G(spieler).PersonDiaRoom[person_nr]) {
+	if (!_G(gameState).PersonDiaRoom[person_nr]) {
 		int16 ani_nr;
 		switch (person_nr) {
 		case 0:
 			if (mode == AAD_STR_START) {
-				switch (_G(spieler).ChewyAni) {
+				switch (_G(gameState).ChewyAni) {
 				case CHEWY_NORMAL:
 					ani_nr = CH_TALK3;
 					break;
@@ -110,7 +110,7 @@ void Room65::atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int1
 
 		case 1:
 			if (mode == AAD_STR_START) {
-				switch (_G(spieler).mi[1]) {
+				switch (_G(gameState).mi[1]) {
 				case 2:
 					start_spz(50, 255, ANI_FRONT, P_HOWARD);
 					break;

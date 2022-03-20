@@ -34,35 +34,35 @@ void Room91::entry() {
 	_G(zoom_horizont) = 110;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
 	_click = 0;
-	_G(spieler).ZoomXy[P_HOWARD][0] = _G(spieler).ZoomXy[P_HOWARD][1] = 30;
+	_G(gameState).ZoomXy[P_HOWARD][0] = _G(gameState).ZoomXy[P_HOWARD][1] = 30;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 
 	if (_G(flags).LoadGame)
 		return;
 
-	_G(spieler).scrollx = 320;
+	_G(gameState).scrollx = 320;
 	hideCur();
 
-	if (_G(spieler).flags34_1) {
+	if (_G(gameState).flags34_1) {
 		setPersonPos(499, 106, P_CHEWY, P_RIGHT);
 		setPersonPos(536, 90, P_HOWARD, P_RIGHT);
-		if (!_G(spieler).flags34_2) {
-			_G(spieler).flags34_2 = true;
+		if (!_G(gameState).flags34_2) {
+			_G(gameState).flags34_2 = true;
 			startAadWait(503);
 		}
 	} else {
 		_G(flags).MainInput = false;
 		_G(flags).NoScroll = true;
-		_G(spieler).flags34_1 = true;
+		_G(gameState).flags34_1 = true;
 		setPersonPos(326, 99, P_CHEWY, P_RIGHT);
 		setPersonPos(312, 75, P_HOWARD, P_RIGHT);
-		_G(spieler).SVal3 = 0;
-		_G(spieler).flags34_4 = true;
+		_G(gameState).SVal3 = 0;
+		_G(gameState).flags34_4 = true;
 		startAadWait(502);
-		_G(spieler)._personHide[P_CHEWY] = true;
+		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(det)->startDetail(0, 255, false);
 
 		for (int i = 0; i < 3; ++i) {
@@ -76,18 +76,18 @@ void Room91::entry() {
 
 void Room91::xit(int16 eib_nr) {
 	_G(flags).MainInput = true;
-	_G(spieler).ScrollxStep = 1;
-	_G(spieler).scrollx = 0;
+	_G(gameState).ScrollxStep = 1;
+	_G(gameState).scrollx = 0;
 
 	if (eib_nr == 136)
-		_G(spieler)._personRoomNr[P_HOWARD] = 90;
+		_G(gameState)._personRoomNr[P_HOWARD] = 90;
 
-	_G(spieler).flags34_4 = false;
+	_G(gameState).flags34_4 = false;
 	_G(flags).NoScroll = false;
 }
 
 void Room91::setup_func() {
-	if (!_G(spieler).flags34_4) {
+	if (!_G(gameState).flags34_4) {
 		calc_person_look();
 		const int xyPos = _G(spieler_vector)[0].Xypos[0];
 		if (xyPos < 130)
@@ -121,20 +121,20 @@ void Room91::setup_func() {
 		_G(det)->startDetail(aniNr + 2, 1, false);
 		_G(det)->startDetail(7, 1, false);
 		start_spz_wait(62, 1, false, P_HOWARD);
-		_G(spieler).SVal3 += 1;
+		_G(gameState).SVal3 += 1;
 		showCur();
-		if (_G(spieler).SVal3 == 4) {
+		if (_G(gameState).SVal3 == 4) {
 			_G(det)->stop_detail(0);
-			_G(spieler)._personHide[P_CHEWY] = false;
+			_G(gameState)._personHide[P_CHEWY] = false;
 			hideCur();
 			autoMove(1, P_CHEWY);
 			stop_spz();
 			startAadWait(505);
-			_G(spieler)._personHide[P_HOWARD] = true;
+			_G(gameState)._personHide[P_HOWARD] = true;
 			startSetAILWait(9, 1, ANI_FRONT);
-			_G(spieler)._personHide[P_HOWARD] = false;
-			_G(spieler)._personRoomNr[P_HOWARD] = 50;
-			_G(spieler).flags34_4 = false;
+			_G(gameState)._personHide[P_HOWARD] = false;
+			_G(gameState)._personRoomNr[P_HOWARD] = 50;
+			_G(gameState).flags34_4 = false;
 			showCur();
 			switchRoom(50);
 		}

@@ -32,23 +32,23 @@ namespace Rooms {
 void Room79::entry() {
 	g_engine->_sound->playSound(0, 0);
 	g_engine->_sound->playSound(0);
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
-	_G(spieler)._personHide[P_CHEWY] = false;
-	_G(spieler)._personHide[P_HOWARD] = false;
-	_G(spieler)._personHide[P_NICHELLE] = false;
-	_G(spieler)._personRoomNr[P_HOWARD] = 79;
-	_G(spieler)._personRoomNr[P_NICHELLE] = 79;
+	_G(gameState)._personHide[P_CHEWY] = false;
+	_G(gameState)._personHide[P_HOWARD] = false;
+	_G(gameState)._personHide[P_NICHELLE] = false;
+	_G(gameState)._personRoomNr[P_HOWARD] = 79;
+	_G(gameState)._personRoomNr[P_NICHELLE] = 79;
 	if (!_G(flags).LoadGame) {
 		setPersonPos(459, 114, P_CHEWY, P_LEFT);
 		setPersonPos(568, 65, P_HOWARD, P_LEFT);
 		setPersonPos(534, 75, P_NICHELLE, P_LEFT);
-		_G(spieler).scrollx = 300;
+		_G(gameState).scrollx = 300;
 		hideCur();
 		startAadWait(484);
-		_G(spieler).PersonGlobalDia[P_HOWARD] = 10026;
-		_G(spieler).PersonDiaRoom[P_HOWARD] = true;
+		_G(gameState).PersonGlobalDia[P_HOWARD] = 10026;
+		_G(gameState).PersonDiaRoom[P_HOWARD] = true;
 		showCur();
 	}
 
@@ -56,11 +56,11 @@ void Room79::entry() {
 }
 
 void Room79::xit() {
-	_G(spieler).R79Val[P_CHEWY] = 1;
-	_G(spieler).R79Val[P_HOWARD] = 1;
-	_G(spieler)._personRoomNr[P_HOWARD] = 80;
-	_G(spieler).R79Val[P_NICHELLE] = 1;
-	_G(spieler)._personRoomNr[P_NICHELLE] = 80;
+	_G(gameState).R79Val[P_CHEWY] = 1;
+	_G(gameState).R79Val[P_HOWARD] = 1;
+	_G(gameState)._personRoomNr[P_HOWARD] = 80;
+	_G(gameState).R79Val[P_NICHELLE] = 1;
+	_G(gameState)._personRoomNr[P_NICHELLE] = 80;
 }
 
 void Room79::setup_func() {

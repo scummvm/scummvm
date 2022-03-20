@@ -39,8 +39,8 @@ int16 loadAdsDia(int16 diaNr) {
 			_G(ads_item_ptr) = _G(atds)->ads_item_ptr(diaNr, _G(ads_blk_nr), &_G(ads_item_nr));
 			_G(flags).AdsDialog = true;
 			_G(ads_push) = true;
-			_G(ads_tmp_dsp) = _G(spieler).DispFlag;
-			_G(spieler).DispFlag = false;
+			_G(ads_tmp_dsp) = _G(gameState).DispFlag;
+			_G(gameState).DispFlag = false;
 
 			setSsiPos();
 			_G(ads_dia_nr) = diaNr;
@@ -57,8 +57,8 @@ void setSsiPos() {
 	for (int16 i = 0; i < MAX_PERSON; i++) {
 		if (i >= P_NICHELLE)
 			tmp = 1;
-		int16 x = _G(spieler_vector)[i].Xypos[0] - _G(spieler).scrollx + _G(spieler_mi)[i].HotX;
-		int16 y = _G(spieler_vector)[i].Xypos[1] - _G(spieler).scrolly;
+		int16 x = _G(spieler_vector)[i].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[i].HotX;
+		int16 y = _G(spieler_vector)[i].Xypos[1] - _G(gameState).scrolly;
 		_G(atds)->set_split_win(i + tmp, x, y);
 	}
 }
@@ -136,15 +136,15 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 					case 71:
 						if (isCurInventory(ZANGE_INV))
 							Room8::hole_kohle();
-						else if (!_G(spieler).inv_cur)
+						else if (!_G(gameState).inv_cur)
 							Room8::start_verbrennen();
 						break;
 
 					case 73:
-						if (!_G(spieler).R9Gitter) {
-							_G(spieler)._personHide[P_CHEWY] = true;
+						if (!_G(gameState).R9Gitter) {
+							_G(gameState)._personHide[P_CHEWY] = true;
 							startSetAILWait(5, 1, ANI_FRONT);
-							_G(spieler)._personHide[P_CHEWY] = false;
+							_G(gameState)._personHide[P_CHEWY] = false;
 						} else {
 							retValue = false;
 						}
@@ -152,7 +152,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 
 
 					case 77:
-						if (!_G(spieler).R10SurimyOk && !_G(spieler).inv_cur) {
+						if (!_G(gameState).R10SurimyOk && !_G(gameState).inv_cur) {
 							hideCur();
 							autoMove(3, P_CHEWY);
 							flic_cut(FCUT_004);
@@ -169,7 +169,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 80:
-						if (_G(spieler).inv_cur)
+						if (_G(gameState).inv_cur)
 							autoMove(3, P_CHEWY);
 						break;
 
@@ -192,7 +192,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 					case 104:
 						if (isCurInventory(TRANSLATOR_INV)) {
 							autoMove(6, P_CHEWY);
-							_G(spieler).R14Translator = true;
+							_G(gameState).R14Translator = true;
 							startAadWait(25);
 						} else
 							retValue = false;
@@ -215,7 +215,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 114:
-						switchRoom(_G(spieler).R23GleiterExit);
+						switchRoom(_G(gameState).R23GleiterExit);
 						break;
 
 					case 117:
@@ -282,7 +282,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 165:
-						if (_G(spieler).R16F5Exit) {
+						if (_G(gameState).R16F5Exit) {
 							invent_2_slot(29);
 							_G(det)->hideStaticSpr(19);
 							_G(atds)->setControlBit(158, ATS_ACTIVE_BIT, ATS_DATA);
@@ -776,7 +776,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 95:
-						if (_G(spieler).R13Band == true)
+						if (_G(gameState).R13Band == true)
 							startAadWait(116);
 						break;
 
@@ -785,7 +785,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 114:
-						switchRoom(_G(spieler).R23GleiterExit);
+						switchRoom(_G(gameState).R23GleiterExit);
 						break;
 
 					case 227:
@@ -843,7 +843,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 122:
-						if (!_G(spieler).R13BorkOk) {
+						if (!_G(gameState).R13BorkOk) {
 							autoMove(10, P_CHEWY);
 							Room13::talk_bork();
 						}
@@ -1050,11 +1050,11 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 				case TXT_MARK_USE:
 					switch (txtNr) {
 					case 90:
-						_G(atds)->set_ats_str(90, TXT_MARK_USE, _G(spieler).R13Band);
+						_G(atds)->set_ats_str(90, TXT_MARK_USE, _G(gameState).R13Band);
 						break;
 
 					case 124:
-						if (!_G(spieler).R16F5Exit)
+						if (!_G(gameState).R16F5Exit)
 							autoMove(5, P_CHEWY);
 						break;
 
@@ -1071,7 +1071,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						break;
 
 					case 267:
-						if (!_G(spieler).R41LolaOk && _G(spieler).R41RepairInfo)
+						if (!_G(gameState).R41LolaOk && _G(gameState).R41RepairInfo)
 							_G(atds)->set_ats_str(267, 1, ATS_DATA);
 						break;
 
@@ -1143,10 +1143,10 @@ void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 
 		case 3:
 			if (strEndNr == 1) {
-				if (_G(spieler).R11IdCardNr == RED_CARD_INV)
-					_G(spieler).R11IdCardNr = YEL_CARD_INV;
+				if (_G(gameState).R11IdCardNr == RED_CARD_INV)
+					_G(gameState).R11IdCardNr = YEL_CARD_INV;
 				else
-					_G(spieler).R11IdCardNr = RED_CARD_INV;
+					_G(gameState).R11IdCardNr = RED_CARD_INV;
 			}
 			break;
 
@@ -1158,26 +1158,26 @@ void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 			if (blkNr == 3) {
 				Room41::sub_dia();
 			} else if (blkNr == 0 && strEndNr == 3) {
-				_G(spieler).R41RepairInfo = true;
+				_G(gameState).R41RepairInfo = true;
 				stop_ads_dialog();
 			}
 			break;
 
 		case 12:
 			if (strEndNr == 1) {
-				_G(spieler).R41HowardDiaOK = true;
+				_G(gameState).R41HowardDiaOK = true;
 			}
 			break;
 
 		case 15:
 			if (blkNr == 1 && strEndNr == 0) {
-				_G(spieler).R55Job = true;
+				_G(gameState).R55Job = true;
 				stop_ads_dialog();
 			}
 			break;
 
 		case 16:
-			if (blkNr == 0 && strEndNr == 2 && !_G(spieler).R56Kneipe)
+			if (blkNr == 0 && strEndNr == 2 && !_G(gameState).R56Kneipe)
 				_G(atds)->delControlBit(362, ATS_ACTIVE_BIT, ATS_DATA);
 
 			break;
@@ -1191,15 +1191,15 @@ void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 		case 18:
 		case 19:
 			if (blkNr == 0 && strEndNr == 4)
-				_G(spieler).R67LiedOk = true;
+				_G(gameState).R67LiedOk = true;
 
 			break;
 
 		case 20:
 			if (blkNr == 0 && strEndNr == 1) {
-				_G(spieler)._personHide[P_CHEWY] = true;
+				_G(gameState)._personHide[P_CHEWY] = true;
 				startSetAILWait(28, 3, ANI_FRONT);
-				_G(spieler)._personHide[P_CHEWY] = false;
+				_G(gameState)._personHide[P_CHEWY] = false;
 			}
 			break;
 
@@ -1318,7 +1318,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 	case 387:
 	case 393:
 		if (mode == AAD_STR_START) {
-			switch (_G(spieler).ChewyAni) {
+			switch (_G(gameState).ChewyAni) {
 			case CHEWY_NORMAL:
 				aniNr = CH_TALK3;
 				break;
@@ -1535,9 +1535,9 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 		switch (personNr) {
 		case P_CHEWY:
 			if (mode == AAD_STR_START) {
-				if (_G(spieler).R28ChewyPump)
+				if (_G(gameState).R28ChewyPump)
 					aniNr = CH_PUMP_TALK;
-				else if (_G(spieler).ChewyAni == CHEWY_ROCKER)
+				else if (_G(gameState).ChewyAni == CHEWY_ROCKER)
 					aniNr = CH_ROCK_TALK1;
 				else
 					aniNr = CH_TALK3;
@@ -1712,7 +1712,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 		switch (personNr) {
 		case P_CHEWY:
 			if (mode == AAD_STR_START) {
-				switch (_G(spieler).ChewyAni) {
+				switch (_G(gameState).ChewyAni) {
 				case CHEWY_NORMAL:
 					aniNr = CH_TALK3;
 					break;
@@ -1752,7 +1752,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 
 		case P_HOWARD:
 			if (mode == AAD_STR_START) {
-				switch (_G(spieler).mi[1]) {
+				switch (_G(gameState).mi[1]) {
 				case 2:
 					start_spz(50, 255, ANI_FRONT, P_HOWARD);
 					break;
@@ -1777,7 +1777,7 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 			break;
 
 		case P_NICHELLE:
-			switch (_G(spieler)._personRoomNr[P_CHEWY]) {
+			switch (_G(gameState)._personRoomNr[P_CHEWY]) {
 			case 28:
 				START_STOP(diaNr - 194);
 				break;
@@ -2124,11 +2124,11 @@ void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr, int16 mode) {
 
 		case 3:
 			if (mode == AAD_STR_START) {
-				_G(spieler)._personHide[P_CHEWY] = true;
+				_G(gameState)._personHide[P_CHEWY] = true;
 				talkAni = 29;
 			} else {
 				_G(det)->stop_detail(29);
-				_G(spieler)._personHide[P_CHEWY] = false;
+				_G(gameState)._personHide[P_CHEWY] = false;
 			}
 			break;
 
@@ -2162,14 +2162,14 @@ void calc_inv_use_txt(int16 test_nr) {
 	switch (test_nr) {
 	case NOTEBOOK_OPEN_INV:
 	case MONOCLE_INV:
-		scrollx = _G(spieler).scrollx;
-		scrolly = _G(spieler).scrolly;
-		_G(spieler).scrollx = 0;
-		_G(spieler).scrolly = 0;
+		scrollx = _G(gameState).scrollx;
+		scrolly = _G(gameState).scrolly;
+		_G(gameState).scrollx = 0;
+		_G(gameState).scrolly = 0;
 
 		_G(room)->load_tgp(NOTEBOOK_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 		_G(out)->setPointer(_G(workptr));
-		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(spieler).scrollx, _G(spieler).scrolly);
+		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(gameState).scrollx, _G(gameState).scrolly);
 		_G(out)->back2screen(_G(workpage));
 
 		while (_G(in)->getSwitchCode() != Common::KEYCODE_ESCAPE) {
@@ -2181,56 +2181,56 @@ void calc_inv_use_txt(int16 test_nr) {
 			SHOULD_QUIT_RETURN;
 		}
 
-		_G(room)->load_tgp(_G(spieler)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
+		_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
 
-		_G(spieler).scrollx = scrollx;
-		_G(spieler).scrolly = scrolly;
+		_G(gameState).scrollx = scrollx;
+		_G(gameState).scrolly = scrolly;
 		break;
 
 	case ANGEL_INV:
 	case KNOCHEN_INV:
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		_G(menu_item) = CUR_USE;
 		cursorChoice(_G(menu_item));
 		ret = del_invent_slot(test_nr);
-		_G(spieler).InventSlot[ret] = ANGEL2_INV;
+		_G(gameState).InventSlot[ret] = ANGEL2_INV;
 		_G(obj)->changeInventory(test_nr, ANGEL2_INV, &_G(room_blk));
 		break;
 
 	case KUERBIS1_INV:
 		ret = del_invent_slot(KUERBIS1_INV);
-		_G(spieler).InventSlot[ret] = K_MASKE_INV;
+		_G(gameState).InventSlot[ret] = K_MASKE_INV;
 		_G(obj)->changeInventory(KUERBIS1_INV, K_MASKE_INV, &_G(room_blk));
 		invent_2_slot(K_FLEISCH_INV);
 		invent_2_slot(K_KERNE_INV);
 		break;
 
 	case MESSER_INV:
-		if (_G(spieler).AkInvent == 40) {
-			delInventory(_G(spieler).AkInvent);
+		if (_G(gameState).AkInvent == 40) {
+			delInventory(_G(gameState).AkInvent);
 			_G(menu_item) = CUR_USE;
 			cursorChoice(_G(menu_item));
 			invent_2_slot(K_MASKE_INV);
 			invent_2_slot(K_FLEISCH_INV);
 			invent_2_slot(K_KERNE_INV);
-		} else if (_G(spieler).AkInvent == 88) {
-			_G(spieler).flags26_10 = true;
-			startAadWait(_G(spieler)._personRoomNr[P_CHEWY] + 350);
+		} else if (_G(gameState).AkInvent == 88) {
+			_G(gameState).flags26_10 = true;
+			startAadWait(_G(gameState)._personRoomNr[P_CHEWY] + 350);
 		}
 		break;
 
 	case BRIEF_INV:
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		_G(menu_item) = CUR_USE;
 		cursorChoice(_G(menu_item));
-		_G(spieler).R42BriefMarke = true;
+		_G(gameState).R42BriefMarke = true;
 		ret = del_invent_slot(BRIEF_INV);
-		_G(spieler).InventSlot[ret] = BRIEF2_INV;
+		_G(gameState).InventSlot[ret] = BRIEF2_INV;
 		_G(obj)->changeInventory(BRIEF_INV, BRIEF2_INV, &_G(room_blk));
 		break;
 
 	case FLASCHE_INV:
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		_G(menu_item) = CUR_USE;
 		cursorChoice(_G(menu_item));
 		// fall through
@@ -2238,47 +2238,47 @@ void calc_inv_use_txt(int16 test_nr) {
 	case WOLLE_INV:
 		remove_inventory(WOLLE_INV);
 		_G(atds)->set_ats_str(FLASCHE_INV, 1, INV_ATS_DATA);
-		_G(spieler).R56WhiskyMix = true;
+		_G(gameState).R56WhiskyMix = true;
 		break;
 
 	case B_MARY_INV:
 	case PIRANHA_INV:
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		_G(menu_item) = CUR_USE;
 		cursorChoice(_G(menu_item));
 		ret = del_invent_slot(test_nr);
-		_G(spieler).InventSlot[ret] = B_MARY2_INV;
+		_G(gameState).InventSlot[ret] = B_MARY2_INV;
 		_G(obj)->changeInventory(test_nr, B_MARY2_INV, &_G(room_blk));
 		break;
 
 	case 13:
-		_G(spieler).flags26_10 = true;
+		_G(gameState).flags26_10 = true;
 		_G(flags).InventMenu = false;
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
-		startAadWait(_G(spieler)._personRoomNr[P_CHEWY] + 350);
+		startAadWait(_G(gameState)._personRoomNr[P_CHEWY] + 350);
 		_G(flags).InventMenu = true;
 		_G(atds)->set_ats_str(ARTE_INV, 1, INV_ATS_DATA);
 		break;
 
 	case 88:
-		_G(spieler).flags26_10 = true;
+		_G(gameState).flags26_10 = true;
 		startAadWait(350);
 		_G(atds)->set_ats_str(ARTE_INV, 1, INV_ATS_DATA);
 		break;
 
 	case 102:
 	case 104:
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		_G(menu_item) = CUR_USE;
 		cursorChoice(CUR_USE);
 
 		ret = del_invent_slot(test_nr);
-		_G(spieler).InventSlot[ret] = 110;
+		_G(gameState).InventSlot[ret] = 110;
 		_G(obj)->changeInventory(104, 110, &_G(room_blk));
 		break;
 
 	case 105:
-		delInventory(_G(spieler).AkInvent);
+		delInventory(_G(gameState).AkInvent);
 		_G(atds)->set_ats_str(105, 0, 1, 6);
 		_G(menu_item) = CUR_USE;
 		cursorChoice(CUR_USE);
@@ -2345,7 +2345,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 	}
 
 	if (inv_mode != -1) {
-		int16 txt_nr = _G(atds)->calc_inv_no_use(_G(spieler).AkInvent, test_nr, inv_mode);
+		int16 txt_nr = _G(atds)->calc_inv_no_use(_G(gameState).AkInvent, test_nr, inv_mode);
 		if (txt_nr != -1) {
 			if (!_G(flags).InventMenu) {
 				if (txt_nr >= 15000) {
@@ -2364,7 +2364,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 				int16 r_val = g_engine->getRandomNumber(5);
 
 				if (_G(flags).InventMenu) {
-					calc_inv_get_text(_G(spieler).AkInvent, test_nr);
+					calc_inv_get_text(_G(gameState).AkInvent, test_nr);
 					Dialogs::Inventory::look(-1, INV_USE_ATS_MODE, RAND_NO_USE[r_val] + 15000);
 				} else {
 					ret = startAtsWait(RAND_NO_USE[r_val], TXT_MARK_USE, 14, INV_USE_DEF);
@@ -2381,11 +2381,11 @@ int16 calc_person_txt(int16 p_nr) {
 
 	switch (p_nr) {
 	case P_CHEWY:
-		switch (_G(spieler)._personRoomNr[P_CHEWY]) {
+		switch (_G(gameState)._personRoomNr[P_CHEWY]) {
 		case 40:
 		case 41:
 		case 42:
-			txt_nr = 219 + _G(spieler)._personRoomNr[P_CHEWY];
+			txt_nr = 219 + _G(gameState)._personRoomNr[P_CHEWY];
 			break;
 
 		default:
@@ -2398,9 +2398,9 @@ int16 calc_person_txt(int16 p_nr) {
 	case P_HOWARD:
 		switch (_G(menu_item)) {
 		case CUR_USE:
-			switch (_G(spieler)._personRoomNr[P_CHEWY]) {
+			switch (_G(gameState)._personRoomNr[P_CHEWY]) {
 			case 40:
-				if (!_G(spieler).R40HoUse && _G(spieler).ChewyAni != CHEWY_ROCKER) {
+				if (!_G(gameState).R40HoUse && _G(gameState).ChewyAni != CHEWY_ROCKER) {
 					_G(menu_item) = CUR_HOWARD;
 					cursorChoice(_G(menu_item));
 					txt_nr = 30000;
@@ -2415,7 +2415,7 @@ int16 calc_person_txt(int16 p_nr) {
 				break;
 
 			case 42:
-				if (!_G(spieler).R42MarkeOk && !_G(spieler).R42HoToBeamter) {
+				if (!_G(gameState).R42MarkeOk && !_G(gameState).R42HoToBeamter) {
 					_G(menu_item) = CUR_HOWARD;
 					cursorChoice(_G(menu_item));
 					txt_nr = 30000;
@@ -2428,7 +2428,7 @@ int16 calc_person_txt(int16 p_nr) {
 			break;
 
 		case CUR_LOOK:
-			return (_G(spieler)._personRoomNr[P_CHEWY] == 89) ? 513 : -1;
+			return (_G(gameState)._personRoomNr[P_CHEWY] == 89) ? 513 : -1;
 
 		default:
 			break;
@@ -2437,7 +2437,7 @@ int16 calc_person_txt(int16 p_nr) {
 
 	case P_NICHELLE:
 		if (_G(menu_item) == CUR_USE) {
-			switch (_G(spieler)._personRoomNr[P_CHEWY]) {
+			switch (_G(gameState)._personRoomNr[P_CHEWY]) {
 			case 67:
 			case 71:
 				_G(menu_item) = CUR_NICHELLE;
@@ -2464,14 +2464,14 @@ int16 calc_person_click(int16 p_nr) {
 
 	switch (p_nr) {
 	case P_CHEWY:
-		switch (_G(spieler).AkInvent) {
+		switch (_G(gameState).AkInvent) {
 		case K_MASKE_INV:
 			Room28::set_pump();
 			action_ret = true;
 			break;
 
 		case CIGAR_INV:
-			if (_G(spieler)._personRoomNr[P_CHEWY] == 49) {
+			if (_G(gameState)._personRoomNr[P_CHEWY] == 49) {
 				Room49::use_boy_cigar();
 				action_ret = true;
 			}
@@ -2490,9 +2490,9 @@ int16 calc_person_click(int16 p_nr) {
 		break;
 
 	case P_HOWARD:
-		switch (_G(spieler).AkInvent) {
+		switch (_G(gameState).AkInvent) {
 		case GALA_INV:
-			if (_G(spieler)._personRoomNr[P_CHEWY] == 67) {
+			if (_G(gameState)._personRoomNr[P_CHEWY] == 67) {
 				Room67::kostuem_aad(378);
 				action_ret = true;
 			}
@@ -2505,12 +2505,12 @@ int16 calc_person_click(int16 p_nr) {
 		break;
 
 	case P_NICHELLE:
-		switch (_G(spieler).AkInvent) {
+		switch (_G(gameState).AkInvent) {
 		case GALA_INV:
-			if (_G(spieler)._personRoomNr[P_CHEWY] == 67) {
+			if (_G(gameState)._personRoomNr[P_CHEWY] == 67) {
 				Room67::kostuem_aad(377);
 				action_ret = true;
-			} else if (_G(spieler)._personRoomNr[P_CHEWY] == 68) {
+			} else if (_G(gameState)._personRoomNr[P_CHEWY] == 68) {
 				Room68::kostuem_aad(387);
 				action_ret = true;
 			}
@@ -2539,58 +2539,58 @@ void calc_person_dia(int16 p_nr) {
 	switch (p_nr) {
 	case P_HOWARD:
 	case P_NICHELLE:
-		switch (_G(spieler)._personRoomNr[P_CHEWY]) {
+		switch (_G(gameState)._personRoomNr[P_CHEWY]) {
 		case 28:
 			if (p_nr == P_HOWARD) {
-				if (_G(spieler).ChewyAni != CHEWY_ROCKER)
-					_G(spieler).PersonDia[p_nr] = 565;
+				if (_G(gameState).ChewyAni != CHEWY_ROCKER)
+					_G(gameState).PersonDia[p_nr] = 565;
 				else
 					flag = true;
 			}
 			break;
 
 		case 46:
-			if (_G(spieler).flags32_10)
-				_G(spieler).PersonDia[p_nr] = 497;
+			if (_G(gameState).flags32_10)
+				_G(gameState).PersonDia[p_nr] = 497;
 			else
 				flag = true;
 			break;
 
 		case 58:
-			if (_G(spieler).flags32_10)
-				_G(spieler).PersonDia[p_nr] = 507;
+			if (_G(gameState).flags32_10)
+				_G(gameState).PersonDia[p_nr] = 507;
 			else
 				flag = true;
 			break;
 
 		case 66:
 			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 525;
+				_G(gameState).PersonDia[p_nr] = 525;
 			else
 				flag = true;
 			break;
 
 		case 67:
 			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 526;
+				_G(gameState).PersonDia[p_nr] = 526;
 			else
 				flag = true;
 			break;
 
 		case 68:
 			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 527;
+				_G(gameState).PersonDia[p_nr] = 527;
 			else
 				flag = true;
 			break;
 
 		case 69:
-			_G(spieler).PersonDia[p_nr] = 381;
+			_G(gameState).PersonDia[p_nr] = 381;
 			break;
 
 		case 70:
 			if (p_nr == P_NICHELLE) {
-				_G(spieler).PersonDia[p_nr] = 528;
+				_G(gameState).PersonDia[p_nr] = 528;
 			} else {
 				flag = true;
 			}
@@ -2598,12 +2598,12 @@ void calc_person_dia(int16 p_nr) {
 
 		case 71:
 			if (p_nr == P_NICHELLE) {
-				if (!_G(spieler).flags28_4) {
+				if (!_G(gameState).flags28_4) {
 					Room71::proc7();
-					_G(spieler).PersonDia[p_nr] = -1;
+					_G(gameState).PersonDia[p_nr] = -1;
 				}
-			} else if (!_G(spieler).flags28_4) {
-				_G(spieler).PersonDia[p_nr] = 435;
+			} else if (!_G(gameState).flags28_4) {
+				_G(gameState).PersonDia[p_nr] = 435;
 			} else {
 				flag = true;
 			}
@@ -2611,35 +2611,35 @@ void calc_person_dia(int16 p_nr) {
 
 		case 73:
 			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 529;
+				_G(gameState).PersonDia[p_nr] = 529;
 			else
 				flag = true;
 			break;
 
 		case 74:
 			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 530;
+				_G(gameState).PersonDia[p_nr] = 530;
 			else
 				flag = true;
 			break;
 
 		case 75:
 			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 531;
+				_G(gameState).PersonDia[p_nr] = 531;
 			else
 				flag = true;
 			break;
 
 		case 79:
 			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 532;
+				_G(gameState).PersonDia[p_nr] = 532;
 			else
 				flag = true;
 			break;
 
 		case 81:
-			if (!_G(spieler).flags30_2)
-				_G(spieler).PersonDia[p_nr] = 457;
+			if (!_G(gameState).flags30_2)
+				_G(gameState).PersonDia[p_nr] = 457;
 			else
 				flag = true;
 			break;
@@ -2647,82 +2647,82 @@ void calc_person_dia(int16 p_nr) {
 		case 82:
 			if (p_nr != P_NICHELLE)
 				flag = true;
-			else if (_G(spieler).flags30_10)
-				_G(spieler).PersonDia[p_nr] = 533;
+			else if (_G(gameState).flags30_10)
+				_G(gameState).PersonDia[p_nr] = 533;
 			else
 				Room82::proc8();
 			break;
 
 		case 84:
-			if (!_G(spieler).flags32_10)
-				_G(spieler).PersonDia[P_NICHELLE] = 479;
+			if (!_G(gameState).flags32_10)
+				_G(gameState).PersonDia[P_NICHELLE] = 479;
 			else if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[P_NICHELLE] = 534;
+				_G(gameState).PersonDia[P_NICHELLE] = 534;
 			else
 				flag = true;
 			break;
 
 		case 85:
 			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 535;
+				_G(gameState).PersonDia[p_nr] = 535;
 			else
 				flag = true;
 			break;
 
 		case 86:
-			_G(spieler).PersonDia[p_nr] = _G(spieler).flags32_2 ? 469 : 467;
+			_G(gameState).PersonDia[p_nr] = _G(gameState).flags32_2 ? 469 : 467;
 			break;
 
 		case 87:
 			if (p_nr == P_HOWARD) {
-				_G(spieler).PersonDiaRoom[P_HOWARD] = true;
-				_G(spieler).PersonDia[P_HOWARD] = 470;
+				_G(gameState).PersonDiaRoom[P_HOWARD] = true;
+				_G(gameState).PersonDia[P_HOWARD] = 470;
 			} else {
-				_G(spieler).PersonDia[P_NICHELLE] = 536;
+				_G(gameState).PersonDia[P_NICHELLE] = 536;
 			}
 			break;
 
 
 		case 88:
-			if (_G(spieler).flags32_10) {
-				_G(spieler).PersonDia[p_nr] = 465;
-				if (_G(spieler).flags30_80 && !_G(spieler).R88UsedMonkey)
-					_G(spieler).PersonDia[p_nr] = 466;
+			if (_G(gameState).flags32_10) {
+				_G(gameState).PersonDia[p_nr] = 465;
+				if (_G(gameState).flags30_80 && !_G(gameState).R88UsedMonkey)
+					_G(gameState).PersonDia[p_nr] = 466;
 			}
 			break;
 
 		case 89:
-			_G(spieler).PersonDia[p_nr] = 492;
+			_G(gameState).PersonDia[p_nr] = 492;
 			break;
 
 		case 90:
-			_G(spieler).PersonDia[p_nr] = 500;
+			_G(gameState).PersonDia[p_nr] = 500;
 			break;
 
 		case 91:
-			_G(spieler).PersonDia[p_nr] = 501;
+			_G(gameState).PersonDia[p_nr] = 501;
 			break;
 
 		case 94:
 			if (p_nr == P_HOWARD)
-				_G(spieler).PersonDia[p_nr] = 540;
+				_G(gameState).PersonDia[p_nr] = 540;
 			break;
 
 		case 95:
 			if (p_nr == P_HOWARD)
-				_G(spieler).PersonDia[p_nr] = 543;
+				_G(gameState).PersonDia[p_nr] = 543;
 			break;
 
 		case 96:
 			if (p_nr == P_HOWARD)
-				_G(spieler).PersonDia[p_nr] = 542;
+				_G(gameState).PersonDia[p_nr] = 542;
 			break;
 
 		case 97:
 			if (p_nr == P_NICHELLE)
-				_G(spieler).PersonDia[p_nr] = 547;
+				_G(gameState).PersonDia[p_nr] = 547;
 			else if (p_nr == P_HOWARD)
-				_G(spieler).PersonDia[p_nr] = 545;
+				_G(gameState).PersonDia[p_nr] = 545;
 			break;
 
 		default:
@@ -2731,27 +2731,27 @@ void calc_person_dia(int16 p_nr) {
 		}
 
 		if (flag) {
-			_G(spieler).PersonDia[p_nr] = _G(spieler).PersonGlobalDia[p_nr];
-			room_nr = _G(spieler).PersonDiaRoom[p_nr];
+			_G(gameState).PersonDia[p_nr] = _G(gameState).PersonGlobalDia[p_nr];
+			room_nr = _G(gameState).PersonDiaRoom[p_nr];
 		}
 
 		_G(atds)->set_string_end_func(&Room65::atds_string_start);
 
 		if (!room_nr) {
-			if (_G(spieler).DiaAMov != -1)
-				autoMove(_G(spieler).DiaAMov, P_CHEWY);
+			if (_G(gameState).DiaAMov != -1)
+				autoMove(_G(gameState).DiaAMov, P_CHEWY);
 
 			int16 tmp[3];
 			for (int i = 0; i < 3; ++i) {
-				tmp[i] = _G(spieler).PersonDiaRoom[i];
-				_G(spieler).PersonDiaRoom[i] = false;
+				tmp[i] = _G(gameState).PersonDiaRoom[i];
+				_G(gameState).PersonDiaRoom[i] = false;
 				_G(stopAutoMove)[i] = true;
 			}
 
-			startAadWait(_G(spieler).PersonDia[p_nr]);
+			startAadWait(_G(gameState).PersonDia[p_nr]);
 
 			for (int i = 0; i < 3; ++i) {
-				_G(spieler).PersonDiaRoom[i] = tmp[i];
+				_G(gameState).PersonDiaRoom[i] = tmp[i];
 				_G(stopAutoMove)[i] = false;
 			}
 
@@ -2759,23 +2759,23 @@ void calc_person_dia(int16 p_nr) {
 		} else {
 			_G(room_blk).AadLoad = false;
 			_G(room_blk).AtsLoad = false;
-			_G(spieler).PersonDiaTmpRoom[p_nr] = _G(spieler)._personRoomNr[P_CHEWY];
+			_G(gameState).PersonDiaTmpRoom[p_nr] = _G(gameState)._personRoomNr[P_CHEWY];
 			save_person_rnr();
 
 			if (p_nr == P_HOWARD) {
-				_G(spieler).PersonDiaRoom[P_CHEWY] = true;
+				_G(gameState).PersonDiaRoom[P_CHEWY] = true;
 				switchRoom(65);
-				_G(spieler).PersonDiaRoom[P_CHEWY] = false;
+				_G(gameState).PersonDiaRoom[P_CHEWY] = false;
 
 			} else if (p_nr == P_NICHELLE) {
-				if (_G(spieler).PersonDia[P_NICHELLE] < 10000) {
+				if (_G(gameState).PersonDia[P_NICHELLE] < 10000) {
 					_G(cur_hide_flag) = false;
 					hideCur();
-					startAadWait(_G(spieler).PersonDia[P_NICHELLE]);
-					_G(stopAutoMove)[P_NICHELLE] = _G(spieler).PersonDiaRoom[P_NICHELLE];
+					startAadWait(_G(gameState).PersonDia[P_NICHELLE]);
+					_G(stopAutoMove)[P_NICHELLE] = _G(gameState).PersonDiaRoom[P_NICHELLE];
 					showCur();
 				} else {
-					startAdsWait(_G(spieler).PersonDia[P_NICHELLE] - 10000);
+					startAdsWait(_G(gameState).PersonDia[P_NICHELLE] - 10000);
 				}
 			}
 		}

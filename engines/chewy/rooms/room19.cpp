@@ -30,8 +30,8 @@ namespace Rooms {
 void Room19::entry() {
 	_G(zoom_horizont) = 250;
 	_G(flags).NoScroll = true;
-	_G(spieler).scrollx = 0;
-	_G(spieler).scrolly = 24;
+	_G(gameState).scrollx = 0;
+	_G(gameState).scrolly = 24;
 }
 
 } // namespace Rooms

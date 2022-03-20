@@ -31,32 +31,32 @@ namespace Chewy {
 namespace Rooms {
 
 void Room89::entry() {
-	_G(spieler).ScrollxStep = 2;
+	_G(gameState).ScrollxStep = 2;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(timer_nr)[0] = _G(room)->set_timer(2, 10);
-	if (_G(spieler).flags33_4) {
+	if (_G(gameState).flags33_4) {
 		_G(det)->showStaticSpr(5);
-		if (!_G(spieler).flags32_80)
+		if (!_G(gameState).flags32_80)
 			_G(det)->showStaticSpr(6);
 	}
 
 	if (_G(flags).LoadGame) {
-		_G(spieler).SVal2 = 0;
+		_G(gameState).SVal2 = 0;
 		return;
 	}
 
-	if (_G(spieler).scrollx != 5000) {
-		_G(spieler).scrollx = 0;
+	if (_G(gameState).scrollx != 5000) {
+		_G(gameState).scrollx = 0;
 		setPersonPos(116, 114, P_HOWARD, P_RIGHT);
 		setPersonPos(93, 98, P_CHEWY, P_RIGHT);
 	}
 
-	if (_G(spieler).flags35_2) {
+	if (_G(gameState).flags35_2) {
 		hideCur();
-		_G(spieler).flags35_2 = false;
-		_G(spieler).SVal1 = 89;
-		_G(spieler).SVal2 = 537;
+		_G(gameState).flags35_2 = false;
+		_G(gameState).SVal1 = 89;
+		_G(gameState).SVal2 = 537;
 		switchRoom(92);
 		startAadWait(490);
 		_G(out)->setPointer(nullptr);
@@ -67,17 +67,17 @@ void Room89::entry() {
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
 		flic_cut(FCUT_118);
-		_G(spieler).SVal1 = 89;
-		_G(spieler).SVal2 = 538;
+		_G(gameState).SVal1 = 89;
+		_G(gameState).SVal2 = 538;
 		switchRoom(92);
 		showCur();
-	} else if (_G(spieler).flags35_4) {
+	} else if (_G(gameState).flags35_4) {
 		// End sequence
 		hideCur();
 		setPersonPos(138, 82, P_CHEWY, P_RIGHT);
 		setPersonPos(116, 114, P_HOWARD, P_RIGHT);
 		setPersonPos(260, 57, P_NICHELLE, P_LEFT);
-		_G(spieler).ZoomXy[P_NICHELLE][0] = _G(spieler).ZoomXy[P_NICHELLE][1] = 10;
+		_G(gameState).ZoomXy[P_NICHELLE][0] = _G(gameState).ZoomXy[P_NICHELLE][1] = 10;
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
@@ -138,17 +138,17 @@ void Room89::entry() {
 
 		Dialogs::Credits::execute();
 		
-		_G(spieler).SVal4 = 1;
+		_G(gameState).SVal4 = 1;
 		_G(out)->ausblenden(2);
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 	}
 
-	_G(spieler).SVal2 = 0;
+	_G(gameState).SVal2 = 0;
 }
 
 void Room89::xit() {
-	_G(spieler).ScrollxStep = 1;
+	_G(gameState).ScrollxStep = 1;
 }
 
 void Room89::setup_func() {
@@ -168,13 +168,13 @@ void Room89::talk1() {
 }
 
 int Room89::proc2() {
-	if (_G(spieler).inv_cur || _G(spieler.flags33_2))
+	if (_G(gameState).inv_cur || _G(gameState).flags33_2)
 		return 0;
 
 	hideCur();
-	_G(spieler).flags33_2 = true;
-	_G(spieler).SVal1 = 89;
-	_G(spieler).SVal2 = 489;
+	_G(gameState).flags33_2 = true;
+	_G(gameState).SVal1 = 89;
+	_G(gameState).SVal2 = 489;
 	switchRoom(92);
 	startAadWait(490);
 	_G(out)->setPointer(nullptr);
@@ -183,8 +183,8 @@ int Room89::proc2() {
 	flic_cut(FCUT_102);
 	register_cutscene(26);
 
-	_G(spieler).SVal1 = 89;
-	_G(spieler).SVal2 = 487;
+	_G(gameState).SVal1 = 89;
+	_G(gameState).SVal2 = 487;
 	switchRoom(92);
 	showCur();
 
@@ -192,16 +192,16 @@ int Room89::proc2() {
 }
 
 int Room89::proc4() {
-	if (_G(spieler).inv_cur || _G(spieler).flags32_80)
+	if (_G(gameState).inv_cur || _G(gameState).flags32_80)
 		return 0;
 
 	hideCur();
 	autoMove(2, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 
-	if (_G(spieler).flags33_4) {
+	if (_G(gameState).flags33_4) {
 		_G(atds)->set_ats_str(514, 2, ATS_DATA);
-		_G(spieler).flags32_80 = true;
+		_G(gameState).flags32_80 = true;
 		_G(det)->hideStaticSpr(6);
 		new_invent_2_cur(111);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
@@ -209,7 +209,7 @@ int Room89::proc4() {
 	} else {
 		_G(det)->showStaticSpr(5);
 		_G(det)->showStaticSpr(6);
-		_G(spieler).flags33_4 = true;
+		_G(gameState).flags33_4 = true;
 		_G(atds)->set_ats_str(514, 1, ATS_DATA);
 	}
 
@@ -218,16 +218,16 @@ int Room89::proc4() {
 }
 
 int Room89::proc5() {
-	if (_G(spieler).inv_cur)
+	if (_G(gameState).inv_cur)
 		return 0;
 
-	if (!_G(spieler).flags32_80 || !_G(spieler).flags33_1 || !_G(spieler).flags33_2)
+	if (!_G(gameState).flags32_80 || !_G(gameState).flags33_1 || !_G(gameState).flags33_2)
 		Room66::proc8(-1, 2, 3, 493);
 	else {
 		hideCur();
 		Room66::proc8(-1, 2, 3, 486);
-		_G(spieler).SVal1 = 89;
-		_G(spieler).SVal2 = 488;
+		_G(gameState).SVal1 = 89;
+		_G(gameState).SVal2 = 488;
 		switchRoom(92);
 		showCur();
 	}
