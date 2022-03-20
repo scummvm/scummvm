@@ -317,6 +317,7 @@ public:
 	uint findBestColor(byte cr, byte cg, byte cb);
 	uint findBestColor(uint32 color);
 	void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
+	void setDesktopColor(byte, byte, byte);
 
 	uint inverter(uint src);
 
