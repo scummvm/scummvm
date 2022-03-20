@@ -154,12 +154,12 @@ const AssetLibInfo *AssetManager::GetLibraryInfo(size_t index) const {
 }
 
 bool AssetManager::DoesAssetExist(const String &asset_name, const String &filter) const {
-	return GetAsset(asset_name, filter, false, nullptr, Shared::kFile_Open, Shared::kFile_Read);
+	return GetAsset(asset_name, filter, false, nullptr);
 }
 
 String AssetManager::FindAssetFileOnly(const String &asset_name, const String &filter) const {
 	AssetLocation loc;
-	if (GetAsset(asset_name, filter, true, &loc, Shared::kFile_Open, Shared::kFile_Read))
+	if (GetAsset(asset_name, filter, true, &loc))
 		return loc.FileName;
 	return "";
 }
@@ -199,8 +199,8 @@ AssetError AssetManager::RegisterAssetLib(const String &path, AssetLibEx *&out_l
 	return kAssetNoError;
 }
 
-bool AssetManager::GetAsset(const String &asset_name, const String &filter, bool dir_only,
-                            AssetLocation *loc, FileOpenMode open_mode, FileWorkMode work_mode) const {
+bool AssetManager::GetAsset(const String &asset_name, const String &filter,
+		bool dir_only, AssetLocation *loc) const {
 	for (const auto *lib : _activeLibs) {
 		auto match = std::find(lib->Filters.begin(), lib->Filters.end(), filter);
 		if (match == lib->Filters.end())
@@ -208,9 +208,9 @@ bool AssetManager::GetAsset(const String &asset_name, const String &filter, bool
 
 		bool found = false;
 		if (IsAssetLibDir(lib))
-			found = GetAssetFromDir(lib, asset_name, loc, open_mode, work_mode);
+			found = GetAssetFromDir(lib, asset_name, loc);
 		else if (!dir_only)
-			found = GetAssetFromLib(lib, asset_name, loc, open_mode, work_mode);
+			found = GetAssetFromLib(lib, asset_name, loc);
 		if (found)
 			return true;
 	}
@@ -218,10 +218,7 @@ bool AssetManager::GetAsset(const String &asset_name, const String &filter, bool
 }
 
 bool AssetManager::GetAssetFromLib(const AssetLibInfo *lib, const String &asset_name,
-                                   AssetLocation *loc, FileOpenMode open_mode, FileWorkMode work_mode) const {
-	if (open_mode != Shared::kFile_Open || work_mode != Shared::kFile_Read)
-		return false; // creating/writing is allowed only for common files on disk
-
+		AssetLocation *loc) const {
 	const AssetInfo *asset = nullptr;
 	for (const auto &a : lib->AssetInfos) {
 		if (a.FileName.CompareNoCase(asset_name) == 0) {
@@ -244,7 +241,7 @@ bool AssetManager::GetAssetFromLib(const AssetLibInfo *lib, const String &asset_
 }
 
 bool AssetManager::GetAssetFromDir(const AssetLibInfo *lib, const String &file_name,
-                                   AssetLocation *loc, FileOpenMode open_mode, FileWorkMode work_mode) const {
+		AssetLocation *loc) const {
 	String found_file = File::FindFileCI(lib->BaseDir, file_name);
 	if (found_file.IsEmpty() || !Path::IsFile(found_file))
 		return false; // not found, or not a file
@@ -257,16 +254,14 @@ bool AssetManager::GetAssetFromDir(const AssetLibInfo *lib, const String &file_n
 	return true;
 }
 
-Stream *AssetManager::OpenAsset(const String &asset_name, soff_t *asset_size, FileOpenMode open_mode, FileWorkMode work_mode) const {
-	return OpenAsset(asset_name, "", asset_size, open_mode, work_mode);
+Stream *AssetManager::OpenAsset(const String &asset_name, soff_t *asset_size) const {
+	return OpenAsset(asset_name, "", asset_size);
 }
 
-Stream *AssetManager::OpenAsset(const String &asset_name, const String &filter, soff_t *asset_size, FileOpenMode open_mode, FileWorkMode work_mode) const {
+Stream *AssetManager::OpenAsset(const String &asset_name, const String &filter, soff_t *asset_size) const {
 	AssetLocation loc;
-	if (GetAsset(asset_name, filter, false, &loc, open_mode, work_mode)) {
-		Stream *s = work_mode == kFile_Read ?
-			File::OpenFile(loc.FileName, loc.Offset, loc.Offset + loc.Size) :
-			File::OpenFile(loc.FileName, open_mode, work_mode);
+	if (GetAsset(asset_name, filter, false, &loc)) {
+		Stream *s = File::OpenFile(loc.FileName, loc.Offset, loc.Offset + loc.Size);
 		if (s) {
 			if (asset_size)
 				*asset_size = loc.Size;

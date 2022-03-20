@@ -62,6 +62,9 @@ int File_Exists(const char *fnmm) {
 	if (!ResolveScriptPath(fnmm, true, rp))
 		return 0;
 
+	if (rp.AssetMgr)
+		return _GP(AssetMgr)->DoesAssetExist(rp.FullPath);
+
 	return (File::TestReadFile(rp.FullPath) || File::TestReadFile(rp.AltPath)) ? 1 : 0;
 }
 

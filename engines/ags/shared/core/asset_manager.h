@@ -108,13 +108,9 @@ public:
 	String       FindAssetFileOnly(const String &asset_name, const String &filter = "") const;
 	// Open asset stream in the given work mode; returns null if asset is not found or cannot be opened
 	// This method only searches in libraries that do not have any defined filters
-	Stream *OpenAsset(const String &asset_name, soff_t *asset_size = nullptr,
-					  FileOpenMode open_mode = kFile_Open,
-					  FileWorkMode work_mode = kFile_Read) const;
+	Stream *OpenAsset(const String &asset_name, soff_t *asset_size = nullptr) const;
 	// Open asset stream, providing a single filter to search in matching libraries
-	Stream *OpenAsset(const String &asset_name, const String &filter, soff_t *asset_size = nullptr,
-					  FileOpenMode open_mode = kFile_Open,
-					  FileWorkMode work_mode = kFile_Read) const;
+	Stream *OpenAsset(const String &asset_name, const String &filter, soff_t *asset_size = nullptr) const;
 	// Open asset stream in the given work mode; returns null if asset is not found or cannot be opened
 	// This method only searches in libraries that do not have any defined filters
 	Common::SeekableReadStream *OpenAssetStream(const String &asset_name) const;
@@ -130,9 +126,9 @@ private:
 	AssetError  RegisterAssetLib(const String &path, AssetLibEx *&lib);
 
 	// Tries to find asset in known locations, tests if it's possible to open, and fills in AssetLocation
-	bool        GetAsset(const String &asset_name, const String &filter, bool dir_only, AssetLocation *loc, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode) const;
-	bool        GetAssetFromLib(const AssetLibInfo *lib, const String &asset_name, AssetLocation *loc, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode) const;
-	bool        GetAssetFromDir(const AssetLibInfo *lib, const String &asset_name, AssetLocation *loc, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode) const;
+	bool        GetAsset(const String &asset_name, const String &filter, bool dir_only, AssetLocation *loc) const;
+	bool        GetAssetFromLib(const AssetLibInfo *lib, const String &asset_name, AssetLocation *loc) const;
+	bool        GetAssetFromDir(const AssetLibInfo *lib, const String &asset_name, AssetLocation *loc) const;
 
 	std::vector<AssetLibEx *> _libs;
 	std::vector<AssetLibEx *> _activeLibs;
