@@ -26,6 +26,7 @@
 #include "ags/shared/core/types.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/gfx/gfx_def.h"
+#include "ags/shared/game/room_struct.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -126,6 +127,8 @@ void construct_game_screen_overlay(bool draw_mouse = true);
 void construct_engine_overlay();
 // Clears black game borders in legacy letterbox mode
 void clear_letterbox_borders();
+
+void debug_draw_room_mask(RoomAreaMask mask);
 
 void tint_image(Shared::Bitmap *g, Shared::Bitmap *source, int red, int grn, int blu, int light_level, int luminance = 255);
 void draw_sprite_support_alpha(Shared::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, Shared::Bitmap *image, bool src_has_alpha,

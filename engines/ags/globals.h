@@ -583,6 +583,9 @@ public:
 	// GUI surfaces
 	std::vector<Shared::Bitmap *> *_guibg;
 	std::vector<Engine::IDriverDependantBitmap *> *_guibgbmp;
+	// For debugging room masks
+	RoomAreaMask _debugRoomMask = kRoomAreaNone;
+	Engine::IDriverDependantBitmap *_debugRoomMaskDDB = nullptr;
 
 	bool _current_background_is_dirty = false;
 	// Room background sprite

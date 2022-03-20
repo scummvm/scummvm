@@ -416,6 +416,12 @@ void dispose_game_drawdata() {
 	_GP(guibgbmp).clear();
 }
 
+static void dispose_debug_room_drawdata() {
+	if (_G(debugRoomMaskDDB) != nullptr)
+		_G(gfxDriver)->DestroyDDB(_G(debugRoomMaskDDB));
+	_G(debugRoomMaskDDB) = nullptr;
+}
+
 void dispose_room_drawdata() {
 	_GP(CameraDrawData).clear();
 	dispose_invalid_regions(true);
@@ -452,6 +458,8 @@ void clear_drawobj_cache() {
 			_G(gfxDriver)->DestroyDDB(_GP(guibgbmp)[i]);
 		_GP(guibgbmp)[i] = nullptr;
 	}
+
+	dispose_debug_room_drawdata();
 }
 
 void on_mainviewport_changed() {
@@ -509,6 +517,10 @@ void sync_roomview(Viewport *view) {
 }
 
 void init_room_drawdata() {
+	// Update debug overlays, if any were on
+	debug_draw_room_mask(_G(debugRoomMask));
+
+	// Following data is only updated for software renderer
 	if (_G(gfxDriver)->RequiresFullRedrawEachFrame())
 		return;
 	// Make sure all frame buffers are created for software drawing
@@ -703,8 +715,6 @@ void draw_game_screen_callback() {
 	construct_game_screen_overlay(false);
 }
 
-
-
 void putpixel_compensate(Bitmap *ds, int xx, int yy, int col) {
 	if ((ds->GetColorDepth() == 32) && (col != 0)) {
 		// ensure the alpha channel is preserved if it has one
@@ -713,9 +723,6 @@ void putpixel_compensate(Bitmap *ds, int xx, int yy, int col) {
 	}
 	ds->FillRect(Rect(xx, yy, xx + get_fixed_pixel_size(1) - 1, yy + get_fixed_pixel_size(1) - 1), col);
 }
-
-
-
 
 void draw_sprite_support_alpha(Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, Bitmap *image, bool src_has_alpha,
                                BlendMode blend_mode, int alpha) {
@@ -1853,6 +1860,10 @@ void prepare_room_sprites() {
 		}
 	}
 	_G(our_eip) = 36;
+
+	// Debug room overlay
+	if ((_G(debugRoomMask) != kRoomAreaNone) && _G(debugRoomMaskDDB))
+		add_thing_to_draw(_G(debugRoomMaskDDB), 0, 0);
 }
 
 // Draws the black surface behind (or rather between) the room viewports
@@ -2280,6 +2291,24 @@ static void update_shakescreen() {
 		if ((_G(loopcounter) % _GP(play).shakesc_delay) < (_GP(play).shakesc_delay / 2))
 			_GP(play).shake_screen_yoff = _GP(play).shakesc_amount;
 	}
+}
+
+void debug_draw_room_mask(RoomAreaMask mask) {
+	_G(debugRoomMask) = mask;
+	if (mask == kRoomAreaNone)
+		return;
+
+	Bitmap *mask_bmp;
+	switch (mask) {
+	case kRoomAreaHotspot: mask_bmp = _GP(thisroom).HotspotMask.get(); break;
+	case kRoomAreaWalkBehind: mask_bmp = _GP(thisroom).WalkBehindMask.get(); break;
+	case kRoomAreaWalkable: mask_bmp = prepare_walkable_areas(-1); break;
+	case kRoomAreaRegion: mask_bmp = _GP(thisroom).RegionMask.get(); break;
+	default: return;
+	}
+
+	_G(debugRoomMaskDDB) = recycle_ddb_bitmap(_G(debugRoomMaskDDB), mask_bmp, false, true);
+	_G(debugRoomMaskDDB)->SetTransparency(150);
 }
 
 // Draw everything
