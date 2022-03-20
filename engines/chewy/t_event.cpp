@@ -2297,14 +2297,14 @@ void calc_inv_use_txt(int16 test_nr) {
 static void calc_inv_get_text(int16 cur_inv, int16 test_nr) {
 	int16 txt_anz;
 
-	const char *s = _G(atds)->ats_get_txt(31, TXT_MARK_USE, &txt_anz, 16);
+	const char *s = _G(atds)->ats_get_txt(31, TXT_MARK_USE, &txt_anz, INV_USE_DEF);
 	_G(calc_inv_text_str1) = Common::String::format("%s ", s);
 
 	_G(atds)->load_atds(cur_inv, INV_ATS_DATA);
 
 	_G(calc_inv_text_str1) += _G(atds)->getTextEntry(cur_inv + 700, TXT_MARK_NAME);
 
-	s = _G(atds)->ats_get_txt(32, TXT_MARK_USE, &txt_anz, 16);
+	s = _G(atds)->ats_get_txt(32, TXT_MARK_USE, &txt_anz, INV_USE_DEF);
 	_G(calc_inv_text_str2) = Common::String::format("%s ", s);
 
 	_G(calc_inv_text_str2) += _G(atds)->getTextEntry(test_nr + 700, TXT_MARK_NAME);
