@@ -1624,7 +1624,7 @@ static void cc_error_fixups(const ccScript *scri, size_t pc, const char *fmt, ..
 	String displbuf = String::FromFormatV(fmt, ap);
 	va_end(ap);
 	const char *scname = scri->numSections > 0 ? scri->sectionNames[0] : "?";
-	if (pc == -1) {
+	if (pc == (size_t) -1) {
 		cc_error("in script %s: %s", scname, displbuf.GetCStr());
 	} else {
 		int line = DetermineScriptLine(scri->code, scri->codesize, pc);
