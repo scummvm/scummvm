@@ -109,7 +109,7 @@ bool Debugger::Cmd_Text(int argc, const char **argv) {
 	int chunk = atoi(argv[1]);
 	int entry = atoi(argv[2]);
 	Common::StringArray text = _G(atds)->getTextArray(chunk, entry);
-	for (int i = 0; i < text.size(); i++) {
+	for (uint i = 0; i < text.size(); i++) {
 		debugPrintf("%d: %s\n", i, text[i].c_str());
 	}
 	return true;
