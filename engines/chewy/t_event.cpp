@@ -2302,16 +2302,12 @@ static void calc_inv_get_text(int16 cur_inv, int16 test_nr) {
 
 	_G(atds)->load_atds(cur_inv, INV_ATS_DATA);
 
-	s = _G(atds)->ats_get_txt(cur_inv, TXT_MARK_NAME, &txt_anz, 6);
-	_G(calc_inv_text_str1) += s;
+	_G(calc_inv_text_str1) += _G(atds)->getTextEntry(cur_inv + 700, TXT_MARK_NAME);
 
 	s = _G(atds)->ats_get_txt(32, TXT_MARK_USE, &txt_anz, 16);
 	_G(calc_inv_text_str2) = Common::String::format("%s ", s);
 
-	_G(atds)->load_atds(test_nr, INV_ATS_DATA);
-
-	s = _G(atds)->ats_get_txt(test_nr, TXT_MARK_NAME, &txt_anz, 6);
-	_G(calc_inv_text_str2) += s;
+	_G(calc_inv_text_str2) += _G(atds)->getTextEntry(test_nr + 700, TXT_MARK_NAME);
 }
 
 bool calc_inv_no_use(int16 test_nr, int16 mode) {
