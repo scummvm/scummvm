@@ -25,6 +25,7 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/camera_process.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -46,7 +47,12 @@ SnapProcess::~SnapProcess() {
 
 void SnapProcess::run() {
 	bool snap_to_player = ConfMan.getBool("camera_on_player");
-	if (snap_to_player) {
+	bool in_stasis = Ultima8Engine::get_instance()->isAvatarInStasis();
+
+	// For cut scenes and remote cameras (when in stasis),
+	// we should snap to the right egg - not to the player.
+	// Snapping to player resumes once stasis is done.
+	if (snap_to_player && !in_stasis) {
 		const Actor *controlled = getControlledActor();
 		if (controlled) {
 			int32 x, y, z;
