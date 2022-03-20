@@ -20200,6 +20200,41 @@ static const uint16 sq4CdPatchLaserBeamMessages[] = {
 	PATCH_END
 };
 
+// In the laser beam hallway in the CD version, the keypad doesn't rotate the
+//  beams by the correct amount at high CPU speeds. The faster the CPU speed,
+//  the less the beams rotate relative to the number entered by the user. This
+//  is a regression due to significant changes in the underlying Cycle class.
+//  Normally our speed throttler would take care of this, but the CD version
+//  also introduces an inner loop when the keypad is displayed.
+//
+// We fix this by calling kGameIsRestarting from within the keypad's inner
+//  loop so that speed throttling occurs and the rotation degrees are accurate.
+//
+// Applies to: English PC CD
+// Responsible method: keyPad:doit
+static const uint16 sq4CdSignatureLaserBeamSpeedThrottle[] = {
+	0x85, 0x00,                         // lat 00  [ redundant ]
+	SIG_MAGICDWORD,
+	0x4a, 0x04,                         // send 04 [ temp0 localize: ]
+	0x81, 0x4d,                         // lag 4d  [ PseudoMouse ]
+	0x31, 0x11,                         // bnt 11  [ branch never taken ]
+	0x39, SIG_ADDTOOFFSET(+1),          // pushi contains
+	0x78,                               // push1
+	0x36,                               // push    [ PseudoMouse ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchLaserBeamSpeedThrottle[] = {
+	0x4a, 0x04,                         // send 04 [ temp0 localize: ]
+	0x78,                               // push1
+	0x76,                               // push0
+	0x43, 0x2c, 0x02,                   // callk GameIsRestarting 02
+	0x39, PATCH_GETORIGINALBYTE(+9),    // pushi contains
+	0x78,                               // push1
+	0x89, 0x4d,                         // lsg 4d  [ PseudoMouse ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
@@ -20237,8 +20272,9 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   410, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   411, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{ false,   531, "CD: disable timepod code for removed room",      1, sq4CdSignatureRemovedRoomTimepodCode,          sq4CdPatchRemovedRoomTimepodCode },
-	{  true,   545, "CD: vohaul pocketpal text+speech fix",           1, sq4CdSignatureVohaulPocketPalTextSpeech,       sq4CdPatchVohaulPocketPalTextSpeech },
 	{  true,   541, "CD: laser beam messages",                        3, sq4CdSignatureLaserBeamMessages,               sq4CdPatchLaserBeamMessages },
+	{  true,   541, "CD: laser beam speed throttle",                  1, sq4CdSignatureLaserBeamSpeedThrottle,          sq4CdPatchLaserBeamSpeedThrottle },
+	{  true,   545, "CD: vohaul pocketpal text+speech fix",           1, sq4CdSignatureVohaulPocketPalTextSpeech,       sq4CdPatchVohaulPocketPalTextSpeech },
 	{  true,   610, "CD: biker bar door fix",                         1, sq4CdSignatureBikerBarDoor,                    sq4CdPatchBikerBarDoor },
 	{  true,   610, "CD: biker hands-on fix",                         3, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
 	{  true,   611, "CD: biker hands-on fix",                         1, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
