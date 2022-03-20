@@ -197,7 +197,7 @@ void Room::loadRoom(RaumBlk *Rb, int16 room_nr, Spieler *player) {
 		Rb->DetKorrekt = Rb->Fti->_correction;
 	}
 	_G(obj)->calc_all_static_detail();
-	load_tgp(_roomInfo->_imageNr, Rb, EPISODE1_TGP, GED_LOAD, "back/episode1.tgp");
+	load_tgp(_roomInfo->_imageNr, Rb, EPISODE1_TGP, GED_LOAD, EPISODE1);
 	set_pal(_ablagePal[Rb->AkAblage], Rb->LowPalMem);
 	calc_invent(Rb, player);
 

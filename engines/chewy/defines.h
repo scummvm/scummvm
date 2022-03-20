@@ -142,6 +142,11 @@ enum SetupScreenMode {
 #define DETAIL_OBJ 5
 #define SPIELER_OBJ 6
 
+#define EPISODE1_TGP 0
+#define GBOOK_TGP 1
+#define NOTEBOOK_START 2
+#define DIARY_START 3
+
 #define CURSOR_TAF "misc/cursor.taf"
 #define INVENTORY_TAF "misc/inventar.taf"
 #define INVENTORY_IIB "misc/inventar.iib"
@@ -156,17 +161,12 @@ enum SetupScreenMode {
 #define CHEWY_HELM_TAF "misc/ch_helm.taf"
 #define MENUTAF "misc/menu.taf"
 #define CH_SPZ_FILE "misc/ch_spez.taf"
-#define OPTION_TAF "MISC/OPTION.TAF"
+#define OPTION_TAF "misc/option.taf"
 
 #define DETAILTEST "room/test.rdi"
-#define GBOOK "BACK/GBOOK.TGP"
+#define GBOOK "back/gbook.tgp"
 
-#define EPISODE1_TGP 0
-#define GBOOK_TGP 1
 #define EPISODE1 "back/episode1.tgp"
-#define NOTEBOOK_START 2
-#define DIARY_START 3
-
 #define EPISODE1_GEP "back/episode1.gep"
 
 #define FONT6x8 "txt/6x8.tff"

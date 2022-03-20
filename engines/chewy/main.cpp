@@ -44,8 +44,8 @@ static const int16 invent_display[4][2] = {
 void game_main() {
 	_G(fontMgr) = new FontMgr();
 
-	_G(font8) = new ChewyFont("TXT/8X8.TFF");
-	_G(font6) = new ChewyFont("TXT/6X8.TFF");
+	_G(font8) = new ChewyFont(FONT8x8);
+	_G(font6) = new ChewyFont(FONT6x8);
 	_G(font6)->setDisplaySize(_G(font6)->getDataWidth() - 2, _G(font6)->getDataHeight());
 	_G(font8)->setDeltaX(10);
 	_G(fontMgr)->setFont(_G(font8)); // set default font
