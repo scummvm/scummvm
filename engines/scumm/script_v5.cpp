@@ -457,7 +457,7 @@ void ScummEngine_v5::o5_actorOps() {
 			// But in the VGA CD version, only costume 0 is used
 			// and the close-up is missing the cigar smoke.
 
-			if (_game.id == GID_MONKEY && _currentRoom == 76 && act == 12 && i == 0 && ConfMan.getBool("enable_enhancements")) {
+			if (_game.id == GID_MONKEY && _currentRoom == 76 && act == 12 && i == 0 && _enableEnhancements) {
 				i = 76;
 			}
 
@@ -670,7 +670,7 @@ void ScummEngine_v5::o5_add() {
 	// We restore the old behavior by adding 0, not 1, to the second
 	// variable when examining the clock tower.
 
-	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 210 && _currentRoom == 35 && _resultVarNumber == 248 && a == 1 && ConfMan.getBool("enable_enhancements")) {
+	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 210 && _currentRoom == 35 && _resultVarNumber == 248 && a == 1 && _enableEnhancements) {
 		a = 0;
 	}
 
@@ -1396,7 +1396,7 @@ void ScummEngine_v5::o5_isLessEqual() {
 	// together that they look like one. This adjusts the timing of the
 	// second one.
 
-	if (_game.id == GID_LOOM && _game.version >= 4 && _language == Common::EN_ANY && vm.slot[_currentScript].number == 95 && var == VAR_MUSIC_TIMER && b == 1708 && ConfMan.getBool("enable_enhancements")) {
+	if (_game.id == GID_LOOM && _game.version >= 4 && _language == Common::EN_ANY && vm.slot[_currentScript].number == 95 && var == VAR_MUSIC_TIMER && b == 1708 && _enableEnhancements) {
 		b = 1815;
 	}
 
@@ -1650,7 +1650,7 @@ void ScummEngine_v5::o5_putActor() {
 	// other coordinates. The difference is never more than a single pixel,
 	// so there's not much reason to correct those.
 
-	if (_game.id == GID_MONKEY && _currentRoom == 76 && act == 12 && ConfMan.getBool("enable_enhancements")) {
+	if (_game.id == GID_MONKEY && _currentRoom == 76 && act == 12 && _enableEnhancements) {
 		if (x == 176 && y == 80) {
 			x = 174;
 			y = 86;
@@ -1922,7 +1922,7 @@ void ScummEngine_v5::o5_roomOps() {
 			// we want the original color 3 for the cigar smoke. It
 			// should be ok since there is no GUI in this scene.
 
-			if (_game.id == GID_MONKEY && _currentRoom == 76 && d == 3 && ConfMan.getBool("enable_enhancements"))
+			if (_game.id == GID_MONKEY && _currentRoom == 76 && d == 3 && _enableEnhancements)
 				break;
 
 			setPalColor(d, a, b, c);	/* index, r, g, b */
@@ -2341,7 +2341,7 @@ void ScummEngine_v5::o5_stopSound() {
 	// 10001 regardless of which room it is. We figure out which one by
 	// looking at which rooms we're moving between.
 
-	if (_game.id == GID_MONKEY && (_game.features & GF_AUDIOTRACKS) && sound == 126 && vm.slot[_currentScript].number == 10001 && VAR(VAR_ROOM) == 43 && VAR(VAR_NEW_ROOM) == 76 && ConfMan.getBool("enable_enhancements")) {
+	if (_game.id == GID_MONKEY && (_game.features & GF_AUDIOTRACKS) && sound == 126 && vm.slot[_currentScript].number == 10001 && VAR(VAR_ROOM) == 43 && VAR(VAR_NEW_ROOM) == 76 && _enableEnhancements) {
 		return;
 	}
 
@@ -2977,7 +2977,7 @@ void ScummEngine_v5::decodeParseString() {
 		case 15:{	// SO_TEXTSTRING
 				const int len = resStrLen(_scriptPointer);
 
-				if (_game.id == GID_LOOM && vm.slot[_currentScript].number == 95 && strcmp((const char *)_scriptPointer, "I am Choas.") == 0 && ConfMan.getBool("enable_enhancements")) {
+				if (_game.id == GID_LOOM && vm.slot[_currentScript].number == 95 && _enableEnhancements && strcmp((const char *)_scriptPointer, "I am Choas.") == 0) {
 					// WORKAROUND: This happens when Chaos introduces
 					// herself to bishop Mandible. Of all the places to put
 					// a typo...

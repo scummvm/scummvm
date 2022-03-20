@@ -68,7 +68,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 			vm.slot[_currentScript].number == 203 &&
 			_actorToPrintStrFor == 255 && strcmp((const char *)msg, " ") == 0 &&
 			getOwner(200) == VAR(VAR_EGO) && VAR(VAR_HAVE_MSG) &&
-			ConfMan.getBool("enable_enhancements")) {
+			_enableEnhancements) {
 			return;
 		}
 

@@ -1496,7 +1496,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 				// Some of the Mac MI2 music only exists as Roland tracks. The
 				// original interpreter doesn't play them. I don't think there
 				// is any similarly missing FoA music.
-				if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh && !ConfMan.getBool("enable_enhancements")) {
+				if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh && !_enableEnhancements) {
 					pri = -1;
 					break;
 				}

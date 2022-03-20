@@ -109,7 +109,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _currentScript(0xFF), // Let debug() work on init stage
 	  _messageDialog(nullptr), _pauseDialog(nullptr), _versionDialog(nullptr),
 	  _rnd("scumm"),
-	  _shakeTimerRate(dr.game.version <= 3 ? 236696 : 291304)
+	  _shakeTimerRate(dr.game.version <= 3 ? 236696 : 291304),
+	  _enableEnhancements(false)
 	  {
 
 	_localizer = nullptr;
@@ -1113,6 +1114,8 @@ ScummEngine_v8::~ScummEngine_v8() {
 Common::Error ScummEngine::init() {
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	_enableEnhancements = ConfMan.getBool("enable_enhancements");
 
 	// Add default file directories.
 	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {

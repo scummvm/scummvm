@@ -314,6 +314,8 @@ public:
 	/** Central resource data. */
 	ResourceManager *_res;
 
+	bool _enableEnhancements;
+
 protected:
 	VirtualMachineState vm;
 

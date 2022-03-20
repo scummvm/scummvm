@@ -1738,7 +1738,7 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 	// overwritten. This probably affects all CD versions, so we just have
 	// to add further patches as they are reported.
 
-	if (_game.id == GID_MONKEY && type == rtRoom && idx == 25 && ConfMan.getBool("enable_enhancements")) {
+	if (_game.id == GID_MONKEY && type == rtRoom && idx == 25 && _enableEnhancements) {
 		tryPatchMI1CannibalScript(getResourceAddress(type, idx), size);
 	} else
 
