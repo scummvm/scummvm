@@ -843,17 +843,18 @@ void Character_SetOption(CharacterInfo *chaa, int flag, int yesorno) {
 		if (yesorno)
 			chaa->flags |= flag;
 	}
-
 }
 
 void Character_SetSpeed(CharacterInfo *chaa, int xspeed, int yspeed) {
-
-	if ((xspeed == 0) || (xspeed > 50) || (yspeed == 0) || (yspeed > 50))
+	if ((xspeed == 0) || (yspeed == 0))
 		quit("!SetCharacterSpeedEx: invalid speed value");
 	if (chaa->walking) {
 		debug_script_warn("Character_SetSpeed: cannot change speed while walking");
 		return;
 	}
+
+	xspeed = Math::Clamp(xspeed, (int)INT16_MIN, (int)INT16_MAX);
+	yspeed = Math::Clamp(yspeed, (int)INT16_MIN, (int)INT16_MAX);
 
 	chaa->walkspeed = xspeed;
 
