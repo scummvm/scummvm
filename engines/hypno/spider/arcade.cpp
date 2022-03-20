@@ -198,9 +198,40 @@ void SpiderEngine::drawPlayer() {
 				break;
 			}
 			_lastPlayerPosition = _currentPlayerPosition;
-		} else if (_playerFrameIdx % 4 != 0 && _playerFrameIdx % 4 != 3) {
+		} else if (_playerFrameIdx < 48 && _playerFrameIdx % 4 != 0 && _playerFrameIdx % 4 != 3) {
 			_playerFrameIdx++;
 			_lastPlayerPosition = _currentPlayerPosition;
+		} else {
+			if (_arcadeMode == "YD") {
+				switch (_lastPlayerPosition) {
+				case kPlayerTop:
+					if ((_playerFrameIdx <= 11 && (_playerFrameIdx % 4 == 0 || _playerFrameIdx % 4 == 3)) || _playerFrameIdx >= 54)
+						_playerFrameIdx = 49;
+					else
+						_playerFrameIdx++;
+					break;
+
+				case kPlayerBottom:
+					if ((_playerFrameIdx <= 23  && (_playerFrameIdx % 4 == 0 || _playerFrameIdx % 4 == 3)) || _playerFrameIdx >= 65)
+						_playerFrameIdx = 60;
+					else
+						_playerFrameIdx++;
+					break;
+				case kPlayerLeft:
+					if ((_playerFrameIdx <= 35 && (_playerFrameIdx % 4 == 0 || _playerFrameIdx % 4 == 3)) || _playerFrameIdx >= 77)
+						_playerFrameIdx = 72;
+					else
+						_playerFrameIdx++;
+					break;
+
+				case kPlayerRight:
+					if ((_playerFrameIdx <= 47 && (_playerFrameIdx % 4 == 0 || _playerFrameIdx % 4 == 3)) || _playerFrameIdx >= 89)
+						_playerFrameIdx = 84;
+					else
+						_playerFrameIdx++;
+					break;
+				}
+			}
 		}
 	} else if (_arcadeMode == "YE" || _arcadeMode == "YF") {
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
