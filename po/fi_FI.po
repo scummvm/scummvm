@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-18 22:46+0000\n"
-"PO-Revision-Date: 2022-03-13 21:27+0000\n"
+"PO-Revision-Date: 2022-03-20 16:27+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1988,10 +1988,8 @@ msgstr ""
 "Tarkista verkkoyhteytesi."
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
-msgstr "Enter"
+msgstr "Syötä teksti"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -4488,6 +4486,8 @@ msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
 msgstr ""
+"Peli ei salli lopettamista tässä kohdassa. Oletko varma että haluat "
+"kumminkin lopettaa?"
 
 #: engines/dragons/dragons.cpp:1802
 #, c-format
@@ -5012,10 +5012,8 @@ msgid "Error: the game could not be saved."
 msgstr "Virhe: peliä ei pystytty tallentamaan."
 
 #: engines/grim/inputdialog.cpp:79
-#, fuzzy
-#| msgid "Input"
 msgid "Input text"
-msgstr "Syöte"
+msgstr "Syötä teksti"
 
 #: engines/grim/md5check.cpp:558
 #, c-format
