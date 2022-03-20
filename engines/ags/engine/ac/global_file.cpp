@@ -26,9 +26,11 @@
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/string.h"
 #include "ags/engine/debugging/debug_log.h"
+#include "ags/shared/core/asset_manager.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/stream.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -78,9 +80,14 @@ int32_t FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileW
 			return 0;
 	}
 
-	Stream *s = File::OpenFile(rp.FullPath, open_mode, work_mode);
-	if (!s && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
-		s = File::OpenFile(rp.AltPath, open_mode, work_mode);
+	Stream *s;
+	if (rp.AssetMgr) {
+		s = _GP(AssetMgr)->OpenAsset(rp.FullPath, nullptr, open_mode, work_mode);
+	} else {
+		s = File::OpenFile(rp.FullPath, open_mode, work_mode);
+		if (!s && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
+			s = File::OpenFile(rp.AltPath, open_mode, work_mode);
+	}
 
 	valid_handles[useindx].stream = s;
 	if (valid_handles[useindx].stream == nullptr)

@@ -206,6 +206,7 @@ const char *GameInstallRootToken = "$INSTALLDIR$";
 const char *UserSavedgamesRootToken = "$MYDOCS$";
 const char *GameSavedgamesDirToken = "$SAVEGAMEDIR$";
 const char *GameDataDirToken = "$APPDATADIR$";
+const char *GameAssetToken = "$DATA$";
 const char *UserConfigFileToken = "$CONFIGFILE$";
 
 void FixupFilename(char *filename) {
@@ -283,18 +284,27 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	debugC(::AGS::kDebugFilePath, "ResolveScriptPath(%s)", orig_sc_path.GetCStr());
 	rp = ResolvedPath();
 
-	bool is_absolute = !is_relative_filename(orig_sc_path.GetCStr());
-	if (is_absolute && !read_only) {
-		debug_script_warn("Attempt to access file '%s' denied (cannot write to absolute path)", orig_sc_path.GetCStr());
-		return false;
-	}
+	if (!Path::IsRelativePath(orig_sc_path)) {
+		if (!read_only) {
+			debug_script_warn("Attempt to access file '%s' denied (cannot write to absolute path)", orig_sc_path.GetCStr());
+			return false;
+		}
 
-	if (is_absolute) {
 		rp = ResolvedPath(orig_sc_path);
 		return true;
 	}
 
 	String sc_path = orig_sc_path;
+	if (sc_path.CompareLeft(GameAssetToken, strlen(GameAssetToken)) == 0) {
+		if (!read_only) {
+			debug_script_warn("Attempt to access file '%s' denied (cannot write to game assets)", orig_sc_path.GetCStr());
+			return false;
+		}
+		rp.FullPath = sc_path.Mid(strlen(GameAssetToken) + 1);
+		rp.AssetMgr = true;
+		return true;
+	}
+
 	FSLocation parent_dir;
 	String child_path;
 	String alt_path;

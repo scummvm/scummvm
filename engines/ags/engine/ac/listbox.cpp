@@ -108,6 +108,8 @@ void ListBox_FillDirList(GUIListBox *listbox, const char *filemask) {
 	if (!ResolveScriptPath(filemask, true, rp))
 		return;
 
+	// TODO: support listing assets from AssetMgr
+
 	std::set<String> files;
 	FillDirList(files, rp.FullPath);
 	if (!rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)

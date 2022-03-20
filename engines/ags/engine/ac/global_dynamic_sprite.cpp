@@ -38,6 +38,9 @@ int LoadImageFile(const char *filename) {
 	if (!ResolveScriptPath(filename, true, rp))
 		return 0;
 
+	// TODO: support loading from asset (stream);
+	// use PACKFILE / load_bmp_pf? Or read data and allocate bitmap struct ourselves
+
 	Bitmap *loadedFile = BitmapHelper::LoadFromFile(rp.FullPath);
 	if (!loadedFile && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
 		loadedFile = BitmapHelper::LoadFromFile(rp.AltPath);

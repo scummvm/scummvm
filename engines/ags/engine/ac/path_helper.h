@@ -86,6 +86,7 @@ struct ResolvedPath {
 	FSLocation Loc;  // location (directory)
 	String FullPath; // full path, including filename
 	String AltPath;  // alternative read-only full path, for backwards compatibility
+	bool AssetMgr = false; // file is to be accessed through the asset manager
 	ResolvedPath() = default;
 	ResolvedPath(const String & file, const String & alt = "")
 		: FullPath(file), AltPath(alt) {
