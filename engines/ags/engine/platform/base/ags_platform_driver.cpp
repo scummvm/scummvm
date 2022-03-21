@@ -53,9 +53,6 @@ AGSPlatformDriver *AGSPlatformDriver::instance = nullptr;
 
 // ******** DEFAULT IMPLEMENTATIONS *******
 
-void AGSPlatformDriver::AboutToQuitGame() {
-}
-
 void AGSPlatformDriver::PostAllegroInit(bool windowed) {
 }
 
@@ -165,6 +162,15 @@ void AGSPlatformDriver::FinishedUsingGraphicsMode() {
 
 SetupReturnValue AGSPlatformDriver::RunSetup(const ConfigTree &cfg_in, ConfigTree &cfg_out) {
 	return kSetup_Cancel;
+}
+
+void AGSPlatformDriver::SetCommandArgs(const char *const argv[], size_t argc) {
+	_cmdArgs = argv;
+	_cmdArgCount = argc;
+}
+
+Common::String AGSPlatformDriver::GetCommandArg(size_t arg_index) {
+	return arg_index < _cmdArgCount ? _cmdArgs[arg_index] : nullptr;
 }
 
 void AGSPlatformDriver::SetGameWindowIcon() {

@@ -45,6 +45,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/engine/platform/base/sys_main.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/globals.h"
@@ -83,23 +84,6 @@ void quit_check_dynamic_sprites(QuitReason qreason) {
 				debug_script_warn("Dynamic sprite %d was never deleted", i);
 		}
 	}
-}
-
-void quit_shutdown_platform(QuitReason qreason) {
-	// Be sure to unlock mouse on exit, or users will hate us
-	_G(platform)->UnlockMouse();
-	_G(platform)->AboutToQuitGame();
-
-	_G(our_eip) = 9016;
-
-	pl_stop_plugins();
-
-	quit_check_dynamic_sprites(qreason);
-
-	_G(platform)->FinishedUsingGraphicsMode();
-
-	if (_G(use_cdplayer))
-		_G(platform)->ShutdownCDPlayer();
 }
 
 void quit_shutdown_audio() {
@@ -217,7 +201,17 @@ void quit_free() {
 
 	quit_shutdown_scripts();
 
-	quit_shutdown_platform(qreason);
+	// Be sure to unlock mouse on exit, or users will hate us
+	sys_window_lock_mouse(false);
+
+	_G(our_eip) = 9016;
+
+	pl_stop_plugins();
+
+	quit_check_dynamic_sprites(qreason);
+
+	if (_G(use_cdplayer))
+		_G(platform)->ShutdownCDPlayer();
 
 	_G(our_eip) = 9019;
 
@@ -243,6 +237,8 @@ void quit_free() {
 	quit_message_on_exit(quitmsg, alertis, qreason);
 
 	quit_release_data();
+
+	_G(platform)->PreBackendExit();
 
 	// release backed library
 	// WARNING: no Allegro objects should remain in memory after this,

@@ -84,6 +84,7 @@ using namespace AGS::Engine;
 
 bool engine_init_backend() {
 	_G(our_eip) = -199;
+	_G(platform)->PreBackendInit();
 	// Initialize SDL
 	Debug::Printf(kDbgMsg_Info, "Initializing backend libs");
 	if (sys_main_init()) {

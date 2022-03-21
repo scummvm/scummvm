@@ -35,8 +35,6 @@ extern void main_init(int argc, const char *argv[]);
 
 extern int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]);
 
-extern AGS::Shared::String GetPathFromCmdArg(int arg_index);
-
 extern String get_engine_string();
 
 extern void main_print_help();

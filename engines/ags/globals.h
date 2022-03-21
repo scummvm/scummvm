@@ -1063,9 +1063,6 @@ public:
 	String _appDirectory; // Needed for library loading
 	String _cmdGameDataPath;
 
-	const char **_global_argv = nullptr;
-	int _global_argc = 0;
-
 	// Startup flags, set from parameters to engine
 	int _force_window = 0;
 	int _override_start_room = 0;

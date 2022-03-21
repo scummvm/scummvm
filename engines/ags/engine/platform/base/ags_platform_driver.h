@@ -70,7 +70,17 @@ struct AGSPlatformDriver
 	: public AGS::Shared::IOutputHandler {
 	virtual ~AGSPlatformDriver() { instance = nullptr; }
 
-	virtual void AboutToQuitGame();
+    // Called at the creation of the platform driver
+    virtual void MainInit() { };
+    // Called right before the formal backend init
+    virtual void PreBackendInit() { };
+    // Called right after the formal backend init
+    virtual void PostBackendInit() { };
+    // Called right before the backend is deinitialized
+    virtual void PreBackendExit() { };
+    // Called right after the backend is deinitialized
+    virtual void PostBackendExit() { };
+
 	virtual void Delay(int millis);
 	virtual void DisplayAlert(const char *, ...) = 0;
 	virtual void AttachToParentConsole();
@@ -121,8 +131,6 @@ struct AGSPlatformDriver
 	virtual void InitialiseAbufAtStartup();
 	virtual void PostAllegroInit(bool windowed);
 	virtual void PostAllegroExit() = 0;
-	virtual void PostBackendInit() {}
-	virtual void PostBackendExit() {}
 	virtual const char *GetBackendFailUserHint() {
 		return nullptr;
 	}
@@ -166,13 +174,16 @@ struct AGSPlatformDriver
 	virtual int  CDPlayerCommand(int cmdd, int datt) = 0;
 	virtual void ShutdownCDPlayer() = 0;
 
-	// Allows adjusting parameters and other fixes before engine is initialized
-	virtual void MainInitAdjustments() {}
+	// Returns command line argument in a UTF-8 format
+	virtual Common::String GetCommandArg(size_t arg_index);
 
 	virtual bool LockMouseToWindow();
 	virtual void UnlockMouse();
 
 	static AGSPlatformDriver *GetDriver();
+
+	// Store command line arguments for the future use
+	void SetCommandArgs(const char *const argv[], size_t argc);
 
 	// Set whether PrintMessage should output to stdout or stderr
 	void SetOutputToErr(bool on) {
@@ -200,6 +211,9 @@ protected:
 	// Defines whether engine is allowed to display important warnings
 	// and errors by showing a message box kind of GUI.
 	bool _guiMode = false;
+
+	const char *const *_cmdArgs = nullptr;
+	size_t _cmdArgCount = 0u;
 
 private:
 	static AGSPlatformDriver *instance;

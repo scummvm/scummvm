@@ -50,16 +50,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-void main_pre_init() {
-	_G(our_eip) = -999;
-	_GP(AssetMgr)->SetSearchPriority(Shared::kAssetPriorityDir);
-	_GP(play).takeover_data = 0;
-}
-
-void main_create_platform_driver() {
-	_G(platform) = AGSPlatformDriver::GetDriver();
-}
-
 // this needs to be updated if the "play" struct changes
 #define SVG_VERSION_BWCOMPAT_MAJOR      3
 #define SVG_VERSION_BWCOMPAT_MINOR      2
@@ -73,6 +63,8 @@ void main_create_platform_driver() {
 #define SVG_VERSION_FWCOMPAT_REVISION   1111
 
 void main_init(int argc, const char *argv[]) {
+	_G(our_eip) = -999;
+
 	// Init libraries: set text encoding
 	set_uformat(U_UTF8);
 	set_filename_encoding(U_UNICODE);
@@ -84,13 +76,12 @@ void main_init(int argc, const char *argv[]) {
 	_G(SavedgameLowestBackwardCompatVersion) = Version(SVG_VERSION_BWCOMPAT_MAJOR, SVG_VERSION_BWCOMPAT_MINOR, SVG_VERSION_BWCOMPAT_RELEASE, SVG_VERSION_BWCOMPAT_REVISION);
 	_G(SavedgameLowestForwardCompatVersion) = Version(SVG_VERSION_FWCOMPAT_MAJOR, SVG_VERSION_FWCOMPAT_MINOR, SVG_VERSION_FWCOMPAT_RELEASE, SVG_VERSION_FWCOMPAT_REVISION);
 
-	_GP(AssetMgr).reset(new AssetManager());
-	main_pre_init();
-	main_create_platform_driver();
-	_G(platform)->MainInitAdjustments();
+	_G(platform) = AGSPlatformDriver::GetDriver();
+	_G(platform)->SetCommandArgs(argv, argc);
+	_G(platform)->MainInit();
 
-	_G(global_argv) = argv;
-	_G(global_argc) = argc;
+	_GP(AssetMgr).reset(new AssetManager());
+	_GP(AssetMgr)->SetSearchPriority(Shared::kAssetPriorityDir);
 }
 
 String get_engine_string() {
@@ -290,12 +281,8 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		else if (arg[0] != '-') datafile_argv = ee;
 	}
 
-	if (datafile_argv > 0) {
-		_G(cmdGameDataPath) = GetPathFromCmdArg(datafile_argv);
-	} else {
-		// assign standard path for mobile/consoles (defined in their own platform implementation)
-		_G(cmdGameDataPath) = _G(psp_game_file_name);
-	}
+	// assign standard path (defined in their own platform implementation)
+	_G(cmdGameDataPath) = _G(psp_game_file_name);
 
 	if (_G(tellInfoKeys).size() > 0)
 		_G(justTellInfo) = true;
@@ -304,7 +291,7 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 }
 
 void main_set_gamedir(int argc, const char *argv[]) {
-	_G(appPath) = GetPathFromCmdArg(0);
+	_G(appPath) = Path::MakeAbsolutePath(_G(platform)->GetCommandArg(0));
 	_G(appDirectory) = Path::GetDirectoryPath(_G(appPath));
 
 	// TODO: remove following when supporting unicode paths
@@ -321,16 +308,6 @@ void main_set_gamedir(int argc, const char *argv[]) {
 		else
 			Debug::Printf(kDbgMsg_Error, "Unable to determine current directory: GetPathInASCII failed.\nArg: %s", cur_dir.GetCStr());
 	}
-}
-
-String GetPathFromCmdArg(int arg_index) {
-	if (arg_index < 0 || arg_index >= _G(global_argc))
-		return "";
-	String path = Path::GetCmdLinePathInASCII(_G(global_argv)[arg_index], arg_index);
-	if (!path.IsEmpty())
-		return Path::MakeAbsolutePath(path);
-	Debug::Printf(kDbgMsg_Error, "Unable to determine path: GetCmdLinePathInASCII failed.\nCommand line argument %i: %s", arg_index, _G(global_argv)[arg_index]);
-	return _G(global_argv)[arg_index];
 }
 
 } // namespace AGS3
