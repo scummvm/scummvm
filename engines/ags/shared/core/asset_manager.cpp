@@ -154,14 +154,7 @@ const AssetLibInfo *AssetManager::GetLibraryInfo(size_t index) const {
 }
 
 bool AssetManager::DoesAssetExist(const String &asset_name, const String &filter) const {
-	return GetAsset(asset_name, filter, false, nullptr);
-}
-
-String AssetManager::FindAssetFileOnly(const String &asset_name, const String &filter) const {
-	AssetLocation loc;
-	if (GetAsset(asset_name, filter, true, &loc))
-		return loc.FileName;
-	return "";
+	return GetAsset(asset_name, filter, false);
 }
 
 AssetError AssetManager::RegisterAssetLib(const String &path, AssetLibEx *&out_lib) {
@@ -200,7 +193,7 @@ AssetError AssetManager::RegisterAssetLib(const String &path, AssetLibEx *&out_l
 }
 
 bool AssetManager::GetAsset(const String &asset_name, const String &filter,
-		bool dir_only, AssetLocation *loc) const {
+		AssetLocation *loc) const {
 	for (const auto *lib : _activeLibs) {
 		auto match = std::find(lib->Filters.begin(), lib->Filters.end(), filter);
 		if (match == lib->Filters.end())
@@ -209,7 +202,7 @@ bool AssetManager::GetAsset(const String &asset_name, const String &filter,
 		bool found = false;
 		if (IsAssetLibDir(lib))
 			found = GetAssetFromDir(lib, asset_name, loc);
-		else if (!dir_only)
+		else
 			found = GetAssetFromLib(lib, asset_name, loc);
 		if (found)
 			return true;
@@ -260,7 +253,7 @@ Stream *AssetManager::OpenAsset(const String &asset_name) const {
 
 Stream *AssetManager::OpenAsset(const String &asset_name, const String &filter) const {
 	AssetLocation loc;
-	if (!GetAsset(asset_name, filter, false, &loc))
+	if (!GetAsset(asset_name, filter, &loc))
 		return nullptr;
 	return File::OpenFile(loc.FileName, loc.Offset, loc.Offset + loc.Size);
 }

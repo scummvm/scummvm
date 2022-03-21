@@ -104,8 +104,6 @@ public:
 	const AssetLibInfo *GetLibraryInfo(size_t index) const;
 	// Tells whether asset exists in any of the registered search locations
 	bool         DoesAssetExist(const String &asset_name, const String &filter = "") const;
-	// Finds asset only looking for bare files in directories; returns full path or empty string if failed
-	String       FindAssetFileOnly(const String &asset_name, const String &filter = "") const;
 	// Open asset stream in the given work mode; returns null if asset is not found or cannot be opened
 	// This method only searches in libraries that do not have any defined filters
 	Stream *OpenAsset(const String &asset_name) const;
@@ -126,7 +124,7 @@ private:
 	AssetError  RegisterAssetLib(const String &path, AssetLibEx *&lib);
 
 	// Tries to find asset in known locations, tests if it's possible to open, and fills in AssetLocation
-	bool        GetAsset(const String &asset_name, const String &filter, bool dir_only, AssetLocation *loc) const;
+	bool        GetAsset(const String &asset_name, const String &filter, AssetLocation *loc) const;
 	bool        GetAssetFromLib(const AssetLibInfo *lib, const String &asset_name, AssetLocation *loc) const;
 	bool        GetAssetFromDir(const AssetLibInfo *lib, const String &asset_name, AssetLocation *loc) const;
 
