@@ -682,7 +682,12 @@ void Cast::loadSoundCasts() {
 		if (sndData != nullptr) {
 			if (sndData->size() == 0) {
 				// audio file is linked, load from the filesystem
-				AudioFileDecoder *audio = new AudioFileDecoder(_castsInfo[c->_key]->fileName);
+				Common::String filename = _castsInfo[c->_key]->fileName;
+
+				if (!_castsInfo[c->_key]->directory.empty())
+					filename = _castsInfo[c->_key]->directory + g_director->_dirSeparator + _castsInfo[c->_key]->fileName;
+
+				AudioFileDecoder *audio = new AudioFileDecoder(filename);
 				soundCast->_audio = audio;
 			} else {
 				SNDDecoder *audio = new SNDDecoder();
