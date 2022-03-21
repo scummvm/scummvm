@@ -41,8 +41,7 @@ int LoadImageFile(const char *filename) {
 
 	Bitmap *loadedFile;
 	if (rp.AssetMgr) {
-		size_t asset_size;
-		PACKFILE *pf = PackfileFromAsset(rp.FullPath, asset_size);
+		PACKFILE *pf = PackfileFromAsset(AssetPath(rp.FullPath, "*"));
 		if (!pf)
 			return 0;
 		loadedFile = BitmapHelper::LoadFromFile(pf);

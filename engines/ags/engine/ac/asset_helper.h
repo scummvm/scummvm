@@ -65,7 +65,7 @@ AssetPath get_audio_clip_assetpath(int bundling_type, const String &filename);
 AssetPath get_voice_over_assetpath(const String &filename);
 
 // Locates asset among known locations, on success returns open stream and asset's size.
-Stream *LocateAsset(const AssetPath &path, size_t &asset_size);
+Stream *LocateAsset(const AssetPath &path);
 // Custom AGS PACKFILE user object
 // TODO: it is preferrable to let our Stream define custom readable window instead,
 // keeping this as simple as possible for now (we may require a stream classes overhaul).
@@ -77,7 +77,7 @@ struct AGS_PACKFILE_OBJ {
 // Creates PACKFILE stream from AGS asset.
 // This function is supposed to be used only when you have to create Allegro
 // object, passing PACKFILE stream to constructor.
-PACKFILE *PackfileFromAsset(const AssetPath &path, size_t &asset_size);
+PACKFILE *PackfileFromAsset(const AssetPath &path);
 bool DoesAssetExistInLib(const AssetPath &assetname);
 
 } // namespace AGS3

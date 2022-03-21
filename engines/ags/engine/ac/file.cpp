@@ -401,12 +401,10 @@ bool ResolveWritePathAndCreateDirs(const String &sc_path, ResolvedPath &rp) {
 	return true;
 }
 
-Stream *LocateAsset(const AssetPath &path, size_t &asset_size) {
+Stream *LocateAsset(const AssetPath &path) {
 	String assetname = path.Name;
 	String filter = path.Filter;
-	soff_t asset_sz = 0;
-	Stream *asset_stream = _GP(AssetMgr)->OpenAsset(assetname, filter, &asset_sz);
-	asset_size = asset_sz;
+	Stream *asset_stream = _GP(AssetMgr)->OpenAsset(assetname, filter);
 	return asset_stream;
 }
 
@@ -475,8 +473,9 @@ static PACKFILE_VTABLE ags_packfile_vtable = {
 };
 //
 
-PACKFILE *PackfileFromAsset(const AssetPath &path, size_t &asset_size) {
-	Stream *asset_stream = LocateAsset(path, asset_size);
+PACKFILE *PackfileFromAsset(const AssetPath &path) {
+	Stream *asset_stream = LocateAsset(path);
+	const size_t asset_size = asset_stream->GetLength();
 	if (asset_stream && asset_size > 0) {
 		AGS_PACKFILE_OBJ *obj = new AGS_PACKFILE_OBJ;
 		obj->stream.reset(asset_stream);

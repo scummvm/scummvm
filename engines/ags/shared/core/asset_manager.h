@@ -108,9 +108,9 @@ public:
 	String       FindAssetFileOnly(const String &asset_name, const String &filter = "") const;
 	// Open asset stream in the given work mode; returns null if asset is not found or cannot be opened
 	// This method only searches in libraries that do not have any defined filters
-	Stream *OpenAsset(const String &asset_name, soff_t *asset_size = nullptr) const;
+	Stream *OpenAsset(const String &asset_name) const;
 	// Open asset stream, providing a single filter to search in matching libraries
-	Stream *OpenAsset(const String &asset_name, const String &filter, soff_t *asset_size = nullptr) const;
+	Stream *OpenAsset(const String &asset_name, const String &filter) const;
 	// Open asset stream in the given work mode; returns null if asset is not found or cannot be opened
 	// This method only searches in libraries that do not have any defined filters
 	Common::SeekableReadStream *OpenAssetStream(const String &asset_name) const;

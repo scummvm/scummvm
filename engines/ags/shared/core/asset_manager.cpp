@@ -254,21 +254,15 @@ bool AssetManager::GetAssetFromDir(const AssetLibInfo *lib, const String &file_n
 	return true;
 }
 
-Stream *AssetManager::OpenAsset(const String &asset_name, soff_t *asset_size) const {
-	return OpenAsset(asset_name, "", asset_size);
+Stream *AssetManager::OpenAsset(const String &asset_name) const {
+	return OpenAsset(asset_name, "");
 }
 
-Stream *AssetManager::OpenAsset(const String &asset_name, const String &filter, soff_t *asset_size) const {
+Stream *AssetManager::OpenAsset(const String &asset_name, const String &filter) const {
 	AssetLocation loc;
-	if (GetAsset(asset_name, filter, false, &loc)) {
-		Stream *s = File::OpenFile(loc.FileName, loc.Offset, loc.Offset + loc.Size);
-		if (s) {
-			if (asset_size)
-				*asset_size = loc.Size;
-		}
-		return s;
-	}
-	return nullptr;
+	if (!GetAsset(asset_name, filter, false, &loc))
+		return nullptr;
+	return File::OpenFile(loc.FileName, loc.Offset, loc.Offset + loc.Size);
 }
 
 Common::SeekableReadStream *AssetManager::OpenAssetStream(const String &asset_name) const {
@@ -276,12 +270,12 @@ Common::SeekableReadStream *AssetManager::OpenAssetStream(const String &asset_na
 }
 
 Common::SeekableReadStream *AssetManager::OpenAssetStream(const String &asset_name, const String &filter) const {
-	soff_t assetSize;
-	Stream *stream = OpenAsset(asset_name, filter, &assetSize);
+	Stream *stream = OpenAsset(asset_name, filter);
 	if (!stream)
 		return nullptr;
 
 	// Get the contents of the asset
+	size_t assetSize = stream->GetLength();
 	byte *data = (byte *)malloc(assetSize);
 	stream->Read(data, assetSize);
 	delete stream;

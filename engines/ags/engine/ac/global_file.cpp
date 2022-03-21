@@ -82,7 +82,7 @@ int32_t FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileW
 
 	Stream *s;
 	if (rp.AssetMgr) {
-		s = _GP(AssetMgr)->OpenAsset(rp.FullPath, nullptr);
+		s = _GP(AssetMgr)->OpenAsset(rp.FullPath, "*");
 	} else {
 		s = File::OpenFile(rp.FullPath, open_mode, work_mode);
 		if (!s && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)

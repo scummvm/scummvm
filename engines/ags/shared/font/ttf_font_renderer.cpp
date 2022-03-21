@@ -86,13 +86,13 @@ bool TTFFontRenderer::IsBitmapFont() {
 bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 		const FontRenderParams *params, FontMetrics *metrics) {
 	String file_name = String::FromFormat("agsfnt%d.ttf", fontNumber);
-	soff_t lenof = 0;
-	Stream *reader = _GP(AssetMgr)->OpenAsset(file_name, &lenof);
+	Stream *reader = _GP(AssetMgr)->OpenAsset(file_name);
 	byte *membuffer;
 
 	if (reader == nullptr)
 		return false;
 
+	size_t lenof = reader->GetLength();
 	membuffer = (byte *)malloc(lenof);
 	reader->ReadArray(membuffer, lenof, 1);
 	delete reader;
