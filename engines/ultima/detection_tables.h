@@ -603,7 +603,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	},
 
 
-	// GOG The Savage Empire
+	// The Savage Empire v1.6
 	{
 		{
 			"thesavageempire",
@@ -618,12 +618,42 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
-	// GOG The Savage Empire
+	// The Savage Empire v1.6
 	{
 		{
 			"thesavageempire_enh",
 			0,
 			AD_ENTRY1s("talk.lzc", "bef60fbc3cc478b2a2e8f0883652b2f3", 160784),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GAME_SAVAGE_EMPIRE,
+		GF_VGA_ENHANCED
+	},
+
+	// The Savage Empire v2.1
+	{
+		{
+			"thesavageempire",
+			0,
+			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+
+	// The Savage Empire v2.1
+	{
+		{
+			"thesavageempire_enh",
+			0,
+			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
