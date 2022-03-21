@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-18 22:46+0000\n"
-"PO-Revision-Date: 2022-03-13 10:48+0000\n"
+"PO-Revision-Date: 2022-03-21 19:27+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -2014,7 +2014,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Enter"
 msgid "Enter Text"
-msgstr "Entrer"
+msgstr "Entrer texte"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -4539,6 +4539,8 @@ msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
 msgstr ""
+"Le jeu interdit de quitter à ce moment-là. Êtes-vous sûr de vouloir quitter "
+"malgré tout ?"
 
 #: engines/dragons/dragons.cpp:1802
 #, c-format
@@ -5069,7 +5071,7 @@ msgstr "Erreur : le jeu n'a pas été sauvegardé."
 #, fuzzy
 #| msgid "Input"
 msgid "Input text"
-msgstr "Entrée"
+msgstr "Texte saisi"
 
 #: engines/grim/md5check.cpp:558
 #, c-format
