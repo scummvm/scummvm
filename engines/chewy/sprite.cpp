@@ -664,7 +664,7 @@ void new_auto_line(int16 nr) {
 				_G(auto_mov_obj)[nr].XyzEnd[0] = _G(mov_line)[nr][_G(auto_mov_vector)[nr].StNr - 1].EndXyz[0];
 				_G(auto_mov_obj)[nr].XyzEnd[1] = _G(mov_line)[nr][_G(auto_mov_vector)[nr].StNr - 1].EndXyz[1];
 				_G(auto_mov_obj)[nr].XyzEnd[2] = _G(mov_line)[nr][_G(auto_mov_vector)[nr].StNr - 1].EndXyz[2];
-				_G(mov)->get_mov_vector((int16 *)_G(auto_mov_obj)[nr].XyzStart,
+				_G(mov)->get_mov_vector((int16 *)_G(auto_mov_obj)[nr].XyzStart, (int16 *)_G(auto_mov_obj)[nr].XyzEnd, 
 				                     _G(auto_mov_obj)[nr].Vorschub, &_G(auto_mov_vector)[nr]);
 			}
 		} else {
@@ -814,7 +814,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 								om->Xypos[2] += tmpz;
 								mi->XyzStart[0] = om->Xypos[0];
 								mi->XyzStart[1] = om->Xypos[1];
-								_G(mov)->get_mov_vector(mi->XyzStart, mi->Vorschub, om);
+								_G(mov)->get_mov_vector(mi->XyzStart, mi->XyzEnd, mi->Vorschub, om);
 								if (om->Xyvo[1] != 0) {
 									_G(new_vector) = true;
 									swap_if_l(&om->Xyvo[1], &om->Xyvo[0]);
@@ -851,7 +851,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 							om->Xypos[2] += tmpz;
 							mi->XyzStart[0] = om->Xypos[0];
 							mi->XyzStart[1] = om->Xypos[1];
-							_G(mov)->get_mov_vector(mi->XyzStart, mi->Vorschub, om);
+							_G(mov)->get_mov_vector(mi->XyzStart, mi->XyzEnd, mi->Vorschub, om);
 							if (om->Xyvo[0] != 0) {
 								_G(new_vector) = true;
 								swap_if_l(&om->Xyvo[0], &om->Xyvo[1]);
@@ -876,7 +876,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 						_G(new_vector) = false;
 						mi->XyzStart[0] = om->Xypos[0];
 						mi->XyzStart[1] = om->Xypos[1];
-						_G(mov)->get_mov_vector(mi->XyzStart, mi->Vorschub, om);
+						_G(mov)->get_mov_vector(mi->XyzStart, mi->XyzEnd, mi->Vorschub, om);
 					}
 					if (om->Count == 0 && !_G(flags).NoEndPosMovObj) {
 						mi->XyzStart[0] = mi->XyzEnd[0];
@@ -1036,7 +1036,7 @@ void zoom_mov_anpass(ObjMov *om, MovInfo *mi) {
 				mi->Vorschub = 2;
 		}
 		if (tmp_vorschub != mi->Vorschub && om->Count) {
-			_G(mov)->get_mov_vector((int16 *)mi->XyzStart, mi->Vorschub, om);
+			_G(mov)->get_mov_vector((int16 *)mi->XyzStart, (int16 *)mi->XyzEnd, mi->Vorschub, om);
 			get_phase(om, mi);
 		}
 	}

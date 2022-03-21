@@ -287,7 +287,7 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 	get_feld_xy(*dst_feld, &mi.XyzEnd[0], &mi.XyzEnd[1]);
 	mi.XyzStart[0] = om.Xypos[0];
 	mi.XyzStart[1] = om.Xypos[1];
-	get_mov_vector(mi.XyzStart, mi.Vorschub, &om);
+	get_mov_vector(mi.XyzStart, mi.XyzEnd, mi.Vorschub, &om);
 	bool endFl = false;
 	int16 mov_ok = 0;
 	int16 steps = 0;
@@ -369,7 +369,7 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 					new_vector = false;
 					mi.XyzStart[0] = om.Xypos[0];
 					mi.XyzStart[1] = om.Xypos[1];
-					get_mov_vector(mi.XyzStart, mi.Vorschub, &om);
+					get_mov_vector(mi.XyzStart, mi.XyzEnd, mi.Vorschub, &om);
 				}
 				if (om.Count == 0) {
 
@@ -386,7 +386,7 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 				om.Xypos[2] += tmpz;
 				mi.XyzStart[0] = om.Xypos[0];
 				mi.XyzStart[1] = om.Xypos[1];
-				get_mov_vector(mi.XyzStart, mi.Vorschub, &om);
+				get_mov_vector(mi.XyzStart, mi.XyzEnd, mi.Vorschub, &om);
 				if (mov_ok == MOV_X) {
 					if (om.Xyvo[0] != 0)
 						new_vector = true;
@@ -661,14 +661,14 @@ void MovClass::get_feld_xy(int16 fnr, int16 *x, int16 *y) {
 	*y <<= 3;
 }
 
-void MovClass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
+void MovClass::get_mov_vector(int16 *startXyz, int16 *endXyz, int16 vorschub, ObjMov *om) {
 	if (vorschub > 0) {
-		int16 x = xyz[0];
-		int16 y = xyz[1];
-		int16 z = xyz[2];
-		int16 x1 = xyz[3];
-		int16 y1 = xyz[4];
-		int16 z1 = xyz[5];
+		int16 x = startXyz[0];
+		int16 y = startXyz[1];
+		int16 z = startXyz[2];
+		int16 x1 = endXyz[0];
+		int16 y1 = endXyz[1];
+		int16 z1 = endXyz[2];
 		om->Xypos[0] = x;
 		om->Xypos[1] = y;
 		om->Xypos[2] = z;
@@ -746,17 +746,17 @@ void MovClass::get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om) {
 		om->Xyna[2][1] = tmp - (om->Xyvo[2] * 1000);
 		om->Xyna[2][0] = 0;
 		if (!om->Count) {
-			xyz[0] = xyz[3];
-			xyz[1] = xyz[4];
-			om->Xypos[0] = xyz[3];
-			om->Xypos[1] = xyz[4];
+			startXyz[0] = endXyz[0];
+			startXyz[1] = endXyz[1];
+			om->Xypos[0] = endXyz[0];
+			om->Xypos[1] = endXyz[1];
 		}
 	} else {
 		om->Count = 0;
 
-		om->Xypos[0] = xyz[0];
-		om->Xypos[1] = xyz[1];
-		om->Xypos[2] = xyz[2];
+		om->Xypos[0] = startXyz[0];
+		om->Xypos[1] = startXyz[1];
+		om->Xypos[2] = startXyz[2];
 		om->Xyvo[0] = 0;
 		om->Xyvo[1] = 0;
 		om->Xyvo[2] = 0;

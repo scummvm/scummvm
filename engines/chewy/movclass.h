@@ -116,7 +116,7 @@ public:
 	void stop_auto_go();
 	void continue_auto_go();
 	bool auto_go_status();
-	void get_mov_vector(int16 *xyz, int16 vorschub, ObjMov *om);
+	void get_mov_vector(int16 *startXyz, int16 *endXyz, int16 vorschub, ObjMov *om);
 
 private:
 	void calc_xy();

@@ -556,7 +556,7 @@ void setupScreen(SetupScreenMode mode) {
 						_G(spieler_mi)[P_CHEWY].XyzStart[1] = _G(spieler_vector)[P_CHEWY].Xypos[1];
 						_G(spieler_mi)[P_CHEWY].XyzEnd[0] = _G(gpkt).Dx - _G(spieler_mi)[P_CHEWY].HotX;
 						_G(spieler_mi)[P_CHEWY].XyzEnd[1] = _G(gpkt).Dy - _G(spieler_mi)[P_CHEWY].HotY;
-						_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[P_CHEWY].XyzStart, _G(spieler_mi)[P_CHEWY].Vorschub, &_G(spieler_vector)[P_CHEWY]);
+						_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[P_CHEWY].XyzStart, (int16 *)_G(spieler_mi)[P_CHEWY].XyzEnd, _G(spieler_mi)[P_CHEWY].Vorschub, &_G(spieler_vector)[P_CHEWY]);
 						get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
 						_G(spieler_vector)[P_CHEWY]._delayCount = 0;
 						_G(auto_p_nr) = P_CHEWY;
@@ -1202,7 +1202,7 @@ bool autoMove(int16 movNr, int16 playerNum) {
 			_G(spieler_mi)[playerNum].XyzStart[1] = _G(spieler_vector)[playerNum].Xypos[1];
 			_G(spieler_mi)[playerNum].XyzEnd[0] = _G(gpkt).Dx - _G(spieler_mi)[playerNum].HotX;
 			_G(spieler_mi)[playerNum].XyzEnd[1] = _G(gpkt).Dy - _G(spieler_mi)[playerNum].HotY;
-			_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[playerNum].XyzStart,
+			_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[playerNum].XyzStart, (int16 *)_G(spieler_mi)[playerNum].XyzEnd,
 				_G(spieler_mi)[playerNum].Vorschub, &_G(spieler_vector)[playerNum]);
 			get_phase(&_G(spieler_vector)[playerNum], &_G(spieler_mi)[playerNum]);
 			_G(spieler_vector)[playerNum]._delayCount = 0;
@@ -1227,7 +1227,7 @@ bool autoMove(int16 movNr, int16 playerNum) {
 				_G(spieler_mi)[playerNum].XyzStart[1] = _G(spieler_vector)[playerNum].Xypos[1];
 				_G(spieler_mi)[playerNum].XyzEnd[0] = _G(gpkt).Dx - _G(spieler_mi)[playerNum].HotX;
 				_G(spieler_mi)[playerNum].XyzEnd[1] = _G(gpkt).Dy - _G(spieler_mi)[playerNum].HotY;
-				_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[playerNum].XyzStart, _G(spieler_mi)[playerNum].Vorschub, &_G(spieler_vector)[playerNum]);
+				_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[playerNum].XyzStart, (int16 *)_G(spieler_mi)[playerNum].XyzEnd, _G(spieler_mi)[playerNum].Vorschub, &_G(spieler_vector)[playerNum]);
 				get_phase(&_G(spieler_vector)[playerNum], &_G(spieler_mi)[playerNum]);
 				while (!endLoopFl) {
 					if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE || key == Common::KEYCODE_ESCAPE) {
@@ -1270,7 +1270,7 @@ void goAutoXy(int16 x, int16 y, int16 personNum, int16 mode) {
 		_G(spieler_mi)[personNum].XyzStart[1] = _G(spieler_vector)[personNum].Xypos[1];
 		_G(spieler_mi)[personNum].XyzEnd[0] = x;
 		_G(spieler_mi)[personNum].XyzEnd[1] = y;
-		_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[personNum].XyzStart,
+		_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[personNum].XyzStart, (int16 *)_G(spieler_mi)[personNum].XyzEnd,
 			_G(spieler_mi)[personNum].Vorschub, &_G(spieler_vector)[personNum]);
 
 		if (_G(spieler_vector)[personNum].Count)
@@ -1881,7 +1881,7 @@ void calc_auto_go() {
 		_G(spieler_mi)[_G(auto_p_nr)].XyzStart[1] = _G(spieler_vector)[_G(auto_p_nr)].Xypos[1];
 		_G(spieler_mi)[_G(auto_p_nr)].XyzEnd[0] -= x_offset;
 		_G(spieler_mi)[_G(auto_p_nr)].XyzEnd[1] -= y_offset;
-		_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[_G(auto_p_nr)].XyzStart, _G(spieler_mi)[_G(auto_p_nr)].Vorschub, &_G(spieler_vector)[_G(auto_p_nr)])
+		_G(mov)->get_mov_vector((int16 *)_G(spieler_mi)[_G(auto_p_nr)].XyzStart, (int16 *)_G(spieler_mi)[_G(auto_p_nr)].XyzEnd, _G(spieler_mi)[_G(auto_p_nr)].Vorschub, &_G(spieler_vector)[_G(auto_p_nr)])
 		;
 		get_phase(&_G(spieler_vector)[_G(auto_p_nr)], &_G(spieler_mi)[_G(auto_p_nr)]);
 	}
