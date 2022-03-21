@@ -154,7 +154,7 @@ const AssetLibInfo *AssetManager::GetLibraryInfo(size_t index) const {
 }
 
 bool AssetManager::DoesAssetExist(const String &asset_name, const String &filter) const {
-	return GetAsset(asset_name, filter, false);
+	return GetAsset(asset_name, filter, nullptr);
 }
 
 AssetError AssetManager::RegisterAssetLib(const String &path, AssetLibEx *&out_lib) {
