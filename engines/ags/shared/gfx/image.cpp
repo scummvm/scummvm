@@ -37,15 +37,10 @@
 namespace AGS3 {
 
 template<class DECODER>
-BITMAP *decodeImage(const char *filename, color *pal) {
+BITMAP *decodeImageStream(Common::SeekableReadStream &stream, color *pal) {
 	DECODER decoder;
 
-	AGS::Shared::Stream *file = AGS3::AGS::Shared::File::OpenFileRead(filename);
-	if (!file)
-		return nullptr;
-
-	AGS::Shared::ScummVMReadStream f(file);
-	if (decoder.loadStream(f)) {
+	if (decoder.loadStream(stream)) {
 		// Create the output surface
 		const Graphics::Surface *src = decoder.getSurface();
 
@@ -68,6 +63,26 @@ BITMAP *decodeImage(const char *filename, color *pal) {
 	} else {
 		return nullptr;
 	}
+}
+
+template<class DECODER>
+BITMAP *decodeImage(const char *filename, color *pal) {
+	AGS::Shared::Stream *file = AGS3::AGS::Shared::File::OpenFileRead(filename);
+	if (!file)
+		return nullptr;
+
+	AGS::Shared::ScummVMReadStream f(file);
+	return decodeImageStream<DECODER>(f, pal);
+}
+
+template<class DECODER>
+BITMAP *decodeImage(PACKFILE *pf, color *pal) {
+	if (!pf)
+		return nullptr;
+
+	AGS::Shared::ScummVMPackReadStream f(pf);
+	f.seek(0);
+	return decodeImageStream<DECODER>(f, pal);
 }
 
 BITMAP *load_bmp(const char *filename, color *pal) {
@@ -99,6 +114,21 @@ BITMAP *load_bitmap(const char *filename, color *pal) {
 		return load_tga(filename, pal);
 	else
 		error("Unknown image file - %s", filename);
+}
+
+BITMAP *load_bitmap(PACKFILE *pf, color *pal) {
+	BITMAP *result;
+
+	if ((result = decodeImage<Image::BitmapDecoder>(pf, pal)) != nullptr)
+		return result;
+	if ((result = decodeImage<Image::IFFDecoder>(pf, pal)) != nullptr)
+		return result;
+	if ((result = decodeImage<Image::PCXDecoder>(pf, pal)) != nullptr)
+		return result;
+	if ((result = decodeImage<Image::TGADecoder>(pf, pal)) != nullptr)
+		return result;
+
+	error("Unknown image file");
 }
 
 int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {

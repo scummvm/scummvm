@@ -35,6 +35,7 @@
 #define AGS_SHARED_UTIL_STREAM_H
 
 #include "ags/shared/api/stream_api.h"
+#include "ags/lib/allegro/file.h"
 #include "common/stream.h"
 #include "common/types.h"
 
@@ -129,6 +130,41 @@ public:
 			origin = kSeekEnd;
 
 		return _stream->Seek(offset, origin);
+	}
+};
+
+
+class ScummVMPackReadStream : public Common::SeekableReadStream {
+private:
+	PACKFILE *_file;
+	DisposeAfterUse::Flag _disposeAfterUse;
+public:
+	ScummVMPackReadStream(PACKFILE *src, DisposeAfterUse::Flag disposeAfterUse =
+		DisposeAfterUse::YES) : _file(src), _disposeAfterUse(disposeAfterUse) {
+	}
+	~ScummVMPackReadStream() override {
+		if (_disposeAfterUse == DisposeAfterUse::YES)
+			delete _file;
+	}
+
+	bool eos() const override {
+		return _file->pack_feof();
+	}
+
+	uint32 read(void *dataPtr, uint32 dataSize) override {
+		return _file->pack_fread(dataPtr, dataSize);
+	}
+
+	int64 pos() const override {
+		error("Unsupported");
+	}
+
+	int64 size() const override {
+		error("Unsupported");
+	}
+
+	bool seek(int64 offset, int whence = SEEK_SET) override {
+		error("Unsupported");
 	}
 };
 

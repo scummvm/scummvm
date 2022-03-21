@@ -26,13 +26,16 @@
 
 namespace AGS3 {
 
-BITMAP *load_bitmap(const char *filename, color *pal);
-BITMAP *load_bmp(const char *filename, color *pal);
-BITMAP *load_lbm(const char *filename, color *pal);
-BITMAP *load_pcx(const char *filename, color *pal);
-BITMAP *load_tga(const char *filename, color *pal);
+struct PACKFILE;
 
-int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal);
+extern BITMAP *load_bitmap(PACKFILE *pf, color *pal);
+extern BITMAP *load_bitmap(const char *filename, color *pal);
+extern BITMAP *load_bmp(const char *filename, color *pal);
+extern BITMAP *load_lbm(const char *filename, color *pal);
+extern BITMAP *load_pcx(const char *filename, color *pal);
+extern BITMAP *load_tga(const char *filename, color *pal);
+
+extern int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal);
 
 } // namespace AGS3
 
