@@ -161,6 +161,10 @@ public:
 	 */
 	void setScreen(int w, int h);
 
+	int getWidth();
+
+	int getHeight();
+
 	/**
 	 * Create a window with the given parameters.
 	 * Note that this method allocates the necessary memory for the window.
