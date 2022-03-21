@@ -1737,9 +1737,19 @@ void LB::b_editableText(int nargs) {
 }
 
 void LB::b_erase(int nargs) {
-	g_lingo->printSTUBWithArglist("b_erase", nargs);
+	Datum d = g_lingo->pop();
+	CastMember *eraseCast = g_director->getCurrentMovie()->getCastMember(d.asMemberID());
 
-	g_lingo->dropStack(nargs);
+	if (eraseCast) {
+		eraseCast->_erase = true;
+		Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
+
+		for (uint i = 0; i < channels.size(); i++) {
+			if (channels[i]->_sprite->_castId == d.asMemberID()) {
+				channels[i]->_dirty = true;
+			}
+		}
+	}
 }
 
 void LB::b_findEmpty(int nargs) {

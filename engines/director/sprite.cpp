@@ -292,7 +292,6 @@ Common::Point Sprite::getRegistrationOffset() {
 		{
 			BitmapCastMember *bc = (BitmapCastMember *)(_cast);
 
-			Common::Point point(0, 0);
 			// stretch the offset
 			if (!_stretch && (_width != bc->_initialRect.width() || _height != bc->_initialRect.height())) {
 				result.x = (bc->_initialRect.left - bc->_regX) * _width / bc->_initialRect.width();

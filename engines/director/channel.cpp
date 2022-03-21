@@ -61,7 +61,8 @@ Channel::Channel(Sprite *sp, int priority) {
 	_visible = true;
 	_dirty = true;
 
-	_sprite->updateEditable();
+	if (_sprite)
+		_sprite->updateEditable();
 }
 
 Channel::Channel(const Channel &channel) {
@@ -200,7 +201,7 @@ bool Channel::isDirty(Sprite *nextSprite) {
 		_delta != Common::Point(0, 0) ||
 		(_sprite->_cast && _sprite->_cast->isModified());
 
-	if (!_sprite->_puppet) {
+	if (_sprite && !_sprite->_puppet) {
 		// When puppet is set, the overall dirty flag should be set when sprite is
 		// modified.
 		isDirtyFlag |= _sprite->_castId != nextSprite->_castId ||
@@ -313,14 +314,15 @@ bool Channel::isMatteWithin(Channel *channel) {
 }
 
 bool Channel::isActiveVideo() {
-	if (!_sprite->_cast || _sprite->_cast->_type != kCastDigitalVideo)
+	if (_sprite && (!_sprite->_cast || _sprite->_cast->_type != kCastDigitalVideo))
 		return false;
 
 	return true;
 }
 
 void Channel::updateVideoTime() {
-	_movieTime = ((DigitalVideoCastMember *)_sprite->_cast)->getMovieCurrentTime();
+	if (_sprite)
+		_movieTime = ((DigitalVideoCastMember *)_sprite->_cast)->getMovieCurrentTime();
 }
 
 bool Channel::isVideoDirectToStage() {
