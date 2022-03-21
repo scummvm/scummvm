@@ -2301,10 +2301,17 @@ void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 		return;
 	const DamageInfo *damageInfo = shapeInfo->_damageInfo;
 
-	// TODO: work out how this flag is decided.
-	uint8 shouldCallUsecode = 1;
+	//
+	// The original games seem to only call the usecode if the hit will destroy
+	// the item and the item has usecode for gotHit -
+	// but we can safely call the function even if no usecode is present.
+	//
+	// TODO: Only calling for destruction seems to break a lot of things, so
+	// need to look more carefully at the disasm.
+	//
+	bool callUsecode = true;// damageInfo && damageInfo->wouldDestroyItem(this, damage);
 
-	if (shouldCallUsecode)
+	if (callUsecode)
 		callUsecodeEvent_gotHit(0x4000, (type << 8) | (damage & 0xff));
 
 	if (damageInfo) {
@@ -2314,7 +2321,7 @@ void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 		}
 	}
 
-	// Fixed items or 0 weight etems can't move.
+	// Fixed items or 0 weight items can't move.
 	// Only damage types 3 and 4 move items in Crusader.
 	if (shapeInfo->is_fixed() || shapeInfo->_weight == 0 || (type != 3 && type != 4)) {
 		return;
@@ -3569,8 +3576,8 @@ uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_WORLDPOINT(point);
-	ARG_UINT16(move_if_blocked); // 0/1
-	ARG_NULL16(); // always 0
+	ARG_UINT16(abort_if_blocked); // 0/1
+	ARG_NULL16(); // always 0 in usecode. Used as sweep flags in disasm.
 
 	int32 x = point.getX();
 	int32 y = point.getY();
@@ -3582,8 +3589,8 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 		return 0;
 
 	//
-	// Return true when there are no blockers.
-	// If there are blockers, only move if move_if_blocked is set.
+	// Return value is 1 when there are no blockers.
+	// If there are blockers, do partial move unless abort_if_blocked is set.
 	//
 	int retval = 1;
 	Std::list<CurrentMap::SweepItem> collisions;
@@ -3599,7 +3606,7 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	for (Std::list<CurrentMap::SweepItem>::iterator it = collisions.begin();
 		 it != collisions.end(); it++) {
 		if (it->_blocking && !it->_touching && it->_endTime > 0) {
-			if (!move_if_blocked)
+			if (abort_if_blocked)
 				return 0;
 			retval = 0;
 			break;
