@@ -28,6 +28,8 @@ namespace Ultima {
 namespace Nuvie {
 
 #define HAS_YM3812  1
+#define HAS_YM3526  0
+#define HAS_Y8950   0
 
 /* --- select emulation chips --- */
 #define BUILD_YM3812 (HAS_YM3812)
