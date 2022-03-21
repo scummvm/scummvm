@@ -97,6 +97,21 @@ static const tSageGameDescription gameDescriptions[] = {
 		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
 	},
 
+	// Found on Wacky Funsters!
+	{
+		{
+			"ringworld",
+			"Demo",
+			AD_ENTRY1s("demoring.rlb", "94a3a8a249e935f2c803d55136a10780", 1584551),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
+		},
+		GType_Ringworld,
+		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
+	},
+
 	// Blue Force floppy, uninstalled
 	{
 		{
@@ -126,6 +141,7 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_BlueForce,
 		GF_FLOPPY | GF_ALT_REGIONS
 	},
+
 	// Blue Force CD and First Wave use the same files
 	{
 		{
@@ -154,6 +170,36 @@ static const tSageGameDescription gameDescriptions[] = {
 		},
 		GType_BlueForce,
 		GF_FLOPPY | GF_ALT_REGIONS
+	},
+
+	// Found on Wacky Funsters!
+	{
+		{
+			"blueforce",
+			"Demo",
+			AD_ENTRY1s("demoblue.rlb", "08491db14d395601e92c230d4fb5d2d5", 1586930),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
+		},
+		GType_BlueForce,
+		GF_CD | GF_DEMO | GF_ALT_REGIONS
+	},
+
+	// Found on Geekwad
+	{
+		{
+			"blueforce",
+			"Demo",
+			AD_ENTRY1s("demoblue.rlb", "a8f631135718844bc72ea8bd85c57ba6", 901321),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
+		},
+		GType_BlueForce,
+		GF_CD | GF_DEMO | GF_ALT_REGIONS
 	},
 
 	// Return to Ringworld
@@ -198,6 +244,36 @@ static const tSageGameDescription gameDescriptions[] = {
 		},
 		GType_Ringworld2,
 		GF_CD | GF_ALT_REGIONS
+	},
+
+	// Found on Wacky Funsters!
+	{
+		{
+			"protostar",
+			"Demo",
+			AD_ENTRY1s("demops.rlb", "8a2aa522b4473bcc32e06371568c0d9a", 1019247),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
+		},
+		GType_Ringworld,
+		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
+	},
+
+	// Found on Geekwad
+	{
+		{
+			"protostar",
+			"Demo",
+			AD_ENTRY1s("demops.rlb", "efe17413126b13228564f687d185a7ad", 511111),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
+		},
+		GType_Ringworld,
+		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
 	},
 
 #ifdef TSAGE_SHERLOCK_ENABLED
