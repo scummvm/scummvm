@@ -25,11 +25,14 @@
 #include "ags/engine/ac/audio_channel.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/game_setup_struct.h"
+#include "ags/shared/core/asset_manager.h"
 #include "ags/engine/ac/dynobj/cc_audio_channel.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 int AudioClip_GetID(ScriptAudioClip *clip) {
 	return clip->id;
@@ -43,7 +46,7 @@ int AudioClip_GetType(ScriptAudioClip *clip) {
 	return clip->type;
 }
 int AudioClip_GetIsAvailable(ScriptAudioClip *clip) {
-	return DoesAssetExistInLib(get_audio_clip_assetpath(clip->bundlingType, clip->fileName)) ? 1 : 0;
+	return _GP(AssetMgr)->DoesAssetExist(get_audio_clip_assetpath(clip->bundlingType, clip->fileName)) ? 1 : 0;
 }
 
 void AudioClip_Stop(ScriptAudioClip *clip) {

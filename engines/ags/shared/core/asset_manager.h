@@ -64,7 +64,20 @@ enum AssetError {
 	kAssetErrNoManager = -6, // asset manager not initialized
 };
 
-// Explicit location of asset data
+/**
+ * AssetPath combines asset name and optional library filter, that serves to narrow down the search
+ */
+struct AssetPath {
+	String Name;
+	String Filter;
+
+	AssetPath(const String &name = "", const String &filter = "") : Name(name), Filter(filter) {
+	}
+};
+
+/**
+ * Explicit location of asset data
+ */
 struct AssetLocation {
 	String      FileName;   // file where asset is located
 	soff_t      Offset;     // asset's position in file (in bytes)
@@ -104,11 +117,17 @@ public:
 	const AssetLibInfo *GetLibraryInfo(size_t index) const;
 	// Tells whether asset exists in any of the registered search locations
 	bool         DoesAssetExist(const String &asset_name, const String &filter = "") const;
+	inline bool  DoesAssetExist(const AssetPath &apath) const {
+		return DoesAssetExist(apath.Name, apath.Filter);
+	}
 	// Open asset stream in the given work mode; returns null if asset is not found or cannot be opened
 	// This method only searches in libraries that do not have any defined filters
 	Stream *OpenAsset(const String &asset_name) const;
 	// Open asset stream, providing a single filter to search in matching libraries
 	Stream *OpenAsset(const String &asset_name, const String &filter) const;
+	inline Stream *OpenAsset(const AssetPath &apath) const {
+		return OpenAsset(apath.Name, apath.Filter);
+	}
 	// Open asset stream in the given work mode; returns null if asset is not found or cannot be opened
 	// This method only searches in libraries that do not have any defined filters
 	Common::SeekableReadStream *OpenAssetStream(const String &asset_name) const;
