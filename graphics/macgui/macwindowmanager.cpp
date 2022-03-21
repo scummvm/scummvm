@@ -275,6 +275,14 @@ void MacWindowManager::setScreen(int w, int h) {
 	drawDesktop();
 }
 
+int MacWindowManager::getWidth() {
+	return _screenDims.width();
+}
+
+int MacWindowManager::getHeight() {
+	return _screenDims.height();
+}
+
 void MacWindowManager::resizeScreen(int w, int h) {
 	if (!_screen)
 		error("MacWindowManager::resizeScreen(): Trying to creating surface on non-existing screen");

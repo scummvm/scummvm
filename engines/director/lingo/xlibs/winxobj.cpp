@@ -229,6 +229,10 @@ static MethodProto xlibMethods[] = {
 	{ "PatToWindow",		RearWindowXObj::m_patToWindow,			1,	1,	400 },	// D4
 	{ "IndexColorToWindow",	RearWindowXObj::m_indexColorToWindow,	1,	1,	400 },	// D4
 	{ "RGBColorToWindow",   RearWindowXObj::m_rgbColorToWindow,     3,  3,  400 },  // D4
+	{ "GetScreenTop",		RearWindowXObj::m_getScreenTop,			0,	0,	400 },	// D4
+	{ "GetScreenLeft",		RearWindowXObj::m_getScreenLeft,		0,	0,	400 },	// D4
+	{ "GetScreenBottom",	RearWindowXObj::m_getScreenBottom,		0,	0,	400 },	// D4
+	{ "GetScreenRight",		RearWindowXObj::m_getScreenRight,		0,	0,	400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -277,6 +281,22 @@ void RearWindowXObj::m_rgbColorToWindow(int nargs) {
 	Graphics::MacWindowManager *window = g_director->getMacWindowManager();
 
 	window->setDesktopColor(r.asInt(), g.asInt(), b.asInt());
+}
+
+void RearWindowXObj::m_getScreenTop(int nargs) {
+	g_lingo->push(Datum(0));
+}
+
+void RearWindowXObj::m_getScreenLeft(int nargs) {
+	g_lingo->push(Datum(0));
+}
+
+void RearWindowXObj::m_getScreenBottom(int nargs) {
+	g_lingo->push(Datum(g_director->getMacWindowManager()->getHeight()));
+}
+
+void RearWindowXObj::m_getScreenRight(int nargs) {
+	g_lingo->push(Datum(g_director->getMacWindowManager()->getWidth()));
 }
 
 } // End of namespace Director
