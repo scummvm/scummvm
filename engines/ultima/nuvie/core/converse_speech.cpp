@@ -177,17 +177,17 @@ NuvieIOBuffer *ConverseSpeech::load_speech(Std::string filename, uint16 sample_n
 
 inline sint16 ConverseSpeech::convert_sample(uint16 raw_sample) {
 	sint16 sample;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	sint16 temp_sample;
-#endif
 
 	if (raw_sample & 128)
 		sample = ((sint16)(abs(128 - raw_sample) * 256) ^ 0xffff)  + 1;
 	else
 		sample = raw_sample * 256;
 
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	temp_sample = sample >> 8;
+// FIXME: Following code is for Big Endian sample conversion
+//        This was required for older libSDL audio output.
+//        May not be needed for ScummVM audio output?
+#if 0
+	sint16 temp_sample = sample >> 8;
 	temp_sample |= (sample & 0xff) << 8;
 	sample = temp_sample;
 #endif
