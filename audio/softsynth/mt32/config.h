@@ -34,6 +34,7 @@
  * 3: All the available API types are provided by the library build.
  */
 #define MT32EMU_EXPORTS_TYPE 0
+#define MT32EMU_API_TYPE 0
 
 /* Type of library build.
  *
