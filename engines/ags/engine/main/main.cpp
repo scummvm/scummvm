@@ -180,7 +180,6 @@ void main_print_help() {
 }
 
 int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
-	int datafile_argv = 0;
 	for (int ee = 1; ee < argc; ++ee) {
 		const char *arg = argv[ee];
 		//
@@ -275,10 +274,6 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 			else
 				cfg["log"][logarg] = "";
 		}
-		//
-		// Special case: data file location
-		//
-		else if (arg[0] != '-') datafile_argv = ee;
 	}
 
 	// assign standard path (defined in their own platform implementation)
