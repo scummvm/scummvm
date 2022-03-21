@@ -52,6 +52,7 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 	_objType = kCastMemberObj;
 
 	_widget = nullptr;
+	_erase = false;
 }
 
 CastMemberInfo *CastMember::getInfo() {

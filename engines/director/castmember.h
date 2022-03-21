@@ -99,6 +99,7 @@ public:
 	Common::Array<Resource> _children;
 
 	bool _hilite;
+	bool _erase;
 	int _purgePriority;
 	uint32 _size;
 	uint8 _flags1;
