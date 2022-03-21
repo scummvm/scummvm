@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/ac/global_dynamic_sprite.h"
+#include "ags/engine/ac/asset_helper.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/engine/ac/path_helper.h"
@@ -38,12 +39,19 @@ int LoadImageFile(const char *filename) {
 	if (!ResolveScriptPath(filename, true, rp))
 		return 0;
 
-	// TODO: support loading from asset (stream);
-	// use PACKFILE / load_bmp_pf? Or read data and allocate bitmap struct ourselves
+	Bitmap *loadedFile;
+	if (rp.AssetMgr) {
+		size_t asset_size;
+		PACKFILE *pf = PackfileFromAsset(rp.FullPath, asset_size);
+		if (!pf)
+			return 0;
+		loadedFile = BitmapHelper::LoadFromFile(pf);
+	} else {
+		loadedFile = BitmapHelper::LoadFromFile(rp.FullPath);
+		if (!loadedFile && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
+			loadedFile = BitmapHelper::LoadFromFile(rp.AltPath);
+	}
 
-	Bitmap *loadedFile = BitmapHelper::LoadFromFile(rp.FullPath);
-	if (!loadedFile && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
-		loadedFile = BitmapHelper::LoadFromFile(rp.AltPath);
 	if (!loadedFile)
 		return 0;
 

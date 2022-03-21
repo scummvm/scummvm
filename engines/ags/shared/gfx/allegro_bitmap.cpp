@@ -134,6 +134,17 @@ bool Bitmap::LoadFromFile(const char *filename) {
 	return _alBitmap != nullptr;
 }
 
+bool Bitmap::LoadFromFile(PACKFILE *pf) {
+	Destroy();
+
+	BITMAP *al_bmp = load_bitmap(pf, nullptr);
+	if (al_bmp) {
+		_alBitmap = al_bmp;
+		_isDataOwner = true;
+	}
+	return _alBitmap != nullptr;
+}
+
 bool Bitmap::SaveToFile(Common::WriteStream &out, const void *palette) {
 	return save_bitmap(out, _alBitmap, (const RGB *)palette) == 0;
 }

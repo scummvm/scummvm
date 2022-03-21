@@ -63,6 +63,7 @@ class Bitmap;
 
 // TODO: revise this construction later
 namespace BitmapHelper {
+
 // Helper functions, that delete faulty bitmaps automatically, and return
 // NULL if bitmap could not be created.
 Bitmap *CreateBitmap(int width, int height, int color_depth = 0);
@@ -73,6 +74,7 @@ Bitmap *LoadFromFile(const char *filename);
 inline Bitmap *LoadFromFile(const String &filename) {
 	return LoadFromFile(filename.GetCStr());
 }
+Bitmap *LoadFromFile(PACKFILE *pf);
 
 // Stretches bitmap to the requested size. The new bitmap will have same
 // colour depth. Returns original bitmap if no changes are necessary.
@@ -87,8 +89,8 @@ void    CopyTransparency(Bitmap *dst, const Bitmap *mask, bool dst_has_alpha, bo
 // Pitch is given in bytes and defines the length of the source scan line.
 // Offset is optional and defines horizontal offset, in pixels.
 void    ReadPixelsFromMemory(Bitmap *dst, const uint8_t *src_buffer, const size_t src_pitch, const size_t src_px_offset = 0);
-} // namespace BitmapHelper
 
+} // namespace BitmapHelper
 } // namespace Shared
 } // namespace AGS
 } // namespace AGS3

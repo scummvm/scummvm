@@ -70,6 +70,7 @@ public:
 		return LoadFromFile(filename.GetCStr());
 	}
 	bool    LoadFromFile(const char *filename);
+	bool    LoadFromFile(PACKFILE *pf);
 	bool    SaveToFile(const String &filename, const void *palette) {
 		return SaveToFile(filename.GetCStr(), palette);
 	}
