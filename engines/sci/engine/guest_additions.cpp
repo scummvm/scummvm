@@ -832,12 +832,12 @@ bool GuestAdditions::restoreFromLauncher() const {
 			reg_t canInputParams[] = { TRUE_REG };
 			invokeSelector(_state->variables[VAR_GLOBAL][kGlobalVarUser], SELECTOR(canInput), 1, canInputParams);
 
-			writeSelectorValue(_segMan, g_sci->getGameObject(), SELECTOR(num), _state->_delayedRestoreGameId - kSaveIdShift);
+			writeSelectorValue(_segMan, g_sci->getGameObject(), SELECTOR(num), shiftScummVMToSciSaveId(_state->_delayedRestoreGameId));
 			invokeSelector(g_sci->getGameObject(), SELECTOR(reallyRestore));
 		} else if (g_sci->getGameId() == GID_SHIVERS) {
 			// Shivers accepts the save game number as a parameter to
 			// `SHIVERS::restore`
-			reg_t args[] = { make_reg(0, _state->_delayedRestoreGameId - kSaveIdShift) };
+			reg_t args[] = { make_reg(0, shiftScummVMToSciSaveId(_state->_delayedRestoreGameId)) };
 			invokeSelector(g_sci->getGameObject(), SELECTOR(restore), 1, args);
 		} else {
 			int saveId = _state->_delayedRestoreGameId;

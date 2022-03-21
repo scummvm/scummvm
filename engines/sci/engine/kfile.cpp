@@ -1506,7 +1506,7 @@ reg_t kGetSaveFiles32(EngineState *s, int argc, reg_t *argv) {
 		// At least Phant2 requires use of strncpy, since it creates save game
 		// names of exactly kMaxSaveNameLength
 		strncpy(target, save.name, kMaxSaveNameLength);
-		int16 sciSaveId = (save.id == 0) ? kMaxShiftedSaveId : (save.id - kSaveIdShift);
+		int16 sciSaveId = shiftScummVMToSciSaveId(save.id);
 		saveIds.setFromInt16(i, sciSaveId);
 	}
 
