@@ -523,7 +523,7 @@ void UpgradeAudio(GameSetupStruct &game, LoadedGameEntities &ents, GameDataVersi
 	// Read audio clip names from from registered libraries
 	for (size_t i = 0; i < _GP(AssetMgr)->GetLibraryCount(); ++i) {
 		const AssetLibInfo *game_lib = _GP(AssetMgr)->GetLibraryInfo(i);
-		if (Path::IsDirectory(game_lib->BasePath))
+		if (File::IsDirectory(game_lib->BasePath))
 			continue; // might be a directory
 
 		for (const AssetInfo &info : game_lib->AssetInfos) {
@@ -538,7 +538,7 @@ void UpgradeAudio(GameSetupStruct &game, LoadedGameEntities &ents, GameDataVersi
 	// but that have to be done consistently if done at all.
 	for (size_t i = 0; i < _GP(AssetMgr)->GetLibraryCount(); ++i) {
 		const AssetLibInfo *game_lib = _GP(AssetMgr)->GetLibraryInfo(i);
-		if (!Path::IsDirectory(game_lib->BasePath))
+		if (!File::IsDirectory(game_lib->BasePath))
 			continue; // might be a library
 
 

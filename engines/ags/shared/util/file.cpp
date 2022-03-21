@@ -34,6 +34,22 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
+bool File::IsDirectory(const String &filename) {
+	// stat() does not like trailing slashes, remove them
+	String fixed_path = Path::MakePathNoSlash(filename);
+	return ags_directory_exists(fixed_path.GetCStr()) != 0;
+}
+
+bool File::IsFile(const String &filename) {
+	return ags_file_exists(filename.GetCStr()) != 0;
+}
+
+bool File::IsFileOrDir(const String &filename) {
+	// stat() does not like trailing slashes, remove them
+	String fixed_path = Path::MakePathNoSlash(filename);
+	return ags_path_exists(fixed_path.GetCStr()) != 0;
+}
+
 soff_t File::GetFileSize(const String &filename) {
 	if (filename.IsEmpty())
 		return 0;

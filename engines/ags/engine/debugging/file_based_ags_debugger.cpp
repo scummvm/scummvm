@@ -34,7 +34,7 @@ using namespace AGS::Shared;
 const char *SENT_MESSAGE_FILE_NAME = "dbgrecv.tmp";
 
 bool FileBasedAGSDebugger::Initialize() {
-	if (Path::IsFile(SENT_MESSAGE_FILE_NAME)) {
+	if (File::IsFile(SENT_MESSAGE_FILE_NAME)) {
 		File::DeleteFile(SENT_MESSAGE_FILE_NAME);
 	}
 	return true;
@@ -44,7 +44,7 @@ void FileBasedAGSDebugger::Shutdown() {
 }
 
 bool FileBasedAGSDebugger::SendMessageToEditor(const char *message) {
-	while (Path::IsFile(SENT_MESSAGE_FILE_NAME)) {
+	while (File::IsFile(SENT_MESSAGE_FILE_NAME)) {
 		_G(platform)->YieldCPU();
 	}
 
@@ -58,7 +58,7 @@ bool FileBasedAGSDebugger::SendMessageToEditor(const char *message) {
 }
 
 bool FileBasedAGSDebugger::IsMessageAvailable() {
-	return (Path::IsFile("dbgsend.tmp") != 0);
+	return (File::IsFile("dbgsend.tmp") != 0);
 }
 
 char *FileBasedAGSDebugger::GetNextMessage() {

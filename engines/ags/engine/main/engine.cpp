@@ -214,9 +214,9 @@ String search_for_game_data_file(String &was_searching_in) {
 	              _G(cmdGameDataPath).GetCStr());
 	// 1. From command line argument, which may be a directory or actual file
 	if (!_G(cmdGameDataPath).IsEmpty()) {
-		if (Path::IsFile(_G(cmdGameDataPath)))
+		if (File::IsFile(_G(cmdGameDataPath)))
 			return _G(cmdGameDataPath); // this path is a file
-		if (!Path::IsDirectory(_G(cmdGameDataPath)))
+		if (!File::IsDirectory(_G(cmdGameDataPath)))
 			return ""; // path is neither file nor directory
 		was_searching_in = _G(cmdGameDataPath);
 		Debug::Printf("Searching in (cmd arg): %s", was_searching_in.GetCStr());
@@ -867,12 +867,12 @@ HError define_gamedata_location_checkall(String &data_path, String &startup_dir)
 	// First try if they provided a startup option
 	if (!_G(cmdGameDataPath).IsEmpty()) {
 		// If not a valid path - bail out
-		if (!Path::IsFileOrDir(_G(cmdGameDataPath)))
+		if (!File::IsFileOrDir(_G(cmdGameDataPath)))
 			return new Error(String::FromFormat("Provided game location is not a valid path.\n Cwd: %s\n Path: %s",
-			                                    Directory::GetCurrentDirectory().GetCStr(),
-			                                    _G(cmdGameDataPath).GetCStr()));
+			    Directory::GetCurrentDirectory().GetCStr(),
+			    _G(cmdGameDataPath).GetCStr()));
 		// If it's a file, then keep it and proceed
-		if (Path::IsFile(_G(cmdGameDataPath))) {
+		if (File::IsFile(_G(cmdGameDataPath))) {
 			Debug::Printf("Using provided game data path: %s", _G(cmdGameDataPath).GetCStr());
 			startup_dir = Path::GetDirectoryPath(_G(cmdGameDataPath));
 			data_path = _G(cmdGameDataPath);

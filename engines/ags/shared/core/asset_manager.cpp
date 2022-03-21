@@ -160,7 +160,7 @@ bool AssetManager::DoesAssetExist(const String &asset_name, const String &filter
 AssetError AssetManager::RegisterAssetLib(const String &path, AssetLibEx *&out_lib) {
 	// Test for a directory
 	std::unique_ptr<AssetLibEx> lib;
-	if (Path::IsDirectory(path)) {
+	if (File::IsDirectory(path)) {
 		lib.reset(new AssetLibEx());
 		lib->BasePath = Path::MakeAbsolutePath(path);
 		lib->BaseDir = Path::GetDirectoryPath(lib->BasePath);
@@ -236,7 +236,7 @@ bool AssetManager::GetAssetFromLib(const AssetLibInfo *lib, const String &asset_
 bool AssetManager::GetAssetFromDir(const AssetLibInfo *lib, const String &file_name,
 		AssetLocation *loc) const {
 	String found_file = File::FindFileCI(lib->BaseDir, file_name);
-	if (found_file.IsEmpty() || !Path::IsFile(found_file))
+	if (found_file.IsEmpty() || !File::IsFile(found_file))
 		return false; // not found, or not a file
 
 	if (loc) {

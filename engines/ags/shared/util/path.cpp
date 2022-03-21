@@ -27,6 +27,7 @@
 #include "ags/lib/allegro/file.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/stdio_compat.h"
+#include "ags/shared/util/file.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -45,22 +46,6 @@ String get_extension(const String &path) {
 	size_t i = filename.findLastOf('.');
 	return (i == Common::String::npos) ?
 	       filename : Common::String(filename.c_str() + i + 1);
-}
-
-bool IsDirectory(const String &filename) {
-	// stat() does not like trailing slashes, remove them
-	String fixed_path = MakePathNoSlash(filename);
-	return ags_directory_exists(fixed_path.GetCStr()) != 0;
-}
-
-bool IsFile(const String &filename) {
-	return ags_file_exists(filename.GetCStr()) != 0;
-}
-
-bool IsFileOrDir(const String &filename) {
-	// stat() does not like trailing slashes, remove them
-	String fixed_path = MakePathNoSlash(filename);
-	return ags_path_exists(fixed_path.GetCStr()) != 0;
 }
 
 String GetParent(const String &path) {
@@ -105,7 +90,7 @@ int ComparePaths(const String &path1, const String &path2) {
 }
 
 String GetDirectoryPath(const String &path) {
-	if (IsDirectory(path))
+	if (File::IsDirectory(path))
 		return path;
 
 	String dir = path;
