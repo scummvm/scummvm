@@ -3055,6 +3055,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
 	// Larry 3 - English DOS
+	// Game version 1.003, 1989-10-27
 	// SCI interpreter version 0.000.572
 	{"lsl3", "", {
 		{"resource.map", 0, "0f429f5186f96d6c501838a1cb44bd43", 7452},
@@ -3210,6 +3211,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16	},
 
 	// Larry 5 - English DOS (from spookypeanut)
+	// Game version 1.000, 1991-09-11
+	// Executable scanning reports "T.A00.169"
 	// SCI interpreter version 1.000.510
 	{"lsl5", "", {
 		{"resource.map", 0, "be00ef895197754ae4eab021ca44cbcd", 6417},
@@ -4633,6 +4636,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
 	// Quest for Glory 1 VGA Remake - English DOS
+	// VERSION file reports "2.000"
 	// Executable scanning reports "2.000.411"
 	{"qfg1vga", "VGA", {
 		{"resource.map", 0, "a731fb6c9c0b282443f7027bc8694d4c", 8469},
@@ -4715,10 +4719,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "5f08242f962293be8fb852f183342350", 478071},
 		{"resource.006", 0, "5e9deacbdb17198ad844988e04833520", 498593},
 		{"resource.007", 0, "2ac1e6fea9aa1f5b91a06693a67b9766", 490151},
+		{"resource.008", 0, "5e85f6cf401eaad1bbd5dd978da81f47", 482914},
+		{"resource.009", 0, "9fa9a4326a5026e13a3afdbabc1e2abd", 480904},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
 	// Quest for Glory 2 - English (from FRG)
+	// 1.102 5x5.25" (label: INT#11.20.90)
 	// Executable scanning reports "1.000.072"
 	{"qfg2", "", {
 		{"resource.map", 0, "bc79c5685c00edab3ad6df18691703bc", 6906},
@@ -4727,21 +4734,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "df137dc7869cab07e1149ba2333c815c", 790750},
 		{"resource.003", 0, "b192607c42f6960ecdf2ad2e4f90e9bc", 972804},
 		{"resource.004", 0, "cd2de58e27665d5853530de93fae7cd6", 983617},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
-
-	// Quest for Glory 2 - English DOS
-	// Executable scanning reports "1.000.072"
-	{"qfg2", "", {
-		{"resource.map", 0, "be23af27e9557bf232efe213ac7f277c", 8166},
-		{"resource.000", 0, "a17e374c4d33b81208c862bc0ffc1a38", 212120},
-		{"resource.001", 0, "e08d7887e30b12008c40f9570447711a", 331973},
-		{"resource.002", 0, "df137dc7869cab07e1149ba2333c815c", 467505},
-		{"resource.003", 0, "df137dc7869cab07e1149ba2333c815c", 502560},
-		{"resource.004", 0, "df137dc7869cab07e1149ba2333c815c", 488541},
-		{"resource.005", 0, "df137dc7869cab07e1149ba2333c815c", 478688},
-		{"resource.006", 0, "b1944bd664ddbd2859cdaa0c4a0d6281", 507489},
-		{"resource.007", 0, "cd2de58e27665d5853530de93fae7cd6", 490794},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -4757,6 +4749,39 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "df137dc7869cab07e1149ba2333c815c", 478574},
 		{"resource.006", 0, "b1944bd664ddbd2859cdaa0c4a0d6281", 507489},
 		{"resource.007", 0, "cd2de58e27665d5853530de93fae7cd6", 490794},
+		{"resource.008", 0, "977a3706f90dd1b4770b6628a4af4530", 483289},
+		{"resource.009", 0, "9fa9a4326a5026e13a3afdbabc1e2abd", 485301},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// Quest for Glory 2 - English DOS
+	// v1.105, 5x5.25"
+	// Executable scanning reports "1.000.087"
+	{"qfg2", "", {
+		{"resource.map", 0, "275abaeab8bcc20776c43e543c405832", 6906},
+		{"resource.000", 0, "a17e374c4d33b81208c862bc0ffc1a38", 212120},
+		{"resource.001", 0, "e08d7887e30b12008c40f9570447711a", 867967},
+		{"resource.002", 0, "df137dc7869cab07e1149ba2333c815c", 790794},
+		{"resource.003", 0, "b192607c42f6960ecdf2ad2e4f90e9bc", 972806},
+		{"resource.004", 0, "cd2de58e27665d5853530de93fae7cd6", 983617},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// Quest for Glory 2 - English DOS
+	// v1.105, 9x3.5" (label: INT#12.7.90)
+	// Executable scanning reports "1.000.087"
+	{"qfg2", "", {
+		{"resource.map", 0, "be23af27e9557bf232efe213ac7f277c", 8166},
+		{"resource.000", 0, "a17e374c4d33b81208c862bc0ffc1a38", 212120},
+		{"resource.001", 0, "e08d7887e30b12008c40f9570447711a", 331973},
+		{"resource.002", 0, "df137dc7869cab07e1149ba2333c815c", 467505},
+		{"resource.003", 0, "df137dc7869cab07e1149ba2333c815c", 502560},
+		{"resource.004", 0, "df137dc7869cab07e1149ba2333c815c", 488541},
+		{"resource.005", 0, "df137dc7869cab07e1149ba2333c815c", 478688},
+		{"resource.006", 0, "b1944bd664ddbd2859cdaa0c4a0d6281", 507489},
+		{"resource.007", 0, "cd2de58e27665d5853530de93fae7cd6", 490794},
+		{"resource.008", 0, "977a3706f90dd1b4770b6628a4af4530", 483289},
+		{"resource.009", 0, "9fa9a4326a5026e13a3afdbabc1e2abd", 485303},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -4805,6 +4830,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	{"qfg3", "", {
 		{"resource.map", 0, "19e2bf9b693932b5e2bb59b9f9ab86c9", 5958},
 		{"resource.000", 0, "6178ad2e83e58e4671ca03315f7a6498", 5868042},
+		{"resource.msg", 0, "b15bc88d223082ee676551569512e937", 279694},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, 0, GUIO_STD16	},
 
@@ -4861,7 +4887,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 							   GAMEOPTION_HQ_VIDEO)
 
 	// Quest for Glory 4 1.1 Floppy - English DOS (supplied by markcool in bug report #4280)
-	// SCI interpreter version 2.000.000 (a guess?)
+	// SCI interpreter version 2.000.000
 	{"qfg4", "", {
 		{"resource.map", 0, "685bdb1ed47bbbb0e5e25db392da83ce", 9301},
 		{"resource.000", 0, "f64fd6aa3977939a86ff30783dd677e1", 11004993},
