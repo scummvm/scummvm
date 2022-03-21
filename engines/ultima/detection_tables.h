@@ -681,6 +681,36 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
+	// The Savage Empire v2.1
+	{
+		{
+			"thesavageempire",
+			0,
+			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+
+	// The Savage Empire v2.1
+	{
+		{
+			"thesavageempire_enh",
+			0,
+			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GAME_SAVAGE_EMPIRE,
+		GF_VGA_ENHANCED
+	},
+
 	{ AD_TABLE_END_MARKER, (GameId)0, 0 }
 };
 
