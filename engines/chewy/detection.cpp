@@ -24,12 +24,16 @@
 
 #include "chewy/detection.h"
 
+#include "common/translation.h"
+
 static const PlainGameDescriptor chewyGames[] = {
 	{"chewy", "Chewy: Esc from F5"},
 	{nullptr, nullptr}
 };
 
 namespace Chewy {
+
+#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
 
 static const ChewyGameDescription gameDescriptions[] = {
 
@@ -41,7 +45,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -54,7 +58,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -66,7 +70,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -78,7 +82,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
@@ -95,13 +99,25 @@ static const ChewyGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO1(GUIO_NOMIDI)
+			GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
 
 	{ AD_TABLE_END_MARKER }
 };
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"original_menus",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR};
 } // namespace Chewy
 
 class ChewyMetaEngineDetection : public AdvancedMetaEngineDetection {

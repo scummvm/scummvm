@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/system.h"
 #include "chewy/chewy.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -27,16 +26,13 @@
 
 namespace Chewy {
 
-char *IOGame::io_init() {
-	for (int16 i = 0; i < 20; i++)
-		_fileFind[i][0] = 0;
+FileFind *IOGame::io_init() {
 	get_savegame_files();
-
-	return &_fileFind[0][0];
+	return &_fileFind[0];
 }
 
 void IOGame::save_entry(int16 slotNum) {
-	Common::String desc(&_fileFind[slotNum][1]);
+	Common::String desc = _fileFind[slotNum]._name;
 	g_engine->saveGameState(slotNum, desc);
 }
 
@@ -45,14 +41,14 @@ int16 IOGame::get_savegame_files() {
 	int ret = 0;
 
 	for (int i = 0; i < 20; i++) {
-		_fileFind[i][0] = 0;
+		_fileFind[i]._found = false;
+		_fileFind[i]._name = "";
 
 		for (uint j = 0; j < saveList.size(); ++j) {
 			if (saveList[j].getSaveSlot() == i) {
 				Common::String name = saveList[j].getDescription();
-				_fileFind[i][0] = 1;
-				strncpy(&_fileFind[i][1], name.c_str(), USER_NAME + 3);
-				_fileFind[i][USER_NAME + 3] = '\0';
+				_fileFind[i]._found = true;
+				_fileFind[i]._name = name;
 				++ret;
 				break;
 			}

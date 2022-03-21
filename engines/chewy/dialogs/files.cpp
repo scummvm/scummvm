@@ -69,8 +69,7 @@ int16 Files::execute(bool isInGame) {
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 	_G(out)->setPointer(_G(screen0));
 	_G(room)->set_ak_pal(&_G(room_blk));
-	char *fnames = _G(iog)->io_init();
-	fnames += 1;
+	FileFind *fnames = _G(iog)->io_init();
  
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 	_G(out)->setPointer(_G(workptr));
@@ -114,16 +113,16 @@ int16 Files::execute(bool isInGame) {
 		}
 
 		// Write the list of savegame slots
-		char *tmp = fnames + (text_off * 40);
-		for (int16 i = 0; i < NUM_VISIBLE_SLOTS; i++, tmp += 40) {
+		FileFind *tmp = &fnames[text_off];
+		for (int16 i = 0; i < NUM_VISIBLE_SLOTS; i++, ++tmp) {
 			Common::String slot = Common::String::format("%2d.", text_off + i);
 			if (i != active_slot) {
 				_G(out)->printxy(40, 68 + (i * 10), 14, 300, 0, slot.c_str());
-				_G(out)->printxy(70, 68 + (i * 10), 14, 300, 0, tmp);
+				_G(out)->printxy(70, 68 + (i * 10), 14, 300, 0, tmp->_name.c_str());
 			} else {
 				_G(out)->boxFill(40, 68 + (i * 10), 308, 68 + 8 + (i * 10), 42);
 				_G(out)->printxy(40, 68 + (i * 10), 255, 300, 0, slot.c_str());
-				_G(out)->printxy(70, 68 + (i * 10), 255, 300, 0, tmp);
+				_G(out)->printxy(70, 68 + (i * 10), 255, 300, 0, tmp->_name.c_str());
 			}
 		}
 
