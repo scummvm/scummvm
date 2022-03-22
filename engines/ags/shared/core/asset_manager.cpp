@@ -24,6 +24,7 @@
 #include "ags/lib/std/utility.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/core/asset_manager.h"
+#include "ags/shared/util/directory.h"
 #include "ags/shared/util/multi_file_lib.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h" // cbuf_to_string_and_free
@@ -155,6 +156,33 @@ const AssetLibInfo *AssetManager::GetLibraryInfo(size_t index) const {
 
 bool AssetManager::DoesAssetExist(const String &asset_name, const String &filter) const {
 	return GetAsset(asset_name, filter, nullptr);
+}
+
+void AssetManager::FindAssets(std::vector<String> &assets, const String &wildcard,
+		const String &filter) const {
+	String pattern = StrUtil::WildcardToRegex(wildcard);
+
+	for (const auto *lib : _activeLibs) {
+		auto match = std::find(lib->Filters.begin(), lib->Filters.end(), filter);
+		if (match == lib->Filters.end())
+			continue; // filter does not match
+
+		if (IsAssetLibDir(lib)) {
+			for (FindFile ff = FindFile::OpenFiles(lib->BaseDir, wildcard);
+				!ff.AtEnd(); ff.Next())
+				assets.push_back(ff.Current());
+		} else {
+			for (const auto &a : lib->AssetInfos) {
+				if (pattern == "*" || (*pattern.GetCStr() &&
+						Common::String(a.FileName).hasSuffixIgnoreCase(pattern.GetCStr() + 1)))
+					assets.push_back(a.FileName);
+			}
+		}
+	}
+
+	// Sort and remove duplicates
+	std::sort(assets.begin(), assets.end());
+	assets.erase(std::unique(assets.begin(), assets.end()), assets.end());
 }
 
 AssetError AssetManager::RegisterAssetLib(const String &path, AssetLibEx *&out_lib) {

@@ -120,6 +120,10 @@ public:
 	inline bool  DoesAssetExist(const AssetPath &apath) const {
 		return DoesAssetExist(apath.Name, apath.Filter);
 	}
+	// Searches in all the registered locations and collects a list of
+    // assets using given wildcard pattern
+    void FindAssets(std::vector<String> &assets, const String &wildcard,
+		const String &filter = "") const;
 	// Open asset stream in the given work mode; returns null if asset is not found or cannot be opened
 	// This method only searches in libraries that do not have any defined filters
 	Stream *OpenAsset(const String &asset_name) const;
