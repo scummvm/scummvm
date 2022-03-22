@@ -47,7 +47,6 @@ void post_config();
 
 void save_config_file();
 
-ScreenSizeDefinition parse_screendef(const String &option, ScreenSizeDefinition def_value);
 FrameScaleDef parse_scaling_option(const String &option);
 String make_scaling_option(FrameScaleDef scale_def);
 uint32_t convert_scaling_to_fp(int scale_factor);

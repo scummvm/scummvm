@@ -180,10 +180,10 @@ void engine_force_window() {
 	// TODO: actually overwrite config tree instead
 	if (_G(force_window) == 1) {
 		_GP(usetup).Screen.DisplayMode.Windowed = true;
-		_GP(usetup).Screen.DisplayMode.ScreenSize.SizeDef = kScreenDef_ByGameScaling;
+		_GP(usetup).Screen.DisplayMode.ScreenSize = ScreenSizeSetup();
 	} else if (_G(force_window) == 2) {
 		_GP(usetup).Screen.DisplayMode.Windowed = false;
-		_GP(usetup).Screen.DisplayMode.ScreenSize.SizeDef = kScreenDef_MaxDisplay;
+		_GP(usetup).Screen.DisplayMode.ScreenSize = ScreenSizeSetup();
 	}
 }
 

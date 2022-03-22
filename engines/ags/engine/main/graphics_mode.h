@@ -60,20 +60,14 @@ enum FrameScaleDef {
 	kNumFrameScaleDef
 };
 
-enum ScreenSizeDefinition {
-	kScreenDef_Explicit,        // define by width & height
-	kScreenDef_ByGameScaling,   // define by game scale factor
-	kScreenDef_MaxDisplay,      // set to maximal supported (desktop/device screen size)
-	kNumScreenDef
-};
-
 // Configuration that is used to determine the size of the screen
 struct ScreenSizeSetup {
-	ScreenSizeDefinition SizeDef;       // a method used to determine screen size
-	AGS3::Size           Size;          // explicitly defined screen metrics
-	bool                 MatchDeviceRatio; // whether to choose resolution matching device aspect ratio
+	AGS3::Size           Size;      // explicit screen metrics
+	int                  Scale = 0; // explicit game scale factor
 
-	ScreenSizeSetup();
+	ScreenSizeSetup() = default;
+	ScreenSizeSetup(const AGS3::Size & sz, int scale = 0) : Size(sz), Scale(scale) {
+	}
 };
 
 // Display mode configuration

@@ -40,8 +40,6 @@ GameSetup::GameSetup() {
 	RenderAtScreenRes = false;
 	Supersampling = 1;
 
-	Screen.DisplayMode.ScreenSize.MatchDeviceRatio = true;
-	Screen.DisplayMode.ScreenSize.SizeDef = kScreenDef_MaxDisplay;
 	Screen.DisplayMode.RefreshRate = 0;
 	Screen.DisplayMode.VSync = false;
 	Screen.DisplayMode.Windowed = false;
