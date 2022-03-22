@@ -1317,18 +1317,8 @@ int16 Atdsys::calc_inv_no_use(int16 curInv, int16 testNr, int16 mode) {
 	return (_itemUseWithDesc.contains(key)) ? _itemUseWithDesc[key] : -1;
 }
 
-int16 Atdsys::getStereoPos(int16 x) {
-	// TODO: Convert to ScummVM's balance (-127 ... 0 ... 127)
-	return 0;
-#if 0
-	float fx_ = (float)x;
-
-	fx_ /= 2.5;
-	if ((fx_ - ((float)((int16)fx_))) > 0.5)
-		fx_ += 1.0;
-
-	return (int16)fx_;
-#endif
+int8 Atdsys::getStereoPos(int16 x) {
+	return floor(x / 2.5) * 2 - 127;
 }
 
 void Atdsys::saveAtdsStream(Common::WriteStream *stream) {

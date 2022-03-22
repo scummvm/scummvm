@@ -98,7 +98,7 @@ void Sound::setSoundChannelVolume(uint channel, uint volume) {
 	_mixer->setChannelVolume(_soundHandle[channel], volume);
 }
 
-void Sound::setSoundChannelBalance(uint channel, uint balance) {
+void Sound::setSoundChannelBalance(uint channel, int8 balance) {
 	assert(channel < MAX_SOUND_EFFECTS);
 	_mixer->setChannelBalance(_soundHandle[channel], balance);
 }

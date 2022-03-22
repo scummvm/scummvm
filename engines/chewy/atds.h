@@ -300,7 +300,7 @@ public:
 	void ads_search_item(int16 itemNr, char **blkAdr);
 	int16 start_ads_auto_dia(char *itemAdr);
 	int16 calc_inv_no_use(int16 curInv, int16 testNr, int16 mode);
-	int16 getStereoPos(int16 x);
+	int8 getStereoPos(int16 x);
 	void enableEvents(bool nr) {
 		_atdsv._eventsEnabled = nr;
 	}

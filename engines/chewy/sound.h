@@ -46,7 +46,7 @@ public:
 	bool isSoundActive(uint channel);
 	void setSoundVolume(uint volume);
 	void setSoundChannelVolume(uint channel, uint volume);
-	void setSoundChannelBalance(uint channel, uint balance);
+	void setSoundChannelBalance(uint channel, int8 balance);
 
 	void playMusic(int num, bool loop = false);
 	void playMusic(uint8 *data, uint32 size, bool loop = false, DisposeAfterUse::Flag dispose = DisposeAfterUse::YES);
