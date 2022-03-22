@@ -33,18 +33,17 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-AssetLocation::AssetLocation()
-	: Offset(0)
-	, Size(0) {
-}
-
-
 inline static bool IsAssetLibDir(const AssetLibInfo *lib) {
 	return lib->BaseFileName.IsEmpty();
 }
-// inline static bool IsAssetLibFile(const AssetLibInfo *lib) {
-// 	return !lib->BaseFileName.IsEmpty();
-// }
+inline static bool IsAssetLibFile(const AssetLibInfo *lib) {
+	return !lib->BaseFileName.IsEmpty();
+}
+
+bool AssetManager::AssetLibEx::TestFilter(const String &filter) const {
+	return filter == "*" ||
+		(std::find(Filters.begin(), Filters.end(), filter) != Filters.end());
+}
 
 bool AssetManager::LibsByPriority::operator()(const AssetLibInfo *lib1, const AssetLibInfo *lib2) const {
 	const bool lib1dir = IsAssetLibDir(lib1);
@@ -155,7 +154,20 @@ const AssetLibInfo *AssetManager::GetLibraryInfo(size_t index) const {
 }
 
 bool AssetManager::DoesAssetExist(const String &asset_name, const String &filter) const {
-	return GetAsset(asset_name, filter, nullptr);
+	for (const auto &lib : _activeLibs) {
+		if (!lib->TestFilter(filter))
+			continue; // filter does not match
+
+		if (IsAssetLibDir(lib)) {
+			String filename = File::FindFileCI(lib->BaseDir, asset_name);
+			if (!filename.IsEmpty() && File::IsFile(filename)) return true;
+		} else {
+			for (const auto &a : lib->AssetInfos) {
+				if (a.FileName.CompareNoCase(asset_name) == 0) return true;
+			}
+		}
+	}
+	return false;
 }
 
 void AssetManager::FindAssets(std::vector<String> &assets, const String &wildcard,
@@ -174,7 +186,7 @@ void AssetManager::FindAssets(std::vector<String> &assets, const String &wildcar
 		} else {
 			for (const auto &a : lib->AssetInfos) {
 				if (pattern == "*" || (*pattern.GetCStr() &&
-						Common::String(a.FileName).hasSuffixIgnoreCase(pattern.GetCStr() + 1)))
+						Common::String(a.FileName.GetCStr()).hasSuffixIgnoreCase(pattern.GetCStr() + 1)))
 					assets.push_back(a.FileName);
 			}
 		}
@@ -220,70 +232,42 @@ AssetError AssetManager::RegisterAssetLib(const String &path, AssetLibEx *&out_l
 	return kAssetNoError;
 }
 
-bool AssetManager::GetAsset(const String &asset_name, const String &filter,
-		AssetLocation *loc) const {
+Stream *AssetManager::OpenAsset(const String &asset_name, const String &filter) const {
 	for (const auto *lib : _activeLibs) {
-		auto match = std::find(lib->Filters.begin(), lib->Filters.end(), filter);
-		if (match == lib->Filters.end())
-			continue; // filter does not match
+		if (!lib->TestFilter(filter)) continue; // filter does not match
 
-		bool found = false;
+		Stream *s = nullptr;
 		if (IsAssetLibDir(lib))
-			found = GetAssetFromDir(lib, asset_name, loc);
+			s = OpenAssetFromDir(lib, asset_name);
 		else
-			found = GetAssetFromLib(lib, asset_name, loc);
-		if (found)
-			return true;
+			s = OpenAssetFromLib(lib, asset_name);
+		if (s)
+			return s;
 	}
-	return false;
+	return nullptr;
 }
 
-bool AssetManager::GetAssetFromLib(const AssetLibInfo *lib, const String &asset_name,
-		AssetLocation *loc) const {
-	const AssetInfo *asset = nullptr;
+Stream *AssetManager::OpenAssetFromLib(const AssetLibInfo *lib, const String &asset_name) const {
 	for (const auto &a : lib->AssetInfos) {
 		if (a.FileName.CompareNoCase(asset_name) == 0) {
-			asset = &a;
-			break;
+			String libfile = File::FindFileCI(lib->BaseDir, lib->LibFileNames[a.LibUid]);
+			if (libfile.IsEmpty())
+				return nullptr;
+			return File::OpenFile(libfile, a.Offset, a.Offset + a.Size);
 		}
 	}
-	if (asset == nullptr)
-		return false;
-
-	String libfile = File::FindFileCI(lib->BaseDir, lib->LibFileNames[asset->LibUid]);
-	if (libfile.IsEmpty())
-		return false;
-	if (loc) {
-		loc->FileName = libfile;
-		loc->Offset = asset->Offset;
-		loc->Size = asset->Size;
-	}
-	return true;
+	return nullptr;
 }
 
-bool AssetManager::GetAssetFromDir(const AssetLibInfo *lib, const String &file_name,
-		AssetLocation *loc) const {
+Stream *AssetManager::OpenAssetFromDir(const AssetLibInfo *lib, const String &file_name) const {
 	String found_file = File::FindFileCI(lib->BaseDir, file_name);
-	if (found_file.IsEmpty() || !File::IsFile(found_file))
-		return false; // not found, or not a file
-
-	if (loc) {
-		loc->FileName = found_file;
-		loc->Offset = 0;
-		loc->Size = File::GetFileSize(found_file);
-	}
-	return true;
+	if (found_file.IsEmpty())
+		return nullptr;
+	return File::OpenFileRead(found_file);
 }
 
 Stream *AssetManager::OpenAsset(const String &asset_name) const {
 	return OpenAsset(asset_name, "");
-}
-
-Stream *AssetManager::OpenAsset(const String &asset_name, const String &filter) const {
-	AssetLocation loc;
-	if (!GetAsset(asset_name, filter, &loc))
-		return nullptr;
-	return File::OpenFile(loc.FileName, loc.Offset, loc.Offset + loc.Size);
 }
 
 Common::SeekableReadStream *AssetManager::OpenAssetStream(const String &asset_name) const {
