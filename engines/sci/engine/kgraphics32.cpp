@@ -396,18 +396,23 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	int16 divisions;
 
 	// SCI 2–2.1early
-	if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
+	// KQ7 2.0b uses a mismatched version of the Styler script (SCI2.1early script
+	// for SCI2.1mid engine), so the calls it makes to kSetShowStyle are wrong and
+	// put `divisions` where `pFadeArray` is supposed to be.
+	if (getSciVersion() <= SCI_VERSION_1_EARLY || g_sci->getGameId() == GID_KQ7) {
 		blackScreen = 0;
 		pFadeArray = NULL_REG;
 		divisions = argc > 7 ? argv[7].toSint16() : -1;
 	}
-	// SCI 2.1mid
-	else if (getSciVersion() < SCI_VERSION_2_1_LATE) {
+	// SCI 2.1mid and RAMA demo (2.1late) and noninteractive Lighthouse demo (2.1late)
+	else if (getSciVersion() <= SCI_VERSION_2_1_MIDDLE ||
+		(g_sci->getGameId() == GID_RAMA && g_sci->isDemo()) ||
+		(g_sci->getGameId() == GID_LIGHTHOUSE && g_sci->isDemo() && getSciVersion() == SCI_VERSION_2_1_LATE)) {
 		blackScreen = 0;
 		pFadeArray = argc > 7 ? argv[7] : NULL_REG;
 		divisions = argc > 8 ? argv[8].toSint16() : -1;
 	}
-	// SCI 2.1late-3
+	// SCI 2.1late-3. Includes Mac 2.1late games and LSL7 demo (2.1late)
 	else {
 		blackScreen = argv[7].toSint16();
 		pFadeArray = argc > 8 ? argv[8] : NULL_REG;
@@ -420,7 +425,7 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 
 	// The order of planeObj and showStyle are reversed because this is how
 	// SSCI3 called the corresponding method on the KernelMgr
-	g_sci->_gfxTransitions32->kernelSetShowStyle(argc, planeObj, (ShowStyleType)type, seconds, back, priority, animate, refFrame, pFadeArray, divisions, blackScreen);
+	g_sci->_gfxTransitions32->kernelSetShowStyle(planeObj, (ShowStyleType)type, seconds, back, priority, animate, refFrame, pFadeArray, divisions, blackScreen);
 
 	return s->r_acc;
 }

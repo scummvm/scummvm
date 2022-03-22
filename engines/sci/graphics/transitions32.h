@@ -256,7 +256,9 @@ public:
 	 */
 	void processEffects(PlaneShowStyle &showStyle);
 
-	void kernelSetShowStyle(const uint16 argc, const reg_t planeObj, const ShowStyleType type, const int16 seconds, const int16 direction, const int16 priority, const int16 animate, const int16 frameOutNow, reg_t pFadeArray, int16 divisions, const int16 blackScreen);
+	void kernelSetShowStyle(const reg_t planeObj, const ShowStyleType type, const int16 seconds,
+		const int16 direction, const int16 priority, const int16 animate, const int16 frameOutNow,
+		const reg_t pFadeArray, const int16 divisions, const int16 blackScreen);
 
 	/**
 	 * Sets the range that will be used by `GfxFrameout::palMorphFrameOut` to
