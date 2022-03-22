@@ -35,6 +35,7 @@
 
 #include "director/types.h"
 #include "director/util.h"
+#include "director/debugger.h"
 #include "director/detection.h"
 
 namespace Common {
@@ -297,6 +298,7 @@ private:
 };
 
 extern DirectorEngine *g_director;
+extern Debugger *g_debugger;
 extern uint32 wmMode;
 
 } // End of namespace Director

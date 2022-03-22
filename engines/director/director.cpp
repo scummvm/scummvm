@@ -29,6 +29,7 @@
 #include "graphics/wincursor.h"
 
 #include "director/director.h"
+#include "director/debugger.h"
 #include "director/archive.h"
 #include "director/cast.h"
 #include "director/movie.h"
@@ -57,7 +58,9 @@ DirectorEngine *g_director;
 
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	g_director = this;
-
+	g_debugger = new Debugger();
+	setDebugger(g_debugger);
+	
 	_dirSeparator = ':';
 
 	parseOptions();

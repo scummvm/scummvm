@@ -1673,7 +1673,11 @@ void LB::b_put(int nargs) {
 		if (i > 0)
 			output += " ";
 	}
-	debug("-- %s", output.c_str());
+	if (g_debugger->isActive()) {
+		g_debugger->debugPrintf("-- %s\n", output.c_str());
+	} else {
+		debug("-- %s", output.c_str());
+	}
 	g_lingo->dropStack(nargs);
 }
 

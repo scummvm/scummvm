@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	channel.o \
 	cursor.o \
 	director.o \
+	debugger.o \
 	events.o \
 	fonts.o \
 	frame.o \
