@@ -1241,7 +1241,14 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	// If the game version is empty, we are probably saving from the GMM, so read it
 	// from global 27 and then the VERSION file
 	if (ver == "") {
-		ver = s->_segMan->getString(s->variables[VAR_GLOBAL][kGlobalVarVersion]);
+		reg_t versionRef = s->variables[VAR_GLOBAL][kGlobalVarVersion];
+#ifdef ENABLE_SCI32
+		// LSL7 stores the version string as an object instead of a reference
+		if (s->_segMan->isObject(versionRef)) {
+			versionRef = readSelector(s->_segMan, versionRef, SELECTOR(data));
+		}
+#endif
+		ver = s->_segMan->getString(versionRef);
 		if (ver == "") {
 			Common::ScopedPtr<Common::SeekableReadStream> versionFile(SearchMan.createReadStreamForMember("VERSION"));
 			ver = versionFile ? versionFile->readLine() : "";
