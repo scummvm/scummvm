@@ -33,32 +33,32 @@ namespace Director {
 Debugger *g_debugger;
 
 Debugger::Debugger(): GUI::Debugger() {
-    g_debugger = this;
-    registerCmd("lingo", WRAP_METHOD(Debugger, cmd_lingo));
+	g_debugger = this;
+	registerCmd("lingo", WRAP_METHOD(Debugger, cmd_lingo));
 }
 
 bool Debugger::cmd_lingo(int argc, const char **argv) {
-    if (argc == 2 && !strcmp(argv[1], "on")) {
-        registerDefaultCmd(WRAP_DEFAULTCOMMAND(Debugger, lingoCommandProcessor));
-        debugPrintf(PROMPT);
-    }
-    return true;
+	if (argc == 2 && !strcmp(argv[1], "on")) {
+		registerDefaultCmd(WRAP_DEFAULTCOMMAND(Debugger, lingoCommandProcessor));
+		debugPrintf(PROMPT);
+	}
+	return true;
 }
 
 bool Debugger::lingoCommandProcessor(const char *inputOrig) {
-    if (!strcmp(inputOrig, "lingo off")) {
-        registerDefaultCmd(nullptr);
-        return true;
-    }
+	if (!strcmp(inputOrig, "lingo off")) {
+		registerDefaultCmd(nullptr);
+		return true;
+	}
 
-    Common::String expr = Common::String(inputOrig);
+	Common::String expr = Common::String(inputOrig);
 	// Compile the code to an anonymous function and call it
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(expr);
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
 	LC::call(sym, 0, false);
-    g_lingo->execute();
-    debugPrintf(PROMPT);
-    return true;
+	g_lingo->execute();
+	debugPrintf(PROMPT);
+	return true;
 }
 
-} // Enf of namespace Director
+} // End of namespace Director
