@@ -75,6 +75,7 @@ public:
 	bool isActive() const { return _isActive; }
 
 protected:
+	typedef Common::Functor1<const char *, bool> defaultCommand;
 	typedef Common::Functor2<int, const char **, bool> Debuglet;
 
 	/**
@@ -87,6 +88,14 @@ protected:
 	 */
 	#define WRAP_METHOD(cls, method) \
 		new Common::Functor2Mem<int, const char **, bool, cls>(this, &cls::method)
+
+	/**
+	 * Convenience macro that makes it easier to register a defaultCommandProcessor
+	 * Usage example:
+	 * 	registerDefaultCmd(WRAP_DEFAULTCOMMAND(MyDebugger, myCmd));
+	 */
+	#define WRAP_DEFAULTCOMMAND(cls, command) \
+		new Common::Functor1Mem<const char *, bool, cls>(this, &cls::command)
 
 	enum VarType {
 		DVAR_BYTE,
@@ -143,6 +152,18 @@ protected:
 	void registerCmd(const Common::String &cmdname, Debuglet *debuglet);
 
 	/**
+	 * Register a default command processor with the debugger. This
+	 * allows an engine to receive all user input in the debugger.
+	 *
+	 * A defaultCommandProcessor has the following signature:
+	 * 		bool func(const char **inputOrig)
+	 *
+	 * To deactivate call with a nullptr.
+	 */
+	void registerDefaultCmd(defaultCommand *defaultCommandProcessor) {
+		_defaultCommandProcessor = defaultCommandProcessor; }
+
+	/**
 	 * Remove all vars except default "debug_countdown"
 	 */
 	void clearVars();
@@ -181,6 +202,11 @@ private:
 	 * time.
 	 */
 	bool _firstTime;
+
+	/**
+	 * A nullptr till set by via registerDefaultCommand.
+	 */
+	defaultCommand *_defaultCommandProcessor;
 
 protected:
 	PauseToken _debugPauseToken;

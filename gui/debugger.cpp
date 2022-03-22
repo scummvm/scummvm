@@ -52,6 +52,7 @@ Debugger::Debugger() {
 	_frameCountdown = 0;
 	_isActive = false;
 	_firstTime = true;
+	_defaultCommandProcessor = nullptr;
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 	_debuggerDialog = new GUI::ConsoleDialog(1.0f, 0.67f);
 	_debuggerDialog->setInputCallback(debuggerInputCallback, this);
@@ -294,6 +295,9 @@ bool Debugger::handleCommand(int argc, const char **argv, bool &result) {
 bool Debugger::parseCommand(const char *inputOrig) {
 	int num_params = 0;
 	const char *param[256];
+
+	if (_defaultCommandProcessor)
+		return (*_defaultCommandProcessor)(inputOrig);
 
 	// Parse out any params
 	Common::String input(inputOrig);
