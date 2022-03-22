@@ -50,12 +50,6 @@ int32 taskArchiveSize(Task *t);
 
 void writeTask(Task *t, Common::MemoryWriteStreamDynamic *out);
 
-#if DEBUG
-//  Debugging function used to check the integrity of the global task
-//  list
-void checkTaskListIntegrity();
-#endif
-
 /* ===================================================================== *
    Utility functions
  * ===================================================================== */
@@ -952,18 +946,6 @@ void TetheredWanderTask::write(Common::MemoryWriteStreamDynamic *out) const {
 		out->writeSint16LE(NoTask);
 }
 
-#if DEBUG
-//----------------------------------------------------------------------
-//	Debugging function used to mark this task and any sub tasks as being
-//	used.  This is used to find task leaks.
-
-void TetheredWanderTask::mark() {
-	WanderTask::mark();
-	if (gotoTether != NULL)
-		gotoTether->mark();
-}
-#endif
-
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
@@ -1111,18 +1093,6 @@ void GotoTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	//  Store prevRunState
 	out->writeUint16LE(prevRunState);
 }
-
-#if DEBUG
-//----------------------------------------------------------------------
-//	Debugging function used to mark this task and any sub tasks as being
-//	used.  This is used to find task leaks.
-
-void GotoTask::mark() {
-	Task::mark();
-	if (wander != NULL)
-		wander->mark();
-}
-#endif
 
 //----------------------------------------------------------------------
 
@@ -1723,18 +1693,6 @@ void GoAwayFromTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeByte(flags);
 }
 
-#if DEBUG
-//----------------------------------------------------------------------
-//	Debugging function used to mark this task and any sub tasks as being
-//	used.  This is used to find task leaks.
-
-void GoAwayFromTask::mark() {
-	Task::mark();
-	if (goTask != NULL)
-		goTask->mark();
-}
-#endif
-
 //----------------------------------------------------------------------
 //	Abort this task
 
@@ -2016,18 +1974,6 @@ void HuntTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	if (huntFlags & (huntGoto | huntWander))
 		out->writeSint16LE(getTaskID(subTask));
 }
-
-#if DEBUG
-//----------------------------------------------------------------------
-//	Debugging function used to mark this task and any sub tasks as being
-//	used.  This is used to find task leaks.
-
-void HuntTask::mark() {
-	Task::mark();
-	if (huntFlags & (huntGoto | huntWander))
-		subTask->mark();
-}
-#endif
 
 //----------------------------------------------------------------------
 
@@ -2801,18 +2747,6 @@ void HuntToBeNearActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeByte(targetEvaluateCtr);
 }
 
-#if DEBUG
-//----------------------------------------------------------------------
-//	Debugging function used to mark this task and any sub tasks as being
-//	used.  This is used to find task leaks.
-
-void HuntToBeNearActorTask::mark() {
-	HuntActorTask::mark();
-	if (goAway != NULL)
-		goAway->mark();
-}
-#endif
-
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
@@ -3536,18 +3470,6 @@ void BandTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeByte(targetEvaluateCtr);
 }
 
-#if DEBUG
-//----------------------------------------------------------------------
-//	Debugging function used to mark this task and any sub tasks as being
-//	used.  This is used to find task leaks.
-
-void BandTask::mark() {
-	HuntTask::mark();
-	if (attend != NULL)
-		attend->mark();
-}
-#endif
-
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
@@ -3925,18 +3847,6 @@ void FollowPatrolRouteTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeSint16LE(counter);
 }
 
-#if DEBUG
-//----------------------------------------------------------------------
-//	Debugging function used to mark this task and any sub tasks as being
-//	used.  This is used to find task leaks.
-
-void FollowPatrolRouteTask::mark() {
-	Task::mark();
-	if (gotoWayPoint != NULL)
-		gotoWayPoint->mark();
-}
-#endif
-
 //----------------------------------------------------------------------
 //	Return an integer representing the type of this task
 
@@ -4190,20 +4100,6 @@ void TaskStack::read(Common::InSaveFile *in) {
 	debugC(4, kDebugSaveload, "...... evalCount = %d", evalCount);
 	debugC(4, kDebugSaveload, "...... evalRate = %d", evalRate);
 }
-
-#if DEBUG
-//----------------------------------------------------------------------
-//	Debugging function used to mark this task and any sub tasks as being
-//	used.  This is used to find task leaks.
-
-void TaskStack::mark() {
-	if (stackBottomID != NoTask) {
-		Task    *stackBottom = getTaskAddress(stackBottomID);
-
-		stackBottom->mark();
-	}
-}
-#endif
 
 //----------------------------------------------------------------------
 //	Set the bottom task of this task stack

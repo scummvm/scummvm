@@ -270,12 +270,6 @@ public:
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
-#if DEBUG
-	//  Debugging function used to mark this task and any sub tasks as
-	//  being used.  This is used to find task leaks.
-	void mark();
-#endif
-
 	//  Return an integer representing the type of this task
 	int16 getType() const;
 
@@ -318,12 +312,6 @@ public:
 	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
-
-#if DEBUG
-	//  Debugging function used to mark this task and any sub tasks as
-	//  being used.  This is used to find task leaks.
-	void mark();
-#endif
 
 	void abortTask();
 	TaskResult evaluate();
@@ -621,12 +609,6 @@ public:
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
-#if DEBUG
-	//  Debugging function used to mark this task and any sub tasks as
-	//  being used.  This is used to find task leaks.
-	void mark();
-#endif
-
 	void abortTask();
 	TaskResult evaluate();
 	TaskResult update();
@@ -741,12 +723,6 @@ public:
 	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
-
-#if DEBUG
-	//  Debugging function used to mark this task and any sub tasks as
-	//  being used.  This is used to find task leaks.
-	void mark();
-#endif
 
 	void abortTask();
 	TaskResult evaluate();
@@ -1086,12 +1062,6 @@ public:
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
-#if DEBUG
-	//  Debugging function used to mark this task and any sub tasks as
-	//  being used.  This is used to find task leaks.
-	void mark();
-#endif
-
 	//  Return an integer representing the type of this task
 	int16 getType() const;
 
@@ -1336,12 +1306,6 @@ public:
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
 
-#if DEBUG
-	//  Debugging function used to mark this task and any sub tasks as
-	//  being used.  This is used to find task leaks.
-	void mark();
-#endif
-
 	//  Return an integer representing the type of this task
 	int16 getType() const;
 
@@ -1463,12 +1427,6 @@ public:
 	int32 archiveSize() const;
 
 	void write(Common::MemoryWriteStreamDynamic *out) const;
-
-#if DEBUG
-	//  Debugging function used to mark this task and any sub tasks as
-	//  being used.  This is used to find task leaks.
-	void mark();
-#endif
 
 	//  Return an integer representing the type of this task
 	int16 getType() const;
