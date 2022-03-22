@@ -1056,7 +1056,30 @@ void ScummEngine_v5::o5_findObject() {
 	getResultPos();
 	int x = getVarOrDirectByte(PARAM_1);
 	int y = getVarOrDirectByte(PARAM_2);
-	setResult(findObject(x, y));
+	int obj = findObject(x, y);
+
+	// WORKAROUND bug #13367: In some versions of Loom, it's possible to
+	// walk right through the closed cell door if you allowed Stoke to lead
+	// you into the cell rather than skipping the cutscene. This is because
+	// the open door (object 623) isn't made non-touchable when the door
+	// closes at the end of the cutscene.
+	//
+	// The FM Towns and TurboGrafx-16 versions fix this by making sure the
+	// object is untouchable at the end of the cutscene. The Macintosh and
+	// VGA talkie versions make sure the object script checks if the door
+	// is open. This makes the script identical to the script for the wall
+	// to the left of the door (object 609).
+	//
+	// These fixes produce subtly different behavior, but since the VGA
+	// talkie version (sadly) is the most readily available these days,
+	// let's go with that fix. But we do it by redirecting the click to the
+	// wall object instead.
+
+	if (_game.id == GID_LOOM && _game.version == 3 && (_game.platform == Common::kPlatformDOS || _game.platform == Common::kPlatformAmiga || _game.platform == Common::kPlatformAtariST) && _currentRoom == 38 && obj == 623) {
+		obj = 609;
+	}
+
+	setResult(obj);
 }
 
 void ScummEngine_v5::o5_freezeScripts() {
