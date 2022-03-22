@@ -319,6 +319,7 @@ Globals::Globals() {
 	// route_finder_impl.cpp globals
 	_navpoints = new int32_t[MAXNEEDSTAGES];
 	_nav = new Navigation();
+	_route_finder_impl = new std::unique_ptr<IRouteFinder>();
 
 	// screen.cpp globals
 	_old_palette = new color[256];

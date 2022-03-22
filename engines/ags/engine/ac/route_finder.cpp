@@ -29,20 +29,6 @@ namespace AGS3 {
 
 using AGS::Shared::Bitmap;
 
-class IRouteFinder {
-public:
-	virtual ~IRouteFinder() {}
-
-	virtual void init_pathfinder() = 0;
-	virtual void shutdown_pathfinder() = 0;
-	virtual void set_wallscreen(Bitmap *wallscreen) = 0;
-	virtual int can_see_from(int x1, int y1, int x2, int y2) = 0;
-	virtual void get_lastcpos(int &lastcx, int &lastcy) = 0;
-	virtual void set_route_move_speed(int speed_x, int speed_y) = 0;
-	virtual int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int movlst, int nocross = 0, int ignore_walls = 0) = 0;
-	virtual void calculate_move_stage(MoveList *mlsp, int aaa) = 0;
-};
-
 class AGSRouteFinder : public IRouteFinder {
 public:
 	virtual ~AGSRouteFinder() {}
@@ -103,47 +89,45 @@ public:
 	}
 };
 
-static IRouteFinder *route_finder_impl = nullptr;
-
 void init_pathfinder(GameDataVersion game_file_version) {
 	if (game_file_version >= kGameVersion_350) {
 		AGS::Shared::Debug::Printf(AGS::Shared::MessageType::kDbgMsg_Info, "Initialize path finder library");
-		route_finder_impl = new AGSRouteFinder();
+		_GP(route_finder_impl).reset(new AGSRouteFinder());
 	} else {
 		AGS::Shared::Debug::Printf(AGS::Shared::MessageType::kDbgMsg_Info, "Initialize legacy path finder library");
-		route_finder_impl = new AGSLegacyRouteFinder();
+		_GP(route_finder_impl).reset(new AGSLegacyRouteFinder());
 	}
 
-	route_finder_impl->init_pathfinder();
+	_GP(route_finder_impl)->init_pathfinder();
 }
 
 void shutdown_pathfinder() {
-	if (route_finder_impl)
-		route_finder_impl->shutdown_pathfinder();
+	if (_GP(route_finder_impl))
+		_GP(route_finder_impl)->shutdown_pathfinder();
 }
 
 void set_wallscreen(Bitmap *wallscreen) {
-	route_finder_impl->set_wallscreen(wallscreen);
+	_GP(route_finder_impl)->set_wallscreen(wallscreen);
 }
 
 int can_see_from(int x1, int y1, int x2, int y2) {
-	return route_finder_impl->can_see_from(x1, y1, x2, y2);
+	return _GP(route_finder_impl)->can_see_from(x1, y1, x2, y2);
 }
 
 void get_lastcpos(int &lastcx, int &lastcy) {
-	route_finder_impl->get_lastcpos(lastcx, lastcy);
+	_GP(route_finder_impl)->get_lastcpos(lastcx, lastcy);
 }
 
 void set_route_move_speed(int speed_x, int speed_y) {
-	route_finder_impl->set_route_move_speed(speed_x, speed_y);
+	_GP(route_finder_impl)->set_route_move_speed(speed_x, speed_y);
 }
 
 int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int movlst, int nocross, int ignore_walls) {
-	return route_finder_impl->find_route(srcx, srcy, xx, yy, onscreen, movlst, nocross, ignore_walls);
+	return _GP(route_finder_impl)->find_route(srcx, srcy, xx, yy, onscreen, movlst, nocross, ignore_walls);
 }
 
 void calculate_move_stage(MoveList *mlsp, int aaa) {
-	route_finder_impl->calculate_move_stage(mlsp, aaa);
+	_GP(route_finder_impl)->calculate_move_stage(mlsp, aaa);
 }
 
 } // namespace AGS3

@@ -99,6 +99,7 @@ class EngineExports;
 } // namespace Core
 } // namespace Plugins
 
+class IRouteFinder;
 class Navigation;
 class SplitLines;
 class TTFFontRenderer;
@@ -1211,6 +1212,7 @@ public:
 	fixed _move_speed_x = 0, _move_speed_y = 0;
 	AGS::Shared::Bitmap *_wallscreen = nullptr;
 	int _lastcx = 0, _lastcy = 0;
+	std::unique_ptr<IRouteFinder> *_route_finder_impl;
 
 	/**@}*/
 
