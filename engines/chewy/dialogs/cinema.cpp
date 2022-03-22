@@ -37,12 +37,6 @@ static const Common::Rect cinematicsHotspots[] = {
 	{ -1,  -1,  -1,  -1 }
 };
 
-static const int16 CINEMA_TBL[4 * 3] = {
-	10,  80,  32, 105,
-	10, 150,  32, 175,
-	36,  64, 310, 188
-};
-
 static const uint8 CINEMA_FLICS[35] = {
 	FCUT_000, FCUT_002, FCUT_006, FCUT_009, FCUT_015,
 	FCUT_012, FCUT_011, FCUT_SPACECHASE_18, FCUT_003, FCUT_048,
