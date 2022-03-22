@@ -224,6 +224,11 @@ AssetError AssetManager::RegisterAssetLib(const String &path, AssetLibEx *&out_l
 		lib->BaseDir = Path::GetDirectoryPath(lib->BasePath);
 		lib->BaseFileName = Path::GetFilename(lib->BasePath);
 		lib->LibFileNames[0] = lib->BaseFileName;
+
+		// Find out real library files in the current filesystem and save them
+		for (size_t i = 0; i < lib->LibFileNames.size(); ++i) {
+			lib->RealLibFiles.push_back(File::FindFileCI(lib->BaseDir, lib->LibFileNames[i]));
+		}
 	}
 
 	out_lib = lib.release();
@@ -247,10 +252,10 @@ Stream *AssetManager::OpenAsset(const String &asset_name, const String &filter) 
 	return nullptr;
 }
 
-Stream *AssetManager::OpenAssetFromLib(const AssetLibInfo *lib, const String &asset_name) const {
+Stream *AssetManager::OpenAssetFromLib(const AssetLibEx *lib, const String &asset_name) const {
 	for (const auto &a : lib->AssetInfos) {
 		if (a.FileName.CompareNoCase(asset_name) == 0) {
-			String libfile = File::FindFileCI(lib->BaseDir, lib->LibFileNames[a.LibUid]);
+			String libfile = lib->RealLibFiles[a.LibUid];
 			if (libfile.IsEmpty())
 				return nullptr;
 			return File::OpenFile(libfile, a.Offset, a.Offset + a.Size);
@@ -259,7 +264,7 @@ Stream *AssetManager::OpenAssetFromLib(const AssetLibInfo *lib, const String &as
 	return nullptr;
 }
 
-Stream *AssetManager::OpenAssetFromDir(const AssetLibInfo *lib, const String &file_name) const {
+Stream *AssetManager::OpenAssetFromDir(const AssetLibEx *lib, const String &file_name) const {
 	String found_file = File::FindFileCI(lib->BaseDir, file_name);
 	if (found_file.IsEmpty())
 		return nullptr;

@@ -127,8 +127,10 @@ public:
 	Common::SeekableReadStream *OpenAssetStream(const String &asset_name, const String &filter) const;
 
 private:
+	// AssetLibEx combines library info with extended internal data required for the manager
 	struct AssetLibEx : AssetLibInfo {
 		std::vector<String> Filters; // asset filters this library is matching to
+		std::vector<String> RealLibFiles; // fixed up library filenames
 
 		bool TestFilter(const String &filter) const;
 	};
@@ -137,8 +139,8 @@ private:
 	AssetError  RegisterAssetLib(const String &path, AssetLibEx *&lib);
 
 	// Tries to find asset in known locations, tests if it's possible to open, and fills in AssetLocation
-	Stream *OpenAssetFromLib(const AssetLibInfo *lib, const String &asset_name) const;
-	Stream *OpenAssetFromDir(const AssetLibInfo *lib, const String &asset_name) const;
+	Stream *OpenAssetFromLib(const AssetLibEx *lib, const String &asset_name) const;
+	Stream *OpenAssetFromDir(const AssetLibEx *lib, const String &asset_name) const;
 
 	std::vector<AssetLibEx *> _libs;
 	std::vector<AssetLibEx *> _activeLibs;
