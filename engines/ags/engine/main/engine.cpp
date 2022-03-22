@@ -1254,7 +1254,7 @@ bool engine_try_switch_windowed_gfxmode() {
 
 	// Keep previous mode in case we need to revert back
 	DisplayMode old_dm = _G(gfxDriver)->GetDisplayMode();
-	GameFrameSetup old_frame = graphics_mode_get_render_frame();
+	FrameScaleDef old_frame = graphics_mode_get_render_frame();
 
 	// Release engine resources that depend on display mode
 	engine_pre_gfxmode_release();
@@ -1263,7 +1263,7 @@ bool engine_try_switch_windowed_gfxmode() {
 	bool switch_to_windowed = !old_dm.Windowed;
 	ActiveDisplaySetting setting = graphics_mode_get_last_setting(switch_to_windowed);
 	DisplayMode last_opposite_mode = setting.Dm;
-	GameFrameSetup use_frame_setup = setting.FrameSetup;
+	FrameScaleDef use_frame_setup = setting.Frame;
 
 	// If there are saved parameters for given mode (fullscreen/windowed)
 	// then use them, if there are not, get default setup for the new mode.

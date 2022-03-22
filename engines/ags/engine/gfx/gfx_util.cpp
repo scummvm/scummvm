@@ -25,11 +25,6 @@
 
 namespace AGS3 {
 
-// CHECKME: is this hack still relevant?
-#if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
-extern int _G(psp_gfx_renderer);
-#endif
-
 namespace AGS {
 namespace Engine {
 

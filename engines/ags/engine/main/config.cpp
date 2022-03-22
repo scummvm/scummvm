@@ -104,64 +104,56 @@ ScreenSizeDefinition parse_screendef(const String &option, ScreenSizeDefinition 
 	return def_value;
 }
 
-void parse_scaling_option(const String &scaling_option, FrameScaleDefinition &scale_def, int &scale_factor) {
-	const char *game_scale_options[kNumFrameScaleDef - 1] = { "max_round", "stretch", "proportional" };
-	scale_def = kFrame_IntScale;
-	for (int i = 0; i < kNumFrameScaleDef - 1; ++i) {
-		if (scaling_option.CompareNoCase(game_scale_options[i]) == 0) {
-			scale_def = (FrameScaleDefinition)(i + 1);
-			break;
-		}
-	}
-
-	if (scale_def == kFrame_IntScale)
-		scale_factor = StrUtil::StringToInt(scaling_option);
-	else
-		scale_factor = 0;
+FrameScaleDef parse_scaling_option(const String &option) {
+	if (option.CompareNoCase("round") == 0 || option.CompareNoCase("max_round") == 0)
+		return kFrame_Round;
+	if (option.CompareNoCase("stretch") == 0)
+		return kFrame_Stretch;
+	if (option.CompareNoCase("proportional") == 0)
+		return kFrame_Proportional;
+	return kFrame_Undefined;
 }
 
-void parse_scaling_option(const String &scaling_option, GameFrameSetup &frame_setup) {
-	parse_scaling_option(scaling_option, frame_setup.ScaleDef, frame_setup.ScaleFactor);
+FrameScaleDef parse_legacy_scaling_option(const String &option, int &scale) {
+	FrameScaleDef frame = parse_scaling_option(option);
+	if (frame == kFrame_Undefined) {
+		scale = StrUtil::StringToInt(option);
+		return scale > 0 ? kFrame_Round : kFrame_Undefined;
+	}
+	return frame;
 }
 
 // Parses legacy filter ID and converts it into current scaling options
-bool parse_legacy_frame_config(const String &scaling_option, String &filter_id, GameFrameSetup &frame) {
+bool parse_legacy_frame_config(const String &scaling_option, String &filter_id,
+	FrameScaleDef &frame, int &scale_factor) {
 	struct {
 		String LegacyName;
 		String CurrentName;
 		int    Scaling;
 	} legacy_filters[6] = { {"none", "none", -1}, {"max", "StdScale", 0}, {"StdScale", "StdScale", -1},
-		{"AAx", "Linear", -1}, {"Hq2x", "Hqx", 2}, {"Hq3x", "Hqx", 3}
-	};
+						   {"AAx", "Linear", -1}, {"Hq2x", "Hqx", 2}, {"Hq3x", "Hqx", 3} };
 
 	for (int i = 0; i < 6; i++) {
 		if (scaling_option.CompareLeftNoCase(legacy_filters[i].LegacyName) == 0) {
 			filter_id = legacy_filters[i].CurrentName;
-			frame.ScaleDef = legacy_filters[i].Scaling == 0 ? kFrame_MaxRound : kFrame_IntScale;
-			frame.ScaleFactor = legacy_filters[i].Scaling >= 0 ? legacy_filters[i].Scaling :
-			                    scaling_option.Mid(legacy_filters[i].LegacyName.GetLength()).ToInt();
+			frame = kFrame_Round;
+			scale_factor = legacy_filters[i].Scaling >= 0 ? legacy_filters[i].Scaling :
+				scaling_option.Mid(legacy_filters[i].LegacyName.GetLength()).ToInt();
 			return true;
 		}
 	}
 	return false;
 }
 
-String make_scaling_option(FrameScaleDefinition scale_def, int scale_factor) {
+String make_scaling_option(FrameScaleDef scale_def) {
 	switch (scale_def) {
-	case kFrame_MaxRound:
-		return "max_round";
-	case kFrame_MaxStretch:
+	case kFrame_Stretch:
 		return "stretch";
-	case kFrame_MaxProportional:
+	case kFrame_Proportional:
 		return "proportional";
 	default:
-		break;
+		return "round";
 	}
-	return String::FromFormat("%d", scale_factor);
-}
-
-String make_scaling_option(const GameFrameSetup &frame_setup) {
-	return make_scaling_option(frame_setup.ScaleDef, frame_setup.ScaleFactor);
 }
 
 uint32_t convert_scaling_to_fp(int scale_factor) {
@@ -177,19 +169,19 @@ int convert_fp_to_scaling(uint32_t scaling) {
 	return scaling >= kUnit ? (scaling >> kShift) : -kUnit / (int32_t)scaling;
 }
 
-void graphics_mode_get_defaults(bool windowed, ScreenSizeSetup &scsz_setup, GameFrameSetup &frame_setup) {
+void graphics_mode_get_defaults(bool windowed, ScreenSizeSetup &scsz_setup, FrameScaleDef &frame) {
 	scsz_setup.Size = Size();
 	if (windowed) {
-		// For the windowed we define mode by the scaled _GP(game).
+		// For the windowed we define mode by the scaled game.
 		scsz_setup.SizeDef = kScreenDef_ByGameScaling;
 		scsz_setup.MatchDeviceRatio = false;
-		frame_setup = _GP(usetup).Screen.WinGameFrame;
+		frame = _GP(usetup).Screen.WinGameFrame;
 	} else {
 		// For the fullscreen we set current desktop resolution, which
 		// corresponds to most comfortable fullscreen mode for the driver.
 		scsz_setup.SizeDef = kScreenDef_MaxDisplay;
 		scsz_setup.MatchDeviceRatio = true;
-		frame_setup = _GP(usetup).Screen.FsGameFrame;
+		frame = _GP(usetup).Screen.FsGameFrame;
 	}
 }
 
@@ -220,11 +212,11 @@ void read_legacy_graphics_config(const ConfigTree &cfg) {
 	int default_res = INIreadint(cfg, "misc", "defaultres", 0);
 	int screen_res = INIreadint(cfg, "misc", "screenres", 0);
 	if ((default_res == kGameResolution_320x200 ||
-	        default_res == kGameResolution_320x240) && screen_res > 0) {
+		default_res == kGameResolution_320x240) && screen_res > 0) {
 		_GP(usetup).override_upscale = true; // run low-res game in high-res mode
 	}
 
-	_GP(usetup).Screen.DisplayMode.Windowed = true; // INIreadint(cfg, "misc", "windowed") > 0;
+	_GP(usetup).Screen.DisplayMode.Windowed = INIreadint(cfg, "misc", "windowed") > 0;
 	_GP(usetup).Screen.DriverID = INIreadstring(cfg, "misc", "gfxdriver", _GP(usetup).Screen.DriverID);
 
 	{
@@ -233,28 +225,30 @@ void read_legacy_graphics_config(const ConfigTree &cfg) {
 			// NOTE: legacy scaling config is applied only to windowed setting
 			if (_GP(usetup).Screen.DisplayMode.Windowed)
 				_GP(usetup).Screen.DisplayMode.ScreenSize.SizeDef = kScreenDef_ByGameScaling;
-			parse_legacy_frame_config(legacy_filter, _GP(usetup).Screen.Filter.ID, _GP(usetup).Screen.WinGameFrame);
+			int scale_factor; // FIXME
+			parse_legacy_frame_config(legacy_filter, _GP(usetup).Screen.Filter.ID, _GP(usetup).Screen.WinGameFrame,
+				scale_factor);
 
 			// AGS 3.2.1 and 3.3.0 aspect ratio preferences
 			if (!_GP(usetup).Screen.DisplayMode.Windowed) {
 				_GP(usetup).Screen.DisplayMode.ScreenSize.MatchDeviceRatio =
-				    (INIreadint(cfg, "misc", "sideborders") > 0 || INIreadint(cfg, "misc", "forceletterbox") > 0 ||
-				     INIreadint(cfg, "misc", "prefer_sideborders") > 0 || INIreadint(cfg, "misc", "prefer_letterbox") > 0);
+					(INIreadint(cfg, "misc", "sideborders") > 0 || INIreadint(cfg, "misc", "forceletterbox") > 0 ||
+						INIreadint(cfg, "misc", "prefer_sideborders") > 0 || INIreadint(cfg, "misc", "prefer_letterbox") > 0);
 			}
 		}
 
 		// AGS 3.4.0 - 3.4.1-rc uniform scaling option
 		String uniform_frame_scale = INIreadstring(cfg, "graphics", "game_scale");
 		if (!uniform_frame_scale.IsEmpty()) {
-			GameFrameSetup frame_setup;
-			parse_scaling_option(uniform_frame_scale, frame_setup);
-			_GP(usetup).Screen.FsGameFrame = frame_setup;
-			_GP(usetup).Screen.WinGameFrame = frame_setup;
+			int scale;
+			FrameScaleDef frame = parse_legacy_scaling_option(uniform_frame_scale, scale);
+			_GP(usetup).Screen.FsGameFrame = frame;
+			_GP(usetup).Screen.WinGameFrame = frame;
 		}
-	}
+		}
 
 	_GP(usetup).Screen.DisplayMode.RefreshRate = INIreadint(cfg, "misc", "refresh");
-}
+	}
 
 void override_config_ext(ConfigTree &cfg) {
 	// Mobile ports always run in fullscreen mode
@@ -310,7 +304,7 @@ void override_config_ext(ConfigTree &cfg) {
 
 	INIwriteint(cfg, "misc", "antialias", _G(psp_gfx_smooth_sprites) != 0);
 	INIwritestring(cfg, "language", "translation", _G(psp_translation));
-}
+	}
 
 void apply_config(const ConfigTree &cfg) {
 	{
@@ -323,21 +317,23 @@ void apply_config(const ConfigTree &cfg) {
 		// Graphics mode
 		_GP(usetup).Screen.DriverID = INIreadstring(cfg, "graphics", "driver", _GP(usetup).Screen.DriverID);
 
-		_GP(usetup).Screen.DisplayMode.Windowed = true; // INIreadint(cfg, "graphics", "windowed") > 0;
+		_GP(usetup).Screen.DisplayMode.Windowed = INIreadint(cfg, "graphics", "windowed") > 0;
 		_GP(usetup).Screen.DisplayMode.ScreenSize.SizeDef = _GP(usetup).Screen.DisplayMode.Windowed ? kScreenDef_ByGameScaling : kScreenDef_MaxDisplay;
 		_GP(usetup).Screen.DisplayMode.ScreenSize.SizeDef = parse_screendef(INIreadstring(cfg, "graphics", "screen_def"),
-		        _GP(usetup).Screen.DisplayMode.ScreenSize.SizeDef);
+			_GP(usetup).Screen.DisplayMode.ScreenSize.SizeDef);
 
 		_GP(usetup).Screen.DisplayMode.ScreenSize.Size = Size(INIreadint(cfg, "graphics", "screen_width"),
-		        INIreadint(cfg, "graphics", "screen_height"));
+			INIreadint(cfg, "graphics", "screen_height"));
 		_GP(usetup).Screen.DisplayMode.ScreenSize.MatchDeviceRatio = INIreadint(cfg, "graphics", "match_device_ratio", 1) != 0;
 		// TODO: move to config overrides (replace values during config load)
 #if AGS_PLATFORM_OS_MACOS
 		_GP(usetup).Screen.Filter.ID = "none";
 #else
 		_GP(usetup).Screen.Filter.ID = INIreadstring(cfg, "graphics", "filter", "StdScale");
-		parse_scaling_option(INIreadstring(cfg, "graphics", "game_scale_fs", "proportional"), _GP(usetup).Screen.FsGameFrame);
-		parse_scaling_option(INIreadstring(cfg, "graphics", "game_scale_win", "max_round"), _GP(usetup).Screen.WinGameFrame);
+		_GP(usetup).Screen.FsGameFrame =
+			parse_scaling_option(INIreadstring(cfg, "graphics", "game_scale_fs", "proportional"));
+		_GP(usetup).Screen.WinGameFrame =
+			parse_scaling_option(INIreadstring(cfg, "graphics", "game_scale_win", "round"));
 #endif
 
 		_GP(usetup).Screen.DisplayMode.RefreshRate = INIreadint(cfg, "graphics", "refresh");
@@ -353,9 +349,7 @@ void apply_config(const ConfigTree &cfg) {
 		_GP(usetup).user_data_dir = INIreadstring(cfg, "misc", "user_data_dir");
 		_GP(usetup).shared_data_dir = INIreadstring(cfg, "misc", "shared_data_dir");
 
-		Common::String translation;
-		if (ConfMan.getActiveDomain()->tryGetVal("translation", translation) && !translation.empty())
-			_GP(usetup).translation = translation;
+		_GP(usetup).translation = INIreadstring(cfg, "language", "translation");
 
 		int cache_size_kb = INIreadint(cfg, "misc", "cachemax", DEFAULTCACHESIZE_KB);
 		if (cache_size_kb > 0)
@@ -413,11 +407,6 @@ void post_config() {
 	if (_GP(usetup).Screen.Filter.ID.IsEmpty() || _GP(usetup).Screen.Filter.ID.CompareNoCase("none") == 0) {
 		_GP(usetup).Screen.Filter.ID = "StdScale";
 	}
-
-	if (!_GP(usetup).Screen.FsGameFrame.IsValid())
-		_GP(usetup).Screen.FsGameFrame = GameFrameSetup(kFrame_MaxProportional);
-	if (!_GP(usetup).Screen.WinGameFrame.IsValid())
-		_GP(usetup).Screen.WinGameFrame = GameFrameSetup(kFrame_MaxRound);
 }
 
 void save_config_file() {

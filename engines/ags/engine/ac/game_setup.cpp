@@ -45,8 +45,8 @@ GameSetup::GameSetup() {
 	Screen.DisplayMode.RefreshRate = 0;
 	Screen.DisplayMode.VSync = false;
 	Screen.DisplayMode.Windowed = false;
-	Screen.FsGameFrame = GameFrameSetup(kFrame_MaxProportional);
-	Screen.WinGameFrame = GameFrameSetup(kFrame_MaxRound);
+	Screen.FsGameFrame = kFrame_Proportional;
+	Screen.WinGameFrame = kFrame_Round;
 }
 
 } // namespace AGS3

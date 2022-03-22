@@ -35,6 +35,7 @@
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/walk_behind.h"
 #include "ags/engine/main/engine.h"
+#include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/media/audio/audio_defines.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/script_runtime.h"
@@ -135,7 +136,6 @@ struct DirtyRects;
 struct EnginePlugin;
 struct ExecutingScript;
 struct EventHappened;
-struct GameFrameSetup;
 struct GameSetup;
 struct GameSetupStruct;
 struct GameState;
@@ -900,7 +900,7 @@ public:
 	ActiveDisplaySetting *_SavedFullscreenSetting;
 	ActiveDisplaySetting *_SavedWindowedSetting;
 	// Current frame scaling setup
-	GameFrameSetup *_CurFrameSetup;
+	FrameScaleDef _CurFrameSetup = kFrame_Undefined;
 	// The game-to-screen transformation
 	AGS::Shared::PlaneScaling *_GameScaling;
 

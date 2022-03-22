@@ -259,7 +259,6 @@ Globals::Globals() {
 	// graphics_mode.cpp globals
 	_SavedFullscreenSetting = new ActiveDisplaySetting();
 	_SavedWindowedSetting = new ActiveDisplaySetting();
-	_CurFrameSetup = new GameFrameSetup();
 	_GameScaling = new AGS::Shared::PlaneScaling();
 
 	// gui_button.cpp globals
@@ -505,7 +504,6 @@ Globals::~Globals() {
 	// graphics_mode.cpp globals
 	delete _SavedFullscreenSetting;
 	delete _SavedWindowedSetting;
-	delete _CurFrameSetup;
 	delete _GameScaling;
 
 	// gui_button.cpp globals
