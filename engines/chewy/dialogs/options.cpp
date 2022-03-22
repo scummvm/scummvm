@@ -43,16 +43,17 @@ namespace Dialogs {
 #define MUSIC_ON2 26
 #define EXIT 27
 
-static const int16 OPTION_ICONS[9 * 4] = {
-	 18,   61,   40,   76,
-	112,   61,  130,   76,
-	 82,  104,  144,  139,
-	164,   93,  194,  115,
-	198,   80,  206,  115,
-	210,   55,  302,  138,
-	126,  146,  210,  198,
-	 22,   92,   44,  136,
-	 50,   92,   72,  136
+static const Common::Rect optionHotspots[] = {
+	{  18,   61,   40,   76 },
+	{ 112,   61,  130,   76 },
+	{  82,  104,  144,  139 },
+	{ 164,   93,  194,  115 },
+	{ 198,   80,  206,  115 },
+	{ 210,   55,  302,  138 },
+	{ 126,  146,  210,  198 },
+	{  22,   92,   44,  136 },
+	{  50,   92,   72,  136 },
+	{  -1,   -1,   -1,   -1 }
 };
 
 void Options::execute(TafInfo *ti) {
@@ -149,7 +150,7 @@ void Options::execute(TafInfo *ti) {
 		if ((_G(minfo)._button == 1) || (key == Common::KEYCODE_RETURN)) {
 			WAIT_TASTE_LOS
 
-			int16 rect = _G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, OPTION_ICONS, 9);
+			int16 rect = _G(in)->findHotspot(optionHotspots);
 			switch (rect) {
 			case 0:
 				if (_G(gameState).FramesPerSecond > 6)

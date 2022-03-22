@@ -36,15 +36,16 @@ enum Widget {
 	GAME = 4, QUIT = 5, OPTIONS = 6, W7 = 7, W8 = 8
 };
 
-static const int16 FILE_ICONS[8 * 4] = {
-	14, 73, 32, 94,
-	14, 96, 32, 118,
-	36, 64, 310, 128,
-	16, 143, 76, 193,
-	78, 143, 130, 193,
-	132, 143, 178, 193,
-	180, 143, 228, 193,
-	232, 143, 310, 193
+static const Common::Rect fileHotspots[] = {
+	{  14,  73,  32,  94 },
+	{  14,  96,  32, 118 },
+	{  36,  64, 310, 128 },
+	{  16, 143,  76, 193 },
+	{  78, 143, 130, 193 },
+	{ 132, 143, 178, 193 },
+	{ 180, 143, 228, 193 },
+	{ 232, 143, 310, 193 },
+	{  -1,  -1,  -1,  -1 }
 };
 
 
@@ -160,7 +161,7 @@ int16 Files::execute(bool isInGame) {
 		}
 
 		if (!flag && _G(minfo)._button == 1) {
-			int16 rect = _G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, FILE_ICONS, 8);
+			int16 rect = _G(in)->findHotspot(fileHotspots);
 			flag = true;
 			key = 0;
 

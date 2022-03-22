@@ -30,15 +30,16 @@
 namespace Chewy {
 namespace Dialogs {
 
-static const int16 INVENTORY_HOTSPOTS[INVENTORY_HOTSPOTS_COUNT][4] = {
-	{ WIN_INF_X + 6, WIN_INF_Y + 10, WIN_INF_X + 6 + 30, WIN_INF_Y + 10 + 14 },
-	{ WIN_INF_X + 6 + 32, WIN_INF_Y + 10, WIN_INF_X + 6 + 62, WIN_INF_Y + 10 + 14 },
-	{ -1, -1, -1, -1 },
-	{ WIN_INF_X + 198, WIN_INF_Y + 10, WIN_INF_X + 198 + 30, WIN_INF_Y + 10 + 14 },
-	{ WIN_INF_X + 198 + 40, WIN_INF_Y + 10, WIN_INF_X + 198 + 70, WIN_INF_Y + 10 + 14 },
-	{ WIN_INF_X + 6, WIN_INF_Y + 4 + 26, WIN_INF_X + 268, WIN_INF_Y + 4 + 26 + 90 },
-	{ WIN_INF_X + 242, WIN_INF_Y + 136, WIN_INF_X + 292, WIN_INF_Y + 136 + 14 },
-	{ WIN_INF_X + 242, WIN_INF_Y + 156, WIN_INF_X + 292, WIN_INF_Y + 156 + 14 }
+static const Common::Rect inventoryHotspots[] = {
+	{  21,  25,  51,  39 },
+	{  53,  25,  83,  39 },
+	{  -2,  -2,  -2,  -2 },
+	{ 213,  25, 243,  39 },
+	{ 253,  25, 283,  39 },
+	{  21,  45, 283, 135 },
+	{ 257, 151, 307, 165 },
+	{ 257, 171, 307, 185 },
+	{  -1,  -1,  -1,  -1 }
 };
 
 static const int16 ANI_INVENT_END[3] = { 7, 16, 24 };
@@ -60,11 +61,11 @@ void Inventory::plot_menu() {
 	}
 
 	int16 y;
-	int16 k = _G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
+	int16 k = _G(in)->findHotspot(inventoryHotspots);
 	if (k != -1) {
 		if (k < 5)
-			_G(out)->boxFill(INVENTORY_HOTSPOTS[k][0], INVENTORY_HOTSPOTS[k][1],
-				INVENTORY_HOTSPOTS[k][2] + 1, INVENTORY_HOTSPOTS[k][3] + 5, 41);
+			_G(out)->boxFill(inventoryHotspots[k].left, inventoryHotspots[k].top,
+	  						 inventoryHotspots[k].bottom + 1, inventoryHotspots[k].right + 5, 41);
 		else {
 			int16 x = (g_events->_mousePos.x - (WIN_INF_X)) / 54;
 			y = (g_events->_mousePos.y - (WIN_INF_Y + 4 + 30)) / 30;
@@ -167,7 +168,7 @@ void Inventory::menu() {
 				mouseFl = true;
 				g_events->_kbInfo._keyCode = '\0';
 
-				int16 k = _G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, &INVENTORY_HOTSPOTS[0][0], INVENTORY_HOTSPOTS_COUNT);
+				int16 k = _G(in)->findHotspot(inventoryHotspots);
 				if (keyVal == Common::KEYCODE_F1)
 					k = 0;
 				else if (keyVal == Common::KEYCODE_F2)
@@ -424,7 +425,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	}
 
 	while (!endLoop) {
-		int16 rect = _G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, (const int16 *)INVENTORY_HOTSPOTS, INVENTORY_HOTSPOTS_COUNT);
+		int16 rect = _G(in)->findHotspot(inventoryHotspots);
 
 		if (_G(minfo)._button) {
 			if (_G(minfo)._button == 2) {

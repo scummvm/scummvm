@@ -23,6 +23,7 @@
 #define CHEWY_MOUSE_H
 
 #include "common/keyboard.h"
+#include "common/rect.h"
 
 namespace Chewy {
 
@@ -33,7 +34,7 @@ public:
 	InputMgr();
 	~InputMgr();
 
-	int16 mouseVector(int16 x, int16 y, const int16 *tbl, int16 nr);
+	int16 findHotspot(const Common::Rect *hotspots);
 
 	int16 getSwitchCode();
 

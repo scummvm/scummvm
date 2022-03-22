@@ -30,6 +30,13 @@ namespace Dialogs {
 
 static constexpr int CINEMA_LINES = 12;
 
+static const Common::Rect cinematicsHotspots[] = {
+	{ 10,  80,  32, 105 },
+	{ 10, 150,  32, 175 },
+	{ 36,  64, 310, 188 },
+	{ -1,  -1,  -1,  -1 }
+};
+
 static const int16 CINEMA_TBL[4 * 3] = {
 	10,  80,  32, 105,
 	10, 150,  32, 175,
@@ -87,7 +94,7 @@ void Cinema::execute() {
 
 		if (_G(minfo)._button == 1 && !flag) {
 			flag = true;
-			switch (_G(in)->mouseVector(g_events->_mousePos.x, g_events->_mousePos.y, CINEMA_TBL, 3)) {
+			switch (_G(in)->findHotspot(cinematicsHotspots)) {
 			case 0:
 				g_events->_kbInfo._scanCode = Common::KEYCODE_UP;
 				if (!endLoop)

@@ -40,10 +40,11 @@ int16 Room4::comp_probe() {
 		{ 136, 103 },
 		{ 188, 101 }
 	};
-	static const int16 CONSOLE[3][4] = {
-		{  82, 158, 143, 199 },
-		{ 150, 159, 194, 193 },
-		{ 201, 154, 262, 193 }
+
+	static const Common::Rect consoleHotspots[] = {
+		{  99, 165, 160, 206 },
+		{ 167, 166, 211, 200 },
+		{ 218, 161, 279, 200 }
 	};
 
 	cur_2_inventory();
@@ -61,7 +62,7 @@ int16 Room4::comp_probe() {
 	while (!endLoop) {
 		mouseAction();
 		if (_G(mouseLeftClick)) {
-			switch (_G(in)->mouseVector(g_events->_mousePos.x + 17, g_events->_mousePos.y + 7, &CONSOLE[0][0], 3)) {
+			switch (_G(in)->findHotspot(consoleHotspots)) {
 			case 0:
 				if (curX > 0)
 					--curX;
