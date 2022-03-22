@@ -151,6 +151,7 @@ void Room46::bodo() {
 }
 
 void Room46::kloppe() {
+	//_G(sndPlayer)->setLoopMode(1);
 	for (int16 i = 0; i < 4; i++) {
 		g_engine->_video->playVideo(FCUT_065);
 		
@@ -172,12 +173,13 @@ void Room46::kloppe() {
 	}
 
 	g_engine->_video->playVideo(FCUT_066);
-	_G(sndPlayer)->fadeOut(0);
+	// TODO: Reimplement
+	//_G(sndPlayer)->fadeOut(0);
 	_G(out)->cls();
 
-	while (_G(sndPlayer)->musicPlaying() && !SHOULD_QUIT) {
-		EVENTS_UPDATE;
-	}
+	//while (_G(sndPlayer)->musicPlaying() && !SHOULD_QUIT) {
+	//	EVENTS_UPDATE;
+	//}
 }
 
 int16 Room46::use_schloss() {

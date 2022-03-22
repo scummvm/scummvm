@@ -184,7 +184,7 @@ void Options::execute(TafInfo *ti) {
 			case 5:
 				if (g_engine->_sound->musicEnabled()) {
 					g_engine->_sound->toggleMusic(false);
-					_G(sndPlayer)->stopMod();
+					g_engine->_sound->stopMusic();
 				} else {
 					g_engine->_sound->toggleMusic(true);
 					_G(currentSong) = -1;

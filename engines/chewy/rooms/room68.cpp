@@ -347,8 +347,9 @@ void Room68::kostuem_aad(int16 aad_nr) {
 	else if (!_G(gameState).R67LiedOk)
 		startAadWait(389);
 	else {
-		if (!g_engine->_sound->subtitlesEnabled())
-			_G(sndPlayer)->fadeOut(5);
+		// TODO: Reimplement
+		//if (!g_engine->_sound->subtitlesEnabled())
+		//	_G(sndPlayer)->fadeOut(5);
 		
 		_G(SetUpScreenFunc) = nullptr;
 		delInventory(_G(gameState).AkInvent);

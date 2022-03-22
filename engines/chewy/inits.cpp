@@ -41,7 +41,6 @@ void standard_init() {
 	_G(uhr) = new Timer(MAX_TIMER_OBJ, _G(ani_timer));
 	_G(det) = new Detail();
 	_G(atds) = new Atdsys();
-	_G(sndPlayer) = new SoundPlayer();
 	_G(mov) = new MovClass();
 
 	_G(out)->init();
@@ -256,7 +255,6 @@ void tidy() {
 	delete _G(iog);
 	delete _G(cur);
 	delete _G(mov);
-	delete _G(sndPlayer);
 	delete _G(atds);
 	delete _G(det);
 	delete _G(uhr);
@@ -272,7 +270,6 @@ void tidy() {
 	_G(iog) = nullptr;
 	_G(cur) = nullptr;
 	_G(mov) = nullptr;
-	_G(sndPlayer) = nullptr;
 	_G(atds) = nullptr;
 	_G(det) = nullptr;
 	_G(uhr) = nullptr;
@@ -287,26 +284,10 @@ void tidy() {
 }
 
 void sound_init() {
-	_G(sndPlayer)->initMixMode();
 	_G(gameState).MusicVol = 63;
 	_G(gameState).SoundVol = 63;
 	g_engine->_sound->setMusicVolume(_G(gameState).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
 	g_engine->_sound->setSoundVolume(_G(gameState).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
-
-	_G(music_handle) = _G(room)->open_handle(DETAIL_TVP, R_VOC_DATA);
-
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_G(music_handle));
-	assert(rs);
-
-	rs->seek(0);
-	_G(EndOfPool) = 0;
-	NewPhead Nph;
-	if (!Nph.load(rs)) {
-		error("sound_init error");
-	} else {
-		_G(EndOfPool) = Nph._poolNr - 1;
-	}
-
 	_G(atds)->setHasSpeech(true);
 }
 

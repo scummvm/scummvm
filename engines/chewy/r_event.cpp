@@ -845,17 +845,16 @@ void flic_cut(int16 nr) {
 
 	switch (nr) {
 	case FCUT_SPACECHASE_18:
-		_G(sndPlayer)->setLoopMode(1);
-
+		// _G(sndPlayer)->setLoopMode(1)
 		for (i = 0; i < 11 && keepPlaying; i++) {
 			keepPlaying = g_engine->_video->playVideo(FCUT_SPACECHASE_18 + i);
 		}
 
-		_G(sndPlayer)->fadeOut(0);
+		// TODO: Reimplement
+		//_G(sndPlayer)->fadeOut(0);
 		_G(out)->ausblenden(1);
 		_G(out)->cls();
-		while (_G(sndPlayer)->musicPlaying()) {}
-		_G(sndPlayer)->setLoopMode(_G(gameState).soundLoopMode);
+		//while (_G(sndPlayer)->musicPlaying()) {}
 		break;
 
 	case FCUT_058:
@@ -871,19 +870,18 @@ void flic_cut(int16 nr) {
 			g_engine->_video->playVideo(FCUT_062);
 		}
 
-		_G(sndPlayer)->fadeOut(0);
+		// TODO: Reimplement
+		//_G(sndPlayer)->fadeOut(0);
 		_G(out)->ausblenden(1);
 		_G(out)->cls();
-		while (_G(sndPlayer)->musicPlaying() && !SHOULD_QUIT) {}
+		//while (_G(sndPlayer)->musicPlaying() && !SHOULD_QUIT) {}
 		break;
 
 	case FCUT_065:
-		_G(sndPlayer)->stopMod();
+		g_engine->_sound->stopMusic();
 		_G(currentSong) = -1;
 		load_room_music(256);
-		_G(sndPlayer)->setLoopMode(1);
 		Room46::kloppe();
-		_G(sndPlayer)->setLoopMode(_G(gameState).soundLoopMode);
 		_G(currentSong) = -1;
 		break;
 

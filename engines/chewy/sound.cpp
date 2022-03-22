@@ -22,6 +22,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "audio/mods/protracker.h"
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "chewy/resource.h"
@@ -110,25 +111,33 @@ void Sound::playMusic(int num, bool loop) {
 	playMusic(data, chunk->size, loop);
 
 	delete[] data;
-	delete chunk;
 }
 
 void Sound::playMusic(uint8 *data, uint32 size, bool loop, DisposeAfterUse::Flag dispose) {
+#if 0
 	uint8 *modData = nullptr;
 	uint32 modSize;
 
+	/*
+	// TODO: Finish and use convertTMFToMod()
 	warning("The current music playing implementation is wrong");
 	modSize = size;
 	modData = (uint8 *)MALLOC(modSize);
 	memcpy(modData, data, size);
-
+	
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 	                                 Audio::makeRawStream(modData,
 	                                         modSize, 22050, Audio::FLAG_UNSIGNED,
 	                                         dispose),
 	                                 loop ? 0 : 1);
+	*/
+
+	convertTMFToMod(data, size, modData, modSize);
+	Audio::AudioStream *stream = Audio::makeProtrackerStream(
+		new Common::MemoryReadStream(data, size));
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
+#endif
 }
 
 void Sound::pauseMusic() {
@@ -205,7 +214,6 @@ void Sound::stopAll() {
 }
 
 void Sound::convertTMFToMod(uint8 *tmfData, uint32 tmfSize, uint8 *modData, uint32 &modSize) {
-
 	const int maxInstruments = 31;
 
 	modSize = tmfSize + 20 + maxInstruments * 22 + 4;
@@ -272,7 +280,7 @@ void Sound::convertTMFToMod(uint8 *tmfData, uint32 tmfSize, uint8 *modData, uint
 	WRITE_BE_UINT32(modPtr, MKTAG('M', '.', 'K', '.'));
 	modPtr += 4;
 
-	free(modData);
+	// TODO: Finish this
 }
 
 void Sound::waitForSpeechToFinish() {

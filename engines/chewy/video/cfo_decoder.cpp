@@ -281,7 +281,8 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 		case kChunkMusicFadeOut:
 			// Used in videos 0, 71
 			channel = _fileStream->readUint16LE();
-			_G(sndPlayer)->fadeOut(channel);
+			// TODO: Reimplement
+			//_G(sndPlayer)->fadeOut(channel);
 			break;
 		case kChunkSetBalance:
 			channel = _fileStream->readUint16LE();

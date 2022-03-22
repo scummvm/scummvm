@@ -30,14 +30,9 @@ namespace Chewy {
 #define PATTERN_PLAY 2
 
 void load_room_music(int16 room_nr) {
-	const int16 seq_start = 0;
-	const int16 seq_end = 0;
-	const int16 pattern = 0;
 	int16 ttp_index = -1;
 	int16 volume = _G(gameState).MusicVol;
-	const int16 lp_mode = 1;
-	const int16 play_mode = NORMAL_PLAY;
-	if (g_engine->_sound->musicEnabled() && (_G(music_handle))) {
+	if (g_engine->_sound->musicEnabled()) {
 		switch (room_nr) {
 		case 0:
 			ttp_index = 0;
@@ -178,7 +173,7 @@ void load_room_music(int16 room_nr) {
 		default:
 			ttp_index = -1;
 			_G(currentSong) = -1;
-			_G(sndPlayer)->stopMod();
+			g_engine->_sound->stopMusic();
 			break;
 		}
 		if (ttp_index != -1) {
@@ -187,24 +182,10 @@ void load_room_music(int16 room_nr) {
 			else if (volume > _G(gameState).MusicVol)
 				volume = _G(gameState).MusicVol;
 			g_engine->_sound->setMusicVolume(volume * Audio::Mixer::kMaxChannelVolume / 120);
-			_G(sndPlayer)->setLoopMode(lp_mode);
 			if (ttp_index != _G(currentSong)) {
-				_G(sndPlayer)->stopMod();
-				while (_G(sndPlayer)->musicPlaying()) {}
-				memset(_G(Ci).MusicSlot, 0, MUSIC_SLOT_SIZE);
-				_G(mem)->file->selectPoolItem(_G(music_handle), _G(EndOfPool) - ttp_index);
-				_G(mem)->file->load_tmf(_G(music_handle), (TmfHeader *)_G(Ci).MusicSlot);
+				g_engine->_sound->stopMusic();
 				_G(currentSong) = ttp_index;
-				if (play_mode == NORMAL_PLAY)
-					_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
-				else {
-					_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
-					_G(sndPlayer)->stopMod();
-					if (play_mode == SEQUENCE_PLAY)
-						_G(sndPlayer)->playSequence(seq_start, seq_end);
-					else if (play_mode == PATTERN_PLAY)
-						_G(sndPlayer)->playPattern(pattern);
-				}
+				g_engine->_sound->playMusic(ttp_index, true);
 			}
 		}
 	}

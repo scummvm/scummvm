@@ -40,14 +40,12 @@ int MainMenu::_personAni[3];
 void MainMenu::execute() {
 	// Convenience during testing to not keep showing title sequence
 	if (!ConfMan.getBool("skip_title")) {
-		_G(mem)->file->selectPoolItem(_G(music_handle), _G(EndOfPool) - 17);
-		_G(mem)->file->load_tmf(_G(music_handle), (TmfHeader *)_G(Ci).MusicSlot);
-		_G(sndPlayer)->playMod((TmfHeader *)_G(Ci).MusicSlot);
+		g_engine->_sound->playMusic(17);
 
 		// NOTE: Originally, this was set to play video 200, but this actually
 		// jumped to the very last video in the file, so we play it explicitly
 		flic_cut(g_engine->getLanguage() == Common::Language::DE_DEU ? FCUT_155 : FCUT_160);
-		_G(sndPlayer)->stopMod();
+		g_engine->_sound->stopMusic();
 	}
 
 	show_intro();
@@ -243,7 +241,6 @@ void MainMenu::playGame() {
 	_G(cur)->show_cur();
 	_G(spieler_vector)[P_CHEWY].Count = 0;
 	_G(uhr)->resetTimer(0, 0);
-	_G(sndPlayer)->setLoopMode(_G(gameState).soundLoopMode);
 
 	while (!SHOULD_QUIT && !mainLoop(1)) {
 	}

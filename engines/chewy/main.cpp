@@ -72,8 +72,6 @@ void alloc_buffers() {
 	_G(pal) = (byte *)MALLOC(768l);
 	_G(Ci).TempArea = (byte *)MALLOC(64004l);
 	_G(det)->set_taf_ani_mem(_G(Ci).TempArea);
-	_G(Ci).MusicSlot = (byte *)MALLOC(MUSIC_SLOT_SIZE);
-	_G(Ci).MaxMusicSize = MUSIC_SLOT_SIZE;
 }
 
 void free_buffers() {
@@ -86,7 +84,6 @@ void free_buffers() {
 	free((char *)_G(chewy));
 
 	free((char *)_G(curtaf));
-	free(_G(Ci).MusicSlot);
 	free(_G(Ci).TempArea);
 	free(_G(pal));
 	free(_G(workpage));

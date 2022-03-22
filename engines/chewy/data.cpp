@@ -55,38 +55,6 @@ uint16 Data::selectPoolItem(Common::Stream *stream, uint16 nr) {
 	return nr;
 }
 
-uint32 Data::load_tmf(Common::Stream *handle, TmfHeader *song) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
-	uint32 size = 0;
-
-	if (rs) {
-		rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
-		ChunkHead ch;
-		if (!ch.load(rs))
-			error("load_tmf error");
-
-		if (ch.type != TMFDATA)
-			error("load_tmf error");
-
-		assert(ch.size > (uint32)TmfHeader::SIZE());
-
-		if (!song->load(rs))
-			error("load_tmf error");
-
-		size = ch.size + sizeof(TmfHeader);
-		byte *memPtr = (byte *)song + sizeof(TmfHeader);
-		memPtr += ((uint32)song->_patternNr) * 1024l;
-		for (int16 i = 0; i < 31; ++i) {
-			if (song->instrument[i].laenge) {
-				song->ipos[i] = memPtr;
-				memPtr += song->instrument[i].laenge;
-			}
-		}
-	}
-
-	return size;
-}
-
 uint32 Data::getPoolSize(const char *filename, int16 chunkStart, int16 chunkNr) {
 	uint32 size = 0;
 

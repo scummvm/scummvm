@@ -29,7 +29,6 @@ MODULE_OBJS = \
 	room.o \
 	resource.o \
 	sound.o \
-	sound_player.o \
 	sprite.o \
 	t_event.o \
 	text.o \

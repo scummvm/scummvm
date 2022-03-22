@@ -33,7 +33,6 @@
 #include "chewy/text.h"
 #include "chewy/object.h"
 #include "chewy/effect.h"
-#include "chewy/sound_player.h"
 
 namespace Chewy {
 
@@ -50,7 +49,6 @@ class InputMgr;
 class IOGame;
 class McgaGraphics;
 class Memory;
-class SoundPlayer;
 
 class Globals {
 	class CurrentScreen : public Graphics::Surface {
@@ -158,8 +156,6 @@ public:
 	int16 _talk_hide_static = -1;
 	int16 _currentSong = -1;
 	bool _savegameFlag = false;
-	Common::Stream *_music_handle = nullptr;
-	int16 _EndOfPool = 0;
 	int _timer_action_ctr = 0;
 
 	AutoMov _auto_mov[MAX_AUTO_MOV];
@@ -246,7 +242,6 @@ public:
 	IOGame *_iog = nullptr;
 	McgaGraphics *_out = nullptr;
 	Cursor *_cur = nullptr;
-	SoundPlayer *_sndPlayer = nullptr;
 	ChewyFont *_font6 = nullptr;
 	ChewyFont *_font8 = nullptr;
 	FontMgr *_fontMgr = nullptr;

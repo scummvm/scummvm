@@ -37,7 +37,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 	_playCount = 0;
 
 	if (stopMusic) {
-		_G(sndPlayer)->stopMod();
+		g_engine->_sound->stopMusic();
 		_G(currentSong) = -1;
 	}
 

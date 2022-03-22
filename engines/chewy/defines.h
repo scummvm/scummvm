@@ -52,7 +52,6 @@ enum SetupScreenMode {
 
 #define MIN_FAR_MEM 3000000
 #define MIN_LOW_MEM 100000
-#define MUSIC_SLOT_SIZE 500000
 #define SPEECH_HALF_BUF 25000
 
 #define JXDIFF 180

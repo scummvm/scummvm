@@ -23,7 +23,6 @@
 #define CHEWY_DATA_H
 
 #include "chewy/chewy.h"
-#include "chewy/ngstypes.h"
 
 namespace Chewy {
 
@@ -33,8 +32,6 @@ public:
 	~Data();
 
 	uint16 selectPoolItem(Common::Stream *stream, uint16 nr);
-	uint32 load_tmf(Common::Stream *stream, TmfHeader *song);
-
 	uint32 getPoolSize(const char *filename, int16 chunkStart, int16 chunkNr);
 };
 

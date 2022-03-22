@@ -51,28 +51,6 @@ struct MouseInfo {
 	int16 _button = 0;
 };
 
-struct TmfInst {
-	uint8 finetune;
-	uint8 insvol;
-	uint32 repstart;
-	uint32 replen;
-	uint32 laenge;
-
-	bool load(Common::SeekableReadStream *src);
-};
-
-struct TmfHeader {
-	char id[4] = { 0 };
-	TmfInst instrument[31];
-	uint8 lied_len = 0;
-	uint8 _patternNr = 0;
-	uint8 _sequence[128] = { 0 };
-	byte *ipos[31] = { nullptr };
-
-	bool load(Common::SeekableReadStream *src);
-	static int SIZE() { return 0x284; }
-};
-
 struct musik_info {
 	int16 musik_playing = 0;
 	int16 play_mode = 0;
@@ -118,8 +96,6 @@ struct ChunkHead {
 
 struct CustomInfo {
 	byte *TempArea = 0;
-	byte *MusicSlot = 0;
-	uint32 MaxMusicSize = 0;
 };
 
 } // namespace Chewy

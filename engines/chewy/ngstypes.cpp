@@ -32,29 +32,6 @@ bool NewPhead::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool TmfInst::load(Common::SeekableReadStream *src) {
-	finetune = src->readByte();
-	insvol = src->readByte();
-	repstart = src->readUint32LE();
-	replen = src->readUint32LE();
-	laenge = src->readUint32LE();
-
-	return true;
-}
-
-bool TmfHeader::load(Common::SeekableReadStream *src) {
-	src->read(id, 4);
-	for (int i = 0; i < 31; ++i)
-		instrument[i].load(src);
-
-	lied_len = src->readByte();
-	_patternNr = src->readByte();
-	src->read(_sequence, 128);
-	src->skip(4 * 31);
-
-	return true;
-}
-
 bool GedPoolHeader::load(Common::SeekableReadStream *src) {
 	src->read(_id, 4);
 	_nr = src->readUint16LE();
