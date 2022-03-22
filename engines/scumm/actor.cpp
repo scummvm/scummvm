@@ -2861,13 +2861,14 @@ void ScummEngine::resetV1ActorTalkColor() {
 void ScummEngine_v7::actorTalk(const byte *msg) {
 	Actor *a;
 	bool stringWrap = false;
+	bool usingOldSystem = (_game.id == GID_FT) || (_game.id == GID_DIG && _game.features & GF_DEMO);
 
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 
 	// Play associated speech, if any
 	playSpeech((byte *)_lastStringTag);
 
-	if (_game.id == GID_DIG || _game.id == GID_CMI) {
+	if (!usingOldSystem) {
 		if (VAR(VAR_HAVE_MSG)) {
 			if (_game.id == GID_DIG && _roomResource == 58 && msg[0] == ' ' && !msg[1])
 				return;
@@ -2900,15 +2901,18 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	_charsetBufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 1;
-	if (_game.id == GID_FT)
+	if (usingOldSystem)
 		VAR(VAR_HAVE_MSG) = 0xFF;
-	_haveActorSpeechMsg = (_game.id == GID_FT) ? true : (!_sound->isSoundRunning(kTalkSoundID));
-	if (_game.id == GID_DIG || _game.id == GID_CMI) {
+	_haveActorSpeechMsg = usingOldSystem ? true : (!_sound->isSoundRunning(kTalkSoundID));
+
+	if (!usingOldSystem) {
 		stringWrap = _string[0].wrapping;
 		_string[0].wrapping = true;
 	}
+
 	CHARSET_1();
-	if (_game.id == GID_DIG || _game.id == GID_CMI) {
+
+	if (!usingOldSystem) {
 		if (_game.version == 8)
 			VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
 		else
@@ -3042,7 +3046,7 @@ void ScummEngine::stopTalk() {
 			((ActorHE *)a)->_heTalking = false;
 	}
 
-	if (_game.id == GID_DIG || _game.id == GID_CMI) {
+	if ((_game.id == GID_DIG && !(_game.features & GF_DEMO)) || _game.id == GID_CMI) {
 		setTalkingActor(0);
 		VAR(VAR_HAVE_MSG) = 0;
 	} else if (_game.heversion >= 60) {

@@ -511,7 +511,7 @@ void ScummEngine_v8::printString(int m, const byte *msg) {
 #pragma mark -
 
 void ScummEngine_v7::processSubtitleQueue() {
-	bool usingOldSystem = (_game.id == GID_FT);
+	bool usingOldSystem = (_game.id == GID_FT) || (_game.id == GID_DIG && _game.features & GF_DEMO);
 	for (int i = 0; i < _subtitleQueuePos; ++i) {
 		SubtitleText *st = &_subtitleQueue[i];
 		if (!st->actorSpeechMsg && (!ConfMan.getBool("subtitles") || VAR(VAR_VOICE_MODE) == 0))
