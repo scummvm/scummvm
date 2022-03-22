@@ -44,7 +44,7 @@ void SOUNDCLIP::set_volume255(int volume) {
 }
 
 void SOUNDCLIP::set_volume_direct(int vol_percent, int vol_absolute) {
-	//vol255 = vol255;
+	_vol255 = vol_absolute;
 	_vol100 = vol_percent;
 	adjust_volume();
 }
