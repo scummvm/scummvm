@@ -442,7 +442,7 @@ int NutRenderer::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, in
 				src += clipWdth;
 				dst += pitch;
 			}
-		}		
+		}
 	}
 	return _direction * width;
 }
