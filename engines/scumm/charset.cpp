@@ -1501,10 +1501,18 @@ void CharsetRendererPCE::setDrawCharIntern(uint16 chr) {
 }
 #endif
 
-CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile, bool correctFontSpacing)
+CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile)
 	 : CharsetRendererCommon(vm) {
 
-	_correctFontSpacing = correctFontSpacing;
+	// The original Macintosh interpreter didn't use the correct spacing
+	// between characters for some of the text, e.g. the Grail Diary. This
+	// appears to have been because of rounding errors, and was apparently
+	// fixed in Loom. Enabling this allows ScummVM to draw the text more
+	// correctly, at the cost of not matching the original quite as well.
+	// (At the time of writing, there are still cases, at least in Loom,
+	// where text isn't correctly positioned.)
+
+	_correctFontSpacing = _vm->_game.id == GID_LOOM || _vm->_enableEnhancements;
 	_pad = false;
 	_glyphSurface = nullptr;
 
