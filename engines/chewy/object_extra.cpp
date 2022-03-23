@@ -91,10 +91,17 @@ void RoomStaticInventory::synchronize(Common::Serializer &s) {
 }
 
 bool SibFileHeader::load(Common::SeekableReadStream *src) {
-	src->read(Id, 4);
-	Anz = src->readUint16LE();
+	src->read(_id, 4);
+	_nr = src->readUint16LE();
 
 	return true;
+}
+
+SibFileHeader::SibFileHeader() {
+	for (int i = 0; i < 4; ++i) {
+		_id[i] = 0;
+	}
+	_nr = 0;
 }
 
 bool RoomExit::load(Common::SeekableReadStream *src) {
@@ -117,10 +124,17 @@ void RoomExit::synchronize(Common::Serializer &s) {
 }
 
 bool EibFileHeader::load(Common::SeekableReadStream *src) {
-	src->read(Id, 4);
-	Anz = src->readSint16LE();
+	src->read(_id, 4);
+	_nr = src->readSint16LE();
 
 	return true;
+}
+
+EibFileHeader::EibFileHeader() {
+	for (int i = 0; i < 4; ++i) {
+		_id[i] = 0;
+	}
+	_nr = 0;
 }
 
 } // namespace Chewy

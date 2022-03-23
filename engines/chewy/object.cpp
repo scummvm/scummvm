@@ -111,17 +111,17 @@ int16 Object::load(const char *filename, RoomStaticInventory *rsi) {
 			error("Object::load error");
 		}
 
-		if (!scumm_strnicmp(_sibFileHeader.Id, "SIB", 3)) {
-			if (_sibFileHeader.Anz) {
+		if (!scumm_strnicmp(_sibFileHeader._id, "SIB", 3)) {
+			if (_sibFileHeader._nr) {
 				bool valid = true;
-				for (int i = 0; i < _sibFileHeader.Anz && valid; ++i, ++rsi) {
+				for (int i = 0; i < _sibFileHeader._nr && valid; ++i, ++rsi) {
 					valid = rsi->load(&f);
 				}
 
 				if (!valid)
 					error("Object::load error");
 
-				_maxStaticInventory = _sibFileHeader.Anz;
+				_maxStaticInventory = _sibFileHeader._nr;
 			} else
 				_maxStaticInventory = 0;
 		} else {
@@ -144,17 +144,17 @@ int16 Object::load(const char *filename, RoomExit *roomExit) {
 			error("Object::load error");
 		}
 
-		if (!scumm_strnicmp(_eibFileHeader.Id, "EIB", 3)) {
-			if (_sibFileHeader.Anz) {
+		if (!scumm_strnicmp(_eibFileHeader._id, "EIB", 3)) {
+			if (_sibFileHeader._nr) {
 				bool valid = true;
-				for (int i = 0; i < _eibFileHeader.Anz && valid; ++i, ++roomExit) {
+				for (int i = 0; i < _eibFileHeader._nr && valid; ++i, ++roomExit) {
 					valid = roomExit->load(&f);
 				}
 
 				if (!valid)
 					error("Object::load error");
 
-				_maxExit = _eibFileHeader.Anz;
+				_maxExit = _eibFileHeader._nr;
 			} else
 				_maxExit = 0;
 		} else {

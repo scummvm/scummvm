@@ -102,10 +102,12 @@ struct RoomStaticInventory {
 };
 
 struct SibFileHeader {
-	char Id[4];
-	int16 Anz;
+	char _id[4];
+	int16 _nr;
 
 	bool load(Common::SeekableReadStream *src);
+
+	SibFileHeader();
 };
 
 struct RoomExit {
@@ -125,10 +127,11 @@ struct RoomExit {
 };
 
 struct EibFileHeader {
-	char Id[4];
-	int16 Anz;
+	char _id[4];
+	int16 _nr;
 
 	bool load(Common::SeekableReadStream *src);
+	EibFileHeader();
 };
 
 } // namespace Chewy

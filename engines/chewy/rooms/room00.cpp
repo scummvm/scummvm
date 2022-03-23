@@ -31,23 +31,20 @@ namespace Chewy {
 namespace Rooms {
 
 #define FLAP_SPRITE 5
-#define SCHLEIM_DETAIL 2
-#define CH_ZIEHT_SCHLEIM 3
-#define CH_BLITZ 8
-#define TUER_DETAIL 9
+#define CH_FLASH 8
 #define FLAP_DETAIL 10
-#define SCHLAUCH_DETAIL 11
-#define CH_WIRFT_SCHLEIM 12
-#define CH_NACH_FUETTERN 13
-#define CH_WIRFT_KISSEN 14
-#define FUETTER_SCHLAUCH 15
+#define HOSE_DETAIL 11
+#define CH_THROWS_SLIME 12
+#define CH_TO_FEEDER 13
+#define CH_THROWS_PILLOW 14
+#define FEEDER_HOSE 15
 #define STERNE_STEHEN 16
-#define SCHLAUCH1 11
-#define SCHLAUCH2 38
-#define SCHLAUCH3 59
-#define KOPF1 39
-#define KOPF2 46
-#define KOPF3 48
+#define HOSE1 11
+#define HOSE2 38
+#define HOSE3 59
+#define HEAD1 39
+#define HEAD2 46
+#define HEAD3 48
 
 void Room0::entry() {
 	if (isCurInventory(0) || _G(gameState).R0PillowThrow || _G(obj)->checkInventory(0))
@@ -191,7 +188,7 @@ void Room0::eyeAnim() {
 }
 
 void Room0::eyeStart(EyeMode mode) {
-	AniDetailInfo *adi = _G(det)->getAniDetail(SCHLAUCH_DETAIL);
+	AniDetailInfo *adi = _G(det)->getAniDetail(HOSE_DETAIL);
 	if (mode == EYE_START)
 		adi->ani_count = adi->start_ani;
 	else
@@ -207,13 +204,13 @@ void Room0::eyeStart(EyeMode mode) {
 	if (mode == EYE_START) {
 		g_engine->_sound->playSound(FLAP_DETAIL, 0);
 		g_engine->_sound->stopSound(1);
-		g_engine->_sound->playSound(SCHLAUCH_DETAIL, 0);
+		g_engine->_sound->playSound(HOSE_DETAIL, 0);
 		g_engine->_sound->stopSound(2);
 	} else {
 		g_engine->_sound->stopSound(0);
 		g_engine->_sound->playSound(FLAP_DETAIL, 1);
 		g_engine->_sound->stopSound(0);
-		g_engine->_sound->playSound(SCHLAUCH_DETAIL, 2);
+		g_engine->_sound->playSound(HOSE_DETAIL, 2);
 	}
 
 	while (!ende) {
@@ -221,16 +218,16 @@ void Room0::eyeStart(EyeMode mode) {
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
 		if ((adi->ani_count > 11) && (adi->ani_count < 19)) {
-			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH1, ANI_HIDE);
+			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, HOSE1, ANI_HIDE);
 			_G(spr_info)[1]._zLevel = 191;
 		}
 		
 		if (adi->ani_count == 38) {
-			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF1, ANI_HIDE);
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, HEAD1, ANI_HIDE);
 			_G(spr_info)[2]._zLevel = 192;
 		}
 
-		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, adi->ani_count, ANI_HIDE);
 		_G(spr_info)[3]._zLevel = 193;
 		get_user_key(NO_SETUP);
 		setupScreen(NO_SETUP);
@@ -265,7 +262,7 @@ void Room0::eyeStart(EyeMode mode) {
 }
 
 void Room0::eyeWait() {
-	AniDetailInfo *adi = _G(det)->getAniDetail(SCHLAUCH_DETAIL);
+	AniDetailInfo *adi = _G(det)->getAniDetail(HOSE_DETAIL);
 	adi->ani_count = 39;
 	adi->delay_count = 15;
 	_G(flags).AniUserAction = true;
@@ -275,9 +272,9 @@ void Room0::eyeWait() {
 
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
-		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, HOSE2, ANI_HIDE);
 		_G(spr_info)[1]._zLevel = 191;
-		_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, adi->ani_count, ANI_HIDE);
 		_G(spr_info)[2]._zLevel = 192;
 		get_user_key(NO_SETUP);
 		setupScreen(NO_SETUP);
@@ -325,28 +322,28 @@ void Room0::calcEyeClick(int16 aniNr) {
 }
 
 void Room0::eyeShoot() {
-	AniDetailInfo *adi = _G(det)->getAniDetail(SCHLAUCH_DETAIL);
+	AniDetailInfo *adi = _G(det)->getAniDetail(HOSE_DETAIL);
 	adi->ani_count = 47;
 
-	bool ende = false;
-	_G(det)->startDetail(CH_BLITZ, 1, ANI_FRONT);
+	bool endLoopFl = false;
+	_G(det)->startDetail(CH_FLASH, 1, ANI_FRONT);
 
-	while (!ende) {
+	while (!endLoopFl) {
 		clear_prog_ani();
 		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
-		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, HOSE2, ANI_HIDE);
 		_G(spr_info)[1]._zLevel = 191;
 
 		if (adi->ani_count < 53) {
-			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, adi->ani_count, ANI_HIDE);
 			_G(spr_info)[2]._zLevel = 192;
 		} else {
-			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, 47, ANI_HIDE);
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, 47, ANI_HIDE);
 			_G(spr_info)[2]._zLevel = 192;
-			if (!_G(det)->get_ani_status(CH_BLITZ))
-				ende = true;
+			if (!_G(det)->get_ani_status(CH_FLASH))
+				endLoopFl = true;
 		}
 
 		setupScreen(DO_SETUP);
@@ -364,9 +361,9 @@ void Room0::eyeShoot() {
 	clear_prog_ani();
 	_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 	_G(spr_info)[0]._zLevel = 190;
-	_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
+	_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, HOSE2, ANI_HIDE);
 	_G(spr_info)[1]._zLevel = 191;
-	_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF2, ANI_HIDE);
+	_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, HEAD2, ANI_HIDE);
 	_G(spr_info)[2]._zLevel = 192;
 
 	waitShowScreen(30);
@@ -376,27 +373,27 @@ void Room0::eyeShoot() {
 }
 
 void Room0::eyeSlimeBack() {
-	AniDetailInfo *adi = _G(det)->getAniDetail(SCHLAUCH_DETAIL);
+	AniDetailInfo *adi = _G(det)->getAniDetail(HOSE_DETAIL);
 	adi->ani_count = 53;
 
-	bool ende = false;
+	bool endLoopFl = false;
 	_G(flags).AniUserAction = true;
 
-	while (!ende) {
+	while (!endLoopFl) {
 		clear_prog_ani();
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
 
 		if ((adi->ani_count > 52) && (adi->ani_count < 59)) {
-			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
+			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, HOSE2, ANI_HIDE);
 			_G(spr_info)[1]._zLevel = 191;
 		}
 		if (adi->ani_count == 61) {
-			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH3, ANI_HIDE);
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, HOSE3, ANI_HIDE);
 			_G(spr_info)[2]._zLevel = 192;
 		}
 
-		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, adi->ani_count, ANI_HIDE);
 		_G(spr_info)[3]._zLevel = 193;
 		set_ani_screen();
 		SHOULD_QUIT_RETURN;
@@ -407,7 +404,7 @@ void Room0::eyeSlimeBack() {
 			adi->delay_count = adi->delay + _G(gameState).DelaySpeed;
 			++adi->ani_count;
 			if (adi->ani_count == 77)
-				ende = true;
+				endLoopFl = true;
 		}
 	}
 
@@ -416,7 +413,7 @@ void Room0::eyeSlimeBack() {
 }
 
 void Room0::checkSlimeEye() {
-	AniDetailInfo *adi = _G(det)->getAniDetail(CH_WIRFT_SCHLEIM);
+	AniDetailInfo *adi = _G(det)->getAniDetail(CH_THROWS_SLIME);
 	adi->ani_count = adi->start_ani;
 	if (adi->load_flag) {
 		_G(det)->load_taf_seq(adi->start_ani, (adi->end_ani - adi->start_ani) + 1, nullptr);
@@ -427,11 +424,11 @@ void Room0::checkSlimeEye() {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
-		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, SCHLAUCH2, ANI_HIDE);
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, HOSE2, ANI_HIDE);
 		_G(spr_info)[1]._zLevel = 191;
-		_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, SCHLAUCH_DETAIL, KOPF2, ANI_HIDE);
+		_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, HOSE_DETAIL, HEAD2, ANI_HIDE);
 		_G(spr_info)[2]._zLevel = 192;
-		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, CH_WIRFT_SCHLEIM, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, CH_THROWS_SLIME, adi->ani_count, ANI_HIDE);
 		_G(spr_info)[3]._zLevel = 193;
 		setupScreen(DO_SETUP);
 
@@ -452,7 +449,7 @@ void Room0::checkSlimeEye() {
 }
 
 void Room0::feederStart(int16 mode) {
-	AniDetailInfo *adi = _G(det)->getAniDetail(FUETTER_SCHLAUCH);
+	AniDetailInfo *adi = _G(det)->getAniDetail(FEEDER_HOSE);
 	if (!mode)
 		adi->ani_count = adi->start_ani;
 	else
@@ -462,24 +459,24 @@ void Room0::feederStart(int16 mode) {
 		trapDoorOpen();
 		g_engine->_sound->playSound(FLAP_DETAIL, 0);
 		g_engine->_sound->stopSound(1);
-		g_engine->_sound->playSound(FUETTER_SCHLAUCH, 0);
+		g_engine->_sound->playSound(FEEDER_HOSE, 0);
 		g_engine->_sound->stopSound(2);
 	} else {
 		g_engine->_sound->stopSound(0);
 		g_engine->_sound->playSound(FLAP_DETAIL, 1);
 		g_engine->_sound->stopSound(0);
-		g_engine->_sound->playSound(FUETTER_SCHLAUCH, 2);
+		g_engine->_sound->playSound(FEEDER_HOSE, 2);
 	}
 
-	bool ende = false;
+	bool endLoopFl = false;
 	if (_G(gameState).R0SlimeUsed)
 		_G(flags).AniUserAction = true;
 
-	while (!ende) {
+	while (!endLoopFl) {
 		clear_prog_ani();
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
-		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FEEDER_HOSE, adi->ani_count, ANI_HIDE);
 		_G(spr_info)[1]._zLevel = 191;
 
 		if (_G(flags).AniUserAction)
@@ -501,11 +498,11 @@ void Room0::feederStart(int16 mode) {
 			if (!mode) {
 				++adi->ani_count;
 				if (adi->ani_count > 135)
-					ende = true;
+					endLoopFl = true;
 			} else {
 				--adi->ani_count;
 				if (adi->ani_count == adi->start_ani - 1)
-					ende = true;
+					endLoopFl = true;
 			}
 		}
 	}
@@ -526,7 +523,7 @@ void Room0::feederExtend() {
 		clear_prog_ani();
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
-		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 136, ANI_HIDE);
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FEEDER_HOSE, 136, ANI_HIDE);
 		_G(spr_info)[1]._zLevel = 191;
 		get_user_key(NO_SETUP);
 		setupScreen(NO_SETUP);
@@ -563,16 +560,16 @@ void Room0::calcPillowClick(int16 aniNr) {
 }
 
 void Room0::checkFeed() {
-	AniDetailInfo *adi = _G(det)->getAniDetail(FUETTER_SCHLAUCH);
+	AniDetailInfo *adi = _G(det)->getAniDetail(FEEDER_HOSE);
 	adi->ani_count = 136;
 
 	int16 i = 152;
-	bool ende = false;
+	bool endLoopFl = false;
 
 	if (_G(gameState).R0SlimeUsed)
 		_G(flags).AniUserAction = true;
 
-	while (!ende) {
+	while (!endLoopFl) {
 		clear_prog_ani();
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
@@ -584,21 +581,21 @@ void Room0::checkFeed() {
 		}
 
 		if (adi->ani_count > 138) {
-			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 138, ANI_HIDE);
+			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FEEDER_HOSE, 138, ANI_HIDE);
 			_G(spr_info)[1]._zLevel = 191;
 		}
 		
 		if (adi->ani_count > 141) {
-			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, i, ANI_HIDE);
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, FEEDER_HOSE, i, ANI_HIDE);
 			_G(spr_info)[2]._zLevel = 192;
 		}
 
 		if (adi->ani_count == 138) {
-			_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 139, ANI_HIDE);
+			_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, FEEDER_HOSE, 139, ANI_HIDE);
 			_G(spr_info)[3]._zLevel = 193;
 		}
 
-		_G(spr_info)[4] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[4] = _G(det)->plot_detail_sprite(0, 0, FEEDER_HOSE, adi->ani_count, ANI_HIDE);
 		_G(spr_info)[4]._zLevel = 194;
 		set_ani_screen();
 		SHOULD_QUIT_RETURN;
@@ -611,36 +608,36 @@ void Room0::checkFeed() {
 				++i;
 			++adi->ani_count;
 			if (adi->ani_count == 152)
-				ende = true;
+				endLoopFl = true;
 		}
 	}
 
 	adi->ani_count = 138;
-	_G(det)->startDetail(CH_NACH_FUETTERN, 2, ANI_FRONT);
+	_G(det)->startDetail(CH_TO_FEEDER, 2, ANI_FRONT);
 
-	ende = false;
-	while (!ende) {
+	endLoopFl = false;
+	while (!endLoopFl) {
 		clear_prog_ani();
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
 
 		if (adi->ani_count > 138) {
-			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 138, ANI_HIDE);
+			_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FEEDER_HOSE, 138, ANI_HIDE);
 			_G(spr_info)[1]._zLevel = 191;
 		}
 
 		if (adi->ani_count == 138) {
-			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 139, ANI_HIDE);
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, FEEDER_HOSE, 139, ANI_HIDE);
 			_G(spr_info)[2]._zLevel = 192;
 		}
 
-		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
+		_G(spr_info)[3] = _G(det)->plot_detail_sprite(0, 0, FEEDER_HOSE, adi->ani_count, ANI_HIDE);
 		_G(spr_info)[3]._zLevel = 193;
 		set_ani_screen();
 		SHOULD_QUIT_RETURN;
 
-		if (!_G(det)->get_ani_status(CH_NACH_FUETTERN))
-			ende = true;
+		if (!_G(det)->get_ani_status(CH_TO_FEEDER))
+			endLoopFl = true;
 
 		if (adi->delay_count > 0)
 			--adi->delay_count;
@@ -657,17 +654,17 @@ void Room0::checkFeed() {
 }
 
 void Room0::checkPillow() {
-	AniDetailInfo *adi = _G(det)->getAniDetail(FUETTER_SCHLAUCH);
+	AniDetailInfo *adi = _G(det)->getAniDetail(FEEDER_HOSE);
 	adi->ani_count = 161;
 
-	bool ende = false;
+	bool endLoopFl = false;
 	_G(gameState)._personHide[P_CHEWY] = true;
-	_G(det)->startDetail(CH_WIRFT_KISSEN, 1, ANI_FRONT);
+	_G(det)->startDetail(CH_THROWS_PILLOW, 1, ANI_FRONT);
 	bool mode = false;
 
-	while (!ende) {
+	while (!endLoopFl) {
 		clear_prog_ani();
-		if (!_G(det)->get_ani_status(CH_WIRFT_KISSEN)) {
+		if (!_G(det)->get_ani_status(CH_THROWS_PILLOW)) {
 			mode = true;
 			_G(gameState)._personHide[P_CHEWY] = false;
 			setPersonPos(228 - CH_HOT_MOV_X, 143 - CH_HOT_MOV_Y, P_CHEWY, P_LEFT);
@@ -675,11 +672,11 @@ void Room0::checkPillow() {
 
 		_G(spr_info)[0] = _G(det)->plot_detail_sprite(0, 0, FLAP_DETAIL, FLAP_SPRITE, ANI_HIDE);
 		_G(spr_info)[0]._zLevel = 190;
-		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, 138, ANI_HIDE);
+		_G(spr_info)[1] = _G(det)->plot_detail_sprite(0, 0, FEEDER_HOSE, 138, ANI_HIDE);
 		_G(spr_info)[1]._zLevel = 191;
 
 		if (mode) {
-			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, FUETTER_SCHLAUCH, adi->ani_count, ANI_HIDE);
+			_G(spr_info)[2] = _G(det)->plot_detail_sprite(0, 0, FEEDER_HOSE, adi->ani_count, ANI_HIDE);
 			_G(spr_info)[2]._zLevel = 192;
 		}
 
@@ -693,7 +690,7 @@ void Room0::checkPillow() {
 				adi->delay_count = adi->delay + _G(gameState).DelaySpeed;
 				--adi->ani_count;
 				if (adi->ani_count == 151)
-					ende = true;
+					endLoopFl = true;
 			}
 		}
 	}
