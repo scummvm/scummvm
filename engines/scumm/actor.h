@@ -206,7 +206,7 @@ public:
 	void putActor(int x, int y, int room);
 	void setActorWalkSpeed(uint newSpeedX, uint newSpeedY);
 protected:
-	int calcMovementFactor(const Common::Point& next);
+	virtual int calcMovementFactor(const Common::Point& next);
 	int actorWalkStep();
 	int remapDirection(int dir, bool is_walking);
 	virtual void setupActorScale();
@@ -336,7 +336,7 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 protected:
-	int calcMovementFactor(const Common::Point& next);
+	int calcMovementFactor(const Common::Point& next) override;
 	int actorWalkStep();
 
 	void setupActorScale() override;
