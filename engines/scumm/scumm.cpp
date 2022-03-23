@@ -1710,10 +1710,9 @@ void ScummEngine::setupCharsetRenderer(const Common::String &macFontFile) {
 #endif
 		if (_game.platform == Common::kPlatformFMTowns)
 			_charset = new CharsetRendererTownsV3(this);
-		else if (_game.platform == Common::kPlatformMacintosh && !macFontFile.empty()) {
-			bool correctFontSpacing = _game.id == GID_LOOM || ConfMan.getBool("mac_v3_correct_font_spacing");
-			_charset = new CharsetRendererMac(this, macFontFile, correctFontSpacing);
-		} else
+		else if (_game.platform == Common::kPlatformMacintosh && !macFontFile.empty())
+			_charset = new CharsetRendererMac(this, macFontFile);
+		else
 			_charset = new CharsetRendererV3(this);
 #ifdef ENABLE_SCUMM_7_8
 	} else if (_game.version == 8) {

@@ -293,7 +293,7 @@ protected:
 	Graphics::Surface *_glyphSurface;
 
 public:
-	CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile, bool correctFontSpacing);
+	CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile);
 	~CharsetRendererMac() override;
 
 	void setCurID(int32 id) override;

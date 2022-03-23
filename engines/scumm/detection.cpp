@@ -199,13 +199,6 @@ static const ExtraGuiOption macV3LowQualityMusic = {
 	false
 };
 
-static const ExtraGuiOption macV3CorrectFontSpacing = {
-	_s("Use correct font spacing"),
-	_s("Draw text with correct font spacing. This arguably looks better, but doesn't match the original behavior."),
-	"mac_v3_correct_font_spacing",
-	false
-};
-
 static const ExtraGuiOption smoothScrolling = {
 	_s("Enable smooth scrolling"),
 	_s("(instead of the normal 8-pixels steps scrolling)"),
@@ -259,18 +252,6 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 
 	if (target.empty() || (gameid == "loom" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
 		options.push_back(macV3LowQualityMusic);
-	}
-
-	// The original Macintosh interpreter didn't use the correct spacing
-	// between characters for some of the text, e.g. the Grail Diary. This
-	// appears to have been because of rounding errors, and was apparently
-	// fixed in Loom. Enabling this setting allows ScummVM to draw the
-	// text more correctly, at the cost of not matching the original quite
-	// as well. (At the time of writing, there are still cases, at least in
-	// Loom, where text isn't correctly positioned.)
-
-	if (target.empty() || (gameid == "indy3" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
-		options.push_back(macV3CorrectFontSpacing);
 	}
 
 	return options;
