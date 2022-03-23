@@ -202,6 +202,8 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 	int16 delay_flag;
 	int8 ende = 0, zeichen, zaehler, cursor_z;
 	char zstring[81], z1string[81];
+	memset(zstring, 0, 81);
+	memset(z1string, 0, 81);
 	int8 einfuege_cur = 0;
 	unsigned char char_anf = 0, char_end = 0;
 	uint16 vorzeichen = 0;
