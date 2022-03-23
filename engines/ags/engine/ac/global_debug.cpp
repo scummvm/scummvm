@@ -62,7 +62,7 @@ String GetRuntimeInfo() {
 	                         "Sprite cache size: %d KB (limit %d KB; %d locked)",
 	                         _G(EngineVersion).LongString.GetCStr(), _GP(game).GetGameRes().Width, _GP(game).GetGameRes().Height, _GP(game).GetColorDepth(),
 	                         mode.Width, mode.Height, mode.ColorDepth, (_G(convert_16bit_bgr)) ? " BGR" : "",
-	                         mode.Windowed ? " W" : "",
+	                         mode.IsWindowed() ? " W" : "",
 	                         _G(gfxDriver)->GetDriverName(), filter->GetInfo().Name.GetCStr(),
 	                         render_frame.GetWidth(), render_frame.GetHeight(),
 	                         _GP(spriteset).GetCacheSize() / 1024, _GP(spriteset).GetMaxCacheSize() / 1024, _GP(spriteset).GetLockedSize() / 1024);

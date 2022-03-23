@@ -58,23 +58,33 @@ struct GraphicResolution : Size {
 	}
 };
 
+enum WindowMode {
+	kWnd_Windowed,      // regular resizable window with a border and a caption
+	kWnd_Fullscreen,    // real (aka exclusive) fullscreen mode
+	kWnd_FullDesktop    // borderless window filling whole desktop
+};
+
 // DisplayMode struct provides extended description of display mode
 struct DisplayMode : public GraphicResolution {
-	int32_t RefreshRate;
-	bool    Vsync;
-	bool    Windowed;
+	int32_t RefreshRate = 0;
+	bool Vsync = false;
+	WindowMode Mode = kWnd_Windowed;
 
-	DisplayMode()
-		: RefreshRate(0)
-		, Vsync(false)
-		, Windowed(false) {
+	// Tells if this is logically a normal windowed mode
+	inline bool IsWindowed() const {
+		return Mode == kWnd_Windowed;
+	}
+	// Tells if this mode defines a real fullscreen, which would require gfx driver to support it
+	inline bool IsRealFullscreen() const {
+		return Mode == kWnd_Fullscreen;
 	}
 
-	DisplayMode(const GraphicResolution &res, bool windowed = false, int32_t refresh = 0, bool vsync = false)
+	DisplayMode() = default;
+	DisplayMode(const GraphicResolution & res, WindowMode mode = kWnd_Windowed, int32_t refresh = 0, bool vsync = false)
 		: GraphicResolution(res)
 		, RefreshRate(refresh)
 		, Vsync(vsync)
-		, Windowed(windowed) {
+		, Mode(mode) {
 	}
 };
 

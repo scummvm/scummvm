@@ -26,7 +26,7 @@
 
 namespace AGS3 {
 
-namespace ags = AGS::Shared;
+using namespace AGS::Engine;
 
 // ----------------------------------------------------------------------------
 // INIT / SHUTDOWN
@@ -91,25 +91,26 @@ void sys_get_desktop_modes(std::vector<AGS::Engine::DisplayMode> &dms) {
 #ifdef TODO
 static SDL_Window *window = nullptr;
 
-SDL_Window *sys_window_create(const char *window_title, int w, int h, bool windowed, int ex_flags) {
+SDL_Window *sys_window_create(const char *window_title, int w, int h, WindowMode mode, int ex_flags) {
 	if (window) {
 		sys_window_destroy();
 	}
 	// TODO: support display index selection (?)
-	// TODO: support separate fullscreen and desktop (borderless fullscreen window) modes
-	Uint32 flags = SDL_WINDOW_RESIZABLE;
-	if (!windowed) {
-		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP/*SDL_WINDOW_FULLSCREEN*/;
+	Uint32 flags = 0;
+	switch (mode) {
+	case kWnd_Windowed: flags |= SDL_WINDOW_RESIZABLE; break;
+	case kWnd_Fullscreen: flags |= SDL_WINDOW_FULLSCREEN; break;
+	case kWnd_FullDesktop: flags |= SDL_WINDOW_FULLSCREEN_DESKTOP; break;
 	}
 	flags |= ex_flags;
 	window = SDL_CreateWindow(
-	             window_title,
-	             SDL_WINDOWPOS_CENTERED_DISPLAY(DEFAULT_DISPLAY_INDEX),
-	             SDL_WINDOWPOS_CENTERED_DISPLAY(DEFAULT_DISPLAY_INDEX),
-	             w,
-	             h,
-	             flags
-	         );
+		window_title,
+		SDL_WINDOWPOS_CENTERED_DISPLAY(DEFAULT_DISPLAY_INDEX),
+		SDL_WINDOWPOS_CENTERED_DISPLAY(DEFAULT_DISPLAY_INDEX),
+		w,
+		h,
+		flags
+	);
 	return window;
 }
 #else
@@ -124,12 +125,15 @@ SDL_Window *sys_get_window() {
 	return nullptr;
 }
 
-void sys_window_set_style(bool windowed) {
+void sys_window_set_style(WindowMode mode, int /*ex_flags*/) {
 #ifdef TODO
 	if (!window) return;
-	// TODO: support separate fullscreen and desktop (borderless fullscreen window) modes
-	// TODO: support resizable window later, might need callback for engine and/or gfx renderer
-	SDL_SetWindowFullscreen(window, windowed ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP);
+	Uint32 flags = 0;
+	switch (mode) {
+	case kWnd_Fullscreen: flags = SDL_WINDOW_FULLSCREEN; break;
+	case kWnd_FullDesktop: flags = SDL_WINDOW_FULLSCREEN_DESKTOP; break;
+}
+	SDL_SetWindowFullscreen(window, flags);
 #endif
 }
 

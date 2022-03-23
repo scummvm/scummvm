@@ -32,6 +32,7 @@ namespace AGS3 {
 using AGS::Shared::String;
 using AGS::Engine::GraphicResolution;
 using AGS::Engine::DisplayMode;
+using AGS::Engine::WindowMode;
 
 Size get_desktop_size();
 
@@ -60,14 +61,19 @@ enum FrameScaleDef {
 	kNumFrameScaleDef
 };
 
-// Configuration that is used to determine the size of the screen
-struct WindowSetup {
-	AGS3::Size           Size;      // explicit screen metrics
-	int                  Scale = 0; // explicit game scale factor
+// Configuration that is used to determine the size and style of the window
+struct WindowSetup
+{
+    AGS3::Size           Size;      // explicit screen metrics
+    int                  Scale = 0; // explicit game scale factor
+    WindowMode           Mode = AGS::Engine::kWnd_Windowed; // window mode
 
-	WindowSetup() = default;
-	WindowSetup(const AGS3::Size & sz) : Size(sz), Scale(0) {}
-	WindowSetup(int scale) : Scale(scale) {}
+    WindowSetup() = default;
+    WindowSetup(const AGS3::Size &sz, WindowMode mode = AGS::Engine::kWnd_Windowed)
+        : Size(sz), Scale(0), Mode(mode) {}
+    WindowSetup(int scale, WindowMode mode = AGS::Engine::kWnd_Windowed)
+        : Scale(scale), Mode(mode) {}
+    WindowSetup(WindowMode mode) : Scale(0), Mode(mode) {}
 };
 
 // Additional parameters for the display mode setup
@@ -124,7 +130,7 @@ ActiveDisplaySetting graphics_mode_get_last_setting(bool windowed);
 bool graphics_mode_create_renderer(const String &driver_id);
 // Try to find and initialize compatible display mode as close to given setup as possible
 bool graphics_mode_set_dm_any(const Size &game_size, const WindowSetup &ws,
-	const ColorDepthOption &color_depth, bool windowed,
+	const ColorDepthOption &color_depth,
 	const FrameScaleDef frame, const DisplaySetupEx &params);
 // Set the display mode with given parameters
 bool graphics_mode_set_dm(const AGS::Engine::DisplayMode &dm);

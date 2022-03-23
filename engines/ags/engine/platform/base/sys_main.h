@@ -55,11 +55,11 @@ void sys_get_desktop_modes(std::vector<AGS::Engine::DisplayMode> &dms);
 //
 struct SDL_Window;
 // Create a new single game window.
-SDL_Window *sys_window_create(const char *window_title, int w, int h, bool windowed, int ex_flags = 0);
+SDL_Window *sys_window_create(const char *window_title, int w, int h, AGS::Engine::WindowMode mode, int ex_flags = 0);
 // Returns current game window, if one exists, or null.
 SDL_Window *sys_get_window();
 // Sets current window style, does nothing if window was not created.
-void sys_window_set_style(bool windowed);
+void sys_window_set_style(AGS::Engine::WindowMode mode, int ex_flags = 0);
 // Set new window size; optionally center new window on screen
 bool sys_window_set_size(int w, int h, bool center);
 // Shows or hides system cursor when it's in the game window
