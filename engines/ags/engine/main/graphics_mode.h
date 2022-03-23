@@ -61,36 +61,38 @@ enum FrameScaleDef {
 };
 
 // Configuration that is used to determine the size of the screen
-struct ScreenSizeSetup {
+struct WindowSetup {
 	AGS3::Size           Size;      // explicit screen metrics
 	int                  Scale = 0; // explicit game scale factor
 
-	ScreenSizeSetup() = default;
-	ScreenSizeSetup(const AGS3::Size & sz, int scale = 0) : Size(sz), Scale(scale) {
-	}
+	WindowSetup() = default;
+	WindowSetup(const AGS3::Size & sz) : Size(sz), Scale(0) {}
+	WindowSetup(int scale) : Scale(scale) {}
 };
 
-// Display mode configuration
+// Additional parameters for the display mode setup
+struct DisplaySetupEx {
+	int                  RefreshRate = 0;  // gfx mode refresh rate
+	bool                 VSync = false;    // vertical sync
+};
+
+// Full graphics configuration, contains graphics driver selection,
+// alternate settings for windowed and fullscreen modes and gfx filter setup.
 struct DisplayModeSetup {
-	ScreenSizeSetup      ScreenSize;
-
-	int                  RefreshRate;   // gfx mode refresh rate
-	bool                 VSync;         // vertical sync
-	bool                 Windowed;      // is mode windowed
-
-	DisplayModeSetup();
-};
-
-// Full graphics configuration
-struct ScreenSetup {
 	String               DriverID;      // graphics driver ID
-	DisplayModeSetup     DisplayMode;   // definition of the initial display mode
 
-	// Definitions for the fullscreen and windowed scaling methods.
+	// Definitions for the fullscreen and windowed modes and scaling methods.
 	// When the initial display mode is set, corresponding scaling method from this pair is used.
 	// The second method is meant to be saved and used if display mode is switched at runtime.
-	FrameScaleDef       FsGameFrame;   // how the game frame should be scaled/positioned in fullscreen mode
-	FrameScaleDef       WinGameFrame;  // how the game frame should be scaled/positioned in windowed mode
+	WindowSetup          FsSetup;       // definition of the fullscreen mode
+	WindowSetup          WinSetup;      // definition of the windowed mode
+	FrameScaleDef        FsGameFrame =  // how the game frame should be scaled/positioned in fullscreen mode
+		kFrame_Undefined;
+	FrameScaleDef        WinGameFrame = // how the game frame should be scaled/positioned in windowed mode
+		kFrame_Undefined;
+
+	bool                 Windowed = false; // initial mode
+	DisplaySetupEx       Params;
 
 	GfxFilterSetup       Filter;        // graphics filter definition
 };
@@ -110,19 +112,20 @@ struct ColorDepthOption {
 // which is useful if you need to save active settings and reapply them later.
 struct ActiveDisplaySetting {
 	DisplayMode     Dm;
-	FrameScaleDef  Frame;
+	FrameScaleDef  Frame = kFrame_Undefined;
 };
 
 // Initializes any possible gfx mode, using user config as a recommendation;
 // may try all available renderers and modes before succeeding (or failing)
-bool graphics_mode_init_any(const GraphicResolution &game_res, const ScreenSetup &setup, const ColorDepthOption &color_depth);
+bool graphics_mode_init_any(const GraphicResolution &game_res, const DisplayModeSetup &setup, const ColorDepthOption &color_depth);
 // Return last saved display mode of the given kind
 ActiveDisplaySetting graphics_mode_get_last_setting(bool windowed);
 // Creates graphics driver of given id
 bool graphics_mode_create_renderer(const String &driver_id);
 // Try to find and initialize compatible display mode as close to given setup as possible
-bool graphics_mode_set_dm_any(const Size &game_size, const DisplayModeSetup &dm_setup,
-                              const ColorDepthOption &color_depth, const FrameScaleDef &frame_setup);
+bool graphics_mode_set_dm_any(const Size &game_size, const WindowSetup &ws,
+	const ColorDepthOption &color_depth, bool windowed,
+	const FrameScaleDef frame, const DisplaySetupEx &params);
 // Set the display mode with given parameters
 bool graphics_mode_set_dm(const AGS::Engine::DisplayMode &dm);
 // Set the native image size

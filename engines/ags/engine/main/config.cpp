@@ -178,17 +178,6 @@ int convert_fp_to_scaling(uint32_t scaling) {
 	return scaling >= kUnit ? (scaling >> kShift) : -kUnit / (int32_t)scaling;
 }
 
-void graphics_mode_get_defaults(bool windowed, ScreenSizeSetup &scsz_setup, FrameScaleDef &frame) {
-	scsz_setup.Size = Size();
-	if (windowed) {
-		scsz_setup = ScreenSizeSetup();
-		frame = _GP(usetup).Screen.WinGameFrame;
-	} else {
-		scsz_setup = ScreenSizeSetup();
-		frame = _GP(usetup).Screen.FsGameFrame;
-	}
-}
-
 String find_default_cfg_file() {
 	return Path::ConcatPaths(_GP(usetup).startup_dir, DefaultConfigFileName);
 }
@@ -220,7 +209,7 @@ void read_legacy_graphics_config(const ConfigTree &cfg) {
 		_GP(usetup).override_upscale = true; // run low-res game in high-res mode
 	}
 
-	_GP(usetup).Screen.DisplayMode.Windowed = INIreadint(cfg, "misc", "windowed") > 0;
+	_GP(usetup).Screen.Windowed = INIreadint(cfg, "misc", "windowed") > 0;
 	_GP(usetup).Screen.DriverID = INIreadstring(cfg, "misc", "gfxdriver", _GP(usetup).Screen.DriverID);
 
 	{
@@ -232,7 +221,7 @@ void read_legacy_graphics_config(const ConfigTree &cfg) {
 				scale_factor);
 
 			// AGS 3.2.1 and 3.3.0 aspect ratio preferences
-			if (!_GP(usetup).Screen.DisplayMode.Windowed) {
+			if (!_GP(usetup).Screen.Windowed) {
 				/* FIXME --- set FsGameFrame?
 				_GP(usetup).Screen.DisplayMode.ScreenSize.MatchDeviceRatio =
 					(INIreadint(cfg, "misc", "sideborders") > 0 || INIreadint(cfg, "misc", "forceletterbox") > 0 ||
@@ -254,15 +243,17 @@ void read_legacy_graphics_config(const ConfigTree &cfg) {
 		ScreenSizeDefinition scr_def = parse_screendef(INIreadstring(cfg, "graphics", "screen_def"));
 		switch (scr_def) {
 		case kScreenDef_Explicit:
-			_GP(usetup).Screen.DisplayMode.ScreenSize.Size = Size(
-				INIreadint(cfg, "graphics", "screen_width"),
-				INIreadint(cfg, "graphics", "screen_height"));
+			_GP(usetup).Screen.FsSetup =
+				_GP(usetup).Screen.WinSetup = WindowSetup(Size(
+					INIreadint(cfg, "graphics", "screen_width"),
+					INIreadint(cfg, "graphics", "screen_height")));
 			break;
 		case kScreenDef_ByGameScaling:
 			INIreadint(cfg, "graphics", "windowed") ?
 				parse_legacy_scaling_option(INIreadstring(cfg, "graphics", "game_scale_win"), src_scale) :
 				parse_legacy_scaling_option(INIreadstring(cfg, "graphics", "game_scale_fs"), src_scale);
-			_GP(usetup).Screen.DisplayMode.ScreenSize.Scale = src_scale;
+			_GP(usetup).Screen.FsSetup =
+				_GP(usetup).Screen.WinSetup = WindowSetup(src_scale);
 			break;
 		default:
 			// set nothing
@@ -270,7 +261,7 @@ void read_legacy_graphics_config(const ConfigTree &cfg) {
 		}
 	}
 
-	_GP(usetup).Screen.DisplayMode.RefreshRate = INIreadint(cfg, "misc", "refresh");
+	_GP(usetup).Screen.Params.RefreshRate = INIreadint(cfg, "misc", "refresh");
 }
 
 void override_config_ext(ConfigTree &cfg) {
@@ -340,7 +331,7 @@ void apply_config(const ConfigTree &cfg) {
 		// Graphics mode
 		_GP(usetup).Screen.DriverID = INIreadstring(cfg, "graphics", "driver", _GP(usetup).Screen.DriverID);
 
-		_GP(usetup).Screen.DisplayMode.Windowed = INIreadint(cfg, "graphics", "windowed") > 0;
+		_GP(usetup).Screen.Windowed = INIreadint(cfg, "graphics", "windowed") > 0;
 		// TODO: move to config overrides (replace values during config load)
 #if AGS_PLATFORM_OS_MACOS
 		_GP(usetup).Screen.Filter.ID = "none";
@@ -352,8 +343,8 @@ void apply_config(const ConfigTree &cfg) {
 			parse_scaling_option(INIreadstring(cfg, "graphics", "game_scale_win", "round"));
 #endif
 
-		_GP(usetup).Screen.DisplayMode.RefreshRate = INIreadint(cfg, "graphics", "refresh");
-		_GP(usetup).Screen.DisplayMode.VSync = INIreadint(cfg, "graphics", "vsync") > 0;
+		_GP(usetup).Screen.Params.RefreshRate = INIreadint(cfg, "graphics", "refresh");
+		_GP(usetup).Screen.Params.VSync = INIreadint(cfg, "graphics", "vsync") > 0;
 		_GP(usetup).RenderAtScreenRes = INIreadint(cfg, "graphics", "render_at_screenres") > 0;
 		_GP(usetup).Supersampling = INIreadint(cfg, "graphics", "supersampling", 1);
 

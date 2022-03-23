@@ -83,7 +83,7 @@ struct GameSetup {
 	bool  RenderAtScreenRes; // render sprites at screen resolution, as opposed to native one
 	int   Supersampling;
 
-	ScreenSetup Screen;
+	DisplayModeSetup Screen;
 
 	GameSetup();
 };

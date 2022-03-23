@@ -179,11 +179,9 @@ void engine_force_window() {
 	// Force to run in a window, override the config file
 	// TODO: actually overwrite config tree instead
 	if (_G(force_window) == 1) {
-		_GP(usetup).Screen.DisplayMode.Windowed = true;
-		_GP(usetup).Screen.DisplayMode.ScreenSize = ScreenSizeSetup();
+		_GP(usetup).Screen.Windowed = true;
 	} else if (_G(force_window) == 2) {
-		_GP(usetup).Screen.DisplayMode.Windowed = false;
-		_GP(usetup).Screen.DisplayMode.ScreenSize = ScreenSizeSetup();
+		_GP(usetup).Screen.Windowed = false;
 	}
 }
 
@@ -523,7 +521,7 @@ int engine_check_disk_space() {
 
 int engine_check_font_was_loaded() {
 	if (!font_first_renderer_loaded()) {
-		_G(platform)->DisplayAlert("No game fonts found. At least one font is required to run the game.");
+		_G(platform)->DisplayAlert("No game fonts found. At least one font is required to run the _GP(game).");
 		_G(proper_exit) = 1;
 		return EXIT_ERROR;
 	}
@@ -1236,7 +1234,7 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	return EXIT_NORMAL;
 }
 
-bool engine_try_set_gfxmode_any(const ScreenSetup &setup) {
+bool engine_try_set_gfxmode_any(const DisplayModeSetup &setup) {
 	engine_shutdown_gfxmode();
 
 	const Size init_desktop = get_desktop_size();
@@ -1260,10 +1258,10 @@ bool engine_try_switch_windowed_gfxmode() {
 	engine_pre_gfxmode_release();
 
 	Size init_desktop = get_desktop_size();
-	bool switch_to_windowed = !old_dm.Windowed;
-	ActiveDisplaySetting setting = graphics_mode_get_last_setting(switch_to_windowed);
+	bool windowed = !old_dm.Windowed;
+	ActiveDisplaySetting setting = graphics_mode_get_last_setting(windowed);
 	DisplayMode last_opposite_mode = setting.Dm;
-	FrameScaleDef use_frame_setup = setting.Frame;
+	FrameScaleDef frame = setting.Frame;
 
 	// If there are saved parameters for given mode (fullscreen/windowed)
 	// then use them, if there are not, get default setup for the new mode.
@@ -1271,21 +1269,20 @@ bool engine_try_switch_windowed_gfxmode() {
 	if (last_opposite_mode.IsValid()) {
 		res = graphics_mode_set_dm(last_opposite_mode);
 	} else {
-		// we need to clone from initial config, because not every parameter is set by graphics_mode_get_defaults()
-		DisplayModeSetup dm_setup = _GP(usetup).Screen.DisplayMode;
-		dm_setup.Windowed = !old_dm.Windowed;
-		graphics_mode_get_defaults(dm_setup.Windowed, dm_setup.ScreenSize, use_frame_setup);
-		res = graphics_mode_set_dm_any(_GP(game).GetGameRes(), dm_setup, old_dm.ColorDepth, use_frame_setup);
+		WindowSetup ws = windowed ? _GP(usetup).Screen.WinSetup : _GP(usetup).Screen.FsSetup;
+		frame = windowed ? _GP(usetup).Screen.WinGameFrame : _GP(usetup).Screen.FsGameFrame;
+		res = graphics_mode_set_dm_any(_GP(game).GetGameRes(), ws, old_dm.ColorDepth, windowed,
+			frame, _GP(usetup).Screen.Params);
 	}
 
 	// Apply corresponding frame render method
 	if (res)
-		res = graphics_mode_set_render_frame(use_frame_setup);
+		res = graphics_mode_set_render_frame(frame);
 
 	if (!res) {
 		// If failed, try switching back to previous gfx mode
 		res = graphics_mode_set_dm(old_dm) &&
-		      graphics_mode_set_render_frame(old_frame);
+			graphics_mode_set_render_frame(old_frame);
 	}
 
 	if (res) {

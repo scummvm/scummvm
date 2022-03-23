@@ -32,11 +32,11 @@ void        show_preload();
 void        engine_init_game_settings();
 int         initialize_engine(const AGS::Shared::ConfigTree &startup_opts);
 
-struct ScreenSetup;
+struct DisplayModeSetup;
 // Try to set new graphics mode deduced from given configuration;
 // if requested mode fails, tries to find any compatible mode close to the
 // requested one.
-bool        engine_try_set_gfxmode_any(const ScreenSetup &setup);
+bool        engine_try_set_gfxmode_any(const DisplayModeSetup &setup);
 // Tries to switch between fullscreen and windowed mode; uses previously saved
 // setup if it is available, or default settings for the new mode
 bool        engine_try_switch_windowed_gfxmode();

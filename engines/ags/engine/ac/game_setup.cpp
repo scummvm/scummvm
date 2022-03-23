@@ -40,9 +40,9 @@ GameSetup::GameSetup() {
 	RenderAtScreenRes = false;
 	Supersampling = 1;
 
-	Screen.DisplayMode.RefreshRate = 0;
-	Screen.DisplayMode.VSync = false;
-	Screen.DisplayMode.Windowed = false;
+	Screen.Params.RefreshRate = 0;
+	Screen.Params.VSync = false;
+	Screen.Windowed = false;
 	Screen.FsGameFrame = kFrame_Proportional;
 	Screen.WinGameFrame = kFrame_Round;
 }
