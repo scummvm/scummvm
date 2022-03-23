@@ -85,6 +85,9 @@ static void post_init_font(size_t fontNumber) {
 		font.Metrics.Height = height;
 		font.Metrics.RealHeight = height;
 	}
+	if (font.Info.Outline != FONT_OUTLINE_AUTO) {
+		font.Info.AutoOutlineThickness = 0;
+	}
 }
 
 IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer) {
@@ -157,7 +160,7 @@ int get_font_outline_font(size_t font_number) {
 }
 
 void set_font_outline(size_t font_number, int outline_type,
-	enum FontInfo::AutoOutlineStyle style, int thickness) {
+		enum FontInfo::AutoOutlineStyle style, int thickness) {
 	if (font_number >= _GP(fonts).size())
 		return;
 	_GP(fonts)[font_number].Info.Outline = outline_type;
