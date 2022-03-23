@@ -2383,6 +2383,18 @@ void ScummEngine_v5::o5_startScript() {
 
 	getWordVararg(data);
 
+	// WORKAROUND bug #13370: If you try to leave the plateau before
+	// healing Rusty, his ghost will block the way. But this should not
+	// happen during the cutscene where he first appears, because then he
+	// will appear to teleport from one spot to another.
+	//
+	// In the VGA talkie version Rusty just appears in the rift, rather
+	// than gliding in from off-stage. The only thing that's affected is
+	// whether Bobbin or Rusty speaks first, and the dialog makes sense
+	// either way.
+	if (_game.id == GID_LOOM && _game.version == 3 && script == 207 && isScriptRunning(98))
+		return;
+
 	// WORKAROUND bug #2198: Script 171 loads a complete room resource,
 	// instead of the actual script, causing invalid opcode cases
 	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && script == 171)
