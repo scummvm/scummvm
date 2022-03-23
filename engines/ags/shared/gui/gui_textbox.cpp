@@ -92,7 +92,7 @@ void GUITextBox::OnKeyPress(const KeyInput &ki) {
 
 	Text.AppendChar(keycode);
 	// if the new string is too long, remove the new character
-	if (wgettextwidth(Text.GetCStr(), Font) > (Width - (6 + get_fixed_pixel_size(5))))
+	if (get_text_width(Text.GetCStr(), Font) > (Width - (6 + get_fixed_pixel_size(5))))
 		Backspace(Text);
 }
 

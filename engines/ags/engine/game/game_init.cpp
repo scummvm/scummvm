@@ -277,7 +277,7 @@ void LoadFonts(GameDataVersion data_ver) {
 		// and there's no custom linespacing, then set linespacing = formal height.
 		if (!is_bitmap_font(i)) {
 			int req_height = _GP(game).fonts[i].SizePt * _GP(game).fonts[i].SizeMultiplier;
-			int height = getfontheight(i);
+			int height = get_font_height(i);
 			if ((height != req_height) && (_GP(game).fonts[i].LineSpacing == 0)) {
 				set_font_linespacing(i, req_height + get_font_outline_padding(i));
 			}

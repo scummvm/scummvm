@@ -242,7 +242,7 @@ extern int get_adjusted_spriteheight(int spr);
 extern bool is_sprite_alpha(int spr);
 
 // Those function have distinct implementations in Engine and Editor
-extern int wgettextwidth_compensate(Shared::Bitmap *ds, const char *tex, int font);
+extern int get_text_width_outlined(Shared::Bitmap *ds, const char *tex, int font);
 
 #define SET_EIP(x) set_our_eip(x);
 extern void set_eip_guiobj(int eip);

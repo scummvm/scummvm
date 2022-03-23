@@ -65,7 +65,7 @@ int getfontlinegap(int font);
 // Gets the total maximal height of the given number of lines printed with the given font
 int getheightoflines(int font, int numlines);
 // Get the maximal width of the given font, with corresponding outlining
-int wgettextwidth_compensate(const char *tex, int font);
+int get_text_width_outlined(const char *tex, int font);
 void do_corner(Shared::Bitmap *ds, int sprn, int xx1, int yy1, int typx, int typy);
 // Returns the image of a button control on the GUI under given child index
 int get_but_pic(GUIMain *guo, int indx);

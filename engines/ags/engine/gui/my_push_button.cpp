@@ -61,7 +61,7 @@ void MyPushButton::draw(Bitmap *ds) {
 
 	ds->DrawLine(Line(x, y, x + wid - 1, y), draw_color);
 	ds->DrawLine(Line(x, y, x, y + hit - 1), draw_color);
-	wouttextxy(ds, x + (wid / 2 - wgettextwidth(text, _G(cbuttfont)) / 2), y + 2, _G(cbuttfont), text_color, text);
+	wouttextxy(ds, x + (wid / 2 - get_text_width(text, _G(cbuttfont)) / 2), y + 2, _G(cbuttfont), text_color, text);
 	if (typeandflags & CNF_DEFAULT)
 		draw_color = ds->GetCompatibleColor(0);
 	else

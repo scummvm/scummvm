@@ -120,7 +120,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	if (_GP(topBar).wantIt) {
 		// ensure that the window is wide enough to display
 		// any top bar text
-		int topBarWid = wgettextwidth_compensate(_GP(topBar).text, _GP(topBar).font);
+		int topBarWid = get_text_width_outlined(_GP(topBar).text, _GP(topBar).font);
 		topBarWid += data_to_game_coord(_GP(play).top_bar_borderwidth + 2) * 2;
 		if (_G(longestline) < topBarWid)
 			_G(longestline) = topBarWid;
@@ -215,7 +215,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 			alphaChannel = true;
 
 		for (size_t ee = 0; ee < _GP(Lines).Count(); ee++) {
-			//int ttxp=wii/2 - wgettextwidth_compensate(lines[ee], usingfont)/2;
+			//int ttxp=wii/2 - get_text_width_outlined(lines[ee], usingfont)/2;
 			int ttyp = ttxtop + ee * disp.linespacing;
 			// asspch < 0 means that it's inside a text box so don't
 			// centre the text
@@ -468,7 +468,7 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 	if (antialias) // This is to make sure TTFs render proper alpha channel in 16-bit games too
 		color |= makeacol32(0, 0, 0, 0xff);
 
-	size_t const t_width = wgettextwidth(texx, font);
+	size_t const t_width = get_text_width(texx, font);
 	size_t const t_height = wgettextheight(texx, font);
 	if (t_width == 0 || t_height == 0)
 		return;
@@ -544,9 +544,9 @@ void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int font, color_t te
 void wouttext_aligned(Bitmap *ds, int usexp, int yy, int oriwid, int usingfont, color_t text_color, const char *text, HorAlignment align) {
 
 	if (align & kMAlignHCenter)
-		usexp = usexp + (oriwid / 2) - (wgettextwidth_compensate(text, usingfont) / 2);
+		usexp = usexp + (oriwid / 2) - (get_text_width_outlined(text, usingfont) / 2);
 	else if (align & kMAlignRight)
-		usexp = usexp + (oriwid - wgettextwidth_compensate(text, usingfont));
+		usexp = usexp + (oriwid - get_text_width_outlined(text, usingfont));
 
 	wouttext_outline(ds, usexp, yy, usingfont, text_color, text);
 }
@@ -564,13 +564,13 @@ int get_font_outline_padding(int font) {
 }
 
 int getfontheight_outlined(int font) {
-	return getfontheight(font) + 2 * get_font_outline_padding(font);
+	return get_font_height(font) + 2 * get_font_outline_padding(font);
 }
 
 int getfontspacing_outlined(int font) {
 	return use_default_linespacing(font) ?
 	       getfontheight_outlined(font) :
-	       getfontlinespacing(font);
+	       get_font_linespacing(font);
 }
 
 int getfontlinegap(int font) {
@@ -581,8 +581,8 @@ int getheightoflines(int font, int numlines) {
 	return getfontspacing_outlined(font) * (numlines - 1) + getfontheight_outlined(font);
 }
 
-int wgettextwidth_compensate(const char *tex, int font) {
-	return wgettextwidth(tex, font) + 2 * get_font_outline_padding(font);
+int get_text_width_outlined(const char *tex, int font) {
+	return get_text_width(tex, font) + 2 * get_font_outline_padding(font);
 }
 
 void do_corner(Bitmap *ds, int sprn, int x, int y, int offx, int offy) {
@@ -782,7 +782,7 @@ void draw_text_window_and_bar(Bitmap **text_window_ds, bool should_free_ds,
 		}
 
 		// draw the text
-		int textx = (ds->GetWidth() / 2) - wgettextwidth_compensate(_GP(topBar).text, _GP(topBar).font) / 2;
+		int textx = (ds->GetWidth() / 2) - get_text_width_outlined(_GP(topBar).text, _GP(topBar).font) / 2;
 		color_t text_color = ds->GetCompatibleColor(_GP(play).top_bar_textcolor);
 		wouttext_outline(ds, textx, _GP(play).top_bar_borderwidth + get_fixed_pixel_size(1), _GP(topBar).font, text_color, _GP(topBar).text);
 

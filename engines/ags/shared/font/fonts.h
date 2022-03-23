@@ -83,13 +83,13 @@ void ensure_text_valid_for_font(char *text, size_t fontnum);
 // Get font's scaling multiplier
 int get_font_scaling_mul(size_t fontNumber);
 // Calculate actual width of a line of text
-int wgettextwidth(const char *texx, size_t fontNumber);
+int get_text_width(const char *texx, size_t fontNumber);
 // Calculates actual height of a line of text
 int wgettextheight(const char *text, size_t fontNumber);
 // Get font's height (maximal height of any line of text printed with this font)
-int getfontheight(size_t fontNumber);
+int get_font_height(size_t fontNumber);
 // Get font's line spacing
-int getfontlinespacing(size_t fontNumber);
+int get_font_linespacing(size_t fontNumber);
 // Set font's line spacing
 void set_font_linespacing(size_t fontNumber, int spacing);
 // Get is font is meant to use default line spacing

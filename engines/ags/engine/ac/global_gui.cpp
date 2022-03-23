@@ -177,7 +177,7 @@ int GetTextWidth(const char *text, int fontnum) {
 	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!GetTextWidth: invalid font number.");
 
-	return game_to_data_coord(wgettextwidth_compensate(text, fontnum));
+	return game_to_data_coord(get_text_width_outlined(text, fontnum));
 }
 
 int GetTextHeight(const char *text, int fontnum, int width) {

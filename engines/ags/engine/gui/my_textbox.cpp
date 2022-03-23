@@ -51,7 +51,7 @@ void MyTextBox::draw(Bitmap *ds) {
 	wouttextxy(ds, x + 2, y + 1, _G(cbuttfont), text_color, text);
 
 	char tbu[2] = "_";
-	wouttextxy(ds, x + 2 + wgettextwidth(text, _G(cbuttfont)), y + 1, _G(cbuttfont), text_color, tbu);
+	wouttextxy(ds, x + 2 + get_text_width(text, _G(cbuttfont)), y + 1, _G(cbuttfont), text_color, tbu);
 }
 
 int MyTextBox::pressedon(int mousex, int mousey) {
@@ -72,7 +72,7 @@ int MyTextBox::processmessage(int mcode, int wParam, NumberPtr lParam) {
 			drawandmouse();
 		} else if (strlen(text) >= TEXTBOX_MAXLEN - 1)
 			;
-		else if (wgettextwidth(text, _G(cbuttfont)) >= wid - 5)
+		else if (get_text_width(text, _G(cbuttfont)) >= wid - 5)
 			;
 		else if (wParam > 127)
 			;  // font only has 128 chars

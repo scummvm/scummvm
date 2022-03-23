@@ -473,7 +473,7 @@ void DialogOptions::Prepare(int _dlgnum, bool _runGameLoopsInBackground) {
 
 	// numbered options, leave space for the numbers
 	if (_GP(game).options[OPT_DIALOGNUMBERED] == kDlgOptNumbering)
-		bullet_wid += wgettextwidth_compensate("9. ", usingfont);
+		bullet_wid += get_text_width_outlined("9. ", usingfont);
 
 	_G(said_text) = 0;
 
