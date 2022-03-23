@@ -135,12 +135,6 @@ int get_text_width(const char *texx, size_t fontNumber) {
 	return _GP(fonts)[fontNumber].Renderer->GetTextWidth(texx, fontNumber);
 }
 
-int wgettextheight(const char *text, size_t fontNumber) {
-	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
-		return 0;
-	return _GP(fonts)[fontNumber].Renderer->GetTextHeight(text, fontNumber);
-}
-
 int get_font_outline(size_t font_number) {
 	if (font_number >= _GP(fonts).size())
 		return FONT_OUTLINE_NONE;
