@@ -125,7 +125,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"sq5",             "Space Quest V: The Next Mutation"},
 	{"islandbrain",     "The Island of Dr. Brain"},
 	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
-	{"pepper",          "Pepper's Adventure in Time"},
+	{"pepper",          "Pepper's Adventures in Time"},
 	{"slater",          "Slater & Charlie Go Camping"},
 	{"gk1demo",         "Gabriel Knight: Sins of the Fathers"},
 	{"qfg4demo",        "Quest for Glory IV: Shadows of Darkness"},
