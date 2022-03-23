@@ -722,6 +722,12 @@ LoomEgaGameOptionsWidget::LoomEgaGameOptionsWidget(GuiObject *boss, const Common
 	_overtureTicksValue = new GUI::StaticTextWidget(widgetsBoss(), "LoomEgaGameOptionsDialog.OvertureTicksValue", Common::U32String());
 
 	_overtureTicksValue->setFlags(GUI::WIDGET_CLEARBG);
+
+	// Normally this would be added as a static game settings widget, but
+	// I see no way to get both the dynamic and the static one, so we have
+	// to duplicate it here.
+
+	_enableEnhancements = new GUI::CheckboxWidget(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableEnhancements", _("Enable game-specific enhancements"), _("Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game."));
 }
 
 void LoomEgaGameOptionsWidget::load() {
@@ -732,20 +738,27 @@ void LoomEgaGameOptionsWidget::load() {
 
 	_overtureTicksSlider->setValue(loomOvertureTicks);
 	updateOvertureTicksValue();
+
+	_enableEnhancements->setState(ConfMan.getBool("enable_enhancements", _domain));
 }
 
 bool LoomEgaGameOptionsWidget::save() {
 	ConfMan.setInt("loom_overture_ticks", _overtureTicksSlider->getValue(), _domain);
+	ConfMan.setBool("enable_enhancements", _enableEnhancements->getState(), _domain);
 	return true;
 }
 
 void LoomEgaGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
 	layouts.addDialog(layoutName, overlayedLayout)
-		.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
-			.addPadding(0, 0, 16, 0)
-			.addWidget("OvertureTicksLabel", "OptionsLabel")
-			.addWidget("OvertureTicks", "WideSlider")
-			.addWidget("OvertureTicksValue", "ShortOptionsLabel")
+		.addLayout(GUI::ThemeLayout::kLayoutVertical, 12)
+			.addPadding(0, 0, 0, 0)
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
+				.addPadding(0, 0, 12, 0)
+				.addWidget("OvertureTicksLabel", "OptionsLabel")
+				.addWidget("OvertureTicks", "WideSlider")
+				.addWidget("OvertureTicksValue", "ShortOptionsLabel")
+			.closeLayout()
+			.addWidget("EnableEnhancements", "Checkbox")
 		.closeLayout()
 	.closeDialog();
 }

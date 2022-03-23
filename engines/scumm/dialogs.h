@@ -228,6 +228,7 @@ private:
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
+	GUI::CheckboxWidget *_enableEnhancements;
 	GUI::SliderWidget *_overtureTicksSlider;
 	GUI::StaticTextWidget *_overtureTicksValue;
 

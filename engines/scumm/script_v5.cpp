@@ -1075,7 +1075,9 @@ void ScummEngine_v5::o5_findObject() {
 	// let's go with that fix. But we do it by redirecting the click to the
 	// wall object instead.
 
-	if (_game.id == GID_LOOM && _game.version == 3 && (_game.platform == Common::kPlatformDOS || _game.platform == Common::kPlatformAmiga || _game.platform == Common::kPlatformAtariST) && _currentRoom == 38 && obj == 623) {
+	if (_game.id == GID_LOOM && _game.version == 3 &&
+	    (_game.platform == Common::kPlatformDOS || _game.platform == Common::kPlatformAmiga || _game.platform == Common::kPlatformAtariST) &&
+	    _currentRoom == 38 && obj == 623 && _enableEnhancements) {
 		obj = 609;
 	}
 
@@ -2392,7 +2394,7 @@ void ScummEngine_v5::o5_startScript() {
 	// than gliding in from off-stage. The only thing that's affected is
 	// whether Bobbin or Rusty speaks first, and the dialog makes sense
 	// either way.
-	if (_game.id == GID_LOOM && _game.version == 3 && script == 207 && isScriptRunning(98))
+	if (_game.id == GID_LOOM && _game.version == 3 && script == 207 && isScriptRunning(98) && _enableEnhancements)
 		return;
 
 	// WORKAROUND bug #2198: Script 171 loads a complete room resource,
