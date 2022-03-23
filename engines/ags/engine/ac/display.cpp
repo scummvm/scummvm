@@ -573,10 +573,6 @@ int getfontspacing_outlined(int font) {
 	       get_font_linespacing(font);
 }
 
-int getfontlinegap(int font) {
-	return getfontspacing_outlined(font) - getfontheight_outlined(font);
-}
-
 int getheightoflines(int font, int numlines) {
 	return getfontspacing_outlined(font) * (numlines - 1) + getfontheight_outlined(font);
 }

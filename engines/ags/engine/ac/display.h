@@ -60,8 +60,6 @@ int getfontheight_outlined(int font);
 int get_font_outline_padding(int font);
 // Get line spacing for the given font, with possible outlining in mind
 int getfontspacing_outlined(int font);
-// Get the distance between bottom one one line and top of the next line (may be negative!)
-int getfontlinegap(int font);
 // Gets the total maximal height of the given number of lines printed with the given font
 int getheightoflines(int font, int numlines);
 // Get the maximal width of the given font, with corresponding outlining
