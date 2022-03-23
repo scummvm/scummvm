@@ -82,7 +82,7 @@ HError ReadTraData(Translation &tra, Stream *in);
 // Writes all translation data to the stream
 void WriteTraData(const Translation &tra, Stream *out);
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

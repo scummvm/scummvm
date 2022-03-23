@@ -150,6 +150,6 @@ void WriteExtBlock(int block, const String &ext_id, PfnWriteExtBlock writer, int
 	out->Seek(0, Shared::kSeekEnd);
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3

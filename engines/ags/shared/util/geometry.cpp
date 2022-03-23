@@ -21,13 +21,8 @@
 
 #include "ags/shared/util/geometry.h"
 #include "ags/lib/std/algorithm.h"
-//include <cmath>
 
 namespace AGS3 {
-//namespace AGS
-//{
-//namespace Common
-//{
 
 bool AreRectsIntersecting(const Rect &r1, const Rect &r2) { // NOTE: remember that in AGS Y axis is pointed downwards
 	return r1.Left <= r2.Right && r1.Right >= r2.Left &&
@@ -124,6 +119,4 @@ Rect PlaceInRect(const Rect &place, const Rect &item, const RectPlacement &place
 	}
 }
 
-//} // namespace Common
-//} // namespace AGS
 } // namespace AGS3

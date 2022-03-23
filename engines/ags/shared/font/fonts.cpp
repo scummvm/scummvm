@@ -196,10 +196,10 @@ bool use_default_linespacing(size_t fontNumber) {
 extern int get_text_width_outlined(const char *tex, int font);
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 SplitLines Lines;
-}
-}
+} // namespace Shared
+} // namespace AGS
 
 // Replaces AGS-specific linebreak tags with common '\n'
 void unescape_script_string(const char *cstr, std::vector<char> &out) {
