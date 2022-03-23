@@ -272,16 +272,6 @@ void LoadFonts(GameDataVersion data_ver) {
 				set_font_outline(i, FONT_OUTLINE_AUTO, FontInfo::kSquared, get_font_scaling_mul(i));
 			}
 		}
-
-		// Backward compatibility: if the real font's height != formal height
-		// and there's no custom linespacing, then set linespacing = formal height.
-		if (!is_bitmap_font(i)) {
-			int req_height = _GP(game).fonts[i].SizePt * _GP(game).fonts[i].SizeMultiplier;
-			int height = get_font_height(i);
-			if ((height != req_height) && (_GP(game).fonts[i].LineSpacing == 0)) {
-				set_font_linespacing(i, req_height + get_font_outline_padding(i));
-			}
-		}
 	}
 
 	// Additional fixups - after all the fonts are registered
@@ -299,6 +289,27 @@ void LoadFonts(GameDataVersion data_ver) {
 			if ((ags_stricmp(name, "LucasFan-Font") == 0) &&
 					(ags_stricmp(outline_name, "Arcade") == 0))
 				set_font_outline(i, FONT_OUTLINE_AUTO);
+		}
+	}
+
+	// Precalculate and cache any additional parameters; do this after all the fixups
+	for (int i = 0; i < _GP(game).numfonts; ++i) {
+		FontInfo &finfo = _GP(game).fonts[i];
+		const int height = get_font_height(i);
+		if (finfo.LineSpacing == 0) {
+			set_font_linespacing(i, height + 2 * finfo.AutoOutlineThickness);
+
+			// WORKAROUND: For qfg2vga at least, fInfo.SizePt == 0, which causes below
+			// to screw up line spacing. Since by the current upstream HEAD this has all
+			// been replaced anyway, for now I'm adding an explicit 0 check
+			if (finfo.SizePt != 0) {
+				// Backward compatibility: if the real font's height != formal height
+				// and there's no custom linespacing, then set linespacing = formal height.
+				const int compat_height = finfo.SizePt * finfo.SizeMultiplier;
+				if (height != compat_height) {
+					set_font_linespacing(i, compat_height + 2 * finfo.AutoOutlineThickness);
+				}
+			}
 		}
 	}
 }

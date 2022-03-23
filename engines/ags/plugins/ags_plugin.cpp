@@ -279,7 +279,7 @@ bool IAGSEngine::FSeek(soff_t offset, int origin, int32 handle) {
 
 void IAGSEngine::DrawTextWrapped(int32 xx, int32 yy, int32 wid, int32 font, int32 color, const char *text) {
 	// TODO: use generic function from the engine instead of having copy&pasted code here
-	int linespacing = getfontspacing_outlined(font);
+	const int linespacing = get_font_linespacing(font);
 
 	if (break_up_text_into_lines(text, _GP(Lines), wid, font) == 0)
 		return;

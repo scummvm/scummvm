@@ -193,13 +193,13 @@ int GetTextHeight(const char *text, int fontnum, int width) {
 int GetFontHeight(int fontnum) {
 	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!GetFontHeight: invalid font number.");
-	return game_to_data_coord(getfontheight_outlined(fontnum));
+	return game_to_data_coord(get_font_height_outlined(fontnum));
 }
 
 int GetFontLineSpacing(int fontnum) {
 	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!GetFontLineSpacing: invalid font number.");
-	return game_to_data_coord(getfontspacing_outlined(fontnum));
+	return game_to_data_coord(get_font_linespacing(fontnum));
 }
 
 void SetGUIBackgroundPic(int guin, int slotn) {

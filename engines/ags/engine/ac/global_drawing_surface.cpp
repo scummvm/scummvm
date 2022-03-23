@@ -147,7 +147,7 @@ void RawPrint(int xx, int yy, const char *text) {
 }
 void RawPrintMessageWrapped(int xx, int yy, int wid, int font, int msgm) {
 	char displbuf[3000];
-	int linespacing = getfontspacing_outlined(font);
+	const int linespacing = get_font_linespacing(font);
 	data_to_game_coords(&xx, &yy);
 	wid = data_to_game_coord(wid);
 

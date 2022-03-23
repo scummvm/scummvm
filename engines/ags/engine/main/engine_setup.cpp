@@ -123,7 +123,7 @@ void engine_setup_system_gamesize() {
 
 void engine_init_resolution_settings(const Size game_size) {
 	Debug::Printf("Initializing resolution settings");
-	_GP(usetup).textheight = getfontheight_outlined(0) + 1;
+	_GP(usetup).textheight = get_font_height_outlined(0) + 1;
 
 	Debug::Printf(kDbgMsg_Info, "Game native resolution: %d x %d (%d bit)%s", game_size.Width, game_size.Height, _GP(game).color_depth * 8,
 	              _GP(game).IsLegacyLetterbox() ? " letterbox-by-design" : "");

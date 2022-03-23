@@ -27,6 +27,7 @@
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/game.h"
 #include "ags/shared/ac/game_setup_struct.h"
+#include "ags/shared/font/fonts.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_display.h"
@@ -72,7 +73,7 @@ void DisplayTopBar(int ypos, int ttexcol, int backcol, const char *title, const 
 
 	_GP(topBar).wantIt = 1;
 	_GP(topBar).font = FONT_NORMAL;
-	_GP(topBar).height = getfontheight_outlined(_GP(topBar).font);
+	_GP(topBar).height = get_font_height_outlined(_GP(topBar).font);
 	_GP(topBar).height += data_to_game_coord(_GP(play).top_bar_borderwidth) * 2 + get_fixed_pixel_size(1);
 
 	// they want to customize the font

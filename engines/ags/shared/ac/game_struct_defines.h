@@ -246,7 +246,7 @@ struct FontInfo {
 	int8          Outline;
 	// Custom vertical render offset, used mainly for fixing broken fonts
 	int           YOffset;
-	// custom line spacing between two lines of text (0 = use font height)
+	// Custom line spacing between two lines of text (0 = use font height)
 	int           LineSpacing;
 	// When automatic outlining, thickness of the outline (0 = no auto outline)
 	int           AutoOutlineThickness;

@@ -450,8 +450,8 @@ void DialogOptions::Prepare(int _dlgnum, bool _runGameLoopsInBackground) {
 
 	dlgyp = get_fixed_pixel_size(160);
 	usingfont = FONT_NORMAL;
-	lineheight = getfontheight_outlined(usingfont);
-	linespacing = getfontspacing_outlined(usingfont);
+	lineheight = get_font_height_outlined(usingfont);
+	linespacing = get_font_linespacing(usingfont);
 	curswas = _G(cur_cursor);
 	bullet_wid = 0;
 	ddb = nullptr;

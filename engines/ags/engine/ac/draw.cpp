@@ -644,7 +644,8 @@ void mark_current_background_dirty() {
 
 void draw_and_invalidate_text(Bitmap *ds, int x1, int y1, int font, color_t text_color, const char *text) {
 	wouttext_outline(ds, x1, y1, font, text_color, text);
-	invalidate_rect(x1, y1, x1 + get_text_width_outlined(text, font), y1 + getfontheight_outlined(font) + get_fixed_pixel_size(1), false);
+	invalidate_rect(x1, y1, x1 + get_text_width_outlined(text, font),
+		y1 + get_font_height_outlined(font) + get_fixed_pixel_size(1), false);
 }
 
 // Renders black borders for the legacy boxed game mode,
@@ -1930,7 +1931,7 @@ void draw_fps(const Rect &viewport) {
 	static Bitmap *fpsDisplay = nullptr;
 	const int font = FONT_NORMAL;
 	if (fpsDisplay == nullptr) {
-		fpsDisplay = CreateCompatBitmap(viewport.GetWidth(), (getfontheight_outlined(font) + get_fixed_pixel_size(5)), _GP(game).GetColorDepth());
+		fpsDisplay = CreateCompatBitmap(viewport.GetWidth(), (get_font_height_outlined(font) + get_fixed_pixel_size(5)));
 	}
 	fpsDisplay->ClearTransparent();
 
@@ -2266,7 +2267,7 @@ void construct_engine_overlay() {
 	if ((_GP(play).debug_mode > 0) && (_G(display_console) != 0)) {
 		const int font = FONT_NORMAL;
 		int ypp = 1;
-		int txtspacing = getfontspacing_outlined(font);
+		int txtspacing = get_font_linespacing(font);
 		int barheight = getheightoflines(font, DEBUG_CONSOLE_NUMLINES - 1) + 4;
 
 		if (_G(debugConsoleBuffer) == nullptr) {

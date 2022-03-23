@@ -333,7 +333,7 @@ void DrawingSurface_DrawStringWrapped_Old(ScriptDrawingSurface *sds, int xx, int
 }
 
 void DrawingSurface_DrawStringWrapped(ScriptDrawingSurface *sds, int xx, int yy, int wid, int font, int alignment, const char *msg) {
-	int linespacing = getfontspacing_outlined(font);
+	int linespacing = get_font_linespacing(font);
 	sds->PointToGameResolution(&xx, &yy);
 	sds->SizeToGameResolution(&wid);
 
