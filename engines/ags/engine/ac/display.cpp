@@ -469,7 +469,7 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 		color |= makeacol32(0, 0, 0, 0xff);
 
 	size_t const t_width = get_text_width(texx, font);
-	size_t const t_height = get_font_height(font);
+	size_t const t_height = get_font_surface_height(font);
 	if (t_width == 0 || t_height == 0)
 		return;
 

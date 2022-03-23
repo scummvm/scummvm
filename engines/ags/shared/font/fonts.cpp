@@ -85,6 +85,7 @@ static void post_init_font(size_t fontNumber) {
 		font.Metrics.Height = height;
 		font.Metrics.RealHeight = height;
 	}
+	font.Metrics.CompatHeight = font.Metrics.Height;
 	if (font.Info.Outline != FONT_OUTLINE_AUTO) {
 		font.Info.AutoOutlineThickness = 0;
 	}
@@ -171,14 +172,20 @@ void set_font_outline(size_t font_number, int outline_type,
 int get_font_height(size_t fontNumber) {
 	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
 		return 0;
-	return _GP(fonts)[fontNumber].Metrics.RealHeight;
+	return _GP(fonts)[fontNumber].Metrics.CompatHeight;
 }
 
 int get_font_height_outlined(size_t fontNumber) {
 	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
 		return 0;
-	return _GP(fonts)[fontNumber].Metrics.RealHeight
+	return _GP(fonts)[fontNumber].Metrics.CompatHeight
 		+ 2 * _GP(fonts)[fontNumber].Info.AutoOutlineThickness;
+}
+
+int get_font_surface_height(size_t fontNumber) {
+	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
+		return 0;
+	return _GP(fonts)[fontNumber].Metrics.RealHeight;
 }
 
 int get_font_linespacing(size_t fontNumber) {

@@ -84,12 +84,17 @@ void ensure_text_valid_for_font(char *text, size_t fontnum);
 int get_font_scaling_mul(size_t fontNumber);
 // Calculate actual width of a line of text
 int get_text_width(const char *texx, size_t fontNumber);
-// Get font's height (maximal height of any line of text printed with this font)
+// Get font's height; this value is used for logical arrangement of UI elements;
+// note that this is a "formal" font height, that may have different value
+// depending on compatibility mode (used when running old games);
 int get_font_height(size_t fontNumber);
 // TODO: GUI classes located in Common library do not make use of outlining,
 // need to find a way to make all code use same functions.
 // Get the maximal height of the given font, with corresponding outlining
 int get_font_height_outlined(size_t fontNumber);
+// Get font's surface height: this always returns the height enough to accomodate
+// font letters on a bitmap or a texture; the distinction is needed for compatibility reasons
+int get_font_surface_height(size_t fontNumber);
 // Get font's line spacing
 int get_font_linespacing(size_t fontNumber);
 // Set font's line spacing
