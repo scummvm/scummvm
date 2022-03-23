@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-03-23 14:23+0000\n"
+"POT-Creation-Date: 2022-03-23 15:03+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -6252,11 +6252,11 @@ msgstr ""
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr ""
 
-#: engines/scumm/detection.cpp:210
+#: engines/scumm/detection.cpp:210 engines/scumm/dialogs.cpp:730
 msgid "Enable game-specific enhancements"
 msgstr ""
 
-#: engines/scumm/detection.cpp:211
+#: engines/scumm/detection.cpp:211 engines/scumm/dialogs.cpp:730
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
