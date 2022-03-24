@@ -99,14 +99,11 @@ static void post_init_font(size_t fontNumber, int load_mode) {
 		font.Info.Flags |= FFLG_DEFLINESPACING;
 		const int height = font.Metrics.Height;
 		font.LineSpacingCalc = height + 2 * font.Info.AutoOutlineThickness;
-		// Backward compatibility: if the real font's height != formal height
-		// then set linespacing from the formal height.
-		if ((load_mode & FONT_LOAD_REPORTREALHEIGHT) == 0) {
-			const int compat_height = font.Metrics.CompatHeight;
-			if (height != compat_height) {
-				font.LineSpacingCalc = compat_height + 2 * font.Info.AutoOutlineThickness;
-			}
-		}
+		// NOTE: we use formal font height to define default linespacing;
+		// this is compatible with the old games and also seem to give nicer
+		// looks (plus user may always setup custom linespacing).
+		// If real height will be wanted, check for FONT_LOAD_REPORTREALHEIGHT
+		// flag in "load_mode" to know when to apply real or formal height.
 	}
 }
 
