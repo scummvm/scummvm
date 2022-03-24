@@ -31,6 +31,11 @@
 
 namespace AGS3 {
 
+// Font load flags, primarily for backward compatibility
+// REPORTREALHEIGHT: get_font_height should return real font's height,
+// otherwise returns formal height, equal to "font size" parameter
+#define FONT_LOAD_REPORTREALHEIGHT 0x01
+
 class IAGSFontRenderer;
 class IAGSFontRenderer2;
 struct FontInfo;
@@ -66,7 +71,7 @@ struct FontRenderParams;
 void init_font_renderer();
 void shutdown_font_renderer();
 void adjust_y_coordinate_for_text(int *ypos, size_t fontnum);
-IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer);
+IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer, int load_mode);
 bool font_first_renderer_loaded();
 bool is_font_loaded(size_t fontNumber);
 bool is_bitmap_font(size_t fontNumber);
@@ -115,7 +120,7 @@ void set_fontinfo(size_t fontNumber, const FontInfo &finfo);
 // Gets full information about the font
 FontInfo get_fontinfo(size_t font_number);
 // Loads a font from disk
-bool wloadfont_size(size_t fontNumber, const FontInfo &font_info);
+bool load_font_size(size_t fontNumber, const FontInfo &font_info, int load_mode);
 void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...);
 // Allocates two outline stencil buffers, or returns previously creates ones;
 // these buffers are owned by the font, they should not be deleted by the caller.

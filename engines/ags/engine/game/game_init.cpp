@@ -258,10 +258,10 @@ HError InitAndRegisterGameEntities() {
 	return HError::None();
 }
 
-void LoadFonts(GameDataVersion data_ver) {
+void LoadFonts(GameSetupStruct &game, GameDataVersion data_ver) {
 	for (int i = 0; i < _GP(game).numfonts; ++i) {
 		FontInfo &finfo = _GP(game).fonts[i];
-		if (!wloadfont_size(i, finfo))
+		if (!load_font_size(i, finfo, game.options[OPT_FONTLOADLOGIC]))
 			quitprintf("Unable to load font %d, no renderer could load a matching file", i);
 
 		const bool is_wfn = is_bitmap_font(i);
@@ -299,14 +299,12 @@ void LoadFonts(GameDataVersion data_ver) {
 		if (finfo.LineSpacing == 0) {
 			set_font_linespacing(i, height + 2 * finfo.AutoOutlineThickness);
 
-			// WORKAROUND: For qfg2vga at least, fInfo.SizePt == 0, which causes below
-			// to screw up line spacing. Since by the current upstream HEAD this has all
-			// been replaced anyway, for now I'm adding an explicit 0 check
-			if (finfo.SizePt != 0) {
-				// Backward compatibility: if the real font's height != formal height
-				// and there's no custom linespacing, then set linespacing = formal height.
+			// Backward compatibility: if the real font's height != formal height
+			// and there's no custom linespacing, then set linespacing = formal height.
+			if ((game.options[OPT_FONTLOADLOGIC] & FONT_LOAD_REPORTREALHEIGHT) == 0) {
 				const int compat_height = finfo.SizePt * finfo.SizeMultiplier;
-				if (height != compat_height) {
+				// WORKAROUND: Don't replace if no height
+				if (compat_height != 0 && height != compat_height) {
 					set_font_linespacing(i, compat_height + 2 * finfo.AutoOutlineThickness);
 				}
 			}
@@ -355,8 +353,9 @@ void AllocScriptModules() {
 }
 
 HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion data_ver) {
-	const ScriptAPIVersion base_api = (ScriptAPIVersion)_GP(game).options[OPT_BASESCRIPTAPI];
-	const ScriptAPIVersion compat_api = (ScriptAPIVersion)_GP(game).options[OPT_SCRIPTCOMPATLEV];
+	GameSetupStruct &game = ents.Game;
+	const ScriptAPIVersion base_api = (ScriptAPIVersion)game.options[OPT_BASESCRIPTAPI];
+	const ScriptAPIVersion compat_api = (ScriptAPIVersion)game.options[OPT_SCRIPTCOMPATLEV];
 	if (data_ver >= kGameVersion_341) {
 		const char *base_api_name = GetScriptAPIName(base_api);
 		const char *compat_api_name = GetScriptAPIName(compat_api);
@@ -366,42 +365,43 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	}
 	// If the game was compiled using unsupported version of the script API,
 	// we warn about potential incompatibilities but proceed further.
-	if (_GP(game).options[OPT_BASESCRIPTAPI] > kScriptAPI_Current)
+	if (game.options[OPT_BASESCRIPTAPI] > kScriptAPI_Current)
 		_G(platform)->DisplayAlert("Warning: this game requests a higher version of AGS script API, it may not run correctly or run at all.");
 
 	//
 	// 1. Check that the loaded data is valid and compatible with the current
 	// engine capabilities.
 	//
-	if (_GP(game).numfonts == 0)
+	if (game.numfonts == 0)
 		return new GameInitError(kGameInitErr_NoFonts);
-	if (_GP(game).audioClipTypes.size() > MAX_AUDIO_TYPES)
+	if (game.audioClipTypes.size() > MAX_AUDIO_TYPES)
 		return new GameInitError(kGameInitErr_TooManyAudioTypes,
-			String::FromFormat("Required: %zu, max: %zu", _GP(game).audioClipTypes.size(), MAX_AUDIO_TYPES));
+			String::FromFormat("Required: %zu, max: %zu", game.audioClipTypes.size(), MAX_AUDIO_TYPES));
 
 	//
 	// 3. Allocate and init game objects
 	//
-	_G(charextra) = (CharacterExtras *)calloc(_GP(game).numcharacters, sizeof(CharacterExtras));
-	_G(charcache) = (CharacterCache *)calloc(1, sizeof(CharacterCache) * _GP(game).numcharacters + 5);
-	_G(mls) = (MoveList *)calloc(_GP(game).numcharacters + MAX_ROOM_OBJECTS + 1, sizeof(MoveList));
+	_G(charextra) = (CharacterExtras *)calloc(game.numcharacters, sizeof(CharacterExtras));
+	_G(charcache) = (CharacterCache *)calloc(1, sizeof(CharacterCache) * game.numcharacters + 5);
+	_G(mls) = (MoveList *)calloc(game.numcharacters + MAX_ROOM_OBJECTS + 1, sizeof(MoveList));
 	init_game_drawdata();
 	_GP(views) = std::move(ents.Views);
 
-	_GP(play).charProps.resize(_GP(game).numcharacters);
+	_GP(play).charProps.resize(game.numcharacters);
 	_G(old_dialog_scripts) = ents.OldDialogScripts;
 	_G(old_speech_lines) = ents.OldSpeechLines;
 
 	// Set number of game channels corresponding to the loaded game version
 	if (_G(loaded_game_file_version) < kGameVersion_360)
-		_GP(game).numGameChannels = MAX_GAME_CHANNELS_v320;
+		game.numGameChannels = MAX_GAME_CHANNELS_v320;
 	else
-		_GP(game).numGameChannels = MAX_GAME_CHANNELS;
+		game.numGameChannels = MAX_GAME_CHANNELS;
 
 	HError err = InitAndRegisterGameEntities();
 	if (!err)
 		return new GameInitError(kGameInitErr_EntityInitFail, err);
-	LoadFonts(data_ver);
+	LoadFonts(game, data_ver);
+	LoadLipsyncData();
 
 	//
 	// 4. Initialize certain runtime variables
@@ -410,12 +410,12 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	_G(ifacepopped) = -1;
 
 	String svg_suffix;
-	if (_GP(game).saveGameFileExtension[0] != 0)
-		svg_suffix.Format(".%s", _GP(game).saveGameFileExtension);
+	if (game.saveGameFileExtension[0] != 0)
+		svg_suffix.Format(".%s", game.saveGameFileExtension);
 	set_save_game_suffix(svg_suffix);
 
-	_GP(play).score_sound = _GP(game).scoreClipID;
-	_GP(play).fade_effect = _GP(game).options[OPT_FADETYPE];
+	_GP(play).score_sound = game.scoreClipID;
+	_GP(play).fade_effect = game.options[OPT_FADETYPE];
 
 	//
 	// 5. Initialize runtime state of certain game objects
@@ -424,7 +424,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 		// labels are not clickable by default
 		_GP(guilabels)[i].SetClickable(false);
 	}
-	_GP(play).gui_draw_order = (int32_t *)calloc(_GP(game).numgui * sizeof(int), 1);
+	_GP(play).gui_draw_order = (int32_t *)calloc(game.numgui * sizeof(int), 1);
 	update_gui_zorder();
 	calculate_reserved_channel_count();
 

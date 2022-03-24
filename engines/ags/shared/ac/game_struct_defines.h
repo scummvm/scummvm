@@ -85,6 +85,7 @@ namespace AGS3 {
 #define OPT_RENDERATSCREENRES 45 // scale sprites at the (final) screen resolution
 #define OPT_RELATIVEASSETRES 46 // relative asset resolution mode (where sprites are resized to match game type)
 #define OPT_WALKSPEEDABSOLUTE 47 // if movement speeds are independent of walkable mask resolution
+#define OPT_FONTLOADLOGIC   48 // fonts load/init logic, see FONT_LOAD_xxx flags
 #define OPT_HIGHESTOPTION   OPT_WALKSPEEDABSOLUTE
 #define OPT_NOMODMUSIC      98
 #define OPT_LIPSYNCTEXT     99

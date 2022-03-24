@@ -73,7 +73,7 @@ bool is_font_loaded(size_t fontNumber) {
 }
 
 // Finish font's initialization
-static void post_init_font(size_t fontNumber) {
+static void post_init_font(size_t fontNumber, int load_mode) {
 	Font &font = _GP(fonts)[fontNumber];
 	if (font.Metrics.Height == 0) {
 		// There is no explicit method for getting maximal possible height of any
@@ -85,19 +85,20 @@ static void post_init_font(size_t fontNumber) {
 		font.Metrics.Height = height;
 		font.Metrics.RealHeight = height;
 	}
-	font.Metrics.CompatHeight = font.Metrics.Height;
+	font.Metrics.CompatHeight = (load_mode & FONT_LOAD_REPORTREALHEIGHT) == 0 ?
+		font.Metrics.Height : font.Metrics.RealHeight;
 	if (font.Info.Outline != FONT_OUTLINE_AUTO) {
 		font.Info.AutoOutlineThickness = 0;
 	}
 }
 
-IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer) {
+IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer, int load_mode) {
 	if (fontNumber >= _GP(fonts).size())
 		return nullptr;
 	IAGSFontRenderer *oldRender = _GP(fonts)[fontNumber].Renderer;
 	_GP(fonts)[fontNumber].Renderer = renderer;
 	_GP(fonts)[fontNumber].Renderer2 = nullptr;
-	post_init_font(fontNumber);
+	post_init_font(fontNumber, load_mode);
 	return oldRender;
 }
 
@@ -350,7 +351,7 @@ FontInfo get_fontinfo(size_t font_number) {
 }
 
 // Loads a font from disk
-bool wloadfont_size(size_t fontNumber, const FontInfo &font_info) {
+bool load_font_size(size_t fontNumber, const FontInfo &font_info, int load_mode) {
 	if (_GP(fonts).size() <= fontNumber)
 		_GP(fonts).resize(fontNumber + 1);
 	else
@@ -372,7 +373,7 @@ bool wloadfont_size(size_t fontNumber, const FontInfo &font_info) {
 
 	_GP(fonts)[fontNumber].Info = font_info;
 	_GP(fonts)[fontNumber].Metrics = metrics;
-	post_init_font(fontNumber);
+	post_init_font(fontNumber, load_mode);
 	return true;
 }
 
