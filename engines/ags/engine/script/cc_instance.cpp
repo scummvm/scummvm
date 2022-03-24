@@ -1577,16 +1577,15 @@ bool ccInstance::CreateGlobalVars(const ccScript *scri) {
 }
 
 bool ccInstance::AddGlobalVar(const ScriptVariable &glvar) {
-	// [IKM] 2013-02-23:
-	// !!! TODO
-	// "Metal Dead" game (built with AGS 3.21.1115) fails to pass this check,
-	// because one of its fixups in script creates reference beyond global
-	// data buffer. The error will be suppressed until root of the problem is
-	// found, and some proper workaround invented.
+	// NOTE:
+	// We suppress the error here, because unfortunately at least one existing
+	// game ("Metal Dead", built with AGS 3.21.1115) fails to pass this check.
+	// It has been found that this may be caused by a global variable of zero
+	// size (an instance of empty struct) placed in the end of the script.
+	// TODO: invent some workaround?
+	// TODO: enable the error back in AGS 4, as this is not a normal behavior.
 	if (glvar.ScAddress < 0 || glvar.ScAddress >= globaldatasize) {
-		/*
-		return false;
-		*/
+		/* return false; */
 		Debug::Printf(kDbgMsg_Warn, "WARNING: global variable refers to data beyond allocated buffer (%d, %d)", glvar.ScAddress, globaldatasize);
 	}
 	globalvars->insert(std::make_pair(glvar.ScAddress, glvar));
