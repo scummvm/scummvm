@@ -804,7 +804,8 @@ void engine_init_game_settings() {
 	// reset graphical script vars (they're still used by some games)
 	for (ee = 0; ee < MAXGLOBALVARS; ee++)
 		_GP(play).globalvars[ee] = 0;
-
+	for (ee = 0; ee < MAXGSVALUES; ee++)
+		_GP(play).globalscriptvars[ee] = 0;
 	for (ee = 0; ee < MAXGLOBALSTRINGS; ee++)
 		_GP(play).globalstrings[ee][0] = 0;
 
