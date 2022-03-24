@@ -36,8 +36,6 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-static const char msg_fanTrans_unsupportiveTranslator[] = _s("The fan translator does not wish his translation to be incorporated into ScummVM.");
-
 namespace Prince {
 static const PrinceGameDescription gameDescriptions[] = {
 	{
@@ -129,13 +127,13 @@ static const PrinceGameDescription gameDescriptions[] = {
 	{
 		{
 			"prince",
-			msg_fanTrans_unsupportiveTranslator,
+			"w/translation",
 			AD_ENTRY3s("databank.ptc", "5fa03833177331214ec1354761b1d2ee", 3565031,
 					   "FONT1.RAW", "e80c50c8167d4d51c60d93e29bedb779", 27118,
 					   "prince_translation.dat", nullptr, -1),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSUPPORTED | ADGF_DROPPLATFORM,
+			GF_TRANSLATED | ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataDE
@@ -143,13 +141,13 @@ static const PrinceGameDescription gameDescriptions[] = {
 	{
 		{
 			"prince",
-			msg_fanTrans_unsupportiveTranslator,
+			"w/translation",
 			AD_ENTRY3s("databank.ptc", "48ec9806bda9d152acbea8ce31c93c49", 3435298,
 					   "FONT1.RAW", "e80c50c8167d4d51c60d93e29bedb779", 27118,
 					   "prince_translation.dat", nullptr, -1),
 			Common::ES_ESP,
 			Common::kPlatformWindows,
-			ADGF_UNSUPPORTED | ADGF_DROPPLATFORM,
+			GF_TRANSLATED | ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NONE)
 		},
 		kPrinceDataPL

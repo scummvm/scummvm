@@ -86,18 +86,18 @@ const char *invOptionsTextES[] = {
 	"Examinar",
 	"Usar",
 	"Abrir/Empujar",
-	"Cerrar/Tirar",
+	"Cerrar/Tirar de",
 	"Dar"
 };
 
 const char *optionsTextES[] = {
-	"Caminar a",
+	"Ir hacia",
 	"Examinar",
 	"Coger",
 	"Usar",
 	"Abrir/Empujar",
-	"Cerrar/Tirar",
-	"Hablar con"
+	"Cerrar/Tirar de",
+	"Hablar a"
 };
 
 // RU
