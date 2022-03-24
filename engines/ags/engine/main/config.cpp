@@ -94,6 +94,32 @@ void INIwritestring(ConfigTree &cfg, const String &sectn, const String &item, co
 	cfg[sectn][item] = value;
 }
 
+static WindowSetup parse_window_mode(const String &option, bool as_windowed) {
+	// "full_window" option means pseudo fullscreen ("borderless fullscreen window")
+	if (!as_windowed && (option.CompareNoCase("full_window") == 0))
+		return WindowSetup(as_windowed ? kWnd_Windowed : kWnd_FullDesktop);
+	// Check supported options for explicit resolution or scale factor,
+	// in which case we'll use either a resizing window or a REAL fullscreen mode
+	const WindowMode exp_wmode = as_windowed ? kWnd_Windowed : kWnd_Fullscreen;
+	if (option.CompareNoCase("desktop") == 0)
+		return WindowSetup(get_desktop_size(), exp_wmode);
+	if (option.CompareNoCase("native") == 0)
+		return WindowSetup(game.GetGameRes(), exp_wmode);
+	// Try parse an explicit resolution type or game scale factor --
+	size_t at = option.FindChar('x');
+	if (at == 0) { // try parse as a scale (xN)
+		int scale = StrUtil::StringToInt(option.Mid(1));
+		if (scale > 0) return WindowSetup(scale, exp_wmode);
+	} else if (at != -1) { // else try parse as a "width x height"
+		Size sz = Size(StrUtil::StringToInt(option.Mid(0, at)),
+			StrUtil::StringToInt(option.Mid(at + 1)));
+		if (!sz.IsNull()) return WindowSetup(sz, exp_wmode);
+	}
+	// In case of "default" option, or any format mistake, return the default:
+	// currently it is either max resizing window of "fullscreen desktop"
+	return WindowSetup(as_windowed ? kWnd_Windowed : kWnd_FullDesktop);
+}
+
 // Legacy screen size definition
 enum ScreenSizeDefinition {
 	kScreenDef_Undefined = -1,
@@ -332,6 +358,10 @@ void apply_config(const ConfigTree &cfg) {
 		_GP(usetup).Screen.DriverID = INIreadstring(cfg, "graphics", "driver", _GP(usetup).Screen.DriverID);
 
 		_GP(usetup).Screen.Windowed = INIreadint(cfg, "graphics", "windowed") > 0;
+
+		_GP(usetup).Screen.FsSetup = parse_window_mode(INIreadstring(cfg, "graphics", "fullscreen", "default"), false);
+		_GP(usetup).Screen.WinSetup = parse_window_mode(INIreadstring(cfg, "graphics", "window", "default"), true);
+
 		// TODO: move to config overrides (replace values during config load)
 #if AGS_PLATFORM_OS_MACOS
 		_GP(usetup).Screen.Filter.ID = "none";
