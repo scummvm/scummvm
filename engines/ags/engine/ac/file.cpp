@@ -114,30 +114,49 @@ void File_WriteRawLine(sc_File *fil, const char *towrite) {
 	FileWriteRawLine(fil->handle, towrite);
 }
 
-void File_ReadRawLine(sc_File *fil, char *buffer) {
+// Reads line of chars until linebreak is met or buffer is filled;
+// returns whether reached the end of line (false in case not enough buffer);
+// guarantees null-terminator in the buffer.
+static bool File_ReadRawLineImpl(sc_File *fil, char *buffer, size_t buf_len) {
+	if (buf_len == 0) return false;
 	Stream *in = get_valid_file_stream_from_handle(fil->handle, "File.ReadRawLine");
-	check_strlen(buffer);
-	int i = 0;
-	while (i < _G(MAXSTRLEN) - 1) {
-		buffer[i] = in->ReadInt8();
-		if (buffer[i] == '\r') {
-			// CR -- skip LF and abort
-			in->ReadInt8();
-			break;
+	for (size_t i = 0; i < buf_len - 1; ++i) {
+		char c = in->ReadByte();
+		if (c < 0 || c == '\n') // EOF or LF
+		{
+			buffer[i] = 0;
+			return true;
 		}
-		if (buffer[i] == '\n')  // LF only -- abort
-			break;
-		if (in->EOS())  // EOF -- abort
-			break;
-		i++;
+		if (c == '\r') // CR or CRLF
+		{
+			c = in->ReadByte();
+			// Look for '\n', but it may be missing, which is also a valid case
+			if (c >= 0 && c != '\n') in->Seek(-1, kSeekCurrent);
+			buffer[i] = 0;
+			return true;
+		}
+		buffer[i] = c;
 	}
-	buffer[i] = 0;
+	buffer[buf_len - 1] = 0;
+	return false; // not enough buffer
+}
+
+void File_ReadRawLine(sc_File *fil, char *buffer) {
+	check_strlen(buffer);
+	File_ReadRawLineImpl(fil, buffer, _G(MAXSTRLEN));
 }
 
 const char *File_ReadRawLineBack(sc_File *fil) {
-	char readbuffer[MAX_MAXSTRLEN + 1];
-	File_ReadRawLine(fil, readbuffer);
-	return CreateNewScriptString(readbuffer);
+	char readbuffer[MAX_MAXSTRLEN];
+	if (File_ReadRawLineImpl(fil, readbuffer, MAX_MAXSTRLEN))
+		return CreateNewScriptString(readbuffer);
+	String sbuf = readbuffer;
+	bool done = false;
+	while (!done) {
+		done = File_ReadRawLineImpl(fil, readbuffer, MAX_MAXSTRLEN);
+		sbuf.Append(readbuffer);
+	};
+	return CreateNewScriptString(sbuf.GetCStr());
 }
 
 void File_ReadString(sc_File *fil, char *toread) {
