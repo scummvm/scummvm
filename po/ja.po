@@ -6482,7 +6482,9 @@ msgstr "ゲーム固有の拡張機能を有効化"
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
-msgstr "Scumm VMがゲームに対し、他のバージョンに基づいた小さな拡張を行う事を許可します。"
+msgstr ""
+"Scumm VMがゲームに対し、他のバージョンに基づいた小さな拡張を行う事を許可しま"
+"す。"
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
