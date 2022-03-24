@@ -219,15 +219,13 @@ void SetGlobalString(int index, const char *newval) {
 	if ((index < 0) | (index >= MAXGLOBALSTRINGS))
 		quitprintf("!SetGlobalString: invalid index %d, supported range is %d - %d", index, 0, MAXGLOBALSTRINGS - 1);
 	debug_script_log("GlobalString %d set to '%s'", index, newval);
-	strncpy(_GP(play).globalstrings[index], newval, MAX_MAXSTRLEN);
-	// truncate it to 200 chars, to be sure
-	_GP(play).globalstrings[index][MAX_MAXSTRLEN - 1] = 0;
+	snprintf(_GP(play).globalstrings[index], MAX_MAXSTRLEN, "%s", newval);
 }
 
 void GetGlobalString(int index, char *strval) {
 	if ((index < 0) | (index >= MAXGLOBALSTRINGS))
 		quitprintf("!GetGlobalString: invalid index %d, supported range is %d - %d", index, 0, MAXGLOBALSTRINGS - 1);
-	strcpy(strval, _GP(play).globalstrings[index]);
+	snprintf(strval, MAX_MAXSTRLEN, "%s", _GP(play).globalstrings[index]);
 }
 
 // TODO: refactor this method, and use same shared procedure at both normal stop/startup and in RunAGSGame
