@@ -56,7 +56,10 @@ void GUILabel::Draw(Shared::Bitmap *ds) {
 		return;
 
 	color_t text_color = ds->GetCompatibleColor(TextColor);
-	const int linespacing = get_font_linespacing(Font) + 1;
+	const int linespacing = // Older engine labels used (font height + 1) as linespacing for some reason
+		((_G(loaded_game_file_version) < kGameVersion_360) && (get_font_flags(Font) & FFLG_DEFLINESPACING)) ?
+		(get_font_height(Font) + 1) :
+		get_font_linespacing(Font);
 	// < 2.72 labels did not limit vertical size of text
 	const bool limit_by_label_frame = _G(loaded_game_file_version) >= kGameVersion_272;
 	int at_y = Y;

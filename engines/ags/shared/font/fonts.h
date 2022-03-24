@@ -80,6 +80,8 @@ bool is_bitmap_font(size_t fontNumber);
 bool font_supports_extended_characters(size_t fontNumber);
 // Get font's name, if it's available, otherwise returns empty string
 const char *get_font_name(size_t fontNumber);
+// Get a collection of FFLG_* flags corresponding to this font
+int get_font_flags(size_t fontNumber);
 // TODO: with changes to WFN font renderer that implemented safe rendering of
 // strings containing invalid chars (since 3.3.1) this function is not
 // important, except for (maybe) few particular cases.

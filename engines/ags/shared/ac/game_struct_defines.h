@@ -106,6 +106,7 @@ namespace AGS3 {
 #define MAX_LEGACY_FONT_SIZE 63
 // Contemporary font flags
 #define FFLG_SIZEMULTIPLIER  0x01  // size data means multiplier
+#define FFLG_DEFLINESPACING  0x02  // linespacing derived from the font height
 // Font outline types
 #define FONT_OUTLINE_NONE -1
 #define FONT_OUTLINE_AUTO -10
