@@ -94,7 +94,7 @@ void INIwritestring(ConfigTree &cfg, const String &sectn, const String &item, co
 	cfg[sectn][item] = value;
 }
 
-static WindowSetup parse_window_mode(const String &option, bool as_windowed) {
+static WindowSetup parse_window_mode(const String &option, bool as_windowed, WindowSetup def_value = WindowSetup()) {
 	// "full_window" option means pseudo fullscreen ("borderless fullscreen window")
 	if (!as_windowed && (option.CompareNoCase("full_window") == 0))
 		return WindowSetup(as_windowed ? kWnd_Windowed : kWnd_FullDesktop);
@@ -104,7 +104,7 @@ static WindowSetup parse_window_mode(const String &option, bool as_windowed) {
 	if (option.CompareNoCase("desktop") == 0)
 		return WindowSetup(get_desktop_size(), exp_wmode);
 	if (option.CompareNoCase("native") == 0)
-		return WindowSetup(game.GetGameRes(), exp_wmode);
+		return WindowSetup(_GP(game).GetGameRes(), exp_wmode);
 	// Try parse an explicit resolution type or game scale factor --
 	size_t at = option.FindChar('x');
 	if (at == 0) { // try parse as a scale (xN)
@@ -115,9 +115,8 @@ static WindowSetup parse_window_mode(const String &option, bool as_windowed) {
 			StrUtil::StringToInt(option.Mid(at + 1)));
 		if (!sz.IsNull()) return WindowSetup(sz, exp_wmode);
 	}
-	// In case of "default" option, or any format mistake, return the default:
-	// currently it is either max resizing window of "fullscreen desktop"
-	return WindowSetup(as_windowed ? kWnd_Windowed : kWnd_FullDesktop);
+	// In case of "default" option, or any format mistake, return the default
+	return def_value;
 }
 
 // Legacy screen size definition
@@ -129,7 +128,7 @@ enum ScreenSizeDefinition {
 	kNumScreenDef
 };
 
-ScreenSizeDefinition parse_screendef(const String &option) {
+static ScreenSizeDefinition parse_legacy_screendef(const String &option) {
 	const char *screen_sz_def_options[kNumScreenDef] = { "explicit", "scaling", "max" };
 	for (int i = 0; i < kNumScreenDef; ++i) {
 		if (option.CompareNoCase(screen_sz_def_options[i]) == 0) {
@@ -139,18 +138,18 @@ ScreenSizeDefinition parse_screendef(const String &option) {
 	return kScreenDef_Undefined;
 }
 
-FrameScaleDef parse_scaling_option(const String &option) {
+FrameScaleDef parse_scaling_option(const String &option, FrameScaleDef def_value) {
 	if (option.CompareNoCase("round") == 0 || option.CompareNoCase("max_round") == 0)
 		return kFrame_Round;
 	if (option.CompareNoCase("stretch") == 0)
 		return kFrame_Stretch;
 	if (option.CompareNoCase("proportional") == 0)
 		return kFrame_Proportional;
-	return kFrame_Undefined;
+	return def_value;
 }
 
-FrameScaleDef parse_legacy_scaling_option(const String &option, int &scale) {
-	FrameScaleDef frame = parse_scaling_option(option);
+static FrameScaleDef parse_legacy_scaling_option(const String &option, int &scale) {
+	FrameScaleDef frame = parse_scaling_option(option, kFrame_Undefined);
 	if (frame == kFrame_Undefined) {
 		scale = StrUtil::StringToInt(option);
 		return scale > 0 ? kFrame_Round : kFrame_Undefined;
@@ -222,11 +221,14 @@ void config_defaults() {
 #else
 	_GP(usetup).Screen.DriverID = "OGL";
 #endif
+	// Defaults for the window style are max resizing window and "fullscreen desktop"
+	_GP(usetup).Screen.FsSetup = WindowSetup(kWnd_FullDesktop);
+	_GP(usetup).Screen.WinSetup = WindowSetup(kWnd_Windowed);
 	_GP(usetup).audio_backend = 1;
 	_GP(usetup).translation = "";
 }
 
-void read_legacy_graphics_config(const ConfigTree &cfg) {
+static void read_legacy_graphics_config(const ConfigTree &cfg) {
 	// Pre-3.* game resolution setup
 	int default_res = INIreadint(cfg, "misc", "defaultres", 0);
 	int screen_res = INIreadint(cfg, "misc", "screenres", 0);
@@ -238,57 +240,69 @@ void read_legacy_graphics_config(const ConfigTree &cfg) {
 	_GP(usetup).Screen.Windowed = INIreadint(cfg, "misc", "windowed") > 0;
 	_GP(usetup).Screen.DriverID = INIreadstring(cfg, "misc", "gfxdriver", _GP(usetup).Screen.DriverID);
 
+	// Window setup: style and size definition, game frame style
 	{
 		String legacy_filter = INIreadstring(cfg, "misc", "gfxfilter");
 		if (!legacy_filter.IsEmpty()) {
-			// NOTE: legacy scaling config is applied only to windowed setting
-			int scale_factor; // FIXME
+			// Legacy scaling config is applied only to windowed setting
+			int scale_factor = 0;
 			parse_legacy_frame_config(legacy_filter, _GP(usetup).Screen.Filter.ID, _GP(usetup).Screen.WinGameFrame,
 				scale_factor);
+			if (scale_factor > 0)
+				_GP(usetup).Screen.WinSetup = WindowSetup(scale_factor);
 
-			// AGS 3.2.1 and 3.3.0 aspect ratio preferences
+			// AGS 3.2.1 and 3.3.0 aspect ratio preferences for fullscreen
 			if (!_GP(usetup).Screen.Windowed) {
-				/* FIXME --- set FsGameFrame?
-				_GP(usetup).Screen.DisplayMode.ScreenSize.MatchDeviceRatio =
+				bool allow_borders =
 					(INIreadint(cfg, "misc", "sideborders") > 0 || INIreadint(cfg, "misc", "forceletterbox") > 0 ||
-					 INIreadint(cfg, "misc", "prefer_sideborders") > 0 || INIreadint(cfg, "misc", "prefer_letterbox") > 0);
-				*/
+						INIreadint(cfg, "misc", "prefer_sideborders") > 0 || INIreadint(cfg, "misc", "prefer_letterbox") > 0);
+				_GP(usetup).Screen.FsGameFrame = allow_borders ? kFrame_Proportional : kFrame_Stretch;
 			}
 		}
 
 		// AGS 3.4.0 - 3.4.1-rc uniform scaling option
 		String uniform_frame_scale = INIreadstring(cfg, "graphics", "game_scale");
-		int src_scale = 1;
 		if (!uniform_frame_scale.IsEmpty()) {
+			int src_scale = 1;
 			FrameScaleDef frame = parse_legacy_scaling_option(uniform_frame_scale, src_scale);
 			_GP(usetup).Screen.FsGameFrame = frame;
 			_GP(usetup).Screen.WinGameFrame = frame;
 		}
 
 		// AGS 3.5.* gfx mode with screen definition
-		ScreenSizeDefinition scr_def = parse_screendef(INIreadstring(cfg, "graphics", "screen_def"));
+		const bool is_windowed = INIreadint(cfg, "graphics", "windowed") != 0;
+		WindowSetup &ws = is_windowed ? _GP(usetup).Screen.WinSetup : _GP(usetup).Screen.FsSetup;
+		const WindowMode wm = is_windowed ? kWnd_Windowed : kWnd_Fullscreen;
+		ScreenSizeDefinition scr_def = parse_legacy_screendef(INIreadstring(cfg, "graphics", "screen_def"));
 		switch (scr_def) {
 		case kScreenDef_Explicit:
-			_GP(usetup).Screen.FsSetup =
-				_GP(usetup).Screen.WinSetup = WindowSetup(Size(
-					INIreadint(cfg, "graphics", "screen_width"),
-					INIreadint(cfg, "graphics", "screen_height")));
-			break;
+		{
+			Size sz(
+				INIreadint(cfg, "graphics", "screen_width"),
+				INIreadint(cfg, "graphics", "screen_height"));
+			ws = WindowSetup(sz, wm);
+		}
+		break;
 		case kScreenDef_ByGameScaling:
-			INIreadint(cfg, "graphics", "windowed") ?
+		{
+			int src_scale;
+			is_windowed ?
 				parse_legacy_scaling_option(INIreadstring(cfg, "graphics", "game_scale_win"), src_scale) :
 				parse_legacy_scaling_option(INIreadstring(cfg, "graphics", "game_scale_fs"), src_scale);
-			_GP(usetup).Screen.FsSetup =
-				_GP(usetup).Screen.WinSetup = WindowSetup(src_scale);
+			ws = WindowSetup(src_scale, wm);
+		}
+		break;
+		case kScreenDef_MaxDisplay:
+			ws = is_windowed ? WindowSetup() : WindowSetup(kWnd_FullDesktop);
 			break;
 		default:
-			// set nothing
 			break;
 		}
 	}
 
 	_GP(usetup).Screen.Params.RefreshRate = INIreadint(cfg, "misc", "refresh");
 }
+
 
 void override_config_ext(ConfigTree &cfg) {
 	// Mobile ports always run in fullscreen mode
@@ -356,11 +370,11 @@ void apply_config(const ConfigTree &cfg) {
 
 		// Graphics mode
 		_GP(usetup).Screen.DriverID = INIreadstring(cfg, "graphics", "driver", _GP(usetup).Screen.DriverID);
-
-		_GP(usetup).Screen.Windowed = INIreadint(cfg, "graphics", "windowed") > 0;
-
-		_GP(usetup).Screen.FsSetup = parse_window_mode(INIreadstring(cfg, "graphics", "fullscreen", "default"), false);
-		_GP(usetup).Screen.WinSetup = parse_window_mode(INIreadstring(cfg, "graphics", "window", "default"), true);
+		_GP(usetup).Screen.Windowed = INIreadint(cfg, "graphics", "windowed", _GP(usetup).Screen.Windowed ? 1 : 0) > 0;
+		_GP(usetup).Screen.FsSetup =
+			parse_window_mode(INIreadstring(cfg, "graphics", "fullscreen", "default"), false, _GP(usetup).Screen.FsSetup);
+		_GP(usetup).Screen.WinSetup =
+			parse_window_mode(INIreadstring(cfg, "graphics", "window", "default"), true, _GP(usetup).Screen.WinSetup);
 
 		// TODO: move to config overrides (replace values during config load)
 #if AGS_PLATFORM_OS_MACOS
@@ -368,9 +382,9 @@ void apply_config(const ConfigTree &cfg) {
 #else
 		_GP(usetup).Screen.Filter.ID = INIreadstring(cfg, "graphics", "filter", "StdScale");
 		_GP(usetup).Screen.FsGameFrame =
-			parse_scaling_option(INIreadstring(cfg, "graphics", "game_scale_fs", "proportional"));
+			parse_scaling_option(INIreadstring(cfg, "graphics", "game_scale_fs", "proportional"), _GP(usetup).Screen.FsGameFrame);
 		_GP(usetup).Screen.WinGameFrame =
-			parse_scaling_option(INIreadstring(cfg, "graphics", "game_scale_win", "round"));
+			parse_scaling_option(INIreadstring(cfg, "graphics", "game_scale_win", "round"), _GP(usetup).Screen.WinGameFrame);
 #endif
 
 		_GP(usetup).Screen.Params.RefreshRate = INIreadint(cfg, "graphics", "refresh");

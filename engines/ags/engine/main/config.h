@@ -47,7 +47,7 @@ void post_config();
 
 void save_config_file();
 
-FrameScaleDef parse_scaling_option(const String &option);
+FrameScaleDef parse_scaling_option(const String &option, FrameScaleDef def_value = kFrame_Undefined);
 String make_scaling_option(FrameScaleDef scale_def);
 uint32_t convert_scaling_to_fp(int scale_factor);
 int convert_fp_to_scaling(uint32_t scaling);
