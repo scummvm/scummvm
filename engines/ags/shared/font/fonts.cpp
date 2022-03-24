@@ -224,6 +224,22 @@ void set_font_linespacing(size_t fontNumber, int spacing) {
 	}
 }
 
+int get_text_lines_height(size_t fontNumber, size_t numlines) {
+	if (fontNumber >= _GP(fonts).size() || numlines == 0)
+		return 0;
+	return _GP(fonts)[fontNumber].LineSpacingCalc * (numlines - 1) +
+		(_GP(fonts)[fontNumber].Metrics.CompatHeight +
+			2 * _GP(fonts)[fontNumber].Info.AutoOutlineThickness);
+}
+
+int get_text_lines_surf_height(size_t fontNumber, size_t numlines) {
+	if (fontNumber >= _GP(fonts).size() || numlines == 0)
+		return 0;
+	return _GP(fonts)[fontNumber].LineSpacingCalc * (numlines - 1) +
+		(_GP(fonts)[fontNumber].Metrics.RealHeight +
+			2 * _GP(fonts)[fontNumber].Info.AutoOutlineThickness);
+}
+
 // Project-dependent implementation
 extern int get_text_width_outlined(const char *tex, int font);
 

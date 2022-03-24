@@ -40,9 +40,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-
-
 int IsGUIOn(int guinum) {
 	if ((guinum < 0) || (guinum >= _GP(game).numgui))
 		quit("!IsGUIOn: invalid GUI number specified");
@@ -187,7 +184,7 @@ int GetTextHeight(const char *text, int fontnum, int width) {
 
 	if (break_up_text_into_lines(text, _GP(Lines), data_to_game_coord(width), fontnum) == 0)
 		return 0;
-	return game_to_data_coord(getheightoflines(fontnum, _GP(Lines).Count()));
+	return game_to_data_coord(get_text_lines_height(fontnum, _GP(Lines).Count()));
 }
 
 int GetFontHeight(int fontnum) {

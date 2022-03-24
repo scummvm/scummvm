@@ -63,9 +63,8 @@ using namespace AGS::Shared;
 using namespace AGS::Shared::BitmapHelper;
 
 struct DisplayVars {
-	int lineheight;    // font's height of single line
-	int linespacing;   // font's line spacing
-	int fulltxtheight; // total height of all the text
+	int linespacing = 0;   // font's line spacing
+	int fulltxtheight = 0; // total height of all the text
 } disp;
 
 // Pass yy = -1 to find Y co-ord automatically
@@ -100,9 +99,8 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 
 	ensure_text_valid_for_font(todis, usingfont);
 	break_up_text_into_lines(todis, _GP(Lines), wii - 2 * padding, usingfont);
-	disp.lineheight = get_font_height_outlined(usingfont);
 	disp.linespacing = get_font_linespacing(usingfont);
-	disp.fulltxtheight = getheightoflines(usingfont, _GP(Lines).Count());
+	disp.fulltxtheight = get_text_lines_surf_height(usingfont, _GP(Lines).Count());
 
 	// AGS 2.x: If the screen is faded out, fade in again when displaying a message box.
 	if (!asspch && (_G(loaded_game_file_version) <= kGameVersion_272))
@@ -561,10 +559,6 @@ int get_font_outline_padding(int font) {
 			return 2;
 	}
 	return 0;
-}
-
-int getheightoflines(int font, int numlines) {
-	return get_font_linespacing(font) * (numlines - 1) + get_font_height_outlined(font);
 }
 
 int get_text_width_outlined(const char *tex, int font) {

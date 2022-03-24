@@ -360,7 +360,7 @@ int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, in
 		needheight = 0;\
 		for (int i = 0; i < numdisp; ++i) {\
 			break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[i]]), _GP(Lines), areawid-(2*padding+2+bullet_wid), usingfont);\
-			needheight += getheightoflines(usingfont, _GP(Lines).Count()) + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);\
+			needheight += get_text_lines_surf_height(usingfont, _GP(Lines).Count()) + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);\
 		}\
 		if (parserInput) needheight += parserInput->Height + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);\
 	}

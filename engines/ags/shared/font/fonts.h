@@ -97,8 +97,6 @@ int get_text_width(const char *texx, size_t fontNumber);
 // note that this is a "formal" font height, that may have different value
 // depending on compatibility mode (used when running old games);
 int get_font_height(size_t fontNumber);
-// TODO: GUI classes located in Common library do not make use of outlining,
-// need to find a way to make all code use same functions.
 // Get the maximal height of the given font, with corresponding outlining
 int get_font_height_outlined(size_t fontNumber);
 // Get font's surface height: this always returns the height enough to accomodate
@@ -112,6 +110,12 @@ void set_font_linespacing(size_t fontNumber, int spacing);
 int  get_font_outline(size_t font_number);
 // Get font's automatic outline thickness (if set)
 int  get_font_outline_thickness(size_t font_number);
+// Gets the total maximal height of the given number of lines printed with the given font;
+// note that this uses formal font height, for compatibility purposes
+int get_text_lines_height(size_t fontNumber, size_t numlines);
+// Gets the height of a graphic surface enough to accomodate this number of text lines;
+// note this accounts for the real pixel font height
+int get_text_lines_surf_height(size_t fontNumber, size_t numlines);
 // get the source font associated with an outline font
 int get_font_outline_font(size_t font_number);
 // Set font's outline type
