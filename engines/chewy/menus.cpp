@@ -243,7 +243,7 @@ void adsMenu() {
 		if (curY < 160 || curY > curYStart + 10)
 			curY = 255;
 		else
-			curY = (curYStart + 5 - curY) / 10;
+			curY = (curYStart + 8 - curY) / 10;
 
 		if (_G(atds)->aadGetStatus() == -1 && _G(ads_push) == false &&
 		        _G(flags).NoDiaBox == false) {
