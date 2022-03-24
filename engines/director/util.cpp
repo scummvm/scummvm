@@ -765,7 +765,9 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 	switch (type) {
 	case kNoneScript:
 	default:
-		error("dumpScriptName(): Incorrect call (type %d)", type);
+		typeName = "unknown";
+		warning("dumpScriptName(): Incorrect call (type %d)", type);
+		break;
 	case kMovieScript:
 		typeName = "movie";
 		break;
