@@ -50,6 +50,8 @@ struct Font {
 	FontInfo            Info;
 	// Values received from the renderer and saved for the reference
 	FontMetrics       Metrics;
+	// Precalculated linespacing, based on font properties and compat settings
+	int                 LineSpacingCalc = 0;
 
 	// Outline buffers
 	Bitmap TextStencil, TextStencilSub;

@@ -87,8 +87,25 @@ static void post_init_font(size_t fontNumber, int load_mode) {
 	}
 	font.Metrics.CompatHeight = (load_mode & FONT_LOAD_REPORTREALHEIGHT) == 0 ?
 		font.Metrics.Height : font.Metrics.RealHeight;
+
 	if (font.Info.Outline != FONT_OUTLINE_AUTO) {
 		font.Info.AutoOutlineThickness = 0;
+	}
+
+	// If there's no explicit linespacing property set, then calculate
+	// default linespacing from the font height + outline thickness.
+	font.LineSpacingCalc = font.Info.LineSpacing;
+	if (font.Info.LineSpacing == 0) {
+		const int height = font.Metrics.Height;
+		font.LineSpacingCalc = height + 2 * font.Info.AutoOutlineThickness;
+		// Backward compatibility: if the real font's height != formal height
+		// then set linespacing from the formal height.
+		if ((load_mode & FONT_LOAD_REPORTREALHEIGHT) == 0) {
+			const int compat_height = font.Metrics.CompatHeight;
+			if (height != compat_height) {
+				font.LineSpacingCalc = compat_height + 2 * font.Info.AutoOutlineThickness;
+			}
+		}
 	}
 }
 
@@ -192,12 +209,14 @@ int get_font_surface_height(size_t fontNumber) {
 int get_font_linespacing(size_t fontNumber) {
 	if (fontNumber >= _GP(fonts).size())
 		return 0;
-	return _GP(fonts)[fontNumber].Info.LineSpacing;
+	return _GP(fonts)[fontNumber].LineSpacingCalc;
 }
 
 void set_font_linespacing(size_t fontNumber, int spacing) {
-	if (fontNumber < _GP(fonts).size())
+	if (fontNumber < _GP(fonts).size()) {
 		_GP(fonts)[fontNumber].Info.LineSpacing = spacing;
+		_GP(fonts)[fontNumber].LineSpacingCalc = spacing;
+	}
 }
 
 // Project-dependent implementation

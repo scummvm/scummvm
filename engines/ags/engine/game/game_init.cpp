@@ -291,25 +291,6 @@ void LoadFonts(GameSetupStruct &game, GameDataVersion data_ver) {
 				set_font_outline(i, FONT_OUTLINE_AUTO);
 		}
 	}
-
-	// Precalculate and cache any additional parameters; do this after all the fixups
-	for (int i = 0; i < _GP(game).numfonts; ++i) {
-		FontInfo &finfo = _GP(game).fonts[i];
-		const int height = get_font_height(i);
-		if (finfo.LineSpacing == 0) {
-			set_font_linespacing(i, height + 2 * finfo.AutoOutlineThickness);
-
-			// Backward compatibility: if the real font's height != formal height
-			// and there's no custom linespacing, then set linespacing = formal height.
-			if ((game.options[OPT_FONTLOADLOGIC] & FONT_LOAD_REPORTREALHEIGHT) == 0) {
-				const int compat_height = finfo.SizePt * finfo.SizeMultiplier;
-				// WORKAROUND: Don't replace if no height
-				if (compat_height != 0 && height != compat_height) {
-					set_font_linespacing(i, compat_height + 2 * finfo.AutoOutlineThickness);
-				}
-			}
-		}
-	}
 }
 
 void LoadLipsyncData() {
