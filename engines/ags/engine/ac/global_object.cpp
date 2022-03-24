@@ -156,11 +156,11 @@ void SetObjectFrame(int obn, int viw, int lop, int fra) {
 	if (lop < 0 || lop >= _GP(views)[viw].numLoops) quitprintf("!SetObjectFrame: invalid loop number used (%d, range is 0 - %d)", lop, _GP(views)[viw].numLoops - 1);
 	// historically AGS let user to pass literally any positive invalid frame value by silently reassigning it to zero...
 	if (fra < 0 || fra >= _GP(views)[viw].loops[lop].numFrames) {
-		if (_GP(views)[viw].loops[lop].numFrames == 0) // NOTE: we have a dummy frame allocated for this case
+		if (_GP(views)[viw].loops[lop].numFrames == 0)
 			debug_script_warn("SetObjectFrame: specified loop %d has no frames, will fallback to dummy frame", lop);
 		else
 			debug_script_warn("SetObjectFrame: frame index out of range (%d, must be 0 - %d), set to 0", fra, _GP(views)[viw].loops[lop].numFrames - 1);
-		fra = 0;
+		fra = 0; // NOTE: we have 1 dummy frame allocated for empty loops
 	}
 	if (viw > UINT16_MAX || lop > UINT16_MAX || fra > UINT16_MAX) {
 		debug_script_warn("Warning: object's (id %d) view/loop/frame (%d/%d/%d) is outside of internal range (%d/%d/%d), reset to no view",
