@@ -493,6 +493,8 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// load the room the game was saved in
 	if (_G(displayed_room) >= 0)
 		load_new_room(_G(displayed_room), nullptr);
+	else
+		set_room_placeholder();
 
 	update_polled_stuff_if_runtime();
 
