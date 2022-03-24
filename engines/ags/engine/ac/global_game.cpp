@@ -199,7 +199,7 @@ void FillSaveList(std::vector<SaveListItem> &saves, size_t max_count) {
 
 void SetGlobalInt(int index, int valu) {
 	if ((index < 0) | (index >= MAXGSVALUES))
-		quit("!SetGlobalInt: invalid index");
+		quitprintf("!SetGlobalInt: invalid index %d, supported range is %d - %d", index, 0, MAXGSVALUES - 1);
 
 	if (_GP(play).globalscriptvars[index] != valu) {
 		debug_script_log("GlobalInt %d set to %d", index, valu);
@@ -211,13 +211,13 @@ void SetGlobalInt(int index, int valu) {
 
 int GetGlobalInt(int index) {
 	if ((index < 0) | (index >= MAXGSVALUES))
-		quit("!GetGlobalInt: invalid index");
+		quitprintf("!GetGlobalInt: invalid index %d, supported range is %d - %d", index, 0, MAXGSVALUES - 1);
 	return _GP(play).globalscriptvars[index];
 }
 
 void SetGlobalString(int index, const char *newval) {
 	if ((index < 0) | (index >= MAXGLOBALSTRINGS))
-		quit("!SetGlobalString: invalid index");
+		quitprintf("!SetGlobalString: invalid index %d, supported range is %d - %d", index, 0, MAXGLOBALSTRINGS - 1);
 	debug_script_log("GlobalString %d set to '%s'", index, newval);
 	strncpy(_GP(play).globalstrings[index], newval, MAX_MAXSTRLEN);
 	// truncate it to 200 chars, to be sure
@@ -226,7 +226,7 @@ void SetGlobalString(int index, const char *newval) {
 
 void GetGlobalString(int index, char *strval) {
 	if ((index < 0) | (index >= MAXGLOBALSTRINGS))
-		quit("!GetGlobalString: invalid index");
+		quitprintf("!GetGlobalString: invalid index %d, supported range is %d - %d", index, 0, MAXGLOBALSTRINGS - 1);
 	strcpy(strval, _GP(play).globalstrings[index]);
 }
 
