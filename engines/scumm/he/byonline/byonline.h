@@ -121,6 +121,8 @@ private:
 	void handleGetProfile(int32 *args);
 	void handleProfileInfo(Common::JSONArray profile);
 
+	void handleTeams(Common::JSONArray userTeam, Common::JSONArray opponentTeam);
+
 	void setProfile(Common::String field, int32 value);
 	void sendGameResults(int userId, int arrayIndex, int unknown);
 

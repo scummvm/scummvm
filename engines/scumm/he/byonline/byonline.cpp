@@ -259,6 +259,10 @@ void BYOnline::processLine(Common::String line) {
 		} else if (command == "game_relay") {
 			int relay = root["relay"]->asIntegerNumber();
 			handleGameRelay(relay);
+		} else if (command == "teams") {
+			Common::JSONArray userTeam = root["user"]->asArray();
+			Common::JSONArray opponentTeam = root["player"]->asArray();
+			handleTeams(userTeam, opponentTeam);
 		}
 	}
 }
@@ -518,6 +522,40 @@ void BYOnline::handleProfileInfo(Common::JSONArray profile) {
 	}
 	// _vm->writeArray(108, 0, 30, 1);
 	_vm->writeVar(111, 1);
+}
+
+void BYOnline::handleTeams(Common::JSONArray userTeam, Common::JSONArray opponentTeam) {
+	// We're going to store our team in array 748, which seems to be otherwise unused
+	// Then we'll pull from that array as needed later
+	int userTeamArray = 0;
+	_vm->defineArray(748, ScummEngine_v90he::kIntArray, 0, 0, 0, userTeam.size(), true, &userTeamArray);
+	_vm->writeVar(748, userTeamArray);
+
+	for (uint i = 0; i < userTeam.size(); i++) {
+		if (userTeam[i]->isIntegerNumber()) {
+			_vm->writeArray(748, 0, i, userTeam[i]->asIntegerNumber());
+		} else {
+			warning("BYOnline: Value for user team index %d is not an integer!", i);
+		}
+	}
+
+	// And similarly store the opponent's team in array 749
+	int opponentTeamArray = 0;
+	_vm->defineArray(749, ScummEngine_v90he::kIntArray, 0, 0, 0, opponentTeam.size(), true, &opponentTeamArray);
+	_vm->writeVar(749, opponentTeamArray);
+
+	for (uint i = 0; i < opponentTeam.size(); i++) {
+		if (opponentTeam[i]->isIntegerNumber()) {
+			_vm->writeArray(749, 0, i, opponentTeam[i]->asIntegerNumber());
+		} else {
+			warning("BYOnline: Value for opponent team index %d is not an integer!", i);
+		}
+	}
+
+	// var586 controls the max player ID used for a few things, including the random selection of teams for Prince Rupert
+	// and as the size for initializing some arrays that we need to have length 263 to support generic players
+	// Now seems as good a time as any to set this variable like so
+	_vm->writeVar(586, 263);
 }
 
 void BYOnline::setProfile(Common::String field, int32 value) {
@@ -958,6 +996,15 @@ void BYOnline::connectedToSession() {
 }
 
 void BYOnline::gameStarted(int hoster, int player, int playerNameArray) {
+	if (_vm->_game.id == GID_BASEBALL2001) {  // TODO: Also check something else to make sure we want to do all this custom team stuff
+		// Request teams for this client and opponent
+		Common::JSONObject getTeamsRequest;
+		getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
+		getTeamsRequest.setVal("user_id", new Common::JSONValue((long long int)hoster));
+		getTeamsRequest.setVal("player_id", new Common::JSONValue((long long int)player));
+		send(getTeamsRequest);
+	}
+
 	char playerName[16];
 	_vm->getStringFromArray(playerNameArray, playerName, sizeof(playerName));
 

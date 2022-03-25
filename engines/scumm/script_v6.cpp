@@ -506,7 +506,23 @@ void ScummEngine_v6::o6_byteArrayRead() {
 
 void ScummEngine_v6::o6_wordArrayRead() {
 	int base = pop();
-	push(readArray(fetchScriptWord(), 0, base));
+	int num = fetchScriptWord();
+	// If we're pulling from the randomly selected teams for online play
+	// at Prince Rupert, read from variables 748 and 749 instead
+	// TODO: Check something else to make sure we want to do all this custom teams stuff
+	if (_game.id == GID_BASEBALL2001 && _currentRoom == 6
+		&& vm.slot[_currentScript].number == 2071) {
+		switch (num) {
+			case 264: case 321:
+				num = 748;
+				break;
+			case 265: case 322:
+				num = 749;
+				break;
+		}
+	}
+	int val = readArray(num, 0, base);
+	push(val);
 }
 
 void ScummEngine_v6::o6_byteArrayIndexedRead() {
