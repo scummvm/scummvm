@@ -1,0 +1,53 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*************************************
+ *
+ * XCMD: RegisterComponent
+ *
+ * USED IN:
+ * trektech: Star Trek: The Next Generation Interactive Technical Manual
+ *
+ * Note: It's not clear what its purpose is.
+ *
+ * Example usage: set errMsg to RegisterComponent(the pathName & "QTVR", ":")
+ *************************************/
+
+#ifndef DIRECTOR_LINGO_XLIBS_REGISTERCOMMANDXCMD_H
+#define DIRECTOR_LINGO_XLIBS_REGISTERCOMMANDXCMD_H
+
+namespace Director {
+
+namespace RegisterComponent {
+
+extern const char *xlibName;
+extern const char *fileNames[];
+
+void open(int type);
+void close(int type);
+
+void b_RegisterComponent(int nargs);
+
+} // End of namespace RegisterComponent
+
+} // End of namespace Director
+
+#endif
