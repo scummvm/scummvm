@@ -120,8 +120,8 @@ bool Container::CanAddItem(Item *item, bool checkwghtvol) {
 		if (volume + item->getVolume() > capacity)
 			return false;
 
-		Item *p = getTopItem();
-		Item *current = item->getTopItem();
+		const Item *p = getTopItem();
+		const Item *current = item->getTopItem();
 
 		// From outside to inside Avatar's inventory?
 		if (p->getObjId() == 1 && current->getObjId() != 1) {
@@ -289,7 +289,7 @@ void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
 }
 
 Item *Container::getFirstItemWithShape(uint16 shapeno, bool recurse) {
-	Std::list<Item *>::iterator iter;
+	Std::list<Item *>::const_iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		if ((*iter)->getShape() == shapeno)
 			return *iter;
@@ -309,7 +309,7 @@ Item *Container::getFirstItemWithShape(uint16 shapeno, bool recurse) {
 }
 
 void Container::getItemsWithShapeFamily(Std::vector<Item *> &itemlist, uint16 family, bool recurse) {
-	Std::list<Item *>::iterator iter;
+	Std::list<Item *>::const_iterator iter;
 	for (iter = _contents.begin(); iter != _contents.end(); ++iter) {
 		if ((*iter)->getShapeInfo()->_family == family)
 			itemlist.push_back(*iter);

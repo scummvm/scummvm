@@ -63,7 +63,7 @@ public:
 
 	//! Get the top-most Container this Item is in, or the Item itself if not
 	//! in a container
-	Item *getTopItem();
+	const Item *getTopItem() const;
 
 	//! Set item location. This strictly sets the location, and does not
 	//! even update CurrentMap
@@ -252,7 +252,7 @@ public:
 	uint16 getFamily() const;
 
 	//! Check if we can merge with another item.
-	bool canMergeWith(Item *other);
+	bool canMergeWith(const Item *other) const;
 
 	//! Get the open ContainerGump for this Item, if any. (NULL if not open.)
 	ObjId getGump() const {
@@ -312,7 +312,7 @@ public:
 	//! \param x x coordinate of other to use, If zero, use real coords.
 	//! \param y y coordinate of other to use
 	//! \param z z coordinate of other to use.
-	bool canReach(Item *other, int range, int32 x = 0, int32 y = 0, int32 z = 0);
+	bool canReach(const Item *other, int range, int32 x = 0, int32 y = 0, int32 z = 0) const;
 
 	//! Move the object to (x,y,z) colliding with objects in the way.
 	//! \param teleport move without colliding with objects between source and
@@ -411,14 +411,14 @@ public:
 	int32 getTargetZRelativeToAttackerZ(int32 attackerz) const;
 
 	//! count nearby objects of a given shape
-	unsigned int countNearby(uint32 shape, uint16 range);
+	unsigned int countNearby(uint32 shape, uint16 range) const;
 
 	//! can this item be dragged?
-	bool canDrag();
+	bool canDrag() const;
 
 	//! how far can this item be thrown?
 	//! \return range, or 0 if item can't be thrown
-	int getThrowRange();
+	int getThrowRange() const;
 
 	//! Check this Item against the given loopscript
 	//! \param script The loopscript to run

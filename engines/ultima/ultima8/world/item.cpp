@@ -133,8 +133,8 @@ Container *Item::getParentAsContainer() const {
 	return p;
 }
 
-Item *Item::getTopItem() {
-	Container *parentItem = getParentAsContainer();
+const Item *Item::getTopItem() const {
+	const Container *parentItem = getParentAsContainer();
 
 	if (!parentItem) return this;
 
@@ -1503,7 +1503,7 @@ int32 Item::getTargetZRelativeToAttackerZ(int32 otherz) const {
 }
 
 
-unsigned int Item::countNearby(uint32 shape, uint16 range) {
+unsigned int Item::countNearby(uint32 shape, uint16 range) const {
 	const CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 	UCList itemlist(2);
 	LOOPSCRIPT(script, LS_SHAPE_EQUAL(shape));
@@ -2338,12 +2338,12 @@ void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 }
 
 
-bool Item::canDrag() {
+bool Item::canDrag() const {
 	const ShapeInfo *si = getShapeInfo();
 	if (si->is_fixed()) return false;
 	if (si->_weight == 0) return false;
 
-	Actor *actor = dynamic_cast<Actor *>(this);
+	const Actor *actor = dynamic_cast<const Actor *>(this);
 	if (actor) {
 		// living actors can't be moved
 		if (!actor->isDead()) return false;
@@ -2354,10 +2354,10 @@ bool Item::canDrag() {
 	return true;
 }
 
-int Item::getThrowRange() {
+int Item::getThrowRange() const {
 	if (!canDrag()) return 0;
 
-	Actor *avatar = getMainActor();
+	const Actor *avatar = getMainActor();
 
 	int range = 64 - getTotalWeight() + avatar->getStr();
 	if (range < 1) range = 1;
@@ -2393,8 +2393,8 @@ static bool checkLineOfSightCollisions(
 	return (blocked_time >= other_hit_time);
 }
 
-bool Item::canReach(Item *other, int range,
-					int32 otherX, int32 otherY, int32 otherZ) {
+bool Item::canReach(const Item *other, int range,
+					int32 otherX, int32 otherY, int32 otherZ) const {
 	// get location and dimensions of self and other (or their root containers)
 	int32 thisX, thisY, thisZ;
 	int32 thisXd, thisYd, thisZd;
@@ -2485,7 +2485,7 @@ static inline bool bothInRange(uint32 x, uint32 y, uint32 lo, uint32 hi) {
 	return (x >= lo && x <= hi && y >= lo && y <= hi);
 }
 
-bool Item::canMergeWith(Item *other) {
+bool Item::canMergeWith(const Item *other) const {
 	// can't merge with self
 	if (other->getObjId() == getObjId()) return false;
 
