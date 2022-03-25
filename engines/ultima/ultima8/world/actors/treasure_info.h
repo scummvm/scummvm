@@ -37,6 +37,15 @@ struct TreasureInfo {
 	unsigned int _minCount, _maxCount;
 
 	TreasureInfo() : _chance(1), _map(0), _minCount(1), _maxCount(1) {}
+
+	void clear() {
+		_special.clear();
+		_chance = 1;
+		_map = 0;
+		_shapes.clear();
+		_frames.clear();
+		_minCount = _maxCount = 1;
+	}
 };
 
 } // End of namespace Ultima8

@@ -41,22 +41,23 @@ void TreasureLoader::loadDefaults() {
 	// load default treasure types
 	lootkeyvals = config->listKeyValues("game", "treasure");
 	KeyMap::const_iterator defaultiter;
+
 	for (defaultiter = lootkeyvals.begin();
 	        defaultiter != lootkeyvals.end(); ++defaultiter) {
 		TreasureInfo ti;
-		bool ok = internalParse(defaultiter->_value, ti, true);
+		const istring &key = defaultiter->_key;
+		const Std::string &val = defaultiter->_value;
+		bool ok = internalParse(val, ti, true);
 		if (ok) {
-			_defaultTreasure[defaultiter->_key] = ti;
+			_defaultTreasure[key] = ti;
 		} else {
-			perr << "Failed to parse treasure type '" << defaultiter->_key
-			     << "': " << defaultiter->_value << Std::endl;
+			warning("Failed to parse treasure type '%s': %s", key.c_str(), val.c_str());
 		}
 	}
-
 }
 
 bool TreasureLoader::parse(const Std::string &desc,
-						   Std::vector<TreasureInfo> &treasure) {
+						   Std::vector<TreasureInfo> &treasure) const {
 	treasure.clear();
 
 	Std::vector<Std::string> tr;
@@ -64,7 +65,6 @@ bool TreasureLoader::parse(const Std::string &desc,
 
 	TreasureInfo ti;
 	for (unsigned int i = 0; i < tr.size(); ++i) {
-//		pout << "parse: item=" << tr[i] << Std::endl;
 		if (internalParse(tr[i], ti, false)) {
 			treasure.push_back(ti);
 		} else {
@@ -76,40 +76,55 @@ bool TreasureLoader::parse(const Std::string &desc,
 }
 
 bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
-								   bool loadingDefault) {
-	ti._special = "";
-	ti._chance = 1;
-	ti._map = 0;
-	ti._shapes.clear();
-	ti._frames.clear();
-	ti._minCount = ti._maxCount = 1;
-
+								   bool loadingDefault) const {
+	ti.clear();
 	bool loadedDefault = false;
 
 	Std::vector<Std::pair<Std::string, Std::string> > kv;
 	SplitStringKV(desc, ' ', kv);
 
 	for (unsigned int i = 0; i < kv.size(); ++i) {
-		Std::string key = kv[i].first;
+		const Std::string &key = kv[i].first;
 		Std::string val = kv[i].second;
-//		pout << "internalParse: key=" << key << " val=" << val << Std::endl;
 
 		if (key == "shape") {
-			if (!parseUInt32Vector(val, ti._shapes))
+			if (!parseUInt32Vector(val, ti._shapes)) {
+				warning("Failed to parse treasure shape list '%s'", val.c_str());
 				return false;
+			}
+			// validate the shapes are > 0 and < max shape
+			for (unsigned int j = 0; j < ti._shapes.size(); j++) {
+				if (ti._shapes[j] <= 0 || ti._shapes[j] > 65535) {
+					warning("Invalid treasure shape in list '%s'", val.c_str());
+					return false;
+				}
+			}
 		} else if (key == "frame") {
-			if (!parseUInt32Vector(val, ti._frames))
+			if (!parseUInt32Vector(val, ti._frames)) {
+				warning("Failed to parse treasure frame list '%s'", val.c_str());
 				return false;
+			}
+			// validate the frames are > 0 and < max frame
+			for (unsigned int j = 0; j < ti._frames.size(); j++) {
+				if (ti._frames[j] < 0 || ti._frames[j] > 65535) {
+					warning("Invalid treasure frame in list '%s'", val.c_str());
+					return false;
+				}
+			}
 		} else if (key == "count") {
 			if (!parseUIntRange(val, ti._minCount, ti._maxCount)) {
 				int x;
-				if (!parseInt(val, x))
+				if (!parseInt(val, x) || x <= 0) {
+					warning("Invalid treasure count '%s'", val.c_str());
 					return false;
+				}
 				ti._minCount = ti._maxCount = x;
 			}
 		} else if (key == "chance") {
-			if (!parseDouble(val, ti._chance))
+			if (!parseDouble(val, ti._chance) || ti._chance <= 0) {
+				warning("Invalid treasure chance '%s'", val.c_str());
 				return false;
+			}
 		} else if (key == "map") {
 			if (val.size() > 1 && val[0] == '!')
 				val[0] = '-'; // HACK: invert map for 'not this map'
@@ -128,17 +143,23 @@ bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
 				return false;
 			loadedDefault = true;
 		} else if (key == "mult" && !loadingDefault) {
-			if (!loadedDefault) return false;
+			if (!loadedDefault) {
+				warning("Need defaults before applying multiplier in treasure data '%s'", val.c_str());
+				return false;
+			}
 			unsigned int minmult, maxmult;
 			if (!parseUIntRange(val, minmult, maxmult)) {
 				int x;
-				if (!parseInt(val, x))
+				if (!parseInt(val, x) || x <= 0) {
+					warning("Invalid treasure multiplier '%s'", val.c_str());
 					return false;
+				}
 				minmult = maxmult = x;
 			}
 			ti._minCount *= minmult;
 			ti._maxCount *= maxmult;
 		} else {
+			warning("Unknown key parsing treasure '%s'", key.c_str());
 			return false;
 		}
 	}
@@ -147,14 +168,16 @@ bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
 }
 
 bool TreasureLoader::parseUInt32Vector(const Std::string &val_,
-									   Std::vector<uint32> &vec) {
+									   Std::vector<uint32> &vec) const {
 	Std::string val = val_;
 	vec.clear();
 
-	Std::string::size_type pos;
+	if (val.empty())
+		return false;
+
 	while (!val.empty()) {
-		pos = val.find(',');
-		Std::string item = val.substr(0, pos);
+		Std::string::size_type pos = val.find(',');
+		const Std::string item = val.substr(0, pos);
 
 		Std::string::size_type itempos = val.find('-');
 		if (itempos != Std::string::npos) {
@@ -165,7 +188,7 @@ bool TreasureLoader::parseUInt32Vector(const Std::string &val_,
 				vec.push_back(i);
 		} else {
 			int x;
-			if (!parseInt(item, x))
+			if (!parseInt(item, x) || x < 0)
 				return false;
 			vec.push_back(x);
 		}
@@ -178,7 +201,7 @@ bool TreasureLoader::parseUInt32Vector(const Std::string &val_,
 }
 
 bool TreasureLoader::parseUIntRange(const Std::string &val,
-									unsigned int &min, unsigned int &max) {
+									unsigned int &min, unsigned int &max) const {
 	Std::string::size_type pos = val.find('-');
 	if (pos == 0 || pos == Std::string::npos || pos + 1 >= val.size())
 		return false;
@@ -186,20 +209,24 @@ bool TreasureLoader::parseUIntRange(const Std::string &val,
 	bool ok = true;
 	ok &= parseInt(val.substr(0, pos), t1);
 	ok &= parseInt(val.substr(pos + 1), t2);
-	if (ok) {
+	if (ok && t1 <= t2 && t1 >= 0 && t2 >= 0) {
 		min = t1;
 		max = t2;
 	}
 	return ok;
 }
 
-bool TreasureLoader::parseDouble(const Std::string &val, double &d) {
+bool TreasureLoader::parseDouble(const Std::string &val, double &d) const {
+	if (val.empty())
+		return false;
 	// TODO: error checking
 	d = atof(val.c_str());
 	return true;
 }
 
-bool TreasureLoader::parseInt(const Std::string &val, int &i) {
+bool TreasureLoader::parseInt(const Std::string &val, int &i) const {
+	if (val.empty())
+		return false;
 	// TODO: error checking
 	i = strtol(val.c_str(), 0, 0);
 	return true;
