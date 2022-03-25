@@ -55,9 +55,6 @@ namespace Saga2 {
    Optional Debugging Code
  * ===================================================================== */
 
-// enable the following to display event loop processing
-#define DEBUG_LOOP 0
-
 extern char            *gameTimeStr;
 extern bool             underground;
 extern char             commandLineHelp[];
