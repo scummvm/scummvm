@@ -1192,7 +1192,12 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 	bool skipdump = false;
 
 	if (ConfMan.getBool("dump_scripts")) {
-		Common::String buf = dumpScriptName(encodePathForDump(archName).c_str(), scriptType, castId, "lscr");
+		Common::String buf;
+		if (scriptFlags & kScriptFlagFactoryDef) {
+			buf = dumpFactoryName(encodePathForDump(archName).c_str(), factoryName.c_str(), "lscr");
+		} else {
+			buf = dumpScriptName(encodePathForDump(archName).c_str(), scriptType, castId, "lscr");
+		}
 
 		if (!out.open(buf, true)) {
 			warning("Lingo::addCodeV4(): Can not open dump file %s", buf.c_str());

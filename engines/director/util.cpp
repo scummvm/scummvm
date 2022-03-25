@@ -764,9 +764,7 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 
 	switch (type) {
 	case kNoneScript:
-	default:
 		typeName = "unknown";
-		warning("dumpScriptName(): Incorrect call (type %d)", type);
 		break;
 	case kMovieScript:
 		typeName = "movie";
@@ -780,9 +778,16 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 	case kScoreScript:
 		typeName = "score";
 		break;
+	default:
+		error("dumpScriptName(): Incorrect call (type %d)", type);
+		break;
 	}
 
 	return Common::String::format("./dumps/%s-%s-%d.%s", prefix, typeName.c_str(), id, ext);
+}
+
+Common::String dumpFactoryName(const char *prefix, const char *name, const char *ext) {
+	return Common::String::format("./dumps/%s-factory-%s.%s", prefix, name, ext);
 }
 
 void RandomState::setSeed(int seed) {
