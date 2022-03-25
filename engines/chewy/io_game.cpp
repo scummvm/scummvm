@@ -31,11 +31,11 @@ Common::StringArray &IOGame::io_init() {
 
 	_fileFind.resize(1000);
 
-	for (int i = 0; i < saveList.size(); i++) {
+	for (uint i = 0; i < saveList.size(); i++) {
 		_fileFind[i] = "";
 
 		for (uint j = 0; j < saveList.size(); ++j) {
-			if (saveList[j].getSaveSlot() == i) {
+			if (saveList[j].getSaveSlot() == (int)i) {
 				Common::String name = saveList[j].getDescription();
 				_fileFind[i] = name;
 				break;
