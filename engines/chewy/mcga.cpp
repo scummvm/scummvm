@@ -221,7 +221,6 @@ void mspr_set_mcga(byte *sptr, int16 x, int16 y, int16 scrWidth) {
 
 void vors() {
 	_G(gcurx) += _G(fontMgr)->getFont()->getDataWidth();
-	_G(gcury) += _G(fontMgr)->getFont()->getDataHeight();
 }
 
 void putcxy(int16 x, int16 y, unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
