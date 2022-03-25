@@ -27,21 +27,11 @@ namespace Chewy {
 #define IOG_END 1
 #define USER_NAME 36
 
-struct FileFind {
-	bool _found;
-	Common::String _name;
-
-	FileFind() {
-		_found = false;
-	}
-};
-
 class IOGame {
-	FileFind _fileFind[20];
-	int16 get_savegame_files();
+	Common::StringArray _fileFind;
 
 public:
-	FileFind *io_init();
+	Common::StringArray &io_init();
 	void save_entry(int16 nr);
 };
 

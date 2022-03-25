@@ -70,7 +70,7 @@ int16 Files::execute(bool isInGame) {
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 	_G(out)->setPointer(_G(screen0));
 	_G(room)->set_ak_pal(&_G(room_blk));
-	FileFind *fnames = _G(iog)->io_init();
+	Common::StringArray &fnames = _G(iog)->io_init();
  
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 	_G(out)->setPointer(_G(workptr));
@@ -114,16 +114,15 @@ int16 Files::execute(bool isInGame) {
 		}
 
 		// Write the list of savegame slots
-		FileFind *tmp = &fnames[text_off];
-		for (int16 i = 0; i < NUM_VISIBLE_SLOTS; i++, ++tmp) {
+		for (int16 i = 0; i < NUM_VISIBLE_SLOTS; i++) {
 			Common::String slot = Common::String::format("%2d.", text_off + i);
 			if (i != active_slot) {
 				_G(out)->printxy(40, 68 + (i * 10), 14, 300, 0, slot.c_str());
-				_G(out)->printxy(70, 68 + (i * 10), 14, 300, 0, tmp->_name.c_str());
+				_G(out)->printxy(70, 68 + (i * 10), 14, 300, 0, fnames[i + text_off].c_str());
 			} else {
 				_G(out)->boxFill(40, 68 + (i * 10), 308, 68 + 8 + (i * 10), 42);
 				_G(out)->printxy(40, 68 + (i * 10), 255, 300, 0, slot.c_str());
-				_G(out)->printxy(70, 68 + (i * 10), 255, 300, 0, tmp->_name.c_str());
+				_G(out)->printxy(70, 68 + (i * 10), 255, 300, 0, fnames[i + text_off].c_str());
 			}
 		}
 
@@ -251,7 +250,7 @@ int16 Files::execute(bool isInGame) {
 			mode[SCROLL_DOWN] = 10;
 			if (active_slot < (NUM_VISIBLE_SLOTS - 1))
 				++active_slot;
-			else if (text_off < (20 - NUM_VISIBLE_SLOTS))
+			else if (text_off < (999 - NUM_VISIBLE_SLOTS))
 				++text_off;
 			break;
 
@@ -273,9 +272,12 @@ enter:
 			} else if (mode[SAVE]) {
 				_G(out)->back2screen(_G(workpage));
 				_G(out)->setPointer(_G(screen0));
-				tmp = fnames + ((text_off + active_slot) * 40);
+				char tmp[81];
+				tmp[0] = '\0';
 				key = _G(out)->scanxy(70, 68 + (active_slot * 10),
 					255, 42, 14, 0, "%36s36", tmp);
+				fnames[text_off + active_slot] = tmp;
+				
 				_G(out)->setPointer(_G(workptr));
 				if (key != Common::KEYCODE_ESCAPE) {
 					_G(iog)->save_entry(text_off + active_slot);

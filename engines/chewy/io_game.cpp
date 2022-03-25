@@ -26,36 +26,29 @@
 
 namespace Chewy {
 
-FileFind *IOGame::io_init() {
-	get_savegame_files();
-	return &_fileFind[0];
-}
-
-void IOGame::save_entry(int16 slotNum) {
-	Common::String desc = _fileFind[slotNum]._name;
-	g_engine->saveGameState(slotNum, desc);
-}
-
-int16 IOGame::get_savegame_files() {
+Common::StringArray &IOGame::io_init() {
 	SaveStateList saveList = g_engine->listSaves();
-	int ret = 0;
 
-	for (int i = 0; i < 20; i++) {
-		_fileFind[i]._found = false;
-		_fileFind[i]._name = "";
+	_fileFind.resize(1000);
+
+	for (int i = 0; i < saveList.size(); i++) {
+		_fileFind[i] = "";
 
 		for (uint j = 0; j < saveList.size(); ++j) {
 			if (saveList[j].getSaveSlot() == i) {
 				Common::String name = saveList[j].getDescription();
-				_fileFind[i]._found = true;
-				_fileFind[i]._name = name;
-				++ret;
+				_fileFind[i] = name;
 				break;
 			}
 		}
 	}
 
-	return ret;
+	return _fileFind;
+}
+
+void IOGame::save_entry(int16 slotNum) {
+	Common::String desc = _fileFind[slotNum];
+	g_engine->saveGameState(slotNum, desc);
 }
 
 } // namespace Chewy
