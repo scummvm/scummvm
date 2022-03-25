@@ -127,6 +127,7 @@ static struct XLibProto {
 	{ LabelDrvXObj::fileNames,		LabelDrvXObj::open,		LabelDrvXObj::close,		kXObj,					400 }, 	// D4
 	{ OrthoPlayXObj::fileNames,		OrthoPlayXObj::open,	OrthoPlayXObj::close,		kXObj,					400 }, 	// D4
 	{ PalXObj::fileNames,			PalXObj::open,			PalXObj::close,				kXObj,					400 }, 	// D4
+	{ MemoryXObj::fileNames,		MemoryXObj::open,		MemoryXObj::close,			kXObj,					400 }, 	// D4
 	{ PopUpMenuXObj::fileNames,		PopUpMenuXObj::open,	PopUpMenuXObj::close,		kXObj,					200 }, 	// D2
 	{ SerialPortXObj::fileNames,	SerialPortXObj::open,	SerialPortXObj::close,		kXObj,					200 },	// D2
 	{ SoundJam::fileNames,			SoundJam::open,			SoundJam::close,			kXObj,					400 },	// D4

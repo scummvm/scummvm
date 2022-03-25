@@ -35,7 +35,7 @@ namespace Director {
 
 const char *MemoryXObj::xlibName = "Memory";
 const char *MemoryXObj::fileNames[] = {
-	"Memory XObj",
+	"Memory",
 	nullptr
 };
 
