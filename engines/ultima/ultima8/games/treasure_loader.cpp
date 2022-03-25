@@ -106,7 +106,7 @@ bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
 			}
 			// validate the frames are > 0 and < max frame
 			for (unsigned int j = 0; j < ti._frames.size(); j++) {
-				if (ti._frames[j] < 0 || ti._frames[j] > 65535) {
+				if (ti._frames[j] <= 0 || ti._frames[j] > 65535) {
 					warning("Invalid treasure frame in list '%s'", val.c_str());
 					return false;
 				}
