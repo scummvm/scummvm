@@ -21,11 +21,23 @@
 
 #include "ags/lib/allegro/base.h"
 #include "ags/lib/allegro/gfx.h"
+#include "ags/lib/allegro/surface.h"
 
 #ifndef AGS_LIB_ALLEGRO_DRAW_H
 #define AGS_LIB_ALLEGRO_DRAW_H
 
 namespace AGS3 {
+
+#define DRAW_MODE_SOLID             0        /* flags for drawing_mode() */
+#define DRAW_MODE_XOR               1
+#define DRAW_MODE_COPY_PATTERN      2
+#define DRAW_MODE_SOLID_PATTERN     3
+#define DRAW_MODE_MASKED_PATTERN    4
+#define DRAW_MODE_TRANS             5
+
+AL_FUNC(void, drawing_mode, (int mode, BITMAP *pattern, int x_anchor, int y_anchor));
+AL_FUNC(void, xor_mode, (int on));
+AL_FUNC(void, solid_mode, (void));
 
 typedef void (*DrawMethod)(BITMAP *, int, int, int);
 

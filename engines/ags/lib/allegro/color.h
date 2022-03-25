@@ -83,6 +83,8 @@ enum BlenderMode {
 	kTintLightBlenderMode
 };
 
+extern int makecol(byte r, byte g, byte b);
+
 AL_ARRAY(const int, _rgb_scale_5);
 AL_ARRAY(const int, _rgb_scale_6);
 

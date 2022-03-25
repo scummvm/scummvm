@@ -1283,4 +1283,18 @@ int ustrsizez(const char *s) {
 	return (intptr_t)s - (intptr_t)orig;
 }
 
+void setlocale(int type, const char *language) {
+	// TODO: If needed for alfont
+}
+
+int need_uconvert(const char *s, int type, int newtype) {
+	// TODO: need_uconvert
+	return 0;
+}
+
+int uvszprintf(char *buf, int size, const char *format, va_list args) {
+	error("TODO: uvszprintf");
+	return 0;
+}
+
 } // namespace AGS3

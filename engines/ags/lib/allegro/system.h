@@ -116,7 +116,6 @@ struct GFX_DRIVER {
 	AL_METHOD(int, show_mouse, (BITMAP *bmp, int x, int y));
 	AL_METHOD(void, hide_mouse, (void));
 	AL_METHOD(void, move_mouse, (int x, int y));
-	AL_METHOD(void, drawing_mode, (void));
 	AL_METHOD(void, save_video_state, (void));
 	AL_METHOD(void, restore_video_state, (void));
 	AL_METHOD(void, set_blender_mode, (int mode, int r, int g, int b, int a));

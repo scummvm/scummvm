@@ -35,6 +35,7 @@ using namespace AGS::Shared;
 // project-specific implementation
 extern bool ShouldAntiAliasText();
 
+
 // ***** TTF RENDERER *****
 void TTFFontRenderer::AdjustYCoordinateForFont(int *ycoord, int fontNumber) {
 	// TTF fonts already have space at the top, so try to remove the gap
@@ -61,18 +62,11 @@ void TTFFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *desti
 	if (y > destination->cb)  // optimisation
 		return;
 
-	int srcFontNum = get_font_outline_font(fontNumber);
-	ALFONT_FONT *srcFont = nullptr;
-	if (srcFontNum != FONT_OUTLINE_NONE) {
-		// Get the font without outline (if it's loaded) for use in
-		// character widths, so it will match when non-outlined font
-		// is drawn on top of it.
-		srcFont = _fontData[srcFontNum].AlFont;
-	}
-
 	// Y - 1 because it seems to get drawn down a bit
-	alfont_textout(destination, _fontData[fontNumber].AlFont,
-		srcFont, text, x, y - 1, colour);
+	if ((ShouldAntiAliasText()) && (bitmap_color_depth(destination) > 8))
+		alfont_textout_aa(destination, _fontData[fontNumber].AlFont, text, x, y - 1, colour);
+	else
+		alfont_textout(destination, _fontData[fontNumber].AlFont, text, x, y - 1, colour);
 }
 
 bool TTFFontRenderer::LoadFromDisk(int fontNumber, int fontSize) {
@@ -84,41 +78,25 @@ bool TTFFontRenderer::IsBitmapFont() {
 }
 
 bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
-		const FontRenderParams *params, FontMetrics *metrics) {
+	const FontRenderParams *params, FontMetrics *metrics) {
 	String file_name = String::FromFormat("agsfnt%d.ttf", fontNumber);
 	Stream *reader = _GP(AssetMgr)->OpenAsset(file_name);
-	byte *membuffer;
+	char *membuffer;
 
 	if (reader == nullptr)
 		return false;
 
-	size_t lenof = reader->GetLength();
-	membuffer = (byte *)malloc(lenof);
+	const size_t lenof = reader->GetLength();
+	membuffer = (char *)malloc(lenof);
 	reader->ReadArray(membuffer, lenof, 1);
 	delete reader;
 
 	ALFONT_FONT *alfptr = alfont_load_font_from_mem(membuffer, lenof);
+	free(membuffer);
 
-	if (alfptr == nullptr) {
-		free(membuffer);
+	if (alfptr == nullptr)
 		return false;
-	}
 
-	// TODO: move this somewhere, should not be right here
-#if defined(AGS_OUTLINE_FONT_FIX) && AGS_OUTLINE_FONT_FIX
-	// FIXME: (!!!) this fix should be done differently:
-	// 1. Find out which OUTLINE font was causing troubles;
-	// 2. Replace outline method ONLY if that troublesome font is used as outline.
-	// 3. Move this fix somewhere else!! (right after game load routine?)
-	//
-	// Check for the LucasFan font since it comes with an outline font that
-	// is drawn incorrectly with Freetype versions > 2.1.3.
-	// A simple workaround is to disable outline fonts for it and use
-	// automatic outline drawing.
-	if (get_font_outline(fontNumber) >= 0 &&
-	        strcmp(alfont_get_name(alfptr), "LucasFan-Font") == 0)
-		set_font_outline(fontNumber, FONT_OUTLINE_AUTO);
-#endif
 	if (fontSize == 0)
 		fontSize = 8; // compatibility fix
 	if (params && params->SizeMultiplier > 1)
@@ -132,8 +110,7 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 	if (metrics) {
 		metrics->Height = alfont_get_font_height(alfptr);
 		metrics->RealHeight = alfont_get_font_real_height(alfptr);
-	}
-
+}
 	return true;
 }
 

@@ -72,6 +72,9 @@ extern int (*uisok)(int c);
  */
 extern void set_uformat(int type);
 
+enum { LC_CTYPE };
+extern void setlocale(int type, const char *language);
+
 /* get_uformat:
  *  Returns the current text encoding format.
  */
@@ -133,6 +136,9 @@ int usetat(char *s, int index, int c);
  *  trailing zero.
  */
 extern int ustrsizez(const char *s);
+
+extern int need_uconvert(const char *s, int type, int newtype);
+extern int uvszprintf(char *buf, int size, const char *format, va_list args);
 
 } // namespace AGS3
 
