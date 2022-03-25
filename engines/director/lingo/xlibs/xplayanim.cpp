@@ -45,7 +45,7 @@ void XPlayAnim::open(int type) {
 }
 
 void XPlayAnim::close(int type) {
-	g_lingo->cleanupBuiltIns();
+	g_lingo->cleanupBuiltIns(builtins);
 }
 
 void XPlayAnim::b_xplayanim(int nargs) {
