@@ -46,7 +46,6 @@ class ChewyFont;
 class Cursor;
 class FontMgr;
 class InputMgr;
-class IOGame;
 class McgaGraphics;
 class Memory;
 
@@ -239,7 +238,6 @@ public:
 	int16 _TmpFrameSpeed = 0;
 	InputMgr *_in = nullptr;
 	Memory *_mem = nullptr;
-	IOGame *_iog = nullptr;
 	McgaGraphics *_out = nullptr;
 	Cursor *_cur = nullptr;
 	ChewyFont *_font6 = nullptr;

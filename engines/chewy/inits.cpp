@@ -61,7 +61,6 @@ void standard_init() {
 	_G(cur) = new Cursor(&_G(curblk));
 	_G(cur)->set_cur_ani(&_G(curani));
 
-	_G(iog) = new IOGame();
 	alloc_buffers();
 	_G(pal)[765] = 63;
 	_G(pal)[766] = 63;
@@ -252,7 +251,6 @@ void tidy() {
 	free_buffers();
 	_G(obj)->free_inv_spr(&_G(inv_spr)[0]);
 
-	delete _G(iog);
 	delete _G(cur);
 	delete _G(mov);
 	delete _G(atds);
@@ -267,7 +265,6 @@ void tidy() {
 	delete _G(out);
 	delete _G(mem);
 
-	_G(iog) = nullptr;
 	_G(cur) = nullptr;
 	_G(mov) = nullptr;
 	_G(atds) = nullptr;

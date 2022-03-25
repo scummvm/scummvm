@@ -49,12 +49,12 @@ static const Common::Rect fileHotspots[] = {
 };
 
 
-int16 Files::execute(bool isInGame) {
+bool Files::execute(bool isInGame) {
 	int16 key = 0;
 	Common::Point pt[8];
 	int16 mode[9];
 	bool visibility[8];
-	int16 ret = 0;
+	bool ret = false;
 	bool flag = false;
 
 	if (!ConfMan.getBool("original_menus")) {
@@ -70,7 +70,6 @@ int16 Files::execute(bool isInGame) {
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
 	_G(out)->setPointer(_G(screen0));
 	_G(room)->set_ak_pal(&_G(room_blk));
-	Common::StringArray &fnames = _G(iog)->io_init();
  
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 	_G(out)->setPointer(_G(workptr));
@@ -93,6 +92,7 @@ int16 Files::execute(bool isInGame) {
 
 	int16 text_off = 0;		// Top visible save slot
 	int16 active_slot = 0;	// Currently selected slot
+	SaveStateList saveList = g_engine->listSaves();
 
 	while (key != Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 		// Draw the dialog background
@@ -113,16 +113,24 @@ int16 Files::execute(bool isInGame) {
 			}
 		}
 
-		// Write the list of savegame slots
+		// Write the list of savegame slots	
 		for (int16 i = 0; i < NUM_VISIBLE_SLOTS; i++) {
+			if (i + text_off >= saveList.size())
+				break;
+
+			// TODO: This implementation disallows gaps in the save list
+			if (saveList[i + text_off].getSaveSlot() != i + text_off)
+				continue;
+
 			Common::String slot = Common::String::format("%2d.", text_off + i);
+			Common::String saveName = saveList[i + text_off].getDescription();
 			if (i != active_slot) {
 				_G(out)->printxy(40, 68 + (i * 10), 14, 300, 0, slot.c_str());
-				_G(out)->printxy(70, 68 + (i * 10), 14, 300, 0, fnames[i + text_off].c_str());
+				_G(out)->printxy(70, 68 + (i * 10), 14, 300, 0, saveName.c_str());
 			} else {
 				_G(out)->boxFill(40, 68 + (i * 10), 308, 68 + 8 + (i * 10), 42);
 				_G(out)->printxy(40, 68 + (i * 10), 255, 300, 0, slot.c_str());
-				_G(out)->printxy(70, 68 + (i * 10), 255, 300, 0, fnames[i + text_off].c_str());
+				_G(out)->printxy(70, 68 + (i * 10), 255, 300, 0, saveName.c_str());
 			}
 		}
 
@@ -146,7 +154,7 @@ int16 Files::execute(bool isInGame) {
 
 			key = getch();
 			if (key == 'j' || key == 'J' || key == 'y' || key == 'Y' || key == 'z' || key == 'Z') {
-				ret = 1;
+				ret = true;
 				key = Common::KEYCODE_ESCAPE;
 			} else {
 				key = 0;
@@ -259,7 +267,6 @@ int16 Files::execute(bool isInGame) {
 enter:
 			if (mode[LOAD]) {
 				const int16 slotNum = text_off + active_slot;
-				SaveStateList saveList = g_engine->listSaves();
 				for (uint j = 0; j < saveList.size(); ++j) {
 					if (saveList[j].getSaveSlot() == slotNum) {
 						_G(currentSong) = -1;
@@ -272,15 +279,15 @@ enter:
 			} else if (mode[SAVE]) {
 				_G(out)->back2screen(_G(workpage));
 				_G(out)->setPointer(_G(screen0));
-				char tmp[81];
-				tmp[0] = '\0';
+				char slotName[81];
+				slotName[0] = '\0';
 				key = _G(out)->scanxy(70, 68 + (active_slot * 10),
-					255, 42, 14, 0, "%36s36", tmp);
-				fnames[text_off + active_slot] = tmp;
+					255, 42, 14, 0, "%36s36", slotName);
 				
 				_G(out)->setPointer(_G(workptr));
 				if (key != Common::KEYCODE_ESCAPE) {
-					_G(iog)->save_entry(text_off + active_slot);
+					g_engine->saveGameState(text_off + active_slot, slotName);
+					saveList = g_engine->listSaves();
 				}
 				key = Common::KEYCODE_ESCAPE;
 			}

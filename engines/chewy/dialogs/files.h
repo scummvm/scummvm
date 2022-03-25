@@ -33,9 +33,9 @@ public:
 	 * Shows the file dialog
 	 * @param isInGame	True when called in-game,
 	 * false when called from the main menu
-	 * @returns		Returns 1 if quit was selected
+	 * @returns		Returns true if quit was selected
 	 */
-	static int16 execute(bool isInGame);
+	static bool execute(bool isInGame);
 };
 
 } // namespace Dialogs

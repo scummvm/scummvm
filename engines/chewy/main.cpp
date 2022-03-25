@@ -377,8 +377,8 @@ bool mainLoop(int16 mode) {
 
 				_G(out)->setPointer(_G(screen0));
 				cursorChoice(CUR_SAVE);
-				int16 ret = Dialogs::Files::execute(true);
-				if (ret == IOG_END) {
+				bool ret = Dialogs::Files::execute(true);
+				if (ret) {
 					retValue = true;
 					_G(fx_blend) = BLEND4;
 				}

@@ -12,7 +12,6 @@ MODULE_OBJS = \
 	gedclass.o \
 	globals.o \
 	inits.o \
-	io_game.o \
 	m_event.o \
 	main.o \
 	mouse.o \
