@@ -41,9 +41,14 @@
 
 namespace Director {
 
-const char *FlushXObj::xlibName = "FlushXObj";
+const char *FlushXObj::xlibNames[] = {
+	"FlushXObj",
+	"Johnny",
+	nullptr,
+};
 const char *FlushXObj::fileNames[] = {
 	"FlushXObj",
+	"Johnny",
 	nullptr
 };
 
@@ -60,14 +65,18 @@ void FlushXObj::open(int type) {
 	if (type == kXObj) {
 		FlushXObject::initMethods(xlibMethods);
 		FlushXObject *xobj = new FlushXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		for (uint i = 0; xlibNames[i]; i++) {
+			g_lingo->_globalvars[xlibNames[i]] = xobj;
+		}
 	}
 }
 
 void FlushXObj::close(int type) {
 	if (type == kXObj) {
 		FlushXObject::cleanupMethods();
-		g_lingo->_globalvars[xlibName] = Datum();
+		for (uint i = 0; xlibNames[i]; i++) {
+			g_lingo->_globalvars[xlibNames[i]] = Datum();
+		}
 	}
 }
 

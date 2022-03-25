@@ -31,7 +31,7 @@ public:
 
 namespace FlushXObj {
 
-extern const char *xlibName;
+extern const char *xlibNames[];
 extern const char *fileNames[];
 
 void open(int type);
