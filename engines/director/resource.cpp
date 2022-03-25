@@ -117,12 +117,9 @@ void Window::probeProjector(const Common::String &movie) {
 	}
 
 	probeMacBinary(archive);
-	delete archive;
 }
 
 void Window::probeMacBinary(MacArchive *archive) {
-	// Let's check if it is a projector file
-	// So far tested with Spaceship Warlock, D2
 	if (archive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
 		warning("Detected Projector file");
 
@@ -178,6 +175,16 @@ void Window::probeMacBinary(MacArchive *archive) {
 			g_lingo->openXLib(res.name, kXObj);
 		}
 	}
+	if (archive->hasResource(MKTAG('X', 'C', 'M', 'D'), -1)) {
+		Common::Array<uint16> xcmd = archive->getResourceIDList(MKTAG('X', 'C', 'M', 'D'));
+		for (Common::Array<uint16>::iterator iterator = xcmd.begin(); iterator != xcmd.end(); ++iterator) {
+			Resource res = archive->getResourceDetail(MKTAG('X', 'C', 'M', 'D'), *iterator);
+			debug(0, "Detected XCMD '%s'", res.name.c_str());
+			g_lingo->openXLib(res.name, kXObj);
+		}
+	}
+	// Register the resfile so that Cursor::readFromResource can find it
+	g_director->_openResFiles.setVal(archive->getPathName(), archive);
 }
 
 Archive *Window::openMainArchive(const Common::String movie) {
