@@ -1345,7 +1345,8 @@ ProcId Actor::dieU8(uint16 damageType) {
 		}
 	}
 
-	destroyContents();
+	if (getFlags() & Item::FLG_FAST_ONLY)
+		destroyContents();
 	giveTreasure();
 
 	const ShapeInfo *shapeinfo = getShapeInfo();
@@ -1424,9 +1425,6 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 
 	ProcId lastanim = 0;
 	Kernel::get_instance()->killProcesses(_objId, Kernel::PROC_TYPE_ALL, true);
-
-	destroyContents();
-	giveTreasure();
 
 	if (getShape() == 0x5d6 && GAME_IS_REGRET) {
 		// you only die twice.. (frozen person breaking into pieces)
