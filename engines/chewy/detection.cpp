@@ -122,7 +122,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 class ChewyMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	ChewyMetaEngineDetection() : AdvancedMetaEngineDetection(Chewy::gameDescriptions, sizeof(Chewy::ChewyGameDescription), chewyGames) {
+	ChewyMetaEngineDetection() : AdvancedMetaEngineDetection(Chewy::gameDescriptions, sizeof(Chewy::ChewyGameDescription), chewyGames, Chewy::optionsList) {
 		_maxScanDepth = 2;
 		_flags = kADFlagMatchFullPaths;
 	}
