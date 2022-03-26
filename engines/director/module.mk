@@ -45,6 +45,7 @@ MODULE_OBJS = \
 	lingo/xlibs/fplayxobj.o \
 	lingo/xlibs/gpid.o \
 	lingo/xlibs/labeldrvxobj.o \
+	lingo/xlibs/movutils.o \
 	lingo/xlibs/jwxini.o \
 	lingo/xlibs/memoryxobj.o \
 	lingo/xlibs/movemousexobj.o \
