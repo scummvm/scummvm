@@ -45,6 +45,7 @@
 #include "director/lingo/xlibs/labeldrvxobj.h"
 #include "director/lingo/xlibs/memoryxobj.h"
 #include "director/lingo/xlibs/movemousexobj.h"
+#include "director/lingo/xlibs/movutils.h"
 #include "director/lingo/xlibs/orthoplayxobj.h"
 #include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/popupmenuxobj.h"
@@ -134,6 +135,7 @@ static struct XLibProto {
 	{ JourneyWareXINIXObj::fileNames,	JourneyWareXINIXObj::open,	JourneyWareXINIXObj::close,	kXObj,					400 }, 	// D4
 	{ PalXObj::fileNames,				PalXObj::open,				PalXObj::close,				kXObj,					400 }, 	// D4
 	{ MemoryXObj::fileNames,			MemoryXObj::open,			MemoryXObj::close,			kXObj,					400 }, 	// D4
+	{ MovUtilsXObj::fileNames,			MovUtilsXObj::open,			MovUtilsXObj::close,		kXObj,					400 }, 	// D4
 	{ PopUpMenuXObj::fileNames,			PopUpMenuXObj::open,		PopUpMenuXObj::close,		kXObj,					200 }, 	// D2
 	{ SerialPortXObj::fileNames,		SerialPortXObj::open,		SerialPortXObj::close,		kXObj,					200 },	// D2
 	{ SoundJam::fileNames,				SoundJam::open,				SoundJam::close,			kXObj,					400 },	// D4
