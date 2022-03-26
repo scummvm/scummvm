@@ -482,7 +482,7 @@ public:
 	void fillLayerRect(int layer, int x, int y, int w, int h, int col);
 	void addDirtyRect(int x, int y, int w, int h);
 	void toggleLayers(int flags);
-	void scrollLayers(int flags, int offset);
+	void scrollLayers(int flags, int offset, bool fast);
 	void update();
 	bool isScrolling(int direction, int threshold = 0) const { return (direction == 0) ? _scrollRemainder != threshold : (direction == 1 ? _scrollRemainder > threshold : _scrollRemainder < threshold); }
 
@@ -526,6 +526,7 @@ private:
 	int _pitch;
 	uint16 _scrollOffset;
 	int _scrollRemainder;
+	bool _semiSmoothScroll;
 	Graphics::PixelFormat _pixelFormat;
 
 	int _numDirtyRects;
