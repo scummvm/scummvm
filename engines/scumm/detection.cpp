@@ -206,6 +206,13 @@ static const ExtraGuiOption smoothScrolling = {
 	true
 };
 
+static const ExtraGuiOption semiSmoothScrolling = {
+	_s("Allow semi-smooth scrolling"),
+	_s("Allow scrolling to be less smooth during the fast camera movement in the intro."),
+	"semi_smooth_scroll",
+	false
+};
+
 static const ExtraGuiOption enableEnhancements {
 	_s("Enable game-specific enhancements"),
 	_s("Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game."),
@@ -241,6 +248,8 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 	}
 	if (target.empty() || platform == Common::kPlatformFMTowns) {
 		options.push_back(smoothScrolling);
+		if (target.empty() || gameid == "loom")
+			options.push_back(semiSmoothScrolling);
 		if (guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))
 			options.push_back(fmtownsTrimTo200);
 	}
