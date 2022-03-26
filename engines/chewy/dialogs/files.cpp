@@ -115,7 +115,7 @@ bool Files::execute(bool isInGame) {
 
 		// Write the list of savegame slots	
 		for (int16 i = 0; i < NUM_VISIBLE_SLOTS; i++) {
-			if (i + text_off >= saveList.size())
+			if (i + text_off >= (int16) saveList.size())
 				break;
 
 			// TODO: This implementation disallows gaps in the save list
