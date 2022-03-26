@@ -1074,6 +1074,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Tex McPhilip 1 - Quest For The Papacy", "3c74b9a24b51aa8020ac82bee3132266"),
 	FANMADE("Tex McPhilip 2 - Road To Divinity (v1.5)", "7387e8df854440bc26620ca0ea43af9a"),
 	FANMADE("Tex McPhilip 3 - A Destiny of Sin (Demo v0.25)", "992d12031a486ad84e592ff5d7c9d782"),
+	FANMADE("Tex McPhilip 3 - A Destiny of Sin (v1.02)", "587d15e1106e59c33053c01b301ffe05"),
 	FANMADE("The 13th Disciple (v1.00)", "887719ad59afce9a41ec057dbb73ad73"),
 	FANMADE("The 13th Disciple (v1.01)", "58e3ec1b9ac1a79901c472aaa59db832"),
 	FANMADE("The Adventures of a Crazed Hermit", "6e3086cbb794d3299a9c5a9792295511"),
