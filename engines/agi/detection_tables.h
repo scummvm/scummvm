@@ -951,6 +951,8 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	FANMADE("Go West, Young Hippie", "ff31484ea465441cb5f3a0f8e956b716"),
 	FANMADE("Good Man (demo v3.41)", "3facd8a8f856b7b6e0f6c3200274d88c"),
+	FANMADE("Good Man (demo v4.0)", "d36f5d98cfcfd28cf7d4103906c59a77"),
+	FANMADE("Good Man (demo v4.0T)", "8184f70a5a33d4f407dfc8e9ddab99e9"),
 
 	GAME_LVFPNF("agi-fanmade", "Groza [AGDS sample]", "logdir", "421da3a18004122a966d64ab6bd86d2e", -1,
 	            Common::RU_RUS, 0x2440, GF_AGDS, GID_FANMADE, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT), // Гроза
