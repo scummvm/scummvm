@@ -44,6 +44,7 @@ MODULE_OBJS = \
 	lingo/xlibs/flushxobj.o \
 	lingo/xlibs/fplayxobj.o \
 	lingo/xlibs/labeldrvxobj.o \
+	lingo/xlibs/jwxini.o \
 	lingo/xlibs/memoryxobj.o \
 	lingo/xlibs/movemousexobj.o \
 	lingo/xlibs/orthoplayxobj.o \
