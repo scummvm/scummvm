@@ -68,6 +68,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      in Loom und Indiana Jones and the Last Crusade behoben.
    - Es ist nun möglich, die Musik in den Disketten-Versionen von Loom durch eigene Audio-Tracks
      zu ersetzen. Im ScummVM-Wiki findest Du eine Liste, welche Teile von Schwanensee im Spiel verwendet werden.
+   - Einige Verbesserungen, die ScummVM zu Spielen hinzufügt, können jetzt
+     in den Spiel-Einstellungen deaktiviert werden. Die Option zur Korrektur des Zeichen-
+     Abstands in den 16-Farben-Versionen für Macintosh von INdiana Jones and the Last Crusade
+     findest du jetzt dort.
 
  Sherlock:
    - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
