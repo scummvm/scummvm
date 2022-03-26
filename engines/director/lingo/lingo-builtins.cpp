@@ -1738,9 +1738,27 @@ void LB::b_copyToClipBoard(int nargs) {
 }
 
 void LB::b_duplicate(int nargs) {
-	g_lingo->printSTUBWithArglist("b_duplicate", nargs);
+	Datum to = g_lingo->pop();
+	Datum from = g_lingo->pop();
 
-	g_lingo->dropStack(nargs);
+	Frame *currentFrame = g_director->getCurrentMovie()->getScore()->_frames[g_director->getCurrentMovie()->getScore()->getCurrentFrame()];
+	CastMember *castMember = g_director->getCurrentMovie()->getCastMember(from.asMemberID());
+	auto channels = g_director->getCurrentMovie()->getScore()->_channels;
+
+	castMember->setModified(true);
+	g_director->getCurrentMovie()->getCast()->_loadedCast->setVal(to.u.i, castMember);
+
+	for (uint16 i = 0; i < currentFrame->_sprites.size(); i++) {
+		if (currentFrame->_sprites[i]->_castId == to.asMemberID())
+			currentFrame->_sprites[i]->setCast(to.asMemberID());
+	}
+
+	for (uint i = 0; i < channels.size(); i++) {
+		if (channels[i]->_sprite->_castId == to.asMemberID()) {
+			channels[i]->_sprite->setCast(to.asMemberID());
+			channels[i]->_dirty = true;
+		}
+	}
 }
 
 void LB::b_editableText(int nargs) {
