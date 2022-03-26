@@ -36,6 +36,7 @@
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
 
+#include "director/lingo/xlibs/aiff.h"
 #include "director/lingo/xlibs/cdromxobj.h"
 #include "director/lingo/xlibs/fileio.h"
 #include "director/lingo/xlibs/flushxobj.h"
@@ -125,6 +126,7 @@ static struct XLibProto {
 	int type;
 	int version;
 } xlibs[] = {
+	{ AiffXObj::fileNames,				AiffXObj::open,				AiffXObj::close,			kXObj,					400 },	// D4
 	{ CDROMXObj::fileNames,				CDROMXObj::open,			CDROMXObj::close,			kXObj,					200 },	// D2
 	{ FileIO::fileNames,				FileIO::open,				FileIO::close,				kXObj | kXtraObj,		200 },	// D2
 	{ FlushXObj::fileNames,				FlushXObj::open,			FlushXObj::close,			kXObj,					400 },	// D4
