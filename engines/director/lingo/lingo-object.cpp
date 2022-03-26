@@ -40,6 +40,7 @@
 #include "director/lingo/xlibs/fileio.h"
 #include "director/lingo/xlibs/flushxobj.h"
 #include "director/lingo/xlibs/fplayxobj.h"
+#include "director/lingo/xlibs/jwxini.h"
 #include "director/lingo/xlibs/labeldrvxobj.h"
 #include "director/lingo/xlibs/memoryxobj.h"
 #include "director/lingo/xlibs/movemousexobj.h"
@@ -122,24 +123,24 @@ static struct XLibProto {
 	int type;
 	int version;
 } xlibs[] = {
-	{ CDROMXObj::fileNames,			CDROMXObj::open,		CDROMXObj::close,			kXObj,					200 },	// D2
-	{ FileIO::fileNames,			FileIO::open,			FileIO::close,				kXObj | kXtraObj,		200 },	// D2
-	{ FlushXObj::fileNames,			FlushXObj::open,		FlushXObj::close,			kXObj,					400 },	// D4
-	{ FPlayXObj::fileNames,			FPlayXObj::open,		FPlayXObj::close,			kXObj,					200 },	// D2
-	{ LabelDrvXObj::fileNames,		LabelDrvXObj::open,		LabelDrvXObj::close,		kXObj,					400 }, 	// D4
-	{ OrthoPlayXObj::fileNames,		OrthoPlayXObj::open,	OrthoPlayXObj::close,		kXObj,					400 }, 	// D4
-	{ PalXObj::fileNames,			PalXObj::open,			PalXObj::close,				kXObj,					400 }, 	// D4
-	{ MemoryXObj::fileNames,		MemoryXObj::open,		MemoryXObj::close,			kXObj,					400 }, 	// D4
-	{ PopUpMenuXObj::fileNames,		PopUpMenuXObj::open,	PopUpMenuXObj::close,		kXObj,					200 }, 	// D2
-	{ SerialPortXObj::fileNames,	SerialPortXObj::open,	SerialPortXObj::close,		kXObj,					200 },	// D2
-	{ SoundJam::fileNames,			SoundJam::open,			SoundJam::close,			kXObj,					400 },	// D4
-	{ RegisterComponent::fileNames,	RegisterComponent::open,RegisterComponent::close,	kXObj,					400 },	// D4
-	{ VideodiscXObj::fileNames,		VideodiscXObj::open,	VideodiscXObj::close,		kXObj,					200 }, 	// D2
-	{ RearWindowXObj::fileNames,	RearWindowXObj::open,	RearWindowXObj::close,		kXObj,					400 },	// D4
-	{ MoveMouseXObj::fileNames,		MoveMouseXObj::open,	MoveMouseXObj::close,		kXObj,					400 },	// D4
-	{ XPlayAnim::fileNames,			XPlayAnim::open,		XPlayAnim::close, 			kXObj,					300 },	// D3
+	{ CDROMXObj::fileNames,				CDROMXObj::open,			CDROMXObj::close,			kXObj,					200 },	// D2
+	{ FileIO::fileNames,				FileIO::open,				FileIO::close,				kXObj | kXtraObj,		200 },	// D2
+	{ FlushXObj::fileNames,				FlushXObj::open,			FlushXObj::close,			kXObj,					400 },	// D4
+	{ FPlayXObj::fileNames,				FPlayXObj::open,			FPlayXObj::close,			kXObj,					200 },	// D2
+	{ LabelDrvXObj::fileNames,			LabelDrvXObj::open,			LabelDrvXObj::close,		kXObj,					400 }, 	// D4
+	{ OrthoPlayXObj::fileNames,			OrthoPlayXObj::open,		OrthoPlayXObj::close,		kXObj,					400 }, 	// D4
+	{ JourneyWareXINIXObj::fileNames,	JourneyWareXINIXObj::open,	JourneyWareXINIXObj::close,	kXObj,					400 }, 	// D4
+	{ PalXObj::fileNames,				PalXObj::open,				PalXObj::close,				kXObj,					400 }, 	// D4
+	{ MemoryXObj::fileNames,			MemoryXObj::open,			MemoryXObj::close,			kXObj,					400 }, 	// D4
+	{ PopUpMenuXObj::fileNames,			PopUpMenuXObj::open,		PopUpMenuXObj::close,		kXObj,					200 }, 	// D2
+	{ SerialPortXObj::fileNames,		SerialPortXObj::open,		SerialPortXObj::close,		kXObj,					200 },	// D2
+	{ SoundJam::fileNames,				SoundJam::open,				SoundJam::close,			kXObj,					400 },	// D4
+	{ RegisterComponent::fileNames,		RegisterComponent::open,	RegisterComponent::close,	kXObj,					400 },	// D4
+	{ VideodiscXObj::fileNames,			VideodiscXObj::open,		VideodiscXObj::close,		kXObj,					200 }, 	// D2
+	{ RearWindowXObj::fileNames,		RearWindowXObj::open,		RearWindowXObj::close,		kXObj,					400 },	// D4
+	{ MoveMouseXObj::fileNames,			MoveMouseXObj::open,		MoveMouseXObj::close,		kXObj,					400 },	// D4
+	{ XPlayAnim::fileNames,				XPlayAnim::open,			XPlayAnim::close, 			kXObj,					300 },	// D3
 	{ nullptr, nullptr, nullptr, 0, 0 }
-
 };
 
 void Lingo::initXLibs() {
