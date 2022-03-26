@@ -19,6 +19,8 @@
  *
  */
 
+#ifdef USE_FREETYPE2
+
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
 #include "ags/lib/alfont/alfont.h"
@@ -4983,3 +4985,68 @@ ALFONT_DLL_DECLSPEC void alfont_set_font_fixed_width(ALFONT_FONT * f, int fixed_
 }
 
 } // namespace AGS3
+
+#else
+
+#include "common/textconsole.h"
+#include "ags/lib/allegro/gfx.h"
+
+namespace AGS3 {
+
+struct ALFONT_FONT {
+	int dummy;
+};
+
+const char *alfont_get_name(ALFONT_FONT *f) { return nullptr; }
+int alfont_init(void) {	return 0; }
+void alfont_exit(void) {}
+
+ALFONT_FONT *alfont_load_font(const char *filepathname) {
+	error("Game needs FreeType library, which was not included in this build");
+}
+
+ALFONT_FONT *alfont_load_font_from_mem(const char *data, int data_len) {
+	return alfont_load_font(nullptr);
+}
+
+void alfont_destroy_font(ALFONT_FONT *f) {}
+int alfont_set_font_size(ALFONT_FONT *f, int h) { return 0; }
+int alfont_get_font_height(ALFONT_FONT *f) { return 0; }
+int alfont_get_font_real_height(ALFONT_FONT *f) { return 0; }
+int alfont_text_mode(int mode) { return 0; }
+void alfont_textout_aa(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color) {}
+void alfont_textout(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color) {}
+void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int bg) {}
+void alfont_textout_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int bg) {}
+void alfont_textout_centre_aa(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color) {}
+void alfont_textout_centre(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color) {}
+void alfont_textout_centre_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int bg) {}
+void alfont_textout_centre_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int bg) {}
+void alfont_textout_right_aa(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color);
+void alfont_textout_right(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color) {}
+void alfont_textout_right_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int bg) {}
+void alfont_textout_right_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int bg) {}
+void alfont_textprintf(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, const char *format, ...) {}
+void alfont_textprintf_aa(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, const char *format, ...) {}
+void alfont_textprintf_ex(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, int bg, const char *format, ...) {}
+void alfont_textprintf_aa_ex(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, int bg, const char *format, ...) {}
+void alfont_textprintf_centre(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, const char *format, ...) {}
+void alfont_textprintf_centre_aa(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, const char *format, ...) {}
+void alfont_textprintf_centre_ex(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, int bg, const char *format, ...) {}
+void alfont_textprintf_centre_aa_ex(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, int bg, const char *format, ...) {}
+void alfont_textprintf_right(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, const char *format, ...) {}
+void alfont_textprintf_right_aa(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, const char *format, ...) {}
+void alfont_textprintf_right_ex(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, int bg, const char *format, ...) {}
+void alfont_textprintf_right_aa_ex(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, int bg, const char *format, ...) {}
+int alfont_text_height(ALFONT_FONT *f) { return 0; }
+int alfont_text_length(ALFONT_FONT *f, const char *str) { return 0; }
+int alfont_is_fixed_font(ALFONT_FONT *f) { return 0; }
+int alfont_is_scalable_font(ALFONT_FONT *f) { return 0; }
+const int *alfont_get_available_fixed_sizes(ALFONT_FONT *f) { return nullptr; }
+int alfont_get_nof_available_fixed_sizes(ALFONT_FONT *f) { return 0; }
+int alfont_get_char_extra_spacing(ALFONT_FONT *f) { return 0; }
+void alfont_set_char_extra_spacing(ALFONT_FONT *f, int spacing) {}
+
+} // namespace AGS3
+
+#endif
