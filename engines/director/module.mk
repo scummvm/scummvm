@@ -39,6 +39,7 @@ MODULE_OBJS = \
 	lingo/lingo-preprocessor.o \
 	lingo/lingo-the.o \
 	lingo/lingo-utils.o \
+	lingo/xlibs/aiff.o \
 	lingo/xlibs/cdromxobj.o \
 	lingo/xlibs/fileio.o \
 	lingo/xlibs/flushxobj.o \
