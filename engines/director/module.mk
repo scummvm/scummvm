@@ -43,6 +43,7 @@ MODULE_OBJS = \
 	lingo/xlibs/fileio.o \
 	lingo/xlibs/flushxobj.o \
 	lingo/xlibs/fplayxobj.o \
+	lingo/xlibs/gpid.o \
 	lingo/xlibs/labeldrvxobj.o \
 	lingo/xlibs/jwxini.o \
 	lingo/xlibs/memoryxobj.o \
