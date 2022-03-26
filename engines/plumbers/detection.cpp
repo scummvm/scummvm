@@ -43,7 +43,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"plumbers",
 		nullptr,
-		AD_ENTRY1s("GAME.BIN", nullptr, 41622),
+		AD_ENTRY1s("GAME.BIN", "02c965b11e952ce1ee83019576f5aef5", 41622),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -54,7 +54,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"plumbers",
 		nullptr,
-		AD_ENTRY1s("launchme", nullptr, 143300),
+		AD_ENTRY1s("launchme", nullptr, 143300), // FIXME: Add MD5sum to entry
 		Common::EN_ANY,
 		Common::kPlatform3DO,
 		ADGF_UNSTABLE,
