@@ -24,6 +24,7 @@
 
 #include "ags/lib/std/map.h"
 #include "ags/shared/font/ags_font_renderer.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
@@ -51,6 +52,15 @@ public:
 		FontMetrics *metrics) override;
 	const char *GetName(int fontNumber) override;
 	void AdjustFontForAntiAlias(int fontNumber, bool aa_mode) override;
+
+	//
+	// Utility functions
+	//
+	// Try load the TTF font using provided point size, and report its metrics
+	static bool MeasureFontOfPointSize(const AGS::Shared::String &filename, int size_pt, FontMetrics *metrics);
+	// Try load the TTF font, find the point size which results in pixel height
+	// as close to the requested as possible; report its metrics
+	static bool MeasureFontOfPixelHeight(const AGS::Shared::String &filename, int pixel_height, FontMetrics *metrics);
 
 private:
 	struct FontData {
