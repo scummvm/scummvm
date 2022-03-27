@@ -1986,16 +1986,44 @@ int CharsetRendererV7::draw2byte(byte *buffer, Common::Rect &clipRect, int x, in
 }
 
 int CharsetRendererV7::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) {
-	// I am aware of not doing anything with the clipRect here, but I currently see no need to upgrade the old rendering with that.
 	if (!prepareDraw(chr))
 		return 0;
+
 	_width = getCharWidth(chr);
+
 	if (_direction < 0)
 		x -= _width;
+
+	int width = MIN(_origWidth, clipRect.right - x);
+	int height = MIN(_origHeight, clipRect.bottom - y);
+
 	_vm->_charsetColorMap[1] = col;
-	VirtScreen &vs = _vm->_virtscr[kMainVirtScreen];
-	drawBitsN(vs, buffer + (y + _offsY) * vs.pitch + x, _charPtr, *_fontPtr, y, _origWidth, _origHeight);
-	return _direction * _width;
+	byte *cmap = _vm->_charsetColorMap;
+	const byte *src = _charPtr;
+	byte *dst = buffer + (y + _offsY) * pitch + x;
+	uint8 bpp = *_fontPtr;
+	byte bits = *src++;
+	byte numbits = 8;
+	pitch -= _origWidth;
+
+	while (height--) {
+		for (int dx = x; dx < x + _origWidth; ++dx) {
+			byte color = (bits >> (8 - bpp)) & 0xFF;
+			if (color && dx >= 0 && dx < x + width && y >= 0)
+				*dst = cmap[color];
+			dst++;
+			bits <<= bpp;
+			numbits -= bpp;
+			if (numbits == 0) {
+				bits = *src++;
+				numbits = 8;
+			}
+		}
+		dst += pitch;
+		++y;
+	}
+
+	return _direction * width;
 }
 
 
