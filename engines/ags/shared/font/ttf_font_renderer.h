@@ -50,6 +50,7 @@ public:
 	bool LoadFromDiskEx(int fontNumber, int fontSize, const FontRenderParams *params,
 		FontMetrics *metrics) override;
 	const char *GetName(int fontNumber) override;
+	void AdjustFontForAntiAlias(int fontNumber, bool aa_mode) override;
 
 private:
 	struct FontData {

@@ -67,6 +67,8 @@ public:
 		FontMetrics *metrics) = 0;
 	// Gets font's name; must return an empty string if no name is available
 	virtual const char *GetName(int fontNumber) = 0;
+	// Perform any necessary adjustments when the AA mode is toggled
+	virtual void AdjustFontForAntiAlias(int fontNumber, bool aa_mode) = 0;
 protected:
 	IAGSFontRenderer2() {}
 	~IAGSFontRenderer2() {}

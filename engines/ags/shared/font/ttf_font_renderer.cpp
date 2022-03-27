@@ -78,6 +78,16 @@ bool TTFFontRenderer::IsBitmapFont() {
 	return false;
 }
 
+static int GetAlfontFlags() {
+	int flags = ALFONT_FLG_FORCE_RESIZE;
+	// Compatibility: font ascender is always adjusted to the formal font's height;
+	// EXCEPTION: not if it's a game made before AGS 3.4.1 with TTF anti-aliasing
+	// (the reason is uncertain, but this is to emulate old engine's behavior).
+	if (!(ShouldAntiAliasText() && (_G(loaded_game_file_version) < kGameVersion_341)))
+		flags |= ALFONT_FLG_ASCENDER_EQ_HEIGHT;
+	return flags;
+}
+
 bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 	const FontRenderParams *params, FontMetrics *metrics) {
 	String file_name = String::FromFormat("agsfnt%d.ttf", fontNumber);
@@ -102,13 +112,8 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 		fontSize = 8; // compatibility fix
 	if (params && params->SizeMultiplier > 1)
 		fontSize *= params->SizeMultiplier;
-	// Compatibility: font ascender is always adjusted to the formal font's height;
-	// EXCEPTION: not if it's a game made before AGS 3.4.1 with TTF anti-aliasing
-	// (the reason is uncertain, but this is to emulate old engine's behavior).
-	int alfont_flags = 0;
-	if (!(ShouldAntiAliasText() && (_G(loaded_game_file_version) < kGameVersion_341)))
-		alfont_flags |= ALFONT_FLG_ASCENDER_EQ_HEIGHT;
-	alfont_set_font_size_ex(alfptr, fontSize, alfont_flags);
+
+	alfont_set_font_size_ex(alfptr, fontSize, GetAlfontFlags());
 
 	_fontData[fontNumber].AlFont = alfptr;
 	_fontData[fontNumber].Params = params ? *params : FontRenderParams();
@@ -116,12 +121,20 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 	if (metrics) {
 		metrics->Height = alfont_get_font_height(alfptr);
 		metrics->RealHeight = alfont_get_font_real_height(alfptr);
-}
+	}
 	return true;
 }
 
 const char *TTFFontRenderer::GetName(int fontNumber) {
 	return alfont_get_name(_fontData[fontNumber].AlFont);
+}
+
+void TTFFontRenderer::AdjustFontForAntiAlias(int fontNumber, bool aa_mode) {
+	if (_G(loaded_game_file_version) < kGameVersion_341) {
+		ALFONT_FONT *alfptr = _fontData[fontNumber].AlFont;
+		int old_height = alfont_get_font_height(alfptr);
+		alfont_set_font_size_ex(alfptr, old_height, GetAlfontFlags());
+	}
 }
 
 void TTFFontRenderer::FreeMemory(int fontNumber) {

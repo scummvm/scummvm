@@ -52,6 +52,7 @@
 #include "ags/engine/ac/system.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/debug_log.h"
+#include "ags/shared/font/fonts.h"
 #include "ags/engine/gui/gui_dialog.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/main/game_run.h"
@@ -425,6 +426,8 @@ int SetGameOption(int opt, int setting) {
 	} else if (opt == OPT_PORTRAITSIDE) {
 		if (setting == 0)  // set back to Left
 			_GP(play).swap_portrait_side = 0;
+	} else if (opt == OPT_ANTIALIASFONTS) {
+		adjust_fonts_for_render_mode(setting != 0);
 	}
 
 	return oldval;

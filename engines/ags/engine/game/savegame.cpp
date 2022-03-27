@@ -43,6 +43,7 @@
 #include "ags/engine/debugging/debugger.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/device/mouse_w32.h"
+#include "ags/shared/font/fonts.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/engine/gfx/graphics_driver.h"
@@ -597,6 +598,8 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 			PlayAmbientSound(i, r_data.DoAmbient[i], _GP(ambient)[i].vol, _GP(ambient)[i].x, _GP(ambient)[i].y);
 	}
 	update_directional_sound_vol();
+
+	adjust_fonts_for_render_mode(_GP(game).options[OPT_ANTIALIASFONTS]);
 
 	recreate_overlay_ddbs();
 
