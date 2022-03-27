@@ -20,7 +20,7 @@
  */
 
 #ifndef SCUMM_STRING_V7_H
-#define SCUMM_STRINGV_7_H
+#define SCUMM_STRING_V7_H
 
 #ifdef ENABLE_SCUMM_7_8
 
