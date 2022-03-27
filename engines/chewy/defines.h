@@ -24,8 +24,6 @@
 
 namespace Chewy {
 
-#define MAXPATH 255
-
 #define VERSION1 0
 #define VERSION2 2
 

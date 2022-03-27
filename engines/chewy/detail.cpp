@@ -203,7 +203,7 @@ void Detail::load_rdi_taf(const char *filename, int16 load_flag) {
 				del_taf_tbl(_rdi.dptr);
 			}
 		}
-		_tafName = Common::String(filename);
+		_tafName = filename;
 		if (!load_flag) {
 			_rdi.dptr = init_taf_tbl(filename);
 			load_taf_tbl(_rdi.dptr);
@@ -297,10 +297,6 @@ void Detail::load_taf_seq(int16 sprNr, int16 sprCount, TafInfo *Tt) {
 	delete res;
 }
 
-void Detail::setStaticSpr(int16 nr, int16 sprNr) {
-	_rdi.Sinfo[nr].SprNr = sprNr;
-}
-
 void Detail::hideStaticSpr(int16 nr) {
 	if (nr >= 0 && nr < MAXDETAILS)
 		_rdi.Sinfo[nr].Hide = true;
@@ -309,14 +305,6 @@ void Detail::hideStaticSpr(int16 nr) {
 void Detail::showStaticSpr(int16 nr) {
 	if (nr >= 0 && nr < MAXDETAILS)
 		_rdi.Sinfo[nr].Hide = false;
-}
-
-byte *Detail::getStaticImage(int16 detNr) {
-	byte *ret = nullptr;
-	const int16 index = _rdi.Sinfo[detNr].SprNr;
-	if (index != -1)
-		ret = _rdi.dptr->_image[index];
-	return ret;
 }
 
 void Detail::setStaticPos(int16 detNr, int16 x, int16 y, bool hideFl, bool correctionFlag) {
@@ -340,26 +328,8 @@ void Detail::getAniValues(int16 aniNr, int16 *start, int16 *end) {
 	*end = _rdi.Ainfo[aniNr].end_ani;
 }
 
-void Detail::setAni(int16 aniNr, int16 start, int16 end) {
-	if (start > end)
-		SWAP(start, end);
-
-	_rdi.Ainfo[aniNr].start_ani = start;
-	_rdi.Ainfo[aniNr].end_ani = end;
-}
-
-byte *Detail::getImage(int16 sprNr) {
-	byte *ret = _rdi.dptr->_image[sprNr];
-	return ret;
-}
-
 AniDetailInfo *Detail::getAniDetail(int16 aniNr) {
 	AniDetailInfo *ret = &_rdi.Ainfo[aniNr];
-	return ret;
-}
-
-int16 *Detail::getCorrectionArray() {
-	int16 *ret = _rdi.dptr->_correction;
 	return ret;
 }
 
@@ -521,21 +491,6 @@ void Detail::stop_detail(int16 nr) {
 		AniDetailInfo *adiptr = &_rdi.Ainfo[nr];
 		adiptr->start_flag = 0;
 	}
-}
-
-void Detail::set_ani_delay(int16 nr, int16 del) {
-	AniDetailInfo *adiptr = &_rdi.Ainfo[nr];
-	adiptr->delay = del;
-}
-
-void Detail::init_list(int16 *mv) {
-	for (int16 i = 0; i < ((MAX_M_ITEMS - 1) << 2); i++)
-		_rdi.mvect[i] = mv[i];
-}
-
-void Detail::get_list(int16 *mv) {
-	for (int16 i = 0; i < ((MAX_M_ITEMS - 1) << 2); i++)
-		mv[i] = _rdi.mvect[i];
 }
 
 int16 Detail::maus_vector(int16 x, int16 y) {

@@ -161,26 +161,6 @@ struct RdiDataHeader {
 	bool load(Common::SeekableReadStream *src);
 };
 
-struct DeteditPrj {
-	char Id[7];
-	char IibFile[MAXPATH];
-	char SibFile[MAXPATH];
-	char RdiFile[MAXPATH];
-	char TafFile[MAXPATH];
-	char TgpFile[MAXPATH];
-	char Workdir[MAXPATH];
-	char InventFile[MAXPATH];
-	char EibFile[MAXPATH];
-	char AtsRoomFile[MAXPATH];
-	char AadFile[MAXPATH];
-	char AtsRoomSteuer[MAXPATH];
-	char AdsFile[MAXPATH];
-	char AtdsFont[MAXPATH];
-	char AdhFile[MAXPATH];
-	char TvpFile[MAXPATH];
-	char DummyFile[MAXPATH];
-};
-
 class Detail {
 public:
 	Detail();
@@ -190,9 +170,6 @@ public:
 
 	void load_rdi_taf(const char *fname, int16 load_flag);
 
-	void setStaticSpr(int16 detNr, int16 sprNr);
-	byte *getStaticImage(int16 detNr);
-
 	void setStaticPos(int16 detNr, int16 x, int16 y, bool hideFl, bool correctionFlag);
 	void setSetailPos(int16 detNr, int16 x, int16 y);
 	void hideStaticSpr(int16 detNr);
@@ -200,10 +177,7 @@ public:
 	void freezeAni();
 	void unfreeze_ani();
 	void getAniValues(int16 aniNr, int16 *start, int16 *end);
-	void setAni(int16 aniNr, int16 start, int16 end);
-	byte *getImage(int16 sprNr);
 	AniDetailInfo *getAniDetail(int16 aniNr);
-	int16 *getCorrectionArray();
 	void init_taf(TafInfo *dptr);
 	TafInfo *get_taf_info();
 	RoomDetailInfo *getRoomDetailInfo();
@@ -211,14 +185,11 @@ public:
 	void set_static_ani(int16 ani_nr, int16 static_nr);
 
 	void del_static_ani(int16 ani_nr);
-	void set_ani_delay(int16 nr, int16 del);
 	void startDetail(int16 nr, int16 rep, int16 reverse);
 	void stop_detail(int16 nr);
 	void plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end,
 	                      int16 zoomx, int16 zoomy);
 	void plot_static_details(int16 scrx, int16 scry, int16 start, int16 end);
-	void init_list(int16 *mv);
-	void get_list(int16 *mv);
 	int16 maus_vector(int16 x, int16 y);
 	int16 get_ani_status(int16 det_nr);
 
