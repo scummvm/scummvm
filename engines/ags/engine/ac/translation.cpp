@@ -56,10 +56,10 @@ void close_translation() {
 	set_uformat(U_ASCII);
 }
 
-bool init_translation(const String &lang, const String &fallback_lang, bool quit_on_error) {
-
+bool init_translation(const String &lang, const String &fallback_lang) {
 	if (lang.IsEmpty())
 		return false;
+	_G(trans_name) = lang;
 	_G(trans_filename) = String::FromFormat("%s.tra", lang.GetCStr());
 
 	std::unique_ptr<Stream> in(_GP(AssetMgr)->OpenAsset(_G(trans_filename)));
@@ -80,20 +80,15 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 
 	// Process errors
 	if (!err) {
-		String err_msg = String::FromFormat("Failed to read translation file: %s:\n%s",
+		close_translation();
+		Debug::Printf(kDbgMsg_Error, "Failed to read translation file: %s:\n%s",
 			_G(trans_filename).GetCStr(),
 			err->FullMessage().GetCStr());
-		close_translation();
-		if (quit_on_error) {
-			quitprintf("!%s", err_msg.GetCStr());
-		} else {
-			Debug::Printf(kDbgMsg_Error, err_msg);
-			if (!fallback_lang.IsEmpty()) {
-				Debug::Printf("Fallback to translation: %s", fallback_lang.GetCStr());
-				init_translation(fallback_lang, "", false);
-			}
-			return false;
+		if (!fallback_lang.IsEmpty()) {
+			Debug::Printf("Fallback to translation: %s", fallback_lang.GetCStr());
+			init_translation(fallback_lang, "");
 		}
+		return false;
 	}
 
 	// Translation read successfully

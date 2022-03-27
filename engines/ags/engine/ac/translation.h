@@ -31,7 +31,7 @@ using AGS::Shared::String;
 using AGS::Shared::StringMap;
 
 void close_translation();
-bool init_translation(const String &lang, const String &fallback_lang, bool quit_on_error);
+bool init_translation(const String &lang, const String &fallback_lang);
 // Returns current translation name, or empty string if default translation is used
 String get_translation_name();
 // Returns fill path to the translation file, or empty string if default translation is used

@@ -800,7 +800,7 @@ void engine_init_game_settings() {
 		_GP(play).globalstrings[ee][0] = 0;
 
 	if (!_GP(usetup).translation.IsEmpty())
-		init_translation(_GP(usetup).translation, "", true);
+		Game_ChangeTranslation(_GP(usetup).translation.GetCStr());
 
 	update_invorder();
 	_G(displayed_room) = -10;
