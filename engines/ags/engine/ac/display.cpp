@@ -390,7 +390,7 @@ bool try_auto_play_speech(const char *text, const char *&replace_text, int chari
 	replace_text = src; // skip voice tag
 	if (play_voice_speech(charid, sndid)) {
 		// if Voice Only, then blank out the text
-		if (_GP(play).want_speech == 2)
+		if (_GP(play).speech_mode == kSpeech_VoiceOnly)
 			replace_text = "  ";
 		return true;
 	}

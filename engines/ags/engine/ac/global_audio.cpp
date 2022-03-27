@@ -448,35 +448,23 @@ void SetSpeechVolume(int newvol) {
 	_GP(play).speech_volume = newvol;
 }
 
-// 0 = text only
-// 1 = voice & text
-// 2 = voice only
 void SetVoiceMode(int newmod) {
-	if ((newmod < 0) | (newmod > 2))
-		quit("!SetVoiceMode: invalid mode number (must be 0,1,2)");
-	// If speech is turned off, store the mode anyway in case the
-	// user adds the VOX file later
-	if (_GP(play).want_speech < 0)
-		_GP(play).want_speech = (-newmod) - 1;
-	else
-		_GP(play).want_speech = newmod;
+	if ((newmod < kSpeech_First) | (newmod > kSpeech_Last))
+		quitprintf("!SetVoiceMode: invalid mode number %d", newmod);
+	_GP(play).speech_mode = (SpeechMode)newmod;
 }
 
 int GetVoiceMode() {
-	return _GP(play).want_speech >= 0 ? _GP(play).want_speech : -(_GP(play).want_speech + 1);
+	return (int)_GP(play).speech_mode;
 }
 
 int IsVoxAvailable() {
-	if (_GP(play).want_speech < 0)
-		return 0;
-	return 1;
+	return _GP(play).voice_avail ? 1 : 0;
 }
 
 int IsMusicVoxAvailable() {
-	return _GP(play).separate_music_lib;
+	return _GP(play).separate_music_lib ? 1 : 0;
 }
-
-
 
 ScriptAudioChannel *PlayVoiceClip(CharacterInfo *ch, int sndid, bool as_speech) {
 	if (!play_voice_nonblocking(ch->index_id, sndid, as_speech))

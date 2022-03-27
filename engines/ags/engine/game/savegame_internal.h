@@ -43,8 +43,8 @@ typedef std::shared_ptr<Bitmap> PBitmap;
 // loading save data
 struct PreservedParams {
 	// Whether speech and audio packages available
-	int SpeechVOX;
-	int MusicVOX;
+	bool SpeechVOX;
+	bool MusicVOX;
 	// Script global data sizes
 	int GlScDataSize;
 	std::vector<int> ScMdDataSize;

@@ -325,7 +325,7 @@ HSaveError OpenSavegame(const String &filename, SavegameDescription &desc, Saveg
 
 // Prepares engine for actual save restore (stops processes, cleans up memory)
 void DoBeforeRestore(PreservedParams &pp) {
-	pp.SpeechVOX = _GP(play).want_speech;
+	pp.SpeechVOX = _GP(play).voice_avail;
 	pp.MusicVOX = _GP(play).separate_music_lib;
 
 	unload_old_room();
@@ -431,13 +431,8 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		_GP(play).dialog_options_highlight_color = DIALOG_OPTIONS_HIGHLIGHT_COLOR_DEFAULT;
 
 	// Preserve whether the music vox is available
+	_GP(play).voice_avail = pp.SpeechVOX;
 	_GP(play).separate_music_lib = pp.MusicVOX;
-	// If they had the vox when they saved it, but they don't now
-	if ((pp.SpeechVOX < 0) && (_GP(play).want_speech >= 0))
-		_GP(play).want_speech = (-_GP(play).want_speech) - 1;
-	// If they didn't have the vox before, but now they do
-	else if ((pp.SpeechVOX >= 0) && (_GP(play).want_speech < 0))
-		_GP(play).want_speech = (-_GP(play).want_speech) - 1;
 
 	// Restore debug flags
 	if (_G(debug_flags) & DBG_DEBUGMODE)

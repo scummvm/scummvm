@@ -68,7 +68,7 @@ String GetRuntimeInfo() {
 	                         _GP(spriteset).GetCacheSize() / 1024, _GP(spriteset).GetMaxCacheSize() / 1024, _GP(spriteset).GetLockedSize() / 1024);
 	if (_GP(play).separate_music_lib)
 		runtimeInfo.Append("[AUDIO.VOX enabled");
-	if (_GP(play).want_speech >= 1)
+	if (_GP(play).voice_avail)
 		runtimeInfo.Append("[SPEECH.VOX enabled");
 	if (get_translation_tree().size() > 0) {
 		runtimeInfo.Append("[Using translation ");

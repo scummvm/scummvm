@@ -38,6 +38,15 @@ enum SkipSpeechStyle {
 	kSkipSpeechLast = kSkipSpeechMouse
 };
 
+enum SpeechMode {
+	kSpeech_TextOnly = 0,
+	kSpeech_VoiceText = 1,
+	kSpeech_VoiceOnly = 2,
+
+	kSpeech_First = kSpeech_TextOnly,
+	kSpeech_Last = kSpeech_VoiceOnly
+};
+
 int user_to_internal_skip_speech(SkipSpeechStyle userval);
 SkipSpeechStyle internal_skip_speech_to_user(int internal_val);
 

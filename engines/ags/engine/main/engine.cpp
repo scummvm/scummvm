@@ -267,7 +267,7 @@ void engine_init_mouse() {
 }
 
 void engine_locate_speech_pak() {
-	_GP(play).want_speech = -2;
+	_GP(play).voice_avail = false;
 
 	if (!_GP(usetup).no_speech_pack) {
 		String speech_file = "speech.vox";
@@ -278,13 +278,12 @@ void engine_locate_speech_pak() {
 				_G(platform)->DisplayAlert("Unable to read voice pack, file could be corrupted or of unknown format.\nSpeech voice-over will be disabled.");
 				return;
 			}
-
 			Debug::Printf(kDbgMsg_Info, "Voice pack found and initialized.");
-			_GP(play).want_speech = 1;
+			_GP(play).voice_avail = true;
 		} else if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).VoiceDir2) != 0) {
 			// If we have custom voice directory set, we will enable voice-over even if speech.vox does not exist
 			Debug::Printf(kDbgMsg_Info, "Voice pack was not found, but explicit voice directory is defined: enabling voice-over.");
-			_GP(play).want_speech = 1;
+			_GP(play).voice_avail = true;
 		}
 		_GP(ResPaths).SpeechPak.Name = speech_file;
 		_GP(ResPaths).SpeechPak.Path = speech_filepath;
@@ -292,18 +291,18 @@ void engine_locate_speech_pak() {
 }
 
 void engine_locate_audio_pak() {
-	_GP(play).separate_music_lib = 0;
+	_GP(play).separate_music_lib = false;
 	String music_file = _GP(game).GetAudioVOXName();
 	String music_filepath = find_assetlib(music_file);
 	if (!music_filepath.IsEmpty()) {
 		if (_GP(AssetMgr)->AddLibrary(music_filepath) == kAssetNoError) {
 			Debug::Printf(kDbgMsg_Info, "%s found and initialized.", music_file.GetCStr());
-			_GP(play).separate_music_lib = 1;
+			_GP(play).separate_music_lib = true;
 			_GP(ResPaths).AudioPak.Name = music_file;
 			_GP(ResPaths).AudioPak.Path = music_filepath;
 		} else {
 			_G(platform)->DisplayAlert("Unable to initialize digital audio pack '%s', file could be corrupt or of unsupported format.",
-			                           music_file.GetCStr());
+				music_file.GetCStr());
 		}
 	} else if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).AudioDir2) != 0) {
 		Debug::Printf(kDbgMsg_Info, "Audio pack was not found, but explicit audio directory is defined.");
@@ -356,9 +355,8 @@ void engine_init_audio() {
 
 	if (_GP(usetup).audio_backend == 0) {
 		// all audio is disabled
-		// and the voice mode should not go to Voice Only
-		_GP(play).want_speech = -2;
-		_GP(play).separate_music_lib = 0;
+		_GP(play).voice_avail = false;
+		_GP(play).separate_music_lib = false;
 	}
 }
 
@@ -706,6 +704,7 @@ void engine_init_game_settings() {
 	_GP(play).music_master_volume = 100 + LegacyMusicMasterVolumeAdjustment;
 	_GP(play).digital_master_volume = 100;
 	_GP(play).screen_flipped = 0;
+	_GP(play).speech_mode = kSpeech_VoiceText;
 	_GP(play).cant_skip_speech = user_to_internal_skip_speech((SkipSpeechStyle)_GP(game).options[OPT_NOSKIPTEXT]);
 	_GP(play).sound_volume = 255;
 	_GP(play).speech_volume = 255;
