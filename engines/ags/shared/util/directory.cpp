@@ -217,6 +217,8 @@ bool FindFileRecursive::PopDir() {
 	_fdirs.pop();
 	_fullDir = Path::GetParent(_fullDir);
 	_curDir = Path::GetParent(_curDir);
+	if (_curDir.Compare(".") == 0)
+		_curDir = ""; // hotfix for GetParent returning "."
 	// advance dir iterator that we just recovered
 	_fdir.Next();
 	return true;
