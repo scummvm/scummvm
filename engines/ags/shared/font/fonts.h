@@ -32,9 +32,14 @@
 namespace AGS3 {
 
 // Font load flags, primarily for backward compatibility
-// REPORTREALHEIGHT: get_font_height should return real font's height,
-// otherwise returns formal height, equal to "font size" parameter
-#define FONT_LOAD_REPORTREALHEIGHT 0x01
+// REPORTNOMINALHEIGHT: get_font_height should return nominal font's height,
+// eq to "font size" parameter, otherwise returns real pixel height.
+#define FONT_LOAD_REPORTNOMINALHEIGHT 0x01
+// ASCENDFIXUP: do the TTF ascender fixup, where font's ascender is resized
+// to the nominal font's height.
+#define FONT_LOAD_ASCENDERFIXUP       0x02
+// Collection of flags defining fully backward compatible TTF behavior
+#define FONT_LOAD_FULLBACKCOMPAT      (FONT_LOAD_REPORTNOMINALHEIGHT | FONT_LOAD_ASCENDERFIXUP)
 
 class IAGSFontRenderer;
 class IAGSFontRenderer2;

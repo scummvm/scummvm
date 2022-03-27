@@ -85,7 +85,7 @@ static void post_init_font(size_t fontNumber, int load_mode) {
 		font.Metrics.Height = height;
 		font.Metrics.RealHeight = height;
 	}
-	font.Metrics.CompatHeight = (load_mode & FONT_LOAD_REPORTREALHEIGHT) == 0 ?
+	font.Metrics.CompatHeight = (load_mode & FONT_LOAD_REPORTNOMINALHEIGHT) != 0 ?
 		font.Metrics.Height : font.Metrics.RealHeight;
 
 	if (font.Info.Outline != FONT_OUTLINE_AUTO) {
@@ -97,13 +97,12 @@ static void post_init_font(size_t fontNumber, int load_mode) {
 	font.LineSpacingCalc = font.Info.LineSpacing;
 	if (font.Info.LineSpacing == 0) {
 		font.Info.Flags |= FFLG_DEFLINESPACING;
-		const int height = font.Metrics.Height;
-		font.LineSpacingCalc = height + 2 * font.Info.AutoOutlineThickness;
-		// NOTE: we use formal font height to define default linespacing;
-		// this is compatible with the old games and also seem to give nicer
-		// looks (plus user may always setup custom linespacing).
-		// If real height will be wanted, check for FONT_LOAD_REPORTREALHEIGHT
-		// flag in "load_mode" to know when to apply real or formal height.
+		// Use either nominal or real pixel font height to define default linespacing;
+		// linespacing = nominal height is compatible with the old games
+		if ((load_mode & FONT_LOAD_REPORTNOMINALHEIGHT) == 0)
+			font.LineSpacingCalc = font.Metrics.RealHeight + 2 * font.Info.AutoOutlineThickness;
+		else
+			font.LineSpacingCalc = font.Metrics.Height + 2 * font.Info.AutoOutlineThickness;
 	}
 }
 
@@ -398,6 +397,7 @@ bool load_font_size(size_t fontNumber, const FontInfo &font_info, int load_mode)
 		wfreefont(fontNumber);
 	FontRenderParams params;
 	params.SizeMultiplier = font_info.SizeMultiplier;
+	params.LoadMode = load_mode;
 	FontMetrics metrics;
 
 	if (_GP(ttfRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params, &metrics)) {
