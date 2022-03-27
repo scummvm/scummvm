@@ -1065,7 +1065,6 @@ public:
 	String _cmdGameDataPath;
 
 	// Startup flags, set from parameters to engine
-	int _force_window = 0;
 	int _override_start_room = 0;
 	bool _justDisplayHelp = false;
 	bool _justDisplayVersion = false;

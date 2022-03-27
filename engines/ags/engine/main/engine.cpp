@@ -175,16 +175,6 @@ bool engine_run_setup(const ConfigTree &cfg, int &app_res) {
 	return true;
 }
 
-void engine_force_window() {
-	// Force to run in a window, override the config file
-	// TODO: actually overwrite config tree instead
-	if (_G(force_window) == 1) {
-		_GP(usetup).Screen.Windowed = true;
-	} else if (_G(force_window) == 2) {
-		_GP(usetup).Screen.Windowed = false;
-	}
-}
-
 // Scans given directory for the AGS game config. If such config exists
 // and it contains data file name, then returns one.
 // Otherwise returns empty string.
@@ -1120,7 +1110,6 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	}
 	// Set up game options from user config
 	engine_set_config(cfg);
-	engine_force_window();
 	if (_G(justTellInfo)) {
 		engine_print_info(_G(tellInfoKeys), &cfg);
 		return EXIT_NORMAL;

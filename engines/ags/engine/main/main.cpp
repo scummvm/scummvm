@@ -208,7 +208,6 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		} else if ((ags_stricmp(arg, "--enabledebugger") == 0) && (argc > ee + 1)) {
 			strcpy(_G(editor_debugger_instance_token), argv[ee + 1]);
 			_G(editor_debugging_enabled) = 1;
-			_G(force_window) = 1;
 			ee++;
 		} else if (ags_stricmp(arg, "--conf") == 0 && (argc > ee + 1)) {
 			_GP(usetup).conf_path = argv[++ee];
@@ -243,9 +242,9 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		else if ((ags_stricmp(arg, "--shared-data-dir") == 0) && (argc > ee + 1))
 			cfg["misc"]["shared_data_dir"] = argv[++ee];
 		else if (ags_stricmp(arg, "--windowed") == 0)
-			_G(force_window) = 1;
+			cfg["graphics"]["windowed"] = "1";
 		else if (ags_stricmp(arg, "--fullscreen") == 0)
-			_G(force_window) = 2;
+			cfg["graphics"]["windowed"] = "0";
 		else if ((ags_stricmp(arg, "--gfxdriver") == 0) && (argc > ee + 1)) {
 			INIwritestring(cfg, "graphics", "driver", argv[++ee]);
 		} else if ((ags_stricmp(arg, "--gfxfilter") == 0) && (argc > ee + 1)) {
