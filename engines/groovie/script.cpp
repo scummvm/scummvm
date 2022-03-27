@@ -958,24 +958,25 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 	}
 
 	// Check if the user wants to skip the video
-	if ((_eventMouseClicked == 2) && (_videoSkipAddress != 0)) {
-		// Jump to the given address
-		_currentInstruction = _videoSkipAddress;
-
-		// Reset the skip address
-		_videoSkipAddress = 0;
-
-		_bitflags = 0;
-
-		// End the playback
-		return true;
-	} else if (_eventMouseClicked == 2 || _eventKbdChar == Common::KEYCODE_ESCAPE || _eventKbdChar == Common::KEYCODE_SPACE) {
-		_vm->_videoPlayer->fastForward();
-		_fastForwarding = true;
+	if (_eventMouseClicked == 2 || _eventKbdChar == Common::KEYCODE_ESCAPE || _eventKbdChar == Common::KEYCODE_SPACE) {
 		// we don't want to clear a left click here, that would eat the input
 		if (_eventMouseClicked == 2)
 			_eventMouseClicked = 0;
 		_eventKbdChar = 0;
+		if (_videoSkipAddress != 0) {
+			// Jump to the given address
+			_currentInstruction = _videoSkipAddress;
+
+			// Reset the skip address
+			_videoSkipAddress = 0;
+
+			_bitflags = 0;
+
+			// End the playback
+			return true;
+		}
+		_vm->_videoPlayer->fastForward();
+		_fastForwarding = true;
 	} else if (_fastForwarding) {
 		_vm->_videoPlayer->fastForward();
 	}
@@ -1278,6 +1279,12 @@ void Script::o_sleep() {
 	Common::Event ev;
 	while (_vm->_system->getMillis() < endTime && !_fastForwarding) {
 		_vm->_system->getEventManager()->pollEvent(ev);
+		if (ev.type == Common::EVENT_RBUTTONDOWN
+			|| (ev.type == Common::EVENT_KEYDOWN && (ev.kbd.ascii == Common::KEYCODE_SPACE || ev.kbd.ascii == Common::KEYCODE_ESCAPE))
+		) {
+			_fastForwarding = true;
+			break;
+		}
 		_vm->_system->updateScreen();
 		_vm->_system->delayMillis(10);
 	}
