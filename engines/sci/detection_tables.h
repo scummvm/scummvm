@@ -5593,6 +5593,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD, GUIO_SQ4_CD	},
 
+	// Space Quest 4 - French DOS CD (fan translation and patch-set)
+	{"sq4", "CD", {
+		{"resource.map", 0, "ed90a8e3ccc53af6633ff6ab58392bae", 7054},
+		{"resource.000", 0, "63247e3901ab8963d4eece73747832e0", 5157378},
+		{"0.fon",        0, "ff0d61807398a6928222ebbfc233adde", 2431},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD, GUIO_SQ4_CD	},
+
 	// Space Quest 4 - Spanish DOS Floppy version distributed on a CD (from jvprat, also includes english language)
 	// Executable scanning reports "1.SQ4.057", VERSION file reports "1.000"
 	// SCI interpreter version 1.000.200 (just a guess)
