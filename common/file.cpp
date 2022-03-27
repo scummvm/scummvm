@@ -62,7 +62,7 @@ bool File::open(const FSNode &node) {
 	assert(!_handle);
 
 	if (!node.exists()) {
-		warning("File::open: '%s' does not exist", node.getPath().c_str());
+		warning("File::open: node does not exist");
 		return false;
 	} else if (node.isDirectory()) {
 		warning("File::open: '%s' is a directory", node.getPath().c_str());
