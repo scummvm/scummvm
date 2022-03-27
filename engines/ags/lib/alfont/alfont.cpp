@@ -472,14 +472,14 @@ int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags) {
 
 	if (!error) {
 		_alfont_uncache_glyphs(f);
-		f->face_h = h;
+		f->face_h = test_h;
 		f->real_face_h = real_height;
 		f->face_ascender = f->face->size->metrics.ascender >> 6;
 
 		// AGS COMPAT HACK: set ascender to the formal font height
 		if ((flags & ALFONT_FLG_ASCENDER_EQ_HEIGHT) != 0) {
-			f->face_ascender = h;
-			f->real_face_h = h + abs(f->face->size->metrics.descender >> 6);
+			f->face_ascender = test_h;
+			f->real_face_h = test_h + abs(f->face->size->metrics.descender >> 6);
 		}
 
 		return ALFONT_OK;
