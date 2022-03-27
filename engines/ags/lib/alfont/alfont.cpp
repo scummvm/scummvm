@@ -406,10 +406,12 @@ static void _alfont_new_cache_glyph(ALFONT_FONT *f) {
 /* API */
 
 int alfont_set_font_size(ALFONT_FONT *f, int h) {
+	return alfont_set_font_size_ex(f, h, 0);
+}
+
+int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags) {
 	int error, test_h, direction;
-	int real_height = 0;
-	// AGS COMPAT HACK: always set ascender to the formal font height
-	int do_ascender_hack = TRUE; // TODO: make a func arg?
+	int real_height;
 	/* check the font doesn't already use that w and h */
 	if (h == f->face_h)
 		return ALFONT_OK;
@@ -474,7 +476,7 @@ int alfont_set_font_size(ALFONT_FONT *f, int h) {
 		f->face_ascender = f->face->size->metrics.ascender >> 6;
 
 		// AGS COMPAT HACK: set ascender to the formal font height
-		if (do_ascender_hack) {
+		if ((flags & ALFONT_FLG_ASCENDER_EQ_HEIGHT) != 0) {
 			f->face_ascender = h;
 			f->real_face_h = h + abs(f->face->size->metrics.descender >> 6);
 		}

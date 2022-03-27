@@ -19,11 +19,12 @@
  *
  */
 
+#include "ags/shared/font/ttf_font_renderer.h"
 #include "ags/lib/alfont/alfont.h"
 #include "ags/shared/core/platform.h"
+#include "ags/shared/ac/game_version.h"
 #include "ags/globals.h"
 #include "ags/shared/core/asset_manager.h"
-#include "ags/shared/font/ttf_font_renderer.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/font/fonts.h"
@@ -97,12 +98,17 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 	if (alfptr == nullptr)
 		return false;
 
-	if (fontSize == 0)
+	if (fontSize <= 0)
 		fontSize = 8; // compatibility fix
 	if (params && params->SizeMultiplier > 1)
 		fontSize *= params->SizeMultiplier;
-	if (fontSize > 0)
-		alfont_set_font_size(alfptr, fontSize);
+	// Compatibility: font ascender is always adjusted to the formal font's height;
+	// EXCEPTION: not if it's a game made before AGS 3.4.1 with TTF anti-aliasing
+	// (the reason is uncertain, but this is to emulate old engine's behavior).
+	int alfont_flags = 0;
+	if (!(ShouldAntiAliasText() && (_G(loaded_game_file_version) < kGameVersion_341)))
+		alfont_flags |= ALFONT_FLG_ASCENDER_EQ_HEIGHT;
+	alfont_set_font_size_ex(alfptr, fontSize, alfont_flags);
 
 	_fontData[fontNumber].AlFont = alfptr;
 	_fontData[fontNumber].Params = params ? *params : FontRenderParams();
