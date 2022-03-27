@@ -360,7 +360,6 @@ public:
 		int h = -1, int i = -1, int j = -1, int k = -1,
 		int l = -1, int m = -1, int n = -1);
 
-	int diMUSEExtractMouthSyncTimes(char *marker);
 	int diMUSEStartStream(int soundId, int priority, int groupId);
 	int diMUSESwitchStream(int oldSoundId, int newSoundId, int fadeDelay, int fadeSyncFlag2, int fadeSyncFlag1);
 	int diMUSESwitchStream(int oldSoundId, int newSoundId, uint8 *crossfadeBuffer, int crossfadeBufferSize, int vocLoopFlag);

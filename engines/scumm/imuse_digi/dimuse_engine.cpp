@@ -771,10 +771,6 @@ int IMuseDigital::diMUSESetTrigger(int soundId, int marker, int opcode, int d, i
 	return cmdsHandleCmd(17, nullptr, soundId, marker, opcode, d, e, f, g, h, i, j, k, l, m, n);
 }
 
-int IMuseDigital::diMUSEExtractMouthSyncTimes(char *marker) {
-	return cmdsHandleCmd(21, (uint8 *)marker);
-}
-
 int IMuseDigital::diMUSEStartStream(int soundId, int priority, int bufferId) {
 	return cmdsHandleCmd(25, nullptr, soundId, priority, bufferId);
 }
