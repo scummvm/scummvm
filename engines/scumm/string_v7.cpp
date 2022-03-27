@@ -179,7 +179,6 @@ void TextRenderer_v7::drawSubstring(const char *str, uint numBytesMax, byte *buf
 #define SCUMM7_MAX_STRINGS		80
 
 void TextRenderer_v7::drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags) {
-
 	debugC(DEBUG_GENERAL, "TextRenderer_v7::drawString(str: '%s', x: %d, y: %d, col: %d, clipRect: (%d, %d, %d, %d), flags: 0x%02x)", str, x, y, col, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom, flags);
 
 	int totalLen = (int)strlen(str);
