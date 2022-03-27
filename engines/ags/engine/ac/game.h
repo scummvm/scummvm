@@ -140,6 +140,8 @@ int Game_GetNormalFont();
 
 const char *Game_GetTranslationFilename();
 int Game_ChangeTranslation(const char *newFilename);
+const char *Game_GetSpeechVoxFilename();
+bool Game_ChangeSpeechVox(const char *newFilename);
 
 //=============================================================================
 

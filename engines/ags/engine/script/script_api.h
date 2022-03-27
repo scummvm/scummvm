@@ -280,7 +280,7 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 #define API_SCALL_BOOL(FUNCTION) \
 	return RuntimeScriptValue().SetInt32AsBool(FUNCTION())
 
-#define API_SCALL_BOOL_OBJ(FUNCTION, P1CLASS) \
+#define API_SCALL_BOOL_POBJ(FUNCTION, P1CLASS) \
 	ASSERT_PARAM_COUNT(FUNCTION, 1); \
 	return RuntimeScriptValue().SetInt32AsBool(FUNCTION((P1CLASS*)params[0].Ptr))
 

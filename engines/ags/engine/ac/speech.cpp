@@ -123,6 +123,7 @@ bool init_voicepak(const String &name) {
 	}
 
 	// Save new resource locations and register asset libraries
+	_G(VoicePakName) = name;
 	_G(VoiceAssetPath) = name.IsEmpty() ? "" : String::FromFormat("%s/", name.GetCStr());
 	_GP(ResPaths).SpeechPak.Name = speech_file;
 	_GP(ResPaths).SpeechPak.Path = speech_filepath;
@@ -130,6 +131,10 @@ bool init_voicepak(const String &name) {
 	_GP(AssetMgr)->AddLibrary(_GP(ResPaths).VoiceDirSub, "voice");
 	_GP(AssetMgr)->AddLibrary(_GP(ResPaths).SpeechPak.Path, "voice");
 	return _GP(play).voice_avail;
+}
+
+String get_voicepak_name() {
+	return _G(VoicePakName);
 }
 
 String get_voice_assetpath() {

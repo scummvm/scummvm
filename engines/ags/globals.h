@@ -529,6 +529,9 @@ public:
 	ScriptDialogOptionsRendering *_ccDialogOptionsRendering;
 	ScriptDrawingSurface *_dialogOptionsRenderingSurface = nullptr;
 
+	// identifier (username) of the voice pak
+	String _VoicePakName;
+	// parent part to use when making voice asset names
 	String _VoiceAssetPath;
 	int _said_speech_line = 0; // used while in dialog to track whether screen needs updating
 	int _said_text = 0;
