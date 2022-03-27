@@ -801,7 +801,7 @@ void update_audio_system_on_game_loop() {
 	}
 
 	// Update and sync logical game channels with the audio backend
-	for (int i = 0; i < _GP(game).numGameChannels; ++i) {
+	for (int i = 0; i < TOTAL_AUDIO_CHANNELS; ++i) {
 		auto *ch = AudioChans::GetChannel(i);
 		if (ch) { // update the playing channel, and if it's finished then dispose it
 			if (ch->is_ready() && !ch->update()) {
