@@ -117,7 +117,8 @@ Option to allow legacy relative asset resolutions.
 Format value is defined as AGS version represented as NN,NN,NN,NN.
 Fonts have adjustable outline
 3.6.0.11:
-Font load flags, control backward compatible font behavior
+New font load flags, control backward compatible font behavior
+
 */
 
 enum GameDataVersion {

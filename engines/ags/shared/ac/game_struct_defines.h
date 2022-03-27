@@ -85,7 +85,6 @@ namespace AGS3 {
 #define OPT_RENDERATSCREENRES 45 // scale sprites at the (final) screen resolution
 #define OPT_RELATIVEASSETRES 46 // relative asset resolution mode (where sprites are resized to match game type)
 #define OPT_WALKSPEEDABSOLUTE 47 // if movement speeds are independent of walkable mask resolution
-#define OPT_FONTLOADLOGIC   48 // fonts load/init logic, see FONT_LOAD_xxx flags
 #define OPT_HIGHESTOPTION   OPT_WALKSPEEDABSOLUTE
 #define OPT_NOMODMUSIC      98
 #define OPT_LIPSYNCTEXT     99
@@ -105,8 +104,19 @@ namespace AGS3 {
 #define FFLG_LEGACY_SIZEMASK 0x3f
 #define MAX_LEGACY_FONT_SIZE 63
 // Contemporary font flags
-#define FFLG_SIZEMULTIPLIER  0x01  // size data means multiplier
-#define FFLG_DEFLINESPACING  0x02  // linespacing derived from the font height
+#define FFLG_SIZEMULTIPLIER        0x01  // size data means multiplier
+#define FFLG_DEFLINESPACING        0x02  // linespacing derived from the font height
+// Font load flags, primarily for backward compatibility:
+// REPORTNOMINALHEIGHT: get_font_height should return nominal font's height,
+// eq to "font size" parameter, otherwise returns real pixel height.
+#define FFLG_REPORTNOMINALHEIGHT   0x04
+// ASCENDFIXUP: do the TTF ascender fixup, where font's ascender is resized
+// to the nominal font's height.
+#define FFLG_ASCENDERFIXUP         0x08
+// Collection of flags defining fully backward compatible TTF fixup
+#define FFLG_TTF_BACKCOMPATMASK   (FFLG_REPORTNOMINALHEIGHT | FFLG_ASCENDERFIXUP)
+// Collection of flags defining font's load mode
+#define FFLG_LOADMODEMASK         (FFLG_REPORTNOMINALHEIGHT | FFLG_ASCENDERFIXUP)
 // Font outline types
 #define FONT_OUTLINE_NONE -1
 #define FONT_OUTLINE_AUTO -10

@@ -83,7 +83,7 @@ static int GetAlfontFlags(int load_mode) {
 	// Compatibility: font ascender is always adjusted to the formal font's height;
 	// EXCEPTION: not if it's a game made before AGS 3.4.1 with TTF anti-aliasing
 	// (the reason is uncertain, but this is to emulate old engine's behavior).
-	if (((load_mode & FONT_LOAD_ASCENDERFIXUP) != 0) &&
+	if (((load_mode & FFLG_ASCENDERFIXUP) != 0) &&
 		!(ShouldAntiAliasText() && (_G(loaded_game_file_version) < kGameVersion_341)))
 		flags |= ALFONT_FLG_ASCENDER_EQ_HEIGHT;
 	return flags;

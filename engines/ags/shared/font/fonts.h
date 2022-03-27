@@ -31,16 +31,6 @@
 
 namespace AGS3 {
 
-// Font load flags, primarily for backward compatibility
-// REPORTNOMINALHEIGHT: get_font_height should return nominal font's height,
-// eq to "font size" parameter, otherwise returns real pixel height.
-#define FONT_LOAD_REPORTNOMINALHEIGHT 0x01
-// ASCENDFIXUP: do the TTF ascender fixup, where font's ascender is resized
-// to the nominal font's height.
-#define FONT_LOAD_ASCENDERFIXUP       0x02
-// Collection of flags defining fully backward compatible TTF behavior
-#define FONT_LOAD_FULLBACKCOMPAT      (FONT_LOAD_REPORTNOMINALHEIGHT | FONT_LOAD_ASCENDERFIXUP)
-
 class IAGSFontRenderer;
 class IAGSFontRenderer2;
 struct FontInfo;
@@ -78,7 +68,7 @@ struct FontRenderParams;
 void init_font_renderer();
 void shutdown_font_renderer();
 void adjust_y_coordinate_for_text(int *ypos, size_t fontnum);
-IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer, int load_mode);
+IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer);
 bool font_first_renderer_loaded();
 bool is_font_loaded(size_t fontNumber);
 bool is_bitmap_font(size_t fontNumber);
@@ -133,8 +123,7 @@ void set_fontinfo(size_t fontNumber, const FontInfo &finfo);
 // Gets full information about the font
 FontInfo get_fontinfo(size_t font_number);
 // Loads a font from disk
-bool load_font_size(size_t fontNumber, const FontInfo &font_info, int load_mode);
-void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...);
+bool load_font_size(size_t fontNumber, const FontInfo &font_info); void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...);
 // Allocates two outline stencil buffers, or returns previously creates ones;
 // these buffers are owned by the font, they should not be deleted by the caller.
 void alloc_font_outline_buffers(size_t font_number,

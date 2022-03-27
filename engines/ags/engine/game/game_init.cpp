@@ -261,7 +261,7 @@ HError InitAndRegisterGameEntities() {
 void LoadFonts(GameSetupStruct &game, GameDataVersion data_ver) {
 	for (int i = 0; i < _GP(game).numfonts; ++i) {
 		FontInfo &finfo = _GP(game).fonts[i];
-		if (!load_font_size(i, finfo, game.options[OPT_FONTLOADLOGIC]))
+		if (!load_font_size(i, finfo))
 			quitprintf("Unable to load font %d, no renderer could load a matching file", i);
 
 		const bool is_wfn = is_bitmap_font(i);
