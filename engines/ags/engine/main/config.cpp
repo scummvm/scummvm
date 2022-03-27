@@ -94,15 +94,18 @@ void INIwritestring(ConfigTree &cfg, const String &sectn, const String &item, co
 	cfg[sectn][item] = value;
 }
 
-static WindowSetup parse_window_mode(const String &option, bool as_windowed, WindowSetup def_value = WindowSetup()) {
+WindowSetup parse_window_mode(const String &option, bool as_windowed, WindowSetup def_value) {
 	// "full_window" option means pseudo fullscreen ("borderless fullscreen window")
 	if (!as_windowed && (option.CompareNoCase("full_window") == 0))
-		return WindowSetup(as_windowed ? kWnd_Windowed : kWnd_FullDesktop);
+		return WindowSetup(kWnd_FullDesktop);
 	// Check supported options for explicit resolution or scale factor,
 	// in which case we'll use either a resizing window or a REAL fullscreen mode
 	const WindowMode exp_wmode = as_windowed ? kWnd_Windowed : kWnd_Fullscreen;
+	// Note that for "desktop" we return "default" for windowed, this will result
+	// in refering to the  desktop size but resizing in accordance to the scaling style
 	if (option.CompareNoCase("desktop") == 0)
-		return WindowSetup(get_desktop_size(), exp_wmode);
+		return as_windowed ? WindowSetup(exp_wmode) : WindowSetup(get_desktop_size(), exp_wmode);
+	// "Native" means using game resolution as a window size
 	if (option.CompareNoCase("native") == 0)
 		return WindowSetup(_GP(game).GetGameRes(), exp_wmode);
 	// Try parse an explicit resolution type or game scale factor --
@@ -110,7 +113,7 @@ static WindowSetup parse_window_mode(const String &option, bool as_windowed, Win
 	if (at == 0) { // try parse as a scale (xN)
 		int scale = StrUtil::StringToInt(option.Mid(1));
 		if (scale > 0) return WindowSetup(scale, exp_wmode);
-	} else if (at != (size_t)(-1)) { // else try parse as a "width x height"
+	} else if (at != -1) { // else try parse as a "width x height"
 		Size sz = Size(StrUtil::StringToInt(option.Mid(0, at)),
 			StrUtil::StringToInt(option.Mid(at + 1)));
 		if (!sz.IsNull()) return WindowSetup(sz, exp_wmode);
