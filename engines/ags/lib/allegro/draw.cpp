@@ -28,12 +28,11 @@ void drawing_mode(int mode, BITMAP *pattern, int x_anchor, int y_anchor) {
 }
 
 void xor_mode(int on) {
-	// TODO: xor_mode
-	error("TODO: xor_mode");
+	drawing_mode(on ? DRAW_MODE_XOR : DRAW_MODE_SOLID, NULL, 0, 0);
 }
 
 void solid_mode(void) {
-	// TODO: solid_mode
+	drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
 }
 
 void do_line(BITMAP *bmp, int x1, int y1, int x2, int y2, int d, DrawMethod proc) {
