@@ -1408,7 +1408,27 @@ void ScummEngine_v6::o6_getRandomNumber() {
 void ScummEngine_v6::o6_getRandomNumberRange() {
 	int max = pop();
 	int min = pop();
-	int rnd = _rnd.getRandomNumberRng(min, max);
+	int rnd;
+
+	// For using predefined teams in Prince Rupert, instead of choosing player IDs randomly
+	// let's pull from the variables that contain the teams
+	// TODO: Also check whether our user wants to use predefined teams here. Probably also wanna check that arrays 748 and 749 exist
+	if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 298) {
+		int offset = _scriptPointer - _scriptOrgPointer;
+		int localvar1 = vm.localvar[_currentScript][1];
+			localvar1, *_scriptPointer, *_scriptPointer, *_scriptPointer, *_scriptOrgPointer, *_scriptOrgPointer, *_scriptOrgPointer, offset
+		);
+		if (offset == 117) {
+			int playerId = readArray(748, 0, localvar1);
+			rnd = playerId;
+		}
+		if (offset == 210) {
+			int playerId = readArray(749, 0, localvar1);
+			rnd = playerId;
+		}
+	} else {
+		rnd = _rnd.getRandomNumberRng(min, max);
+	}
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);

@@ -261,7 +261,7 @@ void BYOnline::processLine(Common::String line) {
 			handleGameRelay(relay);
 		} else if (command == "teams") {
 			Common::JSONArray userTeam = root["user"]->asArray();
-			Common::JSONArray opponentTeam = root["player"]->asArray();
+			Common::JSONArray opponentTeam = root["opponent"]->asArray();
 			handleTeams(userTeam, opponentTeam);
 		}
 	}
@@ -551,11 +551,6 @@ void BYOnline::handleTeams(Common::JSONArray userTeam, Common::JSONArray opponen
 			warning("BYOnline: Value for opponent team index %d is not an integer!", i);
 		}
 	}
-
-	// var586 controls the max player ID used for a few things, including the random selection of teams for Prince Rupert
-	// and as the size for initializing some arrays that we need to have length 263 to support generic players
-	// Now seems as good a time as any to set this variable like so
-	_vm->writeVar(586, 263);
 }
 
 void BYOnline::setProfile(Common::String field, int32 value) {
@@ -652,6 +647,14 @@ void BYOnline::enterArea(int32 areaId) {
 		return;
 	}
 
+	// TODO: Also check whether our user wants to use generics and/or predefined teams here
+	if (_vm->_game.id == GID_BASEBALL2001 && areaId == 19) {
+		// var586 controls the max player ID used for a few things, including the selection of teams for Prince Rupert
+		// and as the size for initializing some arrays that we need to have length 263 to support generic players
+		// If we're in Prince Rupert and our user wants to use generic players, set it to 263
+		_vm->writeVar(586, 263);
+	}
+
 	debugC(DEBUG_BYONLINE, "BYOnline: Entering area %d", int(areaId));
 
 	Common::JSONObject enterAreaRequest;
@@ -672,6 +675,14 @@ void BYOnline::leaveArea() {
 		send(leaveAreaRequest);
 
 		_inArea = false;
+	}
+
+	// TODO: Also check whether our user wants to use generics and/or predefined teams here
+	if (_vm->_game.id == GID_BASEBALL2001) {
+		// var586 controls the max player ID used for a few things, including the selection of teams for Prince Rupert
+		// and as the size for initializing some arrays that we need to have length 263 if we want to support generic players
+		// We may have set it to 263 in Prince Rupert, let's set it back to 61 here
+		_vm->writeVar(586, 61);
 	}
 }
 
@@ -1000,8 +1011,8 @@ void BYOnline::gameStarted(int hoster, int player, int playerNameArray) {
 		// Request teams for this client and opponent
 		Common::JSONObject getTeamsRequest;
 		getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
-		getTeamsRequest.setVal("user_id", new Common::JSONValue((long long int)hoster));
-		getTeamsRequest.setVal("player_id", new Common::JSONValue((long long int)player));
+		getTeamsRequest.setVal("opponent_id", new Common::JSONValue((long long int)player));
+		getTeamsRequest.setVal("key", new Common::JSONValue("S1"));  // TODO: Don't hardcode this, allow the user to configure it somehow
 		send(getTeamsRequest);
 	}
 
