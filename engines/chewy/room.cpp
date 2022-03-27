@@ -189,10 +189,7 @@ void Room::loadRoom(RaumBlk *Rb, int16 room_nr, GameState *player) {
 	RoomDetailInfo *Rdi_ = _G(det)->getRoomDetailInfo();
 	_roomInfo = &Rdi_->Ri;
 	if (_roomInfo->_tafLoad != 255) {
-		char tmp_str[MAXPATH];
-		strcpy(tmp_str, Rb->RoomDir);
-		strcat(tmp_str, _roomInfo->_tafName);
-		_G(det)->load_rdi_taf(tmp_str, _roomInfo->_tafLoad);
+		_G(det)->load_rdi_taf(_roomInfo->_tafName, _roomInfo->_tafLoad);
 		Rb->Fti = _G(det)->get_taf_info();
 		Rb->_detImage = Rb->Fti->_image;
 		Rb->DetKorrekt = Rb->Fti->_correction;

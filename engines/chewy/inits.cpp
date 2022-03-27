@@ -159,7 +159,6 @@ void init_room() {
 	_G(room_blk).Rsi = _G(gameState).room_s_obj;
 	_G(room_blk).AadLoad = true;
 	_G(room_blk).AtsLoad = true;
-	strcpy(_G(room_blk).RoomDir, "room/");
 
 	_G(room)->open_handle(EPISODE1_GEP, R_GEP_DATA);
 }

@@ -62,7 +62,6 @@ struct RaumBlk {
 	RoomMovObject *Rmo;
 	RoomStaticInventory *Rsi;
 
-	char RoomDir[9];
 	int16 AkAblage;
 	byte **_detImage;
 	int16 *DetKorrekt;
