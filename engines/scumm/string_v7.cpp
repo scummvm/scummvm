@@ -629,6 +629,8 @@ void ScummEngine_v7::CHARSET_1() {
 	}
 
 	if (usingOldSystem) {
+		_talkDelay = VAR(VAR_DEFAULT_TALK_DELAY);
+
 		int maxwidth = _charset->_right - tmpNextLeft - 1;
 		if (_charset->_center) {
 			if (maxwidth > _nextLeft)
