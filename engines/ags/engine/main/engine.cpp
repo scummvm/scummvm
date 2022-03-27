@@ -267,27 +267,7 @@ void engine_init_mouse() {
 }
 
 void engine_locate_speech_pak() {
-	_GP(play).voice_avail = false;
-
-	if (!_GP(usetup).no_speech_pack) {
-		String speech_file = "speech.vox";
-		String speech_filepath = find_assetlib(speech_file);
-		if (!speech_filepath.IsEmpty()) {
-			Debug::Printf("Initializing speech vox");
-			if (_GP(AssetMgr)->AddLibrary(speech_filepath) != Shared::kAssetNoError) {
-				_G(platform)->DisplayAlert("Unable to read voice pack, file could be corrupted or of unknown format.\nSpeech voice-over will be disabled.");
-				return;
-			}
-			Debug::Printf(kDbgMsg_Info, "Voice pack found and initialized.");
-			_GP(play).voice_avail = true;
-		} else if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).VoiceDir2) != 0) {
-			// If we have custom voice directory set, we will enable voice-over even if speech.vox does not exist
-			Debug::Printf(kDbgMsg_Info, "Voice pack was not found, but explicit voice directory is defined: enabling voice-over.");
-			_GP(play).voice_avail = true;
-		}
-		_GP(ResPaths).SpeechPak.Name = speech_file;
-		_GP(ResPaths).SpeechPak.Path = speech_filepath;
-	}
+	init_voicepak("");
 }
 
 void engine_locate_audio_pak() {

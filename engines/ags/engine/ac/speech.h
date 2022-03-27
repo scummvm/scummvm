@@ -22,6 +22,8 @@
 #ifndef AGS_ENGINE_AC_SPEECH_H
 #define AGS_ENGINE_AC_SPEECH_H
 
+#include "ags/shared/util/string.h"
+
 namespace AGS3 {
 
 enum SkipSpeechStyle {
@@ -49,6 +51,11 @@ enum SpeechMode {
 
 int user_to_internal_skip_speech(SkipSpeechStyle userval);
 SkipSpeechStyle internal_skip_speech_to_user(int internal_val);
+// Locates and initializes a voice pack of the given *name*, tells if successful;
+// pass empty string for default voice pack.
+bool init_voicepak(const AGS::Shared::String &name = "");
+// Gets an asset's parent path for voice-over clips and data files
+AGS::Shared::String get_voice_assetpath();
 
 } // namespace AGS3
 

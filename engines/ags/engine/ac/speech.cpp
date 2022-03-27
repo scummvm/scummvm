@@ -19,9 +19,10 @@
  *
  */
 
+#include "ags/engine/ac/speech.h"
+#include "ags/engine/ac/asset_helper.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/runtime_defines.h"
-#include "ags/engine/ac/speech.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
@@ -31,9 +32,16 @@
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/script_overlay.h"
+#include "ags/engine/ac/game_setup.h"
+#include "ags/engine/ac/game_state.h"
+#include "ags/shared/core/asset_manager.h"
+#include "ags/engine/main/engine.h"
+#include "ags/shared/util/path.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 int user_to_internal_skip_speech(SkipSpeechStyle userval) {
 	switch (userval) {
@@ -80,6 +88,52 @@ SkipSpeechStyle internal_skip_speech_to_user(int internal_val) {
 		}
 	}
 	return kSkipSpeechNone;
+}
+
+bool init_voicepak(const String &name) {
+	if (_GP(usetup).no_speech_pack) return false; // voice-over disabled
+
+	_GP(play).voice_avail = false;
+	String speech_file = name.IsEmpty() ? "speech.vox" : String::FromFormat("sp_%s.vox", name.GetCStr());
+	if (_GP(ResPaths).SpeechPak.Name.CompareNoCase(speech_file) == 0)
+		return true; // same pak already assigned
+
+	// First remove existing voice packs
+	_GP(AssetMgr)->RemoveLibrary(_GP(ResPaths).SpeechPak.Path);
+	_GP(AssetMgr)->RemoveLibrary(_GP(ResPaths).VoiceDirSub);
+
+	// Now check for the new packs and add if they exist
+	String speech_filepath = find_assetlib(speech_file);
+	if (!speech_filepath.IsEmpty()) {
+		Debug::Printf(kDbgMsg_Info, "Voice pack found: %s", speech_file.GetCStr());
+		_GP(play).voice_avail = true;
+	} else {
+		Debug::Printf(kDbgMsg_Error, "Unable to init voice pack '%s', file not found or of unknown format.",
+			speech_file.GetCStr());
+	}
+
+	String speech_subdir = "";
+	if (!_GP(ResPaths).VoiceDir2.IsEmpty() && Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).VoiceDir2) != 0) {
+		// If we have custom voice directory set, we will enable voice-over even if speech.vox does not exist
+		speech_subdir = name.IsEmpty() ? _GP(ResPaths).VoiceDir2 : Path::ConcatPaths(_GP(ResPaths).VoiceDir2, name);
+		if (File::IsDirectory(speech_subdir)) {
+			Debug::Printf(kDbgMsg_Info, "Optional voice directory is defined: %s", speech_subdir.GetCStr());
+			_GP(play).voice_avail = true;
+		}
+	}
+
+	// Save new resource locations and register asset libraries
+	_G(VoiceAssetPath) = name.IsEmpty() ? "" : String::FromFormat("%s/", name.GetCStr());
+	_GP(ResPaths).SpeechPak.Name = speech_file;
+	_GP(ResPaths).SpeechPak.Path = speech_filepath;
+	_GP(ResPaths).VoiceDirSub = speech_subdir;
+	_GP(AssetMgr)->AddLibrary(_GP(ResPaths).VoiceDirSub, "voice");
+	_GP(AssetMgr)->AddLibrary(_GP(ResPaths).SpeechPak.Path, "voice");
+	return _GP(play).voice_avail;
+}
+
+String get_voice_assetpath() {
+	return _G(VoiceAssetPath);
 }
 
 //=============================================================================

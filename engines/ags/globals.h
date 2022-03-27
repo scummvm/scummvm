@@ -529,6 +529,7 @@ public:
 	ScriptDialogOptionsRendering *_ccDialogOptionsRendering;
 	ScriptDrawingSurface *_dialogOptionsRenderingSurface = nullptr;
 
+	String _VoiceAssetPath;
 	int _said_speech_line = 0; // used while in dialog to track whether screen needs updating
 	int _said_text = 0;
 	int _longestline = 0;

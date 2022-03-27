@@ -474,6 +474,7 @@ ScriptAudioChannel *PlayVoiceClip(CharacterInfo *ch, int sndid, bool as_speech) 
 
 // Construct an asset name for the voice-over clip for the given character and cue id
 String get_cue_filename(int charid, int sndid) {
+	String asset_path = get_voice_assetpath();
 	String script_name;
 	if (charid >= 0) {
 		// append the first 4 characters of the script name to the filename
@@ -484,7 +485,7 @@ String get_cue_filename(int charid, int sndid) {
 	} else {
 		script_name = "NARR";
 	}
-	return String::FromFormat("%s%d", script_name.GetCStr(), sndid);
+	return String::FromFormat("%s%s%d", asset_path.GetCStr(), script_name.GetCStr(), sndid);
 }
 
 // Play voice-over clip on the common channel;

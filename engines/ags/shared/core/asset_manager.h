@@ -94,7 +94,8 @@ public:
 
 	// Add library location to the list of asset locations
 	AssetError   AddLibrary(const String &path, const AssetLibInfo **lib = nullptr);
-	// Add library location, specifying comma-separated list of filters
+	// Add library location, specifying comma-separated list of filters;
+	// if library was already added before, this method will overwrite the filters only
 	AssetError   AddLibrary(const String &path, const String &filters, const AssetLibInfo **lib = nullptr);
 	// Remove library location from the list of asset locations
 	void         RemoveLibrary(const String &path);
