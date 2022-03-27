@@ -46,6 +46,11 @@ namespace AGS3 {
 #define ALFONT_FLG_FORCE_RESIZE       0x01
 // Make ascender equal to formal font height
 #define ALFONT_FLG_ASCENDER_EQ_HEIGHT 0x02
+// When resizing a font, select the first result even if the actual
+// pixel height is different from the requested size;
+// otherwise will search for the point size which results in pixel
+// height closest to the requested size.
+#define ALFONT_FLG_SELECT_NOMINAL_SZ  0x04
 
 /* structs */
 typedef struct ALFONT_FONT ALFONT_FONT;

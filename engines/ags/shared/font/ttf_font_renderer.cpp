@@ -79,7 +79,7 @@ bool TTFFontRenderer::IsBitmapFont() {
 }
 
 static int GetAlfontFlags(int load_mode) {
-	int flags = ALFONT_FLG_FORCE_RESIZE;
+	int flags = ALFONT_FLG_FORCE_RESIZE | ALFONT_FLG_SELECT_NOMINAL_SZ;
 	// Compatibility: font ascender is always adjusted to the formal font's height;
 	// EXCEPTION: not if it's a game made before AGS 3.4.1 with TTF anti-aliasing
 	// (the reason is uncertain, but this is to emulate old engine's behavior).

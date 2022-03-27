@@ -431,7 +431,8 @@ int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags) {
 		real_height = abs(f->face->size->metrics.ascender >> 6) + abs(f->face->size->metrics.descender >> 6);
 
 		// AGS COMPAT HACK: always choose the first result
-		break;
+		if ((flags & ALFONT_FLG_SELECT_NOMINAL_SZ) != 0)
+			break;
 
 		if (real_height == h) {
 			/* we found the wanted height */
