@@ -42,7 +42,6 @@ public:
 	byte getHeight();
 	bool isDoubleByte(uint16 chr);
 	byte getCharWidth(uint16 chr);
-	byte *getCharData(uint16 chr);
 	void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput);
 #ifdef ENABLE_SCI32
 	// SCI2/2.1 equivalent
