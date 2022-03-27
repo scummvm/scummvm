@@ -197,6 +197,18 @@ public:
 			this->insert_at(destIndex++, *first);
 		}
 	}
+
+	/**
+	 * Remove an element
+	 */
+	void remove(T element) {
+		for (uint i = 0; i < this->size(); ++i) {
+			if (this->operator[](i) == element) {
+				this->remove_at(i);
+				return;
+			}
+		}
+	}
 };
 
 } // namespace std
