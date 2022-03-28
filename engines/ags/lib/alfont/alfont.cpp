@@ -19,16 +19,18 @@
  *
  */
 
-#ifdef USE_FREETYPE2
-
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include "common/scummsys.h"
+
+#ifdef USE_FREETYPE2
+
 #include "ags/lib/alfont/alfont.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/draw.h"
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/unicode.h"
 #include <ft2build.h>
+#include <wchar.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 
