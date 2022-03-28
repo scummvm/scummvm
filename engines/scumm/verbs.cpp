@@ -996,6 +996,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 
 		TextStyleFlags flags = kStyleAlignLeft;
 		int xpos = vs->origLeft;
+		int ypos = vs->curRect.top;
 
 		if (vs->center) {
 			flags = kStyleAlignCenter;
@@ -1023,7 +1024,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		_charset->setCurID(vs->charset_nr);
 
 		// Compute the text rect
-		vs->oldRect = vs->curRect = _textV7->calcStringDimensions((const char*)msg, xpos, vs->curRect.top, flags);
+		vs->curRect = _textV7->calcStringDimensions((const char*)msg, xpos, vs->curRect.top, flags);
 		
 		const int maxWidth = _screenWidth - vs->curRect.left;
 		int finalWidth = maxWidth;
@@ -1044,13 +1045,16 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 				--len;
 			}
 
-			enqueueText(tmpBuf, xpos, vs->curRect.top, color, vs->charset_nr, flags);
-			enqueueText(&msg[len + 1], xpos, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, flags);
+			enqueueText(tmpBuf, xpos, ypos, color, vs->charset_nr, flags);
+			enqueueText(&msg[len + 1], xpos, ypos + _verbLineSpacing, color, vs->charset_nr, flags);
 			vs->curRect.right = vs->curRect.left + finalWidth;
 			vs->curRect.bottom += _verbLineSpacing;			
 		} else {
-			enqueueText(msg, xpos, vs->curRect.top, color, vs->charset_nr, flags);
+			enqueueText(msg, xpos, ypos, color, vs->charset_nr, flags);
 		}
+
+		vs->oldRect = vs->curRect;
+		vs->curRect.top = ypos;
 		_charset->setCurID(oldID);
 	}
 }
