@@ -52,7 +52,9 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			_s("Show FPS-counter"),
 			_s("Show the current number of frames per second in the upper left corner"),
 			"show_fps",
-			false
+			false,
+			0,
+			0
 		},
 	},
 
@@ -62,7 +64,9 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			_s("Sprite bilinear filtering (SLOW)"),
 			_s("Apply bilinear filtering to individual sprites"),
 			"bilinear_filtering",
-			false
+			false,
+			0,
+			0
 		}
 	},
 

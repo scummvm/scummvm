@@ -190,14 +190,18 @@ static const ExtraGuiOption hypnoExtraGuiOptionCheats = {
 	_s("Enable cheats"),
 	_s("Allow cheats using the C key."),
 	"cheats",
-	false
+	false,
+	0,
+	0
 };
 
 static const ExtraGuiOption hypnoExtraGuiOptionRestoredContent = {
 	_s("Enable restored content"),
 	_s("Add additional content that is not enabled the original implementation."),
 	"restored",
-	false
+	false,
+	0,
+	0
 };
 
 class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection {

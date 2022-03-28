@@ -123,7 +123,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 						_s("Enable cheat mode"),
 						_s("Debug info and level selection becomes available"),
 						"hypercheat",
-						false
+						false,
+						0,
+						0
 				}
 		},
 

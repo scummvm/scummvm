@@ -212,7 +212,9 @@ static const ExtraGuiOption toltecsExtraGuiOption = {
 	_s("Use original save/load screens"),
 	_s("Use the original save/load screens instead of the ScummVM ones"),
 	"originalsaveload",
-	false
+	false,
+	0,
+	0
 };
 
 class ToltecsMetaEngineDetection : public AdvancedMetaEngineDetection {

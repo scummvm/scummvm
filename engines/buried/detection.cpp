@@ -53,7 +53,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Skip support"),
 			_s("Allow cutscenes to be skipped"),
 			"skip_support",
-			true
+			true,
+			0,
+			0
 		}
 	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR

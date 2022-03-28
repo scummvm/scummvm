@@ -44,7 +44,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("TTS Narrator"),
 			_s("Use TTS to read the descriptions (if TTS is available)"),
 			"tts_narrator",
-			false
+			false,
+			0,
+			0
 		}
 	},
 

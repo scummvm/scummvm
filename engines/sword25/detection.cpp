@@ -47,7 +47,9 @@ static const ExtraGuiOption sword25ExtraGuiOption = {
 	_s("Use English speech"),
 	_s("Use English speech instead of German for every language other than German"),
 	"english_speech",
-	false
+	false,
+	0,
+	0
 };
 
 class Sword25MetaEngineDetection : public AdvancedMetaEngineDetection {

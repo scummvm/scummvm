@@ -86,7 +86,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -96,7 +98,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use an alternative palette"),
 			_s("Use an alternative palette, common for all Amiga games. This was the old behavior"),
 			"altamigapalette",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -106,7 +110,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Mouse support"),
 			_s("Enables mouse support. Allows to use mouse for movement and in game menus."),
 			"mousesupport",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -116,7 +122,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use Hercules hires font"),
 			_s("Uses Hercules hires font, when font file is available."),
 			"herculesfont",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -126,7 +134,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Pause when entering commands"),
 			_s("Shows a command prompt window and pauses the game (like in SCI) instead of a real-time prompt."),
 			"commandpromptwindow",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -136,7 +146,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Add speed menu"),
 			_s("Add game speed menu (similar to PC version)"),
 			"apple2gs_speedmenu",
-			false
+			false,
+			0,
+			0
 		}
 	},
 

@@ -71,6 +71,8 @@ struct ExtraGuiOption {
 	const char *tooltip;       /*!< Option tooltip shown when the mouse cursor hovers over it. */
 	const char *configOption;  /*!< confMan key, e.g. "fullscreen". */
 	bool defaultState;         /*!< Default state of the checkbox (checked or not). */
+	byte groupId;        /*!< Id for the checkbox's group, or 0 for no group. */
+	byte groupLeaderId;  /*!< When this checkbox is unchecked, disable all checkboxes in this group. One leader per group. */
 };
 
 /**

@@ -175,49 +175,63 @@ static const ExtraGuiOption comiObjectLabelsOption = {
 	_s("Show Object Line"),
 	_s("Show the names of objects at the bottom of the screen"),
 	"object_labels",
-	true
+	true,
+	0,
+	0
 };
 
 static const ExtraGuiOption mmnesObjectLabelsOption = {
 	_s("Use NES Classic Palette"),
 	_s("Use a more neutral color palette that closely emulates the NES Classic"),
 	"mm_nes_classic_palette",
-	false
+	false,
+	0,
+	0
 };
 
 static const ExtraGuiOption fmtownsTrimTo200 = {
 	_s("Trim FM-TOWNS games to 200 pixels height"),
 	_s("Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 pixels height, allowing using 'aspect ratio correction'"),
 	"trim_fmtowns_to_200_pixels",
-	false
+	false,
+	0,
+	0
 };
 
 static const ExtraGuiOption macV3LowQualityMusic = {
 	_s("Play simplified music"),
 	_s("This music was presumably intended for low-end Macs, and uses only one channel."),
 	"mac_v3_low_quality_music",
-	false
+	false,
+	0,
+	0
 };
 
 static const ExtraGuiOption smoothScrolling = {
 	_s("Enable smooth scrolling"),
 	_s("(instead of the normal 8-pixels steps scrolling)"),
 	"smooth_scroll",
-	true
+	true,
+	0,
+	1
 };
 
 static const ExtraGuiOption semiSmoothScrolling = {
 	_s("Allow semi-smooth scrolling"),
 	_s("Allow scrolling to be less smooth during the fast camera movement in the intro."),
 	"semi_smooth_scroll",
-	false
+	false,
+	1,
+	0
 };
 
 static const ExtraGuiOption enableEnhancements {
 	_s("Enable game-specific enhancements"),
 	_s("Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game."),
 	"enable_enhancements",
-	true
+	true,
+	0,
+	0
 };
 
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {

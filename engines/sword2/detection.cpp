@@ -32,7 +32,9 @@ static const ExtraGuiOption sword2ExtraGuiOption = {
 	_s("Show object labels"),
 	_s("Show labels for objects on mouse hover"),
 	"object_labels",
-	false
+	false,
+	0,
+	0
 };
 
 class Sword2MetaEngineDetection : public MetaEngineDetection {

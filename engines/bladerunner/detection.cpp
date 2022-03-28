@@ -52,7 +52,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Sitcom mode"),
 			_s("Game will add laughter after actor's line or narration"),
 			"sitcom",
-			false
+			false,
+			0,
+			0
 		}
 	},
 	{
@@ -61,7 +63,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Shorty mode"),
 			_s("Game will shrink the actors and make their voices high pitched"),
 			"shorty",
-			false
+			false,
+			0,
+			0
 		}
 	},
 	{
@@ -70,7 +74,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Frame limiter high performance mode"),
 			_s("This mode may result in high CPU usage! It avoids use of delayMillis() function."),
 			"nodelaymillisfl",
-			false
+			false,
+			0,
+			0
 		}
 	},
 	{
@@ -79,7 +85,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Max frames per second limit"),
 			_s("This mode targets a maximum of 120 fps. When disabled, the game targets 60 fps"),
 			"frames_per_secondfl",
-			false
+			false,
+			0,
+			0
 		}
 	},
 	{
@@ -88,7 +96,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Disable McCoy's quick stamina drain"),
 			_s("When running, McCoy won't start slowing down as soon as the player stops clicking the mouse"),
 			"disable_stamina_drain",
-			false
+			false,
+			0,
+			0
 		}
 	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
