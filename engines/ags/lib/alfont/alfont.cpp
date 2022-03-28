@@ -5016,6 +5016,7 @@ ALFONT_FONT *alfont_load_font_from_mem(const char *data, int data_len) {
 
 void alfont_destroy_font(ALFONT_FONT *f) {}
 int alfont_set_font_size(ALFONT_FONT *f, int h) { return 0; }
+int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags) { return 0; }
 int alfont_get_font_height(ALFONT_FONT *f) { return 0; }
 int alfont_get_font_real_height(ALFONT_FONT *f) { return 0; }
 int alfont_text_mode(int mode) { return 0; }
