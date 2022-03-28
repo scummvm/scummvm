@@ -997,6 +997,12 @@ void compile_room_script() {
 		quitprintf("Unable to create local script: %s", _G(ccErrorString).GetCStr());
 	}
 
+	if (!_G(roominst)->ResolveScriptImports(_G(roominst)->instanceof.get()))
+		quitprintf("Unable to resolve imports in room script");
+
+	if (!_G(roominst)->ResolveImportFixups(_G(roominst)->instanceof.get()))
+		quitprintf("Unable to resolve import fixups in room script");
+
 	_G(roominstFork) = _G(roominst)->Fork();
 	if (_G(roominstFork) == nullptr)
 		quitprintf("Unable to create forked room instance: %s", _G(ccErrorString).GetCStr());

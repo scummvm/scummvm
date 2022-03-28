@@ -196,31 +196,52 @@ int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny, int i
 }
 
 int create_global_script() {
+	constexpr int kscript_create_error = -3;
+
 	ccSetOption(SCOPT_AUTOIMPORT, 1);
+
+	std::vector<ccInstance *> instances_for_resolving;
 	for (int kk = 0; kk < _G(numScriptModules); kk++) {
 		_GP(moduleInst)[kk] = ccInstance::CreateFromScript(_GP(scriptModules)[kk]);
 		if (_GP(moduleInst)[kk] == nullptr)
-			return -3;
-		// create a forked instance for rep_exec_always
-		_GP(moduleInstFork)[kk] = _GP(moduleInst)[kk]->Fork();
-		if (_GP(moduleInstFork)[kk] == nullptr)
-			return -3;
-
-		_GP(moduleRepExecAddr)[kk] = _GP(moduleInst)[kk]->GetSymbolAddress(REP_EXEC_NAME);
+			return kscript_create_error;
+		instances_for_resolving.push_back(_GP(moduleInst)[kk]);
 	}
+
 	_G(gameinst) = ccInstance::CreateFromScript(_GP(gamescript));
 	if (_G(gameinst) == nullptr)
-		return -3;
-	// create a forked instance for rep_exec_always
-	_G(gameinstFork) = _G(gameinst)->Fork();
-	if (_G(gameinstFork) == nullptr)
-		return -3;
+		return kscript_create_error;
+	instances_for_resolving.push_back(_G(gameinst));
 
 	if (_GP(dialogScriptsScript) != nullptr) {
 		_G(dialogScriptsInst) = ccInstance::CreateFromScript(_GP(dialogScriptsScript));
 		if (_G(dialogScriptsInst) == nullptr)
-			return -3;
+			return kscript_create_error;
+		instances_for_resolving.push_back(_G(dialogScriptsInst));
 	}
+
+	// Resolve the script imports after all the scripts have been loaded 
+	for (size_t instance_idx = 0; instance_idx < instances_for_resolving.size(); instance_idx++) {
+		auto inst = instances_for_resolving[instance_idx];
+		if (!inst->ResolveScriptImports(inst->instanceof.get()))
+			return kscript_create_error;
+		if (!inst->ResolveImportFixups(inst->instanceof.get()))
+			return kscript_create_error;
+	}
+
+	// Create the forks for 'repeatedly_execute_always' after resolving
+	// because they copy their respective originals including the resolve information
+	for (int module_idx = 0; module_idx < _G(numScriptModules); module_idx++) {
+		_GP(moduleInstFork)[module_idx] = _GP(moduleInst)[module_idx]->Fork();
+		if (_GP(moduleInstFork)[module_idx] == nullptr)
+			return kscript_create_error;
+
+		_GP(moduleRepExecAddr)[module_idx] = _GP(moduleInst)[module_idx]->GetSymbolAddress(REP_EXEC_NAME);
+	}
+
+	_G(gameinstFork) = _G(gameinst)->Fork();
+	if (_G(gameinstFork) == nullptr)
+		return kscript_create_error;
 
 	ccSetOption(SCOPT_AUTOIMPORT, 0);
 	return 0;

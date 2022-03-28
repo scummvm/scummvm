@@ -1321,7 +1321,6 @@ bool ccInstance::IsBeingRun() const {
 }
 
 bool ccInstance::_Create(PScript scri, ccInstance *joined) {
-	int i;
 	_G(currentline) = -1;
 	if ((scri == nullptr) && (joined != nullptr))
 		scri = joined->instanceof;
@@ -1355,7 +1354,7 @@ bool ccInstance::_Create(PScript scri, ccInstance *joined) {
 			code = (intptr_t *)malloc(codesize * sizeof(intptr_t));
 			// 64 bit: Read code into 8 byte array, necessary for being able to perform
 			// relocations on the references.
-			for (i = 0; i < codesize; ++i)
+			for (int i = 0; i < codesize; ++i)
 				code[i] = scri->code[i];
 		}
 	}
@@ -1376,7 +1375,7 @@ bool ccInstance::_Create(PScript scri, ccInstance *joined) {
 	}
 
 	// find a LoadedInstance slot for it
-	for (i = 0; i < MAX_LOADED_INSTANCES; i++) {
+	for (int i = 0; i < MAX_LOADED_INSTANCES; i++) {
 		if (_G(loadedInstances)[i] == nullptr) {
 			_G(loadedInstances)[i] = this;
 			loadedInstanceId = i;
@@ -1392,9 +1391,6 @@ bool ccInstance::_Create(PScript scri, ccInstance *joined) {
 		resolved_imports = joined->resolved_imports;
 		code_fixups = joined->code_fixups;
 	} else {
-		if (!ResolveScriptImports(scri.get())) {
-			return false;
-		}
 		if (!CreateGlobalVars(scri.get())) {
 			return false;
 		}
@@ -1406,7 +1402,7 @@ bool ccInstance::_Create(PScript scri, ccInstance *joined) {
 	exports = new RuntimeScriptValue[scri->numexports];
 
 	// find the real address of the exports
-	for (i = 0; i < scri->numexports; i++) {
+	for (int i = 0; i < scri->numexports; i++) {
 		int32_t etype = (scri->export_addr[i] >> 24L) & 0x000ff;
 		int32_t eaddr = (scri->export_addr[i] & 0x00ffffff);
 		if (etype == EXPORT_FUNCTION) {
@@ -1435,7 +1431,7 @@ bool ccInstance::_Create(PScript scri, ccInstance *joined) {
 
 	if ((scri->instances == 1) && (ccGetOption(SCOPT_AUTOIMPORT) != 0)) {
 		// import all the exported stuff from this script
-		for (i = 0; i < scri->numexports; i++) {
+		for (int i = 0; i < scri->numexports; i++) {
 			if (!ccAddExternalScriptSymbol(scri->exports[i], exports[i], this)) {
 				cc_error("Export table overflow at '%s'", scri->exports[i]);
 				return false;
@@ -1482,35 +1478,35 @@ void ccInstance::Free() {
 }
 
 bool ccInstance::ResolveScriptImports(const ccScript *scri) {
-	// When the import is referenced in code, it's being addressed
-	// by it's index in the script imports array. That index is
-	// NOT unique and relative to script only.
-	// Script keeps information of used imports as an array of
-	// names.
-	// To allow real-time import use we should put resolved imports
-	// to the array keeping the order of their names in script's
-	// array of names.
+	// Script keeps the information of what imports are used as an array of names.
+	// When an import is referenced in the code, it's addressed by its index in this
+	// array. Different scripts have differing arrays of imports; indexes
+	// into 'imports[]' are NOT unique and relative to the respective script only.
+	// To allow real-time import use, the sequence of imports in 'imports[]'
+	// and 'resolved_imports[]' should not be modified.
 
-	// resolve all imports referenced in the script
 	numimports = scri->numimports;
 	if (numimports == 0) {
+		// [PGB] AFAICS there's nothing wrong with not having any imports, and
+		// it doesn't lead to trouble. However, if it turns out that we do need
+		// to return 'false' here, we should also report why with a 'Debug::Printf()' call.
 		resolved_imports = nullptr;
-		return false;
+		return true;
 	}
 
 	resolved_imports = new int[numimports];
-	int errors = 0, last_err_idx = 0;
-	for (int i = 0; i < scri->numimports; ++i) {
-		if (scri->imports[i] == nullptr) {
-			resolved_imports[i] = -1;
+	int errors = 0, last_err_idx;
+	for (int import_idx = 0; import_idx < scri->numimports; ++import_idx) {
+		if (scri->imports[import_idx] == nullptr) {
+			resolved_imports[import_idx] = -1;
 			continue;
 		}
 
-		resolved_imports[i] = _GP(simp).get_index_of(scri->imports[i]);
-		if (resolved_imports[i] < 0) {
-			Debug::Printf(kDbgMsg_Error, "unresolved import '%s' in '%s'", scri->imports[i], scri->numSections > 0 ? scri->sectionNames[0] : "<unknown>");
+		resolved_imports[import_idx] = _GP(simp).get_index_of(scri->imports[import_idx]);
+		if (resolved_imports[import_idx] < 0) {
+			Debug::Printf(kDbgMsg_Error, "unresolved import '%s' in '%s'", scri->imports[import_idx], scri->numSections > 0 ? scri->sectionNames[0] : "<unknown>");
 			errors++;
-			last_err_idx = i;
+			last_err_idx = import_idx;
 		}
 	}
 
@@ -1519,6 +1515,7 @@ bool ccInstance::ResolveScriptImports(const ccScript *scri) {
 			scri->numSections > 0 ? scri->sectionNames[0] : "<unknown>",
 			errors,
 			scri->imports[last_err_idx]);
+
 	return errors == 0;
 }
 
@@ -1654,32 +1651,35 @@ bool ccInstance::CreateRuntimeCodeFixups(const ccScript *scri) {
 		case FIXUP_FUNCTION:
 		case FIXUP_STRING:
 		case FIXUP_STACK:
-			break; // do nothing yet
 		case FIXUP_IMPORT:
-			// we do not need to save import's address now when we have
-			// resolved imports kept so far as instance exists, but we
-			// must fixup the following instruction in certain case
-		{
-			int import_index = resolved_imports[code[fixup]];
-			const ScriptImport *import = _GP(simp).getByIndex(import_index);
-			if (!import) {
-				cc_error_fixups(scri, fixup, "cannot resolve import (bytecode pos %d, key %d)", fixup, import_index);
-				return false;
-			}
-			code[fixup] = import_index;
-			// If the call is to another script function next CALLEXT
-			// must be replaced with CALLAS
-			if (import->InstancePtr != nullptr && (code[fixup + 1] & INSTANCE_ID_REMOVEMASK) == SCMD_CALLEXT) {
-				code[fixup + 1] = SCMD_CALLAS | (import->InstancePtr->loadedInstanceId << INSTANCE_ID_SHIFT);
-			}
-		}
-		break;
+			break; // do nothing yet
 		default:
 			cc_error_fixups(scri, (size_t)-1, "unknown fixup type: %d (fixup num %d)", scri->fixuptypes[i], i);
 			return false;
 		}
 	}
 
+	return true;
+}
+
+bool ccInstance::ResolveImportFixups(const ccScript *scri) {
+	for (int fixup_idx = 0; fixup_idx < scri->numfixups; ++fixup_idx) {
+		if (scri->fixuptypes[fixup_idx] != FIXUP_IMPORT)
+			continue;
+
+		int32_t const fixup = scri->fixups[fixup_idx];
+		int const import_index = resolved_imports[code[fixup]];
+		ScriptImport const *import = _GP(simp).getByIndex(import_index);
+		if (!import) {
+			cc_error_fixups(scri, fixup, "cannot resolve import (bytecode pos %d, key %d)", fixup, import_index);
+			return false;
+		}
+		code[fixup] = import_index;
+		// If the call is to another script function next CALLEXT
+		// must be replaced with CALLAS
+		if (import->InstancePtr != nullptr && (code[fixup + 1] & INSTANCE_ID_REMOVEMASK) == SCMD_CALLEXT)
+			code[fixup + 1] = SCMD_CALLAS | (import->InstancePtr->loadedInstanceId << INSTANCE_ID_SHIFT);
+	}
 	return true;
 }
 
