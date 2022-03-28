@@ -670,8 +670,8 @@ void setupScreen(SetupScreenMode mode) {
 }
 
 void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
-	int16 anz = 0;
-	char *str_adr = nullptr;
+	const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
+	Common::StringArray desc;
 
 	if (mode == DO_SETUP) {
 
@@ -680,19 +680,19 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 			switch (txt_mode) {
 			case INVENTORY_NORMAL:
 			case INVENTORY_STATIC:
-				str_adr = _G(atds)->ats_get_txt(txt_nr, TXT_MARK_NAME, &anz, ATS_DATA);
+				desc = _G(atds)->getTextArray(roomNum, txt_nr, ATS_DATA);
 				break;
 			default:
 				break;
 			}
 
-			if (str_adr) {
+			if (desc.size() > 0) {
 				_G(fontMgr)->setFont(_G(font8));
 				int16 x = g_events->_mousePos.x;
 				int16 y = g_events->_mousePos.y;
-				calcTxtXy(&x, &y, str_adr, anz);
-				for (int16 i = 0; i < anz; i++)
-					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos(str_adr, i));
+				calcTxtXy(&x, &y, desc);
+				for (int16 i = 0; i < desc.size(); i++)
+					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), desc[i].c_str());
 			}
 		}
 	}
@@ -1420,16 +1420,15 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 				}
 
 				if (dispFl && !actionFl) {
-					int16 anz;
-					char *str_ = _G(atds)->ats_get_txt(txtNr, TXT_MARK_NAME, &anz, ATS_DATA);
-					if (str_ != 0) {
-						//const uint8 roomNr = _G(room)->_roomInfo->_roomNr;
-						//Common::StringArray s = _G(atds)->getTextArray(roomNr + 500, txtNr);
+					const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
+					Common::StringArray desc = _G(atds)->getTextArray(roomNum, txtNr, ATS_DATA);
+
+					if (desc.size() > 0) {
 						ret = txtNr;
 						_G(fontMgr)->setFont(_G(font8));
-						calcTxtXy(&x, &y, str_, anz);
-						for (int16 i = 0; i < anz; i++)
-							printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
+						calcTxtXy(&x, &y, desc);
+						for (int16 i = 0; i < desc.size(); i++)
+							printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), desc[i].c_str());
 					}
 				}
 			} else {

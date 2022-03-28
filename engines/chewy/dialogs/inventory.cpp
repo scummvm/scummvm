@@ -397,8 +397,8 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	bool mouseFl = true;
 
 	if (mode == INV_ATS_MODE) {
-		itemName = _G(atds)->getTextEntry(invent_nr + 700, TXT_MARK_NAME);
-		itemDesc = _G(atds)->getTextArray(invent_nr + 700, TXT_MARK_LOOK);
+		itemName = _G(atds)->getTextEntry(invent_nr, TXT_MARK_NAME, INV_ATS_DATA);
+		itemDesc = _G(atds)->getTextArray(invent_nr, TXT_MARK_LOOK, INV_ATS_DATA);
 		lineCount = itemDesc.size();
 		xoff = itemName.size();
 		xoff *= _G(font8)->getDataWidth();
@@ -409,13 +409,12 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		visibleCount = 3;
 		yoff = 0;
 
-		//Common::StringArray tmp;
 		if (ats_nr >= 15000) {
 			txt_adr = _G(atds)->ats_get_txt(ats_nr - 15000, TXT_MARK_USE, &lineCount, INV_USE_DEF);
-			//tmp = _G(atds)->getTextArray(ats_nr - 15000 + 840, TXT_MARK_USE);
+			//itemDesc = _G(atds)->getTextArray(ats_nr - 15000, TXT_MARK_USE, INV_USE_DEF);
 		} else {
 			txt_adr = _G(atds)->ats_get_txt(ats_nr, TXT_MARK_USE, &lineCount, INV_USE_DATA);
-			//tmp = _G(atds)->getTextArray(ats_nr + 840, TXT_MARK_USE);
+			//itemDesc = _G(atds)->getTextArray(ats_nr, TXT_MARK_USE, INV_USE_DATA);
 		}
 		if (!txt_adr) {
 			endLoop = true;

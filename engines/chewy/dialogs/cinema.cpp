@@ -73,7 +73,7 @@ void Cinema::execute() {
 			// Render cut-scene list
 
 			for (int i = 0; i < CINEMA_LINES; ++i) {
-				cutsceneName = _G(atds)->getTextEntry(98 + 500, i + topIndex + 1);
+				cutsceneName = _G(atds)->getTextEntry(98, 546 + i + topIndex, ATS_DATA);
 				int yp = i * 10 + 68;
 
 				if (i == selected)
@@ -82,7 +82,7 @@ void Cinema::execute() {
 			}
 		} else {
 			// No cut-scene seen yet
-			cutsceneName = _G(atds)->getTextEntry(98 + 500, 0);
+			cutsceneName = _G(atds)->getTextEntry(98, 545, ATS_DATA);
 			_G(out)->printxy(40, 68, 14, 300, _G(scr_width), cutsceneName.c_str());
 		}
 

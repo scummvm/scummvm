@@ -300,15 +300,15 @@ void Room0::eyeWait() {
 void Room0::calcEyeClick(int16 aniNr) {
 	if (mouse_on_prog_ani() == aniNr) {
 		if (_G(minfo)._button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
-			int16 anz;
-			char *str_ = _G(atds)->ats_get_txt(172, TXT_MARK_NAME, &anz, ATS_DATA);
-			if (str_ != 0) {
+			const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
+			Common::StringArray desc = _G(atds)->getTextArray(roomNum, 172, ATS_DATA);
+			if (desc.size() > 0) {
 				_G(fontMgr)->setFont(_G(font8));
 				int16 x = g_events->_mousePos.x;
 				int16 y = g_events->_mousePos.y;
-				calcTxtXy(&x, &y, str_, anz);
-				for (int16 i = 0; i < anz; i++)
-					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
+				calcTxtXy(&x, &y, desc);
+				for (int16 i = 0; i < desc.size(); i++)
+					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), desc[i].c_str());
 			}
 		} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(SLIME_INV)) {
@@ -538,15 +538,15 @@ void Room0::feederExtend() {
 void Room0::calcPillowClick(int16 aniNr) {
 	if (mouse_on_prog_ani() == aniNr) {
 		if (_G(minfo)._button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
-			int16 anz;
-			char *str_ = _G(atds)->ats_get_txt(173, TXT_MARK_NAME, &anz, ATS_DATA);
-			if (str_ != nullptr) {
+			const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
+			Common::StringArray desc = _G(atds)->getTextArray(roomNum, 173, ATS_DATA);
+			if (desc.size() > 0) {
 				_G(fontMgr)->setFont(_G(font8));
 				int16 x = g_events->_mousePos.x;
 				int16 y = g_events->_mousePos.y;
-				calcTxtXy(&x, &y, str_, anz);
-				for (int16 i = 0; i < anz; i++)
-					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
+				calcTxtXy(&x, &y, desc);
+				for (int16 i = 0; i < desc.size(); i++)
+					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), desc[i].c_str());
 			}
 		} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(PILLOW_INV) && _G(gameState).R0SlimeUsed) {

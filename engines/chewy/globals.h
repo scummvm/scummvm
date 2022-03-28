@@ -381,6 +381,7 @@ void remove_inventory(int16 nr);
 
 void getDisplayCoord(int16 *x, int16 *y, int16 nr);
 void calcTxtXy(int16 *x, int16 *y, char *txtAdr, int16 txtNr);
+void calcTxtXy(int16 *x, int16 *y, Common::StringArray &desc);
 void adsMenu();
 
 void stop_ads_dialog();

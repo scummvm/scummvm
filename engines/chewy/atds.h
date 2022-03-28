@@ -312,8 +312,8 @@ public:
 	void loadAtdsStream(Common::SeekableReadStream *stream);
 	uint32 getAtdsStreamSize() const;
 
-	Common::StringArray getTextArray(uint dialogNum, uint entryNum);
-	Common::String getTextEntry(uint dialogNum, uint entryNum);
+	Common::StringArray getTextArray(uint dialogNum, uint entryNum, int type);
+	Common::String getTextEntry(uint dialogNum, uint entryNum, int type);
 
 private:
 	int16 get_delay(int16 txt_len);

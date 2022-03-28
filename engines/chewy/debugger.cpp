@@ -101,14 +101,15 @@ bool Debugger::Cmd_WalkAreas(int argc, const char **argv) {
 }
 
 bool Debugger::Cmd_Text(int argc, const char **argv) {
-	if (argc < 3) {
-		debugPrintf("Usage: text <chunk> <entry>\n");
+	if (argc < 4) {
+		debugPrintf("Usage: text <chunk> <entry> <type>\n");
 		return true;
 	}
 
 	int chunk = atoi(argv[1]);
 	int entry = atoi(argv[2]);
-	Common::StringArray text = _G(atds)->getTextArray(chunk, entry);
+	int type = atoi(argv[3]);
+	Common::StringArray text = _G(atds)->getTextArray(chunk, entry, type);
 	for (uint i = 0; i < text.size(); i++) {
 		debugPrintf("%d: %s\n", i, text[i].c_str());
 	}

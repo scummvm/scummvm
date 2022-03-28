@@ -22,6 +22,8 @@
 #include "common/system.h"
 #include "chewy/resource.h"
 #include "chewy/text.h"
+#include "chewy/atds.h"
+#include "chewy/defines.h"
 
 namespace Chewy {
 
@@ -79,27 +81,54 @@ TextEntryList *Text::getDialog(uint chunk, uint entry) {
 	return l;
 }
 
-TextEntry *Text::getText(uint chunk, uint entry) {
+TextEntry *Text::getText(uint chunk, uint entry, int type) {
+	switch (type) {
+	case AAD_DATA:
+		chunk += AAD_TAP_OFF;
+		break;
+	case ATS_DATA:
+		chunk += ATS_TAP_OFF;
+		break;
+	case ADS_DATA:
+		chunk += ADS_TAP_OFF;
+		break;
+	case INV_USE_DATA:
+		chunk += USE_TAP_OFF;
+		break;
+	case INV_ATS_DATA:
+		chunk += INV_TAP_OFF;
+		break;
+	}
+
 	if (chunk < kADSTextMax)
-		error("getText(): Invalid entry number requested, %d (min %d)", chunk, kADSTextMax);
+		error("getText(): Invalid chunk number requested, %d (min %d)", chunk, kADSTextMax);
 
 	TextEntry *d = new TextEntry();
-	bool isText = (chunk >= kADSTextMax && chunk < kADSTextMax + kATSTextMax);
-	bool isAutoDialog = (chunk >= kADSTextMax + kATSTextMax && chunk < kADSTextMax + kATSTextMax + kAADTextMax);
+	const bool isText = (chunk >= kADSTextMax && chunk < kADSTextMax + kATSTextMax);
+	const bool isAutoDialog = (chunk >= kADSTextMax + kATSTextMax && chunk < kADSTextMax + kATSTextMax + kAADTextMax);
+	const bool isInvDesc = (chunk >= kADSTextMax + kATSTextMax + kAADTextMax && chunk < kADSTextMax + kATSTextMax + kAADTextMax + kINVTextMax);
 
 	byte *data = getChunkData(chunk);
 	byte *ptr = data;
+	uint entryId = 0;
 
 	if (isAutoDialog)
 		ptr += 3;
 
-	for (uint i = 0; i <= entry; i++) {
-		ptr += 13;
+	while (true) {
+		ptr += 3;
+		uint16 headerBytes = READ_LE_UINT16(ptr);
+		ptr += 2;
+		if (headerBytes != 0xFEF0)
+			break;
+		uint16 txtNum = !isInvDesc ? READ_LE_UINT16(ptr) : entryId++;
+		ptr += 2;
+		ptr += 6;
 		d->_speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;
 		ptr += 2;
 
 		do {
-			if (i == entry)
+			if (txtNum == entry)
 				d->_text += *ptr++;
 			else
 				ptr++;
@@ -123,7 +152,7 @@ TextEntry *Text::getText(uint chunk, uint entry) {
 		if (isAutoDialog)
 			ptr += 3;
 
-		if (i == entry) {
+		if (txtNum == entry) {
 			// Found
 			delete[] data;
 			return d;
@@ -137,8 +166,8 @@ TextEntry *Text::getText(uint chunk, uint entry) {
 	return nullptr;
 }
 
-Common::StringArray Text::getTextArray(uint chunk, uint entry) {
-	TextEntry *textData = getText(chunk, entry);
+Common::StringArray Text::getTextArray(uint chunk, uint entry, int type) {
+	TextEntry *textData = getText(chunk, entry, type);
 	Common::StringArray res;
 	Common::String txt = textData ? textData->_text : "";
 	char *text = new char[txt.size() + 1];
@@ -156,9 +185,9 @@ Common::StringArray Text::getTextArray(uint chunk, uint entry) {
 	return res;
 }
 
-Common::String Text::getTextEntry(uint chunk, uint entry) {
-	Common::StringArray res = getTextArray(chunk, entry);
-	return res[0];
+Common::String Text::getTextEntry(uint chunk, uint entry, int type) {
+	Common::StringArray res = getTextArray(chunk, entry, type);
+	return res.size() > 0 ? res[0] : "";
 }
 
 void Text::crypt(char *txt, uint32 size) {

@@ -82,9 +82,9 @@ public:
 	* - inventory text (INV) - 700 - 799
 	* - use text (USE) - 800 - 899
 	*/
-	TextEntry *getText(uint chunk, uint entry);
-	Common::StringArray getTextArray(uint chunk, uint entry);
-	Common::String getTextEntry(uint chunk, uint entry);
+	TextEntry *getText(uint chunk, uint entry, int type);
+	Common::StringArray getTextArray(uint chunk, uint entry, int type);
+	Common::String getTextEntry(uint chunk, uint entry, int type);
 
 	void crypt(char *txt, uint32 size);
 	const char *strPos(const char *txtAdr, int16 pos);

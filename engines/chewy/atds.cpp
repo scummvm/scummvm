@@ -496,8 +496,10 @@ DisplayMode Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mod
 		if (_atsv._display != DISPLAY_NONE)
 			stop_ats();
 
+		//const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
 		int16 txt_anz;
 		_atsv._ptr = ats_get_txt(txtNr, txtMode, &txt_anz, mode);
+		//_atsv._ptr = (char *)getTextEntry(roomNum, txtNr, txtMode).c_str();
 
 		if (_atsv._ptr) {
 			_atsv._display = _atdsv._display;
@@ -1304,13 +1306,6 @@ void Atdsys::show_item(int16 diaNr, int16 blockNr, int16 itemNr) {
 }
 
 int16 Atdsys::calc_inv_no_use(int16 curInv, int16 testNr, int16 mode) {
-	if (curInv != -1) {
-		if (_invBlockNr != curInv) {
-			_invBlockNr = curInv + 1;
-			load_atds(_invBlockNr + _atdsPoolOff[mode], INV_USE_DATA);
-		}
-	}
-
 	assert(mode <= 255 && testNr <= 65535);
 
 	const uint32 key = (mode & 0xff) << 16 | testNr;
@@ -1333,12 +1328,12 @@ uint32 Atdsys::getAtdsStreamSize() const {
 	return _dialogResource->getStreamSize();
 }
 
-Common::StringArray Atdsys::getTextArray(uint dialogNum, uint entryNum) {
-	return _text->getTextArray(dialogNum, entryNum);
+Common::StringArray Atdsys::getTextArray(uint dialogNum, uint entryNum, int type) {
+	return _text->getTextArray(dialogNum, entryNum, type);
 }
 
-Common::String Atdsys::getTextEntry(uint dialogNum, uint entryNum) {
-	return _text->getTextEntry(dialogNum, entryNum);
+Common::String Atdsys::getTextEntry(uint dialogNum, uint entryNum, int type) {
+	return _text->getTextEntry(dialogNum, entryNum, type);
 }
 
 } // namespace Chewy
