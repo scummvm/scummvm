@@ -711,6 +711,8 @@ void alfont_textout_aa(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y,
 	alfont_textout_aa_ex(bmp, f, s, x, y, color, alfont_textmode);
 }
 
+//#define APPLY_FONT_KERNING
+
 void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int backg) {
 	char *lpszW;
 	char *lpszW_tmp;
@@ -724,7 +726,6 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 	int ret; //decide that if the ASCII Code convert to Unicode Code is all OK when used for autofix string or used for general convert.
 	int character;
 	int alpha_table[256];
-	int last_glyph_index;
 	int first_x = 0, final_x = 0, final_y = 0;
 	int curr_uformat = 0;
 	int first_flag = TRUE; //First Char flag
@@ -989,7 +990,9 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 
 	/* draw char by char (using allegro unicode funcs) */
 	acquire_bitmap(bmp);
-	last_glyph_index = 0;
+#ifdef APPLY_FONT_KERNING
+	int last_glyph_index = 0;
+#endif
 
 	if (f->fixed_width == TRUE) {
 		lpszW_tmp = lpszW;
@@ -1071,13 +1074,15 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 		real_y = (y - cglyph.aatop) + f->face_ascender;
 
 		/* apply kerning */
-		/*if (last_glyph_index) {
+#ifdef APPLY_FONT_KERNING
+		if (last_glyph_index) {
 			FT_Vector v;
 			FT_Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
 			real_x += v.x >> 6;
 			real_y += v.y >> 6;
-		}*/
+		}
 		last_glyph_index = glyph_index;
+#endif
 
 		/* draw only if exists */
 		if ((cglyph.aa_available) && (cglyph.aabmp)) {
@@ -1817,7 +1822,7 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 	char *precedingchar_pointer = NULL; //used for precedingchar character
 	int nLen;
 	int ret; //decide that if the ASCII Code convert to Unicode Code is all OK when used for autofix string or used for general convert.
-	int character, last_glyph_index;
+	int character;
 	int first_x = 0, final_x = 0, final_y = 0;
 	int curr_uformat = 0;
 	int first_flag = TRUE; //First Char flag
@@ -2056,8 +2061,9 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 
 	/* draw char by char (using allegro unicode funcs) */
 	acquire_bitmap(bmp);
-	last_glyph_index = 0;
-
+#ifdef APPLY_FONT_KERNING
+	int last_glyph_index = 0;
+#endif
 
 	if (f->fixed_width == TRUE) {
 		lpszW_tmp = lpszW;
@@ -2138,13 +2144,15 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 		real_y = (y - cglyph.top) + f->face_ascender;
 
 		/* apply kerning */
-		/*if (last_glyph_index) {
+#ifdef APPLY_FONT_KERNING
+		if (last_glyph_index) {
 			FT_Vector v;
 			FT_Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
 			real_x += v.x >> 6;
 			real_y += v.y >> 6;
-		}*/
+		}
 		last_glyph_index = glyph_index;
+#endif
 
 		/* draw only if exists */
 		if ((cglyph.mono_available) && (cglyph.bmp)) {
