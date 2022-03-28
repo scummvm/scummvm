@@ -466,8 +466,6 @@ void ScummEngine_v7::drawBlastTexts() {
 
 		bt.rect.top += _screenTop;
 		bt.rect.bottom += _screenTop;
-		bt.rect.left;
-		bt.rect.right;
 		markRectAsDirty(vs->number, bt.rect);
 	}
 }
