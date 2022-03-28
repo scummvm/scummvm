@@ -992,20 +992,19 @@ void compile_room_script() {
 	_G(ccError) = 0;
 
 	_G(roominst) = ccInstance::CreateFromScript(_GP(thisroom).CompiledScript);
-
 	if ((_G(ccError) != 0) || (_G(roominst) == nullptr)) {
-		quitprintf("Unable to create local script: %s", _G(ccErrorString).GetCStr());
+		quitprintf("Unable to create local script:\n%s", _G(ccErrorString).GetCStr());
 	}
 
 	if (!_G(roominst)->ResolveScriptImports(_G(roominst)->instanceof.get()))
-		quitprintf("Unable to resolve imports in room script");
+		quitprintf("Unable to resolve imports in room script:\n%s", _G(ccErrorString).GetCStr());
 
 	if (!_G(roominst)->ResolveImportFixups(_G(roominst)->instanceof.get()))
-		quitprintf("Unable to resolve import fixups in room script");
+		quitprintf("Unable to resolve import fixups in room script:\n%s", _G(ccErrorString).GetCStr());
 
 	_G(roominstFork) = _G(roominst)->Fork();
 	if (_G(roominstFork) == nullptr)
-		quitprintf("Unable to create forked room instance: %s", _G(ccErrorString).GetCStr());
+		quitprintf("Unable to create forked room instance:\n%s", _G(ccErrorString).GetCStr());
 
 	_GP(repExecAlways).roomHasFunction = true;
 	_GP(lateRepExecAlways).roomHasFunction = true;
