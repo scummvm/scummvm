@@ -113,7 +113,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"original_menus",
-			false
+			false,
+			0,
+			0
 		}
 	},
 

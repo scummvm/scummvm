@@ -252,7 +252,7 @@ struct ADExtraGuiOptionsMap {
 	ExtraGuiOption option; /*!< The associated option. */
 };
 
-#define AD_EXTRA_GUI_OPTIONS_TERMINATOR { 0, { 0, 0, 0, 0 } }
+#define AD_EXTRA_GUI_OPTIONS_TERMINATOR { 0, { 0, 0, 0, 0, 0, 0 } }
 
 /**
  * A @ref MetaEngineDetection implementation based on the Advanced Detector code.

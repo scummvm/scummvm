@@ -275,7 +275,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Fast movie speed"),
 			_s("Play movies at an increased speed"),
 			"fast_movie_speed",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -285,7 +287,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -295,7 +299,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Easier AI"),
 			_s("Decrease the difficulty of AI puzzles"),
 			"easier_ai",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -305,7 +311,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Updated Credits Music"),
 			_s("Play the song The Final Hour during the credits instead of reusing MIDI songs"),
 			"credits_music",
-			false
+			false,
+			0,
+			0
 		}
 	},
 

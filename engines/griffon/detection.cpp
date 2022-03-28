@@ -41,7 +41,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable Text to Speech"),
 			_s("Use TTS to read the descriptions (if TTS is available)"),
 			"tts_enabled",
-			false
+			false,
+			0,
+			0
 		}
 	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR

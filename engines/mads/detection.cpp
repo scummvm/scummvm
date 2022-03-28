@@ -62,7 +62,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Easy mouse interface"),
 			_s("Shows object names when hovering the mouse over them"),
 			"EasyMouse",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -72,7 +74,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Animated inventory items"),
 			_s("Animated inventory items"),
 			"InvObjectsAnimated",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -82,7 +86,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Animated game interface"),
 			_s("Animated game interface"),
 			"TextWindowAnimated",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -92,7 +98,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Naughty game mode"),
 			_s("Naughty game mode"),
 			"NaughtyMode",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -102,7 +110,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Graphics dithering"),
 			_s("Graphics dithering"),
 			"GraphicsDithering",
-			true
+			true,
+			0,
+			0
 		}
 	},*/
 
@@ -113,7 +123,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("TTS Narrator"),
 			_s("Use TTS to read the descriptions (if TTS is available)"),
 			"tts_narrator",
-			false
+			false,
+			0,
+			0
 		}
 	},
 #endif

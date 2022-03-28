@@ -134,21 +134,27 @@ static const ExtraGuiOption neverhoodExtraGuiOption1 = {
 	_s("Use original save/load screens"),
 	_s("Use the original save/load screens instead of the ScummVM ones"),
 	"originalsaveload",
-	false
+	false,
+	0,
+	0
 };
 
 static const ExtraGuiOption neverhoodExtraGuiOption2 = {
 	_s("Skip the Hall of Records storyboard scenes"),
 	_s("Allows the player to skip past the Hall of Records storyboard scenes"),
 	"skiphallofrecordsscenes",
-	false
+	false,
+	0,
+	0
 };
 
 static const ExtraGuiOption neverhoodExtraGuiOption3 = {
 	_s("Scale the making of videos to full screen"),
 	_s("Scale the making of videos, so that they use the whole screen"),
 	"scalemakingofvideos",
-	false
+	false,
+	0,
+	0
 };
 
 

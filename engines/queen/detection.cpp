@@ -44,7 +44,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Alternative intro"),
 			_s("Use an alternative game intro (CD version only)"),
 			"alt_intro",
-			false
+			false,
+			0,
+			0
 		}
 	},
 

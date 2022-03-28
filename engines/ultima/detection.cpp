@@ -55,7 +55,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
-			false
+			false,
+			0,
+			0
 		}
 	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
@@ -66,27 +68,35 @@ static const ExtraGuiOption COMMON_OPTIONS[] = {
 		_s("Enable frame skipping"),
 		_s("Allow the game to skip animation frames when running too slow."),
 		"frameSkip",
-		false
+		false,
+		0,
+		0
 	},
 	{
 		_s("Enable frame limiting"),
 		_s("Limits the speed of the game to prevent running too fast."),
 		"frameLimit",
-		true
+		true,
+		0,
+		0
 	},
 	{
 		_s("Enable cheats"),
 		_s("Allow cheats by commands and a menu when player is clicked."),
 		"cheat",
-		false
+		false,
+		0,
+		0
 	},
 	{
 		_s("Enable high resolution"),
 		_s("Enable a higher resolution for the game"),
 		"usehighres",
-		false
+		false,
+		0,
+		0
 	},
-	{ nullptr, nullptr, nullptr, false }
+	{ nullptr, nullptr, nullptr, false, 0, 0 }
 };
 
 static const ExtraGuiOption U8_OPTIONS[] = {
@@ -94,33 +104,43 @@ static const ExtraGuiOption U8_OPTIONS[] = {
 		_s("Play foot step sounds"),
 		_s("Plays sound when the player moves."),
 		"footsteps",
-		true
+		true,
+		0,
+		0
 	},
 	{
 		_s("Enable jump to mouse position"),
 		_s("Jumping while not moving targets the mouse cursor rather than direction only."),
 		"targetedjump",
-		true
+		true,
+		0,
+		0
 	},
 	{
 		_s("Use original save/load screens"),
 		_s("Use the original save/load screens instead of the ScummVM ones"),
 		"originalsaveload",
-		false
+		false,
+		0,
+		0
 	},
 	{
 		_s("Enable font replacement"),
 		_s("Replaces game fonts with rendered fonts"),
 		"font_override",
-		false
+		false,
+		0,
+		0
 	},
 	{
 		_s("Enable font anti-aliasing"),
 		_s("When font anti-aliasing is enabled, the text is smoother."),
 		"font_antialiasing",
-		false
+		false,
+		0,
+		0
 	},
-	{ nullptr, nullptr, nullptr, false }
+	{ nullptr, nullptr, nullptr, false, 0, 0 }
 };
 
 static const ExtraGuiOption CAMERA_WITH_SILENCER = {
@@ -128,12 +148,14 @@ static const ExtraGuiOption CAMERA_WITH_SILENCER = {
 	_s("Camera moves with Silencer"),
 	_s("Camera tracks the player movement rather than snapping to defined positions."),
 	"camera_on_player",
-	true
+	true,
+	0,
+	0
 };
 
 static const ExtraGuiOption REMORSE_OPTIONS[] = {
 	CAMERA_WITH_SILENCER,
-	{ nullptr, nullptr, nullptr, false }
+	{ nullptr, nullptr, nullptr, false, 0, 0 }
 };
 
 static const ExtraGuiOption REGRET_OPTIONS[] = {
@@ -142,9 +164,11 @@ static const ExtraGuiOption REGRET_OPTIONS[] = {
 		_s("Always enable Christmas easter-egg"),
 		_s("Enable the Christmas music at any time of year."),
 		"always_christmas",
-		true
+		true,
+		0,
+		0
 	},
-	{ nullptr, nullptr, nullptr, false }
+	{ nullptr, nullptr, nullptr, false, 0, 0 }
 };
 
 } // End of namespace Ultima

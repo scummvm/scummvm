@@ -46,7 +46,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Gore Mode"),
 			_s("Enable Gore Mode when available"),
 			"enable_gore",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -56,7 +58,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Gore Mode"),
 			_s("Enable Gore Mode when available"),
 			"enable_gore",
-			true
+			true,
+			0,
+			0
 		}
 	},
 

@@ -375,7 +375,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Load modded assets"),
 			_s("Enable loading of external replacement assets."),
 			"enable_assets_mod",
-			true
+			true,
+			0,
+			0
 		}
 	},
 	{
@@ -384,7 +386,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable linear filtering of the backgrounds images"),
 			_s("When linear filtering is enabled the background graphics are smoother in full screen mode, at the cost of some details."),
 			"use_linear_filtering",
-			true
+			true,
+			0,
+			0
 		}
 	},
 	{
@@ -393,7 +397,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable font anti-aliasing"),
 			_s("When font anti-aliasing is enabled, the text is smoother."),
 			"enable_font_antialiasing",
-			true
+			true,
+			0,
+			0
 		}
 	},
 

@@ -36,7 +36,9 @@ static const ExtraGuiOption skyExtraGuiOption = {
 	_s("Floppy intro"),
 	_s("Use the floppy version's intro (CD version only)"),
 	"alt_intro",
-	false
+	false,
+	0,
+	0
 };
 
 struct SkyVersion {

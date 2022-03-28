@@ -55,7 +55,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Show item costs in standard inventory mode"),
 			_s("Shows item costs in standard inventory mode, allowing the value of items to be compared"),
 			"ShowItemCosts",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -65,7 +67,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("More durable armor"),
 			_s("Armor won't break until character is at -80HP, rather than merely -10HP"),
 			"DurableArmor",
-			false
+			false,
+			0,
+			0
 		}
 	},
 

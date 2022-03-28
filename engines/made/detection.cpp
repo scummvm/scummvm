@@ -62,7 +62,9 @@ static const ExtraGuiOption introMusicDigital = {
 	_s("Play a digital soundtrack during the opening movie"),
 	_s("If selected, the game will use a digital soundtrack during the introduction. Otherwise, it will play MIDI music."),
 	"intro_music_digital",
-	true
+	true,
+	0,
+	0
 };
 
 const ExtraGuiOptions MadeMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {

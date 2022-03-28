@@ -238,13 +238,17 @@ const ExtraGuiOptions GlkMetaEngineDetection::getExtraGuiOptions(const Common::S
 		_s("Enable Text to Speech"),
 		_s("Use TTS to read the text"),
 		"speak",
-		false
+		false,
+	        0,
+		0
 	};
 	static const ExtraGuiOption ttsSpeakInputOptions = {
 		_s("Also read input text"),
 		_s("Use TTS to read the input text"),
 		"speak_input",
-		false
+		false,
+		0,
+		0
 	};
 	options.push_back(ttsSpeakOptions);
 	options.push_back(ttsSpeakInputOptions);

@@ -69,7 +69,9 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			_s("Load user patch (unsupported)"),
 			_s("Load an user patch. Please note that the ScummVM team doesn't provide support for using such patches."),
 			"datausr_load",
-			false
+			false,
+			0,
+			0
 		}
 	},
 	{
@@ -78,7 +80,9 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			_s("Show FPS"),
 			_s("Show the current FPS-rate, while you play."),
 			"show_fps",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
