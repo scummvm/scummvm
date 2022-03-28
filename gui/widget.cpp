@@ -691,6 +691,7 @@ void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isEnabled() && _duringPress && x >= 0 && x < _w && y >= 0 && y < _h) {
 		toggleState();
 	}
+	setUnpressedState();
 	_duringPress = false;
 }
 
@@ -757,6 +758,7 @@ void RadiobuttonWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 	if (isEnabled() && _duringPress && x >= 0 && x < _w && y >= 0 && y < _h) {
 		toggleState();
 	}
+	setUnpressedState();
 	_duringPress = false;
 }
 
