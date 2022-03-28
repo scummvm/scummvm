@@ -232,6 +232,35 @@ int IMuseDigital::startVoice(const char *fileName, ScummFile *file, uint32 offse
 	return 0;
 }
 
+static void skipLegacyTrackEntry(Common::Serializer &s) {
+	s.skip(1, VER(31)); // t.pan
+	s.skip(4, VER(31)); // t.vol
+	s.skip(4, VER(31)); // t.volFadeDest
+	s.skip(4, VER(31)); // t.volFadeStep
+	s.skip(4, VER(31)); // t.volFadeDelay
+	s.skip(1, VER(31)); // t.volFadeUsed
+	s.skip(4, VER(31)); // t.soundId
+	s.skip(15, VER(31)); // t.soundName
+	s.skip(1, VER(31)); // t.used
+	s.skip(1, VER(31)); // t.toBeRemoved
+	s.skip(1, VER(31)); // t.souStreamUsed
+	s.skip(1, VER(31), VER(76)); // mixerStreamRunning
+	s.skip(4, VER(31)); // t.soundPriority
+	s.skip(4, VER(31)); // t.regionOffset
+	s.skip(4, VER(31), VER(31)); // trackOffset
+	s.skip(4, VER(31)); // t.dataOffset
+	s.skip(4, VER(31)); // t.curRegion
+	s.skip(4, VER(31)); // t.curHookId
+	s.skip(4, VER(31)); // t.volGroupId
+	s.skip(4, VER(31)); // t.soundType
+	s.skip(4, VER(31)); // t.feedSize
+	s.skip(4, VER(31)); // t.dataMod12Bit
+	s.skip(4, VER(31)); // t.mixerFlags
+	s.skip(4, VER(31), VER(42)); // mixerVol
+	s.skip(4, VER(31), VER(42)); // mixerPan
+	s.skip(1, VER(45)); // t.sndDataExtComp
+}
+
 void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 	Common::StackLock lock(_mutex, "IMuseDigital::saveLoadEarly()");
 
@@ -252,6 +281,9 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 		s.syncAsSint32LE(_nextSeqToPlay, VER(31));
 		s.syncAsByte(_radioChatterSFX, VER(76));
 		s.syncArray(_attributes, 188, Common::Serializer::Sint32LE, VER(31));
+
+		for (int j = 0; j < 16; ++j)
+			skipLegacyTrackEntry(s);
 
 		int stateSoundId = 0;
 		int seqSoundId = 0;
