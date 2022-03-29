@@ -434,9 +434,11 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			// We need to look at the resource fork to detect XCOD resources
 			Common::SeekableSubReadStream *macStream = new Common::SeekableSubReadStream(stream, 0, stream->size());
 			MacArchive *macArchive = new MacArchive();
-			macArchive->openStream(macStream);
-			g_director->getCurrentWindow()->probeMacBinary(macArchive);
-			delete macArchive;
+			if (!macArchive->openStream(macStream)) {
+				delete macArchive;
+			} else {
+				g_director->getCurrentWindow()->probeMacBinary(macArchive);
+			}
 
 			// Then read the data fork
 			moreOffset = Common::MacResManager::getDataForkOffset();
