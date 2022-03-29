@@ -150,7 +150,7 @@ int16 Room37::use_glas() {
 			_G(det)->hideStaticSpr(9);
 			_G(atds)->set_ats_str(250, 1, ATS_DATA);
 			_G(atds)->set_ats_str(256, 1, ATS_DATA);
-			_G(atds)->delControlBit(251, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(251, ATS_ACTIVE_BIT);
 			_G(obj)->show_sib(SIB_HFUTTER2_R37);
 			_G(gameState).R37Gebiss = true;
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
@@ -292,9 +292,9 @@ void Room37::use_hahn() {
 
 			_G(gameState).scrollx = 320;
 			_G(flags).NoScroll = false;
-			_G(atds)->setControlBit(251, ATS_ACTIVE_BIT, ATS_DATA);
-			_G(atds)->setControlBit(250, ATS_ACTIVE_BIT, ATS_DATA);
-			_G(atds)->setControlBit(256, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->setControlBit(251, ATS_ACTIVE_BIT);
+			_G(atds)->setControlBit(250, ATS_ACTIVE_BIT);
+			_G(atds)->setControlBit(256, ATS_ACTIVE_BIT);
 			_G(det)->hideStaticSpr(8);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(141);

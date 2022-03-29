@@ -65,7 +65,7 @@ void setSsiPos() {
 
 int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 	int16 retValue;
-	if (!_G(atds)->getControlBit(txtNr, ATS_ACTIVE_BIT, ATS_DATA)) {
+	if (!_G(atds)->getControlBit(txtNr, ATS_ACTIVE_BIT)) {
 		retValue = true;
 		if (_G(flags).AtsAction == false) {
 			_G(flags).AtsAction = true;
@@ -285,7 +285,7 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 mode) {
 						if (_G(gameState).R16F5Exit) {
 							invent_2_slot(29);
 							_G(det)->hideStaticSpr(19);
-							_G(atds)->setControlBit(158, ATS_ACTIVE_BIT, ATS_DATA);
+							_G(atds)->setControlBit(158, ATS_ACTIVE_BIT);
 						}
 						switchRoom(18);
 						break;
@@ -1178,7 +1178,7 @@ void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr) {
 
 		case 16:
 			if (blkNr == 0 && strEndNr == 2 && !_G(gameState).R56Kneipe)
-				_G(atds)->delControlBit(362, ATS_ACTIVE_BIT, ATS_DATA);
+				_G(atds)->delControlBit(362, ATS_ACTIVE_BIT);
 
 			break;
 

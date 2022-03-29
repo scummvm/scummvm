@@ -53,7 +53,7 @@ void Room63::entry() {
 		_G(det)->showStaticSpr(10);
 		_G(det)->showStaticSpr(12);
 	} else if (_G(gameState).R62LauraVerwandlung) {
-		_G(atds)->setControlBit(383, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(383, ATS_ACTIVE_BIT);
 		_G(SetUpScreenFunc) = setup_func;
 		cur_2_inventory();
 		_G(gameState).scrollx = 176;
@@ -209,7 +209,7 @@ int16 Room63::use_fx_man() {
 		_G(det)->stop_detail(7);
 		startSetAILWait(8, 1, ANI_FRONT);
 		_G(gameState).R63FxMannWeg = true;
-		_G(atds)->setControlBit(384, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(384, ATS_ACTIVE_BIT);
 		showCur();
 	}
 	return action_ret;
@@ -283,7 +283,7 @@ int16 Room63::use_girl() {
 		_G(det)->showStaticSpr(12);
 		_G(atds)->set_ats_str(381, 1, ATS_DATA);
 		_G(atds)->set_ats_str(382, 1, ATS_DATA);
-		_G(atds)->setControlBit(380, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(380, ATS_ACTIVE_BIT);
 		startAadWait(367);
 		showCur();
 	}
@@ -311,8 +311,8 @@ int16 Room63::use_aschenbecher() {
 				_G(det)->hideStaticSpr(12);
 				startAadWait(368);
 				flic_cut(FCUT_080);
-				_G(atds)->setControlBit(381, ATS_ACTIVE_BIT, ATS_DATA);
-				_G(atds)->setControlBit(382, ATS_ACTIVE_BIT, ATS_DATA);
+				_G(atds)->setControlBit(381, ATS_ACTIVE_BIT);
+				_G(atds)->setControlBit(382, ATS_ACTIVE_BIT);
 				_G(atds)->set_ats_str(383, 1, ATS_DATA);
 				_G(gameState).R63Feuer = true;
 				_G(gameState)._personHide[P_CHEWY] = false;

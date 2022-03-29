@@ -457,7 +457,7 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 11:
-		_G(atds)->setControlBit(121, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(121, ATS_ACTIVE_BIT);
 		break;
 
 	case 13:
@@ -974,14 +974,14 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(gameState).R0Monocle = true;
 		_G(obj)->hide_sib(SIB_MONOCLE);
 		if (_G(gameState).R0Noteboook)
-			_G(atds)->delControlBit(12, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(12, ATS_ACTIVE_BIT);
 		break;
 
 	case SIB_NOTEBOOK:
 		_G(gameState).R0Noteboook = true;
 		_G(obj)->hide_sib(SIB_NOTEBOOK);
 		if (_G(gameState).R0Monocle)
-			_G(atds)->delControlBit(12, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(12, ATS_ACTIVE_BIT);
 		break;
 
 	case SIB_TERMINAL_R5:
@@ -1055,7 +1055,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 				_G(obj)->calc_rsi_flip_flop(SIB_RHAKEN_R7);
 				_G(atds)->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATA);
 				_G(atds)->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATA);
-				_G(atds)->delControlBit(56, ATS_ACTIVE_BIT, ATS_DATA);
+				_G(atds)->delControlBit(56, ATS_ACTIVE_BIT);
 				start_aad(9);
 			} else {
 				_G(obj)->set_rsi_flip_flop(SIB_LHAKEN_R7, 2);
@@ -1146,7 +1146,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_SEIL_R21:
-		_G(atds)->setControlBit(129, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(129, ATS_ACTIVE_BIT);
 		break;
 
 	case SIB_GITTER1_R21:
@@ -1154,7 +1154,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_CART1_R18:
-		_G(atds)->setControlBit(155, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(155, ATS_ACTIVE_BIT);
 		break;
 
 	case SIB_DOORKNOB_R18:
@@ -1241,7 +1241,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_LAMPE_R52:
-		_G(atds)->delControlBit(338, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(338, ATS_ACTIVE_BIT);
 		_G(gameState).R52LichtAn ^= 1;
 		check_shad(2 * (_G(gameState).R52LichtAn + 1), 1);
 		break;

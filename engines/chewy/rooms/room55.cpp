@@ -78,7 +78,7 @@ void Room55::entry() {
 			startSetAILWait(3, 1, ANI_FRONT);
 			_G(gameState)._personHide[P_CHEWY] = false;
 			_G(zoom_horizont) = 1;
-			_G(atds)->delControlBit(340, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(340, ATS_ACTIVE_BIT);
 		} else {
 			_G(gameState).scrollx = 0;
 
@@ -289,9 +289,9 @@ void Room55::get_job() {
 	int16 r_nr;
 	if (_G(gameState).R55Job) {
 		r_nr = 55;
-		_G(atds)->delControlBit(357, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(354, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(355, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(357, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(354, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(355, ATS_ACTIVE_BIT);
 	} else {
 		r_nr = 54;
 		mans2rock();
@@ -346,7 +346,7 @@ void Room55::strasse(int16 mode) {
 		_G(room)->set_timer_status(4, TIMER_STOP);
 		_G(det)->del_static_ani(4);
 		_G(det)->stop_detail(4);
-		_G(atds)->setControlBit(340, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(340, ATS_ACTIVE_BIT);
 		startSetAILWait(3, 1, ANI_BACK);
 
 		_G(gameState).scrollx = 0;
@@ -377,10 +377,10 @@ int16 Room55::use_kammeraus() {
 			_G(det)->hideStaticSpr(10);
 			_G(gameState).R55ExitDia = 322;
 			_G(gameState).R55SekWeg = true;
-			_G(atds)->setControlBit(352, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->setControlBit(352, ATS_ACTIVE_BIT);
 			delInventory(_G(gameState).AkInvent);
-			_G(atds)->setControlBit(345, ATS_ACTIVE_BIT, ATS_DATA);
-			_G(atds)->setControlBit(346, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->setControlBit(345, ATS_ACTIVE_BIT);
+			_G(atds)->setControlBit(346, ATS_ACTIVE_BIT);
 			strasse(1);
 			showCur();
 		}

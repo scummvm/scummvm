@@ -99,7 +99,7 @@ int16 Room35::use_cat() {
 			_G(obj)->show_sib(SIB_KNOCHEN_R35);
 			_G(obj)->calc_rsi_flip_flop(SIB_KNOCHEN_R35);
 			_G(det)->showStaticSpr(7);
-			_G(atds)->delControlBit(237, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(237, ATS_ACTIVE_BIT);
 
 			while (_G(det)->get_ani_status(2) && !SHOULD_QUIT) {
 				setupScreen(DO_SETUP);

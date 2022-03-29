@@ -160,7 +160,7 @@ void Room8::open_gdoor() {
 	_G(det)->hideStaticSpr(17);
 	_G(gameState)._personHide[P_CHEWY] = false;
 	setPersonPos(204, 274, P_CHEWY, P_LEFT);
-	_G(atds)->delControlBit(69, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->delControlBit(69, ATS_ACTIVE_BIT);
 	_G(obj)->hide_sib(31);
 	_G(gameState).R8GTuer = true;
 	_G(gameState).room_e_obj[15].Attribut = EXIT_BOTTOM;

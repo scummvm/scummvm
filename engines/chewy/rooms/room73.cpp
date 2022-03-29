@@ -87,8 +87,8 @@ int Room73::proc1() {
 	_G(gameState).flags28_20 = true;
 	autoMove(3, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
-	_G(atds)->delControlBit(433, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->delControlBit(432, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->delControlBit(433, ATS_ACTIVE_BIT);
+	_G(atds)->delControlBit(432, ATS_ACTIVE_BIT);
 	_G(atds)->set_ats_str(430, 1, ATS_DATA);
 	_G(det)->showStaticSpr(3);
 	showCur();
@@ -106,7 +106,7 @@ int Room73::proc2() {
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->hideStaticSpr(3);
 	_G(det)->hideStaticSpr(4);
-	_G(atds)->setControlBit(433, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(433, ATS_ACTIVE_BIT);
 	new_invent_2_cur(99);
 	showCur();
 

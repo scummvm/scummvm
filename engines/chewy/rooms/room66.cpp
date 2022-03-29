@@ -88,8 +88,8 @@ void Room66::entry(int16 eib_nr) {
 
 void Room66::xit(int16 eib_nr) {
 	_G(gameState).ScrollxStep = 1;
-	_G(atds)->setControlBit(415, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->setControlBit(417, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(415, ATS_ACTIVE_BIT);
+	_G(atds)->setControlBit(417, ATS_ACTIVE_BIT);
 	if (_G(gameState)._personRoomNr[P_HOWARD] != 66)
 		return;
 

@@ -116,9 +116,9 @@ void Room56::entry() {
 				_G(gameState).flags34_8 = true;
 				mode = 2;
 			} else if (_G(gameState).flags34_40) {
-				_G(atds)->delControlBit(362, ATS_ACTIVE_BIT, ATS_DATA);
-				_G(atds)->setControlBit(367, ATS_ACTIVE_BIT, ATS_DATA);
-				_G(atds)->setControlBit(366, ATS_ACTIVE_BIT, ATS_DATA);
+				_G(atds)->delControlBit(362, ATS_ACTIVE_BIT);
+				_G(atds)->setControlBit(367, ATS_ACTIVE_BIT);
+				_G(atds)->setControlBit(366, ATS_ACTIVE_BIT);
 				_G(gameState).room_e_obj[137].Attribut = 3;
 				if (_G(gameState).flags33_80) {
 					_G(out)->setPointer(nullptr);
@@ -286,7 +286,7 @@ int16 Room56::use_man() {
 int16 Room56::use_kneipe() {
 	int16 action_ret = false;
 	if (!_G(gameState).flags32_10) {
-		if (_G(menu_item) == CUR_WALK && !_G(gameState).inv_cur && _G(atds)->getControlBit(362, ATS_ACTIVE_BIT, ATS_DATA) == 0) {
+		if (_G(menu_item) == CUR_WALK && !_G(gameState).inv_cur && _G(atds)->getControlBit(362, ATS_ACTIVE_BIT) == 0) {
 			action_ret = true;
 			hideCur();
 			if (_G(gameState).R56Kneipe) {
@@ -432,7 +432,7 @@ void Room56::setup_func() {
 	if (_G(gameState).flags32_10)
 		return;
 	
-	if (!_G(atds)->getControlBit(362, ATS_ACTIVE_BIT, ATS_DATA) && _G(menu_item) == CUR_WALK) {
+	if (!_G(atds)->getControlBit(362, ATS_ACTIVE_BIT) && _G(menu_item) == CUR_WALK) {
 		if (g_events->_mousePos.x + _G(gameState).scrollx >= 157 && g_events->_mousePos.x + _G(gameState).scrollx <= 204 && g_events->_mousePos.y >= 28 && g_events->_mousePos.y <= 89)
 			cursorChoice(CUR_EXIT_TOP);
 		else

@@ -132,7 +132,7 @@ void Room23::use_cartridge() {
 	_G(gameState).R23Cartridge = true;
 
 	if (_G(gameState).R18CartSave) {
-		_G(atds)->delControlBit(171, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(171, ATS_ACTIVE_BIT);
 		_G(atds)->set_ats_str(111, 2, ATS_DATA);
 		startSetAILWait(4, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(3);
@@ -145,7 +145,7 @@ void Room23::use_cartridge() {
 
 void Room23::get_cartridge() {
 	_G(atds)->set_ats_str(111, 0, ATS_DATA);
-	_G(atds)->setControlBit(171, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(171, ATS_ACTIVE_BIT);
 
 	_G(gameState).R23Cartridge = false;
 	_G(det)->hideStaticSpr(3);

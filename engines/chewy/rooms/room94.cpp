@@ -158,7 +158,7 @@ int Room94::giveGhostBottle() {
 	startSetAILWait(4, 1, ANI_FRONT);
 	_G(gameState).flags35_10 = true;
 	_G(gameState).room_e_obj[138].Attribut = EXIT_TOP;
-	_G(atds)->setControlBit(522, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(522, ATS_ACTIVE_BIT);
 	new_invent_2_cur(114);
 	
 	showCur();

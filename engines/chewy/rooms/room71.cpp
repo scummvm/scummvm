@@ -213,8 +213,8 @@ void Room71::proc2() {
 	_G(det)->startDetail(2, 255, false);
 	_G(det)->stop_detail(5);
 	_G(det)->showStaticSpr(8);
-	_G(atds)->setControlBit(442, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->setControlBit(446, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(442, ATS_ACTIVE_BIT);
+	_G(atds)->setControlBit(446, ATS_ACTIVE_BIT);
 	_G(gameState)._personHide[P_HOWARD] = false;
 	_G(gameState)._personHide[P_NICHELLE] = false;
 	_G(gameState)._personHide[P_CHEWY] = false;
@@ -274,7 +274,7 @@ int Room71::proc6() {
 	_G(gameState).flags28_4 = true;
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->del_static_ani(0);
-	_G(atds)->setControlBit(443, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(443, ATS_ACTIVE_BIT);
 	autoMove(3, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	

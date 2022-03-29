@@ -268,9 +268,9 @@ public:
 	void stop_ats();
 	DisplayMode &ats_get_status();
 	void print_ats(int16 x, int16 y, int16 scrX, int16 scrY);
-	int16 getControlBit(int16 txtNr, int16 bitIdx, int16 mode);
-	void setControlBit(int16 txtNr, int16 bitIdx, int16 mode);
-	void delControlBit(int16 txtNr, int16 bitIdx, int16 mode);
+	int16 getControlBit(int16 txtNr, int16 bitIdx);
+	void setControlBit(int16 txtNr, int16 bitIdx);
+	void delControlBit(int16 txtNr, int16 bitIdx);
 	void set_ats_str(int16 txtNr, int16 txtMode, int16 strNr, int16 mode);
 	void set_ats_str(int16 txtNr, int16 strNr, int16 mode);
 	int16 get_ats_str(int16 txtNr, int16 txtMode, int16 mode);

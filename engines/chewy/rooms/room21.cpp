@@ -86,31 +86,31 @@ void Room21::calc_laser() {
 	if (_G(gameState).R21Hebel1 && !_G(gameState).R21Hebel2 && _G(gameState).R21Hebel3) {
 		_G(gameState).R21Laser1Weg = true;
 		_G(det)->stop_detail(3);
-		_G(atds)->setControlBit(134, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(133, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(134, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(133, ATS_ACTIVE_BIT);
 	} else {
 		_G(gameState).R21Laser1Weg = false;
 		_G(det)->startDetail(3, 255, ANI_FRONT);
-		_G(atds)->delControlBit(134, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->setControlBit(133, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(134, ATS_ACTIVE_BIT);
+		_G(atds)->setControlBit(133, ATS_ACTIVE_BIT);
 	}
 
 	if (!_G(gameState).R21Hebel1 && _G(gameState).R21Hebel2 && !_G(gameState).R21Hebel3) {
 		if (!_G(obj)->checkInventory(SEIL_INV) && !_G(gameState).R17Seil) {
 			_G(obj)->show_sib(SIB_SEIL_R21);
-			_G(atds)->delControlBit(129, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(129, ATS_ACTIVE_BIT);
 		}
 
 		_G(gameState).R21Laser2Weg = true;
 		_G(det)->stop_detail(4);
-		_G(atds)->setControlBit(135, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(135, ATS_ACTIVE_BIT);
 
 	} else {
 		_G(obj)->hide_sib(SIB_SEIL_R21);
-		_G(atds)->setControlBit(129, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(129, ATS_ACTIVE_BIT);
 		_G(gameState).R21Laser2Weg = false;
 		_G(det)->startDetail(4, 255, ANI_FRONT);
-		_G(atds)->delControlBit(135, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(135, ATS_ACTIVE_BIT);
 	}
 }
 

@@ -47,7 +47,7 @@ int16 Room32::use_howard() {
 			remove_inventory(MUNTER_INV);
 			register_cutscene(11);
 			flic_cut(FCUT_043);
-			_G(atds)->setControlBit(230, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->setControlBit(230, ATS_ACTIVE_BIT);
 			start_spz(CH_TALK12, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(75);
 			waitShowScreen(5);

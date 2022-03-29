@@ -40,8 +40,8 @@ void Room82::entry() {
 
 	if (_G(gameState).R88UsedMonkey) {
 		_G(det)->showStaticSpr(6);
-		_G(atds)->setControlBit(473, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->setControlBit(467, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(473, ATS_ACTIVE_BIT);
+		_G(atds)->setControlBit(467, ATS_ACTIVE_BIT);
 	}
 
 	if (_G(gameState).flags37_20)

@@ -251,7 +251,7 @@ int16 Room68::use_papagei() {
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->showStaticSpr(12);
 		_G(det)->startDetail(21, 255, ANI_FRONT);
-		_G(atds)->delControlBit(408, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(408, ATS_ACTIVE_BIT);
 		_G(atds)->set_ats_str(407, 1, ATS_DATA);
 		showCur();
 	}
@@ -324,8 +324,8 @@ int16 Room68::use_diva() {
 		register_cutscene(22);
 		_G(det)->del_static_ani(18);
 		startSetAILWait(7, 1, ANI_FRONT);
-		_G(atds)->setControlBit(407, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->setControlBit(412, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(407, ATS_ACTIVE_BIT);
+		_G(atds)->setControlBit(412, ATS_ACTIVE_BIT);
 		setPersonSpr(P_RIGHT, P_CHEWY);
 		startAadWait(402);
 	} else

@@ -54,13 +54,13 @@ void Room41::entry() {
 	}
 
 	if (_G(gameState).R41Einbruch) {
-		_G(atds)->delControlBit(271, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(271, ATS_ACTIVE_BIT);
 		_G(det)->showStaticSpr(6);
 		_G(det)->showStaticSpr(7);
 	}
 
 	if (_G(gameState).ChewyAni == CHEWY_ROCKER) {
-		_G(atds)->setControlBit(269, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(269, ATS_ACTIVE_BIT);
 	}
 
 	if (!_G(flags).LoadGame)
@@ -200,7 +200,7 @@ int16 Room41::use_lola() {
 		setPersonPos(127, 112, P_CHEWY, P_LEFT);
 		_G(det)->stop_detail(6);
 
-		_G(atds)->delControlBit(267, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(267, ATS_ACTIVE_BIT);
 		_G(atds)->set_ats_str(267, 1, ATS_DATA);
 		_G(atds)->hide_item(11, 0, 3);
 		showCur();

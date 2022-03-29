@@ -272,8 +272,8 @@ int Room90::getHubcaps() {
 
 	startAadWait(517);
 	_G(gameState).flags35_1 = false;
-	_G(atds)->setControlBit(517, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->delControlBit(519, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(517, ATS_ACTIVE_BIT);
+	_G(atds)->delControlBit(519, ATS_ACTIVE_BIT);
 	showCur();
 
 	return 1;
@@ -307,8 +307,8 @@ int Room90::shootControlUnit() {
 	_G(HowardMov) = 0;
 	_G(gameState).flags33_40 = true;
 	_G(det)->stop_detail(12);
-	_G(atds)->setControlBit(519, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->delControlBit(520, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(519, ATS_ACTIVE_BIT);
+	_G(atds)->delControlBit(520, ATS_ACTIVE_BIT);
 	_G(flags).ZoomMov = true;
 
 	showCur();
@@ -334,7 +334,7 @@ int Room90::useSurimyOnWreck() {
 	_G(gameState).scrollx = 176;
 	start_spz(45, 255, false, P_CHEWY);
 	startAadWait(519);
-	_G(atds)->setControlBit(520, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(520, ATS_ACTIVE_BIT);
 
 	showCur();
 	return 1;

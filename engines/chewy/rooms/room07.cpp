@@ -60,7 +60,7 @@ void Room7::hook(int16 sibNr) {
 			_G(obj)->calc_rsi_flip_flop(SIB_LHAKEN_R7);
 			_G(obj)->calc_rsi_flip_flop(SIB_RHAKEN_R7);
 		}
-		_G(atds)->delControlBit(56, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(56, ATS_ACTIVE_BIT);
 		_G(atds)->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATA);
 		diaNr = 9;
 	} else {

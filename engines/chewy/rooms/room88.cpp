@@ -43,7 +43,7 @@ void Room88::entry() {
 
 	if (_G(gameState).flags32_10) {
 		_G(det)->startDetail(4, 255, false);
-		_G(atds)->delControlBit(505, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(505, ATS_ACTIVE_BIT);
 	}
 }
 

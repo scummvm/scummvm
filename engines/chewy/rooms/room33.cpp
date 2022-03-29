@@ -167,7 +167,7 @@ void Room33::use_maschine() {
 			_G(gameState)._personHide[P_CHEWY] = false;
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(71);
-			_G(atds)->delControlBit(225, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(225, ATS_ACTIVE_BIT);
 		}
 
 		if (hocker) {
@@ -205,7 +205,7 @@ int16 Room33::get_munter() {
 		autoMove(4, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		invent_2_slot(MUNTER_INV);
-		_G(atds)->setControlBit(225, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(225, ATS_ACTIVE_BIT);
 		_G(det)->hideStaticSpr(3);
 		start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 		startAadWait(72);

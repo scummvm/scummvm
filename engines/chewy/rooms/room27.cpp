@@ -32,9 +32,9 @@ void Room27::entry() {
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 27) {
 		_G(timer_nr)[0] = _G(room)->set_timer(0, 5);
 		_G(det)->set_static_ani(0, -1);
-		_G(atds)->delControlBit(274, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(274, ATS_ACTIVE_BIT);
 	} else {
-		_G(atds)->setControlBit(274, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(274, ATS_ACTIVE_BIT);
 	}
 
 	_G(gameState)._personHide[P_HOWARD] = true;

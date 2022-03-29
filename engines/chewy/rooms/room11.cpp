@@ -59,7 +59,7 @@ void Room11::entry() {
 		_G(obj)->hide_sib(SIB_TBUTTON3_R11);
 		_G(gameState).room_e_obj[20].Attribut = 255;
 		_G(gameState).room_e_obj[21].Attribut = 255;
-		_G(atds)->delControlBit(121, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(121, ATS_ACTIVE_BIT);
 
 		if (!_G(flags).LoadGame) {
 			startAniBlock(2, ABLOCK17);

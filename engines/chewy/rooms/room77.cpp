@@ -44,7 +44,7 @@ void Room77::entry() {
 
 		for (int i = 0; i < 3; ++i) {
 			_G(det)->showStaticSpr(2 + i);
-			_G(atds)->delControlBit(460 + i, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(460 + i, ATS_ACTIVE_BIT);
 		}
 	}
 

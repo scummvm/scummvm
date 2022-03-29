@@ -64,11 +64,11 @@ void Room2::electrifyWalkway1() {
 	_G(gameState).R2ElectrocutedBork = true;
 	delInventory(_G(gameState).AkInvent);
 
-	_G(atds)->delControlBit(11, ATS_COUNT_BIT, ATS_DATA);
-	_G(atds)->delControlBit(11, ATS_ACTION_BIT, ATS_DATA);
-	_G(atds)->delControlBit(19, ATS_COUNT_BIT, ATS_DATA);
-	_G(atds)->delControlBit(25, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->setControlBit(8, ATS_COUNT_BIT, ATS_DATA);
+	_G(atds)->delControlBit(11, ATS_COUNT_BIT);
+	_G(atds)->delControlBit(11, ATS_ACTION_BIT);
+	_G(atds)->delControlBit(19, ATS_COUNT_BIT);
+	_G(atds)->delControlBit(25, ATS_ACTIVE_BIT);
+	_G(atds)->setControlBit(8, ATS_COUNT_BIT);
 	_G(atds)->set_ats_str(11, 1, ATS_DATA);
 }
 

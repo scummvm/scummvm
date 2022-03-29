@@ -50,7 +50,7 @@ bool Room48::timer(int16 t_nr, int16 ani_nr) {
 
 void Room48::calc_pic() {
 	for (int16 i = 0; i < 2; i++) {
-		_G(atds)->setControlBit(312 + i, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(312 + i, ATS_ACTIVE_BIT);
 		_G(gameState).R48Auswahl[3 + i] = 0;
 	}
 
@@ -60,13 +60,13 @@ void Room48::calc_pic() {
 
 	if (_G(obj)->checkInventory(VCARD_INV)) {
 		_G(gameState).R48Auswahl[3] = 1;
-		_G(atds)->delControlBit(312, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(312, ATS_ACTIVE_BIT);
 		_G(det)->showStaticSpr(4);
 	}
 
 	if (_G(obj)->checkInventory(KAPPE_INV)) {
 		_G(gameState).R48Auswahl[4] = 1;
-		_G(atds)->delControlBit(313, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(313, ATS_ACTIVE_BIT);
 		_G(det)->showStaticSpr(4);
 	}
 }

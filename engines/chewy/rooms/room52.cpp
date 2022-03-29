@@ -108,7 +108,7 @@ int16 Room52::use_hot_dog() {
 		startSetAILWait(7, 1, ANI_BACK);
 		g_engine->_sound->stopSound(0);
 		_G(gameState)._personHide[P_CHEWY] = false;
-		_G(atds)->setControlBit(341, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(341, ATS_ACTIVE_BIT);
 		startAadWait(303);
 		_G(atds)->set_ats_str(KILLER_INV, 1, INV_ATS_DATA);
 		_G(gameState).R52KakerWeg = true;

@@ -130,7 +130,7 @@ bool Room0::getPillow() {
 		invent_2_slot(0);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(CUR_WALK);
-		_G(atds)->setControlBit(174, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(174, ATS_ACTIVE_BIT);
 		_G(det)->hideStaticSpr(6);
 
 		_G(flags).AutoAniPlay = false;
@@ -156,7 +156,7 @@ bool Room0::pullSlime() {
 		invent_2_slot(1);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(CUR_WALK);
-		_G(atds)->setControlBit(175, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(175, ATS_ACTIVE_BIT);
 
 		_G(flags).AutoAniPlay = false;
 		showCur();

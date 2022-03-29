@@ -622,7 +622,7 @@ char *Atdsys::ats_get_txt(int16 txtNr, int16 txtMode, int16 *retNr, int16 mode) 
 
 	_atsv._txtMode = txtMode;
 
-	if (!getControlBit(txtNr, ATS_ACTIVE_BIT, mode)) {
+	if (!getControlBit(txtNr, ATS_ACTIVE_BIT)) {
 		uint8 status = _ats_sheader[(txtNr * MAX_ATS_STATUS) + (_atsv._txtMode + 1) / 2];
 		int16 ak_nybble = (_atsv._txtMode + 1) % 2;
 
@@ -708,18 +708,18 @@ int16 Atdsys::get_ats_str(int16 txtNr, int16 txtMode, int16 mode) {
 	return (int16)lo_hi[ak_nybble];
 }
 
-int16 Atdsys::getControlBit(int16 txtNr, int16 bitIdx, int16 mode) {
-	set_ats_mem(mode);
+int16 Atdsys::getControlBit(int16 txtNr, int16 bitIdx) {
+	set_ats_mem(ATS_DATA);
 	return (_ats_sheader[txtNr * MAX_ATS_STATUS] & bitIdx) != 0;
 }
 
-void Atdsys::setControlBit(int16 txtNr, int16 bitIdx, int16 mode) {
-	set_ats_mem(mode);
+void Atdsys::setControlBit(int16 txtNr, int16 bitIdx) {
+	set_ats_mem(ATS_DATA);
 	_ats_sheader[txtNr * MAX_ATS_STATUS] |= bitIdx;
 }
 
-void Atdsys::delControlBit(int16 txtNr, int16 bitIdx, int16 mode) {
-	set_ats_mem(mode);
+void Atdsys::delControlBit(int16 txtNr, int16 bitIdx) {
+	set_ats_mem(ATS_DATA);
 	_ats_sheader[txtNr * MAX_ATS_STATUS] &= ~bitIdx;
 }
 

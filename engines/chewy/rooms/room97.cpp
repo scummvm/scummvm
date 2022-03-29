@@ -74,9 +74,9 @@ void Room97::entry() {
 	if (_G(gameState).flags36_40) {
 		_G(det)->startDetail(14, 255, ANI_FRONT);
 		_G(det)->showStaticSpr(13);
-		_G(atds)->delControlBit(543, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(543, ATS_ACTIVE_BIT);
 	} else {
-		_G(atds)->setControlBit(543, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(543, ATS_ACTIVE_BIT);
 	}
 
 	if (_G(gameState).flags36_20) {
@@ -434,10 +434,10 @@ int Room97::proc6() {
 	_G(det)->stop_detail(5);
 	_G(det)->showStaticSpr(15);
 	_G(gameState).flags36_2 = true;
-	_G(atds)->delControlBit(538, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->setControlBit(531, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->delControlBit(538, ATS_ACTIVE_BIT);
+	_G(atds)->setControlBit(531, ATS_ACTIVE_BIT);
 	_G(atds)->set_ats_str(530, 1, ATS_DATA);
-	_G(atds)->setControlBit(532, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(532, ATS_ACTIVE_BIT);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	_G(gameState).flags36_8 = true;
 
@@ -455,7 +455,7 @@ int Room97::proc7() {
 	_G(gameState)._personHide[P_CHEWY] = true;
 	_G(det)->hideStaticSpr(17);
 	startSetAILWait(22, 1, ANI_FRONT);
-	_G(atds)->setControlBit(538, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(538, ATS_ACTIVE_BIT);
 	_G(atds)->set_ats_str(530, 2, ATS_DATA);
 	new_invent_2_cur(SLIME_INV);
 	_G(gameState).flags36_4 = true;
@@ -487,7 +487,7 @@ int Room97::proc8() {
 		_G(gameState).flags36_8 = false;
 		_G(det)->startDetail(12, 255, false);
 		_G(atds)->set_ats_str(530, 3, ATS_DATA);
-		_G(atds)->delControlBit(532, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(532, ATS_ACTIVE_BIT);
 		_G(atds)->set_ats_str(532, 1, ATS_DATA);
 		_G(det)->startDetail(6, 255, false);
 		_G(det)->hideStaticSpr(14);
@@ -513,8 +513,8 @@ int Room97::proc8() {
 		_G(det)->startDetail(28, 255, false);
 		_G(det)->setSetailPos(27, 272, 110);
 		_G(det)->startDetail(27, 255, false);
-		_G(atds)->setControlBit(533, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->setControlBit(534, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(533, ATS_ACTIVE_BIT);
+		_G(atds)->setControlBit(534, ATS_ACTIVE_BIT);
 	}
 
 	if (diaNr != -1) {
@@ -544,10 +544,10 @@ int Room97::proc9() {
 		_G(det)->startDetail(14, 255, false);
 		startAadWait(555);
 		_G(gameState).flags36_40 = true;
-		_G(atds)->setControlBit(539, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(537, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(535, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(543, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(539, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(537, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(535, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(543, ATS_ACTIVE_BIT);
 	}
 
 	showCur();
@@ -566,7 +566,7 @@ int Room97::proc10() {
 	startSetAILWait(7, 1, ANI_FRONT);
 	_G(det)->showStaticSpr(19);
 	_G(gameState).flags37_1 = true;
-	_G(atds)->setControlBit(543, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(543, ATS_ACTIVE_BIT);
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
 
@@ -678,7 +678,7 @@ void Room97::sensorAnim() {
 	_G(menu_item) = CUR_USE;
 	cursorChoice(CUR_USE);
 	setPersonPos(294, 42, P_CHEWY, P_LEFT);
-	_G(atds)->delControlBit(541, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->delControlBit(541, ATS_ACTIVE_BIT);
 	_slimeThrown = false;
 	_G(det)->startDetail(16, 1, 0);
 	
@@ -738,7 +738,7 @@ void Room97::sensorAnim() {
 		_G(gameState).flags37_2 = true;
 	}
 
-	_G(atds)->setControlBit(541, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(541, ATS_ACTIVE_BIT);
 	showCur();
 	_G(flags).AutoAniPlay = false;
 }

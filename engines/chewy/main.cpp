@@ -1364,7 +1364,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					}
 
 					int16 action_ret = 0;
-					if (!_G(atds)->getControlBit(txtNr, ATS_ACTIVE_BIT, ATS_DATA)) {
+					if (!_G(atds)->getControlBit(txtNr, ATS_ACTIVE_BIT)) {
 						if (_G(menu_item) != CUR_WALK && _G(menu_item) != CUR_USE) {
 							if (x + _G(gameState).scrollx > _G(spieler_vector)[P_CHEWY].Xypos[0])
 								setPersonSpr(P_RIGHT, P_CHEWY);
@@ -1373,18 +1373,18 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 						}
 					}
 
-					if (_G(atds)->getControlBit(txtNr, ATS_ACTION_BIT, ATS_DATA)) {
+					if (_G(atds)->getControlBit(txtNr, ATS_ACTION_BIT)) {
 						action_ret = atsAction(txtNr, txtMode, ATS_ACTION_VOR);
 					}
 					
-					if (ok && !_G(atds)->getControlBit(txtNr, ATS_ACTIVE_BIT, ATS_DATA)) {
+					if (ok && !_G(atds)->getControlBit(txtNr, ATS_ACTIVE_BIT)) {
 						if (startAtsWait(txtNr, txtMode, 14, ATS_DATA))
 							dispFl = false;
 					} else {
 						ret = -1;
 					}
 					
-					if (_G(atds)->getControlBit(txtNr, ATS_ACTION_BIT, ATS_DATA)) {
+					if (_G(atds)->getControlBit(txtNr, ATS_ACTION_BIT)) {
 						action_ret = atsAction(txtNr, txtMode, ATS_ACTION_NACH);
 						actionFl = true;
 						if (action_ret)
@@ -1392,7 +1392,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					}
 					
 					if (!ok && !action_ret) {
-						if (inv_no_use_mode != -1 && !_G(atds)->getControlBit(txtNr, ATS_ACTIVE_BIT, ATS_DATA)) {
+						if (inv_no_use_mode != -1 && !_G(atds)->getControlBit(txtNr, ATS_ACTIVE_BIT)) {
 							actionFl = calc_inv_no_use(idx + (_G(gameState)._personRoomNr[P_CHEWY] * 100), inv_no_use_mode);
 							if (actionFl)
 								ret = txtNr;
@@ -1400,7 +1400,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 					}
 					
 					if (ok && !action_ret && txtMode == TXT_MARK_USE && dispFl) {
-						if (!_G(atds)->getControlBit(txtNr, ATS_ACTIVE_BIT, ATS_DATA)) {
+						if (!_G(atds)->getControlBit(txtNr, ATS_ACTIVE_BIT)) {
 							if (_G(menu_item) != CUR_WALK) {
 								if (x + _G(gameState).scrollx > _G(spieler_vector)[P_CHEWY].Xypos[0])
 									setPersonSpr(P_RIGHT, P_CHEWY);

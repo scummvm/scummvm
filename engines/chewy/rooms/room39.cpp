@@ -59,10 +59,10 @@ void Room39::entry() {
 			else
 				_G(det)->set_static_ani(5, -1);
 
-			_G(atds)->delControlBit(62, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(62, ATS_ACTIVE_BIT);
 		}
 	} else {
-		_G(atds)->setControlBit(62, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(62, ATS_ACTIVE_BIT);
 	}
 
 	set_tv();

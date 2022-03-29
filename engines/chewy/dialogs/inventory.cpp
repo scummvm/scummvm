@@ -592,14 +592,14 @@ void Inventory::look_screen(int16 txt_mode, int16 txt_nr) {
 					break;
 				}
 
-				if (_G(atds)->getControlBit(txt_nr, ATS_ACTION_BIT, ATS_DATA)) {
+				if (_G(atds)->getControlBit(txt_nr, ATS_ACTION_BIT)) {
 					atsAction(txt_nr, m_mode, ATS_ACTION_VOR);
 				}
 				if (ok) {
 					startAtsWait(txt_nr, m_mode, 14, ATS_DATA);
 				}
 
-				if (_G(atds)->getControlBit(txt_nr, ATS_ACTION_BIT, ATS_DATA))
+				if (_G(atds)->getControlBit(txt_nr, ATS_ACTION_BIT))
 					atsAction(txt_nr, m_mode, ATS_ACTION_NACH);
 				if (_G(menu_item) == CUR_USE)
 					_G(flags).StaticUseTxt = true;

@@ -140,7 +140,7 @@ int16 Room57::use_pfoertner() {
 			_G(det)->hideStaticSpr(4);
 			startSetAILWait(6, 1, ANI_WAIT);
 			g_engine->_sound->stopSound(0);
-			_G(atds)->setControlBit(358, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->setControlBit(358, ATS_ACTIVE_BIT);
 		} else {
 			startAadWait(349);
 			goAutoXy(176, 130, P_HOWARD, ANI_WAIT);

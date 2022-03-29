@@ -40,9 +40,9 @@ void Room80::entry() {
 	g_engine->_sound->playSound(0, 2, false);
 
 	if (_G(gameState).gottenDiary) {
-		_G(atds)->delControlBit(476, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(476, ATS_ACTIVE_BIT);
 	} else {
-		_G(atds)->setControlBit(476, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(476, ATS_ACTIVE_BIT);
 	}
 
 	if (_G(gameState).flags32_1) {

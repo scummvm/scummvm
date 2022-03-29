@@ -46,27 +46,27 @@ void Room84::entry() {
 		_G(det)->del_static_ani(3);
 		_G(det)->stop_detail(0);
 		_G(gameState).room_e_obj[124].Attribut = EXIT_TOP;
-		_G(atds)->setControlBit(478, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->setControlBit(479, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(478, ATS_ACTIVE_BIT);
+		_G(atds)->setControlBit(479, ATS_ACTIVE_BIT);
 		_G(atds)->set_ats_str(485, 1, ATS_DATA);	
 	}
 
 	if (_G(gameState).flags32_10) {
 		_G(det)->startDetail(7, 255, false);
-		_G(atds)->delControlBit(504, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(504, ATS_ACTIVE_BIT);
 		_G(gameState).room_e_obj[124].Attribut = 255;
 		_G(atds)->set_ats_str(485, 2, ATS_DATA);
 	}
 
 	if (_G(gameState).r88DestRoom == 84) {
 		_G(det)->showStaticSpr(7);
-		_G(atds)->delControlBit(481, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(482, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(481, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(482, ATS_ACTIVE_BIT);
 	}
 
 	if (_G(gameState).flags32_40) {
-		_G(atds)->setControlBit(481, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->setControlBit(482, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(481, ATS_ACTIVE_BIT);
+		_G(atds)->setControlBit(482, ATS_ACTIVE_BIT);
 		_G(atds)->set_ats_str(485, 1, ATS_DATA);		
 		_G(gameState).room_e_obj[124].Attribut = EXIT_TOP;
 	}

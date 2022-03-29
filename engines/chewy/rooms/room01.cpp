@@ -32,7 +32,7 @@ void Room1::gottenCard() {
 	_G(det)->hideStaticSpr(2);
 	startSetAILWait(4, 1, ANI_FRONT);
 	_G(gameState)._personHide[P_CHEWY] = false;
-	_G(atds)->delControlBit(7, ATS_COUNT_BIT, ATS_DATA);
+	_G(atds)->delControlBit(7, ATS_COUNT_BIT);
 }
 
 void Room1::gedAction(int index) {

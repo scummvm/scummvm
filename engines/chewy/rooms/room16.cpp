@@ -35,11 +35,11 @@ void Room16::entry() {
 	if (!_G(gameState).R16F5Exit) {
 		_G(det)->showStaticSpr(4);
 		_G(gameState).room_e_obj[32].Attribut = 255;
-		_G(atds)->delControlBit(124, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(124, ATS_ACTIVE_BIT);
 	} else {
 		_G(det)->hideStaticSpr(4);
 		_G(gameState).room_e_obj[32].Attribut = EXIT_LEFT;
-		_G(atds)->setControlBit(124, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(124, ATS_ACTIVE_BIT);
 	}
 }
 
