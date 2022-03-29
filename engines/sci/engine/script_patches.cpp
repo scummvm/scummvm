@@ -8158,6 +8158,48 @@ static const uint16 larry6HiresMacVolumeRestorePatch[] = {
 	PATCH_END
 };
 
+// Filling the whale oil lamp with cellulite locks up the game when the PATCHES
+//  directory is missing. The patch files for script 330 override a very broken
+//  version in the resource volumes that always goes into an infinite loop.
+//  Unfortunately, the Leisure Suit Larry Collection CD includes a RESOURCE.CFG
+//  with an incorrect path to the PATCHES directory. Sierra's fix was to issue a
+//  save file with a full oil lamp that was compatible with the broken scripts.
+//  This shouldn't affect ScummVM since we don't use RESOURCE.CFG, but something
+//  about the way the collection was packaged causes players to continue to miss
+//  this directory and not realize until it's too late. The lockup occurs late
+//  in the game and adding the missing patch files invalidates all saves. 
+//
+// We don't generally fix "bugs" that are consequences of not providing all of
+//  the game's data files, but this is a severe case that keeps coming up.
+//  Fortunately, the script bug is simple, so we might as well just patch it and
+//  allow the player to proceed.
+//
+// We mitigate this by patching fillLampScr:changeState(2) to increment its
+//  register property. This is the counter that's supposed to animate the lamp
+//  but instead register is never incremented and the loop never ends.
+//
+// Applies to: English PC CD when PATCHES is missing (TODO: check localizations)
+// Responsible method: fillLampScr:changeState(2)
+// Fixes bug: #10484
+static const uint16 larry6HiresWhaleOilLampSignature[] = {
+	0x39, SIG_SELECTOR8(loop),          // pushi loop
+	0x78,                               // push1
+	0x78,                               // push1
+	0x39, SIG_MAGICDWORD,               // pushi cel
+	      SIG_SELECTOR8(cel),
+	0x78,                               // push1
+	0x67, 0x26,                         // pTos register
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x000c),           // send 0c [ ego loop: 1 cel: register ]
+	SIG_END
+};
+
+static const uint16 larry6HiresWhaleOilLampPatch[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x6f,                               // ipTos register [ increment register ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,     0, "disable mac volume restore",                  1, larry6HiresMacVolumeRestoreSignature, larry6HiresMacVolumeRestorePatch },
@@ -8165,6 +8207,7 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresVolumeResetSignature,      larry6HiresVolumeResetPatch },
 	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,               sci2BenchmarkPatch },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
+	{  true,   330, "fix whale oil lamp lockup",                   1, larry6HiresWhaleOilLampSignature,     larry6HiresWhaleOilLampPatch },
 	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,               sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,               sci2NumSavesPatch2 },
