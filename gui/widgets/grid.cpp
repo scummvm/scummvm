@@ -395,12 +395,9 @@ void GridWidget::unloadSurfaces(Common::HashMap<T, const Graphics::ManagedSurfac
 }
 
 const Graphics::ManagedSurface *GridWidget::filenameToSurface(const Common::String &name) {
-	for (Common::Array<GridItemInfo *>::iterator l = _visibleEntryList.begin(); l != _visibleEntryList.end(); ++l) {
-		if ((!(*l)->isHeader) && ((*l)->thumbPath == name)) {
-			return _loadedSurfaces[name];
-		}
-	}
-	return nullptr;
+	if (name.empty())
+		return nullptr;
+	return _loadedSurfaces[name];
 }
 
 const Graphics::ManagedSurface *GridWidget::languageToSurface(Common::Language languageCode) {
@@ -573,23 +570,30 @@ void GridWidget::setGroupHeaderFormat(const Common::U32String &prefix, const Com
 }
 
 void GridWidget::reloadThumbnails() {
-	Graphics::ManagedSurface *surf = nullptr;
-	Common::String gameid;
-	Common::String engineid;
-
 	for (Common::Array<GridItemInfo *>::iterator iter = _visibleEntryList.begin(); iter != _visibleEntryList.end(); ++iter) {
 		GridItemInfo *entry = *iter;
-		if (!_loadedSurfaces.contains(entry->thumbPath)) {
-			surf = loadSurfaceFromFile(entry->thumbPath);
-			if (surf) {
-				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512, true));
-				_loadedSurfaces[entry->thumbPath] = scSurf;
-				if (surf != scSurf) {
-					surf->free();
-					delete surf;
+		if (entry->isHeader)
+			continue;
+		Graphics::ManagedSurface *surf = nullptr;
+		Common::String path = Common::String::format("icons/%s-%s.png", entry->engineid.c_str(), entry->gameid.c_str());
+		if (!_loadedSurfaces.contains(path)) {
+			surf = loadSurfaceFromFile(path);
+			_loadedSurfaces[path] = surf;
+			if (!surf) {
+				path = Common::String::format("icons/%s.png", entry->engineid.c_str());
+				if (!_loadedSurfaces.contains(path)) {
+					surf = loadSurfaceFromFile(path);
+					_loadedSurfaces[path] = surf;
 				}
-			} else {
-				_loadedSurfaces[entry->thumbPath] = nullptr;
+			}
+		}
+		if (surf) {
+			const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512, true));
+			_loadedSurfaces[path] = scSurf;
+			entry->thumbPath = path;
+			if (surf != scSurf) {
+				surf->free();
+				delete surf;
 			}
 		}
 	}

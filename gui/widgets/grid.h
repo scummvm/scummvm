@@ -63,12 +63,10 @@ struct GridItemInfo {
 	GridItemInfo(int id, const Common::String &eid, const Common::String &gid
 		,const Common::String &t, Common::Language l, Common::Platform p)
 		: entryID(id), gameid(gid), engineid(eid), title(t), language(l), platform(p), isHeader(false) {
-		thumbPath = Common::String::format("icons/%s-%s.png", engineid.c_str(), gameid.c_str());
 	}
 
 	GridItemInfo(const Common::String &groupHeader, int groupID) : title(groupHeader), isHeader(true),
 		entryID(groupID), language(Common::UNK_LANG), platform(Common::kPlatformUnknown) {
-		thumbPath = Common::String("");
 	}
 };
 
