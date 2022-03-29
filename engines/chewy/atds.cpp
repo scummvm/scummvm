@@ -174,7 +174,7 @@ void Atdsys::updateSoundSettings() {
 }
 
 int16 Atdsys::get_delay(int16 txt_len) {
-	int16 z_len = (_ssi->_width / _ssi->Fvorx) + 1;
+	int16 z_len = (_ssi->_width / _ssi->fontWidth) + 1;
 	int16 maxLen = z_len * _ssi->_lines;
 	if (txt_len > maxLen)
 		txt_len = maxLen;
@@ -188,7 +188,7 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 	_ssret._next = false;
 	_ssret._strPtr = _splitPtr;
 	_ssret._x = _splitX;
-	int16 zeichen_anz = (ssi_->_width / ssi_->Fvorx) + 1;
+	int16 zeichen_anz = (ssi_->_width / ssi_->fontWidth) + 1;
 	memset(_splitPtr, 0, sizeof(char *) * MAX_STR_SPLIT);
 	calc_txt_win(ssi_);
 	char *str_adr = ssi_->_str;
@@ -218,7 +218,7 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 				_splitPtr[_ssret._nr] = start_adr;
 				start_adr[tmp_count] = 0;
 				if (ssi_->_mode == SPLIT_CENTER)
-					_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * ssi_->Fvorx)) >> 1);
+					_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * ssi_->fontWidth)) >> 1);
 				else
 					_splitX[_ssret._nr] = ssi_->_x;
 				++_ssret._nr;
@@ -265,7 +265,7 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 					_splitPtr[_ssret._nr] = start_adr;
 					start_adr[tmp_count] = 0;
 					if (ssi_->_mode == SPLIT_CENTER)
-						_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * ssi_->Fvorx)) >> 1);
+						_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * ssi_->fontWidth)) >> 1);
 					else
 						_splitX[_ssret._nr] = ssi_->_x;
 					++_ssret._nr;
@@ -300,7 +300,7 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 		}
 	}
 	if (_ssret._nr <= ssi_->_lines)
-		_ssret._y = ssi_->_y + (ssi_->_lines - _ssret._nr) * ssi_->FHoehe;
+		_ssret._y = ssi_->_y + (ssi_->_lines - _ssret._nr) * ssi_->fontHeight;
 	else
 		_ssret._y = ssi_->_y;
 
@@ -323,12 +323,12 @@ void Atdsys::calc_txt_win(SplitStringInit *ssi_) {
 	else
 		ssi_->_x -= (ssi_->_width >> 1);
 
-	if (ssi_->_y - (ssi_->_lines * ssi_->FHoehe) < 2) {
+	if (ssi_->_y - (ssi_->_lines * ssi_->fontHeight) < 2) {
 		ssi_->_y = 2;
-	} else if (ssi_->_y + (ssi_->_lines * ssi_->FHoehe) > (SCREEN_HEIGHT - 2))
-		ssi_->_y = (SCREEN_HEIGHT - 2) - (ssi_->_lines * ssi_->FHoehe);
+	} else if (ssi_->_y + (ssi_->_lines * ssi_->fontHeight) > (SCREEN_HEIGHT - 2))
+		ssi_->_y = (SCREEN_HEIGHT - 2) - (ssi_->_lines * ssi_->fontHeight);
 	else {
-		ssi_->_y -= (ssi_->_lines * ssi_->FHoehe);
+		ssi_->_y -= (ssi_->_lines * ssi_->fontHeight);
 	}
 }
 
@@ -570,8 +570,8 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 			char *tmp_ptr = _atsv._ptr;
 			SplitStringInit *_atsSsi = &_ssi[0];
 			_atsSsi->_str = tmp_ptr;
-			_atsSsi->Fvorx = _G(fontMgr)->getFont()->getDataWidth();
-			_atsSsi->FHoehe = _G(fontMgr)->getFont()->getDataHeight();
+			_atsSsi->fontWidth = _G(fontMgr)->getFont()->getDataWidth();
+			_atsSsi->fontHeight = _G(fontMgr)->getFont()->getDataHeight();
 			_atsSsi->_x = x - scrX;
 			_atsSsi->_y = y - scrY;
 			char *start_ptr = tmp_ptr;
@@ -580,19 +580,19 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 
 			for (int16 i = 0; i < _ssr->_nr; i++) {
 				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * _atsSsi->FHoehe) + 1,
+				              _ssr->_y + (i * _atsSsi->fontHeight) + 1,
 				              0, 300, 0, _ssr->_strPtr[i]);
 				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * _atsSsi->FHoehe) - 1,
+				              _ssr->_y + (i * _atsSsi->fontHeight) - 1,
 				              0, 300, 0, _ssr->_strPtr[i]);
 				_G(out)->printxy(_ssr->_x[i] + 1,
-				              _ssr->_y + (i * _atsSsi->FHoehe),
+				              _ssr->_y + (i * _atsSsi->fontHeight),
 				              0, 300, 0, _ssr->_strPtr[i]);
 				_G(out)->printxy(_ssr->_x[i] - 1,
-				              _ssr->_y + (i * _atsSsi->FHoehe),
+				              _ssr->_y + (i * _atsSsi->fontHeight),
 				              0, 300, 0, _ssr->_strPtr[i]);
 				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * _atsSsi->FHoehe),
+				              _ssr->_y + (i * _atsSsi->fontHeight),
 				              _atsv._color,
 				              300, 0, _ssr->_strPtr[i]);
 				tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
@@ -932,8 +932,8 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 			if (_aadv._person[_aadv._strHeader->_akPerson]._y != -1) {
 				_ssi[_aadv._strHeader->_akPerson]._y = _aadv._person[_aadv._strHeader->_akPerson]._y - scrY;
 			}
-			_ssi[_aadv._strHeader->_akPerson].Fvorx = _G(fontMgr)->getFont()->getDataWidth();
-			_ssi[_aadv._strHeader->_akPerson].FHoehe = _G(fontMgr)->getFont()->getDataHeight();
+			_ssi[_aadv._strHeader->_akPerson].fontWidth = _G(fontMgr)->getFont()->getDataWidth();
+			_ssi[_aadv._strHeader->_akPerson].fontHeight = _G(fontMgr)->getFont()->getDataHeight();
 			char *start_ptr = tmp_ptr;
 			int16 txt_len;
 			aad_get_zeilen(start_ptr, &txt_len);
@@ -945,19 +945,19 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 			        (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) == -1) {
 				for (int16 i = 0; i < _ssr->_nr; i++) {
 					_G(out)->printxy(_ssr->_x[i] + 1,
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe),
+					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].fontHeight),
 					              0, 300, 0, _ssr->_strPtr[i]);
 					_G(out)->printxy(_ssr->_x[i] - 1,
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe),
+					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].fontHeight),
 					              0, 300, 0, _ssr->_strPtr[i]);
 					_G(out)->printxy(_ssr->_x[i],
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe) + 1,
+					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].fontHeight) + 1,
 					              0, 300, 0, _ssr->_strPtr[i]);
 					_G(out)->printxy(_ssr->_x[i],
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe) - 1,
+					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].fontHeight) - 1,
 					              0, 300, 0, _ssr->_strPtr[i]);
 					_G(out)->printxy(_ssr->_x[i],
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe),
+					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].fontHeight),
 					              _aadv._person[_aadv._strHeader->_akPerson]._color,
 					              300, 0, _ssr->_strPtr[i]);
 					tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;

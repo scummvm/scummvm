@@ -241,8 +241,8 @@ struct SplitStringInit {
 	int16 _lines;
 	int16 _mode;
 
-	int16 Fvorx;
-	int16 FHoehe;
+	int16 fontWidth;
+	int16 fontHeight;
 };
 
 class Atdsys {
