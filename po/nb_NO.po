@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-27 04:28+0000\n"
-"PO-Revision-Date: 2022-03-15 12:07+0000\n"
+"PO-Revision-Date: 2022-03-29 08:08+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -1985,10 +1985,8 @@ msgstr ""
 "Sjekk internettilkoblingen din."
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
-msgstr "Enter"
+msgstr "Oppgi tekst"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -4502,6 +4500,8 @@ msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
 msgstr ""
+"Spillet lar deg ikke avslutte akkurat nå. Er du sikker på at du vil avslutte "
+"likevel?"
 
 #: engines/dragons/dragons.cpp:1802
 #, c-format
@@ -5035,10 +5035,8 @@ msgid "Error: the game could not be saved."
 msgstr "Feil: Spillet kunne ikke bli lagret."
 
 #: engines/grim/inputdialog.cpp:79
-#, fuzzy
-#| msgid "Input"
 msgid "Input text"
-msgstr "Input"
+msgstr "Skriv inn tekst"
 
 #: engines/grim/md5check.cpp:558
 #, c-format
@@ -6588,16 +6586,16 @@ msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(istedenfor den trinnvise siderullingen på 8 piksler av gangen)"
 
 #: engines/scumm/detection.cpp:210 engines/scumm/dialogs.cpp:730
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "Enable game-specific enhancements"
-msgstr "Aktiver fonterstatning"
+msgstr "Aktiver spillspesifikke forbedringer"
 
 #: engines/scumm/detection.cpp:211 engines/scumm/dialogs.cpp:730
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
 msgstr ""
+"Lar ScummVM legge til enkelte småforbedringer basert på andre versjoner av "
+"det samme spillet."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
