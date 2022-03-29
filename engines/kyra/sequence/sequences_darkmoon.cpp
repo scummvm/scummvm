@@ -54,6 +54,8 @@ public:
 	void fadePalette(int index, int del);
 	void copyPalette(int srcIndex, int destIndex);
 
+	int hScroll(bool restart = false);
+
 	void initDelayedPaletteFade(int palIndex, int rate);
 	bool processDelayedPaletteFade();
 
@@ -103,6 +105,9 @@ private:
 	uint8 _sndNextTrack;
 	uint16 _sndNextTrackMarker;
 	const uint16 *_sndMarkersFMTowns;
+
+	uint32 _hScrollStartTimeStamp;
+	uint32 _hScrollResumeTimeStamp;
 
 	uint8 _textColor[3];
 
@@ -350,14 +355,12 @@ void DarkMoonEngine::seq_playIntro() {
 
 	sq.loadScene(1, 2);
 	sq.waitForSongNotifier(++songCurPos);
+	uint32 endtime = _system->getMillis();
 
 	// intro scroll
 	if (!skipFlag() && !shouldQuit()) {
-		for (int i = 0; i < 280; ++i) {
-			uint32 endtime = _system->getMillis() + 18;
-			_screen->copyRegion(9, 8, 8, 8, 303, 128, 0, 0, Screen::CR_NO_P_CHECK);
-			_screen->copyRegion(i, 0, 311, 8, 1, 128, 2, 0, Screen::CR_NO_P_CHECK);
-			_screen->updateScreen();
+		for (int i = sq.hScroll(true); i != 279; i = sq.hScroll()) {
+			endtime += 18;
 			if (_flags.platform == Common::kPlatformAmiga) {
 				if (i == 4 || i == 24 || i == 36)
 					sq.animCommand(39);
@@ -1548,6 +1551,7 @@ void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 	_sndNextTrack = 1;
 	_sndNextTrackMarker = 0;
 	_sndMarkersFMTowns = soundMarkersFMTowns[mode];
+	_hScrollStartTimeStamp = _hScrollResumeTimeStamp = 0;
 
 	if (mode == kIntro) {
 		_config = new Config(
@@ -1733,6 +1737,33 @@ void DarkmoonSequenceHelper::copyPalette(int srcIndex, int destIndex) {
 	_palettes[destIndex]->copy(*_palettes[srcIndex]);
 }
 
+int DarkmoonSequenceHelper::hScroll(bool restart) {
+	if (restart)
+		_hScrollStartTimeStamp = _system->getMillis();
+	else if (!_hScrollStartTimeStamp)
+		return 0;
+
+	uint32 ct = _system->getMillis();
+	int state = (ct - _hScrollStartTimeStamp) / 18;
+	if (state < 0 || state > 279) {
+		_hScrollStartTimeStamp += (ct - _hScrollResumeTimeStamp);
+		state = (ct - _hScrollStartTimeStamp) / 18;
+		if (state < 0 || state > 279)
+			state = 279;
+	}
+
+	_hScrollResumeTimeStamp = ct;
+
+	_screen->copyRegion(9, 8, 8, 8, 303, 128, 0, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(state, 0, 311, 8, 1, 128, 2, 0, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+
+	if (state == 279)
+		_hScrollStartTimeStamp = 0;
+
+	return state;
+}
+
 void DarkmoonSequenceHelper::initDelayedPaletteFade(int palIndex, int rate) {
 	_palettes[11]->copy(*_palettes[0]);
 
@@ -1773,7 +1804,12 @@ void DarkmoonSequenceHelper::delay(uint32 ticks) {
 		processDelayedPaletteFade();
 
 	} else {
-		_vm->delayUntil(end);
+		for (uint32 ct = 0; ct < end; ) {
+			if (ct + 18 <= end)
+				hScroll();
+			ct = _system->getMillis();
+			_vm->delay(MIN<uint32>(9, end - ct));
+		}
 	}
 }
 
