@@ -382,6 +382,19 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_playerFrameIdx = -1;
 }
 
+void WetEngine::drawCursorArcade(const Common::Point &mousePos) {
+	int i = detectTarget(mousePos);
+	if (_arcadeMode == "YT") {
+		changeCursor("c33/c33i2.smk", 12);
+		return;
+	}
+
+	if (i >= 0)
+		changeCursor("target");
+	else
+		changeCursor("arcade");
+}
+
 bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	incShotsFired();
 	return clickedPrimaryShoot(mousePos);
@@ -413,15 +426,30 @@ void WetEngine::hitPlayer() {
 	}
 }
 
+Common::Point WetEngine::computeTargetPosition(const Common::Point &mousePos) {
+	if (_arcadeMode == "YT") {
+		return Common::Point(mousePos.x, mousePos.y - 20);
+	}
+	return mousePos;
+}
+
 void WetEngine::drawShoot(const Common::Point &mousePos) {
 	uint32 c = 253;
-	_compositeSurface->drawLine(0, _screenH, mousePos.x, mousePos.y, c);
-	_compositeSurface->drawLine(0, _screenH, mousePos.x - 1, mousePos.y, c);
-	_compositeSurface->drawLine(0, _screenH, mousePos.x - 2, mousePos.y, c);
 
-	_compositeSurface->drawLine(_screenW, _screenH, mousePos.x, mousePos.y, c);
-	_compositeSurface->drawLine(_screenW, _screenH, mousePos.x - 1, mousePos.y, c);
-	_compositeSurface->drawLine(_screenW, _screenH, mousePos.x - 2, mousePos.y, c);
+	if (_arcadeMode == "YT") {
+		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y + 1, c);
+		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y, c);
+		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y - 1, c);
+	} else {
+		_compositeSurface->drawLine(0, _screenH, mousePos.x, mousePos.y, c);
+		_compositeSurface->drawLine(0, _screenH, mousePos.x - 1, mousePos.y, c);
+		_compositeSurface->drawLine(0, _screenH, mousePos.x - 2, mousePos.y, c);
+
+		_compositeSurface->drawLine(_screenW, _screenH, mousePos.x, mousePos.y, c);
+		_compositeSurface->drawLine(_screenW, _screenH, mousePos.x - 1, mousePos.y, c);
+		_compositeSurface->drawLine(_screenW, _screenH, mousePos.x - 2, mousePos.y, c);
+	}
+
 	playSound(_soundPath + _shootSound, 1);
 }
 

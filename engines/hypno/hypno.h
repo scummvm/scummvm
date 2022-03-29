@@ -218,6 +218,7 @@ public:
 	Common::String _arcadeMode;
 	uint32 _currentPlayerPosition;
 	uint32 _lastPlayerPosition;
+	virtual Common::Point computeTargetPosition(const Common::Point &mousePos);
 	int detectTarget(const Common::Point &mousePos);
 	virtual bool clickedPrimaryShoot(const Common::Point &mousePos);
 	virtual bool clickedSecondaryShoot(const Common::Point &mousePos);
@@ -339,6 +340,8 @@ public:
 	void drawPlayer() override;
 	void drawHealth() override;
 	void hitPlayer() override;
+	void drawCursorArcade(const Common::Point &mousePos) override;
+	Common::Point computeTargetPosition(const Common::Point &mousePos) override;
 	void missTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) override;
 	void runCode(Code *code) override;
 	Common::String findNextLevel(const Common::String &level) override;
