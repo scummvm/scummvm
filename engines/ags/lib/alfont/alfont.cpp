@@ -29,12 +29,24 @@
 #include "ags/lib/allegro/draw.h"
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/unicode.h"
-#include <ft2build.h>
-#include <wchar.h>
-#include FT_FREETYPE_H
-#include FT_GLYPH_H
+#include "graphics/fonts/freetype.h"
 
 namespace AGS3 {
+
+using Graphics::FreeType::Init_FreeType;
+using Graphics::FreeType::Done_FreeType;
+using Graphics::FreeType::Load_Glyph;
+using Graphics::FreeType::Get_Glyph;
+using Graphics::FreeType::Glyph_Copy;
+using Graphics::FreeType::Glyph_To_Bitmap;
+using Graphics::FreeType::Done_Glyph;
+using Graphics::FreeType::Set_Pixel_Sizes;
+using Graphics::FreeType::New_Face;
+using Graphics::FreeType::New_Memory_Face;
+using Graphics::FreeType::Done_Face;
+using Graphics::FreeType::Get_Char_Index;
+using Graphics::FreeType::Get_Kerning;
+
 
 #undef TRUE
 #undef FALSE
@@ -239,8 +251,8 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 	if (!f->cached_glyphs[glyph_number].is_cached) {
 		FT_Glyph new_glyph;
 		/* load the font glyph */
-		FT_Load_Glyph(f->face, glyph_number, FT_LOAD_DEFAULT);
-		FT_Get_Glyph(f->face->glyph, &new_glyph);
+		Load_Glyph(f->face, glyph_number, FT_LOAD_DEFAULT);
+		Get_Glyph(f->face->glyph, &new_glyph);
 
 		/* ok, this glyph is now cached */
 		f->cached_glyphs[glyph_number].is_cached = 1;
@@ -253,11 +265,11 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 			FT_Glyph glyph;
 			FT_BitmapGlyph bmp_glyph;
 
-			FT_Glyph_Copy(new_glyph, &glyph);
+			Glyph_Copy(new_glyph, &glyph);
 
 			/* only render glyph if it is not already a bitmap */
 			if (glyph->format != ft_glyph_format_bitmap)
-				FT_Glyph_To_Bitmap(&glyph, ft_render_mode_mono, NULL, 1);
+				Glyph_To_Bitmap(&glyph, ft_render_mode_mono, NULL, 1);
 
 			/* the FT rendered bitmap */
 			bmp_glyph = (FT_BitmapGlyph)glyph;
@@ -309,7 +321,7 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 				}
 			}
 
-			FT_Done_Glyph(glyph);
+			Done_Glyph(glyph);
 		}
 
 
@@ -319,11 +331,11 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 			FT_Glyph glyph;
 			FT_BitmapGlyph bmp_glyph;
 
-			FT_Glyph_Copy(new_glyph, &glyph);
+			Glyph_Copy(new_glyph, &glyph);
 
 			/* only render glyph if it is not already a bitmap */
 			if (glyph->format != ft_glyph_format_bitmap)
-				FT_Glyph_To_Bitmap(&glyph, ft_render_mode_normal, NULL, 1);
+				Glyph_To_Bitmap(&glyph, ft_render_mode_normal, NULL, 1);
 
 			/* the FT rendered bitmap */
 			bmp_glyph = (FT_BitmapGlyph)glyph;
@@ -379,14 +391,14 @@ static void _alfont_cache_glyph(ALFONT_FONT *f, int glyph_number) {
 				}
 			}
 
-			FT_Done_Glyph(glyph);
+			Done_Glyph(glyph);
 		}
 
 		f->cached_glyphs[glyph_number].advancex = f->face->glyph->advance.x >> 6;
 		f->cached_glyphs[glyph_number].advancey = f->face->glyph->advance.y >> 6;
 
 		/* delete the glyph */
-		FT_Done_Glyph(new_glyph);
+		Done_Glyph(new_glyph);
 	}
 }
 
@@ -425,7 +437,7 @@ int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags) {
 	test_h = h;
 	direction = 0;
 	while (1) {
-		error = FT_Set_Pixel_Sizes(f->face, 0, test_h);
+		error = Set_Pixel_Sizes(f->face, 0, test_h);
 		if (error)
 			break;
 
@@ -454,7 +466,7 @@ int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags) {
 		else if ((direction > 0) && (real_height > h)) {
 			/* decrease one and found */
 			test_h--;
-			FT_Set_Pixel_Sizes(f->face, 0, test_h);
+			Set_Pixel_Sizes(f->face, 0, test_h);
 			break;
 		}
 
@@ -486,7 +498,7 @@ int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags) {
 
 		return ALFONT_OK;
 	} else {
-		FT_Set_Pixel_Sizes(f->face, 0, f->real_face_h);
+		Set_Pixel_Sizes(f->face, 0, f->real_face_h);
 		return ALFONT_ERROR;
 	}
 }
@@ -504,7 +516,7 @@ int alfont_get_font_real_height(ALFONT_FONT *f) {
 void alfont_exit(void) {
 	if (alfont_inited) {
 		alfont_inited = 0;
-		FT_Done_FreeType(ft_library);
+		Done_FreeType(ft_library);
 		memset(&ft_library, 0, sizeof(ft_library));
 	}
 }
@@ -516,7 +528,7 @@ int alfont_init(void) {
 	else {
 		int error;
 		memset(&ft_library, 0, sizeof(ft_library));
-		error = FT_Init_FreeType(&ft_library);
+		error = Init_FreeType(&ft_library);
 
 		if (!error)
 			alfont_inited = 1;
@@ -544,7 +556,7 @@ ALFONT_FONT *alfont_load_font(const char *filepathname) {
 	font->data_size = 0;
 
 	/* load the font */
-	error = FT_New_Face(ft_library, filepathname, 0, &font->face);
+	error = New_Face(ft_library, filepathname, 0, &font->face);
 
 	if (error) {
 		free(font);
@@ -622,7 +634,7 @@ ALFONT_FONT *alfont_load_font_from_mem(const char *data, int data_len) {
 	memcpy((void *)font->data, (void *)data, data_len);
 
 	/* load the font */
-	error = FT_New_Memory_Face(ft_library, (const FT_Byte *)font->data, font->data_size, 0, &font->face);
+	error = New_Memory_Face(ft_library, (const FT_Byte *)font->data, font->data_size, 0, &font->face);
 
 	if (error) {
 		free(font->data);
@@ -690,7 +702,7 @@ void alfont_destroy_font(ALFONT_FONT *f) {
 	_alfont_delete_glyphs(f);
 
 	/* delete the face */
-	FT_Done_Face(f->face);
+	Done_Face(f->face);
 
 	if (f->fixed_sizes)
 		free(f->fixed_sizes);
@@ -1020,7 +1032,7 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 
 			/* get the character out of the font */
 			if (f->face->charmap)
-				glyph_index_tmp = FT_Get_Char_Index(f->face, character);
+				glyph_index_tmp = Get_Char_Index(f->face, character);
 			else
 				glyph_index_tmp = character;
 
@@ -1058,7 +1070,7 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 
 		/* get the character out of the font */
 		if (f->face->charmap)
-			glyph_index = FT_Get_Char_Index(f->face, character);
+			glyph_index = Get_Char_Index(f->face, character);
 		else
 			glyph_index = character;
 
@@ -1077,7 +1089,7 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 #ifdef APPLY_FONT_KERNING
 		if (last_glyph_index) {
 			FT_Vector v;
-			FT_Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
+			Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
 			real_x += v.x >> 6;
 			real_y += v.y >> 6;
 		}
@@ -2091,7 +2103,7 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 
 			/* get the character out of the font */
 			if (f->face->charmap)
-				glyph_index_tmp = FT_Get_Char_Index(f->face, character);
+				glyph_index_tmp = Get_Char_Index(f->face, character);
 			else
 				glyph_index_tmp = character;
 
@@ -2128,7 +2140,7 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 
 		/* get the character out of the font */
 		if (f->face->charmap)
-			glyph_index = FT_Get_Char_Index(f->face, character);
+			glyph_index = Get_Char_Index(f->face, character);
 		else
 			glyph_index = character;
 
@@ -2147,7 +2159,7 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 #ifdef APPLY_FONT_KERNING
 		if (last_glyph_index) {
 			FT_Vector v;
-			FT_Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
+			Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
 			real_x += v.x >> 6;
 			real_y += v.y >> 6;
 		}
@@ -2873,7 +2885,7 @@ int alfont_text_length(ALFONT_FONT * f, const char *str) {
 
 			/* get the character out of the font */
 			if (f->face->charmap)
-				glyph_index_tmp = FT_Get_Char_Index(f->face, character);
+				glyph_index_tmp = Get_Char_Index(f->face, character);
 			else
 				glyph_index_tmp = character;
 
@@ -2898,14 +2910,14 @@ int alfont_text_length(ALFONT_FONT * f, const char *str) {
 #endif
 
 		if (f->face->charmap)
-			glyph_index = FT_Get_Char_Index(f->face, character);
+			glyph_index = Get_Char_Index(f->face, character);
 		else
 			glyph_index = character;
 
 		/* apply kerning */
 		/*if (last_glyph_index) {
 			FT_Vector v;
-			FT_Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
+			Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
 			total_length += v.x >> 6;
 		}*/
 		last_glyph_index = glyph_index;
@@ -2977,14 +2989,14 @@ int alfont_char_length(ALFONT_FONT * f, int character) {
 	/* get the character out of the font */
 
 	if (f->face->charmap)
-		glyph_index = FT_Get_Char_Index(f->face, character);
+		glyph_index = Get_Char_Index(f->face, character);
 	else
 		glyph_index = character;
 
 	/* apply kerning */
 	/*if (last_glyph_index) {
 	  FT_Vector v;
-	  FT_Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
+	  Get_Kerning(f->face, last_glyph_index, glyph_index, ft_kerning_default, &v);
 	  total_length += v.x >> 6;
 	}*/
 	last_glyph_index = glyph_index;
