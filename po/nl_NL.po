@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-27 04:28+0000\n"
-"PO-Revision-Date: 2022-03-14 17:27+0000\n"
+"PO-Revision-Date: 2022-03-29 10:45+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1997,10 +1997,8 @@ msgstr ""
 "Controleer uw Internet verbinding."
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
-msgstr "Enter"
+msgstr "Geef Tekst"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -4517,6 +4515,7 @@ msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
 msgstr ""
+"Het spel verhindert stoppen op dit moment. Wilt u evengoed wilt stoppen?"
 
 #: engines/dragons/dragons.cpp:1802
 #, c-format
@@ -5046,10 +5045,8 @@ msgid "Error: the game could not be saved."
 msgstr "Fout: het spel kon niet worden opgeslagen."
 
 #: engines/grim/inputdialog.cpp:79
-#, fuzzy
-#| msgid "Input"
 msgid "Input text"
-msgstr "Invoer"
+msgstr "Geef tekst"
 
 #: engines/grim/md5check.cpp:558
 #, c-format
@@ -6603,16 +6600,16 @@ msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(in plaats van de gebruikelijke stappen van 8 pixels scrollen)"
 
 #: engines/scumm/detection.cpp:210 engines/scumm/dialogs.cpp:730
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "Enable game-specific enhancements"
-msgstr "Lettertypes vervangen"
+msgstr "Gebruik spel-specifieke verbeteringen"
 
 #: engines/scumm/detection.cpp:211 engines/scumm/dialogs.cpp:730
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
 msgstr ""
+"Pas kleine verbeteringen in het spel toe, meestal gebaseerd op anders "
+"versies van hetzelfde spel."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
