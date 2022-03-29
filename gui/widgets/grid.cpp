@@ -304,7 +304,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 			if (!srcSurface) {
 				warning("Failed to load surface : %s", name.c_str());
 			} else if (srcSurface->format.bytesPerPixel != 1) {
-				surf = new Graphics::ManagedSurface(srcSurface->convertTo(g_system->getOverlayFormat()));
+				surf = new Graphics::ManagedSurface(srcSurface);
 			}
 		} else {
 			debug(5, "GridWidget: Cannot read file '%s'", name.c_str());
