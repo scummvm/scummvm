@@ -161,13 +161,8 @@ void Atdsys::set_string_end_func
 	_atdsv.aad_str = strFunc;
 }
 
-void Atdsys::setHasSpeech(bool hasSpeech) {
-	_hasSpeech = hasSpeech;
-	updateSoundSettings();
-}
-
 void Atdsys::updateSoundSettings() {
-	if (!_hasSpeech)
+	if (!g_engine->_sound->speechEnabled())
 		_atdsv._display = DISPLAY_TXT;
 	else
 		_atdsv._display = g_engine->_sound->getSpeechSubtitlesMode();

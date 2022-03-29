@@ -251,7 +251,6 @@ public:
 	~Atdsys();
 
 	void set_delay(int16 *delay, int16 silent);
-	void setHasSpeech(bool hasSpeech);
 	void updateSoundSettings();
 	void set_split_win(int16 nr, int16 x, int16 y);
 	SplitStringRet *split_string(SplitStringInit *ssi);
@@ -354,7 +353,6 @@ private:
 	int16 _invBlockNr;
 	char *_invUseMem = nullptr;
 	int16 _tmpDelay;
-	bool _hasSpeech = false;
 	int16 _mousePush = 0;
 	int _printDelayCount1 = 0;
 	DialogResource *_dialogResource;

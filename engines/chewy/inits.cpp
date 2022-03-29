@@ -284,7 +284,7 @@ void sound_init() {
 	_G(gameState).SoundVol = 63;
 	g_engine->_sound->setMusicVolume(_G(gameState).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
 	g_engine->_sound->setSoundVolume(_G(gameState).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
-	_G(atds)->setHasSpeech(true);
+	_G(atds)->updateSoundSettings();
 }
 
 void show_intro() {
