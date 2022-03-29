@@ -19,13 +19,14 @@
  *
  */
 
-#ifdef USE_FREETYPE2
-
 // Since FreeType2 includes files, which contain forbidden symbols, we need to
 // allow all symbols here.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
+
+#ifdef USE_FREETYPE2
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
