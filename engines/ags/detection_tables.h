@@ -4992,6 +4992,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("labyrinth", "labyrnth.exe", "0710e2ec71042617f565c01824f0cf3c", 7686481),  //v3.0 final
 	GAME_ENTRY("lacarbonara", "La Carbonara.ags", "086024ea12068a5787d9562b266d2159", 2412912),  //v0.4 Win/Linux
 	GAME_ENTRY_LANG("lacicuta", "Cicuta1.exe", "1290e191d4f24893ce83ba0af5debd9e", 8665956, Common::ES_ESP),
+	GAME_ENTRY("lacroixpan", "La Croix Pan.exe", "c91bf675d6839c42924cf3c9a390ded3", 12411833), //v1.00
 	GAME_ENTRY("lacroixpan", "La Croix Pan.exe", "d9018b1792f6d959d7add4dc3f7cdb46", 12102643),
 	GAME_ENTRY_LANG("lagrancastanya", "PROJECT1.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 39298012, Common::CA_ESP),
 	GAME_ENTRY_LANG("lallaveyfabianshones", "LLAVE.exe", "a8d73d686b2eb77caab8c05e3e1f1d57", 3374527, Common::ES_ESP),
