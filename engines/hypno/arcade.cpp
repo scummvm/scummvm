@@ -313,9 +313,11 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		if (_health <= 0) {
 			skipVideo(background);
 			if (!arc->defeatNoEnergySecondVideo.empty() && transition) {
+				disableCursor();
 				MVideo video(arc->defeatNoEnergySecondVideo, Common::Point(0, 0), false, true, false);
 				runIntro(video);
 			} else if (!arc->defeatNoEnergyFirstVideo.empty()) {
+				disableCursor();
 				MVideo video(arc->defeatNoEnergyFirstVideo, Common::Point(0, 0), false, true, false);
 				runIntro(video);
 			}
@@ -332,6 +334,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 			debugC(1, kHypnoDebugArcade, "Playing transition %s", arc->transitionVideo.c_str());
 			MVideo video(arc->transitionVideo, Common::Point(0, 0), false, true, false);
+			disableCursor();
 			runIntro(video);
 
 			if (!arc->transitionPalette.empty())
@@ -341,6 +344,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			background.decoder->pauseVideo(false);
 			updateScreen(background);
 			drawScreen();
+			drawCursorArcade(mousePos);
 		}
 
 		if (background.decoder && background.decoder->getCurFrame() >= int(segments[_segmentIdx].start + segments[_segmentIdx].size - 2)) {
@@ -372,6 +376,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				if (_objKillsCount[_objIdx] < _objKillsRequired[_objIdx] || _objMissesCount[_objIdx] > _objMissesAllowed[_objIdx]) {
 					if (!arc->defeatMissBossVideo.empty()) {
 						MVideo video(arc->defeatMissBossVideo, Common::Point(0, 0), false, true, false);
+						disableCursor();
 						runIntro(video);
 					}
 					assert(!arc->levelIfLose.empty());
@@ -385,6 +390,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 			if (!arc->nextLevelVideo.empty()) {
 				MVideo video(arc->nextLevelVideo, Common::Point(0, 0), false, true, false);
+				disableCursor();
 				runIntro(video);
 			}
 			assert(!arc->levelIfWin.empty());
@@ -598,6 +604,7 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVid
 			} else if (_objIdx == 0 && !arc->hitBoss1Video.empty()) {
 				background.decoder->pauseVideo(true);
 				MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
+				disableCursor();
 				runIntro(video);
 				loadPalette(arc->backgroundPalette);
 				background.decoder->pauseVideo(false);
@@ -611,6 +618,7 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVid
 				background.decoder->pauseVideo(false);
 				updateScreen(background);
 				drawScreen();
+				drawCursorArcade(mousePos);
 			}
 			byte p[3] = {0x00, 0x00, 0x00}; // Always black?
 			assert(_shoots[i].paletteSize == 1 || _shoots[i].paletteSize == 0);
