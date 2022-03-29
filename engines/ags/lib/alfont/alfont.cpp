@@ -24,6 +24,7 @@
 
 #ifdef USE_FREETYPE2
 
+#include <wchar.h>
 #include "ags/lib/alfont/alfont.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/draw.h"
@@ -425,7 +426,7 @@ int alfont_set_font_size(ALFONT_FONT *f, int h) {
 
 int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags) {
 	int error, test_h, direction;
-	int real_height;
+	int real_height = 0;
 	/* check the font doesn't already use that w and h */
 	if ((h == f->face_h) && (flags & ALFONT_FLG_FORCE_RESIZE) == 0)
 		return ALFONT_OK;

@@ -26,7 +26,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
-#include <wchar.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
