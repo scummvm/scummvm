@@ -691,7 +691,7 @@ void mous_obj_action(int16 nr, int16 mode, int16 txt_mode, int16 txt_nr) {
 				int16 x = g_events->_mousePos.x;
 				int16 y = g_events->_mousePos.y;
 				calcTxtXy(&x, &y, desc);
-				for (int16 i = 0; i < desc.size(); i++)
+				for (int16 i = 0; i < (int16)desc.size(); i++)
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), desc[i].c_str());
 			}
 		}
@@ -1427,7 +1427,7 @@ int16 calcMouseText(int16 x, int16 y, int16 mode) {
 						ret = txtNr;
 						_G(fontMgr)->setFont(_G(font8));
 						calcTxtXy(&x, &y, desc);
-						for (int16 i = 0; i < desc.size(); i++)
+						for (int16 i = 0; i < (int16)desc.size(); i++)
 							printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), desc[i].c_str());
 					}
 				}

@@ -112,8 +112,8 @@ void calcTxtXy(int16 *x, int16 *y, char *txtAdr, int16 txtCount) {
 
 void calcTxtXy(int16 *x, int16 *y, Common::StringArray &textList) {
 	int16 len = 0;
-	for (int16 i = 0; i < textList.size(); i++) {
-		if (textList[i].size() > len)
+	for (int16 i = 0; i < (int16)textList.size(); i++) {
+		if ((int16)textList[i].size() > len)
 			len = textList[i].size();
 	}
 	len = len * _G(fontMgr)->getFont()->getDataWidth();
