@@ -45,10 +45,6 @@
 
 namespace Saga2 {
 
-#define PROGRAM_ABOUT   PROGRAM_FULL_NAME "\r\n\r\n"\
-	" Version " VERSION_STAMP "\r\n"
-
-
 // dialog functions
 APPFUNC(cmdDialogQuit);
 APPFUNCV(cmdFileSave);
