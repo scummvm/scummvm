@@ -110,7 +110,7 @@ int32_t MemoryStream::ReadByte() {
 	if (EOS()) {
 		return -1;
 	}
-	return _cbuf[(size_t)(_pos++)];
+	return static_cast<uint8_t>(_cbuf[(size_t)(_pos++)]);
 }
 
 size_t MemoryStream::Write(const void *buffer, size_t size) {
