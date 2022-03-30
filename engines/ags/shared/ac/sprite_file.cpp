@@ -233,7 +233,7 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 			delete image;
 			return new Error(String::FromFormat("LoadSprite: bad compressed data for sprite %d.", index));
 		}
-		rle_decompress(image, _stream.get());
+		rle_decompress(image->GetDataForWriting(), w * h * bpp, bpp, _stream.get());
 		// TODO: test that not more than data_size was read!
 	} else {
 		switch (bpp) {
@@ -415,7 +415,7 @@ void SpriteFileWriter::WriteBitmap(Bitmap *image) {
 	const SpriteDatHeader hdr(bpp, w, h);
 	if (_compress) {
 		MemoryStream mems(_membuf, kStream_Write);
-		rle_compress(image, &mems);
+		rle_compress(image->GetData(), w * h * bpp, bpp, &mems);
 		// write image data as a plain byte array
 		WriteSpriteData(hdr, &_membuf[0], _membuf.size(), 1);
 		_membuf.clear();

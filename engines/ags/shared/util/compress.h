@@ -36,8 +36,8 @@ class Bitmap;
 
 using namespace AGS; // FIXME later
 
-void rle_compress(Shared::Bitmap *, Shared::Stream *);
-void rle_decompress(Shared::Bitmap *, Shared::Stream *);
+void rle_compress(const uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *out);
+void rle_decompress(uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *in);
 
 // LZW compression
 void save_lzw(Shared::Stream *out, const Shared::Bitmap *bmpp, const RGB *pall);

@@ -43,17 +43,18 @@ using namespace AGS::Shared;
 // RLE
 //-----------------------------------------------------------------------------
 
-void cpackbitl(const uint8_t *line, int size, Stream *out) {
-	int cnt = 0;                  // bytes encoded
+static void cpackbitl(const uint8_t *line, size_t size, Stream *out) {
+	size_t cnt = 0;               // bytes encoded
 
 	while (cnt < size) {
+		// note that the algorithm below requires signed operations
 		int i = cnt;
 		int j = i + 1;
 		int jmax = i + 126;
-		if (jmax >= size)
+		if ((size_t)jmax >= size)
 			jmax = size - 1;
 
-		if (i == size - 1) {        //................last byte alone
+		if (i == (int)size - 1) {        //................last byte alone
 			out->WriteInt8(0);
 			out->WriteInt8(line[i]);
 			cnt++;
@@ -71,24 +72,25 @@ void cpackbitl(const uint8_t *line, int size, Stream *out) {
 				j++;
 
 			out->WriteInt8(j - i);
-			out->WriteArray(line + i, j - i + 1, 1);
+			out->Write(line + i, j - i + 1);
 			cnt += j - i + 1;
 
 		}
 	} // end while
 }
 
-void cpackbitl16(const uint16_t *line, int size, Stream *out) {
-	int cnt = 0;                  // bytes encoded
+static void cpackbitl16(const uint16_t *line, size_t size, Stream *out) {
+	size_t cnt = 0;               // bytes encoded
 
 	while (cnt < size) {
+		// note that the algorithm below requires signed operations
 		int i = cnt;
 		int j = i + 1;
 		int jmax = i + 126;
-		if (jmax >= size)
+		if ((size_t)jmax >= size)
 			jmax = size - 1;
 
-		if (i == size - 1) {        //................last byte alone
+		if (i == (int)size - 1) {        //................last byte alone
 			out->WriteInt8(0);
 			out->WriteInt16(line[i]);
 			cnt++;
@@ -113,17 +115,18 @@ void cpackbitl16(const uint16_t *line, int size, Stream *out) {
 	} // end while
 }
 
-void cpackbitl32(const uint32_t *line, int size, Stream *out) {
-	int cnt = 0;                  // bytes encoded
+static void cpackbitl32(const uint32_t *line, size_t size, Stream *out) {
+	size_t cnt = 0;               // bytes encoded
 
 	while (cnt < size) {
+		// note that the algorithm below requires signed operations
 		int i = cnt;
 		int j = i + 1;
 		int jmax = i + 126;
-		if (jmax >= size)
+		if ((size_t)jmax >= size)
 			jmax = size - 1;
 
-		if (i == size - 1) {        //................last byte alone
+		if (i == (int)size - 1) {        //................last byte alone
 			out->WriteInt8(0);
 			out->WriteInt32(line[i]);
 			cnt++;
@@ -178,15 +181,15 @@ void csavecompressed(Stream *out, const unsigned char *tobesaved, const RGB pala
 	free(ress);
 }
 
-int cunpackbitl(uint8_t *line, int size, Stream *in) {
-	int n = 0;                    // number of bytes decoded
+static int cunpackbitl(uint8_t *line, size_t size, Stream *in) {
+	size_t n = 0;                  // number of bytes decoded
 
 	while (n < size) {
 		int ix = in->ReadByte();     // get index byte
 		if (in->HasErrors())
 			break;
 
-		int8_t cx = ix;
+		char cx = ix;
 		if (cx == -128)
 			cx = 0;
 
@@ -215,15 +218,15 @@ int cunpackbitl(uint8_t *line, int size, Stream *in) {
 	return in->HasErrors() ? -1 : 0;
 }
 
-int cunpackbitl16(uint16_t *line, int size, Stream *in) {
-	int n = 0;                    // number of bytes decoded
+static int cunpackbitl16(uint16_t *line, size_t size, Stream *in) {
+	size_t n = 0;                  // number of bytes decoded
 
 	while (n < size) {
 		int ix = in->ReadByte();     // get index byte
 		if (in->HasErrors())
 			break;
 
-		int8_t cx = ix;
+		char cx = ix;
 		if (cx == -128)
 			cx = 0;
 
@@ -252,15 +255,15 @@ int cunpackbitl16(uint16_t *line, int size, Stream *in) {
 	return in->HasErrors() ? -1 : 0;
 }
 
-int cunpackbitl32(uint32_t *line, int size, Stream *in) {
-	int n = 0;                    // number of bytes decoded
+static int cunpackbitl32(uint32_t *line, size_t size, Stream *in) {
+	size_t n = 0;                  // number of bytes decoded
 
 	while (n < size) {
 		int ix = in->ReadByte();     // get index byte
 		if (in->HasErrors())
 			break;
 
-		int8_t cx = ix;
+		char cx = ix;
 		if (cx == -128)
 			cx = 0;
 
@@ -289,31 +292,21 @@ int cunpackbitl32(uint32_t *line, int size, Stream *in) {
 	return in->HasErrors() ? -1 : 0;
 }
 
-void rle_compress(Bitmap *bmp, Shared::Stream *out) {
-	const int depth = bmp->GetBPP();
-	if (depth == 1) {
-		for (int y = 0; y < bmp->GetHeight(); y++)
-			cpackbitl(&bmp->GetScanLineForWriting(y)[0], bmp->GetWidth(), out);
-	} else if (depth == 2) {
-		for (int y = 0; y < bmp->GetHeight(); y++)
-			cpackbitl16((uint16_t *)&bmp->GetScanLine(y)[0], bmp->GetWidth(), out);
-	} else {
-		for (int y = 0; y < bmp->GetHeight(); y++)
-			cpackbitl32((uint32_t *)&bmp->GetScanLine(y)[0], bmp->GetWidth(), out);
+void rle_compress(const uint8_t *data, size_t data_sz, int image_bpp, Stream *out) {
+	switch (image_bpp) {
+	case 1: cpackbitl(data, data_sz, out); break;
+	case 2: cpackbitl16(reinterpret_cast<const uint16_t *>(data), data_sz / sizeof(uint16_t), out); break;
+	case 4: cpackbitl32(reinterpret_cast<const uint32_t *>(data), data_sz / sizeof(uint32_t), out); break;
+	default: assert(0); break;
 	}
 }
 
-void rle_decompress(Bitmap *bmp, Shared::Stream *in) {
-	const int depth = bmp->GetBPP();
-	if (depth == 1) {
-		for (int y = 0; y < bmp->GetHeight(); y++)
-			cunpackbitl(&bmp->GetScanLineForWriting(y)[0], bmp->GetWidth(), in);
-	} else if (depth == 2) {
-		for (int y = 0; y < bmp->GetHeight(); y++)
-			cunpackbitl16((uint16_t *)&bmp->GetScanLineForWriting(y)[0], bmp->GetWidth(), in);
-	} else {
-		for (int y = 0; y < bmp->GetHeight(); y++)
-			cunpackbitl32((uint32_t *)&bmp->GetScanLineForWriting(y)[0], bmp->GetWidth(), in);
+void rle_decompress(uint8_t *data, size_t data_sz, int image_bpp, Stream *in) {
+	switch (image_bpp) {
+	case 1: cunpackbitl(data, data_sz, in); break;
+	case 2: cunpackbitl16(reinterpret_cast<uint16_t *>(data), data_sz / sizeof(uint16_t), in); break;
+	case 4: cunpackbitl32(reinterpret_cast<uint32_t *>(data), data_sz / sizeof(uint32_t), in); break;
+	default: assert(0); break;
 	}
 }
 
