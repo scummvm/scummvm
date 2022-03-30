@@ -148,11 +148,8 @@ Bitmap *convert_32_to_32bgr(Bitmap *tempbl) {
 //
 Bitmap *AdjustBitmapForUseWithDisplayMode(Bitmap *bitmap, bool has_alpha) {
 	const int bmp_col_depth = bitmap->GetColorDepth();
-#if defined (AGS_INVERTED_COLOR_ORDER)
-	const int sys_col_depth = System_GetColorDepth();
-#endif
+	const int compat_col_depth = _G(gfxDriver)->GetCompatibleBitmapFormat(bmp_col_depth);
 	const int game_col_depth = _GP(game).GetColorDepth();
-	const int compat_col_depth = _G(gfxDriver)->GetCompatibleBitmapFormat(game_col_depth);
 
 	const bool must_switch_palette = bitmap->GetColorDepth() == 8 && game_col_depth > 8;
 	if (must_switch_palette)
@@ -167,6 +164,7 @@ Bitmap *AdjustBitmapForUseWithDisplayMode(Bitmap *bitmap, bool has_alpha) {
 	// to match graphics driver expectation about pixel format.
 	// TODO: make GetCompatibleBitmapFormat tell this somehow
 #if defined (AGS_INVERTED_COLOR_ORDER)
+	const int sys_col_depth = System_GetColorDepth();
 	if (sys_col_depth > 16 && bmp_col_depth == 32) {
 		// Convert RGB to BGR.
 		new_bitmap = convert_32_to_32bgr(bitmap);
