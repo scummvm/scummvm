@@ -1002,7 +1002,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		castInfoSize = 0;
 		break;
 	case kCastMovie:
-		warning("STUB: Cast::loadCastData(): kCastMovie (id=%d, %d children)! This will be missing from the movie and may cause problems", id, res->children.size());
+		warning("BUILDBOT: STUB: Cast::loadCastData(): kCastMovie (id=%d, %d children)! This will be missing from the movie and may cause problems", id, res->children.size());
 		castInfoSize = 0;
 		break;
 	default:
