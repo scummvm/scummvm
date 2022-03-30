@@ -769,7 +769,16 @@ void T1MoverProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
+	// FIXME: Code without typedef emits -Wcast-qual GCC warning.
+	//        However, adding const casts break compilation with -fpermissive.
+	//        Reverted to local typedef for now until this can be avoided.
+#if 0
 	MOVER *pActor = *(MOVER **)param;
+	//const MOVER *pActor = *(const MOVER **)param;
+#else
+	typedef MOVER *PMOVER;
+	const PMOVER pActor = *(const PMOVER *)param;
+#endif
 
 	CORO_BEGIN_CODE(_ctx);
 

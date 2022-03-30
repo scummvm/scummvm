@@ -74,7 +74,16 @@ static void RestoredProcessProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	// get the stuff copied to process when it was created
+	// FIXME: Code without typedef emits -Wcast-qual GCC warning.
+	//        However, adding const casts break compilation with -fpermissive.
+	//        Reverted to local typedef for now until this can be avoided.
+#if 0
 	_ctx->pic = *(INT_CONTEXT **)param;
+	//_ctx->pic = *(const INT_CONTEXT **)param;
+#else
+	typedef INT_CONTEXT *PINT_CONTEXT;
+	_ctx->pic = *(const PINT_CONTEXT *)param;
+#endif
 
 	_ctx->pic = RestoreInterpretContext(_ctx->pic);
 	AttachInterpret(_ctx->pic, CoroScheduler.getCurrentProcess());
@@ -88,7 +97,16 @@ static void RestoredProcessProcess(CORO_PARAM, const void *param) {
  * Process Tinsel Process
  */
 static void ProcessTinselProcess(CORO_PARAM, const void *param) {
-	INT_CONTEXT **pPic = (INT_CONTEXT **)param;
+	// FIXME: Code without typedef emits -Wcast-qual GCC warning.
+	//        However, adding const casts break compilation with -fpermissive.
+	//        Reverted to local typedef for now until this can be avoided.
+#if 0
+	//INT_CONTEXT **pPic = (INT_CONTEXT **)param;
+	const INT_CONTEXT **pPic = (const INT_CONTEXT **)param;
+#else
+	typedef INT_CONTEXT *PINT_CONTEXT;
+	const PINT_CONTEXT *pPic = (const PINT_CONTEXT *)param;
+#endif
 
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
