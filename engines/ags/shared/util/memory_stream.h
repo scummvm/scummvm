@@ -21,7 +21,7 @@
 
 //=============================================================================
 //
-// MemoryStream does reading and writing over the buffer of chars stored in
+// MemoryStream does reading and writing over the buffer of bytes stored in
 // memory. Currently has rather trivial implementation. Does not own a buffer
 // itself, but works with the provided std::vector reference, which means that
 // the buffer *must* persist until stream is closed.
@@ -46,13 +46,13 @@ class MemoryStream : public DataStream {
 public:
 	// Construct memory stream in the read-only mode over a const std::vector;
 	// vector must persist in memory until the stream is closed.
-	MemoryStream(const std::vector<char> &cbuf, DataEndianess stream_endianess = kLittleEndian);
+	MemoryStream(const std::vector<uint8_t> &cbuf, DataEndianess stream_endianess = kLittleEndian);
 	// Construct memory stream in the read-only mode over a const String;
 	// String object must persist in memory until the stream is closed.
 	MemoryStream(const String &cbuf, DataEndianess stream_endianess = kLittleEndian);
 	// Construct memory stream in the chosen mode over a given std::vector;
 	// vector must persist in memory until the stream is closed.
-	MemoryStream(std::vector<char> &buf, StreamWorkMode mode, DataEndianess stream_endianess = kLittleEndian);
+	MemoryStream(std::vector<uint8_t> &buf, StreamWorkMode mode, DataEndianess stream_endianess = kLittleEndian);
 	~MemoryStream() override;
 
 	void    Close() override;
@@ -78,9 +78,9 @@ public:
 	bool    Seek(soff_t offset, StreamSeek origin) override;
 
 private:
-	const char *_cbuf;
+	const uint8_t *_cbuf;
 	size_t _len;
-	std::vector<char> *_buf;
+	std::vector<uint8_t> *_buf;
 	const StreamWorkMode _mode;
 	soff_t _pos;
 };

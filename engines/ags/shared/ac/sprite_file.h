@@ -104,7 +104,7 @@ public:
 	// Loads an image data and creates a ready bitmap
 	HError      LoadSprite(sprkey_t index, Bitmap *&sprite);
 	// Loads an image data into the buffer, reports the bitmap metrics and color depth
-	HError      LoadSpriteData(sprkey_t index, Size &metric, int &bpp, std::vector<char> &data);
+	HError      LoadSpriteData(sprkey_t index, Size &metric, int &bpp, std::vector<uint8_t> &data);
 
 private:
 	// Seek stream to sprite
@@ -141,9 +141,7 @@ public:
     // Writes an empty slot marker
     void WriteEmptySlot();
     // Writes a raw sprite data without additional processing
-    void WriteSpriteData(const char *pbuf, size_t len, int w, int h, int bpp);
-    void WriteSpriteData(const std::vector<char> &buf, int w, int h, int bpp)
-        { WriteSpriteData(&buf[0], buf.size(), w, h, bpp); }
+	void WriteSpriteData(const uint8_t *pbuf, size_t len, int w, int h, int bpp);
     // Finalizes current format; no further writing is possible after this
     void Finalize();
 
@@ -154,7 +152,7 @@ private:
     // sprite index accumulated on write for reporting back to user
     SpriteFileIndex _index;
     // compression buffer
-    std::vector<char> _membuf;
+	std::vector<uint8_t> _membuf;
 };
 
 // Saves all sprites to file; fills in index data for external use

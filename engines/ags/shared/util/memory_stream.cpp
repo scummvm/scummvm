@@ -26,7 +26,7 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-MemoryStream::MemoryStream(const std::vector<char> &cbuf, DataEndianess stream_endianess)
+MemoryStream::MemoryStream(const std::vector<uint8_t> &cbuf, DataEndianess stream_endianess)
 	: DataStream(stream_endianess)
 	, _cbuf(&cbuf.front())
 	, _len(cbuf.size())
@@ -37,14 +37,14 @@ MemoryStream::MemoryStream(const std::vector<char> &cbuf, DataEndianess stream_e
 
 MemoryStream::MemoryStream(const String &cbuf, DataEndianess stream_endianess)
 	: DataStream(stream_endianess)
-	, _cbuf(cbuf.GetCStr())
+	, _cbuf(reinterpret_cast<const uint8_t *>(cbuf.GetCStr()))
 	, _len(cbuf.GetLength())
 	, _buf(nullptr)
 	, _mode(kStream_Read)
 	, _pos(0) {
 }
 
-MemoryStream::MemoryStream(std::vector<char> &buf, StreamWorkMode mode, DataEndianess stream_endianess)
+MemoryStream::MemoryStream(std::vector<uint8_t> &buf, StreamWorkMode mode, DataEndianess stream_endianess)
 	: DataStream(stream_endianess)
 	, _len(buf.size())
 	, _buf(&buf)
@@ -110,7 +110,7 @@ int32_t MemoryStream::ReadByte() {
 	if (EOS()) {
 		return -1;
 	}
-	return static_cast<uint8_t>(_cbuf[(size_t)(_pos++)]);
+	return _cbuf[(size_t)(_pos++)];
 }
 
 size_t MemoryStream::Write(const void *buffer, size_t size) {
