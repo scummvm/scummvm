@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-27 04:28+0000\n"
-"PO-Revision-Date: 2022-02-09 10:27+0000\n"
+"PO-Revision-Date: 2022-03-31 04:27+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -732,48 +732,36 @@ msgstr "Cap"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:101
-#, fuzzy
-#| msgid "First letter"
 msgctxt "group"
 msgid "First letter"
 msgstr "Primera lletra"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
-#, fuzzy
-#| msgid "Engine"
 msgctxt "group"
 msgid "Engine"
 msgstr "Motor"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:105
-#, fuzzy
-#| msgid "Series"
 msgctxt "group"
 msgid "Series"
 msgstr "Sèrie"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:107
-#, fuzzy
-#| msgid "Publisher"
 msgctxt "group"
 msgid "Publisher"
 msgstr "Distribuïdora"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
-#| msgid "Language"
 msgctxt "group"
 msgid "Language"
-msgstr "Llengua"
+msgstr "Idioma"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
-#, fuzzy
-#| msgid "Platform"
 msgctxt "group"
 msgid "Platform"
 msgstr "Plataforma"
@@ -807,21 +795,17 @@ msgid "About ScummVM"
 msgstr "Quant a ScummVM"
 
 #: gui/launcher.cpp:243
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Global ~O~ptions..."
-msgstr "~O~pcions..."
+msgstr "~O~pcions globals..."
 
 #: gui/launcher.cpp:243 gui/launcher.cpp:245
 msgid "Change global ScummVM options"
 msgstr "Canvia les opcions globals de ScummVM"
 
 #: gui/launcher.cpp:245
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "~O~pcions..."
+msgstr "~O~pcs. globals..."
 
 #: gui/launcher.cpp:250
 msgid "~A~dd Game..."
@@ -960,21 +944,17 @@ msgid "Record..."
 msgstr "Enregistra..."
 
 #: gui/launcher.cpp:998
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "~G~ame Options..."
-msgstr "~O~pcions..."
+msgstr "~O~pcions del jocs..."
 
 #: gui/launcher.cpp:998 gui/launcher.cpp:1001
 msgid "Change game options"
 msgstr "Canvia les opcions del joc"
 
 #: gui/launcher.cpp:1001
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "~O~pcions..."
+msgstr "~O~pcs. del joc..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
@@ -2025,10 +2005,8 @@ msgstr ""
 "Comproveu la connexió a Internet."
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
-msgstr "Intro"
+msgstr "Introduïu el text"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -4185,35 +4163,35 @@ msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
 #: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2776
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game from file:\n"
 "\n"
 "%s"
 msgstr ""
-"No s'ha pogut carregar l'estat del joc del fitxer:\n"
+"No s'ha pogut carregar la partida desada del fitxer:\n"
 "\n"
 "%s"
 
 #: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2766
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game to file:\n"
 "\n"
 "%s"
 msgstr ""
-"No s'ha pogut desar l'estat del joc al fitxer:\n"
+"No s'ha pogut desar la partida al fitxer::\n"
 "\n"
 "%s"
 
 #: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2789
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Successfully saved game in file:\n"
 "\n"
 "%s"
 msgstr ""
-"S'ha desat l'estat del joc en el fitxer:\n"
+"S'ha desat la partida en el fitxer:\n"
 "\n"
 "%s"
 
@@ -4241,21 +4219,16 @@ msgstr ""
 "que algunes pistes no es reprodueixin correctament."
 
 #: engines/ags/dialogs.cpp:58
-#, fuzzy
-#| msgid "GUI language:"
 msgid "Game language:"
-msgstr "Idioma de la interfície:"
+msgstr "Idioma del joc:"
 
 #: engines/ags/dialogs.cpp:58
-#, fuzzy
-#| msgid "AdLib is used for music in many games"
 msgid "Language to use for multilingual games"
-msgstr "AdLib s'utilitza per la música de molts jocs"
+msgstr "Idioma a usar per a jocs multilingües"
 
 #: engines/ags/dialogs.cpp:78
-#, fuzzy
 msgid "Force antialiased text"
-msgstr "Amb antialias (16bpp)"
+msgstr "Força el text suavitzat"
 
 #: engines/ags/dialogs.cpp:78
 msgid "Use antialiasing to draw text even if the game does not ask for it"
@@ -4274,34 +4247,28 @@ msgid ""
 msgstr ""
 
 #: engines/asylum/metaengine.cpp:114
-#, fuzzy
 msgid "Show version"
-msgstr "Mostra les etiquetes dels objectes"
+msgstr "Mostra la versió"
 
 #: engines/asylum/metaengine.cpp:119 engines/wintermute/keymapper_tables.h:950
-#, fuzzy
 msgid "Quick load"
-msgstr "Mode clic"
+msgstr "Càrrega ràpida"
 
 #: engines/asylum/metaengine.cpp:124 engines/wintermute/keymapper_tables.h:930
-#, fuzzy
 msgid "Quick save"
-msgstr "Mode clic"
+msgstr "Desament ràpid"
 
 #: engines/asylum/metaengine.cpp:129
-#, fuzzy
 msgid "Switch to Sarah"
-msgstr "Tornar al joc"
+msgstr "Canvia a Sarah"
 
 #: engines/asylum/metaengine.cpp:134
-#, fuzzy
 msgid "Switch to Grimwall"
-msgstr "Tornar al joc"
+msgstr "Canvia a Grimwall"
 
 #: engines/asylum/metaengine.cpp:139
-#, fuzzy
 msgid "Switch to Olmec"
-msgstr "Tornar al joc"
+msgstr "Canvia a Olmec"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
@@ -4312,9 +4279,8 @@ msgid ""
 msgstr ""
 
 #: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:863
-#, fuzzy
 msgid "Load anyway"
-msgstr "Inicia de totes maneres"
+msgstr "Carrega de totes maneres"
 
 #: engines/bladerunner/bladerunner.cpp:357
 msgid "Failed to initialize resources"
@@ -4343,18 +4309,16 @@ msgid "Continue"
 msgstr ""
 
 #: engines/bladerunner/detection.cpp:52
-#, fuzzy
 msgid "Sitcom mode"
-msgstr "Mode heli"
+msgstr "Mode Sitcom"
 
 #: engines/bladerunner/detection.cpp:53
 msgid "Game will add laughter after actor's line or narration"
 msgstr ""
 
 #: engines/bladerunner/detection.cpp:61
-#, fuzzy
 msgid "Shorty mode"
-msgstr "Mode de color"
+msgstr "Mode curt"
 
 #: engines/bladerunner/detection.cpp:62
 msgid "Game will shrink the actors and make their voices high pitched"
@@ -4419,12 +4383,10 @@ msgid "Are you sure you want to quit?"
 msgstr "Esteu segur que voleu sortir?"
 
 #: engines/buried/buried.cpp:590
-#, fuzzy
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr "Joc pausat.  Premeu ESPAI per continuar."
+msgstr "El joc està en pausa. Feu clic a D'acord per continuar."
 
 #: engines/buried/saveload.cpp:66
-#, fuzzy
 msgid ""
 "ScummVM found that you have saved games that should be converted from the "
 "original saved game format.\n"
@@ -4434,27 +4396,25 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"El ScummVM ha trobat que teniu partides desades antigues de Drascula que "
-"s'haurien de convertir.\n"
-"El format de les partides desades antigues no està suportat, per la qual "
-"cosa no podreu carregar aquestes partides si no les convertiu.\n"
+"ScummVM ha trobat que heu desat partides que s'haurien de convertir des del "
+"format de desat original del joc.\n"
+"El format de desat original del joc ja no és suportat directament, així que "
+"no podreu carregar les vostres partides si no els convertiu.\n"
 "\n"
-"Premeu D'Acord per convertir-les ara, en cas contrari se us tornarà a "
-"demanar la propera vegada que engegueu el joc.\n"
+"Premeu d'Acord per convertir-les ara, en cas contrari se us tornarà a "
+"demanar la propera vegada que inicieu el joc.\n"
 
 #: engines/buried/saveload.cpp:165
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
 msgstr ""
 
 #: engines/cge/detection.cpp:113
-#, fuzzy
 msgid "Color Blind Mode"
-msgstr "Mode clic"
+msgstr "Mode per a daltònics"
 
 #: engines/cge/detection.cpp:114
-#, fuzzy
 msgid "Enable Color Blind Mode by default"
-msgstr "Mode clic"
+msgstr "Activa el mode per a daltònics per defecte"
 
 #: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
 #: engines/supernova/detection.cpp:51
@@ -4462,10 +4422,8 @@ msgid "Enable Text to Speech"
 msgstr "Habilita la conversió de text a veu"
 
 #: engines/cge/detection.cpp:125
-#, fuzzy
 msgid "Use TTS to read text in the game (if TTS is available)"
-msgstr ""
-"Utilitza l'àudio del CD en lloc de l'àudio intern del joc, si està disponible"
+msgstr "Utilitza TextToSpeech per llegir text del joc (si TTS està disponible)"
 
 #: engines/cine/detection.cpp:60
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -4478,14 +4436,12 @@ msgid ""
 msgstr ""
 
 #: engines/cine/metaengine.cpp:133
-#, fuzzy
 msgid "Unnamed autosave"
-msgstr "Partida sense nom"
+msgstr "Partida desada automàtica sense nom"
 
 #: engines/cine/metaengine.cpp:135 engines/cine/metaengine.cpp:207
-#, fuzzy
 msgid "Unnamed savegame"
-msgstr "Partida sense nom"
+msgstr "Partida desada sense nom"
 
 #: engines/cine/metaengine.cpp:152 engines/cine/metaengine.cpp:215
 msgid "Empty autosave"
@@ -4529,9 +4485,8 @@ msgid ""
 msgstr ""
 
 #: engines/dragons/metaengine.cpp:137
-#, fuzzy
 msgid "Action"
-msgstr "Actiu"
+msgstr "Acció"
 
 #: engines/dragons/metaengine.cpp:143
 msgid "Change Command"
@@ -4552,16 +4507,14 @@ msgid "Enter"
 msgstr "Intro"
 
 #: engines/dragons/metaengine.cpp:220
-#, fuzzy
 msgid "Debug Graphics"
-msgstr "Gràfics"
+msgstr "Depura els gràfics"
 
 #: engines/dragons/metaengine.cpp:225
 msgid "Quit Game"
 msgstr "Surt del joc"
 
 #: engines/drascula/saveload.cpp:46
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Drascula that should be "
 "converted.\n"
@@ -4571,13 +4524,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"El ScummVM ha trobat que teniu partides desades antigues de Drascula que "
-"s'haurien de convertir.\n"
-"El format de les partides desades antigues no està suportat, per la qual "
-"cosa no podreu carregar aquestes partides si no les convertiu.\n"
+"ScummVM ha trobat que heu desat partides antigues de Drascula que s'haurien "
+"de convertir.\n"
+"El format de desat original del joc ja no és suportat directament, així que "
+"no podreu carregar les vostres partides si no els convertiu.\n"
 "\n"
-"Premeu D'Acord per convertir-les ara, en cas contrari se us tornarà a "
-"demanar la propera vegada que engegueu el joc.\n"
+"Premeu d'Acord per convertir-les ara, en cas contrari se us tornarà a "
+"demanar la propera vegada que inicieu el joc.\n"
 
 #: engines/dreamweb/detection.cpp:64
 msgid "Use bright palette mode"
@@ -4602,10 +4555,8 @@ msgid "Enable Text to Speech for Subtitles"
 msgstr "Habilita la conversió de text a veu per als subtítols"
 
 #: engines/dreamweb/detection.cpp:86
-#, fuzzy
 msgid "Use TTS to read the subtitles (if TTS is available)"
-msgstr ""
-"Utilitza l'àudio del CD en lloc de l'àudio intern del joc, si està disponible"
+msgstr "Utilitza TextToSpeech per llegir els subtítols (si TTS està disponible)"
 
 #: engines/glk/detection.cpp:239
 msgid "Use TTS to read the text"
@@ -4625,7 +4576,6 @@ msgid "[ press any key to exit ]"
 msgstr ""
 
 #: engines/glk/quetzal.cpp:147 engines/glk/quetzal.cpp:156
-#, fuzzy
 msgid "Untitled Savegame"
 msgstr "Partida sense nom"
 
@@ -4634,9 +4584,8 @@ msgid "Loading game...\n"
 msgstr "S'està carregant el joc...\n"
 
 #: engines/glk/advsys/advsys.cpp:34
-#, fuzzy
 msgid "Could not start AdvSys game"
-msgstr "No s'ha pogut canviar al mode de vídeo: '"
+msgstr "No s'ha pogut iniciar el joc AdvSys"
 
 #: engines/glk/advsys/advsys.cpp:47 engines/glk/advsys/vm.cpp:319
 msgid "Sorry, the savegame couldn't be restored"
@@ -4692,9 +4641,8 @@ msgid "This Glulx file is too new a version to execute."
 msgstr "El fitxer Glulx es una versió massa nova per executar-se."
 
 #: engines/glk/quest/quest.cpp:44
-#, fuzzy
 msgid "Could not start Quest game"
-msgstr "No s'ha pogut canviar al mode de vídeo: '"
+msgstr "No s'ha pogut iniciar el joc Quest"
 
 #: engines/glk/scott/scott.cpp:99
 msgid "I don't understand your command. "
@@ -4765,9 +4713,8 @@ msgid ""
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:455
-#, fuzzy
 msgid "none"
-msgstr "<cap>"
+msgstr "cap"
 
 #: engines/glk/scott/scott.cpp:464
 msgid ""
@@ -4920,15 +4867,13 @@ msgstr ""
 
 #: engines/gob/inter_playtoons.cpp:257 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:553
-#, fuzzy
 msgid "Failed to load saved game from file."
-msgstr "No s'ha pogut carregar l'estat del joc del fitxer."
+msgstr "No s'ha pogut carregar la partida desada al fitxer."
 
 #: engines/gob/inter_v2.cpp:1549 engines/gob/inter_geisha.cpp:262
 #: engines/tinsel/saveload.cpp:566
-#, fuzzy
 msgid "Failed to save game to file."
-msgstr "No s'ha pogut desar l'estat del joc al fitxer."
+msgstr "No s'ha pogut desar la partida al fitxer."
 
 #: engines/gob/inter_v5.cpp:106
 msgid "Failed to delete file."
@@ -4939,14 +4884,12 @@ msgid "Menu / Skip"
 msgstr ""
 
 #: engines/griffon/metaengine.cpp:119
-#, fuzzy
 msgid "Attack"
-msgstr "Atac 1"
+msgstr "Atac"
 
 #: engines/griffon/metaengine.cpp:133
-#, fuzzy
 msgid "Speed Up Cutscene"
-msgstr "Salta la seqüència de video"
+msgstr "Accelera l'escena"
 
 #: engines/grim/detection.cpp:69
 msgid "Load user patch (unsupported)"
@@ -4959,9 +4902,8 @@ msgid ""
 msgstr ""
 
 #: engines/grim/detection.cpp:78 engines/zvision/metaengine.cpp:152
-#, fuzzy
 msgid "Show FPS"
-msgstr "Mostra-ho tot"
+msgstr "Mostra els FPS"
 
 #: engines/grim/detection.cpp:79
 msgid "Show the current FPS-rate, while you play."
@@ -4985,19 +4927,16 @@ msgid "Examine"
 msgstr "Examina"
 
 #: engines/grim/grim.cpp:485 engines/grim/grim.cpp:581
-#, fuzzy
 msgid "Use/Talk"
-msgstr "Parla"
+msgstr "Utilitza/Parla"
 
 #: engines/grim/grim.cpp:490 engines/grim/grim.cpp:586
-#, fuzzy
 msgid "Pick up/Put away"
-msgstr "Agafa"
+msgstr "Agafa/Deixa"
 
 #: engines/grim/grim.cpp:500 engines/grim/grim.cpp:596
-#, fuzzy
 msgid "Skip dialog lines"
-msgstr "Salta la línia"
+msgstr "Omet les línies de diàleg"
 
 #: engines/grim/grim.cpp:518 engines/grim/grim.cpp:614
 #: engines/hdb/metaengine.cpp:244
@@ -5017,20 +4956,16 @@ msgid "Quick Room Exit"
 msgstr ""
 
 #: engines/grim/grim.cpp:576
-#, fuzzy
 msgid "Examine/Look"
-msgstr "Examina"
+msgstr "Examina/Mira"
 
 #: engines/grim/grim.cpp:1350
-#, fuzzy
 msgid "Error: the game could not be saved."
-msgstr "no s'ha pogut canviar el mode de vídeo."
+msgstr "Error: no s'ha pogut desar la partida."
 
 #: engines/grim/inputdialog.cpp:79
-#, fuzzy
-#| msgid "Input"
 msgid "Input text"
-msgstr "Entrada"
+msgstr "Introduïu text"
 
 #: engines/grim/md5check.cpp:558
 #, c-format
@@ -5126,9 +5061,8 @@ msgid "Failed to save game"
 msgstr "No s'ha pogut desar l'estat del joc"
 
 #: engines/groovie/script.cpp:841 engines/lab/savegame.cpp:237
-#, fuzzy
 msgid "Would you like to save or restore a game?"
-msgstr "Voleu carregar o desar el joc?"
+msgstr "Voleu desar o carregar una partida?"
 
 #: engines/hadesch/rooms/daedalus.cpp:213
 msgid "The Minotaur minigame is not supported yet. Skipping"
@@ -5143,31 +5077,26 @@ msgid "The Troy minigame is not supported yet. Skipping"
 msgstr "El minijoc Troy encara no està suportat. Omet"
 
 #: engines/hdb/detection.cpp:123
-#, fuzzy
 msgid "Enable cheat mode"
-msgstr "Activa el mode heli"
+msgstr "Habilita el mode amb trucs (cheats)"
 
 #: engines/hdb/detection.cpp:124
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
 #: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:177
-#, fuzzy
 msgid "Move up"
-msgstr "Mou enrere"
+msgstr "Mou amunt"
 
 #: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:183
-#, fuzzy
 msgid "Move down"
-msgstr "Cancel·lar descàrrega"
+msgstr "Mou avall"
 
 #: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:189
-#, fuzzy
 msgid "Move left"
 msgstr "Mou a l'esquerra"
 
 #: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:195
-#, fuzzy
 msgid "Move right"
 msgstr "Mou a la dreta"
 
@@ -5185,7 +5114,6 @@ msgid "Clear waypoints"
 msgstr ""
 
 #: engines/hdb/metaengine.cpp:250
-#, fuzzy
 msgid "Debug"
 msgstr "Depurador"
 
@@ -5198,19 +5126,16 @@ msgid "Enable Gore Mode when available"
 msgstr ""
 
 #: engines/hypno/detection.cpp:190 engines/ultima/detection.cpp:78
-#, fuzzy
 msgid "Enable cheats"
-msgstr "Activa el mode heli"
+msgstr "Habilita els trucs (cheats)"
 
 #: engines/hypno/detection.cpp:191
 msgid "Allow cheats using the C key."
 msgstr ""
 
 #: engines/hypno/detection.cpp:197
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable restored content"
-msgstr "Habilita la integració amb Discord"
+msgstr "Habilita el contingut restaurat"
 
 #: engines/hypno/detection.cpp:198
 msgid "Add additional content that is not enabled the original implementation."
@@ -5335,16 +5260,14 @@ msgstr "No s'ha compilat el suport per a Eye of Beholder"
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:453
 #: engines/ultima/ultima4/meta_engine.cpp:224
 #: engines/ultima/ultima8/meta_engine.cpp:142
-#, fuzzy
 msgid "Interact via Left Click"
-msgstr "Clic esquerre"
+msgstr "Interacciona amb el clic esquerre"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:454
 #: engines/ultima/ultima4/meta_engine.cpp:230
 #: engines/ultima/ultima8/meta_engine.cpp:148
-#, fuzzy
 msgid "Interact via Right Click"
-msgstr "Clic dret"
+msgstr "Interacciona amb el clic dret"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:461
 #: engines/twine/metaengine.cpp:248
@@ -5356,12 +5279,10 @@ msgid "Move Back"
 msgstr "Mou enrere"
 
 #: engines/kyra/engine/eobcommon.cpp:371
-#, fuzzy
 msgid "Move Left"
 msgstr "Mou a l'esquerra"
 
 #: engines/kyra/engine/eobcommon.cpp:372
-#, fuzzy
 msgid "Move Right"
 msgstr "Mou a la dreta"
 
@@ -5378,9 +5299,8 @@ msgid "Turn Right"
 msgstr "Gira a la dreta"
 
 #: engines/kyra/engine/eobcommon.cpp:375
-#, fuzzy
 msgid "Open/Close Inventory"
-msgstr "Inventari"
+msgstr "Obre/Tanca l'inventari"
 
 #: engines/kyra/engine/eobcommon.cpp:376
 msgid "Switch Inventory/Character screen"
@@ -5391,9 +5311,8 @@ msgid "Camp"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:378
-#, fuzzy
 msgid "Cast Spell"
-msgstr "Escull l'encanteri"
+msgstr "Llança l'encanteri"
 
 #: engines/kyra/engine/eobcommon.cpp:381
 msgid "Spell Level 1"
@@ -5432,9 +5351,8 @@ msgid "Attack 3"
 msgstr "Atac 3"
 
 #: engines/kyra/engine/lol.cpp:460
-#, fuzzy
 msgid "Show Map"
-msgstr "~M~ostra el mapa"
+msgstr "Mostra el mapa"
 
 #: engines/kyra/engine/lol.cpp:463
 msgid "Slide Left"
@@ -5552,18 +5470,16 @@ msgid ""
 msgstr ""
 
 #: engines/made/detection_tables.h:441 engines/made/detection_tables.h:458
-#, fuzzy
 msgid "The game is using unsupported engine"
-msgstr "Identificador de joc no suportat"
+msgstr "El joc utilitza un motor no compatible"
 
 #: engines/mads/detection.cpp:62
 msgid "Easy mouse interface"
 msgstr ""
 
 #: engines/mads/detection.cpp:63
-#, fuzzy
 msgid "Shows object names when hovering the mouse over them"
-msgstr "Mostra etiquetes al posar el ratolí sobre els objectes"
+msgstr "Mostra els noms dels objectes en passar-hi el ratolí per sobre"
 
 #: engines/mads/detection.cpp:72 engines/mads/detection.cpp:73
 msgid "Animated inventory items"
@@ -5638,14 +5554,12 @@ msgid "~D~rop Page"
 msgstr "~D~escarta la pàgina"
 
 #: engines/mohawk/dialogs.cpp:150
-#, fuzzy
 msgid "Show ~M~ap"
 msgstr "~M~ostra el mapa"
 
 #: engines/mohawk/dialogs.cpp:155
-#, fuzzy
 msgid "Main Men~u~"
-msgstr "~M~enú Principal"
+msgstr "Men~ú~ principal"
 
 #: engines/mohawk/dialogs.cpp:287
 msgid "The new language will be applied after restarting the game."
@@ -5672,14 +5586,12 @@ msgid ""
 msgstr ""
 
 #: engines/mohawk/dialogs.cpp:366
-#, fuzzy
 msgid "Fastest"
-msgstr "Mode ràpid"
+msgstr "Més ràpid"
 
 #: engines/mohawk/dialogs.cpp:367
-#, fuzzy
 msgid "Normal"
-msgstr "OpenGL Normal"
+msgstr "Normal"
 
 #: engines/mohawk/dialogs.cpp:368
 msgid "Best"
@@ -5706,9 +5618,8 @@ msgid "The game is paused. Press any key to continue."
 msgstr "El joc està en pausa. Premeu qualsevol tecla per continuar."
 
 #: engines/mohawk/myst.cpp:555 engines/mohawk/riven.cpp:819
-#, fuzzy
 msgid "Open main menu"
-msgstr "~R~etorna al Llançador"
+msgstr "Obre el menú principal"
 
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:843
 msgid "Load game state"
@@ -5719,14 +5630,12 @@ msgid "Save game state"
 msgstr "Desa l'estat de la partida"
 
 #: engines/mohawk/myst.cpp:589 engines/mohawk/riven.cpp:853
-#, fuzzy
 msgid "Show options menu"
-msgstr "Opcions"
+msgstr "Mostra el menú d'opcions"
 
 #: engines/mohawk/myst.cpp:601
-#, fuzzy
 msgid "Drop page"
-msgstr "~D~escarta la pàgina"
+msgstr "Descarta la pàgina"
 
 #: engines/mohawk/myst.cpp:607 engines/wintermute/keymapper_tables.h:1449
 #: engines/wintermute/keymapper_tables.h:1596
@@ -5734,9 +5643,8 @@ msgstr "~D~escarta la pàgina"
 #: engines/wintermute/keymapper_tables.h:1668
 #: engines/wintermute/keymapper_tables.h:1687
 #: engines/wintermute/keymapper_tables.h:1720
-#, fuzzy
 msgid "Show map"
-msgstr "~M~ostra el mapa"
+msgstr "Mostra el mapa"
 
 #: engines/mohawk/myst_stacks/menu.cpp:282
 #: engines/mohawk/riven_stacks/aspit.cpp:348
@@ -5763,9 +5671,8 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
-#, fuzzy
 msgid "New game"
-msgstr "Nova partida desada"
+msgstr "Nova partida"
 
 #: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
@@ -5799,22 +5706,18 @@ msgid "You are missing the following required Riven data files:\n"
 msgstr ""
 
 #: engines/mohawk/riven.cpp:865
-#, fuzzy
 msgid "Move forward"
 msgstr "Mou endavant"
 
 #: engines/mohawk/riven.cpp:871
-#, fuzzy
 msgid "Move forward left"
-msgstr "Mou endavant"
+msgstr "Mou endavant a l'esquerra"
 
 #: engines/mohawk/riven.cpp:875
-#, fuzzy
 msgid "Move forward right"
-msgstr "Mou endavant"
+msgstr "Mou endavant a la dreta"
 
 #: engines/mohawk/riven.cpp:879
-#, fuzzy
 msgid "Move backwards"
 msgstr "Mou enrere"
 
@@ -5822,7 +5725,6 @@ msgstr "Mou enrere"
 #: engines/wintermute/keymapper_tables.h:741
 #: engines/wintermute/keymapper_tables.h:2045
 #: engines/wintermute/keymapper_tables.h:2146
-#, fuzzy
 msgid "Turn left"
 msgstr "Gira a l'esquerra"
 
@@ -5830,19 +5732,16 @@ msgstr "Gira a l'esquerra"
 #: engines/wintermute/keymapper_tables.h:746
 #: engines/wintermute/keymapper_tables.h:2051
 #: engines/wintermute/keymapper_tables.h:2153
-#, fuzzy
 msgid "Turn right"
 msgstr "Gira a la dreta"
 
 #: engines/mohawk/riven.cpp:897
-#, fuzzy
 msgid "Look up"
-msgstr "Mira"
+msgstr "Mira amunt"
 
 #: engines/mohawk/riven.cpp:902
-#, fuzzy
 msgid "Look down"
-msgstr "Redueix"
+msgstr "Mira avall"
 
 #: engines/mohawk/riven.cpp:908
 msgid "Play intro videos"
@@ -5869,14 +5768,12 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr ""
 
 #: engines/myst3/detection.cpp:179 engines/myst3/detection.cpp:193
-#, fuzzy
 msgid "PS2 version is not yet supported"
-msgstr "Identificador de joc no suportat"
+msgstr "Encara no s'admet la versió PS2"
 
 #: engines/myst3/detection.cpp:212
-#, fuzzy
 msgid "Widescreen mod"
-msgstr "Mode pantalla completa"
+msgstr "Mod de pantalla panoràmica"
 
 #: engines/myst3/detection.cpp:213
 msgid "Enable widescreen rendering in fullscreen mode."
@@ -5892,69 +5789,56 @@ msgid ""
 msgstr ""
 
 #: engines/myst3/myst3.cpp:1569 engines/pegasus/pegasus.cpp:744
-#, fuzzy
 msgid "Invalid file name for saving"
-msgstr "Nom de partida desada incorrecte"
+msgstr "Nom de fitxer no válid per desar la partida"
 
 #: engines/nancy/input.cpp:163
-#, fuzzy
 msgid "Left Click Interact"
-msgstr "Clic esquerre"
+msgstr "Interacciona amb el clic esquerre"
 
 #: engines/nancy/input.cpp:170
-#, fuzzy
 msgid "Right Click Interact"
-msgstr "Un clic dret"
+msgstr "Interacciona amb el clic dret"
 
 #: engines/nancy/input.cpp:201
-#, fuzzy
 msgid "Fast move modifier"
-msgstr "Mode ràpid"
+msgstr "Modificador de moviment ràpid"
 
 #: engines/nancy/input.cpp:209
-#, fuzzy
 msgid "Toggle fast conversation mode"
-msgstr "Mode ràpid"
+msgstr "Commuta el mode de conversa ràpida"
 
 #: engines/nancy/input.cpp:214
-#, fuzzy
 msgid "Toggle end conversation mode"
-msgstr "Mode ràpid"
+msgstr "Commuta el mode de conversa final"
 
 #: engines/nancy/input.cpp:219
-#, fuzzy
 msgid "Go to main menu"
-msgstr "~R~etorna al Llançador"
+msgstr "Ves al menú principal"
 
 #: engines/nancy/input.cpp:224
-#, fuzzy
 msgid "Go to save/load menu"
-msgstr "Inseriu el disc de partides desades"
+msgstr "Ves al menú de desar/carregar"
 
 #: engines/nancy/input.cpp:229
-#, fuzzy
 msgid "Reload last save"
-msgstr "No hi ha data desada"
+msgstr "Torna a carregar l'última partida desada"
 
 #: engines/nancy/input.cpp:234
-#, fuzzy
 msgid "Go to setup menu"
-msgstr "Opcions"
+msgstr "Ves al menú de configuració"
 
 #: engines/nancy/input.cpp:239
-#, fuzzy
 msgid "Show credits"
-msgstr "Mostra el cursor del ratolí"
+msgstr "Mostra els crèdits"
 
 #: engines/nancy/input.cpp:244
-#, fuzzy
 msgid "Go to map screen"
-msgstr "Desplaçament suau"
+msgstr "Ves a la pantalla del mapa"
 
 #: engines/nancy/input.cpp:250
-#, fuzzy
 msgid "Open general cheat menu"
-msgstr "Activa el mode heli"
+msgstr "Obre el menú de trucs (cheats) general"
 
 #: engines/nancy/input.cpp:255
 msgid "Open event flags cheat menu"
@@ -5979,9 +5863,8 @@ msgid ""
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:42
-#, fuzzy
 msgid "Use original menus"
-msgstr "Utilitza les pantalles originals de desat/càrrega"
+msgstr "Utilitza els menús originals"
 
 #: engines/nancy/dialogs.cpp:42
 msgid ""
@@ -5991,9 +5874,8 @@ msgstr ""
 
 #. I18N: Second Chance is the name of the original engine's autosave system
 #: engines/nancy/dialogs.cpp:45
-#, fuzzy
 msgid "Enable Second Chance"
-msgstr "Activa el mode heli"
+msgstr "Habilita la Segona Oportunitat"
 
 #: engines/nancy/dialogs.cpp:45
 msgid ""
@@ -6002,14 +5884,12 @@ msgid ""
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:47
-#, fuzzy
 msgid "Speech Options"
-msgstr "Només veus"
+msgstr "Opcions de veus"
 
 #: engines/nancy/dialogs.cpp:48
-#, fuzzy
 msgid "Engine Options"
-msgstr "Opcions"
+msgstr "Opcions del motor"
 
 #: engines/nancy/dialogs.cpp:103
 msgid "General"
@@ -6020,9 +5900,8 @@ msgid "Scene Data"
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:106
-#, fuzzy
 msgid "Restart the Scene"
-msgstr "Inicia el depurador"
+msgstr "Reinicia l'escena"
 
 #: engines/nancy/dialogs.cpp:108
 msgid "Scene Number"
@@ -6082,9 +5961,8 @@ msgid "Timer On"
 msgstr "Temporitzador activat"
 
 #: engines/nancy/dialogs.cpp:143
-#, fuzzy
 msgid "Seconds"
-msgstr "Segon noi"
+msgstr "Segons"
 
 #: engines/nancy/dialogs.cpp:212
 msgid "Invalid Scene ID!"
@@ -6132,7 +6010,6 @@ msgid "Saving game..."
 msgstr "Desant la partida..."
 
 #: engines/parallaction/saveload.cpp:268
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Nippon Safes that should be "
 "renamed.\n"
@@ -6141,13 +6018,13 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"El ScummVM ha trobat que teniu partides desades antigues de Nippon Safes que "
-"s'haurien de reanomenar.\n"
-"El noms antics de les partides desades no estan suportats, per la qual cosa "
-"no podreu carregar aquestes partides si no les convertiu.\n"
+"ScummVM ha trobat que heu desat partides antigues del Nippon Safes que "
+"s'haurien de convertir.\n"
+"El format de desat original del joc ja no és suportat directament, així que "
+"no podreu carregar les vostres partides si no els convertiu.\n"
 "\n"
-"Premeu D'Acord per convertir-les ara, en cas contrari se us tornarà a "
-"demanar la propera vegada.\n"
+"Premeu d'Acord per convertir-les ara, en cas contrari se us tornarà a "
+"demanar la propera vegada que inicieu el joc.\n"
 
 #: engines/parallaction/saveload.cpp:315
 #, fuzzy
