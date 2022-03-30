@@ -111,8 +111,6 @@ int get_text_lines_height(size_t fontNumber, size_t numlines);
 // Gets the height of a graphic surface enough to accomodate this number of text lines;
 // note this accounts for the real pixel font height
 int get_text_lines_surf_height(size_t fontNumber, size_t numlines);
-// get the source font associated with an outline font
-int get_font_outline_font(size_t font_number);
 // Set font's outline type
 void set_font_outline(size_t font_number, int outline_type,
 	enum FontInfo::AutoOutlineStyle style = FontInfo::kSquared, int thickness = 1);

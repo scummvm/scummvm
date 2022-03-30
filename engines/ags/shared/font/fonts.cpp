@@ -167,16 +167,6 @@ int get_font_outline_thickness(size_t font_number) {
 	return _GP(fonts)[font_number].Info.AutoOutlineThickness;
 }
 
-int get_font_outline_font(size_t font_number) {
-	for (size_t fontNum = 0; fontNum < _GP(fonts).size(); ++fontNum) {
-		if (_GP(fonts)[fontNum].Info.Outline == (int)font_number)
-			return fontNum;
-	}
-
-	return FONT_OUTLINE_NONE;
-	return _GP(fonts)[font_number].Info.AutoOutlineThickness;
-}
-
 void set_font_outline(size_t font_number, int outline_type,
 		enum FontInfo::AutoOutlineStyle style, int thickness) {
 	if (font_number >= _GP(fonts).size())
