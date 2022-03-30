@@ -74,18 +74,15 @@ HError SpriteFile::OpenFile(const String &filename, const String &sprindex_filen
 		return new Error("Uknown spriteset format.");
 	}
 
-	if (vers == kSprfVersion_Uncompressed) {
-		this->_compressed = false;
-	} else if (vers == kSprfVersion_Compressed) {
-		this->_compressed = true;
-	} else if (vers >= kSprfVersion_Last32bit) {
-		this->_compressed = (_stream->ReadInt8() == 1);
-		spriteFileID = _stream->ReadInt32();
-	}
-
 	if (vers < kSprfVersion_Compressed) {
+		_compressed = false;
 		// skip the palette
 		_stream->Seek(256 * 3); // sizeof(RGB) * 256
+	} else if (vers == kSprfVersion_Compressed) {
+		_compressed = true;
+	} else if (vers >= kSprfVersion_Last32bit) {
+		_compressed = (_stream->ReadInt8() == 1);
+		spriteFileID = _stream->ReadInt32();
 	}
 
 	sprkey_t topmost;
@@ -191,37 +188,17 @@ bool SpriteFile::LoadSpriteIndexFile(const String &filename, int expectedFileID,
 
 HError SpriteFile::RebuildSpriteIndex(Stream *in, sprkey_t topmost,
 	SpriteFileVersion vers, std::vector<Size> &metrics) {
-	for (sprkey_t i = 0; i <= topmost; ++i) {
+	topmost = std::min(topmost, (sprkey_t)_spriteData.size() - 1);
+	for (sprkey_t i = 0; !in->EOS() && (i <= topmost); ++i) {
 		_spriteData[i].Offset = in->GetPosition();
-
-		int coldep = in->ReadInt16();
-
-		if (coldep == 0) {
-			if (in->EOS())
-				break;
-			continue;
-		}
-
-		if (in->EOS())
-			break;
-
-		if ((size_t)i >= _spriteData.size())
-			break;
-
-		int wdd = in->ReadInt16();
-		int htt = in->ReadInt16();
-		metrics[i].Width = wdd;
-		metrics[i].Height = htt;
-
-		size_t spriteDataSize;
-		if (vers == kSprfVersion_Compressed) {
-			spriteDataSize = in->ReadInt32();
-		} else if (vers >= kSprfVersion_Last32bit) {
-			spriteDataSize = this->_compressed ? in->ReadInt32() : wdd * coldep * htt;
-		} else {
-			spriteDataSize = wdd * coldep * htt;
-		}
-		in->Seek(spriteDataSize);
+		int bpp = in->ReadInt16();
+		if (bpp == 0) continue; // empty slot
+		int w = in->ReadInt16();
+		int h = in->ReadInt16();
+		metrics[i].Width = w;
+		metrics[i].Height = h;
+		size_t data_sz = _compressed ? in->ReadInt32() : w * h * bpp;
+		in->Seek(data_sz); // skip image data
 	}
 	return HError::None();
 }
@@ -238,17 +215,16 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 	SeekToSprite(index);
 	_curPos = -2; // mark undefined pos
 
-	int coldep = _stream->ReadInt16();
-	if (coldep == 0) { // empty slot, this is normal
+	int bpp = _stream->ReadInt16();
+	if (bpp == 0) { // empty slot, this is normal
 		return HError::None();
 	}
-
-	int wdd = _stream->ReadInt16();
-	int htt = _stream->ReadInt16();
-	Bitmap *image = BitmapHelper::CreateBitmap(wdd, htt, coldep * 8);
+	int w = _stream->ReadInt16();
+	int h = _stream->ReadInt16();
+	Bitmap *image = BitmapHelper::CreateBitmap(w, h, bpp * 8);
 	if (image == nullptr) {
 		return new Error(String::FromFormat("LoadSprite: failed to allocate bitmap %d (%dx%d%d).",
-			index, wdd, htt, coldep * 8));
+			index, w, h, bpp * 8));
 	}
 
 	if (_compressed) {
@@ -258,27 +234,28 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 			return new Error(String::FromFormat("LoadSprite: bad compressed data for sprite %d.", index));
 		}
 		rle_decompress(image, _stream.get());
+		// TODO: test that not more than data_size was read!
 	} else {
-		if (coldep == 1) {
-			for (int h = 0; h < htt; ++h)
-				_stream->ReadArray(&image->GetScanLineForWriting(h)[0], coldep, wdd);
-		} else if (coldep == 2) {
-			for (int h = 0; h < htt; ++h)
-				_stream->ReadArrayOfInt16((int16_t *)&image->GetScanLineForWriting(h)[0], wdd);
-		} else {
-			for (int h = 0; h < htt; ++h)
-				_stream->ReadArrayOfInt32((int32_t *)&image->GetScanLineForWriting(h)[0], wdd);
+		switch (bpp) {
+		case 1: _stream->Read(image->GetDataForWriting(), w * h); break;
+		case 2: _stream->ReadArrayOfInt16(
+			reinterpret_cast<int16_t *>(image->GetDataForWriting()), w *h); break;
+		case 4: _stream->ReadArrayOfInt32(
+			reinterpret_cast<int32_t *>(image->GetDataForWriting()), w *h); break;
+		default: assert(0); break;
 		}
 	}
+
 	sprite = image;
 	_curPos = index + 1; // mark correct pos
 	return HError::None();
 }
 
 HError SpriteFile::LoadSpriteData(sprkey_t index, Size &metric, int &bpp,
-		std::vector<uint8_t> &data) {
+	std::vector<uint8_t> &data) {
 	metric = Size();
 	bpp = 0;
+	data.resize(0);
 	if (index < 0 || (size_t)index >= _spriteData.size())
 		new Error(String::FromFormat("LoadSprite: slot index %d out of bounds (%d - %d).",
 			index, 0, _spriteData.size() - 1));
@@ -289,26 +266,17 @@ HError SpriteFile::LoadSpriteData(sprkey_t index, Size &metric, int &bpp,
 	SeekToSprite(index);
 	_curPos = -2; // mark undefined pos
 
-	int coldep = _stream->ReadInt16();
-	if (coldep == 0) { // empty slot, this is normal
-		metric = Size();
-		bpp = 0;
-		data.resize(0);
+	bpp = _stream->ReadInt16();
+	if (bpp == 0) { // empty slot, this is normal
 		return HError::None();
 	}
-
-	int width = _stream->ReadInt16();
-	int height = _stream->ReadInt16();
-
-	size_t data_size;
-	if (_compressed)
-		data_size = _stream->ReadInt32();
-	else
-		data_size = width * height * coldep;
+	int w = _stream->ReadInt16();
+	int h = _stream->ReadInt16();
+	size_t data_size = _compressed ? _stream->ReadInt32() : w * h * bpp;
 	data.resize(data_size);
 	_stream->Read(&data[0], data_size);
-	metric = Size(width, height);
-	bpp = coldep;
+	metric = Size(w, h);
+
 	_curPos = index + 1; // mark correct pos
 	return HError::None();
 }
@@ -402,9 +370,9 @@ int SaveSpriteIndex(const String &filename, const SpriteFileIndex &index) {
 	out->WriteInt32(index.GetLastSlot());
 	out->WriteInt32(index.GetCount());
 	if (index.GetCount() > 0) {
-		out->WriteArrayOfInt16(&index.Widths.front(), index.Widths.size());
-		out->WriteArrayOfInt16(&index.Heights.front(), index.Heights.size());
-		out->WriteArrayOfInt64(&index.Offsets.front(), index.Offsets.size());
+		out->WriteArrayOfInt16(&index.Widths[0], index.Widths.size());
+		out->WriteArrayOfInt16(&index.Heights[0], index.Heights.size());
+		out->WriteArrayOfInt64(&index.Offsets[0], index.Offsets.size());
 	}
 	delete out;
 	return 0;
@@ -440,7 +408,7 @@ void SpriteFileWriter::Begin(bool compressed, sprkey_t last_slot) {
 
 void SpriteFileWriter::WriteBitmap(Bitmap *image) {
 	if (!_out) return;
-	int bpp = image->GetColorDepth() / 8;
+	int bpp = image->GetBPP();
 	int w = image->GetWidth();
 	int h = image->GetHeight();
 	if (_compress) {

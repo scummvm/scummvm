@@ -113,7 +113,8 @@ private:
 	// Internal sprite reference
 	struct SpriteRef {
 		soff_t Offset = 0; // data offset
-		size_t Size = 0;   // cache size of element, in bytes
+		size_t RawSize = 0; // file size of element, in bytes
+		// TODO: RawSize is currently unused, due to incompleteness of spriteindex format
 	};
 
 	// Array of sprite references

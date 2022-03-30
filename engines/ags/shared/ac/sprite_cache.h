@@ -153,7 +153,6 @@ private:
 	void        DisposeOldest();
 
 	// Information required for the sprite streaming
-	// TODO: split into sprite cache and sprite stream data
 	struct SpriteData {
 		size_t          Size; // to track cache size
 		uint32_t        Flags;
