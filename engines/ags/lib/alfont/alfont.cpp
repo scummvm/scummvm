@@ -632,7 +632,7 @@ ALFONT_FONT *alfont_load_font_from_mem(const char *data, int data_len) {
 	/* copy user data to internal buffer */
 	font->data = new_data;
 	font->data_size = data_len;
-	memcpy((void *)font->data, (void *)data, data_len);
+	memcpy((void *)font->data, (const void *)data, data_len);
 
 	/* load the font */
 	error = New_Memory_Face(ft_library, (const FT_Byte *)font->data, font->data_size, 0, &font->face);
