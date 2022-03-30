@@ -374,7 +374,7 @@ size_t SpriteCache::LoadSprite(sprkey_t index) {
 	if (!image) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Warn,
 			"LoadSprite: failed to load sprite %d:\n%s\n - remapping to sprite 0.", index,
-			err ? err->FullMessage().GetCStr() : "Sprite does not exist.");
+			err ? "Sprite does not exist." : err->FullMessage().GetCStr());
 		RemapSpriteToSprite0(index);
 		return 0;
 	}
