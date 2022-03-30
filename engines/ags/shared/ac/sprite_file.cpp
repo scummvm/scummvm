@@ -251,10 +251,8 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 	return HError::None();
 }
 
-HError SpriteFile::LoadSpriteData(sprkey_t index, Size &metric, int &bpp,
-	std::vector<uint8_t> &data) {
-	metric = Size();
-	bpp = 0;
+HError SpriteFile::LoadRawData(sprkey_t index, SpriteDatHeader &hdr, std::vector<uint8_t> &data) {
+	hdr = SpriteDatHeader();
 	data.resize(0);
 	if (index < 0 || (size_t)index >= _spriteData.size())
 		new Error(String::FromFormat("LoadSprite: slot index %d out of bounds (%d - %d).",
@@ -266,16 +264,20 @@ HError SpriteFile::LoadSpriteData(sprkey_t index, Size &metric, int &bpp,
 	SeekToSprite(index);
 	_curPos = -2; // mark undefined pos
 
-	bpp = _stream->ReadInt16();
+	int bpp = _stream->ReadInt16();
 	if (bpp == 0) { // empty slot, this is normal
 		return HError::None();
 	}
 	int w = _stream->ReadInt16();
 	int h = _stream->ReadInt16();
-	size_t data_size = _compressed ? _stream->ReadInt32() : w * h * bpp;
+	size_t data_size = w * h * bpp;
+	if (_compressed) {
+		data_size = _stream->ReadInt32() + sizeof(int32_t);
+		_stream->Seek(-4);
+	}
 	data.resize(data_size);
 	_stream->Read(&data[0], data_size);
-	metric = Size(w, h);
+	hdr = SpriteDatHeader(bpp, w, h);
 
 	_curPos = index + 1; // mark correct pos
 	return HError::None();
@@ -340,14 +342,13 @@ int SaveSpriteFile(const String &save_to_file,
 
 		// Not in memory - and same compression option;
 		// Directly copy the sprite bytes from the input file to the output
-		Size metric;
-		int bpp;
-		read_from_file->LoadSpriteData(i, metric, bpp, membuf);
-		if (bpp == 0) {
+		SpriteDatHeader hdr;
+		read_from_file->LoadRawData(i, hdr, membuf);
+		if (hdr.BPP == 0) { // empty slot
 			writer.WriteEmptySlot();
-			continue; // empty slot
+			continue;
 		}
-		writer.WriteSpriteData(&membuf[0], membuf.size(), metric.Width, metric.Height, bpp);
+		writer.WriteRawData(hdr, &membuf[0], membuf.size());
 	}
 	writer.Finalize();
 
@@ -411,13 +412,39 @@ void SpriteFileWriter::WriteBitmap(Bitmap *image) {
 	int bpp = image->GetBPP();
 	int w = image->GetWidth();
 	int h = image->GetHeight();
+	const SpriteDatHeader hdr(bpp, w, h);
 	if (_compress) {
 		MemoryStream mems(_membuf, kStream_Write);
 		rle_compress(image, &mems);
-		WriteSpriteData(&_membuf[0], _membuf.size(), w, h, bpp);
+		// write image data as a plain byte array
+		WriteSpriteData(hdr, &_membuf[0], _membuf.size(), 1);
 		_membuf.clear();
 	} else {
-		WriteSpriteData(image->GetData(), w * h * bpp, w, h, bpp);
+		WriteSpriteData(hdr, image->GetData(), w * h * bpp, bpp);
+	}
+}
+
+void SpriteFileWriter::WriteSpriteData(const SpriteDatHeader &hdr,
+	const uint8_t *im_data, size_t im_data_sz, int im_bpp) {
+	// Add index entry and write resulting data to the stream
+	soff_t sproff = _out->GetPosition();
+	_index.Offsets.push_back(sproff);
+	_index.Widths.push_back(hdr.Width);
+	_index.Heights.push_back(hdr.Height);
+	_out->WriteInt16(hdr.BPP);
+	_out->WriteInt16(hdr.Width);
+	_out->WriteInt16(hdr.Height);
+	// if not compressed, then the data size is supposed to be calculated
+	// from the image metrics
+	if (_compress)
+		_out->WriteInt32(im_data_sz);
+	switch (im_bpp) {
+	case 1: _out->Write(im_data, im_data_sz); break;
+	case 2: _out->WriteArrayOfInt16(reinterpret_cast<const int16_t *>(im_data),
+		im_data_sz / sizeof(int16_t)); break;
+	case 4: _out->WriteArrayOfInt32(reinterpret_cast<const int32_t *>(im_data),
+		im_data_sz / sizeof(int32_t)); break;
+	default: assert(0); break;
 	}
 }
 
@@ -430,22 +457,16 @@ void SpriteFileWriter::WriteEmptySlot() {
 	_index.Heights.push_back(0);
 }
 
-void SpriteFileWriter::WriteSpriteData(const uint8_t *pbuf, size_t len,
-	int w, int h, int bpp) {
+void SpriteFileWriter::WriteRawData(const SpriteDatHeader &hdr, const uint8_t *data, size_t data_sz) {
 	if (!_out) return;
 	soff_t sproff = _out->GetPosition();
 	_index.Offsets.push_back(sproff);
-	_index.Widths.push_back(w);
-	_index.Heights.push_back(h);
-	_out->WriteInt16(bpp);
-	_out->WriteInt16(w);
-	_out->WriteInt16(h);
-	// if not compressed, then the data size could be calculated from the
-	// image metrics, therefore no need to write one
-	if (_compress)
-		_out->WriteInt32(len);
-	if (len == 0) return; // bad data?
-	_out->Write(pbuf, len); // write data itself
+	_index.Widths.push_back(hdr.Width);
+	_index.Heights.push_back(hdr.Height);
+	_out->WriteInt16(hdr.BPP);
+	_out->WriteInt16(hdr.Width);
+	_out->WriteInt16(hdr.Height);
+	_out->Write(data, data_sz);
 }
 
 void SpriteFileWriter::Finalize() {

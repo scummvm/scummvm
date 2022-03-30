@@ -74,6 +74,18 @@ struct SpriteFileIndex {
 	inline sprkey_t GetLastSlot() const { return (sprkey_t)GetCount() - 1; }
 };
 
+// Invidual sprite data header (as read from the file)
+struct SpriteDatHeader {
+	int BPP = 0; // color depth (bytes per pixel)
+	int Width = 0;
+	int Height = 0;
+
+	SpriteDatHeader() = default;
+	SpriteDatHeader(int bpp, int w = 0, int h = 0)
+		: BPP(bpp), Width(w), Height(h) {
+	}
+};
+
 // SpriteFile opens a sprite file for reading, reports general information,
 // and lets read sprites in any order.
 class SpriteFile {
@@ -103,8 +115,8 @@ public:
 
 	// Loads an image data and creates a ready bitmap
 	HError      LoadSprite(sprkey_t index, Bitmap *&sprite);
-	// Loads an image data into the buffer, reports the bitmap metrics and color depth
-	HError      LoadSpriteData(sprkey_t index, Size &metric, int &bpp, std::vector<uint8_t> &data);
+	// Loads a raw sprite element data into the buffer, stores header info separately
+	HError      LoadRawData(sprkey_t index, SpriteDatHeader &hdr, std::vector<uint8_t> &data);
 
 private:
 	// Seek stream to sprite
@@ -141,13 +153,16 @@ public:
     void WriteBitmap(Bitmap *image);
     // Writes an empty slot marker
     void WriteEmptySlot();
-    // Writes a raw sprite data without additional processing
-	void WriteSpriteData(const uint8_t *pbuf, size_t len, int w, int h, int bpp);
-    // Finalizes current format; no further writing is possible after this
-    void Finalize();
+	// Writes a raw sprite data without any additional processing
+	void WriteRawData(const SpriteDatHeader &hdr, const uint8_t *data, size_t data_sz);
+	// Finalizes current format; no further writing is possible after this
+	void Finalize();
 
 private:
-    std::unique_ptr<Stream> &_out;
+	// Writes prepared image data in a proper file format, following explicit data_bpp rule
+	void WriteSpriteData(const SpriteDatHeader &hdr, const uint8_t *im_data, size_t im_data_sz, int im_bpp);
+
+	std::unique_ptr<Stream> &_out;
     bool _compress = false;
     soff_t _lastSlotPos = -1; // last slot save position in file
     // sprite index accumulated on write for reporting back to user
