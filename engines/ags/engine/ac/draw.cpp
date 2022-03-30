@@ -84,33 +84,6 @@ void setpal() {
 
 int _places_r = 3, _places_g = 2, _places_b = 3;
 
-// convert RGB to BGR for strange graphics cards
-Bitmap *convert_16_to_16bgr(Bitmap *tempbl) {
-
-	int x, y;
-	unsigned short c, r, ds, b;
-
-	for (y = 0; y < tempbl->GetHeight(); y++) {
-		unsigned short *p16 = (unsigned short *)tempbl->GetScanLine(y);
-
-		for (x = 0; x < tempbl->GetWidth(); x++) {
-			c = p16[x];
-			if (c != MASK_COLOR_16) {
-				b = _rgb_scale_5[c & 0x1F];
-				ds = _rgb_scale_6[(c >> 5) & 0x3F];
-				r = _rgb_scale_5[(c >> 11) & 0x1F];
-				// allegro assumes 5-6-5 for 16-bit
-				p16[x] = (((r >> _places_r) << _G(_rgb_r_shift_16)) |
-				          ((ds >> _places_g) << _G(_rgb_g_shift_16)) |
-				          ((b >> _places_b) << _G(_rgb_b_shift_16)));
-
-			}
-		}
-	}
-
-	return tempbl;
-}
-
 // PSP: convert 32 bit RGB to BGR.
 Bitmap *convert_32_to_32bgr(Bitmap *tempbl) {
 
@@ -191,10 +164,6 @@ Bitmap *AdjustBitmapForUseWithDisplayMode(Bitmap *bitmap, bool has_alpha) {
 			new_bitmap = remove_alpha_channel(bitmap);
 		else // else simply convert bitmap
 			new_bitmap = BitmapHelper::CreateBitmapCopy(bitmap, compat_col_depth);
-	}
-	// Special case when we must convert 16-bit RGB to BGR
-	else if (_G(convert_16bit_bgr) == 1 && bmp_col_depth == 16) {
-		new_bitmap = convert_16_to_16bgr(bitmap);
 	}
 
 	// Finally, if we did not create a new copy already, - convert to driver compatible format

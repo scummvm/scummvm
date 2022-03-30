@@ -181,17 +181,6 @@ void engine_setup_color_conversions(int coldepth) {
 	_G(_rgb_g_shift_15) = 5;
 	_G(_rgb_b_shift_15) = 0;
 
-	// Most cards do 5-6-5 RGB, which is the format the files are saved in
-	// Some do 5-6-5 BGR, or  6-5-5 RGB, in which case convert the gfx
-	if ((coldepth == 16) && ((_G(_rgb_b_shift_16) != 0) || (_G(_rgb_r_shift_16) != 11))) {
-		_G(convert_16bit_bgr) = 1;
-		if (_G(_rgb_r_shift_16) == 10) {
-			// some very old graphics cards lie about being 16-bit when they
-			// are in fact 15-bit ... get around this
-			_G(places_r) = 3;
-			_G(places_g) = 3;
-		}
-	}
 	if (coldepth > 16) {
 		// when we're using 32-bit colour, it converts hi-color images
 		// the wrong way round - so fix that
