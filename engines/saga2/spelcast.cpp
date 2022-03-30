@@ -30,6 +30,9 @@
 #include "saga2/spelshow.h"
 #include "saga2/spelvals.h"
 #include "saga2/tilevect.h"
+#if DEBUG
+#include "saga2/tileline.h"
+#endif
 
 namespace Saga2 {
 
