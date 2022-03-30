@@ -170,7 +170,7 @@ void engine_pre_gfxsystem_screen_destroy() {
 
 // Setup color conversion parameters
 void engine_setup_color_conversions(int coldepth) {
-	// default shifts for how we store the sprite data1
+	// default shifts for how we store the sprite data
 	_G(_rgb_r_shift_32) = 16;
 	_G(_rgb_g_shift_32) = 8;
 	_G(_rgb_b_shift_32) = 0;
@@ -181,20 +181,10 @@ void engine_setup_color_conversions(int coldepth) {
 	_G(_rgb_g_shift_15) = 5;
 	_G(_rgb_b_shift_15) = 0;
 
-	if (coldepth > 16) {
-		// when we're using 32-bit colour, it converts hi-color images
-		// the wrong way round - so fix that
-
-		_G(_rgb_r_shift_16) = 11;
-		_G(_rgb_g_shift_16) = 5;
-		_G(_rgb_b_shift_16) = 0;
-	} else if (coldepth == 16) {
-		// ensure that any 32-bit graphics displayed are converted
-		// properly to the current depth
-		_G(_rgb_r_shift_32) = 16;
-		_G(_rgb_g_shift_32) = 8;
-		_G(_rgb_b_shift_32) = 0;
-	} else if (coldepth < 16) {
+	// TODO: investigate if this is still necessary, and under which circumstances?
+	// the color conversion should likely be done when preparing textures or
+	// rendering to final output instead, not in the main engine code.
+	if (coldepth < 16) {
 		// ensure that any 32-bit graphics displayed are converted
 		// properly to the current depth
 #if AGS_PLATFORM_OS_WINDOWS
