@@ -380,6 +380,7 @@ public:
 		objMissesCount = 0;
 		animation = "NONE";
 		explosionAnimation = "";
+		startFrame = 0;
 		lastFrame = 1024;
 		noEnemySound = false;
 	}
@@ -411,6 +412,7 @@ public:
 	Common::List<uint32> attackFrames;
 	Common::Array<FrameInfo> bodyFrames;
 	Common::Array<FrameInfo> explosionFrames;
+	uint32 startFrame;
 	uint32 lastFrame;
 	Filename explosionAnimation;
 	bool destroyed;

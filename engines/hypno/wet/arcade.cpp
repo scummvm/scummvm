@@ -416,7 +416,7 @@ void WetEngine::missTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {
 }
 
 void WetEngine::hitPlayer() {
-	if (_arcadeMode != "Y1" && _arcadeMode != "Y3" && _arcadeMode != "Y4" && _arcadeMode != "Y5") {
+	if (_arcadeMode != "Y1" && _arcadeMode != "Y2" && _arcadeMode != "Y3" && _arcadeMode != "Y4" && _arcadeMode != "Y5") {
 		assert( _playerFrameSep < (int)_playerFrames.size());
 		if (_playerFrameIdx < _playerFrameSep)
 			_playerFrameIdx = _playerFrameSep;
