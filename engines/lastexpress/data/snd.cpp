@@ -350,6 +350,7 @@ class LastExpress_ADPCMStream : public Audio::ADPCMStream {
 public:
 	LastExpress_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, uint32 blockSize, uint32 volume, bool looped) :
 			Audio::ADPCMStream(stream, disposeAfterUse, size, 44100, 1, blockSize) {
+		_decodedSampleCount = 0;
 		_currentVolume = 0;
 		_nextVolume = volume;
 		_smoothChangeTarget = volume;
@@ -369,12 +370,6 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples) override {
 		int samples = 0;
-		// Temporary data
-		int step = 0;
-		int sample = 0;
-		byte idx = 0;
-
-		assert(numSamples % 2 == 0);
 
 		while (_running && samples < numSamples) {
 			if (Audio::ADPCMStream::endOfData()) {
@@ -403,21 +398,32 @@ public:
 				_currentVolume = _nextVolume;
 			}
 
-			for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
-				byte data = _stream->readByte();
-				_blockPos[0]++;
+			for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples++) {
+				if (_decodedSampleCount == 0) {
+					int step, sample;
+					byte idx;
 
-				// First nibble
-				idx = data >> 4;
-				step = stepTable[idx + _status.ima_ch[0].stepIndex / 4];
-				sample = CLIP<int>(imaTable[idx + _status.ima_ch[0].stepIndex / 4] + _status.ima_ch[0].last, -32767, 32767);
-				buffer[samples] = (sample * _currentVolume) >> 4;
+					byte data = _stream->readByte();
+					_blockPos[0]++;
 
-				// Second nibble
-				idx = data & 0xF;
-				_status.ima_ch[0].stepIndex = stepTable[idx + step / 4];
-				_status.ima_ch[0].last = CLIP(imaTable[idx + step / 4] + sample, -32767, 32767);
-				buffer[samples + 1] = (_status.ima_ch[0].last * _currentVolume) >> 4;
+					// First nibble
+					idx = data >> 4;
+					step = stepTable[idx + _status.ima_ch[0].stepIndex / 4];
+					sample = CLIP<int>(imaTable[idx + _status.ima_ch[0].stepIndex / 4] + _status.ima_ch[0].last, -32767, 32767);
+					_decodedSamples[0] = (sample * _currentVolume) >> 4;
+
+					// Second nibble
+					idx = data & 0xF;
+					_status.ima_ch[0].stepIndex = stepTable[idx + step / 4];
+					_status.ima_ch[0].last = CLIP(imaTable[idx + step / 4] + sample, -32767, 32767);
+					_decodedSamples[1] = (_status.ima_ch[0].last * _currentVolume) >> 4;
+
+					_decodedSampleCount = 2;
+				}
+
+				// (1 - (count - 1)) ensures that _decodedSamples acts as a FIFO of depth 2
+				buffer[samples] = _decodedSamples[1 - (_decodedSampleCount - 1)];
+				_decodedSampleCount--;
 			}
 		}
 
@@ -428,6 +434,9 @@ public:
 	void setVolumeSmoothly(uint32 newVolume) { _smoothChangeTarget = newVolume; }
 
 private:
+	uint8 _decodedSampleCount;
+	int16 _decodedSamples[2];
+
 	uint32 _currentVolume;
 	uint32 _nextVolume;
 	uint32 _smoothChangeTarget;
