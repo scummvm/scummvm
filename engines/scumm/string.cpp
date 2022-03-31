@@ -72,6 +72,22 @@ void ScummEngine::printString(int m, const byte *msg) {
 			return;
 		}
 
+		// WORKAROUND bug #13378: Sam's reactions during the intro run
+		// much too quick for the subtitles in some localizations. We
+		// get around this by slowing down that entire animation, while
+		// leaving the reset of the animations unchanged.
+		//
+		// The animation speed is not very fine grained, though.
+		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && _enableEnhancements) {
+			if (_language == Common::DE_DEU) {
+				if (memcmp(msg + 16, "Ohh!", 4) == 0) {
+					Actor *a = derefActorSafe(2, "printString");
+					if (a)
+						a->setAnimSpeed(3);
+				}
+			}
+		}
+
 		actorTalk(msg);
 		break;
 	case 1:
@@ -354,6 +370,89 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			_keepText = false;
 			_msgCount = 0;
 			endLoop = true;
+
+			// WORKAROUND bug #13378: Some of the speech is badly
+			// synced to the subtitles, particularly in the
+			// localized versions. This happens because a single
+			// speech line is used for a text that's broken up by
+			// one or more embedded "wait" codes. Rather than
+			// relying on the calculated talk delay, hard-code
+			// better ones.
+			if (_game.id == GID_SAMNMAX && _enableEnhancements && isScriptRunning(65)) {
+				typedef struct {
+					const char *str;
+					const int16 talkDelay;
+					const byte action;
+				} TimingAdjustment;
+
+				TimingAdjustment *adjustments;
+				int numAdjustments;
+
+				// We identify the broken up strings that need
+				// adjustment by the upcoming text.
+
+				TimingAdjustment timingAdjustmentsDE[] = {
+					{ "Und daf\x81r^",    110, 0 },
+					{ "Es ist blo\xe1^",  120, 0 },
+					{ "Hey.",             130, 0 },
+					{ "Klasse Schlag!",   150, 0 },
+					{ "Uiii!",            185, 1 },
+					{ "H\x84h?",          150, 0 },
+					{ "Kann ich seine",   110, 0 },
+					{ "Warum, glaubst",   110, 0 },
+					{ "Vielleicht",       90,  0 },
+					{ "Kann ich fahren?", 240, 0 }
+				};
+
+				switch (_language) {
+				case Common::DE_DEU:
+					adjustments = timingAdjustmentsDE;
+					numAdjustments = ARRAYSIZE(timingAdjustmentsDE);
+					break;
+				default:
+					adjustments = nullptr;
+					numAdjustments = 0;
+					break;
+				}
+
+				byte action = 0;
+
+				for (int i = 0; i < numAdjustments; i++) {
+					int len = strlen(adjustments[i].str);
+					if (memcmp(buffer, adjustments[i].str, len) == 0) {
+						_talkDelay = adjustments[i].talkDelay;
+						action = adjustments[i].action;
+						break;
+					}
+				}
+
+				if (_language == Common::DE_DEU) {
+					Actor *act;
+
+					switch (action) {
+					case 1:
+						act = derefActorSafe(2, "handleNextCharsetCode");
+						if (act)
+							act->setAnimSpeed(2);
+
+						// The actor speaks so slowly that the background
+						// animations have run their course. Try to restart
+						// them, even though it won't be quite seamless.
+
+						int actors[] = { 3, 10 };
+
+						for (int i = 0; i < ARRAYSIZE(actors); i++) {
+							act = derefActorSafe(actors[i], "handleNextCharsetCode");
+							if (act) {
+								act->startAnimActor(act->_initFrame);
+								act->animateActor(249);
+							}
+						}
+						break;
+					}
+				}
+			}
+
 			break;
 		case 8:
 			// Ignore this code here. Occurs e.g. in MI2 when you
