@@ -141,7 +141,6 @@ static inline uint8_t GetPaletteBPP(SpriteFormat fmt) {
 
 
 SpriteFile::SpriteFile() {
-	_compressed = false;
 	_curPos = -2;
 }
 
@@ -176,13 +175,13 @@ HError SpriteFile::OpenFile(const String &filename, const String &sprindex_filen
 
 	_storeFlags = 0;
 	if (_version < kSprfVersion_Compressed) {
-		_compressed = false;
+		_compress = kSprCompress_None;
 		// skip the palette
 		_stream->Seek(256 * 3); // sizeof(RGB) * 256
 	} else if (_version == kSprfVersion_Compressed) {
-		_compressed = true;
+		_compress = kSprCompress_RLE;
 	} else if (_version >= kSprfVersion_Last32bit) {
-		_compressed = (_stream->ReadInt8() == 1);
+		_compress = (SpriteCompression)_stream->ReadInt8();
 		spriteFileID = _stream->ReadInt32();
 	}
 
@@ -225,8 +224,8 @@ int SpriteFile::GetStoreFlags() const {
 	return _storeFlags;
 }
 
-bool SpriteFile::IsFileCompressed() const {
-	return _compressed;
+SpriteCompression SpriteFile::GetSpriteCompression() const {
+	return _compress;
 }
 
 sprkey_t SpriteFile::GetTopmostSprite() const {
@@ -300,17 +299,18 @@ bool SpriteFile::LoadSpriteIndexFile(const String &filename, int expectedFileID,
 }
 
 static inline void ReadSprHeader(SpriteDatHeader &hdr, Stream *in,
-	const SpriteFileVersion ver, int gl_compress) {
+	const SpriteFileVersion ver, SpriteCompression gl_compress) {
 	int bpp = in->ReadInt8();
 	SpriteFormat sformat = (SpriteFormat)in->ReadInt8();
 	// note we MUST read first 2 * int8 before skipping rest
 	if (bpp == 0) {
 		hdr = SpriteDatHeader(); return;
 	} // empty slot
-	int compress = gl_compress, pal_count = 0;
+	int pal_count = 0;
+	SpriteCompression compress = gl_compress;
 	if (ver >= kSprfVersion_StorageFormats) {
 		pal_count = (uint8_t)in->ReadInt8() + 1; // saved as (count - 1)
-		compress = in->ReadInt8();
+		compress = (SpriteCompression)in->ReadInt8();
 	}
 	int w = in->ReadInt16();
 	int h = in->ReadInt16();
@@ -323,11 +323,12 @@ HError SpriteFile::RebuildSpriteIndex(Stream *in, sprkey_t topmost,
 	for (sprkey_t i = 0; !in->EOS() && (i <= topmost); ++i) {
 		_spriteData[i].Offset = in->GetPosition();
 		SpriteDatHeader hdr;
-		ReadSprHeader(hdr, _stream.get(), _version, _compressed ? 1 : 0);
+		ReadSprHeader(hdr, _stream.get(), _version, _compress);
 		if (hdr.BPP == 0) return HError::None(); // empty slot, this is normal
 		int pal_bpp = GetPaletteBPP(hdr.SFormat);
 		if (pal_bpp > 0) in->Seek(hdr.PalCount * pal_bpp); // skip palette
-		size_t data_sz = ((_version >= kSprfVersion_StorageFormats) || _compressed) ?
+		size_t data_sz =
+			((_version >= kSprfVersion_StorageFormats) || _compress != kSprCompress_None) ?
 			(uint32_t)in->ReadInt32() : hdr.Width * hdr.Height * hdr.BPP;
 		in->Seek(data_sz); // skip image data
 	}
@@ -347,7 +348,7 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 	_curPos = -2; // mark undefined pos
 
 	SpriteDatHeader hdr;
-	ReadSprHeader(hdr, _stream.get(), _version, _compressed ? 1 : 0);
+	ReadSprHeader(hdr, _stream.get(), _version, _compress);
 	if (hdr.BPP == 0) return HError::None(); // empty slot, this is normal
 	int bpp = hdr.BPP, w = hdr.Width, h = hdr.Height;
 	Bitmap *image = BitmapHelper::CreateBitmap(w, h, bpp * 8);
@@ -370,14 +371,19 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 		im_data = ImBufferPtr(&indexed_buf[0], indexed_buf.size(), 1);
 	}
 	// (Optional) Decompress the image data into the temp buffer
-	size_t in_data_size = ((_version >= kSprfVersion_StorageFormats) || _compressed) ?
+	size_t in_data_size =
+		((_version >= kSprfVersion_StorageFormats) || _compress != kSprCompress_None) ?
 		(uint32_t)_stream->ReadInt32() : (w * h * bpp);
-	if (_compressed) {
+	if (hdr.Compress != kSprCompress_None) {
 		if (in_data_size == 0) {
 			delete image;
 			return new Error(String::FromFormat("LoadSprite: bad compressed data for sprite %d.", index));
 		}
-		rle_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get());
+		switch (hdr.Compress) {
+		case kSprCompress_RLE: rle_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get()); break;
+		case kSprCompress_LZW: lzw_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get()); break;
+		default: assert(!"Unsupported compression type!");
+		}
 		// TODO: test that not more than data_size was read!
 	}
 	// Otherwise (no compression) read directly
@@ -414,13 +420,13 @@ HError SpriteFile::LoadRawData(sprkey_t index, SpriteDatHeader &hdr, std::vector
 	SeekToSprite(index);
 	_curPos = -2; // mark undefined pos
 
-	ReadSprHeader(hdr, _stream.get(), _version, _compressed ? 1 : 0);
+	ReadSprHeader(hdr, _stream.get(), _version, _compress);
 	if (hdr.BPP == 0) return HError::None(); // empty slot, this is normal
 	size_t data_size = 0;
 	soff_t data_pos = _stream->GetPosition();
 	// Optional palette
 	data_size += hdr.PalCount * GetPaletteBPP(hdr.SFormat);
-	if ((_version >= kSprfVersion_StorageFormats) || _compressed)
+	if ((_version >= kSprfVersion_StorageFormats) || _compress != kSprCompress_None)
 		data_size += (uint32_t)_stream->ReadInt32() + sizeof(uint32_t);
 	else
 		data_size += hdr.Width * hdr.Height * hdr.BPP;
@@ -451,9 +457,8 @@ static sprkey_t FindTopmostSprite(const std::vector<Bitmap *> &sprites) {
 }
 
 int SaveSpriteFile(const String &save_to_file,
-	const std::vector<Bitmap *> &sprites,
-	SpriteFile *read_from_file,
-	int store_flags, bool compress, SpriteFileIndex &index) {
+		const std::vector<Bitmap *> &sprites, SpriteFile *read_from_file,
+		int store_flags, SpriteCompression compress, SpriteFileIndex &index) {
 	std::unique_ptr<Stream> output(File::CreateFile(save_to_file));
 	if (output == nullptr)
 		return -1;
@@ -470,7 +475,7 @@ int SaveSpriteFile(const String &save_to_file,
 
 	const bool diff_compress =
 		read_from_file &&
-		(read_from_file->IsFileCompressed() != compress ||
+		(read_from_file->GetSpriteCompression() != compress ||
 			read_from_file->GetStoreFlags() != store_flags);
 
 	for (sprkey_t i = 0; i <= lastslot; ++i) {
@@ -535,7 +540,7 @@ int SaveSpriteIndex(const String &filename, const SpriteFileIndex &index) {
 SpriteFileWriter::SpriteFileWriter(std::unique_ptr<Stream> &out) : _out(out) {
 }
 
-void SpriteFileWriter::Begin(int store_flags, bool compress, sprkey_t last_slot) {
+void SpriteFileWriter::Begin(int store_flags, SpriteCompression compress, sprkey_t last_slot) {
 	if (!_out) return;
 	_index.SpriteFileIDCheck = g_system->getMillis();
 	_storeFlags = store_flags;
@@ -577,7 +582,7 @@ void SpriteFileWriter::WriteBitmap(Bitmap *image) {
 	uint32_t palette[256];
 	uint32_t pal_count = 0;
 	SpriteFormat sformat = kSprFmt_Undefined;
-	int compress = 0;
+	SpriteCompression compress = kSprCompress_None;
 	if ((_storeFlags & kSprStore_OptimizeForSize) != 0 && (image->GetBPP() > 1)) { // Try to store this sprite as an indexed bitmap
 		if (CreateIndexedBitmap(image, indexed_buf, palette, pal_count) && pal_count > 0) {
 			sformat = PaletteFormatForBPP(image->GetBPP());
@@ -585,10 +590,14 @@ void SpriteFileWriter::WriteBitmap(Bitmap *image) {
 		}
 	}
 	// (Optional) Compress the image data into the temp buffer
-	if (_compress) {
-		compress = 1;
+	if (_compress != kSprCompress_None) {
+		compress = _compress;
 		VectorStream mems(_membuf, kStream_Write);
-		rle_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems);
+		switch (compress) {
+		case kSprCompress_RLE: rle_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems); break;
+		case kSprCompress_LZW: lzw_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems); break;
+		default: assert(!"Unsupported compression type!");
+		}
 		// mark to write as a plain byte array
 		im_data = ImBufferCPtr(&_membuf[0], _membuf.size(), 1);
 	}

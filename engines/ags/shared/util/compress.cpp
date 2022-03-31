@@ -319,6 +319,26 @@ Shared::Bitmap *load_rle_bitmap8(Stream *in, RGB(*pal)[256]) {
 // LZW
 //-----------------------------------------------------------------------------
 
+void lzw_compress(const uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *out) {
+	// LZW algorithm that we use fails on sequence less than 16 bytes.
+	if (data_sz < 16) {
+		out->Write(data, data_sz);
+		return;
+	}
+	MemoryStream mem_in(data, data_sz);
+	lzwcompress(&mem_in, out);
+}
+
+void lzw_decompress(uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *in) {
+	// LZW algorithm that we use fails on sequence less than 16 bytes.
+	if (data_sz < 16) {
+		in->Read(data, data_sz);
+		return;
+	}
+	MemoryStream ms(data, data_sz, kStream_Write);
+	lzwexpand(in, &ms, data_sz);
+}
+
 void save_lzw(Stream *out, const Bitmap *bmpp, const RGB(*pal)[256]) {
 	// First write original bitmap's info and data into the memory buffer
 	// NOTE: we must do this purely for backward compatibility with old room formats:

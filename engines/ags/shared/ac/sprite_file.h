@@ -19,14 +19,14 @@
  *
  */
 
-//=============================================================================
-//
-// SpriteFile class handles sprite file parsing and streaming sprites.
-// SpriteFileWriter manages writing sprites into the output stream one by one,
-// accumulating index information, and may therefore be suitable for a variety
-// of situations.
-//
-//=============================================================================
+ //=============================================================================
+ //
+ // SpriteFile class handles sprite file parsing and streaming sprites.
+ // SpriteFileWriter manages writing sprites into the output stream one by one,
+ // accumulating index information, and may therefore be suitable for a variety
+ // of situations.
+ //
+ //=============================================================================
 
 #ifndef AGS_SHARED_AC_SPRITE_FILE_H
 #define AGS_SHARED_AC_SPRITE_FILE_H
@@ -80,6 +80,12 @@ enum SpriteFormat {
 	kSprFmt_PaletteRgb565 = 34
 };
 
+enum SpriteCompression {
+	kSprCompress_None = 0,
+	kSprCompress_RLE,
+	kSprCompress_LZW
+};
+
 typedef int32_t sprkey_t;
 
 // SpriteFileIndex contains sprite file's table of contents
@@ -89,8 +95,12 @@ struct SpriteFileIndex {
 	std::vector<int16_t> Heights;
 	std::vector<soff_t>  Offsets;
 
-	inline size_t GetCount() const { return Offsets.size(); }
-	inline sprkey_t GetLastSlot() const { return (sprkey_t)GetCount() - 1; }
+	inline size_t GetCount() const {
+		return Offsets.size();
+	}
+	inline sprkey_t GetLastSlot() const {
+		return (sprkey_t)GetCount() - 1;
+	}
 };
 
 // Invidual sprite data header (as read from the file)
@@ -98,14 +108,14 @@ struct SpriteDatHeader {
 	int BPP = 0; // color depth (bytes per pixel); or input format
 	SpriteFormat SFormat = kSprFmt_Undefined; // storage format
 	uint32_t PalCount = 0; // palette length, if applicable to storage format
-	int Compress = 0; // compression type
+	SpriteCompression Compress = kSprCompress_None; // compression type
 	int Width = 0; // sprite's width
 	int Height = 0; // sprite's height
 
 	SpriteDatHeader() = default;
 	SpriteDatHeader(int bpp, SpriteFormat sformat = kSprFmt_Undefined,
-		uint32_t pal_count = 0, int compress = 0, int w = 0, int h = 0)
-		: BPP(bpp), SFormat(sformat), PalCount(pal_count),
+		uint32_t pal_count = 0, SpriteCompression compress = kSprCompress_None,
+		int w = 0, int h = 0) : BPP(bpp), SFormat(sformat), PalCount(pal_count),
 		Compress(compress), Width(w), Height(h) {
 	}
 };
@@ -127,7 +137,7 @@ public:
 
 	int         GetStoreFlags() const;
 	// Tells if bitmaps in the file are compressed
-	bool        IsFileCompressed() const;
+	SpriteCompression GetSpriteCompression() const;
 	// Tells the highest known sprite index
 	sprkey_t    GetTopmostSprite() const;
 
@@ -161,7 +171,7 @@ private:
 	std::unique_ptr<Stream> _stream; // the sprite stream
 	SpriteFileVersion _version = kSprfVersion_Current;
 	int _storeFlags = 0; // storage flags, specify how sprites may be stored
-	bool _compressed; // are sprites compressed
+	SpriteCompression _compress = kSprCompress_None; // sprite compression typ
 	sprkey_t _curPos; // current stream position (sprite slot)
 };
 
@@ -171,17 +181,20 @@ private:
 class SpriteFileWriter {
 public:
 	SpriteFileWriter(std::unique_ptr<Stream> &out);
-	~SpriteFileWriter() {}
+	~SpriteFileWriter() {
+	}
 
-    // Get the sprite index, accumulated after write
-    const SpriteFileIndex &GetIndex() const { return _index; }
+	// Get the sprite index, accumulated after write
+	const SpriteFileIndex &GetIndex() const {
+		return _index;
+	}
 
-    // Initializes new sprite file format
-    void Begin(int store_flags, bool compress, sprkey_t last_slot = -1);
-    // Writes a bitmap into file, compressing if necessary
-    void WriteBitmap(Bitmap *image);
-    // Writes an empty slot marker
-    void WriteEmptySlot();
+	// Initializes new sprite file format
+	void Begin(int store_flags, SpriteCompression compress, sprkey_t last_slot = -1);
+	// Writes a bitmap into file, compressing if necessary
+	void WriteBitmap(Bitmap *image);
+	// Writes an empty slot marker
+	void WriteEmptySlot();
 	// Writes a raw sprite data without any additional processing
 	void WriteRawData(const SpriteDatHeader &hdr, const uint8_t *data, size_t data_sz);
 	// Finalizes current format; no further writing is possible after this
@@ -195,22 +208,22 @@ private:
 
 	std::unique_ptr<Stream> &_out;
 	int _storeFlags = 0;
-    bool _compress = false;
-    soff_t _lastSlotPos = -1; // last slot save position in file
-    // sprite index accumulated on write for reporting back to user
-    SpriteFileIndex _index;
-    // compression buffer
+	SpriteCompression _compress = kSprCompress_None;
+	soff_t _lastSlotPos = -1; // last slot save position in file
+	// sprite index accumulated on write for reporting back to user
+	SpriteFileIndex _index;
+	// compression buffer
 	std::vector<uint8_t> _membuf;
 };
 
 // Saves all sprites to file; fills in index data for external use
 // TODO: refactor to be able to save main file and index file separately (separate function for gather data?)
-int SaveSpriteFile(const String &save_to_file,
-    const std::vector<Bitmap*> &sprites, // available sprites (may contain nullptrs)
-    SpriteFile *read_from_file, // optional file to read missing sprites from
-	int store_flags, bool compress, SpriteFileIndex &index);
+extern int SaveSpriteFile(const String &save_to_file,
+	const std::vector<Bitmap *> &sprites, // available sprites (may contain nullptrs)
+	SpriteFile *read_from_file, // optional file to read missing sprites from
+	int store_flags, SpriteCompression compress, SpriteFileIndex &index);
 // Saves sprite index table in a separate file
-int SaveSpriteIndex(const String &filename, const SpriteFileIndex &index);
+extern int SaveSpriteIndex(const String &filename, const SpriteFileIndex &index);
 
 } // namespace Shared
 } // namespace AGS
