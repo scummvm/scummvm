@@ -82,7 +82,7 @@ bool AtsStrHeader::load(Common::SeekableReadStream *src) {
 
 
 Atdsys::Atdsys() {
-	SplitStringInit init_ssi = { nullptr, 0, 0, 220, 4, SPLIT_CENTER, 8, 8 };
+	SplitStringInit init_ssi = { nullptr, 0, 0, 220, 4, SPLIT_CENTER };
 	_aadv._dialog = false;
 	_aadv._strNr = -1;
 	_aadv._silentCount = false;
@@ -169,7 +169,8 @@ void Atdsys::updateSoundSettings() {
 }
 
 int16 Atdsys::get_delay(int16 txt_len) {
-	int16 z_len = (_ssi->_width / _ssi->fontWidth) + 1;
+	const int16 w = _G(fontMgr)->getFont()->getDataWidth();
+	int16 z_len = (_ssi->_width / w) + 1;
 	int16 maxLen = z_len * _ssi->_lines;
 	if (txt_len > maxLen)
 		txt_len = maxLen;
@@ -179,11 +180,14 @@ int16 Atdsys::get_delay(int16 txt_len) {
 }
 
 SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
+	const int16 w = _G(fontMgr)->getFont()->getDataWidth();
+	const int16 h = _G(fontMgr)->getFont()->getDataHeight();
+
 	_ssret._nr = 0;
 	_ssret._next = false;
 	_ssret._strPtr = _splitPtr;
 	_ssret._x = _splitX;
-	int16 zeichen_anz = (ssi_->_width / ssi_->fontWidth) + 1;
+	int16 zeichen_anz = (ssi_->_width / w) + 1;
 	memset(_splitPtr, 0, sizeof(char *) * MAX_STR_SPLIT);
 	calc_txt_win(ssi_);
 	char *str_adr = ssi_->_str;
@@ -213,7 +217,7 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 				_splitPtr[_ssret._nr] = start_adr;
 				start_adr[tmp_count] = 0;
 				if (ssi_->_mode == SPLIT_CENTER)
-					_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * ssi_->fontWidth)) >> 1);
+					_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * w)) >> 1);
 				else
 					_splitX[_ssret._nr] = ssi_->_x;
 				++_ssret._nr;
@@ -260,7 +264,7 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 					_splitPtr[_ssret._nr] = start_adr;
 					start_adr[tmp_count] = 0;
 					if (ssi_->_mode == SPLIT_CENTER)
-						_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * ssi_->fontWidth)) >> 1);
+						_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * w)) >> 1);
 					else
 						_splitX[_ssret._nr] = ssi_->_x;
 					++_ssret._nr;
@@ -295,7 +299,7 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 		}
 	}
 	if (_ssret._nr <= ssi_->_lines)
-		_ssret._y = ssi_->_y + (ssi_->_lines - _ssret._nr) * ssi_->fontHeight;
+		_ssret._y = ssi_->_y + (ssi_->_lines - _ssret._nr) * h;
 	else
 		_ssret._y = ssi_->_y;
 
@@ -311,6 +315,8 @@ void Atdsys::str_null2leer(char *strStart, char *strEnd) {
 }
 
 void Atdsys::calc_txt_win(SplitStringInit *ssi_) {
+	const int16 h = _G(fontMgr)->getFont()->getDataHeight();
+
 	if (ssi_->_x - (ssi_->_width >> 1) < 2)
 		ssi_->_x = 2;
 	else if (ssi_->_x + (ssi_->_width >> 1) > (SCREEN_WIDTH - 2))
@@ -318,12 +324,12 @@ void Atdsys::calc_txt_win(SplitStringInit *ssi_) {
 	else
 		ssi_->_x -= (ssi_->_width >> 1);
 
-	if (ssi_->_y - (ssi_->_lines * ssi_->fontHeight) < 2) {
+	if (ssi_->_y - (ssi_->_lines * h) < 2) {
 		ssi_->_y = 2;
-	} else if (ssi_->_y + (ssi_->_lines * ssi_->fontHeight) > (SCREEN_HEIGHT - 2))
-		ssi_->_y = (SCREEN_HEIGHT - 2) - (ssi_->_lines * ssi_->fontHeight);
+	} else if (ssi_->_y + (ssi_->_lines * h) > (SCREEN_HEIGHT - 2))
+		ssi_->_y = (SCREEN_HEIGHT - 2) - (ssi_->_lines * h);
 	else {
-		ssi_->_y -= (ssi_->_lines * ssi_->fontHeight);
+		ssi_->_y -= (ssi_->_lines * h);
 	}
 }
 
@@ -565,29 +571,28 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 			char *tmp_ptr = _atsv._ptr;
 			SplitStringInit *_atsSsi = &_ssi[0];
 			_atsSsi->_str = tmp_ptr;
-			_atsSsi->fontWidth = _G(fontMgr)->getFont()->getDataWidth();
-			_atsSsi->fontHeight = _G(fontMgr)->getFont()->getDataHeight();
 			_atsSsi->_x = x - scrX;
 			_atsSsi->_y = y - scrY;
 			char *start_ptr = tmp_ptr;
 			str_null2leer(start_ptr, start_ptr + _atsv._txtLen - 1);
 			_ssr = split_string(_atsSsi);
+			const int16 h = _G(fontMgr)->getFont()->getDataHeight();
 
 			for (int16 i = 0; i < _ssr->_nr; i++) {
 				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * _atsSsi->fontHeight) + 1,
+				              _ssr->_y + (i * h) + 1,
 				              0, 300, 0, _ssr->_strPtr[i]);
 				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * _atsSsi->fontHeight) - 1,
+				              _ssr->_y + (i * h) - 1,
 				              0, 300, 0, _ssr->_strPtr[i]);
 				_G(out)->printxy(_ssr->_x[i] + 1,
-				              _ssr->_y + (i * _atsSsi->fontHeight),
+				              _ssr->_y + (i * h),
 				              0, 300, 0, _ssr->_strPtr[i]);
 				_G(out)->printxy(_ssr->_x[i] - 1,
-				              _ssr->_y + (i * _atsSsi->fontHeight),
+				              _ssr->_y + (i * h),
 				              0, 300, 0, _ssr->_strPtr[i]);
 				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * _atsSsi->fontHeight),
+				              _ssr->_y + (i * h),
 				              _atsv._color,
 				              300, 0, _ssr->_strPtr[i]);
 				tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
@@ -861,6 +866,10 @@ int16 Atdsys::start_aad(int16 diaNr) {
 	if (_atdsMem[AAD_HANDLE]) {
 		_aadv._ptr = _atdsMem[AAD_HANDLE];
 		aad_search_dia(diaNr, &_aadv._ptr);
+
+		//const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
+		//Common::StringArray s = getTextArray(roomNum, diaNr, AAD_DATA);
+
 		if (_aadv._ptr) {
 			_aadv._person.load(_aadv._ptr, _aadv._txtHeader->_perNr);
 			_aadv._ptr += _aadv._txtHeader->_perNr * sizeof(AadInfo);
@@ -920,40 +929,40 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 
 		if (_aadv._silentCount <= 0) {
 			char *tmp_ptr = _aadv._ptr;
-			_ssi[_aadv._strHeader->_akPerson]._str = tmp_ptr;
-			if (_aadv._person[_aadv._strHeader->_akPerson]._x != -1) {
-				_ssi[_aadv._strHeader->_akPerson]._x = _aadv._person[_aadv._strHeader->_akPerson]._x - scrX;
+			const int16 personId = _aadv._strHeader->_akPerson;
+			_ssi[personId]._str = tmp_ptr;
+			if (_aadv._person[personId]._x != -1) {
+				_ssi[personId]._x = _aadv._person[personId]._x - scrX;
 			}
-			if (_aadv._person[_aadv._strHeader->_akPerson]._y != -1) {
-				_ssi[_aadv._strHeader->_akPerson]._y = _aadv._person[_aadv._strHeader->_akPerson]._y - scrY;
+			if (_aadv._person[personId]._y != -1) {
+				_ssi[personId]._y = _aadv._person[personId]._y - scrY;
 			}
-			_ssi[_aadv._strHeader->_akPerson].fontWidth = _G(fontMgr)->getFont()->getDataWidth();
-			_ssi[_aadv._strHeader->_akPerson].fontHeight = _G(fontMgr)->getFont()->getDataHeight();
 			char *start_ptr = tmp_ptr;
 			int16 txt_len;
 			aad_get_zeilen(start_ptr, &txt_len);
 			str_null2leer(start_ptr, start_ptr + txt_len - 1);
-			SplitStringInit tmp_ssi = _ssi[_aadv._strHeader->_akPerson];
+			SplitStringInit tmp_ssi = _ssi[personId];
 			_ssr = split_string(&tmp_ssi);
 
 			if (_atdsv._display != DISPLAY_VOC ||
 			        (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) == -1) {
+				const int16 h = _G(fontMgr)->getFont()->getDataHeight();
 				for (int16 i = 0; i < _ssr->_nr; i++) {
 					_G(out)->printxy(_ssr->_x[i] + 1,
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].fontHeight),
+					              _ssr->_y + (i * h),
 					              0, 300, 0, _ssr->_strPtr[i]);
 					_G(out)->printxy(_ssr->_x[i] - 1,
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].fontHeight),
+					              _ssr->_y + (i * h),
 					              0, 300, 0, _ssr->_strPtr[i]);
 					_G(out)->printxy(_ssr->_x[i],
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].fontHeight) + 1,
+					              _ssr->_y + (i * h) + 1,
 					              0, 300, 0, _ssr->_strPtr[i]);
 					_G(out)->printxy(_ssr->_x[i],
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].fontHeight) - 1,
+					              _ssr->_y + (i * h) - 1,
 					              0, 300, 0, _ssr->_strPtr[i]);
 					_G(out)->printxy(_ssr->_x[i],
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].fontHeight),
-					              _aadv._person[_aadv._strHeader->_akPerson]._color,
+					              _ssr->_y + (i * h),
+					              _aadv._person[personId]._color,
 					              300, 0, _ssr->_strPtr[i]);
 					tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
 				}
@@ -967,8 +976,8 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 					_atdsv._vocNr = _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET;
 					g_engine->_sound->playSpeech(_atdsv._vocNr,
 						_atdsv._display == DISPLAY_VOC);
-					int16 vocx = _G(spieler_vector)[_aadv._strHeader->_akPerson].Xypos[0] -
-								 _G(gameState).scrollx + _G(spieler_mi)[_aadv._strHeader->_akPerson].HotX;
+					int16 vocx = _G(spieler_vector)[personId].Xypos[0] -
+								 _G(gameState).scrollx + _G(spieler_mi)[personId].HotX;
 					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
 
 					if (_atdsv._display == DISPLAY_VOC) {
@@ -992,7 +1001,7 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 				if (tmp_ptr[1] == ATDS_END ||
 				        tmp_ptr[1] == ATDS_END_ENTRY) {
 					if (_atdsv.aad_str != 0)
-						_atdsv.aad_str(_atdsv._diaNr, _aadv._strNr, _aadv._strHeader->_akPerson, AAD_STR_END);
+						_atdsv.aad_str(_atdsv._diaNr, _aadv._strNr, personId, AAD_STR_END);
 					_aadv._dialog = false;
 					_adsv._autoDia = false;
 					_aadv._strNr = -1;

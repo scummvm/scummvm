@@ -240,9 +240,6 @@ struct SplitStringInit {
 	int16 _width;
 	int16 _lines;
 	int16 _mode;
-
-	int16 fontWidth;
-	int16 fontHeight;
 };
 
 class Atdsys {
@@ -336,16 +333,16 @@ private:
 	SplitStringRet *_ssr = nullptr;
 
 	SplitStringInit _ssi[AAD_MAX_PERSON] = {
-		{ 0, 100, 0, 200, 4, SPLIT_CENTER, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_CENTER, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_CENTER, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_CENTER, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_CENTER, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_CENTER, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_CENTER, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_CENTER, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_CENTER, 8, 8 },
-		{ 0, 100, 0, 200, 4, SPLIT_CENTER, 8, 8 },
+		{ 0, 100, 0, 200, 4, SPLIT_CENTER },
+		{ 0, 100, 0, 200, 4, SPLIT_CENTER },
+		{ 0, 100, 0, 200, 4, SPLIT_CENTER },
+		{ 0, 100, 0, 200, 4, SPLIT_CENTER },
+		{ 0, 100, 0, 200, 4, SPLIT_CENTER },
+		{ 0, 100, 0, 200, 4, SPLIT_CENTER },
+		{ 0, 100, 0, 200, 4, SPLIT_CENTER },
+		{ 0, 100, 0, 200, 4, SPLIT_CENTER },
+		{ 0, 100, 0, 200, 4, SPLIT_CENTER },
+		{ 0, 100, 0, 200, 4, SPLIT_CENTER },
 	};
 
 	char *_splitPtr[MAX_STR_SPLIT] = { nullptr };
