@@ -497,7 +497,7 @@ void String::ClipMid(size_t from, size_t count) {
 }
 
 void String::ClipRight(size_t count) {
-	if (count > 0) {
+	if (_len > 0 && count > 0) {
 		count = Math::Min(count, _len);
 		BecomeUnique();
 		_len -= count;
