@@ -648,6 +648,21 @@ void ScummEngine::writeVar(uint var, int value) {
 			}
 		}
 
+		// WORKAROUND bug #13378: For whatever reason, the German and
+		// Italian talkie versions (I can't check the floppy versions)
+		// set the game to run much too fast in some parts of the intro.
+		// Some differences are natural because of the different lengths
+		// of the spoken lines, but 1 or 2 is too fast.
+		//
+		// Any modifications here depend on knowing if the script will
+		// set the timer value back to something sensible afterwards.
+
+		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && var == VAR_TIMER_NEXT && _enableEnhancements) {
+			// "Wirst Du brutzeln, wie eine grobe Bratwurst!"
+			if (value == 1 && _language == Common::DE_DEU)
+				value = 4;
+		}
+
 		_scummVars[var] = value;
 
 		// Unlike the PC version, the Macintosh version of Loom appears

@@ -1115,6 +1115,20 @@ void ScummEngine_v6::o6_setCameraAt() {
 
 void ScummEngine_v6::o6_loadRoom() {
 	int room = pop();
+
+	// WORKAROUND bug #13378: During Sam's reactions to Max beating up the
+	// scientist in the intro, we sometimes have to slow down animations
+	// artificially. This is where we speed them back up again.
+	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && room == 6 && _enableEnhancements) {
+		int actors[] = { 2, 3, 10 };
+
+		for (int i = 0; i < ARRAYSIZE(actors); i++) {
+			Actor *a = derefActorSafe(actors[i], "o6_animateActor");
+			if (a && a->getAnimSpeed() > 0)
+				a->setAnimSpeed(0);
+		}
+	}
+
 	startScene(room, nullptr, 0);
 	if (_game.heversion >= 61) {
 		setCameraAt(camera._cur.x, 0);
