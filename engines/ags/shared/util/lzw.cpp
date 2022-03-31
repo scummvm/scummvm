@@ -25,6 +25,7 @@
 //
 //=============================================================================
 
+#include "ags/shared/util/lzw.h"
 #include "ags/shared/ac/common.h" // quit
 #include "ags/shared/util/stream.h"
 #include "ags/globals.h"
@@ -122,13 +123,13 @@ void _delete(int z) {
 	}
 }
 
-void lzwcompress(Stream *lzw_in, Stream *out) {
+bool lzwcompress(Stream *lzw_in, Stream *out) {
 	int ch, i, run, len, match, size, mask;
 	char buf[17];
 
 	_G(lzbuffer) = (char *)malloc(N + F + (N + 1 + N + N + 256) * sizeof(int));       // 28.5 k !
 	if (_G(lzbuffer) == nullptr) {
-		quit("unable to compress: out of memory");
+		return false;
 	}
 
 	_G(node) = (int *)(_G(lzbuffer) + N + F);
@@ -193,6 +194,7 @@ void lzwcompress(Stream *lzw_in, Stream *out) {
 	}
 
 	free(_G(lzbuffer));
+	return true;
 }
 
 void myputc(int ccc, Stream *out) {
@@ -206,7 +208,7 @@ void myputc(int ccc, Stream *out) {
 	out->WriteInt8(ccc);
 }
 
-void lzwexpand(Stream *lzw_in, Stream *out, size_t out_size) {
+bool lzwexpand(Stream *lzw_in, Stream *out, size_t out_size) {
 	int bits, ch, i, j, len, mask;
 	char *lzbuffer;
 	_G(outbytes) = 0; _G(putbytes) = 0;
@@ -214,7 +216,7 @@ void lzwexpand(Stream *lzw_in, Stream *out, size_t out_size) {
 
 	lzbuffer = (char *)malloc(N);
 	if (lzbuffer == nullptr) {
-		quit("compress.cpp: unable to decompress: insufficient memory");
+		return false;
 	}
 	i = N - F;
 
@@ -244,8 +246,10 @@ void lzwexpand(Stream *lzw_in, Stream *out, size_t out_size) {
 			if ((_G(putbytes) >= _G(maxsize)) && (_G(maxsize) > 0))
 				break;
 
-			if ((lzw_in->EOS()) && (_G(maxsize) > 0))
-				quit("Read error decompressing image - file is corrupt");
+			if ((lzw_in->EOS()) && (_G(maxsize) > 0)) {
+				free(lzbuffer);
+				return false;
+			}
 		}                           // end for mask
 
 		if ((_G(putbytes) >= _G(maxsize)) && (_G(maxsize) > 0))
@@ -253,6 +257,7 @@ void lzwexpand(Stream *lzw_in, Stream *out, size_t out_size) {
 	}
 
 	free(lzbuffer);
+	return true;
 }
 
 } // namespace AGS3
