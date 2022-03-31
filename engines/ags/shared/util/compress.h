@@ -38,12 +38,14 @@ using namespace AGS; // FIXME later
 
 void rle_compress(const uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *out);
 void rle_decompress(uint8_t *data, size_t data_sz, int image_bpp, Shared::Stream *in);
+// Packs a 8-bit bitmap using RLE compression, and writes into stream along with the palette
+void save_rle_bitmap8(Shared::Stream *out, const Shared::Bitmap *bmp, const RGB(*pal)[256] = nullptr);
+// Reads a 8-bit bitmap with palette from the stream and unpacks from RLE
+Shared::Bitmap *load_rle_bitmap8(Shared::Stream *in, RGB(*pal)[256] = nullptr);
 
 // LZW compression
 void save_lzw(Shared::Stream *out, const Shared::Bitmap *bmpp, const RGB *pall);
 void load_lzw(Shared::Stream *in, Shared::Bitmap **bmm, int dst_bpp, RGB *pall);
-void savecompressed_allegro(Shared::Stream *out, const Shared::Bitmap *bmpp, const RGB *pall);
-void loadcompressed_allegro(Shared::Stream *in, Shared::Bitmap **bimpp, RGB *pall);
 
 } // namespace AGS3
 

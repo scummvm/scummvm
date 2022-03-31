@@ -298,28 +298,28 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	if (data_ver >= kRoomVersion_pre114_5)
 		load_lzw(in, &mask, room->BackgroundBPP, room->Palette);
 	else
-		loadcompressed_allegro(in, &mask, room->Palette);
+		mask = load_rle_bitmap8(in);
 	room->BgFrames[0].Graphic.reset(mask);
 
 	update_polled_stuff_if_runtime();
 	// Mask bitmaps
 	if (data_ver >= kRoomVersion_255b) {
-		loadcompressed_allegro(in, &mask, room->Palette);
+		mask = load_rle_bitmap8(in);
 	} else if (data_ver >= kRoomVersion_114) {
 		// an old version - clear the 'shadow' area into a blank regions bmp
-		loadcompressed_allegro(in, &mask, room->Palette);
+		mask = load_rle_bitmap8(in);
 		delete mask;
 		mask = nullptr;
 	}
 	room->RegionMask.reset(mask);
 	update_polled_stuff_if_runtime();
-	loadcompressed_allegro(in, &mask, room->Palette);
+	mask = load_rle_bitmap8(in);
 	room->WalkAreaMask.reset(mask);
 	update_polled_stuff_if_runtime();
-	loadcompressed_allegro(in, &mask, room->Palette);
+	mask = load_rle_bitmap8(in);
 	room->WalkBehindMask.reset(mask);
 	update_polled_stuff_if_runtime();
-	loadcompressed_allegro(in, &mask, room->Palette);
+	mask = load_rle_bitmap8(in);
 	room->HotspotMask.reset(mask);
 	return HError::None();
 }
@@ -748,10 +748,10 @@ void WriteMainBlock(const RoomStruct *room, Stream *out) {
 		out->WriteInt32(room->Regions[i].Tint);
 
 	save_lzw(out, room->BgFrames[0].Graphic.get(), room->Palette);
-	savecompressed_allegro(out, room->RegionMask.get(), room->Palette);
-	savecompressed_allegro(out, room->WalkAreaMask.get(), room->Palette);
-	savecompressed_allegro(out, room->WalkBehindMask.get(), room->Palette);
-	savecompressed_allegro(out, room->HotspotMask.get(), room->Palette);
+	save_rle_bitmap8(out, room->RegionMask.get());
+	save_rle_bitmap8(out, room->WalkAreaMask.get());
+	save_rle_bitmap8(out, room->WalkBehindMask.get());
+	save_rle_bitmap8(out, room->HotspotMask.get());
 }
 
 void WriteCompSc3Block(const RoomStruct *room, Stream *out) {

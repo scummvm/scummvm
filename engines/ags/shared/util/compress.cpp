@@ -151,36 +151,6 @@ static void cpackbitl32(const uint32_t *line, size_t size, Stream *out) {
 	} // end while
 }
 
-
-void csavecompressed(Stream *out, const unsigned char *tobesaved, const RGB pala[256]) {
-	int widt, hit;
-	widt = *tobesaved++;
-	widt += (*tobesaved++) * 256;
-	hit = *tobesaved++;
-	hit += (*tobesaved++) * 256;
-	// Those were originally written as shorts, although they are ints
-	out->WriteInt16(widt);
-	out->WriteInt16(hit);
-
-	unsigned char *ress = (unsigned char *)malloc(widt + 1);
-	int ww;
-
-	for (ww = 0; ww < hit; ww++) {
-		for (int ss = 0; ss < widt; ss++)
-			(*ress++) = (*tobesaved++);
-
-		ress -= widt;
-		cpackbitl(ress, widt, out);
-	}
-
-	for (ww = 0; ww < 256; ww++) {
-		out->WriteInt8(pala[ww].r);
-		out->WriteInt8(pala[ww].g);
-		out->WriteInt8(pala[ww].b);
-	}
-	free(ress);
-}
-
 static int cunpackbitl(uint8_t *line, size_t size, Stream *in) {
 	size_t n = 0;                  // number of bytes decoded
 
@@ -310,6 +280,46 @@ void rle_decompress(uint8_t *data, size_t data_sz, int image_bpp, Stream *in) {
 	}
 }
 
+void save_rle_bitmap8(Stream *out, const Bitmap *bmp, const RGB(*pal)[256]) {
+	assert(bmp->GetBPP() == 1);
+	out->WriteInt16(static_cast<uint16_t>(bmp->GetWidth()));
+	out->WriteInt16(static_cast<uint16_t>(bmp->GetHeight()));
+	// Pack the pixels
+	cpackbitl(bmp->GetData(), bmp->GetWidth() * bmp->GetHeight(), out);
+	// Save palette
+	if (!pal) { // if no pal, write dummy palette, because we have to
+		out->WriteByteCount(0, 256 * 3);
+		return;
+	}
+	const RGB *ppal = *pal;
+	for (int i = 0; i < 256; ++i) {
+		out->WriteInt8(ppal[i].r);
+		out->WriteInt8(ppal[i].g);
+		out->WriteInt8(ppal[i].b);
+	}
+}
+
+Shared::Bitmap *load_rle_bitmap8(Stream *in, RGB(*pal)[256]) {
+	int w = in->ReadInt16();
+	int h = in->ReadInt16();
+	Bitmap *bmp = BitmapHelper::CreateBitmap(w, h, 8);
+	if (!bmp) return nullptr;
+	// Unpack the pixels
+	cunpackbitl(bmp->GetDataForWriting(), w * h, in);
+	// Load or skip the palette
+	if (!pal) {
+		in->Seek(3 * 256);
+		return bmp;
+	}
+	RGB *ppal = *pal;
+	for (int i = 0; i < 256; ++i) {
+		ppal[i].r = in->ReadInt8();
+		ppal[i].g = in->ReadInt8();
+		ppal[i].b = in->ReadInt8();
+	}
+	return bmp;
+}
+
 //-----------------------------------------------------------------------------
 // LZW
 //-----------------------------------------------------------------------------
@@ -399,7 +409,7 @@ void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, RGB *pall) {
 
 	Bitmap *bmm = BitmapHelper::CreateBitmap((loptr[0] / dst_bpp), loptr[1], dst_bpp * 8);
 	if (bmm == nullptr)
-		quit("!load_room: not enough memory to load room background");
+		quit("load_room: not enough memory to load room background");
 
 	update_polled_stuff_if_runtime();
 
@@ -416,39 +426,6 @@ void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, RGB *pall) {
 	update_polled_stuff_if_runtime();
 
 	*dst_bmp = bmm;
-}
-
-void savecompressed_allegro(Stream *out, const Bitmap *bmpp, const RGB *pall) {
-	unsigned char *wgtbl = (unsigned char *)malloc(bmpp->GetWidth() * bmpp->GetHeight() + 4);
-	short *sss = (short *)wgtbl;
-
-	sss[0] = bmpp->GetWidth();
-	sss[1] = bmpp->GetHeight();
-
-	memcpy(&wgtbl[4], bmpp->GetData(), bmpp->GetWidth() * bmpp->GetHeight());
-
-	csavecompressed(out, wgtbl, pall);
-	free(wgtbl);
-}
-
-void loadcompressed_allegro(Stream *in, Bitmap **bimpp, RGB *pall) {
-	short widd, hitt;
-	int   ii;
-
-	widd = in->ReadInt16();
-	hitt = in->ReadInt16();
-	Bitmap *bim = BitmapHelper::CreateBitmap(widd, hitt, 8);
-	if (bim == nullptr)
-		quit("!load_room: not enough memory to decompress masks");
-
-	for (ii = 0; ii < hitt; ii++) {
-		cunpackbitl(&bim->GetScanLineForWriting(ii)[0], widd, in);
-		if (ii % 20 == 0)
-			update_polled_stuff_if_runtime();
-	}
-
-	in->Seek(768);  // skip palette
-	*bimpp = bim;
 }
 
 } // namespace AGS3
