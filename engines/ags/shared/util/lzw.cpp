@@ -178,7 +178,7 @@ void lzwcompress(Stream *lzw_in, Stream *out) {
 			}
 
 			if (!((mask += mask) & 0xFF)) {
-				out->WriteArray(buf, size, 1);
+				out->Write(buf, size);
 				_G(outbytes) += size;
 				size = mask = 1;
 				buf[0] = 0;
@@ -188,7 +188,7 @@ void lzwcompress(Stream *lzw_in, Stream *out) {
 	} while (len > 0);
 
 	if (size > 1) {
-		out->WriteArray(buf, size, 1);
+		out->Write(buf, size);
 		_G(outbytes) += size;
 	}
 

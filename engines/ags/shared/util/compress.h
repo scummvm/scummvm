@@ -44,8 +44,10 @@ void save_rle_bitmap8(Shared::Stream *out, const Shared::Bitmap *bmp, const RGB(
 Shared::Bitmap *load_rle_bitmap8(Shared::Stream *in, RGB(*pal)[256] = nullptr);
 
 // LZW compression
-void save_lzw(Shared::Stream *out, const Shared::Bitmap *bmpp, const RGB *pall);
-void load_lzw(Shared::Stream *in, Shared::Bitmap **bmm, int dst_bpp, RGB *pall);
+// Saves bitmap with an optional palette compressed by LZW
+void save_lzw(Shared::Stream *out, const Shared::Bitmap *bmpp, const RGB(*pal)[256] = nullptr);
+// Loads bitmap decompressing
+void load_lzw(Shared::Stream *in, Shared::Bitmap **bmm, int dst_bpp, RGB(*pal)[256] = nullptr);
 
 } // namespace AGS3
 

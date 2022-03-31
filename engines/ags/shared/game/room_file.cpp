@@ -296,7 +296,7 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	// Primary background
 	Bitmap *mask = nullptr;
 	if (data_ver >= kRoomVersion_pre114_5)
-		load_lzw(in, &mask, room->BackgroundBPP, room->Palette);
+		load_lzw(in, &mask, room->BackgroundBPP, &room->Palette);
 	else
 		mask = load_rle_bitmap8(in);
 	room->BgFrames[0].Graphic.reset(mask);
@@ -390,7 +390,7 @@ HError ReadAnimBgBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	for (size_t i = 1; i < room->BgFrameCount; ++i) {
 		update_polled_stuff_if_runtime();
 		Bitmap *frame = nullptr;
-		load_lzw(in, &frame, room->BackgroundBPP, room->BgFrames[i].Palette);
+		load_lzw(in, &frame, room->BackgroundBPP, &room->BgFrames[i].Palette);
 		room->BgFrames[i].Graphic.reset(frame);
 	}
 	return HError::None();
@@ -747,7 +747,7 @@ void WriteMainBlock(const RoomStruct *room, Stream *out) {
 	for (size_t i = 0; i < (size_t)MAX_ROOM_REGIONS; ++i)
 		out->WriteInt32(room->Regions[i].Tint);
 
-	save_lzw(out, room->BgFrames[0].Graphic.get(), room->Palette);
+	save_lzw(out, room->BgFrames[0].Graphic.get(), &room->Palette);
 	save_rle_bitmap8(out, room->RegionMask.get());
 	save_rle_bitmap8(out, room->WalkAreaMask.get());
 	save_rle_bitmap8(out, room->WalkBehindMask.get());
@@ -777,7 +777,7 @@ void WriteAnimBgBlock(const RoomStruct *room, Stream *out) {
 	for (size_t i = 0; i < room->BgFrameCount; ++i)
 		out->WriteInt8(room->BgFrames[i].IsPaletteShared ? 1 : 0);
 	for (size_t i = 1; i < room->BgFrameCount; ++i)
-		save_lzw(out, room->BgFrames[i].Graphic.get(), room->BgFrames[i].Palette);
+		save_lzw(out, room->BgFrames[i].Graphic.get(), &room->BgFrames[i].Palette);
 }
 
 void WritePropertiesBlock(const RoomStruct *room, Stream *out) {

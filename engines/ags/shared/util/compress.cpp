@@ -19,17 +19,12 @@
  *
  */
 
-#ifdef _MANAGED
-// ensure this doesn't get compiled to .NET IL
-#pragma unmanaged
-#endif
-
+#include "ags/shared/util/compress.h"
 #include "ags/shared/ac/common.h"   // quit, update_polled_stuff
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/util/compress.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/lzw.h"
-#include "ags/shared/util/stream.h"
+#include "ags/shared/util/memory_stream.h"
 #include "ags/globals.h"
 #if AGS_PLATFORM_ENDIAN_BIG
 #include "ags/shared/util/bbop.h"
@@ -324,52 +319,61 @@ Shared::Bitmap *load_rle_bitmap8(Stream *in, RGB(*pal)[256]) {
 // LZW
 //-----------------------------------------------------------------------------
 
-const char *lztempfnm = "~aclzw.tmp";
+void save_lzw(Stream *out, const Bitmap *bmpp, const RGB(*pal)[256]) {
+	// First write original bitmap's info and data into the memory buffer
+	// NOTE: we must do this purely for backward compatibility with old room formats:
+	// because they also included bmp width and height into compressed data!
+	std::vector<uint8_t> membuf;
+	{
+		MemoryStream memws(membuf, kStream_Write);
+		int w = bmpp->GetWidth(), h = bmpp->GetHeight(), bpp = bmpp->GetBPP();
+		memws.WriteInt32(w * bpp); // stride
+		memws.WriteInt32(h);
+		switch (bpp) {
+		case 1: memws.Write(bmpp->GetData(), w * h * bpp); break;
+		case 2: memws.WriteArrayOfInt16(reinterpret_cast<const int16_t *>(bmpp->GetData()), w *h); break;
+		case 4: memws.WriteArrayOfInt32(reinterpret_cast<const int32_t *>(bmpp->GetData()), w *h); break;
+		default: assert(0); break;
+		}
+	}
 
-void save_lzw(Stream *out, const Bitmap *bmpp, const RGB *pall) {
-	// First write original bitmap into temporary file
-	Stream *lz_temp_s = File::OpenFileCI(lztempfnm, kFile_CreateAlways, kFile_Write);
-	lz_temp_s->WriteInt32(bmpp->GetWidth() * bmpp->GetBPP());
-	lz_temp_s->WriteInt32(bmpp->GetHeight());
-	lz_temp_s->WriteArray(bmpp->GetData(), bmpp->GetLineLength(), bmpp->GetHeight());
-	delete lz_temp_s;
-
-	// Now open same file for reading, and begin writing compressed data into required output stream
-	lz_temp_s = File::OpenFileCI(lztempfnm);
-	soff_t temp_sz = lz_temp_s->GetLength();
-	out->WriteArray(&pall[0], sizeof(RGB), 256);
-	out->WriteInt32(temp_sz);
-	soff_t gobacto = out->GetPosition();
+	// Open same buffer for reading, and begin writing compressed data into the output
+	MemoryStream mem_in(membuf);
+	// NOTE: old format saves full RGB struct here (4 bytes, including the filler)
+	if (pal)
+		out->WriteArray(*pal, sizeof(RGB), 256);
+	else
+		out->WriteByteCount(0, sizeof(RGB) * 256);
+	out->WriteInt32((uint32_t)mem_in.GetLength());
 
 	// reserve space for compressed size
-	out->WriteInt32(temp_sz);
-	lzwcompress(lz_temp_s, out);
+	soff_t cmpsz_at = out->GetPosition();
+	out->WriteInt32(0);
+	lzwcompress(&mem_in, out);
 	soff_t toret = out->GetPosition();
-	out->Seek(gobacto, kSeekBegin);
-	soff_t compressed_sz = (toret - gobacto) - 4;
-	out->WriteInt32(compressed_sz);      // write compressed size
-
-	// Delete temp file
-	delete lz_temp_s;
-	File::DeleteFile(lztempfnm);
-
-	// Seek back to the end of the output stream
+	out->Seek(cmpsz_at, kSeekBegin);
+	soff_t compressed_sz = (toret - cmpsz_at) - sizeof(uint32_t);
+	out->WriteInt32(compressed_sz); // write compressed size
+	// seek back to the end of the output stream
 	out->Seek(toret, kSeekBegin);
 }
 
-void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, RGB *pall) {
+void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, RGB(*pal)[256]) {
 	soff_t        uncompsiz;
 	int *loptr;
 	unsigned char *membuffer;
 	int           arin;
 
-	in->Read(&pall[0], sizeof(RGB) * 256);
+	// NOTE: old format saves full RGB struct here (4 bytes, including the filler)
+	if (pal)
+		in->Read(*pal, sizeof(RGB) * 256);
+	else
+		in->Seek(sizeof(RGB) * 256);
 	_G(maxsize) = in->ReadInt32();
 	uncompsiz = in->ReadInt32();
 
 	uncompsiz += in->GetPosition();
-	_G(outbytes) = 0;
-	_G(putbytes) = 0;
+	_G(outbytes) = 0; _G(putbytes) = 0;
 
 	update_polled_stuff_if_runtime();
 	membuffer = lzwexpand_to_mem(in);
@@ -381,20 +385,24 @@ void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, RGB *pall) {
 	loptr[0] = BBOp::SwapBytesInt32(loptr[0]);
 	loptr[1] = BBOp::SwapBytesInt32(loptr[1]);
 	int bitmapNumPixels = loptr[0] * loptr[1] / dst_bpp;
-	switch (dst_bpp) { // bytes per pixel!
-	case 1: {
+	switch (dst_bpp) // bytes per pixel!
+	{
+	case 1:
+	{
 		// all done
 		break;
 	}
-	case 2: {
+	case 2:
+	{
 		short *sp = (short *)membuffer;
 		for (int i = 0; i < bitmapNumPixels; ++i) {
 			sp[i] = BBOp::SwapBytesInt16(sp[i]);
-		}
+}
 		// all done
 		break;
 	}
-	case 4: {
+	case 4:
+	{
 		int *ip = (int *)membuffer;
 		for (int i = 0; i < bitmapNumPixels; ++i) {
 			ip[i] = BBOp::SwapBytesInt32(ip[i]);
@@ -402,7 +410,7 @@ void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, RGB *pall) {
 		// all done
 		break;
 	}
-	}
+  }
 #endif // AGS_PLATFORM_ENDIAN_BIG
 
 	update_polled_stuff_if_runtime();
