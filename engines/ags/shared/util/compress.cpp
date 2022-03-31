@@ -359,79 +359,42 @@ void save_lzw(Stream *out, const Bitmap *bmpp, const RGB(*pal)[256]) {
 }
 
 void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, RGB(*pal)[256]) {
-	soff_t        uncompsiz;
-	int *loptr;
-	unsigned char *membuffer;
-	int           arin;
-
+	*dst_bmp = nullptr;
 	// NOTE: old format saves full RGB struct here (4 bytes, including the filler)
 	if (pal)
 		in->Read(*pal, sizeof(RGB) * 256);
 	else
 		in->Seek(sizeof(RGB) * 256);
-	_G(maxsize) = in->ReadInt32();
-	uncompsiz = in->ReadInt32();
+	const size_t uncomp_sz = in->ReadInt32();
+	const size_t comp_sz = in->ReadInt32();
+	const soff_t end_pos = in->GetPosition() + comp_sz;
 
-	uncompsiz += in->GetPosition();
-	_G(outbytes) = 0; _G(putbytes) = 0;
-
-	update_polled_stuff_if_runtime();
-	membuffer = lzwexpand_to_mem(in);
-	update_polled_stuff_if_runtime();
-
-	loptr = (int *)&membuffer[0];
-	membuffer += 8;
-#if AGS_PLATFORM_ENDIAN_BIG
-	loptr[0] = BBOp::SwapBytesInt32(loptr[0]);
-	loptr[1] = BBOp::SwapBytesInt32(loptr[1]);
-	int bitmapNumPixels = loptr[0] * loptr[1] / dst_bpp;
-	switch (dst_bpp) // bytes per pixel!
+	// First decompress data into the memory buffer
+	std::vector<uint8_t> membuf;
 	{
-	case 1:
-	{
-		// all done
-		break;
+		MemoryStream memws(membuf, kStream_Write);
+		lzwexpand(in, &memws, uncomp_sz);
 	}
-	case 2:
-	{
-		short *sp = (short *)membuffer;
-		for (int i = 0; i < bitmapNumPixels; ++i) {
-			sp[i] = BBOp::SwapBytesInt16(sp[i]);
-}
-		// all done
-		break;
-	}
-	case 4:
-	{
-		int *ip = (int *)membuffer;
-		for (int i = 0; i < bitmapNumPixels; ++i) {
-			ip[i] = BBOp::SwapBytesInt32(ip[i]);
-		}
-		// all done
-		break;
-	}
-  }
-#endif // AGS_PLATFORM_ENDIAN_BIG
 
-	update_polled_stuff_if_runtime();
-
-	Bitmap *bmm = BitmapHelper::CreateBitmap((loptr[0] / dst_bpp), loptr[1], dst_bpp * 8);
+	// Open same buffer for reading and get params and pixels
+	MemoryStream mem_in(membuf);
+	int stride = mem_in.ReadInt32(); // width * bpp
+	int height = mem_in.ReadInt32();
+	Bitmap *bmm = BitmapHelper::CreateBitmap((stride / dst_bpp), height, dst_bpp * 8);
 	if (bmm == nullptr)
-		quit("load_room: not enough memory to load room background");
+		return; // out of mem?
 
-	update_polled_stuff_if_runtime();
+	size_t num_pixels = stride * height / dst_bpp;
+	uint8_t *bmp_data = bmm->GetDataForWriting();
+	switch (dst_bpp) {
+	case 1: mem_in.Read(bmp_data, num_pixels); break;
+	case 2: mem_in.ReadArrayOfInt16(reinterpret_cast<int16_t *>(bmp_data), num_pixels); break;
+	case 4: mem_in.ReadArrayOfInt32(reinterpret_cast<int32_t *>(bmp_data), num_pixels); break;
+	default: assert(0); break;
+	}
 
-	for (arin = 0; arin < loptr[1]; arin++)
-		memcpy(&bmm->GetScanLineForWriting(arin)[0], &membuffer[arin * loptr[0]], loptr[0]);
-
-	update_polled_stuff_if_runtime();
-
-	free(membuffer - 8);
-
-	if (in->GetPosition() != uncompsiz)
-		in->Seek(uncompsiz, kSeekBegin);
-
-	update_polled_stuff_if_runtime();
+	if (in->GetPosition() != end_pos)
+		in->Seek(end_pos, kSeekBegin);
 
 	*dst_bmp = bmm;
 }

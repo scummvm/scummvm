@@ -47,6 +47,9 @@ public:
 	// Construct memory stream in the read-only mode over a const std::vector;
 	// vector must persist in memory until the stream is closed.
 	MemoryStream(const std::vector<uint8_t> &cbuf, DataEndianess stream_endianess = kLittleEndian);
+	// Construct memory stream in the read-only mode over a const C-buffer;
+	// buffer must persist in memory until the stream is closed.
+	MemoryStream(const uint8_t *cbuf, size_t buf_sz, DataEndianess stream_endianess = kLittleEndian);
 	// Construct memory stream in the read-only mode over a const String;
 	// String object must persist in memory until the stream is closed.
 	MemoryStream(const String &cbuf, DataEndianess stream_endianess = kLittleEndian);

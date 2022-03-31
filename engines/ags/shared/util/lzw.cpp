@@ -195,8 +195,6 @@ void lzwcompress(Stream *lzw_in, Stream *out) {
 	free(_G(lzbuffer));
 }
 
-int expand_to_mem = 0;
-unsigned char *membfptr = nullptr;
 void myputc(int ccc, Stream *out) {
 	if (_G(maxsize) > 0) {
 		_G(putbytes)++;
@@ -205,21 +203,17 @@ void myputc(int ccc, Stream *out) {
 	}
 
 	_G(outbytes)++;
-	if (expand_to_mem) {
-		membfptr[0] = ccc;
-		membfptr++;
-	} else
-		out->WriteInt8(ccc);
+	out->WriteInt8(ccc);
 }
 
-void lzwexpand(Stream *lzw_in, Stream *out) {
+void lzwexpand(Stream *lzw_in, Stream *out, size_t out_size) {
 	int bits, ch, i, j, len, mask;
-	char *buf;
-	//  printf(" UnShrinking: %s ",filena);
-	_G(putbytes) = 0;
+	char *lzbuffer;
+	_G(outbytes) = 0; _G(putbytes) = 0;
+	_G(maxsize) = out_size;
 
-	buf = (char *)malloc(N);
-	if (buf == nullptr) {
+	lzbuffer = (char *)malloc(N);
+	if (lzbuffer == nullptr) {
 		quit("compress.cpp: unable to decompress: insufficient memory");
 	}
 	i = N - F;
@@ -237,13 +231,13 @@ void lzwexpand(Stream *lzw_in, Stream *out) {
 				j = (i - j - 1) & (N - 1);
 
 				while (len--) {
-					myputc(buf[i] = buf[j], out);
+					myputc(lzbuffer[i] = lzbuffer[j], out);
 					j = (j + 1) & (N - 1);
 					i = (i + 1) & (N - 1);
 				}
 			} else {
 				ch = lzw_in->ReadByte();
-				myputc(buf[i] = ch, out);
+				myputc(lzbuffer[i] = ch, out);
 				i = (i + 1) & (N - 1);
 			}
 
@@ -258,16 +252,7 @@ void lzwexpand(Stream *lzw_in, Stream *out) {
 			break;
 	}
 
-	free(buf);
-	expand_to_mem = 0;
-}
-
-unsigned char *lzwexpand_to_mem(Stream *in) {
-	unsigned char *membuff = (unsigned char *)malloc(_G(maxsize) + 10);
-	expand_to_mem = 1;
-	membfptr = membuff;
-	lzwexpand(in, nullptr);
-	return membuff;
+	free(lzbuffer);
 }
 
 } // namespace AGS3

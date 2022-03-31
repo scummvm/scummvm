@@ -35,6 +35,15 @@ MemoryStream::MemoryStream(const std::vector<uint8_t> &cbuf, DataEndianess strea
 	, _pos(0) {
 }
 
+MemoryStream::MemoryStream(const uint8_t *cbuf, size_t buf_sz, DataEndianess stream_endianess)
+	: DataStream(stream_endianess)
+	, _cbuf(cbuf)
+	, _len(buf_sz)
+	, _buf(nullptr)
+	, _mode(kStream_Read)
+	, _pos(0) {
+}
+
 MemoryStream::MemoryStream(const String &cbuf, DataEndianess stream_endianess)
 	: DataStream(stream_endianess)
 	, _cbuf(reinterpret_cast<const uint8_t *>(cbuf.GetCStr()))

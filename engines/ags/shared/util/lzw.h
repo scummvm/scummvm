@@ -33,7 +33,7 @@ class Stream;
 using namespace AGS; // FIXME later
 
 void lzwcompress(Shared::Stream *lzw_in, Shared::Stream *out);
-unsigned char *lzwexpand_to_mem(Shared::Stream *in);
+void lzwexpand(Shared::Stream *lzw_in, Shared::Stream *out, size_t out_size);
 
 } // namespace AGS3
 
