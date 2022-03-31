@@ -4556,7 +4556,8 @@ msgstr "Habilita la conversió de text a veu per als subtítols"
 
 #: engines/dreamweb/detection.cpp:86
 msgid "Use TTS to read the subtitles (if TTS is available)"
-msgstr "Utilitza TextToSpeech per llegir els subtítols (si TTS està disponible)"
+msgstr ""
+"Utilitza TextToSpeech per llegir els subtítols (si TTS està disponible)"
 
 #: engines/glk/detection.cpp:239
 msgid "Use TTS to read the text"
