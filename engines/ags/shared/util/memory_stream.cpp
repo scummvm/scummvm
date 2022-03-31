@@ -120,7 +120,7 @@ bool MemoryStream::Seek(soff_t offset, StreamSeek origin) {
 }
 
 size_t MemoryStream::Write(const void *buffer, size_t size) {
-	if (!_buf || _pos >= _buf_sz) {
+	if (!_buf || _pos >= (soff_t)_buf_sz) {
 		return 0;
 	}
 	size = std::min(size, _buf_sz - (size_t)_pos);
@@ -131,7 +131,7 @@ size_t MemoryStream::Write(const void *buffer, size_t size) {
 }
 
 int32_t MemoryStream::WriteByte(uint8_t val) {
-	if (!_buf || _pos >= _buf_sz) {
+	if (!_buf || _pos >= (soff_t)_buf_sz) {
 		return -1;
 	}
 	*(_buf + _pos) = val;
