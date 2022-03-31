@@ -125,14 +125,15 @@ hline: 	CTOK NUM {
 		debugC(1, kHypnoDebugParser, "ON %d", $2);
 	}
 	| TPTOK FILENAME NUM FILENAME {
-		g_parsedArc->transitionVideo = $2;
-		g_parsedArc->transitionTime = $3;
-		g_parsedArc->transitionPalette = $4;
+		g_parsedArc->transitionVideos.push_back($2);
+		g_parsedArc->transitionTimes.push_back($3);
+		g_parsedArc->transitionPalettes.push_back($4);
 		debugC(1, kHypnoDebugParser, "Tp %s %d %s", $2, $3, $4);
 	}
 	| TTOK FILENAME NUM {
-		g_parsedArc->transitionVideo = $2;
-		g_parsedArc->transitionTime = $3;
+		g_parsedArc->transitionVideos.push_back($2);
+		g_parsedArc->transitionTimes.push_back($3);
+		g_parsedArc->transitionPalettes.push_back("");
 		debugC(1, kHypnoDebugParser, "T %s %d", $2, $3);
 	}
 	| TTOK NONETOK NUM { debugC(1, kHypnoDebugParser, "T NONE %d", $3); }

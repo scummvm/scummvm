@@ -58,7 +58,9 @@ void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common
 	*arcade = *g_parsedArc;
 	_levels[filename] = (Level*) arcade;
 	g_parsedArc->backgroundVideo.clear();
-	g_parsedArc->transitionPalette.clear();
+	g_parsedArc->transitionVideos.clear();
+	g_parsedArc->transitionTimes.clear();
+	g_parsedArc->transitionPalettes.clear();
 	g_parsedArc->player.clear();
 	g_parsedArc->shoots.clear();
 	g_parsedArc->intros.clear();
@@ -204,7 +206,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		debugC(1, kHypnoDebugArcade, "Used frame rate looks odd: %f, increasing x 10", rate);
 		background.decoder->setRate(10.0);
 	}
-	loadPalette(arc->backgroundPalette);
+	Filename currentPalette = arc->backgroundPalette;
+	loadPalette(currentPalette);
 	bool shootingPrimary = false;
 	bool shootingSecondary = false;
 	bool needsUpdate = true;
@@ -239,12 +242,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				if (event.kbd.keycode == Common::KEYCODE_c) {
 					background.decoder->pauseVideo(true);
 					showCredits();
-
-					if (transition && !arc->transitionPalette.empty())
-						loadPalette(arc->transitionPalette);
-					else
-						loadPalette(arc->backgroundPalette);
-
+					loadPalette(currentPalette);
 					changeScreenMode("320x200");
 					background.decoder->pauseVideo(false);
 					updateScreen(background);
@@ -328,23 +326,30 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			break;
 		}
 
-		if (!arc->transitionVideo.empty() && !transition && background.decoder->getCurFrame() >= (int)arc->transitionTime) {
+		if (!arc->transitionVideos.empty() && background.decoder->getCurFrame() >= (int)*arc->transitionTimes.begin()) {
 			transition = true;
 			background.decoder->pauseVideo(true);
 
-			debugC(1, kHypnoDebugArcade, "Playing transition %s", arc->transitionVideo.c_str());
-			MVideo video(arc->transitionVideo, Common::Point(0, 0), false, true, false);
+			Filename transitionVideo = *arc->transitionVideos.begin();
+			Filename transitionPalette = *arc->transitionPalettes.begin();
+
+			debugC(1, kHypnoDebugArcade, "Playing transition %s", transitionVideo.c_str());
+			MVideo video(transitionVideo, Common::Point(0, 0), false, true, false);
 			disableCursor();
 			runIntro(video);
 
-			if (!arc->transitionPalette.empty())
-				loadPalette(arc->transitionPalette);
-			else
-				loadPalette(arc->backgroundPalette);
+			if (!transitionPalette.empty())
+				currentPalette = transitionPalette;
+
+			loadPalette(currentPalette);
 			background.decoder->pauseVideo(false);
 			updateScreen(background);
 			drawScreen();
 			drawCursorArcade(mousePos);
+
+			arc->transitionVideos.pop_front();
+			arc->transitionPalettes.pop_front();
+			arc->transitionTimes.pop_front();
 		}
 
 		if (background.decoder && background.decoder->getCurFrame() >= int(segments[_segmentIdx].start + segments[_segmentIdx].size - 2)) {
@@ -475,13 +480,11 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				} else if (it->video->decoder->needsUpdate() && needsUpdate) {
 					updateScreen(*it->video);
 				}
-			} {
+			} else if (!it->video) {
 				uint32 frame = background.decoder->getCurFrame();
 				uint32 bodyLastFrame = it->bodyFrames[it->bodyFrames.size() - 1].lastFrame();
 				if (frame > it->startFrame && frame - it->startFrame > bodyLastFrame)
 					if (!it->destroyed) {
-						_health = _health - it->attackWeight;
-						hitPlayer();
 						missTarget(it, arc, background);
 						shootsToRemove.push_back(i);
 					}
@@ -617,6 +620,7 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVid
 				MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
 				disableCursor();
 				runIntro(video);
+				// Should be currentPalette?
 				loadPalette(arc->backgroundPalette);
 				background.decoder->pauseVideo(false);
 				updateScreen(background);
@@ -625,6 +629,7 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVid
 				background.decoder->pauseVideo(true);
 				MVideo video(arc->hitBoss2Video, Common::Point(0, 0), false, true, false);
 				runIntro(video);
+				// Should be currentPalette?
 				loadPalette(arc->backgroundPalette);
 				background.decoder->pauseVideo(false);
 				updateScreen(background);

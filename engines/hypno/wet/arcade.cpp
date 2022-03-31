@@ -412,6 +412,9 @@ void WetEngine::missTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {
 		background.decoder->pauseVideo(false);
 		updateScreen(background);
 		drawScreen();
+	} else if (s->attackFrames.empty()) {
+		_health = _health - s->attackWeight;
+		hitPlayer();
 	}
 }
 

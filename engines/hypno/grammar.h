@@ -474,7 +474,6 @@ public:
 	ArcadeShooting()  {
 		type = ArcadeLevel;
 		health = 100;
-		transitionTime = 0;
 		id = 0;
 		objKillsRequired[0] = 0;
 		objKillsRequired[1] = 0;
@@ -485,7 +484,7 @@ public:
 	uint32 id;
 	uint32 frameDelay;
 	Common::String mode;
-	uint32 transitionTime;
+	Common::List<uint32> transitionTimes;
 	Segments segments;
 
 	// Objectives
@@ -493,8 +492,8 @@ public:
 	uint32 objMissesAllowed [2];
 
 	// Videos
-	Filename transitionVideo;
-	Filename transitionPalette;
+	Common::List<Filename> transitionVideos;
+	Common::List<Filename> transitionPalettes;
 	Filename nextLevelVideo;
 	Filename defeatNoEnergyFirstVideo;
 	Filename defeatNoEnergySecondVideo;
