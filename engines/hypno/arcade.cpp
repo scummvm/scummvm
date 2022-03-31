@@ -350,6 +350,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			arc->transitionVideos.pop_front();
 			arc->transitionPalettes.pop_front();
 			arc->transitionTimes.pop_front();
+			if (!_music.empty())
+				playSound(_music, 0, arc->musicRate); // restore music
 		}
 
 		if (background.decoder && background.decoder->getCurFrame() >= int(segments[_segmentIdx].start + segments[_segmentIdx].size - 2)) {
@@ -625,6 +627,8 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVid
 				background.decoder->pauseVideo(false);
 				updateScreen(background);
 				drawScreen();
+				if (!_music.empty())
+					playSound(_music, 0, arc->musicRate); // restore music
 			} else if (_objIdx == 1 && !arc->hitBoss2Video.empty()) {
 				background.decoder->pauseVideo(true);
 				MVideo video(arc->hitBoss2Video, Common::Point(0, 0), false, true, false);
@@ -635,6 +639,8 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVid
 				updateScreen(background);
 				drawScreen();
 				drawCursorArcade(mousePos);
+				if (!_music.empty())
+					playSound(_music, 0, arc->musicRate); // restore music
 			}
 			byte p[3] = {0x00, 0x00, 0x00}; // Always black?
 			assert(_shoots[i].paletteSize == 1 || _shoots[i].paletteSize == 0);
