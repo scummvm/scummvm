@@ -22,6 +22,8 @@
 #ifndef AGS_SHARED_UTIL_LZW_H
 #define AGS_SHARED_UTIL_LZW_H
 
+#include "ags/shared/core/types.h"
+
 namespace AGS3 {
 
 namespace AGS {
