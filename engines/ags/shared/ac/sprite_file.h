@@ -50,7 +50,8 @@ enum SpriteFileVersion {
 	kSprfVersion_Last32bit = 6,
 	kSprfVersion_64bit = 10,
 	kSprfVersion_HighSpriteLimit = 11,
-	kSprfVersion_Current = kSprfVersion_HighSpriteLimit
+	kSprfVersion_StorageFormats = 12,
+	kSprfVersion_Current = kSprfVersion_StorageFormats
 };
 
 enum SpriteIndexFileVersion {
@@ -59,6 +60,24 @@ enum SpriteIndexFileVersion {
 	kSpridxfVersion_64bit = 10,
 	kSpridxfVersion_HighSpriteLimit = 11,
 	kSpridxfVersion_Current = kSpridxfVersion_HighSpriteLimit
+};
+
+// Instructions to how the sprites are allowed to be stored
+enum SpriteStorage {
+	// When possible convert the sprite into another format for less disk space
+	// e.g. save 16/32-bit images as 8-bit colormaps with palette
+	kSprStore_OptimizeForSize = 0x01
+};
+
+// Format in which the sprite's pixel data is stored
+enum SpriteFormat {
+	kSprFmt_Undefined = 0, // undefined, or keep as-is
+	// Encoded as a 8-bit colormap with palette of 24-bit RGB values
+	kSprFmt_PaletteRgb888 = 32,
+	// Encoded as a 8-bit colormap with palette of 32-bit ARGB values
+	kSprFmt_PaletteArgb8888 = 33,
+	// Encoded as a 8-bit colormap with palette of 16-bit RGB565 values
+	kSprFmt_PaletteRgb565 = 34
 };
 
 typedef int32_t sprkey_t;
@@ -76,13 +95,18 @@ struct SpriteFileIndex {
 
 // Invidual sprite data header (as read from the file)
 struct SpriteDatHeader {
-	int BPP = 0; // color depth (bytes per pixel)
-	int Width = 0;
-	int Height = 0;
+	int BPP = 0; // color depth (bytes per pixel); or input format
+	SpriteFormat SFormat = kSprFmt_Undefined; // storage format
+	uint32_t PalCount = 0; // palette length, if applicable to storage format
+	int Compress = 0; // compression type
+	int Width = 0; // sprite's width
+	int Height = 0; // sprite's height
 
 	SpriteDatHeader() = default;
-	SpriteDatHeader(int bpp, int w = 0, int h = 0)
-		: BPP(bpp), Width(w), Height(h) {
+	SpriteDatHeader(int bpp, SpriteFormat sformat = kSprFmt_Undefined,
+		uint32_t pal_count = 0, int compress = 0, int w = 0, int h = 0)
+		: BPP(bpp), SFormat(sformat), PalCount(pal_count),
+		Compress(compress), Width(w), Height(h) {
 	}
 };
 
@@ -101,6 +125,7 @@ public:
 	// Closes stream; no reading will be possible unless opened again
 	void        Close();
 
+	int         GetStoreFlags() const;
 	// Tells if bitmaps in the file are compressed
 	bool        IsFileCompressed() const;
 	// Tells the highest known sprite index
@@ -117,6 +142,8 @@ public:
 	HError      LoadSprite(sprkey_t index, Bitmap *&sprite);
 	// Loads a raw sprite element data into the buffer, stores header info separately
 	HError      LoadRawData(sprkey_t index, SpriteDatHeader &hdr, std::vector<uint8_t> &data);
+	HError      LoadSpriteData(sprkey_t index, SpriteDatHeader &hdr, std::vector<uint8_t> &data,
+		std::vector<uint32_t> &palette);
 
 private:
 	// Seek stream to sprite
@@ -132,6 +159,8 @@ private:
 	// Array of sprite references
 	std::vector<SpriteRef> _spriteData;
 	std::unique_ptr<Stream> _stream; // the sprite stream
+	SpriteFileVersion _version = kSprfVersion_Current;
+	int _storeFlags = 0; // storage flags, specify how sprites may be stored
 	bool _compressed; // are sprites compressed
 	sprkey_t _curPos; // current stream position (sprite slot)
 };
@@ -148,7 +177,7 @@ public:
     const SpriteFileIndex &GetIndex() const { return _index; }
 
     // Initializes new sprite file format
-    void Begin(bool compress, sprkey_t last_slot = -1);
+    void Begin(int store_flags, bool compress, sprkey_t last_slot = -1);
     // Writes a bitmap into file, compressing if necessary
     void WriteBitmap(Bitmap *image);
     // Writes an empty slot marker
@@ -160,9 +189,12 @@ public:
 
 private:
 	// Writes prepared image data in a proper file format, following explicit data_bpp rule
-	void WriteSpriteData(const SpriteDatHeader &hdr, const uint8_t *im_data, size_t im_data_sz, int im_bpp);
+	void WriteSpriteData(const SpriteDatHeader &hdr,
+		const uint8_t *im_data, size_t im_data_sz, int im_bpp,
+		const uint32_t palette[256]);
 
 	std::unique_ptr<Stream> &_out;
+	int _storeFlags = 0;
     bool _compress = false;
     soff_t _lastSlotPos = -1; // last slot save position in file
     // sprite index accumulated on write for reporting back to user
@@ -176,7 +208,7 @@ private:
 int SaveSpriteFile(const String &save_to_file,
     const std::vector<Bitmap*> &sprites, // available sprites (may contain nullptrs)
     SpriteFile *read_from_file, // optional file to read missing sprites from
-    bool compressOutput, SpriteFileIndex &index);
+	int store_flags, bool compress, SpriteFileIndex &index);
 // Saves sprite index table in a separate file
 int SaveSpriteIndex(const String &filename, const SpriteFileIndex &index);
 

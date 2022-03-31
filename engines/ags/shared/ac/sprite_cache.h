@@ -94,10 +94,13 @@ public:
 	// Loads sprite reference information and inits sprite stream
 	HError   InitFile(const Shared::String &filename, const Shared::String &sprindex_filename);
 	// Saves current cache contents to the file
-	int         SaveToFile(const Shared::String &filename, bool compressOutput, SpriteFileIndex &index);
+	int         SaveToFile(const Shared::String &filename, int store_flags, bool compress, SpriteFileIndex &index);
 	// Closes an active sprite file stream
 	void        DetachFile();
 
+	inline int GetStoreFlags() const {
+		return _file.GetStoreFlags();
+	}
 	inline bool IsFileCompressed() const {
 		return _file.IsFileCompressed();
 	}
