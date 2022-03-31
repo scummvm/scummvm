@@ -26,43 +26,24 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-MemoryStream::MemoryStream(const std::vector<uint8_t> &cbuf, DataEndianess stream_endianess)
-	: DataStream(stream_endianess)
-	, _cbuf(&cbuf.front())
-	, _len(cbuf.size())
-	, _buf(nullptr)
-	, _mode(kStream_Read)
-	, _pos(0) {
-}
-
 MemoryStream::MemoryStream(const uint8_t *cbuf, size_t buf_sz, DataEndianess stream_endianess)
 	: DataStream(stream_endianess)
 	, _cbuf(cbuf)
+	, _buf_sz(buf_sz)
 	, _len(buf_sz)
 	, _buf(nullptr)
 	, _mode(kStream_Read)
 	, _pos(0) {
 }
 
-MemoryStream::MemoryStream(const String &cbuf, DataEndianess stream_endianess)
+MemoryStream::MemoryStream(uint8_t *buf, size_t buf_sz, StreamWorkMode mode, DataEndianess stream_endianess)
 	: DataStream(stream_endianess)
-	, _cbuf(reinterpret_cast<const uint8_t *>(cbuf.GetCStr()))
-	, _len(cbuf.GetLength())
-	, _buf(nullptr)
+	, _buf(buf)
+	, _buf_sz(buf_sz)
+	, _len(0)
+	, _cbuf(nullptr)
 	, _mode(kStream_Read)
 	, _pos(0) {
-}
-
-MemoryStream::MemoryStream(std::vector<uint8_t> &buf, StreamWorkMode mode, DataEndianess stream_endianess)
-	: DataStream(stream_endianess)
-	, _len(buf.size())
-	, _buf(&buf)
-	, _mode(mode)
-	, _pos(buf.size()) {
-	_cbuf = (mode == kStream_Read) ? &buf.front() : nullptr;
-}
-
-MemoryStream::~MemoryStream() {
 }
 
 void MemoryStream::Close() {
@@ -122,26 +103,6 @@ int32_t MemoryStream::ReadByte() {
 	return _cbuf[(size_t)(_pos++)];
 }
 
-size_t MemoryStream::Write(const void *buffer, size_t size) {
-	if (!_buf) {
-		return 0;
-	}
-	_buf->resize(_buf->size() + size);
-	memcpy(_buf->data() + _pos, buffer, size);
-	_pos += size;
-	_len += size;
-	return size;
-}
-
-int32_t MemoryStream::WriteByte(uint8_t val) {
-	if (!_buf) {
-		return -1;
-	}
-	_buf->push_back(val);
-	_pos++; _len++;
-	return val;
-}
-
 bool MemoryStream::Seek(soff_t offset, StreamSeek origin) {
 	if (!CanSeek()) {
 		return false;
@@ -156,6 +117,62 @@ bool MemoryStream::Seek(soff_t offset, StreamSeek origin) {
 	_pos = std::max<soff_t>(0, _pos);
 	_pos = std::min<soff_t>(_len, _pos); // clamp to EOS
 	return true;
+}
+
+size_t MemoryStream::Write(const void *buffer, size_t size) {
+	if (!_buf || _pos >= _buf_sz) {
+		return 0;
+	}
+	size = std::min(size, _buf_sz - (size_t)_pos);
+	memcpy(_buf + _pos, buffer, size);
+	_pos += size;
+	_len += size;
+	return size;
+}
+
+int32_t MemoryStream::WriteByte(uint8_t val) {
+	if (!_buf || _pos >= _buf_sz) {
+		return -1;
+	}
+	*(_buf + _pos) = val;
+	_pos++; _len++;
+	return val;
+}
+
+
+VectorStream::VectorStream(const std::vector<uint8_t> &cbuf, DataEndianess stream_endianess)
+	: MemoryStream(&cbuf.front(), cbuf.size(), stream_endianess)
+	, _vec(nullptr) {
+}
+
+VectorStream::VectorStream(std::vector<uint8_t> &buf, StreamWorkMode mode, DataEndianess stream_endianess)
+	: MemoryStream((mode == kStream_Read) ? &buf.front() : nullptr, buf.size(), mode, stream_endianess)
+	, _vec(&buf) {
+}
+
+void VectorStream::Close() {
+	_vec = nullptr;
+	MemoryStream::Close();
+}
+
+size_t VectorStream::Write(const void *buffer, size_t size) {
+	if (!_vec) {
+		return 0;
+	}
+	_vec->resize(_vec->size() + size);
+	memcpy(_vec->data() + _pos, buffer, size);
+	_pos += size;
+	_len += size;
+	return size;
+}
+
+int32_t VectorStream::WriteByte(uint8_t val) {
+	if (!_vec) {
+		return -1;
+	}
+	_vec->push_back(val);
+	_pos++; _len++;
+	return val;
 }
 
 } // namespace Shared

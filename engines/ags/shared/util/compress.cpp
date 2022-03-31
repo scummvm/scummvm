@@ -325,7 +325,7 @@ void save_lzw(Stream *out, const Bitmap *bmpp, const RGB(*pal)[256]) {
 	// because they also included bmp width and height into compressed data!
 	std::vector<uint8_t> membuf;
 	{
-		MemoryStream memws(membuf, kStream_Write);
+		VectorStream memws(membuf, kStream_Write);
 		int w = bmpp->GetWidth(), h = bmpp->GetHeight(), bpp = bmpp->GetBPP();
 		memws.WriteInt32(w * bpp); // stride
 		memws.WriteInt32(h);
@@ -338,7 +338,7 @@ void save_lzw(Stream *out, const Bitmap *bmpp, const RGB(*pal)[256]) {
 	}
 
 	// Open same buffer for reading, and begin writing compressed data into the output
-	MemoryStream mem_in(membuf);
+	VectorStream mem_in(membuf);
 	// NOTE: old format saves full RGB struct here (4 bytes, including the filler)
 	if (pal)
 		out->WriteArray(*pal, sizeof(RGB), 256);
@@ -372,12 +372,12 @@ void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, RGB(*pal)[256]) {
 	// First decompress data into the memory buffer
 	std::vector<uint8_t> membuf;
 	{
-		MemoryStream memws(membuf, kStream_Write);
+		VectorStream memws(membuf, kStream_Write);
 		lzwexpand(in, &memws, uncomp_sz);
 	}
 
 	// Open same buffer for reading and get params and pixels
-	MemoryStream mem_in(membuf);
+	VectorStream mem_in(membuf);
 	int stride = mem_in.ReadInt32(); // width * bpp
 	int height = mem_in.ReadInt32();
 	Bitmap *bmm = BitmapHelper::CreateBitmap((stride / dst_bpp), height, dst_bpp * 8);

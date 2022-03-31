@@ -587,7 +587,7 @@ void SpriteFileWriter::WriteBitmap(Bitmap *image) {
 	// (Optional) Compress the image data into the temp buffer
 	if (_compress) {
 		compress = 1;
-		MemoryStream mems(_membuf, kStream_Write);
+		VectorStream mems(_membuf, kStream_Write);
 		rle_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems);
 		// mark to write as a plain byte array
 		im_data = ImBufferCPtr(&_membuf[0], _membuf.size(), 1);
