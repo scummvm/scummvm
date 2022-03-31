@@ -587,10 +587,10 @@ void GridWidget::reloadThumbnails() {
 				}
 			}
 		}
+		entry->thumbPath = path;
 		if (surf) {
 			const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512, true));
 			_loadedSurfaces[path] = scSurf;
-			entry->thumbPath = path;
 			if (surf != scSurf) {
 				surf->free();
 				delete surf;
