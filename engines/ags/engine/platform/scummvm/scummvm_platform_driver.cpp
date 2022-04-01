@@ -40,11 +40,11 @@ struct ScummVMPlatformDriver : AGSPlatformDriver {
 
 	int  CDPlayerCommand(int cmdd, int datt) override;
 	void DisplayAlert(const char *, ...) override;
-	const char *GetAllUsersDataDirectory() override;
-	const char *GetUserSavedgamesDirectory() override;
-	const char *GetUserConfigDirectory() override;
-	const char *GetUserGlobalConfigDirectory() override;
-	const char *GetAppOutputDirectory() override;
+	FSLocation GetAllUsersDataDirectory() override;
+	FSLocation GetUserSavedgamesDirectory() override;
+	FSLocation GetUserConfigDirectory() override;
+	FSLocation GetUserGlobalConfigDirectory() override;
+	FSLocation GetAppOutputDirectory() override;
 	unsigned long GetDiskFreeSpaceMB() override;
 	const char *GetNoMouseErrorString() override;
 	const char *GetAllegroFailUserHint() override;
@@ -77,24 +77,24 @@ void ScummVMPlatformDriver::DisplayAlert(const char *text, ...) {
 		::AGS::g_vm->GUIError(msg);
 }
 
-const char *ScummVMPlatformDriver::GetAllUsersDataDirectory() {
-	return "";
+FSLocation ScummVMPlatformDriver::GetAllUsersDataDirectory() {
+	return FSLocation(".");
 }
 
-const char *ScummVMPlatformDriver::GetUserSavedgamesDirectory() {
-	return "";
+FSLocation ScummVMPlatformDriver::GetUserSavedgamesDirectory() {
+	return FSLocation(".");
 }
 
-const char *ScummVMPlatformDriver::GetUserConfigDirectory() {
+FSLocation ScummVMPlatformDriver::GetUserConfigDirectory() {
 	return GetUserSavedgamesDirectory();
 }
 
-const char *ScummVMPlatformDriver::GetUserGlobalConfigDirectory() {
+FSLocation ScummVMPlatformDriver::GetUserGlobalConfigDirectory() {
 	return GetUserSavedgamesDirectory();
 }
 
-const char *ScummVMPlatformDriver::GetAppOutputDirectory() {
-	return "";
+FSLocation ScummVMPlatformDriver::GetAppOutputDirectory() {
+	return FSLocation(".");
 }
 
 unsigned long ScummVMPlatformDriver::GetDiskFreeSpaceMB() {

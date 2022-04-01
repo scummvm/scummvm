@@ -90,7 +90,12 @@ PDebugOutput create_log_output(const String &name, const String &path = "", LogF
 		return _GP(DbgMgr).RegisterOutput(OutputSystemID, AGSPlatformDriver::GetDriver(), kDbgMsg_None);
 	} else if (name.CompareNoCase(OutputFileID) == 0) {
 		_GP(DebugLogFile).reset(new LogFile());
-		String logfile_path = !path.IsEmpty() ? path : Path::ConcatPaths(_G(platform)->GetAppOutputDirectory(), "ags.log");
+		String logfile_path = path;
+		if (logfile_path.IsEmpty()) {
+			FSLocation fs = _G(platform)->GetAppOutputDirectory();
+			CreateFSDirs(fs);
+			logfile_path = Path::ConcatPaths(fs.FullDir, "ags.log");
+		}
 		if (!_GP(DebugLogFile)->OpenFile(logfile_path, open_mode))
 			return nullptr;
 		Debug::Printf(kDbgMsg_Info, "Logging to %s", logfile_path.GetCStr());
