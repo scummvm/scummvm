@@ -217,6 +217,17 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 				// We identify the broken up strings that need
 				// adjustment by the upcoming text.
 
+				TimingAdjustment timingAdjustmentsEN[] = {
+					{ "It's just that",   100, 0 },
+					{ "you're TOO nice",  90,  0 },
+					{ "^unpredictable.",  170, 0 },
+					{ "Yikes!",           120, 0 },
+					{ "Huh?",             90,  0 },
+					{ "Why do you",       110, 0 },
+					{ "Maybe we can",     75,  0 },
+					{ "Mind if I drive?", 160, 0 }
+				};
+
 				TimingAdjustment timingAdjustmentsDE[] = {
 					{ "Und daf\x81r^",    110, 0 },
 					{ "Es ist blo\xe1^",  120, 0 },
@@ -256,6 +267,10 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 				};
 
 				switch (_language) {
+				case Common::EN_ANY:
+					adjustments = timingAdjustmentsEN;
+					numAdjustments = ARRAYSIZE(timingAdjustmentsEN);
+					break;
 				case Common::DE_DEU:
 					adjustments = timingAdjustmentsDE;
 					numAdjustments = ARRAYSIZE(timingAdjustmentsDE);
