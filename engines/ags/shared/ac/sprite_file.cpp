@@ -89,7 +89,7 @@ static bool CreateIndexedBitmap(const Bitmap *image, std::vector<uint8_t> &dst_d
 		default: assert(0); break;
 		}
 
-		if (pal_n == -1) {
+		if ((int)pal_n == -1) {
 			if (pal_count == 256) return false;
 			pal_n = pal_count;
 			palette[pal_count++] = col;
@@ -135,6 +135,7 @@ static inline uint8_t GetPaletteBPP(SpriteFormat fmt) {
 	case kSprFmt_PaletteRgb888: return 3;
 	case kSprFmt_PaletteArgb8888: return 4;
 	case kSprFmt_PaletteRgb565: return 2;
+	case kSprFmt_Undefined: return 0;
 	}
 	return 0; // means no palette
 }
@@ -630,8 +631,10 @@ void SpriteFileWriter::WriteSpriteData(const SpriteDatHeader &hdr,
 	if (pal_bpp > 0) {
 		assert(hdr.PalCount > 0);
 		switch (pal_bpp) {
-		case 2: for (uint32_t i = 0; i < hdr.PalCount; ++i) _out->WriteInt16(palette[i]);
-		case 4: for (uint32_t i = 0; i < hdr.PalCount; ++i) _out->WriteInt32(palette[i]);
+		case 1: break;
+		case 2: for (uint32_t i = 0; i < hdr.PalCount; ++i) _out->WriteInt16(palette[i]); break;
+		case 4: for (uint32_t i = 0; i < hdr.PalCount; ++i) _out->WriteInt32(palette[i]); break;
+		default: assert(0); break;
 		}
 	}
 	// write the image pixel data
