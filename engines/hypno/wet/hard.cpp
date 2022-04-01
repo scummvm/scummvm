@@ -134,6 +134,7 @@ void WetEngine::runMainMenu(Code *code) {
 	Graphics::Surface surName = overlay->getSubArea(subName);
 	drawImage(surName, subName.left, subName.top, false);
 	drawString("scifi08.fgx", "ENTER NAME :", 48, 50, 100, c);
+	_name.clear();
 	bool cont = true;
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -150,7 +151,7 @@ void WetEngine::runMainMenu(Code *code) {
 				else if (event.kbd.keycode == Common::KEYCODE_RETURN && !_name.empty()) {
 					cont = false;
 				}
-				else if (Common::isAlnum(event.kbd.keycode)) {
+				else if (Common::isAlpha(event.kbd.keycode)) {
 					playSound("sound/m_choice.raw", 1);
 					_name = _name + char(event.kbd.keycode - 32);
 				}
