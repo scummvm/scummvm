@@ -72,18 +72,31 @@ void ScummEngine::printString(int m, const byte *msg) {
 			return;
 		}
 
-		// WORKAROUND bug #13378: Sam's reactions during the intro run
-		// much too quick for the subtitles in some localizations. We
-		// get around this by slowing down that entire animation, while
-		// leaving the reset of the animations unchanged.
-		//
-		// The animation speed is not very fine grained, though.
+		// WORKAROUND bug #13378: In the German version, Sam's reactions
+		// to Max beating up the scientist run much too quick for the
+		// animation to match. We get around this by slowing down that
+		// animation.
+ 		//
+		// In the italian version, the whole scene is sped up to keep up
+		// with Sam's speech. We compensate for this by slowing down the
+		// other animations.
 		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && _enableEnhancements) {
+			Actor *a;
+
 			if (_language == Common::DE_DEU) {
 				if (memcmp(msg + 16, "Ohh!", 4) == 0) {
-					Actor *a = derefActorSafe(2, "printString");
+					a = derefActorSafe(2, "printString");
 					if (a)
 						a->setAnimSpeed(3);
+				}
+			} else if (_language == Common::IT_ITA) {
+				if (memcmp(msg + 16, "Ooh.", 4) == 0) {
+					a = derefActorSafe(3, "printString");
+					if (a)
+						a->setAnimSpeed(2);
+					a = derefActorSafe(10, "printString");
+				if (a)
+						a->setAnimSpeed(2);
 				}
 			}
 		}
@@ -404,10 +417,29 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 					{ "Kann ich fahren?", 240, 0 }
 				};
 
+				TimingAdjustment timingAdjustmentsIT[] = {
+					{ "E per questo^",    120, 0 },
+					{ "Forse sei",        75,  0 },
+					{ "^imprevedibile.",  170, 0 },
+					{ "Oh.",              20,  0 },
+					{ "Ehi, bel colpo.",  30,  0 },
+					{ "Yikes!",           90,  0 },
+					{ "Huh?",             50,  0 },
+					{ "Posso tenere",     100, 0 },
+					{ "Perch\x82 pensi",  120, 0 },
+					{ "Andiamocene",      250, 0 },
+					{ "Forse possiamo",   90,  0 },
+					{ "Ti dispiace",      200, 0 }
+				};
+
 				switch (_language) {
 				case Common::DE_DEU:
 					adjustments = timingAdjustmentsDE;
 					numAdjustments = ARRAYSIZE(timingAdjustmentsDE);
+					break;
+				case Common::IT_ITA:
+					adjustments = timingAdjustmentsIT;
+					numAdjustments = ARRAYSIZE(timingAdjustmentsIT);
 					break;
 				default:
 					adjustments = nullptr;

@@ -661,6 +661,12 @@ void ScummEngine::writeVar(uint var, int value) {
 			// "Wirst Du brutzeln, wie eine grobe Bratwurst!"
 			if (value == 1 && _language == Common::DE_DEU)
 				value = 4;
+
+			// Max beats up the scientist. This was probably to
+			// match the subtitles to the speech better, but this
+			// is just too much!
+			if (value == 2 && _language == Common::IT_ITA)
+				value = 3;
 		}
 
 		_scummVars[var] = value;
