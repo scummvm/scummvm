@@ -39,6 +39,7 @@ DECLARE_SINGLETON(ConfigManager);
 
 char const *const ConfigManager::kApplicationDomain = "scummvm";
 char const *const ConfigManager::kTransientDomain = "__TRANSIENT";
+char const *const ConfigManager::kSessionDomain = "__SESSION"; 
 
 char const *const ConfigManager::kKeymapperDomain = "keymapper";
 
@@ -66,6 +67,7 @@ void ConfigManager::copyFrom(ConfigManager &source) {
 	_appDomain = source._appDomain;
 	_defaultsDomain = source._defaultsDomain;
 	_keymapperDomain = source._keymapperDomain;
+	_sessionDomain = source._sessionDomain; 
 #ifdef USE_CLOUD
 	_cloudDomain = source._cloudDomain;
 #endif
@@ -160,6 +162,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 	_miscDomains.clear();
 	_transientDomain.clear();
 	_domainSaveOrder.clear();
+	_sessionDomain.clear(); 
 
 	_keymapperDomain.clear();
 #ifdef USE_CLOUD
@@ -225,7 +228,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			// Split string at '=' into 'key' and 'value'. First, find the "=" delimeter.
 			const char *p = strchr(t, '=');
 			if (!p)
-				error("Config file buggy: Junk found in line line %d: '%s'", lineno, t);
+				error("Config file buggy: Junk found in line %d: '%s'", lineno, t);
 
 			// Extract the key/value pair
 			String key(t, p);
@@ -364,6 +367,8 @@ const ConfigManager::Domain *ConfigManager::getDomain(const String &domName) con
 		return &_appDomain;
 	if (domName == kKeymapperDomain)
 		return &_keymapperDomain;
+	if (domName == kSessionDomain)
+		return &_sessionDomain; 
 #ifdef USE_CLOUD
 	if (domName == kCloudDomain)
 		return &_cloudDomain;
@@ -386,6 +391,8 @@ ConfigManager::Domain *ConfigManager::getDomain(const String &domName) {
 		return &_appDomain;
 	if (domName == kKeymapperDomain)
 		return &_keymapperDomain;
+	if (domName == kSessionDomain)
+		return &_sessionDomain; 
 #ifdef USE_CLOUD
 	if (domName == kCloudDomain)
 		return &_cloudDomain;
@@ -405,12 +412,16 @@ ConfigManager::Domain *ConfigManager::getDomain(const String &domName) {
 bool ConfigManager::hasKey(const String &key) const {
 	// Search the domains in the following order:
 	// 1) the transient domain,
-	// 2) the active game domain (if any),
-	// 3) the application domain.
+	// 2) the session domain, 
+	// 3) the active game domain (if any),
+	// 4) the application domain.
 	// The defaults domain is explicitly *not* checked.
 
 	if (_transientDomain.contains(key))
 		return true;
+
+	if (_sessionDomain.contains(key))
+		return true; 
 
 	if (_activeDomain && _activeDomain->contains(key))
 		return true;
@@ -428,6 +439,9 @@ bool ConfigManager::hasKey(const String &key, const String &domName) const {
 	if (domName.empty())
 		return hasKey(key);
 
+	if (_sessionDomain.contains(key))
+		return true; 
+
 	const Domain *domain = getDomain(domName);
 
 	if (!domain)
@@ -443,6 +457,7 @@ void ConfigManager::removeKey(const String &key, const String &domName) {
 		      key.c_str(), domName.c_str());
 
 	domain->erase(key);
+	_sessionDomain.erase(key); 
 }
 
 
@@ -452,6 +467,8 @@ void ConfigManager::removeKey(const String &key, const String &domName) {
 const String &ConfigManager::get(const String &key) const {
 	if (_transientDomain.contains(key))
 		return _transientDomain[key];
+	else if (_sessionDomain.contains(key))
+		return _sessionDomain[key]; 
 	else if (_activeDomain && _activeDomain->contains(key))
 		return (*_activeDomain)[key];
 	else if (_appDomain.contains(key))
@@ -466,6 +483,9 @@ const String &ConfigManager::get(const String &key, const String &domName) const
 	// and should be removed ASAP.
 	if (domName.empty())
 		return get(key);
+
+	if (_sessionDomain.contains(key))
+		return _sessionDomain.getVal(key); 
 
 	const Domain *domain = getDomain(domName);
 
@@ -515,8 +535,9 @@ bool ConfigManager::getBool(const String &key, const String &domName) const {
 
 
 void ConfigManager::set(const String &key, const String &value) {
-	// Remove the transient domain value, if any.
+	// Remove the transient and session domain value, if any.
 	_transientDomain.erase(key);
+	_sessionDomain.erase(key); 
 
 	// Write the new key/value pair into the active domain, resp. into
 	// the application domain if no game domain is active.
@@ -706,6 +727,10 @@ bool ConfigManager::hasGameDomain(const String &domName) const {
 bool ConfigManager::hasMiscDomain(const String &domName) const {
 	assert(!domName.empty());
 	return isValidDomainName(domName) && _miscDomains.contains(domName);
+}
+
+bool ConfigManager::isKeyTemporary(const String &key) const {
+	return _transientDomain.contains(key) || _sessionDomain.contains(key);
 }
 
 #pragma mark -

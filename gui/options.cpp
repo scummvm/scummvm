@@ -2118,6 +2118,9 @@ void GlobalOptionsDialog::build() {
 	Common::String iconPath(ConfMan.get("iconspath", _domain));
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
 
+	if (ConfMan.isKeyTemporary("savepath")) {
+		_savePath->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
+	}
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
 		_savePath->setLabel(_("Default"));
 	} else {
@@ -2211,7 +2214,7 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 		new ButtonWidget(boss, prefix + "SaveButton", _("Save Path:"), _("Specifies where your saved games are put"), kChooseSaveDirCmd);
 	else
 		new ButtonWidget(boss, prefix + "SaveButton", _c("Save Path:", "lowres"), _("Specifies where your saved games are put"), kChooseSaveDirCmd);
-	_savePath = new StaticTextWidget(boss, prefix + "SavePath", Common::U32String("/foo/bar"), _("Specifies where your saved games are put"));
+	_savePath = new StaticTextWidget(boss, prefix + "SavePath", Common::U32String("/foo/bar"), _("Specifies where your saved games are put. A red coloring indicates the value is temporary and will not get saved"));
 
 	_savePathClearButton = addClearButton(boss, prefix + "SavePathClearButton", kSavePathClearCmd);
 
@@ -2615,10 +2618,13 @@ void GlobalOptionsDialog::apply() {
 	bool isRebuildNeeded = false;
 
 	Common::U32String savePath(_savePath->getLabel());
-	if (!savePath.empty() && (savePath != _("Default")))
-		ConfMan.set("savepath", savePath.encode(), _domain);
-	else
-		ConfMan.removeKey("savepath", _domain);
+	if (savePath != ConfMan.get("savepath")) {
+		_savePath->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+		if (savePath.empty() || (savePath == _("Default")))
+			ConfMan.removeKey("savepath", _domain);
+		else 
+			ConfMan.set("savepath", savePath.encode(), _domain);
+	}
 
 	Common::U32String themePath(_themePath->getLabel());
 	if (!themePath.empty() && (themePath != _c("None", "path")))

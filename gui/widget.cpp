@@ -292,6 +292,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, 
 	_label = text;
 	_align = Graphics::convertTextAlignH(align, g_gui.useRTL() && _useRTL);
 	setFont(font, lang);
+	_fontColor = ThemeEngine::FontColor::kFontColorNormal; 
 	_useEllipsis = useEllipsis;
 }
 
@@ -302,6 +303,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, 
 	_label = text;
 	_align = Graphics::convertTextAlignH(g_gui.xmlEval()->getWidgetTextHAlign(name), g_gui.useRTL() && _useRTL);
 	setFont(font, lang);
+	_fontColor = ThemeEngine::FontColor::kFontColorNormal; 
 	_useEllipsis = useEllipsis;
 }
 
@@ -326,11 +328,15 @@ void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 	}
 }
 
+void StaticTextWidget::setFontColor(const ThemeEngine::FontColor color)
+{
+	_fontColor = color; 
+}
 
 void StaticTextWidget::drawWidget() {
 	g_gui.theme()->drawText(
 			Common::Rect(_x, _y, _x + _w, _y + _h),
-			_label, _state, _align, ThemeEngine::kTextInversionNone, 0, _useEllipsis, _font
+			_label, _state, _align, ThemeEngine::kTextInversionNone, 0, _useEllipsis, _font, _fontColor
 	);
 }
 

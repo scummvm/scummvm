@@ -1400,6 +1400,29 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::U32String &str, 
 		}
 		break;
 
+	case kFontColorOverride: 
+		if (inverted) {
+			colorId = kTextColorOverrideInverted; 
+		} else {
+			switch (state) {
+			case kStateDisabled:
+				colorId = kTextColorAlternativeDisabled;
+				break;
+
+			case kStateHighlight:
+				colorId = kTextColorOverrideHover;
+				break;
+
+			default:
+				// fallthrough intended
+			case kStateEnabled:
+			case kStatePressed:
+				colorId = kTextColorOverride;
+				break;
+			}
+		}
+		break;
+
 	default:
 		return;
 	}

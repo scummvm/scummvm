@@ -103,6 +103,22 @@
 				color = 'darkgrey'
 		/>
 
+		<text_color id = 'color_override'
+				color = '255, 0, 0'
+		/>
+
+		<text_color id = 'color_override_inverted'
+				color = '0, 255, 255'
+		/>
+
+		<text_color id = 'color_override_hover'
+				color = '255, 50, 50'
+		/>
+
+		<text_color id = 'color_override_disabled'
+				color = '255, 200, 200'
+		/>
+
 		<text_color	id = 'color_button'
 				color = 'green'
 		/>

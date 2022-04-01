@@ -165,6 +165,10 @@ enum TextColor {
 	kTextColorAlternativeInverted,
 	kTextColorAlternativeHover,
 	kTextColorAlternativeDisabled,
+	kTextColorOverride,
+	kTextColorOverrideInverted, 
+	kTextColorOverrideHover, 
+	kTextColorOverrideDisabled,  
 	kTextColorButton,
 	kTextColorButtonHover,
 	kTextColorButtonDisabled,
@@ -282,6 +286,7 @@ public:
 		kFontColorFormatting = -1,	///< Use color from formatting
 		kFontColorNormal = 0,       ///< The default color of the theme
 		kFontColorAlternate = 1,    ///< Alternative font color
+		kFontColorOverride = 2,     ///< Color of overwritten text 
 		kFontColorMax
 	};
 
@@ -579,7 +584,9 @@ public:
 	 * Interface for the ThemeParser class: adds a text color value.
 	 *
 	 * @param colorId Identifier for the color type.
-	 * @param r, g, b Color of the font.
+	 * @param r Red color component
+	 * @param g Green color component
+	 * @param b Blue color component
 	 */
 	bool addTextColor(TextColor colorId, int r, int g, int b);
 
