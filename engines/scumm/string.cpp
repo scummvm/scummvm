@@ -266,6 +266,16 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 					{ "Je peux conduire", 220, 0 }
 				};
 
+				TimingAdjustment timingAdjustmentsES[] = {
+					{ "Y por eso^",       130, 0 },
+					{ "es simplemente",   100, 0 },
+					{ "eres DEMASIADO",   90,  0 },
+					{ "\xa8Hug?",         110, 0 },
+					{ "\xa8Por qu\x82",   110, 0 },
+					{ "Tal vez podamos",  75,  0 },
+					{ "\xa8Te importa",   160, 0 }
+				};
+
 				switch (_language) {
 				case Common::EN_ANY:
 					adjustments = timingAdjustmentsEN;
@@ -284,6 +294,10 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 						adjustments = timingAdjustmentsFRCD;
 						numAdjustments = ARRAYSIZE(timingAdjustmentsFRCD);
 					}
+					break;
+				case Common::ES_ESP:
+					adjustments = timingAdjustmentsES;
+					numAdjustments = ARRAYSIZE(timingAdjustmentsES);
 					break;
 				default:
 					adjustments = nullptr;
