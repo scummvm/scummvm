@@ -572,28 +572,26 @@ void GridWidget::setGroupHeaderFormat(const Common::U32String &prefix, const Com
 void GridWidget::reloadThumbnails() {
 	for (Common::Array<GridItemInfo *>::iterator iter = _visibleEntryList.begin(); iter != _visibleEntryList.end(); ++iter) {
 		GridItemInfo *entry = *iter;
-		if (entry->isHeader)
+		if (entry->thumbPath.empty())
 			continue;
-		Graphics::ManagedSurface *surf = nullptr;
-		Common::String path = Common::String::format("icons/%s-%s.png", entry->engineid.c_str(), entry->gameid.c_str());
-		if (!_loadedSurfaces.contains(path)) {
-			surf = loadSurfaceFromFile(path);
-			_loadedSurfaces[path] = surf;
+
+		if (!_loadedSurfaces.contains(entry->thumbPath)) {
+			Common::String path = Common::String::format("icons/%s-%s.png", entry->engineid.c_str(), entry->gameid.c_str());
+			Graphics::ManagedSurface *surf = loadSurfaceFromFile(path);
 			if (!surf) {
 				path = Common::String::format("icons/%s.png", entry->engineid.c_str());
-				if (!_loadedSurfaces.contains(path)) {
-					surf = loadSurfaceFromFile(path);
-					_loadedSurfaces[path] = surf;
-				}
+				surf = loadSurfaceFromFile(path);
 			}
-		}
-		entry->thumbPath = path;
-		if (surf) {
-			const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512, true));
-			_loadedSurfaces[path] = scSurf;
-			if (surf != scSurf) {
-				surf->free();
-				delete surf;
+
+			if (surf) {
+				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512, true));
+				_loadedSurfaces[entry->thumbPath] = scSurf;
+				if (surf != scSurf) {
+					surf->free();
+					delete surf;
+				}
+			} else {
+				_loadedSurfaces[entry->thumbPath] = nullptr;
 			}
 		}
 	}
