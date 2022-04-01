@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-03-27 04:28+0000\n"
-"PO-Revision-Date: 2022-03-24 12:27+0000\n"
+"PO-Revision-Date: 2022-04-01 11:27+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -2011,8 +2011,6 @@ msgstr ""
 "Vérifiez votre connexion Internet."
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
 msgstr "Entrer texte"
 
@@ -5068,8 +5066,6 @@ msgid "Error: the game could not be saved."
 msgstr "Erreur : le jeu n'a pas été sauvegardé."
 
 #: engines/grim/inputdialog.cpp:79
-#, fuzzy
-#| msgid "Input"
 msgid "Input text"
 msgstr "Texte saisi"
 
