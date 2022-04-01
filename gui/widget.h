@@ -201,6 +201,7 @@ protected:
 	Common::U32String		_label;
 	Graphics::TextAlign		_align;
 	ThemeEngine::FontStyle	_font;
+	ThemeEngine::FontColor  _fontColor; 
 	bool _useEllipsis;
 
 public:
@@ -213,6 +214,7 @@ public:
 	void setAlign(Graphics::TextAlign align);
 	Graphics::TextAlign getAlign() const		{ return _align; }
 	void readLabel() { read(_label); }
+	void setFontColor(ThemeEngine::FontColor color);  
 
 protected:
 	void drawWidget() override;
