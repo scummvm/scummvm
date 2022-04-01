@@ -251,7 +251,7 @@ String PathFromInstallDir(const String &path) {
 }
 
 FSLocation PathFromInstallDir(const FSLocation &fsloc) {
-	if (is_relative_filename(fsloc.FullDir.GetCStr()))
+	if (is_relative_filename(fsloc.FullDir))
 		return FSLocation(_GP(ResPaths).DataDir).Rebase(fsloc.FullDir);
 	return fsloc;
 }
@@ -264,14 +264,14 @@ String PreparePathForWriting(const FSLocation &fsloc, const String &filename) {
 
 FSLocation GetGlobalUserConfigDir() {
 	FSLocation dir = _G(platform)->GetUserGlobalConfigDirectory();
-	if (is_relative_filename(dir.FullDir.GetCStr())) // relative dir is resolved relative to the game data dir
+	if (is_relative_filename(dir.FullDir)) // relative dir is resolved relative to the game data dir
 		return FSLocation(_GP(ResPaths).DataDir).Rebase(dir.FullDir);
 	return dir;
 }
 
 FSLocation GetGameUserConfigDir() {
 	FSLocation dir = _G(platform)->GetUserConfigDirectory();
-	if (is_relative_filename(dir.FullDir.GetCStr())) // relative dir is resolved relative to the game data dir
+	if (is_relative_filename(dir.FullDir)) // relative dir is resolved relative to the game data dir
 		return FSLocation(_GP(ResPaths).DataDir).Rebase(dir.FullDir);
 	else if (_GP(usetup).local_user_conf) // directive to use game dir location
 		return FSLocation(_GP(ResPaths).DataDir);
@@ -280,30 +280,35 @@ FSLocation GetGameUserConfigDir() {
 	return dir.Concat(_GP(game).saveGameFolderName);
 }
 
-// A helper function that deduces a data directory either using default system location,
-// or user option from config. In case of a default location a path is appended with
-// game's "save folder" name, which is meant to separate files from different games.
-static FSLocation MakeGameDataDir(const FSLocation &def_dir, const String &user_dir) {
-	if (user_dir.IsEmpty()) {
-		if (is_relative_filename(def_dir.FullDir.GetCStr())) // relative dir is resolved relative to the game data dir
-			return FSLocation(_GP(ResPaths).DataDir).Rebase(def_dir.FullDir);
-		// For absolute dir, we assume it's a special directory prepared for AGS engine
-		// and therefore amend it with a game's own subdir
-		return def_dir.Concat(_GP(game).saveGameFolderName);
-	}
-	// If this location is set up by user config, then use it as is (resolving relative path if necessary)
-	if (Path::IsSameOrSubDir(_GP(ResPaths).DataDir, user_dir)) // check if it's inside game dir
-		return FSLocation(_GP(ResPaths).DataDir, Path::MakeRelativePath(_GP(ResPaths).DataDir, user_dir));
+// Constructs data dir using rules for default system location
+inline FSLocation MakeDefaultDataDir(const FSLocation &def_dir) {
+	// Relative dir is resolved relative to the game data dir
+	if (is_relative_filename(def_dir.FullDir))
+		return FSLocation(_GP(ResPaths).DataDir).Rebase(def_dir.FullDir);
+	// For absolute dir, we assume it's a special directory prepared for AGS engine
+	// and therefore amend it with a game's own subdir (to separate files from different games)
+	return def_dir.Concat(_GP(game).saveGameFolderName);
+}
+
+// Constructs data dir using rules for the user-specified location
+inline FSLocation MakeUserDataDir(const String &user_dir) {
+	// If user-set location is inside game dir, then form a relative path
+	if (is_relative_filename(user_dir))
+		return FSLocation(_GP(ResPaths).DataDir).Rebase(user_dir);
+	// Otherwise treat it as an absolute path
 	return FSLocation(Path::MakeAbsolutePath(user_dir));
 }
 
-
 FSLocation GetGameAppDataDir() {
-	return MakeGameDataDir(_G(platform)->GetAllUsersDataDirectory(), _GP(usetup).shared_data_dir);
+	if (_GP(usetup).shared_data_dir.IsEmpty())
+		return MakeDefaultDataDir(_G(platform)->GetAllUsersDataDirectory());
+	return MakeUserDataDir(_GP(usetup).shared_data_dir);
 }
 
 FSLocation GetGameUserDataDir() {
-	return MakeGameDataDir(_G(platform)->GetUserSavedgamesDirectory(), _GP(usetup).user_data_dir);
+	if (_GP(usetup).user_data_dir.IsEmpty())
+		return MakeDefaultDataDir(_G(platform)->GetUserSavedgamesDirectory());
+	return MakeUserDataDir(_GP(usetup).user_data_dir);
 }
 
 bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath &rp) {

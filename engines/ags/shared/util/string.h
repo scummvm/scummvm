@@ -423,6 +423,9 @@ public:
 	operator bool() const {
 		return !IsEmpty();
 	}
+	operator const char *() const {
+		return GetCStr();
+	}
 
 private:
 	// Creates new empty string with buffer enough to fit given length
