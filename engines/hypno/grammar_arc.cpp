@@ -87,7 +87,6 @@
 Hypno::Shoot *shoot;
 
 extern int HYPNO_ARC_lex();
-extern int HYPNO_ARC_parse();
 extern int HYPNO_ARC_lineno;
 uint32 HYPNO_ARC_default_sound_rate = 0;
 
