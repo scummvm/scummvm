@@ -411,19 +411,8 @@ void engine_init_user_directories() {
 	if (!_GP(usetup).shared_data_dir.IsEmpty())
 		Debug::Printf(kDbgMsg_Info, "Shared data directory: %s", _GP(usetup).shared_data_dir.GetCStr());
 
-	// if end-user specified custom save path, use it
-	bool res = false;
-	if (!_GP(usetup).user_data_dir.IsEmpty()) {
-		res = SetCustomSaveParent(_GP(usetup).user_data_dir);
-		if (!res) {
-			Debug::Printf(kDbgMsg_Warn, "WARNING: custom user save path failed, using default system paths");
-			res = false;
-		}
-	}
-	// if there is no custom path, or if custom path failed, use default system path
-	if (!res) {
-		SetSaveGameDirectoryPath(Path::ConcatPaths(UserSavedgamesRootToken, _GP(game).saveGameFolderName));
-	}
+	// Initialize default save directory early, for we'll need it to set restart point
+	SetDefaultSaveDirectory();
 }
 
 #if AGS_PLATFORM_OS_ANDROID

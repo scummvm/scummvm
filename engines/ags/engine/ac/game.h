@@ -90,13 +90,10 @@ int Game_GetMODPattern();
 //=============================================================================
 int Game_GetDialogCount();
 
-// Defines a custom save parent directory, which will replace $MYDOCS$/GameName
-// when a new save directory is set from the script
-bool SetCustomSaveParent(const Shared::String &path);
-// If explicit_path flag is false, the actual path will be constructed
-// as a relative to system's user saves directory
-bool SetSaveGameDirectoryPath(const Shared::String &newFolder, bool explicit_path = false);
-int Game_SetSaveGameDirectory(const Shared::String &newFolder);
+// Sets a default save directory, based on platform driver settings and user config
+void SetDefaultSaveDirectory();
+// Sets a new save directory within the save parent; copies "restart" slot if available
+int Game_SetSaveGameDirectory(const char *newFolder);
 const char *Game_GetSaveSlotDescription(int slnum);
 
 const char *Game_GetGlobalStrings(int index);
