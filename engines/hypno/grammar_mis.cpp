@@ -86,7 +86,6 @@
 #define yyerror	 HYPNO_MIS_xerror
 
 extern int HYPNO_MIS_lex();
-//extern int HYPNO_MIS_parse();
 extern int yylineno;
 
 Common::Array<uint32> *smenu_idx = nullptr;
