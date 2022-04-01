@@ -189,9 +189,9 @@ ShaderGL::ShaderGL(const Common::String &name, GLuint vertexShader, GLuint fragm
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
 	if (status != GL_TRUE) {
 		GLint logSize;
-		glGetShaderiv(shaderProgram, GL_INFO_LOG_LENGTH, &logSize);
+		glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logSize);
 		GLchar *log = new GLchar[logSize];
-		glGetShaderInfoLog(shaderProgram, logSize, nullptr, log);
+		glGetProgramInfoLog(shaderProgram, logSize, nullptr, log);
 		error("Could not link shader %s: %s", name.c_str(), log);
 	}
 
