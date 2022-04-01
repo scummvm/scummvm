@@ -245,6 +245,16 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 					{ "Ti dispiace",      200, 0 }
 				};
 
+				TimingAdjustment timingAdjustmentsFRCD[] = {
+					{ "Oh.",              85,  0 },
+					{ "H\x82, pas mal.",  80,  0 },
+					{ "Yiik!",            110, 0 },
+					{ "Je peux garder",   130, 0 },
+					{ "Pourquoi est-ce",  120, 0 },
+					{ "Nous pourrons",    80,  0 },
+					{ "Je peux conduire", 220, 0 }
+				};
+
 				switch (_language) {
 				case Common::DE_DEU:
 					adjustments = timingAdjustmentsDE;
@@ -253,6 +263,12 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 				case Common::IT_ITA:
 					adjustments = timingAdjustmentsIT;
 					numAdjustments = ARRAYSIZE(timingAdjustmentsIT);
+					break;
+				case Common::FR_FRA:
+					if (strcmp(_game.variant, "Floppy") != 0) {
+						adjustments = timingAdjustmentsFRCD;
+						numAdjustments = ARRAYSIZE(timingAdjustmentsFRCD);
+					}
 					break;
 				default:
 					adjustments = nullptr;
