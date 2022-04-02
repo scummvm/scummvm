@@ -325,13 +325,15 @@ HError SpriteFile::RebuildSpriteIndex(Stream *in, sprkey_t topmost,
 		_spriteData[i].Offset = in->GetPosition();
 		SpriteDatHeader hdr;
 		ReadSprHeader(hdr, _stream.get(), _version, _compress);
-		if (hdr.BPP == 0) return HError::None(); // empty slot, this is normal
+		if (hdr.BPP == 0) continue; // empty slot, this is normal
 		int pal_bpp = GetPaletteBPP(hdr.SFormat);
 		if (pal_bpp > 0) in->Seek(hdr.PalCount * pal_bpp); // skip palette
 		size_t data_sz =
 			((_version >= kSprfVersion_StorageFormats) || _compress != kSprCompress_None) ?
 			(uint32_t)in->ReadInt32() : hdr.Width * hdr.Height * hdr.BPP;
 		in->Seek(data_sz); // skip image data
+		metrics[i].Width = hdr.Width;
+		metrics[i].Height = hdr.Height;
 	}
 	return HError::None();
 }
