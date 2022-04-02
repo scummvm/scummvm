@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-03-27 04:28+0000\n"
+"POT-Creation-Date: 2022-04-02 04:52+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -130,7 +130,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:406 gui/launcher.cpp:435 gui/launcher.cpp:478
+#: gui/launcher.cpp:407 gui/launcher.cpp:436 gui/launcher.cpp:479
 #: gui/options.cpp:3060 gui/options.cpp:3098 gui/saveload-dialog.cpp:343
 #: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:580
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:357
@@ -142,7 +142,7 @@ msgstr "हाँ"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:406 gui/launcher.cpp:435 gui/launcher.cpp:478
+#: gui/launcher.cpp:407 gui/launcher.cpp:436 gui/launcher.cpp:479
 #: gui/options.cpp:3060 gui/options.cpp:3098 gui/saveload-dialog.cpp:343
 #: engines/buried/buried.cpp:580 engines/director/events.cpp:91
 #: engines/grim/grim.cpp:357 engines/kyra/gui/saveload_eob.cpp:595
@@ -152,7 +152,7 @@ msgstr "हाँ"
 msgid "No"
 msgstr "नहीं"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:575
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:576
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM यह फोल्डर नहीं खोल पाया!"
 
@@ -165,7 +165,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:385
 #: gui/editrecorddialog.cpp:67 gui/fluidsynth-dialog.cpp:153
-#: gui/launcher.cpp:534 gui/launcher.cpp:538 gui/massadd.cpp:88
+#: gui/launcher.cpp:535 gui/launcher.cpp:539 gui/massadd.cpp:88
 #: gui/options.cpp:2104 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1187 engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
@@ -859,7 +859,7 @@ msgstr "खेल हटा डे (R)"
 msgid "Search in game list"
 msgstr ""
 
-#: gui/launcher.cpp:275 gui/launcher.cpp:782
+#: gui/launcher.cpp:275 gui/launcher.cpp:783
 msgid "Search:"
 msgstr "तलाशें:"
 
@@ -879,90 +879,90 @@ msgstr ""
 msgid "Load"
 msgstr ""
 
-#: gui/launcher.cpp:394
+#: gui/launcher.cpp:395
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 
-#: gui/launcher.cpp:405
+#: gui/launcher.cpp:406
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
 
-#: gui/launcher.cpp:435
+#: gui/launcher.cpp:436
 msgid "Do you really want to remove this game configuration?"
 msgstr ""
 
-#: gui/launcher.cpp:477
+#: gui/launcher.cpp:478
 msgid "Do you want to load saved game?"
 msgstr ""
 
-#: gui/launcher.cpp:534
+#: gui/launcher.cpp:535
 msgid "This game does not support loading games from the launcher."
 msgstr ""
 
-#: gui/launcher.cpp:538
+#: gui/launcher.cpp:539
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 
-#: gui/launcher.cpp:594
+#: gui/launcher.cpp:595
 #, fuzzy
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM ये directory खोल नहीं पाया!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:610
+#: gui/launcher.cpp:611
 msgid "Unknown variant"
 msgstr ""
 
-#: gui/launcher.cpp:616
+#: gui/launcher.cpp:617
 msgid "Pick the game:"
 msgstr ""
 
-#: gui/launcher.cpp:791
+#: gui/launcher.cpp:792
 msgid "Group by:"
 msgstr ""
 
-#: gui/launcher.cpp:831 gui/saveload-dialog.cpp:367
+#: gui/launcher.cpp:832 gui/saveload-dialog.cpp:367
 msgid "List view"
 msgstr ""
 
-#: gui/launcher.cpp:832 gui/saveload-dialog.cpp:368
+#: gui/launcher.cpp:833 gui/saveload-dialog.cpp:368
 msgid "Grid view"
 msgstr ""
 
-#: gui/launcher.cpp:986
+#: gui/launcher.cpp:987
 msgid "~S~tart"
 msgstr "शुरू करें (S)"
 
-#: gui/launcher.cpp:986
+#: gui/launcher.cpp:987
 msgid "Start selected game"
 msgstr "चयनित गेम को शुरू करें"
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:990
 msgid "~L~oad..."
 msgstr ""
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:990
 #, fuzzy
 msgid "Load saved game for selected game"
 msgstr "इस चयनित खेल को शुरू करें"
 
-#: gui/launcher.cpp:991
+#: gui/launcher.cpp:992
 msgid "Record..."
 msgstr ""
 
-#: gui/launcher.cpp:998
+#: gui/launcher.cpp:999
 #, fuzzy
 #| msgid "~O~ptions..."
 msgid "~G~ame Options..."
 msgstr "विकल्प(O)..."
 
-#: gui/launcher.cpp:998 gui/launcher.cpp:1001
+#: gui/launcher.cpp:999 gui/launcher.cpp:1002
 msgid "Change game options"
 msgstr "गेम के विकल्प चुनें"
 
-#: gui/launcher.cpp:1001
+#: gui/launcher.cpp:1002
 #, fuzzy
 #| msgid "~O~ptions..."
 msgctxt "lowres"
@@ -971,7 +971,7 @@ msgstr "विकल्प(O)..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1123 gui/launcher.cpp:1318
+#: gui/launcher.cpp:1124 gui/launcher.cpp:1319
 #, fuzzy
 #| msgid "Engine"
 msgid "Unknown Engine"
@@ -979,29 +979,29 @@ msgstr "इंजन"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1141 gui/launcher.cpp:1350
+#: gui/launcher.cpp:1142 gui/launcher.cpp:1351
 msgid "Unknown Publisher"
 msgstr ""
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1159 gui/launcher.cpp:1336
+#: gui/launcher.cpp:1160 gui/launcher.cpp:1337
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1174 gui/launcher.cpp:1369
+#: gui/launcher.cpp:1175 gui/launcher.cpp:1370
 msgid "Language not detected"
 msgstr ""
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1189 gui/launcher.cpp:1384
+#: gui/launcher.cpp:1190 gui/launcher.cpp:1385
 msgid "Platform not detected"
 msgstr ""
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1395 gui/widgets/groupedlist.cpp:122
+#: gui/launcher.cpp:1396 gui/widgets/groupedlist.cpp:122
 msgid "All"
 msgstr ""
 
