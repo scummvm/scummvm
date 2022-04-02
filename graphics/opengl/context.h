@@ -27,6 +27,7 @@
 namespace OpenGL {
 
 enum ContextOGLType {
+	kOGLContextNone,
 	kOGLContextGL,
 	kOGLContextGLES2
 };

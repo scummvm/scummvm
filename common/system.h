@@ -29,6 +29,7 @@
 #include "common/ustr.h"
 #include "graphics/pixelformat.h"
 #include "graphics/mode.h"
+#include "graphics/opengl/context.h"
 
 namespace Audio {
 class Mixer;
@@ -407,6 +408,12 @@ public:
 		kFeatureOpenGLForGame,
 
 		/**
+		 * This feature flag can be used to check if shaders are supported
+		 * and can be used for 3D game rendering.
+		 */
+		kFeatureShadersForGame,
+
+		/**
 		 * If supported, this feature flag can be used to check if
 		 * waiting for vertical sync before refreshing the screen to reduce
 		 * tearing is enabled.
@@ -726,6 +733,20 @@ public:
 	 */
 	virtual Common::Array<uint> getSupportedAntiAliasingLevels() const {
 		return Common::Array<uint>();
+	}
+
+	/**
+	 * Return the chosen OpenGL type.
+	 *
+	 * This function works even when a 2D graphical manager is active and
+	 * let to select a proper renderer before changing mode.
+	 * Implementation having feature kFeatureOpenGLForGame are expected to
+	 * override this function.
+	 *
+	 * @return the OpenGL type of context which is supported.
+	 */
+	virtual OpenGL::ContextOGLType getOpenGLType() const {
+		return OpenGL::kOGLContextNone;
 	}
 
 	/**

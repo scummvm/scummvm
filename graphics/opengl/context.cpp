@@ -71,6 +71,7 @@ ContextGL::ContextGL() {
 }
 
 void ContextGL::reset() {
+	type = kOGLContextNone;
 	maxTextureSize = 0;
 
 	NPOTSupported = false;
@@ -86,6 +87,9 @@ void ContextGL::reset() {
 void ContextGL::initialize(ContextOGLType contextType) {
 	// Initialize default state.
 	reset();
+	if (contextType == kOGLContextNone) {
+		return;
+	}
 
 	type = contextType;
 
@@ -178,6 +182,9 @@ void ContextGL::initialize(ContextOGLType contextType) {
 
 	// Log context type.
 	switch (type) {
+		case kOGLContextNone:
+			/* Shouldn't happen */
+			break;
 		case kOGLContextGL:
 			debug(5, "OpenGL: GL context initialized");
 			break;

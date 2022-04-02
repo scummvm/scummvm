@@ -192,6 +192,8 @@ public:
 	bool setGraphicsMode(int mode, uint flags) override;
 	int getGraphicsMode() const override;
 
+	OpenGL::ContextOGLType getOpenGLType() const override { return OpenGL::kOGLContextGLES2; }
+
 #ifdef ANDROID_DEBUG_GL_CALLS
 	bool isRunningInMainThread() { return pthread_self() == _main_thread; }
 #endif
