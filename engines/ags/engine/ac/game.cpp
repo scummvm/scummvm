@@ -1653,7 +1653,7 @@ RuntimeScriptValue Sc_Game_GetTranslationFilename(const RuntimeScriptValue *para
 }
 
 RuntimeScriptValue Sc_Game_GetSpeechVoxFilename(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetSpeechVoxFilename);
+	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetSpeechVoxFilename);
 }
 
 // int ()
