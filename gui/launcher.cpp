@@ -343,10 +343,11 @@ void LauncherDialog::close() {
 struct LauncherEntry {
 	Common::String key;
 	Common::String description;
+	Common::String title;
 	const Common::ConfigManager::Domain *domain;
 
-	LauncherEntry(Common::String k, Common::String d, const Common::ConfigManager::Domain *v) {
-		key = k; description = d, domain = v;
+	LauncherEntry(const Common::String &k, const Common::String &d, const Common::String &t, const Common::ConfigManager::Domain *v) :
+		key(k), description(d), title(t), domain(v) {
 	}
 };
 
@@ -1056,7 +1057,7 @@ void LauncherSimple::updateListing() {
 		}
 
 		if (!description.empty())
-			domainList.push_back(LauncherEntry(iter->_key, description, &iter->_value));
+			domainList.push_back(LauncherEntry(iter->_key, description, description, &iter->_value));
 	}
 
 	// Now sort the list in dictionary order
@@ -1476,12 +1477,18 @@ void LauncherGrid::updateListing() {
 			continue;
 
 		Common::String description;
+		Common::String title;
 
 		if (!iter->_value.tryGetVal("description", description)) {
 			QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
 			if (!g.description.empty())
 				description = g.description;
 		}
+
+		// Strip platform language from the title.
+		size_t extraPos = description.findLastOf("(");
+		if (extraPos != Common::String::npos)
+			title = Common::String(description.c_str(), extraPos);
 
 		if (description.empty()) {
 			Common::String gameid;
@@ -1492,13 +1499,10 @@ void LauncherGrid::updateListing() {
 			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
 		}
 
-		// Strip platform language from the title.
-		size_t extraPos = description.findFirstOf("(");
-		if (extraPos != Common::String::npos)
-			description = Common::String(description.c_str(), extraPos);
-
+		if (title.empty())
+			title = description;
 		if (!description.empty())
-			domainList.push_back(LauncherEntry(iter->_key, description, &iter->_value));
+			domainList.push_back(LauncherEntry(iter->_key, description, title, &iter->_value));
 	}
 
 	// Now sort the list in dictionary order
@@ -1509,7 +1513,6 @@ void LauncherGrid::updateListing() {
 	int k = 0;
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
 		Common::String gameid = iter->domain->getVal("gameid");
-		Common::String title = iter->description;
 		Common::String engineid = "UNK";
 		Common::String language = "XX";
 		Common::String platform;
@@ -1517,7 +1520,7 @@ void LauncherGrid::updateListing() {
 		iter->domain->tryGetVal("language", language);
 		iter->domain->tryGetVal("platform", platform);
 		attrs.push_back(iter->domain);
-		gridList.push_back(GridItemInfo(k++, engineid, gameid, title, Common::parseLanguage(language), Common::parsePlatform(platform)));
+		gridList.push_back(GridItemInfo(k++, engineid, gameid, iter->title, iter->description, Common::parseLanguage(language), Common::parsePlatform(platform)));
 	}
 
 	_grid->setEntryList(&gridList);

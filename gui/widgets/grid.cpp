@@ -56,7 +56,7 @@ void GridItemWidget::updateThumb() {
 void GridItemWidget::update() {
 	if (_activeEntry) {
 		updateThumb();
-		setTooltip(_activeEntry->title);
+		setTooltip(_activeEntry->description);
 		markAsDirty();
 	}
 }

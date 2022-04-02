@@ -52,6 +52,7 @@ struct GridItemInfo {
 	Common::String 		engineid;
 	Common::String 		gameid;
 	Common::String 		title;
+	Common::String		description;
 	Common::String 		thumbPath;
 	// Generic attribute value, may be any piece of metadata
 	Common::String		attribute;
@@ -60,14 +61,14 @@ struct GridItemInfo {
 
 	Common::Rect		rect;
 
-	GridItemInfo(int id, const Common::String &eid, const Common::String &gid
-		,const Common::String &t, Common::Language l, Common::Platform p)
-		: entryID(id), gameid(gid), engineid(eid), title(t), language(l), platform(p), isHeader(false) {
+	GridItemInfo(int id, const Common::String &eid, const Common::String &gid, const Common::String &t,
+		const Common::String &d, Common::Language l, Common::Platform p)
+		: entryID(id), gameid(gid), engineid(eid), title(t), description(d), language(l), platform(p), isHeader(false) {
 		thumbPath = Common::String::format("icons/%s-%s.png", engineid.c_str(), gameid.c_str());
 	}
 
-	GridItemInfo(const Common::String &groupHeader, int groupID) : title(groupHeader), isHeader(true),
-		entryID(groupID), language(Common::UNK_LANG), platform(Common::kPlatformUnknown) {
+	GridItemInfo(const Common::String &groupHeader, int groupID) : title(groupHeader), description(groupHeader),
+		isHeader(true), entryID(groupID), language(Common::UNK_LANG), platform(Common::kPlatformUnknown) {
 		thumbPath = Common::String("");
 	}
 };
