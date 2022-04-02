@@ -27,12 +27,25 @@
 
 namespace Common {
 
+bool INIFile::isValidChar(char c) const {
+	if (_allowNonEnglishCharacters) {
+		// Chars that can break parsing are never allowed
+		return !(c == '[' || c == ']' || c == '=' || c == '#' || c == '\r' || c == '\n');
+	} else {
+		// Only some chars are allowed
+		return isAlnum(c) || c == '-' || c == '_' || c == '.' || c == ' ' || c == ':';
+	}
+}
+
 bool INIFile::isValidName(const String &name) const {
-	if (_allowNonEnglishCharacters)
-		return true;
+	if (name.empty())
+		return false;
+
 	const char *p = name.c_str();
-	while (*p && (isAlnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == ' ' || *p == ':'))
+	while (*p && isValidChar(*p)) {
 		p++;
+	}
+
 	return *p == 0;
 }
 
@@ -237,6 +250,11 @@ bool INIFile::saveToStream(WriteStream &stream) {
 }
 
 void INIFile::addSection(const String &section) {
+	if (!isValidName(section)) {
+		warning("Invalid section name: %s", section.c_str());
+		return;
+	}
+
 	Section *s = getSection(section);
 	if (s)
 		return;
