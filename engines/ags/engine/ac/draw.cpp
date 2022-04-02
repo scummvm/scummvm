@@ -1966,9 +1966,9 @@ void draw_gui_and_overlays() {
 		_G(our_eip) = 37;
 		{
 			for (aa = 0; aa < _GP(game).numgui; aa++) {
-				if (!_GP(guis)[aa].IsDisplayed()) continue;
-				if (!_GP(guis)[aa].HasChanged()) continue;
-				if (_GP(guis)[aa].Transparency == 255) continue;
+				if (!_GP(guis)[aa].IsDisplayed()) continue; // not on screen
+				if (!_GP(guis)[aa].HasChanged()) continue; // no changes: no need to update image
+				if (_GP(guis)[aa].Transparency == 255) continue; // 100% transparent
 
 				_GP(guis)[aa].ClearChanged();
 				if (_GP(guibg)[aa] == nullptr ||
@@ -2004,8 +2004,8 @@ void draw_gui_and_overlays() {
 		// Draw the GUIs
 		for (int gg = 0; gg < _GP(game).numgui; gg++) {
 			aa = _GP(play).gui_draw_order[gg];
-			if (!_GP(guis)[aa].IsDisplayed()) continue;
-			if (_GP(guis)[aa].Transparency == 255) continue;
+			if (!_GP(guis)[aa].IsDisplayed()) continue; // not on screen
+			if (_GP(guis)[aa].Transparency == 255) continue; // 100% transparent
 
 			// Don't draw GUI if "GUIs Turn Off When Disabled"
 			if ((_GP(game).options[OPT_DISABLEOFF] == 3) &&
@@ -2015,11 +2015,21 @@ void draw_gui_and_overlays() {
 
 			_GP(guibgbmp)[aa]->SetTransparency(_GP(guis)[aa].Transparency);
 			add_to_sprite_list(_GP(guibgbmp)[aa], _GP(guis)[aa].X, _GP(guis)[aa].Y, _GP(guis)[aa].ZOrder, false);
+		}
 
-			// only poll if the interface is enabled (mouseovers should not
-			// work while in Wait state)
-			if (IsInterfaceEnabled())
-				_GP(guis)[aa].Poll();
+		// Poll the GUIs
+		// TODO: move this out of the draw routine into game update!!
+		// only poll if the interface is enabled
+		if (IsInterfaceEnabled()) {
+			for (int gg = 0; gg < _GP(game).numgui; gg++) {
+				if (!_GP(guis)[gg].IsDisplayed()) continue; // not on screen
+				// Don't touch GUI if "GUIs Turn Off When Disabled"
+				if ((_GP(game).options[OPT_DISABLEOFF] == 3) &&
+					(_G(all_buttons_disabled) > 0) &&
+					(_GP(guis)[gg].PopupStyle != kGUIPopupNoAutoRemove))
+					continue;
+				_GP(guis)[gg].Poll();
+			}
 		}
 	}
 
