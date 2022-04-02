@@ -95,6 +95,7 @@ public:
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	Common::Array<uint> getSupportedAntiAliasingLevels() const override;
+	OpenGL::ContextOGLType getOpenGLType() const override { return _oglType; }
 #endif
 
 protected:
@@ -139,10 +140,12 @@ protected:
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	// Graphics capabilities
-	void detectFramebufferSupport();
+	void detectOpenGLFeaturesSupport();
 	void detectAntiAliasingSupport();
 
+	OpenGL::ContextOGLType _oglType;
 	bool _supportsFrameBuffer;
+	bool _supportsShaders;
 	Common::Array<uint> _antiAliasLevels;
 #endif
 

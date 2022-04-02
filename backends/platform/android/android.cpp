@@ -509,6 +509,8 @@ bool OSystem_Android::hasFeature(Feature f) {
 	/* Even if we are using the 2D graphics manager,
 	 * we are at one initGraphics3d call of supporting GLES2 */
 	if (f == kFeatureOpenGLForGame) return true;
+	/* GLES2 always supports shaders */
+	if (f == kFeatureShadersForGame) return true;
 	return ModularGraphicsBackend::hasFeature(f);
 }
 
