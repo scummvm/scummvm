@@ -484,7 +484,7 @@ void start_aad(int16 diaNr) {
 }
 
 bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
-	DisplayMode ret = DISPLAY_NONE;
+	bool shown = false;
 
 	const int16 oldMouseLeftClick = _G(mouseLeftClick);
 	_G(mouseLeftClick) = false;
@@ -497,28 +497,23 @@ bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
 				atdsStringStart(30000, 0, 0, AAD_STR_START);
 
 			int16 VocNr;
-			ret = _G(atds)->start_ats(txtNr, txtMode, col, mode, &VocNr);
+			shown = _G(atds)->start_ats(txtNr, txtMode, col, mode, &VocNr);
 
-			if (ret == DISPLAY_VOC || ret == DISPLAY_ALL) {
-				int16 vocx = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
+			if (shown && g_engine->_sound->speechEnabled())  {
+				const int16 vocx = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
 
 				g_engine->_sound->setSoundChannelBalance(0, _G(atds)->getStereoPos(vocx));
 				if (VocNr >= 0) {
-					g_engine->_sound->playSpeech(VocNr,
-						_G(atds)->getAtdDisplay() == DISPLAY_VOC);
-					//warning("FIXME - unknown constant SMP_PLAYING");
+					g_engine->_sound->playSpeech(VocNr, !g_engine->_sound->subtitlesEnabled());
 				}
 
 				setupScreen(DO_SETUP);
 			}
 
-			if (ret != DISPLAY_NONE) {
- 				DisplayMode &dMode = _G(atds)->ats_get_status();
-				while (!SHOULD_QUIT && dMode != DISPLAY_NONE) {
-					if (dMode != DISPLAY_TXT && !g_engine->_sound->isSpeechActive()) {
-						dMode = (dMode == DISPLAY_ALL) ?
-							DISPLAY_TXT : DISPLAY_NONE;
-					}
+			if (shown) {
+				while (!SHOULD_QUIT && _G(atds)->atsShown()) {
+					if (g_engine->_sound->speechEnabled() && !g_engine->_sound->isSpeechActive())
+						_G(atds)->stop_ats();
 
 					if (_G(minfo)._button)
 						g_engine->_sound->stopSpeech();
@@ -540,7 +535,7 @@ bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
 	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 	_G(mouseLeftClick) = oldMouseLeftClick;
 
-	return ret != DISPLAY_NONE;
+	return shown;
 }
 
 void aadWait(int16 strNr) {

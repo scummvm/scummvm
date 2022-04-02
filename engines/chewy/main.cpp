@@ -1918,7 +1918,7 @@ void set_person_rnr() {
 
 bool is_chewy_busy() {
 	bool ret = true;
-	if (_G(atds)->ats_get_status() == DISPLAY_NONE) {
+	if (!_G(atds)->atsShown()) {
 		if (_G(atds)->aadGetStatus() == -1) {
 			if (_G(atds)->ads_get_status() == -1) {
 				if (!_G(mov)->auto_go_status()) {

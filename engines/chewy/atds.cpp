@@ -90,12 +90,9 @@ Atdsys::Atdsys() {
 	_adsv._autoDia = false;
 	_adsv._strNr = -1;
 	_adsv._silentCount = false;
-	_atsv._display = DISPLAY_NONE;
-	_atsv._silentCount = false;
-	_atdsv._delay = &_tmpDelay;
 	_tmpDelay = 1;
+	_atdsv._delay = &_tmpDelay;
 	_atdsv._silent = false;
-	_atdsv._display = DISPLAY_TXT;
 	_atdsv._diaNr = -1;
 	_atdsv.aad_str = nullptr;
 	_atdsv._vocNr = -1;
@@ -159,13 +156,6 @@ void Atdsys::set_delay(int16 *delay, int16 silent) {
 void Atdsys::set_string_end_func
 (void (*strFunc)(int16 diaNr, int16 strNr, int16 personNr, int16 mode)) {
 	_atdsv.aad_str = strFunc;
-}
-
-void Atdsys::updateSoundSettings() {
-	if (!g_engine->_sound->speechEnabled())
-		_atdsv._display = DISPLAY_TXT;
-	else
-		_atdsv._display = g_engine->_sound->getSpeechSubtitlesMode();
 }
 
 int16 Atdsys::get_delay(int16 txt_len) {
@@ -487,23 +477,20 @@ void Atdsys::set_ats_mem(int16 mode) {
 	}
 }
 
-DisplayMode Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr) {
+bool Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr) {
 	*vocNr = -1;
 	set_ats_mem(mode);
 
-	_atsv._display = DISPLAY_NONE;
+	_atsv.shown = false;
 
 	if (_atsMem) {
-		if (_atsv._display != DISPLAY_NONE)
-			stop_ats();
-
 		//const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
 		int16 txt_anz;
 		_atsv._ptr = ats_get_txt(txtNr, txtMode, &txt_anz, mode);
 		//_atsv._ptr = (char *)getTextEntry(roomNum, txtNr, txtMode).c_str();
 
 		if (_atsv._ptr) {
-			_atsv._display = _atdsv._display;
+			_atsv.shown = g_engine->_sound->subtitlesEnabled();
 			char *ptr = _atsv._ptr;
 			_atsv._txtLen = 0;
 
@@ -514,8 +501,7 @@ DisplayMode Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mod
 
 			if ((byte)*_atsv._ptr == 248) {
 				// Special code for no message to display
-				_atsv._display = (_atdsv._display == DISPLAY_TXT || *vocNr == -1) ?
-					DISPLAY_NONE : DISPLAY_VOC;
+				_atsv.shown = false;
 
 			} else {
 				_atsv._delayCount = get_delay(_atsv._txtLen);
@@ -524,26 +510,21 @@ DisplayMode Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mod
 				_mousePush = true;
 
 				if (*vocNr == -1) {
-					_atsv._display = (_atdsv._display == DISPLAY_VOC) ?
-						DISPLAY_NONE : DISPLAY_TXT;
+					_atsv.shown = g_engine->_sound->subtitlesEnabled();
 				}
 			}
 		}
 	}
 
-	return _atsv._display;
+	return _atsv.shown;
 }
 
 void Atdsys::stop_ats() {
-	_atsv._display = DISPLAY_NONE;
-}
-
-DisplayMode &Atdsys::ats_get_status() {
-	return _atsv._display;
+	_atsv.shown = false;
 }
 
 void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
-	if (_atsv._display == DISPLAY_TXT || _atsv._display == DISPLAY_ALL) {
+	if (_atsv.shown) {
 		if (_atdsv._eventsEnabled) {
 			switch (_G(in)->getSwitchCode()) {
 			case Common::KEYCODE_ESCAPE:
@@ -601,8 +582,7 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 			str_null2leer(start_ptr, start_ptr + _atsv._txtLen - 1);
 			if (_atsv._delayCount <= 0) {
 				if (_ssr->_next == false) {
-					_atsv._display = (_atsv._display == DISPLAY_ALL) ?
-						DISPLAY_VOC : DISPLAY_NONE;
+					_atsv.shown = false;
 				} else {
 					_atsv._ptr = tmp_ptr;
 					_atsv._txtLen = 0;
@@ -944,7 +924,7 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 			SplitStringInit tmp_ssi = _ssi[personId];
 			_ssr = split_string(&tmp_ssi);
 
-			if (_atdsv._display != DISPLAY_VOC ||
+			if (g_engine->_sound->subtitlesEnabled() ||
 			        (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) == -1) {
 				const int16 h = _G(fontMgr)->getFont()->getDataHeight();
 				for (int16 i = 0; i < _ssr->_nr; i++) {
@@ -970,28 +950,30 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 
 			}
 
-			if (_atdsv._display != DISPLAY_TXT &&
+			if (g_engine->_sound->speechEnabled() &&
 					(_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) != -1) {
 				if (_atdsv._vocNr != _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) {
 					_atdsv._vocNr = _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET;
-					g_engine->_sound->playSpeech(_atdsv._vocNr,
-						_atdsv._display == DISPLAY_VOC);
+					g_engine->_sound->playSpeech(_atdsv._vocNr, !g_engine->_sound->subtitlesEnabled());
 					int16 vocx = _G(spieler_vector)[personId].Xypos[0] -
 								 _G(gameState).scrollx + _G(spieler_mi)[personId].HotX;
 					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
 
-					if (_atdsv._display == DISPLAY_VOC) {
+					if (!g_engine->_sound->subtitlesEnabled()) {
 						_aadv._strNr = -1;
 						_aadv._delayCount = 1;
 					}
 				}
 
-				if (_atdsv._display != DISPLAY_ALL) {
-					for (int16 i = 0; i < _ssr->_nr; i++) {
-						tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
-					}
-					str_null2leer(start_ptr, start_ptr + txt_len - 1);
+				// FIXME: This breaks subtitles, as it removes
+				// all string terminators. This was previously
+				// used when either speech or subtitles (but not
+				// both) were selected, but its logic is broken.
+				// Check if it should be removed altogether.
+				/*for (int16 i = 0; i < _ssr->_nr; i++) {
+					tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
 				}
+				str_null2leer(start_ptr, start_ptr + txt_len - 1);*/
 			}
 
 			if (_aadv._delayCount <= 0) {
@@ -1011,8 +993,8 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 						++_aadv._strNr;
 						while (*_aadv._ptr++ != ATDS_END_TEXT) {}
 
-						int16 tmp_person = _aadv._strHeader->_akPerson;
-						int16 tmp_str_nr = _aadv._strNr;
+						const int16 tmp_person = _aadv._strHeader->_akPerson;
+						const int16 tmp_str_nr = _aadv._strNr;
 						_aadv._strHeader = (AadStrHeader *)_aadv._ptr;
 						_aadv._ptr += sizeof(AadStrHeader);
 						if (_atdsv.aad_str != nullptr) {
@@ -1028,13 +1010,11 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 					_aadv._silentCount = _atdsv._silent;
 				}
 			} else {
-				if (_atdsv._display != DISPLAY_VOC ||
+				if (g_engine->_sound->subtitlesEnabled() ||
 				        (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) == -1)
 					--_aadv._delayCount;
 
-				else if (_atdsv._display == DISPLAY_VOC) {
-					warning("FIXME - unknown constant SMP_PLAYING");
-
+				else if (!g_engine->_sound->subtitlesEnabled()) {
 					_aadv._delayCount = 0;
 				}
 			}

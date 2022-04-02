@@ -178,8 +178,6 @@ void Options::execute(TafInfo *ti) {
 					g_engine->_sound->toggleSubtitles(true);
 					g_engine->_sound->toggleSpeech(false);
 				}
-
-				_G(atds)->updateSoundSettings();
 				break;
 			case 5:
 				if (g_engine->_sound->musicEnabled()) {

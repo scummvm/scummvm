@@ -291,15 +291,6 @@ void Sound::waitForSpeechToFinish() {
 	}
 }
 
-DisplayMode Sound::getSpeechSubtitlesMode() const {
-	if (!ConfMan.getBool("subtitles"))
-		return DISPLAY_VOC;
-	else if (!ConfMan.getBool("speech_mute"))
-		return DISPLAY_ALL;
-	else
-		return DISPLAY_TXT;
-}
-
 bool Sound::soundEnabled() const {
 	return !ConfMan.getBool("sfx_mute");
 }
@@ -325,11 +316,11 @@ void Sound::toggleSpeech(bool enable) {
 }
 
 bool Sound::subtitlesEnabled() const {
-	return !ConfMan.getBool("subtitles");
+	return ConfMan.getBool("subtitles");
 }
 
 void Sound::toggleSubtitles(bool enable) {
-	return ConfMan.setBool("subtitles", !enable);
+	return ConfMan.setBool("subtitles", enable);
 }
 
 } // namespace Chewy

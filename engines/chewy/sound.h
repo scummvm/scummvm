@@ -70,11 +70,6 @@ public:
 	 */
 	void waitForSpeechToFinish();
 
-	/**
-	 * Returns the speech, subtitles mode from the ScummVM config
-	 */
-	DisplayMode getSpeechSubtitlesMode() const;
-
 	bool soundEnabled() const;
 	void toggleSound(bool enable);
 

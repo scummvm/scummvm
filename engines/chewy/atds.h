@@ -48,13 +48,6 @@ namespace Chewy {
 #define INV_ATS_HANDLE 6
 #define ATDS_HANDLE 7
 
-enum DisplayMode {
-	DISPLAY_NONE = -1,
-	DISPLAY_TXT = 0,
-	DISPLAY_VOC = 1,
-	DISPLAY_ALL = 2
-};
-
 #define MAX_STR_SPLIT 10
 
 #define SPLIT_CENTER 1
@@ -104,7 +97,6 @@ struct AtdsVar {
 	int16 *_delay = nullptr;
 	int16 _diaNr = 0;
 
-	DisplayMode _display = DISPLAY_TXT;
 	bool _eventsEnabled = false;
 	int16 _vocNr = 0;
 
@@ -205,7 +197,6 @@ struct AtsTxtHeader {
 };
 
 struct AtsVar {
-	DisplayMode _display = DISPLAY_NONE;
 	AtsTxtHeader _txtHeader;
 	AtsStrHeader _strHeader;
 	char *_ptr;
@@ -214,6 +205,7 @@ struct AtsVar {
 	int16 _txtLen;
 	int16 _color;
 	int16 _txtMode;
+	bool shown;
 };
 
 struct SplitStringRet {
@@ -248,7 +240,6 @@ public:
 	~Atdsys();
 
 	void set_delay(int16 *delay, int16 silent);
-	void updateSoundSettings();
 	void set_split_win(int16 nr, int16 x, int16 y);
 	SplitStringRet *split_string(SplitStringInit *ssi);
 	void calc_txt_win(SplitStringInit *ssi);
@@ -261,9 +252,9 @@ public:
 	void open_handle(const char *fname, int16 mode);
 	void close_handle(int16 mode);
 	void crypt(char *txt, uint32 size);
-	DisplayMode start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr);
+	bool start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr);
 	void stop_ats();
-	DisplayMode &ats_get_status();
+	bool atsShown() { return _atsv.shown; }
 	void print_ats(int16 x, int16 y, int16 scrX, int16 scrY);
 	int16 getControlBit(int16 txtNr, int16 bitIdx);
 	void setControlBit(int16 txtNr, int16 bitIdx);
@@ -299,9 +290,6 @@ public:
 	int8 getStereoPos(int16 x);
 	void enableEvents(bool nr) {
 		_atdsv._eventsEnabled = nr;
-	}
-	int getAtdDisplay() const {
-		return _atdsv._display;	
 	}
 
 	void saveAtdsStream(Common::WriteStream *stream);
