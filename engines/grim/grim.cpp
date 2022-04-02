@@ -261,8 +261,29 @@ LuaBase *GrimEngine::createLua() {
 
 GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 	Common::String rendererConfig = ConfMan.get("renderer");
-	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
-	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(rendererConfig);
+	uint32 availableRendererTypes = Graphics::Renderer::getAvailableTypes();
+
+	availableRendererTypes &=
+#if defined(USE_OPENGL_GAME)
+			Graphics::kRendererTypeOpenGL |
+#endif
+#if defined(USE_OPENGL_SHADERS)
+			Graphics::kRendererTypeOpenGLShaders |
+#endif
+#if defined(USE_TINYGL)
+			Graphics::kRendererTypeTinyGL |
+#endif
+			0;
+
+	// For Grim Fandango, OpenGL renderer without shaders is preferred if available
+	if (desiredRendererType == Graphics::kRendererTypeDefault &&
+		(availableRendererTypes & Graphics::kRendererTypeOpenGL) &&
+	    getGameType() == GType_GRIM) {
+		availableRendererTypes &= ~Graphics::kRendererTypeOpenGLShaders;
+	}
+
+	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingType(desiredRendererType, availableRendererTypes);
 
 	_softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
 	if (!_softRenderer) {
@@ -271,37 +292,14 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 		initGraphics(screenW, screenH, nullptr);
 	}
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
-	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
-#endif
-
-#if defined(USE_OPENGL_GAME)
-	// Check the OpenGL context actually supports shaders
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
-		matchingRendererType = Graphics::kRendererTypeOpenGL;
-	}
-
-	// For Grim Fandango, OpenGL renderer without shaders is preferred
-	if (desiredRendererType == Graphics::kRendererTypeDefault &&
-	    matchingRendererType == Graphics::kRendererTypeOpenGLShaders &&
-	    getGameType() == GType_GRIM) {
-		matchingRendererType = Graphics::kRendererTypeOpenGL;
-	}
-#endif
-
-	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
-		// Display a warning if unable to use the desired renderer
-		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
-	}
-
 	GfxBase *renderer = nullptr;
 #if defined(USE_OPENGL_SHADERS)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		renderer = CreateGfxOpenGLShader();
 	}
 #endif
 #if defined(USE_OPENGL_GAME)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
+	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		renderer = CreateGfxOpenGL();
 	}
 #endif
@@ -310,8 +308,10 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 		renderer = CreateGfxTinyGL();
 	}
 #endif
+
 	if (!renderer) {
-		error("Unable to create a '%s' renderer", rendererConfig.c_str());
+		/* We should never end up here, getBestMatchingRendererType would have failed before */
+		error("Unable to create a renderer");
 	}
 
 	renderer->setupScreen(screenW, screenH);

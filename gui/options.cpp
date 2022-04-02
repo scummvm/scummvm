@@ -403,7 +403,7 @@ void OptionsDialog::build() {
 		_vsyncCheckbox->setState(ConfMan.getBool("vsync", _domain));
 
 		_rendererTypePopUp->setEnabled(true);
-		_rendererTypePopUp->setSelectedTag(Graphics::parseRendererTypeCode(ConfMan.get("renderer", _domain)));
+		_rendererTypePopUp->setSelectedTag(Graphics::Renderer::parseTypeCode(ConfMan.get("renderer", _domain)));
 
 		_antiAliasPopUp->setEnabled(true);
 		if (ConfMan.hasKey("antialiasing", _domain)) {
@@ -642,7 +642,7 @@ void OptionsDialog::apply() {
 
 			if (_rendererTypePopUp->getSelectedTag() > 0) {
 				Graphics::RendererType selected = (Graphics::RendererType) _rendererTypePopUp->getSelectedTag();
-				ConfMan.set("renderer", Graphics::getRendererTypeCode(selected), _domain);
+				ConfMan.set("renderer", Graphics::Renderer::getTypeCode(selected), _domain);
 			} else {
 				ConfMan.removeKey("renderer", _domain);
 			}
@@ -1446,7 +1446,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	_rendererTypePopUp = new PopUpWidget(boss, prefix + "grRendererTypePopup");
 	_rendererTypePopUp->appendEntry(_("<default>"), Graphics::kRendererTypeDefault);
 	_rendererTypePopUp->appendEntry("");
-	const Graphics::RendererTypeDescription *rt = Graphics::listRendererTypes();
+	const Graphics::RendererTypeDescription *rt = Graphics::Renderer::listTypes();
 	for (; rt->code; ++rt) {
 		if (g_system->getOverlayWidth() > 320)
 			_rendererTypePopUp->appendEntry(_(rt->description), rt->id);

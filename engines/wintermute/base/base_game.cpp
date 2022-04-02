@@ -502,63 +502,60 @@ bool BaseGame::initialize1() {
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #ifdef ENABLE_WME3D
 	Common::String rendererConfig = ConfMan.get("renderer");
-	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
-	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(rendererConfig);
+	uint32 availableRendererTypes = Graphics::Renderer::getAvailableTypes();
 
-	if (!_playing3DGame && (desiredRendererType == Graphics::kRendererTypeTinyGL || desiredRendererType == Graphics::kRendererTypeDefault)) {
-		_renderer = makeOSystemRenderer(this);
-		if (_renderer == nullptr) {
-			return STATUS_FAILED;
-		}
-		return STATUS_OK;
-	}
-
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
-	initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
-	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
-#endif
-
+	availableRendererTypes &=
 #if defined(USE_OPENGL_GAME)
-	// Check the OpenGL context actually supports shaders
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
-		matchingRendererType = Graphics::kRendererTypeOpenGL;
-	}
+			Graphics::kRendererTypeOpenGL |
 #endif
+#if defined(USE_OPENGL_SHADERS)
+			Graphics::kRendererTypeOpenGLShaders |
+#endif
+#if defined(USE_TINYGL)
+			Graphics::kRendererTypeTinyGL |
+#endif
+			0;
 
-	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
-		// Display a warning if unable to use the desired renderer
-		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
+	/* When playing 2D, TinyGL is not really TinyGL but software and is always available */
+	if (!_playing3DGame) {
+		availableRendererTypes |= Graphics::kRendererTypeTinyGL;
 	}
 
-#if defined(USE_OPENGL_SHADERS)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingType(desiredRendererType, availableRendererTypes);
+
+ #if defined(USE_OPENGL_SHADERS)
+	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+		initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
 		_renderer3D = makeOpenGL3DShaderRenderer(this);
 	}
-#endif // defined(USE_OPENGL_SHADERS)
-#if defined(USE_OPENGL_GAME)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
+ #endif // defined(USE_OPENGL_SHADERS)
+ #if defined(USE_OPENGL_GAME)
+	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
+		initGraphics3d(_settings->getResWidth(), _settings->getResHeight());
 		_renderer3D = makeOpenGL3DRenderer(this);
 	}
-#endif // defined(USE_OPENGL)
-#if defined(USE_TINYGL)
-	if (_playing3DGame && matchingRendererType == Graphics::kRendererTypeTinyGL) {
-		_renderer3D = nullptr;// TODO: makeTinyGL3DRenderer(this);
-		error("3D software renderered is not supported yet");
+ #endif // defined(USE_OPENGL)
+	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
+		if (_playing3DGame) {
+			_renderer3D = nullptr;// TODO: makeTinyGL3DRenderer(this);
+			error("3D software renderered is not supported yet");
+		}
 	}
-#endif
 	_renderer = _renderer3D;
-#if !defined(USE_OPENGL_GAME) && !defined(USE_OPENGL_SHADERS)
-	if (!_playing3DGame && !_renderer3D)
+
+	if (!_renderer && !_playing3DGame) {
 		_renderer = makeOSystemRenderer(this);
-#endif
+	}
 #else
 	_renderer = makeOSystemRenderer(this);
 #endif
+
 	if (_renderer == nullptr) {
 		return STATUS_FAILED;
+	} else {
+		return STATUS_OK;
 	}
-
-	return STATUS_OK;
 }
 
 
