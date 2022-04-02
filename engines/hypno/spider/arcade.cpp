@@ -34,6 +34,7 @@ static const int shootOriginIndex[9][2] = {
 	{41, 3}, {51, 3}, {65, 6}, {40, 16}, {58, 20}, {67, 10}, {37, 14}, {37, 15}, {67, 22}};
 
 void SpiderEngine::runBeforeArcade(ArcadeShooting *arc) {
+	_checkpoint = _currentLevel;
 	assert(!arc->player.empty());
 	_playerFrames = decodeFrames(arc->player);
 	_playerFrameSep = 0;
@@ -58,8 +59,6 @@ void SpiderEngine::runBeforeArcade(ArcadeShooting *arc) {
 }
 
 void SpiderEngine::runAfterArcade(ArcadeShooting *arc) {
-	_checkpoint = _nextLevel;
-
 	if (_health <= 0) {
 		assert(_score >= _bonus);
 		_score -= _bonus;
