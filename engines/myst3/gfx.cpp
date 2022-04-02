@@ -189,8 +189,18 @@ void Renderer::flipVertical(Graphics::Surface *s) {
 
 Renderer *createRenderer(OSystem *system) {
 	Common::String rendererConfig = ConfMan.get("renderer");
-	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
-	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(rendererConfig);
+	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingAvailableType(desiredRendererType,
+#if defined(USE_OPENGL_GAME)
+			Graphics::kRendererTypeOpenGL |
+#endif
+#if defined(USE_OPENGL_SHADERS)
+			Graphics::kRendererTypeOpenGLShaders |
+#endif
+#if defined(USE_TINYGL)
+			Graphics::kRendererTypeTinyGL |
+#endif
+			0);
 
 	bool isAccelerated = matchingRendererType != Graphics::kRendererTypeTinyGL;
 
@@ -208,29 +218,13 @@ Renderer *createRenderer(OSystem *system) {
 		initGraphics(width, height, nullptr);
 	}
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
-	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
-#endif
-
-#if defined(USE_OPENGL_GAME)
-	// Check the OpenGL context actually supports shaders
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
-		matchingRendererType = Graphics::kRendererTypeOpenGL;
-	}
-#endif
-
-	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
-		// Display a warning if unable to use the desired renderer
-		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
-	}
-
 #if defined(USE_OPENGL_SHADERS)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		return CreateGfxOpenGLShader(system);
 	}
 #endif
 #if defined(USE_OPENGL_GAME)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
+	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		return CreateGfxOpenGL(system);
 	}
 #endif
@@ -239,7 +233,8 @@ Renderer *createRenderer(OSystem *system) {
 		return CreateGfxTinyGL(system);
 	}
 #endif
-	error("Unable to create a '%s' renderer", rendererConfig.c_str());
+	/* We should never end up here, getBestMatchingRendererType would have failed before */
+	error("Unable to create a renderer");
 }
 
 void Renderer::renderDrawable(Drawable *drawable, Window *window) {

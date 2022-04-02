@@ -783,7 +783,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("renderer")
-				Graphics::RendererType renderer = Graphics::parseRendererTypeCode(option);
+				Graphics::RendererType renderer = Graphics::Renderer::parseTypeCode(option);
 				if (renderer == Graphics::kRendererTypeDefault)
 					usage("Unrecognized renderer type '%s'", option);
 			END_OPTION

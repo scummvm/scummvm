@@ -95,13 +95,13 @@ bool Debugger::cmd_set_renderer(int argc, const char **argv) {
 		return true;
 	}
 
-	Graphics::RendererType renderer = Graphics::parseRendererTypeCode(argv[1]);
+	Graphics::RendererType renderer = Graphics::Renderer::parseTypeCode(argv[1]);
 	if (renderer == Graphics::kRendererTypeDefault) {
 		debugPrintf("Invalid renderer '%s'\n", argv[1]);
 		return true;
 	}
 
-	ConfMan.set("renderer", Graphics::getRendererTypeCode(renderer));
+	ConfMan.set("renderer", Graphics::Renderer::getTypeCode(renderer));
 	g_grim->changeHardwareState();
 	return false;
 }

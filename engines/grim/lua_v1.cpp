@@ -289,8 +289,18 @@ void Lua_V1::SetHardwareState() {
 	bool accel = getbool(1);
 
 	Graphics::RendererType renderer = accel ? Graphics::kRendererTypeOpenGL : Graphics::kRendererTypeTinyGL;
-	renderer = Graphics::getBestMatchingAvailableRendererType(renderer);
-	ConfMan.set("renderer", Graphics::getRendererTypeCode(renderer));
+	renderer = Graphics::Renderer::getBestMatchingAvailableType(renderer,
+#if defined(USE_OPENGL_GAME)
+			Graphics::kRendererTypeOpenGL |
+#endif
+#if defined(USE_OPENGL_SHADERS)
+			Graphics::kRendererTypeOpenGLShaders |
+#endif
+#if defined(USE_TINYGL)
+			Graphics::kRendererTypeTinyGL |
+#endif
+			0);
+	ConfMan.set("renderer", Graphics::Renderer::getTypeCode(renderer));
 
 	g_grim->changeHardwareState();
 }
