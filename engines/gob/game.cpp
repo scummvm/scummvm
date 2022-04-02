@@ -513,9 +513,9 @@ void Game::prepareStart() {
 }
 
 void Game::playTot(int16 function) {
-	int16 *oldNestLevel      = _vm->_inter->_nestLevel;
-	int16 *oldBreakFrom      = _vm->_inter->_breakFromLevel;
-	int16 *oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
+	int16 * volatile oldNestLevel      = _vm->_inter->_nestLevel;
+	int16 * volatile oldBreakFrom      = _vm->_inter->_breakFromLevel;
+	int16 * volatile oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
 
 	_script->push();
 

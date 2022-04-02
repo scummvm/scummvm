@@ -99,8 +99,8 @@ class Inter {
 public:
 	uint8 _terminate;
 
-	int16 *_breakFromLevel;
-	int16 *_nestLevel;
+	int16 * volatile _breakFromLevel;
+	int16 * volatile _nestLevel;
 
 	uint32 _soundEndTimeKey;
 	int16 _soundStopVal;

@@ -103,7 +103,7 @@ public:
 	int16 _animBottom;
 	int16 _animRight;
 
-	int16 *_pCaptureCounter;
+	int16 * volatile _pCaptureCounter;
 
 	void init();
 	int16 loadStatic(char search);
