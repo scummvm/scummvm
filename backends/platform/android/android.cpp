@@ -506,6 +506,9 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureClipboardSupport) {
 		return true;
 	}
+	/* Even if we are using the 2D graphics manager,
+	 * we are at one initGraphics3d call of supporting GLES2 */
+	if (f == kFeatureOpenGLForGame) return true;
 	return ModularGraphicsBackend::hasFeature(f);
 }
 
