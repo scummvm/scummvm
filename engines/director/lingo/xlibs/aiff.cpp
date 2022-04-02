@@ -45,6 +45,8 @@
  * IS     mDuration, str      --Read Docs to avoid Hard Drive failure
  */
 
+#include "common/macresman.h"
+#include "audio/decoders/aiff.h"
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
@@ -92,8 +94,21 @@ void AiffXObj::m_new(int nargs) {
 
 void AiffXObj::m_duration(int nargs) {
 	g_lingo->printSTUBWithArglist("AiffXObj::m_duration", nargs);
-	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0)); // TODO: Implement
+	auto filePath = g_lingo->pop().asString();
+
+	// Mac-ify any mac-paths to make them at least consistent:
+	Common::replace(filePath, "\\", ":");
+
+	Common::MacResManager macresman;
+	macresman.open(Common::Path(pathMakeRelative(filePath), g_director->_dirSeparator));
+	auto aiffStream = macresman.getDataFork();
+
+	auto aiffHeader = Audio::AIFFHeader::readAIFFHeader(aiffStream, DisposeAfterUse::YES);
+
+	int duration = (aiffHeader->getFrameCount() / (float)aiffHeader->getFrameRate()) * 60;
+
+	delete aiffHeader;
+	g_lingo->push(Datum(duration));
 }
 
 } // End of namespace Director
