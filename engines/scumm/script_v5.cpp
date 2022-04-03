@@ -1081,6 +1081,15 @@ void ScummEngine_v5::o5_findObject() {
 		obj = 609;
 	}
 
+	// WORKAROUND bug #13385: Clicking on the cave entrance to go back into
+	// the dragon caves registers on the incorrect object. Since the object
+	// script is responsible for actually moving you to the other room and
+	// this script is empty, redirect the action to the cave object's
+	// script instead.
+	if (_game.id == GID_LOOM && _game.version == 4 && _currentRoom == 33 && obj == 482 && _enableEnhancements) {
+		obj = 468;
+	}
+
 	setResult(obj);
 }
 
