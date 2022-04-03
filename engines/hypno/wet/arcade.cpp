@@ -526,7 +526,11 @@ void WetEngine::drawPlayer() {
 	else if (_arcadeMode == "Y4")
 		_playerFrameIdx = 2;
 
-	drawImage(*_playerFrames[_playerFrameIdx], 0, 200 - _playerFrames[_playerFrameIdx]->h + 1, true);
+	int offset = 0;
+	if (_levelId == 31) // Ugly, but seems to be necessary
+		offset = 2;
+
+	drawImage(*_playerFrames[_playerFrameIdx], 0, 200 - _playerFrames[_playerFrameIdx]->h + offset, true);
 }
 
 void WetEngine::drawHealth() {
