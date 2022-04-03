@@ -77,9 +77,9 @@ void ScummEngine::printString(int m, const byte *msg) {
 		// for the animation to match. We get around this by slowing
 		// down that animation.
  		//
-		// In the italian version, the whole scene is sped up to keep up
-		// with Sam's speech. We compensate for this by slowing down the
-		// other animations.
+		// In the italian CD version, the whole scene is sped up to
+		// keep up with Sam's speech. We compensate for this by slowing
+		// down the other animations.
 		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && _enableEnhancements) {
 			Actor *a;
 
@@ -89,7 +89,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 					if (a)
 						a->setAnimSpeed(3);
 				}
-			} else if (_language == Common::IT_ITA) {
+			} else if (_language == Common::IT_ITA && strcmp(_game.variant, "Floppy") != 0) {
 				if (memcmp(msg + 16, "Ooh.", 4) == 0) {
 					a = derefActorSafe(3, "printString");
 					if (a)
@@ -442,7 +442,18 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 					{ "Kann ich fahren?", 240, 0 }
 				};
 
-				TimingAdjustment timingAdjustmentsIT[] = {
+				TimingAdjustment timingAdjustmentsITFloppy[] = {
+					{ "E per questo^",    140, 0 },
+					{ "E' che^ecco^",     100, 0 },
+					{ "^imprevedibile.",  170, 0 },
+					{ "Huh?",             110, 0 },
+					{ "Perch\x82 pensi",  90,  0 },
+					{ "Andiamocene da",   230, 0 },
+					{ "Forse possiamo",   75,  0 },
+					{ "Ti dispiace",      160, 0 }
+				};
+
+				TimingAdjustment timingAdjustmentsITCD[] = {
 					{ "E per questo^",    120, 0 },
 					{ "Forse sei",        75,  0 },
 					{ "^imprevedibile.",  170, 0 },
@@ -504,8 +515,13 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 					}
 					break;
 				case Common::IT_ITA:
-					adjustments = timingAdjustmentsIT;
-					numAdjustments = ARRAYSIZE(timingAdjustmentsIT);
+					if (strcmp(_game.variant, "Floppy") == 0) {
+						adjustments = timingAdjustmentsITFloppy;
+						numAdjustments = ARRAYSIZE(timingAdjustmentsITFloppy);
+					} else {
+						adjustments = timingAdjustmentsITCD;
+						numAdjustments = ARRAYSIZE(timingAdjustmentsITCD);
+					}
 					break;
 				case Common::FR_FRA:
 					if (strcmp(_game.variant, "Floppy") == 0) {

@@ -664,7 +664,9 @@ void ScummEngine::writeVar(uint var, int value) {
 
 			// Max beats up the scientist. This was probably to
 			// match the subtitles to the speech better, but this
-			// is just too much!
+			// is just too much! The floppy version doesn't do this
+			// but there's no need to explicitly test this since
+			// the script never sets the value to 2 there.
 			if (value == 2 && _language == Common::IT_ITA)
 				value = 3;
 		}
