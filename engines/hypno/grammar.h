@@ -481,6 +481,28 @@ public:
 		objMissesAllowed[1] = 0;
 		frameDelay = 0;
 	}
+	void clear() {
+		nextLevelVideo.clear();
+		backgroundVideo.clear();
+		transitionVideos.clear();
+		transitionTimes.clear();
+		transitionPalettes.clear();
+		player.clear();
+		shoots.clear();
+		intros.clear();
+		defeatNoEnergyFirstVideo.clear();
+		defeatMissBossVideo.clear();
+		defeatNoEnergySecondVideo.clear();
+		missBoss1Video.clear();
+		missBoss2Video.clear();
+		hitBoss1Video.clear();
+		hitBoss2Video.clear();
+		beforeVideo.clear();
+		briefingVideo.clear();
+		additionalVideo.clear();
+		segments.clear();
+	}
+
 	uint32 id;
 	uint32 frameDelay;
 	Common::String mode;

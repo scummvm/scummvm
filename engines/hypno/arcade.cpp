@@ -57,23 +57,7 @@ void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common
 	ArcadeShooting *arcade = new ArcadeShooting();
 	*arcade = *g_parsedArc;
 	_levels[filename] = (Level*) arcade;
-	g_parsedArc->backgroundVideo.clear();
-	g_parsedArc->transitionVideos.clear();
-	g_parsedArc->transitionTimes.clear();
-	g_parsedArc->transitionPalettes.clear();
-	g_parsedArc->player.clear();
-	g_parsedArc->shoots.clear();
-	g_parsedArc->intros.clear();
-	g_parsedArc->defeatNoEnergyFirstVideo.clear();
-	g_parsedArc->defeatMissBossVideo.clear();
-	g_parsedArc->defeatNoEnergySecondVideo.clear();
-	g_parsedArc->missBoss1Video.clear();
-	g_parsedArc->missBoss2Video.clear();
-	g_parsedArc->hitBoss1Video.clear();
-	g_parsedArc->hitBoss2Video.clear();
-	g_parsedArc->beforeVideo.clear();
-	g_parsedArc->briefingVideo.clear();
-	g_parsedArc->segments.clear();
+	g_parsedArc->clear();
 }
 
 SegmentShootsSequence HypnoEngine::parseShootList(const Common::String &filename, const Common::String &data) {
