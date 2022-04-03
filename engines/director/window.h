@@ -123,6 +123,7 @@ public:
 	int getWindowType() const { return _windowType; }
 	void setTitleVisible(bool titleVisible) { _titleVisible = titleVisible; updateBorderType(); };
 	bool isTitleVisible() { return _titleVisible; };
+	Datum getStageRect();
 
 	void updateBorderType();
 

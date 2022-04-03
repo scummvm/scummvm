@@ -189,6 +189,18 @@ void Window::setStageColor(uint32 stageColor, bool forceReset) {
 	}
 }
 
+Datum Window::getStageRect() {
+	Graphics::ManagedSurface *surface = getSurface();
+	Datum d;
+	d.type = RECT;
+	d.u.farr = new FArray;
+	d.u.farr->arr.push_back(0);
+	d.u.farr->arr.push_back(0);
+	d.u.farr->arr.push_back(surface->w);
+	d.u.farr->arr.push_back(surface->h);
+	return d;
+}
+
 void Window::reset() {
 	resize(_composeSurface->w, _composeSurface->h, true);
 	_composeSurface->clear(_stageColor);

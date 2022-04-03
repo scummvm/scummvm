@@ -480,6 +480,7 @@ bool Window::hasField(int field) {
 	case kTheDrawRect:
 	case kTheFileName:
 	case kTheModal:
+	case kTheRect:
 	case kTheSourceRect:
 	case kTheTitle:
 	case kTheTitleVisible:
@@ -502,6 +503,9 @@ Datum Window::getField(int field) {
 		return isVisible();
 	case kTheWindowType:
 		return getWindowType();
+	case kTheRect:
+		return getStageRect();
+
 	default:
 		warning("Window::getField: unhandled field '%s'", g_lingo->field2str(field));
 		return Datum();
