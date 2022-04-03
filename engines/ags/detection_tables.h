@@ -738,7 +738,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "chinesecheckers", "Chinese Checkers" },
 	{ "chlorinde", "White Bear Beauty Chlorinde and the Paranormal Parrot" },
 	{ "chongoadv", "Chongo's China Adventure" },
-	{ "chriscolumbus1", "Christopher Columbus is an Idiot - Act 1" },
+	{ "chriscolumbus", "Christopher Columbus is an Idiot" },
 	{ "christmas42", "Christmas42" },
 	{ "christmasgamearcade", "CGA: Christmas Game Arcade" },
 	{ "christmashunt", "Christmas Hunt" },
@@ -773,7 +773,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "columbuslander", "Columbus Lander" },
 	{ "commandoadv", "Commando: The Adventure Game" },
 	{ "comedyquest", "Comedy Quest" },
-	{ "comradecitizenpart1", "Comrade Citizen (part 1)" },
+	{ "comradecitizenpart1", "Comrade Citizen - Part I" },
 	{ "concurrence", "Concurrence" },
 	{ "confessionsofacatburglar", "Confessions Of A Cat Burglar" },
 	{ "coniferskunks", "Conifer Skunks: Osvald's Surprise" },
@@ -818,6 +818,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "cspb", "Cake & Smurphy Puzzle Battle!" },
 	{ "cursevampire", "The Curse of the Vampire" },
 	{ "cyberjack", "cyberJACK" },
+	{ "cybermemory", "Cybermemory Not Found" },
 	{ "cyberpunk97ep1", "Cyberpunk '97 - Episode 1" },
 	{ "daceyinthedark", "Dacey in the Dark: Prelude" },
 	{ "dada", "Dada: Stagnation in Blue" },
@@ -1493,6 +1494,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "maniacmansionds", "Maniac Mansion DS" },
 	{ "maniacmansiondott", "Maniac Mansion - DOTT-style Remake" },
 	{ "maniacmetalheadmania", "Maniac Metalhead Mania" },
+	{ "maniacmetalheadmania2", "Maniac Metalhead Mania II: The Heavy Metal Rescue Mission" },
 	{ "manvsfish", "Man vs. Fish" },
 	{ "mardsrevenge", "Mard's Personal Little Revenge" },
 	{ "martyausdemall", "Marty aus dem All" },
@@ -3288,6 +3290,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("charnelhousetrilogy", "cht.exe", "9ba3d9fbb098a26d7293ad3161c0f270", 341411868),
 	GAME_ENTRY_STEAM("chronicleofinnsmouth", "chronicleofinnsmouth.exe", "f2e3fe96788b72ef2bf9429c58716099", 552972692),
 	GAME_ENTRY_STEAM("chronicleofinnsmouth", "chronicleofinnsmouth.exe", "cb7ab3394128c52293417eae5dacf365", 552728591),
+	GAME_ENTRY_EN("cosmosquest3", "cq3.exe", "18b284c22010850f79bc5c20054a70c4", 8674790),
 	GAME_ENTRY_STEAM("crystalshardadventurebundle", "bundle.exe", "1c45d5c239d9eeef61e283983b6e6851", 4645713),
 	GAME_ENTRY_EN("danewguys2", "jackass.exe", "029aab0fef5e9fff7b95ddf5d79d7718", 23932842), // Humble Store
 	GAME_ENTRY_STEAM("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740554),
@@ -3434,6 +3437,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("tales", "tales.exe", "7b5842e8954354ef6e21dc1837073182", 150969855),
 	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447900356),  // Win Orig
 	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448795857),  // Win v2.2
+	GAME_ENTRY_EN_STEAM("technobabylon", "technobabylon.exe", "83cd1ad574bcfffe1b11504a32402b1e", 448823986),  // Win v2.2 updated
 	GAME_ENTRY_EN_GOG("technobabylon", "ac2game.dat", "570e69be27d3fa94b50f2779100e3fed", 445671616), // Mac v2.2a
 	GAME_ENTRY_EN("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
 	GAME_ENTRY_EN_STEAM("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205),
@@ -3547,10 +3551,15 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("castledornstein", "Castle Dornstein Demo.exe", "4141c41c06c91ec8ab9fffafbc26df67", 53098143),
 	DEMO_ENTRY_EN("charnelhousetrilogy", "sepulchredemo.exe", "9ba3d9fbb098a26d7293ad3161c0f270", 139434513), // Steam
 	DEMO_ENTRY("chronicleofinnsmouth", "ChronicleOfInnsmouthTechDemo1.1.exe", "b5c41e08919834b549ca350a28f18f87", 43595582),  //En-It
+	DETECTION_ENTRY("chriscolumbus", "ChrisColumbus.exe", "615e73fc1874e92d60a1996c2330ea36", 14817026, Common::EN_ANY, "Act 1 Demo", nullptr, ADGF_DEMO),
+	DETECTION_ENTRY("chriscolumbus", "ChrisColumbus.exe", "615e73fc1874e92d60a1996c2330ea36", 15681362, Common::EN_ANY, "Acts 1-2 (partial) Demo", nullptr, ADGF_DEMO),
 	DEMO_ENTRY_EN("city", "City.exe", "3e62eafed0fc365821b7afdbf1aec3d8", 18660151),
+	DEMO_ENTRY_EN("clownatthecircus", "circus.exe", "f120690b506dd63cd7d1112ea6af2f77", 1073547),
 	DEMO_ENTRY_EN("clubmidget", "midget2.exe", "4d17844029d8910fbaae1bdc99e250f2", 1593937),
 	DEMO_ENTRY_EN("coelldeckaflight", "coell deca.exe", "a524cbb1c51589903c4043b98917f1d9", 5497572),
 	DEMO_ENTRY_EN("crimmsson", "Crimm's Son.exe", "618d7dce9631229b4579340b964c6810", 9039508),
+	DEMO_ENTRY_EN("cybermemory", "CybermemoryNotFound.exe", "7971a7c02d414dc8cb33b6ec36080b91", 3851249),  // Windows
+	DEMO_ENTRY_EN("cybermemory", "CybermemoryNotFound.ags", "49416a0d45607a9a352fec6788ed712f", 1354209),  // Linux
 	DEMO_ENTRY_EN("cyberpunk97ep1", "zone - Copy.exe", "78dd4ca028ee0156b6a093d6d780aa65", 717217747),
 	DEMO_ENTRY("danewguys2", "dng2 demo.exe", "0d2e8dc76f9ac381d204a3ac763b0bac", 5235302),
 	DEMO_ENTRY("dangermouse", "Danger Mouse.exe", "eed666c68be394737de478a52210dde4", 247422806),
@@ -4254,7 +4263,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("chinesecheckers", "chinesecheckers.exe", "06a03fe35791b0578068ab1873455463", 3391826),
 	GAME_ENTRY_EN("chlorinde", "ChlorindeMAGS.exe", "3c5bd1713959ff469cb46ebe5542cfcf", 10118602),
 	GAME_ENTRY_EN("chongoadv", "ChinaGame.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 31148695),
-	GAME_ENTRY_EN("chriscolumbus1", "ChrisColumbus.exe", "615e73fc1874e92d60a1996c2330ea36", 14817026),
 	GAME_ENTRY_EN("christmas42", "christmas_42.exe", "97f74f77ff127215fc44f35958fd2d55", 1546010),
 	GAME_ENTRY_EN("christmasgamearcade", "Xmas_2015.exe", "b5c41e08919834b549ca350a28f18f87", 7363985),
 	GAME_ENTRY_EN("christmashunt", "MyXmasGame.exe", "0241777c2537fc5d077c05cde10bfa9f", 3170875),
@@ -4270,7 +4278,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("clipgoestotown", "clip goes to town.exe", "0710e2ec71042617f565c01824f0cf3c", 1690928),
 	GAME_ENTRY_EN("clockworklabyrinth", "clockwork.exe", "c15b2eb56afb3a330474b0fd124a3c9d", 638025412),  //v1.1
 	GAME_ENTRY_EN("clotildesoffritti", "Clotilde astronave.exe", "286551ded3eedc428451e506e29196c9", 368664276),
-	GAME_ENTRY_EN("clownatthecircus", "circus.exe", "f120690b506dd63cd7d1112ea6af2f77", 1073547),
+	GAME_ENTRY_EN("clotildesoffritti", "Clotilde astronave.exe", "286551ded3eedc428451e506e29196c9", 368848300),
 	GAME_ENTRY_EN("clubofevil", "club of evil.exe", "65f53f81071dab6b3ab8363e4c76d12e", 11838011),
 	GAME_ENTRY_LANG("coderbattle", "coderbattle.exe", "8bae5a42f382b38d516a7f8c8f686376", 23992763, Common::DE_DEU),
 	GAME_ENTRY_EN("coinopafternoon", "Let's Play Something.exe", "615e73fc1874e92d60a1996c2330ea36", 1225364411),  //English
@@ -4285,6 +4293,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("colourwise", "colourwise.exe", "473f0e2fd72b747cef62d91090ab74c7", 24461117),
 	GAME_ENTRY_EN("colourwiseleveleditor", "colourwise - Level Editor.exe", "3e09048ec0763a90ffa4eaeeb8f96df5", 3365519),
 	GAME_ENTRY_EN("columbuslander", "columbus lander.exe", "779421cd8ad5268e2efdb26e04608db7", 48744943),
+	GAME_ENTRY_EN("comedyquest", "Comedy Quest.exe", "e46016dff70fa37c1e9f24eec9ae55a0", 22351775),
 	GAME_ENTRY_EN_STEAM("comedyquest", "Comedy Quest.exe", "7a0123d8f6575e9954a18125456515f4", 22381783),
 	GAME_ENTRY_EN("commandoadv", "commando.exe", "0736c98683a5ee6179edd886ca674909", 6225721),
 	GAME_ENTRY_EN("comradecitizenpart1", "citizen.exe", "06a03fe35791b0578068ab1873455463", 2174301),
@@ -4311,7 +4320,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("cosmospuzzle", "space.exe", "0500aacb6c176d47ac0f8158f055db83", 3591766),
 	GAME_ENTRY_EN("cosmosquest1", "tfas1.exe", "ff3d6e4edfca8b4f4f1c6cbf8e2781a6", 16653211),
 	GAME_ENTRY_EN("cosmosquest2", "tfas2-32bit.exe", "ff3d6e4edfca8b4f4f1c6cbf8e2781a6", 118740291),
-	GAME_ENTRY_EN("cosmosquest3", "cq3.exe", "18b284c22010850f79bc5c20054a70c4", 8674790),
 	GAME_ENTRY_EN("cougarsquestforfreedom", "chra.exe", "0500aacb6c176d47ac0f8158f055db83", 12654043),
 	GAME_ENTRY_EN("cougarsquestforfreedom", "cqff.exe", "0500aacb6c176d47ac0f8158f055db83", 12590916),  //v1.0
 	GAME_ENTRY_EN("counterfeit", "counterfeit.exe", "ef1645ccd3d16691ec3908c91f340c34", 2232297),
@@ -5104,6 +5112,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("maniacmansiondeluxe", "Maniac.exe", "465f972675db2da6040518221af5b0ba", 10181366), // v1.3
 	GAME_ENTRY("maniacmansiondeluxe", "Maniac.exe", "465f972675db2da6040518221af5b0ba", 10409172),
 	GAME_ENTRY("maniacmetalheadmania", "Maniac Metalhead Mania.exe", "d4dbb53d3617dcbb56251eb4a332fddd", 11785951),
+	GAME_ENTRY("maniacmetalheadmania2", "Maniac Metalhead Mania II.exe", "be3275347f23aadb6d13aa75f70fcb99", 14997025),  //En-De
 	GAME_ENTRY("manvsfish", "ManVsFish.exe", "06a03fe35791b0578068ab1873455463", 1875086),
 	GAME_ENTRY("mardsrevenge", "MPLR.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 1771793),
 	GAME_ENTRY_LANG("martyausdemall", "test3.exe", "0710e2ec71042617f565c01824f0cf3c", 4352013, Common::DE_DEU),
