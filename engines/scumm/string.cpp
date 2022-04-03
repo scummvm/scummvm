@@ -72,10 +72,10 @@ void ScummEngine::printString(int m, const byte *msg) {
 			return;
 		}
 
-		// WORKAROUND bug #13378: In the German version, Sam's reactions
-		// to Max beating up the scientist run much too quick for the
-		// animation to match. We get around this by slowing down that
-		// animation.
+		// WORKAROUND bug #13378: In the German CD version, Sam's
+		// reactions to Max beating up the scientist run much too quick
+		// for the animation to match. We get around this by slowing
+		// down that animation.
  		//
 		// In the italian version, the whole scene is sped up to keep up
 		// with Sam's speech. We compensate for this by slowing down the
@@ -83,7 +83,7 @@ void ScummEngine::printString(int m, const byte *msg) {
 		if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && _enableEnhancements) {
 			Actor *a;
 
-			if (_language == Common::DE_DEU) {
+			if (_language == Common::DE_DEU && strcmp(_game.variant, "Floppy") != 0) {
 				if (memcmp(msg + 16, "Ohh!", 4) == 0) {
 					a = derefActorSafe(2, "printString");
 					if (a)
@@ -228,7 +228,21 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 					{ "Mind if I drive?", 160, 0 }
 				};
 
-				TimingAdjustment timingAdjustmentsDE[] = {
+				TimingAdjustment timingAdjustmentsDEFloppy[] = {
+					{ "Und daf\x81r^",    110, 0 },
+					{ "Es ist blo\xe1^",  120, 0 },
+					{ "Hey.",             50,  0 },
+					{ "Klasse Schlag!",   30,  0 },
+					{ "Uiii!",            80,  0 },
+					{ "H\x84h?",          60,  0 },
+					{ "Kann ich seine",   110, 0 },
+					{ "Warum, glaubst",   110, 0 },
+					{ "La\xe1 uns von",   220, 0 },
+					{ "Vielleicht",       90,  0 },
+					{ "Kann ich fahren?", 220, 0 }
+				};
+
+				TimingAdjustment timingAdjustmentsDECD[] = {
 					{ "Und daf\x81r^",    110, 0 },
 					{ "Es ist blo\xe1^",  120, 0 },
 					{ "Hey.",             130, 0 },
@@ -282,8 +296,13 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 					numAdjustments = ARRAYSIZE(timingAdjustmentsEN);
 					break;
 				case Common::DE_DEU:
-					adjustments = timingAdjustmentsDE;
-					numAdjustments = ARRAYSIZE(timingAdjustmentsDE);
+					if (strcmp(_game.variant, "Floppy") == 0) {
+						adjustments = timingAdjustmentsDEFloppy;
+						numAdjustments = ARRAYSIZE(timingAdjustmentsDEFloppy);
+					} else {
+						adjustments = timingAdjustmentsDECD;
+						numAdjustments = ARRAYSIZE(timingAdjustmentsDECD);
+					}
 					break;
 				case Common::IT_ITA:
 					adjustments = timingAdjustmentsIT;
