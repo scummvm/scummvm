@@ -743,17 +743,17 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 	vertices[3].v = texBottom;
 
 	// position coords
-	vertices[0].x = pos.x - 0.5f;
-	vertices[0].y = correctedYPos - 0.5f;
+	vertices[0].x = pos.x;
+	vertices[0].y = correctedYPos;
 
-	vertices[1].x = pos.x - 0.5f;
-	vertices[1].y = correctedYPos - height - 0.5f;
+	vertices[1].x = pos.x;
+	vertices[1].y = correctedYPos - height;
 
-	vertices[2].x = pos.x + width - 0.5f;
-	vertices[2].y = correctedYPos - 0.5f;
+	vertices[2].x = pos.x + width;
+	vertices[2].y = correctedYPos;
 
-	vertices[3].x = pos.x + width - 0.5f;
-	vertices[3].y = correctedYPos - height - 0.5;
+	vertices[3].x = pos.x + width;
+	vertices[3].y = correctedYPos - height;
 
 	// not exactly sure about the color format, but this seems to work
 	byte a = RGBCOLGetA(color);
