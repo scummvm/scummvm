@@ -1830,7 +1830,7 @@ void ScummEngine_v5::o5_resourceRoutines() {
 		loadFlObject(getVarOrDirectWord(PARAM_2), resid);
 		break;
 
-	// TODO: For the following see also Hibarnatus' information on bug #7315.
+	// TODO: For the following see also Hibernatus' information on bug #7315.
 	case 32:
 		// TODO (apparently never used in FM-TOWNS)
 		debug(0, "o5_resourceRoutines %d not yet handled (script %d)", op, vm.slot[_currentScript].number);
@@ -2997,6 +2997,12 @@ void ScummEngine_v5::decodeParseString() {
 					// herself to bishop Mandible. Of all the places to put
 					// a typo...
 					printString(textSlot, (const byte *)"I am Chaos.");
+				} else if (_game.id == GID_LOOM && _game.version == 4 && _roomResource == 90 &&
+						vm.slot[_currentScript].number == 203 && _string[textSlot].color == 0x0F && _enableEnhancements) {
+					// WORKAROUND: When Mandible speaks with Goodmold, his second
+					// speech line is missing its color parameter.
+					_string[textSlot].color = 0x0A;
+					printString(textSlot, _scriptPointer);
 				} else if (_game.id == GID_INDY4 && _roomResource == 23 && vm.slot[_currentScript].number == 167 &&
 						len == 24 && 0==memcmp(_scriptPointer+16, "pregod", 6)) {
 					// WORKAROUND for bug #2961.
