@@ -65,6 +65,7 @@ const char *MemoryXObj::fileNames[] = {
 static MethodProto xlibMethods[] = {
 	{ "new",					MemoryXObj::m_new,			0,	0,	400 },	// D4
 	{ "Clear",					MemoryXObj::m_clear,		0,	0,	400 },	// D4
+	{ "Purge",					MemoryXObj::m_purge,		0,	0,	400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -94,6 +95,10 @@ void MemoryXObj::m_new(int nargs) {
 }
 
 void MemoryXObj::m_clear(int nargs) {
+	// g_lingo->pop();
+}
+
+void MemoryXObj::m_purge(int nargs) {
 	// g_lingo->pop();
 }
 
