@@ -220,10 +220,10 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x07, 0x0a, kTheFullColorPermit,	kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x0b, kTheImageDirect,		kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x0c, kTheDoubleClick,		kTheNOField,		true, kTEANOArgs },
-//	{ 0x07, 0x0d, ???,					kTheNOField,		true, kTEANOArgs },
+//	{ 0x07, 0x0d, ???,					kTheNOField,		true, kTEANOArgs }, // key
 	{ 0x07, 0x0e, kTheLastClick,		kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x0f, kTheLastEvent,		kTheNOField,		true, kTEANOArgs },
-//	{ 0x07, 0x10, ???,					kTheNOField,		true, kTEANOArgs },
+//	{ 0x07, 0x10, ???,					kTheNOField,		true, kTEANOArgs }, // keyCode
 	{ 0x07, 0x11, kTheLastKey,			kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x12, kTheLastRoll,			kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x13, kTheTimeoutLapsed,	kTheNOField,		true, kTEANOArgs },
@@ -235,7 +235,7 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x07, 0x19, kTheSoundEnabled,		kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x1a, kTheSoundLevel,		kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x1b, kTheStageColor,		kTheNOField,		true, kTEANOArgs },
-//	{ 0x07, 0x1c, ????,					kTheNOField,		true, kTEANOArgs },
+//	{ 0x07, 0x1c, ????,					kTheNOField,		true, kTEANOArgs }, // indicates dontPassEvent was called
 	{ 0x07, 0x1d, kTheSwitchColorDepth,	kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x1e, kTheTimeoutKeyDown,	kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x1f, kTheTimeoutLength,	kTheNOField,		true, kTEANOArgs },
