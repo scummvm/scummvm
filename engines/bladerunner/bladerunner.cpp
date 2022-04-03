@@ -76,6 +76,9 @@
 #include "bladerunner/waypoints.h"
 #include "bladerunner/zbuffer.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+
 #include "common/array.h"
 #include "common/config-manager.h"
 #include "common/error.h"
@@ -94,6 +97,10 @@
 #include "audio/mididrv.h"
 
 namespace BladeRunner {
+
+const char *BladeRunnerEngine::kGameplayKeymapId = "bladerunner-gameplay";
+const char *BladeRunnerEngine::kKiaKeymapId = "bladerunner-kia";
+const char *BladeRunnerEngine::kCommonKeymapId = "bladerunner-common";
 
 BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *desc)
 	: Engine(syst),
@@ -233,6 +240,10 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_currentKeyDown.keycode = Common::KEYCODE_INVALID;
 	_keyRepeatTimeLast = 0;
 	_keyRepeatTimeDelay = 0;
+
+	_activeCustomEvents->clear();
+	_customEventRepeatTimeLast = 0;
+	_customEventRepeatTimeDelay = 0;
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
@@ -379,6 +390,21 @@ Common::Error BladeRunnerEngine::run() {
 			_mouse->enable(true);
 		}
 		// end of additional code for gracefully handling end-game
+
+		if (getEventManager()->getKeymapper() != nullptr) {
+			if (getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kCommonKeymapId) != nullptr)
+				getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kCommonKeymapId)->setEnabled(true);
+
+			if (getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId) != nullptr)
+				getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId)->setEnabled(true);
+
+			if (getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kKiaKeymapId) != nullptr) {
+				// When disabling a keymap, make sure all their active events in the _activeCustomEvents array
+				// are cleared, because as they won't get an explicit "EVENT_CUSTOM_ENGINE_ACTION_END" event.
+				cleanupPendingRepeatingEvents(BladeRunnerEngine::kKiaKeymapId);
+				getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kKiaKeymapId)->setEnabled(false);
+			}
+		}
 
 		if (_validBootParam) {
 			// clear the flag, so that after a possible game gameOver / end-game
@@ -1262,18 +1288,46 @@ void BladeRunnerEngine::walkingReset() {
 	_isInsideScriptActor  = false;
 }
 
+bool BladeRunnerEngine::isAllowedRepeatedCustomEvent(const Common::Event &currevent) {
+	switch (currevent.type) {
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		switch ((BladeRunnerEngineMappableAction)currevent.customType) {
+		case kMpblActionCutsceneSkip:
+			// fall through
+		case kMpActionDialogueSkip:
+			// fall through
+		case kMpActionToggleKiaOptions:
+			return true;
+
+		default:
+			return false;
+		}
+		break;
+
+	default:
+		break;
+	}
+	return false;
+}
+
 // The original allowed a few keyboard keys to be repeated ("key spamming")
 // namely, Esc, Return and Space during normal gameplay.
-// "Space" spamming results in McCoy quickly switching between combat mode and normal mode, 
-// which is not very useful but it's the original's behavior.
-// Spamming Space, backspace, latin letter keys and symbols is allowed
-// in KIA mode, particularly in the Save Panel when writing the name for a save game.
+// "Spacebar" spamming would result in McCoy quickly switching between combat mode and normal mode,
+// which is not very useful -- by introducing the keymapper with custom action events this behavior is no longer replicated.
+// Spamming Space, backspace, latin letter keys and symbols is allowed in KIA mode,
+// particularly in the Save Panel when typing in the name for a save game.
 // For simplicity, we allow everything after the 0x20 (space ascii code) up to 0xFF.
 // The UIInputBox::charIsValid() will filter out any unsupported characters.
 // F-keys are not repeated.
 bool BladeRunnerEngine::isAllowedRepeatedKey(const Common::KeyState &currKeyState) {
-	return  currKeyState.keycode == Common::KEYCODE_ESCAPE
-	    ||  currKeyState.keycode == Common::KEYCODE_RETURN
+	// Return and KP_Enter keys are repeatable in KIA.
+	// This is noticable when choosing an already saved game to overwrite
+	// and holding down Enter would cause the confirmation dialogue to pop up
+	// and it would subsequently confirm it as well.
+	// TODO if we introduce a custom confirm action for KIA, then that action should be repeatable
+	//      and KEYCODE_RETURN and KEYCODE_KP_ENTER should be removed from this clause;
+	//      the action should be added to the switch cases in isAllowedRepeatedCustomEvent()
+	return  currKeyState.keycode == Common::KEYCODE_RETURN
 	    ||  currKeyState.keycode == Common::KEYCODE_KP_ENTER
 	    ||  currKeyState.keycode == Common::KEYCODE_BACKSPACE
 	    ||  currKeyState.keycode == Common::KEYCODE_SPACE
@@ -1295,7 +1349,7 @@ void BladeRunnerEngine::handleEvents() {
 	// even in the case when no save games for the game exist. In such case the game is supposed
 	// to immediately play the intro video and subsequently start a new game of medium difficulty.
 	// It does not expect the player to enter KIA beforehand, which causes side-effects and unforeseen behavior.
-	// Note: eventually we will support the option to launch into KIA in any case,
+	// NOTE Eventually, we will support the option to launch into KIA in any case,
 	// but not via the "hack" way that is fixed here.
 	if (_gameJustLaunched) {
 		_gameJustLaunched = false;
@@ -1306,12 +1360,109 @@ void BladeRunnerEngine::handleEvents() {
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (shouldDropRogueCustomEvent(event)) {
+				return;
+			}
+			switch ((BladeRunnerEngineMappableAction)event.customType) {
+			case kMpActionToggleCombat:
+				handleMouseAction(event.mouse.x, event.mouse.y, false, false);
+				break;
+
+			case kMpblActionCutsceneSkip:
+				// fall through
+			case kMpActionDialogueSkip:
+				// fall through
+			case kMpActionToggleKiaOptions:
+				// fall through
+			case kMpActionOpenKiaDatabase:
+				// fall through
+			case kMpActionOpenKIATabHelp:
+				// fall through
+			case kMpActionOpenKIATabSaveGame:
+				// fall through
+			case kMpActionOpenKIATabLoadGame:
+				// fall through
+			case kMpActionOpenKIATabCrimeSceneDatabase:
+				// fall through
+			case kMpActionOpenKIATabSuspectDatabase:
+				// fall through
+			case kMpActionOpenKIATabClueDatabase:
+				// fall through
+			case kMpActionOpenKIATabQuitGame:
+				handleCustomEventStop(event);
+				break;
+
+			default:
+				break;
+			}
+			break;
+
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (shouldDropRogueCustomEvent(event)) {
+				return;
+			}
+			// Process the initial/actual custom event only here, filter out repeats
+			// TODO Does this actually filter repeats?
+			if (!event.kbdRepeat) {
+				switch ((BladeRunnerEngineMappableAction)event.customType) {
+				case kMpActionToggleCombat:
+					handleMouseAction(event.mouse.x, event.mouse.y, false, true);
+					break;
+
+				case kMpblActionCutsceneSkip:
+					// fall through
+				case kMpActionDialogueSkip:
+					// fall through
+				case kMpActionToggleKiaOptions:
+					// fall through
+				case kMpActionOpenKiaDatabase:
+					// fall through
+				case kMpActionOpenKIATabHelp:
+					// fall through
+				case kMpActionOpenKIATabSaveGame:
+					// fall through
+				case kMpActionOpenKIATabLoadGame:
+					// fall through
+				case kMpActionOpenKIATabCrimeSceneDatabase:
+					// fall through
+				case kMpActionOpenKIATabSuspectDatabase:
+					// fall through
+				case kMpActionOpenKIATabClueDatabase:
+					// fall through
+				case kMpActionOpenKIATabQuitGame:
+					if (isAllowedRepeatedCustomEvent(event)
+					    && _activeCustomEvents->size() < kMaxCustomConcurrentRepeatableEvents) {
+						if (_activeCustomEvents->empty()) {
+							_customEventRepeatTimeLast = _time->currentSystem();
+							_customEventRepeatTimeDelay = kKeyRepeatInitialDelay;
+						}
+						_activeCustomEvents->push_back(event);
+					}
+					handleCustomEventStart(event);
+					break;
+
+				case kMpActionScrollUp:
+					handleMouseAction(event.mouse.x, event.mouse.y, false, false, -1);
+					break;
+
+				case kMpActionScrollDown:
+					handleMouseAction(event.mouse.x, event.mouse.y, false, false, 1);
+					break;
+
+				default:
+					break;
+				}
+			}
+			break;
+
 		case Common::EVENT_KEYUP:
 			handleKeyUp(event);
 			break;
 
 		case Common::EVENT_KEYDOWN:
-			// Process the actual key press only and filter out repeats
+			// Process the initial/actual key press only here, filter out repeats
+			// TODO Does this actually filter repeats?
 			if (!event.kbdRepeat) {
 				// Only for some keys, allow repeated firing emulation
 				// First hit (fire) has a bigger delay (kKeyRepeatInitialDelay) before repeated events are fired from the same key
@@ -1328,28 +1479,8 @@ void BladeRunnerEngine::handleEvents() {
 			handleMouseAction(event.mouse.x, event.mouse.y, true, false);
 			break;
 
-		case Common::EVENT_RBUTTONUP:
-		case Common::EVENT_MBUTTONUP:
-			handleMouseAction(event.mouse.x, event.mouse.y, false, false);
-			break;
-
 		case Common::EVENT_LBUTTONDOWN:
 			handleMouseAction(event.mouse.x, event.mouse.y, true, true);
-			break;
-
-		case Common::EVENT_RBUTTONDOWN:
-		case Common::EVENT_MBUTTONDOWN:
-			handleMouseAction(event.mouse.x, event.mouse.y, false, true);
-			break;
-
-		// Added by ScummVM team
-		case Common::EVENT_WHEELUP:
-			handleMouseAction(event.mouse.x, event.mouse.y, false, false, -1);
-			break;
-
-		// Added by ScummVM team
-		case Common::EVENT_WHEELDOWN:
-			handleMouseAction(event.mouse.x, event.mouse.y, false, false, 1);
 			break;
 
 		default:
@@ -1361,11 +1492,23 @@ void BladeRunnerEngine::handleEvents() {
 	// Some of those may lead to their own internal gameTick() loops (which will call handleEvents()).
 	// Thus, we need to get a new timeNow value here to ensure we're not comparing with a stale version.
 	uint32 timeNow = _time->currentSystem();
-	if (isAllowedRepeatedKey(_currentKeyDown)
-	    && (timeNow - _keyRepeatTimeLast >= _keyRepeatTimeDelay)) {
+	if (!_activeCustomEvents->empty()
+	    && (timeNow - _customEventRepeatTimeLast >= _customEventRepeatTimeDelay)) {
+		_customEventRepeatTimeLast = timeNow;
+		_customEventRepeatTimeDelay = kKeyRepeatSustainDelay;
+		for (ActiveCustomEventsArray::iterator it = _activeCustomEvents->begin(); it != _activeCustomEvents->end(); it++) {
+			// kbdRepeat field will be unused here since we emulate the kbd repeat behavior anyway,
+			// but maybe it's good to set it for consistency
+			it->kbdRepeat = true;
+			// reissue the custom start event
+			handleCustomEventStart(*it);
+		}
+	} else if (isAllowedRepeatedKey(_currentKeyDown)
+	           && (timeNow - _keyRepeatTimeLast >= _keyRepeatTimeDelay)) {
 		// create a "new" keydown event
 		event.type = Common::EVENT_KEYDOWN;
-		// kbdRepeat field will be unused here since we emulate the kbd repeat behavior anyway, but it's good to set it for consistency
+		// kbdRepeat field will be unused here since we emulate the kbd repeat behavior anyway,
+		// but it's good to set it for consistency
 		event.kbdRepeat = true;
 		event.kbd = _currentKeyDown;
 		_keyRepeatTimeLast = timeNow;
@@ -1391,44 +1534,6 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 }
 
 void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
-	if (_vqaIsPlaying
-	    && (event.kbd.keycode == Common::KEYCODE_RETURN
-	        || event.kbd.keycode == Common::KEYCODE_KP_ENTER
-	        || event.kbd.keycode == Common::KEYCODE_SPACE
-	        || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
-		// Note: Original allows Esc, Spacebar and Return/KP_Enter to skip cutscenes
-		_vqaStopIsRequested = true;
-		_vqaIsPlaying = false;
-
-		return;
-	}
-
-	if (_vqaStopIsRequested
-	    && (event.kbd.keycode == Common::KEYCODE_RETURN
-	        || event.kbd.keycode == Common::KEYCODE_KP_ENTER
-	        || event.kbd.keycode == Common::KEYCODE_SPACE
-	        || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
-		 return;
-	}
-
-	if (_actorIsSpeaking
-	    && (event.kbd.keycode == Common::KEYCODE_RETURN
-	        || event.kbd.keycode == Common::KEYCODE_KP_ENTER
-	        || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
-		// Note: Original only uses the Return/KP_Enter key here
-		_actorSpeakStopIsRequested = true;
-		_actorIsSpeaking = false;
-
-		return;
-	}
-
-	if (_actorSpeakStopIsRequested
-	    && (event.kbd.keycode == Common::KEYCODE_RETURN
-	        || event.kbd.keycode == Common::KEYCODE_KP_ENTER
-	        || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
-		 return;
-	}
-
 	if (!playerHasControl() || _isWalkingInterruptible || _actorIsSpeaking || _vqaIsPlaying) {
 		return;
 	}
@@ -1462,37 +1567,152 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 		_scores->handleKeyDown(event.kbd);
 		return;
 	}
+}
 
-	switch (event.kbd.keycode) {
-		case Common::KEYCODE_F1:
+// Check if an polled event belongs to a currently disabled keymap and, if so, drop it.
+bool BladeRunnerEngine::shouldDropRogueCustomEvent(const Common::Event &evt) {
+	if (getEventManager()->getKeymapper() != nullptr) {
+		Common::KeymapArray kmpsArr = getEventManager()->getKeymapper()->getKeymaps();
+		for (Common::KeymapArray::iterator kmpsIt = kmpsArr.begin(); kmpsIt != kmpsArr.end(); ++kmpsIt) {
+			if (!(*kmpsIt)->isEnabled()) {
+				Common::Keymap::ActionArray actionsInKm = (*kmpsIt)->getActions();
+				for (Common::Keymap::ActionArray::iterator kmIt = actionsInKm.begin(); kmIt != actionsInKm.end(); ++kmIt) {
+					if ((evt.type != Common::EVENT_INVALID) && (evt.customType == (*kmIt)->event.customType)) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
+void BladeRunnerEngine::cleanupPendingRepeatingEvents(const Common::String &keymapperId) {
+	// Also clean up any currently repeating key down here.
+	// This prevents a bug where holding down Enter key in save screen with a filled in save game
+	// or a selected game to overwrite, would complete the save and then maintain Enter as a repeating key
+	// in the main gameplay (without ever sending a key up event to stop it).
+	_currentKeyDown.keycode = Common::KEYCODE_INVALID;
+
+	if (getEventManager()->getKeymapper() != nullptr
+	    && getEventManager()->getKeymapper()->getKeymap(keymapperId) != nullptr
+		&& !_activeCustomEvents->empty()) {
+
+		Common::Keymap::ActionArray actionsInKm = getEventManager()->getKeymapper()->getKeymap(keymapperId)->getActions();
+		for (Common::Keymap::ActionArray::iterator kmIt = actionsInKm.begin(); kmIt != actionsInKm.end(); ++kmIt) {
+			for (ActiveCustomEventsArray::iterator actIt = _activeCustomEvents->begin(); actIt != _activeCustomEvents->end(); ++actIt) {
+				if ((actIt->type != Common::EVENT_INVALID) && (actIt->customType == (*kmIt)->event.customType)) {
+					_activeCustomEvents->erase(actIt);
+					if (actIt == _activeCustomEvents->end()) {
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
+void BladeRunnerEngine::handleCustomEventStop(Common::Event &event) {
+	if (!_activeCustomEvents->empty()) {
+		for (ActiveCustomEventsArray::iterator it = _activeCustomEvents->begin(); it != _activeCustomEvents->end(); it++) {
+			if ((it->type != Common::EVENT_INVALID) && (it->customType == event.customType)) {
+				_activeCustomEvents->erase(it);
+				break;
+			}
+		}
+	}
+
+	if (!playerHasControl() || _isWalkingInterruptible) {
+		return;
+	}
+
+	if (_kia->isOpen()) {
+		_kia->handleCustomEventStop(event);
+		return;
+	}
+}
+
+void BladeRunnerEngine::handleCustomEventStart(Common::Event &event) {
+	if (_vqaIsPlaying && (BladeRunnerEngineMappableAction)event.customType == kMpblActionCutsceneSkip) {
+		_vqaStopIsRequested = true;
+		_vqaIsPlaying = false;
+		return;
+	}
+
+	if (_vqaStopIsRequested && (BladeRunnerEngineMappableAction)event.customType == kMpblActionCutsceneSkip) {
+		return;
+	}
+
+	if (_actorIsSpeaking && (BladeRunnerEngineMappableAction)event.customType == kMpActionDialogueSkip) {
+		_actorSpeakStopIsRequested = true;
+		_actorIsSpeaking = false;
+	}
+
+	if (_actorSpeakStopIsRequested && (BladeRunnerEngineMappableAction)event.customType == kMpActionDialogueSkip) {
+		return;
+	}
+
+	if (!playerHasControl() || _isWalkingInterruptible || _actorIsSpeaking || _vqaIsPlaying) {
+		return;
+	}
+
+	if (_kia->isOpen()) {
+		_kia->handleCustomEventStart(event);
+		return;
+	}
+
+	if (_spinner->isOpen()) {
+		return;
+	}
+
+	if (_elevator->isOpen()) {
+		return;
+	}
+
+	if (_esper->isOpen()) {
+		return;
+	}
+
+	if (_vk->isOpen()) {
+		return;
+	}
+
+	if (_dialogueMenu->isOpen()) {
+		return;
+	}
+
+	if (_scores->isOpen()) {
+		_scores->handleCustomEventStart(event);
+		return;
+	}
+
+	switch ((BladeRunnerEngineMappableAction)event.customType) {
+		case kMpActionOpenKIATabHelp:
 			_kia->open(kKIASectionHelp);
 			break;
-		case Common::KEYCODE_F2:
+		case kMpActionOpenKIATabSaveGame:
 			_kia->open(kKIASectionSave);
 			break;
-		case Common::KEYCODE_F3:
+		case kMpActionOpenKIATabLoadGame:
 			_kia->open(kKIASectionLoad);
 			break;
-		case Common::KEYCODE_F4:
+		case kMpActionOpenKIATabCrimeSceneDatabase:
 			_kia->open(kKIASectionCrimes);
 			break;
-		case Common::KEYCODE_F5:
+		case kMpActionOpenKIATabSuspectDatabase:
 			_kia->open(kKIASectionSuspects);
 			break;
-		case Common::KEYCODE_F6:
+		case kMpActionOpenKIATabClueDatabase:
 			_kia->open(kKIASectionClues);
 			break;
-		case Common::KEYCODE_F10:
+		case kMpActionOpenKIATabQuitGame:
 			_kia->open(kKIASectionQuit);
 			break;
-		case Common::KEYCODE_TAB:
+		case kMpActionOpenKiaDatabase:
 			_kia->openLastOpened();
 			break;
-		case Common::KEYCODE_ESCAPE:
+		case kMpActionToggleKiaOptions:
 			_kia->open(kKIASectionSettings);
-			break;
-		case Common::KEYCODE_SPACE:
-			_combat->change();
 			break;
 		default:
 			break;

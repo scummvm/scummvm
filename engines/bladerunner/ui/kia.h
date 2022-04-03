@@ -28,6 +28,7 @@
 
 namespace Common {
 struct KeyState;
+struct Event;
 }
 
 namespace BladeRunner {
@@ -143,6 +144,8 @@ public:
 	void handleMouseScroll(int mouseX, int mouseY, int direction); // Added by ScummVM team
 	void handleKeyUp(const Common::KeyState &kbd);
 	void handleKeyDown(const Common::KeyState &kbd);
+	void handleCustomEventStop(const Common::Event &evt);
+	void handleCustomEventStart(const Common::Event &evt);
 
 	void playerReset();
 	void playActorDialogue(int actorId, int sentenceId);

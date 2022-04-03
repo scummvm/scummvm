@@ -26,6 +26,7 @@
 
 namespace Common {
 struct KeyState;
+struct Event;
 }
 
 namespace Graphics {
@@ -53,6 +54,10 @@ public:
 
 	virtual void handleKeyUp(const Common::KeyState &kbd) {}
 	virtual void handleKeyDown(const Common::KeyState &kbd) {}
+
+	virtual void handleCustomEventStart(const Common::Event &evt) {}
+	virtual void handleCustomEventStop(const Common::Event &evt) {}
+
 	virtual void handleMouseMove(int mouseX, int mouseY) {}
 	virtual void handleMouseDown(bool mainButton) {}
 	virtual void handleMouseUp(bool mainButton) {}

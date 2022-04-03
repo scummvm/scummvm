@@ -1,3 +1,4 @@
 engines/bladerunner/bladerunner.cpp
 engines/bladerunner/detection.cpp
 engines/bladerunner/detection_tables.h
+engines/bladerunner/metaengine.cpp

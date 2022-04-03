@@ -225,6 +225,22 @@ void KIASectionSave::draw(Graphics::Surface &surface) {
 	_buttons->drawTooltip(surface, _mouseX, _mouseY);
 }
 
+bool KIASectionSave::isKeyConfirmModalDialogue(const Common::KeyState &kbd) {
+	if (kbd.keycode == Common::KEYCODE_RETURN || kbd.keycode == Common::KEYCODE_KP_ENTER) {
+		return true;
+	}
+	return false;
+}
+
+bool KIASectionSave::isKeyRequestDeleteEntry(const Common::KeyState &kbd) {
+	if (_selectedLineId != _newSaveLineId
+		    && (    kbd.keycode == Common::KEYCODE_DELETE
+		        || (kbd.keycode == Common::KEYCODE_KP_PERIOD && !(kbd.flags & Common::KBD_NUM)))) {
+		return true;
+	}
+	return false;
+}
+
 void KIASectionSave::handleKeyUp(const Common::KeyState &kbd) {
 	if (_state == kStateNormal) {
 		_uiContainer->handleKeyUp(kbd);
@@ -234,19 +250,17 @@ void KIASectionSave::handleKeyUp(const Common::KeyState &kbd) {
 void KIASectionSave::handleKeyDown(const Common::KeyState &kbd) {
 	if (_state == kStateNormal) {
 		// Delete a saved game entry either with Delete key or numpad's (keypad's) Del key (when Num Lock Off)
-		if (_selectedLineId != _newSaveLineId
-		     && (    kbd.keycode == Common::KEYCODE_DELETE
-		         || (kbd.keycode == Common::KEYCODE_KP_PERIOD && !(kbd.flags & Common::KBD_NUM)))) {
+		if (isKeyRequestDeleteEntry(kbd)) {
 			changeState(kStateDelete);
 		}
 		_uiContainer->handleKeyDown(kbd);
 	} else if (_state == kStateOverwrite) {
-		if (kbd.keycode == Common::KEYCODE_RETURN || kbd.keycode == Common::KEYCODE_KP_ENTER) {
+		if (isKeyConfirmModalDialogue(kbd)) {
 			save();
 			changeState(kStateNormal);
 		}
 	} else if (_state == kStateDelete) {
-		if (kbd.keycode == Common::KEYCODE_RETURN || kbd.keycode == Common::KEYCODE_KP_ENTER) {
+		if (isKeyConfirmModalDialogue(kbd)) {
 			deleteSave();
 			changeState(kStateNormal);
 		}

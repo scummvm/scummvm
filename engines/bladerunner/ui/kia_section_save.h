@@ -93,6 +93,9 @@ private:
 	void changeState(State state);
 	void save();
 	void deleteSave();
+
+	bool isKeyConfirmModalDialogue(const Common::KeyState &kbd);
+	bool isKeyRequestDeleteEntry(const Common::KeyState &kbd);
 };
 
 } // End of namespace BladeRunner
