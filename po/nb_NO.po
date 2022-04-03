@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-02 04:52+0000\n"
+"POT-Creation-Date: 2022-04-03 20:01+0000\n"
 "PO-Revision-Date: 2022-03-29 08:08+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -3759,7 +3759,7 @@ msgid "Minimize"
 msgstr "Minimer"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:237
-#: engines/zvision/metaengine.cpp:157
+#: engines/bladerunner/metaengine.cpp:167 engines/zvision/metaengine.cpp:157
 msgid "Help"
 msgstr "Hjelp"
 
@@ -4295,15 +4295,15 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Last inn allikevel"
 
-#: engines/bladerunner/bladerunner.cpp:357
+#: engines/bladerunner/bladerunner.cpp:368
 msgid "Failed to initialize resources"
 msgstr "Kunne ikke initialisere ressurser"
 
-#: engines/bladerunner/bladerunner.cpp:1058
+#: engines/bladerunner/bladerunner.cpp:1084
 msgid "A required game resource was not found"
 msgstr "Kunne ikke finne en nødvendig spillressurs"
 
-#: engines/bladerunner/bladerunner.cpp:2334
+#: engines/bladerunner/bladerunner.cpp:2554
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4313,7 +4313,7 @@ msgstr ""
 "spiller i Original Content-modus. Modusen vil bli justert til Restored Cut "
 "Content-modus for denne økten og frem til du avslutter spillet fullstendig."
 
-#: engines/bladerunner/bladerunner.cpp:2336
+#: engines/bladerunner/bladerunner.cpp:2556
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4323,7 +4323,7 @@ msgstr ""
 "i Restored Content-modus. Modusen vil bli justert til Original Content-modus "
 "for denne økten og frem til du avslutter spillet fullstendig."
 
-#: engines/bladerunner/bladerunner.cpp:2338
+#: engines/bladerunner/bladerunner.cpp:2558
 msgid "Continue"
 msgstr "Fortsett"
 
@@ -4404,6 +4404,91 @@ msgstr ""
 #: engines/zvision/detection_tables.h:210
 msgid "Missing game code"
 msgstr "Mangler spillkode"
+
+#: engines/bladerunner/metaengine.cpp:106
+msgid "common shortcuts"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:107
+#, fuzzy
+#| msgid "Main game controls:"
+msgid "main game shortcuts"
+msgstr "Hovedkontroller for spill:"
+
+#: engines/bladerunner/metaengine.cpp:108
+msgid "KIA only shortcuts"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:113
+#, fuzzy
+#| msgid "Walk / Look / Talk"
+msgid "Walk / Look / Talk / Select / Shoot"
+msgstr "Gå / Se / Snakk"
+
+#: engines/bladerunner/metaengine.cpp:119
+#, fuzzy
+#| msgid "Toggle mute"
+msgid "Toggle Combat"
+msgstr "Skru lyddemping av/på"
+
+#: engines/bladerunner/metaengine.cpp:127 engines/scumm/help.cpp:76
+#: engines/zvision/metaengine.cpp:215
+msgid "Skip cutscene"
+msgstr "Hopp over cutscene"
+
+#: engines/bladerunner/metaengine.cpp:136
+#, fuzzy
+#| msgid "Skip dialog lines"
+msgid "Skip dialogue"
+msgstr "Hopp over dialog"
+
+#: engines/bladerunner/metaengine.cpp:143
+#, fuzzy
+#| msgid "~G~ame Options..."
+msgid "Game Options"
+msgstr "Spill~i~nnstillinger ..."
+
+#: engines/bladerunner/metaengine.cpp:149
+msgid "Open KIA Database"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:155
+#, fuzzy
+#| msgid "Scroll up"
+msgid "Scroll Up"
+msgstr "Bla opp"
+
+#: engines/bladerunner/metaengine.cpp:161
+#, fuzzy
+#| msgid "Scroll down"
+msgid "Scroll Down"
+msgstr "Bla ned"
+
+#: engines/bladerunner/metaengine.cpp:172 engines/pegasus/pegasus.cpp:2820
+msgid "Save Game"
+msgstr "Lagre spill"
+
+#: engines/bladerunner/metaengine.cpp:177 engines/pegasus/pegasus.cpp:2826
+msgid "Load Game"
+msgstr "Laste inn spill"
+
+#: engines/bladerunner/metaengine.cpp:182
+#, fuzzy
+#| msgid "Scene Data"
+msgid "Crime Scene Database"
+msgstr "Scenedata"
+
+#: engines/bladerunner/metaengine.cpp:187
+msgid "Suspect Database"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:192
+msgid "Clue Database"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:197 engines/dragons/metaengine.cpp:225
+msgid "Quit Game"
+msgstr "Avslutt spill"
 
 #: engines/buried/buried.cpp:580
 msgid "Are you sure you want to quit?"
@@ -4558,10 +4643,6 @@ msgstr "Enter"
 #: engines/dragons/metaengine.cpp:220
 msgid "Debug Graphics"
 msgstr "Debug-grafikk"
-
-#: engines/dragons/metaengine.cpp:225
-msgid "Quit Game"
-msgstr "Avslutt spill"
 
 #: engines/drascula/saveload.cpp:46
 msgid ""
@@ -6278,14 +6359,6 @@ msgstr "Vis/Skjul Pausemeny"
 msgid "Toggle Chatty AI"
 msgstr "Skru pratsom KI av/på"
 
-#: engines/pegasus/pegasus.cpp:2820
-msgid "Save Game"
-msgstr "Lagre spill"
-
-#: engines/pegasus/pegasus.cpp:2826
-msgid "Load Game"
-msgstr "Laste inn spill"
-
 #: engines/pink/gui.cpp:219
 msgid "This menu item is not yet implemented"
 msgstr "Dette menyelementet er ikke implementert ennå"
@@ -6752,10 +6825,6 @@ msgstr "Hopp over tekstlinje"
 #: engines/scumm/help.cpp:76
 msgid "Esc"
 msgstr "Esc"
-
-#: engines/scumm/help.cpp:76 engines/zvision/metaengine.cpp:215
-msgid "Skip cutscene"
-msgstr "Hopp over cutscene"
 
 #: engines/scumm/help.cpp:77 engines/wintermute/keymapper_tables.h:2059
 msgid "Space"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-02 04:52+0000\n"
+"POT-Creation-Date: 2022-04-03 20:01+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -3838,7 +3838,7 @@ msgid "Minimize"
 msgstr "Minimalizovat"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:237
-#: engines/zvision/metaengine.cpp:157
+#: engines/bladerunner/metaengine.cpp:167 engines/zvision/metaengine.cpp:157
 msgid "Help"
 msgstr ""
 
@@ -4380,30 +4380,30 @@ msgstr ""
 msgid "Load anyway"
 msgstr "Přesto přidat"
 
-#: engines/bladerunner/bladerunner.cpp:357
+#: engines/bladerunner/bladerunner.cpp:368
 #, fuzzy
 msgid "Failed to initialize resources"
 msgstr "Připojení úložiště selhalo."
 
-#: engines/bladerunner/bladerunner.cpp:1058
+#: engines/bladerunner/bladerunner.cpp:1084
 msgid "A required game resource was not found"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2334
+#: engines/bladerunner/bladerunner.cpp:2554
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2336
+#: engines/bladerunner/bladerunner.cpp:2556
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2338
+#: engines/bladerunner/bladerunner.cpp:2558
 msgid "Continue"
 msgstr ""
 
@@ -4479,6 +4479,84 @@ msgstr ""
 #, fuzzy
 msgid "Missing game code"
 msgstr "Hlavní ovládací prvky:"
+
+#: engines/bladerunner/metaengine.cpp:106
+msgid "common shortcuts"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:107
+#, fuzzy
+#| msgid "Main game controls:"
+msgid "main game shortcuts"
+msgstr "Hlavní ovládací prvky:"
+
+#: engines/bladerunner/metaengine.cpp:108
+msgid "KIA only shortcuts"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:113
+msgid "Walk / Look / Talk / Select / Shoot"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:119
+#, fuzzy
+msgid "Toggle Combat"
+msgstr "Povolit zachycování myši"
+
+#: engines/bladerunner/metaengine.cpp:127 engines/scumm/help.cpp:76
+#: engines/zvision/metaengine.cpp:215
+msgid "Skip cutscene"
+msgstr "Přeskočit video"
+
+#: engines/bladerunner/metaengine.cpp:136
+#, fuzzy
+msgid "Skip dialogue"
+msgstr "Přeskočit řádek"
+
+#: engines/bladerunner/metaengine.cpp:143
+#, fuzzy
+#| msgid "~O~ptions..."
+msgid "Game Options"
+msgstr "~V~olby..."
+
+#: engines/bladerunner/metaengine.cpp:149
+msgid "Open KIA Database"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:155
+#, fuzzy
+msgid "Scroll Up"
+msgstr "Posunout seznam nahoru"
+
+#: engines/bladerunner/metaengine.cpp:161
+#, fuzzy
+msgid "Scroll Down"
+msgstr "Posunout seznam dolu"
+
+#: engines/bladerunner/metaengine.cpp:172 engines/pegasus/pegasus.cpp:2820
+msgid "Save Game"
+msgstr "Uložit hru"
+
+#: engines/bladerunner/metaengine.cpp:177 engines/pegasus/pegasus.cpp:2826
+msgid "Load Game"
+msgstr "Nahrát hru"
+
+#: engines/bladerunner/metaengine.cpp:182
+msgid "Crime Scene Database"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:187
+msgid "Suspect Database"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:192
+msgid "Clue Database"
+msgstr ""
+
+#: engines/bladerunner/metaengine.cpp:197 engines/dragons/metaengine.cpp:225
+#, fuzzy
+msgid "Quit Game"
+msgstr " (Hra)"
 
 #: engines/buried/buried.cpp:580
 #, fuzzy
@@ -4634,11 +4712,6 @@ msgstr "Enter"
 #, fuzzy
 msgid "Debug Graphics"
 msgstr "Obraz"
-
-#: engines/dragons/metaengine.cpp:225
-#, fuzzy
-msgid "Quit Game"
-msgstr " (Hra)"
 
 #: engines/drascula/saveload.cpp:46
 msgid ""
@@ -6328,14 +6401,6 @@ msgstr "Zobrazit/Skrýt"
 msgid "Toggle Chatty AI"
 msgstr "Rychlý režim"
 
-#: engines/pegasus/pegasus.cpp:2820
-msgid "Save Game"
-msgstr "Uložit hru"
-
-#: engines/pegasus/pegasus.cpp:2826
-msgid "Load Game"
-msgstr "Nahrát hru"
-
 #: engines/pink/gui.cpp:219
 msgid "This menu item is not yet implemented"
 msgstr ""
@@ -6758,10 +6823,6 @@ msgstr "Přeskočit řádek textu"
 #: engines/scumm/help.cpp:76
 msgid "Esc"
 msgstr "Mezerník"
-
-#: engines/scumm/help.cpp:76 engines/zvision/metaengine.cpp:215
-msgid "Skip cutscene"
-msgstr "Přeskočit video"
 
 #: engines/scumm/help.cpp:77 engines/wintermute/keymapper_tables.h:2059
 msgid "Space"
