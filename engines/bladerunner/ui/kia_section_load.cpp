@@ -40,6 +40,10 @@ namespace BladeRunner {
 
 KIASectionLoad::KIASectionLoad(BladeRunnerEngine *vm) : KIASectionBase(vm) {
 	_uiContainer = new UIContainer(_vm);
+	// There is a small area to the right of the save games list, before the scroll bar,
+	// where scrolling does not work.
+	// However, unlike kia_section_help, if we increase the width of the scrollable area here,
+	// we would noticeably mess with the centering of the title label and the saved game names in the list.
 	_scrollBox   = new UIScrollBox(_vm, scrollBoxCallback, this, 1025, 0, true, Common::Rect(155, 158, 461, 346), Common::Rect(506, 160, 506, 350));
 	_uiContainer->add(_scrollBox);
 

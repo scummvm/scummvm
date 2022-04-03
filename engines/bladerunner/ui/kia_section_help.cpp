@@ -32,8 +32,13 @@ namespace BladeRunner {
 
 KIASectionHelp::KIASectionHelp(BladeRunnerEngine *vm) : KIASectionBase(vm) {
 	_uiContainer = new UIContainer(_vm);
+#if BLADERUNNER_ORIGINAL_BUGS
 	_scrollBox   = new UIScrollBox(_vm, nullptr, this, 1024, 0, false, Common::Rect(135, 145, 461, 385), Common::Rect(506, 160, 506, 350));
-
+#else
+	// Increase width of scollable area, to eliminate the (significant) area to the right,
+	// before the scroll bar, where scrolling would not work.
+	_scrollBox   = new UIScrollBox(_vm, nullptr, this, 1024, 0, false, Common::Rect(135, 145, 502, 385), Common::Rect(506, 160, 506, 350));
+#endif
 	_uiContainer->add(_scrollBox);
 }
 
