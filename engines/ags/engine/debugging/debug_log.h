@@ -38,13 +38,13 @@ void shutdown_debug();
 
 void debug_set_console(bool enable);
 
-// prints debug messages of given type tagged with kDbgGroup_Script,
+// prints debug messages of given type tagged with kDbgGroup_Game,
 // prepending it with current room number and script position info
-void debug_script_print(const AGS::Shared::String &msg, AGS::Shared::MessageType mt);
-// prints formatted debug warnings tagged with kDbgGroup_Script,
+void debug_script_print(AGS::Shared::MessageType mt, const char *msg, ...);
+// prints formatted debug warnings tagged with kDbgGroup_Game,
 // prepending it with current room number and script position info
-void debug_script_warn(const char *texx, ...);
-// prints formatted debug message tagged with kDbgGroup_Script,
+void debug_script_warn(const char *msg, ...);
+// prints formatted debug message tagged with kDbgGroup_Game,
 // prepending it with current room number and script position info
 void debug_script_log(const char *msg, ...);
 
