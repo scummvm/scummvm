@@ -68,22 +68,19 @@ int32_t FindFreeFileSlot() {
 
 int32_t FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode) {
 	debug_script_print(kDbgMsg_Debug, "FileOpen: request: %s", fnmm);
-	// make sure the file path has system-compatible form
-	String filepath = fnmm;
-	filepath.Replace('\\', '/');
 
 	int32_t useindx = FindFreeFileSlot();
 	if (useindx < 0) {
-		debug_script_warn("FileOpen: no free handles: %s", filepath.GetCStr());
+		debug_script_warn("FileOpen: no free handles: %s", fnmm);
 		return 0;
 	}
 
 	ResolvedPath rp;
 	if (open_mode == kFile_Open && work_mode == kFile_Read) {
-		if (!ResolveScriptPath(filepath, true, rp))
+		if (!ResolveScriptPath(fnmm, true, rp))
 			return 0;
 	} else {
-		if (!ResolveWritePathAndCreateDirs(filepath, rp))
+		if (!ResolveWritePathAndCreateDirs(fnmm, rp))
 			return 0;
 	}
 
