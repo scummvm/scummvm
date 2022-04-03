@@ -367,6 +367,7 @@ private:
 	void runLevelMenu(Code *code);
 	void runCheckLives(Code *code);
 	void endCredits(Code *code);
+	uint32 findPaletteIndexZones(uint32 id);
 
 	Common::BitArray _font05;
 	Common::BitArray _font08;

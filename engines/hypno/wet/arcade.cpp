@@ -285,6 +285,49 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 
 }
 
+uint32 WetEngine::findPaletteIndexZones(uint32 id) {
+	switch (id) {
+	case 11:
+		return 237;
+	case 10:
+		return 239;
+	case 21:
+		return 240;
+	case 22:
+		return 237;
+	case 23:
+		return 238;
+	case 20:
+		return 239;
+	default:
+	break;
+	}
+
+	switch (id / 10) {
+	case 3:
+		if (id == 30)
+			return 241;
+		else
+			return 237 + id % 10;
+	case 4:
+		if (id == 40)
+			return 241;
+		else
+			return 236 + id % 10;
+	case 5:
+		if (id == 50)
+			return 240;
+		else
+			return 237 + id % 10;
+	case 6:
+		if (id == 60)
+			return 238;
+		else
+			return 237;
+	default:
+	error("Invalid level id: %d", id);
+	}
+}
 
 void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 	resetStatistics();
@@ -296,8 +339,17 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 		byte *palette;
 		Graphics::Surface *frame = decodeFrame("c_misc/zones.smk", (arc->id / 10 - 1) * 2, &palette);
 		loadPalette(palette, 0, 256);
-		byte p[3] = {0xff, 0x00, 0x00}; // Always red?
-		loadPalette((byte *) &p, 240 - arc->id % 10, 1);
+		byte red[3] = {0xff, 0x00, 0x00};
+		for (int i = 0; i < 5; i++)
+			loadPalette((byte *) &red, 237 + i, 1);
+
+		byte blue[3] = {0x00, 0x00, 0xff};
+		for (uint32 id = 10 * (arc->id / 10) + 1; id < arc->id; id++)
+			loadPalette((byte *) &blue, findPaletteIndexZones(id), 1);
+
+		byte green[3] = {0x00, 0xff, 0x00};
+		uint32 idx = findPaletteIndexZones(arc->id);
+		loadPalette((byte *) &green, idx, 1);
 		drawImage(*frame, 0, 0, false);
 		frame->free();
 		delete frame;
