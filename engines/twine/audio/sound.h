@@ -22,6 +22,7 @@
 #ifndef TWINE_SOUND_H
 #define TWINE_SOUND_H
 
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/scummsys.h"
 #include "common/types.h"
@@ -62,7 +63,7 @@ private:
 	/** Samples playing at a actors position */
 	int32 samplesPlayingActors[NUM_CHANNELS]{0};
 
-	bool playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize, int32 loop, const char *name, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType, DisposeAfterUse::Flag disposeFlag = DisposeAfterUse::YES);
+	bool playSample(int channelIdx, int index, Audio::SeekableAudioStream *audioStream, int32 loop, const char *name, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 
 	bool isChannelPlaying(int32 channel);
 

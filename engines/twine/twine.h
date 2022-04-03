@@ -23,6 +23,7 @@
 #define TWINE_TWINE_H
 
 #include "backends/keymapper/keymap.h"
+#include "common/platform.h"
 #include "common/random.h"
 #include "common/rect.h"
 #include "engines/advancedDetector.h"
@@ -227,7 +228,7 @@ private:
 	 */
 	bool runGameEngine();
 public:
-	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, TwineGameType gameType);
+	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, Common::Platform platform, TwineGameType gameType);
 	~TwinEEngine() override;
 
 	Common::Error run() override;
@@ -252,6 +253,7 @@ public:
 	bool isMod() const { return (_gameFlags & TwinE::TF_MOD) != 0; }
 	bool isDotEmuEnhanced() const { return (_gameFlags & TwinE::TF_DOTEMU_ENHANCED) != 0; }
 	bool isDemo() const { return (_gameFlags & ADGF_DEMO) != 0; };
+	bool isAndroid() const { return _platform == Common::Platform::kPlatformAndroid; };
 	const char *getGameId() const;
 	Common::Language getGameLang() const;
 
@@ -293,6 +295,7 @@ public:
 	int32 _loopInventoryItem = 0;
 	int32 _loopActorStep = 0;
 	uint32 _gameFlags;
+	Common::Platform _platform;
 
 	/** Disable screen recenter */
 	bool _disableScreenRecenter = false;

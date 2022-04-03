@@ -153,6 +153,8 @@ public:
 
 	const TextEntry *_currDialTextEntry = nullptr; // ordered entry
 	Common::String _currentVoxBankFile;
+	// used for the android version (dotemu)
+	Common::String _currentOggBaseFile;
 
 	bool _showDialogueBubble = true;
 
