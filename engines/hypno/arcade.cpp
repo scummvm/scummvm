@@ -67,6 +67,10 @@ void HypnoEngine::parseArcadeShooting(const Common::String &prefix, const Common
 	g_parsedArc->defeatNoEnergyFirstVideo.clear();
 	g_parsedArc->defeatMissBossVideo.clear();
 	g_parsedArc->defeatNoEnergySecondVideo.clear();
+	g_parsedArc->missBoss1Video.clear();
+	g_parsedArc->missBoss2Video.clear();
+	g_parsedArc->hitBoss1Video.clear();
+	g_parsedArc->hitBoss2Video.clear();
 	g_parsedArc->beforeVideo.clear();
 	g_parsedArc->briefingVideo.clear();
 	g_parsedArc->segments.clear();
