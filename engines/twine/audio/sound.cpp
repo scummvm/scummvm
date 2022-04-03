@@ -84,7 +84,9 @@ void Sound::playFlaSample(int32 index, int32 repeat, uint8 balance, int32 volume
 		*sampPtr = 'C';
 	}
 
-	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_FLASAMP_FILE);
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(sampPtr, sampSize, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, DisposeAfterUse::YES);
+	playSample(channelIdx, index, audioStream, repeat, Resources::HQR_FLASAMP_FILE);
 }
 
 void Sound::playSample(int32 index, int32 repeat, int32 x, int32 y, int32 z, int32 actorIdx) {
@@ -104,9 +106,19 @@ void Sound::playSample(int32 index, int32 repeat, int32 x, int32 y, int32 z, int
 		samplesPlayingActors[channelIdx] = actorIdx;
 	}
 
+	if (_engine->isAndroid()) {
+		const Common::String &basename = Common::String::format("%s%i", _engine->_text->_currentOggBaseFile.c_str(), index);
+		Audio::SeekableAudioStream *audioStream = Audio::SeekableAudioStream::openStreamFile(basename);
+		if (audioStream != nullptr) {
+			playSample(index, repeat, audioStream, repeat, Resources::HQR_SAMPLES_FILE, Audio::Mixer::kSFXSoundType);
+			return;
+		}
+	}
 	uint8 *sampPtr = _engine->_resources->_samplesTable[index];
-	int32 sampSize = _engine->_resources->_samplesSizeTable[index];
-	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_SAMPLES_FILE, Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
+	uint32 sampSize = _engine->_resources->_samplesSizeTable[index];
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(sampPtr, sampSize, DisposeAfterUse::NO);
+	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, DisposeAfterUse::YES);
+	playSample(channelIdx, index, audioStream, repeat, Resources::HQR_SAMPLES_FILE, Audio::Mixer::kSFXSoundType);
 }
 
 bool Sound::playVoxSample(const TextEntry *text) {
@@ -142,16 +154,14 @@ bool Sound::playVoxSample(const TextEntry *text) {
 		_engine->_text->_voxHiddenIndex++;
 		*sampPtr = 'C';
 	}
-
-	return playSample(channelIdx, text->index, sampPtr, sampSize, 1, _engine->_text->_currentVoxBankFile.c_str(), Audio::Mixer::kSpeechSoundType);
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(sampPtr, sampSize, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, DisposeAfterUse::YES);
+	return playSample(channelIdx, text->index, audioStream, 1, _engine->_text->_currentVoxBankFile.c_str(), Audio::Mixer::kSpeechSoundType);
 }
 
-bool Sound::playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize, int32 loop, const char *name, Audio::Mixer::SoundType soundType, DisposeAfterUse::Flag disposeFlag) {
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(sampPtr, sampSize, disposeFlag);
-	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, DisposeAfterUse::YES);
+bool Sound::playSample(int channelIdx, int index, Audio::SeekableAudioStream *audioStream, int32 loop, const char *name, Audio::Mixer::SoundType soundType) {
 	if (audioStream == nullptr) {
-		warning("Failed to create audio stream for %s", name);
-		delete stream;
+		warning("Failed to create audio stream for %s: %i", name, index);
 		return false;
 	}
 	if (loop == -1) {

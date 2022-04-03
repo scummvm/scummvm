@@ -57,7 +57,7 @@ public:
 		} else if (gameId == "lbashow") {
 			gameType = TwineGameType::GType_LBASHOW;
 		}
-		*engine = new TwinE::TwinEEngine(syst, desc->language, desc->flags, gameType);
+		*engine = new TwinE::TwinEEngine(syst, desc->language, desc->flags, desc->platform, gameType);
 		return Common::kNoError;
 	}
 

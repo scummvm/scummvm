@@ -79,6 +79,7 @@ void Text::initVoxBank(TextBankId bankIdx) {
 	}
 	// get the correct vox hqr file
 	_currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[_engine->_cfgfile.LanguageId].id, LanguageSuffixTypes[(int)bankIdx]);
+	_currentOggBaseFile = Common::String::format("%s_%s_", LanguageTypes[_engine->_cfgfile.LanguageId].id, LanguageSuffixTypes[(int)bankIdx]);
 	// TODO: loop through other languages and take the scummvm settings regarding voices into account...
 
 	// TODO check the rest to reverse
