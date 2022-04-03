@@ -312,20 +312,29 @@ FSLocation GetGameUserDataDir() {
 }
 
 bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath &rp) {
-	debugC(::AGS::kDebugFilePath, "ResolveScriptPath(%s)", orig_sc_path.GetCStr());
 	rp = ResolvedPath();
 
-	if (!Path::IsRelativePath(orig_sc_path)) {
-		if (!read_only) {
-			debug_script_warn("Attempt to access file '%s' denied (cannot write to absolute path)", orig_sc_path.GetCStr());
-			return false;
-		}
+	// Make sure that the file path has system-compatible form
+	String sc_path = orig_sc_path;
+	sc_path.Replace('\\', '/');
 
-		rp = ResolvedPath(orig_sc_path);
+	// File tokens (they must be the only thing in script path)
+	if (sc_path.Compare(UserConfigFileToken) == 0) {
+		auto loc = GetGameUserConfigDir();
+		rp = ResolvedPath(loc, DefaultConfigFileName);
 		return true;
 	}
 
-	String sc_path = orig_sc_path;
+	// Test absolute paths
+	if (!Path::IsRelativePath(sc_path)) {
+		if (!read_only) {
+			debug_script_warn("Attempt to access file '%s' denied (cannot write to absolute path)", sc_path.GetCStr());
+			return false;
+		}
+		rp = ResolvedPath(sc_path);
+		return true;
+	}
+
 	if (sc_path.CompareLeft(GameAssetToken, strlen(GameAssetToken)) == 0) {
 		if (!read_only) {
 			debug_script_warn("Attempt to access file '%s' denied (cannot write to game assets)", orig_sc_path.GetCStr());
