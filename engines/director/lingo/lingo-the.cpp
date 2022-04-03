@@ -1888,6 +1888,8 @@ void Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		if (!member) {
 			if (propName.equalsIgnoreCase("loaded")) {
 				d = 0;
+			} else  if (propName.equalsIgnoreCase("filename")) {
+				d = Datum(Common::String());
 			} else {
 				g_lingo->lingoError("Lingo::getObjectProp(): %s not found", id.asString().c_str());
 			}
