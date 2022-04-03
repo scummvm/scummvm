@@ -577,7 +577,10 @@ void WetEngine::drawPlayer() {
 		_playerFrameIdx = 2;
 
 	int offset = 0;
-	if (_levelId == 31) // Ugly, but seems to be necessary
+	// Ugly, but seems to be necessary
+	if (_levelId == 31)
+		offset = 2;
+	else if (_levelId == 52)
 		offset = 2;
 
 	drawImage(*_playerFrames[_playerFrameIdx], 0, 200 - _playerFrames[_playerFrameIdx]->h + offset, true);
