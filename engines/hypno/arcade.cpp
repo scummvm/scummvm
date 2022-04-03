@@ -135,6 +135,7 @@ SegmentShootsSequence HypnoEngine::parseShootList(const Common::String &filename
 
 			Common::replace(n, "\nS", "");
 			Common::replace(n, "\nZ\n", "");
+			Common::replace(n, "\nZ", "");
 			si.name = n;
 			si.timestamp = atoi(t.c_str());
 			if (si.timestamp == 0)
@@ -167,7 +168,8 @@ void HypnoEngine::drawPlayer() { error("Function \"%s\" not implemented", __FUNC
 void HypnoEngine::drawHealth() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::drawShoot(const Common::Point &target) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::hitPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
-void HypnoEngine::missTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {}
+void HypnoEngine::missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {}
+void HypnoEngine::missNoTarget(ArcadeShooting *arc, MVideo &background) {}
 
 void HypnoEngine::runBeforeArcade(ArcadeShooting *arc) {}
 void HypnoEngine::runAfterArcade(ArcadeShooting *arc) {}
@@ -326,7 +328,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			break;
 		}
 
-		if (!arc->transitionVideos.empty() && background.decoder->getCurFrame() >= (int)*arc->transitionTimes.begin()) {
+		if (!arc->transitionVideos.empty() && background.decoder->getCurFrame() > (int)*arc->transitionTimes.begin()) {
 			transition = true;
 			background.decoder->pauseVideo(true);
 
@@ -472,7 +474,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 				uint32 bodyLastFrame = it->bodyFrames[it->bodyFrames.size() - 1].lastFrame();
 				if (frame > 0 && frame >= (int)(bodyLastFrame - 3) && !it->destroyed) {
-					missTarget(it, arc, background);
+					missedTarget(it, arc, background);
 					incTargetsMissed();
 					// No need to pop attackFrames or explosionFrames
 					skipVideo(*it->video);
@@ -487,7 +489,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				uint32 bodyLastFrame = it->bodyFrames[it->bodyFrames.size() - 1].lastFrame();
 				if (frame > it->startFrame && frame - it->startFrame > bodyLastFrame)
 					if (!it->destroyed) {
-						missTarget(it, arc, background);
+						missedTarget(it, arc, background);
 						shootsToRemove.push_back(i);
 					}
 			}
@@ -572,7 +574,9 @@ bool HypnoEngine::clickedPrimaryShoot(const Common::Point &mousePos) { return tr
 void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background) {
 	incShotsFired();
 	int i = detectTarget(mousePos);
-	if (i >= 0) {
+	if (i < 0) {
+		missNoTarget(arc, background);
+	} else {
 		if (!_shoots[i].hitSound.empty())
 			playSound(_soundPath + _shoots[i].hitSound, 1);
 

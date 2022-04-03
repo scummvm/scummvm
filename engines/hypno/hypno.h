@@ -225,7 +225,8 @@ public:
 	virtual void drawShoot(const Common::Point &mousePos);
 	virtual void shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background);
 	virtual void hitPlayer();
-	virtual void missTarget(Shoot *s, ArcadeShooting *arc, MVideo &background);
+	virtual void missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background);
+	virtual void missNoTarget(ArcadeShooting *arc, MVideo &background);
 
 	// Segments
 	uint32 _segmentIdx;
@@ -342,7 +343,9 @@ public:
 	void hitPlayer() override;
 	void drawCursorArcade(const Common::Point &mousePos) override;
 	Common::Point computeTargetPosition(const Common::Point &mousePos) override;
-	void missTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) override;
+	void missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) override;
+	void missNoTarget(ArcadeShooting *arc, MVideo &background) override;
+
 	void runCode(Code *code) override;
 	Common::String findNextLevel(const Common::String &level) override;
 	Common::String findNextLevel(const Transition *trans) override;

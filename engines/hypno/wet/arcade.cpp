@@ -400,7 +400,7 @@ bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	return clickedPrimaryShoot(mousePos);
 }
 
-void WetEngine::missTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {
+void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {
 	if (s->name == "SP_SWITCH_R" || s->name == "SP_SWITCH_L") {
 		_health = 0;
 	} else if (s->name == "SP_LIZARD1") {
@@ -415,6 +415,41 @@ void WetEngine::missTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {
 	} else if (s->attackFrames.empty()) {
 		_health = _health - s->attackWeight;
 		hitPlayer();
+	}
+}
+
+void WetEngine::missNoTarget(ArcadeShooting *arc, MVideo &background) {
+	debug("miss no target!");
+	for (int i = _shoots.size() - 1; i >= 0; --i) {
+		Shoot *it = &_shoots[i];
+		debug("missed: %d -> %s", i, it->name.c_str());
+		if ((it->name == "SP_BOSS" || it->name == "SP_BOSS1") && !arc->missBoss1Video.empty()) {
+			background.decoder->pauseVideo(true);
+			MVideo video(arc->missBoss1Video, Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+			// Should be currentPalette?
+			loadPalette(arc->backgroundPalette);
+			background.decoder->pauseVideo(false);
+			updateScreen(background);
+			drawScreen();
+			if (!_music.empty())
+				playSound(_music, 0, arc->musicRate); // restore music
+			break;
+		} else if (it->name == "SP_BOSS2" && !arc->missBoss2Video.empty()) {
+			background.decoder->pauseVideo(true);
+			MVideo video(arc->missBoss2Video, Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+			// Should be currentPalette?
+			loadPalette(arc->backgroundPalette);
+			background.decoder->pauseVideo(false);
+			updateScreen(background);
+			drawScreen();
+			if (!_music.empty())
+				playSound(_music, 0, arc->musicRate); // restore music
+			break;
+		}
 	}
 }
 
