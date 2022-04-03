@@ -647,7 +647,7 @@ Datum CastMember::getField(int field) {
 		break;
 	case kTheFileName:
 		if (castInfo)
-			d = Datum(castInfo->fileName);
+			d = Datum(castInfo->directory + g_director->_dirSeparator + castInfo->fileName);
 		break;
 	case kTheForeColor:
 		d = (int)getForeColor();
