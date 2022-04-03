@@ -419,10 +419,8 @@ void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) 
 }
 
 void WetEngine::missNoTarget(ArcadeShooting *arc, MVideo &background) {
-	debug("miss no target!");
 	for (int i = _shoots.size() - 1; i >= 0; --i) {
 		Shoot *it = &_shoots[i];
-		debug("missed: %d -> %s", i, it->name.c_str());
 		if ((it->name == "SP_BOSS" || it->name == "SP_BOSS1") && !arc->missBoss1Video.empty()) {
 			background.decoder->pauseVideo(true);
 			MVideo video(arc->missBoss1Video, Common::Point(0, 0), false, true, false);
