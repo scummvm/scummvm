@@ -528,6 +528,9 @@ void Lingo::lingoError(const char *s, ...) {
 		_caughtError = true;
 	} else {
 		warning("BUILDBOT: Uncaught Lingo error: %s", buf);
+		if (debugChannelSet(-1, kDebugLingoStrict)) {
+			error("Uncaught Lingo error");
+		}
 		_abort = true;
 	}
 }

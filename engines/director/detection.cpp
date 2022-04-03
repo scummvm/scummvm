@@ -57,6 +57,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Director::kDebugFewFramesOnly, "fewframesonly", "Only run the first 10 frames"},
 	{Director::kDebugImages, "images", "Image drawing"},
 	{Director::kDebugLingoExec, "lingoexec", "Lingo Execution"},
+	{Director::kDebugLingoStrict, "lingostrict", "Drop into debugger on Lingo error"},
 	{Director::kDebugLoading, "loading", "Loading"},
 	{Director::kDebugNoBytecode, "nobytecode", "Do not execute Lscr bytecode"},
 	{Director::kDebugNoLoop, "noloop", "Do not loop the playback"},
