@@ -67,16 +67,20 @@ int32_t FindFreeFileSlot() {
 }
 
 int32_t FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode) {
+	// make sure the file path has system-compatible form
+	String filepath = fnmm;
+	filepath.Replace('\\', '/');
+
 	int32_t useindx = FindFreeFileSlot();
 	if (useindx < 0)
 		return 0;
 
 	ResolvedPath rp;
 	if (open_mode == kFile_Open && work_mode == kFile_Read) {
-		if (!ResolveScriptPath(fnmm, true, rp))
+		if (!ResolveScriptPath(filepath, true, rp))
 			return 0;
 	} else {
-		if (!ResolveWritePathAndCreateDirs(fnmm, rp))
+		if (!ResolveWritePathAndCreateDirs(filepath, rp))
 			return 0;
 	}
 
