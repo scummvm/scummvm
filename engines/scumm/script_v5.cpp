@@ -1617,6 +1617,19 @@ void ScummEngine_v5::o5_pickupObject() {
 }
 
 void ScummEngine_v5::o5_print() {
+	// WORKAROUND bug #13374: The patched script for the Ultimate Talkie
+	// is missing a WaitForMessage() after Lemonhead says "Oooh, that's
+	// nice." so we insert one here. If there is a future version that
+	// fixes this, the workaround still shouldn't do any harm.
+	//
+	// The workaround is deliberately not marked as an enhancement, since
+	// this version makes so many changes of its own.
+	if (_game.id == GID_MONKEY && _currentRoom == 25 && vm.slot[_currentScript].number == 205 && VAR(VAR_HAVE_MSG) && strcmp(_game.variant, "SE Talkie") == 0) {
+		_scriptPointer--;
+		o5_breakHere();
+		return;
+	}
+
 	_actorToPrintStrFor = getVarOrDirectByte(PARAM_1);
 	decodeParseString();
 }
