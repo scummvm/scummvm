@@ -457,6 +457,18 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 					{ "Ti dispiace",      200, 0 }
 				};
 
+				TimingAdjustment timingAdjustmentsFRFloppy[] = {
+					{ "Et pour me",       120, 0 },
+					{ "C'est que^euh^",   100, 0 },
+					{ "vous \x88tes",     65,  0 },
+					{ "^impr\x82visible", 170, 0 },
+					{ "Pourquoi est-ce",  100, 0 },
+					{ "Filons de cet",    190, 0 },
+					{ "Nous pourrons",    65,  0 },
+					{ "Je peux conduire", 170, 0 },
+					{ "Je n'oublierai",   90,  0 }
+				};
+
 				TimingAdjustment timingAdjustmentsFRCD[] = {
 					{ "Oh.",              85,  0 },
 					{ "H\x82, pas mal.",  80,  0 },
@@ -496,7 +508,10 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 					numAdjustments = ARRAYSIZE(timingAdjustmentsIT);
 					break;
 				case Common::FR_FRA:
-					if (strcmp(_game.variant, "Floppy") != 0) {
+					if (strcmp(_game.variant, "Floppy") == 0) {
+						adjustments = timingAdjustmentsFRFloppy;
+						numAdjustments = ARRAYSIZE(timingAdjustmentsFRFloppy);
+					} else {
 						adjustments = timingAdjustmentsFRCD;
 						numAdjustments = ARRAYSIZE(timingAdjustmentsFRCD);
 					}
