@@ -57,7 +57,7 @@ extern int (*ugetc)(const char *s);
 /* ugetxc: */
 extern int (*ugetx)(char **s);
 /* ugetxc: */
-extern int (*ugetxc)(const char **s);
+extern int (*ugetxc)(const char * const *s);
 /* usetc: */
 extern int (*usetc)(char *s, int c);
 /* uwidth: */
