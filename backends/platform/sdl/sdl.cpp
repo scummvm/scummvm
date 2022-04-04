@@ -325,7 +325,7 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 	_supportsShaders = false;
 #if USE_FORCED_GLES2
 	// Framebuffers and shaders are always available with GLES2
-	_oglType = kOGLContextGLES2;
+	_oglType = OpenGL::kOGLContextGLES2;
 	_supportsFrameBuffer = true;
 	_supportsShaders = true;
 #elif !defined(AMIGAOS) && !defined(__MORPHOS__)
