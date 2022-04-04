@@ -376,6 +376,7 @@ public:
 		attackWeight = 0;
 		paletteOffset = 0;
 		paletteSize = 0;
+		maskOffset = 0;
 		objKillsCount = 0;
 		objMissesCount = 0;
 		animation = "NONE";
@@ -402,6 +403,9 @@ public:
 	// Palette
 	uint32 paletteOffset;
 	uint32 paletteSize;
+
+	// Mask
+	uint32 maskOffset;
 
 	// Sounds
 	Filename enemySound;

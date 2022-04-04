@@ -449,6 +449,13 @@ class BoyzEngine : public HypnoEngine {
 public:
 	BoyzEngine(OSystem *syst, const ADGameDescription *gd);
 	void loadAssets() override;
+
+	void runBeforeArcade(ArcadeShooting *arc) override;
+	void drawHealth() override;
+	void drawShoot(const Common::Point &target) override;
+	void hitPlayer() override;
+	void drawPlayer() override;
+	void initSegment(ArcadeShooting *arc) override;
 };
 
 } // End of namespace Hypno

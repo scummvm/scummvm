@@ -92,21 +92,25 @@ extern int HYPNO_ARC_debug;
     VTOK = 285,                    /* VTOK  */
     OTOK = 286,                    /* OTOK  */
     LTOK = 287,                    /* LTOK  */
-    NTOK = 288,                    /* NTOK  */
-    NSTOK = 289,                   /* NSTOK  */
-    RTOK = 290,                    /* RTOK  */
-    R01TOK = 291,                  /* R01TOK  */
-    ITOK = 292,                    /* ITOK  */
-    I1TOK = 293,                   /* I1TOK  */
-    JTOK = 294,                    /* JTOK  */
-    ZTOK = 295,                    /* ZTOK  */
-    NONETOK = 296,                 /* NONETOK  */
-    A0TOK = 297,                   /* A0TOK  */
-    P0TOK = 298,                   /* P0TOK  */
-    WTOK = 299,                    /* WTOK  */
-    XTOK = 300,                    /* XTOK  */
-    CB3TOK = 301,                  /* CB3TOK  */
-    C02TOK = 302                   /* C02TOK  */
+    MTOK = 288,                    /* MTOK  */
+    NTOK = 289,                    /* NTOK  */
+    NSTOK = 290,                   /* NSTOK  */
+    RTOK = 291,                    /* RTOK  */
+    R01TOK = 292,                  /* R01TOK  */
+    ITOK = 293,                    /* ITOK  */
+    I1TOK = 294,                   /* I1TOK  */
+    GTOK = 295,                    /* GTOK  */
+    JTOK = 296,                    /* JTOK  */
+    KTOK = 297,                    /* KTOK  */
+    UTOK = 298,                    /* UTOK  */
+    ZTOK = 299,                    /* ZTOK  */
+    NONETOK = 300,                 /* NONETOK  */
+    A0TOK = 301,                   /* A0TOK  */
+    P0TOK = 302,                   /* P0TOK  */
+    WTOK = 303,                    /* WTOK  */
+    XTOK = 304,                    /* XTOK  */
+    CB3TOK = 305,                  /* CB3TOK  */
+    C02TOK = 306                   /* C02TOK  */
   };
   typedef enum HYPNO_ARC_tokentype HYPNO_ARC_token_kind_t;
 #endif
@@ -115,12 +119,12 @@ extern int HYPNO_ARC_debug;
 #if ! defined HYPNO_ARC_STYPE && ! defined HYPNO_ARC_STYPE_IS_DECLARED
 union HYPNO_ARC_STYPE
 {
-#line 54 "engines/hypno/grammar_arc.y"
+#line 53 "engines/hypno/grammar_arc.y"
 
 	char *s; /* string value */
 	int i;	 /* integer value */
 
-#line 124 "engines/hypno/tokens_arc.h"
+#line 128 "engines/hypno/tokens_arc.h"
 
 };
 typedef union HYPNO_ARC_STYPE HYPNO_ARC_STYPE;

@@ -26,13 +26,57 @@
 
 namespace Hypno {
 
-BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {}
+BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {
+	_screenW = 320;
+	_screenH = 200;
+	_lives = 2;
+}
 
 void BoyzEngine::loadAssets() {
-	LibFile *missions = loadLib("", "boyz/preload/missions.lib", true);
+	LibFile *missions = loadLib("", "preload/missions.lib", true);
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
+	loadArcadeLevel("c11.mi_", "", "", "");
+	loadLib("sound/", "misc/sound.lib", true);
+	_nextLevel = "c11.mi_";
+}
+
+void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
+	_checkpoint = _currentLevel;
+	assert(!arc->player.empty());
+	_playerFrames = decodeFrames(arc->player);
+	_playerFrameSep = 0;
+
+	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
+		if ((*it)->getPixel(0, 0) == 255)
+			break;
+		if ((*it)->getPixel(0, 0) == 252)
+			break;
+
+		_playerFrameSep++;
+	}
+	_playerFrameIdx = -1;
+}
+
+void BoyzEngine::drawPlayer() {
+	drawImage(*_playerFrames[0], 0, 0, true);
+}
+void BoyzEngine::drawHealth() {}
+void BoyzEngine::hitPlayer() {}
+void BoyzEngine::drawShoot(const Common::Point &target) {}
+
+void BoyzEngine::initSegment(ArcadeShooting *arc) {
+	_segmentShootSequenceOffset = 0;
+	_segmentShootSequenceMax = 0;
+
+	uint32 randomSegmentShootSequence = _segmentShootSequenceOffset + _rnd->getRandomNumber(_segmentShootSequenceMax);
+	SegmentShoots segmentShoots = arc->shootSequence[randomSegmentShootSequence];
+	_shootSequence = segmentShoots.shootSequence;
+	_segmentRepetitionMax = segmentShoots.segmentRepetition; // Usually zero
+	_segmentRepetition = 0;
+	_segmentOffset = 0;
+	_segmentIdx = _segmentOffset;
 }
 
 } // namespace Hypno

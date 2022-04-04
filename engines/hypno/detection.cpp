@@ -162,12 +162,12 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)},
 	{
 		"soldierboyz", // Solidier Boyz (US)
-		_s("Missing game code"),
+		nullptr,
 		AD_ENTRY2s("boyz.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 263347,
 					"setup.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 160740),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_UNSUPPORTED,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER

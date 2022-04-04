@@ -59,7 +59,8 @@ using namespace Hypno;
 %token<i> NUM BYTE
 // header
 %token COMMENT CTOK DTOK HTOK HETOK HLTOK H12TOK HUTOK RETTOK QTOK RESTOK
-%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK LTOK NTOK NSTOK RTOK R01TOK ITOK I1TOK JTOK ZTOK
+%token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK LTOK MTOK NTOK NSTOK RTOK R01TOK
+%token ITOK I1TOK GTOK JTOK KTOK UTOK ZTOK
 
 // body
 %token NONETOK A0TOK P0TOK WTOK
@@ -70,7 +71,7 @@ using namespace Hypno;
 // bytes??
 %token CB3TOK C02TOK
 
-%type<s> enc
+%type<s> enc flag
 
 %%
 
@@ -97,6 +98,8 @@ hline: 	CTOK NUM {
 	}
 	| PTOK NUM NUM { debugC(1, kHypnoDebugParser, "P %d %d", $2, $3); }
 	| ATOK NUM NUM { debugC(1, kHypnoDebugParser, "A %d %d", $2, $3); }
+	| MTOK FILENAME { debugC(1, kHypnoDebugParser, "M %s", $2); }
+	| UTOK NUM NUM NUM NUM { debugC(1, kHypnoDebugParser, "U %d %d %d %d", $2, $3, $4, $5); }
 	| VTOK NUM NUM { debugC(1, kHypnoDebugParser, "V %d %d", $2, $3); }
 	| VTOK RESTOK { debugC(1, kHypnoDebugParser, "V 320,200"); }
 	| OTOK NUM NUM {
@@ -181,7 +184,7 @@ hline: 	CTOK NUM {
 
 		debugC(1, kHypnoDebugParser, "BN %s", $2);
 	}
-	| SNTOK FILENAME enc {
+	| SNTOK FILENAME enc flag {
 		uint32 sampleRate = 11025;
 		if (Common::String("22K") == $3 || Common::String("22k") == $3)
 			sampleRate = 22050;
@@ -261,6 +264,10 @@ enc: ENCTOK          { $$ = $1; }
 	| /* nothing */  { $$ = scumm_strdup(""); }
 	;
 
+flag: NAME           { $$ = $1; }
+	| /* nothing */  { $$ = scumm_strdup(""); }
+	;
+
 body: bline body
 	| RETTOK body
 	| /* nothing */
@@ -308,6 +315,10 @@ bline: FNTOK FILENAME {
 		shoot->name = "F";
 		debugC(1, kHypnoDebugParser, "I F");
 	}
+	| ITOK GTOK  { // Workaround for NAME == G
+		shoot->name = "G";
+		debugC(1, kHypnoDebugParser, "I G");
+	}
 	| ITOK HTOK  { // Workaround for NAME == H
 		shoot->name = "H";
 		debugC(1, kHypnoDebugParser, "I H");
@@ -316,9 +327,13 @@ bline: FNTOK FILENAME {
 		shoot->name = "I";
 		debugC(1, kHypnoDebugParser, "I I");
 	}
-	| ITOK JTOK  { // Workaround for NAME == I
+	| ITOK JTOK  { // Workaround for NAME == J
 		shoot->name = "J";
 		debugC(1, kHypnoDebugParser, "I J");
+	}
+	| ITOK KTOK  { // Workaround for NAME == K
+		shoot->name = "K";
+		debugC(1, kHypnoDebugParser, "I K");
 	}
 	| ITOK NTOK  { // Workaround for NAME == N
 		shoot->name = "N";
@@ -351,6 +366,14 @@ bline: FNTOK FILENAME {
 	| ITOK LTOK  { // Workaround for NAME == L
 		shoot->name = "L";
 		debugC(1, kHypnoDebugParser, "I L");
+	}
+	| ITOK MTOK  { // Workaround for NAME == M
+		shoot->name = "M";
+		debugC(1, kHypnoDebugParser, "I M");
+	}
+	| ITOK UTOK  { // Workaround for NAME == U
+		shoot->name = "U";
+		debugC(1, kHypnoDebugParser, "I U");
 	}
 	| JTOK NUM  {
 		debugC(1, kHypnoDebugParser, "J %d", $2);
@@ -406,6 +429,13 @@ bline: FNTOK FILENAME {
 	| LTOK NUM NUM {
 		debugC(1, kHypnoDebugParser, "L %d %d", $2, $3);
 	}
+	| LTOK NUM {
+		debugC(1, kHypnoDebugParser, "L %d", $2);
+	}
+	| MTOK NUM { debugC(1, kHypnoDebugParser, "M %d", $2); }
+	| KTOK NUM { debugC(1, kHypnoDebugParser, "K %d", $2);
+		shoot->maskOffset = $2;
+	}
 	| SNTOK FILENAME enc {
 		if (Common::String("S0") == $1)
 			shoot->enemySound = $2;
@@ -415,6 +445,7 @@ bline: FNTOK FILENAME {
 			shoot->hitSound = $2;
 
 		debugC(1, kHypnoDebugParser, "SN %s", $2); }
+	| GTOK { debugC(1, kHypnoDebugParser, "G"); }
 	| NTOK {
 		shoot->noEnemySound = true;
 		debugC(1, kHypnoDebugParser, "N"); }

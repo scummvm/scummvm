@@ -412,7 +412,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 					if (it->name == si.name) {
 						Shoot s = *it;
 						s.startFrame = si.timestamp;
-						if (it->animation == "NONE") {
+						if (it->maskOffset > 0) {
+							// TODO
+						} else if (it->animation == "NONE") {
 							if ((uint32)(it->name[0]) == _currentPlayerPosition) {
 								_health = _health - it->attackWeight;
 								hitPlayer();
@@ -472,7 +474,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				} else if (it->video->decoder->needsUpdate() && needsUpdate) {
 					updateScreen(*it->video);
 				}
-			} else if (!it->video) {
+			} else if (!it->video && it->bodyFrames.size() > 0) {
 				uint32 frame = background.decoder->getCurFrame();
 				uint32 bodyLastFrame = it->bodyFrames[it->bodyFrames.size() - 1].lastFrame();
 				if (frame > it->startFrame && frame - it->startFrame > bodyLastFrame)
