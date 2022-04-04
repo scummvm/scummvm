@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-03 20:17+0000\n"
+"POT-Creation-Date: 2022-04-04 12:53+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -3778,8 +3778,12 @@ msgstr "חלון"
 msgid "Minimize"
 msgstr "הקטן"
 
+#. I18N: This keymap opens KIA's HELP tab.
+#. In Blade Runner's official localizations, there is a description of this keymap
+#. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+#. ONLINE HELP
 #: backends/platform/sdl/macosx/appmenu_osx.mm:237
-#: engines/bladerunner/metaengine.cpp:167 engines/zvision/metaengine.cpp:157
+#: engines/bladerunner/metaengine.cpp:196 engines/zvision/metaengine.cpp:157
 msgid "Help"
 msgstr "עזרה"
 
@@ -4414,83 +4418,132 @@ msgstr ""
 msgid "Missing game code"
 msgstr "בקרות משחק עיקריות:"
 
-#: engines/bladerunner/metaengine.cpp:106
+#. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
+#: engines/bladerunner/metaengine.cpp:107
 msgid "common shortcuts"
 msgstr ""
 
-#: engines/bladerunner/metaengine.cpp:107
+#. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
+#: engines/bladerunner/metaengine.cpp:109
 #, fuzzy
 #| msgid "Main game controls:"
 msgid "main game shortcuts"
 msgstr "בקרות משחק עיקריות:"
 
-#: engines/bladerunner/metaengine.cpp:108
+#. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
+#: engines/bladerunner/metaengine.cpp:111
 msgid "KIA only shortcuts"
 msgstr ""
 
-#: engines/bladerunner/metaengine.cpp:113
+#. I18N: This keymap is the main way for the user interact with the game.
+#. It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
+#: engines/bladerunner/metaengine.cpp:118
 msgid "Walk / Look / Talk / Select / Shoot"
 msgstr ""
 
-#: engines/bladerunner/metaengine.cpp:119
+#. I18N: This keymap toggles McCoy's status between combat mode (drawing his gun) and normal mode (holstering his gun)
+#. In Blade Runner's official localizations, there is a description of this keymap
+#. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+#. TOGGLE MCCOY'S COMBAT MODE
+#: engines/bladerunner/metaengine.cpp:128
 #, fuzzy
 #| msgid "Toggle mute"
 msgid "Toggle Combat"
 msgstr "הפעל או בטל השתקה"
 
-#: engines/bladerunner/metaengine.cpp:127 engines/scumm/help.cpp:76
+#. I18N: This keymap allows skipping video cutscenes
+#: engines/bladerunner/metaengine.cpp:137 engines/scumm/help.cpp:76
 #: engines/zvision/metaengine.cpp:215
 msgid "Skip cutscene"
 msgstr "דלג על חתכים"
 
-#: engines/bladerunner/metaengine.cpp:136
+#. I18N: This keymap allows skipping the current line of dialogue.
+#. In Blade Runner's official localizations, there is a description of this keymap
+#. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+#. SKIP PAST CURRENT LINE OF DIALOGUE
+#: engines/bladerunner/metaengine.cpp:150
 #, fuzzy
 msgid "Skip dialogue"
 msgstr "דלג על קו"
 
-#: engines/bladerunner/metaengine.cpp:143
+#. I18N: This keymap toggles between opening the KIA in the Game Options tab, and closing the KIA.
+#. In Blade Runner's official localizations, there is a description of this keymap
+#. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+#. GAME OPTIONS
+#: engines/bladerunner/metaengine.cpp:161
 #, fuzzy
 #| msgid "~O~ptions..."
 msgid "Game Options"
 msgstr "א~פ~שרויות..."
 
-#: engines/bladerunner/metaengine.cpp:149
+#. I18N: This keymap opens the KIA database on one of the investigation tabs,
+#. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
+#. In Blade Runner's official localizations, there is a description of this keymap
+#. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+#. ACTIVATE KIA CLUE DATABASE SYSTEM
+#: engines/bladerunner/metaengine.cpp:172
 msgid "Open KIA Database"
 msgstr ""
 
-#: engines/bladerunner/metaengine.cpp:155
+#. I18N: This keymap allows scrolling texts and lists upwards
+#: engines/bladerunner/metaengine.cpp:179
 #, fuzzy
 msgid "Scroll Up"
 msgstr "גלול רשימה למעלה"
 
-#: engines/bladerunner/metaengine.cpp:161
+#. I18N: This keymap allows scrolling texts and lists downwards
+#: engines/bladerunner/metaengine.cpp:186
 #, fuzzy
 msgid "Scroll Down"
 msgstr "גלול רשימה למטה"
 
-#: engines/bladerunner/metaengine.cpp:172 engines/pegasus/pegasus.cpp:2820
+#. I18N: This keymap opens KIA's SAVE GAME tab.
+#. In Blade Runner's official localizations, there is a description of this keymap
+#. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+#. SAVE GAME
+#: engines/bladerunner/metaengine.cpp:205 engines/pegasus/pegasus.cpp:2820
 #, fuzzy
 msgid "Save Game"
 msgstr "שמור משחק:"
 
-#: engines/bladerunner/metaengine.cpp:177 engines/pegasus/pegasus.cpp:2826
+#. I18N: This keymap opens KIA's LOAD GAME tab.
+#. In Blade Runner's official localizations, there is a description of this keymap
+#. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+#. LOAD GAME
+#: engines/bladerunner/metaengine.cpp:214 engines/pegasus/pegasus.cpp:2826
 #, fuzzy
 msgid "Load Game"
 msgstr "טוען משחק"
 
-#: engines/bladerunner/metaengine.cpp:182
+#. I18N: This keymap opens KIA's CRIME SCENE DATABASE tab.
+#. In Blade Runner's official localizations, there is a description of this keymap
+#. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+#. CRIME SCENE DATABASE
+#: engines/bladerunner/metaengine.cpp:223
 msgid "Crime Scene Database"
 msgstr ""
 
-#: engines/bladerunner/metaengine.cpp:187
+#. I18N: This keymap opens KIA's SUSPECT DATABASE tab.
+#. In Blade Runner's official localizations, there is a description of this keymap
+#. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+#. SUSPECT DATABASE
+#: engines/bladerunner/metaengine.cpp:232
 msgid "Suspect Database"
 msgstr ""
 
-#: engines/bladerunner/metaengine.cpp:192
+#. I18N: This keymap opens KIA's CLUE DATABASE tab.
+#. In Blade Runner's official localizations, there is a description of this keymap
+#. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+#. CLUE DATABASE
+#: engines/bladerunner/metaengine.cpp:241
 msgid "Clue Database"
 msgstr ""
 
-#: engines/bladerunner/metaengine.cpp:197 engines/dragons/metaengine.cpp:225
+#. I18N: This keymap opens KIA's QUIT GAME tab.
+#. In Blade Runner's official localizations, there is a description of this keymap
+#. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+#. QUIT GAME
+#: engines/bladerunner/metaengine.cpp:250 engines/dragons/metaengine.cpp:225
 #, fuzzy
 msgid "Quit Game"
 msgstr " (משחק)"
