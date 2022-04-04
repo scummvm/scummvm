@@ -42,11 +42,7 @@ namespace Chewy {
 
 #define MAX_HANDLE 8
 #define AAD_HANDLE 0
-#define ATS_HANDLE 1
 #define ADS_HANDLE 2
-#define INV_USE_HANDLE 4
-#define INV_ATS_HANDLE 6
-#define ATDS_HANDLE 7
 
 #define MAX_STR_SPLIT 10
 
@@ -249,7 +245,6 @@ public:
 
 	Common::Stream *pool_handle(const char *fname);
 	void set_handle(const char *fname, int16 mode, Common::Stream *handle, int16 chunkStart, int16 chunkNr);
-	void open_handle(const char *fname, int16 mode);
 	void close_handle(int16 mode);
 	void crypt(char *txt, uint32 size);
 	bool start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr);
