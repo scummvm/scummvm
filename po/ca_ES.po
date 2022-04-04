@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-03 20:17+0000\n"
-"PO-Revision-Date: 2022-03-31 04:27+0000\n"
+"PO-Revision-Date: 2022-04-04 12:20+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -4383,10 +4383,8 @@ msgid "common shortcuts"
 msgstr ""
 
 #: engines/bladerunner/metaengine.cpp:107
-#, fuzzy
-#| msgid "Main game controls:"
 msgid "main game shortcuts"
-msgstr "Controls principals del joc:"
+msgstr "dreceres del joc principal"
 
 #: engines/bladerunner/metaengine.cpp:108
 msgid "KIA only shortcuts"
@@ -4414,10 +4412,8 @@ msgid "Skip dialogue"
 msgstr "Omet les línies de diàleg"
 
 #: engines/bladerunner/metaengine.cpp:143
-#, fuzzy
-#| msgid "~G~ame Options..."
 msgid "Game Options"
-msgstr "~O~pcions del jocs..."
+msgstr "Opcions del joc"
 
 #: engines/bladerunner/metaengine.cpp:149
 msgid "Open KIA Database"
@@ -6178,21 +6174,18 @@ msgstr "Utilitza una introducció del joc alternativa (només per la versió CD)
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:789
-#, fuzzy
 msgid "Windows Trial version is not supported"
-msgstr "Identificador de joc no suportat"
+msgstr "La versió de prova per a Windows no s'admet"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:815
-#, fuzzy
 msgid "macOS Trial version is not supported"
-msgstr "Identificador de joc no suportat"
+msgstr "La versió de prova per a macOS no s'admet"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:840
-#, fuzzy
 msgid "Pocket PC Trial version is not supported"
-msgstr "Identificador de joc no suportat"
+msgstr "La versió de prova per a Pocket PC no s'admet"
 
 #: engines/saga/metaengine.cpp:112
 msgid "I Have No Mouth support not compiled in"
@@ -6298,9 +6291,8 @@ msgid ""
 msgstr ""
 
 #: engines/sci/sci.cpp:509
-#, fuzzy
 msgid "Download patch"
-msgstr "Baixa"
+msgstr "Baixa el pedaç"
 
 #: engines/sci/sci.cpp:510
 msgid ""
@@ -6359,9 +6351,8 @@ msgid "Show the names of objects at the bottom of the screen"
 msgstr ""
 
 #: engines/scumm/detection.cpp:182
-#, fuzzy
 msgid "Use NES Classic Palette"
-msgstr "Utilitza una introducció del joc alternativa (només per la versió CD)"
+msgstr "Utilitza la paleta NES Classic"
 
 #: engines/scumm/detection.cpp:183
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
@@ -6397,9 +6388,8 @@ msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr ""
 
 #: engines/scumm/detection.cpp:210 engines/scumm/dialogs.cpp:730
-#, fuzzy
 msgid "Enable game-specific enhancements"
-msgstr "Activa els cursors flotants"
+msgstr "Habilita les millores específiques del joc"
 
 #: engines/scumm/detection.cpp:211 engines/scumm/dialogs.cpp:730
 msgid ""
@@ -6572,9 +6562,8 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:78
-#, fuzzy
 msgid "Load saved game 1-10"
-msgstr "Carrega partida 1-10"
+msgstr "Carrega la partida desada 1-10"
 
 #: engines/scumm/help.cpp:79 engines/scumm/help.cpp:83
 #: engines/scumm/help.cpp:85 engines/scumm/help.cpp:99
@@ -6583,9 +6572,8 @@ msgid "Alt"
 msgstr "Alt"
 
 #: engines/scumm/help.cpp:79
-#, fuzzy
 msgid "Save game 1-10"
-msgstr "Desa partida 1-10"
+msgstr "Desa la partida 1-10"
 
 #: engines/scumm/help.cpp:86
 msgid "Music volume up / down"
@@ -7052,14 +7040,12 @@ msgid "Fly to lower right"
 msgstr "Vola avall i a la dreta"
 
 #: engines/scumm/input.cpp:574
-#, fuzzy
 msgid "Snap scroll on"
-msgstr "Desplaçament suau"
+msgstr "Activa el desplaçament ràpid"
 
 #: engines/scumm/input.cpp:576
-#, fuzzy
 msgid "Snap scroll off"
-msgstr "Desplaçament suau"
+msgstr "Desactiva el desplaçament ràpid"
 
 #: engines/scumm/input.cpp:589
 msgid "Music volume: "
@@ -7127,15 +7113,15 @@ msgstr ""
 "però no s'ha trobat %s. S'utilitzarà AdLib."
 
 #: engines/scumm/scumm.cpp:3090
-#, fuzzy
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"Normalment, en aquest punt s'engegaria el Maniac Mansion. Però ScummVM no ho "
-"fa encara. Per jugar-hi, aneu a 'Afegir joc' al menú principal de ScummVM i "
-"seleccioneu el directori 'Maniac' de dins del directori del joc Tentacle."
+"Normalment, en aquest punt s'engegaria el Maniac Mansion. Però perquè això "
+"funcioni, els arxius del joc de Maniac Mansion han d'estar en el directori "
+"'Maniac' dins del directori del joc Tentacle, i el joc s'ha d'afegir a "
+"ScummVM."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:652
 msgid ""
@@ -7169,9 +7155,8 @@ msgid ""
 msgstr ""
 
 #: engines/sherlock/detection.cpp:88
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Commuta el personatge"
+msgstr "Mostra retrats de personatges"
 
 #: engines/sherlock/detection.cpp:89
 msgid "Show portraits for the characters when conversing"
@@ -7212,23 +7197,20 @@ msgid "Walk / Look / Talk"
 msgstr ""
 
 #: engines/sky/metaengine.cpp:103
-#, fuzzy
 msgid "Skip / Close"
-msgstr "Salta la línia"
+msgstr "Omet / Tanca"
 
 #: engines/sky/metaengine.cpp:111
 msgid "Open control panel"
 msgstr ""
 
 #: engines/sky/metaengine.cpp:127
-#, fuzzy
 msgid "Toggle fast mode"
-msgstr "Mode ràpid"
+msgstr "Commuta el mode ràpid"
 
 #: engines/sky/metaengine.cpp:132
-#, fuzzy
 msgid "Toggle really fast mode"
-msgstr "Executa en mode realment ràpid (*)"
+msgstr "Commuta el mode realment ràpid"
 
 #: engines/sky/metaengine.cpp:202
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
@@ -7262,10 +7244,8 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
 #: engines/stark/stark.cpp:106
-#, fuzzy
-#| msgid "Engine plugin does not support saved games"
 msgid "Software renderer does not support modded assets"
-msgstr "El connector de motor no suporta partides desades"
+msgstr "El renderitzador de programari no permet els recursos modificats"
 
 #: engines/stark/stark.cpp:291
 msgid "You are missing recommended data files:"
@@ -7320,14 +7300,12 @@ msgid ""
 msgstr ""
 
 #: engines/supernova/supernova.cpp:832
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "No s'ha pogut carregar l'estat del joc del fitxer."
+msgstr "No s'ha pogut carregar l'estat temporal del joc."
 
 #: engines/supernova/detection.cpp:41
-#, fuzzy
 msgid "Improved mode"
-msgstr "Mode de finestra"
+msgstr "Mode millorat"
 
 #: engines/supernova/detection.cpp:42
 msgid ""
