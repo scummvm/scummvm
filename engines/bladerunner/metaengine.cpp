@@ -103,19 +103,28 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	// Thus, a custom action event cannot be somehow utilised to produce keyboard key presses
 	// (again if a keyboard key is mapped to that action), so it cannot by itself be used
 	// for text entering in the save file name input field, or for typing the Easter Egg strings.
+	// I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 	commonKeymap = new Keymap(Keymap::kKeymapTypeGame, BladeRunnerEngine::kCommonKeymapId, gameDesc + Common::U32String(" - ") + _("common shortcuts"));
+	// I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 	gameplayKeymap = new Keymap(Keymap::kKeymapTypeGame, BladeRunnerEngine::kGameplayKeymapId, gameDesc + Common::U32String(" - ") + _("main game shortcuts"));
+	// I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
 	kiaOnlyKeymap = new Keymap(Keymap::kKeymapTypeGame, BladeRunnerEngine::kKiaKeymapId, gameDesc + Common::U32String(" - ") + _("KIA only shortcuts"));
 
 	Action *act;
 
 	// Look at backends\keymapper\hardware-input.cpp for the strings that can be used in InputMapping
+	// I18N: This keymap is the main way for the user interact with the game.
+	// It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
 	act = new Action(kStandardActionLeftClick, _("Walk / Look / Talk / Select / Shoot"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	commonKeymap->addAction(act);
 
+	// I18N: This keymap toggles McCoy's status between combat mode (drawing his gun) and normal mode (holstering his gun)
+	// In Blade Runner's official localizations, there is a description of this keymap
+	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+	// TOGGLE MCCOY'S COMBAT MODE
 	act = new Action("COMBAT", _("Toggle Combat"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionToggleCombat);
 	act->addDefaultInputMapping("MOUSE_RIGHT");
@@ -124,6 +133,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	act->addDefaultInputMapping("SPACE");
 	gameplayKeymap->addAction(act);
 
+	// I18N: This keymap allows skipping video cutscenes
 	act = new Action("SKIPVIDEO", _("Skip cutscene"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpblActionCutsceneSkip);
 	act->addDefaultInputMapping("ESCAPE");
@@ -133,6 +143,10 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	act->addDefaultInputMapping("JOY_Y");
 	gameplayKeymap->addAction(act);
 
+	// I18N: This keymap allows skipping the current line of dialogue.
+	// In Blade Runner's official localizations, there is a description of this keymap
+	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+	// SKIP PAST CURRENT LINE OF DIALOGUE
 	act = new Action("SKIPDLG", _("Skip dialogue"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionDialogueSkip);
 	act->addDefaultInputMapping("RETURN");
@@ -140,60 +154,99 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	act->addDefaultInputMapping("JOY_X");
 	gameplayKeymap->addAction(act);
 
+	// I18N: This keymap toggles between opening the KIA in the Game Options tab, and closing the KIA.
+	// In Blade Runner's official localizations, there is a description of this keymap
+	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+	// GAME OPTIONS
 	act = new Action("KIAOPTS", _("Game Options"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionToggleKiaOptions);
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_Y");
 	commonKeymap->addAction(act);
 
+	// I18N: This keymap opens the KIA database on one of the investigation tabs,
+	// CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
+	// In Blade Runner's official localizations, there is a description of this keymap
+	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+	// ACTIVATE KIA CLUE DATABASE SYSTEM
 	act = new Action("KIADB", _("Open KIA Database"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKiaDatabase);
 	act->addDefaultInputMapping("TAB");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	gameplayKeymap->addAction(act);
 
+	// I18N: This keymap allows scrolling texts and lists upwards
 	act = new Action("KIASCROLLUP", _("Scroll Up"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionScrollUp);
 	act->addDefaultInputMapping("MOUSE_WHEEL_UP");
 	act->addDefaultInputMapping("JOY_UP");
 	kiaOnlyKeymap->addAction(act);
 
+	// I18N: This keymap allows scrolling texts and lists downwards
 	act = new Action("KIASCROLLDOWN", _("Scroll Down"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionScrollDown);
 	act->addDefaultInputMapping("MOUSE_WHEEL_DOWN");
 	act->addDefaultInputMapping("JOY_DOWN");
 	kiaOnlyKeymap->addAction(act);
 
+	// I18N: This keymap opens KIA's HELP tab.
+	// In Blade Runner's official localizations, there is a description of this keymap
+	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+	// ONLINE HELP
 	act = new Action("KIAHLP", _("Help"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabHelp);
 	act->addDefaultInputMapping("F1");
 	commonKeymap->addAction(act);
 
+	// I18N: This keymap opens KIA's SAVE GAME tab.
+	// In Blade Runner's official localizations, there is a description of this keymap
+	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+	// SAVE GAME
 	act = new Action("KIASAVE", _("Save Game"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabSaveGame);
 	act->addDefaultInputMapping("F2");
 	commonKeymap->addAction(act);
 
+	// I18N: This keymap opens KIA's LOAD GAME tab.
+	// In Blade Runner's official localizations, there is a description of this keymap
+	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+	// LOAD GAME
 	act = new Action("KIALOAD", _("Load Game"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabLoadGame);
 	act->addDefaultInputMapping("F3");
 	commonKeymap->addAction(act);
 
+	// I18N: This keymap opens KIA's CRIME SCENE DATABASE tab.
+	// In Blade Runner's official localizations, there is a description of this keymap
+	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+	// CRIME SCENE DATABASE
 	act = new Action("KIACRIMES", _("Crime Scene Database"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabCrimeSceneDatabase);
 	act->addDefaultInputMapping("F4");
 	commonKeymap->addAction(act);
 
+	// I18N: This keymap opens KIA's SUSPECT DATABASE tab.
+	// In Blade Runner's official localizations, there is a description of this keymap
+	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+	// SUSPECT DATABASE
 	act = new Action("KIASUSPECTS", _("Suspect Database"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabSuspectDatabase);
 	act->addDefaultInputMapping("F5");
 	commonKeymap->addAction(act);
 
+	// I18N: This keymap opens KIA's CLUE DATABASE tab.
+	// In Blade Runner's official localizations, there is a description of this keymap
+	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+	// CLUE DATABASE
 	act = new Action("KIACLUES", _("Clue Database"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabClueDatabase);
 	act->addDefaultInputMapping("F6");
 	commonKeymap->addAction(act);
 
+	// I18N: This keymap opens KIA's QUIT GAME tab.
+	// In Blade Runner's official localizations, there is a description of this keymap
+	// on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
+	// QUIT GAME
 	act = new Action("KIAQUIT", _("Quit Game"));
 	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionOpenKIATabQuitGame);
 	act->addDefaultInputMapping("F10");
