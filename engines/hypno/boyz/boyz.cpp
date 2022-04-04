@@ -66,6 +66,8 @@ void BoyzEngine::drawHealth() {}
 void BoyzEngine::hitPlayer() {}
 void BoyzEngine::drawShoot(const Common::Point &target) {}
 
+Common::String BoyzEngine::findNextLevel(const Common::String &level) { return level; }
+
 void BoyzEngine::initSegment(ArcadeShooting *arc) {
 	_segmentShootSequenceOffset = 0;
 	_segmentShootSequenceMax = 0;

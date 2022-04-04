@@ -449,6 +449,7 @@ class BoyzEngine : public HypnoEngine {
 public:
 	BoyzEngine(OSystem *syst, const ADGameDescription *gd);
 	void loadAssets() override;
+	Common::String findNextLevel(const Common::String &level) override;
 
 	void runBeforeArcade(ArcadeShooting *arc) override;
 	void drawHealth() override;

@@ -117,6 +117,7 @@ LibFile *HypnoEngine::loadLib(const Filename &prefix, const Filename &filename, 
 }
 
 void HypnoEngine::loadAssets() { error("Function \"%s\" not implemented", __FUNCTION__); }
+Common::String HypnoEngine::findNextLevel(const Common::String &level) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 Common::Error HypnoEngine::run() {
 	Graphics::ModeList modes;
