@@ -1300,11 +1300,17 @@ uint32 Atdsys::getAtdsStreamSize() const {
 }
 
 Common::StringArray Atdsys::getTextArray(uint dialogNum, uint entryNum, int type) {
-	return _text->getTextArray(dialogNum, entryNum, type);
+	if (!getControlBit(entryNum, ATS_ACTIVE_BIT))
+		return _text->getTextArray(dialogNum, entryNum, type);
+	else
+		return Common::StringArray();
 }
 
 Common::String Atdsys::getTextEntry(uint dialogNum, uint entryNum, int type) {
-	return _text->getTextEntry(dialogNum, entryNum, type);
+	if (!getControlBit(entryNum, ATS_ACTIVE_BIT))
+		return _text->getTextEntry(dialogNum, entryNum, type);
+	else
+		return Common::String();
 }
 
 } // namespace Chewy
