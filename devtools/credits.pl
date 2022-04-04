@@ -639,6 +639,10 @@ begin_credits("Credits");
 				add_person("Chris Warren-Smith", "", "");
 			end_section();
 
+			begin_section("Webassembly / Emscripten");
+				add_person("Christian K&uuml;ndig", "chkuendig", "");
+			end_section();
+
 			begin_section("WebOS");
 				add_person("Klaus Reimer", "kayahr", "");
 			end_section();

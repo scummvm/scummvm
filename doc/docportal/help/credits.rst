@@ -1580,6 +1580,15 @@ Tizen / BADA
    * - Chris Warren-Smith
      -
 
+Webassembly / Emscripten
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Christian Kündig
+     -
+
 WebOS
 ^^^^^
 
