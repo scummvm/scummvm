@@ -374,19 +374,6 @@ void Atdsys::set_handle(const char *fname, int16 mode, Common::Stream *handle, i
 	}
 }
 
-void Atdsys::open_handle(const char *fname, int16 mode) {
-	_atdsMem[mode] = atds_adr(fname, 0, 20000);
-
-	Common::File *f = new Common::File();
-	f->open(fname);
-	if (f->isOpen()) {
-		close_handle(mode);
-		_atdsHandle[mode] = f;
-	} else {
-		error("Error reading from %s", fname);
-	}
-}
-
 void Atdsys::close_handle(int16 mode) {
 	Common::Stream *stream = _atdsHandle[mode];
 	if (stream) {
