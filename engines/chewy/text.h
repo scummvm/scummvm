@@ -40,8 +40,8 @@ enum MaxTextTypes {
 	kADSTextMax = 500, //   0 - 499
 	kATSTextMax = 100, // 500 - 599
 	kAADTextMax = 100, // 600 - 699
-	kINVTextMax = 100, // 700 - 799
-	kUSETextMax = 100  // 800 - 899
+	kINVTextMax = 140, // 700 - 849
+	kUSETextMax =  60  // 850 - 899
 };
 
 /**

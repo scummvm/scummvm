@@ -82,21 +82,30 @@ TextEntryList *Text::getDialog(uint chunk, uint entry) {
 }
 
 TextEntry *Text::getText(uint chunk, uint entry, int type) {
+	bool isText = false;
+	bool isAutoDialog = false;
+	bool isInvDesc = false;
+
 	switch (type) {
 	case AAD_DATA:
-		chunk += AAD_TAP_OFF;
+		chunk += kADSTextMax + kATSTextMax;
+		isAutoDialog = true;
 		break;
 	case ATS_DATA:
-		chunk += ATS_TAP_OFF;
+		chunk += kADSTextMax;
+		isText = true;
 		break;
 	case ADS_DATA:
-		chunk += ADS_TAP_OFF;
+		// No change - chunk starts from 0
 		break;
 	case INV_USE_DATA:
-		chunk += USE_TAP_OFF;
+	case INV_USE_DEF:
+		chunk += kADSTextMax + kATSTextMax + kAADTextMax + kINVTextMax;
+		isInvDesc = true;
 		break;
 	case INV_ATS_DATA:
-		chunk += INV_TAP_OFF;
+		chunk += kADSTextMax + kATSTextMax + kAADTextMax;
+		isInvDesc = true;
 		break;
 	}
 
@@ -104,9 +113,6 @@ TextEntry *Text::getText(uint chunk, uint entry, int type) {
 		error("getText(): Invalid chunk number requested, %d (min %d)", chunk, kADSTextMax);
 
 	TextEntry *d = new TextEntry();
-	const bool isText = (chunk >= kADSTextMax && chunk < kADSTextMax + kATSTextMax);
-	const bool isAutoDialog = (chunk >= kADSTextMax + kATSTextMax && chunk < kADSTextMax + kATSTextMax + kAADTextMax);
-	const bool isInvDesc = (chunk >= kADSTextMax + kATSTextMax + kAADTextMax && chunk < kADSTextMax + kATSTextMax + kAADTextMax + kINVTextMax);
 
 	byte *data = getChunkData(chunk);
 	byte *ptr = data;
