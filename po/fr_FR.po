@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-03 20:17+0000\n"
-"PO-Revision-Date: 2022-04-01 11:27+0000\n"
+"PO-Revision-Date: 2022-04-04 10:29+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -4446,29 +4446,23 @@ msgstr "Code de jeu manquant"
 
 #: engines/bladerunner/metaengine.cpp:106
 msgid "common shortcuts"
-msgstr ""
+msgstr "raccourcis communs"
 
 #: engines/bladerunner/metaengine.cpp:107
-#, fuzzy
-#| msgid "Main game controls:"
 msgid "main game shortcuts"
-msgstr "Contrôles principaux du jeu :"
+msgstr "raccourcis jeu principal"
 
 #: engines/bladerunner/metaengine.cpp:108
 msgid "KIA only shortcuts"
-msgstr ""
+msgstr "raccourcis KIA uniquement"
 
 #: engines/bladerunner/metaengine.cpp:113
-#, fuzzy
-#| msgid "Walk / Look / Talk"
 msgid "Walk / Look / Talk / Select / Shoot"
-msgstr "Marcher / Regarder / Parler"
+msgstr "Marcher / Regarder / Parler /Selectionner / Tirer"
 
 #: engines/bladerunner/metaengine.cpp:119
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Combat"
-msgstr "Act./Désact. Muet"
+msgstr "Act./Désact. Combat"
 
 #: engines/bladerunner/metaengine.cpp:127 engines/scumm/help.cpp:76
 #: engines/zvision/metaengine.cpp:215
@@ -4476,30 +4470,22 @@ msgid "Skip cutscene"
 msgstr "Passer la séquence"
 
 #: engines/bladerunner/metaengine.cpp:136
-#, fuzzy
-#| msgid "Skip dialog lines"
 msgid "Skip dialogue"
 msgstr "Passer les dialogues"
 
 #: engines/bladerunner/metaengine.cpp:143
-#, fuzzy
-#| msgid "~G~ame Options..."
 msgid "Game Options"
-msgstr "Options du ~J~eu..."
+msgstr "Options du Jeu"
 
 #: engines/bladerunner/metaengine.cpp:149
 msgid "Open KIA Database"
-msgstr ""
+msgstr "Ouvrir Base de données KIA"
 
 #: engines/bladerunner/metaengine.cpp:155
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll Up"
 msgstr "Défiler vers le haut"
 
 #: engines/bladerunner/metaengine.cpp:161
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll Down"
 msgstr "Défiler vers le bas"
 
@@ -4512,18 +4498,16 @@ msgid "Load Game"
 msgstr "Charger"
 
 #: engines/bladerunner/metaengine.cpp:182
-#, fuzzy
-#| msgid "Scene Data"
 msgid "Crime Scene Database"
-msgstr "Données de la scène"
+msgstr "Base de données Scènes de crime"
 
 #: engines/bladerunner/metaengine.cpp:187
 msgid "Suspect Database"
-msgstr ""
+msgstr "Base de données Suspects"
 
 #: engines/bladerunner/metaengine.cpp:192
 msgid "Clue Database"
-msgstr ""
+msgstr "Base de données Indices"
 
 #: engines/bladerunner/metaengine.cpp:197 engines/dragons/metaengine.cpp:225
 msgid "Quit Game"
