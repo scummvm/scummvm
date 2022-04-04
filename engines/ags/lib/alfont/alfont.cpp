@@ -1015,9 +1015,9 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 		_alfont_uncache_glyphs(f);
 
 #ifdef ALFONT_LINUX //Fix for Linux Unicode System(be converted)
-		for (character = ugetxc((const char **)&lpszW_tmp); character != 0; character = ugetxc((const char **)&lpszW_tmp), character = ugetxc((const char **)&lpszW_tmp)) {
+		for (character = ugetxc(&lpszW_tmp); character != 0; character = ugetxc(&lpszW_tmp), character = ugetxc(&lpszW_tmp)) {
 #else
-		for (character = ugetxc((const char **)&lpszW_tmp); character != 0; character = ugetxc((const char **)&lpszW_tmp)) {
+		for (character = ugetxc(&lpszW_tmp); character != 0; character = ugetxc(&lpszW_tmp)) {
 #endif
 			int glyph_index_tmp;
 			struct _ALFONT_CACHED_GLYPH cglyph_tmp;
@@ -1052,9 +1052,9 @@ void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int
 
 
 #ifdef ALFONT_LINUX //Fix for Linux Unicode System(be converted)
-	for (character = ugetxc((const char **)&lpszW); character != 0; character = ugetxc((const char **)&lpszW), character = ugetxc((const char **)&lpszW)) {
+	for (character = ugetxc(&lpszW); character != 0; character = ugetxc(&lpszW), character = ugetxc(&lpszW)) {
 #else
-	for (character = ugetxc((const char **)&lpszW); character != 0; character = ugetxc((const char **)&lpszW)) {
+	for (character = ugetxc(&lpszW); character != 0; character = ugetxc(&lpszW)) {
 #endif
 		int real_x, real_y, glyph_index;
 		struct _ALFONT_CACHED_GLYPH cglyph;
@@ -2086,9 +2086,9 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 		_alfont_uncache_glyphs(f);
 
 #ifdef ALFONT_LINUX //Fix for Linux Unicode System(be converted)
-		for (character = ugetxc((const char **)&lpszW_tmp); character != 0; character = ugetxc((const char **)&lpszW_tmp), character = ugetxc((const char **)&lpszW_tmp)) {
+		for (character = ugetxc(&lpszW_tmp); character != 0; character = ugetxc(&lpszW_tmp), character = ugetxc(&lpszW_tmp)) {
 #else
-		for (character = ugetxc((const char **)&lpszW_tmp); character != 0; character = ugetxc((const char **)&lpszW_tmp)) {
+		for (character = ugetxc(&lpszW_tmp); character != 0; character = ugetxc(&lpszW_tmp)) {
 #endif
 			int glyph_index_tmp;
 			struct _ALFONT_CACHED_GLYPH cglyph_tmp;
@@ -2122,9 +2122,9 @@ void alfont_textout_ex(BITMAP * bmp, ALFONT_FONT * f, const char *s, int x, int 
 		}
 
 #ifdef ALFONT_LINUX //Fix for Linux Unicode System(be converted)
-	for (character = ugetxc((const char **)&lpszW); character != 0; character = ugetxc((const char **)&lpszW), character = ugetxc((const char **)&lpszW)) {
+	for (character = ugetxc(&lpszW); character != 0; character = ugetxc(&lpszW), character = ugetxc(&lpszW)) {
 #else
-	for (character = ugetxc((const char **)&lpszW); character != 0; character = ugetxc((const char **)&lpszW)) {
+	for (character = ugetxc(&lpszW); character != 0; character = ugetxc(&lpszW)) {
 #endif
 		int real_x, real_y, glyph_index;
 		struct _ALFONT_CACHED_GLYPH cglyph;
@@ -2872,9 +2872,9 @@ int alfont_text_length(ALFONT_FONT * f, const char *str) {
 		_alfont_uncache_glyphs(f);
 
 #ifdef ALFONT_LINUX //Fix for Linux Unicode System(be converted)
-		for (character = ugetxc((const char **)&lpszW_tmp); character != 0; character = ugetxc((const char **)&lpszW_tmp), character = ugetxc((const char **)&lpszW_tmp)) {
+		for (character = ugetxc(&lpszW_tmp); character != 0; character = ugetxc(&lpszW_tmp), character = ugetxc(&lpszW_tmp)) {
 #else
-		for (character = ugetxc((const char **)&lpszW_tmp); character != 0; character = ugetxc((const char **)&lpszW_tmp)) {
+		for (character = ugetxc(&lpszW_tmp); character != 0; character = ugetxc(&lpszW_tmp)) {
 #endif
 			/* get the character out of the font */
 
@@ -2898,9 +2898,9 @@ int alfont_text_length(ALFONT_FONT * f, const char *str) {
 		}
 
 #ifdef ALFONT_LINUX //Fix for Linux Unicode System(be converted)
-	for (character = ugetxc((const char **)&lpszW); character != 0; character = ugetxc((const char **)&lpszW), character = ugetxc((const char **)&lpszW)) {
+	for (character = ugetxc(&lpszW); character != 0; character = ugetxc(&lpszW), character = ugetxc(&lpszW)) {
 #else
-	for (character = ugetxc((const char **)&lpszW); character != 0; character = ugetxc((const char **)&lpszW)) {
+	for (character = ugetxc(&lpszW); character != 0; character = ugetxc(&lpszW)) {
 #endif
 		/* get the character out of the font */
 
@@ -3749,14 +3749,14 @@ int alfont_ugetx(ALFONT_FONT * f, char **s) {
 	//advances the *s pointer to the next character
 
 	if (f->type == 1) {
-		ugetxc((const char **)s);
+		ugetxc(s);
 #ifdef ALFONT_LINUX
-		ugetxc((const char **)s);
+		ugetxc(s);
 #endif
 	} else if (f->type == 2) {
-		ugetxc((const char **)&lpszWS);
+		ugetxc(&lpszWS);
 #ifdef ALFONT_LINUX
-		ugetxc((const char **)&lpszWS);
+		ugetxc(&lpszWS);
 #endif
 #ifdef ALFONT_DOS
 		if ((c_pt = iconv_open(f->language, "UTF-16LE")) == (iconv_t)-1) {
@@ -3798,9 +3798,9 @@ int alfont_ugetx(ALFONT_FONT * f, char **s) {
 #ifdef ALFONT_LINUX
 		set_uformat(U_UTF8);
 #endif
-		ugetxc((const char **)s);
+		ugetxc(s);
 #ifdef ALFONT_LINUX
-		ugetxc((const char **)s);
+		ugetxc(s);
 #endif
 	}
 
@@ -4056,14 +4056,14 @@ int alfont_ugetxc(ALFONT_FONT * f, const char **s) {
 	//advances the *s pointer to the next character
 
 	if (f->type == 1) {
-		ugetxc((const char **)s);
+		ugetxc(s);
 #ifdef ALFONT_LINUX
-		ugetxc((const char **)s);
+		ugetxc(s);
 #endif
 	} else if (f->type == 2) {
-		ugetxc((const char **)&lpszWS);
+		ugetxc(&lpszWS);
 #ifdef ALFONT_LINUX
-		ugetxc((const char **)&lpszWS);
+		ugetxc(&lpszWS);
 #endif
 #ifdef ALFONT_DOS
 		if ((c_pt = iconv_open(f->language, "UTF-16LE")) == (iconv_t)-1) {
