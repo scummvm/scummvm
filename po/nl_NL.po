@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-03 20:01+0000\n"
+"POT-Creation-Date: 2022-04-03 20:17+0000\n"
 "PO-Revision-Date: 2022-03-29 10:46+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -323,7 +323,7 @@ msgid "Platform:"
 msgstr "Platform:"
 
 #: gui/editgamedialog.cpp:207 gui/options.cpp:1780 gui/options.cpp:1950
-#: backends/graphics/sdl/sdl-graphics.cpp:416
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Graphics"
 msgstr "Beeld"
 
@@ -1179,7 +1179,7 @@ msgstr "Uitrekmodus:"
 msgid "Scaler:"
 msgstr "Schaler:"
 
-#: gui/options.cpp:1437 backends/graphics/sdl/sdl-graphics.cpp:407
+#: gui/options.cpp:1437 backends/graphics/sdl/sdl-graphics.cpp:409
 msgid "Fullscreen mode"
 msgstr "Volledig-scherm modus"
 
@@ -2785,15 +2785,15 @@ msgstr "Voorspellende invoer dialoogvenster"
 msgid "Confirm"
 msgstr "Bevestig"
 
-#: graphics/renderer.cpp:30 backends/graphics/opengl/opengl-graphics.cpp:174
+#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: graphics/renderer.cpp:33
+#: graphics/renderer.cpp:36
 msgid "OpenGL with shaders"
 msgstr "OpenGL met shaders"
 
-#: graphics/renderer.cpp:41
+#: graphics/renderer.cpp:44
 msgctxt "lowres"
 msgid "OpenGL with shaders"
 msgstr "OpenGL met shaders"
@@ -3139,20 +3139,20 @@ msgstr "Schermafdruk '%s' bewaard"
 msgid "Could not save screenshot"
 msgstr "Schermafdruk opslaan mislukt"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:409
+#: backends/graphics/sdl/sdl-graphics.cpp:411
 msgid "Windowed mode"
 msgstr "Venstermodus"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:420 engines/scumm/help.cpp:85
+#: backends/graphics/sdl/sdl-graphics.cpp:422 engines/scumm/help.cpp:85
 msgid "Toggle fullscreen"
 msgstr "Volledig scherm aan-/uitzetten"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:427 engines/scumm/help.cpp:98
+#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:98
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "Mousecapture aan-/uitzetten"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:432
+#: backends/graphics/sdl/sdl-graphics.cpp:434
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -3165,32 +3165,32 @@ msgstr "Mousecapture aan-/uitzetten"
 msgid "Save screenshot"
 msgstr "Bewaar schermafdruk"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:438
+#: backends/graphics/sdl/sdl-graphics.cpp:440
 msgid "Toggle aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie aan-/uitzetten"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:445
+#: backends/graphics/sdl/sdl-graphics.cpp:447
 msgid "Toggle linear filtered scaling"
 msgstr "Lineair filteren tijdens het schalen aan-/uitzetten"
 
 # can this be changed into "Could not switch to video mode '%s'"?
-#: backends/graphics/sdl/sdl-graphics.cpp:452
+#: backends/graphics/sdl/sdl-graphics.cpp:454
 msgid "Cycle through stretch modes"
 msgstr "Loop door uitrekmodi"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:458
+#: backends/graphics/sdl/sdl-graphics.cpp:460
 msgid "Increase the scale factor"
 msgstr "Verhoog de schalingsfactor"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:464
+#: backends/graphics/sdl/sdl-graphics.cpp:466
 msgid "Decrease the scale factor"
 msgstr "Verlaag de schalingsfactor"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:470
+#: backends/graphics/sdl/sdl-graphics.cpp:472
 msgid "Switch to the next scaler"
 msgstr "Schakel naar de volgende schaalmode"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:475
+#: backends/graphics/sdl/sdl-graphics.cpp:477
 msgid "Switch to the previous scaler"
 msgstr "Schakel naar de vorige schaalmode"
 
@@ -6056,7 +6056,7 @@ msgstr "Breedbeeld aanpassing"
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Zet breedbeeld rendering in volscherm modus aan."
 
-#: engines/myst3/myst3.cpp:355
+#: engines/myst3/myst3.cpp:365
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
@@ -6071,7 +6071,7 @@ msgstr ""
 "De update kan gevonden worden op:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 
-#: engines/myst3/myst3.cpp:1569 engines/pegasus/pegasus.cpp:744
+#: engines/myst3/myst3.cpp:1579 engines/pegasus/pegasus.cpp:744
 msgid "Invalid file name for saving"
 msgstr "Geef bestandsnaam voor bewaren"
 

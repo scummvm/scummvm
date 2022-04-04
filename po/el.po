@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-03 20:01+0000\n"
+"POT-Creation-Date: 2022-04-03 20:17+0000\n"
 "PO-Revision-Date: 2022-03-23 20:39+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -325,7 +325,7 @@ msgid "Platform:"
 msgstr "Πλατφόρμα:"
 
 #: gui/editgamedialog.cpp:207 gui/options.cpp:1780 gui/options.cpp:1950
-#: backends/graphics/sdl/sdl-graphics.cpp:416
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Graphics"
 msgstr "Γραφικά"
 
@@ -1191,7 +1191,7 @@ msgstr "Επέκταση εικόνας:"
 msgid "Scaler:"
 msgstr "Κλιμάκωση:"
 
-#: gui/options.cpp:1437 backends/graphics/sdl/sdl-graphics.cpp:407
+#: gui/options.cpp:1437 backends/graphics/sdl/sdl-graphics.cpp:409
 msgid "Fullscreen mode"
 msgstr "Λειτουργία πλήρους οθόνης"
 
@@ -2826,15 +2826,15 @@ msgstr "Παράθυρο διαλόγου με πρόβλεψη κειμένου
 msgid "Confirm"
 msgstr "Επιβεβαίωση"
 
-#: graphics/renderer.cpp:30 backends/graphics/opengl/opengl-graphics.cpp:174
+#: graphics/renderer.cpp:33 backends/graphics/opengl/opengl-graphics.cpp:174
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: graphics/renderer.cpp:33
+#: graphics/renderer.cpp:36
 msgid "OpenGL with shaders"
 msgstr "OpenGL με σκιαστές"
 
-#: graphics/renderer.cpp:41
+#: graphics/renderer.cpp:44
 msgctxt "lowres"
 msgid "OpenGL with shaders"
 msgstr "OpenGL με σκιαστές"
@@ -3183,20 +3183,20 @@ msgstr "Έγινε αποθήκευση στιγμιότυπου '%s'"
 msgid "Could not save screenshot"
 msgstr "Αδυναμία αποθήκευσης στιγμιότυπου"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:409
+#: backends/graphics/sdl/sdl-graphics.cpp:411
 msgid "Windowed mode"
 msgstr "Λειτουργία παραθύρου"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:420 engines/scumm/help.cpp:85
+#: backends/graphics/sdl/sdl-graphics.cpp:422 engines/scumm/help.cpp:85
 msgid "Toggle fullscreen"
 msgstr "Λειτουργία πλήρους οθόνης"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:427 engines/scumm/help.cpp:98
+#: backends/graphics/sdl/sdl-graphics.cpp:429 engines/scumm/help.cpp:98
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
 msgstr "Εναλλαγή κράτησης ποντικιού"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:432
+#: backends/graphics/sdl/sdl-graphics.cpp:434
 #: engines/wintermute/keymapper_tables.h:646
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
@@ -3209,31 +3209,31 @@ msgstr "Εναλλαγή κράτησης ποντικιού"
 msgid "Save screenshot"
 msgstr "Αποθήκευση στιγμιότυπου"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:438
+#: backends/graphics/sdl/sdl-graphics.cpp:440
 msgid "Toggle aspect ratio correction"
 msgstr "Εναλλαγή διόρθωσης αναλογίας διαστάσεων"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:445
+#: backends/graphics/sdl/sdl-graphics.cpp:447
 msgid "Toggle linear filtered scaling"
 msgstr "Εναλλαγή χρήσης γραμμικού φίλτρου σε κλιμάκωση εικόνας"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:452
+#: backends/graphics/sdl/sdl-graphics.cpp:454
 msgid "Cycle through stretch modes"
 msgstr "Κυκλική περιήγηση στις λειτουργίες εξάπλωσης εικόνας"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:458
+#: backends/graphics/sdl/sdl-graphics.cpp:460
 msgid "Increase the scale factor"
 msgstr "Αύξηση συντελεστή κλίμακας"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:464
+#: backends/graphics/sdl/sdl-graphics.cpp:466
 msgid "Decrease the scale factor"
 msgstr "Μείωση συντελεστή κλίμακας"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:470
+#: backends/graphics/sdl/sdl-graphics.cpp:472
 msgid "Switch to the next scaler"
 msgstr "Χρήση επόμενου κλιμακωτή"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:475
+#: backends/graphics/sdl/sdl-graphics.cpp:477
 msgid "Switch to the previous scaler"
 msgstr "Χρήση προηγούμενου κλιμακωτή"
 
@@ -6149,7 +6149,7 @@ msgstr "Λειτουργία ευρείας οθόνης"
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Εικόνα ευρείας οθόνης κατά τη λειτουργία πλήρους οθόνης."
 
-#: engines/myst3/myst3.cpp:355
+#: engines/myst3/myst3.cpp:365
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
@@ -6164,7 +6164,7 @@ msgstr ""
 "Οι ενημερώσεις μπορούν να ληφθούν από εδώ:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 
-#: engines/myst3/myst3.cpp:1569 engines/pegasus/pegasus.cpp:744
+#: engines/myst3/myst3.cpp:1579 engines/pegasus/pegasus.cpp:744
 msgid "Invalid file name for saving"
 msgstr "Εσφαλμένο όνομα αρχείου για αποθήκευση"
 
