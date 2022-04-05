@@ -215,7 +215,8 @@ static const char HELP_STRING[] =
     "                           If --md5-engine=ENGINE_ID is passed, it fetches the MD5 length\n"
     "                           automatically, overriding --md5-length\n"
 	"  --md5-path=PATH          Used with --md5 to specify path of file to calculate MD5 hash of\n"
-	"  --md5-length=NUM         Used with --md5 to specify the number of bytes to be hashed\n"
+	"  --md5-length=NUM         Used with --md5 to specify the number of bytes to be hashed.\n"
+	"                           Use negative number for calculating tail md5.\n"
     "                           Is overriden when used with --md5-engine\n"
     "  --md5-engine=ENGINE_ID   Used with --md5 to specify the engine for which number of bytes\n"
     "                           to be hashed must be calculated. This option overrides --md5-length\n"
@@ -1372,11 +1373,23 @@ static int recAddGames(const Common::FSNode &dir, const Common::String &engineId
 	return count;
 }
 
-static void calcMD5(Common::FSNode &path, long int length) {
+static void calcMD5(Common::FSNode &path, int32 length) {
 	Common::SeekableReadStream *stream = path.createReadStream();
+
 	if (stream) {
+		bool tail = false;
+
+		if (length < 0) {// Tail md5 is requested
+			length = -length;
+			tail = true;
+
+			if (stream->size() > length)
+				stream->seek(-length, SEEK_END);
+		}
+
 		Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-		printf("(hash) : %s, (filename) : %s, (bytes) : %d\n", md5.c_str(), path.getName().c_str(), length && length <= stream->size() ? (int32)length : (int32)stream->size());
+		printf("(hash) : %s, (filename) : %s, (bytes) : %d%s\n", md5.c_str(), path.getName().c_str(), length && length <= stream->size() ? (int32)length : (int32)stream->size(), tail ? ", tail" : "");
+
 		delete stream;
 	} else {
 		printf("Usage : --md5 --md5-path=<PATH> [--md5-length=NUM]\n");
@@ -1683,9 +1696,11 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		Common::String filename = settings.getValOrDefault("md5-path", "scummvm");
 		Common::Path Filename(filename, '/');
 		Common::FSNode path(Filename);
-		long int md5Length = 0;
+		int32 md5Length = 0;
+
 		if (settings.contains("md5-length"))
-			md5Length = settings["md5-length"].asUint64();
+			md5Length = strtol(settings["md5-length"].c_str(), nullptr, 10);
+
 		if (settings.contains("md5-engine")) {
 			Common::String engineID = settings["md5-engine"];
 			if (engineID == "scumm") {
@@ -1700,14 +1715,15 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 
 				const AdvancedMetaEngineDetection* advEnginePtr = dynamic_cast<AdvancedMetaEngineDetection*>(&(plugin->get<MetaEngineDetection>()));
 				if (advEnginePtr == nullptr) {
-					warning("This engine doesn't support MD5 based detection");
+					warning("The requested engine (%s) doesn't support MD5-based detection", engineID.c_str());
 					return true;
 				}
-				md5Length = (long int)advEnginePtr->getMD5Bytes();
+				md5Length = (int32)advEnginePtr->getMD5Bytes();
 			}
 		}
 
 		calcMD5(path, md5Length);
+
 		return true;
 #ifdef DETECTOR_TESTING_HACK
 	} else if (command == "test-detector") {
