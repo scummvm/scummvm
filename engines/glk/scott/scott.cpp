@@ -26,6 +26,8 @@
 #include "line_drawing.h"
 #include "hulk.h"
 #include "parser.h"
+#include "game_info.h"
+#include "detect_game.h"
 #include "glk/scott/scott.h"
 #include "glk/quetzal.h"
 #include "common/config-manager.h"
@@ -41,111 +43,140 @@ Scott::Scott(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, g
 		_currentCounter(0), _savedRoom(0), _options(0), _width(0), _topHeight(0), _splitScreen(true),
 		_bottomWindow(nullptr), _topWindow(nullptr), _bitFlags(0), _saveSlot(-1), _autoInventory(0) {
 	g_vm = this;
+	_globals = new Globals();
 	Common::fill(&_nounText[0], &_nounText[16], '\0');
 	Common::fill(&_counters[0], &_counters[16], 0);
 	Common::fill(&_roomSaved[0], &_roomSaved[16], 0);
+}
+
+Scott::~Scott() {
+	delete _globals;
 }
 
 void Scott::runGame() {
 	int vb, no;
 	initialize();
 
-	_bottomWindow = glk_window_open(nullptr, 0, 0, wintype_TextBuffer, 1);
-	if (_bottomWindow == nullptr) {
+	glk_stylehint_set(wintype_TextBuffer, style_User1, stylehint_Proportional, 0);
+	glk_stylehint_set(wintype_TextBuffer, style_User1, stylehint_Indentation, 20);
+	glk_stylehint_set(wintype_TextBuffer, style_User1, stylehint_ParaIndentation, 20);
+	glk_stylehint_set(wintype_TextBuffer, style_Preformatted, stylehint_Justification, stylehint_just_Centered);
+
+	_bottomWindow = glk_window_open(0, 0, 0, wintype_TextBuffer, GLK_BUFFER_ROCK);
+	if (_bottomWindow == nullptr)
 		glk_exit();
-		return;
-	}
 	glk_set_window(_bottomWindow);
 
+	for (int i = 0; i < MAX_SYSMESS; i++) {
+		_G(_sys)[i] = g_sysDict[i];
+	}
+
+	const char **dictpointer;
+
+	if (_options & YOUARE)
+		dictpointer = g_sysDict;
+	else
+		dictpointer = g_sysDictIAm;
+
+	for (int i = 0; i < MAX_SYSMESS && dictpointer[i] != nullptr; i++) {
+		_G(_sys)[i] = dictpointer[i];
+	}
+
+	GameIDType gameType = detectGame(&_gameFile);
+
+	if (!gameType)
+		fatal("Unsupported game!");
+
+	if (gameType != SCOTTFREE && gameType != TI994A) {
+		_options |= SPECTRUM_STYLE;
+		_splitScreen = 1;
+	} else {
+		if (gameType != TI994A)
+			_options |= TRS80_STYLE;
+		_splitScreen = 1;
+	}
+
+	if (_titleScreen != nullptr) {
+		if (_splitScreen)
+			printTitleScreenGrid();
+		else
+			printTitleScreenBuffer();
+	}
+
 	if (_options & TRS80_STYLE) {
-		_width = 64;
+		_topWidth = 64;
 		_topHeight = 11;
 	} else {
-		_width = 80;
+		_topWidth = 80;
 		_topHeight = 10;
 	}
 
-	if (_splitScreen) {
-		_topWindow = glk_window_open(_bottomWindow, winmethod_Above | winmethod_Fixed, _topHeight, wintype_TextGrid, 0);
-		if (_topWindow == nullptr) {
-			_splitScreen = 0;
-			_topWindow = _bottomWindow;
-		}
-	} else {
-		_topWindow = _bottomWindow;
+	if (CURRENT_GAME == TI994A) {
+		display(_bottomWindow, "In this adventure, you may abbreviate any word \
+				by typing its first %d letters, and directions by typing \
+				one letter.\n\nDo you want to restore previously saved game?\n",
+				_G(_gameHeader)._wordLength);
+		if (yesOrNo())
+			loadGame();
+		clearScreen();
 	}
 
-	output("ScummVM support adapted from Scott Free, A Scott Adams game driver in C.\n\n");
+	openTopWindow();
+
+	if (gameType == SCOTTFREE)
+		output("ScummVM support adapted from Scott Free, A Scott Adams game driver in C.\n\n");
 
 	// Check for savegame
 	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
-	// Load the game
-	loadDatabase(&_gameFile, (_options & DEBUGGING) ? 1 : 0);
-
-	// Main game loop
-	while (!shouldQuit()) {
+	while (1) {
 		glk_tick();
 
-		performActions(0, 0);
-		if (shouldQuit())
-			break;
-
-		if (_saveSlot >= 0) {
-			// Load any savegame during startup
-			loadGameState(_saveSlot);
-			_saveSlot = -1;
+		if (!_stopTime)
+			performActions(0, 0);
+		if (!(_currentCommand && _currentCommand->_allFlag && !(_currentCommand->_allFlag & LASTALL))) {
+			_printLookToTranscript = _shouldLookInTranscript;
+			look();
+			_printLookToTranscript = _shouldLookInTranscript = 0;
 		}
 
-		look();
-
-		if (getInput(&vb, &no) == -1)
+		if (getInput(&vb, &no) == 1)
 			continue;
-		if (g_vm->shouldQuit())
-			break;
 
 		switch (performActions(vb, no)) {
-		case -1:
-			output(_("I don't understand your command. "));
+		case ER_RAN_ALL_LINES_NO_MATCH:
+			output(_G(_sys)[I_DONT_UNDERSTAND]);
 			break;
-		case -2:
-			output(_("I can't do that yet. "));
+		case ER_RAN_ALL_LINES:
+			output(_G(_sys)[YOU_CANT_DO_THAT_YET]);
 			break;
 		default:
-			break;
+			_justStarted = 0;
 		}
-		if (shouldQuit())
-			return;
 
-		// Brian Howarth games seem to use -1 for forever
-		if (_G(_items)[LIGHT_SOURCE]._location != DESTROYED && _G(_gameHeader)._lightTime != -1) {
+		/* Brian Howarth games seem to use -1 for forever */
+		if (_G(_items)[LIGHT_SOURCE]._location != DESTROYED && _G(_gameHeader)._lightTime != -1 && !_stopTime) {
 			_G(_gameHeader)._lightTime--;
 			if (_G(_gameHeader)._lightTime < 1) {
 				_bitFlags |= (1 << LIGHTOUTBIT);
-				if (_G(_items)[LIGHT_SOURCE]._location == CARRIED ||
-						_G(_items)[LIGHT_SOURCE]._location == MY_LOC) {
-					if (_options & SCOTTLIGHT)
-						output(_("Light has run out! "));
-					else
-						output(_("Your light has run out. "));
+				if (_G(_items)[LIGHT_SOURCE]._location == CARRIED || _G(_items)[LIGHT_SOURCE]._location == MY_LOC) {
+					output(_G(_sys)[LIGHT_HAS_RUN_OUT]);
 				}
-				if (_options & PREHISTORIC_LAMP)
+				if ((_options & PREHISTORIC_LAMP) || (_G(_game)->_subType & MYSTERIOUS) || CURRENT_GAME == TI994A)
 					_G(_items)[LIGHT_SOURCE]._location = DESTROYED;
 			} else if (_G(_gameHeader)._lightTime < 25) {
-				if (_G(_items)[LIGHT_SOURCE]._location == CARRIED ||
-						_G(_items)[LIGHT_SOURCE]._location == MY_LOC) {
-
-					if (_options & SCOTTLIGHT) {
-						output(_("Light runs out in "));
-						outputNumber(_G(_gameHeader)._lightTime);
-						output(_(" turns. "));
+				if (_G(_items)[LIGHT_SOURCE]._location == CARRIED || _G(_items)[LIGHT_SOURCE]._location == MY_LOC) {
+					if ((_options & SCOTTLIGHT) || (_G(_game)->_subType & MYSTERIOUS)) {
+						display(_bottomWindow, "%s %d %s\n", _G(_sys)[LIGHT_RUNS_OUT_IN], _G(_gameHeader)._lightTime, _G(_sys)[TURNS]);
 					} else {
 						if (_G(_gameHeader)._lightTime % 5 == 0)
-							output(_("Your light is growing dim. "));
+							output(_G(_sys)[LIGHT_GROWING_DIM]);
 					}
 				}
 			}
 		}
+		if (_stopTime)
+			_stopTime--;
 	}
 }
 
@@ -737,14 +768,14 @@ ActionResultType Scott::performLine(int ct) {
 			break;
 		case 1:
 #ifdef DEBUG_ACTIONS
-			debug("Does the player carry %s?\n", Items[dv].Text);
+			debug("Does the player carry %s?\n", _G(_items)[dv].Text);
 #endif
 			if (_G(_items)[dv]._location != CARRIED)
 				return ACT_FAILURE;
 			break;
 		case 2:
 #ifdef DEBUG_ACTIONS
-			debug("Is %s in location?\n", Items[dv].Text);
+			debug("Is %s in location?\n", _G(_items)[dv].Text);
 #endif
 			if (_G(_items)[dv]._location != MY_LOC)
 				return ACT_FAILURE;
@@ -1921,7 +1952,7 @@ void Scott::swapItemLocations(int itemA, int itemB) {
 void Scott::putItemAInRoomB(int itemA, int roomB) {
 #ifdef DEBUG_ACTIONS
 	debug("Item %d (%s) is put in room %d (%s). MY_LOC: %d (%s)\n",
-			itemA, Items[arg1].Text, roomB, _G(_rooms)[roomB].Text, MY_LOC,
+			itemA, _G(_items)[arg1].Text, roomB, _G(_rooms)[roomB].Text, MY_LOC,
 			_G(_rooms)[MY_LOC].Text);
 #endif
 	if (_G(_items)[itemA]._location == MY_LOC)
@@ -1979,6 +2010,45 @@ void Scott::printTakenOrDropped(int index) {
 	if ((!(_currentCommand->_allFlag & LASTALL)) || _splitScreen == 0) {
 		output("\n");
 	}
+}
+
+void Scott::printTitleScreenBuffer() {
+	glk_stream_set_current(glk_window_get_stream(_bottomWindow));
+	glk_set_style(style_User1);
+	clearScreen();
+	output(_titleScreen);
+	glk_set_style(style_Normal);
+	hitEnter();
+	clearScreen();
+}
+
+void Scott::printTitleScreenGrid() {
+	int titleLength = _titleScreen.size();
+	int rows = 0;
+	for (int i = 0; i < titleLength; i++)
+		if (_titleScreen[i] == '\n')
+			rows++;
+	winid_t titlewin = glk_window_open(_bottomWindow, winmethod_Above | winmethod_Fixed, rows + 2,
+									   wintype_TextGrid, 0);
+	glui32 width, height;
+	glk_window_get_size(titlewin, &width, &height);
+	if (width < 40 || height < rows + 2) {
+		glk_window_close(titlewin, nullptr);
+		printTitleScreenBuffer();
+		return;
+	}
+	int offset = (width - 40) / 2;
+	int pos = 0;
+	char row[40];
+	row[39] = 0;
+	for (int i = 1; i <= rows; i++) {
+		glk_window_move_cursor(titlewin, offset, i);
+		while (_titleScreen[pos] != '\n' && pos < titleLength)
+			display(titlewin, "%c", _titleScreen[pos++]);
+		pos++;
+	}
+	hitEnter();
+	glk_window_close(titlewin, nullptr);
 }
 
 void writeToRoomDescriptionStream(const char *fmt, ...) {

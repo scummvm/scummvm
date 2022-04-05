@@ -35,6 +35,7 @@ namespace Glk {
 namespace Scott {
 
 struct Command;
+class Globals;
 
 #define LIGHT_SOURCE    9   // Always 9 how odd
 #define CARRIED     255     // Carried
@@ -129,6 +130,7 @@ struct Tail {
  */
 class Scott : public GlkAPI {
 private:
+	Globals *_globals;
 	int _lightRefill;
 	char _nounText[16];
 	int _counters[16];   ///< Range unknown
@@ -145,9 +147,11 @@ private:
 	winid_t _bottomWindow, _topWindow;
 	uint32 _bitFlags;    ///< Might be >32 flags - I haven't seen >32 yet
 	int _saveSlot;		 ///< Save slot when loading savegame from launcher
+	Common::String _titleScreen;
 
 	Command *_currentCommand = nullptr;
 
+	int _justStarted = 0;
 	int _shouldRestart = 0;
 	int _stopTime = 0;
 
@@ -169,7 +173,6 @@ private:
 	void updateSettings();
 	void updates(event_t ev);
 	void delay(int seconds);
-	void fatal(const char *x);
 	void clearScreen(void);
 	bool randomPercent(uint n);
 	int countCarried(void);
@@ -215,11 +218,14 @@ private:
 	void printMessage(int index);
 	void playerIsDead();
 	void printTakenOrDropped(int index);
+	void printTitleScreenBuffer();
+	void printTitleScreenGrid();
 
 public:
 	void drawImage(int image);
 	void output(const Common::String &a);
 	void output(const Common::U32String &a);
+	void fatal(const char *x);
 	void hitEnter();
 
 public:
@@ -227,6 +233,11 @@ public:
 	 * Constructor
 	 */
 	Scott(OSystem *syst, const GlkGameDescription &gameDesc);
+
+	/**
+	 * Destructor
+	 */
+	~Scott();
 
 	/**
 	 * Returns the running interpreter type
