@@ -165,20 +165,15 @@ void init_room() {
 
 void init_atds() {
 	// Close any prior handles
-	_G(atds)->close_handle(AAD_DATA);
-	_G(atds)->close_handle(ATS_DATA);
-	_G(atds)->close_handle(ADS_DATA);
-	_G(atds)->close_handle(INV_USE_DATA);
-	_G(atds)->close_handle(INV_ATS_DATA);
-	_G(atds)->close_handle(ATDS_HANDLE);
+	_G(atds)->close_handle();
 
 	// New set up
-	Common::Stream *handle = _G(atds)->pool_handle(ATDS_TXT);
-	_G(atds)->set_handle(ATDS_TXT, ATS_DATA, handle, ATS_TAP_OFF, ATS_TAP_MAX);
-	_G(atds)->set_handle(ATDS_TXT, INV_ATS_DATA, handle, INV_TAP_OFF, INV_TAP_MAX);
-	_G(atds)->set_handle(ATDS_TXT, AAD_DATA, handle, AAD_TAP_OFF, AAD_TAP_MAX);
-	_G(atds)->set_handle(ATDS_TXT, ADS_DATA, handle, ADS_TAP_OFF, ADS_TAP_MAX);
-	_G(atds)->set_handle(ATDS_TXT, INV_USE_DATA, handle, USE_TAP_OFF, USE_TAP_MAX);
+	_G(atds)->pool_handle(ATDS_TXT);
+	_G(atds)->set_handle(ATDS_TXT, ATS_DATA, ATS_TAP_OFF, ATS_TAP_MAX);
+	_G(atds)->set_handle(ATDS_TXT, INV_ATS_DATA, INV_TAP_OFF, INV_TAP_MAX);
+	_G(atds)->set_handle(ATDS_TXT, AAD_DATA, AAD_TAP_OFF, AAD_TAP_MAX);
+	_G(atds)->set_handle(ATDS_TXT, ADS_DATA, ADS_TAP_OFF, ADS_TAP_MAX);
+	_G(atds)->set_handle(ATDS_TXT, INV_USE_DATA, USE_TAP_OFF, USE_TAP_MAX);
 	_G(gameState).AadSilent = 10;
 	_G(gameState).DelaySpeed = 5;
 	_G(spieler_vector)[P_CHEWY].Delay = _G(gameState).DelaySpeed;
