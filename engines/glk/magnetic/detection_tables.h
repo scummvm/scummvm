@@ -34,7 +34,7 @@ const PlainGameDescriptor MAGNETIC_GAME_LIST[] = {
 	{ "guild", "The Guild of Thieves" },
 	{ "jinxter", "Jinxter" },
 	{ "myth", "Myth" },
-	{ "pawn", "the Pawn" },
+	{ "pawn", "The Pawn" },
 	{ "wonderland", "Wonderland" },
 
 	{ nullptr, nullptr }
