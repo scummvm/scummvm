@@ -98,7 +98,10 @@ hline: 	CTOK NUM {
 	}
 	| PTOK NUM NUM { debugC(1, kHypnoDebugParser, "P %d %d", $2, $3); }
 	| ATOK NUM NUM { debugC(1, kHypnoDebugParser, "A %d %d", $2, $3); }
-	| MTOK FILENAME { debugC(1, kHypnoDebugParser, "M %s", $2); }
+	| MTOK FILENAME {
+		debugC(1, kHypnoDebugParser, "M %s", $2);
+		g_parsedArc->maskVideo = $2;
+	}
 	| UTOK NUM NUM NUM NUM { debugC(1, kHypnoDebugParser, "U %d %d %d %d", $2, $3, $4, $5); }
 	| VTOK NUM NUM { debugC(1, kHypnoDebugParser, "V %d %d", $2, $3); }
 	| VTOK RESTOK { debugC(1, kHypnoDebugParser, "V 320,200"); }
@@ -431,10 +434,15 @@ bline: FNTOK FILENAME {
 	}
 	| LTOK NUM {
 		debugC(1, kHypnoDebugParser, "L %d", $2);
+		FrameInfo fi($2-1, 0);
+		shoot->bodyFrames.push_back(fi);
 	}
-	| MTOK NUM { debugC(1, kHypnoDebugParser, "M %d", $2); }
+	| MTOK NUM { debugC(1, kHypnoDebugParser, "M %d", $2);
+		shoot->missedAnimation = $2;
+	}
 	| KTOK NUM { debugC(1, kHypnoDebugParser, "K %d", $2);
-		shoot->maskOffset = $2;
+		FrameInfo fi($2, 1);
+		shoot->explosionFrames.push_back(fi);
 	}
 	| SNTOK FILENAME enc {
 		if (Common::String("S0") == $1)

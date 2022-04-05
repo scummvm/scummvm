@@ -182,6 +182,7 @@ public:
 	uint32 _transparentColor;
 	Common::Rect screenRect;
 	void updateScreen(MVideo &video);
+	void updateVideo(MVideo &video);
 	void drawScreen();
 
 	// intros
@@ -207,6 +208,8 @@ public:
 	Videos _escapeSequentialVideoToPlay;
 	Videos _videosPlaying;
 	Videos _videosLooping;
+	MVideo *_masks;
+	const Graphics::Surface *_mask;
 
 	// Sounds
 	Filename _soundPath;
@@ -219,7 +222,7 @@ public:
 	uint32 _currentPlayerPosition;
 	uint32 _lastPlayerPosition;
 	virtual Common::Point computeTargetPosition(const Common::Point &mousePos);
-	int detectTarget(const Common::Point &mousePos);
+	virtual int detectTarget(const Common::Point &mousePos);
 	virtual bool clickedPrimaryShoot(const Common::Point &mousePos);
 	virtual bool clickedSecondaryShoot(const Common::Point &mousePos);
 	virtual void drawShoot(const Common::Point &mousePos);
@@ -452,10 +455,15 @@ public:
 	Common::String findNextLevel(const Common::String &level) override;
 
 	void runBeforeArcade(ArcadeShooting *arc) override;
+	int detectTarget(const Common::Point &mousePos) override;
+	void shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background) override;
+
+	void missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) override;
 	void drawHealth() override;
 	void drawShoot(const Common::Point &target) override;
 	void hitPlayer() override;
 	void drawPlayer() override;
+	void findNextSegment(ArcadeShooting *arc) override;
 	void initSegment(ArcadeShooting *arc) override;
 };
 

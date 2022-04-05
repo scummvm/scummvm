@@ -81,4 +81,55 @@ void BoyzEngine::initSegment(ArcadeShooting *arc) {
 	_segmentIdx = _segmentOffset;
 }
 
+void BoyzEngine::findNextSegment(ArcadeShooting *arc) {
+	_segmentIdx = _segmentIdx + 1;
+}
+
+int BoyzEngine::detectTarget(const Common::Point &mousePos) {
+	Common::Point target = computeTargetPosition(mousePos);
+	assert(_shoots.size() <= 1);
+	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
+		if (_mask->getPixel(target.x, target.y) == 1)
+			return 0;
+	}
+	return -1;
+}
+
+void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background) {
+	incShotsFired();
+	int i = detectTarget(mousePos);
+	if (i < 0) {
+		missNoTarget(arc, background);
+	} else {
+		if (!_shoots[i].hitSound.empty())
+			playSound(_soundPath + _shoots[i].hitSound, 1);
+
+		incEnemyHits();
+		if (!_shoots[i].deathSound.empty())
+			playSound(_soundPath + _shoots[i].deathSound, 1);
+
+		incTargetsDestroyed();
+		incScore(_shoots[i].pointsToShoot);
+		incBonus(_shoots[i].pointsToShoot);
+		_shoots[i].destroyed = true;
+		background.decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
+		_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
+		_shoots.clear();
+	}
+}
+
+void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {
+	if (s->missedAnimation == uint32(-1)) {
+		uint32 last = background.decoder->getFrameCount()-1;
+		background.decoder->forceSeekToFrame(last);
+		_masks->decoder->forceSeekToFrame(last);
+		return;
+	}
+
+	s->missedAnimation = s->missedAnimation + 3;
+	background.decoder->forceSeekToFrame(s->missedAnimation);
+	_masks->decoder->forceSeekToFrame(s->missedAnimation);
+}
+
+
 } // namespace Hypno

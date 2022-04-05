@@ -376,7 +376,7 @@ public:
 		attackWeight = 0;
 		paletteOffset = 0;
 		paletteSize = 0;
-		maskOffset = 0;
+		missedAnimation = 0;
 		objKillsCount = 0;
 		objMissesCount = 0;
 		animation = "NONE";
@@ -405,7 +405,7 @@ public:
 	uint32 paletteSize;
 
 	// Mask
-	uint32 maskOffset;
+	uint32 missedAnimation;
 
 	// Sounds
 	Filename enemySound;
@@ -491,6 +491,7 @@ public:
 		transitionVideos.clear();
 		transitionTimes.clear();
 		transitionPalettes.clear();
+		maskVideo.clear();
 		player.clear();
 		shoots.clear();
 		intros.clear();
@@ -534,6 +535,7 @@ public:
 
 	Filename backgroundVideo;
 	Filename backgroundPalette;
+	Filename maskVideo;
 	Filename player;
 	int health;
 	Shoots shoots;

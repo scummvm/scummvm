@@ -185,12 +185,21 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	debugC(1, kHypnoDebugArcade, "Starting segment of type %x", segments[_segmentIdx].type);
 	_shoots.clear();
 	_skipLevel = false;
+	_mask = nullptr;
+	_masks = nullptr;
 
 	Common::Point offset;
 	MVideo background = MVideo(arc->backgroundVideo, offset, false, false, false);
 
 	drawCursorArcade(mousePos);
 	playVideo(background);
+
+	if (!arc->maskVideo.empty()) {
+		_masks = new MVideo(arc->maskVideo, offset, false, false, false);
+		playVideo(*_masks);
+		_mask = _masks->decoder->decodeNextFrame();
+	}
+
 	float rate = background.decoder->getFrameRate().toDouble();
 	if (rate < 10) {
 		debugC(1, kHypnoDebugArcade, "Used frame rate looks odd: %f, increasing x 10", rate);
@@ -296,6 +305,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		if (needsUpdate) {
 			drawScreen();
 			updateScreen(background);
+			if (!arc->maskVideo.empty() && _masks->decoder->needsUpdate())
+				_mask = _masks->decoder->decodeNextFrame();
 		}
 
 		if (_health <= 0) {
@@ -412,8 +423,12 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 					if (it->name == si.name) {
 						Shoot s = *it;
 						s.startFrame = si.timestamp;
-						if (it->maskOffset > 0) {
-							// TODO
+						if (_masks) {
+							s.startFrame = 0;
+							if (_shoots.size() == 0)
+								_shoots.push_back(s);
+							else
+								_shoots[0] = s;
 						} else if (it->animation == "NONE") {
 							if ((uint32)(it->name[0]) == _currentPlayerPosition) {
 								_health = _health - it->attackWeight;
@@ -521,6 +536,13 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 	if (background.decoder)
 		skipVideo(background);
+
+	if (_masks) {
+		skipVideo(*_masks);
+		delete _masks;
+		_mask = nullptr;
+		_masks = nullptr;
+	}
 
 	stopSound();
 	_music.clear();
