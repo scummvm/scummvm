@@ -168,8 +168,5 @@ Short options are listed where they are available.
         ``--version``,``-v``,"Displays ScummVM version information and exits"
         ``--md5``,,"Shows MD5 hash of the file given by ``--md5-path=PATH``. If ``--md5-length=NUM`` is passed then it shows the MD5 hash of the first ``NUM`` bytes of the file given by ``PATH``. If ``--md5-engine=ENGINE_ID`` option is passed then it auto-calculates the required bytes and its hash, overriding ``--md5-length``"
         ``--md5-path=PATH``,,"Used with ``--md5`` to specify path of file to calculate MD5 hash of (default: ./scummvm)"
-        ``--md5-length=NUM``,,"Used with ``--md5`` to specify the number of bytes to be hashed. If ``NUM`` is 0, MD5 hash of the whole file is calculated. Is overriden if passed with ``--md5-engine`` option. (default: 0)"
+        ``--md5-length=NUM``,,"Used with ``--md5`` to specify the number of bytes to be hashed. If ``NUM`` is 0, MD5 hash of the whole file is calculated. Of ``NUM`` is negative, the MD5 hash is calculated from the tail. Is overriden if passed with ``--md5-engine`` option. (default: 0)"
         ``--md5-engine=ENGINE_ID``,,"Used with ``--md5`` to specify engine of game for which hash is to be calculated. Overrides ``--md5-length`` if passed with it"
-
-
-
