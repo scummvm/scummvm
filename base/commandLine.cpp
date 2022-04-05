@@ -1703,7 +1703,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 					warning("This engine doesn't support MD5 based detection");
 					return true;
 				}
-				md5Length = (long int) advEnginePtr->getMD5Bytes();
+				md5Length = (long int)advEnginePtr->getMD5Bytes();
 			}
 		}
 
