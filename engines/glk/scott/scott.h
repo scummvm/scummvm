@@ -131,7 +131,6 @@ struct Tail {
 class Scott : public GlkAPI {
 private:
 	Globals *_globals;
-	int _lightRefill;
 	char _nounText[16];
 	int _counters[16];   ///< Range unknown
 	int _currentCounter;
@@ -144,7 +143,6 @@ private:
 
 	int _autoInventory;
 	bool _splitScreen;
-	winid_t _bottomWindow, _topWindow;
 	uint32 _bitFlags;    ///< Might be >32 flags - I haven't seen >32 yet
 	int _saveSlot;		 ///< Save slot when loading savegame from launcher
 	Common::String _titleScreen;
@@ -168,8 +166,6 @@ private:
 	 */
 	void initialize();
 
-	void display(winid_t w, const char *fmt, ...);
-	void display(winid_t w, const Common::U32String fmt, ...);
 	void updateSettings();
 	void updates(event_t ev);
 	void delay(int seconds);
@@ -225,6 +221,8 @@ public:
 	void drawImage(int image);
 	void output(const Common::String &a);
 	void output(const Common::U32String &a);
+	void display(winid_t w, const char *fmt, ...);
+	void display(winid_t w, const Common::U32String fmt, ...);
 	void fatal(const char *x);
 	void hitEnter();
 

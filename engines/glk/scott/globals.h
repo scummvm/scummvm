@@ -27,12 +27,16 @@ public:
 	Common::StringArray _messages;
 	Common::Array<Action> _actions;
 	Common::StringArray _sys;
+	Common::StringArray _systemMessages;
 	GameInfo *_game;
 	winid_t _graphics;
 	uint8_t *_entireFile;
 	size_t _fileLength;
 	strid_t _roomDescriptionStream;
 	int _fileBaselineOffset;
+	int _header[24];
+	int _lightRefill;
+	winid_t _bottomWindow, _topWindow;
 
 	//sagadraw
 	int _drawToBuffer;
@@ -56,7 +60,7 @@ public:
 
 
 	//line_drawing
-	LineImage *_lineImages;
+	Common::Array<LineImage> _lineImages;
 	VectorStateType _vectorState;
 	PixelToDraw **_pixelsToDraw;
 	int _totalDrawInstructions;

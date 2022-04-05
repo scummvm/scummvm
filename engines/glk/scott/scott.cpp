@@ -41,7 +41,7 @@ Scott *g_vm;
 
 Scott::Scott(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 		_currentCounter(0), _savedRoom(0), _options(0), _width(0), _topHeight(0), _splitScreen(true),
-		_bottomWindow(nullptr), _topWindow(nullptr), _bitFlags(0), _saveSlot(-1), _autoInventory(0) {
+		_bitFlags(0), _saveSlot(-1), _autoInventory(0) {
 	g_vm = this;
 	_globals = new Globals();
 	Common::fill(&_nounText[0], &_nounText[16], '\0');
@@ -62,10 +62,10 @@ void Scott::runGame() {
 	glk_stylehint_set(wintype_TextBuffer, style_User1, stylehint_ParaIndentation, 20);
 	glk_stylehint_set(wintype_TextBuffer, style_Preformatted, stylehint_Justification, stylehint_just_Centered);
 
-	_bottomWindow = glk_window_open(0, 0, 0, wintype_TextBuffer, GLK_BUFFER_ROCK);
-	if (_bottomWindow == nullptr)
+	_G(_bottomWindow) = glk_window_open(0, 0, 0, wintype_TextBuffer, GLK_BUFFER_ROCK);
+	if (_G(_bottomWindow) == nullptr)
 		glk_exit();
-	glk_set_window(_bottomWindow);
+	glk_set_window(_G(_bottomWindow));
 
 	for (int i = 0; i < MAX_SYSMESS; i++) {
 		_G(_sys)[i] = g_sysDict[i];
@@ -112,7 +112,7 @@ void Scott::runGame() {
 	}
 
 	if (CURRENT_GAME == TI994A) {
-		display(_bottomWindow, "In this adventure, you may abbreviate any word \
+		display(_G(_bottomWindow), "In this adventure, you may abbreviate any word \
 				by typing its first %d letters, and directions by typing \
 				one letter.\n\nDo you want to restore previously saved game?\n",
 				_G(_gameHeader)._wordLength);
@@ -167,7 +167,7 @@ void Scott::runGame() {
 			} else if (_G(_gameHeader)._lightTime < 25) {
 				if (_G(_items)[LIGHT_SOURCE]._location == CARRIED || _G(_items)[LIGHT_SOURCE]._location == MY_LOC) {
 					if ((_options & SCOTTLIGHT) || (_G(_game)->_subType & MYSTERIOUS)) {
-						display(_bottomWindow, "%s %d %s\n", _G(_sys)[LIGHT_RUNS_OUT_IN], _G(_gameHeader)._lightTime, _G(_sys)[TURNS]);
+						display(_G(_bottomWindow), "%s %d %s\n", _G(_sys)[LIGHT_RUNS_OUT_IN], _G(_gameHeader)._lightTime, _G(_sys)[TURNS]);
 					} else {
 						if (_G(_gameHeader)._lightTime % 5 == 0)
 							output(_G(_sys)[LIGHT_GROWING_DIM]);
@@ -270,8 +270,8 @@ void Scott::delay(int seconds) {
 	if (!glk_gestalt(gestalt_Timer, 0))
 		return;
 
-	glk_request_char_event(_bottomWindow);
-	glk_cancel_char_event(_bottomWindow);
+	glk_request_char_event(_G(_bottomWindow));
+	glk_cancel_char_event(_G(_bottomWindow));
 
 	if (drawingVector()) {
 		do {
@@ -293,12 +293,12 @@ void Scott::delay(int seconds) {
 }
 
 void Scott::fatal(const char *x) {
-	display(_bottomWindow, "%s\n", x);
+	display(_G(_bottomWindow), "%s\n", x);
 	cleanupAndExit();
 }
 
 void Scott::clearScreen(void) {
-	glk_window_clear(_bottomWindow);
+	glk_window_clear(_G(_bottomWindow));
 }
 
 bool Scott::randomPercent(uint n) {
@@ -416,7 +416,7 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 	_G(_gameHeader)._playerRoom = pr;
 	_G(_gameHeader)._treasures = tr;
 	_G(_gameHeader)._lightTime = lt;
-	_lightRefill = lt;
+	_G(_lightRefill) = lt;
 	_G(_gameHeader)._numMessages = mn;
 	_G(_messages).resize(mn + 1);
 	_G(_gameHeader)._treasureRoom = trm;
@@ -494,22 +494,22 @@ void Scott::loadDatabase(Common::SeekableReadStream *f, bool loud) {
 
 void Scott::output(const Common::String &a) {
 	if (_saveSlot == -1)
-		display(_bottomWindow, "%s", a.c_str());
+		display(_G(_bottomWindow), "%s", a.c_str());
 }
 
 void Scott::output(const Common::U32String &a) {
 	if (_saveSlot == -1)
-		display(_bottomWindow, Common::U32String("%S"), a.c_str());
+		display(_G(_bottomWindow), Common::U32String("%S"), a.c_str());
 }
 
 void Scott::outputNumber(int a) {
-	display(_bottomWindow, "%d", a);
+	display(_G(_bottomWindow), "%d", a);
 }
 
 void Scott::look(void) {
 	drawRoomImage();
 
-	if (_splitScreen && _topWindow == nullptr)
+	if (_splitScreen && _G(_topWindow) == nullptr)
 		return;
 
 	char *buf = new char[1000];
@@ -608,7 +608,7 @@ int Scott::whichWord(const char *word, const Common::StringArray &list) {
 void Scott::lineInput(char *buf, size_t n) {
 	event_t ev;
 
-	glk_request_line_event(_bottomWindow, buf, n - 1, 0);
+	glk_request_line_event(_G(_bottomWindow), buf, n - 1, 0);
 
 	do {
 		glk_select(&ev);
@@ -1025,7 +1025,7 @@ ActionResultType Scott::performLine(int ct) {
 				_bitFlags &= ~(1 << 0);
 				break;
 			case 69:
-				_G(_gameHeader)._lightTime = _lightRefill;
+				_G(_gameHeader)._lightTime = _G(_lightRefill);
 				_G(_items)[LIGHT_SOURCE]._location = CARRIED;
 				_bitFlags &= ~(1 << LIGHTOUTBIT);
 				break;
@@ -1435,17 +1435,17 @@ void Scott::flushRoomDescription(char *buf) {
 	int printDelimiter = (_options & (TRS80_STYLE | SPECTRUM_STYLE | TI994A_STYLE));
 
 	if (_splitScreen) {
-		glk_window_clear(_topWindow);
-		glk_window_get_size(_topWindow, (uint *)&_topWidth, (uint *)&_topHeight);
+		glk_window_clear(_G(_topWindow));
+		glk_window_get_size(_G(_topWindow), (uint *)&_topWidth, (uint *)&_topHeight);
 		int rows, length;
 		char *textWithBreaks = lineBreakText(buf, _topWidth, &rows, &length);
 
 		glui32 bottomheight;
-		glk_window_get_size(_bottomWindow, nullptr, &bottomheight);
-		winid_t o2 = glk_window_get_parent(_topWindow);
+		glk_window_get_size(_G(_bottomWindow), nullptr, &bottomheight);
+		winid_t o2 = glk_window_get_parent(_G(_topWindow));
 		if (!(bottomheight < 3 && _topHeight < rows)) {
-			glk_window_get_size(_topWindow, (uint *)&_topWidth, (uint *)&_topHeight);
-			glk_window_set_arrangement(o2, winmethod_Above | winmethod_Fixed, rows, _topWindow);
+			glk_window_get_size(_G(_topWindow), (uint *)&_topWidth, (uint *)&_topHeight);
+			glk_window_set_arrangement(o2, winmethod_Above | winmethod_Fixed, rows, _G(_topWindow));
 		} else {
 			printDelimiter = 0;
 		}
@@ -1466,19 +1466,19 @@ void Scott::flushRoomDescription(char *buf) {
 			string[i] = 0;
 			if (strlen(string) == 0)
 				break;
-			glk_window_move_cursor(_topWindow, 0, line);
-			display(_topWindow, "%s", string);
+			glk_window_move_cursor(_G(_topWindow), 0, line);
+			display(_G(_topWindow), "%s", string);
 		}
 		delete[] string;
 
 		if (line < rows - 1) {
-			glk_window_get_size(_topWindow, (uint *)&_topWidth, (uint *)&_topHeight);
-			glk_window_set_arrangement(o2, winmethod_Above | winmethod_Fixed, MIN(rows - 1, _topHeight - 1), _topWindow);
+			glk_window_get_size(_G(_topWindow), (uint *)&_topWidth, (uint *)&_topHeight);
+			glk_window_set_arrangement(o2, winmethod_Above | winmethod_Fixed, MIN(rows - 1, _topHeight - 1), _G(_topWindow));
 		}
 
 		delete[] textWithBreaks;
 	} else {
-		display(_bottomWindow, "%s", buf);
+		display(_G(_bottomWindow), "%s", buf);
 	}
 
 	if (printDelimiter) {
@@ -1498,9 +1498,9 @@ void Scott::flushRoomDescription(char *buf) {
 }
 
 void Scott::printWindowDelimiter() {
-	glk_window_get_size(_topWindow, (uint *)&_topWidth, (uint *)&_topHeight);
-	glk_window_move_cursor(_topWindow, 0, _topHeight - 1);
-	glk_stream_set_current(glk_window_get_stream(_topWindow));
+	glk_window_get_size(_G(_topWindow), (uint *)&_topWidth, (uint *)&_topHeight);
+	glk_window_move_cursor(_G(_topWindow), 0, _topHeight - 1);
+	glk_stream_set_current(glk_window_get_stream(_G(_topWindow)));
 	if (_options & SPECTRUM_STYLE)
 		for (int i = 0; i < _topWidth; i++)
 			glk_put_char('*');
@@ -1605,7 +1605,7 @@ void Scott::closeGraphicsWindow() {
 	if (_G(_graphics)) {
 		glk_window_close(_G(_graphics), nullptr);
 		_G(_graphics) = nullptr;
-		glk_window_get_size(_topWindow, (uint *)&_topWidth, (uint *)&_topHeight);
+		glk_window_get_size(_G(_topWindow), (uint *)&_topWidth, (uint *)&_topHeight);
 	}
 }
 
@@ -1625,14 +1625,14 @@ void Scott::openGraphicsWindow() {
 		return;
 	glui32 graphwidth, graphheight, optimalWidth, optimalHeight;
 
-	if (_topWindow == nullptr)
-		_topWindow = findGlkWindowWithRock(GLK_STATUS_ROCK);
+	if (_G(_topWindow) == nullptr)
+		_G(_topWindow) = findGlkWindowWithRock(GLK_STATUS_ROCK);
 	if (_G(_graphics) == nullptr)
 		_G(_graphics) = findGlkWindowWithRock(GLK_GRAPHICS_ROCK);
-	if (_G(_graphics) == nullptr && _topWindow != nullptr) {
-		glk_window_get_size(_topWindow, (uint *)&_topWidth, (uint *)&_topHeight);
-		glk_window_close(_topWindow, nullptr);
-		_G(_graphics) = glk_window_open(_bottomWindow, winmethod_Above | winmethod_Proportional, 60, wintype_Graphics, GLK_GRAPHICS_ROCK);
+	if (_G(_graphics) == nullptr && _G(_topWindow) != nullptr) {
+		glk_window_get_size(_G(_topWindow), (uint *)&_topWidth, (uint *)&_topHeight);
+		glk_window_close(_G(_topWindow), nullptr);
+		_G(_graphics) = glk_window_open(_G(_bottomWindow), winmethod_Above | winmethod_Proportional, 60, wintype_Graphics, GLK_GRAPHICS_ROCK);
 		glk_window_get_size(_G(_graphics), &graphwidth, &graphheight);
 		_G(_pixelSize) = optimalPictureSize(&optimalWidth, &optimalHeight);
 		_G(_xOffset) = ((int)graphwidth - (int)optimalWidth) / 2;
@@ -1644,16 +1644,16 @@ void Scott::openGraphicsWindow() {
 
 		// Set the graphics window background to match the main window background, best as we can, and clear the window. 
 		glui32 backgroundColor;
-		if (glk_style_measure(_bottomWindow, style_Normal, stylehint_BackColor, &backgroundColor)) {
+		if (glk_style_measure(_G(_bottomWindow), style_Normal, stylehint_BackColor, &backgroundColor)) {
 			glk_window_set_background_color(_G(_graphics), backgroundColor);
 			glk_window_clear(_G(_graphics));
 		}
 
-		_topWindow = glk_window_open(_bottomWindow, winmethod_Above | winmethod_Fixed, _topHeight, wintype_TextGrid, GLK_STATUS_ROCK);
-		glk_window_get_size(_topWindow, (uint *)&_topWidth, (uint *)&_topHeight);
+		_G(_topWindow) = glk_window_open(_G(_bottomWindow), winmethod_Above | winmethod_Fixed, _topHeight, wintype_TextGrid, GLK_STATUS_ROCK);
+		glk_window_get_size(_G(_topWindow), (uint *)&_topWidth, (uint *)&_topHeight);
 	} else {
 		if (!_G(_graphics))
-			_G(_graphics) = glk_window_open(_bottomWindow, winmethod_Above | winmethod_Proportional, 60, wintype_Graphics, GLK_GRAPHICS_ROCK);
+			_G(_graphics) = glk_window_open(_G(_bottomWindow), winmethod_Above | winmethod_Proportional, 60, wintype_Graphics, GLK_GRAPHICS_ROCK);
 		glk_window_get_size(_G(_graphics), &graphwidth, &graphheight);
 		_G(_pixelSize) = optimalPictureSize(&optimalWidth, &optimalHeight);
 		_G(_xOffset) = (graphwidth - optimalWidth) / 2;
@@ -1682,18 +1682,18 @@ const glui32 Scott::optimalPictureSize(glui32 *width, glui32 *height) {
 }
 
 void Scott::openTopWindow() {
-	_topWindow = findGlkWindowWithRock(GLK_STATUS_ROCK);
-	if (_topWindow == NULL) {
+	_G(_topWindow) = findGlkWindowWithRock(GLK_STATUS_ROCK);
+	if (_G(_topWindow) == NULL) {
 		if (_splitScreen) {
-			_topWindow = glk_window_open(_bottomWindow, winmethod_Above | winmethod_Fixed, _topHeight, wintype_TextGrid, GLK_STATUS_ROCK);
-			if (_topWindow == NULL) {
+			_G(_topWindow) = glk_window_open(_G(_bottomWindow), winmethod_Above | winmethod_Fixed, _topHeight, wintype_TextGrid, GLK_STATUS_ROCK);
+			if (_G(_topWindow) == NULL) {
 				_splitScreen = 0;
-				_topWindow = _bottomWindow;
+				_G(_topWindow) = _G(_bottomWindow);
 			} else {
-				glk_window_get_size(_topWindow, (uint *)&_topWidth, NULL);
+				glk_window_get_size(_G(_topWindow), (uint *)&_topWidth, NULL);
 			}
 		} else {
-			_topWindow = _bottomWindow;
+			_G(_topWindow) = _G(_bottomWindow);
 		}
 	}
 }
@@ -1793,7 +1793,7 @@ void Scott::drawRoomImage() {
 }
 
 int Scott::yesOrNo() {
-	glk_request_char_event(_bottomWindow);
+	glk_request_char_event(_G(_bottomWindow));
 
 	event_t ev;
 	int result = 0;
@@ -1810,7 +1810,7 @@ int Scott::yesOrNo() {
 				result = 2;
 			} else {
 				output(_G(_sys)[ANSWER_YES_OR_NO]);
-				glk_request_char_event(_bottomWindow);
+				glk_request_char_event(_G(_bottomWindow));
 			}
 		} else
 			updates(ev);
@@ -1820,7 +1820,7 @@ int Scott::yesOrNo() {
 }
 
 void Scott::hitEnter() {
-	glk_request_char_event(_bottomWindow);
+	glk_request_char_event(_G(_bottomWindow));
 
 	event_t ev;
 	int result = 0;
@@ -1830,7 +1830,7 @@ void Scott::hitEnter() {
 			if (ev.val1 == keycode_Return) {
 				result = 1;
 			} else {
-				glk_request_char_event(_bottomWindow);
+				glk_request_char_event(_G(_bottomWindow));
 			}
 		} else
 			updates(ev);
@@ -1883,7 +1883,7 @@ void Scott::lookWithPause() {
 }
 
 void Scott::doneIt() {
-	if (_splitScreen && _topWindow)
+	if (_splitScreen && _G(_topWindow))
 		look();
 	output("\n\n");
 	output(_G(_sys)[PLAY_AGAIN]);
@@ -1903,7 +1903,7 @@ int Scott::printScore() {
 			n++;
 		i++;
 	}
-	display(_bottomWindow, "%s %d %s%s %d.\n", _G(_sys)[IVE_STORED], n, _G(_sys)[TREASURES],
+	display(_G(_bottomWindow), "%s %d %s%s %d.\n", _G(_sys)[IVE_STORED], n, _G(_sys)[TREASURES],
 			_G(_sys)[ON_A_SCALE_THAT_RATES], (n * 100) / _G(_gameHeader)._treasures);
 	if (n == _G(_gameHeader)._treasures) {
 		output(_G(_sys)[YOUVE_SOLVED_IT]);
@@ -2013,7 +2013,7 @@ void Scott::printTakenOrDropped(int index) {
 }
 
 void Scott::printTitleScreenBuffer() {
-	glk_stream_set_current(glk_window_get_stream(_bottomWindow));
+	glk_stream_set_current(glk_window_get_stream(_G(_bottomWindow)));
 	glk_set_style(style_User1);
 	clearScreen();
 	output(_titleScreen);
@@ -2028,7 +2028,7 @@ void Scott::printTitleScreenGrid() {
 	for (int i = 0; i < titleLength; i++)
 		if (_titleScreen[i] == '\n')
 			rows++;
-	winid_t titlewin = glk_window_open(_bottomWindow, winmethod_Above | winmethod_Fixed, rows + 2,
+	winid_t titlewin = glk_window_open(_G(_bottomWindow), winmethod_Above | winmethod_Fixed, rows + 2,
 									   wintype_TextGrid, 0);
 	glui32 width, height;
 	glk_window_get_size(titlewin, &width, &height);
