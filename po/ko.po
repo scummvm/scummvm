@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-04 14:02+0000\n"
 "PO-Revision-Date: 2022-04-05 15:27+0000\n"
-"Last-Translator: luckbok <luckbokdan@gmail.com>\n"
+"Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -5199,12 +5199,12 @@ msgstr "AI 퍼즐의 난이도 낮추기"
 
 #: engines/groovie/detection.cpp:305
 msgid "Updated Credits Music"
-msgstr "업데이트된 음악 크레딧"
+msgstr "업데이트된 크레딧 음악"
 
 #: engines/groovie/detection.cpp:306
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
-msgstr "MIDI 노래를 재사용하는 대신 크레딧 동안 노래를 재생하십시오."
+msgstr "크레딧 도중 MIDI 음악을 재사용하는 대신 'The Final Hour' 음악을 재생합니다"
 
 #: engines/groovie/metaengine.cpp:52
 msgid "GroovieV2 support is not compiled in"
