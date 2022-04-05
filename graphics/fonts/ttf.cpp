@@ -139,27 +139,27 @@ void TTFLibrary::closeFont(FT_Face &face) {
 class TTFFont : public Font {
 public:
 	TTFFont();
-	virtual ~TTFFont();
+	~TTFFont() override;
 
 	bool load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode,
 	          uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening);
 	bool load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool fakeBold, bool fakeItalic,
 	          int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening);
 
-	virtual int getFontHeight() const;
+	int getFontHeight() const override;
 	Common::String getFontName() const override;
-	virtual int getFontAscent() const;
+	int getFontAscent() const override;
 
-	virtual int getMaxCharWidth() const;
+	int getMaxCharWidth() const override;
 
-	virtual int getCharWidth(uint32 chr) const;
+	int getCharWidth(uint32 chr) const override;
 
-	virtual int getKerningOffset(uint32 left, uint32 right) const;
+	int getKerningOffset(uint32 left, uint32 right) const override;
 
-	virtual Common::Rect getBoundingBox(uint32 chr) const;
+	Common::Rect getBoundingBox(uint32 chr) const override;
 
-	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
-	virtual void drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const;
+	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+	void drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 private:
 	bool _initialized;
