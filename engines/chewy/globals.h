@@ -358,8 +358,6 @@ void show_intro();
 void register_cutscene(int cutsceneNum);
 void getCutscenes(Common::Array<int> &cutscenes);
 
-void init_atds();
-
 void init_room();
 
 void buildMenu(int16 x, int16 y, int16 xNr, int16 yNr, int16 col, int16 mode);

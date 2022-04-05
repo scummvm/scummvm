@@ -236,9 +236,7 @@ public:
 	char *atds_adr(const char *fname, int16 chunkStart, int16 chunkNr);
 	void load_atds(int16 chunkNr, int16 mode);
 
-	Common::Stream *pool_handle(const char *fname);
 	void set_handle(const char *fname, int16 mode, int16 chunkStart, int16 chunkNr);
-	void close_handle();
 	void crypt(char *txt, uint32 size);
 	bool start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr);
 	void stop_ats();
@@ -288,10 +286,11 @@ public:
 	Common::String getTextEntry(uint dialogNum, uint entryNum, int type);
 
 private:
+	void init();
 	int16 get_delay(int16 txt_len);
 	void initItemUseWith();
-
-	Common::Stream *_atdsHandle = nullptr;
+	
+	Common::File *_atdsHandle = nullptr;
 	char *_atdsMem[MAX_HANDLE] = { nullptr };
 	int16 _atdsPoolOff[MAX_HANDLE] = { 0 };
 	char *_atsMem = nullptr;
