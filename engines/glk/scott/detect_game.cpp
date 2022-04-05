@@ -341,15 +341,14 @@ void loadVectorData(GameInfo info, uint8_t *ptr) {
 
 GameIDType detectGame(Common::SeekableReadStream *f) {
 
-	//TODO
-	//for (int i = 0; i < NUMBER_OF_DIRECTIONS; i++)
-	//	Directions[i] = EnglishDirections[i];
-	//for (int i = 0; i < NUMBER_OF_SKIPPABLE_WORDS; i++)
-	//	SkipList[i] = EnglishSkipList[i];
-	//for (int i = 0; i < NUMBER_OF_DELIMITERS; i++)
-	//	DelimiterList[i] = EnglishDelimiterList[i];
-	//for (int i = 0; i < NUMBER_OF_EXTRA_NOUNS; i++)
-	//	ExtraNouns[i] = EnglishExtraNouns[i];
+	for (int i = 0; i < NUMBER_OF_DIRECTIONS; i++)
+		_G(_directions)[i] = _G(_englishDirections)[i];
+	for (int i = 0; i < NUMBER_OF_SKIPPABLE_WORDS; i++)
+		_G(_skipList)[i] = _G(_englishSkipList)[i];
+	for (int i = 0; i < NUMBER_OF_DELIMITERS; i++)
+		_G(_delimiterList)[i] = _G(_englishDelimiterList)[i];
+	for (int i = 0; i < NUMBER_OF_EXTRA_NOUNS; i++)
+		_G(_extraNouns)[i] = _G(_englishExtraNouns)[i];
 
 	_G(_fileLength) = f->size();
 
