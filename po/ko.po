@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-04 14:02+0000\n"
-"PO-Revision-Date: 2022-02-18 18:47+0000\n"
-"Last-Translator: papercutter0324 <wfeltmate@gmail.com>\n"
+"PO-Revision-Date: 2022-04-05 15:25+0000\n"
+"Last-Translator: luckbok <luckbokdan@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -2810,7 +2810,7 @@ msgstr "OPL3LPT"
 
 #: audio/fmopl.cpp:96
 msgid "RetroWave OPL3"
-msgstr ""
+msgstr "RetroWave OPL3"
 
 #: audio/mididrv.cpp:219
 #, c-format
@@ -4283,7 +4283,7 @@ msgstr "Olmec에게 전환"
 msgid ""
 "WARNING: Attempt to load saved game from a previous version: Version %s / "
 "Build %d"
-msgstr ""
+msgstr "경고: 이전 버전에서 저장한 게임을 로드하려고 시도함"
 
 #: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:863
 msgid "Load anyway"
