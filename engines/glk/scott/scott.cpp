@@ -25,6 +25,7 @@
 #include "layout_text.h"
 #include "line_drawing.h"
 #include "hulk.h"
+#include "parser.h"
 #include "glk/scott/scott.h"
 #include "glk/quetzal.h"
 #include "common/config-manager.h"
@@ -501,7 +502,7 @@ void Scott::look(void) {
 
 	r = &_G(_rooms)[MY_LOC];
 
-	if (r->_text == "")
+	if (r->_text.empty())
 		return;
 
 	if (r->_text.hasPrefix("*"))
@@ -713,106 +714,173 @@ int Scott::getInput(int *vb, int *no) {
 	return 0;
 }
 
-int Scott::performLine(int ct) {
-	int continuation = 0;
+ActionResultType Scott::performLine(int ct) {
+#ifdef DEBUG_ACTIONS
+	debug("Performing line %d: ", ct);
+#endif
+	int continuation = 0, dead = 0;
 	int param[5], pptr = 0;
+	int p;
 	int act[4];
 	int cc = 0;
-
 	while (cc < 5) {
 		int cv, dv;
 		cv = _G(_actions)[ct]._condition[cc];
 		dv = cv / 20;
 		cv %= 20;
+#ifdef DEBUG_ACTIONS
+		debug("Testing condition %d: ", cv);
+#endif
 		switch (cv) {
 		case 0:
 			param[pptr++] = dv;
 			break;
 		case 1:
+#ifdef DEBUG_ACTIONS
+			debug("Does the player carry %s?\n", Items[dv].Text);
+#endif
 			if (_G(_items)[dv]._location != CARRIED)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 2:
+#ifdef DEBUG_ACTIONS
+			debug("Is %s in location?\n", Items[dv].Text);
+#endif
 			if (_G(_items)[dv]._location != MY_LOC)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 3:
-			if (_G(_items)[dv]._location != CARRIED &&
-					_G(_items)[dv]._location != MY_LOC)
-				return 0;
+#ifdef DEBUG_ACTIONS
+			debug("Is %s held or in location?\n", _G(_items)[dv].Text);
+#endif
+			if (_G(_items)[dv]._location != CARRIED && _G(_items)[dv]._location != MY_LOC)
+				return ACT_FAILURE;
 			break;
 		case 4:
+#ifdef DEBUG_ACTIONS
+			debug("Is location %s?\n", _G(_rooms)[dv].Text);
+#endif
 			if (MY_LOC != dv)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 5:
+#ifdef DEBUG_ACTIONS
+			debug("Is %s NOT in location?\n", _G(_items)[dv].Text);
+#endif
 			if (_G(_items)[dv]._location == MY_LOC)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 6:
+#ifdef DEBUG_ACTIONS
+			debug("Does the player NOT carry %s?\n", _G(_items)[dv].Text);
+#endif
 			if (_G(_items)[dv]._location == CARRIED)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 7:
+#ifdef DEBUG_ACTIONS
+			debug("Is location NOT %s?\n", _G(_rooms)[dv].Text);
+#endif
 			if (MY_LOC == dv)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 8:
+#ifdef DEBUG_ACTIONS
+			debug("Is bitflag %d set?\n", dv);
+#endif
 			if ((_bitFlags & (1 << dv)) == 0)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 9:
+#ifdef DEBUG_ACTIONS
+			debug("Is bitflag %d NOT set?\n", dv);
+#endif
 			if (_bitFlags & (1 << dv))
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 10:
+#ifdef DEBUG_ACTIONS
+			debug("Does the player carry anything?\n");
+#endif
 			if (countCarried() == 0)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 11:
+#ifdef DEBUG_ACTIONS
+			debug("Does the player carry nothing?\n");
+#endif
 			if (countCarried())
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 12:
+#ifdef DEBUG_ACTIONS
+			debug("Is %s neither carried nor in room?\n", _G(_items)[dv].Text);
+#endif
 			if (_G(_items)[dv]._location == CARRIED || _G(_items)[dv]._location == MY_LOC)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 13:
+#ifdef DEBUG_ACTIONS
+			debug("Is %s (%d) in play?\n", _G(_items)[dv].Text, dv);
+#endif
 			if (_G(_items)[dv]._location == 0)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 14:
+#ifdef DEBUG_ACTIONS
+			debug("Is %s NOT in play?\n", _G(_items)[dv].Text);
+#endif
 			if (_G(_items)[dv]._location)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 15:
+#ifdef DEBUG_ACTIONS
+			debug("Is _currentCounter <= %d?\n", dv);
+#endif
 			if (_currentCounter > dv)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 16:
+#ifdef DEBUG_ACTIONS
+			debug("Is _currentCounter > %d?\n", dv);
+#endif
 			if (_currentCounter <= dv)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 17:
+#ifdef DEBUG_ACTIONS
+			debug("Is %s still in initial room?\n", _G(_items)[dv].Text);
+#endif
 			if (_G(_items)[dv]._location != _G(_items)[dv]._initialLoc)
-				return 0;
+				return ACT_FAILURE;
 			break;
 		case 18:
+#ifdef DEBUG_ACTIONS
+			debug("Has %s been moved?\n", _G(_items)[dv].Text);
+#endif
 			if (_G(_items)[dv]._location == _G(_items)[dv]._initialLoc)
-				return 0;
+				return ACT_FAILURE;
 			break;
-		case 19:
-			// Only seen in Brian Howarth games so far
+		case 19: /* Only seen in Brian Howarth games so far */
+#ifdef DEBUG_ACTIONS
+			debug("Is current counter == %d?\n", dv);
 			if (_currentCounter != dv)
-				return 0;
-			break;
-		default:
+				debug("Nope, current counter is %d\n", _currentCounter);
+#endif
+			if (_currentCounter != dv)
+				return ACT_FAILURE;
 			break;
 		}
+#ifdef DEBUG_ACTIONS
+		debug("YES\n");
+#endif
 		cc++;
 	}
+#if defined(__clang__)
+#pragma mark Subcommands
+#endif
 
-	// _actions
+	/* Actions */
 	act[0] = _G(_actions)[ct]._action[0];
 	act[2] = _G(_actions)[ct]._action[1];
 	act[1] = act[0] % 150;
@@ -822,33 +890,47 @@ int Scott::performLine(int ct) {
 	cc = 0;
 	pptr = 0;
 	while (cc < 4) {
+#ifdef DEBUG_ACTIONS
+		debug("Performing action %d: ", act[cc]);
+#endif
 		if (act[cc] >= 1 && act[cc] < 52) {
-			output(_G(_messages)[act[cc]]);
-			output("\n");
+			printMessage(act[cc]);
 		} else if (act[cc] > 101) {
-			output(_G(_messages)[act[cc] - 50]);
-			output("\n");
-		} else {
+			printMessage(act[cc] - 50);
+		} else
 			switch (act[cc]) {
-			case 0:// NOP
+			case 0: /* NOP */
 				break;
 			case 52:
-				if (countCarried() == _G(_gameHeader)._maxCarry) {
-					if (_options & YOUARE)
-						output(_("You are carrying too much. "));
-					else
-						output(_("I've too much to carry! "));
-					break;
+				if (countCarried() >= _G(_gameHeader)._maxCarry) {
+					output(_G(_sys)[YOURE_CARRYING_TOO_MUCH]);
+					return ACT_SUCCESS;
 				}
 				_G(_items)[param[pptr++]]._location = CARRIED;
 				break;
 			case 53:
+#ifdef DEBUG_ACTIONS
+				debug("item %d (\"%s\") is now in location.\n", param[pptr],
+						_G(_items)[param[pptr]].Text);
+#endif
 				_G(_items)[param[pptr++]]._location = MY_LOC;
+				_shouldLookInTranscript = 1;
 				break;
 			case 54:
+#ifdef DEBUG_ACTIONS
+				debug("player location is now room %d (%s).\n", param[pptr],
+						_G(_rooms)[param[pptr]].Text);
+#endif
 				MY_LOC = param[pptr++];
+				_shouldLookInTranscript = 1;
+				look();
 				break;
 			case 55:
+#ifdef DEBUG_ACTIONS
+				fprintf(stderr,
+						"Item %d (%s) is removed from the game (put in room 0).\n",
+						param[pptr], _G(_items)[param[pptr]].Text);
+#endif
 				_G(_items)[param[pptr++]]._location = 0;
 				break;
 			case 56:
@@ -858,83 +940,53 @@ int Scott::performLine(int ct) {
 				_bitFlags &= ~(1 << DARKBIT);
 				break;
 			case 58:
+#ifdef DEBUG_ACTIONS
+				debug("Bitflag %d is set\n", param[pptr]);
+#endif
 				_bitFlags |= (1 << param[pptr++]);
 				break;
 			case 59:
+#ifdef DEBUG_ACTIONS
+				debug("Item %d (%s) is removed from play.\n", param[pptr],
+						_G(_items)[param[pptr]].Text);
+#endif
 				_G(_items)[param[pptr++]]._location = 0;
 				break;
 			case 60:
+#ifdef DEBUG_ACTIONS
+				debug("BitFlag %d is cleared\n", param[pptr]);
+#endif
 				_bitFlags &= ~(1 << param[pptr++]);
 				break;
 			case 61:
-				if (_options & YOUARE)
-					output(_("You are dead.\n"));
-				else
-					output(_("I am dead.\n"));
-				_bitFlags &= ~(1 << DARKBIT);
-				MY_LOC = _G(_gameHeader)._numRooms;// It seems to be what the code says!
+				playerIsDead();
 				break;
-			case 62: {
-				// Bug fix for some systems - before it could get parameters wrong */
-				int i = param[pptr++];
-				_G(_items)[i]._location = param[pptr++];
+			case 62:
+				p = param[pptr++];
+				putItemAInRoomB(p, param[pptr++]);
 				break;
-			}
 			case 63:
-doneit:
-				output(_("The game is now over.\n"));
-				glk_exit();
-				return 0;
+#ifdef DEBUG_ACTIONS
+				debug("Game over.\n");
+#endif
+				doneIt();
+				dead = 1;
+				break;
 			case 64:
 				break;
-			case 65: {
-				int i = 0;
-				int n = 0;
-				while (i <= _G(_gameHeader)._numItems) {
-					if (_G(_items)[i]._location == _G(_gameHeader)._treasureRoom &&
-							_G(_items)[i]._text.hasPrefix("*"))
-						n++;
-					i++;
-				}
-				if (_options & YOUARE)
-					output(_("You have stored "));
-				else
-					output(_("I've stored "));
-				outputNumber(n);
-				output(_(" treasures.  On a scale of 0 to 100, that rates "));
-				outputNumber((n * 100) / _G(_gameHeader)._treasures);
-				output(".\n");
-				if (n == _G(_gameHeader)._treasures) {
-					output(_("Well done.\n"));
-					goto doneit;
-				}
+			case 65:
+				dead = printScore();
+				_stopTime = 2;
 				break;
-			}
-			case 66: {
-				int i = 0;
-				int f = 0;
-				if (_options & YOUARE)
-					output(_("You are carrying:\n"));
+			case 66:
+				if (_G(_game)->_type == SEAS_OF_BLOOD_VARIANT)
+					// TODO
+					// AdventureSheet();
+					debug("case 66 not implemented\n");
 				else
-					output(_("I'm carrying:\n"));
-				while (i <= _G(_gameHeader)._numItems) {
-					if (_G(_items)[i]._location == CARRIED) {
-						if (f == 1) {
-							if (_options & TRS80_STYLE)
-								output(". ");
-							else
-								output(" - ");
-						}
-						f = 1;
-						output(_G(_items)[i]._text);
-					}
-					i++;
-				}
-				if (f == 0)
-					output(_("Nothing"));
-				output(".\n");
+					listInventory();
+				_stopTime = 2;
 				break;
-			}
 			case 67:
 				_bitFlags |= (1 << 0);
 				break;
@@ -947,61 +999,62 @@ doneit:
 				_bitFlags &= ~(1 << LIGHTOUTBIT);
 				break;
 			case 70:
-				clearScreen(); // pdd.
+				clearScreen(); /* pdd. */
 				break;
 			case 71:
 				saveGame();
+				_stopTime = 2;
 				break;
-			case 72: {
-				int i1 = param[pptr++];
-				int i2 = param[pptr++];
-				int t = _G(_items)[i1]._location;
-				_G(_items)[i1]._location = _G(_items)[i2]._location;
-				_G(_items)[i2]._location = t;
+			case 72:
+				p = param[pptr++];
+				swapItemLocations(p, param[pptr++]);
 				break;
-			}
 			case 73:
+#ifdef DEBUG_ACTIONS
+				debug("Continue with next line\n");
+#endif
 				continuation = 1;
 				break;
 			case 74:
 				_G(_items)[param[pptr++]]._location = CARRIED;
 				break;
-			case 75: {
-				int i1, i2;
-				i1 = param[pptr++];
-				i2 = param[pptr++];
-				_G(_items)[i1]._location = _G(_items)[i2]._location;
+			case 75:
+				p = param[pptr++];
+				moveItemAToLocOfItemB(p, param[pptr++]);
 				break;
-			}
-			case 76:
-				// Looking at adventure ..
+			case 76: /* Looking at adventure .. */
+#ifdef DEBUG_ACTIONS
+				debug("LOOK\n");
+#endif
+				if (_splitScreen)
+					look();
+				_shouldLookInTranscript = 1;
 				break;
 			case 77:
-				if (_currentCounter >= 0)
+				if (_currentCounter >= 1)
 					_currentCounter--;
+#ifdef DEBUG_ACTIONS
+				fprintf(stderr,
+						"decrementing current counter. Current counter is now %d.\n",
+						_currentCounter);
+#endif
 				break;
 			case 78:
 				outputNumber(_currentCounter);
+				output(" ");
 				break;
 			case 79:
+#ifdef DEBUG_ACTIONS
+				debug("_currentCounter is set to %d.\n", param[pptr]);
+#endif
 				_currentCounter = param[pptr++];
 				break;
-			case 80: {
-				int t = MY_LOC;
-				MY_LOC = _savedRoom;
-				_savedRoom = t;
+			case 80:
+				goToStoredLoc();
 				break;
-			}
-			case 81: {
-				// This is somewhat guessed. Claymorgue always seems to do
-				// select counter n, thing, select counter n, but uses one value that always
-				// seems to exist. Trying a few options I found this gave sane results on ageing
-				int t = param[pptr++];
-				int c1 = _currentCounter;
-				_currentCounter = _counters[t];
-				_counters[t] = c1;
+			case 81:
+				swapCounters(param[pptr++]);
 				break;
-			}
 			case 82:
 				_currentCounter += param[pptr++];
 				break;
@@ -1009,239 +1062,296 @@ doneit:
 				_currentCounter -= param[pptr++];
 				if (_currentCounter < -1)
 					_currentCounter = -1;
-				// Note: This seems to be needed. I don't yet know if there
-				// is a maximum value to limit too
+				/* Note: This seems to be needed. I don't yet
+						 know if there is a maximum value to limit too */
 				break;
 			case 84:
-				output(_nounText);
+				//TODO
+				//if (CurrentCommand)
+				//	glk_put_string_stream_uni(
+				//		glk_window_get_stream(Bottom),
+				//		UnicodeWords[CurrentCommand->nounwordindex]);
 				break;
 			case 85:
-				output(_nounText);
-				output("\n");
+				//TODO
+				//if (CurrentCommand)
+				//	glk_put_string_stream_uni(
+				//		glk_window_get_stream(Bottom),
+				//		UnicodeWords[CurrentCommand->nounwordindex]);
+				//Output("\n");
 				break;
 			case 86:
-				output("\n");
+				if (!(_options & SPECTRUM_STYLE))
+					output("\n");
 				break;
-			case 87: {
-				// Changed this to swap location<->roomflag[x] not roomflag 0 and x
-				int p = param[pptr++];
-				int sr = MY_LOC;
-				MY_LOC = _roomSaved[p];
-				_roomSaved[p] = sr;
+			case 87:
+				swapLocAndRoomFlag(param[pptr++]);
 				break;
-			}
 			case 88:
-				delay(2);
+#ifdef DEBUG_ACTIONS
+				debug("Delay\n");
+#endif
+				delay(1);
 				break;
 			case 89:
-				pptr++;
-				// SAGA draw picture n
-				// Spectrum Seas of Blood - start combat ?
-				// Poking this into older spectrum games causes a crash
+#ifdef DEBUG_ACTIONS
+				debug("Action 89, parameter %d\n", param[pptr]);
+#endif
+				p = param[pptr++];
+				switch (CURRENT_GAME) {
+				case SPIDERMAN:
+				case SPIDERMAN_C64:
+					//TODO
+					//DrawBlack();
+					break;
+				case SECRET_MISSION:
+				case SECRET_MISSION_C64:
+					//TODO
+					//SecretAction(p);
+					break;
+				case ADVENTURELAND:
+				case ADVENTURELAND_C64:
+					//TODO
+					//AdventurelandAction(p);
+					break;
+				case SEAS_OF_BLOOD:
+				case SEAS_OF_BLOOD_C64:
+					//TODO
+					//BloodAction(p);
+					break;
+				case ROBIN_OF_SHERWOOD:
+				case ROBIN_OF_SHERWOOD_C64:
+					//TODO
+					//SherwoodAction(p);
+					break;
+				case GREMLINS:
+				case GREMLINS_SPANISH:
+				case GREMLINS_GERMAN:
+				case GREMLINS_GERMAN_C64:
+					//TODO
+					//GremlinsAction(p);
+					break;
+				default:
+					break;
+				}
+				break;
+
+			case 90:
+#ifdef DEBUG_ACTIONS
+				debug("Draw Hulk image, parameter %d\n", param[pptr]);
+#endif
+				if (CURRENT_GAME != HULK && CURRENT_GAME != HULK_C64) {
+					pptr++;
+				} else if (!(_bitFlags & (1 << DARKBIT)))
+					drawHulkImage(param[pptr++]);
 				break;
 			default:
-				error("Unknown action %d [Param begins %d %d]\n",
-					  act[cc], param[pptr], param[pptr + 1]);
+				debug("Unknown action %d [Param begins %d %d]\n", act[cc],
+						param[pptr], param[pptr + 1]);
 				break;
 			}
-		}
-
 		cc++;
 	}
 
-	return 1 + continuation;
+	if (dead) {
+		return ACT_GAMEOVER;
+	} else if (continuation) {
+		return ACT_CONTINUE;
+	} else {
+		return ACT_SUCCESS;
+	}
 }
 
-int Scott::performActions(int vb, int no) {
-	static bool disableSysFunc = false; // Recursion lock
-	int d = _bitFlags & (1 << DARKBIT);
-
+ExplicitResultType Scott::performActions(int vb, int no) {
+	int dark = _bitFlags & (1 << DARKBIT);
 	int ct = 0;
-	int fl;
+	ExplicitResultType flag = ER_NO_RESULT;
 	int doagain = 0;
-	if (vb == 1 && no == -1) {
-		output(_("Give me a direction too."));
-		return 0;
+	int found_match = 0;
+
+	if (vb == GO && no == -1) {
+		output(_G(_sys)[DIRECTION]);
+		return ER_SUCCESS;
 	}
 	if (vb == 1 && no >= 1 && no <= 6) {
 		int nl;
-		if (_G(_items)[LIGHT_SOURCE]._location == MY_LOC ||
-				_G(_items)[LIGHT_SOURCE]._location == CARRIED)
-			d = 0;
-		if (d)
-			output(_("Dangerous to move in the dark! "));
+		if (_G(_items)[LIGHT_SOURCE]._location == MY_LOC || _G(_items)[LIGHT_SOURCE]._location == CARRIED)
+			dark = 0;
+		if (dark)
+			output(_G(_sys)[DANGEROUS_TO_MOVE_IN_DARK]);
 		nl = _G(_rooms)[MY_LOC]._exits[no - 1];
 		if (nl != 0) {
+			/* Seas of Blood needs this to be able to flee back to the last room */
+			if (_G(_game)->_type == SEAS_OF_BLOOD_VARIANT)
+				_savedRoom = MY_LOC;
+			if (_options & (SPECTRUM_STYLE | TI994A_STYLE))
+				output(_G(_sys)[OK]);
 			MY_LOC = nl;
-			return 0;
-		}
-		if (d) {
-			if (_options & YOUARE)
-				output(_("You fell down and broke your neck. "));
-			else
-				output(_("I fell down and broke my neck. "));
-			glk_exit();
-			return 0;
-		}
-		if (_options & YOUARE)
-			output(_("You can't go in that direction. "));
-		else
-			output(_("I can't go in that direction. "));
-		return 0;
-	}
-
-	fl = -1;
-	while (ct <= _G(_gameHeader)._numActions) {
-		int vv, nv;
-		vv = _G(_actions)[ct]._vocab;
-		// Think this is now right. If a line we run has an action73
-		// run all following lines with vocab of 0,0
-		if (vb != 0 && (doagain && vv != 0))
-			break;
-		// Oops.. added this minor cockup fix 1.11
-		if (vb != 0 && !doagain && fl == 0)
-			break;
-		nv = vv % 150;
-		vv /= 150;
-		if ((vv == vb) || (doagain && _G(_actions)[ct]._vocab == 0)) {
-			if ((vv == 0 && randomPercent(nv)) || doagain ||
-					(vv != 0 && (nv == no || nv == 0))) {
-				int f2;
-				if (fl == -1)
-					fl = -2;
-				if ((f2 = performLine(ct)) > 0) {
-					// ahah finally figured it out !
-					fl = 0;
-					if (f2 == 2)
-						doagain = 1;
-					if (vb != 0 && doagain == 0)
-						return 0;
-				}
-
-				if (shouldQuit())
-					return 0;
+			_shouldLookInTranscript = 1;
+			if (_currentCommand && _currentCommand->_next) {
+				lookWithPause();
 			}
+			return ER_SUCCESS;
 		}
-		ct++;
-
-		// Previously this did not check ct against _gameHeader._numActions and would read
-		// past the end of _actions.  I don't know what should happen on the last action,
-		// but doing nothing is better than reading one past the end.
-		// --Chris
-		if (ct <= _G(_gameHeader)._numActions && _G(_actions)[ct]._vocab != 0)
-			doagain = 0;
+		if (dark) {
+			_bitFlags &= ~(1 << DARKBIT);
+			MY_LOC = _G(_gameHeader)._numRooms; /* It seems to be what the code says! */
+			output(_G(_sys)[YOU_FELL_AND_BROKE_YOUR_NECK]);
+			_bitFlags &= ~(1 << DARKBIT);
+			MY_LOC = _G(_gameHeader)._numRooms; /* It seems to be what the code says! */
+			return ER_SUCCESS;
+		}
+		output(_G(_sys)[YOU_CANT_GO_THAT_WAY]);
+		return ER_SUCCESS;
 	}
-	if (fl != 0 && disableSysFunc == 0) {
-		int item;
-		if (_G(_items)[LIGHT_SOURCE]._location == MY_LOC ||
-				_G(_items)[LIGHT_SOURCE]._location == CARRIED)
-			d = 0;
-		if (vb == 10 || vb == 18) {
-			// Yes they really _are_ hardcoded values
-			if (vb == 10) {
-				if (scumm_stricmp(_nounText, "ALL") == 0) {
-					int i = 0;
-					int f = 0;
 
-					if (d) {
-						output(_("It is dark.\n"));
-						return 0;
+	if ((CURRENT_GAME == HULK || CURRENT_GAME == HULK_C64) && vb == 39 && !dark) {
+		hulkShowImageOnExamine(no);
+	}
+	
+	if (_currentCommand && _currentCommand->_allFlag && vb == _currentCommand->_verb && !(dark && vb == TAKE)) {
+		output(_G(_items)[_currentCommand->_item]._text);
+		output("....");
+	}
+	flag = ER_RAN_ALL_LINES_NO_MATCH;
+	if (CURRENT_GAME != TI994A) {
+		while (ct <= _G(_gameHeader)._numActions) {
+			int verbvalue, nounvalue;
+			verbvalue = _G(_actions)[ct]._vocab;
+			/* Think this is now right. If a line we run has an action73
+		   run all following lines with vocab of 0,0 */
+			if (vb != 0 && (doagain && verbvalue != 0))
+				break;
+			/* Oops.. added this minor cockup fix 1.11 */
+			if (vb != 0 && !doagain && flag == 0)
+				break;
+			nounvalue = verbvalue % 150;
+			verbvalue /= 150;
+			if ((verbvalue == vb) || (doagain && _G(_actions)[ct]._vocab == 0)) {
+				if ((verbvalue == 0 && randomPercent(nounvalue)) || doagain || (verbvalue != 0 && (nounvalue == no || nounvalue == 0))) {
+					if (verbvalue == vb && vb != 0 && nounvalue == no)
+						found_match = 1;
+					ActionResultType flag2;
+					if (flag == ER_RAN_ALL_LINES_NO_MATCH)
+						flag = ER_RAN_ALL_LINES;
+					if ((flag2 = performLine(ct)) != ACT_FAILURE) {
+						/* ahah finally figured it out ! */
+						flag = ER_SUCCESS;
+						if (flag2 == ACT_CONTINUE)
+							doagain = 1;
+						else if (flag2 == ACT_GAMEOVER)
+							return ER_SUCCESS;
+						if (vb != 0 && doagain == 0)
+							return ER_SUCCESS;
 					}
-					while (i <= _G(_gameHeader)._numItems) {
-						if (_G(_items)[i]._location == MY_LOC && _G(_items)[i]._autoGet != nullptr && _G(_items)[i]._autoGet[0] != '*') {
-							no = whichWord(_G(_items)[i]._autoGet.c_str(), _G(_nouns));
-							disableSysFunc = true;    // Don't recurse into auto get !
-							performActions(vb, no);   // Recursively check each items table code
-							disableSysFunc = false;
-							if (shouldQuit())
-								return 0;
-
-							if (countCarried() == _G(_gameHeader)._maxCarry) {
-								if (_options & YOUARE)
-									output(_("You are carrying too much. "));
-								else
-									output(_("I've too much to carry. "));
-								return 0;
-							}
-							_G(_items)[i]._location = CARRIED;
-							output(_G(_items)[i]._text);
-							output(_(": O.K.\n"));
-							f = 1;
-						}
-						i++;
-					}
-					if (f == 0)
-						output(_("Nothing taken."));
-					return 0;
 				}
+			}
+
+			ct++;
+
+			/* Previously this did not check ct against
+			 * GameHeader.NumActions and would read past the end of
+			 * Actions.  I don't know what should happen on the last
+			 * action, but doing nothing is better than reading one
+			 * past the end.
+			 * --Chris
+			 */
+			if (ct <= _G(_gameHeader)._numActions && _G(_actions)[ct]._vocab != 0)
+				doagain = 0;
+		}
+	} else {
+		if (vb == 0) {
+			//TODO
+			//RunImplicitTI99Actions();
+			return ER_NO_RESULT;
+		} else {
+			//TODO
+			//flag = RunExplicitTI99Actions(vb, no);
+		}
+	}
+
+	if (found_match)
+		return flag;
+
+	if (flag != ER_SUCCESS) {
+		int item = 0;
+		if (_G(_items)[LIGHT_SOURCE]._location == MY_LOC || _G(_items)[LIGHT_SOURCE]._location == CARRIED)
+			dark = 0;
+
+		if (vb == TAKE || vb == DROP) {
+			if (_currentCommand->_allFlag) {
+				if (vb == TAKE && dark) {
+					output(_G(_sys)[TOO_DARK_TO_SEE]);
+					while (!(_currentCommand->_allFlag & LASTALL)) {
+						_currentCommand = _currentCommand->_next;
+					}
+					return ER_SUCCESS;
+				}
+				item = _currentCommand->_item;
+				int location = CARRIED;
+				if (vb == TAKE)
+					location = MY_LOC;
+				while (_G(_items)[item]._location != location && !(_currentCommand->_allFlag & LASTALL)) {
+					_currentCommand = _currentCommand->_next;
+				}
+				if (_G(_items)[item]._location != location)
+					return ER_SUCCESS;
+			}
+
+			/* Yes they really _are_ hardcoded values */
+			if (vb == TAKE) {
 				if (no == -1) {
-					output(_("What ? "));
-					return 0;
+					output(_G(_sys)[WHAT]);
+					return ER_SUCCESS;
 				}
-				if (countCarried() == _G(_gameHeader)._maxCarry) {
-					if (_options & YOUARE)
-						output(_("You are carrying too much. "));
-					else
-						output(_("I've too much to carry. "));
-					return 0;
+				if (countCarried() >= _G(_gameHeader)._maxCarry) {
+					output(_G(_sys)[YOURE_CARRYING_TOO_MUCH]);
+					return ER_SUCCESS;
 				}
-				item = matchUpItem(_nounText, MY_LOC);
+				if (!item)
+					item = matchUpItem(no, MY_LOC);
 				if (item == -1) {
-					if (_options & YOUARE)
-						output(_("It is beyond your power to do that. "));
-					else
-						output(_("It's beyond my power to do that. "));
-					return 0;
+					item = matchUpItem(no, CARRIED);
+					if (item == -1) {
+						item = matchUpItem(no, 0);
+						if (item == -1) {
+							output(_G(_sys)[THATS_BEYOND_MY_POWER]);
+						} else {
+							output(_G(_sys)[YOU_DONT_SEE_IT]);
+						}
+					} else {
+						output(_G(_sys)[YOU_HAVE_IT]);
+					}
+					return ER_SUCCESS;
 				}
 				_G(_items)[item]._location = CARRIED;
-				output(_("O.K. "));
-				return 0;
+				printTakenOrDropped(TAKEN);
+				return ER_SUCCESS;
 			}
-			if (vb == 18) {
-				if (scumm_stricmp(_nounText, "ALL") == 0) {
-					int i = 0;
-					int f = 0;
-					while (i <= _G(_gameHeader)._numItems) {
-						if (_G(_items)[i]._location == CARRIED && !_G(_items)[i]._autoGet.empty()
-								&& !_G(_items)[i]._autoGet.hasPrefix("*")) {
-							no = whichWord(_G(_items)[i]._autoGet.c_str(), _G(_nouns));
-							disableSysFunc = true;
-							performActions(vb, no);
-							disableSysFunc = false;
-							if (shouldQuit())
-								return 0;
 
-							_G(_items)[i]._location = MY_LOC;
-							output(_G(_items)[i]._text);
-							output(_(": O.K.\n"));
-							f = 1;
-						}
-						i++;
-					}
-					if (f == 0)
-						output(_("Nothing dropped.\n"));
-					return 0;
-				}
+			if (vb == DROP) {
 				if (no == -1) {
-					output(_("What ? "));
-					return 0;
+					output(_G(_sys)[WHAT]);
+					return ER_SUCCESS;
 				}
-				item = matchUpItem(_nounText, CARRIED);
+				if (!item)
+					item = matchUpItem(no, CARRIED);
 				if (item == -1) {
-					if (_options & YOUARE)
-						output(_("It's beyond your power to do that.\n"));
-					else
-						output(_("It's beyond my power to do that.\n"));
-					return 0;
+					item = matchUpItem(no, 0);
+					if (item == -1) {
+						output(_G(_sys)[THATS_BEYOND_MY_POWER]);
+					} else {
+						output(_G(_sys)[YOU_HAVENT_GOT_IT]);
+					}
+					return ER_SUCCESS;
 				}
 				_G(_items)[item]._location = MY_LOC;
-				output("O.K. ");
-				return 0;
+				printTakenOrDropped(DROPPED);
+				return ER_SUCCESS;
 			}
 		}
 	}
-
-	return fl;
+	return flag;
 }
 
 void Scott::readInts(Common::SeekableReadStream *f, size_t count, ...) {
@@ -1382,7 +1492,7 @@ void Scott::listExits() {
 			if (f) {
 				writeToRoomDescriptionStream("%s", _G(_sys)[EXITS_DELIMITER]);
 			}
-			/* sys[] begins with the exit names */
+			/* _G(_sys)[] begins with the exit names */
 			writeToRoomDescriptionStream("%s", _G(_sys)[ct]);
 			f = 1;
 		}
@@ -1449,7 +1559,7 @@ int Scott::itemEndsWithPeriod(int item) {
 	if (item < 0 || item > _G(_gameHeader)._numItems)
 		return 0;
 	Common::String desc = _G(_items)[item]._text;
-	if (desc != "" && desc[0] != 0) {
+	if (!desc.empty() && desc[0] != 0) {
 		const char lastchar = desc[desc.size() - 1];
 		if (lastchar == '.' || lastchar == '!') {
 			return 1;
@@ -1651,6 +1761,33 @@ void Scott::drawRoomImage() {
 		}
 }
 
+int Scott::yesOrNo() {
+	glk_request_char_event(_bottomWindow);
+
+	event_t ev;
+	int result = 0;
+	const char y = tolower((unsigned char)_G(_sys)[YES][0]);
+	const char n = tolower((unsigned char)_G(_sys)[NO][0]);
+
+	do {
+		glk_select(&ev);
+		if (ev.type == evtype_CharInput) {
+			const char reply = tolower(ev.val1);
+			if (reply == y) {
+				result = 1;
+			} else if (reply == n) {
+				result = 2;
+			} else {
+				output(_G(_sys)[ANSWER_YES_OR_NO]);
+				glk_request_char_event(_bottomWindow);
+			}
+		} else
+			updates(ev);
+	} while (result == 0);
+
+	return (result == 1);
+}
+
 void Scott::hitEnter() {
 	glk_request_char_event(_bottomWindow);
 
@@ -1702,6 +1839,145 @@ void Scott::listInventory() {
 	}
 	if (_transcript) {
 		glk_put_char_stream_uni(_transcript, 10);
+	}
+}
+
+void Scott::lookWithPause() {
+	char fc = _G(_rooms)[MY_LOC]._text[0];
+	if (_G(_rooms)[MY_LOC]._text.empty() || MY_LOC == 0 || fc == 0 || fc == '.' || fc == ' ')
+		return;
+	_shouldLookInTranscript = 1;
+	_pauseNextRoomDescription = 1;
+	look();
+}
+
+void Scott::doneIt() {
+	if (_splitScreen && _topWindow)
+		look();
+	output("\n\n");
+	output(_G(_sys)[PLAY_AGAIN]);
+	output("\n");
+	if (yesOrNo()) {
+		_shouldRestart = 1;
+	} else {
+		cleanupAndExit();
+	}
+}
+
+int Scott::printScore() {
+	int i = 0;
+	int n = 0;
+	while (i <= _G(_gameHeader)._numItems) {
+		if (_G(_items)[i]._location == _G(_gameHeader)._treasureRoom && _G(_items)[i]._text[0] == '*')
+			n++;
+		i++;
+	}
+	display(_bottomWindow, "%s %d %s%s %d.\n", _G(_sys)[IVE_STORED], n, _G(_sys)[TREASURES],
+			_G(_sys)[ON_A_SCALE_THAT_RATES], (n * 100) / _G(_gameHeader)._treasures);
+	if (n == _G(_gameHeader)._treasures) {
+		output(_G(_sys)[YOUVE_SOLVED_IT]);
+		doneIt();
+		return 1;
+	}
+	return 0;
+}
+
+void Scott::moveItemAToLocOfItemB(int itemA, int itemB) {
+	_G(_items)[itemA]._location = _G(_items)[itemB]._location;
+	if (_G(_items)[itemB]._location == MY_LOC)
+		_shouldLookInTranscript = 1;
+}
+
+void Scott::goToStoredLoc() {
+#ifdef DEBUG_ACTIONS
+	debug("switch location to stored location (%d) (%s).\n",
+			SavedRoom, _G(_rooms)[SavedRoom].Text);
+#endif
+	int t = MY_LOC;
+	MY_LOC = _savedRoom;
+	_savedRoom = t;
+	_shouldLookInTranscript = 1;
+}
+
+void Scott::swapLocAndRoomFlag(int index) {
+#ifdef DEBUG_ACTIONS
+	debug("swap location<->roomflag[%d]\n", index);
+#endif
+	int temp = MY_LOC;
+	MY_LOC = _roomSaved[index];
+	_roomSaved[index] = temp;
+	_shouldLookInTranscript = 1;
+	look();
+}
+
+void Scott::swapItemLocations(int itemA, int itemB) {
+	int temp = _G(_items)[itemA]._location;
+	_G(_items)[itemA]._location = _G(_items)[itemB]._location;
+	_G(_items)[itemB]._location = temp;
+	if (_G(_items)[itemA]._location == MY_LOC || _G(_items)[itemB]._location == MY_LOC)
+		_shouldLookInTranscript = 1;
+}
+
+void Scott::putItemAInRoomB(int itemA, int roomB) {
+#ifdef DEBUG_ACTIONS
+	debug("Item %d (%s) is put in room %d (%s). MY_LOC: %d (%s)\n",
+			itemA, Items[arg1].Text, roomB, _G(_rooms)[roomB].Text, MY_LOC,
+			_G(_rooms)[MY_LOC].Text);
+#endif
+	if (_G(_items)[itemA]._location == MY_LOC)
+		lookWithPause();
+	_G(_items)[itemA]._location = roomB;
+}
+
+void Scott::swapCounters(int index) {
+#ifdef DEBUG_ACTIONS
+	debug("Select a counter.Current counter is swapped with backup "
+			"counter %d\n", index);
+#endif
+	if (index > 15) {
+		error("ERROR! parameter out of range. Max 15, got %d\n", index);
+		index = 15;
+	}
+	int temp = _currentCounter;
+
+	_currentCounter = _counters[index];
+	_counters[index] = temp;
+#ifdef DEBUG_ACTIONS
+	debug("Value of new selected counter is %d\n", _currentCounter);
+#endif
+}
+
+void Scott::printMessage(int index) {
+#ifdef DEBUG_ACTIONS
+	debug("Print message %d: \"%s\"\n", index, Messages[index]);
+#endif
+	Common::String message = _G(_messages)[index];
+	if (!message.empty() && message[0] != 0) {
+		output(message);
+		const char lastchar = message[message.size() - 1];
+		if (lastchar != 13 && lastchar != 10)
+			output(_G(_sys)[MESSAGE_DELIMITER]);
+	}
+}
+
+void Scott::playerIsDead() {
+#ifdef DEBUG_ACTIONS
+	debug("Player is dead\n");
+#endif
+	output(_G(_sys)[IM_DEAD]);
+	_bitFlags &= ~(1 << DARKBIT);
+	MY_LOC = _G(_gameHeader)._numRooms; /* It seems to be what the code says! */
+}
+
+void Scott::printTakenOrDropped(int index) {
+	output(_G(_sys[index]));
+	int length = _G(_sys)[index].size();
+	char last = _G(_sys)[index][length - 1];
+	if (last == 10 || last == 13)
+		return;
+	output(" ");
+	if ((!(_currentCommand->_allFlag & LASTALL)) || _splitScreen == 0) {
+		output("\n");
 	}
 }
 

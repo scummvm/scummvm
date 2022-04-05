@@ -34,6 +34,8 @@
 namespace Glk {
 namespace Scott {
 
+struct Command;
+
 #define LIGHT_SOURCE    9   // Always 9 how odd
 #define CARRIED     255     // Carried
 #define DESTROYED   0       // Destroyed
@@ -144,6 +146,12 @@ private:
 	uint32 _bitFlags;    ///< Might be >32 flags - I haven't seen >32 yet
 	int _saveSlot;		 ///< Save slot when loading savegame from launcher
 
+	Command *_currentCommand = nullptr;
+
+	int _shouldRestart = 0;
+	int _stopTime = 0;
+
+	int _shouldLookInTranscript = 0;
 	int _printLookToTranscript = 0;
 	int _pauseNextRoomDescription = 0;
 
@@ -169,15 +177,13 @@ private:
 	int matchUpItem(int noun, int loc);
 	Common::String readString(Common::SeekableReadStream *f);
 	void loadDatabase(Common::SeekableReadStream *f, bool loud);
-	void output(const Common::String &a);
-	void output(const Common::U32String &a);
 	void outputNumber(int a);
 	void look(void);
 	int whichWord(const char *word, const Common::StringArray &list);
 	void lineInput(char *buf, size_t n);
 	int getInput(int *vb, int *no);
-	int performLine(int ct);
-	int performActions(int vb, int no);
+	ActionResultType performLine(int ct);
+	ExplicitResultType performActions(int vb, int no);
 
 	void readInts(Common::SeekableReadStream *f, size_t count, ...);
 	void writeToRoomDescriptionStream(const char *fmt, ...);
@@ -195,11 +201,26 @@ private:
 	void cleanupAndExit();
 	void drawBlack();
 	void drawRoomImage();
-	void hitEnter();
+	int yesOrNo();
 	void listInventory();
+	void lookWithPause();
+	void doneIt();
+	int printScore();
+	void moveItemAToLocOfItemB(int itemA, int itemB);
+	void goToStoredLoc();
+	void swapLocAndRoomFlag(int index);
+	void swapItemLocations(int itemA, int itemB);
+	void putItemAInRoomB(int itemA, int roomB);
+	void swapCounters(int index);
+	void printMessage(int index);
+	void playerIsDead();
+	void printTakenOrDropped(int index);
 
 public:
 	void drawImage(int image);
+	void output(const Common::String &a);
+	void output(const Common::U32String &a);
+	void hitEnter();
 
 public:
 	/**
