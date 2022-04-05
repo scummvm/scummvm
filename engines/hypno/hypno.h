@@ -219,6 +219,7 @@ public:
 
 	// Arcade
 	Common::String _arcadeMode;
+	MVideo *_background;
 	uint32 _currentPlayerPosition;
 	uint32 _lastPlayerPosition;
 	virtual Common::Point computeTargetPosition(const Common::Point &mousePos);
