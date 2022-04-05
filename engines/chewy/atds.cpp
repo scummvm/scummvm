@@ -75,12 +75,6 @@ bool AdsTxtHeader::load(const void *src) {
 	return true;
 }
 
-bool AtsStrHeader::load(Common::SeekableReadStream *src) {
-	_vocNr = src->readUint16LE();
-	return true;
-}
-
-
 Atdsys::Atdsys() {
 	SplitStringInit init_ssi = { nullptr, 0, 0, 220, 4, SPLIT_CENTER };
 	_aadv._dialog = false;
@@ -484,7 +478,7 @@ bool Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int1
 			while (*ptr++ != ATDS_END_TEXT)
 				++_atsv._txtLen;
 
-			*vocNr = _atsv._strHeader._vocNr - ATDS_VOC_OFFSET;
+			*vocNr = _atsv.vocNum - ATDS_VOC_OFFSET;
 
 			if ((byte)*_atsv._ptr == 248) {
 				// Special code for no message to display
@@ -731,16 +725,14 @@ void Atdsys::ats_search_nr(int16 txtNr, char **str) {
 			*str = start_str + 2 + AtsTxtHeader::SIZE();
 
 			if (_atsv._txtMode) {
-				Common::MemoryReadStream rs2((const byte *)*str,
-					AtsStrHeader::SIZE());
-				_atsv._strHeader.load(&rs2);
+				_atsv.vocNum = READ_LE_UINT16(str);
 			}
 
-			*str += AtsStrHeader::SIZE();
+			*str += 2;	// voc number
 			break;
 		}
 
-		start_str += 2 + AtsTxtHeader::SIZE() + AtsStrHeader::SIZE();
+		start_str += 2 + AtsTxtHeader::SIZE() + 2;	// txt header + voc number
 
 		// Need to iterate over the following string to next entry
 		bool done2 = false;
@@ -777,12 +769,10 @@ void Atdsys::ats_search_str(int16 *nr, uint8 *status, uint8 controlByte, char **
 			} else if (*tmp_str == ATDS_END_TEXT) {
 				endLoop = true;
 				*str = start_str;
-				start_str -= AtsStrHeader::SIZE();
+				start_str -= 2;	// voc number
 
 				if (_atsv._txtMode != TXT_MARK_NAME) {
-					Common::MemoryReadStream rs((const byte *)start_str,
-						AtsStrHeader::SIZE());
-					_atsv._strHeader.load(&rs);
+					_atsv.vocNum = READ_LE_UINT16(start_str);
 				}
 
 				if (tmp_str[1] != ATDS_END) {
@@ -800,16 +790,14 @@ void Atdsys::ats_search_str(int16 *nr, uint8 *status, uint8 controlByte, char **
 					*nr = 0;
 					*status = count;
 					*str = start_str;
-					start_str -= AtsStrHeader::SIZE();
+					start_str -= 2; // voc number
 
 					if (_atsv._txtMode != TXT_MARK_NAME) {
-						Common::MemoryReadStream rs((const byte *)start_str,
-							AtsStrHeader::SIZE());
-						_atsv._strHeader.load(&rs);
+						_atsv.vocNum = READ_LE_UINT16(start_str);
 					}
 				} else {
 					++count;
-					tmp_str += AtsStrHeader::SIZE() + 2;
+					tmp_str += 2 + 2;	// voc number + 2
 					start_str = tmp_str + 1;
 				}
 			} else if (*tmp_str == ATDS_END ||

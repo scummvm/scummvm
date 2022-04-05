@@ -176,13 +176,6 @@ struct AdsNextBlk {
 	int16 _endNr;
 };
 
-struct AtsStrHeader {
-	uint16 _vocNr = 0;
-
-	bool load(Common::SeekableReadStream *src);
-	static constexpr int SIZE() { return 2; }
-};
-
 struct AtsTxtHeader {
 	uint16 _txtNr = 0;
 	int16 _aMov = 0;
@@ -194,7 +187,7 @@ struct AtsTxtHeader {
 
 struct AtsVar {
 	AtsTxtHeader _txtHeader;
-	AtsStrHeader _strHeader;
+	uint16 vocNum;
 	char *_ptr;
 	int16 _delayCount;
 	int16 _silentCount;
