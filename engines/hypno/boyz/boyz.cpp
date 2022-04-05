@@ -64,7 +64,7 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_playerFrameIdx = -1;
 
 	_currentScript = arc->script;
-	ScriptInfo si = _currentScript.begin();
+	ScriptInfo si = *_currentScript.begin();
 	_currentActor = si.actor - 1;
 	_currentMode = si.mode;
 	_currentScript.pop_front();
