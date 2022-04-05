@@ -37,7 +37,9 @@ void BoyzEngine::loadAssets() {
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
-	loadArcadeLevel("c11.mi_", "", "", "");
+	loadArcadeLevel("c11.mi_", "c12.mi_", "??", "");
+	loadArcadeLevel("c12.mi_", "??", "??", "");
+
 	loadLib("sound/", "misc/sound.lib", true);
 	_nextLevel = "c11.mi_";
 }
@@ -48,21 +50,35 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_playerFrames = decodeFrames(arc->player);
 	_playerFrameSep = 0;
 
-	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
-		if ((*it)->getPixel(0, 0) == 255)
-			break;
-		if ((*it)->getPixel(0, 0) == 252)
-			break;
+	Common::Rect healthBarBox(0, 3, 107, 18);
+	Common::Rect ammoBarBox(0, 20, 103, 34);
+	Common::Rect portraitBox(0, 40, 57, 94);
 
-		_playerFrameSep++;
+	for (int i = 0; i < int(_playerFrames.size()); i++) {
+		_healthBar[i] = _playerFrames[i]->getSubArea(healthBarBox);
+		_ammoBar[i] = _playerFrames[i]->getSubArea(ammoBarBox);
+		_portrait[i] = _playerFrames[i]->getSubArea(portraitBox);
 	}
+
+	_playerFrameSep = _playerFrames.size();
 	_playerFrameIdx = -1;
 }
 
-void BoyzEngine::drawPlayer() {
-	drawImage(*_playerFrames[0], 0, 0, true);
+void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
+	for (int i = 0; i < int(_playerFrames.size()); i++) {
+		_playerFrames[i]->free();
+		delete _playerFrames[i];
+	}
 }
-void BoyzEngine::drawHealth() {}
+
+void BoyzEngine::drawPlayer() {
+	drawImage(_portrait[0], 0, 200 - _portrait[2].h, true);
+}
+
+void BoyzEngine::drawHealth() {
+	drawImage(_healthBar[0], 0, 0, true);
+	drawImage(_ammoBar[0], 320 - _ammoBar[0].w, 0, true);
+}
 void BoyzEngine::hitPlayer() {}
 void BoyzEngine::drawShoot(const Common::Point &target) {}
 

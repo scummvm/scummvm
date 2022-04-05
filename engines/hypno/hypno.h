@@ -455,6 +455,7 @@ public:
 	Common::String findNextLevel(const Common::String &level) override;
 
 	void runBeforeArcade(ArcadeShooting *arc) override;
+	void runAfterArcade(ArcadeShooting *arc) override;
 	int detectTarget(const Common::Point &mousePos) override;
 	void shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background) override;
 
@@ -465,6 +466,11 @@ public:
 	void drawPlayer() override;
 	void findNextSegment(ArcadeShooting *arc) override;
 	void initSegment(ArcadeShooting *arc) override;
+
+	private:
+	Graphics::Surface _healthBar[6];
+	Graphics::Surface _ammoBar[6];
+	Graphics::Surface _portrait[6];
 };
 
 } // End of namespace Hypno
