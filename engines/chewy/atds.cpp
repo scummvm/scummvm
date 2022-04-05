@@ -110,10 +110,8 @@ Atdsys::Atdsys() {
 }
 
 Atdsys::~Atdsys() {
-	if (_atdsHandle) {
-		delete _atdsHandle;
-		_atdsHandle = nullptr;
-	}
+	delete _atdsHandle;
+	_atdsHandle = nullptr;
 
 	for (int16 i = 0; i < MAX_HANDLE; i++) {
 		if (_atdsMem[i])
@@ -141,8 +139,7 @@ void Atdsys::init() {
 	set_handle(ATDS_TXT, INV_USE_DATA, USE_TAP_OFF, USE_TAP_MAX);
 	_G(gameState).AadSilent = 10;
 	_G(gameState).DelaySpeed = 5;
-	_G(spieler_vector)
-	[P_CHEWY].Delay = _G(gameState).DelaySpeed;
+	_G(spieler_vector)[P_CHEWY].Delay = _G(gameState).DelaySpeed;
 	set_delay(&_G(gameState).DelaySpeed, _G(gameState).AadSilent);
 	set_string_end_func(&atdsStringStart);
 }
@@ -352,47 +349,35 @@ void Atdsys::set_split_win(int16 nr, int16 x, int16 y) {
 
 void Atdsys::set_handle(const char *fname, int16 mode, int16 chunkStart, int16 chunkNr) {
 	ChunkHead Ch;
-	char *tmp_adr = atds_adr(fname, chunkStart, chunkNr);
-	if (_atdsHandle) {
-		if (_atdsMem[mode])
-			free(_atdsMem[mode]);
-		_atdsMem[mode] = tmp_adr;
-		_atdsPoolOff[mode] = chunkStart;
-		switch (mode) {
-		case INV_USE_DATA:
-			_G(mem)->file->selectPoolItem(_atdsHandle, _atdsPoolOff[mode]);
-			_atdsHandle->seek(-ChunkHead::SIZE(), SEEK_CUR);
+	uint32 size = _G(mem)->file->getPoolSize(fname, chunkStart, chunkNr);
+	char *tmp_adr = size ? (char *)MALLOC(size + 3) : nullptr;
 
-			if (!Ch.load(_atdsHandle)) {
+	if (_atdsMem[mode])
+		free(_atdsMem[mode]);
+	_atdsMem[mode] = tmp_adr;
+	_atdsPoolOff[mode] = chunkStart;
+
+	if (mode == INV_USE_DATA) {
+		_G(mem)->file->selectPoolItem(_atdsHandle, _atdsPoolOff[mode]);
+		_atdsHandle->seek(-ChunkHead::SIZE(), SEEK_CUR);
+
+		if (!Ch.load(_atdsHandle))
+			error("Error reading from %s", fname);
+
+		free(_invUseMem);
+		_invUseMem = (char *)MALLOC(Ch.size + 3l);
+
+		if (Ch.size) {
+			if (!_atdsHandle->read(_invUseMem, Ch.size)) {
 				error("Error reading from %s", fname);
 			} else {
-				free(_invUseMem);
-				_invUseMem = (char *)MALLOC(Ch.size + 3l);
-
-				if (Ch.size) {
-					if (!_atdsHandle->read(_invUseMem, Ch.size)) {
-						error("Error reading from %s", fname);
-					} else {
-						crypt(_invUseMem, Ch.size);
-					}
-				}
-				_invUseMem[Ch.size] = (char)BLOCKENDE;
-				_invUseMem[Ch.size + 1] = (char)BLOCKENDE;
-				_invUseMem[Ch.size + 2] = (char)BLOCKENDE;
+				crypt(_invUseMem, Ch.size);
 			}
-			break;
 		}
+		_invUseMem[Ch.size] = (char)BLOCKENDE;
+		_invUseMem[Ch.size + 1] = (char)BLOCKENDE;
+		_invUseMem[Ch.size + 2] = (char)BLOCKENDE;
 	}
-}
-
-char *Atdsys::atds_adr(const char *fname, int16 chunkStart, int16 chunkNr) {
-	char *tmp_adr = nullptr;
-	uint32 size = _G(mem)->file->getPoolSize(fname, chunkStart, chunkNr);
-	if (size) {
-		tmp_adr = (char *)MALLOC(size + 3);
-	}
-
-	return tmp_adr;
 }
 
 void Atdsys::load_atds(int16 chunkNr, int16 mode) {

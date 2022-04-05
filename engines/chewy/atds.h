@@ -233,7 +233,6 @@ public:
 	SplitStringRet *split_string(SplitStringInit *ssi);
 	void calc_txt_win(SplitStringInit *ssi);
 	void str_null2leer(char *strStart, char *strEnd);
-	char *atds_adr(const char *fname, int16 chunkStart, int16 chunkNr);
 	void load_atds(int16 chunkNr, int16 mode);
 
 	void set_handle(const char *fname, int16 mode, int16 chunkStart, int16 chunkNr);

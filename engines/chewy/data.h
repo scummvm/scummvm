@@ -23,15 +23,16 @@
 #define CHEWY_DATA_H
 
 #include "chewy/chewy.h"
+#include "common/file.h"
 
 namespace Chewy {
 
 class Data {
 public:
-	Data();
-	~Data();
+	Data() {}
+	~Data() {}
 
-	uint16 selectPoolItem(Common::Stream *stream, uint16 nr);
+	void selectPoolItem(Common::File *stream, uint16 nr);
 	uint32 getPoolSize(const char *filename, int16 chunkStart, int16 chunkNr);
 };
 
