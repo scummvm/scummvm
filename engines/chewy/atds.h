@@ -237,8 +237,8 @@ public:
 	void load_atds(int16 chunkNr, int16 mode);
 
 	Common::Stream *pool_handle(const char *fname);
-	void set_handle(const char *fname, int16 mode, Common::Stream *handle, int16 chunkStart, int16 chunkNr);
-	void close_handle(int16 mode);
+	void set_handle(const char *fname, int16 mode, int16 chunkStart, int16 chunkNr);
+	void close_handle();
 	void crypt(char *txt, uint32 size);
 	bool start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr);
 	void stop_ats();
@@ -291,7 +291,7 @@ private:
 	int16 get_delay(int16 txt_len);
 	void initItemUseWith();
 
-	Common::Stream *_atdsHandle[MAX_HANDLE] = { nullptr };
+	Common::Stream *_atdsHandle = nullptr;
 	char *_atdsMem[MAX_HANDLE] = { nullptr };
 	int16 _atdsPoolOff[MAX_HANDLE] = { 0 };
 	char *_atsMem = nullptr;

@@ -109,8 +109,12 @@ Atdsys::Atdsys() {
 }
 
 Atdsys::~Atdsys() {
+	close_handle();
+
 	for (int16 i = 0; i < MAX_HANDLE; i++) {
-		close_handle(i);
+		if (_atdsMem[i])
+			free(_atdsMem[i]);
+		_atdsMem[i] = nullptr;	
 	}
 
 	if (_invUseMem)
@@ -326,19 +330,20 @@ Common::Stream *Atdsys::pool_handle(const char *fname) {
 	Common::File *f = new Common::File();
 	f->open(fname);
 	if (f->isOpen()) {
-		_atdsHandle[ATDS_HANDLE] = f;
+		_atdsHandle = f;
 	} else {
 		error("Error reading from %s", fname);
 	}
 	return f;
 }
 
-void Atdsys::set_handle(const char *fname, int16 mode, Common::Stream *handle, int16 chunkStart, int16 chunkNr) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
+void Atdsys::set_handle(const char *fname, int16 mode, int16 chunkStart, int16 chunkNr) {
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_atdsHandle);
 	ChunkHead Ch;
 	char *tmp_adr = atds_adr(fname, chunkStart, chunkNr);
 	if (rs) {
-		_atdsHandle[mode] = rs;
+		if (_atdsMem[mode])
+			free(_atdsMem[mode]);
 		_atdsMem[mode] = tmp_adr;
 		_atdsPoolOff[mode] = chunkStart;
 		switch (mode) {
@@ -368,21 +373,11 @@ void Atdsys::set_handle(const char *fname, int16 mode, Common::Stream *handle, i
 	}
 }
 
-void Atdsys::close_handle(int16 mode) {
-	Common::Stream *stream = _atdsHandle[mode];
-	if (stream) {
-		delete _atdsHandle[mode];
-		_atdsHandle[mode] = nullptr;
-
-		for (int i = 0; i < MAX_HANDLE; ++i) {
-			if (_atdsHandle[i] == stream)
-				_atdsHandle[i] = nullptr;
-		}
+void Atdsys::close_handle() {
+	if (_atdsHandle) {
+		delete _atdsHandle;
+		_atdsHandle = nullptr;
 	}
-
-	if (_atdsMem[mode])
-		free(_atdsMem[mode]);
-	_atdsMem[mode] = nullptr;
 }
 
 char *Atdsys::atds_adr(const char *fname, int16 chunkStart, int16 chunkNr) {
@@ -399,7 +394,7 @@ void Atdsys::load_atds(int16 chunkNr, int16 mode) {
 	char *txt_adr = _atdsMem[mode];
 
 	ChunkHead Ch;
-	Common::SeekableReadStream *stream = dynamic_cast<Common::SeekableReadStream *>(_atdsHandle[mode]);
+	Common::SeekableReadStream *stream = dynamic_cast<Common::SeekableReadStream *>(_atdsHandle);
 
 	if (stream && txt_adr) {
 		_G(mem)->file->selectPoolItem(stream, chunkNr + _atdsPoolOff[mode]);
