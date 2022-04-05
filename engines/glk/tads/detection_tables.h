@@ -124,7 +124,7 @@ const PlainGameDescriptor TADS2_GAME_LIST[] = {
 	{ "lightiania", "Lightiania" },
 	{ "losingyourgrip", "Losing Your Grip, a Journey in Five Fits" },
 	{ "lost", "Lost" },
-	{ "lostnytads", "Lost in New York" },
+	{ "lostnytads", "Lost New York" },
 	{ "lovesparade", "Everybody Loves a Parade" },
 	{ "maidenmoonlight", "Maiden of the Moonlight" },
 	{ "meanstreetstads", "Mean Streets" },
