@@ -105,11 +105,15 @@ Atdsys::Atdsys() {
 	_adsnb._endNr = 0;
 	_adsStackPtr = 0;
 
+	init();
 	initItemUseWith();
 }
 
 Atdsys::~Atdsys() {
-	close_handle();
+	if (_atdsHandle) {
+		delete _atdsHandle;
+		_atdsHandle = nullptr;
+	}
 
 	for (int16 i = 0; i < MAX_HANDLE; i++) {
 		if (_atdsMem[i])
@@ -121,6 +125,26 @@ Atdsys::~Atdsys() {
 		free(_invUseMem);
 
 	delete _dialogResource;
+}
+
+void Atdsys::init() {
+	_atdsHandle = new Common::File();
+	_atdsHandle->open(ATDS_TXT);
+	if (!_atdsHandle->isOpen()) {
+		error("Error opening %s", ATDS_TXT);
+	}
+
+	set_handle(ATDS_TXT, ATS_DATA, ATS_TAP_OFF, ATS_TAP_MAX);
+	set_handle(ATDS_TXT, INV_ATS_DATA, INV_TAP_OFF, INV_TAP_MAX);
+	set_handle(ATDS_TXT, AAD_DATA, AAD_TAP_OFF, AAD_TAP_MAX);
+	set_handle(ATDS_TXT, ADS_DATA, ADS_TAP_OFF, ADS_TAP_MAX);
+	set_handle(ATDS_TXT, INV_USE_DATA, USE_TAP_OFF, USE_TAP_MAX);
+	_G(gameState).AadSilent = 10;
+	_G(gameState).DelaySpeed = 5;
+	_G(spieler_vector)
+	[P_CHEWY].Delay = _G(gameState).DelaySpeed;
+	set_delay(&_G(gameState).DelaySpeed, _G(gameState).AadSilent);
+	set_string_end_func(&atdsStringStart);
 }
 
 void Atdsys::initItemUseWith() {
@@ -326,39 +350,27 @@ void Atdsys::set_split_win(int16 nr, int16 x, int16 y) {
 	_ssi[nr]._y = y;
 }
 
-Common::Stream *Atdsys::pool_handle(const char *fname) {
-	Common::File *f = new Common::File();
-	f->open(fname);
-	if (f->isOpen()) {
-		_atdsHandle = f;
-	} else {
-		error("Error reading from %s", fname);
-	}
-	return f;
-}
-
 void Atdsys::set_handle(const char *fname, int16 mode, int16 chunkStart, int16 chunkNr) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(_atdsHandle);
 	ChunkHead Ch;
 	char *tmp_adr = atds_adr(fname, chunkStart, chunkNr);
-	if (rs) {
+	if (_atdsHandle) {
 		if (_atdsMem[mode])
 			free(_atdsMem[mode]);
 		_atdsMem[mode] = tmp_adr;
 		_atdsPoolOff[mode] = chunkStart;
 		switch (mode) {
 		case INV_USE_DATA:
-			_G(mem)->file->selectPoolItem(rs, _atdsPoolOff[mode]);
-			rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
+			_G(mem)->file->selectPoolItem(_atdsHandle, _atdsPoolOff[mode]);
+			_atdsHandle->seek(-ChunkHead::SIZE(), SEEK_CUR);
 
-			if (!Ch.load(rs)) {
+			if (!Ch.load(_atdsHandle)) {
 				error("Error reading from %s", fname);
 			} else {
 				free(_invUseMem);
 				_invUseMem = (char *)MALLOC(Ch.size + 3l);
 
 				if (Ch.size) {
-					if (!rs->read(_invUseMem, Ch.size)) {
+					if (!_atdsHandle->read(_invUseMem, Ch.size)) {
 						error("Error reading from %s", fname);
 					} else {
 						crypt(_invUseMem, Ch.size);
@@ -370,13 +382,6 @@ void Atdsys::set_handle(const char *fname, int16 mode, int16 chunkStart, int16 c
 			}
 			break;
 		}
-	}
-}
-
-void Atdsys::close_handle() {
-	if (_atdsHandle) {
-		delete _atdsHandle;
-		_atdsHandle = nullptr;
 	}
 }
 
@@ -394,16 +399,14 @@ void Atdsys::load_atds(int16 chunkNr, int16 mode) {
 	char *txt_adr = _atdsMem[mode];
 
 	ChunkHead Ch;
-	Common::SeekableReadStream *stream = dynamic_cast<Common::SeekableReadStream *>(_atdsHandle);
-
-	if (stream && txt_adr) {
-		_G(mem)->file->selectPoolItem(stream, chunkNr + _atdsPoolOff[mode]);
-		stream->seek(-ChunkHead::SIZE(), SEEK_CUR);
-		if (!Ch.load(stream)) {
+	if (_atdsHandle && txt_adr) {
+		_G(mem)->file->selectPoolItem(_atdsHandle, chunkNr + _atdsPoolOff[mode]);
+		_atdsHandle->seek(-ChunkHead::SIZE(), SEEK_CUR);
+		if (!Ch.load(_atdsHandle)) {
 			error("load_atds error");
 		} else {
 			if (Ch.size) {
-				if (stream->read(txt_adr, Ch.size) != Ch.size) {
+				if (_atdsHandle->read(txt_adr, Ch.size) != Ch.size) {
 					error("load_atds error");
 				} else {
 					crypt(txt_adr, Ch.size);
