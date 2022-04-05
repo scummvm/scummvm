@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "scott.h"
 #include "definitions.h"
+#include "detect_game.h"
 
 namespace Glk {
 namespace Scott {
@@ -304,6 +305,113 @@ void drawSagaPictureNumber(int pictureNumber) {
 	drawSagaPictureFromData(img._imageData, img._width, img._height, img._xOff, img._yOff);
 }
 
+void sagaSetup(size_t imgOffset) {
+	int32_t i, y;
+
+	Common::Array<uint16_t> imageOffsets(_G(_game)->_numberOfPictures);
+
+	if (_G(_palChosen) == NO_PALETTE) {
+		_G(_palChosen) = _G(_game)->_palette;
+	}
+
+	if (_G(_palChosen) == NO_PALETTE) {
+		error("unknown palette\n");
+	}
+
+	definePalette();
+
+	int version = _G(_game)->_pictureFormatVersion;
+
+	int32_t CHAR_START = _G(_game)->_startOfCharacters + _G(_fileBaselineOffset);
+	int32_t OFFSET_TABLE_START = _G(_game)->_startOfImageData + _G(_fileBaselineOffset);
+
+	if (_G(_game)->_startOfImageData == FOLLOWS) {
+		OFFSET_TABLE_START = CHAR_START + 0x800;
+	}
+
+	int32_t DATA_OFFSET = _G(_game)->_imageAddressOffset + _G(_fileBaselineOffset);
+	if (imgOffset)
+		DATA_OFFSET = imgOffset;
+	uint8_t *pos;
+	int numgraphics = _G(_game)->_numberOfPictures;
+
+	pos = seekToPos(_G(_entireFile), CHAR_START);
+
+#ifdef DRAWDEBUG
+	debug("Grabbing Character details\n");
+	debug("Character Offset: %04x\n", CHAR_START - _G(_fileBaselineOffset));
+#endif
+	for (i = 0; i < 256; i++) {
+		for (y = 0; y < 8; y++) {
+			_G(_sprite)[i][y] = *(pos++);
+		}
+	}
+
+	_G(_images).resize(numgraphics);
+	Image *img = &_G(_images)[0];
+
+	pos = seekToPos(_G(_entireFile), OFFSET_TABLE_START);
+	pos = seekToPos(_G(_entireFile), OFFSET_TABLE_START);
+
+	for (i = 0; i < numgraphics; i++) {
+		if (_G(_game)->_pictureFormatVersion == 0) {
+			uint16_t address;
+
+			if (i < 11) {
+				address = _G(_game)->_startOfImageData + (i * 2);
+			} else if (i < 28) {
+				address = _G(_hulkItemImageOffsets) + (i - 10) * 2;
+			} else if (i < 34) {
+				address = _G(_hulkLookImageOffsets) + (i - 28) * 2;
+			} else {
+				address = _G(_hulkSpecialImageOffsets) + (i - 34) * 2;
+			}
+
+			address += _G(_fileBaselineOffset);
+			address = _G(_entireFile)[address] + _G(_entireFile)[address + 1] * 0x100;
+
+			imageOffsets[i] = address + _G(_hulkImageOffset);
+		} else {
+			imageOffsets[i] = *(pos++);
+			imageOffsets[i] += *(pos++) * 0x100;
+		}
+	}
+
+	for (int picture_number = 0; picture_number < numgraphics; picture_number++) {
+		pos = seekToPos(_G(_entireFile), imageOffsets[picture_number] + DATA_OFFSET);
+		if (pos == 0)
+			return;
+
+		img->_width = *(pos++);
+		if (img->_width > 32)
+			img->_width = 32;
+
+		img->_height = *(pos++);
+		if (img->_height > 12)
+			img->_height = 12;
+
+		if (version > 0) {
+			img->_xOff = *(pos++);
+			if (img->_xOff > 32)
+				img->_xOff = 4;
+			img->_yOff = *(pos++);
+			if (img->_yOff > 12)
+				img->_yOff = 0;
+		} else {
+			if (picture_number > 9 && picture_number < 28) {
+				img->_xOff = _G(_entireFile)[_G(_hulkCoordinates) + picture_number - 10 + _G(_fileBaselineOffset)];
+				img->_yOff = _G(_entireFile)[_G(_hulkCoordinates) + 18 + picture_number - 10 + _G(_fileBaselineOffset)];
+			} else {
+				img->_xOff = img->_yOff = 0;
+			}
+		}
+
+		img->_imageData = pos;
+
+		img++;
+	}
+}
+
 void putPixel(glsi32 x, glsi32 y, int32_t color) {
 	int yOffset = 0;
 
@@ -325,6 +433,181 @@ void rectFill(int32_t x, int32_t y, int32_t width, int32_t height, int32_t color
 
 	g_vm->glk_window_fill_rect(_G(_graphics), glk_color, x * _G(_pixelSize) + _G(_xOffset),
 							   y * _G(_pixelSize) + yOffset, width * _G(_pixelSize), height * _G(_pixelSize));
+}
+
+void setColor(int32_t index, RGB *colour) {
+	_G(_pal)[index][0] = (*colour)[0];
+	_G(_pal)[index][1] = (*colour)[1];
+	_G(_pal)[index][2] = (*colour)[2];
+}
+
+void definePalette() {
+	/* set up the palette */
+	if (_G(_palChosen) == VGA) {
+		RGB black = {0, 0, 0};
+		RGB blue = {0, 0, 255};
+		RGB red = {255, 0, 0};
+		RGB magenta = {255, 0, 255};
+		RGB green = {0, 255, 0};
+		RGB cyan = {0, 255, 255};
+		RGB yellow = {255, 255, 0};
+		RGB white = {255, 255, 255};
+		RGB brblack = {0, 0, 0};
+		RGB brblue = {0, 0, 255};
+		RGB brred = {255, 0, 0};
+		RGB brmagenta = {255, 0, 255};
+		RGB brgreen = {0, 255, 0};
+		RGB brcyan = {0, 255, 255};
+		RGB bryellow = {255, 255, 0};
+		RGB brwhite = {255, 255, 255};
+
+		setColor(0, &black);
+		setColor(1, &blue);
+		setColor(2, &red);
+		setColor(3, &magenta);
+		setColor(4, &green);
+		setColor(5, &cyan);
+		setColor(6, &yellow);
+		setColor(7, &white);
+		setColor(8, &brblack);
+		setColor(9, &brblue);
+		setColor(10, &brred);
+		setColor(11, &brmagenta);
+		setColor(12, &brgreen);
+		setColor(13, &brcyan);
+		setColor(14, &bryellow);
+		setColor(15, &brwhite);
+	} else if (_G(_palChosen) == ZX) {
+		/* corrected Sinclair ZX palette (pretty dull though) */
+		RGB black = {0, 0, 0};
+		RGB blue = {0, 0, 154};
+		RGB red = {154, 0, 0};
+		RGB magenta = {154, 0, 154};
+		RGB green = {0, 154, 0};
+		RGB cyan = {0, 154, 154};
+		RGB yellow = {154, 154, 0};
+		RGB white = {154, 154, 154};
+		RGB brblack = {0, 0, 0};
+		RGB brblue = {0, 0, 170};
+		RGB brred = {186, 0, 0};
+		RGB brmagenta = {206, 0, 206};
+		RGB brgreen = {0, 206, 0};
+		RGB brcyan = {0, 223, 223};
+		RGB bryellow = {239, 239, 0};
+		RGB brwhite = {255, 255, 255};
+
+		setColor(0, &black);
+		setColor(1, &blue);
+		setColor(2, &red);
+		setColor(3, &magenta);
+		setColor(4, &green);
+		setColor(5, &cyan);
+		setColor(6, &yellow);
+		setColor(7, &white);
+		setColor(8, &brblack);
+		setColor(9, &brblue);
+		setColor(10, &brred);
+		setColor(11, &brmagenta);
+		setColor(12, &brgreen);
+		setColor(13, &brcyan);
+		setColor(14, &bryellow);
+		setColor(15, &brwhite);
+
+		_G(_whiteColour) = 15;
+		_G(_blueColour) = 9;
+		_G(_diceColour) = 0xff0000;
+	} else if (_G(_palChosen) == ZXOPT) {
+		/* optimized but not realistic Sinclair ZX palette (SPIN emu) */
+		RGB black = {0, 0, 0};
+		RGB blue = {0, 0, 202};
+		RGB red = {202, 0, 0};
+		RGB magenta = {202, 0, 202};
+		RGB green = {0, 202, 0};
+		RGB cyan = {0, 202, 202};
+		RGB yellow = {202, 202, 0};
+		RGB white = {202, 202, 202};
+		/*
+	 old David Lodge palette:
+
+	 RGB black = { 0, 0, 0 };
+	 RGB blue = { 0, 0, 214 };
+	 RGB red = { 214, 0, 0 };
+	 RGB magenta = { 214, 0, 214 };
+	 RGB green = { 0, 214, 0 };
+	 RGB cyan = { 0, 214, 214 };
+	 RGB yellow = { 214, 214, 0 };
+	 RGB white = { 214, 214, 214 };
+	 */
+		RGB brblack = {0, 0, 0};
+		RGB brblue = {0, 0, 255};
+		RGB brred = {255, 0, 20};
+		RGB brmagenta = {255, 0, 255};
+		RGB brgreen = {0, 255, 0};
+		RGB brcyan = {0, 255, 255};
+		RGB bryellow = {255, 255, 0};
+		RGB brwhite = {255, 255, 255};
+
+		setColor(0, &black);
+		setColor(1, &blue);
+		setColor(2, &red);
+		setColor(3, &magenta);
+		setColor(4, &green);
+		setColor(5, &cyan);
+		setColor(6, &yellow);
+		setColor(7, &white);
+		setColor(8, &brblack);
+		setColor(9, &brblue);
+		setColor(10, &brred);
+		setColor(11, &brmagenta);
+		setColor(12, &brgreen);
+		setColor(13, &brcyan);
+		setColor(14, &bryellow);
+		setColor(15, &brwhite);
+
+		_G(_whiteColour) = 15;
+		_G(_blueColour) = 9;
+		_G(_diceColour) = 0xff0000;
+
+	} else if ((_G(_palChosen) == C64A) || (_G(_palChosen) == C64B)) {
+		/* and now: C64 palette (pepto/VICE) */
+		RGB black = {0, 0, 0};
+		RGB white = {255, 255, 255};
+		RGB red = {191, 97, 72};
+		RGB cyan = {153, 230, 249};
+		RGB purple = {177, 89, 185};
+		RGB green = {121, 213, 112};
+		RGB blue = {95, 72, 233};
+		RGB yellow = {247, 255, 108};
+		RGB orange = {186, 134, 32};
+		RGB brown = {116, 105, 0};
+		RGB lred = {180, 105, 164};
+		RGB dgrey = {69, 69, 69};
+		RGB grey = {167, 167, 167};
+		RGB lgreen = {154, 210, 134};
+		RGB lblue = {162, 143, 255};
+		RGB lgrey = {150, 150, 150};
+
+		setColor(0, &black);
+		setColor(1, &white);
+		setColor(2, &red);
+		setColor(3, &cyan);
+		setColor(4, &purple);
+		setColor(5, &green);
+		setColor(6, &blue);
+		setColor(7, &yellow);
+		setColor(8, &orange);
+		setColor(9, &brown);
+		setColor(10, &lred);
+		setColor(11, &dgrey);
+		setColor(12, &grey);
+		setColor(13, &lgreen);
+		setColor(14, &lblue);
+		setColor(15, &lgrey);
+
+		_G(_whiteColour) = 1;
+		_G(_blueColour) = 6;
+		_G(_diceColour) = 0x5f48e9;
+	}
 }
 
 int32_t remap(int32_t color) {

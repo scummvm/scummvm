@@ -17,8 +17,11 @@ struct Image {
 uint8_t *drawSagaPictureFromData(uint8_t *dataptr, int xSize, int ySize, int xOff, int yOff);
 void drawSagaPictureNumber(int pictureNumber);
 
+void sagaSetup(size_t imgOffset);
+
 void putPixel(glsi32 x, glsi32 y, int32_t color);
 void rectFill(int32_t x, int32_t y, int32_t width, int32_t height, int32_t color);
+void definePalette();
 
 int32_t remap(int32_t color);
 

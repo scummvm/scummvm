@@ -32,13 +32,14 @@ public:
 	uint8_t *_entireFile;
 	size_t _fileLength;
 	strid_t _roomDescriptionStream;
+	int _fileBaselineOffset;
 
 	//sagadraw
 	int _drawToBuffer;
 	uint8_t _sprite[256][8];
 	uint8_t _screenchars[768][8];
 	uint8_t _buffer[384][9];
-	Image *_images;
+	Common::Array<Image> _images;
 	int _pixelSize;
 	int _xOffset;
 	PALETTE _pal;
@@ -47,6 +48,12 @@ public:
 	glui32 _diceColour;
 	int32_t _errorCount;
 	PaletteType _palChosen;
+	size_t _hulkCoordinates;
+	size_t _hulkItemImageOffsets;
+	size_t _hulkLookImageOffsets;
+	size_t _hulkSpecialImageOffsets;
+	size_t _hulkImageOffset;
+
 
 	//line_drawing
 	LineImage *_lineImages;
