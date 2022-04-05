@@ -62,6 +62,12 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 
 	_playerFrameSep = _playerFrames.size();
 	_playerFrameIdx = -1;
+
+	_currentScript = arc->script;
+	ScriptInfo si = _currentScript.begin();
+	_currentActor = si.actor - 1;
+	_currentMode = si.mode;
+	_currentScript.pop_front();
 }
 
 void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
@@ -72,12 +78,12 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 }
 
 void BoyzEngine::drawPlayer() {
-	drawImage(_portrait[0], 0, 200 - _portrait[2].h, true);
+	drawImage(_portrait[_currentActor], 0, 200 - _portrait[_currentActor].h, true);
 }
 
 void BoyzEngine::drawHealth() {
-	drawImage(_healthBar[0], 0, 0, true);
-	drawImage(_ammoBar[0], 320 - _ammoBar[0].w, 0, true);
+	drawImage(_healthBar[_currentActor], 0, 0, true);
+	drawImage(_ammoBar[_currentActor], 320 - _ammoBar[_currentActor].w, 0, true);
 }
 void BoyzEngine::hitPlayer() {}
 void BoyzEngine::drawShoot(const Common::Point &target) {}

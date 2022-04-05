@@ -366,6 +366,27 @@ public:
 	uint32 length;
 };
 
+enum ScriptMode {
+	NonInteractive = 1,
+	Interactive,
+};
+
+class ScriptInfo {
+public:
+	ScriptInfo(uint32 time_, uint32 mode_, uint32 actor_, uint32 cursor_) {
+		time = time_;
+		mode = ScriptMode(mode_);
+		actor = actor_;
+		cursor = cursor_;
+	}
+	uint32 time;
+	ScriptMode mode;
+	uint32 actor;
+	uint32 cursor;
+};
+
+typedef Common::List<ScriptInfo> Script;
+
 class Shoot {
 public:
 	Shoot() {
@@ -506,6 +527,7 @@ public:
 		briefingVideo.clear();
 		additionalVideo.clear();
 		segments.clear();
+		script.clear();
 	}
 
 	uint32 id;
@@ -517,6 +539,9 @@ public:
 	// Objectives
 	uint32 objKillsRequired [2];
 	uint32 objMissesAllowed [2];
+
+	// Script
+	Script script;
 
 	// Videos
 	Common::List<Filename> transitionVideos;

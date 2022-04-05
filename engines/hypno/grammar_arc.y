@@ -102,7 +102,11 @@ hline: 	CTOK NUM {
 		debugC(1, kHypnoDebugParser, "M %s", $2);
 		g_parsedArc->maskVideo = $2;
 	}
-	| UTOK NUM NUM NUM NUM { debugC(1, kHypnoDebugParser, "U %d %d %d %d", $2, $3, $4, $5); }
+	| UTOK NUM NUM NUM NUM {
+		debugC(1, kHypnoDebugParser, "U %d %d %d %d", $2, $3, $4, $5);
+		ScriptInfo si($2, $3, $4, $5);
+		g_parsedArc->script.push_back(si);
+	}
 	| VTOK NUM NUM { debugC(1, kHypnoDebugParser, "V %d %d", $2, $3); }
 	| VTOK RESTOK { debugC(1, kHypnoDebugParser, "V 320,200"); }
 	| OTOK NUM NUM {

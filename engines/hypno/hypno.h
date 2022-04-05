@@ -471,6 +471,12 @@ public:
 	Graphics::Surface _healthBar[6];
 	Graphics::Surface _ammoBar[6];
 	Graphics::Surface _portrait[6];
+
+	Script _currentScript;
+	ScriptMode _currentMode;
+	uint32 _currentActor;
+	uint32 _currentCursor;
+
 };
 
 } // End of namespace Hypno
