@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-04 14:02+0000\n"
 "PO-Revision-Date: 2022-04-05 15:25+0000\n"
-"Last-Translator: luckbok <luckbokdan@gmail.com>\n"
+"Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -717,56 +717,42 @@ msgstr "???"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:99
-#, fuzzy
-#| msgid "None"
 msgctxt "group"
 msgid "None"
 msgstr "없음"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:101
-#, fuzzy
-#| msgid "First letter"
 msgctxt "group"
 msgid "First letter"
 msgstr "첫 글자"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
-#, fuzzy
-#| msgid "Engine"
 msgctxt "group"
 msgid "Engine"
 msgstr "엔진"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:105
-#, fuzzy
-#| msgid "Series"
 msgctxt "group"
 msgid "Series"
 msgstr "시리즈"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:107
-#, fuzzy
-#| msgid "Publisher"
 msgctxt "group"
 msgid "Publisher"
 msgstr "배급사"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
-#| msgid "Language"
 msgctxt "group"
 msgid "Language"
 msgstr "언어"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
-#, fuzzy
-#| msgid "Platform"
 msgctxt "group"
 msgid "Platform"
 msgstr "플랫폼"
@@ -792,31 +778,25 @@ msgid "Quit ScummVM"
 msgstr "ScummVM 종료"
 
 #: gui/launcher.cpp:241
-#, fuzzy
-#| msgid "A~b~out..."
 msgid "A~b~out"
-msgstr "프로그램 정보(~b~)..."
+msgstr "프로그램 정보(~b~)"
 
 #: gui/launcher.cpp:241 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
 msgstr "ScummVM 정보"
 
 #: gui/launcher.cpp:243
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Global ~O~ptions..."
-msgstr "옵션(~O~)..."
+msgstr "전역 옵션(~O~)..."
 
 #: gui/launcher.cpp:243 gui/launcher.cpp:245
 msgid "Change global ScummVM options"
 msgstr "전역 ScummVM 설정을 수정합니다"
 
 #: gui/launcher.cpp:245
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "옵션(~O~)..."
+msgstr "전역 옵션(~O~)..."
 
 #: gui/launcher.cpp:250
 msgid "~A~dd Game..."
@@ -951,21 +931,17 @@ msgid "Record..."
 msgstr "녹화..."
 
 #: gui/launcher.cpp:999
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "~G~ame Options..."
-msgstr "옵션(~O~)..."
+msgstr "게임 옵션(~G~)..."
 
 #: gui/launcher.cpp:999 gui/launcher.cpp:1002
 msgid "Change game options"
 msgstr "게임 옵션을 변경합니다"
 
 #: gui/launcher.cpp:1002
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "옵션(~O~)..."
+msgstr "게임 옵션(~G~)..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
@@ -1990,10 +1966,8 @@ msgstr ""
 "인터넷 연결을 확인해 주세요."
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
-msgstr "Enter"
+msgstr "텍스트 입력"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -2234,8 +2208,6 @@ msgid "Play"
 msgstr "플레이"
 
 #: gui/widgets/grid.cpp:221
-#, fuzzy
-#| msgid "Save"
 msgid "Saves"
 msgstr "저장"
 
@@ -4403,10 +4375,8 @@ msgstr ""
 
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:109
-#, fuzzy
-#| msgid "Main game controls:"
 msgid "main game shortcuts"
-msgstr "주 게임 조작:"
+msgstr "주 게임 단축키"
 
 #. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:111
@@ -4416,20 +4386,16 @@ msgstr ""
 #. I18N: This keymap is the main way for the user interact with the game.
 #. It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
 #: engines/bladerunner/metaengine.cpp:118
-#, fuzzy
-#| msgid "Walk / Look / Talk"
 msgid "Walk / Look / Talk / Select / Shoot"
-msgstr "걷기 / 보기 / 말하기"
+msgstr "걷기 / 보기 / 말하기 / 선택하기 / 쏘기"
 
 #. I18N: This keymap toggles McCoy's status between combat mode (drawing his gun) and normal mode (holstering his gun)
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. TOGGLE MCCOY'S COMBAT MODE
 #: engines/bladerunner/metaengine.cpp:128
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Combat"
-msgstr "음소거 전환"
+msgstr "전투 전환"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:137 engines/scumm/help.cpp:76
@@ -4442,8 +4408,6 @@ msgstr "컷씬을 건너뜀"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SKIP PAST CURRENT LINE OF DIALOGUE
 #: engines/bladerunner/metaengine.cpp:150
-#, fuzzy
-#| msgid "Skip dialog lines"
 msgid "Skip dialogue"
 msgstr "대사 건너뛰기"
 
@@ -4452,10 +4416,8 @@ msgstr "대사 건너뛰기"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:161
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Game Options"
-msgstr "옵션(~O~)..."
+msgstr "게임 옵션"
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
@@ -4468,15 +4430,11 @@ msgstr ""
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:179
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll Up"
 msgstr "위로 스크롤"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
 #: engines/bladerunner/metaengine.cpp:186
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll Down"
 msgstr "아래로 스크롤"
 
@@ -4501,10 +4459,8 @@ msgstr "게임 불러오기"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CRIME SCENE DATABASE
 #: engines/bladerunner/metaengine.cpp:223
-#, fuzzy
-#| msgid "Scene Data"
 msgid "Crime Scene Database"
-msgstr "씬 데이터"
+msgstr "범죄 현장 데이터베이스"
 
 #. I18N: This keymap opens KIA's SUSPECT DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4539,15 +4495,6 @@ msgid "Your game is now Paused.  Click OK to continue."
 msgstr "게임이 일시 중지되었습니다. OK를 눌러 다시 시작합니다."
 
 #: engines/buried/saveload.cpp:66
-#, fuzzy
-#| msgid ""
-#| "ScummVM found that you have old saved games for Drascula that should be "
-#| "converted.\n"
-#| "The old saved game format is no longer supported, so you will not be able "
-#| "to load your games if you don't convert them.\n"
-#| "\n"
-#| "Press OK to convert them now, otherwise you will be asked again the next "
-#| "time you start the game.\n"
 msgid ""
 "ScummVM found that you have saved games that should be converted from the "
 "original saved game format.\n"
@@ -4557,12 +4504,10 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"변환이 필요한 이전 Drascula 게임 저장 파일을 사용을 감지했습니다.\n"
-"이전 게임 저장 파일은 더 이상 지원되지 않으며 변환 작업을 거쳐야 불러올 수 있"
-"습니다\n"
+"원본 형식으로부터 변환이 필요한 게임 저장 파일을 감지했습니다.\n"
+"기존 저장 파일은 더 이상 직접 지원되지 않으며 변환 작업을 거쳐야 불러올 수 있습니다\n"
 "\n"
-"확인 버튼을 누르면 변환을 진행합니다. 그렇지 않으면 다음 번 게임을 시작 시 다"
-"시 이 창이 표시됩니다.\n"
+"확인 버튼을 누르면 변환을 진행합니다. 그렇지 않으면 다음 번 게임을 시작 시 다시 이 창이 표시됩니다.\n"
 
 #: engines/buried/saveload.cpp:165
 msgid "Saved game was created with a newer version of ScummVM. Unable to load."
@@ -5145,10 +5090,8 @@ msgid "Error: the game could not be saved."
 msgstr "오류: 게임을 저장하지 못함."
 
 #: engines/grim/inputdialog.cpp:79
-#, fuzzy
-#| msgid "Input"
 msgid "Input text"
-msgstr "입력"
+msgstr "텍스트 입력"
 
 #: engines/grim/md5check.cpp:558
 #, c-format
@@ -5345,10 +5288,8 @@ msgid "Allow cheats using the C key."
 msgstr "C 키를 사용하여 치트를 허용합니다."
 
 #: engines/hypno/detection.cpp:197
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable restored content"
-msgstr "Discord 통합 사용"
+msgstr "복원된 컨텐츠 활성화"
 
 #: engines/hypno/detection.cpp:198
 msgid "Add additional content that is not enabled the original implementation."
@@ -5845,16 +5786,10 @@ msgid "Transitions:"
 msgstr "전환효과:"
 
 #: engines/mohawk/dialogs.cpp:361
-#, fuzzy
-#| msgid ""
-#| "Toggle screen transitions on or off. Turning off screen transitions will "
-#| "enable you to navigate more quickly through the game."
 msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
-msgstr ""
-"화면 전환 효과를 켜거나 끕니다. 화면 전환 효과를 끌 경우 게임 내를 더욱 빠르"
-"게 다닐 수 있습니다."
+msgstr "화면 전환 속도를 조절합니다. 화면 전환 효과를 끌 경우 게임 내를 더욱 빠르게 다닐 수 있습니다."
 
 #: engines/mohawk/dialogs.cpp:366
 msgid "Fastest"
@@ -6652,10 +6587,8 @@ msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(일반적인 8 픽셀 단위 스크롤을 대신해 사용)"
 
 #: engines/scumm/detection.cpp:210 engines/scumm/dialogs.cpp:730
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "Enable game-specific enhancements"
-msgstr "대체 폰트 사용"
+msgstr "게임별 개선사항 활성화"
 
 #: engines/scumm/detection.cpp:211 engines/scumm/dialogs.cpp:730
 msgid ""
