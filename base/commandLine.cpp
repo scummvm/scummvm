@@ -26,6 +26,7 @@
 
 #include <limits.h>
 
+#include "engines/advancedDetector.h"
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
@@ -45,7 +46,6 @@
 #include "audio/musicplugin.h"
 
 #include "graphics/renderer.h"
-#include "advancedDetector.h"
 
 #define DETECTOR_TESTING_HACK
 #define UPGRADE_ALL_TARGETS_HACK
