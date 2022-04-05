@@ -1,5 +1,5 @@
-#ifndef GAMEINFO_H
-#define GAMEINFO_H
+#ifndef GLK_SCOTT_GAMEINFO
+#define GLK_SCOTT_GAMEINFO
 
 #include "definitions.h"
 

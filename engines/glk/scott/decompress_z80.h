@@ -1,5 +1,5 @@
-#ifndef DECOMPRESSZ80_H
-#define DECOMPRESSZ80_H
+#ifndef GLK_SCOTT_DECOMPRESSZ80
+#define GLK_SCOTT_DECOMPRESSZ80
 
 #include "common/scummsys.h"
 

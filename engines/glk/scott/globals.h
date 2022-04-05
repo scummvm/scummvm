@@ -1,20 +1,15 @@
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#ifndef GLK_SCOTT_GLOBALS
+#define GLK_SCOTT_GLOBALS
 
 #include "glk/glk_types.h"
+#include "definitions.h"
+#include "saga_draw.h"
+#include "scott.h"
+#include "line_drawing.h"
+#include "glk/scott/command_parser.h"
 
 namespace Glk {
 namespace Scott {
-
-struct LineImage;
-enum VectorStateType;
-struct PixelToDraw;
-struct Image;
-enum PaletteType;
-struct GameInfo;
-
-typedef uint8_t RGB[3];
-typedef RGB PALETTE[16];
 
 class Globals {
 public:
@@ -37,6 +32,9 @@ public:
 	int _header[24];
 	int _lightRefill;
 	winid_t _bottomWindow, _topWindow;
+	Command *_currentCommand;
+	int _stopTime = 0;
+	strid_t _transcript = nullptr;
 
 	//sagadraw
 	int _drawToBuffer;
@@ -74,6 +72,26 @@ public:
 
 	//connect
 	int _gliSlowDraw;
+
+	//parser
+	int _lastNoun;
+	glui32 *_firstErrorMessage;
+	glui32 **_unicodeWords = nullptr;
+	char **_charWords = nullptr;
+	int _wordsInInput = 0;
+	Common::StringArray _directions;
+	Common::StringArray _englishDirections;
+	Common::StringArray _skipList;
+	Common::StringArray _englishSkipList;
+	Common::StringArray _delimiterList;
+	Common::StringArray _englishDelimiterList;
+	Common::StringArray _extraCommands;
+	Common::StringArray _extraNouns;
+	Common::StringArray _englishExtraNouns;
+	Common::Array<ExtraCommand> _extraNounsKey;
+	Common::Array<ExtraCommand> _extraCommandsKey;
+	Common::StringArray _abbreviations;
+	Common::StringArray _abbreviationsKey;
 
 public:
 	Globals();

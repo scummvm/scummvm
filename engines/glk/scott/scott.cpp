@@ -25,7 +25,7 @@
 #include "layout_text.h"
 #include "line_drawing.h"
 #include "hulk.h"
-#include "parser.h"
+#include "glk/scott/command_parser.h"
 #include "game_info.h"
 #include "detect_game.h"
 #include "glk/scott/scott.h"
@@ -83,6 +83,7 @@ void Scott::runGame() {
 	}
 
 	GameIDType gameType = detectGame(&_gameFile);
+	loadDatabase(&_gameFile, (_options & DEBUGGING) ? 1 : 0);
 
 	if (!gameType)
 		fatal("Unsupported game!");
@@ -96,7 +97,7 @@ void Scott::runGame() {
 		_splitScreen = 1;
 	}
 
-	if (_titleScreen != nullptr) {
+	if (!_titleScreen.empty()) {
 		if (_splitScreen)
 			printTitleScreenGrid();
 		else
@@ -132,9 +133,9 @@ void Scott::runGame() {
 	while (1) {
 		glk_tick();
 
-		if (!_stopTime)
+		if (!_G(_stopTime))
 			performActions(0, 0);
-		if (!(_currentCommand && _currentCommand->_allFlag && !(_currentCommand->_allFlag & LASTALL))) {
+		if (!(_G(_currentCommand) && _G(_currentCommand)->_allFlag && !(_G(_currentCommand)->_allFlag & LASTALL))) {
 			_printLookToTranscript = _shouldLookInTranscript;
 			look();
 			_printLookToTranscript = _shouldLookInTranscript = 0;
@@ -155,7 +156,7 @@ void Scott::runGame() {
 		}
 
 		/* Brian Howarth games seem to use -1 for forever */
-		if (_G(_items)[LIGHT_SOURCE]._location != DESTROYED && _G(_gameHeader)._lightTime != -1 && !_stopTime) {
+		if (_G(_items)[LIGHT_SOURCE]._location != DESTROYED && _G(_gameHeader)._lightTime != -1 && !_G(_stopTime)) {
 			_G(_gameHeader)._lightTime--;
 			if (_G(_gameHeader)._lightTime < 1) {
 				_bitFlags |= (1 << LIGHTOUTBIT);
@@ -175,8 +176,8 @@ void Scott::runGame() {
 				}
 			}
 		}
-		if (_stopTime)
-			_stopTime--;
+		if (_G(_stopTime))
+			_G(_stopTime)--;
 	}
 }
 
@@ -205,8 +206,8 @@ void Scott::display(winid_t w, const char *fmt, ...) {
 	va_end(ap);
 
 	glk_put_string_stream(glk_window_get_stream(w), msg.c_str());
-	if (_transcript)
-		glk_put_string_stream(_transcript, msg.c_str());
+	if (_G(_transcript))
+		glk_put_string_stream(_G(_transcript), msg.c_str());
 }
 
 void Scott::display(winid_t w, const Common::U32String fmt, ...) {
@@ -219,8 +220,8 @@ void Scott::display(winid_t w, const Common::U32String fmt, ...) {
 	va_end(ap);
 
 	glk_put_string_stream_uni(glk_window_get_stream(w), msg.u32_str());
-	if (_transcript)
-		glk_put_string_stream_uni(_transcript, msg.u32_str());
+	if (_G(_transcript))
+		glk_put_string_stream_uni(_G(_transcript), msg.u32_str());
 }
 
 void Scott::updateSettings() {
@@ -521,8 +522,8 @@ void Scott::look(void) {
 
 	if (!_splitScreen) {
 		writeToRoomDescriptionStream("\n");
-	} else if (_transcript && _printLookToTranscript) {
-		glk_put_char_stream_uni(_transcript, 10);
+	} else if (_G(_transcript) && _printLookToTranscript) {
+		glk_put_char_stream_uni(_G(_transcript), 10);
 	}
 
 	if ((_bitFlags & (1 << DARKBIT)) && _G(_items)[LIGHT_SOURCE]._location != CARRIED && _G(_items)[LIGHT_SOURCE]._location != MY_LOC) {
@@ -605,24 +606,6 @@ int Scott::whichWord(const char *word, const Common::StringArray &list) {
 	return -1;
 }
 
-void Scott::lineInput(char *buf, size_t n) {
-	event_t ev;
-
-	glk_request_line_event(_G(_bottomWindow), buf, n - 1, 0);
-
-	do {
-		glk_select(&ev);
-		if (ev.type == evtype_Quit)
-			return;
-		else if (ev.type == evtype_LineInput)
-			break;
-		else if (ev.type == evtype_Arrange && _splitScreen)
-			look();
-	} while (ev.type != evtype_Quit);
-
-	buf[ev.val1] = 0;
-}
-
 Common::Error Scott::writeGameData(Common::WriteStream *ws) {
 	Common::String msg;
 
@@ -674,75 +657,6 @@ Common::Error Scott::readSaveData(Common::SeekableReadStream *rs) {
 	}
 
 	return Common::kNoError;
-}
-
-int Scott::getInput(int *vb, int *no) {
-	char buf[256];
-	char verb[10], noun[10];
-	int vc, nc;
-	int num;
-
-	do {
-		do {
-			output("\nTell me what to do ? ");
-			lineInput(buf, sizeof buf);
-			if (g_vm->shouldQuit())
-				return 0;
-
-			num = sscanf(buf, "%9s %9s", verb, noun);
-		} while (num == 0 || *buf == '\n');
-
-		if (scumm_stricmp(verb, "restore") == 0) {
-			loadGame();
-			return -1;
-		}
-		if (num == 1)
-			*noun = 0;
-		if (*noun == 0 && strlen(verb) == 1) {
-			switch (Common::isUpper((unsigned char)*verb) ? tolower((unsigned char)*verb) : *verb) {
-			case 'n':
-				strcpy(verb, "NORTH");
-				break;
-			case 'e':
-				strcpy(verb, "EAST");
-				break;
-			case 's':
-				strcpy(verb, "SOUTH");
-				break;
-			case 'w':
-				strcpy(verb, "WEST");
-				break;
-			case 'u':
-				strcpy(verb, "UP");
-				break;
-			case 'd':
-				strcpy(verb, "DOWN");
-				break;
-			// Brian Howarth interpreter also supports this
-			case 'i':
-				strcpy(verb, "INVENTORY");
-				break;
-			default:
-				break;
-			}
-		}
-		nc = whichWord(verb, _G(_nouns));
-		// The Scott Adams system has a hack to avoid typing 'go'
-		if (nc >= 1 && nc <= 6) {
-			vc = 1;
-		} else {
-			vc = whichWord(verb, _G(_verbs));
-			nc = whichWord(noun, _G(_nouns));
-		}
-		*vb = vc;
-		*no = nc;
-		if (vc == -1) {
-			output(_("You use word(s) I don't know! "));
-		}
-	} while (vc == -1);
-
-	strcpy(_nounText, noun); // Needed by GET/DROP hack
-	return 0;
 }
 
 ActionResultType Scott::performLine(int ct) {
@@ -1007,7 +921,7 @@ ActionResultType Scott::performLine(int ct) {
 				break;
 			case 65:
 				dead = printScore();
-				_stopTime = 2;
+				_G(_stopTime) = 2;
 				break;
 			case 66:
 				if (_G(_game)->_type == SEAS_OF_BLOOD_VARIANT)
@@ -1016,7 +930,7 @@ ActionResultType Scott::performLine(int ct) {
 					debug("case 66 not implemented\n");
 				else
 					listInventory();
-				_stopTime = 2;
+				_G(_stopTime) = 2;
 				break;
 			case 67:
 				_bitFlags |= (1 << 0);
@@ -1034,7 +948,7 @@ ActionResultType Scott::performLine(int ct) {
 				break;
 			case 71:
 				saveGame();
-				_stopTime = 2;
+				_G(_stopTime) = 2;
 				break;
 			case 72:
 				p = param[pptr++];
@@ -1219,7 +1133,7 @@ ExplicitResultType Scott::performActions(int vb, int no) {
 				output(_G(_sys)[OK]);
 			MY_LOC = nl;
 			_shouldLookInTranscript = 1;
-			if (_currentCommand && _currentCommand->_next) {
+			if (_G(_currentCommand) && _G(_currentCommand)->_next) {
 				lookWithPause();
 			}
 			return ER_SUCCESS;
@@ -1240,8 +1154,8 @@ ExplicitResultType Scott::performActions(int vb, int no) {
 		hulkShowImageOnExamine(no);
 	}
 	
-	if (_currentCommand && _currentCommand->_allFlag && vb == _currentCommand->_verb && !(dark && vb == TAKE)) {
-		output(_G(_items)[_currentCommand->_item]._text);
+	if (_G(_currentCommand) && _G(_currentCommand)->_allFlag && vb == _G(_currentCommand)->_verb && !(dark && vb == TAKE)) {
+		output(_G(_items)[_G(_currentCommand)->_item]._text);
 		output("....");
 	}
 	flag = ER_RAN_ALL_LINES_NO_MATCH;
@@ -1310,20 +1224,20 @@ ExplicitResultType Scott::performActions(int vb, int no) {
 			dark = 0;
 
 		if (vb == TAKE || vb == DROP) {
-			if (_currentCommand->_allFlag) {
+			if (_G(_currentCommand)->_allFlag) {
 				if (vb == TAKE && dark) {
 					output(_G(_sys)[TOO_DARK_TO_SEE]);
-					while (!(_currentCommand->_allFlag & LASTALL)) {
-						_currentCommand = _currentCommand->_next;
+					while (!(_G(_currentCommand)->_allFlag & LASTALL)) {
+						_G(_currentCommand) = _G(_currentCommand)->_next;
 					}
 					return ER_SUCCESS;
 				}
-				item = _currentCommand->_item;
+				item = _G(_currentCommand)->_item;
 				int location = CARRIED;
 				if (vb == TAKE)
 					location = MY_LOC;
-				while (_G(_items)[item]._location != location && !(_currentCommand->_allFlag & LASTALL)) {
-					_currentCommand = _currentCommand->_next;
+				while (_G(_items)[item]._location != location && !(_G(_currentCommand)->_allFlag & LASTALL)) {
+					_G(_currentCommand) = _G(_currentCommand)->_next;
 				}
 				if (_G(_items)[item]._location != location)
 					return ER_SUCCESS;
@@ -1428,9 +1342,9 @@ void Scott::writeToRoomDescriptionStream(const char *fmt, ...) {
 void Scott::flushRoomDescription(char *buf) {
 	glk_stream_close(_roomDescriptionStream, 0);
 
-	strid_t storedTranscript = _transcript;
+	strid_t storedTranscript = _G(_transcript);
 	if (!_printLookToTranscript)
-		_transcript = nullptr;
+		_G(_transcript) = nullptr;
 
 	int printDelimiter = (_options & (TRS80_STYLE | SPECTRUM_STYLE | TI994A_STYLE));
 
@@ -1490,7 +1404,7 @@ void Scott::flushRoomDescription(char *buf) {
 		_pauseNextRoomDescription = 0;
 	}
 
-	_transcript = storedTranscript;
+	_G(_transcript) = storedTranscript;
 	if (buf != nullptr) {
 		delete[] buf;
 		buf = nullptr;
@@ -1699,8 +1613,8 @@ void Scott::openTopWindow() {
 }
 
 void Scott::cleanupAndExit() {
-	if (_transcript)
-		glk_stream_close(_transcript, NULL);
+	if (_G(_transcript))
+		glk_stream_close(_G(_transcript), nullptr);
 	if (drawingVector()) {
 		_G(_gliSlowDraw) = 0;
 		drawSomeVectorPixels(0);
@@ -1722,7 +1636,9 @@ void Scott::drawImage(int image) {
 		return;
 	}
 	if (_G(_game)->_pictureFormatVersion == 99)
-		drawVectorPicture(image);
+		// TODO
+		// drawVectorPicture(image);
+		warning("drawVectorPicture not implmented\n");
 	else
 		drawSagaPictureNumber(image);
 }
@@ -1868,8 +1784,8 @@ void Scott::listInventory() {
 			output(".");
 		output(" ");
 	}
-	if (_transcript) {
-		glk_put_char_stream_uni(_transcript, 10);
+	if (_G(_transcript)) {
+		glk_put_char_stream_uni(_G(_transcript), 10);
 	}
 }
 
@@ -2007,7 +1923,7 @@ void Scott::printTakenOrDropped(int index) {
 	if (last == 10 || last == 13)
 		return;
 	output(" ");
-	if ((!(_currentCommand->_allFlag & LASTALL)) || _splitScreen == 0) {
+	if ((!(_G(_currentCommand)->_allFlag & LASTALL)) || _splitScreen == 0) {
 		output("\n");
 	}
 }

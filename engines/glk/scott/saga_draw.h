@@ -1,5 +1,5 @@
-#ifndef SAGADRAW_H
-#define SAGADRAW_H
+#ifndef GLK_SCOTT_SAGADRAW
+#define GLK_SCOTT_SAGADRAW
 
 #include "glk/glk_types.h"
 
@@ -13,6 +13,9 @@ struct Image {
 	uint8_t _width;
 	uint8_t _height;
 };
+
+typedef uint8_t RGB[3];
+typedef RGB PALETTE[16];
 
 uint8_t *drawSagaPictureFromData(uint8_t *dataptr, int xSize, int ySize, int xOff, int yOff);
 void drawSagaPictureNumber(int pictureNumber);

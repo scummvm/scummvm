@@ -1,5 +1,5 @@
-#ifndef layouttext_h
-#define layouttext_h
+#ifndef GLK_SCOTT_LAYOUTTEXT
+#define GLK_SCOTT_LAYOUTTEXT
 
 namespace Glk {
 namespace Scott {

@@ -30,6 +30,7 @@
 
 #include "common/scummsys.h"
 #include "glk/glk_api.h"
+#include "definitions.h"
 
 namespace Glk {
 namespace Scott {
@@ -101,7 +102,7 @@ struct Room {
 	int _exits[6];
 	byte _image;
 
-	Room() : _image(0) {
+	Room() : _image(255) {
 		Common::fill(&_exits[0], &_exits[6], 0);
 	}
 };
@@ -147,18 +148,14 @@ private:
 	int _saveSlot;		 ///< Save slot when loading savegame from launcher
 	Common::String _titleScreen;
 
-	Command *_currentCommand = nullptr;
-
 	int _justStarted = 0;
 	int _shouldRestart = 0;
-	int _stopTime = 0;
 
 	int _shouldLookInTranscript = 0;
 	int _printLookToTranscript = 0;
 	int _pauseNextRoomDescription = 0;
 
 	strid_t _roomDescriptionStream = nullptr;
-	strid_t _transcript = nullptr;
 
 private:
 	/**
@@ -167,20 +164,17 @@ private:
 	void initialize();
 
 	void updateSettings();
-	void updates(event_t ev);
 	void delay(int seconds);
 	void clearScreen(void);
 	bool randomPercent(uint n);
 	int countCarried(void);
-	const char *mapSynonym(int noun);
 	int matchUpItem(int noun, int loc);
 	Common::String readString(Common::SeekableReadStream *f);
 	void loadDatabase(Common::SeekableReadStream *f, bool loud);
 	void outputNumber(int a);
 	void look(void);
 	int whichWord(const char *word, const Common::StringArray &list);
-	void lineInput(char *buf, size_t n);
-	int getInput(int *vb, int *no);
+
 	ActionResultType performLine(int ct);
 	ExplicitResultType performActions(int vb, int no);
 
@@ -225,6 +219,8 @@ public:
 	void display(winid_t w, const Common::U32String fmt, ...);
 	void fatal(const char *x);
 	void hitEnter();
+	void updates(event_t ev);
+	const char *mapSynonym(int noun);
 
 public:
 	/**

@@ -1,5 +1,5 @@
-#ifndef HULK_H
-#define HULK_H
+#ifndef GLK_SCOTT_HULK
+#define GLK_SCOTT_HULK
 
 struct GameInfo;
 

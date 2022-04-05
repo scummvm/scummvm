@@ -87,7 +87,7 @@ uint8_t *readDictionary(GameInfo info, uint8_t **pointer, int loud) {
 					}
 				}
 				dictword[charindex++] = c;
-			} else if (info._subType == LOCALIZED) {
+			} else if (info._subType & LOCALIZED) {
 				if (charindex == 0) {
 					if (c & 0x80) {
 						c = c & 0x7f;
@@ -354,6 +354,7 @@ GameIDType detectGame(Common::SeekableReadStream *f) {
 	_G(_fileLength) = f->size();
 
 	_G(_game) = new GameInfo();
+	return SCOTTFREE;
 
 	//TODO
 	//SCOTTFREE Detection

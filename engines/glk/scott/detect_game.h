@@ -1,5 +1,5 @@
-#ifndef DETECTGAME_H
-#define DETECTGAME_H
+#ifndef GLK_SCOTT_DETECTGAME
+#define GLK_SCOTT_DETECTGAME
 
 #include "definitions.h"
 #include "common/stream.h"

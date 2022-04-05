@@ -1,5 +1,5 @@
-#ifndef DEFINITIONS_H
-#define DEFINITIONS_H
+#ifndef GLK_SCOTT_DEFINITIONS
+#define GLK_SCOTT_DEFINITIONS
 
 #include "common/str.h"
 

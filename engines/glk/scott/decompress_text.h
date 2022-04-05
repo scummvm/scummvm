@@ -1,5 +1,5 @@
-#ifndef DECOMPRESSTEXT_H
-#define DECOMPRESSTEXT_H
+#ifndef GLK_SCOTT_DECOMPRESSTEXT
+#define GLK_SCOTT_DECOMPRESSTEXT
 
 #include "common/scummsys.h"
 
