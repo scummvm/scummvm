@@ -473,6 +473,8 @@ public:
 	Graphics::Surface _ammoBar[6];
 	Graphics::Surface _portrait[6];
 
+	void updateFromScript();
+
 	Script _currentScript;
 	ScriptMode _currentMode;
 	uint32 _currentActor;

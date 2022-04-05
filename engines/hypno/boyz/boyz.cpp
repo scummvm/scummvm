@@ -77,11 +77,25 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 	}
 }
 
+void BoyzEngine::updateFromScript() {
+	if (_currentScript.size() > 0) {
+		ScriptInfo si = *_currentScript.begin();
+		//debug("%d %d %d", si.time, _background->decoder->getCurFrame(), si.actor);
+		if (int(si.time) <= _background->decoder->getCurFrame()) {
+			_currentActor = si.actor - 1;
+			_currentMode = si.mode;
+			_currentScript.pop_front();
+		}
+	}
+}
+
 void BoyzEngine::drawPlayer() {
+	updateFromScript();
 	drawImage(_portrait[_currentActor], 0, 200 - _portrait[_currentActor].h, true);
 }
 
 void BoyzEngine::drawHealth() {
+	updateFromScript();
 	drawImage(_healthBar[_currentActor], 0, 0, true);
 	drawImage(_ammoBar[_currentActor], 320 - _ammoBar[_currentActor].w, 0, true);
 }
