@@ -27,32 +27,22 @@
 
 namespace Chewy {
 
-Data::Data() {
-}
-
-Data::~Data() {
-}
-
-uint16 Data::selectPoolItem(Common::Stream *stream, uint16 nr) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
-
-	if (rs) {
-		rs->seek(0, SEEK_SET);
+void Data::selectPoolItem(Common::File *stream, uint16 nr) {
+	if (stream) {
+		stream->seek(0, SEEK_SET);
 		NewPhead ph;
-		if (!ph.load(rs))
+		if (!ph.load(stream))
 			error("selectPoolItem error");
 
 		if (!strncmp(ph._id, "NGS", 3)) {
 			if (nr >= ph._poolNr)
 				nr = ph._poolNr - 1;
 
-			rs->seek(-(int)((ph._poolNr - nr) * sizeof(uint32)), SEEK_END);
-			uint32 tmp1 = rs->readUint32LE();
-			rs->seek(tmp1, SEEK_SET);
+			stream->seek(-(int)((ph._poolNr - nr) * sizeof(uint32)), SEEK_END);
+			uint32 tmp1 = stream->readUint32LE();
+			stream->seek(tmp1, SEEK_SET);
 		}
 	}
-
-	return nr;
 }
 
 uint32 Data::getPoolSize(const char *filename, int16 chunkStart, int16 chunkNr) {
