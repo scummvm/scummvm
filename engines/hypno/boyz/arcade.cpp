@@ -91,7 +91,17 @@ void BoyzEngine::drawPlayer() {
 
 void BoyzEngine::drawHealth() {
 	updateFromScript();
+
+	// Health
+	Common::Rect healthBarBox(0, 0, _healthBar[_currentActor].w, _healthBar[_currentActor].h/2);
+	uint32 c = 252; // white
+	_compositeSurface->fillRect(healthBarBox, c);
 	drawImage(_healthBar[_currentActor], 0, 0, true);
+
+	// Ammo
+	Common::Rect ammoBarBox(320 - _ammoBar[_currentActor].w, 0, 320, _ammoBar[_currentActor].h/2);
+	c = 251; // green
+	_compositeSurface->fillRect(ammoBarBox, c);
 	drawImage(_ammoBar[_currentActor], 320 - _ammoBar[_currentActor].w, 0, true);
 }
 void BoyzEngine::hitPlayer() {
