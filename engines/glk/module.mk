@@ -234,6 +234,18 @@ MODULE_OBJS := \
 	quest/read_file.o \
 	quest/string.o \
 	quest/streams.o \
+	scott/bsd.o \
+	scott/command_parser.o \
+	scott/decompress_text.o \
+	scott/decompress_z80.o \
+	scott/detect_game.o \
+	scott/game_info.o \
+	scott/globals.o \
+	scott/hulk.o \
+	scott/layout_text.o \
+	scott/line_drawing.o \
+	scott/ring_buffer.o \
+	scott/saga_draw.o \
 	scott/scott.o \
 	tads/os_banners.o \
 	tads/os_buffer.o \
