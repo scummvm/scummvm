@@ -83,6 +83,8 @@ public:
 	void handleMouseUp(bool mainButton) override;
 	void handleMouseScroll(int direction) override;
 
+	void handleCustomEventStart(const Common::Event &evt) override;
+	void handleCustomEventStop(const Common::Event &evt) override;
 private:
 	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);
 	static void inputBoxCallback(void *callbackData, void *source);
@@ -93,9 +95,6 @@ private:
 	void changeState(State state);
 	void save();
 	void deleteSave();
-
-	bool isKeyConfirmModalDialogue(const Common::KeyState &kbd);
-	bool isKeyRequestDeleteEntry(const Common::KeyState &kbd);
 };
 
 } // End of namespace BladeRunner

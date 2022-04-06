@@ -24,6 +24,7 @@
 
 namespace Common{
 struct KeyState;
+struct Event;
 }
 
 namespace Graphics {
@@ -55,6 +56,8 @@ public:
 	virtual void handleMouseScroll(int direction) {} // Added by ScummVM team
 	virtual void handleKeyUp(const Common::KeyState &kbd) {}
 	virtual void handleKeyDown(const Common::KeyState &kbd) {}
+	virtual void handleCustomEventStop(const Common::Event &evt) {}
+	virtual void handleCustomEventStart(const Common::Event &evt) {}
 };
 
 } // End of namespace BladeRunner

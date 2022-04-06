@@ -128,6 +128,39 @@ void UIContainer::handleKeyDown(const Common::KeyState &kbd) {
 	}
 }
 
+void UIContainer::handleCustomEventStop(const Common::Event &evt) {
+	if (_handleSpecificNumOfTopLayers <= 0) {
+		for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
+			(*component)->handleCustomEventStop(evt);
+		}
+	} else {
+		int countOfTopLayersToHandle = _handleSpecificNumOfTopLayers;
+		Common::Array<UIComponent*>::iterator component = _components.end();
+		do {
+			--component;
+			--countOfTopLayersToHandle;
+			(*component)->handleCustomEventStop(evt);
+		} while (component != _components.begin() && countOfTopLayersToHandle != 0);
+	}
+}
+
+void UIContainer::handleCustomEventStart(const Common::Event &evt) {
+	if (_handleSpecificNumOfTopLayers <= 0) {
+		for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
+			(*component)->handleCustomEventStart(evt);
+		}
+	} else {
+		int countOfTopLayersToHandle = _handleSpecificNumOfTopLayers;
+		Common::Array<UIComponent*>::iterator component = _components.end();
+		do {
+			--component;
+			--countOfTopLayersToHandle;
+			(*component)->handleCustomEventStart(evt);
+		} while (component != _components.begin() && countOfTopLayersToHandle != 0);
+
+	}
+}
+
 void UIContainer::add(UIComponent *component) {
 	_components.push_back(component);
 }

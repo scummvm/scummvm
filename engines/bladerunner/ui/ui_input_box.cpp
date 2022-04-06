@@ -93,12 +93,16 @@ void UIInputBox::handleKeyDown(const Common::KeyState &kbd) {
 			_text += kc;
 		} else if (kbd.keycode == Common::KEYCODE_BACKSPACE) {
 			_text.deleteLastChar();
-		} else if ((kbd.keycode == Common::KEYCODE_RETURN || kbd.keycode == Common::KEYCODE_KP_ENTER)
-			        && !_text.empty()) {
-			if (_valueChangedCallback) {
-				_valueChangedCallback(_callbackData, this);
-			}
 		}
+	}
+}
+
+void UIInputBox::handleCustomEventStart(const Common::Event &evt) {
+	if (_isVisible
+	    && evt.customType == BladeRunnerEngine::BladeRunnerEngineMappableAction::kMpConfirmDlg
+	    && !_text.empty()
+	    && _valueChangedCallback) {
+		_valueChangedCallback(_callbackData, this);
 	}
 }
 

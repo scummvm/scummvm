@@ -297,10 +297,16 @@ public:
 	//      This is because the original, when holding down right mouse button, would just toggle McCoy's mode once.
 	//      We keep the behavior for "right mouse button".
 	//      The continuous fast toggle behavior when holding down <SPACEBAR> feels more like a bug anyway.
+	// NOTE In the original, the KP_PERIOD key with NUMLOCK on, would work as a normal '.' character
+	//      in the KIA Save Game screen. With NUMLOCK off, it would work as a delete request for the selected entry.
+	//      However, NUMLOCK is currently not working as a modifier key for keymaps,
+	//      so maybe we can implement the original behavior more accurately,
+	//      when that is fixed in the keymapper or hardware-input code.
+	//      For now, KP_PERIOD will work (by default) as a delete request.
 	enum BladeRunnerEngineMappableAction {
 //		kMpActionLeftClick,        // default <left click> (select, walk-to, run-to, look-at, talk-to, use, shoot (combat mode), KIA (click on McCoy))
 		kMpActionToggleCombat,     // default <right click> or <Spacebar>
-		kMpblActionCutsceneSkip,   // default <Return> or <KP_Enter> or <Esc> or <Spacebar>
+		kMpActionCutsceneSkip,     // default <Return> or <KP_Enter> or <Esc> or <Spacebar>
 		kMpActionDialogueSkip,     // default <Return> or <KP_Enter>
 		kMpActionToggleKiaOptions, // default <Esc> opens/closes KIA, in Options tab
 		kMpActionOpenKiaDatabase,  // default <Tab> - only opens KIA (if closed), in one of the database tabs (the last active one, or else the first)
@@ -312,7 +318,9 @@ public:
 		kMpActionOpenKIATabClueDatabase,       // default <F6>
 		kMpActionOpenKIATabQuitGame,           // default <F10>
 		kMpActionScrollUp,                     // ScummVM addition (scroll list up)
-		kMpActionScrollDown                    // ScummVM addition (scroll list down)
+		kMpActionScrollDown,                   // ScummVM addition (scroll list down)
+		kMpConfirmDlg,                         // default <Return> or <KP_Enter>
+		kMpDeleteSelectedSvdGame               // default <Delete> or <KP_Period>
 	};
 
 private:

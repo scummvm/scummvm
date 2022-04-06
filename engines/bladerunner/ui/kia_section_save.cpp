@@ -225,22 +225,6 @@ void KIASectionSave::draw(Graphics::Surface &surface) {
 	_buttons->drawTooltip(surface, _mouseX, _mouseY);
 }
 
-bool KIASectionSave::isKeyConfirmModalDialogue(const Common::KeyState &kbd) {
-	if (kbd.keycode == Common::KEYCODE_RETURN || kbd.keycode == Common::KEYCODE_KP_ENTER) {
-		return true;
-	}
-	return false;
-}
-
-bool KIASectionSave::isKeyRequestDeleteEntry(const Common::KeyState &kbd) {
-	if (_selectedLineId != _newSaveLineId
-		    && (    kbd.keycode == Common::KEYCODE_DELETE
-		        || (kbd.keycode == Common::KEYCODE_KP_PERIOD && !(kbd.flags & Common::KBD_NUM)))) {
-		return true;
-	}
-	return false;
-}
-
 void KIASectionSave::handleKeyUp(const Common::KeyState &kbd) {
 	if (_state == kStateNormal) {
 		_uiContainer->handleKeyUp(kbd);
@@ -249,18 +233,31 @@ void KIASectionSave::handleKeyUp(const Common::KeyState &kbd) {
 
 void KIASectionSave::handleKeyDown(const Common::KeyState &kbd) {
 	if (_state == kStateNormal) {
+		_uiContainer->handleKeyDown(kbd);
+	}
+}
+
+void KIASectionSave::handleCustomEventStop(const Common::Event &evt) {
+	if (_state == kStateNormal) {
+		_uiContainer->handleCustomEventStop(evt);
+	}
+}
+
+void KIASectionSave::handleCustomEventStart(const Common::Event &evt) {
+	if (_state == kStateNormal) {
 		// Delete a saved game entry either with Delete key or numpad's (keypad's) Del key (when Num Lock Off)
-		if (isKeyRequestDeleteEntry(kbd)) {
+		if (_selectedLineId != _newSaveLineId
+		    && evt.customType == BladeRunnerEngine::BladeRunnerEngineMappableAction::kMpDeleteSelectedSvdGame) {
 			changeState(kStateDelete);
 		}
-		_uiContainer->handleKeyDown(kbd);
+		_uiContainer->handleCustomEventStart(evt);
 	} else if (_state == kStateOverwrite) {
-		if (isKeyConfirmModalDialogue(kbd)) {
+		if (evt.customType == BladeRunnerEngine::BladeRunnerEngineMappableAction::kMpConfirmDlg) {
 			save();
 			changeState(kStateNormal);
 		}
 	} else if (_state == kStateDelete) {
-		if (isKeyConfirmModalDialogue(kbd)) {
+		if (evt.customType == BladeRunnerEngine::BladeRunnerEngineMappableAction::kMpConfirmDlg) {
 			deleteSave();
 			changeState(kStateNormal);
 		}
