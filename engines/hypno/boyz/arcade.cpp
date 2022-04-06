@@ -94,7 +94,13 @@ void BoyzEngine::drawHealth() {
 	drawImage(_healthBar[_currentActor], 0, 0, true);
 	drawImage(_ammoBar[_currentActor], 320 - _ammoBar[_currentActor].w, 0, true);
 }
-void BoyzEngine::hitPlayer() {}
+void BoyzEngine::hitPlayer() {
+	uint32 c = 250; // red
+	_compositeSurface->fillRect(Common::Rect(0, 0, _screenW, _screenH), c);
+	drawScreen();
+	if (!_hitSound.empty())
+		playSound(_soundPath + _hitSound, 1, 11025);
+}
 void BoyzEngine::drawShoot(const Common::Point &target) {}
 
 void BoyzEngine::initSegment(ArcadeShooting *arc) {
@@ -125,6 +131,7 @@ int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 }
 
 void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background) {
+	playSound(_soundPath + _weaponShootSound[0], 1);
 	incShotsFired();
 	int i = detectTarget(mousePos);
 	if (i < 0) {
@@ -149,7 +156,7 @@ void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVide
 }
 
 void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {
-
+	hitPlayer();
 	if (s->missedAnimation == 0)
 		return;
 	else if (s->missedAnimation == uint32(-1)) {

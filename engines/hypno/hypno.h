@@ -475,6 +475,8 @@ public:
 	Graphics::Surface _ammoBar[6];
 	Graphics::Surface _portrait[6];
 
+	Filename _weaponShootSound[6];
+
 	byte *_crosshairsPalette;
 	Graphics::Surface _crosshairsInactive[8];
 	Graphics::Surface _crosshairsActive[8];

@@ -44,6 +44,10 @@ void BoyzEngine::loadAssets() {
 
 	loadLib("sound/", "misc/sound.lib", true);
 
+	_weaponShootSound[0] = "pstlfire.raw";
+	_weaponShootSound[2] = "ak47fire.raw";
+	_weaponShootSound[4] = "shotfire.raw";
+
 	Graphics::Surface *targets = decodeFrame("preload/targets.smk", 0, &_crosshairsPalette);
 
 	Common::Rect cursorBox = Common::Rect(16, 8, 32, 24);
