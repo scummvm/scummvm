@@ -38,7 +38,9 @@ void BoyzEngine::loadAssets() {
 	if (missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
 	loadArcadeLevel("c11.mi_", "c12.mi_", "??", "");
-	loadArcadeLevel("c12.mi_", "??", "??", "");
+	loadArcadeLevel("c12.mi_", "c14.mi_", "??", "");
+	//loadArcadeLevel("c13.mi_", "??", "??", "");
+	loadArcadeLevel("c14.mi_", "??", "??", "");
 
 	loadLib("sound/", "misc/sound.lib", true);
 	_nextLevel = "c11.mi_";
@@ -155,7 +157,10 @@ void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVide
 }
 
 void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {
-	if (s->missedAnimation == uint32(-1)) {
+
+	if (s->missedAnimation == 0)
+		return;
+	else if (s->missedAnimation == uint32(-1)) {
 		uint32 last = background.decoder->getFrameCount()-1;
 		background.decoder->forceSeekToFrame(last);
 		_masks->decoder->forceSeekToFrame(last);

@@ -58,9 +58,9 @@ using namespace Hypno;
 %token<s> NAME FILENAME BNTOK SNTOK KNTOK YXTOK FNTOK ENCTOK ONTOK
 %token<i> NUM BYTE
 // header
-%token COMMENT CTOK DTOK HTOK HETOK HLTOK H12TOK HUTOK RETTOK QTOK RESTOK
+%token COMMENT AVTOK ABTOK CTOK DTOK HTOK HETOK HLTOK H12TOK HUTOK RETTOK QTOK RESTOK
 %token PTOK FTOK TTOK TPTOK ATOK VTOK OTOK LTOK MTOK NTOK NSTOK RTOK R01TOK
-%token ITOK I1TOK GTOK JTOK KTOK UTOK ZTOK
+%token ITOK I1TOK GTOK JTOK J0TOK KTOK UTOK ZTOK
 
 // body
 %token NONETOK A0TOK P0TOK WTOK
@@ -288,6 +288,15 @@ bline: FNTOK FILENAME {
 			shoot->explosionAnimation = $2;
 		debugC(1, kHypnoDebugParser, "FN %s", $2);
 	}
+	| AVTOK NUM {
+		debugC(1, kHypnoDebugParser, "AV %d", $2);
+	}
+	| ABTOK NUM {
+		debugC(1, kHypnoDebugParser, "AB %d", $2);
+	}
+	| J0TOK NUM {
+		debugC(1, kHypnoDebugParser, "J0 %d", $2);
+	}
 	| FNTOK NONETOK {
 		shoot = new Shoot();
 		shoot->animation = "NONE";
@@ -448,6 +457,10 @@ bline: FNTOK FILENAME {
 		FrameInfo fi($2, 1);
 		shoot->explosionFrames.push_back(fi);
 	}
+	| KTOK NUM NUM { debugC(1, kHypnoDebugParser, "K %d %d", $2, $3);
+		FrameInfo fi($2, 1);
+		shoot->explosionFrames.push_back(fi);
+	}
 	| SNTOK FILENAME enc {
 		if (Common::String("S0") == $1)
 			shoot->enemySound = $2;
@@ -458,6 +471,15 @@ bline: FNTOK FILENAME {
 
 		debugC(1, kHypnoDebugParser, "SN %s", $2); }
 	| GTOK { debugC(1, kHypnoDebugParser, "G"); }
+	| TTOK NUM {
+		debugC(1, kHypnoDebugParser, "T %d", $2);
+	}
+	| TTOK {
+		debugC(1, kHypnoDebugParser, "T");
+	}
+	| MTOK {
+		debugC(1, kHypnoDebugParser, "M");
+	}
 	| NTOK {
 		shoot->noEnemySound = true;
 		debugC(1, kHypnoDebugParser, "N"); }
