@@ -151,6 +151,7 @@ public:
 	void defaultCursor();
 	void changeCursor(const Common::String &cursor, uint32 n, bool centerCursor = false);
 	void changeCursor(const Common::String &cursor);
+	void changeCursor(const Graphics::Surface &entry, byte *palette, bool centerCursor = false);
 
 	// Actions
 	void runMenu(Hotspots *hs);
@@ -458,6 +459,7 @@ public:
 	void runBeforeArcade(ArcadeShooting *arc) override;
 	void runAfterArcade(ArcadeShooting *arc) override;
 	int detectTarget(const Common::Point &mousePos) override;
+	void drawCursorArcade(const Common::Point &mousePos) override;
 	void shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background) override;
 
 	void missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) override;
@@ -472,6 +474,11 @@ public:
 	Graphics::Surface _healthBar[6];
 	Graphics::Surface _ammoBar[6];
 	Graphics::Surface _portrait[6];
+
+	byte *_crosshairsPalette;
+	Graphics::Surface _crosshairsInactive[8];
+	Graphics::Surface _crosshairsActive[8];
+	Graphics::Surface _crosshairsTarget[8];
 
 	void updateFromScript();
 

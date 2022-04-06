@@ -71,6 +71,19 @@ void BoyzEngine::updateFromScript() {
 	}
 }
 
+void BoyzEngine::drawCursorArcade(const Common::Point &mousePos) {
+	if (_currentMode == NonInteractive) {
+		changeCursor(_crosshairsInactive[0], _crosshairsPalette, true);
+		return;
+	}
+
+	int i = detectTarget(mousePos);
+	if (i >= 0)
+		changeCursor(_crosshairsTarget[0], _crosshairsPalette, true);
+	else
+		changeCursor(_crosshairsActive[0], _crosshairsPalette, true);
+}
+
 void BoyzEngine::drawPlayer() {
 	updateFromScript();
 	drawImage(_portrait[_currentActor], 0, 200 - _portrait[_currentActor].h, true);
@@ -131,6 +144,7 @@ void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVide
 		background.decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		_shoots.clear();
+		changeCursor(_crosshairsActive[0], _crosshairsPalette, true);
 	}
 }
 

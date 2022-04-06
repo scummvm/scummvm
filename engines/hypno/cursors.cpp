@@ -131,5 +131,14 @@ void HypnoEngine::changeCursor(const Common::String &cursor, uint32 n, bool cent
 	CursorMan.showMouse(true);
 }
 
+void HypnoEngine::changeCursor(const Graphics::Surface &entry, byte *palette, bool centerCursor) {
+	uint32 hotspotX = centerCursor ? entry.w / 2 : 0;
+	uint32 hotspotY = centerCursor ? entry.h / 2 : 0;
+	CursorMan.replaceCursor(entry.getPixels(), entry.w, entry.h, hotspotX, hotspotY, 0, &_pixelFormat);
+	CursorMan.replaceCursorPalette(palette, 0, 256);
+	CursorMan.showMouse(true);
+}
+
+
 } // End of namespace Hypno
 

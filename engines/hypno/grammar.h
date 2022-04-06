@@ -367,8 +367,8 @@ public:
 };
 
 enum ScriptMode {
-	NonInteractive = 1,
-	Interactive,
+	Interactive = 1,
+	NonInteractive,
 };
 
 class ScriptInfo {

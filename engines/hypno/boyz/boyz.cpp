@@ -43,6 +43,21 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c14.mi_", "??", "??", "");
 
 	loadLib("sound/", "misc/sound.lib", true);
+
+	Graphics::Surface *targets = decodeFrame("preload/targets.smk", 0, &_crosshairsPalette);
+
+	Common::Rect cursorBox = Common::Rect(16, 8, 32, 24);
+	_crosshairsInactive[0].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsInactive[0].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(16, 40, 32, 56);
+	_crosshairsActive[0].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsActive[0].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(16, 72, 32, 88);
+	_crosshairsTarget[0].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsTarget[0].copyRectToSurface(*targets, 0, 0, cursorBox);
+
 	_nextLevel = "c11.mi_";
 }
 
