@@ -103,6 +103,7 @@ public:
 	 */
 	virtual Common::Rect getClipRect() const;
 
+	virtual void handleMouseWheel(int x, int y, int direction) {};
 protected:
 	virtual void	releaseFocus() = 0;
 };
