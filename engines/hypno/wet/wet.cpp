@@ -391,7 +391,7 @@ void WetEngine::showCredits() {
 		return;
 	}
 
-	if (!isDemo() || _variant == "Demo" || _language == Common::EN_USA) {
+	if (!isDemo() || (_variant == "Demo" && _language == Common::EN_USA)) {
 		MVideo video("c_misc/credits.smk", Common::Point(0, 0), false, true, false);
 		runIntro(video);
 	}
