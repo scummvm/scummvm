@@ -1388,8 +1388,9 @@ static void calcMD5(Common::FSNode &path, int32 length) {
 		}
 
 		Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-		printf("(hash) : %s, (filename) : %s, (bytes) : %d%s\n", md5.c_str(), path.getName().c_str(), length && length <= stream->size() ? (int32)length : (int32)stream->size(), tail ? ", tail" : "");
-
+		if (length != 0 && length < stream->size())
+			md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
+		printf("%s: %s, %llu bytes\n", path.getName().c_str(), md5.c_str(), (unsigned long long)stream->size());
 		delete stream;
 	} else {
 		printf("Usage : --md5 --md5-path=<PATH> [--md5-length=NUM]\n");
