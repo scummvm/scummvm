@@ -6601,7 +6601,9 @@ msgstr "게임별 개선사항 활성화"
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
-msgstr "ScummVM이 해당 게임의 다른 버전에 기반한 작은 개선사항을 추가하도록 허용합니다."
+msgstr ""
+"ScummVM이 해당 게임의 다른 버전에 기반한 작은 개선사항을 추가하도록 허용합니"
+"다."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
