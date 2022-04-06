@@ -2598,8 +2598,9 @@ load_game:
 			// simply try to achieve that manually. It fixes bugs #6011 and #13369.
 			// We just have to kind of pretend that we've gone through the save/load "room" (with all the right
 			// variables in place), so that all the operations get triggered properly.
-			// The Mac, DOS Talkie and PC-Engine don't have the bugs. We can rely on our old hack there, since
-			// it wouldn't work otherwise, anyway.
+			// The glitch with the flask (#6011) seems to be present only in the DOS EGA, Amiga, Atari ST and
+			// FM-Towns versions. Mac, DOS Talkie and PC-Engine don't have that bug. We can rely on our old hack
+			// there, since it wouldn't work otherwise, anyway.
 			int args[NUM_SCRIPT_LOCAL];
 			memset(args, 0, sizeof(args));
 
@@ -2630,8 +2631,8 @@ load_game:
 				byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
 				args[0] = 2;
 				runScript(restoreScript, 0, 0, args);
-				// Reset two variables, similiar to what the save script would do, to avoid minor glitches
-				// of the verb image on the right of the distaff (image remainung blank when moving the
+				// Reset two variables, similar to what the save script would do, to avoid minor glitches
+				// of the verb image on the right of the distaff (image remaining blank when moving the
 				// mouse cursor over an object, bug #13369).
 				VAR(saveLoadVar + 2) = VAR(saveLoadVar + 3) = 0;
 			}
