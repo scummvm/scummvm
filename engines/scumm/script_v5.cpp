@@ -1496,6 +1496,25 @@ void ScummEngine_v5::o5_loadRoom() {
 		putState(25, 1);
 	}
 
+	// WORKAROUND: The first time you examine Rusty while he's sleeping,
+	// you will get a close-up of him. Which one should depend on whether
+	// or not you've used the Reflection draft on him. But in some, you
+	// will always get the close-up where he's wearing his own clothes.
+
+	if (_game.id == GID_LOOM && _game.version == 3 && room == 29 &&
+		vm.slot[_currentScript].number == 112 && _enableEnhancements) {
+		Actor *a = derefActorSafe(VAR(VAR_EGO), "o5_loadRoom");
+
+		// Bobbin's normal costume is number 1. If he's wearing anything
+		// else, he's presumably disguised as Rusty. The game also sets
+		// a variable, but uses different ones for different versions of
+		// the game. You can't even assume that every English version
+		// uses the same one!
+
+		if (a && a->_costume != 1)
+			room = 68;
+	}
+
 	// For small header games, we only call startScene if the room
 	// actually changed. This avoid unwanted (wrong) fades in Zak256
 	// and others. OTOH, it seems to cause a problem in newer games.
