@@ -227,7 +227,8 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 		gameid == "monkey2" ||
 		gameid == "samnmax" ||
 		gameid == "loom" ||
-		(gameid == "indy3" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
+		(gameid == "indy3" && platform == Common::kPlatformMacintosh && extra != "Steam") ||
+		gameid == "atlantis") {
 		options.push_back(enableEnhancements);
 	}
 
