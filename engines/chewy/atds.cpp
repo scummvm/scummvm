@@ -76,7 +76,7 @@ bool AdsTxtHeader::load(const void *src) {
 }
 
 Atdsys::Atdsys() {
-	SplitStringInit init_ssi = { nullptr, 0, 0, 220, 4, SPLIT_CENTER };
+	SplitStringInit init_ssi = { nullptr, 0, 0 };
 	_aadv._dialog = false;
 	_aadv._strNr = -1;
 	_aadv._silentCount = false;
@@ -178,9 +178,11 @@ void Atdsys::set_string_end_func
 }
 
 int16 Atdsys::get_delay(int16 txt_len) {
+	const int16 width = 220;
+	const int16 lines = 4;
 	const int16 w = _G(fontMgr)->getFont()->getDataWidth();
-	int16 z_len = (_ssi->_width / w) + 1;
-	int16 maxLen = z_len * _ssi->_lines;
+	int16 z_len = (width / w) + 1;
+	int16 maxLen = z_len * lines;
 	if (txt_len > maxLen)
 		txt_len = maxLen;
 
@@ -191,12 +193,14 @@ int16 Atdsys::get_delay(int16 txt_len) {
 SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 	const int16 w = _G(fontMgr)->getFont()->getDataWidth();
 	const int16 h = _G(fontMgr)->getFont()->getDataHeight();
+	const int16 width = 220;
+	const int16 lines = 4;
 
 	_ssret._nr = 0;
 	_ssret._next = false;
 	_ssret._strPtr = _splitPtr;
 	_ssret._x = _splitX;
-	int16 zeichen_anz = (ssi_->_width / w) + 1;
+	int16 zeichen_anz = (width / w) + 1;
 	memset(_splitPtr, 0, sizeof(char *) * MAX_STR_SPLIT);
 	calc_txt_win(ssi_);
 	char *str_adr = ssi_->_str;
@@ -225,12 +229,9 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 			} else {
 				_splitPtr[_ssret._nr] = start_adr;
 				start_adr[tmp_count] = 0;
-				if (ssi_->_mode == SPLIT_CENTER)
-					_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * w)) >> 1);
-				else
-					_splitX[_ssret._nr] = ssi_->_x;
+				_splitX[_ssret._nr] = ssi_->_x + ((width - (strlen(start_adr) * w)) >> 1);
 				++_ssret._nr;
-				if (_ssret._nr == ssi_->_lines) {
+				if (_ssret._nr == lines) {
 					endLoop = true;
 					bool endInnerLoop = false;
 					while (!endInnerLoop) {
@@ -265,17 +266,14 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 					test_zeilen = 2;
 				++count;
 				++str_adr;
-				if ((_ssret._nr + test_zeilen) >= ssi_->_lines) {
+				if ((_ssret._nr + test_zeilen) >= lines) {
 					if (count < zeichen_anz) {
 						tmp_count = count;
 						endLoop = true;
 					}
 					_splitPtr[_ssret._nr] = start_adr;
 					start_adr[tmp_count] = 0;
-					if (ssi_->_mode == SPLIT_CENTER)
-						_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * w)) >> 1);
-					else
-						_splitX[_ssret._nr] = ssi_->_x;
+					_splitX[_ssret._nr] = ssi_->_x + ((width - (strlen(start_adr) * w)) >> 1);
 					++_ssret._nr;
 					bool ende1 = false;
 					while (!ende1) {
@@ -307,8 +305,8 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 
 		}
 	}
-	if (_ssret._nr <= ssi_->_lines)
-		_ssret._y = ssi_->_y + (ssi_->_lines - _ssret._nr) * h;
+	if (_ssret._nr <= lines)
+		_ssret._y = ssi_->_y + (lines - _ssret._nr) * h;
 	else
 		_ssret._y = ssi_->_y;
 
@@ -325,20 +323,22 @@ void Atdsys::str_null2leer(char *strStart, char *strEnd) {
 
 void Atdsys::calc_txt_win(SplitStringInit *ssi_) {
 	const int16 h = _G(fontMgr)->getFont()->getDataHeight();
+	const int16 width = 220;
+	const int16 lines = 4;
 
-	if (ssi_->_x - (ssi_->_width >> 1) < 2)
+	if (ssi_->_x - (width >> 1) < 2)
 		ssi_->_x = 2;
-	else if (ssi_->_x + (ssi_->_width >> 1) > (SCREEN_WIDTH - 2))
-		ssi_->_x = ((SCREEN_WIDTH - 2) - ssi_->_width);
+	else if (ssi_->_x + (width >> 1) > (SCREEN_WIDTH - 2))
+		ssi_->_x = ((SCREEN_WIDTH - 2) - width);
 	else
-		ssi_->_x -= (ssi_->_width >> 1);
+		ssi_->_x -= (width >> 1);
 
-	if (ssi_->_y - (ssi_->_lines * h) < 2) {
+	if (ssi_->_y - (lines * h) < 2) {
 		ssi_->_y = 2;
-	} else if (ssi_->_y + (ssi_->_lines * h) > (SCREEN_HEIGHT - 2))
-		ssi_->_y = (SCREEN_HEIGHT - 2) - (ssi_->_lines * h);
+	} else if (ssi_->_y + (lines * h) > (SCREEN_HEIGHT - 2))
+		ssi_->_y = (SCREEN_HEIGHT - 2) - (lines * h);
 	else {
-		ssi_->_y -= (ssi_->_lines * h);
+		ssi_->_y -= (lines * h);
 	}
 }
 
