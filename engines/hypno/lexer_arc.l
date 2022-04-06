@@ -87,7 +87,7 @@ Y[A-Z0-9]					HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return YXTOK;
 [\-]?[0-9]+					HYPNO_ARC_lval.i = atoi(HYPNO_ARC_text); return NUM;
 [A-Za-z_][A-Za-z_0-9]*		HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return NAME;
 [A-Za-z][A-Za-z_0-9\\\.]+	HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FILENAME;
-[0-9][A-Za-z_0-9\\\.]+		HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FILENAME;
+[0-9][\-A-Za-z_0-9\\\.]+	HYPNO_ARC_lval.s = scumm_strdup(HYPNO_ARC_text); return FILENAME;
 320\,200					return RESTOK;
 [\n|\r\n]					return RETTOK;
 \;.+\r						/* ignore comment */
