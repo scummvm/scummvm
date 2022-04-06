@@ -1277,6 +1277,15 @@ void ScummEngine::setVerbObject(uint room, uint object, uint verb) {
 	if (whereIsObject(object) == WIO_FLOBJECT)
 		error("Can't grab verb image from flobject");
 
+	// HACK: When the straw changes to gold, or the other way around, the
+	// object image changes, but the text is not undrawn. This causes the
+	// two object names to overlap each other. The text can be undrawn by
+	// script 8, but the logic for it is more convoluted in the Mac version
+	// than in the EGA DOS version, and I can't figure out how to bend it
+	// to my will. So hard-code the clearing here.
+	if (_game.id == GID_LOOM && verb == 53 && _game.platform == Common::kPlatformMacintosh)
+		drawBox(232, 152, 312, 192, 0);
+
 	if (_game.features & GF_OLD_BUNDLE) {
 		for (i = (_numLocalObjects-1); i > 0; i--) {
 			if (_objs[i].obj_nr == object) {
