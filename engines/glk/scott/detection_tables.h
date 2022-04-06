@@ -95,6 +95,10 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRY0("marveladventure2",  "f7e772643a24eaf94cfb2d48e3949ec1", 18643),
 	DT_ENTRY0("scottsampler",      "d569a769f304dc02b3062d97458ddd01", 13854),
 
+	// ZX Spectrum game versions
+	DT_ENTRY1("marveladventure", "ZXSpectrum", "0eec511d3cde815c73e5464ab0cdbef9", 40727),
+	DT_ENTRY1("timemachine", "ZXSpectrum", "b22d1f4d46c99ff4443d541d3fe424c1", 30928),
+
 	// PDA game versions
 	DT_ENTRY0("adventureland",     "ae541fc1085da2f7d561b72ed20a6bc1", 18003),
 	DT_ENTRY0("pirateadventure",   "cbd47ab4fcfe00231ffd71d52378d410", 18482),

@@ -1,7 +1,28 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "glk/scott/command_parser.h"
-#include "globals.h"
-#include "scott.h"
-#include "bsd.h"
+#include "glk/scott/globals.h"
+#include "glk/scott/scott.h"
+#include "glk/scott/bsd.h"
 
 namespace Glk {
 namespace Scott {
@@ -74,7 +95,7 @@ char **LineInput(void) {
 	glui32 unibuf[512];
 
 	do {
-		g_vm->display(_G(_bottomWindow), "\n%s", _G(_sys)[WHAT_NOW]);
+		g_vm->display(_G(_bottomWindow), "\n%s", _G(_sys)[WHAT_NOW].c_str());
 		g_vm->glk_request_line_event_uni(_G(_bottomWindow), unibuf, (glui32)511, 0);
 
 		while (1) {
@@ -323,6 +344,8 @@ int findExtraneousWords(int *index, int noun) {
 
 	return 1;
 }
+
+Command *commandFromStrings(int index, Command *previous);
 
 Command *createCommandStruct(int verb, int noun, int verbIndex, int nounIndex, Command *previous) {
 	struct Command *command = new Command();

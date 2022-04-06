@@ -1,3 +1,24 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #ifndef GLK_SCOTT_DEFINITIONS
 #define GLK_SCOTT_DEFINITIONS
 
@@ -227,50 +248,50 @@ enum ActionTableType {
 struct GameInfo {
 	Common::String _title;
 
-	GameIDType _gameID;
-	GameType _type;
-	Subtype _subType;
-	DictionaryType _dictionary;
+	GameIDType _gameID = UNKNOWN_GAME;
+	GameType _type = NO_TYPE;
+	Subtype _subType = ENGLISH;
+	DictionaryType _dictionary = NOT_A_GAME;
 
-	int _numberOfItems;
-	int _numberOfActions;
-	int _numberOfWords;
-	int _numberOfRooms;
-	int _maxCarried;
-	int _wordLength;
-	int _numberOfMessages;
+	int _numberOfItems = 0;
+	int _numberOfActions = 0;
+	int _numberOfWords = 0;
+	int _numberOfRooms = 0;
+	int _maxCarried = 0;
+	int _wordLength = 0;
+	int _numberOfMessages = 0;
 
-	int _numberOfVerbs;
-	int _numberOfNouns;
+	int _numberOfVerbs = 0;
+	int _numberOfNouns = 0;
 
-	int _startOfHeader;
-	HeaderType _headerStyle;
+	int _startOfHeader = 0;
+	HeaderType _headerStyle = NO_HEADER;
 
-	int _startOfRoomImageList;
-	int _startOfItemFlags;
-	int _startOfItemImageList;
+	int _startOfRoomImageList = 0;
+	int _startOfItemFlags = 0;
+	int _startOfItemImageList = 0;
 
-	int _startOfActions;
-	ActionTableType _actionsStyle;
-	int _startOfDictionary;
-	int _startOfRoomDescriptions;
-	int _startOfRoomConnections;
-	int _startOfMessages;
-	int _startOfItemDescriptions;
-	int _startOfItemLocations;
+	int _startOfActions = 0;
+	ActionTableType _actionsStyle = UNKNOWN_ACTIONS_TYPE;
+	int _startOfDictionary = 0;
+	int _startOfRoomDescriptions = 0;
+	int _startOfRoomConnections = 0;
+	int _startOfMessages = 0;
+	int _startOfItemDescriptions = 0;
+	int _startOfItemLocations = 0;
 
-	int _startOfSystemMessages;
-	int _startOfDirections;
+	int _startOfSystemMessages = 0;
+	int _startOfDirections = 0;
 
-	int _startOfCharacters;
-	int _startOfImageData;
-	int _imageAddressOffset; /* This is the difference between the value given by
+	int _startOfCharacters = 0;
+	int _startOfImageData = 0;
+	int _imageAddressOffset = 0; /* This is the difference between the value given by
 							   the image data lookup table and a usable file
 							   offset */
-	int _numberOfPictures;
-	PaletteType _palette;
-	int _pictureFormatVersion;
-	int _startOfIntroText;
+	int _numberOfPictures = 0;
+	PaletteType _palette = NO_PALETTE;
+	int _pictureFormatVersion = 0;
+	int _startOfIntroText = 0;
 };
 
 } // End of namespace Scott

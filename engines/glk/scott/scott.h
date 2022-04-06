@@ -30,7 +30,7 @@
 
 #include "common/scummsys.h"
 #include "glk/glk_api.h"
-#include "definitions.h"
+#include "glk/scott/definitions.h"
 
 namespace Glk {
 namespace Scott {
@@ -134,18 +134,18 @@ private:
 	Globals *_globals;
 	char _nounText[16];
 	int _counters[16];   ///< Range unknown
-	int _currentCounter;
-	int _savedRoom;
+	int _currentCounter = 0;
+	int _savedRoom = 0;
 	int _roomSaved[16];  ///< Range unknown
-	int _options;        ///< Option flags set
-	int _width;          ///< Terminal width
-	int _topHeight;      ///< Height of top window
-	int _topWidth;
+	int _options = 0;        ///< Option flags set
+	int _width = 0;          ///< Terminal width
+	int _topHeight = 0;      ///< Height of top window
+	int _topWidth = 0;
 
-	int _autoInventory;
-	bool _splitScreen;
-	uint32 _bitFlags;    ///< Might be >32 flags - I haven't seen >32 yet
-	int _saveSlot;		 ///< Save slot when loading savegame from launcher
+	int _autoInventory = 0;
+	bool _splitScreen = true;
+	uint32 _bitFlags = 0;    ///< Might be >32 flags - I haven't seen >32 yet
+	int _saveSlot = -1;		 ///< Save slot when loading savegame from launcher
 	Common::String _titleScreen;
 
 	int _justStarted = 0;

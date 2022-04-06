@@ -32,7 +32,7 @@
  * SUCH DAMAGE.
  */
 
-#include "bsd.h"
+#include "glk/scott/bsd.h"
 #include <ctype.h>
 
 namespace Glk {

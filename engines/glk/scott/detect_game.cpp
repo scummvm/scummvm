@@ -1,12 +1,33 @@
-#include "detect_game.h"
-#include "scott.h"
-#include "game_info.h"
-#include "saga_draw.h"
-#include "line_drawing.h"
-#include "hulk.h"
-#include "decompress_z80.h"
-#include "decompress_text.h"
-#include "globals.h"
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "glk/scott/detect_game.h"
+#include "glk/scott/scott.h"
+#include "glk/scott/game_info.h"
+#include "glk/scott/saga_draw.h"
+#include "glk/scott/line_drawing.h"
+#include "glk/scott/hulk.h"
+#include "glk/scott/decompress_z80.h"
+#include "glk/scott/decompress_text.h"
+#include "glk/scott/globals.h"
 
 namespace Glk {
 namespace Scott {
@@ -353,7 +374,7 @@ GameIDType detectGame(Common::SeekableReadStream *f) {
 	_G(_fileLength) = f->size();
 
 	_G(_game) = new GameInfo();
-	return SCOTTFREE;
+	//return SCOTTFREE;
 
 	//TODO
 	//SCOTTFREE Detection
@@ -456,7 +477,23 @@ GameIDType detectGame(Common::SeekableReadStream *f) {
 		}
 		break;
 	default:
-		//TODO
+		if (!(_G(_game)->_subType & C64)) {
+			if (_G(_game)->_subType & MYSTERIOUS) {
+				for (int i = PLAY_AGAIN; i <= YOU_HAVENT_GOT_IT; i++)
+					_G(_sys)[i] = _G(_systemMessages)[2 - PLAY_AGAIN + i];
+				for (int i = YOU_DONT_SEE_IT; i <= WHAT_NOW; i++)
+					_G(_sys)[i] = _G(_systemMessages)[15 - YOU_DONT_SEE_IT + i];
+				for (int i = LIGHT_HAS_RUN_OUT; i <= RESUME_A_SAVED_GAME; i++)
+					_G(_sys)[i] = _G(_systemMessages)[31 - LIGHT_HAS_RUN_OUT + i];
+				_G(_sys)[ITEM_DELIMITER] = " - ";
+				_G(_sys)[MESSAGE_DELIMITER] = "\n";
+				_G(_sys)[YOU_SEE] = "\nThings I can see:\n";
+				break;
+			} else {
+				for (int i = PLAY_AGAIN; i <= RESUME_A_SAVED_GAME; i++)
+					_G(_sys)[i] = _G(_systemMessages)[2 - PLAY_AGAIN + i];
+			}
+		}
 		break;
 	}
 
@@ -498,13 +535,270 @@ int seekIfNeeded(int expectedStart, int *offset, uint8_t **ptr) {
 	return 1;
 }
 
+int tryLoadingOld(GameInfo info, int dictStart) {
+	int ni, na, nw, nr, mc, pr, tr, wl, lt, mn, trm;
+	int ct;
+
+	Action *ap;
+	Room *rp;
+	Item *ip;
+	/* Load the header */
+
+	uint8_t *ptr = _G(_entireFile);
+	_G(_fileBaselineOffset) = dictStart - info._startOfDictionary;
+	int offset = info._startOfHeader + _G(_fileBaselineOffset);
+
+	ptr = seekToPos(_G(_entireFile), offset);
+	if (ptr == 0)
+		return 0;
+
+	readHeader(ptr);
+
+	if (!parseHeader(_G(_header), info._headerStyle, &ni, &na, &nw, &nr, &mc, &pr, &tr, &wl, &lt, &mn, &trm))
+		return 0;
+
+	if (ni != info._numberOfItems || na != info._numberOfActions || nw != info._numberOfWords || nr != info._numberOfRooms || mc != info._maxCarried) {
+		return 0;
+	}
+
+	_G(_gameHeader)._numItems = ni;
+	_G(_gameHeader)._numActions = na;
+	_G(_gameHeader)._numWords = nw;
+	_G(_gameHeader)._wordLength = wl;
+	_G(_gameHeader)._numRooms = nr;
+	_G(_gameHeader)._maxCarry = mc;
+	_G(_gameHeader)._playerRoom = pr;
+	_G(_gameHeader)._treasures = tr;
+	_G(_gameHeader)._lightTime = lt;
+	_G(_lightRefill) = lt;
+	_G(_gameHeader)._numMessages = mn;
+	_G(_gameHeader)._treasureRoom = trm;
+	_G(_items).resize(ni + 1);
+	_G(_actions).resize(na + 1);
+	_G(_verbs).resize(nw + 2);
+	_G(_nouns).resize(nw + 2);
+	_G(_rooms).resize(nr + 1);
+	_G(_messages).resize(mn + 1);
+
+	//actions
+	if (seekIfNeeded(info._startOfActions, &offset, &ptr) == 0)
+		return 0;
+
+	ct = 0;
+
+	uint16_t value, cond, comm;
+
+	while (ct < na + 1) {
+		ap = &_G(_actions)[ct];
+		value = *(ptr++);
+		value += *(ptr++) * 0x100; /* verb/noun */
+		ap->_vocab = value;
+
+		cond = 5;
+		comm = 2;
+
+		for (int j = 0; j < 5; j++) {
+			if (j < cond) {
+				value = *(ptr++);
+				value += *(ptr++) * 0x100;
+			} else
+				value = 0;
+			ap->_condition[j] = value;
+		}
+		for (int j = 0; j < 2; j++) {
+			if (j < comm) {
+				value = *(ptr++);
+				value += *(ptr++) * 0x100;
+			} else
+				value = 0;
+			ap->_action[j] = value;
+		}
+		ct++;
+	}
+
+	// room connections
+	if (seekIfNeeded(info._startOfRoomConnections, &offset, &ptr) == 0)
+		return 0;
+
+	ct = 0;
+
+	while (ct < nr + 1) {
+		rp = &_G(_rooms)[ct];
+		for (int j = 0; j < 6; j++) {
+			rp->_exits[j] = *(ptr++);
+		}
+		ct++;
+	}
+
+	//item locations
+	if (seekIfNeeded(info._startOfItemLocations, &offset, &ptr) == 0)
+		return 0;
+
+	ct = 0;
+	while (ct < ni + 1) {
+		ip = &_G(_items)[ct];
+		ip->_location = *(ptr++);
+		ip->_initialLoc = ip->_location;
+		ct++;
+	}
+
+	//dictionary
+	if (seekIfNeeded(info._startOfDictionary, &offset, &ptr) == 0)
+		return 0;
+
+	ptr = readDictionary(info, &ptr, 0);
+
+	//rooms
+	if (seekIfNeeded(info._startOfRoomDescriptions, &offset, &ptr) == 0)
+		return 0;
+
+	if (info._startOfRoomDescriptions == FOLLOWS)
+		ptr++;
+
+	ct = 0;
+
+	char text[256];
+	char c = 0;
+	int charindex = 0;
+
+	do {
+		c = *(ptr++);
+		text[charindex] = c;
+		rp = &_G(_rooms)[ct];
+		if (c == 0) {
+			rp->_text = text;
+			if (info._numberOfPictures > 0)
+				rp->_image = ct - 1;
+			else
+				rp->_image = 255;
+			ct++;
+			charindex = 0;
+		} else {
+			charindex++;
+		}
+		if (c != 0 && !isascii(c))
+			return 0;
+	} while (ct < nr + 1);
+
+	//messages
+	if (seekIfNeeded(info._startOfMessages, &offset, &ptr) == 0)
+		return 0;
+
+	ct = 0;
+	charindex = 0;
+
+	while (ct < mn + 1) {
+		c = *(ptr++);
+		text[charindex] = c;
+		if (c == 0) {
+			_G(_messages)[ct] = text;
+			ct++;
+			charindex = 0;
+		} else {
+			charindex++;
+		}
+	}
+
+	//items
+	if (seekIfNeeded(info._startOfItemDescriptions, &offset, &ptr) == 0)
+		return 0;
+
+	ct = 0;
+	charindex = 0;
+
+	do {
+		ip = &_G(_items)[ct];
+		c = *(ptr++);
+		text[charindex] = c;
+		if (c == 0) {
+			ip->_text = text;
+			const char *p = strchr(ip->_text.c_str(), '/');
+			/* Some games use // to mean no auto get/drop word! */
+			if (p) {
+				ip->_autoGet = Common::String(p);
+				if (!ip->_autoGet.hasPrefix("//") && !ip->_autoGet.hasPrefix("/*")) {
+					ip->_text = Common::String(ip->_text.c_str(), p);
+					ip->_autoGet.deleteChar(0);
+					const char *t = strchr(ip->_autoGet.c_str(), '/');
+					if (t)
+						ip->_autoGet = Common::String(ip->_autoGet.c_str(), t);
+				}
+			}
+			ct++;
+			charindex = 0;
+		} else {
+			charindex++;
+		}
+	} while (ct < ni + 1);
+
+	//line images
+	if (info._numberOfPictures > 0) {
+		loadVectorData(info, ptr);
+	}
+
+	//system messages
+	ct = 0;
+	if (seekIfNeeded(info._startOfSystemMessages, &offset, &ptr) == 0)
+		return 1;
+
+	charindex = 0;
+
+	do {
+		c = *(ptr++);
+		text[charindex] = c;
+		if (c == 0 || c == 0x0d) {
+			if (charindex > 0) {
+				if (c == 0x0d)
+					charindex++;
+				text[charindex] = '\0';
+				_G(_systemMessages)[ct] = Common::String(text, charindex + 1);
+				ct++;
+				charindex = 0;
+			}
+		} else {
+			charindex++;
+		}
+
+		if (c != 0 && c != 0x0d && c != '\x83' && c != '\xc9' && !isascii(c))
+			break;
+	} while (ct < 40);
+
+	charindex = 0;
+
+	if (seekIfNeeded(info._startOfDirections, &offset, &ptr) == 0)
+		return 0;
+
+	ct = 0;
+	do {
+		c = *(ptr++);
+		text[charindex] = c;
+		if (c == 0 || c == 0x0d) {
+			if (charindex > 0) {
+				if (c == 0x0d)
+					charindex++;
+				text[charindex] = '\0';
+				_G(_sys)[ct] = Common::String(text, charindex + 1);
+				ct++;
+				charindex = 0;
+			}
+		} else {
+			charindex++;
+		}
+
+		if (c != 0 && c != 0x0d && !isascii(c))
+			break;
+	} while (ct < 6);
+
+	return 1;
+}
+
 int tryLoading(GameInfo info, int dictStart, int loud) {
 	// The Hulk does everything differently so it gets its own function
 	if (info._gameID == HULK || info._gameID == HULK_C64)
 		return tryLoadingHulk(info, dictStart);
 
-	// TODO
-	// Implement tryLoadingOld
+	if (info._type == OLD_STYLE)
+		return tryLoadingOld(info, dictStart);
 
 	int ni, na, nw, nr, mc, pr, tr, wl, lt, mn, trm;
 	int ct;

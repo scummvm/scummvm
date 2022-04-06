@@ -19,15 +19,15 @@
  *
  */
 
-#include "globals.h"
-#include "saga_draw.h"
-#include "definitions.h"
-#include "layout_text.h"
-#include "line_drawing.h"
-#include "hulk.h"
+#include "glk/scott/globals.h"
+#include "glk/scott/saga_draw.h"
+#include "glk/scott/definitions.h"
+#include "glk/scott/layout_text.h"
+#include "glk/scott/line_drawing.h"
+#include "glk/scott/hulk.h"
 #include "glk/scott/command_parser.h"
-#include "game_info.h"
-#include "detect_game.h"
+#include "glk/scott/game_info.h"
+#include "glk/scott/detect_game.h"
 #include "glk/scott/scott.h"
 #include "glk/quetzal.h"
 #include "common/config-manager.h"
@@ -39,9 +39,7 @@ namespace Scott {
 
 Scott *g_vm;
 
-Scott::Scott(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		_currentCounter(0), _savedRoom(0), _options(0), _width(0), _topHeight(0), _splitScreen(true),
-		_bitFlags(0), _saveSlot(-1), _autoInventory(0) {
+Scott::Scott(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
 	g_vm = this;
 	_globals = new Globals();
 	Common::fill(&_nounText[0], &_nounText[16], '\0');
@@ -83,7 +81,7 @@ void Scott::runGame() {
 	}
 
 	GameIDType gameType = detectGame(&_gameFile);
-	loadDatabase(&_gameFile, (_options & DEBUGGING) ? 1 : 0);
+	//loadDatabase(&_gameFile, (_options & DEBUGGING) ? 1 : 0);
 
 	if (!gameType)
 		fatal("Unsupported game!");
@@ -168,10 +166,10 @@ void Scott::runGame() {
 			} else if (_G(_gameHeader)._lightTime < 25) {
 				if (_G(_items)[LIGHT_SOURCE]._location == CARRIED || _G(_items)[LIGHT_SOURCE]._location == MY_LOC) {
 					if ((_options & SCOTTLIGHT) || (_G(_game)->_subType & MYSTERIOUS)) {
-						display(_G(_bottomWindow), "%s %d %s\n", _G(_sys)[LIGHT_RUNS_OUT_IN], _G(_gameHeader)._lightTime, _G(_sys)[TURNS]);
+						display(_G(_bottomWindow), "%s %d %s\n", _G(_sys)[LIGHT_RUNS_OUT_IN].c_str(), _G(_gameHeader)._lightTime, _G(_sys)[TURNS].c_str());
 					} else {
 						if (_G(_gameHeader)._lightTime % 5 == 0)
-							output(_G(_sys)[LIGHT_GROWING_DIM]);
+							output(_G(_sys)[LIGHT_GROWING_DIM].c_str());
 					}
 				}
 			}
@@ -527,7 +525,7 @@ void Scott::look(void) {
 	}
 
 	if ((_bitFlags & (1 << DARKBIT)) && _G(_items)[LIGHT_SOURCE]._location != CARRIED && _G(_items)[LIGHT_SOURCE]._location != MY_LOC) {
-		writeToRoomDescriptionStream("%s", _G(_sys)[TOO_DARK_TO_SEE]);
+		writeToRoomDescriptionStream("%s", _G(_sys)[TOO_DARK_TO_SEE].c_str());
 		flushRoomDescription(buf);
 		return;
 	}
@@ -538,9 +536,9 @@ void Scott::look(void) {
 		return;
 
 	if (r->_text.hasPrefix("*"))
-		writeToRoomDescriptionStream("%s", r->_text.substr(1));
+		writeToRoomDescriptionStream("%s", r->_text.substr(1).c_str());
 	else {
-		writeToRoomDescriptionStream("%s%s", _G(_sys)[YOU_ARE], r->_text);
+		writeToRoomDescriptionStream("%s%s", _G(_sys)[YOU_ARE].c_str(), r->_text.c_str());
 	}
 
 	if (!(_options & SPECTRUM_STYLE)) {
@@ -558,16 +556,16 @@ void Scott::look(void) {
 				continue;
 			}
 			if (f == 0) {
-				writeToRoomDescriptionStream("%s", _G(_sys)[YOU_SEE]);
+				writeToRoomDescriptionStream("%s", _G(_sys)[YOU_SEE].c_str());
 				f++;
 				if (_options & SPECTRUM_STYLE)
 					writeToRoomDescriptionStream("\n");
 			} else if (!(_options & (TRS80_STYLE | SPECTRUM_STYLE))) {
-				writeToRoomDescriptionStream("%s", _G(_sys)[ITEM_DELIMITER]);
+				writeToRoomDescriptionStream("%s", _G(_sys)[ITEM_DELIMITER].c_str());
 			}
-			writeToRoomDescriptionStream("%s", _G(_items)[ct]._text);
+			writeToRoomDescriptionStream("%s", _G(_items)[ct]._text.c_str());
 			if (_options & (TRS80_STYLE | SPECTRUM_STYLE)) {
-				writeToRoomDescriptionStream("%s", _G(_sys)[ITEM_DELIMITER]);
+				writeToRoomDescriptionStream("%s", _G(_sys)[ITEM_DELIMITER].c_str());
 			}
 		}
 		ct++;
@@ -1011,19 +1009,17 @@ ActionResultType Scott::performLine(int ct) {
 						 know if there is a maximum value to limit too */
 				break;
 			case 84:
-				//TODO
-				//if (CurrentCommand)
-				//	glk_put_string_stream_uni(
-				//		glk_window_get_stream(Bottom),
-				//		UnicodeWords[CurrentCommand->nounwordindex]);
+				if (_G(_currentCommand))
+					glk_put_string_stream_uni(
+						glk_window_get_stream(_G(_bottomWindow)),
+						_G(_unicodeWords)[_G(_currentCommand)->_nounWordIndex]);
 				break;
 			case 85:
-				//TODO
-				//if (CurrentCommand)
-				//	glk_put_string_stream_uni(
-				//		glk_window_get_stream(Bottom),
-				//		UnicodeWords[CurrentCommand->nounwordindex]);
-				//Output("\n");
+				if (_G(_currentCommand))
+					glk_put_string_stream_uni(
+						glk_window_get_stream(_G(_bottomWindow)),
+						_G(_unicodeWords)[_G(_currentCommand)->_nounWordIndex]);
+				output("\n");
 				break;
 			case 86:
 				if (!(_options & SPECTRUM_STYLE))
@@ -1383,7 +1379,6 @@ void Scott::flushRoomDescription(char *buf) {
 			glk_window_move_cursor(_G(_topWindow), 0, line);
 			display(_G(_topWindow), "%s", string);
 		}
-		delete[] string;
 
 		if (line < rows - 1) {
 			glk_window_get_size(_G(_topWindow), (uint *)&_topWidth, (uint *)&_topHeight);
@@ -1430,21 +1425,21 @@ void Scott::listExits() {
 	int ct = 0;
 	int f = 0;
 
-	writeToRoomDescriptionStream("\n\n%s", _G(_sys)[EXITS]);
+	writeToRoomDescriptionStream("\n\n%s", _G(_sys)[EXITS].c_str());
 
 	while (ct < 6) {
 		if ((&_G(_rooms)[MY_LOC])->_exits[ct] != 0) {
 			if (f) {
-				writeToRoomDescriptionStream("%s", _G(_sys)[EXITS_DELIMITER]);
+				writeToRoomDescriptionStream("%s", _G(_sys)[EXITS_DELIMITER].c_str());
 			}
 			/* _G(_sys)[] begins with the exit names */
-			writeToRoomDescriptionStream("%s", _G(_sys)[ct]);
+			writeToRoomDescriptionStream("%s", _G(_sys)[ct].c_str());
 			f = 1;
 		}
 		ct++;
 	}
 	if (f == 0)
-		writeToRoomDescriptionStream("%s", _G(_sys)[NONE]);
+		writeToRoomDescriptionStream("%s", _G(_sys)[NONE].c_str());
 	return;
 }
 
@@ -1455,12 +1450,12 @@ void Scott::listExitsSpectrumStyle() {
 	while (ct < 6) {
 		if ((&_G(_rooms)[MY_LOC])->_exits[ct] != 0) {
 			if (f == 0) {
-				writeToRoomDescriptionStream("\n\n%s", _G(_sys)[EXITS]);
+				writeToRoomDescriptionStream("\n\n%s", _G(_sys)[EXITS].c_str());
 			} else {
-				writeToRoomDescriptionStream("%s", _G(_sys)[EXITS_DELIMITER]);
+				writeToRoomDescriptionStream("%s", _G(_sys)[EXITS_DELIMITER].c_str());
 			}
 			/* sys[] begins with the exit names */
-			writeToRoomDescriptionStream("%s", _G(_sys)[ct]);
+			writeToRoomDescriptionStream("%s", _G(_sys)[ct].c_str());
 			f = 1;
 		}
 		ct++;
@@ -1472,7 +1467,7 @@ void Scott::listExitsSpectrumStyle() {
 void Scott::listInventoryInUpperWindow() {
 	int i = 0;
 	int lastitem = -1;
-	writeToRoomDescriptionStream("\n%s", _G(_sys)[INVENTORY]);
+	writeToRoomDescriptionStream("\n%s", _G(_sys)[INVENTORY].c_str());
 	while (i <= _G(_gameHeader)._numItems) {
 		if (_G(_items)[i]._location == CARRIED) {
 			if (_G(_items)[i]._text[0] == 0) {
@@ -1481,18 +1476,18 @@ void Scott::listInventoryInUpperWindow() {
 				continue;
 			}
 			if (lastitem > -1 && (_options & (TRS80_STYLE | SPECTRUM_STYLE)) == 0) {
-				writeToRoomDescriptionStream("%s", _G(_sys)[ITEM_DELIMITER]);
+				writeToRoomDescriptionStream("%s", _G(_sys)[ITEM_DELIMITER].c_str());
 			}
 			lastitem = i;
-			writeToRoomDescriptionStream("%s", _G(_items)[i]._text);
+			writeToRoomDescriptionStream("%s", _G(_items)[i]._text.c_str());
 			if (_options & (TRS80_STYLE | SPECTRUM_STYLE)) {
-				writeToRoomDescriptionStream("%s", _G(_sys)[ITEM_DELIMITER]);
+				writeToRoomDescriptionStream("%s", _G(_sys)[ITEM_DELIMITER].c_str());
 			}
 		}
 		i++;
 	}
 	if (lastitem == -1) {
-		writeToRoomDescriptionStream("%s\n", _G(_sys)[NOTHING]);
+		writeToRoomDescriptionStream("%s\n", _G(_sys)[NOTHING].c_str());
 	} else {
 		if (_options & TI994A_STYLE && !itemEndsWithPeriod(lastitem))
 			writeToRoomDescriptionStream(".");
@@ -1636,9 +1631,7 @@ void Scott::drawImage(int image) {
 		return;
 	}
 	if (_G(_game)->_pictureFormatVersion == 99)
-		// TODO
-		// drawVectorPicture(image);
-		warning("drawVectorPicture not implmented\n");
+		drawVectorPicture(image);
 	else
 		drawSagaPictureNumber(image);
 }
@@ -1819,10 +1812,10 @@ int Scott::printScore() {
 			n++;
 		i++;
 	}
-	display(_G(_bottomWindow), "%s %d %s%s %d.\n", _G(_sys)[IVE_STORED], n, _G(_sys)[TREASURES],
-			_G(_sys)[ON_A_SCALE_THAT_RATES], (n * 100) / _G(_gameHeader)._treasures);
+	display(_G(_bottomWindow), "%s %d %s%s %d.\n", _G(_sys)[IVE_STORED].c_str(), n, _G(_sys)[TREASURES].c_str(),
+			_G(_sys)[ON_A_SCALE_THAT_RATES].c_str(), (n * 100) / _G(_gameHeader)._treasures);
 	if (n == _G(_gameHeader)._treasures) {
-		output(_G(_sys)[YOUVE_SOLVED_IT]);
+		output(_G(_sys)[YOUVE_SOLVED_IT].c_str());
 		doneIt();
 		return 1;
 	}
