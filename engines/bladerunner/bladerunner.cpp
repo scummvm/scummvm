@@ -1292,11 +1292,13 @@ bool BladeRunnerEngine::isAllowedRepeatedCustomEvent(const Common::Event &currev
 	switch (currevent.type) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		switch ((BladeRunnerEngineMappableAction)currevent.customType) {
-		case kMpblActionCutsceneSkip:
+		case kMpActionCutsceneSkip:
 			// fall through
 		case kMpActionDialogueSkip:
 			// fall through
 		case kMpActionToggleKiaOptions:
+			// fall through
+		case kMpConfirmDlg:
 			return true;
 
 		default:
@@ -1324,12 +1326,7 @@ bool BladeRunnerEngine::isAllowedRepeatedKey(const Common::KeyState &currKeyStat
 	// This is noticable when choosing an already saved game to overwrite
 	// and holding down Enter would cause the confirmation dialogue to pop up
 	// and it would subsequently confirm it as well.
-	// TODO if we introduce a custom confirm action for KIA, then that action should be repeatable
-	//      and KEYCODE_RETURN and KEYCODE_KP_ENTER should be removed from this clause;
-	//      the action should be added to the switch cases in isAllowedRepeatedCustomEvent()
-	return  currKeyState.keycode == Common::KEYCODE_RETURN
-	    ||  currKeyState.keycode == Common::KEYCODE_KP_ENTER
-	    ||  currKeyState.keycode == Common::KEYCODE_BACKSPACE
+	return  currKeyState.keycode == Common::KEYCODE_BACKSPACE
 	    ||  currKeyState.keycode == Common::KEYCODE_SPACE
 	    ||  currKeyState.keycode == Common::KEYCODE_KP_MINUS
 	    ||  currKeyState.keycode == Common::KEYCODE_KP_PLUS
@@ -1369,7 +1366,7 @@ void BladeRunnerEngine::handleEvents() {
 				handleMouseAction(event.mouse.x, event.mouse.y, false, false);
 				break;
 
-			case kMpblActionCutsceneSkip:
+			case kMpActionCutsceneSkip:
 				// fall through
 			case kMpActionDialogueSkip:
 				// fall through
@@ -1390,6 +1387,10 @@ void BladeRunnerEngine::handleEvents() {
 			case kMpActionOpenKIATabClueDatabase:
 				// fall through
 			case kMpActionOpenKIATabQuitGame:
+				// fall through
+			case kMpConfirmDlg:
+				// fall through
+			case kMpDeleteSelectedSvdGame:
 				handleCustomEventStop(event);
 				break;
 
@@ -1410,7 +1411,7 @@ void BladeRunnerEngine::handleEvents() {
 					handleMouseAction(event.mouse.x, event.mouse.y, false, true);
 					break;
 
-				case kMpblActionCutsceneSkip:
+				case kMpActionCutsceneSkip:
 					// fall through
 				case kMpActionDialogueSkip:
 					// fall through
@@ -1431,6 +1432,10 @@ void BladeRunnerEngine::handleEvents() {
 				case kMpActionOpenKIATabClueDatabase:
 					// fall through
 				case kMpActionOpenKIATabQuitGame:
+					// fall through
+				case kMpConfirmDlg:
+					// fall through
+				case kMpDeleteSelectedSvdGame:
 					if (isAllowedRepeatedCustomEvent(event)
 					    && _activeCustomEvents->size() < kMaxCustomConcurrentRepeatableEvents) {
 						if (_activeCustomEvents->empty()) {
@@ -1496,12 +1501,23 @@ void BladeRunnerEngine::handleEvents() {
 	    && (timeNow - _customEventRepeatTimeLast >= _customEventRepeatTimeDelay)) {
 		_customEventRepeatTimeLast = timeNow;
 		_customEventRepeatTimeDelay = kKeyRepeatSustainDelay;
+		uint16 aceSize = _activeCustomEvents->size();
 		for (ActiveCustomEventsArray::iterator it = _activeCustomEvents->begin(); it != _activeCustomEvents->end(); it++) {
 			// kbdRepeat field will be unused here since we emulate the kbd repeat behavior anyway,
 			// but maybe it's good to set it for consistency
 			it->kbdRepeat = true;
 			// reissue the custom start event
 			handleCustomEventStart(*it);
+			// This extra check is needed since it's possible that during this for loop
+			// within the above handleCustomEventStart() execution,
+			// cleanupPendingRepeatingEvents() is called
+			// and elements from _activeCustomEvents are removed!
+			// TODO This is probably an indication that this could be reworked
+			//      as something cleaner and safer.
+			//      Or event repetition could be handled by the keymapper code (outside the engine code)
+			if (aceSize != _activeCustomEvents->size()) {
+				break;
+			}
 		}
 	} else if (isAllowedRepeatedKey(_currentKeyDown)
 	           && (timeNow - _keyRepeatTimeLast >= _keyRepeatTimeDelay)) {
@@ -1603,6 +1619,10 @@ void BladeRunnerEngine::cleanupPendingRepeatingEvents(const Common::String &keym
 			for (ActiveCustomEventsArray::iterator actIt = _activeCustomEvents->begin(); actIt != _activeCustomEvents->end(); ++actIt) {
 				if ((actIt->type != Common::EVENT_INVALID) && (actIt->customType == (*kmIt)->event.customType)) {
 					_activeCustomEvents->erase(actIt);
+					// When erasing an element from an array, erase(iterator pos)
+					// will return an iterator pointing to the next element in the array.
+					// Thus, we should check if we reached the end() here, to avoid moving
+					// the iterator in the next loop repetition to an invalid memory location.
 					if (actIt == _activeCustomEvents->end()) {
 						break;
 					}
@@ -1633,13 +1653,13 @@ void BladeRunnerEngine::handleCustomEventStop(Common::Event &event) {
 }
 
 void BladeRunnerEngine::handleCustomEventStart(Common::Event &event) {
-	if (_vqaIsPlaying && (BladeRunnerEngineMappableAction)event.customType == kMpblActionCutsceneSkip) {
+	if (_vqaIsPlaying && (BladeRunnerEngineMappableAction)event.customType == kMpActionCutsceneSkip) {
 		_vqaStopIsRequested = true;
 		_vqaIsPlaying = false;
 		return;
 	}
 
-	if (_vqaStopIsRequested && (BladeRunnerEngineMappableAction)event.customType == kMpblActionCutsceneSkip) {
+	if (_vqaStopIsRequested && (BladeRunnerEngineMappableAction)event.customType == kMpActionCutsceneSkip) {
 		return;
 	}
 

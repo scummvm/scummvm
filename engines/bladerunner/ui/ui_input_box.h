@@ -55,6 +55,7 @@ public:
 	void hide();
 
 	void handleKeyDown(const Common::KeyState &kbd) override;
+	void handleCustomEventStart(const Common::Event &evt) override;
 
 private:
 	bool getValidChar(const uint16 &kc16bit, uint8 &kc8bit);

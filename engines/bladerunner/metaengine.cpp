@@ -135,7 +135,7 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 
 	// I18N: This keymap allows skipping video cutscenes
 	act = new Action("SKIPVIDEO", _("Skip cutscene"));
-	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpblActionCutsceneSkip);
+	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpActionCutsceneSkip);
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("RETURN");
 	act->addDefaultInputMapping("KP_ENTER");
@@ -174,6 +174,31 @@ Common::KeymapArray BladeRunnerMetaEngine::initKeymaps(const char *target) const
 	act->addDefaultInputMapping("TAB");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 	gameplayKeymap->addAction(act);
+
+	// I18N: This keymap works within the KIA Save Game screen
+	// and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
+	// and also submitting a new save game name, or choosing an existing save game for overwriting.
+	act = new Action("KIACONFIRMDLG", _("Confirm"));
+	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpConfirmDlg);
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("KP_ENTER");
+	act->addDefaultInputMapping("JOY_B");
+	kiaOnlyKeymap->addAction(act);
+
+	// I18N: This keymap works within the KIA Save Game screen
+	// and allows submitting a selected existing save game for deletion.
+	act = new Action("KIADELETESVDGAME", _("Delete Selected Saved Game"));
+	act->setCustomEngineActionEvent(BladeRunnerEngine::kMpDeleteSelectedSvdGame);
+	act->addDefaultInputMapping("DELETE");
+	// TODO In the original KP_PERIOD with NUMLOCK on, would work as a normal '.' character.
+	// KP_PERIOD with NUMLOCK off, would work as a delete request for the selected saved game.
+	// However, NUMLOCK is currently not working as a modifier key for keymaps,
+	// so maybe we should implement this original behavior more accurately,
+	// when that is fixed in the keymapper or hardware-input code.
+	// For now, KP_PERIOD will work (by default) as a delete request.
+	act->addDefaultInputMapping("KP_PERIOD");
+	act->addDefaultInputMapping("JOY_X");
+	kiaOnlyKeymap->addAction(act);
 
 	// I18N: This keymap allows scrolling texts and lists upwards
 	act = new Action("KIASCROLLUP", _("Scroll Up"));
