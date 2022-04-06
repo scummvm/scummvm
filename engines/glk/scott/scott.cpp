@@ -81,7 +81,9 @@ void Scott::runGame() {
 	}
 
 	GameIDType gameType = detectGame(&_gameFile);
-	//loadDatabase(&_gameFile, (_options & DEBUGGING) ? 1 : 0);
+
+	if (gameType == SCOTTFREE)
+		loadDatabase(&_gameFile, (_options & DEBUGGING) ? 1 : 0);
 
 	if (!gameType)
 		fatal("Unsupported game!");
@@ -223,7 +225,24 @@ void Scott::display(winid_t w, const Common::U32String fmt, ...) {
 }
 
 void Scott::updateSettings() {
-	//TODO
+	if (drawingVector())
+		glk_request_timer_events(20);
+
+	PaletteType previousPal = _G(_palChosen);
+	if (_options & FORCE_PALETTE_ZX)
+		_G(_palChosen) = ZXOPT;
+	else if (_options & FORCE_PALETTE_C64) {
+		if (_G(_game)->_pictureFormatVersion == 99)
+			_G(_palChosen) = C64A;
+		else
+			_G(_palChosen) = C64B;
+	} else
+		_G(_palChosen) = _G(_game)->_palette;
+	if (_G(_palChosen) != previousPal) {
+		definePalette();
+		if (_G(_vectorState) != NO_VECTOR_IMAGE)
+			drawSomeVectorPixels(1);
+	}
 }
 
 void Scott::updates(event_t ev) {

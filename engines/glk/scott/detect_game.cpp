@@ -28,6 +28,9 @@
 #include "glk/scott/decompress_z80.h"
 #include "glk/scott/decompress_text.h"
 #include "glk/scott/globals.h"
+#include "glk/scott/detection.h"
+#include "glk/scott/detection_tables.h"
+#include "common/md5.h"
 
 namespace Glk {
 namespace Scott {
@@ -374,40 +377,51 @@ GameIDType detectGame(Common::SeekableReadStream *f) {
 	_G(_fileLength) = f->size();
 
 	_G(_game) = new GameInfo();
-	//return SCOTTFREE;
 
-	//TODO
-	//SCOTTFREE Detection
+	Common::String md5 = Common::computeStreamMD5AsString(*f, 5000);
+	f->seek(0);
+	const GlkDetectionEntry *p = SCOTT_GAMES;
 
-	_G(_entireFile) = new uint8_t[_G(_fileLength)];
-	int result = f->read(_G(_entireFile), _G(_fileLength));
-	if (result != _G(_fileLength))
-		g_vm->fatal("File empty or read error!");
-	//TODO
-	//TI99/4A Detection
-	//TODO
-	//C64 Detection
+	while (p->_md5) {
+		if (md5 == p->_md5) {
+			if (p->_extra == "") {
+				CURRENT_GAME = SCOTTFREE;
+			}
+			if (p->_extra == "ZXSpectrum") {
+				_G(_entireFile) = new uint8_t[_G(_fileLength)];
+				int result = f->read(_G(_entireFile), _G(_fileLength));
+				if (result != _G(_fileLength))
+					g_vm->fatal("File empty or read error!");
 
-	//ZXSpectrum Detection
-	uint8_t *uncompressed = decompressZ80(_G(_entireFile), _G(_fileLength));
-	if (uncompressed != NULL) {
-		delete[] _G(_entireFile);
-		_G(_entireFile) = uncompressed;
-		_G(_fileLength) = 0xc000;
-	}
+				// ZXSpectrum Detection
+				uint8_t *uncompressed = decompressZ80(_G(_entireFile), _G(_fileLength));
+				if (uncompressed != NULL) {
+					delete[] _G(_entireFile);
+					_G(_entireFile) = uncompressed;
+					_G(_fileLength) = 0xc000;
+				}
 
-	size_t offset;
-	DictionaryType dict_type = getId(&offset);
-	if (dict_type == NOT_A_GAME)
-		return UNKNOWN_GAME;
-	for (int i = 0; i < NUMGAMES; i++) {
-		if (g_games[i]._dictionary == dict_type) {
-			if (tryLoading(g_games[i], offset, 0)) {
-				delete _G(_game);
-				_G(_game) = &g_games[i];
-				break;
+				size_t offset;
+				DictionaryType dict_type = getId(&offset);
+				if (dict_type == NOT_A_GAME)
+					return UNKNOWN_GAME;
+				for (int i = 0; i < NUMGAMES; i++) {
+					if (g_games[i]._dictionary == dict_type) {
+						if (tryLoading(g_games[i], offset, 0)) {
+							delete _G(_game);
+							_G(_game) = &g_games[i];
+							break;
+						}
+					}
+				}
 			}
 		}
+		// TODO
+		// TI99/4A Detection
+
+		// TODO
+		// C64 Detection
+		++p;
 	}
 
 	if (CURRENT_GAME == SCOTTFREE || CURRENT_GAME == TI994A)
