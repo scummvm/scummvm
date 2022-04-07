@@ -760,6 +760,8 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 				fileSize += file->readUint32LE() >> 8;
 #if defined(ENABLE_SCUMM_7_8)
 				_vm->_imuseDigital->startVoice(_sfxFilename.c_str(), file.release(), totalOffset, fileSize);
+#else
+				(void)fileSize;
 #endif
 			} else if (headerTag == MKTAG('V','T','L','K')) {
 #if defined(ENABLE_SCUMM_7_8)
