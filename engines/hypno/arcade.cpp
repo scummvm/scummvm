@@ -327,32 +327,30 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			break;
 		}
 
-		if (!arc->transitionVideos.empty() && _background->decoder->getCurFrame() > (int)*arc->transitionTimes.begin()) {
-			transition = true;
-			_background->decoder->pauseVideo(true);
+		if (!arc->transitions.empty()) {
+			ArcadeTransition at = *arc->transitions.begin();
+			if (_background->decoder->getCurFrame() > (int) at.time) {
+				transition = true;
+				_background->decoder->pauseVideo(true);
 
-			Filename transitionVideo = *arc->transitionVideos.begin();
-			Filename transitionPalette = *arc->transitionPalettes.begin();
+				debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
+				MVideo video(at.video, Common::Point(0, 0), false, true, false);
+				disableCursor();
+				runIntro(video);
 
-			debugC(1, kHypnoDebugArcade, "Playing transition %s", transitionVideo.c_str());
-			MVideo video(transitionVideo, Common::Point(0, 0), false, true, false);
-			disableCursor();
-			runIntro(video);
+				if (!at.palette.empty())
+					currentPalette = at.palette;
 
-			if (!transitionPalette.empty())
-				currentPalette = transitionPalette;
+				loadPalette(currentPalette);
+				_background->decoder->pauseVideo(false);
+				updateScreen(*_background);
+				drawScreen();
+				drawCursorArcade(mousePos);
 
-			loadPalette(currentPalette);
-			_background->decoder->pauseVideo(false);
-			updateScreen(*_background);
-			drawScreen();
-			drawCursorArcade(mousePos);
-
-			arc->transitionVideos.pop_front();
-			arc->transitionPalettes.pop_front();
-			arc->transitionTimes.pop_front();
-			if (!_music.empty())
-				playSound(_music, 0, arc->musicRate); // restore music
+				arc->transitions.pop_front();
+				if (!_music.empty())
+					playSound(_music, 0, arc->musicRate); // restore music
+			}
 		}
 
 		if (_background->decoder && _background->decoder->getCurFrame() >= int(segments[_segmentIdx].start + segments[_segmentIdx].size - 2)) {

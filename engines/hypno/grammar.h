@@ -494,6 +494,23 @@ public:
 
 typedef Common::Array<Segment> Segments;
 
+class ArcadeTransition {
+public:
+	ArcadeTransition(Filename video_, Filename palette_, Filename audio_, uint32 time_)  {
+		video = video_;
+		palette = palette_;
+		audio = audio_;
+		time = time_;
+	}
+
+	Filename video;
+	Filename palette;
+	Filename audio;
+	uint32 time;
+};
+
+typedef Common::List<ArcadeTransition> ArcadeTransitions;
+
 class ArcadeShooting : public Level {
 public:
 	ArcadeShooting()  {
@@ -509,9 +526,7 @@ public:
 	void clear() {
 		nextLevelVideo.clear();
 		backgroundVideo.clear();
-		transitionVideos.clear();
-		transitionTimes.clear();
-		transitionPalettes.clear();
+		transitions.clear();
 		maskVideo.clear();
 		player.clear();
 		shoots.clear();
@@ -533,7 +548,7 @@ public:
 	uint32 id;
 	uint32 frameDelay;
 	Common::String mode;
-	Common::List<uint32> transitionTimes;
+	ArcadeTransitions transitions;
 	Segments segments;
 
 	// Objectives
@@ -544,8 +559,6 @@ public:
 	Script script;
 
 	// Videos
-	Common::List<Filename> transitionVideos;
-	Common::List<Filename> transitionPalettes;
 	Filename nextLevelVideo;
 	Filename defeatNoEnergyFirstVideo;
 	Filename defeatNoEnergySecondVideo;
