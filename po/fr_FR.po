@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-06 14:42+0000\n"
-"PO-Revision-Date: 2022-04-04 10:29+0000\n"
+"PO-Revision-Date: 2022-04-07 19:27+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -4516,7 +4516,7 @@ msgstr "Ouvrir Base de données KIA"
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:190
 msgid "Delete Selected Saved Game"
-msgstr ""
+msgstr "Effacer la sauvegarde sélectionnée"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:204
