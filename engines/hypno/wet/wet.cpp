@@ -259,7 +259,7 @@ void WetEngine::loadAssetsFullGame() {
 	_levels["<level_menu>"] = level_menu;
 	_levels["<level_menu>"]->levelIfWin = "?";
 
-	Transition *over = new Transition("<quit>");
+	Transition *over = new Transition("<main_menu>");
 	over->intros.push_back("c_misc/gameover.smk");
 	_levels["<game_over>"] = over;
 
