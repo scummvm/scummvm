@@ -46,10 +46,7 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_playerFrameIdx = -1;
 
 	_currentScript = arc->script;
-	ScriptInfo si = *_currentScript.begin();
-	_currentActor = si.actor - 1;
-	_currentMode = si.mode;
-	_currentScript.pop_front();
+	updateFromScript();
 }
 
 void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
@@ -63,25 +60,30 @@ void BoyzEngine::updateFromScript() {
 	if (_currentScript.size() > 0) {
 		ScriptInfo si = *_currentScript.begin();
 		//debug("%d %d %d", si.time, _background->decoder->getCurFrame(), si.actor);
-		if (int(si.time) <= _background->decoder->getCurFrame()) {
+		if (!_background || int(si.time) <= _background->decoder->getCurFrame()) {
 			_currentActor = si.actor - 1;
 			_currentMode = si.mode;
+			_currentWeapon = si.cursor - 1;
 			_currentScript.pop_front();
+
+			if (_currentMode == NonInteractive)
+				changeCursor(_crosshairsInactive[_currentWeapon], _crosshairsPalette, true);
+			else
+				changeCursor(_crosshairsActive[_currentWeapon], _crosshairsPalette, true);
 		}
 	}
 }
 
 void BoyzEngine::drawCursorArcade(const Common::Point &mousePos) {
 	if (_currentMode == NonInteractive) {
-		changeCursor(_crosshairsInactive[0], _crosshairsPalette, true);
 		return;
 	}
 
 	int i = detectTarget(mousePos);
 	if (i >= 0)
-		changeCursor(_crosshairsTarget[0], _crosshairsPalette, true);
+		changeCursor(_crosshairsTarget[_currentWeapon], _crosshairsPalette, true);
 	else
-		changeCursor(_crosshairsActive[0], _crosshairsPalette, true);
+		changeCursor(_crosshairsActive[_currentWeapon], _crosshairsPalette, true);
 }
 
 void BoyzEngine::drawPlayer() {
@@ -141,7 +143,11 @@ int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 }
 
 void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background) {
-	playSound(_soundPath + _weaponShootSound[0], 1);
+	if (_currentMode == NonInteractive) {
+		return;
+	}
+
+	playSound(_soundPath + _weaponShootSound[_currentWeapon], 1);
 	incShotsFired();
 	int i = detectTarget(mousePos);
 	if (i < 0) {
@@ -161,7 +167,7 @@ void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVide
 		background.decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		_shoots.clear();
-		changeCursor(_crosshairsActive[0], _crosshairsPalette, true);
+		changeCursor(_crosshairsActive[_currentWeapon], _crosshairsPalette, true);
 	}
 }
 

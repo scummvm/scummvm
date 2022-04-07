@@ -487,7 +487,7 @@ public:
 	Script _currentScript;
 	ScriptMode _currentMode;
 	uint32 _currentActor;
-	uint32 _currentCursor;
+	uint32 _currentWeapon;
 
 };
 
