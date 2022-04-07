@@ -599,7 +599,7 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 
 		if (table->transitionType == 4) {
 			_stopSequenceFlag = 0;
-			diMUSESetTrigger(table->soundId, MKTAG('_', 'e', 'n', 'd'), 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+			diMUSESetTrigger(table->soundId, MKTAG('_', 'e', 'n', 'd'), 0);
 		}
 
 		if (oldSoundId) {
@@ -645,7 +645,7 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 		break;
 	case 6:
 		_stopSequenceFlag = 0;
-		diMUSESetTrigger(DIMUSE_SMUSH_SOUNDID + DIMUSE_BUFFER_MUSIC, MKTAG('_', 'e', 'n', 'd'), 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+		diMUSESetTrigger(DIMUSE_SMUSH_SOUNDID + DIMUSE_BUFFER_MUSIC, MKTAG('_', 'e', 'n', 'd'), 0);
 		break;
 	case 7:
 		if (oldSoundId)
@@ -821,7 +821,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 
 		if (table->transitionType == 4) {
 			_stopSequenceFlag = 0;
-			diMUSESetTrigger(table->soundId, MKTAG('_', 'e', 'n', 'd'), 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+			diMUSESetTrigger(table->soundId, MKTAG('_', 'e', 'n', 'd'), 0);
 		}
 
 		if (oldSoundId) {
@@ -852,10 +852,10 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 					switch (table->transitionType) {
 					case 12:
 						diMUSESetHook(oldSoundId, table->hookId);
-						diMUSESetTrigger(oldSoundId, MKTAG('e', 'x', 'i', 't'), 26, oldSoundId, table->soundId, fadeDelay, 1, 0, -1, -1, -1, -1, -1, -1);
-						diMUSESetTrigger(oldSoundId, MKTAG('e', 'x', 'i', 't'), 12, table->soundId, DIMUSE_P_VOLUME, 127, -1, -1, -1, -1, -1, -1, -1, -1);
-						diMUSESetTrigger(oldSoundId, MKTAG('e', 'x', 'i', 't'), 12, table->soundId, DIMUSE_P_GROUP, 4, -1, -1, -1, -1, -1, -1, -1, -1);
-						diMUSESetTrigger(oldSoundId, MKTAG('e', 'x', 'i', 't'), 15, table->soundId, hookId, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+						diMUSESetTrigger(oldSoundId, MKTAG('e', 'x', 'i', 't'), 26, oldSoundId, table->soundId, fadeDelay, 1, 0);
+						diMUSESetTrigger(oldSoundId, MKTAG('e', 'x', 'i', 't'), 12, table->soundId, DIMUSE_P_VOLUME, 127);
+						diMUSESetTrigger(oldSoundId, MKTAG('e', 'x', 'i', 't'), 12, table->soundId, DIMUSE_P_GROUP, 4);
+						diMUSESetTrigger(oldSoundId, MKTAG('e', 'x', 'i', 't'), 15, table->soundId, hookId);
 						diMUSEProcessStreams();
 						break;
 					default:
@@ -883,7 +883,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		break;
 	case 6:
 		_stopSequenceFlag = 0;
-		diMUSESetTrigger(DIMUSE_SMUSH_SOUNDID + DIMUSE_BUFFER_MUSIC, MKTAG('_', 'e', 'n', 'd'), 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+		diMUSESetTrigger(DIMUSE_SMUSH_SOUNDID + DIMUSE_BUFFER_MUSIC, MKTAG('_', 'e', 'n', 'd'), 0);
 		break;
 	case 7:
 		if (oldSoundId)
@@ -897,7 +897,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		if (oldSoundId)
 			diMUSESetHook(oldSoundId, table->hookId);
 		_stopSequenceFlag = 0;
-		diMUSESetTrigger(oldSoundId, MKTAG('_', 'e', 'n', 'd'), 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+		diMUSESetTrigger(oldSoundId, MKTAG('_', 'e', 'n', 'd'), 0);
 		break;
 	default:
 		debug(5, "IMuseDigital::playComiMusic(): bogus transition type, ignored");

@@ -180,6 +180,12 @@ int IMuseDigital::startVoice(int soundId, const char *soundName, byte speakingAc
 			diMUSEStopSound(DIMUSE_SMUSH_SOUNDID + DIMUSE_BUFFER_SPEECH);
 		}
 
+		// Set up a trigger for extracting mouth sync times;
+		// see Sound::extractSyncsFromDiMUSEMarker() for details.
+		// Setting up a trigger with an empty marker is a shortcut for
+		// activating the trigger for any marker.
+		diMUSESetTrigger(kTalkSoundID, 0, 21);
+
 		diMUSEStartStream(kTalkSoundID, 127, DIMUSE_BUFFER_SPEECH);
 		diMUSESetParam(kTalkSoundID, DIMUSE_P_GROUP, DIMUSE_GROUP_SPEECH);
 		if (speakingActorId == _vm->VAR(_vm->VAR_EGO)) {

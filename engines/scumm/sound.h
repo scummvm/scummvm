@@ -137,6 +137,7 @@ public:
 	bool isSfxFileCompressed();
 	bool hasSfxFile() const;
 	ScummFile *restoreDiMUSESpeechFile(const char *fileName);
+	void extractSyncsFromDiMUSEMarker(const char *marker);
 
 	void startCDTimer();
 	void stopCDTimer();

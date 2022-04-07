@@ -81,6 +81,9 @@ int IMuseDigital::cmdsHandleCmd(int cmd, uint8 *ptr, int a, int b, int c, int d,
 		return _triggersHandler->clearTrigger(a, marker, c);
 	case 20:
 		return _triggersHandler->deferCommand(a, b, c, d, e, f, g, h, i, j, k, l, m, n);
+	case 21:
+		_vm->_sound->extractSyncsFromDiMUSEMarker((char *)ptr);
+		break;
 	case 25:
 		return waveStartStream(a, b, c);
 	case 26:

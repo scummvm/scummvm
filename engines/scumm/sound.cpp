@@ -659,6 +659,10 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 	if (_vm->_game.id == GID_CMI || (_vm->_game.id == GID_DIG && !(_vm->_game.features & GF_DEMO))) {
 		// COMI (full & demo), DIG (full)
 		_sfxMode |= mode;
+
+		if (_vm->_game.id == GID_DIG)
+			_curSoundPos = 0;
+
 		return;
 	} else if (_vm->_game.id == GID_DIG && (_vm->_game.features & GF_DEMO)) {
 		_sfxMode |= mode;
@@ -756,6 +760,8 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 				fileSize += file->readUint32LE() >> 8;
 #if defined(ENABLE_SCUMM_7_8)
 				_vm->_imuseDigital->startVoice(_sfxFilename.c_str(), file.release(), totalOffset, fileSize);
+#else
+				(void)fileSize;
 #endif
 			} else if (headerTag == MKTAG('V','T','L','K')) {
 #if defined(ENABLE_SCUMM_7_8)
@@ -926,6 +932,11 @@ bool Sound::isMouthSyncOff(uint pos) {
 	uint j;
 	bool val = true;
 	uint16 *ms = _mouthSyncTimes;
+
+	if (_vm->_game.id == GID_DIG && !(_vm->_game.features & GF_DEMO)) {
+		pos = 1000 * pos / 60;
+		val = false;
+	}
 
 	_endOfMouthSync = false;
 	do {
@@ -1175,6 +1186,27 @@ ScummFile *Sound::restoreDiMUSESpeechFile(const char *fileName) {
 	}
 
 	return file.release();
+}
+
+/* The approach used by the full version of The Dig for obtaining mouth syncs is a bit weird:
+ * they are stored in a text marker found inside the DiMUSE map for each speech file, and when
+ * said engine reaches said marker, the function below is triggered.
+ *
+ * A good reason why this is the way it's done, is that in The Dig the whole speech file,
+ * including its map (and consequently, the text marker), is compressed with the same codec as
+ * sound data; this prevents us from getting the mouth syncs before the file has started playing.
+ * Also, although I can't confirm this, there might be more than one sync marker in a single
+ * speech file, so let's just be safe and follow what the original does.
+ */
+void Sound::extractSyncsFromDiMUSEMarker(const char *marker) {
+	int syncIdx = 0;
+
+	while (marker[syncIdx * 8]) {
+		_mouthSyncTimes[syncIdx] = (uint16)atoi(&marker[syncIdx * 8]);
+		syncIdx++;
+	}
+
+	_mouthSyncTimes[syncIdx] = 0xFFFF;
 }
 
 void Sound::setupSfxFile() {
