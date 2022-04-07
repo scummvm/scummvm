@@ -464,6 +464,17 @@ void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) 
 		background.decoder->pauseVideo(false);
 		updateScreen(background);
 		drawScreen();
+	} else if (_levelId == 60 && s->name == "DOOR1") {
+		_health = 0;
+		background.decoder->pauseVideo(true);
+		// In the last level, the hit boss video is used to store this ending
+		MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
+		runIntro(video);
+		loadPalette(arc->backgroundPalette);
+		background.decoder->pauseVideo(false);
+		updateScreen(background);
+		drawScreen();
+		_skipDefeatVideo = true;
 	} else if (s->attackFrames.empty()) {
 		_health = _health - s->attackWeight;
 		hitPlayer();

@@ -269,6 +269,7 @@ public:
 
 	Common::String _difficulty;
 	bool _skipLevel;
+	bool _skipDefeatVideo;
 
 	virtual void drawCursorArcade(const Common::Point &mousePos);
 	virtual void drawPlayer();

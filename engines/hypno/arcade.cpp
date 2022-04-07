@@ -185,6 +185,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	debugC(1, kHypnoDebugArcade, "Starting segment of type %x", segments[_segmentIdx].type);
 	_shoots.clear();
 	_skipLevel = false;
+	_skipDefeatVideo = false;
 	_mask = nullptr;
 	_masks = nullptr;
 
@@ -311,7 +312,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 		if (_health <= 0) {
 			skipVideo(*_background);
-			if (!arc->defeatNoEnergySecondVideo.empty() && transition) {
+			if (_skipDefeatVideo)
+				; // No video
+			else if (!arc->defeatNoEnergySecondVideo.empty() && transition) {
 				disableCursor();
 				MVideo video(arc->defeatNoEnergySecondVideo, Common::Point(0, 0), false, true, false);
 				runIntro(video);
