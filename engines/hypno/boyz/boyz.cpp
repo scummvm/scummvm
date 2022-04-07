@@ -55,44 +55,32 @@ void BoyzEngine::loadAssets() {
 
 	Graphics::Surface *targets = decodeFrame("preload/targets.smk", 0, &_crosshairsPalette);
 
-	Common::Rect cursorBox = Common::Rect(16, 8, 32, 24);
+	Common::Rect cursorBox;
+
+	// Pistol?
+	cursorBox = Common::Rect(62, 6, 83, 26);
 	_crosshairsInactive[0].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsInactive[0].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	cursorBox = Common::Rect(16, 40, 32, 56);
+	cursorBox = Common::Rect(62, 38, 83, 58);
 	_crosshairsActive[0].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsActive[0].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	cursorBox = Common::Rect(16, 72, 32, 88);
+	cursorBox = Common::Rect(62, 70, 83, 90);
 	_crosshairsTarget[0].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[0].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	cursorBox = Common::Rect(62, 6, 83, 26);
-	_crosshairsInactive[1].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsInactive[1].copyRectToSurface(*targets, 0, 0, cursorBox);
-
-	cursorBox = Common::Rect(62, 38, 83, 58);
-	_crosshairsActive[1].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsActive[1].copyRectToSurface(*targets, 0, 0, cursorBox);
-
-	cursorBox = Common::Rect(62, 70, 83, 90);
-	_crosshairsTarget[1].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsTarget[1].copyRectToSurface(*targets, 0, 0, cursorBox);
-
-    //
-	cursorBox = Common::Rect(104, 7, 136, 25);
+	cursorBox = Common::Rect(16, 8, 32, 24);
 	_crosshairsInactive[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsInactive[2].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	cursorBox = Common::Rect(104, 39, 136, 57);
+	cursorBox = Common::Rect(16, 40, 32, 56);
 	_crosshairsActive[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsActive[2].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	cursorBox = Common::Rect(104, 71, 136, 83);
+	cursorBox = Common::Rect(16, 72, 32, 88);
 	_crosshairsTarget[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[2].copyRectToSurface(*targets, 0, 0, cursorBox);
-
-	//
 
 	cursorBox = Common::Rect(163, 11, 173, 21);
 	_crosshairsInactive[3].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
@@ -107,7 +95,20 @@ void BoyzEngine::loadAssets() {
 	_crosshairsTarget[3].copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	// Shotgun
+	cursorBox = Common::Rect(104, 7, 136, 25);
+	_crosshairsInactive[4].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsInactive[4].copyRectToSurface(*targets, 0, 0, cursorBox);
 
+	cursorBox = Common::Rect(104, 39, 136, 57);
+	_crosshairsActive[4].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsActive[4].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(104, 71, 136, 83);
+	_crosshairsTarget[4].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsTarget[4].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+    // Double small
+	/*
 	cursorBox = Common::Rect(203, 11, 229, 21);
 	_crosshairsInactive[4].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsInactive[4].copyRectToSurface(*targets, 0, 0, cursorBox);
@@ -147,7 +148,7 @@ void BoyzEngine::loadAssets() {
 	cursorBox = Common::Rect(57, 162, 88, 189);
 	_crosshairsTarget[6].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[6].copyRectToSurface(*targets, 0, 0, cursorBox);
-
+	*/
 	_nextLevel = "c11.mi_";
 }
 
