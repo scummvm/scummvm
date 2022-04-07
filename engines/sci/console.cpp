@@ -602,9 +602,13 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 
 bool Console::cmdKernelFunctions(int argc, const char **argv) {
 	debugPrintf("Kernel function names in numeric order:\n");
+	uint column = 0;
 	for (uint seeker = 0; seeker <  _engine->getKernel()->getKernelNamesSize(); seeker++) {
-		debugPrintf("%03x: %20s | ", seeker, _engine->getKernel()->getKernelName(seeker).c_str());
-		if ((seeker % 3) == 2)
+		const Common::String &kernelName = _engine->getKernel()->getKernelName(seeker);
+		if (kernelName == "Dummy")
+			continue;
+		debugPrintf("%03x: %20s | ", seeker, kernelName.c_str());
+		if ((column++ % 3) == 2)
 			debugPrintf("\n");
 	}
 
