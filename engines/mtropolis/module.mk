@@ -5,6 +5,8 @@ MODULE_OBJS = \
 	data.o \
 	detection.o \
 	metaengine.o \
+	modifiers.o \
+	modifier_factory.o \
 	mtropolis.o \
 	runtime.o \
 	vthread.o

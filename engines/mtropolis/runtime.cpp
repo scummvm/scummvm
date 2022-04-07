@@ -22,12 +22,23 @@
 #include "mtropolis/runtime.h"
 #include "mtropolis/data.h"
 #include "mtropolis/vthread.h"
+#include "mtropolis/modifier_factory.h"
 
 #include "common/file.h"
 #include "common/substream.h"
 
 
 namespace MTropolis {
+
+Event::Event() : eventType(0), eventInfo(0) {
+}
+
+bool Event::load(const Data::Event& data) {
+	eventType = data.eventID;
+	eventInfo = data.eventInfo;
+
+	return true;
+}
 
 ProjectDescription::ProjectDescription() {
 }
@@ -47,6 +58,10 @@ const Common::Array<SegmentDescription> &ProjectDescription::getSegments() const
 	return _segments;
 }
 
+Common::Array<Common::SharedPtr<Modifier> >& SimpleModifierContainer::getModifiers() {
+	return _modifiers;
+}
+
 Structural::~Structural() {
 }
 
@@ -57,7 +72,7 @@ const Common::Array<Common::SharedPtr<Structural> > &Structural::getChildren() c
 	return _children;
 }
 
-const Common::Array<Common::SharedPtr<Modifier> > &Structural::getModifiers() const {
+Common::Array<Common::SharedPtr<Modifier> > &Structural::getModifiers() {
 	return _modifiers;
 }
 
@@ -96,9 +111,13 @@ void Runtime::addVolume(int volumeID, const char *name, bool isMounted) {
 	_volumes.push_back(volume);
 }
 
+const Common::Array<Common::SharedPtr<Modifier> > &IModifierContainer::getModifiers() const {
+	return const_cast<IModifierContainer &>(*this).getModifiers();
+};
+
 
 Project::Project()
-	: _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false) {
+	: _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false), _haveGlobalObjectInfo(false) {
 }
 
 Project::~Project() {
@@ -219,6 +238,8 @@ void Project::loadBootStream(size_t streamIndex) {
 	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].stream.get(), streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
 	Data::DataReader reader(stream, _projectFormat);
 
+	ChildLoaderStack loaderStack;
+
 	for (;;) {
 		Common::SharedPtr<Data::DataObject> dataObject;
 		Data::loadDataObject(reader, dataObject);
@@ -227,18 +248,27 @@ void Project::loadBootStream(size_t streamIndex) {
 			error("Failed to load project boot data");
 		}
 
-		switch (dataObject->getType()) {
-		case Data::DataObjectTypes::kPresentationSettings:
-			loadPresentationSettings(*static_cast<const Data::PresentationSettings *>(dataObject.get()));
-			break;
-		case Data::DataObjectTypes::kAssetCatalog:
-			loadAssetCatalog(*static_cast<const Data::AssetCatalog *>(dataObject.get()));
-			break;
-		case Data::DataObjectTypes::kStreamHeader:
-			// Ignore
-			break;
-		default:
-			error("Unexpected object type in boot stream");
+		if (loaderStack.contexts.size() > 0) {
+			loadRuntimeContextualObject(loaderStack, *dataObject.get());
+		} else {
+			// Root-level objects
+			switch (dataObject->getType()) {
+			case Data::DataObjectTypes::kPresentationSettings:
+				loadPresentationSettings(*static_cast<const Data::PresentationSettings *>(dataObject.get()));
+				break;
+			case Data::DataObjectTypes::kAssetCatalog:
+				loadAssetCatalog(*static_cast<const Data::AssetCatalog *>(dataObject.get()));
+				break;
+			case Data::DataObjectTypes::kGlobalObjectInfo:
+				loadGlobalObjectInfo(loaderStack, *static_cast<const Data::GlobalObjectInfo *>(dataObject.get()));
+				break;
+			case Data::DataObjectTypes::kStreamHeader:
+			case Data::DataObjectTypes::kUnknown19:
+				// Ignore
+				break;
+			default:
+				error("Unexpected object type in boot stream");
+			}
 		}
 	}
 }
@@ -286,6 +316,60 @@ void Project::loadAssetCatalog(const Data::AssetCatalog &assetCatalog) {
 				_assetNameToID[assetDesc.name] = assetDesc.id;
 		}
 	}
+}
+
+void Project::loadGlobalObjectInfo(ChildLoaderStack& loaderStack, const Data::GlobalObjectInfo& globalObjectInfo) {
+	if (_haveGlobalObjectInfo)
+		error("Multiple global object infos");
+
+	_haveGlobalObjectInfo = true;
+
+	if (globalObjectInfo.numGlobalModifiers > 0) {
+		ChildLoaderContext loaderContext;
+		loaderContext.containerUnion.modifierContainer = &_globalModifiers;
+		loaderContext.remainingCount = globalObjectInfo.numGlobalModifiers;
+		loaderContext.type = ChildLoaderContext::kTypeModifierList;
+
+		loaderStack.contexts.push_back(loaderContext);
+	}
+}
+
+
+static Common::SharedPtr<Modifier> loadModifierObject(ModifierLoaderContext &loaderContext, const Data::DataObject &dataObject) {
+	IModifierFactory *factory = getModifierFactoryForDataObjectType(dataObject.getType());
+
+	if (!factory)
+		error("Unknown or unsupported modifier type, or non-modifier encountered where a modifier was expected");
+
+	Common::SharedPtr<Modifier> modifier = factory->createModifier(loaderContext, dataObject);
+	if (!modifier)
+		error("Modifier object failed to load");
+
+	return modifier;
+}
+
+void loadRuntimeContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject) {
+	ChildLoaderContext &topContext = stack.contexts.back();
+
+	// The stack entry must always be popped before loading the object because the load process may descend into more children,
+	// such as when behaviors are nested.
+	switch (topContext.type) {
+	case ChildLoaderContext::kTypeModifierList: {
+			IModifierContainer *container = topContext.containerUnion.modifierContainer;
+
+			if ((--topContext.remainingCount) == 0)
+				stack.contexts.pop_back();
+
+			ModifierLoaderContext loaderContext;
+			loaderContext.childLoaderStack = &stack;
+
+			container->getModifiers().push_back(loadModifierObject(loaderContext, dataObject));
+		}
+		break;
+	}
+}
+
+Modifier::~Modifier() {
 }
 
 } // End of namespace MTropolis

@@ -58,6 +58,11 @@ enum DataObjectType {
 	kPresentationSettings = 0x3ec,
 
 	kAssetCatalog         = 0xd,
+    kGlobalObjectInfo     = 0x17,
+	kUnknown19            = 0x19,
+
+	
+	kBehaviorModifier     = 0x2c6,
 };
 
 } // End of namespace DataObjectTypes
@@ -152,21 +157,18 @@ protected:
 };
 
 struct PresentationSettings : public DataObject {
-
-public:
-	DataReadErrorCode load(DataReader &reader) override;
-
 	uint32 persistFlags;
 	uint32 sizeIncludingTag;
 	uint8 unknown1[2];
 	Point dimensions;
 	uint16 bitsPerPixel;
 	uint16 unknown4;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
 };
 
 struct AssetCatalog : public DataObject {
-	DataReadErrorCode load(DataReader &reader) override;
-
 	enum {
 		kFlag1Deleted = 1,
 		kFlag1LimitOnePerSegment = 2,
@@ -188,6 +190,27 @@ struct AssetCatalog : public DataObject {
 	uint8 unknown1[4];
 	uint32 numAssets;
 	Common::Array<AssetInfo> assets;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct Unknown19 : public DataObject {
+	uint32 persistFlags;
+	uint32 sizeIncludingTag;
+	uint8 unknown1[2];
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct GlobalObjectInfo : public DataObject {
+	DataReadErrorCode load(DataReader &reader) override;
+
+	uint32 persistFlags;
+	uint32 sizeIncludingTag;
+	uint16 numGlobalModifiers;
+	uint8 unknown1[4];
 };
 
 class ProjectCatalog : public DataObject {
@@ -219,15 +242,37 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-class StreamHeader : public DataObject {
+struct StreamHeader : public DataObject {
 
-public:
 	uint32 marker;
 	uint32 sizeIncludingTag;
 	char name[17];
 	uint8 projectID[2];
 	uint8 unknown1[4]; // Seems to be consistent across builds
 	uint16 unknown2;   // 0
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct BehaviorModifier : public DataObject {
+
+	uint32 unknown1;
+	uint32 sizeIncludingTag;
+	uint8 unknown2[2];
+	uint32 guid;
+	uint32 unknown4;
+	uint16 unknown5;
+	uint32 unknown6;
+	Point editorLayoutPosition;
+	uint16 lengthOfName;
+	uint16 numChildren;
+	uint32 flags;
+	Event enableWhen;
+	Event disableWhen;
+	uint8 unknown7[2];
+
+	Common::String name;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
