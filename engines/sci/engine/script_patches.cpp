@@ -5768,8 +5768,8 @@ static const uint16 kq6PatchTruncatedMessagesFix[] = {
 //  their mouths are animated by inner loops that call kDrawCel with unthrottled
 //  inner inner loops that spin to create a delay between frames. This prevents
 //  updating the screen and responding to input. We replace the spin loops with
-//  calls to kGameIsRestarting, which detects and throttles these calls so that
-//  the speed is reasonable, the screen updates, and the game is responsive.
+//  calls to kScummVMSleep for 5 ticks so that the speed is reasonable, the
+//  screen updates, and the game is responsive.
 //
 // Applies to: All versions
 // Responsible method: participle:doVerb, tomato:doVerb
@@ -5786,9 +5786,9 @@ static const uint16 kq6SignatureTalkingInventory[] = {
 static const uint16 kq6PatchTalkingInventory[] = {
 	PATCH_ADDTOOFFSET(+2),
 	0x78,                               // push1
-	0x76,                               // push0
-	0x43, 0x2c, 0x02,                   // callk GameIsRestarting 02 [ custom throttling ]
-	0x34, PATCH_UINT16(0x0000),         // ldi 0000 [ exit loop ]
+	0x39, 0x05,                         // pushi 05
+	0x43, kScummVMSleepId, 0x02,        // callk kScummVMSleep 02 [ 5 ticks ]
+	0x35, 0x00,                         // ldi 00 [ exit loop ]
 	PATCH_END
 };
 

@@ -832,9 +832,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 #endif
 	{ MAP_CALL(Show),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(SinDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
-#ifdef ENABLE_SCI32
-	{ MAP_CALL(ScummVMSleep),      SIG_SCI32, SIGFOR_ALL,    "i",                     NULL,            NULL },
-#endif
+	{ MAP_CALL(ScummVMSleep),      SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                   NULL,            NULL },
 	{ MAP_CALL(Sqrt),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(StrAt),             SIG_EVERYWHERE,           "ri(i)",                 NULL,            kStrAt_workarounds },

@@ -411,9 +411,8 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, delta);
 }
 
-#ifdef ENABLE_SCI32
 // kScummVMSleep is our own custom kernel function that sleeps for
-// the number of ticks requested. We use this in SCI32 script patches
+// the number of ticks requested. We use this in script patches
 // to replace spin loops so that the application remains responsive
 // and doesn't just block the thread without updating the screen or
 // processing input events.
@@ -422,7 +421,6 @@ reg_t kScummVMSleep(EngineState *s, int argc, reg_t *argv) {
 	s->sleep(ticks);
 	return s->r_acc;
 }
-#endif
 
 reg_t kCoordPri(EngineState *s, int argc, reg_t *argv) {
 	int16 y = argv[0].toSint16();
