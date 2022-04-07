@@ -248,6 +248,26 @@ DataReadErrorCode AssetCatalog::load(DataReader& reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode Unknown19::load(DataReader &reader) {
+	if (_revision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(persistFlags) || !reader.readU32(sizeIncludingTag) || !reader.readBytes(unknown1))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode GlobalObjectInfo::load(DataReader &reader) {
+	if (_revision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(persistFlags) || !reader.readU32(sizeIncludingTag) || !reader.readU16(numGlobalModifiers) || !reader.readBytes(unknown1))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode ProjectCatalog::load(DataReader &reader) {
 	if (_revision != 2 && _revision != 3) {
 		return kDataReadErrorUnsupportedRevision;
@@ -322,6 +342,25 @@ DataReadErrorCode StreamHeader::load(DataReader& reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode BehaviorModifier::load(DataReader& reader) {
+	if (_revision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag)
+		|| !reader.readBytes(unknown2) || !reader.readU32(guid)
+		|| !reader.readU32(unknown4) || !reader.readU16(unknown5)
+		|| !reader.readU32(unknown6) || !editorLayoutPosition.load(reader)
+		|| !reader.readU16(lengthOfName) || !reader.readU16(numChildren))
+		return kDataReadErrorReadFailed;
+
+	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	if (!reader.readU32(flags) || !enableWhen.load(reader) || !disableWhen.load(reader) || !reader.readBytes(unknown7))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
 
 DataReadErrorCode loadDataObject(DataReader& reader, Common::SharedPtr<DataObject>& outObject) {
 	uint32 type;
@@ -346,6 +385,15 @@ DataReadErrorCode loadDataObject(DataReader& reader, Common::SharedPtr<DataObjec
 		break;
 	case DataObjectTypes::kAssetCatalog:
 		dataObject = new AssetCatalog();
+		break;
+	case DataObjectTypes::kUnknown19:
+		dataObject = new Unknown19();
+		break;
+	case DataObjectTypes::kGlobalObjectInfo:
+		dataObject = new GlobalObjectInfo();
+		break;
+	case DataObjectTypes::kBehaviorModifier:
+		dataObject = new BehaviorModifier();
 		break;
 	default:
 		break;

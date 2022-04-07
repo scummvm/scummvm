@@ -61,6 +61,15 @@ struct VolumeState {
 	bool isMounted;
 };
 
+struct Event {
+	Event();
+
+	uint32 eventType;
+	uint32 eventInfo;
+
+	bool load(const Data::Event &data);
+};
+
 class Runtime {
 public:
 	Runtime();
@@ -77,13 +86,27 @@ private:
 	Common::ScopedPtr<VThread> _vthread;
 };
 
-class Structural {
+struct IModifierContainer {
+	virtual Common::Array<Common::SharedPtr<Modifier> > &getModifiers() = 0;
+	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const;
+};
+
+class SimpleModifierContainer : public IModifierContainer {
+
+	Common::Array<Common::SharedPtr<Modifier> > &getModifiers() override;
+
+private:
+	Common::Array<Common::SharedPtr<Modifier> > _modifiers;
+};
+
+class Structural : public IModifierContainer {
 
 public:
 	virtual ~Structural();
 
 	const Common::Array<Common::SharedPtr<Structural> > &getChildren() const;
-	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const;
+
+	Common::Array<Common::SharedPtr<Modifier> > &getModifiers() override;
 
 private:
 	Common::Array<Common::SharedPtr<Structural> > _children;
@@ -109,6 +132,25 @@ public:
 
 private:
 	int _segmentIndex;
+};
+
+struct ChildLoaderContext {
+	enum Type {
+		kTypeModifierList,
+		kTypeStructuralList,
+	};
+
+	union ContainerUnion {
+		IModifierContainer *modifierContainer;
+	};
+
+	uint remainingCount;
+	Type type;
+	ContainerUnion containerUnion;
+};
+
+struct ChildLoaderStack {
+	Common::Array<ChildLoaderContext> contexts;
 };
 
 class Project : public Structural {
@@ -154,6 +196,7 @@ private:
 
 	void loadPresentationSettings(const Data::PresentationSettings &presentationSettings);
 	void loadAssetCatalog(const Data::AssetCatalog &assetCatalog);
+	void loadGlobalObjectInfo(ChildLoaderStack &loaderStack, const Data::GlobalObjectInfo &globalObjectInfo);
 
 	Common::Array<Segment> _segments;
 	Common::Array<StreamDesc> _streams;
@@ -166,6 +209,9 @@ private:
 	Common::HashMap<Common::String, size_t> _assetNameToID;
 
 	ProjectPresentationSettings _presentationSettings;
+
+	bool _haveGlobalObjectInfo;
+	SimpleModifierContainer _globalModifiers;
 };
 
 class Section : public Structural {
@@ -178,7 +224,11 @@ class Scene : public Structural {
 };
 
 class Modifier {
+public:
+	virtual ~Modifier();
 };
+
+void loadRuntimeContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject);
 
 } // End of namespace MTropolis
 
