@@ -218,7 +218,8 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return	"Marvel Comics Spider-Man: The Sinister Six (C) Brooklyn Multimedia\n"
-				"Wetlands (C) Hypnotix, Inc.";
+				"Wetlands (C) Hypnotix, Inc.\n"
+				"Soldier Bozy (C) Hypnotix, Inc., Motion Picture Corporation of America Interactive";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
