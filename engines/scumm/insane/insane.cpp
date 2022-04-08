@@ -104,6 +104,10 @@ void Insane::setSmushParams(int speed) {
 	_speed = speed;
 }
 
+void Insane::setSmushPlayer(SmushPlayer *player) {
+	_player = player;
+}
+
 void Insane::initvars() {
 	int i, j;
 
@@ -768,6 +772,7 @@ int32 Insane::idx2Tweak() {
 void Insane::smush_setToFinish() {
 	debugC(DEBUG_INSANE, "Video is set to finish");
 	_vm->_smushVideoShouldFinish = true;
+	_player->resetAudioTracks();
 }
 
 // smlayer_stopSound

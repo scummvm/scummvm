@@ -112,14 +112,11 @@ MODULE_OBJS += \
 	insane/insane_enemy.o \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
-	smush/channel.o \
 	smush/codec1.o \
 	smush/codec20.o \
 	smush/codec37.o \
 	smush/codec47.o \
-	smush/smush_player.o \
-	smush/saud_channel.o \
-	smush/smush_mixer.o
+	smush/smush_player.o
 
 ifdef USE_ARM_SMUSH_ASM
 MODULE_OBJS += \

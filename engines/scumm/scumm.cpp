@@ -42,7 +42,6 @@
 #include "scumm/file_nes.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
-#include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/players/player_towns.h"
 #include "scumm/insane/insane.h"
@@ -1084,10 +1083,6 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 }
 
 ScummEngine_v7::~ScummEngine_v7() {
-	if (_smixer) {
-		_smixer->stop();
-		delete _smixer;
-	}
 	if (_splayer) {
 		_splayer->release();
 		delete _splayer;
@@ -1695,11 +1690,9 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 	if (_game.id == GID_FT)
 		_insane = new Insane(this);
 	else
-		_insane = 0;
+		_insane = nullptr;
 
-	_smixer = new SmushMixer(_mixer);
-
-	_splayer = new SmushPlayer(this, _imuseDigital);
+	_splayer = new SmushPlayer(this, _imuseDigital, _insane);
 }
 #endif
 
@@ -2921,9 +2914,8 @@ void ScummEngine_v7::scummLoop_handleSound() {
 		_imuseDigital->refreshScripts();
 	}
 
-	if (_smixer) {
-		_smixer->flush();
-	}
+	_splayer->setChanFlag(0, VAR(VAR_VOICE_MODE) != 0);
+	_splayer->setChanFlag(2, VAR(VAR_VOICE_MODE) != 2);
 }
 #endif
 

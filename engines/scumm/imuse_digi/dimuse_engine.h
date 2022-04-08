@@ -44,6 +44,8 @@
 #include "scumm/imuse_digi/dimuse_sndmgr.h"
 #include "scumm/imuse_digi/dimuse_tables.h"
 
+#include "scumm/smush/smush_player.h"
+
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
@@ -55,6 +57,7 @@ class QueuingAudioStream;
 
 namespace Scumm {
 class ScummEngine_v7;
+class SmushPlayer;
 
 struct imuseDigTable;
 struct imuseComiTable;
@@ -67,6 +70,7 @@ private:
 	Common::Mutex _mutex;
 	ScummEngine_v7 *_vm;
 	Audio::Mixer *_mixer;
+	SmushPlayer *_splayer;
 
 	IMuseDigiInternalMixer *_internalMixer;
 	IMuseDigiGroupsHandler *_groupsHandler;
@@ -327,6 +331,8 @@ public:
 	void disableEngine();
 	bool isEngineDisabled();
 	void stopSMUSHAudio();
+	void receiveAudioFromSMUSH(uint8 *srcBuf, int32 inFrameCount, int32 feedSize, int32 mixBufStartIndex, int volume, int pan, bool is11025Hz);
+	void setSmushPlayer(SmushPlayer *splayer);
 
 	bool isFTSoundEngine(); // Used in the handlers to check if we're using the FT version of the engine
 
