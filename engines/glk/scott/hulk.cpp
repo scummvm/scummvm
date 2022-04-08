@@ -24,6 +24,8 @@
 #include "glk/scott/detect_game.h"
 #include "glk/scott/globals.h"
 #include "glk/scott/scott.h"
+#include <stddef.h>
+#include <stdint.h>
 
 namespace Glk {
 namespace Scott {

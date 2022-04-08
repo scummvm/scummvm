@@ -22,7 +22,8 @@
 #ifndef GLK_SCOTT_DECOMPRESSZ80
 #define GLK_SCOTT_DECOMPRESSZ80
 
-#include <cstdint>
+#include <stdint.h>
+#include <stddef.h>
 
 namespace Glk {
 namespace Scott {

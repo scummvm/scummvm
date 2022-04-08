@@ -27,7 +27,8 @@
 #include "glk/scott/definitions.h"
 #include "common/array.h"
 #include "common/str-array.h"
-#include <cstdint>
+#include <stdint.h>
+#include <stddef.h>
 
 namespace Glk {
 namespace Scott {

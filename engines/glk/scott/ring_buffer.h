@@ -22,6 +22,7 @@
 #ifndef GLK_SCOTT_RINGBUFFER
 #define GLK_SCOTT_RINGBUFFER
 
+#include <stddef.h>
 #include <stdint.h>
 
 namespace Glk {

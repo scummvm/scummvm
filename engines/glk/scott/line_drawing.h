@@ -22,6 +22,7 @@
 #ifndef GLK_SCOTT_LINEDRAWING
 #define GLK_SCOTT_LINEDRAWING
 
+#include <stddef.h>
 #include <stdint.h>
 
 namespace Glk {

@@ -32,7 +32,8 @@
 #include "glk/glk_api.h"
 #include "glk/scott/definitions.h"
 #include "glk/scott/globals.h"
-#include <cstdint>
+#include <stddef.h>
+#include <stdint.h>
 
 namespace Glk {
 namespace Scott {
