@@ -28,12 +28,14 @@
 namespace MTropolis {
 
 struct ModifierLoaderContext;
+class MiniscriptProgram;
 
 class BehaviorModifier : public Modifier, public IModifierContainer {
 public:
 	bool load(ModifierLoaderContext &context, const Data::BehaviorModifier &data);
 
-	Common::Array<Common::SharedPtr<Modifier> > &getModifiers() override;
+	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
+	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
 private:
 	Common::Array<Common::SharedPtr<Modifier> > _children;
@@ -41,6 +43,43 @@ private:
 	Event _disableWhen;
 };
 
+class MiniscriptModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::MiniscriptModifier &data);
+
+private:
+	Event _enableWhen;
+
+	Common::SharedPtr<MiniscriptProgram> _program;
+};
+
+class MessengerModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::MessengerModifier &data);
+
+private:
+	Event _when;
+	Event _send;
+
+	MessageFlags _messageFlags;
+	MessageWithType _messageWithType;
+	uint32 _messageDestination;	// May be a MessageDestination or GUID
+};
+
+class IfMessengerModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data);
+
+private:
+	Event _when;
+	Event _send;
+
+	MessageFlags _messageFlags;
+	MessageWithType _messageWithType;
+	uint32 _messageDestination; // May be a MessageDestination or GUID
+
+	Common::SharedPtr<MiniscriptProgram> _program;
+};
 
 }	// End of namespace MTropolis
 

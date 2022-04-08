@@ -37,6 +37,42 @@ namespace MTropolis {
 class Project;
 class Modifier;
 
+
+
+struct MessageFlags {
+	bool relay : 1;
+	bool cascade : 1;
+	bool immediate : 1;
+
+	MessageFlags();
+};
+
+enum MessageWithType {
+	kMessageWithNothing = 0,
+	kMessageWithIncomingData = 0x1b,
+	kMessageWithVariable = 0x1c,
+};
+
+enum MessageDestination {
+	kMessageDestSharedScene = 0x65,
+	kMessageDestScene = 0x66,
+	kMessageDestSection = 0x67,
+	kMessageDestProject = 0x68,
+	kMessageDestActiveScene = 0x69,
+	kMessageDestElementsParent = 0x6a,
+	kMessageDestChildren = 0x6b,
+	kMessageDestModifiersParent = 0x6c,
+	kMessageDestSubsection = 0x6d,
+
+	kMessageDestElement = 0xc9,
+	kMessageDestSourcesParent = 0xcf,
+
+	kMessageDestBehavior = 0xd4,
+	kMessageDestNextElement = 0xd1,
+	kMessageDestPrevElement = 0xd2,
+	kMessageDestBehaviorsParent = 0xd3,
+};
+
 struct SegmentDescription {
 	int volumeID;
 	Common::String filePath;
@@ -87,13 +123,14 @@ private:
 };
 
 struct IModifierContainer {
-	virtual Common::Array<Common::SharedPtr<Modifier> > &getModifiers() = 0;
-	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const;
+	virtual const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const = 0;
+	virtual void appendModifier(const Common::SharedPtr<Modifier> &modifier) = 0;
 };
 
 class SimpleModifierContainer : public IModifierContainer {
 
-	Common::Array<Common::SharedPtr<Modifier> > &getModifiers() override;
+	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const;
+	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
 private:
 	Common::Array<Common::SharedPtr<Modifier> > _modifiers;
@@ -106,7 +143,8 @@ public:
 
 	const Common::Array<Common::SharedPtr<Structural> > &getChildren() const;
 
-	Common::Array<Common::SharedPtr<Modifier> > &getModifiers() override;
+	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
+	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
 private:
 	Common::Array<Common::SharedPtr<Structural> > _children;
@@ -225,7 +263,12 @@ class Scene : public Structural {
 
 class Modifier {
 public:
+	Modifier();
 	virtual ~Modifier();
+
+protected:
+	uint32 _guid;
+	Common::String _name;
 };
 
 void loadRuntimeContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject);

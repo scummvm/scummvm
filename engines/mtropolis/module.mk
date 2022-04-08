@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	data.o \
 	detection.o \
 	metaengine.o \
+	miniscript.o \
 	modifiers.o \
 	modifier_factory.o \
 	mtropolis.o \

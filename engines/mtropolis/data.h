@@ -60,9 +60,13 @@ enum DataObjectType {
 	kAssetCatalog         = 0xd,
     kGlobalObjectInfo     = 0x17,
 	kUnknown19            = 0x19,
-
 	
+	kIfMessengerModifier  = 0x2bc,
 	kBehaviorModifier     = 0x2c6,
+	kMessengerModifier    = 0x2da,
+	kMiniscriptModifier   = 0x3c0,
+
+	kDebris               = 0xfffffffe,	// Deleted object
 };
 
 } // End of namespace DataObjectTypes
@@ -98,6 +102,7 @@ public:
 	bool skip(size_t count);
 
 	ProjectFormat getProjectFormat() const;
+	bool isBigEndian() const;
 
 private:
 	Common::SeekableReadStreamEndian &_stream;
@@ -273,6 +278,130 @@ struct BehaviorModifier : public DataObject {
 	uint8 unknown7[2];
 
 	Common::String name;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct MiniscriptProgram {
+	struct LocalRef {
+		uint32 guid;
+		uint8 lengthOfName;
+		uint8 unknown2;
+
+		Common::String name;
+	};
+
+	struct Attribute {
+		uint8 lengthOfName;
+		uint8 unknown3;
+
+		Common::String name;
+	};
+
+	uint32 unknown1;
+	uint32 sizeOfInstructions;
+	uint32 numOfInstructions;
+	uint32 numLocalRefs;
+	uint32 numAttributes;
+
+	Common::Array<uint8> bytecode;
+	Common::Array<LocalRef> localRefs;
+	Common::Array<Attribute> attributes;
+
+	ProjectFormat projectFormat;
+	bool isBigEndian;
+
+	bool load(DataReader &reader);
+};
+
+struct MiniscriptModifier : public DataObject {
+
+	uint32 unknown1;
+	uint32 sizeIncludingTag;
+	uint32 guid;
+	uint8 unknown3[6];
+	uint32 unknown4;
+	uint8 unknown5[4];
+	uint16 lengthOfName;
+	Event enableWhen;
+	uint8 unknown6[11];
+	uint8 unknown7;
+
+	Common::String name;
+
+	MiniscriptProgram program;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+enum MessageFlags {
+	kMessageFlagNoRelay = 0x20000000,
+	kMessageFlagNoCascade = 0x40000000,
+	kMessageFlagNoImmediate = 0x80000000,
+};
+
+struct MessengerModifier : public DataObject {
+	uint32 unknown1;
+	uint32 sizeIncludingTag;
+	uint32 guid;
+	uint8 unknown3[6];
+	uint32 unknown4;
+	uint8 unknown5[4];
+	uint16 lengthOfName;
+	uint32 messageFlags;
+	Event send;
+	Event when;
+	uint16 unknown14;
+	uint32 destination;
+	uint8 unknown11[10];
+	uint16 with;
+	uint8 unknown15[4];
+	uint32 withSourceGUID;
+	uint8 unknown12[36];
+	uint8 withSourceLength;
+	uint8 unknown13;
+
+	Common::String name;
+	Common::String withSourceName;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct IfMessengerModifier : public DataObject {
+	uint32 unknown1;
+	uint32 sizeIncludingTag;
+	uint32 guid;
+	uint8 unknown3[6];
+	uint32 unknown4;
+	uint8 unknown5[4];
+	uint16 lengthOfName;
+	uint32 messageFlags;
+	Event send;
+	Event when;
+	uint16 unknown6;
+	uint32 destination;
+	uint8 unknown7[10];
+	uint16 with;
+	uint8 unknown8[4];
+	uint32 withSourceGUID;
+	uint8 unknown9[46];
+	uint8 withSourceLength;
+	uint8 unknown10;
+	MiniscriptProgram program;
+
+	Common::String name;
+	Common::String withSource;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct Debris : public DataObject {
+	uint32 persistFlags;
+	uint32 sizeIncludingTag;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

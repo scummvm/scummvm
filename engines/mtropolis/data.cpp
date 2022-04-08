@@ -151,6 +151,10 @@ ProjectFormat DataReader::getProjectFormat() const {
 	return _projectFormat;
 }
 
+bool DataReader::isBigEndian() const {
+	return _stream.isBE();
+}
+
 bool Rect::load(DataReader &reader) {
 	if (reader.getProjectFormat() == kProjectFormatMacintosh)
 		return reader.readS16(top) && reader.readS16(left) && reader.readS16(bottom) && reader.readS16(right);
@@ -362,6 +366,120 @@ DataReadErrorCode BehaviorModifier::load(DataReader& reader) {
 	return kDataReadErrorNone;
 }
 
+bool MiniscriptProgram::load(DataReader &reader) {
+	projectFormat = reader.getProjectFormat();
+	isBigEndian = reader.isBigEndian();
+
+	if (!reader.readU32(unknown1) || !reader.readU32(sizeOfInstructions) || !reader.readU32(numOfInstructions) || !reader.readU32(numLocalRefs) || !reader.readU32(numAttributes))
+		return false;
+
+	if (sizeOfInstructions > 0) {
+		bytecode.resize(sizeOfInstructions);
+		if (!reader.read(&bytecode[0], sizeOfInstructions))
+			return false;
+	}
+
+	if (numLocalRefs > 0) {
+		localRefs.resize(numLocalRefs);
+		for (size_t i = 0; i < numLocalRefs; i++) {
+			LocalRef &localRef = localRefs[i];
+			if (!reader.readU32(localRef.guid) || !reader.readU8(localRef.lengthOfName) || !reader.readU8(localRef.unknown2))
+				return false;
+
+			if (localRef.lengthOfName > 0 && !reader.readTerminatedStr(localRef.name, localRef.lengthOfName))
+				return false;
+		}
+	}
+
+	if (numAttributes > 0) {
+		attributes.resize(numAttributes);
+		for (size_t i = 0; i < numAttributes; i++) {
+			Attribute &attrib = attributes[i];
+			if (!reader.readU8(attrib.lengthOfName) || !reader.readU8(attrib.unknown3))
+				return false;
+
+			if (attrib.lengthOfName > 0 && !reader.readTerminatedStr(attrib.name, attrib.lengthOfName))
+				return false;
+		}
+	}
+
+	return true;
+}
+
+DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
+	if (_revision != 0x3eb)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid) || !reader.readBytes(unknown3) || !reader.readU32(unknown4) || !reader.readBytes(unknown5) || !reader.readU16(lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	if (!enableWhen.load(reader) || !reader.readBytes(unknown6) || !reader.readU8(unknown7) || !program.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode MessengerModifier::load(DataReader& reader) {
+	if (_revision != 0x3ea)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
+		|| !reader.readBytes(unknown3) || !reader.readU32(unknown4) || !reader.readBytes(unknown5) || !reader.readU16(lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	// Unlike most cases, the "when" event is split in half in this case
+	if (!reader.readU32(messageFlags) || !reader.readU32(when.eventID) || !send.load(reader) || !reader.readU16(unknown14) || !reader.readU32(destination)
+		|| !reader.readBytes(unknown11) || !reader.readU16(with) || !reader.readBytes(unknown15) || !reader.readU32(withSourceGUID)
+		|| !reader.readBytes(unknown12) || !reader.readU32(when.eventInfo) || !reader.readU8(withSourceLength) || !reader.readU8(unknown13))
+		return kDataReadErrorReadFailed;
+
+	if (withSourceLength > 0 && !reader.readNonTerminatedStr(withSourceName, withSourceLength))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
+	if (_revision != 0x3ea)
+		return kDataReadErrorReadFailed;
+
+	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
+		|| !reader.readBytes(unknown3) || !reader.readU32(unknown4) || !reader.readBytes(unknown5) || !reader.readU16(lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	if (!reader.readU32(messageFlags) || !when.load(reader) || !send.load(reader) ||
+		!reader.readU16(unknown6) || !reader.readU32(destination) || !reader.readBytes(unknown7) || !reader.readU16(with)
+		|| !reader.readBytes(unknown8) || !reader.readU32(withSourceGUID) || !reader.readBytes(unknown9) || !reader.readU8(withSourceLength) || !reader.readU8(unknown10))
+		return kDataReadErrorReadFailed;
+
+	if (withSourceLength > 0 && !reader.readNonTerminatedStr(withSource, withSourceLength))
+		return kDataReadErrorReadFailed;
+
+	if (!program.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode Debris::load(DataReader &reader) {
+	if (_revision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(persistFlags) || !reader.readU32(sizeIncludingTag))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode loadDataObject(DataReader& reader, Common::SharedPtr<DataObject>& outObject) {
 	uint32 type;
 	uint16 revision;
@@ -394,6 +512,18 @@ DataReadErrorCode loadDataObject(DataReader& reader, Common::SharedPtr<DataObjec
 		break;
 	case DataObjectTypes::kBehaviorModifier:
 		dataObject = new BehaviorModifier();
+		break;
+	case DataObjectTypes::kMiniscriptModifier:
+		dataObject = new MiniscriptModifier();
+		break;
+	case DataObjectTypes::kMessengerModifier:
+		dataObject = new MessengerModifier();
+		break;
+	case DataObjectTypes::kIfMessengerModifier:
+		dataObject = new IfMessengerModifier();
+		break;
+	case DataObjectTypes::kDebris:
+		dataObject = new Debris();
 		break;
 	default:
 		break;

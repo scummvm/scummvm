@@ -56,7 +56,7 @@ VThreadState VThread::step() {
 }
 
 void VThread::reserveFrame(size_t size, size_t alignment, void *&outFramePtr, void *&outUnadjustedDataPtr, size_t &outPrevFrameOffset) {
-	const size_t frameAlignment = offsetof(VThreadAlignmentHelper<VThreadStackFrame>, item);
+	const size_t frameAlignment = AlignmentHelper<VThreadStackFrame>::getAlignment();
 	const size_t frameAlignmentMask = frameAlignment - 1;
 
 	size_t dataAlignmentMask = alignment - 1;

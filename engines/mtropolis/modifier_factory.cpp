@@ -57,6 +57,12 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 	switch (dataObjectType) {
 	case Data::DataObjectTypes::kBehaviorModifier:
 		return ModifierFactory<BehaviorModifier, Data::BehaviorModifier>::getInstance();
+	case Data::DataObjectTypes::kMiniscriptModifier:
+		return ModifierFactory<MiniscriptModifier, Data::MiniscriptModifier>::getInstance();
+	case Data::DataObjectTypes::kIfMessengerModifier:
+		return ModifierFactory<IfMessengerModifier, Data::IfMessengerModifier>::getInstance();
+	case Data::DataObjectTypes::kMessengerModifier:
+		return ModifierFactory<MessengerModifier, Data::MessengerModifier>::getInstance();
 	default:
 		return nullptr;
 	}

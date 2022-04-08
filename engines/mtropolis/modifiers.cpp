@@ -19,10 +19,21 @@
  *
  */
 
+#include "mtropolis/miniscript.h"
 #include "mtropolis/modifiers.h"
 #include "mtropolis/modifier_factory.h"
 
+#include "common/memstream.h"
+
 namespace MTropolis {
+
+static MessageFlags translateMessengerFlags(uint32 messengerFlags) {
+	MessageFlags messageFlags;
+	messageFlags.relay = ((messengerFlags & 0x20000000) == 0);
+	messageFlags.cascade = ((messengerFlags & 0x40000000) == 0);
+	messageFlags.immediate = ((messengerFlags & 0x80000000) == 0);
+	return messageFlags;
+}
 
 bool BehaviorModifier::load(ModifierLoaderContext &context, const Data::BehaviorModifier &data) {
 	if (data.numChildren > 0) {
@@ -37,11 +48,64 @@ bool BehaviorModifier::load(ModifierLoaderContext &context, const Data::Behavior
 	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen))
 		return false;
 
+	_guid = data.guid;
+	_name = data.name;
+
 	return true;
 }
 
-Common::Array<Common::SharedPtr<Modifier> > &BehaviorModifier::getModifiers() {
+const Common::Array<Common::SharedPtr<Modifier> > &BehaviorModifier::getModifiers() const {
 	return _children;
 }
+
+void BehaviorModifier::appendModifier(const Common::SharedPtr<Modifier> &modifier) {
+	_children.push_back(modifier);
+}
+
+
+// Miniscript modifier
+bool MiniscriptModifier::load(ModifierLoaderContext &context, const Data::MiniscriptModifier &data) {
+	if (!_enableWhen.load(data.enableWhen))
+		return false;
+
+	_program = MiniscriptParser::parse(data.program);
+	if (!_program)
+		return false;
+
+	return true;
+}
+
+bool MessengerModifier::load(ModifierLoaderContext &context, const Data::MessengerModifier &data) {
+	_guid = data.guid;
+	_name = data.name;
+
+	if (!_when.load(data.when) || !_send.load(data.send))
+		return false;
+
+	_messageFlags = translateMessengerFlags(data.messageFlags);
+	_messageWithType = static_cast<MessageWithType>(data.with);
+	_messageDestination = data.destination;
+
+	return true;
+}
+
+bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data) {
+	_guid = data.guid;
+	_name = data.name;
+
+	if (!_when.load(data.when) || !_send.load(data.send))
+		return false;
+
+	_messageFlags = translateMessengerFlags(data.messageFlags);
+	_messageWithType = static_cast<MessageWithType>(data.with);
+	_messageDestination = data.destination;
+
+	_program = MiniscriptParser::parse(data.program);
+	if (!_program)
+		return false;
+
+	return true;
+}
+
 
 } // End of namespace MTropolis
