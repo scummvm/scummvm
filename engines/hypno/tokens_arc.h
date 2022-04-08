@@ -89,31 +89,32 @@ extern int HYPNO_ARC_debug;
     PTOK = 282,                    /* PTOK  */
     FTOK = 283,                    /* FTOK  */
     TTOK = 284,                    /* TTOK  */
-    TPTOK = 285,                   /* TPTOK  */
-    ATOK = 286,                    /* ATOK  */
-    VTOK = 287,                    /* VTOK  */
-    OTOK = 288,                    /* OTOK  */
-    LTOK = 289,                    /* LTOK  */
-    MTOK = 290,                    /* MTOK  */
-    NTOK = 291,                    /* NTOK  */
-    NSTOK = 292,                   /* NSTOK  */
-    RTOK = 293,                    /* RTOK  */
-    R01TOK = 294,                  /* R01TOK  */
-    ITOK = 295,                    /* ITOK  */
-    I1TOK = 296,                   /* I1TOK  */
-    GTOK = 297,                    /* GTOK  */
-    JTOK = 298,                    /* JTOK  */
-    J0TOK = 299,                   /* J0TOK  */
-    KTOK = 300,                    /* KTOK  */
-    UTOK = 301,                    /* UTOK  */
-    ZTOK = 302,                    /* ZTOK  */
-    NONETOK = 303,                 /* NONETOK  */
-    A0TOK = 304,                   /* A0TOK  */
-    P0TOK = 305,                   /* P0TOK  */
-    WTOK = 306,                    /* WTOK  */
-    XTOK = 307,                    /* XTOK  */
-    CB3TOK = 308,                  /* CB3TOK  */
-    C02TOK = 309                   /* C02TOK  */
+    TATOK = 285,                   /* TATOK  */
+    TPTOK = 286,                   /* TPTOK  */
+    ATOK = 287,                    /* ATOK  */
+    VTOK = 288,                    /* VTOK  */
+    OTOK = 289,                    /* OTOK  */
+    LTOK = 290,                    /* LTOK  */
+    MTOK = 291,                    /* MTOK  */
+    NTOK = 292,                    /* NTOK  */
+    NSTOK = 293,                   /* NSTOK  */
+    RTOK = 294,                    /* RTOK  */
+    R01TOK = 295,                  /* R01TOK  */
+    ITOK = 296,                    /* ITOK  */
+    I1TOK = 297,                   /* I1TOK  */
+    GTOK = 298,                    /* GTOK  */
+    JTOK = 299,                    /* JTOK  */
+    J0TOK = 300,                   /* J0TOK  */
+    KTOK = 301,                    /* KTOK  */
+    UTOK = 302,                    /* UTOK  */
+    ZTOK = 303,                    /* ZTOK  */
+    NONETOK = 304,                 /* NONETOK  */
+    A0TOK = 305,                   /* A0TOK  */
+    P0TOK = 306,                   /* P0TOK  */
+    WTOK = 307,                    /* WTOK  */
+    XTOK = 308,                    /* XTOK  */
+    CB3TOK = 309,                  /* CB3TOK  */
+    C02TOK = 310                   /* C02TOK  */
   };
   typedef enum HYPNO_ARC_tokentype HYPNO_ARC_token_kind_t;
 #endif
@@ -127,7 +128,7 @@ union HYPNO_ARC_STYPE
 	char *s; /* string value */
 	int i;	 /* integer value */
 
-#line 131 "engines/hypno/tokens_arc.h"
+#line 132 "engines/hypno/tokens_arc.h"
 
 };
 typedef union HYPNO_ARC_STYPE HYPNO_ARC_STYPE;

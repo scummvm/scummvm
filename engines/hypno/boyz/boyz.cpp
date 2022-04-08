@@ -43,6 +43,7 @@ void BoyzEngine::loadAssets() {
 	//loadArcadeLevel("c13.mi_", "??", "??", "");
 	loadArcadeLevel("c14.mi_", "c15.mi_", "??", "");
 	loadArcadeLevel("c15.mi_", "c16.mi_", "??", "");
+	loadArcadeLevel("c16.mi_", "c17.mi_", "??", "");
 
 	loadLib("sound/", "misc/sound.lib", true);
 

@@ -78,6 +78,11 @@ SegmentShootsSequence HypnoEngine::parseShootList(const Common::String &filename
 	Common::String n;
 	ShootInfo si;
 	SegmentShootsSequence seq;
+
+	// Patch to fix an issue in the parsing of the c3 level in Spiderman
+	if (filename == "c3.mi_" || filename == "c3h.mi_")
+		Common::replace(pdata, "92.B", "92,B");
+
 	// Parsing
 	pdata.trim();
 	pdata = "\n" + pdata;
@@ -112,7 +117,7 @@ SegmentShootsSequence HypnoEngine::parseShootList(const Common::String &filename
 		}
 	} else if (pdata[1] == 'S' ) { // Single element
 		SegmentShoots ss;
-		Common::StringTokenizer tok(pdata, " ,.\t\r");
+		Common::StringTokenizer tok(pdata, " ,\t\r");
 		while (!tok.empty()) {
 			t = tok.nextToken();
 			if (t[0] == '\n')
