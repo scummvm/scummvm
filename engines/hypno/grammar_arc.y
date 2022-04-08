@@ -58,7 +58,7 @@ using namespace Hypno;
 %token<s> NAME FILENAME BNTOK SNTOK KNTOK YXTOK FNTOK ENCTOK ONTOK
 %token<i> NUM BYTE
 // header
-%token COMMENT AVTOK ABTOK CTOK DTOK HTOK HETOK HLTOK H12TOK HUTOK RETTOK QTOK RESTOK
+%token COMMENT ALTOK AVTOK ABTOK CTOK DTOK HTOK HETOK HLTOK H12TOK HUTOK RETTOK QTOK RESTOK
 %token PTOK FTOK TTOK TATOK TPTOK ATOK VTOK OTOK LTOK MTOK NTOK NSTOK RTOK R01TOK
 %token ITOK I1TOK GTOK JTOK J0TOK KTOK UTOK ZTOK
 
@@ -138,7 +138,7 @@ hline: 	CTOK NUM {
 		g_parsedArc->transitions.push_back(at);
 		debugC(1, kHypnoDebugParser, "Tp %s %d %s", $2, $3, $4);
 	}
-	| TATOK NUM FILENAME enc {
+	| TATOK NUM FILENAME flag enc {
 		ArcadeTransition at("", "", $3, $2);
 		g_parsedArc->transitions.push_back(at);
 		debugC(1, kHypnoDebugParser, "Ta %d %s", $2, $3);
@@ -293,6 +293,9 @@ bline: FNTOK FILENAME {
 	}
 	| AVTOK NUM {
 		debugC(1, kHypnoDebugParser, "AV %d", $2);
+	}
+	| ALTOK NUM {
+		debugC(1, kHypnoDebugParser, "AL %d", $2);
 	}
 	| ABTOK NUM {
 		debugC(1, kHypnoDebugParser, "AB %d", $2);

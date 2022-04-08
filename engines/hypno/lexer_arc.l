@@ -50,6 +50,7 @@ H[1-2]						return H12TOK;
 H							return HTOK;
 P							return PTOK;
 AB							return ABTOK;
+AL							return ALTOK;
 AV							return AVTOK;
 A							return ATOK;
 V							return VTOK;
