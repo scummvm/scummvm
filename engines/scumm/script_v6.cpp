@@ -2374,7 +2374,8 @@ void ScummEngine_v6::o6_talkActor() {
 	// Original script did not check for VAR_EGO == 2 before executing
 	// a talkActor opcode.
 	if (_game.id == GID_TENTACLE && vm.slot[_currentScript].number == 307
-			&& VAR(VAR_EGO) != 2 && _actorToPrintStrFor == 2) {
+			&& VAR(VAR_EGO) != 2 && _actorToPrintStrFor == 2
+			&& _enableEnhancements) {
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		return;
 	}
