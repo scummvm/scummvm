@@ -54,6 +54,7 @@ class Insane {
 	~Insane();
 
 	void setSmushParams(int speed);
+	void setSmushPlayer(SmushPlayer *player);
 	void runScene(int arraynum);
 
 	void procPreRendering();

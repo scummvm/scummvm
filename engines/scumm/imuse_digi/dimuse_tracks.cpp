@@ -162,6 +162,10 @@ void IMuseDigital::tracksCallback() {
 
 		if (_outputFeedSize != 0) {
 			_internalMixer->clearMixerBuffer();
+			if (_isEarlyDiMUSE && _splayer && _splayer->isAudioCallbackEnabled()) {
+				_splayer->processDispatches(_outputFeedSize);
+			}
+
 			if (!_tracksPauseTimer) {
 				IMuseDigiTrack *track = _trackList;
 

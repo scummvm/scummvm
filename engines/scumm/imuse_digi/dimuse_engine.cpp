@@ -50,6 +50,7 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer)
 	_callbackFps = 50;
 	_usecPerInt = 20000;
 
+	_splayer = nullptr;
 	_isEarlyDiMUSE = (_vm->_game.id == GID_FT || (_vm->_game.id == GID_DIG && _vm->_game.features & GF_DEMO));
 
 	if (_isEarlyDiMUSE) {
@@ -642,6 +643,14 @@ int IMuseDigital::getSoundIdByName(const char *soundName) {
 	return 0;
 }
 
+void IMuseDigital::setSmushPlayer(SmushPlayer *splayer) {
+	_splayer = splayer;
+}
+
+void IMuseDigital::receiveAudioFromSMUSH(uint8 *srcBuf, int32 inFrameCount, int32 feedSize, int32 mixBufStartIndex, int volume, int pan, bool is11025Hz) {
+	_internalMixer->mix(srcBuf, inFrameCount, 8, 1, feedSize, mixBufStartIndex, volume, pan, is11025Hz);
+}
+
 void IMuseDigital::parseScriptCmds(int cmd, int soundId, int sub_cmd, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n, int o, int p) {
 	int b = soundId;
 	int c = sub_cmd;
@@ -802,16 +811,22 @@ int IMuseDigital::diMUSELipSync(int soundId, int syncId, int msPos, int32 &width
 
 int IMuseDigital::diMUSESetMusicGroupVol(int volume) {
 	debug(5, "IMuseDigital::diMUSESetMusicGroupVol(): %d", volume);
+	if (_isEarlyDiMUSE)
+		_splayer->setGroupVolume(GRP_BKGMUS, volume);
 	return diMUSESetGroupVol(3, volume);
 }
 
 int IMuseDigital::diMUSESetSFXGroupVol(int volume) {
 	debug(5, "IMuseDigital::diMUSESetSFXGroupVol(): %d", volume);
+	if (_isEarlyDiMUSE)
+		_splayer->setGroupVolume(GRP_SFX, volume);
 	return diMUSESetGroupVol(1, volume);
 }
 
 int IMuseDigital::diMUSESetVoiceGroupVol(int volume) {
 	debug(5, "IMuseDigital::diMUSESetVoiceGroupVol(): %d", volume);
+	if (_isEarlyDiMUSE)
+		_splayer->setGroupVolume(GRP_SPEECH, volume);
 	return diMUSESetGroupVol(2, volume);
 }
 
