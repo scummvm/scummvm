@@ -1231,6 +1231,7 @@ void ScummEngine_v6::o6_faceActor() {
 void ScummEngine_v6::o6_animateActor() {
 	int anim = pop();
 	int act = pop();
+
 	if (_game.id == GID_TENTACLE && _roomResource == 57 &&
 		vm.slot[_currentScript].number == 19 && act == 593) {
 		// WORKAROUND bug #813: This very odd case (animateActor(593,250))
@@ -1240,6 +1241,7 @@ void ScummEngine_v6::o6_animateActor() {
 		// (593 is the time machine in room 57), or if this is simply a script bug.
 		act = 6;
 	}
+
 	if (_game.id == GID_SAMNMAX && _roomResource == 35 &&
 		vm.slot[_currentScript].number == 202 && act == 4 && anim == 14) {
 		// WORKAROUND bug #2068 (Animation glitch at World of Fish).
@@ -1249,8 +1251,25 @@ void ScummEngine_v6::o6_animateActor() {
 			stopTalk();
 		}
 	}
+
 	Actor *a = derefActor(act, "o6_animateActor");
 	a->animateActor(anim);
+
+	if (_game.id == GID_TENTACLE && _roomResource == 61 && vm.slot[_currentScript].number == 207 && act == 1 && anim == 250 && _enableEnhancements) {
+		// WORKAROUND: In the scene where the three kids are sent back
+		// in time, every time Bernard faces the camera with a scared
+		// expression, the peephole on his Chron-O-John opens. We only
+		// want this to happen the first time, which we detect by
+		// checking if actor 2 has been assigned a costume other than
+		// zero yet. On subsequent calls, we skip past the opening
+		// frames to where the peephole is fully open.
+		Actor *a2 = derefActorSafe(2, "o6_animateActor");
+		if (a2 && a2->_costume) {
+			a->animateCostume();
+			a->animateCostume();
+			a->animateCostume();
+		}
+	}
 }
 
 void ScummEngine_v6::o6_doSentence() {
