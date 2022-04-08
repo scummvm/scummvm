@@ -496,16 +496,16 @@ typedef Common::Array<Segment> Segments;
 
 class ArcadeTransition {
 public:
-	ArcadeTransition(Filename video_, Filename palette_, Filename audio_, uint32 time_)  {
+	ArcadeTransition(Filename video_, Filename palette_, Filename sound_, uint32 time_)  {
 		video = video_;
 		palette = palette_;
-		audio = audio_;
+		sound = sound_;
 		time = time_;
 	}
 
 	Filename video;
 	Filename palette;
-	Filename audio;
+	Filename sound;
 	uint32 time;
 };
 

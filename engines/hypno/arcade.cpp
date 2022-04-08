@@ -339,21 +339,26 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			ArcadeTransition at = *arc->transitions.begin();
 			if (_background->decoder->getCurFrame() > (int) at.time) {
 				transition = true;
-				_background->decoder->pauseVideo(true);
 
-				debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
-				MVideo video(at.video, Common::Point(0, 0), false, true, false);
-				disableCursor();
-				runIntro(video);
+				if (!at.video.empty()) {
+					_background->decoder->pauseVideo(true);
+					debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
+					MVideo video(at.video, Common::Point(0, 0), false, true, false);
+					disableCursor();
+					runIntro(video);
 
-				if (!at.palette.empty())
-					currentPalette = at.palette;
+					if (!at.palette.empty())
+						currentPalette = at.palette;
 
-				loadPalette(currentPalette);
-				_background->decoder->pauseVideo(false);
-				updateScreen(*_background);
-				drawScreen();
-				drawCursorArcade(mousePos);
+					loadPalette(currentPalette);
+					_background->decoder->pauseVideo(false);
+					updateScreen(*_background);
+					drawScreen();
+					drawCursorArcade(mousePos);
+				} else if (!at.sound.empty()) {
+					playSound(at.sound, 1);
+				} else
+					error ("Invalid transition at %d", at.time);
 
 				arc->transitions.pop_front();
 				if (!_music.empty())
