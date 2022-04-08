@@ -30,6 +30,9 @@
 
 namespace MTropolis {
 
+MessageFlags::MessageFlags() : relay(true), cascade(true), immediate(true) {
+}
+
 Event::Event() : eventType(0), eventInfo(0) {
 }
 
@@ -58,8 +61,12 @@ const Common::Array<SegmentDescription> &ProjectDescription::getSegments() const
 	return _segments;
 }
 
-Common::Array<Common::SharedPtr<Modifier> >& SimpleModifierContainer::getModifiers() {
+const Common::Array<Common::SharedPtr<Modifier> >& SimpleModifierContainer::getModifiers() const {
 	return _modifiers;
+}
+
+void SimpleModifierContainer::appendModifier(const Common::SharedPtr<Modifier> &modifier) {
+	_modifiers.push_back(modifier);
 }
 
 Structural::~Structural() {
@@ -72,8 +79,12 @@ const Common::Array<Common::SharedPtr<Structural> > &Structural::getChildren() c
 	return _children;
 }
 
-Common::Array<Common::SharedPtr<Modifier> > &Structural::getModifiers() {
+const Common::Array<Common::SharedPtr<Modifier> > &Structural::getModifiers() const {
 	return _modifiers;
+}
+
+void Structural::appendModifier(const Common::SharedPtr<Modifier> &modifier) {
+	_modifiers.push_back(modifier);
 }
 
 Runtime::Runtime() {
@@ -336,6 +347,10 @@ void Project::loadGlobalObjectInfo(ChildLoaderStack& loaderStack, const Data::Gl
 
 
 static Common::SharedPtr<Modifier> loadModifierObject(ModifierLoaderContext &loaderContext, const Data::DataObject &dataObject) {
+	// Special case for debris
+	if (dataObject.getType() == Data::DataObjectTypes::kDebris)
+		return nullptr;
+
 	IModifierFactory *factory = getModifierFactoryForDataObjectType(dataObject.getType());
 
 	if (!factory)
@@ -363,10 +378,13 @@ void loadRuntimeContextualObject(ChildLoaderStack &stack, const Data::DataObject
 			ModifierLoaderContext loaderContext;
 			loaderContext.childLoaderStack = &stack;
 
-			container->getModifiers().push_back(loadModifierObject(loaderContext, dataObject));
+			container->appendModifier(loadModifierObject(loaderContext, dataObject));
 		}
 		break;
 	}
+}
+
+Modifier::Modifier() : _guid(0) {
 }
 
 Modifier::~Modifier() {

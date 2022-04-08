@@ -23,6 +23,7 @@
 #define MTROPOLIS_TASKSTACK_H
 
 #include <new>
+#include "mtropolis/alignment_helper.h"
 
 namespace MTropolis {
 
@@ -34,13 +35,6 @@ enum VThreadState {
 	kVThreadSuspend,
 	kVThreadError,
 };
-
-template<typename TClass>
-struct VThreadAlignmentHelper {
-	char prefix;
-	TClass item;
-};
-
 
 class VThreadTaskData {
 
@@ -229,8 +223,8 @@ template<typename TClass, typename TData>
 TData *VThread::pushTask(TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
 	typedef VThreadMethodData<TClass, TData> FrameData_t; 
 
-	const size_t frameAlignment = offsetof(VThreadAlignmentHelper<VThreadStackFrame>, item);
-	const size_t dataAlignment = offsetof(VThreadAlignmentHelper<FrameData_t>, item);
+	const size_t frameAlignment = AlignmentHelper<VThreadStackFrame>::getAlignment();
+	const size_t dataAlignment = AlignmentHelper<FrameData_t>::getAlignment();
 	const size_t maxAlignment = (frameAlignment < dataAlignment) ? dataAlignment : frameAlignment;
 
 	void *framePtr;
@@ -257,8 +251,8 @@ template<typename TData>
 TData *VThread::pushTask(VThreadState (*func)(const TData &data)) {
 	typedef VThreadFunctionData<TData> FrameData_t;
 
-	const size_t frameAlignment = offsetof(VThreadAlignmentHelper<VThreadStackFrame>, item);
-	const size_t dataAlignment = offsetof(VThreadAlignmentHelper<FrameData_t>, item);
+	const size_t frameAlignment = AlignmentHelper<VThreadStackFrame>::getAlignment();
+	const size_t dataAlignment = AlignmentHelper<FrameData_t>::getAlignment();
 	const size_t maxAlignment = (frameAlignment < dataAlignment) ? dataAlignment : frameAlignment;
 
 	void *framePtr;
