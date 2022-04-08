@@ -23,6 +23,7 @@
 #define GLK_SCOTT_SAGADRAW
 
 #include "glk/glk_types.h"
+#include <stddef.h>
 #include <stdint.h>
 
 namespace Glk {
