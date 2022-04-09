@@ -38,6 +38,19 @@ DataReadErrorCode CursorModifier::load(const PlugInModifier &prefix, DataReader 
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode STransCtModifier::load(const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU16(unknown1) || !unknown2.load(reader) || !reader.readU16(unknown3) || !unknown4.load(reader)
+		|| !reader.readU16(unknown5) || !reader.readU32(unknown6) || !reader.readU16(unknown7) || !reader.readU32(unknown8)
+		|| !reader.readU16(unknown9) || !reader.readU32(unknown10) || !reader.readU16(unknown11) || !reader.readU32(unknown12)
+		|| !reader.readU16(unknown13) || !reader.readU32(unknown14) || !reader.readU16(unknown15) || !reader.readBytes(unknown16))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 } // End of namespace Standard
 
 } // End of namespace Data

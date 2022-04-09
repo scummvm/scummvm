@@ -35,11 +35,16 @@ bool CursorModifier::load(const PlugInModifierLoaderContext &context, const Data
 	return true;
 }
 
-StandardPlugIn::StandardPlugIn() : _cursorModifierFactory(this) {
+bool STransCtModifier::load(const PlugInModifierLoaderContext& context, const Data::Standard::STransCtModifier& data) {
+	return true;
+}
+
+StandardPlugIn::StandardPlugIn() : _cursorModifierFactory(this), _sTransCtModifierFactory(this) {
 }
 
 void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
 	registrar->registerPlugInModifier("CursorMod", &_cursorModifierFactory);
+	registrar->registerPlugInModifier("STransCt", &_sTransCtModifierFactory);
 }
 
 } // End of namespace Standard
