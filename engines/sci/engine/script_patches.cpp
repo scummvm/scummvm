@@ -18612,6 +18612,44 @@ static const uint16 sq3AnnouncementsPatch[] = {
 	PATCH_END
 };
 
+// In the navigation computer, selecting your current location is supposed to
+//  display COURSE ALREADY ACHIEVED but the message doesn't appear in ScummVM.
+//  This occurs in later versions of SQ3.
+//
+// The navigation computer was changed in version 1.018 to return to the main
+//  screen when selecting the current location. It appears that there was some
+//  confusion though; the new script incorrectly attempts to disable the scan
+//  button and sets a three second pause after requesting a room change. The
+//  result is that the pause doesn't occur and the text is drawn and then erased
+//  on the same game cycle. By the time ScummVM updates the window from the
+//  screen buffer it's too late. In Sierra's interpreter the text only flickers
+//  on the screen, even on slow machines.
+//
+// We fix this by calling kScummVMSleep with the script's three second delay so
+//  that the screen updates and the message is displayed. The button states
+//  don't matter because no input is processed when sleeping and the script sets
+//  a new room immediately afterwards.
+//
+// Applies to: English PC 1.018, German PC, German Amiga, Macintosh
+// Responsible method: courseScript:changeState(1)
+// Fixes bug: #13114
+static const uint16 sq3CourseAchievedSignature[] = {
+	0x39, SIG_MAGICDWORD,               // pushi state
+	      SIG_SELECTOR8(state),
+	0x78,                               // push1
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa scanBut
+	0x4a, 0x06,                         // send 06 [ scanBut state: 0 (has no effect) ]
+	SIG_END
+};
+
+static const uint16 sq3CourseAchievedPatch[] = {
+	0x38, PATCH_UINT16(0x0001),         // pushi 0001
+	0x38, PATCH_UINT16(0x00b4),         // pushi 00b4
+	0x43, kScummVMSleepId, 0x02,        // callk kScummVMSleep 02 [ 180 ticks ]
+	PATCH_END
+};
+
 // Space Quest 3 has some strings hard coded in the scripts file
 // We need to patch them for the Hebrew translation
 
@@ -18642,6 +18680,7 @@ static const uint16 sq3HebrewStatusBarNamePatch[] = {
 //         script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq3Signatures[] = {
 	{ false,   0, "Hebrew: Replace name in status bar",    1, sq3HebrewStatusBarNameSignature,                     sq3HebrewStatusBarNamePatch },
+	{  true,  19, "Fix course achieved message",           1, sq3CourseAchievedSignature,                          sq3CourseAchievedPatch },
 	{  true, 117, "Fix end credits",                       1, sq3EndCreditsSignature,                              sq3EndCreditsPatch },
 	{  true, 702, "Fix scumsoft announcements",            1, sq3AnnouncementsSignature,                           sq3AnnouncementsPatch },
 	{ false, 996, "Hebrew: Replace 'Enter input' prompt",  1, sq3HebrewEnterInputSignature,                        sq3HebrewEnterInputPatch },
