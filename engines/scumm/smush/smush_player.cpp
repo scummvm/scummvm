@@ -526,7 +526,7 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 		_iactTable[bufId] = index;
 
 		if (index) {
-			if (_imuseDigital->diMUSEGetParam(bufId + DIMUSE_SMUSH_SOUNDID, 0x100)) {
+			if (_imuseDigital->diMUSEGetParam(bufId + DIMUSE_SMUSH_SOUNDID, DIMUSE_P_SND_TRACK_NUM)) {
 				_imuseDigital->diMUSEFeedStream(bufId + DIMUSE_SMUSH_SOUNDID, dataBuffer, subSize - 18, paused);
 				free(dataBuffer);
 				return;
@@ -544,7 +544,7 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 				curSoundId = _imuseDigital->diMUSEGetNextSound(curSoundId);
 				if (!curSoundId)
 					break;
-			} while (_imuseDigital->diMUSEGetParam(curSoundId, 0x1800) != 1 || _imuseDigital->diMUSEGetParam(curSoundId, 0x1900) != bufId);
+			} while (_imuseDigital->diMUSEGetParam(curSoundId, DIMUSE_P_SND_HAS_STREAM) != 1 || _imuseDigital->diMUSEGetParam(curSoundId, DIMUSE_P_STREAM_BUFID) != bufId);
 
 			if (!curSoundId) {
 				// There isn't any previous sound running: start a new stream
@@ -557,14 +557,14 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 				_imuseDigital->diMUSESwitchStream(curSoundId, bufId + DIMUSE_SMUSH_SOUNDID, bufId == 2 ? 1000 : 150, 0, 0);
 			}
 
-			_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, 0x600, volume);
+			_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, DIMUSE_P_VOLUME, volume);
 
 			if (bufId == DIMUSE_BUFFER_SPEECH) {
-				_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, 0x400, DIMUSE_GROUP_SPEECH);
+				_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, DIMUSE_P_GROUP, DIMUSE_GROUP_SPEECH);
 			} else if (bufId == DIMUSE_BUFFER_MUSIC) {
-				_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, 0x400, DIMUSE_GROUP_MUSIC);
+				_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, DIMUSE_P_GROUP, DIMUSE_GROUP_MUSIC);
 			} else {
-				_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, 0x400, DIMUSE_GROUP_SFX);
+				_imuseDigital->diMUSESetParam(bufId + DIMUSE_SMUSH_SOUNDID, DIMUSE_P_GROUP, DIMUSE_GROUP_SFX);
 			}
 
 			_imuseDigital->diMUSEFeedStream(bufId + DIMUSE_SMUSH_SOUNDID, dataBuffer, subSize - 18, paused);
