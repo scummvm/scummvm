@@ -1446,12 +1446,14 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	_rendererTypePopUp = new PopUpWidget(boss, prefix + "grRendererTypePopup");
 	_rendererTypePopUp->appendEntry(_("<default>"), Graphics::kRendererTypeDefault);
 	_rendererTypePopUp->appendEntry("");
-	const Graphics::RendererTypeDescription *rt = Graphics::Renderer::listTypes();
-	for (; rt->code; ++rt) {
-		if (g_system->getOverlayWidth() > 320)
-			_rendererTypePopUp->appendEntry(_(rt->description), rt->id);
-		else
-			_rendererTypePopUp->appendEntry(_c(rt->description, "lowres"), rt->id);
+	Common::Array<Graphics::RendererTypeDescription> rt = Graphics::Renderer::listTypes();
+	for (Common::Array<Graphics::RendererTypeDescription>::iterator it = rt.begin();
+	        it != rt.end(); ++it) {
+		if (g_system->getOverlayWidth() > 320) {
+			_rendererTypePopUp->appendEntry(_(it->description), it->id);
+		} else {
+			_rendererTypePopUp->appendEntry(_c(it->description, "lowres"), it->id);
+		}
 	}
 
 	_antiAliasPopUpDesc = new StaticTextWidget(boss, prefix + "grAntiAliasPopupDesc", _("3D Anti-aliasing:"));

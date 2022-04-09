@@ -23,6 +23,7 @@
 #define GRAPHICS_RENDERER_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/str.h"
 
 namespace Graphics {
@@ -56,7 +57,7 @@ struct RendererTypeDescription {
 
 class Renderer {
 public:
-	static const RendererTypeDescription *listTypes();
+	static Common::Array<RendererTypeDescription> listTypes();
 
 	/** Convert a renderer code to a RendererType enum value */
 	static RendererType parseTypeCode(const Common::String &code);
@@ -75,7 +76,7 @@ public:
 		return getBestMatchingType(desired, getAvailableTypes() & supported);
 	}
 };
- /** @} */
+/** @} */
 } // End of namespace Graphics
 
 #endif
