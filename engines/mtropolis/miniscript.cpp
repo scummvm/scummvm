@@ -130,7 +130,7 @@ bool MiniscriptInstructionLoader<MiniscriptInstructions::PushValue>::loadInstruc
 	else if (dataType == 0x15) {
 		double d;
 		if (instrDataReader.getProjectFormat() == Data::kProjectFormatMacintosh) {
-			if (!instrDataReader.readTruncated8087XPDouble(d))
+			if (!instrDataReader.readF80(d))
 				return false;
 		} else if (instrDataReader.getProjectFormat() == Data::kProjectFormatWindows) {
 			if (!instrDataReader.readF64(d))
