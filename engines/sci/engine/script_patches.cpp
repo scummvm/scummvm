@@ -7908,9 +7908,62 @@ static const uint16 larry2PatchWearParachutePoints[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                           patch
+// When buying a lottery ticket, the message box "Processing..." is displayed
+//  three times with no delay between the messages. In the original, each was
+//  visibly erased before the next because the interpreter drew directly to the
+//  screen. This created the necessary flicker effect indicating that the three
+//  identical messages were separte. In ScummVM there is no flicker because the
+//  window is updated with the screen buffer when processing events or between
+//  game cycles. The result is a single message box that appears to not respond
+//  to Enter or clicks until the third one dismisses it.
+//
+// We fix this by adding a brief delay in the "Procesing..." loop with a call to
+//  kScummVMSleep so that the screen is redrawn between message boxes and the
+//  intended effect occurs as in the original. This patch is broken up into two
+//  parts because different versions have different instructions in the loop.
+//
+// Applies to: All versions
+// Responsible method: rm114Script:changeState(15)
+static const uint16 larry2SignatureLotteryTicketMessages1[] = {
+	0x35, 0x00,                      // ldi 00
+	0xa5, 0x00,                      // sat 00 [ temp0 = 0 ]
+	0x8d, 0x00,                      // lst 00 [ start loop ]
+	SIG_MAGICDWORD,
+	0x35, 0x03,                      // ldi 03
+	0x22,                            // lt?    [ temp0 < 3 ]
+	0x30, SIG_ADDTOOFFSET(+1), 0x00, // bnt    [ exit loop ]
+	SIG_END
+};
+
+static const uint16 larry2PatchLotteryTicketMessages1[] = {
+	0xa5, 0x00,                      // sat 00 [ temp0 = 0 (acc already 0) ]
+	0x7a,                            // push2  [ start loop ]
+	0x20,                            // ge?    [ 2 >= temp0 ]
+	0x31, PATCH_GETORIGINALBYTEADJUST(+10, +6), // bnt [ exit loop ]
+	0x78,                            // push1
+	0x39, 0x02,                      // pushi 02
+	0x43, kScummVMSleepId, 0x02,     // callk kScummVMSleep 02 [ 2 ticks ]
+	PATCH_END
+};
+
+static const uint16 larry2SignatureLotteryTicketMessages2[] = {
+	0x47, 0xff, SIG_MAGICDWORD, 0x00, 0x0c, // calle proc255_0 0c [ Print "Processing..." ]
+	0xc5, 0x00,                             // +at 00 [ temp0++, acc = temp0 ]
+	0x32, SIG_ADDTOOFFSET(+1), 0xff,        // jmp    [ continue loop ]
+	SIG_END
+};
+
+static const uint16 larry2PatchLotteryTicketMessages2[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x32, PATCH_GETORIGINALBYTEADJUST(+7, -2), 0xff, // jmp [ continue loop ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                              patch
 static const SciScriptPatcherEntry larry2Signatures[] = {
-	{  true,    63, "plane: no points for wearing parachute",      1, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
+	{  true,    63, "plane: no points for wearing parachute",      1, larry2SignatureWearParachutePoints,    larry2PatchWearParachutePoints },
+	{  true,   114, "lottery ticket messages (1/2)",               1, larry2SignatureLotteryTicketMessages1, larry2PatchLotteryTicketMessages1 },
+	{  true,   114, "lottery ticket messages (2/2)",               1, larry2SignatureLotteryTicketMessages2, larry2PatchLotteryTicketMessages2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
