@@ -293,34 +293,25 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	}
 
 	update_polled_stuff_if_runtime();
-	// Primary background
-	Bitmap *mask = nullptr;
+	// Primary background (LZW or RLE compressed depending on format)
 	if (data_ver >= kRoomVersion_pre114_5)
-		load_lzw(in, &mask, room->BackgroundBPP, &room->Palette);
+		room->BgFrames[0].Graphic.reset(
+			load_lzw(in, room->BackgroundBPP, &room->Palette));
 	else
-		mask = load_rle_bitmap8(in);
-	room->BgFrames[0].Graphic.reset(mask);
+		room->BgFrames[0].Graphic.reset(load_rle_bitmap8(in));
 
+	// Area masks
 	update_polled_stuff_if_runtime();
-	// Mask bitmaps
-	if (data_ver >= kRoomVersion_255b) {
-		mask = load_rle_bitmap8(in);
-	} else if (data_ver >= kRoomVersion_114) {
-		// an old version - clear the 'shadow' area into a blank regions bmp
-		mask = load_rle_bitmap8(in);
-		delete mask;
-		mask = nullptr;
-	}
-	room->RegionMask.reset(mask);
+	if (data_ver >= kRoomVersion_255b)
+		room->RegionMask.reset(load_rle_bitmap8(in));
+	else if (data_ver >= kRoomVersion_114)
+		skip_rle_bitmap8(in); // an old version - clear the 'shadow' area into a blank regions bmp (???)
 	update_polled_stuff_if_runtime();
-	mask = load_rle_bitmap8(in);
-	room->WalkAreaMask.reset(mask);
+	room->WalkAreaMask.reset(load_rle_bitmap8(in));
 	update_polled_stuff_if_runtime();
-	mask = load_rle_bitmap8(in);
-	room->WalkBehindMask.reset(mask);
+	room->WalkBehindMask.reset(load_rle_bitmap8(in));
 	update_polled_stuff_if_runtime();
-	mask = load_rle_bitmap8(in);
-	room->HotspotMask.reset(mask);
+	room->HotspotMask.reset(load_rle_bitmap8(in));
 	return HError::None();
 }
 
@@ -389,9 +380,8 @@ HError ReadAnimBgBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 
 	for (size_t i = 1; i < room->BgFrameCount; ++i) {
 		update_polled_stuff_if_runtime();
-		Bitmap *frame = nullptr;
-		load_lzw(in, &frame, room->BackgroundBPP, &room->BgFrames[i].Palette);
-		room->BgFrames[i].Graphic.reset(frame);
+		room->BgFrames[i].Graphic.reset(
+			load_lzw(in, room->BackgroundBPP, &room->BgFrames[i].Palette));
 	}
 	return HError::None();
 }

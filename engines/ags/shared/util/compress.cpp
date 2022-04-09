@@ -315,6 +315,13 @@ Shared::Bitmap *load_rle_bitmap8(Stream *in, RGB(*pal)[256]) {
 	return bmp;
 }
 
+void skip_rle_bitmap8(Shared::Stream *in) {
+	int w = in->ReadInt16();
+	int h = in->ReadInt16();
+	// Skip 8-bit pixel data + RGB palette
+	in->Seek((w * h) + (3 * 256));
+}
+
 //-----------------------------------------------------------------------------
 // LZW
 //-----------------------------------------------------------------------------
@@ -378,8 +385,7 @@ void save_lzw(Stream *out, const Bitmap *bmpp, const RGB(*pal)[256]) {
 	out->Seek(toret, kSeekBegin);
 }
 
-void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, RGB(*pal)[256]) {
-	*dst_bmp = nullptr;
+Bitmap *load_lzw(Stream *in, int dst_bpp, RGB(*pal)[256]) {
 	// NOTE: old format saves full RGB struct here (4 bytes, including the filler)
 	if (pal)
 		in->Read(*pal, sizeof(RGB) * 256);
@@ -401,8 +407,7 @@ void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, RGB(*pal)[256]) {
 	int stride = mem_in.ReadInt32(); // width * bpp
 	int height = mem_in.ReadInt32();
 	Bitmap *bmm = BitmapHelper::CreateBitmap((stride / dst_bpp), height, dst_bpp * 8);
-	if (bmm == nullptr)
-		return; // out of mem?
+	if (!bmm) return nullptr; // out of mem?
 
 	size_t num_pixels = stride * height / dst_bpp;
 	uint8_t *bmp_data = bmm->GetDataForWriting();
@@ -416,7 +421,7 @@ void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, RGB(*pal)[256]) {
 	if (in->GetPosition() != end_pos)
 		in->Seek(end_pos, kSeekBegin);
 
-	*dst_bmp = bmm;
+	return bmm;
 }
 
 } // namespace AGS3
