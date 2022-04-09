@@ -67,6 +67,7 @@ static size_t lookup_palette(uint32_t col, uint32_t palette[256], uint32_t ncols
 static bool CreateIndexedBitmap(const Bitmap *image, std::vector<uint8_t> &dst_data,
 	uint32_t palette[256], uint32_t &pal_count) {
 	const int src_bpp = image->GetBPP();
+	if (src_bpp < 2) { assert(0); return false; }
 	const size_t src_size = image->GetWidth() * image->GetHeight() * image->GetBPP();
 	const size_t dst_size = image->GetWidth() * image->GetHeight();
 	dst_data.resize(dst_size);
@@ -86,7 +87,7 @@ static bool CreateIndexedBitmap(const Bitmap *image, std::vector<uint8_t> &dst_d
 			col = *((const uint32_t *)src);
 			pal_n = lookup_palette(col, palette, pal_count);
 			break;
-		default: assert(0); break;
+		default: assert(0); return false;
 		}
 
 		if ((int)pal_n == -1) {
