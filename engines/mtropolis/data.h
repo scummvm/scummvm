@@ -144,7 +144,8 @@ public:
 	bool readS64(int64 &value);
 	bool readF32(float &value);
 	bool readF64(double &value);
-	bool readTruncated8087XPDouble(double &value);
+	bool readF80(double &value);
+
 	bool read(void *dest, size_t size);
 
 	// Reads a terminated string where "length" is the number of characters including a null terminator
