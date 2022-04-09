@@ -143,6 +143,21 @@ public:
 
 	bool wantsFocus() override { return true; }
 
+	static Common::String getThemeColor(byte r, byte g, byte b) {
+		return Common::String::format("\001c%02x%02x%02x", r, g, b);
+	}
+	
+	static Common::String getThemeColor(const ThemeEngine::FontColor &color) {
+		switch (color) {
+		case ThemeEngine::kFontColorNormal:
+			return Common::String("\001C{normal}");
+		case ThemeEngine::kFontColorAlternate:
+			return Common::String("\001C{alternate}");
+		default:
+			return Common::String("\001C{unknown}");
+		}
+	}
+
 protected:
 	void drawWidget() override;
 

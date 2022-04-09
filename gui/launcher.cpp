@@ -1023,7 +1023,6 @@ void LauncherSimple::build() {
 void LauncherSimple::updateListing() {
 	Common::U32StringArray l;
 	Common::Array<const Common::ConfigManager::Domain *> attrs;
-	ListWidget::ColorList colors;
 	ThemeEngine::FontColor color;
 	int numEntries = ConfMan.getInt("gui_list_max_scan_entries");
 
@@ -1078,14 +1077,14 @@ void LauncherSimple::updateListing() {
 				// description += Common::String::format(" (%s)", _("Not found"));
 			}
 		}
-		l.push_back(iter->description);
-		colors.push_back(color);
+		Common::String game_item = GUI::ListWidget::getThemeColor(color) + iter->description;
+		l.push_back(game_item);
 		attrs.push_back(iter->domain);
 		_domains.push_back(iter->key);
 	}
 
 	const int oldSel = _list->getSelected();
-	_list->setList(l, &colors);
+	_list->setList(l);
 
 	groupEntries(attrs);
 
