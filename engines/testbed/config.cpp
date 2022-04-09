@@ -124,8 +124,10 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	case GUI::kCloseCmd:
 		// This is final selected state, write it to config file.
 		ws = _testbedConfMan->getConfigWriteStream();
-		_testbedConfMan->writeTestbedConfigToStream(ws);
-		delete ws;
+		if (ws) {
+			_testbedConfMan->writeTestbedConfigToStream(ws);
+			delete ws;
+		}
 		break;
 
 	default:
