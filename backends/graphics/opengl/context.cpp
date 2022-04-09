@@ -117,16 +117,35 @@ void OpenGLGraphicsManager::initializeGLContext() {
 	const char *verString = (const char *)glGetString(GL_VERSION);
 	debug(5, "OpenGL version: %s", verString);
 
-	const char *glVersionFormat;
 	if (g_context.type == kContextGL) {
-		glVersionFormat = "%d.%d";
-	} else {
-		glVersionFormat = "OpenGL ES %d.%d";
-	}
-
-	if (sscanf(verString, glVersionFormat, &g_context.majorVersion, &g_context.minorVersion) != 2) {
-		g_context.majorVersion = g_context.minorVersion = 0;
-		warning("Could not parse GL version '%s'", verString);
+		// OpenGL version number is either of the form major.minor or major.minor.release,
+		// where the numbers all have one or more digits
+		if (sscanf(verString, "%d.%d", &g_context.majorVersion, &g_context.minorVersion) != 2) {
+			g_context.majorVersion = g_context.minorVersion = 0;
+			warning("Could not parse GL version '%s'", verString);
+		}
+	} else if (g_context.type == kContextGLES) {
+		// The form of the string is "OpenGL ES-<profile> <major>.<minor>",
+		// where <profile> is either "CM" (Common) or "CL" (Common-Lite),
+		// and <major> and <minor> are integers.
+		char profile[3];
+		if (sscanf(verString, "OpenGL ES-%2s %d.%d", profile,
+					&g_context.majorVersion, &g_context.minorVersion) != 3) {
+			g_context.majorVersion = g_context.minorVersion = 0;
+			warning("Could not parse GL ES version '%s'", verString);
+		}
+	} else if (g_context.type == kContextGLES2) {
+		// The version is of the form
+		// OpenGL<space>ES<space><version number><space><vendor-specific information>
+		// version number format is not defined
+		// There is only OpenGL ES 2.0 anyway
+		if (sscanf(verString, "OpenGL ES %d.%d", &g_context.majorVersion, &g_context.minorVersion) != 2) {
+			g_context.minorVersion = 0;
+			if (sscanf(verString, "OpenGL ES %d ", &g_context.majorVersion) != 1) {
+				g_context.majorVersion = 0;
+				warning("Could not parse GL ES 2 version '%s'", verString);
+			}
+		}
 	}
 
 	const char *extString = (const char *)glGetString(GL_EXTENSIONS);
