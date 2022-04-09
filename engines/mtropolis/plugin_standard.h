@@ -42,6 +42,12 @@ private:
 	uint32 _cursorID;
 };
 
+// Some sort of scene transition modifier
+class STransCtModifier : public Modifier {
+public:
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data);
+};
+
 class StandardPlugIn : public MTropolis::PlugIn {
 public:
 	StandardPlugIn();
@@ -50,6 +56,7 @@ public:
 
 private:
 	PlugInModifierFactory<CursorModifier, Data::Standard::CursorModifier> _cursorModifierFactory;
+	PlugInModifierFactory<STransCtModifier, Data::Standard::STransCtModifier> _sTransCtModifierFactory;
 };
 
 } // End of namespace Standard
