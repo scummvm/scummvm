@@ -120,9 +120,7 @@ bool MemoryStream::Seek(soff_t offset, StreamSeek origin) {
 }
 
 size_t MemoryStream::Write(const void *buffer, size_t size) {
-	if (!_buf || _pos >= (soff_t)_buf_sz) {
-		return 0;
-	}
+	if (_pos >= (soff_t)_buf_sz) { return 0; }
 	size = std::min(size, _buf_sz - (size_t)_pos);
 	memcpy(_buf + _pos, buffer, size);
 	_pos += size;
@@ -131,9 +129,7 @@ size_t MemoryStream::Write(const void *buffer, size_t size) {
 }
 
 int32_t MemoryStream::WriteByte(uint8_t val) {
-	if (!_buf || _pos >= (soff_t)_buf_sz) {
-		return -1;
-	}
+	if (_pos >= (soff_t)_buf_sz) { return -1; }
 	*(_buf + _pos) = val;
 	_pos++; _len++;
 	return val;
@@ -156,9 +152,6 @@ void VectorStream::Close() {
 }
 
 size_t VectorStream::Write(const void *buffer, size_t size) {
-	if (!_vec) {
-		return 0;
-	}
 	_vec->resize(_vec->size() + size);
 	memcpy(_vec->data() + _pos, buffer, size);
 	_pos += size;
@@ -167,9 +160,6 @@ size_t VectorStream::Write(const void *buffer, size_t size) {
 }
 
 int32_t VectorStream::WriteByte(uint8_t val) {
-	if (!_vec) {
-		return -1;
-	}
 	_vec->push_back(val);
 	_pos++; _len++;
 	return val;

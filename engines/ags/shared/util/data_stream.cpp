@@ -68,10 +68,6 @@ size_t DataStream::WriteInt64(int64_t val) {
 }
 
 size_t DataStream::ReadAndConvertArrayOfInt16(int16_t *buffer, size_t count) {
-	if (!CanRead() || !buffer) {
-		return 0;
-	}
-
 	count = ReadArray(buffer, sizeof(int16_t), count);
 	for (size_t i = 0; i < count; ++i, ++buffer) {
 		*buffer = BBOp::SwapBytesInt16(*buffer);
@@ -80,10 +76,6 @@ size_t DataStream::ReadAndConvertArrayOfInt16(int16_t *buffer, size_t count) {
 }
 
 size_t DataStream::ReadAndConvertArrayOfInt32(int32_t *buffer, size_t count) {
-	if (!CanRead() || !buffer) {
-		return 0;
-	}
-
 	count = ReadArray(buffer, sizeof(int32_t), count);
 	for (size_t i = 0; i < count; ++i, ++buffer) {
 		*buffer = BBOp::SwapBytesInt32(*buffer);
@@ -92,10 +84,6 @@ size_t DataStream::ReadAndConvertArrayOfInt32(int32_t *buffer, size_t count) {
 }
 
 size_t DataStream::ReadAndConvertArrayOfInt64(int64_t *buffer, size_t count) {
-	if (!CanRead() || !buffer) {
-		return 0;
-	}
-
 	count = ReadArray(buffer, sizeof(int64_t), count);
 	for (size_t i = 0; i < count; ++i, ++buffer) {
 		*buffer = BBOp::SwapBytesInt64(*buffer);
@@ -104,10 +92,6 @@ size_t DataStream::ReadAndConvertArrayOfInt64(int64_t *buffer, size_t count) {
 }
 
 size_t DataStream::WriteAndConvertArrayOfInt16(const int16_t *buffer, size_t count) {
-	if (!CanWrite() || !buffer) {
-		return 0;
-	}
-
 	size_t elem;
 	for (elem = 0; elem < count && !EOS(); ++elem, ++buffer) {
 		int16_t val = *buffer;
@@ -120,10 +104,6 @@ size_t DataStream::WriteAndConvertArrayOfInt16(const int16_t *buffer, size_t cou
 }
 
 size_t DataStream::WriteAndConvertArrayOfInt32(const int32_t *buffer, size_t count) {
-	if (!CanWrite() || !buffer) {
-		return 0;
-	}
-
 	size_t elem;
 	for (elem = 0; elem < count && !EOS(); ++elem, ++buffer) {
 		int32_t val = *buffer;
@@ -136,10 +116,6 @@ size_t DataStream::WriteAndConvertArrayOfInt32(const int32_t *buffer, size_t cou
 }
 
 size_t DataStream::WriteAndConvertArrayOfInt64(const int64_t *buffer, size_t count) {
-	if (!CanWrite() || !buffer) {
-		return 0;
-	}
-
 	size_t elem;
 	for (elem = 0; elem < count && !EOS(); ++elem, ++buffer) {
 		int64_t val = *buffer;

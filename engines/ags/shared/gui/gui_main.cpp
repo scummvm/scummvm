@@ -863,7 +863,7 @@ void WriteGUI(Stream *out) {
 
 	for (size_t i = 0; i < _GP(guis).size(); ++i) {
 		_GP(guis)[i].WriteToFile(out);
-	}
+	} 
 	out->WriteInt32(_G(numguibuts));
 	for (int i = 0; i < _G(numguibuts); ++i) {
 		_GP(guibuts)[i].WriteToFile(out);
