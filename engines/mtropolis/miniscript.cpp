@@ -129,8 +129,15 @@ bool MiniscriptInstructionLoader<MiniscriptInstructions::PushValue>::loadInstruc
 		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeNull, nullptr);
 	else if (dataType == 0x15) {
 		double d;
-		if (!instrDataReader.readF64(d))
+		if (instrDataReader.getProjectFormat() == Data::kProjectFormatMacintosh) {
+			if (!instrDataReader.readTruncated8087XPDouble(d))
+				return false;
+		} else if (instrDataReader.getProjectFormat() == Data::kProjectFormatWindows) {
+			if (!instrDataReader.readF64(d))
+				return false;
+		} else {
 			return false;
+		}
 
 		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeDouble, &d);
 	} else if (dataType == 0x1a) {
