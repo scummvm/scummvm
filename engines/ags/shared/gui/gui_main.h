@@ -226,10 +226,14 @@ void MarkInventoryForUpdate(int char_id, bool is_player);
 // Parses the string and returns combination of label macro flags
 GUILabelMacro FindLabelMacros(const String &text);
 
+// Reads all GUIs and their controls.
+// WARNING: the data is read into the global arrays (guis, guibuts, and so on)
 // TODO: remove is_savegame param after dropping support for old saves
 // because only they use ReadGUI to read runtime GUI data
-HError ReadGUI(std::vector<GUIMain> &guis, Stream *in, bool is_savegame = false);
-void WriteGUI(const std::vector<GUIMain> &guis, Stream *out);
+HError ReadGUI(Stream *in, bool is_savegame = false);
+// Writes all GUIs and their controls.
+// WARNING: the data is written from the global arrays (guis, guibuts, and so on)
+void WriteGUI(Stream *out);
 // Converts legacy GUIVisibility into appropriate GUIMain properties
 void ApplyLegacyVisibility(GUIMain &gui, LegacyGUIVisState vis);
 }

@@ -220,7 +220,7 @@ static void ReadAnimatedButtons_Aligned(Stream *in) {
 }
 
 static HSaveError restore_game_gui(Stream *in, int numGuisWas) {
-	HError err = GUI::ReadGUI(_GP(guis), in, true);
+	HError err = GUI::ReadGUI(in, true);
 	if (!err)
 		return new SavegameError(kSvgErr_GameObjectInitFailed, err);
 	_GP(game).numgui = _GP(guis).size();

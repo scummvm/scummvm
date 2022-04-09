@@ -752,7 +752,7 @@ HError ResortGUI(std::vector<GUIMain> &theGuis, bool bwcompat_ctrl_zorder = fals
 	return HError::None();
 }
 
-HError ReadGUI(std::vector<GUIMain> &guis, Stream *in, bool is_savegame) {
+HError ReadGUI(Stream *in, bool is_savegame) {
 	if (in->ReadInt32() != (int)GUIMAGIC)
 		return new Error("ReadGUI: unknown format or file is corrupt");
 
@@ -767,7 +767,7 @@ HError ReadGUI(std::vector<GUIMain> &guis, Stream *in, bool is_savegame) {
 		                                    GameGuiVersion, kGuiVersion_Initial, kGuiVersion_Current));
 	else
 		gui_count = in->ReadInt32();
-	guis.resize(gui_count);
+	_GP(guis).resize(gui_count);
 
 	// import the main GUI elements
 	for (size_t i = 0; i < gui_count; ++i) {
@@ -853,15 +853,15 @@ HError ReadGUI(std::vector<GUIMain> &guis, Stream *in, bool is_savegame) {
 			_GP(guilist)[i].ReadFromFile(in, GameGuiVersion);
 		}
 	}
-	return ResortGUI(guis, GameGuiVersion < kGuiVersion_272e);
+	return ResortGUI(_GP(guis), GameGuiVersion < kGuiVersion_272e);
 }
 
-void WriteGUI(const std::vector<GUIMain> &guis, Stream *out) {
+void WriteGUI(Stream *out) {
 	out->WriteInt32(GUIMAGIC);
 	out->WriteInt32(kGuiVersion_Current);
-	out->WriteInt32(guis.size());
+	out->WriteInt32(_GP(guis).size());
 
-	for (size_t i = 0; i < guis.size(); ++i) {
+	for (size_t i = 0; i < _GP(guis).size(); ++i) {
 		_GP(guis)[i].WriteToFile(out);
 	}
 	out->WriteInt32(_G(numguibuts));
