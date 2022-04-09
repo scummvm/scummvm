@@ -28,12 +28,63 @@
 namespace MTropolis {
 
 struct ModifierLoaderContext {
+	explicit ModifierLoaderContext(ChildLoaderStack *childLoaderStack);
+
 	ChildLoaderStack *childLoaderStack;
 };
 
 struct IModifierFactory {
-	virtual Common::SharedPtr<Modifier> createModifier(ModifierLoaderContext &context, const Data::DataObject &dataObject) = 0;
+	virtual Common::SharedPtr<Modifier> createModifier(ModifierLoaderContext &context, const Data::DataObject &dataObject) const = 0;
 };
+
+struct IPlugInModifierFactory {
+	virtual Common::SharedPtr<Modifier> createModifier(ModifierLoaderContext &context, const Data::PlugInModifier &plugInModifierData) const = 0;
+};
+
+struct IPlugInModifierFactoryAndDataFactory : public IPlugInModifierFactory, public Data::IPlugInModifierDataFactory {
+};
+
+// Helper classes for plug-in modifier loaders
+struct PlugInModifierLoaderContext {
+	PlugInModifierLoaderContext(ModifierLoaderContext &modifierLoaderContext, const Data::PlugInModifier &plugInModifierData, PlugIn *plugIn);
+
+	ModifierLoaderContext &modifierLoaderContext;
+	const Data::PlugInModifier &plugInModifierData;
+	PlugIn *plugIn;
+};
+
+template<typename TModifier, typename TModifierData>
+class PlugInModifierFactory : public IPlugInModifierFactoryAndDataFactory {
+public:
+	explicit PlugInModifierFactory(PlugIn *plugIn);
+
+	Common::SharedPtr<Modifier> createModifier(ModifierLoaderContext &context, const Data::PlugInModifier &plugInModifierData) const override;
+	Common::SharedPtr<Data::PlugInModifierData> createModifierData() const override;
+
+private:
+	PlugIn &_plugIn;
+};
+
+template<typename TModifier, typename TModifierData>
+PlugInModifierFactory<TModifier, TModifierData>::PlugInModifierFactory(PlugIn *plugIn) : _plugIn(*plugIn) {
+}
+
+template<typename TModifier, typename TModifierData>
+Common::SharedPtr<Modifier> PlugInModifierFactory<TModifier, TModifierData>::createModifier(ModifierLoaderContext &context, const Data::PlugInModifier &plugInModifierData) const {
+	Common::SharedPtr<TModifier> modifier(new TModifier());
+
+	PlugInModifierLoaderContext plugInContext(context, plugInModifierData, &_plugIn);
+
+	if (!modifier->load(plugInContext, static_cast<const TModifierData &>(*plugInModifierData.plugInData.get())))
+		modifier.reset();
+
+	return Common::SharedPtr<Modifier>(modifier);
+}
+
+template<typename TModifier, typename TModifierData>
+Common::SharedPtr<Data::PlugInModifierData> PlugInModifierFactory<TModifier, TModifierData>::createModifierData() const {
+	return Common::SharedPtr<Data::PlugInModifierData>(new TModifierData());
+}
 
 IModifierFactory *getModifierFactoryForDataObjectType(Data::DataObjectTypes::DataObjectType dataObjectType);
 

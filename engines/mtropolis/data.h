@@ -24,12 +24,17 @@
 
 #include "common/array.h"
 #include "common/error.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 
 namespace MTropolis {
 
 namespace Data {
+
+struct PlugInModifier;
+struct PlugInModifierData;
 
 enum ProjectFormat {
 	kProjectFormatUnknown,
@@ -45,28 +50,81 @@ enum DataReadErrorCode {
 	kDataReadErrorUnsupportedRevision,
 	kDataReadErrorReadFailed,
 	kDataReadErrorUnrecognized,
+	kDataReadErrorPlugInNotFound,
 };
 
 namespace DataObjectTypes {
 
 enum DataObjectType {
-	kUnknown = 0,
+	kUnknown                             = 0,
 
-	kProjectCatalog       = 0x3e8,
-	kStreamHeader         = 0x3e9,
-	kProjectHeader        = 0x3ea,
-	kPresentationSettings = 0x3ec,
+	kProjectCatalog                      = 0x3e8,
+	kStreamHeader                        = 0x3e9,
+	kProjectHeader                       = 0x3ea,
+	kPresentationSettings                = 0x3ec,
 
-	kAssetCatalog         = 0xd,
-    kGlobalObjectInfo     = 0x17,
-	kUnknown19            = 0x19,
-	
-	kIfMessengerModifier  = 0x2bc,
-	kBehaviorModifier     = 0x2c6,
-	kMessengerModifier    = 0x2da,
-	kMiniscriptModifier   = 0x3c0,
+	kAssetCatalog                        = 0xd,
+    kGlobalObjectInfo                    = 0x17,
+	kUnknown19                           = 0x19,
+	kProjectLabelMap                     = 0x22,	// NYI
 
-	kDebris               = 0xfffffffe,	// Deleted object
+	kProjectStructuralDef                = 0x2,		// NYI
+	kSectionStructuralDef                = 0x3,		// NYI
+	kSceneStructuralDef                  = 0x8,
+	kSubsectionStructuralDef             = 0x21,	// NYI
+	kMovieStructuralDef                  = 0x5,		// NYI
+	kMToonStructuralDef                  = 0x6,		// NYI
+	kGraphicStructuralDef                = 0x7,		// NYI
+	kSoundStructuralDef                  = 0xa,		// NYI
+
+	kTextLabelElement                    = 0x15,	// NYI
+
+	kAlias                               = 0x27,	// NYI
+
+	kMovieAsset                          = 0x10,	// NYI
+	kSoundAsset                          = 0x11,	// NYI
+	kColorTableAsset                     = 0x1e,	// NYI
+	kImageAsset                          = 0xe,		// NYI
+	kMToonAsset                          = 0xf,		// NYI
+
+	kSoundEffectModifier                 = 0x1a4,	// NYI
+	kChangeSceneModifier                 = 0x136,	// NYI
+	kReturnModifier                      = 0x140,	// NYI
+	kDragMotionModifier                  = 0x208,	// NYI
+	kVectorMotionModifier                = 0x226,	// NYI
+	kPathMotionModifierV1                = 0x21c,	// NYI - Obsolete version
+	kPathMotionModifierV2                = 0x21b,	// NYI
+	kSceneTransitionModifier             = 0x26c,	// NYI
+	kElementTransitionModifier           = 0x276,	// NYI
+	kSharedSceneModifier                 = 0x29a,	// NYI
+	kIfMessengerModifier                 = 0x2bc,
+	kBehaviorModifier                    = 0x2c6,
+	kMessengerModifier                   = 0x2da,
+	kSetModifier                         = 0x2df,	// NYI
+	kCollisionDetectionMessengerMOdifier = 0x2ee,	// NYI
+	kBoundaryDetectionMessengerModifier  = 0x2f8,	// NYI
+	kKeyboardMessengerModifier           = 0x302,	// NYI
+	kTextStyleModifier                   = 0x32a,	// NYI
+	kGraphicModifier                     = 0x334,	// NYI
+	kImageEffectModifier                 = 0x384,	// NYI
+	kMiniscriptModifier                  = 0x3c0,
+	kCursorModifierV1                    = 0x3ca,	// NYI - Obsolete version
+	kGradientModifier                    = 0x4b0,	// NYI
+	kColorTableModifier                  = 0x4c4,	// NYI
+	kSaveAndRestoreModifier              = 0x4d8,	// NYI
+
+	kCompoundVariableModifier            = 0x2c7,	// NYI
+	kBooleanVariableModifier             = 0x321,
+	kIntegerVariableModifier             = 0x322,	// NYI
+	kIntegerRangeVariableModifier        = 0x324,	// NYI
+	kVectorVariableModifier              = 0x327,	// NYI
+	kFloatingPointVariableModifier       = 0x328,	// NYI
+	kPointVariableModifier               = 0x326,
+	kStringVariableModifier              = 0x329,	// NYI
+
+	kDebris                              = 0xfffffffe,	// Deleted object
+	kPlugInModifier                      = 0xffffffff,
+	kAssetDataChunk                      = 0xffff,
 };
 
 } // End of namespace DataObjectTypes
@@ -105,6 +163,8 @@ public:
 	bool isBigEndian() const;
 
 private:
+	bool checkErrorAndReset();
+
 	Common::SeekableReadStreamEndian &_stream;
 	ProjectFormat _projectFormat;
 };
@@ -315,8 +375,8 @@ struct MiniscriptProgram {
 	bool load(DataReader &reader);
 };
 
-struct MiniscriptModifier : public DataObject {
-
+// Header used for most modifiers, but not all
+struct TypicalModifierHeader {
 	uint32 unknown1;
 	uint32 sizeIncludingTag;
 	uint32 guid;
@@ -324,11 +384,18 @@ struct MiniscriptModifier : public DataObject {
 	uint32 unknown4;
 	uint8 unknown5[4];
 	uint16 lengthOfName;
+
+	Common::String name;
+
+	bool load(DataReader &reader);
+};
+
+struct MiniscriptModifier : public DataObject {
+
+	TypicalModifierHeader modHeader;
 	Event enableWhen;
 	uint8 unknown6[11];
 	uint8 unknown7;
-
-	Common::String name;
 
 	MiniscriptProgram program;
 
@@ -343,13 +410,8 @@ enum MessageFlags {
 };
 
 struct MessengerModifier : public DataObject {
-	uint32 unknown1;
-	uint32 sizeIncludingTag;
-	uint32 guid;
-	uint8 unknown3[6];
-	uint32 unknown4;
-	uint8 unknown5[4];
-	uint16 lengthOfName;
+	TypicalModifierHeader modHeader;
+
 	uint32 messageFlags;
 	Event send;
 	Event when;
@@ -363,7 +425,6 @@ struct MessengerModifier : public DataObject {
 	uint8 withSourceLength;
 	uint8 unknown13;
 
-	Common::String name;
 	Common::String withSourceName;
 
 protected:
@@ -371,13 +432,8 @@ protected:
 };
 
 struct IfMessengerModifier : public DataObject {
-	uint32 unknown1;
-	uint32 sizeIncludingTag;
-	uint32 guid;
-	uint8 unknown3[6];
-	uint32 unknown4;
-	uint8 unknown5[4];
-	uint16 lengthOfName;
+	TypicalModifierHeader modHeader;
+
 	uint32 messageFlags;
 	Event send;
 	Event when;
@@ -392,8 +448,52 @@ struct IfMessengerModifier : public DataObject {
 	uint8 unknown10;
 	MiniscriptProgram program;
 
-	Common::String name;
 	Common::String withSource;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct BooleanVariableModifier final : public DataObject {
+	TypicalModifierHeader modHeader;
+	uint8_t value;
+	uint8_t unknown5;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct PointVariableModifier final : public DataObject {
+	TypicalModifierHeader modHeader;
+
+	uint8_t unknown5[4];
+	Point value;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct PlugInModifierData {
+	virtual ~PlugInModifierData();
+	virtual DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) = 0;
+};
+
+struct PlugInModifier : public DataObject {
+	uint32 unknown1;
+	uint32 codedSize;	// Total size on Mac but (size + (name length * 255)) on Windows for some reason
+	char modifierName[17];
+	uint32 guid;
+	uint8 unknown2[6];
+	uint16 plugInRevision;
+	uint32 unknown4;
+	uint8 unknown5[4];
+	uint16 lengthOfName;
+
+	Common::String name;
+
+	uint32 subObjectSize;
+
+	Common::SharedPtr<PlugInModifierData> plugInData;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -407,7 +507,20 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-DataReadErrorCode loadDataObject(DataReader &reader, Common::SharedPtr<DataObject> &outObject);
+struct IPlugInModifierDataFactory {
+	virtual Common::SharedPtr<Data::PlugInModifierData> createModifierData() const = 0;
+};
+
+class PlugInModifierRegistry {
+public:
+	const IPlugInModifierDataFactory *findLoader(const char *modifierName) const;
+	void registerLoader(const char *modifierName, const IPlugInModifierDataFactory *loader);
+
+private:
+	Common::HashMap<Common::String, const IPlugInModifierDataFactory *> _loaders;
+};
+
+DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataReader &reader, Common::SharedPtr<DataObject> &outObject);
 
 template<size_t TSize>
 inline bool DataReader::readBytes(uint8(&arr)[TSize]) {

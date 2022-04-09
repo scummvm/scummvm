@@ -81,6 +81,22 @@ private:
 	Common::SharedPtr<MiniscriptProgram> _program;
 };
 
+class BooleanVariableModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data);
+
+private:
+	bool _value;
+};
+
+class PointVariableModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::PointVariableModifier &data);
+
+private:
+	Point16 _value;
+};
+
 }	// End of namespace MTropolis
 
 #endif

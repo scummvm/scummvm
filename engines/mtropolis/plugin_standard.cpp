@@ -19,44 +19,37 @@
  *
  */
 
-/**
- * @file
- * StuffIt decompressor used in engines:
- * - grim
- * - groovie
- * - kyra
- * - mtropolis
- */
+#include "mtropolis/plugin_standard.h"
+#include "mtropolis/plugins.h"
 
-#ifndef COMMON_STUFFIT_H
-#define COMMON_STUFFIT_H
 
-namespace Common {
+namespace MTropolis {
 
-/**
- * @defgroup common_stuffit StuffIt decompressor
- * @ingroup common
- *
- * @brief API related to StuffIt archive files.
- *
- * @{
- */
+namespace Standard {
 
-class Archive;
-class String;
-class SeekableReadStream;
+bool CursorModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::CursorModifier &data) {
+	if (!_applyWhen.load(data.applyWhen) || !_removeWhen.load(data.removeWhen))
+		return false;
+	_cursorID = data.cursorID;
 
-/**
- * This factory method creates an Archive instance corresponding to the content
- * of the StuffIt compressed file with the given name.
- *
- * May return 0 in case of a failure.
- */
-Archive *createStuffItArchive(const String &fileName);
-Archive *createStuffItArchive(SeekableReadStream *stream);
+	return true;
+}
 
-/** @} */
+StandardPlugIn::StandardPlugIn() : _cursorModifierFactory(this) {
+}
 
-} // End of namespace Common
+void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
+	registrar->registerPlugInModifier("CursorMod", &_cursorModifierFactory);
+}
 
-#endif
+} // End of namespace Standard
+
+namespace PlugIns {
+
+Common::SharedPtr<PlugIn> createStandard() {
+	return Common::SharedPtr<PlugIn>(new Standard::StandardPlugIn());
+}
+
+} // End of namespace MTropolis
+
+} // End of namespace MTropolis

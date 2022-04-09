@@ -27,20 +27,18 @@
 namespace MTropolis {
 
 static const MTropolisGameDescription gameDescriptions[] = {
-#if 0
 	{
 		// Obsidian Macintosh
 		{
 			"obsidian",
 			"V1.0, 1/13/97, installed, CD",
 			{
-				//{ "Obsidian Data 0", 0, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", -1 },  // Only used for launch loading screen
-				{ "Obsidian Data 1", 0, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", -1 },
-				{ "Obsidian Data 2", 0, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", -1 },
-				{ "Obsidian Data 3", 0, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", -1 },
-				{ "Obsidian Data 4", 0, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", -1 },
-				{ "Obsidian Data 5", 0, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", -1 },
-				{ "Obsidian Data 6", 0, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", -1 },
+				{ "Obsidian Installer", 0, "1c272c23dc50b771970cabe8410c9349", -1 },
+				{ "Obsidian Data 2", 0, "1e590e3154c1af09efb951a07abc48b8", -1 },
+				{ "Obsidian Data 3", 0, "48e514a594b7a7ad190351d6d32d5d33", -1 },
+				{ "Obsidian Data 4", 0, "8dfa726c675aae3778951ddd18e4484c", -1 },
+				{ "Obsidian Data 5", 0, "6f085578b13b3db99543b969c9009b17", -1 },
+				{ "Obsidian Data 6", 0, "120ddcb1780be0f6380d708041733406", -1 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -52,7 +50,6 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-#endif
 	{
 		// Obsidian Windows, installed
 		{

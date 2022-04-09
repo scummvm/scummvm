@@ -19,44 +19,22 @@
  *
  */
 
-/**
- * @file
- * StuffIt decompressor used in engines:
- * - grim
- * - groovie
- * - kyra
- * - mtropolis
- */
+#ifndef MTROPOLIS_PLUGINS_H
+#define MTROPOLIS_PLUGINS_H
 
-#ifndef COMMON_STUFFIT_H
-#define COMMON_STUFFIT_H
+#include "common/ptr.h"
 
-namespace Common {
+namespace MTropolis {
 
-/**
- * @defgroup common_stuffit StuffIt decompressor
- * @ingroup common
- *
- * @brief API related to StuffIt archive files.
- *
- * @{
- */
+class PlugIn;
 
-class Archive;
-class String;
-class SeekableReadStream;
+namespace PlugIns {
 
-/**
- * This factory method creates an Archive instance corresponding to the content
- * of the StuffIt compressed file with the given name.
- *
- * May return 0 in case of a failure.
- */
-Archive *createStuffItArchive(const String &fileName);
-Archive *createStuffItArchive(SeekableReadStream *stream);
+Common::SharedPtr<PlugIn> createStandard();
+Common::SharedPtr<PlugIn> createObsidian();
 
-/** @} */
+} // End of namespace PlugIns
 
-} // End of namespace Common
+} // End of namespace MTropolis
 
 #endif

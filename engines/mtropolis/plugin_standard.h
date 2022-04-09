@@ -19,44 +19,41 @@
  *
  */
 
-/**
- * @file
- * StuffIt decompressor used in engines:
- * - grim
- * - groovie
- * - kyra
- * - mtropolis
- */
+#ifndef MTROPOLIS_PLUGIN_STANDARD_H
+#define MTROPOLIS_PLUGIN_STANDARD_H
 
-#ifndef COMMON_STUFFIT_H
-#define COMMON_STUFFIT_H
+#include "mtropolis/modifier_factory.h"
+#include "mtropolis/runtime.h"
+#include "mtropolis/plugin_standard_data.h"
 
-namespace Common {
+namespace MTropolis {
 
-/**
- * @defgroup common_stuffit StuffIt decompressor
- * @ingroup common
- *
- * @brief API related to StuffIt archive files.
- *
- * @{
- */
+namespace Standard {
 
-class Archive;
-class String;
-class SeekableReadStream;
+class StandardPlugIn;
 
-/**
- * This factory method creates an Archive instance corresponding to the content
- * of the StuffIt compressed file with the given name.
- *
- * May return 0 in case of a failure.
- */
-Archive *createStuffItArchive(const String &fileName);
-Archive *createStuffItArchive(SeekableReadStream *stream);
+class CursorModifier : public Modifier {
+public:
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::CursorModifier &data);
 
-/** @} */
+private:
+	Event _applyWhen;
+	Event _removeWhen;
+	uint32 _cursorID;
+};
 
-} // End of namespace Common
+class StandardPlugIn : public MTropolis::PlugIn {
+public:
+	StandardPlugIn();
+
+	void registerModifiers(IPlugInModifierRegistrar *registrar) const override;
+
+private:
+	PlugInModifierFactory<CursorModifier, Data::Standard::CursorModifier> _cursorModifierFactory;
+};
+
+} // End of namespace Standard
+
+} // End of namespace MTropolis
 
 #endif
