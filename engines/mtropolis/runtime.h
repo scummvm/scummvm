@@ -35,9 +35,17 @@
 namespace MTropolis {
 
 class Project;
+class PlugIn;
 class Modifier;
+struct IModifierFactory;
+struct IPlugInModifierFactory;
+struct IPlugInModifierFactoryAndDataFactory;
+struct ModifierLoaderContext;
 
-
+struct Point16 {
+	int16 x;
+	int16 y;
+};
 
 struct MessageFlags {
 	bool relay : 1;
@@ -76,6 +84,23 @@ enum MessageDestination {
 struct SegmentDescription {
 	int volumeID;
 	Common::String filePath;
+	Common::SeekableReadStream *stream;
+};
+
+struct IPlugInModifierRegistrar {
+	virtual void registerPlugInModifier(const char *name, const Data::IPlugInModifierDataFactory *loader, const IPlugInModifierFactory *factory) = 0;
+	void registerPlugInModifier(const char *name, const IPlugInModifierFactoryAndDataFactory *loaderFactory);
+};
+
+class PlugIn {
+public:
+	virtual ~PlugIn();
+
+	virtual void registerModifiers(IPlugInModifierRegistrar *registrar) const = 0;
+};
+
+struct ProjectResources {
+	virtual ~ProjectResources();
 };
 
 class ProjectDescription {
@@ -85,10 +110,19 @@ public:
 	~ProjectDescription();
 
 	void addSegment(int volumeID, const char *filePath);
+	void addSegment(int volumeID, Common::SeekableReadStream *stream);
 	const Common::Array<SegmentDescription> &getSegments() const;
+
+	void addPlugIn(const Common::SharedPtr<PlugIn> &plugIn);
+	const Common::Array<Common::SharedPtr<PlugIn> > &getPlugIns() const;
+
+	void setResources(const Common::SharedPtr<ProjectResources> &resources);
+	const Common::SharedPtr<ProjectResources> &getResources() const;
 
 private:
 	Common::Array<SegmentDescription> _segments;
+	Common::Array<Common::SharedPtr<PlugIn> > _plugIns;
+	Common::SharedPtr<ProjectResources> _resources;
 };
 
 struct VolumeState {
@@ -191,6 +225,20 @@ struct ChildLoaderStack {
 	Common::Array<ChildLoaderContext> contexts;
 };
 
+class ProjectPlugInRegistry : public IPlugInModifierRegistrar  {
+public:
+	ProjectPlugInRegistry();
+
+	void registerPlugInModifier(const char *name, const Data::IPlugInModifierDataFactory *dataFactory, const IPlugInModifierFactory *factory) override;
+
+	const Data::PlugInModifierRegistry &getDataLoaderRegistry() const;
+	const IPlugInModifierFactory *findPlugInModifierFactory(const char *name) const;
+
+private:
+	Data::PlugInModifierRegistry _dataLoaderRegistry;
+	Common::HashMap<Common::String, const IPlugInModifierFactory *> _factoryRegistry;
+};
+
 class Project : public Structural {
 
 public:
@@ -202,7 +250,8 @@ public:
 private:
 	struct Segment {
 		SegmentDescription desc;
-		Common::SharedPtr<Common::SeekableReadStream> stream;
+		Common::SharedPtr<Common::SeekableReadStream> rcStream;
+		Common::SeekableReadStream *weakStream;
 	};
 
 	enum StreamType {
@@ -235,6 +284,8 @@ private:
 	void loadPresentationSettings(const Data::PresentationSettings &presentationSettings);
 	void loadAssetCatalog(const Data::AssetCatalog &assetCatalog);
 	void loadGlobalObjectInfo(ChildLoaderStack &loaderStack, const Data::GlobalObjectInfo &globalObjectInfo);
+	void loadContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject);
+	Common::SharedPtr<Modifier> loadModifierObject(ModifierLoaderContext &loaderContext, const Data::DataObject &dataObject);
 
 	Common::Array<Segment> _segments;
 	Common::Array<StreamDesc> _streams;
@@ -250,6 +301,11 @@ private:
 
 	bool _haveGlobalObjectInfo;
 	SimpleModifierContainer _globalModifiers;
+
+	ProjectPlugInRegistry _plugInRegistry;
+
+	Common::Array<Common::SharedPtr<PlugIn> > _plugIns;
+	Common::SharedPtr<ProjectResources> _resources;
 };
 
 class Section : public Structural {
@@ -270,8 +326,6 @@ protected:
 	uint32 _guid;
 	Common::String _name;
 };
-
-void loadRuntimeContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject);
 
 } // End of namespace MTropolis
 

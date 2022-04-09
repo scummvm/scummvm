@@ -19,44 +19,27 @@
  *
  */
 
-/**
- * @file
- * StuffIt decompressor used in engines:
- * - grim
- * - groovie
- * - kyra
- * - mtropolis
- */
+#include "mtropolis/plugin_standard_data.h"
 
-#ifndef COMMON_STUFFIT_H
-#define COMMON_STUFFIT_H
+namespace MTropolis {
 
-namespace Common {
+namespace Data {
 
-/**
- * @defgroup common_stuffit StuffIt decompressor
- * @ingroup common
- *
- * @brief API related to StuffIt archive files.
- *
- * @{
- */
+namespace Standard {
 
-class Archive;
-class String;
-class SeekableReadStream;
+DataReadErrorCode CursorModifier::load(const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 1)
+		return kDataReadErrorUnsupportedRevision;
 
-/**
- * This factory method creates an Archive instance corresponding to the content
- * of the StuffIt compressed file with the given name.
- *
- * May return 0 in case of a failure.
- */
-Archive *createStuffItArchive(const String &fileName);
-Archive *createStuffItArchive(SeekableReadStream *stream);
+	if (!reader.readU16(unknown1) || !applyWhen.load(reader) || !reader.readU16(unknown2)
+		|| !removeWhen.load(reader) || !reader.readU16(unknown3) || !reader.readU32(cursorID) || !reader.readBytes(unknown4))
+		return kDataReadErrorReadFailed;
 
-/** @} */
+	return kDataReadErrorNone;
+}
 
-} // End of namespace Common
+} // End of namespace Standard
 
-#endif
+} // End of namespace Data
+
+} // End of namespace MTropolis

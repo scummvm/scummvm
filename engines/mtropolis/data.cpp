@@ -20,6 +20,7 @@
  */
 
 #include "mtropolis/data.h"
+#include "common/debug.h"
 
 namespace MTropolis {
 
@@ -31,52 +32,52 @@ DataReader::DataReader(Common::SeekableReadStreamEndian &stream, ProjectFormat p
 
 bool DataReader::readU8(uint8 &value) {
 	value = _stream.readByte();
-	return !_stream.err();
+	return checkErrorAndReset();
 }
 
 bool DataReader::readU16(uint16 &value) {
 	value = _stream.readUint16();
-	return !_stream.err();
+	return checkErrorAndReset();
 }
 
 bool DataReader::readU32(uint32 &value) {
 	value = _stream.readUint32();
-	return !_stream.err();
+	return checkErrorAndReset();
 }
 
 bool DataReader::readU64(uint64 &value) {
 	value = _stream.readUint64();
-	return !_stream.err();
+	return checkErrorAndReset();
 }
 
 bool DataReader::readS8(int8 &value) {
 	value = _stream.readSByte();
-	return !_stream.err();
+	return checkErrorAndReset();
 }
 
 bool DataReader::readS16(int16 &value) {
 	value = _stream.readSint16();
-	return !_stream.err();
+	return checkErrorAndReset();
 }
 
 bool DataReader::readS32(int32 &value) {
 	value = _stream.readSint32();
-	return !_stream.err();
+	return checkErrorAndReset();
 }
 
 bool DataReader::readS64(int64 &value) {
 	value = _stream.readSint64();
-	return !_stream.err();
+	return checkErrorAndReset();
 }
 
 bool DataReader::readF32(float &value) {
 	value = _stream.readFloat();
-	return !_stream.err();
+	return checkErrorAndReset();
 }
 
 bool DataReader::readF64(double &value) {
 	value = _stream.readDouble();
-	return !_stream.err();
+	return checkErrorAndReset();
 }
 
 bool DataReader::read(void *dest, size_t size) {
@@ -86,8 +87,8 @@ bool DataReader::read(void *dest, size_t size) {
 			thisChunkSize = static_cast<uint32>(size);
 		}
 
-		_stream.read(dest, thisChunkSize);
-		if (_stream.err()) {
+		if (_stream.read(dest, thisChunkSize) != thisChunkSize) {
+			checkErrorAndReset();
 			return false;
 		}
 
@@ -139,6 +140,7 @@ bool DataReader::skip(size_t count) {
 		}
 
 		if (!_stream.seek(static_cast<int64>(count), SEEK_CUR)) {
+			checkErrorAndReset();
 			return false;
 		}
 
@@ -154,6 +156,17 @@ ProjectFormat DataReader::getProjectFormat() const {
 bool DataReader::isBigEndian() const {
 	return _stream.isBE();
 }
+
+bool DataReader::checkErrorAndReset() {
+	const bool isFault = _stream.err() || _stream.eos();
+	if (isFault) {
+		_stream.clearErr();
+		return false;
+	}
+
+	return true;
+}
+
 
 bool Rect::load(DataReader &reader) {
 	if (reader.getProjectFormat() == kProjectFormatMacintosh)
@@ -297,11 +310,15 @@ DataReadErrorCode ProjectCatalog::load(DataReader &reader) {
 			return kDataReadErrorReadFailed;
 		}
 
-		if (_revision >= 3 && !reader.skip(8)) {
+		if (_revision >= 3 && reader.getProjectFormat() == Data::kProjectFormatWindows && !reader.skip(8)) {
 			return kDataReadErrorReadFailed;
 		}
 
 		if (!reader.readU32(streamDesc.pos) || !reader.readU32(streamDesc.size)) {
+			return kDataReadErrorReadFailed;
+		}
+
+		if (_revision >= 3 && reader.getProjectFormat() == Data::kProjectFormatMacintosh && !reader.skip(8)) {
 			return kDataReadErrorReadFailed;
 		}
 	}
@@ -406,17 +423,21 @@ bool MiniscriptProgram::load(DataReader &reader) {
 	return true;
 }
 
+bool TypicalModifierHeader::load(DataReader& reader) {
+	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid) || !reader.readBytes(unknown3) || !reader.readU32(unknown4) || !reader.readBytes(unknown5) || !reader.readU16(lengthOfName))
+		return false;
+
+	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
+		return false;
+
+	return true;
+}
+
 DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
 	if (_revision != 0x3eb)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid) || !reader.readBytes(unknown3) || !reader.readU32(unknown4) || !reader.readBytes(unknown5) || !reader.readU16(lengthOfName))
-		return kDataReadErrorReadFailed;
-
-	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
-		return kDataReadErrorReadFailed;
-
-	if (!enableWhen.load(reader) || !reader.readBytes(unknown6) || !reader.readU8(unknown7) || !program.load(reader))
+	if (!modHeader.load(reader) || !enableWhen.load(reader) || !reader.readBytes(unknown6) || !reader.readU8(unknown7) || !program.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -426,11 +447,7 @@ DataReadErrorCode MessengerModifier::load(DataReader& reader) {
 	if (_revision != 0x3ea)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
-		|| !reader.readBytes(unknown3) || !reader.readU32(unknown4) || !reader.readBytes(unknown5) || !reader.readU16(lengthOfName))
-		return kDataReadErrorReadFailed;
-
-	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
+	if (!modHeader.load(reader))
 		return kDataReadErrorReadFailed;
 
 	// Unlike most cases, the "when" event is split in half in this case
@@ -449,14 +466,7 @@ DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 	if (_revision != 0x3ea)
 		return kDataReadErrorReadFailed;
 
-	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
-		|| !reader.readBytes(unknown3) || !reader.readU32(unknown4) || !reader.readBytes(unknown5) || !reader.readU16(lengthOfName))
-		return kDataReadErrorReadFailed;
-
-	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
-		return kDataReadErrorReadFailed;
-
-	if (!reader.readU32(messageFlags) || !when.load(reader) || !send.load(reader) ||
+	if (!modHeader.load(reader) || !reader.readU32(messageFlags) || !when.load(reader) || !send.load(reader) ||
 		!reader.readU16(unknown6) || !reader.readU32(destination) || !reader.readBytes(unknown7) || !reader.readU16(with)
 		|| !reader.readBytes(unknown8) || !reader.readU32(withSourceGUID) || !reader.readBytes(unknown9) || !reader.readU8(withSourceLength) || !reader.readU8(unknown10))
 		return kDataReadErrorReadFailed;
@@ -466,6 +476,63 @@ DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 
 	if (!program.load(reader))
 		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode BooleanVariableModifier::load(DataReader &reader) {
+	if (_revision != 0x3e8)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readU8(value) || !reader.readU8(unknown5))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode PointVariableModifier::load(DataReader &reader) {
+	if (_revision != 0x3e8)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readBytes(unknown5) || !value.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+PlugInModifierData::~PlugInModifierData() {
+}
+
+DataReadErrorCode PlugInModifier::load(DataReader &reader) {
+	if (_revision != 0x03e9)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(unknown1) || !reader.readU32(codedSize) || !reader.read(modifierName, 16)
+		|| !reader.readU32(guid) || !reader.readBytes(unknown2) || !reader.readU16(plugInRevision)
+		|| !reader.readU32(unknown4) || !reader.readBytes(unknown5) || !reader.readU16(lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	// Terminate modifier name safely
+	modifierName[16] = 0;
+
+	subObjectSize = codedSize;
+	if (reader.getProjectFormat() == kProjectFormatWindows) {
+		// This makes no sense but it's how it's stored...
+		if (subObjectSize < lengthOfName * 256u)
+			return kDataReadErrorReadFailed;
+		subObjectSize -= lengthOfName * 256u;
+	} else {
+		if (subObjectSize < lengthOfName)
+			return kDataReadErrorReadFailed;
+		subObjectSize -= lengthOfName;
+	}
+
+	if (subObjectSize < 52)
+		return kDataReadErrorReadFailed;
+	subObjectSize -= 52;
 
 	return kDataReadErrorNone;
 }
@@ -480,7 +547,18 @@ DataReadErrorCode Debris::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-DataReadErrorCode loadDataObject(DataReader& reader, Common::SharedPtr<DataObject>& outObject) {
+const IPlugInModifierDataFactory *PlugInModifierRegistry::findLoader(const char *modifierName) const {
+	Common::HashMap<Common::String, const IPlugInModifierDataFactory *>::const_iterator it = _loaders.find(modifierName);
+	if (it == _loaders.end())
+		return nullptr;
+	return it->_value;
+}
+
+void PlugInModifierRegistry::registerLoader(const char *modifierName, const IPlugInModifierDataFactory *loader) {
+	_loaders[modifierName] = loader;
+}
+
+DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataReader &reader, Common::SharedPtr<DataObject> &outObject) {
 	uint32 type;
 	uint16 revision;
 	if (!reader.readU32(type) || !reader.readU16(revision)) {
@@ -522,10 +600,20 @@ DataReadErrorCode loadDataObject(DataReader& reader, Common::SharedPtr<DataObjec
 	case DataObjectTypes::kIfMessengerModifier:
 		dataObject = new IfMessengerModifier();
 		break;
+	case DataObjectTypes::kBooleanVariableModifier:
+		dataObject = new BooleanVariableModifier();
+		break;
+	case DataObjectTypes::kPointVariableModifier:
+		dataObject = new PointVariableModifier();
+		break;
 	case DataObjectTypes::kDebris:
 		dataObject = new Debris();
 		break;
+	case DataObjectTypes::kPlugInModifier:
+		dataObject = new PlugInModifier();
+		break;
 	default:
+		debug(1, "Unrecognized data object type %x", static_cast<int>(type));
 		break;
 	}
 
@@ -538,6 +626,24 @@ DataReadErrorCode loadDataObject(DataReader& reader, Common::SharedPtr<DataObjec
 	if (errorCode != kDataReadErrorNone) {
 		outObject.reset();
 		return errorCode;
+	}
+
+	if (type == DataObjectTypes::kPlugInModifier) {
+		const IPlugInModifierDataFactory *plugInLoader = registry.findLoader(static_cast<const PlugInModifier *>(dataObject)->modifierName);
+		if (!plugInLoader) {
+			debug(1, "Unrecognized plug-in modifier type %s", static_cast<const PlugInModifier *>(dataObject)->modifierName);
+			outObject.reset();
+			return kDataReadErrorPlugInNotFound;
+		}
+
+		Common::SharedPtr<PlugInModifierData> plugInModifierData(plugInLoader->createModifierData());
+		errorCode = plugInModifierData->load(*static_cast<const PlugInModifier *>(dataObject), reader);
+		if (errorCode != kDataReadErrorNone) {
+			outObject.reset();
+			return errorCode;
+		}
+
+		static_cast<PlugInModifier *>(dataObject)->plugInData = plugInModifierData;
 	}
 
 	outObject = sharedPtr;

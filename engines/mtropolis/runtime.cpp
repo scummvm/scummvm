@@ -36,11 +36,21 @@ MessageFlags::MessageFlags() : relay(true), cascade(true), immediate(true) {
 Event::Event() : eventType(0), eventInfo(0) {
 }
 
-bool Event::load(const Data::Event& data) {
+bool Event::load(const Data::Event &data) {
 	eventType = data.eventID;
 	eventInfo = data.eventInfo;
 
 	return true;
+}
+
+void IPlugInModifierRegistrar::registerPlugInModifier(const char *name, const IPlugInModifierFactoryAndDataFactory *loaderFactory) {
+	return this->registerPlugInModifier(name, loaderFactory, loaderFactory);
+}
+
+PlugIn::~PlugIn() {
+}
+
+ProjectResources::~ProjectResources() {
 }
 
 ProjectDescription::ProjectDescription() {
@@ -53,6 +63,15 @@ void ProjectDescription::addSegment(int volumeID, const char *filePath) {
 	SegmentDescription desc;
 	desc.volumeID = volumeID;
 	desc.filePath = filePath;
+	desc.stream = nullptr;
+
+	_segments.push_back(desc);
+}
+
+void ProjectDescription::addSegment(int volumeID, Common::SeekableReadStream *stream) {
+	SegmentDescription desc;
+	desc.volumeID = volumeID;
+	desc.stream = stream;
 
 	_segments.push_back(desc);
 }
@@ -60,6 +79,23 @@ void ProjectDescription::addSegment(int volumeID, const char *filePath) {
 const Common::Array<SegmentDescription> &ProjectDescription::getSegments() const {
 	return _segments;
 }
+
+void ProjectDescription::addPlugIn(const Common::SharedPtr<PlugIn>& plugIn) {
+	_plugIns.push_back(plugIn);
+}
+
+const Common::Array<Common::SharedPtr<PlugIn> >& ProjectDescription::getPlugIns() const {
+	return _plugIns;
+}
+
+void ProjectDescription::setResources(const Common::SharedPtr<ProjectResources> &resources) {
+	_resources = resources;
+}
+
+const Common::SharedPtr<ProjectResources> &ProjectDescription::getResources() const {
+	return _resources;
+}
+
 
 const Common::Array<Common::SharedPtr<Modifier> >& SimpleModifierContainer::getModifiers() const {
 	return _modifiers;
@@ -126,6 +162,24 @@ const Common::Array<Common::SharedPtr<Modifier> > &IModifierContainer::getModifi
 	return const_cast<IModifierContainer &>(*this).getModifiers();
 };
 
+ProjectPlugInRegistry::ProjectPlugInRegistry() {
+}
+
+void ProjectPlugInRegistry::registerPlugInModifier(const char *name, const Data::IPlugInModifierDataFactory *loader, const IPlugInModifierFactory *factory) {
+	_dataLoaderRegistry.registerLoader(name, loader);
+	_factoryRegistry[name] = factory;
+}
+
+const Data::PlugInModifierRegistry& ProjectPlugInRegistry::getDataLoaderRegistry() const {
+	return _dataLoaderRegistry;
+}
+
+const IPlugInModifierFactory *ProjectPlugInRegistry::findPlugInModifierFactory(const char *name) const {
+	Common::HashMap<Common::String, const IPlugInModifierFactory *>::const_iterator it = _factoryRegistry.find(name);
+	if (it == _factoryRegistry.end())
+		return nullptr;
+	return it->_value;
+}
 
 Project::Project()
 	: _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false), _haveGlobalObjectInfo(false) {
@@ -135,6 +189,20 @@ Project::~Project() {
 }
 
 void Project::loadFromDescription(const ProjectDescription& desc) {
+	_resources = desc.getResources();
+
+	const Common::Array<Common::SharedPtr<PlugIn> > &plugIns = desc.getPlugIns();
+
+	for (Common::Array<Common::SharedPtr<PlugIn> >::const_iterator it = plugIns.begin(), itEnd = plugIns.end(); it != itEnd; ++it) {
+		Common::SharedPtr<PlugIn> plugIn = (*it);
+
+		_plugIns.push_back(plugIn);
+
+		plugIn->registerModifiers(&_plugInRegistry);
+	}
+
+	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
+
 	size_t numSegments = desc.getSegments().size();
 	_segments.resize(numSegments);
 
@@ -145,7 +213,7 @@ void Project::loadFromDescription(const ProjectDescription& desc) {
 	// Try to open the first segment
 	openSegmentStream(0);
 
-	Common::SeekableReadStream *baseStream = _segments[0].stream.get();
+	Common::SeekableReadStream *baseStream = _segments[0].weakStream;
 	uint16_t startValue = baseStream->readUint16LE();
 
 	if (startValue == 1) {
@@ -168,14 +236,14 @@ void Project::loadFromDescription(const ProjectDescription& desc) {
 	Data::DataReader reader(stream, _projectFormat);
 
 	Common::SharedPtr<Data::DataObject> dataObject;
-	Data::loadDataObject(reader, dataObject);
+	Data::loadDataObject(_plugInRegistry.getDataLoaderRegistry(), reader, dataObject);
 
 	if (!dataObject || dataObject->getType() != Data::DataObjectTypes::kProjectHeader) {
 		error("Expected project header but found something else");
 
 	}
 
-	Data::loadDataObject(reader, dataObject);
+	Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
 	if (!dataObject || dataObject->getType() != Data::DataObjectTypes::kProjectCatalog) {
 		error("Expected project catalog but found something else");
 	}
@@ -229,14 +297,20 @@ void Project::openSegmentStream(int segmentIndex) {
 
 	Segment &segment = _segments[segmentIndex];
 
-	if (segment.stream)
+	if (segment.weakStream)
 		return;
 
-	Common::File *f = new Common::File();
-	segment.stream.reset(f);
+	if (segment.desc.stream) {
+		segment.rcStream.reset();
+		segment.weakStream = segment.desc.stream;
+	} else {
+		Common::File *f = new Common::File();
+		segment.rcStream.reset(f);
+		segment.weakStream = f;
 
-	if (!f->open(segment.desc.filePath)) {
-		error("Failed to open segment file %s", segment.desc.filePath.c_str());
+		if (!f->open(segment.desc.filePath)) {
+			error("Failed to open segment file %s", segment.desc.filePath.c_str());
+		}
 	}
 }
 
@@ -246,21 +320,26 @@ void Project::loadBootStream(size_t streamIndex) {
 	size_t segmentIndex = streamDesc.segmentIndex;
 	openSegmentStream(segmentIndex);
 
-	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].stream.get(), streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
+	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
 	Data::DataReader reader(stream, _projectFormat);
 
 	ChildLoaderStack loaderStack;
 
+	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
+
+	size_t numObjectsLoaded = 0;
 	for (;;) {
 		Common::SharedPtr<Data::DataObject> dataObject;
-		Data::loadDataObject(reader, dataObject);
+		Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
+
+		numObjectsLoaded++;
 
 		if (!dataObject) {
 			error("Failed to load project boot data");
 		}
 
 		if (loaderStack.contexts.size() > 0) {
-			loadRuntimeContextualObject(loaderStack, *dataObject.get());
+			loadContextualObject(loaderStack, *dataObject.get());
 		} else {
 			// Root-level objects
 			switch (dataObject->getType()) {
@@ -345,25 +424,36 @@ void Project::loadGlobalObjectInfo(ChildLoaderStack& loaderStack, const Data::Gl
 	}
 }
 
-
-static Common::SharedPtr<Modifier> loadModifierObject(ModifierLoaderContext &loaderContext, const Data::DataObject &dataObject) {
+Common::SharedPtr<Modifier> Project::loadModifierObject(ModifierLoaderContext &loaderContext, const Data::DataObject &dataObject) {
 	// Special case for debris
 	if (dataObject.getType() == Data::DataObjectTypes::kDebris)
 		return nullptr;
 
-	IModifierFactory *factory = getModifierFactoryForDataObjectType(dataObject.getType());
+	Common::SharedPtr<Modifier> modifier;
 
-	if (!factory)
-		error("Unknown or unsupported modifier type, or non-modifier encountered where a modifier was expected");
+	// Special case for plug-ins
+	if (dataObject.getType() == Data::DataObjectTypes::kPlugInModifier) {
+		const Data::PlugInModifier &plugInData = static_cast<const Data::PlugInModifier &>(dataObject);
+		const IPlugInModifierFactory *factory = _plugInRegistry.findPlugInModifierFactory(plugInData.modifierName);
+		if (!factory)
+			error("Unknown or unsupported plug-in modifier type");
 
-	Common::SharedPtr<Modifier> modifier = factory->createModifier(loaderContext, dataObject);
+		modifier = factory->createModifier(loaderContext, plugInData);
+	} else {
+		IModifierFactory *factory = getModifierFactoryForDataObjectType(dataObject.getType());
+
+		if (!factory)
+			error("Unknown or unsupported modifier type, or non-modifier encountered where a modifier was expected");
+
+		modifier = factory->createModifier(loaderContext, dataObject);
+	}
 	if (!modifier)
 		error("Modifier object failed to load");
 
 	return modifier;
 }
 
-void loadRuntimeContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject) {
+void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject) {
 	ChildLoaderContext &topContext = stack.contexts.back();
 
 	// The stack entry must always be popped before loading the object because the load process may descend into more children,
@@ -375,8 +465,7 @@ void loadRuntimeContextualObject(ChildLoaderStack &stack, const Data::DataObject
 			if ((--topContext.remainingCount) == 0)
 				stack.contexts.pop_back();
 
-			ModifierLoaderContext loaderContext;
-			loaderContext.childLoaderStack = &stack;
+			ModifierLoaderContext loaderContext(&stack);
 
 			container->appendModifier(loadModifierObject(loaderContext, dataObject));
 		}

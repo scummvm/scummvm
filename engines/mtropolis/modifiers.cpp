@@ -76,8 +76,8 @@ bool MiniscriptModifier::load(ModifierLoaderContext &context, const Data::Minisc
 }
 
 bool MessengerModifier::load(ModifierLoaderContext &context, const Data::MessengerModifier &data) {
-	_guid = data.guid;
-	_name = data.name;
+	_guid = data.modHeader.guid;
+	_name = data.modHeader.name;
 
 	if (!_when.load(data.when) || !_send.load(data.send))
 		return false;
@@ -90,8 +90,8 @@ bool MessengerModifier::load(ModifierLoaderContext &context, const Data::Messeng
 }
 
 bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data) {
-	_guid = data.guid;
-	_name = data.name;
+	_guid = data.modHeader.guid;
+	_name = data.modHeader.name;
 
 	if (!_when.load(data.when) || !_send.load(data.send))
 		return false;
@@ -107,5 +107,23 @@ bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMes
 	return true;
 }
 
+bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data) {
+	_guid = data.modHeader.guid;
+	_name = data.modHeader.name;
+
+	_value = (data.value != 0);
+
+	return true;
+}
+
+bool PointVariableModifier::load(ModifierLoaderContext &context, const Data::PointVariableModifier &data) {
+	_guid = data.modHeader.guid;
+	_name = data.modHeader.name;
+
+	_value.x = data.value.x;
+	_value.y = data.value.y;
+
+	return true;
+}
 
 } // End of namespace MTropolis

@@ -24,10 +24,16 @@
 
 namespace MTropolis {
 
+ModifierLoaderContext::ModifierLoaderContext(ChildLoaderStack *childLoaderStack) : childLoaderStack(childLoaderStack) {}
+
+PlugInModifierLoaderContext::PlugInModifierLoaderContext(ModifierLoaderContext &modifierLoaderContext, const Data::PlugInModifier &plugInModifierData, PlugIn *plugIn)
+	: modifierLoaderContext(modifierLoaderContext), plugInModifierData(plugInModifierData), plugIn(plugIn) {
+}
+
 template<typename TModifier, typename TModifierData>
 class ModifierFactory : public IModifierFactory {
 public:
-	Common::SharedPtr<Modifier> createModifier(ModifierLoaderContext &context, const Data::DataObject &dataObject) override;
+	Common::SharedPtr<Modifier> createModifier(ModifierLoaderContext &context, const Data::DataObject &dataObject) const override;
 	static IModifierFactory *getInstance();
 
 private:
@@ -35,7 +41,7 @@ private:
 };
 
 template<typename TModifier, typename TModifierData>
-Common::SharedPtr<Modifier> ModifierFactory<TModifier, TModifierData>::createModifier(ModifierLoaderContext &context, const Data::DataObject &dataObject) {
+Common::SharedPtr<Modifier> ModifierFactory<TModifier, TModifierData>::createModifier(ModifierLoaderContext &context, const Data::DataObject &dataObject) const {
 	Common::SharedPtr<TModifier> modifier(new TModifier());
 
 	if (!modifier->load(context, static_cast<const TModifierData &>(dataObject)))
@@ -63,6 +69,10 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 		return ModifierFactory<IfMessengerModifier, Data::IfMessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kMessengerModifier:
 		return ModifierFactory<MessengerModifier, Data::MessengerModifier>::getInstance();
+	case Data::DataObjectTypes::kBooleanVariableModifier:
+		return ModifierFactory<BooleanVariableModifier, Data::BooleanVariableModifier>::getInstance();
+	case Data::DataObjectTypes::kPointVariableModifier:
+		return ModifierFactory<PointVariableModifier, Data::PointVariableModifier>::getInstance();
 	default:
 		return nullptr;
 	}
