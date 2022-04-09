@@ -42,7 +42,7 @@ MemoryStream::MemoryStream(uint8_t *buf, size_t buf_sz, StreamWorkMode mode, Dat
 	, _buf_sz(buf_sz)
 	, _len(0)
 	, _cbuf(nullptr)
-	, _mode(kStream_Read)
+	, _mode(mode)
 	, _pos(0) {
 }
 
