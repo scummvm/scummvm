@@ -43,12 +43,19 @@ static const RendererTypeDescription rendererTypes[] = {
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("OpenGL with shaders", "lowres")
 
-const RendererTypeDescription *Renderer::listTypes() {
-	return rendererTypes;
+Common::Array<RendererTypeDescription> Renderer::listTypes() {
+	uint32 available = getAvailableTypes();
+	Common::Array<RendererTypeDescription> ret;
+	for (const RendererTypeDescription *rt = rendererTypes; rt->code; ++rt) {
+		if (available & rt->id) {
+			ret.push_back(*rt);
+		}
+	}
+	return ret;
 }
 
 RendererType Renderer::parseTypeCode(const Common::String &code) {
-	const RendererTypeDescription *rt = listTypes();
+	const RendererTypeDescription *rt = rendererTypes;
 	while (rt->code) {
 		if (rt->code == code) {
 			return rt->id;
@@ -60,7 +67,7 @@ RendererType Renderer::parseTypeCode(const Common::String &code) {
 }
 
 Common::String Renderer::getTypeCode(RendererType type) {
-	const RendererTypeDescription *rt = listTypes();
+	const RendererTypeDescription *rt = rendererTypes;
 	while (rt->code) {
 		if (rt->id == type) {
 			return rt->code;
