@@ -284,7 +284,8 @@ void engine_locate_audio_pak() {
 			_G(platform)->DisplayAlert("Unable to initialize digital audio pack '%s', file could be corrupt or of unsupported format.",
 				music_file.GetCStr());
 		}
-	} else if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).AudioDir2) != 0) {
+	} else if (!_GP(ResPaths).AudioDir2.IsEmpty() &&
+			Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).AudioDir2) != 0) {
 		Debug::Printf(kDbgMsg_Info, "Audio pack was not found, but explicit audio directory is defined.");
 	}
 }

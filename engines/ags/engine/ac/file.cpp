@@ -524,7 +524,8 @@ String find_assetlib(const String &filename) {
 	String libname = File::FindFileCI(_GP(ResPaths).DataDir, filename);
 	if (AssetManager::IsDataFile(libname))
 		return libname;
-	if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).DataDir2) != 0) {
+	if (!_GP(ResPaths).DataDir2.IsEmpty() &&
+		Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).DataDir2) != 0) {
 		// Hack for running in Debugger
 		libname = File::FindFileCI(_GP(ResPaths).DataDir2, filename);
 		if (AssetManager::IsDataFile(libname))
