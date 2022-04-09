@@ -22,6 +22,8 @@
 #include "mtropolis/data.h"
 #include "common/debug.h"
 
+#include <float.h>
+
 namespace MTropolis {
 
 namespace Data {
@@ -79,6 +81,47 @@ bool DataReader::readF64(double &value) {
 	value = _stream.readDouble();
 	return checkErrorAndReset();
 }
+
+bool DataReader::readTruncated8087XPDouble(double &value) {
+	uint64 u64 = _stream.readUint64();
+	if (!checkErrorAndReset())
+		return false;
+	
+	uint8_t sign = static_cast<uint16_t>((u64 >> 63) & 1);
+	int16_t exponent = static_cast<int16_t>((u64 >> 48) & 0x7fff);
+	uint64_t mantissa = (u64 & 0x7fffffffffffULL);
+
+	// Adjust exponent
+	exponent = exponent - 15360;
+	if (exponent > 2047) {
+		// Too big
+		if (sign)
+			value = -DBL_MAX;
+		else
+			value = DBL_MAX;
+	} else if (exponent > 0) {
+		// Normal number
+		uint64_t recombined = (static_cast<uint64_t>(sign) << 63) | (static_cast<uint64_t>(exponent) << 52) | (static_cast<uint64_t>(mantissa) << 5);
+		memcpy(&value, &recombined, 8);
+	} else {
+		// Subnormal number
+		mantissa |= 0x800000000000ULL;
+		mantissa <<= 5;
+		if (exponent <= -52) {
+			mantissa = 0;
+			exponent = 0;
+		} else {
+			mantissa >>= (-exponent);
+			exponent = 0;
+		}
+
+		uint64_t recombined = (static_cast<uint64_t>(sign) << 63) | (static_cast<uint64_t>(exponent) << 52) | (static_cast<uint64_t>(mantissa) << 5);
+		memcpy(&value, &recombined, 8);
+	}
+
+	return true;
+}
+
 
 bool DataReader::read(void *dest, size_t size) {
 	while (size > 0) {
@@ -613,7 +656,7 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		dataObject = new PlugInModifier();
 		break;
 	default:
-		debug(1, "Unrecognized data object type %x", static_cast<int>(type));
+		warning("Unrecognized data object type %x", static_cast<int>(type));
 		break;
 	}
 
@@ -631,7 +674,7 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	if (type == DataObjectTypes::kPlugInModifier) {
 		const IPlugInModifierDataFactory *plugInLoader = registry.findLoader(static_cast<const PlugInModifier *>(dataObject)->modifierName);
 		if (!plugInLoader) {
-			debug(1, "Unrecognized plug-in modifier type %s", static_cast<const PlugInModifier *>(dataObject)->modifierName);
+			warning("Unrecognized plug-in modifier type %s", static_cast<const PlugInModifier *>(dataObject)->modifierName);
 			outObject.reset();
 			return kDataReadErrorPlugInNotFound;
 		}
