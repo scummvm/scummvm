@@ -147,7 +147,7 @@ public:
 		return Common::String::format("\001c%02x%02x%02x", r, g, b);
 	}
 	
-	static Common::String getThemeColor(const ThemeEngine::FontColor &color) {
+	static Common::String getThemeColor(const ThemeEngine::FontColor color) {
 		switch (color) {
 		case ThemeEngine::kFontColorNormal:
 			return Common::String("\001C{normal}");
@@ -157,6 +157,8 @@ public:
 			return Common::String("\001C{unknown}");
 		}
 	}
+
+	static Common::String stripGUIformatting(const Common::String &str);
 
 protected:
 	void drawWidget() override;

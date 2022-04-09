@@ -814,4 +814,34 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 	}
 }
 
+Common::String ListWidget::stripGUIformatting(const Common::String &str) {
+	char* stripped = new char[str.size() + 1];
+	char* d = stripped;
+	const char* s = str.c_str();
+	while (*s) {
+		if (*s != '\001') { // normal symbol
+			*d++ = *s++;
+			continue;
+		}
+
+		s++; // skip \001
+		switch (*s) {
+			case '\001':  // \001\001
+				*d++ = *s++;
+				break;
+			case 'c': // \001cRRGGBB
+				s += 7; // check length?
+				break;
+			case 'C': // \001C{color-name}
+				while (*s && *s++ != '}')
+					;
+				break;
+			default:
+				error("Wrong string format (%c)", *s);
+		}
+	}
+	*d = '\0'; // null terminate
+	return Common::String(stripped);
+}
+
 } // End of namespace GUI
