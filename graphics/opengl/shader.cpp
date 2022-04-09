@@ -256,6 +256,7 @@ void ShaderGL::use(bool forceReload) {
 			}
 		}
 	}
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 GLuint ShaderGL::createBuffer(GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage) {
@@ -263,6 +264,7 @@ GLuint ShaderGL::createBuffer(GLenum target, GLsizeiptr size, const GLvoid *data
 	glGenBuffers(1, &vbo);
 	glBindBuffer(target, vbo);
 	glBufferData(target, size, data, usage);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	return vbo;
 }
 
