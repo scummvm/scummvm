@@ -428,6 +428,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 		debugC(1, kHypnoDebugArcade, "Number of separator frames: %d", _playerFrameSeps.size());
 
 	_playerFrameStart = 0;
+	_playerFrameSep = _playerFrames.size();
 
 	if (_playerFrameSeps.size() > 0) {
 		_playerFrameSep = *_playerFrameSeps.begin();
