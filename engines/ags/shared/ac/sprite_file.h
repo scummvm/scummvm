@@ -45,6 +45,7 @@ class Bitmap;
 
 // TODO: research old version differences
 enum SpriteFileVersion {
+	kSprfVersion_Undefined = 0,
 	kSprfVersion_Uncompressed = 4,
 	kSprfVersion_Compressed = 5,
 	kSprfVersion_Last32bit = 6,
@@ -152,8 +153,6 @@ public:
 	HError      LoadSprite(sprkey_t index, Bitmap *&sprite);
 	// Loads a raw sprite element data into the buffer, stores header info separately
 	HError      LoadRawData(sprkey_t index, SpriteDatHeader &hdr, std::vector<uint8_t> &data);
-	HError      LoadSpriteData(sprkey_t index, SpriteDatHeader &hdr, std::vector<uint8_t> &data,
-		std::vector<uint32_t> &palette);
 
 private:
 	// Seek stream to sprite

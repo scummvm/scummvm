@@ -438,6 +438,8 @@ int SpriteCache::SaveToFile(const String &filename, int store_flags, SpriteCompr
 }
 
 HError SpriteCache::InitFile(const String &filename, const String &sprindex_filename) {
+	Reset();
+
 	std::vector<Size> metrics;
 	HError err = _file.OpenFile(filename, sprindex_filename, metrics);
 	if (!err)
@@ -453,7 +455,6 @@ HError SpriteCache::InitFile(const String &filename, const String &sprindex_file
 		if (!metrics[i].IsNull()) {
 			// Existing sprite
 			_spriteData[i].Flags = SPRCACHEFLAG_ISASSET;
-			_spriteData[i].Image = nullptr;
 			get_new_size_for_sprite(i, metrics[i].Width, metrics[i].Height, _sprInfos[i].Width, _sprInfos[i].Height);
 		} else {
 			// Handle empty slot: remap to sprite 0

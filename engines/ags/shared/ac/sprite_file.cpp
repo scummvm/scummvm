@@ -147,7 +147,9 @@ SpriteFile::SpriteFile() {
 }
 
 HError SpriteFile::OpenFile(const String &filename, const String &sprindex_filename,
-	std::vector<Size> &metrics) {
+		std::vector<Size> &metrics) {
+	Close();
+
 	char buff[20];
 	soff_t spr_initial_offs = 0;
 	int spriteFileID = 0;
@@ -219,6 +221,10 @@ HError SpriteFile::OpenFile(const String &filename, const String &sprindex_filen
 
 void SpriteFile::Close() {
 	_stream.reset();
+	_spriteData.clear();
+	_version = kSprfVersion_Undefined;
+	_storeFlags = 0;
+	_compress = kSprCompress_None;
 	_curPos = -2;
 }
 
