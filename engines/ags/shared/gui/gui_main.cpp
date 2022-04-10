@@ -258,6 +258,8 @@ void GUIMain::DrawAt(Bitmap *ds, int x, int y) {
 		if (!objToDraw->IsVisible())
 			continue;
 
+		if (GUI::Options.ClipControls)
+			subbmp.SetClip(RectWH(objToDraw->X, objToDraw->Y, objToDraw->Width, objToDraw->Height));
 		objToDraw->Draw(&subbmp);
 
 		int selectedColour = 14;

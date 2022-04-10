@@ -196,6 +196,8 @@ enum GuiDisableStyle {
 
 // Global GUI options
 struct GuiOptions {
+	// Clip GUI control's contents to the control's rectangle
+	bool ClipControls = true;
 	// How the GUI controls are drawn when the interface is disabled
 	GuiDisableStyle DisabledStyle = kGuiDis_Unchanged;
 	// Whether to graphically outline GUI controls

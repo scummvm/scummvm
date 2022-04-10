@@ -284,8 +284,8 @@ void GUIButton::WriteToSavegame(Stream *out) const {
 
 void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 	// NOTE: the CLIP flag only clips the image, not the text
-	if (IsClippingImage())
-		ds->SetClip(Rect(X, Y, X + Width - 1, Y + Height - 1));
+	if (IsClippingImage() && !GUI::Options.ClipControls)
+		ds->SetClip(RectWH(X, Y, Width, Height));
 	if (_GP(spriteset)[CurrentImage] != nullptr)
 		draw_gui_sprite(ds, CurrentImage, X, Y, true);
 
@@ -317,11 +317,13 @@ void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 		                                   _GP(spriteset)[CurrentImage]->GetWidth(),
 		                                   _GP(spriteset)[CurrentImage]->GetHeight()));
 	}
-	ds->ResetClip();
 
 	// Don't print Text of (INV) (INVSHR) (INVNS)
 	if (_placeholder == kButtonPlace_None && !_unnamed)
 		DrawText(ds, draw_disabled);
+
+	if (IsClippingImage() && !GUI::Options.ClipControls)
+		ds->ResetClip();
 }
 
 void GUIButton::DrawText(Bitmap *ds, bool draw_disabled) {
