@@ -143,6 +143,7 @@ public:
 	uint32 getSize() const {
 		return _stream.size();
 	}
+	uint32 findLargestChunk(uint start, uint end);
 	uint32 getChunkCount() const;
 	Chunk *getChunk(uint num);
 	virtual uint8 *getChunkData(uint num);

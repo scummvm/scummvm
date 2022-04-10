@@ -27,14 +27,6 @@
 
 namespace Chewy {
 
-Memory::Memory() {
-	file = new Data();
-}
-
-Memory::~Memory() {
-	delete (file);
-}
-
 TafInfo *Memory::taf_adr(const char *filename) {
 	SpriteResource *res = new SpriteResource(filename);
 	int32 imageCount = res->getChunkCount();

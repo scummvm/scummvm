@@ -22,20 +22,17 @@
 #ifndef CHEWY_MEMORY_H
 #define CHEWY_MEMORY_H
 
-#include "chewy/data.h"
 #include "chewy/ngstypes.h"
 
 namespace Chewy {
 
 class Memory {
 public:
-	Memory();
-	~Memory();
+	Memory() {}
+	~Memory() {}
 
 	TafInfo *taf_adr(const char *filename);
 	TafSeqInfo *taf_seq_adr(int16 image_start, int16 image_anz);
-
-	Data *file;
 };
 
 } // namespace Chewy

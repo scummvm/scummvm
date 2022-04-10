@@ -114,6 +114,15 @@ Chunk *Resource::getChunk(uint num) {
 	return &_chunkList[num];
 }
 
+uint32 Resource::findLargestChunk(uint start, uint end) {
+	uint32 maxSize = 0;
+	for (uint i = start; i < end; i++) {
+		if (_chunkList[i].size > maxSize)
+			maxSize = _chunkList[i].size;
+	}
+	return maxSize;
+}
+
 uint8 *Resource::getChunkData(uint num) {
 	assert(num < _chunkList.size());
 

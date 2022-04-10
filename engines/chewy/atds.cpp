@@ -348,8 +348,7 @@ void Atdsys::set_split_win(int16 nr, int16 x, int16 y) {
 }
 
 void Atdsys::set_handle(const char *fname, int16 mode, int16 chunkStart, int16 chunkNr) {
-	ChunkHead Ch;
-	uint32 size = _G(mem)->file->getPoolSize(fname, chunkStart, chunkNr);
+	uint32 size = _text->findLargestChunk(chunkStart, chunkStart + chunkNr);
 	char *tmp_adr = size ? (char *)MALLOC(size + 3) : nullptr;
 
 	if (_atdsMem[mode])
@@ -358,51 +357,31 @@ void Atdsys::set_handle(const char *fname, int16 mode, int16 chunkStart, int16 c
 	_atdsPoolOff[mode] = chunkStart;
 
 	if (mode == INV_USE_DATA) {
-		_G(mem)->file->selectPoolItem(_atdsHandle, _atdsPoolOff[mode]);
-		_atdsHandle->seek(-ChunkHead::SIZE(), SEEK_CUR);
-
-		if (!Ch.load(_atdsHandle))
-			error("Error reading from %s", fname);
+		const uint32 size = _text->getChunk(chunkStart)->size;
+		const uint8 *chunkData = _text->getChunkData(chunkStart);
 
 		free(_invUseMem);
-		_invUseMem = (char *)MALLOC(Ch.size + 3l);
+		_invUseMem = (char *)MALLOC(size + 3l);
+		memcpy(_invUseMem, chunkData, size);
+		delete[] chunkData;
 
-		if (Ch.size) {
-			if (!_atdsHandle->read(_invUseMem, Ch.size)) {
-				error("Error reading from %s", fname);
-			} else {
-				crypt(_invUseMem, Ch.size);
-			}
-		}
-		_invUseMem[Ch.size] = (char)BLOCKENDE;
-		_invUseMem[Ch.size + 1] = (char)BLOCKENDE;
-		_invUseMem[Ch.size + 2] = (char)BLOCKENDE;
+		_invUseMem[size] = (char)BLOCKENDE;
+		_invUseMem[size + 1] = (char)BLOCKENDE;
+		_invUseMem[size + 2] = (char)BLOCKENDE;
 	}
 }
 
 void Atdsys::load_atds(int16 chunkNr, int16 mode) {
 	char *txt_adr = _atdsMem[mode];
 
-	ChunkHead Ch;
 	if (_atdsHandle && txt_adr) {
-		_G(mem)->file->selectPoolItem(_atdsHandle, chunkNr + _atdsPoolOff[mode]);
-		_atdsHandle->seek(-ChunkHead::SIZE(), SEEK_CUR);
-		if (!Ch.load(_atdsHandle)) {
-			error("load_atds error");
-		} else {
-			if (Ch.size) {
-				if (_atdsHandle->read(txt_adr, Ch.size) != Ch.size) {
-					error("load_atds error");
-				} else {
-					crypt(txt_adr, Ch.size);
-				}
-			}
-			txt_adr[Ch.size] = (char)BLOCKENDE;
-			txt_adr[Ch.size + 1] = (char)BLOCKENDE;
-			txt_adr[Ch.size + 2] = (char)BLOCKENDE;
-		}
-	} else {
-		error("load_atds error");
+		const uint32 size = _text->getChunk(chunkNr + _atdsPoolOff[mode])->size;
+		const uint8 *chunkData = _text->getChunkData(chunkNr + _atdsPoolOff[mode]);
+		memcpy(txt_adr, chunkData, size);
+		delete[] chunkData;
+		txt_adr[size] = (char)BLOCKENDE;
+		txt_adr[size + 1] = (char)BLOCKENDE;
+		txt_adr[size + 2] = (char)BLOCKENDE;
 	}
 }
 
