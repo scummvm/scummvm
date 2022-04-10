@@ -665,7 +665,9 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVid
 				playVideo(*_shoots[i].video);
 				int w = _shoots[i].video->decoder->getWidth();
 				int h = _shoots[i].video->decoder->getHeight();
+				uint32 explosionLastFrame = _shoots[i].video->decoder->getFrameCount() - 1;
 				_shoots[i].video->position = Common::Point(position.x - w / 2, position.y - h / 2);
+				_shoots[i].lastFrame = explosionLastFrame - 1;
 			} else if (_objIdx == 0 && !arc->hitBoss1Video.empty()) {
 				background.decoder->pauseVideo(true);
 				MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
