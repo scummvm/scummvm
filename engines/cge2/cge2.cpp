@@ -139,7 +139,7 @@ void CGE2Engine::init() {
 	_sys = new System(this);
 	_eventManager = new EventManager(this);
 	_map = new Map(this);
-	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;	
 }
 
 void CGE2Engine::deinit() {
@@ -183,8 +183,10 @@ bool CGE2Engine::hasFeature(EngineFeature f) const {
 
 Common::Error CGE2Engine::run() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr)
+	if (ttsMan != nullptr) {
 		ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
+		ttsMan->enable(ConfMan.getBool("tts_enabled_speech") || ConfMan.getBool("tts_enabled_objects"));
+	}
 	syncSoundSettings();
 	initGraphics(kScrWidth, kScrHeight);
 

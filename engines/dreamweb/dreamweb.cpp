@@ -397,6 +397,7 @@ Common::Error DreamWebEngine::run() {
 	if (_ttsMan != nullptr) {
 		Common::String languageString = Common::getLanguageCode(getLanguage());
 		_ttsMan->setLanguage(languageString);
+		_ttsMan->enable(ConfMan.getBool("tts_enabled_objects") || ConfMan.getBool("tts_enabled_speech"));
 		switch (getLanguage()) {
 		case Common::RU_RUS:
 			_textEncoding = Common::kDos866;

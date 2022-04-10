@@ -67,6 +67,7 @@ SoundManager::SoundManager(MortevielleEngine *vm, Audio::Mixer *mixer) {
 	_ttsMan = g_system->getTextToSpeechManager();
 	if (_ttsMan) {
 		_ttsMan->setLanguage(ConfMan.get("language"));
+		_ttsMan->enable(true);
 		_ttsMan->stop();
 		_ttsMan->setRate(0);
 		_ttsMan->setPitch(0);

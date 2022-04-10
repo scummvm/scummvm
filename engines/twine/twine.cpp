@@ -31,6 +31,7 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/text-to-speech.h"
 #include "engines/metaengine.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
@@ -477,6 +478,10 @@ void TwinEEngine::initConfigurations() {
 	_cfgfile.ShadowMode = ConfGetIntOrDefault("shadow", 2);
 	_cfgfile.SceZoom = ConfGetBoolOrDefault("scezoom", false);
 	_cfgfile.PolygonDetails = ConfGetIntOrDefault("polygondetails", 2);
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr)
+		ttsMan->enable(ConfGetBoolOrDefault("tts_narrator", false));
 
 	debug(1, "UseCD:          %s", (_cfgfile.UseCD ? "true" : "false"));
 	debug(1, "Sound:          %s", (_cfgfile.Sound ? "true" : "false"));

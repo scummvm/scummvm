@@ -24,6 +24,7 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/text-to-speech.h"
 
 namespace Sherlock {
 
@@ -245,6 +246,10 @@ void SherlockEngine::loadConfig() {
 	_ui->_helpStyle = ConfMan.getBool("help_style");
 	_ui->_slideWindows = ConfMan.getBool("window_style");
 	_people->_portraitsOn = ConfMan.getBool("portraits_on");
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr)
+		ttsMan->enable(ConfMan.getBool("tts_narrator"));
 }
 
 void SherlockEngine::saveConfig() {
