@@ -429,13 +429,17 @@ HError SpriteFile::LoadRawData(sprkey_t index, SpriteDatHeader &hdr, std::vector
 	size_t data_size = 0;
 	soff_t data_pos = _stream->GetPosition();
 	// Optional palette
-	data_size += hdr.PalCount * GetPaletteBPP(hdr.SFormat);
+	size_t pal_size = hdr.PalCount * GetPaletteBPP(hdr.SFormat);
+	data_size += pal_size;
+	_stream->Seek(pal_size);
+	// Pixel data
 	if ((_version >= kSprfVersion_StorageFormats) || _compress != kSprCompress_None)
 		data_size += (uint32_t)_stream->ReadInt32() + sizeof(uint32_t);
 	else
 		data_size += hdr.Width * hdr.Height * hdr.BPP;
+	// Seek back and read all at once
 	data.resize(data_size);
-	_stream->Seek(data_pos);
+	_stream->Seek(data_pos, kSeekBegin);
 	_stream->Read(&data[0], data_size);
 
 	_curPos = index + 1; // mark correct pos
