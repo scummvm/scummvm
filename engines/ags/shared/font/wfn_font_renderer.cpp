@@ -19,11 +19,11 @@
  *
  */
 
+#include "ags/shared/font/wfn_font_renderer.h"
 #include "ags/shared/ac/common.h" // our_eip
 #include "ags/shared/core/asset_manager.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/font/wfn_font.h"
-#include "ags/shared/font/wfn_font_renderer.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/util/stream.h"
 #include "ags/globals.h"
@@ -99,23 +99,21 @@ int RenderChar(Bitmap *ds, const int at_x, const int at_y, const WFNChar &wfn_ch
 	const unsigned char *actdata = wfn_char.Data;
 	const int bytewid = wfn_char.GetRowByteCount();
 
-	int x = at_x;
-	int y = at_y;
-	for (int h = 0; h < height; ++h) {
-		for (int w = 0; w < width; ++w) {
+	// NOTE: allegro's putpixel ignores clipping (optimization),
+	// so we'll have to accomodate for that ourselves
+	Rect clip = ds->GetClip();
+	int sx = MAX(at_x, clip.Left), ex = MIN(at_x + width * scale, clip.Right + 1);
+	int sy = MAX(at_y, clip.Top), ey = MIN(at_y + height * scale, clip.Bottom + 1);
+	for (int h = 0, y = sy; h < height && y < ey; ++h, y += scale) {
+		for (int w = 0, x = sx; w < width && x < ex; ++w, x += scale) {
 			if (((actdata[h * bytewid + (w / 8)] & (0x80 >> (w % 8))) != 0)) {
 				if (scale > 1) {
-					ds->FillRect(Rect(x + w, y + h, x + w + (scale - 1),
-					                  y + h + (scale - 1)), text_color);
+					ds->FillRect(RectWH(x, y, scale - 1, scale - 1), text_color);
 				} else {
-					ds->PutPixel(x + w, y + h, text_color);
+					ds->PutPixel(x, y, text_color);
 				}
 			}
-
-			x += scale - 1;
 		}
-		y += scale - 1;
-		x = at_x;
 	}
 	return width * scale;
 }
