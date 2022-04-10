@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-10 16:11+0000\n"
+"POT-Creation-Date: 2022-04-10 17:01+0000\n"
 "PO-Revision-Date: 2022-04-06 17:17+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -2226,11 +2226,11 @@ msgstr "Játék"
 msgid "Saves"
 msgstr "Mentések"
 
-#: base/main.cpp:650
+#: base/main.cpp:651
 msgid "Error running game:"
 msgstr "Hiba a játék futtatásakor:"
 
-#: base/main.cpp:697
+#: base/main.cpp:698
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Nem található olyan játékmotor ami a választott játékot támogatja"
 

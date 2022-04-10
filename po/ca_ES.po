@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-10 16:11+0000\n"
+"POT-Creation-Date: 2022-04-10 17:01+0000\n"
 "PO-Revision-Date: 2022-04-04 12:20+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -2254,11 +2254,11 @@ msgstr "Jugar"
 msgid "Saves"
 msgstr "Partides desades"
 
-#: base/main.cpp:650
+#: base/main.cpp:651
 msgid "Error running game:"
 msgstr "Error al executar el joc:"
 
-#: base/main.cpp:697
+#: base/main.cpp:698
 msgid "Could not find any engine capable of running the selected game"
 msgstr "No s'ha pogut trobar cap motor capaç d'executar el joc seleccionat"
 
