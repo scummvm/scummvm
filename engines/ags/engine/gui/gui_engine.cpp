@@ -98,8 +98,6 @@ int get_eip_guiobj() {
 	return _G(eip_guiobj);
 }
 
-bool outlineGuiObjects = false;
-
 namespace AGS {
 namespace Shared {
 

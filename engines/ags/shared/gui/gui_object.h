@@ -30,11 +30,6 @@
 
 namespace AGS3 {
 
-#define GUIDIS_GREYOUT   1
-#define GUIDIS_BLACKOUT  2
-#define GUIDIS_UNCHANGED 4
-#define GUIDIS_GUIOFF  0x80
-
 struct KeyInput;
 
 namespace AGS {
@@ -138,7 +133,7 @@ HorAlignment ConvertLegacyGUIAlignment(LegacyGUIAlignment align);
 
 // Tells if the given control is considered enabled, taking global flag into account
 inline bool IsGUIEnabled(AGS::Shared::GUIObject *g) {
-	return !_G(all_buttons_disabled) && g->IsEnabled();
+	return (_G(all_buttons_disabled) < 0) && g->IsEnabled();
 }
 
 } // namespace AGS3

@@ -206,6 +206,7 @@ public:
 
 namespace GUI {
 extern GuiVersion GameGuiVersion;
+extern GuiOptions Options;
 
 // Draw standart "shading" effect over rectangle
 void DrawDisabledEffect(Bitmap *ds, const Rect &rc);
@@ -251,8 +252,6 @@ extern int get_text_width_outlined(Shared::Bitmap *ds, const char *tex, int font
 #define SET_EIP(x) set_our_eip(x);
 extern void set_eip_guiobj(int eip);
 extern int get_eip_guiobj();
-
-extern bool outlineGuiObjects;
 
 } // namespace AGS3
 

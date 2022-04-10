@@ -74,7 +74,6 @@ void    replace_macro_tokens(const char *text, AGS::Shared::String &fixed_text);
 void    update_gui_zorder();
 void    export_gui_controls(int ee);
 void    unexport_gui_controls(int ee);
-int     convert_gui_disabled_style(int oldStyle);
 void    update_gui_disabled_status();
 int     adjust_x_for_guis(int xx, int yy);
 int     adjust_y_for_guis(int yy);

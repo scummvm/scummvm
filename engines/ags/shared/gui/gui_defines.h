@@ -27,7 +27,6 @@ namespace AGS3 {
 #define GUIMAGIC          0xcafebeef
 #define MAX_GUIOBJ_EVENTS 10
 #define TEXTWINDOW_PADDING_DEFAULT  3
-//#define MAX_OBJ_EACH_TYPE 251
 
 // TODO: find out more about gui version history
 //=============================================================================
@@ -186,6 +185,21 @@ enum GUITextBoxFlags {
 enum GuiSvgVersion {
 	kGuiSvgVersion_Initial = 0,
 	kGuiSvgVersion_350 = 1
+};
+
+enum GuiDisableStyle {
+	kGuiDis_Greyout = 0,
+	kGuiDis_Blackout = 1,
+	kGuiDis_Unchanged = 2,
+	kGuiDis_Off = 3
+};
+
+// Global GUI options
+struct GuiOptions {
+	// How the GUI controls are drawn when the interface is disabled
+	GuiDisableStyle DisabledStyle = kGuiDis_Unchanged;
+	// Whether to graphically outline GUI controls
+	bool OutlineControls = false;
 };
 
 } // namespace Shared

@@ -97,15 +97,15 @@ void GUIButton::Draw(Bitmap *ds) {
 	bool draw_disabled = !IsGUIEnabled(this);
 
 	// if it's "Unchanged when disabled" or "GUI Off", don't grey out
-	if (_G(gui_disabled_style) == GUIDIS_UNCHANGED ||
-	        _G(gui_disabled_style) == GUIDIS_GUIOFF) {
+	if ((GUI::Options.DisabledStyle == kGuiDis_Unchanged) ||
+		(GUI::Options.DisabledStyle == kGuiDis_Off)) {
 		draw_disabled = false;
 	}
 	// TODO: should only change properties in reaction to particular events
 	if (CurrentImage <= 0 || draw_disabled)
 		CurrentImage = Image;
 
-	if (draw_disabled && _G(gui_disabled_style) == GUIDIS_BLACKOUT)
+	if (draw_disabled && (GUI::Options.DisabledStyle == kGuiDis_Blackout))
 		// buttons off when disabled - no point carrying on
 		return;
 
@@ -311,7 +311,7 @@ void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 		}
 	}
 
-	if ((draw_disabled) && (_G(gui_disabled_style) == GUIDIS_GREYOUT)) {
+	if ((draw_disabled) && (GUI::Options.DisabledStyle == kGuiDis_Greyout)) {
 		// darken the button when disabled
 		GUI::DrawDisabledEffect(ds, RectWH(X, Y,
 		                                   _GP(spriteset)[CurrentImage]->GetWidth(),

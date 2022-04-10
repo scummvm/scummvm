@@ -2008,9 +2008,9 @@ void draw_gui_and_overlays() {
 			if (_GP(guis)[aa].Transparency == 255) continue; // 100% transparent
 
 			// Don't draw GUI if "GUIs Turn Off When Disabled"
-			if ((_GP(game).options[OPT_DISABLEOFF] == 3) &&
-			        (_G(all_buttons_disabled) > 0) &&
-			        (_GP(guis)[aa].PopupStyle != kGUIPopupNoAutoRemove))
+			if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) &&
+					(_G(all_buttons_disabled) >= 0) &&
+					(_GP(guis)[aa].PopupStyle != kGUIPopupNoAutoRemove))
 				continue;
 
 			_GP(guibgbmp)[aa]->SetTransparency(_GP(guis)[aa].Transparency);
@@ -2024,9 +2024,9 @@ void draw_gui_and_overlays() {
 			for (int gg = 0; gg < _GP(game).numgui; gg++) {
 				if (!_GP(guis)[gg].IsDisplayed()) continue; // not on screen
 				// Don't touch GUI if "GUIs Turn Off When Disabled"
-				if ((_GP(game).options[OPT_DISABLEOFF] == 3) &&
-					(_G(all_buttons_disabled) > 0) &&
-					(_GP(guis)[gg].PopupStyle != kGUIPopupNoAutoRemove))
+				if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) &&
+						(_G(all_buttons_disabled) >= 0) &&
+						(_GP(guis)[gg].PopupStyle != kGUIPopupNoAutoRemove))
 					continue;
 				_GP(guis)[gg].Poll();
 			}
