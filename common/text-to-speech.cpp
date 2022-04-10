@@ -82,6 +82,7 @@ TextToSpeechManager::TextToSpeechManager() {
 	_ttsState->_rate = 0;
 	_ttsState->_activeVoice = 0;
 	_ttsState->_language = "en";
+	_ttsState->_enabled = false;
 	_ttsState->_next = nullptr;
 }
 
@@ -93,6 +94,7 @@ void TextToSpeechManager::pushState() {
 	newState->_rate = _ttsState->_rate;
 	newState->_activeVoice = _ttsState->_activeVoice;
 	newState->_language = _ttsState->_language;
+	newState->_enabled = _ttsState->_enabled;
 	newState->_next = _ttsState;
 	_ttsState = newState;
 	updateVoices();
@@ -115,7 +117,15 @@ bool TextToSpeechManager::popState() {
 	setVolume(_ttsState->_volume);
 	setRate(_ttsState->_rate);
 	setVoice(voice);
+
 	return false;
+}
+
+void TextToSpeechManager::enable(bool on) {
+	if (_ttsState->_enabled == on)
+		return;
+	_ttsState->_enabled = on;
+	updateVoices();
 }
 
 void TextToSpeechManager::clearState() {
