@@ -34,9 +34,9 @@ class Stream;
 }
 using namespace AGS; // FIXME later
 
+// The CharacterInfo struct size is fixed because it's exposed to script
+// and plugin API, therefore new stuff has to go here
 struct CharacterExtras {
-	// UGLY UGLY UGLY!! The CharacterInfo struct size is fixed because it's
-	// used in the scripts, therefore overflowing stuff has to go here
 	short invorder[MAX_INVORDER];
 	short invorder_count;
 	// TODO: implement full AABB and keep updated, so that engine could rely on these cached values all time;

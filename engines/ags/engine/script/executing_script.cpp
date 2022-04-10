@@ -47,7 +47,6 @@ int ExecutingScript::queue_action(PostScriptAction act, int data, const char *an
 			           aname, postScriptActionNames[numPostScriptActions - 1],
 			           postScriptActionPositions[numPostScriptActions - 1].Section.GetCStr(), postScriptActionPositions[numPostScriptActions - 1].Line);
 			break;
-		// MACPORT FIX 9/6/5: added default clause to remove warning
 		default:
 			break;
 		}
