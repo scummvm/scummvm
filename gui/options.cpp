@@ -2792,6 +2792,7 @@ void GlobalOptionsDialog::apply() {
 #ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan) {
+		ttsMan->enable(_ttsCheckbox->getState());
 #ifdef USE_TRANSLATION
 		if (newLang != oldLang) {
 			ttsMan->setLanguage(newLang);

@@ -135,6 +135,7 @@ struct TTSState {
 	String _language;
 	int _activeVoice;
 	Array<TTSVoice> _availableVoices;
+	bool _enabled;
 	TTSState *_next;
 };
 
@@ -335,6 +336,11 @@ public:
 	 * Frees the _data field from TTSVoice
 	 */
 	virtual void freeVoiceData(void *data) {}
+
+	/**
+	 * Enables/disables the TTS
+	 */
+	void enable(bool on);
 
 protected:
 	TTSState *_ttsState;
