@@ -42,6 +42,7 @@ bool BehaviorModifier::load(ModifierLoaderContext &context, const Data::Behavior
 
 	_guid = data.guid;
 	_name = data.name;
+	_modifierFlags.load(data.modifierFlags);
 
 	return true;
 }
@@ -86,8 +87,8 @@ bool MessengerSendSpec::load(const Data::Event& dataEvent, uint32 dataMessageFla
 }
 
 bool MessengerModifier::load(ModifierLoaderContext &context, const Data::MessengerModifier &data) {
-	_guid = data.modHeader.guid;
-	_name = data.modHeader.name;
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
 
 	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSourceGUID, data.destination))
 		return false;
@@ -96,8 +97,8 @@ bool MessengerModifier::load(ModifierLoaderContext &context, const Data::Messeng
 }
 
 bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data) {
-	_guid = data.modHeader.guid;
-	_name = data.modHeader.name;
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
 
 	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSourceGUID, data.destination))
 		return false;
@@ -110,8 +111,8 @@ bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMes
 }
 
 bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data::KeyboardMessengerModifier &data) {
-	_guid = data.modHeader.guid;
-	_name = data.modHeader.name;
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
 
 	_onDown = ((data.messageFlagsAndKeyStates & Data::KeyboardMessengerModifier::kOnDown) != 0);
 	_onUp = ((data.messageFlagsAndKeyStates & Data::KeyboardMessengerModifier::kOnUp) != 0);
@@ -153,8 +154,8 @@ bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data:
 }
 
 bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data) {
-	_guid = data.modHeader.guid;
-	_name = data.modHeader.name;
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
 
 	_value = (data.value != 0);
 
@@ -162,8 +163,8 @@ bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::B
 }
 
 bool PointVariableModifier::load(ModifierLoaderContext &context, const Data::PointVariableModifier &data) {
-	_guid = data.modHeader.guid;
-	_name = data.modHeader.name;
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
 
 	_value.x = data.value.x;
 	_value.y = data.value.y;
