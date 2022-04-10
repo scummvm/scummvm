@@ -215,10 +215,13 @@ private:
 	std::vector<uint8_t> _membuf;
 };
 
-// Saves all sprites to file; fills in index data for external use
+// Saves all sprites to file; fills in index data for external use.
 // TODO: refactor to be able to save main file and index file separately (separate function for gather data?)
-extern int SaveSpriteFile(const String &save_to_file,
-	const std::vector<Bitmap *> &sprites, // available sprites (may contain nullptrs)
+// Accepts available sprites as pairs of bool and Bitmap pointer, where boolean value
+// tells if sprite exists and Bitmap pointer may be null;
+// If a sprite's bitmap is missing, it will try reading one from the input file stream.
+int SaveSpriteFile(const String &save_to_file,
+	const std::vector<std::pair<bool, Bitmap *> > &sprites,
 	SpriteFile *read_from_file, // optional file to read missing sprites from
 	int store_flags, SpriteCompression compress, SpriteFileIndex &index);
 // Saves sprite index table in a separate file
