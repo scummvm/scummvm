@@ -21,7 +21,6 @@
 
 #include "common/events.h"
 #include "ags/engine/ac/sys_events.h"
-//include <deque>
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/game_setup_struct.h"
@@ -310,6 +309,11 @@ void sys_evt_process_pending(void) {
 
 	while ((e = ::AGS::g_events->readEvent()).type != Common::EVENT_INVALID)
 		sys_process_event(e);
+}
+
+void sys_flush_events(void) {
+	::AGS::g_events->clearEvents();
+	ags_clear_input_state();
 }
 
 } // namespace AGS3

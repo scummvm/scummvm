@@ -1214,12 +1214,14 @@ bool engine_try_set_gfxmode_any(const DisplayModeSetup &setup) {
 	engine_shutdown_gfxmode();
 
 	const Size init_desktop = get_desktop_size();
-	if (!graphics_mode_init_any(GraphicResolution(_GP(game).GetGameRes(), _GP(game).color_depth * 8),
-		setup, ColorDepthOption(_GP(game).GetColorDepth())))
-		return false;
+	bool res = graphics_mode_init_any(GraphicResolution(_GP(game).GetGameRes(), _GP(game).color_depth * 8),
+		setup, ColorDepthOption(_GP(game).GetColorDepth()));
 
-	engine_post_gfxmode_setup(init_desktop);
-	return true;
+	if (res)
+		engine_post_gfxmode_setup(init_desktop);
+	// Make sure that we don't receive window events queued during init
+	sys_flush_events();
+	return res;
 }
 
 bool engine_try_switch_windowed_gfxmode() {
@@ -1268,7 +1270,9 @@ bool engine_try_switch_windowed_gfxmode() {
 			init_desktop = get_desktop_size();
 		engine_post_gfxmode_setup(init_desktop);
 	}
-	ags_clear_input_state();
+
+	// Make sure that we don't receive window events queued during init
+	sys_flush_events();
 	return res;
 }
 

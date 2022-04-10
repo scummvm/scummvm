@@ -116,10 +116,10 @@ extern void sys_evt_set_quit_callback(void(*proc)(void));
 // Set engine callback for when input focus is received or lost by the window.
 extern void sys_evt_set_focus_callbacks(void(*switch_in)(void), void(*switch_out)(void));
 
-// Process single event.
-//extern void sys_evt_process_one(const Common::Event &event);
 // Process all events in the backend's queue.
 extern void sys_evt_process_pending(void);
+// Flushes system events following window initialization.
+void sys_flush_events(void);
 
 } // namespace AGS3
 
