@@ -63,29 +63,29 @@ public:
 	//-----------------------------------------------------
 	// Helper methods
 	//-----------------------------------------------------
-	inline int8_t ReadInt8() override {
+	int8_t ReadInt8() override {
 		return ReadByte();
 	}
 
-	inline size_t WriteInt8(int8_t val) override {
+	size_t WriteInt8(int8_t val) override {
 		int32_t ival = WriteByte(val);
 		return ival >= 0 ? ival : 0;
 	}
 
-	inline bool ReadBool() override {
+	bool ReadBool() override {
 		return ReadInt8() != 0;
 	}
 
-	inline size_t WriteBool(bool val) override {
+	size_t WriteBool(bool val) override {
 		return WriteInt8(val ? 1 : 0);
 	}
 
 	// Practically identical to Read() and Write(), these two helpers' only
 	// meaning is to underline the purpose of data being (de)serialized
-	inline size_t ReadArrayOfInt8(int8_t *buffer, size_t count) override {
+	size_t ReadArrayOfInt8(int8_t *buffer, size_t count) override {
 		return Read(buffer, count);
 	}
-	inline size_t WriteArrayOfInt8(const int8_t *buffer, size_t count) override {
+	size_t WriteArrayOfInt8(const int8_t *buffer, size_t count) override {
 		return Write(buffer, count);
 	}
 
