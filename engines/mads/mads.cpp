@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/text-to-speech.h"
 #include "engines/util.h"
 #include "mads/mads.h"
 #include "mads/game.h"
@@ -132,6 +133,10 @@ void MADSEngine::loadOptions() {
 	// otherwise all sound, music and sfx, is controlled by the SFX volume slider.
 	int soundVolume = MIN(255, ConfMan.getInt("sfx_volume"));
 	_sound->setVolume(soundVolume);
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr)
+		ttsMan->enable(ConfMan.getBool("tts_narrator"));
 }
 
 void MADSEngine::saveOptions() {

@@ -131,8 +131,10 @@ void GriffonEngine::saveConfig() {
 
 Common::Error GriffonEngine::run() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr)
+	if (ttsMan != nullptr) {
 		ttsMan->setLanguage("en");
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+	}
 
 	initGraphics(320, 240, new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
