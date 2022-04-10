@@ -326,10 +326,16 @@ void engine_init_timer() {
 
 void engine_init_audio() {
 #if !AGS_PLATFORM_SCUMMVM
-	if (_GP(usetup).audio_backend != 0) {
-		Debug::Printf("Initializing audio");
-		audio_core_init(); // audio core system
-	}
+	if (usetup.audio_backend != 0)
+    {
+        Debug::Printf("Initializing audio");
+        try {
+            audio_core_init(); // audio core system
+        } catch(std::runtime_error) {
+            Debug::Printf("Failed to initialize audio, disabling.");
+            usetup.audio_backend = 0;
+        }
+    }
 #endif
 
 	_G(our_eip) = -181;
