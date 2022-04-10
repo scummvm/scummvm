@@ -666,7 +666,7 @@ void Engine::openMainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr) {
+	if (ttsMan != nullptr && ConfMan.hasKey("tts_enabled", "scummvm") && ConfMan.getBool("tts_enabled", "scummvm")) {
 		ttsMan->pushState();
 		g_gui.initTextToSpeech();
 	}
@@ -697,7 +697,7 @@ void Engine::openMainMenuDialog() {
 		}
 	}
 
-	if (ttsMan != nullptr)
+	if (ttsMan != nullptr && ConfMan.hasKey("tts_enabled", "scummvm") && ConfMan.getBool("tts_enabled", "scummvm"))
 		ttsMan->popState();
 
 	g_system->applyBackendSettings();
