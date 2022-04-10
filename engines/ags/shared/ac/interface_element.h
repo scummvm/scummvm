@@ -42,21 +42,6 @@ struct InterfaceElement {
 	InterfaceElement();
 };
 
-/*struct InterfaceStyle {
-int  playareax1,playareay1,playareax2,playareay2; // where the game takes place
-int  vtextxp,vtextyp;
-char vtext[40];
-int  numbuttons,popupbuttons;
-InterfaceButton button[MAXBUTTON];
-int  invx1,invy1,invx2,invy2;  // set invx1=-1 for Sierra-style inventory
-InterfaceStyle() {  // sierra interface
-playareax1=0; playareay1=13; playareax2=319; playareay2=199;
-vtextxp=160; vtextyp=2; strcpy(vtext,"@SCORETEXT@$r@GAMENAME@");
-invx1=-1; numbuttons=2; popupbuttons=1;
-button[0].set(0,13,3,-1,0);
-}
-};*/
-
 } // namespace AGS3
 
 #endif

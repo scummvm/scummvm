@@ -224,7 +224,6 @@ bool lzwexpand(Stream *lzw_in, Stream *out, size_t out_size) {
 	while ((bits = lzw_in->ReadByte()) != -1) {
 		for (mask = 0x01; mask & 0xFF; mask <<= 1) {
 			if (bits & mask) {
-				// MACPORT FIX: read to short and expand
 				short jshort = 0;
 				jshort = lzw_in->ReadInt16();
 				j = jshort;
