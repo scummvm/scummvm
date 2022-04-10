@@ -284,7 +284,10 @@ public:
 	Shoots _shoots;
 	Frames _playerFrames;
 	int _playerFrameIdx;
+	Common::List<int> _playerFrameSeps;
+	int _playerFrameStart;
 	int _playerFrameSep;
+	int _playerFrameEnd;
 
 	// Objectives
 	uint32 _objIdx;

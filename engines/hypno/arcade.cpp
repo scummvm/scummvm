@@ -340,6 +340,23 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			if (_background->decoder->getCurFrame() > (int) at.time) {
 				transition = true;
 
+				if (_playerFrameSeps.size() == 1) {
+					_playerFrameStart = _playerFrameEnd + 1;
+					_playerFrameSep = *_playerFrameSeps.begin();
+					_playerFrameSeps.pop_front();
+					_playerFrameEnd = _playerFrames.size();
+					_playerFrameIdx = _playerFrameStart;
+					debugC(1, kHypnoDebugArcade, "New separator frames %d %d %d", _playerFrameStart, _playerFrameSep, _playerFrameEnd);
+				} else if (_playerFrameSeps.size() >= 2) {
+					_playerFrameStart = _playerFrameEnd + 1;
+					_playerFrameSep = *_playerFrameSeps.begin();
+					_playerFrameSeps.pop_front();
+					_playerFrameEnd = *_playerFrameSeps.begin();
+					_playerFrameSeps.pop_front();
+					_playerFrameIdx = _playerFrameStart;
+					debugC(1, kHypnoDebugArcade, "New separator frames %d %d %d", _playerFrameStart, _playerFrameSep, _playerFrameEnd);
+				}
+
 				if (!at.video.empty()) {
 					_background->decoder->pauseVideo(true);
 					debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
@@ -352,6 +369,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 					loadPalette(currentPalette);
 					_background->decoder->pauseVideo(false);
+					drawPlayer();
 					updateScreen(*_background);
 					drawScreen();
 					drawCursorArcade(mousePos);

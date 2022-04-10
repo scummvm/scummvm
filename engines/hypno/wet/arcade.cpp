@@ -414,22 +414,32 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 		}
 	}
 
-	_playerFrameSep = 0;
 
-	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
-		if ((*it)->getPixel(0, 0) == 255)
-			break;
-		if ((*it)->getPixel(0, 0) == 252)
-			break;
-
-		_playerFrameSep++;
+	for (int i = 0; i < int(_playerFrames.size()); i++) {
+		if (_playerFrames[i]->getPixel(0, 0) == 255)
+			_playerFrameSeps.push_back(i);
+		else if (_playerFrames[i]->getPixel(0, 0) == 252)
+			_playerFrameSeps.push_back(i);
 	}
 
-	if (_playerFrameSep == (int)_playerFrames.size()) {
+	if (_playerFrameSeps.size() == 0) {
 		debugC(1, kHypnoDebugArcade, "No player separator frame found in %s! (size: %d)", arc->player.c_str(), _playerFrames.size());
-		//_playerFrameSep = -1;
 	} else
-		debugC(1, kHypnoDebugArcade, "Separator frame found at %d", _playerFrameSep);
+		debugC(1, kHypnoDebugArcade, "Number of separator frames: %d", _playerFrameSeps.size());
+
+	_playerFrameStart = 0;
+
+	if (_playerFrameSeps.size() > 0) {
+		_playerFrameSep = *_playerFrameSeps.begin();
+		_playerFrameSeps.pop_front();
+	}
+
+	if (_playerFrameSeps.size() > 0) {
+		_playerFrameEnd = *_playerFrameSeps.begin();
+		_playerFrameSeps.pop_front();
+	} else {
+		_playerFrameEnd = _playerFrames.size();
+	}
 
 	_playerFrameIdx = -1;
 }
@@ -573,13 +583,9 @@ void WetEngine::drawPlayer() {
 	if (_arcadeMode == "Y1" || _arcadeMode == "Y3")
 		return;
 
-	if (_playerFrameIdx < _playerFrameSep) {
-		_playerFrameIdx++;
-		_playerFrameIdx = _playerFrameIdx % _playerFrameSep;
-	} else {
-		_playerFrameIdx++;
-		if (_playerFrameIdx >= (int)_playerFrames.size())
-			_playerFrameIdx = 0;
+	_playerFrameIdx++;
+	if (_playerFrameIdx == _playerFrameSep || _playerFrameIdx >= _playerFrameEnd) {
+		_playerFrameIdx = _playerFrameStart;
 	}
 
 	if (_arcadeMode == "Y5")
