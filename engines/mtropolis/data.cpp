@@ -413,7 +413,7 @@ DataReadErrorCode BehaviorModifier::load(DataReader& reader) {
 	if (_revision != 1)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag)
+	if (!reader.readU32(modifierFlags) || !reader.readU32(sizeIncludingTag)
 		|| !reader.readBytes(unknown2) || !reader.readU32(guid)
 		|| !reader.readU32(unknown4) || !reader.readU16(unknown5)
 		|| !reader.readU32(unknown6) || !editorLayoutPosition.load(reader)
@@ -470,7 +470,9 @@ bool MiniscriptProgram::load(DataReader &reader) {
 }
 
 bool TypicalModifierHeader::load(DataReader& reader) {
-	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid) || !reader.readBytes(unknown3) || !reader.readU32(unknown4) || !reader.readBytes(unknown5) || !reader.readU16(lengthOfName))
+	if (!reader.readU32(modifierFlags) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
+		|| !reader.readBytes(unknown3) || !reader.readU32(unknown4) || !editorLayoutPosition.load(reader)
+		|| !reader.readU16(lengthOfName))
 		return false;
 
 	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
@@ -571,9 +573,9 @@ DataReadErrorCode PlugInModifier::load(DataReader &reader) {
 	if (_revision != 0x03e9)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!reader.readU32(unknown1) || !reader.readU32(codedSize) || !reader.read(modifierName, 16)
+	if (!reader.readU32(modifierFlags) || !reader.readU32(codedSize) || !reader.read(modifierName, 16)
 		|| !reader.readU32(guid) || !reader.readBytes(unknown2) || !reader.readU16(plugInRevision)
-		|| !reader.readU32(unknown4) || !reader.readBytes(unknown5) || !reader.readU16(lengthOfName))
+		|| !reader.readU32(unknown4) || !editorLayoutPosition.load(reader) || !reader.readU16(lengthOfName))
 		return kDataReadErrorReadFailed;
 
 	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))

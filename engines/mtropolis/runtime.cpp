@@ -473,10 +473,25 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 	}
 }
 
+ModifierFlags::ModifierFlags() : isLastModifier(false) {
+}
+
+bool ModifierFlags::load(const uint32 dataModifierFlags) {
+	isLastModifier = ((dataModifierFlags & 0x2) != 0);
+	return true;
+}
+
 Modifier::Modifier() : _guid(0) {
 }
 
 Modifier::~Modifier() {
+}
+
+bool Modifier::loadTypicalHeader(const Data::TypicalModifierHeader& typicalHeader) {
+	if (!_modifierFlags.load(typicalHeader.modifierFlags))
+		return false;
+
+	return true;
 }
 
 } // End of namespace MTropolis

@@ -317,6 +317,13 @@ class Subsection : public Structural {
 class Scene : public Structural {
 };
 
+struct ModifierFlags {
+	ModifierFlags();
+	bool load(const uint32 dataModifierFlags);
+
+	bool isLastModifier : 1;
+};
+
 class Modifier {
 public:
 	Modifier();
@@ -325,6 +332,9 @@ public:
 protected:
 	uint32 _guid;
 	Common::String _name;
+	ModifierFlags _modifierFlags;
+
+	bool loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeader);
 };
 
 } // End of namespace MTropolis

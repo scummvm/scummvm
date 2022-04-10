@@ -29,6 +29,7 @@
 #include "common/ptr.h"
 #include "common/stream.h"
 
+// This contains defs related to parsing of mTropolis stored data into structured data objects.
 namespace MTropolis {
 
 namespace Data {
@@ -52,6 +53,11 @@ enum DataReadErrorCode {
 	kDataReadErrorUnrecognized,
 	kDataReadErrorPlugInNotFound,
 };
+
+enum ModifierFlags {
+	kModifierFlagLast = 0x2,
+};
+
 
 namespace DataObjectTypes {
 
@@ -101,7 +107,7 @@ enum DataObjectType {
 	kBehaviorModifier                    = 0x2c6,
 	kMessengerModifier                   = 0x2da,
 	kSetModifier                         = 0x2df,	// NYI
-	kCollisionDetectionMessengerMOdifier = 0x2ee,	// NYI
+	kCollisionDetectionMessengerModifier = 0x2ee,	// NYI
 	kBoundaryDetectionMessengerModifier  = 0x2f8,	// NYI
 	kKeyboardMessengerModifier           = 0x302,
 	kTextStyleModifier                   = 0x32a,	// NYI
@@ -324,7 +330,7 @@ protected:
 
 struct BehaviorModifier : public DataObject {
 
-	uint32 unknown1;
+	uint32 modifierFlags;
 	uint32 sizeIncludingTag;
 	uint8 unknown2[2];
 	uint32 guid;
@@ -379,12 +385,12 @@ struct MiniscriptProgram {
 
 // Header used for most modifiers, but not all
 struct TypicalModifierHeader {
-	uint32 unknown1;
+	uint32 modifierFlags;
 	uint32 sizeIncludingTag;
 	uint32 guid;
 	uint8 unknown3[6];
 	uint32 unknown4;
-	uint8 unknown5[4];
+	Point editorLayoutPosition;
 	uint16 lengthOfName;
 
 	Common::String name;
@@ -538,14 +544,14 @@ struct PlugInModifierData {
 };
 
 struct PlugInModifier : public DataObject {
-	uint32 unknown1;
+	uint32 modifierFlags;
 	uint32 codedSize;	// Total size on Mac but (size + (name length * 255)) on Windows for some reason
 	char modifierName[17];
 	uint32 guid;
 	uint8 unknown2[6];
 	uint16 plugInRevision;
 	uint32 unknown4;
-	uint8 unknown5[4];
+	Point editorLayoutPosition;
 	uint16 lengthOfName;
 
 	Common::String name;
