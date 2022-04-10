@@ -103,7 +103,7 @@ enum DataObjectType {
 	kSetModifier                         = 0x2df,	// NYI
 	kCollisionDetectionMessengerMOdifier = 0x2ee,	// NYI
 	kBoundaryDetectionMessengerModifier  = 0x2f8,	// NYI
-	kKeyboardMessengerModifier           = 0x302,	// NYI
+	kKeyboardMessengerModifier           = 0x302,
 	kTextStyleModifier                   = 0x32a,	// NYI
 	kGraphicModifier                     = 0x334,	// NYI
 	kImageEffectModifier                 = 0x384,	// NYI
@@ -449,6 +449,63 @@ struct IfMessengerModifier : public DataObject {
 	uint8 withSourceLength;
 	uint8 unknown10;
 	MiniscriptProgram program;
+
+	Common::String withSource;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct KeyboardMessengerModifier : public DataObject {
+	enum KeyStateFlags {
+		kOnDown = 0x10000000,
+		kOnUp = 0x4000000,
+		kOnRepeat = 0x8000000,
+
+		kKeyStateMask = (kOnDown | kOnUp | kOnRepeat),
+	};
+
+	enum KeyModifiers {
+		kControl = 0x1000,
+		kCommand = 0x0100,
+		kOption = 0x0800,
+	};
+
+	enum KeyCodes {
+		kAny = 0x00,
+		kHome = 0x01,
+		kEnter = 0x03,
+		kEnd = 0x04,
+		kHelp = 0x05,
+		kBackspace = 0x08,
+		kTab = 0x09,
+		kPageUp = 0x0b,
+		kPageDown = 0x0c,
+		kReturn = 0x0d,
+		kEscape = 0x1b,
+		kArrowLeft = 0x1c,
+		kArrowRight = 0x1d,
+		kArrowUp = 0x1e,
+		kArrowDown = 0x1f,
+		kDelete = 0x7f,
+	};
+
+	TypicalModifierHeader modHeader;
+	uint32 messageFlagsAndKeyStates;
+	uint16 unknown2;
+	uint16 keyModifiers;
+	uint8 keycode;
+	uint8 unknown4[7];
+	Event message;
+	uint16 unknown7;
+	uint32 destination;
+	uint8 unknown9[10];
+	uint16 with;
+	uint8 unknown11[4];
+	uint32 withSourceGUID;
+	uint8 unknown13[36];
+	uint8 withSourceLength;
+	uint8 unknown14;
 
 	Common::String withSource;
 
