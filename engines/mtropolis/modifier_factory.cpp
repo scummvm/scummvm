@@ -67,6 +67,8 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 		return ModifierFactory<MiniscriptModifier, Data::MiniscriptModifier>::getInstance();
 	case Data::DataObjectTypes::kIfMessengerModifier:
 		return ModifierFactory<IfMessengerModifier, Data::IfMessengerModifier>::getInstance();
+	case Data::DataObjectTypes::kKeyboardMessengerModifier:
+		return ModifierFactory<KeyboardMessengerModifier, Data::KeyboardMessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kMessengerModifier:
 		return ModifierFactory<MessengerModifier, Data::MessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kBooleanVariableModifier:

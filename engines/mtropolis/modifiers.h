@@ -53,17 +53,24 @@ private:
 	Common::SharedPtr<MiniscriptProgram> _program;
 };
 
+struct MessengerSendSpec {
+	MessengerSendSpec();
+	bool load(const Data::Event &dataEvent, uint32 dataMessageFlags, uint16 dataWith, uint32 dataWithSourceGUID, uint32 dataDestination);
+
+	Event send;
+	MessageFlags messageFlags;
+	MessageWithType withType;
+	uint32 withSourceGUID;
+	uint32 destination; // May be a MessageDestination or GUID
+};
+
 class MessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::MessengerModifier &data);
 
 private:
 	Event _when;
-	Event _send;
-
-	MessageFlags _messageFlags;
-	MessageWithType _messageWithType;
-	uint32 _messageDestination;	// May be a MessageDestination or GUID
+	MessengerSendSpec _sendSpec;
 };
 
 class IfMessengerModifier : public Modifier {
@@ -72,13 +79,47 @@ public:
 
 private:
 	Event _when;
-	Event _send;
-
-	MessageFlags _messageFlags;
-	MessageWithType _messageWithType;
-	uint32 _messageDestination; // May be a MessageDestination or GUID
+	MessengerSendSpec _sendSpec;
 
 	Common::SharedPtr<MiniscriptProgram> _program;
+};
+class KeyboardMessengerModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::KeyboardMessengerModifier &data);
+
+private:
+	Event _send;
+
+	enum KeyCodeType {
+		kAny = 0x00,
+		kHome = 0x01,
+		kEnter = 0x03,
+		kEnd = 0x04,
+		kHelp = 0x05,
+		kBackspace = 0x08,
+		kTab = 0x09,
+		kPageUp = 0x0b,
+		kPageDown = 0x0c,
+		kReturn = 0x0d,
+		kEscape = 0x1b,
+		kArrowLeft = 0x1c,
+		kArrowRight = 0x1d,
+		kArrowUp = 0x1e,
+		kArrowDown = 0x1f,
+		kDelete = 0x7f,
+		kMacRomanChar = 0xff,
+	};
+
+	bool _onDown : 1;
+	bool _onUp : 1;
+	bool _onRepeat : 1;
+	bool _keyModControl : 1;
+	bool _keyModCommand : 1;
+	bool _keyModOption : 1;
+	KeyCodeType _keyCodeType;
+	uint8_t _macRomanChar;
+
+	MessengerSendSpec _sendSpec;
 };
 
 class BooleanVariableModifier : public Modifier {

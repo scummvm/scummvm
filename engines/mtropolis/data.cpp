@@ -526,6 +526,24 @@ DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode KeyboardMessengerModifier::load(DataReader &reader) {
+	if (_revision != 0x3eb)
+		return kDataReadErrorReadFailed;
+
+	if (!modHeader.load(reader) || !reader.readU32(messageFlagsAndKeyStates) || !reader.readU16(unknown2)
+		|| !reader.readU16(keyModifiers) || !reader.readU8(keycode) || !reader.readBytes(unknown4)
+		|| !message.load(reader) || !reader.readU16(unknown7) || !reader.readU32(destination)
+		|| !reader.readBytes(unknown9) || !reader.readU16(with) || !reader.readBytes(unknown11)
+		|| !reader.readU32(withSourceGUID) || !reader.readBytes(unknown13) || !reader.readU8(withSourceLength)
+		|| !reader.readU8(unknown14))
+		return kDataReadErrorReadFailed;
+
+	if (withSourceLength > 0 && !reader.readNonTerminatedStr(withSource, withSourceLength))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode BooleanVariableModifier::load(DataReader &reader) {
 	if (_revision != 0x3e8)
 		return kDataReadErrorUnsupportedRevision;
@@ -657,6 +675,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kPlugInModifier:
 		dataObject = new PlugInModifier();
+		break;
+	case DataObjectTypes::kKeyboardMessengerModifier:
+		dataObject = new KeyboardMessengerModifier();
 		break;
 	default:
 		warning("Unrecognized data object type %x", static_cast<int>(type));
