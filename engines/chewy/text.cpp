@@ -220,14 +220,6 @@ Common::String Text::getTextEntry(uint chunk, uint entry, int type, int subEntry
 	return res.size() > 0 ? res[0] : "";
 }
 
-void Text::crypt(char *txt, uint32 size) {
-	uint8 *sp = (uint8 *)txt;
-	for (uint32 i = 0; i < size; i++) {
-		*sp = -(*sp);
-		++sp;
-	}
-}
-
 const char *Text::strPos(const char *txtAdr, int16 pos) {
 	const char *ptr = txtAdr;
 	for (int16 i = 0; i < pos;) {

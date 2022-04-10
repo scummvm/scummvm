@@ -233,7 +233,6 @@ public:
 	void load_atds(int16 chunkNr, int16 mode);
 
 	void set_handle(const char *fname, int16 mode, int16 chunkStart, int16 chunkNr);
-	void crypt(char *txt, uint32 size);
 	bool start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr);
 	void stop_ats();
 	bool atsShown() { return _atsv.shown; }

@@ -385,14 +385,6 @@ void Atdsys::load_atds(int16 chunkNr, int16 mode) {
 	}
 }
 
-void Atdsys::crypt(char *txt, uint32 size) {
-	uint8 *sp = (uint8 *)txt;
-	for (uint32 i = 0; i < size; i++) {
-		*sp = -(*sp);
-		++sp;
-	}
-}
-
 void Atdsys::set_ats_mem(int16 mode) {
 	switch (mode) {
 	case ATS_DATA:

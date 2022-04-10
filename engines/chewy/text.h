@@ -90,7 +90,6 @@ public:
 	Common::StringArray getTextArray(uint chunk, uint entry, int type, int subEntry = -1);
 	Common::String getTextEntry(uint chunk, uint entry, int type, int subEntry = -1);
 
-	void crypt(char *txt, uint32 size);
 	const char *strPos(const char *txtAdr, int16 pos);
 };
 
