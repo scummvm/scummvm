@@ -268,7 +268,7 @@ public:
 	void ads_search_block(int16 blockNr, char **ptr);
 	void ads_search_item(int16 itemNr, char **blkAdr);
 	int16 start_ads_auto_dia(char *itemAdr);
-	int16 calc_inv_no_use(int16 curInv, int16 testNr, int16 mode);
+	int16 calc_inv_no_use(int16 curInv, int16 testNr);
 	int8 getStereoPos(int16 x);
 	void enableEvents(bool nr) {
 		_atdsv._eventsEnabled = nr;
@@ -278,8 +278,8 @@ public:
 	void loadAtdsStream(Common::SeekableReadStream *stream);
 	uint32 getAtdsStreamSize() const;
 
-	Common::StringArray getTextArray(uint dialogNum, uint entryNum, int type);
-	Common::String getTextEntry(uint dialogNum, uint entryNum, int type);
+	Common::StringArray getTextArray(uint dialogNum, uint entryNum, int type, int subEntry = -1);
+	Common::String getTextEntry(uint dialogNum, uint entryNum, int type, int subEntry = -1);
 
 private:
 	void init();

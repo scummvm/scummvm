@@ -81,7 +81,7 @@ TextEntryList *Text::getDialog(uint chunk, uint entry) {
 	return l;
 }
 
-TextEntry *Text::getText(uint chunk, uint entry, int type) {
+TextEntry *Text::getText(uint chunk, uint entry, int type, int subEntry) {
 	bool isText = false;
 	bool isAutoDialog = false;
 	bool isInvDesc = false;
@@ -117,24 +117,38 @@ TextEntry *Text::getText(uint chunk, uint entry, int type) {
 	byte *data = getChunkData(chunk);
 	byte *ptr = data;
 	uint entryId = 0;
+	uint16 headerBytes, txtNum;
+	int curSubEntry = -1;
+
+	//Common::hexdump(data, _chunkList[chunk].size);
 
 	if (isAutoDialog)
 		ptr += 3;
 
 	while (true) {
 		ptr += 3;
-		uint16 headerBytes = READ_LE_UINT16(ptr);
+		headerBytes = READ_LE_UINT16(ptr);
 		ptr += 2;
+
+		if (headerBytes == 0xFEF2) {
+			// Start of subchunk
+			curSubEntry = *ptr;
+			ptr++;
+			headerBytes = READ_LE_UINT16(ptr);
+			ptr += 2;
+		}
+
 		if (headerBytes != 0xFEF0)
 			break;
-		uint16 txtNum = !isInvDesc ? READ_LE_UINT16(ptr) : entryId++;
+
+		txtNum = !isInvDesc ? READ_LE_UINT16(ptr) : entryId++;
 		ptr += 2;
 		ptr += 6;
 		d->_speechId = READ_LE_UINT16(ptr) - VOICE_OFFSET;
 		ptr += 2;
 
 		do {
-			if (txtNum == entry)
+			if (txtNum == entry && curSubEntry == subEntry)
 				d->_text += *ptr++;
 			else
 				ptr++;
@@ -143,6 +157,16 @@ TextEntry *Text::getText(uint chunk, uint entry, int type) {
 				*ptr = '|';
 			}
 		} while (*ptr);
+
+		// FIXME: Skip other embedded strings for now
+		if (*(ptr + 1) == kEndText && *(ptr + 2) == 0xf1 && *(ptr + 3) == 0xfe) {
+			ptr += 5;
+			do {
+				ptr++;
+				if (*ptr == 0 && *(ptr + 1) != kEndText)
+					ptr++;
+			} while (*ptr);
+		}
 
 		if (*(ptr + 1) != kEndText || *(ptr + 2) != kEndChunk) {
 			warning("Invalid text resource - %d, %d", chunk, entry);
@@ -158,7 +182,7 @@ TextEntry *Text::getText(uint chunk, uint entry, int type) {
 		if (isAutoDialog)
 			ptr += 3;
 
-		if (txtNum == entry) {
+		if (txtNum == entry && curSubEntry == subEntry) {
 			// Found
 			delete[] data;
 			return d;
@@ -172,8 +196,8 @@ TextEntry *Text::getText(uint chunk, uint entry, int type) {
 	return nullptr;
 }
 
-Common::StringArray Text::getTextArray(uint chunk, uint entry, int type) {
-	TextEntry *textData = getText(chunk, entry, type);
+Common::StringArray Text::getTextArray(uint chunk, uint entry, int type, int subEntry) {
+	TextEntry *textData = getText(chunk, entry, type, subEntry);
 	Common::StringArray res;
 	Common::String txt = textData ? textData->_text : "";
 	char *text = new char[txt.size() + 1];
@@ -191,8 +215,8 @@ Common::StringArray Text::getTextArray(uint chunk, uint entry, int type) {
 	return res;
 }
 
-Common::String Text::getTextEntry(uint chunk, uint entry, int type) {
-	Common::StringArray res = getTextArray(chunk, entry, type);
+Common::String Text::getTextEntry(uint chunk, uint entry, int type, int subEntry) {
+	Common::StringArray res = getTextArray(chunk, entry, type, subEntry);
 	return res.size() > 0 ? res[0] : "";
 }
 

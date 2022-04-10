@@ -2298,6 +2298,7 @@ static void calc_inv_get_text(int16 cur_inv, int16 test_nr) {
 	int16 txt_anz;
 
 	const char *s = _G(atds)->ats_get_txt(31, TXT_MARK_USE, &txt_anz, INV_USE_DEF);
+	//Common::String tmp = _G(atds)->getTextEntry(0, 31, INV_USE_DEF, TXT_MARK_USE);
 	_G(calc_inv_text_str1) = Common::String::format("%s ", s);
 	_G(calc_inv_text_str1) += _G(atds)->getTextEntry(cur_inv, TXT_MARK_NAME, INV_ATS_DATA);
 
@@ -2341,7 +2342,7 @@ bool calc_inv_no_use(int16 test_nr, int16 mode) {
 	}
 
 	if (inv_mode != -1) {
-		int16 txt_nr = _G(atds)->calc_inv_no_use(_G(gameState).AkInvent, test_nr, inv_mode);
+		int16 txt_nr = _G(atds)->calc_inv_no_use(_G(gameState).AkInvent, test_nr);
 		if (txt_nr != -1) {
 			if (!_G(flags).InventMenu) {
 				if (txt_nr >= 15000) {

@@ -442,6 +442,8 @@ void Atdsys::set_ats_mem(int16 mode) {
 }
 
 bool Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr) {
+	assert(mode == ATS_DATA || mode == INV_USE_DATA || mode == INV_USE_DEF);
+
 	*vocNr = -1;
 	set_ats_mem(mode);
 
@@ -451,7 +453,7 @@ bool Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int1
 		//const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
 		int16 txt_anz;
 		_atsv._ptr = ats_get_txt(txtNr, txtMode, &txt_anz, mode);
-		//_atsv._ptr = (char *)getTextEntry(roomNum, txtNr, txtMode).c_str();
+		//Common::StringArray tmp = getTextArray(roomNum, txtNr, mode, txtMode);
 
 		if (_atsv._ptr) {
 			_atsv.shown = g_engine->_sound->subtitlesEnabled();
@@ -567,6 +569,8 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 
 char *Atdsys::ats_get_txt(int16 txtNr, int16 txtMode, int16 *retNr, int16 mode) {
 	char *str_ = nullptr;
+
+	assert(mode == ATS_DATA || mode == INV_USE_DATA || mode == INV_USE_DEF);
 	set_ats_mem(mode);
 
 	_atsv._txtMode = txtMode;
@@ -1247,10 +1251,13 @@ void Atdsys::show_item(int16 diaNr, int16 blockNr, int16 itemNr) {
 	_dialogResource->setItemShown(diaNr, blockNr, itemNr, true);
 }
 
-int16 Atdsys::calc_inv_no_use(int16 curInv, int16 testNr, int16 mode) {
-	assert(mode <= 255 && testNr <= 65535);
+int16 Atdsys::calc_inv_no_use(int16 curInv, int16 testNr) {
+	if (curInv != -1)
+		_invBlockNr = curInv + 1;
 
-	const uint32 key = (mode & 0xff) << 16 | testNr;
+	assert(curInv <= 255 && testNr <= 65535);
+
+	const uint32 key = (curInv & 0xff) << 16 | testNr;
 	return (_itemUseWithDesc.contains(key)) ? _itemUseWithDesc[key] : -1;
 }
 
@@ -1270,16 +1277,16 @@ uint32 Atdsys::getAtdsStreamSize() const {
 	return _dialogResource->getStreamSize();
 }
 
-Common::StringArray Atdsys::getTextArray(uint dialogNum, uint entryNum, int type) {
+Common::StringArray Atdsys::getTextArray(uint dialogNum, uint entryNum, int type, int subEntry) {
 	if (!getControlBit(entryNum, ATS_ACTIVE_BIT))
-		return _text->getTextArray(dialogNum, entryNum, type);
+		return _text->getTextArray(dialogNum, entryNum, type, subEntry);
 	else
 		return Common::StringArray();
 }
 
-Common::String Atdsys::getTextEntry(uint dialogNum, uint entryNum, int type) {
+Common::String Atdsys::getTextEntry(uint dialogNum, uint entryNum, int type, int subEntry) {
 	if (!getControlBit(entryNum, ATS_ACTIVE_BIT))
-		return _text->getTextEntry(dialogNum, entryNum, type);
+		return _text->getTextEntry(dialogNum, entryNum, type, subEntry);
 	else
 		return Common::String();
 }

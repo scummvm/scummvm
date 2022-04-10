@@ -411,10 +411,10 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 
 		if (ats_nr >= 15000) {
 			txt_adr = _G(atds)->ats_get_txt(ats_nr - 15000, TXT_MARK_USE, &lineCount, INV_USE_DEF);
-			//itemDesc = _G(atds)->getTextArray(ats_nr - 15000, TXT_MARK_USE, INV_USE_DEF);
+			//itemDesc = _G(atds)->getTextArray(0, ats_nr - 15000, INV_USE_DEF, TXT_MARK_USE);
 		} else {
 			txt_adr = _G(atds)->ats_get_txt(ats_nr, TXT_MARK_USE, &lineCount, INV_USE_DATA);
-			//itemDesc = _G(atds)->getTextArray(ats_nr, TXT_MARK_USE, INV_USE_DATA);
+			//itemDesc = _G(atds)->getTextArray(0, ats_nr, TXT_MARK_USE, INV_USE_DATA);
 		}
 		if (!txt_adr) {
 			endLoop = true;
