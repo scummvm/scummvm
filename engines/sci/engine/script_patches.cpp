@@ -21609,11 +21609,44 @@ static const uint16 ramaChangeDirPatch[] = {
 	PATCH_END
 };
 
+// Clicking on the lower area of the screen at the start of the demo, or at a
+//  later time when the cursor is a pointer, crashes the program with a missing
+//  script error. The demo adds button handlers for buttons that don't really
+//  exist, and clicking loads scripts that aren't included.
+//
+// We fix this by removing the broken button handlers. Graphics are unaffected.
+//
+// Applies to: PC Demo
+// Responsible method: RamaInterface:init
+// Fixes bug: #10344
+static const uint16 ramaDemoBrokenButtonsSignature[] = {
+	0x38, SIG_SELECTOR16(add),     // pushi add
+	0x38, SIG_UINT16(0x0003),      // pushi 0003
+	SIG_MAGICDWORD,
+	0x72, SIG_UINT16(0x03fe),      // lofsa optionsButton [ puzzle icon ]
+	0x36,                          // push
+	0x72, SIG_UINT16(0x02d6),      // lofsa thighComputerButton [ lower area ]
+	0x36,                          // push
+	SIG_ADDTOOFFSET(+36),
+	0x4a, SIG_UINT16(0x0018),      // send 18 [ interfacePlane:theFtrs ... add: optionsButton thighComputerButton ... ]
+	SIG_END
+};
+
+static const uint16 ramaDemoBrokenButtonsPatch[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x78,                          // push1
+	0x33, 0x08,                    // jmp 08 [ skip adding optionsButton and thighComputerButton ]
+	PATCH_ADDTOOFFSET(+44),
+	0x4a, PATCH_UINT16(0x0014),    // send 14
+	PATCH_END
+};
+
 static const SciScriptPatcherEntry ramaSignatures[] = {
 	{  true,     0, "disable video benchmarking",                     1, sci2BenchmarkSignature,          sci2BenchmarkReversePatch },
 	{  true,    15, "disable video benchmarking",                     1, sci2BenchmarkSignature,          sci2BenchmarkReversePatch },
 	{  true,    55, "fix bad DocReader::init priority calculation",   1, ramaDocReaderInitSignature,      ramaDocReaderInitPatch },
 	{  true,    85, "fix SaveManager to use normal readWord calls",   1, ramaSerializeRegTSignature1,     ramaSerializeRegTPatch1 },
+	{  true,    90, "demo: remove broken button handlers",            1, ramaDemoBrokenButtonsSignature,  ramaDemoBrokenButtonsPatch },
 	{  true,   201, "fix crash restoring save games using NukeTimer", 1, ramaNukeTimerSignature,          ramaNukeTimerPatch },
 	{  true, 64928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,      sciNarratorLockupPatch },
 	{  true, 64990, "disable change directory button",                1, ramaChangeDirSignature,          ramaChangeDirPatch },
