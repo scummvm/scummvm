@@ -619,13 +619,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			}
 #endif
 			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-			if (ttsMan != nullptr && ConfMan.hasKey("tts_enabled", "scummvm") && ConfMan.getBool("tts_enabled", "scummvm")) {
+			if (ttsMan != nullptr) {
 				ttsMan->pushState();
 			}
-
 			// Try to run the game
 			Common::Error result = runGame(plugin, enginePlugin, system, specialDebug);
-			if (ttsMan != nullptr && ConfMan.hasKey("tts_enabled", "scummvm") && ConfMan.getBool("tts_enabled", "scummvm")) {
+			if (ttsMan != nullptr) {
 				ttsMan->popState();
 			}
 
