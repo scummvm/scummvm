@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-10 17:01+0000\n"
-"PO-Revision-Date: 2022-04-04 16:44+0000\n"
+"PO-Revision-Date: 2022-04-12 01:27+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -4467,7 +4467,7 @@ msgstr "Avaa KIA tietokanta"
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:190
 msgid "Delete Selected Saved Game"
-msgstr ""
+msgstr "Poista valittu pelitallennus"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:204
