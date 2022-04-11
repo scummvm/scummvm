@@ -76,15 +76,15 @@ HError DataExtParser::PostAssert() {
 	const soff_t cur_pos = _in->GetPosition();
 	const soff_t block_end = _blockStart + _blockLen;
 	if (cur_pos > block_end) {
-		String err = String::FromFormat("Block: '%s', expected to end at offset: %lld, finished reading at %lld.",
-			_extID.GetCStr(), block_end, cur_pos);
+		String err = String::FromFormat("Block: '%s', expected to end at offset: %llu, finished reading at %llu.",
+			_extID.GetCStr(), static_cast<int64>(block_end), static_cast<int64>(cur_pos));
 		if (cur_pos <= block_end + GetOverLeeway(_blockID))
 			Debug::Printf(kDbgMsg_Warn, err);
 		else
 			return new DataExtError(kDataExtErr_BlockDataOverlapping, err);
 	} else if (cur_pos < block_end) {
-		Debug::Printf(kDbgMsg_Warn, "WARNING: data blocks nonsequential, block '%s' expected to end at %lld, finished reading at %lld",
-			_extID.GetCStr(), block_end, cur_pos);
+		Debug::Printf(kDbgMsg_Warn, "WARNING: data blocks nonsequential, block '%s' expected to end at %llu, finished reading at %llu",
+			_extID.GetCStr(), static_cast<int64>(block_end), static_cast<int64>(cur_pos));
 		_in->Seek(block_end, Shared::kSeekBegin);
 	}
 	return HError::None();

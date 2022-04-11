@@ -67,7 +67,8 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 
 	const soff_t table_addr = static_cast<uint16_t>(in->ReadInt16()); // offset table relative address
 	if (table_addr < (soff_t)(WFN_FILE_SIG_LENGTH + sizeof(uint16_t)) || table_addr >= used_data_size) {
-		Debug::Printf(kDbgMsg_Error, "\tWFN: bad table address: %lld (%d - %d)", table_addr, WFN_FILE_SIG_LENGTH + sizeof(uint16_t), used_data_size);
+		Debug::Printf(kDbgMsg_Error, "\tWFN: bad table address: %llu (%llu - %llu)", static_cast<int64>(table_addr),
+			static_cast<int64>(WFN_FILE_SIG_LENGTH + sizeof(uint16_t)), static_cast<int64>(used_data_size));
 		return kWFNErr_BadTableAddress; // bad table address
 	}
 

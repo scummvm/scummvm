@@ -1199,7 +1199,8 @@ HSaveError ReadComponent(Stream *in, SvgCmpReadHelper &hlp, ComponentInfo &info)
 	if (!err)
 		return err;
 	if (in->GetPosition() - info.DataOffset != info.DataSize)
-		return new SavegameError(kSvgErr_ComponentSizeMismatch, String::FromFormat("Expected: %lld, actual: %lld", info.DataSize, in->GetPosition() - info.DataOffset));
+		return new SavegameError(kSvgErr_ComponentSizeMismatch, String::FromFormat("Expected: %llu, actual: %llu",
+			static_cast<int64>(info.DataSize), static_cast<int64>(in->GetPosition() - info.DataOffset)));
 	if (!AssertFormatTag(in, info.Name, false))
 		return new SavegameError(kSvgErr_ComponentClosingTagFormat);
 	return HSaveError::None();
