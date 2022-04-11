@@ -121,7 +121,7 @@ static bool File_ReadRawLineImpl(sc_File *fil, char *buffer, size_t buf_len) {
 	if (buf_len == 0) return false;
 	Stream *in = get_valid_file_stream_from_handle(fil->handle, "File.ReadRawLine");
 	for (size_t i = 0; i < buf_len - 1; ++i) {
-		char c = in->ReadByte();
+		int c = in->ReadByte();
 		if (c < 0 || c == '\n') // EOF or LF
 		{
 			buffer[i] = 0;
