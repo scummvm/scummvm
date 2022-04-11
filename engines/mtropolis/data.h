@@ -111,7 +111,7 @@ enum DataObjectType {
 	kBoundaryDetectionMessengerModifier  = 0x2f8,	// NYI
 	kKeyboardMessengerModifier           = 0x302,
 	kTextStyleModifier                   = 0x32a,	// NYI
-	kGraphicModifier                     = 0x334,	// NYI
+	kGraphicModifier                     = 0x334,
 	kImageEffectModifier                 = 0x384,	// NYI
 	kMiniscriptModifier                  = 0x3c0,
 	kCursorModifierV1                    = 0x3ca,	// NYI - Obsolete version
@@ -198,6 +198,14 @@ struct Event {
 
 	uint32 eventID;
 	uint32 eventInfo;
+};
+
+struct ColorRGB16 {
+	bool load(DataReader &reader);
+
+	uint16 red;
+	uint16 green;
+	uint16 blue;
 };
 
 class DataObject : public Common::NonCopyable {
@@ -519,7 +527,52 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-struct BooleanVariableModifier final : public DataObject {
+struct GraphicModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+
+	uint16 unknown1;
+	Event applyWhen;
+	Event removeWhen;
+	uint8 unknown2[2];
+	uint16 inkMode;
+	uint16 shape;
+
+	struct MacPart {
+		uint8 unknown4_1[6];
+		uint8 unknown4_2[26];
+	};
+
+	struct WinPart {
+		uint8 unknown5_1[4];
+		uint8 unknown5_2[22];
+	};
+
+	union PlatformPart {
+		MacPart mac;
+		WinPart win;
+	};
+
+	bool haveMacPart;
+	bool haveWinPart;
+	PlatformPart platform;
+
+	ColorRGB16 foreColor;
+	ColorRGB16 backColor;
+	uint16 borderSize;
+	ColorRGB16 borderColor;
+	uint16 shadowSize;
+	ColorRGB16 shadowColor;
+
+	uint16 numPolygonPoints;
+	uint8 unknown6[8];
+
+	Common::Array<Point> polyPoints;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct BooleanVariableModifier : public DataObject {
 	TypicalModifierHeader modHeader;
 	uint8_t value;
 	uint8_t unknown5;
@@ -528,7 +581,7 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-struct PointVariableModifier final : public DataObject {
+struct PointVariableModifier : public DataObject {
 	TypicalModifierHeader modHeader;
 
 	uint8_t unknown5[4];

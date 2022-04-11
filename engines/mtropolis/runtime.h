@@ -47,6 +47,14 @@ struct Point16 {
 	int16 y;
 };
 
+struct ColorRGB8 {
+	uint16 r;
+	uint16 g;
+	uint16 b;
+
+	bool load(const Data::ColorRGB16 &color);
+};
+
 struct MessageFlags {
 	bool relay : 1;
 	bool cascade : 1;

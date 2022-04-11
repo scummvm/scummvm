@@ -30,6 +30,13 @@
 
 namespace MTropolis {
 
+bool ColorRGB8::load(const Data::ColorRGB16& color) {
+	this->r = (color.red * 510 + 1) / 131070;
+	this->g = (color.green * 510 + 1) / 131070;
+	this->b = (color.blue * 510 + 1) / 131070;
+	return true;
+}
+
 MessageFlags::MessageFlags() : relay(true), cascade(true), immediate(true) {
 }
 
