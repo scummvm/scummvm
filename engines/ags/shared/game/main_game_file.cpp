@@ -734,6 +734,15 @@ HError GameDataExtReader::ReadBlock(int block_id, const String &ext_id,
 			_in->ReadInt32();
 		}
 		return HError::None();
+	} else if (ext_id.CompareNoCase("v360_cursors") == 0) {
+		for (int i = 0; i < _ents.Game.numcursors; ++i) {
+			_ents.Game.mcurs[i].animdelay = _in->ReadInt32();
+			// reserved
+			_in->ReadInt32();
+			_in->ReadInt32();
+			_in->ReadInt32();
+		}
+		return HError::None();
 	}
 
     return new MainGameFileError(kMGFErr_ExtUnknown, String::FromFormat("Type: %s", ext_id.GetCStr()));

@@ -2204,7 +2204,7 @@ void construct_game_screen_overlay(bool draw_mouse) {
 			if (_G(mouse_frame) >= _GP(views)[viewnum].loops[loopnum].numFrames)
 				_G(mouse_frame) = 0;
 			set_new_cursor_graphic(_GP(views)[viewnum].loops[loopnum].frames[_G(mouse_frame)].pic);
-			_G(mouse_delay) = _GP(views)[viewnum].loops[loopnum].frames[_G(mouse_frame)].speed + 5;
+			_G(mouse_delay) = _GP(views)[viewnum].loops[loopnum].frames[_G(mouse_frame)].speed + _GP(game).mcurs[_G(cur_cursor)].animdelay;
 			CheckViewFrame(viewnum, loopnum, _G(mouse_frame));
 		}
 		_G(lastmx) = _G(mousex);
