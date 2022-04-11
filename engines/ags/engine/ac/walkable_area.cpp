@@ -38,18 +38,15 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 void redo_walkable_areas() {
-	_GP(thisroom).WalkAreaMask->Blit(_G(walkareabackup), 0, 0, 0, 0, _GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight());
-
-	int hh, ww;
-	for (hh = 0; hh < _G(walkareabackup)->GetHeight(); hh++) {
-		uint8_t *walls_scanline = _GP(thisroom).WalkAreaMask->GetScanLineForWriting(hh);
-		for (ww = 0; ww < _G(walkareabackup)->GetWidth(); ww++) {
-			//      if (_GP(play).walkable_areas_on[_getpixel(_GP(thisroom).WalkAreaMask,ww,hh)]==0)
-			if (_GP(play).walkable_areas_on[walls_scanline[ww]] == 0)
-				walls_scanline[ww] = 0;
+	_GP(thisroom).WalkAreaMask->Blit(_G(walkareabackup), 0, 0);
+	for (int h = 0; h < _G(walkareabackup)->GetHeight(); ++h) {
+		uint8_t *walls_scanline = _GP(thisroom).WalkAreaMask->GetScanLineForWriting(h);
+		for (int w = 0; w < _G(walkareabackup)->GetWidth(); ++w) {
+			if ((walls_scanline[w] >= sizeof(_GP(play).walkable_areas_on)) ||
+				(_GP(play).walkable_areas_on[walls_scanline[w]] == 0))
+				walls_scanline[w] = 0;
 		}
 	}
-
 }
 
 int get_walkable_area_pixel(int x, int y) {
