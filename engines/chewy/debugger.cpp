@@ -22,7 +22,6 @@
 #include "common/file.h"
 #include "chewy/debugger.h"
 #include "chewy/globals.h"
-#include "chewy/ngshext.h"
 #include "chewy/chewy.h"
 #include "chewy/video/video_player.h"
 

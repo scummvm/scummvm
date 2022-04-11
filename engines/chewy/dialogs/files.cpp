@@ -22,8 +22,11 @@
 #include "common/config-manager.h"
 #include "chewy/dialogs/files.h"
 #include "chewy/dialogs/options.h"
+#include "chewy/cursor.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
+#include "chewy/mcga_graphics.h"
+#include "chewy/memory.h"
 #include "chewy/ngsdefs.h"
 
 namespace Chewy {

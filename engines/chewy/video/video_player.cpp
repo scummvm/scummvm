@@ -21,8 +21,10 @@
 
 #include "chewy/video/cfo_decoder.h"
 #include "chewy/video/video_player.h"
+#include "chewy/cursor.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
+#include "chewy/mouse.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
 #include "common/events.h"
@@ -75,7 +77,6 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 
 				if (cfoDecoder->hasDirtyPalette())
 					g_system->getPaletteManager()->setPalette(cfoDecoder->getPalette(), 0, 256);
-					//setScummVMPalette(cfoDecoder->getPalette(), 0, 256);
 
 				keepPlaying = handleCustom(num, curFrame, cfoDecoder);
 				curFrame = cfoDecoder->getCurFrame();
@@ -100,7 +101,6 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 	cfoDecoder->close();
 
 	g_system->getPaletteManager()->setPalette(curPalette, 0, 256);
-	//setScummVMPalette(curPalette, 0, 256);
 	_G(cur)->show_cur();
 
 	delete videoResource;

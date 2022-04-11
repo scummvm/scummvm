@@ -19,9 +19,9 @@
  *
  */
 
-#include "chewy/ngshext.h"
 #include "chewy/effect.h"
 #include "chewy/globals.h"
+#include "chewy/mcga_graphics.h"
 
 namespace Chewy {
 
@@ -53,7 +53,7 @@ void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, b
 		else
 			x = rnd_zeiger[i] * 8;
 		_G(out)->setPointer(sram_speicher);
-		_G(out)->spriteSave(sp, x, y, 8, 8, 0);
+		_G(out)->spriteSave(sp, x, y, 8, 8);
 		_G(out)->setPointer(screen);
 		_G(out)->spriteSet(sp, x, y, 0);
 	}
@@ -82,25 +82,25 @@ void Effect::blende1(byte *memPtr, byte *screen, byte *palette, int16 frames, ui
 			int16 x, y, x1;
 			for (x = i; x < 39 - i; x++) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x * 8, i * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x * 8, i * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x * 8, i * 8, 0);
 			}
 			for (y = i; y < 24 - i; y++) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x * 8, y * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x * 8, y * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x * 8, y * 8, 0);
 			}
 			for (x1 = 39 - i; x1 > i; x1--) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x1 * 8, y * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x1 * 8, y * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x1 * 8, y * 8, 0);
 			}
 			for (int16 y1 = 24 - i; y1 > i; y1--) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x1 * 8, y1 * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x1 * 8, y1 * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x1 * 8, y1 * 8, 0);
 			}
@@ -112,25 +112,25 @@ void Effect::blende1(byte *memPtr, byte *screen, byte *palette, int16 frames, ui
 			int16 x, y, x1;
 			for (x = i; x < 39 - i; x++) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x * 8, i * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x * 8, i * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x * 8, i * 8, 0);
 			}
 			for (y = i; y < 24 - i; y++) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x * 8, y * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x * 8, y * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x * 8, y * 8, 0);
 			}
 			for (x1 = 39 - i; x1 > i; x1--) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x1 * 8, y * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x1 * 8, y * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x1 * 8, y * 8, 0);
 			}
 			for (int16 y1 = 24 - i; y1 > i; y1--) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x1 * 8, y1 * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x1 * 8, y1 * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x1 * 8, y1 * 8, 0);
 			}

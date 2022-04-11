@@ -24,7 +24,9 @@
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
+#include "chewy/mcga_graphics.h"
 #include "chewy/menus.h"
+#include "chewy/mouse.h"
 #include "chewy/dialogs/inventory.h"
 
 namespace Chewy {

@@ -22,6 +22,7 @@
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
+#include "chewy/memory.h"
 #include "chewy/sound.h"
 #include "chewy/detail.h"
 

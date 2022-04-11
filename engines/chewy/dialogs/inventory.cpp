@@ -22,10 +22,12 @@
 #include "chewy/dialogs/inventory.h"
 #include "chewy/rooms/room44.h"
 #include "chewy/rooms/room58.h"
+#include "chewy/cursor.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/menus.h"
+#include "chewy/mouse.h"
 
 namespace Chewy {
 namespace Dialogs {

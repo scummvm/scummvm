@@ -19,9 +19,11 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
+#include "chewy/mouse.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room04.h"
 #include "chewy/sound.h"

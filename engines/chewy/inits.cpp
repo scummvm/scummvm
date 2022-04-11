@@ -22,9 +22,12 @@
 #include "common/config-manager.h"
 #include "common/memstream.h"
 #include "chewy/chewy.h"
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
+#include "chewy/mcga_graphics.h"
+#include "chewy/memory.h"
 #include "chewy/sound.h"
 
 namespace Chewy {

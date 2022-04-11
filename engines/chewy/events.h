@@ -154,7 +154,6 @@ extern void delay(size_t time);
 
 extern bool kbhit();
 extern char getch();
-extern void putch(char c);
 
 #define EVENTS_UPDATE g_events->update()
 #define EVENTS_CLEAR g_events->clearEvents()

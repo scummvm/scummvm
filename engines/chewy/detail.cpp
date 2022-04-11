@@ -21,6 +21,8 @@
 
 #include "chewy/detail.h"
 #include "chewy/globals.h"
+#include "chewy/mcga_graphics.h"
+#include "chewy/memory.h"
 #include "chewy/ngsdefs.h"
 #include "chewy/sound.h"
 #include "chewy/resource.h"

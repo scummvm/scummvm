@@ -22,8 +22,9 @@
 #ifndef CHEWY_DETAIL_H
 #define CHEWY_DETAIL_H
 
-#include "chewy/defines.h"
-#include "chewy/ngshext.h"
+#include "common/scummsys.h"
+#include "common/stream.h"
+#include "chewy/ngstypes.h"
 
 namespace Chewy {
 

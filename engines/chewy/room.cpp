@@ -21,9 +21,9 @@
 
 #include "chewy/defines.h"
 #include "chewy/globals.h"
+#include "chewy/memory.h"
 #include "chewy/resource.h"
 #include "chewy/room.h"
-#include "chewy/ngshext.h"
 #include "chewy/sound.h"
 
 namespace Chewy {

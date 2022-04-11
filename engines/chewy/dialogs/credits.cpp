@@ -23,6 +23,8 @@
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
+#include "chewy/mcga_graphics.h"
+#include "chewy/mouse.h"
 #include "chewy/text.h"
 
 namespace Chewy {

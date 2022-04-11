@@ -14,7 +14,6 @@ MODULE_OBJS = \
 	m_event.o \
 	main.o \
 	mouse.o \
-	mcga.o \
 	mcga_graphics.o \
 	memory.o \
 	menus.o \

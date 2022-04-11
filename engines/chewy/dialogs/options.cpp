@@ -20,8 +20,10 @@
  */
 
 #include "chewy/dialogs/options.h"
+#include "chewy/cursor.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
+#include "chewy/mcga_graphics.h"
 #include "chewy/sound.h"
 
 namespace Chewy {

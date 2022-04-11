@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
+#include "chewy/mouse.h"
 #include "chewy/ngsdefs.h"
 
 namespace Chewy {
@@ -252,10 +253,6 @@ char getch() {
 	}
 
 	return 0;
-}
-
-void putch(char c) {
-	warning("STUB: putch()");
 }
 
 } // namespace Chewy

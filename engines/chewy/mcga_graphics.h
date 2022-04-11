@@ -52,8 +52,8 @@ public:
 	void back2screen(byte *ptr);
 
 	void spriteSave(byte *spritePtr, int16 x, int16 y, int16 width,
-	                 int16 height, int16 screenWidth);
-	void spriteSet(byte *sptr, int16 x, int16 y, int16 scrwidth);
+	                int16 height);
+	void spriteSet(byte *sptr, int16 x, int16 y, int16 scrWidth);
 	void scale_set(byte *sptr, int16 x, int16 y, int16 xdiff,
 	               int16 ydiff, int16 scrwidth);
 	void map_spr2screen(byte *sptr, int16 x, int16 y);
@@ -67,9 +67,21 @@ public:
 
 private:
 	int16 devices();
+	void putz(unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth);
+
+	// Zoom related
+	void setXVals();
+	void setYVals(int spriteHeight);
+	void clip(byte *&source, byte *&dest, int16 &x, int16 &y);
+	void zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 yDiff, int16 scrWidth);
 
 	byte _palTable[PALETTE_SIZE];
 	uint8 _einfuegen = 0;
+
+	int _zoomSpriteDeltaX2;
+	int _zoomSpriteDeltaY2;
+	int _zoomSpriteXVal1, _zoomSpriteXVal2;
+	int _zoomSpriteYVal1, _zoomSpriteYVal2;
 };
 
 } // namespace Chewy

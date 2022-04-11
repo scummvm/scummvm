@@ -23,6 +23,7 @@
 #define CHEWY_ROOM_H
 
 #include "chewy/detail.h"
+#include "chewy/mcga_graphics.h"
 #include "chewy/object_extra.h"
 
 namespace Chewy {

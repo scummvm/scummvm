@@ -26,7 +26,6 @@
 #include "graphics/palette.h"
 #include "video/flic_decoder.h"
 #include "chewy/globals.h"
-#include "chewy/mcga.h"
 #include "chewy/sound.h"
 #include "chewy/video/cfo_decoder.h"
 

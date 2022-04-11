@@ -22,6 +22,8 @@
 #ifndef CHEWY_MOVCLASS_H
 #define CHEWY_MOVCLASS_H
 
+#include "common/scummsys.h"
+
 namespace Chewy {
 
 #define MAX_KNOTEN_PKT 15

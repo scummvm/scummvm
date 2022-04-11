@@ -20,15 +20,15 @@
  */
 
 #include "common/config-manager.h"
-#include "common/textconsole.h"
 #include "chewy/dialogs/main_menu.h"
 #include "chewy/dialogs/cinema.h"
 #include "chewy/dialogs/credits.h"
 #include "chewy/dialogs/files.h"
+#include "chewy/cursor.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
-#include "chewy/ngshext.h"
+#include "chewy/mcga_graphics.h"
 #include "chewy/sound.h"
 
 namespace Chewy {

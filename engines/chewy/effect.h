@@ -22,6 +22,8 @@
 #ifndef CHEWY_EFFECT_H
 #define CHEWY_EFFECT_H
 
+#include "common/scummsys.h"
+
 namespace Chewy {
 
 enum BlendMode {
