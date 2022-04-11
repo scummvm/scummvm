@@ -96,21 +96,21 @@ bool DataReader::readF80(double &value) {
 	uint8_t sign = (signAndExponent >> 15) & 1;
 	int16_t exponent = signAndExponent & 0x7fff;
 
-	// Eliminate implicit 1 and truncate from 63 to 47 bits
-	mantissa &= 0x7fffffffffffffffULL;
-	mantissa >>= 16;
+	// Eliminate implicit 1 and truncate from 63 to 52 bits
+	mantissa &= (((static_cast<uint64_t>(1) << 52) - 1u) << 11);
+	mantissa >>= 11;
 
 	if (mantissa != 0 || exponent != 0) {
 		// Adjust exponent
-		exponent = exponent - 15360;
+		exponent -= 15360;
 		if (exponent > 2046) {
 			// Too big, set to largest finite magnitude
 			exponent = 2046;
-			mantissa = 0xFFFFFFFFFFFFFUL;
+			mantissa = (static_cast<uint64_t>(1) << 52) - 1u;
 		} else if (exponent < 0) {
 			// Subnormal number
-			mantissa |= 0x1000000000000ULL;
-			if (exponent <= -48) {
+			mantissa |= (static_cast<uint64_t>(1) << 52);
+			if (exponent < -52) {
 				mantissa = 0;
 				exponent = 0;
 			} else {
@@ -120,7 +120,7 @@ bool DataReader::readF80(double &value) {
 		}
 	}
 
-	uint64_t recombined = (static_cast<uint64_t>(sign) << 63) | (static_cast<uint64_t>(exponent) << 52) | (static_cast<uint64_t>(mantissa) << 5);
+	uint64_t recombined = (static_cast<uint64_t>(sign) << 63) | (static_cast<uint64_t>(exponent) << 52) | static_cast<uint64_t>(mantissa);
 	memcpy(&value, &recombined, 8);
 
 	return true;
@@ -566,6 +566,40 @@ DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode TimerMessengerModifier::load(DataReader &reader) {
+	if (_revision != 0x3ea)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (!reader.readU32(messageAndTimerFlags) || !executeWhen.load(reader) || !send.load(reader)
+		|| !terminateWhen.load(reader) || !reader.readU16(unknown2) || !reader.readU32(destination)
+		|| !reader.readBytes(unknown4) || !with.load(reader) || !reader.readU8(unknown5)
+		|| !reader.readU8(minutes) || !reader.readU8(seconds) || !reader.readU8(hundredthsOfSeconds)
+		|| !reader.readU32(unknown6) || !reader.readU32(unknown7) || !reader.readBytes(unknown8)
+		|| !reader.readU8(withSourceLength) || !reader.readU8(unknown9) || !reader.readNonTerminatedStr(withSource, withSourceLength))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode CollisionDetectionMessengerModifier::load(DataReader &reader) {
+	if (_revision != 0x3ea)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (!reader.readU32(messageAndModifierFlags) || !enableWhen.load(reader) || !disableWhen.load(reader)
+		|| !send.load(reader) || !reader.readU16(unknown2) || !reader.readU32(destination)
+		|| !reader.readBytes(unknown3) || !with.load(reader) || !reader.readU8(withSourceLength)
+		|| !reader.readU8(unknown4) || !reader.readNonTerminatedStr(withSource, withSourceLength))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode KeyboardMessengerModifier::load(DataReader &reader) {
 	if (_revision != 0x3eb)
 		return kDataReadErrorUnsupportedRevision;
@@ -771,6 +805,12 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kPlugInModifier:
 		dataObject = new PlugInModifier();
+		break;
+	case DataObjectTypes::kTimerMessengerModifier:
+		dataObject = new TimerMessengerModifier();
+		break;
+	case DataObjectTypes::kCollisionDetectionMessengerModifier:
+		dataObject = new CollisionDetectionMessengerModifier();
 		break;
 	case DataObjectTypes::kKeyboardMessengerModifier:
 		dataObject = new KeyboardMessengerModifier();

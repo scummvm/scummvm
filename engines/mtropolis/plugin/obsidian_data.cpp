@@ -19,7 +19,7 @@
  *
  */
 
-#include "mtropolis/plugin_obsidian_data.h"
+#include "mtropolis/plugin/obsidian_data.h"
 
 namespace MTropolis {
 

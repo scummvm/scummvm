@@ -107,7 +107,8 @@ enum DataObjectType {
 	kBehaviorModifier                    = 0x2c6,
 	kMessengerModifier                   = 0x2da,
 	kSetModifier                         = 0x2df,
-	kCollisionDetectionMessengerModifier = 0x2ee,	// NYI
+	kTimerMessengerModifier              = 0x2e4,
+	kCollisionDetectionMessengerModifier = 0x2ee,
 	kBoundaryDetectionMessengerModifier  = 0x2f8,	// NYI
 	kKeyboardMessengerModifier           = 0x302,
 	kTextStyleModifier                   = 0x32a,
@@ -488,6 +489,71 @@ struct IfMessengerModifier : public DataObject {
 	uint8 withSourceLength;
 	uint8 unknown10;
 	MiniscriptProgram program;
+
+	Common::String withSource;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct TimerMessengerModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+
+	enum TimerFlags {
+		kTimerFlagLooping = 0x10000000,
+	};
+
+	uint32 messageAndTimerFlags;
+	Event executeWhen;
+	Event send;
+	Event terminateWhen;
+	uint16 unknown2;
+	uint32 destination;
+	uint8 unknown4[10];
+	MessageDataLocator with;
+	uint8 unknown5;
+	uint8 minutes;
+	uint8 seconds;
+	uint8 hundredthsOfSeconds;
+	uint32 unknown6;
+	uint32 unknown7;
+	uint8 unknown8[10];
+	uint8 withSourceLength;
+	uint8 unknown9;
+
+	Common::String withSource;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct CollisionDetectionMessengerModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+
+	enum ModifierFlags {
+		kDetectLayerInFront = 0x10000000,
+		kDetectLayerBehind = 0x08000000,
+		kSendToCollidingElement = 0x02000000,
+		kSendToOnlyFirstCollidingElement = 0x00200000,
+
+		kDetectionModeMask = 0x01c00000,
+		kDetectionModeFirstContact = 0x01400000,
+		kDetectionModeWhileInContact = 0x01000000,
+		kDetectionModeExiting = 0x00800000,
+
+		kNoCollideWithParent = 0x00100000,
+	};
+
+	uint32 messageAndModifierFlags;
+	Event enableWhen;
+	Event disableWhen;
+	Event send;
+	uint16 unknown2;
+	uint32 destination;
+	uint8 unknown3[10];
+	MessageDataLocator with;
+	uint8 withSourceLength;
+	uint8 unknown4;
 
 	Common::String withSource;
 

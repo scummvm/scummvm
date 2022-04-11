@@ -55,12 +55,13 @@ private:
 
 struct MessengerSendSpec {
 	MessengerSendSpec();
-	bool load(const Data::Event &dataEvent, uint32 dataMessageFlags, uint16 dataWith, uint32 dataWithSourceGUID, uint32 dataDestination);
+	bool load(const Data::Event &dataEvent, uint32 dataMessageFlags, uint16 dataWith, const Common::String &dataWithSourceName, uint32 dataWithSourceGUID, uint32 dataDestination);
 
 	Event send;
 	MessageFlags messageFlags;
 	MessageWithType withType;
 	uint32 withSourceGUID;
+	Common::String withSourceName;
 	uint32 destination; // May be a MessageDestination or GUID
 };
 
@@ -96,6 +97,41 @@ private:
 	MessengerSendSpec _sendSpec;
 
 	Common::SharedPtr<MiniscriptProgram> _program;
+};
+
+class TimerMessengerModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::TimerMessengerModifier &data);
+
+private:
+	Event _executeWhen;
+	Event _terminateWhen;
+	MessengerSendSpec _sendSpec;
+	uint32 _milliseconds;
+	bool _looping;
+};
+
+class CollisionDetectionMessengerModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::CollisionDetectionMessengerModifier &data);
+
+private:
+	enum DetectionMode {
+		kDetectionModeFirstContact,
+		kDetectionModeWhileInContact,
+		kDetectionModeExiting,
+	};
+
+	Event _enableWhen;
+	Event _disableWhen;
+	MessengerSendSpec _sendSpec;
+
+	DetectionMode _detectionMode;
+	bool _detectInFront;
+	bool _detectBehind;
+	bool _ignoreParent;
+	bool _sendToCollidingElement; // ... instead of to send spec destination, but send spec with/flags still apply!
+	bool _sendToOnlyFirstCollidingElement;
 };
 
 class KeyboardMessengerModifier : public Modifier {

@@ -71,7 +71,7 @@ bool MiniscriptModifier::load(ModifierLoaderContext &context, const Data::Minisc
 MessengerSendSpec::MessengerSendSpec() : withType(kMessageWithNothing), withSourceGUID(0), destination(0) {
 }
 
-bool MessengerSendSpec::load(const Data::Event& dataEvent, uint32 dataMessageFlags, uint16 dataWith, uint32 dataWithSourceGUID, uint32 dataDestination) {
+bool MessengerSendSpec::load(const Data::Event& dataEvent, uint32 dataMessageFlags, uint16 dataWith, const Common::String &dataWithSourceName, uint32 dataWithSourceGUID, uint32 dataDestination) {
 	messageFlags.relay = ((dataMessageFlags & 0x20000000) == 0);
 	messageFlags.cascade = ((dataMessageFlags & 0x40000000) == 0);
 	messageFlags.immediate = ((dataMessageFlags & 0x80000000) == 0);
@@ -82,6 +82,7 @@ bool MessengerSendSpec::load(const Data::Event& dataEvent, uint32 dataMessageFla
 	this->destination = dataDestination;
 	this->withSourceGUID = dataWithSourceGUID;
 	this->withType = static_cast<MessageWithType>(dataWith);
+	this->withSourceName = dataWithSourceName;
 
 	return true;
 }
@@ -90,7 +91,7 @@ bool MessengerModifier::load(ModifierLoaderContext &context, const Data::Messeng
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with.locationType, data.with.guid, data.destination))
+	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with.locationType, data.withSourceName, data.with.guid, data.destination))
 		return false;
 
 	return true;
@@ -119,12 +120,62 @@ bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMes
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSourceGUID, data.destination))
+	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSource, data.withSourceGUID, data.destination))
 		return false;
 
 	_program = MiniscriptParser::parse(data.program);
 	if (!_program)
 		return false;
+
+	return true;
+}
+
+bool TimerMessengerModifier::load(ModifierLoaderContext &context, const Data::TimerMessengerModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_executeWhen.load(data.executeWhen) || !this->_terminateWhen.load(data.terminateWhen))
+		return false;
+
+	if (!_sendSpec.load(data.send, data.messageAndTimerFlags, data.with.locationType, data.withSource, data.with.guid, data.destination))
+		return false;
+
+	_milliseconds = data.minutes * (60 * 1000) + data.seconds * (1000) + data.hundredthsOfSeconds * 10;
+	_looping = ((data.messageAndTimerFlags & Data::TimerMessengerModifier::kTimerFlagLooping) != 0);
+
+	return true;
+}
+
+bool CollisionDetectionMessengerModifier::load(ModifierLoaderContext &context, const Data::CollisionDetectionMessengerModifier &data) {
+
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_enableWhen.load(data.enableWhen) || !this->_disableWhen.load(data.disableWhen))
+		return false;
+
+	if (!_sendSpec.load(data.send, data.messageAndModifierFlags, data.with.locationType, data.withSource, data.with.guid, data.destination))
+		return false;
+
+	_detectInFront = ((data.messageAndModifierFlags & Data::CollisionDetectionMessengerModifier::kDetectLayerInFront) != 0);
+	_detectBehind = ((data.messageAndModifierFlags & Data::CollisionDetectionMessengerModifier::kDetectLayerBehind) != 0);
+	_ignoreParent = ((data.messageAndModifierFlags & Data::CollisionDetectionMessengerModifier::kNoCollideWithParent) != 0);
+	_sendToCollidingElement = ((data.messageAndModifierFlags & Data::CollisionDetectionMessengerModifier::kSendToCollidingElement) != 0);
+	_sendToOnlyFirstCollidingElement = ((data.messageAndModifierFlags & Data::CollisionDetectionMessengerModifier::kSendToOnlyFirstCollidingElement) != 0);
+
+	switch (data.messageAndModifierFlags & Data::CollisionDetectionMessengerModifier::kDetectionModeMask) {
+	case Data::CollisionDetectionMessengerModifier::kDetectionModeFirstContact:
+		_detectionMode = kDetectionModeFirstContact;
+		break;
+	case Data::CollisionDetectionMessengerModifier::kDetectionModeWhileInContact:
+		_detectionMode = kDetectionModeWhileInContact;
+		break;
+	case Data::CollisionDetectionMessengerModifier::kDetectionModeExiting:
+		_detectionMode = kDetectionModeExiting;
+		break;
+	default:
+		return false;	// Unknown flag combination
+	}
 
 	return true;
 }
@@ -166,7 +217,7 @@ bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data:
 		break;
 	}
 
-	if (!_sendSpec.load(data.message, data.messageFlagsAndKeyStates, data.with, data.withSourceGUID, data.destination))
+	if (!_sendSpec.load(data.message, data.messageFlagsAndKeyStates, data.with, data.withSource, data.withSourceGUID, data.destination))
 		return false;
 
 	return true;
