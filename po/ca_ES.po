@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-10 17:01+0000\n"
-"PO-Revision-Date: 2022-04-04 12:20+0000\n"
+"PO-Revision-Date: 2022-04-12 01:27+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -4412,10 +4412,8 @@ msgstr ""
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. TOGGLE MCCOY'S COMBAT MODE
 #: engines/bladerunner/metaengine.cpp:128
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Combat"
-msgstr "Commuta el silenci"
+msgstr "Mode de combat"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:137 engines/scumm/help.cpp:76
@@ -4428,10 +4426,8 @@ msgstr "Salta la seqüència de video"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SKIP PAST CURRENT LINE OF DIALOGUE
 #: engines/bladerunner/metaengine.cpp:150
-#, fuzzy
-#| msgid "Skip dialog lines"
 msgid "Skip dialogue"
-msgstr "Omet les línies de diàleg"
+msgstr "Omet la línia de diàleg"
 
 #. I18N: This keymap toggles between opening the KIA in the Game Options tab, and closing the KIA.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4458,15 +4454,13 @@ msgstr ""
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:204
-#, fuzzy
 msgid "Scroll Up"
-msgstr "Desplaça la llista amunt"
+msgstr "Desplaça amunt"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
 #: engines/bladerunner/metaengine.cpp:211
-#, fuzzy
 msgid "Scroll Down"
-msgstr "Desplaça la llista avall"
+msgstr "Desplaça avall"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -6162,7 +6156,6 @@ msgstr ""
 "demanar la propera vegada que inicieu el joc.\n"
 
 #: engines/parallaction/saveload.cpp:315
-#, fuzzy
 msgid "ScummVM successfully converted all your saved games."
 msgstr "ScummVM ha convertit satisfactòriament totes les partides desades."
 
@@ -6211,9 +6204,8 @@ msgid "Display/Hide Pause Menu"
 msgstr "Mostra/Oculta el menú de pausa"
 
 #: engines/pegasus/pegasus.cpp:2805
-#, fuzzy
 msgid "Toggle Chatty AI"
-msgstr "Mode ràpid"
+msgstr "Commutar IA de xat"
 
 #: engines/pink/gui.cpp:219
 msgid "This menu item is not yet implemented"
@@ -6405,9 +6397,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/detection.cpp:175
-#, fuzzy
 msgid "Show Object Line"
-msgstr "Mostra les etiquetes dels objectes"
+msgstr "Mostra l'etiqueta de l'objecte"
 
 #: engines/scumm/detection.cpp:176
 msgid "Show the names of objects at the bottom of the screen"
@@ -6442,9 +6433,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/detection.cpp:203
-#, fuzzy
 msgid "Enable smooth scrolling"
-msgstr "Activa el desplaçament suau al caminar"
+msgstr "Habilita el desplaçament suau"
 
 #: engines/scumm/detection.cpp:204
 msgid "(instead of the normal 8-pixels steps scrolling)"
@@ -6989,9 +6979,8 @@ msgid "Third kid"
 msgstr "Tercer noi"
 
 #: engines/scumm/help.cpp:292
-#, fuzzy
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Conmuta la visualització de dades central"
+msgstr "Commuta la visualització de l'Inventari/Punts IQ"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
@@ -7226,9 +7215,8 @@ msgid "Show portraits for the characters when conversing"
 msgstr ""
 
 #: engines/sherlock/detection.cpp:98
-#, fuzzy
 msgid "Slide dialogs into view"
-msgstr "Salta la línia"
+msgstr "Lliscar els diàlegs al mostrar-los"
 
 #: engines/sherlock/detection.cpp:99
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
@@ -7298,9 +7286,8 @@ msgid ""
 msgstr ""
 
 #: engines/stark/detection.cpp:393 engines/ultima/detection.cpp:118
-#, fuzzy
 msgid "Enable font anti-aliasing"
-msgstr "Activa els cursors flotants"
+msgstr "Habilita l'antialiàsing del tipus de lletra"
 
 #: engines/stark/detection.cpp:394 engines/ultima/detection.cpp:119
 msgid "When font anti-aliasing is enabled, the text is smoother."
@@ -7387,12 +7374,11 @@ msgstr ""
 "zlib"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:464
-#, fuzzy
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
-"S'han trobat escenes en DXA, però s'ha compilat el ScummVM sense suport de "
-"zlib"
+"S'han trobat escenes en MPEG-2, però s'ha compilat el ScummVM sense suport "
+"de MPEG-2"
 
 #: engines/sword1/animation.cpp:575 engines/sword2/animation.cpp:473
 #, c-format
@@ -7400,7 +7386,6 @@ msgid "Cutscene '%s' not found"
 msgstr "No s'ha trobat l'escena '%s'"
 
 #: engines/sword1/control.cpp:886
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Broken Sword 1 that should "
 "be converted.\n"
@@ -7415,8 +7400,8 @@ msgstr ""
 "El format de les partides desades antigues no està suportat, per la qual "
 "cosa no podreu carregar aquestes partides si no les convertiu.\n"
 "\n"
-"Premeu D'Acord per convertir-les ara, en cas contrari se us tornarà a "
-"demanar la propera vegada que engegueu el joc.\n"
+"Premeu d'Acord per convertir-les ara, en cas contrari se us tornarà a "
+"demanar la propera vegada que inicieu el joc.\n"
 
 #: engines/sword1/control.cpp:1260
 #, c-format
@@ -7472,9 +7457,8 @@ msgstr ""
 "Descomprimiu-lo, si us plau"
 
 #: engines/tinsel/detection_tables.h:481
-#, fuzzy
 msgid "Saturn CD version is not yet supported"
-msgstr "Identificador de joc no suportat"
+msgstr "Encara no s'admet la versió de Saturn CD"
 
 #: engines/tony/tony.cpp:248
 #, c-format
@@ -7482,9 +7466,9 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr ""
 
 #: engines/toon/toon.cpp:215
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game in slot #%d "
-msgstr "No s'ha pogut desar a l'espai %d "
+msgstr "Partida desada a la ranura %d "
 
 #: engines/toon/toon.cpp:219
 #, c-format
@@ -7519,9 +7503,8 @@ msgid "Enable the original wall collision damage"
 msgstr ""
 
 #: engines/twine/detection.cpp:681
-#, fuzzy
 msgid "Disable save menu"
-msgstr "No s'ha pogut desar l'estat del joc"
+msgstr "Desactiva el menú de desar"
 
 #: engines/twine/detection.cpp:682
 msgid ""
@@ -7529,73 +7512,60 @@ msgid ""
 msgstr ""
 
 #: engines/twine/detection.cpp:688
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "Activa el mode heli"
+msgstr "Habilita el mode de depuració"
 
 #: engines/twine/detection.cpp:689
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "Activa el mode heli"
+msgstr "Habilita el mode de depuració"
 
 #: engines/twine/detection.cpp:695
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "Activa el públic"
+msgstr "Habilita l'àudio de CD"
 
 #: engines/twine/detection.cpp:696
 msgid "Enable the original audio cd track"
 msgstr ""
 
 #: engines/twine/detection.cpp:702
-#, fuzzy
 msgid "Enable sound"
-msgstr "Activa el públic"
+msgstr "Habilita el so"
 
 #: engines/twine/detection.cpp:703
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "Títol complet del joc"
+msgstr "Habilita el so del joc"
 
 #: engines/twine/detection.cpp:709
-#, fuzzy
 msgid "Enable voices"
-msgstr "Activa el mode heli"
+msgstr "Habilita les veus"
 
 #: engines/twine/detection.cpp:710
-#, fuzzy
 msgid "Enable the voices for the game"
-msgstr "Activa el mode heli"
+msgstr "Habilita les veus del joc"
 
 #: engines/twine/detection.cpp:716
-#, fuzzy
 msgid "Enable text"
-msgstr "Activa el públic"
+msgstr "Habilita el text"
 
 #: engines/twine/detection.cpp:717
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "Títol complet del joc"
+msgstr "Habilita el text del joc"
 
 #: engines/twine/detection.cpp:723
-#, fuzzy
 msgid "Enable movies"
-msgstr "Activa el mode heli"
+msgstr "Habilita les pel·lícules"
 
 #: engines/twine/detection.cpp:724
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "Activa el mode heli"
+msgstr "Habilita les escenes curtes del joc"
 
 #: engines/twine/detection.cpp:730
-#, fuzzy
 msgid "Enable mouse"
-msgstr "Activa el mode heli"
+msgstr "Habilita el ratolí"
 
 #: engines/twine/detection.cpp:731
-#, fuzzy
 msgid "Enable the mouse for the UI"
-msgstr "Títol complet del joc"
+msgstr "Habilita el ratolí a la interfície d'usuari"
 
 #: engines/twine/detection.cpp:737
 msgid "Use the USA version"
@@ -7606,14 +7576,12 @@ msgid "Enable the USA specific version flags"
 msgstr ""
 
 #: engines/twine/detection.cpp:744 engines/ultima/detection.cpp:84
-#, fuzzy
 msgid "Enable high resolution"
-msgstr "Activa la barra gràfica dels punts d'impacte"
+msgstr "Habilita l'alta resolució"
 
 #: engines/twine/detection.cpp:745 engines/ultima/detection.cpp:85
-#, fuzzy
 msgid "Enable a higher resolution for the game"
-msgstr "Títol complet del joc"
+msgstr "Habilita l'alta resolució del joc"
 
 #: engines/twine/metaengine.cpp:104
 msgid "Debug Next Room"
