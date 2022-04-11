@@ -9,10 +9,10 @@ MODULE_OBJS = \
 	modifiers.o \
 	modifier_factory.o \
 	mtropolis.o \
-	plugin_obsidian.o \
-	plugin_obsidian_data.o \
-	plugin_standard.o \
-	plugin_standard_data.o \
+	plugin/obsidian.o \
+	plugin/obsidian_data.o \
+	plugin/standard.o \
+	plugin/standard_data.o \
 	runtime.o \
 	vthread.o
 

@@ -19,42 +19,27 @@
  *
  */
 
-#include "mtropolis/plugin_standard.h"
+#include "mtropolis/plugin/obsidian.h"
 #include "mtropolis/plugins.h"
-
 
 namespace MTropolis {
 
-namespace Standard {
+namespace Obsidian {
 
-bool CursorModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::CursorModifier &data) {
-	if (!_applyWhen.load(data.applyWhen) || !_removeWhen.load(data.removeWhen))
-		return false;
-	_cursorID = data.cursorID;
-
-	return true;
+ObsidianPlugIn::ObsidianPlugIn() {
 }
 
-bool STransCtModifier::load(const PlugInModifierLoaderContext& context, const Data::Standard::STransCtModifier& data) {
-	return true;
+void ObsidianPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
 }
 
-StandardPlugIn::StandardPlugIn() : _cursorModifierFactory(this), _sTransCtModifierFactory(this) {
-}
-
-void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
-	registrar->registerPlugInModifier("CursorMod", &_cursorModifierFactory);
-	registrar->registerPlugInModifier("STransCt", &_sTransCtModifierFactory);
-}
-
-} // End of namespace Standard
+} // End of namespace ObsidianPlugIn
 
 namespace PlugIns {
 
-Common::SharedPtr<PlugIn> createStandard() {
-	return Common::SharedPtr<PlugIn>(new Standard::StandardPlugIn());
+Common::SharedPtr<PlugIn> createObsidian() {
+	return Common::SharedPtr<PlugIn>(new Obsidian::ObsidianPlugIn());
 }
 
-} // End of namespace MTropolis
+} // End of namespace PlugIns
 
 } // End of namespace MTropolis

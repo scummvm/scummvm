@@ -24,7 +24,7 @@
 
 #include "mtropolis/modifier_factory.h"
 #include "mtropolis/runtime.h"
-#include "mtropolis/plugin_standard_data.h"
+#include "mtropolis/plugin/standard_data.h"
 
 namespace MTropolis {
 
