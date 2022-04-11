@@ -68,6 +68,21 @@ enum PlayerPosition {
 	kPlayerRight = 'R'
 };
 
+// Common colors
+enum HypnoColors {
+	kHypnoColorRed = 250,
+	kHypnoColorGreen = 251,
+	kHypnoColorWhite = 252,
+	kHypnoColorYellow = 253,
+};
+
+// Spider colors
+enum SpiderColors {
+	kSpiderColorWhite = 248,
+	kSpiderColorBlue = 252,
+};
+
+
 class HypnoEngine : public Engine {
 private:
 	Image::ImageDecoder *_image;
@@ -144,6 +159,7 @@ public:
 	void drawImage(Graphics::Surface &image, int x, int y, bool transparent);
 	void loadPalette(const Common::String &fname);
 	void loadPalette(const byte *palette, uint32 offset, uint32 size);
+	byte *getPalette(uint32 idx);
 
 	// Cursors
 	Common::String _defaultCursor;

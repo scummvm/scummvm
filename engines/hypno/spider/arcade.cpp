@@ -88,7 +88,7 @@ void SpiderEngine::hitPlayer() {
 		if (_playerFrameIdx < _playerFrameSep)
 			_playerFrameIdx = _playerFrameSep;
 	} else {
-		uint32 c = 250; // red
+		uint32 c = kHypnoColorRed; // red
 		_compositeSurface->fillRect(Common::Rect(0, 0, 640, 480), c);
 		drawScreen();
 	}
@@ -97,7 +97,7 @@ void SpiderEngine::hitPlayer() {
 }
 
 void SpiderEngine::drawShoot(const Common::Point &target) {
-	uint32 c = 248; // white
+	uint32 c = kSpiderColorWhite; // white
 	uint32 ox = 0;
 	uint32 oy = 0;
 
@@ -270,14 +270,14 @@ void SpiderEngine::drawHealth() {
 		return;
 	r = Common::Rect(256, 152 + d, 272, 174);
 	if (d >= 11)
-		c = 250; // red
+		c = kHypnoColorRed; // red
 	else
-		c = 251; // green
+		c = kHypnoColorGreen; // green
 
 	_compositeSurface->fillRect(r, c);
 
 	r = Common::Rect(256, 152, 272, 174);
-	c = 252; // blue
+	c = kSpiderColorBlue; // blue
 	_compositeSurface->frameRect(r, c);
 
 	drawString("block05.fgx", "ENERGY", 248, 180, 38, c);

@@ -232,7 +232,7 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 		byte *palette;
 		Graphics::Surface *frame = decodeFrame("c_misc/zones.smk", 12, &palette);
 		loadPalette(palette, 0, 256);
-		uint32 c = 251; // green
+		uint32 c = kHypnoColorGreen; // green
 		int bonusCounter = 0;
 		int scoreCounter = _score - _bonus;
 		assert(scoreCounter >= 0);
@@ -357,7 +357,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 		bool endedBriefing = false;
 		Common::Event event;
 
-		uint32 c = 251; // green
+		uint32 c = kHypnoColorGreen; // green
 		drawString("scifi08.fgx", Common::String::format("Lives : %d", _lives), 36, 2, 0, c);
 		while (!shouldQuit() && !endedBriefing) {
 
@@ -544,7 +544,7 @@ Common::Point WetEngine::computeTargetPosition(const Common::Point &mousePos) {
 }
 
 void WetEngine::drawShoot(const Common::Point &mousePos) {
-	uint32 c = 253;
+	uint32 c = kHypnoColorYellow;
 
 	if (_arcadeMode == "YT") {
 		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y + 1, c);
@@ -565,7 +565,7 @@ void WetEngine::drawShoot(const Common::Point &mousePos) {
 
 void WetEngine::drawPlayer() {
 	// TARGET ACQUIRED frame
-	uint32 c = 251; // green
+	uint32 c = kHypnoColorGreen; // green
 	_compositeSurface->drawLine(113, 1, 119, 1, c);
 	_compositeSurface->drawLine(200, 1, 206, 1, c);
 
@@ -575,7 +575,7 @@ void WetEngine::drawPlayer() {
 	_compositeSurface->drawLine(113, 9, 119, 9, c);
 	_compositeSurface->drawLine(200, 9, 206, 9, c);
 
-	c = 250; // red ?
+	c = kHypnoColorRed; // red ?
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 	int i = detectTarget(mousePos);
 	if (i > 0)
@@ -605,7 +605,7 @@ void WetEngine::drawPlayer() {
 }
 
 void WetEngine::drawHealth() {
-	uint32 c = 253;
+	uint32 c = kHypnoColorYellow;
 	int p = (100 * _health) / _maxHealth;
 	int s = _score;
 	int mo = _objKillsCount[_objIdx];

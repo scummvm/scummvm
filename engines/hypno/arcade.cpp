@@ -463,9 +463,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 								_health = _health - it->attackWeight;
 								hitPlayer();
 							}
-							byte p[3] = {0xff, 0x00, 0x00}; // Always red?
+							byte *c = getPalette(kHypnoColorRed);
 							assert(s.paletteSize == 1 || s.paletteSize == 0);
-							loadPalette((byte *) &p, s.paletteOffset, s.paletteSize);
+							loadPalette(c, s.paletteOffset, s.paletteSize);
 							_shoots.push_back(s);
 						} else {
 							s.video = new MVideo(it->animation, offset + it->position, true, false, false);

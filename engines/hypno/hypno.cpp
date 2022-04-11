@@ -433,6 +433,13 @@ void HypnoEngine::loadPalette(const byte *palette, uint32 offset, uint32 size) {
 	g_system->getPaletteManager()->setPalette(palette, offset, size);
 }
 
+
+byte *HypnoEngine::getPalette(uint idx) {
+	byte *videoPalette = (byte *)malloc(3);
+	g_system->getPaletteManager()->grabPalette(videoPalette, idx, 1);
+	return videoPalette;
+}
+
 void HypnoEngine::updateVideo(MVideo &video) {
 	video.decoder->decodeNextFrame();
 }
