@@ -153,6 +153,28 @@ bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data:
 	return true;
 }
 
+bool GraphicModifier::load(ModifierLoaderContext& context, const Data::GraphicModifier& data) {
+	if (!loadTypicalHeader(data.modHeader) || !_applyWhen.load(data.applyWhen) || !_removeWhen.load(data.removeWhen)
+		|| !_foreColor.load(data.foreColor) || !_backColor.load(data.backColor)
+		|| !_borderColor.load(data.borderColor) || !_shadowColor.load(data.shadowColor))
+		return false;
+
+	// We need the poly points even if this isn't a poly shape since I think it's possible to change the shape type at runtime
+	_polyPoints.resize(data.polyPoints.size());
+	for (size_t i = 0; i < data.polyPoints.size(); i++) {
+		_polyPoints[i].x = data.polyPoints[i].x;
+		_polyPoints[i].y = data.polyPoints[i].y;
+	}
+
+	_inkMode = static_cast<InkMode>(data.inkMode);
+	_shape = static_cast<Shape>(data.shape);
+
+	_borderSize = data.borderSize;
+	_shadowSize = data.shadowSize;
+
+	return true;
+}
+
 bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;

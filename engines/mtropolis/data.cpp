@@ -236,6 +236,26 @@ bool Event::load(DataReader& reader) {
 	return reader.readU32(eventID) && reader.readU32(eventInfo);
 }
 
+
+bool ColorRGB16::load(DataReader& reader) {
+
+	if (reader.getProjectFormat() == kProjectFormatMacintosh)
+		return reader.readU16(red) && reader.readU16(green) && reader.readU16(blue); 
+	else if (reader.getProjectFormat() == kProjectFormatWindows) {
+		uint8 bgra[4];
+		if (!reader.readBytes(bgra))
+			return false;
+
+		red = bgra[2] * 0x101;
+		green = bgra[1] * 0x101;
+		blue = bgra[0] * 0x101;
+
+		return true;
+	}
+	else
+		return false;
+}
+
 DataObject::DataObject() : _type(DataObjectTypes::kUnknown), _revision(0) {
 }
 
@@ -512,7 +532,7 @@ DataReadErrorCode MessengerModifier::load(DataReader& reader) {
 
 DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 	if (_revision != 0x3ea)
-		return kDataReadErrorReadFailed;
+		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readU32(messageFlags) || !when.load(reader) || !send.load(reader) ||
 		!reader.readU16(unknown6) || !reader.readU32(destination) || !reader.readBytes(unknown7) || !reader.readU16(with)
@@ -530,7 +550,7 @@ DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 
 DataReadErrorCode KeyboardMessengerModifier::load(DataReader &reader) {
 	if (_revision != 0x3eb)
-		return kDataReadErrorReadFailed;
+		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readU32(messageFlagsAndKeyStates) || !reader.readU16(unknown2)
 		|| !reader.readU16(keyModifiers) || !reader.readU8(keycode) || !reader.readBytes(unknown4)
@@ -542,6 +562,46 @@ DataReadErrorCode KeyboardMessengerModifier::load(DataReader &reader) {
 
 	if (withSourceLength > 0 && !reader.readNonTerminatedStr(withSource, withSourceLength))
 		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+
+DataReadErrorCode GraphicModifier::load(DataReader &reader) {
+	if (_revision != 0x3e9)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readU16(unknown1) || !applyWhen.load(reader)
+		|| !removeWhen.load(reader) || !reader.readBytes(unknown2) || !reader.readU16(inkMode)
+		|| !reader.readU16(shape))
+		return kDataReadErrorReadFailed;
+
+	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+		haveMacPart = true;
+		if (!reader.readBytes(platform.mac.unknown4_1) || !backColor.load(reader) || !foreColor.load(reader)
+			|| !reader.readU16(borderSize) || !borderColor.load(reader) || !reader.readU16(shadowSize)
+			|| !shadowColor.load(reader) || !reader.readBytes(platform.mac.unknown4_2))
+			return kDataReadErrorReadFailed;
+	} else
+		haveMacPart = false;
+
+	if (reader.getProjectFormat() == kProjectFormatWindows) {
+		haveWinPart = true;
+		if (!reader.readBytes(platform.win.unknown5_1) || !backColor.load(reader) || !foreColor.load(reader)
+			|| !reader.readU16(borderSize) || !borderColor.load(reader) || !reader.readU16(shadowSize)
+			|| !shadowColor.load(reader) || !reader.readBytes(platform.win.unknown5_2))
+			return kDataReadErrorReadFailed;
+	} else
+		haveWinPart = false;
+
+	if (!reader.readU16(numPolygonPoints) || !reader.readBytes(unknown6))
+		return kDataReadErrorReadFailed;
+
+	polyPoints.resize(numPolygonPoints);
+	for (size_t i = 0; i < numPolygonPoints; i++) {
+		if (!polyPoints[i].load(reader))
+			return kDataReadErrorReadFailed;
+	}
 
 	return kDataReadErrorNone;
 }
@@ -680,6 +740,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kKeyboardMessengerModifier:
 		dataObject = new KeyboardMessengerModifier();
+		break;
+	case DataObjectTypes::kGraphicModifier:
+		dataObject = new GraphicModifier();
 		break;
 	default:
 		warning("Unrecognized data object type %x", static_cast<int>(type));
