@@ -33,7 +33,8 @@ RoomOptions::RoomOptions()
 	, SaveLoadDisabled(false)
 	, PlayerCharOff(false)
 	, PlayerView(0)
-	, MusicVolume(kRoomVolumeNormal) {
+	, MusicVolume(kRoomVolumeNormal)
+	, Flags(0) {
 }
 
 RoomBgFrame::RoomBgFrame()
