@@ -25,10 +25,9 @@
 #include "glk/glk_types.h"
 #include "glk/windows.h"
 #include "glk/scott/definitions.h"
+#include "glk/scott/types.h"
 #include "common/array.h"
 #include "common/str-array.h"
-#include <stdint.h>
-#include <stddef.h>
 
 namespace Glk {
 namespace Scott {
