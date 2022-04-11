@@ -261,8 +261,6 @@ void unload_old_room() {
 		_G(roominst) = nullptr;
 	} else _G(croom)->tsdatasize = 0;
 	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
-	_GP(play).bg_frame = 0;
-	_GP(play).bg_frame_locked = 0;
 	remove_screen_overlay(-1);
 	delete _G(raw_saved_screen);
 	_G(raw_saved_screen) = nullptr;
@@ -892,6 +890,8 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	_G(new_room_flags) = 0;
 	_GP(play).gscript_timer = -1; // avoid screw-ups with changing screens
 	_GP(play).player_on_region = 0;
+	_GP(play).bg_frame = 0;
+	_GP(play).bg_frame_locked = (_GP(thisroom).Options.Flags & kRoomFlag_BkgFrameLocked) != 0;
 	// trash any input which they might have done while it was loading
 	ags_clear_input_buffer();
 	// no fade in, so set the palette immediately in case of 256-col sprites
