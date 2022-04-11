@@ -621,4 +621,14 @@ void WetEngine::drawHealth() {
 	}
 }
 
+byte *WetEngine::getTargetColor(Common::String name, int levelId) {
+	if (name == "BOSS1" ||  name == "BOSS2" || name == "BOSS3" || name == "BOSS4")
+		return getPalette(kHypnoColorGreen);
+
+	const chapterEntry *entry = _chapterTable[levelId];
+	if (entry->targetColor < 0)
+		error ("No target color specified for level %d", levelId);
+	return getPalette(entry->targetColor);
+}
+
 } // End of namespace Hypno

@@ -282,5 +282,8 @@ void SpiderEngine::drawHealth() {
 
 	drawString("block05.fgx", "ENERGY", 248, 180, 38, c);
 }
+byte *SpiderEngine::getTargetColor(Common::String name, int levelId) {
+	return getPalette(kHypnoColorRed);
+}
 
 } // End of namespace Hypno

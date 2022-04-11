@@ -170,6 +170,8 @@ void HypnoEngine::runAfterArcade(ArcadeShooting *arc) {}
 void HypnoEngine::initSegment(ArcadeShooting *arc) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::findNextSegment(ArcadeShooting *arc) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
+byte *HypnoEngine::getTargetColor(Common::String name, int levelId) { error("Function \"%s\" not implemented", __FUNCTION__); }
+
 void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_arcadeMode = arc->mode;
 	Common::Point mousePos;
@@ -463,7 +465,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 								_health = _health - it->attackWeight;
 								hitPlayer();
 							}
-							byte *c = getPalette(kHypnoColorRed);
+							byte *c = getTargetColor(it->name, _levelId);
 							assert(s.paletteSize == 1 || s.paletteSize == 0);
 							loadPalette(c, s.paletteOffset, s.paletteSize);
 							_shoots.push_back(s);

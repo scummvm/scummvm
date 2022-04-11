@@ -70,10 +70,13 @@ enum PlayerPosition {
 
 // Common colors
 enum HypnoColors {
+	kHypnoNoColor = -1,
 	kHypnoColorRed = 250,
 	kHypnoColorGreen = 251,
 	kHypnoColorWhite = 252,
 	kHypnoColorYellow = 253,
+	kHypnoColorBlack = 254,
+	kHypnoColorCyan = 255
 };
 
 // Spider colors
@@ -248,6 +251,7 @@ public:
 	virtual void hitPlayer();
 	virtual void missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background);
 	virtual void missNoTarget(ArcadeShooting *arc, MVideo &background);
+	virtual byte *getTargetColor(Common::String name, int levelId);
 
 	// Segments
 	uint32 _segmentIdx;
@@ -342,6 +346,7 @@ struct chapterEntry {
 	int energyPos[2];
 	int scorePos[2];
 	int objectivesPos[2];
+	int targetColor;
 };
 
 class WetEngine : public HypnoEngine {
@@ -386,6 +391,7 @@ public:
 	void runAfterArcade(ArcadeShooting *arc) override;
 	void findNextSegment(ArcadeShooting *arc) override;
 	void initSegment(ArcadeShooting *arc) override;
+	byte *getTargetColor(Common::String name, int levelId) override;
 
 private:
 	void runMainMenu(Code *code);
@@ -421,6 +427,7 @@ public:
 	void runAfterArcade(ArcadeShooting *arc) override;
 	void findNextSegment(ArcadeShooting *arc) override;
 	void initSegment(ArcadeShooting *arc) override;
+	byte *getTargetColor(Common::String name, int levelId) override;
 
 	void drawBackToMenu(Hotspot *h) override;
 	void runCode(Code *code) override;
