@@ -80,14 +80,14 @@ void GameSetupStruct::Free() {
 // Assigns font info parameters using legacy flags value read from the game data
 void SetFontInfoFromLegacyFlags(FontInfo &finfo, const uint8_t data) {
 	finfo.Flags = (data >> 6) & 0xFF;
-	finfo.SizePt = data & FFLG_LEGACY_SIZEMASK;
+	finfo.Size = data & FFLG_LEGACY_SIZEMASK;
 }
 
 void AdjustFontInfoUsingFlags(FontInfo &finfo, const uint32_t flags) {
 	finfo.Flags = flags;
 	if ((flags & FFLG_SIZEMULTIPLIER) != 0) {
-		finfo.SizeMultiplier = finfo.SizePt;
-		finfo.SizePt = 0;
+		finfo.SizeMultiplier = finfo.Size;
+		finfo.Size = 0;
 	}
 }
 
@@ -133,7 +133,7 @@ void GameSetupStruct::read_font_infos(Shared::Stream *in, GameDataVersion data_v
 	} else {
 		for (int i = 0; i < numfonts; ++i) {
 			uint32_t flags = in->ReadInt32();
-			fonts[i].SizePt = in->ReadInt32();
+			fonts[i].Size = in->ReadInt32();
 			fonts[i].Outline = in->ReadInt32();
 			fonts[i].YOffset = in->ReadInt32();
 			fonts[i].LineSpacing = Math::Max<int32_t>(0, in->ReadInt32());

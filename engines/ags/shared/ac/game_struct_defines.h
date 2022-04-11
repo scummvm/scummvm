@@ -249,8 +249,8 @@ struct FontInfo {
 
 	// General font's loading and rendering flags
 	uint32_t      Flags;
-	// Font size, in points (basically means pixels in AGS)
-	int           SizePt;
+	// Nominal font import size (in pixels)
+	int           Size;
 	// Factor to multiply base font size by
 	int           SizeMultiplier;
 	// Outlining font index, or auto-outline flag

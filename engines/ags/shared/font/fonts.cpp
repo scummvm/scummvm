@@ -38,7 +38,7 @@ using namespace AGS::Shared;
 
 FontInfo::FontInfo()
 	: Flags(0)
-	, SizePt(0)
+	, Size(0)
 	, SizeMultiplier(1)
 	, Outline(FONT_OUTLINE_NONE)
 	, YOffset(0)
@@ -388,10 +388,10 @@ bool load_font_size(size_t fontNumber, const FontInfo &font_info) {
 	params.LoadMode = (font_info.Flags & FFLG_LOADMODEMASK);
 	FontMetrics metrics;
 
-	if (_GP(ttfRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params, &metrics)) {
+	if (_GP(ttfRenderer).LoadFromDiskEx(fontNumber, font_info.Size, &params, &metrics)) {
 		_GP(fonts)[fontNumber].Renderer = &_GP(ttfRenderer);
 		_GP(fonts)[fontNumber].Renderer2 = &_GP(ttfRenderer);
-	} else if (_GP(wfnRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params, &metrics)) {
+	} else if (_GP(wfnRenderer).LoadFromDiskEx(fontNumber, font_info.Size, &params, &metrics)) {
 		_GP(fonts)[fontNumber].Renderer = &_GP(wfnRenderer);
 		_GP(fonts)[fontNumber].Renderer2 = &_GP(wfnRenderer);
 	}
