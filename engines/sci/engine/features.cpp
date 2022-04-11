@@ -355,15 +355,23 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 
 		if (opcode == op_callk) {
 			uint16 kFuncNum = opparams[0];
-			uint16 argc = opparams[1];
+			uint16 argc = opparams[1] / 2;
 
 			if (kFuncNum == 8) {	// kDrawPic	(SCI0 - SCI11)
-				// If kDrawPic is called with 6 parameters from the overlay
-				// selector, the game is using old graphics functions.
-				// Otherwise, if it's called with 8 parameters (e.g. SQ3) or 4 parameters
-				// (e.g. Hoyle 1/2), it's using new graphics functions.
-				_gfxFunctionsType = (argc == 6) ? SCI_VERSION_0_EARLY : SCI_VERSION_0_LATE;
-				return true;
+				// If kDrawPic is called with 3 parameters from the overlay
+				// method then the game is using old graphics functions.
+				// If instead it's called with 4 parameters then it's using
+				// the newer ones. (KQ4 late, SQ3 1.018)
+				// Ignore other arg counts as those are unrelated to overlays
+				// and this detection gets run on all Rm methods when the
+				// overlay selector doesn't exist.
+				if (argc == 3) {
+					_gfxFunctionsType = SCI_VERSION_0_EARLY;
+					return true;
+				} else if (argc == 4) {
+					_gfxFunctionsType = SCI_VERSION_0_LATE;
+					return true;
+				}
 			}
 		}
 	}
@@ -424,9 +432,9 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 				}
 
 				if (!found) {
-					// No method of the Rm object is calling kDrawPic, thus the
-					// game doesn't have overlays and is using older graphics
-					// functions
+					// No method of the Rm object is calling kDrawPic with
+					// 3 or 4 parameters, thus we assume that the game doesn't
+					// have overlays and is using older graphics functions.
 					_gfxFunctionsType = SCI_VERSION_0_EARLY;
 				}
 			}
