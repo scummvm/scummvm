@@ -38,6 +38,16 @@ Bitmap *CreateBitmap(int width, int height, int color_depth) {
 	return bitmap;
 }
 
+Bitmap *CreateClearBitmap(int width, int height, int clear_color, int color_depth) {
+	Bitmap *bitmap = new Bitmap();
+	if (!bitmap->Create(width, height, color_depth)) {
+		delete bitmap;
+		return nullptr;
+	}
+	bitmap->Clear(clear_color);
+	return bitmap;
+}
+
 Bitmap *CreateTransparentBitmap(int width, int height, int color_depth) {
 	Bitmap *bitmap = new Bitmap();
 	if (!bitmap->CreateTransparent(width, height, color_depth)) {
