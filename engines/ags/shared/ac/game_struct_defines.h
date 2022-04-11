@@ -84,7 +84,7 @@ namespace AGS3 {
 #define OPT_RELATIVEASSETRES 46 // relative asset resolution mode (where sprites are resized to match game type)
 #define OPT_WALKSPEEDABSOLUTE 47 // if movement speeds are independent of walkable mask resolution
 #define OPT_CLIPGUICONTROLS 48 // clip drawn gui control contents to the control's rectangle
-#define OPT_HIGHESTOPTION   OPT_WALKSPEEDABSOLUTE
+#define OPT_HIGHESTOPTION   OPT_CLIPGUICONTROLS
 #define OPT_NOMODMUSIC      98
 #define OPT_LIPSYNCTEXT     99
 #define PORTRAIT_LEFT       0
