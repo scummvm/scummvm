@@ -153,6 +153,35 @@ bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data:
 	return true;
 }
 
+TextStyleModifier::StyleFlags::StyleFlags() : bold(false), italic(false), underline(false), outline(false), shadow(false), condensed(false), expanded(false) {
+}
+
+bool TextStyleModifier::StyleFlags::load(uint8 dataStyleFlags) {
+	bold = ((dataStyleFlags & 0x01) != 0);
+	italic = ((dataStyleFlags & 0x02) != 0);
+	underline = ((dataStyleFlags & 0x03) != 0);
+	outline = ((dataStyleFlags & 0x04) != 0);
+	shadow = ((dataStyleFlags & 0x10) != 0);
+	condensed = ((dataStyleFlags & 0x20) != 0);
+	expanded = ((dataStyleFlags & 0x40) != 0);
+	return true;
+}
+
+bool TextStyleModifier::load(ModifierLoaderContext &context, const Data::TextStyleModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_textColor.load(data.textColor) || !_backgroundColor.load(data.backgroundColor) || !_applyWhen.load(data.applyWhen) || !_removeWhen.load(data.removeWhen))
+		return false;
+
+	_macFontID = data.macFontID;
+	_size = data.size;
+	_alignment = static_cast<Alignment>(data.alignment);
+	_fontFamilyName = data.fontFamilyName;
+
+	return true;
+}
+
 bool GraphicModifier::load(ModifierLoaderContext& context, const Data::GraphicModifier& data) {
 	if (!loadTypicalHeader(data.modHeader) || !_applyWhen.load(data.applyWhen) || !_removeWhen.load(data.removeWhen)
 		|| !_foreColor.load(data.foreColor) || !_backColor.load(data.backColor)

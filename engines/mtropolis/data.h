@@ -110,7 +110,7 @@ enum DataObjectType {
 	kCollisionDetectionMessengerModifier = 0x2ee,	// NYI
 	kBoundaryDetectionMessengerModifier  = 0x2f8,	// NYI
 	kKeyboardMessengerModifier           = 0x302,
-	kTextStyleModifier                   = 0x32a,	// NYI
+	kTextStyleModifier                   = 0x32a,
 	kGraphicModifier                     = 0x334,
 	kImageEffectModifier                 = 0x384,	// NYI
 	kMiniscriptModifier                  = 0x3c0,
@@ -522,6 +522,29 @@ struct KeyboardMessengerModifier : public DataObject {
 	uint8 unknown14;
 
 	Common::String withSource;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct TextStyleModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+
+	TypicalModifierHeader m_modHeader;
+	uint8 unknown1[4];
+	uint16 macFontID;
+	uint8 flags;
+	uint8 unknown2;
+	uint16 size;
+	ColorRGB16 textColor;		// Appears to not actually be used
+	ColorRGB16 backgroundColor; // Appears to not actually be used
+	uint16 alignment;
+	uint16 unknown3;
+	Event applyWhen;
+	Event removeWhen;
+	uint16_t lengthOfFontFamilyName;
+
+	Common::String fontFamilyName;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

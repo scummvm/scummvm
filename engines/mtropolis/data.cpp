@@ -566,6 +566,19 @@ DataReadErrorCode KeyboardMessengerModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode TextStyleModifier::load(DataReader &reader) {
+	if (_revision != 0x3e8)
+		return kDataReadErrorUnsupportedRevision;
+	
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readU16(macFontID)
+		|| !reader.readU8(flags) || !reader.readU8(unknown2) || !reader.readU16(size)
+		|| !textColor.load(reader) || !backgroundColor.load(reader) || !reader.readU16(alignment)
+		|| !reader.readU16(unknown3) || !applyWhen.load(reader) || !removeWhen.load(reader)
+		|| !reader.readU16(lengthOfFontFamilyName) || !reader.readNonTerminatedStr(fontFamilyName, lengthOfFontFamilyName))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
 
 DataReadErrorCode GraphicModifier::load(DataReader &reader) {
 	if (_revision != 0x3e9)
@@ -740,6 +753,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kKeyboardMessengerModifier:
 		dataObject = new KeyboardMessengerModifier();
+		break;
+	case DataObjectTypes::kTextStyleModifier:
+		dataObject = new TextStyleModifier();
 		break;
 	case DataObjectTypes::kGraphicModifier:
 		dataObject = new GraphicModifier();
