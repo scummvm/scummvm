@@ -540,7 +540,10 @@ TestExitStatus Speechtests::testQueueNoRepeat() {
 
 SpeechTestSuite::SpeechTestSuite() {
 	_isTsEnabled = true;
-	if (!g_system->getTextToSpeechManager())
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan)
+		ttsMan->enable(true);
+	else
 		_isTsEnabled = false;
 	addTest("testMale", &Speechtests::testMale, true);
 	addTest("testFemale", &Speechtests::testFemale, true);
