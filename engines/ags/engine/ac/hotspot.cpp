@@ -41,11 +41,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-
-
-
-
 void Hotspot_SetEnabled(ScriptHotspot *hss, int newval) {
 	if (newval)
 		EnableHotspot(hss->id);
@@ -54,7 +49,7 @@ void Hotspot_SetEnabled(ScriptHotspot *hss, int newval) {
 }
 
 int Hotspot_GetEnabled(ScriptHotspot *hss) {
-	return _G(croom)->hotspot_enabled[hss->id];
+	return _G(croom)->hotspot[hss->id].Enabled ? 1 : 0;
 }
 
 int Hotspot_GetID(ScriptHotspot *hss) {
@@ -82,7 +77,15 @@ void Hotspot_GetName(ScriptHotspot *hss, char *buffer) {
 }
 
 const char *Hotspot_GetName_New(ScriptHotspot *hss) {
-	return CreateNewScriptString(get_translation(_GP(thisroom).Hotspots[hss->id].Name.GetCStr()));
+	if ((hss->id < 0) || (hss->id >= MAX_ROOM_HOTSPOTS))
+		quit("!Hotspot.Name: invalid hotspot number");
+	return CreateNewScriptString(get_translation(_G(croom)->hotspot[hss->id].Name.GetCStr()));
+}
+
+void Hotspot_SetName(ScriptHotspot *hss, const char *newName) {
+	if ((hss->id < 0) || (hss->id >= MAX_ROOM_HOTSPOTS))
+		quit("!Hotspot.Name: invalid hotspot number");
+	_G(croom)->hotspot[hss->id].Name = newName;
 }
 
 bool Hotspot_IsInteractionAvailable(ScriptHotspot *hhot, int mood) {
@@ -122,7 +125,7 @@ bool Hotspot_SetTextProperty(ScriptHotspot *hss, const char *property, const cha
 int get_hotspot_at(int xpp, int ypp) {
 	int onhs = _GP(thisroom).HotspotMask->GetPixel(room_to_mask_coord(xpp), room_to_mask_coord(ypp));
 	if (onhs <= 0 || onhs >= MAX_ROOM_HOTSPOTS) return 0;
-	if (_G(croom)->hotspot_enabled[onhs] == 0) return 0;
+	if (!_G(croom)->hotspot[onhs].Enabled) return 0;
 	return onhs;
 }
 
@@ -203,6 +206,10 @@ RuntimeScriptValue Sc_Hotspot_GetName_New(void *self, const RuntimeScriptValue *
 	API_CONST_OBJCALL_OBJ(ScriptHotspot, const char, _GP(myScriptStringImpl), Hotspot_GetName_New);
 }
 
+RuntimeScriptValue Sc_Hotspot_SetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_POBJ(ScriptHotspot, Hotspot_SetName, const char);
+}
+
 // int (ScriptHotspot *hss)
 RuntimeScriptValue Sc_Hotspot_GetWalkToX(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptHotspot, Hotspot_GetWalkToX);
@@ -231,6 +238,7 @@ void RegisterHotspotAPI() {
 	ccAddExternalObjectFunction("Hotspot::set_Enabled", Sc_Hotspot_SetEnabled);
 	ccAddExternalObjectFunction("Hotspot::get_ID", Sc_Hotspot_GetID);
 	ccAddExternalObjectFunction("Hotspot::get_Name", Sc_Hotspot_GetName_New);
+	ccAddExternalObjectFunction("Hotspot::set_Name", Sc_Hotspot_SetName);
 	ccAddExternalObjectFunction("Hotspot::get_WalkToX", Sc_Hotspot_GetWalkToX);
 	ccAddExternalObjectFunction("Hotspot::get_WalkToY", Sc_Hotspot_GetWalkToY);
 }

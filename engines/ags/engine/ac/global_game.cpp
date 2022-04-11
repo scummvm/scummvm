@@ -587,7 +587,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 	// on object
 	if (loctype == LOCTYPE_OBJ) {
 		aa = _G(getloctype_index);
-		strcpy(tempo, get_translation(_GP(thisroom).Objects[aa].Name.GetCStr()));
+		strcpy(tempo, get_translation(_G(croom)->obj[aa].name.GetCStr()));
 		// Compatibility: < 3.1.1 games returned space for nameless object
 		// (presumably was a bug, but fixing it affected certain games behavior)
 		if (_G(loaded_game_file_version) < kGameVersion_311 && tempo[0] == 0) {
@@ -600,7 +600,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 		return;
 	}
 	onhs = _G(getloctype_index);
-	if (onhs > 0) strcpy(tempo, get_translation(_GP(thisroom).Hotspots[onhs].Name.GetCStr()));
+	if (onhs > 0) strcpy(tempo, get_translation(_G(croom)->hotspot[onhs].Name.GetCStr()));
 	if (_GP(play).get_loc_name_last_time != onhs)
 		GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 	_GP(play).get_loc_name_last_time = onhs;

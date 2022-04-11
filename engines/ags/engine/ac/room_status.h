@@ -39,6 +39,14 @@ class Stream;
 using AGS::Shared::Stream;
 using AGS::Shared::Interaction;
 
+struct HotspotState {
+	bool Enabled = false;
+	Shared::String Name;
+
+	void ReadFromSavegame(Shared::Stream *in, int save_ver);
+	void WriteToSavegame(Shared::Stream *out) const;
+};
+
 // This struct is saved in the save games - it contains everything about
 // a room that could change
 struct RoomStatus {
@@ -62,7 +70,7 @@ struct RoomStatus {
 	EventBlock objcond[MAX_ROOM_OBJECTS];
 	EventBlock misccond;
 #endif
-	int8  hotspot_enabled[MAX_ROOM_HOTSPOTS];
+	HotspotState hotspot[MAX_ROOM_HOTSPOTS];
 	int8  region_enabled[MAX_ROOM_REGIONS];
 	short walkbehind_base[MAX_WALK_BEHINDS];
 	int32_t interactionVariableValues[MAX_GLOBAL_VARIABLES];
@@ -75,7 +83,7 @@ struct RoomStatus {
 
 	void ReadFromFile_v321(Shared::Stream *in);
 	void ReadRoomObjects_Aligned(Shared::Stream *in);
-	void ReadFromSavegame(Shared::Stream *in);
+	void ReadFromSavegame(Shared::Stream *in, int save_ver);
 	void WriteToSavegame(Shared::Stream *out) const;
 };
 

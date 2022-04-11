@@ -30,6 +30,7 @@
 #include "ags/engine/main/update.h"
 #include "ags/shared/util/math.h"
 #include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 
@@ -153,7 +154,7 @@ void RoomObject::update_cycle_view_backwards() {
 	}
 }
 
-void RoomObject::ReadFromFile(Stream *in) {
+void RoomObject::ReadFromSavegame(Stream *in, int save_ver) {
 	x = in->ReadInt32();
 	y = in->ReadInt32();
 	transparent = in->ReadInt32();
@@ -178,9 +179,12 @@ void RoomObject::ReadFromFile(Stream *in) {
 	flags = in->ReadInt8();
 	blocking_width = in->ReadInt16();
 	blocking_height = in->ReadInt16();
+	if (save_ver > 0) {
+		name = StrUtil::ReadString(in);
+	}
 }
 
-void RoomObject::WriteToFile(Stream *out) const {
+void RoomObject::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(x);
 	out->WriteInt32(y);
 	out->WriteInt32(transparent);
@@ -205,6 +209,7 @@ void RoomObject::WriteToFile(Stream *out) const {
 	out->WriteInt8(flags);
 	out->WriteInt16(blocking_width);
 	out->WriteInt16(blocking_height);
+	StrUtil::WriteString(name, out);
 }
 
 } // namespace AGS3

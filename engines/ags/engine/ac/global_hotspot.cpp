@@ -41,23 +41,17 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-
-
-
-
-
 void DisableHotspot(int hsnum) {
 	if ((hsnum < 1) | (hsnum >= MAX_ROOM_HOTSPOTS))
 		quit("!DisableHotspot: invalid hotspot specified");
-	_G(croom)->hotspot_enabled[hsnum] = 0;
+	_G(croom)->hotspot[hsnum].Enabled = false;
 	debug_script_log("Hotspot %d disabled", hsnum);
 }
 
 void EnableHotspot(int hsnum) {
 	if ((hsnum < 1) | (hsnum >= MAX_ROOM_HOTSPOTS))
 		quit("!EnableHotspot: invalid hotspot specified");
-	_G(croom)->hotspot_enabled[hsnum] = 1;
+	_G(croom)->hotspot[hsnum].Enabled = true;
 	debug_script_log("Hotspot %d re-enabled", hsnum);
 }
 
@@ -92,7 +86,7 @@ void GetHotspotName(int hotspot, char *buffer) {
 	if ((hotspot < 0) || (hotspot >= MAX_ROOM_HOTSPOTS))
 		quit("!GetHotspotName: invalid hotspot number");
 
-	strcpy(buffer, get_translation(_GP(thisroom).Hotspots[hotspot].Name.GetCStr()));
+	strcpy(buffer, get_translation(_G(croom)->hotspot[hotspot].Name.GetCStr()));
 }
 
 void RunHotspotInteraction(int hotspothere, int mood) {

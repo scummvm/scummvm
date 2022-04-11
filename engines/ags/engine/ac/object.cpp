@@ -279,7 +279,13 @@ const char *Object_GetName_New(ScriptObject *objj) {
 	if (!is_valid_object(objj->id))
 		quit("!Object.Name: invalid object number");
 
-	return CreateNewScriptString(get_translation(_GP(thisroom).Objects[objj->id].Name.GetCStr()));
+	return CreateNewScriptString(get_translation(_G(croom)->obj[objj->id].name.GetCStr()));
+}
+
+void Object_SetName(ScriptObject *objj, const char *newName) {
+	if (!is_valid_object(objj->id))
+		quit("!Object.Name: invalid object number");
+	_G(croom)->obj[objj->id].name = newName;
 }
 
 bool Object_IsInteractionAvailable(ScriptObject *oobj, int mood) {
@@ -790,6 +796,10 @@ RuntimeScriptValue Sc_Object_GetName_New(void *self, const RuntimeScriptValue *p
 	API_CONST_OBJCALL_OBJ(ScriptObject, const char, _GP(myScriptStringImpl), Object_GetName_New);
 }
 
+RuntimeScriptValue Sc_Object_SetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_POBJ(ScriptObject, Object_SetName, const char);
+}
+
 RuntimeScriptValue Sc_Object_GetScaling(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptObject, Object_GetScaling);
 }
@@ -903,6 +913,7 @@ void RegisterObjectAPI() {
 	ccAddExternalObjectFunction("Object::set_ManualScaling", Sc_Object_SetManualScaling);
 	ccAddExternalObjectFunction("Object::get_Moving", Sc_Object_GetMoving);
 	ccAddExternalObjectFunction("Object::get_Name", Sc_Object_GetName_New);
+	ccAddExternalObjectFunction("Object::set_Name", Sc_Object_SetName);
 	ccAddExternalObjectFunction("Object::get_Scaling", Sc_Object_GetScaling);
 	ccAddExternalObjectFunction("Object::set_Scaling", Sc_Object_SetScaling);
 	ccAddExternalObjectFunction("Object::get_Solid", Sc_Object_GetSolid);

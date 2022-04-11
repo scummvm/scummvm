@@ -30,6 +30,7 @@
 
 #include "ags/shared/core/types.h"
 #include "ags/shared/ac/common_defines.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
@@ -60,7 +61,9 @@ struct RoomObject {
 	int8  overall_speed;
 	int8  on;
 	int8  flags;
+	// Down to here is a part of the plugin API
 	short blocking_width, blocking_height;
+	Shared::String name;
 
 	RoomObject();
 
@@ -79,8 +82,8 @@ struct RoomObject {
 	void update_cycle_view_forwards();
 	void update_cycle_view_backwards();
 
-	void ReadFromFile(Shared::Stream *in);
-	void WriteToFile(Shared::Stream *out) const;
+	void ReadFromSavegame(Shared::Stream *in, int save_ver);
+	void WriteToSavegame(Shared::Stream *out) const;
 };
 
 } // namespace AGS3
