@@ -88,6 +88,25 @@ private:
 	Common::String _targetName;
 };
 
+class DragMotionModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::DragMotionModifier &data);
+
+private:
+	Event _enableWhen;
+	Event _disableWhen;
+
+	enum ConstraintDirection {
+		kConstraintDirectionNone,
+		kConstraintDirectionHorizontal,
+		kConstraintDirectionVertical,
+	};
+
+	ConstraintDirection _constraintDirection;
+	Rect16 _constraintMargin;
+	bool _constrainToParent;
+};
+
 class IfMessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data);
