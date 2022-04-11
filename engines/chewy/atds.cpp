@@ -358,17 +358,17 @@ void Atdsys::set_handle(const char *fname, int16 mode, int16 chunkStart, int16 c
 	_atdsPoolOff[mode] = chunkStart;
 
 	if (mode == INV_USE_DATA) {
-		const uint32 size = _text->getChunk(chunkStart)->size;
+		const uint32 chunkSize = _text->getChunk(chunkStart)->size;
 		const uint8 *chunkData = _text->getChunkData(chunkStart);
 
 		free(_invUseMem);
-		_invUseMem = (char *)MALLOC(size + 3l);
-		memcpy(_invUseMem, chunkData, size);
+		_invUseMem = (char *)MALLOC(chunkSize + 3l);
+		memcpy(_invUseMem, chunkData, chunkSize);
 		delete[] chunkData;
 
-		_invUseMem[size] = (char)BLOCKENDE;
-		_invUseMem[size + 1] = (char)BLOCKENDE;
-		_invUseMem[size + 2] = (char)BLOCKENDE;
+		_invUseMem[chunkSize] = (char)BLOCKENDE;
+		_invUseMem[chunkSize + 1] = (char)BLOCKENDE;
+		_invUseMem[chunkSize + 2] = (char)BLOCKENDE;
 	}
 }
 
@@ -376,13 +376,13 @@ void Atdsys::load_atds(int16 chunkNr, int16 mode) {
 	char *txt_adr = _atdsMem[mode];
 
 	if (_atdsHandle && txt_adr) {
-		const uint32 size = _text->getChunk(chunkNr + _atdsPoolOff[mode])->size;
+		const uint32 chunkSize = _text->getChunk(chunkNr + _atdsPoolOff[mode])->size;
 		const uint8 *chunkData = _text->getChunkData(chunkNr + _atdsPoolOff[mode]);
-		memcpy(txt_adr, chunkData, size);
+		memcpy(txt_adr, chunkData, chunkSize);
 		delete[] chunkData;
-		txt_adr[size] = (char)BLOCKENDE;
-		txt_adr[size + 1] = (char)BLOCKENDE;
-		txt_adr[size + 2] = (char)BLOCKENDE;
+		txt_adr[chunkSize] = (char)BLOCKENDE;
+		txt_adr[chunkSize + 1] = (char)BLOCKENDE;
+		txt_adr[chunkSize + 2] = (char)BLOCKENDE;
 	}
 }
 
