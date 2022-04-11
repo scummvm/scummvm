@@ -47,6 +47,15 @@ struct Point16 {
 	int16 y;
 };
 
+struct Rect16 {
+	int16 top;
+	int16 left;
+	int16 bottom;
+	int16 right;
+
+	bool load(const Data::Rect &rect);
+};
+
 struct ColorRGB8 {
 	uint8 r;
 	uint8 g;

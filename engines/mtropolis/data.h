@@ -96,7 +96,7 @@ enum DataObjectType {
 	kSoundEffectModifier                 = 0x1a4,	// NYI
 	kChangeSceneModifier                 = 0x136,	// NYI
 	kReturnModifier                      = 0x140,	// NYI
-	kDragMotionModifier                  = 0x208,	// NYI
+	kDragMotionModifier                  = 0x208,
 	kVectorMotionModifier                = 0x226,	// NYI
 	kPathMotionModifierV1                = 0x21c,	// NYI - Obsolete version
 	kPathMotionModifierV2                = 0x21b,	// NYI
@@ -468,6 +468,46 @@ struct SetModifier : public DataObject {
 
 	Common::String sourceName;
 	Common::String targetName;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct DragMotionModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+
+	Event enableWhen;
+	Event disableWhen;
+
+	struct WinPart {
+		uint8_t unknown2;
+		uint8_t constrainHorizontal;
+		uint8_t constrainVertical;
+		uint8_t constrainToParent;
+	};
+
+	struct MacPart {
+		uint8_t flags;
+		uint8_t unknown3;
+
+		enum Flags {
+			kConstrainToParent = 0x10,
+			kConstrainVertical = 0x20,
+			kConstrainHorizontal = 0x40,
+		};
+	};
+
+	union PlatformPart {
+		WinPart win;
+		MacPart mac;
+	};
+
+	PlatformPart platform;
+
+	bool haveMacPart;
+	bool haveWinPart;
+	Rect constraintMargin;
+	uint16_t unknown1;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

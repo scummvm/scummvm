@@ -548,6 +548,39 @@ DataReadErrorCode SetModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode DragMotionModifier::load(DataReader &reader) {
+	if (_revision != 0x3e8)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (!enableWhen.load(reader) || !disableWhen.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+		if (!reader.readU8(platform.mac.flags) || !reader.readU8(platform.mac.unknown3))
+			return kDataReadErrorReadFailed;
+
+		haveMacPart = true;
+	} else
+		haveMacPart = false;
+
+	if (reader.getProjectFormat() == kProjectFormatWindows) {
+		if (!reader.readU8(platform.win.unknown2) || !reader.readU8(platform.win.constrainHorizontal)
+			|| !reader.readU8(platform.win.constrainVertical) || !reader.readU8(platform.win.constrainToParent))
+			return kDataReadErrorReadFailed;
+
+		haveWinPart = true;
+	} else
+		haveWinPart = false;
+
+	if (!constraintMargin.load(reader) || !reader.readU16(unknown1))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 	if (_revision != 0x3ea)
 		return kDataReadErrorUnsupportedRevision;
@@ -790,6 +823,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kSetModifier:
 		dataObject = new SetModifier();
+		break;
+	case DataObjectTypes::kDragMotionModifier:
+		dataObject = new DragMotionModifier();
 		break;
 	case DataObjectTypes::kIfMessengerModifier:
 		dataObject = new IfMessengerModifier();

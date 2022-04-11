@@ -30,6 +30,15 @@
 
 namespace MTropolis {
 
+bool Rect16::load(const Data::Rect& rect) {
+	top = rect.top;
+	left = rect.left;
+	bottom = rect.bottom;
+	right = rect.right;
+
+	return true;
+}
+
 bool ColorRGB8::load(const Data::ColorRGB16& color) {
 	this->r = (color.red * 510 + 1) / 131070;
 	this->g = (color.green * 510 + 1) / 131070;

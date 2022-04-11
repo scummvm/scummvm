@@ -65,6 +65,8 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 		return ModifierFactory<BehaviorModifier, Data::BehaviorModifier>::getInstance();
 	case Data::DataObjectTypes::kMiniscriptModifier:
 		return ModifierFactory<MiniscriptModifier, Data::MiniscriptModifier>::getInstance();
+	case Data::DataObjectTypes::kDragMotionModifier:
+		return ModifierFactory<DragMotionModifier, Data::DragMotionModifier>::getInstance();
 	case Data::DataObjectTypes::kIfMessengerModifier:
 		return ModifierFactory<IfMessengerModifier, Data::IfMessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kTimerMessengerModifier:
