@@ -339,8 +339,6 @@ void Project::loadBootStream(size_t streamIndex) {
 		Common::SharedPtr<Data::DataObject> dataObject;
 		Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
 
-		numObjectsLoaded++;
-
 		if (!dataObject) {
 			error("Failed to load project boot data");
 		}
@@ -367,6 +365,8 @@ void Project::loadBootStream(size_t streamIndex) {
 				error("Unexpected object type in boot stream");
 			}
 		}
+
+		numObjectsLoaded++;
 	}
 }
 

@@ -73,6 +73,20 @@ private:
 	MessengerSendSpec _sendSpec;
 };
 
+class SetModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::SetModifier &data);
+
+private:
+	Event _executeWhen;
+	MessageWithType _sourceLocType;
+	MessageWithType _targetLocType;
+	uint32 _sourceGUID;
+	uint32 _targetGUID;
+	Common::String _sourceName;
+	Common::String _targetName;
+};
+
 class IfMessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data);
