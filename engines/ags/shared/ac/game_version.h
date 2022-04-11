@@ -153,7 +153,8 @@ enum GameDataVersion {
 	kGameVersion_350 = 50,
 	kGameVersion_360 = 3060000,
 	kGameVersion_360_11 = 3060011,
-	kGameVersion_Current = kGameVersion_360_11
+	kGameVersion_360_16 = 3060016,
+	kGameVersion_Current = kGameVersion_360_16
 };
 
 } // namespace AGS3
