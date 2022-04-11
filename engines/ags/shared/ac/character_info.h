@@ -61,8 +61,10 @@ using namespace AGS; // FIXME later
 #define FOLLOW_ALWAYSONTOP  0x7ffe
 
 struct CharacterExtras; // forward declaration
-// remember - if change this struct, also change AGSDEFNS.SH and
-// plugin header file struct
+// IMPORTANT: exposed to script API, and plugin API as AGSCharacter!
+// For older script compatibility the struct also has to maintain its size;
+// do not extend or change existing fields, unless planning breaking compatibility.
+// Use CharacterExtras struct for any extensions
 struct CharacterInfo {
 	int   defview;
 	int   talkview;
@@ -85,7 +87,7 @@ struct CharacterInfo {
 	short pic_yoffs; // this is fixed in screen coordinates
 	int   z;    // z-location, for flying etc
 	int   walkwait;
-	short speech_anim_speed, reserved1;  // only 1 reserved left!!
+	short speech_anim_speed, idle_anim_speed;
 	short blocking_width, blocking_height;
 	int   index_id;  // used for object functions to know the id
 	short pic_xoffs; // this is fixed in screen coordinates
