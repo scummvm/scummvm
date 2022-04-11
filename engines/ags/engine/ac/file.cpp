@@ -509,15 +509,14 @@ static PACKFILE_VTABLE ags_packfile_vtable = {
 
 PACKFILE *PackfileFromAsset(const AssetPath &path) {
 	Stream *asset_stream = _GP(AssetMgr)->OpenAsset(path);
+	if (!asset_stream) return nullptr;
 	const size_t asset_size = asset_stream->GetLength();
-	if (asset_stream && asset_size > 0) {
-		AGS_PACKFILE_OBJ *obj = new AGS_PACKFILE_OBJ;
-		obj->stream.reset(asset_stream);
-		obj->asset_size = asset_size;
-		obj->remains = asset_size;
-		return pack_fopen_vtable(&ags_packfile_vtable, obj);
-	}
-	return nullptr;
+	if (asset_size == 0) return nullptr;
+	AGS_PACKFILE_OBJ *obj = new AGS_PACKFILE_OBJ;
+	obj->stream.reset(asset_stream);
+	obj->asset_size = asset_size;
+	obj->remains = asset_size;
+	return pack_fopen_vtable(&ags_packfile_vtable, obj);
 }
 
 String find_assetlib(const String &filename) {
