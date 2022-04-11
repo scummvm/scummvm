@@ -75,6 +75,8 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 		return ModifierFactory<GraphicModifier, Data::GraphicModifier>::getInstance();
 	case Data::DataObjectTypes::kMessengerModifier:
 		return ModifierFactory<MessengerModifier, Data::MessengerModifier>::getInstance();
+	case Data::DataObjectTypes::kSetModifier:
+		return ModifierFactory<SetModifier, Data::SetModifier>::getInstance();
 	case Data::DataObjectTypes::kBooleanVariableModifier:
 		return ModifierFactory<BooleanVariableModifier, Data::BooleanVariableModifier>::getInstance();
 	case Data::DataObjectTypes::kPointVariableModifier:

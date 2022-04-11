@@ -90,8 +90,27 @@ bool MessengerModifier::load(ModifierLoaderContext &context, const Data::Messeng
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSourceGUID, data.destination))
+	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with.locationType, data.with.guid, data.destination))
 		return false;
+
+	return true;
+}
+
+bool SetModifier::load(ModifierLoaderContext &context, const Data::SetModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_executeWhen.load(data.executeWhen))
+		return false;
+
+	_sourceLocType = static_cast<MessageWithType>(data.sourceLocator.locationType);
+	_targetLocType = static_cast<MessageWithType>(data.targetLocator.locationType);
+
+	_sourceGUID = data.sourceLocator.guid;
+	_targetGUID = data.targetLocator.guid;
+
+	_sourceName = data.sourceName;
+	_targetName = data.targetName;
 
 	return true;
 }

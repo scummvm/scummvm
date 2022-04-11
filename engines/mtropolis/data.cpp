@@ -511,7 +511,14 @@ DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-DataReadErrorCode MessengerModifier::load(DataReader& reader) {
+bool MessageDataLocator::load(DataReader& reader) {
+	if (!reader.readU16(locationType) || !reader.readBytes(unknown1) || !reader.readU32(guid) || !reader.readBytes(unknown2))
+		return false;
+
+	return true;
+}
+
+DataReadErrorCode MessengerModifier::load(DataReader &reader) {
 	if (_revision != 0x3ea)
 		return kDataReadErrorUnsupportedRevision;
 
@@ -520,11 +527,22 @@ DataReadErrorCode MessengerModifier::load(DataReader& reader) {
 
 	// Unlike most cases, the "when" event is split in half in this case
 	if (!reader.readU32(messageFlags) || !reader.readU32(when.eventID) || !send.load(reader) || !reader.readU16(unknown14) || !reader.readU32(destination)
-		|| !reader.readBytes(unknown11) || !reader.readU16(with) || !reader.readBytes(unknown15) || !reader.readU32(withSourceGUID)
-		|| !reader.readBytes(unknown12) || !reader.readU32(when.eventInfo) || !reader.readU8(withSourceLength) || !reader.readU8(unknown13))
+		|| !reader.readBytes(unknown11) || !with.load(reader) || !reader.readU32(when.eventInfo) || !reader.readU8(withSourceLength) || !reader.readU8(unknown13))
 		return kDataReadErrorReadFailed;
 
 	if (withSourceLength > 0 && !reader.readNonTerminatedStr(withSourceName, withSourceLength))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode SetModifier::load(DataReader &reader) {
+	if (_revision != 0x3e8)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !executeWhen.load(reader) || !sourceLocator.load(reader) || !targetLocator.load(reader)
+		|| !reader.readU8(unknown3) || !reader.readU8(sourceNameLength) || !reader.readU8(targetNameLength) || !reader.readBytes(unknown4)
+		|| !reader.readNonTerminatedStr(sourceName, sourceNameLength) || !reader.readNonTerminatedStr(targetName, targetNameLength))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -735,6 +753,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kMessengerModifier:
 		dataObject = new MessengerModifier();
+		break;
+	case DataObjectTypes::kSetModifier:
+		dataObject = new SetModifier();
 		break;
 	case DataObjectTypes::kIfMessengerModifier:
 		dataObject = new IfMessengerModifier();

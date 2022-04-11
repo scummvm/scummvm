@@ -106,7 +106,7 @@ enum DataObjectType {
 	kIfMessengerModifier                 = 0x2bc,
 	kBehaviorModifier                    = 0x2c6,
 	kMessengerModifier                   = 0x2da,
-	kSetModifier                         = 0x2df,	// NYI
+	kSetModifier                         = 0x2df,
 	kCollisionDetectionMessengerModifier = 0x2ee,	// NYI
 	kBoundaryDetectionMessengerModifier  = 0x2f8,	// NYI
 	kKeyboardMessengerModifier           = 0x302,
@@ -425,6 +425,15 @@ enum MessageFlags {
 	kMessageFlagNoImmediate = 0x80000000,
 };
 
+struct MessageDataLocator {
+	uint16 locationType;
+	uint8 unknown1[4];
+	uint32 guid;
+	uint8 unknown2[36];
+
+	bool load(DataReader &reader);
+};
+
 struct MessengerModifier : public DataObject {
 	TypicalModifierHeader modHeader;
 
@@ -434,14 +443,30 @@ struct MessengerModifier : public DataObject {
 	uint16 unknown14;
 	uint32 destination;
 	uint8 unknown11[10];
-	uint16 with;
-	uint8 unknown15[4];
-	uint32 withSourceGUID;
-	uint8 unknown12[36];
+	MessageDataLocator with;
 	uint8 withSourceLength;
 	uint8 unknown13;
 
 	Common::String withSourceName;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct SetModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+
+	uint8 unknown1[4];
+	Event executeWhen;
+	MessageDataLocator sourceLocator;
+	MessageDataLocator targetLocator;
+	uint8 unknown3;
+	uint8 sourceNameLength;
+	uint8 targetNameLength;
+	uint8 unknown4[3];
+
+	Common::String sourceName;
+	Common::String targetName;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
