@@ -22,7 +22,7 @@
 #ifndef GLK_SCOTT_DECOMPRESSTEXT
 #define GLK_SCOTT_DECOMPRESSTEXT
 
-#include <stdint.h>
+#include "glk/scott/types.h"
 
 namespace Glk {
 namespace Scott {

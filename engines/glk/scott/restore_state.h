@@ -22,7 +22,7 @@
 #ifndef GLK_SCOTT_RESTORESTATE
 #define GLK_SCOTT_RESTORESTATE
 
-#include <stdint.h>
+#include "glk/scott/types.h"
 
 namespace Glk {
 namespace Scott {

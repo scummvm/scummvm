@@ -24,8 +24,7 @@
 
 #include "common/stream.h"
 #include "glk/scott/definitions.h"
-#include <stdint.h>
-#include <stddef.h>
+#include "glk/scott/types.h"
 
 namespace Glk {
 namespace Scott {
