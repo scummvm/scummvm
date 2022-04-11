@@ -42,6 +42,7 @@
 #include "ags/shared/ac/view.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/gfx/gfx_def.h"
+#include "ags/shared/gui/gui_main.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/ac/dynobj/cc_object.h"
 #include "ags/engine/ac/move_list.h"
@@ -286,6 +287,7 @@ void Object_SetName(ScriptObject *objj, const char *newName) {
 	if (!is_valid_object(objj->id))
 		quit("!Object.Name: invalid object number");
 	_G(croom)->obj[objj->id].name = newName;
+	GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 }
 
 bool Object_IsInteractionAvailable(ScriptObject *oobj, int mood) {

@@ -30,6 +30,7 @@
 #include "ags/engine/ac/string.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gui/gui_main.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
@@ -86,6 +87,7 @@ void Hotspot_SetName(ScriptHotspot *hss, const char *newName) {
 	if ((hss->id < 0) || (hss->id >= MAX_ROOM_HOTSPOTS))
 		quit("!Hotspot.Name: invalid hotspot number");
 	_G(croom)->hotspot[hss->id].Name = newName;
+	GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 }
 
 bool Hotspot_IsInteractionAvailable(ScriptHotspot *hhot, int mood) {
