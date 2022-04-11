@@ -123,6 +123,39 @@ private:
 	MessengerSendSpec _sendSpec;
 };
 
+class TextStyleModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::TextStyleModifier &data);
+
+	enum Alignment {
+		kAlignmentLeft = 0,
+		kAlignmentCenter = 1,
+		kAlignmentRight = 0xffff,
+	};
+
+	struct StyleFlags {
+		bool bold : 1;
+		bool italic : 1;
+		bool underline : 1;
+		bool outline : 1;
+		bool shadow : 1;
+		bool condensed : 1;
+		bool expanded : 1;
+
+		StyleFlags();
+		bool load(uint8 dataStyleFlags);
+	};
+
+	uint16 _macFontID;
+	uint16 _size;
+	ColorRGB8 _textColor;
+	ColorRGB8 _backgroundColor;
+	Alignment _alignment;
+	Event _applyWhen;
+	Event _removeWhen;
+	Common::String _fontFamilyName;
+};
+
 class GraphicModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::GraphicModifier &data);

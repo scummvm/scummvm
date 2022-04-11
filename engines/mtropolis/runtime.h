@@ -48,9 +48,9 @@ struct Point16 {
 };
 
 struct ColorRGB8 {
-	uint16 r;
-	uint16 g;
-	uint16 b;
+	uint8 r;
+	uint8 g;
+	uint8 b;
 
 	bool load(const Data::ColorRGB16 &color);
 };
