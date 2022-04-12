@@ -72,6 +72,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      in den Spiel-Einstellungen deaktiviert werden. Die Option zur Korrektur des Zeichen-
      Abstands in den 16-Farben-Versionen für Macintosh von Indiana Jones and the Last Crusade
      findest du jetzt dort.
+   - Fehler bei der Wiedergabe von MIDI-Musik in der EGA/VGA-Diskettenversion von The Secret of Monkey Island behoben.
 
  Sherlock:
    - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
