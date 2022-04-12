@@ -56,13 +56,6 @@ enum TintMethod {
 	TintSpecifyMaximum = 1
 };
 
-enum VideoSkipType {
-	VideoSkipNone = 0,
-	VideoSkipEscape = 1,
-	VideoSkipAnyKey = 2,
-	VideoSkipKeyOrMouse = 3
-};
-
 // Sprite transformation
 // TODO: combine with stretch parameters in the IDriverDependantBitmap?
 struct SpriteTransform {

@@ -37,6 +37,7 @@
 #include "ags/engine/ac/global_hotspot.h"
 #include "ags/engine/ac/global_object.h"
 #include "ags/engine/ac/global_room.h"
+#include "ags/engine/ac/global_video.h"
 #include "ags/engine/ac/inv_window.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/room.h"
@@ -699,7 +700,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			play_sound(IPARAM1);
 			break;
 		case 8:  // Play Flic
-			play_flc_file(IPARAM1, IPARAM2);
+			PlayFlic(IPARAM1, IPARAM2);
 			break;
 		case 9: { // Run Dialog
 			int roomWas = _GP(play).room_changes;

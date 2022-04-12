@@ -24,8 +24,8 @@
 
 namespace AGS3 {
 
-void scrPlayVideo(const char *name, int skip, int flags);
-void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags);
+void PlayFlic(int numb, int flags);
+void PlayVideo(const char *name, int skip, int flags);
 
 } // namespace AGS3
 

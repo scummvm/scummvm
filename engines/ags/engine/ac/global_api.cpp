@@ -1023,7 +1023,7 @@ RuntimeScriptValue Sc_PlayAmbientSound(const RuntimeScriptValue *params, int32_t
 
 // void (int numb,int playflags)
 RuntimeScriptValue Sc_play_flc_file(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_PINT2(play_flc_file);
+	API_SCALL_VOID_PINT2(PlayFlic);
 }
 
 // void  (char *filename)
@@ -1058,7 +1058,7 @@ RuntimeScriptValue Sc_PlaySoundEx(const RuntimeScriptValue *params, int32_t para
 
 // void (const char* name, int skip, int flags)
 RuntimeScriptValue Sc_scrPlayVideo(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_POBJ_PINT2(scrPlayVideo, const char);
+	API_SCALL_VOID_POBJ_PINT2(PlayVideo, const char);
 }
 
 // void (int dialog)
