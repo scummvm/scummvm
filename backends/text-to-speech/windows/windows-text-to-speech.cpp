@@ -153,7 +153,7 @@ DWORD WINAPI startSpeech(LPVOID parameters) {
 			break;
 		}
 		WCHAR *currentSpeech = params->queue->front();
-		_voice->Speak(currentSpeech, SPF_PURGEBEFORESPEAK | SPF_ASYNC | SPF_PARSE_SAPI, nullptr);
+		 _voice->Speak(currentSpeech, SPF_PURGEBEFORESPEAK | SPF_ASYNC | SPF_PARSE_SAPI, nullptr);
 		ReleaseMutex(*params->mutex);
 
 		while (*(params->state) != WindowsTextToSpeechManager::PAUSED)
@@ -340,8 +340,12 @@ void WindowsTextToSpeechManager::setVolume(unsigned volume) {
 }
 
 void WindowsTextToSpeechManager::setLanguage(Common::String language) {
-	Common::TextToSpeechManager::setLanguage(language);
-	updateVoices();
+	if (_ttsState->_language != language.substr(0, 2) || _ttsState->_availableVoices.empty()) {
+		Common::TextToSpeechManager::setLanguage(language);
+		updateVoices();
+	} else if (_speechState == NO_VOICE) {
+		_speechState = READY;
+	}
 	setVoice(0);
 }
 
