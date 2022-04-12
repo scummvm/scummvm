@@ -208,7 +208,7 @@ void WetEngine::loadAssetsPCW() {
 	Transition *over = new Transition("<quit>");
 	_levels["<game_over>"] = over;
 
-	loadLib("", "c_misc/sound.lib", false);
+	loadLib("sound/", "c_misc/sound.lib", false);
 	loadLib("", "c_misc/fonts.lib", true);
 	loadFonts();
 	_nextLevel = "<start>";
