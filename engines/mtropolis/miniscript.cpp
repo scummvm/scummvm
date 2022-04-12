@@ -128,17 +128,11 @@ bool MiniscriptInstructionLoader<MiniscriptInstructions::PushValue>::loadInstruc
 	if (dataType == 0)
 		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeNull, nullptr);
 	else if (dataType == 0x15) {
-		double d;
-		if (instrDataReader.getProjectFormat() == Data::kProjectFormatMacintosh) {
-			if (!instrDataReader.readF80(d))
-				return false;
-		} else if (instrDataReader.getProjectFormat() == Data::kProjectFormatWindows) {
-			if (!instrDataReader.readF64(d))
-				return false;
-		} else {
+		Data::XPFloat f;
+		if (!f.load(instrDataReader))
 			return false;
-		}
 
+		double d = f.toDouble();
 		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeDouble, &d);
 	} else if (dataType == 0x1a) {
 		uint8 boolValue;
@@ -153,13 +147,18 @@ bool MiniscriptInstructionLoader<MiniscriptInstructions::PushValue>::loadInstruc
 			return false;
 
 		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeLocalRef, &refValue);
-
 	} else if (dataType == 0x1fa) {
 		uint32 refValue;
 		if (!instrDataReader.readU32(refValue))
 			return false;
 
 		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeGlobalRef, &refValue);
+	} else if (dataType == 0x1d) {
+		MiniscriptInstructions::PushValue::Label label;
+		if (!instrDataReader.readU32(label.superGroup) || !instrDataReader.readU32(label.id))
+			return false;
+
+		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeLabel, &label);
 	} else
 		return false;
 
@@ -423,11 +422,14 @@ PushValue::PushValue(DataType dataType, const void *value) {
 		_value.b = *static_cast<const bool *>(value);
 		break;
 	case DataType::kDataTypeDouble:
-		_value.d = *static_cast<const double *>(value);
+		_value.f = *static_cast<const double *>(value);
 		break;
 	case DataType::kDataTypeLocalRef:
 	case DataType::kDataTypeGlobalRef:
 		_value.ref = *static_cast<const uint32 *>(value);
+		break;
+	case DataType::kDataTypeLabel:
+		_value.lbl = *static_cast<const Label *>(value);
 		break;
 	default:
 		break;

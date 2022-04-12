@@ -82,50 +82,6 @@ bool DataReader::readF64(double &value) {
 	return checkErrorAndReset();
 }
 
-bool DataReader::readF80(double &value) {
-	uint16_t signAndExponent;
-	uint64_t mantissa;
-	if (isBigEndian()) {
-		if (!readU16(signAndExponent) || !readU64(mantissa))
-			return false;
-	} else {
-		if (!readU64(mantissa) || !readU16(signAndExponent))
-			return false;
-	}
-
-	uint8_t sign = (signAndExponent >> 15) & 1;
-	int16_t exponent = signAndExponent & 0x7fff;
-
-	// Eliminate implicit 1 and truncate from 63 to 52 bits
-	mantissa &= (((static_cast<uint64_t>(1) << 52) - 1u) << 11);
-	mantissa >>= 11;
-
-	if (mantissa != 0 || exponent != 0) {
-		// Adjust exponent
-		exponent -= 15360;
-		if (exponent > 2046) {
-			// Too big, set to largest finite magnitude
-			exponent = 2046;
-			mantissa = (static_cast<uint64_t>(1) << 52) - 1u;
-		} else if (exponent < 0) {
-			// Subnormal number
-			mantissa |= (static_cast<uint64_t>(1) << 52);
-			if (exponent < -52) {
-				mantissa = 0;
-				exponent = 0;
-			} else {
-				mantissa >>= (-exponent);
-				exponent = 0;
-			}
-		}
-	}
-
-	uint64_t recombined = (static_cast<uint64_t>(sign) << 63) | (static_cast<uint64_t>(exponent) << 52) | static_cast<uint64_t>(mantissa);
-	memcpy(&value, &recombined, 8);
-
-	return true;
-}
-
 bool DataReader::read(void *dest, size_t size) {
 	while (size > 0) {
 		uint32 thisChunkSize = UINT32_MAX;
@@ -254,6 +210,76 @@ bool ColorRGB16::load(DataReader& reader) {
 	}
 	else
 		return false;
+}
+
+bool XPFloat::load(DataReader &reader) {
+	if (reader.getProjectFormat() == kProjectFormatMacintosh)
+		return reader.readU16(signAndExponent) && reader.readU64(mantissa);
+	else if (reader.getProjectFormat() == kProjectFormatWindows) {
+		uint64 doublePrecFloatBits;
+		if (!reader.readU64(doublePrecFloatBits))
+			return false;
+
+		uint8 sign = ((doublePrecFloatBits >> 63) & 1);
+		int16 exponent = ((doublePrecFloatBits >> 52) & ((1 << 11) - 1));
+		uint64 workMantissa = (doublePrecFloatBits & ((static_cast<uint64>(1) << 52) - 1));
+
+		if (exponent == 0) {
+			// Subnormal number or zero
+			if (workMantissa != 0) {
+				while (((workMantissa >> 52) & 1) == 0) {
+					exponent--;
+					workMantissa <<= 1;
+				}
+			}
+		} else {
+			workMantissa |= (static_cast<uint64>(1) << 52);
+		}
+
+		exponent += 15360;
+
+		signAndExponent = (sign << 15) | exponent;
+		mantissa = workMantissa << 11;
+
+		return true;
+	} else
+		return false;
+}
+
+double XPFloat::toDouble() const {
+	uint8 sign = (signAndExponent >> 15) & 1;
+	int16 exponent = signAndExponent & 0x7fff;
+
+	// Eliminate implicit 1 and truncate from 63 to 52 bits
+	uint64 workMantissa = this->mantissa & (((static_cast<uint64>(1) << 52) - 1u) << 11);
+	workMantissa >>= 11;
+
+	if (mantissa != 0 || exponent != 0) {
+		// Adjust exponent
+		exponent -= 15360;
+		if (exponent > 2046) {
+			// Too big, set to largest finite magnitude
+			exponent = 2046;
+			workMantissa = (static_cast<uint64_t>(1) << 52) - 1u;
+		} else if (exponent < 0) {
+			// Subnormal number
+			workMantissa |= (static_cast<uint64_t>(1) << 52);
+			if (exponent < -52) {
+				workMantissa = 0;
+				exponent = 0;
+			} else {
+				workMantissa >>= (-exponent);
+				exponent = 0;
+			}
+		}
+	}
+
+	uint64_t recombined = (static_cast<uint64_t>(sign) << 63) | (static_cast<uint64_t>(exponent) << 52) | static_cast<uint64_t>(mantissa);
+
+	double d;
+	memcpy(&d, &recombined, 8);
+
+	return d;
 }
 
 DataObject::DataObject() : _type(DataObjectTypes::kUnknown), _revision(0) {
@@ -714,11 +740,51 @@ DataReadErrorCode BooleanVariableModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode IntegerVariableModifier::load(DataReader &reader) {
+	if (_revision != 0x3e8)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readS32(value))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode IntegerRangeVariableModifier::load(DataReader &reader) {
+	if (_revision != 0x3e8)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readS32(min) || !reader.readS32(max))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode PointVariableModifier::load(DataReader &reader) {
 	if (_revision != 0x3e8)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readBytes(unknown5) || !value.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode FloatingPointVariableModifier::load(DataReader &reader) {
+	if (_revision != 0x3e8)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !value.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode StringVariableModifier::load(DataReader &reader) {
+	if (_revision != 0x3e8)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readU32(lengthOfString) || !reader.readBytes(unknown1) || !reader.readTerminatedStr(value, lengthOfString))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -833,8 +899,20 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	case DataObjectTypes::kBooleanVariableModifier:
 		dataObject = new BooleanVariableModifier();
 		break;
+	case DataObjectTypes::kIntegerVariableModifier:
+		dataObject = new IntegerVariableModifier();
+		break;
+	case DataObjectTypes::kIntegerRangeVariableModifier:
+		dataObject = new IntegerRangeVariableModifier();
+		break;
 	case DataObjectTypes::kPointVariableModifier:
 		dataObject = new PointVariableModifier();
+		break;
+	case DataObjectTypes::kFloatingPointVariableModifier:
+		dataObject = new FloatingPointVariableModifier();
+		break;
+	case DataObjectTypes::kStringVariableModifier:
+		dataObject = new StringVariableModifier();
 		break;
 	case DataObjectTypes::kDebris:
 		dataObject = new Debris();

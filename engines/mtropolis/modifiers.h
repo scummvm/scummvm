@@ -276,12 +276,45 @@ private:
 	bool _value;
 };
 
+class IntegerVariableModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::IntegerVariableModifier &data);
+
+private:
+	int32 _value;
+};
+
+class IntegerRangeVariableModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::IntegerRangeVariableModifier &data);
+
+private:
+	int32 _min;
+	int32 _max;
+};
+
 class PointVariableModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::PointVariableModifier &data);
 
 private:
 	Point16 _value;
+};
+
+class FloatingPointVariableModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::FloatingPointVariableModifier &data);
+
+private:
+	double _value;
+};
+
+class StringVariableModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::StringVariableModifier &data);
+
+private:
+	Common::String _value;
 };
 
 }	// End of namespace MTropolis

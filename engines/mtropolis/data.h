@@ -122,12 +122,12 @@ enum DataObjectType {
 
 	kCompoundVariableModifier            = 0x2c7,	// NYI
 	kBooleanVariableModifier             = 0x321,
-	kIntegerVariableModifier             = 0x322,	// NYI
-	kIntegerRangeVariableModifier        = 0x324,	// NYI
+	kIntegerVariableModifier             = 0x322,
+	kIntegerRangeVariableModifier        = 0x324,
 	kVectorVariableModifier              = 0x327,	// NYI
-	kFloatingPointVariableModifier       = 0x328,	// NYI
 	kPointVariableModifier               = 0x326,
-	kStringVariableModifier              = 0x329,	// NYI
+	kFloatingPointVariableModifier       = 0x328,
+	kStringVariableModifier              = 0x329,
 
 	kDebris                              = 0xfffffffe,	// Deleted object
 	kPlugInModifier                      = 0xffffffff,
@@ -151,7 +151,6 @@ public:
 	bool readS64(int64 &value);
 	bool readF32(float &value);
 	bool readF64(double &value);
-	bool readF80(double &value);
 
 	bool read(void *dest, size_t size);
 
@@ -207,6 +206,14 @@ struct ColorRGB16 {
 	uint16 red;
 	uint16 green;
 	uint16 blue;
+};
+
+struct XPFloat {
+	bool load(DataReader &reader);
+	double toDouble() const;
+
+	uint64_t mantissa;
+	uint16_t signAndExponent;
 };
 
 class DataObject : public Common::NonCopyable {
@@ -728,8 +735,27 @@ protected:
 
 struct BooleanVariableModifier : public DataObject {
 	TypicalModifierHeader modHeader;
-	uint8_t value;
-	uint8_t unknown5;
+	uint8 value;
+	uint8 unknown5;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct IntegerVariableModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+	uint8 unknown1[4];
+	int32 value;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct IntegerRangeVariableModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+	uint8 unknown1[4];
+	int32 min;
+	int32 max;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -738,8 +764,27 @@ protected:
 struct PointVariableModifier : public DataObject {
 	TypicalModifierHeader modHeader;
 
-	uint8_t unknown5[4];
+	uint8 unknown5[4];
 	Point value;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct FloatingPointVariableModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+	uint8 unknown1[4];
+	XPFloat value;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct StringVariableModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+	uint32 lengthOfString;
+	uint8 unknown1[4];
+	Common::String value;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

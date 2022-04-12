@@ -195,6 +195,12 @@ namespace MiniscriptInstructions {
 			kDataTypeBool,
 			kDataTypeLocalRef,
 			kDataTypeGlobalRef,
+			kDataTypeLabel,
+		};
+
+		struct Label {
+			uint32 superGroup;
+			uint32 id;
 		};
 
 		PushValue(DataType dataType, const void *value);
@@ -202,8 +208,9 @@ namespace MiniscriptInstructions {
 	private:
 		union ValueUnion {
 			bool b;
-			double d;
+			double f;
 			uint32 ref;
+			Label lbl;
 		};
 
 		DataType _dataType;
