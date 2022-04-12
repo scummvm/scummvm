@@ -49,6 +49,19 @@ bool ColorRGB8::load(const Data::ColorRGB16& color) {
 MessageFlags::MessageFlags() : relay(true), cascade(true), immediate(true) {
 }
 
+
+MessageDataLocator::MessageDataLocator() : locatorType(kMessageDataLocatorTypeNothing), superGroupID(0), guidOrLabelID(0) {
+}
+
+bool MessageDataLocator::load(const Data::MessageDataLocator& data, const Common::String& dataSourceName) {
+	guidOrLabelID = data.guidOrLabelID;
+	superGroupID = data.superGroupID;
+	locatorType = static_cast<MessageDataLocatorType>(data.locationType);
+	sourceName = dataSourceName;
+
+	return true;
+}
+
 Event::Event() : eventType(0), eventInfo(0) {
 }
 
@@ -345,7 +358,6 @@ void Project::loadBootStream(size_t streamIndex) {
 
 	size_t numObjectsLoaded = 0;
 	for (;;) {
-		int64 globalPos = stream.pos() + streamDesc.pos;
 		Common::SharedPtr<Data::DataObject> dataObject;
 		Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
 

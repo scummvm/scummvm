@@ -538,7 +538,7 @@ DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
 }
 
 bool MessageDataLocator::load(DataReader& reader) {
-	if (!reader.readU16(locationType) || !reader.readBytes(unknown1) || !reader.readU32(guid) || !reader.readBytes(unknown2))
+	if (!reader.readU16(locationType) || !reader.readU32(superGroupID) || !reader.readU32(guidOrLabelID) || !reader.readBytes(unknown2))
 		return false;
 
 	return true;
@@ -626,9 +626,9 @@ DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 	if (_revision != 0x3ea)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readU32(messageFlags) || !when.load(reader) || !send.load(reader) ||
-		!reader.readU16(unknown6) || !reader.readU32(destination) || !reader.readBytes(unknown7) || !reader.readU16(with)
-		|| !reader.readBytes(unknown8) || !reader.readU32(withSourceGUID) || !reader.readBytes(unknown9) || !reader.readU8(withSourceLength) || !reader.readU8(unknown10))
+	if (!modHeader.load(reader) || !reader.readU32(messageFlags) || !when.load(reader) || !send.load(reader)
+		|| !reader.readU16(unknown6) || !reader.readU32(destination) || !reader.readBytes(unknown7) || !with.load(reader)
+		|| !reader.readBytes(unknown9) || !reader.readU8(withSourceLength) || !reader.readU8(unknown10))
 		return kDataReadErrorReadFailed;
 
 	if (withSourceLength > 0 && !reader.readNonTerminatedStr(withSource, withSourceLength))
@@ -658,6 +658,22 @@ DataReadErrorCode TimerMessengerModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode BoundaryDetectionMessengerModifier::load(DataReader &reader) {
+	if (_revision != 0x3ea)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (!reader.readU16(messageFlagsHigh) || !enableWhen.load(reader) || !disableWhen.load(reader)
+		|| !send.load(reader) || !reader.readU16(unknown2) || !reader.readU32(destination)
+		|| !reader.readBytes(unknown3) || !with.load(reader) || !reader.readU8(withSourceLength)
+		|| !reader.readU8(unknown4) || !reader.readNonTerminatedStr(withSource, withSourceLength))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode CollisionDetectionMessengerModifier::load(DataReader &reader) {
 	if (_revision != 0x3ea)
 		return kDataReadErrorUnsupportedRevision;
@@ -681,8 +697,7 @@ DataReadErrorCode KeyboardMessengerModifier::load(DataReader &reader) {
 	if (!modHeader.load(reader) || !reader.readU32(messageFlagsAndKeyStates) || !reader.readU16(unknown2)
 		|| !reader.readU16(keyModifiers) || !reader.readU8(keycode) || !reader.readBytes(unknown4)
 		|| !message.load(reader) || !reader.readU16(unknown7) || !reader.readU32(destination)
-		|| !reader.readBytes(unknown9) || !reader.readU16(with) || !reader.readBytes(unknown11)
-		|| !reader.readU32(withSourceGUID) || !reader.readBytes(unknown13) || !reader.readU8(withSourceLength)
+		|| !reader.readBytes(unknown9) || !with.load(reader) || !reader.readU8(withSourceLength)
 		|| !reader.readU8(unknown14))
 		return kDataReadErrorReadFailed;
 
@@ -956,6 +971,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kCollisionDetectionMessengerModifier:
 		dataObject = new CollisionDetectionMessengerModifier();
+		break;
+	case DataObjectTypes::kBoundaryDetectionMessengerModifier:
+		dataObject = new BoundaryDetectionMessengerModifier();
 		break;
 	case DataObjectTypes::kKeyboardMessengerModifier:
 		dataObject = new KeyboardMessengerModifier();
