@@ -60,6 +60,23 @@ static const char *version_cookie __attribute__((used)) = "$VER: ScummVM " SCUMM
 #endif
 const char gScummVMBuildDate[] = __DATE__ " " __TIME__;
 const char gScummVMVersionDate[] = SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
+const char gScummVMCompiler[] = ""
+#define STR_HELPER(x)	#x
+#define STR(x)		STR_HELPER(x)
+#if defined(_MSC_VER)
+	"MSVC " STR(_MSC_FULL_VER)
+#elif defined(__INTEL_COMPILER)
+	"ICC " STR(__INTEL_COMPILER) "." STR(__INTEL_COMPILER_UPDATE)
+#elif defined(__clang__)
+	"Clang " STR(__clang_major__) "." STR(__clang_minor__) "." STR(__clang_patchlevel__)
+#elif defined(__GNUC__)
+	"GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__)
+#else
+	"unknown compiler"
+#endif
+#undef STR
+#undef STR_HELPER
+	;
 const char gScummVMFullVersion[] = "ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
 const char gScummVMFeatures[] = ""
 #ifdef TAINTED_BUILD
