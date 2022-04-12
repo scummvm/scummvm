@@ -463,11 +463,6 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	update_polled_stuff_if_runtime();
 	_G(our_eip) = 201;
-	/*  // apparently, doing this stops volume spiking between tracks
-	if (_GP(thisroom).Options.StartupMusic>0) {
-	stopmusic();
-	delay(100);
-	}*/
 
 	_GP(play).room_width = _GP(thisroom).Width;
 	_GP(play).room_height = _GP(thisroom).Height;
@@ -594,14 +589,6 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		}
 		for (size_t i = 0; i < (size_t)MAX_WALK_BEHINDS; ++i)
 			_G(croom)->walkbehind_base[i] = _GP(thisroom).WalkBehinds[i].Baseline;
-		for (cc = 0; cc < MAX_FLAGS; cc++) _G(croom)->flagstates[cc] = 0;
-
-		/*    // we copy these structs for the Score column to work
-		_G(croom)->misccond=_GP(thisroom).misccond;
-		for (cc=0;cc<MAX_ROOM_HOTSPOTS;cc++)
-		_G(croom)->hscond[cc]=_GP(thisroom).hscond[cc];
-		for (cc=0;cc<MAX_ROOM_OBJECTS;cc++)
-		_G(croom)->objcond[cc]=_GP(thisroom).objcond[cc];*/
 
 		for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++) {
 			_G(croom)->hotspot[cc].Enabled = true;
@@ -610,6 +597,16 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		for (cc = 0; cc < MAX_ROOM_REGIONS; cc++) {
 			_G(croom)->region_enabled[cc] = 1;
 		}
+
+#if defined (OBSOLETE)
+		for (cc = 0; cc < MAX_LEGACY_ROOM_FLAGS; cc++) _G(croom)->flagstates[cc] = 0;
+		// we copy these structs for the Score column to work
+		_G(croom)->misccond = _GP(thisroom).misccond;
+		for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
+			_G(croom)->hscond[cc] = _GP(thisroom).hscond[cc];
+		for (cc = 0; cc < MAX_ROOM_OBJECTS; cc++)
+			_G(croom)->objcond[cc] = _GP(thisroom).objcond[cc];
+#endif
 
 		_G(croom)->beenhere = 1;
 		_G(in_new_room) = 2;
@@ -632,8 +629,6 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	_G(objs) = &_G(croom)->obj[0];
 
 	for (cc = 0; cc < MAX_ROOM_OBJECTS; cc++) {
-		// 64 bit: Using the id instead
-		// _G(scrObj)[cc].obj = &_G(croom)->obj[cc];
 		_G(objectScriptObjNames)[cc].Free();
 	}
 
@@ -653,17 +648,6 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	}
 
 	_G(our_eip) = 206;
-	/*  THIS IS DONE IN THE EDITOR NOW
-	_GP(thisroom).BgFrames.IsPaletteShared[0] = 1;
-	for (dd = 1; dd < _GP(thisroom).BgFrameCount; dd++) {
-	if (memcmp (&_GP(thisroom).BgFrames.Palette[dd][0], &_G(palette)[0], sizeof(color) * 256) == 0)
-	_GP(thisroom).BgFrames.IsPaletteShared[dd] = 1;
-	else
-	_GP(thisroom).BgFrames.IsPaletteShared[dd] = 0;
-	}
-	// only make the first frame shared if the last is
-	if (_GP(thisroom).BgFrames.IsPaletteShared[_GP(thisroom).BgFrameCount - 1] == 0)
-	_GP(thisroom).BgFrames.IsPaletteShared[0] = 0;*/
 
 	update_polled_stuff_if_runtime();
 
@@ -903,8 +887,6 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	debug_script_log("Now in room %d", _G(displayed_room));
 	GUI::MarkAllGUIForUpdate();
 	pl_run_plugin_hooks(AGSE_ENTERROOM, _G(displayed_room));
-	//  MoveToWalkableArea(_GP(game).playercharacter);
-	//  MSS_CHECK_ALL_BLOCKS;
 }
 
 // new_room: changes the current room number, and loads the new room from disk
@@ -970,8 +952,6 @@ int find_highest_room_entered() {
 		if (isRoomStatusValid(qq) && (getRoomStatus(qq)->beenhere != 0))
 			fndas = qq;
 	}
-	// This is actually legal - they might start in room 400 and save
-	//if (fndas<0) quit("find_highest_room: been in no rooms?");
 	return fndas;
 }
 
@@ -997,7 +977,6 @@ void check_new_room() {
 		process_event(&evh);
 		_GP(play).disabled_user_interface --;
 		_G(in_new_room) = newroom_was;
-		//    setevent(EV_RUNEVBLOCK,EVB_ROOM,0,5);
 	}
 }
 

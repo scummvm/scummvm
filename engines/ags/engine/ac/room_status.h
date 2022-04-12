@@ -53,7 +53,6 @@ struct RoomStatus {
 	int   beenhere = 0;
 	int   numobj = 0;
 	RoomObject obj[MAX_ROOM_OBJECTS];
-	short flagstates[MAX_FLAGS];
 	int   tsdatasize = 0;
 	char *tsdata = nullptr;
 	Interaction intrHotspot[MAX_ROOM_HOTSPOTS];
@@ -64,16 +63,18 @@ struct RoomStatus {
 	Shared::StringIMap roomProps;
 	Shared::StringIMap hsProps[MAX_ROOM_HOTSPOTS];
 	Shared::StringIMap objProps[MAX_ROOM_OBJECTS];
-	// [IKM] 2012-06-22: not used anywhere
-#ifdef UNUSED_CODE
-	EventBlock hscond[MAX_ROOM_HOTSPOTS];
-	EventBlock objcond[MAX_ROOM_OBJECTS];
-	EventBlock misccond;
-#endif
 	HotspotState hotspot[MAX_ROOM_HOTSPOTS];
 	int8  region_enabled[MAX_ROOM_REGIONS];
 	short walkbehind_base[MAX_WALK_BEHINDS];
 	int32_t interactionVariableValues[MAX_GLOBAL_VARIABLES];
+
+	// Likely pre-2.5 data
+#if defined (OBSOLETE)
+	short flagstates[MAX_LEGACY_ROOM_FLAGS]{};
+	EventBlock hscond[MAX_ROOM_HOTSPOTS];
+	EventBlock objcond[MAX_ROOM_OBJECTS];
+	EventBlock misccond;
+#endif
 
 	RoomStatus();
 	~RoomStatus();

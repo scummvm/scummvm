@@ -48,7 +48,6 @@ void HotspotState::WriteToSavegame(Shared::Stream *out) const {
 RoomStatus::RoomStatus() {
 	beenhere = 0;
 	numobj = 0;
-	memset(&flagstates, 0, sizeof(flagstates));
 	tsdatasize = 0;
 	tsdata = nullptr;
 
@@ -83,7 +82,7 @@ void RoomStatus::ReadFromFile_v321(Stream *in) {
 	beenhere = in->ReadInt32();
 	numobj = in->ReadInt32();
 	ReadRoomObjects_Aligned(in);
-	in->ReadArrayOfInt16(flagstates, MAX_FLAGS);
+	in->Seek(MAX_LEGACY_ROOM_FLAGS * sizeof(int16_t)); // flagstates (OBSOLETE)
 	tsdatasize = in->ReadInt32();
 	in->ReadInt32(); // tsdata
 	for (int i = 0; i < MAX_ROOM_HOTSPOTS; ++i) {

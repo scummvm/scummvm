@@ -83,7 +83,7 @@ struct DeprecatedRoomStruct {
 	int32_t       numwalkareas;
 	PolyPoints    wallpoints[MAX_WALK_AREAS];
 	// Unknown flags
-	int16_t       flagstates[MAX_FLAGS];
+	int16_t       flagstates[MAX_LEGACY_ROOM_FLAGS];
 };
 
 
