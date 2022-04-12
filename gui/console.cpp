@@ -641,11 +641,9 @@ void ConsoleDialog::historyScroll(int direction) {
 	if (_historySize == 0)
 		return;
 
-	if (_historyLine == 0 && direction > 0) {
-		int i;
-		for (i = 0; i < _promptEndPos - _promptStartPos; i++)
-			_history[_historyIndex].insertChar(buffer(_promptStartPos + i), i);
-	}
+	if (_historyLine == 0 && direction > 0)
+		// Save current line in history
+		_history[_historyIndex] = getUserInput();
 
 	// Advance to the next line in the history
 	int line = _historyLine + direction;
