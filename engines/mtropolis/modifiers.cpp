@@ -68,30 +68,11 @@ bool MiniscriptModifier::load(ModifierLoaderContext &context, const Data::Minisc
 	return true;
 }
 
-MessengerSendSpec::MessengerSendSpec() : destination(0) {
-}
-
-bool MessengerSendSpec::load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::MessageDataLocator &dataLocator, const Common::String &dataWithSourceName, uint32 dataDestination) {
-	messageFlags.relay = ((dataMessageFlags & 0x20000000) == 0);
-	messageFlags.cascade = ((dataMessageFlags & 0x40000000) == 0);
-	messageFlags.immediate = ((dataMessageFlags & 0x80000000) == 0);
-
-	if (!this->send.load(dataEvent))
-		return false;
-
-	if (!this->with.load(dataLocator, dataWithSourceName))
-		return false;
-
-	this->destination = dataDestination;
-
-	return true;
-}
-
 bool MessengerModifier::load(ModifierLoaderContext &context, const Data::MessengerModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSourceName, data.destination))
+	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSource, data.withString, data.destination))
 		return false;
 
 	return true;
@@ -101,7 +82,7 @@ bool SetModifier::load(ModifierLoaderContext &context, const Data::SetModifier &
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_executeWhen.load(data.executeWhen) || !_sourceLoc.load(data.sourceLocator, data.sourceName) || !_targetLoc.load(data.targetLocator, data.targetName))
+	if (!_executeWhen.load(data.executeWhen) || !_source.load(data.source, data.sourceName, data.sourceString) || !_target.load(data.target, data.targetName, data.targetString))
 		return false;
 
 	return true;
@@ -147,7 +128,7 @@ bool VectorMotionModifier::load(ModifierLoaderContext &context, const Data::Vect
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen) || !_sourceVarLoc.load(data.varSource, data.varSourceName))
+	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen) || !_vec.load(data.vec, data.vecSource, data.vecString))
 		return false;
 
 	return true;
@@ -157,7 +138,7 @@ bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMes
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSource, data.destination))
+	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSource, data.withString, data.destination))
 		return false;
 
 	_program = MiniscriptParser::parse(data.program);
@@ -174,7 +155,7 @@ bool TimerMessengerModifier::load(ModifierLoaderContext &context, const Data::Ti
 	if (!_executeWhen.load(data.executeWhen) || !this->_terminateWhen.load(data.terminateWhen))
 		return false;
 
-	if (!_sendSpec.load(data.send, data.messageAndTimerFlags, data.with, data.withSource, data.destination))
+	if (!_sendSpec.load(data.send, data.messageAndTimerFlags, data.with, data.withSource, data.withString, data.destination))
 		return false;
 
 	_milliseconds = data.minutes * (60 * 1000) + data.seconds * (1000) + data.hundredthsOfSeconds * 10;
@@ -198,7 +179,7 @@ bool BoundaryDetectionMessengerModifier::load(ModifierLoaderContext &context, co
 	_detectLeftEdge = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectLeftEdge) != 0);
 	_detectRightEdge = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectRightEdge) != 0);
 
-	if (!_send.load(data.send, data.messageFlagsHigh << 16, data.with, data.withSource, data.destination))
+	if (!_send.load(data.send, data.messageFlagsHigh << 16, data.with, data.withSource, data.withString, data.destination))
 		return false;
 
 	return true;
@@ -211,7 +192,7 @@ bool CollisionDetectionMessengerModifier::load(ModifierLoaderContext &context, c
 	if (!_enableWhen.load(data.enableWhen) || !this->_disableWhen.load(data.disableWhen))
 		return false;
 
-	if (!_sendSpec.load(data.send, data.messageAndModifierFlags, data.with, data.withSource, data.destination))
+	if (!_sendSpec.load(data.send, data.messageAndModifierFlags, data.with, data.withSource, data.withString, data.destination))
 		return false;
 
 	_detectInFront = ((data.messageAndModifierFlags & Data::CollisionDetectionMessengerModifier::kDetectLayerInFront) != 0);
@@ -274,7 +255,7 @@ bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data:
 		break;
 	}
 
-	if (!_sendSpec.load(data.message, data.messageFlagsAndKeyStates, data.with, data.withSource, data.destination))
+	if (!_sendSpec.load(data.message, data.messageFlagsAndKeyStates, data.with, data.withSource, data.withString, data.destination))
 		return false;
 
 	return true;
@@ -353,8 +334,8 @@ bool IntegerRangeVariableModifier::load(ModifierLoaderContext& context, const Da
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	_min = data.min;
-	_max = data.max;
+	if (!_range.load(data.range))
+		return false;
 
 	return true;
 }
@@ -363,8 +344,8 @@ bool VectorVariableModifier::load(ModifierLoaderContext &context, const Data::Ve
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	_angleRadians = data.angleRadians.toDouble();
-	_magnitude = data.magnitude.toDouble();
+	_vector.angleRadians = data.vector.angleRadians.toDouble();
+	_vector.magnitude = data.vector.magnitude.toDouble();
 
 	return true;
 }

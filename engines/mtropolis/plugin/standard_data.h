@@ -65,6 +65,34 @@ protected:
 	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
 };
 
+struct MediaCueMessengerModifier : public PlugInModifierData {
+	enum MessageFlags {
+		kMessageFlagImmediate = 0x1,
+		kMessageFlagCascade = 0x2,
+		kMessageFlagRelay = 0x3,
+	};
+
+	enum TriggerTiming {
+		kTriggerTimingStart = 0,
+		kTriggerTimingDuring = 1,
+		kTriggerTimingEnd = 2,
+	};
+
+	PlugInTypeTaggedValue enableWhen;
+	PlugInTypeTaggedValue disableWhen;
+	PlugInTypeTaggedValue sendEvent;
+	PlugInTypeTaggedValue nonStandardMessageFlags;	// int type, non-standard
+	uint16 unknown1;
+	uint32 destination;
+	uint32 unknown2;
+	PlugInTypeTaggedValue with;
+	PlugInTypeTaggedValue executeAt;	// May validly be a label, variable, integer, or integer range
+	PlugInTypeTaggedValue triggerTiming;	// int type
+
+protected:
+	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
+};
+
 } // End of namespace Standard
 
 } // End of namespace Data

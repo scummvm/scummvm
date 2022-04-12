@@ -51,6 +51,19 @@ DataReadErrorCode STransCtModifier::load(const PlugInModifier &prefix, DataReade
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode MediaCueMessengerModifier::load(const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !sendEvent.load(reader)
+		|| !nonStandardMessageFlags.load(reader) || !reader.readU16(unknown1) || !reader.readU32(destination)
+		|| !reader.readU32(unknown2) || !with.load(reader) || !executeAt.load(reader)
+		|| !triggerTiming.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 } // End of namespace Standard
 
 } // End of namespace Data

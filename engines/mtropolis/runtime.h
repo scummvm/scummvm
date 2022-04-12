@@ -45,6 +45,16 @@ struct ModifierLoaderContext;
 struct Point16 {
 	int16 x;
 	int16 y;
+
+	bool load(const Data::Point &point);
+
+	inline bool operator==(const Point16& other) const {
+		return x == other.x && y == other.y;
+	}
+
+	inline bool operator!=(const Point16 &other) const {
+		return !((*this) == other);
+	}
 };
 
 struct Rect16 {
@@ -54,6 +64,85 @@ struct Rect16 {
 	int16 right;
 
 	bool load(const Data::Rect &rect);
+
+	inline bool operator==(const Rect16 &other) const {
+		return top == other.top && left == other.left && bottom == other.bottom && right == other.right;
+	}
+
+	inline bool operator!=(const Rect16 &other) const {
+		return !((*this) == other);
+	}
+};
+
+struct IntRange {
+	int32 min;
+	int32 max;
+
+	bool load(const Data::IntRange &range);
+
+	inline bool operator==(const IntRange &other) const {
+		return min == other.min && max == other.max;
+	}
+
+	inline bool operator!=(const IntRange &other) const {
+		return !((*this) == other);
+	}
+};
+
+struct Label {
+	uint32 superGroupID;
+	uint32 id;
+
+	bool load(const Data::Label &label);
+
+	inline bool operator==(const Label &other) const {
+		return superGroupID == other.superGroupID && id == other.id;
+	}
+
+	inline bool operator!=(const Label &other) const {
+		return !((*this) == other);
+	}
+};
+
+struct Event {
+	uint32 eventType;
+	uint32 eventInfo;
+
+	bool load(const Data::Event &data);
+
+	inline bool operator==(const Event &other) const {
+		return eventType == other.eventType && eventInfo == other.eventInfo;
+	}
+
+	inline bool operator!=(const Event &other) const {
+		return !((*this) == other);
+	}
+};
+
+struct VarReference {
+	uint32 guid;
+	Common::String *source;
+
+	inline bool operator==(const VarReference &other) const {
+		return guid == other.guid && (*source) == (*other.source);
+	}
+
+	inline bool operator!=(const VarReference &other) const {
+		return !((*this) == other);
+	}
+};
+
+struct AngleMagVector {
+	double angleRadians;
+	double magnitude;
+
+	inline bool operator==(const AngleMagVector &other) const {
+		return angleRadians == other.angleRadians && magnitude == other.magnitude;
+	}
+
+	inline bool operator!=(const AngleMagVector &other) const {
+		return !((*this) == other);
+	}
 };
 
 struct ColorRGB8 {
@@ -72,22 +161,79 @@ struct MessageFlags {
 	bool immediate : 1;
 };
 
-enum MessageDataLocatorType {
-	kMessageDataLocatorTypeNothing = 0,
-	kMessageDataLocatorTypeIncomingData = 0x1b,
-	kMessageDataLocatorTypeVariable = 0x1c,
-	kMessageDataLocatorTypeLabel = 0x1d,
+struct DynamicValue {
+	enum Type {
+		kTypeNull,
+		kTypeInteger,
+		kTypeFloat,
+		kTypePoint,
+		KTypeIntegerRange,
+		kTypeBoolean,
+		kTypeVector,
+		kTypeLabel,
+		kTypeEvent,
+		kTypeVariableReference,
+		kTypeIncomingData,
+		kTypeString,
+	};
+
+	DynamicValue();
+	DynamicValue(const DynamicValue &other);
+	~DynamicValue();
+
+	bool load(const Data::InternalTypeTaggedValue &data, const Common::String &varSource, const Common::String &varString);
+	bool load(const Data::PlugInTypeTaggedValue &data);
+
+	Type getType() const;
+
+	const int32 &getInt() const;
+	const double &getFloat() const;
+	const Point16 &getPoint() const;
+	const IntRange &getIntRange() const;
+	const AngleMagVector &getVector() const;
+	const Label &getLabel() const;
+	const Event &getEvent() const;
+	const VarReference &getVarReference() const;
+	const Common::String &getString() const;
+	const bool &getBool() const;
+
+	DynamicValue &operator=(const DynamicValue &other);
+
+	bool operator==(const DynamicValue &other) const;
+	inline bool operator!=(const DynamicValue& other) const {
+		return !((*this) == other);
+	}
+
+private:
+	union ValueUnion {
+		double asFloat;
+		int32 asInt;
+		IntRange asIntRange;
+		AngleMagVector asVector;
+		Label asLabel;
+		VarReference asVarReference;
+		Event asEvent;
+		Point16 asPoint;
+		bool asBool;
+	};
+
+	void clear();
+	void initFromOther(const DynamicValue &other);
+
+	Type _type;
+	ValueUnion _value;
+	Common::String _str;
 };
 
-struct MessageDataLocator {
-	MessageDataLocator(); 
-	bool load(const Data::MessageDataLocator &data, const Common::String &dataSourceName);
+struct MessengerSendSpec {
+	MessengerSendSpec();
+	bool load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::InternalTypeTaggedValue &dataLocator, const Common::String &dataWithSource, const Common::String &dataWithString, uint32 dataDestination);
+	bool load(const Data::PlugInTypeTaggedValue &dataEvent, const MessageFlags &dataMessageFlags, const Data::PlugInTypeTaggedValue &dataWith, uint32 dataDestination);
 
-	MessageDataLocatorType locatorType;
-	uint32 superGroupID;
-	uint32 guidOrLabelID;
-
-	Common::String sourceName;
+	Event send;
+	MessageFlags messageFlags;
+	DynamicValue with;
+	uint32 destination; // May be a MessageDestination or GUID
 };
 
 enum MessageDestination {
@@ -158,15 +304,6 @@ struct VolumeState {
 	Common::String name;
 	int volumeID;
 	bool isMounted;
-};
-
-struct Event {
-	Event();
-
-	uint32 eventType;
-	uint32 eventInfo;
-
-	bool load(const Data::Event &data);
 };
 
 class Runtime {

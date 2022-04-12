@@ -24,11 +24,19 @@
 #include "mtropolis/vthread.h"
 #include "mtropolis/modifier_factory.h"
 
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/substream.h"
 
 
 namespace MTropolis {
+
+bool Point16::load(const Data::Point& point) {
+	x = point.x;
+	y = point.y;
+
+	return true;
+}
 
 bool Rect16::load(const Data::Rect& rect) {
 	top = rect.top;
@@ -39,30 +47,333 @@ bool Rect16::load(const Data::Rect& rect) {
 	return true;
 }
 
+bool IntRange::load(const Data::IntRange& range) {
+	max = range.max;
+	min = range.min;
+
+	return true;
+}
+
+bool Label::load(const Data::Label& label) {
+	id = label.labelID;
+	superGroupID = label.superGroupID;
+
+	return true;
+}
+
 bool ColorRGB8::load(const Data::ColorRGB16& color) {
 	this->r = (color.red * 510 + 1) / 131070;
 	this->g = (color.green * 510 + 1) / 131070;
 	this->b = (color.blue * 510 + 1) / 131070;
+
 	return true;
 }
 
 MessageFlags::MessageFlags() : relay(true), cascade(true), immediate(true) {
 }
 
-
-MessageDataLocator::MessageDataLocator() : locatorType(kMessageDataLocatorTypeNothing), superGroupID(0), guidOrLabelID(0) {
+DynamicValue::DynamicValue() : _type(kTypeNull) {
 }
 
-bool MessageDataLocator::load(const Data::MessageDataLocator& data, const Common::String& dataSourceName) {
-	guidOrLabelID = data.guidOrLabelID;
-	superGroupID = data.superGroupID;
-	locatorType = static_cast<MessageDataLocatorType>(data.locationType);
-	sourceName = dataSourceName;
+DynamicValue::DynamicValue(const DynamicValue &other) : _type(kTypeNull) {
+	initFromOther(other);
+}
+
+DynamicValue::~DynamicValue() {
+	clear();
+}
+
+bool DynamicValue::load(const Data::InternalTypeTaggedValue &data, const Common::String &varSource, const Common::String &varString) {
+	switch (data.type) {
+	case Data::InternalTypeTaggedValue::kNull:
+		_type = kTypeNull;
+		break;
+	case Data::InternalTypeTaggedValue::kIncomingData:
+		_type = kTypeIncomingData;
+		break;
+	case Data::InternalTypeTaggedValue::kInteger:
+		_type = kTypeInteger;
+		_value.asInt = data.value.asInteger;
+		break;
+	case Data::InternalTypeTaggedValue::kString:
+		_type = kTypeString;
+		_str = varString;
+		break;
+	case Data::InternalTypeTaggedValue::kPoint:
+		_type = kTypePoint;
+		if (!_value.asPoint.load(data.value.asPoint))
+			return false;
+		break;
+	case Data::InternalTypeTaggedValue::kIntegerRange:
+		_type = KTypeIntegerRange;
+		if (!_value.asIntRange.load(data.value.asIntegerRange))
+			return false;
+		break;
+	case Data::InternalTypeTaggedValue::kFloat:
+		_type = kTypeFloat;
+		_value.asFloat = data.value.asFloat.toDouble();
+		break;
+	case Data::InternalTypeTaggedValue::kBool:
+		_type = kTypeBoolean;
+		_value.asBool = (data.value.asBool != 0);
+		break;
+	case Data::InternalTypeTaggedValue::kVariableReference:
+		_type = kTypeVariableReference;
+		_value.asVarReference.guid = data.value.asVariableReference.guid;
+		_value.asVarReference.source = &_str;
+		_str = varSource;
+		break;
+	case Data::InternalTypeTaggedValue::kLabel:
+		_type = kTypeLabel;
+		if (!_value.asLabel.load(data.value.asLabel))
+			return false;
+		break;
+	default:
+		assert(false);
+		return false;
+	}
 
 	return true;
 }
 
-Event::Event() : eventType(0), eventInfo(0) {
+bool DynamicValue::load(const Data::PlugInTypeTaggedValue& data) {
+	switch (data.type) {
+	case Data::PlugInTypeTaggedValue::kNull:
+		_type = kTypeNull;
+		break;
+	case Data::PlugInTypeTaggedValue::kIncomingData:
+		_type = kTypeIncomingData;
+		break;
+	case Data::PlugInTypeTaggedValue::kInteger:
+		_type = kTypeInteger;
+		_value.asInt = data.value.asInt;
+		break;
+	case Data::PlugInTypeTaggedValue::kIntegerRange:
+		_type = KTypeIntegerRange;
+		if (!_value.asIntRange.load(data.value.asIntRange))
+			return false;
+		break;
+	case Data::PlugInTypeTaggedValue::kFloat:
+		_type = kTypeFloat;
+		_value.asFloat = data.value.asFloat.toDouble();
+		break;
+	case Data::PlugInTypeTaggedValue::kBoolean:
+		_type = kTypeBoolean;
+		_value.asBool = (data.value.asBoolean != 0);
+		break;
+	case Data::PlugInTypeTaggedValue::kEvent:
+		_type = kTypeEvent;
+		if (!_value.asEvent.load(data.value.asEvent))
+			return false;
+		break;
+	case Data::PlugInTypeTaggedValue::kLabel:
+		_type = kTypeLabel;
+		if (!_value.asLabel.load(data.value.asLabel))
+			return false;
+		break;
+	case Data::PlugInTypeTaggedValue::kString:
+		_type = kTypeString;
+		_str = data.str;
+		break;
+	case Data::PlugInTypeTaggedValue::kVariableReference:
+		_type = kTypeVariableReference;
+		_value.asVarReference.guid = data.value.asVarRefGUID;
+		_value.asVarReference.source = &_str;
+		_str.clear();	// Extra data doesn't seem to correlate to this
+		break;
+	default:
+		assert(false);
+		return false;
+	}
+
+	return true;
+}
+
+
+DynamicValue::Type DynamicValue::getType() const {
+	return _type;
+}
+
+const int32 &DynamicValue::getInt() const {
+	assert(_type == kTypeInteger);
+	return _value.asInt;
+}
+
+const double &DynamicValue::getFloat() const {
+	assert(_type == kTypeFloat);
+	return _value.asFloat;
+}
+
+const Point16 &DynamicValue::getPoint() const {
+	assert(_type == kTypePoint);
+	return _value.asPoint;
+}
+
+const IntRange &DynamicValue::getIntRange() const {
+	assert(_type == KTypeIntegerRange);
+	return _value.asIntRange;
+}
+
+const AngleMagVector &DynamicValue::getVector() const {
+	assert(_type == kTypeVector);
+	return _value.asVector;
+}
+
+const Label &DynamicValue::getLabel() const {
+	assert(_type == kTypeLabel);
+	return _value.asLabel;
+}
+
+const Event &DynamicValue::getEvent() const {
+	assert(_type == kTypeEvent);
+	return _value.asEvent;
+}
+
+const VarReference &DynamicValue::getVarReference() const {
+	assert(_type == kTypeVariableReference);
+	return _value.asVarReference;
+}
+
+const Common::String &DynamicValue::getString() const {
+	assert(_type == kTypeString);
+	return _str;
+}
+
+const bool &DynamicValue::getBool() const {
+	assert(_type == kTypeBoolean);
+	return _value.asBool;
+}
+
+DynamicValue &DynamicValue::operator=(const DynamicValue &other) {
+	if (this != &other) {
+		clear();
+		initFromOther(other);
+	}
+
+	return *this;
+}
+
+bool DynamicValue::operator==(const DynamicValue &other) const {
+	if (_type != other._type)
+		return false;
+
+	switch (_type) {
+	case kTypeNull:
+		return true;
+	case kTypeInteger:
+		return _value.asInt == other._value.asInt;
+	case kTypeFloat:
+		return _value.asFloat == other._value.asFloat;
+	case kTypePoint:
+		return _value.asPoint == other._value.asPoint;
+	case KTypeIntegerRange:
+		return _value.asIntRange == other._value.asIntRange;
+	case kTypeVector:
+		return _value.asVector == other._value.asVector;
+	case kTypeLabel:
+		return _value.asLabel == other._value.asLabel;
+	case kTypeEvent:
+		return _value.asEvent == other._value.asEvent;
+	case kTypeVariableReference:
+		return _value.asVarReference == other._value.asVarReference;
+	case kTypeIncomingData:
+		return true;
+	case kTypeString:
+		return _str == other._str;
+	case kTypeBoolean:
+		return _value.asBool == other._value.asBool;
+	default:
+		break;
+	}
+
+	assert(false);
+	return false;
+}
+
+void DynamicValue::clear() {
+	_str.clear();
+	_type = kTypeNull;
+}
+
+void DynamicValue::initFromOther(const DynamicValue& other) {
+	assert(_type == kTypeNull);
+
+	_type = other._type;
+
+	switch (_type) {
+	case kTypeNull:
+	case kTypeIncomingData:
+		break;
+	case kTypeInteger:
+		_value.asInt = other._value.asInt;
+		break;
+	case kTypeFloat:
+		_value.asFloat = other._value.asFloat;
+		break;
+	case kTypePoint:
+		_value.asPoint = other._value.asPoint;
+		break;
+	case KTypeIntegerRange:
+		_value.asIntRange = other._value.asIntRange;
+		break;
+	case kTypeVector:
+		_value.asVector = other._value.asVector;
+		break;
+	case kTypeLabel:
+		_value.asLabel = other._value.asLabel;
+		break;
+	case kTypeEvent:
+		_value.asEvent = other._value.asEvent;
+		break;
+	case kTypeVariableReference:
+		_value.asVarReference = other._value.asVarReference;
+		_str = other._str;
+		_value.asVarReference.source = &_str;
+		break;
+	case kTypeString:
+		_str = other._str;
+		break;
+	case kTypeBoolean:
+		_value.asBool = other._value.asBool;
+		break;
+	default:
+		assert(false);
+		break;
+	}
+}
+
+MessengerSendSpec::MessengerSendSpec() : destination(0) {
+}
+
+bool MessengerSendSpec::load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::InternalTypeTaggedValue &dataLocator, const Common::String &dataWithSource, const Common::String &dataWithString, uint32 dataDestination) {
+	messageFlags.relay = ((dataMessageFlags & 0x20000000) == 0);
+	messageFlags.cascade = ((dataMessageFlags & 0x40000000) == 0);
+	messageFlags.immediate = ((dataMessageFlags & 0x80000000) == 0);
+
+	if (!this->send.load(dataEvent))
+		return false;
+
+	if (!this->with.load(dataLocator, dataWithSource, dataWithString))
+		return false;
+
+	this->destination = dataDestination;
+
+	return true;
+}
+
+bool MessengerSendSpec::load(const Data::PlugInTypeTaggedValue &dataEvent, const MessageFlags &dataMessageFlags, const Data::PlugInTypeTaggedValue &dataWith, uint32 dataDestination) {
+	if (dataEvent.type != Data::PlugInTypeTaggedValue::kEvent)
+		return false;
+
+	if (!this->send.load(dataEvent.value.asEvent))
+		return false;
+
+	if (!this->with.load(dataWith))
+		return false;
+
+	this->destination = dataDestination;
+
+	return true;
 }
 
 bool Event::load(const Data::Event &data) {
@@ -220,6 +531,8 @@ Project::~Project() {
 void Project::loadFromDescription(const ProjectDescription& desc) {
 	_resources = desc.getResources();
 
+	debug(1, "Loading new project...");
+
 	const Common::Array<Common::SharedPtr<PlugIn> > &plugIns = desc.getPlugIns();
 
 	for (Common::Array<Common::SharedPtr<PlugIn> >::const_iterator it = plugIns.begin(), itEnd = plugIns.end(); it != itEnd; ++it) {
@@ -269,7 +582,6 @@ void Project::loadFromDescription(const ProjectDescription& desc) {
 
 	if (!dataObject || dataObject->getType() != Data::DataObjectTypes::kProjectHeader) {
 		error("Expected project header but found something else");
-
 	}
 
 	Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
@@ -282,6 +594,8 @@ void Project::loadFromDescription(const ProjectDescription& desc) {
 	if (catalog->segments.size() != desc.getSegments().size()) {
 		error("Project declared a different number of segments than the project description provided");
 	}
+
+	debug(1, "Catalog loaded OK, identified %i streams", static_cast<int>(catalog->streams.size()));
 
 	_streams.resize(catalog->streams.size());
 	for (size_t i = 0; i < _streams.size(); i++) {
@@ -315,6 +629,8 @@ void Project::loadFromDescription(const ProjectDescription& desc) {
 	if (!foundBootStream) {
 		error("Failed to find boot stream");
 	}
+
+	debug(1, "Loading boot stream");
 
 	loadBootStream(bootStreamIndex);
 }
