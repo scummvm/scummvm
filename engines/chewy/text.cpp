@@ -102,6 +102,7 @@ TextEntry *Text::getText(uint chunk, uint entry, int type, int subEntry) {
 	case INV_USE_DEF:
 		chunk += kADSTextMax + kATSTextMax + kAADTextMax + kINVTextMax;
 		isInvDesc = true;
+		isText = true;
 		break;
 	case INV_ATS_DATA:
 		chunk += kADSTextMax + kATSTextMax + kAADTextMax;
