@@ -146,6 +146,7 @@ void main_print_help() {
 #if AGS_PLATFORM_OS_WINDOWS
 	                          "  --no-message-box             Disable alerts as modal message boxes\n"
 #endif
+		                      "  --no-translation             Use default game language on start\n"
 	                          "  --noiface                    Don't draw game GUI\n"
 	                          "  --noscript                   Don't run room scripts; *WARNING:* unreliable\n"
 	                          "  --nospr                      Don't draw room objects and characters\n"
@@ -167,7 +168,8 @@ void main_print_help() {
 	                          "  --tell-graphicdriver         Print list of supported graphic drivers\n"
 	                          "\n"
 	                          "  --test                       Run game in the test mode\n"
-	                          "  --version                    Print engine's version and stop\n"
+                              "  --translation <name>         Select the given translation on start\n"
+		                      "  --version                    Print engine's version and stop\n"
 	                          "  --user-data-dir DIR          Set the save game directory\n"
 	                          "  --windowed                   Force display mode to windowed\n"
 	                          "\n"
@@ -257,6 +259,10 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 				INIwritestring(cfg, "graphics", "game_scale_win", argv[++ee]);
 			else
 				INIwritestring(cfg, "graphics", "game_scale_win", "max_round");
+		} else if ((ags_stricmp(arg, "--translation") == 0) && (argc > ee + 1)) {
+			INIwritestring(cfg, "language", "translation", argv[++ee]);
+		} else if (ags_stricmp(arg, "--no-translation") == 0) {
+			INIwritestring(cfg, "language", "translation", "");
 		} else if (ags_stricmp(arg, "--fps") == 0) _G(display_fps) = kFPS_Forced;
 		else if (ags_stricmp(arg, "--test") == 0) _G(debug_flags) |= DBG_DEBUGMODE;
 		else if (ags_stricmp(arg, "--noiface") == 0) _G(debug_flags) |= DBG_NOIFACE;
