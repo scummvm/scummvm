@@ -607,6 +607,21 @@ DataReadErrorCode DragMotionModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode VectorMotionModifier::load(DataReader &reader) {
+	if (_revision != 0x3e9)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !varSource.load(reader)
+		|| !reader.readU16(unknown1) || !reader.readU8(varSourceNameLength) || !reader.readU8(unknown2)
+		|| !reader.readNonTerminatedStr(varSourceName, varSourceNameLength))
+		return kDataReadErrorNone;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 	if (_revision != 0x3ea)
 		return kDataReadErrorUnsupportedRevision;
@@ -760,6 +775,16 @@ DataReadErrorCode IntegerRangeVariableModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode VectorVariableModifier::load(DataReader &reader) {
+	if (_revision != 0x3e8)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !angleRadians.load(reader) || !magnitude.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode PointVariableModifier::load(DataReader &reader) {
 	if (_revision != 0x3e8)
 		return kDataReadErrorUnsupportedRevision;
@@ -893,6 +918,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	case DataObjectTypes::kDragMotionModifier:
 		dataObject = new DragMotionModifier();
 		break;
+	case DataObjectTypes::kVectorMotionModifier:
+		dataObject = new VectorMotionModifier();
+		break;
 	case DataObjectTypes::kIfMessengerModifier:
 		dataObject = new IfMessengerModifier();
 		break;
@@ -910,6 +938,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kFloatingPointVariableModifier:
 		dataObject = new FloatingPointVariableModifier();
+		break;
+	case DataObjectTypes::kVectorVariableModifier:
+		dataObject = new VectorVariableModifier();
 		break;
 	case DataObjectTypes::kStringVariableModifier:
 		dataObject = new StringVariableModifier();

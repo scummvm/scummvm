@@ -152,6 +152,20 @@ bool DragMotionModifier::load(ModifierLoaderContext &context, const Data::DragMo
 	return true;
 }
 
+bool VectorMotionModifier::load(ModifierLoaderContext &context, const Data::VectorMotionModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen))
+		return false;
+
+	_sourceVarGUID = data.varSource.guid;
+	_sourceVarLocType = static_cast<MessageWithType>(data.varSource.locationType);
+	_sourceVarName = data.varSourceName;
+
+	return true;
+}
+
 bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -334,6 +348,16 @@ bool IntegerRangeVariableModifier::load(ModifierLoaderContext& context, const Da
 
 	_min = data.min;
 	_max = data.max;
+
+	return true;
+}
+
+bool VectorVariableModifier::load(ModifierLoaderContext &context, const Data::VectorVariableModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	_angleRadians = data.angleRadians.toDouble();
+	_magnitude = data.magnitude.toDouble();
 
 	return true;
 }

@@ -67,6 +67,8 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 		return ModifierFactory<MiniscriptModifier, Data::MiniscriptModifier>::getInstance();
 	case Data::DataObjectTypes::kDragMotionModifier:
 		return ModifierFactory<DragMotionModifier, Data::DragMotionModifier>::getInstance();
+	case Data::DataObjectTypes::kVectorMotionModifier:
+		return ModifierFactory<VectorMotionModifier, Data::VectorMotionModifier>::getInstance();
 	case Data::DataObjectTypes::kIfMessengerModifier:
 		return ModifierFactory<IfMessengerModifier, Data::IfMessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kTimerMessengerModifier:
@@ -90,6 +92,8 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 	case Data::DataObjectTypes::kIntegerRangeVariableModifier:
 		return ModifierFactory<IntegerRangeVariableModifier, Data::IntegerRangeVariableModifier>::getInstance();
 	case Data::DataObjectTypes::kPointVariableModifier:
+		return ModifierFactory<VectorVariableModifier, Data::VectorVariableModifier>::getInstance();
+	case Data::DataObjectTypes::kVectorVariableModifier:
 		return ModifierFactory<PointVariableModifier, Data::PointVariableModifier>::getInstance();
 	case Data::DataObjectTypes::kFloatingPointVariableModifier:
 		return ModifierFactory<FloatingPointVariableModifier, Data::FloatingPointVariableModifier>::getInstance();

@@ -97,7 +97,7 @@ enum DataObjectType {
 	kChangeSceneModifier                 = 0x136,	// NYI
 	kReturnModifier                      = 0x140,	// NYI
 	kDragMotionModifier                  = 0x208,
-	kVectorMotionModifier                = 0x226,	// NYI
+	kVectorMotionModifier                = 0x226,
 	kPathMotionModifierV1                = 0x21c,	// NYI - Obsolete version
 	kPathMotionModifierV2                = 0x21b,	// NYI
 	kSceneTransitionModifier             = 0x26c,	// NYI
@@ -124,7 +124,7 @@ enum DataObjectType {
 	kBooleanVariableModifier             = 0x321,
 	kIntegerVariableModifier             = 0x322,
 	kIntegerRangeVariableModifier        = 0x324,
-	kVectorVariableModifier              = 0x327,	// NYI
+	kVectorVariableModifier              = 0x327,
 	kPointVariableModifier               = 0x326,
 	kFloatingPointVariableModifier       = 0x328,
 	kStringVariableModifier              = 0x329,
@@ -520,6 +520,22 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
+struct VectorMotionModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+
+	Event enableWhen;
+	Event disableWhen;
+	MessageDataLocator varSource;
+	uint16 unknown1;
+	uint8 varSourceNameLength;
+	uint8 unknown2;
+
+	Common::String varSourceName;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
 struct IfMessengerModifier : public DataObject {
 	TypicalModifierHeader modHeader;
 
@@ -756,6 +772,16 @@ struct IntegerRangeVariableModifier : public DataObject {
 	uint8 unknown1[4];
 	int32 min;
 	int32 max;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct VectorVariableModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+	uint8 unknown1[4];
+	XPFloat angleRadians;
+	XPFloat magnitude;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

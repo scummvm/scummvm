@@ -107,6 +107,19 @@ private:
 	bool _constrainToParent;
 };
 
+class VectorMotionModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::VectorMotionModifier &data);
+
+private:
+	Event _enableWhen;
+	Event _disableWhen;
+
+	MessageWithType _sourceVarLocType;
+	uint32 _sourceVarGUID;
+	Common::String _sourceVarName;
+};
+
 class IfMessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data);
@@ -291,6 +304,15 @@ public:
 private:
 	int32 _min;
 	int32 _max;
+};
+
+class VectorVariableModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::VectorVariableModifier &data);
+
+private:
+	double _angleRadians;
+	double _magnitude;
 };
 
 class PointVariableModifier : public Modifier {
