@@ -208,12 +208,111 @@ struct ColorRGB16 {
 	uint16 blue;
 };
 
+struct IntRange {
+	bool load(DataReader &reader);
+
+	int32 min;
+	int32 max;
+};
+
 struct XPFloat {
 	bool load(DataReader &reader);
 	double toDouble() const;
 
-	uint64_t mantissa;
-	uint16_t signAndExponent;
+	uint64 mantissa;
+	uint16 signAndExponent;
+};
+
+struct XPFloatVector {
+	bool load(DataReader &reader);
+
+	XPFloat angleRadians;
+	XPFloat magnitude;
+};
+
+struct Label {
+	bool load(DataReader &reader);
+
+	uint32 superGroupID;
+	uint32 labelID;
+};
+
+// mTropolis uses two separate type-tagged value formats.
+//
+// InternalTypeTaggedValue is used by internal modifiers for messenger payloads and set modifiers
+// and seems to match Miniscript ops too.
+// InternalTypeTaggedValue is always 44 bytes in size and stores string data elsewhere in the containing structure.
+//
+// PlugInTypeTaggedValue is used by plug-ins and is fully self-contained.
+//
+// If you change something here, remember to update DynamicValue::load
+struct InternalTypeTaggedValue {
+	enum TypeCode {
+		kNull = 0x00,
+		kInteger = 0x01,
+		kString = 0x0d, // String data is stored externally from the value
+		kPoint = 0x10,
+		kIntegerRange = 0x11,
+		kFloat = 0x15,
+		kBool = 0x1a,
+		kIncomingData = 0x1b,
+		kVariableReference = 0x1c,
+		kLabel = 0x1d,
+	};
+
+	struct VariableReference {
+		uint32 unknown;
+		uint32 guid;
+	};
+
+	union ValueUnion {
+		uint8 asBool;
+		XPFloat asFloat;
+		int32 asInteger;
+		IntRange asIntegerRange;
+		VariableReference asVariableReference;
+		Label asLabel;
+		Point asPoint;
+	};
+
+	uint16 type;
+	ValueUnion value;
+
+	bool load(DataReader &reader);
+};
+
+struct PlugInTypeTaggedValue : public Common::NonCopyable {
+	enum TypeCode {
+		kNull = 0x00,
+		kInteger = 0x01,
+		kIntegerRange = 0xb,
+		kFloat = 0xf,
+		kBoolean = 0x14,
+		kEvent = 0x17,
+		kLabel = 0x64,
+		kString = 0x66,
+		kIncomingData = 0x6e,
+		kVariableReference = 0x73,	// Has extra data
+	};
+
+	union ValueUnion {
+		int32 asInt;
+		Point asPoint;
+		IntRange asIntRange;
+		XPFloat asFloat;
+		uint16 asBoolean;
+		Event asEvent;
+		Label asLabel;
+		uint32 asVarRefGUID;
+	};
+
+	uint16 type;
+	ValueUnion value;
+
+	Common::String str;
+	Common::Array<uint8> extraData;
+
+	bool load(DataReader &reader);
 };
 
 class DataObject : public Common::NonCopyable {
@@ -433,14 +532,6 @@ enum MessageFlags {
 	kMessageFlagNoImmediate = 0x80000000,
 };
 
-struct MessageDataLocator {
-	uint16 locationType;
-	uint32 superGroupID;
-	uint32 guidOrLabelID;
-	uint8 unknown2[36];
-
-	bool load(DataReader &reader);
-};
 
 struct MessengerModifier : public DataObject {
 	TypicalModifierHeader modHeader;
@@ -451,11 +542,12 @@ struct MessengerModifier : public DataObject {
 	uint16 unknown14;
 	uint32 destination;
 	uint8 unknown11[10];
-	MessageDataLocator with;
+	InternalTypeTaggedValue with;
 	uint8 withSourceLength;
-	uint8 unknown13;
+	uint8 withStringLength;
 
-	Common::String withSourceName;
+	Common::String withSource;
+	Common::String withString;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -466,15 +558,19 @@ struct SetModifier : public DataObject {
 
 	uint8 unknown1[4];
 	Event executeWhen;
-	MessageDataLocator sourceLocator;
-	MessageDataLocator targetLocator;
+	InternalTypeTaggedValue source;
+	InternalTypeTaggedValue target;
 	uint8 unknown3;
 	uint8 sourceNameLength;
 	uint8 targetNameLength;
-	uint8 unknown4[3];
+	uint8 sourceStringLength;
+	uint8 targetStringLength;
+	uint8 unknown4;
 
 	Common::String sourceName;
 	Common::String targetName;
+	Common::String sourceString;
+	Common::String targetString;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -525,12 +621,13 @@ struct VectorMotionModifier : public DataObject {
 
 	Event enableWhen;
 	Event disableWhen;
-	MessageDataLocator varSource;
+	InternalTypeTaggedValue vec;
 	uint16 unknown1;
-	uint8 varSourceNameLength;
-	uint8 unknown2;
+	uint8 vecSourceLength;
+	uint8 vecStringLength;
 
-	Common::String varSourceName;
+	Common::String vecSource;
+	Common::String vecString;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -545,13 +642,14 @@ struct IfMessengerModifier : public DataObject {
 	uint16 unknown6;
 	uint32 destination;
 	uint8 unknown7[10];
-	MessageDataLocator with;
+	InternalTypeTaggedValue with;
 	uint8 unknown9[10];
 	uint8 withSourceLength;
-	uint8 unknown10;
+	uint8 withStringLength;
 	MiniscriptProgram program;
 
 	Common::String withSource;
+	Common::String withString;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -571,7 +669,7 @@ struct TimerMessengerModifier : public DataObject {
 	uint16 unknown2;
 	uint32 destination;
 	uint8 unknown4[10];
-	MessageDataLocator with;
+	InternalTypeTaggedValue with;
 	uint8 unknown5;
 	uint8 minutes;
 	uint8 seconds;
@@ -580,9 +678,10 @@ struct TimerMessengerModifier : public DataObject {
 	uint32 unknown7;
 	uint8 unknown8[10];
 	uint8 withSourceLength;
-	uint8 unknown9;
+	uint8 withStringLength;
 
 	Common::String withSource;
+	Common::String withString;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -606,11 +705,12 @@ struct BoundaryDetectionMessengerModifier : public DataObject {
 	uint16 unknown2;
 	uint32 destination;
 	uint8 unknown3[10];
-	MessageDataLocator with;
+	InternalTypeTaggedValue with;
 	uint8 withSourceLength;
-	uint8 unknown4;
+	uint8 withStringLength;
 
 	Common::String withSource;
+	Common::String withString;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -639,11 +739,12 @@ struct CollisionDetectionMessengerModifier : public DataObject {
 	uint16 unknown2;
 	uint32 destination;
 	uint8 unknown3[10];
-	MessageDataLocator with;
+	InternalTypeTaggedValue with;
 	uint8 withSourceLength;
-	uint8 unknown4;
+	uint8 withStringLength;
 
 	Common::String withSource;
+	Common::String withString;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -693,11 +794,12 @@ struct KeyboardMessengerModifier : public DataObject {
 	uint16 unknown7;
 	uint32 destination;
 	uint8 unknown9[10];
-	MessageDataLocator with;
+	InternalTypeTaggedValue with;
 	uint8 withSourceLength;
-	uint8 unknown14;
+	uint8 withStringLength;
 
 	Common::String withSource;
+	Common::String withString;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -792,8 +894,7 @@ protected:
 struct IntegerRangeVariableModifier : public DataObject {
 	TypicalModifierHeader modHeader;
 	uint8 unknown1[4];
-	int32 min;
-	int32 max;
+	IntRange range;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -802,8 +903,7 @@ protected:
 struct VectorVariableModifier : public DataObject {
 	TypicalModifierHeader modHeader;
 	uint8 unknown1[4];
-	XPFloat angleRadians;
-	XPFloat magnitude;
+	XPFloatVector vector;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

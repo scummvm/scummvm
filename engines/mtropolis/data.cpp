@@ -21,6 +21,7 @@
 
 #include "mtropolis/data.h"
 #include "common/debug.h"
+#include "common/memstream.h"
 
 #include <float.h>
 
@@ -212,6 +213,10 @@ bool ColorRGB16::load(DataReader& reader) {
 		return false;
 }
 
+bool IntRange::load(DataReader& reader) {
+	return reader.readS32(min) && reader.readS32(max);
+}
+
 bool XPFloat::load(DataReader &reader) {
 	if (reader.getProjectFormat() == kProjectFormatMacintosh)
 		return reader.readU16(signAndExponent) && reader.readU64(mantissa);
@@ -238,7 +243,7 @@ bool XPFloat::load(DataReader &reader) {
 
 		exponent += 15360;
 
-		signAndExponent = (sign << 15) | exponent;
+		signAndExponent = static_cast<uint16>((sign << 15) | exponent);
 		mantissa = workMantissa << 11;
 
 		return true;
@@ -280,6 +285,129 @@ double XPFloat::toDouble() const {
 	memcpy(&d, &recombined, 8);
 
 	return d;
+}
+
+bool XPFloatVector::load(DataReader& reader) {
+	return angleRadians.load(reader) && magnitude.load(reader);
+}
+
+bool Label::load(DataReader &reader) {
+	return reader.readU32(superGroupID) && reader.readU32(labelID);
+}
+
+bool InternalTypeTaggedValue::load(DataReader& reader) {
+	if (!reader.readU16(type))
+		return false;
+
+	uint8 contents[44];
+	if (!reader.readBytes(contents))
+		return false;
+
+	Common::MemoryReadStreamEndian contentsStream(contents, sizeof(contents), reader.isBigEndian());
+
+	DataReader valueReader(contentsStream, reader.getProjectFormat());
+
+	switch (type) {
+	case kNull:
+	case kIncomingData:
+	case kString:	// Not a bug - string data is external!
+		break;
+	case kInteger:
+		if (!valueReader.readS32(value.asInteger))
+			return false;
+		break;
+	case kPoint:
+		if (!value.asPoint.load(valueReader))
+			return false;
+		break;
+	case kIntegerRange:
+		if (!value.asIntegerRange.load(valueReader))
+			return false;
+		break;
+	case kFloat:
+		if (!value.asFloat.load(valueReader))
+			return false;
+		break;
+	case kBool:
+		if (!valueReader.readU8(value.asBool))
+			return false;
+		break;
+	case kVariableReference:
+		if (!valueReader.readU32(value.asVariableReference.unknown) || !valueReader.readU32(value.asVariableReference.guid))
+			return false;
+		break;
+	case kLabel:
+		if (!value.asLabel.load(valueReader))
+			return false;
+		break;
+	default:
+		warning("Unknown tagged value type %x", type);
+		return false;
+	}
+
+	return true;
+}
+
+bool PlugInTypeTaggedValue::load(DataReader &reader) {
+	if (!reader.readU16(type))
+		return false;
+
+	switch (type) {
+	case kNull:
+	case kIncomingData:
+		break;
+	case kInteger:
+		if (!reader.readS32(value.asInt))
+			return false;
+		break;
+	case kIntegerRange:
+		if (!value.asIntRange.load(reader))
+			return false;
+		break;
+	case kFloat:
+		if (!value.asFloat.load(reader))
+			return false;
+		break;
+	case kBoolean:
+		if (!reader.readU16(value.asBoolean))
+			return false;
+		break;
+	case kEvent:
+		if (!value.asEvent.load(reader))
+			return false;
+		break;
+	case kLabel:
+		// This is the opposite of internal vars...
+		if (!reader.readU32(value.asLabel.labelID) || !reader.readU32(value.asLabel.superGroupID))
+			return false;
+		break;
+	case kString: {
+			uint32 length1;
+			uint32 length2;
+			if (!reader.readU32(length1) || !reader.readU32(length2))
+				return false;
+			if (length1 != length2)	// ???
+				return false;
+			if (!reader.readTerminatedStr(this->str, length1))
+				return false;
+		} break;
+	case kVariableReference: {
+			uint32 extraDataSize;
+			if (!reader.readU32(value.asVarRefGUID) || !reader.readU32(extraDataSize))
+				return false;
+
+			if (extraDataSize > 0) {
+				this->extraData.resize(extraDataSize);
+				if (!reader.read(&extraData[0], extraDataSize))
+					return false;
+			}
+		} break;
+	default:
+		warning("Unknown plug-in value type %x", type);
+		return false;
+	}
+
+	return true;
 }
 
 DataObject::DataObject() : _type(DataObjectTypes::kUnknown), _revision(0) {
@@ -537,13 +665,6 @@ DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-bool MessageDataLocator::load(DataReader& reader) {
-	if (!reader.readU16(locationType) || !reader.readU32(superGroupID) || !reader.readU32(guidOrLabelID) || !reader.readBytes(unknown2))
-		return false;
-
-	return true;
-}
-
 DataReadErrorCode MessengerModifier::load(DataReader &reader) {
 	if (_revision != 0x3ea)
 		return kDataReadErrorUnsupportedRevision;
@@ -553,10 +674,10 @@ DataReadErrorCode MessengerModifier::load(DataReader &reader) {
 
 	// Unlike most cases, the "when" event is split in half in this case
 	if (!reader.readU32(messageFlags) || !reader.readU32(when.eventID) || !send.load(reader) || !reader.readU16(unknown14) || !reader.readU32(destination)
-		|| !reader.readBytes(unknown11) || !with.load(reader) || !reader.readU32(when.eventInfo) || !reader.readU8(withSourceLength) || !reader.readU8(unknown13))
+		|| !reader.readBytes(unknown11) || !with.load(reader) || !reader.readU32(when.eventInfo) || !reader.readU8(withSourceLength) || !reader.readU8(withStringLength))
 		return kDataReadErrorReadFailed;
 
-	if (withSourceLength > 0 && !reader.readNonTerminatedStr(withSourceName, withSourceLength))
+	if (!reader.readNonTerminatedStr(withSource, withSourceLength) || !reader.readNonTerminatedStr(withString, withStringLength))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -566,9 +687,12 @@ DataReadErrorCode SetModifier::load(DataReader &reader) {
 	if (_revision != 0x3e8)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !executeWhen.load(reader) || !sourceLocator.load(reader) || !targetLocator.load(reader)
-		|| !reader.readU8(unknown3) || !reader.readU8(sourceNameLength) || !reader.readU8(targetNameLength) || !reader.readBytes(unknown4)
-		|| !reader.readNonTerminatedStr(sourceName, sourceNameLength) || !reader.readNonTerminatedStr(targetName, targetNameLength))
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !executeWhen.load(reader)
+		|| !source.load(reader) || !target.load(reader) || !reader.readU8(unknown3)
+		|| !reader.readU8(sourceNameLength) || !reader.readU8(targetNameLength) || !reader.readU8(sourceStringLength)
+		|| !reader.readU8(targetStringLength)  || !reader.readU8(unknown4) || !reader.readNonTerminatedStr(sourceName, sourceNameLength)
+		|| !reader.readNonTerminatedStr(targetName, targetNameLength) || !reader.readNonTerminatedStr(sourceString, sourceNameLength)
+		|| !reader.readNonTerminatedStr(targetString, targetStringLength))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -614,9 +738,10 @@ DataReadErrorCode VectorMotionModifier::load(DataReader &reader) {
 	if (!modHeader.load(reader))
 		return kDataReadErrorReadFailed;
 
-	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !varSource.load(reader)
-		|| !reader.readU16(unknown1) || !reader.readU8(varSourceNameLength) || !reader.readU8(unknown2)
-		|| !reader.readNonTerminatedStr(varSourceName, varSourceNameLength))
+	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !vec.load(reader)
+		|| !reader.readU16(unknown1) || !reader.readU8(vecSourceLength) || !reader.readU8(vecStringLength)
+		|| !reader.readNonTerminatedStr(vecSource, vecSourceLength)
+		/*|| !reader.readNonTerminatedStr(vecString, vecStringLength)*/)	// mTropolis bug!
 		return kDataReadErrorNone;
 
 	return kDataReadErrorNone;
@@ -628,10 +753,10 @@ DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 
 	if (!modHeader.load(reader) || !reader.readU32(messageFlags) || !when.load(reader) || !send.load(reader)
 		|| !reader.readU16(unknown6) || !reader.readU32(destination) || !reader.readBytes(unknown7) || !with.load(reader)
-		|| !reader.readBytes(unknown9) || !reader.readU8(withSourceLength) || !reader.readU8(unknown10))
+		|| !reader.readBytes(unknown9) || !reader.readU8(withSourceLength) || !reader.readU8(withStringLength))
 		return kDataReadErrorReadFailed;
 
-	if (withSourceLength > 0 && !reader.readNonTerminatedStr(withSource, withSourceLength))
+	if (!reader.readNonTerminatedStr(withSource, withSourceLength) || !reader.readNonTerminatedStr(withString, withStringLength))
 		return kDataReadErrorReadFailed;
 
 	if (!program.load(reader))
@@ -652,7 +777,8 @@ DataReadErrorCode TimerMessengerModifier::load(DataReader &reader) {
 		|| !reader.readBytes(unknown4) || !with.load(reader) || !reader.readU8(unknown5)
 		|| !reader.readU8(minutes) || !reader.readU8(seconds) || !reader.readU8(hundredthsOfSeconds)
 		|| !reader.readU32(unknown6) || !reader.readU32(unknown7) || !reader.readBytes(unknown8)
-		|| !reader.readU8(withSourceLength) || !reader.readU8(unknown9) || !reader.readNonTerminatedStr(withSource, withSourceLength))
+		|| !reader.readU8(withSourceLength) || !reader.readU8(withStringLength) || !reader.readNonTerminatedStr(withSource, withSourceLength)
+		 || !reader.readNonTerminatedStr(withString, withStringLength))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -668,7 +794,7 @@ DataReadErrorCode BoundaryDetectionMessengerModifier::load(DataReader &reader) {
 	if (!reader.readU16(messageFlagsHigh) || !enableWhen.load(reader) || !disableWhen.load(reader)
 		|| !send.load(reader) || !reader.readU16(unknown2) || !reader.readU32(destination)
 		|| !reader.readBytes(unknown3) || !with.load(reader) || !reader.readU8(withSourceLength)
-		|| !reader.readU8(unknown4) || !reader.readNonTerminatedStr(withSource, withSourceLength))
+		|| !reader.readU8(withStringLength) || !reader.readNonTerminatedStr(withSource, withSourceLength) || !reader.readNonTerminatedStr(withString, withStringLength))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -684,7 +810,7 @@ DataReadErrorCode CollisionDetectionMessengerModifier::load(DataReader &reader) 
 	if (!reader.readU32(messageAndModifierFlags) || !enableWhen.load(reader) || !disableWhen.load(reader)
 		|| !send.load(reader) || !reader.readU16(unknown2) || !reader.readU32(destination)
 		|| !reader.readBytes(unknown3) || !with.load(reader) || !reader.readU8(withSourceLength)
-		|| !reader.readU8(unknown4) || !reader.readNonTerminatedStr(withSource, withSourceLength))
+		|| !reader.readU8(withStringLength) || !reader.readNonTerminatedStr(withSource, withSourceLength)  || !reader.readNonTerminatedStr(withString, withStringLength))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -698,10 +824,10 @@ DataReadErrorCode KeyboardMessengerModifier::load(DataReader &reader) {
 		|| !reader.readU16(keyModifiers) || !reader.readU8(keycode) || !reader.readBytes(unknown4)
 		|| !message.load(reader) || !reader.readU16(unknown7) || !reader.readU32(destination)
 		|| !reader.readBytes(unknown9) || !with.load(reader) || !reader.readU8(withSourceLength)
-		|| !reader.readU8(unknown14))
+		|| !reader.readU8(withStringLength))
 		return kDataReadErrorReadFailed;
 
-	if (withSourceLength > 0 && !reader.readNonTerminatedStr(withSource, withSourceLength))
+	if (!reader.readNonTerminatedStr(withSource, withSourceLength) || !reader.readNonTerminatedStr(withString, withStringLength))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -784,7 +910,7 @@ DataReadErrorCode IntegerRangeVariableModifier::load(DataReader &reader) {
 	if (_revision != 0x3e8)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readS32(min) || !reader.readS32(max))
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !range.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -794,7 +920,7 @@ DataReadErrorCode VectorVariableModifier::load(DataReader &reader) {
 	if (_revision != 0x3e8)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !angleRadians.load(reader) || !magnitude.load(reader))
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !this->vector.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -894,6 +1020,8 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	if (!reader.readU32(type) || !reader.readU16(revision)) {
 		return kDataReadErrorReadFailed;
 	}
+
+	debug(4, "Loading data object type %x", static_cast<int>(type));
 
 	DataObject *dataObject = nullptr;
 	switch (type) {

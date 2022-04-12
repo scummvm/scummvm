@@ -22,6 +22,7 @@
 #ifndef MTROPOLIS_PLUGIN_STANDARD_H
 #define MTROPOLIS_PLUGIN_STANDARD_H
 
+#include "mtropolis/modifiers.h"
 #include "mtropolis/modifier_factory.h"
 #include "mtropolis/runtime.h"
 #include "mtropolis/plugin/standard_data.h"
@@ -48,6 +49,23 @@ public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data);
 };
 
+class MediaCueMessengerModifier : public Modifier {
+public:
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::MediaCueMessengerModifier &data);
+
+private:
+	enum TriggerTiming {
+		kTriggerTimingStart = 0,
+		kTriggerTimingDuring = 1,
+		kTriggerTimingEnd = 2,
+	};
+
+	Event _enableWhen;
+	Event _disableWhen;
+	TriggerTiming _triggerTiming;
+	MessengerSendSpec _send;
+};
+
 class StandardPlugIn : public MTropolis::PlugIn {
 public:
 	StandardPlugIn();
@@ -57,6 +75,7 @@ public:
 private:
 	PlugInModifierFactory<CursorModifier, Data::Standard::CursorModifier> _cursorModifierFactory;
 	PlugInModifierFactory<STransCtModifier, Data::Standard::STransCtModifier> _sTransCtModifierFactory;
+	PlugInModifierFactory<MediaCueMessengerModifier, Data::Standard::MediaCueMessengerModifier> _mediaCueModifierFactory;
 };
 
 } // End of namespace Standard

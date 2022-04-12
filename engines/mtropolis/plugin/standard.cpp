@@ -39,12 +39,44 @@ bool STransCtModifier::load(const PlugInModifierLoaderContext& context, const Da
 	return true;
 }
 
-StandardPlugIn::StandardPlugIn() : _cursorModifierFactory(this), _sTransCtModifierFactory(this) {
+bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext& context, const Data::Standard::MediaCueMessengerModifier& data) {
+	if (data.enableWhen.type != Data::PlugInTypeTaggedValue::kEvent)
+		return false;
+
+	_enableWhen.load(data.enableWhen.value.asEvent);
+
+	if (data.disableWhen.type != Data::PlugInTypeTaggedValue::kEvent)
+		return false;
+
+	_disableWhen.load(data.disableWhen.value.asEvent);
+
+	if (data.triggerTiming.type != Data::PlugInTypeTaggedValue::kInteger)
+		return false;
+
+	_triggerTiming = static_cast<TriggerTiming>(data.triggerTiming.value.asInt);
+
+	if (data.nonStandardMessageFlags.type != Data::PlugInTypeTaggedValue::kInteger)
+		return false;
+
+	int32 msgFlags = data.nonStandardMessageFlags.value.asInt;
+
+	MessageFlags messageFlags;
+	messageFlags.immediate = ((msgFlags & Data::Standard::MediaCueMessengerModifier::kMessageFlagImmediate) != 0);
+	messageFlags.cascade = ((msgFlags & Data::Standard::MediaCueMessengerModifier::kMessageFlagCascade) != 0);
+	messageFlags.relay = ((msgFlags & Data::Standard::MediaCueMessengerModifier::kMessageFlagRelay) != 0);
+	if (!_send.load(data.sendEvent, messageFlags, data.with, data.destination))
+		return false;
+
+	return true;
+}
+
+StandardPlugIn::StandardPlugIn() : _cursorModifierFactory(this), _sTransCtModifierFactory(this), _mediaCueModifierFactory(this) {
 }
 
 void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
 	registrar->registerPlugInModifier("CursorMod", &_cursorModifierFactory);
 	registrar->registerPlugInModifier("STransCt", &_sTransCtModifierFactory);
+	registrar->registerPlugInModifier("MediaCue", &_mediaCueModifierFactory);
 }
 
 } // End of namespace Standard

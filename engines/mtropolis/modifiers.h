@@ -53,16 +53,6 @@ private:
 	Common::SharedPtr<MiniscriptProgram> _program;
 };
 
-struct MessengerSendSpec {
-	MessengerSendSpec();
-	bool load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::MessageDataLocator &dataLocator, const Common::String &dataWithSourceName, uint32 dataDestination);
-
-	Event send;
-	MessageFlags messageFlags;
-	MessageDataLocator with;
-	uint32 destination; // May be a MessageDestination or GUID
-};
-
 class MessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::MessengerModifier &data);
@@ -78,8 +68,8 @@ public:
 
 private:
 	Event _executeWhen;
-	MessageDataLocator _sourceLoc;
-	MessageDataLocator _targetLoc;
+	DynamicValue _source;
+	DynamicValue _target;
 };
 
 class DragMotionModifier : public Modifier {
@@ -109,7 +99,7 @@ private:
 	Event _enableWhen;
 	Event _disableWhen;
 
-	MessageDataLocator _sourceVarLoc;
+	DynamicValue _vec;
 };
 
 class IfMessengerModifier : public Modifier {
@@ -320,8 +310,7 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::IntegerRangeVariableModifier &data);
 
 private:
-	int32 _min;
-	int32 _max;
+	IntRange _range;
 };
 
 class VectorVariableModifier : public Modifier {
@@ -329,8 +318,7 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::VectorVariableModifier &data);
 
 private:
-	double _angleRadians;
-	double _magnitude;
+	AngleMagVector _vector;
 };
 
 class PointVariableModifier : public Modifier {
