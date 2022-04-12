@@ -969,7 +969,7 @@ HSaveError ReadThisRoom(Stream *in, int32_t cmp_ver, const PreservedParams &pp, 
 
 	// read the current troom state, in case they saved in temporary room
 	if (!in->ReadBool())
-		_GP(troom).ReadFromSavegame(in, cmp_ver > 1 ? 1 : 0); // FIXME!!
+		_GP(troom).ReadFromSavegame(in, cmp_ver);
 
 	return HSaveError::None();
 }
@@ -1101,14 +1101,14 @@ ComponentHandler ComponentHandlers[] = {
 	},
 	{
 		"Room States",
-		1,
+		2,
 		0,
 		WriteRoomStates,
 		ReadRoomStates
 	},
 	{
 		"Loaded Room State",
-		2,
+		2, // should correspond to "Room States"
 		0,
 		WriteThisRoom,
 		ReadThisRoom
