@@ -229,7 +229,7 @@ void WetEngine::loadAssetsPCG() {
 	intro->frameNumber = 0;
 	_levels["<start>"] = intro;
 
-	loadArcadeLevel("c31.mis", "<quit>", "<check_lives>", "");
+	loadArcadeLevel("c31.mis", "<quit>", "<quit>", "");
 
 	Transition *over = new Transition("<quit>");
 	over->intros.push_back("g.s");
