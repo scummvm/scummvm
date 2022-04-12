@@ -62,10 +62,8 @@ namespace Common {
  * @{
  */
 
-// The sgi IRIX MIPSpro Compiler has difficulties with nested templates.
-// This and the other __sgi conditionals below work around these problems.
-// The Intel C++ Compiler suffers from the same problems.
-#if (defined(__sgi) && !defined(__GNUC__)) || defined(__INTEL_COMPILER)
+// The Intel C++ Compiler has difficulties with nested templates.
+#if defined(__INTEL_COMPILER)
 template<class T> class IteratorImpl;
 #endif
 
@@ -158,9 +156,7 @@ private:
 	size_type lookupAndCreateIfMissing(const Key &key);
 	void expandStorage(size_type newCapacity);
 
-#if !defined(__sgi) || defined(__GNUC__)
 	template<class T> friend class IteratorImpl;
-#endif
 
 	/**
 	 * Simple HashMap iterator implementation.
@@ -168,7 +164,7 @@ private:
 	template<class NodeType>
 	class IteratorImpl {
 		friend class HashMap;
-#if (defined(__sgi) && !defined(__GNUC__)) || defined(__INTEL_COMPILER)
+#if defined(__INTEL_COMPILER)
 		template<class T> friend class Common::IteratorImpl;
 #else
 		template<class T> friend class IteratorImpl;
