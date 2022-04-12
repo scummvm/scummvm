@@ -65,17 +65,29 @@ struct ColorRGB8 {
 };
 
 struct MessageFlags {
+	MessageFlags();
+
 	bool relay : 1;
 	bool cascade : 1;
 	bool immediate : 1;
-
-	MessageFlags();
 };
 
-enum MessageWithType {
-	kMessageWithNothing = 0,
-	kMessageWithIncomingData = 0x1b,
-	kMessageWithVariable = 0x1c,
+enum MessageDataLocatorType {
+	kMessageDataLocatorTypeNothing = 0,
+	kMessageDataLocatorTypeIncomingData = 0x1b,
+	kMessageDataLocatorTypeVariable = 0x1c,
+	kMessageDataLocatorTypeLabel = 0x1d,
+};
+
+struct MessageDataLocator {
+	MessageDataLocator(); 
+	bool load(const Data::MessageDataLocator &data, const Common::String &dataSourceName);
+
+	MessageDataLocatorType locatorType;
+	uint32 superGroupID;
+	uint32 guidOrLabelID;
+
+	Common::String sourceName;
 };
 
 enum MessageDestination {

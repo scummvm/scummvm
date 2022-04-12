@@ -73,6 +73,8 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 		return ModifierFactory<IfMessengerModifier, Data::IfMessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kTimerMessengerModifier:
 		return ModifierFactory<TimerMessengerModifier, Data::TimerMessengerModifier>::getInstance();
+	case Data::DataObjectTypes::kBoundaryDetectionMessengerModifier:
+		return ModifierFactory<BoundaryDetectionMessengerModifier, Data::BoundaryDetectionMessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kCollisionDetectionMessengerModifier:
 		return ModifierFactory<CollisionDetectionMessengerModifier, Data::CollisionDetectionMessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kKeyboardMessengerModifier:

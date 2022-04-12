@@ -55,13 +55,11 @@ private:
 
 struct MessengerSendSpec {
 	MessengerSendSpec();
-	bool load(const Data::Event &dataEvent, uint32 dataMessageFlags, uint16 dataWith, const Common::String &dataWithSourceName, uint32 dataWithSourceGUID, uint32 dataDestination);
+	bool load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::MessageDataLocator &dataLocator, const Common::String &dataWithSourceName, uint32 dataDestination);
 
 	Event send;
 	MessageFlags messageFlags;
-	MessageWithType withType;
-	uint32 withSourceGUID;
-	Common::String withSourceName;
+	MessageDataLocator with;
 	uint32 destination; // May be a MessageDestination or GUID
 };
 
@@ -80,12 +78,8 @@ public:
 
 private:
 	Event _executeWhen;
-	MessageWithType _sourceLocType;
-	MessageWithType _targetLocType;
-	uint32 _sourceGUID;
-	uint32 _targetGUID;
-	Common::String _sourceName;
-	Common::String _targetName;
+	MessageDataLocator _sourceLoc;
+	MessageDataLocator _targetLoc;
 };
 
 class DragMotionModifier : public Modifier {
@@ -115,9 +109,7 @@ private:
 	Event _enableWhen;
 	Event _disableWhen;
 
-	MessageWithType _sourceVarLocType;
-	uint32 _sourceVarGUID;
-	Common::String _sourceVarName;
+	MessageDataLocator _sourceVarLoc;
 };
 
 class IfMessengerModifier : public Modifier {
@@ -141,6 +133,32 @@ private:
 	MessengerSendSpec _sendSpec;
 	uint32 _milliseconds;
 	bool _looping;
+};
+
+class BoundaryDetectionMessengerModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::BoundaryDetectionMessengerModifier &data);
+
+private:
+	enum ExitTriggerMode {
+		kExitTriggerExiting,
+		kExitTriggerOnceExited,
+	};
+
+	enum DetectionMode {
+		kContinuous,
+		kOnFirstDetection,
+	};
+
+	Event _enableWhen;
+	Event _disableWhen;
+	ExitTriggerMode _exitTriggerMode;
+	DetectionMode _detectionMode;
+	bool _detectTopEdge;
+	bool _detectBottomEdge;
+	bool _detectLeftEdge;
+	bool _detectRightEdge;
+	MessengerSendSpec _send;
 };
 
 class CollisionDetectionMessengerModifier : public Modifier {

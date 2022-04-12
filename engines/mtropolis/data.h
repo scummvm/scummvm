@@ -109,7 +109,7 @@ enum DataObjectType {
 	kSetModifier                         = 0x2df,
 	kTimerMessengerModifier              = 0x2e4,
 	kCollisionDetectionMessengerModifier = 0x2ee,
-	kBoundaryDetectionMessengerModifier  = 0x2f8,	// NYI
+	kBoundaryDetectionMessengerModifier  = 0x2f8,
 	kKeyboardMessengerModifier           = 0x302,
 	kTextStyleModifier                   = 0x32a,
 	kGraphicModifier                     = 0x334,
@@ -435,8 +435,8 @@ enum MessageFlags {
 
 struct MessageDataLocator {
 	uint16 locationType;
-	uint8 unknown1[4];
-	uint32 guid;
+	uint32 superGroupID;
+	uint32 guidOrLabelID;
 	uint8 unknown2[36];
 
 	bool load(DataReader &reader);
@@ -545,10 +545,8 @@ struct IfMessengerModifier : public DataObject {
 	uint16 unknown6;
 	uint32 destination;
 	uint8 unknown7[10];
-	uint16 with;
-	uint8 unknown8[4];
-	uint32 withSourceGUID;
-	uint8 unknown9[46];
+	MessageDataLocator with;
+	uint8 unknown9[10];
 	uint8 withSourceLength;
 	uint8 unknown10;
 	MiniscriptProgram program;
@@ -590,9 +588,35 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-struct CollisionDetectionMessengerModifier : public DataObject {
-	TypicalModifierHeader modHeader;
+struct BoundaryDetectionMessengerModifier : public DataObject {
+	enum Flags {
+		kDetectTopEdge = 0x1000,
+		kDetectBottomEdge = 0x0800,
+		kDetectLeftEdge = 0x0400,
+		kDetectRightEdge = 0x0200,
+		kDetectExiting = 0x0100, // Off = once exited
+		kWhileDetected = 0x0080, // Off = on first detected
+	};
 
+	TypicalModifierHeader modHeader;
+	uint16 messageFlagsHigh;
+	Event enableWhen;
+	Event disableWhen;
+	Event send;
+	uint16 unknown2;
+	uint32 destination;
+	uint8 unknown3[10];
+	MessageDataLocator with;
+	uint8 withSourceLength;
+	uint8 unknown4;
+
+	Common::String withSource;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct CollisionDetectionMessengerModifier : public DataObject {
 	enum ModifierFlags {
 		kDetectLayerInFront = 0x10000000,
 		kDetectLayerBehind = 0x08000000,
@@ -607,6 +631,7 @@ struct CollisionDetectionMessengerModifier : public DataObject {
 		kNoCollideWithParent = 0x00100000,
 	};
 
+	TypicalModifierHeader modHeader;
 	uint32 messageAndModifierFlags;
 	Event enableWhen;
 	Event disableWhen;
@@ -668,10 +693,7 @@ struct KeyboardMessengerModifier : public DataObject {
 	uint16 unknown7;
 	uint32 destination;
 	uint8 unknown9[10];
-	uint16 with;
-	uint8 unknown11[4];
-	uint32 withSourceGUID;
-	uint8 unknown13[36];
+	MessageDataLocator with;
 	uint8 withSourceLength;
 	uint8 unknown14;
 

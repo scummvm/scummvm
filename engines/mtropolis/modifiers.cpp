@@ -68,10 +68,10 @@ bool MiniscriptModifier::load(ModifierLoaderContext &context, const Data::Minisc
 	return true;
 }
 
-MessengerSendSpec::MessengerSendSpec() : withType(kMessageWithNothing), withSourceGUID(0), destination(0) {
+MessengerSendSpec::MessengerSendSpec() : destination(0) {
 }
 
-bool MessengerSendSpec::load(const Data::Event& dataEvent, uint32 dataMessageFlags, uint16 dataWith, const Common::String &dataWithSourceName, uint32 dataWithSourceGUID, uint32 dataDestination) {
+bool MessengerSendSpec::load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::MessageDataLocator &dataLocator, const Common::String &dataWithSourceName, uint32 dataDestination) {
 	messageFlags.relay = ((dataMessageFlags & 0x20000000) == 0);
 	messageFlags.cascade = ((dataMessageFlags & 0x40000000) == 0);
 	messageFlags.immediate = ((dataMessageFlags & 0x80000000) == 0);
@@ -79,10 +79,10 @@ bool MessengerSendSpec::load(const Data::Event& dataEvent, uint32 dataMessageFla
 	if (!this->send.load(dataEvent))
 		return false;
 
+	if (!this->with.load(dataLocator, dataWithSourceName))
+		return false;
+
 	this->destination = dataDestination;
-	this->withSourceGUID = dataWithSourceGUID;
-	this->withType = static_cast<MessageWithType>(dataWith);
-	this->withSourceName = dataWithSourceName;
 
 	return true;
 }
@@ -91,7 +91,7 @@ bool MessengerModifier::load(ModifierLoaderContext &context, const Data::Messeng
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with.locationType, data.withSourceName, data.with.guid, data.destination))
+	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSourceName, data.destination))
 		return false;
 
 	return true;
@@ -101,17 +101,8 @@ bool SetModifier::load(ModifierLoaderContext &context, const Data::SetModifier &
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_executeWhen.load(data.executeWhen))
+	if (!_executeWhen.load(data.executeWhen) || !_sourceLoc.load(data.sourceLocator, data.sourceName) || !_targetLoc.load(data.targetLocator, data.targetName))
 		return false;
-
-	_sourceLocType = static_cast<MessageWithType>(data.sourceLocator.locationType);
-	_targetLocType = static_cast<MessageWithType>(data.targetLocator.locationType);
-
-	_sourceGUID = data.sourceLocator.guid;
-	_targetGUID = data.targetLocator.guid;
-
-	_sourceName = data.sourceName;
-	_targetName = data.targetName;
 
 	return true;
 }
@@ -156,12 +147,8 @@ bool VectorMotionModifier::load(ModifierLoaderContext &context, const Data::Vect
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen))
+	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen) || !_sourceVarLoc.load(data.varSource, data.varSourceName))
 		return false;
-
-	_sourceVarGUID = data.varSource.guid;
-	_sourceVarLocType = static_cast<MessageWithType>(data.varSource.locationType);
-	_sourceVarName = data.varSourceName;
 
 	return true;
 }
@@ -170,7 +157,7 @@ bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMes
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSource, data.withSourceGUID, data.destination))
+	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSource, data.destination))
 		return false;
 
 	_program = MiniscriptParser::parse(data.program);
@@ -187,7 +174,7 @@ bool TimerMessengerModifier::load(ModifierLoaderContext &context, const Data::Ti
 	if (!_executeWhen.load(data.executeWhen) || !this->_terminateWhen.load(data.terminateWhen))
 		return false;
 
-	if (!_sendSpec.load(data.send, data.messageAndTimerFlags, data.with.locationType, data.withSource, data.with.guid, data.destination))
+	if (!_sendSpec.load(data.send, data.messageAndTimerFlags, data.with, data.withSource, data.destination))
 		return false;
 
 	_milliseconds = data.minutes * (60 * 1000) + data.seconds * (1000) + data.hundredthsOfSeconds * 10;
@@ -196,15 +183,35 @@ bool TimerMessengerModifier::load(ModifierLoaderContext &context, const Data::Ti
 	return true;
 }
 
-bool CollisionDetectionMessengerModifier::load(ModifierLoaderContext &context, const Data::CollisionDetectionMessengerModifier &data) {
-
+bool BoundaryDetectionMessengerModifier::load(ModifierLoaderContext &context, const Data::BoundaryDetectionMessengerModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
 	if (!_enableWhen.load(data.enableWhen) || !this->_disableWhen.load(data.disableWhen))
 		return false;
 
-	if (!_sendSpec.load(data.send, data.messageAndModifierFlags, data.with.locationType, data.withSource, data.with.guid, data.destination))
+	_exitTriggerMode = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectExiting) != 0) ? kExitTriggerExiting : kExitTriggerOnceExited;
+	_detectionMode = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kWhileDetected) != 0) ? kContinuous : kOnFirstDetection;
+		
+	_detectTopEdge = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectTopEdge) != 0);
+	_detectBottomEdge = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectBottomEdge) != 0);
+	_detectLeftEdge = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectLeftEdge) != 0);
+	_detectRightEdge = ((data.messageFlagsHigh & Data::BoundaryDetectionMessengerModifier::kDetectRightEdge) != 0);
+
+	if (!_send.load(data.send, data.messageFlagsHigh << 16, data.with, data.withSource, data.destination))
+		return false;
+
+	return true;
+}
+
+bool CollisionDetectionMessengerModifier::load(ModifierLoaderContext &context, const Data::CollisionDetectionMessengerModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_enableWhen.load(data.enableWhen) || !this->_disableWhen.load(data.disableWhen))
+		return false;
+
+	if (!_sendSpec.load(data.send, data.messageAndModifierFlags, data.with, data.withSource, data.destination))
 		return false;
 
 	_detectInFront = ((data.messageAndModifierFlags & Data::CollisionDetectionMessengerModifier::kDetectLayerInFront) != 0);
@@ -267,7 +274,7 @@ bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data:
 		break;
 	}
 
-	if (!_sendSpec.load(data.message, data.messageFlagsAndKeyStates, data.with, data.withSource, data.withSourceGUID, data.destination))
+	if (!_sendSpec.load(data.message, data.messageFlagsAndKeyStates, data.with, data.withSource, data.destination))
 		return false;
 
 	return true;
