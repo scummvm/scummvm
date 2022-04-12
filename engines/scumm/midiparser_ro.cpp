@@ -134,6 +134,7 @@ bool MidiParser_RO::loadMusic (byte *data, uint32 size) {
 	}
 
 	_numTracks = 1;
+	_autoLoop = false;
 	_ppqn = 120;
 	_tracks[0] = pos + 2;
 	_markerCount = _lastMarkerCount = 0;
