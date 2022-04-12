@@ -339,7 +339,10 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 		if (!arc->transitions.empty()) {
 			ArcadeTransition at = *arc->transitions.begin();
-			if (_background->decoder->getCurFrame() > (int) at.time) {
+			int ttime = at.time;
+			if (ttime == 0)
+				_skipLevel = true;
+			else if (_background->decoder->getCurFrame() > ttime) {
 				transition = true;
 
 				if (_playerFrameSeps.size() == 1) {
@@ -378,7 +381,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				} else if (!at.sound.empty()) {
 					playSound(at.sound, 1);
 				} else
-					error ("Invalid transition at %d", at.time);
+					error ("Invalid transition at %d", ttime);
 
 				arc->transitions.pop_front();
 				if (!_music.empty())
