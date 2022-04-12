@@ -37,14 +37,18 @@ public:
 	void plot_cur();
 	void show_cur();
 	void hide_cur();
-	void set_cur_ani(CurAni *ani);
+	void setAnimation(uint8 start, uint8 end, int16 delay);
 	void move(int16 x, int16 y);
+	uint8 getAnimStart() const { return _animStart; }
 
 	CurBlk *_curblk = nullptr;
-	CurAni *_ani = nullptr;
 	int _scrWidth = 0;
 	int16 _curAniCountdown = 0;
 	int16 _aniCount = 0;
+
+	uint8 _animStart = 0;
+	uint8 _animEnd = 0;
+	int16 _animDelay = 0;
 };
 
 } // namespace Chewy

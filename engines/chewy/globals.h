@@ -208,7 +208,6 @@ public:
 
 	MouseInfo _minfo;
 	CurBlk _curblk;
-	CurAni _curani;
 	RaumBlk _room_blk;
 	Flags _flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 					0, 0, 0, 0, 0, 0, 0, 0, 0 };

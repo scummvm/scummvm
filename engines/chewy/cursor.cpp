@@ -29,7 +29,6 @@ namespace Chewy {
 Cursor::Cursor(CurBlk *curblkp) {
 	_curblk = curblkp;
 
-	_ani = nullptr;
 	_curAniCountdown = 0;
 	_aniCount = 0;
 }
@@ -42,11 +41,11 @@ void Cursor::plot_cur() {
 		_cursorMoveFl = false;
 
 		--_curAniCountdown;
-		if (_curAniCountdown <= 0 && _ani != nullptr) {
-			_curAniCountdown = _ani->_delay;
+		if (_curAniCountdown <= 0) {
+			_curAniCountdown = _animDelay;
 			++_aniCount;
-			if (_aniCount > _ani->_end)
-				_aniCount = _ani->_start;
+			if (_aniCount > _animEnd)
+				_aniCount = _animStart;
 		}
 
 		const uint16 w = READ_LE_INT16(_curblk->sprite[_aniCount]);
@@ -65,10 +64,12 @@ void Cursor::hide_cur() {
 	CursorMan.showMouse(false);
 }
 
-void Cursor::set_cur_ani(CurAni *ani1) {
-	_ani = ani1;
+void Cursor::setAnimation(uint8 start, uint8 end, int16 delay) {
+	_aniCount = _animStart = start;
+	_animEnd = end;
+	if (delay >= 0)
+		_animDelay = delay;
 	_curAniCountdown = 0;
-	_aniCount = _ani->_start;
 }
 
 void Cursor::move(int16 x, int16 y) {

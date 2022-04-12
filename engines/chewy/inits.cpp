@@ -57,12 +57,9 @@ void standard_init() {
 	_G(curtaf) = _G(mem)->taf_adr(CURSOR_TAF);
 
 	_G(curblk).sprite = _G(curtaf)->_image;
-	_G(curani)._start = 0;
-	_G(curani)._end = 0;
-	_G(curani)._delay = 0;
 	
 	_G(cur) = new Cursor(&_G(curblk));
-	_G(cur)->set_cur_ani(&_G(curani));
+	_G(cur)->setAnimation(0, 0, 0);
 
 	alloc_buffers();
 	_G(pal)[765] = 63;

@@ -24,6 +24,8 @@
 #include "chewy/globals.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room24.h"
+
+#include "chewy/cursor.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
@@ -42,8 +44,7 @@ void Room24::entry() {
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
 	_G(curblk).sprite = _G(room_blk)._detImage;
-	_G(curani)._start = 7;
-	_G(curani)._end = 10;
+	_G(cur)->setAnimation(7, 10, -1);
 	_G(menu_item) = CUR_USER;
 	cursorChoice(CUR_USER);
 

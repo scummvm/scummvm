@@ -80,12 +80,6 @@ struct CurBlk {
 	byte **sprite = nullptr;
 };
 
-struct CurAni {
-	uint8 _start = 0;
-	uint8 _end = 0;
-	int16 _delay = 0;
-};
-
 struct CustomInfo {
 	byte *TempArea = 0;
 };
