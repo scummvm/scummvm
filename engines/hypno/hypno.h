@@ -406,6 +406,8 @@ private:
 	Common::Array<uint32> _c40SegmentNext;
 	int _c40SegmentIdx;
 	int _c40lastTurn;
+	int _c50LeftTurns;
+	int _c50RigthTurns;
 };
 
 class SpiderEngine : public HypnoEngine {

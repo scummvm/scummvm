@@ -543,6 +543,10 @@ public:
 		additionalVideo.clear();
 		segments.clear();
 		script.clear();
+		objKillsRequired[0] = 0;
+		objKillsRequired[1] = 0;
+		objMissesAllowed[0] = 0;
+		objMissesAllowed[1] = 0;
 	}
 
 	uint32 id;

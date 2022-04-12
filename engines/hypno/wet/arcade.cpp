@@ -34,9 +34,6 @@ void WetEngine::initSegment(ArcadeShooting *arc) {
 	} else if (_arcadeMode == "Y3") {
 		_segmentShootSequenceOffset = 0;
 		_segmentShootSequenceMax = 7;
-	} else if (_arcadeMode == "Y5") {
-		_segmentShootSequenceOffset = 1;
-		_segmentShootSequenceMax = 9;
 	} else if (_arcadeMode == "Y4") {
 		_c40SegmentNext.clear();
 		_c40SegmentNext.push_back(2);
@@ -54,6 +51,12 @@ void WetEngine::initSegment(ArcadeShooting *arc) {
 
 		_segmentShootSequenceOffset = 0;
 		_segmentShootSequenceMax = 3;
+	} else if (_arcadeMode == "Y5") {
+		_c50LeftTurns = 0;
+		_c50RigthTurns = 0;
+
+		_segmentShootSequenceOffset = 1;
+		_segmentShootSequenceMax = 9;
 	} else {
 		_segmentShootSequenceOffset = 0;
 		_segmentShootSequenceMax = 0;
@@ -126,12 +129,22 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 					_segmentIdx = _segmentIdx + 3;
 				else
 					_segmentIdx = _segmentIdx + 2;
-			} else if (_arcadeMode == "Y5" || _arcadeMode == "Y4") {
+			} else if (_arcadeMode == "Y4") {
 				if (mousePos.x <= 100)
 					_segmentIdx = _segmentIdx + 2;
 				else if (mousePos.x >= 300)
 					_segmentIdx = _segmentIdx + 3;
 				else
+					_segmentIdx = _segmentIdx + 1;
+
+			} else if (_arcadeMode == "Y5") {
+				if (mousePos.x <= 100) {
+					_segmentIdx = _segmentIdx + 2;
+					_c50LeftTurns++;
+				} else if (mousePos.x >= 300) {
+					_segmentIdx = _segmentIdx + 3;
+					_c50RigthTurns++;
+				} else
 					_segmentIdx = _segmentIdx + 1;
 			} else
 				error("Invalid segment type for mode: %s at the end of segment %x", _arcadeMode.c_str(), segments[_segmentIdx].type);
@@ -201,6 +214,11 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 						// TODO: this should also add a barrier near the end
 						_c40lastTurn = int(_segmentIdx);
 					}
+				}
+			} else if (_arcadeMode == "Y5") {
+				if (_c50LeftTurns >= 1 && _c50RigthTurns >= 3) {
+					_segmentIdx = 9; // last segment
+					return;
 				}
 			}
 
