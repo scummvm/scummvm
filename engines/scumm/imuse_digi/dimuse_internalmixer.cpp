@@ -701,7 +701,7 @@ void IMuseDigiInternalMixer::mixBits8ConvertToStereo(uint8 *srcBuf, int32 inFram
 	int value;
 	int residualLength;
 
-	mixBufCurCell = (uint16 *)(&_mixBuf[2 * mixBufStartIndex]);
+	mixBufCurCell = (uint16 *)(&_mixBuf[4 * mixBufStartIndex]);
 	if (_isEarlyDiMUSE) {
 		if (ftIs11025Hz) {
 			srcBuf_ptr = srcBuf;
@@ -909,11 +909,11 @@ void IMuseDigiInternalMixer::mixBits12ConvertToStereo(uint8 *srcBuf, int32 inFra
 }
 
 void IMuseDigiInternalMixer::mixBits16ConvertToStereo(uint8 *srcBuf, int32 inFrameCount, int feedSize, int32 mixBufStartIndex, int32 *leftAmpTable, int32 *rightAmpTable) {
-	uint16* mixBufCurCell;
+	uint16 *mixBufCurCell;
 	uint16 *srcBuf_tmp;
 	int residualLength;
 
-	mixBufCurCell = (uint16*)(&_mixBuf[2 * mixBufStartIndex]);
+	mixBufCurCell = (uint16 *)(&_mixBuf[2 * mixBufStartIndex]);
 
 	if (feedSize == inFrameCount) {
 		if (feedSize) {
@@ -976,7 +976,7 @@ void IMuseDigiInternalMixer::mixBits8Stereo(uint8 *srcBuf, int32 inFrameCount, i
 	uint8 *srcBuf_ptr;
 	int residualLength;
 
-	mixBufCurCell = (uint16*)(&_mixBuf[4 * mixBufStartIndex]);
+	mixBufCurCell = (uint16 *)(&_mixBuf[4 * mixBufStartIndex]);
 	if (feedSize == inFrameCount) {
 		if (feedSize) {
 			srcBuf_ptr = srcBuf;
@@ -1099,7 +1099,7 @@ void IMuseDigiInternalMixer::mixBits16Stereo(uint8 *srcBuf, int32 inFrameCount, 
 	uint16 *srcBuf_ptr;
 	int residualLength;
 
-	mixBufCurCell = (uint16*)(&_mixBuf[4 * mixBufStartIndex]);
+	mixBufCurCell = (uint16 *)(&_mixBuf[4 * mixBufStartIndex]);
 	if (feedSize == inFrameCount) {
 		if (feedSize) {
 			srcBuf_ptr = (uint16 *)srcBuf;
