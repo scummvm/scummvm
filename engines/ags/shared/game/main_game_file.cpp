@@ -70,8 +70,6 @@ String GetMainGameFileErrorText(MainGameFileErrorType err) {
 		return "Unable to determine native game resolution.";
 	case kMGFErr_TooManySprites:
 		return "Too many sprites for this engine to handle.";
-	case kMGFErr_TooManyCursors:
-		return "Too many cursors for this engine to handle.";
 	case kMGFErr_InvalidPropertySchema:
 		return "Failed to deserialize custom properties schema.";
 	case kMGFErr_InvalidPropertyValues:
