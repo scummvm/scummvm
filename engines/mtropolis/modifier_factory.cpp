@@ -85,8 +85,17 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 		return ModifierFactory<SetModifier, Data::SetModifier>::getInstance();
 	case Data::DataObjectTypes::kBooleanVariableModifier:
 		return ModifierFactory<BooleanVariableModifier, Data::BooleanVariableModifier>::getInstance();
+	case Data::DataObjectTypes::kIntegerVariableModifier:
+		return ModifierFactory<IntegerVariableModifier, Data::IntegerVariableModifier>::getInstance();
+	case Data::DataObjectTypes::kIntegerRangeVariableModifier:
+		return ModifierFactory<IntegerRangeVariableModifier, Data::IntegerRangeVariableModifier>::getInstance();
 	case Data::DataObjectTypes::kPointVariableModifier:
 		return ModifierFactory<PointVariableModifier, Data::PointVariableModifier>::getInstance();
+	case Data::DataObjectTypes::kFloatingPointVariableModifier:
+		return ModifierFactory<FloatingPointVariableModifier, Data::FloatingPointVariableModifier>::getInstance();
+	case Data::DataObjectTypes::kStringVariableModifier:
+		return ModifierFactory<StringVariableModifier, Data::StringVariableModifier>::getInstance();
+
 	default:
 		return nullptr;
 	}

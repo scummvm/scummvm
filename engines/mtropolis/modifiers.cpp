@@ -319,12 +319,49 @@ bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::B
 	return true;
 }
 
+bool IntegerVariableModifier::load(ModifierLoaderContext& context, const Data::IntegerVariableModifier& data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	_value = data.value;
+
+	return true;
+}
+
+bool IntegerRangeVariableModifier::load(ModifierLoaderContext& context, const Data::IntegerRangeVariableModifier& data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	_min = data.min;
+	_max = data.max;
+
+	return true;
+}
+
 bool PointVariableModifier::load(ModifierLoaderContext &context, const Data::PointVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
 	_value.x = data.value.x;
 	_value.y = data.value.y;
+
+	return true;
+}
+
+bool FloatingPointVariableModifier::load(ModifierLoaderContext &context, const Data::FloatingPointVariableModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	_value = data.value.toDouble();
+
+	return true;
+}
+
+bool StringVariableModifier::load(ModifierLoaderContext &context, const Data::StringVariableModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	_value = data.value;
 
 	return true;
 }

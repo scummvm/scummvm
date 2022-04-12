@@ -345,6 +345,7 @@ void Project::loadBootStream(size_t streamIndex) {
 
 	size_t numObjectsLoaded = 0;
 	for (;;) {
+		int64 globalPos = stream.pos() + streamDesc.pos;
 		Common::SharedPtr<Data::DataObject> dataObject;
 		Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
 
