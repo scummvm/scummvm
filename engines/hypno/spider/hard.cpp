@@ -92,13 +92,17 @@ void SpiderEngine::runMatrix(Code *code) {
 	delete v;
 	Graphics::Surface *menu;
 	Common::Rect menuArea(0, 0, 0, 0);
-	if (isDemo()) // No hints in demo
+	bool transparent;
+	if (isDemo()) { // No hints in demo
 		menu = decodeFrame("int_main/resume.smk", 0);
-	else
+		transparent = true;
+	} else {
 		menu = decodeFrame("int_main/hint1.smk", 0);
+		transparent = false;
+	}
 
 	menuArea = Common::Rect(0, 0, menu->w, menu->h);
-	drawImage(*menu, 0, 0, false);
+	drawImage(*menu, 0, 0, transparent);
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 
