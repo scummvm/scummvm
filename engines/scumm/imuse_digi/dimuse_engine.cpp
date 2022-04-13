@@ -645,6 +645,10 @@ int IMuseDigital::getSoundIdByName(const char *soundName) {
 
 void IMuseDigital::setSmushPlayer(SmushPlayer *splayer) {
 	_splayer = splayer;
+	// Perform a first-time volume update for both SMUSH and iMUSE
+	diMUSESetMusicGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2, 0, 127));
+	diMUSESetVoiceGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2, 0, 127));
+	diMUSESetSFXGroupVol(CLIP(_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2, 0, 127));
 }
 
 void IMuseDigital::receiveAudioFromSMUSH(uint8 *srcBuf, int32 inFrameCount, int32 feedSize, int32 mixBufStartIndex, int volume, int pan, bool is11025Hz) {
@@ -813,21 +817,21 @@ int IMuseDigital::diMUSESetMusicGroupVol(int volume) {
 	debug(5, "IMuseDigital::diMUSESetMusicGroupVol(): %d", volume);
 	if (_isEarlyDiMUSE)
 		_splayer->setGroupVolume(GRP_BKGMUS, volume);
-	return diMUSESetGroupVol(3, volume);
+	return diMUSESetGroupVol(DIMUSE_GROUP_MUSIC, volume);
 }
 
 int IMuseDigital::diMUSESetSFXGroupVol(int volume) {
 	debug(5, "IMuseDigital::diMUSESetSFXGroupVol(): %d", volume);
 	if (_isEarlyDiMUSE)
 		_splayer->setGroupVolume(GRP_SFX, volume);
-	return diMUSESetGroupVol(1, volume);
+	return diMUSESetGroupVol(DIMUSE_GROUP_SFX, volume);
 }
 
 int IMuseDigital::diMUSESetVoiceGroupVol(int volume) {
 	debug(5, "IMuseDigital::diMUSESetVoiceGroupVol(): %d", volume);
 	if (_isEarlyDiMUSE)
 		_splayer->setGroupVolume(GRP_SPEECH, volume);
-	return diMUSESetGroupVol(2, volume);
+	return diMUSESetGroupVol(DIMUSE_GROUP_SPEECH, volume);
 }
 
 void IMuseDigital::diMUSEUpdateGroupVolumes() {
