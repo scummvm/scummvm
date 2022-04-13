@@ -115,17 +115,21 @@ bool init_translation(const String &lang, const String &fallback_lang) {
 	// Mixed encoding support: 
 	// original text unfortunately may contain extended ASCII chars (> 127);
 	// if translation is UTF-8 but game is extended ASCII, then the translation
-	// dictionary keys won't match.
-	// With that assumption we must convert dictionary keys into ASCII using
-	// provided locale hint.
-	String key_enc = _GP(trans).StrOptions["gameencoding"];
-	if (!key_enc.IsEmpty()) {
-		StringMap conv_map;
-		for (const auto &item : _GP(trans).Dict) {
-			String key = convert_utf8_to_ascii(item._key.GetCStr(), key_enc.GetCStr());
-			conv_map.insert(std::make_pair(key, item._value));
+	// dictionary keys won't match. With that assumption we must convert
+	// dictionary keys into ASCII using provided locale hint.
+	int game_codepage = _GP(game).options[OPT_GAMETEXTENCODING];
+	if ((get_uformat() == U_UTF8) && (game_codepage != 65001)) {
+		String key_enc = (game_codepage > 0) ?
+			String::FromFormat(".%d", game_codepage) :
+			_GP(trans).StrOptions["gameencoding"];
+		if (!key_enc.IsEmpty()) {
+			StringMap conv_map;
+			for (const auto &item : _GP(trans).Dict) {
+				String key = convert_utf8_to_ascii(item._key.GetCStr(), key_enc.GetCStr());
+				conv_map.insert(std::make_pair(key, item._value));
+			}
+			_GP(trans).Dict = conv_map;
 		}
-		_GP(trans).Dict = conv_map;
 	}
 
 	Debug::Printf("Translation initialized: %s", _G(trans_filename).GetCStr());
