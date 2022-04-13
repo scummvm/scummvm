@@ -361,6 +361,7 @@ void override_config_ext(ConfigTree &cfg) {
 
 	INIwriteint(cfg, "misc", "antialias", _G(psp_gfx_smooth_sprites) != 0);
 	INIwritestring(cfg, "language", "translation", _G(psp_translation));
+	INIwriteint(cfg, "misc", "clear_cache_on_room_change", _G(psp_clear_cache_on_room_change) != 0);
 }
 
 void apply_config(const ConfigTree &cfg) {
@@ -400,6 +401,7 @@ void apply_config(const ConfigTree &cfg) {
 		// This option is backwards (usevox is 0 if no_speech_pack)
 		_GP(usetup).no_speech_pack = INIreadint(cfg, "sound", "usespeech", 1) == 0;
 
+		_GP(usetup).clear_cache_on_room_change = INIreadint(cfg, "misc", "clear_cache_on_room_change", _GP(usetup).clear_cache_on_room_change);
 		_GP(usetup).user_data_dir = INIreadstring(cfg, "misc", "user_data_dir");
 		_GP(usetup).shared_data_dir = INIreadstring(cfg, "misc", "shared_data_dir");
 

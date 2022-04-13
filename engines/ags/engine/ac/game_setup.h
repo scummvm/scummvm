@@ -83,6 +83,7 @@ struct GameSetup {
 	MouseSpeedDef mouse_speed_def;
 	bool  RenderAtScreenRes; // render sprites at screen resolution, as opposed to native one
 	int   Supersampling;
+	bool  clear_cache_on_room_change; // compatibility
 
 	DisplayModeSetup Screen;
 
