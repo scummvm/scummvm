@@ -51,11 +51,14 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	Common::String newOuttakeFile = Common::String::format("OUTTAKE%d.MIX", container);
 
 	if (container > 0) {
-		if (_vm->isArchiveOpen(oldOuttakeFile)) {
+		if (_vm->isArchiveOpen(oldOuttakeFile)
+		    && _vm->_chapters->currentResourceId() != container) {
 			_vm->closeArchive(oldOuttakeFile);
 		}
 
-		_vm->openArchive(newOuttakeFile);
+		if (!_vm->isArchiveOpen(newOuttakeFile)) {
+			_vm->openArchive(newOuttakeFile);
+		}
 	}
 
 	_vm->playerLosesControl();
@@ -159,11 +162,14 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	_vm->playerGainsControl();
 
 	if (container > 0) {
-		if (_vm->isArchiveOpen(newOuttakeFile)) {
+		if (_vm->isArchiveOpen(newOuttakeFile)
+		    && _vm->_chapters->currentResourceId() != container) {
 			_vm->closeArchive(newOuttakeFile);
 		}
 
-		_vm->openArchive(oldOuttakeFile);
+		if (!_vm->isArchiveOpen(oldOuttakeFile)) {
+			_vm->openArchive(oldOuttakeFile);
+		}
 	}
 }
 
