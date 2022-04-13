@@ -88,6 +88,29 @@ bool SetModifier::load(ModifierLoaderContext &context, const Data::SetModifier &
 	return true;
 }
 
+bool ChangeSceneModifier::load(ModifierLoaderContext& context, const Data::ChangeSceneModifier& data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_executeWhen.load(data.executeWhen))
+		return false;
+
+	if ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagNextScene) != 0)
+		_sceneSelectionType = kSceneSelectionTypeNext;
+	else if ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagPrevScene) != 0)
+		_sceneSelectionType = kSceneSelectionTypePrevious;
+	else if ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagSpecificScene) != 0)
+		_sceneSelectionType = kSceneSelectionTypeSpecific;
+	else
+		return false;
+
+	_addToReturnList = ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagAddToReturnList) != 0);
+	_addToDestList = ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagAddToDestList) != 0);
+	_addToWrapAround = ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagWrapAround) != 0);
+
+	return true;
+}
+
 bool DragMotionModifier::load(ModifierLoaderContext &context, const Data::DragMotionModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -130,6 +153,36 @@ bool VectorMotionModifier::load(ModifierLoaderContext &context, const Data::Vect
 
 	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen) || !_vec.load(data.vec, data.vecSource, data.vecString))
 		return false;
+
+	return true;
+}
+
+bool SceneTransitionModifier::load(ModifierLoaderContext &context, const Data::SceneTransitionModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen))
+		return false;
+
+	_duration = data.duration;
+	_steps = data.steps;
+	_transitionType = static_cast<TransitionType>(data.transitionType);
+	_transitionDirection = static_cast<TransitionDirection>(data.direction);
+
+	return true;
+}
+
+bool ElementTransitionModifier::load(ModifierLoaderContext &context, const Data::ElementTransitionModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen))
+		return false;
+
+	_rate = data.rate;
+	_steps = data.steps;
+	_transitionType = static_cast<TransitionType>(data.transitionType);
+	_revealType = static_cast<RevealType>(data.revealType);
 
 	return true;
 }
@@ -311,6 +364,33 @@ bool GraphicModifier::load(ModifierLoaderContext& context, const Data::GraphicMo
 
 	return true;
 }
+
+bool CompoundVariableModifier::load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data) {
+	if (data.numChildren > 0) {
+		ChildLoaderContext loaderContext;
+		loaderContext.containerUnion.modifierContainer = this;
+		loaderContext.type = ChildLoaderContext::kTypeModifierList;
+		loaderContext.remainingCount = data.numChildren;
+
+		context.childLoaderStack->contexts.push_back(loaderContext);
+	}
+
+	if (!_modifierFlags.load(data.modifierFlags))
+		return false;
+	_guid = data.guid;
+	_name = data.name;
+
+	return true;
+}
+
+const Common::Array<Common::SharedPtr<Modifier> > &CompoundVariableModifier::getModifiers() const {
+	return _children;
+}
+
+void CompoundVariableModifier::appendModifier(const Common::SharedPtr<Modifier>& modifier) {
+	_children.push_back(modifier);
+}
+
 
 bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))

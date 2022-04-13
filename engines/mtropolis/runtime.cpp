@@ -835,6 +835,8 @@ Modifier::~Modifier() {
 bool Modifier::loadTypicalHeader(const Data::TypicalModifierHeader& typicalHeader) {
 	if (!_modifierFlags.load(typicalHeader.modifierFlags))
 		return false;
+	_guid = typicalHeader.guid;
+	_name = typicalHeader.name;
 
 	return true;
 }

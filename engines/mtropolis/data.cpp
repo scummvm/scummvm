@@ -386,9 +386,8 @@ bool PlugInTypeTaggedValue::load(DataReader &reader) {
 			uint32 length2;
 			if (!reader.readU32(length1) || !reader.readU32(length2))
 				return false;
-			if (length1 != length2)	// ???
-				return false;
-			if (!reader.readTerminatedStr(this->str, length1))
+			// Usually length1 == length2 but sometimes not?
+			if (!reader.readTerminatedStr(this->str, length2))
 				return false;
 		} break;
 	case kVariableReference: {
@@ -698,6 +697,17 @@ DataReadErrorCode SetModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode ChangeSceneModifier::load(DataReader &reader) {
+	if (_revision != 0x3e9)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readU32(changeSceneFlags) || !executeWhen.load(reader)
+		|| !reader.readU32(targetSectionGUID) || !reader.readU32(targetSubsectionGUID) || !reader.readU32(targetSceneGUID))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode DragMotionModifier::load(DataReader &reader) {
 	if (_revision != 0x3e8)
 		return kDataReadErrorUnsupportedRevision;
@@ -742,6 +752,36 @@ DataReadErrorCode VectorMotionModifier::load(DataReader &reader) {
 		|| !reader.readU16(unknown1) || !reader.readU8(vecSourceLength) || !reader.readU8(vecStringLength)
 		|| !reader.readNonTerminatedStr(vecSource, vecSourceLength)
 		/*|| !reader.readNonTerminatedStr(vecString, vecStringLength)*/)	// mTropolis bug!
+		return kDataReadErrorNone;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode SceneTransitionModifier::load(DataReader &reader) {
+	if (_revision != 0x3e9)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !reader.readU16(transitionType)
+		|| !reader.readU16(direction) || !reader.readU16(unknown3) || !reader.readU16(steps)
+		|| !reader.readU32(duration) || !reader.readBytes(unknown5))
+		return kDataReadErrorNone;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode ElementTransitionModifier::load(DataReader &reader) {
+	if (_revision != 0x3e9)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !reader.readU16(revealType)
+		|| !reader.readU16(transitionType) || !reader.readU16(unknown3) || !reader.readU16(unknown4)
+		|| !reader.readU16(steps) || !reader.readU16(rate))
 		return kDataReadErrorNone;
 
 	return kDataReadErrorNone;
@@ -882,6 +922,19 @@ DataReadErrorCode GraphicModifier::load(DataReader &reader) {
 		if (!polyPoints[i].load(reader))
 			return kDataReadErrorReadFailed;
 	}
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode CompoundVariableModifier::load(DataReader &reader) {
+	if (_revision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(modifierFlags) || !reader.readU32(sizeIncludingTag) || !reader.readBytes(unknown1)
+		|| !reader.readU32(guid) || !reader.readBytes(unknown4) || !reader.readU32(unknown5)
+		|| !editorLayoutPosition.load(reader) || !reader.readU16(lengthOfName) || !reader.readU16(numChildren)
+		|| !reader.readTerminatedStr(name, lengthOfName) || !reader.readBytes(unknown7))
+		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
 }
@@ -1058,14 +1111,26 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	case DataObjectTypes::kSetModifier:
 		dataObject = new SetModifier();
 		break;
+	case DataObjectTypes::kChangeSceneModifier:
+		dataObject = new ChangeSceneModifier();
+		break;
 	case DataObjectTypes::kDragMotionModifier:
 		dataObject = new DragMotionModifier();
 		break;
 	case DataObjectTypes::kVectorMotionModifier:
 		dataObject = new VectorMotionModifier();
 		break;
+	case DataObjectTypes::kSceneTransitionModifier:
+		dataObject = new SceneTransitionModifier();
+		break;
+	case DataObjectTypes::kElementTransitionModifier:
+		dataObject = new ElementTransitionModifier();
+		break;
 	case DataObjectTypes::kIfMessengerModifier:
 		dataObject = new IfMessengerModifier();
+		break;
+	case DataObjectTypes::kCompoundVariableModifier:
+		dataObject = new CompoundVariableModifier();
 		break;
 	case DataObjectTypes::kBooleanVariableModifier:
 		dataObject = new BooleanVariableModifier();
@@ -1139,6 +1204,7 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		Common::SharedPtr<PlugInModifierData> plugInModifierData(plugInLoader->createModifierData());
 		errorCode = plugInModifierData->load(*static_cast<const PlugInModifier *>(dataObject), reader);
 		if (errorCode != kDataReadErrorNone) {
+			warning("Plug-in modifier failed to load");
 			outObject.reset();
 			return errorCode;
 		}

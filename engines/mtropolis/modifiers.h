@@ -72,6 +72,27 @@ private:
 	DynamicValue _target;
 };
 
+class ChangeSceneModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::ChangeSceneModifier &data);
+
+private:
+	enum SceneSelectionType {
+		kSceneSelectionTypeNext,
+		kSceneSelectionTypePrevious,
+		kSceneSelectionTypeSpecific,
+	};
+
+	Event _executeWhen;
+	SceneSelectionType _sceneSelectionType;
+	uint32 _targetSectionGUID;
+	uint32 _targetSubsectionGUID;
+	uint32 _targetSceneGUID;
+	bool _addToReturnList;
+	bool _addToDestList;
+	bool _addToWrapAround;
+};
+
 class DragMotionModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::DragMotionModifier &data);
@@ -100,6 +121,63 @@ private:
 	Event _disableWhen;
 
 	DynamicValue _vec;
+};
+
+class SceneTransitionModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::SceneTransitionModifier &data);
+
+	enum TransitionType {
+		kTransitionTypePatternDissolve = 0x0406,
+		kTransitionTypeRandomDissolve  = 0x0410,	// No steps
+		kTransitionTypeFade            = 0x041a,
+		kTransitionTypeSlide           = 0x03e8,	// Directional
+		kTransitionTypePush            = 0x03f2,	// Directional
+		kTransitionTypeZoom            = 0x03fc,
+		kTransitionTypeWipe            = 0x0424,	// Directional
+	};
+
+	enum TransitionDirection {
+		kTransitionDirectionUp = 0x385,
+		kTransitionDirectionDown = 0x385,
+		kTransitionDirectionLeft = 0x386,
+		kTransitionDirectionRight = 0x387,
+	};
+
+private:
+	Event _enableWhen;
+	Event _disableWhen;
+
+	uint32 _duration;	// 6000000 is maximum
+	uint16 _steps;
+	TransitionType _transitionType;
+	TransitionDirection _transitionDirection;
+};
+
+class ElementTransitionModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::ElementTransitionModifier &data);
+
+	enum TransitionType {
+		kTransitionTypeRectangularIris = 0x03e8,
+		kTransitionTypeOvalIris = 0x03f2,
+		kTransitionTypeZoom = 0x044c,
+		kTransitionTypeFade = 0x2328,
+	};
+
+	enum RevealType {
+		kRevealTypeReveal = 0,
+		kRevealTypeConceal = 1,
+	};
+
+private:
+	Event _enableWhen;
+	Event _disableWhen;
+
+	uint32 _rate;	// 1-100, higher is faster
+	uint16 _steps;
+	TransitionType _transitionType;
+	RevealType _revealType;
 };
 
 class IfMessengerModifier : public Modifier {
@@ -287,6 +365,17 @@ private:
 	ColorRGB8 _shadowColor;
 
 	Common::Array<Point16> _polyPoints;
+};
+
+class CompoundVariableModifier : public Modifier, public IModifierContainer {
+public:
+	bool load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data);
+
+private:
+	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
+	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
+
+	Common::Array<Common::SharedPtr<Modifier> > _children;
 };
 
 class BooleanVariableModifier : public Modifier {
