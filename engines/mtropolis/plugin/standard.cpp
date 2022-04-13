@@ -70,13 +70,76 @@ bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext& context,
 	return true;
 }
 
-StandardPlugIn::StandardPlugIn() : _cursorModifierFactory(this), _sTransCtModifierFactory(this), _mediaCueModifierFactory(this) {
+bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data) {
+	if (data.setToSourceParentWhen.type != Data::PlugInTypeTaggedValue::kEvent)
+		return false;
+
+	_setToSourceParentWhen.load(data.setToSourceParentWhen.value.asEvent);
+
+	if (data.objectPath.type != Data::PlugInTypeTaggedValue::kString)
+		return false;
+
+	_objectPath = data.objectPath.str;
+
+	return true;
+}
+
+bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::MidiModifier &data) {
+	if (data.executeWhen.type != Data::PlugInTypeTaggedValue::kEvent)
+		return false;
+
+	_executeWhen.load(data.executeWhen.value.asEvent);
+	if (data.terminateWhen.type != Data::PlugInTypeTaggedValue::kEvent)
+		return false;
+
+	_terminateWhen.load(data.terminateWhen.value.asEvent);
+
+	if (data.embeddedFlag) {
+		_mode = kModeFile;
+		_embeddedFile = data.embeddedFile;
+
+		_modeSpecific.file.loop = (data.modeSpecific.embedded.loop != 0);
+		_modeSpecific.file.overrideTempo = (data.modeSpecific.embedded.overrideTempo != 0);
+		_modeSpecific.file.volume = (data.modeSpecific.embedded.volume != 0);
+
+		if (data.embeddedFadeIn.type != Data::PlugInTypeTaggedValue::kFloat
+			|| data.embeddedFadeOut.type != Data::PlugInTypeTaggedValue::kFloat
+			|| data.embeddedTempo.type != Data::PlugInTypeTaggedValue::kFloat)
+			return false;
+
+		_modeSpecific.file.fadeIn = data.embeddedFadeIn.value.asFloat.toDouble();
+		_modeSpecific.file.fadeOut = data.embeddedFadeOut.value.asFloat.toDouble();
+		_modeSpecific.file.tempo = data.embeddedTempo.value.asFloat.toDouble();
+	} else {
+		_mode = kModeSingleNote;
+
+		if (data.singleNoteDuration.type != Data::PlugInTypeTaggedValue::kFloat)
+			return false;
+
+		_modeSpecific.singleNote.channel = data.modeSpecific.singleNote.channel;
+		_modeSpecific.singleNote.note = data.modeSpecific.singleNote.note;
+		_modeSpecific.singleNote.velocity = data.modeSpecific.singleNote.velocity;
+		_modeSpecific.singleNote.program = data.modeSpecific.singleNote.program;
+		_modeSpecific.singleNote.duration = data.singleNoteDuration.value.asFloat.toDouble();
+	}
+
+	return true;
+}
+
+StandardPlugIn::StandardPlugIn()
+	: _cursorModifierFactory(this)
+	, _sTransCtModifierFactory(this)
+	, _mediaCueModifierFactory(this)
+	, _objRefVarModifierFactory(this)
+	, _midiModifierFactory(this) {
 }
 
 void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
 	registrar->registerPlugInModifier("CursorMod", &_cursorModifierFactory);
 	registrar->registerPlugInModifier("STransCt", &_sTransCtModifierFactory);
 	registrar->registerPlugInModifier("MediaCue", &_mediaCueModifierFactory);
+	registrar->registerPlugInModifier("ObjRefP", &_objRefVarModifierFactory);
+	registrar->registerPlugInModifier("MIDIModf", &_midiModifierFactory);
 }
 
 } // End of namespace Standard

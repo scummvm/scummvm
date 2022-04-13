@@ -64,6 +64,53 @@ DataReadErrorCode MediaCueMessengerModifier::load(const PlugInModifier &prefix, 
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode ObjectReferenceVariableModifier::load(const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 2)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!setToSourceParentWhen.load(reader) || !unknown1.load(reader) || !objectPath.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode MidiModifier::load(const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 1 && prefix.plugInRevision != 2)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!executeWhen.load(reader) || !terminateWhen.load(reader) || !reader.readU8(embeddedFlag))
+		return kDataReadErrorReadFailed;
+
+	if (embeddedFlag) {
+		if (!reader.readU8(modeSpecific.embedded.hasFile))
+			return kDataReadErrorReadFailed;
+		if (modeSpecific.embedded.hasFile) {
+			embeddedFile = Common::SharedPtr<EmbeddedFile>(new EmbeddedFile());
+
+			uint8 bigEndianLength[4];
+			if (!reader.readBytes(bigEndianLength))
+				return kDataReadErrorReadFailed;
+
+			uint32 length = (bigEndianLength[0] << 24) + (bigEndianLength[1] << 16) + (bigEndianLength[2] << 8) + bigEndianLength[3];
+
+			embeddedFile->contents.resize(length);
+			if (length > 0 && !reader.read(&embeddedFile->contents[0], length))
+				return kDataReadErrorReadFailed;
+		}
+
+		if (!reader.readU8(modeSpecific.embedded.loop) || !reader.readU8(modeSpecific.embedded.overrideTempo)
+			|| !reader.readU8(modeSpecific.embedded.volume) || !embeddedTempo.load(reader)
+			|| !embeddedFadeIn.load(reader) || !embeddedFadeOut.load(reader))
+			return kDataReadErrorReadFailed;
+	} else {
+		if (!reader.readU8(modeSpecific.singleNote.channel) || !reader.readU8(modeSpecific.singleNote.note) || !reader.readU8(modeSpecific.singleNote.velocity)
+			|| !reader.readU8(modeSpecific.singleNote.program) || !singleNoteDuration.load(reader))
+			return kDataReadErrorReadFailed;
+	}
+
+	return kDataReadErrorNone;
+}
+
 } // End of namespace Standard
 
 } // End of namespace Data

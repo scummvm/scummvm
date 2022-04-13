@@ -66,6 +66,56 @@ private:
 	MessengerSendSpec _send;
 };
 
+class ObjectReferenceVariableModifier : public Modifier {
+public:
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data);
+
+private:
+	Event _setToSourceParentWhen;
+	Common::String _objectPath;
+};
+
+class MidiModifier : public Modifier {
+public:
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::MidiModifier &data);
+
+private:
+	struct FilePart {
+		bool loop;
+		bool overrideTempo;
+		bool volume;
+		double tempo;
+		double fadeIn;
+		double fadeOut;
+	};
+
+	struct SingleNotePart {
+		uint8 channel;
+		uint8 note;
+		uint8 velocity;
+		uint8 program;
+		double duration;
+	};
+
+	union ModeSpecificUnion {
+		FilePart file;
+		SingleNotePart singleNote;
+	};
+
+	enum Mode {
+		kModeFile,
+		kModeSingleNote,
+	};
+
+	Event _executeWhen;
+	Event _terminateWhen;
+
+	Mode _mode;
+	ModeSpecificUnion _modeSpecific;
+
+	Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> _embeddedFile;
+};
+
 class StandardPlugIn : public MTropolis::PlugIn {
 public:
 	StandardPlugIn();
@@ -76,6 +126,8 @@ private:
 	PlugInModifierFactory<CursorModifier, Data::Standard::CursorModifier> _cursorModifierFactory;
 	PlugInModifierFactory<STransCtModifier, Data::Standard::STransCtModifier> _sTransCtModifierFactory;
 	PlugInModifierFactory<MediaCueMessengerModifier, Data::Standard::MediaCueMessengerModifier> _mediaCueModifierFactory;
+	PlugInModifierFactory<ObjectReferenceVariableModifier, Data::Standard::ObjectReferenceVariableModifier> _objRefVarModifierFactory;
+	PlugInModifierFactory<MidiModifier, Data::Standard::MidiModifier> _midiModifierFactory;
 };
 
 } // End of namespace Standard

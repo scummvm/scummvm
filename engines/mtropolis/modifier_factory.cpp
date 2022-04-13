@@ -65,10 +65,16 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 		return ModifierFactory<BehaviorModifier, Data::BehaviorModifier>::getInstance();
 	case Data::DataObjectTypes::kMiniscriptModifier:
 		return ModifierFactory<MiniscriptModifier, Data::MiniscriptModifier>::getInstance();
+	case Data::DataObjectTypes::kChangeSceneModifier:
+		return ModifierFactory<ChangeSceneModifier, Data::ChangeSceneModifier>::getInstance();
 	case Data::DataObjectTypes::kDragMotionModifier:
 		return ModifierFactory<DragMotionModifier, Data::DragMotionModifier>::getInstance();
 	case Data::DataObjectTypes::kVectorMotionModifier:
 		return ModifierFactory<VectorMotionModifier, Data::VectorMotionModifier>::getInstance();
+	case Data::DataObjectTypes::kSceneTransitionModifier:
+		return ModifierFactory<SceneTransitionModifier, Data::SceneTransitionModifier>::getInstance();
+	case Data::DataObjectTypes::kElementTransitionModifier:
+		return ModifierFactory<ElementTransitionModifier, Data::ElementTransitionModifier>::getInstance();
 	case Data::DataObjectTypes::kIfMessengerModifier:
 		return ModifierFactory<IfMessengerModifier, Data::IfMessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kTimerMessengerModifier:
@@ -87,6 +93,8 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 		return ModifierFactory<MessengerModifier, Data::MessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kSetModifier:
 		return ModifierFactory<SetModifier, Data::SetModifier>::getInstance();
+	case Data::DataObjectTypes::kCompoundVariableModifier:
+		return ModifierFactory<CompoundVariableModifier, Data::CompoundVariableModifier>::getInstance();
 	case Data::DataObjectTypes::kBooleanVariableModifier:
 		return ModifierFactory<BooleanVariableModifier, Data::BooleanVariableModifier>::getInstance();
 	case Data::DataObjectTypes::kIntegerVariableModifier:

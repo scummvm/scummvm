@@ -93,15 +93,15 @@ enum DataObjectType {
 	kImageAsset                          = 0xe,		// NYI
 	kMToonAsset                          = 0xf,		// NYI
 
-	kSoundEffectModifier                 = 0x1a4,	// NYI
-	kChangeSceneModifier                 = 0x136,	// NYI
+	kChangeSceneModifier                 = 0x136,
 	kReturnModifier                      = 0x140,	// NYI
+	kSoundEffectModifier                 = 0x1a4,	// NYI
 	kDragMotionModifier                  = 0x208,
-	kVectorMotionModifier                = 0x226,
 	kPathMotionModifierV1                = 0x21c,	// NYI - Obsolete version
 	kPathMotionModifierV2                = 0x21b,	// NYI
-	kSceneTransitionModifier             = 0x26c,	// NYI
-	kElementTransitionModifier           = 0x276,	// NYI
+	kVectorMotionModifier                = 0x226,
+	kSceneTransitionModifier             = 0x26c,
+	kElementTransitionModifier           = 0x276,
 	kSharedSceneModifier                 = 0x29a,	// NYI
 	kIfMessengerModifier                 = 0x2bc,
 	kBehaviorModifier                    = 0x2c6,
@@ -120,7 +120,7 @@ enum DataObjectType {
 	kColorTableModifier                  = 0x4c4,	// NYI
 	kSaveAndRestoreModifier              = 0x4d8,	// NYI
 
-	kCompoundVariableModifier            = 0x2c7,	// NYI
+	kCompoundVariableModifier            = 0x2c7,
 	kBooleanVariableModifier             = 0x321,
 	kIntegerVariableModifier             = 0x322,
 	kIntegerRangeVariableModifier        = 0x324,
@@ -576,6 +576,28 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
+struct ChangeSceneModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+
+	enum ChangeSceneFlags {
+		kChangeSceneFlagNextScene       = 0x80000000,
+		kChangeSceneFlagPrevScene       = 0x40000000,
+		kChangeSceneFlagSpecificScene   = 0x20000000,
+		kChangeSceneFlagAddToReturnList = 0x10000000,
+		kChangeSceneFlagAddToDestList   = 0x08000000,
+		kChangeSceneFlagWrapAround      = 0x04000000,
+	};
+
+	uint32 changeSceneFlags;
+	Event executeWhen;
+	uint32 targetSectionGUID;
+	uint32 targetSubsectionGUID;
+	uint32 targetSceneGUID;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
 struct DragMotionModifier : public DataObject {
 	TypicalModifierHeader modHeader;
 
@@ -628,6 +650,38 @@ struct VectorMotionModifier : public DataObject {
 
 	Common::String vecSource;
 	Common::String vecString;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct SceneTransitionModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+
+	Event enableWhen;
+	Event disableWhen;
+	uint16 transitionType;
+	uint16 direction;
+	uint16 unknown3;
+	uint16 steps;
+	uint32 duration;
+	uint8 unknown5[2];
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct ElementTransitionModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+
+	Event enableWhen;
+	Event disableWhen;
+	uint16 revealType;
+	uint16 transitionType;
+	uint16 unknown3;
+	uint16 unknown4;
+	uint16 steps;
+	uint16 rate;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -868,6 +922,25 @@ struct GraphicModifier : public DataObject {
 	uint8 unknown6[8];
 
 	Common::Array<Point> polyPoints;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct CompoundVariableModifier : public DataObject {
+	// This doesn't follow the usual modifier header layout
+	uint32 modifierFlags;
+	uint32 sizeIncludingTag;
+	uint8 unknown1[2];	// Extra field
+	uint32 guid;
+	uint8 unknown4[6];
+	uint32 unknown5;
+	Point editorLayoutPosition;
+	uint16 lengthOfName;
+	uint16 numChildren;
+	uint8 unknown7[4];
+
+	Common::String name;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

@@ -93,6 +93,56 @@ protected:
 	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
 };
 
+struct ObjectReferenceVariableModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue setToSourceParentWhen;
+	PlugInTypeTaggedValue unknown1;
+	PlugInTypeTaggedValue objectPath;
+
+protected:
+	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct MidiModifier : public PlugInModifierData {
+	struct EmbeddedFile {
+		Common::Array<uint8> contents;
+	};
+
+	struct EmbeddedPart {
+		uint8 hasFile;
+		uint8 loop;
+		uint8 overrideTempo;
+		uint8 volume;
+	};
+
+	struct SingleNotePart {
+		uint8 channel;
+		uint8 note;
+		uint8 velocity;
+		uint8 program;
+	};
+
+	union ModeSpecificUnion {
+		EmbeddedPart embedded;
+		SingleNotePart singleNote;
+	};
+
+	PlugInTypeTaggedValue executeWhen;
+	PlugInTypeTaggedValue terminateWhen;
+
+	uint8 embeddedFlag;
+	ModeSpecificUnion modeSpecific;
+
+	PlugInTypeTaggedValue embeddedTempo;		// Float
+	PlugInTypeTaggedValue embeddedFadeIn;		// Float
+	PlugInTypeTaggedValue embeddedFadeOut;		// Float
+	PlugInTypeTaggedValue singleNoteDuration;	// Float
+
+	Common::SharedPtr<EmbeddedFile> embeddedFile;
+
+protected:
+	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
+};
+
 } // End of namespace Standard
 
 } // End of namespace Data
