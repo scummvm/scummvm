@@ -68,6 +68,7 @@
 #include "ags/engine/gui/gui_dialog.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/media/video/video.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/platform/base/sys_main.h"
 #include "ags/plugins/plugin_engine.h"
@@ -1216,7 +1217,9 @@ void display_switch_out_suspend() {
 
 	// TODO: find out if anything has to be done here for SDL backend
 
-	// stop the sound stuttering
+	video_pause();
+
+	// Pause all the sounds
 	for (int i = 0; i < TOTAL_AUDIO_CHANNELS; i++) {
 		auto *ch = AudioChans::GetChannelIfPlaying(i);
 		if (ch) {
@@ -1243,12 +1246,14 @@ void display_switch_in() {
 void display_switch_in_resume() {
 	display_switch_in();
 
+	// Resume all the sounds
 	for (int i = 0; i < TOTAL_AUDIO_CHANNELS; i++) {
 		auto *ch = AudioChans::GetChannelIfPlaying(i);
 		if (ch) {
 			ch->resume();
 		}
 	}
+	video_resume();
 
 	// clear the screen if necessary
 	if (_G(gfxDriver) && _G(gfxDriver)->UsesMemoryBackBuffer())

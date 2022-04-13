@@ -156,4 +156,12 @@ bool play_flc_video(int numb, int flags, VideoSkipType skip) {
 	return false;
 }
 
+void video_pause() {
+	// TODO
+}
+
+void video_resume() {
+	// TODO
+}
+
 } // namespace AGS3
