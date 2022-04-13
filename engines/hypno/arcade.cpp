@@ -161,8 +161,8 @@ void HypnoEngine::drawPlayer() { error("Function \"%s\" not implemented", __FUNC
 void HypnoEngine::drawHealth() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::drawShoot(const Common::Point &target) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::hitPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
-void HypnoEngine::missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {}
-void HypnoEngine::missNoTarget(ArcadeShooting *arc, MVideo &background) {}
+void HypnoEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {}
+void HypnoEngine::missNoTarget(ArcadeShooting *arc) {}
 
 void HypnoEngine::runBeforeArcade(ArcadeShooting *arc) {}
 void HypnoEngine::runAfterArcade(ArcadeShooting *arc) {}
@@ -513,7 +513,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 				uint32 bodyLastFrame = it->bodyFrames[it->bodyFrames.size() - 1].lastFrame();
 				if (frame > 0 && frame >= (int)(bodyLastFrame - 3) && !it->destroyed) {
-					missedTarget(it, arc, *_background);
+					missedTarget(it, arc);
 					incTargetsMissed();
 					// No need to pop attackFrames or explosionFrames
 					skipVideo(*it->video);
@@ -528,7 +528,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				uint32 bodyLastFrame = it->bodyFrames[it->bodyFrames.size() - 1].lastFrame();
 				if (frame > it->startFrame && frame - it->startFrame > bodyLastFrame)
 					if (!it->destroyed) {
-						missedTarget(it, arc, *_background);
+						missedTarget(it, arc);
 						shootsToRemove.push_back(i);
 					}
 			}
@@ -625,7 +625,7 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
 	incShotsFired();
 	int i = detectTarget(mousePos);
 	if (i < 0) {
-		missNoTarget(arc, *_background);
+		missNoTarget(arc);
 	} else {
 		if (!_shoots[i].hitSound.empty())
 			playSound(_soundPath + _shoots[i].hitSound, 1);

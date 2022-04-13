@@ -151,7 +151,7 @@ void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
 	incShotsFired();
 	int i = detectTarget(mousePos);
 	if (i < 0) {
-		missNoTarget(arc, *_background);
+		missNoTarget(arc);
 	} else {
 		if (!_shoots[i].hitSound.empty())
 			playSound(_soundPath + _shoots[i].hitSound, 1);
@@ -171,19 +171,19 @@ void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
 	}
 }
 
-void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {
+void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	hitPlayer();
 	if (s->missedAnimation == 0)
 		return;
 	else if (s->missedAnimation == uint32(-1)) {
-		uint32 last = background.decoder->getFrameCount()-1;
-		background.decoder->forceSeekToFrame(last);
+		uint32 last = _background->decoder->getFrameCount()-1;
+		_background->decoder->forceSeekToFrame(last);
 		_masks->decoder->forceSeekToFrame(last);
 		return;
 	}
 
 	s->missedAnimation = s->missedAnimation + 3;
-	background.decoder->forceSeekToFrame(s->missedAnimation);
+	_background->decoder->forceSeekToFrame(s->missedAnimation);
 	_masks->decoder->forceSeekToFrame(s->missedAnimation);
 }
 

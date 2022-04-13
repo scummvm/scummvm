@@ -481,27 +481,27 @@ bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	return clickedPrimaryShoot(mousePos);
 }
 
-void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) {
+void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	if (s->name == "SP_SWITCH_R" || s->name == "SP_SWITCH_L") {
 		_health = 0;
 	} else if (s->name == "SP_LIZARD1") {
 		_health = _health - 15;
-		background.decoder->pauseVideo(true);
+		_background->decoder->pauseVideo(true);
 		MVideo video(arc->additionalVideo, Common::Point(0, 0), false, true, false);
 		runIntro(video);
 		loadPalette(arc->backgroundPalette);
-		background.decoder->pauseVideo(false);
-		updateScreen(background);
+		_background->decoder->pauseVideo(false);
+		updateScreen(*_background);
 		drawScreen();
 	} else if (_levelId == 60 && s->name == "DOOR1") {
 		_health = 0;
-		background.decoder->pauseVideo(true);
+		_background->decoder->pauseVideo(true);
 		// In the last level, the hit boss video is used to store this ending
 		MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
 		runIntro(video);
 		loadPalette(arc->backgroundPalette);
-		background.decoder->pauseVideo(false);
-		updateScreen(background);
+		_background->decoder->pauseVideo(false);
+		updateScreen(*_background);
 		drawScreen();
 		_skipDefeatVideo = true;
 	} else if (s->attackFrames.empty()) {
@@ -510,31 +510,31 @@ void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) 
 	}
 }
 
-void WetEngine::missNoTarget(ArcadeShooting *arc, MVideo &background) {
+void WetEngine::missNoTarget(ArcadeShooting *arc) {
 	for (int i = _shoots.size() - 1; i >= 0; --i) {
 		Shoot *it = &_shoots[i];
 		if ((it->name == "SP_BOSS" || it->name == "SP_BOSS1") && !arc->missBoss1Video.empty()) {
-			background.decoder->pauseVideo(true);
+			_background->decoder->pauseVideo(true);
 			MVideo video(arc->missBoss1Video, Common::Point(0, 0), false, true, false);
 			disableCursor();
 			runIntro(video);
 			// Should be currentPalette?
 			loadPalette(arc->backgroundPalette);
-			background.decoder->pauseVideo(false);
-			updateScreen(background);
+			_background->decoder->pauseVideo(false);
+			updateScreen(*_background);
 			drawScreen();
 			if (!_music.empty())
 				playSound(_music, 0, arc->musicRate); // restore music
 			break;
 		} else if (it->name == "SP_BOSS2" && !arc->missBoss2Video.empty()) {
-			background.decoder->pauseVideo(true);
+			_background->decoder->pauseVideo(true);
 			MVideo video(arc->missBoss2Video, Common::Point(0, 0), false, true, false);
 			disableCursor();
 			runIntro(video);
 			// Should be currentPalette?
 			loadPalette(arc->backgroundPalette);
-			background.decoder->pauseVideo(false);
-			updateScreen(background);
+			_background->decoder->pauseVideo(false);
+			updateScreen(*_background);
 			drawScreen();
 			if (!_music.empty())
 				playSound(_music, 0, arc->musicRate); // restore music
