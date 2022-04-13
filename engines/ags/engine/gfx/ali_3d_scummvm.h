@@ -79,22 +79,25 @@ public:
 	void SetTint(int red, int green, int blue, int tintSaturation) override {
 	}
 
-	Bitmap *_bmp;
-	bool _flipped;
-	int _stretchToWidth, _stretchToHeight;
-	bool _opaque; // no mask color
-	bool _hasAlpha;
-	int _transparency;
+	Bitmap *_bmp = nullptr;
+	bool _flipped = false;
+	int _stretchToWidth = 0, _stretchToHeight = 0;
+	bool _opaque = false; // no mask color
+	bool _hasAlpha = false;
+	int _transparency = 0;
+
+	ALSoftwareBitmap(int width, int height, int color_depth, bool opaque) {
+		_width = width;
+		_height = height;
+		_colDepth = color_depth;
+		_opaque = opaque;
+	}
 
 	ALSoftwareBitmap(Bitmap *bmp, bool opaque, bool hasAlpha) {
 		_bmp = bmp;
 		_width = bmp->GetWidth();
 		_height = bmp->GetHeight();
 		_colDepth = bmp->GetColorDepth();
-		_flipped = false;
-		_stretchToWidth = 0;
-		_stretchToHeight = 0;
-		_transparency = 0;
 		_opaque = opaque;
 		_hasAlpha = hasAlpha;
 	}
@@ -178,6 +181,7 @@ public:
 	// Clears the screen rectangle. The coordinates are expected in the **native game resolution**.
 	void ClearRectangle(int x1, int y1, int x2, int y2, RGB *colorToUse) override;
 	int  GetCompatibleBitmapFormat(int color_depth) override;
+	IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque) override;
 	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque) override;
 	void UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool hasAlpha) override;
 	void DestroyDDB(IDriverDependantBitmap *bitmap) override;

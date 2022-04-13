@@ -212,10 +212,12 @@ int ScummVMRendererGraphicsDriver::GetCompatibleBitmapFormat(int color_depth) {
 	return color_depth;
 }
 
+IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateDDB(int width, int height, int color_depth, bool opaque) {
+	return new ALSoftwareBitmap(width, height, color_depth, opaque);
+}
+
 IDriverDependantBitmap *ScummVMRendererGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque) {
-	ALSoftwareBitmap *newBitmap = new ALSoftwareBitmap(bitmap, opaque, hasAlpha);
-	UpdateDDBFromBitmap(newBitmap, bitmap, hasAlpha);
-	return newBitmap;
+	return new ALSoftwareBitmap(bitmap, opaque, hasAlpha);
 }
 
 void ScummVMRendererGraphicsDriver::UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool hasAlpha) {

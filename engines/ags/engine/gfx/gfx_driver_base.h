@@ -211,9 +211,6 @@ public:
 	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque = false) override;
 
 protected:
-	// Creates a "raw" DDB, without pixel initialization
-	virtual IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque = false) = 0;
-
 	// Stage screens are raw bitmap buffers meant to be sent to plugins on demand
 	// at certain drawing stages. If used at least once these buffers are then
 	// rendered as additional sprites in their respected order.

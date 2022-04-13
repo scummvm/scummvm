@@ -125,6 +125,9 @@ public:
 	// Gets closest recommended bitmap format (currently - only color depth) for the given original format.
 	// Engine needs to have game bitmaps brought to the certain range of formats, easing conversion into the video bitmaps.
 	virtual int  GetCompatibleBitmapFormat(int color_depth) = 0;
+	// Creates a "raw" DDB, without pixel initialization
+	virtual IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque = false) = 0;
+	// Creates DDB, initializes from the given bitmap
 	virtual IDriverDependantBitmap *CreateDDBFromBitmap(Shared::Bitmap *bitmap, bool hasAlpha, bool opaque = false) = 0;
 	virtual void UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Shared::Bitmap *bitmap, bool hasAlpha) = 0;
 	virtual void DestroyDDB(IDriverDependantBitmap *bitmap) = 0;
