@@ -285,6 +285,7 @@ struct PlugInTypeTaggedValue : public Common::NonCopyable {
 	enum TypeCode {
 		kNull = 0x00,
 		kInteger = 0x01,
+		kPoint = 0xa,
 		kIntegerRange = 0xb,
 		kFloat = 0xf,
 		kBoolean = 0x14,

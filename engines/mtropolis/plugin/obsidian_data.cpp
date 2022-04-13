@@ -27,6 +27,36 @@ namespace Data {
 
 namespace Obsidian {
 
+DataReadErrorCode MovementModifier::load(const PlugInModifier& prefix, DataReader& reader) {
+	if (prefix.plugInRevision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!unknown1Event.load(reader)
+		|| !unknown2Event.load(reader)
+		|| !unknown3Point.load(reader)
+		|| !unknown4Bool.load(reader)
+		|| !unknown5Point.load(reader)
+		|| !unknown6Int.load(reader)
+		|| !unknown7Float.load(reader)
+		|| !unknown8Int.load(reader)
+		|| !unknown9Event.load(reader)
+		|| !unknown10Label.load(reader)
+		|| !unknown11Null.load(reader)
+		|| !unknown12Int.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode RectShiftModifier::load(const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!unknown1Event.load(reader) || !unknown2Event.load(reader) || !unknown3Int.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
 
 } // End of namespace Obsidian
 

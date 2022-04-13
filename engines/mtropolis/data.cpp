@@ -356,6 +356,10 @@ bool PlugInTypeTaggedValue::load(DataReader &reader) {
 	case kNull:
 	case kIncomingData:
 		break;
+	case kPoint:
+		if (!value.asPoint.load(reader))
+			return false;
+		break;
 	case kInteger:
 		if (!reader.readS32(value.asInt))
 			return false;
