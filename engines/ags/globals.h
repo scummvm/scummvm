@@ -1088,6 +1088,7 @@ public:
 	const char *_psp_game_file_name = "";
 	const char *_psp_translation = "default";
 
+	int _psp_rotation = 0;
 	int _psp_gfx_renderer = 0;
 	int _psp_gfx_scaling = 1;
 	int _psp_gfx_smoothing = 0;

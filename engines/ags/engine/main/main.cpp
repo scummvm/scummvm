@@ -153,6 +153,8 @@ void main_print_help() {
 	                          "  --nospr                      Don't draw room objects and characters\n"
 	                          "  --noupdate                   Don't run game update\n"
 	                          "  --novideo                    Don't play game videos\n"
+                              "  --rotation <MODE>            Screen rotation preferences. MODEs are:\n"
+                              "                                 unlocked (0), portrait (1), landscape (2)\n"
 #if AGS_PLATFORM_OS_WINDOWS
 	                          "  --setup                      Run setup application\n"
 #endif
@@ -276,7 +278,9 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		else if (ags_stricmp(arg, "--nomusic") == 0) _G(debug_flags) |= DBG_NOMUSIC;
 		else if (ags_stricmp(arg, "--noscript") == 0) _G(debug_flags) |= DBG_NOSCRIPT;
 		else if (ags_stricmp(arg, "--novideo") == 0) _G(debug_flags) |= DBG_NOVIDEO;
-		else if (ags_strnicmp(arg, "--log-", 6) == 0 && arg[6] != 0) {
+		else if (ags_stricmp(arg, "--rotation") == 0 && (argc > ee + 1)) {
+			INIwritestring(cfg, "graphics", "rotation", argv[++ee]);
+		} else if (ags_strnicmp(arg, "--log-", 6) == 0 && arg[6] != 0) {
 			String logarg = arg + 6;
 			size_t split_at = logarg.FindChar('=');
 			if (split_at != String::npos)

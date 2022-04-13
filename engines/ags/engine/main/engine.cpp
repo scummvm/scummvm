@@ -1182,6 +1182,8 @@ int initialize_engine(const ConfigTree &startup_opts) {
 
 	engine_init_resolution_settings(_GP(game).GetGameRes());
 
+	engine_adjust_for_rotation_settings();
+
 	// Attempt to initialize graphics mode
 	if (!engine_try_set_gfxmode_any(_GP(usetup).Screen))
 		return EXIT_ERROR;

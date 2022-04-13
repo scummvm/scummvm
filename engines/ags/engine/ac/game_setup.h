@@ -42,6 +42,14 @@ enum MouseSpeedDef {
 	kNumMouseSpeedDefs
 };
 
+// Screen rotation mode on supported platforms and devices
+enum ScreenRotation {
+	kScreenRotation_Unlocked = 0,     // player can freely rotate the screen if possible
+	kScreenRotation_Portrait,         // screen can only be in portrait orientation
+	kScreenRotation_Landscape,        // screen can only be in landscape orientation
+	kNumScreenRotationOptions
+};
+
 using AGS::Shared::String;
 
 // TODO: reconsider the purpose of this struct.
@@ -84,6 +92,7 @@ struct GameSetup {
 	bool  RenderAtScreenRes; // render sprites at screen resolution, as opposed to native one
 	int   Supersampling;
 	bool  clear_cache_on_room_change; // compatibility
+	ScreenRotation rotation;
 
 	DisplayModeSetup Screen;
 

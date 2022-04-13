@@ -137,6 +137,23 @@ void engine_init_resolution_settings(const Size game_size) {
 	engine_setup_system_gamesize();
 }
 
+void engine_adjust_for_rotation_settings() {
+#if 0
+	switch (_GP(usetup).rotation) {
+	case ScreenRotation::kScreenRotation_Portrait:
+		SDL_SetHint(SDL_HINT_ORIENTATIONS, "Portrait PortraitUpsideDown");
+		break;
+	case ScreenRotation::kScreenRotation_Landscape:
+		SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
+		break;
+	case kScreenRotation_Unlocked:
+		// let the user rotate as wished. No adjustment needed.
+	default:
+		break;
+	}
+#endif
+}
+
 // Setup gfx driver callbacks and options
 void engine_post_gfxmode_driver_setup() {
 	_G(gfxDriver)->SetCallbackForPolling(update_polled_stuff_if_runtime);
