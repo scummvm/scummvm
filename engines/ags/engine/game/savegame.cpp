@@ -513,6 +513,10 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	update_polled_stuff_if_runtime();
 
 	if (_G(displayed_room) >= 0) {
+		// Fixup the frame index, in case the restored room does not have enough background frames
+		if (_GP(play).bg_frame < 0 || _GP(play).bg_frame >= (int)_GP(thisroom).BgFrameCount)
+			_GP(play).bg_frame = 0;
+
 		for (int i = 0; i < MAX_ROOM_BGFRAMES; ++i) {
 			if (r_data.RoomBkgScene[i]) {
 				_GP(thisroom).BgFrames[i].Graphic = r_data.RoomBkgScene[i];
@@ -610,7 +614,6 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	if (_G(displayed_room) < 0) {
 		// the restart point, no room was loaded
 		load_new_room(_G(playerchar)->room, _G(playerchar));
-		_G(playerchar)->prevroom = -1;
 
 		first_room_initialization();
 	}

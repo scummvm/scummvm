@@ -97,8 +97,6 @@ void start_game() {
 	if (_G(displayed_room) < 0) {
 		current_fade_out_effect();
 		load_new_room(_G(playerchar)->room, _G(playerchar));
-		// load_new_room updates it, but it should be -1 in the first room
-		_G(playerchar)->prevroom = -1;
 	}
 
 	first_room_initialization();
