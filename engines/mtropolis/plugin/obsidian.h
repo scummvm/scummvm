@@ -22,17 +22,34 @@
 #ifndef MTROPOLIS_PLUGIN_OBSIDIAN_H
 #define MTROPOLIS_PLUGIN_OBSIDIAN_H
 
+#include "mtropolis/modifiers.h"
+#include "mtropolis/modifier_factory.h"
 #include "mtropolis/runtime.h"
+#include "mtropolis/plugin/obsidian_data.h"
 
 namespace MTropolis {
 
 namespace Obsidian {
+
+class MovementModifier : public Modifier {
+public:
+	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::MovementModifier &data);
+};
+
+class RectShiftModifier : public Modifier {
+public:
+	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::RectShiftModifier &data);
+};
 
 class ObsidianPlugIn : public MTropolis::PlugIn {
 public:
 	ObsidianPlugIn();
 
 	void registerModifiers(IPlugInModifierRegistrar *registrar) const override;
+
+private:
+	PlugInModifierFactory<MovementModifier, Data::Obsidian::MovementModifier> _movementModifierFactory;
+	PlugInModifierFactory<RectShiftModifier, Data::Obsidian::RectShiftModifier> _rectShiftModifierFactory;
 };
 
 } // End of namespace Obsidian

@@ -30,6 +30,42 @@ namespace Data {
 
 namespace Obsidian {
 
+// Known Obsidian custom modifiers:
+// Movement - Heat/water effects, "fly" behavior (?)
+// rectshift - Heat/water/star effects (?)
+// xorCheck - Inspiration realm canvas puzzle
+// xorMod - Inspiration realm canvas puzzle
+// WordMixer - Bureau realm WordMixer terminal
+// Dictionary - Bureau realm file cabinet dictionary
+// TextWork - Text manipulation operations
+
+struct MovementModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1Event;	// Probably "enable when"
+	PlugInTypeTaggedValue unknown2Event;	// Probably "disable when"
+	PlugInTypeTaggedValue unknown3Point;
+	PlugInTypeTaggedValue unknown4Bool;
+	PlugInTypeTaggedValue unknown5Point;
+	PlugInTypeTaggedValue unknown6Int;
+	PlugInTypeTaggedValue unknown7Float;
+	PlugInTypeTaggedValue unknown8Int;
+	PlugInTypeTaggedValue unknown9Event;
+	PlugInTypeTaggedValue unknown10Label;
+	PlugInTypeTaggedValue unknown11Null;
+	PlugInTypeTaggedValue unknown12Int;
+
+protected:
+	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct RectShiftModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1Event; // Probably "enable when"
+	PlugInTypeTaggedValue unknown2Event; // Probably "disable when"
+	PlugInTypeTaggedValue unknown3Int;
+
+protected:
+	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
+};
+
 
 } // End of namespace Obsidian
 

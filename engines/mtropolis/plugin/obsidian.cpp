@@ -26,10 +26,20 @@ namespace MTropolis {
 
 namespace Obsidian {
 
-ObsidianPlugIn::ObsidianPlugIn() {
+bool MovementModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::MovementModifier &data) {
+	return true;
+}
+
+bool RectShiftModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::RectShiftModifier &data) {
+	return true;
+}
+
+ObsidianPlugIn::ObsidianPlugIn() : _movementModifierFactory(this), _rectShiftModifierFactory(this) {
 }
 
 void ObsidianPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
+	registrar->registerPlugInModifier("Movement", &_movementModifierFactory);
+	registrar->registerPlugInModifier("rectshift", &_rectShiftModifierFactory);
 }
 
 } // End of namespace ObsidianPlugIn
