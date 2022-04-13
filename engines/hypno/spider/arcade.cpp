@@ -63,6 +63,14 @@ void SpiderEngine::runAfterArcade(ArcadeShooting *arc) {
 		assert(_score >= _bonus);
 		_score -= _bonus;
 	}
+
+	if (isDemo() && _restoredContentEnabled) {
+		if (_health == 0)
+			showScore("Spider-man was defeated!");
+		else
+			showScore("Spider-Man saved the day!");
+		_score = 0;
+	}
 }
 
 void SpiderEngine::initSegment(ArcadeShooting *arc) {

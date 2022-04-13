@@ -1088,8 +1088,9 @@ void SpiderEngine::runGiveUp() {
 }
 
 void SpiderEngine::showScore(const Common::String prefix) {
-	Common::String message = Common::String::format("%s\n\
-	You finished the game with a score of %d points", prefix.c_str(), _score);
+	Common::String fmessage = "%s\nYou finished the ";
+	fmessage = fmessage + (isDemo() ? "demo" : "game") + " with a score of %d points";
+	Common::String message = Common::String::format(fmessage.c_str(), prefix.c_str(), _score);
 	GUI::MessageDialog dialog(message);
 	dialog.runModal();
 }
