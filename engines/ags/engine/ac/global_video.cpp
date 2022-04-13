@@ -104,6 +104,9 @@ void PlayVideo(const char *name, int skip, int scr_flags) {
 	if (_GP(usetup).audio_backend == 0)
 		flags &= ~kVideo_EnableAudio;
 
+	if (_G(loaded_game_file_version) < kGameVersion_360_16)
+		flags |= kVideo_LegacyFrameSize;
+
 	pause_sound_if_necessary_and_play_video(name, flags, static_cast<VideoSkipType>(skip));
 }
 
