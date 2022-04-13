@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-12 07:00+0000\n"
+"POT-Creation-Date: 2022-04-13 03:35+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -655,10 +655,10 @@ msgid "Interact"
 msgstr "אינטראקציה"
 
 #: gui/gui-manager.cpp:227 engines/metaengine.cpp:109
-#: engines/dragons/metaengine.cpp:160 engines/glk/scott/scott.cpp:411
-#: engines/griffon/metaengine.cpp:95 engines/grim/grim.cpp:455
-#: engines/grim/grim.cpp:536 engines/twine/metaengine.cpp:329
-#: engines/twine/metaengine.cpp:396 engines/wintermute/keymapper_tables.h:1262
+#: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:95
+#: engines/grim/grim.cpp:455 engines/grim/grim.cpp:536
+#: engines/twine/metaengine.cpp:329 engines/twine/metaengine.cpp:396
+#: engines/wintermute/keymapper_tables.h:1262
 #: engines/wintermute/keymapper_tables.h:1372
 #: engines/wintermute/keymapper_tables.h:1843
 #: engines/wintermute/keymapper_tables.h:2077
@@ -666,10 +666,10 @@ msgid "Up"
 msgstr "למעלה"
 
 #: gui/gui-manager.cpp:232 engines/metaengine.cpp:114
-#: engines/dragons/metaengine.cpp:166 engines/glk/scott/scott.cpp:411
-#: engines/griffon/metaengine.cpp:101 engines/grim/grim.cpp:460
-#: engines/grim/grim.cpp:541 engines/twine/metaengine.cpp:336
-#: engines/twine/metaengine.cpp:404 engines/wintermute/keymapper_tables.h:1268
+#: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:101
+#: engines/grim/grim.cpp:460 engines/grim/grim.cpp:541
+#: engines/twine/metaengine.cpp:336 engines/twine/metaengine.cpp:404
+#: engines/wintermute/keymapper_tables.h:1268
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1849
 #: engines/wintermute/keymapper_tables.h:2083
@@ -4845,220 +4845,9 @@ msgstr "קובץ Glulx זה גרסה חדשה מכדי שתוכל לבצע."
 msgid "Could not start Quest game"
 msgstr "לא ניתן היה להתחיל את המשחק AdvSys"
 
-#: engines/glk/scott/scott.cpp:99
-msgid "I don't understand your command. "
-msgstr "אני לא מבין את הפקודה שלך. "
-
-#: engines/glk/scott/scott.cpp:102
-msgid "I can't do that yet. "
-msgstr "אני עדיין לא יכול לעשות את זה. "
-
-#: engines/glk/scott/scott.cpp:118
-msgid "Light has run out! "
-msgstr "האור אזל! "
-
-#: engines/glk/scott/scott.cpp:120
-msgid "Your light has run out. "
-msgstr "האור שלך אזל. "
-
-#: engines/glk/scott/scott.cpp:129
-msgid "Light runs out in "
-msgstr "האור אוזל פנימה "
-
-#: engines/glk/scott/scott.cpp:131
-msgid " turns. "
-msgstr " מסתובב. "
-
-#: engines/glk/scott/scott.cpp:134
-msgid "Your light is growing dim. "
-msgstr "האור שלך הולך ומתעמעם. "
-
-#: engines/glk/scott/scott.cpp:411
-msgid "North"
-msgstr "צפון"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "South"
-msgstr "דרום"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "East"
-msgstr "מזרח"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "West"
-msgstr "מערב"
-
-#: engines/glk/scott/scott.cpp:423
-msgid "You can't see. It is too dark!\n"
-msgstr "אתה לא יכול לראות. חשוך מדי!\n"
-
-#: engines/glk/scott/scott.cpp:425
-msgid "I can't see. It is too dark!\n"
-msgstr "אני לא יכול לראות. חשוך מדי!\n"
-
-#: engines/glk/scott/scott.cpp:435
-#, c-format
-msgid "You are in a %s\n"
-msgstr "אתה בעוד %s\n"
-
-#: engines/glk/scott/scott.cpp:437
-#, c-format
-msgid "I'm in a %s\n"
-msgstr "אני בעוד %s\n"
-
-#: engines/glk/scott/scott.cpp:442
-msgid ""
-"\n"
-"Obvious exits: "
-msgstr ""
-"\n"
-"יציאות ברורות: "
-
-#: engines/glk/scott/scott.cpp:455
-msgid "none"
-msgstr "אף אחד"
-
-#: engines/glk/scott/scott.cpp:464
-msgid ""
-"\n"
-"You can also see: "
-msgstr ""
-"\n"
-"אתה יכול גם לראות: "
-
-#: engines/glk/scott/scott.cpp:467
-msgid ""
-"\n"
-"I can also see: "
-msgstr ""
-"\n"
-"אני יכול לראות גם: "
-
-#: engines/glk/scott/scott.cpp:550
+#: engines/glk/scott/scott.cpp:662
 msgid "Saved.\n"
 msgstr "נשמר.\n"
-
-#: engines/glk/scott/scott.cpp:643
-msgid "You use word(s) I don't know! "
-msgstr "אתה משתמש במילים שאני לא יודע! "
-
-#: engines/glk/scott/scott.cpp:773 engines/glk/scott/scott.cpp:1096
-#: engines/glk/scott/scott.cpp:1118
-msgid "You are carrying too much. "
-msgstr "אתה סוחב יותר מדי. "
-
-#: engines/glk/scott/scott.cpp:775
-msgid "I've too much to carry! "
-msgstr "יש לי יותר מדי מה לשאת! "
-
-#: engines/glk/scott/scott.cpp:806
-msgid "You are dead.\n"
-msgstr "אתה מת.\n"
-
-#: engines/glk/scott/scott.cpp:808
-msgid "I am dead.\n"
-msgstr "אני מת.\n"
-
-#: engines/glk/scott/scott.cpp:820
-msgid "The game is now over.\n"
-msgstr "המשחק נגמר.\n"
-
-#: engines/glk/scott/scott.cpp:835
-msgid "You have stored "
-msgstr "שמרת "
-
-#: engines/glk/scott/scott.cpp:837
-msgid "I've stored "
-msgstr "אחסתי "
-
-#: engines/glk/scott/scott.cpp:839
-msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr " אוצרות. בסולם של 0 עד 100, זה מדרג "
-
-#: engines/glk/scott/scott.cpp:843
-msgid "Well done.\n"
-msgstr "כל הכבוד.\n"
-
-#: engines/glk/scott/scott.cpp:852
-msgid "You are carrying:\n"
-msgstr "אתה נושא:\n"
-
-#: engines/glk/scott/scott.cpp:854
-msgid "I'm carrying:\n"
-msgstr "אני סוחב:\n"
-
-#: engines/glk/scott/scott.cpp:869
-msgid "Nothing"
-msgstr "שום דבר"
-
-#: engines/glk/scott/scott.cpp:998
-msgid "Give me a direction too."
-msgstr "תן לי גם כיוון."
-
-#: engines/glk/scott/scott.cpp:1007
-msgid "Dangerous to move in the dark! "
-msgstr "מסוכן לנוע בחושך! "
-
-#: engines/glk/scott/scott.cpp:1015
-msgid "You fell down and broke your neck. "
-msgstr "נפלת ושברת את צווארך. "
-
-#: engines/glk/scott/scott.cpp:1017
-msgid "I fell down and broke my neck. "
-msgstr "נפלתי ושברתי את צווארי. "
-
-#: engines/glk/scott/scott.cpp:1022
-msgid "You can't go in that direction. "
-msgstr "אתה לא יכול ללכת לכיוון הזה. "
-
-#: engines/glk/scott/scott.cpp:1024
-msgid "I can't go in that direction. "
-msgstr "אני לא יכול ללכת לכיוון הזה. "
-
-#: engines/glk/scott/scott.cpp:1082
-msgid "It is dark.\n"
-msgstr "חשוך.\n"
-
-#: engines/glk/scott/scott.cpp:1098 engines/glk/scott/scott.cpp:1120
-msgid "I've too much to carry. "
-msgstr "יש לי יותר מדי מה לשאת. "
-
-#: engines/glk/scott/scott.cpp:1103 engines/glk/scott/scott.cpp:1151
-msgid ": O.K.\n"
-msgstr ": בסדר.\n"
-
-#: engines/glk/scott/scott.cpp:1109
-msgid "Nothing taken."
-msgstr "שום דבר לא נלקח."
-
-#: engines/glk/scott/scott.cpp:1113 engines/glk/scott/scott.cpp:1161
-msgid "What ? "
-msgstr "מה ? "
-
-#: engines/glk/scott/scott.cpp:1126
-msgid "It is beyond your power to do that. "
-msgstr "זה מעבר לכוחך לעשות זאת. "
-
-#: engines/glk/scott/scott.cpp:1128
-msgid "It's beyond my power to do that. "
-msgstr "זה מעבר לכוח שלי לעשות זאת. "
-
-#: engines/glk/scott/scott.cpp:1132
-msgid "O.K. "
-msgstr "בסדר. "
-
-#: engines/glk/scott/scott.cpp:1157
-msgid "Nothing dropped.\n"
-msgstr "שום דבר לא צנח.\n"
-
-#: engines/glk/scott/scott.cpp:1167
-msgid "It's beyond your power to do that.\n"
-msgstr "זה מעבר לכוחך לעשות זאת.\n"
-
-#: engines/glk/scott/scott.cpp:1169
-msgid "It's beyond my power to do that.\n"
-msgstr "זה מעבר לכוח שלי לעשות זאת.\n"
 
 #: engines/glk/zcode/zcode.cpp:144
 msgid "Error writing save file\n"
@@ -8949,6 +8738,165 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#~ msgid "I don't understand your command. "
+#~ msgstr "אני לא מבין את הפקודה שלך. "
+
+#~ msgid "I can't do that yet. "
+#~ msgstr "אני עדיין לא יכול לעשות את זה. "
+
+#~ msgid "Light has run out! "
+#~ msgstr "האור אזל! "
+
+#~ msgid "Your light has run out. "
+#~ msgstr "האור שלך אזל. "
+
+#~ msgid "Light runs out in "
+#~ msgstr "האור אוזל פנימה "
+
+#~ msgid " turns. "
+#~ msgstr " מסתובב. "
+
+#~ msgid "Your light is growing dim. "
+#~ msgstr "האור שלך הולך ומתעמעם. "
+
+#~ msgid "North"
+#~ msgstr "צפון"
+
+#~ msgid "South"
+#~ msgstr "דרום"
+
+#~ msgid "East"
+#~ msgstr "מזרח"
+
+#~ msgid "West"
+#~ msgstr "מערב"
+
+#~ msgid "You can't see. It is too dark!\n"
+#~ msgstr "אתה לא יכול לראות. חשוך מדי!\n"
+
+#~ msgid "I can't see. It is too dark!\n"
+#~ msgstr "אני לא יכול לראות. חשוך מדי!\n"
+
+#~ msgid "You are in a %s\n"
+#~ msgstr "אתה בעוד %s\n"
+
+#~ msgid "I'm in a %s\n"
+#~ msgstr "אני בעוד %s\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "Obvious exits: "
+#~ msgstr ""
+#~ "\n"
+#~ "יציאות ברורות: "
+
+#~ msgid "none"
+#~ msgstr "אף אחד"
+
+#~ msgid ""
+#~ "\n"
+#~ "You can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "אתה יכול גם לראות: "
+
+#~ msgid ""
+#~ "\n"
+#~ "I can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "אני יכול לראות גם: "
+
+#~ msgid "You use word(s) I don't know! "
+#~ msgstr "אתה משתמש במילים שאני לא יודע! "
+
+#~ msgid "You are carrying too much. "
+#~ msgstr "אתה סוחב יותר מדי. "
+
+#~ msgid "I've too much to carry! "
+#~ msgstr "יש לי יותר מדי מה לשאת! "
+
+#~ msgid "You are dead.\n"
+#~ msgstr "אתה מת.\n"
+
+#~ msgid "I am dead.\n"
+#~ msgstr "אני מת.\n"
+
+#~ msgid "The game is now over.\n"
+#~ msgstr "המשחק נגמר.\n"
+
+#~ msgid "You have stored "
+#~ msgstr "שמרת "
+
+#~ msgid "I've stored "
+#~ msgstr "אחסתי "
+
+#~ msgid " treasures.  On a scale of 0 to 100, that rates "
+#~ msgstr " אוצרות. בסולם של 0 עד 100, זה מדרג "
+
+#~ msgid "Well done.\n"
+#~ msgstr "כל הכבוד.\n"
+
+#~ msgid "You are carrying:\n"
+#~ msgstr "אתה נושא:\n"
+
+#~ msgid "I'm carrying:\n"
+#~ msgstr "אני סוחב:\n"
+
+#~ msgid "Nothing"
+#~ msgstr "שום דבר"
+
+#~ msgid "Give me a direction too."
+#~ msgstr "תן לי גם כיוון."
+
+#~ msgid "Dangerous to move in the dark! "
+#~ msgstr "מסוכן לנוע בחושך! "
+
+#~ msgid "You fell down and broke your neck. "
+#~ msgstr "נפלת ושברת את צווארך. "
+
+#~ msgid "I fell down and broke my neck. "
+#~ msgstr "נפלתי ושברתי את צווארי. "
+
+#~ msgid "You can't go in that direction. "
+#~ msgstr "אתה לא יכול ללכת לכיוון הזה. "
+
+#~ msgid "I can't go in that direction. "
+#~ msgstr "אני לא יכול ללכת לכיוון הזה. "
+
+#~ msgid "It is dark.\n"
+#~ msgstr "חשוך.\n"
+
+#~ msgid "I've too much to carry. "
+#~ msgstr "יש לי יותר מדי מה לשאת. "
+
+#~ msgid ": O.K.\n"
+#~ msgstr ": בסדר.\n"
+
+#~ msgid "Nothing taken."
+#~ msgstr "שום דבר לא נלקח."
+
+#~ msgid "What ? "
+#~ msgstr "מה ? "
+
+#~ msgid "It is beyond your power to do that. "
+#~ msgstr "זה מעבר לכוחך לעשות זאת. "
+
+#~ msgid "It's beyond my power to do that. "
+#~ msgstr "זה מעבר לכוח שלי לעשות זאת. "
+
+#~ msgid "O.K. "
+#~ msgstr "בסדר. "
+
+#~ msgid "Nothing dropped.\n"
+#~ msgstr "שום דבר לא צנח.\n"
+
+#~ msgid "It's beyond your power to do that.\n"
+#~ msgstr "זה מעבר לכוחך לעשות זאת.\n"
+
+#~ msgid "It's beyond my power to do that.\n"
+#~ msgstr "זה מעבר לכוח שלי לעשות זאת.\n"
 
 #~ msgid "Ok"
 #~ msgstr "אישור"

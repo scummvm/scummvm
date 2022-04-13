@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-12 07:00+0000\n"
+"POT-Creation-Date: 2022-04-13 03:35+0000\n"
 "PO-Revision-Date: 2022-04-12 01:27+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -651,10 +651,10 @@ msgid "Interact"
 msgstr "Käytä"
 
 #: gui/gui-manager.cpp:227 engines/metaengine.cpp:109
-#: engines/dragons/metaengine.cpp:160 engines/glk/scott/scott.cpp:411
-#: engines/griffon/metaengine.cpp:95 engines/grim/grim.cpp:455
-#: engines/grim/grim.cpp:536 engines/twine/metaengine.cpp:329
-#: engines/twine/metaengine.cpp:396 engines/wintermute/keymapper_tables.h:1262
+#: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:95
+#: engines/grim/grim.cpp:455 engines/grim/grim.cpp:536
+#: engines/twine/metaengine.cpp:329 engines/twine/metaengine.cpp:396
+#: engines/wintermute/keymapper_tables.h:1262
 #: engines/wintermute/keymapper_tables.h:1372
 #: engines/wintermute/keymapper_tables.h:1843
 #: engines/wintermute/keymapper_tables.h:2077
@@ -662,10 +662,10 @@ msgid "Up"
 msgstr "Ylös"
 
 #: gui/gui-manager.cpp:232 engines/metaengine.cpp:114
-#: engines/dragons/metaengine.cpp:166 engines/glk/scott/scott.cpp:411
-#: engines/griffon/metaengine.cpp:101 engines/grim/grim.cpp:460
-#: engines/grim/grim.cpp:541 engines/twine/metaengine.cpp:336
-#: engines/twine/metaengine.cpp:404 engines/wintermute/keymapper_tables.h:1268
+#: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:101
+#: engines/grim/grim.cpp:460 engines/grim/grim.cpp:541
+#: engines/twine/metaengine.cpp:336 engines/twine/metaengine.cpp:404
+#: engines/wintermute/keymapper_tables.h:1268
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1849
 #: engines/wintermute/keymapper_tables.h:2083
@@ -4808,220 +4808,9 @@ msgstr "Tämä Glulx-tiedosto on versioltaan liian uusi ajettavaksi."
 msgid "Could not start Quest game"
 msgstr "Quest-pelin käynnistys epäonnistui"
 
-#: engines/glk/scott/scott.cpp:99
-msgid "I don't understand your command. "
-msgstr "En ymmärrä komentoasi. "
-
-#: engines/glk/scott/scott.cpp:102
-msgid "I can't do that yet. "
-msgstr "En pysty tekemään tuota vielä. "
-
-#: engines/glk/scott/scott.cpp:118
-msgid "Light has run out! "
-msgstr "Valo on sammunut! "
-
-#: engines/glk/scott/scott.cpp:120
-msgid "Your light has run out. "
-msgstr "Valosi on sammunut. "
-
-#: engines/glk/scott/scott.cpp:129
-msgid "Light runs out in "
-msgstr "Valo sammuu "
-
-#: engines/glk/scott/scott.cpp:131
-msgid " turns. "
-msgstr " vuorossa. "
-
-#: engines/glk/scott/scott.cpp:134
-msgid "Your light is growing dim. "
-msgstr "Valosi hiipuu. "
-
-#: engines/glk/scott/scott.cpp:411
-msgid "North"
-msgstr "Pohjoinen"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "South"
-msgstr "Etelä"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "East"
-msgstr "Itä"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "West"
-msgstr "Länsi"
-
-#: engines/glk/scott/scott.cpp:423
-msgid "You can't see. It is too dark!\n"
-msgstr "Et näe mitään. On liian pimeää!\n"
-
-#: engines/glk/scott/scott.cpp:425
-msgid "I can't see. It is too dark!\n"
-msgstr "En näe mitään. On liian pimeää!\n"
-
-#: engines/glk/scott/scott.cpp:435
-#, c-format
-msgid "You are in a %s\n"
-msgstr "Olet paikassa %s\n"
-
-#: engines/glk/scott/scott.cpp:437
-#, c-format
-msgid "I'm in a %s\n"
-msgstr "Olen paikassa %s\n"
-
-#: engines/glk/scott/scott.cpp:442
-msgid ""
-"\n"
-"Obvious exits: "
-msgstr ""
-"\n"
-"Ilmeiset uloskäynnit: "
-
-#: engines/glk/scott/scott.cpp:455
-msgid "none"
-msgstr "ei ainuttakaan"
-
-#: engines/glk/scott/scott.cpp:464
-msgid ""
-"\n"
-"You can also see: "
-msgstr ""
-"\n"
-"Näet myös: "
-
-#: engines/glk/scott/scott.cpp:467
-msgid ""
-"\n"
-"I can also see: "
-msgstr ""
-"\n"
-"Näen myös: "
-
-#: engines/glk/scott/scott.cpp:550
+#: engines/glk/scott/scott.cpp:662
 msgid "Saved.\n"
 msgstr "Tallennettu.\n"
-
-#: engines/glk/scott/scott.cpp:643
-msgid "You use word(s) I don't know! "
-msgstr "Käytät sanoja joita en ymmärrä! "
-
-#: engines/glk/scott/scott.cpp:773 engines/glk/scott/scott.cpp:1096
-#: engines/glk/scott/scott.cpp:1118
-msgid "You are carrying too much. "
-msgstr "Sinulla on liikaa kannettavaa. "
-
-#: engines/glk/scott/scott.cpp:775
-msgid "I've too much to carry! "
-msgstr "Minulla on liikaa kannettavaa! "
-
-#: engines/glk/scott/scott.cpp:806
-msgid "You are dead.\n"
-msgstr "Olet kuollut.\n"
-
-#: engines/glk/scott/scott.cpp:808
-msgid "I am dead.\n"
-msgstr "Olen kuollut.\n"
-
-#: engines/glk/scott/scott.cpp:820
-msgid "The game is now over.\n"
-msgstr "Peli on nyt loppu.\n"
-
-#: engines/glk/scott/scott.cpp:835
-msgid "You have stored "
-msgstr "Olet kerännyt "
-
-#: engines/glk/scott/scott.cpp:837
-msgid "I've stored "
-msgstr "Olen kerännyt "
-
-#: engines/glk/scott/scott.cpp:839
-msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr " aarretta.  Mittapuulla 0-100, se on "
-
-#: engines/glk/scott/scott.cpp:843
-msgid "Well done.\n"
-msgstr "Hyvin tehty.\n"
-
-#: engines/glk/scott/scott.cpp:852
-msgid "You are carrying:\n"
-msgstr "Sinulla on kannossa:\n"
-
-#: engines/glk/scott/scott.cpp:854
-msgid "I'm carrying:\n"
-msgstr "Minulla on kannossa:\n"
-
-#: engines/glk/scott/scott.cpp:869
-msgid "Nothing"
-msgstr "Ei mitään"
-
-#: engines/glk/scott/scott.cpp:998
-msgid "Give me a direction too."
-msgstr "Kerro minulle myös suunta."
-
-#: engines/glk/scott/scott.cpp:1007
-msgid "Dangerous to move in the dark! "
-msgstr "On vaarallista liikkua pimeällä! "
-
-#: engines/glk/scott/scott.cpp:1015
-msgid "You fell down and broke your neck. "
-msgstr "Putosit ja taitoit niskasi. "
-
-#: engines/glk/scott/scott.cpp:1017
-msgid "I fell down and broke my neck. "
-msgstr "Putosin ja taitoin niskani. "
-
-#: engines/glk/scott/scott.cpp:1022
-msgid "You can't go in that direction. "
-msgstr "Et voi mennä siihen suuntaan. "
-
-#: engines/glk/scott/scott.cpp:1024
-msgid "I can't go in that direction. "
-msgstr "En voi mennä siihen suuntaan. "
-
-#: engines/glk/scott/scott.cpp:1082
-msgid "It is dark.\n"
-msgstr "On pimeää.\n"
-
-#: engines/glk/scott/scott.cpp:1098 engines/glk/scott/scott.cpp:1120
-msgid "I've too much to carry. "
-msgstr "Minulla on liikaa kannettavaa. "
-
-#: engines/glk/scott/scott.cpp:1103 engines/glk/scott/scott.cpp:1151
-msgid ": O.K.\n"
-msgstr ": O.K.\n"
-
-#: engines/glk/scott/scott.cpp:1109
-msgid "Nothing taken."
-msgstr "Mitään ei otettu."
-
-#: engines/glk/scott/scott.cpp:1113 engines/glk/scott/scott.cpp:1161
-msgid "What ? "
-msgstr "Mitä ? "
-
-#: engines/glk/scott/scott.cpp:1126
-msgid "It is beyond your power to do that. "
-msgstr "Se on kykyjesi ulkopuolella. "
-
-#: engines/glk/scott/scott.cpp:1128
-msgid "It's beyond my power to do that. "
-msgstr "Se on kykyjeni ulkopuolella. "
-
-#: engines/glk/scott/scott.cpp:1132
-msgid "O.K. "
-msgstr "O.K. "
-
-#: engines/glk/scott/scott.cpp:1157
-msgid "Nothing dropped.\n"
-msgstr "Mitään ei pudotettu.\n"
-
-#: engines/glk/scott/scott.cpp:1167
-msgid "It's beyond your power to do that.\n"
-msgstr "Se on kykyjesi ulkopuolella.\n"
-
-#: engines/glk/scott/scott.cpp:1169
-msgid "It's beyond my power to do that.\n"
-msgstr "Se on kykyjeni ulkopuolella.\n"
 
 #: engines/glk/zcode/zcode.cpp:144
 msgid "Error writing save file\n"
@@ -8873,6 +8662,165 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+
+#~ msgid "I don't understand your command. "
+#~ msgstr "En ymmärrä komentoasi. "
+
+#~ msgid "I can't do that yet. "
+#~ msgstr "En pysty tekemään tuota vielä. "
+
+#~ msgid "Light has run out! "
+#~ msgstr "Valo on sammunut! "
+
+#~ msgid "Your light has run out. "
+#~ msgstr "Valosi on sammunut. "
+
+#~ msgid "Light runs out in "
+#~ msgstr "Valo sammuu "
+
+#~ msgid " turns. "
+#~ msgstr " vuorossa. "
+
+#~ msgid "Your light is growing dim. "
+#~ msgstr "Valosi hiipuu. "
+
+#~ msgid "North"
+#~ msgstr "Pohjoinen"
+
+#~ msgid "South"
+#~ msgstr "Etelä"
+
+#~ msgid "East"
+#~ msgstr "Itä"
+
+#~ msgid "West"
+#~ msgstr "Länsi"
+
+#~ msgid "You can't see. It is too dark!\n"
+#~ msgstr "Et näe mitään. On liian pimeää!\n"
+
+#~ msgid "I can't see. It is too dark!\n"
+#~ msgstr "En näe mitään. On liian pimeää!\n"
+
+#~ msgid "You are in a %s\n"
+#~ msgstr "Olet paikassa %s\n"
+
+#~ msgid "I'm in a %s\n"
+#~ msgstr "Olen paikassa %s\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "Obvious exits: "
+#~ msgstr ""
+#~ "\n"
+#~ "Ilmeiset uloskäynnit: "
+
+#~ msgid "none"
+#~ msgstr "ei ainuttakaan"
+
+#~ msgid ""
+#~ "\n"
+#~ "You can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "Näet myös: "
+
+#~ msgid ""
+#~ "\n"
+#~ "I can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "Näen myös: "
+
+#~ msgid "You use word(s) I don't know! "
+#~ msgstr "Käytät sanoja joita en ymmärrä! "
+
+#~ msgid "You are carrying too much. "
+#~ msgstr "Sinulla on liikaa kannettavaa. "
+
+#~ msgid "I've too much to carry! "
+#~ msgstr "Minulla on liikaa kannettavaa! "
+
+#~ msgid "You are dead.\n"
+#~ msgstr "Olet kuollut.\n"
+
+#~ msgid "I am dead.\n"
+#~ msgstr "Olen kuollut.\n"
+
+#~ msgid "The game is now over.\n"
+#~ msgstr "Peli on nyt loppu.\n"
+
+#~ msgid "You have stored "
+#~ msgstr "Olet kerännyt "
+
+#~ msgid "I've stored "
+#~ msgstr "Olen kerännyt "
+
+#~ msgid " treasures.  On a scale of 0 to 100, that rates "
+#~ msgstr " aarretta.  Mittapuulla 0-100, se on "
+
+#~ msgid "Well done.\n"
+#~ msgstr "Hyvin tehty.\n"
+
+#~ msgid "You are carrying:\n"
+#~ msgstr "Sinulla on kannossa:\n"
+
+#~ msgid "I'm carrying:\n"
+#~ msgstr "Minulla on kannossa:\n"
+
+#~ msgid "Nothing"
+#~ msgstr "Ei mitään"
+
+#~ msgid "Give me a direction too."
+#~ msgstr "Kerro minulle myös suunta."
+
+#~ msgid "Dangerous to move in the dark! "
+#~ msgstr "On vaarallista liikkua pimeällä! "
+
+#~ msgid "You fell down and broke your neck. "
+#~ msgstr "Putosit ja taitoit niskasi. "
+
+#~ msgid "I fell down and broke my neck. "
+#~ msgstr "Putosin ja taitoin niskani. "
+
+#~ msgid "You can't go in that direction. "
+#~ msgstr "Et voi mennä siihen suuntaan. "
+
+#~ msgid "I can't go in that direction. "
+#~ msgstr "En voi mennä siihen suuntaan. "
+
+#~ msgid "It is dark.\n"
+#~ msgstr "On pimeää.\n"
+
+#~ msgid "I've too much to carry. "
+#~ msgstr "Minulla on liikaa kannettavaa. "
+
+#~ msgid ": O.K.\n"
+#~ msgstr ": O.K.\n"
+
+#~ msgid "Nothing taken."
+#~ msgstr "Mitään ei otettu."
+
+#~ msgid "What ? "
+#~ msgstr "Mitä ? "
+
+#~ msgid "It is beyond your power to do that. "
+#~ msgstr "Se on kykyjesi ulkopuolella. "
+
+#~ msgid "It's beyond my power to do that. "
+#~ msgstr "Se on kykyjeni ulkopuolella. "
+
+#~ msgid "O.K. "
+#~ msgstr "O.K. "
+
+#~ msgid "Nothing dropped.\n"
+#~ msgstr "Mitään ei pudotettu.\n"
+
+#~ msgid "It's beyond your power to do that.\n"
+#~ msgstr "Se on kykyjesi ulkopuolella.\n"
+
+#~ msgid "It's beyond my power to do that.\n"
+#~ msgstr "Se on kykyjeni ulkopuolella.\n"
 
 #~ msgid "Use correct font spacing"
 #~ msgstr "Käytä oikeaa kirjasinväliä"

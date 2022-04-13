@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-12 07:00+0000\n"
+"POT-Creation-Date: 2022-04-13 03:35+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -667,10 +667,10 @@ msgid "Interact"
 msgstr "Använd"
 
 #: gui/gui-manager.cpp:227 engines/metaengine.cpp:109
-#: engines/dragons/metaengine.cpp:160 engines/glk/scott/scott.cpp:411
-#: engines/griffon/metaengine.cpp:95 engines/grim/grim.cpp:455
-#: engines/grim/grim.cpp:536 engines/twine/metaengine.cpp:329
-#: engines/twine/metaengine.cpp:396 engines/wintermute/keymapper_tables.h:1262
+#: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:95
+#: engines/grim/grim.cpp:455 engines/grim/grim.cpp:536
+#: engines/twine/metaengine.cpp:329 engines/twine/metaengine.cpp:396
+#: engines/wintermute/keymapper_tables.h:1262
 #: engines/wintermute/keymapper_tables.h:1372
 #: engines/wintermute/keymapper_tables.h:1843
 #: engines/wintermute/keymapper_tables.h:2077
@@ -678,10 +678,10 @@ msgid "Up"
 msgstr "Upp"
 
 #: gui/gui-manager.cpp:232 engines/metaengine.cpp:114
-#: engines/dragons/metaengine.cpp:166 engines/glk/scott/scott.cpp:411
-#: engines/griffon/metaengine.cpp:101 engines/grim/grim.cpp:460
-#: engines/grim/grim.cpp:541 engines/twine/metaengine.cpp:336
-#: engines/twine/metaengine.cpp:404 engines/wintermute/keymapper_tables.h:1268
+#: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:101
+#: engines/grim/grim.cpp:460 engines/grim/grim.cpp:541
+#: engines/twine/metaengine.cpp:336 engines/twine/metaengine.cpp:404
+#: engines/wintermute/keymapper_tables.h:1268
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1849
 #: engines/wintermute/keymapper_tables.h:2083
@@ -4896,224 +4896,9 @@ msgstr ""
 msgid "Could not start Quest game"
 msgstr "Kunde inte byta till videoläget: '"
 
-#: engines/glk/scott/scott.cpp:99
-msgid "I don't understand your command. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:102
-msgid "I can't do that yet. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:118
-#, fuzzy
-msgid "Light has run out! "
-msgstr "Simulera höger musknapp"
-
-#: engines/glk/scott/scott.cpp:120
-#, fuzzy
-msgid "Your light has run out. "
-msgstr "Simulera höger musknapp"
-
-#: engines/glk/scott/scott.cpp:129
-#, fuzzy
-msgid "Light runs out in "
-msgstr "Simulera höger musknapp"
-
-#: engines/glk/scott/scott.cpp:131
-msgid " turns. "
-msgstr " drag. "
-
-#: engines/glk/scott/scott.cpp:134
-msgid "Your light is growing dim. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:411
-msgid "North"
-msgstr "Norr"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "South"
-msgstr "Syd"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "East"
-msgstr "Öst"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "West"
-msgstr "Väst"
-
-#: engines/glk/scott/scott.cpp:423
-msgid "You can't see. It is too dark!\n"
-msgstr "Du kan inte se. Det är för mörkt!\n"
-
-#: engines/glk/scott/scott.cpp:425
-msgid "I can't see. It is too dark!\n"
-msgstr "Jag kan inte se. Det är för mörkt!\n"
-
-#: engines/glk/scott/scott.cpp:435
-#, c-format
-msgid "You are in a %s\n"
-msgstr "Du är i en %s\n"
-
-#: engines/glk/scott/scott.cpp:437
-#, c-format
-msgid "I'm in a %s\n"
-msgstr "Jag är i en %s\n"
-
-#: engines/glk/scott/scott.cpp:442
-msgid ""
-"\n"
-"Obvious exits: "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:455
-msgid "none"
-msgstr "inga"
-
-#: engines/glk/scott/scott.cpp:464
-msgid ""
-"\n"
-"You can also see: "
-msgstr ""
-"\n"
-"Du kan också se: "
-
-#: engines/glk/scott/scott.cpp:467
-msgid ""
-"\n"
-"I can also see: "
-msgstr ""
-"\n"
-"Jag kan också se: "
-
-#: engines/glk/scott/scott.cpp:550
+#: engines/glk/scott/scott.cpp:662
 msgid "Saved.\n"
 msgstr "Spara\n"
-
-#: engines/glk/scott/scott.cpp:643
-msgid "You use word(s) I don't know! "
-msgstr "Du använder ord jag inte kan! "
-
-#: engines/glk/scott/scott.cpp:773 engines/glk/scott/scott.cpp:1096
-#: engines/glk/scott/scott.cpp:1118
-msgid "You are carrying too much. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:775
-msgid "I've too much to carry! "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:806
-msgid "You are dead.\n"
-msgstr "Ladda\n"
-
-#: engines/glk/scott/scott.cpp:808
-msgid "I am dead.\n"
-msgstr "Jag är död.\n"
-
-#: engines/glk/scott/scott.cpp:820
-msgid "The game is now over.\n"
-msgstr "Spelet är nu slut.\n"
-
-#: engines/glk/scott/scott.cpp:835
-#, fuzzy
-msgid "You have stored "
-msgstr "Ladda"
-
-#: engines/glk/scott/scott.cpp:837
-#, fuzzy
-msgid "I've stored "
-msgstr "Ladda"
-
-#: engines/glk/scott/scott.cpp:839
-msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:843
-msgid "Well done.\n"
-msgstr "Bra jobbat.\n"
-
-#: engines/glk/scott/scott.cpp:852
-msgid "You are carrying:\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:854
-msgid "I'm carrying:\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:869
-msgid "Nothing"
-msgstr "Ingenting"
-
-#: engines/glk/scott/scott.cpp:998
-msgid "Give me a direction too."
-msgstr "Ge mig en riktning också."
-
-#: engines/glk/scott/scott.cpp:1007
-msgid "Dangerous to move in the dark! "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1015
-msgid "You fell down and broke your neck. "
-msgstr "Du föll ned och bröt nacken. "
-
-#: engines/glk/scott/scott.cpp:1017
-msgid "I fell down and broke my neck. "
-msgstr "Jag föll ner och bröt min nacke. "
-
-#: engines/glk/scott/scott.cpp:1022
-msgid "You can't go in that direction. "
-msgstr "Du kan inte gå åt det hållet. "
-
-#: engines/glk/scott/scott.cpp:1024
-msgid "I can't go in that direction. "
-msgstr "Jag kan inte gå åt det hållet. "
-
-#: engines/glk/scott/scott.cpp:1082
-msgid "It is dark.\n"
-msgstr "Det är mörkt.\n"
-
-#: engines/glk/scott/scott.cpp:1098 engines/glk/scott/scott.cpp:1120
-msgid "I've too much to carry. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1103 engines/glk/scott/scott.cpp:1151
-msgid ": O.K.\n"
-msgstr ": O.K.\n"
-
-#: engines/glk/scott/scott.cpp:1109
-msgid "Nothing taken."
-msgstr "Inget taget."
-
-#: engines/glk/scott/scott.cpp:1113 engines/glk/scott/scott.cpp:1161
-#, fuzzy
-msgid "What ? "
-msgstr "Vad är"
-
-#: engines/glk/scott/scott.cpp:1126
-msgid "It is beyond your power to do that. "
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1128
-msgid "It's beyond my power to do that. "
-msgstr "Det är bortom min färmåga att göra det. "
-
-#: engines/glk/scott/scott.cpp:1132
-msgid "O.K. "
-msgstr "O.K. "
-
-#: engines/glk/scott/scott.cpp:1157
-msgid "Nothing dropped.\n"
-msgstr ""
-
-#: engines/glk/scott/scott.cpp:1167
-msgid "It's beyond your power to do that.\n"
-msgstr "Det är bortom din förmåga att göra det.\n"
-
-#: engines/glk/scott/scott.cpp:1169
-msgid "It's beyond my power to do that.\n"
-msgstr "Det är bortom min förmåga att göra det.\n"
 
 #: engines/glk/zcode/zcode.cpp:144
 #, fuzzy
@@ -8979,6 +8764,128 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Light has run out! "
+#~ msgstr "Simulera höger musknapp"
+
+#, fuzzy
+#~ msgid "Your light has run out. "
+#~ msgstr "Simulera höger musknapp"
+
+#, fuzzy
+#~ msgid "Light runs out in "
+#~ msgstr "Simulera höger musknapp"
+
+#~ msgid " turns. "
+#~ msgstr " drag. "
+
+#~ msgid "North"
+#~ msgstr "Norr"
+
+#~ msgid "South"
+#~ msgstr "Syd"
+
+#~ msgid "East"
+#~ msgstr "Öst"
+
+#~ msgid "West"
+#~ msgstr "Väst"
+
+#~ msgid "You can't see. It is too dark!\n"
+#~ msgstr "Du kan inte se. Det är för mörkt!\n"
+
+#~ msgid "I can't see. It is too dark!\n"
+#~ msgstr "Jag kan inte se. Det är för mörkt!\n"
+
+#~ msgid "You are in a %s\n"
+#~ msgstr "Du är i en %s\n"
+
+#~ msgid "I'm in a %s\n"
+#~ msgstr "Jag är i en %s\n"
+
+#~ msgid "none"
+#~ msgstr "inga"
+
+#~ msgid ""
+#~ "\n"
+#~ "You can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "Du kan också se: "
+
+#~ msgid ""
+#~ "\n"
+#~ "I can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "Jag kan också se: "
+
+#~ msgid "You use word(s) I don't know! "
+#~ msgstr "Du använder ord jag inte kan! "
+
+#~ msgid "You are dead.\n"
+#~ msgstr "Ladda\n"
+
+#~ msgid "I am dead.\n"
+#~ msgstr "Jag är död.\n"
+
+#~ msgid "The game is now over.\n"
+#~ msgstr "Spelet är nu slut.\n"
+
+#, fuzzy
+#~ msgid "You have stored "
+#~ msgstr "Ladda"
+
+#, fuzzy
+#~ msgid "I've stored "
+#~ msgstr "Ladda"
+
+#~ msgid "Well done.\n"
+#~ msgstr "Bra jobbat.\n"
+
+#~ msgid "Nothing"
+#~ msgstr "Ingenting"
+
+#~ msgid "Give me a direction too."
+#~ msgstr "Ge mig en riktning också."
+
+#~ msgid "You fell down and broke your neck. "
+#~ msgstr "Du föll ned och bröt nacken. "
+
+#~ msgid "I fell down and broke my neck. "
+#~ msgstr "Jag föll ner och bröt min nacke. "
+
+#~ msgid "You can't go in that direction. "
+#~ msgstr "Du kan inte gå åt det hållet. "
+
+#~ msgid "I can't go in that direction. "
+#~ msgstr "Jag kan inte gå åt det hållet. "
+
+#~ msgid "It is dark.\n"
+#~ msgstr "Det är mörkt.\n"
+
+#~ msgid ": O.K.\n"
+#~ msgstr ": O.K.\n"
+
+#~ msgid "Nothing taken."
+#~ msgstr "Inget taget."
+
+#, fuzzy
+#~ msgid "What ? "
+#~ msgstr "Vad är"
+
+#~ msgid "It's beyond my power to do that. "
+#~ msgstr "Det är bortom min färmåga att göra det. "
+
+#~ msgid "O.K. "
+#~ msgstr "O.K. "
+
+#~ msgid "It's beyond your power to do that.\n"
+#~ msgstr "Det är bortom din förmåga att göra det.\n"
+
+#~ msgid "It's beyond my power to do that.\n"
+#~ msgstr "Det är bortom min förmåga att göra det.\n"
 
 #~ msgid "Ok"
 #~ msgstr "OK"

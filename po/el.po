@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-12 07:00+0000\n"
+"POT-Creation-Date: 2022-04-13 03:35+0000\n"
 "PO-Revision-Date: 2022-04-06 17:17+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -661,10 +661,10 @@ msgid "Interact"
 msgstr "Αλληλεπίδραση"
 
 #: gui/gui-manager.cpp:227 engines/metaengine.cpp:109
-#: engines/dragons/metaengine.cpp:160 engines/glk/scott/scott.cpp:411
-#: engines/griffon/metaengine.cpp:95 engines/grim/grim.cpp:455
-#: engines/grim/grim.cpp:536 engines/twine/metaengine.cpp:329
-#: engines/twine/metaengine.cpp:396 engines/wintermute/keymapper_tables.h:1262
+#: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:95
+#: engines/grim/grim.cpp:455 engines/grim/grim.cpp:536
+#: engines/twine/metaengine.cpp:329 engines/twine/metaengine.cpp:396
+#: engines/wintermute/keymapper_tables.h:1262
 #: engines/wintermute/keymapper_tables.h:1372
 #: engines/wintermute/keymapper_tables.h:1843
 #: engines/wintermute/keymapper_tables.h:2077
@@ -672,10 +672,10 @@ msgid "Up"
 msgstr "Πάνω"
 
 #: gui/gui-manager.cpp:232 engines/metaengine.cpp:114
-#: engines/dragons/metaengine.cpp:166 engines/glk/scott/scott.cpp:411
-#: engines/griffon/metaengine.cpp:101 engines/grim/grim.cpp:460
-#: engines/grim/grim.cpp:541 engines/twine/metaengine.cpp:336
-#: engines/twine/metaengine.cpp:404 engines/wintermute/keymapper_tables.h:1268
+#: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:101
+#: engines/grim/grim.cpp:460 engines/grim/grim.cpp:541
+#: engines/twine/metaengine.cpp:336 engines/twine/metaengine.cpp:404
+#: engines/wintermute/keymapper_tables.h:1268
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1849
 #: engines/wintermute/keymapper_tables.h:2083
@@ -4903,220 +4903,9 @@ msgstr "Αυτή η έκδοση αρχείου Glulx είναι πολύ νέα
 msgid "Could not start Quest game"
 msgstr "Αδυναμία εκκίνησης παιχνιδιού Quest"
 
-#: engines/glk/scott/scott.cpp:99
-msgid "I don't understand your command. "
-msgstr "Δεν καταλαβαίνω την εντολή σου. "
-
-#: engines/glk/scott/scott.cpp:102
-msgid "I can't do that yet. "
-msgstr "Δεν μπορώ να το κάνω αυτό ακόμα. "
-
-#: engines/glk/scott/scott.cpp:118
-msgid "Light has run out! "
-msgstr "Το φως έχει σβήσει! "
-
-#: engines/glk/scott/scott.cpp:120
-msgid "Your light has run out. "
-msgstr "Το φως σου έχει σβήσει. "
-
-#: engines/glk/scott/scott.cpp:129
-msgid "Light runs out in "
-msgstr "Το φως θα σβήσει σε "
-
-#: engines/glk/scott/scott.cpp:131
-msgid " turns. "
-msgstr " γύρους. "
-
-#: engines/glk/scott/scott.cpp:134
-msgid "Your light is growing dim. "
-msgstr "Το φως σου γίνεται αδύναμο. "
-
-#: engines/glk/scott/scott.cpp:411
-msgid "North"
-msgstr "Βόρεια"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "South"
-msgstr "Νότια"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "East"
-msgstr "Ανατολικά"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "West"
-msgstr "Δυτικά"
-
-#: engines/glk/scott/scott.cpp:423
-msgid "You can't see. It is too dark!\n"
-msgstr "Δεν μπορείς να δεις. Είναι πολύ σκοτεινά!\n"
-
-#: engines/glk/scott/scott.cpp:425
-msgid "I can't see. It is too dark!\n"
-msgstr "Δεν μπορώ να δω. Είναι πολύ σκοτεινά!\n"
-
-#: engines/glk/scott/scott.cpp:435
-#, c-format
-msgid "You are in a %s\n"
-msgstr "Βρίσκεσαι σε ένα %s\n"
-
-#: engines/glk/scott/scott.cpp:437
-#, c-format
-msgid "I'm in a %s\n"
-msgstr "Βρίσκομαι σε ένα %s\n"
-
-#: engines/glk/scott/scott.cpp:442
-msgid ""
-"\n"
-"Obvious exits: "
-msgstr ""
-"\n"
-"Προφανείς έξοδοι: "
-
-#: engines/glk/scott/scott.cpp:455
-msgid "none"
-msgstr "καμία"
-
-#: engines/glk/scott/scott.cpp:464
-msgid ""
-"\n"
-"You can also see: "
-msgstr ""
-"\n"
-"Μπορείς επίσης να δεις: "
-
-#: engines/glk/scott/scott.cpp:467
-msgid ""
-"\n"
-"I can also see: "
-msgstr ""
-"\n"
-"Μπορώ επίσης να δω: "
-
-#: engines/glk/scott/scott.cpp:550
+#: engines/glk/scott/scott.cpp:662
 msgid "Saved.\n"
 msgstr "Αποθηκεύτηκε.\n"
-
-#: engines/glk/scott/scott.cpp:643
-msgid "You use word(s) I don't know! "
-msgstr "Χρησιμοποιείς λέξεις που δεν γνωρίζω! "
-
-#: engines/glk/scott/scott.cpp:773 engines/glk/scott/scott.cpp:1096
-#: engines/glk/scott/scott.cpp:1118
-msgid "You are carrying too much. "
-msgstr "Κουβαλάς πάρα πολλά πράγματα. "
-
-#: engines/glk/scott/scott.cpp:775
-msgid "I've too much to carry! "
-msgstr "Κουβαλάω πάρα πολλά πράγματα! "
-
-#: engines/glk/scott/scott.cpp:806
-msgid "You are dead.\n"
-msgstr "Είσαι νεκρός.\n"
-
-#: engines/glk/scott/scott.cpp:808
-msgid "I am dead.\n"
-msgstr "Είμαι νεκρός.\n"
-
-#: engines/glk/scott/scott.cpp:820
-msgid "The game is now over.\n"
-msgstr "Το παιχνίδι έχει τελειώσει τώρα.\n"
-
-#: engines/glk/scott/scott.cpp:835
-msgid "You have stored "
-msgstr "Έχεις συγκεντρώσει "
-
-#: engines/glk/scott/scott.cpp:837
-msgid "I've stored "
-msgstr "Έχω συγκεντρώσει "
-
-#: engines/glk/scott/scott.cpp:839
-msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr " θησαυρούς.  Σε κλίμακα από το 0 έως το 100, το σκόρ είναι "
-
-#: engines/glk/scott/scott.cpp:843
-msgid "Well done.\n"
-msgstr "Μπράβο.\n"
-
-#: engines/glk/scott/scott.cpp:852
-msgid "You are carrying:\n"
-msgstr "Κουβαλάς:\n"
-
-#: engines/glk/scott/scott.cpp:854
-msgid "I'm carrying:\n"
-msgstr "Κουβαλάω:\n"
-
-#: engines/glk/scott/scott.cpp:869
-msgid "Nothing"
-msgstr "Τίποτα"
-
-#: engines/glk/scott/scott.cpp:998
-msgid "Give me a direction too."
-msgstr "Δώσε μου και μια κατεύθυνση."
-
-#: engines/glk/scott/scott.cpp:1007
-msgid "Dangerous to move in the dark! "
-msgstr "Επικίνδυνο να μετακινείσαι στο σκοτάδι! "
-
-#: engines/glk/scott/scott.cpp:1015
-msgid "You fell down and broke your neck. "
-msgstr "Έπεσες κάτω και έσπασες το σβέρκο σου. "
-
-#: engines/glk/scott/scott.cpp:1017
-msgid "I fell down and broke my neck. "
-msgstr "Έπεσα και έσπασα το σβέρκο μου. "
-
-#: engines/glk/scott/scott.cpp:1022
-msgid "You can't go in that direction. "
-msgstr "Δεν μπορείς να πας προς εκείνη την κατεύθυνση. "
-
-#: engines/glk/scott/scott.cpp:1024
-msgid "I can't go in that direction. "
-msgstr "Δεν μπορώ να πάω προς εκείνη την κατεύθυνση. "
-
-#: engines/glk/scott/scott.cpp:1082
-msgid "It is dark.\n"
-msgstr "Είναι σκοτεινά.\n"
-
-#: engines/glk/scott/scott.cpp:1098 engines/glk/scott/scott.cpp:1120
-msgid "I've too much to carry. "
-msgstr "Κουβαλάω πάρα πολλά πράγματα. "
-
-#: engines/glk/scott/scott.cpp:1103 engines/glk/scott/scott.cpp:1151
-msgid ": O.K.\n"
-msgstr ": Εντάξει\n"
-
-#: engines/glk/scott/scott.cpp:1109
-msgid "Nothing taken."
-msgstr "Δεν λήφθηκε τίποτα."
-
-#: engines/glk/scott/scott.cpp:1113 engines/glk/scott/scott.cpp:1161
-msgid "What ? "
-msgstr "Ορίστε ; "
-
-#: engines/glk/scott/scott.cpp:1126
-msgid "It is beyond your power to do that. "
-msgstr "Είναι πέρα από τη δύναμή σου να το κάνεις αυτό. "
-
-#: engines/glk/scott/scott.cpp:1128
-msgid "It's beyond my power to do that. "
-msgstr "Είναι πέρα από τη δύναμή μου να το κάνω αυτό. "
-
-#: engines/glk/scott/scott.cpp:1132
-msgid "O.K. "
-msgstr "Εντάξει "
-
-#: engines/glk/scott/scott.cpp:1157
-msgid "Nothing dropped.\n"
-msgstr "Δεν ρίχτηκε τίποτα.\n"
-
-#: engines/glk/scott/scott.cpp:1167
-msgid "It's beyond your power to do that.\n"
-msgstr "Είναι πέρα από τη δύναμή σου να το κάνεις αυτό.\n"
-
-#: engines/glk/scott/scott.cpp:1169
-msgid "It's beyond my power to do that.\n"
-msgstr "Είναι πέρα από τη δύναμή μου να το κάνω αυτό.\n"
 
 #: engines/glk/zcode/zcode.cpp:144
 msgid "Error writing save file\n"
@@ -9074,6 +8863,165 @@ msgstr ""
 "Liberation Fonts ή το πακέτο GNU FreeFont. Θα χρειαστείτε όλα τα fonts από "
 "το πακέτο με fonts που θα επιλέξετε, δηλαδή, LiberationMono, LiberationSans "
 "και LiberationSerif, ή FreeMono, FreeSans και FreeSerif αντίστοιχα."
+
+#~ msgid "I don't understand your command. "
+#~ msgstr "Δεν καταλαβαίνω την εντολή σου. "
+
+#~ msgid "I can't do that yet. "
+#~ msgstr "Δεν μπορώ να το κάνω αυτό ακόμα. "
+
+#~ msgid "Light has run out! "
+#~ msgstr "Το φως έχει σβήσει! "
+
+#~ msgid "Your light has run out. "
+#~ msgstr "Το φως σου έχει σβήσει. "
+
+#~ msgid "Light runs out in "
+#~ msgstr "Το φως θα σβήσει σε "
+
+#~ msgid " turns. "
+#~ msgstr " γύρους. "
+
+#~ msgid "Your light is growing dim. "
+#~ msgstr "Το φως σου γίνεται αδύναμο. "
+
+#~ msgid "North"
+#~ msgstr "Βόρεια"
+
+#~ msgid "South"
+#~ msgstr "Νότια"
+
+#~ msgid "East"
+#~ msgstr "Ανατολικά"
+
+#~ msgid "West"
+#~ msgstr "Δυτικά"
+
+#~ msgid "You can't see. It is too dark!\n"
+#~ msgstr "Δεν μπορείς να δεις. Είναι πολύ σκοτεινά!\n"
+
+#~ msgid "I can't see. It is too dark!\n"
+#~ msgstr "Δεν μπορώ να δω. Είναι πολύ σκοτεινά!\n"
+
+#~ msgid "You are in a %s\n"
+#~ msgstr "Βρίσκεσαι σε ένα %s\n"
+
+#~ msgid "I'm in a %s\n"
+#~ msgstr "Βρίσκομαι σε ένα %s\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "Obvious exits: "
+#~ msgstr ""
+#~ "\n"
+#~ "Προφανείς έξοδοι: "
+
+#~ msgid "none"
+#~ msgstr "καμία"
+
+#~ msgid ""
+#~ "\n"
+#~ "You can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "Μπορείς επίσης να δεις: "
+
+#~ msgid ""
+#~ "\n"
+#~ "I can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "Μπορώ επίσης να δω: "
+
+#~ msgid "You use word(s) I don't know! "
+#~ msgstr "Χρησιμοποιείς λέξεις που δεν γνωρίζω! "
+
+#~ msgid "You are carrying too much. "
+#~ msgstr "Κουβαλάς πάρα πολλά πράγματα. "
+
+#~ msgid "I've too much to carry! "
+#~ msgstr "Κουβαλάω πάρα πολλά πράγματα! "
+
+#~ msgid "You are dead.\n"
+#~ msgstr "Είσαι νεκρός.\n"
+
+#~ msgid "I am dead.\n"
+#~ msgstr "Είμαι νεκρός.\n"
+
+#~ msgid "The game is now over.\n"
+#~ msgstr "Το παιχνίδι έχει τελειώσει τώρα.\n"
+
+#~ msgid "You have stored "
+#~ msgstr "Έχεις συγκεντρώσει "
+
+#~ msgid "I've stored "
+#~ msgstr "Έχω συγκεντρώσει "
+
+#~ msgid " treasures.  On a scale of 0 to 100, that rates "
+#~ msgstr " θησαυρούς.  Σε κλίμακα από το 0 έως το 100, το σκόρ είναι "
+
+#~ msgid "Well done.\n"
+#~ msgstr "Μπράβο.\n"
+
+#~ msgid "You are carrying:\n"
+#~ msgstr "Κουβαλάς:\n"
+
+#~ msgid "I'm carrying:\n"
+#~ msgstr "Κουβαλάω:\n"
+
+#~ msgid "Nothing"
+#~ msgstr "Τίποτα"
+
+#~ msgid "Give me a direction too."
+#~ msgstr "Δώσε μου και μια κατεύθυνση."
+
+#~ msgid "Dangerous to move in the dark! "
+#~ msgstr "Επικίνδυνο να μετακινείσαι στο σκοτάδι! "
+
+#~ msgid "You fell down and broke your neck. "
+#~ msgstr "Έπεσες κάτω και έσπασες το σβέρκο σου. "
+
+#~ msgid "I fell down and broke my neck. "
+#~ msgstr "Έπεσα και έσπασα το σβέρκο μου. "
+
+#~ msgid "You can't go in that direction. "
+#~ msgstr "Δεν μπορείς να πας προς εκείνη την κατεύθυνση. "
+
+#~ msgid "I can't go in that direction. "
+#~ msgstr "Δεν μπορώ να πάω προς εκείνη την κατεύθυνση. "
+
+#~ msgid "It is dark.\n"
+#~ msgstr "Είναι σκοτεινά.\n"
+
+#~ msgid "I've too much to carry. "
+#~ msgstr "Κουβαλάω πάρα πολλά πράγματα. "
+
+#~ msgid ": O.K.\n"
+#~ msgstr ": Εντάξει\n"
+
+#~ msgid "Nothing taken."
+#~ msgstr "Δεν λήφθηκε τίποτα."
+
+#~ msgid "What ? "
+#~ msgstr "Ορίστε ; "
+
+#~ msgid "It is beyond your power to do that. "
+#~ msgstr "Είναι πέρα από τη δύναμή σου να το κάνεις αυτό. "
+
+#~ msgid "It's beyond my power to do that. "
+#~ msgstr "Είναι πέρα από τη δύναμή μου να το κάνω αυτό. "
+
+#~ msgid "O.K. "
+#~ msgstr "Εντάξει "
+
+#~ msgid "Nothing dropped.\n"
+#~ msgstr "Δεν ρίχτηκε τίποτα.\n"
+
+#~ msgid "It's beyond your power to do that.\n"
+#~ msgstr "Είναι πέρα από τη δύναμή σου να το κάνεις αυτό.\n"
+
+#~ msgid "It's beyond my power to do that.\n"
+#~ msgstr "Είναι πέρα από τη δύναμή μου να το κάνω αυτό.\n"
 
 #~ msgid "Use correct font spacing"
 #~ msgstr "Χρήση σωστού διαστήματος μεταξύ χαρακτήρων"

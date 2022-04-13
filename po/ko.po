@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-12 07:00+0000\n"
+"POT-Creation-Date: 2022-04-13 03:35+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -648,10 +648,10 @@ msgid "Interact"
 msgstr "상호작용"
 
 #: gui/gui-manager.cpp:227 engines/metaengine.cpp:109
-#: engines/dragons/metaengine.cpp:160 engines/glk/scott/scott.cpp:411
-#: engines/griffon/metaengine.cpp:95 engines/grim/grim.cpp:455
-#: engines/grim/grim.cpp:536 engines/twine/metaengine.cpp:329
-#: engines/twine/metaengine.cpp:396 engines/wintermute/keymapper_tables.h:1262
+#: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:95
+#: engines/grim/grim.cpp:455 engines/grim/grim.cpp:536
+#: engines/twine/metaengine.cpp:329 engines/twine/metaengine.cpp:396
+#: engines/wintermute/keymapper_tables.h:1262
 #: engines/wintermute/keymapper_tables.h:1372
 #: engines/wintermute/keymapper_tables.h:1843
 #: engines/wintermute/keymapper_tables.h:2077
@@ -659,10 +659,10 @@ msgid "Up"
 msgstr "위"
 
 #: gui/gui-manager.cpp:232 engines/metaengine.cpp:114
-#: engines/dragons/metaengine.cpp:166 engines/glk/scott/scott.cpp:411
-#: engines/griffon/metaengine.cpp:101 engines/grim/grim.cpp:460
-#: engines/grim/grim.cpp:541 engines/twine/metaengine.cpp:336
-#: engines/twine/metaengine.cpp:404 engines/wintermute/keymapper_tables.h:1268
+#: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:101
+#: engines/grim/grim.cpp:460 engines/grim/grim.cpp:541
+#: engines/twine/metaengine.cpp:336 engines/twine/metaengine.cpp:404
+#: engines/wintermute/keymapper_tables.h:1268
 #: engines/wintermute/keymapper_tables.h:1379
 #: engines/wintermute/keymapper_tables.h:1849
 #: engines/wintermute/keymapper_tables.h:2083
@@ -4771,220 +4771,9 @@ msgstr "Glulx 파일이 신버전이어서 실행할 수 없습니다."
 msgid "Could not start Quest game"
 msgstr "Quest 게임을 시작하지 못함"
 
-#: engines/glk/scott/scott.cpp:99
-msgid "I don't understand your command. "
-msgstr "명령을 이해하지 못했습니다. "
-
-#: engines/glk/scott/scott.cpp:102
-msgid "I can't do that yet. "
-msgstr "아직은 할 수 없습니다. "
-
-#: engines/glk/scott/scott.cpp:118
-msgid "Light has run out! "
-msgstr "빛이 사라지고 있습니다! "
-
-#: engines/glk/scott/scott.cpp:120
-msgid "Your light has run out. "
-msgstr "당신의 빛이 사라져갑니다. "
-
-#: engines/glk/scott/scott.cpp:129
-msgid "Light runs out in "
-msgstr "빛이 다 끝나갑니다 "
-
-#: engines/glk/scott/scott.cpp:131
-msgid " turns. "
-msgstr " 켜기 "
-
-#: engines/glk/scott/scott.cpp:134
-msgid "Your light is growing dim. "
-msgstr "당신의 빛이 어두워지고 있습니다. "
-
-#: engines/glk/scott/scott.cpp:411
-msgid "North"
-msgstr "북쪽"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "South"
-msgstr "남쪽"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "East"
-msgstr "동쪽"
-
-#: engines/glk/scott/scott.cpp:411
-msgid "West"
-msgstr "서쪽"
-
-#: engines/glk/scott/scott.cpp:423
-msgid "You can't see. It is too dark!\n"
-msgstr "당신은 볼 수 없습니다. 너무 어두워요!\n"
-
-#: engines/glk/scott/scott.cpp:425
-msgid "I can't see. It is too dark!\n"
-msgstr "보이지 않아요. 너무 어두워요!\n"
-
-#: engines/glk/scott/scott.cpp:435
-#, c-format
-msgid "You are in a %s\n"
-msgstr "당신은 %s 에 있습니다\n"
-
-#: engines/glk/scott/scott.cpp:437
-#, c-format
-msgid "I'm in a %s\n"
-msgstr "나는 %s에 있습니다\n"
-
-#: engines/glk/scott/scott.cpp:442
-msgid ""
-"\n"
-"Obvious exits: "
-msgstr ""
-"\n"
-"확실한 탈출구: "
-
-#: engines/glk/scott/scott.cpp:455
-msgid "none"
-msgstr "없음"
-
-#: engines/glk/scott/scott.cpp:464
-msgid ""
-"\n"
-"You can also see: "
-msgstr ""
-"\n"
-"또한 이것도 보입니다: "
-
-#: engines/glk/scott/scott.cpp:467
-msgid ""
-"\n"
-"I can also see: "
-msgstr ""
-"\n"
-"이것도 보입니다: "
-
-#: engines/glk/scott/scott.cpp:550
+#: engines/glk/scott/scott.cpp:662
 msgid "Saved.\n"
 msgstr "저장됨.\n"
-
-#: engines/glk/scott/scott.cpp:643
-msgid "You use word(s) I don't know! "
-msgstr "당신은 제가 모르는 말을 사용하는 군요! "
-
-#: engines/glk/scott/scott.cpp:773 engines/glk/scott/scott.cpp:1096
-#: engines/glk/scott/scott.cpp:1118
-msgid "You are carrying too much. "
-msgstr "너무 많이 들고 있습니다. "
-
-#: engines/glk/scott/scott.cpp:775
-msgid "I've too much to carry! "
-msgstr "너무 많이 들고 있어요! "
-
-#: engines/glk/scott/scott.cpp:806
-msgid "You are dead.\n"
-msgstr "당신은 죽었습니다.\n"
-
-#: engines/glk/scott/scott.cpp:808
-msgid "I am dead.\n"
-msgstr "저는 죽었습니다.\n"
-
-#: engines/glk/scott/scott.cpp:820
-msgid "The game is now over.\n"
-msgstr "게임 오버 되었습니다.\n"
-
-#: engines/glk/scott/scott.cpp:835
-msgid "You have stored "
-msgstr "당신은 저장 되었습니다 "
-
-#: engines/glk/scott/scott.cpp:837
-msgid "I've stored "
-msgstr "저는 저장되었습니다 "
-
-#: engines/glk/scott/scott.cpp:839
-msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr " 보물. 0부터 100이라 치면 저것은 "
-
-#: engines/glk/scott/scott.cpp:843
-msgid "Well done.\n"
-msgstr "잘했습니다.\n"
-
-#: engines/glk/scott/scott.cpp:852
-msgid "You are carrying:\n"
-msgstr "당신은 다음을 들고있습니다:\n"
-
-#: engines/glk/scott/scott.cpp:854
-msgid "I'm carrying:\n"
-msgstr "저는 이걸 들고있습니다:\n"
-
-#: engines/glk/scott/scott.cpp:869
-msgid "Nothing"
-msgstr "없음"
-
-#: engines/glk/scott/scott.cpp:998
-msgid "Give me a direction too."
-msgstr "방향도 지시해 주세요."
-
-#: engines/glk/scott/scott.cpp:1007
-msgid "Dangerous to move in the dark! "
-msgstr "어두워서 움직이기 위험합니다! "
-
-#: engines/glk/scott/scott.cpp:1015
-msgid "You fell down and broke your neck. "
-msgstr "당신은 추락해서 목이 부러졌습니다. "
-
-#: engines/glk/scott/scott.cpp:1017
-msgid "I fell down and broke my neck. "
-msgstr "저는 추락해서 목이 부러졌습니다. "
-
-#: engines/glk/scott/scott.cpp:1022
-msgid "You can't go in that direction. "
-msgstr "그쪽으로는 갈 수 없습니다. "
-
-#: engines/glk/scott/scott.cpp:1024
-msgid "I can't go in that direction. "
-msgstr "그쪽으로는 갈 수 없습니다. "
-
-#: engines/glk/scott/scott.cpp:1082
-msgid "It is dark.\n"
-msgstr "어둡습니다.\n"
-
-#: engines/glk/scott/scott.cpp:1098 engines/glk/scott/scott.cpp:1120
-msgid "I've too much to carry. "
-msgstr "너무 많아서 들수 없습니다. "
-
-#: engines/glk/scott/scott.cpp:1103 engines/glk/scott/scott.cpp:1151
-msgid ": O.K.\n"
-msgstr ": 넵\n"
-
-#: engines/glk/scott/scott.cpp:1109
-msgid "Nothing taken."
-msgstr "갖지 않았습니다."
-
-#: engines/glk/scott/scott.cpp:1113 engines/glk/scott/scott.cpp:1161
-msgid "What ? "
-msgstr "네 ? "
-
-#: engines/glk/scott/scott.cpp:1126
-msgid "It is beyond your power to do that. "
-msgstr "당신이 해결할 수 없는 일입니다. "
-
-#: engines/glk/scott/scott.cpp:1128
-msgid "It's beyond my power to do that. "
-msgstr "제가 해결할 수 없는 일입니다. "
-
-#: engines/glk/scott/scott.cpp:1132
-msgid "O.K. "
-msgstr "네 "
-
-#: engines/glk/scott/scott.cpp:1157
-msgid "Nothing dropped.\n"
-msgstr "아무것도 나오지 않았습니다.\n"
-
-#: engines/glk/scott/scott.cpp:1167
-msgid "It's beyond your power to do that.\n"
-msgstr "그건 당신이 할 수 없는 일입니다.\n"
-
-#: engines/glk/scott/scott.cpp:1169
-msgid "It's beyond my power to do that.\n"
-msgstr "이건 제가 할 수 없는 일입니다.\n"
 
 #: engines/glk/zcode/zcode.cpp:144
 msgid "Error writing save file\n"
@@ -8779,6 +8568,165 @@ msgstr ""
 "다. 선택한 글꼴 패키지의 모든 글꼴이 필요할 수 있습니다. 예: LiberationMono, "
 "LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 FreeSerif가 각"
 "각 필요함."
+
+#~ msgid "I don't understand your command. "
+#~ msgstr "명령을 이해하지 못했습니다. "
+
+#~ msgid "I can't do that yet. "
+#~ msgstr "아직은 할 수 없습니다. "
+
+#~ msgid "Light has run out! "
+#~ msgstr "빛이 사라지고 있습니다! "
+
+#~ msgid "Your light has run out. "
+#~ msgstr "당신의 빛이 사라져갑니다. "
+
+#~ msgid "Light runs out in "
+#~ msgstr "빛이 다 끝나갑니다 "
+
+#~ msgid " turns. "
+#~ msgstr " 켜기 "
+
+#~ msgid "Your light is growing dim. "
+#~ msgstr "당신의 빛이 어두워지고 있습니다. "
+
+#~ msgid "North"
+#~ msgstr "북쪽"
+
+#~ msgid "South"
+#~ msgstr "남쪽"
+
+#~ msgid "East"
+#~ msgstr "동쪽"
+
+#~ msgid "West"
+#~ msgstr "서쪽"
+
+#~ msgid "You can't see. It is too dark!\n"
+#~ msgstr "당신은 볼 수 없습니다. 너무 어두워요!\n"
+
+#~ msgid "I can't see. It is too dark!\n"
+#~ msgstr "보이지 않아요. 너무 어두워요!\n"
+
+#~ msgid "You are in a %s\n"
+#~ msgstr "당신은 %s 에 있습니다\n"
+
+#~ msgid "I'm in a %s\n"
+#~ msgstr "나는 %s에 있습니다\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "Obvious exits: "
+#~ msgstr ""
+#~ "\n"
+#~ "확실한 탈출구: "
+
+#~ msgid "none"
+#~ msgstr "없음"
+
+#~ msgid ""
+#~ "\n"
+#~ "You can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "또한 이것도 보입니다: "
+
+#~ msgid ""
+#~ "\n"
+#~ "I can also see: "
+#~ msgstr ""
+#~ "\n"
+#~ "이것도 보입니다: "
+
+#~ msgid "You use word(s) I don't know! "
+#~ msgstr "당신은 제가 모르는 말을 사용하는 군요! "
+
+#~ msgid "You are carrying too much. "
+#~ msgstr "너무 많이 들고 있습니다. "
+
+#~ msgid "I've too much to carry! "
+#~ msgstr "너무 많이 들고 있어요! "
+
+#~ msgid "You are dead.\n"
+#~ msgstr "당신은 죽었습니다.\n"
+
+#~ msgid "I am dead.\n"
+#~ msgstr "저는 죽었습니다.\n"
+
+#~ msgid "The game is now over.\n"
+#~ msgstr "게임 오버 되었습니다.\n"
+
+#~ msgid "You have stored "
+#~ msgstr "당신은 저장 되었습니다 "
+
+#~ msgid "I've stored "
+#~ msgstr "저는 저장되었습니다 "
+
+#~ msgid " treasures.  On a scale of 0 to 100, that rates "
+#~ msgstr " 보물. 0부터 100이라 치면 저것은 "
+
+#~ msgid "Well done.\n"
+#~ msgstr "잘했습니다.\n"
+
+#~ msgid "You are carrying:\n"
+#~ msgstr "당신은 다음을 들고있습니다:\n"
+
+#~ msgid "I'm carrying:\n"
+#~ msgstr "저는 이걸 들고있습니다:\n"
+
+#~ msgid "Nothing"
+#~ msgstr "없음"
+
+#~ msgid "Give me a direction too."
+#~ msgstr "방향도 지시해 주세요."
+
+#~ msgid "Dangerous to move in the dark! "
+#~ msgstr "어두워서 움직이기 위험합니다! "
+
+#~ msgid "You fell down and broke your neck. "
+#~ msgstr "당신은 추락해서 목이 부러졌습니다. "
+
+#~ msgid "I fell down and broke my neck. "
+#~ msgstr "저는 추락해서 목이 부러졌습니다. "
+
+#~ msgid "You can't go in that direction. "
+#~ msgstr "그쪽으로는 갈 수 없습니다. "
+
+#~ msgid "I can't go in that direction. "
+#~ msgstr "그쪽으로는 갈 수 없습니다. "
+
+#~ msgid "It is dark.\n"
+#~ msgstr "어둡습니다.\n"
+
+#~ msgid "I've too much to carry. "
+#~ msgstr "너무 많아서 들수 없습니다. "
+
+#~ msgid ": O.K.\n"
+#~ msgstr ": 넵\n"
+
+#~ msgid "Nothing taken."
+#~ msgstr "갖지 않았습니다."
+
+#~ msgid "What ? "
+#~ msgstr "네 ? "
+
+#~ msgid "It is beyond your power to do that. "
+#~ msgstr "당신이 해결할 수 없는 일입니다. "
+
+#~ msgid "It's beyond my power to do that. "
+#~ msgstr "제가 해결할 수 없는 일입니다. "
+
+#~ msgid "O.K. "
+#~ msgstr "네 "
+
+#~ msgid "Nothing dropped.\n"
+#~ msgstr "아무것도 나오지 않았습니다.\n"
+
+#~ msgid "It's beyond your power to do that.\n"
+#~ msgstr "그건 당신이 할 수 없는 일입니다.\n"
+
+#~ msgid "It's beyond my power to do that.\n"
+#~ msgstr "이건 제가 할 수 없는 일입니다.\n"
 
 #~ msgid "Use correct font spacing"
 #~ msgstr "올바른 글꼴 간격 사용"
