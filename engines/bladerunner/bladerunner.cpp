@@ -1208,6 +1208,21 @@ void BladeRunnerEngine::gameTick() {
 		}
 	}
 
+	if (_debugger->_dbgPendingOuttake.pending) {
+		// NOTE a side-effect of forcibly playing back an outtake video with the debugger
+		//      is that the ambient sounds of the scene may be removed
+		//      and won't be restored after the scene has completed.
+		//      Eg. this happens for outtake 29 (FLYTRU_E), which is the special muted outtake
+		//      for which, in Restored Content mode, we add custom ambient sounds.
+		//      Fixing this (storing ambient sounds and restoring them after the outtake has finished)
+		//      is too cumbersome to be worth it.
+		int ambientSoundsPreOuttakeVol = _mixer->getVolumeForSoundType(_mixer->kPlainSoundType);
+		_mixer->setVolumeForSoundType(_mixer->kPlainSoundType, 0);
+		outtakePlay(_debugger->_dbgPendingOuttake.outtakeId, _debugger->_dbgPendingOuttake.notLocalized, _debugger->_dbgPendingOuttake.container);
+		_mixer->setVolumeForSoundType(_mixer->kPlainSoundType, ambientSoundsPreOuttakeVol);
+		_debugger->resetPendingOuttake();
+	}
+
 	_mouse->tick(p.x, p.y);
 	_mouse->draw(_surfaceFront, p.x, p.y);
 

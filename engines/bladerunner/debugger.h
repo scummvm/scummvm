@@ -65,6 +65,13 @@ class Debugger : public GUI::Debugger{
 		DebuggerDrawnObjectType type;
 	};
 
+	struct DebuggerPendingOuttake {
+		bool pending;
+		int  outtakeId;
+		bool notLocalized;
+		int  container;
+	};
+
 public:
 	bool _isDebuggerOverlay;
 
@@ -90,6 +97,7 @@ public:
 	bool _useBetaCrosshairsCursor;
 	bool _useAdditiveDrawModeForMouseCursorMode0;
 	bool _useAdditiveDrawModeForMouseCursorMode1;
+	DebuggerPendingOuttake _dbgPendingOuttake;
 
 	Debugger(BladeRunnerEngine *vm);
 	~Debugger() override;
@@ -119,6 +127,7 @@ public:
 	bool cmdRegion(int argc, const char **argv);
 	bool cmdMouse(int argc, const char **argv);
 	bool cmdDifficulty(int argc, const char **argv);
+	bool cmdOuttake(int argc, const char** argv);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	bool cmdEffect(int argc, const char **argv);
@@ -139,6 +148,7 @@ public:
 	void drawScreenEffects();
 
 	bool dbgAttemptToLoadChapterSetScene(int chapterId, int setId, int sceneId);
+	void resetPendingOuttake();
 
 private:
 	Common::Array<DebuggerDrawnObject> _specificDrawnObjectsList;

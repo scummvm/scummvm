@@ -112,6 +112,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	_useBetaCrosshairsCursor = false;
 	_useAdditiveDrawModeForMouseCursorMode0 = false;
 	_useAdditiveDrawModeForMouseCursorMode1 = false;
+	resetPendingOuttake();
 
 	registerCmd("anim", WRAP_METHOD(Debugger, cmdAnimation));
 	registerCmd("health", WRAP_METHOD(Debugger, cmdHealth));
@@ -139,6 +140,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("region", WRAP_METHOD(Debugger, cmdRegion));
 	registerCmd("mouse", WRAP_METHOD(Debugger, cmdMouse));
 	registerCmd("difficulty", WRAP_METHOD(Debugger, cmdDifficulty));
+	registerCmd("outtake", WRAP_METHOD(Debugger, cmdOuttake));
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	registerCmd("effect", WRAP_METHOD(Debugger, cmdEffect));
@@ -638,7 +640,7 @@ bool Debugger::cmdMusic(int argc, const char** argv) {
 	Common::String trackArgStr = argv[1];
 	if (trackArgStr == "list") {
 		for (int i = 0; i < (int)_vm->_gameInfo->getMusicTrackCount(); ++i) {
-			debugPrintf("%2d %s\n", i, kMusicTracksArr[i]);
+			debugPrintf("%2d - %s\n", i, kMusicTracksArr[i]);
 		}
 		return true;
 	} else if (trackArgStr == "stop") {
@@ -2776,6 +2778,139 @@ void Debugger::updateTogglesForDbgDrawListInCurrentSetAndScene() {
 					 || _viewWaypointsCoverToggle || _specificWaypointCoverDrawn
 					 || _viewWalkboxes || _specificWalkboxesDrawn
 					 || !_specificDrawnObjectsList.empty();
+}
+
+// NOTE The Flythrough (FLYTRU_E) outtake has sound only in Restored Content mode.
+const struct OuttakesVQAsList {
+	int resourceId;
+	const char* name;
+	bool notLocalized;
+	int container;
+	const char* description;
+} outtakesList[] = {
+	{  0, "INTRO",   false,  1, "Act 1 Intro - Prologue" },
+	{  1, "MW_A",    false,  1, "Act 2 Intro" },
+	{  2, "MW_B01",  false,  2, "Act 3 Intro - Start" },
+	{  3, "MW_B02",  false,  2, "Act 3 Intro - Mid A" }, // Lucy is Replicant
+	{  4, "MW_B03",  false,  2, "Act 3 Intro - Mid B" }, // Dektora is Replicant
+	{  5, "MW_B04",  false,  2, "Act 3 Intro - Mid C" }, // Lucy and Dektora are Human
+	{  6, "MW_B05",  false,  2, "Act 3 Intro - End" },
+	{  7, "MW_C01",  false,  3, "Act 4 Intro - Start" },
+	{  8, "MW_C02",  false,  3, "Act 4 Intro - End A" }, // Clovis with INCEPT PHOTO - Twins are Humans
+	{  9, "MW_C03",  false,  3, "Act 4 Intro - End B" }, // Clovis without INCEPT PHOTO - Twins are Replicants
+	{ 10, "MW_D",    false,  3, "Act 5 Intro" },
+	{ 11, "INTRGT",  false,  1, "Interrogation scene" },
+	{ 12, "END01A",  false,  4, "Underground Ending - A" }, // with Lucy (Human)
+	{ 13, "END01B",  false,  4, "Underground Ending - B" }, // with Lucy (Replicant) and enough DNA data
+	{ 14, "END01C",  false,  4, "Underground Ending - C" }, // with Lucy (Replicant) but insufficient DNA data
+	{ 15, "END01D",  false,  4, "Underground Ending - D" }, // with Dektora (Human)
+	{ 16, "END01E",  false,  4, "Underground Ending - E" }, // with Dektora (Replicant) and enough DNA data
+	{ 17, "END01F",  false,  4, "Underground Ending - F" }, // with Dektora (Replicant) but insufficient DNA data
+	{ 18, "END02",   false,  4, "Underground Enging - Clovis" }, // Clovis dying alone in Moonbus
+	{ 19, "END03",   false,  4, "Underground Ending - McCoy" },  // McCoy alone
+	{ 20, "END04A",  false,  4, "Moonbus Ending - Start" },
+	{ 21, "END04B",  false,  4, "Moonbus Ending - Mid A" }, // With Lucy
+	{ 22, "END04C",  false,  4, "Moonbus Ending - Mid B" }, // With Dektora
+	{ 23, "END04D",  false,  4, "Moonbus Ending - End" },   // Moonbus take-off
+	{ 24, "END05",   false,  4, "End 5 - Gaff's Origami" },
+	{ 25, "END06",   false,  4, "Kipple Ending - 6" }, // With Steele
+	{ 26, "END07",   false,  4, "Kipple Ending - 7" }, // McCoy picks up dog origami
+	{ 27, "TB_FLY",  false,  2, "Flying to Tyrell Pyramid" },
+	{ 28, "WSTLGO_E", true, -1, "Westwood Studios Partnership Intro"}, // STARTUP.MIX
+	{ 29, "FLYTRU_E", true,  1, "Spinner Fly-Through"},
+	{ 30, "AWAY01_E", true,  2, "Spinner Flying Away 01"},
+	{ 31, "AWAY02_E", true,  1, "Spinner Flying Away 02"},
+	{ 32, "ASCENT_E", true, -1, "Spinner Ascending"},
+	{ 33, "DSCENT_E", true, -1, "Spinner Descending"},
+	{ 34, "INSD01_E", true,  1, "Spinner Flying (Inside Camera) 01"},
+	{ 35, "INSD02_E", true, -1, "Spinner Flying (Inside Camera) 02"},
+	{ 36, "TWRD01_E", true,  1, "Spinner Flying Towards 01"},
+	{ 37, "TWRD02_E", true,  1, "Spinner Flying Towards 02"},
+	{ 38, "TWRD03_E", true, -1, "Spinner Flying Towards 03"},
+	{ 39, "RACHEL_E", true,  2, "Rachael walks in"},
+	{ 40, "DEKTRA_E", true,  2, "Dektora's (Hecuba's) dance"},
+	{ 41, "BRLOGO_E", true, -1, "Blade Runner Logo"}, // STARTUP.MIX
+	{ -1, nullptr,    true, -1, nullptr}
+};
+
+bool Debugger::cmdOuttake(int argc, const char** argv) {
+	bool invalidSyntax = false;
+
+	if (argc != 2) {
+		invalidSyntax = true;
+	} else {
+		if (_vm->_kia->isOpen()
+		    || _vm->_esper->isOpen()
+		    || _vm->_spinner->isOpen()
+		    || _vm->_elevator->isOpen()
+		    || _vm->_vk->isOpen()
+		    || _vm->_scores->isOpen()
+		    ) {
+			debugPrintf("Sorry, playing custom outtakes in KIA, ESPER, Voigt-Kampff, Spinner GPS,\nScores or Elevator mode is not supported\n");
+			return true;
+		}
+
+		if (!_vm->canSaveGameStateCurrently()) {
+			debugPrintf("Sorry, playing custom outtakes while player control is disabled or an in-game script is running, is not supported\n");
+			return true;
+		}
+
+		Common::String outtakeArgStr = argv[1];
+		if (outtakeArgStr == "list") {
+			for (int i = 0; i < (int)_vm->_gameInfo->getOuttakeCount(); ++i) {
+				debugPrintf("%2d - %s\n", outtakesList[i].resourceId, outtakesList[i].description);
+			}
+			return true;
+		} else {
+			int argId = atoi(argv[1]);
+
+			if ((argId == 0 && !isAllZeroes(outtakeArgStr))
+			    || argId < 0
+			    || argId >= (int)_vm->_gameInfo->getOuttakeCount()) {
+				debugPrintf("Invalid outtake id specified.\nPlease choose an integer between 0 and %d.\n", (int)_vm->_gameInfo->getOuttakeCount() - 1);
+				return true;
+			} else {
+				_dbgPendingOuttake.container = outtakesList[argId].container;
+				if (argId == 35 || argId == 38) {
+					// These outtakes exist in containers: OUTTAKE1 and OUTTAKE2
+					if (_vm->_chapters->currentResourceId() != 1
+					    && _vm->_chapters->currentResourceId() != 2) {
+						_dbgPendingOuttake.container = (int)_vm->_rnd.getRandomNumberRng(1, 2);
+					}
+				} else if (argId == 32 || argId == 33) {
+					// These outtakes exist in containers: OUTTAKE1, OUTTAKE3, OUTTAKE4
+					if (_vm->_chapters->currentResourceId() != 1
+					    && _vm->_chapters->currentResourceId() != 3
+					    && _vm->_chapters->currentResourceId() != 4) {
+						_dbgPendingOuttake.container = (int)_vm->_rnd.getRandomNumberRng(2, 4);
+						if (_dbgPendingOuttake.container == 2)
+							_dbgPendingOuttake.container = 1;
+					}
+				}
+				// We need to close the debugger console first before playing back the outtake.
+				// The following prepares the outtake video for playback within BladeRunnerEngine::gameTick()
+				_dbgPendingOuttake.pending = true;
+				_dbgPendingOuttake.outtakeId = outtakesList[argId].resourceId;
+				_dbgPendingOuttake.notLocalized = outtakesList[argId].notLocalized;
+			}
+		}
+	}
+
+	if (invalidSyntax) {
+		debugPrintf("Play an outtake video.\n");
+		debugPrintf("Usage: %s [<outtakeId> | list]\n", argv[0]);
+		debugPrintf("outtakeId can be in [0, %d]\n", (int)_vm->_gameInfo->getOuttakeCount() - 1);
+		return true;
+	}
+	// close debugger (to play the outtake)
+	return false;
+}
+
+void Debugger::resetPendingOuttake() {
+	_dbgPendingOuttake.pending = false;
+	_dbgPendingOuttake.outtakeId = -1;
+	_dbgPendingOuttake.notLocalized = false;
+	_dbgPendingOuttake.container = -1;
 }
 
 } // End of namespace BladeRunner
