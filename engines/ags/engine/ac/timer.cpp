@@ -40,12 +40,15 @@ std::chrono::microseconds GetFrameDuration() {
 	return _G(tick_duration);
 }
 
-void setTimerFps(int new_fps) {
+int setTimerFps(int new_fps) {
+	int old_fps = _G(framerate);
 	_G(tick_duration) = std::chrono::microseconds(1000000LL / new_fps);
+	_G(framerate) = new_fps;
 	_G(framerate_maxed) = new_fps >= 1000;
 
 	_G(last_tick_time) = AGS_Clock::now();
 	_G(next_frame_timestamp) = AGS_Clock::now();
+	return old_fps;
 }
 
 bool isTimerFpsMaxed() {

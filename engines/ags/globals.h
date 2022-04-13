@@ -1333,6 +1333,7 @@ public:
 
 	std::chrono::microseconds _tick_duration = std::chrono::microseconds(1000000LL / 40);
 	bool _framerate_maxed = false;
+	int _framerate = 0;
 
 	uint32 _last_tick_time = 0; // AGS_Clock::now();
 	uint32 _next_frame_timestamp = 0; // AGS_Clock::now();

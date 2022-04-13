@@ -19,6 +19,18 @@
  *
  */
 
+//=============================================================================
+//
+// Video playback interface.
+//
+// TODO: good future changes:
+//  - do not render to the screen right inside the VideoPlayer class,
+//    instead write the frame into the bitmap or texture, and expose
+//    current frame in the interface to let the engine decide what to do
+//    with it.
+//
+//=============================================================================
+
 #ifndef AGS_ENGINE_MEDIA_VIDEO_VIDEO_H
 #define AGS_ENGINE_MEDIA_VIDEO_VIDEO_H
 

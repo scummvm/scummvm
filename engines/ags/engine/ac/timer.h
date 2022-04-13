@@ -39,7 +39,7 @@ using AGS_Clock = std::conditional <
 extern void WaitForNextFrame();
 
 // Sets real FPS to the given number of frames per second; pass 1000+ for maxed FPS mode
-extern void setTimerFps(int new_fps);
+extern int setTimerFps(int new_fps);
 // Tells whether maxed FPS mode is currently set
 extern bool isTimerFpsMaxed();
 // If more than N frames, just skip all, start a fresh.

@@ -45,6 +45,8 @@ void GameLoopUntilNoOverlay();
 void RunGameUntilAborted();
 // Update everything game related
 void UpdateGameOnce(bool checkControls = false, IDriverDependantBitmap *extraBitmap = nullptr, int extraX = 0, int extraY = 0);
+// Update minimal required game state: audio, loop counter, etc
+void UpdateGameAudioOnly();
 // Gets current logical game FPS, this is normally a fixed number set in script;
 // in case of "maxed fps" mode this function returns real measured FPS.
 float get_current_fps();
