@@ -641,7 +641,7 @@ void ConsoleDialog::historyScroll(int direction) {
 	if (_historySize == 0)
 		return;
 
-	if (_historyLine == 0 && direction > 0)
+	if (_historyLine == 0 && direction > 0 && !getUserInput().empty())
 		// Save current line in history
 		_history[_historyIndex] = getUserInput();
 
