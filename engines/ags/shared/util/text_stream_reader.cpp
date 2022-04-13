@@ -53,12 +53,7 @@ bool TextStreamReader::EOS() const {
 }
 
 char TextStreamReader::ReadChar() {
-	// Skip carriage-returns
-	char c;
-	do {
-		c = _stream->ReadByte();
-	} while (!_stream->EOS() && c == '\r');
-	return c;
+	return _stream->ReadInt8();
 }
 
 String TextStreamReader::ReadString(size_t length) {
