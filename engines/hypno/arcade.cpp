@@ -549,7 +549,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 		if (needsUpdate) {
 			if (shootingPrimary || shootingSecondary) {
-				shoot(mousePos, arc, *_background);
+				shoot(mousePos, arc);
 				drawShoot(mousePos);
 				shootingPrimary = false;
 			}
@@ -621,11 +621,11 @@ void HypnoEngine::drawCursorArcade(const Common::Point &mousePos) {
 
 bool HypnoEngine::clickedPrimaryShoot(const Common::Point &mousePos) { return true; }
 
-void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background) {
+void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
 	incShotsFired();
 	int i = detectTarget(mousePos);
 	if (i < 0) {
-		missNoTarget(arc, background);
+		missNoTarget(arc, *_background);
 	} else {
 		if (!_shoots[i].hitSound.empty())
 			playSound(_soundPath + _shoots[i].hitSound, 1);
@@ -674,25 +674,25 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVid
 				_shoots[i].video->position = Common::Point(position.x - w / 2, position.y - h / 2);
 				_shoots[i].lastFrame = explosionLastFrame - 1;
 			} else if (_objIdx == 0 && !arc->hitBoss1Video.empty()) {
-				background.decoder->pauseVideo(true);
+				_background->decoder->pauseVideo(true);
 				MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
 				disableCursor();
 				runIntro(video);
 				// Should be currentPalette?
 				loadPalette(arc->backgroundPalette);
-				background.decoder->pauseVideo(false);
-				updateScreen(background);
+				_background->decoder->pauseVideo(false);
+				updateScreen(*_background);
 				drawScreen();
 				if (!_music.empty())
 					playSound(_music, 0, arc->musicRate); // restore music
 			} else if (_objIdx == 1 && !arc->hitBoss2Video.empty()) {
-				background.decoder->pauseVideo(true);
+				_background->decoder->pauseVideo(true);
 				MVideo video(arc->hitBoss2Video, Common::Point(0, 0), false, true, false);
 				runIntro(video);
 				// Should be currentPalette?
 				loadPalette(arc->backgroundPalette);
-				background.decoder->pauseVideo(false);
-				updateScreen(background);
+				_background->decoder->pauseVideo(false);
+				updateScreen(*_background);
 				drawScreen();
 				drawCursorArcade(mousePos);
 				if (!_music.empty())

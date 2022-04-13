@@ -247,7 +247,7 @@ public:
 	virtual bool clickedPrimaryShoot(const Common::Point &mousePos);
 	virtual bool clickedSecondaryShoot(const Common::Point &mousePos);
 	virtual void drawShoot(const Common::Point &mousePos);
-	virtual void shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background);
+	virtual void shoot(const Common::Point &mousePos, ArcadeShooting *arc);
 	virtual void hitPlayer();
 	virtual void missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background);
 	virtual void missNoTarget(ArcadeShooting *arc, MVideo &background);
@@ -489,7 +489,7 @@ public:
 	void runAfterArcade(ArcadeShooting *arc) override;
 	int detectTarget(const Common::Point &mousePos) override;
 	void drawCursorArcade(const Common::Point &mousePos) override;
-	void shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background) override;
+	void shoot(const Common::Point &mousePos, ArcadeShooting *arc) override;
 
 	void missedTarget(Shoot *s, ArcadeShooting *arc, MVideo &background) override;
 	void drawHealth() override;

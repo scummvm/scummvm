@@ -142,7 +142,7 @@ int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 	return -1;
 }
 
-void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVideo &background) {
+void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
 	if (_currentMode == NonInteractive) {
 		return;
 	}
@@ -151,7 +151,7 @@ void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVide
 	incShotsFired();
 	int i = detectTarget(mousePos);
 	if (i < 0) {
-		missNoTarget(arc, background);
+		missNoTarget(arc, *_background);
 	} else {
 		if (!_shoots[i].hitSound.empty())
 			playSound(_soundPath + _shoots[i].hitSound, 1);
@@ -164,7 +164,7 @@ void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, MVide
 		incScore(_shoots[i].pointsToShoot);
 		incBonus(_shoots[i].pointsToShoot);
 		_shoots[i].destroyed = true;
-		background.decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
+		_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		_shoots.clear();
 		changeCursor(_crosshairsActive[_currentWeapon], _crosshairsPalette, true);
