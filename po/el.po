@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-13 20:11+0000\n"
+"POT-Creation-Date: 2022-04-14 02:23+0000\n"
 "PO-Revision-Date: 2022-04-06 17:17+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4879,7 +4879,7 @@ msgstr "Αυτό δεν είναι ένα έγκυρο αρχείο Alan2."
 msgid "Savegame"
 msgstr "Αποθηκευμένο παιχνίδι"
 
-#: engines/glk/comprehend/game.cpp:861
+#: engines/glk/comprehend/game.cpp:860
 msgid "Picture window toggled\n"
 msgstr "Εναλλαγή παραθύρου εικόνας\n"
 

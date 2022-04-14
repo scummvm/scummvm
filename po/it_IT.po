@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-13 20:11+0000\n"
+"POT-Creation-Date: 2022-04-14 02:23+0000\n"
 "PO-Revision-Date: 2022-04-05 19:27+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -4840,7 +4840,7 @@ msgstr "Questo non è un file Alan2 valido."
 msgid "Savegame"
 msgstr "Salvataggio"
 
-#: engines/glk/comprehend/game.cpp:861
+#: engines/glk/comprehend/game.cpp:860
 msgid "Picture window toggled\n"
 msgstr "Visualizzazione immagine/testo modificata\n"
 

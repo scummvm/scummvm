@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-13 20:11+0000\n"
+"POT-Creation-Date: 2022-04-14 02:23+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4747,7 +4747,7 @@ msgstr "올바른 Alan2 파일이 아닙니다."
 msgid "Savegame"
 msgstr "게임저장"
 
-#: engines/glk/comprehend/game.cpp:861
+#: engines/glk/comprehend/game.cpp:860
 msgid "Picture window toggled\n"
 msgstr "이미지 창 토글\n"
 

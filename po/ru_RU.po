@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-13 20:11+0000\n"
+"POT-Creation-Date: 2022-04-14 02:23+0000\n"
 "PO-Revision-Date: 2022-04-07 09:03+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -4797,7 +4797,7 @@ msgstr "Это не правильный файл Alan2."
 msgid "Savegame"
 msgstr "Сохранение игры"
 
-#: engines/glk/comprehend/game.cpp:861
+#: engines/glk/comprehend/game.cpp:860
 msgid "Picture window toggled\n"
 msgstr "Окно и с иллюстрацией переключено\n"
 
