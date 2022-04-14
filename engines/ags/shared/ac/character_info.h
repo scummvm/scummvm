@@ -22,6 +22,7 @@
 #ifndef AGS_SHARED_AC_CHARACTER_INFO_H
 #define AGS_SHARED_AC_CHARACTER_INFO_H
 
+#include "ags/lib/std/vector.h"
 #include "ags/shared/ac/common_defines.h" // constants
 
 namespace AGS3 {
@@ -120,14 +121,14 @@ struct CharacterInfo {
 	//
 	// [IKM] 2016-08-26: these methods should NOT be in CharacterInfo class,
 	// bit in distinct runtime character class!
-	void UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, int &numSheep, int *followingAsSheep);
+	void UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, std::vector<int> &followingAsSheep);
 	void UpdateFollowingExactlyCharacter();
 
 	int  update_character_walking(CharacterExtras *chex);
 	void update_character_moving(int &char_index, CharacterExtras *chex, int &doing_nothing);
 	int  update_character_animating(int &char_index, int &doing_nothing);
 	void update_character_idle(CharacterExtras *chex, int &doing_nothing);
-	void update_character_follower(int &char_index, int &numSheep, int *followingAsSheep, int &doing_nothing);
+	void update_character_follower(int &char_index, std::vector<int> &followingAsSheep, int &doing_nothing);
 
 	void ReadFromFile(Shared::Stream *in);
 	void WriteToFile(Shared::Stream *out);
