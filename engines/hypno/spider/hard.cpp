@@ -1096,24 +1096,14 @@ void SpiderEngine::showScore(const Common::String prefix) {
 }
 
 void SpiderEngine::showCredits() {
-	if (_cheatsEnabled && !_arcadeMode.empty()) {
-		_skipLevel = true;
-		return;
+	changeScreenMode("640x480");
+	MVideo video("cine/credits.smk", Common::Point(0, 0), false, true, false);
+	runIntro(video);
+	if (_restoredContentEnabled) {
+		showScore("Spider-Man saved the day!");
 	}
-
-	if (!_arcadeMode.empty())
-		return; // No credits during arcade sequence
-
-	if (!isDemo()) { // No credits in demo
-		changeScreenMode("640x480");
-		MVideo video("cine/credits.smk", Common::Point(0, 0), false, true, false);
-		runIntro(video);
-		if (_restoredContentEnabled) {
-			showScore("Spider-Man saved the day!");
-		}
-		_score = 0;
-		_nextLevel = "mainmenu.mi_";
-	}
+	_score = 0;
+	_nextLevel = "mainmenu.mi_";
 }
 
 } // End of namespace Hypno

@@ -90,6 +90,30 @@ void SpiderEngine::findNextSegment(ArcadeShooting *arc) {
 	_segmentIdx = _segmentIdx + 1;
 }
 
+
+void SpiderEngine::pressedKey(const int keycode) {
+	if (keycode == Common::KEYCODE_c) {
+		if (_cheatsEnabled) {
+			_skipLevel = true;
+			return;
+		}
+	} else if (keycode == Common::KEYCODE_k) { // Added for testing
+		_health = 0;
+	} else if (keycode == Common::KEYCODE_LEFT) {
+		_lastPlayerPosition = _currentPlayerPosition;
+		_currentPlayerPosition = kPlayerLeft;
+	} else if (keycode == Common::KEYCODE_DOWN) {
+		_lastPlayerPosition = _currentPlayerPosition;
+		_currentPlayerPosition = kPlayerBottom;
+	} else if (keycode == Common::KEYCODE_RIGHT) {
+		_lastPlayerPosition = _currentPlayerPosition;
+		_currentPlayerPosition = kPlayerRight;
+	} else if (keycode == Common::KEYCODE_UP) {
+		_lastPlayerPosition = _currentPlayerPosition;
+		_currentPlayerPosition = kPlayerTop;
+	}
+}
+
 void SpiderEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	if (_arcadeMode != "YC" && _arcadeMode != "YD")
 		return;

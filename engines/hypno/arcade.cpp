@@ -167,6 +167,8 @@ void HypnoEngine::missNoTarget(ArcadeShooting *arc) {}
 void HypnoEngine::runBeforeArcade(ArcadeShooting *arc) {}
 void HypnoEngine::runAfterArcade(ArcadeShooting *arc) {}
 
+void HypnoEngine::pressedKey(const int keycode) {}
+
 void HypnoEngine::initSegment(ArcadeShooting *arc) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::findNextSegment(ArcadeShooting *arc) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
@@ -246,29 +248,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				break;
 
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_c) {
-					_background->decoder->pauseVideo(true);
-					showCredits();
-					loadPalette(currentPalette);
-					changeScreenMode("320x200");
-					_background->decoder->pauseVideo(false);
-					updateScreen(*_background);
-					drawScreen();
-				} else if (event.kbd.keycode == Common::KEYCODE_k) { // Added for testing
-					_health = 0;
-				} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
-					_lastPlayerPosition = _currentPlayerPosition;
-					_currentPlayerPosition = kPlayerLeft;
-				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
-					_lastPlayerPosition = _currentPlayerPosition;
-					_currentPlayerPosition = kPlayerBottom;
-				} else if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
-					_lastPlayerPosition = _currentPlayerPosition;
-					_currentPlayerPosition = kPlayerRight;
-				} else if (event.kbd.keycode == Common::KEYCODE_UP) {
-					_lastPlayerPosition = _currentPlayerPosition;
-					_currentPlayerPosition = kPlayerTop;
-				}
+				pressedKey(event.kbd.keycode);
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:

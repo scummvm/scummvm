@@ -244,6 +244,7 @@ public:
 	uint32 _lastPlayerPosition;
 	virtual Common::Point computeTargetPosition(const Common::Point &mousePos);
 	virtual int detectTarget(const Common::Point &mousePos);
+	virtual void pressedKey(const int keycode);
 	virtual bool clickedPrimaryShoot(const Common::Point &mousePos);
 	virtual bool clickedSecondaryShoot(const Common::Point &mousePos);
 	virtual void drawShoot(const Common::Point &mousePos);
@@ -387,6 +388,7 @@ public:
 	void saveProfile(const Common::String &name, int levelId);
 
 	// Arcade
+	void pressedKey(const int keycode) override;
 	void runBeforeArcade(ArcadeShooting *arc) override;
 	void runAfterArcade(ArcadeShooting *arc) override;
 	void findNextSegment(ArcadeShooting *arc) override;
@@ -426,6 +428,7 @@ public:
 	void hitPlayer() override;
 
 	// Arcade
+	void pressedKey(const int keycode) override;
 	void runBeforeArcade(ArcadeShooting *arc) override;
 	void runAfterArcade(ArcadeShooting *arc) override;
 	void findNextSegment(ArcadeShooting *arc) override;

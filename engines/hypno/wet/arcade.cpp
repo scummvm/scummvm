@@ -463,6 +463,24 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_playerFrameIdx = -1;
 }
 
+void WetEngine::pressedKey(const int keycode) {
+	if (keycode == Common::KEYCODE_c) {
+		if (_cheatsEnabled) {
+			_skipLevel = true;
+			return;
+		}
+		_background->decoder->pauseVideo(true);
+		showCredits();
+		//loadPalette(currentPalette); //FIXME
+		changeScreenMode("320x200");
+		_background->decoder->pauseVideo(false);
+		updateScreen(*_background);
+		drawScreen();
+	} else if (keycode == Common::KEYCODE_k) { // Added for testing
+		_health = 0;
+	}
+}
+
 void WetEngine::drawCursorArcade(const Common::Point &mousePos) {
 	int i = detectTarget(mousePos);
 	if (_arcadeMode == "YT") {
