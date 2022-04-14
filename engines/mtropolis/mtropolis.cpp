@@ -24,6 +24,7 @@
 #include "mtropolis/runtime.h"
 
 #include "mtropolis/plugins.h"
+#include "mtropolis/plugin/standard.h"
 
 #include "common/config-manager.h"
 #include "common/macresman.h"
@@ -134,7 +135,10 @@ Common::Error MTropolisEngine::run() {
 		desc->addSegment(4, "Obsidian Data 5.MPX");
 		desc->addSegment(5, "Obsidian Data 6.MPX");
 
-		desc->addPlugIn(PlugIns::createStandard());
+		Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
+		static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
+		desc->addPlugIn(standardPlugIn);
+
 		desc->addPlugIn(PlugIns::createObsidian());
 
 		_runtime->queueProject(desc);
@@ -156,7 +160,10 @@ Common::Error MTropolisEngine::run() {
 		for (int i = 0; i < 6; i++)
 			desc->addSegment(i, resources->getSegmentStream(i));
 
-		desc->addPlugIn(PlugIns::createStandard());
+		Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
+		static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
+		desc->addPlugIn(standardPlugIn);
+
 		desc->addPlugIn(PlugIns::createObsidian());
 
 		desc->setResources(resPtr);

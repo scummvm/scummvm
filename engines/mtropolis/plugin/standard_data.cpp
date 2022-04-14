@@ -20,6 +20,7 @@
  */
 
 #include "mtropolis/plugin/standard_data.h"
+#include "mtropolis/plugin/standard.h"
 
 namespace MTropolis {
 
@@ -27,7 +28,7 @@ namespace Data {
 
 namespace Standard {
 
-DataReadErrorCode CursorModifier::load(const PlugInModifier &prefix, DataReader &reader) {
+DataReadErrorCode CursorModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 1)
 		return kDataReadErrorUnsupportedRevision;
 
@@ -38,7 +39,7 @@ DataReadErrorCode CursorModifier::load(const PlugInModifier &prefix, DataReader 
 	return kDataReadErrorNone;
 }
 
-DataReadErrorCode STransCtModifier::load(const PlugInModifier &prefix, DataReader &reader) {
+DataReadErrorCode STransCtModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 0)
 		return kDataReadErrorUnsupportedRevision;
 
@@ -51,7 +52,7 @@ DataReadErrorCode STransCtModifier::load(const PlugInModifier &prefix, DataReade
 	return kDataReadErrorNone;
 }
 
-DataReadErrorCode MediaCueMessengerModifier::load(const PlugInModifier &prefix, DataReader &reader) {
+DataReadErrorCode MediaCueMessengerModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 1)
 		return kDataReadErrorUnsupportedRevision;
 
@@ -64,7 +65,7 @@ DataReadErrorCode MediaCueMessengerModifier::load(const PlugInModifier &prefix, 
 	return kDataReadErrorNone;
 }
 
-DataReadErrorCode ObjectReferenceVariableModifier::load(const PlugInModifier &prefix, DataReader &reader) {
+DataReadErrorCode ObjectReferenceVariableModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 2)
 		return kDataReadErrorUnsupportedRevision;
 
@@ -74,7 +75,7 @@ DataReadErrorCode ObjectReferenceVariableModifier::load(const PlugInModifier &pr
 	return kDataReadErrorNone;
 }
 
-DataReadErrorCode MidiModifier::load(const PlugInModifier &prefix, DataReader &reader) {
+DataReadErrorCode MidiModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 1 && prefix.plugInRevision != 2)
 		return kDataReadErrorUnsupportedRevision;
 
@@ -110,6 +111,65 @@ DataReadErrorCode MidiModifier::load(const PlugInModifier &prefix, DataReader &r
 
 	return kDataReadErrorNone;
 }
+
+ListVariableModifier::ListVariableModifier() : values(nullptr) {
+}
+
+ListVariableModifier::~ListVariableModifier() {
+	if (values)
+		delete[] values;
+}
+
+DataReadErrorCode ListVariableModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 2 && prefix.plugInRevision != 3)
+		return kDataReadErrorUnsupportedRevision;
+
+	int64 privateDataPos = reader.tell();
+
+	if (!reader.readU16(unknown1) || !reader.readU32(contentsType) || !reader.readBytes(unknown2))
+		return kDataReadErrorReadFailed;
+
+	persistentValuesGarbled = false;
+
+	if (prefix.plugInRevision == 3) {
+		PlugInTypeTaggedValue persistentFlag;
+		if (!persistentFlag.load(reader) || persistentFlag.type != PlugInTypeTaggedValue::kBoolean)
+			return kDataReadErrorReadFailed;
+
+		havePersistentData = (persistentFlag.value.asBoolean != 0);
+		if (havePersistentData) {
+			PlugInTypeTaggedValue numValuesVar;
+			if (!numValuesVar.load(reader) || numValuesVar.type != PlugInTypeTaggedValue::kInteger || numValuesVar.value.asInt < 0)
+				return kDataReadErrorReadFailed;
+
+			numValues = static_cast<uint32>(numValuesVar.value.asInt);
+
+			values = new PlugInTypeTaggedValue[numValues];
+			for (size_t i = 0; i < numValues; i++) {
+				if (!values[i].load(reader)) {
+					if (static_cast<const MTropolis::Standard::StandardPlugIn &>(plugIn).getHacks().allowGarbledListModData) {
+						persistentValuesGarbled = true;
+						if (!reader.seek(privateDataPos + prefix.subObjectSize))
+							return kDataReadErrorReadFailed;
+						break;
+					} else {
+						return kDataReadErrorReadFailed;
+					}
+				}
+			}
+		} else {
+			numValues = 0;
+			values = nullptr;
+		}
+	} else {
+		havePersistentData = false;
+		numValues = 0;
+		values = nullptr;
+	}
+
+	return kDataReadErrorNone;
+}
+
 
 } // End of namespace Standard
 

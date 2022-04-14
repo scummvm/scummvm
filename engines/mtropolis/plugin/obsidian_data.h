@@ -54,7 +54,7 @@ struct MovementModifier : public PlugInModifierData {
 	PlugInTypeTaggedValue unknown12Int;
 
 protected:
-	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
 struct RectShiftModifier : public PlugInModifierData {
@@ -63,7 +63,7 @@ struct RectShiftModifier : public PlugInModifierData {
 	PlugInTypeTaggedValue unknown3Int;
 
 protected:
-	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
 

@@ -72,10 +72,399 @@ bool ColorRGB8::load(const Data::ColorRGB16& color) {
 MessageFlags::MessageFlags() : relay(true), cascade(true), immediate(true) {
 }
 
-DynamicValue::DynamicValue() : _type(kTypeNull) {
+
+DynamicListContainerBase::~DynamicListContainerBase() {
 }
 
-DynamicValue::DynamicValue(const DynamicValue &other) : _type(kTypeNull) {
+void DynamicListDefaultSetter::defaultSet(int32 &value) {
+	value = 0;
+}
+
+void DynamicListDefaultSetter::defaultSet(double &value) {
+	value = 0.0;
+}
+
+void DynamicListDefaultSetter::defaultSet(Point16 &value) {
+	value.x = 0;
+	value.y = 0;
+}
+
+void DynamicListDefaultSetter::defaultSet(IntRange &value) {
+	value.min = 0;
+	value.max = 0;
+}
+
+void DynamicListDefaultSetter::defaultSet(bool &value) {
+	value = false;
+}
+
+void DynamicListDefaultSetter::defaultSet(AngleMagVector &value) {
+	value.angleRadians = 0.0;
+	value.magnitude = 0.0;
+}
+
+void DynamicListDefaultSetter::defaultSet(Label &value) {
+	value.id = 0;
+	value.superGroupID = 0;
+}
+
+void DynamicListDefaultSetter::defaultSet(Event &value) {
+	value.eventType = 0;
+	value.eventInfo = 0;
+}
+
+void DynamicListDefaultSetter::defaultSet(Common::String &value) {
+}
+
+void DynamicListDefaultSetter::defaultSet(DynamicList &value) {
+}
+
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const int32 *&outPtr) {
+	if (dynValue.getType() != DynamicValueTypes::kInteger)
+		return false;
+	outPtr = &dynValue.getInt();
+	return true;
+}
+
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const double *&outPtr) {
+	if (dynValue.getType() != DynamicValueTypes::kFloat)
+		return false;
+	outPtr = &dynValue.getFloat();
+	return true;
+}
+
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const Point16 *&outPtr) {
+	if (dynValue.getType() != DynamicValueTypes::kPoint)
+		return false;
+	outPtr = &dynValue.getPoint();
+	return true;
+}
+
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const IntRange *&outPtr) {
+	if (dynValue.getType() != DynamicValueTypes::kIntegerRange)
+		return false;
+	outPtr = &dynValue.getIntRange();
+	return true;
+}
+
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const bool *&outPtr) {
+	if (dynValue.getType() != DynamicValueTypes::kBoolean)
+		return false;
+	outPtr = &dynValue.getBool();
+	return true;
+}
+
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const AngleMagVector *&outPtr) {
+	if (dynValue.getType() != DynamicValueTypes::kVector)
+		return false;
+	outPtr = &dynValue.getVector();
+	return true;
+}
+
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const Label *&outPtr) {
+	if (dynValue.getType() != DynamicValueTypes::kLabel)
+		return false;
+	outPtr = &dynValue.getLabel();
+	return true;
+}
+
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const Event *&outPtr) {
+	if (dynValue.getType() != DynamicValueTypes::kEvent)
+		return false;
+	outPtr = &dynValue.getEvent();
+	return true;
+}
+
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const Common::String *&outPtr) {
+	if (dynValue.getType() != DynamicValueTypes::kString)
+		return false;
+	outPtr = &dynValue.getString();
+	return true;
+}
+
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const DynamicList *&outPtr) {
+	if (dynValue.getType() != DynamicValueTypes::kBoolean)
+		return false;
+	outPtr = &dynValue.getList();
+	return true;
+}
+
+DynamicListContainer<void>::DynamicListContainer() : _size(0) {
+}
+
+bool DynamicListContainer<void>::setAtIndex(size_t index, const DynamicValue &dynValue) {
+	return true;
+}
+
+void DynamicListContainer<void>::setFrom(const DynamicListContainerBase &other) {
+	_size = other.getSize();	// ... the only thing we have anyway...
+}
+
+const void *DynamicListContainer<void>::getConstArrayPtr() const {
+	return nullptr;
+}
+
+size_t DynamicListContainer<void>::getSize() const {
+	return _size;
+}
+
+bool DynamicListContainer<void>::compareEqual(const DynamicListContainerBase &other) const {
+	return true;
+}
+
+bool DynamicListContainer<VarReference>::setAtIndex(size_t index, const DynamicValue &dynValue) {
+	if (dynValue.getType() != DynamicValueTypes::kVariableReference)
+		return false;
+
+	size_t requiredSize = index + 1;
+
+	if (_array.size() < requiredSize) {
+		size_t prevSize = _array.size();
+		_array.resize(requiredSize);
+		_strings.resize(requiredSize);
+
+		for (size_t i = prevSize; i < index; prevSize++) {
+			_array[i].guid = 0;
+		}
+
+		const VarReference &varRef = dynValue.getVarReference();
+		_array[index].guid = varRef.guid;
+		_strings[index] = *varRef.source;
+
+		rebuildStringPointers();
+	} else {
+		const VarReference &varRef = dynValue.getVarReference();
+		_array[index].guid = varRef.guid;
+		_strings[index] = *varRef.source;
+	}
+
+	return true;
+}
+
+void DynamicListContainer<VarReference>::setFrom(const DynamicListContainerBase &other) {
+	const DynamicListContainer<VarReference> &otherTyped = static_cast<const DynamicListContainer<VarReference> &>(other);
+
+	_array = otherTyped._array;
+	_strings = otherTyped._strings;
+	rebuildStringPointers();
+}
+
+const void *DynamicListContainer<VarReference>::getConstArrayPtr() const {
+	return &_array;
+}
+
+size_t DynamicListContainer<VarReference>::getSize() const {
+	return _array.size();
+}
+
+bool DynamicListContainer<VarReference>::compareEqual(const DynamicListContainerBase &other) const {
+	const DynamicListContainer<VarReference> &otherTyped = static_cast<const DynamicListContainer<VarReference> &>(other);
+	return _array == otherTyped._array;
+}
+
+void DynamicListContainer<VarReference>::rebuildStringPointers() {
+	assert(_strings.size() == _array.size());
+
+	size_t numStrings = _array.size();
+	for (size_t i = 0; i < numStrings; i++) {
+		_array[i].source = &_strings[i];
+	}
+}
+
+
+DynamicList::DynamicList() : _type(DynamicValueTypes::kEmpty), _container(nullptr) {
+}
+
+DynamicList::DynamicList(const DynamicList &other) : _type(DynamicValueTypes::kEmpty), _container(nullptr) {
+	initFromOther(other);
+}
+
+DynamicList::~DynamicList() {
+	clear();
+}
+
+DynamicValueTypes::DynamicValueType DynamicList::getType() const {
+	return _type;
+}
+
+const Common::Array<int32> &DynamicList::getInt() const {
+	assert(_type == DynamicValueTypes::kInteger);
+	return *static_cast<const Common::Array<int32> *>(_container->getConstArrayPtr());
+}
+
+const Common::Array<double> &DynamicList::getFloat() const {
+	assert(_type == DynamicValueTypes::kFloat);
+	return *static_cast<const Common::Array<double> *>(_container->getConstArrayPtr());
+}
+
+const Common::Array<Point16> &DynamicList::getPoint() const {
+	assert(_type == DynamicValueTypes::kPoint);
+	return *static_cast<const Common::Array<Point16> *>(_container->getConstArrayPtr());
+}
+
+const Common::Array<IntRange> &DynamicList::getIntRange() const {
+	assert(_type == DynamicValueTypes::kIntegerRange);
+	return *static_cast<const Common::Array<IntRange> *>(_container->getConstArrayPtr());
+}
+
+const Common::Array<AngleMagVector> &DynamicList::getVector() const {
+	assert(_type == DynamicValueTypes::kVector);
+	return *static_cast<const Common::Array<AngleMagVector> *>(_container->getConstArrayPtr());
+}
+
+const Common::Array<Label> &DynamicList::getLabel() const {
+	assert(_type == DynamicValueTypes::kLabel);
+	return *static_cast<const Common::Array<Label> *>(_container->getConstArrayPtr());
+}
+
+const Common::Array<Event> &DynamicList::getEvent() const {
+	assert(_type == DynamicValueTypes::kEvent);
+	return *static_cast<const Common::Array<Event> *>(_container->getConstArrayPtr());
+}
+
+const Common::Array<VarReference> &DynamicList::getVarReference() const {
+	assert(_type == DynamicValueTypes::kVariableReference);
+	return *static_cast<const Common::Array<VarReference> *>(_container->getConstArrayPtr());
+}
+
+const Common::Array<Common::String> &DynamicList::getString() const {
+	assert(_type == DynamicValueTypes::kString);
+	return *static_cast<const Common::Array<Common::String> *>(_container->getConstArrayPtr());
+}
+
+const Common::Array<bool> &DynamicList::getBool() const {
+	assert(_type == DynamicValueTypes::kBoolean);
+	return *static_cast<const Common::Array<bool> *>(_container->getConstArrayPtr());
+}
+
+bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
+	if (_type != value.getType()) {
+		if (_container != nullptr && _container->getSize() != 0)
+			return false;
+		else {
+			clear();
+			changeToType(value.getType());
+			return _container->setAtIndex(index, value);
+		}
+	} else {
+		return _container->setAtIndex(index, value);
+	}
+}
+
+DynamicList &DynamicList::operator=(const DynamicList &other) {
+	if (this != &other) {
+		if (_type == DynamicValueTypes::kList && other._type == DynamicValueTypes::kList) {
+			// In this case, one operand may be inside of the other operand, so we need to copy instead of clear
+			DynamicList listClone(*this);
+			swap(listClone);
+		} else {
+			clear();
+			initFromOther(other);
+		}
+	}
+
+	return *this;
+}
+
+bool DynamicList::operator==(const DynamicList &other) const {
+	if (this == &other)
+		return true;
+
+	if (_type != other._type)
+		return false;
+
+	if (_container == nullptr)
+		return other._container == nullptr;
+
+	if (other._container == nullptr)
+		return false;	// (_container == nullptr)
+
+	return _container->compareEqual(*other._container);
+}
+
+void DynamicList::swap(DynamicList &other) {
+	if (this == &other)
+		return;
+
+	DynamicValueTypes::DynamicValueType tempType = _type;
+	_type = other._type;
+	other._type = tempType;
+
+	DynamicListContainerBase *tempContainer = _container;
+	_container = other._container;
+	other._container = tempContainer;
+}
+
+bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
+	switch (type)
+	{
+	case DynamicValueTypes::kNull:
+		_container = new DynamicListContainer<void>();
+		break;
+	case DynamicValueTypes::kInteger:
+		_container = new DynamicListContainer<int32>();
+		break;
+	case DynamicValueTypes::kFloat:
+		_container = new DynamicListContainer<double>();
+		break;
+	case DynamicValueTypes::kPoint:
+		_container = new DynamicListContainer<Point16>();
+		break;
+	case DynamicValueTypes::kIntegerRange:
+		_container = new DynamicListContainer<IntRange>();
+		break;
+	case DynamicValueTypes::kBoolean:
+		_container = new DynamicListContainer<bool>();
+		break;
+	case DynamicValueTypes::kVector:
+		_container = new DynamicListContainer<AngleMagVector>();
+		break;
+	case DynamicValueTypes::kLabel:
+		_container = new DynamicListContainer<Label>();
+		break;
+	case DynamicValueTypes::kEvent:
+		_container = new DynamicListContainer<Event>();
+		break;
+	case DynamicValueTypes::kVariableReference:
+		_container = new DynamicListContainer<VarReference>();
+		break;
+	case DynamicValueTypes::kIncomingData:
+		_container = new DynamicListContainer<void>();
+		break;
+	case DynamicValueTypes::kString:
+		_container = new DynamicListContainer<Common::String>();
+		break;
+	case DynamicValueTypes::kList:
+		_container = new DynamicListContainer<DynamicList>();
+		break;
+	}
+
+	_type = type;
+
+	return true;
+}
+
+void DynamicList::clear() {
+	_type = DynamicValueTypes::kEmpty;
+	if (_container)
+		delete _container;
+	_container = nullptr;
+}
+
+void DynamicList::initFromOther(const DynamicList &other) {
+	assert(_container == nullptr);
+	assert(_type == DynamicValueTypes::kEmpty);
+
+	if (other._type != DynamicValueTypes::kEmpty) {
+		changeToType(other._type);
+		_container->setFrom(*other._container);
+	}
+}
+
+DynamicValue::DynamicValue() : _type(DynamicValueTypes::kNull) {
+}
+
+DynamicValue::DynamicValue(const DynamicValue &other) : _type(DynamicValueTypes::kNull) {
 	initFromOther(other);
 }
 
@@ -86,45 +475,45 @@ DynamicValue::~DynamicValue() {
 bool DynamicValue::load(const Data::InternalTypeTaggedValue &data, const Common::String &varSource, const Common::String &varString) {
 	switch (data.type) {
 	case Data::InternalTypeTaggedValue::kNull:
-		_type = kTypeNull;
+		_type = DynamicValueTypes::kNull;
 		break;
 	case Data::InternalTypeTaggedValue::kIncomingData:
-		_type = kTypeIncomingData;
+		_type = DynamicValueTypes::kIncomingData;
 		break;
 	case Data::InternalTypeTaggedValue::kInteger:
-		_type = kTypeInteger;
+		_type = DynamicValueTypes::kInteger;
 		_value.asInt = data.value.asInteger;
 		break;
 	case Data::InternalTypeTaggedValue::kString:
-		_type = kTypeString;
+		_type = DynamicValueTypes::kString;
 		_str = varString;
 		break;
 	case Data::InternalTypeTaggedValue::kPoint:
-		_type = kTypePoint;
+		_type = DynamicValueTypes::kPoint;
 		if (!_value.asPoint.load(data.value.asPoint))
 			return false;
 		break;
 	case Data::InternalTypeTaggedValue::kIntegerRange:
-		_type = KTypeIntegerRange;
+		_type = DynamicValueTypes::kIntegerRange;
 		if (!_value.asIntRange.load(data.value.asIntegerRange))
 			return false;
 		break;
 	case Data::InternalTypeTaggedValue::kFloat:
-		_type = kTypeFloat;
+		_type = DynamicValueTypes::kFloat;
 		_value.asFloat = data.value.asFloat.toDouble();
 		break;
 	case Data::InternalTypeTaggedValue::kBool:
-		_type = kTypeBoolean;
+		_type = DynamicValueTypes::kBoolean;
 		_value.asBool = (data.value.asBool != 0);
 		break;
 	case Data::InternalTypeTaggedValue::kVariableReference:
-		_type = kTypeVariableReference;
+		_type = DynamicValueTypes::kVariableReference;
 		_value.asVarReference.guid = data.value.asVariableReference.guid;
 		_value.asVarReference.source = &_str;
 		_str = varSource;
 		break;
 	case Data::InternalTypeTaggedValue::kLabel:
-		_type = kTypeLabel;
+		_type = DynamicValueTypes::kLabel;
 		if (!_value.asLabel.load(data.value.asLabel))
 			return false;
 		break;
@@ -139,47 +528,52 @@ bool DynamicValue::load(const Data::InternalTypeTaggedValue &data, const Common:
 bool DynamicValue::load(const Data::PlugInTypeTaggedValue& data) {
 	switch (data.type) {
 	case Data::PlugInTypeTaggedValue::kNull:
-		_type = kTypeNull;
+		_type = DynamicValueTypes::kNull;
 		break;
 	case Data::PlugInTypeTaggedValue::kIncomingData:
-		_type = kTypeIncomingData;
+		_type = DynamicValueTypes::kIncomingData;
 		break;
 	case Data::PlugInTypeTaggedValue::kInteger:
-		_type = kTypeInteger;
+		_type = DynamicValueTypes::kInteger;
 		_value.asInt = data.value.asInt;
 		break;
 	case Data::PlugInTypeTaggedValue::kIntegerRange:
-		_type = KTypeIntegerRange;
+		_type = DynamicValueTypes::kIntegerRange;
 		if (!_value.asIntRange.load(data.value.asIntRange))
 			return false;
 		break;
 	case Data::PlugInTypeTaggedValue::kFloat:
-		_type = kTypeFloat;
+		_type = DynamicValueTypes::kFloat;
 		_value.asFloat = data.value.asFloat.toDouble();
 		break;
 	case Data::PlugInTypeTaggedValue::kBoolean:
-		_type = kTypeBoolean;
+		_type = DynamicValueTypes::kBoolean;
 		_value.asBool = (data.value.asBoolean != 0);
 		break;
 	case Data::PlugInTypeTaggedValue::kEvent:
-		_type = kTypeEvent;
+		_type = DynamicValueTypes::kEvent;
 		if (!_value.asEvent.load(data.value.asEvent))
 			return false;
 		break;
 	case Data::PlugInTypeTaggedValue::kLabel:
-		_type = kTypeLabel;
+		_type = DynamicValueTypes::kLabel;
 		if (!_value.asLabel.load(data.value.asLabel))
 			return false;
 		break;
 	case Data::PlugInTypeTaggedValue::kString:
-		_type = kTypeString;
+		_type = DynamicValueTypes::kString;
 		_str = data.str;
 		break;
 	case Data::PlugInTypeTaggedValue::kVariableReference:
-		_type = kTypeVariableReference;
+		_type = DynamicValueTypes::kVariableReference;
 		_value.asVarReference.guid = data.value.asVarRefGUID;
 		_value.asVarReference.source = &_str;
 		_str.clear();	// Extra data doesn't seem to correlate to this
+		break;
+	case Data::PlugInTypeTaggedValue::kPoint:
+		_type = DynamicValueTypes::kPoint;
+		if (!_value.asPoint.load(data.value.asPoint))
+			return false;
 		break;
 	default:
 		assert(false);
@@ -190,98 +584,123 @@ bool DynamicValue::load(const Data::PlugInTypeTaggedValue& data) {
 }
 
 
-DynamicValue::Type DynamicValue::getType() const {
+DynamicValueTypes::DynamicValueType DynamicValue::getType() const {
 	return _type;
 }
 
 const int32 &DynamicValue::getInt() const {
-	assert(_type == kTypeInteger);
+	assert(_type == DynamicValueTypes::kInteger);
 	return _value.asInt;
 }
 
 const double &DynamicValue::getFloat() const {
-	assert(_type == kTypeFloat);
+	assert(_type == DynamicValueTypes::kFloat);
 	return _value.asFloat;
 }
 
 const Point16 &DynamicValue::getPoint() const {
-	assert(_type == kTypePoint);
+	assert(_type == DynamicValueTypes::kPoint);
 	return _value.asPoint;
 }
 
 const IntRange &DynamicValue::getIntRange() const {
-	assert(_type == KTypeIntegerRange);
+	assert(_type == DynamicValueTypes::kIntegerRange);
 	return _value.asIntRange;
 }
 
 const AngleMagVector &DynamicValue::getVector() const {
-	assert(_type == kTypeVector);
+	assert(_type == DynamicValueTypes::kVector);
 	return _value.asVector;
 }
 
 const Label &DynamicValue::getLabel() const {
-	assert(_type == kTypeLabel);
+	assert(_type == DynamicValueTypes::kLabel);
 	return _value.asLabel;
 }
 
 const Event &DynamicValue::getEvent() const {
-	assert(_type == kTypeEvent);
+	assert(_type == DynamicValueTypes::kEvent);
 	return _value.asEvent;
 }
 
 const VarReference &DynamicValue::getVarReference() const {
-	assert(_type == kTypeVariableReference);
+	assert(_type == DynamicValueTypes::kVariableReference);
 	return _value.asVarReference;
 }
 
 const Common::String &DynamicValue::getString() const {
-	assert(_type == kTypeString);
+	assert(_type == DynamicValueTypes::kString);
 	return _str;
 }
 
 const bool &DynamicValue::getBool() const {
-	assert(_type == kTypeBoolean);
+	assert(_type == DynamicValueTypes::kBoolean);
 	return _value.asBool;
+}
+
+const DynamicList &DynamicValue::getList() const {
+	assert(_type == DynamicValueTypes::kList);
+	return *_value.asList;
+}
+
+void DynamicValue::swap(DynamicValue &other) {
+	DynamicValueTypes::DynamicValueType tempType = _type;
+	_type = other._type;
+	other._type = tempType;
+
+	Common::String tempStr = _str;
+	_str = other._str;
+	other._str = tempStr;
+
+	ValueUnion tempValue;
+	memcpy(&tempValue, &_value, sizeof(ValueUnion));
+	memcpy(&_value, &other._value, sizeof(ValueUnion));
+	memcpy(&other._value, &tempValue, sizeof(ValueUnion));
 }
 
 DynamicValue &DynamicValue::operator=(const DynamicValue &other) {
 	if (this != &other) {
-		clear();
-		initFromOther(other);
+		DynamicValue temp(other);
+		swap(temp);
 	}
 
 	return *this;
 }
 
 bool DynamicValue::operator==(const DynamicValue &other) const {
+	if (this == &other)
+		return true;
+
 	if (_type != other._type)
 		return false;
 
 	switch (_type) {
-	case kTypeNull:
+	case DynamicValueTypes::kNull:
 		return true;
-	case kTypeInteger:
+	case DynamicValueTypes::kInteger:
 		return _value.asInt == other._value.asInt;
-	case kTypeFloat:
+	case DynamicValueTypes::kFloat:
 		return _value.asFloat == other._value.asFloat;
-	case kTypePoint:
+	case DynamicValueTypes::kPoint:
 		return _value.asPoint == other._value.asPoint;
-	case KTypeIntegerRange:
+	case DynamicValueTypes::kIntegerRange:
 		return _value.asIntRange == other._value.asIntRange;
-	case kTypeVector:
+	case DynamicValueTypes::kVector:
 		return _value.asVector == other._value.asVector;
-	case kTypeLabel:
+	case DynamicValueTypes::kLabel:
 		return _value.asLabel == other._value.asLabel;
-	case kTypeEvent:
+	case DynamicValueTypes::kEvent:
 		return _value.asEvent == other._value.asEvent;
-	case kTypeVariableReference:
+	case DynamicValueTypes::kVariableReference:
 		return _value.asVarReference == other._value.asVarReference;
-	case kTypeIncomingData:
+	case DynamicValueTypes::kIncomingData:
 		return true;
-	case kTypeString:
+	case DynamicValueTypes::kString:
 		return _str == other._str;
-	case kTypeBoolean:
+	case DynamicValueTypes::kBoolean:
 		return _value.asBool == other._value.asBool;
+	case DynamicValueTypes::kList:
+		return (*_value.asList) == (*other._value.asList);
 	default:
 		break;
 	}
@@ -291,55 +710,61 @@ bool DynamicValue::operator==(const DynamicValue &other) const {
 }
 
 void DynamicValue::clear() {
+	if (_type == DynamicValueTypes::kList)
+		delete _value.asList;
+
 	_str.clear();
-	_type = kTypeNull;
+	_type = DynamicValueTypes::kNull;
 }
 
 void DynamicValue::initFromOther(const DynamicValue& other) {
-	assert(_type == kTypeNull);
-
-	_type = other._type;
+	assert(_type == DynamicValueTypes::kNull);
 
 	switch (_type) {
-	case kTypeNull:
-	case kTypeIncomingData:
+	case DynamicValueTypes::kNull:
+	case DynamicValueTypes::kIncomingData:
 		break;
-	case kTypeInteger:
+	case DynamicValueTypes::kInteger:
 		_value.asInt = other._value.asInt;
 		break;
-	case kTypeFloat:
+	case DynamicValueTypes::kFloat:
 		_value.asFloat = other._value.asFloat;
 		break;
-	case kTypePoint:
+	case DynamicValueTypes::kPoint:
 		_value.asPoint = other._value.asPoint;
 		break;
-	case KTypeIntegerRange:
+	case DynamicValueTypes::kIntegerRange:
 		_value.asIntRange = other._value.asIntRange;
 		break;
-	case kTypeVector:
+	case DynamicValueTypes::kVector:
 		_value.asVector = other._value.asVector;
 		break;
-	case kTypeLabel:
+	case DynamicValueTypes::kLabel:
 		_value.asLabel = other._value.asLabel;
 		break;
-	case kTypeEvent:
+	case DynamicValueTypes::kEvent:
 		_value.asEvent = other._value.asEvent;
 		break;
-	case kTypeVariableReference:
+	case DynamicValueTypes::kVariableReference:
 		_value.asVarReference = other._value.asVarReference;
 		_str = other._str;
 		_value.asVarReference.source = &_str;
 		break;
-	case kTypeString:
+	case DynamicValueTypes::kString:
 		_str = other._str;
 		break;
-	case kTypeBoolean:
+	case DynamicValueTypes::kBoolean:
 		_value.asBool = other._value.asBool;
+		break;
+	case DynamicValueTypes::kList:
+		_value.asList = new DynamicList(*other._value.asList);
 		break;
 	default:
 		assert(false);
 		break;
 	}
+
+	_type = other._type;
 }
 
 MessengerSendSpec::MessengerSendSpec() : destination(0) {
@@ -455,6 +880,10 @@ const Common::Array<Common::SharedPtr<Structural> > &Structural::getChildren() c
 	return _children;
 }
 
+void Structural::addChild(const Common::SharedPtr<Structural>& child) {
+	_children.push_back(child);
+}
+
 const Common::Array<Common::SharedPtr<Modifier> > &Structural::getModifiers() const {
 	return _modifiers;
 }
@@ -522,7 +951,7 @@ const IPlugInModifierFactory *ProjectPlugInRegistry::findPlugInModifierFactory(c
 }
 
 Project::Project()
-	: _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false), _haveGlobalObjectInfo(false) {
+	: _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false), _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false) {
 }
 
 Project::~Project() {
@@ -695,6 +1124,22 @@ void Project::loadBootStream(size_t streamIndex) {
 			case Data::DataObjectTypes::kGlobalObjectInfo:
 				loadGlobalObjectInfo(loaderStack, *static_cast<const Data::GlobalObjectInfo *>(dataObject.get()));
 				break;
+			case Data::DataObjectTypes::kProjectLabelMap:
+				loadLabelMap(*static_cast<const Data::ProjectLabelMap *>(dataObject.get()));
+				break;
+			case Data::DataObjectTypes::kProjectStructuralDef: {
+					if (_haveProjectStructuralDef)
+						error("Multiple project structural defs");
+
+					_haveProjectStructuralDef = true;
+
+					ChildLoaderContext loaderContext;
+					loaderContext.containerUnion.structural = this;
+					loaderContext.remainingCount = 0;
+					loaderContext.type = ChildLoaderContext::kTypeProject;
+
+					loaderStack.contexts.push_back(loaderContext);
+				} break;
 			case Data::DataObjectTypes::kStreamHeader:
 			case Data::DataObjectTypes::kUnknown19:
 				// Ignore
@@ -798,6 +1243,64 @@ Common::SharedPtr<Modifier> Project::loadModifierObject(ModifierLoaderContext &l
 	return modifier;
 }
 
+void Project::loadLabelMap(const Data::ProjectLabelMap &projectLabelMap) {
+	debug(1, "Loading label map...");
+
+	_labelSuperGroups.resize(projectLabelMap.numSuperGroups);
+
+	size_t totalLabels = 0;
+	for (size_t i = 0; i < projectLabelMap.numSuperGroups; i++) {
+		_labelSuperGroups[i].numTotalNodes = 0;
+		for (size_t j = 0; j < projectLabelMap.superGroups[i].numChildren; j++)
+			totalLabels += recursiveCountLabels(projectLabelMap.superGroups[i].tree[j]);
+	}
+
+	Common::Array<const Data::ProjectLabelMap::LabelTree *> treeQueue;
+	treeQueue.resize(totalLabels);
+	_labelTree.resize(totalLabels);
+
+	// Expand label tree into a breadth-first tree but cluster all super-groups
+	size_t insertionOffset = 0;
+	size_t dequeueOffset = 0;
+	for (size_t i = 0; i < projectLabelMap.numSuperGroups; i++) {
+		const Data::ProjectLabelMap::SuperGroup &dataSG = projectLabelMap.superGroups[i];
+		LabelSuperGroup &sg = _labelSuperGroups[i];
+
+		sg.name = dataSG.name;
+		sg.superGroupID = dataSG.id;
+
+		sg.firstRootNodeIndex = insertionOffset;
+
+		for (size_t j = 0; j < dataSG.numChildren; j++)
+			treeQueue[insertionOffset++] = &dataSG.tree[j];
+
+		while (dequeueOffset < insertionOffset) {
+			const Data::ProjectLabelMap::LabelTree &dataTree = *treeQueue[dequeueOffset];
+			LabelTree &labelTree = _labelTree[dequeueOffset];
+
+			labelTree.id = dataTree.id;
+			labelTree.name = dataTree.name;
+			dequeueOffset++;
+
+			labelTree.firstChildIndex = insertionOffset;
+			labelTree.numChildren = dataTree.numChildren;
+			for (size_t j = 0; j < dataTree.numChildren; j++)
+				treeQueue[insertionOffset++] = &dataTree.children[j];
+		}
+
+		sg.numTotalNodes = insertionOffset - sg.firstRootNodeIndex;
+	}
+
+	debug(1, "Loaded %i labels and %i supergroups", static_cast<int>(_labelTree.size()), static_cast<int>(_labelSuperGroups.size()));
+}
+
+size_t Project::recursiveCountLabels(const Data::ProjectLabelMap::LabelTree& tree) {
+	size_t numLabels = 1;	// For the node itself
+	for (size_t i = 0; i < tree.numChildren; i++)
+		numLabels += recursiveCountLabels(tree.children[i]);
+	return numLabels;
+}
+
 void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject) {
 	ChildLoaderContext &topContext = stack.contexts.back();
 
@@ -813,7 +1316,67 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 			ModifierLoaderContext loaderContext(&stack);
 
 			container->appendModifier(loadModifierObject(loaderContext, dataObject));
-		}
+		} break;
+	case ChildLoaderContext::kTypeProject: {
+			Structural *project = topContext.containerUnion.structural;
+
+			if (dataObject.getType() == Data::DataObjectTypes::kSectionStructuralDef) {
+
+				const Data::SectionStructuralDef &sectionObject = static_cast<const Data::SectionStructuralDef &>(dataObject);
+
+				Common::SharedPtr<Structural> subsection(new Section());
+
+				project->addChild(subsection);
+
+				if (sectionObject.structuralFlags & Data::StructuralFlags::kNoMoreSiblings)
+					stack.contexts.pop_back();
+
+				if (sectionObject.structuralFlags & Data::StructuralFlags::kHasChildren) {
+					ChildLoaderContext loaderContext;
+					loaderContext.containerUnion.structural = subsection.get();
+					loaderContext.remainingCount = 0;
+					loaderContext.type = ChildLoaderContext::kTypeSection;
+
+					stack.contexts.push_back(loaderContext);
+				}
+			} else {
+				// Assume this is a modifier
+				ModifierLoaderContext loaderContext(&stack);
+
+				project->appendModifier(loadModifierObject(loaderContext, dataObject));
+			}
+		} break;
+	case ChildLoaderContext::kTypeSection: {
+			Structural *project = topContext.containerUnion.structural;
+
+			if (dataObject.getType() == Data::DataObjectTypes::kSubsectionStructuralDef) {
+
+				const Data::SubsectionStructuralDef &subsectionObject = static_cast<const Data::SubsectionStructuralDef &>(dataObject);
+
+				Common::SharedPtr<Structural> subsection(new Subsection());
+
+				project->addChild(subsection);
+
+				if (subsectionObject.structuralFlags & Data::StructuralFlags::kNoMoreSiblings)
+					stack.contexts.pop_back();
+
+				if (subsectionObject.structuralFlags & Data::StructuralFlags::kHasChildren) {
+					ChildLoaderContext loaderContext;
+					loaderContext.containerUnion.structural = subsection.get();
+					loaderContext.remainingCount = 0;
+					loaderContext.type = ChildLoaderContext::kTypeSubsection;
+
+					stack.contexts.push_back(loaderContext);
+				}
+			} else {
+				// Assume this is a modifier
+				ModifierLoaderContext loaderContext(&stack);
+
+				project->appendModifier(loadModifierObject(loaderContext, dataObject));
+			}
+		} break;
+	default:
+		error("Tried to load a contextual object outside of a context");
 		break;
 	}
 }

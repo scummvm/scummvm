@@ -27,7 +27,7 @@ namespace Data {
 
 namespace Obsidian {
 
-DataReadErrorCode MovementModifier::load(const PlugInModifier& prefix, DataReader& reader) {
+DataReadErrorCode MovementModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 0)
 		return kDataReadErrorUnsupportedRevision;
 
@@ -48,7 +48,7 @@ DataReadErrorCode MovementModifier::load(const PlugInModifier& prefix, DataReade
 	return kDataReadErrorNone;
 }
 
-DataReadErrorCode RectShiftModifier::load(const PlugInModifier &prefix, DataReader &reader) {
+DataReadErrorCode RectShiftModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
 	if (prefix.plugInRevision != 1)
 		return kDataReadErrorUnsupportedRevision;
 

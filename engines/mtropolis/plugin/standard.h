@@ -116,11 +116,32 @@ private:
 	Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> _embeddedFile;
 };
 
+class ListVariableModifier : public Modifier {
+public:
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data);
+
+private:
+	DynamicList _list;
+};
+
+struct StandardPlugInHacks {
+	StandardPlugInHacks();
+
+	// If list mod values are illegible, just ignore them and flag it as garbled.
+	// Necessary to load object 00788ab9 (olL437Check) in Obsidian, which is supposed to be a list of
+	// 4 lists that are 3-size each, in the persistent data, but actually contains 4 identical values
+	// that appear to be garbage.
+	bool allowGarbledListModData;
+};
+
 class StandardPlugIn : public MTropolis::PlugIn {
 public:
 	StandardPlugIn();
 
 	void registerModifiers(IPlugInModifierRegistrar *registrar) const override;
+
+	const StandardPlugInHacks &getHacks() const;
+	StandardPlugInHacks &getHacks();
 
 private:
 	PlugInModifierFactory<CursorModifier, Data::Standard::CursorModifier> _cursorModifierFactory;
@@ -128,6 +149,9 @@ private:
 	PlugInModifierFactory<MediaCueMessengerModifier, Data::Standard::MediaCueMessengerModifier> _mediaCueModifierFactory;
 	PlugInModifierFactory<ObjectReferenceVariableModifier, Data::Standard::ObjectReferenceVariableModifier> _objRefVarModifierFactory;
 	PlugInModifierFactory<MidiModifier, Data::Standard::MidiModifier> _midiModifierFactory;
+	PlugInModifierFactory<ListVariableModifier, Data::Standard::ListVariableModifier> _listVarModifierFactory;
+
+	StandardPlugInHacks _hacks;
 };
 
 } // End of namespace Standard
