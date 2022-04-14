@@ -479,7 +479,7 @@ done:
 	return string;
 }
 
-void GameData::parse_string_table(FileBuffer *fb, unsigned start_addr,
+void GameData::parse_string_table(FileBuffer *fb, uint start_addr,
 							   uint32 end_addr, StringTable *table) {
 	if (start_addr < end_addr) {
 		fb->seek(start_addr);

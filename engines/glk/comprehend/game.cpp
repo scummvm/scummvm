@@ -461,14 +461,13 @@ void ComprehendGame::updateRoomDesc() {
 
 void ComprehendGame::update() {
 	Room *room = get_room(_currentRoom);
-	unsigned room_type, room_desc_string;
+	uint room_type, room_desc_string;
 
 	update_graphics();
 
 	/* Check if the room is special (dark, too bright, etc) */
 	room_desc_string = room->_stringDesc;
-	room_type = roomIsSpecial(_currentRoom,
-	                                &room_desc_string);
+	room_type = roomIsSpecial(_currentRoom, &room_desc_string);
 
 	if (_updateFlags & UPDATE_ROOM_DESC) {
 		Common::String desc = stringLookup(room_desc_string);

@@ -27,7 +27,9 @@
 namespace Glk {
 namespace Scott {
 
+#if !defined(SIZE_MAX)
 #define SIZE_MAX 0xFFFFFFFF
+#endif
 
 typedef uint8 uint8_t;
 typedef uint16 uint16_t;

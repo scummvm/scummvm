@@ -181,7 +181,7 @@ private:
 	void closeGraphicsWindow();
 	winid_t findGlkWindowWithRock(glui32 rock);
 	void openGraphicsWindow();
-	glui32 optimalPictureSize(glui32 *width, glui32 *height);
+	glui32 optimalPictureSize(uint *width, uint *height);
 	void openTopWindow();
 	void cleanupAndExit();
 	void drawBlack();

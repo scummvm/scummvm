@@ -1407,7 +1407,7 @@ void Scott::flushRoomDescription(char *buf) {
 		int rows, length;
 		char *textWithBreaks = lineBreakText(buf, _topWidth, &rows, &length);
 
-		glui32 bottomheight;
+		uint bottomheight;
 		glk_window_get_size(_G(_bottomWindow), nullptr, &bottomheight);
 		winid_t o2 = glk_window_get_parent(_G(_topWindow));
 		if (!(bottomheight < 3 && _topHeight < rows)) {
@@ -1576,7 +1576,7 @@ void Scott::closeGraphicsWindow() {
 }
 
 winid_t Scott::findGlkWindowWithRock(glui32 rock) {
-	glui32 rockptr;
+	uint rockptr;
 	winid_t win = glk_window_iterate(nullptr, &rockptr);
 	while (win) {
 		if (rockptr == rock)
@@ -1589,7 +1589,7 @@ winid_t Scott::findGlkWindowWithRock(glui32 rock) {
 void Scott::openGraphicsWindow() {
 	if (!glk_gestalt(gestalt_Graphics, 0))
 		return;
-	glui32 graphwidth, graphheight, optimalWidth, optimalHeight;
+	uint graphwidth, graphheight, optimalWidth, optimalHeight;
 
 	if (_G(_topWindow) == nullptr)
 		_G(_topWindow) = findGlkWindowWithRock(GLK_STATUS_ROCK);
@@ -1609,7 +1609,7 @@ void Scott::openGraphicsWindow() {
 		}
 
 		// Set the graphics window background to match the main window background, best as we can, and clear the window.
-		glui32 backgroundColor;
+		uint backgroundColor;
 		if (glk_style_measure(_G(_bottomWindow), style_Normal, stylehint_BackColor, &backgroundColor)) {
 			glk_window_set_background_color(_G(_graphics), backgroundColor);
 			glk_window_clear(_G(_graphics));
@@ -1628,11 +1628,11 @@ void Scott::openGraphicsWindow() {
 	}
 }
 
-glui32 Scott::optimalPictureSize(glui32 *width, glui32 *height) {
+glui32 Scott::optimalPictureSize(uint *width, uint *height) {
 	*width = 255;
 	*height = 96;
 	int multiplier = 1;
-	glui32 graphwidth, graphheight;
+	uint graphwidth, graphheight;
 	glk_window_get_size(_G(_graphics), &graphwidth, &graphheight);
 	multiplier = graphheight / 96;
 	if (static_cast<glui32>(255 * multiplier) > graphwidth)
@@ -2138,7 +2138,7 @@ void Scott::printTitleScreenGrid() {
 			rows++;
 	winid_t titlewin = glk_window_open(_G(_bottomWindow), winmethod_Above | winmethod_Fixed, rows + 2,
 									   wintype_TextGrid, 0);
-	glui32 width, height;
+	uint width, height;
 	glk_window_get_size(titlewin, &width, &height);
 	if (width < 40 || height < static_cast<glui32>(rows + 2)) {
 		glk_window_close(titlewin, nullptr);

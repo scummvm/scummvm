@@ -130,8 +130,7 @@ bool TransylvaniaGame1::isMonsterInRoom(const TransylvaniaMonster *monsterInfo) 
 	return monster->_room == _currentRoom;
 }
 
-int TransylvaniaGame1::roomIsSpecial(unsigned room_index,
-									unsigned *roomDescString) {
+int TransylvaniaGame1::roomIsSpecial(uint room_index, uint *roomDescString) {
 	Room *room = &_rooms[room_index];
 
 	if (room_index == 0x28) {

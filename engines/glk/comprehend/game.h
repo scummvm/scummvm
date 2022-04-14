@@ -171,7 +171,7 @@ public:
 	 */
 	virtual void handleAction(Sentence *sentence);
 
-	virtual int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) {
+	virtual int roomIsSpecial(uint room_index, uint *room_desc_string) {
 		return ROOM_IS_NORMAL;
 	}
 	virtual void handleSpecialOpcode() {}

@@ -44,7 +44,7 @@ public:
 	void beforeGame() override;
 	void beforeTurn() override;
 	void synchronizeSave(Common::Serializer &s) override;
-	int roomIsSpecial(unsigned room_index, unsigned *roomDescString) override;
+	int roomIsSpecial(uint room_index, uint *roomDescString) override;
 	void handleSpecialOpcode() override;
 };
 

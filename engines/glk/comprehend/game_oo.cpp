@@ -118,7 +118,7 @@ void OOToposGame::beforeGame() {
 	g_comprehend->glk_window_clear(g_comprehend->_bottomWindow);
 }
 
-int OOToposGame::roomIsSpecial(unsigned room_index, unsigned *roomDescString) {
+int OOToposGame::roomIsSpecial(uint room_index, uint *roomDescString) {
 	Room *room = &_rooms[room_index];
 
 	// Is the room dark
