@@ -20,6 +20,7 @@
  */
 
 #include "ags/shared/util/string_utils.h"
+#include "ags/shared/util/utf8.h"
 #include "ags/shared/core/platform.h"
 #include "ags/lib/std/regex.h"
 #include "ags/shared/util/math.h"
@@ -218,6 +219,25 @@ void StrUtil::WriteStringMap(const StringMap &map, Stream *out) {
 		StrUtil::WriteString(kv._key, out);
 		StrUtil::WriteString(kv._value, out);
 	}
+}
+
+size_t StrUtil::ConvertUtf8ToAscii(const char *mbstr, const char *loc_name, char *out_cstr, size_t out_sz) {
+	// TODO: later consider using C++11 conversion methods
+	// First convert utf-8 string into widestring;
+	std::vector<wchar_t> wcsbuf; // widechar buffer
+	wcsbuf.resize(Utf8::GetLength(mbstr) + 1);
+	// NOTE: we don't use mbstowcs, because unfortunately ".utf-8" locale
+	// is not normally supported on all systems (e.g. Windows 7 and earlier)
+	for (size_t at = 0, chr_sz = 0; *mbstr; mbstr += chr_sz, ++at) {
+		Utf8::Rune r;
+		chr_sz = Utf8::GetChar(mbstr, Utf8::UtfSz, &r);
+		wcsbuf[at] = static_cast<wchar_t>(r);
+	}
+	// Then convert widestring to single-byte string using specified locale
+	setlocale(LC_CTYPE, loc_name);
+	size_t res_sz = wcstombs(out_cstr, &wcsbuf[0], out_sz);
+	setlocale(LC_CTYPE, "");
+	return res_sz;
 }
 
 } // namespace Shared

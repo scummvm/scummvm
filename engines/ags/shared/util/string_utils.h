@@ -83,6 +83,10 @@ void            WriteCStr(const String &s, Stream *out);
 void            ReadStringMap(StringMap &map, Stream *in);
 void            WriteStringMap(const StringMap &map, Stream *out);
 
+// Convert utf-8 string to ascii/ansi representation;
+	// writes into out_cstr buffer limited by out_sz bytes; returns bytes written.
+size_t ConvertUtf8ToAscii(const char *mbstr, const char *loc_name, char *out_cstr, size_t out_sz);
+
 } // namespace StrUtil
 } // namespace Shared
 } // namespace AGS

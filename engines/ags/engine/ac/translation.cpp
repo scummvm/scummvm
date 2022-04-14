@@ -29,22 +29,17 @@
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/translation.h"
 #include "ags/shared/ac/words_dictionary.h"
+#include "ags/shared/core/asset_manager.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/game/tra_file.h"
 #include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
-
-// TODO: Since ScummVM can't use uconvert, this is a dummy implementation for now
-const char *convert_utf8_to_ascii(const char *mbstr, const char *loc_name) {
-	_G(mbbuf).resize(strlen(mbstr) + 1);
-	strcpy(&_G(mbbuf)[0], mbstr);
-	return &_G(mbbuf)[0];
-}
 
 void close_translation() {
 	_GP(transtree).clear();
@@ -124,9 +119,11 @@ bool init_translation(const String &lang, const String &fallback_lang) {
 			_GP(trans).StrOptions["gameencoding"];
 		if (!key_enc.IsEmpty()) {
 			StringMap conv_map;
+			std::vector<char> ascii; // ascii buffer
 			for (const auto &item : _GP(trans).Dict) {
-				String key = convert_utf8_to_ascii(item._key.GetCStr(), key_enc.GetCStr());
-				conv_map.insert(std::make_pair(key, item._value));
+				ascii.resize(item._key.GetLength()); // ascii len will be <= utf-8 len
+				StrUtil::ConvertUtf8ToAscii(item._key.GetCStr(), key_enc.GetCStr(), &ascii[0], ascii.size());
+				conv_map.insert(std::make_pair(String(&ascii[0]), item._value));
 			}
 			_GP(trans).Dict = conv_map;
 		}
