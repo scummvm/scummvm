@@ -32,6 +32,8 @@
 // This contains defs related to parsing of mTropolis stored data into structured data objects.
 namespace MTropolis {
 
+class PlugIn;
+
 namespace Data {
 
 struct PlugInModifier;
@@ -64,6 +66,7 @@ namespace DataObjectTypes {
 enum DataObjectType {
 	kUnknown                             = 0,
 
+	kProjectLabelMap                     = 0x22,
 	kProjectCatalog                      = 0x3e8,
 	kStreamHeader                        = 0x3e9,
 	kProjectHeader                       = 0x3ea,
@@ -72,15 +75,15 @@ enum DataObjectType {
 	kAssetCatalog                        = 0xd,
     kGlobalObjectInfo                    = 0x17,
 	kUnknown19                           = 0x19,
-	kProjectLabelMap                     = 0x22,	// NYI
 
-	kProjectStructuralDef                = 0x2,		// NYI
-	kSectionStructuralDef                = 0x3,		// NYI
-	kSceneStructuralDef                  = 0x8,
-	kSubsectionStructuralDef             = 0x21,	// NYI
+	kProjectStructuralDef                = 0x2,
+	kSectionStructuralDef                = 0x3,
+	kSubsectionStructuralDef             = 0x21,
+
+	kGraphicStructuralDef                = 0x8,		// NYI
 	kMovieStructuralDef                  = 0x5,		// NYI
 	kMToonStructuralDef                  = 0x6,		// NYI
-	kGraphicStructuralDef                = 0x7,		// NYI
+	kImageStructuralDef                  = 0x7,		// NYI
 	kSoundStructuralDef                  = 0xa,		// NYI
 
 	kTextLabelElement                    = 0x15,	// NYI
@@ -136,6 +139,13 @@ enum DataObjectType {
 
 } // End of namespace DataObjectTypes
 
+namespace StructuralFlags {
+	enum StructuralFlags {
+		kHasChildren = 0x4,
+		kNoMoreSiblings = 0x8,
+	};
+} // End of namespace StructuralFlags
+
 class DataReader {
 
 public:
@@ -165,7 +175,10 @@ public:
 	template<size_t TSize>
 	bool readBytes(uint8 (&arr)[TSize]);
 
+	bool seek(int64 pos);
 	bool skip(size_t count);
+
+	int64 tell() const;
 
 	ProjectFormat getProjectFormat() const;
 	bool isBigEndian() const;
@@ -333,15 +346,64 @@ protected:
 	uint16 _revision;
 };
 
-class ProjectHeader : public DataObject {
-
-public:
+struct ProjectHeader : public DataObject {
 	uint32 persistFlags;
 	uint32 sizeIncludingTag;
 	uint16 unknown1;
 	uint32 catalogFilePosition;
 
 protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct ProjectLabelMap : public DataObject {
+	ProjectLabelMap();
+	~ProjectLabelMap();
+
+	struct LabelTree {
+		LabelTree();
+		~LabelTree();
+
+		enum {
+			kExpandedInEditor = 0x80000000,
+		};
+
+		uint32 nameLength;
+		uint32 isGroup;
+		uint32 id;
+		uint32 unknown1;
+		uint32 flags;
+
+		Common::String name;
+
+		uint32_t numChildren;
+		LabelTree *children;
+	};
+
+	struct SuperGroup {
+		SuperGroup();
+		~SuperGroup();
+
+		uint32 nameLength;
+		uint32 id;
+		uint32 unknown2;
+		Common::String name;
+
+		uint32_t numChildren;
+		LabelTree *tree;
+	};
+
+	uint32 persistFlags;
+	uint32 unknown1; // Always 0x16
+	uint32 numSuperGroups;
+	uint32 nextAvailableID;
+
+	SuperGroup *superGroups;
+
+private:
+	static DataReadErrorCode loadSuperGroup(SuperGroup &sg, DataReader &reader);
+	static DataReadErrorCode loadLabelTree(LabelTree &lt, DataReader &reader);
+
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
@@ -388,6 +450,49 @@ struct Unknown19 : public DataObject {
 	uint32 persistFlags;
 	uint32 sizeIncludingTag;
 	uint8 unknown1[2];
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct ProjectStructuralDef final : public DataObject {
+	uint32 unknown1; // Seems to always be 0x16
+	uint32 sizeIncludingTag;
+	uint32 guid;
+	uint32 structuralFlags;
+	uint16 lengthOfName;
+
+	Common::String name;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct SectionStructuralDef : public DataObject {
+	uint32 unknown1;
+	uint32 sizeIncludingTag;
+	uint32 guid;
+	uint16 lengthOfName;
+	uint32 structuralFlags;
+	uint16 unknown4;
+	uint16 sectionID;
+	uint32 segmentID;
+
+	Common::String name;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct SubsectionStructuralDef final : public DataObject {
+	uint32 unknown1;
+	uint32 sizeIncludingTag;
+	uint32 guid;
+	uint16 lengthOfName;
+	uint32 structuralFlags;
+	uint16 sectionID;
+
+	Common::String name;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -1014,7 +1119,7 @@ protected:
 
 struct PlugInModifierData {
 	virtual ~PlugInModifierData();
-	virtual DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) = 0;
+	virtual DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) = 0;
 };
 
 struct PlugInModifier : public DataObject {
@@ -1048,6 +1153,7 @@ protected:
 
 struct IPlugInModifierDataFactory {
 	virtual Common::SharedPtr<Data::PlugInModifierData> createModifierData() const = 0;
+	virtual PlugIn &getPlugIn() const = 0;
 };
 
 class PlugInModifierRegistry {

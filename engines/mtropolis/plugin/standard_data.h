@@ -40,7 +40,7 @@ struct CursorModifier : public PlugInModifierData {
 	uint8 unknown4[4];
 
 protected:
-	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
 struct STransCtModifier : public PlugInModifierData {
@@ -62,7 +62,7 @@ struct STransCtModifier : public PlugInModifierData {
 	uint8 unknown16[2];
 
 protected:
-	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
 struct MediaCueMessengerModifier : public PlugInModifierData {
@@ -90,7 +90,7 @@ struct MediaCueMessengerModifier : public PlugInModifierData {
 	PlugInTypeTaggedValue triggerTiming;	// int type
 
 protected:
-	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
 struct ObjectReferenceVariableModifier : public PlugInModifierData {
@@ -99,7 +99,7 @@ struct ObjectReferenceVariableModifier : public PlugInModifierData {
 	PlugInTypeTaggedValue objectPath;
 
 protected:
-	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
 struct MidiModifier : public PlugInModifierData {
@@ -140,7 +140,36 @@ struct MidiModifier : public PlugInModifierData {
 	Common::SharedPtr<EmbeddedFile> embeddedFile;
 
 protected:
-	DataReadErrorCode load(const PlugInModifier &prefix, DataReader &reader) override;
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct ListVariableModifier : public PlugInModifierData {
+	enum ContentsType {
+		kContentsTypeInteger = 1,
+		kContentsTypePoint = 2,
+		kContentsTypeRange = 3,
+		kContentsTypeFloat = 4,
+		kContentsTypeString = 5,
+		kContentsTypeObject = 6,
+		kContentsTypeVector = 8,
+		kContentsTypeBoolean = 9,
+	};
+
+	ListVariableModifier();
+	~ListVariableModifier();
+
+	uint16 unknown1;
+	uint32 contentsType;
+	uint8 unknown2[4];
+
+	bool havePersistentData;
+	uint32 numValues;
+	PlugInTypeTaggedValue *values;
+
+	bool persistentValuesGarbled;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
 } // End of namespace Standard

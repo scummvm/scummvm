@@ -126,12 +126,76 @@ bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::
 	return true;
 }
 
+bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data) {
+	if (!data.havePersistentData || data.numValues == 0)
+		return true;	// If the list is empty then we don't care, the actual value type is irrelevant because it can be reassigned
+
+	DynamicValueTypes::DynamicValueType expectedType = DynamicValueTypes::kInvalid;
+	switch (data.contentsType) {
+	case Data::Standard::ListVariableModifier::kContentsTypeInteger:
+		expectedType = DynamicValueTypes::kInteger;
+		break;
+	case Data::Standard::ListVariableModifier::kContentsTypePoint:
+		expectedType = DynamicValueTypes::kPoint;
+		break;
+	case Data::Standard::ListVariableModifier::kContentsTypeRange:
+		expectedType = DynamicValueTypes::kIntegerRange;
+		break;
+	case Data::Standard::ListVariableModifier::kContentsTypeFloat:
+		expectedType = DynamicValueTypes::kFloat;
+		break;
+	case Data::Standard::ListVariableModifier::kContentsTypeString:
+		expectedType = DynamicValueTypes::kString;
+		break;
+	case Data::Standard::ListVariableModifier::kContentsTypeObject:
+		if (data.persistentValuesGarbled) {
+			// Ignore and let the game fix it
+			return true;
+		} else {
+			warning("Object reference lists are not implemented");
+			return false;
+		}
+		break;
+	case Data::Standard::ListVariableModifier::kContentsTypeVector:
+		expectedType = DynamicValueTypes::kVector;
+		break;
+	case Data::Standard::ListVariableModifier::kContentsTypeBoolean:
+		expectedType = DynamicValueTypes::kBoolean;
+		break;
+	default:
+		warning("Unknown list data type");
+		return false;
+	}
+
+	for (size_t i = 0; i < data.numValues; i++) {
+		DynamicValue dynValue;
+		if (!dynValue.load(data.values[i]))
+			return false;
+
+		if (dynValue.getType() != expectedType) {
+			warning("List mod initialization element had the wrong type");
+			return false;
+		}
+
+		if (!_list.setAtIndex(i, dynValue)) {
+			warning("Failed to initialize list modifier, value was rejected");
+			return false;
+		}
+	}
+
+	return true;
+}
+
+StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
+}
+
 StandardPlugIn::StandardPlugIn()
 	: _cursorModifierFactory(this)
 	, _sTransCtModifierFactory(this)
 	, _mediaCueModifierFactory(this)
 	, _objRefVarModifierFactory(this)
-	, _midiModifierFactory(this) {
+	, _midiModifierFactory(this)
+	, _listVarModifierFactory(this) {
 }
 
 void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
@@ -140,6 +204,15 @@ void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) cons
 	registrar->registerPlugInModifier("MediaCue", &_mediaCueModifierFactory);
 	registrar->registerPlugInModifier("ObjRefP", &_objRefVarModifierFactory);
 	registrar->registerPlugInModifier("MIDIModf", &_midiModifierFactory);
+	registrar->registerPlugInModifier("ListMod", &_listVarModifierFactory);
+}
+
+const StandardPlugInHacks &StandardPlugIn::getHacks() const {
+	return _hacks;
+}
+
+StandardPlugInHacks& StandardPlugIn::getHacks() {
+	return _hacks;
 }
 
 } // End of namespace Standard

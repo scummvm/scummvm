@@ -135,6 +135,10 @@ bool DataReader::readNonTerminatedStr(Common::String &value, size_t size) {
 	return true;
 }
 
+bool DataReader::seek(int64 pos) {
+	return _stream.seek(pos);
+}
+
 bool DataReader::skip(size_t count) {
 	while (count > 0) {
 		uint64 thisChunkSize = INT64_MAX;
@@ -150,6 +154,10 @@ bool DataReader::skip(size_t count) {
 		count -= static_cast<size_t>(thisChunkSize);
 	}
 	return true;
+}
+
+int64 DataReader::tell() const {
+	return _stream.pos();
 }
 
 ProjectFormat DataReader::getProjectFormat() const {
@@ -433,6 +441,91 @@ DataObjectTypes::DataObjectType DataObject::getType() const {
 	return _type;
 }
 
+ProjectLabelMap::ProjectLabelMap() : superGroups(nullptr) {
+}
+
+ProjectLabelMap::~ProjectLabelMap() {
+	if (superGroups)
+		delete[] superGroups;
+}
+
+DataReadErrorCode ProjectLabelMap::load(DataReader &reader) {
+	if (_revision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(persistFlags) || !reader.readU32(unknown1) || !reader.readU32(numSuperGroups) || !reader.readU32(nextAvailableID))
+		return kDataReadErrorReadFailed;
+
+	if (unknown1 != 0x16)
+		return kDataReadErrorUnrecognized;
+
+	superGroups = new SuperGroup[numSuperGroups];
+	for (size_t i = 0; i < numSuperGroups; i++) {
+		DataReadErrorCode subCode = loadSuperGroup(superGroups[i], reader);
+		if (subCode != kDataReadErrorNone)
+			return subCode;
+	}
+
+	return kDataReadErrorNone;
+}
+
+ProjectLabelMap::LabelTree::LabelTree() : children(nullptr) {
+}
+
+ProjectLabelMap::LabelTree::~LabelTree() {
+	if (children)
+		delete[] children;
+}
+
+ProjectLabelMap::SuperGroup::SuperGroup()
+	: tree(nullptr) {
+}
+
+ProjectLabelMap::SuperGroup::~SuperGroup() {
+	if (tree)
+		delete[] tree;
+}
+
+DataReadErrorCode ProjectLabelMap::loadSuperGroup(SuperGroup &sg, DataReader &reader) {
+	if (!reader.readU32(sg.nameLength) || !reader.readU32(sg.id) || !reader.readU32(sg.unknown2)
+		|| !reader.readNonTerminatedStr(sg.name, sg.nameLength) || !reader.readU32(sg.numChildren))
+		return kDataReadErrorReadFailed;
+
+	if (sg.numChildren) {
+		sg.tree = new LabelTree[sg.numChildren];
+		for (size_t i = 0; i < sg.numChildren; i++) {
+			DataReadErrorCode subCode = loadLabelTree(sg.tree[i], reader);
+			if (subCode != kDataReadErrorNone)
+				return subCode;
+		}
+	}
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode ProjectLabelMap::loadLabelTree(LabelTree &lt, DataReader &reader) {
+	if (!reader.readU32(lt.nameLength) || !reader.readU32(lt.isGroup) || !reader.readU32(lt.id)
+		|| !reader.readU32(lt.unknown1) || !reader.readU32(lt.flags) || !reader.readNonTerminatedStr(lt.name, lt.nameLength))
+		return kDataReadErrorReadFailed;
+
+	if (lt.isGroup) {
+		if (!reader.readU32(lt.numChildren))
+			return kDataReadErrorReadFailed;
+
+		if (lt.numChildren) {
+			lt.children = new LabelTree[lt.numChildren];
+			for (size_t i = 0; i < lt.numChildren; i++) {
+				DataReadErrorCode subCode = loadLabelTree(lt.children[i], reader);
+				if (subCode != kDataReadErrorNone)
+					return subCode;
+			}
+		}
+	} else
+		lt.numChildren = 0;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode ProjectHeader::load(DataReader &reader) {
 	if (_revision != 0) {
 		return kDataReadErrorUnsupportedRevision;
@@ -446,7 +539,6 @@ DataReadErrorCode ProjectHeader::load(DataReader &reader) {
 }
 
 DataReadErrorCode PresentationSettings::load(DataReader &reader) {
-
 	if (_revision != 2)
 		return kDataReadErrorUnsupportedRevision;
 
@@ -493,6 +585,41 @@ DataReadErrorCode Unknown19::load(DataReader &reader) {
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!reader.readU32(persistFlags) || !reader.readU32(sizeIncludingTag) || !reader.readBytes(unknown1))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode ProjectStructuralDef::load(DataReader &reader) {
+	if (_revision != 1 && _revision != 2)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
+		|| !reader.readU32(structuralFlags) || !reader.readU16(lengthOfName) || !reader.readTerminatedStr(name, lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode SectionStructuralDef::load(DataReader &reader) {
+	if (_revision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
+		|| !reader.readU16(lengthOfName) || !reader.readU32(structuralFlags) || !reader.readU16(unknown4)
+		|| !reader.readU16(unknown4) || !reader.readU32(segmentID) || !reader.readTerminatedStr(name, lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode SubsectionStructuralDef::load(DataReader &reader) {
+	if (_revision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(unknown1) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
+		|| !reader.readU16(lengthOfName) || !reader.readU32(structuralFlags) || !reader.readU16(sectionID)
+		|| !reader.readTerminatedStr(name, lengthOfName))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1082,6 +1209,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 
 	DataObject *dataObject = nullptr;
 	switch (type) {
+	case DataObjectTypes::kProjectLabelMap:
+		dataObject = new ProjectLabelMap();
+		break;
 	case DataObjectTypes::kProjectHeader:
 		dataObject = new ProjectHeader();
 		break;
@@ -1099,6 +1229,15 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kUnknown19:
 		dataObject = new Unknown19();
+		break;
+	case DataObjectTypes::kProjectStructuralDef:
+		dataObject = new ProjectStructuralDef();
+		break;
+	case DataObjectTypes::kSectionStructuralDef:
+		dataObject = new SectionStructuralDef();
+		break;
+	case DataObjectTypes::kSubsectionStructuralDef:
+		dataObject = new SubsectionStructuralDef();
 		break;
 	case DataObjectTypes::kGlobalObjectInfo:
 		dataObject = new GlobalObjectInfo();
@@ -1206,7 +1345,7 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		}
 
 		Common::SharedPtr<PlugInModifierData> plugInModifierData(plugInLoader->createModifierData());
-		errorCode = plugInModifierData->load(*static_cast<const PlugInModifier *>(dataObject), reader);
+		errorCode = plugInModifierData->load(plugInLoader->getPlugIn(), *static_cast<const PlugInModifier *>(dataObject), reader);
 		if (errorCode != kDataReadErrorNone) {
 			warning("Plug-in modifier failed to load");
 			outObject.reset();

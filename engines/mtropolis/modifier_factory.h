@@ -60,6 +60,7 @@ public:
 
 	Common::SharedPtr<Modifier> createModifier(ModifierLoaderContext &context, const Data::PlugInModifier &plugInModifierData) const override;
 	Common::SharedPtr<Data::PlugInModifierData> createModifierData() const override;
+	PlugIn &getPlugIn() const override;
 
 private:
 	PlugIn &_plugIn;
@@ -84,6 +85,11 @@ Common::SharedPtr<Modifier> PlugInModifierFactory<TModifier, TModifierData>::cre
 template<typename TModifier, typename TModifierData>
 Common::SharedPtr<Data::PlugInModifierData> PlugInModifierFactory<TModifier, TModifierData>::createModifierData() const {
 	return Common::SharedPtr<Data::PlugInModifierData>(new TModifierData());
+}
+
+template<typename TModifier, typename TModifierData>
+PlugIn& PlugInModifierFactory<TModifier, TModifierData>::getPlugIn() const {
+	return _plugIn;
 }
 
 IModifierFactory *getModifierFactoryForDataObjectType(Data::DataObjectTypes::DataObjectType dataObjectType);

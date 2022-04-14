@@ -161,22 +161,195 @@ struct MessageFlags {
 	bool immediate : 1;
 };
 
-struct DynamicValue {
-	enum Type {
-		kTypeNull,
-		kTypeInteger,
-		kTypeFloat,
-		kTypePoint,
-		KTypeIntegerRange,
-		kTypeBoolean,
-		kTypeVector,
-		kTypeLabel,
-		kTypeEvent,
-		kTypeVariableReference,
-		kTypeIncomingData,
-		kTypeString,
-	};
+namespace DynamicValueTypes {
+	enum DynamicValueType {
+		kInvalid,
 
+		kNull,
+		kInteger,
+		kFloat,
+		kPoint,
+		kIntegerRange,
+		kBoolean,
+		kVector,
+		kLabel,
+		kEvent,
+		kVariableReference,
+		kIncomingData,
+		kString,
+		kList,
+
+		kEmpty,
+	};
+}
+
+struct DynamicValue;
+struct DynamicList;
+
+class DynamicListContainerBase {
+public:
+	virtual ~DynamicListContainerBase();
+	virtual bool setAtIndex(size_t index, const DynamicValue &dynValue) = 0;
+	virtual void setFrom(const DynamicListContainerBase &other) = 0;	// Only supports setting same type!
+	virtual const void *getConstArrayPtr() const = 0;
+	virtual size_t getSize() const = 0;
+	virtual bool compareEqual(const DynamicListContainerBase &other) const = 0;
+};
+
+struct DynamicListDefaultSetter {
+	static void defaultSet(int32 &value);
+	static void defaultSet(double &value);
+	static void defaultSet(Point16 &value);
+	static void defaultSet(IntRange &value);
+	static void defaultSet(bool &value);
+	static void defaultSet(AngleMagVector &value);
+	static void defaultSet(Label &value);
+	static void defaultSet(Event &value);
+	static void defaultSet(Common::String &value);
+	static void defaultSet(DynamicList &value);
+};
+
+struct DynamicListValueImporter {
+	static bool importValue(const DynamicValue &dynValue, const int32 *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const double *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const Point16 *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const IntRange *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const bool *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const AngleMagVector *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const Label *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const Event *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const Common::String *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const DynamicList *&outPtr);
+};
+
+template<class T>
+class DynamicListContainer : public DynamicListContainerBase {
+public:
+	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
+	void setFrom(const DynamicListContainerBase &other) override;
+	const void *getConstArrayPtr() const override;
+	size_t getSize() const override;
+	bool compareEqual(const DynamicListContainerBase &other) const override;
+
+private:
+	Common::Array<T> _array;
+};
+
+template<>
+class DynamicListContainer<void> : public DynamicListContainerBase {
+public:
+	DynamicListContainer();
+
+	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
+	void setFrom(const DynamicListContainerBase &other) override;
+	const void *getConstArrayPtr() const override;
+	size_t getSize() const override;
+	bool compareEqual(const DynamicListContainerBase &other) const override;
+
+public:
+	size_t _size;
+};
+
+template<>
+class DynamicListContainer<VarReference> : public DynamicListContainerBase {
+public:
+	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
+	void setFrom(const DynamicListContainerBase &other) override;
+	const void *getConstArrayPtr() const override;
+	size_t getSize() const override;
+	bool compareEqual(const DynamicListContainerBase &other) const override;
+
+private:
+	void rebuildStringPointers();
+
+	Common::Array<VarReference> _array;
+	Common::Array<Common::String> _strings;
+};
+
+template<class T>
+bool DynamicListContainer<T>::setAtIndex(size_t index, const DynamicValue &dynValue) {
+	const T *valuePtr = nullptr;
+	if (!DynamicListValueImporter::importValue(dynValue, valuePtr))
+		return false;
+
+	_array.reserve(index + 1);
+	if (_array.size() <= index) {
+		if (_array.size() < index) {
+			T defaultValue;
+			DynamicListDefaultSetter::defaultSet(defaultValue);
+			while (_array.size() < index) {
+				_array.push_back(defaultValue);
+			}
+		}
+		_array.push_back(*valuePtr);
+	} else {
+		_array[index] = *valuePtr;
+	}
+
+	return true;
+}
+
+template<class T>
+void DynamicListContainer<T>::setFrom(const DynamicListContainerBase &other) {
+	_array = static_cast<const DynamicListContainer<T> &>(other)._array;
+}
+
+template<class T>
+const void *DynamicListContainer<T>::getConstArrayPtr() const {
+	return &_array;
+}
+
+template<class T>
+size_t DynamicListContainer<T>::getSize() const {
+	return _array.size();
+}
+
+template<class T>
+bool DynamicListContainer<T>::compareEqual(const DynamicListContainerBase &other) const {
+	const DynamicListContainer<T> &otherTyped = static_cast<const DynamicListContainer<T> &>(other);
+	return _array == otherTyped._array;
+}
+
+struct DynamicList {
+	DynamicList();
+	DynamicList(const DynamicList &other);
+	~DynamicList();
+
+	DynamicValueTypes::DynamicValueType getType() const;
+
+	const Common::Array<int32> &getInt() const;
+	const Common::Array<double> &getFloat() const;
+	const Common::Array<Point16> &getPoint() const;
+	const Common::Array<IntRange> &getIntRange() const;
+	const Common::Array<AngleMagVector> &getVector() const;
+	const Common::Array<Label> &getLabel() const;
+	const Common::Array<Event> &getEvent() const;
+	const Common::Array<VarReference> &getVarReference() const;
+	const Common::Array<Common::String> &getString() const;
+	const Common::Array<bool> &getBool() const;
+
+	bool setAtIndex(size_t index, const DynamicValue &value);
+
+	DynamicList &operator=(const DynamicList &other);
+
+	bool operator==(const DynamicList &other) const;
+	inline bool operator!=(const DynamicList &other) const {
+		return !((*this) == other);
+	}
+
+	void swap(DynamicList &other);
+
+private:
+	void clear();
+	void initFromOther(const DynamicList &other);
+	bool changeToType(DynamicValueTypes::DynamicValueType type);
+
+	DynamicValueTypes::DynamicValueType _type;
+	DynamicListContainerBase *_container;
+};
+
+
+struct DynamicValue {
 	DynamicValue();
 	DynamicValue(const DynamicValue &other);
 	~DynamicValue();
@@ -184,7 +357,7 @@ struct DynamicValue {
 	bool load(const Data::InternalTypeTaggedValue &data, const Common::String &varSource, const Common::String &varString);
 	bool load(const Data::PlugInTypeTaggedValue &data);
 
-	Type getType() const;
+	DynamicValueTypes::DynamicValueType getType() const;
 
 	const int32 &getInt() const;
 	const double &getFloat() const;
@@ -196,6 +369,7 @@ struct DynamicValue {
 	const VarReference &getVarReference() const;
 	const Common::String &getString() const;
 	const bool &getBool() const;
+	const DynamicList &getList() const;
 
 	DynamicValue &operator=(const DynamicValue &other);
 
@@ -203,6 +377,8 @@ struct DynamicValue {
 	inline bool operator!=(const DynamicValue& other) const {
 		return !((*this) == other);
 	}
+
+	void swap(DynamicValue &other);
 
 private:
 	union ValueUnion {
@@ -215,12 +391,13 @@ private:
 		Event asEvent;
 		Point16 asPoint;
 		bool asBool;
+		DynamicList *asList;
 	};
 
 	void clear();
 	void initFromOther(const DynamicValue &other);
 
-	Type _type;
+	DynamicValueTypes::DynamicValueType _type;
 	ValueUnion _value;
 	Common::String _str;
 };
@@ -342,6 +519,7 @@ public:
 	virtual ~Structural();
 
 	const Common::Array<Common::SharedPtr<Structural> > &getChildren() const;
+	void addChild(const Common::SharedPtr<Structural> &child);
 
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
@@ -374,12 +552,17 @@ private:
 
 struct ChildLoaderContext {
 	enum Type {
+		kTypeUnknown,
 		kTypeModifierList,
-		kTypeStructuralList,
+		kTypeProject,
+		kTypeSection,
+		kTypeSubsection,
+		kTypeSceneRoots,
 	};
 
 	union ContainerUnion {
 		IModifierContainer *modifierContainer;
+		Structural *structural;
 	};
 
 	uint remainingCount;
@@ -414,6 +597,23 @@ public:
 	void loadFromDescription(const ProjectDescription &desc);
 
 private:
+	struct LabelSuperGroup {
+		size_t firstRootNodeIndex;
+		size_t numRootNodes;
+		size_t numTotalNodes;
+
+		uint32 superGroupID;
+		Common::String name;
+	};
+
+	struct LabelTree {
+		size_t firstChildIndex;
+		size_t numChildren;
+
+		uint32 id;
+		Common::String name;
+	};
+
 	struct Segment {
 		SegmentDescription desc;
 		Common::SharedPtr<Common::SeekableReadStream> rcStream;
@@ -452,9 +652,13 @@ private:
 	void loadGlobalObjectInfo(ChildLoaderStack &loaderStack, const Data::GlobalObjectInfo &globalObjectInfo);
 	void loadContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject);
 	Common::SharedPtr<Modifier> loadModifierObject(ModifierLoaderContext &loaderContext, const Data::DataObject &dataObject);
+	void loadLabelMap(const Data::ProjectLabelMap &projectLabelMap);
+	static size_t recursiveCountLabels(const Data::ProjectLabelMap::LabelTree &tree);
 
 	Common::Array<Segment> _segments;
 	Common::Array<StreamDesc> _streams;
+	Common::Array<LabelTree> _labelTree;
+	Common::Array<LabelSuperGroup> _labelSuperGroups;
 	Data::ProjectFormat _projectFormat;
 	bool _isBigEndian;
 
@@ -466,6 +670,7 @@ private:
 	ProjectPresentationSettings _presentationSettings;
 
 	bool _haveGlobalObjectInfo;
+	bool _haveProjectStructuralDef;
 	SimpleModifierContainer _globalModifiers;
 
 	ProjectPlugInRegistry _plugInRegistry;
