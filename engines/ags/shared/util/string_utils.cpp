@@ -240,6 +240,28 @@ size_t StrUtil::ConvertUtf8ToAscii(const char *mbstr, const char *loc_name, char
 	return res_sz;
 }
 
+size_t StrUtil::ConvertUtf8ToWstr(const char *mbstr, wchar_t *out_wcstr, size_t out_sz) {
+	size_t len = 0;
+	for (size_t mb_sz = 1; *mbstr && (mb_sz > 0) && (len < out_sz);
+		mbstr += mb_sz, ++out_wcstr, ++len) {
+		Utf8::Rune r;
+		mb_sz = Utf8::GetChar(mbstr, Utf8::UtfSz, &r);
+		*out_wcstr = static_cast<wchar_t>(r);
+	}
+	*out_wcstr = 0;
+	return len;
+}
+
+size_t StrUtil::ConvertWstrToUtf8(const wchar_t *wcstr, char *out_mbstr, size_t out_sz) {
+	size_t len = 0;
+	for (size_t mb_sz = 1; *wcstr && (mb_sz > 0) && (len + mb_sz < out_sz);
+		++wcstr, out_mbstr += mb_sz, len += mb_sz) {
+		mb_sz = Utf8::SetChar(*wcstr, out_mbstr, out_sz - len);
+	}
+	*out_mbstr = 0;
+	return len;
+}
+
 } // namespace Shared
 } // namespace AGS
 } // namespace AGS3
