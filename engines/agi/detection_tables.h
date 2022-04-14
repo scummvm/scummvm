@@ -290,8 +290,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Black Cauldron (PC 5.25") 2.10 11/10/88 [AGI 3.002.098]
 	GAME3("bc", "2.10 1988-11-10 5.25\"", "bcdir", "0c5a9acbcc7e51127c34818e75806df6", 0x3149, GID_BC),
 
-	// Black Cauldron (PC) 2.10 [AGI 3.002.097]
-	GAME3("bc", "2.10", "bcdir", "0de3953c9225009dc91e5b0d1692967b", 0x3149, GID_BC),
+	// Black Cauldron (PC 3.5") 2.10 11/10/88 [AGI 3.002.098]
+	// BC.QA says "Interpreter: 3.002.097", while AGIDATA.OVL is "3.002.098"
+	GAME3("bc", "2.10 1988-11-10 3.5\"", "bcdir", "0de3953c9225009dc91e5b0d1692967b", 0x3149, GID_BC),
 
 	// Black Cauldron (CoCo3 360k) [AGI 2.023]
 	GAME_PS("bc", "", "51212c54808ade96176f201ae0ac7a6f", 357, 0x2440, GID_BC, Common::kPlatformCoCo3),
