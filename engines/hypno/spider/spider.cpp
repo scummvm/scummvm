@@ -30,7 +30,9 @@ namespace Hypno {
 
 extern const char *sceneVariables[];
 
-SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {
+SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd)
+  : HypnoEngine(syst, gd),
+  _currentPlayerPosition(kPlayerLeft), _lastPlayerPosition(kPlayerLeft) {
 	_screenW = 640;
 	_screenH = 480;
 	_font = nullptr;

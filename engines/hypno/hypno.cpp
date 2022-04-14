@@ -54,7 +54,6 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _playerFrameIdx(0), _playerFrameSep(0), _refreshConversation(false),
 	  _countdown(0), _timerStarted(false), _score(0), _lives(0),
 	  _defaultCursor(""), _checkpoint(""), _skipDefeatVideo(false),
-	  _currentPlayerPosition(kPlayerLeft), _lastPlayerPosition(kPlayerLeft),
 	  _background(nullptr),
 	  _masks(nullptr),
 	  _screenW(0), _screenH(0) { // Every games initializes its own resolution

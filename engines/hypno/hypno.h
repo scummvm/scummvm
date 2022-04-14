@@ -240,8 +240,6 @@ public:
 	// Arcade
 	Common::String _arcadeMode;
 	MVideo *_background;
-	uint32 _currentPlayerPosition;
-	uint32 _lastPlayerPosition;
 	virtual Common::Point computeTargetPosition(const Common::Point &mousePos);
 	virtual int detectTarget(const Common::Point &mousePos);
 	virtual void pressedKey(const int keycode);
@@ -468,6 +466,9 @@ private:
 	void runFuseBox(Code *code);
 	void runGiveUp();
 	void showScore(const Common::String prefix);
+
+	uint32 _currentPlayerPosition;
+	uint32 _lastPlayerPosition;
 
 	bool _fuseState[2][10] = {};
 	bool _isFuseRust = true;
