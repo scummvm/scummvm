@@ -106,7 +106,6 @@ class SplitLines;
 class TTFFontRenderer;
 class WFNFontRenderer;
 
-struct ActiveDisplaySetting;
 struct AGSDeSerializer;
 struct AGSPlatformDriver;
 struct AGSStaticObject;
@@ -324,8 +323,7 @@ public:
 	 * @{
 	 */
 
-	AnimatingGUIButton *_animbuts;
-	int _numAnimButs = 0;
+	std::vector<AnimatingGUIButton> *_animbuts;
 
 	/**@}*/
 

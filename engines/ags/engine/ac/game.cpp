@@ -24,6 +24,7 @@
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/view.h"
 #include "ags/engine/ac/audio_channel.h"
+#include "ags/engine/ac/button.h"
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/character_cache.h"
 #include "ags/shared/ac/dialog_topic.h"

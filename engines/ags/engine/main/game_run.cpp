@@ -580,10 +580,10 @@ static void game_loop_update_animated_buttons() {
 	// update animating GUI buttons
 	// this bit isn't in update_stuff because it always needs to
 	// happen, even when the game is paused
-	for (int aa = 0; aa < _G(numAnimButs); aa++) {
-		if (UpdateAnimatingButton(aa)) {
-			StopButtonAnimation(aa);
-			aa--;
+	for (size_t i = 0; i < GetAnimatingButtonCount(); ++i) {
+		if (UpdateAnimatingButton(i)) {
+			StopButtonAnimation(i);
+			i--;
 		}
 	}
 }

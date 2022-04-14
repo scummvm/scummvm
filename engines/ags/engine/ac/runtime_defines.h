@@ -145,7 +145,6 @@ const int LegacyRoomVolumeFactor = 30;
 
 #define MAX_DYNAMIC_SURFACES 20
 
-#define MAX_ANIMATING_BUTTONS 15
 #define RESTART_POINT_SAVE_GAME_NUMBER 999
 
 #define MAX_OPEN_SCRIPT_FILES 10

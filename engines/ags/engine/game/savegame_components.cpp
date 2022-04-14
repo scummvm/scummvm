@@ -21,9 +21,10 @@
 
 #include "ags/lib/std/map.h"
 #include "ags/shared/ac/audio_clip_type.h"
-#include "ags/engine/ac/character.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/dialog_topic.h"
+#include "ags/engine/ac/button.h"
+#include "ags/engine/ac/character.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/engine/ac/game.h"
@@ -567,9 +568,10 @@ HSaveError WriteGUI(Stream *out) {
 
 	// Animated buttons
 	WriteFormatTag(out, "AnimatedButtons");
-	out->WriteInt32(_G(numAnimButs));
-	for (int i = 0; i < _G(numAnimButs); ++i)
-		_G(animbuts)[i].WriteToFile(out);
+	size_t num_abuts = GetAnimatingButtonCount();
+	out->WriteInt32(num_abuts);
+	for (size_t i = 0; i < num_abuts; ++i)
+		GetAnimatingButtonByIndex(i)->WriteToFile(out);
 	return HSaveError::None();
 }
 
@@ -629,13 +631,13 @@ HSaveError ReadGUI(Stream *in, int32_t cmp_ver, const PreservedParams &pp, Resto
 	// Animated buttons
 	if (!AssertFormatTagStrict(err, in, "AnimatedButtons"))
 		return err;
+	RemoveAllButtonAnimations();
 	int anim_count = in->ReadInt32();
-	if (!AssertCompatLimit(err, anim_count, MAX_ANIMATING_BUTTONS, "animated buttons"))
-		return err;
-	_G(numAnimButs) = anim_count;
-	for (int i = 0; i < _G(numAnimButs); ++i)
-		_G(animbuts)[i].ReadFromFile(in);
-	return err;
+	for (int i = 0; i < anim_count; ++i) {
+		AnimatingGUIButton abut;
+		abut.ReadFromFile(in);
+		AddButtonAnimation(abut);
+	}	return err;
 }
 
 HSaveError WriteInventory(Stream *out) {

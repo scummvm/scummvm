@@ -32,6 +32,7 @@
 #include "ags/engine/ac/character_extras.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/dialog_topic.h"
+#include "ags/engine/ac/button.h"
 #include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/engine/ac/game.h"
 #include "ags/shared/ac/game_setup_struct.h"
@@ -211,10 +212,12 @@ static void restore_game_more_dynamic_values(Stream *in) {
 	_G(game_paused) = in->ReadInt32();
 }
 
-static void ReadAnimatedButtons_Aligned(Stream *in) {
+void ReadAnimatedButtons_Aligned(Stream *in, int num_abuts) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
-	for (int i = 0; i < _G(numAnimButs); ++i) {
-		_G(animbuts)[i].ReadFromFile(&align_s);
+	for (int i = 0; i < num_abuts; ++i) {
+		AnimatingGUIButton abtn;
+		abtn.ReadFromFile(&align_s);
+		AddButtonAnimation(abtn);
 		align_s.Reset();
 	}
 }
@@ -229,8 +232,9 @@ static HSaveError restore_game_gui(Stream *in, int numGuisWas) {
 		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of GUI.");
 	}
 
-	_G(numAnimButs) = in->ReadInt32();
-	ReadAnimatedButtons_Aligned(in);
+	RemoveAllButtonAnimations();
+	int anim_count = in->ReadInt32();
+	ReadAnimatedButtons_Aligned(in, anim_count);
 	return HSaveError::None();
 }
 

@@ -28,6 +28,7 @@
 namespace AGS3 {
 
 using AGS::Shared::GUIButton;
+struct AnimatingGUIButton;
 
 void        Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat);
 const char *Button_GetText_New(GUIButton *butt);
@@ -48,8 +49,12 @@ int         Button_GetTextColor(GUIButton *butt);
 void        Button_SetTextColor(GUIButton *butt, int newcol);
 
 int         UpdateAnimatingButton(int bu);
-void        StopButtonAnimation(int idxn);
-void        FindAndRemoveButtonAnimation(int guin, int objn);
+size_t      GetAnimatingButtonCount();
+AnimatingGUIButton *GetAnimatingButtonByIndex(int idxn);
+void        AddButtonAnimation(const AnimatingGUIButton &abtn);
+void		StopButtonAnimation(int idxn);
+void		FindAndRemoveButtonAnimation(int guin, int objn);
+void        RemoveAllButtonAnimations();
 
 } // namespace AGS3
 

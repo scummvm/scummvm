@@ -126,7 +126,7 @@ Globals::Globals() {
 	_scrAudioChannel = new ScriptAudioChannel[MAX_GAME_CHANNELS];
 
 	// button.cpp globals
-	_animbuts = new AnimatingGUIButton[MAX_ANIMATING_BUTTONS];
+	_animbuts = new std::vector<AnimatingGUIButton>();
 
 	// cc_instance.cpp globals
 	_GlobalReturnValue = new RuntimeScriptValue();
@@ -387,7 +387,7 @@ Globals::~Globals() {
 	delete[] _scrAudioChannel;
 
 	// button.cpp globals
-	delete[] _animbuts;
+	delete _animbuts;
 
 	// cc_instance.cpp globals
 	delete _GlobalReturnValue;
