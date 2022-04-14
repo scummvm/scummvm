@@ -201,7 +201,7 @@ const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
 					const char *p = GetArgPtr(sc_args, varg_ptr, arg_idx);
 					// Do extra checks for %s placeholder
 					if (fmt_done == kFormatParseArgString && !p) {
-						if (loaded_game_file_version < kGameVersion_320) {
+						if (_G(loaded_game_file_version) < kGameVersion_320) {
 							// explicitly put "(null)" into the placeholder
 							p = "(null)";
 						} else {

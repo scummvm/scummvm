@@ -1495,7 +1495,7 @@ bool ccInstance::ResolveScriptImports(const ccScript *scri) {
 	}
 
 	resolved_imports = new int[numimports];
-	int errors = 0, last_err_idx;
+	int errors = 0, last_err_idx = 0;
 	for (int import_idx = 0; import_idx < scri->numimports; ++import_idx) {
 		if (scri->imports[import_idx] == nullptr) {
 			resolved_imports[import_idx] = -1;
