@@ -1700,6 +1700,13 @@ void ScummEngine_v5::o5_putActor() {
 		} else if (x == 176 && y == 78) {
 			x = 172;
 		}
+	} else if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && _currentRoom == 42 && vm.slot[_currentScript].number == 201 && act == 6 && x == 136 && y == 0 && _enableEnhancements) {
+		// WORKAROUND: bug #2762: When switching back to Zak after using the blue
+		// crystal on the bird in Lima, the bird will disappear, come back and
+		// disappear again. This is really strange and only happens with the
+		// FM-TOWNS version, which adds an unconditional putActor(6,136,0) sequence
+		// that will always negate the getActorX()/getActorY() checks that follow.
+		return;
 	}
 
 	Actor *a = derefActor(act, "o5_putActor");
