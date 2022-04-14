@@ -113,6 +113,12 @@ extern int ustrnicmp(const char *s1, const char *s2, int n);
  *  last character).
  */
 extern int uoffset(const char *s, int index);
+
+/* ugetat:
+ *  Returns the character from the specified index within the string.
+ */
+extern int ugetat(const char *s, int idx);
+
 /* ustrlwr:
  *  Unicode-aware version of the ANSI strlwr() function.
  */

@@ -1206,6 +1206,11 @@ int uoffset(const char *s, int index) {
 	return (intptr_t)s - (intptr_t)orig;
 }
 
+int ugetat(const char *s, int index) {
+	assert(s);
+	return ugetc(s + uoffset(s, index));
+}
+
 char *ustrlwr(char *s) {
 	int pos = 0;
 	int c, lc;
