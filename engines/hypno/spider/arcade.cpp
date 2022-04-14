@@ -90,6 +90,15 @@ void SpiderEngine::findNextSegment(ArcadeShooting *arc) {
 	_segmentIdx = _segmentIdx + 1;
 }
 
+void SpiderEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
+	if (_arcadeMode != "YC" && _arcadeMode != "YD")
+		return;
+	if ((uint32)(s->name[0]) == _currentPlayerPosition) {
+		_health = _health - s->attackWeight;
+		hitPlayer();
+	}
+}
+
 
 void SpiderEngine::hitPlayer() {
 	if (_playerFrameSep < (int)_playerFrames.size()) {

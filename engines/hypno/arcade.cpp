@@ -464,10 +464,6 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 							else
 								_shoots[0] = s;
 						} else if (it->animation == "NONE") {
-							if ((uint32)(it->name[0]) == _currentPlayerPosition) {
-								_health = _health - it->attackWeight;
-								hitPlayer();
-							}
 							byte *c = getTargetColor(it->name, _levelId);
 							assert(s.paletteSize == 1 || s.paletteSize == 0);
 							loadPalette(c, s.paletteOffset, s.paletteSize);
@@ -526,7 +522,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			} else if (!it->video && it->bodyFrames.size() > 0) {
 				uint32 frame = _background->decoder->getCurFrame();
 				uint32 bodyLastFrame = it->bodyFrames[it->bodyFrames.size() - 1].lastFrame();
-				if (frame > it->startFrame && frame - it->startFrame > bodyLastFrame)
+				if (frame > it->startFrame && frame - it->startFrame >= bodyLastFrame - 3)
 					if (!it->destroyed) {
 						missedTarget(it, arc);
 						shootsToRemove.push_back(i);

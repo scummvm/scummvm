@@ -422,6 +422,7 @@ public:
 	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;
+	void missedTarget(Shoot *s, ArcadeShooting *arc) override;
 	void hitPlayer() override;
 
 	// Arcade
