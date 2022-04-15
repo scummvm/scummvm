@@ -694,7 +694,7 @@ int ccInstance::Run(int32_t curpc) {
 			reg1 = !(reg1);
 			break;
 		case SCMD_CALL:
-			// CallScriptFunction another function within same script, just save PC
+			// Call another function within same script, just save PC
 			// and continue from there
 			if (curnest >= MAXNEST - 1) {
 				cc_error("!call stack overflow, recursive call problem?");
@@ -920,7 +920,7 @@ int ccInstance::Run(int32_t curpc) {
 		case SCMD_CALLAS: {
 			PUSH_CALL_STACK;
 
-			// CallScriptFunction to a function in another script
+			// Call to a function in another script
 
 			// If there are nested CALLAS calls, the stack might
 			// contain 2 calls worth of parameters, so only
@@ -977,7 +977,7 @@ int ccInstance::Run(int32_t curpc) {
 			break;
 		}
 		case SCMD_CALLEXT: {
-			// CallScriptFunction to a real 'C' code function
+			// Call to a real 'C' code function
 			was_just_callas = -1;
 			if (num_args_to_func < 0) {
 				num_args_to_func = func_callstack.Count;
