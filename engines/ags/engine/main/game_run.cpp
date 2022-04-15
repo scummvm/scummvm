@@ -502,8 +502,6 @@ static void check_keyboard_controls() {
 		debug_script_log("Running on_key_press keycode %d", sckey);
 		setevent(EV_TEXTSCRIPT, TS_KEYPRESS, sckey);
 	}
-
-	// RunTextScriptIParam(_G(gameinst),"on_key_press",kgn);
 }
 
 // check_controls: checks mouse & keyboard interface
@@ -513,7 +511,9 @@ static void check_controls() {
 	sys_evt_process_pending();
 
 	check_mouse_controls();
-	check_keyboard_controls();
+	// Handle all the buffered key events
+	while (ags_keyevent_ready())
+		check_keyboard_controls();
 }
 
 static void check_room_edges(size_t numevents_was) {
