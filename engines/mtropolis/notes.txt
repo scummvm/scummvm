@@ -1,0 +1,14 @@
+GUID resolution and structure loading:
+
+Loading of objects in the mTropolis backend is done in multiple stages due to
+the complex GUID resolution process, inline assets, and other things.  Here's
+
+The first step to loading is to load data objects.  Data objects are JUST data,
+but due to weird aspects of the data loading process (like the fact that asset
+defs can appear anywhere) it's separate.
+
+The second step is conversion of data objects into runtime objects and
+formation of the scene structure.
+
+The third step is "materialization" which performs two tasks: First, it clones
+all aliased non-variable modifiers.  Second, it remaps all GUIDs to objects.

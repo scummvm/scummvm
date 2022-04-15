@@ -58,6 +58,13 @@ DataReadErrorCode RectShiftModifier::load(PlugIn &plugIn, const PlugInModifier &
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode TextWorkModifier::load(PlugIn& plugIn, const PlugInModifier& prefix, DataReader& reader) {
+	if (prefix.plugInRevision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	return kDataReadErrorNone;
+}
+
 } // End of namespace Obsidian
 
 } // End of namespace Data

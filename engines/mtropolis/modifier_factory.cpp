@@ -65,8 +65,12 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 		return ModifierFactory<BehaviorModifier, Data::BehaviorModifier>::getInstance();
 	case Data::DataObjectTypes::kMiniscriptModifier:
 		return ModifierFactory<MiniscriptModifier, Data::MiniscriptModifier>::getInstance();
+	case Data::DataObjectTypes::kAliasModifier:
+		return ModifierFactory<AliasModifier, Data::AliasModifier>::getInstance();
 	case Data::DataObjectTypes::kChangeSceneModifier:
 		return ModifierFactory<ChangeSceneModifier, Data::ChangeSceneModifier>::getInstance();
+	case Data::DataObjectTypes::kSoundEffectModifier:
+		return ModifierFactory<SoundEffectModifier, Data::SoundEffectModifier>::getInstance();
 	case Data::DataObjectTypes::kDragMotionModifier:
 		return ModifierFactory<DragMotionModifier, Data::DragMotionModifier>::getInstance();
 	case Data::DataObjectTypes::kVectorMotionModifier:
@@ -111,6 +115,7 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 		return ModifierFactory<StringVariableModifier, Data::StringVariableModifier>::getInstance();
 
 	default:
+		warning("No modifier factory for type %x", static_cast<int>(dataObjectType));
 		return nullptr;
 	}
 }

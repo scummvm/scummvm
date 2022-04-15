@@ -27,6 +27,7 @@
 #include "mtropolis/plugin/standard.h"
 
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/macresman.h"
 #include "common/ptr.h"
 #include "common/stuffit.h"
@@ -56,6 +57,8 @@ MacObsidianResources::MacObsidianResources() : _installerArchive(nullptr), _inst
 }
 
 void MacObsidianResources::setup() {
+	debug(1, "Opening Obsidian Mac installer package...");
+
 	if (!_installerResMan.open("Obsidian Installer"))
 		error("Failed to open Obsidian Installer");
 
@@ -68,8 +71,10 @@ void MacObsidianResources::setup() {
 	if (!_installerArchive)
 		error("Failed to open Obsidian Installer archive");
 
+	debug(1, "Reading data from installer...");
 	_segmentStreams[0] = _installerArchive->createReadStreamForMember("Obsidian Data 1");
 
+	debug("Opening data segments...");
 	for (int i = 0; i < 5; i++) {
 		char fileName[32];
 		sprintf(fileName, "Obsidian Data %i", (i + 2));
@@ -96,7 +101,6 @@ MacObsidianResources::~MacObsidianResources() {
 	delete _installerArchive;
 	delete _installerDataForkStream;
 }
-
 
 MTropolisEngine::MTropolisEngine(OSystem *syst, const MTropolisGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 

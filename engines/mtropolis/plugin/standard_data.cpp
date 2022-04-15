@@ -170,6 +170,12 @@ DataReadErrorCode ListVariableModifier::load(PlugIn &plugIn, const PlugInModifie
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode SysInfoModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	return kDataReadErrorNone;
+}
 
 } // End of namespace Standard
 

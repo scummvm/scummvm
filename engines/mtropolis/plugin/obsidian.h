@@ -41,6 +41,11 @@ public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::RectShiftModifier &data);
 };
 
+class TextWorkModifier : public Modifier {
+public:
+	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::TextWorkModifier &data);
+};
+
 class ObsidianPlugIn : public MTropolis::PlugIn {
 public:
 	ObsidianPlugIn();
@@ -50,6 +55,7 @@ public:
 private:
 	PlugInModifierFactory<MovementModifier, Data::Obsidian::MovementModifier> _movementModifierFactory;
 	PlugInModifierFactory<RectShiftModifier, Data::Obsidian::RectShiftModifier> _rectShiftModifierFactory;
+	PlugInModifierFactory<TextWorkModifier, Data::Obsidian::TextWorkModifier> _textWorkModifierFactory;
 };
 
 } // End of namespace Obsidian

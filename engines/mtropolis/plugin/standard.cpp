@@ -186,6 +186,10 @@ bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, cons
 	return true;
 }
 
+bool SysInfoModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::SysInfoModifier &data) {
+	return true;
+}
+
 StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
 }
 
@@ -195,7 +199,8 @@ StandardPlugIn::StandardPlugIn()
 	, _mediaCueModifierFactory(this)
 	, _objRefVarModifierFactory(this)
 	, _midiModifierFactory(this)
-	, _listVarModifierFactory(this) {
+	, _listVarModifierFactory(this)
+	, _sysInfoModifierFactory(this) {
 }
 
 void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
@@ -205,6 +210,7 @@ void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) cons
 	registrar->registerPlugInModifier("ObjRefP", &_objRefVarModifierFactory);
 	registrar->registerPlugInModifier("MIDIModf", &_midiModifierFactory);
 	registrar->registerPlugInModifier("ListMod", &_listVarModifierFactory);
+	registrar->registerPlugInModifier("SysInfo", &_sysInfoModifierFactory);
 }
 
 const StandardPlugInHacks &StandardPlugIn::getHacks() const {

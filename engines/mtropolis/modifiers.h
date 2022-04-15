@@ -72,6 +72,14 @@ private:
 	DynamicValue _target;
 };
 
+class AliasModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::AliasModifier &data);
+
+private:
+	uint32 _aliasID;
+};
+
 class ChangeSceneModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::ChangeSceneModifier &data);
@@ -91,6 +99,23 @@ private:
 	bool _addToReturnList;
 	bool _addToDestList;
 	bool _addToWrapAround;
+};
+
+class SoundEffectModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::SoundEffectModifier &data);
+
+private:
+	enum SoundType {
+		kSoundTypeBeep,
+		kSoundTypeAudioAsset,
+	};
+
+	Event _executeWhen;
+	Event _terminateWhen;
+
+	SoundType _soundType;
+	uint32 _assetID;
 };
 
 class DragMotionModifier : public Modifier {

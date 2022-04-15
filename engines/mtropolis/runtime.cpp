@@ -22,6 +22,8 @@
 #include "mtropolis/runtime.h"
 #include "mtropolis/data.h"
 #include "mtropolis/vthread.h"
+#include "mtropolis/asset_factory.h"
+#include "mtropolis/element_factory.h"
 #include "mtropolis/modifier_factory.h"
 
 #include "common/debug.h"
@@ -870,6 +872,9 @@ void SimpleModifierContainer::appendModifier(const Common::SharedPtr<Modifier> &
 	_modifiers.push_back(modifier);
 }
 
+Structural::Structural() : _guid(0) {
+}
+
 Structural::~Structural() {
 }
 
@@ -882,6 +887,10 @@ const Common::Array<Common::SharedPtr<Structural> > &Structural::getChildren() c
 
 void Structural::addChild(const Common::SharedPtr<Structural>& child) {
 	_children.push_back(child);
+}
+
+const Common::String &Structural::getName() const {
+	return _name;
 }
 
 const Common::Array<Common::SharedPtr<Modifier> > &Structural::getModifiers() const {
@@ -930,6 +939,9 @@ void Runtime::addVolume(int volumeID, const char *name, bool isMounted) {
 const Common::Array<Common::SharedPtr<Modifier> > &IModifierContainer::getModifiers() const {
 	return const_cast<IModifierContainer &>(*this).getModifiers();
 };
+
+ChildLoaderContext::ChildLoaderContext() : remainingCount(0), type(kTypeUnknown) {
+}
 
 ProjectPlugInRegistry::ProjectPlugInRegistry() {
 }
@@ -1062,6 +1074,12 @@ void Project::loadFromDescription(const ProjectDescription& desc) {
 	debug(1, "Loading boot stream");
 
 	loadBootStream(bootStreamIndex);
+
+	debug(1, "Boot stream loaded successfully, materializing project...");
+
+	error("TODO");
+
+	debug(1, "Materialized project OK, project is loaded!");
 }
 
 void Project::openSegmentStream(int segmentIndex) {
@@ -1098,11 +1116,12 @@ void Project::loadBootStream(size_t streamIndex) {
 	Data::DataReader reader(stream, _projectFormat);
 
 	ChildLoaderStack loaderStack;
+	AssetDefLoaderContext assetDefLoader;
 
 	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
 
 	size_t numObjectsLoaded = 0;
-	for (;;) {
+	while (stream.pos() != streamDesc.size) {
 		Common::SharedPtr<Data::DataObject> dataObject;
 		Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
 
@@ -1110,7 +1129,15 @@ void Project::loadBootStream(size_t streamIndex) {
 			error("Failed to load project boot data");
 		}
 
-		if (loaderStack.contexts.size() > 0) {
+		Data::DataObjectTypes::DataObjectType dataObjectType = dataObject->getType();
+
+		if (Data::DataObjectTypes::isAsset(dataObjectType)) {
+			// Asset defs can appear anywhere
+			loadAssetDef(assetDefLoader, *dataObject.get());
+		} else if (dataObjectType == Data::DataObjectTypes::kAssetDataChunk) {
+			// Ignore
+			continue;
+		} else if (loaderStack.contexts.size() > 0) {
 			loadContextualObject(loaderStack, *dataObject.get());
 		} else {
 			// Root-level objects
@@ -1303,6 +1330,7 @@ size_t Project::recursiveCountLabels(const Data::ProjectLabelMap::LabelTree& tre
 
 void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject) {
 	ChildLoaderContext &topContext = stack.contexts.back();
+	const Data::DataObjectTypes::DataObjectType dataObjectType = dataObject.getType();
 
 	// The stack entry must always be popped before loading the object because the load process may descend into more children,
 	// such as when behaviors are nested.
@@ -1320,59 +1348,103 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 	case ChildLoaderContext::kTypeProject: {
 			Structural *project = topContext.containerUnion.structural;
 
-			if (dataObject.getType() == Data::DataObjectTypes::kSectionStructuralDef) {
+			if (dataObjectType == Data::DataObjectTypes::kSectionStructuralDef) {
 
 				const Data::SectionStructuralDef &sectionObject = static_cast<const Data::SectionStructuralDef &>(dataObject);
 
-				Common::SharedPtr<Structural> subsection(new Section());
+				Common::SharedPtr<Structural> section(new Section());
+				if (!static_cast<Section *>(section.get())->load(sectionObject))
+					error("Failed to load section");
 
-				project->addChild(subsection);
+				project->addChild(section);
 
-				if (sectionObject.structuralFlags & Data::StructuralFlags::kNoMoreSiblings)
-					stack.contexts.pop_back();
+				// For some reason all section objects have the "no more siblings" structural flag.
+				// There doesn't appear to be any indication of how many section objects there will
+				// be either.
+				//if (sectionObject.structuralFlags & Data::StructuralFlags::kNoMoreSiblings)
+				//	stack.contexts.pop_back();
 
 				if (sectionObject.structuralFlags & Data::StructuralFlags::kHasChildren) {
 					ChildLoaderContext loaderContext;
-					loaderContext.containerUnion.structural = subsection.get();
+					loaderContext.containerUnion.structural = section.get();
 					loaderContext.remainingCount = 0;
 					loaderContext.type = ChildLoaderContext::kTypeSection;
 
 					stack.contexts.push_back(loaderContext);
 				}
-			} else {
-				// Assume this is a modifier
+			} else if (Data::DataObjectTypes::isModifier(dataObjectType)) {
 				ModifierLoaderContext loaderContext(&stack);
-
 				project->appendModifier(loadModifierObject(loaderContext, dataObject));
+			} else {
+				error("Unexpected object type in this context");
 			}
 		} break;
 	case ChildLoaderContext::kTypeSection: {
-			Structural *project = topContext.containerUnion.structural;
+			Structural *section = topContext.containerUnion.structural;
 
 			if (dataObject.getType() == Data::DataObjectTypes::kSubsectionStructuralDef) {
-
 				const Data::SubsectionStructuralDef &subsectionObject = static_cast<const Data::SubsectionStructuralDef &>(dataObject);
 
 				Common::SharedPtr<Structural> subsection(new Subsection());
+				if (!static_cast<Subsection *>(subsection.get())->load(subsectionObject))
+					error("Failed to load subsection");
 
-				project->addChild(subsection);
+				section->addChild(subsection);
 
 				if (subsectionObject.structuralFlags & Data::StructuralFlags::kNoMoreSiblings)
 					stack.contexts.pop_back();
 
 				if (subsectionObject.structuralFlags & Data::StructuralFlags::kHasChildren) {
 					ChildLoaderContext loaderContext;
-					loaderContext.containerUnion.structural = subsection.get();
+					loaderContext.containerUnion.filteredElements.structural = subsection.get();
+					loaderContext.containerUnion.filteredElements.filterFunc = Data::DataObjectTypes::isValidSceneRootElement;
 					loaderContext.remainingCount = 0;
-					loaderContext.type = ChildLoaderContext::kTypeSubsection;
+					loaderContext.type = ChildLoaderContext::kTypeFilteredElements;
 
 					stack.contexts.push_back(loaderContext);
 				}
-			} else {
-				// Assume this is a modifier
+			} else if (Data::DataObjectTypes::isModifier(dataObjectType)) {
 				ModifierLoaderContext loaderContext(&stack);
+				section->appendModifier(loadModifierObject(loaderContext, dataObject));
+			} else {
+				error("Unexpected object type in this context");
+			}
+		} break;
+	case ChildLoaderContext::kTypeFilteredElements: {
+			Structural *container = topContext.containerUnion.filteredElements.structural;
 
-				project->appendModifier(loadModifierObject(loaderContext, dataObject));
+			if (topContext.containerUnion.filteredElements.filterFunc(dataObjectType)) {
+				const Data::StructuralDef &structuralDef = static_cast<const Data::StructuralDef &>(dataObject);
+
+				IElementFactory *elementFactory = getElementFactoryForDataObjectType(dataObjectType);
+				if (!elementFactory) {
+					error("No element factory defined for structural object");
+				}
+
+				ElementLoaderContext elementLoaderContext;
+				Common::SharedPtr<Element> element = elementFactory->createElement(elementLoaderContext, dataObject);
+
+				container->addChild(element);
+
+				if (structuralDef.structuralFlags & Data::StructuralFlags::kNoMoreSiblings)
+					stack.contexts.pop_back();
+
+				if (structuralDef.structuralFlags & Data::StructuralFlags::kHasChildren) {
+					ChildLoaderContext loaderContext;
+					// Visual elements can contain non-visual element children, but non-visual elements
+					// can only contain non-visual element children
+					loaderContext.containerUnion.filteredElements.filterFunc = element->isVisual() ? Data::DataObjectTypes::isElement : Data::DataObjectTypes::isNonVisualElement;
+					loaderContext.containerUnion.filteredElements.structural = container;
+					loaderContext.remainingCount = 0;
+					loaderContext.type = ChildLoaderContext::kTypeFilteredElements;
+
+					stack.contexts.push_back(loaderContext);
+				}
+			} else if (Data::DataObjectTypes::isModifier(dataObjectType)) {
+				ModifierLoaderContext loaderContext(&stack);
+				container->appendModifier(loadModifierObject(loaderContext, dataObject));
+			} else {
+				error("Unexpected object type in this context");
 			}
 		} break;
 	default:
@@ -1380,6 +1452,55 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 		break;
 	}
 }
+
+void Project::loadAssetDef(AssetDefLoaderContext& context, const Data::DataObject& dataObject) {
+	assert(Data::DataObjectTypes::isAsset(dataObject.getType()));
+
+	IAssetFactory *factory = getAssetFactoryForDataObjectType(dataObject.getType());
+	if (!factory) {
+		error("Unimplemented asset type");
+		return;
+	}
+
+	AssetLoaderContext loaderContext;
+	context.assets.push_back(factory->createAsset(loaderContext, dataObject));
+}
+
+bool Section::load(const Data::SectionStructuralDef &data) {
+	_name = data.name;
+	_guid = data.guid;
+
+	return true;
+}
+
+bool Subsection::load(const Data::SubsectionStructuralDef &data) {
+	_name = data.name;
+	_guid = data.guid;
+
+	return true;
+}
+
+bool VisualElement::isVisual() const {
+	return true;
+}
+
+bool VisualElement::loadCommon(const Common::String &name, uint32 guid, const Data::Rect &rect, uint32 elementFlags, uint16 layer, uint32 streamLocator, uint16 sectionID) {
+	if (!_rect.load(rect))
+		return false;
+
+	_name = name;
+	_guid = guid;
+	_isHidden = ((elementFlags & Data::ElementFlags::kHidden) != 0);
+	_streamLocator = streamLocator;
+	_sectionID = sectionID;
+
+	return true;
+}
+
+bool NonVisualElement::isVisual() const {
+	return false;
+}
+
 
 ModifierFlags::ModifierFlags() : isLastModifier(false) {
 }
