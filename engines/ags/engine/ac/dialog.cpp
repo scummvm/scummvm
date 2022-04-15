@@ -851,6 +851,9 @@ bool DialogOptions::Run() {
 			_GP(runDialogOptionKeyPressHandlerFunc).params[0].SetDynamicObject(&_GP(ccDialogOptionsRendering), &_GP(ccDialogOptionsRendering));
 			_GP(runDialogOptionKeyPressHandlerFunc).params[1].SetInt32(AGSKeyToScriptKey(gkey));
 			run_function_on_non_blocking_thread(&_GP(runDialogOptionKeyPressHandlerFunc));
+			_GP(runDialogOptionTextInputHandlerFunc).params[0].SetDynamicObject(&_GP(ccDialogOptionsRendering), &_GP(ccDialogOptionsRendering));
+			_GP(runDialogOptionTextInputHandlerFunc).params[1].SetInt32(ki.UChar);
+			run_function_on_non_blocking_thread(&_GP(runDialogOptionKeyPressHandlerFunc));
 		}
 		// Allow selection of options by keyboard shortcuts
 		else if (_GP(game).options[OPT_DIALOGNUMBERED] >= kDlgOptKeysOnly &&

@@ -1256,6 +1256,7 @@ public:
 	NonBlockingScriptFunction *_getDialogOptionUnderCursorFunc;
 	NonBlockingScriptFunction *_runDialogOptionMouseClickHandlerFunc;
 	NonBlockingScriptFunction *_runDialogOptionKeyPressHandlerFunc;
+	NonBlockingScriptFunction *_runDialogOptionTextInputHandlerFunc;
 	NonBlockingScriptFunction *_runDialogOptionRepExecFunc;
 
 	ScriptSystem *_scsystem;
