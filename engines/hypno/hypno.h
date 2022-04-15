@@ -293,6 +293,7 @@ public:
 	virtual void drawCursorArcade(const Common::Point &mousePos);
 	virtual void drawPlayer();
 	virtual void drawHealth();
+	virtual void drawAmmo();
 	int _health;
 	int _maxHealth;
 	int _score;
@@ -501,6 +502,7 @@ public:
 
 	void missedTarget(Shoot *s, ArcadeShooting *arc) override;
 	void drawHealth() override;
+	void drawAmmo() override;
 	void drawShoot(const Common::Point &target) override;
 	void hitPlayer() override;
 	void drawPlayer() override;

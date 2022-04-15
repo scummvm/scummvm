@@ -159,6 +159,7 @@ void HypnoEngine::loadArcadeLevel(const Common::String &arclevel, const Common::
 
 void HypnoEngine::drawPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::drawHealth() { error("Function \"%s\" not implemented", __FUNCTION__); }
+void HypnoEngine::drawAmmo() {}
 void HypnoEngine::drawShoot(const Common::Point &target) { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::hitPlayer() { error("Function \"%s\" not implemented", __FUNCTION__); }
 void HypnoEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {}
@@ -532,6 +533,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 			drawPlayer();
 			drawHealth();
+			drawAmmo();
 		}
 
 		g_system->delayMillis(arc->frameDelay);

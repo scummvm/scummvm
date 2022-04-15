@@ -94,18 +94,21 @@ void BoyzEngine::drawPlayer() {
 void BoyzEngine::drawHealth() {
 	updateFromScript();
 
-	// Health
 	Common::Rect healthBarBox(0, 0, _healthBar[_currentActor].w, _healthBar[_currentActor].h/2);
 	uint32 c = kHypnoColorWhite; // white
 	_compositeSurface->fillRect(healthBarBox, c);
 	drawImage(_healthBar[_currentActor], 0, 0, true);
+}
 
-	// Ammo
+void BoyzEngine::drawAmmo() {
+	updateFromScript();
+
 	Common::Rect ammoBarBox(320 - _ammoBar[_currentActor].w, 0, 320, _ammoBar[_currentActor].h/2);
-	c = kHypnoColorGreen; // green
+	uint32 c = kHypnoColorGreen; // green
 	_compositeSurface->fillRect(ammoBarBox, c);
 	drawImage(_ammoBar[_currentActor], 320 - _ammoBar[_currentActor].w, 0, true);
 }
+
 void BoyzEngine::hitPlayer() {
 	uint32 c = kHypnoColorRed; // red
 	_compositeSurface->fillRect(Common::Rect(0, 0, _screenW, _screenH), c);
