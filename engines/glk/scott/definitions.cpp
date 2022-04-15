@@ -27,7 +27,7 @@ namespace Scott {
 GameInfo::GameInfo() {}
 
 GameInfo::GameInfo(
-					Common::String title,
+					const char *title,
 					GameIDType gameID,
 					GameType type,
 					Subtype subType,
