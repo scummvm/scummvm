@@ -300,6 +300,11 @@ public:
 		escape = false;
 		active = true;
 	}
+
+	Talk(Talk *t)  {
+		*this = *t;
+	}
+
 	TalkCommands commands;
 	bool active;
 	bool escape;

@@ -231,7 +231,9 @@ void HypnoEngine::runChangeLevel(ChangeLevel *a) {
 }
 
 void HypnoEngine::runTalk(Talk *a) {
-	_conversation.push_back(a);
+	// Recreate the items to allow modifications
+	Talk *n = new Talk(a);
+	_conversation.push_back(n);
 	_refreshConversation = true;
 }
 

@@ -323,6 +323,7 @@ public:
 	Actions _conversation;
 	bool _refreshConversation;
 	virtual void showConversation();
+	virtual void endConversation();
 	virtual void rightClickedConversation(const Common::Point &mousePos);
 	virtual void leftClickedConversation(const Common::Point &mousePos);
 	virtual bool hoverConversation(const Common::Point &mousePos);
@@ -442,6 +443,7 @@ public:
 	void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) override;
 
 	void showConversation() override;
+	void endConversation() override;
 	void rightClickedConversation(const Common::Point &mousePos) override;
 	void leftClickedConversation(const Common::Point &mousePos) override;
 	bool hoverConversation(const Common::Point &mousePos) override;
