@@ -255,8 +255,9 @@ enum eAGSKeyCode {
 struct KeyInput {
 	const static size_t UTF8_ARR_SIZE = 5;
 
-	eAGSKeyCode Key = eAGSKeyCodeNone;
-	char        Text[UTF8_ARR_SIZE] = { 0 };
+	eAGSKeyCode Key = eAGSKeyCodeNone; // actual key code
+	int         UChar = 0; // full character value (supports unicode)
+	char        Text[UTF8_ARR_SIZE]{}; // character in a string format
 
 	KeyInput() = default;
 };

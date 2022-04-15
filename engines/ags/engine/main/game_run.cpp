@@ -501,6 +501,10 @@ static void check_keyboard_controls() {
 		int sckey = AGSKeyToScriptKey(kgn);
 		debug_script_log("Running on_key_press keycode %d", sckey);
 		setevent(EV_TEXTSCRIPT, TS_KEYPRESS, sckey);
+		if (ki.UChar > 0) {
+			debug_script_log("Running on_text_input char %s (%d)", ki.Text, ki.UChar);
+			setevent(EV_TEXTSCRIPT, TS_TEXTINPUT, ki.UChar);
+		}
 	}
 }
 

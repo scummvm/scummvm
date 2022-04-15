@@ -43,12 +43,13 @@ namespace AGS3 {
 #define EV_FADEIN     3
 #define EV_IFACECLICK 4
 #define EV_NEWROOM    5
-#define TS_REPEAT   1
-#define TS_KEYPRESS 2
-#define TS_MCLICK   3
-#define TS_NUM      4
-#define EVB_HOTSPOT 1
-#define EVB_ROOM    2
+#define TS_REPEAT     1
+#define TS_KEYPRESS   2
+#define TS_MCLICK     3
+#define TS_TEXTINPUT  4
+#define TS_NUM        5
+#define EVB_HOTSPOT   1
+#define EVB_ROOM      2
 
 struct EventHappened {
 	int type = 0;
