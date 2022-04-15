@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-14 02:23+0000\n"
+"POT-Creation-Date: 2022-04-15 13:26+0000\n"
 "PO-Revision-Date: 2022-04-12 01:27+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4976,7 +4976,7 @@ msgstr ""
 msgid "Escape from Monkey Island support is not compiled in"
 msgstr "Escape from Monkey Island-tukea ei ole käännetty mukaan"
 
-#: engines/grim/resource.cpp:99
+#: engines/grim/resource.cpp:100
 msgid ""
 "The original patch of Grim Fandango\n"
 "is missing. Please download it from\n"
@@ -4988,7 +4988,7 @@ msgstr ""
 "https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe\n"
 "ja laita se pelisi pelidatahakemistoon"
 
-#: engines/grim/resource.cpp:104
+#: engines/grim/resource.cpp:105
 msgid ""
 "The original patch of Escape from Monkey Island is missing. \n"
 "Please download it from https://downloads.scummvm.org/frs/extras/patches/\n"

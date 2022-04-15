@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-14 02:23+0000\n"
+"POT-Creation-Date: 2022-04-15 13:26+0000\n"
 "PO-Revision-Date: 2021-07-12 15:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -4808,7 +4808,7 @@ msgstr ""
 msgid "Escape from Monkey Island support is not compiled in"
 msgstr ""
 
-#: engines/grim/resource.cpp:99
+#: engines/grim/resource.cpp:100
 msgid ""
 "The original patch of Grim Fandango\n"
 "is missing. Please download it from\n"
@@ -4816,7 +4816,7 @@ msgid ""
 "and put it in the game data files directory"
 msgstr ""
 
-#: engines/grim/resource.cpp:104
+#: engines/grim/resource.cpp:105
 msgid ""
 "The original patch of Escape from Monkey Island is missing. \n"
 "Please download it from https://downloads.scummvm.org/frs/extras/patches/\n"

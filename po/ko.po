@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-14 02:23+0000\n"
+"POT-Creation-Date: 2022-04-15 13:26+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4937,7 +4937,7 @@ msgstr ""
 msgid "Escape from Monkey Island support is not compiled in"
 msgstr "원숭이섬 탈출 지원이 컴파일 되지 않음"
 
-#: engines/grim/resource.cpp:99
+#: engines/grim/resource.cpp:100
 msgid ""
 "The original patch of Grim Fandango\n"
 "is missing. Please download it from\n"
@@ -4949,7 +4949,7 @@ msgstr ""
 "게임 데이터 디렉토리에 넣어 주세요.\n"
 "https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe"
 
-#: engines/grim/resource.cpp:104
+#: engines/grim/resource.cpp:105
 msgid ""
 "The original patch of Escape from Monkey Island is missing. \n"
 "Please download it from https://downloads.scummvm.org/frs/extras/patches/\n"
