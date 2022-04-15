@@ -203,7 +203,7 @@ void WetEngine::loadAssetsPCW() {
 	intro->intros.push_back("c_misc/wet.smk");
 	_levels["<start>"] = intro;
 
-	loadArcadeLevel("c11.mis", "<quit>", "<check_lives>", "");
+	loadArcadeLevel("c11.mis", "<quit>", "<quit>", "");
 
 	Transition *over = new Transition("<quit>");
 	_levels["<game_over>"] = over;
