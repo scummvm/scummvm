@@ -247,7 +247,7 @@ enum ActionTableType {
 
 struct GameInfo {
 	GameInfo();
-	GameInfo(Common::String title, GameIDType gameID, GameType type, Subtype subType, DictionaryType dictionary,
+	GameInfo(const char *title, GameIDType gameID, GameType type, Subtype subType, DictionaryType dictionary,
 			 int numberOfItems, int numberOfActions, int numberOfWords, int numberOfRooms, int maxCarried,
 			 int wordLength, int numberOfMessages, int numberOfVerbs, int numberOfNouns, int startOfHeader,
 			 HeaderType headerStyle, int startOfRoomImageList, int startOfItemFlags, int startOfItemImageList,
@@ -256,7 +256,7 @@ struct GameInfo {
 			 int startOfSystemMessages, int startOfDirections, int startOfCharacters, int startOfImageData,
 			 int imageAddressOffset, int numberOfPictures, PaletteType palette, int pictureFormatVersion,
 			 int startOfIntroText);
-	Common::String _title;
+	const char *_title;
 
 	GameIDType _gameID = UNKNOWN_GAME;
 	GameType _type = NO_TYPE;

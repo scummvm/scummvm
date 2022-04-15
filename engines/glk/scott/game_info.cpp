@@ -27,7 +27,7 @@
 namespace Glk {
 namespace Scott {
 
-Common::Array<GameInfo> g_games = {
+GameInfo g_games[NUMGAMES] = {
 	GameInfo("Pirate Adventure",
 		 PIRATE,
 		 OLD_STYLE,                 // type
