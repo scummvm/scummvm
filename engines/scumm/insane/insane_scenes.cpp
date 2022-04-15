@@ -853,7 +853,6 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 			postCase17(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			smlayer_stopSound(95);
 			smlayer_stopSound(87);
-			smlayer_stopSound(88);
 			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
 			break;
