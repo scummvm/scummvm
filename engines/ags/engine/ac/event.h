@@ -46,6 +46,7 @@ namespace AGS3 {
 #define TS_REPEAT   1
 #define TS_KEYPRESS 2
 #define TS_MCLICK   3
+#define TS_NUM      4
 #define EVB_HOTSPOT 1
 #define EVB_ROOM    2
 

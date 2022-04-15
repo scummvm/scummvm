@@ -83,10 +83,7 @@ void start_game() {
 	// skip ticks to account for initialisation or a restored _GP(game).
 	skipMissedTicks();
 
-	for (int kk = 0; kk < _G(numScriptModules); kk++)
-		RunTextScript(_GP(moduleInst)[kk], "game_start");
-
-	RunTextScript(_G(gameinst), "game_start");
+	RunScriptFunctionInModules("game_start");
 
 	_G(our_eip) = -43;
 

@@ -173,7 +173,8 @@ int run_dialog_script(DialogTopic *dtpp, int dialogID, int offse, int optionInde
 	if (_G(dialogScriptsInst)) {
 		char funcName[100];
 		sprintf(funcName, "_run_dialog%d", dialogID);
-		RunTextScriptIParam(_G(dialogScriptsInst), funcName, RuntimeScriptValue().SetInt32(optionIndex));
+		RuntimeScriptValue params[]{ optionIndex };
+		RunScriptFunction(_G(dialogScriptsInst), funcName, 1, params);
 		result = _G(dialogScriptsInst)->returnValue;
 	} else {
 		// old dialog format

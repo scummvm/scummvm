@@ -32,6 +32,7 @@
 #include "ags/shared/util/version.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/script/cc_script.h"
+#include "ags/engine/ac/event.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/walk_behind.h"
 #include "ags/engine/main/engine.h"
@@ -675,7 +676,7 @@ public:
 	int _inside_processevent = 0;
 	int _eventClaimed = 0;
 
-	const char *_tsnames[4] = { nullptr, REP_EXEC_NAME, "on_key_press", "on_mouse_click" };
+	const char *_tsnames[TS_NUM] = { nullptr, REP_EXEC_NAME, "on_key_press", "on_mouse_click" };
 
 	/**@}*/
 

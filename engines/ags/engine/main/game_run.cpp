@@ -222,8 +222,8 @@ static void check_mouse_controls() {
 			}
 			_G(wasongui) = mongu;
 			_G(wasbutdown) = mbut + 1;
-		} else setevent(EV_TEXTSCRIPT, TS_MCLICK, mbut + 1);
-		//    else RunTextScriptIParam(_G(gameinst),"on_mouse_click",aa+1);
+		} else
+			setevent(EV_TEXTSCRIPT, TS_MCLICK, mbut + 1);
 	}
 
 	if (mwheelz < 0)
