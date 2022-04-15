@@ -34,6 +34,7 @@
 
 namespace MTropolis {
 
+class Asset;
 class Project;
 class PlugIn;
 class Modifier;
@@ -516,17 +517,22 @@ private:
 class Structural : public IModifierContainer {
 
 public:
+	Structural();
 	virtual ~Structural();
 
 	const Common::Array<Common::SharedPtr<Structural> > &getChildren() const;
 	void addChild(const Common::SharedPtr<Structural> &child);
 
+	const Common::String &getName() const;
+
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
-private:
+protected:
 	Common::Array<Common::SharedPtr<Structural> > _children;
 	Common::Array<Common::SharedPtr<Modifier> > _modifiers;
+	Common::String _name;
+	uint32 _guid;
 };
 
 struct ProjectPresentationSettings {
@@ -550,20 +556,31 @@ private:
 	int _segmentIndex;
 };
 
+struct AssetDefLoaderContext {
+	Common::Array<Common::SharedPtr<Asset> > assets;
+};
+
 struct ChildLoaderContext {
 	enum Type {
 		kTypeUnknown,
 		kTypeModifierList,
 		kTypeProject,
 		kTypeSection,
-		kTypeSubsection,
-		kTypeSceneRoots,
+		kTypeFilteredElements,
+	};
+
+	struct FilteredElements {
+		Structural *structural;
+		bool (*filterFunc)(Data::DataObjectTypes::DataObjectType dataObjectType);
 	};
 
 	union ContainerUnion {
 		IModifierContainer *modifierContainer;
 		Structural *structural;
+		FilteredElements filteredElements;
 	};
+
+	ChildLoaderContext();
 
 	uint remainingCount;
 	Type type;
@@ -650,6 +667,7 @@ private:
 	void loadPresentationSettings(const Data::PresentationSettings &presentationSettings);
 	void loadAssetCatalog(const Data::AssetCatalog &assetCatalog);
 	void loadGlobalObjectInfo(ChildLoaderStack &loaderStack, const Data::GlobalObjectInfo &globalObjectInfo);
+	void loadAssetDef(AssetDefLoaderContext &context, const Data::DataObject &dataObject);
 	void loadContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject);
 	Common::SharedPtr<Modifier> loadModifierObject(ModifierLoaderContext &loaderContext, const Data::DataObject &dataObject);
 	void loadLabelMap(const Data::ProjectLabelMap &projectLabelMap);
@@ -680,12 +698,41 @@ private:
 };
 
 class Section : public Structural {
+public:
+	bool load(const Data::SectionStructuralDef &data);
 };
 
 class Subsection : public Structural {
+public:
+	bool load(const Data::SubsectionStructuralDef &data);
 };
 
-class Scene : public Structural {
+class Element : public Structural {
+public:
+	virtual bool isVisual() const = 0;
+
+protected:
+	uint32 _streamLocator;
+	uint16 _sectionID;
+};
+
+class VisualElement : public Element {
+public:
+	bool isVisual() const override;
+
+protected:
+	bool loadCommon(const Common::String &name, uint32 guid, const Data::Rect &rect, uint32 elementFlags, uint16 layer, uint32 streamLocator, uint16 sectionID);
+
+	bool _isHidden;
+	Rect16 _rect;
+	uint16 _layer;
+};
+
+class NonVisualElement : public Element {
+public:
+	bool isVisual() const override;
+
+	bool loadCommon(const Data::Rect &rect, const Common::String &str, uint32 elementFlags);
 };
 
 struct ModifierFlags {
@@ -706,6 +753,15 @@ protected:
 	ModifierFlags _modifierFlags;
 
 	bool loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeader);
+};
+
+class Asset {
+public:
+	Asset();
+	virtual ~Asset();
+
+protected:
+	uint32 _assetID;
 };
 
 } // End of namespace MTropolis

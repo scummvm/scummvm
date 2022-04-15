@@ -124,6 +124,11 @@ private:
 	DynamicList _list;
 };
 
+class SysInfoModifier : public Modifier {
+public:
+	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::SysInfoModifier &data);
+};
+
 struct StandardPlugInHacks {
 	StandardPlugInHacks();
 
@@ -150,6 +155,7 @@ private:
 	PlugInModifierFactory<ObjectReferenceVariableModifier, Data::Standard::ObjectReferenceVariableModifier> _objRefVarModifierFactory;
 	PlugInModifierFactory<MidiModifier, Data::Standard::MidiModifier> _midiModifierFactory;
 	PlugInModifierFactory<ListVariableModifier, Data::Standard::ListVariableModifier> _listVarModifierFactory;
+	PlugInModifierFactory<SysInfoModifier, Data::Standard::SysInfoModifier> _sysInfoModifierFactory;
 
 	StandardPlugInHacks _hacks;
 };

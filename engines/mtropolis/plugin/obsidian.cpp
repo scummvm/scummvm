@@ -34,12 +34,18 @@ bool RectShiftModifier::load(const PlugInModifierLoaderContext &context, const D
 	return true;
 }
 
-ObsidianPlugIn::ObsidianPlugIn() : _movementModifierFactory(this), _rectShiftModifierFactory(this) {
+bool TextWorkModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::TextWorkModifier &data) {
+	return true;
+}
+
+
+ObsidianPlugIn::ObsidianPlugIn() : _movementModifierFactory(this), _rectShiftModifierFactory(this), _textWorkModifierFactory(this) {
 }
 
 void ObsidianPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
 	registrar->registerPlugInModifier("Movement", &_movementModifierFactory);
 	registrar->registerPlugInModifier("rectshift", &_rectShiftModifierFactory);
+	registrar->registerPlugInModifier("TextWork", &_textWorkModifierFactory);
 }
 
 } // End of namespace ObsidianPlugIn

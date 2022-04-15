@@ -88,6 +88,17 @@ bool SetModifier::load(ModifierLoaderContext &context, const Data::SetModifier &
 	return true;
 }
 
+bool AliasModifier::load(ModifierLoaderContext &context, const Data::AliasModifier &data) {
+	_guid = data.guid;
+	if (!_modifierFlags.load(data.modifierFlags))
+		return false;
+	_name = data.name;
+
+	_aliasID = data.aliasIndexPlusOne;
+
+	return true;
+}
+
 bool ChangeSceneModifier::load(ModifierLoaderContext& context, const Data::ChangeSceneModifier& data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -107,6 +118,24 @@ bool ChangeSceneModifier::load(ModifierLoaderContext& context, const Data::Chang
 	_addToReturnList = ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagAddToReturnList) != 0);
 	_addToDestList = ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagAddToDestList) != 0);
 	_addToWrapAround = ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagWrapAround) != 0);
+
+	return true;
+}
+
+bool SoundEffectModifier::load(ModifierLoaderContext &context, const Data::SoundEffectModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_executeWhen.load(data.executeWhen) || !_terminateWhen.load(data.executeWhen))
+		return false;
+
+	if (data.assetID == Data::SoundEffectModifier::kSpecialAssetIDSystemBeep) {
+		_soundType = kSoundTypeBeep;
+		_assetID = 0;
+	} else {
+		_soundType = kSoundTypeAudioAsset;
+		_assetID = data.assetID;
+	}
 
 	return true;
 }

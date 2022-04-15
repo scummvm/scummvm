@@ -30,6 +30,9 @@
 #include "common/stream.h"
 
 // This contains defs related to parsing of mTropolis stored data into structured data objects.
+// This is separated from asset construction for a number of reasons, mainly that data parsing has
+// several quirky parses, and there are a lot of fields where, due to platform-specific byte
+// swaps, we know the size of the value but don't know what it means.
 namespace MTropolis {
 
 class PlugIn;
@@ -80,25 +83,17 @@ enum DataObjectType {
 	kSectionStructuralDef                = 0x3,
 	kSubsectionStructuralDef             = 0x21,
 
-	kGraphicStructuralDef                = 0x8,		// NYI
-	kMovieStructuralDef                  = 0x5,		// NYI
-	kMToonStructuralDef                  = 0x6,		// NYI
-	kImageStructuralDef                  = 0x7,		// NYI
-	kSoundStructuralDef                  = 0xa,		// NYI
-
+	kGraphicElement                      = 0x8,		// NYI
+	kMovieElement                        = 0x5,		// NYI
+	kMToonElement                        = 0x6,		// NYI
+	kImageElement                        = 0x7,		// NYI
+	kSoundElement                        = 0xa,		// NYI
 	kTextLabelElement                    = 0x15,	// NYI
 
-	kAlias                               = 0x27,	// NYI
-
-	kMovieAsset                          = 0x10,	// NYI
-	kSoundAsset                          = 0x11,	// NYI
-	kColorTableAsset                     = 0x1e,	// NYI
-	kImageAsset                          = 0xe,		// NYI
-	kMToonAsset                          = 0xf,		// NYI
-
+	kAliasModifier                       = 0x27,
 	kChangeSceneModifier                 = 0x136,
 	kReturnModifier                      = 0x140,	// NYI
-	kSoundEffectModifier                 = 0x1a4,	// NYI
+	kSoundEffectModifier                 = 0x1a4,
 	kDragMotionModifier                  = 0x208,
 	kPathMotionModifierV1                = 0x21c,	// NYI - Obsolete version
 	kPathMotionModifierV2                = 0x21b,	// NYI
@@ -131,11 +126,25 @@ enum DataObjectType {
 	kPointVariableModifier               = 0x326,
 	kFloatingPointVariableModifier       = 0x328,
 	kStringVariableModifier              = 0x329,
-
-	kDebris                              = 0xfffffffe,	// Deleted object
+	kDebris                              = 0xfffffffe,	// Deleted modifier in alias list
 	kPlugInModifier                      = 0xffffffff,
+
+	kMovieAsset                          = 0x10,	// NYI
+	kAudioAsset                          = 0x11,
+	kColorTableAsset                     = 0x1e,
+	kImageAsset                          = 0xe,		// NYI
+	kMToonAsset                          = 0xf,		// NYI
+
 	kAssetDataChunk                      = 0xffff,
 };
+
+bool isValidSceneRootElement(DataObjectType type);
+bool isVisualElement(DataObjectType type);
+bool isNonVisualElement(DataObjectType type);
+bool isStructural(DataObjectType type);
+bool isElement(DataObjectType type);
+bool isModifier(DataObjectType type);
+bool isAsset(DataObjectType type);
 
 } // End of namespace DataObjectTypes
 
@@ -455,11 +464,15 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-struct ProjectStructuralDef final : public DataObject {
-	uint32 unknown1; // Seems to always be 0x16
+struct StructuralDef : public DataObject {
+	uint32 structuralFlags;
+};
+
+struct ProjectStructuralDef : public DataObject {
+	uint32 unknown1; // Seems to always be 0x16 or 0x9
 	uint32 sizeIncludingTag;
 	uint32 guid;
-	uint32 structuralFlags;
+	uint32 otherFlags;
 	uint16 lengthOfName;
 
 	Common::String name;
@@ -468,12 +481,11 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-struct SectionStructuralDef : public DataObject {
-	uint32 unknown1;
+struct SectionStructuralDef : public StructuralDef {
 	uint32 sizeIncludingTag;
 	uint32 guid;
 	uint16 lengthOfName;
-	uint32 structuralFlags;
+	uint32 otherFlags;
 	uint16 unknown4;
 	uint16 sectionID;
 	uint32 segmentID;
@@ -484,13 +496,121 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-struct SubsectionStructuralDef final : public DataObject {
-	uint32 unknown1;
+struct SubsectionStructuralDef : public StructuralDef {
+	uint32 structuralFlags;
 	uint32 sizeIncludingTag;
 	uint32 guid;
 	uint16 lengthOfName;
-	uint32 structuralFlags;
+	uint32 otherFlags;
 	uint16 sectionID;
+
+	Common::String name;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+namespace ElementFlags {
+	enum ElementFlags {
+		kNotDirectToScreen	= 0x00001000,
+		kHidden				= 0x00008000,
+		kPaused				= 0x00010000,
+		kExpandedInEditor	= 0x00800000,
+		kCacheBitmap		= 0x02000000,
+		kSelectedInEditor	= 0x10000000,
+	};
+} // End of namespace ElementFlags
+
+namespace AnimationFlags {
+	enum AnimationFlags {
+		kAlternate      = 0x10000000,
+		kLoop           = 0x08000000,
+		kPlayEveryFrame = 0x02000000,
+	};
+}
+
+struct GraphicElement : public StructuralDef {
+	// Possible element flags: NotDirectToScreen, CacheBitmap, Hidden
+	uint32 sizeIncludingTag;
+	uint32 guid;
+	uint16 lengthOfName;
+	uint32 elementFlags;
+	uint16 layer;
+	uint16 sectionID;
+	Rect rect1;
+	Rect rect2;
+	uint32 streamLocator; // 1-based index, sometimes observed with 0x10000000 flag set, not sure of the meaning
+	uint8 unknown11[4];
+
+	Common::String name;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct ImageElement : public StructuralDef {
+	// Possible element flags: NotDirectToScreen, CacheBitmap, Hidden
+	uint32 sizeIncludingTag;
+	uint32 guid;
+	uint16 lengthOfName;
+	uint32 elementFlags;
+	uint16 layer;
+	uint16 sectionID;
+	Rect rect1;
+	Rect rect2;
+	uint32 imageAssetID;
+	uint32 streamLocator;
+	uint8 unknown7[4];
+
+	Common::String name;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct MovieElement : public StructuralDef {
+	// Possible flags: NotDirectToScreen, CacheBitmap, Hidden, Loop, Loop + Alternate, Paused
+	uint32 sizeIncludingTag;
+	uint32 guid;
+	uint16 lengthOfName;
+	uint32 elementFlags;
+	uint16 layer;
+	uint8 unknown3[44];
+	uint16 sectionID;
+	uint8 unknown5[2];
+	Rect rect1;
+	Rect rect2;
+	uint32 assetID;
+	uint32 unknown7;
+	uint16 volume;
+	uint32 animationFlags;
+	uint8 unknown10[4];
+	uint8 unknown11[4];
+	uint32 streamLocator;
+	uint8 unknown13[4];
+
+	Common::String name;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct MToonElement : public StructuralDef {
+	// Possible flags: NotDirectToScreen, CacheBitmap, Hidden, Loop, Paused, PlayEveryFrame (inverted as "Maintain Rate")
+	uint32 sizeIncludingTag;
+	uint32 guid;
+	uint16 lengthOfName;
+	uint32 elementFlags;
+	uint16 layer;
+	uint32 animationFlags;
+	uint8 unknown4[4];
+	uint16 sectionID;
+	Rect rect1;
+	Rect rect2;
+	uint32 unknown5;
+	uint32 rateTimes10000;
+	uint32 streamLocator;
+	uint32 unknown6;
 
 	Common::String name;
 
@@ -682,9 +802,23 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-struct ChangeSceneModifier : public DataObject {
-	TypicalModifierHeader modHeader;
+struct AliasModifier : public DataObject {
+	uint32 modifierFlags;
+	uint32 sizeIncludingTag;
+	uint16 aliasIndexPlusOne;
+	uint32 unknown1;
+	uint32 unknown2;
+	uint16 lengthOfName;
+	uint32 guid;
+	Point editorLayoutPosition;
 
+	Common::String name;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct ChangeSceneModifier : public DataObject {
 	enum ChangeSceneFlags {
 		kChangeSceneFlagNextScene       = 0x80000000,
 		kChangeSceneFlagPrevScene       = 0x40000000,
@@ -694,11 +828,28 @@ struct ChangeSceneModifier : public DataObject {
 		kChangeSceneFlagWrapAround      = 0x04000000,
 	};
 
+	TypicalModifierHeader modHeader;
 	uint32 changeSceneFlags;
 	Event executeWhen;
 	uint32 targetSectionGUID;
 	uint32 targetSubsectionGUID;
 	uint32 targetSceneGUID;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct SoundEffectModifier : public DataObject {
+	static const uint32 kSpecialAssetIDSystemBeep = 0xffffffffu;
+
+	TypicalModifierHeader modHeader;
+	uint8 unknown1[4];
+	Event executeWhen;
+	Event terminateWhen;
+	uint32 unknown2;
+	uint8 unknown3[4];
+	uint32 assetID;
+	uint8 unknown5[4];
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -1146,6 +1297,82 @@ protected:
 struct Debris : public DataObject {
 	uint32 persistFlags;
 	uint32 sizeIncludingTag;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct ColorTableAsset : public DataObject {
+	uint32 persistFlags;
+	uint32 sizeIncludingTag;
+	uint8 unknown1[4];
+	uint32 assetID;
+	uint32 unknown2; // Usually zero-fill but sometimes contains 0xb
+
+	ColorRGB16 colors[256];
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct AudioAsset : public DataObject {
+	struct MacPart {
+		uint8 unknown4[4];
+		uint8 unknown5[5];
+		uint8 unknown6[3];
+		uint8 unknown8[20];
+	};
+
+	struct WinPart {
+		uint8 unknown9[3];
+		uint8 unknown10[3];
+		uint8 unknown11[18];
+		uint8 unknown12_1[2];
+	};
+
+	union PlatformPart {
+		MacPart mac;
+		WinPart win;
+	};
+
+	struct CuePoint {
+		uint8 unknown13[2];
+		uint32 unknown14;
+		uint32 position;
+		uint32 cuePointID;
+	};
+
+	uint32 persistFlags;
+	uint32 assetAndDataCombinedSize;
+	uint8 unknown2[4];
+	uint32 assetID;
+	uint8 unknown3[20];
+	uint16 sampleRate1;
+	uint8 bitsPerSample;
+	uint8 encoding1;
+	uint8 channels;
+	uint8 codedDuration[4];
+	uint16 sampleRate2;
+	uint32 cuePointDataSize;
+	uint16 numCuePoints;
+	uint8 unknown14[4];
+	uint32 filePosition;
+	uint32 size;
+
+	Common::Array<CuePoint> cuePoints;
+
+	bool haveMacPart;
+	bool haveWinPart;
+	PlatformPart platform;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct AssetDataChunk : public DataObject {
+	uint32 unknown1;
+	uint32 sizeIncludingTag;
+	int64 filePosition;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

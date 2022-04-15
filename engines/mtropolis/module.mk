@@ -1,9 +1,12 @@
 MODULE := engines/mtropolis
 
 MODULE_OBJS = \
+	asset_factory.o \
 	console.o \
 	data.o \
 	detection.o \
+	element_factory.o \
+	elements.o \
 	metaengine.o \
 	miniscript.o \
 	modifiers.o \
