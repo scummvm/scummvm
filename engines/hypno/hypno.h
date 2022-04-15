@@ -173,7 +173,7 @@ public:
 	void changeCursor(const Graphics::Surface &entry, byte *palette, bool centerCursor = false);
 
 	// Actions
-	void runMenu(Hotspots *hs);
+	void runMenu(Hotspots *hs, bool only_menu = false);
 	void runBackground(Background *a);
 	void runOverlay(Overlay *a);
 	void runMice(Mice *a);

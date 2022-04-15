@@ -28,11 +28,11 @@ namespace Hypno {
 
 // Actions
 
-void HypnoEngine::runMenu(Hotspots *hs) {
+void HypnoEngine::runMenu(Hotspots *hs, bool only_menu) {
 	Hotspot *h = hs->begin();
 	assert(h->type == MakeMenu);
 	debugC(1, kHypnoDebugScene, "hotspot actions size: %d", h->actions.size());
-	for (Actions::const_iterator itt = h->actions.begin(); itt != h->actions.end(); ++itt) {
+	for (Actions::const_iterator itt = h->actions.begin(); !only_menu && itt != h->actions.end(); ++itt) {
 		Action *action = *itt;
 		switch (action->type) {
 		case QuitAction:

@@ -365,6 +365,7 @@ void HypnoEngine::runScene(Scene *scene) {
 			_nextParallelVideoToPlay.empty() &&
 			_videosPlaying.empty()) {
 			showConversation();
+			runMenu(stack.back(), true);
 			drawScreen();
 			_refreshConversation = false;
 		}
