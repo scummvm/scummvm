@@ -245,7 +245,7 @@ void unload_old_room() {
 	}
 
 	cancel_all_scripts();
-	_G(numevents) = 0;  // cancel any pending room events
+	_GP(events).clear();  // cancel any pending room events
 
 	if (_G(roomBackgroundBmp) != nullptr) {
 		_G(gfxDriver)->DestroyDDB(_G(roomBackgroundBmp));

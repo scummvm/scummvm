@@ -667,8 +667,7 @@ public:
 	int _in_enters_screen = 0, _done_es_error = 0;
 	int _in_leaves_screen = -1;
 
-	EventHappened *_event;
-	int _numevents = 0;
+	std::vector<EventHappened> *_events;
 
 	const char *_evblockbasename = nullptr;
 	int _evblocknum = 0;

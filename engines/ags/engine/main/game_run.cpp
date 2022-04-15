@@ -158,7 +158,7 @@ static int game_loop_check_ground_level_interactions() {
 		if ((_G(restrict_until)) && (!ShouldStayInWaitMode())) {
 			// cancel the Rep Exec and Stands on Hotspot events that
 			// we just added -- otherwise the event queue gets huge
-			_G(numevents) = _G(numEventsAtStartOfFunction);
+			_GP(events).resize(_G(numEventsAtStartOfFunction));
 			return 0;
 		}
 	} // end if checking ground level interactions
@@ -516,14 +516,14 @@ static void check_controls() {
 	check_keyboard_controls();
 }
 
-static void check_room_edges(int numevents_was) {
+static void check_room_edges(size_t numevents_was) {
 	if ((IsInterfaceEnabled()) && (IsGamePaused() == 0) &&
 	        (_G(in_new_room) == 0) && (_G(new_room_was) == 0)) {
 		// Only allow walking off edges if not in wait mode, and
 		// if not in Player Enters Screen (allow walking in from off-screen)
 		int edgesActivated[4] = { 0, 0, 0, 0 };
 		// Only do it if nothing else has happened (eg. mouseclick)
-		if ((_G(numevents) == numevents_was) &&
+		if ((_GP(events).size() == numevents_was) &&
 		        ((_GP(play).ground_level_areas_disabled & GLED_INTERACTION) == 0)) {
 
 			if (_G(playerchar)->x <= _GP(thisroom).Edges.Left)
@@ -558,7 +558,7 @@ static void game_loop_check_controls(bool checkControls) {
 	// don't let the player do anything before the screen fades in
 	if ((_G(in_new_room) == 0) && (checkControls)) {
 		int inRoom = _G(displayed_room);
-		int numevents_was = _G(numevents);
+		size_t numevents_was = _GP(events).size();
 		check_controls();
 		check_room_edges(numevents_was);
 
@@ -631,7 +631,7 @@ static void game_loop_update_events() {
 	if (_G(in_new_room) > 0)
 		setevent(EV_FADEIN, 0, 0, 0);
 	_G(in_new_room) = 0;
-	update_events();
+	processallevents();
 	if (!_G(abort_engine) && (_G(new_room_was) > 0) && (_G(in_new_room) == 0)) {
 		// if in a new room, and the room wasn't just changed again in update_events,
 		// then queue the Enters Screen scripts
@@ -704,7 +704,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 
 	sys_evt_process_pending();
 
-	_G(numEventsAtStartOfFunction) = _G(numevents);
+	_G(numEventsAtStartOfFunction) = _GP(events).size();
 
 	if (_G(want_exit)) {
 		ProperExit();

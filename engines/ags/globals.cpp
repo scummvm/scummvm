@@ -196,7 +196,7 @@ Globals::Globals() {
 	_ResPaths = new ResourcePaths();
 
 	// event.cpp globals
-	_event = new EventHappened[MAXEVENTS + 1];
+	_events = new std::vector<EventHappened>();
 
 	// fonts.cpp globals
 	_fonts = new std::vector<AGS::Shared::Font>();
@@ -443,7 +443,7 @@ Globals::~Globals() {
 	delete _ResPaths;
 
 	// event.cpp globals
-	delete[] _event;
+	delete _events;
 
 	// fonts.cpp globals
 	delete _fonts;
