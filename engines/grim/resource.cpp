@@ -80,7 +80,8 @@ ResourceLoader::ResourceLoader() {
 
 	//Load the update from the executable, if needed
 	const char *updateFilename = nullptr;
-	if (g_grim->getGameType() == GType_GRIM && !g_grim->isRemastered()) {
+	if ((g_grim->getGameType() == GType_GRIM && !g_grim->isRemastered())
+	    || g_grim->getGameType() == GType_MONKEY4) {
 		updateFilename = g_grim->getUpdateFilename();
 	}
 	if (updateFilename) {
