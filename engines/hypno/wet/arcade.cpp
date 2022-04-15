@@ -23,6 +23,7 @@
 #include "hypno/hypno.h"
 
 #include "common/events.h"
+#include "gui/message.h"
 #include "graphics/cursorman.h"
 
 namespace Hypno {
@@ -246,7 +247,9 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 
 void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 	_checkpoint = _currentLevel;
-	if (!isDemo() || (_variant == "Demo" && _language == Common::EN_USA)) {
+	if (isDemo() && _variant != "Demo" && _restoredContentEnabled) {
+		showDemoScore();
+	} else if (!isDemo() || (_variant == "Demo" && _language == Common::EN_USA)) {
 		byte *palette;
 		Graphics::Surface *frame = decodeFrame("c_misc/zones.smk", 12, &palette);
 		loadPalette(palette, 0, 256);
