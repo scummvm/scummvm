@@ -60,7 +60,7 @@ int ExecutingScript::queue_action(PostScriptAction act, int data, const char *an
 	return numPostScriptActions - 1;
 }
 
-void ExecutingScript::run_another(const char *namm, ScriptInstType scinst, size_t param_count, const RuntimeScriptValue &p1, const RuntimeScriptValue &p2) {
+void ExecutingScript::run_another(const char *namm, ScriptInstType scinst, size_t param_count, const RuntimeScriptValue *params) {
 	if (numanother < MAX_QUEUED_SCRIPTS)
 		numanother++;
 	else {
@@ -73,8 +73,8 @@ void ExecutingScript::run_another(const char *namm, ScriptInstType scinst, size_
 	script.FnName.SetString(namm, MAX_FUNCTION_NAME_LEN);
 	script.Instance = scinst;
 	script.ParamCount = param_count;
-	script.Param1 = p1;
-	script.Param2 = p2;
+	for (size_t p = 0; p < MAX_QUEUED_PARAMS && p < param_count; ++p)
+		script.Params[p] = params[p];
 }
 
 void ExecutingScript::init() {

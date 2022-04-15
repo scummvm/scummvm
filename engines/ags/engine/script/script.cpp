@@ -271,22 +271,22 @@ ccInstance *GetScriptInstanceByType(ScriptInstType sc_inst) {
 	return nullptr;
 }
 
-void QueueScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count, const RuntimeScriptValue &p1, const RuntimeScriptValue &p2) {
+void QueueScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count, const RuntimeScriptValue *params) {
 	if (_G(inside_script))
 		// queue the script for the run after current script is finished
-		_G(curscript)->run_another(fn_name, sc_inst, param_count, p1, p2);
+		_G(curscript)->run_another(fn_name, sc_inst, param_count, params);
 	else
 		// if no script is currently running, run the requested script right away
-		RunScriptFunction(sc_inst, fn_name, param_count, p1, p2);
+		RunScriptFunction(sc_inst, fn_name, param_count, params);
 }
 
-void RunScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count, const RuntimeScriptValue &p1, const RuntimeScriptValue &p2) {
+void RunScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count, const RuntimeScriptValue *params) {
 	ccInstance *sci = GetScriptInstanceByType(sc_inst);
 	if (sci) {
 		if (param_count == 2)
-			RunTextScript2IParam(sci, fn_name, p1, p2);
+			RunTextScript2IParam(sci, fn_name, params[0], params[1]);
 		else if (param_count == 1)
-			RunTextScriptIParam(sci, fn_name, p1);
+			RunTextScriptIParam(sci, fn_name, params[0]);
 		else if (param_count == 0)
 			RunTextScript(sci, fn_name);
 	}
@@ -361,7 +361,7 @@ int PrepareTextScript(ccInstance *sci, const char **tsname) {
 	return 0;
 }
 
-int RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam, const RuntimeScriptValue *params) {
+int RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, size_t numParam, const RuntimeScriptValue *params) {
 	int oldRestoreCount = _G(gameHasBeenRestored);
 	// First, save the current ccError state
 	// This is necessary because we might be attempting
@@ -573,7 +573,7 @@ void post_script_cleanup() {
 	for (jj = 0; jj < copyof.numanother; jj++) {
 		old_room_number = _G(displayed_room);
 		QueuedScript &script = copyof.ScFnQueue[jj];
-		RunScriptFunction(script.Instance, script.FnName.GetCStr(), script.ParamCount, script.Param1, script.Param2);
+		RunScriptFunction(script.Instance, script.FnName.GetCStr(), script.ParamCount, script.Params);
 		if (script.Instance == kScInstRoom && script.ParamCount == 1) {
 			// some bogus hack for "on_call" event handler
 			_GP(play).roomscript_finished = 1;
@@ -899,8 +899,8 @@ void run_unhandled_event(int evnt) {
 	else if ((evtype == 3) & (evnt == 4));  // any click on character
 	else if (evtype > 0) {
 		can_run_delayed_command();
-
-		QueueScriptFunction(kScInstGame, "unhandled_event", 2, RuntimeScriptValue().SetInt32(evtype), RuntimeScriptValue().SetInt32(evnt));
+		RuntimeScriptValue params[] = { evtype, evnt };
+		QueueScriptFunction(kScInstGame, "unhandled_event", 2, params);
 	}
 }
 

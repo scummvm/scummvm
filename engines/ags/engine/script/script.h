@@ -53,12 +53,12 @@ void    cancel_all_scripts();
 ccInstance *GetScriptInstanceByType(ScriptInstType sc_inst);
 // Queues a script function to be run either called by the engine or from another script
 void    QueueScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count = 0,
-                            const RuntimeScriptValue &p1 = RuntimeScriptValue(), const RuntimeScriptValue &p2 = RuntimeScriptValue());
+	const RuntimeScriptValue *params = nullptr);
 // Try to run a script function right away
 void    RunScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count = 0,
-                          const RuntimeScriptValue &p1 = RuntimeScriptValue(), const RuntimeScriptValue &p2 = RuntimeScriptValue());
+	const RuntimeScriptValue *params = nullptr);
 
-int     RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam, const RuntimeScriptValue *params);
+int     RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, size_t param_count, const RuntimeScriptValue *params);
 int     RunTextScript(ccInstance *sci, const char *tsname);
 int     RunTextScriptIParam(ccInstance *sci, const char *tsname, const RuntimeScriptValue &iparam);
 int     RunTextScript2IParam(ccInstance *sci, const char *tsname, const RuntimeScriptValue &iparam, const RuntimeScriptValue &param2);

@@ -177,8 +177,8 @@ void CallRoomScript(int value) {
 		quit("!CallRoomScript: not inside a script???");
 
 	_GP(play).roomscript_finished = 0;
-	RuntimeScriptValue rval_null;
-	_G(curscript)->run_another("on_call", kScInstRoom, 1, RuntimeScriptValue().SetInt32(value), rval_null);
+	RuntimeScriptValue params[]{ value , RuntimeScriptValue() };
+	_G(curscript)->run_another("on_call", kScInstRoom, 1, params);
 }
 
 int HasBeenToRoom(int roomnum) {

@@ -41,6 +41,7 @@ enum PostScriptAction {
 #define MAX_QUEUED_SCRIPTS 4
 #define MAX_QUEUED_ACTIONS 5
 #define MAX_FUNCTION_NAME_LEN 60
+#define MAX_QUEUED_PARAMS  4
 
 enum ScriptInstType {
 	kScInstGame,
@@ -51,8 +52,7 @@ struct QueuedScript {
 	Shared::String     FnName;
 	ScriptInstType     Instance;
 	size_t             ParamCount;
-	RuntimeScriptValue Param1;
-	RuntimeScriptValue Param2;
+	RuntimeScriptValue Params[MAX_QUEUED_PARAMS];
 
 	QueuedScript();
 };
@@ -70,7 +70,7 @@ struct ExecutingScript {
 	int8 forked;
 
 	int queue_action(PostScriptAction act, int data, const char *aname);
-	void run_another(const char *namm, ScriptInstType scinst, size_t param_count, const RuntimeScriptValue &p1, const RuntimeScriptValue &p2);
+	void run_another(const char *namm, ScriptInstType scinst, size_t param_count, const RuntimeScriptValue *params);
 	void init();
 	ExecutingScript();
 };

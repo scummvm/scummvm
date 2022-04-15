@@ -311,9 +311,9 @@ void remove_popup_interface(int ifacenum) {
 void process_interface_click(int ifce, int btn, int mbut) {
 	if (btn < 0) {
 		// click on GUI background
-		QueueScriptFunction(kScInstGame, _GP(guis)[ifce].OnClickHandler.GetCStr(), 2,
-		                    RuntimeScriptValue().SetDynamicObject(&_G(scrGui)[ifce], &_GP(ccDynamicGUI)),
-		                    RuntimeScriptValue().SetInt32(mbut));
+		RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(&_G(scrGui)[ifce], &_GP(ccDynamicGUI)),
+					RuntimeScriptValue().SetInt32(mbut) };
+		QueueScriptFunction(kScInstGame, _GP(guis)[ifce].OnClickHandler.GetCStr(), 2, params);
 		return;
 	}
 
@@ -335,23 +335,23 @@ void process_interface_click(int ifce, int btn, int mbut) {
 		// if the object has a special handler script then run it;
 		// otherwise, run interface_click
 		if ((theObj->GetEventCount() > 0) &&
-		        (!theObj->EventHandlers[0].IsEmpty()) &&
-		        (!_G(gameinst)->GetSymbolAddress(theObj->EventHandlers[0].GetCStr()).IsNull())) {
+			(!theObj->EventHandlers[0].IsEmpty()) &&
+			(!_G(gameinst)->GetSymbolAddress(theObj->EventHandlers[0].GetCStr()).IsNull())) {
 			// control-specific event handler
-			if (strchr(theObj->GetEventArgs(0).GetCStr(), ',') != nullptr)
-				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0].GetCStr(), 2,
-				                    RuntimeScriptValue().SetDynamicObject(theObj, &_GP(ccDynamicGUIObject)),
-				                    RuntimeScriptValue().SetInt32(mbut));
-			else
-				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0].GetCStr(), 1,
-				                    RuntimeScriptValue().SetDynamicObject(theObj, &_GP(ccDynamicGUIObject)));
-		} else
-			QueueScriptFunction(kScInstGame, "interface_click", 2,
-			                    RuntimeScriptValue().SetInt32(ifce),
-			                    RuntimeScriptValue().SetInt32(btn));
+			if (theObj->GetEventArgs(0).FindChar(',') != -1) {
+				RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(theObj, &_GP(ccDynamicGUIObject)),
+					RuntimeScriptValue().SetInt32(mbut) };
+				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0].GetCStr(), 2, params);
+			} else {
+				RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(theObj, &_GP(ccDynamicGUIObject)) };
+				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0].GetCStr(), 1, params);
+			}
+		} else {
+			RuntimeScriptValue params[]{ ifce , btn };
+			QueueScriptFunction(kScInstGame, "interface_click", 2, params);
+		}
 	}
 }
-
 
 void replace_macro_tokens(const char *text, String &fixed_text) {
 	const char *curptr = &text[0];
