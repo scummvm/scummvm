@@ -105,7 +105,7 @@ protected:
 	virtual void handleTickle(); // Called periodically (in every guiloop() )
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
 	virtual void handleMouseUp(int x, int y, int button, int clickCount);
-	virtual void handleMouseWheel(int x, int y, int direction);
+	virtual void handleMouseWheel(int x, int y, int direction) override;
 	virtual void handleKeyDown(Common::KeyState state);
 	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseMoved(int x, int y, int button);
