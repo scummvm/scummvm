@@ -36,6 +36,17 @@ enum VThreadState {
 	kVThreadError,
 };
 
+struct VThreadFaultIdentifier {
+};
+
+template<typename T>
+struct VThreadFaultIdentifierSingleton {
+	static VThreadFaultIdentifier _identifier;
+};
+
+template<typename T>
+VThreadFaultIdentifier VThreadFaultIdentifierSingleton<T>::_identifier;
+
 class VThreadTaskData {
 
 public:
@@ -43,11 +54,15 @@ public:
 
 	virtual VThreadState destructAndRunTask() = 0;
 	virtual void relocateTo(void *newPosition) = 0;
+
+	virtual bool isFaultHandler() = 0;
+	virtual bool handlesFault() = 0;
 };
 
 struct VThreadStackFrame {
 	size_t taskDataOffset;	// Offset to VThreadTaskData
 	size_t prevFrameOffset;
+	VThreadFaultIdentifier *faultID;
 
 #ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
 	VThreadTaskData *data;
@@ -59,7 +74,7 @@ template<typename TClass, typename TData>
 class VThreadMethodData : public VThreadTaskData {
 
 public:
-	VThreadMethodData(TClass *target, VThreadState (TClass::*method)(const TData &data));
+	VThreadMethodData(VThreadFaultIdentifier *faultID, TClass *target, VThreadState (TClass::*method)(const TData &data));
 	VThreadMethodData(const VThreadMethodData &other);
 
 #if __cplusplus >= 201103L
@@ -72,6 +87,7 @@ public:
 	TData &getData();
 
 private:
+	VThreadFaultIdentifier *_faultID;
 	TClass *_target;
 	VThreadState (TClass::*_method)(const TData &data);
 	TData _data;
@@ -81,11 +97,11 @@ template<typename TData>
 class VThreadFunctionData : public VThreadTaskData {
 
 public:
-	explicit VThreadFunctionData(VThreadState (*func)(const TData &data));
+	explicit VThreadFunctionData(VThreadFaultIdentifier *faultID, VThreadState (*func)(const TData &data));
 	VThreadFunctionData(const VThreadFunctionData &other);
 
 #if __cplusplus >= 201103L
-	VThreadFunctionData(VThreadMethodData &&other);
+	VThreadFunctionData(VThreadFunctionData &&other);
 #endif
 
 	VThreadState destructAndRunTask() override;
@@ -94,6 +110,7 @@ public:
 	TData &getData();
 
 private:
+	VThreadFaultIdentifier *_faultID;
 	VThreadState (*_func)(const TData &data);
 	TData _data;
 };
@@ -110,9 +127,20 @@ public:
 	template<typename TData>
 	TData *pushTask(VThreadState (*func)(const TData &data));
 
+	template<typename TFaultType, typename TClass, typename TData>
+	TData *pushFaultHandler(TClass *obj, VThreadState (TClass::*method)(const TData &data));
+
+	template<typename TFaultType, typename TData>
+	TData *pushFaultHandler(VThreadState (*func)(const TData &data));
+
 	VThreadState step();
 
 private:
+	template<typename TClass, typename TData>
+	TData *pushTaskWithFaultHandler(VThreadFaultIdentifier *faultID, TClass *obj, VThreadState (TClass::*method)(const TData &data));
+
+	template<typename TData>
+	TData *pushTaskWithFaultHandler(VThreadFaultIdentifier *faultID, VThreadState (*func)(const TData &data));
 
 	void reserveFrame(size_t size, size_t alignment, void *&outFramePtr, void *&outUnadjustedDataPtr, size_t &outPrevFrameOffset);
 	bool popFrame(void *&dataPtr, void *&outFramePtr);
@@ -122,20 +150,24 @@ private:
 	size_t _size;
 	size_t _alignment;
 	size_t _used;
+	VThreadFaultIdentifier *_faultID;
 };
 
 template<typename TClass, typename TData>
-VThreadMethodData<TClass, TData>::VThreadMethodData(TClass *target, VThreadState (TClass::*method)(const TData &data)) : _target(target), _method(method) {
+VThreadMethodData<TClass, TData>::VThreadMethodData(VThreadFaultIdentifier *faultID, TClass *target, VThreadState (TClass::*method)(const TData &data))
+	: _faultID(faultID), _target(target), _method(method) {
 }
 
 template<typename TClass, typename TData>
-VThreadMethodData<TClass, TData>::VThreadMethodData(const VThreadMethodData& other) : _target(other._target), _method(other._method), _data(other._data) {
+VThreadMethodData<TClass, TData>::VThreadMethodData(const VThreadMethodData& other)
+	: _faultID(other._faultID), _target(other._target), _method(other._method), _data(other._data) {
 }
 
 #if __cplusplus >= 201103L
 
 template<typename TClass, typename TData>
-VThreadMethodData<TClass, TData>::VThreadMethodData(VThreadMethodData &&other) : _target(other._target), _method(other._method), _data(static_cast<TData &&>(*static_cast<TData *>(other._data))) {
+VThreadMethodData<TClass, TData>::VThreadMethodData(VThreadMethodData &&other)
+	: _faultID(other.faultID), _target(other._target), _method(other._method), _data(static_cast<TData &&>(*static_cast<TData *>(other._data))) {
 }
 
 #endif
@@ -173,17 +205,20 @@ TData &VThreadMethodData<TClass, TData>::getData() {
 }
 
 template<typename TData>
-VThreadFunctionData<TData>::VThreadFunctionData(VThreadState (*func)(const TData &data)) : _func(func) {
+VThreadFunctionData<TData>::VThreadFunctionData(VThreadFaultIdentifier *faultID, VThreadState (*func)(const TData &data))
+	: _faultID(faultID), _func(func) {
 }
 
 template<typename TData>
-VThreadFunctionData<TData>::VThreadFunctionData(const VThreadFunctionData &other) : _func(other._func), _data(other._data) {
+VThreadFunctionData<TData>::VThreadFunctionData(const VThreadFunctionData &other)
+	: _faultID(other._faultID), _func(other._func), _data(other._data) {
 }
 
 #if __cplusplus >= 201103L
 
 template<typename TData>
-VThreadFunctionData<TData>::VThreadFunctionData(VThreadMethodData &&other) : func(other._func), data(static_cast<TData &&>(other._data)) {
+VThreadFunctionData<TData>::VThreadFunctionData(VThreadFunctionData &&other)
+	: _faultID(other._faultID), _func(other._func), _data(static_cast<TData &&>(other._data)) {
 }
 
 #endif
@@ -221,6 +256,27 @@ TData &VThreadFunctionData<TData>::getData() {
 
 template<typename TClass, typename TData>
 TData *VThread::pushTask(TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
+	return this->pushTaskWithFaultHandler(nullptr, obj, method);
+}
+
+template<typename TData>
+TData *VThread::pushTask(VThreadState (*func)(const TData &data)) {
+	return this->pushTaskWithFaultHandler(nullptr, func);
+}
+
+template<typename TFaultType, typename TClass, typename TData>
+TData *VThread::pushFaultHandler(TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
+	return this->pushTaskWithFaultHandler(&VThreadFaultIdentifierSingleton<TFaultType>::_identifier, obj, method);
+}
+
+template<typename TFaultType, typename TData>
+TData *VThread::pushFaultHandler(VThreadState (*func)(const TData &data)) {
+	return this->pushTaskWithFaultHandler(&VThreadFaultIdentifierSingleton<TFaultType>::_identifier, func);
+}
+
+
+template<typename TClass, typename TData>
+TData *VThread::pushTaskWithFaultHandler(VThreadFaultIdentifier *faultID, TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
 	typedef VThreadMethodData<TClass, TData> FrameData_t; 
 
 	const size_t frameAlignment = AlignmentHelper<VThreadStackFrame>::getAlignment();
@@ -235,6 +291,7 @@ TData *VThread::pushTask(TClass *obj, VThreadState (TClass::*method)(const TData
 
 	VThreadStackFrame *frame = new (framePtr) VThreadStackFrame();
 	frame->prevFrameOffset = prevFrameOffset;
+	frame->faultID = faultID;
 
 	FrameData_t *frameData = new (dataPtr) FrameData_t(obj, method);
 	frame->taskDataOffset = reinterpret_cast<char *>(static_cast<VThreadTaskData *>(frameData)) - static_cast<char *>(_stackAlignedBase);
@@ -248,7 +305,7 @@ TData *VThread::pushTask(TClass *obj, VThreadState (TClass::*method)(const TData
 }
 
 template<typename TData>
-TData *VThread::pushTask(VThreadState (*func)(const TData &data)) {
+TData *VThread::pushTaskWithFaultHandler(VThreadFaultIdentifier *faultID, VThreadState (*func)(const TData &data)) {
 	typedef VThreadFunctionData<TData> FrameData_t;
 
 	const size_t frameAlignment = AlignmentHelper<VThreadStackFrame>::getAlignment();
@@ -262,6 +319,7 @@ TData *VThread::pushTask(VThreadState (*func)(const TData &data)) {
 
 	VThreadStackFrame *frame = new (framePtr) VThreadStackFrame();
 	frame->prevFrameOffset = prevFrameOffset;
+	frame->faultID = faultID;
 
 	FrameData_t *frameData = new (dataPtr) FrameData_t(func);
 	frame->taskDataOffset = reinterpret_cast<char *>(static_cast<VThreadTaskData *>(frameData)) - static_cast<char *>(_stackAlignedBase);
