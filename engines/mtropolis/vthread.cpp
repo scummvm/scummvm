@@ -26,7 +26,7 @@ namespace MTropolis {
 VThreadTaskData::~VThreadTaskData() {
 }
 
-VThread::VThread() : _stackUnalignedBase(nullptr), _stackAlignedBase(nullptr), _size(0), _alignment(1), _used(0) {
+VThread::VThread() : _faultID(nullptr), _stackUnalignedBase(nullptr), _stackAlignedBase(nullptr), _size(0), _alignment(1), _used(0) {
 }
 
 
@@ -46,10 +46,16 @@ VThreadState VThread::step() {
 	void *dataPtr;
 	void *framePtr;
 	while (popFrame(dataPtr, framePtr)) {
+		VThreadStackFrame *frame = static_cast<VThreadStackFrame *>(framePtr);
+		bool isHandling = (frame->faultID == _faultID);
 		static_cast<VThreadStackFrame *>(framePtr)->~VThreadStackFrame();
-		VThreadState state = static_cast<VThreadTaskData *>(dataPtr)->destructAndRunTask();
-		if (state != kVThreadReturn)
-			return state;
+		if (isHandling) {
+			VThreadState state = static_cast<VThreadTaskData *>(dataPtr)->destructAndRunTask();
+			if (state != kVThreadReturn)
+				return state;
+		} else {
+			static_cast<VThreadTaskData *>(dataPtr)->~VThreadTaskData();
+		}
 	}
 
 	return kVThreadReturn;
