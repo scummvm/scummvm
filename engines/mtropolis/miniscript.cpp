@@ -31,9 +31,11 @@ namespace MTropolis {
 MiniscriptInstruction::~MiniscriptInstruction() {
 }
 
-MiniscriptProgram::MiniscriptProgram(const Common::SharedPtr<Common::Array<uint8> > &programData, const Common::Array<MiniscriptInstruction *> &instructions,
-									 const Common::Array<LocalRef> &localRefs, const Common::Array<Attribute> &attributes)
-	: _programData(programData), _instructions(instructions), _localRefs(localRefs), _attributes(attributes) {
+MiniscriptReferences::MiniscriptReferences(const Common::Array<LocalRef> &localRefs, const Common::Array<GlobalRef> &globalRefs) : _localRefs(localRefs), _globalRefs(globalRefs) {
+}
+
+MiniscriptProgram::MiniscriptProgram(const Common::SharedPtr<Common::Array<uint8> > &programData, const Common::Array<MiniscriptInstruction *> &instructions, const Common::Array<Attribute> &attributes)
+	: _programData(programData), _instructions(instructions), _attributes(attributes) {
 }
 
 MiniscriptProgram::~MiniscriptProgram() {
@@ -222,15 +224,20 @@ template<class T>
 MiniscriptInstructionFactory<T> MiniscriptInstructionFactory<T>::_instance;
 
 
-Common::SharedPtr<MiniscriptProgram> MiniscriptParser::parse(const Data::MiniscriptProgram &program) {
-	Common::Array<MiniscriptProgram::LocalRef> localRefs;
+bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::SharedPtr<MiniscriptProgram> &outProgram, Common::SharedPtr<MiniscriptReferences> &outReferences) {
+	Common::Array<MiniscriptReferences::LocalRef> localRefs;
+	Common::Array<MiniscriptReferences::GlobalRef> globalRefs;
+	Common::HashMap<uint32, size_t> globalGUIDToGlobalRefIndex;
 	Common::Array<MiniscriptProgram::Attribute> attributes;
 	Common::SharedPtr<Common::Array<uint8> > programDataPtr;
 	Common::Array<MiniscriptInstruction *> miniscriptInstructions;
 
 	// If the program is empty then just return an empty program
-	if (program.bytecode.size() == 0 || program.numOfInstructions == 0)
-		return Common::SharedPtr<MiniscriptProgram>(new MiniscriptProgram(programDataPtr, miniscriptInstructions, localRefs, attributes));
+	if (program.bytecode.size() == 0 || program.numOfInstructions == 0) {
+		outProgram = Common::SharedPtr<MiniscriptProgram>(new MiniscriptProgram(programDataPtr, miniscriptInstructions, attributes));
+		outReferences = Common::SharedPtr<MiniscriptReferences>(new MiniscriptReferences(localRefs, globalRefs));
+		return true;
+	}
 
 	localRefs.resize(program.localRefs.size());
 	for (size_t i = 0; i < program.localRefs.size(); i++) {
@@ -261,15 +268,15 @@ Common::SharedPtr<MiniscriptProgram> MiniscriptParser::parse(const Data::Miniscr
 		InstructionData &rawInstruction = rawInstructions[i];
 		uint16 instrSize;
 		if (!reader.readU16(rawInstruction.opcode) || !reader.readU16(rawInstruction.flags) || !reader.readU16(instrSize))
-			return nullptr;
+			return false;
 
 		if (instrSize < 6)
-			return nullptr;
+			return false;
 
 		if (instrSize > 6) {
 			rawInstruction.contents.resize(instrSize - 6);
 			if (!reader.read(&rawInstruction.contents[0], instrSize - 6))
-				return nullptr;
+				return false;
 		}
 	}
 
@@ -286,7 +293,7 @@ Common::SharedPtr<MiniscriptProgram> MiniscriptParser::parse(const Data::Miniscr
 		rawInstruction.instrFactory = factory;
 
 		if (!factory)
-			return nullptr;
+			return false;
 
 		size_t compiledSize = 0;
 		size_t compiledAlignment = 0;
@@ -328,12 +335,35 @@ Common::SharedPtr<MiniscriptProgram> MiniscriptParser::parse(const Data::Miniscr
 				miniscriptInstructions[i - 1 - di]->~MiniscriptInstruction();
 			}
 
-			return nullptr;
+			return false;
+		}
+
+		// Allocate the static GUID in the reference set
+		if (rawInstruction.opcode == 0x192) {
+			MiniscriptInstructions::PushGlobal *instr = static_cast<MiniscriptInstructions::PushGlobal *>(miniscriptInstructions[i]);
+			uint32 staticGUID = instr->getStaticGUID();
+			Common::HashMap<uint32, size_t>::const_iterator refIt = globalGUIDToGlobalRefIndex.find(staticGUID);
+			if (refIt == globalGUIDToGlobalRefIndex.end()) {
+				const size_t index = globalRefs.size();
+
+				MiniscriptReferences::GlobalRef globalRef;
+				globalRef.guid = staticGUID;
+
+				globalRefs.push_back(globalRef);
+				globalGUIDToGlobalRefIndex[staticGUID] = index;
+
+				instr->setReferenceSetIndex(index);
+			} else {
+				instr->setReferenceSetIndex(refIt->_value);
+			}
 		}
 	}
 
 	// Done
-	return Common::SharedPtr<MiniscriptProgram>(new MiniscriptProgram(programDataPtr, miniscriptInstructions, localRefs, attributes));
+	outProgram = Common::SharedPtr<MiniscriptProgram>(new MiniscriptProgram(programDataPtr, miniscriptInstructions, attributes));
+	outReferences = Common::SharedPtr<MiniscriptReferences>(new MiniscriptReferences(localRefs, globalRefs));
+
+	return true;
 }
 
 IMiniscriptInstructionFactory* MiniscriptParser::resolveOpcode(uint16 opcode) {
@@ -436,7 +466,19 @@ PushValue::PushValue(DataType dataType, const void *value) {
 	}
 }
 
-PushGlobal::PushGlobal(uint32 globalID) : _globalID(globalID) {
+PushGlobal::PushGlobal(uint32 guid) : _guid(guid), _refSetIndex(0) {
+}
+
+uint32 PushGlobal::getStaticGUID() const {
+	return _guid;
+}
+
+void PushGlobal::setReferenceSetIndex(size_t refSetIndex) {
+	_refSetIndex = refSetIndex;
+}
+
+size_t PushGlobal::getReferenceSetIndex() const {
+	return _refSetIndex;
 }
 
 PushString::PushString(const Common::String &str) : _str(str) {

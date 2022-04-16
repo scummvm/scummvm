@@ -25,6 +25,7 @@
 #include "mtropolis/asset_factory.h"
 #include "mtropolis/element_factory.h"
 #include "mtropolis/modifier_factory.h"
+#include "mtropolis/modifiers.h"
 
 #include "common/debug.h"
 #include "common/file.h"
@@ -33,7 +34,41 @@
 
 namespace MTropolis {
 
-bool Point16::load(const Data::Point& point) {
+class ModifierChildMaterializer : public IStructuralReferenceVisitor {
+public:
+	ModifierChildMaterializer(Runtime *runtime, ObjectLinkingScope *outerScope);
+
+	void visitChildStructuralRef(Common::SharedPtr<Structural> &structural) override;
+	void visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) override;
+	void visitWeakStructuralRef(Common::SharedPtr<Structural> &structural) override;
+	void visitWeakModifierRef(Common::SharedPtr<Modifier> &modifier) override;
+
+private:
+	Runtime *_runtime;
+	ObjectLinkingScope *_outerScope;
+};
+
+ModifierChildMaterializer::ModifierChildMaterializer(Runtime *runtime, ObjectLinkingScope *outerScope)
+	: _runtime(runtime), _outerScope(outerScope) {
+}
+
+void ModifierChildMaterializer::visitChildStructuralRef(Common::SharedPtr<Structural> &structural) {
+	assert(false);
+}
+
+void ModifierChildMaterializer::visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) {
+	modifier->materialize(_runtime, _outerScope);
+}
+
+void ModifierChildMaterializer::visitWeakStructuralRef(Common::SharedPtr<Structural> &structural) {
+	assert(false);
+}
+
+void ModifierChildMaterializer::visitWeakModifierRef(Common::SharedPtr<Modifier> &modifier) {
+	// Do nothing
+}
+
+bool Point16::load(const Data::Point &point) {
 	x = point.x;
 	y = point.y;
 
@@ -872,7 +907,26 @@ void SimpleModifierContainer::appendModifier(const Common::SharedPtr<Modifier> &
 	_modifiers.push_back(modifier);
 }
 
-Structural::Structural() : _guid(0) {
+
+RuntimeObject::RuntimeObject() : _guid(0), _runtimeGUID(0) {
+}
+
+RuntimeObject::~RuntimeObject() {
+}
+
+uint32 RuntimeObject::getStaticGUID() const {
+	return _guid;
+}
+
+uint32 RuntimeObject::getRuntimeGUID() const {
+	return _runtimeGUID;
+}
+
+void RuntimeObject::setRuntimeGUID(uint32 runtimeGUID) {
+	_runtimeGUID = runtimeGUID;
+}
+
+Structural::Structural() {
 }
 
 Structural::~Structural() {
@@ -901,7 +955,103 @@ void Structural::appendModifier(const Common::SharedPtr<Modifier> &modifier) {
 	_modifiers.push_back(modifier);
 }
 
-Runtime::Runtime() {
+void Structural::materializeSelfAndDescendents(Runtime *runtime, ObjectLinkingScope *outerScope) {
+	linkInternalReferences(outerScope);
+	setRuntimeGUID(runtime->allocateRuntimeGUID());
+
+	materializeDescendents(runtime, outerScope);
+}
+
+void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *outerScope) {
+	// Materialization is the step after objects are fully constructed and filled with data.
+	// It does three things, recursively:
+	// - Assigns all objects a new runtime GUID
+	// - Clones any non-variable aliased modifiers
+	// - Links any static GUIDs to in-scope visible objects
+	// Objects are only ever materialized once
+	ObjectLinkingScope tempModifierScope;
+	ObjectLinkingScope tempStructuralScope;
+	ObjectLinkingScope *modifierScope = this->getPersistentModifierScope();
+	ObjectLinkingScope *structuralScope = this->getPersistentStructuralScope();
+
+	if (!modifierScope)
+		modifierScope = &tempModifierScope;
+	if (!structuralScope)
+		structuralScope = &tempStructuralScope;
+
+	modifierScope->setParent(outerScope);
+
+	for (Common::Array<Common::SharedPtr<Modifier> >::iterator it = _modifiers.begin(), itEnd = _modifiers.end(); it != itEnd; ++it) {
+		Modifier *modifier = it->get();
+		uint32 modifierGUID = modifier->getStaticGUID();
+		if (modifier->isAlias() && !modifier->isVariable()) {
+			Common::SharedPtr<Modifier> templateModifier = runtime->getProject()->resolveAlias(static_cast<AliasModifier *>(modifier)->getAliasID());
+			if (!templateModifier) {
+				error("Failed to resolve alias");
+			}
+
+			Common::SharedPtr<Modifier> clonedModifier = templateModifier->shallowClone();
+			clonedModifier->setName(modifier->getName());
+
+			(*it) = clonedModifier;
+			modifier = clonedModifier.get();
+		}
+		modifierScope->addObject(modifierGUID, *it);
+	}
+
+	for (Common::Array<Common::SharedPtr<Modifier> >::const_iterator it = _modifiers.begin(), itEnd = _modifiers.end(); it != itEnd; ++it) {
+		Modifier *modifier = it->get();
+		modifier->materialize(runtime, modifierScope);
+	}
+
+	structuralScope->setParent(modifierScope);
+
+	const Common::Array<Common::SharedPtr<Structural> > &children = this->getChildren();
+	for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = children.begin(), itEnd = children.end(); it != itEnd; ++it) {
+		Structural *child = it->get();
+		structuralScope->addObject(child->getStaticGUID(), *it);
+	}
+
+	for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = children.begin(), itEnd = children.end(); it != itEnd; ++it) {
+		Structural *child = it->get();
+		child->materializeSelfAndDescendents(runtime, structuralScope);
+	}
+}
+
+void Structural::linkInternalReferences(ObjectLinkingScope *scope) {
+}
+
+ObjectLinkingScope *Structural::getPersistentStructuralScope() {
+	return nullptr;
+}
+
+ObjectLinkingScope* Structural::getPersistentModifierScope() {
+	return nullptr;
+}
+
+ObjectLinkingScope::ObjectLinkingScope() : _parent(nullptr) {
+}
+
+ObjectLinkingScope::~ObjectLinkingScope() {
+}
+
+void ObjectLinkingScope::setParent(ObjectLinkingScope *parent) {
+	_parent = parent;
+}
+
+void ObjectLinkingScope::addObject(uint32 guid, const Common::WeakPtr<RuntimeObject> &object) {
+	_guidToObject[guid] = object;
+}
+
+void ObjectLinkingScope::reset() {
+	_parent = nullptr;
+	_guidToObject.clear(true);
+}
+
+SceneStateTransition::SceneStateTransition(VisualElement *scene, SceneState targetState) : scene(scene), targetState(targetState) {
+}
+
+Runtime::Runtime() : _nextRuntimeGUID(1) {
 	_vthread.reset(new VThread());
 }
 
@@ -916,11 +1066,46 @@ void Runtime::runFrame() {
 		Common::SharedPtr<ProjectDescription> desc = _queuedProjectDesc;
 		_queuedProjectDesc.reset();
 
-		_project.reset();
+		unloadProject();
+
 		_project.reset(new Project());
 
 		_project->loadFromDescription(*desc);
+
+		_rootLinkingScope.addObject(_project->getStaticGUID(), _project);
+
+		// We have to materialize global variables because they are not cloned from aliases.
+		debug(1, "Materializing global variables...");
+		_project->materializeGlobalVariables(this, &_rootLinkingScope);
+
+		debug(1, "Materializing project...");
+		_project->materializeSelfAndDescendents(this, &_rootLinkingScope);
+
+		debug(1, "Project is fully loaded!  Starting up...");
+
+		if (_project->getChildren().size() == 0) {
+			error("Project has no sections");
+		}
+
+		Structural *firstSection = _project->getChildren()[0].get();
+		if (firstSection->getChildren().size() == 0) {
+			error("Project has no subsections");
+		}
+
+		Structural *firstSubsection = firstSection->getChildren()[0].get();
+		if (firstSubsection->getChildren().size() < 2) {
+			error("Project has no subsections");
+		}
+
+		_pendingSceneStateTransitions.push_back(SceneStateTransition(static_cast<VisualElement *>(firstSubsection->getChildren()[0].get()), kSceneStateShared));
+		_pendingSceneStateTransitions.push_back(SceneStateTransition(static_cast<VisualElement *>(firstSubsection->getChildren()[1].get()), kSceneStateActive));
 	}
+}
+
+void Runtime::unloadProject() {
+	_project.reset();
+	_rootLinkingScope.reset();
+	_pendingSceneStateTransitions.clear();
 }
 
 void Runtime::queueProject(const Common::SharedPtr<ProjectDescription> &desc) {
@@ -934,6 +1119,14 @@ void Runtime::addVolume(int volumeID, const char *name, bool isMounted) {
 	volume.volumeID = volumeID;
 
 	_volumes.push_back(volume);
+}
+
+Project *Runtime::getProject() const {
+	return _project.get();
+}
+
+uint32 Runtime::allocateRuntimeGUID() {
+	return _nextRuntimeGUID++;
 }
 
 const Common::Array<Common::SharedPtr<Modifier> > &IModifierContainer::getModifiers() const {
@@ -1075,11 +1268,25 @@ void Project::loadFromDescription(const ProjectDescription& desc) {
 
 	loadBootStream(bootStreamIndex);
 
-	debug(1, "Boot stream loaded successfully, materializing project...");
+	debug(1, "Boot stream loaded successfully");
+}
 
-	error("TODO");
+Common::SharedPtr<Modifier> Project::resolveAlias(uint32 aliasID) const {
+	if (aliasID == 0 || aliasID > _globalModifiers.getModifiers().size())
+		return Common::SharedPtr<Modifier>();
 
-	debug(1, "Materialized project OK, project is loaded!");
+	return _globalModifiers.getModifiers()[aliasID - 1];
+}
+
+void Project::materializeGlobalVariables(Runtime *runtime, ObjectLinkingScope *outerScope) {
+	for (Common::Array<Common::SharedPtr<Modifier> >::const_iterator it = _globalModifiers.getModifiers().begin(), itEnd = _globalModifiers.getModifiers().end(); it != itEnd; ++it) {
+		Modifier *modifier = it->get();
+		if (!modifier)
+			continue;
+
+		if (modifier->isVariable())
+			modifier->materialize(runtime, outerScope);
+	}
 }
 
 void Project::openSegmentStream(int segmentIndex) {
@@ -1177,6 +1384,10 @@ void Project::loadBootStream(size_t streamIndex) {
 		}
 
 		numObjectsLoaded++;
+	}
+
+	if (loaderStack.contexts.size() != 1 || loaderStack.contexts[0].type != ChildLoaderContext::kTypeProject) {
+		error("Boot stream loader finished in an expected state, something didn't finish loading");
 	}
 }
 
@@ -1328,6 +1539,14 @@ size_t Project::recursiveCountLabels(const Data::ProjectLabelMap::LabelTree& tre
 	return numLabels;
 }
 
+ObjectLinkingScope *Project::getPersistentStructuralScope() {
+	return &_structuralScope;
+}
+
+ObjectLinkingScope *Project::getPersistentModifierScope() {
+	return &_modifierScope;
+}
+
 void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject) {
 	ChildLoaderContext &topContext = stack.contexts.back();
 	const Data::DataObjectTypes::DataObjectType dataObjectType = dataObject.getType();
@@ -1473,11 +1692,31 @@ bool Section::load(const Data::SectionStructuralDef &data) {
 	return true;
 }
 
+ObjectLinkingScope *Section::getPersistentStructuralScope() {
+	return &_structuralScope;
+}
+
+ObjectLinkingScope *Section::getPersistentModifierScope() {
+	return &_modifierScope;
+}
+
 bool Subsection::load(const Data::SubsectionStructuralDef &data) {
 	_name = data.name;
 	_guid = data.guid;
 
 	return true;
+}
+
+ObjectLinkingScope *Subsection::getPersistentStructuralScope() {
+	return &_structuralScope;
+}
+
+ObjectLinkingScope *Subsection::getPersistentModifierScope() {
+	return &_modifierScope;
+}
+
+uint32 Element::getStreamLocator() const {
+	return _streamLocator;
 }
 
 bool VisualElement::isVisual() const {
@@ -1510,19 +1749,53 @@ bool ModifierFlags::load(const uint32 dataModifierFlags) {
 	return true;
 }
 
-Modifier::Modifier() : _guid(0) {
+Modifier::Modifier() {
 }
 
 Modifier::~Modifier() {
 }
 
-bool Modifier::loadTypicalHeader(const Data::TypicalModifierHeader& typicalHeader) {
+void Modifier::materialize(Runtime *runtime, ObjectLinkingScope *outerScope) {
+	ModifierChildMaterializer childMaterializer(runtime, outerScope);
+	this->visitInternalReferences(&childMaterializer);
+
+	linkInternalReferences();
+	setRuntimeGUID(runtime->allocateRuntimeGUID());
+}
+
+bool Modifier::isAlias() const {
+	return false;
+}
+
+bool Modifier::isVariable() const {
+	return false;
+}
+
+void Modifier::setName(const Common::String& name) {
+	_name = name;
+}
+
+const Common::String& Modifier::getName() const {
+	return _name;
+}
+
+void Modifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+}
+
+bool VariableModifier::isVariable() const {
+	return true;
+}
+
+bool Modifier::loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeader) {
 	if (!_modifierFlags.load(typicalHeader.modifierFlags))
 		return false;
 	_guid = typicalHeader.guid;
 	_name = typicalHeader.name;
 
 	return true;
+}
+
+void Modifier::linkInternalReferences() {
 }
 
 } // End of namespace MTropolis

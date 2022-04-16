@@ -1,7 +1,7 @@
 GUID resolution and structure loading:
 
 Loading of objects in the mTropolis backend is done in multiple stages due to
-the complex GUID resolution process, inline assets, and other things.  Here's
+the complex GUID resolution process, inline assets, and other things.
 
 The first step to loading is to load data objects.  Data objects are JUST data,
 but due to weird aspects of the data loading process (like the fact that asset
@@ -10,5 +10,51 @@ defs can appear anywhere) it's separate.
 The second step is conversion of data objects into runtime objects and
 formation of the scene structure.
 
-The third step is "materialization" which performs two tasks: First, it clones
-all aliased non-variable modifiers.  Second, it remaps all GUIDs to objects.
+The third step is "materialization" which converts loaded objects into a
+ready-to-use state.  This involves replacing any non-variable aliases with a
+copy of the original, assigning new GUIDs to the new objects, and remapping
+any internal references to the corresponding visible objects.
+
+Objects are only ever materialized once.  Aliasable variables in the global
+modifier table are materialized when the project is loaded, while everything
+else is materialized when it's imported into the project.
+
+Objects cloned from already-materialized objects should NOT be materialized
+again, instead they should be fixed up using an object reference remap table,
+shallowClone, and visitInternalReferences.  Cloning is not currently supported
+because Obsidian doesn't use it.
+
+
+Scene transitions:
+
+mTropolis Player's handling of scene transitions is very buggy/quirky.
+Basically, there is a feature called "add to destination scene" (ATDS) which
+loads the target scene on top of a stack of scenes and adds it to the return
+list, which is intended for dialogs and such.
+
+Unfortunately, it only works properly in the straightforward case, and
+transitions are done in a way that basically does the exact actions required
+for it to work in the typical case but are broken in edge cases.
+
+Basically scenes are ordered in a stack, and there is a scene return list
+separate from the scene stack.  The shared scene is always at the bottom of
+the stack.
+
+On forward scene transitions:
+ - The shared scene is changed to the shared scene of the new scene
+ - If not doing an ATDS-type transfer, then the current scene is unloaded
+ - If the target scene is not loaded, then it is loaded at the top of the stack
+
+On return transitions:
+ - The active scene is unloaded
+ - If returning from a non-ATDS transfer, then the return scene is loaded and its
+   shared scene is made active.
+
+This has a bunch of confirmed broken cases:
+- Returning from an ATDS transfer into a different shared scene will not reset
+  the shared scene on return.
+- Transitioning into an ATDS scene that's already in the stack will cause it to
+  be removed on returning.  This can even cause no scenes to be loaded.
+- Doing a regular transition out of ATDS stacked scenes and then returning will
+  cause only the top scene to be loaded.
+- Probably a bunch of other cases.

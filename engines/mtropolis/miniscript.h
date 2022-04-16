@@ -35,31 +35,43 @@ public:
 	virtual ~MiniscriptInstruction();
 };
 
-class MiniscriptProgram {
+class MiniscriptReferences {
 public:
 	struct LocalRef {
 		uint32 guid;
 		Common::String name;
 	};
 
+	struct GlobalRef {
+		uint32 guid;
+	};
+
+	MiniscriptReferences(const Common::Array<LocalRef> &localRefs, const Common::Array<GlobalRef> &globalRefs);
+
+private:
+	Common::Array<LocalRef> _localRefs;
+	Common::Array<GlobalRef> _globalRefs;
+};
+
+class MiniscriptProgram {
+public:
+
 	struct Attribute {
 		Common::String name;
 	};
 
-	MiniscriptProgram(const Common::SharedPtr<Common::Array<uint8> > &programData, const Common::Array<MiniscriptInstruction *> &instructions,
-		const Common::Array<LocalRef> &localRefs, const Common::Array<Attribute> &attributes);
+	MiniscriptProgram(const Common::SharedPtr<Common::Array<uint8> > &programData, const Common::Array<MiniscriptInstruction *> &instructions, const Common::Array<Attribute> &attributes);
 	~MiniscriptProgram();
 
 private:
 	Common::SharedPtr<Common::Array<uint8> > _programData;
 	Common::Array<MiniscriptInstruction *> _instructions;
-	Common::Array<LocalRef> _localRefs;
 	Common::Array<Attribute> _attributes;
 };
 
 class MiniscriptParser {
 public:
-	static Common::SharedPtr<MiniscriptProgram> parse(const Data::MiniscriptProgram &programData);
+	static bool parse(const Data::MiniscriptProgram &programData, Common::SharedPtr<MiniscriptProgram> &outProgram, Common::SharedPtr<MiniscriptReferences> &outReferences);
 
 	static IMiniscriptInstructionFactory *resolveOpcode(uint16 opcode);
 };
@@ -219,10 +231,15 @@ namespace MiniscriptInstructions {
 
 	class PushGlobal : public UnimplementedInstruction {
 	public:
-		explicit PushGlobal(uint32 globalID);
+		explicit PushGlobal(uint32 guid);
+
+		uint32 getStaticGUID() const;
+		void setReferenceSetIndex(size_t refSetIndex);
+		size_t getReferenceSetIndex() const;
 
 	private:
-		uint32 _globalID;
+		uint32 _guid;
+		size_t _refSetIndex;
 	};
 
 	class PushString : public UnimplementedInstruction {

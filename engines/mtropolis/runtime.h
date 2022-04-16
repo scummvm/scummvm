@@ -35,9 +35,13 @@
 namespace MTropolis {
 
 class Asset;
-class Project;
-class PlugIn;
+class Element;
 class Modifier;
+class RuntimeObject;
+class PlugIn;
+class Project;
+class Structural;
+class VisualElement;
 struct IModifierFactory;
 struct IPlugInModifierFactory;
 struct IPlugInModifierFactoryAndDataFactory;
@@ -484,6 +488,35 @@ struct VolumeState {
 	bool isMounted;
 };
 
+class ObjectLinkingScope {
+public:
+	ObjectLinkingScope();
+	~ObjectLinkingScope();
+
+	void setParent(ObjectLinkingScope *parent);
+	void addObject(uint32 guid, const Common::WeakPtr<RuntimeObject> &object);
+
+	void reset();
+
+private:
+	Common::HashMap<uint32, Common::WeakPtr<RuntimeObject> > _guidToObject;
+	ObjectLinkingScope *_parent;
+};
+
+enum SceneState {
+	kSceneStateShared,
+	kSceneStateInactive,
+	kSceneStateActive,
+	kSceneStateUnloaded,
+};
+
+struct SceneStateTransition {
+	SceneStateTransition(VisualElement *scene, SceneState targetState);
+
+	VisualElement *scene;
+	SceneState targetState;
+};
+
 class Runtime {
 public:
 	Runtime();
@@ -492,12 +525,25 @@ public:
 	void queueProject(const Common::SharedPtr<ProjectDescription> &desc);
 
 	void addVolume(int volumeID, const char *name, bool isMounted);
+	void addSceneStateTransition(const SceneStateTransition *transition);
+
+	Project *getProject() const;
+
+	uint32 allocateRuntimeGUID();
 
 private:
+	VThreadState *unloadActiveScene();
+	VThreadState *unloadActiveShared();
+	void unloadProject();
+
 	Common::Array<VolumeState> _volumes;
 	Common::SharedPtr<ProjectDescription> _queuedProjectDesc;
 	Common::SharedPtr<Project> _project;
 	Common::ScopedPtr<VThread> _vthread;
+	ObjectLinkingScope _rootLinkingScope;
+	Common::Array<SceneStateTransition> _pendingSceneStateTransitions;
+
+	uint32 _nextRuntimeGUID;
 };
 
 struct IModifierContainer {
@@ -506,7 +552,7 @@ struct IModifierContainer {
 };
 
 class SimpleModifierContainer : public IModifierContainer {
-
+public:
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
@@ -514,8 +560,32 @@ private:
 	Common::Array<Common::SharedPtr<Modifier> > _modifiers;
 };
 
-class Structural : public IModifierContainer {
+class RuntimeObject {
+public:
+	RuntimeObject();
+	virtual ~RuntimeObject();
 
+	uint32 getStaticGUID() const;
+	uint32 getRuntimeGUID() const;
+
+	void setRuntimeGUID(uint32 runtimeGUID);
+
+protected:
+	// This is the static GUID stored in the data, it is not guaranteed
+	// to be globally unique at runtime.  In particular, cloning an object
+	// and using aliased modifiers will cause multiple objects with the same
+	uint32 _guid;
+	uint32 _runtimeGUID;
+};
+
+struct IStructuralReferenceVisitor {
+	virtual void visitChildStructuralRef(Common::SharedPtr<Structural> &structural) = 0;
+	virtual void visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) = 0;
+	virtual void visitWeakStructuralRef(Common::SharedPtr<Structural> &structural) = 0;
+	virtual void visitWeakModifierRef(Common::SharedPtr<Modifier> &modifier) = 0;
+};
+
+class Structural : public RuntimeObject, public IModifierContainer {
 public:
 	Structural();
 	virtual ~Structural();
@@ -528,11 +598,18 @@ public:
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
+	void materializeSelfAndDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
+	void materializeDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
+
 protected:
+	virtual ObjectLinkingScope *getPersistentStructuralScope();
+	virtual ObjectLinkingScope *getPersistentModifierScope();
+
+	virtual void linkInternalReferences(ObjectLinkingScope *outerScope);
+
 	Common::Array<Common::SharedPtr<Structural> > _children;
 	Common::Array<Common::SharedPtr<Modifier> > _modifiers;
 	Common::String _name;
-	uint32 _guid;
 };
 
 struct ProjectPresentationSettings {
@@ -612,6 +689,8 @@ public:
 	~Project();
 
 	void loadFromDescription(const ProjectDescription &desc);
+	Common::SharedPtr<Modifier> resolveAlias(uint32 aliasID) const;
+	void materializeGlobalVariables(Runtime *runtime, ObjectLinkingScope *scope);
 
 private:
 	struct LabelSuperGroup {
@@ -673,6 +752,9 @@ private:
 	void loadLabelMap(const Data::ProjectLabelMap &projectLabelMap);
 	static size_t recursiveCountLabels(const Data::ProjectLabelMap::LabelTree &tree);
 
+	ObjectLinkingScope *getPersistentStructuralScope() override;
+	ObjectLinkingScope *getPersistentModifierScope() override;
+
 	Common::Array<Segment> _segments;
 	Common::Array<StreamDesc> _streams;
 	Common::Array<LabelTree> _labelTree;
@@ -695,21 +777,39 @@ private:
 
 	Common::Array<Common::SharedPtr<PlugIn> > _plugIns;
 	Common::SharedPtr<ProjectResources> _resources;
+	ObjectLinkingScope _structuralScope;
+	ObjectLinkingScope _modifierScope;
 };
 
 class Section : public Structural {
 public:
 	bool load(const Data::SectionStructuralDef &data);
+
+private:
+	ObjectLinkingScope *getPersistentStructuralScope() override;
+	ObjectLinkingScope *getPersistentModifierScope() override;
+
+	ObjectLinkingScope _structuralScope;
+	ObjectLinkingScope _modifierScope;
 };
 
 class Subsection : public Structural {
 public:
 	bool load(const Data::SubsectionStructuralDef &data);
+
+private:
+	ObjectLinkingScope *getPersistentStructuralScope() override;
+	ObjectLinkingScope *getPersistentModifierScope() override;
+
+	ObjectLinkingScope _structuralScope;
+	ObjectLinkingScope _modifierScope;
 };
 
 class Element : public Structural {
 public:
 	virtual bool isVisual() const = 0;
+
+	uint32 getStreamLocator() const;
 
 protected:
 	uint32 _streamLocator;
@@ -742,17 +842,35 @@ struct ModifierFlags {
 	bool isLastModifier : 1;
 };
 
-class Modifier {
+class Modifier : public RuntimeObject {
 public:
 	Modifier();
 	virtual ~Modifier();
 
+	void materialize(Runtime *runtime, ObjectLinkingScope *outerScope);
+
+	virtual bool isAlias() const;
+	virtual bool isVariable() const;
+
+	void setName(const Common::String &name);
+	const Common::String &getName() const;
+
+	// Shallow clones only need to copy the object.  Descendent copies are done using visitInternalReferences.
+	virtual Common::SharedPtr<Modifier> shallowClone() const = 0;
+
+	virtual void visitInternalReferences(IStructuralReferenceVisitor *visitor);
+
 protected:
-	uint32 _guid;
+	bool loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeader);
+	virtual void linkInternalReferences();
+
 	Common::String _name;
 	ModifierFlags _modifierFlags;
+};
 
-	bool loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeader);
+class VariableModifier : public Modifier {
+public:
+	virtual bool isVariable() const;
 };
 
 class Asset {

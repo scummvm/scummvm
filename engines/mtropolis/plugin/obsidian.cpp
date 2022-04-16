@@ -30,14 +30,25 @@ bool MovementModifier::load(const PlugInModifierLoaderContext &context, const Da
 	return true;
 }
 
+Common::SharedPtr<Modifier> MovementModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new MovementModifier(*this));
+}
+
 bool RectShiftModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::RectShiftModifier &data) {
 	return true;
+}
+
+Common::SharedPtr<Modifier> RectShiftModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new RectShiftModifier(*this));
 }
 
 bool TextWorkModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::TextWorkModifier &data) {
 	return true;
 }
 
+Common::SharedPtr<Modifier> TextWorkModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new TextWorkModifier(*this));
+}
 
 ObsidianPlugIn::ObsidianPlugIn() : _movementModifierFactory(this), _rectShiftModifierFactory(this), _textWorkModifierFactory(this) {
 }

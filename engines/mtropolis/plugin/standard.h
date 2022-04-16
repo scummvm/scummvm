@@ -38,6 +38,8 @@ public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::CursorModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _applyWhen;
 	Event _removeWhen;
 	uint32 _cursorID;
@@ -47,6 +49,9 @@ private:
 class STransCtModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data);
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
 };
 
 class MediaCueMessengerModifier : public Modifier {
@@ -54,6 +59,8 @@ public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::MediaCueMessengerModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	enum TriggerTiming {
 		kTriggerTimingStart = 0,
 		kTriggerTimingDuring = 1,
@@ -66,11 +73,13 @@ private:
 	MessengerSendSpec _send;
 };
 
-class ObjectReferenceVariableModifier : public Modifier {
+class ObjectReferenceVariableModifier : public VariableModifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _setToSourceParentWhen;
 	Common::String _objectPath;
 };
@@ -80,6 +89,8 @@ public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::MidiModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	struct FilePart {
 		bool loop;
 		bool overrideTempo;
@@ -116,17 +127,22 @@ private:
 	Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> _embeddedFile;
 };
 
-class ListVariableModifier : public Modifier {
+class ListVariableModifier : public VariableModifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	DynamicList _list;
 };
 
 class SysInfoModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::SysInfoModifier &data);
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
 };
 
 struct StandardPlugInHacks {
