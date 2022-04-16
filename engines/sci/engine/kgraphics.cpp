@@ -372,25 +372,17 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	// Fixes bug #5710.
 	if (textWidth >= g_sci->_gfxScreen->getDisplayWidth() ||
 		textHeight >= g_sci->_gfxScreen->getDisplayHeight()) {
-		// TODO: Is this needed for SCI32 as well?
-		if (g_sci->_gfxText16) {
-			warning("kTextSize: string would be too big to fit on screen. Trimming it");
-			text.trim();
-			// Copy over the trimmed string...
-			s->_segMan->strcpy(argv[1], text.c_str());
-			// ...and recalculate bounding box dimensions
-			g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font, maxWidth, &textWidth, &textHeight);
-		}
+		warning("kTextSize: string would be too big to fit on screen. Trimming it");
+		text.trim();
+		// Copy over the trimmed string...
+		s->_segMan->strcpy(argv[1], text.c_str());
+		// ...and recalculate bounding box dimensions
+		g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font, maxWidth, &textWidth, &textHeight);
 	}
 
 	debugC(kDebugLevelStrings, "GetTextSize '%s' -> %dx%d", text.c_str(), textWidth, textHeight);
-	if (getSciVersion() <= SCI_VERSION_1_1) {
-		dest[2] = make_reg(0, textHeight);
-		dest[3] = make_reg(0, textWidth);
-	} else {
-		dest[2] = make_reg(0, textWidth);
-		dest[3] = make_reg(0, textHeight);
-	}
+	dest[2] = make_reg(0, textHeight);
+	dest[3] = make_reg(0, textWidth);
 
 	return s->r_acc;
 }
