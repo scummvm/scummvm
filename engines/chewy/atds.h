@@ -188,10 +188,9 @@ struct AtsTxtHeader {
 struct AtsVar {
 	AtsTxtHeader _txtHeader;
 	uint16 vocNum;
-	char *_ptr;
+	Common::String text;
 	int16 _delayCount;
 	int16 _silentCount;
-	int16 _txtLen;
 	int16 _color;
 	int16 _txtMode;
 	bool shown;
@@ -227,7 +226,7 @@ public:
 
 	void set_delay(int16 *delay, int16 silent);
 	void set_split_win(int16 nr, int16 x, int16 y);
-	SplitStringRet *split_string(SplitStringInit *ssi);
+	void split_string(SplitStringInit *ssi, SplitStringRet *ret);
 	void calc_txt_win(SplitStringInit *ssi);
 	void str_null2leer(char *strStart, char *strEnd);
 	void load_atds(int16 chunkNr, int16 mode);
@@ -243,10 +242,6 @@ public:
 	void set_ats_str(int16 txtNr, int16 txtMode, int16 strNr, int16 mode);
 	void set_ats_str(int16 txtNr, int16 strNr, int16 mode);
 	int16 get_ats_str(int16 txtNr, int16 txtMode, int16 mode);
-	char *ats_get_txt(int16 txtNr, int16 txtMode, int16 *retNr, int16 mode);
-	char *ats_search_block(int16 txtMode, char *txtAdr);
-	void ats_search_nr(int16 txtNr, char **str);
-	void ats_search_str(int16 *nr, uint8 *status, uint8 controlByte, char **str);
 	void set_ats_mem(int16 mode);
 	int16 start_aad(int16 diaNr);
 	void stopAad();
@@ -299,8 +294,6 @@ private:
 	AdsNextBlk _adsnb;
 	uint8 _adsStack[ADS_STACK_SIZE] = { 0 };
 	int16 _adsStackPtr;
-	SplitStringRet _ssret;
-	SplitStringRet *_ssr = nullptr;
 
 	SplitStringInit _ssi[AAD_MAX_PERSON] = {
 		{ 0, 100, 0 },
@@ -318,7 +311,6 @@ private:
 	char *_splitPtr[MAX_STR_SPLIT] = { nullptr };
 	int16 _splitX[MAX_STR_SPLIT] = { 0 };
 	int16 _invBlockNr;
-	char *_invUseMem = nullptr;
 	int16 _tmpDelay;
 	int16 _mousePush = 0;
 	int _printDelayCount1 = 0;

@@ -162,11 +162,9 @@ TextEntry *Text::getText(uint chunk, uint entry, int type, int subEntry) {
 		// FIXME: Skip other embedded strings for now
 		if (*(ptr + 1) == kEndText && *(ptr + 2) == 0xf1 && *(ptr + 3) == 0xfe) {
 			ptr += 5;
-			do {
+			while (!(!*ptr && *(ptr + 1) == kEndText && *(ptr + 2) == kEndChunk)) {
 				ptr++;
-				if (*ptr == 0 && *(ptr + 1) != kEndText)
-					ptr++;
-			} while (*ptr);
+			}
 		}
 
 		if (*(ptr + 1) != kEndText || *(ptr + 2) != kEndChunk) {
@@ -209,6 +207,8 @@ Common::StringArray Text::getTextArray(uint chunk, uint entry, int type, int sub
 		res.push_back(line);
 		line = strtok(nullptr, "|");
 	}
+
+	_lastSpeechId = textData ? textData->_speechId : -1;
 
 	delete[] text;
 	delete textData;

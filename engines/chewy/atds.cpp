@@ -92,12 +92,9 @@ Atdsys::Atdsys() {
 	_atdsv.aad_str = nullptr;
 	_atdsv._vocNr = -1;
 	_atdsv._eventsEnabled = true;
-	_ssret._next = false;
-	_ssr = &_ssret;
 	for (int16 i = 0; i < AAD_MAX_PERSON; i++)
 		_ssi[i] = init_ssi;
 	_invBlockNr = -1;
-	_invUseMem = nullptr;
 
 	_dialogResource = new DialogResource(ADS_TXT_STEUER);
 	_text = new Text();
@@ -119,9 +116,6 @@ Atdsys::~Atdsys() {
 			free(_atdsMem[i]);
 		_atdsMem[i] = nullptr;	
 	}
-
-	if (_invUseMem)
-		free(_invUseMem);
 
 	delete _dialogResource;
 }
@@ -191,16 +185,16 @@ int16 Atdsys::get_delay(int16 txt_len) {
 	return ret;
 }
 
-SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
+void Atdsys::split_string(SplitStringInit *ssi_, SplitStringRet *ret) {
 	const int16 w = _G(fontMgr)->getFont()->getDataWidth();
 	const int16 h = _G(fontMgr)->getFont()->getDataHeight();
 	const int16 width = 220;
 	const int16 lines = 4;
 
-	_ssret._nr = 0;
-	_ssret._next = false;
-	_ssret._strPtr = _splitPtr;
-	_ssret._x = _splitX;
+	ret->_nr = 0;
+	ret->_next = false;
+	ret->_strPtr = _splitPtr;
+	ret->_x = _splitX;
 	int16 zeichen_anz = (width / w) + 1;
 	memset(_splitPtr, 0, sizeof(char *) * MAX_STR_SPLIT);
 	calc_txt_win(ssi_);
@@ -228,11 +222,11 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 				++str_adr;
 				++count;
 			} else {
-				_splitPtr[_ssret._nr] = start_adr;
+				_splitPtr[ret->_nr] = start_adr;
 				start_adr[tmp_count] = 0;
-				_splitX[_ssret._nr] = ssi_->_x + ((width - (strlen(start_adr) * w)) >> 1);
-				++_ssret._nr;
-				if (_ssret._nr == lines) {
+				_splitX[ret->_nr] = ssi_->_x + ((width - (strlen(start_adr) * w)) >> 1);
+				++ret->_nr;
+				if (ret->_nr == lines) {
 					endLoop = true;
 					bool endInnerLoop = false;
 					while (!endInnerLoop) {
@@ -240,7 +234,7 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 							endInnerLoop = true;
 						else if (*str_adr != ' ' && *str_adr != 0) {
 							endInnerLoop = true;
-							_ssret._next = true;
+							ret->_next = true;
 						}
 						++str_adr;
 					}
@@ -267,22 +261,22 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 					test_zeilen = 2;
 				++count;
 				++str_adr;
-				if ((_ssret._nr + test_zeilen) >= lines) {
+				if (ret->_nr + test_zeilen >= lines) {
 					if (count < zeichen_anz) {
 						tmp_count = count;
 						endLoop = true;
 					}
-					_splitPtr[_ssret._nr] = start_adr;
+					_splitPtr[ret->_nr] = start_adr;
 					start_adr[tmp_count] = 0;
-					_splitX[_ssret._nr] = ssi_->_x + ((width - (strlen(start_adr) * w)) >> 1);
-					++_ssret._nr;
+					_splitX[ret->_nr] = ssi_->_x + ((width - (strlen(start_adr) * w)) >> 1);
+					++ret->_nr;
 					bool ende1 = false;
 					while (!ende1) {
 						if (*str_adr == ATDS_END_TEXT)
 							ende1 = true;
 						else if (*str_adr != ' ' && *str_adr != 0) {
 							ende1 = true;
-							_ssret._next = true;
+							ret->_next = true;
 						}
 						++str_adr;
 					}
@@ -306,12 +300,10 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 
 		}
 	}
-	if (_ssret._nr <= lines)
-		_ssret._y = ssi_->_y + (lines - _ssret._nr) * h;
+	if (ret->_nr <= lines)
+		ret->_y = ssi_->_y + (lines - ret->_nr) * h;
 	else
-		_ssret._y = ssi_->_y;
-
-	return &_ssret;
+		ret->_y = ssi_->_y;
 }
 
 void Atdsys::str_null2leer(char *strStart, char *strEnd) {
@@ -356,20 +348,6 @@ void Atdsys::set_handle(const char *fname, int16 mode, int16 chunkStart, int16 c
 		free(_atdsMem[mode]);
 	_atdsMem[mode] = tmp_adr;
 	_atdsPoolOff[mode] = chunkStart;
-
-	if (mode == INV_USE_DATA) {
-		const uint32 chunkSize = _text->getChunk(chunkStart)->size;
-		const uint8 *chunkData = _text->getChunkData(chunkStart);
-
-		free(_invUseMem);
-		_invUseMem = (char *)MALLOC(chunkSize + 3l);
-		memcpy(_invUseMem, chunkData, chunkSize);
-		delete[] chunkData;
-
-		_invUseMem[chunkSize] = (char)BLOCKENDE;
-		_invUseMem[chunkSize + 1] = (char)BLOCKENDE;
-		_invUseMem[chunkSize + 2] = (char)BLOCKENDE;
-	}
 }
 
 void Atdsys::load_atds(int16 chunkNr, int16 mode) {
@@ -399,9 +377,7 @@ void Atdsys::set_ats_mem(int16 mode) {
 		break;
 
 	case INV_USE_DEF:
-		_ats_sheader = _G(gameState).InvUseDef;
-		_atsMem = _invUseMem;
-		break;
+		error("set_ats_mem() called with mode INV_USE_DEF");
 
 	case INV_ATS_DATA:
 		_ats_sheader = _G(gameState).InvAts;
@@ -417,40 +393,37 @@ bool Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int1
 	assert(mode == ATS_DATA || mode == INV_USE_DATA || mode == INV_USE_DEF);
 
 	*vocNr = -1;
-	set_ats_mem(mode);
+
+	if (mode != INV_USE_DEF)
+		set_ats_mem(mode);
 
 	_atsv.shown = false;
 
-	if (_atsMem) {
-		//const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
-		int16 txt_anz;
-		_atsv._ptr = ats_get_txt(txtNr, txtMode, &txt_anz, mode);
-		//Common::StringArray tmp = getTextArray(roomNum, txtNr, mode, txtMode);
+	Common::StringArray textArray;
 
-		if (_atsv._ptr) {
+	if (mode != INV_USE_DEF) {
+		const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
+		textArray = getTextArray(roomNum, txtNr, mode, txtMode);
+	} else {
+		textArray = getTextArray(0, txtNr, mode, -1);
+	}
+
+	_atsv.text.clear();
+	for (int i = 0; i < textArray.size(); i++)
+		_atsv.text += textArray[i] + " ";
+	_atsv.text.deleteLastChar();
+
+	if (_atsv.text.size() > 0) {
+		*vocNr = txtMode != TXT_MARK_NAME ? _text->getLastSpeechId() : -1;
+		_atsv.shown = g_engine->_sound->subtitlesEnabled();
+		_atsv._txtMode = txtMode;
+		_atsv._delayCount = get_delay(_atsv.text.size());
+		_atsv._color = color;
+		_printDelayCount1 = _atsv._delayCount / 10;
+		_mousePush = true;
+
+		if (*vocNr == -1) {
 			_atsv.shown = g_engine->_sound->subtitlesEnabled();
-			char *ptr = _atsv._ptr;
-			_atsv._txtLen = 0;
-
-			while (*ptr++ != ATDS_END_TEXT)
-				++_atsv._txtLen;
-
-			*vocNr = _atsv.vocNum - ATDS_VOC_OFFSET;
-
-			if ((byte)*_atsv._ptr == 248) {
-				// Special code for no message to display
-				_atsv.shown = false;
-
-			} else {
-				_atsv._delayCount = get_delay(_atsv._txtLen);
-				_printDelayCount1 = _atsv._delayCount / 10;
-				_atsv._color = color;
-				_mousePush = true;
-
-				if (*vocNr == -1) {
-					_atsv.shown = g_engine->_sound->subtitlesEnabled();
-				}
-			}
 		}
 	}
 
@@ -468,7 +441,7 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_RETURN:
 			case MOUSE_LEFT:
-				if (_mousePush == false) {
+				if (!_mousePush) {
 					if (_atsv._silentCount <= 0 && _atsv._delayCount > _printDelayCount1) {
 						_mousePush = true;
 						_atsv._delayCount = 0;
@@ -487,46 +460,48 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 		}
 
 		if (_atsv._silentCount <= 0) {
-			char *tmp_ptr = _atsv._ptr;
-			SplitStringInit *_atsSsi = &_ssi[0];
-			_atsSsi->_str = tmp_ptr;
-			_atsSsi->_x = x - scrX;
-			_atsSsi->_y = y - scrY;
-			char *start_ptr = tmp_ptr;
-			str_null2leer(start_ptr, start_ptr + _atsv._txtLen - 1);
-			_ssr = split_string(_atsSsi);
+			// TODO: Rewrite this
+			SplitStringInit *atsSsi = &_ssi[0];
+			char *txt = new char[_atsv.text.size() + 2];
 			const int16 h = _G(fontMgr)->getFont()->getDataHeight();
+			uint shownLen = 0;
+			SplitStringRet splitString;
 
-			for (int16 i = 0; i < _ssr->_nr; i++) {
-				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * h) + 1,
-				              0, 300, 0, _ssr->_strPtr[i]);
-				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * h) - 1,
-				              0, 300, 0, _ssr->_strPtr[i]);
-				_G(out)->printxy(_ssr->_x[i] + 1,
-				              _ssr->_y + (i * h),
-				              0, 300, 0, _ssr->_strPtr[i]);
-				_G(out)->printxy(_ssr->_x[i] - 1,
-				              _ssr->_y + (i * h),
-				              0, 300, 0, _ssr->_strPtr[i]);
-				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * h),
+			Common::strlcpy(txt, _atsv.text.c_str(), _atsv.text.size() + 1);
+			txt[_atsv.text.size() + 1] = ATDS_END_TEXT;
+			atsSsi->_str = txt;
+			atsSsi->_x = x - scrX;
+			atsSsi->_y = y - scrY;
+			split_string(atsSsi, &splitString);
+
+			for (int16 i = 0; i < splitString._nr; i++) {
+				_G(out)->printxy(splitString._x[i],
+								 splitString._y + (i * h) + 1,
+								 0, 300, 0, splitString._strPtr[i]);
+				_G(out)->printxy(splitString._x[i],
+								 splitString._y + (i * h) - 1,
+								 0, 300, 0, splitString._strPtr[i]);
+				_G(out)->printxy(splitString._x[i] + 1,
+				              splitString._y + (i * h),
+				              0, 300, 0, splitString._strPtr[i]);
+				_G(out)->printxy(splitString._x[i] - 1,
+				              splitString._y + (i * h),
+				              0, 300, 0, splitString._strPtr[i]);
+				_G(out)->printxy(splitString._x[i],
+				              splitString._y + (i * h),
 				              _atsv._color,
-				              300, 0, _ssr->_strPtr[i]);
-				tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
+				              300, 0, splitString._strPtr[i]);
+
+				shownLen += strlen(splitString._strPtr[i]) + 1;
 			}
 
-			str_null2leer(start_ptr, start_ptr + _atsv._txtLen - 1);
+			delete[] txt;
+
 			if (_atsv._delayCount <= 0) {
-				if (_ssr->_next == false) {
+				if (!splitString._next) {
 					_atsv.shown = false;
 				} else {
-					_atsv._ptr = tmp_ptr;
-					_atsv._txtLen = 0;
-					while (*tmp_ptr++ != ATDS_END_TEXT)
-						++_atsv._txtLen;
-					_atsv._delayCount = get_delay(_atsv._txtLen);
+					_atsv._delayCount = get_delay(_atsv.text.size() - shownLen);
 					_printDelayCount1 = _atsv._delayCount / 10;
 					_atsv._silentCount = _atdsv._silent;
 				}
@@ -537,67 +512,6 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 			--_atsv._silentCount;
 		}
 	}
-}
-
-char *Atdsys::ats_get_txt(int16 txtNr, int16 txtMode, int16 *retNr, int16 mode) {
-	char *str_ = nullptr;
-
-	assert(mode == ATS_DATA || mode == INV_USE_DATA || mode == INV_USE_DEF);
-	set_ats_mem(mode);
-
-	_atsv._txtMode = txtMode;
-
-	if (!getControlBit(txtNr, ATS_ACTIVE_BIT)) {
-		uint8 status = _ats_sheader[(txtNr * MAX_ATS_STATUS) + (_atsv._txtMode + 1) / 2];
-		int16 ak_nybble = (_atsv._txtMode + 1) % 2;
-
-		uint8 lo_hi[2];
-		lo_hi[1] = status >> 4;
-		lo_hi[0] = status &= 15;
-		str_ = ats_search_block(_atsv._txtMode, _atsMem);
-		if (str_ != nullptr) {
-			ats_search_nr(txtNr, &str_);
-			if (str_ != nullptr) {
-				ats_search_str(retNr, &lo_hi[ak_nybble], (uint8)_ats_sheader[txtNr * MAX_ATS_STATUS], &str_);
-
-				if (str_ != nullptr) {
-					status = 0;
-					lo_hi[1] <<= 4;
-					status |= lo_hi[0];
-					status |= lo_hi[1];
-					_ats_sheader[(txtNr * MAX_ATS_STATUS) + (_atsv._txtMode + 1) / 2] = status;
-				}
-			}
-		}
-	}
-
-	// WORKAROUND: Proper word wrapping some inventory items' look desc
-	if (txtMode == TXT_MARK_LOOK && str_ != nullptr) {
-		switch (txtNr) {
-		case CYB_KRONE_INV:
-			if (str_[37] == ' ' && str_[56] == '\0') {
-				str_[37] = '\0';
-				str_[56] = ' ';
-			}
-			break;
-		case YEL_CARD_INV:
-			if (str_[39] == ' ' && str_[46] == '\0') {
-				str_[39] = '\0';
-				str_[46] = ' ';
-			}
-			break;
-		case PAPIER_INV:
-			if (str_[32] == ' ') {
-				str_[32] = '\0';
-				*retNr = 2;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	return str_;
 }
 
 void Atdsys::set_ats_str(int16 txtNr, int16 txtMode, int16 strNr, int16 mode) {
@@ -646,131 +560,6 @@ void Atdsys::setControlBit(int16 txtNr, int16 bitIdx) {
 void Atdsys::delControlBit(int16 txtNr, int16 bitIdx) {
 	set_ats_mem(ATS_DATA);
 	_ats_sheader[txtNr * MAX_ATS_STATUS] &= ~bitIdx;
-}
-
-char *Atdsys::ats_search_block(int16 txtMode, char *txtAdr) {
-	char *strP = txtAdr;
-	int ende = 0;
-
-	for (; !ende; ++strP) {
-		if (strP[0] == (char)BLOCKENDE &&
-		        strP[1] == (char)BLOCKENDE &&
-		        strP[2] == (char)BLOCKENDE) {
-			ende = 2;
-		} else if (strP[0] == (char)0xf2 && strP[1] == (char)0xfe) {
-			if (strP[2] == (char)txtMode)
-				ende = 1;
-			strP += 2;
-		}
-	}
-
-	if (ende == 2)
-		strP = nullptr;
-
-	return strP;
-}
-
-void Atdsys::ats_search_nr(int16 txtNr, char **str) {
-	char *start_str = *str;
-
-	bool done1 = false;
-	while (!done1) {
-		Common::MemoryReadStream rs1((const byte *)start_str + 2, AtsTxtHeader::SIZE());
-		_atsv._txtHeader.load(&rs1);
-
-		if (READ_LE_UINT16(start_str) == 0xFEF0 &&
-				_atsv._txtHeader._txtNr == txtNr) {
-			// Found match
-			*str = start_str + 2 + AtsTxtHeader::SIZE();
-
-			if (_atsv._txtMode) {
-				_atsv.vocNum = READ_LE_UINT16(str);
-			}
-
-			*str += 2;	// voc number
-			break;
-		}
-
-		start_str += 2 + AtsTxtHeader::SIZE() + 2;	// txt header + voc number
-
-		// Need to iterate over the following string to next entry
-		bool done2 = false;
-		for (; !done2; start_str++) {
-			if (*start_str == 13) {
-				// Reached end of line
-				if (READ_LE_UINT16(start_str + 1) == 0xFEF1)
-					start_str += 4;
-				else if (start_str[1] == 0xe) {
-					++start_str;
-					if (start_str[1] == 0xf && start_str[2] == 0xf && start_str[3] == 0xf) {
-						done1 = done2 = true;
-						*str = nullptr;
-					} else {
-						done2 = true;
-					}
-				}
-			}
-		}
-	}
-}
-
-void Atdsys::ats_search_str(int16 *nr, uint8 *status, uint8 controlByte, char **str) {
-	char *tmp_str = *str;
-	char *start_str = *str;
-	*nr = 0;
-	bool endLoop = false;
-	int16 count = 0;
-
-	while (!endLoop) {
-		if (count == *status) {
-			if (!*tmp_str) {
-				++*nr;
-			} else if (*tmp_str == ATDS_END_TEXT) {
-				endLoop = true;
-				*str = start_str;
-				start_str -= 2;	// voc number
-
-				if (_atsv._txtMode != TXT_MARK_NAME) {
-					_atsv.vocNum = READ_LE_UINT16(start_str);
-				}
-
-				if (tmp_str[1] != ATDS_END) {
-					if (!(controlByte & ATS_COUNT_BIT))
-						++*status;
-				} else {
-					if (controlByte & ATS_RESET_BIT)
-						*status = 0;
-				}
-			}
-		} else {
-			if (*tmp_str == ATDS_END_TEXT) {
-				if (tmp_str[1] == ATDS_END) {
-					endLoop = false;
-					*nr = 0;
-					*status = count;
-					*str = start_str;
-					start_str -= 2; // voc number
-
-					if (_atsv._txtMode != TXT_MARK_NAME) {
-						_atsv.vocNum = READ_LE_UINT16(start_str);
-					}
-				} else {
-					++count;
-					tmp_str += 2 + 2;	// voc number + 2
-					start_str = tmp_str + 1;
-				}
-			} else if (*tmp_str == ATDS_END ||
-			           (tmp_str[0] == (char)BLOCKENDE &&
-			            tmp_str[1] == (char)BLOCKENDE &&
-			            tmp_str[2] == (char)BLOCKENDE)) {
-				endLoop = false;
-				*nr = 0;
-				*str = nullptr;
-			}
-		}
-
-		++tmp_str;
-	}
 }
 
 int16 Atdsys::start_aad(int16 diaNr) {
@@ -823,7 +612,7 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 			case MOUSE_LEFT:
 				EVENTS_CLEAR;
 
-				if (_mousePush == false) {
+				if (!_mousePush) {
 					if (_aadv._silentCount <= 0 && _aadv._delayCount > _printDelayCount1) {
 						_mousePush = true;
 						_aadv._delayCount = 0;
@@ -856,29 +645,30 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 			aad_get_zeilen(start_ptr, &txt_len);
 			str_null2leer(start_ptr, start_ptr + txt_len - 1);
 			SplitStringInit tmp_ssi = _ssi[personId];
-			_ssr = split_string(&tmp_ssi);
+			SplitStringRet splitString;
+			split_string(&tmp_ssi, &splitString);
 
 			if (g_engine->_sound->subtitlesEnabled() ||
 			        (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) == -1) {
 				const int16 h = _G(fontMgr)->getFont()->getDataHeight();
-				for (int16 i = 0; i < _ssr->_nr; i++) {
-					_G(out)->printxy(_ssr->_x[i] + 1,
-					              _ssr->_y + (i * h),
-					              0, 300, 0, _ssr->_strPtr[i]);
-					_G(out)->printxy(_ssr->_x[i] - 1,
-					              _ssr->_y + (i * h),
-					              0, 300, 0, _ssr->_strPtr[i]);
-					_G(out)->printxy(_ssr->_x[i],
-					              _ssr->_y + (i * h) + 1,
-					              0, 300, 0, _ssr->_strPtr[i]);
-					_G(out)->printxy(_ssr->_x[i],
-					              _ssr->_y + (i * h) - 1,
-					              0, 300, 0, _ssr->_strPtr[i]);
-					_G(out)->printxy(_ssr->_x[i],
-					              _ssr->_y + (i * h),
+				for (int16 i = 0; i < splitString._nr; i++) {
+					_G(out)->printxy(splitString._x[i] + 1,
+									 splitString._y + (i * h),
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i] - 1,
+									 splitString._y + (i * h),
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h) + 1,
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h) - 1,
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h),
 					              _aadv._person[personId]._color,
-					              300, 0, _ssr->_strPtr[i]);
-					tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
+									 300, 0, splitString._strPtr[i]);
+					tmp_ptr += strlen(splitString._strPtr[i]) + 1;
 				}
 				str_null2leer(start_ptr, start_ptr + txt_len - 1);
 
@@ -904,8 +694,8 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 				// used when either speech or subtitles (but not
 				// both) were selected, but its logic is broken.
 				// Check if it should be removed altogether.
-				/*for (int16 i = 0; i < _ssr->_nr; i++) {
-					tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
+				/*for (int16 i = 0; i < splitString._nr; i++) {
+					tmp_ptr += strlen(splitString._strPtr[i]) + 1;
 				}
 				str_null2leer(start_ptr, start_ptr + txt_len - 1);*/
 			}
@@ -921,9 +711,9 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 					_aadv._dialog = false;
 					_adsv._autoDia = false;
 					_aadv._strNr = -1;
-					_ssret._next = false;
+					splitString._next = false;
 				} else {
-					if (_ssr->_next == false) {
+					if (!splitString._next) {
 						++_aadv._strNr;
 						while (*_aadv._ptr++ != ATDS_END_TEXT) {}
 
@@ -1047,7 +837,6 @@ bool  Atdsys::ads_start(int16 diaNr) {
 void Atdsys::stop_ads() {
 	_adsv._dialog = -1;
 	_adsv._autoDia = false;
-
 }
 
 int16 Atdsys::ads_get_status() {
