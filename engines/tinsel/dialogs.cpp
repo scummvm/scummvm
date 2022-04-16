@@ -1618,9 +1618,12 @@ void Dialogs::HoldItem(int item, bool bKeepFilm) {
 					AddToInventory(INV_1, _heldItem);
 				else if (invObj->attribute & DEFINV2)
 					AddToInventory(INV_2, _heldItem);
-				else
-					// Hook for definable default inventory
-					AddToInventory(INV_1, _heldItem);
+				else {
+					if ((TinselVersion < 3) || (!(invObj->attribute & V3ATTR_X200) && !(invObj->attribute & V3ATTR_X400))) {
+						// Hook for definable default inventory
+						AddToInventory(INV_1, _heldItem);
+					}
+				}
 			}
 
 		} else if (TinselVersion <= 1) {
