@@ -55,17 +55,36 @@ void BehaviorModifier::appendModifier(const Common::SharedPtr<Modifier> &modifie
 	_children.push_back(modifier);
 }
 
+Common::SharedPtr<Modifier> BehaviorModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new BehaviorModifier(*this));
+}
+
+void BehaviorModifier::visitInternalReferences(IStructuralReferenceVisitor* visitor) {
+	for (Common::Array<Common::SharedPtr<Modifier> >::iterator it = _children.begin(), itEnd = _children.end(); it != itEnd; ++it) {
+		visitor->visitChildModifierRef(*it);
+	}
+}
+
 
 // Miniscript modifier
 bool MiniscriptModifier::load(ModifierLoaderContext &context, const Data::MiniscriptModifier &data) {
 	if (!_enableWhen.load(data.enableWhen))
 		return false;
 
-	_program = MiniscriptParser::parse(data.program);
-	if (!_program)
+	if (!MiniscriptParser::parse(data.program, _program, _references))
 		return false;
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> MiniscriptModifier::shallowClone() const {
+	MiniscriptModifier *clonePtr = new MiniscriptModifier(*this);
+	Common::SharedPtr<Modifier> clone(clonePtr);
+
+	// Keep the Miniscript program (which is static), but clone the references
+	clonePtr->_references.reset(new MiniscriptReferences(*_references));
+
+	return clone;
 }
 
 bool MessengerModifier::load(ModifierLoaderContext &context, const Data::MessengerModifier &data) {
@@ -78,6 +97,10 @@ bool MessengerModifier::load(ModifierLoaderContext &context, const Data::Messeng
 	return true;
 }
 
+Common::SharedPtr<Modifier> MessengerModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new MessengerModifier(*this));
+}
+
 bool SetModifier::load(ModifierLoaderContext &context, const Data::SetModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -86,6 +109,10 @@ bool SetModifier::load(ModifierLoaderContext &context, const Data::SetModifier &
 		return false;
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> SetModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new SetModifier(*this));
 }
 
 bool AliasModifier::load(ModifierLoaderContext &context, const Data::AliasModifier &data) {
@@ -97,6 +124,14 @@ bool AliasModifier::load(ModifierLoaderContext &context, const Data::AliasModifi
 	_aliasID = data.aliasIndexPlusOne;
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> AliasModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new AliasModifier(*this));
+}
+
+uint32 AliasModifier::getAliasID() const {
+	return _aliasID;
 }
 
 bool ChangeSceneModifier::load(ModifierLoaderContext& context, const Data::ChangeSceneModifier& data) {
@@ -122,6 +157,10 @@ bool ChangeSceneModifier::load(ModifierLoaderContext& context, const Data::Chang
 	return true;
 }
 
+Common::SharedPtr<Modifier> ChangeSceneModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new ChangeSceneModifier(*this));
+}
+
 bool SoundEffectModifier::load(ModifierLoaderContext &context, const Data::SoundEffectModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -138,6 +177,10 @@ bool SoundEffectModifier::load(ModifierLoaderContext &context, const Data::Sound
 	}
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> SoundEffectModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new SoundEffectModifier(*this));
 }
 
 bool DragMotionModifier::load(ModifierLoaderContext &context, const Data::DragMotionModifier &data) {
@@ -176,6 +219,10 @@ bool DragMotionModifier::load(ModifierLoaderContext &context, const Data::DragMo
 	return true;
 }
 
+Common::SharedPtr<Modifier> DragMotionModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new DragMotionModifier(*this));
+}
+
 bool VectorMotionModifier::load(ModifierLoaderContext &context, const Data::VectorMotionModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -184,6 +231,10 @@ bool VectorMotionModifier::load(ModifierLoaderContext &context, const Data::Vect
 		return false;
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> VectorMotionModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new VectorMotionModifier(*this));
 }
 
 bool SceneTransitionModifier::load(ModifierLoaderContext &context, const Data::SceneTransitionModifier &data) {
@@ -201,6 +252,10 @@ bool SceneTransitionModifier::load(ModifierLoaderContext &context, const Data::S
 	return true;
 }
 
+Common::SharedPtr<Modifier> SceneTransitionModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new SceneTransitionModifier(*this));
+}
+
 bool ElementTransitionModifier::load(ModifierLoaderContext &context, const Data::ElementTransitionModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -216,6 +271,10 @@ bool ElementTransitionModifier::load(ModifierLoaderContext &context, const Data:
 	return true;
 }
 
+Common::SharedPtr<Modifier> ElementTransitionModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new ElementTransitionModifier(*this));
+}
+
 bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -223,11 +282,20 @@ bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMes
 	if (!_when.load(data.when) || !_sendSpec.load(data.send, data.messageFlags, data.with, data.withSource, data.withString, data.destination))
 		return false;
 
-	_program = MiniscriptParser::parse(data.program);
-	if (!_program)
+	if (!MiniscriptParser::parse(data.program, _program, _references))
 		return false;
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> IfMessengerModifier::shallowClone() const {
+	IfMessengerModifier *clonePtr = new IfMessengerModifier(*this);
+	Common::SharedPtr<Modifier> clone(clonePtr);
+
+	// Keep the Miniscript program (which is static), but clone the references
+	clonePtr->_references.reset(new MiniscriptReferences(*_references));
+
+	return clone;
 }
 
 bool TimerMessengerModifier::load(ModifierLoaderContext &context, const Data::TimerMessengerModifier &data) {
@@ -244,6 +312,10 @@ bool TimerMessengerModifier::load(ModifierLoaderContext &context, const Data::Ti
 	_looping = ((data.messageAndTimerFlags & Data::TimerMessengerModifier::kTimerFlagLooping) != 0);
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> TimerMessengerModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new TimerMessengerModifier(*this));
 }
 
 bool BoundaryDetectionMessengerModifier::load(ModifierLoaderContext &context, const Data::BoundaryDetectionMessengerModifier &data) {
@@ -265,6 +337,10 @@ bool BoundaryDetectionMessengerModifier::load(ModifierLoaderContext &context, co
 		return false;
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> BoundaryDetectionMessengerModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new BoundaryDetectionMessengerModifier(*this));
 }
 
 bool CollisionDetectionMessengerModifier::load(ModifierLoaderContext &context, const Data::CollisionDetectionMessengerModifier &data) {
@@ -298,6 +374,10 @@ bool CollisionDetectionMessengerModifier::load(ModifierLoaderContext &context, c
 	}
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> CollisionDetectionMessengerModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new CollisionDetectionMessengerModifier(*this));
 }
 
 bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data::KeyboardMessengerModifier &data) {
@@ -343,6 +423,10 @@ bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data:
 	return true;
 }
 
+Common::SharedPtr<Modifier> KeyboardMessengerModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new KeyboardMessengerModifier(*this));
+}
+
 TextStyleModifier::StyleFlags::StyleFlags() : bold(false), italic(false), underline(false), outline(false), shadow(false), condensed(false), expanded(false) {
 }
 
@@ -372,6 +456,10 @@ bool TextStyleModifier::load(ModifierLoaderContext &context, const Data::TextSty
 	return true;
 }
 
+Common::SharedPtr<Modifier> TextStyleModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new TextStyleModifier(*this));
+}
+
 bool GraphicModifier::load(ModifierLoaderContext& context, const Data::GraphicModifier& data) {
 	if (!loadTypicalHeader(data.modHeader) || !_applyWhen.load(data.applyWhen) || !_removeWhen.load(data.removeWhen)
 		|| !_foreColor.load(data.foreColor) || !_backColor.load(data.backColor)
@@ -392,6 +480,10 @@ bool GraphicModifier::load(ModifierLoaderContext& context, const Data::GraphicMo
 	_shadowSize = data.shadowSize;
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> GraphicModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new GraphicModifier(*this));
 }
 
 bool CompoundVariableModifier::load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data) {
@@ -420,6 +512,15 @@ void CompoundVariableModifier::appendModifier(const Common::SharedPtr<Modifier>&
 	_children.push_back(modifier);
 }
 
+void CompoundVariableModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	for (Common::Array<Common::SharedPtr<Modifier> >::iterator it = _children.begin(), itEnd = _children.end(); it != itEnd; ++it) {
+		visitor->visitChildModifierRef(*it);
+	}
+}
+
+Common::SharedPtr<Modifier> CompoundVariableModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new CompoundVariableModifier(*this));
+}
 
 bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
@@ -430,6 +531,10 @@ bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::B
 	return true;
 }
 
+Common::SharedPtr<Modifier> BooleanVariableModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new BooleanVariableModifier(*this));
+}
+
 bool IntegerVariableModifier::load(ModifierLoaderContext& context, const Data::IntegerVariableModifier& data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -437,6 +542,10 @@ bool IntegerVariableModifier::load(ModifierLoaderContext& context, const Data::I
 	_value = data.value;
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> IntegerVariableModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new IntegerVariableModifier(*this));
 }
 
 bool IntegerRangeVariableModifier::load(ModifierLoaderContext& context, const Data::IntegerRangeVariableModifier& data) {
@@ -449,6 +558,10 @@ bool IntegerRangeVariableModifier::load(ModifierLoaderContext& context, const Da
 	return true;
 }
 
+Common::SharedPtr<Modifier> IntegerRangeVariableModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new IntegerRangeVariableModifier(*this));
+}
+
 bool VectorVariableModifier::load(ModifierLoaderContext &context, const Data::VectorVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -457,6 +570,10 @@ bool VectorVariableModifier::load(ModifierLoaderContext &context, const Data::Ve
 	_vector.magnitude = data.vector.magnitude.toDouble();
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> VectorVariableModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new VectorVariableModifier(*this));
 }
 
 bool PointVariableModifier::load(ModifierLoaderContext &context, const Data::PointVariableModifier &data) {
@@ -469,6 +586,10 @@ bool PointVariableModifier::load(ModifierLoaderContext &context, const Data::Poi
 	return true;
 }
 
+Common::SharedPtr<Modifier> PointVariableModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new PointVariableModifier(*this));
+}
+
 bool FloatingPointVariableModifier::load(ModifierLoaderContext &context, const Data::FloatingPointVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -478,6 +599,10 @@ bool FloatingPointVariableModifier::load(ModifierLoaderContext &context, const D
 	return true;
 }
 
+Common::SharedPtr<Modifier> FloatingPointVariableModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new FloatingPointVariableModifier(*this));
+}
+
 bool StringVariableModifier::load(ModifierLoaderContext &context, const Data::StringVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -485,6 +610,10 @@ bool StringVariableModifier::load(ModifierLoaderContext &context, const Data::St
 	_value = data.value;
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> StringVariableModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new StringVariableModifier(*this));
 }
 
 } // End of namespace MTropolis

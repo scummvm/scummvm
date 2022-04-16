@@ -29,6 +29,7 @@ namespace MTropolis {
 
 struct ModifierLoaderContext;
 class MiniscriptProgram;
+class MiniscriptReferences;
 
 class BehaviorModifier : public Modifier, public IModifierContainer {
 public:
@@ -38,7 +39,11 @@ public:
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
 	Common::Array<Common::SharedPtr<Modifier> > _children;
+
 	Event _enableWhen;
 	Event _disableWhen;
 };
@@ -48,9 +53,12 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::MiniscriptModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _enableWhen;
 
 	Common::SharedPtr<MiniscriptProgram> _program;
+	Common::SharedPtr<MiniscriptReferences> _references;
 };
 
 class MessengerModifier : public Modifier {
@@ -58,6 +66,8 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::MessengerModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _when;
 	MessengerSendSpec _sendSpec;
 };
@@ -67,6 +77,8 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::SetModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _executeWhen;
 	DynamicValue _source;
 	DynamicValue _target;
@@ -75,8 +87,11 @@ private:
 class AliasModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::AliasModifier &data);
+	uint32 getAliasID() const;
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	uint32 _aliasID;
 };
 
@@ -85,6 +100,8 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::ChangeSceneModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	enum SceneSelectionType {
 		kSceneSelectionTypeNext,
 		kSceneSelectionTypePrevious,
@@ -106,6 +123,8 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::SoundEffectModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	enum SoundType {
 		kSoundTypeBeep,
 		kSoundTypeAudioAsset,
@@ -123,6 +142,8 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::DragMotionModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _enableWhen;
 	Event _disableWhen;
 
@@ -142,6 +163,8 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::VectorMotionModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _enableWhen;
 	Event _disableWhen;
 
@@ -170,6 +193,8 @@ public:
 	};
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _enableWhen;
 	Event _disableWhen;
 
@@ -196,6 +221,8 @@ public:
 	};
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _enableWhen;
 	Event _disableWhen;
 
@@ -210,10 +237,13 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _when;
 	MessengerSendSpec _sendSpec;
 
 	Common::SharedPtr<MiniscriptProgram> _program;
+	Common::SharedPtr<MiniscriptReferences> _references;
 };
 
 class TimerMessengerModifier : public Modifier {
@@ -221,6 +251,8 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::TimerMessengerModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _executeWhen;
 	Event _terminateWhen;
 	MessengerSendSpec _sendSpec;
@@ -233,6 +265,8 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::BoundaryDetectionMessengerModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	enum ExitTriggerMode {
 		kExitTriggerExiting,
 		kExitTriggerOnceExited,
@@ -259,6 +293,8 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::CollisionDetectionMessengerModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	enum DetectionMode {
 		kDetectionModeFirstContact,
 		kDetectionModeWhileInContact,
@@ -282,6 +318,8 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::KeyboardMessengerModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _send;
 
 	enum KeyCodeType {
@@ -339,6 +377,9 @@ public:
 		bool load(uint8 dataStyleFlags);
 	};
 
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	uint16 _macFontID;
 	uint16 _size;
 	ColorRGB8 _textColor;
@@ -377,6 +418,8 @@ public:
 	};
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Event _applyWhen;
 	Event _removeWhen;
 	InkMode _inkMode;
@@ -392,70 +435,87 @@ private:
 	Common::Array<Point16> _polyPoints;
 };
 
-class CompoundVariableModifier : public Modifier, public IModifierContainer {
+class CompoundVariableModifier : public VariableModifier, public IModifierContainer {
 public:
 	bool load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 	Common::Array<Common::SharedPtr<Modifier> > _children;
 };
 
-class BooleanVariableModifier : public Modifier {
+class BooleanVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	bool _value;
 };
 
-class IntegerVariableModifier : public Modifier {
+class IntegerVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IntegerVariableModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	int32 _value;
 };
 
-class IntegerRangeVariableModifier : public Modifier {
+class IntegerRangeVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IntegerRangeVariableModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	IntRange _range;
 };
 
-class VectorVariableModifier : public Modifier {
+class VectorVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::VectorVariableModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	AngleMagVector _vector;
 };
 
-class PointVariableModifier : public Modifier {
+class PointVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::PointVariableModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Point16 _value;
 };
 
-class FloatingPointVariableModifier : public Modifier {
+class FloatingPointVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::FloatingPointVariableModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	double _value;
 };
 
-class StringVariableModifier : public Modifier {
+class StringVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::StringVariableModifier &data);
 
 private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
 	Common::String _value;
 };
 

@@ -34,16 +34,25 @@ namespace Obsidian {
 class MovementModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::MovementModifier &data);
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
 };
 
 class RectShiftModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::RectShiftModifier &data);
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
 };
 
 class TextWorkModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::TextWorkModifier &data);
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
 };
 
 class ObsidianPlugIn : public MTropolis::PlugIn {

@@ -35,8 +35,16 @@ bool CursorModifier::load(const PlugInModifierLoaderContext &context, const Data
 	return true;
 }
 
+Common::SharedPtr<Modifier> CursorModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new CursorModifier(*this));
+}
+
 bool STransCtModifier::load(const PlugInModifierLoaderContext& context, const Data::Standard::STransCtModifier& data) {
 	return true;
+}
+
+Common::SharedPtr<Modifier> STransCtModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new STransCtModifier(*this));
 }
 
 bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext& context, const Data::Standard::MediaCueMessengerModifier& data) {
@@ -70,6 +78,10 @@ bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext& context,
 	return true;
 }
 
+Common::SharedPtr<Modifier> MediaCueMessengerModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new MediaCueMessengerModifier(*this));
+}
+
 bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data) {
 	if (data.setToSourceParentWhen.type != Data::PlugInTypeTaggedValue::kEvent)
 		return false;
@@ -82,6 +94,10 @@ bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &co
 	_objectPath = data.objectPath.str;
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> ObjectReferenceVariableModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new ObjectReferenceVariableModifier(*this));
 }
 
 bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::MidiModifier &data) {
@@ -124,6 +140,10 @@ bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::
 	}
 
 	return true;
+}
+
+Common::SharedPtr<Modifier> MidiModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new MidiModifier(*this));
 }
 
 bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data) {
@@ -186,8 +206,16 @@ bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, cons
 	return true;
 }
 
+Common::SharedPtr<Modifier> ListVariableModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new ListVariableModifier(*this));
+}
+
 bool SysInfoModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::SysInfoModifier &data) {
 	return true;
+}
+
+Common::SharedPtr<Modifier> SysInfoModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new SysInfoModifier(*this));
 }
 
 StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
