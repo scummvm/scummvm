@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-15 20:44+0000\n"
+"POT-Creation-Date: 2022-04-16 13:48+0000\n"
 "PO-Revision-Date: 2021-07-12 15:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -20,17 +20,18 @@ msgstr ""
 "X-Generator: Weblate 4.4\n"
 "X-Language-name: Chinese (Trad)\n"
 
-#: gui/about.cpp:103
+#. I18N: built on <build date> with <compiler>
+#: gui/about.cpp:104
 #, fuzzy, c-format
 #| msgid "(built on %s)"
 msgid "(built on %s with %s)"
 msgstr "(编译于：%s)"
 
-#: gui/about.cpp:110
+#: gui/about.cpp:111
 msgid "Features compiled in:"
 msgstr "特性编译于："
 
-#: gui/about.cpp:119
+#: gui/about.cpp:120
 msgid "Available engines:"
 msgstr "可用引擎："
 

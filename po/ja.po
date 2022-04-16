@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-15 20:44+0000\n"
+"POT-Creation-Date: 2022-04-16 13:48+0000\n"
 "PO-Revision-Date: 2022-04-07 19:27+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -20,17 +20,18 @@ msgstr ""
 "X-Generator: Weblate 4.4\n"
 "X-Language-name: Japanese\n"
 
-#: gui/about.cpp:103
+#. I18N: built on <build date> with <compiler>
+#: gui/about.cpp:104
 #, fuzzy, c-format
 #| msgid "(built on %s)"
 msgid "(built on %s with %s)"
 msgstr "(%s上に構築)"
 
-#: gui/about.cpp:110
+#: gui/about.cpp:111
 msgid "Features compiled in:"
 msgstr "コンパイルされた機能："
 
-#: gui/about.cpp:119
+#: gui/about.cpp:120
 msgid "Available engines:"
 msgstr "利用可能なエンジン："
 
