@@ -19,7 +19,7 @@
  *
  */
 #include "dragons/bigfile.h"
-//#include "dragons/dragons.h"
+#include "dragons/dragons.h"
 
 namespace Dragons {
 
@@ -34,12 +34,12 @@ uint32 BigfileArchive::getResourceId(const char *filename) {
 }
 
 BigfileArchive::BigfileArchive(DragonsEngine *vm, const char *filename) :_vm(vm), _fd(nullptr) {
-	_fd = new ::Common::File();
+	_fd = new Common::File();
 	if (!_fd->open(filename)) {
 		error("BigfileArchive::BigfileArchive() Could not open %s", filename);
 	}
 
-	//_totalRecords = _vm->getBigFileTotalRecords();
+	_totalRecords = _vm->getBigFileTotalRecords();
 	_fileInfoTbl.resize(_totalRecords);
 
 	loadFileInfoTbl();
@@ -57,7 +57,7 @@ void BigfileArchive::loadFileInfoTbl() {
 		error("Failed to open dragon.exe");
 	}
 
-	//fd.seek(_vm->getBigFileInfoTblFromDragonEXE());
+	fd.seek(_vm->getBigFileInfoTblFromDragonEXE());
 
 	for (int i = 0; i < _totalRecords; i++) {
 		fd.read(filename, 16);

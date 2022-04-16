@@ -75,7 +75,7 @@ void Minigame5::run() {
 	short local_10;
 	uint32 savedEngineFlags;
 
-	Common::File *fd = new ::Common::File();
+	Common::File *fd = new Common::File();
 	if (!fd->open("arc5.bin")) {
 		error("Failed to open arc5.bin");
 	}

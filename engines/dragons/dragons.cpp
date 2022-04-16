@@ -141,19 +141,19 @@ void DragonsEngine::updateEvents() {
 	while (_eventMan->pollEvent(event)) {
 //		_input->processEvent(event);
 		switch (event.type) {
-		case ::Common::EVENT_QUIT:
+		case Common::EVENT_QUIT:
 			quitGame();
 			break;
-		case ::Common::EVENT_MOUSEMOVE:
+		case Common::EVENT_MOUSEMOVE:
 			_cursor->updatePosition(event.mouse.x, event.mouse.y);
 			break;
-		case ::Common::EVENT_WHEELDOWN:
+		case Common::EVENT_WHEELDOWN:
 			_mouseWheel = MOUSE_WHEEL_DOWN;
 			break;
-		case ::Common::EVENT_WHEELUP:
+		case Common::EVENT_WHEELUP:
 			_mouseWheel = MOUSE_WHEEL_UP;
 			break;
-		case ::Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			if (event.customType == Dragons::kDragonsActionLeft) {
 				_leftKeyDown = true;
 			} else if (event.customType == Dragons::kDragonsActionRight) {
@@ -180,7 +180,7 @@ void DragonsEngine::updateEvents() {
 				_debugMode = !_debugMode;
 			}
 			break;
-		case ::Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 			if (event.customType == Dragons::kDragonsActionLeft) {
 				_leftKeyUp = true;
 				_leftKeyDown = false;
@@ -226,7 +226,7 @@ void DragonsEngine::updateEvents() {
 
 Common::Error DragonsEngine::run() {
 	if(!checkAudioVideoFiles()) {
-		return ::Common::kNoGameDataFoundError;
+		return Common::kNoGameDataFoundError;
 	}
 
 	_screen = new Screen();
@@ -284,7 +284,7 @@ Common::Error DragonsEngine::run() {
 	delete _strPlayer;
 
 	debug("Ok");
-	return ::Common::kNoError;
+	return Common::kNoError;
 }
 
 uint16 DragonsEngine::ipt_img_file_related() {
@@ -1324,17 +1324,17 @@ void DragonsEngine::runSceneUpdaterFunction() {
 	}
 }
 
-//void DragonsEngine::setSceneUpdateFunction(void (*newUpdateFunction)()) {
-//	_sceneUpdateFunction = newUpdateFunction;
-//}
+void DragonsEngine::setSceneUpdateFunction(void (*newUpdateFunction)()) {
+	_sceneUpdateFunction = newUpdateFunction;
+}
 
 void DragonsEngine::clearSceneUpdateFunction() {
 	setSceneUpdateFunction(nullptr);
 }
 
-//void DragonsEngine::setVsyncUpdateFunction(void (*newUpdateFunction)()) {
-//	_vsyncUpdateFunction = newUpdateFunction;
-//}
+void DragonsEngine::setVsyncUpdateFunction(void (*newUpdateFunction)()) {
+	_vsyncUpdateFunction = newUpdateFunction;
+}
 
 void DragonsEngine::seedRandom(int32 seed) {
 	_randomState = seed * -0x2b0e2b0f;
@@ -1463,28 +1463,28 @@ void DragonsEngine::updatePaletteCycling() {
 
 uint32 DragonsEngine::getFontOffsetFromDragonEXE() {
 	switch (_language) {
-	case ::Common::EN_USA :
-	case ::Common::RU_RUS : return 0x4a144;
-	case ::Common::EN_GRB : return 0x4b4fc;
-	case ::Common::DE_DEU : return 0x4af5c;
-	case ::Common::FR_FRA : return 0x4b158;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x4a144;
+	case Common::EN_GRB : return 0x4b4fc;
+	case Common::DE_DEU : return 0x4af5c;
+	case Common::FR_FRA : return 0x4b158;
 	default : error("Unable to get font offset from dragon.exe for %s", getLanguageCode(_language));
 	}
 }
 
 uint32 DragonsEngine::getSpeechTblOffsetFromDragonEXE() {
 	switch (_language) {
-	case ::Common::EN_USA :
-	case ::Common::RU_RUS : return 0x4e138;
-	case ::Common::EN_GRB : return 0x4f4f4;
-	case ::Common::DE_DEU : return 0x4f0a4;
-	case ::Common::FR_FRA : return 0x4f2a0;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x4e138;
+	case Common::EN_GRB : return 0x4f4f4;
+	case Common::DE_DEU : return 0x4f0a4;
+	case Common::FR_FRA : return 0x4f2a0;
 	default : error("Unable to get speech table offset from dragon.exe for %s", getLanguageCode(_language));
 	}
 }
 
 uint16 DragonsEngine::getBigFileTotalRecords() {
-	if (_language == ::Common::EN_USA || _language == ::Common::EN_GRB || _language == ::Common::RU_RUS) {
+	if (_language == Common::EN_USA || _language == Common::EN_GRB || _language == Common::RU_RUS) {
 		return 576;
 	}
 	return 588;
@@ -1492,11 +1492,11 @@ uint16 DragonsEngine::getBigFileTotalRecords() {
 
 uint32 DragonsEngine::getBigFileInfoTblFromDragonEXE() {
 	switch (_language) {
-	case ::Common::EN_USA :
-	case ::Common::RU_RUS : return 0x4a238;
-	case ::Common::EN_GRB : return 0x4b5f4;
-	case ::Common::DE_DEU : return 0x4b054;
-	case ::Common::FR_FRA : return 0x4b250;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x4a238;
+	case Common::EN_GRB : return 0x4b5f4;
+	case Common::DE_DEU : return 0x4b054;
+	case Common::FR_FRA : return 0x4b250;
 	default :
 		error("Unable to get bigfile info table offset from dragon.exe for %s", getLanguageCode(_language));
 	}
@@ -1504,11 +1504,11 @@ uint32 DragonsEngine::getBigFileInfoTblFromDragonEXE() {
 
 uint32 DragonsEngine::getCutscenePaletteOffsetFromDragonEXE() {
 	switch (_language) {
-	case ::Common::EN_USA :
-	case ::Common::RU_RUS : return 0x5336c;
-	case ::Common::EN_GRB : return 0x54628;
-	case ::Common::DE_DEU : return 0x541d8;
-	case ::Common::FR_FRA : return 0x543d4;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x5336c;
+	case Common::EN_GRB : return 0x54628;
+	case Common::DE_DEU : return 0x541d8;
+	case Common::FR_FRA : return 0x543d4;
 	default :
 		error("Unable to get cutscene palette table offset from dragon.exe for %s", getLanguageCode(_language));
 	}
@@ -1516,11 +1516,11 @@ uint32 DragonsEngine::getCutscenePaletteOffsetFromDragonEXE() {
 
 uint32 DragonsEngine::defaultResponseOffsetFromDragonEXE() {
 	switch (_language) {
-	case ::Common::EN_USA :
-	case ::Common::RU_RUS : return 0x541b0;
-	case ::Common::EN_GRB : return 0x55470;
-	case ::Common::DE_DEU : return 0x55020;
-	case ::Common::FR_FRA : return 0x5521c;
+	case Common::EN_USA :
+	case Common::RU_RUS : return 0x541b0;
+	case Common::EN_GRB : return 0x55470;
+	case Common::DE_DEU : return 0x55020;
+	case Common::FR_FRA : return 0x5521c;
 	default :
 		error("Unable to get response offset table offset from dragon.exe for %s", getLanguageCode(_language));
 	}
@@ -1701,7 +1701,7 @@ void DragonsEngine::loadingScreen() {
 	actor->setFlag(ACTOR_FLAG_200);
 	actor->setFlag(ACTOR_FLAG_80);
 
-	if (_language == ::Common::DE_DEU || _language == ::Common::FR_FRA) {
+	if (_language == Common::DE_DEU || _language == Common::FR_FRA) {
 		actor = _actorManager->loadActor(0,0x84,0,0,6);
 		actor->setFlag(ACTOR_FLAG_100);
 		actor->setFlag(ACTOR_FLAG_200);
@@ -1825,13 +1825,13 @@ void DragonsEngine::syncSoundSettings() {
 }
 
 uint16 DragonsEngine::getCursorHandPointerSequenceID() {
-	return _language == ::Common::DE_DEU || _language == ::Common::FR_FRA ? 0x86 : 0x84;
+	return _language == Common::DE_DEU || _language == Common::FR_FRA ? 0x86 : 0x84;
 }
 
 uint32 DragonsEngine::getMiniGame3StartingDialog() {
 	switch (_language) {
-	case ::Common::DE_DEU : return 0x5456;
-	case ::Common::FR_FRA : return 0x509C;
+	case Common::DE_DEU : return 0x5456;
+	case Common::FR_FRA : return 0x509C;
 	default : break;
 	}
 	return 0x479A;
@@ -1839,15 +1839,15 @@ uint32 DragonsEngine::getMiniGame3StartingDialog() {
 
 uint32 DragonsEngine::getMiniGame3PickAHatDialog() {
 	switch (_language) {
-	case ::Common::DE_DEU : return 0x2E32E;
-	case ::Common::FR_FRA : return 0x2F180;
+	case Common::DE_DEU : return 0x2E32E;
+	case Common::FR_FRA : return 0x2F180;
 	default : break;
 	}
 	return 0x2958A;
 }
 
 uint32 DragonsEngine::getMiniGame3DataOffset() {
-	if (_language == ::Common::DE_DEU || _language == ::Common::FR_FRA) {
+	if (_language == Common::DE_DEU || _language == Common::FR_FRA) {
 		return 0x265c;
 	}
 	return 0x4914;
@@ -1855,9 +1855,9 @@ uint32 DragonsEngine::getMiniGame3DataOffset() {
 
 uint32 DragonsEngine::getDialogTextId(uint32 textId) {
 	switch (_language) {
-	case ::Common::EN_GRB : return getDialogTextIdGrb(textId);
-	case ::Common::DE_DEU : return getDialogTextIdDe(textId);
-	case ::Common::FR_FRA : return getDialogTextIdFr(textId);
+	case Common::EN_GRB : return getDialogTextIdGrb(textId);
+	case Common::DE_DEU : return getDialogTextIdDe(textId);
+	case Common::FR_FRA : return getDialogTextIdFr(textId);
 	default : break;
 	}
 	return textId;
@@ -2438,8 +2438,8 @@ uint32 DragonsEngine::getDialogTextIdFr(uint32 textId) {
 	return textId;
 }
 
-//void (*DragonsEngine::getSceneUpdateFunction())() {
-//	return _sceneUpdateFunction;
-//}
+void (*DragonsEngine::getSceneUpdateFunction())() {
+	return _sceneUpdateFunction;
+}
 
 } // End of namespace Dragons

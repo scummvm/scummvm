@@ -32,7 +32,6 @@
 
 namespace Dragons {
 
-	/*
 Cursor::Cursor(DragonsEngine *vm): _vm(vm), _actor(nullptr), _x(0), _y(0) {
 	_sequenceID = 0;
 	_data_800728b0_cursor_seqID = 0;
@@ -43,7 +42,7 @@ Cursor::Cursor(DragonsEngine *vm): _vm(vm), _actor(nullptr), _x(0), _y(0) {
 	_iniItemInHand = 0;
 	_handPointerSequenceID = _vm->getCursorHandPointerSequenceID();
 }
-*/
+
 void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResource) {
 	_sequenceID = 0;
 	_actor = actorManager->loadActor(0, 0); //Load cursor
@@ -56,7 +55,7 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	_actor->_flags |= (ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
 					   ACTOR_FLAG_200);
 
-	//dragonINIResource->getFlickerRecord()->actor = _actor; //TODO is this correct?
+	dragonINIResource->getFlickerRecord()->actor = _actor; //TODO is this correct?
 	dragonINIResource->getFlickerRecord()->flags |= INI_FLAG_1;
 	_iniUnderCursor = 0;
 	_iniItemInHand = 0;
@@ -206,14 +205,14 @@ int16 Cursor::updateIniFromScene() {
 			// 0x80028a10
 			if (ini->flags & 1) {
 				// 0x80028b18
-				/* if (ini->actor->isFlagSet(ACTOR_FLAG_40) && ini->actor->isFlagSet(ACTOR_FLAG_8)) {
+				if (ini->actor->isFlagSet(ACTOR_FLAG_40) && ini->actor->isFlagSet(ACTOR_FLAG_8)) {
 					int16 iniActorXPosition = ini->actor->_x_pos - ini->actor->_frame->xOffset;
 					int16 iniActorYPosition = ini->actor->_y_pos - ini->actor->_frame->yOffset;
 					if (cursorX >= iniActorXPosition && cursorX < iniActorXPosition + ini->actor->_frame->width
 							&& cursorY >= iniActorYPosition && cursorY < iniActorYPosition + ini->actor->_frame->height) {
 						cursorOverIni = i + 1;
 					}
-				}*/
+				}
 			} else {
 				// 0x80028a24
 				if (ini->imgId != -1) {

@@ -179,7 +179,7 @@ Common::SeekableReadStream *MidiMusicPlayer::loadSoundFont(BigfileArchive *bigFi
 	delete vab;
 	delete memFile;
 
-	return new ::Common::MemoryReadStream(bytes, size, DisposeAfterUse::YES);
+	return new Common::MemoryReadStream(bytes, size, DisposeAfterUse::YES);
 }
 
 } // End of namespace Dragons

@@ -648,42 +648,13 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 	return ((const MP3OffsetTable *)a)->org_offset - ((const MP3OffsetTable *)b)->org_offset;
 }
 
-static Audio::AudioStream *checkForBrokenIndy4Sample(Common::SeekableReadStream *file, uint32 offset) {
-	// WORKAROUND: Check for original Indy4 MONSTER.SOU bug
-	// The speech sample at VCTL offset 0x76ccbca ("Hey you!") which is used
-	// when Indy gets caught on the German submarine seems to not be a VOC
-	// but raw PCM s16be at (this is a guess) 44.1 kHz with a bogus VOC header.
-	// To work around this we skip the VOC header and decode the raw PCM data.
-	// Fixes Trac#10559
-	byte vocHeader[32];
-
-	file->read(vocHeader, 32);
-	// If the bogus VOC header isn't found, don't apply the workaround
-	if (memcmp(vocHeader, "Creative Voice File\x1a\x1a\x00\x0a\x01\x29\x11\x01\x02\x50\x01\xa6\x00", 32) != 0) {
-		file->seek(-32, SEEK_CUR);
-		return nullptr;
-	}
-
-	const int size = 86016; // size of speech sample
-	offset += 32; // size of VOC header
-	return Audio::makeRawStream(
-		new Common::SeekableSubReadStream(
-			file,
-			offset,
-			offset + size,
-			DisposeAfterUse::YES
-		),
-		44100,
-		Audio::FLAG_16BITS,
-		DisposeAfterUse::YES
-	);
-}
-
 void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle) {
 	int num = 0, i;
 	int id = -1;
 	int size = 0;
 	Common::ScopedPtr<ScummFile> file;
+
+	bool _sampleIsPCMS16BE44100 = false;
 
 	if (_vm->_game.id == GID_CMI || (_vm->_game.id == GID_DIG && !(_vm->_game.features & GF_DEMO))) {
 		// COMI (full & demo), DIG (full)
@@ -845,6 +816,16 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			size = result->compressed_size;
 #endif
 		} else {
+			// WORKAROUND: Original Indy4 MONSTER.SOU bug
+			// The speech sample at VCTL offset 0x76ccbca ("Hey you!") which is used
+			// when Indy gets caught on the German submarine seems to not be a VOC
+			// but raw PCM s16be at (this is a guess) 44.1 kHz with a bogus VOC header.
+			// To work around this we skip the VOC header and decode the raw PCM data.
+			// Fixes Trac#10559
+			if (mode == 2 && _vm->_game.id == GID_INDY4 && offset == 0x76ccbca) {
+				_sampleIsPCMS16BE44100 = true;
+				size = 86016; // size of speech sample
+			}
 			offset += 8;
 		}
 
@@ -908,17 +889,25 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 #endif
 			break;
 		default:
-			if (mode == 2 && _vm->_game.id == GID_INDY4 && offset == 0x76ccbd4)
-				input = checkForBrokenIndy4Sample(file.release(), offset);
+			if (_sampleIsPCMS16BE44100) {
+				byte *vocHeader = new byte[32];
 
-			if (!input) {
-				input = Audio::makeVOCStream(
-					file.release(),
-					Audio::FLAG_UNSIGNED,
-					DisposeAfterUse::YES
-				);
+				file->read(vocHeader, 32);
+				// Don't apply the Indy4 MONSTER.SOU workaround if we don't find the bogus VOC header
+				if (memcmp(vocHeader, "Creative Voice File\x1a\x1a\x00\x0a\x01\x29\x11\x01\x02\x50\x01\xa6\x00", 32) != 0) {
+					_sampleIsPCMS16BE44100 = false;
+				}
+
+				delete[] vocHeader;
+				file->seek(-32, SEEK_CUR);
 			}
 
+			if (_sampleIsPCMS16BE44100) {
+				offset += 32;
+				input = Audio::makeRawStream(new Common::SeekableSubReadStream(file.release(), offset, offset + size, DisposeAfterUse::YES), 44100, Audio::FLAG_16BITS, DisposeAfterUse::YES);
+			} else {
+				input = Audio::makeVOCStream(file.release(), Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+			}
 			break;
 		}
 

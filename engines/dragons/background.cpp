@@ -45,7 +45,7 @@ void PriorityLayer::load(TileMap &tileMap, byte *tiles) {
 	memcpy(_values, tiles, tileSize);
 }
 
-int16 PriorityLayer::getPriority(::Common::Point pos) {
+int16 PriorityLayer::getPriority(Common::Point pos) {
 	pos.x = CLIP<int16>(pos.x, 0, _width - 1);
 	pos.y = CLIP<int16>(pos.y, 0, _height - 1);
 	const int16 tx = pos.x / TILE_WIDTH, sx = pos.x % TILE_WIDTH;
@@ -87,9 +87,9 @@ Background::Background() : _priorityLayer(nullptr), _points2(nullptr), _data(nul
 	_layerSurface[0] = nullptr;
 	_layerSurface[1] = nullptr;
 	_layerSurface[2] = nullptr;
-	_layerOffset[0] = ::Common::Point(0, 0);
-	_layerOffset[1] = ::Common::Point(0, 0);
-	_layerOffset[2] = ::Common::Point(0, 0);
+	_layerOffset[0] = Common::Point(0, 0);
+	_layerOffset[1] = Common::Point(0, 0);
+	_layerOffset[2] = Common::Point(0, 0);
 	_layerAlphaMode[0] = NONE;
 	_layerAlphaMode[1] = NONE;
 	_layerAlphaMode[2] = NONE;
@@ -112,7 +112,7 @@ Background::~Background() {
 }
 
 bool Background::load(byte *dataStart, uint32 size) {
-	::Common::MemoryReadStream stream(dataStart, size, DisposeAfterUse::NO);
+	Common::MemoryReadStream stream(dataStart, size, DisposeAfterUse::NO);
 	_data = dataStart;
 
 	stream.read(_palette, 512);
@@ -169,8 +169,8 @@ bool Background::load(byte *dataStart, uint32 size) {
 	return false;
 }
 
-::Common::Point *Background::loadPoints(::Common::SeekableReadStream &stream) {
-	::Common::Point *points = new ::Common::Point[0x20];
+Common::Point *Background::loadPoints(Common::SeekableReadStream &stream) {
+	Common::Point *points = new Common::Point[0x20];
 
 	for (int i = 0; i < 0x20; i++) {
 		points[i].x = stream.readUint16LE();
@@ -216,7 +216,7 @@ void drawTileToSurface(Graphics::Surface *surface, byte *palette, byte *tile, ui
 	}
 }
 
-::Common::Point Background::getPoint2(uint32 pointIndex) {
+Common::Point Background::getPoint2(uint32 pointIndex) {
 	assert (pointIndex < 0x20);
 	return _points2[pointIndex];
 }
@@ -231,7 +231,7 @@ uint16 Background::getHeight() {
 	return _layerSurface[1]->h;
 }
 
-int16 Background::getPriorityAtPoint(::Common::Point pos) {
+int16 Background::getPriorityAtPoint(Common::Point pos) {
 	if (pos.x < 0 || pos.x >= getWidth() || pos.y < 0 || pos.y >= getHeight()) {
 		return -1;
 	}
@@ -280,12 +280,12 @@ void Background::setPalette(byte *newPalette) {
 	}
 }
 
-void Background::setLayerOffset(uint8 layerNumber, ::Common::Point offset) {
+void Background::setLayerOffset(uint8 layerNumber, Common::Point offset) {
 	assert(layerNumber < 4);
 	_layerOffset[layerNumber] = offset;
 }
 
-::Common::Point Background::getLayerOffset(uint8 layerNumber) {
+Common::Point Background::getLayerOffset(uint8 layerNumber) {
 	assert(layerNumber < 4);
 	return _layerOffset[layerNumber];
 }
@@ -318,7 +318,7 @@ Background *BackgroundResourceLoader::load(const char *filename) {
 	return bg;
 }
 
-void ScaleLayer::load(::Common::SeekableReadStream &stream) {
+void ScaleLayer::load(Common::SeekableReadStream &stream) {
 	for (int i = 0; i < 32; i++) {
 		_bands[i]._y = stream.readSint16LE();
 		_bands[i]._priority = stream.readSint16LE();

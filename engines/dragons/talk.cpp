@@ -835,7 +835,7 @@ TalkDialogEntry *Talk::displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dia
 	goto LAB_800317a4;
 }
 
-void Talk::exitTalkMenu(bool isFlag8Set, bool isFlag100Set, ::Common::Array<TalkDialogEntry*> dialogEntries) {
+void Talk::exitTalkMenu(bool isFlag8Set, bool isFlag100Set, Common::Array<TalkDialogEntry*> dialogEntries) {
 	_vm->clearFlags(ENGINE_FLAG_8);
 	_vm->clearFlags(ENGINE_FLAG_100);
 
@@ -949,7 +949,7 @@ uint32 Talk::extractTextIndex(Common::File *fd, uint16 offset) {
 }
 
 void Talk::initDefaultResponseTable() {
-	Common::File *fd = new ::Common::File();
+	Common::File *fd = new Common::File();
 	if (!fd->open("dragon.exe")) {
 		error("Failed to open dragon.exe");
 	}

@@ -22,11 +22,11 @@
 #define DRAGONS_DRAGONINI_H
 
 #include "common/system.h"
+#include "dragons/bigfile.h"
 
 namespace Dragons {
 
 class Actor;
-class BigfileArchive;
 
 enum IniFlags {
 	INI_FLAG_1 = 0x1,
@@ -47,8 +47,7 @@ struct DragonINI {
 	int16 actorResourceId;
 	uint16 sequenceId;
 	int16 inventorySequenceId;
-	//Actor *actor;
-	void *actor;
+	Actor *actor;
 	uint16 sceneId;
 	int16 direction;
 	int16 counter;

@@ -31,10 +31,10 @@
 #include "dragons/talk.h"
 
 namespace Dragons {
-class DragonsEngine;
-	/* CutScene::CutScene(DragonsEngine *vm) : _vm(vm) {
+
+CutScene::CutScene(DragonsEngine *vm): _vm(vm) {
 	loadPalettes();
-}*/
+}
 
 CutScene::~CutScene() {
 	if (_palettes) {
@@ -542,14 +542,14 @@ void CutScene::diamondScene() {
 	byte palette[512];
 
 	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
-	/* actorId = _vm->getINI(0x257)->actor;
+	actorId = _vm->getINI(0x257)->actor;
 	actorId_03 = _vm->getINI(0x259)->actor;
 	actorId_01 = _vm->getINI(0x258)->actor;
 	actorId_03->setFlag(ACTOR_FLAG_100);
 	actorId_03->_priorityLayer = 4;
 	actorId_00 = _vm->getINI(0x256)->actor;
 	_vm->setFlags(ENGINE_FLAG_20000);
-	actorId_02 = _vm->getINI(0x25a)->actor;*/
+	actorId_02 = _vm->getINI(0x25a)->actor;
 	if ((_vm->_talk->somethingTextAndSpeechAndAnimRelated(actorId_02, 1, 0, 0x4294a, 0x2601) != 2) && !actorId->actorSetSequenceAndWaitAllowSkip(2)) {
 		actorId->updateSequence(3);
 		if (!actorId_01->actorSetSequenceAndWaitAllowSkip(0x18)) {
@@ -924,7 +924,7 @@ void CutScene::tournamentCutScene() {
 	uint16 dialogText[1000];
 
 	tournamentUpdateCameraX = 0x140;
-	//_vm->setVsyncUpdateFunction(tournamentUpdateFunction);
+	_vm->setVsyncUpdateFunction(tournamentUpdateFunction);
 	_vm->_talk->loadText(_vm->getDialogTextId(0x4C40C), dialogText, 1000);
 	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, _vm->getDialogTextId(0x4C40C));
 
@@ -939,11 +939,10 @@ void CutScene::tournamentCutScene() {
 
 	_vm->_talk->loadText(_vm->getDialogTextId(0x4C6E8), dialogText, 1000);
 	_vm->_talk->displayDialogAroundPoint(dialogText, 0, 0, 0x1e01, 1, _vm->getDialogTextId(0x4C6E8));
-	//_vm->setVsyncUpdateFunction(nullptr);
+	_vm->setVsyncUpdateFunction(nullptr);
 	_vm->setFlags(ENGINE_FLAG_20000);
 	_vm->fadeToBlack();
-	Actor *actor;
-	//= _vm->_dragonINIResource->getRecord(0x02BE)->actor;
+	Actor *actor = _vm->_dragonINIResource->getRecord(0x02BE)->actor;
 	_vm->_screen->loadPalette(0, actor->_actorResource->getPalette());
 	_vm->_scene->_camera.x = 0;
 	_vm->playOrStopSound(0);

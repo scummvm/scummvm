@@ -34,14 +34,14 @@ Screen::Screen() {
 	initGraphics(320, 200, &_pixelFormat);
 	_backSurface = new Graphics::Surface();
 	_backSurface->create(320, 200, _pixelFormat);
-	_screenShakeOffset = ::Common::Point();
+	_screenShakeOffset = Common::Point();
 }
 
 void Screen::updateScreen() {
 	if (_screenShakeOffset.x != 0 || _screenShakeOffset.y != 0) {
 		g_system->fillScreen(0); //TODO this is meant for 8bit screens. we should use system shake here.
 	}
-	Common::Rect clipRect = clipRectToScreen(_screenShakeOffset.x,  _screenShakeOffset.y, ::Common::Rect(_backSurface->w, _backSurface->h));
+	Common::Rect clipRect = clipRectToScreen(_screenShakeOffset.x,  _screenShakeOffset.y, Common::Rect(_backSurface->w, _backSurface->h));
 	g_system->copyRectToScreen((byte*)_backSurface->getBasePtr(clipRect.left, clipRect.top),
 			_backSurface->pitch,
 			_screenShakeOffset.x < 0 ? 0 : _screenShakeOffset.x, _screenShakeOffset.y < 0 ? 0 : _screenShakeOffset.y,
@@ -64,7 +64,7 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 	copyRectToSurface(srcSurface.getBasePtr(0, 0), srcSurface.pitch, srcSurface.w, 0, destX, destY, srcSurface.w, srcSurface.h, false, NONE);
 }
 
-void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const ::Common::Rect srcRect, bool flipX, AlphaBlendMode alpha) {
+void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect, bool flipX, AlphaBlendMode alpha) {
 	Common::Rect clipRect = clipRectToScreen(destX,  destY, srcRect);
 	if (clipRect.width() == 0 || clipRect.height() == 0) {
 		return;
@@ -80,7 +80,7 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, srcSurface.w, clipRect.left, destX, destY, clipRect.width(), clipRect.height(), flipX, alpha);
 }
 
-void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, const byte *palette, int destX, int destY, const ::Common::Rect srcRect, bool flipX, AlphaBlendMode alpha, uint16 scale) {
+void Screen::copyRectToSurface8bpp(const Graphics::Surface &srcSurface, const byte *palette, int destX, int destY, const Common::Rect srcRect, bool flipX, AlphaBlendMode alpha, uint16 scale) {
 	if (scale != DRAGONS_ENGINE_SPRITE_100_PERCENT_SCALE) {
 		drawScaledSprite(_backSurface, (const byte *)srcSurface.getBasePtr(0, 0),
 				srcRect.width(), srcRect.height(),
@@ -264,11 +264,11 @@ void Screen::drawScaledSprite(Graphics::Surface *destSurface, const byte *source
 	}
 }
 
-Common::Rect Screen::clipRectToScreen(int destX, int destY, const ::Common::Rect rect) {
-	return clipRectToRect(destX, destY, rect, ::Common::Rect(320, 200));
+Common::Rect Screen::clipRectToScreen(int destX, int destY, const Common::Rect rect) {
+	return clipRectToRect(destX, destY, rect, Common::Rect(320, 200));
 }
 
-Common::Rect Screen::clipRectToRect(int destX, int destY, const ::Common::Rect rect, const ::Common::Rect containerRect) {
+Common::Rect Screen::clipRectToRect(int destX, int destY, const Common::Rect rect, const Common::Rect containerRect) {
 	int16 x, y, w, h;
 	x = rect.left;
 	y = rect.top;
@@ -309,7 +309,7 @@ Common::Rect Screen::clipRectToRect(int destX, int destY, const ::Common::Rect r
 		h = 0;
 	}
 
-	return ::Common::Rect(x, y, x + w, y + h);
+	return Common::Rect(x, y, x + w, y + h);
 }
 
 void Screen::updatePaletteTransparency(uint16 paletteNum, uint16 startOffset, uint16 endOffset, bool isTransparent) {
@@ -382,7 +382,7 @@ void Screen::clearScreen() {
 	_backSurface->fillRect(Common::Rect(0, 0, _backSurface->w, _backSurface->h), 0);
 }
 
-void Screen::drawRect(uint16 colour, ::Common::Rect rect, int id) {
+void Screen::drawRect(uint16 colour, Common::Rect rect, int id) {
 	Common::Rect clippedRect = clipRectToScreen(0, 0, rect);
 	//top
 	_backSurface->drawLine(clippedRect.left, clippedRect.top, clippedRect.right, clippedRect.top, colour);
@@ -414,7 +414,7 @@ void Screen::copyRectToSurface8bppWrappedY(const Graphics::Surface &srcSurface, 
 	}
 }
 
-void Screen::copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, const byte *palette, ::Common::Rect srcRect,
+void Screen::copyRectToSurface8bppWrappedX(const Graphics::Surface &srcSurface, const byte *palette, Common::Rect srcRect,
 										   AlphaBlendMode alpha) {
 	// Copy buffer data to internal buffer
 	const byte *src = (const byte *)srcSurface.getBasePtr(0, 0);
@@ -470,12 +470,12 @@ void Screen::drawFlatQuads(uint16 priorityLayer) {
 		if (_flatQuads[i].flags & 1u && _flatQuads[i].priorityLayer == priorityLayer) {
 			//TODO need to support semitrans mode.
 			//TODO check if we need to support non-rectangular quads.
-			fillRect(_flatQuads[i].colour, ::Common::Rect(_flatQuads[i].points[0].x, _flatQuads[i].points[0].y, _flatQuads[i].points[3].x + 1, _flatQuads[i].points[3].y + 1));
+			fillRect(_flatQuads[i].colour, Common::Rect(_flatQuads[i].points[0].x, _flatQuads[i].points[0].y, _flatQuads[i].points[3].x + 1, _flatQuads[i].points[3].y + 1));
 		}
 	}
 }
 
-void Screen::fillRect(uint16 colour, ::Common::Rect rect) {
+void Screen::fillRect(uint16 colour, Common::Rect rect) {
 	_backSurface->fillRect(rect, colour);
 }
 

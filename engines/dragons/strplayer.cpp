@@ -29,7 +29,7 @@ StrPlayer::StrPlayer(DragonsEngine *vm, Screen *screen) : _vm(vm), _screen(scree
 	_decoder = new Video::PSXStreamDecoder(Video::PSXStreamDecoder::kCD2x);
 }
 
-void StrPlayer::playVideo(const ::Common::String &filename) {
+void StrPlayer::playVideo(const Common::String &filename) {
 	bool skipped = false;
 
 	if (!_decoder->loadFile(filename)) {
@@ -42,14 +42,14 @@ void StrPlayer::playVideo(const ::Common::String &filename) {
 			const Graphics::Surface *frame = _decoder->decodeNextFrame();
 			if (frame) {
 				_screen->clearScreen();
-				_screen->copyRectToSurface(*frame, 0, 0, ::Common::Rect(frame->w, frame->h));
+				_screen->copyRectToSurface(*frame, 0, 0, Common::Rect(frame->w, frame->h));
 				_screen->updateScreen();
 			}
 		}
 
 		Common::Event event;
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			if (event.type == ::Common::EVENT_CUSTOM_ENGINE_ACTION_END
+			if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END
 				&& (event.customType == Dragons::kDragonsActionSelect || event.customType == Dragons::kDragonsActionEnter)) {
 				skipped = true;
 			}

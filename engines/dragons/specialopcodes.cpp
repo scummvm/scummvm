@@ -71,7 +71,7 @@ void SpecialOpcodes::run(int16 op) {
 	(*_opcodes[op])();
 }
 
-typedef ::Common::Functor0Mem<void, SpecialOpcodes> SpecialOpcodeI;
+typedef Common::Functor0Mem<void, SpecialOpcodes> SpecialOpcodeI;
 #define OPCODE(op, func) \
 	_opcodes[op] = new SpecialOpcodeI(this, &SpecialOpcodes::func); \
 	_opcodeNames[op] = #func;
@@ -1563,7 +1563,7 @@ void castleFogUpdateFunction() {
 		if (castleFogXOffset < 0) {
 			castleFogXOffset = 0x13f;
 		}
-		vm->_scene->setLayerOffset(2, ::Common::Point(castleFogXOffset, 0));
+		vm->_scene->setLayerOffset(2, Common::Point(castleFogXOffset, 0));
 		specialOpCounter = 6;
 	} else {
 		specialOpCounter--;

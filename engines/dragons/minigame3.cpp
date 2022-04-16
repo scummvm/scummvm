@@ -121,7 +121,7 @@ void Minigame3::run() {
 	int16 unkXPosTbl[20];
 
 
-	Common::File *fd = new ::Common::File();
+	Common::File *fd = new Common::File();
 	if (!fd->open("arc3.bin")) {
 		error("Failed to open arc3.bin");
 	}
@@ -742,7 +742,7 @@ void Minigame3::run() {
 }
 
 void Minigame3::updateBackgroundLayerOffset(uint32 layerNumber, int16 xOffset, int16 yOffset) {
-	_vm->_scene->setLayerOffset(layerNumber, ::Common::Point(xOffset, yOffset));
+	_vm->_scene->setLayerOffset(layerNumber, Common::Point(xOffset, yOffset));
 }
 
 void Minigame3::fun_80017f70_paletteRelated(uint16 param_1) {

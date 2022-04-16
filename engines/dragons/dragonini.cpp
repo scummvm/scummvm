@@ -20,29 +20,26 @@
  */
 #include "common/debug.h"
 #include "common/memstream.h"
-//#include "dragons/bigfile.h"
 #include "dragons/dragonini.h"
 
 namespace Dragons {
 
 #define DRAGON_INI_STRUCT_SIZE 0x22
-/* DragonINIResource::DragonINIResource(BigfileArchive *bigfileArchive) : _bigfileArchive(bigfileArchive), _dragonINI(nullptr) {
+DragonINIResource::DragonINIResource(BigfileArchive *bigfileArchive): _bigfileArchive(bigfileArchive), _dragonINI(nullptr) {
 	reset();
-}*/
+}
 
 void DragonINIResource::reset() {
 	uint32 fileSize;
-	byte *data;
-	//= _bigfileArchive->load("dragon.ini", fileSize);
-	//::Common::SeekableReadStream *readStream;
-	//= new ::Common::MemoryReadStream(data, fileSize, DisposeAfterUse::YES);
+	byte *data = _bigfileArchive->load("dragon.ini", fileSize);
+	Common::SeekableReadStream *readStream = new Common::MemoryReadStream(data, fileSize, DisposeAfterUse::YES);
 
 	if (!_dragonINI) {
 		_count = fileSize / DRAGON_INI_STRUCT_SIZE;
-		//_dragonINI = new DragonINI[_count];
+		_dragonINI = new DragonINI[_count];
 	}
 
-	/* for (int i = 0; i < _count; i++) {
+	for (int i = 0; i < _count; i++) {
 		_dragonINI[i].id = (uint16)i;
 		_dragonINI[i].iptIndex_maybe = readStream->readSint16LE();
 		_dragonINI[i].imgId = readStream->readSint16LE();
@@ -51,7 +48,7 @@ void DragonINIResource::reset() {
 		_dragonINI[i].inventorySequenceId = readStream->readSint16LE();
 		uint16 v = readStream->readUint16LE();
 		assert(v == 0); // actorId
-		//_dragonINI[i].actor = nullptr;
+		_dragonINI[i].actor = nullptr;
 		_dragonINI[i].sceneId = readStream->readUint16LE();
 		_dragonINI[i].direction = readStream->readSint16LE();
 		_dragonINI[i].counter = readStream->readSint16LE();
@@ -67,7 +64,7 @@ void DragonINIResource::reset() {
 
 	_flickerINI = &_dragonINI[0];
 
-	delete readStream;*/
+	delete readStream;
 }
 
 DragonINI *DragonINIResource::getRecord(uint16 index) {

@@ -54,7 +54,7 @@ private:
 	InventoryState _state;
 	Bag *_bag;
 
-	//void (*_inventionBookPrevSceneUpdateFunc)();
+	void (*_inventionBookPrevSceneUpdateFunc)();
 	uint16 _inventionBookPrevSceneId;
 	uint16 _inventionBookPrevFlickerINISceneId;
 	Common::Point _inventionBookPrevFlickerINIPosition;

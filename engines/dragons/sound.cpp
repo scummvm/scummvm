@@ -42,6 +42,13 @@
 
 namespace Dragons {
 
+struct SpeechLocation {
+	uint32 talkId;
+	uint16 sectorStart;
+	int8 startOffset;
+	uint16 sectorEnd;
+} SpeechLocation;
+
 void CdIntToPos_0(uint32 param_1) { //, byte *param_2)
 	int iVar1;
 	int iVar2;
@@ -81,7 +88,7 @@ void SoundManager::playSpeech(uint32 textIndex) {
 		return;
 	}
 
-	Common::File *fd = new ::Common::File();
+	Common::File *fd = new Common::File();
 	if (!fd->open("dtspeech.xa")) {
 		error("Failed to open dtspeech.xa");
 	}
@@ -99,8 +106,8 @@ bool SoundManager::isSpeechPlaying() {
 	return _vm->_mixer->isSoundHandleActive(_speechHandle);
 }
 
-bool SoundManager::getSpeechLocation(uint32 talkId, SpeechLocation *location) {
-	Common::File *fd = new ::Common::File();
+bool SoundManager::getSpeechLocation(uint32 talkId, struct SpeechLocation *location) {
+	Common::File *fd = new Common::File();
 	if (!fd->open("dragon.exe")) {
 		error("Failed to open dragon.exe");
 	}
@@ -155,7 +162,7 @@ static const int s_xaTable[5][2] = {
 	{ 122, -60 }
 };
 
-void SoundManager::PSXAudioTrack::queueAudioFromSector(Audio::QueuingAudioStream *audStream, ::Common::SeekableReadStream *sector) {
+void SoundManager::PSXAudioTrack::queueAudioFromSector(Audio::QueuingAudioStream *audStream, Common::SeekableReadStream *sector) {
 	sector->skip(24);
 
 	// This XA audio is different (yet similar) from normal XA audio! Watch out!
@@ -379,8 +386,8 @@ VabSound * SoundManager::loadVab(const char *headerFilename, const char *bodyFil
 	byte *headData = _bigFileArchive->load(headerFilename, headSize);
 	byte *bodyData = _bigFileArchive->load(bodyFilename, bodySize);
 
-	Common::SeekableReadStream *headStream = new ::Common::MemoryReadStream(headData, headSize, DisposeAfterUse::YES);
-	Common::SeekableReadStream *bodyStream = new ::Common::MemoryReadStream(bodyData, bodySize, DisposeAfterUse::YES);
+	Common::SeekableReadStream *headStream = new Common::MemoryReadStream(headData, headSize, DisposeAfterUse::YES);
+	Common::SeekableReadStream *bodyStream = new Common::MemoryReadStream(bodyData, bodySize, DisposeAfterUse::YES);
 
 	return new VabSound(headStream, bodyStream);
 }
@@ -459,7 +466,7 @@ void SoundManager::loadMsf(uint32 sceneId) {
 		uint32 msfSize;
 		byte *msfData = _bigFileArchive->load(msfFileName, msfSize);
 
-		Common::SeekableReadStream *msfStream = new ::Common::MemoryReadStream(msfData, msfSize, DisposeAfterUse::YES);
+		Common::SeekableReadStream *msfStream = new Common::MemoryReadStream(msfData, msfSize, DisposeAfterUse::YES);
 
 		stopAllVoices();
 
@@ -523,7 +530,7 @@ void SoundManager::playMusic(int16 song) {
 
 	uint32 dataSize;
 	byte *seqData = _bigFileArchive->load(filename, dataSize);
-	Common::MemoryReadStream *seq = new ::Common::MemoryReadStream(seqData, dataSize, DisposeAfterUse::YES);
+	Common::MemoryReadStream *seq = new Common::MemoryReadStream(seqData, dataSize, DisposeAfterUse::YES);
 	_midiPlayer->playSong(seq);
 	delete seq;
 }

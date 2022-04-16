@@ -93,7 +93,7 @@ void ScriptOpcodes::execOpcode(ScriptOpCall &scriptOpCall) {
 	(*_opcodes[scriptOpCall._op])(scriptOpCall);
 }
 
-typedef ::Common::Functor1Mem<ScriptOpCall&, void, ScriptOpcodes> ScriptOpcodeI;
+typedef Common::Functor1Mem<ScriptOpCall&, void, ScriptOpcodes> ScriptOpcodeI;
 #define OPCODE(op, func) \
 	_opcodes[op] = new ScriptOpcodeI(this, &ScriptOpcodes::func); \
 	_opcodeNames[op] = #func;

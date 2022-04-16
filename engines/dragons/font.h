@@ -74,7 +74,7 @@ public:
 	void clearTextDialog(uint32 x1, uint32 y1, uint32 x2, uint32 y2);
 
 private:
-	Font *loadFont(uint16 index, ::Common::SeekableReadStream &stream);
+	Font *loadFont(uint16 index, Common::SeekableReadStream &stream);
 	void drawBoxChar(uint32 x, uint32 y, uint8 tileIndex);
 };
 

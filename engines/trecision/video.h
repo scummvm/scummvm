@@ -22,7 +22,6 @@
 #ifndef TRECISION_VIDEO_H
 #define TRECISION_VIDEO_H
 
-#include "common/file.h"
 #include "common/stream.h"
 #include "common/serializer.h"
 #include "video/smk_decoder.h"
@@ -63,15 +62,11 @@ private:
 	class AmigaVideoTrack : public VideoTrack {
 	public:
 		AmigaVideoTrack(const Common::String &fileName);
-		~AmigaVideoTrack();
 
 	private:
-		const Graphics::PixelFormat _rgb555Format;
 		byte _palette[3 * 256];
 		int _curFrame;
 		uint32 _frameCount;
-		Graphics::Surface *_surface;
-		Common::File *_videoStream;
 
 		uint16 getWidth() const override;
 		uint16 getHeight() const override;

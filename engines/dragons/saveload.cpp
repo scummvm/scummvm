@@ -142,23 +142,23 @@ bool DragonsEngine::loadgame(const char *filename) {
 
 Common::Error DragonsEngine::loadGameState(int slot) {
 	if (!loadgame(getSavegameFilename(slot).c_str()))
-		return ::Common::kReadingFailed;
-	return ::Common::kNoError;
+		return Common::kReadingFailed;
+	return Common::kNoError;
 }
 
-Common::Error DragonsEngine::saveGameState(int slot, const ::Common::String &description, bool isAutoSave) {
+Common::Error DragonsEngine::saveGameState(int slot, const Common::String &description, bool isAutoSave) {
 	if (!savegame(getSavegameFilename(slot).c_str(), description.c_str()))
-		return ::Common::kWritingFailed;
-	return ::Common::kNoError;
+		return Common::kWritingFailed;
+	return Common::kNoError;
 }
 
 Common::String DragonsEngine::getSavegameFilename(int num) {
 	return getSavegameFilename(_targetName, num);
 }
 
-Common::String DragonsEngine::getSavegameFilename(const ::Common::String &target, int num) {
+Common::String DragonsEngine::getSavegameFilename(const Common::String &target, int num) {
 	assert(num >= 0 && num <= 999);
-	return ::Common::String::format("%s.%03d", target.c_str(), num);
+	return Common::String::format("%s.%03d", target.c_str(), num);
 }
 
 } // End of namespace Illusions

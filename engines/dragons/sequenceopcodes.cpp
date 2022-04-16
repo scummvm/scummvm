@@ -65,7 +65,7 @@ void SequenceOpcodes::execOpcode(Actor *control, OpCall &opCall) {
 	(*_opcodes[opCall._op])(control, opCall);
 }
 
-typedef ::Common::Functor2Mem<Actor*, OpCall&, void, SequenceOpcodes> SequenceOpcodeI;
+typedef Common::Functor2Mem<Actor*, OpCall&, void, SequenceOpcodes> SequenceOpcodeI;
 #define OPCODE(op, func) \
 	_opcodes[op] = new SequenceOpcodeI(this, &SequenceOpcodes::func); \
 	_opcodeNames[op] = #func;

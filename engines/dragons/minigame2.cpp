@@ -103,7 +103,7 @@ void Minigame2::run(int16 param_1, uint16 param_2, int16 param_3) {
 	originalInventoryType = _vm->_inventory->getState();
 	flicker = _vm->_dragonINIResource->getFlickerRecord();
 
-	Common::File *fd = new ::Common::File();
+	Common::File *fd = new Common::File();
 	if (!fd->open("arc2.bin")) {
 		error("Failed to open arc2.bin");
 	}

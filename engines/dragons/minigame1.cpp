@@ -92,7 +92,7 @@ void Minigame1::run() {
 	Actor *wheelsActor;
 	Actor *dustSpriteActor;
 
-	Common::File *fd = new ::Common::File();
+	Common::File *fd = new Common::File();
 	if (!fd->open("arc1.bin")) {
 		error("Failed to open arc1.bin");
 	}

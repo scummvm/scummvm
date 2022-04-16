@@ -95,7 +95,7 @@ private:
 	void copyTextToBuffer(uint16 *destBuffer, byte *src, uint32 destBufferLength);
 	uint32 wideStrLen(uint16 *text);
 	TalkDialogEntry *displayTalkDialogMenu(Common::Array<TalkDialogEntry*> dialogEntries);
-	void exitTalkMenu(bool isFlag8Set, bool isFlag100Set, ::Common::Array<TalkDialogEntry*> dialogEntries);
+	void exitTalkMenu(bool isFlag8Set, bool isFlag100Set, Common::Array<TalkDialogEntry*> dialogEntries);
 	uint32 getDefaultResponseTextIndex();
 	void initDefaultResponseTable();
 	uint32 strlenUTF16(uint16 *text);

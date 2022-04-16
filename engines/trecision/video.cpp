@@ -123,59 +123,44 @@ bool NightlongSmackerDecoder::endOfFrames() const {
 
 // ----------------------------------------------------------------------------
 
-NightlongAmigaDecoder::AmigaVideoTrack::AmigaVideoTrack(const Common::String &fileName):
-	_rgb555Format(2, 5, 5, 5, 0, 10, 5, 0, 0){
+NightlongAmigaDecoder::AmigaVideoTrack::AmigaVideoTrack(const Common::String &fileName) {
 	memset(_palette, 0, sizeof(_palette));
+
+	Common::File *stream = new Common::File();
+	stream->open(fileName);
+
+	if (!stream->isOpen())
+		return;
+
 	_curFrame = 0;
 	_frameCount = 10; // TODO: Anything > 1 to keep playing till the audio is done
 
-	// TODO: Hardcoded for inventory items. Find them for all videos
-	const int width = 48;
-	const int height = 40;
-
-	_surface = new Graphics::Surface();
-	_surface->create(width, height, _rgb555Format);
-
-	_videoStream = new Common::File();
-	_videoStream->open(fileName);
-
-	if (!_videoStream->isOpen())
-		return;
-
-	if (!(fileName.hasPrefix("I") && fileName.hasSuffix(".an")))
-		return;
-
 	// TODO: some videos have more than 256 entries
-	uint16 palEntries = _videoStream->readUint16LE();
-	_videoStream->skip(2); // unknown
+	/*uint16 palEntries = stream->readUint16LE();
+	stream->skip(2); // unknown
 	for (uint16 i = 0; i < palEntries; i++) {
-		if (i < 256) {
-			_palette[i * 3] = _videoStream->readByte();
-			_palette[i * 3 + 1] = _videoStream->readByte();
-			_palette[i * 3 + 2] = _videoStream->readByte();
-			_videoStream->skip(1); // unused alpha channel
-		} else {
-			_videoStream->skip(4);
-		}
-	}
-}
+		_palette[i * 3] = stream->readByte();
+		_palette[i * 3 + 1] = stream->readByte();
+		_palette[i * 3 + 2] = stream->readByte();
+		stream->skip(1); // unused alpha channel
+	}*/
 
-NightlongAmigaDecoder::AmigaVideoTrack::~AmigaVideoTrack() {
-	_surface->free();
-	delete _surface;
-	delete _videoStream;
+	delete stream;
 }
 
 uint16 NightlongAmigaDecoder::AmigaVideoTrack::getWidth() const {
-	return _surface->w;
+	// TODO
+	return 0;
 }
 
 uint16 NightlongAmigaDecoder::AmigaVideoTrack::getHeight() const {
-	return _surface->h;
+	// TODO
+	return 0;
 }
 
 Graphics::PixelFormat NightlongAmigaDecoder::AmigaVideoTrack::getPixelFormat() const {
-	return _surface->format;
+	// TODO
+	return g_system->getScreenFormat();
 }
 
 uint32 NightlongAmigaDecoder::AmigaVideoTrack::getNextFrameStartTime() const {
@@ -184,15 +169,8 @@ uint32 NightlongAmigaDecoder::AmigaVideoTrack::getNextFrameStartTime() const {
 }
 
 const Graphics::Surface *NightlongAmigaDecoder::AmigaVideoTrack::decodeNextFrame() {
-	for (uint16 y = 0; y < _surface->h; ++y) {
-		for (uint16 x = 0; x < _surface->w; ++x) {
-			_surface->setPixel(x, y, _videoStream->readUint16LE());
-		}
-	}
-
-	_curFrame++;
-
-	return _surface;
+	// TODO
+	return nullptr;
 }
 
 NightlongAmigaDecoder::AmigaAudioTrack::AmigaAudioTrack(const Common::String &fileName) :
@@ -230,11 +208,12 @@ bool NightlongAmigaDecoder::forceSeekToFrame(uint frame) {
 
 const Common::Rect *NightlongAmigaDecoder::getNextDirtyRect() {
 	// TODO
-	return getCurFrame() == 0 ? &_lastDirtyRect : nullptr;
+	return &_lastDirtyRect;
 }
 
 bool NightlongAmigaDecoder::endOfFrames() const {
-	return getCurFrame() >= (int32)getFrameCount() - 1;
+	//return getCurFrame() >= (int32)getFrameCount() - 1;
+	return true;
 }
 
 } // namespace Trecision

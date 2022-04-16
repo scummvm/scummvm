@@ -20,20 +20,19 @@
  */
 #include "common/memstream.h"
 #include "dragons/dragonimg.h"
-//#include "dragons/bigfile.h"
+#include "dragons/bigfile.h"
 
 namespace Dragons {
 
 DragonImg::DragonImg(BigfileArchive *bigfileArchive) {
 	uint32 fileSize;
-	byte *iptData;
-	//= bigfileArchive->load("dragon.ipt", fileSize);
-	::Common::SeekableReadStream *iptReadStream = new ::Common::MemoryReadStream(iptData, fileSize, DisposeAfterUse::YES);
+	byte *iptData = bigfileArchive->load("dragon.ipt", fileSize);
+	Common::SeekableReadStream *iptReadStream = new Common::MemoryReadStream(iptData, fileSize, DisposeAfterUse::YES);
 
 	_count = fileSize / 4;
 
-	//_imgData = bigfileArchive->load("dragon.img", fileSize);
-	::Common::SeekableReadStream *imgReadStream = new ::Common::MemoryReadStream(_imgData, fileSize, DisposeAfterUse::NO);
+	_imgData = bigfileArchive->load("dragon.img", fileSize);
+	Common::SeekableReadStream *imgReadStream = new Common::MemoryReadStream(_imgData, fileSize, DisposeAfterUse::NO);
 
 
 	_imgObjects = new Img[_count];

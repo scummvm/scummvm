@@ -57,7 +57,7 @@ bool DragonsMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 void DragonsMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = ::Common::String::format("%s.%03d", target, slot);
+	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
@@ -122,9 +122,9 @@ Common::Error DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, 
 		                       "https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons");
 		break;
 	default:
-		return ::Common::kUnsupportedGameidError;
+		return Common::kUnsupportedGameidError;
 	}
-	return ::Common::kNoError;
+	return Common::kNoError;
 }
 
 Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {

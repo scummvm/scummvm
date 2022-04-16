@@ -107,7 +107,7 @@ public:
 	 * @param dataHeader
 	 * @param dataBody
 	 */
-	VabSound(Common::SeekableReadStream* vhData, ::Common::SeekableReadStream* vbData);
+	VabSound(Common::SeekableReadStream* vhData, Common::SeekableReadStream* vbData);
 
 	~VabSound();
 

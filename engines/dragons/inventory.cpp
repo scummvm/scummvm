@@ -74,7 +74,7 @@ Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_inventionBookPrevSceneUpdateFunc = nullptr;
 	_inventionBookPrevSceneId = 0;
 	_inventionBookPrevFlickerINISceneId = 0;
-	_inventionBookPrevFlickerINIPosition = ::Common::Point(0, 0);
+	_inventionBookPrevFlickerINIPosition = Common::Point(0, 0);
 }
 
 void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backgroundResourceLoader, Bag *bag, DragonINIResource *dragonIniResource) {
@@ -119,7 +119,7 @@ void Inventory::updateVisibility() {
 }
 
 Common::Point Inventory::getPosition() {
-	return ::Common::Point(positionTable[_screenPositionIndex].x, positionTable[_screenPositionIndex].y);
+	return Common::Point(positionTable[_screenPositionIndex].x, positionTable[_screenPositionIndex].y);
 }
 
 void Inventory::setActorFlag400() {
@@ -291,7 +291,7 @@ void Inventory::openInventionBook() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	if (flicker && flicker->actor) {
 		_inventionBookPrevFlickerINISceneId = flicker->sceneId;
-		_inventionBookPrevFlickerINIPosition = ::Common::Point(flicker->actor->_x_pos, flicker->actor->_y_pos);
+		_inventionBookPrevFlickerINIPosition = Common::Point(flicker->actor->_x_pos, flicker->actor->_y_pos);
 		flicker->sceneId = 0;
 	}
 	_vm->_scene->setSceneId(2);
