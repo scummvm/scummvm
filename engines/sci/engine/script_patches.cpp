@@ -1925,7 +1925,7 @@ static const uint16 freddypharkasPatchMacInventory[] = {
 // Applies to: Mac Floppy
 // Responsible method: Heap in script 270
 // Fixes bug #7065
-static const uint16 freddypharkasSignatureMacEasterEgg[] = {
+static const uint16 freddypharkasSignatureMacEasterEggHang[] = {
 	SIG_MAGICDWORD,                 // macSound
 	SIG_UINT16(0x0b89),             // number = 2953
 	SIG_UINT16(0x007f),             // vol = 127
@@ -1934,9 +1934,41 @@ static const uint16 freddypharkasSignatureMacEasterEgg[] = {
 	SIG_END
 };
 
-static const uint16 freddypharkasPatchMacEasterEgg[] = {
+static const uint16 freddypharkasPatchMacEasterEggHang[] = {
 	PATCH_ADDTOOFFSET(+6),
 	PATCH_UINT16(0x0001),           // loop = 1 [ play sound once ]
+	PATCH_END
+};
+
+// WORKAROUND
+// FPFP Mac's easter egg has a view that relies on a bug in the Mac interpreter.
+//  Sierra's interpreter draws views one pixel higher than their y coordinate.
+//  KQ6 Mac has this bug too. Compared to their original PC versions, views
+//  appear higher relative to their background. This is a problem for views that
+//  require precise placement to blend in with those backgrounds.
+//
+// The Mac easter egg adds such a view. View 275 contains a hand in the lake
+//  holding a Maintosh computer. Because this feature was developed against the
+//  Mac interpreter, the y coordinate that achieved the water effect is really
+//  off by one. In our interpreter, which doesn't have this bug, the view
+//  appears one pixel lower than intended and doesn't match the background.
+//
+// We fix this by adjusting macView:y to compensate for Sierra's off-by-one bug
+//  so that view 275 matches the lake background as in the original.
+//
+// Applies to: Mac Floppy
+// Responsible method: Heap in script 270
+static const uint16 freddypharkasSignatureMacEasterEggView[] = {
+	SIG_MAGICDWORD,                 // macView
+	SIG_UINT16(0x061e),             // name = $061e [ macView ]
+	SIG_UINT16(0x00cd),             // x = 205
+	SIG_UINT16(0x0065),             // y = 101
+	SIG_END
+};
+
+static const uint16 freddypharkasPatchMacEasterEggView[] = {
+	PATCH_ADDTOOFFSET(+4),
+	PATCH_UINT16(0x0064),           // y = 100
 	PATCH_END
 };
 
@@ -2073,17 +2105,18 @@ static const uint16 freddypharkasPatchDeskLetter[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                            patch
+//          script, description,                                      signature                                patch
 static const SciScriptPatcherEntry freddypharkasSignatures[] = {
-	{  true,    15, "Mac: broken inventory",                       1, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
-	{  true,   110, "intro scaling workaround",                    2, freddypharkasSignatureIntroScaling,  freddypharkasPatchIntroScaling },
-	{  false,  200, "Mac: skip broken hop singh scene",            1, freddypharkasSignatureMacHopSingh,   freddypharkasPatchMacHopSingh },
-	{  true,   235, "CD: canister pickup hang",                    3, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
-	{  true,   270, "Mac: easter egg hang",                        1, freddypharkasSignatureMacEasterEgg,  freddypharkasPatchMacEasterEgg },
-	{  true,   310, "church key reappears",                        1, freddypharkasSignatureChurchKey,     freddypharkasPatchChurchKey },
-	{  true,   320, "ladder event issue",                          2, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
-	{  true,   610, "desk letter reappears",                       1, freddypharkasSignatureDeskLetter,    freddypharkasPatchDeskLetter },
-	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,          sciNarratorLockupPatch },
+	{  true,    15, "Mac: broken inventory",                       1, freddypharkasSignatureMacInventory,      freddypharkasPatchMacInventory },
+	{  true,   110, "intro scaling workaround",                    2, freddypharkasSignatureIntroScaling,      freddypharkasPatchIntroScaling },
+	{  false,  200, "Mac: skip broken hop singh scene",            1, freddypharkasSignatureMacHopSingh,       freddypharkasPatchMacHopSingh },
+	{  true,   235, "CD: canister pickup hang",                    3, freddypharkasSignatureCanisterHang,      freddypharkasPatchCanisterHang },
+	{  true,   270, "Mac: easter egg hang",                        1, freddypharkasSignatureMacEasterEggHang,  freddypharkasPatchMacEasterEggHang },
+	{  true,   270, "Mac: easter egg view",                        1, freddypharkasSignatureMacEasterEggView,  freddypharkasPatchMacEasterEggView },
+	{  true,   310, "church key reappears",                        1, freddypharkasSignatureChurchKey,         freddypharkasPatchChurchKey },
+	{  true,   320, "ladder event issue",                          2, freddypharkasSignatureLadderEvent,       freddypharkasPatchLadderEvent },
+	{  true,   610, "desk letter reappears",                       1, freddypharkasSignatureDeskLetter,        freddypharkasPatchDeskLetter },
+	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,              sciNarratorLockupPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
