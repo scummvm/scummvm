@@ -40,7 +40,7 @@ struct DragonINI;
 
 class Scene {
 public:
-	Common::Point _camera;
+	::Common::Point _camera;
 	int16 _mapTransitionEffectSceneID;
 
 private:
@@ -78,14 +78,14 @@ public:
 	void setMgLayerPriority(uint8 newPriority);
 	void setFgLayerPriority(uint8 newPriority);
 
-	void setLayerOffset(uint8 layerNumber, Common::Point offset);
+	void setLayerOffset(uint8 layerNumber, ::Common::Point offset);
 	Common::Point getLayerOffset(uint8 layerNumber);
 	ScaleLayer *getScaleLayer();
 	void setLayerAlphaMode(uint8 layerNumber, AlphaBlendMode mode);
 private:
 	void resetActorFrameFlags();
 	void drawActorNumber(int16 x, int16 y, uint16 actorId);
-	void drawBgLayer(uint8 layerNumber, Common::Rect rect, Graphics::Surface *surface);
+	void drawBgLayer(uint8 layerNumber, ::Common::Rect rect, Graphics::Surface *surface);
 };
 
 } // End of namespace Dragons

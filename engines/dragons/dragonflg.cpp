@@ -78,7 +78,7 @@ void Properties::getProperyPos(uint32 propertyId, uint &index, byte &mask) {
 	mask = 1 << (propertyId % 8);
 }
 
-void Properties::save(uint numberToWrite, Common::WriteStream *out) {
+void Properties::save(uint numberToWrite, ::Common::WriteStream *out) {
 	assert(numberToWrite % 8 == 0);
 	assert(numberToWrite <= _count);
 	out->write(_properties, numberToWrite / 8);

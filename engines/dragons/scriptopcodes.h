@@ -46,7 +46,7 @@ struct ScriptOpCall {
 	uint32 readUint32();
 };
 
-typedef Common::Functor1<ScriptOpCall&, void> ScriptOpcode;
+typedef ::Common::Functor1<ScriptOpCall&, void> ScriptOpcode;
 
 class DragonFLG;
 class SpecialOpcodes;

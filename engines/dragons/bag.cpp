@@ -47,7 +47,7 @@ void Bag::updatePosition(Common::Point newPos) {
 }
 
 void Bag::draw() {
-	_screen->copyRectToSurface(*_surface, _position.x, _position.y, Common::Rect(_surface->w, _surface->h));
+	_screen->copyRectToSurface(*_surface, _position.x, _position.y, ::Common::Rect(_surface->w, _surface->h));
 }
 
 void Bag::load(BigfileArchive *bigFileArchive) {
@@ -56,7 +56,7 @@ void Bag::load(BigfileArchive *bigFileArchive) {
 	byte *tiles;
 	uint32 size;
 	byte *scrData = bigFileArchive->load("bag.scr", size);
-	Common::MemoryReadStream stream(scrData, size, DisposeAfterUse::YES);
+	::Common::MemoryReadStream stream(scrData, size, DisposeAfterUse::YES);
 
 	stream.seek(0x4);
 	stream.read(pal, 512);

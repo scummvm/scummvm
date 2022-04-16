@@ -38,14 +38,14 @@ ActorResource *ActorResourceLoader::load(uint32 resourceId) {
 	const char *filename = actorResourceFiles[resourceId];
 	uint32 size;
 	byte *scrData = _bigFileArchive->load(filename, size);
-	Common::SeekableReadStream *readStream = new Common::MemoryReadStream(scrData, size, DisposeAfterUse::NO);
+	::Common::SeekableReadStream *readStream = new ::Common::MemoryReadStream(scrData, size, DisposeAfterUse::NO);
 
 	debug(1, "Loading '%s'", filename);
 	actorResource->load(resourceId, scrData, *readStream);
 	return actorResource;
 }
 
-bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream &stream) {
+bool ActorResource::load(uint32 id, byte *dataStart, ::Common::SeekableReadStream &stream) {
 	_id = id;
 	_data = dataStart;
 	_fileSize = stream.size();
@@ -154,7 +154,7 @@ byte *ActorResource::getSequenceData(int16 sequenceId) {
 }
 
 ActorFrame *ActorResource::loadFrameHeader(uint16 frameOffset) {
-	Common::SeekableReadStream *stream = new Common::MemoryReadStream(_data + frameOffset, sizeof(ActorFrame), DisposeAfterUse::NO);
+	Common::SeekableReadStream *stream = new ::Common::MemoryReadStream(_data + frameOffset, sizeof(ActorFrame), DisposeAfterUse::NO);
 
 	ActorFrame *frame = new ActorFrame;
 	frame->xOffset = stream->readSint16LE();

@@ -68,7 +68,7 @@ private:
 public:
 	ActorResource();
 	~ActorResource();
-	bool load(uint32 id, byte *dataStart, Common::SeekableReadStream &stream);
+	bool load(uint32 id, byte *dataStart, ::Common::SeekableReadStream &stream);
 	Graphics::Surface *loadFrame(ActorFrame &frameNumber, byte *palette);
 	ActorFrame *loadFrameHeader(uint16 frameOffset);
 

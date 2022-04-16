@@ -267,7 +267,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 //				int y = ini->y - actor->_frame_vram_y;
 //				if (x >= 0 && y >= 0 && x + s->w < 320 && y + s->h < 200) {
 //					debug("Actor %d, %d %d (%d, %d)", actor->_actorID, ini->actorResourceId, ini->flags, ini->x, ini->y);
-//					_stage->getFgLayer()->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h));
+//					_stage->getFgLayer()->copyRectToSurface(*s, x, y, ::Common::Rect(s->w, s->h));
 //				}
 				}
 				// _stage->getFgLayer()->drawLine(ini->x, ini->y, ini->x + 8, ini->y + 8, 0x7c00);
@@ -387,9 +387,9 @@ void Scene::draw() {
 					debug(5, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d Scale: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
 						  y,
 						  s->w, s->h, actor->_priorityLayer, actor->_scale);
-					_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, Common::Rect(s->w, s->h), (bool)(actor->_frame->flags & FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? NONE : NORMAL, actor->_scale);
+					_screen->copyRectToSurface8bpp(*s, actor->getPalette(), x, y, ::Common::Rect(s->w, s->h), (bool)(actor->_frame->flags & FRAME_FLAG_FLIP_X), actor->isFlagSet(ACTOR_FLAG_8000) ? NONE : NORMAL, actor->_scale);
 					if (_vm->isDebugMode()) {
-						_screen->drawRect(0x7fff, Common::Rect(x, y, x + s->w, y + s->h), actor->_actorID);
+						_screen->drawRect(0x7fff, ::Common::Rect(x, y, x + s->w, y + s->h), actor->_actorID);
 						drawActorNumber(x + s->w, y + 8, actor->_actorID);
 					}
 				}
@@ -495,7 +495,7 @@ void Scene::drawActorNumber(int16 x, int16 y, uint16 actorId) {
 	_vm->_fontManager->addText(x, y, text, strlen(text8), 1);
 }
 
-void Scene::setLayerOffset(uint8 layerNumber, Common::Point offset) {
+void Scene::setLayerOffset(uint8 layerNumber, ::Common::Point offset) {
 	_stage->setLayerOffset(layerNumber, offset);
 }
 
@@ -503,9 +503,9 @@ Common::Point Scene::getLayerOffset(uint8 layerNumber) {
 	return _stage->getLayerOffset(layerNumber);
 }
 
-void Scene::drawBgLayer(uint8 layerNumber, Common::Rect rect, Graphics::Surface *surface) {
+void Scene::drawBgLayer(uint8 layerNumber, ::Common::Rect rect, Graphics::Surface *surface) {
 	Common::Point offset = _stage->getLayerOffset(layerNumber);
-//	Common::Rect clippedRect = _screen->clipRectToRect(offset.x, offset.y, rect, Common::Rect(_stage->getBgLayer()->w, _stage->getBgLayer()->h));
+//	Common::Rect clippedRect = _screen->clipRectToRect(offset.x, offset.y, rect, ::Common::Rect(_stage->getBgLayer()->w, _stage->getBgLayer()->h));
 	rect.left += rect.left + offset.x < 0 ? -(rect.left + offset.x) : offset.x;
 	if (rect.right + offset.x > surface->w) {
 		rect.right = surface->w - 1;

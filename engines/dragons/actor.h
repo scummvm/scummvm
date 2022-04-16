@@ -58,7 +58,7 @@ enum ActorFrameFlags {
 
 class ActorManager {
 public:
-	typedef Common::Array<Actor> Actors;
+	typedef ::Common::Array<Actor> Actors;
 	typedef Actors::iterator ActorsIterator;
 
 private:

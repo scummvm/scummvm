@@ -30,7 +30,7 @@ namespace Dragons {
 DragonRMS::DragonRMS(BigfileArchive *bigfileArchive, DragonOBD *dragonOBD) : _dragonOBD(dragonOBD) {
 	uint32 fileSize;
 	byte *data = bigfileArchive->load("dragon.rms", fileSize);
-	Common::SeekableReadStream *readStream = new Common::MemoryReadStream(data, fileSize, DisposeAfterUse::YES);
+	Common::SeekableReadStream *readStream = new ::Common::MemoryReadStream(data, fileSize, DisposeAfterUse::YES);
 
 	_count = fileSize / DRAGON_RMS_STRUCT_SIZE;
 

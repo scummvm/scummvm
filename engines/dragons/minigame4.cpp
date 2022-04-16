@@ -154,7 +154,7 @@ uint16 Minigame4::runDanceBattle() {
 	uint16 round3StepPositionTbl [20];
 	uint16 round3DurationTbl [20];
 
-	Common::File *fd = new Common::File();
+	Common::File *fd = new ::Common::File();
 	if (!fd->open("arc4.bin")) {
 		error("Failed to open arc4.bin");
 	}
@@ -322,9 +322,9 @@ void videoUpdaterFunction() {
 	static uint16 layer2XOffset = 0;
 	static uint16 layer0XOffset = 0;
 	DragonsEngine *vm = getEngine();
-	vm->_scene->setLayerOffset(2, Common::Point(layer2XOffset, 0));
+	vm->_scene->setLayerOffset(2, ::Common::Point(layer2XOffset, 0));
 	layer2XOffset = (layer2XOffset + 3) % 512;
-	vm->_scene->setLayerOffset(0, Common::Point(layer0XOffset, 0));
+	vm->_scene->setLayerOffset(0, ::Common::Point(layer0XOffset, 0));
 	layer0XOffset = (layer0XOffset + 4) % 512;
 }
 

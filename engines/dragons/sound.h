@@ -33,7 +33,13 @@ class DragonsEngine;
 class BigfileArchive;
 class DragonRMS;
 class VabSound;
-struct SpeechLocation;
+
+struct SpeechLocation {
+	uint32 talkId;
+	uint16 sectorStart;
+	int8 startOffset;
+	uint16 sectorEnd;
+};
 
 typedef struct Voice {
 	int16 soundID;
@@ -97,7 +103,7 @@ private:
 
 	VabSound * loadVab(const char *headerFilename, const char *bodyFilename);
 
-	bool getSpeechLocation(uint32 talkId, struct SpeechLocation *location);
+	bool getSpeechLocation(uint32 talkId, SpeechLocation *location);
 	bool isVoicePlaying(uint16 soundID);
 	Audio::SoundHandle *getVoiceHandle(uint16 soundID);
 	void stopVoicePlaying(uint16 soundID);
@@ -116,7 +122,7 @@ private:
 		Audio::QueuingAudioStream *createNewAudioStream(Common::File *fd, uint16 sectorStart, int8 startOffset, uint16 sectorEnd);
 
 	private:
-		void queueAudioFromSector(Audio::QueuingAudioStream *audStream, Common::SeekableReadStream *sector);
+		void queueAudioFromSector(Audio::QueuingAudioStream *audStream, ::Common::SeekableReadStream *sector);
 	};
 };
 

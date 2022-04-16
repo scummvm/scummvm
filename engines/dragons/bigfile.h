@@ -29,7 +29,7 @@ namespace Dragons {
 class DragonsEngine;
 
 struct FileInfo {
-	Common::String filename;
+	::Common::String filename;
 	uint32 offset;
 	uint32 size;
 	FileInfo() {
@@ -42,9 +42,9 @@ struct FileInfo {
 class BigfileArchive {
 private:
 	DragonsEngine *_vm;
-	Common::File *_fd;
+	::Common::File *_fd;
 	uint16 _totalRecords;
-	Common::Array<FileInfo> _fileInfoTbl;
+	::Common::Array<FileInfo> _fileInfoTbl;
 
 public:
 	BigfileArchive(DragonsEngine *vm, const char *filename);

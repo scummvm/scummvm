@@ -36,7 +36,7 @@ VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm
 	_vbData = new byte[dataSize];
 	msfData->read(_vbData, dataSize);
 
-//		_vbData = new Common::MemoryReadStream(newData, dataSize, DisposeAfterUse::YES);
+//		_vbData = new ::Common::MemoryReadStream(newData, dataSize, DisposeAfterUse::YES);
 //
 //		Audio::AudioStream *str = Audio::makeXAStream(_vbData, 11025);
 //		Audio::SoundHandle _speechHandle;
@@ -45,7 +45,7 @@ VabSound::VabSound(Common::SeekableReadStream *msfData, const DragonsEngine *_vm
 	delete msfData;
 }
 
-VabSound::VabSound(Common::SeekableReadStream *vhData, Common::SeekableReadStream *vbData): _toneAttrs(nullptr), _vbData(nullptr) {
+VabSound::VabSound(Common::SeekableReadStream *vhData, ::Common::SeekableReadStream *vbData): _toneAttrs(nullptr), _vbData(nullptr) {
 	loadHeader(vhData);
 
 	assert(vhData->pos() == vhData->size());
@@ -110,7 +110,7 @@ Audio::AudioStream *VabSound::getAudioStream(uint16 program, uint16 key) {
 	debug(3, "Playing program %d, Key %d, numTones: %d, vagID %d, vagOffset: %x, size: %x adjustedSampleRate: %d",
 	   program, key, _programAttrs[program].tones, vagID, _vagOffsets[vagID], _vagSizes[vagID], sampleRate);
 	Audio::AudioStream *str = Audio::makeXAStream(
-			new Common::MemoryReadStream(&_vbData[_vagOffsets[vagID]], _vagSizes[vagID], DisposeAfterUse::NO),
+			new ::Common::MemoryReadStream(&_vbData[_vagOffsets[vagID]], _vagSizes[vagID], DisposeAfterUse::NO),
 			sampleRate,
 			DisposeAfterUse::YES);
 	return str;

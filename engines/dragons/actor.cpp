@@ -354,7 +354,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 		// More adjusting of the source position
 		bool needAdjustSourcePoint = true;
 		for (int pointIndex = 0; pointIndex < kPathPointsCount; ++pointIndex) {
-			const Common::Point pt = getEngine()->_scene->getPoint(pointIndex);
+			const ::Common::Point pt = getEngine()->_scene->getPoint(pointIndex);
 			if (pt.x != -1 && canWalkLine(actorX1, actorY1, pt.x, pt.y, flags)) {
 				needAdjustSourcePoint = false;
 				break;
@@ -362,7 +362,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 		}
 		if (needAdjustSourcePoint) {
 			for (int pointIndex = 0; needAdjustSourcePoint && pointIndex < kPathPointsCount; ++pointIndex) {
-				const Common::Point pt = getEngine()->_scene->getPoint(pointIndex);
+				const ::Common::Point pt = getEngine()->_scene->getPoint(pointIndex);
 				for (int deltaIndex = 0; needAdjustSourcePoint && deltaIndex < 8; ++deltaIndex) {
 					const int deltaX = kAdjustXTbl[deltaIndex];
 					const int deltaY = kAdjustYTbl[deltaIndex];
@@ -379,7 +379,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 		// More adjusting of the destination position
 		bool needAdjustDestPoint = true;
 		for (int pointIndex = 0; pointIndex < kPathPointsCount; ++pointIndex) {
-			const Common::Point pt = getEngine()->_scene->getPoint(pointIndex);
+			const ::Common::Point pt = getEngine()->_scene->getPoint(pointIndex);
 			if (pt.x != -1 && canWalkLine(destX, destY, pt.x, pt.y, flags)) {
 				needAdjustDestPoint = false;
 				break;
@@ -387,7 +387,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 		}
 		if (needAdjustDestPoint) {
 			for (int pointIndex = 0; needAdjustDestPoint && pointIndex < kPathPointsCount; ++pointIndex) {
-				const Common::Point pt = getEngine()->_scene->getPoint(pointIndex);
+				const ::Common::Point pt = getEngine()->_scene->getPoint(pointIndex);
 				for (int deltaIndex = 0; needAdjustDestPoint && deltaIndex < 8; ++deltaIndex) {
 					const int deltaX = kAdjustXTbl[deltaIndex];
 					const int deltaY = kAdjustYTbl[deltaIndex];
@@ -412,11 +412,11 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 			return false;
 		}
 		pathPointProcessed[foundPointIndex] = true;
-		const Common::Point pt = getEngine()->_scene->getPoint(foundPointIndex);
+		const ::Common::Point pt = getEngine()->_scene->getPoint(foundPointIndex);
 		tempDestX1 = pt.x;
 		tempDestY1 = pt.y;
 		if (pathPointsIndex >= 2) {
-			const Common::Point prevPt = getEngine()->_scene->getPoint(_walkPointsTbl[pathPointsIndex - 2]);
+			const ::Common::Point prevPt = getEngine()->_scene->getPoint(_walkPointsTbl[pathPointsIndex - 2]);
 			if (canWalkLine(pt.x, pt.y, prevPt.x, prevPt.y, flags)) {
 				--pathPointsIndex;
 			}
@@ -464,7 +464,7 @@ bool Actor::startWalk(int16 destX, int16 destY, uint16 flags) {
 		_finalWalkDestX = -1;
 		_finalWalkDestY = -1;
 	} else {
-		const Common::Point pt = getEngine()->_scene->getPoint(_walkPointsTbl[_walkPointsIndex]);
+		const ::Common::Point pt = getEngine()->_scene->getPoint(_walkPointsTbl[_walkPointsIndex]);
 		_walkDestX = pt.x;
 		_walkDestY = pt.y;
 	}

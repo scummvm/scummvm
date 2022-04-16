@@ -22398,6 +22398,447 @@ static const SciScriptPatcherEntry torinSignatures[] = {
 
 #endif
 
+//// REMOVE THESE - START /////////////////////////////////////////////////////////////////////////
+
+/*
+Cannot be removed (integral parts of games):
+- Freddy Pharkas drug mixing puzzle
+- Longbow coat of arms/tree names/druid hand code
+- SQ5 planet coordinates
+*/
+
+// Electronic door lock
+static const uint16 brain1Cp[] = {
+	// These two patches are mutually exclusive
+
+	// Patch 1: Removes the CP screen completely and the door always opens
+	/*
+	SIG_MAGICDWORD,
+	0x8f, 0x01,            // lsp 01
+	0x35, 0x03,            // ldi 03
+	0x1a,                  // eq?
+	0x30, 0x2f, 0x00,      // bnt 002f  [08b5]
+	0x82, 0x38, 0x02,      // lal 0238
+	0x30, 0x0e, 0x00,      // bnt 000e  [089a]
+	0
+	*/
+	// Patch 2: Keeps asking for the CP each time, but the answer is always
+	// ignored and the door opens all the time
+	SIG_MAGICDWORD,
+	0x38, 0xc2, 0x00,      // pushi 00c2
+	0x76,                  // push0
+	0x72, 0x62, 0x3c,      // lofsa 3c62
+	0x4a, 0x04,            // send 04
+	0x30, 0x1a, 0x00,      // bnt 001a  [08c0]
+	SIG_END
+};
+
+static const uint16 brain1PatchCp[] = {
+	//PATCH_ADDTOOFFSET(+11),	// Patch 1
+	PATCH_ADDTOOFFSET(+9),	// Patch 2
+	0x34, 0x00, 0x00, // ldi 0000
+	PATCH_END
+};
+
+// Island location
+static const uint16 brain2Cp[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x46,         // lsg 46
+	0x78,               // push1
+	0x40, 0x1a, 0x07, 0x04, // call 071a  [0c84] 04
+	0x22,               // lt?
+	0x30, 0x74, 0x00,   // bnt 0074  [05e3]
+	SIG_END
+};
+
+static const uint16 brain2PatchCp[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x32, 0x28, 0x00,	// jmp 0028 [0597] (skip past all checks and accept any answer)
+	PATCH_END
+};
+
+// Face paint
+static const uint16 ecoQuest2Cp[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x1f,        // lsl 1f
+	0x83, 0x1e,        // lal 1e
+	0x1a,              // eq?
+	0x31, 0x15,        // bnt 15  [06c4]
+	SIG_END
+};
+
+static const uint16 ecoQuest2PatchCp[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x35, 0x00,      // ldi 00
+	PATCH_END
+
+};
+
+// Startup questions
+static const uint16 kq4Cp[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x23,      // lsl 23
+	0x83, 0x02,      // lal 02
+	0x1a,            // eq?
+	0x30,            // bnt (2 bytes, failure offset)
+	SIG_END
+};
+
+static const uint16 kq4PatchCp[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x34, 0x00, 0x00, // ldi 0000 (never jump)
+	PATCH_END
+};
+
+// Random spells
+static const uint16 kq5Cp[] = {
+	SIG_MAGICDWORD,
+	0x36,             // push
+	0x45, 0x1a, 0x02, // callb 1a 02
+	0x85, 0x00,       // lat 00
+	0x48,             // ret
+	SIG_END
+};
+
+static const uint16 kq5PatchCp[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x35, 0x01,      // ldi 01 (answer was correct)
+	PATCH_END
+};
+
+// Isle of the Sacred Mountain cliffs questions
+static const uint16 kq6Cp[] = {
+	SIG_MAGICDWORD,
+	0x63, 0x78,      // pToa 78 (correctButton)
+	0x1a,            // eq?
+	0x2f, 0x05,      // bt 05  [0bc6]
+	SIG_END
+};
+
+static const uint16 kq6PatchCp[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x33, 0x08,       // jmp 0x08 [0bc9] (answer is always correct and skip the bnt)
+	PATCH_END
+};
+
+// Age verification
+static const uint16 larry1Cp[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x03,          // lsl 03
+	0x83, 0x04,          // lal 04
+	0x1a,                // eq?
+	0x2e, 0x05, 0x00,    // bt 0005  [0679]
+	SIG_END
+};
+
+static const uint16 larry1PatchCp[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x32, 0x07, 0x00,       // jmp 0007 (answer is always correct and skip the bnt)
+	PATCH_END
+};
+
+// Girl matching
+static const uint16 larry2Cp[] = {
+	SIG_MAGICDWORD,
+	0x43, 0x49, 0x04, // callk StrCmp[49] 04
+	0x18,             // not
+	0x30, 0x0d, 0x00, // bnt 000d  [05cc]
+	SIG_END
+};
+
+static const uint16 larry2PatchCp[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x34, 0x00, 0x00, // ldi 0000 (never jump)
+	PATCH_END
+};
+
+// Age verification
+static const uint16 larry3Cp1[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x05,       // lsl 05
+	0x83, 0x06,       // lal 06
+	0x1a,             // eq?
+	0x30, 0x38, 0x00, // bnt 0038  [055b]
+	SIG_END
+};
+
+static const uint16 larry3PatchCp1[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x34, 0x00, 0x00, // ldi 0000
+	PATCH_END
+};
+
+// Ticket number
+static const uint16 larry3Cp2[] = {
+	SIG_MAGICDWORD,
+	0x3c,             // dup
+	0x35, 0x02,       // ldi 02
+	0x1a,             // eq?
+	0x30, 0x94, 0x00, // bnt 0094  [0fac]
+	SIG_END
+};
+
+static const uint16 larry3PatchCp2[] = {
+	PATCH_ADDTOOFFSET(+13),
+	0x32,             // jmp
+	PATCH_END
+};
+
+// Locker combination
+static const uint16 larry3Cp3[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x00,       // lsl 00
+	0x81, 0x93,       // lag 93
+	0x1c,             // ne?
+	0x2e, 0x0d, 0x00, // bt 000d  [0527]
+	SIG_END
+};
+
+static const uint16 larry3PatchCp3[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x32, 0x1d, 0x00, // jmp 001d  [0537]
+	PATCH_END
+};
+
+// Airport terminal
+static const uint16 larry5Cp[] = {
+	SIG_MAGICDWORD,
+	0x3c,			// dup
+	0x83, 0x10,		// lal 10
+	0x93, 0x04,		// lali 04
+	0x1a,           // eq?
+	0x30, 0x0b, 0x00,	// bnt 000b  [0108]
+	SIG_END
+};
+
+static const uint16 larry5PatchCp[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x34, 0x00, 0x00, // ldi 0000
+	PATCH_END
+};
+
+// Fingerprint matching
+static const uint16 laurabow1Cp[] = {
+	SIG_MAGICDWORD,
+	0x83, 0x00,      // lal 00
+	0x02,            // add
+	0x93, 0x35,      // lali 0x35
+	0x1a,            // eq?
+	0x30,            // bnt (failure offset)
+	SIG_END
+};
+
+static const uint16 laurabow1PatchCp[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x34, 0x00, 0x00, // ldi 0000 (dummy - never fail)
+	PATCH_END
+};
+
+// Egyptian gods questions
+static const uint16 laurabow2Cp[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x01,       // lsl 01
+	0x35, 0x01,       // ldi 01
+	0x04,             // sub
+	0x93, 0x04,       // lali 04
+	0x1a,             // eq?
+	0x31, 0x0b,       // bnt 0b  [0329]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchCp[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x35, 0x00,        // ldi 00
+	PATCH_END
+};
+
+// Gemstones: accept any gemstone
+static const uint16 longbowCp1[] = {
+	SIG_MAGICDWORD,
+	0x46, 0xe7, 0x03, 0x05, 0x00, // calle 03e7 0005 X
+	SIG_ADDTOOFFSET(+1), // [skip 1 bytes, calle parameter]
+	0x30, 0x13, 0x00,  // bnt 0013
+	SIG_END
+};
+
+static const uint16 longbowPatchCp1[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x34, 0x00, 0x00, // ldi 0000 (dummy - never fail)
+	PATCH_END
+};
+
+// Gemstones: allow the same gemstone to be clicked more than once
+static const uint16 longbowCp2[] = {
+	SIG_MAGICDWORD,
+	0x8f, 0x01,       // lsp 01
+	0x35, 0x03,       // ldi 03
+	0x1a,             // eq?
+	0x30,             // bnt X
+	SIG_ADDTOOFFSET(+2), // [skip 2 bytes, bnt offset]
+	0xc3, 0x0e,       // +al 0e
+	0x8b,             // lsl X
+	SIG_ADDTOOFFSET(+1), // [skip 1 bytes, lsl variable]
+	0x35, 0x00,       // ldi 00
+	0x1a,             // eq?
+	0x30,             // bnt X
+	SIG_END
+};
+
+static const uint16 longbowPatchCp2[] = {
+	PATCH_ADDTOOFFSET(+15),
+	0x34, 0x00, 0x00, // ldi 0000 (dummy - never fail)
+	PATCH_END
+};
+
+// Suspect matching
+static const uint16 pq2Cp[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,      // ldi 00
+	0xa1, 0x04,      // sag 04
+	0x3a,            // toss
+	0x81, 0x04,      // lag 04
+	0x30, 0x0c, 0x00,// bnt 000c  [01ce]
+	SIG_END
+};
+
+static const uint16 pq2PatchCp[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x32,			// jmp (name entry is always correct)
+	PATCH_END
+};
+
+// Arcada library
+static const uint16 sq1Cp1[] = {
+	SIG_MAGICDWORD,
+	0x43, 0x45, 0x04,  // callk StrCmp[45] 04
+	0x36,              // push
+	0x35, 0x00,        // ldi 00
+	0x1a,              // eq?
+	0x30, 0x09, 0x00,  // bnt 0009  [083d]
+	SIG_END
+};
+
+// Deltaur navigational code
+static const uint16 sq1Cp2[] = {
+	SIG_MAGICDWORD,
+	0x43, 0x45, 0x04,  // callk StrCmp[45] 04
+	0x36,              // push
+	0x35, 0x00,        // ldi 00
+	0x1a,              // eq?
+	0x30, 0x26, 0x00,  // bnt 0026  [05ac]
+	SIG_END
+};
+
+static const uint16 sq1PatchCp[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x34, 0x00, 0x00, // ldi 0000 (dummy - never fail)
+	PATCH_END
+};
+
+// Time shuttle
+static const uint16 sq4Cp[] = {
+	SIG_MAGICDWORD,
+	0x5b, 0x02, 0x15,// lea 02 15
+	0x36,            // push
+	0x43, 0x45, 0x04,// callk StrCmp[45] 04
+	0x18,            // not
+	0x30, 0x2a, 0x00,// bnt 002a  [0620]
+	SIG_END
+};
+
+static const uint16 sq4PatchCp[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x34, 0x00, 0x00, // ldi 0000 (dummy - never fail)
+	PATCH_END
+};
+
+static const SciScriptPatcherEntry brain1AltSignatures[] = {
+	//{  true,    120, "cp",              1,     brain1Cp, brain1PatchCp },	// Patch 1
+	{  true,    120, "cp",              1,     brain1Cp, brain1PatchCp },	// Patch 2
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry brain2Signatures[] = {
+	{  true,    130, "cp",              1,    brain2Cp, brain2PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry ecoquest2AltSignatures[] = {
+	{  true,    390, "cp",              1,   ecoQuest2Cp, ecoQuest2PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry kq4AltSignatures[] = {
+	{  true,    701, "cp",              1,    kq4Cp, kq4PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry kq5AltSignatures[] = {
+	{  true,    754, "cp",              1,    kq5Cp, kq5PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry kq6AltSignatures[] = {
+	{  true,     21, "cp",              1,    kq6Cp, kq6PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry larry1AltSignatures[] = {
+	{  true,    720, "cp",              1,    larry1Cp, larry1PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry larry2AltSignatures[] = {
+	{  true,     10, "cp",              1,     larry2Cp, larry2PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry larry3AltSignatures[] = {
+	{  true,    140, "cp1",             1,     larry3Cp1, larry3PatchCp1 },
+	{  true,    420, "cp2",             1,     larry3Cp2, larry3PatchCp2 },
+	{  true,    370, "cp3",             1,     larry3Cp3, larry3PatchCp3 },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry larry5AltSignatures[] = {
+	{  true,    258, "cp",              1,     larry5Cp, larry5PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry laurabowAltSignatures[] = {
+	{  true,    414, "cp",              3,     laurabow1Cp, laurabow1PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry laurabow2AltSignatures[] = {
+	{  true,     18, "cp",              1,     laurabow2Cp, laurabow2PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry longbowAltSignatures[] = {
+	{  true,    621, "cp1",             9,     longbowCp1, longbowPatchCp1 },
+	{  true,    621, "cp2",             9,     longbowCp2, longbowPatchCp2 },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry pq2AltSignatures[] = {
+	{  true,    701, "cp",              1,     pq2Cp, pq2PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry sq1vgaAltSignatures[] = {
+	{  true,    103, "cp1",             1,     sq1Cp1, sq1PatchCp },
+	{  true,    400, "cp2",             1,     sq1Cp2, sq1PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+static const SciScriptPatcherEntry sq4AltSignatures[] = {
+	{  true,    815, "cp",              1,     sq4Cp, sq4PatchCp },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+//// REMOVE THESE - END /////////////////////////////////////////////////////////////////////////
+
 // =================================================================================
 
 ScriptPatcher::ScriptPatcher() {
@@ -23017,6 +23458,80 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 	default:
 		break;
 	}
+
+	//// REMOVE THESE - START ////////////////////////////////////
+	delete[] _runtimeTable; // have to do this to reset the table
+	_runtimeTable = NULL;
+
+	switch (gameId) {
+	case GID_CASTLEBRAIN:
+		if (scriptNr == 120)
+			signatureTable = brain1AltSignatures;
+		break;
+	case GID_ECOQUEST2:
+		if (scriptNr == 390)
+			signatureTable = ecoquest2AltSignatures;
+		break;
+	case GID_ISLANDBRAIN:
+		if (scriptNr == 130)
+			signatureTable = brain2Signatures;
+		break;
+	case GID_KQ4:
+		if (scriptNr == 701)
+			signatureTable = kq4AltSignatures;
+		break;
+	case GID_KQ5:
+		if (scriptNr == 754)
+			signatureTable = kq5AltSignatures;
+		break;
+	case GID_KQ6:
+		if (scriptNr == 21)
+			signatureTable = kq6AltSignatures;
+		break;
+	case GID_LAURABOW:
+		if (scriptNr == 414)
+			signatureTable = laurabowAltSignatures;
+		break;
+	case GID_LAURABOW2:
+		if (scriptNr == 18)
+			signatureTable = laurabow2AltSignatures;
+		break;
+	case GID_LONGBOW:
+		if (scriptNr == 621)
+			signatureTable = longbowAltSignatures;
+		break;
+	case GID_LSL1:
+		if (scriptNr == 720)
+			signatureTable = larry1AltSignatures;
+		break;
+	case GID_LSL2:
+		if (scriptNr == 10)
+			signatureTable = larry2AltSignatures;
+		break;
+	case GID_LSL3:
+		if (scriptNr == 140 || scriptNr == 420 || scriptNr == 370)
+			signatureTable = larry3AltSignatures;
+		break;
+	case GID_LSL5:
+		if (scriptNr == 258)
+			signatureTable = larry5AltSignatures;
+		break;
+	case GID_PQ2:
+		if (scriptNr == 701)
+			signatureTable = pq2AltSignatures;
+		break;
+	case GID_SQ1:
+		if (scriptNr == 103 || scriptNr == 400)
+			signatureTable = sq1vgaAltSignatures;
+		break;
+	case GID_SQ4:
+		if (scriptNr == 815)
+			signatureTable = sq4AltSignatures;
+		break;
+	default:
+		break;
+	}
+	//// REMOVE THESE - END //////////////////////////////////////
 
 	if (signatureTable) {
 		_isMacSci11 = (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1);

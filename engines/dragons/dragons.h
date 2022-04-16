@@ -29,7 +29,7 @@
 namespace Dragons {
 
 struct SaveHeader {
-	Common::String description;
+	::Common::String description;
 	uint32 version;
 	uint32 flags;
 	uint32 saveDate;
@@ -182,7 +182,7 @@ public:
 	SoundManager *_sound;
 	StrPlayer *_strPlayer;
 
-	PaletteCyclingInstruction _paletteCyclingTbl[8];
+	//PaletteCyclingInstruction _paletteCyclingTbl[8];
 
 	bool _isLoadingDialogAudio;
 	uint16 _videoFlags; // TODO move to screen?
@@ -193,7 +193,7 @@ public:
 	uint16 _sceneId1; //TODO wire this up. I think it might be where to restore save game from?
 
 private:
-	Common::Language _language;
+	::Common::Language _language;
 	BigfileArchive *_bigfileArchive;
 	DragonFLG *_dragonFLG;
 	DragonVAR *_dragonVAR;
@@ -202,7 +202,7 @@ private:
 	uint32 _nextUpdatetime;
 	uint32 _flags;
 	uint32 _unkFlags1;
-	Common::Point _cursorPosition;
+	::Common::Point _cursorPosition;
 	uint32 _flickerIdleCounter;
 	uint32 _bit_flags_8006fbd8;
 	//unk
@@ -240,8 +240,8 @@ private:
 	bool _isGamePaused;
 	bool _inMenu;
 
-	void (*_sceneUpdateFunction)();
-	void (*_vsyncUpdateFunction)();
+	//void (*_sceneUpdateFunction)();
+	//void (*_vsyncUpdateFunction)();
 protected:
 	bool hasFeature(EngineFeature f) const override;
 public:
@@ -252,12 +252,12 @@ public:
 	Common::Error run() override;
 
 	Common::String getSavegameFilename(int num);
-	static Common::String getSavegameFilename(const Common::String &target, int num);
-	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
+	static ::Common::String getSavegameFilename(const ::Common::String &target, int num);
+	static kReadSaveHeaderError readSaveHeader(::Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
 
 	Common::Error loadGameState(int slot) override;
 	bool canLoadGameStateCurrently() override;
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+	Common::Error saveGameState(int slot, const ::Common::String &desc, bool isAutosave) override;
 	bool canSaveGameStateCurrently() override;
 	void syncSoundSettings() override;
 
@@ -304,11 +304,11 @@ public:
 	void reset();
 
 	void runSceneUpdaterFunction();
-	void setSceneUpdateFunction(void (*newUpdateFunction)());
+	//void setSceneUpdateFunction(void (*newUpdateFunction)());
 	void clearSceneUpdateFunction();
-	void (*getSceneUpdateFunction())();
+	//void (*getSceneUpdateFunction())();
 
-	void setVsyncUpdateFunction(void (*newUpdateFunction)());
+	//void setVsyncUpdateFunction(void (*newUpdateFunction)());
 	bool isVsyncUpdaterFunctionRunning();
 	void runVsyncUpdaterFunction();
 

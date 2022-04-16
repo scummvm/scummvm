@@ -52,7 +52,7 @@ class ScaleLayer {
 public:
 	ScaleLayer();
 	~ScaleLayer();
-	void load(Common::SeekableReadStream &stream);
+	void load(::Common::SeekableReadStream &stream);
 	uint16 getScale(uint16 y);
 	void backup();
 	void restore();
@@ -89,9 +89,9 @@ private:
 	ScaleLayer _scaleLayer;
 	byte _palette[512];
 	Graphics::Surface *_layerSurface[3];
-	Common::Point *_points2;
+	::Common::Point *_points2;
 	uint8 _layerPriority[3];
-	Common::Point _layerOffset[3];
+	::Common::Point _layerOffset[3];
 	AlphaBlendMode _layerAlphaMode[3];
 
 public:
@@ -112,8 +112,8 @@ public:
 	void setMgLayerPriority(uint8 newPriority) { _layerPriority[1] = newPriority; }
 	void setFgLayerPriority(uint8 newPriority) { _layerPriority[2] = newPriority; }
 
-	int16 getPriorityAtPoint(Common::Point pos);
-	Common::Point getPoint2(uint32 pointIndex);
+	int16 getPriorityAtPoint(::Common::Point pos);
+	::Common::Point getPoint2(uint32 pointIndex);
 	byte *getPalette() { return _palette; }
 
 	void overlayPriorityTileMap(byte *data, int16 x, int16 y, int16 w, int16 h);
@@ -121,7 +121,7 @@ public:
 	void overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int16 w, int16 h);
 	void restoreTiles(uint16 layerNum, int16 x, int16 y, int16 w, int16 h);
 	void setPalette(byte *newPalette);
-	void setLayerOffset(uint8 layerNumber, Common::Point offset);
+	void setLayerOffset(uint8 layerNumber, ::Common::Point offset);
 	Common::Point getLayerOffset(uint8 layerNumber);
 	ScaleLayer *getScaleLayer() { return &_scaleLayer; }
 
@@ -129,7 +129,7 @@ public:
 	void setLayerAlphaMode(uint8 layerNumber, Dragons::AlphaBlendMode mode);
 
 private:
-	Common::Point *loadPoints(Common::SeekableReadStream &stream);
+	::Common::Point *loadPoints(::Common::SeekableReadStream &stream);
 	Graphics::Surface *initGfxLayer(TileMap &tileMap);
 	void loadGfxLayer(Graphics::Surface *surface, TileMap &tileMap, byte *tiles);
 
@@ -138,7 +138,7 @@ private:
 class PriorityLayer {
 public:
 	void load(TileMap &tileMap, byte *tiles);
-	int16 getPriority(Common::Point pos);
+	int16 getPriority(::Common::Point pos);
 	void overlayTileMap(byte *data, int16 x, int16 y, int16 w, int16 h);
 	void restoreTileMap(int16 x, int16 y, int16 w, int16 h);
 protected:

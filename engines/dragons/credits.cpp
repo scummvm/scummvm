@@ -18,17 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "dragons/credits.h"
 
 #include "common/system.h"
-#include "dragons/bigfile.h"
-#include "dragons/dragons.h"
+#include "dragons/credits.h"
+//#include "dragons/bigfile.h"
+//#include "dragons/dragons.h"
 #include "dragons/screen.h"
 #include "dragons/font.h"
 
 namespace Dragons {
 
-void creditsUpdateFunction() {
+/* void creditsUpdateFunction() {
 	getEngine()->_credits->update();
 }
 
@@ -43,16 +43,16 @@ Credits::Credits(DragonsEngine *vm, FontManager *fontManager, BigfileArchive *bi
 	_dataLength = 0;
 	_curPosition = 0;
 }
-
+*/
 void Credits::start() {
-	_surface = new Graphics::Surface();
-	_surface->create(320, 208, Graphics::PixelFormat::createFormatCLUT8());
+	//_surface = new Graphics::Surface();
+	//_surface->create(320, 208, Graphics::PixelFormat::createFormatCLUT8());
 	_updateCounter = 0x78;
 	_curPosition = 0;
-	_creditsData = _bigfileArchive->load("credits.txt", _dataLength);
+	//_creditsData = _bigfileArchive->load("credits.txt", _dataLength);
 	_curPtr = (char *)_creditsData;
 	assert(_creditsData);
-	_vm->setVsyncUpdateFunction(creditsUpdateFunction);
+	//_vm->setVsyncUpdateFunction(creditsUpdateFunction);
 	_running = true;
 }
 
@@ -62,12 +62,12 @@ bool Credits::isRunning() {
 
 void Credits::draw() {
 	if (_running) {
-		_vm->_screen->copyRectToSurface8bppWrappedY(*_surface, _vm->_screen->getPalette(2), _yOffset);
+		//_vm->_screen->copyRectToSurface8bppWrappedY(*_surface, _vm->_screen->getPalette(2), _yOffset);
 	}
 }
 
 void Credits::cleanup() {
-	_vm->setVsyncUpdateFunction(nullptr);
+	//_vm->setVsyncUpdateFunction(nullptr);
 	_surface->free();
 	delete _surface;
 }

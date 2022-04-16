@@ -52,7 +52,7 @@ struct OpCall {
 #define ARG_INT16(name) int16 name = opCall.readSint16(); debug(5, "ARG_INT16(" #name " = %d)", name);
 #define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug(5, "ARG_UINT32(" #name " = %08X)", name);
 
-typedef Common::Functor2<Actor*, OpCall&, void> SequenceOpcode;
+typedef ::Common::Functor2<Actor*, OpCall&, void> SequenceOpcode;
 
 class SequenceOpcodes {
 public:

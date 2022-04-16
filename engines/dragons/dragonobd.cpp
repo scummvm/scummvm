@@ -20,19 +20,19 @@
  */
 #include "common/memstream.h"
 #include "dragons/dragonobd.h"
-#include "dragons/bigfile.h"
+//#include "dragons/bigfile.h"
 
 namespace Dragons {
 
 DragonOBD::DragonOBD(BigfileArchive *bigfileArchive) {
 	uint32 size;
-	byte *optData = bigfileArchive->load("dragon.opt", size);
-	_optReadStream = new Common::MemoryReadStream(optData, size, DisposeAfterUse::YES);
+	//byte *optData = bigfileArchive->load("dragon.opt", size);
+	//_optReadStream = new ::Common::MemoryReadStream(optData, size, DisposeAfterUse::YES);
 
-	byte *sptData = bigfileArchive->load("dragon.spt", size);
-	_sptReadStream = new Common::MemoryReadStream(sptData, size, DisposeAfterUse::YES);
+	//byte *sptData = bigfileArchive->load("dragon.spt", size);
+	//_sptReadStream = new ::Common::MemoryReadStream(sptData, size, DisposeAfterUse::YES);
 
-	_data = bigfileArchive->load("dragon.obd", _dataSize);
+	//_data = bigfileArchive->load("dragon.obd", _dataSize);
 }
 
 byte *DragonOBD::getObdAtOffset(uint32 offset) {

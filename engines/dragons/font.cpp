@@ -87,7 +87,7 @@ void Font::renderToSurface(Graphics::Surface *surface, int16 x, int16 y, uint16 
 FontManager::FontManager(DragonsEngine *vm, Screen *screen, BigfileArchive *bigfileArchive): _vm(vm), _screen(screen), _numTextEntries(0) {
 	uint32 fileSize;
 	byte *data = bigfileArchive->load("fntfiles.dat", fileSize);
-	Common::SeekableReadStream *readStream = new Common::MemoryReadStream(data, fileSize, DisposeAfterUse::YES);
+	Common::SeekableReadStream *readStream = new ::Common::MemoryReadStream(data, fileSize, DisposeAfterUse::YES);
 
 	_fonts[0] = loadFont(0, *readStream);
 	_fonts[1] = loadFont(1, *readStream);
@@ -124,7 +124,7 @@ void FontManager::addText(int16 x, int16 y, uint16 *text, uint16 length, uint8 f
 
 void FontManager::draw() {
 	if(_numTextEntries > 0) {
-		_screen->copyRectToSurface8bpp(*_surface, _screen->getPalette(2), 0, 0, Common::Rect(_surface->w, _surface->h), false, NORMAL);
+		_screen->copyRectToSurface8bpp(*_surface, _screen->getPalette(2), 0, 0, ::Common::Rect(_surface->w, _surface->h), false, NORMAL);
 	}
 }
 
@@ -133,7 +133,7 @@ void FontManager::clearText() {
 	_surface->fillRect(Common::Rect(_surface->w, _surface->h), 0);
 }
 
-Font *FontManager::loadFont(uint16 index, Common::SeekableReadStream &stream) {
+Font *FontManager::loadFont(uint16 index, ::Common::SeekableReadStream &stream) {
 	Common::File fd;
 	if (!fd.open("dragon.exe")) {
 		error("Failed to open dragon.exe");

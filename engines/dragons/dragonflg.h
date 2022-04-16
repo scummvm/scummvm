@@ -36,7 +36,7 @@ public:
 	void clear();
 	bool get(uint32 propertyId);
 	void set(uint32 propertyId, bool value);
-	void save(uint numberToWrite, Common::WriteStream *out);
+	void save(uint numberToWrite, ::Common::WriteStream *out);
 	void print(char *prefix);
 
 private:

@@ -32,7 +32,7 @@ namespace Dragons {
 
 class DragonsEngine;
 
-typedef Common::Functor0<void> SpecialOpcode;
+typedef ::Common::Functor0<void> SpecialOpcode;
 
 class SpecialOpcodes {
 public:
