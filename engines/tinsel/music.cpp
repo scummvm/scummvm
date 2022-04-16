@@ -693,6 +693,10 @@ PCMMusicPlayer::PCMMusicPlayer() {
 
 	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType,
 			&_handle, this, -1, _volume, 0, DisposeAfterUse::NO, true);
+
+	if (TinselVersion == 3) {
+		warning("Todo: remove workaround when deadlock in readBuffer is fixed");
+	}
 }
 
 PCMMusicPlayer::~PCMMusicPlayer() {
@@ -725,6 +729,10 @@ void PCMMusicPlayer::stopPlay() {
 
 int PCMMusicPlayer::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock slock(_mutex);
+
+	// Workaround for v3 to prevent deadlock due to missing chunk
+	if ((TinselVersion == 3) && !_curChunk && _state == S_MID)
+		return 0;
 
 	if (!_curChunk && ((_state == S_IDLE) || (_state == S_STOP)))
 		return 0;
