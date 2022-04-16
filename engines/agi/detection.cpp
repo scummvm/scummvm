@@ -275,8 +275,8 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 			g_fallbackDesc.version = wagFileParser.convertToAgiVersionNumber(*wagAgiVer);
 		}
 
-		// Set gameid according to *.wag file information if it's present and it doesn't contain whitespace.
-		if (wagGameID != nullptr && !Common::String(wagGameID->getData()).contains(" ")) {
+		// Set gameid according to *.wag file information if it's present and it's a known value
+		if (wagGameID != nullptr && findPlainGameDescriptor(wagGameID->getData(), agiGames)) {
 			_gameid = wagGameID->getData();
 			debug(3, "Agi::fallbackDetector: Using game id (%s) from WAG file", _gameid.c_str());
 		}
