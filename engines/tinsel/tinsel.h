@@ -64,6 +64,7 @@ class Actor;
 class Handle;
 class Scroll;
 class Dialogs;
+class Notebook;
 
 typedef Common::List<Common::Rect> RectList;
 
@@ -175,6 +176,7 @@ public:
 	Config *_config;
 	Scroll *_scroll;
 	Dialogs *_dialogs;
+	Notebook *_notebook = nullptr;
 
 	KEYFPTR _keyHandler;
 

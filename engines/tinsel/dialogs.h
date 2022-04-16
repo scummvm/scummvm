@@ -86,8 +86,11 @@ enum InvCursorFN { IC_AREA,
 #define PERMACONV 0x20
 #define CONVENDITEM 0x40
 // Noir only
+#define V3ATTR_X80 0x80
 #define V3ATTR_X200 0x200
 #define V3ATTR_X400 0x400
+#define NOTEBOOK_TITLE 0x800 // is a notebook title
+#define V3ATTR_X2000 0x2000
 
 #define sliderRange (_sliderYmax - _sliderYmin)
 #define MAXSLIDES 4
@@ -124,6 +127,10 @@ struct INV_OBJECT {
 	SCNHANDLE hIconFilm;	// inventory objects animation film
 	SCNHANDLE hScript;	// inventory objects event handling script
 	int32 attribute;		// inventory object's attribute
+
+	// Noir
+	int32 unknown;
+	int32 title;	// id of associated notebook title
 };
 
 struct INV_DEF {
