@@ -245,7 +245,7 @@ private:
 	void setupQuadEBO();
 
 	void setupZBuffer();
-	void drawDepthBitmap(int x, int y, int w, int h, char *data);
+	void drawDepthBitmap(int bitmapId, int x, int y, int w, int h, char *data);
 
 	float _fov;
 	float _nclip;

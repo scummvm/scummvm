@@ -1470,7 +1470,8 @@ void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) 
 	} else {
 		// Only draw the manual zbuffer when enabled
 		if (bitmap->getActiveImage() - 1 < bitmap->getNumImages()) {
-			drawDepthBitmap(dx, dy, bitmap->getWidth(), bitmap->getHeight(), (char *)const_cast<void *>(bitmap->getData(bitmap->getActiveImage() - 1).getPixels()));
+			drawDepthBitmap(bitmap->getId(), dx, dy, bitmap->getWidth(), bitmap->getHeight(),
+			                (char *)const_cast<void *>(bitmap->getData(bitmap->getActiveImage() - 1).getPixels()));
 		} else {
 			warning("zbuffer image has index out of bounds! %d/%d", bitmap->getActiveImage(), bitmap->getNumImages());
 		}
@@ -1478,15 +1479,26 @@ void GfxOpenGLS::drawBitmap(const Bitmap *bitmap, int dx, int dy, uint32 layer) 
 	}
 }
 
-void GfxOpenGLS::drawDepthBitmap(int x, int y, int w, int h, char *data) {
+void GfxOpenGLS::drawDepthBitmap(int bitmapId, int x, int y, int w, int h, char *data) {
+	static int prevId = -1;
 	static int prevX = -1, prevY = -1;
+	static int prevW = -1, prevH = -1;
 	static char *prevData = nullptr;
 
-	if (prevX == x && prevY == y && data == prevData)
+	// Sometimes the data pointer is reused by the allocator between bitmaps
+	// Use the bitmap ID to ensure we don't prevent an expected update
+	if (bitmapId == prevId &&
+	        prevX == x && prevY == y &&
+	        prevW == w && prevH == h &&
+	        data == prevData) {
 		return;
+	}
 
+	prevId = bitmapId;
 	prevX = x;
 	prevY = y;
+	prevW = w;
+	prevH = h;
 	prevData = data;
 
 	glActiveTexture(GL_TEXTURE1);
