@@ -421,12 +421,6 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	_simpleShadow[3].u = 1.0f;
 	_simpleShadow[3].v = 0.0f;
 
-	// The ShaderSurfaceRenderer sets an array buffer which appearently conflicts with us
-	// Reset it!
-#if defined(USE_OPENGL_SHADERS)
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_OPENGL_SHADERS)
-
 	return true;
 }
 
