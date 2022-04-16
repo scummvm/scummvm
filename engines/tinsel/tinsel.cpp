@@ -59,6 +59,7 @@
 #include "tinsel/sysvar.h"
 #include "tinsel/timers.h"
 #include "tinsel/tinsel.h"
+#include "tinsel/noir/notebook.h"
 
 namespace Tinsel {
 
@@ -1012,6 +1013,10 @@ Common::Error TinselEngine::run() {
 	_handle = new Handle();
 	_scroll = new Scroll();
 	_dialogs = new Dialogs();
+
+	if (TinselVersion == 3) {
+		_notebook = new Notebook();
+	}
 
 	// Initialize backend
 	if (getGameID() == GID_NOIR) {

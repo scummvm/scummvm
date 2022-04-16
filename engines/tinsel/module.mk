@@ -46,7 +46,8 @@ MODULE_OBJS := \
 	timers.o \
 	tinlib.o \
 	tinsel.o \
-	token.o
+	token.o \
+	noir/notebook.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TINSEL), DYNAMIC_PLUGIN)
