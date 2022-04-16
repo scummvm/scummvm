@@ -196,7 +196,7 @@ void MultiAdjustXY(OBJECT *pMultiObj, int deltaX, int deltaY) {
 	if (deltaX == 0 && deltaY == 0)
 		return;		// ignore no change
 
-	if (!TinselV2) {
+	if (TinselVersion <= 1) {
 		// *** This may be wrong!!!
 		if (pMultiObj->flags & DMA_FLIPH) {
 			// image is flipped horizontally - flip the x direction

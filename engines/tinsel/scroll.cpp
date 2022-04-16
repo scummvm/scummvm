@@ -44,9 +44,9 @@ namespace Tinsel {
 #define SCROLLPIXELS 8 // Number of pixels to scroll per iteration
 
 // Distance from edge that triggers a scroll
-#define RLDISTANCE (TinselV2 ? _scrollData.xTrigger : 50)
-#define UDISTANCE (TinselV2 ? _scrollData.yTriggerTop : 20)
-#define DDISTANCE (TinselV2 ? _scrollData.yTriggerBottom : 20)
+#define RLDISTANCE ((TinselVersion >= 2) ? _scrollData.xTrigger : 50)
+#define UDISTANCE ((TinselVersion >= 2) ? _scrollData.yTriggerTop : 20)
+#define DDISTANCE ((TinselVersion >= 2) ? _scrollData.yTriggerBottom : 20)
 
 // Number of iterations to make
 #define RLSCROLL 160 // 20*8 = 160 = half a screen
@@ -149,7 +149,7 @@ void Scroll::NeedScroll(int direction) {
 		}
 
 		if (_leftScroll <= 0) {
-			if (TinselV2) {
+			if (TinselVersion >= 2) {
 				_scrollPixelsX = _scrollData.xSpeed;
 				_leftScroll += _scrollData.xDistance;
 			} else {
@@ -172,7 +172,7 @@ void Scroll::NeedScroll(int direction) {
 		}
 
 		if (_leftScroll >= 0) {
-			if (TinselV2) {
+			if (TinselVersion >= 2) {
 				_scrollPixelsX = _scrollData.xSpeed;
 				_leftScroll -= _scrollData.xDistance;
 			} else {
@@ -196,7 +196,7 @@ void Scroll::NeedScroll(int direction) {
 			}
 
 		if (_downScroll <= 0) {
-			if (TinselV2) {
+			if (TinselVersion >= 2) {
 				_scrollPixelsY = _scrollData.ySpeed;
 				_downScroll += _scrollData.yDistance;
 			} else {
@@ -219,7 +219,7 @@ void Scroll::NeedScroll(int direction) {
 		}
 
 		if (_downScroll >= 0) {
-			if (TinselV2) {
+			if (TinselVersion >= 2) {
 				_scrollPixelsY = _scrollData.ySpeed;
 				_downScroll -= _scrollData.yDistance;
 			} else {
@@ -274,7 +274,7 @@ void Scroll::ScrollImage() {
 			Loffset = _imageW - SCREEN_WIDTH;// Now at extreme right
 
 		/*** New feature to prop up rickety scroll boundaries ***/
-		if (TinselV2 && SysVar(SV_MaximumXoffset) &&  (Loffset > SysVar(SV_MaximumXoffset)))
+		if ((TinselVersion >= 2) && SysVar(SV_MaximumXoffset) &&  (Loffset > SysVar(SV_MaximumXoffset)))
 			Loffset = SysVar(SV_MaximumXoffset);
 
 	} else if (_leftScroll < 0) {
@@ -288,7 +288,7 @@ void Scroll::ScrollImage() {
 			Loffset = 0;		// Now at extreme left
 
 		/*** New feature to prop up rickety scroll boundaries ***/
-		if (TinselV2 && SysVar(SV_MinimumXoffset) &&  (Loffset < SysVar(SV_MinimumXoffset)))
+		if ((TinselVersion >= 2) && SysVar(SV_MinimumXoffset) &&  (Loffset < SysVar(SV_MinimumXoffset)))
 			Loffset = SysVar(SV_MinimumXoffset);
 	}
 
@@ -307,7 +307,7 @@ void Scroll::ScrollImage() {
 			Toffset = _imageH - SCREEN_HEIGHT;// Now at extreme bottom
 
 		/*** New feature to prop up rickety scroll boundaries ***/
-		if (TinselV2 && SysVar(SV_MaximumYoffset) &&  Toffset > SysVar(SV_MaximumYoffset))
+		if ((TinselVersion >= 2) && SysVar(SV_MaximumYoffset) &&  Toffset > SysVar(SV_MaximumYoffset))
 			Toffset = SysVar(SV_MaximumYoffset);
 
 	} else if (_downScroll < 0) {
@@ -322,7 +322,7 @@ void Scroll::ScrollImage() {
 			Toffset = 0;			// Now at extreme top
 
 		/*** New feature to prop up rickety scroll boundaries ***/
-		if (TinselV2 && SysVar(SV_MinimumYoffset) &&  Toffset < SysVar(SV_MinimumYoffset))
+		if ((TinselVersion >= 2) && SysVar(SV_MinimumYoffset) &&  Toffset < SysVar(SV_MinimumYoffset))
 			Toffset = SysVar(SV_MinimumYoffset);
 	}
 
@@ -398,7 +398,7 @@ void Scroll::RestoreScrollDefaults() {
  */
 void Scroll::DropScroll() {
 	_scrollData.NumNoH = _scrollData.NumNoV = 0;
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		_leftScroll = _downScroll = 0;		// No iterations outstanding
 		_oldx = _oldy = 0;
 		_scrollPixelsX = _scrollData.xSpeed;
@@ -432,8 +432,8 @@ int Scroll::GetScrollFocus() {
 void Scroll::ScrollTo(int x, int y, int xIter, int yIter) {
 	int Loffset, Toffset;		// for background offsets
 
-	_scrollPixelsX = xIter != 0 ? xIter : (TinselV2 ? _scrollData.xSpeed : SCROLLPIXELS);
-	_scrollPixelsY = yIter != 0 ? yIter : (TinselV2 ? _scrollData.ySpeed : SCROLLPIXELS);
+	_scrollPixelsX = xIter != 0 ? xIter : ((TinselVersion >= 2) ? _scrollData.xSpeed : SCROLLPIXELS);
+	_scrollPixelsY = yIter != 0 ? yIter : ((TinselVersion >= 2) ? _scrollData.ySpeed : SCROLLPIXELS);
 
 	_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);	// get background offsets
 
@@ -491,7 +491,7 @@ void Scroll::InitScroll(int width, int height) {
 	_imageH = height; // Dimensions
 	_imageW = width;  //  of this scene.
 
-	if (!TinselV2) {
+	if (TinselVersion <= 1) {
 		_leftScroll = _downScroll = 0; // No iterations outstanding
 		_oldx = _oldy = 0;
 		_scrollPixelsX = _scrollPixelsY = SCROLLPIXELS;

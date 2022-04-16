@@ -273,7 +273,7 @@ void Background::SetBackPal(SCNHANDLE hPal) {
 void Background::DropBackground() {
 	_pBG[0] = nullptr;	// No background
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		_hBgPal = 0;	// No background palette
 }
 

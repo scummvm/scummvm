@@ -238,8 +238,10 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			continue;
 		case Common::KEYCODE_m:
 			// Debug facility - scene hopper
-			if (TinselV2 && (evt.kbd.hasFlags(Common::KBD_ALT)))
+			if (TinselVersion >= 2) {
+			 if (evt.kbd.hasFlags(Common::KBD_ALT))
 				ProcessKeyEvent(PLR_JUMP);
+			}
 			break;
 		case Common::KEYCODE_q:
 			if ((evt.kbd.hasFlags(Common::KBD_CTRL)) || (evt.kbd.hasFlags(Common::KBD_ALT)))
@@ -337,7 +339,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 			if (DwGetCurrentTime() - _ctx->lastLeftClick < (uint32)_vm->_config->_dclickSpeed) {
 				// Left button double-click
 
-				if (TinselV2) {
+				if (TinselVersion >= 2) {
 					// Kill off the button process and fire off the action command
 					CoroScheduler.killMatchingProcess(PID_BTN_CLICK, -1);
 					PlayerEvent(PLR_ACTION, _ctx->clickPos);
@@ -354,7 +356,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 				// Initial mouse down - either for a single click, or potentially
 				// the start of a double-click action
 
-				if (TinselV2) {
+				if (TinselVersion >= 2) {
 					PlayerEvent(PLR_DRAG1_START, mousePos);
 
 					ProvNotProcessed();
@@ -381,14 +383,16 @@ static void MouseProcess(CORO_PARAM, const void *) {
 
 				// If player control is enabled, start a process which, if it times out,
 				// will activate a single button click
-				if (TinselV2 && ControlIsOn()) {
-					_ctx->clickPos = mousePos;
-					CoroScheduler.createProcess(PID_BTN_CLICK, SingleLeftProcess, &_ctx->clickPos, sizeof(Common::Point));
+				if (TinselVersion >= 2) {
+					if (ControlIsOn()) {
+						_ctx->clickPos = mousePos;
+						CoroScheduler.createProcess(PID_BTN_CLICK, SingleLeftProcess, &_ctx->clickPos, sizeof(Common::Point));
+					}
 				}
 			} else
 				_ctx->lastLeftClick -= _vm->_config->_dclickSpeed;
 
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				// Signal left drag end
 				PlayerEvent(PLR_DRAG1_END, mousePos);
 			else
@@ -401,7 +405,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 
 			if (DwGetCurrentTime() - _ctx->lastRightClick < (uint32)_vm->_config->_dclickSpeed) {
 				// Right button double-click
-				if (TinselV2) {
+				if (TinselVersion >= 2) {
 					PlayerEvent(PLR_NOEVENT, _ctx->clickPos);
 				} else {
 					// signal right drag start
@@ -413,7 +417,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 
 				_ctx->lastRWasDouble = true;
 			} else {
-				if (TinselV2) {
+				if (TinselVersion >= 2) {
 					PlayerEvent(PLR_DRAG2_START, mousePos);
 					PlayerEvent(PLR_LOOK, mousePos);
 				} else {
@@ -437,7 +441,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 			else
 				_ctx->lastRightClick -= _vm->_config->_dclickSpeed;
 
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				// Signal left drag end
 				PlayerEvent(PLR_DRAG2_END, mousePos);
 			else
@@ -480,7 +484,7 @@ static void MasterScriptProcess(CORO_PARAM, const void *) {
  * Store the facts pertaining to a scene change.
  */
 void SetNewScene(SCNHANDLE scene, int entrance, int transition) {
-	if (!g_bCuttingScene && TinselV2)
+	if (!g_bCuttingScene && TinselVersion >= 2)
 		WrapScene();
 
 	// If we're loading from the GMM, load the scene as a delayed one
@@ -625,7 +629,7 @@ static void RestoredProcess(CORO_PARAM, const void *param) {
 	_ctx->pic = *((INT_CONTEXT * const *)param);
 
 	_ctx->pic = RestoreInterpretContext(_ctx->pic);
-	_ctx->bConverse = TinselV2 && (_ctx->pic->event == CONVERSE);
+	_ctx->bConverse = (TinselVersion >= 2) && (_ctx->pic->event == CONVERSE);
 
 	CORO_INVOKE_1(Interpret, _ctx->pic);
 
@@ -676,12 +680,12 @@ bool ChangeScene(bool bReset) {
 				// Trigger pre-load and fade and start countdown
 				CountOut = COUNTOUT_COUNT;
 				FadeOutFast();
-				if (TinselV2)
+				if (TinselVersion >= 2)
 					_vm->_pcmMusic->startFadeOut(COUNTOUT_COUNT);
 				break;
 			}
 		} else if (--CountOut == 0) {
-			if (!TinselV2)
+			if (TinselVersion <= 1)
 				ClearScreen();
 
 			StartNewScene(g_NextScene.scene, g_NextScene.entry);
@@ -760,7 +764,7 @@ GameChunk createGameChunkV2() {
 	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_POLY);
 	chunk.numPolygons = (cptr != NULL) ? READ_32(cptr) : 0;
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_NUM_PROCESSES);
 		assert(cptr && (*cptr < 100));
 		chunk.numProcesses = *cptr;
@@ -813,7 +817,7 @@ void LoadBasicChunks() {
 	if (game.numPolygons != 0)
 		MaxPolygons(game.numPolygons);
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		// Global processes
 		cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_PROCESSES);
 		assert(!game.numProcesses || cptr);
@@ -1185,7 +1189,9 @@ bool TinselEngine::pollEvent() {
 		{
 			// This fragment takes care of Tinsel 2 when it's been compiled with
 			// blank areas at the top and bottom of the screen
-			int ySkip = TinselV2 ? (g_system->getHeight() - _vm->screen().h) / 2 : 0;
+			int ySkip = 0;
+			if (TinselVersion >= 2)
+				ySkip = (g_system->getHeight() - _vm->screen().h) / 2;
 			if ((event.mouse.y >= ySkip) && (event.mouse.y < (g_system->getHeight() - ySkip)))
 				_mousePos = Common::Point(event.mouse.x, event.mouse.y - ySkip);
 		}
@@ -1339,7 +1345,7 @@ void TinselEngine::ProcessKeyEvent(const Common::Event &event) {
 const char *TinselEngine::getSampleIndex(LANGUAGE lang) {
 	int cd;
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		cd = GetCurrentCD();
 		assert((cd == 1) || (cd == 2));
 		assert(((unsigned int) lang) < NUM_LANGUAGES);
@@ -1360,7 +1366,7 @@ const char *TinselEngine::getSampleIndex(LANGUAGE lang) {
 const char *TinselEngine::getSampleFile(LANGUAGE lang) {
 	int cd;
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		cd = GetCurrentCD();
 		assert((cd == 1) || (cd == 2));
 		assert(((unsigned int) lang) < NUM_LANGUAGES);
@@ -1383,7 +1389,7 @@ const char *TinselEngine::getTextFile(LANGUAGE lang) {
 
 	int cd;
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		cd = GetCurrentCD();
 		assert((cd == 1) || (cd == 2));
 

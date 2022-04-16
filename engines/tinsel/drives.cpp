@@ -110,7 +110,7 @@ void DoCdChange() {
 		_vm->_sound->closeSampleStream();
 
 		// Use the filesize of the sample file to determine, for Discworld 2, which CD it is
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			TinselFile f;
 			if (!f.open(_vm->getSampleFile(g_sampleLanguage)))
 				// No CD present
@@ -179,7 +179,7 @@ bool TinselFile::open(const Common::String &filename) {
 	if (openInternal(filename))
 		return true;
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		return false;
 
 	// Check if the file being requested is the *1.* or *2.* files

@@ -252,7 +252,7 @@ void ResetVarsPCode() {
  */
 void LockCode(INT_CONTEXT *ic) {
 	if (ic->GSort == GS_MASTER) {
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			// Get the srcipt handle from a specific global chunk
 			ic->code = (byte *)_vm->_handle->LockMem(g_hMasterScript);
 		else
@@ -318,7 +318,7 @@ static void FreeWaitCheck(INT_CONTEXT * pic, bool bVoluntary) {
  */
 static void FreeInterpretContextPi(INT_CONTEXT *pic) {
 	FreeWaitCheck(pic, true);
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		memset(pic, 0, sizeof(INT_CONTEXT));
 	pic->GSort = GS_NONE;
 }
@@ -335,7 +335,7 @@ void FreeInterpretContextPr(Common::PROCESS *pProc) {
 	for (i = 0, pic = g_icList; i < NUM_INTERPRET; i++, pic++) {
 		if (pic->GSort != GS_NONE && pic->pProc == pProc) {
 			FreeWaitCheck(pic, false);
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				memset(pic, 0, sizeof(INT_CONTEXT));
 			pic->GSort = GS_NONE;
 			break;
@@ -435,7 +435,7 @@ void RegisterGlobals(int num) {
 	if (g_pGlobals == nullptr) {
 		g_numGlobals = num;
 
-		g_hMasterScript = !TinselV2 ? 0 :
+		g_hMasterScript = (TinselVersion <= 1) ? 0 :
 			READ_32(FindChunk(MASTER_SCNHANDLE, CHUNK_MASTER_SCRIPT));
 
 		// Allocate RAM for pGlobals and make sure it's allocated
@@ -458,7 +458,7 @@ void RegisterGlobals(int num) {
 		memset(g_icList, 0, NUM_INTERPRET * sizeof(INT_CONTEXT));
 	}
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		// read initial values
 		CdCD(Common::nullContext);
 
@@ -723,7 +723,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			if (!TinselV0)
 				ic->sp += tmp2;
 			LockCode(ic);
-			if (TinselV2 && (ic->resumeState == RES_1))
+			if ((TinselVersion >= 2) && (ic->resumeState == RES_1))
 				ic->resumeState = RES_NOT;
 			break;
 

@@ -125,9 +125,9 @@ void MemoryInit() {
 
 	// store the current heap size in the sentinel
 	uint32 size = MemoryPoolSize[0];
-	if (TinselVersion == TINSEL_V1) size = MemoryPoolSize[1];
-	else if (TinselVersion == TINSEL_V2) size = MemoryPoolSize[2];
-	else if (TinselVersion == TINSEL_V3) {
+	if (TinselVersion == 1) size = MemoryPoolSize[1];
+	else if (TinselVersion == 2) size = MemoryPoolSize[2];
+	else if (TinselVersion == 3) {
 		warning("TODO: Find the correct memory pool size for Noir, using 512 MiB for now");
 		size = MemoryPoolSize[3];
 	}

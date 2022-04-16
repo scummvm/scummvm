@@ -60,7 +60,7 @@ void BGmainProcess(CORO_PARAM, const void *param) {
 	if (_vm->_bg->_pBG[0] == NULL) {
 		/*** At start of scene ***/
 
-		if (!TinselV2) {
+		if (TinselVersion <= 1) {
 			pReel = (const FREEL *)param;
 
 			// Get the MULTI_INIT structure
@@ -95,7 +95,7 @@ void BGmainProcess(CORO_PARAM, const void *param) {
 		if (_vm->_bg->GetDoFadeIn()) {
 			FadeInFast();
 			_vm->_bg->SetDoFadeIn(false);
-		} else if (TinselV2)
+		} else if (TinselVersion >= 2)
 			PokeInTagColor();
 
 		for (;;) {
@@ -108,7 +108,7 @@ void BGmainProcess(CORO_PARAM, const void *param) {
 		}
 	} else {
 		// New background during scene
-		if (!TinselV2) {
+		if (TinselVersion <= 1) {
 			pReel = (const FREEL *)param;
 			InitStepAnimScript(&_vm->_bg->_thisAnim[0], _vm->_bg->_pBG[0], FROM_32(pReel->script), _vm->_bg->getBgSpeed());
 			StepAnimScript(&_vm->_bg->_thisAnim[0]);
@@ -193,7 +193,7 @@ void Background::StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 	if (_pBG[0] == NULL)
 		ControlStartOff();
 
-	if (TinselV2 && (coroParam != Common::nullContext))
+	if ((TinselVersion >= 2) && (coroParam != Common::nullContext))
 		CORO_GIVE_WAY;
 
 	CORO_END_CODE;

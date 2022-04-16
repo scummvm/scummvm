@@ -437,7 +437,7 @@ bool SoundManager::sampleExists(int id) {
  * Returns true if a sample is currently playing.
  */
 bool SoundManager::sampleIsPlaying() {
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		return _vm->_mixer->isSoundHandleActive(_channels[kChannelTinsel1].handle);
 
 	for (int i = 0; i < kNumChannels; i++)
@@ -451,7 +451,7 @@ bool SoundManager::sampleIsPlaying() {
  * Stops any currently playing sample.
  */
 void SoundManager::stopAllSamples() {
-	if (!TinselV2) {
+	if (TinselVersion <= 1) {
 		_vm->_mixer->stopHandle(_channels[kChannelTinsel1].handle);
 		return;
 	}
@@ -463,7 +463,7 @@ void SoundManager::stopAllSamples() {
 void SoundManager::stopSpecSample(int id, int sub) {
 	debugC(DEBUG_DETAILED, kTinselDebugSound, "stopSpecSample(%d, %d)", id, sub);
 
-	if (!TinselV2) {
+	if (TinselVersion <= 1) {
 		if (_channels[kChannelTinsel1].sampleNum == id)
 			_vm->_mixer->stopHandle(_channels[kChannelTinsel1].handle);
 		return;
@@ -476,7 +476,7 @@ void SoundManager::stopSpecSample(int id, int sub) {
 }
 
 void SoundManager::setSFXVolumes(uint8 volume) {
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		return;
 
 	for (int i = kChannelSFX; i < kNumChannels; i++)

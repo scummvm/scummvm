@@ -168,19 +168,19 @@ enum PARTS_INDEX {
 };
 
 // The following defines select the correct constant depending on Tinsel version
-#define IX_CROSS1 (TinselV2 ? IX2_CROSS1 : IX1_CROSS1)
-#define IX_CURDD (TinselV2 ? IX2_CURDD : IX1_CURDD)
-#define IX_CURDU (TinselV2 ? IX2_CURDU : IX1_CURDU)
-#define IX_CURLR (TinselV2 ? IX2_CURLR : IX1_CURLR)
-#define IX_CURUD (TinselV2 ? IX2_CURUD : IX1_CURUD)
-#define IX_CURUL (TinselV2 ? IX2_CURUL : IX1_CURUL)
-#define IX_MDGROOVE (TinselV2 ? IX2_MDGROOVE : IX1_MDGROOVE)
-#define IX_MDSLIDER (TinselV2 ? IX2_MDSLIDER : IX1_MDSLIDER)
-#define IX_NTR (TinselV2 ? IX2_NTR : IX1_NTR)
-#define IX_RBR (TinselV2 ? IX2_RBR : IX1_RBR)
-#define IX_RTL (TinselV2 ? IX2_RTL : IX1_RTL)
-#define IX_RTR (TinselV2 ? IX2_RTR : IX1_RTR)
-#define IX_TICK1 (TinselV2 ? IX2_TICK1 : IX1_TICK1)
+#define IX_CROSS1 ((TinselVersion >= 2) ? IX2_CROSS1 : IX1_CROSS1)
+#define IX_CURDD ((TinselVersion >= 2) ? IX2_CURDD : IX1_CURDD)
+#define IX_CURDU ((TinselVersion >= 2) ? IX2_CURDU : IX1_CURDU)
+#define IX_CURLR ((TinselVersion >= 2) ? IX2_CURLR : IX1_CURLR)
+#define IX_CURUD ((TinselVersion >= 2) ? IX2_CURUD : IX1_CURUD)
+#define IX_CURUL ((TinselVersion >= 2) ? IX2_CURUL : IX1_CURUL)
+#define IX_MDGROOVE ((TinselVersion >= 2) ? IX2_MDGROOVE : IX1_MDGROOVE)
+#define IX_MDSLIDER ((TinselVersion >= 2) ? IX2_MDSLIDER : IX1_MDSLIDER)
+#define IX_NTR ((TinselVersion >= 2) ? IX2_NTR : IX1_NTR)
+#define IX_RBR ((TinselVersion >= 2) ? IX2_RBR : IX1_RBR)
+#define IX_RTL ((TinselVersion >= 2) ? IX2_RTL : IX1_RTL)
+#define IX_RTR ((TinselVersion >= 2) ? IX2_RTR : IX1_RTR)
+#define IX_TICK1 ((TinselVersion >= 2) ? IX2_TICK1 : IX1_TICK1)
 
 #define NORMGRAPH 0
 #define DOWNGRAPH 1
@@ -195,26 +195,26 @@ enum PARTS_INDEX {
 #define HOPEDFORFREELS 6 // Expected flag reels
 //-----------------------
 
-#define MAX_ININV (TinselV2 ? 160 : 150) // Max in an inventory
+#define MAX_ININV ((TinselVersion >= 2) ? 160 : 150) // Max in an inventory
 
-#define ITEM_WIDTH (TinselV2 ? 50 : 25)  // Dimensions of an icon
-#define ITEM_HEIGHT (TinselV2 ? 50 : 25) //
-#define I_SEPARATION (TinselV2 ? 2 : 1)  // Item separation
+#define ITEM_WIDTH ((TinselVersion >= 2) ? 50 : 25)  // Dimensions of an icon
+#define ITEM_HEIGHT ((TinselVersion >= 2) ? 50 : 25) //
+#define I_SEPARATION ((TinselVersion >= 2) ? 2 : 1)  // Item separation
 
 #define NM_TOFF 11                // Title text Y offset from top
-#define NM_TBT (TinselV2 ? 4 : 0) // Y, title box top
+#define NM_TBT ((TinselVersion >= 2) ? 4 : 0) // Y, title box top
 #define NM_TBB 33
-#define NM_LSX (TinselV2 ? 4 : 0) // X, left side
-#define NM_BSY (TinselV2 ? -9 : -M_TH + 1)
-#define NM_RSX (TinselV2 ? -9 : -M_SW + 1)
+#define NM_LSX ((TinselVersion >= 2) ? 4 : 0) // X, left side
+#define NM_BSY ((TinselVersion >= 2) ? -9 : -M_TH + 1)
+#define NM_RSX ((TinselVersion >= 2) ? -9 : -M_SW + 1)
 #define NM_SBL (-27)
-#define NM_SLH (TinselV2 ? 11 : 5) // Slider height
+#define NM_SLH ((TinselVersion >= 2) ? 11 : 5) // Slider height
 #define NM_SLX (-11)               // Slider X offset (from right)
 
-#define NM_BG_POS_X (TinselV2 ? 9 : 1)    // }
-#define NM_BG_POS_Y (TinselV2 ? 9 : 1)    // } Offset of translucent rectangle
-#define NM_BG_SIZ_X (TinselV2 ? -18 : -3) // }
-#define NM_BG_SIZ_Y (TinselV2 ? -18 : -3) // } How much larger it is than edges
+#define NM_BG_POS_X ((TinselVersion >= 2) ? 9 : 1)    // }
+#define NM_BG_POS_Y ((TinselVersion >= 2) ? 9 : 1)    // } Offset of translucent rectangle
+#define NM_BG_SIZ_X ((TinselVersion >= 2) ? -18 : -3) // }
+#define NM_BG_SIZ_Y ((TinselVersion >= 2) ? -18 : -3) // } How much larger it is than edges
 
 #define NM_RS_T_INSET 3
 #define NM_RS_B_INSET 4
@@ -222,32 +222,32 @@ enum PARTS_INDEX {
 #define NM_RS_R_INSET 4
 #define NM_RS_THICKNESS 5
 #define NM_MOVE_AREA_B_Y 30
-#define NM_SLIDE_INSET (TinselV2 ? 18 : 9)     // X offset (from right) of left of scroll region
-#define NM_SLIDE_THICKNESS (TinselV2 ? 13 : 7) // thickness of scroll region
+#define NM_SLIDE_INSET ((TinselVersion >= 2) ? 18 : 9)     // X offset (from right) of left of scroll region
+#define NM_SLIDE_THICKNESS ((TinselVersion >= 2) ? 13 : 7) // thickness of scroll region
 #define NM_UP_ARROW_TOP 34                     // Y offset of top of up arrow
 #define NM_UP_ARROW_BOTTOM 49                  // Y offset of bottom of up arrow
 #define NM_DN_ARROW_TOP 22                     // Y offset (from bottom) of top of down arrow
 #define NM_DN_ARROW_BOTTOM 5                   // Y offset (from bottom) of bottom of down arrow
 
-#define MD_YBUTTOP (TinselV2 ? 2 : 9)
-#define MD_YBUTBOT (TinselV2 ? 16 : 0)
-#define MD_XLBUTL (TinselV2 ? 4 : 1)
-#define MD_XLBUTR (TinselV2 ? 26 : 10)
-#define MD_XRBUTL (TinselV2 ? 173 : 105)
-#define MD_XRBUTR (TinselV2 ? 195 : 114)
+#define MD_YBUTTOP ((TinselVersion >= 2) ? 2 : 9)
+#define MD_YBUTBOT ((TinselVersion >= 2) ? 16 : 0)
+#define MD_XLBUTL ((TinselVersion >= 2) ? 4 : 1)
+#define MD_XLBUTR ((TinselVersion >= 2) ? 26 : 10)
+#define MD_XRBUTL ((TinselVersion >= 2) ? 173 : 105)
+#define MD_XRBUTR ((TinselVersion >= 2) ? 195 : 114)
 #define ROTX1 60 // Rotate button's offsets from the center
 
-#define MAX_NAME_RIGHT (TinselV2 ? 417 : 213)
+#define MAX_NAME_RIGHT ((TinselVersion >= 2) ? 417 : 213)
 
-#define SLIDE_RANGE (TinselV2 ? 120 : 81)
-#define SLIDE_MINX (TinselV2 ? 25 : 8)
-#define SLIDE_MAXX (TinselV2 ? 25 + 120 : 8 + 81)
+#define SLIDE_RANGE ((TinselVersion >= 2) ? 120 : 81)
+#define SLIDE_MINX ((TinselVersion >= 2) ? 25 : 8)
+#define SLIDE_MAXX ((TinselVersion >= 2) ? 25 + 120 : 8 + 81)
 
-#define MDTEXT_YOFF (TinselV2 ? -1 : 6)
+#define MDTEXT_YOFF ((TinselVersion >= 2) ? -1 : 6)
 #define MDTEXT_XOFF -4
 #define TOG2_YOFF -22
 #define ROT_YOFF 48
-#define TYOFF (TinselV2 ? 4 : 0)
+#define TYOFF ((TinselVersion >= 2) ? 4 : 0)
 #define FLAGX (-5)
 #define FLAGY 4
 
@@ -392,8 +392,8 @@ static CONFBOX t2OptionBox[] = {
 
 static CONFINIT t2ciOption = {6, 4, 144, 60, false, t2OptionBox, sizeof(t2OptionBox) / sizeof(CONFBOX), NO_HEADING};
 
-#define ciOption (TinselV2 ? t2ciOption : t1ciOption)
-#define optionBox (TinselV2 ? t2OptionBox : t1OptionBox)
+#define ciOption ((TinselVersion >= 2) ? t2ciOption : t1ciOption)
+#define optionBox ((TinselVersion >= 2) ? t2OptionBox : t1OptionBox)
 
 /*-------------------------------------------------------------*\
 | These are the load and save game menus.			|
@@ -473,10 +473,10 @@ static CONFBOX t2SaveBox[] = {
 static CONFINIT t1ciSave = {10, 6, 20, 16, true, t1SaveBox, ARRAYSIZE(t1SaveBox), SIX_SAVE_HEADING};
 static CONFINIT t2ciSave = {10, 6, 40, 16, true, t2SaveBox, sizeof(t2SaveBox) / sizeof(CONFBOX), SS_SAVE_HEADING};
 
-#define ciLoad (TinselV2 ? t2ciLoad : t1ciLoad)
-#define loadBox (TinselV2 ? t2LoadBox : t1LoadBox)
-#define ciSave (TinselV2 ? t2ciSave : t1ciSave)
-#define saveBox (TinselV2 ? t2SaveBox : t1SaveBox)
+#define ciLoad ((TinselVersion >= 2) ? t2ciLoad : t1ciLoad)
+#define loadBox ((TinselVersion >= 2) ? t2LoadBox : t1LoadBox)
+#define ciSave ((TinselVersion >= 2) ? t2ciSave : t1ciSave)
+#define saveBox ((TinselVersion >= 2) ? t2SaveBox : t1SaveBox)
 
 /*-------------------------------------------------------------*\
 | This is the restart confirmation 'menu'.			|
@@ -508,7 +508,7 @@ static CONFINIT t1ciRestart = {4, 2, 98, 53, false, t1RestartBox, ARRAYSIZE(t1Re
 static CONFINIT t1ciRestartPSX = {8, 2, 46, 53, false, t1RestartBoxPSX, ARRAYSIZE(t1RestartBoxPSX), SIX_RESTART_HEADING};
 static CONFINIT t2ciRestart = {4, 2, 196, 53, false, t2RestartBox, sizeof(t2RestartBox) / sizeof(CONFBOX), SS_RESTART_HEADING};
 
-#define ciRestart (TinselV2 ? t2ciRestart : (TinselV1PSX ? t1ciRestartPSX : t1ciRestart))
+#define ciRestart ((TinselVersion >= 2) ? t2ciRestart : (TinselV1PSX ? t1ciRestartPSX : t1ciRestart))
 
 /*-------------------------------------------------------------*\
 | This is the sound control 'menu'. In Discworld 2, it also		|
@@ -532,7 +532,7 @@ static CONFBOX t2SoundBox[] = {
 static CONFINIT t1ciSound = {10, 5, 20, 16, false, t1SoundBox, ARRAYSIZE(t1SoundBox), NO_HEADING};
 static CONFINIT t2ciSound = {10, 5, 40, 16, false, t2SoundBox, sizeof(t2SoundBox) / sizeof(CONFBOX), SS_SOUND_HEADING};
 
-#define ciSound (TinselV2 ? t2ciSound : t1ciSound)
+#define ciSound ((TinselVersion >= 2) ? t2ciSound : t1ciSound)
 
 /*-------------------------------------------------------------*\
 | This is the (mouse) control 'menu'.				|
@@ -618,8 +618,8 @@ static CONFBOX t2QuitBox[] = {
 static CONFINIT t1ciQuit = {4, 2, 98, 53, false, t1QuitBox, ARRAYSIZE(t1QuitBox), SIX_QUIT_HEADING};
 static CONFINIT t2ciQuit = {4, 2, 196, 53, false, t2QuitBox, sizeof(t2QuitBox) / sizeof(CONFBOX), SS_QUIT_HEADING};
 
-#define quitBox (TinselV2 ? t2QuitBox : t1QuitBox)
-#define ciQuit (TinselV2 ? t2ciQuit : t1ciQuit)
+#define quitBox ((TinselVersion >= 2) ? t2QuitBox : t1QuitBox)
+#define ciQuit ((TinselVersion >= 2) ? t2ciQuit : t1ciQuit)
 
 /***************************************************************************\
 |************************    Startup and shutdown    ***********************|
@@ -736,8 +736,8 @@ enum {
 #define M_IDT 10 // Y offset (from bottom) of top of down arrow
 #define M_IDB 3  // Y offset (from bottom) of bottom of down arrow
 
-#define START_ICONX (TinselV2 ? 12 : (M_SW + 1))         // } Relative offset of first icon
-#define START_ICONY (TinselV2 ? 40 : (M_TBB + M_TH + 1)) // } within the inventory window
+#define START_ICONX ((TinselVersion >= 2) ? 12 : (M_SW + 1))         // } Relative offset of first icon
+#define START_ICONY ((TinselVersion >= 2) ? 40 : (M_TBB + M_TH + 1)) // } within the inventory window
 
 /*-------------------------------------------------------------------------*/
 
@@ -1158,7 +1158,7 @@ int Dialogs::WhichItemHeld() {
 void Dialogs::InventoryIconCursor(bool bNewItem) {
 
 	if (_heldItem != INV_NOICON) {
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			if (bNewItem) {
 				int objIndex = GetObjectIndex(_heldItem);
 				_heldFilm = _invFilms[objIndex];
@@ -1374,7 +1374,7 @@ void Dialogs::Select(int i, bool force) {
 	switch (cd.box[i].boxType) {
 	case RGROUP:
 		_iconArray[HL2] = RectangleObject(_vm->_bg->BgPal(),
-		                                   (TinselV2 ? HighlightColor() : COL_HILIGHT), cd.box[i].w, cd.box[i].h);
+		                                   ((TinselVersion >= 2) ? HighlightColor() : COL_HILIGHT), cd.box[i].w, cd.box[i].h);
 		MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _iconArray[HL2]);
 		MultiSetAniXY(_iconArray[HL2],
 		              _invD[_activeInv].inventoryX + cd.box[i].xpos,
@@ -1384,7 +1384,7 @@ void Dialogs::Select(int i, bool force) {
 		if (cd.editableRgroup) {
 			MultiSetZPosition(_iconArray[HL2], Z_INV_ITEXT + 1);
 
-			if (TinselV2) {
+			if (TinselVersion >= 2) {
 				assert(cd.box[i].textMethod == TM_POINTER);
 			} else {
 				assert(cd.box[i].ixText == USE_POINTER);
@@ -1474,7 +1474,7 @@ void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 	INV_OBJECT *invObj;
 
 	// Validate trying to add to a legal inventory
-	assert(invno == INV_1 || invno == INV_2 || invno == INV_CONV || invno == INV_OPEN || (invno == INV_DEFAULT && TinselV2));
+	assert(invno == INV_1 || invno == INV_2 || invno == INV_CONV || invno == INV_OPEN || (invno == INV_DEFAULT && TinselVersion >= 2));
 
 	if (invno == INV_OPEN) {
 		assert(_inventoryState == ACTIVE_INV && (_activeInv == INV_1 || _activeInv == INV_2)); // addopeninv() with inventry not open
@@ -1486,7 +1486,7 @@ void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 	} else {
 		bOpen = false;
 
-		if (TinselV2 && invno == INV_DEFAULT) {
+		if ((TinselVersion >= 2) && invno == INV_DEFAULT) {
 			invObj = GetInvObject(icon);
 			if (invObj->attribute & DEFINV2)
 				invno = INV_2;
@@ -1512,7 +1512,7 @@ void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 	if (i == _invD[invno].NoofItems) {
 		if (!bOpen) {
 			if (invno == INV_CONV) {
-				if (TinselV2) {
+				if (TinselVersion >= 2) {
 					int nei;
 
 					// Count how many current contents have end attribute
@@ -1586,7 +1586,7 @@ bool Dialogs::RemFromInventory(int invno, int icon) {
 		memmove(&_invD[invno].contents[i], &_invD[invno].contents[i + 1], (_invD[invno].NoofItems - i) * sizeof(int));
 		_invD[invno].NoofItems--;
 
-		if (TinselV2 && invno == INV_CONV) {
+		if ((TinselVersion >= 2) && invno == INV_CONV) {
 			_invD[INV_CONV].NoofHicons = _invD[invno].NoofItems;
 
 			// Get the window to re-position
@@ -1605,7 +1605,7 @@ void Dialogs::HoldItem(int item, bool bKeepFilm) {
 	INV_OBJECT *invObj;
 
 	if (_heldItem != item) {
-		if (TinselV2 && (_heldItem != NOOBJECT)) {
+		if ((TinselVersion >= 2) && (_heldItem != NOOBJECT)) {
 			// No longer holding previous item
 			_vm->_cursor->DelAuxCursor(); // no longer aux cursor
 
@@ -1623,7 +1623,7 @@ void Dialogs::HoldItem(int item, bool bKeepFilm) {
 					AddToInventory(INV_1, _heldItem);
 			}
 
-		} else if (!TinselV2) {
+		} else if (TinselVersion <= 1) {
 			if (item == INV_NOICON && _heldItem != INV_NOICON)
 				_vm->_cursor->DelAuxCursor(); // no longer aux cursor
 
@@ -1640,7 +1640,7 @@ void Dialogs::HoldItem(int item, bool bKeepFilm) {
 
 		_heldItem = item; // Item held
 
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			InventoryIconCursor(!bKeepFilm);
 
 			// Redraw contents - held item not displayed as a content.
@@ -1648,7 +1648,7 @@ void Dialogs::HoldItem(int item, bool bKeepFilm) {
 		}
 	}
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		// Redraw contents - held item not displayed as a content.
 		_ItemsChanged = true;
 }
@@ -1693,7 +1693,7 @@ enum { I_NOTIN,
  * to rework all this.
  */
 int Dialogs::InvArea(int x, int y) {
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		int RightX = MultiRightmost(_rectObject) - NM_BG_SIZ_X - NM_BG_POS_X - NM_RS_R_INSET;
 		int BottomY = MultiLowest(_rectObject) - NM_BG_SIZ_Y - NM_BG_POS_Y - NM_RS_B_INSET;
 
@@ -1958,13 +1958,13 @@ int Dialogs::WhichMenuBox(int curX, int curY, bool bSlides) {
 
 	// Slider on extra window
 	if (cd.bExtraWin) {
-		const Common::Rect r = TinselV2 ? Common::Rect(411, 46, 425, 339) : Common::Rect(20 + 181, 24 + 2, 20 + 181 + 8, 24 + 139 + 5);
+		const Common::Rect r = (TinselVersion >= 2) ? Common::Rect(411, 46, 425, 339) : Common::Rect(20 + 181, 24 + 2, 20 + 181 + 8, 24 + 139 + 5);
 
 		if (r.contains(curX, curY)) {
 
-			if (curY < (r.top + (TinselV2 ? 18 : 5)))
+			if (curY < (r.top + ((TinselVersion >= 2) ? 18 : 5)))
 				return IB_UP;
-			else if (curY > (r.bottom - (TinselV2 ? 18 : 5)))
+			else if (curY > (r.bottom - ((TinselVersion >= 2) ? 18 : 5)))
 				return IB_DOWN;
 			else if (curY + _invD[_activeInv].inventoryY < _sliderYpos)
 				return IB_SLIDE_UP;
@@ -2020,7 +2020,7 @@ void Dialogs::InvBoxes(bool InBody, int curX, int curY) {
 		    cd.box[cd.pointBox].boxType == AATBUT ||
 		    cd.box[cd.pointBox].boxType == AABUT) {
 			_iconArray[HL1] = RectangleObject(_vm->_bg->BgPal(),
-			                                   (TinselV2 ? HighlightColor() : COL_HILIGHT),
+			                                   ((TinselVersion >= 2) ? HighlightColor() : COL_HILIGHT),
 			                                   cd.box[cd.pointBox].w, cd.box[cd.pointBox].h);
 			MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _iconArray[HL1]);
 			MultiSetAniXY(_iconArray[HL1],
@@ -2332,7 +2332,7 @@ OBJECT *Dialogs::AddObject(const FREEL *pfreel, int num) {
 
 void Dialogs::AddSlider(OBJECT **slide, const FILM *pfilm) {
 	_slideObject = *slide = AddObject(&pfilm->reels[IX_SLIDE], -1);
-	MultiSetAniXY(*slide, MultiRightmost(_rectObject) + (TinselV2 ? NM_SLX : -M_SXOFF + 2),
+	MultiSetAniXY(*slide, MultiRightmost(_rectObject) + ((TinselVersion >= 2) ? NM_SLX : -M_SXOFF + 2),
 	              _invD[_activeInv].inventoryY + _sliderYpos);
 	MultiSetZPosition(*slide, Z_INV_MFRAME);
 }
@@ -2350,11 +2350,11 @@ void Dialogs::AddBox(int *pi, const int i) {
 	switch (cd.box[i].boxType) {
 	default:
 		// Ignore if it's a blank scene hopper box
-		if (TinselV2 && (cd.box[i].textMethod == TM_NONE))
+		if ((TinselVersion >= 2) && (cd.box[i].textMethod == TM_NONE))
 			break;
 
 		// Give us a box
-		_iconArray[*pi] = RectangleObject(_vm->_bg->BgPal(), TinselV2 ? BoxColor() : COL_BOX,
+		_iconArray[*pi] = RectangleObject(_vm->_bg->BgPal(), (TinselVersion >= 2) ? BoxColor() : COL_BOX,
 		                                   cd.box[i].w, cd.box[i].h);
 		MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _iconArray[*pi]);
 		MultiSetAniXY(_iconArray[*pi], x, y);
@@ -2363,7 +2363,7 @@ void Dialogs::AddBox(int *pi, const int i) {
 
 		// Stick in the text
 		if ((cd.box[i].textMethod == TM_POINTER) ||
-		    (!TinselV2 && (cd.box[i].ixText == USE_POINTER))) {
+		    ((TinselVersion <= 1) && (cd.box[i].ixText == USE_POINTER))) {
 			if (cd.box[i].boxText != NULL) {
 				if (cd.box[i].boxType == RGROUP) {
 					_iconArray[*pi] = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), cd.box[i].boxText, 0,
@@ -2386,7 +2386,7 @@ void Dialogs::AddBox(int *pi, const int i) {
 				*pi += 1;
 			}
 		} else {
-			if (TinselV2) {
+			if (TinselVersion >= 2) {
 				if (cd.box[i].textMethod == TM_INDEX)
 					LoadStringRes(SysString(cd.box[i].ixText), _vm->_font->TextBufferAddr(), TBUFSZ);
 				else {
@@ -2398,7 +2398,7 @@ void Dialogs::AddBox(int *pi, const int i) {
 				assert(cd.box[i].boxType != RGROUP); // You'll need to add some code!
 			}
 
-			if (TinselV2 && (cd.box[i].boxType == RGROUP))
+			if ((TinselVersion >= 2) && (cd.box[i].boxType == RGROUP))
 				_iconArray[*pi] = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
 				                                 0, x + 2, y + TYOFF, _vm->_font->GetTagFontHandle(), 0, 0);
 			else
@@ -2452,7 +2452,7 @@ void Dialogs::AddBox(int *pi, const int i) {
 		*pi += 1;
 
 		// Stick in the text
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			assert(cd.box[i].textMethod == TM_INDEX);
 			LoadStringRes(SysString(cd.box[i].ixText), _vm->_font->TextBufferAddr(), TBUFSZ);
 		} else {
@@ -2477,7 +2477,7 @@ void Dialogs::AddBox(int *pi, const int i) {
 		*pi += 1;
 
 		// Stick in the text
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			assert(cd.box[i].textMethod == TM_INDEX);
 			LoadStringRes(SysString(cd.box[i].ixText), _vm->_font->TextBufferAddr(), TBUFSZ);
 		} else {
@@ -2518,7 +2518,7 @@ void Dialogs::AddBox(int *pi, const int i) {
 		*pi += 1;
 
 		// Stick in the text
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			assert(cd.box[i].textMethod == TM_INDEX);
 			LoadStringRes(SysString(cd.box[i].ixText), _vm->_font->TextBufferAddr(), TBUFSZ);
 		} else {
@@ -2591,7 +2591,7 @@ void Dialogs::AddBoxes(bool bPosnSlide) {
 	}
 
 	if (cd.bExtraWin) {
-		if (bPosnSlide && !TinselV2)
+		if (bPosnSlide && TinselVersion <= 1)
 			_sliderYpos = _sliderYmin + (cd.extraBase * (_sliderYmax - _sliderYmin)) / (MAX_SAVED_FILES - NUM_RGROUP_BOXES);
 		else if (bPosnSlide) {
 			// Tinsel 2 bPosnSlide code
@@ -2616,7 +2616,7 @@ void Dialogs::AddBoxes(bool bPosnSlide) {
 			MultiMoveRelXY(_slideObject, 0, _sliderYpos - lastY);
 		}
 
-		if (!TinselV2)
+		if (TinselVersion <= 1)
 			MultiSetAniXY(_slideObject, _invD[_activeInv].inventoryX + 24 + 179, _sliderYpos);
 	}
 
@@ -2642,8 +2642,8 @@ int Dialogs::AddExtraWindow(int x, int y, OBJECT **retObj) {
 	// Get the frame's data
 	pfilm = (const FILM *)_vm->_handle->LockMem(_hWinParts);
 
-	x += TinselV2 ? 30 : 20;
-	y += TinselV2 ? 38 : 24;
+	x += (TinselVersion >= 2) ? 30 : 20;
+	y += (TinselVersion >= 2) ? 38 : 24;
 
 	// Draw the four corners
 	retObj[n] = AddObject(&pfilm->reels[IX_RTL], -1); // Top left
@@ -2651,44 +2651,44 @@ int Dialogs::AddExtraWindow(int x, int y, OBJECT **retObj) {
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
 	retObj[n] = AddObject(&pfilm->reels[IX_NTR], -1); // Top right
-	MultiSetAniXY(retObj[n], x + (TinselV2 ? _TLwidth + 312 : 152), y);
+	MultiSetAniXY(retObj[n], x + ((TinselVersion >= 2) ? _TLwidth + 312 : 152), y);
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
 	retObj[n] = AddObject(&pfilm->reels[IX_BL], -1); // Bottom left
-	MultiSetAniXY(retObj[n], x, y + (TinselV2 ? _TLheight + 208 : 124));
+	MultiSetAniXY(retObj[n], x, y + ((TinselVersion >= 2) ? _TLheight + 208 : 124));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
 	retObj[n] = AddObject(&pfilm->reels[IX_BR], -1); // Bottom right
-	MultiSetAniXY(retObj[n], x + (TinselV2 ? _TLwidth + 312 : 152),
-	              y + (TinselV2 ? _TLheight + 208 : 124));
+	MultiSetAniXY(retObj[n], x + ((TinselVersion >= 2) ? _TLwidth + 312 : 152),
+	              y + ((TinselVersion >= 2) ? _TLheight + 208 : 124));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
 
 	// Draw the edges
 	retObj[n] = AddObject(&pfilm->reels[IX_H156], -1); // Top
-	MultiSetAniXY(retObj[n], x + (TinselV2 ? _TLwidth : 6), y + NM_TBT);
+	MultiSetAniXY(retObj[n], x + ((TinselVersion >= 2) ? _TLwidth : 6), y + NM_TBT);
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
 	retObj[n] = AddObject(&pfilm->reels[IX_H156], -1); // Bottom
-	MultiSetAniXY(retObj[n], x + (TinselV2 ? _TLwidth : 6), y + (TinselV2 ? _TLheight + 208 + _BLheight + NM_BSY : 143));
+	MultiSetAniXY(retObj[n], x + ((TinselVersion >= 2) ? _TLwidth : 6), y + ((TinselVersion >= 2) ? _TLheight + 208 + _BLheight + NM_BSY : 143));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
 	retObj[n] = AddObject(&pfilm->reels[IX_V104], -1); // Left
-	MultiSetAniXY(retObj[n], x + NM_LSX, y + (TinselV2 ? _TLheight : 20));
+	MultiSetAniXY(retObj[n], x + NM_LSX, y + ((TinselVersion >= 2) ? _TLheight : 20));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
 	retObj[n] = AddObject(&pfilm->reels[IX_V104], -1); // Right 1
-	MultiSetAniXY(retObj[n], x + (TinselV2 ? _TLwidth + 312 + _TRwidth + NM_RSX : 179),
-	              y + (TinselV2 ? _TLheight : 20));
+	MultiSetAniXY(retObj[n], x + ((TinselVersion >= 2) ? _TLwidth + 312 + _TRwidth + NM_RSX : 179),
+	              y + ((TinselVersion >= 2) ? _TLheight : 20));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
 	retObj[n] = AddObject(&pfilm->reels[IX_V104], -1); // Right 2
-	MultiSetAniXY(retObj[n], x + (TinselV2 ? _TLwidth + 312 + _TRwidth + NM_SBL : 188),
-	              y + (TinselV2 ? _TLheight : 20));
+	MultiSetAniXY(retObj[n], x + ((TinselVersion >= 2) ? _TLwidth + 312 + _TRwidth + NM_SBL : 188),
+	              y + ((TinselVersion >= 2) ? _TLheight : 20));
 	MultiSetZPosition(retObj[n], Z_INV_MFRAME);
 	n++;
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		_sliderYpos = _sliderYmin = y + 27;
 		_sliderYmax = y + 273;
 
@@ -2754,7 +2754,7 @@ void Dialogs::ConstructInventory(InventoryType filling) {
 	eV = (_invD[_activeInv].NoofVicons - 1) * (ITEM_HEIGHT + I_SEPARATION) + _SuppV;
 
 	// Which window frame corners to use
-	if (TinselV2 && (_activeInv == INV_CONV)) {
+	if ((TinselVersion >= 2) && (_activeInv == INV_CONV)) {
 		_TL = IX_TL;
 		_TR = IX2_TR4;
 		_BL = IX_BL;
@@ -2799,7 +2799,7 @@ void Dialogs::ConstructInventory(InventoryType filling) {
 
 		// Bottom of header box
 		if (filling == FULL) {
-			if (TinselV2) {
+			if (TinselVersion >= 2) {
 				retObj[n] = AddObject(&pfilm->reels[hFillers[_invD[_activeInv].NoofHicons - 2]], -1);
 				MultiSetAniXY(retObj[n], invX + _TLwidth, invY + NM_TBB);
 				MultiSetZPosition(retObj[n], zpos);
@@ -2833,7 +2833,7 @@ void Dialogs::ConstructInventory(InventoryType filling) {
 		n++;
 	}
 	if (_SuppH) {
-		int offx = _TLwidth + eH - (TinselV2 ? ITEM_WIDTH + I_SEPARATION : 26);
+		int offx = _TLwidth + eH - ((TinselVersion >= 2) ? ITEM_WIDTH + I_SEPARATION : 26);
 		if (offx < _TLwidth) // Not too far!
 			offx = _TLwidth;
 
@@ -2862,7 +2862,7 @@ void Dialogs::ConstructInventory(InventoryType filling) {
 		// Left side of scroll bar
 		if (filling == FULL && _activeInv != INV_CONV) {
 			retObj[n] = AddObject(&pfilm->reels[vFillers[_invD[_activeInv].NoofVicons - 2]], -1);
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				MultiSetAniXY(retObj[n], invX + _TLwidth + eH + _TRwidth + NM_SBL, invY + _TLheight);
 			else
 				MultiSetAniXY(retObj[n], invX + _TLwidth + eH + M_SBL + 1, invY + _TLheight);
@@ -2877,8 +2877,8 @@ void Dialogs::ConstructInventory(InventoryType filling) {
 		n++;
 	}
 	if (_SuppV) {
-		int offy = _TLheight + eV - (TinselV2 ? ITEM_HEIGHT + I_SEPARATION : 26);
-		int minAmount = TinselV2 ? 20 : 5;
+		int offy = _TLheight + eV - ((TinselVersion >= 2) ? ITEM_HEIGHT + I_SEPARATION : 26);
+		int minAmount = (TinselVersion >= 2) ? 20 : 5;
 		if (offy < minAmount)
 			offy = minAmount;
 
@@ -2898,13 +2898,13 @@ void Dialogs::ConstructInventory(InventoryType filling) {
 	OBJECT **rect, **title;
 
 	// Draw background, slider and icons
-	if (TinselV2 && (filling != EMPTY)) {
+	if ((TinselVersion >= 2) && (filling != EMPTY)) {
 		AddBackground(&retObj[n++], eH, eV);
 		AddTitle(&retObj[n++], eH);
 	}
 
 	if (filling == FULL) {
-		if (!TinselV2) {
+		if (TinselVersion <= 1) {
 			rect = &retObj[n++];
 			title = &retObj[n++];
 
@@ -2914,7 +2914,7 @@ void Dialogs::ConstructInventory(InventoryType filling) {
 		if (_activeInv == INV_CONV) {
 			_slideObject = nullptr;
 
-			if (TinselV2) {
+			if (TinselVersion >= 2) {
 				// !!!!! MAGIC NUMBER ALERT !!!!!
 				// Make sure it's big enough for the heading
 				if (MultiLeftmost(retObj[n - 1]) < _invD[INV_CONV].inventoryX + 10) {
@@ -2923,14 +2923,14 @@ void Dialogs::ConstructInventory(InventoryType filling) {
 				}
 			}
 		} else if (_invD[_activeInv].NoofItems > _invD[_activeInv].NoofHicons * _invD[_activeInv].NoofVicons) {
-			_sliderYmin = _TLheight - (TinselV2 ? 1 : 2);
-			_sliderYmax = _TLheight + eV + (TinselV2 ? 12 : 10);
+			_sliderYmin = _TLheight - ((TinselVersion >= 2) ? 1 : 2);
+			_sliderYmax = _TLheight + eV + ((TinselVersion >= 2) ? 12 : 10);
 			AddSlider(&retObj[n++], pfilm);
 		}
 
 		FillInInventory();
 	} else if (filling == CONF) {
-		if (!TinselV2) {
+		if (TinselVersion <= 1) {
 			rect = &retObj[n++];
 			title = &retObj[n++];
 
@@ -3124,7 +3124,7 @@ void Dialogs::InvCursor(InvCursorFN fn, int CurX, int CurY) {
 
 void Dialogs::ConvAction(int index) {
 	assert(_activeInv == INV_CONV); // not conv. window!
-	MOVER *pMover = TinselV2 ? GetMover(_vm->_actor->GetLeadId()) : NULL;
+	MOVER *pMover = (TinselVersion >= 2) ? GetMover(_vm->_actor->GetLeadId()) : NULL;
 
 	switch (index) {
 	case INV_NOICON:
@@ -3136,7 +3136,7 @@ void Dialogs::ConvAction(int index) {
 
 	case INV_OPENICON:
 		// Store the direction the lead character is facing in when the conversation starts
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			_initialDirection = GetMoverDirection(pMover);
 		_thisIcon = -2; // Preamble
 		break;
@@ -3146,7 +3146,7 @@ void Dialogs::ConvAction(int index) {
 		break;
 	}
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		RunPolyTinselCode(_thisConvPoly, CONVERSE, PLR_NOEVENT, true);
 	else {
 		// If the lead's direction has changed for any reason (such as having broken the
@@ -3267,7 +3267,7 @@ void Dialogs::HideConversation(bool bHide) {
 			// Window is not hidden
 			_InventoryHidden = false;
 
-			if (TinselV2 && _ItemsChanged)
+			if ((TinselVersion >= 2) && _ItemsChanged)
 				// Just rebuild the whole thing
 				ConstructInventory(FULL);
 			else {
@@ -3277,14 +3277,14 @@ void Dialogs::HideConversation(bool bHide) {
 				}
 
 				// Don't flash if items changed. If they have, will be redrawn anyway.
-				if (TinselV2 || !_ItemsChanged) {
+				if ((TinselVersion >= 2) || !_ItemsChanged) {
 					for (i = 0; i < MAX_ICONS && _iconArray[i]; i++) {
 						MultiAdjustXY(_iconArray[i], -2 * SCREEN_WIDTH, 0);
 					}
 				}
 			}
 
-			if (TinselV2 && _bMoveOnUnHide) {
+			if ((TinselVersion >= 2) && _bMoveOnUnHide) {
 				/*
 				 * First time, position it appropriately
 				 */
@@ -3414,11 +3414,11 @@ void Dialogs::PopUpInventory(int invno) {
 		_reOpenMenu = false; // Better safe than sorry...
 
 		DisableTags(); // Tags disabled during inventory
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			DisablePointing(); // Pointing disabled during inventory
 
 		if (invno == INV_CONV) { // Conversation window?
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				// Quiet please..
 				_vm->_pcmMusic->dim(false);
 
@@ -3426,7 +3426,7 @@ void Dialogs::PopUpInventory(int invno) {
 			memset(_invD[INV_CONV].contents, 0, MAX_ININV * sizeof(int));
 			memcpy(_invD[INV_CONV].contents, _permIcons, _numPermIcons * sizeof(int));
 			_invD[INV_CONV].NoofItems = _numPermIcons;
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				_invD[INV_CONV].NoofHicons = _numPermIcons;
 			else
 				_thisIcon = 0;
@@ -3460,7 +3460,7 @@ void Dialogs::SetMenuGlobals(CONFINIT *ci) {
 	cd.NumBoxes = ci->NumBoxes;
 	cd.ixHeading = ci->ixHeading;
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if ((ci->ixHeading != NO_HEADING) && SysString(ci->ixHeading))
 			_invD[INV_MENU].hInvTitle = SysString(ci->ixHeading);
 		else
@@ -3491,7 +3491,7 @@ void Dialogs::OpenMenu(CONFTYPE menuType) {
 
 	case SAVE_MENU:
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true); // Show VK when saving a game
-		if (!TinselV2)
+		if (TinselVersion <= 1)
 			_vm->_cursor->SetCursorScreenXY(262, 91);
 		SetMenuGlobals(&ciSave);
 		cd.editableRgroup = true;
@@ -3505,7 +3505,7 @@ void Dialogs::OpenMenu(CONFTYPE menuType) {
 		break;
 
 	case RESTART_MENU:
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			_vm->_cursor->SetCursorScreenXY(360, 153);
 		else if (_vm->getLanguage() == Common::JA_JPN)
 			_vm->_cursor->SetCursorScreenXY(180, 106);
@@ -3516,11 +3516,11 @@ void Dialogs::OpenMenu(CONFTYPE menuType) {
 		break;
 
 	case SOUND_MENU:
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			_displayedLanguage = TextLanguage();
 #if 1
 		// FIXME: Hack to setup CONFBOX pointer to data in the global Config object
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			t2SoundBox[0].ival = &_vm->_config->_musicVolume;
 			t2SoundBox[1].ival = &_vm->_config->_soundVolume;
 			t2SoundBox[2].ival = &_vm->_config->_voiceVolume;
@@ -3545,7 +3545,7 @@ void Dialogs::OpenMenu(CONFTYPE menuType) {
 		break;
 
 	case QUIT_MENU:
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			_vm->_cursor->SetCursorScreenXY(360, 153);
 		else if (_vm->getLanguage() == Common::JA_JPN)
 			_vm->_cursor->SetCursorScreenXY(180, 106);
@@ -3653,7 +3653,7 @@ void Dialogs::KillInventory() {
 
 	if (_inventoryState == ACTIVE_INV) {
 		EnableTags();
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			EnablePointing();
 
 		_invD[_activeInv].bMax = _InventoryMaximised;
@@ -3674,7 +3674,7 @@ void Dialogs::KillInventory() {
 	} else if (_activeInv == INV_CONF)
 		InventoryIconCursor(false);
 
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		// Pump up the volume
 		if (_activeInv == INV_CONV)
 			_vm->_pcmMusic->unDim(false);
@@ -3807,7 +3807,7 @@ void Dialogs::SlideCSlider(int y, SSFN fn) {
 			gotoY = newY; // Hunky-Dory
 
 		// Move slider to new position
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			MultiMoveRelXY(_slideObject, 0, gotoY - _sliderYpos);
 		_sliderYpos = gotoY;
 
@@ -4607,11 +4607,11 @@ void Dialogs::InvPickup(int index) {
 
 	// If not holding anything
 	if (_heldItem == INV_NOICON && _invD[_activeInv].contents[index] &&
-	    (!TinselV2 || _invD[_activeInv].contents[index] != _heldItem)) {
+	    ((TinselVersion <= 1) || _invD[_activeInv].contents[index] != _heldItem)) {
 		// Pick-up
 		invObj = GetInvObject(_invD[_activeInv].contents[index]);
 		_thisIcon = _invD[_activeInv].contents[index];
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			InvTinselEvent(invObj, PICKUP, INV_PICKUP, index);
 		else if (invObj->hScript)
 			InvTinselEvent(invObj, WALKTO, INV_PICKUP, index);
@@ -4625,7 +4625,7 @@ void Dialogs::InvPickup(int index) {
 			InvTinselEvent(invObj, PUTDOWN, INV_PICKUP, index);
 
 		else if (!(invObj->attribute & IO_ONLYINV1 && _activeInv != INV_1) && !(invObj->attribute & IO_ONLYINV2 && _activeInv != INV_2)) {
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				InvPutDown(index);
 			else
 				CoroScheduler.createProcess(PID_TCODE, InvPdProcess, &index, sizeof(index));
@@ -4741,9 +4741,9 @@ void Dialogs::InvAction() {
 			if (index != INV_NOICON) {
 				if (_invD[_activeInv].contents[index] && _invD[_activeInv].contents[index] != _heldItem) {
 					invObj = GetInvObject(_invD[_activeInv].contents[index]);
-					if (TinselV2)
+					if (TinselVersion >= 2)
 						_thisIcon = _invD[_activeInv].contents[index];
-					if (TinselV2 || (invObj->hScript))
+					if ((TinselVersion >= 2) || (invObj->hScript))
 						InvTinselEvent(invObj, ACTION, INV_ACTION, index);
 				}
 			}
@@ -5020,7 +5020,7 @@ void Dialogs::syncInvInfo(Common::Serializer &s) {
 		s.syncAsSint32LE(_invD[i].bMax);
 	}
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		for (int i = 0; i < _numObjects; ++i)
 			s.syncAsUint32LE(_invFilms[i]);
 		s.syncAsUint32LE(_heldFilm);
@@ -5054,7 +5054,7 @@ void Dialogs::RegisterIcons(void *cptr, int num) {
 			memmove(destP, srcP, 12);
 			destP->attribute = 0;
 		}
-	} else if (TinselV2) {
+	} else if (TinselVersion >= 2) {
 		if (_invFilms == NULL) {
 			// First time - allocate memory
 			MEM_NODE *node = MemoryAllocFixed(_numObjects * sizeof(SCNHANDLE));
@@ -5091,7 +5091,7 @@ void Dialogs::setInvWinParts(SCNHANDLE hf) {
 
 #ifdef DEBUG
 	pfilm = (const FILM *)_vm->_handle->LockMem(hf);
-	assert(FROM_32(pfilm->numreels) >= (uint32)(TinselV2 ? T2_HOPEDFORREELS : T1_HOPEDFORREELS)); // not as many reels as expected
+	assert(FROM_32(pfilm->numreels) >= (uint32)((TinselVersion >= 2) ? T2_HOPEDFORREELS : T1_HOPEDFORREELS)); // not as many reels as expected
 #endif
 }
 
@@ -5598,7 +5598,7 @@ static void ObjectProcess(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		CORO_INVOKE_1(AllowDclick, to->bev);
 
 	_ctx->pic = InitInterpretContext(GS_INVENTORY, to->pinvo->hScript, to->event, NOPOLY, 0, to->pinvo,
@@ -5632,7 +5632,7 @@ static void ObjectProcess(CORO_PARAM, const void *param) {
 static void InvTinselEvent(INV_OBJECT *pinvo, TINSEL_EVENT event, PLR_EVENT be, int index) {
 	OP_INIT to = {pinvo, event, be, 0};
 
-	if (_vm->_dialogs->InventoryIsHidden() || (TinselV2 && !pinvo->hScript))
+	if (_vm->_dialogs->InventoryIsHidden() || ((TinselVersion >= 2) && !pinvo->hScript))
 		return;
 
 	_vm->_dialogs->_glitterIndex = index;

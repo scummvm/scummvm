@@ -138,7 +138,7 @@ void AllowDclick(CORO_PARAM, PLR_EVENT be) {
  * Re-enables user control
  */
 void ControlOn() {
-	if (!TinselV2) {
+	if (TinselVersion <= 1) {
 		Control(CONTROL_ON);
 		return;
 	}
@@ -168,7 +168,7 @@ void ControlOn() {
  * Takes control from the user
  */
 void ControlOff() {
-	if (!TinselV2) {
+	if (TinselVersion <= 1) {
 		Control(CONTROL_ON);
 		return;
 	}
@@ -194,7 +194,7 @@ void ControlOff() {
  * Prevent tags and cursor re-appearing
  */
 void ControlStartOff() {
-	if (!TinselV2) {
+	if (TinselVersion <= 1) {
 		Control(CONTROL_STARTOFF);
 		return;
 	}
@@ -218,7 +218,7 @@ void ControlStartOff() {
  * Return TRUE if control taken, FALSE if not.
  */
 bool GetControl(int param) {
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		return GetControl();
 
 	else if (TestToken(TOKEN_CONTROL)) {
@@ -237,7 +237,7 @@ bool GetControl() {
 }
 
 bool ControlIsOn() {
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		return (g_controlState == CONTROL_ON);
 
 	return TestToken(TOKEN_CONTROL);
@@ -266,7 +266,7 @@ static void WalkProcess(CORO_PARAM, const void *param) {
 
 	_ctx->pMover = GetMover(LEAD_ACTOR);
 
-	if (TinselV2 && MoverIs(_ctx->pMover) && !MoverIsSWalking(_ctx->pMover)) {
+	if ((TinselVersion >= 2) && MoverIs(_ctx->pMover) && !MoverIsSWalking(_ctx->pMover)) {
 		assert(_ctx->pMover->hCpath != NOPOLY); // Lead actor is not in a path
 
 		_ctx->thisWalk = SetActorDest(_ctx->pMover, to->x, to->y, false, 0);
@@ -275,7 +275,7 @@ static void WalkProcess(CORO_PARAM, const void *param) {
 		while (MoverMoving(_ctx->pMover) && (_ctx->thisWalk == GetWalkNumber(_ctx->pMover)))
 			CORO_SLEEP(1);
 
-	} else if (!TinselV2 && _ctx->pMover->bActive) {
+	} else if ((TinselVersion <= 1) && _ctx->pMover->bActive) {
 		assert(_ctx->pMover->hCpath != NOPOLY); // Lead actor is not in a path
 
 		GetToken(TOKEN_LEAD);
@@ -312,13 +312,13 @@ static void ProcessUserEvent(TINSEL_EVENT uEvent, const Common::Point &coOrds, P
 
 	if ((actor = GetTaggedActor()) != 0) {
 		// Event for a tagged actor
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			ActorEvent(Common::nullContext, actor, uEvent, false, 0);
 		else
 			ActorEvent(actor, uEvent, be);
 	} else if ((hPoly = GetTaggedPoly()) != NOPOLY) {
 		// Event for active tagged polygon
-		if (!TinselV2)
+		if (TinselVersion <= 1)
 			RunPolyTinselCode(hPoly, uEvent, be, false);
 		else if (uEvent != PROV_WALKTO)
 			PolygonEvent(Common::nullContext, hPoly, uEvent, 0, false, 0);
@@ -328,13 +328,13 @@ static void ProcessUserEvent(TINSEL_EVENT uEvent, const Common::Point &coOrds, P
 
 		// There could be a poly involved which has no tag.
 		if ((hPoly = InPolygon(aniX, aniY, TAG)) != NOPOLY ||
-			(!TinselV2 && ((hPoly = InPolygon(aniX, aniY, EXIT)) != NOPOLY))) {
-			if (TinselV2 && (uEvent != PROV_WALKTO))
+			((TinselVersion <= 1) && ((hPoly = InPolygon(aniX, aniY, EXIT)) != NOPOLY))) {
+			if ((TinselVersion >= 2) && (uEvent != PROV_WALKTO))
 				PolygonEvent(Common::nullContext, hPoly, uEvent, 0, false, 0);
-			else if (!TinselV2)
+			else if (TinselVersion <= 1)
 				RunPolyTinselCode(hPoly, uEvent, be, false);
 		} else if ((uEvent == PROV_WALKTO) || (uEvent == WALKTO)) {
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				ProcessedProvisional();
 			WalkTo(aniX, aniY);
 		}
@@ -393,7 +393,7 @@ void ProcessKeyEvent(PLR_EVENT ke) {
 	PlayerEvent(ke, mousePos);
 }
 
-#define REAL_ACTION_CHECK if (TinselV2) { \
+#define REAL_ACTION_CHECK if (TinselVersion >= 2) { \
 	if (DwGetCurrentTime() - lastRealAction < 4) return; \
 	lastRealAction = DwGetCurrentTime(); \
 }
@@ -432,7 +432,7 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 	if (!ControlIsOn() && (pEvent != PLR_DRAG1_END))
 		return;
 
-	if (TinselV2 && _vm->_dialogs->InventoryActive()) {
+	if ((TinselVersion >= 2) && _vm->_dialogs->InventoryActive()) {
 		int x, y;
 		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &x, &y);
 		_vm->_dialogs->EventToInventory(pEvent, Common::Point(coOrds.x - x, coOrds.y - y));
@@ -467,7 +467,7 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 	case PLR_WALKTO:
 		REAL_ACTION_CHECK;
 
-		if (TinselV2 || !_vm->_dialogs->InventoryActive())
+		if ((TinselVersion >= 2) || !_vm->_dialogs->InventoryActive())
 			ProcessUserEvent(WALKTO, coOrds, PLR_SLEFT);
 		else
 			_vm->_dialogs->EventToInventory(PLR_SLEFT, coOrds);
@@ -476,7 +476,7 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 	case PLR_ACTION:
 		REAL_ACTION_CHECK;
 
-		if (TinselV2 || !_vm->_dialogs->InventoryActive())
+		if ((TinselVersion >= 2) || !_vm->_dialogs->InventoryActive())
 			ProcessUserEvent(ACTION, coOrds, PLR_DLEFT);
 		else
 			_vm->_dialogs->EventToInventory(PLR_DLEFT, coOrds);
@@ -485,7 +485,7 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 	case PLR_LOOK:
 		REAL_ACTION_CHECK;
 
-		if (TinselV2 || !_vm->_dialogs->InventoryActive())
+		if ((TinselVersion >= 2) || !_vm->_dialogs->InventoryActive())
 			ProcessUserEvent(LOOK, coOrds, PLR_SRIGHT);
 		else
 			_vm->_dialogs->EventToInventory(PLR_SRIGHT, coOrds);
@@ -559,7 +559,7 @@ void PolyTinselProcess(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 
 		// Take control for CONVERSE events
 		if (to->event == CONVERSE) {
@@ -655,14 +655,14 @@ void PolygonEvent(CORO_PARAM, HPOLYGON hPoly, TINSEL_EVENT tEvent, int actor, bo
 void RunPolyTinselCode(HPOLYGON hPoly, TINSEL_EVENT event, PLR_EVENT be, bool tc) {
 	PTP_INIT to = { hPoly, event, be, tc, 0, NULL };
 
-	assert(!TinselV2);
+	assert(TinselVersion <= 1);
 	CoroScheduler.createProcess(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
 }
 
 void effRunPolyTinselCode(HPOLYGON hPoly, TINSEL_EVENT event, int actor) {
 	PTP_INIT to = { hPoly, event, PLR_NOEVENT, false, actor, NULL };
 
-	assert(!TinselV2);
+	assert(TinselVersion <= 1);
 	CoroScheduler.createProcess(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
 }
 
