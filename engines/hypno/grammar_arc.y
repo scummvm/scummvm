@@ -107,8 +107,14 @@ hline: 	CTOK NUM {
 		ScriptInfo si($2, $3, $4, $5);
 		g_parsedArc->script.push_back(si);
 	}
-	| VTOK NUM NUM { debugC(1, kHypnoDebugParser, "V %d %d", $2, $3); }
-	| VTOK RESTOK { debugC(1, kHypnoDebugParser, "V 320,200"); }
+	| VTOK NUM NUM {
+		debugC(1, kHypnoDebugParser, "V %d %d", $2, $3);
+		g_parsedArc->mouseBox = Common::Rect(0, 0, $2, $3);
+	}
+	| VTOK RESTOK {
+		debugC(1, kHypnoDebugParser, "V 320,200");
+		g_parsedArc->mouseBox = Common::Rect(0, 0, 320, 200);
+	}
 	| OTOK NUM NUM {
 		g_parsedArc->objKillsRequired[0] = $2;
 		g_parsedArc->objMissesAllowed[0] = $3;

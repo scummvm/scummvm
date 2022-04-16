@@ -552,11 +552,13 @@ public:
 		objKillsRequired[1] = 0;
 		objMissesAllowed[0] = 0;
 		objMissesAllowed[1] = 0;
+		mouseBox = Common::Rect(0, 0, 320, 200);
 	}
 
 	uint32 id;
 	uint32 frameDelay;
 	Common::String mode;
+	Common::Rect mouseBox;
 	ArcadeTransitions transitions;
 	Segments segments;
 

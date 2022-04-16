@@ -199,6 +199,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_mask = nullptr;
 	_masks = nullptr;
 
+	if (arc->mouseBox == Common::Rect(0, 0, 0, 0))
+		error("Invalid or missing mouse box");
+
 	Common::Point offset;
 	_background = new MVideo(arc->backgroundVideo, offset, false, false, false);
 
@@ -268,7 +271,13 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 			case Common::EVENT_MOUSEMOVE:
 				drawCursorArcade(mousePos);
-				if (mousePos.x <= 100 && offset.x < 0) {
+				if (mousePos.x >= arc->mouseBox.right-1) {
+					g_system->warpMouse(arc->mouseBox.right-1, mousePos.y);
+					needsUpdate = true;
+				} else if (mousePos.y >= arc->mouseBox.bottom-1) {
+					g_system->warpMouse(mousePos.x, arc->mouseBox.bottom-1);
+					needsUpdate = true;
+				} else if (mousePos.x <= 100 && offset.x < 0) {
 					for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
 						if (it->video && it->video->decoder)
 							it->video->position.x = it->video->position.x + 1;
