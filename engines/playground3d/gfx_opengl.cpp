@@ -80,11 +80,6 @@ void OpenGLRenderer::init() {
 
 	computeScreenViewport();
 
-#if defined(USE_OPENGL_SHADERS)
-	// The ShaderSurfaceRenderer sets an array buffer which conflict with fixed pipeline rendering
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_OPENGL_SHADERS)
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
