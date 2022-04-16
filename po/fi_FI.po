@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-15 13:26+0000\n"
+"POT-Creation-Date: 2022-04-15 20:44+0000\n"
 "PO-Revision-Date: 2022-04-12 01:27+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -21,8 +21,9 @@ msgstr ""
 "X-Language-name: Suomi\n"
 
 #: gui/about.cpp:103
-#, c-format
-msgid "(built on %s)"
+#, fuzzy, c-format
+#| msgid "(built on %s)"
+msgid "(built on %s with %s)"
 msgstr "(käännöksen päiväys: %s)"
 
 #: gui/about.cpp:110

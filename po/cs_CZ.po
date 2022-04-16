@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-15 13:26+0000\n"
+"POT-Creation-Date: 2022-04-15 20:44+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -23,8 +23,9 @@ msgstr ""
 "X-Language-name: Český\n"
 
 #: gui/about.cpp:103
-#, c-format
-msgid "(built on %s)"
+#, fuzzy, c-format
+#| msgid "(built on %s)"
+msgid "(built on %s with %s)"
 msgstr "(sestaveno %s)"
 
 #: gui/about.cpp:110
