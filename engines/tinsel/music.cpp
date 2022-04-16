@@ -270,7 +270,7 @@ void Music::OpenMidiFiles() {
 
 	if (TinselV0) {
 		// The early demo version of DW1 doesn't have MIDI
-	} else if (TinselV2) {
+	} else if (TinselVersion >= 2) {
 		// DW2 uses a different music mechanism
 	} else if (TinselV1Mac) {
 		// open MIDI sequence file in binary mode

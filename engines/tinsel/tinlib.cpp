@@ -713,7 +713,7 @@ void CdEndActor(int	actor, int	myEscape) {
 static void CDload(SCNHANDLE start, SCNHANDLE next, int myEscape) {
 	assert(start && next && start != next); // cdload() fault
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if (myEscape && myEscape != GetEscEvents()) {
 			g_bEscapedCdPlay = true;
 			return;
@@ -742,7 +742,7 @@ static void CloseInventory() {
  *  OR Restore cursor and return control to the player.
  */
 void Control(int param) {
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if (param)
 			ControlOn();
 		else {
@@ -836,7 +836,7 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
 		// TOP of screen, Default (i.e. TOP of screen), or BOTTOM of screen
 
 		// If waiting is enabled, wait for ongoing scroll
-		if (TinselV2 && SysVar(SV_CONVERSATIONWAITS))
+		if ((TinselVersion >= 2) && SysVar(SV_CONVERSATIONWAITS))
 			CORO_INVOKE_1(WaitScroll, myEscape);
 
 		// Don't do it if it's not wanted
@@ -849,7 +849,7 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
 
 		_vm->_dialogs->KillInventory();
 
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			// If this is from a tag polygon, get the associated
 			// actor (the one the polygon is named after), if any.
 			if (!actor) {
@@ -999,7 +999,7 @@ static void DeclareLanguage(int languageId, SCNHANDLE hDescription, SCNHANDLE hF
 static void DecLead(uint32 id, SCNHANDLE *rp = 0, SCNHANDLE text = 0) {
 	MOVER *pMover;		// Moving actor structure
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		// Tinsel 2 only specifies the lead actor Id
 		_vm->_actor->SetLeadId(id);
 		RegisterMover(id);
@@ -1444,7 +1444,7 @@ void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if (_vm->_bmv->MoviePlaying()) {
 			_vm->_bmv->AbortMovie();
 			CORO_SLEEP(2);
@@ -1454,7 +1454,7 @@ void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition) {
 	SetNewScene(scene, entrance, transition);
 
 	// Prevent tags and cursor re-appearing
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		ControlStartOff();
 	else
 		GetControl(CONTROL_STARTOFF);
@@ -1495,7 +1495,7 @@ static void ObjectHeld(int object) {
 void Offset(EXTREME extreme, int x, int y) {
 	_vm->_scroll->KillScroll();
 
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		DecodeExtreme(extreme, &x, &y);
 
 	_vm->_bg->PlayfieldSetPos(FIELD_WORLD, x, y);
@@ -1652,7 +1652,7 @@ static void PlayMidi(CORO_PARAM, SCNHANDLE hMidi, int loop, bool complete) {
 	// In DW1, it messes up the script arguments when entering the secret
 	// door in the bookshelf in the library, leading to a crash, when the
 	// music volume is set to 0.
-	if (!_vm->_music->MidiPlaying() && TinselV2)
+	if (!_vm->_music->MidiPlaying() && TinselVersion >= 2)
 		CORO_SLEEP(1);
 
 	if (complete) {
@@ -1937,7 +1937,7 @@ static void PrepareScene(SCNHANDLE scene) {
  * Print the given text at the given place for the given time.
  */
 static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSustain, bool escOn, int myEscape) {
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		escOn = myEscape != 0;
 
 	CORO_BEGIN_CONTEXT;
@@ -1960,7 +1960,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	if (escOn && myEscape != GetEscEvents())
 		return;
 
-	if (!TinselV2) {
+	if (TinselVersion <= 1) {
 		// Kick off the voice sample
 		if (_vm->_config->_voiceVolume != 0 && _vm->_sound->sampleExists(text)) {
 			_vm->_sound->playSample(text, Audio::Mixer::kSpeechSoundType, &_ctx->handle);
@@ -1981,13 +1981,13 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		_ctx->myleftEvent = bSustain ? 0 : GetLeftEvents();
 	} else {
 		_ctx->time = time * ONE_SECOND;
-		_ctx->myleftEvent = (TinselV2 && !bSustain) ? GetLeftEvents() : 0;
+		_ctx->myleftEvent = ((TinselVersion >= 2) && !bSustain) ? GetLeftEvents() : 0;
 		if (_vm->_config->isJapanMode())
 			bJapDoPrintText = true;
 	}
 
 	// Print the text
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		int Loffset, Toffset;
 		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 		_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
@@ -2003,9 +2003,11 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	} else if (bJapDoPrintText || (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
 		int Loffset, Toffset;	// Screen position
 		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
+
+		SCNHANDLE fontHandle = (TinselVersion >= 2) ? _vm->_font->GetTagFontHandle() : _vm->_font->GetTalkFontHandle();
 		_ctx->pText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(),
 					0, x - Loffset, y - Toffset,
-					TinselV2 ? _vm->_font->GetTagFontHandle() : _vm->_font->GetTalkFontHandle(), TXT_CENTER);
+					fontHandle, TXT_CENTER);
 		assert(_ctx->pText); // string produced NULL text
 		if (_vm->_dialogs->IsTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
@@ -2030,7 +2032,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 		return;
 
 	// Leave it up until time runs out or whatever
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		do {
 			CORO_SLEEP(1);
 
@@ -2120,7 +2122,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 	}
 
 	// Don't do it if it's not wanted
-	if (TinselV2 && (myEscape) && (myEscape != GetEscEvents()))
+	if ((TinselVersion >= 2) && (myEscape) && (myEscape != GetEscEvents()))
 		return;
 
 	/*
@@ -2137,15 +2139,15 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 	if (event != POINTED) {
 		g_bNotPointedRunning = true;	// Get POINTED text to die
 		CORO_SLEEP(1);		// Give it chance to
-	} else if (!TinselV2)
+	} else if (TinselVersion <= 1)
 		g_bNotPointedRunning = false;	// There may have been an OFF without an ON
 
 	// Make multi-ones escape
-	if (TinselV2 && (SubStringCount(hText) > 1) && !_ctx->myEscape)
+	if ((TinselVersion >= 2) && (SubStringCount(hText) > 1) && !_ctx->myEscape)
 		_ctx->myEscape = GetEscEvents();
 
 	// Loop once for Tinsel 1 strings, and for Tinsel 2 however many lines are needed
-	for (_ctx->sub = 0; _ctx->sub < (TinselV2 ? SubStringCount(hText) : 1); _ctx->sub++) {
+	for (_ctx->sub = 0; _ctx->sub < ((TinselVersion >= 2) ? SubStringCount(hText) : 1); _ctx->sub++) {
 		if (_ctx->myEscape && _ctx->myEscape != GetEscEvents())
 			break;
 
@@ -2163,7 +2165,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 			int	xshift;
 
 			// Get the text string
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				LoadSubString(hText, _ctx->sub, _vm->_font->TextBufferAddr(), TBUFSZ);
 			else
 				LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
@@ -2174,7 +2176,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 
 			MultiSetZPosition(_ctx->pText, Z_INV_ITEXT);
 
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				KeepOnScreen(_ctx->pText, &_ctx->textx, &_ctx->texty);
 			else {
 				// Don't go off the side of the screen
@@ -2192,7 +2194,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 		} else
 			_ctx->pText = nullptr;
 
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			if (event == POINTED) {
 				/*
 				* PrintObj() called from POINT event
@@ -2430,11 +2432,11 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
 static void PrintTag(HPOLYGON hp, SCNHANDLE text, int actor = 0, bool bCursor = false) {
 	// printtag() may only be called from a polygon code block in Tinsel 1, or
 	// additionally from a moving actor code block in Tinsel 2
-	assert((hp != NOPOLY) || (TinselV2 && (actor != 0)));
+	assert((hp != NOPOLY) || ((TinselVersion >= 2) && (actor != 0)));
 
 	if (hp != NOPOLY) {
 		// Poly handling
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			SetPolyTagWanted(hp, true, bCursor, text);
 		else if (PolyTagState(hp) == TAG_OFF) {
 			SetPolyTagState(hp, TAG_ON);
@@ -2502,7 +2504,7 @@ static void RestoreScene(CORO_PARAM, TRANSITS transition) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if (_vm->_bmv->MoviePlaying()) {
 			_vm->_bmv->AbortMovie();
 			CORO_SLEEP(2);
@@ -2555,7 +2557,7 @@ void SaveScene(CORO_PARAM) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		CuttingScene(true);
 		SendSceneTinselProcess(LEAVE_T2);
 		CORO_GIVE_WAY;
@@ -2600,12 +2602,12 @@ static void ScrollScreen(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter,
 	_ctx->x = xp;
 	_ctx->y = yp;
 
-	if ((TinselV2 && g_bInstantScroll) || (escOn && myEscape != GetEscEvents())) {
+	if (((TinselVersion >= 2) && g_bInstantScroll) || (escOn && myEscape != GetEscEvents())) {
 		// Instant completion!
 		Offset(extreme, _ctx->x, _ctx->y);
 	} else {
 		_ctx->thisScroll = g_scrollNumber;
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			DecodeExtreme(extreme, &_ctx->x, &_ctx->y);
 
 		_vm->_scroll->ScrollTo(_ctx->x, _ctx->y, xIter, yIter);
@@ -2628,7 +2630,7 @@ static void ScrollScreen(CORO_PARAM, EXTREME extreme, int xp, int yp, int xIter,
 
 				_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 			} while (Loffset != _ctx->x || Toffset != _ctx->y);
-		} else if (TinselV2 && myEscape) {
+		} else if ((TinselVersion >= 2) && myEscape) {
 			SCROLL_MONITOR sm;
 
 			// Scroll is escapable even though we're not waiting for it
@@ -2910,10 +2912,10 @@ void Stand(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm) {
 	CORO_BEGIN_CODE(_ctx);
 
 	_ctx->pMover = GetMover(actor);
-	assert(!TinselV2 || (_ctx->pMover != NULL));
+	assert((TinselVersion <= 1) || (_ctx->pMover != NULL));
 
 	if (_ctx->pMover) {
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			// New special. If no paths, just ignore this
 			if (PathCount() == 0)
 				return;
@@ -2938,23 +2940,23 @@ void Stand(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm) {
 				// Check hFilm against certain constants. Note that a switch statement isn't
 				// used here because it would interfere with our co-routine implementation
 				if (hFilm == TF_UP) {
-					if (TinselV2) CORO_GIVE_WAY;
+					if (TinselVersion >= 2) CORO_GIVE_WAY;
 					SetMoverDirection(_ctx->pMover, AWAY);
 					SetMoverStanding(_ctx->pMover);
 				} else if (hFilm == TF_DOWN) {
-					if (TinselV2) CORO_GIVE_WAY;
+					if (TinselVersion >= 2) CORO_GIVE_WAY;
 					SetMoverDirection(_ctx->pMover, FORWARD);
 					SetMoverStanding(_ctx->pMover);
 				} else if (hFilm == TF_LEFT) {
-					if (TinselV2) CORO_GIVE_WAY;
+					if (TinselVersion >= 2) CORO_GIVE_WAY;
 					SetMoverDirection(_ctx->pMover, LEFTREEL);
 					SetMoverStanding(_ctx->pMover);
 				} else if (hFilm == TF_RIGHT) {
-					if (TinselV2) CORO_GIVE_WAY;
+					if (TinselVersion >= 2) CORO_GIVE_WAY;
 					SetMoverDirection(_ctx->pMover, RIGHTREEL);
 					SetMoverStanding(_ctx->pMover);
 				} else if (hFilm != TF_NONE) {
-					if (TinselV2) CORO_GIVE_WAY;
+					if (TinselVersion >= 2) CORO_GIVE_WAY;
 					AlterMover(_ctx->pMover, hFilm, AR_NORMAL);
 				}
 			}
@@ -3025,7 +3027,7 @@ static void StandTag(int actor, HPOLYGON hp) {
 	hFilm = GetPolyFilm(hp);
 
 	// other actors can use direction
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if (actor != LEAD_ACTOR && actor != _vm->_actor->GetLeadId()
 				&& hFilm != TF_UP && hFilm != TF_DOWN
 				&& hFilm != TF_LEFT && hFilm != TF_RIGHT)
@@ -3084,7 +3086,7 @@ static void StopWalk(int actor) {
 	pMover = GetMover(actor);
 	assert(pMover);
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if (MoverHidden(pMover))
 			return;
 
@@ -3123,7 +3125,7 @@ static void Swalk(CORO_PARAM, int actor, int x1, int y1, int x2, int y2, SCNHAND
 
 	// Don't do it if it's not wanted
 	if (escOn && myEscape != GetEscEvents()) {
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			if (x2 == -1 && y2 == -1)
 				CORO_INVOKE_ARGS(Stand, (CORO_SUBCTX, actor, x1, y1, 0));
 			else
@@ -3136,13 +3138,13 @@ static void Swalk(CORO_PARAM, int actor, int x1, int y1, int x2, int y2, SCNHAND
 	// For lead actor, lock out the user (if not already locked out)
 	if (actor == _vm->_actor->GetLeadId() || actor == LEAD_ACTOR) {
 		_ctx->bTookControl = GetControl(CONTROL_OFFV2);
-		if (TinselV2 && _ctx->bTookControl)
+		if ((TinselVersion >= 2) && _ctx->bTookControl)
 			_vm->_cursor->RestoreMainCursor();
 	} else {
 		_ctx->bTookControl = false;
 	}
 
-	if (TinselV2 && (x2 == -1) && (y2 == -1)) {
+	if ((TinselVersion >= 2) && (x2 == -1) && (y2 == -1)) {
 		// First co-ordinates are the destination
 		x2 = x1;
 		y2 = y1;
@@ -3163,7 +3165,7 @@ static void Swalk(CORO_PARAM, int actor, int x1, int y1, int x2, int y2, SCNHAND
 			CORO_INVOKE_ARGS(Stand, (CORO_SUBCTX, actor, x1, y1, 0));
 		}
 
-		if (TinselV2 && (zOverride != -1)) {
+		if ((TinselVersion >= 2) && (zOverride != -1)) {
 			MOVER *pMover = GetMover(actor);
 			assert(pMover);
 
@@ -3274,7 +3276,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	_ctx->pText = nullptr;
 
 	// If waiting is enabled, wait for ongoing scroll
-	if (TinselV2 && SysVar(SV_SPEECHWAITS))
+	if ((TinselVersion >= 2) && SysVar(SV_SPEECHWAITS))
 		CORO_INVOKE_1(WaitScroll, myEscape);
 
 	// Don't do it if it's not wanted
@@ -3284,10 +3286,10 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	_ctx->myLeftEvent = GetLeftEvents();
 
 	// If this actor is dead, call a stop to the calling process
-	if (!TinselV2 && (actorId && !_vm->_actor->actorAlive(actorId)))
+	if ((TinselVersion <= 1) && (actorId && !_vm->_actor->actorAlive(actorId)))
 		CORO_KILL_SELF();
 
-	if (!TinselV2 || (speechType == IS_TALK)) {
+	if ((TinselVersion <= 1) || (speechType == IS_TALK)) {
 		/*
 		 * Find out which actor is talking
 		 * and with which direction if no film supplied
@@ -3309,20 +3311,20 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			break;
 		}
 		assert(_ctx->actor);
-	} else if (TinselV2)
+	} else if (TinselVersion >= 2)
 		_ctx->actor = actorId;
 
 	/*
 	 * Lock out the user (for lead actor, if not already locked out)
 	 * May need to disable tags for other actors
 	 */
-	if (_ctx->actor == _vm->_actor->GetLeadId() || (TinselV2 && (_ctx->actor == LEAD_ACTOR)))
+	if (_ctx->actor == _vm->_actor->GetLeadId() || ((TinselVersion >= 2) && (_ctx->actor == LEAD_ACTOR)))
 		_ctx->bTookControl = GetControl(CONTROL_OFF);
 	else
 		_ctx->bTookControl = false;
 	_ctx->bTookTags = DisableTagsIfEnabled();
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		/*
 		 * Divert stuff
 		 */
@@ -3339,7 +3341,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	 * Kick off the voice sample
 	 */
 	if (_vm->_config->_voiceVolume != 0 && _vm->_sound->sampleExists(hText)) {
-		if (!TinselV2) {
+		if (TinselVersion <= 1) {
 			_vm->_sound->playSample(hText, Audio::Mixer::kSpeechSoundType, &_ctx->handle);
 			_ctx->bSamples = _vm->_mixer->isSoundHandleActive(_ctx->handle);
 		} else
@@ -3376,7 +3378,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 				TALKING, 0, false, 0));
 		}
 
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			// Let it all kick in and position this 'waiting' process
 			// down the process list from the playing process(es)
 			// This ensures immediate return when the reel finishes
@@ -3384,11 +3386,11 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	}
 
 	// Make multi-ones escape
-	if (TinselV2 && (SubStringCount(hText) > 1) && !_ctx->escEvents)
+	if ((TinselVersion >= 2) && (SubStringCount(hText) > 1) && !_ctx->escEvents)
 		_ctx->escEvents = GetEscEvents();
 
-	for (_ctx->sub = 0; _ctx->sub < (TinselV2 ? SubStringCount(hText) : 1); _ctx->sub++) {
-		if (TinselV2 && _ctx->escEvents && _ctx->escEvents != GetEscEvents())
+	for (_ctx->sub = 0; _ctx->sub < ((TinselVersion >= 2) ? SubStringCount(hText) : 1); _ctx->sub++) {
+		if ((TinselVersion >= 2) && _ctx->escEvents && _ctx->escEvents != GetEscEvents())
 			break;
 
 		/*
@@ -3412,7 +3414,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			if (!TinselV0 && !TinselV3) {
 				SetTextPal(_vm->_actor->GetActorRGB(_ctx->actor));
 			}
-			if (TinselV2) {
+			if (TinselVersion >= 2) {
 				LoadSubString(hText, _ctx->sub, _vm->_font->TextBufferAddr(), TBUFSZ);
 			} else {
 				LoadStringRes(hText, _vm->_font->TextBufferAddr(), TBUFSZ);
@@ -3438,7 +3440,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 				 * Set bottom of text just above the speaker's head
 				 * But don't go off the top of the screen
 				 */
-				if (TinselV2)
+				if (TinselVersion >= 2)
 					MultiMoveRelXY(_ctx->pText, 0, _ctx->y - _ctx->Toffset - MultiLowest(_ctx->pText) - 2);
 				else {
 					yshift = _ctx->y - MultiLowest(_ctx->pText) - 2;		// Just above head
@@ -3459,7 +3461,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 				}
 			}
 
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				// Don't go off the screen
 				KeepOnScreen(_ctx->pText, &_ctx->x, &_ctx->y);
 
@@ -3470,7 +3472,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			_ctx->ticks = TextTime(_vm->_font->TextBufferAddr());
 		}
 
-		if (TinselV2 && _ctx->bSample) {
+		if ((TinselVersion >= 2) && _ctx->bSample) {
 			// Kick off the sample now (perhaps with a delay)
 			if (g_bNoPause)
 				g_bNoPause = false;
@@ -3499,7 +3501,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			CORO_SLEEP(1);
 
 			// Handle timeout decrementing and Escape presses
-			if (TinselV2) {
+			if (TinselVersion >= 2) {
 				if ((_ctx->escEvents && _ctx->escEvents != GetEscEvents()) ||
 					(!bSustain && LeftEventChange(_ctx->myLeftEvent)) ||
 					(--_ctx->timeout <= 0)) {
@@ -3527,7 +3529,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 						break;
 					} else {
 						// Talk reel stops at end of speech
-						if (!TinselV2 || (_ctx->bTalkReel && (_ctx->sub == SubStringCount(hText) - 1))) {
+						if ((TinselVersion <= 1) || (_ctx->bTalkReel && (_ctx->sub == SubStringCount(hText) - 1))) {
 							CORO_INVOKE_2(FinishTalkingReel, _ctx->pActor, _ctx->actor);
 							_ctx->bTalkReel = false;
 						}
@@ -3549,7 +3551,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 			_ctx->pText = nullptr;
 		}
-		if (TinselV2 && _ctx->bSample)
+		if ((TinselVersion >= 2) && _ctx->bSample)
 			_vm->_sound->stopSpecSample(hText, _ctx->sub);
 	}
 
@@ -3563,7 +3565,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	if (_ctx->pText != NULL)
 		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_SAYAT)) {
 			_vm->_actor->SetActorTalking(_ctx->actor, false);
 			if (_vm->_actor->IsTaggedActor(_ctx->actor))
@@ -3583,7 +3585,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	 * And, finally, release the talk token.
 	 */
 	if (_ctx->bTookControl) {
-		if (TinselV2) ControlOn(); else Control(CONTROL_ON);
+		if (TinselVersion >= 2) ControlOn(); else Control(CONTROL_ON);
 	}
 	if (_ctx->bTookTags)
 		EnableTags();
@@ -3723,7 +3725,7 @@ static void TopPlay(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, i
  * Open or close the 'top window'
  */
 static void TopWindow(int bpos) {
-	bool isStart = (TinselV2 && (bpos != 0)) || (!TinselV2 && (bpos == TW_START));
+	bool isStart = ((TinselVersion >= 2) && (bpos != 0)) || ((TinselVersion <= 1) && (bpos == TW_START));
 
 	_vm->_dialogs->KillInventory();
 
@@ -3910,13 +3912,13 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool i
 
 	// Straight there if escaped
 	if (escOn && myescEvent != GetEscEvents()) {
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			StopMover(pMover);
 		CORO_INVOKE_ARGS(Stand, (CORO_SUBCTX, actor, x, y, 0));
 		return;
 	}
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if (MoverHidden(pMover))
 			return;
 
@@ -3928,7 +3930,7 @@ void Walk(CORO_PARAM, int actor, int x, int y, SCNHANDLE hFilm, int hold, bool i
 	assert(pMover->hCpath != NOPOLY); // moving actor not in path
 
 	// Croak if he is doing an SWalk()
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		// Croak if he is doing an SWalk()
 		if (MoverIsSWalking(pMover))
 			CORO_KILL_SELF();
@@ -4002,7 +4004,7 @@ static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool esc
 		return;
 	}
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if (MoverHidden(pMover) || !MoverIs(pMover)) {
 			retVal = false;
 			return;
@@ -4053,7 +4055,7 @@ static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool esc
 static void WalkingActor(uint32 id, SCNHANDLE *rp = NULL) {
 	MOVER *pActor;		// Moving actor structure
 
-	if (TinselVersion == TINSEL_V2) {
+	if (TinselVersion == 2) {
 		RegisterMover(id);
 		return;
 	}
@@ -4104,7 +4106,7 @@ static void WalkPoly(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool es
 		return;
 	}
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if (MoverHidden(pMover))
 			return;
 
@@ -4126,17 +4128,17 @@ static void WalkPoly(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool es
 		if (escOn && myEscape != GetEscEvents()) {
 			// Straight there if escaped
 			StandTag(actor, hp);
-			if (!TinselV2)
+			if (TinselVersion <= 1)
 				FreeToken(pMover->actorToken);
 			return;
 		}
 
 		// Die if superceded
-		if (TinselV2 && (_ctx->thisWalk != GetWalkNumber(pMover)))
+		if ((TinselVersion >= 2) && (_ctx->thisWalk != GetWalkNumber(pMover)))
 			CORO_KILL_SELF();
 	}
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		FreeToken(pMover->actorToken);
 
 	CORO_END_CODE;
@@ -4166,7 +4168,7 @@ static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool esc
 		return;
 	}
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		GetToken(pMover->actorToken);
 	else {
 		if (MoverHidden(pMover))
@@ -4182,7 +4184,7 @@ static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool esc
 		if (escOn && myEscape != GetEscEvents()) {
 			// Straight there if escaped
 			StandTag(actor, hp);
-			if (!TinselV2)
+			if (TinselVersion <= 1)
 				FreeToken(pMover->actorToken);
 			return;
 		}
@@ -4190,7 +4192,7 @@ static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool esc
 		CORO_SLEEP(1);
 
 		// Die if superceded
-		if (TinselV2 && (_ctx->thisWalk != GetWalkNumber(pMover)))
+		if ((TinselVersion >= 2) && (_ctx->thisWalk != GetWalkNumber(pMover)))
 			CORO_KILL_SELF();
 	}
 
@@ -4226,7 +4228,7 @@ static void WalkTag(CORO_PARAM, int actor, SCNHANDLE film, HPOLYGON hp, bool esc
 		break;
 	}
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		FreeToken(pMover->actorToken);
 
 	CORO_END_CODE;
@@ -5282,7 +5284,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pic, RESUME_STATE *pResumeState) {
 	int libCode;
 	if (TinselV0) libCode = DW1DEMO_CODES[operand];
-	else if (!TinselV2) libCode = DW1_CODES[operand];
+	else if (TinselVersion <= 1) libCode = DW1_CODES[operand];
 	else if (TinselV2Demo) libCode = DW2DEMO_CODES[operand];
 	else if (TinselV3) {
 		NoirMapping mapping = translateNoirLibCode(operand, pp);
@@ -5395,7 +5397,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case ADDOPENINV:
 		// Common to both DW1 & DW2
-		AddInv(TinselV2 ? DW2_INV_OPEN : INV_OPEN, pp[0]);
+		AddInv((TinselVersion >= 2) ? DW2_INV_OPEN : INV_OPEN, pp[0]);
 		return -1;
 
 	case ADDTOPIC:
@@ -5604,7 +5606,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case DECFLAGS:
 		// Common to both DW1 & DW2
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			error("DecFlags() is obsolete");
 
 		DecFlags(pp[0]);
@@ -5641,7 +5643,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case DECLEAD:
 		// Common to DW1 / DW2 / Noir
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			DecLead(pp[0]);
 			return -1;
 		} else {
@@ -5727,7 +5729,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case EVENT:
 		// Common to DW1 / DW2 / Noir
-		if (TinselVersion == TINSEL_V2 || TinselVersion == TINSEL_V3)
+		if (TinselVersion >= 2)
 			pp[0] = pic->event;
 		else
 			pp[0] = TINSEL1_EVENT_MAP[pic->event];
@@ -5809,7 +5811,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case HIDEACTOR:
 		// Common to DW1 / DW2 / Noir
-		if (!TinselV2)
+		if (TinselVersion <= 1)
 			HideActorFn(coroParam, pp[0]);
 		else if (*pResumeState == RES_1 && pic->resumeCode == RES_WAITING) {
 			*pResumeState = RES_NOT;
@@ -5908,7 +5910,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case KILLACTOR:
 		// DW1 only
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			error("KillActor() was not expected to be required");
 
 		KillActor(pp[0]);
@@ -5993,7 +5995,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case OFFSET:
 		// Common to both DW1 & DW2
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			pp -= 2;			// 2 parameters
 			Offset((EXTREME)pp[0], pp[1], pp[2]);
 			return -3;
@@ -6029,7 +6031,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 			Play(coroParam, pp[-1], -1, -1, pp[0], pic->myEscape, false, pic->event, pic->hPoly, pic->idActor);
 			return -2;
 
-		} if (TinselV2) {
+		} if (TinselVersion >= 2) {
 			pp -= 3;			// 4 parameters
 			if (*pResumeState == RES_1 && _vm->_handle->IsCdPlayHandle(pp[0]))
 				*pResumeState = RES_NOT;
@@ -6074,7 +6076,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case PLAYSAMPLE:
 		// Common to DW1 / DW2 / Noir
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			pp -= 3;			// 4 parameters
 			PlaySample(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape);
 			return -4;
@@ -6132,7 +6134,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case PRINT:
 		// Common to both DW1 & DW2
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			pp -= 4;			// 5 parameters
 			Print(coroParam, pp[0], pp[1], pp[2], pp[3], pp[4] != 0, pic->escOn, pic->myEscape);
 			return -5;
@@ -6155,7 +6157,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case PRINTTAG:
 		// Common to DW1 / DW2 / Noir
-		PrintTag(pic->hPoly, pp[0], TinselV2 ? pic->idActor : 0, false);
+		PrintTag(pic->hPoly, pp[0], (TinselVersion >= 2) ? pic->idActor : 0, false);
 		return -1;
 
 	case QUITGAME:
@@ -6181,7 +6183,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case RESTORESCENE:
 		// Common to both DW1 & DW2
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			RestoreScene(coroParam, (TRANSITS)pp[0]);
 			return -1;
 		} else {
@@ -6257,7 +6259,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case SCROLL:
 		// Common to both DW1 & DW2
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			pp -= 5;			// 6 parameters
 			ScrollScreen(coroParam, (EXTREME)pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pic->escOn, pic->myEscape);
 			return -6;
@@ -6334,7 +6336,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case SETPALETTE:
 		// Common to both DW1 & DW2
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			// Note: Although DW2 introduces parameters for start and length, it doesn't use them
 			pp -= 2;
 			SetPalette(pp[0], pic->escOn, pic->myEscape);
@@ -6498,7 +6500,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case STOPSAMPLE:
 		// Common to both DW1 & DW2
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			StopSample(pp[0]);
 			return -1;
 		} else {
@@ -6550,7 +6552,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		// Common to both DW1 & DW2
 		pp -= 1;			// 2 parameters
 
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			TalkOrSay(coroParam, IS_TALK, pp[1], 0, 0, pp[0], 0, false, pic->escOn, pic->myEscape);
 		else if (pic->event == WALKIN || pic->event == WALKOUT)
 			TalkOrSay(coroParam, IS_TALK, pp[1], 0, 0, pp[0], 0, false, pic->escOn, pic->myEscape);
@@ -6560,7 +6562,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case TALKAT:
 		// Common to both DW1 & DW2
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			pp -= 4;			// 5 parameters
 			TalkOrSay(coroParam, IS_TALKAT, pp[3], pp[1], pp[2], 0, pp[0], pp[4], pic->escOn, pic->myEscape);
 			return -5;
@@ -6629,7 +6631,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case TOPPLAY:
 		// Common to both DW1 & DW2
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			pp -= 3;			// 4 parameters
 			TopPlay(coroParam, pp[0], pp[1], pp[2], pp[3], pic->myEscape, pic->event);
 			return -4;
@@ -6722,7 +6724,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case WALKINGACTOR:
 		// Common to both DW1 & DW2
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			// DW2 doesn't use a second parameter to WalkingActor
 			WalkingActor(pp[0]);
 			return -1;
@@ -6734,7 +6736,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case WALKPOLY:
 		// Common to both DW1 & DW2
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			pp -= 1;			// 2 parameters
 			WalkPoly(coroParam, pp[0], pp[1], pic->hPoly, pic->escOn, pic->myEscape);
 			return -2;
@@ -6746,7 +6748,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case WALKTAG:
 		// Common to both DW1 & DW2
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			pp -= 1;			// 2 parameters
 			WalkTag(coroParam, pp[0], pp[1], pic->hPoly, pic->escOn, pic->myEscape);
 			return -2;

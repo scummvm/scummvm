@@ -237,7 +237,7 @@ void Poly::nextPoly() {
 	int typeVal = nextLong(_pData);
 	if ((FROM_32(typeVal) == 6) && TinselV3)
 		typeVal = TO_32(7);
-	if ((FROM_32(typeVal) == 5) && TinselV2)
+	if ((FROM_32(typeVal) == 5) && TinselVersion >= 2)
 		typeVal = TO_32(6);
 	type = (POLY_TYPE)typeVal;
 
@@ -246,7 +246,7 @@ void Poly::nextPoly() {
 	for (int i = 0; i < 4; ++i)
 		y[i] = nextLong(_pData);
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		xoff = nextLong(_pData);
 		yoff = nextLong(_pData);
 		id = nextLong(_pData);
@@ -273,7 +273,7 @@ void Poly::nextPoly() {
 		vz[2] = nextLong(_pData);
 		vz[3] = nextLong(_pData);
 	} else {
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			reftype = nextLong(_pData);
 		}
 		tagx = nextLong(_pData);
@@ -283,7 +283,7 @@ void Poly::nextPoly() {
 		nodey = nextLong(_pData);
 		hFilm = nextLong(_pData);
 
-		if (!TinselV2) {
+		if (TinselVersion <= 1) {
 			reftype = nextLong(_pData);
 			id = nextLong(_pData);
 		}
@@ -291,14 +291,14 @@ void Poly::nextPoly() {
 		scale1 = nextLong(_pData);
 		scale2 = nextLong(_pData);
 
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			level1 = nextLong(_pData);
 			level2 = nextLong(_pData);
 			bright1 = nextLong(_pData);
 		}
 	}
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		bright2 = nextLong(_pData);
 	}
 
@@ -411,7 +411,7 @@ bool IsInPolygon(int xt, int yt, HPOLYGON hp) {
 	assert(pp != NULL); // Testing whether in a NULL polygon
 
 	// Shift cursor for relative polygons
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		xt -= volatileStuff[hp].xoff;
 		yt -= volatileStuff[hp].yoff;
 	}
@@ -818,7 +818,7 @@ static HPOLYGON PathOnTheWay(HPOLYGON from, HPOLYGON to) {
 
 	const POLYGON *p = TryPath(Polys[from], Polys[to], Polys[from]);
 
-	if (TinselV2 && !p)
+	if ((TinselVersion >= 2) && !p)
 		return NOPOLY;
 
 	assert(p != NULL); // Trying to find route between unconnected paths
@@ -1123,8 +1123,8 @@ void GetTagTag(HPOLYGON hp, SCNHANDLE *hTagText, int *tagx, int *tagy) {
 
 	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hp]->pIndex);
 
-	*tagx = (int)FROM_32(ptp.tagx) + (TinselV2 ? volatileStuff[hp].xoff : 0);
-	*tagy = (int)FROM_32(ptp.tagy) + (TinselV2 ? volatileStuff[hp].yoff : 0);
+	*tagx = (int)FROM_32(ptp.tagx) + ((TinselVersion >= 2) ? volatileStuff[hp].xoff : 0);
+	*tagy = (int)FROM_32(ptp.tagy) + ((TinselVersion >= 2) ? volatileStuff[hp].yoff : 0);
 	*hTagText = FROM_32(ptp.hTagtext);
 }
 
@@ -1266,22 +1266,22 @@ void syncPolyInfo(Common::Serializer &s) {
  */
 
 void SaveDeadPolys(bool *sdp) {
-	assert(!TinselV2);
+	assert(TinselVersion <= 1);
 	memcpy(sdp, deadPolys, MAX_POLY*sizeof(bool));
 }
 
 void RestoreDeadPolys(bool *sdp) {
-	assert(!TinselV2);
+	assert(TinselVersion <= 1);
 	memcpy(deadPolys, sdp, MAX_POLY*sizeof(bool));
 }
 
 void SavePolygonStuff(POLY_VOLATILE *sps) {
-	assert(TinselV2);
+	assert(TinselVersion >= 2);
 	memcpy(sps, volatileStuff, MAX_POLY*sizeof(POLY_VOLATILE));
 }
 
 void RestorePolygonStuff(POLY_VOLATILE *sps) {
-	assert(TinselV2);
+	assert(TinselVersion >= 2);
 	memcpy(volatileStuff, sps, MAX_POLY*sizeof(POLY_VOLATILE));
 }
 
@@ -1397,7 +1397,7 @@ static void SetPathAdjacencies() {
 				continue;
 
 			// Must be on the same level
-			if (TinselV2 && !MatchingLevels(p1, p2))
+			if ((TinselVersion >= 2) && !MatchingLevels(p1, p2))
 				continue;
 
 			int j = DistinctCorners(i1, i2);
@@ -1863,7 +1863,7 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 	memset(RoutePaths, 0, sizeof(RoutePaths));
 
 	if (!bRestart) {
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			memset(volatileStuff, 0, sizeof(volatileStuff));
 		else
 			memset(deadPolys, 0, sizeof(deadPolys));
@@ -1912,7 +1912,7 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 		}
 	}
 
-	if (!TinselV2) {
+	if (TinselVersion <= 1) {
 		SetPathAdjacencies();		// Paths need to know the facts
 #ifdef DEBUG
 		CheckNPathIntegrity();
@@ -2049,7 +2049,7 @@ void GetPolyNode(HPOLYGON hp, int *pNodeX, int *pNodeY) {
 	Poly ptp(_vm->_handle->LockMem(pHandle), Polys[hp]->pIndex);
 
 	// WORKAROUND: Invalid node adjustment for DW2 Cartwheel scene refer polygon
-	if (TinselV2 && (pHandle == 0x74191900) && (hp == 8)) {
+	if ((TinselVersion >= 2) && (pHandle == 0x74191900) && (hp == 8)) {
 		*pNodeX = 480;
 		*pNodeY = 408;
 	} else {
@@ -2057,7 +2057,7 @@ void GetPolyNode(HPOLYGON hp, int *pNodeX, int *pNodeY) {
 		*pNodeY = FROM_32(ptp.nodey);
 	}
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		*pNodeX += volatileStuff[hp].xoff;
 		*pNodeY += volatileStuff[hp].yoff;
 	}
@@ -2075,7 +2075,7 @@ void SetPolyPointedTo(HPOLYGON hp, bool bPointedTo) {
 bool PolyIsPointedTo(HPOLYGON hp) {
 	CHECK_HP(hp, "Out of range polygon handle (31)");
 
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		return (Polys[hp]->tagFlags & POINTING);
 
 	return PolyPointState(hp) == PS_POINTING;
@@ -2262,14 +2262,14 @@ void EnableTag(CORO_PARAM, int tag) {
 		Polys[_ctx->i]->polyType = TAG;
 		volatileStuff[_ctx->i].bDead = false;
 
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, _ctx->i, SHOWEVENT, 0, true, 0));
 	} else if ((_ctx->i = FindPolygon(TAG, tag)) != NOPOLY) {
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, _ctx->i, SHOWEVENT, 0, true, 0));
 	}
 
-	if (!TinselV2) {
+	if (TinselVersion <= 1) {
 		TAGSTATE *pts = &TagStates[SceneTags[currentTScene].offset];
 		for (int j = 0; j < SceneTags[currentTScene].nooftags; j++, pts++) {
 			if (pts->tid == tag) {
@@ -2385,14 +2385,14 @@ void DisableTag(CORO_PARAM, int tag) {
 
 		volatileStuff[_ctx->i].bDead = true;
 
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, _ctx->i, HIDEEVENT, 0, true, 0));
 	} else if ((_ctx->i = FindPolygon(EX_TAG, tag)) != NOPOLY) {
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, _ctx->i, HIDEEVENT, 0, true, 0));
 	}
 
-	if (!TinselV2) {
+	if (TinselVersion <= 1) {
 		TAGSTATE *pts = &TagStates[SceneTags[currentTScene].offset];
 		for (int j = 0; j < SceneTags[currentTScene].nooftags; j++, pts++) {
 			if (pts->tid == tag) {

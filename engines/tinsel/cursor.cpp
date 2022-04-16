@@ -432,7 +432,7 @@ void Cursor::InitCurObj() {
 		PokeInPalette(pmi);
 	}
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		_auxCursor = nullptr; // No auxillary cursor
 
 	_mainCursor = MultiInitObject(pmi);
@@ -475,7 +475,7 @@ void Cursor::DwInitCursor(SCNHANDLE bfilm) {
  * DropCursor is called when a scene is closing down.
  */
 void Cursor::DropCursor() {
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if (_auxCursor)
 			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _auxCursor);
 		if (_mainCursor)
@@ -588,7 +588,7 @@ void CursorStoppedCheck(CORO_PARAM) {
 bool CanInitializeCursor() {
 	if (!_vm->_cursor->HasReelData()) {
 		return false;
-	} else if (TinselVersion != TINSEL_V3) {
+	} else if (TinselVersion != 3) {
 		return (_vm->_bg->BgPal() != 0);
 	}
 	return true;

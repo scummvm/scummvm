@@ -99,14 +99,13 @@ typedef bool (*KEYFPTR)(const Common::KeyState &);
 #define GAME_FRAME_DELAY (1000 / ONE_SECOND)
 
 #define TinselVersion (_vm->getVersion())
-#define TinselV0 (TinselVersion == TINSEL_V0)
-#define TinselV1 (TinselVersion == TINSEL_V1)
-#define TinselV2 (TinselVersion == TINSEL_V2 || TinselVersion == TINSEL_V3)
-#define TinselV3 (TinselVersion == TINSEL_V3)
-#define TinselV2Demo (TinselVersion == TINSEL_V2 && _vm->getIsADGFDemo())
-#define TinselV1PSX (TinselVersion == TINSEL_V1 && _vm->getPlatform() == Common::kPlatformPSX)
-#define TinselV1Mac (TinselVersion == TINSEL_V1 && _vm->getPlatform() == Common::kPlatformMacintosh)
-#define TinselV1Saturn (TinselVersion == TINSEL_V1 && _vm->getPlatform() == Common::kPlatformSaturn)
+#define TinselV0 (TinselVersion == 0)
+#define TinselV1 (TinselVersion == 1)
+#define TinselV3 (TinselVersion == 3)
+#define TinselV2Demo (TinselVersion == 2 && _vm->getIsADGFDemo())
+#define TinselV1PSX (TinselVersion == 1 && _vm->getPlatform() == Common::kPlatformPSX)
+#define TinselV1Mac (TinselVersion == 1 && _vm->getPlatform() == Common::kPlatformMacintosh)
+#define TinselV1Saturn (TinselVersion == 1 && _vm->getPlatform() == Common::kPlatformSaturn)
 
 #define READ_16(v) (TinselV1Mac || TinselV1Saturn ? READ_BE_UINT16(v) : READ_LE_UINT16(v))
 #define READ_32(v) (TinselV1Mac || TinselV1Saturn ? READ_BE_UINT32(v) : READ_LE_UINT32(v))
@@ -213,7 +212,7 @@ public:
 		pt.x = CLIP<int16>(pt.x, 0, SCREEN_WIDTH - 1);
 		pt.y = CLIP<int16>(pt.y, 0, SCREEN_HEIGHT - 1);
 
-		int yOffset = TinselV2 ? (g_system->getHeight() - _screenSurface.h) / 2 : 0;
+		int yOffset = (TinselVersion >= 2) ? (g_system->getHeight() - _screenSurface.h) / 2 : 0;
 		g_system->warpMouse(pt.x, pt.y + yOffset);
 		_mousePos = pt;
 	}

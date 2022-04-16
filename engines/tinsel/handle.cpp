@@ -80,7 +80,7 @@ Handle::~Handle() {
  * permanent graphics etc.
  */
 void Handle::SetupHandleTable() {
-	bool t2Flag = TinselV2;
+	bool t2Flag = TinselVersion >= 2;
 	int RECORD_SIZE = t2Flag ? 24 : 20;
 
 	int len;
@@ -417,14 +417,14 @@ SCNHANDLE Handle::GetFontImageHandle(SCNHANDLE offset) {
 const ACTORDATA *Handle::GetActorData(SCNHANDLE offset, int numActors) {
 	byte *data = LockMem(offset);
 	const bool isBE = TinselV1Mac || TinselV1Saturn;
-	const uint32 size = TinselV2 ? 20 : 12; // ACTORDATA struct size
+	const uint32 size = (TinselVersion >= 2) ? 20 : 12; // ACTORDATA struct size
 
 	Common::MemoryReadStreamEndian *stream = new Common::MemoryReadStreamEndian(data, size * numActors, isBE);
 
 	ACTORDATA *actorData = new ACTORDATA[numActors];
 
 	for (int i = 0; i < numActors; i++) {
-		if (!TinselV2) {
+		if (TinselVersion <= 1) {
 			actorData[i].masking = stream->readSint32();
 			actorData[i].hActorId = stream->readUint32();
 			actorData[i].hActorCode = stream->readUint32();
@@ -483,7 +483,7 @@ byte *Handle::LockMem(SCNHANDLE offset) {
 			// Data was discarded, we have to reload
 			MemoryReAlloc(pH->_node, pH->filesize & FSIZE_MASK);
 
-			if (TinselV2) {
+			if (TinselVersion >= 2) {
 				SetCD(pH->flags2 & fAllCds);
 				CdCD(Common::nullContext);
 			}
@@ -602,7 +602,7 @@ int Handle::CdNumber(SCNHANDLE offset) {
 
 	MEMHANDLE *pH = _handleTable + handle;
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		return 1;
 
 	return GetCD(pH->flags2 & fAllCds);

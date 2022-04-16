@@ -134,7 +134,7 @@ bool Console::cmd_sound(int argc, const char **argv) {
 
 	int id = strToInt(argv[1]);
 	if (_vm->_sound->sampleExists(id)) {
-		if (!TinselV2)
+		if (TinselVersion <= 1)
 			_vm->_sound->playSample(id, Audio::Mixer::kSpeechSoundType);
 		else
 			_vm->_sound->playSample(id, 0, false, 0, 0, PRIORITY_TALK, Audio::Mixer::kSpeechSoundType);

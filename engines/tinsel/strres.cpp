@@ -192,7 +192,7 @@ static byte *FindStringBase(int id) {
 	while (strSkip-- != 0) {
 		// skip to next string
 
-		if (!TinselV2 || ((*pText & 0x80) == 0)) {
+		if ((TinselVersion <= 1) || ((*pText & 0x80) == 0)) {
 			// Tinsel 1, or string of length < 128
 			pText += *pText + 1;
 		} else if (*pText == 0x80) {
@@ -244,7 +244,7 @@ int LoadStringResource(int id, int sub, char *pBuffer, int bufferMax) {
 		return 0;
 	}
 
-	if (!TinselV2 || ((*pText & 0x80) == 0)) {
+	if ((TinselVersion <= 1) || ((*pText & 0x80) == 0)) {
 		// get length of string
 		len = *pText;
 	} else if (*pText == 0x80) {

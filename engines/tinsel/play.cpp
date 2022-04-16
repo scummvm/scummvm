@@ -941,7 +941,7 @@ static void PlayProcess(CORO_PARAM, const void *param) {
 	const PPINIT *ppi = (const PPINIT *)param;
 	CORO_BEGIN_CODE(_ctx);
 
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		CORO_INVOKE_ARGS(t2PlayReel, (CORO_SUBCTX, ppi->x, ppi->y, ppi->bRestore, ppi->speed,
 			ppi->hFilm, ppi->column, ppi->myescEvent, ppi->bTop, ppi->playfield));
 	else
@@ -960,7 +960,7 @@ void NewestFilm(SCNHANDLE film, const FREEL *reel) {
 	// Get the MULTI_INIT structure
 	pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(reel->mobj));
 
-	if (!TinselV2 || ((int32)FROM_32(pmi->mulID) != -2))
+	if ((TinselVersion <= 1) || ((int32)FROM_32(pmi->mulID) != -2))
 		_vm->_actor->SetActorLatestFilm((int32)FROM_32(pmi->mulID), film);
 }
 
@@ -1010,7 +1010,7 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay
 		CoroScheduler.createProcess(PID_REEL, PlayProcess, &ppi, sizeof(PPINIT));
 	}
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		// Let it all kick in and position this process
 		// down the process list from the playing process(es)
 		// This ensures something
@@ -1042,6 +1042,7 @@ void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool spla
 
 	assert(hFilm != 0); // Trying to play NULL film
 	const FILM *pFilm;
+	int lowestReel;
 
 	pFilm = (const FILM *)_vm->_handle->LockMem(hFilm);
 
@@ -1065,14 +1066,15 @@ void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool spla
 
 	// Start display process for each secondary reel in the film in Tinsel 1,
 	// or all of them in Tinsel 2
-	for (int i = FROM_32(pFilm->numreels) - 1; i >= (TinselV2 ? 0 : 1); i--) {
+	lowestReel = (TinselVersion >= 2) ? 0 : 1;
+	for (int i = FROM_32(pFilm->numreels) - 1; i >= lowestReel; i--) {
 		NewestFilm(hFilm, &pFilm->reels[i]);
 
 		_ctx->ppi.column = i;
 		CoroScheduler.createProcess(PID_REEL, PlayProcess, &_ctx->ppi, sizeof(PPINIT));
 	}
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		// Let it all kick in and position this 'waiting' process
 		// down the process list from the playing process(es)
 		// This ensures immediate return when the reel finishes
@@ -1107,7 +1109,7 @@ void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool spla
  * NOTE: This is specifically for actors during a Tinsel 1 restore scene.
  */
 void RestoreActorReels(SCNHANDLE hFilm, short reelnum, short z, int x, int y) {
-	assert(!TinselV2);
+	assert(TinselVersion <= 1);
 	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(hFilm);
 	PPINIT ppi;
 
@@ -1141,7 +1143,7 @@ void RestoreActorReels(SCNHANDLE hFilm, short reelnum, short z, int x, int y) {
  * NOTE: This is specifically for actors during a Tinsel 2 restore scene.
  */
 void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
-	assert(TinselV2);
+	assert(TinselVersion >= 2);
 	FILM *pFilm = (FILM *)_vm->_handle->LockMem(hFilm);
 	PPINIT ppi;
 
