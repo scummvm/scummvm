@@ -28,27 +28,27 @@
 namespace Hypno {
 
 static const chapterEntry rawChapterTable[] = {
-	{11, {44, 172}, {218, 172}, {0,   0},   kHypnoColorRed}, 	// c11
-	{10, {19, 3},   {246, 3}, 	{246, 11},  kHypnoNoColor}, 	// c10
-	{21, {70, 160}, {180, 160}, {220, 185}, kHypnoColorYellow}, // c21
-	{22, {70, 160}, {180, 160}, {220, 185}, kHypnoColorGreen}, 	// c22
-	{23, {70, 160}, {180, 160}, {220, 185}, kHypnoColorCyan}, 	// c23
-	{20, {128, 150}, {238, 150},{0,   0},   kHypnoColorCyan}, 	// c20
-	{31, {70, 160}, {180, 160}, {220, 185}, kHypnoColorGreen}, 	// c31
-	{32, {70, 160}, {180, 160}, {220, 185}, kHypnoColorRed}, 	// c32
-	{33, {70, 160}, {180, 160}, {220, 185}, kHypnoColorRed}, 	// c33
-	{30, {19, 3},   {246, 3}, 	{246, 11},  kHypnoColorRed}, 	// c30
-	{41, {70, 160}, {180, 160}, {220, 185}, kHypnoColorRed}, 	// c41
-	{42, {70, 160}, {180, 160}, {220, 185}, kHypnoColorRed}, 	// c42
-	{43, {70, 160}, {180, 160}, {220, 185}, kHypnoColorRed}, 	// c43
-	{44, {70, 160}, {180, 160}, {220, 185}, kHypnoColorRed}, 	// c44
-	{40, {19, 3},   {246, 3}, 	{246, 11},  kHypnoColorRed}, 	// c40
-	{51, {60, 167}, {190, 167}, {135, 187}, kHypnoColorRed}, 	// c51
-	{52, {60, 167}, {190, 167}, {135, 187}, kHypnoColorRed}, 	// c52
-	{50, {19, 3},   {246, 3}, 	{246, 11},  kHypnoColorRed}, 	// c50 (fixed)
-	{61, {63, 167}, {187, 167}, {192, 188}, kHypnoColorRed}, 	// c61
-	{60, {63, 167}, {187, 167}, {192, 188}, kHypnoColorRed}, 	// c60
-	{0,  {0,  0},   {0,   0},   {0,   0},   kHypnoColorRed}    	// NULL
+	{11, {44, 172}, {218, 172}, {0,   0},   {127, 172}, kHypnoColorRed}, 	// c11
+	{10, {19, 3},   {246, 3}, 	{246, 11},  {2, 2},     kHypnoNoColor}, 	// c10
+	{21, {70, 160}, {180, 160}, {220, 185}, {44, 162},  kHypnoColorYellow}, // c21
+	{22, {70, 160}, {180, 160}, {220, 185}, {44, 162},  kHypnoColorGreen}, 	// c22
+	{23, {70, 160}, {180, 160}, {220, 185}, {44, 162},  kHypnoColorCyan}, 	// c23
+	{20, {128, 150}, {238, 150},{0,   0},   {0, 0},     kHypnoColorCyan}, 	// c20
+	{31, {70, 160}, {180, 160}, {220, 185}, {44, 162},  kHypnoColorGreen}, 	// c31
+	{32, {70, 160}, {180, 160}, {220, 185}, {44, 162},  kHypnoColorRed}, 	// c32
+	{33, {70, 160}, {180, 160}, {220, 185}, {44, 162},  kHypnoColorRed}, 	// c33
+	{30, {19, 3},   {246, 3}, 	{246, 11},  {0, 0},     kHypnoColorRed}, 	// c30
+	{41, {70, 160}, {180, 160}, {220, 185}, {0, 0},     kHypnoColorRed}, 	// c41
+	{42, {70, 160}, {180, 160}, {220, 185}, {0, 0},     kHypnoColorRed}, 	// c42
+	{43, {70, 160}, {180, 160}, {220, 185}, {0, 0},     kHypnoColorRed}, 	// c43
+	{44, {70, 160}, {180, 160}, {220, 185}, {0, 0},     kHypnoColorRed}, 	// c44
+	{40, {19, 3},   {246, 3}, 	{246, 11},  {0, 0},     kHypnoColorRed}, 	// c40
+	{51, {60, 167}, {190, 167}, {135, 187}, {0, 0},     kHypnoColorRed}, 	// c51
+	{52, {60, 167}, {190, 167}, {135, 187}, {0, 0},     kHypnoColorRed}, 	// c52
+	{50, {19, 3},   {246, 3}, 	{246, 11},  {0, 0},     kHypnoColorRed}, 	// c50 (fixed)
+	{61, {63, 167}, {187, 167}, {192, 188}, {152, 185}, kHypnoColorRed}, 	// c61
+	{60, {63, 167}, {187, 167}, {192, 188}, {152, 185}, kHypnoColorRed}, 	// c60
+	{0,  {0,  0},   {0,   0},   {0,   0},   {0, 0},     kHypnoColorRed}    	// NULL
 };
 
 WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {

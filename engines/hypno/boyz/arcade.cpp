@@ -95,7 +95,7 @@ void BoyzEngine::drawHealth() {
 	updateFromScript();
 
 	Common::Rect healthBarBox(0, 0, _healthBar[_currentActor].w, _healthBar[_currentActor].h/2);
-	uint32 c = kHypnoColorWhite; // white
+	uint32 c = kHypnoColorWhiteOrBlue; // white
 	_compositeSurface->fillRect(healthBarBox, c);
 	drawImage(_healthBar[_currentActor], 0, 0, true);
 }

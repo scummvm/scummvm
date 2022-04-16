@@ -73,7 +73,7 @@ enum HypnoColors {
 	kHypnoNoColor = -1,
 	kHypnoColorRed = 250,
 	kHypnoColorGreen = 251,
-	kHypnoColorWhite = 252,
+	kHypnoColorWhiteOrBlue = 252,
 	kHypnoColorYellow = 253,
 	kHypnoColorBlack = 254,
 	kHypnoColorCyan = 255
@@ -296,6 +296,10 @@ public:
 	virtual void drawAmmo();
 	int _health;
 	int _maxHealth;
+
+	int _ammo;
+	int _maxAmmo;
+
 	int _score;
 	int _bonus;
 	int _lives;
@@ -347,6 +351,7 @@ struct chapterEntry {
 	int energyPos[2];
 	int scorePos[2];
 	int objectivesPos[2];
+	int ammoPos[2];
 	int targetColor;
 };
 
@@ -371,6 +376,7 @@ public:
 	void drawShoot(const Common::Point &target) override;
 	void drawPlayer() override;
 	void drawHealth() override;
+	void drawAmmo() override;
 	void hitPlayer() override;
 	void drawCursorArcade(const Common::Point &mousePos) override;
 	Common::Point computeTargetPosition(const Common::Point &mousePos) override;

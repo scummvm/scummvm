@@ -525,10 +525,15 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		}
 
 		if (needsUpdate) {
-			if (shootingPrimary || shootingSecondary) {
+			if (shootingPrimary) {
 				shoot(mousePos, arc);
 				drawShoot(mousePos);
 				shootingPrimary = false;
+			} else if (shootingSecondary) {
+				shoot(mousePos, arc);
+				if (_background->decoder->getCurFrame() % 2 == 0)
+					drawShoot(mousePos);
+				shootingSecondary = clickedSecondaryShoot(mousePos);
 			}
 
 			drawPlayer();

@@ -464,6 +464,9 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 	}
 
 	_playerFrameIdx = -1;
+
+	_ammo = 150;
+	_maxAmmo = 150;
 }
 
 void WetEngine::pressedKey(const int keycode) {
@@ -498,6 +501,10 @@ void WetEngine::drawCursorArcade(const Common::Point &mousePos) {
 }
 
 bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
+	if (_ammo <= 0)
+		return false;
+
+	_ammo--;
 	incShotsFired();
 	return clickedPrimaryShoot(mousePos);
 }
@@ -659,6 +666,21 @@ void WetEngine::drawHealth() {
 			drawString("block05.fgx", Common::String::format("M.O.  %d/%d", mo, mm), entry->objectivesPos[0], entry->objectivesPos[1], 60, c);
 	}
 }
+
+void WetEngine::drawAmmo() {
+	const chapterEntry *entry = _chapterTable[_levelId];
+	if (entry->ammoPos[0] == 0 && entry->ammoPos[1] == 0)
+		return;
+
+	int d = (13 * (_maxAmmo - _ammo) / _maxAmmo);
+	if (d >= 13)
+		return;
+	Common::Point p(entry->ammoPos[0], entry->ammoPos[1]);
+	Common::Rect r = Common::Rect(p.x, p.y + d, p.x + 15, p.y + 13);
+	uint32 c = kHypnoColorWhiteOrBlue; // blue
+	_compositeSurface->fillRect(r, c);
+}
+
 
 byte *WetEngine::getTargetColor(Common::String name, int levelId) {
 	if (name == "BOSS1" ||  name == "BOSS2" || name == "BOSS3" || name == "BOSS4")
