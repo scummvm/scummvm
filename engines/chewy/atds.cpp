@@ -114,7 +114,7 @@ Atdsys::~Atdsys() {
 	for (int16 i = 0; i < MAX_HANDLE; i++) {
 		if (_atdsMem[i])
 			free(_atdsMem[i]);
-		_atdsMem[i] = nullptr;	
+		_atdsMem[i] = nullptr;
 	}
 
 	delete _dialogResource;
@@ -153,7 +153,7 @@ void Atdsys::initItemUseWith() {
 		objB = f.readSint16LE();
 		txtNum = f.readSint16LE();
 
-		assert(objA <= 255 && objB <= 65535);
+		assert(objA <= 255);
 
 		const uint32 key = (objA & 0xff) << 16 | objB;
 		_itemUseWithDesc[key] = txtNum;
@@ -1016,7 +1016,7 @@ int16 Atdsys::calc_inv_no_use(int16 curInv, int16 testNr) {
 	if (curInv != -1)
 		_invBlockNr = curInv + 1;
 
-	assert(curInv <= 255 && testNr <= 65535);
+	assert(curInv <= 255);
 
 	const uint32 key = (curInv & 0xff) << 16 | testNr;
 	return (_itemUseWithDesc.contains(key)) ? _itemUseWithDesc[key] : -1;
