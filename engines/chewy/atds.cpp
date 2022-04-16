@@ -409,7 +409,7 @@ bool Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int1
 	}
 
 	_atsv.text.clear();
-	for (int i = 0; i < textArray.size(); i++)
+	for (uint i = 0; i < textArray.size(); i++)
 		_atsv.text += textArray[i] + " ";
 	_atsv.text.deleteLastChar();
 
