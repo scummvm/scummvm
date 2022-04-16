@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-15 20:44+0000\n"
-"PO-Revision-Date: 2022-04-07 09:03+0000\n"
+"PO-Revision-Date: 2022-04-16 10:39+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -21,10 +21,9 @@ msgstr ""
 "X-Language-name: Русский\n"
 
 #: gui/about.cpp:103
-#, fuzzy, c-format
-#| msgid "(built on %s)"
+#, c-format
 msgid "(built on %s with %s)"
-msgstr "(собрано %s)"
+msgstr "(собрано %s c %s)"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
