@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-16 13:48+0000\n"
+"POT-Creation-Date: 2022-04-16 21:25+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -176,9 +176,9 @@ msgstr "לא ניתן ליצור תיקיה להורדה - קובץ באותו �
 #: engines/groovie/script.cpp:652 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:924
-#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1363
-#: engines/scumm/scumm.cpp:1389 engines/scumm/scumm.cpp:1411
-#: engines/scumm/scumm.cpp:1689 engines/scumm/scumm.cpp:2162
+#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1358
+#: engines/scumm/scumm.cpp:1384 engines/scumm/scumm.cpp:1406
+#: engines/scumm/scumm.cpp:1684 engines/scumm/scumm.cpp:2155
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
 #: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
 #: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
@@ -4186,7 +4186,7 @@ msgstr "לשחזר"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2789
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2782
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4197,7 +4197,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2779
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2772
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4208,7 +4208,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2802
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2795
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7166,7 +7166,7 @@ msgstr "תכונות שנבנו:"
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "תכונות שנבנו:"
 
-#: engines/scumm/scumm.cpp:545
+#: engines/scumm/scumm.cpp:544
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -7174,7 +7174,7 @@ msgid ""
 "320x200, under 'engine' tab."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1362
+#: engines/scumm/scumm.cpp:1357
 #, fuzzy
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
@@ -7183,7 +7183,7 @@ msgstr ""
 "לא ניתן למצוא את ההפעלה מקינטוש 'נול' לקריאת ה-\n"
 "מכשירים מ. המוסיקה תושבת."
 
-#: engines/scumm/scumm.cpp:1388
+#: engines/scumm/scumm.cpp:1383
 #, fuzzy
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
@@ -7192,7 +7192,7 @@ msgstr ""
 "לא ניתן למצוא את ההפעלה מקינטוש 'נול' לקריאת ה-\n"
 "מכשירים מ. המוסיקה תושבת."
 
-#: engines/scumm/scumm.cpp:1410
+#: engines/scumm/scumm.cpp:1405
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -7200,14 +7200,14 @@ msgstr ""
 "לא ניתן למצוא את ההפעלה מקינטוש 'אי הקופים' כדי לקרוא את\n"
 "מכשירים מ. המוסיקה תושבת."
 
-#: engines/scumm/scumm.cpp:1686
+#: engines/scumm/scumm.cpp:1681
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2160
+#: engines/scumm/scumm.cpp:2153
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7216,7 +7216,7 @@ msgstr ""
 "תמיכת MIDI מקומית דורשת את שדרוג הרולנד מ- LucasArts,\n"
 "אבל %s חסר. במקום זאת משתמשים ב- AdLib."
 
-#: engines/scumm/scumm.cpp:3102
+#: engines/scumm/scumm.cpp:3094
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
