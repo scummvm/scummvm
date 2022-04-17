@@ -353,6 +353,9 @@ public:
 	const FILM *GetWindowData();
 	void Redraw();
 
+	// Noir
+	bool IsConvAndNotMove();
+
 	bool _noLanguage;
 	int _glitterIndex;
 	volatile int _pointedWaitCount; // used by ObjectProcess - fix the 'repeated pressing bug'
