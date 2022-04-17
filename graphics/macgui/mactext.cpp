@@ -76,7 +76,9 @@ Common::CodePage MacFontRun::getEncoding() {
 
 bool MacFontRun::plainByteMode() {
 	Common::CodePage encoding = getEncoding();
-	return encoding != Common::kUtf8 && encoding != Common::kCodePageInvalid;
+	// this return statement only accounts for utf8, invalid, and now macroman
+	// for future unicode font compatibility, it should account for all codepages instead
+	return encoding != Common::kUtf8 && encoding != Common::kCodePageInvalid && encoding != Common::kMacRoman;
 }
 
 Common::String MacFontRun::getEncodedText() {
