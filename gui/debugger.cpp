@@ -722,7 +722,7 @@ bool Debugger::cmdMd5Mac(int argc, const char **argv) {
 				// The resource fork is probably the most relevant one.
 				if (macResMan.hasResFork()) {
 					Common::String md5 = macResMan.computeResForkMD5AsString(length, tail);
-					if (length != 0 && length < macResMan.getResForkDataSize())
+					if (length != 0 && length < (int32)macResMan.getResForkDataSize())
 						md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
 					debugPrintf("%s (resource): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)macResMan.getResForkDataSize());
 				}
