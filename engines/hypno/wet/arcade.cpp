@@ -484,6 +484,8 @@ void WetEngine::pressedKey(const int keycode) {
 		drawScreen();
 	} else if (keycode == Common::KEYCODE_k) { // Added for testing
 		_health = 0;
+	} else if (keycode == Common::KEYCODE_ESCAPE) {
+		openMainMenuDialog();
 	}
 }
 
