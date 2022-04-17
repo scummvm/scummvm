@@ -152,7 +152,7 @@ enum MASTER_LIB_CODES {
 	TRYPLAYSAMPLE, UNDIMMUSIC, UNHOOKSCENE, UNTAGACTOR, VIBRATE, WAITFRAME, WAITKEY,
 	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
 	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D, DECINVMAIN,
-	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, FADEMUSIC, VOICEOVER, SETVIEW, HIGHEST_LIBCODE
+	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, FADEMUSIC, VOICEOVER, SETVIEW, HELDOBJECTORTOPIC, HIGHEST_LIBCODE
 };
 
 static const MASTER_LIB_CODES DW1DEMO_CODES[] = {
@@ -4598,8 +4598,10 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d)", mapping.name, pp[0]);
 		break;
-	case 75: // 0 parameters, returns icon of topic or held object
-		error("Unsupported libCode %d", libCode);
+	case 75:
+		mapping = NoirMapping{"HELDOBJECTORTOPIC", HELDOBJECTORTOPIC, 0};
+		debug(7, "%s()", mapping.name);
+		break;
 	case 76: // 0 parameters, returns enum depending on a bitfield value on held object
 		error("Unsupported libCode %d", libCode);
 	case 77:
@@ -5807,6 +5809,15 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case HELDOBJECT:
 		// Common to both DW1 & DW2
 		pp[0] = HeldObject();
+		return 0;
+
+	case HELDOBJECTORTOPIC:
+		// Noir
+		if (_vm->_dialogs->IsConvAndNotMove()) {
+			pp[0] = HeldObject();
+		} else {
+			pp[0] = Topic();
+		}
 		return 0;
 
 	case HIDEACTOR:
