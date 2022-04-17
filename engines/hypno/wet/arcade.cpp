@@ -674,6 +674,9 @@ void WetEngine::drawAmmo() {
 	if (entry->ammoPos[0] == 0 && entry->ammoPos[1] == 0)
 		return;
 
+	if (_playerFrameIdx > _playerFrameSep) // Player was hit
+		return;
+
 	int d = (13 * (_maxAmmo - _ammo) / _maxAmmo);
 	if (d >= 13)
 		return;
