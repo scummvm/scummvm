@@ -108,7 +108,11 @@ Director::Director(PinkEngine *vm)
 	_textFont = nullptr;
 
 #ifdef USE_FREETYPE2
-	_textFont = Graphics::loadTTFFontFromArchive("system.ttf", 16);
+	if (vm->getLanguage() == Common::HE_ISR) {
+		_textFont = _wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12, Graphics::kMacFontRegular));
+	} else {
+	  _textFont = Graphics::loadTTFFontFromArchive("system.ttf", 16);
+	}
 #endif
 	_textFontCleanup = true;
 
