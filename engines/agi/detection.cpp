@@ -282,12 +282,12 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 		}
 
 		// Set game description and extra according to *.wag file information if they're present
-		if (wagGameDesc != nullptr) {
+		if (wagGameDesc != nullptr && Common::String(wagGameDesc->getData()) != "\"\"") {
 			description = wagGameDesc->getData();
 			debug(3, "Agi::fallbackDetector: Game description (%s) from WAG file", wagGameDesc->getData());
 
 			// If there's game version in the *.wag file, set extra to it
-			if (wagGameVer != nullptr) {
+			if (wagGameVer != nullptr && Common::String(wagGameVer->getData()) != "\"\"") {
 				_extra = wagGameVer->getData();
 				debug(3, "Agi::fallbackDetector: Game version (%s) from WAG file", wagGameVer->getData());
 			}
