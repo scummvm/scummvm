@@ -331,7 +331,7 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 		fallbackWarning = "Your game version has been detected using fallback matching as a\n";
 		fallbackWarning += Common::String::format("variant of %s (%s).\n", g_fallbackDesc.desc.gameId, g_fallbackDesc.desc.extra);
 		fallbackWarning += "If this is an original and unmodified version or new made Fanmade game,\n";
-		fallbackWarning += "please report any, information previously printed by ScummVM to the team.\n";
+		fallbackWarning += "please report any information previously printed by ScummVM to the team.\n";
 
 		g_system->logMessage(LogMessageType::kWarning, fallbackWarning.c_str());
 
