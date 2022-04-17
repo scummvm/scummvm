@@ -625,6 +625,8 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
 		incEnemyHits();
 		if (_shoots[i].timesToShoot > 1) {
 			_shoots[i].timesToShoot = _shoots[i].timesToShoot - 1;
+			// Redraw cursor
+			drawCursorArcade(mousePos);
 			return;
 		}
 
@@ -695,6 +697,8 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
 			loadPalette((byte *) &p, _shoots[i].paletteOffset, _shoots[i].paletteSize);
 			_objKillsCount[_objIdx] = _objKillsCount[_objIdx] + _shoots[i].objKillsCount;
 		}
+		// Redraw cursor
+		drawCursorArcade(mousePos);
 	}
 }
 
