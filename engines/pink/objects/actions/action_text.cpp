@@ -142,12 +142,7 @@ void ActionText::start() {
 	} else {
 		director->addTextAction(this);
 
-		// alignment not working, thus we implement alignment for center manually
-		Graphics::TextAlign alignment = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
-		if (!_centered && _actor->getPage()->getGame()->getLanguage() == Common::HE_ISR) {
-			alignment = Graphics::kTextAlignRight;
-		}
-		_macText = new Graphics::MacText(_text, &director->getWndManager(), director->getTextFont(), _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);
+		_macText = new Graphics::MacText(_text, &director->getWndManager(), director->getTextFont(), _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, align);
 	}
 }
 
