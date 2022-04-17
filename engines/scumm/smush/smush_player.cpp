@@ -1779,7 +1779,7 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 	}
 }
 
-bool SmushPlayer::processAudioCodes(int idx, int &tmpFeedSize, int &mixVolume) {
+bool SmushPlayer::processAudioCodes(int idx, int32 &tmpFeedSize, int &mixVolume) {
 	uint8 *code, *buf, subcode, value;
 	int chunk;
 
