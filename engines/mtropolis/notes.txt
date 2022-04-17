@@ -57,4 +57,7 @@ This has a bunch of confirmed broken cases:
   be removed on returning.  This can even cause no scenes to be loaded.
 - Doing a regular transition out of ATDS stacked scenes and then returning will
   cause only the top scene to be loaded.
+- Transitioning to the shared scene causes very nonsensical behavior, including
+  doubled-up events, modifiers not working, and other chaos.  Currently the
+  mTropolis engine errors out if you attempt this.
 - Probably a bunch of other cases.
