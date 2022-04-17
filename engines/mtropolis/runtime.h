@@ -36,16 +36,132 @@ namespace MTropolis {
 
 class Asset;
 class Element;
+class MessageDispatch;
+struct MessageProperties;
 class Modifier;
 class RuntimeObject;
 class PlugIn;
 class Project;
+class Runtime;
 class Structural;
 class VisualElement;
+struct IMessageConsumer;
+struct IModifierContainer;
 struct IModifierFactory;
 struct IPlugInModifierFactory;
 struct IPlugInModifierFactoryAndDataFactory;
 struct ModifierLoaderContext;
+
+
+
+namespace DynamicValueTypes {
+
+enum DynamicValueType {
+	kInvalid,
+
+	kNull,
+	kInteger,
+	kFloat,
+	kPoint,
+	kIntegerRange,
+	kBoolean,
+	kVector,
+	kLabel,
+	kEvent,
+	kVariableReference,
+	kIncomingData,
+	kString,
+	kList,
+
+	kEmpty,
+};
+
+} // End of namespace DynamicValuesTypes
+
+namespace AttributeIDs {
+
+	enum AttributeID {
+	kAttribCache = 55,
+	kAttribDirect = 56,
+	kAttribVisible = 58,
+	kAttribLayer = 24,
+	kAttribPosition = 1,
+	kAttribWidth = 2,
+	kAttribHeight = 3,
+};
+
+} // End of namespace AttributeIDs
+
+namespace EventIDs {
+
+enum EventID {
+	kNothing = 0,
+
+	kElementEnableEdit = 207,
+	kElementDisableEdit = 220,
+	kElementSelect = 209,
+	kElementDeselect = 210,
+	kElementToggleSelect = 213,
+	kElementUpdatedCalculated = 219,
+	kElementShow = 222,
+	kElementHide = 223,
+
+	kElementScrollUp = 1001,
+	kElementScrollDown = 1002,
+	kElementScrollRight = 1005,
+	kElementScrollLeft = 1006,
+
+	kMotionStarted = 501,
+	kMotionEnded = 502,
+
+	kTransitionStarted = 503,
+	kTransitionEnded = 504,
+
+	kMouseUp = 301,
+	kMouseDown = 302,
+	kMouseOver = 303,
+	kMouseOutside = 304,
+	kMouseTrackedInside = 305,
+	kMouseTracking = 306,
+	kMouseTrackedOutside = 307,
+	kMouseUpInside = 309,
+	kMouseUpOutside = 310,
+
+	kSceneStarted = 101,
+	kSceneEnded = 102,
+	kSceneDeactivated = 103,
+	kSceneReactivated = 104,
+	kSceneTransitionEnded = 506,
+
+	kSharedSceneReturnedToScene = 401,
+	kSharedSceneSceneChanged = 402,
+	kSharedSceneNoNextScene = 403,
+	kSharedSceneNoPrevScene = 404,
+
+	kParentEnabled = 2001,
+	kParentDisabled = 2002,
+	kParentChanged = 227,
+
+	kPreloadMedia = 1701,
+	kFlushMedia = 1703,
+	kPrerollMedia = 1704,
+
+	kCloseProject = 1601,
+
+	kUserTimeout = 1801,
+	kProjectStarted = 1802,
+	kProjectEnded = 1803,
+
+	kAttribGet = 1300,
+	kAttribSet = 1200,
+
+	kClone = 226,
+	kKill = 228,
+
+	kAuthorMessage = 900,
+};
+
+} // End of namespace EventIDs
 
 struct Point16 {
 	int16 x;
@@ -110,8 +226,11 @@ struct Label {
 };
 
 struct Event {
-	uint32 eventType;
+	EventIDs::EventID eventType;
 	uint32 eventInfo;
+
+	static Event create();
+	static Event create(EventIDs::EventID eventType, uint32 eventInfo);
 
 	bool load(const Data::Event &data);
 
@@ -165,28 +284,6 @@ struct MessageFlags {
 	bool cascade : 1;
 	bool immediate : 1;
 };
-
-namespace DynamicValueTypes {
-	enum DynamicValueType {
-		kInvalid,
-
-		kNull,
-		kInteger,
-		kFloat,
-		kPoint,
-		kIntegerRange,
-		kBoolean,
-		kVector,
-		kLabel,
-		kEvent,
-		kVariableReference,
-		kIncomingData,
-		kString,
-		kList,
-
-		kEmpty,
-	};
-}
 
 struct DynamicValue;
 struct DynamicList;
@@ -418,6 +515,13 @@ struct MessengerSendSpec {
 	uint32 destination; // May be a MessageDestination or GUID
 };
 
+struct Message {
+	Message();
+
+	Event evt;
+	DynamicValue data;
+};
+
 enum MessageDestination {
 	kMessageDestSharedScene = 0x65,
 	kMessageDestScene = 0x66,
@@ -503,18 +607,78 @@ private:
 	ObjectLinkingScope *_parent;
 };
 
-enum SceneState {
-	kSceneStateShared,
-	kSceneStateInactive,
-	kSceneStateActive,
-	kSceneStateUnloaded,
+struct LowLevelSceneStateTransitionAction {
+	enum ActionType {
+		kLoad,
+		kUnload,
+		kSendMessage,
+	};
+
+	explicit LowLevelSceneStateTransitionAction(const Common::SharedPtr<MessageDispatch> &msg);
+	LowLevelSceneStateTransitionAction(const LowLevelSceneStateTransitionAction &other);
+	LowLevelSceneStateTransitionAction(const Common::SharedPtr<Structural> &scene, ActionType actionType);
+
+	ActionType getActionType() const;
+	const Common::SharedPtr<Structural> &getScene() const;
+	const Common::SharedPtr<MessageDispatch> &getMessage() const;
+
+	LowLevelSceneStateTransitionAction &operator=(const LowLevelSceneStateTransitionAction &other);
+
+private:
+	ActionType _actionType;
+	Common::SharedPtr<Structural> _scene;
+	Common::SharedPtr<MessageDispatch> _msg;
 };
 
-struct SceneStateTransition {
-	SceneStateTransition(VisualElement *scene, SceneState targetState);
+struct HighLevelSceneTransition {
+	enum Type {
+		kTypeReturn,
+		kTypeChangeToScene,
+	};
 
-	VisualElement *scene;
-	SceneState targetState;
+	HighLevelSceneTransition(const Common::SharedPtr<Structural> &scene, Type type, bool addToDestinationScene, bool addToReturnList);
+
+	Common::SharedPtr<Structural> scene;
+	Type type;
+	bool addToDestinationScene;
+	bool addToReturnList;
+};
+
+class MessageDispatch {
+public:
+	MessageDispatch(const Event &evt, Structural *root, bool cascade, bool relay);
+	MessageDispatch(const Event &evt, Modifier *root, bool cascade, bool relay);
+
+	bool isTerminated() const;
+	VThreadState continuePropagating(Runtime *runtime);
+
+private:
+	struct PropagationStack {
+		union Ptr {
+			Structural *structural;
+			Modifier *modifier;
+			IModifierContainer *modifierContainer;
+		};
+
+		enum PropagationStage {
+			kStageSendToModifier,
+			kStageSendToModifierContainer,
+
+			kStageSendToStructuralSelf,
+			kStageSendToStructuralModifiers,
+			kStageSendToStructuralChildren,
+		};
+
+		PropagationStage propagationStage;
+		size_t index;
+		Ptr ptr;
+	};
+
+	Common::Array<PropagationStack> _propagationStack;
+	Common::SharedPtr<MessageProperties> _msg;
+	bool _cascade;	// Traverses structure tree
+	bool _relay;	// Fire on multiple modifiers
+	bool _terminated;
 };
 
 class Runtime {
@@ -525,23 +689,73 @@ public:
 	void queueProject(const Common::SharedPtr<ProjectDescription> &desc);
 
 	void addVolume(int volumeID, const char *name, bool isMounted);
-	void addSceneStateTransition(const SceneStateTransition *transition);
+	void addSceneStateTransition(const HighLevelSceneTransition &transition);
 
 	Project *getProject() const;
+
+	void postConsumeMessageTask(IMessageConsumer *msgConsumer, const Common::SharedPtr<MessageProperties> &msg);
 
 	uint32 allocateRuntimeGUID();
 
 private:
-	VThreadState *unloadActiveScene();
-	VThreadState *unloadActiveShared();
+	struct SceneStackEntry {
+		SceneStackEntry();
+
+		Common::SharedPtr<Structural> scene;
+	};
+
+	struct Teardown {
+		Common::WeakPtr<Structural> structural;
+		bool onlyRemoveChildren;
+	};
+
+	struct SceneReturnListEntry {
+		Common::SharedPtr<Structural> scene;
+		bool isAddToDestinationSceneTransition;
+	};
+
+	struct DispatchMethodTaskData {
+		Common::SharedPtr<MessageDispatch> dispatch;
+	};
+
+	struct ConsumeMessageTaskData {
+		IMessageConsumer *consumer;
+		Common::SharedPtr<MessageProperties> message;
+	};
+
+	static Common::SharedPtr<Structural> findDefaultSharedSceneForScene(Structural *scene);
+	void executeTeardown(const Teardown &teardown);
+	void executeLowLevelSceneStateTransition(const LowLevelSceneStateTransitionAction &transitionAction);
+	void executeHighLevelSceneTransition(const HighLevelSceneTransition &transition);
+	void executeCompleteTransitionToScene(const Common::SharedPtr<Structural> &scene);
+	void executeSharedScenePostSceneChangeActions();
+
+	void loadScene(const Common::SharedPtr<Structural> &scene);
+
+	// Sending a message on the VThread means "immediately"
+	void sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch);
+	void queueMessage(const Common::SharedPtr<MessageDispatch> &dispatch);
+
 	void unloadProject();
+
+	VThreadState dispatchMessageTask(const DispatchMethodTaskData &data);
+	VThreadState consumeMessageTask(const ConsumeMessageTaskData &data);
 
 	Common::Array<VolumeState> _volumes;
 	Common::SharedPtr<ProjectDescription> _queuedProjectDesc;
 	Common::SharedPtr<Project> _project;
 	Common::ScopedPtr<VThread> _vthread;
+	Common::Array<Common::SharedPtr<MessageDispatch> > _messageQueue;
 	ObjectLinkingScope _rootLinkingScope;
-	Common::Array<SceneStateTransition> _pendingSceneStateTransitions;
+
+	Common::Array<Teardown> _pendingTeardowns;
+	Common::Array<LowLevelSceneStateTransitionAction> _pendingLowLevelTransitions;
+	Common::Array<HighLevelSceneTransition> _pendingSceneTransitions;
+	Common::Array<SceneStackEntry> _sceneStack;
+	Common::SharedPtr<Structural> _activeMainScene;
+	Common::SharedPtr<Structural> _activeSharedScene;
+	Common::Array<SceneReturnListEntry> _sceneReturnList;
+
 
 	uint32 _nextRuntimeGUID;
 };
@@ -578,6 +792,19 @@ protected:
 	uint32 _runtimeGUID;
 };
 
+struct MessageProperties {
+	MessageProperties(const Event &evt, const DynamicValue &value, const Common::WeakPtr<RuntimeObject> &source);
+
+	const Event &getEvent() const;
+	const DynamicValue &getValue() const;
+	const Common::WeakPtr<RuntimeObject> &getSource() const;
+
+private:
+	Event _evt;
+	DynamicValue _value;
+	Common::WeakPtr<RuntimeObject> _source;
+};
+
 struct IStructuralReferenceVisitor {
 	virtual void visitChildStructuralRef(Common::SharedPtr<Structural> &structural) = 0;
 	virtual void visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) = 0;
@@ -585,18 +812,33 @@ struct IStructuralReferenceVisitor {
 	virtual void visitWeakModifierRef(Common::SharedPtr<Modifier> &modifier) = 0;
 };
 
-class Structural : public RuntimeObject, public IModifierContainer {
+struct IMessageConsumer {
+	// These should only be implemented as direct responses - child traversal is handled by the message propagation process
+	virtual bool respondsToEvent(const Event &evt) const = 0;
+	virtual VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) const = 0;
+};
+
+class Structural : public RuntimeObject, public IModifierContainer, public IMessageConsumer {
 public:
 	Structural();
 	virtual ~Structural();
 
 	const Common::Array<Common::SharedPtr<Structural> > &getChildren() const;
 	void addChild(const Common::SharedPtr<Structural> &child);
+	void removeAllChildren();
+	void removeAllModifiers();
+	void removeChild(Structural *child);
+
+	Structural *getParent() const;
+	void setParent(Structural *parent);
 
 	const Common::String &getName() const;
 
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) const override;
 
 	void materializeSelfAndDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
 	void materializeDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
@@ -607,6 +849,7 @@ protected:
 
 	virtual void linkInternalReferences(ObjectLinkingScope *outerScope);
 
+	Structural *_parent;
 	Common::Array<Common::SharedPtr<Structural> > _children;
 	Common::Array<Common::SharedPtr<Modifier> > _modifiers;
 	Common::String _name;
@@ -621,7 +864,6 @@ struct ProjectPresentationSettings {
 };
 
 class AssetInfo {
-
 public:
 	AssetInfo();
 	virtual ~AssetInfo();
@@ -842,7 +1084,7 @@ struct ModifierFlags {
 	bool isLastModifier : 1;
 };
 
-class Modifier : public RuntimeObject {
+class Modifier : public RuntimeObject, public IMessageConsumer {
 public:
 	Modifier();
 	virtual ~Modifier();
@@ -851,6 +1093,12 @@ public:
 
 	virtual bool isAlias() const;
 	virtual bool isVariable() const;
+
+	// This should only return a propagation container if messages should actually be propagated (i.e. NOT switched-off behaviors!)
+	virtual IModifierContainer *getMessagePropagationContainer() const;
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) const override;
 
 	void setName(const Common::String &name);
 	const Common::String &getName() const;

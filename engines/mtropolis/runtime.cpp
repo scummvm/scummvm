@@ -75,7 +75,7 @@ bool Point16::load(const Data::Point &point) {
 	return true;
 }
 
-bool Rect16::load(const Data::Rect& rect) {
+bool Rect16::load(const Data::Rect &rect) {
 	top = rect.top;
 	left = rect.left;
 	bottom = rect.bottom;
@@ -84,21 +84,21 @@ bool Rect16::load(const Data::Rect& rect) {
 	return true;
 }
 
-bool IntRange::load(const Data::IntRange& range) {
+bool IntRange::load(const Data::IntRange &range) {
 	max = range.max;
 	min = range.min;
 
 	return true;
 }
 
-bool Label::load(const Data::Label& label) {
+bool Label::load(const Data::Label &label) {
 	id = label.labelID;
 	superGroupID = label.superGroupID;
 
 	return true;
 }
 
-bool ColorRGB8::load(const Data::ColorRGB16& color) {
+bool ColorRGB8::load(const Data::ColorRGB16 &color) {
 	this->r = (color.red * 510 + 1) / 131070;
 	this->g = (color.green * 510 + 1) / 131070;
 	this->b = (color.blue * 510 + 1) / 131070;
@@ -108,7 +108,6 @@ bool ColorRGB8::load(const Data::ColorRGB16& color) {
 
 MessageFlags::MessageFlags() : relay(true), cascade(true), immediate(true) {
 }
-
 
 DynamicListContainerBase::~DynamicListContainerBase() {
 }
@@ -146,7 +145,7 @@ void DynamicListDefaultSetter::defaultSet(Label &value) {
 }
 
 void DynamicListDefaultSetter::defaultSet(Event &value) {
-	value.eventType = 0;
+	value.eventType = EventIDs::EventID::kNothing;
 	value.eventInfo = 0;
 }
 
@@ -234,7 +233,7 @@ bool DynamicListContainer<void>::setAtIndex(size_t index, const DynamicValue &dy
 }
 
 void DynamicListContainer<void>::setFrom(const DynamicListContainerBase &other) {
-	_size = other.getSize();	// ... the only thing we have anyway...
+	_size = other.getSize(); // ... the only thing we have anyway...
 }
 
 const void *DynamicListContainer<void>::getConstArrayPtr() const {
@@ -307,7 +306,6 @@ void DynamicListContainer<VarReference>::rebuildStringPointers() {
 		_array[i].source = &_strings[i];
 	}
 }
-
 
 DynamicList::DynamicList() : _type(DynamicValueTypes::kEmpty), _container(nullptr) {
 }
@@ -414,7 +412,7 @@ bool DynamicList::operator==(const DynamicList &other) const {
 		return other._container == nullptr;
 
 	if (other._container == nullptr)
-		return false;	// (_container == nullptr)
+		return false; // (_container == nullptr)
 
 	return _container->compareEqual(*other._container);
 }
@@ -433,8 +431,7 @@ void DynamicList::swap(DynamicList &other) {
 }
 
 bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
-	switch (type)
-	{
+	switch (type) {
 	case DynamicValueTypes::kNull:
 		_container = new DynamicListContainer<void>();
 		break;
@@ -562,7 +559,7 @@ bool DynamicValue::load(const Data::InternalTypeTaggedValue &data, const Common:
 	return true;
 }
 
-bool DynamicValue::load(const Data::PlugInTypeTaggedValue& data) {
+bool DynamicValue::load(const Data::PlugInTypeTaggedValue &data) {
 	switch (data.type) {
 	case Data::PlugInTypeTaggedValue::kNull:
 		_type = DynamicValueTypes::kNull;
@@ -605,7 +602,7 @@ bool DynamicValue::load(const Data::PlugInTypeTaggedValue& data) {
 		_type = DynamicValueTypes::kVariableReference;
 		_value.asVarReference.guid = data.value.asVarRefGUID;
 		_value.asVarReference.source = &_str;
-		_str.clear();	// Extra data doesn't seem to correlate to this
+		_str.clear(); // Extra data doesn't seem to correlate to this
 		break;
 	case Data::PlugInTypeTaggedValue::kPoint:
 		_type = DynamicValueTypes::kPoint;
@@ -619,7 +616,6 @@ bool DynamicValue::load(const Data::PlugInTypeTaggedValue& data) {
 
 	return true;
 }
-
 
 DynamicValueTypes::DynamicValueType DynamicValue::getType() const {
 	return _type;
@@ -754,7 +750,7 @@ void DynamicValue::clear() {
 	_type = DynamicValueTypes::kNull;
 }
 
-void DynamicValue::initFromOther(const DynamicValue& other) {
+void DynamicValue::initFromOther(const DynamicValue &other) {
 	assert(_type == DynamicValueTypes::kNull);
 
 	switch (_type) {
@@ -838,8 +834,24 @@ bool MessengerSendSpec::load(const Data::PlugInTypeTaggedValue &dataEvent, const
 	return true;
 }
 
+Event Event::create() {
+	Event evt;
+	evt.eventInfo = 0;
+	evt.eventType = EventIDs::kNothing;
+
+	return evt;
+}
+
+Event Event::create(EventIDs::EventID eventType, uint32 eventInfo) {
+	Event evt;
+	evt.eventType = eventType;
+	evt.eventInfo = eventInfo;
+
+	return evt;
+}
+
 bool Event::load(const Data::Event &data) {
-	eventType = data.eventID;
+	eventType = static_cast<EventIDs::EventID>(data.eventID);
 	eventInfo = data.eventInfo;
 
 	return true;
@@ -926,7 +938,24 @@ void RuntimeObject::setRuntimeGUID(uint32 runtimeGUID) {
 	_runtimeGUID = runtimeGUID;
 }
 
-Structural::Structural() {
+
+MessageProperties::MessageProperties(const Event &evt, const DynamicValue &value, const Common::WeakPtr<RuntimeObject> &source)
+	: _evt(evt), _value(value), _source(source) {
+}
+
+const Event &MessageProperties::getEvent() const {
+	return _evt;
+}
+
+const DynamicValue& MessageProperties::getValue() const {
+	return _value;
+}
+
+const Common::WeakPtr<RuntimeObject>& MessageProperties::getSource() const {
+	return _source;
+}
+
+Structural::Structural() : _parent(nullptr) {
 }
 
 Structural::~Structural() {
@@ -941,6 +970,32 @@ const Common::Array<Common::SharedPtr<Structural> > &Structural::getChildren() c
 
 void Structural::addChild(const Common::SharedPtr<Structural>& child) {
 	_children.push_back(child);
+	child->setParent(this);
+}
+
+void Structural::removeAllChildren() {
+	_children.clear();
+}
+
+void Structural::removeAllModifiers() {
+	_modifiers.clear();
+}
+
+void Structural::removeChild(Structural* child) {
+	for (size_t i = 0; i < _children.size(); i++) {
+		if (_children[i].get() == child) {
+			_children.remove_at(i);
+			return;
+		}
+	}
+}
+
+Structural* Structural::getParent() const {
+	return _parent;
+}
+
+void Structural::setParent(Structural *parent) {
+	_parent = parent;
 }
 
 const Common::String &Structural::getName() const {
@@ -953,6 +1008,15 @@ const Common::Array<Common::SharedPtr<Modifier> > &Structural::getModifiers() co
 
 void Structural::appendModifier(const Common::SharedPtr<Modifier> &modifier) {
 	_modifiers.push_back(modifier);
+}
+
+bool Structural::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState Structural::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) const {
+	assert(false);
+	return kVThreadError;
 }
 
 void Structural::materializeSelfAndDescendents(Runtime *runtime, ObjectLinkingScope *outerScope) {
@@ -1048,7 +1112,177 @@ void ObjectLinkingScope::reset() {
 	_guidToObject.clear(true);
 }
 
-SceneStateTransition::SceneStateTransition(VisualElement *scene, SceneState targetState) : scene(scene), targetState(targetState) {
+LowLevelSceneStateTransitionAction::LowLevelSceneStateTransitionAction(const Common::SharedPtr<MessageDispatch> &msg)
+	: _actionType(LowLevelSceneStateTransitionAction::kSendMessage), _msg(msg) {
+}
+
+LowLevelSceneStateTransitionAction::LowLevelSceneStateTransitionAction(const LowLevelSceneStateTransitionAction &other)
+	: _actionType(other._actionType), _msg(other._msg), _scene(other._scene) {
+}
+
+LowLevelSceneStateTransitionAction::LowLevelSceneStateTransitionAction(const Common::SharedPtr<Structural> &scene, ActionType actionType)
+	: _scene(scene), _actionType(actionType) {
+}
+
+LowLevelSceneStateTransitionAction::ActionType LowLevelSceneStateTransitionAction::getActionType() const {
+	return _actionType;
+}
+
+const Common::SharedPtr<Structural>& LowLevelSceneStateTransitionAction::getScene() const {
+	return _scene;
+}
+
+const Common::SharedPtr<MessageDispatch>& LowLevelSceneStateTransitionAction::getMessage() const {
+	return _msg;
+}
+
+LowLevelSceneStateTransitionAction &LowLevelSceneStateTransitionAction::operator=(const LowLevelSceneStateTransitionAction &other) {
+	_scene = other._scene;
+	_msg = other._msg;
+	_actionType = other._actionType;
+
+	return *this;
+}
+
+
+HighLevelSceneTransition::HighLevelSceneTransition(const Common::SharedPtr<Structural> &scene, Type type, bool addToDestinationScene, bool addToReturnList)
+	: scene(scene), type(type), addToDestinationScene(addToDestinationScene), addToReturnList(addToReturnList) {
+}
+
+MessageDispatch::MessageDispatch(const Event &evt, Structural *root, bool cascade, bool relay)
+	: _cascade(cascade), _relay(relay), _terminated(false) {
+	PropagationStack topEntry;
+	topEntry.index = 0;
+	topEntry.propagationStage = PropagationStack::kStageSendToStructuralSelf;
+	topEntry.ptr.structural = root;
+
+	_propagationStack.push_back(topEntry);
+}
+
+MessageDispatch::MessageDispatch(const Event &evt, Modifier *root, bool cascade, bool relay)
+	: _cascade(cascade), _relay(relay), _terminated(false) {
+	_msg.reset(new MessageProperties(evt, DynamicValue(), Common::WeakPtr<RuntimeObject>()));
+
+	PropagationStack topEntry;
+	topEntry.index = 0;
+	topEntry.propagationStage = PropagationStack::kStageSendToModifier;
+	topEntry.ptr.modifier = root;
+
+	_propagationStack.push_back(topEntry);
+}
+
+bool MessageDispatch::isTerminated() const {
+	return _terminated;
+}
+
+VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
+	// By the point this function is called, continuePropagating has been re-posted to the VThread,
+	// so any propagation state changed in this function will be handled after any VThread tasks
+	// posted here.
+	while (_propagationStack.size() > 0) {
+		PropagationStack &stackTop = _propagationStack.back();
+
+		switch (stackTop.propagationStage)
+		{
+		case PropagationStack::kStageSendToModifier: {
+				Modifier *modifier = stackTop.ptr.modifier;
+				_propagationStack.pop_back();
+
+				// Handle the action in the VThread
+				bool responds = modifier->respondsToEvent(_msg->getEvent());
+
+				// Queue propagation to children, if any, when the VThread task is done
+				if (responds && !_relay) {
+					_terminated = true;
+				} else {
+					IModifierContainer *childContainer = modifier->getMessagePropagationContainer();
+					if (childContainer && childContainer->getModifiers().size() > 0) {
+						PropagationStack childPropagation;
+						childPropagation.propagationStage = PropagationStack::kStageSendToModifierContainer;
+						childPropagation.index = 0;
+						childPropagation.ptr.modifierContainer = childContainer;
+						_propagationStack.push_back(childPropagation);
+					}
+				}
+
+				// Post to the message action itself to VThread
+				runtime->postConsumeMessageTask(modifier, _msg);
+				return kVThreadReturn;
+			} break;
+		case PropagationStack::kStageSendToModifierContainer: {
+				IModifierContainer *container = stackTop.ptr.modifierContainer;
+				const Common::Array<Common::SharedPtr<Modifier> > &children = container->getModifiers();
+				if (stackTop.index >= children.size()) {
+					_propagationStack.pop_back();
+				} else {
+					Common::SharedPtr<Modifier> target = children[stackTop.index++];
+
+					PropagationStack modifierPropagation;
+					modifierPropagation.propagationStage = PropagationStack::kStageSendToModifier;
+					modifierPropagation.index = 0;
+					modifierPropagation.ptr.modifier = target.get();
+					_propagationStack.push_back(modifierPropagation);
+				}
+			} break;
+		case PropagationStack::kStageSendToStructuralChildren: {
+				Structural *structural = stackTop.ptr.structural;
+				const Common::Array<Common::SharedPtr<Structural> > &children = structural->getChildren();
+				if (stackTop.index >= children.size()) {
+					_propagationStack.pop_back();
+				} else {
+					PropagationStack childPropagation;
+					childPropagation.propagationStage = PropagationStack::kStageSendToStructuralSelf;
+					childPropagation.index = 0;
+					childPropagation.ptr.structural = structural;
+					_propagationStack.push_back(childPropagation);
+				}
+			} break;
+		case PropagationStack::kStageSendToStructuralSelf: {
+				Structural *structural = stackTop.ptr.structural;
+				stackTop.propagationStage = PropagationStack::kStageSendToStructuralModifiers;
+				stackTop.index = 0;
+				stackTop.ptr.structural = structural;
+
+				bool responds = structural->respondsToEvent(_msg->getEvent());
+
+				if (responds && !_relay) {
+					_terminated = true;
+				}
+
+				runtime->postConsumeMessageTask(structural, _msg);
+				return kVThreadReturn;
+			} break;
+		case PropagationStack::kStageSendToStructuralModifiers: {
+				Structural *structural = stackTop.ptr.structural;
+
+				// Once done with modifiers, propagate to children if set to cascade
+				if (_cascade) {
+					stackTop.propagationStage = PropagationStack::kStageSendToStructuralChildren;
+					stackTop.index = 0;
+					stackTop.ptr.structural = structural;
+				} else {
+					_propagationStack.pop_back();
+				}
+
+				if (structural->getModifiers().size() > 0) {
+					PropagationStack modifierContainerPropagation;
+					modifierContainerPropagation.propagationStage = PropagationStack::kStageSendToModifierContainer;
+					modifierContainerPropagation.index = 0;
+					modifierContainerPropagation.ptr.modifierContainer = structural;
+					_propagationStack.push_back(modifierContainerPropagation);
+				}
+			} break;
+		default:
+			return kVThreadError;
+		}
+	}
+
+	_terminated = true;
+
+	return kVThreadReturn;
+}
+
+Runtime::SceneStackEntry::SceneStackEntry() {
 }
 
 Runtime::Runtime() : _nextRuntimeGUID(1) {
@@ -1056,56 +1290,386 @@ Runtime::Runtime() : _nextRuntimeGUID(1) {
 }
 
 void Runtime::runFrame() {
-	VThreadState state = _vthread->step();
-	if (state != kVThreadReturn) {
-		// Still doing blocking tasks
-		return;
-	}
-
-	if (_queuedProjectDesc) {
-		Common::SharedPtr<ProjectDescription> desc = _queuedProjectDesc;
-		_queuedProjectDesc.reset();
-
-		unloadProject();
-
-		_project.reset(new Project());
-
-		_project->loadFromDescription(*desc);
-
-		_rootLinkingScope.addObject(_project->getStaticGUID(), _project);
-
-		// We have to materialize global variables because they are not cloned from aliases.
-		debug(1, "Materializing global variables...");
-		_project->materializeGlobalVariables(this, &_rootLinkingScope);
-
-		debug(1, "Materializing project...");
-		_project->materializeSelfAndDescendents(this, &_rootLinkingScope);
-
-		debug(1, "Project is fully loaded!  Starting up...");
-
-		if (_project->getChildren().size() == 0) {
-			error("Project has no sections");
+	for (;;) {
+		VThreadState state = _vthread->step();
+		if (state != kVThreadReturn) {
+			// Still doing blocking tasks
+			return;
 		}
 
-		Structural *firstSection = _project->getChildren()[0].get();
-		if (firstSection->getChildren().size() == 0) {
-			error("Project has no subsections");
+		if (_queuedProjectDesc) {
+			Common::SharedPtr<ProjectDescription> desc = _queuedProjectDesc;
+			_queuedProjectDesc.reset();
+
+			unloadProject();
+
+			_project.reset(new Project());
+
+			_project->loadFromDescription(*desc);
+
+			_rootLinkingScope.addObject(_project->getStaticGUID(), _project);
+
+			// We have to materialize global variables because they are not cloned from aliases.
+			debug(1, "Materializing global variables...");
+			_project->materializeGlobalVariables(this, &_rootLinkingScope);
+
+			debug(1, "Materializing project...");
+			_project->materializeSelfAndDescendents(this, &_rootLinkingScope);
+
+			debug(1, "Project is fully loaded!  Starting up...");
+
+			if (_project->getChildren().size() == 0) {
+				error("Project has no sections");
+			}
+
+			Structural *firstSection = _project->getChildren()[0].get();
+			if (firstSection->getChildren().size() == 0) {
+				error("Project has no subsections");
+			}
+
+			Structural *firstSubsection = firstSection->getChildren()[0].get();
+			if (firstSubsection->getChildren().size() < 2) {
+				error("Project has no subsections");
+			}
+
+			_pendingSceneTransitions.push_back(HighLevelSceneTransition(firstSubsection->getChildren()[1], HighLevelSceneTransition::kTypeChangeToScene, false, false));
+			continue;
 		}
 
-		Structural *firstSubsection = firstSection->getChildren()[0].get();
-		if (firstSubsection->getChildren().size() < 2) {
-			error("Project has no subsections");
+		if (_messageQueue.size() > 0) {
+			Common::SharedPtr<MessageDispatch> msg = _messageQueue[0];
+			_messageQueue.remove_at(0);
+
+			sendMessageOnVThread(msg);
+			continue;
 		}
 
-		_pendingSceneStateTransitions.push_back(SceneStateTransition(static_cast<VisualElement *>(firstSubsection->getChildren()[0].get()), kSceneStateShared));
-		_pendingSceneStateTransitions.push_back(SceneStateTransition(static_cast<VisualElement *>(firstSubsection->getChildren()[1].get()), kSceneStateActive));
+		// Teardowns must only occur during idle conditions where there are no queued message and no VThread tasks
+		if (_pendingTeardowns.size() > 0) {
+			for (Common::Array<Teardown>::const_iterator it = _pendingTeardowns.begin(), itEnd = _pendingTeardowns.end(); it != itEnd; ++it) {
+				executeTeardown(*it);
+			}
+			_pendingTeardowns.clear();
+			continue;
+		}
+
+		if (_pendingLowLevelTransitions.size() > 0) {
+			LowLevelSceneStateTransitionAction transition = _pendingLowLevelTransitions[0];
+			_pendingLowLevelTransitions.remove_at(0);
+
+			executeLowLevelSceneStateTransition(transition);
+			continue;
+		}
+
+		if (_pendingSceneTransitions.size() > 0) {
+			HighLevelSceneTransition transition = _pendingSceneTransitions[0];
+			_pendingSceneTransitions.remove_at(0);
+
+			executeHighLevelSceneTransition(transition);
+			continue;
+		}
 	}
 }
 
+Common::SharedPtr<Structural> Runtime::findDefaultSharedSceneForScene(Structural *scene) {
+	Structural *subsection = scene->getParent();
+	const Common::Array<Common::SharedPtr<Structural> > &children = subsection->getChildren();
+	if (children.size() == 0 || children[0].get() == scene)
+		return Common::SharedPtr<Structural>();
+
+	return children[0];
+}
+
+void Runtime::executeTeardown(const Teardown &teardown) {
+	Common::SharedPtr<Structural> structural = teardown.structural.lock();
+	if (!structural)
+		return;	// Already gone
+
+	if (teardown.onlyRemoveChildren) {
+		structural->removeAllChildren();
+		structural->removeAllModifiers();
+	} else {
+		Structural *parent = structural->getParent();
+
+		// Nothing should be holding strong references to structural objects after they're removed from the project
+		assert(parent != nullptr);
+
+		if (!parent) {
+			return; // Already unlinked but still alive somehow
+		}
+
+		parent->removeChild(structural.get());
+
+		structural->setParent(nullptr);
+	}
+}
+
+void Runtime::executeLowLevelSceneStateTransition(const LowLevelSceneStateTransitionAction &action) {
+	switch (action.getActionType())
+	{
+	case LowLevelSceneStateTransitionAction::kSendMessage:
+		sendMessageOnVThread(action.getMessage());
+		break;
+	case LowLevelSceneStateTransitionAction::kLoad:
+		loadScene(action.getScene());
+		break;
+	case LowLevelSceneStateTransitionAction::kUnload: {
+			Teardown teardown;
+			teardown.onlyRemoveChildren = true;
+			teardown.structural = action.getScene();
+
+			_pendingTeardowns.push_back(teardown);
+		} break;
+	default:
+		assert(false);
+		break;
+	}
+}
+
+void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structural> &targetScene) {
+	if (targetScene == _activeMainScene)
+		return;
+
+	if (_sceneStack.size() == 0)
+		_sceneStack.resize(1);	// Reserve shared scene slot
+
+	Common::SharedPtr<Structural> targetSharedScene = findDefaultSharedSceneForScene(targetScene.get());
+
+	if (targetScene == targetSharedScene)
+		error("Transitioned into a default shared scene, this is not supported");
+
+	if (_activeMainScene == targetSharedScene)
+		error("Transitioned into scene currently being used as a target scene, this is not supported");
+
+	bool sceneAlreadyInStack = false;
+	for (size_t i = _sceneStack.size() - 1; i > 0; i--) {
+		Common::SharedPtr<Structural> stackedScene = _sceneStack[i].scene;
+		if (stackedScene == targetScene) {
+			sceneAlreadyInStack = true;
+		} else {
+			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), false, true))));
+			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true))));
+			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
+
+			if (stackedScene == targetSharedScene)
+				error("Transitioned to a shared scene which was already on the stack as a normal scene.  This is not supported.");
+
+			_sceneStack.remove_at(i);
+		}
+	}
+
+	if (targetSharedScene != _activeSharedScene) {
+		if (_activeSharedScene) {
+			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), false, true))));
+			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true))));
+			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeSharedScene, LowLevelSceneStateTransitionAction::kUnload));
+		}
+
+		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kLoad));
+		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true))));
+		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), false, true))));
+
+		SceneStackEntry sharedSceneEntry;
+		sharedSceneEntry.scene = targetScene;
+
+		_sceneStack[0] = sharedSceneEntry;
+	}
+
+	if (!sceneAlreadyInStack) {
+		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetScene, LowLevelSceneStateTransitionAction::kLoad));
+		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentEnabled, 0), targetScene.get(), true, true))));
+		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), false, true))));
+
+		SceneStackEntry sceneEntry;
+		sceneEntry.scene = targetScene;
+
+		_sceneStack.push_back(sceneEntry);
+	}
+
+	_activeMainScene = targetScene;
+	_activeSharedScene = targetSharedScene;
+
+	executeSharedScenePostSceneChangeActions();
+}
+
+void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &transition) {
+	if (_sceneStack.size() == 0)
+		_sceneStack.resize(1); // Reserve shared scene slot
+
+	// This replicates a bunch of quirks/bugs of mTropolis's scene transition logic,
+	// see the accompanying notes file.  There are probably some missing cases related to
+	// shared scene, calling return/scene transitions during scene deactivation, or other
+	// edge cases that hopefully no games actually do!
+	switch (transition.type) {
+	case HighLevelSceneTransition::kTypeReturn: {
+			if (_sceneReturnList.size() == 0) {
+				warning("A scene return was requested, but no scenes are in the scene return list");
+				return;
+			}
+
+			const SceneReturnListEntry &sceneReturn = _sceneReturnList.back();
+
+			if (sceneReturn.scene == _activeSharedScene)
+				error("Transitioned into the active shared scene as the main scene, this is not supported");
+
+			if (sceneReturn.scene != _activeMainScene) {
+				assert(_activeMainScene.get() != nullptr); // There should always be an active main scene after the first transition
+
+				if (sceneReturn.isAddToDestinationSceneTransition) {
+					// In this case we unload the active main scene and reactivate the old main
+					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), false, true))));
+					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true))));
+					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
+
+					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneReactivated, 0), _activeMainScene.get(), false, true))));
+
+					_activeMainScene = sceneReturn.scene;
+
+					executeSharedScenePostSceneChangeActions();
+				} else {
+					executeCompleteTransitionToScene(sceneReturn.scene);
+				}
+			}
+		} break;
+	case HighLevelSceneTransition::kTypeChangeToScene: {
+			const Common::SharedPtr<Structural> targetScene = transition.scene;
+
+			if (transition.addToDestinationScene || !transition.addToReturnList) {
+				SceneReturnListEntry returnListEntry;
+				returnListEntry.isAddToDestinationSceneTransition = transition.addToDestinationScene;
+				returnListEntry.scene = _activeMainScene;
+				_sceneReturnList.push_back(returnListEntry);
+			}
+
+			if (transition.addToDestinationScene) {
+				if (targetScene != _activeMainScene) {
+					Common::SharedPtr<Structural> targetSharedScene = findDefaultSharedSceneForScene(targetScene.get());
+
+					if (targetScene == targetSharedScene)
+						error("Transitioned into a default shared scene, this is not supported");
+
+					if (_activeMainScene == targetSharedScene)
+						error("Transitioned into scene currently being used as a target scene, this is not supported");
+
+					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneDeactivated, 0), _activeMainScene.get(), false, true))));
+
+					if (targetSharedScene != _activeSharedScene) {
+						if (_activeSharedScene) {
+							_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), false, true))));
+							_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true))));
+							_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeSharedScene, LowLevelSceneStateTransitionAction::kUnload));
+						}
+
+						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kLoad));
+						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true))));
+						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), false, true))));
+
+						SceneStackEntry sharedSceneEntry;
+						sharedSceneEntry.scene = targetScene;
+
+						_sceneStack[0] = sharedSceneEntry;
+					}
+
+						
+					bool sceneAlreadyInStack = false;
+					for (size_t i = _sceneStack.size() - 1; i > 0; i--) {
+						Common::SharedPtr<Structural> stackedScene = _sceneStack[i].scene;
+						if (stackedScene == targetScene) {
+							sceneAlreadyInStack = true;
+							break;
+						}
+					}
+
+					// This is probably wrong if it's already in the stack, but transitioning to already-in-stack scenes is extremely buggy in mTropolis Player anyway
+					if (!sceneAlreadyInStack) {
+						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetScene, LowLevelSceneStateTransitionAction::kLoad));
+						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentEnabled, 0), targetScene.get(), true, true))));
+						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), false, true))));
+
+						SceneStackEntry sceneEntry;
+						sceneEntry.scene = targetScene;
+
+						_sceneStack.push_back(sceneEntry);
+					}
+
+					_activeMainScene = targetScene;
+					_activeSharedScene = targetSharedScene;
+
+					executeSharedScenePostSceneChangeActions();
+				}
+			} else {
+				executeCompleteTransitionToScene(targetScene);
+			}
+		} break;
+	default:
+		break;
+	}
+}
+
+void Runtime::executeSharedScenePostSceneChangeActions() {
+	Structural *subsection = _activeMainScene->getParent();
+	const Common::Array<Common::SharedPtr<Structural> > &subsectionScenes = subsection->getChildren();
+
+	_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSharedSceneSceneChanged, 0), _activeSharedScene.get(), false, true))));
+	if (subsectionScenes.size() > 1) {
+		if (_activeMainScene == subsectionScenes[subsectionScenes.size() - 1])
+			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSharedSceneNoNextScene, 0), _activeSharedScene.get(), false, true))));
+		if (_activeMainScene == subsectionScenes[1])
+			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSharedSceneNoPrevScene, 0), _activeSharedScene.get(), false, true))));
+	}
+}
+
+void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
+	Element *element = static_cast<Element *>(scene.get());
+	uint32 streamIndex = element->getStreamLocator() & 0xffff;	// Not actually sure how many bits are legal here
+
+	error("TODO: Load scene");
+}
+
+void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch) {
+	DispatchMethodTaskData *taskData = _vthread->pushTask(this, &Runtime::dispatchMessageTask);
+	taskData->dispatch = dispatch;
+}
+
+VThreadState Runtime::dispatchMessageTask(const DispatchMethodTaskData &data) {
+	Common::SharedPtr<MessageDispatch> dispatchPtr = data.dispatch;
+	MessageDispatch &dispatch = *dispatchPtr.get();
+
+	if (dispatch.isTerminated())
+		return kVThreadReturn;
+	else {
+		// Requeue propagation after whatever happens with this propagation step
+		DispatchMethodTaskData *requeueData = _vthread->pushTask(this, &Runtime::dispatchMessageTask);
+		requeueData->dispatch = dispatchPtr;
+
+		return dispatch.continuePropagating(this);
+	}
+}
+
+VThreadState Runtime::consumeMessageTask(const ConsumeMessageTaskData &data) {
+	IMessageConsumer *consumer = data.consumer;
+	assert(consumer->respondsToEvent(data.message->getEvent()));
+	return consumer->consumeMessage(this, data.message);
+}
+
+void Runtime::queueMessage(const Common::SharedPtr<MessageDispatch>& dispatch) {
+	_messageQueue.push_back(dispatch);
+}
+
 void Runtime::unloadProject() {
+	_activeMainScene.reset();
+	_activeSharedScene.reset();
+	_sceneStack.clear();
+	_sceneReturnList.clear();
+	_pendingLowLevelTransitions.clear();
+	_pendingSceneTransitions.clear();
+	_pendingTeardowns.clear();
+	_messageQueue.clear();
+	_vthread.reset(new VThread());
+
+	// These should be last
 	_project.reset();
 	_rootLinkingScope.reset();
-	_pendingSceneStateTransitions.clear();
 }
 
 void Runtime::queueProject(const Common::SharedPtr<ProjectDescription> &desc) {
@@ -1121,8 +1685,18 @@ void Runtime::addVolume(int volumeID, const char *name, bool isMounted) {
 	_volumes.push_back(volume);
 }
 
+void Runtime::addSceneStateTransition(const HighLevelSceneTransition &transition) {
+	_pendingSceneTransitions.push_back(transition);
+}
+
 Project *Runtime::getProject() const {
 	return _project.get();
+}
+
+void Runtime::postConsumeMessageTask(IMessageConsumer *consumer, const Common::SharedPtr<MessageProperties> &msg) {
+	ConsumeMessageTaskData *params = _vthread->pushTask(this, &Runtime::consumeMessageTask);
+	params->consumer = consumer;
+	params->message = msg;
 }
 
 uint32 Runtime::allocateRuntimeGUID() {
@@ -1576,6 +2150,7 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 					error("Failed to load section");
 
 				project->addChild(section);
+				section->setParent(project);
 
 				// For some reason all section objects have the "no more siblings" structural flag.
 				// There doesn't appear to be any indication of how many section objects there will
@@ -1769,6 +2344,20 @@ bool Modifier::isAlias() const {
 
 bool Modifier::isVariable() const {
 	return false;
+}
+
+IModifierContainer *Modifier::getMessagePropagationContainer() const {
+	return nullptr;
+}
+
+bool Modifier::respondsToEvent(const Event &evt) const {
+	return false;
+}
+
+VThreadState Modifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) const {
+	// If you're here, a message type was reported as responsive by respondsToEvent but consumeMessage wasn't overrided
+	assert(false);
+	return kVThreadError;
 }
 
 void Modifier::setName(const Common::String& name) {

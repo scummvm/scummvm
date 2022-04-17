@@ -46,11 +46,13 @@ VThreadState VThread::step() {
 	void *dataPtr;
 	void *framePtr;
 	while (popFrame(dataPtr, framePtr)) {
-		VThreadStackFrame *frame = static_cast<VThreadStackFrame *>(framePtr);
-		bool isHandling = (frame->faultID == _faultID);
+		VThreadTaskData *data = static_cast<VThreadTaskData *>(dataPtr);
+
+		const bool isHandling = (data->handlesFault(_faultID));
 		static_cast<VThreadStackFrame *>(framePtr)->~VThreadStackFrame();
 		if (isHandling) {
-			VThreadState state = static_cast<VThreadTaskData *>(dataPtr)->destructAndRunTask();
+			_faultID = nullptr;
+			VThreadState state = data->destructAndRunTask();
 			if (state != kVThreadReturn)
 				return state;
 		} else {
