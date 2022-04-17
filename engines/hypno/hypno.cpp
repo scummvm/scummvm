@@ -150,7 +150,8 @@ Common::Error HypnoEngine::run() {
 			_nextLevel = "";
 			_arcadeMode = "";
 			runLevel(_currentLevel);
-		}
+		} else
+			g_system->delayMillis(300);
 	}
 	return Common::kNoError;
 }
