@@ -111,7 +111,7 @@ Director::Director(PinkEngine *vm)
 	if (vm->getLanguage() == Common::HE_ISR) {
 		_textFont = _wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12, Graphics::kMacFontRegular));
 	} else {
-	  _textFont = Graphics::loadTTFFontFromArchive("system.ttf", 16);
+		_textFont = Graphics::loadTTFFontFromArchive("system.ttf", 16);
 	}
 #endif
 	_textFontCleanup = true;
