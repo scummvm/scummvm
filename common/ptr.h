@@ -425,6 +425,17 @@ public:
 		return this->_tracker == nullptr || this->_tracker->getStrongCount() == 0;
 	}
 
+	WeakPtr<T> &operator=(const WeakPtr<T> &r) {
+		reset(r);
+		return *this;
+	}
+
+	template<class T2>
+	WeakPtr<T> &operator=(const WeakPtr<T2> &r) {
+		reset(r);
+		return *this;
+	}
+
 	WeakPtr<T> &operator=(const BasePtr<T> &r) {
 		reset(r);
 		return *this;
@@ -454,10 +465,10 @@ public:
 
 		this->assign(r);
 
-		if (oldTracker)
-			oldTracker->incWeak();
 		if (this->_tracker)
-			this->_tracker->decWeak();
+			this->_tracker->incWeak();
+		if (oldTracker)
+			oldTracker->decWeak();
 	}
 
 	/**
@@ -469,10 +480,10 @@ public:
 
 		this->assign(r);
 
-		if (oldTracker)
-			oldTracker->incWeak();
 		if (this->_tracker)
-			this->_tracker->decWeak();
+			this->_tracker->incWeak();
+		if (oldTracker)
+			oldTracker->decWeak();
 	}
 };
 
