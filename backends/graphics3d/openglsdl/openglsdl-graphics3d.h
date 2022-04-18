@@ -57,6 +57,11 @@ public:
 	bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags) override;
 	int getGraphicsMode() const override;
 
+	const OSystem::GraphicsMode *getSupportedStretchModes() const override;
+	int getDefaultStretchMode() const override;
+	bool setStretchMode(int mode) override;
+	int getStretchMode() const override;
+
 	void beginGFXTransaction() override;
 	OSystem::TransactionError endGFXTransaction() override;
 
@@ -95,11 +100,9 @@ public:
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
 	int16 getOverlayWidth() const override;
 	int16 getOverlayHeight() const override;
-	bool isOverlayVisible() const override { return _overlayVisible; }
 
 	// GraphicsManager API - Mouse
 	bool showMouse(bool visible) override;
-	void warpMouse(int x, int y) override;
 	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override {}
 	void setCursorPalette(const byte *colors, uint start, uint num) override {}
 
@@ -109,12 +112,7 @@ public:
 
 	bool gameNeedsAspectRatioCorrection() const override { return false; }
 
-	void transformMouseCoordinates(Common::Point &point);
-	bool notifyMousePosition(Common::Point &mouse) override {
-		transformMouseCoordinates(mouse);
-
-		return true;
-	}
+	bool notifyMousePosition(Common::Point &mouse) override;
 
 protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -126,8 +124,6 @@ protected:
 	OpenGL::ContextOGLType _glContextType;
 
 	bool _supportsFrameBuffer;
-
-	Math::Rect2d _gameRect;
 
 	struct OpenGLPixelFormat {
 		uint bytesPerPixel;
@@ -152,9 +148,7 @@ protected:
 	void createOrUpdateScreen();
 	void setupScreen();
 
-	/** Compute the size and position of the game rectangle in the screen */
-	Math::Rect2d computeGameRect(bool renderToFrameBuffer, uint gameWidth, uint gameHeight,
-	                             uint screenWidth, uint screenHeight);
+	void handleResizeImpl(const int width, const int height) override;
 
 	bool saveScreenshot(const Common::String &filename) const override;
 
@@ -162,10 +156,9 @@ protected:
 
 	int _screenChangeCount;
 	int _antialiasing;
+	int _stretchMode;
 	bool _vsync;
 	bool _fullscreen;
-	bool _lockAspectRatio;
-	bool _overlayVisible;
 
 	OpenGL::TiledSurface *_overlayScreen;
 	OpenGL::TiledSurface *_overlayBackground;

@@ -73,6 +73,7 @@ backends/graphics/opengl/opengl-graphics.cpp
 backends/graphics/openglsdl/openglsdl-graphics.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/graphics/sdl/sdl-graphics.cpp
+backends/graphics3d/openglsdl/openglsdl-graphics3d.cpp
 backends/keymapper/hardware-input.cpp
 backends/keymapper/remap-widget.cpp
 backends/keymapper/virtual-mouse.cpp
