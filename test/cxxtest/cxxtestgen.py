@@ -174,7 +174,11 @@ def scanInputFiles(files):
 
 def scanInputFile(fileName):
     '''Scan single input file for test suites'''
-    file = open(fileName)
+    if sys.version_info.major >= 3:
+        file = open(fileName, encoding='utf-8')
+    else:
+        file = open(fileName)
+
     lineNo = 0
     while 1:
         line = file.readline()
