@@ -187,10 +187,12 @@ namespace MiniscriptInstructions {
 
 	class GetChild : public UnimplementedInstruction {
 	public:
-		explicit GetChild(uint32 attribute);
+		GetChild(uint32 attribute, bool isLValue, bool isIndexed);
 
 	private:
 		uint32 _attribute;
+		bool _isLValue;
+		bool _isIndexed;
 	};
 
 	class ListAppend : public UnimplementedInstruction {
@@ -215,7 +217,7 @@ namespace MiniscriptInstructions {
 			uint32 id;
 		};
 
-		PushValue(DataType dataType, const void *value);
+		PushValue(DataType dataType, const void *value, bool isLValue);
 
 	private:
 		union ValueUnion {
@@ -227,11 +229,12 @@ namespace MiniscriptInstructions {
 
 		DataType _dataType;
 		ValueUnion _value;
+		bool _isLValue;
 	};
 
 	class PushGlobal : public UnimplementedInstruction {
 	public:
-		explicit PushGlobal(uint32 guid);
+		explicit PushGlobal(uint32 guid, bool isLValue);
 
 		uint32 getStaticGUID() const;
 		void setReferenceSetIndex(size_t refSetIndex);
@@ -240,6 +243,7 @@ namespace MiniscriptInstructions {
 	private:
 		uint32 _guid;
 		size_t _refSetIndex;
+		bool _isLValue;
 	};
 
 	class PushString : public UnimplementedInstruction {
