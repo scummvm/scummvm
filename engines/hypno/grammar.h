@@ -527,6 +527,7 @@ public:
 		objKillsRequired[1] = 0;
 		objMissesAllowed[0] = 0;
 		objMissesAllowed[1] = 0;
+		mouseBox = Common::Rect(0, 0, 320, 200);
 		frameDelay = 0;
 		targetSoundRate = 0; // TODO: unused
 		shootSoundRate = 0;
