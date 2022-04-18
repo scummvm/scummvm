@@ -182,8 +182,14 @@ void WetEngine::runMainMenu(Code *code) {
 	_name.toLowercase();
 	bool found = loadProfile(_name);
 
-	if (found)
+	if (found) {
+		menu->free();
+		delete menu;
+		overlay->free();
+		delete overlay;
 		return;
+	}
+
 
 	saveProfile(_name, _ids[_lastLevel]);
 
@@ -252,7 +258,10 @@ void WetEngine::runMainMenu(Code *code) {
 
 	_difficulty = difficulties[idx];
 	_nextLevel = code->levelIfWin;
-
+	menu->free();
+	delete menu;
+	overlay->free();
+	delete overlay;
 }
 
 void WetEngine::showDemoScore() {
