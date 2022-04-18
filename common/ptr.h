@@ -40,29 +40,74 @@ namespace Common {
  * @{
  */
 
-class BasePtrDeletionInternal {
+class BasePtrTrackerInternal {
 public:
-	virtual ~BasePtrDeletionInternal() {}
+	typedef int RefValue;
+
+	BasePtrTrackerInternal() : _weakRefCount(1), _strongRefCount(1) {}
+	virtual ~BasePtrTrackerInternal() {}
+
+	void incWeak() {
+		_weakRefCount++;
+	}
+
+	void decWeak() {
+		if (--_weakRefCount == 0)
+			delete this;
+	}
+
+	void incStrong() {
+		_strongRefCount++;
+	}
+
+	void decStrong() {
+		if (--_strongRefCount == 0) {
+			destructObject();
+			decWeak();
+		}
+	}
+
+	bool isAlive() const {
+		return _strongRefCount > 0;
+	}
+
+	RefValue getStrongCount() const {
+		return _strongRefCount;
+	}
+
+protected:
+	virtual void destructObject() = 0;
+
+private:
+	RefValue _weakRefCount; // Weak ref count + 1 if object ref count > 0
+	RefValue _strongRefCount;
 };
 
 template<class T>
-class BasePtrDeletionImpl : public BasePtrDeletionInternal {
+class BasePtrTrackerImpl : public BasePtrTrackerInternal {
 public:
-	BasePtrDeletionImpl(T *ptr) : _ptr(ptr) {}
-	~BasePtrDeletionImpl() {
+	BasePtrTrackerImpl(T *ptr) : _ptr(ptr) {}
+
+protected:
+	void destructObject() override {
 		STATIC_ASSERT(sizeof(T) > 0, SharedPtr_cannot_delete_incomplete_type);
 		delete _ptr;
 	}
-private:
+
 	T *_ptr;
 };
 
 template<class T, class DL>
-class BasePtrDeletionDeleterImpl : public BasePtrDeletionInternal {
+class BasePtrTrackerDeletionImpl : public BasePtrTrackerInternal {
 public:
-	BasePtrDeletionDeleterImpl(T *ptr, DL d) : _ptr(ptr), _deleter(d) {}
-	~BasePtrDeletionDeleterImpl() { _deleter(_ptr); }
+	BasePtrTrackerDeletionImpl(T *ptr, DL d) : _ptr(ptr), _deleter(d) {}
+	~BasePtrTrackerDeletionImpl() { _deleter(_ptr); }
+
 private:
+	void destructObject() override {
+		_deleter(_ptr);
+	}
+
 	T *_ptr;
 	DL _deleter;
 };
@@ -79,36 +124,32 @@ class BasePtr : public SafeBool<BasePtr<T> > {
 	template<class T2> friend class BasePtr;
 #endif
 public:
-	typedef int RefValue;
 	typedef T ValueType;
 	typedef T *PointerType;
 	typedef T &ReferenceType;
 
-	BasePtr() : _refCount(nullptr), _deletion(nullptr), _pointer(nullptr) {
+	BasePtr() : _tracker(nullptr), _pointer(nullptr) {
 	}
 
-	explicit BasePtr(std::nullptr_t) : _refCount(nullptr), _deletion(nullptr), _pointer(nullptr) {
+	explicit BasePtr(std::nullptr_t) : _tracker(nullptr), _pointer(nullptr) {
 	}
 
 	template<class T2>
-	explicit BasePtr(T2 *p) : _refCount(new RefValue(1)), _deletion(new BasePtrDeletionImpl<T2>(p)), _pointer(p) {
+	explicit BasePtr(T2 *p) : _tracker(p ? (new BasePtrTrackerImpl<T2>(p)) : nullptr), _pointer(p) {
 	}
 
 	template<class T2, class DL>
-	BasePtr(T2 *p, DL d) : _refCount(new RefValue(1)), _deletion(new BasePtrDeletionDeleterImpl<T2, DL>(p, d)), _pointer(p) {
+	BasePtr(T2 *p, DL d) : _tracker(p ? new BasePtrTrackerDeletionImpl<T2, DL>(p, d) : nullptr), _pointer(p) {
 	}
 
-	BasePtr(const BasePtr &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) {
-		if (_refCount)
-			++(*_refCount);
+	BasePtr(const BasePtr &r) : _tracker(r._tracker), _pointer(r._pointer) {
 	}
+
 	template<class T2>
-	BasePtr(const BasePtr<T2> &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) {
-		if (_refCount) ++(*_refCount);
+	BasePtr(const BasePtr<T2> &r) : _tracker(r._tracker), _pointer(r._pointer) {
 	}
 
 	~BasePtr() {
-		decRef();
 	}
 
 	/**
@@ -119,114 +160,15 @@ public:
 		return _pointer != nullptr;
 	}
 
-	/**
-	 * Returns the number of references to the assigned pointer.
-	 * This should just be used for debugging purposes.
-	 */
-	RefValue refCount() const {
-		return _refCount ? *_refCount : 0;
-	}
-
-	/**
-	 * Returns whether the referenced object isn't valid
-	 */
-	bool expired() const {
-		return !_refCount;
-	}
-
-	/**
-	 * Checks if the object is the only object refering
-	 * to the assigned pointer. This should just be used for
-	 * debugging purposes.
-	 */
-	bool unique() const {
-		return refCount() == 1;
-	}
-
-	BasePtr &operator=(const BasePtr &r) {
-		reset(r);
-		return *this;
-	}
-
+protected:
 	template<class T2>
-	BasePtr &operator=(const BasePtr<T2> &r) {
-		reset(r);
-		return *this;
-	}
-
-	/**
-	 * Resets the object to a NULL pointer.
-	 */
-	void reset() {
-		decRef();
-		_deletion = nullptr;
-		_refCount = nullptr;
-		_pointer = nullptr;
-	}
-
-	/**
-	 * Resets the object to the specified pointer
-	 */
-	void reset(const BasePtr &r) {
-		if (r._refCount)
-			++(*r._refCount);
-		decRef();
-
-		_refCount = r._refCount;
-		_deletion = r._deletion;
+	void assign(const BasePtr<T2> &r) {
+		_tracker = r._tracker;
 		_pointer = r._pointer;
 	}
 
-	/**
-	 * Resets the object to the specified pointer
-	 */
-	template<class T2>
-	void reset(const BasePtr<T2> &r) {
-		if (r._refCount)
-			++(*r._refCount);
-		decRef();
-
-		_refCount = r._refCount;
-		_deletion = r._deletion;
-		_pointer = r._pointer;
-	}
-
-	/**
-	 * Resets the object to the specified pointer
-	 */
-	void reset(T *ptr) {
-		reset(BasePtr<T>(ptr));
-	}
-
-protected:
-	RefValue *_refCount;
-	BasePtrDeletionInternal *_deletion;
-	PointerType _pointer;
-protected:
-	/**
-	 * Decrements the reference count to the stored pointer, and deletes it if
-	 * there are no longer any references to it
-	 */
-	void decRef() {
-		if (_refCount) {
-			--(*_refCount);
-			if (!*_refCount) {
-				delete _refCount;
-				delete _deletion;
-				_deletion = nullptr;
-				_refCount = nullptr;
-				_pointer = nullptr;
-			}
-		}
-	}
-
-	/**
-	 * Increments the reference count to the stored pointer
-	 */
-	void incRef() {
-		if (_refCount)
-			++*_refCount;
-	}
+	BasePtrTrackerInternal *_tracker;
+	T *_pointer;
 };
 
 template<class T>
@@ -276,6 +218,7 @@ class WeakPtr;
 template<class T>
 class SharedPtr : public BasePtr<T> {
 public:
+	// Invariant: If _tracker is non-null, then the object is alive
 	typedef T *PointerType;
 	typedef T &ReferenceType;
 
@@ -283,6 +226,11 @@ public:
 	}
 
 	SharedPtr(std::nullptr_t) : BasePtr<T>() {
+	}
+
+	~SharedPtr() {
+		if (this->_tracker)
+			this->_tracker->decStrong();
 	}
 
 	template<class T2>
@@ -294,23 +242,44 @@ public:
 	}
 
 	SharedPtr(const SharedPtr<T> &r) : BasePtr<T>(r) {
+		if (this->_tracker)
+			this->_tracker->incStrong();
 	}
 
-	SharedPtr(const WeakPtr<T> &r) : BasePtr<T>(r) {
+	SharedPtr(const WeakPtr<T> &r) {
+		reset(r);
 	}
 
 	template<class T2>
 	SharedPtr(const SharedPtr<T2> &r) : BasePtr<T>(r) {
+		if (this->_tracker)
+			this->_tracker->incStrong();
 	}
 
 	SharedPtr &operator=(const SharedPtr &r) {
-		BasePtr<T>::operator=(r);
+		BasePtrTrackerInternal *oldTracker = this->_tracker;
+
+		this->assign(r);
+
+		if (this->_tracker)
+			this->_tracker->incStrong();
+		if (oldTracker)
+			oldTracker->decStrong();
+
 		return *this;
 	}
 
 	template<class T2>
 	SharedPtr &operator=(const SharedPtr<T2> &r) {
-		BasePtr<T>::operator=(r);
+		BasePtrTrackerInternal *oldTracker = this->_tracker;
+
+		this->assign(r);
+
+		if (this->_tracker)
+			this->_tracker->incStrong();
+		if (oldTracker)
+			oldTracker->decStrong();
+
 		return *this;
 	}
 
@@ -334,6 +303,75 @@ public:
 	bool operator!=(const SharedPtr<T2> &r) const {
 		return this->_pointer != r.get();
 	}
+
+	/**
+	 * Checks if the object is the only object refering
+	 * to the assigned pointer. This should just be used for
+	 * debugging purposes.
+	 */
+	bool unique() const {
+		return this->_tracker != nullptr && this->_tracker->getStrongCount() == 1;
+	}
+
+	/**
+	 * Resets the object to a NULL pointer.
+	 */
+	void reset() {
+		if (this->_tracker)
+			this->_tracker->decStrong();
+		this->_tracker = nullptr;
+		this->_pointer = nullptr;
+	}
+
+	/**
+	 * Resets the object to the specified pointer
+	 */
+	void reset(const BasePtr<T> &r) {
+		BasePtrTrackerInternal *oldTracker = this->_tracker;
+
+		this->assign(r);
+
+		if (this->_tracker && this->_tracker->isAlive()) {
+			this->_tracker->incStrong();
+		} else {
+			this->_tracker = nullptr;
+			this->_pointer = nullptr;
+		}
+
+		if (oldTracker)
+			oldTracker->decStrong();
+	}
+
+	/**
+	 * Resets the object to the specified pointer
+	 */
+	template<class T2>
+	void reset(const BasePtr<T2> &r) {
+		BasePtrTrackerInternal *oldTracker = this->_tracker;
+
+		this->assign(r);
+
+		if (this->_tracker && this->_tracker->isAlive()) {
+			this->_tracker->incStrong();
+		} else {
+			this->_tracker = nullptr;
+			this->_pointer = nullptr;
+		}
+
+		if (oldTracker)
+			oldTracker->decStrong();
+	}
+
+	/**
+	 * Resets the object to the specified pointer
+	 */
+	void reset(T *ptr) {
+		if (this->_tracker)
+			this->_tracker->decStrong();
+
+		this->_pointer = ptr;
+		this->_tracker = new BasePtrTrackerImpl<T>(ptr);
+	}
 };
 
 /**
@@ -349,15 +387,20 @@ public:
 	WeakPtr(std::nullptr_t) : BasePtr<T>() {
 	}
 
-	template<class T2>
-	explicit WeakPtr(T2 *p) : BasePtr<T>(p) {
+	WeakPtr(const BasePtr<T> &r) : BasePtr<T>(r) {
+		if (this->_tracker)
+			this->_tracker->incWeak();
 	}
 
-	WeakPtr(const BasePtr<T> &r) : BasePtr<T>(r) {
+	~WeakPtr() {
+		if (this->_tracker)
+			this->_tracker->decWeak();
 	}
 
 	template<class T2>
 	WeakPtr(const BasePtr<T2> &r) : BasePtr<T>(r) {
+		if (this->_tracker)
+			this->_tracker->incWeak();
 	}
 
 	/**
@@ -365,6 +408,71 @@ public:
 	 */
 	SharedPtr<T> lock() const {
 		return SharedPtr<T>(*this);
+	}
+
+	/**
+	 * Implicit conversion operator to bool for convenience, to make
+	 * checks like "if (sharedPtr) ..." possible.
+	 */
+	bool operator_bool() const {
+		return this->_pointer != nullptr;
+	}
+
+	/**
+	 * Returns whether the referenced object isn't valid
+	 */
+	bool expired() const {
+		return this->_tracker == nullptr || this->_tracker->getStrongCount() == 0;
+	}
+
+	WeakPtr<T> &operator=(const BasePtr<T> &r) {
+		reset(r);
+		return *this;
+	}
+
+	template<class T2>
+	WeakPtr<T> &operator=(const BasePtr<T2> &r) {
+		reset(r);
+		return *this;
+	}
+
+	/**
+	 * Resets the object to a NULL pointer.
+	 */
+	void reset() {
+		if (this->_tracker)
+			this->_tracker->decWeak();
+		this->_tracker = nullptr;
+		this->_pointer = nullptr;
+	}
+
+	/**
+	 * Resets the object to the specified pointer
+	 */
+	void reset(const BasePtr<T> &r) {
+		BasePtrTrackerInternal *oldTracker = this->_tracker;
+
+		this->assign(r);
+
+		if (oldTracker)
+			oldTracker->incWeak();
+		if (this->_tracker)
+			this->_tracker->decWeak();
+	}
+
+	/**
+	 * Resets the object to the specified pointer
+	 */
+	template<class T2>
+	void reset(const BasePtr<T2> &r) {
+		BasePtrTrackerInternal *oldTracker = this->_tracker;
+
+		this->assign(r);
+
+		if (oldTracker)
+			oldTracker->incWeak();
+		if (this->_tracker)
+			this->_tracker->decWeak();
 	}
 };
 
