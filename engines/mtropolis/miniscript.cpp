@@ -90,7 +90,7 @@ bool MiniscriptInstructionLoader<MiniscriptInstructions::GetChild>::loadInstruct
 	if (!instrDataReader.readU32(childAttribute))
 		return false;
 
-	new (dest) MiniscriptInstructions::GetChild(childAttribute);
+	new (dest) MiniscriptInstructions::GetChild(childAttribute, (instrFlags & 1) != 0, (instrFlags & 32) != 0);
 	return true;
 }
 
@@ -100,7 +100,7 @@ bool MiniscriptInstructionLoader<MiniscriptInstructions::PushGlobal>::loadInstru
 	if (!instrDataReader.readU32(globalID))
 		return false;
 
-	new (dest) MiniscriptInstructions::PushGlobal(globalID);
+	new (dest) MiniscriptInstructions::PushGlobal(globalID, (instrFlags & 1) != 0);
 	return true;
 }
 
@@ -128,39 +128,39 @@ bool MiniscriptInstructionLoader<MiniscriptInstructions::PushValue>::loadInstruc
 		return false;
 
 	if (dataType == 0)
-		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeNull, nullptr);
+		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeNull, nullptr, false);
 	else if (dataType == 0x15) {
 		Data::XPFloat f;
 		if (!f.load(instrDataReader))
 			return false;
 
 		double d = f.toDouble();
-		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeDouble, &d);
+		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeDouble, &d, false);
 	} else if (dataType == 0x1a) {
 		uint8 boolValue;
 		if (!instrDataReader.readU8(boolValue))
 			return false;
 
 		bool b = (boolValue != 0);
-		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeBool, &b);
+		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeBool, &b, false);
 	} else if (dataType == 0x1f9) {
 		uint32 refValue;
 		if (!instrDataReader.readU32(refValue))
 			return false;
 
-		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeLocalRef, &refValue);
+		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeLocalRef, &refValue, (instrFlags & 1) != 0);
 	} else if (dataType == 0x1fa) {
 		uint32 refValue;
 		if (!instrDataReader.readU32(refValue))
 			return false;
 
-		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeGlobalRef, &refValue);
+		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeGlobalRef, &refValue, (instrFlags & 1) != 0);
 	} else if (dataType == 0x1d) {
 		MiniscriptInstructions::PushValue::Label label;
 		if (!instrDataReader.readU32(label.superGroup) || !instrDataReader.readU32(label.id))
 			return false;
 
-		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeLabel, &label);
+		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeLabel, &label, false);
 	} else
 		return false;
 
@@ -443,10 +443,12 @@ Send::Send(const Event &evt) : _evt(evt) {
 BuiltinFunc::BuiltinFunc(BuiltinFunctionID bfid) : _funcID(bfid) {
 }
 
-GetChild::GetChild(uint32 attribute) : _attribute(attribute) {
+GetChild::GetChild(uint32 attribute, bool isLValue, bool isIndexed)
+	: _attribute(attribute), _isLValue(isLValue), _isIndexed(isIndexed) {
 }
 
-PushValue::PushValue(DataType dataType, const void *value) {
+PushValue::PushValue(DataType dataType, const void *value, bool isLValue)
+	: _dataType(dataType), _isLValue(isLValue) {
 	switch (dataType) {
 	case DataType::kDataTypeBool:
 		_value.b = *static_cast<const bool *>(value);
@@ -466,7 +468,7 @@ PushValue::PushValue(DataType dataType, const void *value) {
 	}
 }
 
-PushGlobal::PushGlobal(uint32 guid) : _guid(guid), _refSetIndex(0) {
+PushGlobal::PushGlobal(uint32 guid, bool isLValue) : _guid(guid), _refSetIndex(0), _isLValue(isLValue) {
 }
 
 uint32 PushGlobal::getStaticGUID() const {
