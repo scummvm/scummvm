@@ -82,7 +82,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 };
 
 /**
- * The fallback game descriptor used by the Made engine's fallbackDetector.
+ * The fallback game descriptor used by the mTropolis engine's fallbackDetector.
  * Contents of this struct are to be overwritten by the fallbackDetector.
  */
 static MTropolisGameDescription g_fallbackDesc = {
