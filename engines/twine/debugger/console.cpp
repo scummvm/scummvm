@@ -71,7 +71,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("set_holomap_flag", WRAP_METHOD(TwinEConsole, doSetHolomapFlag));
 	registerCmd("set_holomap_trajectory", WRAP_METHOD(TwinEConsole, doSetHolomapTrajectory));
 	registerCmd("show_holomap_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
-	registerCmd("toggle_scene_patches", WRAP_METHOD(TwinEConsole, doToggleScenePatches));
+	registerCmd("toggle_enhancements", WRAP_METHOD(TwinEConsole, doToggleEnhancements));
 }
 
 TwinEConsole::~TwinEConsole() {
@@ -109,8 +109,8 @@ bool TwinEConsole::doToggleGodMode(int argc, const char **argv) {
 	return true;
 }
 
-bool TwinEConsole::doToggleScenePatches(int argc, const char **argv) {
-	TOGGLE_DEBUG(_engine->_scene->_useScenePatches, "use scene patches\n")
+bool TwinEConsole::doToggleEnhancements(int argc, const char **argv) {
+	TOGGLE_DEBUG(_engine->_scene->_enableEnhancements, "enable enhancements\n")
 	return true;
 }
 

@@ -1233,7 +1233,7 @@ static int32 lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 trackIdx = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::POS_POINT(%i)", (int)trackIdx);
-	if (engine->_scene->_useScenePatches) {
+	if (engine->_scene->_enableEnhancements) {
 		if (IS_HERO(ctx.actorIdx) && engine->_scene->_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && trackIdx == 8) {
 			ctx.stream.rewind(2);
 			ctx.stream.writeByte(0x34); // CHANGE_CUBE

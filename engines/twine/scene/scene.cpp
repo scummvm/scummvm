@@ -392,7 +392,7 @@ bool Scene::loadSceneLBA1() {
 		point->z = (int16)stream.readUint16LE();
 	}
 
-	if (_useScenePatches) {
+	if (_enableEnhancements) {
 		switch (_currentSceneIdx) {
 		case LBA1SceneId::Hamalayi_Mountains_landing_place:
 			_sceneActors[21]._pos.x = _sceneActors[21]._collisionPos.x = 6656 + 256;
@@ -483,7 +483,7 @@ void Scene::dumpSceneScripts() const {
 
 void Scene::changeScene() {
 	if (_engine->isLBA1()) {
-		if (_useScenePatches) {
+		if (_enableEnhancements) {
 			if (_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && _needChangeScene == LBA1SceneId::Principal_Island_Harbor) {
 				if (_sceneNumZones >= 15 && _sceneNumTracks >= 8) {
 					const ZoneStruct *zone = &_sceneZones[15];
