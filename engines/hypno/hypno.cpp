@@ -199,7 +199,9 @@ void HypnoEngine::runIntros(Videos &videos) {
 	debugC(1, kHypnoDebugScene, "Starting run intros with %d videos!", videos.size());
 	Common::Event event;
 	stopSound();
-	// defaultCursor();
+	bool skip = false;
+	int clicked[3] = {-1, -1, -1};
+	int clicks = 0;
 
 	for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
 		playVideo(*it);
@@ -210,12 +212,17 @@ void HypnoEngine::runIntros(Videos &videos) {
 			// Events
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
-						if (it->decoder)
-							skipVideo(*it);
-					}
-					videos.clear();
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					skip = true;
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				if (videos.size() == 1) {
+					int first = (clicks - 2) % 3;
+					int last = clicks % 3;
+					clicked[last] = videos[0].decoder->getCurFrame();
+					if (clicks >= 2 && clicked[last] - clicked[first] <= 10)
+						skip = true;
+					clicks++;
 				}
 				break;
 
@@ -223,6 +230,14 @@ void HypnoEngine::runIntros(Videos &videos) {
 				break;
 			}
 		}
+		if (skip) {
+			for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
+				if (it->decoder)
+					skipVideo(*it);
+			}
+			videos.clear();
+		}
+
 		bool playing = false;
 		for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
 			assert(!it->loop);
