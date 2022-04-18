@@ -135,7 +135,7 @@
     <DisplayString Condition="_pointer != 0">{*_pointer}</DisplayString>
     <Expand>
       <Item Condition="_pointer != 0" Name="[ptr]">_pointer</Item>
-      <Item Condition="_refCount != 0" Name="[refCount]">*_refCount</Item>
+      <Item Condition="_tracker != 0" Name="[refCount]">_tracker->_strongRefCount</Item>
     </Expand>
   </Type>
 </AutoVisualizer>
