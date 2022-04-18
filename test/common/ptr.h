@@ -156,6 +156,16 @@ class PtrTestSuite : public CxxTest::TestSuite {
 		Common::SharedPtr<A> a(b);
 		a = b;
 	}
+
+	void test_weak_ptr() {
+		Common::SharedPtr<B> b(new B);
+		Common::WeakPtr<A> a(b);
+		TS_ASSERT(a.lock() == b);
+		TS_ASSERT(!a.expired());
+		b.reset();
+		TS_ASSERT(a.expired());
+		TS_ASSERT(!a.lock());
+	}
 };
 
 int PtrTestSuite::InstanceCountingClass::count = 0;
