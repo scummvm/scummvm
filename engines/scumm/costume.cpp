@@ -773,7 +773,7 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 		palette = darkpalette;
 
 	src = _loaded._dataOffsets;
-	anim = 4 * cost.frame[limb] + newDirToOldDir(a->getFacing());
+	anim = cost.frame[limb];
 	frameNum = cost.curpos[limb];
 	frame = src[src[2 * anim] + frameNum];
 
@@ -967,10 +967,8 @@ void ClassicCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) 
 	loadCostume(a->_costume);
 
 	anim = newDirToOldDir(a->getFacing()) + frame * 4;
-
-	if (anim > _numAnim) {
+	if (anim > _numAnim)
 		return;
-	}
 
 	if (_vm->_game.id == GID_LOOM && _vm->_game.platform == Common::kPlatformPCEngine)
 		baseptr = _dataOffsets + anim * 2 + 2;
@@ -1006,7 +1004,7 @@ void ClassicCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) 
 				if (j == 0xFFFF) {
 					a->_cost.curpos[i] = 0xFFFF;
 					a->_cost.start[i] = 0;
-					a->_cost.frame[i] = frame;
+					a->_cost.frame[i] = anim;
 				} else {
 					extra = *r++;
 					cmd = _animCmds[j];
@@ -1019,7 +1017,7 @@ void ClassicCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) 
 						a->_cost.end[i] = j + (extra & 0x7F);
 						if (extra & 0x80)
 							a->_cost.curpos[i] |= 0x8000;
-						a->_cost.frame[i] = frame;
+						a->_cost.frame[i] = anim;
 					}
 				}
 			} else {
@@ -1162,7 +1160,7 @@ void NESCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	a->_cost.curpos[0] = 0;
 	a->_cost.start[0] = 0;
 	a->_cost.end[0] = _dataOffsets[2 * anim + 1];
-	a->_cost.frame[0] = frame;
+	a->_cost.frame[0] = anim;
 }
 
 byte NESCostumeLoader::increaseAnims(Actor *a) {

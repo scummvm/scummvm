@@ -1516,6 +1516,16 @@ void Actor::setDirection(int direction) {
 		vald = _cost.frame[i];
 		if (vald == 0xFFFF)
 			continue;
+		if (!(_vm->_game.features & GF_NEW_COSTUMES)) {
+			// Fix bug mentioned here: https://github.com/scummvm/scummvm/pull/3795/
+			// For versions 1 to 6 we need to store the direction info in the frame array (like
+			// the original interpreters do). I haven't found any signs that v7/8 require it, though.
+			// I haven't checked HE, but since it uses the same AKOS costumes as v7/8 I leave that
+			// as it is...
+			if ((vald & 3) == newDirToOldDir(direction))
+				continue;
+			vald >>= 2;
+		}
 		_vm->_costumeLoader->costumeDecodeData(this, vald, (_vm->_game.version <= 2) ? 0xFFFF : aMask);
 	}
 
@@ -3799,6 +3809,14 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 
 		setDirection(_facing);
+	}
+
+	if (s.isLoading() && _vm->_game.version > 0 && !(_vm->_game.features & GF_NEW_COSTUMES) && s.getVersion() < VER(105)) {
+		// For older saves, we can't reconstruct the frame's direction if it is different from the actor
+		// direction, this is the best we can do. However, it seems to be relevant only for very rare
+		// edge cases, anyway...
+		for (int i = 0; i < 16; ++i)
+			_cost.frame[i] = (_cost.frame[i] << 2) | newDirToOldDir(_facing);
 	}
 }
 
