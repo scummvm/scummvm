@@ -126,6 +126,7 @@ class TinselEngine : public Engine {
 	static const char *const _sampleIndices[][3];
 	static const char *const _sampleFiles[][3];
 	static const char *const _textFiles[][3];
+	static const char *const _sceneFiles[];
 
 protected:
 
@@ -161,6 +162,8 @@ public:
 	const char *getSampleIndex(LANGUAGE lang);
 	const char *getSampleFile(LANGUAGE lang);
 	const char *getTextFile(LANGUAGE lang);
+	// Noir
+	const char *getSceneFile(LANGUAGE lang);
 
 	MidiDriver *_driver;
 	SoundManager *_sound;

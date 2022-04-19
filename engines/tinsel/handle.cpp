@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
+#include "common/str.h"
 
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
@@ -606,6 +607,22 @@ int Handle::CdNumber(SCNHANDLE offset) {
 		return 1;
 
 	return GetCD(pH->flags2 & fAllCds);
+}
+
+/**
+  * Searches for a resource by name and returns the handle to it.
+  *
+  * @param fileName Name of the resource to search for
+  */
+SCNHANDLE Handle::FindLanguageSceneHandle(const char *fileName) {
+	Common::String nameString{fileName};
+
+	for (uint i = 0; i < _numHandles; ++i) {
+		if (nameString == Common::String{_handleTable[i].szName}) {
+			return i << SCNHANDLE_SHIFT;
+		}
+	}
+	error("Can't find handle for language scene\n");
 }
 
 } // End of namespace Tinsel

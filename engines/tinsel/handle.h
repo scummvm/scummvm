@@ -75,6 +75,9 @@ public:
 
 	int CdNumber(SCNHANDLE offset);
 
+	// Noir
+	SCNHANDLE FindLanguageSceneHandle(const char *fileName);
+
 #ifdef BODGE
 	bool ValidHandle(SCNHANDLE offset);
 #endif
