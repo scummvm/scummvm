@@ -1693,22 +1693,22 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 		byte *unpatchedScript = getResourceAddress(type, idx);
 
 		const byte patch[] = {
-0x48, 0x00, 0x40, 0x00, 0x00, 0x13, 0x00, // if (Local[0] == 0) {
-0x33, 0x03, 0x00, 0x00, 0xc8, 0x00,       //     SetScreen(0,200);
-0x0a, 0x82, 0xff,                         //     startScript(130,[]);
-0x80,                                     //     breakHere();
-0x68, 0x00, 0x00, 0x82,                   //     VAR_RESULT = isScriptRunning(130);
-0x28, 0x00, 0x00, 0xf6, 0xff,             //     unless (!VAR_RESULT) goto 0955;
-                                          // }
-0x48, 0x00, 0x40, 0x3f, 0xe1, 0x1d, 0x00, // if (Local[0] == -7873) [
-0x1a, 0x32, 0x00, 0x3f, 0x01,             //     VAR_MAINMENU_KEY = 319;
-0x33, 0x03, 0x00, 0x00, 0xc8, 0x00,       //     SetScreen(0,200);
-0x0a, 0x82, 0xff,                         //     startScript(130,[]);
-0x80,                                     //     breakHere();
-0x68, 0x00, 0x00, 0x82,                   //     VAR_RESULT = isScriptRunning(130);
-0x28, 0x00, 0x00, 0xf6, 0xff,             //     unless (!VAR_RESULT) goto 0955;
-0x1a, 0x00, 0x40, 0x00, 0x00              //     Local[0] = 0;
-                                          // }
+0x48, 0x00, 0x40, 0x00, 0x00, 0x13, 0x00, // [0926] if (Local[0] == 0) {
+0x33, 0x03, 0x00, 0x00, 0xc8, 0x00,       // [092D]   SetScreen(0,200);
+0x0a, 0x82, 0xff,                         // [0933]   startScript(130,[]);
+0x80,                                     // [0936]   breakHere();
+0x68, 0x00, 0x00, 0x82,                   // [0937]   VAR_RESULT = isScriptRunning(130);
+0x28, 0x00, 0x00, 0xf6, 0xff,             // [093B]   unless (!VAR_RESULT) goto 0936;
+                                          // [0940] }
+0x48, 0x00, 0x40, 0x3f, 0xe1, 0x1d, 0x00, // [0940] if (Local[0] == -7873) [
+0x1a, 0x32, 0x00, 0x3f, 0x01,             // [0947]   VAR_MAINMENU_KEY = 319;
+0x33, 0x03, 0x00, 0x00, 0xc8, 0x00,       // [094C]   SetScreen(0,200);
+0x0a, 0x82, 0xff,                         // [0952]   startScript(130,[]);
+0x80,                                     // [0955]   breakHere();
+0x68, 0x00, 0x00, 0x82,                   // [0956]   VAR_RESULT = isScriptRunning(130);
+0x28, 0x00, 0x00, 0xf6, 0xff,             // [095A]   unless (!VAR_RESULT) goto 0955;
+0x1a, 0x00, 0x40, 0x00, 0x00              // [095F]   Local[0] = 0;
+                                          // [0964] }
 		};
 
 		byte *patchedScript = new byte[6780];
