@@ -903,7 +903,17 @@ const char *const TinselEngine::_textFiles[][3] = {
 	{ "japanese.txt", "japanese1.txt", "japanese2.txt" },	// Japanese
 	{ "us.txt", "us1.txt", "us2.txt" }					// US English
 };
-
+const char *const TinselEngine::_sceneFiles[] = {
+	"english.scn", // English
+	"french.scn", // French
+	"german.scn", // German
+	"italian.scn", // Italian
+	"spanish.scn", // Spanish
+	"english.scn", // Hebrew (FIXME: not sure if this is correct)
+	"english.scn", // Hungarian (FIXME: not sure if this is correct)
+	"japanese.scn", // Japanese
+	"us.scn"  // US English
+};
 
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
@@ -1406,6 +1416,20 @@ const char *TinselEngine::getTextFile(LANGUAGE lang) {
 		cd = 0;
 
 	return _textFiles[lang][cd];
+}
+
+/**
+ * Return the loading screen(?) scene file specific to the given language.
+ *
+ * @param lang index of the language
+ */
+const char *TinselEngine::getSceneFile(LANGUAGE lang) {
+	assert(((unsigned int) lang) < NUM_LANGUAGES);
+
+	if (!Common::File::exists(_sceneFiles[lang]))
+		lang = TXT_ENGLISH; // fallback to ENGLISH.SCN if <LANG>.IDX is not found
+
+	return _sceneFiles[lang];
 }
 
 } // End of namespace Tinsel
