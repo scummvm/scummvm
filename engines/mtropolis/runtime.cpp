@@ -26,11 +26,14 @@
 #include "mtropolis/element_factory.h"
 #include "mtropolis/modifier_factory.h"
 #include "mtropolis/modifiers.h"
+#include "mtropolis/render.h"
 
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/substream.h"
+#include "common/system.h"
 
+#include "graphics/surface.h"
 #include "graphics/wincursor.h"
 #include "graphics/maccursor.h"
 
@@ -984,6 +987,9 @@ const Common::WeakPtr<RuntimeObject>& MessageProperties::getSource() const {
 }
 
 Structural::Structural() : _parent(nullptr) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	_debugger = nullptr;
+#endif
 }
 
 Structural::~Structural() {
@@ -1134,10 +1140,14 @@ Common::SharedPtr<DebugInspector> Structural::debugGetInspector() const {
 	return _debugInspector;
 }
 
+Debugger* Structural::debugGetDebugger() const {
+	return _debugger;
+}
+
 DebugInspector *Structural::debugCreateInspector() {
 	return new DebugInspector(this);
 }
-#endif
+#endif /* MTROPOLIS_DEBUG_ENABLE */
 
 void Structural::linkInternalReferences(ObjectLinkingScope *scope) {
 }
@@ -1348,6 +1358,7 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 Runtime::SceneStackEntry::SceneStackEntry() {
 }
 
+
 Runtime::Runtime() : _nextRuntimeGUID(1) {
 	_vthread.reset(new VThread());
 }
@@ -1440,6 +1451,58 @@ void Runtime::runFrame() {
 		// Ran out of actions
 		break;
 	}
+}
+
+void Runtime::drawFrame(OSystem* system) {
+	int width = system->getWidth();
+	int height = system->getHeight();
+
+	for (Common::Array<Common::SharedPtr<Window> >::const_iterator it = _windows.begin(), itEnd = _windows.end(); it != itEnd; ++it) {
+		const Window &window = *it->get();
+		const Graphics::Surface &surface = window.getSurface();
+
+		int32 destLeft = window.getX();
+		int32 destRight = destLeft + surface.w;
+		int32 destTop = window.getY();
+		int32 destBottom = destTop + surface.h;
+
+		int32 srcLeft = 0;
+		int32 srcRight = surface.w;
+		int32 srcTop = 0;
+		int32 srcBottom = surface.h;
+
+		// Clip to drawable area
+		if (destLeft < 0) {
+			int leftAdjust = -destLeft;
+			destLeft += leftAdjust;
+			srcLeft += leftAdjust;
+		}
+
+		if (destTop < 0) {
+			int topAdjust = -destTop;
+			destTop += topAdjust;
+			srcTop += topAdjust;
+		}
+
+		if (destRight > width) {
+			int rightAdjust = width - destRight;
+			destRight += rightAdjust;
+			srcRight += rightAdjust;
+		}
+
+		if (destBottom > height) {
+			int bottomAdjust = height - destBottom;
+			destBottom += bottomAdjust;
+			srcBottom += bottomAdjust;
+		}
+
+		if (destLeft >= destRight || destTop >= destBottom || destLeft >= width || destTop >= height || destRight <= 0 || destBottom <= 0)
+			continue;
+
+		system->copyRectToScreen(surface.getBasePtr(destLeft, destTop), surface.pitch, destLeft, destTop, destRight - destLeft, destBottom - destTop);
+	}
+
+	system->updateScreen();
 }
 
 Common::SharedPtr<Structural> Runtime::findDefaultSharedSceneForScene(Structural *scene) {
@@ -1784,11 +1847,16 @@ uint32 Runtime::allocateRuntimeGUID() {
 	return _nextRuntimeGUID++;
 }
 
+void Runtime::addWindow(const Common::SharedPtr<Window> &window) {
+	_windows.push_back(window);
+}
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
+
 void Runtime::debugSetEnabled(bool enabled) {
 	if (enabled) {
 		if (!_debugger) 
-			_debugger.reset(new Debugger());
+			_debugger.reset(new Debugger(this));
 	} else {
 		_debugger.reset();
 	}
@@ -1797,7 +1865,12 @@ void Runtime::debugBreak() {
 	debugSetEnabled(true);
 	_debugger->setPaused(true);
 }
-#endif
+
+Debugger* Runtime::debugGetDebugger() const {
+	return _debugger.get();
+}
+
+#endif /* MTROPOLIS_DEBUG_ENABLE */
 
 const Common::Array<Common::SharedPtr<Modifier> > &IModifierContainer::getModifiers() const {
 	return const_cast<IModifierContainer &>(*this).getModifiers();
@@ -2493,6 +2566,9 @@ bool ModifierFlags::load(const uint32 dataModifierFlags) {
 }
 
 Modifier::Modifier() {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	_debugger = nullptr;
+#endif
 }
 
 Modifier::~Modifier() {
@@ -2510,6 +2586,7 @@ void Modifier::materialize(Runtime *runtime, ObjectLinkingScope *outerScope) {
 	setRuntimeGUID(runtime->allocateRuntimeGUID());
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
+	_debugger = runtime->debugGetDebugger();
 	_debugInspector.reset(this->debugCreateInspector());
 #endif
 }
@@ -2548,6 +2625,7 @@ void Modifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
+
 SupportStatus Modifier::debugGetSupportStatus() const {
 	return kSupportStatusNone;
 }
@@ -2560,11 +2638,15 @@ Common::SharedPtr<DebugInspector> Modifier::debugGetInspector() const {
 	return _debugInspector;
 }
 
+Debugger *Modifier::debugGetDebugger() const {
+	return _debugger;
+}
+
 DebugInspector *Modifier::debugCreateInspector() {
 	return new DebugInspector(this);
 
 }
-#endif
+#endif /* MTROPOLIS_DEBUG_ENABLE */
 
 bool VariableModifier::isVariable() const {
 	return true;

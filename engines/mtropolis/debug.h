@@ -25,12 +25,17 @@
 #include "common/str.h"
 #include "common/ptr.h"
 
+#include <cstdarg>
+
 #define MTROPOLIS_DEBUG_VTHREAD_STACKS
 #define MTROPOLIS_DEBUG_ENABLE
 
 namespace MTropolis {
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
+
+class Runtime;
+
 struct IDebuggable;
 
 enum SupportStatus {
@@ -50,19 +55,46 @@ private:
 	IDebuggable *_debuggable;
 };
 
+enum DebugSeverity {
+	kDebugSeverityInfo,
+	kDebugSeverityWarning,
+	kDebugSeverityError,
+};
+
+class Notification {
+public:
+
+private:
+	Runtime *_runtime;
+};
+
 class Debugger {
 public:
-	Debugger();
+	explicit Debugger(Runtime *runtime);
 	~Debugger();
 
 	void setPaused(bool paused);
 	bool isPaused() const;
+	void notify(DebugSeverity severity, const Common::String &str);
+	void notifyFmt(DebugSeverity severity, const char *fmt, ...);
+	void vnotifyFmt(DebugSeverity severity, const char *fmt, va_list args);
 
 private:
+	Debugger();
+
 	bool _paused;
+	Runtime *_runtime;
 };
 
-#endif
+#define MTROPOLIS_DEBUG_NOTIFY(...) \
+		(static_cast<const IDebuggable *>(this)->debugGetDebugger()->notifyFmt(__VA_ARGS__));
+
+
+#else /* MTROPOLIS_DEBUG_ENABLE */
+
+#define MTROPOLIS_DEBUG_NOTIFY(...) ((void)0)
+
+#endif /* !MTROPOLIS_DEBUG_ENABLE */
 
 struct IDebuggable {
 #ifdef MTROPOLIS_DEBUG_ENABLE
@@ -70,12 +102,10 @@ struct IDebuggable {
 	virtual const char *debugGetTypeName() const = 0;
 	virtual const Common::String &debugGetName() const = 0;
 	virtual Common::SharedPtr<DebugInspector> debugGetInspector() const = 0;
+	virtual Debugger *debugGetDebugger() const = 0;
 #endif
 };
 
 } // End of namespace MTropolis
 
 #endif /* MTROPOLIS_DEBUG_H */
-
-
-

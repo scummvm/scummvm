@@ -18,6 +18,7 @@ MODULE_OBJS = \
 	plugin/obsidian_data.o \
 	plugin/standard.o \
 	plugin/standard_data.o \
+	render.o \
 	runtime.o \
 	vthread.o
 
