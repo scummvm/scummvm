@@ -1686,7 +1686,7 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 	//
 	// However, this means that there is no way to pick the difficulty
 	// level. Since ScummVM bypasses the copy protection check, there is
-	// no harm in showing the screen by simply re-inserging the missing
+	// no harm in showing the screen by simply re-inserting the missing
 	// part of the script.
 
 	else if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh && type == rtScript && idx == 1 && size == 6718) {
