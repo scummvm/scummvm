@@ -402,6 +402,7 @@ static const MD5Table md5table[] = {
 	{ "7fc6cdb46b4c9d384c52327f4bca6416", "football", "", "", -1, Common::EN_ANY, Common::kPlatformUnknown },
 	{ "810a9da887aefa597b0cf3c77d262897", "BluesABCTime", "", "Demo", -1, Common::EN_ANY, Common::kPlatformUnknown },
 	{ "813af095ff338dacf349aca377e48041", "pajama", "HE 101", "", 66878, Common::DE_DEU, Common::kPlatformWii },
+	{ "813fbcd24a46728cf142cb62057a69cd", "comi", "", "", 76791, Common::HE_ISR, Common::kPlatformWindows },
 	{ "822807c3cd3b43a925cab2767ca6b453", "BluesTreasureHunt", "", "Disc 1", -1, Common::EN_ANY, Common::kPlatformUnknown },
 	{ "8241070e96518c894e8f5f8e987b6030", "tentacle", "", "CD", -1, Common::DE_DEU, Common::kPlatformMacintosh },
 	{ "8299d9b8a1b0e7b881bae7a9971dc5e2", "zak", "V2", "Demo", 1916, Common::EN_ANY, Common::kPlatformAtariST },
