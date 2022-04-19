@@ -396,20 +396,4 @@ uint32 MidiParser_SMF::compressToType0(byte *tracks[], byte numTracks, byte *buf
 	return output - buffer;
 }
 
-void MidiParser_SMF::sendToDriver(uint32 b) {
-	if (_source < 0) {
-		MidiParser::sendToDriver(b);
-	} else {
-		_driver->send(_source, b);
-	}
-}
-
-void MidiParser_SMF::sendMetaEventToDriver(byte type, byte *data, uint16 length) {
-	if (_source < 0) {
-		MidiParser::sendMetaEventToDriver(type, data, length);
-	} else {
-		_driver->metaEvent(_source, type, data, length);
-	}
-}
-
 MidiParser *MidiParser::createParser_SMF(int8 source) { return new MidiParser_SMF(source); }

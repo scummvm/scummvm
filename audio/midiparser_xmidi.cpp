@@ -44,14 +44,6 @@ protected:
 	int _loopCount;
 
 	/**
-	 * The source number to use when sending MIDI messages to the driver.
-	 * When using multiple sources, use source 0 and higher. This must be
-	 * used when source volume or channel locking is used.
-	 * By default this is -1, which means the parser is the only source
-	 * of MIDI messages and multiple source functionality is disabled.
-	 */
-	int8 _source;
-	/**
 	 * The sequence branches defined for each track. These point to
 	 * positions in the MIDI data.
 	 */
@@ -87,15 +79,12 @@ protected:
 		_loopCount = -1;
 	}
 	void onTrackStart(uint8 track) override;
-
-	void sendToDriver(uint32 b) override;
-	void sendMetaEventToDriver(byte type, byte *data, uint16 length) override;
 public:
 	MidiParser_XMIDI(XMidiCallbackProc proc, void *data, int8 source = -1) :
+			MidiParser(source),
 			_callbackProc(proc),
 			_callbackData(data),
 			_newTimbreListDriver(nullptr),
-			_source(source),
 			_loopCount(-1) {
 		memset(_loop, 0, sizeof(_loop));
 		memset(_trackBranches, 0, sizeof(_trackBranches));
@@ -570,22 +559,6 @@ void MidiParser_XMIDI::onTrackStart(uint8 track) {
 	// Load custom timbres
 	if (_newTimbreListDriver && _tracksTimbreListSize[track] > 0)
 		_newTimbreListDriver->processXMIDITimbreChunk(_tracksTimbreList[track], _tracksTimbreListSize[track]);
-}
-
-void MidiParser_XMIDI::sendToDriver(uint32 b) {
-	if (_source < 0) {
-		MidiParser::sendToDriver(b);
-	} else {
-		_driver->send(_source, b);
-	}
-}
-
-void MidiParser_XMIDI::sendMetaEventToDriver(byte type, byte *data, uint16 length) {
-	if (_source < 0) {
-		MidiParser::sendMetaEventToDriver(type, data, length);
-	} else {
-		_driver->metaEvent(_source, type, data, length);
-	}
 }
 
 void MidiParser::defaultXMidiCallback(byte eventData, void *data) {

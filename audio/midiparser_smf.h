@@ -31,14 +31,6 @@ class MidiParser_SMF : public MidiParser {
 protected:
 	byte *_buffer;
 	bool _malformedPitchBends;
-	/**
-	 * The source number to use when sending MIDI messages to the driver.
-	 * When using multiple sources, use source 0 and higher. This must be
-	 * used when source volume or channel locking is used.
-	 * By default this is -1, which means the parser is the only source
-	 * of MIDI messages and multiple source functionality is disabled.
-	 */
-	int8 _source;
 
 protected:
 	/**
@@ -55,11 +47,8 @@ protected:
 	uint32 compressToType0(byte *tracks[], byte numTracks, byte *buffer, bool malformedPitchBends = false);
 	void parseNextEvent(EventInfo &info) override;
 
-	void sendToDriver(uint32 b) override;
-	void sendMetaEventToDriver(byte type, byte *data, uint16 length) override;
-
 public:
-	MidiParser_SMF(int8 source = -1) : _buffer(nullptr), _malformedPitchBends(false), _source(source) {}
+	MidiParser_SMF(int8 source = -1) : MidiParser(source), _buffer(nullptr), _malformedPitchBends(false) {}
 	~MidiParser_SMF();
 
 	bool loadMusic(byte *data, uint32 size) override;

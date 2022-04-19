@@ -30,7 +30,8 @@
 //
 //////////////////////////////////////////////////
 
-MidiParser::MidiParser() :
+MidiParser::MidiParser(int8 source) :
+_source(source),
 _hangingNotesCount(0),
 _driver(nullptr),
 _timerRate(0x4A0000),
@@ -84,11 +85,19 @@ void MidiParser::property(int prop, int value) {
 }
 
 void MidiParser::sendToDriver(uint32 b) {
-	_driver->send(b);
+	if (_source < 0) {
+		_driver->send(b);
+	} else {
+		_driver->send(_source, b);
+	}
 }
 
 void MidiParser::sendMetaEventToDriver(byte type, byte *data, uint16 length) {
-	_driver->metaEvent(type, data, length);
+	if (_source < 0) {
+		_driver->metaEvent(type, data, length);
+	} else {
+		_driver->metaEvent(_source, type, data, length);
+	}
 }
 
 void MidiParser::setTempo(uint32 tempo) {
@@ -186,7 +195,7 @@ void MidiParser::onTimer() {
 	// even if the parser does not parse events.
 	_sysExDelay -= (_sysExDelay > _timerRate) ? _timerRate : _sysExDelay;
 
-	if (!_position._playPos || !_driver || !_doParse || _pause || !_driver->isReady())
+	if (!_position._playPos || !_driver || !_doParse || _pause || !_driver->isReady(_source))
 		return;
 
 	_abortParse = false;

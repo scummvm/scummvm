@@ -320,6 +320,15 @@ protected:
 	bool   _doParse;       ///< True if the parser should be parsing; false if it should not be active
 	bool   _pause;		   ///< True if the parser has paused parsing
 
+	/**
+	 * The source number to use when sending MIDI messages to the driver.
+	 * When using multiple sources, use source 0 and higher. This must be
+	 * used when source volume or channel locking is used.
+	 * By default this is -1, which means the parser is the only source
+	 * of MIDI messages and multiple source functionality is disabled.
+	 */
+	int8   _source;
+
 protected:
 	static uint32 readVLQ(byte * &data);
 	virtual void resetTracking();
@@ -427,7 +436,7 @@ public:
 public:
 	typedef void (*XMidiCallbackProc)(byte eventData, void *refCon);
 
-	MidiParser();
+	MidiParser(int8 source = -1);
 	virtual ~MidiParser() { stopPlaying(); }
 
 	virtual bool loadMusic(byte *data, uint32 size) = 0;
