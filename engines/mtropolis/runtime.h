@@ -29,17 +29,19 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
-#include "graphics/pixelformat.h"
-
 #include "mtropolis/data.h"
 #include "mtropolis/debug.h"
 #include "mtropolis/vthread.h"
+
+class OSystem;
 
 namespace Graphics {
 
 struct WinCursorGroup;
 class MacCursor;
 class Cursor;
+struct PixelFormat;
+struct Surface;
 
 } // End of namespace Graphics
 
@@ -50,7 +52,6 @@ class CursorGraphic;
 class CursorGraphicCollection;
 class Element;
 class MessageDispatch;
-struct MessageProperties;
 class Modifier;
 class RuntimeObject;
 class PlugIn;
@@ -58,13 +59,14 @@ class Project;
 class Runtime;
 class Structural;
 class VisualElement;
+class Window;
 struct IMessageConsumer;
 struct IModifierContainer;
 struct IModifierFactory;
 struct IPlugInModifierFactory;
 struct IPlugInModifierFactoryAndDataFactory;
+struct MessageProperties;
 struct ModifierLoaderContext;
-
 
 namespace DynamicValueTypes {
 
@@ -92,7 +94,7 @@ enum DynamicValueType {
 
 namespace AttributeIDs {
 
-	enum AttributeID {
+enum AttributeID {
 	kAttribCache = 55,
 	kAttribDirect = 56,
 	kAttribVisible = 58,
@@ -181,7 +183,7 @@ struct Point16 {
 
 	bool load(const Data::Point &point);
 
-	inline bool operator==(const Point16& other) const {
+	inline bool operator==(const Point16 &other) const {
 		return x == other.x && y == other.y;
 	}
 
@@ -304,7 +306,7 @@ class DynamicListContainerBase {
 public:
 	virtual ~DynamicListContainerBase();
 	virtual bool setAtIndex(size_t index, const DynamicValue &dynValue) = 0;
-	virtual void setFrom(const DynamicListContainerBase &other) = 0;	// Only supports setting same type!
+	virtual void setFrom(const DynamicListContainerBase &other) = 0; // Only supports setting same type!
 	virtual const void *getConstArrayPtr() const = 0;
 	virtual size_t getSize() const = 0;
 	virtual bool compareEqual(const DynamicListContainerBase &other) const = 0;
@@ -462,7 +464,6 @@ private:
 	DynamicListContainerBase *_container;
 };
 
-
 struct DynamicValue {
 	DynamicValue();
 	DynamicValue(const DynamicValue &other);
@@ -488,7 +489,7 @@ struct DynamicValue {
 	DynamicValue &operator=(const DynamicValue &other);
 
 	bool operator==(const DynamicValue &other) const;
-	inline bool operator!=(const DynamicValue& other) const {
+	inline bool operator!=(const DynamicValue &other) const {
 		return !((*this) == other);
 	}
 
@@ -576,7 +577,6 @@ struct ProjectResources {
 	virtual ~ProjectResources();
 };
 
-
 class CursorGraphicCollection {
 public:
 	CursorGraphicCollection();
@@ -594,7 +594,7 @@ private:
 
 class ProjectDescription {
 public:
-	ProjectDescription(); 
+	ProjectDescription();
 	~ProjectDescription();
 
 	void addSegment(int volumeID, const char *filePath);
@@ -706,8 +706,8 @@ private:
 
 	Common::Array<PropagationStack> _propagationStack;
 	Common::SharedPtr<MessageProperties> _msg;
-	bool _cascade;	// Traverses structure tree
-	bool _relay;	// Fire on multiple modifiers
+	bool _cascade; // Traverses structure tree
+	bool _relay;   // Fire on multiple modifiers
 	bool _terminated;
 };
 
@@ -716,6 +716,7 @@ public:
 	Runtime();
 
 	void runFrame();
+	void drawFrame(OSystem *osystem);
 	void queueProject(const Common::SharedPtr<ProjectDescription> &desc);
 
 	void addVolume(int volumeID, const char *name, bool isMounted);
@@ -727,9 +728,12 @@ public:
 
 	uint32 allocateRuntimeGUID();
 
+	void addWindow(const Common::SharedPtr<Window> &window);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
+	Debugger *debugGetDebugger() const;
 #endif
 
 private:
@@ -790,6 +794,8 @@ private:
 	Common::SharedPtr<Structural> _activeMainScene;
 	Common::SharedPtr<Structural> _activeSharedScene;
 	Common::Array<SceneReturnListEntry> _sceneReturnList;
+
+	Common::Array<Common::SharedPtr<Window> > _windows;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<Debugger> _debugger;
@@ -882,9 +888,10 @@ public:
 	void materializeDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
-	virtual SupportStatus debugGetSupportStatus() const override;
-	virtual const Common::String &debugGetName() const override;
-	virtual Common::SharedPtr<DebugInspector> debugGetInspector() const override;
+	SupportStatus debugGetSupportStatus() const override;
+	const Common::String &debugGetName() const override;
+	Common::SharedPtr<DebugInspector> debugGetInspector() const override;
+	Debugger *debugGetDebugger() const override;
 
 	virtual DebugInspector *debugCreateInspector();
 #endif
@@ -902,6 +909,7 @@ protected:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<DebugInspector> _debugInspector;
+	Debugger *_debugger;
 #endif
 };
 
@@ -1175,9 +1183,10 @@ public:
 	virtual void visitInternalReferences(IStructuralReferenceVisitor *visitor);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
-	virtual SupportStatus debugGetSupportStatus() const override;
-	virtual const Common::String &debugGetName() const override;
-	virtual Common::SharedPtr<DebugInspector> debugGetInspector() const override;
+	SupportStatus debugGetSupportStatus() const override;
+	const Common::String &debugGetName() const override;
+	Common::SharedPtr<DebugInspector> debugGetInspector() const override;
+	Debugger *debugGetDebugger() const override;
 
 	virtual DebugInspector *debugCreateInspector();
 #endif
@@ -1191,6 +1200,7 @@ protected:
 	
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<DebugInspector> _debugInspector;
+	Debugger *_debugger;
 #endif
 };
 

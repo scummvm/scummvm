@@ -19,50 +19,35 @@
  *
  */
 
-#include "mtropolis/debug.h"
+#ifndef MTROPOLIS_RENDER_H
+#define MTROPOLIS_RENDER_H
 
-#include "gui/dialog.h"
+#include "common/scummsys.h"
+#include "graphics/pixelformat.h"
+
+namespace Graphics {
+
+struct Surface;
+
+} // End of namespace Graphics
 
 namespace MTropolis {
 
-DebugInspector::DebugInspector(IDebuggable *debuggable) {
-}
+class Window {
+public:
+	Window(int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format);
+	~Window();
 
-DebugInspector::~DebugInspector() {
-}
+	int32 getX() const;
+	int32 getY() const;
+	Graphics::Surface &getSurface() const;
 
-void DebugInspector::onDestroyed() {
-	_debuggable = nullptr;
-}
-
-Debugger::Debugger(Runtime *runtime) : _paused(false), _runtime(runtime) {
-}
-
-Debugger::~Debugger() {
-}
-
-void Debugger::setPaused(bool paused) {
-	_paused = paused;
-}
-
-bool Debugger::isPaused() const {
-	return _paused;
-}
-
-void Debugger::notify(DebugSeverity severity, const Common::String& str) {
-	// TODO
-}
-
-void Debugger::notifyFmt(DebugSeverity severity, const char *fmt, ...) {
-	va_list args;
-	va_start(args, fmt);
-	this->vnotifyFmt(severity, fmt, args);
-	va_end(args);
-}
-
-void Debugger::vnotifyFmt(DebugSeverity severity, const char* fmt, va_list args) {
-	Common::String str(Common::String::vformat(fmt, args));
-	this->notify(severity, fmt);
-}
+private:
+	int32 _x;
+	int32 _y;
+	Graphics::Surface *_surface;
+};
 
 } // End of namespace MTropolis
+
+#endif
