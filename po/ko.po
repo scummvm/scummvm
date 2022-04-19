@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-16 21:25+0000\n"
+"POT-Creation-Date: 2022-04-19 18:14+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4028,18 +4028,20 @@ msgstr "텍스트에 대해서 NTSC 효과를 에뮬레이트하지 않습니다
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
 #: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
-#: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
-#: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
-#: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
+#: engines/sci/detection_options.h:93 engines/sherlock/detection.cpp:58
+#: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
+#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:106
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "원본 저장/불러오기 화면 사용"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
 #: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
-#: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
-#: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
-#: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
+#: engines/sci/detection_options.h:94 engines/sherlock/detection.cpp:59
+#: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
+#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:107
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "ScummVM의 화면 대신 원본 저장/불러오기 화면을 사용합니다"
 
@@ -4537,7 +4539,7 @@ msgid "Enable Color Blind Mode by default"
 msgstr "색맹 모드를 기본으로 활성화합니다"
 
 #: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
-#: engines/supernova/detection.cpp:51
+#: engines/sci/detection_options.h:191 engines/supernova/detection.cpp:51
 msgid "Enable Text to Speech"
 msgstr "TTS 활성화"
 
@@ -4675,8 +4677,9 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "물체, 옵션 및 성경 인용문에 대해 TTS를 활성화"
 
 #: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
-#: engines/mads/detection.cpp:114 engines/sherlock/detection.cpp:120
-#: engines/supernova/detection.cpp:52 engines/twine/detection.cpp:753
+#: engines/mads/detection.cpp:114 engines/sci/detection_options.h:192
+#: engines/sherlock/detection.cpp:120 engines/supernova/detection.cpp:52
+#: engines/twine/detection.cpp:753
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "TTS를 사용하여 설명 읽기 (TTS를 사용할 수있는 경우)"
 
@@ -6166,6 +6169,144 @@ msgstr ""
 #: engines/saga/saga.cpp:228
 msgid "Error loading game resources."
 msgstr "게임 리소스 불러오기 오류."
+
+#: engines/sci/detection_options.h:31
+msgid "Skip EGA dithering pass (full color backgrounds)"
+msgstr "EGA 디더링 패스 건너뛰기 (풀컬러 배경화면)"
+
+#: engines/sci/detection_options.h:32
+msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
+msgstr "EGA게임의 디더링 패스를 건너뛰고 그래픽이 풀 컬러로 표시됩니다"
+
+#: engines/sci/detection_options.h:41
+msgid "Enable high resolution graphics"
+msgstr "고해상도 그래픽 사용"
+
+#: engines/sci/detection_options.h:42
+msgid "Enable high resolution graphics/content"
+msgstr "고해상도 그래픽/컨텐츠를 사용합니다"
+
+#: engines/sci/detection_options.h:51
+msgid "Enable black-lined video"
+msgstr "비디오에 검은 선 표시"
+
+#: engines/sci/detection_options.h:52
+msgid "Draw black lines over videos to increase their apparent sharpness"
+msgstr "선명도를 높이기 위해 비디오 위에 검은 선을 그립니다"
+
+#: engines/sci/detection_options.h:62
+msgid "Use high-quality video scaling"
+msgstr "고품질 비디오 크기조절 사용"
+
+#: engines/sci/detection_options.h:63
+msgid "Use linear interpolation when upscaling videos, where possible"
+msgstr "비디오 크기조절 할때 가능하면 선형 필터링을 사용"
+
+#: engines/sci/detection_options.h:73
+msgid "Use high-quality \"LarryScale\" cel scaling"
+msgstr "고품질 \"래리스케일\" 셀 크기조절 사용"
+
+#: engines/sci/detection_options.h:74
+msgid "Use special cartoon scaler for drawing character sprites"
+msgstr "캐릭터를 표시할 때 특별한 카툰 크기조절 방식을 사용합니다"
+
+#: engines/sci/detection_options.h:83
+msgid "Prefer digital sound effects"
+msgstr "디지털 사운드 효과 선호"
+
+#: engines/sci/detection_options.h:84
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr "합성 음원 대신 디지털 사운드 이펙트 선호"
+
+#: engines/sci/detection_options.h:103
+msgid "Use CD audio"
+msgstr "CD 오디오 사용"
+
+#: engines/sci/detection_options.h:104
+msgid "Use CD audio instead of in-game audio, if available"
+msgstr "사용 가능할 경우 게임 오디오 대신 CD 오디오를 사용합니다"
+
+#: engines/sci/detection_options.h:114
+msgid "Use Windows cursors"
+msgstr "윈도우즈 커서 사용"
+
+#: engines/sci/detection_options.h:115
+msgid ""
+"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
+msgstr "도스 커서 대신에 윈도우즈 커서(작은 크기, 흑백)를 사용합니다"
+
+#: engines/sci/detection_options.h:125
+msgid "Use silver cursors"
+msgstr "실버 커서 사용"
+
+#: engines/sci/detection_options.h:126
+msgid ""
+"Use the alternate set of silver cursors instead of the normal golden ones"
+msgstr "금색 커서 대신에 은색 대체 커서 세트를 사용합니다"
+
+#: engines/sci/detection_options.h:136
+msgid "Enable content censoring"
+msgstr "컨텐츠 검열 사용"
+
+#: engines/sci/detection_options.h:137
+msgid "Enable the game's built-in optional content censoring"
+msgstr "컨텐츠 검열에 대한 내장 게임 옵션을 사용합니다"
+
+#: engines/sci/detection_options.h:147
+msgid "Upscale videos"
+msgstr "비디오 업스케일"
+
+#: engines/sci/detection_options.h:148
+msgid "Upscale videos to double their size"
+msgstr "실제 사이즈의 두 배 크기로 비디오를 업스케일합니다"
+
+#: engines/sci/detection_options.h:158
+msgid "Use RGB rendering"
+msgstr "RGB 렌더링 사용"
+
+#: engines/sci/detection_options.h:159
+msgid "Use RGB rendering to improve screen transitions"
+msgstr "화면 전환효과를 개선하기위해 RGB 렌더링을 사용합니다"
+
+#: engines/sci/detection_options.h:169
+msgid "Use per-resource modified palettes"
+msgstr "리소스별 변경된 팔레트 사용"
+
+#: engines/sci/detection_options.h:170
+msgid "Use custom per-resource palettes to improve visuals"
+msgstr "비주얼 향상을 위해 리소스별 커스텀 팔레트 사용"
+
+#: engines/sci/detection_options.h:180
+msgid "Enable bearded musicians"
+msgstr "턱수염이 난 음악가를 활성화"
+
+#: engines/sci/detection_options.h:181
+msgid "Enable graphics that were disabled for legal reasons"
+msgstr "법적인 문제로 비활성화되었던 그래픽을 활성화"
+
+#: engines/sci/detection_options.h:205
+msgid "MIDI mode:"
+msgstr "MIDI 모드:"
+
+#: engines/sci/detection_options.h:206
+msgid ""
+"When using external MIDI devices (e.g. through USB-MIDI), select your device "
+"here"
+msgstr ""
+"외장 MIDI 장치를 사용하는 경우 (USB-MIDI 등), 여기서 사용하는 장치를 선택하십"
+"시오"
+
+#: engines/sci/detection_options.h:211
+msgid "Standard (GM / MT-32)"
+msgstr "표준 (GM / MT-32)"
+
+#: engines/sci/detection_options.h:215
+msgid "Roland D-110 / D-10 / D-20"
+msgstr "Roland D-110 / D-10 / D-20"
+
+#: engines/sci/detection_options.h:219
+msgid "Yamaha FB-01"
+msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_tables.h:4397
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -8769,112 +8910,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "3D 게임에서 수직 동기화 사용"
-
-#~ msgid "Skip EGA dithering pass (full color backgrounds)"
-#~ msgstr "EGA 디더링 패스 건너뛰기 (풀컬러 배경화면)"
-
-#~ msgid ""
-#~ "Skip dithering pass in EGA games, graphics are shown with full colors"
-#~ msgstr "EGA게임의 디더링 패스를 건너뛰고 그래픽이 풀 컬러로 표시됩니다"
-
-#~ msgid "Enable high resolution graphics"
-#~ msgstr "고해상도 그래픽 사용"
-
-#~ msgid "Enable high resolution graphics/content"
-#~ msgstr "고해상도 그래픽/컨텐츠를 사용합니다"
-
-#~ msgid "Enable black-lined video"
-#~ msgstr "비디오에 검은 선 표시"
-
-#~ msgid "Draw black lines over videos to increase their apparent sharpness"
-#~ msgstr "선명도를 높이기 위해 비디오 위에 검은 선을 그립니다"
-
-#~ msgid "Use high-quality video scaling"
-#~ msgstr "고품질 비디오 크기조절 사용"
-
-#~ msgid "Use linear interpolation when upscaling videos, where possible"
-#~ msgstr "비디오 크기조절 할때 가능하면 선형 필터링을 사용"
-
-#~ msgid "Use high-quality \"LarryScale\" cel scaling"
-#~ msgstr "고품질 \"래리스케일\" 셀 크기조절 사용"
-
-#~ msgid "Use special cartoon scaler for drawing character sprites"
-#~ msgstr "캐릭터를 표시할 때 특별한 카툰 크기조절 방식을 사용합니다"
-
-#~ msgid "Prefer digital sound effects"
-#~ msgstr "디지털 사운드 효과 선호"
-
-#~ msgid "Prefer digital sound effects instead of synthesized ones"
-#~ msgstr "합성 음원 대신 디지털 사운드 이펙트 선호"
-
-#~ msgid "Use CD audio"
-#~ msgstr "CD 오디오 사용"
-
-#~ msgid "Use CD audio instead of in-game audio, if available"
-#~ msgstr "사용 가능할 경우 게임 오디오 대신 CD 오디오를 사용합니다"
-
-#~ msgid "Use Windows cursors"
-#~ msgstr "윈도우즈 커서 사용"
-
-#~ msgid ""
-#~ "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-#~ msgstr "도스 커서 대신에 윈도우즈 커서(작은 크기, 흑백)를 사용합니다"
-
-#~ msgid "Use silver cursors"
-#~ msgstr "실버 커서 사용"
-
-#~ msgid ""
-#~ "Use the alternate set of silver cursors instead of the normal golden ones"
-#~ msgstr "금색 커서 대신에 은색 대체 커서 세트를 사용합니다"
-
-#~ msgid "Enable content censoring"
-#~ msgstr "컨텐츠 검열 사용"
-
-#~ msgid "Enable the game's built-in optional content censoring"
-#~ msgstr "컨텐츠 검열에 대한 내장 게임 옵션을 사용합니다"
-
-#~ msgid "Upscale videos"
-#~ msgstr "비디오 업스케일"
-
-#~ msgid "Upscale videos to double their size"
-#~ msgstr "실제 사이즈의 두 배 크기로 비디오를 업스케일합니다"
-
-#~ msgid "Use RGB rendering"
-#~ msgstr "RGB 렌더링 사용"
-
-#~ msgid "Use RGB rendering to improve screen transitions"
-#~ msgstr "화면 전환효과를 개선하기위해 RGB 렌더링을 사용합니다"
-
-#~ msgid "Use per-resource modified palettes"
-#~ msgstr "리소스별 변경된 팔레트 사용"
-
-#~ msgid "Use custom per-resource palettes to improve visuals"
-#~ msgstr "비주얼 향상을 위해 리소스별 커스텀 팔레트 사용"
-
-#~ msgid "Enable bearded musicians"
-#~ msgstr "턱수염이 난 음악가를 활성화"
-
-#~ msgid "Enable graphics that were disabled for legal reasons"
-#~ msgstr "법적인 문제로 비활성화되었던 그래픽을 활성화"
-
-#~ msgid "MIDI mode:"
-#~ msgstr "MIDI 모드:"
-
-#~ msgid ""
-#~ "When using external MIDI devices (e.g. through USB-MIDI), select your "
-#~ "device here"
-#~ msgstr ""
-#~ "외장 MIDI 장치를 사용하는 경우 (USB-MIDI 등), 여기서 사용하는 장치를 선택"
-#~ "하십시오"
-
-#~ msgid "Standard (GM / MT-32)"
-#~ msgstr "표준 (GM / MT-32)"
-
-#~ msgid "Roland D-110 / D-10 / D-20"
-#~ msgstr "Roland D-110 / D-10 / D-20"
-
-#~ msgid "Yamaha FB-01"
-#~ msgstr "Yamaha FB-01"
 
 #~ msgid "Auto"
 #~ msgstr "자동"

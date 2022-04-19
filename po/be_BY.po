@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-16 21:25+0000\n"
+"POT-Creation-Date: 2022-04-19 18:14+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -4102,18 +4102,20 @@ msgstr "Не эмуляваць артэфакты NTSC для тэксту"
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
 #: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
-#: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
-#: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
-#: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
+#: engines/sci/detection_options.h:93 engines/sherlock/detection.cpp:58
+#: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
+#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:106
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Выкарыстоўваць арыгінальныя экраны запісу/чытання гульні"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
 #: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
-#: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
-#: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
-#: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
+#: engines/sci/detection_options.h:94 engines/sherlock/detection.cpp:59
+#: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
+#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:107
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Выкарыстоўваць арыгінальныя экраны чытання/захавання гульні замест ScummVM"
@@ -4653,7 +4655,7 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Уключыць рэжым для людзей са слабым успрыманнем колеру"
 
 #: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
-#: engines/supernova/detection.cpp:51
+#: engines/sci/detection_options.h:191 engines/supernova/detection.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Уключыць генератар мовы"
 
@@ -4794,8 +4796,9 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 
 #: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
-#: engines/mads/detection.cpp:114 engines/sherlock/detection.cpp:120
-#: engines/supernova/detection.cpp:52 engines/twine/detection.cpp:753
+#: engines/mads/detection.cpp:114 engines/sci/detection_options.h:192
+#: engines/sherlock/detection.cpp:120 engines/supernova/detection.cpp:52
+#: engines/twine/detection.cpp:753
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Ужываць TTS для чытання апісанняў услых (калі TTS даступна)"
 
@@ -6297,6 +6300,155 @@ msgstr ""
 #, fuzzy
 msgid "Error loading game resources."
 msgstr "Памылка запуску гульні:"
+
+#: engines/sci/detection_options.h:31
+msgid "Skip EGA dithering pass (full color backgrounds)"
+msgstr "Не рабіць апраксімацыю колераў EGA (поўнакаляровыя фоны)"
+
+#: engines/sci/detection_options.h:32
+msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
+msgstr ""
+"Прапускае праход апраксімацыі колераў EGA, графіка будзе паказана з усімі "
+"колерамі"
+
+#: engines/sci/detection_options.h:41
+msgid "Enable high resolution graphics"
+msgstr "Уключыць адлюстраванне графікі высокага адрознення"
+
+#: engines/sci/detection_options.h:42
+msgid "Enable high resolution graphics/content"
+msgstr "Уключыць графіку і кантэнт высокага адрознення"
+
+#: engines/sci/detection_options.h:51
+msgid "Enable black-lined video"
+msgstr "Уключыць відэа з лініямі"
+
+#: engines/sci/detection_options.h:52
+msgid "Draw black lines over videos to increase their apparent sharpness"
+msgstr ""
+"Малюе чорныя лініі па-над відэа, павялічваючы такім чынам бачную выразнасць"
+
+#: engines/sci/detection_options.h:62
+msgid "Use high-quality video scaling"
+msgstr "Ужываць якаснае маштабаванне відэа"
+
+#: engines/sci/detection_options.h:63
+msgid "Use linear interpolation when upscaling videos, where possible"
+msgstr "Па магчымасці ужывае лінейную інтэрпаляцыю падчас маштабавання відэа"
+
+#: engines/sci/detection_options.h:73
+msgid "Use high-quality \"LarryScale\" cel scaling"
+msgstr "Ужываць высакаякаснае маштабаванне LarryScale"
+
+#: engines/sci/detection_options.h:74
+msgid "Use special cartoon scaler for drawing character sprites"
+msgstr ""
+"Ужываць спецыяльнае мультыплікацыйнае маштабаванне для малявання спрайтаў "
+"персанажаў"
+
+#: engines/sci/detection_options.h:83
+msgid "Prefer digital sound effects"
+msgstr "Аддаваць перавагу лічбавым гукавым эфектам"
+
+#: engines/sci/detection_options.h:84
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr "Аддаваць перавагу лічбавым гукавым эфектам замест сінтэзаваных"
+
+#: engines/sci/detection_options.h:103
+msgid "Use CD audio"
+msgstr "Выкарыстоўваць CD-аўдыё"
+
+#: engines/sci/detection_options.h:104
+msgid "Use CD audio instead of in-game audio, if available"
+msgstr ""
+"Выкарыстоўваць гукавыя дарожкі з CD замест музыкі з файлаў гульні (калі "
+"даступна)"
+
+#: engines/sci/detection_options.h:114
+msgid "Use Windows cursors"
+msgstr "Выкарыстоўваць курсоры Windows"
+
+#: engines/sci/detection_options.h:115
+msgid ""
+"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
+msgstr ""
+"Выкарыстоўваць курсоры Windows (меншыя па памеры і аднакаляровыя) замест "
+"курсораў DOS"
+
+#: engines/sci/detection_options.h:125
+msgid "Use silver cursors"
+msgstr "Выкарыстоўваць срэбныя курсоры"
+
+#: engines/sci/detection_options.h:126
+msgid ""
+"Use the alternate set of silver cursors instead of the normal golden ones"
+msgstr ""
+"Выкарыстоўваць альтэрнатыўны набор срэбных курсораў замест звычайных залатых"
+
+#: engines/sci/detection_options.h:136
+msgid "Enable content censoring"
+msgstr "Уключыць цэнзуру змесціва"
+
+#: engines/sci/detection_options.h:137
+msgid "Enable the game's built-in optional content censoring"
+msgstr "Уключыць убудаванае неабавязковае цэнзураванне змесціва"
+
+#: engines/sci/detection_options.h:147
+msgid "Upscale videos"
+msgstr "Маштабаваць відэа"
+
+#: engines/sci/detection_options.h:148
+msgid "Upscale videos to double their size"
+msgstr "Маштабаваць памеры відэа ўдвая"
+
+#: engines/sci/detection_options.h:158
+msgid "Use RGB rendering"
+msgstr ""
+
+#: engines/sci/detection_options.h:159
+msgid "Use RGB rendering to improve screen transitions"
+msgstr ""
+
+#: engines/sci/detection_options.h:169
+msgid "Use per-resource modified palettes"
+msgstr ""
+
+#: engines/sci/detection_options.h:170
+msgid "Use custom per-resource palettes to improve visuals"
+msgstr ""
+
+#: engines/sci/detection_options.h:180
+#, fuzzy
+msgid "Enable bearded musicians"
+msgstr "Уключыць цэнзуру змесціва"
+
+#: engines/sci/detection_options.h:181
+msgid "Enable graphics that were disabled for legal reasons"
+msgstr ""
+
+#: engines/sci/detection_options.h:205
+msgid "MIDI mode:"
+msgstr "Рэжым MIDI:"
+
+#: engines/sci/detection_options.h:206
+msgid ""
+"When using external MIDI devices (e.g. through USB-MIDI), select your device "
+"here"
+msgstr ""
+"Калі вы выкарыстоўваеце знешнюю MIDI-прыладу (напрыклад USB-MIDI), выберыце "
+"прыладу тут"
+
+#: engines/sci/detection_options.h:211
+msgid "Standard (GM / MT-32)"
+msgstr "Стандартная (GM / MT-32)"
+
+#: engines/sci/detection_options.h:215
+msgid "Roland D-110 / D-10 / D-20"
+msgstr "Roland D-110 / D-10 / D-20"
+
+#: engines/sci/detection_options.h:219
+msgid "Yamaha FB-01"
+msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_tables.h:4397
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -8799,111 +8951,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Enable cross fade"
 #~ msgstr "Уключыць рэжым c чытамі"
-
-#~ msgid "Skip EGA dithering pass (full color backgrounds)"
-#~ msgstr "Не рабіць апраксімацыю колераў EGA (поўнакаляровыя фоны)"
-
-#~ msgid ""
-#~ "Skip dithering pass in EGA games, graphics are shown with full colors"
-#~ msgstr ""
-#~ "Прапускае праход апраксімацыі колераў EGA, графіка будзе паказана з усімі "
-#~ "колерамі"
-
-#~ msgid "Enable high resolution graphics"
-#~ msgstr "Уключыць адлюстраванне графікі высокага адрознення"
-
-#~ msgid "Enable high resolution graphics/content"
-#~ msgstr "Уключыць графіку і кантэнт высокага адрознення"
-
-#~ msgid "Enable black-lined video"
-#~ msgstr "Уключыць відэа з лініямі"
-
-#~ msgid "Draw black lines over videos to increase their apparent sharpness"
-#~ msgstr ""
-#~ "Малюе чорныя лініі па-над відэа, павялічваючы такім чынам бачную "
-#~ "выразнасць"
-
-#~ msgid "Use high-quality video scaling"
-#~ msgstr "Ужываць якаснае маштабаванне відэа"
-
-#~ msgid "Use linear interpolation when upscaling videos, where possible"
-#~ msgstr ""
-#~ "Па магчымасці ужывае лінейную інтэрпаляцыю падчас маштабавання відэа"
-
-#~ msgid "Use high-quality \"LarryScale\" cel scaling"
-#~ msgstr "Ужываць высакаякаснае маштабаванне LarryScale"
-
-#~ msgid "Use special cartoon scaler for drawing character sprites"
-#~ msgstr ""
-#~ "Ужываць спецыяльнае мультыплікацыйнае маштабаванне для малявання спрайтаў "
-#~ "персанажаў"
-
-#~ msgid "Prefer digital sound effects"
-#~ msgstr "Аддаваць перавагу лічбавым гукавым эфектам"
-
-#~ msgid "Prefer digital sound effects instead of synthesized ones"
-#~ msgstr "Аддаваць перавагу лічбавым гукавым эфектам замест сінтэзаваных"
-
-#~ msgid "Use CD audio"
-#~ msgstr "Выкарыстоўваць CD-аўдыё"
-
-#~ msgid "Use CD audio instead of in-game audio, if available"
-#~ msgstr ""
-#~ "Выкарыстоўваць гукавыя дарожкі з CD замест музыкі з файлаў гульні (калі "
-#~ "даступна)"
-
-#~ msgid "Use Windows cursors"
-#~ msgstr "Выкарыстоўваць курсоры Windows"
-
-#~ msgid ""
-#~ "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-#~ msgstr ""
-#~ "Выкарыстоўваць курсоры Windows (меншыя па памеры і аднакаляровыя) замест "
-#~ "курсораў DOS"
-
-#~ msgid "Use silver cursors"
-#~ msgstr "Выкарыстоўваць срэбныя курсоры"
-
-#~ msgid ""
-#~ "Use the alternate set of silver cursors instead of the normal golden ones"
-#~ msgstr ""
-#~ "Выкарыстоўваць альтэрнатыўны набор срэбных курсораў замест звычайных "
-#~ "залатых"
-
-#~ msgid "Enable content censoring"
-#~ msgstr "Уключыць цэнзуру змесціва"
-
-#~ msgid "Enable the game's built-in optional content censoring"
-#~ msgstr "Уключыць убудаванае неабавязковае цэнзураванне змесціва"
-
-#~ msgid "Upscale videos"
-#~ msgstr "Маштабаваць відэа"
-
-#~ msgid "Upscale videos to double their size"
-#~ msgstr "Маштабаваць памеры відэа ўдвая"
-
-#, fuzzy
-#~ msgid "Enable bearded musicians"
-#~ msgstr "Уключыць цэнзуру змесціва"
-
-#~ msgid "MIDI mode:"
-#~ msgstr "Рэжым MIDI:"
-
-#~ msgid ""
-#~ "When using external MIDI devices (e.g. through USB-MIDI), select your "
-#~ "device here"
-#~ msgstr ""
-#~ "Калі вы выкарыстоўваеце знешнюю MIDI-прыладу (напрыклад USB-MIDI), "
-#~ "выберыце прыладу тут"
-
-#~ msgid "Standard (GM / MT-32)"
-#~ msgstr "Стандартная (GM / MT-32)"
-
-#~ msgid "Roland D-110 / D-10 / D-20"
-#~ msgstr "Roland D-110 / D-10 / D-20"
-
-#~ msgid "Yamaha FB-01"
-#~ msgstr "Yamaha FB-01"
 
 #, fuzzy
 #~| msgid "Autosave"

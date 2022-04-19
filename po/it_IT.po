@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-16 21:25+0000\n"
+"POT-Creation-Date: 2022-04-19 18:14+0000\n"
 "PO-Revision-Date: 2022-04-19 10:30+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -4095,18 +4095,20 @@ msgstr "Non emulare gli artefatti NTSC nei testi"
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
 #: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
-#: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
-#: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
-#: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
+#: engines/sci/detection_options.h:93 engines/sherlock/detection.cpp:58
+#: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
+#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:106
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Usa schermate di salvataggio originali"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
 #: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
-#: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
-#: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
-#: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
+#: engines/sci/detection_options.h:94 engines/sherlock/detection.cpp:59
+#: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
+#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:107
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Usa le schermate originali di salvataggio e caricamento, al posto di quelle "
@@ -4621,7 +4623,7 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Abilita di default la modalità daltonici"
 
 #: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
-#: engines/supernova/detection.cpp:51
+#: engines/sci/detection_options.h:191 engines/supernova/detection.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Abilita sintesi vocale"
 
@@ -4767,8 +4769,9 @@ msgstr ""
 "Abilita Sintesi Vocale per gli oggetti, le opzioni e i passaggi della Bibbia"
 
 #: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
-#: engines/mads/detection.cpp:114 engines/sherlock/detection.cpp:120
-#: engines/supernova/detection.cpp:52 engines/twine/detection.cpp:753
+#: engines/mads/detection.cpp:114 engines/sci/detection_options.h:192
+#: engines/sherlock/detection.cpp:120 engines/supernova/detection.cpp:52
+#: engines/twine/detection.cpp:753
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Legge le descrizioni utilizzando la sintesi vocale (se disponibile)"
 
@@ -6297,6 +6300,154 @@ msgstr ""
 #: engines/saga/saga.cpp:228
 msgid "Error loading game resources."
 msgstr "Errore nel caricamento delle risorse del gioco."
+
+#: engines/sci/detection_options.h:31
+msgid "Skip EGA dithering pass (full color backgrounds)"
+msgstr "Non applicare l'effetto dithering EGA (usa sfondi a tinta unita)"
+
+#: engines/sci/detection_options.h:32
+msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
+msgstr ""
+"Non applica effetti dithering ai giochi con grafica EGA. Verranno sempre "
+"usati colori a piena intensità"
+
+#: engines/sci/detection_options.h:41
+msgid "Enable high resolution graphics"
+msgstr "Abilita grafica ad alta risoluzione"
+
+#: engines/sci/detection_options.h:42
+msgid "Enable high resolution graphics/content"
+msgstr "Abilita grafica ed altri contenuti ad alta risoluzione"
+
+#: engines/sci/detection_options.h:51
+msgid "Enable black-lined video"
+msgstr "Abilita linee di scansione nei video"
+
+#: engines/sci/detection_options.h:52
+msgid "Draw black lines over videos to increase their apparent sharpness"
+msgstr ""
+"Applica linee di scansione ai video per migliorarne la nitidezza (apparente)"
+
+#: engines/sci/detection_options.h:62
+msgid "Use high-quality video scaling"
+msgstr "Usa lo scaling video di alta qualità"
+
+#: engines/sci/detection_options.h:63
+msgid "Use linear interpolation when upscaling videos, where possible"
+msgstr "Usa filtro bilineare per lo scaling dei filmati, ove possibile"
+
+#: engines/sci/detection_options.h:73
+msgid "Use high-quality \"LarryScale\" cel scaling"
+msgstr "Usa cel scaling di alta qualità \"LarryScale\""
+
+#: engines/sci/detection_options.h:74
+msgid "Use special cartoon scaler for drawing character sprites"
+msgstr "Usa il Cartoon-Scaler speciale per disegnare gli sprite dei personaggi"
+
+#: engines/sci/detection_options.h:83
+msgid "Prefer digital sound effects"
+msgstr "Preferisci effetti sonori digitalizzati"
+
+#: engines/sci/detection_options.h:84
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr ""
+"Usa preferibilmente gli effetti sonori digitalizzati, anziché quelli "
+"sintetizzati"
+
+#: engines/sci/detection_options.h:103
+msgid "Use CD audio"
+msgstr "Usa audio da CD"
+
+#: engines/sci/detection_options.h:104
+msgid "Use CD audio instead of in-game audio, if available"
+msgstr ""
+"Usa l'audio da CD al posto di quello incorporato nel gioco, se disponibile"
+
+#: engines/sci/detection_options.h:114
+msgid "Use Windows cursors"
+msgstr "Usa cursori di Windows"
+
+#: engines/sci/detection_options.h:115
+msgid ""
+"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
+msgstr ""
+"Usa i cursori di Windows (più piccoli e monocromatici) al posto di quelli DOS"
+
+#: engines/sci/detection_options.h:125
+msgid "Use silver cursors"
+msgstr "Usa cursori d'argento"
+
+#: engines/sci/detection_options.h:126
+msgid ""
+"Use the alternate set of silver cursors instead of the normal golden ones"
+msgstr ""
+"Usa il set alternativo di cursori d'argento al posto di quelli normali d'oro"
+
+#: engines/sci/detection_options.h:136
+msgid "Enable content censoring"
+msgstr "Attiva censura del contenuto"
+
+#: engines/sci/detection_options.h:137
+msgid "Enable the game's built-in optional content censoring"
+msgstr "Attiva la censura dei contenuti incorporata nel gioco"
+
+#: engines/sci/detection_options.h:147
+msgid "Upscale videos"
+msgstr "Applica upscale ai video"
+
+#: engines/sci/detection_options.h:148
+msgid "Upscale videos to double their size"
+msgstr "Applica upscale ai video per raddoppiarne la dimensione"
+
+#: engines/sci/detection_options.h:158
+msgid "Use RGB rendering"
+msgstr "Usa rendering RGB"
+
+#: engines/sci/detection_options.h:159
+msgid "Use RGB rendering to improve screen transitions"
+msgstr "Usa il rendering RGB per migliorare le transizioni tra le schermate"
+
+#: engines/sci/detection_options.h:169
+msgid "Use per-resource modified palettes"
+msgstr "Usa palette ottimizzata per ogni elemento"
+
+#: engines/sci/detection_options.h:170
+msgid "Use custom per-resource palettes to improve visuals"
+msgstr ""
+"Utilizza una palette di colori personalizzata per ogni elemento grafico, "
+"migliorandone la resa estetica"
+
+#: engines/sci/detection_options.h:180
+msgid "Enable bearded musicians"
+msgstr "Abilita musicisti barbuti"
+
+#: engines/sci/detection_options.h:181
+msgid "Enable graphics that were disabled for legal reasons"
+msgstr "Abilita elementi grafici che sono stati disattivati per ragioni legali"
+
+#: engines/sci/detection_options.h:205
+msgid "MIDI mode:"
+msgstr "Modalità MIDI:"
+
+#: engines/sci/detection_options.h:206
+msgid ""
+"When using external MIDI devices (e.g. through USB-MIDI), select your device "
+"here"
+msgstr ""
+"Se intendi usare periferiche MIDI esterne (per es. attraverso USB-MIDI), "
+"seleziona qui il dispositivo appropriato"
+
+#: engines/sci/detection_options.h:211
+msgid "Standard (GM / MT-32)"
+msgstr "Standard (GM / MT-32)"
+
+#: engines/sci/detection_options.h:215
+msgid "Roland D-110 / D-10 / D-20"
+msgstr "Roland D-110 / D-10 / D-20"
+
+#: engines/sci/detection_options.h:219
+msgid "Yamaha FB-01"
+msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_tables.h:4397
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -8988,127 +9139,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "V-Sync nei giochi 3D"
-
-#~ msgid "Skip EGA dithering pass (full color backgrounds)"
-#~ msgstr "Non applicare l'effetto dithering EGA (usa sfondi a tinta unita)"
-
-#~ msgid ""
-#~ "Skip dithering pass in EGA games, graphics are shown with full colors"
-#~ msgstr ""
-#~ "Non applica effetti dithering ai giochi con grafica EGA. Verranno sempre "
-#~ "usati colori a piena intensità"
-
-#~ msgid "Enable high resolution graphics"
-#~ msgstr "Abilita grafica ad alta risoluzione"
-
-#~ msgid "Enable high resolution graphics/content"
-#~ msgstr "Abilita grafica ed altri contenuti ad alta risoluzione"
-
-#~ msgid "Enable black-lined video"
-#~ msgstr "Abilita linee di scansione nei video"
-
-#~ msgid "Draw black lines over videos to increase their apparent sharpness"
-#~ msgstr ""
-#~ "Applica linee di scansione ai video per migliorarne la nitidezza "
-#~ "(apparente)"
-
-#~ msgid "Use high-quality video scaling"
-#~ msgstr "Usa lo scaling video di alta qualità"
-
-#~ msgid "Use linear interpolation when upscaling videos, where possible"
-#~ msgstr "Usa filtro bilineare per lo scaling dei filmati, ove possibile"
-
-#~ msgid "Use high-quality \"LarryScale\" cel scaling"
-#~ msgstr "Usa cel scaling di alta qualità \"LarryScale\""
-
-#~ msgid "Use special cartoon scaler for drawing character sprites"
-#~ msgstr ""
-#~ "Usa il Cartoon-Scaler speciale per disegnare gli sprite dei personaggi"
-
-#~ msgid "Prefer digital sound effects"
-#~ msgstr "Preferisci effetti sonori digitalizzati"
-
-#~ msgid "Prefer digital sound effects instead of synthesized ones"
-#~ msgstr ""
-#~ "Usa preferibilmente gli effetti sonori digitalizzati, anziché quelli "
-#~ "sintetizzati"
-
-#~ msgid "Use CD audio"
-#~ msgstr "Usa audio da CD"
-
-#~ msgid "Use CD audio instead of in-game audio, if available"
-#~ msgstr ""
-#~ "Usa l'audio da CD al posto di quello incorporato nel gioco, se disponibile"
-
-#~ msgid "Use Windows cursors"
-#~ msgstr "Usa cursori di Windows"
-
-#~ msgid ""
-#~ "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-#~ msgstr ""
-#~ "Usa i cursori di Windows (più piccoli e monocromatici) al posto di quelli "
-#~ "DOS"
-
-#~ msgid "Use silver cursors"
-#~ msgstr "Usa cursori d'argento"
-
-#~ msgid ""
-#~ "Use the alternate set of silver cursors instead of the normal golden ones"
-#~ msgstr ""
-#~ "Usa il set alternativo di cursori d'argento al posto di quelli normali "
-#~ "d'oro"
-
-#~ msgid "Enable content censoring"
-#~ msgstr "Attiva censura del contenuto"
-
-#~ msgid "Enable the game's built-in optional content censoring"
-#~ msgstr "Attiva la censura dei contenuti incorporata nel gioco"
-
-#~ msgid "Upscale videos"
-#~ msgstr "Applica upscale ai video"
-
-#~ msgid "Upscale videos to double their size"
-#~ msgstr "Applica upscale ai video per raddoppiarne la dimensione"
-
-#~ msgid "Use RGB rendering"
-#~ msgstr "Usa rendering RGB"
-
-#~ msgid "Use RGB rendering to improve screen transitions"
-#~ msgstr "Usa il rendering RGB per migliorare le transizioni tra le schermate"
-
-#~ msgid "Use per-resource modified palettes"
-#~ msgstr "Usa palette ottimizzata per ogni elemento"
-
-#~ msgid "Use custom per-resource palettes to improve visuals"
-#~ msgstr ""
-#~ "Utilizza una palette di colori personalizzata per ogni elemento grafico, "
-#~ "migliorandone la resa estetica"
-
-#~ msgid "Enable bearded musicians"
-#~ msgstr "Abilita musicisti barbuti"
-
-#~ msgid "Enable graphics that were disabled for legal reasons"
-#~ msgstr ""
-#~ "Abilita elementi grafici che sono stati disattivati per ragioni legali"
-
-#~ msgid "MIDI mode:"
-#~ msgstr "Modalità MIDI:"
-
-#~ msgid ""
-#~ "When using external MIDI devices (e.g. through USB-MIDI), select your "
-#~ "device here"
-#~ msgstr ""
-#~ "Se intendi usare periferiche MIDI esterne (per es. attraverso USB-MIDI), "
-#~ "seleziona qui il dispositivo appropriato"
-
-#~ msgid "Standard (GM / MT-32)"
-#~ msgstr "Standard (GM / MT-32)"
-
-#~ msgid "Roland D-110 / D-10 / D-20"
-#~ msgstr "Roland D-110 / D-10 / D-20"
-
-#~ msgid "Yamaha FB-01"
-#~ msgstr "Yamaha FB-01"
 
 #~ msgid "Auto"
 #~ msgstr "Automatica"

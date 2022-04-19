@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-16 21:25+0000\n"
+"POT-Creation-Date: 2022-04-19 18:14+0000\n"
 "PO-Revision-Date: 2022-04-07 09:36+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -4062,18 +4062,20 @@ msgstr "Ikke bruk emulering av NTSC-artefakter på tekst"
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
 #: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
-#: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
-#: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
-#: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
+#: engines/sci/detection_options.h:93 engines/sherlock/detection.cpp:58
+#: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
+#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:106
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Bruk originale lagre/laste-skjermer"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
 #: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
-#: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
-#: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
-#: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
+#: engines/sci/detection_options.h:94 engines/sherlock/detection.cpp:59
+#: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
+#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:107
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Bruk de opprinnelige Lagre-/Laste-skjermene istedenfor ScummVMs egne"
 
@@ -4581,7 +4583,7 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Aktiver fargeblindmodus som standard"
 
 #: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
-#: engines/supernova/detection.cpp:51
+#: engines/sci/detection_options.h:191 engines/supernova/detection.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Aktiver tekst og tale"
 
@@ -4731,8 +4733,9 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "Aktiver tekst til tale for gjenstander, innstillinger og bibelsitat"
 
 #: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
-#: engines/mads/detection.cpp:114 engines/sherlock/detection.cpp:120
-#: engines/supernova/detection.cpp:52 engines/twine/detection.cpp:753
+#: engines/mads/detection.cpp:114 engines/sci/detection_options.h:192
+#: engines/sherlock/detection.cpp:120 engines/supernova/detection.cpp:52
+#: engines/twine/detection.cpp:753
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 "Bruk tekst til tale til å lese beskrivelser (hvis tekst til tale er "
@@ -6250,6 +6253,151 @@ msgstr ""
 #: engines/saga/saga.cpp:228
 msgid "Error loading game resources."
 msgstr "Feil under lasting av spillressurser."
+
+#: engines/sci/detection_options.h:31
+msgid "Skip EGA dithering pass (full color backgrounds)"
+msgstr "Hopp over EGA dithering (fullfarge bakgrunner)"
+
+#: engines/sci/detection_options.h:32
+msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
+msgstr ""
+
+#: engines/sci/detection_options.h:41
+msgid "Enable high resolution graphics"
+msgstr "Aktiver høyoppløselig grafikk"
+
+#: engines/sci/detection_options.h:42
+msgid "Enable high resolution graphics/content"
+msgstr "Aktiver høyoppløselig grafikk/innhold"
+
+#: engines/sci/detection_options.h:51
+msgid "Enable black-lined video"
+msgstr "Aktiver svartlinjet video"
+
+#: engines/sci/detection_options.h:52
+msgid "Draw black lines over videos to increase their apparent sharpness"
+msgstr ""
+
+#: engines/sci/detection_options.h:62
+msgid "Use high-quality video scaling"
+msgstr ""
+
+#: engines/sci/detection_options.h:63
+#, fuzzy
+msgid "Use linear interpolation when upscaling videos, where possible"
+msgstr "Bruk lineær filtrering ved grafikkskalering"
+
+#: engines/sci/detection_options.h:73
+msgid "Use high-quality \"LarryScale\" cel scaling"
+msgstr ""
+
+#: engines/sci/detection_options.h:74
+msgid "Use special cartoon scaler for drawing character sprites"
+msgstr ""
+
+#: engines/sci/detection_options.h:83
+msgid "Prefer digital sound effects"
+msgstr "Foretrekk digitale lydeffekter"
+
+#: engines/sci/detection_options.h:84
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr "Foretrekk digitale lydeffekter fremfor syntetiske"
+
+#: engines/sci/detection_options.h:103
+msgid "Use CD audio"
+msgstr "Bruk CD-lyd"
+
+#: engines/sci/detection_options.h:104
+msgid "Use CD audio instead of in-game audio, if available"
+msgstr "Bruk CD-lyd istedenfor spillets lyd, hvis tilgjengelig"
+
+#: engines/sci/detection_options.h:114
+msgid "Use Windows cursors"
+msgstr "Bruk Windows-muspekere"
+
+#: engines/sci/detection_options.h:115
+msgid ""
+"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
+msgstr "Bruk Windows-muspekerene (mindre, og monokrome) isteden"
+
+#: engines/sci/detection_options.h:125
+msgid "Use silver cursors"
+msgstr "Bruk sølvmuspekere"
+
+#: engines/sci/detection_options.h:126
+#, fuzzy
+msgid ""
+"Use the alternate set of silver cursors instead of the normal golden ones"
+msgstr ""
+"Bruk det alternative settet med sølvmuspekere, istedenfor de normale gylne."
+
+#: engines/sci/detection_options.h:136
+#, fuzzy
+msgid "Enable content censoring"
+msgstr "Aktiver flytende muspekere"
+
+#: engines/sci/detection_options.h:137
+#, fuzzy
+msgid "Enable the game's built-in optional content censoring"
+msgstr "Aktiver flytende muspekere"
+
+#: engines/sci/detection_options.h:147
+#, fuzzy
+#| msgid "Unscaled"
+msgid "Upscale videos"
+msgstr "Uskalert"
+
+#: engines/sci/detection_options.h:148
+msgid "Upscale videos to double their size"
+msgstr ""
+
+#: engines/sci/detection_options.h:158
+msgid "Use RGB rendering"
+msgstr ""
+
+#: engines/sci/detection_options.h:159
+msgid "Use RGB rendering to improve screen transitions"
+msgstr ""
+
+#: engines/sci/detection_options.h:169
+msgid "Use per-resource modified palettes"
+msgstr ""
+
+#: engines/sci/detection_options.h:170
+msgid "Use custom per-resource palettes to improve visuals"
+msgstr ""
+
+#: engines/sci/detection_options.h:180
+#, fuzzy
+msgid "Enable bearded musicians"
+msgstr "Aktiver flytende muspekere"
+
+#: engines/sci/detection_options.h:181
+msgid "Enable graphics that were disabled for legal reasons"
+msgstr ""
+
+#: engines/sci/detection_options.h:205
+#, fuzzy
+msgid "MIDI mode:"
+msgstr "MIDI gain:"
+
+#: engines/sci/detection_options.h:206
+msgid ""
+"When using external MIDI devices (e.g. through USB-MIDI), select your device "
+"here"
+msgstr ""
+
+#: engines/sci/detection_options.h:211
+msgid "Standard (GM / MT-32)"
+msgstr ""
+
+#: engines/sci/detection_options.h:215
+msgid "Roland D-110 / D-10 / D-20"
+msgstr ""
+
+#: engines/sci/detection_options.h:219
+msgid "Yamaha FB-01"
+msgstr ""
 
 #: engines/sci/detection_tables.h:4397
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -8903,67 +9051,6 @@ msgstr ""
 
 #~ msgid "Enable cross fading of images and scenes"
 #~ msgstr "Aktiver kryssovergang for bilder og scener"
-
-#~ msgid "Skip EGA dithering pass (full color backgrounds)"
-#~ msgstr "Hopp over EGA dithering (fullfarge bakgrunner)"
-
-#~ msgid "Enable high resolution graphics"
-#~ msgstr "Aktiver høyoppløselig grafikk"
-
-#~ msgid "Enable high resolution graphics/content"
-#~ msgstr "Aktiver høyoppløselig grafikk/innhold"
-
-#~ msgid "Enable black-lined video"
-#~ msgstr "Aktiver svartlinjet video"
-
-#, fuzzy
-#~ msgid "Use linear interpolation when upscaling videos, where possible"
-#~ msgstr "Bruk lineær filtrering ved grafikkskalering"
-
-#~ msgid "Prefer digital sound effects"
-#~ msgstr "Foretrekk digitale lydeffekter"
-
-#~ msgid "Prefer digital sound effects instead of synthesized ones"
-#~ msgstr "Foretrekk digitale lydeffekter fremfor syntetiske"
-
-#~ msgid "Use CD audio"
-#~ msgstr "Bruk CD-lyd"
-
-#~ msgid "Use CD audio instead of in-game audio, if available"
-#~ msgstr "Bruk CD-lyd istedenfor spillets lyd, hvis tilgjengelig"
-
-#~ msgid "Use Windows cursors"
-#~ msgstr "Bruk Windows-muspekere"
-
-#~ msgid ""
-#~ "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-#~ msgstr "Bruk Windows-muspekerene (mindre, og monokrome) isteden"
-
-#~ msgid "Use silver cursors"
-#~ msgstr "Bruk sølvmuspekere"
-
-#, fuzzy
-#~ msgid ""
-#~ "Use the alternate set of silver cursors instead of the normal golden ones"
-#~ msgstr ""
-#~ "Bruk det alternative settet med sølvmuspekere, istedenfor de normale "
-#~ "gylne."
-
-#, fuzzy
-#~ msgid "Enable content censoring"
-#~ msgstr "Aktiver flytende muspekere"
-
-#, fuzzy
-#~ msgid "Enable the game's built-in optional content censoring"
-#~ msgstr "Aktiver flytende muspekere"
-
-#, fuzzy
-#~ msgid "Enable bearded musicians"
-#~ msgstr "Aktiver flytende muspekere"
-
-#, fuzzy
-#~ msgid "MIDI mode:"
-#~ msgstr "MIDI gain:"
 
 #, fuzzy
 #~ msgid "Auto"

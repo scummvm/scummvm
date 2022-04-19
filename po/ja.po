@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-16 21:25+0000\n"
+"POT-Creation-Date: 2022-04-19 18:14+0000\n"
 "PO-Revision-Date: 2022-04-18 10:27+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4023,18 +4023,20 @@ msgstr "テキストをNTSCコンポジットでエミュレートしない"
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
 #: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
-#: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
-#: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
-#: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
+#: engines/sci/detection_options.h:93 engines/sherlock/detection.cpp:58
+#: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
+#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:106
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "オリジナルのセーブ/ロード画面を使用する"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
 #: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
-#: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
-#: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
-#: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
+#: engines/sci/detection_options.h:94 engines/sherlock/detection.cpp:59
+#: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
+#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:107
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "ScummVMの代わりに、オリジナルのセーブ/ロード画面を使用する"
 
@@ -4529,7 +4531,7 @@ msgid "Enable Color Blind Mode by default"
 msgstr "デフォルトで色覚多様性モードを有効化"
 
 #: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
-#: engines/supernova/detection.cpp:51
+#: engines/sci/detection_options.h:191 engines/supernova/detection.cpp:51
 msgid "Enable Text to Speech"
 msgstr "音声合成をオンにする"
 
@@ -4667,8 +4669,9 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "オブジェクト、オプション、聖書の引用の読み上げを有効化"
 
 #: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
-#: engines/mads/detection.cpp:114 engines/sherlock/detection.cpp:120
-#: engines/supernova/detection.cpp:52 engines/twine/detection.cpp:753
+#: engines/mads/detection.cpp:114 engines/sci/detection_options.h:192
+#: engines/sherlock/detection.cpp:120 engines/supernova/detection.cpp:52
+#: engines/twine/detection.cpp:753
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "音声合成を使用して詳細を読み上げる(利用可能な場合のみ)"
 
@@ -6153,6 +6156,142 @@ msgstr ""
 #: engines/saga/saga.cpp:228
 msgid "Error loading game resources."
 msgstr "リソースのロード中にエラーが発生しました。"
+
+#: engines/sci/detection_options.h:31
+msgid "Skip EGA dithering pass (full color backgrounds)"
+msgstr "EGAディザリングパスをスキップ(フルカラー背景)"
+
+#: engines/sci/detection_options.h:32
+msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
+msgstr "EGAディザリングパスをスキップし、フルカラーでグラフィックを表示"
+
+#: engines/sci/detection_options.h:41
+msgid "Enable high resolution graphics"
+msgstr "ハイレゾグラフィックを有効化"
+
+#: engines/sci/detection_options.h:42
+msgid "Enable high resolution graphics/content"
+msgstr "高解像度のグラフィック/コンテンツを有効にする"
+
+#: engines/sci/detection_options.h:51
+msgid "Enable black-lined video"
+msgstr "黒塗りの映像を有効化"
+
+#: engines/sci/detection_options.h:52
+msgid "Draw black lines over videos to increase their apparent sharpness"
+msgstr "映像に黒い線を重ね、シャープネスを強める"
+
+#: engines/sci/detection_options.h:62
+msgid "Use high-quality video scaling"
+msgstr "高品質なビデオスケーリングを使用する"
+
+#: engines/sci/detection_options.h:63
+msgid "Use linear interpolation when upscaling videos, where possible"
+msgstr "映像のアップスケーリングに、可能な限り線形補間を使用"
+
+#: engines/sci/detection_options.h:73
+msgid "Use high-quality \"LarryScale\" cel scaling"
+msgstr "高品質なLarryScaleセルスケーリングを使用"
+
+#: engines/sci/detection_options.h:74
+msgid "Use special cartoon scaler for drawing character sprites"
+msgstr "キャラクタースプライト用に特別なカートゥーンスケーラーを使用"
+
+#: engines/sci/detection_options.h:83
+msgid "Prefer digital sound effects"
+msgstr "デジタルSEを選ぶ"
+
+#: engines/sci/detection_options.h:84
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr "合成音声ではなくデジタルSEを選ぶ"
+
+#: engines/sci/detection_options.h:103
+msgid "Use CD audio"
+msgstr "CD音楽を使用"
+
+#: engines/sci/detection_options.h:104
+msgid "Use CD audio instead of in-game audio, if available"
+msgstr "可能な場合、BGMとしてCDオーディオを使用"
+
+#: engines/sci/detection_options.h:114
+msgid "Use Windows cursors"
+msgstr "Windowsのカーソルを使用"
+
+#: engines/sci/detection_options.h:115
+msgid ""
+"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
+msgstr "DOSのカーソルの代わりにWindowsのカーソル(小さいモノクロ)を使用"
+
+#: engines/sci/detection_options.h:125
+msgid "Use silver cursors"
+msgstr "銀カーソルを使用"
+
+#: engines/sci/detection_options.h:126
+msgid ""
+"Use the alternate set of silver cursors instead of the normal golden ones"
+msgstr "通常の金カーソルの代わりに銀カーソルを使用する"
+
+#: engines/sci/detection_options.h:136
+msgid "Enable content censoring"
+msgstr "コンテンツの規制を有効にする"
+
+#: engines/sci/detection_options.h:137
+msgid "Enable the game's built-in optional content censoring"
+msgstr "ゲームに組み込まれた規制オプションを有効にする"
+
+#: engines/sci/detection_options.h:147
+msgid "Upscale videos"
+msgstr "映像をアップスケーリングする"
+
+#: engines/sci/detection_options.h:148
+msgid "Upscale videos to double their size"
+msgstr "映像を2倍にアップスケーリングする"
+
+#: engines/sci/detection_options.h:158
+msgid "Use RGB rendering"
+msgstr "RGBレンダリングを使用する"
+
+#: engines/sci/detection_options.h:159
+msgid "Use RGB rendering to improve screen transitions"
+msgstr "RGBレンダリングを使用して画面遷移を改善する"
+
+#: engines/sci/detection_options.h:169
+msgid "Use per-resource modified palettes"
+msgstr "リソースごとに変更されたパレットを使用する"
+
+#: engines/sci/detection_options.h:170
+msgid "Use custom per-resource palettes to improve visuals"
+msgstr "リソースごとにカスタムパレットを使用してビジュアルを向上させる"
+
+#: engines/sci/detection_options.h:180
+msgid "Enable bearded musicians"
+msgstr "ミュージシャンに髭を生やす"
+
+#: engines/sci/detection_options.h:181
+msgid "Enable graphics that were disabled for legal reasons"
+msgstr "法律上の理由で無効化されたグラフィックを有効化"
+
+#: engines/sci/detection_options.h:205
+msgid "MIDI mode:"
+msgstr "MIDI モード："
+
+#: engines/sci/detection_options.h:206
+msgid ""
+"When using external MIDI devices (e.g. through USB-MIDI), select your device "
+"here"
+msgstr "外部のMIDIデバイス(USB-MIDIなど)を使用する場合、ここで選択してください"
+
+#: engines/sci/detection_options.h:211
+msgid "Standard (GM / MT-32)"
+msgstr "標準 (GM / MT-32)"
+
+#: engines/sci/detection_options.h:215
+msgid "Roland D-110 / D-10 / D-20"
+msgstr "ローランド D-110 / D-10 / D-20"
+
+#: engines/sci/detection_options.h:219
+msgid "Yamaha FB-01"
+msgstr "ヤマハ FB-01"
 
 #: engines/sci/detection_tables.h:4397
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -8771,111 +8910,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "3Dゲームで垂直同期"
-
-#~ msgid "Skip EGA dithering pass (full color backgrounds)"
-#~ msgstr "EGAディザリングパスをスキップ(フルカラー背景)"
-
-#~ msgid ""
-#~ "Skip dithering pass in EGA games, graphics are shown with full colors"
-#~ msgstr "EGAディザリングパスをスキップし、フルカラーでグラフィックを表示"
-
-#~ msgid "Enable high resolution graphics"
-#~ msgstr "ハイレゾグラフィックを有効化"
-
-#~ msgid "Enable high resolution graphics/content"
-#~ msgstr "高解像度のグラフィック/コンテンツを有効にする"
-
-#~ msgid "Enable black-lined video"
-#~ msgstr "黒塗りの映像を有効化"
-
-#~ msgid "Draw black lines over videos to increase their apparent sharpness"
-#~ msgstr "映像に黒い線を重ね、シャープネスを強める"
-
-#~ msgid "Use high-quality video scaling"
-#~ msgstr "高品質なビデオスケーリングを使用する"
-
-#~ msgid "Use linear interpolation when upscaling videos, where possible"
-#~ msgstr "映像のアップスケーリングに、可能な限り線形補間を使用"
-
-#~ msgid "Use high-quality \"LarryScale\" cel scaling"
-#~ msgstr "高品質なLarryScaleセルスケーリングを使用"
-
-#~ msgid "Use special cartoon scaler for drawing character sprites"
-#~ msgstr "キャラクタースプライト用に特別なカートゥーンスケーラーを使用"
-
-#~ msgid "Prefer digital sound effects"
-#~ msgstr "デジタルSEを選ぶ"
-
-#~ msgid "Prefer digital sound effects instead of synthesized ones"
-#~ msgstr "合成音声ではなくデジタルSEを選ぶ"
-
-#~ msgid "Use CD audio"
-#~ msgstr "CD音楽を使用"
-
-#~ msgid "Use CD audio instead of in-game audio, if available"
-#~ msgstr "可能な場合、BGMとしてCDオーディオを使用"
-
-#~ msgid "Use Windows cursors"
-#~ msgstr "Windowsのカーソルを使用"
-
-#~ msgid ""
-#~ "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-#~ msgstr "DOSのカーソルの代わりにWindowsのカーソル(小さいモノクロ)を使用"
-
-#~ msgid "Use silver cursors"
-#~ msgstr "銀カーソルを使用"
-
-#~ msgid ""
-#~ "Use the alternate set of silver cursors instead of the normal golden ones"
-#~ msgstr "通常の金カーソルの代わりに銀カーソルを使用する"
-
-#~ msgid "Enable content censoring"
-#~ msgstr "コンテンツの規制を有効にする"
-
-#~ msgid "Enable the game's built-in optional content censoring"
-#~ msgstr "ゲームに組み込まれた規制オプションを有効にする"
-
-#~ msgid "Upscale videos"
-#~ msgstr "映像をアップスケーリングする"
-
-#~ msgid "Upscale videos to double their size"
-#~ msgstr "映像を2倍にアップスケーリングする"
-
-#~ msgid "Use RGB rendering"
-#~ msgstr "RGBレンダリングを使用する"
-
-#~ msgid "Use RGB rendering to improve screen transitions"
-#~ msgstr "RGBレンダリングを使用して画面遷移を改善する"
-
-#~ msgid "Use per-resource modified palettes"
-#~ msgstr "リソースごとに変更されたパレットを使用する"
-
-#~ msgid "Use custom per-resource palettes to improve visuals"
-#~ msgstr "リソースごとにカスタムパレットを使用してビジュアルを向上させる"
-
-#~ msgid "Enable bearded musicians"
-#~ msgstr "ミュージシャンに髭を生やす"
-
-#~ msgid "Enable graphics that were disabled for legal reasons"
-#~ msgstr "法律上の理由で無効化されたグラフィックを有効化"
-
-#~ msgid "MIDI mode:"
-#~ msgstr "MIDI モード："
-
-#~ msgid ""
-#~ "When using external MIDI devices (e.g. through USB-MIDI), select your "
-#~ "device here"
-#~ msgstr ""
-#~ "外部のMIDIデバイス(USB-MIDIなど)を使用する場合、ここで選択してください"
-
-#~ msgid "Standard (GM / MT-32)"
-#~ msgstr "標準 (GM / MT-32)"
-
-#~ msgid "Roland D-110 / D-10 / D-20"
-#~ msgstr "ローランド D-110 / D-10 / D-20"
-
-#~ msgid "Yamaha FB-01"
-#~ msgstr "ヤマハ FB-01"
 
 #~ msgid "Auto"
 #~ msgstr "自動"

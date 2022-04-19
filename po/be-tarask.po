@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-16 21:25+0000\n"
+"POT-Creation-Date: 2022-04-19 18:14+0000\n"
 "PO-Revision-Date: 2022-02-11 14:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -4065,18 +4065,20 @@ msgstr "Не эмуляваць артэфактаў NTSC для тэксту"
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
 #: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
-#: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
-#: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
-#: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
+#: engines/sci/detection_options.h:93 engines/sherlock/detection.cpp:58
+#: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
+#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:106
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
 #: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
-#: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
-#: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
-#: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
+#: engines/sci/detection_options.h:94 engines/sherlock/detection.cpp:59
+#: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
+#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:107
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня замест экранаў "
@@ -4606,7 +4608,7 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Робіць рэжым Колеравай сьлепаты стандартным"
 
 #: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
-#: engines/supernova/detection.cpp:51
+#: engines/sci/detection_options.h:191 engines/supernova/detection.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Далучыць ператварэньне тэксту ў мову"
 
@@ -4747,8 +4749,9 @@ msgstr ""
 "Далучыць ператварэньне тэксту ў мову для аб’ектаў, наладаў і біблійнай цытаты"
 
 #: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
-#: engines/mads/detection.cpp:114 engines/sherlock/detection.cpp:120
-#: engines/supernova/detection.cpp:52 engines/twine/detection.cpp:753
+#: engines/mads/detection.cpp:114 engines/sci/detection_options.h:192
+#: engines/sherlock/detection.cpp:120 engines/supernova/detection.cpp:52
+#: engines/twine/detection.cpp:753
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Ператвараць тэкст у мову ў апісаньнях (калі даступна)"
 
@@ -6260,6 +6263,176 @@ msgstr ""
 #: engines/saga/saga.cpp:228
 msgid "Error loading game resources."
 msgstr "Памылка ладаваньня зьвестак гульні."
+
+#: engines/sci/detection_options.h:31
+msgid "Skip EGA dithering pass (full color backgrounds)"
+msgstr ""
+
+#: engines/sci/detection_options.h:32
+msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
+msgstr ""
+
+#: engines/sci/detection_options.h:41
+#, fuzzy
+#| msgid "Enable high resolution"
+msgid "Enable high resolution graphics"
+msgstr "Далучыць высокую разрознасьць"
+
+#: engines/sci/detection_options.h:42
+#, fuzzy
+#| msgid "Enable high resolution"
+msgid "Enable high resolution graphics/content"
+msgstr "Далучыць высокую разрознасьць"
+
+#: engines/sci/detection_options.h:51
+msgid "Enable black-lined video"
+msgstr ""
+
+#: engines/sci/detection_options.h:52
+msgid "Draw black lines over videos to increase their apparent sharpness"
+msgstr ""
+
+#: engines/sci/detection_options.h:62
+msgid "Use high-quality video scaling"
+msgstr ""
+
+#: engines/sci/detection_options.h:63
+#, fuzzy
+#| msgid "Use linear filtering when scaling graphics"
+msgid "Use linear interpolation when upscaling videos, where possible"
+msgstr "Ужывайце лінейнае фільтраваньне, калі павялічваеце графіку"
+
+#: engines/sci/detection_options.h:73
+msgid "Use high-quality \"LarryScale\" cel scaling"
+msgstr ""
+
+#: engines/sci/detection_options.h:74
+msgid "Use special cartoon scaler for drawing character sprites"
+msgstr ""
+
+#: engines/sci/detection_options.h:83
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Prefer digital sound effects"
+msgstr "Гучнасьць спэцыяльных гукавых эфэктаў"
+
+#: engines/sci/detection_options.h:84
+#, fuzzy
+#| msgid "Use the original save/load screens instead of the ScummVM ones"
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr ""
+"Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня замест экранаў "
+"ScummVM"
+
+#: engines/sci/detection_options.h:103
+#, fuzzy
+#| msgid "SegaCD Audio"
+msgid "Use CD audio"
+msgstr "Гук SegaCD"
+
+#: engines/sci/detection_options.h:104
+#, fuzzy
+#| msgid "Use TTS to read text in the game (if TTS is available)"
+msgid "Use CD audio instead of in-game audio, if available"
+msgstr "Ператвараць тэкст у мову ў гульні (калі даступна)"
+
+#: engines/sci/detection_options.h:114
+msgid "Use Windows cursors"
+msgstr ""
+
+#: engines/sci/detection_options.h:115
+#, fuzzy
+#| msgid "Use the original save/load screens instead of the ScummVM ones"
+msgid ""
+"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
+msgstr ""
+"Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня замест экранаў "
+"ScummVM"
+
+#: engines/sci/detection_options.h:125
+#, fuzzy
+#| msgid "Regular cursor"
+msgid "Use silver cursors"
+msgstr "Звычайны паказальнік"
+
+#: engines/sci/detection_options.h:126
+#, fuzzy
+#| msgid "Use the original save/load screens instead of the ScummVM ones"
+msgid ""
+"Use the alternate set of silver cursors instead of the normal golden ones"
+msgstr ""
+"Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня замест экранаў "
+"ScummVM"
+
+#: engines/sci/detection_options.h:136
+#, fuzzy
+#| msgid "Enable font anti-aliasing"
+msgid "Enable content censoring"
+msgstr "Далучыць памякчэньне шрыфтоў"
+
+#: engines/sci/detection_options.h:137
+msgid "Enable the game's built-in optional content censoring"
+msgstr ""
+
+#: engines/sci/detection_options.h:147
+#, fuzzy
+#| msgid "Unscaled"
+msgid "Upscale videos"
+msgstr "Без павялічэньня"
+
+#: engines/sci/detection_options.h:148
+msgid "Upscale videos to double their size"
+msgstr ""
+
+#: engines/sci/detection_options.h:158
+msgid "Use RGB rendering"
+msgstr ""
+
+#: engines/sci/detection_options.h:159
+msgid "Use RGB rendering to improve screen transitions"
+msgstr ""
+
+#: engines/sci/detection_options.h:169
+msgid "Use per-resource modified palettes"
+msgstr ""
+
+#: engines/sci/detection_options.h:170
+msgid "Use custom per-resource palettes to improve visuals"
+msgstr ""
+
+#: engines/sci/detection_options.h:180
+#, fuzzy
+#| msgid "Enable frame skipping"
+msgid "Enable bearded musicians"
+msgstr "Далучыць пропуск кадраў"
+
+#: engines/sci/detection_options.h:181
+msgid "Enable graphics that were disabled for legal reasons"
+msgstr ""
+
+#: engines/sci/detection_options.h:205
+#, fuzzy
+#| msgid "MIDI gain:"
+msgid "MIDI mode:"
+msgstr "Узмацненьне MIDI:"
+
+#: engines/sci/detection_options.h:206
+msgid ""
+"When using external MIDI devices (e.g. through USB-MIDI), select your device "
+"here"
+msgstr ""
+
+#: engines/sci/detection_options.h:211
+msgid "Standard (GM / MT-32)"
+msgstr ""
+
+#: engines/sci/detection_options.h:215
+msgid "Roland D-110 / D-10 / D-20"
+msgstr ""
+
+#: engines/sci/detection_options.h:219
+msgid "Yamaha FB-01"
+msgstr ""
 
 #: engines/sci/detection_tables.h:4397
 msgid "Incomplete game detected. You have to copy data from all the CDs."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-16 21:25+0000\n"
+"POT-Creation-Date: 2022-04-19 18:14+0000\n"
 "PO-Revision-Date: 2022-04-17 16:27+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4052,18 +4052,20 @@ msgstr "Poista NTSC-häiriövärien emulointi tekstille"
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
 #: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
-#: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
-#: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
-#: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
+#: engines/sci/detection_options.h:93 engines/sherlock/detection.cpp:58
+#: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
+#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:106
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
 #: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
-#: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
-#: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
-#: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
+#: engines/sci/detection_options.h:94 engines/sherlock/detection.cpp:59
+#: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
+#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:107
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja ScummVM valikoiden sijaan"
 
@@ -4568,7 +4570,7 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Aktivoi värisokeustila vakiona"
 
 #: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
-#: engines/supernova/detection.cpp:51
+#: engines/sci/detection_options.h:191 engines/supernova/detection.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Käytä tekstistä puheeksi -toimintoa"
 
@@ -4711,8 +4713,9 @@ msgstr ""
 "Tekstistä puheeksi -toiminto esineille, asetuksille ja raamattulainaukselle"
 
 #: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
-#: engines/mads/detection.cpp:114 engines/sherlock/detection.cpp:120
-#: engines/supernova/detection.cpp:52 engines/twine/detection.cpp:753
+#: engines/mads/detection.cpp:114 engines/sci/detection_options.h:192
+#: engines/sherlock/detection.cpp:120 engines/supernova/detection.cpp:52
+#: engines/twine/detection.cpp:753
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Käytä TTS:ää kuvauksien lukemiseen (jos TTS on saatavilla)"
 
@@ -6217,6 +6220,149 @@ msgstr ""
 #: engines/saga/saga.cpp:228
 msgid "Error loading game resources."
 msgstr "Peliresursseja lukiessa tapahtui virhe."
+
+#: engines/sci/detection_options.h:31
+msgid "Skip EGA dithering pass (full color backgrounds)"
+msgstr "Ohita EGA dithering pass (täysväritaustat)"
+
+#: engines/sci/detection_options.h:32
+msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
+msgstr "Ohita dithering pass EGA peleissä, grafiikat näytetään täysvärisenä"
+
+#: engines/sci/detection_options.h:41
+msgid "Enable high resolution graphics"
+msgstr "Käytä korkearesoluutioista grafiikkaa"
+
+#: engines/sci/detection_options.h:42
+msgid "Enable high resolution graphics/content"
+msgstr "Käytä korkearesoluutioista grafiikkaa/sisältöä"
+
+#: engines/sci/detection_options.h:51
+msgid "Enable black-lined video"
+msgstr "Käytä mustia vuoroviivoja videoissa"
+
+#: engines/sci/detection_options.h:52
+msgid "Draw black lines over videos to increase their apparent sharpness"
+msgstr ""
+"Piirrä mustia vuoroviivoja videoihin jotta ne näyttäisivät terävämmiltä"
+
+#: engines/sci/detection_options.h:62
+msgid "Use high-quality video scaling"
+msgstr "Käytä korkealaatuista videoskaalausta"
+
+#: engines/sci/detection_options.h:63
+msgid "Use linear interpolation when upscaling videos, where possible"
+msgstr ""
+"Käytä lineaarista interpolaatiota videoiden suurentamisessa jos mahdollista"
+
+#: engines/sci/detection_options.h:73
+msgid "Use high-quality \"LarryScale\" cel scaling"
+msgstr "Käytä korkealaatuista \"LarryCel\" videoskaalausta"
+
+#: engines/sci/detection_options.h:74
+msgid "Use special cartoon scaler for drawing character sprites"
+msgstr ""
+"Käytä piirrostyyliseen grafiikaan erikoistunutta skaalainta hahmografiikan "
+"piirtämiseen"
+
+#: engines/sci/detection_options.h:83
+msgid "Prefer digital sound effects"
+msgstr "Käytä mieluiten digitaalisia äänitehosteita"
+
+#: engines/sci/detection_options.h:84
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr ""
+"Käytä mieluiten digitaalisia äänitehosteita synteettisten tehosteiden sijaan"
+
+#: engines/sci/detection_options.h:103
+msgid "Use CD audio"
+msgstr "Käytä CD-ääntä"
+
+#: engines/sci/detection_options.h:104
+msgid "Use CD audio instead of in-game audio, if available"
+msgstr "Käytä CD:n audiota pelin audion sijaan, jos mahdollista"
+
+#: engines/sci/detection_options.h:114
+msgid "Use Windows cursors"
+msgstr "Käytä Windowsin kursoreita"
+
+#: engines/sci/detection_options.h:115
+msgid ""
+"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
+msgstr ""
+"Käytä Windowsin kursoreita (pienempiä ja harmaasävyisiä) DOS kursorien sijaan"
+
+#: engines/sci/detection_options.h:125
+msgid "Use silver cursors"
+msgstr "Käytä hopeisia kursoreita"
+
+#: engines/sci/detection_options.h:126
+msgid ""
+"Use the alternate set of silver cursors instead of the normal golden ones"
+msgstr "Käytä vaihtoehtoisia hopeisia kursoreita normaalien kultaisten sijaan"
+
+#: engines/sci/detection_options.h:136
+msgid "Enable content censoring"
+msgstr "Sisällön sensurointi"
+
+#: engines/sci/detection_options.h:137
+msgid "Enable the game's built-in optional content censoring"
+msgstr "Pelin sisäänrakennettu valinnainen sisällön sensurointi"
+
+#: engines/sci/detection_options.h:147
+msgid "Upscale videos"
+msgstr "Skaalaa videot"
+
+#: engines/sci/detection_options.h:148
+msgid "Upscale videos to double their size"
+msgstr "Skaalaa videot tuplakokoisiksi"
+
+#: engines/sci/detection_options.h:158
+msgid "Use RGB rendering"
+msgstr "Käytä RGB-renderöintiä"
+
+#: engines/sci/detection_options.h:159
+msgid "Use RGB rendering to improve screen transitions"
+msgstr "RGB-renderöinti tekee kuvasiirtymistä paremman näköisiä"
+
+#: engines/sci/detection_options.h:169
+msgid "Use per-resource modified palettes"
+msgstr "Käytä resurssikohtaisia muokattuja väripaletteja"
+
+#: engines/sci/detection_options.h:170
+msgid "Use custom per-resource palettes to improve visuals"
+msgstr "Resurssikohtaiset väripaletit näyttävät paremmalta"
+
+#: engines/sci/detection_options.h:180
+msgid "Enable bearded musicians"
+msgstr "Parrakkaat muusikot"
+
+#: engines/sci/detection_options.h:181
+msgid "Enable graphics that were disabled for legal reasons"
+msgstr "Salli grafiikat jotka olivat poistettu lakiteknisistä syistä"
+
+#: engines/sci/detection_options.h:205
+msgid "MIDI mode:"
+msgstr "MIDI tila:"
+
+#: engines/sci/detection_options.h:206
+msgid ""
+"When using external MIDI devices (e.g. through USB-MIDI), select your device "
+"here"
+msgstr ""
+"Käyttäessäsi ulkoisia MIDI-laitteita (esim. USB-MIDI), valitse laite tästä"
+
+#: engines/sci/detection_options.h:211
+msgid "Standard (GM / MT-32)"
+msgstr "Vakio (GM / MT-32)"
+
+#: engines/sci/detection_options.h:215
+msgid "Roland D-110 / D-10 / D-20"
+msgstr "Roland D-110 / D-10 / D-20"
+
+#: engines/sci/detection_options.h:219
+msgid "Yamaha FB-01"
+msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_tables.h:4397
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -8869,121 +9015,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "V-Sync 3D-peleissä"
-
-#~ msgid "Skip EGA dithering pass (full color backgrounds)"
-#~ msgstr "Ohita EGA dithering pass (täysväritaustat)"
-
-#~ msgid ""
-#~ "Skip dithering pass in EGA games, graphics are shown with full colors"
-#~ msgstr "Ohita dithering pass EGA peleissä, grafiikat näytetään täysvärisenä"
-
-#~ msgid "Enable high resolution graphics"
-#~ msgstr "Käytä korkearesoluutioista grafiikkaa"
-
-#~ msgid "Enable high resolution graphics/content"
-#~ msgstr "Käytä korkearesoluutioista grafiikkaa/sisältöä"
-
-#~ msgid "Enable black-lined video"
-#~ msgstr "Käytä mustia vuoroviivoja videoissa"
-
-#~ msgid "Draw black lines over videos to increase their apparent sharpness"
-#~ msgstr ""
-#~ "Piirrä mustia vuoroviivoja videoihin jotta ne näyttäisivät terävämmiltä"
-
-#~ msgid "Use high-quality video scaling"
-#~ msgstr "Käytä korkealaatuista videoskaalausta"
-
-#~ msgid "Use linear interpolation when upscaling videos, where possible"
-#~ msgstr ""
-#~ "Käytä lineaarista interpolaatiota videoiden suurentamisessa jos "
-#~ "mahdollista"
-
-#~ msgid "Use high-quality \"LarryScale\" cel scaling"
-#~ msgstr "Käytä korkealaatuista \"LarryCel\" videoskaalausta"
-
-#~ msgid "Use special cartoon scaler for drawing character sprites"
-#~ msgstr ""
-#~ "Käytä piirrostyyliseen grafiikaan erikoistunutta skaalainta "
-#~ "hahmografiikan piirtämiseen"
-
-#~ msgid "Prefer digital sound effects"
-#~ msgstr "Käytä mieluiten digitaalisia äänitehosteita"
-
-#~ msgid "Prefer digital sound effects instead of synthesized ones"
-#~ msgstr ""
-#~ "Käytä mieluiten digitaalisia äänitehosteita synteettisten tehosteiden "
-#~ "sijaan"
-
-#~ msgid "Use CD audio"
-#~ msgstr "Käytä CD-ääntä"
-
-#~ msgid "Use CD audio instead of in-game audio, if available"
-#~ msgstr "Käytä CD:n audiota pelin audion sijaan, jos mahdollista"
-
-#~ msgid "Use Windows cursors"
-#~ msgstr "Käytä Windowsin kursoreita"
-
-#~ msgid ""
-#~ "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-#~ msgstr ""
-#~ "Käytä Windowsin kursoreita (pienempiä ja harmaasävyisiä) DOS kursorien "
-#~ "sijaan"
-
-#~ msgid "Use silver cursors"
-#~ msgstr "Käytä hopeisia kursoreita"
-
-#~ msgid ""
-#~ "Use the alternate set of silver cursors instead of the normal golden ones"
-#~ msgstr ""
-#~ "Käytä vaihtoehtoisia hopeisia kursoreita normaalien kultaisten sijaan"
-
-#~ msgid "Enable content censoring"
-#~ msgstr "Sisällön sensurointi"
-
-#~ msgid "Enable the game's built-in optional content censoring"
-#~ msgstr "Pelin sisäänrakennettu valinnainen sisällön sensurointi"
-
-#~ msgid "Upscale videos"
-#~ msgstr "Skaalaa videot"
-
-#~ msgid "Upscale videos to double their size"
-#~ msgstr "Skaalaa videot tuplakokoisiksi"
-
-#~ msgid "Use RGB rendering"
-#~ msgstr "Käytä RGB-renderöintiä"
-
-#~ msgid "Use RGB rendering to improve screen transitions"
-#~ msgstr "RGB-renderöinti tekee kuvasiirtymistä paremman näköisiä"
-
-#~ msgid "Use per-resource modified palettes"
-#~ msgstr "Käytä resurssikohtaisia muokattuja väripaletteja"
-
-#~ msgid "Use custom per-resource palettes to improve visuals"
-#~ msgstr "Resurssikohtaiset väripaletit näyttävät paremmalta"
-
-#~ msgid "Enable bearded musicians"
-#~ msgstr "Parrakkaat muusikot"
-
-#~ msgid "Enable graphics that were disabled for legal reasons"
-#~ msgstr "Salli grafiikat jotka olivat poistettu lakiteknisistä syistä"
-
-#~ msgid "MIDI mode:"
-#~ msgstr "MIDI tila:"
-
-#~ msgid ""
-#~ "When using external MIDI devices (e.g. through USB-MIDI), select your "
-#~ "device here"
-#~ msgstr ""
-#~ "Käyttäessäsi ulkoisia MIDI-laitteita (esim. USB-MIDI), valitse laite tästä"
-
-#~ msgid "Standard (GM / MT-32)"
-#~ msgstr "Vakio (GM / MT-32)"
-
-#~ msgid "Roland D-110 / D-10 / D-20"
-#~ msgstr "Roland D-110 / D-10 / D-20"
-
-#~ msgid "Yamaha FB-01"
-#~ msgstr "Yamaha FB-01"
 
 #~ msgid "Auto"
 #~ msgstr "Auto"

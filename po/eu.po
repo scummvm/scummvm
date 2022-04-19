@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-16 21:25+0000\n"
+"POT-Creation-Date: 2022-04-19 18:14+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -4163,18 +4163,20 @@ msgstr ""
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
 #: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
-#: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
-#: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
-#: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
+#: engines/sci/detection_options.h:93 engines/sherlock/detection.cpp:58
+#: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
+#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:106
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Erabili jatorrizko gorde/kargatu pantailak"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
 #: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
-#: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
-#: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
-#: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
+#: engines/sci/detection_options.h:94 engines/sherlock/detection.cpp:59
+#: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
+#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:107
+#: engines/zvision/detection_tables.h:51
 #, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
@@ -4689,7 +4691,7 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Gaitu daltonikoentzako modua lehenetsi modura"
 
 #: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
-#: engines/supernova/detection.cpp:51
+#: engines/sci/detection_options.h:191 engines/supernova/detection.cpp:51
 #, fuzzy
 msgid "Enable Text to Speech"
 msgstr "Testu eta ahotsa:"
@@ -4822,8 +4824,9 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 
 #: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
-#: engines/mads/detection.cpp:114 engines/sherlock/detection.cpp:120
-#: engines/supernova/detection.cpp:52 engines/twine/detection.cpp:753
+#: engines/mads/detection.cpp:114 engines/sci/detection_options.h:192
+#: engines/sherlock/detection.cpp:120 engines/supernova/detection.cpp:52
+#: engines/twine/detection.cpp:753
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
@@ -6321,6 +6324,153 @@ msgstr ""
 #, fuzzy
 msgid "Error loading game resources."
 msgstr "Jokoa exekutatzean errorea:"
+
+#: engines/sci/detection_options.h:31
+msgid "Skip EGA dithering pass (full color backgrounds)"
+msgstr "Saihestu EGA leuntze pausua (koloretako hondoak)"
+
+#: engines/sci/detection_options.h:32
+msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
+msgstr ""
+"Saihestu leuntzea EGA jokoetan, grafikoak kolore guztiekin erakustendira"
+
+#: engines/sci/detection_options.h:41
+msgid "Enable high resolution graphics"
+msgstr "Gaitu erresoluzio altuko grafikoak"
+
+#: engines/sci/detection_options.h:42
+msgid "Enable high resolution graphics/content"
+msgstr "Gaitu erresoluzio altuko grafikoak/edukiak"
+
+#: engines/sci/detection_options.h:51
+#, fuzzy
+msgid "Enable black-lined video"
+msgstr "Roland GS modua gaitu"
+
+#: engines/sci/detection_options.h:52
+msgid "Draw black lines over videos to increase their apparent sharpness"
+msgstr ""
+
+#: engines/sci/detection_options.h:62
+msgid "Use high-quality video scaling"
+msgstr ""
+
+#: engines/sci/detection_options.h:63
+msgid "Use linear interpolation when upscaling videos, where possible"
+msgstr ""
+
+#: engines/sci/detection_options.h:73
+msgid "Use high-quality \"LarryScale\" cel scaling"
+msgstr ""
+
+#: engines/sci/detection_options.h:74
+msgid "Use special cartoon scaler for drawing character sprites"
+msgstr ""
+
+#: engines/sci/detection_options.h:83
+msgid "Prefer digital sound effects"
+msgstr "Lehenetsi soinu efektu digitalak"
+
+#: engines/sci/detection_options.h:84
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr "Lehenetsi soinu efektu digitalak sintetizatuen ordez"
+
+#: engines/sci/detection_options.h:103
+msgid "Use CD audio"
+msgstr "Erabili audio CDa"
+
+#: engines/sci/detection_options.h:104
+msgid "Use CD audio instead of in-game audio, if available"
+msgstr "Erabili CD-ko audioa jokokoa beharrean, eskurarri badago"
+
+#: engines/sci/detection_options.h:114
+msgid "Use Windows cursors"
+msgstr "Erabili Windows-eko kurtsoreak"
+
+#: engines/sci/detection_options.h:115
+msgid ""
+"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
+msgstr ""
+"Erabili Windows-eko kurtsoreak (txikiagoak eta monokromoak) DOS-ekoak "
+"erabilibeharrean"
+
+#: engines/sci/detection_options.h:125
+msgid "Use silver cursors"
+msgstr "Erabili zilarrezko kurtsoreak"
+
+#: engines/sci/detection_options.h:126
+#, fuzzy
+msgid ""
+"Use the alternate set of silver cursors instead of the normal golden ones"
+msgstr ""
+"Erabili zilar kolorezko kurtsore multzo alternatiboa, urre-koloreko "
+"kursorenormalak erabili beharrean"
+
+#: engines/sci/detection_options.h:136
+#, fuzzy
+msgid "Enable content censoring"
+msgstr "Gaitu kurtsore flotatzaileak"
+
+#: engines/sci/detection_options.h:137
+#, fuzzy
+msgid "Enable the game's built-in optional content censoring"
+msgstr "Gaitu kurtsore flotatzaileak"
+
+#: engines/sci/detection_options.h:147
+msgid "Upscale videos"
+msgstr ""
+
+#: engines/sci/detection_options.h:148
+msgid "Upscale videos to double their size"
+msgstr ""
+
+#: engines/sci/detection_options.h:158
+msgid "Use RGB rendering"
+msgstr ""
+
+#: engines/sci/detection_options.h:159
+msgid "Use RGB rendering to improve screen transitions"
+msgstr ""
+
+#: engines/sci/detection_options.h:169
+msgid "Use per-resource modified palettes"
+msgstr ""
+
+#: engines/sci/detection_options.h:170
+msgid "Use custom per-resource palettes to improve visuals"
+msgstr ""
+
+#: engines/sci/detection_options.h:180
+#, fuzzy
+msgid "Enable bearded musicians"
+msgstr "Gaitu kurtsore flotatzaileak"
+
+#: engines/sci/detection_options.h:181
+msgid "Enable graphics that were disabled for legal reasons"
+msgstr ""
+
+#: engines/sci/detection_options.h:205
+#, fuzzy
+msgid "MIDI mode:"
+msgstr "MIDI irabazia:"
+
+#: engines/sci/detection_options.h:206
+msgid ""
+"When using external MIDI devices (e.g. through USB-MIDI), select your device "
+"here"
+msgstr ""
+
+#: engines/sci/detection_options.h:211
+msgid "Standard (GM / MT-32)"
+msgstr ""
+
+#: engines/sci/detection_options.h:215
+msgid "Roland D-110 / D-10 / D-20"
+msgstr ""
+
+#: engines/sci/detection_options.h:219
+msgid "Yamaha FB-01"
+msgstr ""
 
 #: engines/sci/detection_tables.h:4397
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -8842,71 +8992,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Enable cross fade"
 #~ msgstr "Gaitu helio modua"
-
-#~ msgid "Skip EGA dithering pass (full color backgrounds)"
-#~ msgstr "Saihestu EGA leuntze pausua (koloretako hondoak)"
-
-#~ msgid ""
-#~ "Skip dithering pass in EGA games, graphics are shown with full colors"
-#~ msgstr ""
-#~ "Saihestu leuntzea EGA jokoetan, grafikoak kolore guztiekin erakustendira"
-
-#~ msgid "Enable high resolution graphics"
-#~ msgstr "Gaitu erresoluzio altuko grafikoak"
-
-#~ msgid "Enable high resolution graphics/content"
-#~ msgstr "Gaitu erresoluzio altuko grafikoak/edukiak"
-
-#, fuzzy
-#~ msgid "Enable black-lined video"
-#~ msgstr "Roland GS modua gaitu"
-
-#~ msgid "Prefer digital sound effects"
-#~ msgstr "Lehenetsi soinu efektu digitalak"
-
-#~ msgid "Prefer digital sound effects instead of synthesized ones"
-#~ msgstr "Lehenetsi soinu efektu digitalak sintetizatuen ordez"
-
-#~ msgid "Use CD audio"
-#~ msgstr "Erabili audio CDa"
-
-#~ msgid "Use CD audio instead of in-game audio, if available"
-#~ msgstr "Erabili CD-ko audioa jokokoa beharrean, eskurarri badago"
-
-#~ msgid "Use Windows cursors"
-#~ msgstr "Erabili Windows-eko kurtsoreak"
-
-#~ msgid ""
-#~ "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-#~ msgstr ""
-#~ "Erabili Windows-eko kurtsoreak (txikiagoak eta monokromoak) DOS-ekoak "
-#~ "erabilibeharrean"
-
-#~ msgid "Use silver cursors"
-#~ msgstr "Erabili zilarrezko kurtsoreak"
-
-#, fuzzy
-#~ msgid ""
-#~ "Use the alternate set of silver cursors instead of the normal golden ones"
-#~ msgstr ""
-#~ "Erabili zilar kolorezko kurtsore multzo alternatiboa, urre-koloreko "
-#~ "kursorenormalak erabili beharrean"
-
-#, fuzzy
-#~ msgid "Enable content censoring"
-#~ msgstr "Gaitu kurtsore flotatzaileak"
-
-#, fuzzy
-#~ msgid "Enable the game's built-in optional content censoring"
-#~ msgstr "Gaitu kurtsore flotatzaileak"
-
-#, fuzzy
-#~ msgid "Enable bearded musicians"
-#~ msgstr "Gaitu kurtsore flotatzaileak"
-
-#, fuzzy
-#~ msgid "MIDI mode:"
-#~ msgstr "MIDI irabazia:"
 
 #, fuzzy
 #~ msgid "Auto"

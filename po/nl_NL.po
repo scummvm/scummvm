@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-16 21:25+0000\n"
+"POT-Creation-Date: 2022-04-19 18:14+0000\n"
 "PO-Revision-Date: 2022-03-29 10:46+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4078,18 +4078,20 @@ msgstr "Emuleer geen NTSC artefacten voor tekst"
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
 #: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
-#: engines/sherlock/detection.cpp:58 engines/toltecs/detection.cpp:212
-#: engines/trecision/detection.cpp:219 engines/ultima/detection.cpp:55
-#: engines/ultima/detection.cpp:106 engines/zvision/detection_tables.h:50
+#: engines/sci/detection_options.h:93 engines/sherlock/detection.cpp:58
+#: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
+#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:106
+#: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Gebruik originele opslaan/laad schermen"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
 #: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
-#: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
-#: engines/trecision/detection.cpp:220 engines/ultima/detection.cpp:56
-#: engines/ultima/detection.cpp:107 engines/zvision/detection_tables.h:51
+#: engines/sci/detection_options.h:94 engines/sherlock/detection.cpp:59
+#: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
+#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:107
+#: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Gebruik de originele opslaan/laden schermen in plaats van die van ScummVM"
@@ -4613,7 +4615,7 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Schakel Kleurenblind modus standaard in"
 
 #: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
-#: engines/supernova/detection.cpp:51
+#: engines/sci/detection_options.h:191 engines/supernova/detection.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Gebruik Tekst naar Spraak"
 
@@ -4756,8 +4758,9 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "Zet spreek tekst aan voor Objecten, Opties en Bijbel Citaat"
 
 #: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
-#: engines/mads/detection.cpp:114 engines/sherlock/detection.cpp:120
-#: engines/supernova/detection.cpp:52 engines/twine/detection.cpp:753
+#: engines/mads/detection.cpp:114 engines/sci/detection_options.h:192
+#: engines/sherlock/detection.cpp:120 engines/supernova/detection.cpp:52
+#: engines/twine/detection.cpp:753
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 "Gebruik TTS voor het lezen van de omschrijvingen (als TTS beschikbaar is)"
@@ -6280,6 +6283,153 @@ msgstr ""
 #: engines/saga/saga.cpp:228
 msgid "Error loading game resources."
 msgstr "Fout bij laden spel onderdelen."
+
+#: engines/sci/detection_options.h:31
+msgid "Skip EGA dithering pass (full color backgrounds)"
+msgstr "Sla EGA dithering stap over (volledige kleuren achtergronden)"
+
+#: engines/sci/detection_options.h:32
+msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
+msgstr ""
+"Sla dithering stap in EGA spellen over, beelden worden getoond met volledige "
+"kleuren"
+
+#: engines/sci/detection_options.h:41
+msgid "Enable high resolution graphics"
+msgstr "Gebruik hoge resolutie beelden"
+
+#: engines/sci/detection_options.h:42
+msgid "Enable high resolution graphics/content"
+msgstr "Gebruik hoge resolutie beelden"
+
+#: engines/sci/detection_options.h:51
+msgid "Enable black-lined video"
+msgstr "Activeer black-lined video"
+
+#: engines/sci/detection_options.h:52
+msgid "Draw black lines over videos to increase their apparent sharpness"
+msgstr ""
+"Teken zwarte lijntjes over videos om de scherpte ogenschijnlijk te verhogen"
+
+#: engines/sci/detection_options.h:62
+msgid "Use high-quality video scaling"
+msgstr "Gebruik hoge kwaliteit video schaling"
+
+#: engines/sci/detection_options.h:63
+msgid "Use linear interpolation when upscaling videos, where possible"
+msgstr ""
+"Gebruik lineaire interpolatie tijdens het opschalen van videos, waar mogelijk"
+
+#: engines/sci/detection_options.h:73
+msgid "Use high-quality \"LarryScale\" cel scaling"
+msgstr "Gebruik hoge kwaliteit \"LarryScale\" cel schaling"
+
+#: engines/sci/detection_options.h:74
+msgid "Use special cartoon scaler for drawing character sprites"
+msgstr ""
+"Gebruik speciale cartoon schaler voor het tekenen van de personage sprites"
+
+#: engines/sci/detection_options.h:83
+msgid "Prefer digital sound effects"
+msgstr "Geef de voorkeur aan digitale geluidseffecten"
+
+#: engines/sci/detection_options.h:84
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr "Geef de voorkeur aan digitale geluidseffecten boven gesynthetiseerde"
+
+#: engines/sci/detection_options.h:103
+msgid "Use CD audio"
+msgstr "Gebruik CD audio"
+
+#: engines/sci/detection_options.h:104
+msgid "Use CD audio instead of in-game audio, if available"
+msgstr "Gebruik CD audio in plaats van in-game audio, als dat beschikbaar is"
+
+#: engines/sci/detection_options.h:114
+msgid "Use Windows cursors"
+msgstr "Gebruik Windows muisaanwijzers"
+
+#: engines/sci/detection_options.h:115
+msgid ""
+"Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
+msgstr ""
+"Gebruik Windows muisaanwijzers (kleiner en monochrome) in plaats van de DOS "
+"muisaanwijzers"
+
+#: engines/sci/detection_options.h:125
+msgid "Use silver cursors"
+msgstr "Gebruik zilveren muisaanwijzers"
+
+#: engines/sci/detection_options.h:126
+msgid ""
+"Use the alternate set of silver cursors instead of the normal golden ones"
+msgstr ""
+"Gebruik de alternative set van zilveren cursors in plaats van de normale "
+"gouden"
+
+#: engines/sci/detection_options.h:136
+msgid "Enable content censoring"
+msgstr "Censureren content inschakelen"
+
+#: engines/sci/detection_options.h:137
+msgid "Enable the game's built-in optional content censoring"
+msgstr "Inschakelen van het in het spel gebouwde optionele inhoud censuur"
+
+#: engines/sci/detection_options.h:147
+msgid "Upscale videos"
+msgstr "Videos opschalen"
+
+#: engines/sci/detection_options.h:148
+msgid "Upscale videos to double their size"
+msgstr "Schaal videos op naar dubbele grootte"
+
+#: engines/sci/detection_options.h:158
+msgid "Use RGB rendering"
+msgstr "Gebruik RGB rendering"
+
+#: engines/sci/detection_options.h:159
+msgid "Use RGB rendering to improve screen transitions"
+msgstr "Gebruik RGB rendering om schermovergangen te verbeteren"
+
+#: engines/sci/detection_options.h:169
+msgid "Use per-resource modified palettes"
+msgstr "Gebruikt per bron gemodificieerde kleurenpaletten"
+
+#: engines/sci/detection_options.h:170
+msgid "Use custom per-resource palettes to improve visuals"
+msgstr "Gebruik per object aangepaste kleurenpaletten om beeld te verbeteren"
+
+#: engines/sci/detection_options.h:180
+msgid "Enable bearded musicians"
+msgstr "Schakel bebaarde muziekanten in"
+
+#: engines/sci/detection_options.h:181
+msgid "Enable graphics that were disabled for legal reasons"
+msgstr "Toon beelden die uitgeschakeld waren vanwege juridische redenen"
+
+#: engines/sci/detection_options.h:205
+msgid "MIDI mode:"
+msgstr "MIDI modus:"
+
+#: engines/sci/detection_options.h:206
+msgid ""
+"When using external MIDI devices (e.g. through USB-MIDI), select your device "
+"here"
+msgstr ""
+"Bij het gebruik van externe MIDI apparaten (bijv. door USB-MIDI), kunt u "
+"hier uw apparaat kiezen"
+
+#: engines/sci/detection_options.h:211
+msgid "Standard (GM / MT-32)"
+msgstr "Standaard (GM / MT-32)"
+
+#: engines/sci/detection_options.h:215
+msgid "Roland D-110 / D-10 / D-20"
+msgstr "Roland D-110 / D-10 / D-20"
+
+#: engines/sci/detection_options.h:219
+msgid "Yamaha FB-01"
+msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_tables.h:4397
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -8929,126 +9079,6 @@ msgstr ""
 
 #~ msgid "V-Sync in 3D Games"
 #~ msgstr "V-Sync in 3D Spellen"
-
-#~ msgid "Skip EGA dithering pass (full color backgrounds)"
-#~ msgstr "Sla EGA dithering stap over (volledige kleuren achtergronden)"
-
-#~ msgid ""
-#~ "Skip dithering pass in EGA games, graphics are shown with full colors"
-#~ msgstr ""
-#~ "Sla dithering stap in EGA spellen over, beelden worden getoond met "
-#~ "volledige kleuren"
-
-#~ msgid "Enable high resolution graphics"
-#~ msgstr "Gebruik hoge resolutie beelden"
-
-#~ msgid "Enable high resolution graphics/content"
-#~ msgstr "Gebruik hoge resolutie beelden"
-
-#~ msgid "Enable black-lined video"
-#~ msgstr "Activeer black-lined video"
-
-#~ msgid "Draw black lines over videos to increase their apparent sharpness"
-#~ msgstr ""
-#~ "Teken zwarte lijntjes over videos om de scherpte ogenschijnlijk te "
-#~ "verhogen"
-
-#~ msgid "Use high-quality video scaling"
-#~ msgstr "Gebruik hoge kwaliteit video schaling"
-
-#~ msgid "Use linear interpolation when upscaling videos, where possible"
-#~ msgstr ""
-#~ "Gebruik lineaire interpolatie tijdens het opschalen van videos, waar "
-#~ "mogelijk"
-
-#~ msgid "Use high-quality \"LarryScale\" cel scaling"
-#~ msgstr "Gebruik hoge kwaliteit \"LarryScale\" cel schaling"
-
-#~ msgid "Use special cartoon scaler for drawing character sprites"
-#~ msgstr ""
-#~ "Gebruik speciale cartoon schaler voor het tekenen van de personage sprites"
-
-#~ msgid "Prefer digital sound effects"
-#~ msgstr "Geef de voorkeur aan digitale geluidseffecten"
-
-#~ msgid "Prefer digital sound effects instead of synthesized ones"
-#~ msgstr ""
-#~ "Geef de voorkeur aan digitale geluidseffecten boven gesynthetiseerde"
-
-#~ msgid "Use CD audio"
-#~ msgstr "Gebruik CD audio"
-
-#~ msgid "Use CD audio instead of in-game audio, if available"
-#~ msgstr ""
-#~ "Gebruik CD audio in plaats van in-game audio, als dat beschikbaar is"
-
-#~ msgid "Use Windows cursors"
-#~ msgstr "Gebruik Windows muisaanwijzers"
-
-#~ msgid ""
-#~ "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-#~ msgstr ""
-#~ "Gebruik Windows muisaanwijzers (kleiner en monochrome) in plaats van de "
-#~ "DOS muisaanwijzers"
-
-#~ msgid "Use silver cursors"
-#~ msgstr "Gebruik zilveren muisaanwijzers"
-
-#~ msgid ""
-#~ "Use the alternate set of silver cursors instead of the normal golden ones"
-#~ msgstr ""
-#~ "Gebruik de alternative set van zilveren cursors in plaats van de normale "
-#~ "gouden"
-
-#~ msgid "Enable content censoring"
-#~ msgstr "Censureren content inschakelen"
-
-#~ msgid "Enable the game's built-in optional content censoring"
-#~ msgstr "Inschakelen van het in het spel gebouwde optionele inhoud censuur"
-
-#~ msgid "Upscale videos"
-#~ msgstr "Videos opschalen"
-
-#~ msgid "Upscale videos to double their size"
-#~ msgstr "Schaal videos op naar dubbele grootte"
-
-#~ msgid "Use RGB rendering"
-#~ msgstr "Gebruik RGB rendering"
-
-#~ msgid "Use RGB rendering to improve screen transitions"
-#~ msgstr "Gebruik RGB rendering om schermovergangen te verbeteren"
-
-#~ msgid "Use per-resource modified palettes"
-#~ msgstr "Gebruikt per bron gemodificieerde kleurenpaletten"
-
-#~ msgid "Use custom per-resource palettes to improve visuals"
-#~ msgstr ""
-#~ "Gebruik per object aangepaste kleurenpaletten om beeld te verbeteren"
-
-#~ msgid "Enable bearded musicians"
-#~ msgstr "Schakel bebaarde muziekanten in"
-
-#~ msgid "Enable graphics that were disabled for legal reasons"
-#~ msgstr "Toon beelden die uitgeschakeld waren vanwege juridische redenen"
-
-#~ msgid "MIDI mode:"
-#~ msgstr "MIDI modus:"
-
-#~ msgid ""
-#~ "When using external MIDI devices (e.g. through USB-MIDI), select your "
-#~ "device here"
-#~ msgstr ""
-#~ "Bij het gebruik van externe MIDI apparaten (bijv. door USB-MIDI), kunt u "
-#~ "hier uw apparaat kiezen"
-
-#~ msgid "Standard (GM / MT-32)"
-#~ msgstr "Standaard (GM / MT-32)"
-
-#~ msgid "Roland D-110 / D-10 / D-20"
-#~ msgstr "Roland D-110 / D-10 / D-20"
-
-#~ msgid "Yamaha FB-01"
-#~ msgstr "Yamaha FB-01"
 
 #~ msgid "Auto"
 #~ msgstr "Automatisch"
