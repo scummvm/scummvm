@@ -387,6 +387,11 @@ public:
 	WeakPtr(std::nullptr_t) : BasePtr<T>() {
 	}
 
+	WeakPtr(const WeakPtr<T> &r) : BasePtr<T>(r) {
+		if (this->_tracker)
+			this->_tracker->incWeak();
+	}
+
 	WeakPtr(const BasePtr<T> &r) : BasePtr<T>(r) {
 		if (this->_tracker)
 			this->_tracker->incWeak();
