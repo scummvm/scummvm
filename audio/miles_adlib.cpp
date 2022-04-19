@@ -1224,8 +1224,8 @@ void MidiDriver_Miles_AdLib::applyControllerDefaults(uint8 source) {
 		return;
 
 	for (int i = 0; i < MIDI_CHANNEL_COUNT; i++) {
-		if (_controllerDefaults.program >= 0) {
-			_midiChannels[i].currentProgram = _controllerDefaults.program;
+		if (_controllerDefaults.program[i] >= 0) {
+			_midiChannels[i].currentProgram = _controllerDefaults.program[i];
 		}
 		if (_controllerDefaults.pitchBend >= 0) {
 			_midiChannels[i].currentPitchBender = _controllerDefaults.pitchBend;

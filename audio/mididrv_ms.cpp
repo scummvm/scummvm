@@ -37,19 +37,20 @@ MidiDriver_Multisource::MidiSource::MidiSource() :
 	fadeDuration(0) { }
 
 MidiDriver_Multisource::ControllerDefaults::ControllerDefaults() :
-	// The -1 value indicates no default value should be set on the controller.
-	program(-1),
-	instrumentBank(-1),
-	drumkit(-1),
-	channelPressure(-1),
-	pitchBend(-1),
-	modulation(-1),
-	volume(-1),
-	panning(-1),
-	expression(-1),
-	sustain(-1),
-	rpn(-1),
-	pitchBendSensitivity(-1) { }
+		// The -1 value indicates no default value should be set on the controller.
+		instrumentBank(-1),
+		drumkit(-1),
+		channelPressure(-1),
+		pitchBend(-1),
+		modulation(-1),
+		volume(-1),
+		panning(-1),
+		expression(-1),
+		sustain(-1),
+		rpn(-1),
+		pitchBendSensitivity(-1) {
+	Common::fill(program, program + ARRAYSIZE(program), -1);
+}
 
 MidiDriver_Multisource::MidiDriver_Multisource() :
 		_instrumentRemapping(nullptr),
@@ -238,7 +239,7 @@ void MidiDriver_Multisource::setControllerDefault(ControllerDefaultType type, in
 	// corresponding to the specified controller.
 	switch (type) {
 	case CONTROLLER_DEFAULT_PROGRAM:
-		_controllerDefaults.program = value;
+		Common::fill(_controllerDefaults.program, _controllerDefaults.program + ARRAYSIZE(_controllerDefaults.program), value);
 		break;
 	case CONTROLLER_DEFAULT_INSTRUMENT_BANK:
 		_controllerDefaults.instrumentBank = value;
@@ -275,6 +276,19 @@ void MidiDriver_Multisource::setControllerDefault(ControllerDefaultType type, in
 		break;
 	default:
 		warning("MidiDriver_Multisource::setControllerDefault - Unknown controller default type %i", type);
+		break;
+	}
+}
+
+void MidiDriver_Multisource::setControllerDefaults(ControllerDefaultType type, int16 *value) {
+	// Set the specified default values on _controllerDefaults on the field
+	// corresponding to the specified controller.
+	switch (type) {
+	case CONTROLLER_DEFAULT_PROGRAM:
+		Common::copy(value, value + ARRAYSIZE(_controllerDefaults.program), _controllerDefaults.program);
+		break;
+	default:
+		warning("MidiDriver_Multisource::setControllerDefaults - Unsupported controller default type %i", type);
 		break;
 	}
 }
@@ -347,7 +361,7 @@ void MidiDriver_Multisource::setSourceNeutralVolume(uint8 source, uint16 volume)
 	_sources[source].neutralVolume = volume;
 }
 
-void MidiDriver_Multisource::setInstrumentRemapping(byte *instrumentRemapping) {
+void MidiDriver_Multisource::setInstrumentRemapping(const byte *instrumentRemapping) {
 	_instrumentRemapping = instrumentRemapping;
 }
 

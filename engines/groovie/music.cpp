@@ -512,8 +512,8 @@ void MusicPlayerXMI::stopAllNotes(bool stopSustainedNotes) {
 		_driver->stopAllNotes(stopSustainedNotes);
 }
 
-bool MusicPlayerXMI::isReady() {
-	return _driver ? _driver->isReady() : false;
+bool MusicPlayerXMI::isReady(int8 source) {
+	return _driver ? _driver->isReady(source) : false;
 }
 
 void MusicPlayerXMI::updateVolume() {

@@ -606,15 +606,15 @@ public:
 	uint32 property(int prop, uint32 param) override;
 	uint32 getBaseTempo() override;
 	/**
-	 * This driver does not use MidiChannel objects, so this function returns 0.
+	 * This driver does not use MidiChannel objects, so this function returns nullptr.
 	 * 
-	 * @return 0
+	 * @return nullptr
 	 */
 	MidiChannel *allocateChannel() override;
 	/**
-	 * This driver does not use MidiChannel objects, so this function returns 0.
+	 * This driver does not use MidiChannel objects, so this function returns nullptr.
 	 * 
-	 * @return 0
+	 * @return nullptr
 	 */
 	MidiChannel *getPercussionChannel() override;
 
@@ -1030,7 +1030,14 @@ protected:
 	 * @return The offset to the base register for this channel.
 	 */
 	uint16 determineChannelRegisterOffset(uint8 oplChannel, bool fourOperator = false);
-
+	/**
+	 * Writes the specified instrument definition to the specified OPL channel.
+	 * It will calculate volume and panning if necessary.
+	 * 
+	 * @param oplChannel The OPL channel on which to write the instrument.
+	 * @param instrument The data of the instrument to write.
+	 */
+	void writeInstrument(uint8 oplChannel, InstrumentInfo instrument);
 	/**
 	 * Sets the key on bit to false for the specified OPL channel or rhythm
 	 * instrument and updates _activeNotes or _activeRhythmNotes with the new
@@ -1076,7 +1083,7 @@ protected:
 	 * calculated and written. Use type undefined to calculate panning for a
 	 * melodic instrument.
 	 */
-	void writePanning(uint8 oplChannel, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED);
+	virtual void writePanning(uint8 oplChannel, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED);
 	/**
 	 * Calculates the frequency for the active note on the specified OPL
 	 * channel or of the specified rhythm type (@see calculateFrequency) and
@@ -1088,7 +1095,7 @@ protected:
 	 * be calculated and written. Use type undefined to calculate the frequency
 	 * for a melodic instrument.
 	 */
-	void writeFrequency(uint8 oplChannel, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED);
+	virtual void writeFrequency(uint8 oplChannel, OplInstrumentRhythmType rhythmType = RHYTHM_TYPE_UNDEFINED);
 
 	/**
 	 * Writes the specified value to the specified OPL register.

@@ -78,7 +78,7 @@ void AdLibBnkInstrumentOperatorDefinition::toOplInstrumentOperatorDefinition(Opl
 	operatorDef.waveformSelect = waveformSelect;
 }
 
-void AdLibBnkInstrumentDefinition::toOplInstrumentDefinition(OplInstrumentDefinition& instrumentDef) {
+void AdLibBnkInstrumentDefinition::toOplInstrumentDefinition(OplInstrumentDefinition &instrumentDef) {
 	instrumentDef.fourOperator = false;
 
 	operator0.toOplInstrumentOperatorDefinition(instrumentDef.operator0, waveformSelect0);
@@ -637,9 +637,11 @@ void MidiDriver_ADLIB_Multisource::noteOff(uint8 channel, uint8 note, uint8 velo
 }
 
 void MidiDriver_ADLIB_Multisource::noteOn(uint8 channel, uint8 note, uint8 velocity, uint8 source) {
-	if (velocity == 0)
+	if (velocity == 0) {
 		// Note on with velocity 0 is a note off.
 		noteOff(channel, note, velocity, source);
+		return;
+	}
 
 	InstrumentInfo instrument = determineInstrument(channel, source, note);
 	// If rhythm mode is on and the note is on the rhythm channel, this note
@@ -687,20 +689,9 @@ void MidiDriver_ADLIB_Multisource::noteOn(uint8 channel, uint8 note, uint8 veloc
 		activeNote->instrumentId = instrument.instrumentId;
 		activeNote->instrumentDef = instrument.instrumentDef;
 
-		// Calculate operator volumes and write operator definitions to
-		// the OPL registers.
-		for (int i = 0; i < instrument.instrumentDef->getNumberOfOperators(); i++) {
-			uint16 operatorOffset = determineOperatorRegisterOffset(oplChannel, i, instrument.instrumentDef->rhythmType, instrument.instrumentDef->fourOperator);
-			const OplInstrumentOperatorDefinition &operatorDef = instrument.instrumentDef->getOperatorDefinition(i);
-			writeRegister(OPL_REGISTER_BASE_FREQMULT_MISC + operatorOffset, operatorDef.freqMultMisc);
-			writeVolume(oplChannel, i, instrument.instrumentDef->rhythmType);
-			writeRegister(OPL_REGISTER_BASE_DECAY_ATTACK + operatorOffset, operatorDef.decayAttack);
-			writeRegister(OPL_REGISTER_BASE_RELEASE_SUSTAIN + operatorOffset, operatorDef.releaseSustain);
-			writeRegister(OPL_REGISTER_BASE_WAVEFORMSELECT + operatorOffset, operatorDef.waveformSelect);
-		}
+		// Write out the instrument definition, volume and panning.
+		writeInstrument(oplChannel, instrument);
 
-		// Determine and write panning and write feedback and connection.
-		writePanning(oplChannel, instrument.instrumentDef->rhythmType);
 		// Calculate and write frequency and block and write key on bit.
 		writeFrequency(oplChannel, instrument.instrumentDef->rhythmType);
 
@@ -768,10 +759,6 @@ void MidiDriver_ADLIB_Multisource::controlChange(uint8 channel, uint8 controller
 }
 
 void MidiDriver_ADLIB_Multisource::programChange(uint8 channel, uint8 program, uint8 source) {
-	if (_instrumentRemapping && channel != MIDI_RHYTHM_CHANNEL)
-		// Apply instrument remapping (if specified) to instrument channels.
-		program = _instrumentRemapping[program];
-
 	// Just set the MIDI program value; this event does not affect active notes.
 	_controlData[source][channel].program = program;
 }
@@ -861,8 +848,8 @@ void MidiDriver_ADLIB_Multisource::applyControllerDefaults(uint8 source) {
 		}
 	} else {
 		for (int i = 0; i < MIDI_CHANNEL_COUNT; i++) {
-			if (_controllerDefaults.program >= 0) {
-				_controlData[source][i].program = _controllerDefaults.program;
+			if (_controllerDefaults.program[i] >= 0) {
+				_controlData[source][i].program = _controllerDefaults.program[i];
 			}
 			if (_controllerDefaults.channelPressure >= 0) {
 				_controlData[source][i].channelPressure = _controllerDefaults.channelPressure;
@@ -1093,12 +1080,15 @@ void MidiDriver_ADLIB_Multisource::stopAllNotes(uint8 source, uint8 channel) {
 		}
 	}
 	if (_rhythmMode && !_rhythmModeIgnoreNoteOffs && (channel == 0xFF || channel == MIDI_RHYTHM_CHANNEL)) {
+		bool rhythmChanged = false;
 		for (int i = 0; i < 5; i++) {
 			if (_activeRhythmNotes[i].noteActive && (source == 0xFF || _activeRhythmNotes[i].source == source)) {
 				_activeRhythmNotes[i].noteActive = false;
+				rhythmChanged = true;
 			}
 		}
-		writeRhythm();
+		if (rhythmChanged)
+			writeRhythm();
 	}
 	
 	_activeNotesMutex.unlock();
@@ -1303,7 +1293,11 @@ MidiDriver_ADLIB_Multisource::InstrumentInfo MidiDriver_ADLIB_Multisource::deter
 	} else {
 		// On non-rhythm channels, use the active instrument (program) on the
 		// MIDI channel.
-		instrument.instrumentId = _controlData[source][channel].program;
+		byte program = _controlData[source][channel].program;
+		if (_instrumentRemapping)
+			// Apply instrument remapping (if specified).
+			program = _instrumentRemapping[program];
+		instrument.instrumentId = program;
 		instrument.instrumentDef = &_instrumentBank[instrument.instrumentId];
 		instrument.oplNote = note;
 	}
@@ -1332,6 +1326,10 @@ uint8 MidiDriver_ADLIB_Multisource::allocateOplChannel(uint8 channel, uint8 sour
 		uint32 inactiveNoteCounter = 0xFFFF, instrumentNoteCounter = 0xFFFF, lowestNoteCounter = 0xFFFF;
 		for (int i = 0; i < _numMelodicChannels; i++) {
 			uint8 oplChannel = _melodicChannels[i];
+			if (_activeNotes[oplChannel].channelAllocated)
+				// Channel has been statically allocated. Try the next channel.
+				continue;
+
 			if (_activeNotes[oplChannel].noteCounterValue == 0) {
 				// This channel is unused. No need to look any further.
 				unusedChannel = oplChannel;
@@ -1538,7 +1536,7 @@ int32 MidiDriver_ADLIB_Multisource::calculatePitchBend(uint8 channel, uint8 sour
 	return pitchBend;
 }
 
-uint8 MidiDriver_ADLIB_Multisource::calculateVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition& instrumentDef, uint8 operatorNum) {
+uint8 MidiDriver_ADLIB_Multisource::calculateVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
 	// Get the volume (level) for this operator from the instrument definition.
 	uint8 operatorDefVolume = instrumentDef.getOperatorDefinition(operatorNum).level & 0x3F;
 
@@ -1754,6 +1752,26 @@ uint16 MidiDriver_ADLIB_Multisource::determineChannelRegisterOffset(uint8 oplCha
 	return offset + (oplChannel % numChannelsPerSet);
 }
 
+void MidiDriver_ADLIB_Multisource::writeInstrument(uint8 oplChannel, InstrumentInfo instrument) {
+	ActiveNote *activeNote = (instrument.instrumentDef->rhythmType == RHYTHM_TYPE_UNDEFINED ? &_activeNotes[oplChannel] : &_activeRhythmNotes[instrument.instrumentDef->rhythmType - 1]);
+	activeNote->instrumentDef = instrument.instrumentDef;
+
+	// Calculate operator volumes and write operator definitions to
+	// the OPL registers.
+	for (int i = 0; i < instrument.instrumentDef->getNumberOfOperators(); i++) {
+		uint16 operatorOffset = determineOperatorRegisterOffset(oplChannel, i, instrument.instrumentDef->rhythmType, instrument.instrumentDef->fourOperator);
+		const OplInstrumentOperatorDefinition &operatorDef = instrument.instrumentDef->getOperatorDefinition(i);
+		writeRegister(OPL_REGISTER_BASE_FREQMULT_MISC + operatorOffset, operatorDef.freqMultMisc);
+		writeVolume(oplChannel, i, instrument.instrumentDef->rhythmType);
+		writeRegister(OPL_REGISTER_BASE_DECAY_ATTACK + operatorOffset, operatorDef.decayAttack);
+		writeRegister(OPL_REGISTER_BASE_RELEASE_SUSTAIN + operatorOffset, operatorDef.releaseSustain);
+		writeRegister(OPL_REGISTER_BASE_WAVEFORMSELECT + operatorOffset, operatorDef.waveformSelect);
+	}
+
+	// Determine and write panning and write feedback and connection.
+	writePanning(oplChannel, instrument.instrumentDef->rhythmType);
+}
+
 void MidiDriver_ADLIB_Multisource::writeKeyOff(uint8 oplChannel, OplInstrumentRhythmType rhythmType, bool forceWrite) {
 	_activeNotesMutex.lock();
 
@@ -1858,7 +1876,7 @@ void MidiDriver_ADLIB_Multisource::writeFrequency(uint8 oplChannel, OplInstrumen
 	writeRegister(OPL_REGISTER_BASE_FNUMLOW + channelOffset, frequency & 0xFF);
 	// Write the high 2 frequency bits and block and add the key on bit.
 	writeRegister(OPL_REGISTER_BASE_FNUMHIGH_BLOCK_KEYON + channelOffset,
-		(frequency >> 8) | (rhythmType == RHYTHM_TYPE_UNDEFINED ? OPL_MASK_KEYON : 0));
+		(frequency >> 8) | (rhythmType == RHYTHM_TYPE_UNDEFINED && activeNote->noteActive ? OPL_MASK_KEYON : 0));
 
 	_activeNotesMutex.unlock();
 }
@@ -1866,9 +1884,11 @@ void MidiDriver_ADLIB_Multisource::writeFrequency(uint8 oplChannel, OplInstrumen
 void MidiDriver_ADLIB_Multisource::writeRegister(uint16 reg, uint8 value, bool forceWrite) {
 	//debug("Writing register %X %X", reg, value);
 
-	// Write the value to the register if forceWrite is specified or if the
-	// new register value is different from the current value.
-	if (forceWrite || _shadowRegisters[reg] != value) {
+	// Write the value to the register if it is a timer register, if forceWrite
+	// is specified or if the new register value is different from the current
+	// value.
+	if ((reg >= 1 && reg <= 3) || (_oplType == OPL::Config::kDualOpl2 && reg >= 0x101 && reg <= 0x103) || 
+			forceWrite || _shadowRegisters[reg] != value) {
 		_shadowRegisters[reg] = value;
 		_opl->writeReg(reg, value);
 	}

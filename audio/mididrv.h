@@ -244,8 +244,11 @@ public:
 	 * A driver implementation might need time to prepare playback of
 	 * a track. Use this function to check if the driver is ready to
 	 * receive MIDI events.
+	 *
+	 * @param source Check if the driver is ready to receive events from this
+	 * specific source. Specify -1 to check readiness regardless of source.
 	 */
-	virtual bool isReady() { return true; }
+	virtual bool isReady(int8 source = -1) { return true; }
 
 protected:
 
