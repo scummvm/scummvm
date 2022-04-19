@@ -56,6 +56,7 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			"obsidian",
 			"V1.0, 1/13/97, installed, CD",
 			{
+				{ "Obsidian.exe", 0, "0b50a779136ae6c9cc8bcfa3148c1127", -1 },
 				{ "Obsidian.c95", 0, "fea68ff30ff319cdab30b79d2850a480", -1 },
 				{ "RSGKit.r95", 0, "071dc9098f9610fcec45c96342b1b69a", -1 },
 				{ "MCURSORS.C95", 0, "dcbe480913eebf233d0cdc33809bf048", -1 },

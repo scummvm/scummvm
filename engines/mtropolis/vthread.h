@@ -24,15 +24,14 @@
 
 #include <new>
 #include "mtropolis/alignment_helper.h"
+#include "mtropolis/debug.h"
 
 namespace MTropolis {
-
-#define MTROPOLIS_DEBUG_VTHREAD_STACKS
 
 // Virtual thread, really a task stack
 enum VThreadState {
 	kVThreadReturn,
-	kVThreadSuspend,
+	kVThreadSuspended,
 	kVThreadError,
 };
 

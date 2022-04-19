@@ -21,6 +21,7 @@
 
 #include "mtropolis/miniscript.h"
 #include "mtropolis/alignment_helper.h"
+#include "common/config-manager.h"
 
 #include "common/memstream.h"
 

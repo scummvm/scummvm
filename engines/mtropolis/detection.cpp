@@ -25,6 +25,7 @@
 #include "mtropolis/detection.h"
 
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 static const PlainGameDescriptor mTropolisGames[] = {
 	{"obsidian", "Obsidian"},
@@ -65,8 +66,24 @@ public:
 };
 
 const ExtraGuiOptions MTropolisMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
-
 	ExtraGuiOptions options;
+
+	static const ExtraGuiOption launchDebugOption = {
+		_s("Start with debugger"),
+		_s("Starts with the debugger dashboard active"),
+		"mtropolis_debug_at_start",
+		false
+	};
+	static const ExtraGuiOption launchBreakOption = {
+		_s("Start debugging immediately"),
+		_s("Halts progress and stops at the debugger immediately"),
+		"mtropolis_pause_at_start",
+		false
+	};
+
+	options.push_back(launchDebugOption);
+	options.push_back(launchBreakOption);
+
 	return options;
 }
 

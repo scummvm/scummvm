@@ -29,12 +29,25 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
+#include "graphics/pixelformat.h"
+
 #include "mtropolis/data.h"
+#include "mtropolis/debug.h"
 #include "mtropolis/vthread.h"
+
+namespace Graphics {
+
+struct WinCursorGroup;
+class MacCursor;
+class Cursor;
+
+} // End of namespace Graphics
 
 namespace MTropolis {
 
 class Asset;
+class CursorGraphic;
+class CursorGraphicCollection;
 class Element;
 class MessageDispatch;
 struct MessageProperties;
@@ -51,7 +64,6 @@ struct IModifierFactory;
 struct IPlugInModifierFactory;
 struct IPlugInModifierFactoryAndDataFactory;
 struct ModifierLoaderContext;
-
 
 
 namespace DynamicValueTypes {
@@ -564,8 +576,23 @@ struct ProjectResources {
 	virtual ~ProjectResources();
 };
 
-class ProjectDescription {
 
+class CursorGraphicCollection {
+public:
+	CursorGraphicCollection();
+	~CursorGraphicCollection();
+
+	void addWinCursorGroup(uint32 cursorGroupID, const Common::SharedPtr<Graphics::WinCursorGroup> &cursorGroup);
+	void addMacCursor(uint32 cursorID, const Common::SharedPtr<Graphics::MacCursor> &cursor);
+
+private:
+	Common::HashMap<uint32, Graphics::Cursor *> _cursorGraphics;
+
+	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _winCursorGroups;
+	Common::Array<Common::SharedPtr<Graphics::MacCursor> > _macCursors;
+};
+
+class ProjectDescription {
 public:
 	ProjectDescription(); 
 	~ProjectDescription();
@@ -580,10 +607,13 @@ public:
 	void setResources(const Common::SharedPtr<ProjectResources> &resources);
 	const Common::SharedPtr<ProjectResources> &getResources() const;
 
+	void setCursorGraphics(const Common::SharedPtr<CursorGraphicCollection> &cursorGraphics);
+
 private:
 	Common::Array<SegmentDescription> _segments;
 	Common::Array<Common::SharedPtr<PlugIn> > _plugIns;
 	Common::SharedPtr<ProjectResources> _resources;
+	Common::SharedPtr<CursorGraphicCollection> _cursorGraphics;
 };
 
 struct VolumeState {
@@ -697,6 +727,11 @@ public:
 
 	uint32 allocateRuntimeGUID();
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	void debugSetEnabled(bool enabled);
+	void debugBreak();
+#endif
+
 private:
 	struct SceneStackEntry {
 		SceneStackEntry();
@@ -756,6 +791,9 @@ private:
 	Common::SharedPtr<Structural> _activeSharedScene;
 	Common::Array<SceneReturnListEntry> _sceneReturnList;
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	Common::SharedPtr<Debugger> _debugger;
+#endif
 
 	uint32 _nextRuntimeGUID;
 };
@@ -818,7 +856,7 @@ struct IMessageConsumer {
 	virtual VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) const = 0;
 };
 
-class Structural : public RuntimeObject, public IModifierContainer, public IMessageConsumer {
+class Structural : public RuntimeObject, public IModifierContainer, public IMessageConsumer, public IDebuggable {
 public:
 	Structural();
 	virtual ~Structural();
@@ -843,6 +881,14 @@ public:
 	void materializeSelfAndDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
 	void materializeDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	virtual SupportStatus debugGetSupportStatus() const override;
+	virtual const Common::String &debugGetName() const override;
+	virtual Common::SharedPtr<DebugInspector> debugGetInspector() const override;
+
+	virtual DebugInspector *debugCreateInspector();
+#endif
+
 protected:
 	virtual ObjectLinkingScope *getPersistentStructuralScope();
 	virtual ObjectLinkingScope *getPersistentModifierScope();
@@ -853,6 +899,10 @@ protected:
 	Common::Array<Common::SharedPtr<Structural> > _children;
 	Common::Array<Common::SharedPtr<Modifier> > _modifiers;
 	Common::String _name;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	Common::SharedPtr<DebugInspector> _debugInspector;
+#endif
 };
 
 struct ProjectPresentationSettings {
@@ -931,8 +981,14 @@ public:
 	~Project();
 
 	void loadFromDescription(const ProjectDescription &desc);
+	void loadSceneFromStream(const Common::SharedPtr<Structural> &structural, uint32 streamID);
+
 	Common::SharedPtr<Modifier> resolveAlias(uint32 aliasID) const;
 	void materializeGlobalVariables(Runtime *runtime, ObjectLinkingScope *scope);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Project"; }
+#endif
 
 private:
 	struct LabelSuperGroup {
@@ -1027,6 +1083,10 @@ class Section : public Structural {
 public:
 	bool load(const Data::SectionStructuralDef &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Section"; }
+#endif
+
 private:
 	ObjectLinkingScope *getPersistentStructuralScope() override;
 	ObjectLinkingScope *getPersistentModifierScope() override;
@@ -1038,6 +1098,12 @@ private:
 class Subsection : public Structural {
 public:
 	bool load(const Data::SubsectionStructuralDef &data);
+
+	ObjectLinkingScope *getSceneLoadMaterializeScope();
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Subsection"; }
+#endif
 
 private:
 	ObjectLinkingScope *getPersistentStructuralScope() override;
@@ -1084,7 +1150,7 @@ struct ModifierFlags {
 	bool isLastModifier : 1;
 };
 
-class Modifier : public RuntimeObject, public IMessageConsumer {
+class Modifier : public RuntimeObject, public IMessageConsumer, public IDebuggable {
 public:
 	Modifier();
 	virtual ~Modifier();
@@ -1108,12 +1174,24 @@ public:
 
 	virtual void visitInternalReferences(IStructuralReferenceVisitor *visitor);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	virtual SupportStatus debugGetSupportStatus() const override;
+	virtual const Common::String &debugGetName() const override;
+	virtual Common::SharedPtr<DebugInspector> debugGetInspector() const override;
+
+	virtual DebugInspector *debugCreateInspector();
+#endif
+
 protected:
 	bool loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeader);
 	virtual void linkInternalReferences();
 
 	Common::String _name;
 	ModifierFlags _modifierFlags;
+	
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	Common::SharedPtr<DebugInspector> _debugInspector;
+#endif
 };
 
 class VariableModifier : public Modifier {
@@ -1129,6 +1207,7 @@ public:
 protected:
 	uint32 _assetID;
 };
+
 
 } // End of namespace MTropolis
 

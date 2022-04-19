@@ -21,6 +21,7 @@
 
 #include "mtropolis/mtropolis.h"
 #include "mtropolis/console.h"
+#include "mtropolis/debug.h"
 #include "mtropolis/runtime.h"
 
 #include "mtropolis/plugins.h"
@@ -28,12 +29,47 @@
 
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/events.h"
+#include "common/file.h"
 #include "common/macresman.h"
 #include "common/ptr.h"
 #include "common/stuffit.h"
+#include "common/system.h"
+#include "common/winexe.h"
+
+#include "engines/util.h"
+
+#include "graphics/pixelformat.h"
+#include "graphics/cursorman.h"
+#include "graphics/wincursor.h"
 
 namespace MTropolis {
 
+static bool loadCursorsFromPE(CursorGraphicCollection &cursorGraphics, Common::SeekableReadStream *stream) {
+	Common::SharedPtr<Common::WinResources> winRes(Common::WinResources::createFromEXE(stream));
+	if (!winRes) {
+		warning("Couldn't load resources from PE file");
+		return false;
+	}
+
+	Common::Array<Common::WinResourceID> cursorGroupIDs = winRes->getIDList(Common::kWinGroupCursor);
+	for (Common::Array<Common::WinResourceID>::const_iterator it = cursorGroupIDs.begin(), itEnd = cursorGroupIDs.end(); it != itEnd; ++it) {
+		const Common::WinResourceID &id = *it;
+
+		Common::SharedPtr<Graphics::WinCursorGroup> cursorGroup(Graphics::WinCursorGroup::createCursorGroup(winRes.get(), *it));
+		if (!winRes) {
+			warning("Couldn't load cursor group");
+			return false;
+		}
+
+		if (cursorGroup->cursors.size() == 0) {
+			// Empty?
+			continue;
+		}
+
+		cursorGraphics.addWinCursorGroup(id.getID(), cursorGroup);
+	}
+}
 
 struct MacObsidianResources : public ProjectResources {
 	MacObsidianResources();
@@ -112,18 +148,32 @@ MTropolisEngine::MTropolisEngine(OSystem *syst, const MTropolisGameDescription *
 }
 
 MTropolisEngine::~MTropolisEngine() {
-
 }
 
 void MTropolisEngine::handleEvents() {
+	Common::Event evt;
+	Common::EventManager *eventMan = _system->getEventManager();
 
+	while (eventMan->pollEvent(evt)) {
+		switch (evt.type) {
+		default:
+			break;
+		}
+	}
 }
 
 Common::Error MTropolisEngine::run() {
+	int preferredWidth = 1024;
+	int preferredHeight = 768;
+	Graphics::PixelFormat preferredPixelFormat = Graphics::createPixelFormat<888>();
 
 	_runtime.reset(new Runtime());
 
 	if (_gameDescription->gameID == GID_OBSIDIAN && _gameDescription->desc.platform == Common::kPlatformWindows) {
+		preferredWidth = 640;
+		preferredHeight = 480;
+		preferredPixelFormat = Graphics::createPixelFormat<555>();
+
 		_runtime->addVolume(0, "Installed", true);
 		_runtime->addVolume(1, "OBSIDIAN1", true);
 		_runtime->addVolume(2, "OBSIDIAN2", true);
@@ -139,6 +189,21 @@ Common::Error MTropolisEngine::run() {
 		desc->addSegment(4, "Obsidian Data 5.MPX");
 		desc->addSegment(5, "Obsidian Data 6.MPX");
 
+		Common::SharedPtr<CursorGraphicCollection> cursors(new CursorGraphicCollection());
+		{
+			// Has to be in this order, some resources from MCURSORS will clobber resources from the player executable
+			const char *cursorFiles[3] = {"Obsidian.exe", "MCURSORS.C95", "Obsidian.c95"};
+
+			for (int i = 0; i < 3; i++) {
+				Common::File f;
+				if (!f.open(cursorFiles[i]) || !loadCursorsFromPE(*cursors, &f)) {
+					error("Failed to load resources");
+				}
+			}
+		}
+
+		desc->setCursorGraphics(cursors);
+
 		Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
 		static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
 		desc->addPlugIn(standardPlugIn);
@@ -147,6 +212,10 @@ Common::Error MTropolisEngine::run() {
 
 		_runtime->queueProject(desc);
 	} else if (_gameDescription->gameID == GID_OBSIDIAN && _gameDescription->desc.platform == Common::kPlatformMacintosh) {
+		preferredWidth = 640;
+		preferredHeight = 480;
+		preferredPixelFormat = Graphics::createPixelFormat<555>();
+
 		MacObsidianResources *resources = new MacObsidianResources();
 		Common::SharedPtr<ProjectResources> resPtr(resources);
 
@@ -175,8 +244,22 @@ Common::Error MTropolisEngine::run() {
 		_runtime->queueProject(desc);
 	}
 
+	initGraphics(preferredWidth, preferredHeight, &preferredPixelFormat);
+	setDebugger(new Console(this));
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	if (ConfMan.getBool("mtropolis_debug_at_start")) {
+		_runtime->debugSetEnabled(true);
+	}
+	if (ConfMan.getBool("mtropolis_pause_at_start")) {
+		_runtime->debugBreak();
+	}
+#endif
+
 	while (!shouldQuit()) {
+		handleEvents();
 		_runtime->runFrame();
+		_system->updateScreen();
 	}
 
 	_runtime.release();

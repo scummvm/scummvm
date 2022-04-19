@@ -37,6 +37,10 @@ class CursorModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::CursorModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Cursor Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -50,6 +54,10 @@ class STransCtModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Unknown STransCt Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 };
@@ -57,6 +65,10 @@ private:
 class MediaCueMessengerModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::MediaCueMessengerModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Media Cue Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -77,6 +89,10 @@ class ObjectReferenceVariableModifier : public VariableModifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Object Reference Variable Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -87,6 +103,10 @@ private:
 class MidiModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::MidiModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "MIDI Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -131,6 +151,10 @@ class ListVariableModifier : public VariableModifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "List Variable Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -140,6 +164,10 @@ private:
 class SysInfoModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::SysInfoModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "System Info Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;

@@ -31,6 +31,8 @@
 #include "common/file.h"
 #include "common/substream.h"
 
+#include "graphics/wincursor.h"
+#include "graphics/maccursor.h"
 
 namespace MTropolis {
 
@@ -867,6 +869,29 @@ PlugIn::~PlugIn() {
 ProjectResources::~ProjectResources() {
 }
 
+CursorGraphicCollection::CursorGraphicCollection() {
+}
+
+CursorGraphicCollection::~CursorGraphicCollection() {
+}
+
+void CursorGraphicCollection::addWinCursorGroup(uint32 cursorGroupID, const Common::SharedPtr<Graphics::WinCursorGroup> &cursorGroup) {
+	if (cursorGroup->cursors.size() > 0) {
+		// Not sure what the proper logic should be here, but the second one seems to be the one we usually want
+		if (cursorGroup->cursors.size() > 1)
+			_cursorGraphics[cursorGroupID] = cursorGroup->cursors[1].cursor;
+		else
+			_cursorGraphics[cursorGroupID] = cursorGroup->cursors.back().cursor;
+		_winCursorGroups.push_back(cursorGroup);
+	}
+}
+
+void CursorGraphicCollection::addMacCursor(uint32 cursorID, const Common::SharedPtr<Graphics::MacCursor> &cursor) {
+	_cursorGraphics[cursorID] = cursor.get();
+	_macCursors.push_back(cursor);
+}
+
+
 ProjectDescription::ProjectDescription() {
 }
 
@@ -910,6 +935,9 @@ const Common::SharedPtr<ProjectResources> &ProjectDescription::getResources() co
 	return _resources;
 }
 
+void ProjectDescription::setCursorGraphics(const Common::SharedPtr<CursorGraphicCollection>& cursorGraphics) {
+	_cursorGraphics = cursorGraphics;
+}
 
 const Common::Array<Common::SharedPtr<Modifier> >& SimpleModifierContainer::getModifiers() const {
 	return _modifiers;
@@ -959,6 +987,10 @@ Structural::Structural() : _parent(nullptr) {
 }
 
 Structural::~Structural() {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	if (_debugInspector)
+		_debugInspector->onDestroyed();
+#endif
 }
 
 ProjectPresentationSettings::ProjectPresentationSettings() : width(640), height(480), bitsPerPixel(8) {
@@ -1024,6 +1056,10 @@ void Structural::materializeSelfAndDescendents(Runtime *runtime, ObjectLinkingSc
 	setRuntimeGUID(runtime->allocateRuntimeGUID());
 
 	materializeDescendents(runtime, outerScope);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	_debugInspector.reset(this->debugCreateInspector());
+#endif
 }
 
 void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *outerScope) {
@@ -1033,6 +1069,9 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 	// - Clones any non-variable aliased modifiers
 	// - Links any static GUIDs to in-scope visible objects
 	// Objects are only ever materialized once
+	//
+	// Modifiers can see other modifiers but can't see sibling elements...
+	// so the structural scope is effectively nested inside of the modifier scope.
 	ObjectLinkingScope tempModifierScope;
 	ObjectLinkingScope tempStructuralScope;
 	ObjectLinkingScope *modifierScope = this->getPersistentModifierScope();
@@ -1081,6 +1120,24 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 		child->materializeSelfAndDescendents(runtime, structuralScope);
 	}
 }
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+SupportStatus Structural::debugGetSupportStatus() const {
+	return kSupportStatusNone;
+}
+
+const Common::String& Structural::debugGetName() const {
+	return _name;
+}
+
+Common::SharedPtr<DebugInspector> Structural::debugGetInspector() const {
+	return _debugInspector;
+}
+
+DebugInspector *Structural::debugCreateInspector() {
+	return new DebugInspector(this);
+}
+#endif
 
 void Structural::linkInternalReferences(ObjectLinkingScope *scope) {
 }
@@ -1151,6 +1208,8 @@ HighLevelSceneTransition::HighLevelSceneTransition(const Common::SharedPtr<Struc
 
 MessageDispatch::MessageDispatch(const Event &evt, Structural *root, bool cascade, bool relay)
 	: _cascade(cascade), _relay(relay), _terminated(false) {
+	_msg.reset(new MessageProperties(evt, DynamicValue(), Common::WeakPtr<RuntimeObject>()));
+
 	PropagationStack topEntry;
 	topEntry.index = 0;
 	topEntry.propagationStage = PropagationStack::kStageSendToStructuralSelf;
@@ -1206,7 +1265,9 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 				}
 
 				// Post to the message action itself to VThread
-				runtime->postConsumeMessageTask(modifier, _msg);
+				if (responds)
+					runtime->postConsumeMessageTask(modifier, _msg);
+
 				return kVThreadReturn;
 			} break;
 		case PropagationStack::kStageSendToModifierContainer: {
@@ -1249,7 +1310,9 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 					_terminated = true;
 				}
 
-				runtime->postConsumeMessageTask(structural, _msg);
+				if (responds)
+					runtime->postConsumeMessageTask(structural, _msg);
+
 				return kVThreadReturn;
 			} break;
 		case PropagationStack::kStageSendToStructuralModifiers: {
@@ -1290,6 +1353,11 @@ Runtime::Runtime() : _nextRuntimeGUID(1) {
 }
 
 void Runtime::runFrame() {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	if (_debugger && _debugger->isPaused())
+		return;
+#endif
+
 	for (;;) {
 		VThreadState state = _vthread->step();
 		if (state != kVThreadReturn) {
@@ -1368,6 +1436,9 @@ void Runtime::runFrame() {
 			executeHighLevelSceneTransition(transition);
 			continue;
 		}
+
+		// Ran out of actions
+		break;
 	}
 }
 
@@ -1620,10 +1691,20 @@ void Runtime::executeSharedScenePostSceneChangeActions() {
 }
 
 void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
+	debug(1, "Loading scene '%s'", scene->getName().c_str());
 	Element *element = static_cast<Element *>(scene.get());
-	uint32 streamIndex = element->getStreamLocator() & 0xffff;	// Not actually sure how many bits are legal here
+	uint32 streamID = element->getStreamLocator() & 0xffff; // Not actually sure how many bits are legal here
 
-	error("TODO: Load scene");
+	Subsection *subsection = static_cast<Subsection *>(scene->getParent());
+
+	_project->loadSceneFromStream(scene, streamID);
+	debug(1, "Scene loaded OK, materializing objects...");
+	scene->materializeDescendents(this, subsection->getSceneLoadMaterializeScope());
+	debug(1, "Scene materialized OK");
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+
+#endif
 }
 
 void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch) {
@@ -1702,6 +1783,21 @@ void Runtime::postConsumeMessageTask(IMessageConsumer *consumer, const Common::S
 uint32 Runtime::allocateRuntimeGUID() {
 	return _nextRuntimeGUID++;
 }
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void Runtime::debugSetEnabled(bool enabled) {
+	if (enabled) {
+		if (!_debugger) 
+			_debugger.reset(new Debugger());
+	} else {
+		_debugger.reset();
+	}
+}
+void Runtime::debugBreak() {
+	debugSetEnabled(true);
+	_debugger->setPaused(true);
+}
+#endif
 
 const Common::Array<Common::SharedPtr<Modifier> > &IModifierContainer::getModifiers() const {
 	return const_cast<IModifierContainer &>(*this).getModifiers();
@@ -1843,6 +1939,74 @@ void Project::loadFromDescription(const ProjectDescription& desc) {
 	loadBootStream(bootStreamIndex);
 
 	debug(1, "Boot stream loaded successfully");
+}
+
+void Project::loadSceneFromStream(const Common::SharedPtr<Structural>& scene, uint32 streamID) {
+	if (streamID == 0 || streamID > _streams.size()) {
+		error("Invalid stream ID");
+	}
+
+	const StreamDesc &streamDesc = _streams[streamID - 1];
+	uint segmentIndex = streamDesc.segmentIndex;
+
+	openSegmentStream(segmentIndex);
+
+	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
+	Data::DataReader reader(stream, _projectFormat);
+
+	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
+
+	{
+		Common::SharedPtr<Data::DataObject> dataObject;
+		Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
+
+		if (dataObject == nullptr || dataObject->getType() != Data::DataObjectTypes::kStreamHeader) {
+			error("Scene stream header was missing");
+		}
+	}
+
+	ChildLoaderStack loaderStack;
+	AssetDefLoaderContext assetDefLoader;
+
+	{
+		ChildLoaderContext loaderContext;
+		loaderContext.containerUnion.filteredElements.filterFunc = Data::DataObjectTypes::isElement;
+		loaderContext.containerUnion.filteredElements.structural = scene.get();
+		loaderContext.remainingCount = 0;
+		loaderContext.type = ChildLoaderContext::kTypeFilteredElements;
+
+		loaderStack.contexts.push_back(loaderContext);
+	}
+
+	size_t numObjectsLoaded = 0;
+	while (stream.pos() != streamDesc.size) {
+		Common::SharedPtr<Data::DataObject> dataObject;
+		Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
+
+		if (!dataObject) {
+			error("Failed to load stream");
+		}
+
+		Data::DataObjectTypes::DataObjectType dataObjectType = dataObject->getType();
+
+		if (Data::DataObjectTypes::isAsset(dataObjectType)) {
+			// Asset defs can appear anywhere
+			loadAssetDef(assetDefLoader, *dataObject.get());
+		} else if (dataObjectType == Data::DataObjectTypes::kAssetDataChunk) {
+			// Ignore
+			continue;
+		} else if (loaderStack.contexts.size() > 0) {
+			loadContextualObject(loaderStack, *dataObject.get());
+		} else {
+			error("Unexpectedly exited scene context in loader");
+		}
+
+		numObjectsLoaded++;
+	}
+
+	if (loaderStack.contexts.size() != 1 || loaderStack.contexts[0].type != ChildLoaderContext::kTypeFilteredElements) {
+		error("Scene stream loader finished in an expected state, something didn't finish loading");
+	}
 }
 
 Common::SharedPtr<Modifier> Project::resolveAlias(uint32 aliasID) const {
@@ -2282,6 +2446,10 @@ bool Subsection::load(const Data::SubsectionStructuralDef &data) {
 	return true;
 }
 
+ObjectLinkingScope *Subsection::getSceneLoadMaterializeScope() {
+	return getPersistentStructuralScope();
+}
+
 ObjectLinkingScope *Subsection::getPersistentStructuralScope() {
 	return &_structuralScope;
 }
@@ -2328,6 +2496,10 @@ Modifier::Modifier() {
 }
 
 Modifier::~Modifier() {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	if (_debugInspector)
+		_debugInspector->onDestroyed();
+#endif
 }
 
 void Modifier::materialize(Runtime *runtime, ObjectLinkingScope *outerScope) {
@@ -2336,6 +2508,10 @@ void Modifier::materialize(Runtime *runtime, ObjectLinkingScope *outerScope) {
 
 	linkInternalReferences();
 	setRuntimeGUID(runtime->allocateRuntimeGUID());
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	_debugInspector.reset(this->debugCreateInspector());
+#endif
 }
 
 bool Modifier::isAlias() const {
@@ -2370,6 +2546,25 @@ const Common::String& Modifier::getName() const {
 
 void Modifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
 }
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+SupportStatus Modifier::debugGetSupportStatus() const {
+	return kSupportStatusNone;
+}
+
+const Common::String &Modifier::debugGetName() const {
+	return _name;
+}
+
+Common::SharedPtr<DebugInspector> Modifier::debugGetInspector() const {
+	return _debugInspector;
+}
+
+DebugInspector *Modifier::debugCreateInspector() {
+	return new DebugInspector(this);
+
+}
+#endif
 
 bool VariableModifier::isVariable() const {
 	return true;

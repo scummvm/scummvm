@@ -59,7 +59,6 @@ public:
 	Common::Platform getPlatform() const;
 
 public:
-
 	void handleEvents();
 
 protected:

@@ -38,6 +38,10 @@ public:
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Behavior Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
@@ -52,6 +56,10 @@ class MiniscriptModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::MiniscriptModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Miniscript Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -65,6 +73,10 @@ class MessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::MessengerModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Messenger Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -75,6 +87,10 @@ private:
 class SetModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::SetModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Set Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -89,6 +105,10 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::AliasModifier &data);
 	uint32 getAliasID() const;
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Alias Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -98,6 +118,10 @@ private:
 class ChangeSceneModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::ChangeSceneModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Change Scene Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -122,6 +146,10 @@ class SoundEffectModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::SoundEffectModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Sound Effect Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -140,6 +168,10 @@ private:
 class DragMotionModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::DragMotionModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Drag Motion Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -161,6 +193,10 @@ private:
 class VectorMotionModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::VectorMotionModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Vector Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -192,6 +228,10 @@ public:
 		kTransitionDirectionRight = 0x387,
 	};
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Scene Transition Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -220,6 +260,10 @@ public:
 		kRevealTypeConceal = 1,
 	};
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Element Transition Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -236,6 +280,10 @@ class IfMessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "If Messenger Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -250,6 +298,10 @@ class TimerMessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::TimerMessengerModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Timer Messenger Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -263,6 +315,10 @@ private:
 class BoundaryDetectionMessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::BoundaryDetectionMessengerModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Boundary Detection Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -292,6 +348,10 @@ class CollisionDetectionMessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::CollisionDetectionMessengerModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Collision Detection Messenger Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -316,6 +376,10 @@ private:
 class KeyboardMessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::KeyboardMessengerModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Keyboard Messenger Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -377,6 +441,10 @@ public:
 		bool load(uint8 dataStyleFlags);
 	};
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Text Style Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -417,6 +485,10 @@ public:
 		kShapeStar = 0xb,	// 5-point star, horizontal arms are at (top+bottom*2)/3
 	};
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Graphic Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -439,6 +511,10 @@ class CompoundVariableModifier : public VariableModifier, public IModifierContai
 public:
 	bool load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Compound Variable Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -453,6 +529,10 @@ class BooleanVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Boolean Variable Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -462,6 +542,10 @@ private:
 class IntegerVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IntegerVariableModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Integer Variable Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -473,6 +557,10 @@ class IntegerRangeVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IntegerRangeVariableModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Integer Range Variable Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -482,6 +570,10 @@ private:
 class VectorVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::VectorVariableModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Vector Variable Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -493,6 +585,10 @@ class PointVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::PointVariableModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Point Variable Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -503,6 +599,10 @@ class FloatingPointVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::FloatingPointVariableModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Floating Point Variable Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
@@ -512,6 +612,10 @@ private:
 class StringVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::StringVariableModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "String Variable Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;

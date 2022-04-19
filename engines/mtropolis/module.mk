@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	assets.o \
 	console.o \
 	data.o \
+	debug.o \
 	detection.o \
 	element_factory.o \
 	elements.o \

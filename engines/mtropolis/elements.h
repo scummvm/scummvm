@@ -36,6 +36,10 @@ public:
 
 	bool load(ElementLoaderContext &context, const Data::GraphicElement &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Graphic Element"; }
+#endif
+
 private:
 	bool _directToScreen;
 	bool _cacheBitmap;

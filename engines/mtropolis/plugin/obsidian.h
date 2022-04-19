@@ -35,6 +35,10 @@ class MovementModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::MovementModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Movement Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 };
@@ -43,6 +47,10 @@ class RectShiftModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::RectShiftModifier &data);
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Rect Shift Modifier"; }
+#endif
+
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 };
@@ -50,6 +58,10 @@ private:
 class TextWorkModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::TextWorkModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "TextWork Modifier"; }
+#endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
