@@ -23,8 +23,10 @@
 
 namespace MTropolis {
 
-Console::Console() {
+Console::Console(MTropolisEngine *engine) : _engine(engine) {
 }
 
+Console::~Console() {
+}
 
 } // End of namespace MTropolis

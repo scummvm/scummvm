@@ -19,23 +19,34 @@
  *
  */
 
-#ifndef MTROPOLIS_CONSOLE_H
-#define MTROPOLIS_CONSOLE_H
+#include "mtropolis/debug.h"
 
-#include "gui/debugger.h"
+#include "gui/dialog.h"
 
 namespace MTropolis {
 
-class MTropolisEngine;
-
-class Console : public GUI::Debugger {
-public:
-	explicit Console(MTropolisEngine *engine);
-	~Console() override;
-
-private:
-	MTropolisEngine *_engine;
-};
+DebugInspector::DebugInspector(IDebuggable *debuggable) {
 }
 
-#endif
+DebugInspector::~DebugInspector() {
+}
+
+void DebugInspector::onDestroyed() {
+	_debuggable = nullptr;
+}
+
+Debugger::Debugger() : _paused(false) {
+}
+
+Debugger::~Debugger() {
+}
+
+void Debugger::setPaused(bool paused) {
+	_paused = paused;
+}
+
+bool Debugger::isPaused() const {
+	return _paused;
+}
+
+} // End of namespace MTropolis
