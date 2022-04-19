@@ -285,7 +285,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	int k;
 	char mangledName[200];
 	size_t mangled_len = snprintf(mangledName, sizeof(mangledName), "%s$", funcname);
-	int export_args = 0;
+	int32_t export_args = 0;
 
 	for (k = 0; k < instanceof->numexports; k++) {
 		char *thisExportName = instanceof->exports[k];
