@@ -42,18 +42,29 @@ struct FILM;
 struct CONFINIT;
 
 enum {
-	INV_OPEN	= -1,	// DW1 only
-	INV_CONV	= 0,
-	INV_1		= 1,
-	INV_2		= 2,
-	INV_CONF	= 3,
-	INV_MENU	= 3,	// DW2 constant
-	NUM_INV		= 4,
+	INV_OPEN 		= -1, // DW1 only
+	INV_CONV 		= 0,
+	INV_1 			= 1,
+	INV_2 			= 2,
+	INV_CONF 		= 3,
+	INV_MENU 		= 3, // DW2 constant
+	NUM_INV_V0 		= 4,
 
 	// Discworld 2 constants
-	DW2_INV_OPEN = 5,
-	INV_DEFAULT = 6
+	DW2_INV_OPEN	= 5,
+	INV_DEFAULT  	= 6,
+
+	// Noir constants
+	INV_4 		 	= 4,
+	NUM_INV_V3 	 	= 5,
+	INV_7NOINV 	 	= 7,
+	INV_8NOINV 	 	= 8,
+	INV_NOTEBOOK 	= 9,
+
+	MAX_NUM_INV 	= NUM_INV_V3 // For determination of _invD array size
 };
+
+#define NUM_INV ((TinselVersion == 3) ? NUM_INV_V3 : NUM_INV_V0)
 
 enum {
 	NOOBJECT = -1,
@@ -302,6 +313,9 @@ public:
 	void idec_inv2(SCNHANDLE text, int MaxContents, int MinWidth, int MinHeight,
 	               int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
 
+	// Noir
+	void idec_invMain(SCNHANDLE text, int MaxContents);
+
 	bool InventoryActive();
 
 	void PermaConvIcon(int icon, bool bEnd = false);
@@ -448,7 +462,7 @@ private:
 	SCNHANDLE _flagFilm;  // Window members and cursors' graphic data
 	SCNHANDLE _configStrings[20];
 
-	INV_DEF _invD[NUM_INV];        // Conversation + 2 inventories + ...
+	INV_DEF _invD[MAX_NUM_INV];        // Conversation + 2 inventories + ...
 	int _activeInv;                      // Which inventory is currently active
 	INV_OBJECT *_invObjects; // Inventory objects' data
 	int _numObjects;               // Number of inventory objects

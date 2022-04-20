@@ -57,6 +57,7 @@
 #include "tinsel/tinlib.h"
 #include "tinsel/tinsel.h" // For engine access
 #include "tinsel/token.h"
+#include "tinsel/noir/sysreel.h"
 
 #include "common/textconsole.h"
 
@@ -1161,7 +1162,18 @@ void Dialogs::InventoryIconCursor(bool bNewItem) {
 		if (TinselVersion >= 2) {
 			if (bNewItem) {
 				int objIndex = GetObjectIndex(_heldItem);
-				_heldFilm = _invFilms[objIndex];
+
+				if (TinselVersion == 3) {
+					INV_OBJECT *invObj = GetInvObject(_heldItem);
+
+					if (invObj->attribute & V3ATTR_X200) {
+						_heldFilm = _vm->_systemReel->Get(objIndex);
+					} else {
+						_heldFilm = _invFilms[objIndex];
+					}
+				} else {
+					_heldFilm = _invFilms[objIndex];
+				}
 			}
 			_vm->_cursor->SetAuxCursor(_heldFilm);
 		} else {
@@ -5212,6 +5224,28 @@ void Dialogs::idec_inv2(SCNHANDLE text, int MaxContents,
 	idec_inv(INV_2, text, MaxContents, MinWidth, MinHeight,
 	         StartWidth, StartHeight, MaxWidth, MaxHeight,
 	         100, 100, true);
+}
+
+/**
+ * Called from Glitter functions: dec_invMain
+ * - Declare inventories 1,3 and 4 and hail the loadingscreen(?) scene.
+ */
+void Dialogs::idec_invMain(SCNHANDLE text, int MaxContents) {
+	idec_inv(INV_1, text, MaxContents,3, 2, 3, 2, 3, 2, 39,
+			72, false);
+	idec_inv(INV_MENU, 0, 3, 2, 2, 2, 1, 3, 1, 100, 100,
+			false);
+	idec_inv(INV_4, text, MaxContents,3, 2, 3, 2, 3, 2, 39,
+			72, false);
+
+	warning("TODO: idec_invMain: implement language scene playback");
+	// This is not yet actived because playing the loadsceen scene
+	// currently produces an invalid corountine stack.
+#if 0
+	const char *fileName = _vm->getSceneFile(TextLanguage());
+	SCNHANDLE sceneHandle = _vm->_handle->FindLanguageSceneHandle(fileName);
+	DoHailScene(sceneHandle);
+#endif
 }
 
 /**
