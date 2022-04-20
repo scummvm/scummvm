@@ -980,6 +980,18 @@ static void DecInv2(SCNHANDLE text, int MaxContents,
 }
 
 /**
+ * Declare parameters of inventories 1, 3 and 4.
+ * Display loadingscreen (?).
+ * Takes 8 parameter, but uses only 2.
+ */
+static void DecInvMain(SCNHANDLE text, int MaxContents,
+		int MinWidth, int MinHeight,
+		int StartWidth, int StartHeight,
+		int MaxWidth, int MaxHeight) {
+	_vm->_dialogs->idec_invMain(text, MaxContents);
+}
+
+/**
  * Declare the bits that the inventory windows are constructed from.
  */
 static void DecInvW(SCNHANDLE hf) {
@@ -4662,8 +4674,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d)", mapping.name, pp[0]);
 		break;
-	case 90: // play anim based on item
-		error("Unsupported libCode %d", libCode);
+	case 90: // 2 parameters, play anim based on item
+		mapping = NoirMapping{"INVPLAY", ZZZZZZ, 2};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d, %d)", mapping.name, pp[0], pp[1]);
+		break;
 	case 91:
 		mapping = NoirMapping{"INWHICHINV", INWHICHINV, 0};
 		debug(7, "%s()", mapping.name);
@@ -5630,7 +5645,9 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -8;
 
 	case DECINVMAIN:
-		warning("TODO: Implement DECINVMAIN");
+		pp -= 7;			// 8 parameters
+		DecInvMain(pp[0], pp[1], pp[2], pp[3],
+			 pp[4], pp[5], pp[6], pp[7]);
 		return -8;
 
 	case DECINVW:

@@ -59,7 +59,8 @@ enum {
 	fSound		= 0x04000000L,	///< sound data
 	fGraphic	= 0x08000000L,	///< graphic data
 	fCompressed	= 0x10000000L,	///< compressed data
-	fLoaded		= 0x20000000L	///< set when file data has been loaded
+	fLoaded		= 0x20000000L,	///< set when file data has been loaded
+	fUnknown	= 0x40000000L	///< v3 specific
 };
 #define FSIZE_MASK	((TinselVersion == 3) ? 0xFFFFFFFFL : 0x00FFFFFFL)	//!< mask to isolate the filesize
 #define MEMFLAGS(x) ((TinselVersion == 3) ? x->flags2 : x->filesize)

@@ -33,9 +33,11 @@ namespace Tinsel {
 // internal allocation flags
 #define	DWM_USED		0x0001	///< the objects memory block is in use
 #define	DWM_DISCARDED	0x0002	///< the objects memory block has been discarded
-#define	DWM_LOCKED		0x0004	///< the objects memory block is locked
+#define	DWM_LOCKED		((TinselVersion == 3) ? 0x0200 : 0x0004)	///< the objects memory block is locked
 #define	DWM_SENTINEL	0x0008	///< the objects memory block is a sentinel
-
+// Noir
+#define	DWM_V3X20		0x0020	///< unknown
+#define	DWM_V3X4		0x0004	///< unknown
 
 struct MEM_NODE {
 	MEM_NODE *pNext;	// link to the next node in the list

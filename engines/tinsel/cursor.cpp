@@ -321,15 +321,19 @@ void Cursor::SetAuxCursor(SCNHANDLE hFilm) {
 
 	DelAuxCursor();		// Get rid of previous
 
-	// WORKAROUND: There's no palette when loading a DW1 savegame with a held item, so exit if so
-	if (!_vm->_bg->BgPal())
-		return;
+	// Noir does not use palettes
+	if (TinselVersion < 3) {
+		// WORKAROUND: There's no palette when loading a DW1 savegame with a held item, so exit if so
+		if (!_vm->_bg->BgPal())
+			return;
+
+		assert(_vm->_bg->BgPal()); // no background palette
+		PokeInPalette(pmi);
+	}
 
 	GetCursorXY(&x, &y, false);	// Note: also waits for cursor to appear
 
 	pim = _vm->_handle->GetImage(READ_32(pFrame)); // Get pointer to auxillary cursor's image
-	assert(_vm->_bg->BgPal()); // no background palette
-	PokeInPalette(pmi);
 
 	_auxCursorOffsetX = (short)(pim->imgWidth / 2 - ((int16) pim->anioffX));
 	_auxCursorOffsetY = (short)((pim->imgHeight & ~C16_FLAG_MASK) / 2 -
