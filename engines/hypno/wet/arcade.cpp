@@ -124,25 +124,25 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 
 		} else if (segments[_segmentIdx].type == 0xc5) {
 			if (_arcadeMode == "Y1") {
-				if (mousePos.x <= 100)
+				if (mousePos.x <= 106)
 					_segmentIdx = _segmentIdx + 1;
-				else if (mousePos.x >= 300)
+				else if (mousePos.x >= 213)
 					_segmentIdx = _segmentIdx + 3;
 				else
 					_segmentIdx = _segmentIdx + 2;
 			} else if (_arcadeMode == "Y4") {
-				if (mousePos.x <= 100)
+				if (mousePos.x <= 106)
 					_segmentIdx = _segmentIdx + 2;
-				else if (mousePos.x >= 300)
+				else if (mousePos.x >= 213)
 					_segmentIdx = _segmentIdx + 3;
 				else
 					_segmentIdx = _segmentIdx + 1;
 
 			} else if (_arcadeMode == "Y5") {
-				if (mousePos.x <= 100) {
+				if (mousePos.x <= 106) {
 					_segmentIdx = _segmentIdx + 2;
 					_c50LeftTurns++;
-				} else if (mousePos.x >= 300) {
+				} else if (mousePos.x >= 213) {
 					_segmentIdx = _segmentIdx + 3;
 					_c50RigthTurns++;
 				} else
