@@ -76,7 +76,6 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 	g_vm = this;
 
 	_events = new EventsManager();
-	_music = new Music();
 	_globals = new ::AGS3::Globals();
 
 	Common::String forceAA;
@@ -181,6 +180,8 @@ Common::Error AGSEngine::run() {
 	// Update shell associations and exit
 	if (_G(debug_flags) & DBG_REGONLY)
 		return Common::kNoError;
+
+	_music = new Music();
 
 	_G(loadSaveGameOnStartup) = ConfMan.getInt("save_slot");
 
