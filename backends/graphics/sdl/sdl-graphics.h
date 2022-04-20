@@ -93,7 +93,7 @@ public:
 	 */
 	virtual bool notifyMousePosition(Common::Point &mouse);
 
-	bool showMouse(bool visible) override;
+	virtual bool showMouse(bool visible) override;
 	bool lockMouse(bool lock) override;
 
 	virtual bool saveScreenshot(const Common::String &filename) const { return false; }
