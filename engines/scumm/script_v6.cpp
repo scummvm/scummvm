@@ -1032,6 +1032,17 @@ void ScummEngine_v6::o6_setState() {
 	int state = pop();
 	int obj = pop();
 
+	// WORKAROUND for bug #3832: parts of Bruno are left on the screen when he
+	// escapes Bumpusville with Trixie. Bruno (act. 11) and Trixie (act. 12) are
+	// properly removed from the scene by the script, but not the combined actor
+	// which is used by this animation (act. 6). Fix this before the door gets closed.
+	if (_game.id == GID_SAMNMAX && _roomResource == 47 && vm.slot[_currentScript].number == 202 &&
+		obj == 451 && state == 0 && _enableEnhancements) {
+		Actor *a = derefActorSafe(6, "o6_setState");
+		if (a)
+			a->putActor(0, 0, 0);
+	}
+
 	putState(obj, state);
 	markObjectRectAsDirty(obj);
 	if (_bgNeedsRedraw)
