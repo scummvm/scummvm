@@ -157,8 +157,10 @@ void OSystem_SDL::init() {
 	SDL_EnableUNICODE(1);
 #endif
 
+#if !defined(OPENPANDORA)
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
+#endif
 
 	if (_window == nullptr)
 		_window = new SdlWindow();
