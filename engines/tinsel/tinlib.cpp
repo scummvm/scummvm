@@ -66,6 +66,7 @@
 #include "tinsel/tinsel.h"
 #include "tinsel/token.h"
 #include "tinsel/noir/notebook.h"
+#include "tinsel/noir/sysreel.h"
 
 #include "common/textconsole.h"
 
@@ -2776,14 +2777,7 @@ static void SetPalette(SCNHANDLE hPal, bool escOn, int myEscape) {
  * Set system reel
  */
 static void SetSystemReel(int index, SCNHANDLE reel) {
-	switch (index) {
-		case 11:
-			DecCursor(reel);
-			break;
-		default:
-			warning("SetSystemReel(%d, %08X), STUBBED", index, reel);
-			break;
-	}
+	_vm->_systemReel->Set(index, reel);
 }
 
 /**

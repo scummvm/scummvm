@@ -60,6 +60,7 @@
 #include "tinsel/timers.h"
 #include "tinsel/tinsel.h"
 #include "tinsel/noir/notebook.h"
+#include "tinsel/noir/sysreel.h"
 
 namespace Tinsel {
 
@@ -1026,6 +1027,7 @@ Common::Error TinselEngine::run() {
 
 	if (TinselVersion == 3) {
 		_notebook = new Notebook();
+		_systemReel = new SystemReel();
 	}
 
 	// Initialize backend
