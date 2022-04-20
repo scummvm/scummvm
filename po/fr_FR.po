@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-19 18:14+0000\n"
+"POT-Creation-Date: 2022-04-20 16:40+0000\n"
 "PO-Revision-Date: 2022-04-16 10:39+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -4291,7 +4291,7 @@ msgstr ""
 "Utilise l'anti-crénelage pour afficher les textes même si le jeu ne le "
 "demande pas"
 
-#: engines/ags/ags.cpp:126
+#: engines/ags/ags.cpp:125
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
@@ -4299,7 +4299,7 @@ msgstr ""
 "Le jeu sélectionné utilise une version de AGS antérieur à la version 2.5 et "
 "n'est pas supporté."
 
-#: engines/ags/ags.cpp:134
+#: engines/ags/ags.cpp:133
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
