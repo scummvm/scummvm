@@ -240,6 +240,7 @@ public:
 	// Arcade
 	Common::String _arcadeMode;
 	MVideo *_background;
+	virtual Common::Point getPlayerPosition(bool needsUpdate);
 	virtual Common::Point computeTargetPosition(const Common::Point &mousePos);
 	virtual int detectTarget(const Common::Point &mousePos);
 	virtual void pressedKey(const int keycode);
@@ -394,6 +395,7 @@ public:
 	void saveProfile(const Common::String &name, int levelId);
 
 	// Arcade
+	Common::Point getPlayerPosition(bool needsUpdate) override;
 	void pressedKey(const int keycode) override;
 	void runBeforeArcade(ArcadeShooting *arc) override;
 	void runAfterArcade(ArcadeShooting *arc) override;
@@ -408,6 +410,8 @@ private:
 	void endCredits(Code *code);
 	void showDemoScore();
 	uint32 findPaletteIndexZones(uint32 id);
+
+	Common::Point _c33PlayerPosition;
 
 	Common::BitArray _font05;
 	Common::BitArray _font08;

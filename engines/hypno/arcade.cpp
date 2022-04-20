@@ -243,7 +243,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	while (!shouldQuit()) {
 		needsUpdate = _background->decoder->needsUpdate();
 		while (g_system->getEventManager()->pollEvent(event)) {
-			mousePos = g_system->getEventManager()->getMousePos();
+			mousePos = getPlayerPosition(false);
+
 			// Events
 			switch (event.type) {
 
@@ -273,24 +274,20 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				drawCursorArcade(mousePos);
 				if (mousePos.x >= arc->mouseBox.right-1) {
 					g_system->warpMouse(arc->mouseBox.right-1, mousePos.y);
-					needsUpdate = true;
 				} else if (mousePos.y >= arc->mouseBox.bottom-1) {
 					g_system->warpMouse(mousePos.x, arc->mouseBox.bottom-1);
-					needsUpdate = true;
 				} else if (mousePos.x <= 100 && offset.x < 0) {
 					for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
 						if (it->video && it->video->decoder)
 							it->video->position.x = it->video->position.x + 1;
 					}
 					offset.x = offset.x + 1;
-					needsUpdate = true;
 				} else if (mousePos.x >= 300 && offset.x > 320 - _background->decoder->getWidth()) {
 					for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
 						if (it->video && it->video->decoder)
 							it->video->position.x = it->video->position.x - 1;
 					}
 					offset.x = offset.x - 1;
-					needsUpdate = true;
 				}
 				_background->position = offset;
 				break;
@@ -301,6 +298,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		}
 
 		if (needsUpdate) {
+			getPlayerPosition(true);
 			drawScreen();
 			updateScreen(*_background);
 			if (!arc->maskVideo.empty() && _masks->decoder->needsUpdate())
@@ -580,6 +578,10 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 Common::Point HypnoEngine::computeTargetPosition(const Common::Point &mousePos) {
 	return mousePos;
+}
+
+Common::Point HypnoEngine::getPlayerPosition(bool needsUpdate) {
+	return g_system->getEventManager()->getMousePos();
 }
 
 int HypnoEngine::detectTarget(const Common::Point &mousePos) {

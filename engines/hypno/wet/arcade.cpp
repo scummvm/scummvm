@@ -467,6 +467,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 
 	_ammo = 150;
 	_maxAmmo = 150;
+	_c33PlayerPosition = Common::Point(_screenW/2, _screenH/2);
 }
 
 void WetEngine::pressedKey(const int keycode) {
@@ -489,10 +490,24 @@ void WetEngine::pressedKey(const int keycode) {
 	}
 }
 
+Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
+	Common::Point mousePos = g_system->getEventManager()->getMousePos();
+	if (_arcadeMode == "YT") {
+		if (needsUpdate) {
+			Common::Point diff = mousePos - _c33PlayerPosition;
+			if (diff.x > 1 || diff.y > 1)
+				diff = diff / 10;
+			_c33PlayerPosition = _c33PlayerPosition + diff;
+		}
+		return _c33PlayerPosition;
+	}
+	return mousePos;
+}
+
 void WetEngine::drawCursorArcade(const Common::Point &mousePos) {
 	int i = detectTarget(mousePos);
 	if (_arcadeMode == "YT") {
-		changeCursor("c33/c33i2.smk", 12);
+		changeCursor("arcade");
 		return;
 	}
 
@@ -650,6 +665,11 @@ void WetEngine::drawPlayer() {
 		offset = 2;
 
 	drawImage(*_playerFrames[_playerFrameIdx], 0, 200 - _playerFrames[_playerFrameIdx]->h + offset, true);
+	if (_arcadeMode == "YT") {
+		Graphics::Surface *cursor = decodeFrame("c33/c33i2.smk", 12, nullptr);
+		drawImage(*cursor, _c33PlayerPosition.x, _c33PlayerPosition.y, true);
+	}
+
 }
 
 void WetEngine::drawHealth() {
