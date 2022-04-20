@@ -30,6 +30,9 @@ public:
 
 	bool loadGFXMode() override;
 	void unloadGFXMode() override;
+
+	bool showMouse(bool visible) override;
+	bool notifyMousePosition(Common::Point &mouse);
 };
 
 #endif /* BACKENDS_GRAPHICS_OP_H */
