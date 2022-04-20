@@ -30,6 +30,7 @@ namespace Scumm {
 
 // GUI-options, primarily used by detection_tables.h
 #define GUIO_TRIM_FMTOWNS_TO_200_PIXELS                GUIO_GAMEOPTIONS1
+#define GUIO_ENHANCEMENTS                              GUIO_GAMEOPTIONS2
 
 /**
  * Descriptor of a specific SCUMM game. Used internally to store
