@@ -65,6 +65,7 @@ class Handle;
 class Scroll;
 class Dialogs;
 class Notebook;
+class SystemReel;
 
 typedef Common::List<Common::Rect> RectList;
 
@@ -180,6 +181,7 @@ public:
 	Scroll *_scroll;
 	Dialogs *_dialogs;
 	Notebook *_notebook = nullptr;
+	SystemReel *_systemReel = nullptr;
 
 	KEYFPTR _keyHandler;
 

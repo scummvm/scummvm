@@ -48,6 +48,7 @@ MODULE_OBJS := \
 	tinsel.o \
 	token.o \
 	noir/notebook.o \
+	noir/sysreel.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TINSEL), DYNAMIC_PLUGIN)
