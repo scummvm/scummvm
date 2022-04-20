@@ -82,7 +82,7 @@ bool OPGraphicsManager::showMouse(bool visible) {
 			showCursor = SDL_ENABLE;
 		}
 	}
-	SDL_ShowCursor(showCursor);
+	//SDL_ShowCursor(showCursor);
 
 	return WindowedGraphicsManager::showMouse(visible);
 }
@@ -137,7 +137,7 @@ bool OPGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 		}
 	}
 
-	SDL_ShowCursor(showCursor);
+	//SDL_ShowCursor(showCursor);
 	if (valid) {
 		setMousePosition(mouse.x, mouse.y);
 		mouse = convertWindowToVirtual(mouse.x, mouse.y);
