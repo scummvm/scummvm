@@ -32,7 +32,10 @@ Path::Path(const char *str, char separator) {
 }
 
 Path::Path(const String &str, char separator) {
-	set(str.c_str(), separator);
+	if (separator == DIR_SEPARATOR)
+		_str = str;
+	else
+		set(str.c_str(), separator);
 }
 
 String Path::toString(char separator) const {
@@ -44,6 +47,24 @@ String Path::toString(char separator) const {
 			res += *ptr;
 	}
 	return res;
+}
+
+Path Path::getParent() const {
+	if (_str.size() < 2)
+		return Path();
+	size_t separatorPos = _str.findLastOf(DIR_SEPARATOR, _str.size() - 2);
+	if (separatorPos == Common::String::npos)
+		return Path();
+	return Path(_str.substr(0, separatorPos + 1), DIR_SEPARATOR);
+}
+
+Path Path::getLastComponent() const {
+	if (_str.size() < 2)
+		return *this;
+	size_t separatorPos = _str.findLastOf(DIR_SEPARATOR, _str.size() - 2);
+	if (separatorPos == Common::String::npos)
+		return *this;
+	return Path(_str.substr(separatorPos + 1), DIR_SEPARATOR);
 }
 
 bool Path::operator==(const Path &x) const {
@@ -84,7 +105,10 @@ Path &Path::appendInPlace(const Path &x) {
 }
 
 Path &Path::appendInPlace(const String &str, char separator) {
-	appendInPlace(str.c_str(), separator);
+	if (separator == DIR_SEPARATOR)
+		_str += str;
+	else
+		appendInPlace(str.c_str(), separator);
 	return *this;
 }
 
