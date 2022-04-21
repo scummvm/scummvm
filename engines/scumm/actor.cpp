@@ -1522,7 +1522,7 @@ void Actor::setDirection(int direction) {
 			// the original interpreters do). I haven't found any signs that v7/8 require it, though.
 			// I haven't checked HE, but since it uses the same AKOS costumes as v7/8 I leave that
 			// as it is...	
-			if ((vald & 3) == newDirToOldDir(direction)) {
+			if ((vald & 3) == newDirToOldDir(_facing)) {
 				// v1/2 skip the frame only if everything is equal...
 				if (_vm->_game.version > 2 || (vald >> 2) == _frame)
 					continue;
@@ -3820,8 +3820,10 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 		// For older saves, we can't reconstruct the frame's direction if it is different from the actor
 		// direction, this is the best we can do. However, it seems to be relevant only for very rare
 		// edge cases, anyway...
-		for (int i = 0; i < 16; ++i)
-			_cost.frame[i] = (_cost.frame[i] << 2) | newDirToOldDir(_facing);
+		for (int i = 0; i < 16; ++i) {
+			if (_cost.frame[i] != 0xffff)
+				_cost.frame[i] = (_cost.frame[i] << 2) | newDirToOldDir(_facing);
+		}
 	}
 }
 
