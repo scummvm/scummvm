@@ -85,6 +85,7 @@ typedef int HPOLYGON;
 #define Z_TOPW_TEXT	Z_TAG_TEXT
 
 // Started a collection of assorted maximum numbers here:
+// TODO: Noir only has two movers - deal with that
 #define MAX_MOVERS	6	// Moving actors using path system
 #define MAX_SAVED_ACTORS 32	// Saved 'Normal' actors
 #define MAX_SAVED_ALIVES 512	// Saves actors'lives

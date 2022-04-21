@@ -1095,7 +1095,7 @@ static void Drop(int object) {
  * Delete all objects from inventory 1 and 2.
  */
 static void DropEverything() {
-	_vm->_dialogs->HoldItem(NOOBJECT, false);
+	_vm->_dialogs->HoldItem(INV_NOICON, false);
 
 	_vm->_dialogs->ClearInventory(INV_1);
 	_vm->_dialogs->ClearInventory(INV_2);
@@ -1217,7 +1217,7 @@ static bool HasRestarted() {
  * See if an object is in the inventory.
  */
 int Have(int object) {
-	return (_vm->_dialogs->InventoryPos(object) != NOOBJECT);
+	return (_vm->_dialogs->InventoryPos(object) != INV_NOICON);
 }
 
 /**
