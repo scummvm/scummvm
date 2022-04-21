@@ -587,6 +587,12 @@ Common::Point HypnoEngine::getPlayerPosition(bool needsUpdate) {
 int HypnoEngine::detectTarget(const Common::Point &mousePos) {
 	int i = -1;
 	Common::Point target = computeTargetPosition(mousePos);
+	if (target.x >= _compositeSurface->w || target.y >= _compositeSurface->h)
+		return -1;
+
+	if (target.x < 0 || target.y < 0)
+		return -1;
+
 	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
 		i++;
 		if (it->destroyed)
