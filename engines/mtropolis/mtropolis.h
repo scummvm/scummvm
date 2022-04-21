@@ -38,19 +38,6 @@
  */
 namespace MTropolis {
 
-enum ColorDepthMode {
-	kColorDepthMode1Bit,
-	kColorDepthMode2Bit,
-	kColorDepthMode4Bit,
-	kColorDepthMode8Bit,
-	kColorDepthMode16Bit,
-	kColorDepthMode32Bit,
-
-	kColorDepthModeCount,
-
-	kColorDepthModeInvalid,
-};
-
 class Runtime;
 
 class MTropolisEngine : public ::Engine {

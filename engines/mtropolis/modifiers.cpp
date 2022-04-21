@@ -55,6 +55,10 @@ void BehaviorModifier::appendModifier(const Common::SharedPtr<Modifier> &modifie
 	_children.push_back(modifier);
 }
 
+IModifierContainer* BehaviorModifier::getChildContainer() {
+	return this;
+}
+
 Common::SharedPtr<Modifier> BehaviorModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new BehaviorModifier(*this));
 }
@@ -502,6 +506,10 @@ bool CompoundVariableModifier::load(ModifierLoaderContext &context, const Data::
 	_name = data.name;
 
 	return true;
+}
+
+IModifierContainer *CompoundVariableModifier::getChildContainer() {
+	return this;
 }
 
 const Common::Array<Common::SharedPtr<Modifier> > &CompoundVariableModifier::getModifiers() const {

@@ -21,7 +21,9 @@
 
 #include "mtropolis/render.h"
 #include "mtropolis/runtime.h"
+
 #include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 namespace MTropolis {
 
@@ -62,16 +64,11 @@ inline int quantize8To5(int value, byte orderedDither16x16) {
 	return (value * 249 + (orderedDither16x16 << 3)) >> 11;
 }
 
-Window::Window(int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format) : _x(x), _y(y), _surface(nullptr) {
-	_surface = new Graphics::Surface();
-	_surface->create(width, height, format);
+Window::Window(int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format) : _x(x), _y(y) {
+	_surface.reset(new Graphics::ManagedSurface(width, height, format));
 }
 
 Window::~Window() {
-	if (_surface) {
-		_surface->free();
-		delete _surface;
-	}
 }
 
 int32 Window::getX() const {
@@ -82,8 +79,31 @@ int32 Window::getY() const {
 	return _y;
 }
 
-Graphics::Surface &Window::getSurface() const {
-	return *_surface;
+void Window::setPosition(int32 x, int32 y) {
+	_x = x;
+	_y = y;
 }
+
+
+const Common::SharedPtr<Graphics::ManagedSurface> &Window::getSurface() const {
+	return _surface;
+}
+
+const Graphics::PixelFormat& Window::getPixelFormat() const {
+	return _surface->format;
+}
+
+namespace Render {
+
+uint32 resolveRGB(uint8 r, uint8 g, uint8 b, const Graphics::PixelFormat &fmt) {
+	uint32 rPlaced = (static_cast<uint32>(r) >> (8 - fmt.rBits())) << fmt.rShift;
+	uint32 gPlaced = (static_cast<uint32>(g) >> (8 - fmt.gBits())) << fmt.gShift;
+	uint32 bPlaced = (static_cast<uint32>(b) >> (8 - fmt.bBits())) << fmt.bShift;
+	uint32 aPlaced = (static_cast<uint32>(255) >> (8 - fmt.aBits())) << fmt.aShift;
+
+	return rPlaced | gPlaced | bPlaced | aPlaced;
+}
+
+} // End of namespace Render
 
 } // End of namespace MTropolis

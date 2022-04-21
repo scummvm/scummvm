@@ -23,11 +23,14 @@
 #define MTROPOLIS_RUNTIME_H
 
 #include "common/array.h"
+#include "common/language.h"
 #include "common/platform.h"
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+
+#include "graphics/pixelformat.h"
 
 #include "mtropolis/data.h"
 #include "mtropolis/debug.h"
@@ -39,6 +42,7 @@ namespace Graphics {
 
 struct WinCursorGroup;
 class MacCursor;
+class MacFontManager;
 class Cursor;
 struct PixelFormat;
 struct Surface;
@@ -67,6 +71,19 @@ struct IPlugInModifierFactory;
 struct IPlugInModifierFactoryAndDataFactory;
 struct MessageProperties;
 struct ModifierLoaderContext;
+
+enum ColorDepthMode {
+	kColorDepthMode1Bit,
+	kColorDepthMode2Bit,
+	kColorDepthMode4Bit,
+	kColorDepthMode8Bit,
+	kColorDepthMode16Bit,
+	kColorDepthMode32Bit,
+
+	kColorDepthModeCount,
+
+	kColorDepthModeInvalid,
+};
 
 namespace DynamicValueTypes {
 
@@ -609,11 +626,15 @@ public:
 
 	void setCursorGraphics(const Common::SharedPtr<CursorGraphicCollection> &cursorGraphics);
 
+	void setLanguage(const Common::Language &language);
+	const Common::Language &getLanguage() const;
+
 private:
 	Common::Array<SegmentDescription> _segments;
 	Common::Array<Common::SharedPtr<PlugIn> > _plugIns;
 	Common::SharedPtr<ProjectResources> _resources;
 	Common::SharedPtr<CursorGraphicCollection> _cursorGraphics;
+	Common::Language _language;
 };
 
 struct VolumeState {
@@ -715,7 +736,7 @@ class Runtime {
 public:
 	Runtime();
 
-	void runFrame();
+	void runFrame(uint32 msec);
 	void drawFrame(OSystem *osystem);
 	void queueProject(const Common::SharedPtr<ProjectDescription> &desc);
 
@@ -729,6 +750,25 @@ public:
 	uint32 allocateRuntimeGUID();
 
 	void addWindow(const Common::SharedPtr<Window> &window);
+	void removeWindow(Window *window);
+
+	// Sets up a supported display mode
+	void setupDisplayMode(ColorDepthMode displayMode, const Graphics::PixelFormat &pixelFormat);
+
+	// Switches to a specified display mode.  Returns true if the mode was actually changed.  If so, all windows will need
+	// to be recreated.
+	bool switchDisplayMode(ColorDepthMode realDisplayMode, ColorDepthMode fakeDisplayMode);
+	void setDisplayResolution(uint16 width, uint16 height);
+	void getDisplayResolution(uint16 &outWidth, uint16 &outHeight) const;
+
+	const Graphics::PixelFormat &getRenderPixelFormat() const;
+	const Common::SharedPtr<Graphics::MacFontManager> &getMacFontManager() const;
+
+	const Common::SharedPtr<Structural> &getActiveMainScene() const;
+	const Common::SharedPtr<Structural> &getActiveSharedScene() const;
+
+	uint64 getRealTime() const;
+	uint64 getPlayTime() const;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
@@ -775,6 +815,8 @@ private:
 	void sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch);
 	void queueMessage(const Common::SharedPtr<MessageDispatch> &dispatch);
 
+	void ensureMainWindowExists();
+
 	void unloadProject();
 
 	VThreadState dispatchMessageTask(const DispatchMethodTaskData &data);
@@ -795,13 +837,26 @@ private:
 	Common::SharedPtr<Structural> _activeSharedScene;
 	Common::Array<SceneReturnListEntry> _sceneReturnList;
 
+	Common::WeakPtr<Window> _mainWindow;
 	Common::Array<Common::SharedPtr<Window> > _windows;
+
+	Common::SharedPtr<Graphics::MacFontManager> _macFontMan;
+
+	uint32 _nextRuntimeGUID;
+
+	bool _displayModeSupported[kColorDepthModeCount];
+	Graphics::PixelFormat _displayModePixelFormats[kColorDepthModeCount];
+	ColorDepthMode _realDisplayMode;
+	ColorDepthMode _fakeDisplayMode;
+	uint16 _displayWidth;
+	uint16 _displayHeight;
+
+	uint64 _realTime;
+	uint64 _playTime;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<Debugger> _debugger;
 #endif
-
-	uint32 _nextRuntimeGUID;
 };
 
 struct IModifierContainer {
@@ -994,6 +1049,8 @@ public:
 	Common::SharedPtr<Modifier> resolveAlias(uint32 aliasID) const;
 	void materializeGlobalVariables(Runtime *runtime, ObjectLinkingScope *scope);
 
+	const ProjectPresentationSettings &getPresentationSettings() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Project"; }
 #endif
@@ -1169,7 +1226,8 @@ public:
 	virtual bool isVariable() const;
 
 	// This should only return a propagation container if messages should actually be propagated (i.e. NOT switched-off behaviors!)
-	virtual IModifierContainer *getMessagePropagationContainer() const;
+	virtual IModifierContainer *getMessagePropagationContainer();
+	virtual IModifierContainer *getChildContainer();
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) const override;
