@@ -1173,7 +1173,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 				psxSaturnDrawTiles(pObj, srcPtr, destPtr, typeId == 0x41, psxFourBitClut, psxSkipBytes, psxMapperTable, true);
 			else if (TinselV1Mac)
 				MacDrawTiles(pObj, srcPtr, destPtr, typeId == 0x41);
-			else if (TinselV1)
+			else if (TinselVersion == 1)
 				WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x41);
 			else if (TinselVersion == 0)
 				t0WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x41);
@@ -1186,7 +1186,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 				WrtAll(pObj, srcPtr, destPtr, typeId == 0x48);
 			else if (TinselV1PSX || TinselV1Saturn)
 				psxSaturnDrawTiles(pObj, srcPtr, destPtr, typeId == 0x48, psxFourBitClut, psxSkipBytes, psxMapperTable, false);
-			else if (TinselV1)
+			else if (TinselVersion == 1)
 				WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x48);
 			break;
 		case 0x04:	// fill with constant color without clipping

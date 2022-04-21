@@ -1459,7 +1459,7 @@ void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition) {
 	else
 		GetControl(CONTROL_STARTOFF);
 
-	if (TinselV1)
+	if (TinselVersion == 1)
 		++g_sceneCtr;
 
 	// Prevent code subsequent to this call running before scene changes
@@ -3811,7 +3811,7 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 
 	for (;;) {
 		_ctx->startEvent = getUserEvents();
-		if (TinselV1) {
+		if (TinselVersion == 1) {
 			// Store cursor position
 			while (!_vm->_cursor->GetCursorXYNoWait(&_ctx->startX, &_ctx->startY, false))
 				CORO_SLEEP(1);
@@ -3821,7 +3821,7 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 			CORO_SLEEP(1);
 
 			// Not necessary to monitor escape as it's an event anyway
-			if (TinselV1) {
+			if (TinselVersion == 1) {
 				int curX, curY;
 				_vm->_cursor->GetCursorXY(&curX, &curY, false); // Store cursor position
 				if (curX != _ctx->startX || curY != _ctx->startY)
@@ -5284,7 +5284,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pic, RESUME_STATE *pResumeState) {
 	int libCode;
 	if (TinselVersion == 0) libCode = DW1DEMO_CODES[operand];
-	else if (TinselVersion <= 1) libCode = DW1_CODES[operand];
+	else if (TinselVersion == 1) libCode = DW1_CODES[operand];
 	else if (TinselV2Demo) libCode = DW2DEMO_CODES[operand];
 	else if (TinselV3) {
 		NoirMapping mapping = translateNoirLibCode(operand, pp);

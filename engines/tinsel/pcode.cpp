@@ -611,7 +611,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 					(wkEntry->ip == ip) &&
 					(wkEntry->isDemo == _vm->getIsADGFDemo()) &&
 					((wkEntry->platform == Common::kPlatformUnknown) || (wkEntry->platform == _vm->getPlatform())) &&
-					(!TinselV1 || (wkEntry->scnFlag == ((_vm->getFeatures() & GF_SCNFILES) != 0)))) {
+					((TinselVersion != 1) || (wkEntry->scnFlag == ((_vm->getFeatures() & GF_SCNFILES) != 0)))) {
 					// Point to start of workaround fragment
 					ip = 0;
 					break;
