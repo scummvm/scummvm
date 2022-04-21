@@ -112,65 +112,6 @@ private:
 	DL _deleter;
 };
 
-/**
- * A base class for both SharedPtr and WeakPtr.
- *
- * This base class encapsulates the logic for the reference counter
- * used by both.
- */
-template<class T>
-class BasePtr : public SafeBool<BasePtr<T> > {
-#if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
-	template<class T2> friend class BasePtr;
-#endif
-public:
-	typedef T ValueType;
-	typedef T *PointerType;
-	typedef T &ReferenceType;
-
-	BasePtr() : _tracker(nullptr), _pointer(nullptr) {
-	}
-
-	explicit BasePtr(std::nullptr_t) : _tracker(nullptr), _pointer(nullptr) {
-	}
-
-	template<class T2>
-	explicit BasePtr(T2 *p) : _tracker(p ? (new BasePtrTrackerImpl<T2>(p)) : nullptr), _pointer(p) {
-	}
-
-	template<class T2, class DL>
-	BasePtr(T2 *p, DL d) : _tracker(p ? new BasePtrTrackerDeletionImpl<T2, DL>(p, d) : nullptr), _pointer(p) {
-	}
-
-	BasePtr(const BasePtr &r) : _tracker(r._tracker), _pointer(r._pointer) {
-	}
-
-	template<class T2>
-	BasePtr(const BasePtr<T2> &r) : _tracker(r._tracker), _pointer(r._pointer) {
-	}
-
-	~BasePtr() {
-	}
-
-	/**
-	 * Implicit conversion operator to bool for convenience, to make
-	 * checks like "if (sharedPtr) ..." possible.
-	 */
-	bool operator_bool() const {
-		return _pointer != nullptr;
-	}
-
-protected:
-	template<class T2>
-	void assign(const BasePtr<T2> &r) {
-		_tracker = r._tracker;
-		_pointer = r._pointer;
-	}
-
-	BasePtrTrackerInternal *_tracker;
-	T *_pointer;
-};
-
 template<class T>
 class WeakPtr;
 
@@ -216,75 +157,69 @@ class WeakPtr;
  * a plain pointer is only possible via SharedPtr::get.
  */
 template<class T>
-class SharedPtr : public BasePtr<T> {
+class SharedPtr : public SafeBool<SharedPtr<T> > {
+	template<class T2>
+	friend class WeakPtr;
+	template<class T2>
+	friend class SharedPtr;
 public:
 	// Invariant: If _tracker is non-null, then the object is alive
 	typedef T *PointerType;
 	typedef T &ReferenceType;
+	typedef BasePtrTrackerInternal::RefValue RefValue;
 
-	SharedPtr() : BasePtr<T>() {
+	SharedPtr() : _pointer(nullptr), _tracker(nullptr) {
 	}
 
-	SharedPtr(std::nullptr_t) : BasePtr<T>() {
+	SharedPtr(std::nullptr_t) : _pointer(nullptr), _tracker(nullptr) {
 	}
 
 	~SharedPtr() {
-		if (this->_tracker)
-			this->_tracker->decStrong();
+		if (_tracker)
+			_tracker->decStrong();
 	}
 
 	template<class T2>
-	explicit SharedPtr(T2 *p) : BasePtr<T>(p) {
+	explicit SharedPtr(T2 *p) : _pointer(p), _tracker(p ? (new BasePtrTrackerImpl<T2>(p)) : nullptr) {
 	}
 
 	template<class T2, class DL>
-	SharedPtr(T2 *p, DL d) : BasePtr<T>(p, d) {
+	SharedPtr(T2 *p, DL d) : _pointer(p), _tracker(p ? (new BasePtrTrackerDeletionImpl<T2, DL>(p, d)) : nullptr) {
 	}
 
-	SharedPtr(const SharedPtr<T> &r) : BasePtr<T>(r) {
-		if (this->_tracker)
-			this->_tracker->incStrong();
-	}
-
-	SharedPtr(const WeakPtr<T> &r) {
-		reset(r);
+	SharedPtr(const SharedPtr<T> &r) : _pointer(r._pointer), _tracker(r._tracker) {
+		if (_tracker)
+			_tracker->incStrong();
 	}
 
 	template<class T2>
-	SharedPtr(const SharedPtr<T2> &r) : BasePtr<T>(r) {
-		if (this->_tracker)
-			this->_tracker->incStrong();
+	SharedPtr(const SharedPtr<T2> &r) : _pointer(r._pointer), _tracker(r._tracker) {
+		if (_tracker)
+			_tracker->incStrong();
+	}
+
+	template<class T2>
+	explicit SharedPtr(const WeakPtr<T2> &r) : _pointer(nullptr), _tracker(nullptr) {
+		if (r._tracker && r._tracker->isAlive()) {
+			_pointer = r._pointer;
+			_tracker = r._tracker;
+			_tracker->incStrong();
+		}
 	}
 
 	SharedPtr &operator=(const SharedPtr &r) {
-		BasePtrTrackerInternal *oldTracker = this->_tracker;
-
-		this->assign(r);
-
-		if (this->_tracker)
-			this->_tracker->incStrong();
-		if (oldTracker)
-			oldTracker->decStrong();
-
+		reset(r);
 		return *this;
 	}
 
 	template<class T2>
 	SharedPtr &operator=(const SharedPtr<T2> &r) {
-		BasePtrTrackerInternal *oldTracker = this->_tracker;
-
-		this->assign(r);
-
-		if (this->_tracker)
-			this->_tracker->incStrong();
-		if (oldTracker)
-			oldTracker->decStrong();
-
+		reset(r);
 		return *this;
 	}
 
-	T &operator*() const { assert(this->_pointer); return *this->_pointer; }
-	T *operator->() const { assert(this->_pointer); return this->_pointer; }
+	T &operator*() const { assert(_pointer); return *_pointer; }
+	T *operator->() const { assert(_pointer); return _pointer; }
 
 	/**
 	 * Returns the plain pointer value. Be sure you know what you
@@ -292,16 +227,33 @@ public:
 	 *
 	 * @return the pointer the SharedPtr object manages
 	 */
-	PointerType get() const { return this->_pointer; }
+	PointerType get() const { return _pointer; }
 
 	template<class T2>
 	bool operator==(const SharedPtr<T2> &r) const {
-		return this->_pointer == r.get();
+		return _pointer == r.get();
 	}
 
 	template<class T2>
 	bool operator!=(const SharedPtr<T2> &r) const {
-		return this->_pointer != r.get();
+		return _pointer != r.get();
+	}
+
+	/**
+	 * Implicit conversion operator to bool for convenience, to make
+	 * checks like "if (sharedPtr) ..." possible.
+	 */
+	bool operator_bool() const {
+		return _pointer != nullptr;
+	}
+
+	/**
+	 * Returns the number of strong references to the object.
+	 */
+	int refCount() const {
+		if (_tracker == nullptr)
+			return 0;
+		return _tracker->getStrongCount();
 	}
 
 	/**
@@ -310,52 +262,49 @@ public:
 	 * debugging purposes.
 	 */
 	bool unique() const {
-		return this->_tracker != nullptr && this->_tracker->getStrongCount() == 1;
+		return refCount() == 1;
 	}
 
 	/**
 	 * Resets the object to a NULL pointer.
 	 */
 	void reset() {
-		if (this->_tracker)
-			this->_tracker->decStrong();
-		this->_tracker = nullptr;
-		this->_pointer = nullptr;
+		if (_tracker)
+			_tracker->decStrong();
+		_tracker = nullptr;
+		_pointer = nullptr;
 	}
 
 	/**
-	 * Resets the object to the specified pointer
+	 * Resets the object to the specified shared pointer
 	 */
-	void reset(const BasePtr<T> &r) {
-		BasePtrTrackerInternal *oldTracker = this->_tracker;
+	template<class T2>
+	void reset(const SharedPtr<T2> &r) {
+		BasePtrTrackerInternal *oldTracker = _tracker;
 
-		this->assign(r);
+		_pointer = r._pointer;
+		_tracker = r._tracker;
 
-		if (this->_tracker && this->_tracker->isAlive()) {
-			this->_tracker->incStrong();
-		} else {
-			this->_tracker = nullptr;
-			this->_pointer = nullptr;
-		}
-
+		if (_tracker)
+			_tracker->incStrong();
 		if (oldTracker)
 			oldTracker->decStrong();
 	}
 
 	/**
-	 * Resets the object to the specified pointer
+	 * Resets the object to the specified weak pointer
 	 */
 	template<class T2>
-	void reset(const BasePtr<T2> &r) {
-		BasePtrTrackerInternal *oldTracker = this->_tracker;
+	void reset(const WeakPtr<T2> &r) {
+		BasePtrTrackerInternal *oldTracker = _tracker;
 
-		this->assign(r);
-
-		if (this->_tracker && this->_tracker->isAlive()) {
-			this->_tracker->incStrong();
+		if (r._tracker && r._tracker->isAlive()) {
+			_tracker = r._tracker;
+			_pointer = r._pointer;
+			_tracker->incStrong();
 		} else {
-			this->_tracker = nullptr;
-			this->_pointer = nullptr;
+			_tracker = nullptr;
+			_pointer = nullptr;
 		}
 
 		if (oldTracker)
@@ -366,46 +315,57 @@ public:
 	 * Resets the object to the specified pointer
 	 */
 	void reset(T *ptr) {
-		if (this->_tracker)
-			this->_tracker->decStrong();
+		if (_tracker)
+			_tracker->decStrong();
 
-		this->_pointer = ptr;
-		this->_tracker = new BasePtrTrackerImpl<T>(ptr);
+		_pointer = ptr;
+		_tracker = new BasePtrTrackerImpl<T>(ptr);
 	}
+
+private:
+	T *_pointer;
+	BasePtrTrackerInternal *_tracker;
 };
+
+
 
 /**
  * Implements a smart pointer that holds a non-owning ("weak") refrence to
  * a pointer. It needs to be converted to a SharedPtr to access it.
  */
 template<class T>
-class WeakPtr : public BasePtr<T> {
+class WeakPtr : public SafeBool<WeakPtr<T> > {
+	template<class T2>
+	friend class WeakPtr;
+	template<class T2>
+	friend class SharedPtr;
 public:
-	WeakPtr() : BasePtr<T>() {
+	WeakPtr() : _pointer(nullptr), _tracker(nullptr) {
 	}
 
-	WeakPtr(std::nullptr_t) : BasePtr<T>() {
+	WeakPtr(std::nullptr_t) : _pointer(nullptr), _tracker(nullptr) {
 	}
 
-	WeakPtr(const WeakPtr<T> &r) : BasePtr<T>(r) {
-		if (this->_tracker)
-			this->_tracker->incWeak();
-	}
-
-	WeakPtr(const BasePtr<T> &r) : BasePtr<T>(r) {
-		if (this->_tracker)
-			this->_tracker->incWeak();
+	WeakPtr(const WeakPtr<T> &r) : _pointer(r._pointer), _tracker(r._tracker) {
+		if (_tracker)
+			_tracker->incWeak();
 	}
 
 	~WeakPtr() {
-		if (this->_tracker)
-			this->_tracker->decWeak();
+		if (_tracker)
+			_tracker->decWeak();
 	}
 
 	template<class T2>
-	WeakPtr(const BasePtr<T2> &r) : BasePtr<T>(r) {
-		if (this->_tracker)
-			this->_tracker->incWeak();
+	WeakPtr(const WeakPtr<T2> &r) : _pointer(r._pointer), _tracker(r._tracker) {
+		if (_tracker)
+			_tracker->incWeak();
+	}
+
+	template<class T2>
+	WeakPtr(const SharedPtr<T2> &r) : _pointer(r._pointer), _tracker(r._tracker) {
+		if (_tracker)
+			_tracker->incWeak();
 	}
 
 	/**
@@ -417,17 +377,27 @@ public:
 
 	/**
 	 * Implicit conversion operator to bool for convenience, to make
-	 * checks like "if (sharedPtr) ..." possible.
+	 * checks like "if (weakPtr) ..." possible.  This only checks if the
+	 * weak pointer contains a pointer, not that the pointer is live.
 	 */
 	bool operator_bool() const {
-		return this->_pointer != nullptr;
+		return _pointer != nullptr;
+	}
+
+	/**
+	 * Returns the number of strong references to the object.
+	 */
+	int refCount() const {
+		if (_tracker == nullptr)
+			return 0;
+		return _tracker->getStrongCount();
 	}
 
 	/**
 	 * Returns whether the referenced object isn't valid
 	 */
 	bool expired() const {
-		return this->_tracker == nullptr || this->_tracker->getStrongCount() == 0;
+		return _tracker == nullptr || _tracker->getStrongCount() == 0;
 	}
 
 	WeakPtr<T> &operator=(const WeakPtr<T> &r) {
@@ -441,13 +411,8 @@ public:
 		return *this;
 	}
 
-	WeakPtr<T> &operator=(const BasePtr<T> &r) {
-		reset(r);
-		return *this;
-	}
-
 	template<class T2>
-	WeakPtr<T> &operator=(const BasePtr<T2> &r) {
+	WeakPtr<T> &operator=(const SharedPtr<T2> &r) {
 		reset(r);
 		return *this;
 	}
@@ -456,40 +421,47 @@ public:
 	 * Resets the object to a NULL pointer.
 	 */
 	void reset() {
-		if (this->_tracker)
-			this->_tracker->decWeak();
-		this->_tracker = nullptr;
-		this->_pointer = nullptr;
+		if (_tracker)
+			_tracker->decWeak();
+		_tracker = nullptr;
+		_pointer = nullptr;
 	}
 
 	/**
-	 * Resets the object to the specified pointer
-	 */
-	void reset(const BasePtr<T> &r) {
-		BasePtrTrackerInternal *oldTracker = this->_tracker;
-
-		this->assign(r);
-
-		if (this->_tracker)
-			this->_tracker->incWeak();
-		if (oldTracker)
-			oldTracker->decWeak();
-	}
-
-	/**
-	 * Resets the object to the specified pointer
+	 * Resets the object to the specified shared pointer
 	 */
 	template<class T2>
-	void reset(const BasePtr<T2> &r) {
-		BasePtrTrackerInternal *oldTracker = this->_tracker;
+	void reset(const SharedPtr<T2> &r) {
+		BasePtrTrackerInternal *oldTracker = _tracker;
 
-		this->assign(r);
+		_pointer = r._pointer;
+		_tracker = r._tracker;
 
-		if (this->_tracker)
-			this->_tracker->incWeak();
+		if (_tracker)
+			_tracker->incWeak();
 		if (oldTracker)
 			oldTracker->decWeak();
 	}
+
+	/**
+	 * Resets the object to the specified weak pointer
+	 */
+	template<class T2>
+	void reset(const WeakPtr<T2> &r) {
+		BasePtrTrackerInternal *oldTracker = _tracker;
+
+		_pointer = r._pointer;
+		_tracker = r._tracker;
+
+		if (_tracker)
+			_tracker->incWeak();
+		if (oldTracker)
+			oldTracker->decWeak();
+	}
+
+private:
+	T *_pointer;
+	BasePtrTrackerInternal *_tracker;
 };
 
 template <typename T>
