@@ -38,6 +38,8 @@ public:
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
+	IModifierContainer *getChildContainer() override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Behavior Modifier"; }
 #endif
@@ -510,6 +512,8 @@ private:
 class CompoundVariableModifier : public VariableModifier, public IModifierContainer {
 public:
 	bool load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data);
+
+	IModifierContainer *getChildContainer() override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Compound Variable Modifier"; }

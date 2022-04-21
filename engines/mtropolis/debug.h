@@ -24,17 +24,27 @@
 
 #include "common/str.h"
 #include "common/ptr.h"
+#include "common/hashmap.h"
 
 #include <cstdarg>
 
 #define MTROPOLIS_DEBUG_VTHREAD_STACKS
 #define MTROPOLIS_DEBUG_ENABLE
 
+namespace Graphics {
+
+class MacFontManager;
+
+} // End of namespace Graphics
+
 namespace MTropolis {
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 
 class Runtime;
+class Window;
+class Structural;
+class Modifier;
 
 struct IDebuggable;
 
@@ -73,17 +83,35 @@ public:
 	explicit Debugger(Runtime *runtime);
 	~Debugger();
 
+	void runFrame(uint32 msec);
+
 	void setPaused(bool paused);
 	bool isPaused() const;
+
 	void notify(DebugSeverity severity, const Common::String &str);
 	void notifyFmt(DebugSeverity severity, const char *fmt, ...);
 	void vnotifyFmt(DebugSeverity severity, const char *fmt, va_list args);
 
+	void refreshSceneStatus();
+	void complainAboutUnfinished(Structural *structural);
+
 private:
 	Debugger();
 
+	static void scanStructuralStatus(Structural *structural, Common::HashMap<Common::String, SupportStatus> &unfinishedModifiers, Common::HashMap<Common::String, SupportStatus> &unfinishedElements);
+	static void scanModifierStatus(Modifier *modifier, Common::HashMap<Common::String, SupportStatus> &unfinishedModifiers, Common::HashMap<Common::String, SupportStatus> &unfinishedElements);
+	static void scanDebuggableStatus(IDebuggable *debuggable, Common::HashMap<Common::String, SupportStatus> &unfinished);
+
+	struct ToastNotification {
+		Common::SharedPtr<Window> window;
+		uint64 dismissTime;
+	};
+
 	bool _paused;
 	Runtime *_runtime;
+	Common::SharedPtr<Window> _sceneStatusWindow;
+	Common::SharedPtr<Graphics::MacFontManager> _macFontMan;
+	Common::Array<ToastNotification> _toastNotifications;
 };
 
 #define MTROPOLIS_DEBUG_NOTIFY(...) \

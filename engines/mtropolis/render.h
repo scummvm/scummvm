@@ -22,12 +22,14 @@
 #ifndef MTROPOLIS_RENDER_H
 #define MTROPOLIS_RENDER_H
 
+#include "common/ptr.h"
 #include "common/scummsys.h"
+
 #include "graphics/pixelformat.h"
 
 namespace Graphics {
 
-struct Surface;
+class ManagedSurface;
 
 } // End of namespace Graphics
 
@@ -40,13 +42,22 @@ public:
 
 	int32 getX() const;
 	int32 getY() const;
-	Graphics::Surface &getSurface() const;
+	void setPosition(int32 x, int32 y);
+
+	const Common::SharedPtr<Graphics::ManagedSurface> &getSurface() const;
+	const Graphics::PixelFormat &getPixelFormat() const;
 
 private:
 	int32 _x;
 	int32 _y;
-	Graphics::Surface *_surface;
+	Common::SharedPtr<Graphics::ManagedSurface> _surface;
 };
+
+namespace Render {
+
+uint32 resolveRGB(uint8 r, uint8 g, uint8 b, const Graphics::PixelFormat &fmt);
+
+} // End of namespace Render
 
 } // End of namespace MTropolis
 

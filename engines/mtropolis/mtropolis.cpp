@@ -391,6 +391,16 @@ Common::Error MTropolisEngine::run() {
 	if (selectedMode == kColorDepthModeInvalid)
 		error("Couldn't resolve a color depth mode");
 
+	// Set up supported pixel modes
+	for (int i = 0; i < kColorDepthModeCount; i++) {
+		if (haveExactMode[i] || haveCloseMode[i])
+			_runtime->setupDisplayMode(static_cast<ColorDepthMode>(i), modePixelFormats[i]);
+	}
+
+	// Set active mode
+	_runtime->switchDisplayMode(selectedMode, selectedMode);
+	_runtime->setDisplayResolution(preferredWidth, preferredHeight);
+
 	initGraphics(preferredWidth, preferredHeight, &modePixelFormats[selectedMode]);
 	setDebugger(new Console(this));
 
@@ -403,9 +413,15 @@ Common::Error MTropolisEngine::run() {
 	}
 #endif
 
+	uint32 prevTimeStamp = getTotalPlayTime();
+
 	while (!shouldQuit()) {
+		const uint32 frameTime = getTotalPlayTime();
+		const uint32 elapsedThisFrame = frameTime - prevTimeStamp;
+		prevTimeStamp = frameTime;
+
 		handleEvents();
-		_runtime->runFrame();
+		_runtime->runFrame(elapsedThisFrame);
 		_runtime->drawFrame(_system);
 	}
 

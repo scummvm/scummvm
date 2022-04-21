@@ -33,9 +33,11 @@
 #include "common/substream.h"
 #include "common/system.h"
 
+#include "graphics/managed_surface.h"
 #include "graphics/surface.h"
 #include "graphics/wincursor.h"
 #include "graphics/maccursor.h"
+#include "graphics/macgui/macfontmanager.h"
 
 namespace MTropolis {
 
@@ -895,7 +897,7 @@ void CursorGraphicCollection::addMacCursor(uint32 cursorID, const Common::Shared
 }
 
 
-ProjectDescription::ProjectDescription() {
+ProjectDescription::ProjectDescription() : _language(Common::EN_ANY) {
 }
 
 ProjectDescription::~ProjectDescription() {
@@ -940,6 +942,14 @@ const Common::SharedPtr<ProjectResources> &ProjectDescription::getResources() co
 
 void ProjectDescription::setCursorGraphics(const Common::SharedPtr<CursorGraphicCollection>& cursorGraphics) {
 	_cursorGraphics = cursorGraphics;
+}
+
+void ProjectDescription::setLanguage(const Common::Language &language) {
+	_language = language;
+}
+
+const Common::Language &ProjectDescription::getLanguage() const {
+	return _language;
 }
 
 const Common::Array<Common::SharedPtr<Modifier> >& SimpleModifierContainer::getModifiers() const {
@@ -1359,14 +1369,27 @@ Runtime::SceneStackEntry::SceneStackEntry() {
 }
 
 
-Runtime::Runtime() : _nextRuntimeGUID(1) {
+Runtime::Runtime() : _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
+	_displayWidth(1024), _displayHeight(768),
+					 _realTime(0), _playTime(0) {
 	_vthread.reset(new VThread());
+
+	for (int i = 0; i < kColorDepthModeCount; i++) {
+		_displayModeSupported[i] = false;
+		_realDisplayMode = kColorDepthModeInvalid;
+		_fakeDisplayMode = kColorDepthModeInvalid;
+	}
 }
 
-void Runtime::runFrame() {
+void Runtime::runFrame(uint32 msec) {
+	_realTime += msec;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
-	if (_debugger && _debugger->isPaused())
-		return;
+	if (_debugger) {
+		_debugger->runFrame(msec);
+		if (_debugger->isPaused())
+			return;
+	}
 #endif
 
 	for (;;) {
@@ -1381,6 +1404,8 @@ void Runtime::runFrame() {
 			_queuedProjectDesc.reset();
 
 			unloadProject();
+
+			_macFontMan.reset(new Graphics::MacFontManager(0, desc->getLanguage()));
 
 			_project.reset(new Project());
 
@@ -1451,15 +1476,19 @@ void Runtime::runFrame() {
 		// Ran out of actions
 		break;
 	}
+
+	_playTime += msec;
 }
 
 void Runtime::drawFrame(OSystem* system) {
 	int width = system->getWidth();
 	int height = system->getHeight();
 
+	system->fillScreen(Render::resolveRGB(0, 0, 0, getRenderPixelFormat()));
+
 	for (Common::Array<Common::SharedPtr<Window> >::const_iterator it = _windows.begin(), itEnd = _windows.end(); it != itEnd; ++it) {
 		const Window &window = *it->get();
-		const Graphics::Surface &surface = window.getSurface();
+		const Graphics::ManagedSurface &surface = *window.getSurface();
 
 		int32 destLeft = window.getX();
 		int32 destRight = destLeft + surface.w;
@@ -1499,7 +1528,9 @@ void Runtime::drawFrame(OSystem* system) {
 		if (destLeft >= destRight || destTop >= destBottom || destLeft >= width || destTop >= height || destRight <= 0 || destBottom <= 0)
 			continue;
 
-		system->copyRectToScreen(surface.getBasePtr(destLeft, destTop), surface.pitch, destLeft, destTop, destRight - destLeft, destBottom - destTop);
+		system->copyRectToScreen(surface.getBasePtr(srcLeft, srcTop), surface.pitch, destLeft, destTop, destRight - destLeft, destBottom - destTop);
+
+		int n = 0;
 	}
 
 	system->updateScreen();
@@ -1766,7 +1797,10 @@ void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
 	debug(1, "Scene materialized OK");
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
-
+	if (_debugger) {
+		_debugger->complainAboutUnfinished(scene.get());
+		_debugger->refreshSceneStatus();
+	}
 #endif
 }
 
@@ -1800,6 +1834,19 @@ void Runtime::queueMessage(const Common::SharedPtr<MessageDispatch>& dispatch) {
 	_messageQueue.push_back(dispatch);
 }
 
+void Runtime::ensureMainWindowExists() {
+	// Maybe there's a better spot for this
+	if (!_mainWindow && _project) {
+		const ProjectPresentationSettings &presentationSettings = _project->getPresentationSettings();
+
+		int32 centeredX = (static_cast<int32>(_displayWidth) - static_cast<int32>(presentationSettings.width)) / 2;
+		int32 centeredY = (static_cast<int32>(_displayHeight) - static_cast<int32>(presentationSettings.height)) / 2;
+		Common::SharedPtr<Window> mainWindow(new Window(centeredX, centeredY, presentationSettings.width, presentationSettings.height, _displayModePixelFormats[_realDisplayMode]));
+		addWindow(mainWindow);
+		_mainWindow.reset(mainWindow);
+	}
+}
+
 void Runtime::unloadProject() {
 	_activeMainScene.reset();
 	_activeSharedScene.reset();
@@ -1810,6 +1857,10 @@ void Runtime::unloadProject() {
 	_pendingTeardowns.clear();
 	_messageQueue.clear();
 	_vthread.reset(new VThread());
+
+	if (_mainWindow) {
+		removeWindow(_mainWindow.lock().get());
+	}
 
 	// These should be last
 	_project.reset();
@@ -1849,6 +1900,68 @@ uint32 Runtime::allocateRuntimeGUID() {
 
 void Runtime::addWindow(const Common::SharedPtr<Window> &window) {
 	_windows.push_back(window);
+}
+
+void Runtime::removeWindow(Window *window) {
+	for (size_t i = 0; i < _windows.size(); i++) {
+		if (_windows[i].get() == window) {
+			_windows.remove_at(i);
+			break;
+		}
+	}
+}
+
+void Runtime::setupDisplayMode(ColorDepthMode displayMode, const Graphics::PixelFormat& pixelFormat) {
+	_displayModeSupported[displayMode] = true;
+	_displayModePixelFormats[displayMode] = pixelFormat;
+}
+
+bool Runtime::switchDisplayMode(ColorDepthMode realDisplayMode, ColorDepthMode fakeDisplayMode) {
+	_fakeDisplayMode = fakeDisplayMode;
+
+	if (_realDisplayMode != realDisplayMode) {
+		_realDisplayMode = realDisplayMode;
+		_windows.clear();
+		return true;
+	}
+
+	return false;
+}
+
+void Runtime::setDisplayResolution(uint16 width, uint16 height) {
+	_displayWidth = width;
+	_displayHeight = height;
+}
+
+void Runtime::getDisplayResolution(uint16 &outWidth, uint16 &outHeight) const {
+	outWidth = _displayWidth;
+	outHeight = _displayHeight;
+}
+
+const Graphics::PixelFormat& Runtime::getRenderPixelFormat() const {
+	assert(_realDisplayMode != kColorDepthModeInvalid);
+
+	return _displayModePixelFormats[_realDisplayMode];
+}
+
+const Common::SharedPtr<Graphics::MacFontManager>& Runtime::getMacFontManager() const {
+	return _macFontMan;
+}
+
+const Common::SharedPtr<Structural> &Runtime::getActiveMainScene() const {
+	return _activeMainScene;
+}
+
+const Common::SharedPtr<Structural> &Runtime::getActiveSharedScene() const {
+	return _activeSharedScene;
+}
+
+uint64 Runtime::getRealTime() const {
+	return _realTime;
+}
+
+uint64 Runtime::getPlayTime() const {
+	return _playTime;
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
@@ -2098,6 +2211,10 @@ void Project::materializeGlobalVariables(Runtime *runtime, ObjectLinkingScope *o
 		if (modifier->isVariable())
 			modifier->materialize(runtime, outerScope);
 	}
+}
+
+const ProjectPresentationSettings& Project::getPresentationSettings() const {
+	return _presentationSettings;
 }
 
 void Project::openSegmentStream(int segmentIndex) {
@@ -2599,7 +2716,11 @@ bool Modifier::isVariable() const {
 	return false;
 }
 
-IModifierContainer *Modifier::getMessagePropagationContainer() const {
+IModifierContainer *Modifier::getMessagePropagationContainer() {
+	return nullptr;
+}
+
+IModifierContainer *Modifier::getChildContainer() {
 	return nullptr;
 }
 
