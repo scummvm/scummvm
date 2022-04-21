@@ -2665,6 +2665,7 @@ bool VisualElement::loadCommon(const Common::String &name, uint32 guid, const Da
 	_isHidden = ((elementFlags & Data::ElementFlags::kHidden) != 0);
 	_streamLocator = streamLocator;
 	_sectionID = sectionID;
+	_layer = layer;
 
 	return true;
 }
