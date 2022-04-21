@@ -1073,7 +1073,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 		return;
 
 	// If writing constant data, don't bother locking the data pointer and reading src details
-	if (((pObj->flags & DMA_CONST) == 0) || (TinselV3 && ((pObj->flags & 0x05) == 0x05))) {
+	if (((pObj->flags & DMA_CONST) == 0) || ((TinselVersion == 3) && ((pObj->flags & 0x05) == 0x05))) {
 		if (TinselVersion >= 2) {
 			srcPtr = (byte *)_vm->_handle->LockMem(pObj->hBits);
 			pObj->charBase = nullptr;
@@ -1165,7 +1165,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 		case 0x51:	// TinselV2 and above, draw sprite with clipping, flipped horizontally
 			assert((TinselVersion >= 2) || (typeId == 0x01 || typeId == 0x41));
 
-			if (TinselV3)
+			if (TinselVersion == 3)
 				t3WrtNonZero(pObj, srcPtr, destPtr);
 			else if (TinselVersion >= 2)
 				t2WrtNonZero(pObj, srcPtr, destPtr, (typeId & DMA_CLIP) != 0, (typeId & DMA_FLIPH) != 0);
@@ -1180,7 +1180,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 			break;
 		case 0x08:	// draw background without clipping
 		case 0x48:	// draw background with clipping
-			if (TinselV3)
+			if (TinselVersion == 3)
 				t3WrtAll(pObj, srcPtr, destPtr);
 			else if ((TinselVersion == 2) || TinselV1Mac || (TinselVersion == 0))
 				WrtAll(pObj, srcPtr, destPtr, typeId == 0x48);
@@ -1195,7 +1195,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 			break;
 		case 0x81:	// TinselV3, draw sprite with transparency
 		case 0xC1:	// TinselV3, draw sprite with transparency & clipping
-			if (TinselV3)
+			if (TinselVersion == 3)
 				t3TransWNZ(pObj, srcPtr, destPtr);
 			else if (TinselVersion == 2)
 				t2WrtNonZero(pObj, srcPtr, destPtr, (typeId & DMA_CLIP) != 0, (typeId & DMA_FLIPH) != 0);
@@ -1206,7 +1206,7 @@ void DrawObject(DRAWOBJECT *pObj) {
 			break;
 		case 0x05:	// TinselV3, draw text with color replacement without clipping
 		case 0x45:	// TinselV3, draw text with color replacement with clipping
-			assert(TinselV3);
+			assert(TinselVersion == 3);
 			t3WrtText(pObj, srcPtr, destPtr);
 			break;
 		default:

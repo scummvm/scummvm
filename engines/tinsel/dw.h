@@ -55,8 +55,8 @@ typedef int HPOLYGON;
 // inventory object handle (if there are inventory objects)
 #define	INV_OBJ_SCNHANDLE ((TinselVersion == 0) ? (2 << SCNHANDLE_SHIFT) : (1 << SCNHANDLE_SHIFT))
 
-#define FIELD_WORLD		(TinselV3 ? 2 : 0)
-#define FIELD_STATUS	(TinselV3 ? 8 : 1)
+#define FIELD_WORLD		((TinselVersion == 3) ? 2 : 0)
+#define FIELD_STATUS	((TinselVersion == 3) ? 8 : 1)
 
 #define ZSHIFT 10
 

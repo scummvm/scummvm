@@ -1584,7 +1584,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int myEs
 		return;
 	}
 
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		CORO_INVOKE_0(_vm->_bg->WaitForBG);
 	}
 
@@ -1613,7 +1613,7 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int myEs
 
 	bComplete = compit;
 
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		bComplete = compit & 0x20;
 		if (bTop) {
 			playfield = _vm->_bg->GetPlayfieldList(FIELD_STATUS);
@@ -3411,7 +3411,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK))
 				_vm->_actor->GetActorMidTop(_ctx->actor, &_ctx->x, &_ctx->y);
 
-			if ((TinselVersion != 0) && !TinselV3) {
+			if ((TinselVersion != 0) && (TinselVersion != 3)) {
 				SetTextPal(_vm->_actor->GetActorRGB(_ctx->actor));
 			}
 			if (TinselVersion >= 2) {
@@ -3423,7 +3423,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			}
 
 			int color = 0;
-			if (TinselV3) {
+			if (TinselVersion == 3) {
 				color = _vm->_actor->GetActorRGB(_ctx->actor);
 			}
 
@@ -5286,7 +5286,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	if (TinselVersion == 0) libCode = DW1DEMO_CODES[operand];
 	else if (TinselVersion == 1) libCode = DW1_CODES[operand];
 	else if (TinselV2Demo) libCode = DW2DEMO_CODES[operand];
-	else if (TinselV3) {
+	else if (TinselVersion == 3) {
 		NoirMapping mapping = translateNoirLibCode(operand, pp);
 		libCode = mapping.libCode;
 		if (libCode == ZZZZZZ) {
@@ -6017,7 +6017,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case PLAY:
 		// Common to DW1 / DW2 / Noir
-		if (TinselV3) {
+		if (TinselVersion == 3) {
 			if (*pResumeState == RES_1 && _vm->_handle->IsCdPlayHandle(pp[0])) {
 				*pResumeState = RES_NOT;
 				if ((pp[0] & 0x10) != 0) {
@@ -6057,7 +6057,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -3;
 
 	case PLAYMOVIE:
-		if (TinselV3) {
+		if (TinselVersion == 3) {
 			t3PlayMovie(coroParam, pp[0], pic->myEscape);
 		} else {
 			// DW2 only
@@ -6348,7 +6348,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case SETSYSTEMREEL:
 		// Noir only
-		if (TinselV3) {
+		if (TinselVersion == 3) {
 			pp -= 1;
 			SetSystemReel(pp[0], pp[1]);
 			return -2;

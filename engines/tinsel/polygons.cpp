@@ -235,7 +235,7 @@ void Poly::nextPoly() {
 	const byte *pRecord = _pData;
 
 	int typeVal = nextLong(_pData);
-	if ((FROM_32(typeVal) == 6) && TinselV3)
+	if ((FROM_32(typeVal) == 6) && (TinselVersion == 3))
 		typeVal = TO_32(7);
 	if ((FROM_32(typeVal) == 5) && TinselVersion >= 2)
 		typeVal = TO_32(6);
@@ -250,14 +250,14 @@ void Poly::nextPoly() {
 		xoff = nextLong(_pData);
 		yoff = nextLong(_pData);
 		id = nextLong(_pData);
-		if (TinselV3) {
+		if (TinselVersion == 3) {
 			sceneId = nextLong(_pData);
 			playfield = nextLong(_pData);
 		}
 	}
 
 	// Noir is for scale polygons using union with some alignment
-	if (TinselV3 && type == POLY_SCALE) {
+	if ((TinselVersion == 3) && type == POLY_SCALE) {
 		vx[0] = nextLong(_pData);
 		vx[1] = nextLong(_pData);
 		vx[2] = nextLong(_pData);
@@ -1930,7 +1930,7 @@ void InitPolygons(SCNHANDLE ph, int numPoly, bool bRestart) {
 		} else {
 			for (int i = numPoly - 1; i >= 0; i--) {
 				if (Polys[i]->polyType == TAG){
-					if (TinselV3) {
+					if (TinselVersion == 3) {
 						Poly ptp(_vm->_handle->LockMem(pHandle), Polys[i]->pIndex);
 						if (ptp.sceneId != -1) {
 							continue;

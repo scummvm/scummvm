@@ -779,7 +779,7 @@ GameChunk createGameChunkV2() {
 }
 
 GameChunk loadGameChunk() {
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		return loadGameChunkV3();
 	} else {
 		return createGameChunkV2();

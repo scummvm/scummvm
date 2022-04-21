@@ -625,7 +625,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		if ((TinselVersion == 0) && ((opcode & OPMASK) > OP_IMM))
 			opcode += 3;
 
-		if (TinselV3) {
+		if (TinselVersion == 3) {
 			// Discworld Noir adds a NOOP-operation as opcode 0, leaving everything
 			// else 1 higher, so we subtract 1, and add NOOP as the highest opcode instead.
 			opcode -= 1;
@@ -858,7 +858,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			break;
 
 		case OP_NOOP:
-			if (!TinselV3) {
+			if (TinselVersion != 3) {
 				error("OP_NOOP seen outside Discworld Noir");
 			}
 			break;

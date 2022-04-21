@@ -428,7 +428,7 @@ void Cursor::InitCurObj() {
 	const FREEL *pfr = (const FREEL *)&pFilm->reels[0];
 	const MULTI_INIT *pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
 
-	if (!TinselV3) {
+	if (TinselVersion != 3) {
 		PokeInPalette(pmi);
 	}
 

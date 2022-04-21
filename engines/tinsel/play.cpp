@@ -56,7 +56,7 @@ struct PPINIT {
 	uint8	escOn;
 	int32	myescEvent;
 
-	OBJECT** playfield;	// TinselV3, the playfield to insert the film
+	OBJECT** playfield;	// TinselVersion == 3, the playfield to insert the film
 };
 
 //----------------- LOCAL GLOBAL DATA --------------------
@@ -753,7 +753,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	/*
 	 * Insert the object
 	 */
-	if (!TinselV3) {
+	if (TinselVersion != 3) {
 		// Poke in the background palette
 		PokeInPalette(_ctx->pmi);
 	}
@@ -766,7 +766,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 	// Set up and insert the multi-object
 	_ctx->pPlayObj = MultiInitObject(_ctx->pmi);
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		MultiInsertObject(playfield, _ctx->pPlayObj);
 	} else {
 		if (!bTop)
@@ -914,7 +914,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	_vm->_actor->NotPlayingReel(_ctx->reelActor, _ctx->filmNumber, column);
 
 	// Ditch the object
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		MultiDeleteObject(playfield, _ctx->pPlayObj);
 	} else {
 		if (!bTop) {

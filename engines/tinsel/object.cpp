@@ -374,7 +374,7 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
 		PALQ *pPalQ= nullptr;	// palette queue pointer
 		const IMAGE *pImg = _vm->_handle->GetImage(pInitTbl->hObjImg); // handle to image
 
-		if (!TinselV3) {
+		if (TinselVersion != 3) {
 			if (pImg->hImgPal) {
 				// allocate a palette for this object
 				pPalQ = AllocPalette(pImg->hImgPal);

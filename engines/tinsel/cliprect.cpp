@@ -296,7 +296,7 @@ void UpdateClipRect(OBJECT **pObjList, Common::Point *pWin, Common::Rect *pClip)
 		currentObj.height         = pObj->height;
 		currentObj.xPos           = (short)x;
 		currentObj.yPos           = (short)y;
-		if (!TinselV3) {
+		if (TinselVersion != 3) {
 			currentObj.pPal       = pObj->pPal;
 		} else {
 			currentObj.isRLE      = pObj->isRLE;

@@ -543,7 +543,7 @@ void SoundManager::openSampleFiles() {
 			break;
 		default:
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected original sound-data");
-			if (TinselV3) {
+			if (TinselVersion == 3) {
 				// And in Noir, the data is MP3
 				_soundMode = kMP3Mode;
 			}
