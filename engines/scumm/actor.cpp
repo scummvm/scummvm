@@ -1521,10 +1521,15 @@ void Actor::setDirection(int direction) {
 			// For versions 1 to 6 we need to store the direction info in the frame array (like
 			// the original interpreters do). I haven't found any signs that v7/8 require it, though.
 			// I haven't checked HE, but since it uses the same AKOS costumes as v7/8 I leave that
-			// as it is...
-			if ((vald & 3) == newDirToOldDir(direction))
-				continue;
+			// as it is...	
+			if ((vald & 3) == newDirToOldDir(direction)) {
+				// v1/2 skip the frame only if everything is equal...
+				if (_vm->_game.version > 2 || (vald >> 2) == _frame)
+					continue;
+			}
 			vald >>= 2;
+			if (_vm->_game.version < 3)
+				_frame = vald;
 		}
 		_vm->_costumeLoader->costumeDecodeData(this, vald, (_vm->_game.version <= 2) ? 0xFFFF : aMask);
 	}
@@ -2064,7 +2069,6 @@ void Actor::showActor() {
 		}
 	}
 
-	stopActorMoving();
 	_visible = true;
 	_needRedraw = true;
 }
