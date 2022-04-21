@@ -2069,6 +2069,7 @@ void Actor::showActor() {
 		}
 	}
 
+	stopActorMoving();
 	_visible = true;
 	_needRedraw = true;
 }
