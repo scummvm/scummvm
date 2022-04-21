@@ -167,7 +167,7 @@ void Background::StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(hFilm);
 	const FREEL *pfr = &pfilm->reels[0];
 
-	if (!TinselV3) {
+	if (TinselVersion != 3) {
 		const MULTI_INIT *pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
 		const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
 		const IMAGE *pim = _vm->_handle->GetImage(READ_32(pFrame));

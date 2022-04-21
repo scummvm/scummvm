@@ -608,7 +608,7 @@ void Actor::GetActorMidTop(int ano, int *x, int *y) {
 
 	if (pActor) {
 		GetMoverMidTop(pActor, x, y);
-	} else if (TinselV3) {
+	} else if (TinselVersion == 3) {
 		int i;
 		for (i = 0; i < MAX_REELS; i++) {
 			if (_actorInfo[ano-1].presObjs[i] && MultiHasShape(_actorInfo[ano-1].presObjs[i])) {

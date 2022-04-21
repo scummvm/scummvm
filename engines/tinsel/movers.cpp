@@ -624,7 +624,7 @@ void SetMoverDirection(MOVER *pMover, DIRECTION dirn) {
  * Get actor to adopt its appropriate standing reel.
  */
 void SetMoverStanding(MOVER *pMover) {
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		warning("TODO: Finish implementation of GetMoverStanding() for Noir");
 		return;
 	}
@@ -710,7 +710,7 @@ static void InitialPathChecks(MOVER *pMover, int xpos, int ypos) {
 
 		z = GetScale(FirstPathPoly(), pMover->objY);
 	}
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		warning("TODO: Finish implementation of InitialPathChecks() for Noir");
 	} else {
 		SetMoverWalkReel(pMover, FORWARD, z, false);
@@ -916,7 +916,7 @@ void MoverProcessCreate(int X, int Y, int id, MOVER *pMover) {
 		iStruct.Y = Y;
 		iStruct.pMover = pMover;
 
-		CoroScheduler.createProcess(PID_MOVER, TinselV3 ? T3MoverProcess : T2MoverProcess, &iStruct, sizeof(MAINIT));
+		CoroScheduler.createProcess(PID_MOVER, (TinselVersion == 3) ? T3MoverProcess : T2MoverProcess, &iStruct, sizeof(MAINIT));
 	} else {
 		MoverProcessHelper(X, Y, id, pMover);
 		pMover->pProc = CoroScheduler.createProcess(PID_MOVER, T1MoverProcess, &pMover, sizeof(MOVER *));

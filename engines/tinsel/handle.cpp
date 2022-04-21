@@ -60,9 +60,9 @@ enum {
 	fCompressed	= 0x10000000L,	///< compressed data
 	fLoaded		= 0x20000000L	///< set when file data has been loaded
 };
-#define FSIZE_MASK	(TinselV3 ? 0xFFFFFFFFL : 0x00FFFFFFL)	//!< mask to isolate the filesize
-#define MEMFLAGS(x) (TinselV3 ? x->flags2 : x->filesize)
-#define MEMFLAGSET(x, mask) (TinselV3 ? x->flags2 |= mask : x->filesize |= mask)
+#define FSIZE_MASK	((TinselVersion == 3) ? 0xFFFFFFFFL : 0x00FFFFFFL)	//!< mask to isolate the filesize
+#define MEMFLAGS(x) ((TinselVersion == 3) ? x->flags2 : x->filesize)
+#define MEMFLAGSET(x, mask) ((TinselVersion == 3) ? x->flags2 |= mask : x->filesize |= mask)
 
 Handle::Handle() : _handleTable(0), _numHandles(0), _cdPlayHandle((uint32)-1), _cdBaseHandle(0), _cdTopHandle(0), _cdGraphStream(nullptr) {
 }
@@ -258,7 +258,7 @@ void Handle::LoadFile(MEMHANDLE *pH) {
 	memcpy(szFilename, pH->szName, sizeof(pH->szName));
 	szFilename[sizeof(pH->szName)] = 0;
 
-	if (!TinselV3 && MEMFLAGS(pH) & fCompressed) {
+	if ((TinselVersion != 3) && MEMFLAGS(pH) & fCompressed) {
 		error("Compression handling has been removed - %s", szFilename);
 	}
 
@@ -273,7 +273,7 @@ void Handle::LoadFile(MEMHANDLE *pH) {
 		// make sure address is valid
 		assert(addr);
 
-		if (TinselV3 && MEMFLAGS(pH) & fCompressed) {
+		if ((TinselVersion == 3) && MEMFLAGS(pH) & fCompressed) {
 			bytes = decompressLZSS(f, addr);
 		} else {
 			bytes = f.read(addr, pH->filesize & FSIZE_MASK);
@@ -309,7 +309,7 @@ void Handle::LoadFile(MEMHANDLE *pH) {
 FONT *Handle::GetFont(SCNHANDLE offset) {
 	byte *data = LockMem(offset);
 	const bool isBE = TinselV1Mac || TinselV1Saturn;
-	const uint32 size = (TinselV3 ? 12 * 4 : 11 * 4) + 300 * 4;	// FONT struct size
+	const uint32 size = ((TinselVersion == 3) ? 12 * 4 : 11 * 4) + 300 * 4;	// FONT struct size
 	Common::MemoryReadStreamEndian *stream = new Common::MemoryReadStreamEndian(data, size, isBE);
 
 	FONT *font = new FONT();
@@ -318,7 +318,7 @@ FONT *Handle::GetFont(SCNHANDLE offset) {
 	font->xShadow = stream->readSint32();
 	font->yShadow = stream->readSint32();
 	font->spaceSize = stream->readSint32();
-	font->baseColor = TinselV3 ? stream->readSint32() : 0;
+	font->baseColor = (TinselVersion == 3) ? stream->readSint32() : 0;
 	font->fontInit.hObjImg = stream->readUint32();
 	font->fontInit.objFlags = stream->readSint32();
 	font->fontInit.objID = stream->readSint32();
@@ -383,7 +383,7 @@ const IMAGE *Handle::GetImage(SCNHANDLE offset) {
 	img->anioffY = stream->readSint16();
 	img->hImgBits = stream->readUint32();
 
-	if (!TinselV3) {
+	if (TinselVersion != 3) {
 		img->hImgPal = stream->readUint32();
 	} else {
 		img->isRLE = stream->readSint16();

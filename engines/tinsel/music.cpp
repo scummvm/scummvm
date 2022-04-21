@@ -765,7 +765,7 @@ int PCMMusicPlayer::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool PCMMusicPlayer::isStereo() const {
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		return true;
 	} else {
 		return false;
@@ -773,7 +773,7 @@ bool PCMMusicPlayer::isStereo() const {
 }
 
 int PCMMusicPlayer::getRate() const {
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		if (_curChunk) {
 			return _curChunk->getRate();
 		} else {
@@ -1023,7 +1023,7 @@ void PCMMusicPlayer::loadMP3MusicFromSegment(int segmentNum) {
 }
 
 void PCMMusicPlayer::loadMusicFromSegment(int segmentNum) {
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		loadMP3MusicFromSegment(segmentNum);
 	} else {
 		loadADPCMMusicFromSegment(segmentNum);
