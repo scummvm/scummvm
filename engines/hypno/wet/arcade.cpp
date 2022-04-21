@@ -38,6 +38,9 @@ void WetEngine::initSegment(ArcadeShooting *arc) {
 	} else if (_arcadeMode == "Y4") {
 		_c40SegmentNext.clear();
 		_c40SegmentNext.push_back(2);
+		_c40SegmentPath.push_back(3);
+
+		_c40SegmentNext.push_back(2);
 		_c40SegmentPath.push_back(5);
 
 		_c40SegmentNext.push_back(6);
@@ -613,6 +616,12 @@ void WetEngine::drawShoot(const Common::Point &mousePos) {
 		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y + 1, c);
 		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y, c);
 		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y - 1, c);
+	} else if (_arcadeMode == "Y4") {
+		_compositeSurface->drawLine(_screenW/2 - 50, _screenH, mousePos.x, mousePos.y, c);
+		_compositeSurface->drawLine(_screenW/2 - 50, _screenH, mousePos.x - 1, mousePos.y, c);
+
+		_compositeSurface->drawLine(_screenW/2 + 50, _screenH, mousePos.x, mousePos.y, c);
+		_compositeSurface->drawLine(_screenW/2 + 50, _screenH, mousePos.x - 1, mousePos.y, c);
 	} else {
 		_compositeSurface->drawLine(0, _screenH, mousePos.x, mousePos.y, c);
 		_compositeSurface->drawLine(0, _screenH, mousePos.x - 1, mousePos.y, c);
@@ -624,6 +633,21 @@ void WetEngine::drawShoot(const Common::Point &mousePos) {
 	}
 
 	playSound(_soundPath + _shootSound, 1);
+
+	if (_arcadeMode == "Y4") {
+		if (mousePos.x <= 25)
+			_playerFrameIdx = 10;
+		else if (mousePos.x <= 50)
+			_playerFrameIdx = 12;
+		else if (mousePos.x >= 295)
+			_playerFrameIdx = 18;
+		else if (mousePos.x >= 270)
+			_playerFrameIdx = 16;
+		else
+			_playerFrameIdx = 14;
+
+		drawImage(*_playerFrames[_playerFrameIdx], 0, 200 - _playerFrames[_playerFrameIdx]->h, true);
+	}
 }
 
 void WetEngine::drawPlayer() {
@@ -654,8 +678,19 @@ void WetEngine::drawPlayer() {
 
 	if (_arcadeMode == "Y5")
 		_playerFrameIdx = 1;
-	else if (_arcadeMode == "Y4")
-		_playerFrameIdx = 2;
+	else if (_arcadeMode == "Y4") {
+		if (mousePos.x <= 25)
+			_playerFrameIdx = 0;
+		else if (mousePos.x <= 50)
+			_playerFrameIdx = 2;
+		else if (mousePos.x >= 295)
+			_playerFrameIdx = 8;
+		else if (mousePos.x >= 270)
+			_playerFrameIdx = 6;
+		else
+			_playerFrameIdx = 4;
+	}
+
 
 	int offset = 0;
 	// Ugly, but seems to be necessary
