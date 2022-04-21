@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-21 09:07+0000\n"
-"PO-Revision-Date: 2022-04-16 10:39+0000\n"
+"PO-Revision-Date: 2022-04-21 11:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -6628,16 +6628,16 @@ msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(вместо обычной прокрутки с шагов в 8 пикселей)"
 
 #: engines/scumm/detection.cpp:220
-#, fuzzy
-#| msgid "Enable smooth scrolling"
 msgid "Allow semi-smooth scrolling"
-msgstr "Включить плавную прокрутку"
+msgstr "Включить полуплавную прокрутку"
 
 #: engines/scumm/detection.cpp:221
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr ""
+"Включает менее плавную прокрутку во время быстрокго перемещения камеры в "
+"интро."
 
 #: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:730
 msgid "Enable game-specific enhancements"
