@@ -1605,7 +1605,7 @@ void Dialogs::HoldItem(int item, bool bKeepFilm) {
 	INV_OBJECT *invObj;
 
 	if (_heldItem != item) {
-		if ((TinselVersion >= 2) && (_heldItem != NOOBJECT)) {
+		if ((TinselVersion >= 2) && (_heldItem != INV_NOICON)) {
 			// No longer holding previous item
 			_vm->_cursor->DelAuxCursor(); // no longer aux cursor
 
@@ -3130,18 +3130,18 @@ void Dialogs::ConvAction(int index) {
 	MOVER *pMover = (TinselVersion >= 2) ? GetMover(_vm->_actor->GetLeadId()) : NULL;
 
 	switch (index) {
-	case INV_NOICON:
+	case NOOBJECT:
 		return;
 
 	case INV_CLOSEICON:
-		_thisIcon = -1; // Postamble
+		_thisIcon = NOOBJECT; // Postamble
 		break;
 
 	case INV_OPENICON:
 		// Store the direction the lead character is facing in when the conversation starts
 		if (TinselVersion >= 2)
 			_initialDirection = GetMoverDirection(pMover);
-		_thisIcon = -2; // Preamble
+		_thisIcon = INV_CLOSEICON; // Preamble
 		break;
 
 	default:

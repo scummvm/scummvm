@@ -57,11 +57,18 @@ enum {
 
 enum {
 	NOOBJECT = -1,
-	INV_NOICON = -1,
+	INV_NOICON_V0 = -1,
 	INV_CLOSEICON = -2,
 	INV_OPENICON = -3,
-	INV_HELDNOTIN = -4
+	INV_HELDNOTIN_V0 = -4,
+	// Noir discerns between NOOBJECT and INV_NOICON
+	INV_NOICON_V3 = 0,
+	INV_HELDNOTIN_V3 = 1,
+	INV_HELDIN = 2,
 };
+
+#define INV_NOICON ((TinselVersion == 3) ? INV_NOICON_V3 : INV_NOICON_V0)
+#define INV_HELDNOTIN ((TinselVersion == 3) ? INV_HELDNOTIN_V3 : INV_HELDNOTIN_V0)
 
 enum CONV_PARAM {
 	CONV_DEF,
@@ -90,6 +97,7 @@ enum InvCursorFN { IC_AREA,
 #define V3ATTR_X200 0x200
 #define V3ATTR_X400 0x400
 #define NOTEBOOK_TITLE 0x800 // is a notebook title
+#define V3ATTR_X1000 0x1000
 #define V3ATTR_X2000 0x2000
 
 #define sliderRange (_sliderYmax - _sliderYmin)
