@@ -497,7 +497,7 @@ void SoundManager::showSoundError(const char *errorMsg, const char *soundFile) {
  */
 void SoundManager::openSampleFiles() {
 	// V1 Floppy and V0 demo versions have no sample files
-	if ((TinselVersion == 0) || (TinselV1 && !_vm->isV1CD()))
+	if ((TinselVersion == 0) || ((TinselVersion == 1) && !_vm->isV1CD()))
 		return;
 
 	TinselFile f(TinselV1Saturn);

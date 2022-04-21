@@ -1542,7 +1542,7 @@ static void ActorRestoredProcess(CORO_PARAM, const void *param) {
 	// This is needed particularly for the Psychiatrist scene in Discworld 1 - otherwise Rincewind
 	// can't go upstairs without leaving the building and returning.  If this patch causes problems
 	// in other scenes, an added check for the hCode == 1174490602 could be added.
-	if (isSavegame && TinselV1)
+	if (isSavegame && (TinselVersion == 1))
 		_ctx->pic->resumeState = RES_NOT;
 
 	CORO_INVOKE_1(Interpret, _ctx->pic);

@@ -190,9 +190,9 @@ static void SceneTinselProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	// The following myEscape value setting is used for enabling title screen skipping in DW1
-	if (TinselV1 && (g_sceneCtr == 1)) g_initialMyEscape = GetEscEvents();
+	if ((TinselVersion == 1) && (g_sceneCtr == 1)) g_initialMyEscape = GetEscEvents();
 	// DW1 PSX, Saturn and Mac has its own scene skipping script code for scenes 2 and 3 (bug #6094).
-	_ctx->myEscape = (TinselV1 && (g_sceneCtr < ((TinselV1PSX || TinselV1Saturn || TinselV1Mac) ? 2 : 4))) ? g_initialMyEscape : 0;
+	_ctx->myEscape = ((TinselVersion == 1) && (g_sceneCtr < ((TinselV1PSX || TinselV1Saturn || TinselV1Mac) ? 2 : 4))) ? g_initialMyEscape : 0;
 
 	// get the stuff copied to process when it was created
 	_ctx->pInit = (const TP_INIT *)param;
