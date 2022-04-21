@@ -312,7 +312,7 @@ void Poly::nextPoly() {
 	nlistx = (const int32 *)(_pStart + (int)FROM_32(pnodelistx));
 	nlisty = (const int32 *)(_pStart + (int)FROM_32(pnodelisty));
 
-	if (TinselV0)
+	if (TinselVersion == 0)
 		// Skip to the last 4 bytes of the record for the hScript value
 		_pData = pRecord + 0x62C;
 

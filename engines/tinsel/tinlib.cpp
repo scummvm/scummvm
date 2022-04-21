@@ -3411,7 +3411,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK))
 				_vm->_actor->GetActorMidTop(_ctx->actor, &_ctx->x, &_ctx->y);
 
-			if (!TinselV0 && !TinselV3) {
+			if ((TinselVersion != 0) && !TinselV3) {
 				SetTextPal(_vm->_actor->GetActorRGB(_ctx->actor));
 			}
 			if (TinselVersion >= 2) {
@@ -5283,7 +5283,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
  */
 int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pic, RESUME_STATE *pResumeState) {
 	int libCode;
-	if (TinselV0) libCode = DW1DEMO_CODES[operand];
+	if (TinselVersion == 0) libCode = DW1DEMO_CODES[operand];
 	else if (TinselVersion <= 1) libCode = DW1_CODES[operand];
 	else if (TinselV2Demo) libCode = DW2DEMO_CODES[operand];
 	else if (TinselV3) {
@@ -5329,7 +5329,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case ACTORREF:
 		// Common to both DW1 & DW2
-		if (!TinselV0)
+		if (TinselVersion != 0)
 			error("actorref isn't a real function");
 		return 0;
 

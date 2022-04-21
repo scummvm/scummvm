@@ -1175,14 +1175,14 @@ void DrawObject(DRAWOBJECT *pObj) {
 				MacDrawTiles(pObj, srcPtr, destPtr, typeId == 0x41);
 			else if (TinselV1)
 				WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x41);
-			else if (TinselV0)
+			else if (TinselVersion == 0)
 				t0WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x41);
 			break;
 		case 0x08:	// draw background without clipping
 		case 0x48:	// draw background with clipping
 			if (TinselV3)
 				t3WrtAll(pObj, srcPtr, destPtr);
-			else if ((TinselVersion == 2) || TinselV1Mac || TinselV0)
+			else if ((TinselVersion == 2) || TinselV1Mac || (TinselVersion == 0))
 				WrtAll(pObj, srcPtr, destPtr, typeId == 0x48);
 			else if (TinselV1PSX || TinselV1Saturn)
 				psxSaturnDrawTiles(pObj, srcPtr, destPtr, typeId == 0x48, psxFourBitClut, psxSkipBytes, psxMapperTable, false);

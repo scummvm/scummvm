@@ -553,7 +553,7 @@ static int32 GetBytes(const byte *scriptCode, const WorkaroundEntry* &wkEntry, i
 	switch (numBytes) {
 	case 0:
 		// Instruction byte
-		tmp = code[ip++ * (TinselV0 ? 4 : 1)];
+		tmp = code[ip++ * ((TinselVersion == 0) ? 4 : 1)];
 		break;
 	case 1:
 		// Fetch and sign extend a 8 bit value to 32 bits.
@@ -565,7 +565,7 @@ static int32 GetBytes(const byte *scriptCode, const WorkaroundEntry* &wkEntry, i
 		ip += 2;
 		break;
 	default:
-		if (TinselV0)
+		if (TinselVersion == 0)
 			tmp = (int32)READ_LE_UINT32(code + ip++ * 4);
 		else {
 			tmp = (int32)READ_LE_UINT32(code + ip);
@@ -582,7 +582,7 @@ static int32 GetBytes(const byte *scriptCode, const WorkaroundEntry* &wkEntry, i
  * stream and advance the instruction pointer accordingly.
  */
 static int32 Fetch(byte opcode, const byte *code, const WorkaroundEntry* &wkEntry, int &ip) {
-	if (TinselV0)
+	if (TinselVersion == 0)
 		// Fetch a 32 bit value.
 		return GetBytes(code, wkEntry, ip, 4);
 	else if (opcode & OPSIZE8)
@@ -622,7 +622,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		}
 
 		byte opcode = (byte)GetBytes(ic->code, wkEntry, ip, 0);
-		if (TinselV0 && ((opcode & OPMASK) > OP_IMM))
+		if ((TinselVersion == 0) && ((opcode & OPMASK) > OP_IMM))
 			opcode += 3;
 
 		if (TinselV3) {
@@ -720,7 +720,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			tmp2 = CallLibraryRoutine(coroParam, tmp, &ic->stack[ic->sp], ic, &ic->resumeState);
 			if (coroParam)
 				return;
-			if (!TinselV0)
+			if (TinselVersion != 0)
 				ic->sp += tmp2;
 			LockCode(ic);
 			if ((TinselVersion >= 2) && (ic->resumeState == RES_1))

@@ -185,7 +185,7 @@ void Background::StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 	// Start display process for each reel in the film
 	CoroScheduler.createProcess(PID_REEL, BGmainProcess, &pfilm->reels[0], sizeof(FREEL));
 
-	if (TinselV0) {
+	if (TinselVersion == 0) {
 		for (uint i = 1; i < FROM_32(pfilm->numreels); ++i)
 			CoroScheduler.createProcess(PID_REEL, BGotherProcess, &pfilm->reels[i], sizeof(FREEL));
 	}

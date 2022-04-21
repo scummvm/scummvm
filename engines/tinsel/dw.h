@@ -53,7 +53,7 @@ typedef int HPOLYGON;
 #define	MAX_INT	(~MIN_INT)
 
 // inventory object handle (if there are inventory objects)
-#define	INV_OBJ_SCNHANDLE (TinselV0 ? (2 << SCNHANDLE_SHIFT) : (1 << SCNHANDLE_SHIFT))
+#define	INV_OBJ_SCNHANDLE ((TinselVersion == 0) ? (2 << SCNHANDLE_SHIFT) : (1 << SCNHANDLE_SHIFT))
 
 #define FIELD_WORLD		(TinselV3 ? 2 : 0)
 #define FIELD_STATUS	(TinselV3 ? 8 : 1)

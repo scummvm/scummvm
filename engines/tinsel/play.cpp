@@ -457,7 +457,7 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 	_ctx->reelActor = (int32)FROM_32(pmi->mulID);
 
 	/**** New (experimental? bit 5/1/95 ****/
-	if (!TinselV0 && !_vm->_actor->actorAlive(_ctx->reelActor))
+	if ((TinselVersion != 0) && !_vm->_actor->actorAlive(_ctx->reelActor))
 		return;
 	/**** Delete a bit down there if this stays ****/
 

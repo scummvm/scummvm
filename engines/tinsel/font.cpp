@@ -31,7 +31,7 @@ namespace Tinsel {
 
 void Font::SetTagFontHandle(SCNHANDLE hFont) {
 	_hTagFont = _hRegularTagFont = hFont;
-	if (TinselV0)
+	if (TinselVersion == 0)
 		SetTalkFontHandle(hFont);	// Also re-use for talk text
 }
 
