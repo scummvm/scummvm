@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-21 09:07+0000\n"
+"POT-Creation-Date: 2022-04-21 17:34+0000\n"
 "PO-Revision-Date: 2022-04-20 10:37+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -4852,12 +4852,12 @@ msgid "Save file created by different version."
 msgstr "Lagringsfil opprettet i en annen versjon."
 
 #: engines/gob/inter_playtoons.cpp:257 engines/gob/inter_v2.cpp:1479
-#: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:553
+#: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:554
 msgid "Failed to load saved game from file."
 msgstr "Kunne ikke laste inn lagret spill fra lagringsfil."
 
 #: engines/gob/inter_v2.cpp:1549 engines/gob/inter_geisha.cpp:262
-#: engines/tinsel/saveload.cpp:566
+#: engines/tinsel/saveload.cpp:567
 msgid "Failed to save game to file."
 msgstr "Kunne ikke lagre spill til lagringsfil."
 

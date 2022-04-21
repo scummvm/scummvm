@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-21 09:07+0000\n"
+"POT-Creation-Date: 2022-04-21 17:34+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4867,12 +4867,12 @@ msgid "Save file created by different version."
 msgstr ""
 
 #: engines/gob/inter_playtoons.cpp:257 engines/gob/inter_v2.cpp:1479
-#: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:553
+#: engines/gob/inter_geisha.cpp:231 engines/tinsel/saveload.cpp:554
 msgid "Failed to load saved game from file."
 msgstr "טעינת המשחק השמורה מהקובץ נכשלה."
 
 #: engines/gob/inter_v2.cpp:1549 engines/gob/inter_geisha.cpp:262
-#: engines/tinsel/saveload.cpp:566
+#: engines/tinsel/saveload.cpp:567
 msgid "Failed to save game to file."
 msgstr "שמירת המשחק לקובץ נכשלה."
 
