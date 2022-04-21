@@ -268,7 +268,7 @@ void Music::SetMidiVolume(int vol) {
 void Music::OpenMidiFiles() {
 	Common::File midiStream;
 
-	if (TinselV0) {
+	if (TinselVersion == 0) {
 		// The early demo version of DW1 doesn't have MIDI
 	} else if (TinselVersion >= 2) {
 		// DW2 uses a different music mechanism

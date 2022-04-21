@@ -3475,7 +3475,7 @@ void Dialogs::OpenMenu(CONFTYPE menuType) {
 	int curX, curY;
 
 	// In the DW 1 demo, don't allow any menu to be opened
-	if (TinselV0)
+	if (TinselVersion == 0)
 		return;
 
 	if (_inventoryState != IDLE_INV)
@@ -5040,7 +5040,7 @@ void Dialogs::RegisterIcons(void *cptr, int num) {
 	_numObjects = num;
 	_invObjects = (INV_OBJECT *)cptr;
 
-	if (TinselV0) {
+	if (TinselVersion == 0) {
 		// In Tinsel 0, the INV_OBJECT structure doesn't have an attributes field, so we
 		// need to 'unpack' the source structures into the standard Tinsel v1/v2 format
 		MEM_NODE *node = MemoryAllocFixed(_numObjects * sizeof(INV_OBJECT));

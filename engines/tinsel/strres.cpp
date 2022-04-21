@@ -156,7 +156,7 @@ static byte *FindStringBase(int id) {
 	byte *pText = g_textBuffer;
 
 	// For Tinsel 0, Ids are decremented by 1
-	if (TinselV0)
+	if (TinselVersion == 0)
 		--id;
 
 	// index into text resource file
