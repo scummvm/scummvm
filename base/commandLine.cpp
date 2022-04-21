@@ -1695,7 +1695,13 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return true;
 	} else if (command == "md5") {
 		Common::String filename = settings.getValOrDefault("md5-path", "scummvm");
-		Common::Path Filename(filename, '/');
+		// Assume '/' separator except on Windows if the path contain at least one `\`
+		char sep = '/';
+#if WIN32
+		if (filename.contains('\\'))
+			sep = '\\';
+#endif
+		Common::Path Filename(filename, sep);
 		Common::FSNode path(Filename);
 		int32 md5Length = 0;
 
