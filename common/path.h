@@ -91,6 +91,22 @@ public:
 	 */
 	String toString(char separator = '/') const;
 
+	/**
+	 * Returns the Path for the parent directory of this path.
+	 *
+	 * Appending the getLastComponent() of a path to getParent() returns a path
+	 * identical to the original path.
+	 */
+	Path getParent() const;
+
+	/**
+	 * Returns the last component of this path.
+	 *
+	 * Appending the getLastComponent() of a path to getParent() returns a path
+	 * identical to the original path.
+	 */
+	Path getLastComponent() const;
+
 	/** Check whether this path is identical to path @p x. */
 	bool operator==(const Path &x) const;
 
