@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-20 16:40+0000\n"
+"POT-Creation-Date: 2022-04-21 09:07+0000\n"
 "PO-Revision-Date: 2022-03-29 10:46+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4050,57 +4050,57 @@ msgstr "TV emulatie"
 msgid "Emulate composite output to an NTSC TV"
 msgstr "Emuleer composite uitgang naar een NTSC TV"
 
-#: engines/adl/detection.cpp:63 engines/adl/detection.cpp:73
+#: engines/adl/detection.cpp:65 engines/adl/detection.cpp:77
 msgid "Color graphics"
 msgstr "Kleurenafbeeldingen"
 
-#: engines/adl/detection.cpp:64 engines/adl/detection.cpp:74
+#: engines/adl/detection.cpp:66 engines/adl/detection.cpp:78
 msgid "Use color graphics instead of monochrome"
 msgstr "Gebruik kleurenafbeeldingen in plaats van monochroom"
 
-#: engines/adl/detection.cpp:83
+#: engines/adl/detection.cpp:89
 msgid "Show scanlines"
 msgstr "Toon scanlines"
 
-#: engines/adl/detection.cpp:84
+#: engines/adl/detection.cpp:90
 msgid "Darken every other scanline to mimic the look of a CRT"
 msgstr ""
 "Maak om en om een scanline donker om zo het beeld van een CRT na te bootsen"
 
-#: engines/adl/detection.cpp:93
+#: engines/adl/detection.cpp:101
 msgid "Always use sharp monochrome text"
 msgstr "Gebruik altijd scherpe monochome tekst"
 
-#: engines/adl/detection.cpp:94
+#: engines/adl/detection.cpp:102
 msgid "Do not emulate NTSC artifacts for text"
 msgstr "Emuleer geen NTSC artefacten voor tekst"
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
-#: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
-#: engines/sci/detection_options.h:93 engines/sherlock/detection.cpp:58
+#: engines/groovie/detection.cpp:287 engines/neverhood/detection.cpp:134
+#: engines/sci/detection_options.h:105 engines/sherlock/detection.cpp:58
 #: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
-#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:106
+#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:120
 #: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Gebruik originele opslaan/laad schermen"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
-#: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
-#: engines/sci/detection_options.h:94 engines/sherlock/detection.cpp:59
+#: engines/groovie/detection.cpp:288 engines/neverhood/detection.cpp:135
+#: engines/sci/detection_options.h:106 engines/sherlock/detection.cpp:59
 #: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
-#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:107
+#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:121
 #: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Gebruik de originele opslaan/laden schermen in plaats van die van ScummVM"
 
-#: engines/agi/detection.cpp:96
+#: engines/agi/detection.cpp:98
 msgid "Use an alternative palette"
 msgstr "Gebruik een alternatieve palet"
 
-#: engines/agi/detection.cpp:97
+#: engines/agi/detection.cpp:99
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
@@ -4108,32 +4108,32 @@ msgstr ""
 "Gebruik een alternatieve palet, gemeenschappelijk voor alle Amiga spellen. "
 "Dit was het oude gedrag"
 
-#: engines/agi/detection.cpp:106
+#: engines/agi/detection.cpp:110
 msgid "Mouse support"
 msgstr "Muis ondersteuning"
 
-#: engines/agi/detection.cpp:107
+#: engines/agi/detection.cpp:111
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
 "Zet muis ondersteuning aan. Maakt het mogelijk om de muis te gebruiken voor "
 "bewegen en in spelmenus."
 
-#: engines/agi/detection.cpp:116
+#: engines/agi/detection.cpp:122
 msgid "Use Hercules hires font"
 msgstr "Gebruik Hercules hires lettertype"
 
-#: engines/agi/detection.cpp:117
+#: engines/agi/detection.cpp:123
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
 "Gebruikt het Hercules hires lettertype wanneer het lettertype bestand "
 "beschikbaar is."
 
-#: engines/agi/detection.cpp:126
+#: engines/agi/detection.cpp:134
 msgid "Pause when entering commands"
 msgstr "Pauzeer tijdens invoeren van opdrachten"
 
-#: engines/agi/detection.cpp:127
+#: engines/agi/detection.cpp:135
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
@@ -4141,11 +4141,11 @@ msgstr ""
 "Toont een opdrachtpromptscherm en pauzeert het spel (zoals in SCI) in plaats "
 "van een real-time prompt."
 
-#: engines/agi/detection.cpp:136
+#: engines/agi/detection.cpp:146
 msgid "Add speed menu"
 msgstr "Voeg snelheid menu toe"
 
-#: engines/agi/detection.cpp:137
+#: engines/agi/detection.cpp:147
 msgid "Add game speed menu (similar to PC version)"
 msgstr "Voeg spelsnelheid menu toe (net als PC versie)"
 
@@ -4366,20 +4366,20 @@ msgstr "Sitcom modus"
 msgid "Game will add laughter after actor's line or narration"
 msgstr "Spel voegt gelach toe na regels van personage of verhaal"
 
-#: engines/bladerunner/detection.cpp:61
+#: engines/bladerunner/detection.cpp:63
 msgid "Shorty mode"
 msgstr "Shorty modus"
 
-#: engines/bladerunner/detection.cpp:62
+#: engines/bladerunner/detection.cpp:64
 msgid "Game will shrink the actors and make their voices high pitched"
 msgstr ""
 "Spel verkleint de hoofden van de personages en laat de stemmen hoger klinken"
 
-#: engines/bladerunner/detection.cpp:70
+#: engines/bladerunner/detection.cpp:74
 msgid "Frame limiter high performance mode"
 msgstr "Framebeperker hoge performance modus"
 
-#: engines/bladerunner/detection.cpp:71
+#: engines/bladerunner/detection.cpp:75
 msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
@@ -4387,22 +4387,22 @@ msgstr ""
 "Deze modus kan resulteren in hoog CPU gebruik! Het omzeilt gebruik van "
 "delayMillis() functie."
 
-#: engines/bladerunner/detection.cpp:79
+#: engines/bladerunner/detection.cpp:85
 msgid "Max frames per second limit"
 msgstr "Max frames per seconde limiet"
 
-#: engines/bladerunner/detection.cpp:80
+#: engines/bladerunner/detection.cpp:86
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
 "Deze modus richt op een maximum van 120 fps. Uitgeschakeld is dat 60 fps"
 
-#: engines/bladerunner/detection.cpp:88
+#: engines/bladerunner/detection.cpp:96
 msgid "Disable McCoy's quick stamina drain"
 msgstr "McCoy's snelle stamina daling uitzetten"
 
-#: engines/bladerunner/detection.cpp:89
+#: engines/bladerunner/detection.cpp:97
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
@@ -4421,7 +4421,7 @@ msgstr "De vertaler wil niet dat zijn vertaling geïntegreerd wordt in ScummVM."
 #: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
 #: engines/groovie/detection.cpp:104 engines/kyra/detection_tables.h:303
-#: engines/lure/detection.cpp:249 engines/mohawk/detection_tables.h:988
+#: engines/lure/detection.cpp:251 engines/mohawk/detection_tables.h:988
 #: engines/mohawk/detection_tables.h:1094
 #: engines/mohawk/detection_tables.h:1109 engines/myst3/detection.cpp:142
 #: engines/neverhood/detection.cpp:120 engines/saga/detection_tables.h:186
@@ -4429,8 +4429,8 @@ msgstr "De vertaler wil niet dat zijn vertaling geïntegreerd wordt in ScummVM."
 #: engines/sci/detection_tables.h:5068 engines/sci/detection_tables.h:5076
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/trecision/detection.cpp:199
-#: engines/zvision/detection_tables.h:190
-#: engines/zvision/detection_tables.h:210
+#: engines/zvision/detection_tables.h:200
+#: engines/zvision/detection_tables.h:220
 msgid "Missing game code"
 msgstr "Ontbrekende spel code"
 
@@ -4614,21 +4614,21 @@ msgstr "Kleurenblind Modus"
 msgid "Enable Color Blind Mode by default"
 msgstr "Schakel Kleurenblind modus standaard in"
 
-#: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
-#: engines/sci/detection_options.h:191 engines/supernova/detection.cpp:51
+#: engines/cge/detection.cpp:126 engines/glk/detection.cpp:238
+#: engines/sci/detection_options.h:221 engines/supernova/detection.cpp:53
 msgid "Enable Text to Speech"
 msgstr "Gebruik Tekst naar Spraak"
 
-#: engines/cge/detection.cpp:125
+#: engines/cge/detection.cpp:127
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr ""
 "Gebruik TTS voor het oplezen van tekst in het spel (als TTS beschikbaar is)"
 
-#: engines/cine/detection.cpp:60
+#: engines/cine/detection.cpp:62
 msgid "Use transparent dialog boxes in 16 color scenes"
 msgstr "Gebruik doorzichtige dialoogvensters in 16 kleuren scenes"
 
-#: engines/cine/detection.cpp:61
+#: engines/cine/detection.cpp:63
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
@@ -4745,31 +4745,31 @@ msgstr ""
 "Klik OK om ze nu te converteren, anders zult u de volgende keer als u het "
 "spel start dit weer gevraagd worden.\n"
 
-#: engines/dreamweb/detection.cpp:64
+#: engines/dreamweb/detection.cpp:66
 msgid "Use bright palette mode"
 msgstr "Gebruik heldere palet modus"
 
-#: engines/dreamweb/detection.cpp:65
+#: engines/dreamweb/detection.cpp:67
 msgid "Display graphics using the game's bright palette"
 msgstr "Gebruik het heldere palet van het spel voor grafische zaken"
 
-#: engines/dreamweb/detection.cpp:75
+#: engines/dreamweb/detection.cpp:79
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "Zet spreek tekst aan voor Objecten, Opties en Bijbel Citaat"
 
-#: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
-#: engines/mads/detection.cpp:114 engines/sci/detection_options.h:192
-#: engines/sherlock/detection.cpp:120 engines/supernova/detection.cpp:52
-#: engines/twine/detection.cpp:753
+#: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
+#: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
+#: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
+#: engines/twine/detection.cpp:775
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 "Gebruik TTS voor het lezen van de omschrijvingen (als TTS beschikbaar is)"
 
-#: engines/dreamweb/detection.cpp:85
+#: engines/dreamweb/detection.cpp:91
 msgid "Enable Text to Speech for Subtitles"
 msgstr "Zet Spreek Tekst uit voor ondertiteling aan"
 
-#: engines/dreamweb/detection.cpp:86
+#: engines/dreamweb/detection.cpp:92
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr ""
 "Gebruik TTS voor het lezen van de ondertiteling (als TTS beschikbaar is)"
@@ -4778,11 +4778,11 @@ msgstr ""
 msgid "Use TTS to read the text"
 msgstr "Gebruik TTS om de tekst te lezen"
 
-#: engines/glk/detection.cpp:244
+#: engines/glk/detection.cpp:246
 msgid "Also read input text"
 msgstr "Lees ook de ingevoerde tekst"
 
-#: engines/glk/detection.cpp:245
+#: engines/glk/detection.cpp:247
 msgid "Use TTS to read the input text"
 msgstr "Gebruik TTS om de tekst invoer te lezen"
 
@@ -4917,11 +4917,11 @@ msgstr ""
 "Laad een gebruikers patch. Merk op dat het ScummVM team geen ondersteuning "
 "biedt voor zulke patches."
 
-#: engines/grim/detection.cpp:78 engines/zvision/metaengine.cpp:152
+#: engines/grim/detection.cpp:80 engines/zvision/metaengine.cpp:152
 msgid "Show FPS"
 msgstr "Toon FPS"
 
-#: engines/grim/detection.cpp:79
+#: engines/grim/detection.cpp:81
 msgid "Show the current FPS-rate, while you play."
 msgstr "Toon huidige FPS tijdens spelen."
 
@@ -5085,19 +5085,19 @@ msgstr "Film snel afspelen"
 msgid "Play movies at an increased speed"
 msgstr "Speel films sneller af"
 
-#: engines/groovie/detection.cpp:295
+#: engines/groovie/detection.cpp:299
 msgid "Easier AI"
 msgstr "Makkelijkere AI"
 
-#: engines/groovie/detection.cpp:296
+#: engines/groovie/detection.cpp:300
 msgid "Decrease the difficulty of AI puzzles"
 msgstr "Verlaag de moeilijkheid van AI puzzels"
 
-#: engines/groovie/detection.cpp:305
+#: engines/groovie/detection.cpp:311
 msgid "Updated Credits Music"
 msgstr "Bijgewerkte Muziek Credits"
 
-#: engines/groovie/detection.cpp:306
+#: engines/groovie/detection.cpp:312
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
@@ -5169,15 +5169,15 @@ msgstr "Tussenstops wissen"
 msgid "Debug"
 msgstr "Debug"
 
-#: engines/hopkins/detection.cpp:46 engines/hopkins/detection.cpp:56
+#: engines/hopkins/detection.cpp:46 engines/hopkins/detection.cpp:58
 msgid "Gore Mode"
 msgstr "Gore Modus"
 
-#: engines/hopkins/detection.cpp:47 engines/hopkins/detection.cpp:57
+#: engines/hopkins/detection.cpp:47 engines/hopkins/detection.cpp:59
 msgid "Enable Gore Mode when available"
 msgstr "Gore modus inschakelen waar mogelijk"
 
-#: engines/hypno/detection.cpp:190 engines/ultima/detection.cpp:78
+#: engines/hypno/detection.cpp:190 engines/ultima/detection.cpp:84
 msgid "Enable cheats"
 msgstr "Zet valsspelen aan"
 
@@ -5185,11 +5185,11 @@ msgstr "Zet valsspelen aan"
 msgid "Allow cheats using the C key."
 msgstr "Sta cheaten toe met de C toets."
 
-#: engines/hypno/detection.cpp:197
+#: engines/hypno/detection.cpp:199
 msgid "Enable restored content"
 msgstr "Gerestaureerde inhoud inschakelen"
 
-#: engines/hypno/detection.cpp:198
+#: engines/hypno/detection.cpp:200
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 "Voeg extra content toe die niet in de originele implementatie gebruikt werd."
@@ -5205,69 +5205,69 @@ msgid "Enable studio audience"
 msgstr "Publiek inschakelen"
 
 #. I18N: This option allows the user to skip text and cutscenes.
-#: engines/kyra/detection.cpp:72
+#: engines/kyra/detection.cpp:74
 msgid "Skip support"
 msgstr "Support overslaan"
 
-#: engines/kyra/detection.cpp:73
+#: engines/kyra/detection.cpp:75
 msgid "Allow text and cutscenes to be skipped"
 msgstr "Toestaan om tekst en cutscenes over te slaan"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
-#: engines/kyra/detection.cpp:83
+#: engines/kyra/detection.cpp:87
 msgid "Helium mode"
 msgstr "Helium-modus"
 
-#: engines/kyra/detection.cpp:84
+#: engines/kyra/detection.cpp:88
 msgid "Enable helium mode"
 msgstr "Helium-modus aangezet"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
-#: engines/kyra/detection.cpp:97
+#: engines/kyra/detection.cpp:103
 msgid "Smooth scrolling"
 msgstr "Vloeiend scrollen"
 
-#: engines/kyra/detection.cpp:98
+#: engines/kyra/detection.cpp:104
 msgid "Enable smooth scrolling when walking"
 msgstr "Schakelt vloeiend scrollen in als er gelopen word"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
-#: engines/kyra/detection.cpp:110
+#: engines/kyra/detection.cpp:118
 msgid "Floating cursors"
 msgstr "Zwevend wijzers"
 
-#: engines/kyra/detection.cpp:111
+#: engines/kyra/detection.cpp:119
 msgid "Enable floating cursors"
 msgstr "Zwevende wijzers inschakelen"
 
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
-#: engines/kyra/detection.cpp:122
+#: engines/kyra/detection.cpp:132
 msgid "Suggest save names"
 msgstr "Geef naamsuggesties voor opgeslagen spellen"
 
-#: engines/kyra/detection.cpp:123
+#: engines/kyra/detection.cpp:133
 msgid "Autogenerated naming suggestions for savegames"
 msgstr "Automatisch gegenereerde naam suggesties voor opgeslagen spellen"
 
 #. I18N: HP stands for Hit Points
-#: engines/kyra/detection.cpp:135
+#: engines/kyra/detection.cpp:147
 msgid "HP bar graphs"
 msgstr "HP balk grafieken"
 
-#: engines/kyra/detection.cpp:136
+#: engines/kyra/detection.cpp:148
 msgid "Enable hit point bar graphs"
 msgstr "Hitpoints balkgrafieken inschakelen"
 
 #. I18N: L/R stands for Left/Right
-#: engines/kyra/detection.cpp:146
+#: engines/kyra/detection.cpp:160
 msgid "Fight Button L/R Swap"
 msgstr "Vechtknop L/R Omwisselen"
 
-#: engines/kyra/detection.cpp:147
+#: engines/kyra/detection.cpp:161
 msgid "Left button to attack, right button to pick up items"
 msgstr "Linkerknop om aan te vallen, rechterknop om voorwerpen op te pakken"
 
@@ -5560,8 +5560,8 @@ msgstr ""
 msgid "This puzzle is not available in the trial version of the game"
 msgstr "Deze puzzel is niet beschikbaar in de probeer versie van het spel"
 
-#: engines/lure/detection.cpp:44 engines/mads/detection.cpp:113
-#: engines/sherlock/detection.cpp:119 engines/twine/detection.cpp:752
+#: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:774
 msgid "TTS Narrator"
 msgstr "TTS Verteller"
 
@@ -5589,15 +5589,15 @@ msgstr "Makkelijke muis interface"
 msgid "Shows object names when hovering the mouse over them"
 msgstr "Toon labels voor objecten als de muis er over zweeft"
 
-#: engines/mads/detection.cpp:72 engines/mads/detection.cpp:73
+#: engines/mads/detection.cpp:74 engines/mads/detection.cpp:75
 msgid "Animated inventory items"
 msgstr "Geanimeerde inventaris"
 
-#: engines/mads/detection.cpp:82 engines/mads/detection.cpp:83
+#: engines/mads/detection.cpp:86 engines/mads/detection.cpp:87
 msgid "Animated game interface"
 msgstr "Geanimeerde spel interface"
 
-#: engines/mads/detection.cpp:92 engines/mads/detection.cpp:93
+#: engines/mads/detection.cpp:98 engines/mads/detection.cpp:99
 msgid "Naughty game mode"
 msgstr "Ondeugende spelmodus"
 
@@ -6117,21 +6117,21 @@ msgstr "Seconden"
 msgid "Invalid Scene ID!"
 msgstr "Ongeldige Scene ID!"
 
-#: engines/neverhood/detection.cpp:141
+#: engines/neverhood/detection.cpp:143
 msgid "Skip the Hall of Records storyboard scenes"
 msgstr "Sla de Hall of Records verhaallijnscenes over"
 
-#: engines/neverhood/detection.cpp:142
+#: engines/neverhood/detection.cpp:144
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr ""
 "Maakt het voor de speler mogelijk om de Hall of Records verhaallijnscenes "
 "over te slaan"
 
-#: engines/neverhood/detection.cpp:148
+#: engines/neverhood/detection.cpp:152
 msgid "Scale the making of videos to full screen"
 msgstr "Schaal het maken van videos naar het volledige scherm"
 
-#: engines/neverhood/detection.cpp:149
+#: engines/neverhood/detection.cpp:153
 msgid "Scale the making of videos, so that they use the whole screen"
 msgstr "Schaal het maken van videos zodat ze het volledige scherm gebruiken"
 
@@ -6294,124 +6294,124 @@ msgstr ""
 "Sla dithering stap in EGA spellen over, beelden worden getoond met volledige "
 "kleuren"
 
-#: engines/sci/detection_options.h:41
+#: engines/sci/detection_options.h:43
 msgid "Enable high resolution graphics"
 msgstr "Gebruik hoge resolutie beelden"
 
-#: engines/sci/detection_options.h:42
+#: engines/sci/detection_options.h:44
 msgid "Enable high resolution graphics/content"
 msgstr "Gebruik hoge resolutie beelden"
 
-#: engines/sci/detection_options.h:51
+#: engines/sci/detection_options.h:55
 msgid "Enable black-lined video"
 msgstr "Activeer black-lined video"
 
-#: engines/sci/detection_options.h:52
+#: engines/sci/detection_options.h:56
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
 "Teken zwarte lijntjes over videos om de scherpte ogenschijnlijk te verhogen"
 
-#: engines/sci/detection_options.h:62
+#: engines/sci/detection_options.h:68
 msgid "Use high-quality video scaling"
 msgstr "Gebruik hoge kwaliteit video schaling"
 
-#: engines/sci/detection_options.h:63
+#: engines/sci/detection_options.h:69
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr ""
 "Gebruik lineaire interpolatie tijdens het opschalen van videos, waar mogelijk"
 
-#: engines/sci/detection_options.h:73
+#: engines/sci/detection_options.h:81
 msgid "Use high-quality \"LarryScale\" cel scaling"
 msgstr "Gebruik hoge kwaliteit \"LarryScale\" cel schaling"
 
-#: engines/sci/detection_options.h:74
+#: engines/sci/detection_options.h:82
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
 "Gebruik speciale cartoon schaler voor het tekenen van de personage sprites"
 
-#: engines/sci/detection_options.h:83
+#: engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
 msgstr "Geef de voorkeur aan digitale geluidseffecten"
 
-#: engines/sci/detection_options.h:84
+#: engines/sci/detection_options.h:94
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Geef de voorkeur aan digitale geluidseffecten boven gesynthetiseerde"
 
-#: engines/sci/detection_options.h:103
+#: engines/sci/detection_options.h:117
 msgid "Use CD audio"
 msgstr "Gebruik CD audio"
 
-#: engines/sci/detection_options.h:104
+#: engines/sci/detection_options.h:118
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Gebruik CD audio in plaats van in-game audio, als dat beschikbaar is"
 
-#: engines/sci/detection_options.h:114
+#: engines/sci/detection_options.h:130
 msgid "Use Windows cursors"
 msgstr "Gebruik Windows muisaanwijzers"
 
-#: engines/sci/detection_options.h:115
+#: engines/sci/detection_options.h:131
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Gebruik Windows muisaanwijzers (kleiner en monochrome) in plaats van de DOS "
 "muisaanwijzers"
 
-#: engines/sci/detection_options.h:125
+#: engines/sci/detection_options.h:143
 msgid "Use silver cursors"
 msgstr "Gebruik zilveren muisaanwijzers"
 
-#: engines/sci/detection_options.h:126
+#: engines/sci/detection_options.h:144
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Gebruik de alternative set van zilveren cursors in plaats van de normale "
 "gouden"
 
-#: engines/sci/detection_options.h:136
+#: engines/sci/detection_options.h:156
 msgid "Enable content censoring"
 msgstr "Censureren content inschakelen"
 
-#: engines/sci/detection_options.h:137
+#: engines/sci/detection_options.h:157
 msgid "Enable the game's built-in optional content censoring"
 msgstr "Inschakelen van het in het spel gebouwde optionele inhoud censuur"
 
-#: engines/sci/detection_options.h:147
+#: engines/sci/detection_options.h:169
 msgid "Upscale videos"
 msgstr "Videos opschalen"
 
-#: engines/sci/detection_options.h:148
+#: engines/sci/detection_options.h:170
 msgid "Upscale videos to double their size"
 msgstr "Schaal videos op naar dubbele grootte"
 
-#: engines/sci/detection_options.h:158
+#: engines/sci/detection_options.h:182
 msgid "Use RGB rendering"
 msgstr "Gebruik RGB rendering"
 
-#: engines/sci/detection_options.h:159
+#: engines/sci/detection_options.h:183
 msgid "Use RGB rendering to improve screen transitions"
 msgstr "Gebruik RGB rendering om schermovergangen te verbeteren"
 
-#: engines/sci/detection_options.h:169
+#: engines/sci/detection_options.h:195
 msgid "Use per-resource modified palettes"
 msgstr "Gebruikt per bron gemodificieerde kleurenpaletten"
 
-#: engines/sci/detection_options.h:170
+#: engines/sci/detection_options.h:196
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr "Gebruik per object aangepaste kleurenpaletten om beeld te verbeteren"
 
-#: engines/sci/detection_options.h:180
+#: engines/sci/detection_options.h:208
 msgid "Enable bearded musicians"
 msgstr "Schakel bebaarde muziekanten in"
 
-#: engines/sci/detection_options.h:181
+#: engines/sci/detection_options.h:209
 msgid "Enable graphics that were disabled for legal reasons"
 msgstr "Toon beelden die uitgeschakeld waren vanwege juridische redenen"
 
-#: engines/sci/detection_options.h:205
+#: engines/sci/detection_options.h:237
 msgid "MIDI mode:"
 msgstr "MIDI modus:"
 
-#: engines/sci/detection_options.h:206
+#: engines/sci/detection_options.h:238
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
@@ -6419,15 +6419,15 @@ msgstr ""
 "Bij het gebruik van externe MIDI apparaten (bijv. door USB-MIDI), kunt u "
 "hier uw apparaat kiezen"
 
-#: engines/sci/detection_options.h:211
+#: engines/sci/detection_options.h:243
 msgid "Standard (GM / MT-32)"
 msgstr "Standaard (GM / MT-32)"
 
-#: engines/sci/detection_options.h:215
+#: engines/sci/detection_options.h:247
 msgid "Roland D-110 / D-10 / D-20"
 msgstr "Roland D-110 / D-10 / D-20"
 
-#: engines/sci/detection_options.h:219
+#: engines/sci/detection_options.h:251
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
@@ -6634,21 +6634,21 @@ msgstr "Toon Object Regel"
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Toon de namen van de objecten onderaan het scherm"
 
-#: engines/scumm/detection.cpp:182
+#: engines/scumm/detection.cpp:184
 msgid "Use NES Classic Palette"
 msgstr "Gebruik NES Classic palet"
 
-#: engines/scumm/detection.cpp:183
+#: engines/scumm/detection.cpp:185
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 "Gebruik een meer neutrale kleurenpalet dat sterk lijkt op die van de NES "
 "Classic"
 
-#: engines/scumm/detection.cpp:189
+#: engines/scumm/detection.cpp:193
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "Trim FM-TOWNS spellen naar 200 pixels hoog"
 
-#: engines/scumm/detection.cpp:190
+#: engines/scumm/detection.cpp:194
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -6656,11 +6656,11 @@ msgstr ""
 "Knip de extra 40 pixels onder het scherm af om het zo standaard 200 pixels "
 "hoog te maken. Hierdoorwordt 'aspect ratio correctie' mogelijk"
 
-#: engines/scumm/detection.cpp:196
+#: engines/scumm/detection.cpp:202
 msgid "Play simplified music"
 msgstr "Speel versimpelde muziek"
 
-#: engines/scumm/detection.cpp:197
+#: engines/scumm/detection.cpp:203
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
@@ -6668,19 +6668,31 @@ msgstr ""
 "Deze muziek was waarschijnlijk bedoeld voor de wat mindere Macs, en gebruikt "
 "slechts 1 kanaal."
 
-#: engines/scumm/detection.cpp:203
+#: engines/scumm/detection.cpp:211
 msgid "Enable smooth scrolling"
 msgstr "Zet vloeiend scrollen aan"
 
-#: engines/scumm/detection.cpp:204
+#: engines/scumm/detection.cpp:212
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(in plaats van de gebruikelijke stappen van 8 pixels scrollen)"
 
-#: engines/scumm/detection.cpp:210 engines/scumm/dialogs.cpp:730
+#: engines/scumm/detection.cpp:220
+#, fuzzy
+#| msgid "Enable smooth scrolling"
+msgid "Allow semi-smooth scrolling"
+msgstr "Zet vloeiend scrollen aan"
+
+#: engines/scumm/detection.cpp:221
+msgid ""
+"Allow scrolling to be less smooth during the fast camera movement in the "
+"intro."
+msgstr ""
+
+#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:730
 msgid "Enable game-specific enhancements"
 msgstr "Gebruik spel-specifieke verbeteringen"
 
-#: engines/scumm/detection.cpp:211 engines/scumm/dialogs.cpp:730
+#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:730
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -7456,20 +7468,20 @@ msgstr ""
 "Kopieer deze bestand(en) a.u.b. in de spel data map.\n"
 "\n"
 
-#: engines/sherlock/detection.cpp:68
+#: engines/sherlock/detection.cpp:70
 msgid "Pixellated scene transitions"
 msgstr "Pixellated scèneovergangen"
 
-#: engines/sherlock/detection.cpp:69
+#: engines/sherlock/detection.cpp:71
 msgid "When changing scenes, a randomized pixel transition is done"
 msgstr ""
 "Bij scene wijzigingen wordt er een willekeurig pixel transitie gebruikt"
 
-#: engines/sherlock/detection.cpp:78
+#: engines/sherlock/detection.cpp:82
 msgid "Don't show hotspots when moving mouse"
 msgstr "Toon geen hotspots als de muis beweegt"
 
-#: engines/sherlock/detection.cpp:79
+#: engines/sherlock/detection.cpp:83
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
@@ -7477,27 +7489,27 @@ msgstr ""
 "Toon alleen hotspots wanneer er daadwerkelijk op hotspot of actieknop "
 "geklikt word"
 
-#: engines/sherlock/detection.cpp:88
+#: engines/sherlock/detection.cpp:94
 msgid "Show character portraits"
 msgstr "Toon personage portretfoto's"
 
-#: engines/sherlock/detection.cpp:89
+#: engines/sherlock/detection.cpp:95
 msgid "Show portraits for the characters when conversing"
 msgstr "Toon portretten van de personages bij het converseren"
 
-#: engines/sherlock/detection.cpp:98
+#: engines/sherlock/detection.cpp:106
 msgid "Slide dialogs into view"
 msgstr "Schuif dialoogvensters in beeld"
 
-#: engines/sherlock/detection.cpp:99
+#: engines/sherlock/detection.cpp:107
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
 msgstr "Schuif dialoogvensters in beeld, in plaats van onmiddellijk tonen"
 
-#: engines/sherlock/detection.cpp:108
+#: engines/sherlock/detection.cpp:118
 msgid "Transparent windows"
 msgstr "Transparante vensters"
 
-#: engines/sherlock/detection.cpp:109
+#: engines/sherlock/detection.cpp:119
 msgid "Show windows with a partially transparent background"
 msgstr "Toon vensters met een gedeeltelijk transparante achtergrond"
 
@@ -7547,11 +7559,11 @@ msgstr "Laad bewerkte bestanden"
 msgid "Enable loading of external replacement assets."
 msgstr "Zet het laden van externe vervangende spelbestanden aan."
 
-#: engines/stark/detection.cpp:384
+#: engines/stark/detection.cpp:386
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "Schakel lineair filteren van de achtergrond afbeeldingen in"
 
-#: engines/stark/detection.cpp:385
+#: engines/stark/detection.cpp:387
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -7559,11 +7571,11 @@ msgstr ""
 "Wanneer lineair filteren is ingeschakeld, de achtergrond afbeeldingen worden "
 "gladder in volledig scherm modus, ten koste van sommige details."
 
-#: engines/stark/detection.cpp:393 engines/ultima/detection.cpp:118
+#: engines/stark/detection.cpp:397 engines/ultima/detection.cpp:136
 msgid "Enable font anti-aliasing"
 msgstr "Schakel font anti-aliasing in"
 
-#: engines/stark/detection.cpp:394 engines/ultima/detection.cpp:119
+#: engines/stark/detection.cpp:398 engines/ultima/detection.cpp:137
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Wanneer font anti-aliasing is ingeschakeld, ziet de tekst er gladder uit."
@@ -7789,86 +7801,86 @@ msgstr "Zet muur botsingen aan"
 msgid "Enable the original wall collision damage"
 msgstr "Gebruik de originel muur bots beschadiging"
 
-#: engines/twine/detection.cpp:681
+#: engines/twine/detection.cpp:683
 msgid "Disable save menu"
 msgstr "Bewaar menu uitschakelen"
 
-#: engines/twine/detection.cpp:682
+#: engines/twine/detection.cpp:684
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 "Het origineel had alleen automatisch opslaan. Dit maakt het mogelijk om op "
 "te slaan wanneer u maar wilt."
 
-#: engines/twine/detection.cpp:688
+#: engines/twine/detection.cpp:692
 msgid "Enable debug mode"
 msgstr "Zet debug modus aan"
 
-#: engines/twine/detection.cpp:689
+#: engines/twine/detection.cpp:693
 msgid "Enable the debug mode"
 msgstr "Gebruik de debug modus"
 
-#: engines/twine/detection.cpp:695
+#: engines/twine/detection.cpp:701
 msgid "Enable audio CD"
 msgstr "Zet audio CD aan"
 
-#: engines/twine/detection.cpp:696
+#: engines/twine/detection.cpp:702
 msgid "Enable the original audio cd track"
 msgstr "Gebruik de originele audio CD spoor"
 
-#: engines/twine/detection.cpp:702
+#: engines/twine/detection.cpp:710
 msgid "Enable sound"
 msgstr "Geluid aanzetten"
 
-#: engines/twine/detection.cpp:703
+#: engines/twine/detection.cpp:711
 msgid "Enable the sound for the game"
 msgstr "Zet geluid aan voor het spel"
 
-#: engines/twine/detection.cpp:709
+#: engines/twine/detection.cpp:719
 msgid "Enable voices"
 msgstr "Zet spraak aan"
 
-#: engines/twine/detection.cpp:710
+#: engines/twine/detection.cpp:720
 msgid "Enable the voices for the game"
 msgstr "Zet stemmen aan in het spel"
 
-#: engines/twine/detection.cpp:716
+#: engines/twine/detection.cpp:728
 msgid "Enable text"
 msgstr "Zet tekst aan"
 
-#: engines/twine/detection.cpp:717
+#: engines/twine/detection.cpp:729
 msgid "Enable the text for the game"
 msgstr "Zet tekst aan voor het spel"
 
-#: engines/twine/detection.cpp:723
+#: engines/twine/detection.cpp:737
 msgid "Enable movies"
 msgstr "Zet films aan"
 
-#: engines/twine/detection.cpp:724
+#: engines/twine/detection.cpp:738
 msgid "Enable the cutscenes for the game"
 msgstr "Laat cutscenes zien in het spel"
 
-#: engines/twine/detection.cpp:730
+#: engines/twine/detection.cpp:746
 msgid "Enable mouse"
 msgstr "Gebruik muis"
 
-#: engines/twine/detection.cpp:731
+#: engines/twine/detection.cpp:747
 msgid "Enable the mouse for the UI"
 msgstr "Gebruik de muis voor de UI"
 
-#: engines/twine/detection.cpp:737
+#: engines/twine/detection.cpp:755
 msgid "Use the USA version"
 msgstr "Gebruik de VS versie"
 
-#: engines/twine/detection.cpp:738
+#: engines/twine/detection.cpp:756
 msgid "Enable the USA specific version flags"
 msgstr "Gebruik the USA versie specifieke vlaggen"
 
-#: engines/twine/detection.cpp:744 engines/ultima/detection.cpp:84
+#: engines/twine/detection.cpp:764 engines/ultima/detection.cpp:92
 msgid "Enable high resolution"
 msgstr "Gebruik hoge resolutie"
 
-#: engines/twine/detection.cpp:745 engines/ultima/detection.cpp:85
+#: engines/twine/detection.cpp:765 engines/ultima/detection.cpp:93
 msgid "Enable a higher resolution for the game"
 msgstr "Gebruik een hogere resolutie voor het spel"
 
@@ -8017,71 +8029,71 @@ msgctxt "Options menu"
 msgid "Wall collision off"
 msgstr "Muur botsen uit"
 
-#: engines/ultima/detection.cpp:66
+#: engines/ultima/detection.cpp:68
 msgid "Enable frame skipping"
 msgstr "Frame overslaan toestaan"
 
-#: engines/ultima/detection.cpp:67
+#: engines/ultima/detection.cpp:69
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr "Laat het spel frames overslaan wanneer het te langzaam draait."
 
-#: engines/ultima/detection.cpp:72
+#: engines/ultima/detection.cpp:76
 msgid "Enable frame limiting"
 msgstr "Gebruik frame limietering"
 
-#: engines/ultima/detection.cpp:73
+#: engines/ultima/detection.cpp:77
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 "Beperkt de snelheid van het spel om te voorkomen dat het te snel draait."
 
-#: engines/ultima/detection.cpp:79
+#: engines/ultima/detection.cpp:85
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr "Sta cheat commandos toe, en een menu wanneer op de speler is geklikt."
 
-#: engines/ultima/detection.cpp:94
+#: engines/ultima/detection.cpp:104
 msgid "Play foot step sounds"
 msgstr "Speel voetstap geluiden"
 
-#: engines/ultima/detection.cpp:95
+#: engines/ultima/detection.cpp:105
 msgid "Plays sound when the player moves."
 msgstr "Speelt geluid wanneer de speler zich verplaatst."
 
-#: engines/ultima/detection.cpp:100
+#: engines/ultima/detection.cpp:112
 msgid "Enable jump to mouse position"
 msgstr "Zet springen naar muis positie aan"
 
-#: engines/ultima/detection.cpp:101
+#: engines/ultima/detection.cpp:113
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
 "Springen zonder te verplaatsen richt de muis aanwijzer in plaats van alleen "
 "de richting."
 
-#: engines/ultima/detection.cpp:112
+#: engines/ultima/detection.cpp:128
 msgid "Enable font replacement"
 msgstr "Lettertypes vervangen"
 
-#: engines/ultima/detection.cpp:113
+#: engines/ultima/detection.cpp:129
 msgid "Replaces game fonts with rendered fonts"
 msgstr "Vervangt spel lettertypes met gerenderde lettertypes"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/detection.cpp:128
+#: engines/ultima/detection.cpp:148
 msgid "Camera moves with Silencer"
 msgstr "Camera beweegt met Silencer mee"
 
-#: engines/ultima/detection.cpp:129
+#: engines/ultima/detection.cpp:149
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
 "Camera volgt de bewegingen van de speler in plaats van springen naar "
 "voorgedefenieerde posities."
 
-#: engines/ultima/detection.cpp:142
+#: engines/ultima/detection.cpp:164
 msgid "Always enable Christmas easter-egg"
 msgstr "Zet de kerst easter-egg altijd aan"
 
-#: engines/ultima/detection.cpp:143
+#: engines/ultima/detection.cpp:165
 msgid "Enable the Christmas music at any time of year."
 msgstr "Gebruik de kerstmuziek het gehele jaar."
 
@@ -8153,11 +8165,11 @@ msgstr "Toon FPS-teller"
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr "Toon de huidige Frames Per Second teller in de linkerbovenhoek"
 
-#: engines/wintermute/detection.cpp:62
+#: engines/wintermute/detection.cpp:64
 msgid "Sprite bilinear filtering (SLOW)"
 msgstr "Sprite bilineair filteren (langzaam)"
 
-#: engines/wintermute/detection.cpp:63
+#: engines/wintermute/detection.cpp:65
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Pas bilineair filteren toe op individuele sprites"
 
@@ -8776,11 +8788,11 @@ msgstr ""
 "Toont kosten van voorwerpen in standaard inventaris mode, om de waarden van "
 "voorwerpen te kunnen vergelijken"
 
-#: engines/xeen/detection.cpp:65
+#: engines/xeen/detection.cpp:67
 msgid "More durable armor"
 msgstr "Duurzamere harnas"
 
-#: engines/xeen/detection.cpp:66
+#: engines/xeen/detection.cpp:68
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
 "Harnas zal niet breken voordat de personage op -80HP staat, in plaats van "
@@ -8790,35 +8802,35 @@ msgstr ""
 msgid "Failed to autosave"
 msgstr "Snel opslaan mislukt"
 
-#: engines/zvision/detection_tables.h:60
+#: engines/zvision/detection_tables.h:62
 msgid "Double FPS"
 msgstr "Dubbele FPS"
 
-#: engines/zvision/detection_tables.h:61
+#: engines/zvision/detection_tables.h:63
 msgid "Increase framerate from 30 to 60 FPS"
 msgstr "Verhoog framerate van 30 naar 60 FPS"
 
-#: engines/zvision/detection_tables.h:70
+#: engines/zvision/detection_tables.h:74
 msgid "Enable Venus"
 msgstr "Gebruik Venus"
 
-#: engines/zvision/detection_tables.h:71
+#: engines/zvision/detection_tables.h:75
 msgid "Enable the Venus help system"
 msgstr "Gebruik het Venus help systeem"
 
-#: engines/zvision/detection_tables.h:80
+#: engines/zvision/detection_tables.h:86
 msgid "Disable animation while turning"
 msgstr "Stop animatie tijdens draaien"
 
-#: engines/zvision/detection_tables.h:81
+#: engines/zvision/detection_tables.h:87
 msgid "Disable animation while turning in panorama mode"
 msgstr "Stop animatie tijdens draaien in panorama modus"
 
-#: engines/zvision/detection_tables.h:90
+#: engines/zvision/detection_tables.h:98
 msgid "Use high resolution MPEG video"
 msgstr "Gebruik hoge resolutie MPEG video"
 
-#: engines/zvision/detection_tables.h:91
+#: engines/zvision/detection_tables.h:99
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
 "Gebruik de MPEG video van de DVD versie in plaats van de lagere resolutie AVI"

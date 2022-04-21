@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-20 16:40+0000\n"
+"POT-Creation-Date: 2022-04-21 09:07+0000\n"
 "PO-Revision-Date: 2022-04-17 16:27+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4025,55 +4025,55 @@ msgstr "TV-emulaatio"
 msgid "Emulate composite output to an NTSC TV"
 msgstr "Emuloi komposiittivideoulostuloa NTSC-televisioon"
 
-#: engines/adl/detection.cpp:63 engines/adl/detection.cpp:73
+#: engines/adl/detection.cpp:65 engines/adl/detection.cpp:77
 msgid "Color graphics"
 msgstr "Värigrafiikka"
 
-#: engines/adl/detection.cpp:64 engines/adl/detection.cpp:74
+#: engines/adl/detection.cpp:66 engines/adl/detection.cpp:78
 msgid "Use color graphics instead of monochrome"
 msgstr "Käytä värigrafiikkaa mustavalkoisen sijaan"
 
-#: engines/adl/detection.cpp:83
+#: engines/adl/detection.cpp:89
 msgid "Show scanlines"
 msgstr "Näytä vaakajuovat"
 
-#: engines/adl/detection.cpp:84
+#: engines/adl/detection.cpp:90
 msgid "Darken every other scanline to mimic the look of a CRT"
 msgstr "Tummenna joka toista juovaa kuvaputken jäljittelyä varten"
 
-#: engines/adl/detection.cpp:93
+#: engines/adl/detection.cpp:101
 msgid "Always use sharp monochrome text"
 msgstr "Käytä aina terävää mustavalkotekstiä"
 
-#: engines/adl/detection.cpp:94
+#: engines/adl/detection.cpp:102
 msgid "Do not emulate NTSC artifacts for text"
 msgstr "Poista NTSC-häiriövärien emulointi tekstille"
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
-#: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
-#: engines/sci/detection_options.h:93 engines/sherlock/detection.cpp:58
+#: engines/groovie/detection.cpp:287 engines/neverhood/detection.cpp:134
+#: engines/sci/detection_options.h:105 engines/sherlock/detection.cpp:58
 #: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
-#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:106
+#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:120
 #: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
-#: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
-#: engines/sci/detection_options.h:94 engines/sherlock/detection.cpp:59
+#: engines/groovie/detection.cpp:288 engines/neverhood/detection.cpp:135
+#: engines/sci/detection_options.h:106 engines/sherlock/detection.cpp:59
 #: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
-#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:107
+#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:121
 #: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja ScummVM valikoiden sijaan"
 
-#: engines/agi/detection.cpp:96
+#: engines/agi/detection.cpp:98
 msgid "Use an alternative palette"
 msgstr "Käytä vaihtoehtoista palettia"
 
-#: engines/agi/detection.cpp:97
+#: engines/agi/detection.cpp:99
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
@@ -4081,29 +4081,29 @@ msgstr ""
 "Käytä vaihtoehtoista väripalettia, joka on yleinen kaikissa Amigapeleissä. "
 "Tämä on vanha toimintamalli"
 
-#: engines/agi/detection.cpp:106
+#: engines/agi/detection.cpp:110
 msgid "Mouse support"
 msgstr "Hiirituki"
 
-#: engines/agi/detection.cpp:107
+#: engines/agi/detection.cpp:111
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr "Aktivoi hiirituen. Mahdollistaa hiiren käyttämisen pelivalikoissa."
 
-#: engines/agi/detection.cpp:116
+#: engines/agi/detection.cpp:122
 msgid "Use Hercules hires font"
 msgstr "Käytä korkearesoluutioista Hercules-fonttia"
 
-#: engines/agi/detection.cpp:117
+#: engines/agi/detection.cpp:123
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
 "Käyttää korkearesoluutioista Hercules-fonttia jos tiedosto on saatavilla."
 
-#: engines/agi/detection.cpp:126
+#: engines/agi/detection.cpp:134
 msgid "Pause when entering commands"
 msgstr "Pysäytä käskyjen syöttämisen ajaksi"
 
-#: engines/agi/detection.cpp:127
+#: engines/agi/detection.cpp:135
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
@@ -4111,11 +4111,11 @@ msgstr ""
 "Näyttää komentokehoitteen ja pysäyttää pelin (kuten SCI:ssä) reaaliaikaisen "
 "kehoitteen sijaan."
 
-#: engines/agi/detection.cpp:136
+#: engines/agi/detection.cpp:146
 msgid "Add speed menu"
 msgstr "Lisää nopeusvalikko"
 
-#: engines/agi/detection.cpp:137
+#: engines/agi/detection.cpp:147
 msgid "Add game speed menu (similar to PC version)"
 msgstr "Lisää pelinnopeusvalikko (kuten PC-versiossa)"
 
@@ -4338,19 +4338,19 @@ msgstr "Tilannekomediamoodi"
 msgid "Game will add laughter after actor's line or narration"
 msgstr "Hahmon repliikin jälkeen lisätään naurua"
 
-#: engines/bladerunner/detection.cpp:61
+#: engines/bladerunner/detection.cpp:63
 msgid "Shorty mode"
 msgstr "Pätkätila"
 
-#: engines/bladerunner/detection.cpp:62
+#: engines/bladerunner/detection.cpp:64
 msgid "Game will shrink the actors and make their voices high pitched"
 msgstr "Hahmoja kutistetaan ja niiden ääntä nopeutetaan"
 
-#: engines/bladerunner/detection.cpp:70
+#: engines/bladerunner/detection.cpp:74
 msgid "Frame limiter high performance mode"
 msgstr "Kuvanpäivitysnopeuden rajoittimen korkean suorituskyvyn tila"
 
-#: engines/bladerunner/detection.cpp:71
+#: engines/bladerunner/detection.cpp:75
 msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
@@ -4358,22 +4358,22 @@ msgstr ""
 "Tämä tila saattaa käyttää paljon laskentatehoa! Se välttää delayMillis()-"
 "funktion käyttämistä."
 
-#: engines/bladerunner/detection.cpp:79
+#: engines/bladerunner/detection.cpp:85
 msgid "Max frames per second limit"
 msgstr "Maksimi kuvia/sekunti raja"
 
-#: engines/bladerunner/detection.cpp:80
+#: engines/bladerunner/detection.cpp:86
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
 "Tämä tila tähtää 120FPS maksimiin. Jos pois päältä, peli tähtää 60FPS:ään"
 
-#: engines/bladerunner/detection.cpp:88
+#: engines/bladerunner/detection.cpp:96
 msgid "Disable McCoy's quick stamina drain"
 msgstr "Estä McCoy:n nopea staminan kuluminen"
 
-#: engines/bladerunner/detection.cpp:89
+#: engines/bladerunner/detection.cpp:97
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
@@ -4393,7 +4393,7 @@ msgstr ""
 #: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
 #: engines/groovie/detection.cpp:104 engines/kyra/detection_tables.h:303
-#: engines/lure/detection.cpp:249 engines/mohawk/detection_tables.h:988
+#: engines/lure/detection.cpp:251 engines/mohawk/detection_tables.h:988
 #: engines/mohawk/detection_tables.h:1094
 #: engines/mohawk/detection_tables.h:1109 engines/myst3/detection.cpp:142
 #: engines/neverhood/detection.cpp:120 engines/saga/detection_tables.h:186
@@ -4401,8 +4401,8 @@ msgstr ""
 #: engines/sci/detection_tables.h:5068 engines/sci/detection_tables.h:5076
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/trecision/detection.cpp:199
-#: engines/zvision/detection_tables.h:190
-#: engines/zvision/detection_tables.h:210
+#: engines/zvision/detection_tables.h:200
+#: engines/zvision/detection_tables.h:220
 msgid "Missing game code"
 msgstr "Pelimoottori puuttuu"
 
@@ -4569,20 +4569,20 @@ msgstr "Värisokeustila"
 msgid "Enable Color Blind Mode by default"
 msgstr "Aktivoi värisokeustila vakiona"
 
-#: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
-#: engines/sci/detection_options.h:191 engines/supernova/detection.cpp:51
+#: engines/cge/detection.cpp:126 engines/glk/detection.cpp:238
+#: engines/sci/detection_options.h:221 engines/supernova/detection.cpp:53
 msgid "Enable Text to Speech"
 msgstr "Käytä tekstistä puheeksi -toimintoa"
 
-#: engines/cge/detection.cpp:125
+#: engines/cge/detection.cpp:127
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Käytä TTS:ää tekstin lukemiseen pelissä (jos TTS on saatavilla)"
 
-#: engines/cine/detection.cpp:60
+#: engines/cine/detection.cpp:62
 msgid "Use transparent dialog boxes in 16 color scenes"
 msgstr "Käytä läpinäkyviä dialogilaatikoita 16-värisissä näkymissä"
 
-#: engines/cine/detection.cpp:61
+#: engines/cine/detection.cpp:63
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
@@ -4699,31 +4699,31 @@ msgstr ""
 "Paina OK muuntaaksesi ne nyt, muuten sinulta kysytään asiaa uudestaan "
 "seuraavalla kerralla.\n"
 
-#: engines/dreamweb/detection.cpp:64
+#: engines/dreamweb/detection.cpp:66
 msgid "Use bright palette mode"
 msgstr "Käytä kirkaspalettitilaa"
 
-#: engines/dreamweb/detection.cpp:65
+#: engines/dreamweb/detection.cpp:67
 msgid "Display graphics using the game's bright palette"
 msgstr "Näytä grafiikat käyttäen pelin kirkasta palettia"
 
-#: engines/dreamweb/detection.cpp:75
+#: engines/dreamweb/detection.cpp:79
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 "Tekstistä puheeksi -toiminto esineille, asetuksille ja raamattulainaukselle"
 
-#: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
-#: engines/mads/detection.cpp:114 engines/sci/detection_options.h:192
-#: engines/sherlock/detection.cpp:120 engines/supernova/detection.cpp:52
-#: engines/twine/detection.cpp:753
+#: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
+#: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
+#: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
+#: engines/twine/detection.cpp:775
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Käytä TTS:ää kuvauksien lukemiseen (jos TTS on saatavilla)"
 
-#: engines/dreamweb/detection.cpp:85
+#: engines/dreamweb/detection.cpp:91
 msgid "Enable Text to Speech for Subtitles"
 msgstr "Tekstistä puheeksi -toiminto tekstityksille"
 
-#: engines/dreamweb/detection.cpp:86
+#: engines/dreamweb/detection.cpp:92
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "Käytä TTS:ää tekstitysten lukemiseen (jos TTS on saatavilla)"
 
@@ -4731,11 +4731,11 @@ msgstr "Käytä TTS:ää tekstitysten lukemiseen (jos TTS on saatavilla)"
 msgid "Use TTS to read the text"
 msgstr "Käytä tekstistä puheeksi -toimintoa tekstin lukemiseksi"
 
-#: engines/glk/detection.cpp:244
+#: engines/glk/detection.cpp:246
 msgid "Also read input text"
 msgstr "Lue myös syötetty teksti"
 
-#: engines/glk/detection.cpp:245
+#: engines/glk/detection.cpp:247
 msgid "Use TTS to read the input text"
 msgstr "Käytä tekstistä puheeksi -toimintoa syötetyn tekstin lukemiseksi"
 
@@ -4866,11 +4866,11 @@ msgstr ""
 "Lataa epävirallisen päivityksen. Huomaathan että ScummVM:n tiimi ei anna "
 "tukea tällaisten päivitysten käyttöön."
 
-#: engines/grim/detection.cpp:78 engines/zvision/metaengine.cpp:152
+#: engines/grim/detection.cpp:80 engines/zvision/metaengine.cpp:152
 msgid "Show FPS"
 msgstr "Näytä FPS-laskuri"
 
-#: engines/grim/detection.cpp:79
+#: engines/grim/detection.cpp:81
 msgid "Show the current FPS-rate, while you play."
 msgstr "Näytä FPS pelin aikana."
 
@@ -5037,19 +5037,19 @@ msgstr "Nopea videontoisto"
 msgid "Play movies at an increased speed"
 msgstr "Toista videot nopeampana"
 
-#: engines/groovie/detection.cpp:295
+#: engines/groovie/detection.cpp:299
 msgid "Easier AI"
 msgstr "Helpompi AI"
 
-#: engines/groovie/detection.cpp:296
+#: engines/groovie/detection.cpp:300
 msgid "Decrease the difficulty of AI puzzles"
 msgstr "Madalla AI-pulmien vaikeustasoa"
 
-#: engines/groovie/detection.cpp:305
+#: engines/groovie/detection.cpp:311
 msgid "Updated Credits Music"
 msgstr "Päivitetty lopputekstimusiikki"
 
-#: engines/groovie/detection.cpp:306
+#: engines/groovie/detection.cpp:312
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr "Soita laulu 'The Final Hour' MIDI-musiikin sijaan lopputeksteissä"
@@ -5119,15 +5119,15 @@ msgstr "Tyhjennä reittipisteet"
 msgid "Debug"
 msgstr "Debuggeri"
 
-#: engines/hopkins/detection.cpp:46 engines/hopkins/detection.cpp:56
+#: engines/hopkins/detection.cpp:46 engines/hopkins/detection.cpp:58
 msgid "Gore Mode"
 msgstr "Hurmemoodi"
 
-#: engines/hopkins/detection.cpp:47 engines/hopkins/detection.cpp:57
+#: engines/hopkins/detection.cpp:47 engines/hopkins/detection.cpp:59
 msgid "Enable Gore Mode when available"
 msgstr "Aktivoi hurmemoodi jos saatavilla"
 
-#: engines/hypno/detection.cpp:190 engines/ultima/detection.cpp:78
+#: engines/hypno/detection.cpp:190 engines/ultima/detection.cpp:84
 msgid "Enable cheats"
 msgstr "Salli huijaus"
 
@@ -5135,11 +5135,11 @@ msgstr "Salli huijaus"
 msgid "Allow cheats using the C key."
 msgstr "Salli huijaukset käyttämällä C-näppäintä."
 
-#: engines/hypno/detection.cpp:197
+#: engines/hypno/detection.cpp:199
 msgid "Enable restored content"
 msgstr "Käytä palautettua sisältöä"
 
-#: engines/hypno/detection.cpp:198
+#: engines/hypno/detection.cpp:200
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "Lisää sisältöä joka ei ole nähtävissä alkuperäisessä toteutuksessa."
 
@@ -5154,69 +5154,69 @@ msgid "Enable studio audience"
 msgstr "Studioyleisö päälle"
 
 #. I18N: This option allows the user to skip text and cutscenes.
-#: engines/kyra/detection.cpp:72
+#: engines/kyra/detection.cpp:74
 msgid "Skip support"
 msgstr "Ohita tuki"
 
-#: engines/kyra/detection.cpp:73
+#: engines/kyra/detection.cpp:75
 msgid "Allow text and cutscenes to be skipped"
 msgstr "Salli tekstin ja videoiden ohittaminen"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
-#: engines/kyra/detection.cpp:83
+#: engines/kyra/detection.cpp:87
 msgid "Helium mode"
 msgstr "Heliumtila"
 
-#: engines/kyra/detection.cpp:84
+#: engines/kyra/detection.cpp:88
 msgid "Enable helium mode"
 msgstr "Käytä heliumtilaa"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
-#: engines/kyra/detection.cpp:97
+#: engines/kyra/detection.cpp:103
 msgid "Smooth scrolling"
 msgstr "Pehmeä vieritys"
 
-#: engines/kyra/detection.cpp:98
+#: engines/kyra/detection.cpp:104
 msgid "Enable smooth scrolling when walking"
 msgstr "Käytä pehmeää vieritystä kävellessä"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
-#: engines/kyra/detection.cpp:110
+#: engines/kyra/detection.cpp:118
 msgid "Floating cursors"
 msgstr "Leijuva kursori"
 
-#: engines/kyra/detection.cpp:111
+#: engines/kyra/detection.cpp:119
 msgid "Enable floating cursors"
 msgstr "Käytä leijuvia kursoreita"
 
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
-#: engines/kyra/detection.cpp:122
+#: engines/kyra/detection.cpp:132
 msgid "Suggest save names"
 msgstr "Tallennusten nimiehdotukset"
 
-#: engines/kyra/detection.cpp:123
+#: engines/kyra/detection.cpp:133
 msgid "Autogenerated naming suggestions for savegames"
 msgstr "Automaattisesti luodut nimiehdotukset pelitallennuksille"
 
 #. I18N: HP stands for Hit Points
-#: engines/kyra/detection.cpp:135
+#: engines/kyra/detection.cpp:147
 msgid "HP bar graphs"
 msgstr "Kestopisteet (HP) graafisina palkkeina"
 
-#: engines/kyra/detection.cpp:136
+#: engines/kyra/detection.cpp:148
 msgid "Enable hit point bar graphs"
 msgstr "Käytä kestopisteissä värillisiä grafiikkapalkkeja numeroiden sijaan"
 
 #. I18N: L/R stands for Left/Right
-#: engines/kyra/detection.cpp:146
+#: engines/kyra/detection.cpp:160
 msgid "Fight Button L/R Swap"
 msgstr "Taistelupainikkeen vaihto"
 
-#: engines/kyra/detection.cpp:147
+#: engines/kyra/detection.cpp:161
 msgid "Left button to attack, right button to pick up items"
 msgstr "Vasen painike hyökkää, oikea painike poimii esineitä"
 
@@ -5505,8 +5505,8 @@ msgstr ""
 msgid "This puzzle is not available in the trial version of the game"
 msgstr "Tutkiminen tätä pidemmälle on mahdollista vain pelin täysversiossa"
 
-#: engines/lure/detection.cpp:44 engines/mads/detection.cpp:113
-#: engines/sherlock/detection.cpp:119 engines/twine/detection.cpp:752
+#: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:774
 msgid "TTS Narrator"
 msgstr "TTS-kertoja"
 
@@ -5534,15 +5534,15 @@ msgstr "Helppo hiirikäyttöliittymä"
 msgid "Shows object names when hovering the mouse over them"
 msgstr "Näytä esineiden kuvauksen kohdistaessasi kursorin esineen ylle"
 
-#: engines/mads/detection.cpp:72 engines/mads/detection.cpp:73
+#: engines/mads/detection.cpp:74 engines/mads/detection.cpp:75
 msgid "Animated inventory items"
 msgstr "Animoidut inventorioesineet"
 
-#: engines/mads/detection.cpp:82 engines/mads/detection.cpp:83
+#: engines/mads/detection.cpp:86 engines/mads/detection.cpp:87
 msgid "Animated game interface"
 msgstr "Animoitu pelikäyttöliittymä"
 
-#: engines/mads/detection.cpp:92 engines/mads/detection.cpp:93
+#: engines/mads/detection.cpp:98 engines/mads/detection.cpp:99
 msgid "Naughty game mode"
 msgstr "Tuhma pelitila"
 
@@ -6057,19 +6057,19 @@ msgstr "Sekuntia"
 msgid "Invalid Scene ID!"
 msgstr "Viallinen näkymän ID!"
 
-#: engines/neverhood/detection.cpp:141
+#: engines/neverhood/detection.cpp:143
 msgid "Skip the Hall of Records storyboard scenes"
 msgstr "Ohita Hall of Records storyboardkohtaukset"
 
-#: engines/neverhood/detection.cpp:142
+#: engines/neverhood/detection.cpp:144
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr "Sallii pelaajan ohittaa Hall of Records storyboardkohtaukset"
 
-#: engines/neverhood/detection.cpp:148
+#: engines/neverhood/detection.cpp:152
 msgid "Scale the making of videos to full screen"
 msgstr "Skaalaa making of-videot koko ruudun kokoiseksi"
 
-#: engines/neverhood/detection.cpp:149
+#: engines/neverhood/detection.cpp:153
 msgid "Scale the making of videos, so that they use the whole screen"
 msgstr "Skaalaa making of-videot niin että ne käyttävät koko ruudun tilan"
 
@@ -6229,138 +6229,138 @@ msgstr "Ohita EGA dithering pass (täysväritaustat)"
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr "Ohita dithering pass EGA peleissä, grafiikat näytetään täysvärisenä"
 
-#: engines/sci/detection_options.h:41
+#: engines/sci/detection_options.h:43
 msgid "Enable high resolution graphics"
 msgstr "Käytä korkearesoluutioista grafiikkaa"
 
-#: engines/sci/detection_options.h:42
+#: engines/sci/detection_options.h:44
 msgid "Enable high resolution graphics/content"
 msgstr "Käytä korkearesoluutioista grafiikkaa/sisältöä"
 
-#: engines/sci/detection_options.h:51
+#: engines/sci/detection_options.h:55
 msgid "Enable black-lined video"
 msgstr "Käytä mustia vuoroviivoja videoissa"
 
-#: engines/sci/detection_options.h:52
+#: engines/sci/detection_options.h:56
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
 "Piirrä mustia vuoroviivoja videoihin jotta ne näyttäisivät terävämmiltä"
 
-#: engines/sci/detection_options.h:62
+#: engines/sci/detection_options.h:68
 msgid "Use high-quality video scaling"
 msgstr "Käytä korkealaatuista videoskaalausta"
 
-#: engines/sci/detection_options.h:63
+#: engines/sci/detection_options.h:69
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr ""
 "Käytä lineaarista interpolaatiota videoiden suurentamisessa jos mahdollista"
 
-#: engines/sci/detection_options.h:73
+#: engines/sci/detection_options.h:81
 msgid "Use high-quality \"LarryScale\" cel scaling"
 msgstr "Käytä korkealaatuista \"LarryCel\" videoskaalausta"
 
-#: engines/sci/detection_options.h:74
+#: engines/sci/detection_options.h:82
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
 "Käytä piirrostyyliseen grafiikaan erikoistunutta skaalainta hahmografiikan "
 "piirtämiseen"
 
-#: engines/sci/detection_options.h:83
+#: engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
 msgstr "Käytä mieluiten digitaalisia äänitehosteita"
 
-#: engines/sci/detection_options.h:84
+#: engines/sci/detection_options.h:94
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr ""
 "Käytä mieluiten digitaalisia äänitehosteita synteettisten tehosteiden sijaan"
 
-#: engines/sci/detection_options.h:103
+#: engines/sci/detection_options.h:117
 msgid "Use CD audio"
 msgstr "Käytä CD-ääntä"
 
-#: engines/sci/detection_options.h:104
+#: engines/sci/detection_options.h:118
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Käytä CD:n audiota pelin audion sijaan, jos mahdollista"
 
-#: engines/sci/detection_options.h:114
+#: engines/sci/detection_options.h:130
 msgid "Use Windows cursors"
 msgstr "Käytä Windowsin kursoreita"
 
-#: engines/sci/detection_options.h:115
+#: engines/sci/detection_options.h:131
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Käytä Windowsin kursoreita (pienempiä ja harmaasävyisiä) DOS kursorien sijaan"
 
-#: engines/sci/detection_options.h:125
+#: engines/sci/detection_options.h:143
 msgid "Use silver cursors"
 msgstr "Käytä hopeisia kursoreita"
 
-#: engines/sci/detection_options.h:126
+#: engines/sci/detection_options.h:144
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr "Käytä vaihtoehtoisia hopeisia kursoreita normaalien kultaisten sijaan"
 
-#: engines/sci/detection_options.h:136
+#: engines/sci/detection_options.h:156
 msgid "Enable content censoring"
 msgstr "Sisällön sensurointi"
 
-#: engines/sci/detection_options.h:137
+#: engines/sci/detection_options.h:157
 msgid "Enable the game's built-in optional content censoring"
 msgstr "Pelin sisäänrakennettu valinnainen sisällön sensurointi"
 
-#: engines/sci/detection_options.h:147
+#: engines/sci/detection_options.h:169
 msgid "Upscale videos"
 msgstr "Skaalaa videot"
 
-#: engines/sci/detection_options.h:148
+#: engines/sci/detection_options.h:170
 msgid "Upscale videos to double their size"
 msgstr "Skaalaa videot tuplakokoisiksi"
 
-#: engines/sci/detection_options.h:158
+#: engines/sci/detection_options.h:182
 msgid "Use RGB rendering"
 msgstr "Käytä RGB-renderöintiä"
 
-#: engines/sci/detection_options.h:159
+#: engines/sci/detection_options.h:183
 msgid "Use RGB rendering to improve screen transitions"
 msgstr "RGB-renderöinti tekee kuvasiirtymistä paremman näköisiä"
 
-#: engines/sci/detection_options.h:169
+#: engines/sci/detection_options.h:195
 msgid "Use per-resource modified palettes"
 msgstr "Käytä resurssikohtaisia muokattuja väripaletteja"
 
-#: engines/sci/detection_options.h:170
+#: engines/sci/detection_options.h:196
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr "Resurssikohtaiset väripaletit näyttävät paremmalta"
 
-#: engines/sci/detection_options.h:180
+#: engines/sci/detection_options.h:208
 msgid "Enable bearded musicians"
 msgstr "Parrakkaat muusikot"
 
-#: engines/sci/detection_options.h:181
+#: engines/sci/detection_options.h:209
 msgid "Enable graphics that were disabled for legal reasons"
 msgstr "Salli grafiikat jotka olivat poistettu lakiteknisistä syistä"
 
-#: engines/sci/detection_options.h:205
+#: engines/sci/detection_options.h:237
 msgid "MIDI mode:"
 msgstr "MIDI tila:"
 
-#: engines/sci/detection_options.h:206
+#: engines/sci/detection_options.h:238
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
 msgstr ""
 "Käyttäessäsi ulkoisia MIDI-laitteita (esim. USB-MIDI), valitse laite tästä"
 
-#: engines/sci/detection_options.h:211
+#: engines/sci/detection_options.h:243
 msgid "Standard (GM / MT-32)"
 msgstr "Vakio (GM / MT-32)"
 
-#: engines/sci/detection_options.h:215
+#: engines/sci/detection_options.h:247
 msgid "Roland D-110 / D-10 / D-20"
 msgstr "Roland D-110 / D-10 / D-20"
 
-#: engines/sci/detection_options.h:219
+#: engines/sci/detection_options.h:251
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
@@ -6562,19 +6562,19 @@ msgstr "Näytä esineiden tiedot"
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Näytä esineiden nimet näytön alalaidassa"
 
-#: engines/scumm/detection.cpp:182
+#: engines/scumm/detection.cpp:184
 msgid "Use NES Classic Palette"
 msgstr "Käytä NES Classic-palettia"
 
-#: engines/scumm/detection.cpp:183
+#: engines/scumm/detection.cpp:185
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "Käytä neutraalimpaa väripalettia joka emuloi paremmin NES Classic:ia"
 
-#: engines/scumm/detection.cpp:189
+#: engines/scumm/detection.cpp:193
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "Trimmaa FM-TOWNS pelit 200 pikselin korkuisiksi"
 
-#: engines/scumm/detection.cpp:190
+#: engines/scumm/detection.cpp:194
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -6582,11 +6582,11 @@ msgstr ""
 "Leikkaa ylimääräiset 40 pikseliä näytön alaosasta, jättäen jäljelle 200 "
 "pikseliä, jolloin kuvasuhteen korjaus on mahdollista"
 
-#: engines/scumm/detection.cpp:196
+#: engines/scumm/detection.cpp:202
 msgid "Play simplified music"
 msgstr "Yksinkertaistettu musiikki"
 
-#: engines/scumm/detection.cpp:197
+#: engines/scumm/detection.cpp:203
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
@@ -6594,19 +6594,31 @@ msgstr ""
 "Tämä musiikki oli oletettavasti tarkoitettu hitaille maceille, ja se käyttää "
 "vain yhtä kanavaa."
 
-#: engines/scumm/detection.cpp:203
+#: engines/scumm/detection.cpp:211
 msgid "Enable smooth scrolling"
 msgstr "Käytä jatkuvaa vieritystä"
 
-#: engines/scumm/detection.cpp:204
+#: engines/scumm/detection.cpp:212
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(sen sijaan että vieritettäisiin 8 pikselin askeleissa)"
 
-#: engines/scumm/detection.cpp:210 engines/scumm/dialogs.cpp:730
+#: engines/scumm/detection.cpp:220
+#, fuzzy
+#| msgid "Enable smooth scrolling"
+msgid "Allow semi-smooth scrolling"
+msgstr "Käytä jatkuvaa vieritystä"
+
+#: engines/scumm/detection.cpp:221
+msgid ""
+"Allow scrolling to be less smooth during the fast camera movement in the "
+"intro."
+msgstr ""
+
+#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:730
 msgid "Enable game-specific enhancements"
 msgstr "Pelikohtaiset parannukset"
 
-#: engines/scumm/detection.cpp:211 engines/scumm/dialogs.cpp:730
+#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:730
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -7381,19 +7393,19 @@ msgstr ""
 "Ole hyvä ja kopioi nämä tiedostot pelidatakansioon.\n"
 "\n"
 
-#: engines/sherlock/detection.cpp:68
+#: engines/sherlock/detection.cpp:70
 msgid "Pixellated scene transitions"
 msgstr "Pikselöidyt kohtauksenvaihdot"
 
-#: engines/sherlock/detection.cpp:69
+#: engines/sherlock/detection.cpp:71
 msgid "When changing scenes, a randomized pixel transition is done"
 msgstr "Kohtauksia vaihtaessa näytetään sattumanvarainen pikselitransitio"
 
-#: engines/sherlock/detection.cpp:78
+#: engines/sherlock/detection.cpp:82
 msgid "Don't show hotspots when moving mouse"
 msgstr "Älä näytä tärkeitä alueita hiirtä liikuttaessa"
 
-#: engines/sherlock/detection.cpp:79
+#: engines/sherlock/detection.cpp:83
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
@@ -7401,28 +7413,28 @@ msgstr ""
 "Näytä tärkeiden alueiden nimet vain sen jälkeen kun aluetta tai "
 "toimintanappia on painettu"
 
-#: engines/sherlock/detection.cpp:88
+#: engines/sherlock/detection.cpp:94
 msgid "Show character portraits"
 msgstr "Näytä hahmojen muotokuvat"
 
-#: engines/sherlock/detection.cpp:89
+#: engines/sherlock/detection.cpp:95
 msgid "Show portraits for the characters when conversing"
 msgstr "Näytä hahmojen muotokuvat keskustelujen aikana"
 
-#: engines/sherlock/detection.cpp:98
+#: engines/sherlock/detection.cpp:106
 msgid "Slide dialogs into view"
 msgstr "Liu'uta dialogit ruudulle"
 
-#: engines/sherlock/detection.cpp:99
+#: engines/sherlock/detection.cpp:107
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
 msgstr ""
 "Liu'uta dialogit ruudulle sen sijaan että ne näytettäisiin välittömästi"
 
-#: engines/sherlock/detection.cpp:108
+#: engines/sherlock/detection.cpp:118
 msgid "Transparent windows"
 msgstr "Läpinäkyvät ikkunat"
 
-#: engines/sherlock/detection.cpp:109
+#: engines/sherlock/detection.cpp:119
 msgid "Show windows with a partially transparent background"
 msgstr "Näytä ikkunat osittain läpinäkyvällä taustalla"
 
@@ -7472,11 +7484,11 @@ msgstr "Lataa modattuja peliresursseja"
 msgid "Enable loading of external replacement assets."
 msgstr "Mahdollista ulkoisten korvaavien peliresurssien lataus."
 
-#: engines/stark/detection.cpp:384
+#: engines/stark/detection.cpp:386
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "Taustakuvien lineaarinen suodatus"
 
-#: engines/stark/detection.cpp:385
+#: engines/stark/detection.cpp:387
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -7484,11 +7496,11 @@ msgstr ""
 "Kun lineaarinen suodatus on päällä, taustakuvat ovat pehmeämpiä "
 "kokoruututilassa, mutta menettävät hieman yksityiskohtia."
 
-#: engines/stark/detection.cpp:393 engines/ultima/detection.cpp:118
+#: engines/stark/detection.cpp:397 engines/ultima/detection.cpp:136
 msgid "Enable font anti-aliasing"
 msgstr "Fonttien antialiasointi"
 
-#: engines/stark/detection.cpp:394 engines/ultima/detection.cpp:119
+#: engines/stark/detection.cpp:398 engines/ultima/detection.cpp:137
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Kirjaimet näyttävät sileämmiltä kun antialiasointi on päällä."
 
@@ -7717,86 +7729,86 @@ msgstr "Seinien törmäystarkistus päälle"
 msgid "Enable the original wall collision damage"
 msgstr "Pelin alkuperäinen seiniintörmäyksen vahinkomalli päälle"
 
-#: engines/twine/detection.cpp:681
+#: engines/twine/detection.cpp:683
 msgid "Disable save menu"
 msgstr "Tallennusvalikko pois päältä"
 
-#: engines/twine/detection.cpp:682
+#: engines/twine/detection.cpp:684
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 "Alkuperäisessä pelissä oli vain automaattitallennus. Tämä mahdollistaa pelin "
 "tallentamisen milloin tahansa."
 
-#: engines/twine/detection.cpp:688
+#: engines/twine/detection.cpp:692
 msgid "Enable debug mode"
 msgstr "Käytä debugtilaa"
 
-#: engines/twine/detection.cpp:689
+#: engines/twine/detection.cpp:693
 msgid "Enable the debug mode"
 msgstr "Debug-tila päälle"
 
-#: engines/twine/detection.cpp:695
+#: engines/twine/detection.cpp:701
 msgid "Enable audio CD"
 msgstr "Käytä Audio CD:tä"
 
-#: engines/twine/detection.cpp:696
+#: engines/twine/detection.cpp:702
 msgid "Enable the original audio cd track"
 msgstr "Käytä alkuperäistä audio CD-raitaa"
 
-#: engines/twine/detection.cpp:702
+#: engines/twine/detection.cpp:710
 msgid "Enable sound"
 msgstr "Äänet päälle"
 
-#: engines/twine/detection.cpp:703
+#: engines/twine/detection.cpp:711
 msgid "Enable the sound for the game"
 msgstr "Laita pelin äänet päälle"
 
-#: engines/twine/detection.cpp:709
+#: engines/twine/detection.cpp:719
 msgid "Enable voices"
 msgstr "Puhe päälle"
 
-#: engines/twine/detection.cpp:710
+#: engines/twine/detection.cpp:720
 msgid "Enable the voices for the game"
 msgstr "Laita puhe päälle pelissä"
 
-#: engines/twine/detection.cpp:716
+#: engines/twine/detection.cpp:728
 msgid "Enable text"
 msgstr "Tekstit päälle"
 
-#: engines/twine/detection.cpp:717
+#: engines/twine/detection.cpp:729
 msgid "Enable the text for the game"
 msgstr "Laita tekstit päälle pelissä"
 
-#: engines/twine/detection.cpp:723
+#: engines/twine/detection.cpp:737
 msgid "Enable movies"
 msgstr "Videot päälle"
 
-#: engines/twine/detection.cpp:724
+#: engines/twine/detection.cpp:738
 msgid "Enable the cutscenes for the game"
 msgstr "Laita videot päälle pelissä"
 
-#: engines/twine/detection.cpp:730
+#: engines/twine/detection.cpp:746
 msgid "Enable mouse"
 msgstr "Käytä hiirtä"
 
-#: engines/twine/detection.cpp:731
+#: engines/twine/detection.cpp:747
 msgid "Enable the mouse for the UI"
 msgstr "Käytä hiirtä käyttöliittymässä"
 
-#: engines/twine/detection.cpp:737
+#: engines/twine/detection.cpp:755
 msgid "Use the USA version"
 msgstr "Käytä USA-versiota"
 
-#: engines/twine/detection.cpp:738
+#: engines/twine/detection.cpp:756
 msgid "Enable the USA specific version flags"
 msgstr "Käytä USA-versiota pelistä"
 
-#: engines/twine/detection.cpp:744 engines/ultima/detection.cpp:84
+#: engines/twine/detection.cpp:764 engines/ultima/detection.cpp:92
 msgid "Enable high resolution"
 msgstr "Käytä korkeaa resoluutiota"
 
-#: engines/twine/detection.cpp:745 engines/ultima/detection.cpp:85
+#: engines/twine/detection.cpp:765 engines/ultima/detection.cpp:93
 msgid "Enable a higher resolution for the game"
 msgstr "Käytä korkeampaa resoluutiota pelissä"
 
@@ -7945,68 +7957,68 @@ msgctxt "Options menu"
 msgid "Wall collision off"
 msgstr "Seinien törmäystarkistus pois päältä"
 
-#: engines/ultima/detection.cpp:66
+#: engines/ultima/detection.cpp:68
 msgid "Enable frame skipping"
 msgstr "Salli harvempi ruudunpäivitys"
 
-#: engines/ultima/detection.cpp:67
+#: engines/ultima/detection.cpp:69
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr "Salli pelin päivittää ruutua harvemmin jos se pyörii liian hitaasti."
 
-#: engines/ultima/detection.cpp:72
+#: engines/ultima/detection.cpp:76
 msgid "Enable frame limiting"
 msgstr "Rajoita ruudun päivitystä"
 
-#: engines/ultima/detection.cpp:73
+#: engines/ultima/detection.cpp:77
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr "Rajoitaa pelin nopeutta jottei se olisi liian nopea."
 
-#: engines/ultima/detection.cpp:79
+#: engines/ultima/detection.cpp:85
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
 "Salli huijaaminen komennoilla sekä pelaajaa klikkaamalla aukeavasta menusta."
 
-#: engines/ultima/detection.cpp:94
+#: engines/ultima/detection.cpp:104
 msgid "Play foot step sounds"
 msgstr "Soita askeläänet"
 
-#: engines/ultima/detection.cpp:95
+#: engines/ultima/detection.cpp:105
 msgid "Plays sound when the player moves."
 msgstr "Pelaajan liikkumisesta kuuluu ääni."
 
-#: engines/ultima/detection.cpp:100
+#: engines/ultima/detection.cpp:112
 msgid "Enable jump to mouse position"
 msgstr "Hiiren sijaintiin hyppääminen"
 
-#: engines/ultima/detection.cpp:101
+#: engines/ultima/detection.cpp:113
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
 "Paikaltaan hyppääminen kohdistaa hypyn hiiren sijaintiin eikä vain suuntaan."
 
-#: engines/ultima/detection.cpp:112
+#: engines/ultima/detection.cpp:128
 msgid "Enable font replacement"
 msgstr "Mahdollista fonttien korvaaminen"
 
-#: engines/ultima/detection.cpp:113
+#: engines/ultima/detection.cpp:129
 msgid "Replaces game fonts with rendered fonts"
 msgstr "Korvaa pelin fontit renderöidyillä fonteilla"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/detection.cpp:128
+#: engines/ultima/detection.cpp:148
 msgid "Camera moves with Silencer"
 msgstr "Kamera liikkuu hahmon mukana"
 
-#: engines/ultima/detection.cpp:129
+#: engines/ultima/detection.cpp:149
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr "Kamera seuraa sulavasti hahmoa määrättyjen siirtymien sijaan."
 
-#: engines/ultima/detection.cpp:142
+#: engines/ultima/detection.cpp:164
 msgid "Always enable Christmas easter-egg"
 msgstr "Pääsiäismuna aina päällä"
 
-#: engines/ultima/detection.cpp:143
+#: engines/ultima/detection.cpp:165
 msgid "Enable the Christmas music at any time of year."
 msgstr "Joulumusiikki päällä ympäri vuoden."
 
@@ -8080,11 +8092,11 @@ msgstr "Näytä FPS-laskuri"
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr "Näytä tämänhetkinen kuvia/sekunti määrä vasemmassa ylänurkassa"
 
-#: engines/wintermute/detection.cpp:62
+#: engines/wintermute/detection.cpp:64
 msgid "Sprite bilinear filtering (SLOW)"
 msgstr "Spritejen bilineaarinen suodatus (HIDAS)"
 
-#: engines/wintermute/detection.cpp:63
+#: engines/wintermute/detection.cpp:65
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Käytä bilineaarista suodatusta yksittäisiin spriteihin"
 
@@ -8706,11 +8718,11 @@ msgstr ""
 "Näyttää esineiden hinnat normaalissa inventoriossa, mahdollistaen arvojen "
 "vertailun"
 
-#: engines/xeen/detection.cpp:65
+#: engines/xeen/detection.cpp:67
 msgid "More durable armor"
 msgstr "Kestävämmät suojavarusteet"
 
-#: engines/xeen/detection.cpp:66
+#: engines/xeen/detection.cpp:68
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
 "Suojavaruste hajoaa vasta hahmon ollessa -80HP:ssä normaalin -10HP sijasta"
@@ -8719,35 +8731,35 @@ msgstr ""
 msgid "Failed to autosave"
 msgstr "Pelin automaattinen tallennus epäonnistui"
 
-#: engines/zvision/detection_tables.h:60
+#: engines/zvision/detection_tables.h:62
 msgid "Double FPS"
 msgstr "Kaksinkertaista FPS"
 
-#: engines/zvision/detection_tables.h:61
+#: engines/zvision/detection_tables.h:63
 msgid "Increase framerate from 30 to 60 FPS"
 msgstr "Kasvata ruudunpäivitysnopeus 60 FPS:ään 30 FPS:stä"
 
-#: engines/zvision/detection_tables.h:70
+#: engines/zvision/detection_tables.h:74
 msgid "Enable Venus"
 msgstr "Käytä Venusta"
 
-#: engines/zvision/detection_tables.h:71
+#: engines/zvision/detection_tables.h:75
 msgid "Enable the Venus help system"
 msgstr "Käytä Venus-avustusjärjestelmää"
 
-#: engines/zvision/detection_tables.h:80
+#: engines/zvision/detection_tables.h:86
 msgid "Disable animation while turning"
 msgstr "Animaatio pois päältä kääntyessä"
 
-#: engines/zvision/detection_tables.h:81
+#: engines/zvision/detection_tables.h:87
 msgid "Disable animation while turning in panorama mode"
 msgstr "Animaatio pois päältä panoraamamoodissa kääntyessä"
 
-#: engines/zvision/detection_tables.h:90
+#: engines/zvision/detection_tables.h:98
 msgid "Use high resolution MPEG video"
 msgstr "Käytä korkearesoluutioista MPEG-videota"
 
-#: engines/zvision/detection_tables.h:91
+#: engines/zvision/detection_tables.h:99
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
 "Käytä DVD-version MPEG videoita matalampiresoluutioisten AVI-tiedostojen "

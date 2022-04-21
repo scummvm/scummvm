@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-20 16:40+0000\n"
+"POT-Creation-Date: 2022-04-21 09:07+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4051,92 +4051,92 @@ msgstr "אמולציה טלוויזיונית"
 msgid "Emulate composite output to an NTSC TV"
 msgstr "חיקוי פלט מורכב לטלוויזיה NTSC"
 
-#: engines/adl/detection.cpp:63 engines/adl/detection.cpp:73
+#: engines/adl/detection.cpp:65 engines/adl/detection.cpp:77
 msgid "Color graphics"
 msgstr "גרפיקה צבעונית"
 
-#: engines/adl/detection.cpp:64 engines/adl/detection.cpp:74
+#: engines/adl/detection.cpp:66 engines/adl/detection.cpp:78
 msgid "Use color graphics instead of monochrome"
 msgstr "השתמש בגרפיקה צבעונית במקום מונוכרום"
 
-#: engines/adl/detection.cpp:83
+#: engines/adl/detection.cpp:89
 msgid "Show scanlines"
 msgstr "הצג סריקות סריקה"
 
-#: engines/adl/detection.cpp:84
+#: engines/adl/detection.cpp:90
 msgid "Darken every other scanline to mimic the look of a CRT"
 msgstr "השחירו כל קו סריקה אחר כדי לחקות את המראה של CRT"
 
-#: engines/adl/detection.cpp:93
+#: engines/adl/detection.cpp:101
 msgid "Always use sharp monochrome text"
 msgstr "השתמש תמיד בטקסט מונוכרום חד"
 
-#: engines/adl/detection.cpp:94
+#: engines/adl/detection.cpp:102
 msgid "Do not emulate NTSC artifacts for text"
 msgstr "אל תחקה חפצי NTSC לטקסט"
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:298 engines/dreamweb/detection.cpp:54
-#: engines/groovie/detection.cpp:285 engines/neverhood/detection.cpp:134
-#: engines/sci/detection_options.h:93 engines/sherlock/detection.cpp:58
+#: engines/groovie/detection.cpp:287 engines/neverhood/detection.cpp:134
+#: engines/sci/detection_options.h:105 engines/sherlock/detection.cpp:58
 #: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
-#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:106
+#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:120
 #: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "השתמש במסכי שמירה / טעינה מקוריים"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:55
-#: engines/groovie/detection.cpp:286 engines/neverhood/detection.cpp:135
-#: engines/sci/detection_options.h:94 engines/sherlock/detection.cpp:59
+#: engines/groovie/detection.cpp:288 engines/neverhood/detection.cpp:135
+#: engines/sci/detection_options.h:106 engines/sherlock/detection.cpp:59
 #: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
-#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:107
+#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:121
 #: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "השתמש במסכי השמירה / הטעינה המקוריים במקום במסכי ScummVM"
 
-#: engines/agi/detection.cpp:96
+#: engines/agi/detection.cpp:98
 msgid "Use an alternative palette"
 msgstr "השתמש בפלטה חלופית"
 
-#: engines/agi/detection.cpp:97
+#: engines/agi/detection.cpp:99
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr "השתמש בפלטה חלופית, המשותפת לכל משחקי אמיגה. זו הייתה ההתנהגות הישנה"
 
-#: engines/agi/detection.cpp:106
+#: engines/agi/detection.cpp:110
 msgid "Mouse support"
 msgstr "תמיכה בעכבר"
 
-#: engines/agi/detection.cpp:107
+#: engines/agi/detection.cpp:111
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr "מאפשר תמיכה בעכבר. מאפשר להשתמש בעכבר לתנועה ובתפריטי משחק."
 
-#: engines/agi/detection.cpp:116
+#: engines/agi/detection.cpp:122
 msgid "Use Hercules hires font"
 msgstr "השתמש בגופן של הרקולס שוכר"
 
-#: engines/agi/detection.cpp:117
+#: engines/agi/detection.cpp:123
 msgid "Uses Hercules hires font, when font file is available."
 msgstr "שימושים בהרקולס שוכר גופן, כאשר קובץ הגופן זמין."
 
-#: engines/agi/detection.cpp:126
+#: engines/agi/detection.cpp:134
 msgid "Pause when entering commands"
 msgstr "השהה בעת הזנת פקודות"
 
-#: engines/agi/detection.cpp:127
+#: engines/agi/detection.cpp:135
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr "מציג חלון שורת פקודה ומושהה את המשחק (כמו ב- SCI) במקום בקשה בזמן אמת."
 
-#: engines/agi/detection.cpp:136
+#: engines/agi/detection.cpp:146
 msgid "Add speed menu"
 msgstr ""
 
-#: engines/agi/detection.cpp:137
+#: engines/agi/detection.cpp:147
 msgid "Add game speed menu (similar to PC version)"
 msgstr ""
 
@@ -4361,19 +4361,19 @@ msgstr "מצב Sitcom"
 msgid "Game will add laughter after actor's line or narration"
 msgstr "המשחק יוסיף צחוק אחרי הקו או הקריינות של השחקן"
 
-#: engines/bladerunner/detection.cpp:61
+#: engines/bladerunner/detection.cpp:63
 msgid "Shorty mode"
 msgstr "מצב שורטי"
 
-#: engines/bladerunner/detection.cpp:62
+#: engines/bladerunner/detection.cpp:64
 msgid "Game will shrink the actors and make their voices high pitched"
 msgstr "משחק יכווץ את השחקנים ויגיב את קולם לגובה"
 
-#: engines/bladerunner/detection.cpp:70
+#: engines/bladerunner/detection.cpp:74
 msgid "Frame limiter high performance mode"
 msgstr "מגביל מסגרת במצב ביצועים גבוהים"
 
-#: engines/bladerunner/detection.cpp:71
+#: engines/bladerunner/detection.cpp:75
 msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
@@ -4381,21 +4381,21 @@ msgstr ""
 "מצב זה עשוי לגרום לשימוש רב במעבדים! היא נמנעת משימוש בפונקציה delayMillis "
 "()."
 
-#: engines/bladerunner/detection.cpp:79
+#: engines/bladerunner/detection.cpp:85
 msgid "Max frames per second limit"
 msgstr ""
 
-#: engines/bladerunner/detection.cpp:80
+#: engines/bladerunner/detection.cpp:86
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
 msgstr ""
 
-#: engines/bladerunner/detection.cpp:88
+#: engines/bladerunner/detection.cpp:96
 msgid "Disable McCoy's quick stamina drain"
 msgstr ""
 
-#: engines/bladerunner/detection.cpp:89
+#: engines/bladerunner/detection.cpp:97
 msgid ""
 "When running, McCoy won't start slowing down as soon as the player stops "
 "clicking the mouse"
@@ -4412,7 +4412,7 @@ msgstr ""
 #: engines/bladerunner/detection_tables.h:128 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
 #: engines/groovie/detection.cpp:104 engines/kyra/detection_tables.h:303
-#: engines/lure/detection.cpp:249 engines/mohawk/detection_tables.h:988
+#: engines/lure/detection.cpp:251 engines/mohawk/detection_tables.h:988
 #: engines/mohawk/detection_tables.h:1094
 #: engines/mohawk/detection_tables.h:1109 engines/myst3/detection.cpp:142
 #: engines/neverhood/detection.cpp:120 engines/saga/detection_tables.h:186
@@ -4420,8 +4420,8 @@ msgstr ""
 #: engines/sci/detection_tables.h:5068 engines/sci/detection_tables.h:5076
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/trecision/detection.cpp:199
-#: engines/zvision/detection_tables.h:190
-#: engines/zvision/detection_tables.h:210
+#: engines/zvision/detection_tables.h:200
+#: engines/zvision/detection_tables.h:220
 #, fuzzy
 msgid "Missing game code"
 msgstr "בקרות משחק עיקריות:"
@@ -4613,22 +4613,22 @@ msgstr "מצב עיוור צבע"
 msgid "Enable Color Blind Mode by default"
 msgstr "אפשר מצב עיוור צבע כברירת מחדל"
 
-#: engines/cge/detection.cpp:124 engines/glk/detection.cpp:238
-#: engines/sci/detection_options.h:191 engines/supernova/detection.cpp:51
+#: engines/cge/detection.cpp:126 engines/glk/detection.cpp:238
+#: engines/sci/detection_options.h:221 engines/supernova/detection.cpp:53
 #, fuzzy
 msgid "Enable Text to Speech"
 msgstr "השתמש בטקסט לדיבור"
 
-#: engines/cge/detection.cpp:125
+#: engines/cge/detection.cpp:127
 #, fuzzy
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "השתמש באודיו CD במקום בשמע במשחק, אם הוא זמין"
 
-#: engines/cine/detection.cpp:60
+#: engines/cine/detection.cpp:62
 msgid "Use transparent dialog boxes in 16 color scenes"
 msgstr ""
 
-#: engines/cine/detection.cpp:61
+#: engines/cine/detection.cpp:63
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
@@ -4731,31 +4731,31 @@ msgstr ""
 "\n"
 "לחץ על OK כדי להמיר אותם כעת, אחרת תישאל שוב בפעם הבאה שתתחיל במשחק.\n"
 
-#: engines/dreamweb/detection.cpp:64
+#: engines/dreamweb/detection.cpp:66
 msgid "Use bright palette mode"
 msgstr "השתמש במצב לוח בהיר"
 
-#: engines/dreamweb/detection.cpp:65
+#: engines/dreamweb/detection.cpp:67
 msgid "Display graphics using the game's bright palette"
 msgstr "הציג גרפיקה באמצעות לוח הצבעים של המשחק"
 
-#: engines/dreamweb/detection.cpp:75
+#: engines/dreamweb/detection.cpp:79
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 
-#: engines/dreamweb/detection.cpp:76 engines/lure/detection.cpp:45
-#: engines/mads/detection.cpp:114 engines/sci/detection_options.h:192
-#: engines/sherlock/detection.cpp:120 engines/supernova/detection.cpp:52
-#: engines/twine/detection.cpp:753
+#: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
+#: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
+#: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
+#: engines/twine/detection.cpp:775
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
-#: engines/dreamweb/detection.cpp:85
+#: engines/dreamweb/detection.cpp:91
 #, fuzzy
 msgid "Enable Text to Speech for Subtitles"
 msgstr "השתמש בטקסט לדיבור"
 
-#: engines/dreamweb/detection.cpp:86
+#: engines/dreamweb/detection.cpp:92
 #, fuzzy
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "השתמש באודיו CD במקום בשמע במשחק, אם הוא זמין"
@@ -4765,12 +4765,12 @@ msgstr "השתמש באודיו CD במקום בשמע במשחק, אם הוא �
 msgid "Use TTS to read the text"
 msgstr "קריאת הקובץ נכשלה!"
 
-#: engines/glk/detection.cpp:244
+#: engines/glk/detection.cpp:246
 #, fuzzy
 msgid "Also read input text"
 msgstr "קריאת הקובץ נכשלה!"
 
-#: engines/glk/detection.cpp:245
+#: engines/glk/detection.cpp:247
 #, fuzzy
 msgid "Use TTS to read the input text"
 msgstr "קריאת הקובץ נכשלה!"
@@ -4904,12 +4904,12 @@ msgid ""
 "support for using such patches."
 msgstr ""
 
-#: engines/grim/detection.cpp:78 engines/zvision/metaengine.cpp:152
+#: engines/grim/detection.cpp:80 engines/zvision/metaengine.cpp:152
 #, fuzzy
 msgid "Show FPS"
 msgstr "הצג דלפק FPS"
 
-#: engines/grim/detection.cpp:79
+#: engines/grim/detection.cpp:81
 msgid "Show the current FPS-rate, while you play."
 msgstr ""
 
@@ -5047,19 +5047,19 @@ msgstr "מהירות סרט מהירה"
 msgid "Play movies at an increased speed"
 msgstr "שחק סרטים במהירות מוגברת"
 
-#: engines/groovie/detection.cpp:295
+#: engines/groovie/detection.cpp:299
 msgid "Easier AI"
 msgstr ""
 
-#: engines/groovie/detection.cpp:296
+#: engines/groovie/detection.cpp:300
 msgid "Decrease the difficulty of AI puzzles"
 msgstr ""
 
-#: engines/groovie/detection.cpp:305
+#: engines/groovie/detection.cpp:311
 msgid "Updated Credits Music"
 msgstr ""
 
-#: engines/groovie/detection.cpp:306
+#: engines/groovie/detection.cpp:312
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr ""
@@ -5142,15 +5142,15 @@ msgstr ""
 msgid "Debug"
 msgstr "מאתר הבאגים"
 
-#: engines/hopkins/detection.cpp:46 engines/hopkins/detection.cpp:56
+#: engines/hopkins/detection.cpp:46 engines/hopkins/detection.cpp:58
 msgid "Gore Mode"
 msgstr "מצב גור"
 
-#: engines/hopkins/detection.cpp:47 engines/hopkins/detection.cpp:57
+#: engines/hopkins/detection.cpp:47 engines/hopkins/detection.cpp:59
 msgid "Enable Gore Mode when available"
 msgstr "אפשר מצב Gore כאשר הוא זמין"
 
-#: engines/hypno/detection.cpp:190 engines/ultima/detection.cpp:78
+#: engines/hypno/detection.cpp:190 engines/ultima/detection.cpp:84
 #, fuzzy
 msgid "Enable cheats"
 msgstr "אפשר מצב רמאות"
@@ -5159,12 +5159,12 @@ msgstr "אפשר מצב רמאות"
 msgid "Allow cheats using the C key."
 msgstr ""
 
-#: engines/hypno/detection.cpp:197
+#: engines/hypno/detection.cpp:199
 #, fuzzy
 msgid "Enable restored content"
 msgstr "אפשר צנזורה של תוכן"
 
-#: engines/hypno/detection.cpp:198
+#: engines/hypno/detection.cpp:200
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 
@@ -5179,70 +5179,70 @@ msgid "Enable studio audience"
 msgstr "אפשר קהל אולפן"
 
 #. I18N: This option allows the user to skip text and cutscenes.
-#: engines/kyra/detection.cpp:72
+#: engines/kyra/detection.cpp:74
 msgid "Skip support"
 msgstr "דלג על התמיכה"
 
-#: engines/kyra/detection.cpp:73
+#: engines/kyra/detection.cpp:75
 msgid "Allow text and cutscenes to be skipped"
 msgstr "אפשר לדלג על טקסטים וחתכים"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
-#: engines/kyra/detection.cpp:83
+#: engines/kyra/detection.cpp:87
 msgid "Helium mode"
 msgstr "מצב הליום"
 
-#: engines/kyra/detection.cpp:84
+#: engines/kyra/detection.cpp:88
 msgid "Enable helium mode"
 msgstr "אפשר מצב הליום"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
-#: engines/kyra/detection.cpp:97
+#: engines/kyra/detection.cpp:103
 msgid "Smooth scrolling"
 msgstr "גלילה חלקה"
 
-#: engines/kyra/detection.cpp:98
+#: engines/kyra/detection.cpp:104
 msgid "Enable smooth scrolling when walking"
 msgstr "אפשר גלילה חלקה בזמן ההליכה"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
-#: engines/kyra/detection.cpp:110
+#: engines/kyra/detection.cpp:118
 msgid "Floating cursors"
 msgstr "סמנים צפים"
 
-#: engines/kyra/detection.cpp:111
+#: engines/kyra/detection.cpp:119
 msgid "Enable floating cursors"
 msgstr "אפשר סמן צף"
 
 #. I18N: When enabled, this option will fill in an autogenerated savegame
 #. description into the input prompt where.
-#: engines/kyra/detection.cpp:122
+#: engines/kyra/detection.cpp:132
 #, fuzzy
 msgid "Suggest save names"
 msgstr "משחקים שמורים"
 
-#: engines/kyra/detection.cpp:123
+#: engines/kyra/detection.cpp:133
 msgid "Autogenerated naming suggestions for savegames"
 msgstr ""
 
 #. I18N: HP stands for Hit Points
-#: engines/kyra/detection.cpp:135
+#: engines/kyra/detection.cpp:147
 msgid "HP bar graphs"
 msgstr "תרשימי עמודות של HP"
 
-#: engines/kyra/detection.cpp:136
+#: engines/kyra/detection.cpp:148
 msgid "Enable hit point bar graphs"
 msgstr "אפשר תרשימי סרגל נקודות נקודה"
 
 #. I18N: L/R stands for Left/Right
-#: engines/kyra/detection.cpp:146
+#: engines/kyra/detection.cpp:160
 msgid "Fight Button L/R Swap"
 msgstr "החלפת כפתור קרב L / R"
 
-#: engines/kyra/detection.cpp:147
+#: engines/kyra/detection.cpp:161
 msgid "Left button to attack, right button to pick up items"
 msgstr "כפתור שמאלי לתקוף, כפתור ימין לאיסוף פריטים"
 
@@ -5539,8 +5539,8 @@ msgstr ""
 "חקר מעבר לנקודה זו זמין רק בגירסה המלאה של\n"
 "המשחק."
 
-#: engines/lure/detection.cpp:44 engines/mads/detection.cpp:113
-#: engines/sherlock/detection.cpp:119 engines/twine/detection.cpp:752
+#: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:774
 msgid "TTS Narrator"
 msgstr ""
 
@@ -5567,15 +5567,15 @@ msgstr "ממשק עכבר קל"
 msgid "Shows object names when hovering the mouse over them"
 msgstr "מציג שמות של אובייקטים כשמרחפים עליהם העכבר עליהם"
 
-#: engines/mads/detection.cpp:72 engines/mads/detection.cpp:73
+#: engines/mads/detection.cpp:74 engines/mads/detection.cpp:75
 msgid "Animated inventory items"
 msgstr "פריטי מלאי מונפשים"
 
-#: engines/mads/detection.cpp:82 engines/mads/detection.cpp:83
+#: engines/mads/detection.cpp:86 engines/mads/detection.cpp:87
 msgid "Animated game interface"
 msgstr "ממשק משחק אנימציה"
 
-#: engines/mads/detection.cpp:92 engines/mads/detection.cpp:93
+#: engines/mads/detection.cpp:98 engines/mads/detection.cpp:99
 msgid "Naughty game mode"
 msgstr "מצב משחק שובב"
 
@@ -6103,19 +6103,19 @@ msgstr "ילד שני"
 msgid "Invalid Scene ID!"
 msgstr "נתיב שגוי!"
 
-#: engines/neverhood/detection.cpp:141
+#: engines/neverhood/detection.cpp:143
 msgid "Skip the Hall of Records storyboard scenes"
 msgstr "דלג על סצינות לוח הסיפור של היכל התקליטים"
 
-#: engines/neverhood/detection.cpp:142
+#: engines/neverhood/detection.cpp:144
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr "מאפשר לשחקן לדלג על פני סצינות לוח הסיפור של היכל התקליטים"
 
-#: engines/neverhood/detection.cpp:148
+#: engines/neverhood/detection.cpp:152
 msgid "Scale the making of videos to full screen"
 msgstr "קנה מידה את יצירת הסרטונים למסך מלא"
 
-#: engines/neverhood/detection.cpp:149
+#: engines/neverhood/detection.cpp:153
 msgid "Scale the making of videos, so that they use the whole screen"
 msgstr "קנה מידה את יצירת הסרטונים כך שישתמשו בכל המסך"
 
@@ -6273,133 +6273,133 @@ msgstr "דלג על מעבר dithering של EGA (רקעים בצבע מלא)"
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr "דלג על מעבר מתפשט במשחקי EGA, הגרפיקה מוצגת בצבעים מלאים"
 
-#: engines/sci/detection_options.h:41
+#: engines/sci/detection_options.h:43
 msgid "Enable high resolution graphics"
 msgstr "אפשר גרפיקה ברזולוציה גבוהה"
 
-#: engines/sci/detection_options.h:42
+#: engines/sci/detection_options.h:44
 msgid "Enable high resolution graphics/content"
 msgstr "אפשר גרפיקה / תוכן ברזולוציה גבוהה"
 
-#: engines/sci/detection_options.h:51
+#: engines/sci/detection_options.h:55
 msgid "Enable black-lined video"
 msgstr "אפשר סרטון עם קו שחור"
 
-#: engines/sci/detection_options.h:52
+#: engines/sci/detection_options.h:56
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr "צייר קווים שחורים מעל סרטונים כדי להגדיל את החדות שלהם"
 
-#: engines/sci/detection_options.h:62
+#: engines/sci/detection_options.h:68
 msgid "Use high-quality video scaling"
 msgstr "השתמש בקנה מידה וידאו באיכות גבוהה"
 
-#: engines/sci/detection_options.h:63
+#: engines/sci/detection_options.h:69
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr "השתמש באינטרפולציה לינארית בעת שינוי גודל סרטונים, במידת האפשר"
 
-#: engines/sci/detection_options.h:73
+#: engines/sci/detection_options.h:81
 msgid "Use high-quality \"LarryScale\" cel scaling"
 msgstr "השתמש בקנה מידה גדול של סולם \"LarryScale\""
 
-#: engines/sci/detection_options.h:74
+#: engines/sci/detection_options.h:82
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr "השתמש בקולנוע מצויר מיוחד לציור שודדי תווים"
 
-#: engines/sci/detection_options.h:83
+#: engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
 msgstr "העדיפו אפקטים של צליל דיגיטלי"
 
-#: engines/sci/detection_options.h:84
+#: engines/sci/detection_options.h:94
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "העדיפו אפקטים של צליל דיגיטלי במקום על סינתזות"
 
-#: engines/sci/detection_options.h:103
+#: engines/sci/detection_options.h:117
 msgid "Use CD audio"
 msgstr "השתמש באודיו CD"
 
-#: engines/sci/detection_options.h:104
+#: engines/sci/detection_options.h:118
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "השתמש באודיו CD במקום בשמע במשחק, אם הוא זמין"
 
-#: engines/sci/detection_options.h:114
+#: engines/sci/detection_options.h:130
 msgid "Use Windows cursors"
 msgstr "השתמש בסמן Windows"
 
-#: engines/sci/detection_options.h:115
+#: engines/sci/detection_options.h:131
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr "השתמש בסמן Windows (קטן יותר ובצבע מונוכרום) במקום ב- DOS"
 
-#: engines/sci/detection_options.h:125
+#: engines/sci/detection_options.h:143
 msgid "Use silver cursors"
 msgstr "השתמש בסמן כסף"
 
-#: engines/sci/detection_options.h:126
+#: engines/sci/detection_options.h:144
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr "השתמש בקבוצת הסמנים החלופית במקום זהוב הרגיל"
 
-#: engines/sci/detection_options.h:136
+#: engines/sci/detection_options.h:156
 msgid "Enable content censoring"
 msgstr "אפשר צנזורה של תוכן"
 
-#: engines/sci/detection_options.h:137
+#: engines/sci/detection_options.h:157
 msgid "Enable the game's built-in optional content censoring"
 msgstr "אפשר צנזורת תוכן מובנית של המשחק"
 
-#: engines/sci/detection_options.h:147
+#: engines/sci/detection_options.h:169
 msgid "Upscale videos"
 msgstr "סרטונים יוקרתיים"
 
-#: engines/sci/detection_options.h:148
+#: engines/sci/detection_options.h:170
 msgid "Upscale videos to double their size"
 msgstr "סרטונים יוקרתיים להכפלת גודלם"
 
-#: engines/sci/detection_options.h:158
+#: engines/sci/detection_options.h:182
 msgid "Use RGB rendering"
 msgstr ""
 
-#: engines/sci/detection_options.h:159
+#: engines/sci/detection_options.h:183
 msgid "Use RGB rendering to improve screen transitions"
 msgstr ""
 
-#: engines/sci/detection_options.h:169
+#: engines/sci/detection_options.h:195
 msgid "Use per-resource modified palettes"
 msgstr ""
 
-#: engines/sci/detection_options.h:170
+#: engines/sci/detection_options.h:196
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
 
-#: engines/sci/detection_options.h:180
+#: engines/sci/detection_options.h:208
 #, fuzzy
 msgid "Enable bearded musicians"
 msgstr "אפשר צנזורה של תוכן"
 
-#: engines/sci/detection_options.h:181
+#: engines/sci/detection_options.h:209
 msgid "Enable graphics that were disabled for legal reasons"
 msgstr ""
 
-#: engines/sci/detection_options.h:205
+#: engines/sci/detection_options.h:237
 #, fuzzy
 msgid "MIDI mode:"
 msgstr "רווח MIDI:"
 
-#: engines/sci/detection_options.h:206
+#: engines/sci/detection_options.h:238
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
 msgstr ""
 
-#: engines/sci/detection_options.h:211
+#: engines/sci/detection_options.h:243
 msgid "Standard (GM / MT-32)"
 msgstr ""
 
-#: engines/sci/detection_options.h:215
+#: engines/sci/detection_options.h:247
 msgid "Roland D-110 / D-10 / D-20"
 msgstr ""
 
-#: engines/sci/detection_options.h:219
+#: engines/sci/detection_options.h:251
 msgid "Yamaha FB-01"
 msgstr ""
 
@@ -6581,50 +6581,61 @@ msgstr "הצג קו אובייקט"
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "הצגת שמות של אובייקטים בתחתית המסך"
 
-#: engines/scumm/detection.cpp:182
+#: engines/scumm/detection.cpp:184
 #, fuzzy
 msgid "Use NES Classic Palette"
 msgstr "השתמש בפלטה חלופית"
 
-#: engines/scumm/detection.cpp:183
+#: engines/scumm/detection.cpp:185
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 
-#: engines/scumm/detection.cpp:189
+#: engines/scumm/detection.cpp:193
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr ""
 
-#: engines/scumm/detection.cpp:190
+#: engines/scumm/detection.cpp:194
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
 
-#: engines/scumm/detection.cpp:196
+#: engines/scumm/detection.cpp:202
 msgid "Play simplified music"
 msgstr ""
 
-#: engines/scumm/detection.cpp:197
+#: engines/scumm/detection.cpp:203
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
 msgstr ""
 
-#: engines/scumm/detection.cpp:203
+#: engines/scumm/detection.cpp:211
 #, fuzzy
 msgid "Enable smooth scrolling"
 msgstr "אפשר גלילה חלקה בזמן ההליכה"
 
-#: engines/scumm/detection.cpp:204
+#: engines/scumm/detection.cpp:212
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr ""
 
-#: engines/scumm/detection.cpp:210 engines/scumm/dialogs.cpp:730
+#: engines/scumm/detection.cpp:220
+#, fuzzy
+msgid "Allow semi-smooth scrolling"
+msgstr "אפשר גלילה חלקה בזמן ההליכה"
+
+#: engines/scumm/detection.cpp:221
+msgid ""
+"Allow scrolling to be less smooth during the fast camera movement in the "
+"intro."
+msgstr ""
+
+#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:730
 #, fuzzy
 msgid "Enable game-specific enhancements"
 msgstr "אפשר צנזורה של תוכן"
 
-#: engines/scumm/detection.cpp:211 engines/scumm/dialogs.cpp:730
+#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:730
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -7385,45 +7396,45 @@ msgstr ""
 "אנא העתק קבצים אלה לספריית נתוני המשחק.\n"
 "\n"
 
-#: engines/sherlock/detection.cpp:68
+#: engines/sherlock/detection.cpp:70
 msgid "Pixellated scene transitions"
 msgstr "מעברי סצנה פיקסליים"
 
-#: engines/sherlock/detection.cpp:69
+#: engines/sherlock/detection.cpp:71
 msgid "When changing scenes, a randomized pixel transition is done"
 msgstr "בעת החלפת סצינות, מתבצע מעבר פיקסל אקראי"
 
-#: engines/sherlock/detection.cpp:78
+#: engines/sherlock/detection.cpp:82
 msgid "Don't show hotspots when moving mouse"
 msgstr "אל תציג נקודות חמות בעת העברת העכבר"
 
-#: engines/sherlock/detection.cpp:79
+#: engines/sherlock/detection.cpp:83
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr "הצג רק שמות של נקודה חמה לאחר שתלחץ בפועל על נקודה חמה או כפתור פעולה"
 
-#: engines/sherlock/detection.cpp:88
+#: engines/sherlock/detection.cpp:94
 msgid "Show character portraits"
 msgstr "הצג דיוקנאות תווים"
 
-#: engines/sherlock/detection.cpp:89
+#: engines/sherlock/detection.cpp:95
 msgid "Show portraits for the characters when conversing"
 msgstr "הצג דיוקנאות עבור הדמויות בעת שיחה"
 
-#: engines/sherlock/detection.cpp:98
+#: engines/sherlock/detection.cpp:106
 msgid "Slide dialogs into view"
 msgstr "החלק דיאלוגים לתצוגה"
 
-#: engines/sherlock/detection.cpp:99
+#: engines/sherlock/detection.cpp:107
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
 msgstr "החלק את תיבת הדו-שיח של ממשק המשתמש לתצוגה, במקום פשוט להציג אותם מייד"
 
-#: engines/sherlock/detection.cpp:108
+#: engines/sherlock/detection.cpp:118
 msgid "Transparent windows"
 msgstr "חלונות שקופים"
 
-#: engines/sherlock/detection.cpp:109
+#: engines/sherlock/detection.cpp:119
 msgid "Show windows with a partially transparent background"
 msgstr "הצג חלונות עם רקע שקוף חלקית"
 
@@ -7475,22 +7486,22 @@ msgstr "טוען משחק"
 msgid "Enable loading of external replacement assets."
 msgstr ""
 
-#: engines/stark/detection.cpp:384
+#: engines/stark/detection.cpp:386
 msgid "Enable linear filtering of the backgrounds images"
 msgstr ""
 
-#: engines/stark/detection.cpp:385
+#: engines/stark/detection.cpp:387
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
 
-#: engines/stark/detection.cpp:393 engines/ultima/detection.cpp:118
+#: engines/stark/detection.cpp:397 engines/ultima/detection.cpp:136
 #, fuzzy
 msgid "Enable font anti-aliasing"
 msgstr "אפשר צנזורה של תוכן"
 
-#: engines/stark/detection.cpp:394 engines/ultima/detection.cpp:119
+#: engines/stark/detection.cpp:398 engines/ultima/detection.cpp:137
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
@@ -7698,99 +7709,99 @@ msgstr ""
 msgid "Enable the original wall collision damage"
 msgstr ""
 
-#: engines/twine/detection.cpp:681
+#: engines/twine/detection.cpp:683
 #, fuzzy
 msgid "Disable save menu"
 msgstr "שמירת המשחק נכשלה"
 
-#: engines/twine/detection.cpp:682
+#: engines/twine/detection.cpp:684
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 
-#: engines/twine/detection.cpp:688
+#: engines/twine/detection.cpp:692
 #, fuzzy
 msgid "Enable debug mode"
 msgstr "אפשר מצב הליום"
 
-#: engines/twine/detection.cpp:689
+#: engines/twine/detection.cpp:693
 #, fuzzy
 msgid "Enable the debug mode"
 msgstr "אפשר מצב הליום"
 
-#: engines/twine/detection.cpp:695
+#: engines/twine/detection.cpp:701
 #, fuzzy
 msgid "Enable audio CD"
 msgstr "אפשר קהל אולפן"
 
-#: engines/twine/detection.cpp:696
+#: engines/twine/detection.cpp:702
 msgid "Enable the original audio cd track"
 msgstr ""
 
-#: engines/twine/detection.cpp:702
+#: engines/twine/detection.cpp:710
 #, fuzzy
 msgid "Enable sound"
 msgstr "אפשר אחסון"
 
-#: engines/twine/detection.cpp:703
+#: engines/twine/detection.cpp:711
 #, fuzzy
 msgid "Enable the sound for the game"
 msgstr "כותרת מלאה של המשחק"
 
-#: engines/twine/detection.cpp:709
+#: engines/twine/detection.cpp:719
 #, fuzzy
 msgid "Enable voices"
 msgstr "הפעל את ונוס"
 
-#: engines/twine/detection.cpp:710
+#: engines/twine/detection.cpp:720
 #, fuzzy
 msgid "Enable the voices for the game"
 msgstr "הפעל את מערכת העזרה של ונוס"
 
-#: engines/twine/detection.cpp:716
+#: engines/twine/detection.cpp:728
 #, fuzzy
 msgid "Enable text"
 msgstr "אפשר אחסון"
 
-#: engines/twine/detection.cpp:717
+#: engines/twine/detection.cpp:729
 #, fuzzy
 msgid "Enable the text for the game"
 msgstr "כותרת מלאה של המשחק"
 
-#: engines/twine/detection.cpp:723
+#: engines/twine/detection.cpp:737
 #, fuzzy
 msgid "Enable movies"
 msgstr "הפעל את ונוס"
 
-#: engines/twine/detection.cpp:724
+#: engines/twine/detection.cpp:738
 #, fuzzy
 msgid "Enable the cutscenes for the game"
 msgstr "הפעל את מערכת העזרה של ונוס"
 
-#: engines/twine/detection.cpp:730
+#: engines/twine/detection.cpp:746
 #, fuzzy
 msgid "Enable mouse"
 msgstr "הפעל את ונוס"
 
-#: engines/twine/detection.cpp:731
+#: engines/twine/detection.cpp:747
 #, fuzzy
 msgid "Enable the mouse for the UI"
 msgstr "כותרת מלאה של המשחק"
 
-#: engines/twine/detection.cpp:737
+#: engines/twine/detection.cpp:755
 msgid "Use the USA version"
 msgstr ""
 
-#: engines/twine/detection.cpp:738
+#: engines/twine/detection.cpp:756
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/detection.cpp:744 engines/ultima/detection.cpp:84
+#: engines/twine/detection.cpp:764 engines/ultima/detection.cpp:92
 #, fuzzy
 msgid "Enable high resolution"
 msgstr "אפשר גרפיקה ברזולוציה גבוהה"
 
-#: engines/twine/detection.cpp:745 engines/ultima/detection.cpp:85
+#: engines/twine/detection.cpp:765 engines/ultima/detection.cpp:93
 #, fuzzy
 msgid "Enable a higher resolution for the game"
 msgstr "כותרת מלאה של המשחק"
@@ -7953,69 +7964,69 @@ msgctxt "Options menu"
 msgid "Wall collision off"
 msgstr "גלול את הצמד"
 
-#: engines/ultima/detection.cpp:66
+#: engines/ultima/detection.cpp:68
 msgid "Enable frame skipping"
 msgstr ""
 
-#: engines/ultima/detection.cpp:67
+#: engines/ultima/detection.cpp:69
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
 
-#: engines/ultima/detection.cpp:72
+#: engines/ultima/detection.cpp:76
 #, fuzzy
 msgid "Enable frame limiting"
 msgstr "אפשר צנזורה של תוכן"
 
-#: engines/ultima/detection.cpp:73
+#: engines/ultima/detection.cpp:77
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 
-#: engines/ultima/detection.cpp:79
+#: engines/ultima/detection.cpp:85
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
 
-#: engines/ultima/detection.cpp:94
+#: engines/ultima/detection.cpp:104
 msgid "Play foot step sounds"
 msgstr ""
 
-#: engines/ultima/detection.cpp:95
+#: engines/ultima/detection.cpp:105
 msgid "Plays sound when the player moves."
-msgstr ""
-
-#: engines/ultima/detection.cpp:100
-#, fuzzy
-msgid "Enable jump to mouse position"
-msgstr "כותרת מלאה של המשחק"
-
-#: engines/ultima/detection.cpp:101
-msgid ""
-"Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
 
 #: engines/ultima/detection.cpp:112
 #, fuzzy
+msgid "Enable jump to mouse position"
+msgstr "כותרת מלאה של המשחק"
+
+#: engines/ultima/detection.cpp:113
+msgid ""
+"Jumping while not moving targets the mouse cursor rather than direction only."
+msgstr ""
+
+#: engines/ultima/detection.cpp:128
+#, fuzzy
 msgid "Enable font replacement"
 msgstr "אפשר צנזורה של תוכן"
 
-#: engines/ultima/detection.cpp:113
+#: engines/ultima/detection.cpp:129
 msgid "Replaces game fonts with rendered fonts"
 msgstr ""
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/detection.cpp:128
+#: engines/ultima/detection.cpp:148
 msgid "Camera moves with Silencer"
 msgstr ""
 
-#: engines/ultima/detection.cpp:129
+#: engines/ultima/detection.cpp:149
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
 
-#: engines/ultima/detection.cpp:142
+#: engines/ultima/detection.cpp:164
 msgid "Always enable Christmas easter-egg"
 msgstr ""
 
-#: engines/ultima/detection.cpp:143
+#: engines/ultima/detection.cpp:165
 msgid "Enable the Christmas music at any time of year."
 msgstr ""
 
@@ -8089,11 +8100,11 @@ msgstr "הצג דלפק FPS"
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr "הצג את המספר הנוכחי של פריימים בשנייה בפינה השמאלית העליונה"
 
-#: engines/wintermute/detection.cpp:62
+#: engines/wintermute/detection.cpp:64
 msgid "Sprite bilinear filtering (SLOW)"
 msgstr "סינון ספרייט דו-גלילי (SLOW)"
 
-#: engines/wintermute/detection.cpp:63
+#: engines/wintermute/detection.cpp:65
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "החל סינון בי-לינארי על דמויות בודדות"
 
@@ -8785,11 +8796,11 @@ msgid ""
 "be compared"
 msgstr "מציג עלויות פריט במצב מלאי רגיל, ומאפשר להשוות בין ערך הפריטים"
 
-#: engines/xeen/detection.cpp:65
+#: engines/xeen/detection.cpp:67
 msgid "More durable armor"
 msgstr "שריון עמיד יותר"
 
-#: engines/xeen/detection.cpp:66
+#: engines/xeen/detection.cpp:68
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr "השריון לא ישבר עד שהדמות תהיה ב -80 כ\"ס, ולא רק -10 כ\"ס"
 
@@ -8798,35 +8809,35 @@ msgstr "השריון לא ישבר עד שהדמות תהיה ב -80 כ\"ס, ו�
 msgid "Failed to autosave"
 msgstr "שמירת המשחק נכשלה"
 
-#: engines/zvision/detection_tables.h:60
+#: engines/zvision/detection_tables.h:62
 msgid "Double FPS"
 msgstr "FPS כפול"
 
-#: engines/zvision/detection_tables.h:61
+#: engines/zvision/detection_tables.h:63
 msgid "Increase framerate from 30 to 60 FPS"
 msgstr "הגדל את המסגרת מ 30 ל 60 FPS"
 
-#: engines/zvision/detection_tables.h:70
+#: engines/zvision/detection_tables.h:74
 msgid "Enable Venus"
 msgstr "הפעל את ונוס"
 
-#: engines/zvision/detection_tables.h:71
+#: engines/zvision/detection_tables.h:75
 msgid "Enable the Venus help system"
 msgstr "הפעל את מערכת העזרה של ונוס"
 
-#: engines/zvision/detection_tables.h:80
+#: engines/zvision/detection_tables.h:86
 msgid "Disable animation while turning"
 msgstr "בטל אנימציה בזמן פניה"
 
-#: engines/zvision/detection_tables.h:81
+#: engines/zvision/detection_tables.h:87
 msgid "Disable animation while turning in panorama mode"
 msgstr "בטל אנימציה בזמן פניה במצב פנורמה"
 
-#: engines/zvision/detection_tables.h:90
+#: engines/zvision/detection_tables.h:98
 msgid "Use high resolution MPEG video"
 msgstr "השתמש בווידיאו MPEG ברזולוציה גבוהה"
 
-#: engines/zvision/detection_tables.h:91
+#: engines/zvision/detection_tables.h:99
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr "השתמש בווידיאו MPEG מגירסת ה- DVD במקום ב- AVI ברזולוציה נמוכה יותר"
 
