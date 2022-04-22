@@ -819,6 +819,9 @@ public:
 		int disabled_for = 0; // FOR_* constant
 		// pointer to the test variable
 		const void *data_ptr = nullptr;
+		// other values used for a test, depend on type
+		int data1 = 0;
+		int data2 = 0;
 	} _restrict_until;
 
 	unsigned int _loopcounter = 0;

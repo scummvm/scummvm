@@ -82,6 +82,7 @@ static bool ShouldStayInWaitMode();
 #define UNTIL_INTIS0    6
 #define UNTIL_SHORTIS0  7
 #define UNTIL_INTISNEG  8
+#define UNTIL_ANIMBTNEND 9
 
 static void ProperExit() {
 	_G(want_exit) = 0;
@@ -865,6 +866,10 @@ static bool ShouldStayInWaitMode() {
 		short *wkptr = (short *)_G(restrict_until).data_ptr;
 		return !(wkptr[0] == 0);
 	}
+	case UNTIL_ANIMBTNEND: {
+		// still animating?
+		return FindButtonAnimation(_G(restrict_until).data1, _G(restrict_until).data2) >= 0;
+	}
 	default:
 		quit("loop_until: unknown until event");
 	}
@@ -932,7 +937,7 @@ static int GameTick() {
 	return res;
 }
 
-static void SetupLoopParameters(int untilwhat, const void *udata) {
+static void SetupLoopParameters(int untilwhat, const void *data_ptr = nullptr, int data1 = 0, int data2 = 0) {
 	_GP(play).disabled_user_interface++;
 	if (GUI::Options.DisabledStyle != kGuiDis_Unchanged) { // If GUI looks change when disabled, then update them all
 		GUI::MarkAllGUIForUpdate();
@@ -940,17 +945,19 @@ static void SetupLoopParameters(int untilwhat, const void *udata) {
 	// Only change the mouse cursor if it hasn't been specifically changed first
 	// (or if it's speech, always change it)
 	if (((_G(cur_cursor) == _G(cur_mode)) || (untilwhat == UNTIL_NOOVERLAY)) &&
-	        (_G(cur_mode) != CURS_WAIT))
+		(_G(cur_mode) != CURS_WAIT))
 		set_mouse_cursor(CURS_WAIT);
 
 	_G(restrict_until).type = untilwhat;
-	_G(restrict_until).data_ptr = udata;
+	_G(restrict_until).data_ptr = data_ptr;
+	_G(restrict_until).data1 = data1;
+	_G(restrict_until).data2 = data2;
 	_G(restrict_until).disabled_for = FOR_EXITLOOP;
 }
 
 // This function is called from lot of various functions
 // in the game core, character, room object etc
-static void GameLoopUntilEvent(int untilwhat, const void *daaa) {
+static void GameLoopUntilEvent(int untilwhat, const void *data_ptr = nullptr, int data1 = 0, int data2 = 0) {
 	// blocking cutscene - end skipping
 	EndSkippingUntilCharStops();
 
@@ -959,8 +966,8 @@ static void GameLoopUntilEvent(int untilwhat, const void *daaa) {
 	// call needs them
 	auto cached_restrict_until = _G(restrict_until);
 
-	SetupLoopParameters(untilwhat, daaa);
-	while (GameTick() == 0 && !_G(abort_engine)) {}
+	SetupLoopParameters(untilwhat, data_ptr, data1, data2);
+	while (GameTick() == 0);
 
 	_G(our_eip) = 78;
 
@@ -996,10 +1003,12 @@ void GameLoopUntilNotMoving(const short *move) {
 }
 
 void GameLoopUntilNoOverlay() {
-	GameLoopUntilEvent(UNTIL_NOOVERLAY, nullptr);
+	GameLoopUntilEvent(UNTIL_NOOVERLAY);
 }
 
-
+void GameLoopUntilButAnimEnd(int guin, int objn) {
+	GameLoopUntilEvent(UNTIL_ANIMBTNEND, nullptr, guin, objn);
+}
 
 void RunGameUntilAborted() {
 	// skip ticks to account for time spent starting _GP(game).

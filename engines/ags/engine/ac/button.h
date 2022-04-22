@@ -53,6 +53,7 @@ size_t      GetAnimatingButtonCount();
 AnimatingGUIButton *GetAnimatingButtonByIndex(int idxn);
 void        AddButtonAnimation(const AnimatingGUIButton &abtn);
 void		StopButtonAnimation(int idxn);
+int         FindButtonAnimation(int guin, int objn);
 void		FindAndRemoveButtonAnimation(int guin, int objn);
 void        RemoveAllButtonAnimations();
 

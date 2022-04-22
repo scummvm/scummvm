@@ -39,7 +39,8 @@ struct AnimatingGUIButton {
 	short buttonid = 0, ongui = 0, onguibut = 0;
 	// current animation status
 	short view = 0, loop = 0, frame = 0;
-	short speed = 0, repeat = 0, wait = 0;
+	short speed = 0, repeat = 0, blocking = 0,
+		direction = 0, wait = 0;
 
 	void ReadFromFile(Shared::Stream *in);
 	void WriteToFile(Shared::Stream *out);

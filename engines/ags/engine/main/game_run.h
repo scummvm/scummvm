@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGS_ENGINE_MAIN__GAMERUN_H
-#define AGS_ENGINE_MAIN__GAMERUN_H
+#ifndef AGS_ENGINE_MAIN_GAME_RUN_H
+#define AGS_ENGINE_MAIN_GAME_RUN_H
 
 namespace AGS3 {
 
@@ -40,6 +40,7 @@ void GameLoopUntilValueIsNegative(const short *value);
 void GameLoopUntilValueIsNegative(const int *value);
 void GameLoopUntilNotMoving(const short *move);
 void GameLoopUntilNoOverlay();
+void GameLoopUntilButAnimEnd(int guin, int objn);
 
 // Run the actual game until it ends, or aborted by player/error; loops GameTick() internally
 void RunGameUntilAborted();
