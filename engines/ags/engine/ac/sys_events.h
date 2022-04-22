@@ -65,7 +65,10 @@ inline int make_merged_mod(int mod) {
 	return m_mod;
 }
 
-extern KeyInput ags_keycode_from_scummvm(const Common::Event &event);
+// Converts ScummVM key event to eAGSKeyCode if it is in proper range,
+// see comments to eAGSKeyCode for details.
+// Optionally works in bacward compatible mode (old_keyhandle)
+extern KeyInput ags_keycode_from_scummvm(const Common::Event &event, bool old_keyhandle);
 
 // Tells if there are any buffered key events
 extern bool ags_keyevent_ready();

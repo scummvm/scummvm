@@ -85,7 +85,8 @@ namespace AGS3 {
 #define OPT_WALKSPEEDABSOLUTE 47 // if movement speeds are independent of walkable mask resolution
 #define OPT_CLIPGUICONTROLS 48 // clip drawn gui control contents to the control's rectangle
 #define OPT_GAMETEXTENCODING 49 // how the text in the game data should be interpreted
-#define OPT_HIGHESTOPTION   OPT_GAMETEXTENCODING
+#define OPT_KEYHANDLEAPI    50 // key handling mode (old/new)
+#define OPT_HIGHESTOPTION   OPT_KEYHANDLEAPI
 #define OPT_NOMODMUSIC      98
 #define OPT_LIPSYNCTEXT     99
 #define PORTRAIT_LEFT       0

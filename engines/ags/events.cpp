@@ -311,7 +311,7 @@ bool EventsManager::ags_key_to_scancode(AGS3::eAGSKeyCode key, Common::KeyCode(&
 	return false;
 }
 
-AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &event, int &ags_mod) {
+AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &event, int &ags_mod, bool old_keyhandle) {
 	if (event.type != Common::EVENT_KEYDOWN)
 		return AGS3::eAGSKeyCodeNone;
 
@@ -324,12 +324,16 @@ AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &eve
 	if (mod & Common::KBD_CTRL)  ags_mod |= AGS3::eAGSModLCtrl;
 	if (mod & Common::KBD_ALT)   ags_mod |= AGS3::eAGSModLAlt;
 
-	// Ctrl and Alt combinations realign the letter code to certain offset
-	if (sym >= Common::KEYCODE_a && sym <= Common::KEYCODE_z) {
+	// Old mode: Ctrl and Alt combinations realign the letter code to certain offset
+	if (old_keyhandle && (sym >= Common::KEYCODE_a && sym <= Common::KEYCODE_z)) {
 		if ((mod & Common::KBD_CTRL) != 0) // align letters to code 1
 			return static_cast<AGS3::eAGSKeyCode>(0 + (sym - Common::KEYCODE_a) + 1);
 		else if ((mod & Common::KBD_ALT) != 0) // align letters to code 301
 			return static_cast<AGS3::eAGSKeyCode>(AGS_EXT_KEY_SHIFT + (sym - Common::KEYCODE_a) + 1);
+	}
+	// New mode: also handle common key range
+	else if (!old_keyhandle && (sym >= Common::KEYCODE_SPACE && sym <= Common::KEYCODE_z)) {
+		return static_cast<AGS3::eAGSKeyCode>(sym);
 	}
 
 	if (event.kbd.ascii >= 32 && event.kbd.ascii <= 127)
@@ -406,6 +410,18 @@ AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &eve
 	case Common::KEYCODE_KP_PERIOD:
 	case Common::KEYCODE_DELETE:
 		return AGS3::eAGSKeyCodeDelete;
+	case Common::KEYCODE_LSHIFT:
+		return AGS3::eAGSKeyCodeLShift;
+	case Common::KEYCODE_RSHIFT:
+		return AGS3::eAGSKeyCodeRShift;
+	case Common::KEYCODE_LCTRL:
+		return AGS3::eAGSKeyCodeLCtrl;
+	case Common::KEYCODE_RCTRL:
+		return AGS3::eAGSKeyCodeRCtrl;
+	case Common::KEYCODE_LALT:
+		return AGS3::eAGSKeyCodeLAlt;
+	case Common::KEYCODE_RALT:
+		return AGS3::eAGSKeyCodeRAlt;
 
 	default:
 		return AGS3::eAGSKeyCodeNone;

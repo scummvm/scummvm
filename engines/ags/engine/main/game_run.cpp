@@ -243,7 +243,12 @@ int old_key_mod = 0; // for saving previous key mods
 
 // Runs service key controls, returns false if service key combinations were handled
 // and no more processing required, otherwise returns true and provides current keycode and key shifts.
+//
+// * old_keyhandle mode is a backward compatible input handling mode, where
+//   - lone mod keys are not passed further into the engine;
+//   - key + mod combos are merged into one key code for the script callback.
 bool run_service_key_controls(KeyInput &out_key) {
+	const bool old_keyhandle = (_GP(game).options[OPT_KEYHANDLEAPI] == 0);
 	bool handled = false;
 	const bool key_valid = ags_keyevent_ready();
 	const Common::Event key_evt = key_valid ? ags_get_next_keyevent() : Common::Event();
@@ -299,11 +304,10 @@ bool run_service_key_controls(KeyInput &out_key) {
 
 	if (!key_valid)
 		return false; // if there was no key press, finish after handling current mod state
-	if (is_only_mod_key || handled)
-		return false; // rest of engine currently does not use pressed mod keys
-	// change this when it's no longer true (but be mindful about key-skipping!)
+	if (handled || (old_keyhandle && is_only_mod_key))
+		return false; // in backward mode the engine does not react to single mod keys
 
-	KeyInput ki = ags_keycode_from_scummvm(key_evt);
+	KeyInput ki = ags_keycode_from_scummvm(key_evt, old_keyhandle);
 	eAGSKeyCode agskey = ki.Key;
 	if (agskey == eAGSKeyCodeNone)
 		return false; // should skip this key event
@@ -405,6 +409,7 @@ bool run_service_mb_controls(int &mbut, int &mwheelz) {
 
 // Runs default keyboard handling
 static void check_keyboard_controls() {
+	const bool old_keyhandle = _GP(game).options[OPT_KEYHANDLEAPI] == 0;
 	// First check for service engine's combinations (mouse lock, display mode switch, and so forth)
 	KeyInput ki;
 	if (!run_service_key_controls(ki)) {
@@ -500,9 +505,11 @@ static void check_keyboard_controls() {
 	if (!keywasprocessed) {
 		int sckey = AGSKeyToScriptKey(kgn);
 		int sckeymod = ki.Mod;
-		debug_script_log("Running on_key_press keycode %d, mod %d", sckey, sckeymod);
-		setevent(EV_TEXTSCRIPT, TS_KEYPRESS, sckey, sckeymod);
-		if (ki.UChar > 0) {
+		if (old_keyhandle || (ki.UChar == 0)) {
+			debug_script_log("Running on_key_press keycode %d, mod %d", sckey, sckeymod);
+			setevent(EV_TEXTSCRIPT, TS_KEYPRESS, sckey, sckeymod);
+		}
+		if (!old_keyhandle && (ki.UChar > 0)) {
 			debug_script_log("Running on_text_input char %s (%d)", ki.Text, ki.UChar);
 			setevent(EV_TEXTSCRIPT, TS_TEXTINPUT, ki.UChar);
 		}

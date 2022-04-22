@@ -50,9 +50,9 @@ void UpdateGameAudioOnly();
 // Gets current logical game FPS, this is normally a fixed number set in script;
 // in case of "maxed fps" mode this function returns real measured FPS.
 float get_current_fps();
+struct KeyInput;
 // Runs service key controls, returns false if no key was pressed or key input was claimed by the engine,
 // otherwise returns true and provides a keycode.
-struct KeyInput;
 bool run_service_key_controls(KeyInput &kgn);
 // Runs service mouse controls, returns false if mouse input was claimed by the engine,
 // otherwise returns true and provides mouse button code.

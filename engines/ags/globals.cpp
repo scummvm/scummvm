@@ -333,7 +333,7 @@ Globals::Globals() {
 	_renderDialogOptionsFunc = new NonBlockingScriptFunction("dialog_options_render", 1);
 	_getDialogOptionUnderCursorFunc = new NonBlockingScriptFunction("dialog_options_get_active", 1);
 	_runDialogOptionMouseClickHandlerFunc = new NonBlockingScriptFunction("dialog_options_mouse_click", 2);
-	_runDialogOptionKeyPressHandlerFunc = new NonBlockingScriptFunction("dialog_options_key_press", 2);
+	_runDialogOptionKeyPressHandlerFunc = new NonBlockingScriptFunction("dialog_options_key_press", 3);
 	_runDialogOptionTextInputHandlerFunc = new NonBlockingScriptFunction("dialog_options_text_input", 2);
 	_runDialogOptionRepExecFunc = new NonBlockingScriptFunction("dialog_options_repexec", 1);
 	_scsystem = new ScriptSystem();
