@@ -153,7 +153,7 @@ DWORD WINAPI startSpeech(LPVOID parameters) {
 			break;
 		}
 		WCHAR *currentSpeech = params->queue->front();
-		 _voice->Speak(currentSpeech, SPF_PURGEBEFORESPEAK | SPF_ASYNC | SPF_PARSE_SAPI, nullptr);
+		_voice->Speak(currentSpeech, SPF_PURGEBEFORESPEAK | SPF_ASYNC | SPF_PARSE_SAPI, nullptr);
 		ReleaseMutex(*params->mutex);
 
 		while (*(params->state) != WindowsTextToSpeechManager::PAUSED)
