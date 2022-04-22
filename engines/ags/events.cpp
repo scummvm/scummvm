@@ -323,6 +323,8 @@ AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &eve
 	if (mod & Common::KBD_SHIFT) ags_mod |= AGS3::eAGSModLShift;
 	if (mod & Common::KBD_CTRL)  ags_mod |= AGS3::eAGSModLCtrl;
 	if (mod & Common::KBD_ALT)   ags_mod |= AGS3::eAGSModLAlt;
+	if (mod & Common::KBD_NUM)   ags_mod |= AGS3::eAGSModNum;
+	if (mod & Common::KBD_CAPS)  ags_mod |= AGS3::eAGSModCaps;
 
 	// Old mode: Ctrl and Alt combinations realign the letter code to certain offset
 	if (old_keyhandle && (sym >= Common::KEYCODE_a && sym <= Common::KEYCODE_z)) {
