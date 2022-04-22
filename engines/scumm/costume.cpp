@@ -910,7 +910,39 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 				_srcptr += 12;
 			}
 
-			return mainRoutine(xmoveCur, ymoveCur);
+			// WORKAROUND: During the intro, when Bernard faces to
+			// the right or left it's apparently the same set of
+			// graphical sprites (limbs) except in one case they're
+			// mirrored. There are two limbs: Bernard's face, and
+			// the surrounding area of the Chron-O-John. I guess
+			// that it's done this way so that opening the lid is
+			// part of the actor animation.
+			//
+			// Of course, just because Bernard turns his head does
+			// not mean that the Chron-O-John should be mirrored
+			// along with it. We work around this drawing glitch by
+			// always having the appropriate mirroring flag for
+			// that limb. We also adjust the position of the head
+			// slightly to make it fit nicer into the framing area.
+			//
+			// Note that room 61 is used more than once, so just to
+			// be extra safe we also check that the expected script
+			// is running.
+
+			bool mirror = _mirror;
+
+			if (_vm->_game.id == GID_TENTACLE && _vm->_currentRoom == 61 && a->_number == 1 && a->getFacing() == 270 && _vm->isScriptRunning(207) && _vm->_enableEnhancements) {
+				if (limb == 0) {
+					_mirror = true;
+				} else if (!_mirror) {
+					xmoveCur += 2;
+				}
+			}
+
+			bool result = mainRoutine(xmoveCur, ymoveCur);
+
+			_mirror = mirror;
+			return result;
 		}
 	}
 
