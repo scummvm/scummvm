@@ -20,6 +20,7 @@
  */
 
 #include "video/avi_decoder.h"
+#include "video/flic_decoder.h"
 #include "video/mpegps_decoder.h"
 #include "video/theora_decoder.h"
 #include "ags/shared/core/platform.h"
@@ -151,9 +152,10 @@ bool play_theora_video(const char *name, int flags, VideoSkipType skip, bool sho
 }
 
 bool play_flc_video(int numb, int flags, VideoSkipType skip) {
-	// TODO: play_flc_file
-	Display("This games uses Flic videos that ScummVM doesn't yet support");
-	return false;
+	Video::FlicDecoder decoder;
+	String flicName = String::FromFormat("flic%d.flc", numb);
+
+	return play_video(&decoder, flicName, flags, skip, false);
 }
 
 void video_pause() {
