@@ -139,7 +139,7 @@ void CGE2Engine::init() {
 	_sys = new System(this);
 	_eventManager = new EventManager(this);
 	_map = new Map(this);
-	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;	
+	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 }
 
 void CGE2Engine::deinit() {
