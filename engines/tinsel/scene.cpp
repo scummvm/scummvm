@@ -458,7 +458,7 @@ void DoHailScene(SCNHANDLE scene) {
 		init.event = NOEVENT;
 		init.hTinselCode = ss->hSceneScript;
 
-		CoroScheduler.createProcess(PID_TCODE, SceneTinselProcess, &init, sizeof(init));
+		CoroScheduler.createProcess(PID_SCENE, SceneTinselProcess, &init, sizeof(init));
 	}
 }
 
