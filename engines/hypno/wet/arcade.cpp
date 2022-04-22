@@ -37,24 +37,44 @@ void WetEngine::initSegment(ArcadeShooting *arc) {
 		_segmentShootSequenceMax = 7;
 	} else if (_arcadeMode == "Y4") {
 		_c40SegmentNext.clear();
-		_c40SegmentNext.push_back(2);
-		_c40SegmentPath.push_back(3);
 
-		_c40SegmentNext.push_back(2);
-		_c40SegmentPath.push_back(5);
+		_c40SegmentNext.push_back(2);  // Road fork (down)
+		_c40SegmentPath.push_back(3);  // Go straight
 
-		_c40SegmentNext.push_back(6);
-		_c40SegmentPath.push_back(8);
+		_c40SegmentNext.push_back(9);  // Tunnel entry
+		_c40SegmentPath.push_back(9);  // Go straight
+		_c40SegmentNext.push_back(1);  // Tunnel section
+		_c40SegmentPath.push_back(11); // Tunnel exit
 
-		_c40SegmentNext.push_back(15);
-		_c40SegmentPath.push_back(16);
+		_c40SegmentNext.push_back(2);  // Road fork
+		_c40SegmentPath.push_back(5);  // Turn left
+
+		_c40SegmentNext.push_back(6);  // Ramp
+		_c40SegmentPath.push_back(8);  // Take ramp
+
+		_c40SegmentNext.push_back(15);  // Road fork (up)
+		_c40SegmentPath.push_back(18);  // Take right
+
+		_c40SegmentNext.push_back(22);  // Tunnel entry
+		_c40SegmentPath.push_back(22);  // Go straight
+		_c40SegmentNext.push_back(14);  // Tunnel section
+		_c40SegmentPath.push_back(24);  // Tunnel exit
+
+		_c40SegmentNext.push_back(15);  // Road fork (up)
+		_c40SegmentPath.push_back(17);  // Take left
+
+		_c40SegmentNext.push_back(19);  // Ramp
+		_c40SegmentPath.push_back(21);  // Take ramp
+
+		_c40SegmentNext.push_back(2);  // Road fork (down)
+		_c40SegmentPath.push_back(3);  // Go straight
 
 		_c40SegmentNext.push_back(26);
 		_c40SegmentIdx = 0;
 		_c40lastTurn = -1;
 
 		_segmentShootSequenceOffset = 0;
-		_segmentShootSequenceMax = 3;
+		_segmentShootSequenceMax = 5;
 	} else if (_arcadeMode == "Y5") {
 		_c50LeftTurns = 0;
 		_c50RigthTurns = 0;
@@ -169,10 +189,10 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 			else
 				_segmentIdx = _segmentIdx + 1;
 
-		} else if (segments[_segmentIdx].type == 'a') {
-			_segmentIdx = 1;
+		/*} else if (segments[_segmentIdx].type == 'a') {
+			_segmentIdx = 1;*/
 		} else if (segments[_segmentIdx].type == 's') {
-			_segmentIdx = 11;
+			_segmentIdx = _segmentIdx + 10; // _segmentIdx = 11;
 		} else {
 
 			// Objective checking
@@ -197,15 +217,29 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 					_segmentShootSequenceOffset = 8;
 					_segmentShootSequenceMax = 7;
 				} else if (_arcadeMode == "Y4") {
-					_segmentOffset = 13;
-					_segmentShootSequenceOffset = 1; // TODO
-					_segmentShootSequenceMax = 1;    // TODO
+					if (_segmentOffset == 0) {
+						_segmentOffset = 13;
+						_segmentShootSequenceOffset = 10; // TODO
+						_segmentShootSequenceMax = 5;    // TODO
+					} else {
+						_segmentOffset = 0;
+						_segmentShootSequenceOffset = 0;
+						_segmentShootSequenceMax = 5;
+					}
 				} else
 					error("Invalid segment type for mode: %s at the end of segment %x", _arcadeMode.c_str(), segments[_segmentIdx].type);
 			} else if (segments[_segmentIdx].type == 0xbb) {
 				_segmentOffset = 0;
 				_segmentShootSequenceOffset = 0;
 				_segmentShootSequenceMax = 7;
+			} else if (segments[_segmentIdx].type == 0x61) {
+				_segmentOffset = _segmentOffset + 1; // _segmentOffset = 1;
+				_segmentShootSequenceOffset = 6;
+				_segmentShootSequenceMax = 4;
+			} else if (segments[_segmentIdx].type == 0x63) {
+				_segmentOffset = _segmentOffset - 1; // _segmentOffset = 0;
+				//_segmentShootSequenceOffset = 0; // TODO
+				//_segmentShootSequenceMax = 7; // TODO
 			}
 
 			if (_arcadeMode == "Y4") {
