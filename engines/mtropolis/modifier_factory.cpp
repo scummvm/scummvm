@@ -46,6 +46,8 @@ Common::SharedPtr<Modifier> ModifierFactory<TModifier, TModifierData>::createMod
 
 	if (!modifier->load(context, static_cast<const TModifierData &>(dataObject)))
 		modifier.reset();
+	else
+		modifier->setSelfReference(modifier);
 
 	return Common::SharedPtr<Modifier>(modifier);
 }

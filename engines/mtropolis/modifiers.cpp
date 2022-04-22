@@ -53,6 +53,7 @@ const Common::Array<Common::SharedPtr<Modifier> > &BehaviorModifier::getModifier
 
 void BehaviorModifier::appendModifier(const Common::SharedPtr<Modifier> &modifier) {
 	_children.push_back(modifier);
+	modifier->setParent(getSelfReference());
 }
 
 IModifierContainer* BehaviorModifier::getChildContainer() {
@@ -81,6 +82,19 @@ bool MiniscriptModifier::load(ModifierLoaderContext &context, const Data::Minisc
 	return true;
 }
 
+bool MiniscriptModifier::respondsToEvent(const Event &evt) const {
+	return _enableWhen.respondsTo(evt);
+}
+
+VThreadState MiniscriptModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_enableWhen.respondsTo(msg->getEvent())) {
+		Common::SharedPtr<MiniscriptThread> thread(new MiniscriptThread(runtime, msg, _program, _references, this));
+		MiniscriptThread::runOnVThread(runtime->getVThread(), thread);
+	}
+
+	return kVThreadReturn;
+}
+
 Common::SharedPtr<Modifier> MiniscriptModifier::shallowClone() const {
 	MiniscriptModifier *clonePtr = new MiniscriptModifier(*this);
 	Common::SharedPtr<Modifier> clone(clonePtr);
@@ -89,6 +103,10 @@ Common::SharedPtr<Modifier> MiniscriptModifier::shallowClone() const {
 	clonePtr->_references.reset(new MiniscriptReferences(*_references));
 
 	return clone;
+}
+
+void MiniscriptModifier::linkInternalReferences(ObjectLinkingScope* scope) {
+	_references->linkInternalReferences(scope);
 }
 
 bool MessengerModifier::load(ModifierLoaderContext &context, const Data::MessengerModifier &data) {
@@ -518,6 +536,7 @@ const Common::Array<Common::SharedPtr<Modifier> > &CompoundVariableModifier::get
 
 void CompoundVariableModifier::appendModifier(const Common::SharedPtr<Modifier>& modifier) {
 	_children.push_back(modifier);
+	modifier->setParent(getSelfReference());
 }
 
 void CompoundVariableModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {

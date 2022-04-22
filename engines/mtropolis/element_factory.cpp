@@ -44,6 +44,8 @@ Common::SharedPtr<Element> ElementFactory<TElement, TElementData>::createElement
 
 	if (!element->load(context, static_cast<const TElementData &>(dataObject)))
 		element.reset();
+	else
+		element->setSelfReference(element);
 
 	return Common::SharedPtr<Element>(element);
 }

@@ -57,6 +57,7 @@ class CursorGraphicCollection;
 class Element;
 class MessageDispatch;
 class Modifier;
+class PlugInModifier;
 class RuntimeObject;
 class PlugIn;
 class Project;
@@ -71,6 +72,11 @@ struct IPlugInModifierFactory;
 struct IPlugInModifierFactoryAndDataFactory;
 struct MessageProperties;
 struct ModifierLoaderContext;
+struct PlugInModifierLoaderContext;
+template<typename TElement, typename TElementData> class ElementFactory;
+
+
+Common::String toCaseInsensitive(const Common::String &str);
 
 enum ColorDepthMode {
 	kColorDepthMode1Bit,
@@ -103,6 +109,7 @@ enum DynamicValueType {
 	kIncomingData,
 	kString,
 	kList,
+	kObject,
 
 	kEmpty,
 };
@@ -263,6 +270,10 @@ struct Event {
 	static Event create();
 	static Event create(EventIDs::EventID eventType, uint32 eventInfo);
 
+	// Returns true if this event, interpreted as a filter, recognizes another event.
+	// Handles cases where eventInfo is ignored (hopefully).
+	bool respondsTo(const Event &otherEvent) const;
+
 	bool load(const Data::Event &data);
 
 	inline bool operator==(const Event &other) const {
@@ -339,7 +350,8 @@ struct DynamicListDefaultSetter {
 	static void defaultSet(Label &value);
 	static void defaultSet(Event &value);
 	static void defaultSet(Common::String &value);
-	static void defaultSet(DynamicList &value);
+	static void defaultSet(Common::SharedPtr<DynamicList> &value);
+	static void defaultSet(Common::WeakPtr<RuntimeObject> &value);
 };
 
 struct DynamicListValueImporter {
@@ -352,7 +364,8 @@ struct DynamicListValueImporter {
 	static bool importValue(const DynamicValue &dynValue, const Label *&outPtr);
 	static bool importValue(const DynamicValue &dynValue, const Event *&outPtr);
 	static bool importValue(const DynamicValue &dynValue, const Common::String *&outPtr);
-	static bool importValue(const DynamicValue &dynValue, const DynamicList *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const Common::SharedPtr<DynamicList> *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const Common::WeakPtr<RuntimeObject> *&outPtr);
 };
 
 template<class T>
@@ -472,6 +485,8 @@ struct DynamicList {
 
 	void swap(DynamicList &other);
 
+	Common::SharedPtr<DynamicList> clone() const;
+
 private:
 	void clear();
 	void initFromOther(const DynamicList &other);
@@ -481,6 +496,8 @@ private:
 	DynamicListContainerBase *_container;
 };
 
+// Dynamic value container.  Somewhat importantly, lists stored in dynamic values
+// are BY REFERENCE and must be cloned as necessary.
 struct DynamicValue {
 	DynamicValue();
 	DynamicValue(const DynamicValue &other);
@@ -501,7 +518,23 @@ struct DynamicValue {
 	const VarReference &getVarReference() const;
 	const Common::String &getString() const;
 	const bool &getBool() const;
-	const DynamicList &getList() const;
+	const Common::SharedPtr<DynamicList> &getList() const;
+	const Common::WeakPtr<RuntimeObject> &getObject() const;
+
+	void clear();
+
+	void setInt(int32 value);
+	void setFloat(double value);
+	void setPoint(const Point16 &value);
+	void setIntRange(const IntRange &value);
+	void setVector(const AngleMagVector &value);
+	void setLabel(const Label &value);
+	void setEvent(const Event &value);
+	void setVarReference(const VarReference &value);
+	void setString(const Common::String &value);
+	void setBool(bool value);
+	void setList(const Common::SharedPtr<DynamicList> &value);
+	void setObject(const Common::WeakPtr<RuntimeObject> &value);
 
 	DynamicValue &operator=(const DynamicValue &other);
 
@@ -523,15 +556,22 @@ private:
 		Event asEvent;
 		Point16 asPoint;
 		bool asBool;
-		DynamicList *asList;
 	};
 
-	void clear();
+	template<class T>
+	void internalSwap(T &a, T &b) {
+		T temp = a;
+		a = b;
+		b = temp;
+	}
+
 	void initFromOther(const DynamicValue &other);
 
 	DynamicValueTypes::DynamicValueType _type;
 	ValueUnion _value;
 	Common::String _str;
+	Common::SharedPtr<DynamicList> _list;
+	Common::WeakPtr<RuntimeObject> _obj;
 };
 
 struct MessengerSendSpec {
@@ -649,12 +689,16 @@ public:
 	~ObjectLinkingScope();
 
 	void setParent(ObjectLinkingScope *parent);
-	void addObject(uint32 guid, const Common::WeakPtr<RuntimeObject> &object);
+	void addObject(uint32 guid, const Common::String &name, const Common::WeakPtr<RuntimeObject> &object);
+	Common::WeakPtr<RuntimeObject> resolve(uint32 staticGUID) const;
+	Common::WeakPtr<RuntimeObject> resolve(const Common::String &name, bool isNameAlreadyInsensitive) const;
+	Common::WeakPtr<RuntimeObject> resolve(uint32 staticGUID, const Common::String &name, bool isNameAlreadyInsensitive) const;
 
 	void reset();
 
 private:
 	Common::HashMap<uint32, Common::WeakPtr<RuntimeObject> > _guidToObject;
+	Common::HashMap<Common::String, Common::WeakPtr<RuntimeObject> > _nameToObject;
 	ObjectLinkingScope *_parent;
 };
 
@@ -770,6 +814,8 @@ public:
 	uint64 getRealTime() const;
 	uint64 getPlayTime() const;
 
+	VThread &getVThread() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
@@ -874,6 +920,9 @@ private:
 };
 
 class RuntimeObject {
+	template<typename TElement, typename TElementData>
+	friend class ElementFactory;
+
 public:
 	RuntimeObject();
 	virtual ~RuntimeObject();
@@ -883,12 +932,23 @@ public:
 
 	void setRuntimeGUID(uint32 runtimeGUID);
 
+	void setSelfReference(const Common::WeakPtr<RuntimeObject> &selfReference);
+	const Common::WeakPtr<RuntimeObject> &getSelfReference() const;
+
+	virtual bool isProject() const;
+	virtual bool isSection() const;
+	virtual bool isSubsection() const;
+	virtual bool isModifier() const;
+	virtual bool isElement() const;
+
 protected:
 	// This is the static GUID stored in the data, it is not guaranteed
 	// to be globally unique at runtime.  In particular, cloning an object
 	// and using aliased modifiers will cause multiple objects with the same
+	// static GUID to exist with separate runtime GUIDs.
 	uint32 _guid;
 	uint32 _runtimeGUID;
+	Common::WeakPtr<RuntimeObject> _selfReference;
 };
 
 struct MessageProperties {
@@ -914,7 +974,7 @@ struct IStructuralReferenceVisitor {
 struct IMessageConsumer {
 	// These should only be implemented as direct responses - child traversal is handled by the message propagation process
 	virtual bool respondsToEvent(const Event &evt) const = 0;
-	virtual VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) const = 0;
+	virtual VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) = 0;
 };
 
 class Structural : public RuntimeObject, public IModifierContainer, public IMessageConsumer, public IDebuggable {
@@ -937,7 +997,7 @@ public:
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
 	bool respondsToEvent(const Event &evt) const override;
-	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	void materializeSelfAndDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
 	void materializeDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
@@ -1051,6 +1111,8 @@ public:
 
 	const ProjectPresentationSettings &getPresentationSettings() const;
 
+	bool isProject() const override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Project"; }
 #endif
@@ -1148,6 +1210,8 @@ class Section : public Structural {
 public:
 	bool load(const Data::SectionStructuralDef &data);
 
+	bool isSection() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Section"; }
 #endif
@@ -1166,6 +1230,8 @@ public:
 
 	ObjectLinkingScope *getSceneLoadMaterializeScope();
 
+	bool isSubsection() const override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Subsection"; }
 #endif
@@ -1181,6 +1247,7 @@ private:
 class Element : public Structural {
 public:
 	virtual bool isVisual() const = 0;
+	bool isElement() const override;
 
 	uint32 getStreamLocator() const;
 
@@ -1224,13 +1291,17 @@ public:
 
 	virtual bool isAlias() const;
 	virtual bool isVariable() const;
+	bool isModifier() const override;
 
 	// This should only return a propagation container if messages should actually be propagated (i.e. NOT switched-off behaviors!)
 	virtual IModifierContainer *getMessagePropagationContainer();
 	virtual IModifierContainer *getChildContainer();
 
+	const Common::WeakPtr<RuntimeObject> &getParent() const;
+	void setParent(const Common::WeakPtr<RuntimeObject> &parent);
+
 	bool respondsToEvent(const Event &evt) const override;
-	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	void setName(const Common::String &name);
 	const Common::String &getName() const;
@@ -1238,7 +1309,12 @@ public:
 	// Shallow clones only need to copy the object.  Descendent copies are done using visitInternalReferences.
 	virtual Common::SharedPtr<Modifier> shallowClone() const = 0;
 
+	// Visits any internal references in the object.
+	// Any references to other elements owned by the object MUST be SharedPtr, any references to non-owned objects
+	// MUST be WeakPtr, in order for the cloning and materialization logic to work correctly.
 	virtual void visitInternalReferences(IStructuralReferenceVisitor *visitor);
+
+	bool loadPlugInHeader(const PlugInModifierLoaderContext &plugInContext);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	SupportStatus debugGetSupportStatus() const override;
@@ -1251,11 +1327,14 @@ public:
 
 protected:
 	bool loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeader);
-	virtual void linkInternalReferences();
+
+	// Links any references contained in the object, resolving static GUIDs to runtime object references
+	virtual void linkInternalReferences(ObjectLinkingScope *scope);
 
 	Common::String _name;
 	ModifierFlags _modifierFlags;
-	
+	Common::WeakPtr<RuntimeObject> _parent;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<DebugInspector> _debugInspector;
 	Debugger *_debugger;

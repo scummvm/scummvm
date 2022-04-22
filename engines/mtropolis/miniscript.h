@@ -27,12 +27,21 @@
 
 namespace MTropolis {
 
+class MiniscriptThread;
 struct MiniscriptVM;
 struct IMiniscriptInstructionFactory;
+
+enum MiniscriptInstructionOutcome {
+	kMiniscriptInstructionOutcomeContinue,			// Continue executing next instruction
+	kMiniscriptInstructionOutcomeYieldToVThread,	// Instruction pushed a VThread task
+	kMiniscriptInstructionOutcomeFailed,			// Instruction errored
+};
 
 class MiniscriptInstruction {
 public:
 	virtual ~MiniscriptInstruction();
+
+	virtual MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const = 0;
 };
 
 class MiniscriptReferences {
@@ -40,17 +49,18 @@ public:
 	struct LocalRef {
 		uint32 guid;
 		Common::String name;
+		Common::WeakPtr<RuntimeObject> resolution;
 	};
 
-	struct GlobalRef {
-		uint32 guid;
-	};
+	explicit MiniscriptReferences(const Common::Array<LocalRef> &localRefs);
 
-	MiniscriptReferences(const Common::Array<LocalRef> &localRefs, const Common::Array<GlobalRef> &globalRefs);
+	void linkInternalReferences(ObjectLinkingScope *scope);
+
+	Common::WeakPtr<RuntimeObject> getRefByIndex(uint index) const;
 
 private:
 	Common::Array<LocalRef> _localRefs;
-	Common::Array<GlobalRef> _globalRefs;
+
 };
 
 class MiniscriptProgram {
@@ -62,6 +72,8 @@ public:
 
 	MiniscriptProgram(const Common::SharedPtr<Common::Array<uint8> > &programData, const Common::Array<MiniscriptInstruction *> &instructions, const Common::Array<Attribute> &attributes);
 	~MiniscriptProgram();
+
+	const Common::Array<MiniscriptInstruction *> &getInstructions() const;
 
 private:
 	Common::SharedPtr<Common::Array<uint8> > _programData;
@@ -78,6 +90,8 @@ public:
 
 namespace MiniscriptInstructions {
 	class UnimplementedInstruction : public MiniscriptInstruction {
+	private:
+		virtual MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
 	class Set : public UnimplementedInstruction {
@@ -201,7 +215,7 @@ namespace MiniscriptInstructions {
 	class ListCreate : public UnimplementedInstruction {
 	};
 
-	class PushValue : public UnimplementedInstruction {
+	class PushValue : public MiniscriptInstruction {
 	public:
 		enum DataType {
 			kDataTypeNull,
@@ -220,6 +234,8 @@ namespace MiniscriptInstructions {
 		PushValue(DataType dataType, const void *value, bool isLValue);
 
 	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
+
 		union ValueUnion {
 			bool b;
 			double f;
@@ -232,17 +248,30 @@ namespace MiniscriptInstructions {
 		bool _isLValue;
 	};
 
-	class PushGlobal : public UnimplementedInstruction {
+	class PushGlobal : public MiniscriptInstruction {
 	public:
-		explicit PushGlobal(uint32 guid, bool isLValue);
+		explicit PushGlobal(uint32 globalID, bool isLValue);
 
-		uint32 getStaticGUID() const;
-		void setReferenceSetIndex(size_t refSetIndex);
-		size_t getReferenceSetIndex() const;
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 
 	private:
-		uint32 _guid;
-		size_t _refSetIndex;
+		enum {
+			kGlobalRefElement = 1,
+			kGlobalRefSubsection = 2,
+			kGlobalRefSource = 3,
+			kGlobalRefIncomingData = 4,
+			kGlobalRefMouse = 5,
+			kGlobalRefTicks = 6,
+			kGlobalRefScene = 7,
+			kGlobalRefSharedScene = 8,
+			kGlobalRefSection = 9,
+			kGlobalRefProject = 10,
+			kGlobalRefActiveScene = 11,
+		};
+
+		MiniscriptInstructionOutcome executeFindFilteredParent(MiniscriptThread *thread) const;
+
+		uint32 _globalID;
 		bool _isLValue;
 	};
 
@@ -263,6 +292,59 @@ namespace MiniscriptInstructions {
 		bool _isConditional;
 	};
 } // End of namespace MiniscriptInstructions
+
+class MiniscriptThread {
+public:
+	enum StackValueType {
+		kStackValueTypeLValue,
+		kStackValueTypeRValue,
+		kStackValueTypeLValueAttrib,
+	};
+
+	struct StackValue {
+		DynamicValue value;
+
+		StackValueType type;
+		uint attribIndex;
+	};
+
+	MiniscriptThread(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msgProps, const Common::SharedPtr<MiniscriptProgram> &program, const Common::SharedPtr<MiniscriptReferences> &refs, Modifier *modifier);
+
+	static void runOnVThread(VThread &vthread, const Common::SharedPtr<MiniscriptThread> &thread);
+
+	void error(const Common::String &message);
+
+	const Common::SharedPtr<MiniscriptProgram> &getProgram() const;
+	const Common::SharedPtr<MiniscriptReferences> &getRefs() const;
+	Modifier *getModifier() const;
+	const Common::SharedPtr<MessageProperties> &getMessageProperties() const;
+	Runtime *getRuntime() const;
+
+	void pushLValue(const DynamicValue &value);
+	void pushRValue(const DynamicValue &value);
+	void pushLValueAttrib(const DynamicValue &value, uint attributeIndex);
+	void popValues(size_t count);
+	size_t getStackSize() const;
+	StackValue &getStackValueFromTop(size_t offset);
+
+private:
+	struct ResumeTaskData {
+		Common::SharedPtr<MiniscriptThread> thread;
+	};
+
+	static VThreadState resumeTask(const ResumeTaskData &data);
+	VThreadState resume(const ResumeTaskData &data);
+
+	Common::SharedPtr<MiniscriptProgram> _program;
+	Common::SharedPtr<MiniscriptReferences> _refs;
+	Common::SharedPtr<MessageProperties> _msgProps;
+	Modifier *_modifier;
+	Runtime *_runtime;
+	Common::Array<StackValue> _stack;
+
+	size_t _currentInstruction;
+	bool _failed;
+};
 
 } // End of namespace MTropolis
 

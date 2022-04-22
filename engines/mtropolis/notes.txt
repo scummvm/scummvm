@@ -12,8 +12,7 @@ formation of the scene structure.
 
 The third step is "materialization" which converts loaded objects into a
 ready-to-use state.  This involves replacing any non-variable aliases with a
-copy of the original, assigning new GUIDs to the new objects, and remapping
-any internal references to the corresponding visible objects.
+copy of the original, and assigning new GUIDs to the new objects.
 
 Objects are only ever materialized once.  Aliasable variables in the global
 modifier table are materialized when the project is loaded, while everything
@@ -23,6 +22,13 @@ Objects cloned from already-materialized objects should NOT be materialized
 again, instead they should be fixed up using an object reference remap table,
 shallowClone, and visitInternalReferences.  Cloning is not currently supported
 because Obsidian doesn't use it.
+
+An important aspect of this loading process that GUIDs are resolved in the
+scope of where they are inserted.  This is necessary because mTropolis allows
+objects to be converted into aliases anywhere that they occur and will NOT
+do anything to patch up GUID references from where they were, so the GUID
+needs to be resolvable from the location that the modifier exists.
+
 
 
 Scene transitions:
@@ -61,3 +67,20 @@ This has a bunch of confirmed broken cases:
   doubled-up events, modifiers not working, and other chaos.  Currently the
   mTropolis engine errors out if you attempt this.
 - Probably a bunch of other cases.
+
+
+Object reference liveness:
+
+A lot of things internally go off of an assumption that structural objects and
+modifiers are NEVER deleted unless the VThread task queue is empty.  Basically that
+means that if any messages are queued or any actions are in the middle of being
+performed, then objects may not be deleted.  The only thing that can delete an
+object is a scheduled Teardown.
+
+Currently this is unused, but mTropolis supports a "kill" event type which will
+remove an object when sent to it, and a "kill" attribute that removes an object
+when it is assigned to.
+
+A big implication of this is that it's okay to use raw pointers to scene objects
+in VThread tasks.  In particular, tasks calling member functions are OK to
+schedule.

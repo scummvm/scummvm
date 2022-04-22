@@ -137,9 +137,6 @@ void Debugger::vnotifyFmt(DebugSeverity severity, const char* fmt, va_list args)
 }
 
 void Debugger::refreshSceneStatus() {
-	const int sceneWindowWidth = 256;
-	const int sceneWindowHeight = 32;
-
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 
 	Common::Array<Common::String> sceneStrs;

@@ -31,12 +31,6 @@
 #define MTROPOLIS_DEBUG_VTHREAD_STACKS
 #define MTROPOLIS_DEBUG_ENABLE
 
-namespace Graphics {
-
-class MacFontManager;
-
-} // End of namespace Graphics
-
 namespace MTropolis {
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
@@ -110,7 +104,6 @@ private:
 	bool _paused;
 	Runtime *_runtime;
 	Common::SharedPtr<Window> _sceneStatusWindow;
-	Common::SharedPtr<Graphics::MacFontManager> _macFontMan;
 	Common::Array<ToastNotification> _toastNotifications;
 };
 
