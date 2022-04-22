@@ -96,6 +96,7 @@ struct GameSetup {
 	ScreenRotation rotation;
 
 	DisplayModeSetup Screen;
+	String software_render_driver;
 
 	GameSetup();
 };

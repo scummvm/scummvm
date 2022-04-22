@@ -82,6 +82,12 @@ void sys_get_desktop_modes(std::vector<AGS::Engine::DisplayMode> &dms) {
 #endif
 }
 
+void sys_renderer_set_output(const AGS::Shared::String &name) {
+#ifndef AGS_PLATFORM_SCUMMVM
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, name.GetCStr());
+#endif
+}
+
 // ----------------------------------------------------------------------------
 // AUDIO UTILS
 // ----------------------------------------------------------------------------

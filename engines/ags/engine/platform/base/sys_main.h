@@ -51,6 +51,8 @@ void sys_set_background_mode(bool on);
 int sys_get_desktop_resolution(int &width, int &height);
 // Queries supported desktop modes.
 void sys_get_desktop_modes(std::vector<AGS::Engine::DisplayMode> &dms);
+// Sets output driver for the backend's renderer
+void sys_renderer_set_output(const AGS::Shared::String &name);
 
 // Audio utilities.
 //
