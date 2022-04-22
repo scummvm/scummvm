@@ -287,7 +287,6 @@ class ScummEngine : public Engine, public Common::Serializable {
 	friend class ScummDebugger;
 	friend class CharsetRenderer;
 	friend class CharsetRendererTownsClassic;
-	friend class ClassicCostumeRenderer;
 	friend class ResourceManager;
 
 public:
