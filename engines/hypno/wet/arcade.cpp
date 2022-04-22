@@ -710,9 +710,11 @@ void WetEngine::drawPlayer() {
 		_playerFrameIdx = _playerFrameStart;
 	}
 
-	if (_arcadeMode == "Y5")
-		_playerFrameIdx = 1;
-	else if (_arcadeMode == "Y4") {
+	if (_arcadeMode == "Y5") {
+		int x = mousePos.x / (_screenW / 3);
+		int y = mousePos.y / (_screenH / 3);
+		_playerFrameIdx = 2 * (x + 3*y) + 1;
+	} else if (_arcadeMode == "Y4") {
 		if (mousePos.x <= 25)
 			_playerFrameIdx = 0;
 		else if (mousePos.x <= 50)
