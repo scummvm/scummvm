@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-21 17:34+0000\n"
-"PO-Revision-Date: 2022-04-20 10:37+0000\n"
+"PO-Revision-Date: 2022-04-22 09:28+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -6638,19 +6638,19 @@ msgstr "Aktiver jevn skjermrulling"
 
 #: engines/scumm/detection.cpp:212
 msgid "(instead of the normal 8-pixels steps scrolling)"
-msgstr "(istedenfor den trinnvise siderullingen på 8 piksler av gangen)"
+msgstr "(istedenfor den trinnvise skjermrullingen på 8 piksler av gangen)"
 
 #: engines/scumm/detection.cpp:220
-#, fuzzy
-#| msgid "Enable smooth scrolling"
 msgid "Allow semi-smooth scrolling"
-msgstr "Aktiver jevn skjermrulling"
+msgstr "Tillat delvis jevn skjermrulling"
 
 #: engines/scumm/detection.cpp:221
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr ""
+"Gjør at skjermrullingen er litt mindre utjevnet under den raske "
+"kameraføringen i introen."
 
 #: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:730
 msgid "Enable game-specific enhancements"
