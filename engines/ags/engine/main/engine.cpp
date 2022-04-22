@@ -326,24 +326,22 @@ void engine_init_timer() {
 
 void engine_init_audio() {
 #if !AGS_PLATFORM_SCUMMVM
-	if (usetup.audio_backend != 0)
-    {
-        Debug::Printf("Initializing audio");
-        try {
-            audio_core_init(); // audio core system
-        } catch(std::runtime_error) {
-            Debug::Printf("Failed to initialize audio, disabling.");
-            usetup.audio_backend = 0;
-        }
-    }
+	if (usetup.audio_backend != 0) {
+		Debug::Printf("Initializing audio");
+		try {
+			audio_core_init(); // audio core system
+		} catch (std::runtime_error ex) {
+			Debug::Printf(kDbgMsg_Error, "Failed to initialize audio: %s", ex.what());
+			usetup.audio_backend = 0;
+		}
+	}
 #endif
 
-	_G(our_eip) = -181;
-
-	if (_GP(usetup).audio_backend == 0) {
+	if (!_GP(usetup).audio_enabled) {
 		// all audio is disabled
 		_GP(play).voice_avail = false;
 		_GP(play).separate_music_lib = false;
+		Debug::Printf(kDbgMsg_Info, "Audio is disabled");
 	}
 }
 

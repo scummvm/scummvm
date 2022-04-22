@@ -34,6 +34,7 @@
 #include "ags/engine/media/audio/sound.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
+#include "ags/engine/platform/base/sys_main.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/file.h"
 #include "ags/engine/ac/global_audio.h"
@@ -189,7 +190,7 @@ static int find_free_audio_channel(ScriptAudioClip *clip, int priority, bool int
 }
 
 bool is_audiotype_allowed_to_play(AudioFileType type) {
-	return _GP(usetup).audio_backend != 0;
+	return _GP(usetup).audio_enabled;
 }
 
 SOUNDCLIP *load_sound_clip(ScriptAudioClip *audioClip, bool repeat) {
@@ -592,6 +593,8 @@ void shutdown_sound() {
 #if !AGS_PLATFORM_SCUMMVM
 	audio_core_shutdown(); // audio core system
 #endif
+	sys_audio_shutdown(); // backend
+	_GP(usetup).audio_enabled = false;
 }
 
 // the sound will only be played if there is a free channel or
