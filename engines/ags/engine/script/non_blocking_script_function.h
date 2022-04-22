@@ -31,9 +31,7 @@ namespace AGS3 {
 struct NonBlockingScriptFunction {
 	const char *functionName;
 	int numParameters;
-	//void* param1;
-	//void* param2;
-	RuntimeScriptValue params[2];
+	RuntimeScriptValue params[3];
 	bool roomHasFunction;
 	bool globalScriptHasFunction;
 	std::vector<bool> moduleHasFunction;

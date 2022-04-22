@@ -850,6 +850,7 @@ bool DialogOptions::Run() {
 		} else if (new_custom_render) {
 			_GP(runDialogOptionKeyPressHandlerFunc).params[0].SetDynamicObject(&_GP(ccDialogOptionsRendering), &_GP(ccDialogOptionsRendering));
 			_GP(runDialogOptionKeyPressHandlerFunc).params[1].SetInt32(AGSKeyToScriptKey(gkey));
+			_GP(runDialogOptionKeyPressHandlerFunc).params[2].SetInt32(ki.Mod);
 			run_function_on_non_blocking_thread(&_GP(runDialogOptionKeyPressHandlerFunc));
 			_GP(runDialogOptionTextInputHandlerFunc).params[0].SetDynamicObject(&_GP(ccDialogOptionsRendering), &_GP(ccDialogOptionsRendering));
 			_GP(runDialogOptionTextInputHandlerFunc).params[1].SetInt32(ki.UChar);

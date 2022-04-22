@@ -65,7 +65,7 @@ static void(*_on_switchout_callback)(void) = nullptr;
 KeyInput ags_keycode_from_scummvm(const Common::Event &event) {
 	KeyInput ki;
 
-	ki.Key = ::AGS::g_events->scummvm_key_to_ags_key(event);
+	ki.Key = ::AGS::g_events->scummvm_key_to_ags_key(event, ki.Mod);
 
 	return ki;
 }

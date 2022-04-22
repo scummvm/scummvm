@@ -251,11 +251,22 @@ enum eAGSKeyCode {
 	*/
 };
 
+// AGS key modifiers
+enum eAGSKeyMod {
+	eAGSModLShift = 0x0001,
+	eAGSModRShift = 0x0002,
+	eAGSModLCtrl = 0x0004,
+	eAGSModRCtrl = 0x0008,
+	eAGSModLAlt = 0x0010,
+	eAGSModRAlt = 0x0020
+};
+
 // Combined key code and a textual representation in UTF-8
 struct KeyInput {
 	const static size_t UTF8_ARR_SIZE = 5;
 
 	eAGSKeyCode Key = eAGSKeyCodeNone; // actual key code
+	int         Mod = 0; // key modifiers
 	int         UChar = 0; // full character value (supports unicode)
 	char        Text[UTF8_ARR_SIZE]{}; // character in a string format
 

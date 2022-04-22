@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "ags/events.h"
 #include "ags/globals.h"
+#include "ags/shared/ac/keycode.h"
 
 namespace AGS {
 
@@ -310,12 +311,18 @@ bool EventsManager::ags_key_to_scancode(AGS3::eAGSKeyCode key, Common::KeyCode(&
 	return false;
 }
 
-AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &event) {
+AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &event, int &ags_mod) {
 	if (event.type != Common::EVENT_KEYDOWN)
 		return AGS3::eAGSKeyCodeNone;
 
 	const Common::KeyCode sym = event.kbd.keycode;
 	const uint16 mod = event.kbd.flags;
+
+	// First handle the mods, - these are straightforward
+	ags_mod = 0;
+	if (mod & Common::KBD_SHIFT) ags_mod |= AGS3::eAGSModLShift;
+	if (mod & Common::KBD_CTRL)  ags_mod |= AGS3::eAGSModLCtrl;
+	if (mod & Common::KBD_ALT)   ags_mod |= AGS3::eAGSModLAlt;
 
 	// Ctrl and Alt combinations realign the letter code to certain offset
 	if (sym >= Common::KEYCODE_a && sym <= Common::KEYCODE_z) {
