@@ -184,7 +184,8 @@ enum GUITextBoxFlags {
 // TODO: move to the engine code
 enum GuiSvgVersion {
 	kGuiSvgVersion_Initial = 0,
-	kGuiSvgVersion_350 = 1
+	kGuiSvgVersion_350,
+	kGuiSvgVersion_36020
 };
 
 enum GuiDisableStyle {

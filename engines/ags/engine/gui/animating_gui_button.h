@@ -42,7 +42,7 @@ struct AnimatingGUIButton {
 	short speed = 0, repeat = 0, blocking = 0,
 		direction = 0, wait = 0;
 
-	void ReadFromFile(Shared::Stream *in);
+	void ReadFromFile(Shared::Stream *in, int cmp_ver);
 	void WriteToFile(Shared::Stream *out);
 };
 
