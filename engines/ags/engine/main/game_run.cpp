@@ -840,30 +840,30 @@ static bool ShouldStayInWaitMode() {
 
 	switch (_G(restrict_until).type) {
 	case UNTIL_MOVEEND: {
-		short *wkptr = (short *)_G(restrict_until).data_ptr;
+		const short *wkptr = (const short *)_G(restrict_until).data_ptr;
 		return !(wkptr[0] < 1);
 	}
 	case UNTIL_CHARIS0: {
-		char *chptr = (char *)_G(restrict_until).data_ptr;
+		const char *chptr = (const char *)_G(restrict_until).data_ptr;
 		return !(chptr[0] == 0);
 	}
 	case UNTIL_NEGATIVE: {
-		short *wkptr = (short *)_G(restrict_until).data_ptr;
+		const short *wkptr = (const short *)_G(restrict_until).data_ptr;
 		return !(wkptr[0] < 0);
 	}
 	case UNTIL_INTISNEG: {
-		int *wkptr = (int *)_G(restrict_until).data_ptr;
+		const int *wkptr = (const int *)_G(restrict_until).data_ptr;
 		return !(wkptr[0] < 0);
 	}
 	case UNTIL_NOOVERLAY: {
 		return !(_GP(play).text_overlay_on == 0);
 	}
 	case UNTIL_INTIS0: {
-		int *wkptr = (int *)_G(restrict_until).data_ptr;
+		const int *wkptr = (const int *)_G(restrict_until).data_ptr;
 		return !(wkptr[0] == 0);
 	}
 	case UNTIL_SHORTIS0: {
-		short *wkptr = (short *)_G(restrict_until).data_ptr;
+		const short *wkptr = (const short *)_G(restrict_until).data_ptr;
 		return !(wkptr[0] == 0);
 	}
 	case UNTIL_ANIMBTNEND: {
