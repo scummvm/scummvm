@@ -32,7 +32,21 @@ namespace MTropolis {
 MiniscriptInstruction::~MiniscriptInstruction() {
 }
 
-MiniscriptReferences::MiniscriptReferences(const Common::Array<LocalRef> &localRefs, const Common::Array<GlobalRef> &globalRefs) : _localRefs(localRefs), _globalRefs(globalRefs) {
+MiniscriptReferences::MiniscriptReferences(const Common::Array<LocalRef> &localRefs) : _localRefs(localRefs) {
+}
+
+void MiniscriptReferences::linkInternalReferences(ObjectLinkingScope *scope) {
+	// Resolve using name lookups since there are some known cases where the GUID is broken
+	// e.g. "bArriveFromCutScene" in "Set bArriveFromCutScene on PE" in Obsidian
+	for (Common::Array<LocalRef>::iterator it = _localRefs.begin(), itEnd = _localRefs.end(); it != itEnd; ++it) {
+		it->resolution = scope->resolve(it->guid, it->name, false);
+	}
+}
+
+Common::WeakPtr<RuntimeObject> MiniscriptReferences::getRefByIndex(uint index) const {
+	if (index >= _localRefs.size())
+		return Common::WeakPtr<RuntimeObject>();
+	return _localRefs[index].resolution;
 }
 
 MiniscriptProgram::MiniscriptProgram(const Common::SharedPtr<Common::Array<uint8> > &programData, const Common::Array<MiniscriptInstruction *> &instructions, const Common::Array<Attribute> &attributes)
@@ -45,6 +59,9 @@ MiniscriptProgram::~MiniscriptProgram() {
 		(*it)->~MiniscriptInstruction();
 }
 
+const Common::Array<MiniscriptInstruction *> &MiniscriptProgram::getInstructions() const {
+	return _instructions;
+}
 
 template<class T>
 struct MiniscriptInstructionLoader {
@@ -79,7 +96,7 @@ bool MiniscriptInstructionLoader<MiniscriptInstructions::BuiltinFunc>::loadInstr
 		return false;
 
 	if (functionID < 1 || functionID > 20)
-		return false;	// Unknown function
+		return false; // Unknown function
 
 	new (dest) MiniscriptInstructions::BuiltinFunc(static_cast<MiniscriptInstructions::BuiltinFunc::BuiltinFunctionID>(functionID));
 	return true;
@@ -113,10 +130,10 @@ bool MiniscriptInstructionLoader<MiniscriptInstructions::Jump>::loadInstruction(
 
 	bool isConditional = (jumpFlags == 2);
 	if (jumpFlags != 1 && jumpFlags != 2)
-		return false;	// Don't recognize this flag combination
+		return false; // Don't recognize this flag combination
 
 	if (instrOffset == 0)
-		return false;	// Not valid
+		return false; // Not valid
 
 	new (dest) MiniscriptInstructions::Jump(instrOffset, isConditional);
 	return true;
@@ -211,24 +228,21 @@ bool MiniscriptInstructionFactory<T>::create(void *dest, uint32 instrFlags, Data
 }
 
 template<class T>
-void MiniscriptInstructionFactory<T>::getSizeAndAlignment(size_t& outSize, size_t& outAlignment) const {
+void MiniscriptInstructionFactory<T>::getSizeAndAlignment(size_t &outSize, size_t &outAlignment) const {
 	outSize = sizeof(T);
 	outAlignment = AlignmentHelper<T>::getAlignment();
 }
 
 template<class T>
-inline IMiniscriptInstructionFactory* MiniscriptInstructionFactory<T>::getInstance() {
+inline IMiniscriptInstructionFactory *MiniscriptInstructionFactory<T>::getInstance() {
 	return &_instance;
 }
 
 template<class T>
 MiniscriptInstructionFactory<T> MiniscriptInstructionFactory<T>::_instance;
 
-
 bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::SharedPtr<MiniscriptProgram> &outProgram, Common::SharedPtr<MiniscriptReferences> &outReferences) {
 	Common::Array<MiniscriptReferences::LocalRef> localRefs;
-	Common::Array<MiniscriptReferences::GlobalRef> globalRefs;
-	Common::HashMap<uint32, size_t> globalGUIDToGlobalRefIndex;
 	Common::Array<MiniscriptProgram::Attribute> attributes;
 	Common::SharedPtr<Common::Array<uint8> > programDataPtr;
 	Common::Array<MiniscriptInstruction *> miniscriptInstructions;
@@ -236,7 +250,7 @@ bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::Sha
 	// If the program is empty then just return an empty program
 	if (program.bytecode.size() == 0 || program.numOfInstructions == 0) {
 		outProgram = Common::SharedPtr<MiniscriptProgram>(new MiniscriptProgram(programDataPtr, miniscriptInstructions, attributes));
-		outReferences = Common::SharedPtr<MiniscriptReferences>(new MiniscriptReferences(localRefs, globalRefs));
+		outReferences = Common::SharedPtr<MiniscriptReferences>(new MiniscriptReferences(localRefs));
 		return true;
 	}
 
@@ -338,36 +352,16 @@ bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::Sha
 
 			return false;
 		}
-
-		// Allocate the static GUID in the reference set
-		if (rawInstruction.opcode == 0x192) {
-			MiniscriptInstructions::PushGlobal *instr = static_cast<MiniscriptInstructions::PushGlobal *>(miniscriptInstructions[i]);
-			uint32 staticGUID = instr->getStaticGUID();
-			Common::HashMap<uint32, size_t>::const_iterator refIt = globalGUIDToGlobalRefIndex.find(staticGUID);
-			if (refIt == globalGUIDToGlobalRefIndex.end()) {
-				const size_t index = globalRefs.size();
-
-				MiniscriptReferences::GlobalRef globalRef;
-				globalRef.guid = staticGUID;
-
-				globalRefs.push_back(globalRef);
-				globalGUIDToGlobalRefIndex[staticGUID] = index;
-
-				instr->setReferenceSetIndex(index);
-			} else {
-				instr->setReferenceSetIndex(refIt->_value);
-			}
-		}
 	}
 
 	// Done
 	outProgram = Common::SharedPtr<MiniscriptProgram>(new MiniscriptProgram(programDataPtr, miniscriptInstructions, attributes));
-	outReferences = Common::SharedPtr<MiniscriptReferences>(new MiniscriptReferences(localRefs, globalRefs));
+	outReferences = Common::SharedPtr<MiniscriptReferences>(new MiniscriptReferences(localRefs));
 
 	return true;
 }
 
-IMiniscriptInstructionFactory* MiniscriptParser::resolveOpcode(uint16 opcode) {
+IMiniscriptInstructionFactory *MiniscriptParser::resolveOpcode(uint16 opcode) {
 	switch (opcode) {
 	case 0x834:
 		return MiniscriptInstructionFactory<MiniscriptInstructions::Set>::getInstance();
@@ -438,6 +432,11 @@ IMiniscriptInstructionFactory* MiniscriptParser::resolveOpcode(uint16 opcode) {
 
 namespace MiniscriptInstructions {
 
+MiniscriptInstructionOutcome UnimplementedInstruction::execute(MiniscriptThread *thread) const {
+	thread->error("Unimplemented instruction");
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
 Send::Send(const Event &evt) : _evt(evt) {
 }
 
@@ -469,19 +468,138 @@ PushValue::PushValue(DataType dataType, const void *value, bool isLValue)
 	}
 }
 
-PushGlobal::PushGlobal(uint32 guid, bool isLValue) : _guid(guid), _refSetIndex(0), _isLValue(isLValue) {
+MiniscriptInstructionOutcome PushValue::execute(MiniscriptThread *thread) const {
+	DynamicValue value;
+
+	switch (_dataType) {
+	case DataType::kDataTypeNull:
+		value.clear();
+		break;
+	case DataType::kDataTypeDouble:
+		value.setFloat(_value.f);
+		break;
+	case DataType::kDataTypeBool:
+		value.setFloat(_value.b);
+		break;
+	case DataType::kDataTypeLocalRef:
+		value.setObject(thread->getRefs()->getRefByIndex(_value.ref));
+		break;
+	case DataType::kDataTypeGlobalRef:
+		thread->error("Global references are not implemented");
+		return kMiniscriptInstructionOutcomeFailed;
+	case DataType::kDataTypeLabel: {
+		MTropolis::Label label;
+		label.id = _value.lbl.id;
+		label.superGroupID = _value.lbl.superGroup;
+		value.setLabel(label);
+	} break;
+	default:
+		assert(false);
+		break;
+	}
+
+	if (_isLValue)
+		thread->pushLValue(value);
+	else
+		thread->pushRValue(value);
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
-uint32 PushGlobal::getStaticGUID() const {
-	return _guid;
+PushGlobal::PushGlobal(uint32 globalID, bool isLValue) : _globalID(globalID), _isLValue(isLValue) {
 }
 
-void PushGlobal::setReferenceSetIndex(size_t refSetIndex) {
-	_refSetIndex = refSetIndex;
+MiniscriptInstructionOutcome PushGlobal::execute(MiniscriptThread *thread) const {
+	DynamicValue value;
+	switch (_globalID) {
+	case kGlobalRefElement:
+	case kGlobalRefSection:
+	case kGlobalRefSubsection:
+	case kGlobalRefScene:
+	case kGlobalRefProject:
+		return executeFindFilteredParent(thread);
+	case kGlobalRefIncomingData:
+		value = thread->getMessageProperties()->getValue();
+		break;
+	case kGlobalRefSource:
+		value.setObject(thread->getMessageProperties()->getSource());
+		break;
+	case kGlobalRefMouse:
+		thread->error("'mouse' global ref not yet implemented");
+		return kMiniscriptInstructionOutcomeFailed;
+	case kGlobalRefTicks:
+		value.setInt(thread->getRuntime()->getPlayTime() * 60 / 1000);
+		break;
+	case kGlobalRefSharedScene:
+		value.setObject(thread->getRuntime()->getActiveSharedScene());
+		break;
+	case kGlobalRefActiveScene:
+		value.setObject(thread->getRuntime()->getActiveMainScene());
+		break;
+	default:
+		assert(false);
+		thread->error("Unknown global ref type");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	if (_isLValue)
+		thread->pushLValue(value);
+	else
+		thread->pushRValue(value);
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
-size_t PushGlobal::getReferenceSetIndex() const {
-	return _refSetIndex;
+MiniscriptInstructionOutcome PushGlobal::executeFindFilteredParent(MiniscriptThread *thread) const {
+	Common::WeakPtr<RuntimeObject> ref = thread->getModifier()->getSelfReference();
+	for (;;) {
+		Common::SharedPtr<RuntimeObject> obj = ref.lock();
+		if (!obj)
+			break;
+
+		bool isMatch = false;
+		switch (_globalID) {
+		case kGlobalRefElement:
+			isMatch = obj->isElement();
+			break;
+		case kGlobalRefSection:
+			isMatch = obj->isSection();
+			break;
+		case kGlobalRefSubsection:
+			isMatch = obj->isSubsection();
+			break;
+		case kGlobalRefScene:
+			// FIXME: Need better detection of scenes
+			isMatch = obj->isElement() && static_cast<Element *>(obj.get())->getParent()->isSubsection();
+			break;
+		case kGlobalRefProject:
+			isMatch = obj->isProject();
+			break;
+		default:
+			break;
+		};
+
+		if (isMatch)
+			break;
+		else if (obj->isElement()) {
+			ref = static_cast<Element *>(obj.get())->getParent()->getSelfReference();
+		} else if (obj->isModifier()) {
+			ref = static_cast<Modifier *>(obj.get())->getParent();
+		} else {
+			ref.reset();
+			break;
+		}
+	}
+
+	DynamicValue value;
+	value.setObject(ref);
+
+	if (_isLValue)
+		thread->pushLValue(value);
+	else
+		thread->pushRValue(value);
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 PushString::PushString(const Common::String &str) : _str(str) {
@@ -491,5 +609,124 @@ Jump::Jump(uint32 instrOffset, bool isConditional) : _instrOffset(instrOffset), 
 }
 
 } // End of namespace MiniscriptInstructions
+
+MiniscriptThread::MiniscriptThread(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msgProps, const Common::SharedPtr<MiniscriptProgram> &program, const Common::SharedPtr<MiniscriptReferences> &refs, Modifier *modifier)
+	: _runtime(runtime), _msgProps(msgProps), _program(program), _refs(refs), _modifier(modifier), _currentInstruction(0), _failed(false) {
+}
+
+void MiniscriptThread::runOnVThread(VThread &vthread, const Common::SharedPtr<MiniscriptThread> &thread) {
+	ResumeTaskData *taskData = vthread.pushTask(resumeTask);
+	taskData->thread = thread;
+}
+
+void MiniscriptThread::error(const Common::String &message) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	_runtime->debugGetDebugger()->notify(kDebugSeverityError, Common::String("Miniscript error: " + message));
+#endif
+	warning("Miniscript error: %s", message.c_str());
+
+	// This should be redundant
+	_failed = true;
+}
+
+const Common::SharedPtr<MiniscriptProgram> &MiniscriptThread::getProgram() const {
+	return _program;
+}
+
+const Common::SharedPtr<MiniscriptReferences> &MiniscriptThread::getRefs() const {
+	return _refs;
+}
+
+Modifier *MiniscriptThread::getModifier() const {
+	return _modifier;
+}
+
+const Common::SharedPtr<MessageProperties>& MiniscriptThread::getMessageProperties() const {
+	return _msgProps;
+}
+
+Runtime *MiniscriptThread::getRuntime() const {
+	return _runtime;
+}
+
+void MiniscriptThread::pushLValue(const DynamicValue &value) {
+	_stack.push_back(StackValue());
+
+	StackValue &stackValue = _stack.back();
+	stackValue.value = value;
+	stackValue.type = kStackValueTypeLValue;
+	stackValue.attribIndex = 0;
+}
+
+void MiniscriptThread::pushRValue(const DynamicValue &value) {
+	_stack.push_back(StackValue());
+
+	StackValue &stackValue = _stack.back();
+	stackValue.value = value;
+	stackValue.type = kStackValueTypeRValue;
+	stackValue.attribIndex = 0;
+}
+
+void MiniscriptThread::pushLValueAttrib(const DynamicValue &value, uint attributeIndex) {
+	_stack.push_back(StackValue());
+
+	StackValue &stackValue = _stack.back();
+	stackValue.value = value;
+	stackValue.type = kStackValueTypeLValueAttrib;
+	stackValue.attribIndex = 0;
+}
+
+void MiniscriptThread::popValues(size_t count) {
+	while (count--)
+		_stack.pop_back();
+}
+
+size_t MiniscriptThread::getStackSize() const {
+	return _stack.size();
+}
+
+MiniscriptThread::StackValue &MiniscriptThread::getStackValueFromTop(size_t offset) {
+	assert(offset < _stack.size());
+	return _stack[_stack.size() - 1 - offset];
+}
+
+VThreadState MiniscriptThread::resumeTask(const ResumeTaskData &data) {
+	return data.thread->resume(data);
+}
+
+VThreadState MiniscriptThread::resume(const ResumeTaskData &taskData) {
+	const Common::Array<MiniscriptInstruction *> &instrsArray = _program->getInstructions();
+
+	if (instrsArray.size() == 0)
+		return kVThreadReturn;
+
+	MiniscriptInstruction *const *instrs = &instrsArray[0];
+	size_t numInstrs = instrsArray.size();
+
+	if (_currentInstruction >= numInstrs || _failed)
+		return kVThreadReturn;
+
+	// Requeue now so that any VThread tasks queued by instructions run in front of the resume
+	{
+		ResumeTaskData *requeueData = _runtime->getVThread().pushTask(resumeTask);
+		requeueData->thread = taskData.thread;
+	}
+
+	while (_currentInstruction < numInstrs && !_failed) {
+		MiniscriptInstruction *instr = instrs[_currentInstruction++];
+
+		MiniscriptInstructionOutcome outcome = instr->execute(this);
+		if (outcome == kMiniscriptInstructionOutcomeFailed) {
+			// Should this also interrupt the message dispatch?
+			_failed = true;
+			return kVThreadReturn;
+		}
+
+		if (outcome == kMiniscriptInstructionOutcomeYieldToVThread)
+			return kVThreadReturn;
+	}
+
+	return kVThreadReturn;
+}
 
 } // End of namespace MTropolis

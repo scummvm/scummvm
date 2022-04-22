@@ -41,6 +41,38 @@
 
 namespace MTropolis {
 
+class ModifierInnerScopeBuilder : public IStructuralReferenceVisitor {
+public:
+	ModifierInnerScopeBuilder(ObjectLinkingScope *scope);
+
+	void visitChildStructuralRef(Common::SharedPtr<Structural> &structural) override;
+	void visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) override;
+	void visitWeakStructuralRef(Common::SharedPtr<Structural> &structural) override;
+	void visitWeakModifierRef(Common::SharedPtr<Modifier> &modifier) override;
+
+private:
+	ObjectLinkingScope *_scope;
+};
+
+ModifierInnerScopeBuilder::ModifierInnerScopeBuilder(ObjectLinkingScope *scope) : _scope(scope) {
+}
+
+void ModifierInnerScopeBuilder::visitChildStructuralRef(Common::SharedPtr<Structural> &structural) {
+	assert(false);
+}
+
+void ModifierInnerScopeBuilder::visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) {
+	_scope->addObject(modifier->getStaticGUID(), modifier->getName(), modifier);
+}
+
+void ModifierInnerScopeBuilder::visitWeakStructuralRef(Common::SharedPtr<Structural> &structural) {
+	assert(false);
+}
+
+void ModifierInnerScopeBuilder::visitWeakModifierRef(Common::SharedPtr<Modifier> &modifier) {
+	// Do nothing
+}
+
 class ModifierChildMaterializer : public IStructuralReferenceVisitor {
 public:
 	ModifierChildMaterializer(Runtime *runtime, ObjectLinkingScope *outerScope);
@@ -73,6 +105,26 @@ void ModifierChildMaterializer::visitWeakStructuralRef(Common::SharedPtr<Structu
 
 void ModifierChildMaterializer::visitWeakModifierRef(Common::SharedPtr<Modifier> &modifier) {
 	// Do nothing
+}
+
+Common::String toCaseInsensitive(const Common::String &str) {
+	uint strLen = str.size();
+	if (strLen == 0)
+		return str;
+
+	// TODO: Figure out how this is supposed to behave with respect to non-ASCII characters
+	Common::Array<char> lowered;
+	lowered.resize(strLen);
+
+	for (uint i = 0; i < strLen; i++) {
+		char c = str[i];
+		if (c >= 'A' && c <= 'Z') {
+			c = static_cast<char>(c - 'A' + 'a');
+		}
+		lowered[i] = c;
+	}
+
+	return Common::String(&lowered[0], strLen);
 }
 
 bool Point16::load(const Data::Point &point) {
@@ -159,7 +211,10 @@ void DynamicListDefaultSetter::defaultSet(Event &value) {
 void DynamicListDefaultSetter::defaultSet(Common::String &value) {
 }
 
-void DynamicListDefaultSetter::defaultSet(DynamicList &value) {
+void DynamicListDefaultSetter::defaultSet(Common::SharedPtr<DynamicList> &value) {
+}
+
+void DynamicListDefaultSetter::defaultSet(Common::WeakPtr<RuntimeObject> &value) {
 }
 
 bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const int32 *&outPtr) {
@@ -225,10 +280,17 @@ bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const C
 	return true;
 }
 
-bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const DynamicList *&outPtr) {
-	if (dynValue.getType() != DynamicValueTypes::kBoolean)
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const Common::SharedPtr<DynamicList> *&outPtr) {
+	if (dynValue.getType() != DynamicValueTypes::kList)
 		return false;
 	outPtr = &dynValue.getList();
+	return true;
+}
+
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const Common::WeakPtr<RuntimeObject> *&outPtr) {
+	if (dynValue.getType() != DynamicValueTypes::kObject)
+		return false;
+	outPtr = &dynValue.getObject();
 	return true;
 }
 
@@ -395,14 +457,8 @@ bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
 
 DynamicList &DynamicList::operator=(const DynamicList &other) {
 	if (this != &other) {
-		if (_type == DynamicValueTypes::kList && other._type == DynamicValueTypes::kList) {
-			// In this case, one operand may be inside of the other operand, so we need to copy instead of clear
-			DynamicList listClone(*this);
-			swap(listClone);
-		} else {
-			clear();
-			initFromOther(other);
-		}
+		clear();
+		initFromOther(other);
 	}
 
 	return *this;
@@ -476,7 +532,10 @@ bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
 		_container = new DynamicListContainer<Common::String>();
 		break;
 	case DynamicValueTypes::kList:
-		_container = new DynamicListContainer<DynamicList>();
+		_container = new DynamicListContainer<Common::SharedPtr<DynamicList> >();
+		break;
+	case DynamicValueTypes::kObject:
+		_container = new DynamicListContainer<Common::WeakPtr<RuntimeObject> >();
 		break;
 	}
 
@@ -678,19 +737,107 @@ const bool &DynamicValue::getBool() const {
 	return _value.asBool;
 }
 
-const DynamicList &DynamicValue::getList() const {
+const Common::SharedPtr<DynamicList> &DynamicValue::getList() const {
 	assert(_type == DynamicValueTypes::kList);
-	return *_value.asList;
+	return _list;
+}
+
+const Common::WeakPtr<RuntimeObject> &DynamicValue::getObject() const {
+	assert(_type == DynamicValueTypes::kObject);
+	return _obj;
+}
+
+void DynamicValue::setInt(int32 value) {
+	if (_type != DynamicValueTypes::kInteger)
+		clear();
+	_type = DynamicValueTypes::kInteger;
+	_value.asInt = value;
+}
+
+void DynamicValue::setFloat(double value) {
+	if (_type != DynamicValueTypes::kFloat)
+		clear();
+	_type = DynamicValueTypes::kFloat;
+	_value.asFloat = value;
+}
+
+void DynamicValue::setPoint(const Point16 &value) {
+	if (_type != DynamicValueTypes::kPoint)
+		clear();
+	_type = DynamicValueTypes::kPoint;
+	_value.asPoint = value;
+}
+
+void DynamicValue::setIntRange(const IntRange &value) {
+	if (_type != DynamicValueTypes::kIntegerRange)
+		clear();
+	_type = DynamicValueTypes::kIntegerRange;
+	_value.asIntRange = value;
+}
+
+void DynamicValue::setVector(const AngleMagVector &value) {
+	if (_type != DynamicValueTypes::kVector)
+		clear();
+	_type = DynamicValueTypes::kVector;
+	_value.asVector = value;
+}
+
+void DynamicValue::setLabel(const Label &value) {
+	if (_type != DynamicValueTypes::kLabel)
+		clear();
+	_type = DynamicValueTypes::kLabel;
+	_value.asLabel = value;
+}
+
+void DynamicValue::setEvent(const Event &value) {
+	if (_type != DynamicValueTypes::kEvent)
+		clear();
+	_type = DynamicValueTypes::kEvent;
+	_value.asEvent = value;
+}
+
+void DynamicValue::setVarReference(const VarReference &value) {
+	if (_type != DynamicValueTypes::kVariableReference)
+		clear();
+	_type = DynamicValueTypes::kVariableReference;
+	_value.asVarReference.guid = value.guid;
+	_value.asVarReference.source = &_str;
+	_str = *value.source;
+}
+
+void DynamicValue::setString(const Common::String &value) {
+	if (_type != DynamicValueTypes::kString)
+		clear();
+	_type = DynamicValueTypes::kString;
+	_str = value;
+}
+
+void DynamicValue::setBool(bool value) {
+	if (_type != DynamicValueTypes::kBoolean)
+		clear();
+	_type = DynamicValueTypes::kBoolean;
+	_value.asBool = value;
+}
+
+void DynamicValue::setList(const Common::SharedPtr<DynamicList> &value) {
+	if (_type != DynamicValueTypes::kList)
+		clear();
+	_type = DynamicValueTypes::kList;
+	_list = value;
+}
+
+void DynamicValue::setObject(const Common::WeakPtr<RuntimeObject> &value) {
+	if (_type != DynamicValueTypes::kObject)
+		clear();
+	_type = DynamicValueTypes::kObject;
+	_obj = value;
 }
 
 void DynamicValue::swap(DynamicValue &other) {
-	DynamicValueTypes::DynamicValueType tempType = _type;
-	_type = other._type;
-	other._type = tempType;
-
-	Common::String tempStr = _str;
-	_str = other._str;
-	other._str = tempStr;
+	internalSwap(_type, other._type);
+	internalSwap(_str, other._str);
+	internalSwap(_list, other._list);
+	internalSwap(_obj, other._obj);
 
 	ValueUnion tempValue;
 	memcpy(&tempValue, &_value, sizeof(ValueUnion));
@@ -740,7 +887,9 @@ bool DynamicValue::operator==(const DynamicValue &other) const {
 	case DynamicValueTypes::kBoolean:
 		return _value.asBool == other._value.asBool;
 	case DynamicValueTypes::kList:
-		return (*_value.asList) == (*other._value.asList);
+		return (*_list.get()) == (*other._list.get());
+	case DynamicValueTypes::kObject:
+		return _obj == other._obj;
 	default:
 		break;
 	}
@@ -750,9 +899,8 @@ bool DynamicValue::operator==(const DynamicValue &other) const {
 }
 
 void DynamicValue::clear() {
-	if (_type == DynamicValueTypes::kList)
-		delete _value.asList;
-
+	_list.reset();
+	_obj.reset();
 	_str.clear();
 	_type = DynamicValueTypes::kNull;
 }
@@ -797,7 +945,10 @@ void DynamicValue::initFromOther(const DynamicValue &other) {
 		_value.asBool = other._value.asBool;
 		break;
 	case DynamicValueTypes::kList:
-		_value.asList = new DynamicList(*other._value.asList);
+		_list = other._list;
+		break;
+	case DynamicValueTypes::kObject:
+		_obj = other._obj;
 		break;
 	default:
 		assert(false);
@@ -855,6 +1006,10 @@ Event Event::create(EventIDs::EventID eventType, uint32 eventInfo) {
 	evt.eventInfo = eventInfo;
 
 	return evt;
+}
+
+bool Event::respondsTo(const Event &otherEvent) const {
+	return (*this) == otherEvent;
 }
 
 bool Event::load(const Data::Event &data) {
@@ -958,8 +1113,9 @@ const Common::Array<Common::SharedPtr<Modifier> >& SimpleModifierContainer::getM
 
 void SimpleModifierContainer::appendModifier(const Common::SharedPtr<Modifier> &modifier) {
 	_modifiers.push_back(modifier);
+	if (modifier)
+		modifier->setParent(nullptr);
 }
-
 
 RuntimeObject::RuntimeObject() : _guid(0), _runtimeGUID(0) {
 }
@@ -979,6 +1135,33 @@ void RuntimeObject::setRuntimeGUID(uint32 runtimeGUID) {
 	_runtimeGUID = runtimeGUID;
 }
 
+void RuntimeObject::setSelfReference(const Common::WeakPtr<RuntimeObject> &selfReference) {
+	_selfReference = selfReference;
+}
+
+const Common::WeakPtr<RuntimeObject>& RuntimeObject::getSelfReference() const {
+	return _selfReference;
+}
+
+bool RuntimeObject::isProject() const {
+	return false;
+}
+
+bool RuntimeObject::isSection() const {
+	return false;
+}
+
+bool RuntimeObject::isSubsection() const {
+	return false;
+}
+
+bool RuntimeObject::isModifier() const {
+	return false;
+}
+
+bool RuntimeObject::isElement() const {
+	return false;
+}
 
 MessageProperties::MessageProperties(const Event &evt, const DynamicValue &value, const Common::WeakPtr<RuntimeObject> &source)
 	: _evt(evt), _value(value), _source(source) {
@@ -1038,7 +1221,7 @@ void Structural::removeChild(Structural* child) {
 	}
 }
 
-Structural* Structural::getParent() const {
+Structural *Structural::getParent() const {
 	return _parent;
 }
 
@@ -1056,13 +1239,14 @@ const Common::Array<Common::SharedPtr<Modifier> > &Structural::getModifiers() co
 
 void Structural::appendModifier(const Common::SharedPtr<Modifier> &modifier) {
 	_modifiers.push_back(modifier);
+	modifier->setParent(getSelfReference());
 }
 
 bool Structural::respondsToEvent(const Event &evt) const {
 	return false;
 }
 
-VThreadState Structural::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) const {
+VThreadState Structural::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	assert(false);
 	return kVThreadError;
 }
@@ -1115,7 +1299,7 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 			(*it) = clonedModifier;
 			modifier = clonedModifier.get();
 		}
-		modifierScope->addObject(modifierGUID, *it);
+		modifierScope->addObject(modifierGUID, modifier->getName(), *it);
 	}
 
 	for (Common::Array<Common::SharedPtr<Modifier> >::const_iterator it = _modifiers.begin(), itEnd = _modifiers.end(); it != itEnd; ++it) {
@@ -1128,7 +1312,7 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 	const Common::Array<Common::SharedPtr<Structural> > &children = this->getChildren();
 	for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = children.begin(), itEnd = children.end(); it != itEnd; ++it) {
 		Structural *child = it->get();
-		structuralScope->addObject(child->getStaticGUID(), *it);
+		structuralScope->addObject(child->getStaticGUID(), child->getName(), *it);
 	}
 
 	for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = children.begin(), itEnd = children.end(); it != itEnd; ++it) {
@@ -1180,8 +1364,56 @@ void ObjectLinkingScope::setParent(ObjectLinkingScope *parent) {
 	_parent = parent;
 }
 
-void ObjectLinkingScope::addObject(uint32 guid, const Common::WeakPtr<RuntimeObject> &object) {
+void ObjectLinkingScope::addObject(uint32 guid, const Common::String &name, const Common::WeakPtr<RuntimeObject> &object) {
 	_guidToObject[guid] = object;
+
+	if (name.size() > 0)
+		_nameToObject[toCaseInsensitive(name)] = object;
+}
+
+Common::WeakPtr<RuntimeObject> ObjectLinkingScope::resolve(uint32 staticGUID) const {
+	if (staticGUID == 0)
+		return Common::WeakPtr<RuntimeObject>();
+
+	Common::HashMap<uint32, Common::WeakPtr<RuntimeObject> >::const_iterator it = _guidToObject.find(staticGUID);
+	if (it != _guidToObject.end()) {
+		return it->_value;
+	} else {
+		if (_parent)
+			return _parent->resolve(staticGUID);
+
+		warning("Couldn't resolve static GUID %x", staticGUID);
+		return Common::WeakPtr<RuntimeObject>();
+	}
+}
+
+Common::WeakPtr<RuntimeObject> ObjectLinkingScope::resolve(const Common::String &name, bool isNameAlreadyInsensitive) const {
+	const Common::String *namePtr = &name;
+	Common::String madeInsensitive;
+
+	if (!isNameAlreadyInsensitive) {
+		madeInsensitive = toCaseInsensitive(name);
+		namePtr = &madeInsensitive;
+	}
+
+	Common::HashMap<Common::String, Common::WeakPtr<RuntimeObject> >::const_iterator it = _nameToObject.find(*namePtr);
+	if (it != _nameToObject.end()) {
+		return it->_value;
+	} else {
+		if (_parent)
+			return _parent->resolve(*namePtr, true);
+
+		warning("Couldn't resolve object name '%s'", name.c_str());
+		return Common::WeakPtr<RuntimeObject>();
+	}
+}
+
+Common::WeakPtr<RuntimeObject> ObjectLinkingScope::resolve(uint32 staticGUID, const Common::String &name, bool isNameAlreadyInsensitive) const {
+	Common::WeakPtr<RuntimeObject> byGUIDResult = resolve(staticGUID);
+	if (byGUIDResult)
+		return byGUIDResult;
+	else
+		return resolve(name, isNameAlreadyInsensitive);
 }
 
 void ObjectLinkingScope::reset() {
@@ -1408,10 +1640,11 @@ void Runtime::runFrame(uint32 msec) {
 			_macFontMan.reset(new Graphics::MacFontManager(0, desc->getLanguage()));
 
 			_project.reset(new Project());
+			_project->setSelfReference(_project);
 
 			_project->loadFromDescription(*desc);
 
-			_rootLinkingScope.addObject(_project->getStaticGUID(), _project);
+			_rootLinkingScope.addObject(_project->getStaticGUID(), _project->getName(), _project);
 
 			// We have to materialize global variables because they are not cloned from aliases.
 			debug(1, "Materializing global variables...");
@@ -1529,8 +1762,6 @@ void Runtime::drawFrame(OSystem* system) {
 			continue;
 
 		system->copyRectToScreen(surface.getBasePtr(srcLeft, srcTop), surface.pitch, destLeft, destTop, destRight - destLeft, destBottom - destTop);
-
-		int n = 0;
 	}
 
 	system->updateScreen();
@@ -1538,6 +1769,7 @@ void Runtime::drawFrame(OSystem* system) {
 
 Common::SharedPtr<Structural> Runtime::findDefaultSharedSceneForScene(Structural *scene) {
 	Structural *subsection = scene->getParent();
+
 	const Common::Array<Common::SharedPtr<Structural> > &children = subsection->getChildren();
 	if (children.size() == 0 || children[0].get() == scene)
 		return Common::SharedPtr<Structural>();
@@ -1773,6 +2005,7 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 
 void Runtime::executeSharedScenePostSceneChangeActions() {
 	Structural *subsection = _activeMainScene->getParent();
+
 	const Common::Array<Common::SharedPtr<Structural> > &subsectionScenes = subsection->getChildren();
 
 	_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSharedSceneSceneChanged, 0), _activeSharedScene.get(), false, true))));
@@ -1962,6 +2195,10 @@ uint64 Runtime::getRealTime() const {
 
 uint64 Runtime::getPlayTime() const {
 	return _playTime;
+}
+
+VThread& Runtime::getVThread() const {
+	return *_vthread.get();
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
@@ -2215,6 +2452,10 @@ void Project::materializeGlobalVariables(Runtime *runtime, ObjectLinkingScope *o
 
 const ProjectPresentationSettings& Project::getPresentationSettings() const {
 	return _presentationSettings;
+}
+
+bool Project::isProject() const {
+	return true;
 }
 
 void Project::openSegmentStream(int segmentIndex) {
@@ -2500,6 +2741,8 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 				const Data::SectionStructuralDef &sectionObject = static_cast<const Data::SectionStructuralDef &>(dataObject);
 
 				Common::SharedPtr<Structural> section(new Section());
+				section->setSelfReference(section);
+
 				if (!static_cast<Section *>(section.get())->load(sectionObject))
 					error("Failed to load section");
 
@@ -2534,6 +2777,8 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 				const Data::SubsectionStructuralDef &subsectionObject = static_cast<const Data::SubsectionStructuralDef &>(dataObject);
 
 				Common::SharedPtr<Structural> subsection(new Subsection());
+				subsection->setSelfReference(subsection);
+
 				if (!static_cast<Subsection *>(subsection.get())->load(subsectionObject))
 					error("Failed to load subsection");
 
@@ -2621,6 +2866,10 @@ bool Section::load(const Data::SectionStructuralDef &data) {
 	return true;
 }
 
+bool Section::isSection() const {
+	return true;
+}
+
 ObjectLinkingScope *Section::getPersistentStructuralScope() {
 	return &_structuralScope;
 }
@@ -2636,6 +2885,10 @@ bool Subsection::load(const Data::SubsectionStructuralDef &data) {
 	return true;
 }
 
+bool Subsection::isSubsection() const {
+	return true;
+}
+
 ObjectLinkingScope *Subsection::getSceneLoadMaterializeScope() {
 	return getPersistentStructuralScope();
 }
@@ -2646,6 +2899,10 @@ ObjectLinkingScope *Subsection::getPersistentStructuralScope() {
 
 ObjectLinkingScope *Subsection::getPersistentModifierScope() {
 	return &_modifierScope;
+}
+
+bool Element::isElement() const {
+	return true;
 }
 
 uint32 Element::getStreamLocator() const {
@@ -2683,7 +2940,7 @@ bool ModifierFlags::load(const uint32 dataModifierFlags) {
 	return true;
 }
 
-Modifier::Modifier() {
+Modifier::Modifier() : _parent(nullptr) {
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	_debugger = nullptr;
 #endif
@@ -2697,10 +2954,16 @@ Modifier::~Modifier() {
 }
 
 void Modifier::materialize(Runtime *runtime, ObjectLinkingScope *outerScope) {
-	ModifierChildMaterializer childMaterializer(runtime, outerScope);
+	ObjectLinkingScope innerScope;
+	innerScope.setParent(outerScope);
+
+	ModifierInnerScopeBuilder innerScopeBuilder(&innerScope);
+	this->visitInternalReferences(&innerScopeBuilder);
+
+	ModifierChildMaterializer childMaterializer(runtime, &innerScope);
 	this->visitInternalReferences(&childMaterializer);
 
-	linkInternalReferences();
+	linkInternalReferences(outerScope);
 	setRuntimeGUID(runtime->allocateRuntimeGUID());
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
@@ -2717,6 +2980,10 @@ bool Modifier::isVariable() const {
 	return false;
 }
 
+bool Modifier::isModifier() const {
+	return true;
+}
+
 IModifierContainer *Modifier::getMessagePropagationContainer() {
 	return nullptr;
 }
@@ -2725,11 +2992,19 @@ IModifierContainer *Modifier::getChildContainer() {
 	return nullptr;
 }
 
+const Common::WeakPtr<RuntimeObject>& Modifier::getParent() const {
+	return _parent;
+}
+
+void Modifier::setParent(const Common::WeakPtr<RuntimeObject> &parent) {
+	_parent = parent;
+}
+
 bool Modifier::respondsToEvent(const Event &evt) const {
 	return false;
 }
 
-VThreadState Modifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) const {
+VThreadState Modifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	// If you're here, a message type was reported as responsive by respondsToEvent but consumeMessage wasn't overrided
 	assert(false);
 	return kVThreadError;
@@ -2744,6 +3019,13 @@ const Common::String& Modifier::getName() const {
 }
 
 void Modifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+}
+
+bool Modifier::loadPlugInHeader(const PlugInModifierLoaderContext &plugInContext) {
+	_guid = plugInContext.plugInModifierData.guid;
+	_name = plugInContext.plugInModifierData.name;
+
+	return true;
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
@@ -2783,7 +3065,7 @@ bool Modifier::loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeade
 	return true;
 }
 
-void Modifier::linkInternalReferences() {
+void Modifier::linkInternalReferences(ObjectLinkingScope *scope) {
 }
 
 } // End of namespace MTropolis

@@ -30,6 +30,7 @@ namespace MTropolis {
 struct ModifierLoaderContext;
 class MiniscriptProgram;
 class MiniscriptReferences;
+class MiniscriptThread;
 
 class BehaviorModifier : public Modifier, public IModifierContainer {
 public:
@@ -58,12 +59,17 @@ class MiniscriptModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::MiniscriptModifier &data);
 
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Miniscript Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
 #endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	void linkInternalReferences(ObjectLinkingScope *scope) override;
 
 	Event _enableWhen;
 
