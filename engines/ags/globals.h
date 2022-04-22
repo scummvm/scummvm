@@ -812,11 +812,14 @@ public:
 	 * @{
 	 */
 
-	// Following 3 parameters instruct the engine to run game loops until
-	// certain condition is not fullfilled.
-	int _restrict_until = 0;
-	int _user_disabled_for = 0;
-	const void *_user_disabled_data = nullptr;
+	 // Following struct instructs the engine to run game loops until
+	 // certain condition is not fullfilled.
+	struct RestrictUntil {
+		int type = 0; // type of condition, UNTIL_* constant
+		int disabled_for = 0; // FOR_* constant
+		// pointer to the test variable
+		const void *data_ptr = nullptr;
+	} _restrict_until;
 
 	unsigned int _loopcounter = 0;
 	unsigned int _lastcounter = 0;

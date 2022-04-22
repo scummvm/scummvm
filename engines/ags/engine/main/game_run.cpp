@@ -72,7 +72,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-static int ShouldStayInWaitMode();
+static bool ShouldStayInWaitMode();
 
 #define UNTIL_ANIMEND   1
 #define UNTIL_MOVEEND   2
@@ -155,7 +155,7 @@ static int game_loop_check_ground_level_interactions() {
 		// if in a Wait loop which is no longer valid (probably
 		// because the Region interaction did a NewRoom), abort
 		// the rest of the loop
-		if ((_G(restrict_until)) && (!ShouldStayInWaitMode())) {
+		if ((_G(restrict_until).type > 0) && (!ShouldStayInWaitMode())) {
 			// cancel the Rep Exec and Stands on Hotspot events that
 			// we just added -- otherwise the event queue gets huge
 			_GP(events).resize(_G(numEventsAtStartOfFunction));
@@ -382,7 +382,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 	}
 
 	if (((agskey == eAGSKeyCodeCtrlV) && (cur_key_mods & Common::KBD_ALT) != 0)
-	        && (_GP(play).wait_counter < 1) && (_GP(play).text_overlay_on == 0) && (_G(restrict_until) == 0)) {
+			&& (_GP(play).wait_counter < 1) && (_GP(play).text_overlay_on == 0) && (_G(restrict_until).type == 0)) {
 		// make sure we can't interrupt a Wait()
 		// and desync the music to cutscene
 		_GP(play).debug_mode++;
@@ -832,56 +832,67 @@ static void UpdateMouseOverLocation() {
 }
 
 // Checks if user interface should remain disabled for now
-static int ShouldStayInWaitMode() {
-	if (_G(restrict_until) == 0)
+// Checks if user interface should remain disabled for now
+static bool ShouldStayInWaitMode() {
+	if (_G(restrict_until).type == 0)
 		quit("end_wait_loop called but game not in loop_until state");
-	int retval = _G(restrict_until);
 
-	if (_G(restrict_until) == UNTIL_MOVEEND) {
-		const int16 *wkptr = (const int16 *)_G(user_disabled_data);
-		if (wkptr[0] < 1) retval = 0;
-	} else if (_G(restrict_until) == UNTIL_CHARIS0) {
-		const char *chptr = (const char *)_G(user_disabled_data);
-		if (chptr[0] == 0) retval = 0;
-	} else if (_G(restrict_until) == UNTIL_NEGATIVE) {
-		const int16 *wkptr = (const int16 *)_G(user_disabled_data);
-		if (wkptr[0] < 0) retval = 0;
-	} else if (_G(restrict_until) == UNTIL_INTISNEG) {
-		const int *wkptr = (const int *)_G(user_disabled_data);
-		if (wkptr[0] < 0) retval = 0;
-	} else if (_G(restrict_until) == UNTIL_NOOVERLAY) {
-		if (_GP(play).text_overlay_on == 0) retval = 0;
-	} else if (_G(restrict_until) == UNTIL_INTIS0) {
-		const int *wkptr = (const int *)_G(user_disabled_data);
-		if (wkptr[0] == 0) retval = 0;
-	} else if (_G(restrict_until) == UNTIL_SHORTIS0) {
-		const int16 *wkptr = (const int16 *)_G(user_disabled_data);
-		if (wkptr[0] == 0) retval = 0;
-	} else quit("loop_until: unknown until event");
+	switch (_G(restrict_until).type) {
+	case UNTIL_MOVEEND: {
+		short *wkptr = (short *)_G(restrict_until).data_ptr;
+		return !(wkptr[0] < 1);
+	}
+	case UNTIL_CHARIS0: {
+		char *chptr = (char *)_G(restrict_until).data_ptr;
+		return !(chptr[0] == 0);
+	}
+	case UNTIL_NEGATIVE: {
+		short *wkptr = (short *)_G(restrict_until).data_ptr;
+		return !(wkptr[0] < 0);
+	}
+	case UNTIL_INTISNEG: {
+		int *wkptr = (int *)_G(restrict_until).data_ptr;
+		return !(wkptr[0] < 0);
+	}
+	case UNTIL_NOOVERLAY: {
+		return !(_GP(play).text_overlay_on == 0);
+	}
+	case UNTIL_INTIS0: {
+		int *wkptr = (int *)_G(restrict_until).data_ptr;
+		return !(wkptr[0] == 0);
+	}
+	case UNTIL_SHORTIS0: {
+		short *wkptr = (short *)_G(restrict_until).data_ptr;
+		return !(wkptr[0] == 0);
+	}
+	default:
+		quit("loop_until: unknown until event");
+	}
 
-	return retval;
+	return true; // should stay in wait
 }
 
 static int UpdateWaitMode() {
-	if (_G(restrict_until) == 0) {
+	if (_G(restrict_until).type == 0) {
 		return RETURN_CONTINUE;
 	}
 
-	_G(restrict_until) = ShouldStayInWaitMode();
+	if (!ShouldStayInWaitMode())
+		_G(restrict_until).type = 0;
 	_G(our_eip) = 77;
 
-	if (_G(restrict_until) != 0) {
+	if (_G(restrict_until).type > 0) {
 		return RETURN_CONTINUE;
 	}
 
-	auto was_disabled_for = _G(user_disabled_for);
+	auto was_disabled_for = _G(restrict_until).disabled_for;
 
 	set_default_cursor();
 	if (GUI::Options.DisabledStyle != kGuiDis_Unchanged) { // If GUI looks change when disabled, then update them all
 		GUI::MarkAllGUIForUpdate();
 	}
 	_GP(play).disabled_user_interface--;
-	_G(user_disabled_for) = 0;
+	_G(restrict_until).disabled_for = 0;
 
 	switch (was_disabled_for) {
 	// case FOR_ANIMATION:
@@ -893,7 +904,7 @@ static int UpdateWaitMode() {
 		quit("err: for_script obsolete (v2.1 and earlier only)");
 		break;
 	default:
-		quit("Unknown _G(user_disabled_for) in end _G(restrict_until)");
+		quit("Unknown user_disabled_for in end _G(restrict_until)");
 	}
 
 	// we shouldn't get here.
@@ -932,9 +943,9 @@ static void SetupLoopParameters(int untilwhat, const void *udata) {
 	        (_G(cur_mode) != CURS_WAIT))
 		set_mouse_cursor(CURS_WAIT);
 
-	_G(restrict_until) = untilwhat;
-	_G(user_disabled_data) = udata;
-	_G(user_disabled_for) = FOR_EXITLOOP;
+	_G(restrict_until).type = untilwhat;
+	_G(restrict_until).data_ptr = udata;
+	_G(restrict_until).disabled_for = FOR_EXITLOOP;
 }
 
 // This function is called from lot of various functions
@@ -947,8 +958,6 @@ static void GameLoopUntilEvent(int untilwhat, const void *daaa) {
 	// remember the state of these vars in case a higher level
 	// call needs them
 	auto cached_restrict_until = _G(restrict_until);
-	auto cached_user_disabled_data = _G(user_disabled_data);
-	auto cached_user_disabled_for = _G(user_disabled_for);
 
 	SetupLoopParameters(untilwhat, daaa);
 	while (GameTick() == 0 && !_G(abort_engine)) {}
@@ -956,8 +965,6 @@ static void GameLoopUntilEvent(int untilwhat, const void *daaa) {
 	_G(our_eip) = 78;
 
 	_G(restrict_until) = cached_restrict_until;
-	_G(user_disabled_data) = cached_user_disabled_data;
-	_G(user_disabled_for) = cached_user_disabled_for;
 }
 
 void GameLoopUntilValueIsZero(const int8 *value) {
