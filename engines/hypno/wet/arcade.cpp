@@ -702,8 +702,8 @@ void WetEngine::drawPlayer() {
 	c = kHypnoColorRed; // red ?
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 	int i = detectTarget(mousePos);
-	if (i > 0)
-		drawString("block05.fgx", "TARGET  ACQUIRED", 116, 3, 80, c);
+	if (i >= 0)
+		drawString("block05.fgx", "TARGET ACQUIRED", 116, 3, 80, c);
 
 	if (_arcadeMode == "Y1" || _arcadeMode == "Y3")
 		return;
@@ -754,12 +754,28 @@ void WetEngine::drawHealth() {
 	int mm = _objKillsRequired[_objIdx];
 	if (_playerFrameIdx < _playerFrameSep) {
 		const chapterEntry *entry = _chapterTable[_levelId];
-		//uint32 id = _levelId;
-		drawString("block05.fgx", Common::String::format("ENERGY  %d%%", p), entry->energyPos[0], entry->energyPos[1], 65, c);
-		drawString("block05.fgx", Common::String::format("SCORE  %04d", s), entry->scorePos[0], entry->scorePos[1], 72, c);
+		Common::Point ep(entry->energyPos[0], entry->energyPos[1]);
+		Common::Point sp(entry->scorePos[0], entry->scorePos[1]);
+		Common::Point op(entry->objectivesPos[0], entry->objectivesPos[1]);
+
+		if (_arcadeMode == "Y1") {
+			Common::Rect r;
+			r = Common::Rect(ep.x - 2, ep.y - 2, ep.x + 69, sp.y + 9);
+			_compositeSurface->frameRect(r, kHypnoColorGreen);
+
+			r = Common::Rect(sp.x - 2, sp.y - 2, sp.x + 74, sp.y + 8);
+			_compositeSurface->frameRect(r, kHypnoColorGreen);
+
+			// TODO: not rendering correctly
+			//r = Common::Rect(op.x - 2, op.y - 2, op.x + 75, op.y + 9);
+			//_compositeSurface->frameRect(r, kHypnoColorGreen);
+		}
+
+		drawString("block05.fgx", Common::String::format("ENERGY %d%%", p), ep.x, ep.y, 65, c);
+		drawString("block05.fgx", Common::String::format("SCORE  %04d", s), sp.x, sp.y, 72, c);
 		// Objectives are always in the zero in the demo
-		if (entry->objectivesPos[0] > 0 && entry->objectivesPos[1] > 0)
-			drawString("block05.fgx", Common::String::format("M.O.  %d/%d", mo, mm), entry->objectivesPos[0], entry->objectivesPos[1], 60, c);
+		if (op.x > 0 && op.y > 0)
+			drawString("block05.fgx", Common::String::format("M.O.  %d/%d", mo, mm), op.x, op.y, 60, c);
 	}
 }
 
@@ -775,9 +791,15 @@ void WetEngine::drawAmmo() {
 	if (d >= 13)
 		return;
 	Common::Point p(entry->ammoPos[0], entry->ammoPos[1]);
-	Common::Rect r = Common::Rect(p.x, p.y + d, p.x + 15, p.y + 13);
-	uint32 c = kHypnoColorWhiteOrBlue; // blue
-	_compositeSurface->fillRect(r, c);
+	Common::Rect r;
+	if (_arcadeMode == "Y1") {
+		r = Common::Rect(p.x - 1, p.y - 1, p.x + 16, p.y + 14);
+		_compositeSurface->frameRect(r, kHypnoColorGreen);
+	}
+
+	r = Common::Rect(p.x, p.y + d, p.x + 15, p.y + 13);
+	_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
+
 }
 
 
