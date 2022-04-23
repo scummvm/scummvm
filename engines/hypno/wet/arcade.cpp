@@ -284,6 +284,9 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 
 void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 	_checkpoint = _currentLevel;
+	if (_health < 0)
+		_health = 0;
+
 	if (isDemo() && _variant != "Demo" && _restoredContentEnabled) {
 		showDemoScore();
 	} else if (!isDemo() || (_variant == "Demo" && _language == Common::EN_USA)) {
