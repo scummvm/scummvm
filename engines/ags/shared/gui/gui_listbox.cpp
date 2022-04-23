@@ -268,7 +268,7 @@ void GUIListBox::OnResized() {
 }
 
 void GUIListBox::UpdateMetrics() {
-	int font_height = (_G(loaded_game_file_version) < kGameVersion_360) ?
+	int font_height = (_G(loaded_game_file_version) < kGameVersion_360_21) ?
 		get_font_height(Font) : get_font_height_outlined(Font);
 	RowHeight = font_height + get_fixed_pixel_size(2); // +1 top/bottom margin
 	VisibleItemCount = Height / RowHeight;
