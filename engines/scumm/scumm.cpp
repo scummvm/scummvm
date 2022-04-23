@@ -2235,6 +2235,8 @@ void ScummEngine::setTimerAndShakeFrequency() {
 				// In MANIAC V1, one tick represents three frames,
 				// i.e., 12 quarter-frames.
 				_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V1_DIVISOR * 12;
+			} else {
+				_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V2_4_DIVISOR;
 			}
 			break;
 		case 2:
