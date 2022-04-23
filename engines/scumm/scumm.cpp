@@ -106,9 +106,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _game(dr.game),
 	  _filenamePattern(dr.fp),
 	  _language(dr.language),
-	  _rnd("scumm"),
-	  _shakeTimerRate(dr.game.version <= 3 ? 236696 : 291304)
+	  _rnd("scumm")
 {
+
 #ifdef USE_RGB_COLOR
 	if (_game.features & GF_16BIT_COLOR) {
 		if (_game.platform == Common::kPlatformPCEngine)
@@ -152,6 +152,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	for (uint i = 0; i < ARRAYSIZE(_virtscr); i++) {
 		_virtscr[i].clear();
 	}
+
+	setTimerAndShakeFrequency();
+
 	camera.reset();
 	memset(_colorCycle, 0, sizeof(_colorCycle));
 	memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
@@ -2093,8 +2096,6 @@ Common::Error ScummEngine::go() {
 		_saveLoadFlag = 0;
 	}
 
-	int diff = 0;	// Duration of one loop iteration
-
 	while (!shouldQuit()) {
 		// Randomize the PRNG by calling it at regular intervals. This ensures
 		// that it will be in a different state each time you run the program.
@@ -2135,12 +2136,13 @@ Common::Error ScummEngine::go() {
 			delta += ((ScummEngine_v0 *)this)->DelayCalculateDelta();
 		}
 
-		// WORKAROUND: walking speed in the original v1 interpreter
-		// is sometimes slower (e.g. during scrolling) than in ScummVM.
-		// This is important for the door-closing action in the dungeon,
-		// otherwise (delta < 6) a single kid is able to escape.
-		if (_game.version == 1 && isScriptRunning(137)) {
-			delta = 6;
+		// In MANIAC V1, the workings of the wait loop will increment the
+		// timer past the comparison, producing a longer wait loop than
+		// expected. The timer resolution is lower than the frame-time
+		// derived from it, i.e., one tick represents three frames. We need
+		// to round up VAR_TIMER_NEXT to the nearest multiple of three.
+		if (_game.id == GID_MANIAC && _game.version == 1) {
+			delta = ceil(delta / 3.0) * 3;
 		}
 
 		// Wait, start and stop the stop watch at the time the wait is assumed
@@ -2164,7 +2166,7 @@ Common::Error ScummEngine::go() {
 
 void ScummEngine::waitForTimer(int quarterFrames) {
 	uint32 endTime, cur;
-	uint32 msecDelay = getIntegralTime(quarterFrames * (1000 / 60.0) / 4);
+	uint32 msecDelay = getIntegralTime(quarterFrames * (1000 / _timerFrequency));
 
 	if (_fastMode & 2)
 		msecDelay = 0;
@@ -2221,6 +2223,45 @@ uint32 ScummEngine::getIntegralTime(double fMsecs) {
 	}
 
 	return msecIntPart;
+}
+
+void ScummEngine::setTimerAndShakeFrequency() {
+	_shakeTimerRate = _timerFrequency = 240.0;
+
+	if (_game.platform == Common::kPlatformDOS || _game.platform == Common::kPlatformUnknown) {
+		switch (_game.version) {
+		case 1:
+			if (_game.id == GID_MANIAC) {
+				// In MANIAC V1, one tick represents three frames,
+				// i.e., 12 quarter-frames.
+				_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V1_DIVISOR * 12;
+			}
+			break;
+		case 2:
+		case 3:
+		case 4:
+			_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V2_4_DIVISOR;
+			break;
+		case 5:
+			_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V5_6_ORCHESTRATOR_DIVISOR;
+			_timerFrequency *= PIT_V5_6_SUBTIMER_INC / PIT_V5_SUBTIMER_THRESH;
+			break;
+		case 6:
+			_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V5_6_ORCHESTRATOR_DIVISOR;
+			if (_game.id == GID_TENTACLE) {
+				_timerFrequency *= PIT_V5_6_SUBTIMER_INC / PIT_V6_DOTT_SUBTIMER_THRESH;
+			} else {
+				_timerFrequency *= PIT_V5_6_SUBTIMER_INC / PIT_V6_SAMNMAX_SUBTIMER_THRESH;
+			}
+			break;
+		case 7:
+			_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V7_ORCHESTRATOR_DIVISOR;
+			_timerFrequency *= PIT_V7_SUBTIMER_INC / PIT_V7_SUBTIMER_THRESH;
+			break;
+		default:
+			_shakeTimerRate = _timerFrequency = 240.0;
+		}
+	}
 }
 
 void ScummEngine_v0::scummLoop(int delta) {
