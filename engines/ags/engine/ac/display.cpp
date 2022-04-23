@@ -561,10 +561,6 @@ int get_font_outline_padding(int font) {
 	return 0;
 }
 
-int get_text_width_outlined(const char *tex, int font) {
-	return get_text_width(tex, font) + 2 * get_font_outline_padding(font);
-}
-
 void do_corner(Bitmap *ds, int sprn, int x, int y, int offx, int offy) {
 	if (sprn < 0) return;
 	if (_GP(spriteset)[sprn] == nullptr) {
