@@ -74,6 +74,7 @@ public:
 	~MiniscriptProgram();
 
 	const Common::Array<MiniscriptInstruction *> &getInstructions() const;
+	const Common::Array<Attribute> &getAttributes() const;
 
 private:
 	Common::SharedPtr<Common::Array<uint8> > _programData;
@@ -199,11 +200,13 @@ namespace MiniscriptInstructions {
 	class VectorCreate : public UnimplementedInstruction {
 	};
 
-	class GetChild : public UnimplementedInstruction {
+	class GetChild : public MiniscriptInstruction {
 	public:
 		GetChild(uint32 attribute, bool isLValue, bool isIndexed);
 
 	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
+
 		uint32 _attribute;
 		bool _isLValue;
 		bool _isIndexed;
@@ -296,16 +299,20 @@ namespace MiniscriptInstructions {
 class MiniscriptThread {
 public:
 	enum StackValueType {
-		kStackValueTypeLValue,
-		kStackValueTypeRValue,
 		kStackValueTypeLValueAttrib,
+		kStackValueTypeLValueAttribIndex,
+		kStackValueTypeRValue,
 	};
 
 	struct StackValue {
 		DynamicValue value;
+		DynamicValue index;	// Sigh
 
 		StackValueType type;
 		uint attribIndex;
+
+		inline bool isRValue() const { return this->type == kStackValueTypeRValue; }
+		inline bool isLValue() const { return this->type == kStackValueTypeLValueAttrib || this->type == kStackValueTypeLValueAttribIndex; }
 	};
 
 	MiniscriptThread(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msgProps, const Common::SharedPtr<MiniscriptProgram> &program, const Common::SharedPtr<MiniscriptReferences> &refs, Modifier *modifier);
@@ -320,12 +327,13 @@ public:
 	const Common::SharedPtr<MessageProperties> &getMessageProperties() const;
 	Runtime *getRuntime() const;
 
-	void pushLValue(const DynamicValue &value);
 	void pushRValue(const DynamicValue &value);
 	void pushLValueAttrib(const DynamicValue &value, uint attributeIndex);
 	void popValues(size_t count);
 	size_t getStackSize() const;
 	StackValue &getStackValueFromTop(size_t offset);
+
+	MiniscriptInstructionOutcome convertToRValue(size_t offset);
 
 private:
 	struct ResumeTaskData {

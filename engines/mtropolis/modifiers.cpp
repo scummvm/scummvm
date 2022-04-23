@@ -73,7 +73,7 @@ void BehaviorModifier::visitInternalReferences(IStructuralReferenceVisitor* visi
 
 // Miniscript modifier
 bool MiniscriptModifier::load(ModifierLoaderContext &context, const Data::MiniscriptModifier &data) {
-	if (!_enableWhen.load(data.enableWhen))
+	if (!this->loadTypicalHeader(data.modHeader) || !_enableWhen.load(data.enableWhen))
 		return false;
 
 	if (!MiniscriptParser::parse(data.program, _program, _references))

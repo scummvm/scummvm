@@ -455,6 +455,13 @@ bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
 	}
 }
 
+size_t DynamicList::getSize() const {
+	if (!_container)
+		return 0;
+	else
+		return _container->getSize();
+}
+
 DynamicList &DynamicList::operator=(const DynamicList &other) {
 	if (this != &other) {
 		clear();
@@ -908,7 +915,7 @@ void DynamicValue::clear() {
 void DynamicValue::initFromOther(const DynamicValue &other) {
 	assert(_type == DynamicValueTypes::kNull);
 
-	switch (_type) {
+	switch (other._type) {
 	case DynamicValueTypes::kNull:
 	case DynamicValueTypes::kIncomingData:
 		break;
@@ -1160,6 +1167,14 @@ bool RuntimeObject::isModifier() const {
 }
 
 bool RuntimeObject::isElement() const {
+	return false;
+}
+
+bool RuntimeObject::readAttribute(DynamicValue &result, const Common::String &attrib, const DynamicValue *optionalIndex) {
+	return false;
+}
+
+bool RuntimeObject::setAttribute(const Common::String &attrib, const DynamicValue *optionalIndex, const DynamicValue &value) {
 	return false;
 }
 

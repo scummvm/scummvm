@@ -63,6 +63,10 @@ const Common::Array<MiniscriptInstruction *> &MiniscriptProgram::getInstructions
 	return _instructions;
 }
 
+const Common::Array<MiniscriptProgram::Attribute> &MiniscriptProgram::getAttributes() const {
+	return _attributes;
+}
+
 template<class T>
 struct MiniscriptInstructionLoader {
 	static bool loadInstruction(void *dest, uint32 instrFlags, Data::DataReader &instrDataReader);
@@ -447,6 +451,54 @@ GetChild::GetChild(uint32 attribute, bool isLValue, bool isIndexed)
 	: _attribute(attribute), _isLValue(isLValue), _isIndexed(isIndexed) {
 }
 
+MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
+	if (_isIndexed) {
+		if (thread->getStackSize() < 2) {
+			thread->error("Stack underflow");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+
+		if (!thread->getStackValueFromTop(0).isRValue()) {
+			MiniscriptInstructionOutcome outcome = thread->convertToRValue(0);
+			if (outcome != kMiniscriptInstructionOutcomeContinue)
+				return outcome;
+		}
+
+		if (!thread->getStackValueFromTop(1).isRValue()) {
+			MiniscriptInstructionOutcome outcome = thread->convertToRValue(1);
+			if (outcome != kMiniscriptInstructionOutcomeContinue)
+				return outcome;
+		}
+
+		DynamicValue index = thread->getStackValueFromTop(0).value;
+		thread->popValues(1);
+
+		// Transform into result LValue in place
+		MiniscriptThread::StackValue &result = thread->getStackValueFromTop(0);
+		result.attribIndex = this->_attribute;
+		result.index = index;
+		result.type = MiniscriptThread::kStackValueTypeLValueAttribIndex;
+	} else {
+		if (thread->getStackSize() < 1) {
+			thread->error("Stack underflow");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+
+		if (!thread->getStackValueFromTop(0).isRValue()) {
+			MiniscriptInstructionOutcome outcome = thread->convertToRValue(0);
+			if (outcome != kMiniscriptInstructionOutcomeContinue)
+				return outcome;
+		}
+
+		// Transform into result LValue in place
+		MiniscriptThread::StackValue &result = thread->getStackValueFromTop(0);
+		result.attribIndex = this->_attribute;
+		result.type = MiniscriptThread::kStackValueTypeLValueAttribIndex;
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 PushValue::PushValue(DataType dataType, const void *value, bool isLValue)
 	: _dataType(dataType), _isLValue(isLValue) {
 	switch (dataType) {
@@ -498,10 +550,7 @@ MiniscriptInstructionOutcome PushValue::execute(MiniscriptThread *thread) const 
 		break;
 	}
 
-	if (_isLValue)
-		thread->pushLValue(value);
-	else
-		thread->pushRValue(value);
+	thread->pushRValue(value);
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -542,10 +591,7 @@ MiniscriptInstructionOutcome PushGlobal::execute(MiniscriptThread *thread) const
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	if (_isLValue)
-		thread->pushLValue(value);
-	else
-		thread->pushRValue(value);
+	thread->pushRValue(value);
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -594,10 +640,7 @@ MiniscriptInstructionOutcome PushGlobal::executeFindFilteredParent(MiniscriptThr
 	DynamicValue value;
 	value.setObject(ref);
 
-	if (_isLValue)
-		thread->pushLValue(value);
-	else
-		thread->pushRValue(value);
+	thread->pushRValue(value);
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -621,7 +664,8 @@ void MiniscriptThread::runOnVThread(VThread &vthread, const Common::SharedPtr<Mi
 
 void MiniscriptThread::error(const Common::String &message) {
 #ifdef MTROPOLIS_DEBUG_ENABLE
-	_runtime->debugGetDebugger()->notify(kDebugSeverityError, Common::String("Miniscript error: " + message));
+	if (_runtime->debugGetDebugger())
+		_runtime->debugGetDebugger()->notify(kDebugSeverityError, Common::String("Miniscript error: " + message));
 #endif
 	warning("Miniscript error: %s", message.c_str());
 
@@ -641,21 +685,12 @@ Modifier *MiniscriptThread::getModifier() const {
 	return _modifier;
 }
 
-const Common::SharedPtr<MessageProperties>& MiniscriptThread::getMessageProperties() const {
+const Common::SharedPtr<MessageProperties> &MiniscriptThread::getMessageProperties() const {
 	return _msgProps;
 }
 
 Runtime *MiniscriptThread::getRuntime() const {
 	return _runtime;
-}
-
-void MiniscriptThread::pushLValue(const DynamicValue &value) {
-	_stack.push_back(StackValue());
-
-	StackValue &stackValue = _stack.back();
-	stackValue.value = value;
-	stackValue.type = kStackValueTypeLValue;
-	stackValue.attribIndex = 0;
 }
 
 void MiniscriptThread::pushRValue(const DynamicValue &value) {
@@ -688,6 +723,126 @@ size_t MiniscriptThread::getStackSize() const {
 MiniscriptThread::StackValue &MiniscriptThread::getStackValueFromTop(size_t offset) {
 	assert(offset < _stack.size());
 	return _stack[_stack.size() - 1 - offset];
+}
+
+MiniscriptInstructionOutcome MiniscriptThread::convertToRValue(size_t offset) {
+	assert(offset < _stack.size());
+	StackValue &stackValue = _stack[_stack.size() - 1 - offset];
+
+	if (stackValue.type == kStackValueTypeRValue)
+		return kMiniscriptInstructionOutcomeContinue;
+
+	const DynamicValue *index = nullptr;
+	if (stackValue.type == kStackValueTypeLValueAttribIndex)
+		index = &stackValue.index;
+	else {
+		assert(stackValue.type == kStackValueTypeLValueAttrib);
+	}
+
+	const Common::Array<MiniscriptProgram::Attribute> &attribs = this->_program->getAttributes();
+	if (stackValue.attribIndex >= attribs.size()) {
+		this->error("Invalid attribute index");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	const Common::String &attrib = attribs[stackValue.attribIndex].name;
+
+	const DynamicValue &value = stackValue.value;
+
+	DynamicValue resultValue;
+
+	switch (value.getType()) {
+	case DynamicValueTypes::kPoint: {
+			if (index == nullptr && attrib == "x")
+				resultValue.setInt(value.getPoint().x);
+			else if (index == nullptr && attrib == "y")
+				resultValue.setInt(value.getPoint().y);
+			else {
+				this->error("Unable to read attribute '" + attrib + "' from point");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+		} break;
+	case DynamicValueTypes::kIntegerRange: {
+			if (index == nullptr && attrib == "start")
+				resultValue.setInt(value.getIntRange().min);
+			else if (index == nullptr && attrib == "y")
+				resultValue.setInt(value.getIntRange().max);
+			else {
+				this->error("Unable to read attribute '" + attrib + "' from integer range");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+		} break;
+	case DynamicValueTypes::kVector: {
+			if (index == nullptr && attrib == "angle")
+				resultValue.setFloat(value.getVector().angleRadians * (180.8 / M_PI));
+			else if (index == nullptr && attrib == "magnitude")
+				resultValue.setFloat(value.getVector().magnitude);
+			else {
+				this->error("Unable to read attribute '" + attrib + "' from vector");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+		} break;
+	case DynamicValueTypes::kIncomingData: {
+			resultValue = _msgProps->getValue();
+		} break;
+	case DynamicValueTypes::kList: {
+			DynamicList &list = *value.getList().get();
+			if (index != nullptr && attrib == "value") {
+				int32 indexValue = 0;
+				if (index->getType() == DynamicValueTypes::kFloat) {
+					double f = index->getFloat();
+					double flooredF = floor(f);
+					if (!isfinite(f) || f != flooredF || flooredF < 1.0 || flooredF > static_cast<double>(INT32_MAX)) {
+						this->error("Unable to convert index to a valid value");
+						return kMiniscriptInstructionOutcomeFailed;
+					}
+					indexValue = static_cast<int32>(flooredF);
+				} else if (index->getType() == DynamicValueTypes::kInteger) {
+					indexValue = index->getInt();
+				} else {
+					this->error("List index was an invalid type");
+					return kMiniscriptInstructionOutcomeFailed;
+				}
+
+				if (indexValue < 1 || static_cast<size_t>(indexValue) > list.getSize()) {
+					this->error("List index out of bounds");
+					return kMiniscriptInstructionOutcomeFailed;
+				}
+
+				if (!list.setAtIndex(static_cast<size_t>(indexValue - 1), value)) {
+					this->error("List is the wrong type");
+					return kMiniscriptInstructionOutcomeFailed;
+				}
+			} else {
+				this->error("Unable to read attribute '" + attrib + "' from list");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+		} break;
+	case DynamicValueTypes::kObject: {
+			Common::SharedPtr<RuntimeObject> object = value.getObject().lock();
+			if (!object) {
+				this->error("Attempted to read attribute from invalid object");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+
+			if (!object->readAttribute(resultValue, attrib, index)) {
+				this->error("Unable to read attribute '" + attrib + "' from object");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+		} break;
+	default:
+		this->error("Type has no attributes");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	// Get the slot back since it may have moved
+	StackValue &resultSlot = _stack[_stack.size() - 1 - offset];
+	resultSlot.attribIndex = 0;
+	resultSlot.index.clear();
+	resultSlot.value = resultValue;
+	resultSlot.type = kStackValueTypeRValue;
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 VThreadState MiniscriptThread::resumeTask(const ResumeTaskData &data) {
