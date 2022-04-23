@@ -54,6 +54,8 @@ namespace MTropolis {
 class Asset;
 class CursorGraphic;
 class CursorGraphicCollection;
+struct DynamicValueReadProxy;
+struct DynamicValueWriteProxy;
 class Element;
 class MessageDispatch;
 class Modifier;
@@ -110,6 +112,8 @@ enum DynamicValueType {
 	kString,
 	kList,
 	kObject,
+	kReadProxy,
+	kWriteProxy,
 
 	kEmpty,
 };
@@ -330,14 +334,40 @@ struct MessageFlags {
 struct DynamicValue;
 struct DynamicList;
 
+struct IDynamicValueReadInterface {
+	virtual bool read(DynamicValue &dest, const void *objectRef, uintptr_t ptrOrOffset) const = 0;
+	virtual bool readAttrib(DynamicValue &dest, const void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const = 0;
+	virtual bool readAttribIndexed(DynamicValue &dest, const void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const = 0;
+};
+
+struct IDynamicValueWriteInterface {
+	virtual bool write(const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const = 0;
+	virtual bool refAttrib(DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const = 0;
+	virtual bool refAttribIndexed(DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const = 0;
+};
+
+struct DynamicValueReadProxy {
+	uintptr_t ptrOrOffset;
+	const void *objectRef;
+	IDynamicValueReadInterface *ifc;
+};
+
+struct DynamicValueWriteProxy {
+	uintptr_t ptrOrOffset;
+	void *objectRef;
+	IDynamicValueWriteInterface *ifc;
+};
+
 class DynamicListContainerBase {
 public:
 	virtual ~DynamicListContainerBase();
 	virtual bool setAtIndex(size_t index, const DynamicValue &dynValue) = 0;
+	virtual bool getAtIndex(size_t index, DynamicValue &dynValue) const = 0;
 	virtual void setFrom(const DynamicListContainerBase &other) = 0; // Only supports setting same type!
 	virtual const void *getConstArrayPtr() const = 0;
 	virtual size_t getSize() const = 0;
 	virtual bool compareEqual(const DynamicListContainerBase &other) const = 0;
+	virtual DynamicListContainerBase *clone() const = 0;
 };
 
 struct DynamicListDefaultSetter {
@@ -368,14 +398,30 @@ struct DynamicListValueImporter {
 	static bool importValue(const DynamicValue &dynValue, const Common::WeakPtr<RuntimeObject> *&outPtr);
 };
 
+struct DynamicListValueExporter {
+	static void exportValue(DynamicValue &dynValue, const int32 &value);
+	static void exportValue(DynamicValue &dynValue, const double &value);
+	static void exportValue(DynamicValue &dynValue, const Point16 &value);
+	static void exportValue(DynamicValue &dynValue, const IntRange &value);
+	static void exportValue(DynamicValue &dynValue, const bool &value);
+	static void exportValue(DynamicValue &dynValue, const AngleMagVector &value);
+	static void exportValue(DynamicValue &dynValue, const Label &value);
+	static void exportValue(DynamicValue &dynValue, const Event &value);
+	static void exportValue(DynamicValue &dynValue, const Common::String &value);
+	static void exportValue(DynamicValue &dynValue, const Common::SharedPtr<DynamicList> &value);
+	static void exportValue(DynamicValue &dynValue, const Common::WeakPtr<RuntimeObject> &value);
+};
+
 template<class T>
 class DynamicListContainer : public DynamicListContainerBase {
 public:
 	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
+	bool getAtIndex(size_t index, DynamicValue &dynValue) const override;
 	void setFrom(const DynamicListContainerBase &other) override;
 	const void *getConstArrayPtr() const override;
 	size_t getSize() const override;
 	bool compareEqual(const DynamicListContainerBase &other) const override;
+	DynamicListContainerBase *clone() const override;
 
 private:
 	Common::Array<T> _array;
@@ -387,10 +433,12 @@ public:
 	DynamicListContainer();
 
 	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
+	bool getAtIndex(size_t index, DynamicValue &dynValue) const override;
 	void setFrom(const DynamicListContainerBase &other) override;
 	const void *getConstArrayPtr() const override;
 	size_t getSize() const override;
 	bool compareEqual(const DynamicListContainerBase &other) const override;
+	DynamicListContainerBase *clone() const override;
 
 public:
 	size_t _size;
@@ -400,10 +448,12 @@ template<>
 class DynamicListContainer<VarReference> : public DynamicListContainerBase {
 public:
 	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
+	bool getAtIndex(size_t index, DynamicValue &dynValue) const override;
 	void setFrom(const DynamicListContainerBase &other) override;
 	const void *getConstArrayPtr() const override;
 	size_t getSize() const override;
 	bool compareEqual(const DynamicListContainerBase &other) const override;
+	DynamicListContainerBase *clone() const override;
 
 private:
 	void rebuildStringPointers();
@@ -436,6 +486,15 @@ bool DynamicListContainer<T>::setAtIndex(size_t index, const DynamicValue &dynVa
 }
 
 template<class T>
+bool DynamicListContainer<T>::getAtIndex(size_t index, DynamicValue &dynValue) const {
+	if (index >= _array.size())
+		return false;
+
+	DynamicListValueExporter::exportValue(dynValue, _array[index]);
+	return true;
+}
+
+template<class T>
 void DynamicListContainer<T>::setFrom(const DynamicListContainerBase &other) {
 	_array = static_cast<const DynamicListContainer<T> &>(other)._array;
 }
@@ -456,6 +515,11 @@ bool DynamicListContainer<T>::compareEqual(const DynamicListContainerBase &other
 	return _array == otherTyped._array;
 }
 
+template<class T>
+DynamicListContainerBase *DynamicListContainer<T>::clone() const {
+	return new DynamicListContainer<T>(*this);
+}
+
 struct DynamicList {
 	DynamicList();
 	DynamicList(const DynamicList &other);
@@ -474,8 +538,11 @@ struct DynamicList {
 	const Common::Array<Common::String> &getString() const;
 	const Common::Array<bool> &getBool() const;
 
+	bool getAtIndex(size_t index, DynamicValue &value) const;
 	bool setAtIndex(size_t index, const DynamicValue &value);
 	size_t getSize() const;
+
+	static bool dynamicValueToIndex(size_t &outIndex, const DynamicValue &value);
 
 	DynamicList &operator=(const DynamicList &other);
 
@@ -521,6 +588,10 @@ struct DynamicValue {
 	const bool &getBool() const;
 	const Common::SharedPtr<DynamicList> &getList() const;
 	const Common::WeakPtr<RuntimeObject> &getObject() const;
+	const DynamicValueReadProxy &getReadProxy() const;
+	const DynamicValueWriteProxy &getWriteProxy() const;
+	const Common::SharedPtr<DynamicList> &getReadProxyList() const;
+	const Common::SharedPtr<DynamicList> &getWriteProxyList() const;
 
 	void clear();
 
@@ -536,6 +607,8 @@ struct DynamicValue {
 	void setBool(bool value);
 	void setList(const Common::SharedPtr<DynamicList> &value);
 	void setObject(const Common::WeakPtr<RuntimeObject> &value);
+	void setReadProxy(const Common::SharedPtr<DynamicList> &list, const DynamicValueReadProxy &readProxy);
+	void setWriteProxy(const Common::SharedPtr<DynamicList> &list, const DynamicValueWriteProxy &writeProxy);
 
 	DynamicValue &operator=(const DynamicValue &other);
 
@@ -557,6 +630,8 @@ private:
 		Event asEvent;
 		Point16 asPoint;
 		bool asBool;
+		DynamicValueReadProxy asReadProxy;
+		DynamicValueWriteProxy asWriteProxy;
 	};
 
 	template<class T>
@@ -944,8 +1019,10 @@ public:
 	virtual bool isModifier() const;
 	virtual bool isElement() const;
 
-	virtual bool readAttribute(DynamicValue &result, const Common::String &attrib, const DynamicValue *optionalIndex);
-	virtual bool setAttribute(const Common::String &attrib, const DynamicValue *optionalIndex, const DynamicValue &value);
+	virtual bool readAttribute(DynamicValue &result, const Common::String &attrib);
+	virtual bool readAttributeIndexed(DynamicValue &result, const Common::String &attrib, const DynamicValue &index);
+	virtual bool writeRefAttribute(DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+	virtual bool writeRefAttributeIndexed(DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index);
 
 protected:
 	// This is the static GUID stored in the data, it is not guaranteed
@@ -1350,6 +1427,8 @@ protected:
 class VariableModifier : public Modifier {
 public:
 	virtual bool isVariable() const;
+	virtual bool setValue(const DynamicValue &value) = 0;
+	virtual void getValue(DynamicValue &dest) const = 0;
 };
 
 class Asset {

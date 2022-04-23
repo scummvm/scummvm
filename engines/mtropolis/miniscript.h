@@ -28,7 +28,7 @@
 namespace MTropolis {
 
 class MiniscriptThread;
-struct MiniscriptVM;
+struct MiniscriptStackValue;
 struct IMiniscriptInstructionFactory;
 
 enum MiniscriptInstructionOutcome {
@@ -95,7 +95,9 @@ namespace MiniscriptInstructions {
 		virtual MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
-	class Set : public UnimplementedInstruction {
+	class Set : public MiniscriptInstruction {
+	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
 	class Send : public UnimplementedInstruction {
@@ -206,6 +208,8 @@ namespace MiniscriptInstructions {
 
 	private:
 		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
+		MiniscriptInstructionOutcome readRValueAttrib(MiniscriptThread *thread, DynamicValue &valueSrcDest, const Common::String &attrib) const;
+		MiniscriptInstructionOutcome readRValueAttribIndexed(MiniscriptThread *thread, DynamicValue &valueSrcDest, const Common::String &attrib, const DynamicValue &index) const;
 
 		uint32 _attribute;
 		bool _isLValue;
@@ -296,24 +300,13 @@ namespace MiniscriptInstructions {
 	};
 } // End of namespace MiniscriptInstructions
 
+
+struct MiniscriptStackValue {
+	DynamicValue value;
+};
+
 class MiniscriptThread {
 public:
-	enum StackValueType {
-		kStackValueTypeLValueAttrib,
-		kStackValueTypeLValueAttribIndex,
-		kStackValueTypeRValue,
-	};
-
-	struct StackValue {
-		DynamicValue value;
-		DynamicValue index;	// Sigh
-
-		StackValueType type;
-		uint attribIndex;
-
-		inline bool isRValue() const { return this->type == kStackValueTypeRValue; }
-		inline bool isLValue() const { return this->type == kStackValueTypeLValueAttrib || this->type == kStackValueTypeLValueAttribIndex; }
-	};
 
 	MiniscriptThread(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msgProps, const Common::SharedPtr<MiniscriptProgram> &program, const Common::SharedPtr<MiniscriptReferences> &refs, Modifier *modifier);
 
@@ -327,13 +320,12 @@ public:
 	const Common::SharedPtr<MessageProperties> &getMessageProperties() const;
 	Runtime *getRuntime() const;
 
-	void pushRValue(const DynamicValue &value);
-	void pushLValueAttrib(const DynamicValue &value, uint attributeIndex);
+	void pushValue(const DynamicValue &value);
 	void popValues(size_t count);
 	size_t getStackSize() const;
-	StackValue &getStackValueFromTop(size_t offset);
+	MiniscriptStackValue &getStackValueFromTop(size_t offset);
 
-	MiniscriptInstructionOutcome convertToRValue(size_t offset);
+	MiniscriptInstructionOutcome dereferenceRValue(size_t offset);
 
 private:
 	struct ResumeTaskData {
@@ -343,12 +335,14 @@ private:
 	static VThreadState resumeTask(const ResumeTaskData &data);
 	VThreadState resume(const ResumeTaskData &data);
 
+	MiniscriptInstructionOutcome tryLoadVariable(MiniscriptStackValue &stackValue);
+
 	Common::SharedPtr<MiniscriptProgram> _program;
 	Common::SharedPtr<MiniscriptReferences> _refs;
 	Common::SharedPtr<MessageProperties> _msgProps;
 	Modifier *_modifier;
 	Runtime *_runtime;
-	Common::Array<StackValue> _stack;
+	Common::Array<MiniscriptStackValue> _stack;
 
 	size_t _currentInstruction;
 	bool _failed;

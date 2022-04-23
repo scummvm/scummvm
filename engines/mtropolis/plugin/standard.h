@@ -87,7 +87,12 @@ private:
 
 class ObjectReferenceVariableModifier : public VariableModifier {
 public:
+	ObjectReferenceVariableModifier();
+
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data);
+
+	bool setValue(const DynamicValue &value) override;
+	void getValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Object Reference Variable Modifier"; }
@@ -97,7 +102,10 @@ private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
 	Event _setToSourceParentWhen;
-	Common::String _objectPath;
+
+	mutable Common::WeakPtr<RuntimeObject> _object;
+	mutable Common::String _objectPath;
+	mutable bool _isResolved;
 };
 
 class MidiModifier : public Modifier {
@@ -149,16 +157,24 @@ private:
 
 class ListVariableModifier : public VariableModifier {
 public:
+	ListVariableModifier();
+
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data);
+
+	bool setValue(const DynamicValue &value) override;
+	void getValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "List Variable Modifier"; }
 #endif
 
 private:
+	ListVariableModifier(const ListVariableModifier &other);
+	ListVariableModifier &operator=(const ListVariableModifier &other);
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
-	DynamicList _list;
+	Common::SharedPtr<DynamicList> _list;
 };
 
 class SysInfoModifier : public Modifier {
