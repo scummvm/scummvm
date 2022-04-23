@@ -479,11 +479,9 @@ protected:
 
 class MidiDriver_NULL_Multisource : public MidiDriver_Multisource {
 public:
-	~MidiDriver_NULL_Multisource();
-
 	int open() override;
 	bool isOpen() const override { return true; }
-	void close() override { }
+	void close() override;
 	uint32 getBaseTempo() override { return 10000; }
 	MidiChannel *allocateChannel() override { return 0; }
 	MidiChannel *getPercussionChannel() override { return 0; }
