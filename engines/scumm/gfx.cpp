@@ -66,8 +66,7 @@ struct StripTable {
 
 enum {
 	kScrolltime = 500,  // ms scrolling is supposed to take
-	kPictureDelay = 20,
-	kFadeDelay = 4 // 1/4th of a jiffie
+	kPictureDelay = 5
 };
 
 #define NUM_SHAKE_POSITIONS 8
@@ -3920,7 +3919,7 @@ void ScummEngine::transitionEffect(int a) {
 	int bottom;
 	int l, t, r, b;
 	const int height = MIN((int)_virtscr[kMainVirtScreen].h, _screenHeight);
-	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
+	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : kPictureDelay;
 
 	for (i = 0; i < 16; i++) {
 		delta[i] = transitionEffects[a].deltaTable[i];
@@ -3979,7 +3978,7 @@ void ScummEngine::transitionEffect(int a) {
 void ScummEngine::dissolveEffect(int width, int height) {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 	int *offsets;
-	int blits_before_refresh, blits;
+	int blitsBeforeRefresh, blits;
 	int x, y;
 	int w, h;
 	int i;
@@ -4049,7 +4048,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	// but might still need some tuning.
 
 	blits = 0;
-	blits_before_refresh = (3 * w * h) / 25;
+	blitsBeforeRefresh = (3 * w * h) / 25; // TODO: Check
 
 	// Speed up the effect for CD Loom since it uses it so often. I don't
 	// think the original had any delay at all, so on modern hardware it
@@ -4072,17 +4071,17 @@ void ScummEngine::dissolveEffect(int width, int height) {
 			_system->copyRectToScreen(vs->getPixels(x, y), vs->pitch, x, y + vs->topline, width, height);
 
 
-		if (++blits >= blits_before_refresh) {
+		if (++blits >= blitsBeforeRefresh) {
 			blits = 0;
-			waitForTimer(30);
+			waitForTimer(4);
 		}
 	}
 
-	free(offsets);
-
 	if (blits != 0) {
-		waitForTimer(30);
+		waitForTimer(4);
 	}
+
+	free(offsets);
 }
 
 void ScummEngine::scrollEffect(int dir) {
@@ -4097,7 +4096,7 @@ void ScummEngine::scrollEffect(int dir) {
 
 	int x, y;
 	int step;
-	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
+	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : kPictureDelay;
 
 	if ((dir == 0) || (dir == 1))
 		step = vs->h;
