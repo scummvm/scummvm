@@ -281,6 +281,58 @@ typedef uint16 ResId;
 class ResourceManager;
 
 /**
+ * DOS Programmable Interrupt Timer constants.
+ *
+ * The SCUMM engine (v1-v7, DOS) timer ticks are based on the jiffy unit (roughly 60Hz).
+ * Well, if we want to be pedantic about it, it operates on quarter jiffies (240Hz),
+ * a rate at which several screen effects are updated; but still, this value is divided
+ * by 4 in the main game loop in order for it to operate on whole jiffies.
+ * In order to obtain this behavior, the PIT is programmed to operate at roughly 240Hz,
+ * though these timings change from version to version (or game by game, for v6).
+ *
+ * Glossary:
+ * - Base frequency: this is the frequency at which the Intel 8253/54 PIT
+ *                   operates, namely obtained with the formula 105/88, which
+ *                   yields 1.193181818... MHz. We are storing it in Hz;
+ *
+ * - Divisor:        the base frequency in DOS is not used as-is, but it is instead
+ *                   divided by a customizable divisor which can range between
+ *                   0 and (2^16-1), where 0 is a shortcut for 2^16. This operation
+ *                   yields the custom frequency at which the custom assigned interrupt
+ *                   gets called (hence "Programmable");
+ *
+ * - Orchestrator:   starting from SCUMM v5, games started using iMUSE, and apparently
+ *                   needed a more precise timing handling; this led to the introduction
+ *                   of a main orchestrator timer (which then handled the execution of
+                     other sub-timers), whose divisor (4096) was set up in the IMS
+ *                   drivers up until v7, in which the divisor (3977) was set up in the
+ *                   executable as a part of the INSANE orchestration;
+ *
+ * - Sub-timer:      custom made timers, operating under an orchestrator; in the macros
+ *                   below, "INC" refers to the increment of an accumulator which gets
+ *                   updated at each iteration of the orchestrator interrupt; "THRESH"
+ *                   refers to a threshold value of the aforementioned accumulator,
+ *                   beyond which the accumulator is decremented by the threshold value,
+ *                   and the interrupt of the sub-timer gets executed (e.g. the values
+ *                   below mainly refer to the interrupt which increments the SCUMM
+ *                   quarter frame counter.
+ *
+ * All the values below are presented as doubles, so to safely yield fractional results.
+ */
+
+#define PIT_BASE_FREQUENCY             1193182.0 // In Hz
+#define PIT_V1_DIVISOR                 65536.0
+#define PIT_V2_4_DIVISOR               5041.0
+#define PIT_V5_6_ORCHESTRATOR_DIVISOR  4096.0
+#define PIT_V5_6_SUBTIMER_INC          3433.0
+#define PIT_V5_SUBTIMER_THRESH         4167.0
+#define PIT_V6_SAMNMAX_SUBTIMER_THRESH 4167.0
+#define PIT_V6_DOTT_SUBTIMER_THRESH    4237.0
+#define PIT_V7_ORCHESTRATOR_DIVISOR    3977.0
+#define PIT_V7_SUBTIMER_INC            3977.0
+#define PIT_V7_SUBTIMER_THRESH         4971.0
+
+/**
  * Base class for all SCUMM engines.
  */
 class ScummEngine : public Engine, public Common::Serializable {
@@ -385,6 +437,8 @@ protected:
 
 	void waitForTimer(int quarterFrames);
 	uint32 _lastWaitTime;
+
+	void setTimerAndShakeFrequency();
 
 	/**
 	 * Represents fractional milliseconds by decomposing the passed
@@ -1018,7 +1072,8 @@ protected:
 	uint _shakeFrame = 0;
 	uint32 _shakeNextTick = 0;
 	uint32 _shakeTickCounter = 0;
-	const uint32 _shakeTimerRate;
+	double _shakeTimerRate;
+	double _timerFrequency;
 
 	void setShake(int mode);
 

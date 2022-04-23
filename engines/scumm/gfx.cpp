@@ -65,7 +65,6 @@ struct StripTable {
 };
 
 enum {
-	kScrolltime = 500,  // ms scrolling is supposed to take
 	kPictureDelay = 5
 };
 
@@ -4095,15 +4094,8 @@ void ScummEngine::scrollEffect(int dir) {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
 	int x, y;
-	int step;
+	const int step = 8;
 	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : kPictureDelay;
-
-	if ((dir == 0) || (dir == 1))
-		step = vs->h;
-	else
-		step = vs->w;
-
-	step = (step * delay) / kScrolltime;
 
 	byte *src;
 	int m = _textSurfaceMultiplier;
@@ -4227,7 +4219,7 @@ void ScummEngine::updateScreenShakeEffect() {
 		// but inside each respective ims driver during the driver load/init process. The screen shakes update every 8 ticks.
 		// LOOM uses either 236.696 Hz at 8 ticks delay or 473.297 Hz at 16 ticks delay, depending on the sound card selection.
 		// The outcome is the same...
-		_shakeTickCounter += ((1000000000 / _shakeTimerRate) * 8);
+		_shakeTickCounter += ((1000000 / _shakeTimerRate) * 8);
 		_shakeNextTick += (_shakeTickCounter / 1000);
 		_shakeTickCounter %= 1000;
 	}
