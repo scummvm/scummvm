@@ -1613,22 +1613,21 @@ Runtime::Runtime() : _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvali
 	}
 }
 
-void Runtime::runFrame(uint32 msec) {
+void Runtime::runRealFrame(uint32 msec) {
 	_realTime += msec;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
-	if (_debugger) {
+	if (_debugger)
 		_debugger->runFrame(msec);
-		if (_debugger->isPaused())
-			return;
-	}
 #endif
+}
 
+bool Runtime::runProjectFrame() {
 	for (;;) {
 		VThreadState state = _vthread->step();
 		if (state != kVThreadReturn) {
 			// Still doing blocking tasks
-			return;
+			return false;
 		}
 
 		if (_queuedProjectDesc) {
@@ -1710,6 +1709,11 @@ void Runtime::runFrame(uint32 msec) {
 		break;
 	}
 
+	// Frame completed
+	return true;
+}
+
+void Runtime::advanceProjectTime(uint32 msec) {
 	_playTime += msec;
 }
 
