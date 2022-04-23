@@ -124,7 +124,7 @@ bool init_translation(const String &lang, const String &fallback_lang) {
 			StringMap conv_map;
 			std::vector<char> ascii; // ascii buffer
 			for (const auto &item : _GP(trans).Dict) {
-				ascii.resize(item._key.GetLength()); // ascii len will be <= utf-8 len
+				ascii.resize(item._key.GetLength() + 1); // ascii len will be <= utf-8 len
 				StrUtil::ConvertUtf8ToAscii(item._key.GetCStr(), key_enc.GetCStr(), &ascii[0], ascii.size());
 				conv_map.insert(std::make_pair(String(&ascii[0]), item._value));
 			}
