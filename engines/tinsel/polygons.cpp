@@ -2460,10 +2460,11 @@ void UpdateGroundPlane() {
 			break;
 		}
 	}
-	if (i >= noofPolys) return;
-	//assert(i < noofPolys);// No scale polygon
+	if (i >= noofPolys)
+		return;
+	// assert(i < noofPolys);// No scale polygon
 
-	POLYGON* pp = Polys[i];
+	POLYGON *pp = Polys[i];
 	Poly ptp(_vm->_handle->LockMem(pHandle), pp->pIndex);
 
 	// Vertex2c v[4];
@@ -2474,6 +2475,19 @@ void UpdateGroundPlane() {
 	// TransformXYZ(ptp.vx[2] * scale, -ptp.vy[2] * scale, -ptp.vz[2] * scale, v[2]);
 	// TransformXYZ(ptp.vx[3] * scale, -ptp.vy[3] * scale, -ptp.vz[3] * scale, v[3]);
 	//...
+}
+
+// Notebook (Tinsel)
+void NotebookPolyEntry(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3) {
+	warning("TODO: Finish implementation of NotebookPolyEntry(%d, %d, %d, %d, %d, %d, %d, %d)", c0.x, c0.y, c1.x, c1.y, c2.x, c2.y, c3.x, c3.y);
+}
+
+void NotebookPolyNextPage(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3) {
+	warning("TODO: Finish implementation of NotebookPolyNextPage(%d, %d, %d, %d, %d, %d, %d, %d)", c0.x, c0.y, c1.x, c1.y, c2.x, c2.y, c3.x, c3.y);
+}
+
+void NotebookPolyPrevPage(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3) {
+	warning("TODO: Finish implementation of NotebookPolyPrevPage(%d, %d, %d, %d, %d, %d, %d, %d)", c0.x, c0.y, c1.x, c1.y, c2.x, c2.y, c3.x, c3.y);
 }
 
 } // End of namespace Tinsel

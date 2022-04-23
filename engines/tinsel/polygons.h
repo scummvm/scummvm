@@ -152,6 +152,10 @@ int PathCount();
 void MovePolygon(PTYPE ptype, int id, int x, int y);
 void MovePolygonTo(PTYPE ptype, int id, int x, int y);
 
+void NotebookPolyEntry(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3);
+void NotebookPolyNextPage(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3);
+void NotebookPolyPrevPage(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3);
+
 /*-------------------------------------------------------------------------*/
 
 void UpdateGroundPlane();

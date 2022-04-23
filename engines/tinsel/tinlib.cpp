@@ -155,7 +155,8 @@ enum MASTER_LIB_CODES {
 	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
 	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D, DECINVMAIN,
 	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, FADEMUSIC, VOICEOVER, SETVIEW,
-	HELDOBJECTORTOPIC, BOOKADDHYPERLINK, OPENNOTEBOOK, HIGHEST_LIBCODE
+	HELDOBJECTORTOPIC, BOOKADDHYPERLINK, OPENNOTEBOOK, NTBPOLYENTRY, NTBPOLYPREVPAGE,
+	NTBPOLYNEXTPAGE, HIGHEST_LIBCODE
 };
 
 static const MASTER_LIB_CODES DW1DEMO_CODES[] = {
@@ -5207,22 +5208,19 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		debug(7, "%s()", mapping.name);
 		break;
 	case 210: // STUBBED
-		warning("TODO: Implement OP210");
-		mapping = NoirMapping{"OP210", ZZZZZZ, 8};
+		mapping = NoirMapping{"NTBPOLYENTRY", NTBPOLYENTRY, 8};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
 		break;
 	case 211: // 4 parameters
 		error("Unsupported libCode %d PLAYSEQUENCE", libCode);
 	case 212: // STUBBED
-		warning("TODO: Implement OP212");
-		mapping = NoirMapping{"OP212", ZZZZZZ, 8};
+		mapping = NoirMapping{"NTBPOLYPREVPAGE", NTBPOLYPREVPAGE, 8};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
 		break;
 	case 213: // STUBBED
-		warning("TODO: Implement OP213");
-		mapping = NoirMapping{"OP213", ZZZZZZ, 8};
+		mapping = NoirMapping{"NTBPOLYNEXTPAGE", NTBPOLYNEXTPAGE, 8};
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3], pp[4], pp[5], pp[6], pp[7]);
 		break;
@@ -6005,6 +6003,33 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		// DW2 only
 		g_bNoPause = true;
 		return 0;
+
+	case NTBPOLYENTRY:
+		// Noir only
+		pp -= 7; // 8 Parameters
+		NotebookPolyEntry(Common::Point(pp[0], pp[1]),
+						  Common::Point(pp[2], pp[3]),
+						  Common::Point(pp[4], pp[5]),
+						  Common::Point(pp[6], pp[7]));
+		return -8;
+
+	case NTBPOLYNEXTPAGE:
+		// Noir only
+		pp -= 7; // 8 Parameters
+		NotebookPolyNextPage(Common::Point(pp[0], pp[1]),
+							 Common::Point(pp[2], pp[3]),
+							 Common::Point(pp[4], pp[5]),
+							 Common::Point(pp[6], pp[7]));
+		return -8;
+
+	case NTBPOLYPREVPAGE:
+		// Noir only
+		pp -= 7; // 8 Parameters
+		NotebookPolyPrevPage(Common::Point(pp[0], pp[1]),
+							 Common::Point(pp[2], pp[3]),
+							 Common::Point(pp[4], pp[5]),
+							 Common::Point(pp[6], pp[7]));
+		return -8;
 
 	case NOSCROLL:
 		// Common to both DW1 & DW2
