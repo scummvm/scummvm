@@ -49,9 +49,12 @@ void WetEngine::runCode(Code *code) {
 }
 
 void WetEngine::runCheckLives(Code *code) {
-	if (_lives < 0)
+	if (_lives < 0) {
 		_nextLevel = "<game_over>";
-	else
+		_score = 0;
+		_lives = 2;
+		saveProfile(_name, _lastLevel);
+	} else
 		_nextLevel = _checkpoint;
 }
 
