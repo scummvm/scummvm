@@ -287,6 +287,13 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 	if (_health < 0)
 		_health = 0;
 
+	if (arc->mode == "YT") {
+		for (Frames::iterator it = _c33PlayerCursor.begin(); it != _c33PlayerCursor.end(); ++it) {
+			(*it)->free();
+			delete (*it);
+		}
+	}
+
 	if (isDemo() && _variant != "Demo" && _restoredContentEnabled) {
 		showDemoScore();
 	} else if (!isDemo() || (_variant == "Demo" && _language == Common::EN_USA)) {
@@ -508,6 +515,11 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_ammo = 150;
 	_maxAmmo = 150;
 	_c33PlayerPosition = Common::Point(_screenW/2, _screenH/2);
+
+	if (arc->mode == "YT") {
+		_c33PlayerCursor = decodeFrames("c33/c33i2.smk");
+	}
+
 }
 
 void WetEngine::pressedKey(const int keycode) {
@@ -538,6 +550,15 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 			if (diff.x > 1 || diff.y > 1)
 				diff = diff / 10;
 			_c33PlayerPosition = _c33PlayerPosition + diff;
+
+			if (diff.x > 0 && abs(diff.x) > abs(diff.y))
+				drawImage(*_c33PlayerCursor[4], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+			else if (diff.x < 0 && abs(diff.x) > abs(diff.y))
+				drawImage(*_c33PlayerCursor[8], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+			else if (diff.y > 0)
+				drawImage(*_c33PlayerCursor[12], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+			else
+				drawImage(*_c33PlayerCursor[10], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
 		}
 		return _c33PlayerPosition;
 	}
@@ -739,11 +760,6 @@ void WetEngine::drawPlayer() {
 		offset = 2;
 
 	drawImage(*_playerFrames[_playerFrameIdx], 0, 200 - _playerFrames[_playerFrameIdx]->h + offset, true);
-	if (_arcadeMode == "YT") {
-		Graphics::Surface *cursor = decodeFrame("c33/c33i2.smk", 12, nullptr);
-		drawImage(*cursor, _c33PlayerPosition.x, _c33PlayerPosition.y, true);
-	}
-
 }
 
 void WetEngine::drawHealth() {

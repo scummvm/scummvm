@@ -413,6 +413,7 @@ private:
 	void showDemoScore();
 	uint32 findPaletteIndexZones(uint32 id);
 
+	Frames _c33PlayerCursor;
 	Common::Point _c33PlayerPosition;
 
 	Common::BitArray _font05;
