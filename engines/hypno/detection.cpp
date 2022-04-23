@@ -132,6 +132,16 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"wetlands", // Non Interactive demo featured in several game magazines
+		"NonInteractive",
+		AD_ENTRY2s("playsmks.exe", "edc5b0c0caf3d5b01d344cb555d9a085", 422607,
+				"wetmusic.81m", "0d99c63ce19633d09569b1fdcdff1505", 2833439),
+		Common::EN_USA,
+		Common::kPlatformDOS,
+		ADGF_TESTING | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"wetlands", // Wetlands (US)
 		nullptr,
 		AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 647447,

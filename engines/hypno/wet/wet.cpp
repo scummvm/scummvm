@@ -86,6 +86,8 @@ void WetEngine::loadAssets() {
 		loadAssetsPCW();
 	else if (_variant == "PCGDemo")
 		loadAssetsPCG();
+	else if (_variant == "NonInteractive")
+		loadAssetsNI();
 	else
 		error("Invalid demo version: \"%s\"", _variant.c_str());
 }
@@ -189,6 +191,48 @@ void WetEngine::loadAssetsDemoDisc() {
 	loadLib("wetlands/sound/", "wetlands/c_misc/sound.lib", true);
 	_nextLevel = "<start>";
 }
+
+void WetEngine::loadAssetsNI() {
+	playSound("wetmusic.81m", 0, 11025);
+	Transition *movies = new Transition("<quit>");
+	movies->intros.push_back("demo/nw_logo.smk");
+	movies->intros.push_back("demo/hypnotix.smk");
+	movies->intros.push_back("demo/wetlogo.smk");
+	movies->intros.push_back("demo/c31c1.smk");
+	movies->intros.push_back("demo/demo31.smk");
+	movies->intros.push_back("demo/c31c2.smk");
+	movies->intros.push_back("demo/c31e1.smk");
+	movies->intros.push_back("demo/logo_w.smk");
+	movies->intros.push_back("demo/bar01b.smk");
+	movies->intros.push_back("demo/gun_320.smk");
+	movies->intros.push_back("demo/logo_e.smk");
+	movies->intros.push_back("demo/c30peek.smk");
+	movies->intros.push_back("demo/demo30.smk");
+	movies->intros.push_back("demo/c30knife.smk");
+	movies->intros.push_back("demo/logo_t.smk");
+	movies->intros.push_back("demo/c51teez.smk");
+	movies->intros.push_back("demo/demo21.smk");
+	movies->intros.push_back("demo/c51kill.smk");
+	movies->intros.push_back("demo/logo_l.smk");
+	movies->intros.push_back("demo/run_320.smk");
+	movies->intros.push_back("demo/logo_a.smk");
+	movies->intros.push_back("demo/demo50.smk");
+	movies->intros.push_back("demo/c50gate.smk");
+	movies->intros.push_back("demo/logo_n.smk");
+	movies->intros.push_back("demo/c22end.smk");
+	movies->intros.push_back("demo/logo_d.smk");
+	movies->intros.push_back("demo/demo44.smk");
+	movies->intros.push_back("demo/c44boom.smk");
+	movies->intros.push_back("demo/logo_s.smk");
+	movies->intros.push_back("demo/xi.smk");
+	movies->intros.push_back("demo/wetlogo.smk");
+	movies->intros.push_back("demo/c30shoot.smk");
+	movies->frameImage = "";
+	movies->frameNumber = 0;
+	_levels["<start>"] = movies;
+	_nextLevel = "<start>";
+}
+
 
 void WetEngine::loadAssetsPCW() {
 

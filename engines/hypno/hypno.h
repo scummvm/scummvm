@@ -369,6 +369,8 @@ public:
 	void loadAssetsPCW();
 	void loadAssetsPCG();
 	void loadAssetsFullGame();
+	void loadAssetsNI();
+
 	void loadFonts() override;
 	void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) override;
 
