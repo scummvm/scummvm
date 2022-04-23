@@ -48,15 +48,17 @@ NewControl::NewControl() {
 	enabled = 1;
 	needredraw = 1;
 }
-int NewControl::mouseisinarea(int mousex, int mousey) {
+
+int NewControl::mouseisinarea(int mx, int my) {
 	if (_G(topwindowhandle) != wlevel)
 		return 0;
 
-	if ((mousex > x) & (mousex < x + wid) & (mousey > y) & (mousey < y + hit))
+	if ((mx > x) &(mx < x + wid) &(my > y) &(my < y + hit))
 		return 1;
 
 	return 0;
 }
+
 void NewControl::drawifneeded() {
 	if (_G(topwindowhandle) != wlevel)
 		return;

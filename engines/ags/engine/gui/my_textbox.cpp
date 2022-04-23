@@ -54,7 +54,7 @@ void MyTextBox::draw(Bitmap *ds) {
 	wouttextxy(ds, x + 2 + get_text_width(text, _G(cbuttfont)), y + 1, _G(cbuttfont), text_color, tbu);
 }
 
-int MyTextBox::pressedon(int mousex, int mousey) {
+int MyTextBox::pressedon(int /*mx*/, int /*my*/) {
 	return 0;
 }
 
