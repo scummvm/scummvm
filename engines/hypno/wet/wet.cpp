@@ -278,6 +278,7 @@ void WetEngine::loadAssetsFullGame() {
 	Code *end_credits = new Code("<credits>");
 	_levels["<credits>"] = end_credits;
 
+	ArcadeShooting *arc;
 	loadArcadeLevel("c110.mi_", "c10", "<check_lives>", "");
 	loadArcadeLevel("c111.mi_", "c10", "<check_lives>", "");
 	loadArcadeLevel("c112.mi_", "c10", "<check_lives>", "");
@@ -302,6 +303,18 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c201.mi_", "c31", "<check_lives>", "");
 	loadArcadeLevel("c202.mi_", "c31", "<check_lives>", "");
 
+	arc = (ArcadeShooting*) _levels["c200.mi_"];
+	arc->mouseBox.right = 320;
+	arc->mouseBox.bottom = 135;
+
+	arc = (ArcadeShooting*) _levels["c201.mi_"];
+	arc->mouseBox.right = 320;
+	arc->mouseBox.bottom = 135;
+
+	arc = (ArcadeShooting*) _levels["c202.mi_"];
+	arc->mouseBox.right = 320;
+	arc->mouseBox.bottom = 135;
+
 	loadArcadeLevel("c310.mi_", "c32", "<check_lives>", "");
 	loadArcadeLevel("c311.mi_", "c32", "<check_lives>", "");
 	loadArcadeLevel("c312.mi_", "c32", "<check_lives>", "");
@@ -315,7 +328,7 @@ void WetEngine::loadAssetsFullGame() {
 	loadArcadeLevel("c332.mi_", "c30", "<check_lives>", "");
 
 	loadArcadeLevel("c300.mi_", "c41", "<check_lives>", "");
-	ArcadeShooting *arc = (ArcadeShooting*) _levels["c300.mi_"];
+	arc = (ArcadeShooting*) _levels["c300.mi_"];
 	arc->id = 30; // Fixed from the original (3)
 
 	loadArcadeLevel("c301.mi_", "c41", "<check_lives>", "");
