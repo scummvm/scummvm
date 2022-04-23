@@ -79,8 +79,6 @@ struct RoomObject {
 	}
 
 	void UpdateCyclingView(int ref_id);
-	void update_cycle_view_forwards();
-	void update_cycle_view_backwards();
 
 	void ReadFromSavegame(Shared::Stream *in, int save_ver);
 	void WriteToSavegame(Shared::Stream *out) const;

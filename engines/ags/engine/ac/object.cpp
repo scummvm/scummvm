@@ -40,6 +40,7 @@
 #include "ags/engine/ac/route_finder.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/shared/ac/view.h"
+#include "ags/engine/ac/view_frame.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/gfx/gfx_def.h"
 #include "ags/shared/gui/gui_main.h"
@@ -550,6 +551,72 @@ int check_click_on_object(int roomx, int roomy, int mood) {
 	if (aa < 0) return 0;
 	RunObjectInteraction(aa, mood);
 	return 1;
+}
+
+// General view animation algorithm: find next loop and frame, depending on anim settings
+bool CycleViewAnim(int view, uint16_t &o_loop, uint16_t &o_frame, bool forwards, int repeat) {
+	// Allow multi-loop repeat: idk why, but original engine behavior
+	// was to only check this for forward animation, not backward
+	const bool multi_loop_repeat = !forwards || (_GP(play).no_multiloop_repeat == 0);
+
+	ViewStruct *aview = &_GP(views)[view];
+	uint16_t loop = o_loop;
+	uint16_t frame = o_frame;
+	bool done = false;
+
+	if (forwards) {
+		if (frame + 1 >= aview->loops[loop].numFrames) { // Reached the last frame in the loop, find out what to do next
+			if (aview->loops[loop].RunNextLoop()) {
+				// go to next loop
+				loop++;
+				frame = 0;
+			} else {
+				// If either ANIM_REPEAT or ANIM_ONCERESET:
+				// reset to the beginning of a multiloop animation
+				if (repeat != ANIM_ONCE) {
+					frame = 0;
+					if (multi_loop_repeat)
+						while ((loop > 0) && (aview->loops[loop - 1].RunNextLoop()))
+							loop--;
+				} else { // if ANIM_ONCE, stop at the last frame
+					frame = aview->loops[loop].numFrames - 1;
+				}
+
+				if (repeat != ANIM_REPEAT) // either ANIM_ONCE or ANIM_ONCERESET
+					done = true; // finished animation
+			}
+		} else
+			frame++;
+	} else // backwards
+	{
+		if (frame == 0) { // Reached the first frame in the loop, find out what to do next
+			if ((loop > 0) && aview->loops[loop - 1].RunNextLoop()) {
+				// go to next loop
+				loop--;
+				frame = aview->loops[loop].numFrames - 1;
+			} else {
+				// If either ANIM_REPEAT or ANIM_ONCERESET:
+				// reset to the beginning of a multiloop animation
+				if (repeat != ANIM_ONCE) {
+					if (multi_loop_repeat)
+						while (aview->loops[loop].RunNextLoop())
+							loop++;
+					frame = aview->loops[loop].numFrames - 1;
+				} else { // if ANIM_ONCE, stop at the first frame
+					frame = 0;
+				}
+
+				if (repeat != ANIM_REPEAT) // either ANIM_ONCE or ANIM_ONCERESET
+					done = true; // finished animation
+			}
+		} else
+			frame--;
+	}
+
+	// Update object values
+	o_loop = loop;
+	o_frame = frame;
+	return !done; // have we finished animating?
 }
 
 //=============================================================================

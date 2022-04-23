@@ -594,7 +594,7 @@ static void game_loop_update_animated_buttons() {
 	// this bit isn't in update_stuff because it always needs to
 	// happen, even when the game is paused
 	for (size_t i = 0; i < GetAnimatingButtonCount(); ++i) {
-		if (UpdateAnimatingButton(i)) {
+		if (!UpdateAnimatingButton(i)) {
 			StopButtonAnimation(i);
 			i--;
 		}

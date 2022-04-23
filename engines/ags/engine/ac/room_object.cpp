@@ -24,6 +24,7 @@
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
+#include "ags/engine/ac/object.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/view_frame.h"
 #include "ags/engine/debugging/debug_log.h"
@@ -79,24 +80,15 @@ void RoomObject::UpdateCyclingView(int ref_id) {
 	if (cycling == 0) return;
 	if (view == (uint16_t)-1) return;
 	if (wait > 0) {
-		wait--;
-		return;
+		wait--; return;
 	}
 
-	if (cycling >= ANIM_BACKWARDS) {
-
-		update_cycle_view_backwards();
-
-	} else {  // Animate forwards
-
-		update_cycle_view_forwards();
-
-	}  // end if forwards
+	cycling = CycleViewAnim(view, loop, frame, cycling < ANIM_BACKWARDS, cycling % ANIM_BACKWARDS);
 
 	ViewFrame *vfptr = &_GP(views)[view].loops[loop].frames[frame];
 	if (vfptr->pic > UINT16_MAX)
 		debug_script_warn("Warning: object's (id %d) sprite %d is outside of internal range (%d), reset to 0",
-		                  ref_id, vfptr->pic, UINT16_MAX);
+			ref_id, vfptr->pic, UINT16_MAX);
 	num = Math::InRangeOrDef<uint16_t>(vfptr->pic, 0);
 
 	if (cycling == 0)
@@ -104,54 +96,6 @@ void RoomObject::UpdateCyclingView(int ref_id) {
 
 	wait = vfptr->speed + overall_speed;
 	CheckViewFrame(view, loop, frame);
-}
-
-
-void RoomObject::update_cycle_view_forwards() {
-	frame++;
-	if (frame >= _GP(views)[view].loops[loop].numFrames) {
-		// go to next loop thing
-		if (_GP(views)[view].loops[loop].RunNextLoop()) {
-			if (loop + 1 >= _GP(views)[view].numLoops)
-				quit("!Last loop in a view requested to move to next loop");
-			loop++;
-			frame = 0;
-		} else if (cycling % ANIM_BACKWARDS == ANIM_ONCE) {
-			// leave it on the last frame
-			cycling = 0;
-			frame--;
-		} else {
-			if (_GP(play).no_multiloop_repeat == 0) {
-				// multi-loop anims, go back to start of it
-				while ((loop > 0) &&
-				        (_GP(views)[view].loops[loop - 1].RunNextLoop()))
-					loop--;
-			}
-			if (cycling % ANIM_BACKWARDS == ANIM_ONCERESET)
-				cycling = 0;
-			frame = 0;
-		}
-	}
-}
-
-void RoomObject::update_cycle_view_backwards() {
-	// animate backwards
-	if (frame > 0) {
-		frame--;
-	} else {
-		if ((loop > 0) &&
-		        (_GP(views)[view].loops[loop - 1].RunNextLoop())) {
-			// If it's a Go-to-next-loop on the previous one, then go back
-			loop--;
-			frame = _GP(views)[view].loops[loop].numFrames - 1;
-		} else if (cycling % ANIM_BACKWARDS == ANIM_ONCE) {
-			// leave it on the first frame
-			cycling = 0;
-			frame = 0;
-		} else { // repeating animation
-			frame = _GP(views)[view].loops[loop].numFrames - 1;
-		}
-	}
 }
 
 void RoomObject::ReadFromSavegame(Stream *in, int save_ver) {

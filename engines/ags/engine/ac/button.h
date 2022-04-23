@@ -48,7 +48,8 @@ void        Button_SetPushedGraphic(GUIButton *guil, int slotn);
 int         Button_GetTextColor(GUIButton *butt);
 void        Button_SetTextColor(GUIButton *butt, int newcol);
 
-int         UpdateAnimatingButton(int bu);
+// Update button's animation, returns whether the animation continues
+bool        UpdateAnimatingButton(int bu);
 size_t      GetAnimatingButtonCount();
 AnimatingGUIButton *GetAnimatingButtonByIndex(int idxn);
 void        AddButtonAnimation(const AnimatingGUIButton &abtn);

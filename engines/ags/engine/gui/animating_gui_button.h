@@ -19,9 +19,13 @@
  *
  */
 
+// Description of a button animation; stored separately from the GUI button.
+//
+
 #ifndef AGS_ENGINE_GUI_ANIMATING_GUI_BUTTON_H
 #define AGS_ENGINE_GUI_ANIMATING_GUI_BUTTON_H
 
+#include "ags/shared/core/types.h"
 #include "ags/engine/ac/runtime_defines.h"
 
 namespace AGS3 {
@@ -38,7 +42,7 @@ struct AnimatingGUIButton {
 	// index into _GP(guibuts) array, GUI, button
 	short buttonid = 0, ongui = 0, onguibut = 0;
 	// current animation status
-	short view = 0, loop = 0, frame = 0;
+	uint16_t view = 0, loop = 0, frame = 0;
 	short speed = 0, repeat = 0, blocking = 0,
 		direction = 0, wait = 0;
 

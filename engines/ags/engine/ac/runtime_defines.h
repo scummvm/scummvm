@@ -90,8 +90,11 @@ const int LegacyRoomVolumeFactor = 30;
 #define CHANIM_REPEAT    2
 #define CHANIM_BACKWARDS 4
 #define ANIM_BACKWARDS 10
+// Animates once and stops at the *last* frame
 #define ANIM_ONCE      1
+// Animates infinitely until stopped by command
 #define ANIM_REPEAT    2
+// Animates once and stops, resetting to the very first frame
 #define ANIM_ONCERESET 3
 #define FONT_STATUSBAR  0
 #define FONT_NORMAL     _GP(play).normal_font
