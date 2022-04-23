@@ -475,6 +475,7 @@ struct DynamicList {
 	const Common::Array<bool> &getBool() const;
 
 	bool setAtIndex(size_t index, const DynamicValue &value);
+	size_t getSize() const;
 
 	DynamicList &operator=(const DynamicList &other);
 
@@ -942,6 +943,9 @@ public:
 	virtual bool isSubsection() const;
 	virtual bool isModifier() const;
 	virtual bool isElement() const;
+
+	virtual bool readAttribute(DynamicValue &result, const Common::String &attrib, const DynamicValue *optionalIndex);
+	virtual bool setAttribute(const Common::String &attrib, const DynamicValue *optionalIndex, const DynamicValue &value);
 
 protected:
 	// This is the static GUID stored in the data, it is not guaranteed
