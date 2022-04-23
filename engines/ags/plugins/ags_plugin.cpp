@@ -484,7 +484,7 @@ void IAGSEngine::GetTextExtent(int32 font, const char *text, int32 *width, int32
 	if (width != nullptr)
 		width[0] = get_text_width_outlined(text, font);
 	if (height != nullptr)
-		height[0] = get_font_height(font);
+		height[0] = get_font_height_outlined(font);
 }
 void IAGSEngine::PrintDebugConsole(const char *text) {
 	debug_script_log("[PLUGIN] %s", text);

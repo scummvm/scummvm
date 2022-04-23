@@ -344,15 +344,8 @@ void DrawingSurface_DrawStringWrapped(ScriptDrawingSurface *sds, int xx, int yy,
 	color_t text_color = sds->currentColour;
 
 	for (size_t i = 0; i < _GP(Lines).Count(); i++) {
-		int drawAtX = xx;
-
-		if (alignment & kMAlignHCenter) {
-			drawAtX = xx + ((wid / 2) - get_text_width(_GP(Lines)[i].GetCStr(), font) / 2);
-		} else if (alignment & kMAlignRight) {
-			drawAtX = (xx + wid) - get_text_width(_GP(Lines)[i].GetCStr(), font);
-		}
-
-		wouttext_outline(ds, drawAtX, yy + linespacing * i, font, text_color, _GP(Lines)[i].GetCStr());
+		GUI::DrawTextAlignedHor(ds, _GP(Lines)[i].GetCStr(), font, text_color,
+			xx, xx + wid - 1, yy + linespacing * i, (FrameAlignment)alignment);
 	}
 
 	sds->FinishedDrawing();

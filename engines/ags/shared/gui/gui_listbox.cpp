@@ -19,8 +19,9 @@
  *
  */
 
-#include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/gui_listbox.h"
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
@@ -267,7 +268,9 @@ void GUIListBox::OnResized() {
 }
 
 void GUIListBox::UpdateMetrics() {
-	RowHeight = get_font_height(Font) + get_fixed_pixel_size(2);
+	int font_height = (_G(loaded_game_file_version) < kGameVersion_360) ?
+		get_font_height(Font) : get_font_height_outlined(Font);
+	RowHeight = font_height + get_fixed_pixel_size(2); // +1 top/bottom margin
 	VisibleItemCount = Height / RowHeight;
 	if (ItemCount <= VisibleItemCount)
 		TopItem = 0; // reset scroll if all items are visible

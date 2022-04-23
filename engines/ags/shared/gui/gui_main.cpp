@@ -649,15 +649,16 @@ void DrawDisabledEffect(Bitmap *ds, const Rect &rc) {
 }
 
 void DrawTextAligned(Bitmap *ds, const char *text, int font, color_t text_color, const Rect &frame, FrameAlignment align) {
-	int text_height = get_font_height(font);
+	int text_height = (_G(loaded_game_file_version) < kGameVersion_360) ?
+		get_font_height(font) : get_font_height_outlined(font);
 	if (align & kMAlignVCenter)
 		text_height++; // CHECKME
-	Rect item = AlignInRect(frame, RectWH(0, 0, get_text_width(text, font), text_height), align);
+	Rect item = AlignInRect(frame, RectWH(0, 0, get_text_width_outlined(text, font), text_height), align);
 	wouttext_outline(ds, item.Left, item.Top, font, text_color, text);
 }
 
 void DrawTextAlignedHor(Bitmap *ds, const char *text, int font, color_t text_color, int x1, int x2, int y, FrameAlignment align) {
-	int x = AlignInHRange(x1, x2, 0, get_text_width(text, font), align);
+	int x = AlignInHRange(x1, x2, 0, get_text_width_outlined(text, font), align);
 	wouttext_outline(ds, x, y, font, text_color, text);
 }
 
