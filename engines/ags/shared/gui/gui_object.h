@@ -60,6 +60,8 @@ public:
 	bool            IsVisible() const;
 	// implemented separately in engine and editor
 	bool            IsClickable() const;
+    // Compatibility: should the control's graphic be clipped to its x,y,w,h
+    virtual bool    IsContentClipped() const { return true; }
 
 	// Operations
 	virtual void    Draw(Bitmap *ds) {

@@ -33,6 +33,9 @@ class GUISlider : public GUIObject {
 public:
 	GUISlider();
 
+	// Compatibility: sliders are not clipped as of 3.6.0
+	bool IsContentClipped() const override { return false; }
+
 	// Tells if the slider is horizontal (otherwise - vertical)
 	bool IsHorizontal() const;
 	bool IsOverControl(int x, int y, int leeway) const override;
