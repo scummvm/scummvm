@@ -42,8 +42,8 @@ ifdef DIST_FILES_THEMES
 	cp $(DIST_FILES_THEMES) $(AMIGAOSPATH)/themes
 endif
 ifneq ($(DIST_FILES_SHADERS),)
-	makedir all $(AMIGAOSPATH)/shaders
-	cp $(DIST_FILES_SHADERS) $(AMIGAOSPATH)/shaders
+	makedir all $(AMIGAOSPATH)/extras/shaders
+	cp $(DIST_FILES_SHADERS) $(AMIGAOSPATH)/extras/shaders
 endif
 	# Strip and copy engine plugins.
 ifdef DYNAMIC_MODULES
