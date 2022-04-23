@@ -448,6 +448,7 @@ void on_mainviewport_changed() {
 
 // Allocates a bitmap for rendering camera/viewport pair (software render mode)
 void prepare_roomview_frame(Viewport *view) {
+	if (!view->GetCamera()) return; // no camera link
 	const int view_index = view->GetID();
 	const Size view_sz = view->GetRect().GetSize();
 	const Size cam_sz = view->GetCamera()->GetRect().GetSize();
