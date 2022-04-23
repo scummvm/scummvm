@@ -65,6 +65,8 @@ private:
 	// The following variables are not persisted on disk
 	// Cached coordinates of slider handle
 	Rect    _cachedHandle;
+	// The length of the handle movement range, in pixels
+	int     _handleRange;
 };
 
 } // namespace Shared
