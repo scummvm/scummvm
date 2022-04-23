@@ -738,16 +738,15 @@ GUILabelMacro FindLabelMacros(const String &text) {
 	return (GUILabelMacro)macro_flags;
 }
 
-HError ResortGUI(std::vector<GUIMain> &theGuis, bool bwcompat_ctrl_zorder = false) {
+static HError ResortGUI(bool bwcompat_ctrl_zorder = false) {
 	// set up the reverse-lookup array
-	for (size_t gui_index = 0; gui_index < theGuis.size(); ++gui_index) {
-		GUIMain &gui = theGuis[gui_index];
+	for (auto &gui : _GP(guis)) {
 		HError err = gui.RebuildArray();
 		if (!err)
 			return err;
 		for (int ctrl_index = 0; ctrl_index < gui.GetControlCount(); ++ctrl_index) {
 			GUIObject *gui_ctrl = gui.GetControl(ctrl_index);
-			gui_ctrl->ParentId = gui_index;
+			gui_ctrl->ParentId = gui.ID;
 			gui_ctrl->Id = ctrl_index;
 			if (bwcompat_ctrl_zorder)
 				gui_ctrl->ZOrder = ctrl_index;
@@ -859,7 +858,7 @@ HError ReadGUI(Stream *in, bool is_savegame) {
 			_GP(guilist)[i].ReadFromFile(in, GameGuiVersion);
 		}
 	}
-	return ResortGUI(_GP(guis), GameGuiVersion < kGuiVersion_272e);
+	return ResortGUI(GameGuiVersion < kGuiVersion_272e);
 }
 
 void WriteGUI(Stream *out) {
