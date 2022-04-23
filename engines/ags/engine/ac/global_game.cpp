@@ -186,8 +186,8 @@ void FillSaveList(std::vector<SaveListItem> &saves, size_t max_count) {
 	for (uint idx = 0; idx < saveList.size(); ++idx) {
 		int saveGameSlot = saveList[idx].getSaveSlot();
 
-		// only list games .000 to .099 (to allow higher slots for other perposes)
-		if (saveGameSlot > 99)
+		// only list games .000 to .xxx (to allow higher slots for other perposes)
+		if (saveGameSlot < 0 || saveGameSlot > TOP_LISTEDSAVESLOT)
 			continue;
 
 		String description;

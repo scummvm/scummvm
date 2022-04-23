@@ -47,7 +47,12 @@ namespace AGS3 {
 #define DIALOG_NEWTOPIC  12000
 #define MAX_TIMERS       21
 #define MAX_PARSED_WORDS 15
+// how many saves may be listed at once
 #define MAXSAVEGAMES     50
+// topmost save index to be listed with a FillSaveGameList command
+// NOTE: changing this may theoretically affect older games which
+// use slots > 99 for special purposes!
+#define TOP_LISTEDSAVESLOT 99
 #define MAX_QUEUED_MUSIC 10
 #define GLED_INTERACTION 1
 #define GLED_EFFECTS     2
