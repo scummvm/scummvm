@@ -383,7 +383,17 @@ public:
 protected:
 	virtual void parseEvent(Common::Event event);
 
-	int waitForTimer(int msec_delay);
+	void waitForTimer(int quarterFrames);
+	uint32 _lastWaitTime;
+
+	/**
+	 * Represents fractional milliseconds by decomposing the passed
+	 * value into integral and fractional parts, then incrementing the
+	 * integer part as needed on subsequent function calls.
+	 */
+	uint32 getIntegralTime(double fMsecs);
+	double _msecFractParts;
+
 	virtual void processInput();
 	virtual void processKeyboard(Common::KeyState lastKeyHit);
 	virtual void clearClickedStatus();

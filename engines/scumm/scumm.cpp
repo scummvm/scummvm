@@ -2101,6 +2101,7 @@ Common::Error ScummEngine::go() {
 		_rnd.getRandomNumber(2);
 
 		// Notify the script about how much time has passed, in ticks (60 ticks per second)
+		uint32 diff = _system->getMillis() - _lastWaitTime;
 		if (VAR_TIMER != 0xFF)
 			VAR(VAR_TIMER) = diff * 60 / 1000;
 		if (VAR_TIMER_TOTAL != 0xFF)
@@ -2142,18 +2143,15 @@ Common::Error ScummEngine::go() {
 			delta = 6;
 		}
 
-		// Wait and start the stop watch at the time the wait is assumed
+		// Wait, start and stop the stop watch at the time the wait is assumed
 		// to end. There is no guarantee that the wait is that exact,
 		// but this way if it overshoots that time will count as part
 		// of the main loop.
 
-		diff = waitForTimer(delta * 1000 / 60 - diff);
+		waitForTimer(delta * 4);
 
 		// Run the main loop
 		scummLoop(delta);
-
-		// Halt the stop watch and compute how much time this iteration took.
-		diff = _system->getMillis() - diff;
 
 		if (shouldQuit()) {
 			// TODO: Maybe perform an autosave on exit?
@@ -2164,17 +2162,19 @@ Common::Error ScummEngine::go() {
 	return Common::kNoError;
 }
 
-int ScummEngine::waitForTimer(int msec_delay) {
-	uint32 end_time;
+void ScummEngine::waitForTimer(int quarterFrames) {
+	uint32 endTime, cur;
+	uint32 msecDelay = getIntegralTime(quarterFrames * (1000 / 60.0) / 4);
 
 	if (_fastMode & 2)
-		msec_delay = 0;
+		msecDelay = 0;
 	else if (_fastMode & 1)
-		msec_delay = 10;
+		msecDelay = 10;
 
-	uint32 cur = _system->getMillis();;
-
-	end_time = cur + msec_delay;
+	cur = _system->getMillis();
+	uint32 diff = cur - _lastWaitTime;
+	msecDelay = (msecDelay > diff) ? msecDelay - diff : 0;
+	endTime = cur + msecDelay;
 
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
@@ -2196,20 +2196,31 @@ int ScummEngine::waitForTimer(int msec_delay) {
 		_refreshDuration[_refreshArrayPos] = (int)(cur - screenUpdateTimerStart);
 		_refreshArrayPos = (_refreshArrayPos + 1) % ARRAYSIZE(_refreshDuration);
 #endif
-		if (cur >= end_time)
+		if (cur >= endTime)
 			break;
-		_system->delayMillis(MIN<uint32>(10, end_time - cur));
+		_system->delayMillis(MIN<uint32>(10, endTime - cur));
 	}
 
-	// Return the expected end time, which may be different from the actual
-	// time. This helps the main loop maintain consistent timing.
+	// Set the last wait time as the expected end time, which may be different
+	// from the actual time. This helps the main loop maintain consistent timing.
 	//
 	// If it's lagging too far behind, we probably resumed from pausing, or
 	// the process was suspended, or any such thing. We probably can't
 	// sensibly detect all of them from within ScummVM, so in that case we
 	// simply return the current time to catch up.
 
-	return (cur > end_time + 50) ? cur : end_time;
+	_lastWaitTime = (cur > endTime + 50) ? cur : endTime;
+}
+
+uint32 ScummEngine::getIntegralTime(double fMsecs) {
+	double msecIntPart;
+	_msecFractParts += modf(fMsecs, &msecIntPart);
+	if (_msecFractParts >= 1) {
+		_msecFractParts--;
+		msecIntPart++;
+	}
+
+	return msecIntPart;
 }
 
 void ScummEngine_v0::scummLoop(int delta) {
