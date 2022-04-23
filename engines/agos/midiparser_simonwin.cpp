@@ -25,8 +25,8 @@
 
 namespace AGOS {
 
-MidiParser_SimonWin::MidiParser_SimonWin(int8 source, bool correctSimon1Tempo) :
-	MidiParser_SMF(source), _trackData(), _correctSimon1Tempo(correctSimon1Tempo) { }
+MidiParser_SimonWin::MidiParser_SimonWin(int8 source, bool useDosTempos) :
+	MidiParser_SMF(source), _trackData(), _useDosTempos(useDosTempos) { }
 
 MidiParser_SimonWin::~MidiParser_SimonWin() {
 	// Call unloadMusic to make sure any _trackData contents are deallocated.
@@ -61,7 +61,7 @@ void MidiParser_SimonWin::parseNextEvent(EventInfo &info) {
 
 void MidiParser_SimonWin::setTempo(uint32 tempo) {
 	uint32 newTempo = tempo;
-	if (_correctSimon1Tempo && tempo < 750000) {
+	if (_useDosTempos && tempo < 750000) {
 		// WORKAROUND The tempos set in the SMF data of Simon 1 Windows are
 		// faster than the DOS version for the faster tempos. These are
 		// corrected here to match the DOS version. The correct tempos have

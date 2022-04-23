@@ -42,7 +42,7 @@ protected:
 public:
 	int32 determineDataSize(Common::SeekableReadStream *stream) override;
 
-	MidiParser_SimonWin(int8 source = -1, bool correctSimon1Tempo = false);
+	MidiParser_SimonWin(int8 source = -1, bool useDosTempos = false);
 	~MidiParser_SimonWin();
 
 	void setTempo(uint32 tempo) override;
@@ -55,7 +55,7 @@ protected:
 
 	byte *_trackData[MAXIMUM_TRACKS];
 
-	bool _correctSimon1Tempo;
+	bool _useDosTempos;
 };
 
 } // End of namespace AGOS
