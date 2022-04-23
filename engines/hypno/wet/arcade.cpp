@@ -758,7 +758,7 @@ void WetEngine::drawHealth() {
 		Common::Point sp(entry->scorePos[0], entry->scorePos[1]);
 		Common::Point op(entry->objectivesPos[0], entry->objectivesPos[1]);
 
-		if (_arcadeMode == "Y1" || _arcadeMode == "Y3" || _arcadeMode == "Y4") {
+		if (_arcadeMode == "Y1" || _arcadeMode == "Y3" || _arcadeMode == "Y4" || _arcadeMode == "Y5") {
 			Common::Rect r;
 			r = Common::Rect(ep.x - 2, ep.y - 2, ep.x + 69, sp.y + 9);
 			_compositeSurface->frameRect(r, kHypnoColorGreen);
@@ -792,14 +792,18 @@ void WetEngine::drawAmmo() {
 		return;
 	Common::Point p(entry->ammoPos[0], entry->ammoPos[1]);
 	Common::Rect r;
-	if (_arcadeMode == "Y1" || _arcadeMode == "Y3" || _arcadeMode == "Y4") {
+	if (_arcadeMode == "Y1" || _arcadeMode == "Y3" || _arcadeMode == "Y4" || _arcadeMode == "Y5") {
 		r = Common::Rect(p.x - 1, p.y - 1, p.x + 16, p.y + 14);
 		_compositeSurface->frameRect(r, kHypnoColorGreen);
 	}
 
-	r = Common::Rect(p.x, p.y + d, p.x + 15, p.y + 13);
-	_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
-
+	if (_levelId / 10 == 5 && _arcadeMode != "Y5") {
+		r = Common::Rect(p.x, p.y + d, p.x + 13, p.y + 13);
+		_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
+	} else {
+		r = Common::Rect(p.x, p.y + d, p.x + 15, p.y + 13);
+		_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
+	}
 }
 
 
