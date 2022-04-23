@@ -3617,16 +3617,16 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("fountainofyouth", "foydemo.exe", "f120690b506dd63cd7d1112ea6af2f77", 14372003),  // v1.0
 	DEMO_ENTRY_EN("fountainofyouth", "foydemo.exe", "f120690b506dd63cd7d1112ea6af2f77", 14371419),  // v1.1
 	DEMO_ENTRY_EN("franticfranko", "steelh1.exe", "2cb9c81a20282b55f69343ef95cbb63d", 37086267),
-	DEMO_ENTRY("gamesgalore", "gamesgalore.exe", "f120690b506dd63cd7d1112ea6af2f77", 7620552),
-	DEMO_ENTRY("gassesuittollis3", "gst3_demo.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 4270243),
-	DEMO_ENTRY("geminirue", "gemini rue demo.exe", "978eab85a41b8fc089b719af47dfbb79", 61839853),
-	DEMO_ENTRY("gesundheit", "gesundheit.exe", "5554b9e0df6241d25c9a070708e54478", 49666357),
+	DEMO_ENTRY_EN("gamesgalore", "gamesgalore.exe", "f120690b506dd63cd7d1112ea6af2f77", 7620552),
+	DEMO_ENTRY_EN("gassesuittollis3", "gst3_demo.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 4270243),
+	DEMO_ENTRY_EN("geminirue", "gemini rue demo.exe", "978eab85a41b8fc089b719af47dfbb79", 61839853),
+	DEMO_ENTRY_EN("gesundheit", "gesundheit.exe", "5554b9e0df6241d25c9a070708e54478", 49666357),
 	DEMO_ENTRY_EN("goldenwake", "a-golden-wake.exe", "e80586fdc2db32f65658b235d8cbc159", 54256115),
-	DEMO_ENTRY("ghostdream", "ghostdream.exe", "05594881531d62e4575545f3c8fd2576", 225600520),
+	DEMO_ENTRY_EN("ghostdream", "ghostdream.exe", "05594881531d62e4575545f3c8fd2576", 225600520),
 	DEMO_ENTRY_EN("graceward", "Red_Black_Brown.exe", "0564de07d3fd5c16e6947a647061913c", 167543007),  //itch.io
-	DEMO_ENTRY("grandmabadass", "grandmaDEMO.exe", "636250e131f51c7a97989992cc97cf02", 525503237),
-	DEMO_ENTRY("greenback", "Greenback.exe", "b80b5892fc0291add209a0d3de6dedc5", 10490547),
-	DEMO_ENTRY("gwendarkly", "MAGSGwenVersion.exe", "ac764efb63859d435e03f04f46f2b1f0", 10141568),
+	DEMO_ENTRY("grandmabadass", "grandmaDEMO.exe", "636250e131f51c7a97989992cc97cf02", 525503237),  // Multilang
+	DEMO_ENTRY_EN("greenback", "Greenback.exe", "b80b5892fc0291add209a0d3de6dedc5", 10490547),
+	DEMO_ENTRY_EN("gwendarkly", "MAGSGwenVersion.exe", "ac764efb63859d435e03f04f46f2b1f0", 10141568),
 	DEMO_ENTRY("harrycaine", "Harry Caine Extreme Weather Reporter.exe", "82da2565c456dcfb265ded6fe3189c0b", 24158833),
 	DEMO_ENTRY("herdiscoming", "herd.exe", "78dd4ca028ee0156b6a093d6d780aa65", 5664594), // Steam
 	DEMO_ENTRY("hewatches", "MansionAGS.exe", "74dc062c5f68f3d70da911f2db5737b6", 10728553),
@@ -4713,66 +4713,66 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("futurecity3000", "FutureCity3000.exe", "4d4b6d6e560cf32f440c39f8d3896da5", 41930580),
 	GAME_ENTRY_EN("gabyking", "GabyKing.exe", "1fd15cc387812c04447d89729b24b097", 2289131),
 	GAME_ENTRY_EN("gabyking", "GabyKing.exe", "1fd15cc387812c04447d89729b24b097", 2260498),
-	GAME_ENTRY("galaxyquest", "My Game.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 1809822),
-	GAME_ENTRY("gamequest", "Game Quest.exe", "06a03fe35791b0578068ab1873455463", 6597978),
+	GAME_ENTRY_EN("galaxyquest", "My Game.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 1809822),
+	GAME_ENTRY_EN("gamequest", "Game Quest.exe", "06a03fe35791b0578068ab1873455463", 6597978),
 	GAME_ENTRY_EN("garbheileach", "The Secret of Garbh Eileach.exe", "25976a689b0f4d73eac69b1728377ecb", 18399510),
-	GAME_ENTRY("gatewayremake", "Gateway Remake.exe", "0241777c2537fc5d077c05cde10bfa9f", 210991212),
-	GAME_ENTRY("gatewayremake", "Gateway Remake.exe", "0241777c2537fc5d077c05cde10bfa9f", 212491008),
-	GAME_ENTRY("gaygreg", "ggig.exe", "3128b9f90e2f954ba704414ae854d10b", 3876381),
-	GAME_ENTRY("gemcollector", "gemgame.exe", "789facada85e12c3ac19d5a6d4379a49", 75235335),
-	GAME_ENTRY("genbu", "Genbu.exe", "64fcaf7da0b257ea831f89c54be0ad72", 1892238),
-	GAME_ENTRY("geometricshapes1circleboy", "Circle1.exe", "06a03fe35791b0578068ab1873455463", 2389129),
-	GAME_ENTRY("getawayfrompluto", "Get away.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 755529),
-	GAME_ENTRY("getfood", "getfood.exe", "495d45fb8adfd49690ae3b97921feec6", 10600153),
-	GAME_ENTRY("getsquirty", "Get Squirty.exe", "78dd4ca028ee0156b6a093d6d780aa65", 9498475),
+	GAME_ENTRY_EN("gatewayremake", "Gateway Remake.exe", "0241777c2537fc5d077c05cde10bfa9f", 210991212),
+	GAME_ENTRY_EN("gatewayremake", "Gateway Remake.exe", "0241777c2537fc5d077c05cde10bfa9f", 212491008),
+	GAME_ENTRY_EN("gaygreg", "ggig.exe", "3128b9f90e2f954ba704414ae854d10b", 3876381),
+	GAME_ENTRY_EN("gemcollector", "gemgame.exe", "789facada85e12c3ac19d5a6d4379a49", 75235335),
+	GAME_ENTRY_EN("genbu", "Genbu.exe", "64fcaf7da0b257ea831f89c54be0ad72", 1892238),
+	GAME_ENTRY_EN("geometricshapes1circleboy", "Circle1.exe", "06a03fe35791b0578068ab1873455463", 2389129),
+	GAME_ENTRY_EN("getawayfrompluto", "Get away.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 755529),
+	GAME_ENTRY_EN("getfood", "getfood.exe", "495d45fb8adfd49690ae3b97921feec6", 10600153),
+	GAME_ENTRY_EN("getsquirty", "Get Squirty.exe", "78dd4ca028ee0156b6a093d6d780aa65", 9498475),
 	GAME_ENTRY_EN("gettingpicture", "Getting the picture.exe", "8f18ad4456e6dbeaf041cd91449a55ba", 7797274),  // Windows
 	GAME_ENTRY_EN("gettingpicture", "Getting the picture.ags", "452def82c59d0982ca3babf2aa23fa75", 4761094),  // Linux
-	GAME_ENTRY("ghostcatchers", "GhostCatchers.exe", "338fa79960d40689063af31c671b8729", 230925663),
+	GAME_ENTRY_EN("ghostcatchers", "GhostCatchers.exe", "338fa79960d40689063af31c671b8729", 230925663),
 	GAME_ENTRY_EN("ghostvirus", "GhostInvasion.exe", "0241777c2537fc5d077c05cde10bfa9f", 2444356),
-	GAME_ENTRY("ghostvoyage", "Ghost Voyage.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 7870814),
+	GAME_ENTRY_EN("ghostvoyage", "Ghost Voyage.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 7870814),
 	GAME_ENTRY_EN("giftingspirit", "Gifting Spirit.exe", "7130eeba055e91ebf32d95a4751816d3", 10550723),  // Windows
 	GAME_ENTRY_EN("giftingspirit", "Gifting Spirit.ags", "d325fde1085cfebd7bac7672b0127ac8", 7514543),  // Linux
-	GAME_ENTRY("gladiatorquest", "Glad.exe", "97020973a2a635fe28eb0ba4bdfaa70b", 2821000),
-	GAME_ENTRY("glitchquest", "glitchquest.exe", "465f972675db2da6040518221af5b0ba", 3182715),
-	GAME_ENTRY_PLATFORM("glitchquest", "GQnofun.exe", "465f972675db2da6040518221af5b0ba", 3181931, "No-Fun"),
-	GAME_ENTRY("globalistagenda", "yamaiay.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 24536162),
-	GAME_ENTRY("gnomeshomebrewingadventure", "gnomebrew.exe", "abb3aee32ae97a8475626cceefb0664e", 50307521),
-	GAME_ENTRY_PLATFORM("gnrblex", "Gnrblex_AGS.exe", "476a1a39d43ea27577eacf907173e2c1", 85038656, "MAGS"),  // MAGS v1.0.0.1
-	GAME_ENTRY_PLATFORM("gnrblex", "Gnrblex_AGS.exe", "476a1a39d43ea27577eacf907173e2c1", 85043059, "MAGS"),  // MAGS v1.0.0.5
-	GAME_ENTRY_PLATFORM("gnrblex", "Gnrblex_AGS.exe", "59fe2aa2cc67589f11707ddc5a7f01cc", 115462750, "Final/Steam"),  // Final/Steam v2.0
-	GAME_ENTRY("goatherd", "Goat Herd and the Gods.exe", "56ce1bc6ab10748cb4ddb91435cfa578", 91710325),
-	GAME_ENTRY("goldreddragon", "Mongoose Fitch.exe", "615e73fc1874e92d60a1996c2330ea36", 4508646),
-	GAME_ENTRY("goneboatfishin", "Gone Boat Fishin'.exe", "bdd1df0484e296faa348ffcb03e16273", 72936045),
-	GAME_ENTRY("gonefishin", "Gone fishin'.exe", "338fa79960d40689063af31c671b8729", 76569490),
-	GAME_ENTRY("gonemyangel", "GoneMyAngel.exe", "615e73fc1874e92d60a1996c2330ea36", 16422700),
-	GAME_ENTRY("gonorth", "GO NORTH.exe", "f18443f98fd61d2c655e76a17f7da905", 14398652),
-	GAME_ENTRY("gonorth2", "GO NORTH.exe", "618d7dce9631229b4579340b964c6810", 13294868),
-	GAME_ENTRY("goodgod", "Good God!.exe", "02bd7b853a95bca41a594567c4f59fd6", 8372952),
-	GAME_ENTRY("goodmorningmrgingerbread", "mister_gingerbread.exe", "b42f80733b6bd1ded5e29be2c683afa8", 7084332),
-	GAME_ENTRY("goodsantabadsanta", "x-mags.exe", "71ca0d6c1c699595f28a2125948d4a84", 1966547),
-	GAME_ENTRY("goontang", "GC.exe", "0710e2ec71042617f565c01824f0cf3c", 1243202),
-	GAME_ENTRY("gotalight", "gotalight.exe", "daa21f03e41b5d3e7fd7558be3f8616e", 4019593),
-	GAME_ENTRY("gpslostadventure", "G.P.s Lost Adventure [Wells8892].exe", "06a03fe35791b0578068ab1873455463", 4181945),
-	GAME_ENTRY("gpslostadventure", "GPs_LostAdventure.exe", "06a03fe35791b0578068ab1873455463", 4181945),
-	GAME_ENTRY("grandkitchenescape", "GrandKitchenEscape.exe", "310db16c989e9bbfa3973bc1bb6215f7", 28327560),  // Windows
-	GAME_ENTRY("grandkitchenescape", "GrandKitchenEscape.ags", "5d2aac79e25a74a4db113c54df4a01ec", 25110132),  // Linux
+	GAME_ENTRY_EN("gladiatorquest", "Glad.exe", "97020973a2a635fe28eb0ba4bdfaa70b", 2821000),
+	GAME_ENTRY_EN("glitchquest", "glitchquest.exe", "465f972675db2da6040518221af5b0ba", 3182715),
+	GAME_ENTRY_EN_PLATFORM("glitchquest", "GQnofun.exe", "465f972675db2da6040518221af5b0ba", 3181931, "No-Fun"),
+	GAME_ENTRY_EN("globalistagenda", "yamaiay.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 24536162),
+	GAME_ENTRY_EN("gnomeshomebrewingadventure", "gnomebrew.exe", "abb3aee32ae97a8475626cceefb0664e", 50307521),
+	GAME_ENTRY_EN_PLATFORM("gnrblex", "Gnrblex_AGS.exe", "476a1a39d43ea27577eacf907173e2c1", 85038656, "MAGS"),  // MAGS v1.0.0.1
+	GAME_ENTRY_EN_PLATFORM("gnrblex", "Gnrblex_AGS.exe", "476a1a39d43ea27577eacf907173e2c1", 85043059, "MAGS"),  // MAGS v1.0.0.5
+	GAME_ENTRY_EN_PLATFORM("gnrblex", "Gnrblex_AGS.exe", "59fe2aa2cc67589f11707ddc5a7f01cc", 115462750, "Final/Steam"),  // Final/Steam v2.0
+	GAME_ENTRY_EN("goatherd", "Goat Herd and the Gods.exe", "56ce1bc6ab10748cb4ddb91435cfa578", 91710325),
+	GAME_ENTRY_EN("goldreddragon", "Mongoose Fitch.exe", "615e73fc1874e92d60a1996c2330ea36", 4508646),
+	GAME_ENTRY_EN("goneboatfishin", "Gone Boat Fishin'.exe", "bdd1df0484e296faa348ffcb03e16273", 72936045),
+	GAME_ENTRY_EN("gonefishin", "Gone fishin'.exe", "338fa79960d40689063af31c671b8729", 76569490),
+	GAME_ENTRY_EN("gonemyangel", "GoneMyAngel.exe", "615e73fc1874e92d60a1996c2330ea36", 16422700),
+	GAME_ENTRY_EN("gonorth", "GO NORTH.exe", "f18443f98fd61d2c655e76a17f7da905", 14398652),
+	GAME_ENTRY_EN("gonorth2", "GO NORTH.exe", "618d7dce9631229b4579340b964c6810", 13294868),
+	GAME_ENTRY_EN("goodgod", "Good God!.exe", "02bd7b853a95bca41a594567c4f59fd6", 8372952),
+	GAME_ENTRY_EN("goodmorningmrgingerbread", "mister_gingerbread.exe", "b42f80733b6bd1ded5e29be2c683afa8", 7084332),
+	GAME_ENTRY_EN("goodsantabadsanta", "x-mags.exe", "71ca0d6c1c699595f28a2125948d4a84", 1966547),
+	GAME_ENTRY_EN("goontang", "GC.exe", "0710e2ec71042617f565c01824f0cf3c", 1243202),
+	GAME_ENTRY_EN("gotalight", "gotalight.exe", "daa21f03e41b5d3e7fd7558be3f8616e", 4019593),
+	GAME_ENTRY_EN("gpslostadventure", "G.P.s Lost Adventure [Wells8892].exe", "06a03fe35791b0578068ab1873455463", 4181945),
+	GAME_ENTRY_EN("gpslostadventure", "GPs_LostAdventure.exe", "06a03fe35791b0578068ab1873455463", 4181945),
+	GAME_ENTRY_EN("grandkitchenescape", "GrandKitchenEscape.exe", "310db16c989e9bbfa3973bc1bb6215f7", 28327560),  // Windows
+	GAME_ENTRY_EN("grandkitchenescape", "GrandKitchenEscape.ags", "5d2aac79e25a74a4db113c54df4a01ec", 25110132),  // Linux
 	GAME_ENTRY_EN("granville1", "GVILLE1.exe", "c1451c6631e1bf4de6d1ed3760ca1dc9", 2340624),
-	GAME_ENTRY("graveyard", "Graveyard.exe", "955b711b21d7a2df6af1bb0cccccbb08", 13699789),
-	GAME_ENTRY("gravitytestgame", "TEST.exe", "97d700529f5cc826f230c27acf81adfd", 768926),
-	GAME_ENTRY("gray", "Gray.exe", "b36bda97ef129952eb2d18bf5087530c", 162378773),
-	GAME_ENTRY_PLATFORM("gray", "Gray.exe", "b36bda97ef129952eb2d18bf5087530c", 165386532, "Easter Egg Edition"),
-	GAME_ENTRY("grizzlygooseofgosse", "Goose Fear.exe", "b69b5887e4a33a3b8588d52fed04b730", 32123559),
-	GAME_ENTRY("groundhog", "Groundhog.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 67854225),
-	GAME_ENTRY("grr", "Grr!.exe", "3128b9f90e2f954ba704414ae854d10b", 26753739),
-	GAME_ENTRY("guardiansofgold", "Guardians of Gold.exe", "933200c8f306eccaaa484b1575da8528", 429166629),
-	GAME_ENTRY("guardiansofgold", "Guardians of Gold.exe", "933200c8f306eccaaa484b1575da8528", 429237374),
-	GAME_ENTRY("guyhookcrook", "GuyByHookOrByCrook.exe", "b0a3f015490a1c2b2d87483524f96df0", 9024485),  // Windows
-	GAME_ENTRY("guyhookcrook", "GuyByHookOrByCrook.ags", "1d909d5622b79c5c86b202723d96088b", 5919185),  // Linux
-	GAME_ENTRY("guyredplanet", "rocket.exe", "82da2565c456dcfb265ded6fe3189c0b", 5375785),
-	GAME_ENTRY("guyslug", "GuySlug.exe", "0710e2ec71042617f565c01824f0cf3c", 1959514),
-	GAME_ENTRY("guyver1d", "Guyver1D.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 2618588),
-	GAME_ENTRY("guyverquest1", "Guyver Quest.exe", "465f972675db2da6040518221af5b0ba", 774591),
-	GAME_ENTRY("guyverquest2", "Guyver Quest 2.exe", "465f972675db2da6040518221af5b0ba", 1138940),
+	GAME_ENTRY_EN("graveyard", "Graveyard.exe", "955b711b21d7a2df6af1bb0cccccbb08", 13699789),
+	GAME_ENTRY_EN("gravitytestgame", "TEST.exe", "97d700529f5cc826f230c27acf81adfd", 768926),
+	GAME_ENTRY("gray", "Gray.exe", "b36bda97ef129952eb2d18bf5087530c", 162378773),  // Eng-Pol
+	GAME_ENTRY_PLATFORM("gray", "Gray.exe", "b36bda97ef129952eb2d18bf5087530c", 165386532, "Easter Egg Edition"),  // Eng-Pol
+	GAME_ENTRY_EN("grizzlygooseofgosse", "Goose Fear.exe", "b69b5887e4a33a3b8588d52fed04b730", 32123559),
+	GAME_ENTRY_EN("groundhog", "Groundhog.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 67854225),
+	GAME_ENTRY_EN("grr", "Grr!.exe", "3128b9f90e2f954ba704414ae854d10b", 26753739),
+	GAME_ENTRY_EN("guardiansofgold", "Guardians of Gold.exe", "933200c8f306eccaaa484b1575da8528", 429166629),
+	GAME_ENTRY_EN("guardiansofgold", "Guardians of Gold.exe", "933200c8f306eccaaa484b1575da8528", 429237374),
+	GAME_ENTRY_EN("guyhookcrook", "GuyByHookOrByCrook.exe", "b0a3f015490a1c2b2d87483524f96df0", 9024485),  // Windows
+	GAME_ENTRY_EN("guyhookcrook", "GuyByHookOrByCrook.ags", "1d909d5622b79c5c86b202723d96088b", 5919185),  // Linux
+	GAME_ENTRY_EN("guyredplanet", "rocket.exe", "82da2565c456dcfb265ded6fe3189c0b", 5375785),
+	GAME_ENTRY_EN("guyslug", "GuySlug.exe", "0710e2ec71042617f565c01824f0cf3c", 1959514),
+	GAME_ENTRY_EN("guyver1d", "Guyver1D.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 2618588),
+	GAME_ENTRY("guyverquest1", "Guyver Quest.exe", "465f972675db2da6040518221af5b0ba", 774591),  // Eng-Rus
+	GAME_ENTRY("guyverquest2", "Guyver Quest 2.exe", "465f972675db2da6040518221af5b0ba", 1138940),  // Eng-Rus
 	GAME_ENTRY("hack", "Hack.exe", "f120690b506dd63cd7d1112ea6af2f77", 4384638),
 	GAME_ENTRY_EN("hackenslashisland", "mags0902.exe", "88cf59aad15ca331ab0f854e16c84df3", 2678206),
 	GAME_ENTRY("halloween", "Halloween.exe", "3128b9f90e2f954ba704414ae854d10b", 5130336),  // v2.0
