@@ -28,6 +28,7 @@
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/math.h"
+#include "ags/engine/ac/object.h"
 #include "ags/engine/ac/view_frame.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/room_struct.h"
@@ -290,52 +291,21 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 			//continue;
 			return RETURN_CONTINUE;
 		} else {
-			int oldframe = frame;
-			if (animating & CHANIM_BACKWARDS) {
-				frame--;
-				if (frame < 0) {
-					// if the previous loop is a Run Next Loop one, go back to it
-					if ((loop > 0) &&
-					        (_GP(views)[view].loops[loop - 1].RunNextLoop())) {
-
-						loop--;
-						frame = _GP(views)[view].loops[loop].numFrames - 1;
-					} else if (animating & CHANIM_REPEAT) {
-
-						frame = _GP(views)[view].loops[loop].numFrames - 1;
-
-						while (_GP(views)[view].loops[loop].RunNextLoop()) {
-							loop++;
-							frame = _GP(views)[view].loops[loop].numFrames - 1;
-						}
-					} else {
-						frame++;
-						animating = 0;
-					}
-				}
-			} else
-				frame++;
+			// Normal view animation
+			const int oldframe = frame;
 
 			if ((aa == _G(char_speaking)) &&
-			        (_GP(play).speech_in_post_state ||
-			         ((!_GP(play).speech_has_voice) &&
-			          (_GP(play).close_mouth_speech_time > 0) &&
-			          (_GP(play).messagetime < _GP(play).close_mouth_speech_time)))) {
+				(_GP(play).speech_in_post_state ||
+				((!_GP(play).speech_has_voice) &&
+					(_GP(play).close_mouth_speech_time > 0) &&
+					(_GP(play).messagetime < _GP(play).close_mouth_speech_time)))) {
 				// finished talking - stop animation
 				animating = 0;
 				frame = 0;
-			}
-
-			if (frame >= _GP(views)[view].loops[loop].numFrames) {
-
-				if (_GP(views)[view].loops[loop].RunNextLoop()) {
-					if (loop + 1 >= _GP(views)[view].numLoops)
-						quit("!Animating character tried to overrun last loop in view");
-					loop++;
-					frame = 0;
-				} else if ((animating & CHANIM_REPEAT) == 0) {
-					animating = 0;
-					frame--;
+			} else {
+				if (!CycleViewAnim(view, loop, frame, (animating & CHANIM_BACKWARDS) == 0,
+					(animating & CHANIM_REPEAT) ? ANIM_REPEAT : ANIM_ONCE)) {
+					animating = 0; // finished animating
 					// end of idle anim
 					if (idleleft < 0) {
 						// constant anim, reset (need this cos animating==0)
@@ -347,18 +317,11 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 							idleleft = idletime;
 						}
 					}
-				} else {
-					frame = 0;
-					// if it's a multi-loop animation, go back to start
-					if (_GP(play).no_multiloop_repeat == 0) {
-						while ((loop > 0) &&
-						        (_GP(views)[view].loops[loop - 1].RunNextLoop()))
-							loop--;
-					}
 				}
 			}
+
 			wait = _GP(views)[view].loops[loop].frames[frame].speed;
-			// idle anim doesn't have speed stored cos animating==0
+			// idle anim doesn't have speed stored cos animating==0 (TODO: investigate why?)
 			if (idleleft < 0)
 				wait += idle_anim_speed;
 			else

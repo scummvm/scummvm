@@ -24,6 +24,7 @@
 
 #include "ags/lib/std/vector.h"
 #include "ags/shared/ac/common_defines.h" // constants
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 
@@ -93,7 +94,7 @@ struct CharacterInfo {
 	int   index_id;  // used for object functions to know the id
 	short pic_xoffs; // this is fixed in screen coordinates
 	short walkwaitcounter;
-	short loop, frame;
+	uint16_t loop, frame;
 	short walking, animating;
 	short walkspeed, animspeed;
 	short inv[MAX_INV];
