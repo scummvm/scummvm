@@ -71,7 +71,7 @@ private:
 	bool _musicRhythmNotesDisabled;
 };
 
-MidiDriver_Multisource *createMidiDriverSimon1AdLib(const char *instrumentFilename);
+MidiDriver_Multisource *createMidiDriverSimon1AdLib(const char *instrumentFilename, OPL::Config::OplType);
 
 } // End of namespace AGOS
 

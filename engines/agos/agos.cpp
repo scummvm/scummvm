@@ -525,6 +525,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	// syncSoundSettings.
 	_musicVolume = 192;
 	_effectsVolume = 192;
+	_useDigitalSfx = true;
 
 	_saveLoadType = 0;
 	_saveLoadSlot = 0;
@@ -611,11 +612,28 @@ Common::Error AGOSEngine::init() {
 		((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
 		(getPlatform() == Common::kPlatformDOS || getPlatform() == Common::kPlatformPC98)) {
 
-		int ret = _midi->open(getGameType(), getPlatform(), (getFeatures() & GF_DEMO));
+		int ret = _midi->open();
 		if (ret)
 			warning("MIDI Player init failed: \"%s\"", MidiDriver::getErrorName(ret));
 
 		_midiEnabled = true;
+	}
+	// Digital SFX are used if MIDI SFX are not available or if the "prefer
+	// digital SFX" setting is set to true or is not present at all.
+	// Two exceptions to this are:
+	// - Elvira 2 DOS needs an optional file to enable digital SFX. If it is
+	//   not present, MIDI SFX are used.
+	// - Simon 1 DOS floppy has only MIDI SFX.
+	// Note that MIDI SFX can be safely used if the MidiPlayer failed to
+	// initialize; they just will not play.
+	_useDigitalSfx = !_midiEnabled || !_midi->hasMidiSfx() || !ConfMan.hasKey("prefer_digitalsfx") || ConfMan.getBool("prefer_digitalsfx");
+	if ((getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformDOS && !SearchMan.hasFile("013.VGA")) ||
+			(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformDOS && !(getFeatures() & GF_TALKIE))) {
+		_useDigitalSfx = false;
+	}
+	if (!_useDigitalSfx && (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) && getPlatform() == Common::kPlatformDOS) {
+		// Load the MIDI SFX data file for Elvira 2 and Waxworks DOS.
+		loadMidiSfx();
 	}
 
 	// allocate buffers

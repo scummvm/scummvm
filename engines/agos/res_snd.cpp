@@ -137,7 +137,7 @@ void AGOSEngine::loadMusic(uint16 music, bool forceSimon2Gm) {
 	uint16 indexBase = forceSimon2Gm ? MUSIC_INDEX_BASE_SIMON2_GM : _musicIndexBase;
 
 	_gameFile->seek(_gameOffsetsPtr[indexBase + music - 1], SEEK_SET);
-	_midi->loadMusic(_gameFile);
+	_midi->load(_gameFile);
 
 	// Activate Simon 2 GM to MT-32 remapping if we force GM, otherwise
 	// deactivate it (in case it was previously activated).
@@ -279,7 +279,7 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 		int size = SIMON1_GMF_SIZE[music];
 
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-		_midi->loadMusic(_gameFile, size);
+		_midi->load(_gameFile, size);
 		_midi->play();
 	} else if (getPlatform() == Common::kPlatformDOS) {
 		// DOS floppy version.
@@ -292,7 +292,7 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 		if (f.isOpen() == false)
 			error("playMusic: Can't load music from '%s'", filename);
 
-		_midi->loadMusic(&f, f.size());
+		_midi->load(&f, f.size());
 		if (getFeatures() & GF_DEMO) {
 			// Full version music data has a loop flag in the file header, but
 			// the demo needs to have this set manually.
@@ -304,7 +304,7 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 		// Windows version uses SMF data in one large data file.
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
 
-		_midi->loadMusic(_gameFile);
+		_midi->load(_gameFile);
 		_midi->setLoop(true);
 
 		_midi->play();
@@ -313,6 +313,47 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 		
 		// TODO: Add support for Desktop Tracker format in Acorn disk version
 	}
+}
+
+void AGOSEngine_Simon1::playMidiSfx(uint16 sound) {
+	// The sound effects in floppy disk version of
+	// Simon the Sorcerer 1 are only meant for AdLib
+	if (!_midi->hasMidiSfx())
+		return;
+
+	// AdLib SFX use GMF data bundled in 9 STINGSx.MUS files.
+	char filename[16];
+	Common::File mus_file;
+
+	sprintf(filename, "STINGS%i.MUS", _soundFileId);
+	mus_file.open(filename);
+	if (!mus_file.isOpen())
+		error("playSting: Can't load sound effect from '%s'", filename);
+
+	// WORKAROUND Some Simon 1 DOS floppy SFX use the OPL rhythm instruments.
+	// This can conflict with the music using the rhythm instruments, so the
+	// original interpreter disables the music rhythm notes while a sound
+	// effect is playing. However, only some sound effects use rhythm notes, so
+	// in many cases this is not needed and leads to the music drums needlessly
+	// being disabled.
+	// To improve this, the sound effect number is checked against a list of
+	// SFX using rhythm notes, and only if it is in the list the music drums
+	// will be disabled while it plays.
+	bool rhythmSfx = false;
+	// Search for the file ID / SFX ID combination in the list of SFX that use
+	// rhythm notes.
+	byte sfxId = (_soundFileId << 4) | sound;
+	for (int i = 0; i < ARRAYSIZE(SIMON1_RHYTHM_SFX); i++) {
+		if (SIMON1_RHYTHM_SFX[i] == sfxId) {
+			rhythmSfx = true;
+			break;
+		}
+	}
+
+	_midi->stop(true);
+
+	_midi->load(&mus_file, mus_file.size(), true);
+	_midi->play(sound, true, rhythmSfx);
 }
 
 void AGOSEngine::playMusic(uint16 music, uint16 track) {
@@ -337,9 +378,9 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 			str = file;
 		}
 
-		_midi->loadS1D(str);
-		_midi->startTrack(0);
-		_midi->startTrack(track);
+		//warning("Playing track %d", music);
+		_midi->load(str);
+		_midi->play();
 		delete str;
 	}
 }
@@ -349,47 +390,6 @@ void AGOSEngine::stopMusic() {
 		_midi->stop();
 	}
 	_mixer->stopHandle(_modHandle);
-}
-
-void AGOSEngine::playSting(uint16 soundId) {
-	// The sound effects in floppy disk version of
-	// Simon the Sorcerer 1 are only meant for AdLib
-	if (!_midi->hasAdLibSfx())
-		return;
-
-	// AdLib SFX use GMF data bundled in 9 STINGSx.MUS files.
-	char filename[16];
-	Common::File mus_file;
-
-	sprintf(filename, "STINGS%i.MUS", _soundFileId);
-	mus_file.open(filename);
-	if (!mus_file.isOpen())
-		error("playSting: Can't load sound effect from '%s'", filename);
-
-	// WORKAROUND Some Simon 1 DOS floppy SFX use the OPL rhythm instruments.
-	// This can conflict with the music using the rhythm instruments, so the
-	// original interpreter disables the music rhythm notes while a sound
-	// effect is playing. However, only some sound effects use rhythm notes, so
-	// in many cases this is not needed and leads to the music drums needlessly
-	// being disabled.
-	// To improve this, the sound effect number is checked against a list of
-	// SFX using rhythm notes, and only if it is in the list the music drums
-	// will be disabled while it plays.
-	bool rhythmSfx = false;
-	// Search for the file ID / SFX ID combination in the list of SFX that use
-	// rhythm notes.
-	byte sfxId = (_soundFileId << 4) | soundId;
-	for (int i = 0; i < ARRAYSIZE(SIMON1_RHYTHM_SFX); i++) {
-		if (SIMON1_RHYTHM_SFX[i] == sfxId) {
-			rhythmSfx = true;
-			break;
-		}
-	}
-
-	_midi->stopSfx();
-
-	_midi->loadMusic(&mus_file, mus_file.size(), true);
-	_midi->play(soundId, true, rhythmSfx);
 }
 
 static const byte elvira1_soundTable[100] = {
@@ -571,6 +571,14 @@ void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 		_sound->playSfx5Data(dst, sound, pan, vol);
 }
 
+void AGOSEngine::playSfx(uint16 sound, uint16 freq, uint16 flags, bool canUseMidiSfx) {
+	if (_useDigitalSfx) {
+		loadSound(sound, freq, flags);
+	} else if (canUseMidiSfx) {
+		playMidiSfx(sound);
+	}
+}
+
 void AGOSEngine::loadSound(uint16 sound, uint16 freq, uint16 flags) {
 	byte *dst;
 	uint32 offs, size = 0;
@@ -611,7 +619,6 @@ void AGOSEngine::loadSound(uint16 sound, uint16 freq, uint16 flags) {
 
 			if (size > _curSfxFileSize)
 				error("loadSound: Reading beyond EOF (%d, %d)", size, _curSfxFileSize);
-
 		}
 
 		size = READ_BE_UINT16(dst + 2);
@@ -636,6 +643,29 @@ void AGOSEngine::loadSound(uint16 sound, uint16 freq, uint16 flags) {
 			_sound->stopSfx();
 		_sound->playRawData(dst + offs, sound, size, rate);
 	}
+}
+
+void AGOSEngine::loadMidiSfx() {
+	if (!_midi->hasMidiSfx())
+		return;
+
+	Common::File fxb_file;
+
+	Common::String filename = getGameType() == GType_ELVIRA2 ? "MYLIB.FXB" : "WAX.FXB";
+	fxb_file.open(filename);
+	if (!fxb_file.isOpen())
+		error("loadMidiSfx: Can't open sound effect bank '%s'", filename.c_str());
+
+	_midi->load(&fxb_file, fxb_file.size(), true);
+
+	fxb_file.close();
+}
+
+void AGOSEngine::playMidiSfx(uint16 sound) {
+	if (!_midi->hasMidiSfx())
+		return;
+
+	_midi->play(sound, true);
 }
 
 void AGOSEngine::loadVoice(uint speechId) {
@@ -671,6 +701,12 @@ void AGOSEngine::loadVoice(uint speechId) {
 	} else {
 		_sound->playVoice(speechId);
 	}
+}
+
+void AGOSEngine::stopAllSfx() {
+	_sound->stopAllSfx();
+	if (_midi->hasMidiSfx())
+		_midi->stop(true);
 }
 
 } // End of namespace AGOS

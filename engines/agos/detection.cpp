@@ -24,9 +24,11 @@
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/installshield_cab.h"
+#include "common/translation.h"
 
 #include "agos/detection.h"
 #include "agos/intern_detection.h"
@@ -71,6 +73,31 @@ static const char *const directoryGlobs[] = {
 
 using namespace AGOS;
 
+static const ExtraGuiOption opl3Mode = {
+	_s("AdLib OPL3 mode"),
+	_s("When AdLib is selected, OPL3 features will be used. Depending on the \
+	game, this will prevent cut-off notes, add extra notes or instruments \
+	and/or add stereo."),
+	"opl3_mode",
+	false
+};
+
+static const ExtraGuiOption useDosTempos = {
+	_s("Use DOS version music tempos"),
+	_s("Selecting this option will play the music using the tempos used by \
+	the DOS version of the game. Otherwise, the faster tempos of the Windows \
+	version will be used."),
+	"dos_music_tempos",
+	false
+};
+
+static const ExtraGuiOption preferDigitalSfx = {
+	_s("Prefer digital sound effects"),
+	_s("Prefer digital sound effects instead of synthesized ones"),
+	"prefer_digitalsfx",
+	true
+};
+
 class AgosMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	AgosMetaEngineDetection() : AdvancedMetaEngineDetection(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
@@ -97,6 +124,35 @@ public:
 
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
+	}
+
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override {
+		const Common::String gameid = ConfMan.get("gameid", target);
+		const Common::String platform = ConfMan.get("platform", target);
+		const Common::String extra = ConfMan.get("extra", target);
+
+		ExtraGuiOptions options;
+		if (target.empty() || ((gameid == "elvira2" || gameid == "waxworks" || gameid == "simon1") && platform == "pc")) {
+			// DOS versions of Elvira 2, Waxworks and Simon 1 can optionally
+			// make use of AdLib OPL3 features.
+			options.push_back(opl3Mode);
+		}
+		if (target.empty() || (gameid == "simon1" && ((platform == "pc" && extra != "Floppy Demo") || platform == "windows" ||
+				(platform == "acorn" && extra.contains("CD"))))) {
+			// Simon 1 DOS (except the floppy demo), Windows and Acorn CD can
+			// choose between the DOS or Windows music tempos.
+			ExtraGuiOption dosTemposOption = useDosTempos;
+			// DOS tempos are default for the DOS versions; other versions use
+			// the Windows tempos by default.
+			dosTemposOption.defaultState = platform == "pc";
+			options.push_back(dosTemposOption);
+		}
+		if (target.empty() || ((gameid == "elvira2" || gameid == "waxworks") && platform == "pc")) {
+			// DOS versions of Elvira 2 and Waxworks can use either Adlib or
+			// digital SFX.
+			options.push_back(preferDigitalSfx);
+		}
+		return options;
 	}
 };
 

@@ -6,7 +6,6 @@ MODULE_OBJS := \
 	drivers/accolade/pc98.o \
 	drivers/accolade/mt32.o \
 	drivers/simon1/adlib.o \
-	drivers/simon1/adlib_win.o \
 	agos.o \
 	charset.o \
 	charset-fontdata.o \
@@ -40,6 +39,7 @@ MODULE_OBJS := \
 	script_ww.o \
 	script_s1.o \
 	script_s2.o \
+	sfxparser_accolade.o \
 	sound.o \
 	string.o \
 	string_pn.o \

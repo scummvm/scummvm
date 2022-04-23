@@ -299,7 +299,7 @@ uint8 MidiDriver_Simon1_AdLib::calculateUnscaledVolume(uint8 channel, uint8 sour
 	return 0x3F - calculatedVolume;
 }
 
-MidiDriver_Multisource *createMidiDriverSimon1AdLib(const char *instrumentFilename) {
+MidiDriver_Multisource *createMidiDriverSimon1AdLib(const char *instrumentFilename, OPL::Config::OplType oplType) {
 	// Load instrument data.
 	Common::File ibk;
 
@@ -319,7 +319,7 @@ MidiDriver_Multisource *createMidiDriverSimon1AdLib(const char *instrumentFilena
 		return nullptr;
 	}
 
-	MidiDriver_Simon1_AdLib *driver = new MidiDriver_Simon1_AdLib(OPL::Config::kOpl3, instrumentData);
+	MidiDriver_Simon1_AdLib *driver = new MidiDriver_Simon1_AdLib(oplType, instrumentData);
 	delete[] instrumentData;
 
 	return driver;

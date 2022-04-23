@@ -1161,14 +1161,17 @@ void AGOSEngine::vc28_playSFX() {
 	uint16 flags = vcReadNextWord();
 	debug(0, "vc28_playSFX: (sound %d, channels %d, frequency %d, flags %d)", sound, chans, freq, flags);
 
-	loadSound(sound, freq, flags);
+	// Waxworks DOS uses 2 opcodes to play SFX: this one for digital SFX and
+	// vc52 for MIDI SFX. If MIDI SFX are used, this opcode should be ignored;
+	// vc52 will play the corresponding MIDI SFX (if available).
+	playSfx(sound, freq, flags, !(getGameType() == GType_WW && getPlatform() == Common::kPlatformDOS));
 }
 
 void AGOSEngine::vc29_stopAllSounds() {
 	if (getGameType() != GType_PP)
 		_sound->stopVoice();
 
-	_sound->stopAllSfx();
+	stopAllSfx();
 }
 
 void AGOSEngine::vc30_setFrameRate() {

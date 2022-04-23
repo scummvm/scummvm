@@ -253,8 +253,6 @@ public:
 	const char *getFileName(int type) const;
 
 protected:
-	void playSting(uint16 a);
-
 	const byte *_vcPtr;								/* video code ptr */
 	uint16 _vcGetOutOfCode;
 
@@ -599,6 +597,7 @@ protected:
 	// The current SFX and ambient volume, or the last used volume if SFX
 	// and/or ambient sounds are currently muted.
 	uint16 _effectsVolume;
+	bool _useDigitalSfx;
 
 	uint8 _saveGameNameLen;
 	uint16 _saveLoadRowCurPos;
@@ -653,8 +652,12 @@ protected:
 	void decompressPN(Common::Stack<uint32> &dataList, uint8 *&dataOut, int &dataOutSize);
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
 	void loadSound(uint16 sound, int16 pan, int16 vol, uint16 type);
+	void playSfx(uint16 sound, uint16 freq, uint16 flags, bool canUseMidiSfx);
 	void loadSound(uint16 sound, uint16 freq, uint16 flags);
+	void loadMidiSfx();
+	virtual void playMidiSfx(uint16 sound);
 	void loadVoice(uint speechId);
+	void stopAllSfx();
 
 	void loadSoundFile(const char *filename);
 
@@ -1904,6 +1907,7 @@ protected:
 	int userGameGetKey(bool *b, uint maxChar) override;
 
 	void playMusic(uint16 music, uint16 track) override;
+	void playMidiSfx(uint16 sound) override;
 
 	void vcStopAnimation(uint16 zone, uint16 sprite) override;
 
