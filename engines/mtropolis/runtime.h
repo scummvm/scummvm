@@ -780,7 +780,9 @@ class Runtime {
 public:
 	Runtime();
 
-	void runFrame(uint32 msec);
+	void runRealFrame(uint32 msec);
+	bool runProjectFrame();
+	void advanceProjectTime(uint32 msec);
 	void drawFrame(OSystem *osystem);
 	void queueProject(const Common::SharedPtr<ProjectDescription> &desc);
 
