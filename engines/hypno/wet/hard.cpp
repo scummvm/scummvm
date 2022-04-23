@@ -82,6 +82,7 @@ void WetEngine::runLevelMenu(Code *code) {
 	loadPalette((byte *) &lime, 192+currentLevel, 1);
 	drawImage(*menu, 0, 0, false);
 	bool cont = true;
+	playSound("sound/bub01.raw", 0, 22050);
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Events
@@ -93,12 +94,13 @@ void WetEngine::runLevelMenu(Code *code) {
 
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_DOWN && currentLevel < _lastLevel) {
-					playSound("sound/extra.raw", 1, 11025);
+					playSound("sound/m_hilite.raw", 1, 11025);
 					currentLevel++;
 				} else if (event.kbd.keycode == Common::KEYCODE_UP && currentLevel > 0) {
-					playSound("sound/extra.raw", 1, 11025);
+					playSound("sound/m_hilite.raw", 1, 11025);
 					currentLevel--;
 				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ) {
+					playSound("sound/m_choice.raw", 1, 11025);
 					_nextLevel = Common::String::format("c%d", _ids[currentLevel]);
 					cont = false;
 				}

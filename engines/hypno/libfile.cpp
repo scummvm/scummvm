@@ -69,7 +69,9 @@ bool LibFile::open(const Common::String &prefix, const Common::String &filename,
 
 			for (uint32 i = 0; i < size; i++) {
 				b = libfile.readByte();
-				if (encrypted && b != '\n')
+				if (b == '\n' && f.name.hasSuffix(".raw"))
+					b = b ^ 0xfe;
+				else if (encrypted && b != '\n')
 					b = b ^ 0xfe;
 				f.data.push_back(b);
 				//debugN("%c", b);
