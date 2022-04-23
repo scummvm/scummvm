@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-21 17:34+0000\n"
-"PO-Revision-Date: 2022-04-16 10:39+0000\n"
+"PO-Revision-Date: 2022-04-23 12:27+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -5239,11 +5239,11 @@ msgstr "Active le mode hélium"
 #. changing from one screen to another.
 #: engines/kyra/detection.cpp:103
 msgid "Smooth scrolling"
-msgstr "Défilement régulier"
+msgstr "Défilement fluide"
 
 #: engines/kyra/detection.cpp:104
 msgid "Enable smooth scrolling when walking"
-msgstr "Active le défilement régulier en marchant"
+msgstr "Active le défilement fluide en marchant"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
@@ -6703,23 +6703,23 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:211
 msgid "Enable smooth scrolling"
-msgstr "Active le défilement régulier"
+msgstr "Activer le défilement fluide"
 
 #: engines/scumm/detection.cpp:212
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(au lieu du défilement normal par pas de 8 pixels)"
 
 #: engines/scumm/detection.cpp:220
-#, fuzzy
-#| msgid "Enable smooth scrolling"
 msgid "Allow semi-smooth scrolling"
-msgstr "Active le défilement régulier"
+msgstr "Permettre un défilement semi-fluide"
 
 #: engines/scumm/detection.cpp:221
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr ""
+"Permet au défilement d'être moins fluide pendant le mouvement rapide de la "
+"caméra pendant l'intro."
 
 #: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:730
 msgid "Enable game-specific enhancements"
