@@ -288,13 +288,7 @@ static bool DoRunScriptFuncCantBlock(ccInstance *sci, NonBlockingScriptFunction 
 		return (false);
 
 	_G(no_blocking_functions)++;
-	int result = 0;
-
-	if (funcToRun->numParameters < 3) {
-		result = sci->CallScriptFunction((const char *)funcToRun->functionName, funcToRun->numParameters, funcToRun->params);
-	} else {
-		quit("DoRunScriptFuncCantBlock called with too many parameters");
-	}
+	int result = sci->CallScriptFunction(funcToRun->functionName, funcToRun->numParameters, funcToRun->params);
 
 	if (_G(abort_engine))
 		return false;
