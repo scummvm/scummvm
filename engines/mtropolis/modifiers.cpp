@@ -558,6 +558,19 @@ bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::B
 	return true;
 }
 
+bool BooleanVariableModifier::setValue(const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kBoolean)
+		_value = value.getBool();
+	else
+		return false;
+
+	return true;
+}
+
+void BooleanVariableModifier::getValue(DynamicValue &dest) const {
+	dest.setBool(_value);
+}
+
 Common::SharedPtr<Modifier> BooleanVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new BooleanVariableModifier(*this));
 }
@@ -569,6 +582,21 @@ bool IntegerVariableModifier::load(ModifierLoaderContext& context, const Data::I
 	_value = data.value;
 
 	return true;
+}
+
+bool IntegerVariableModifier::setValue(const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kFloat)
+		_value = static_cast<int32>(floor(value.getFloat() + 0.5));
+	else if (value.getType() == DynamicValueTypes::kInteger)
+		_value = value.getInt();
+	else
+		return false;
+
+	return true;
+}
+
+void IntegerVariableModifier::getValue(DynamicValue &dest) const {
+	dest.setInt(_value);
 }
 
 Common::SharedPtr<Modifier> IntegerVariableModifier::shallowClone() const {
@@ -585,6 +613,19 @@ bool IntegerRangeVariableModifier::load(ModifierLoaderContext& context, const Da
 	return true;
 }
 
+bool IntegerRangeVariableModifier::setValue(const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kIntegerRange)
+		_range = value.getIntRange();
+	else
+		return false;
+
+	return true;
+}
+
+void IntegerRangeVariableModifier::getValue(DynamicValue &dest) const {
+	dest.setIntRange(_range);
+}
+
 Common::SharedPtr<Modifier> IntegerRangeVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new IntegerRangeVariableModifier(*this));
 }
@@ -597,6 +638,19 @@ bool VectorVariableModifier::load(ModifierLoaderContext &context, const Data::Ve
 	_vector.magnitude = data.vector.magnitude.toDouble();
 
 	return true;
+}
+
+bool VectorVariableModifier::setValue(const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kVector)
+		_vector = value.getVector();
+	else
+		return false;
+
+	return true;
+}
+
+void VectorVariableModifier::getValue(DynamicValue &dest) const {
+	dest.setVector(_vector);
 }
 
 Common::SharedPtr<Modifier> VectorVariableModifier::shallowClone() const {
@@ -613,6 +667,19 @@ bool PointVariableModifier::load(ModifierLoaderContext &context, const Data::Poi
 	return true;
 }
 
+bool PointVariableModifier::setValue(const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kPoint)
+		_value = value.getPoint();
+	else
+		return false;
+
+	return true;
+}
+
+void PointVariableModifier::getValue(DynamicValue &dest) const {
+	dest.setPoint(_value);
+}
+
 Common::SharedPtr<Modifier> PointVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new PointVariableModifier(*this));
 }
@@ -626,6 +693,21 @@ bool FloatingPointVariableModifier::load(ModifierLoaderContext &context, const D
 	return true;
 }
 
+bool FloatingPointVariableModifier::setValue(const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kInteger)
+		_value = value.getInt();
+	else if (value.getType() == DynamicValueTypes::kFloat)
+		_value = value.getFloat();
+	else
+		return false;
+
+	return true;
+}
+
+void FloatingPointVariableModifier::getValue(DynamicValue &dest) const {
+	dest.setFloat(_value);
+}
+
 Common::SharedPtr<Modifier> FloatingPointVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new FloatingPointVariableModifier(*this));
 }
@@ -637,6 +719,19 @@ bool StringVariableModifier::load(ModifierLoaderContext &context, const Data::St
 	_value = data.value;
 
 	return true;
+}
+
+bool StringVariableModifier::setValue(const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kString)
+		_value = value.getString();
+	else
+		return false;
+
+	return true;
+}
+
+void StringVariableModifier::getValue(DynamicValue &dest) const {
+	dest.setString(_value);
 }
 
 Common::SharedPtr<Modifier> StringVariableModifier::shallowClone() const {

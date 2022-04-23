@@ -82,6 +82,9 @@ Common::SharedPtr<Modifier> MediaCueMessengerModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new MediaCueMessengerModifier(*this));
 }
 
+ObjectReferenceVariableModifier::ObjectReferenceVariableModifier() : _isResolved(false) {
+}
+
 bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data) {
 	if (data.setToSourceParentWhen.type != Data::PlugInTypeTaggedValue::kEvent)
 		return false;
@@ -92,8 +95,37 @@ bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &co
 		return false;
 
 	_objectPath = data.objectPath.str;
+	_isResolved = false;
 
 	return true;
+}
+
+bool ObjectReferenceVariableModifier::setValue(const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kNull) {
+		_object.reset();
+		_objectPath.clear();
+		_isResolved = true;
+	} else if (value.getType() == DynamicValueTypes::kObject) {
+		_object = value.getObject();
+		_objectPath.clear();
+		_isResolved = true;
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+void ObjectReferenceVariableModifier::getValue(DynamicValue &dest) const {
+	if (_isResolved) {
+		if (!_object)
+			dest.clear();
+		else
+			dest.setObject(_object);
+	} else {
+		error("Resolving default objects from variable modifiers is not implemented!");
+		dest.clear();
+	}
 }
 
 Common::SharedPtr<Modifier> ObjectReferenceVariableModifier::shallowClone() const {
@@ -144,6 +176,9 @@ bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::
 
 Common::SharedPtr<Modifier> MidiModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new MidiModifier(*this));
+}
+
+ListVariableModifier::ListVariableModifier() : _list(new DynamicList()) {
 }
 
 bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data) {
@@ -197,13 +232,32 @@ bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, cons
 			return false;
 		}
 
-		if (!_list.setAtIndex(i, dynValue)) {
+		if (!_list->setAtIndex(i, dynValue)) {
 			warning("Failed to initialize list modifier, value was rejected");
 			return false;
 		}
 	}
 
 	return true;
+}
+
+bool ListVariableModifier::setValue(const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kList)
+		_list = value.getList()->clone();
+	else
+		return false;
+
+	return true;
+}
+
+void ListVariableModifier::getValue(DynamicValue &dest) const {
+	dest.setList(_list);
+}
+
+
+ListVariableModifier::ListVariableModifier(const ListVariableModifier &other) {
+	if (other._list)
+		_list = other._list->clone();
 }
 
 Common::SharedPtr<Modifier> ListVariableModifier::shallowClone() const {

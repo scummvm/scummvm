@@ -84,3 +84,15 @@ when it is assigned to.
 A big implication of this is that it's okay to use raw pointers to scene objects
 in VThread tasks.  In particular, tasks calling member functions are OK to
 schedule.
+
+
+Miniscript:
+
+Miniscript has a lot of weird quirks.  Most symbols inside of a script are resolved
+as element members, so "WorldManager" in a script doesn't reference some global
+object named WorldManager, it compiles into the equivalent of "element.worldmanager"
+and the actual WorldManager is resolved via hierarchical lookup when attempting to
+read the attribute from the element.
+
+Also, "this" is not reserved - if you look up the "this" attribute from ANYTHING
+then it will resolve to the modifier executing the script.

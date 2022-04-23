@@ -515,7 +515,12 @@ private:
 	Common::Array<Point16> _polyPoints;
 };
 
-class CompoundVariableModifier : public VariableModifier, public IModifierContainer {
+// Compound variable modifiers are not true variable modifiers.
+// They aren't treated as values by Miniscript and they aren't
+// treated as unique objects by aliases.  The only way that
+// they behave like variable modifiers is that it's legal to
+// put them inside of CompoundVariableModifiers.
+class CompoundVariableModifier : public Modifier, public IModifierContainer {
 public:
 	bool load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data);
 
@@ -539,6 +544,9 @@ class BooleanVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data);
 
+	bool setValue(const DynamicValue &value) override;
+	void getValue(DynamicValue &dest) const override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Boolean Variable Modifier"; }
 #endif
@@ -552,6 +560,9 @@ private:
 class IntegerVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IntegerVariableModifier &data);
+
+	bool setValue(const DynamicValue &value) override;
+	void getValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Integer Variable Modifier"; }
@@ -567,6 +578,9 @@ class IntegerRangeVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IntegerRangeVariableModifier &data);
 
+	bool setValue(const DynamicValue &value) override;
+	void getValue(DynamicValue &dest) const override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Integer Range Variable Modifier"; }
 #endif
@@ -580,6 +594,9 @@ private:
 class VectorVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::VectorVariableModifier &data);
+
+	bool setValue(const DynamicValue &value) override;
+	void getValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Vector Variable Modifier"; }
@@ -595,6 +612,9 @@ class PointVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::PointVariableModifier &data);
 
+	bool setValue(const DynamicValue &value) override;
+	void getValue(DynamicValue &dest) const override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Point Variable Modifier"; }
 #endif
@@ -609,6 +629,9 @@ class FloatingPointVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::FloatingPointVariableModifier &data);
 
+	bool setValue(const DynamicValue &value) override;
+	void getValue(DynamicValue &dest) const override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Floating Point Variable Modifier"; }
 #endif
@@ -622,6 +645,9 @@ private:
 class StringVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::StringVariableModifier &data);
+
+	bool setValue(const DynamicValue &value) override;
+	void getValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "String Variable Modifier"; }
