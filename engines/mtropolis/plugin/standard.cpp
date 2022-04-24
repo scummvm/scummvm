@@ -22,6 +22,8 @@
 #include "mtropolis/plugin/standard.h"
 #include "mtropolis/plugins.h"
 
+#include "mtropolis/miniscript.h"
+
 
 namespace MTropolis {
 
@@ -118,7 +120,7 @@ bool ObjectReferenceVariableModifier::setValue(const DynamicValue &value) {
 
 void ObjectReferenceVariableModifier::getValue(DynamicValue &dest) const {
 	if (_isResolved) {
-		if (!_object)
+		if (_object.expired())
 			dest.clear();
 		else
 			dest.setObject(_object);
@@ -267,6 +269,44 @@ Common::SharedPtr<Modifier> ListVariableModifier::shallowClone() const {
 bool SysInfoModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::SysInfoModifier &data) {
 	return true;
 }
+
+bool SysInfoModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "bitdepth") {
+		ColorDepthMode colorDepth = thread->getRuntime()->getFakeColorDepth();
+		switch (colorDepth) {
+		case kColorDepthMode1Bit:
+			result.setInt(1);
+			break;
+		case kColorDepthMode2Bit:
+			result.setInt(2);
+			break;
+		case kColorDepthMode4Bit:
+			result.setInt(4);
+			break;
+		case kColorDepthMode8Bit:
+			result.setInt(8);
+			break;
+		case kColorDepthMode16Bit:
+			result.setInt(16);
+			break;
+		case kColorDepthMode32Bit:
+			result.setInt(32);
+			break;
+		default:
+			return false;
+		}
+
+		return true;
+	} else if (attrib == "screensize") {
+		uint16 width, height;
+		thread->getRuntime()->getDisplayResolution(width, height);
+		result.setPoint(Point16::create(width, height));
+		return true;
+	}
+
+	return false;
+}
+
 
 Common::SharedPtr<Modifier> SysInfoModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new SysInfoModifier(*this));

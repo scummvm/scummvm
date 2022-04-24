@@ -1307,19 +1307,19 @@ bool RuntimeObject::isElement() const {
 	return false;
 }
 
-bool RuntimeObject::readAttribute(DynamicValue &result, const Common::String &attrib) {
+bool RuntimeObject::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
 	return false;
 }
 
-bool RuntimeObject::readAttributeIndexed(DynamicValue& result, const Common::String& attrib, const DynamicValue& index) {
+bool RuntimeObject::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) {
 	return false;
 }
 
-bool RuntimeObject::writeRefAttribute(DynamicValueWriteProxy& writeProxy, const Common::String& attrib) {
+bool RuntimeObject::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	return false;
 }
 
-bool RuntimeObject::writeRefAttributeIndexed(DynamicValueWriteProxy& writeProxy, const Common::String& attrib, const DynamicValue& index) {
+bool RuntimeObject::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) {
 	return false;
 }
 
@@ -1570,7 +1570,7 @@ Common::WeakPtr<RuntimeObject> ObjectLinkingScope::resolve(const Common::String 
 
 Common::WeakPtr<RuntimeObject> ObjectLinkingScope::resolve(uint32 staticGUID, const Common::String &name, bool isNameAlreadyInsensitive) const {
 	Common::WeakPtr<RuntimeObject> byGUIDResult = resolve(staticGUID);
-	if (byGUIDResult)
+	if (!byGUIDResult.expired())
 		return byGUIDResult;
 	else
 		return resolve(name, isNameAlreadyInsensitive);
@@ -2233,7 +2233,7 @@ void Runtime::queueMessage(const Common::SharedPtr<MessageDispatch>& dispatch) {
 
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
-	if (!_mainWindow && _project) {
+	if (_mainWindow.expired() && _project) {
 		const ProjectPresentationSettings &presentationSettings = _project->getPresentationSettings();
 
 		int32 centeredX = (static_cast<int32>(_displayWidth) - static_cast<int32>(presentationSettings.width)) / 2;
@@ -2255,7 +2255,7 @@ void Runtime::unloadProject() {
 	_messageQueue.clear();
 	_vthread.reset(new VThread());
 
-	if (_mainWindow) {
+	if (!_mainWindow.expired()) {
 		removeWindow(_mainWindow.lock().get());
 	}
 
@@ -2333,6 +2333,14 @@ void Runtime::setDisplayResolution(uint16 width, uint16 height) {
 void Runtime::getDisplayResolution(uint16 &outWidth, uint16 &outHeight) const {
 	outWidth = _displayWidth;
 	outHeight = _displayHeight;
+}
+
+ColorDepthMode Runtime::getRealColorDepth() const {
+	return _realDisplayMode;
+}
+
+ColorDepthMode Runtime::getFakeColorDepth() const {
+	return _fakeDisplayMode;
 }
 
 const Graphics::PixelFormat& Runtime::getRenderPixelFormat() const {

@@ -456,17 +456,30 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 	const MiniscriptStackValue &srcValue = thread->getStackValueFromTop(0);
 	MiniscriptStackValue &target = thread->getStackValueFromTop(1);
 
-	if (target.value.getType() != DynamicValueTypes::kWriteProxy) {
-		thread->error("Can't assign to rvalue");
-		return kMiniscriptInstructionOutcomeFailed;
-	}
+	if (target.value.getType() == DynamicValueTypes::kWriteProxy) {
+		const DynamicValueWriteProxy &proxy = target.value.getWriteProxy();
+		if (!proxy.ifc->write(srcValue.value, proxy.objectRef, proxy.ptrOrOffset)) {
+			thread->error("Failed to assign value");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+	} else {
+		VariableModifier *var = nullptr;
+		if (target.value.getType() == DynamicValueTypes::kObject) {
+			Common::SharedPtr<RuntimeObject> obj = target.value.getObject().lock();
+			if (obj && obj->isModifier() && static_cast<const Modifier *>(obj.get())->isVariable())
+				var = static_cast<VariableModifier *>(obj.get());
+		}
 
-	const DynamicValueWriteProxy &proxy = target.value.getWriteProxy();
-	if (!proxy.ifc->write(srcValue.value, proxy.objectRef, proxy.ptrOrOffset)) {
-		thread->error("Failed to assign value");
-		return kMiniscriptInstructionOutcomeFailed;
+		if (var != nullptr) {
+			if (!var->setValue(srcValue.value)) {
+				thread->error("Couldn't assign value to variable, probably wrong type");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+		} else {
+			thread->error("Can't assign to rvalue");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
 	}
-
 	thread->popValues(2);
 
 	return kMiniscriptInstructionOutcomeContinue;
@@ -514,7 +527,7 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 				}
 
 				DynamicValueWriteProxy proxy;
-				if (!obj->writeRefAttributeIndexed(proxy, attrib, indexSlot.value)) {
+				if (!obj->writeRefAttributeIndexed(thread, proxy, attrib, indexSlot.value)) {
 					thread->error("Failed to get a writeable reference to attribute '" + attrib + "'");
 					return kMiniscriptInstructionOutcomeFailed;
 				}
@@ -551,7 +564,7 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 					return kMiniscriptInstructionOutcomeFailed;
 				}
 
-				if (!obj->readAttribute(indexableValueSlot.value, attrib)) {
+				if (!obj->readAttribute(thread, indexableValueSlot.value, attrib)) {
 					thread->error("Failed to read attribute '" + attrib + "'");
 					return kMiniscriptInstructionOutcomeFailed;
 				}
@@ -603,7 +616,7 @@ MiniscriptInstructionOutcome GetChild::readRValueAttrib(MiniscriptThread *thread
 			if (!obj) {
 				thread->error("Unable to read attrib '" + attrib + "' from invalid object");
 				return kMiniscriptInstructionOutcomeFailed;
-			} else if (!obj->readAttribute(valueSrcDest, attrib)) {
+			} else if (!obj->readAttribute(thread, valueSrcDest, attrib)) {
 				thread->error("Unable to read attrib '" + attrib + "'");
 				return kMiniscriptInstructionOutcomeFailed;
 			}

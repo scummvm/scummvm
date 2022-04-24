@@ -29,6 +29,8 @@
 
 namespace MTropolis {
 
+class Runtime;
+
 namespace Standard {
 
 class StandardPlugIn;
@@ -180,6 +182,8 @@ private:
 class SysInfoModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::SysInfoModifier &data);
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "System Info Modifier"; }
