@@ -533,7 +533,8 @@ String find_assetlib(const String &filename) {
 	return "";
 }
 
-AssetPath get_audio_clip_assetpath(int bundling_type, const String &filename) {
+AssetPath get_audio_clip_assetpath(int /*bundling_type*/, const String &filename) {
+	// NOTE: bundling_type is ignored now
 	return AssetPath(filename, "audio");
 }
 

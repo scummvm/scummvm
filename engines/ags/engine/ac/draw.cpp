@@ -1859,7 +1859,7 @@ void draw_preroom_background() {
 // ds and roomcam_surface may be the same bitmap.
 // no_transform flag tells to copy dirty regions on roomcam_surface without any coordinate conversion
 // whatsoever.
-PBitmap draw_room_background(Viewport *view, const SpriteTransform &room_trans) {
+PBitmap draw_room_background(Viewport *view) {
 	_G(our_eip) = 31;
 
 	// For the sake of software renderer, if there is any kind of camera transform required
@@ -2113,7 +2113,7 @@ static void construct_room_view() {
 				_G(gfxDriver)->DrawSprite(0, 0, _G(roomBackgroundBmp));
 			} else {
 				// room background is drawn by dirty rects system
-				PBitmap bg_surface = draw_room_background(viewport.get(), room_trans);
+				PBitmap bg_surface = draw_room_background(viewport.get());
 				_G(gfxDriver)->BeginSpriteBatch(view_rc, room_trans, Point(), kFlip_None, bg_surface);
 			}
 		}

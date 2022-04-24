@@ -367,7 +367,7 @@ void _display_at(int xx, int yy, int wii, const char *text, int disp_type, int a
 
 	EndSkippingUntilCharStops();
 
-	if (try_auto_play_speech(text, text, _GP(play).narrator_speech, true)) {// TODO: is there any need for this flag?
+	if (try_auto_play_speech(text, text, _GP(play).narrator_speech)) {
 		need_stop_speech = true;
 	}
 	_display_main(xx, yy, wii, text, disp_type, usingfont, asspch, isThought, allowShrink, overlayPositionFixed);
@@ -376,7 +376,7 @@ void _display_at(int xx, int yy, int wii, const char *text, int disp_type, int a
 		stop_voice_speech();
 }
 
-bool try_auto_play_speech(const char *text, const char *&replace_text, int charid, bool blocking) {
+bool try_auto_play_speech(const char *text, const char *&replace_text, int charid) {
 	const char *src = text;
 	if (src[0] != '&')
 		return false;

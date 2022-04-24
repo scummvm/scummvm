@@ -166,7 +166,7 @@ void get_dialog_script_parameters(unsigned char *&script, unsigned short *param1
 	}
 }
 
-int run_dialog_script(DialogTopic *dtpp, int dialogID, int offse, int optionIndex) {
+int run_dialog_script(int dialogID, int offse, int optionIndex) {
 	_G(said_speech_line) = 0;
 	int result = RUN_DIALOG_STAY;
 
@@ -1066,7 +1066,7 @@ void do_conversation(int dlgnum) {
 	DialogTopic *dtop = &_G(dialog)[dlgnum];
 
 	// run the startup script
-	int tocar = run_dialog_script(dtop, dlgnum, dtop->startupentrypoint, 0);
+	int tocar = run_dialog_script(dlgnum, dtop->startupentrypoint, 0);
 	if ((tocar == RUN_DIALOG_STOP_DIALOG) ||
 	        (tocar == RUN_DIALOG_GOTO_PREVIOUS)) {
 		// 'stop' or 'goto-previous' from first startup script
@@ -1085,7 +1085,7 @@ void do_conversation(int dlgnum) {
 		if (dlgnum != dlgnum_was) {
 			// dialog topic changed, so play the startup
 			// script for the new topic
-			tocar = run_dialog_script(dtop, dlgnum, dtop->startupentrypoint, 0);
+			tocar = run_dialog_script(dlgnum, dtop->startupentrypoint, 0);
 			dlgnum_was = dlgnum;
 			if (tocar == RUN_DIALOG_GOTO_PREVIOUS) {
 				if (numPrevTopics < 1) {
@@ -1124,7 +1124,7 @@ void do_conversation(int dlgnum) {
 				set_mouse_cursor(CURS_ARROW);
 			}
 		} else if (chose >= 0) {
-			tocar = run_dialog_script(dtop, dlgnum, dtop->entrypoints[chose], chose + 1);
+			tocar = run_dialog_script(dlgnum, dtop->entrypoints[chose], chose + 1);
 		} else {
 			tocar = RUN_DIALOG_STOP_DIALOG;
 		}
