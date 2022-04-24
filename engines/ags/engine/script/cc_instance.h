@@ -138,7 +138,7 @@ public:
 	ccInstance *callStackCodeInst[MAX_CALL_STACK];
 
 	// array of real import indexes used in script
-	int *resolved_imports;
+	uint32_t *resolved_imports;
 	int  numimports;
 
 	char *code_fixups;

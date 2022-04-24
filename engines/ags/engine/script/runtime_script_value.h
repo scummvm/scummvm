@@ -301,7 +301,7 @@ public:
 		return RuntimeScriptValue().SetInt32AsBool(!GetAsBool());
 	}
 
-	inline bool operator ==(const RuntimeScriptValue &rval) {
+	inline bool operator ==(const RuntimeScriptValue &rval) const {
 		if (rval.Type == kScValPluginFunction) {
 			assert(!rval.methodName.empty());
 			return (Type == kScValPluginFunction) && (rval.methodName == methodName);
@@ -309,14 +309,14 @@ public:
 
 		return ((intptr_t)Ptr + (intptr_t)IValue) == ((intptr_t)rval.Ptr + (intptr_t)rval.IValue);
 	}
-	inline bool operator !=(const RuntimeScriptValue &rval) {
+	inline bool operator !=(const RuntimeScriptValue &rval) const {
 		return !(*this == rval);
 	}
 
 	// FIXME: find out all certain cases when we are reading a pointer and store it
 	// as 32-bit value here. There should be a solution to distinct these cases and
 	// store value differently, otherwise it won't work for 64-bit build.
-	inline RuntimeScriptValue ReadValue() {
+	inline RuntimeScriptValue ReadValue() const {
 		RuntimeScriptValue rval;
 		switch (this->Type) {
 		case kScValStackPtr: {
@@ -359,9 +359,9 @@ public:
 	// Helper functions for reading or writing values from/to
 	// object, referenced by this Runtime Value.
 	// Copy implementation depends on value type.
-	uint8_t     ReadByte();
-	int16_t     ReadInt16();
-	int32_t     ReadInt32();
+	uint8_t     ReadByte() const;
+	int16_t     ReadInt16() const;
+	int32_t     ReadInt32() const;
 	bool        WriteByte(uint8_t val);
 	bool        WriteInt16(int16_t val);
 	bool        WriteInt32(int32_t val);
