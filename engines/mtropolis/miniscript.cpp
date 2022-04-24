@@ -441,7 +441,6 @@ MiniscriptInstructionOutcome UnimplementedInstruction::execute(MiniscriptThread 
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-
 MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 	if (thread->getStackSize() < 2) {
 		thread->error("Stack underflow");
