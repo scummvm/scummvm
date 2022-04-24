@@ -90,8 +90,8 @@ void run_function_on_non_blocking_thread(NonBlockingScriptFunction *funcToRun) {
 
 	// run modules
 	// modules need a forkedinst for this to work
-	for (int kk = 0; kk < _G(numScriptModules); kk++) {
-		funcToRun->moduleHasFunction[kk] = DoRunScriptFuncCantBlock(_GP(moduleInstFork)[kk], funcToRun, funcToRun->moduleHasFunction[kk]);
+	for (size_t i = 0; i < _G(numScriptModules); ++i) {
+		funcToRun->moduleHasFunction[i] = DoRunScriptFuncCantBlock(_GP(moduleInstFork)[i], funcToRun, funcToRun->moduleHasFunction[i]);
 
 		if (room_changes_was != _GP(play).room_changes)
 			return;
@@ -205,11 +205,11 @@ int create_global_script() {
 	ccSetOption(SCOPT_AUTOIMPORT, 1);
 
 	std::vector<ccInstance *> instances_for_resolving;
-	for (int kk = 0; kk < _G(numScriptModules); kk++) {
-		_GP(moduleInst)[kk] = ccInstance::CreateFromScript(_GP(scriptModules)[kk]);
-		if (_GP(moduleInst)[kk] == nullptr)
+	for (size_t i = 0; i < _G(numScriptModules); ++i) {
+		_GP(moduleInst)[i] = ccInstance::CreateFromScript(_GP(scriptModules)[i]);
+		if (_GP(moduleInst)[i] == nullptr)
 			return kscript_create_error;
-		instances_for_resolving.push_back(_GP(moduleInst)[kk]);
+		instances_for_resolving.push_back(_GP(moduleInst)[i]);
 	}
 
 	_G(gameinst) = ccInstance::CreateFromScript(_GP(gamescript));
@@ -235,7 +235,7 @@ int create_global_script() {
 
 	// Create the forks for 'repeatedly_execute_always' after resolving
 	// because they copy their respective originals including the resolve information
-	for (int module_idx = 0; module_idx < _G(numScriptModules); module_idx++) {
+	for (size_t module_idx = 0; module_idx < _G(numScriptModules); module_idx++) {
 		_GP(moduleInstFork)[module_idx] = _GP(moduleInst)[module_idx]->Fork();
 		if (_GP(moduleInstFork)[module_idx] == nullptr)
 			return kscript_create_error;
@@ -395,7 +395,7 @@ int RunScriptFunction(ccInstance *sci, const char *tsname, size_t numParam, cons
 }
 
 void RunScriptFunctionInModules(const char *tsname, size_t param_count, const RuntimeScriptValue *params) {
-	for (int i = 0; i < _G(numScriptModules); ++i)
+	for (size_t i = 0; i < _G(numScriptModules); ++i)
 		RunScriptFunction(_GP(moduleInst)[i], tsname, param_count, params);
 	RunScriptFunction(_G(gameinst), tsname, param_count, params);
 }
@@ -417,7 +417,7 @@ int RunScriptFunctionInRoom(const char *tsname, size_t param_count, const Runtim
 static int RunUnclaimableEvent(const char *tsname) {
 	const int room_changes_was = _GP(play).room_changes;
 	const int restore_game_count_was = _G(gameHasBeenRestored);
-	for (int i = 0; i < _G(numScriptModules); ++i) {
+	for (size_t i = 0; i < _G(numScriptModules); ++i) {
 		if (!_GP(moduleRepExecAddr)[i].IsNull())
 			RunScriptFunction(_GP(moduleInst)[i], tsname);
 		// Break on room change or save restoration

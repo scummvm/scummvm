@@ -1271,7 +1271,7 @@ public:
 	std::vector<ccInstance *> *_moduleInst;
 	std::vector<ccInstance *> *_moduleInstFork;
 	std::vector<RuntimeScriptValue> *_moduleRepExecAddr;
-	int _numScriptModules = 0;
+	size_t _numScriptModules = 0;
 
 	// TODO: find out if these extra arrays are really necessary. This may be remains from the
 	// time when the symbol import table was holding raw pointers to char array.

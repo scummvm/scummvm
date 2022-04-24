@@ -355,7 +355,7 @@ void DoBeforeRestore(PreservedParams &pp) {
 	_G(gameinstFork) = nullptr;
 	_G(gameinst) = nullptr;
 	pp.ScMdDataSize.resize(_G(numScriptModules));
-	for (int i = 0; i < _G(numScriptModules); ++i) {
+	for (size_t i = 0; i < _G(numScriptModules); ++i) {
 		pp.ScMdDataSize[i] = _GP(moduleInst)[i]->globaldatasize;
 		delete _GP(moduleInstFork)[i];
 		delete _GP(moduleInst)[i];
@@ -467,7 +467,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		       Math::Min((size_t)_G(gameinst)->globaldatasize, r_data.GlobalScript.Len));
 
 	// restore the script module data
-	for (int i = 0; i < _G(numScriptModules); ++i) {
+	for (size_t i = 0; i < _G(numScriptModules); ++i) {
 		if (r_data.ScriptModules[i].Data.get())
 			memcpy(_GP(moduleInst)[i]->globaldata, r_data.ScriptModules[i].Data.get(),
 			       Math::Min((size_t)_GP(moduleInst)[i]->globaldatasize, r_data.ScriptModules[i].Len));

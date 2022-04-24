@@ -393,7 +393,7 @@ void unload_game_file() {
 
 	_GP(dialogScriptsScript).reset();
 
-	for (int i = 0; i < _G(numScriptModules); ++i) {
+	for (size_t i = 0; i < _G(numScriptModules); ++i) {
 		delete _GP(moduleInstFork)[i];
 		delete _GP(moduleInst)[i];
 		_GP(scriptModules)[i].reset();
