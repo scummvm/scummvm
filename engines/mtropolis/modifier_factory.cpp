@@ -107,9 +107,9 @@ IModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectType
 		return ModifierFactory<IntegerVariableModifier, Data::IntegerVariableModifier>::getInstance();
 	case Data::DataObjectTypes::kIntegerRangeVariableModifier:
 		return ModifierFactory<IntegerRangeVariableModifier, Data::IntegerRangeVariableModifier>::getInstance();
-	case Data::DataObjectTypes::kPointVariableModifier:
-		return ModifierFactory<VectorVariableModifier, Data::VectorVariableModifier>::getInstance();
 	case Data::DataObjectTypes::kVectorVariableModifier:
+		return ModifierFactory<VectorVariableModifier, Data::VectorVariableModifier>::getInstance();
+	case Data::DataObjectTypes::kPointVariableModifier:
 		return ModifierFactory<PointVariableModifier, Data::PointVariableModifier>::getInstance();
 	case Data::DataObjectTypes::kFloatingPointVariableModifier:
 		return ModifierFactory<FloatingPointVariableModifier, Data::FloatingPointVariableModifier>::getInstance();
