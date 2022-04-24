@@ -42,7 +42,7 @@ size_t CCGUIObject::CalcSerializeSize() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 void CCGUIObject::Serialize(const char *address, Stream *out) {
-	GUIObject *guio = (GUIObject *)address;
+	const GUIObject *guio = (const GUIObject *)address;
 	out->WriteInt32(guio->ParentId);
 	out->WriteInt32(guio->Id);
 }

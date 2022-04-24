@@ -41,7 +41,7 @@ size_t CCInventory::CalcSerializeSize() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 void CCInventory::Serialize(const char *address, Stream *out) {
-	ScriptInvItem *shh = (ScriptInvItem *)address;
+	const ScriptInvItem *shh = (const ScriptInvItem *)address;
 	out->WriteInt32(shh->id);
 }
 

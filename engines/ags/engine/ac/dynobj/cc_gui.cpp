@@ -40,7 +40,7 @@ size_t CCGUI::CalcSerializeSize() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 void CCGUI::Serialize(const char *address, Stream *out) {
-	ScriptGUI *shh = (ScriptGUI *)address;
+	const ScriptGUI *shh = (const ScriptGUI *)address;
 	out->WriteInt32(shh->id);
 }
 

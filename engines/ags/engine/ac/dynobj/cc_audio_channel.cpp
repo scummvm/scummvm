@@ -38,7 +38,7 @@ size_t CCAudioChannel::CalcSerializeSize() {
 }
 
 void CCAudioChannel::Serialize(const char *address, Stream *out) {
-	ScriptAudioChannel *ach = (ScriptAudioChannel *)address;
+	const ScriptAudioChannel *ach = (const ScriptAudioChannel *)address;
 	out->WriteInt32(ach->id);
 }
 

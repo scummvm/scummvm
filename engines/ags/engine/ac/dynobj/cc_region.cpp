@@ -42,7 +42,7 @@ size_t CCRegion::CalcSerializeSize() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 void CCRegion::Serialize(const char *address, Stream *out) {
-	ScriptRegion *shh = (ScriptRegion *)address;
+	const ScriptRegion *shh = (const ScriptRegion *)address;
 	out->WriteInt32(shh->id);
 }
 

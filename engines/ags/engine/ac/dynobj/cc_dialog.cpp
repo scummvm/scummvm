@@ -42,7 +42,7 @@ size_t CCDialog::CalcSerializeSize() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 void CCDialog::Serialize(const char *address, Stream *out) {
-	ScriptDialog *shh = (ScriptDialog *)address;
+	const ScriptDialog *shh = (const ScriptDialog *)address;
 	out->WriteInt32(shh->id);
 }
 

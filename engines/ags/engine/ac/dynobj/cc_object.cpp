@@ -42,7 +42,7 @@ size_t CCObject::CalcSerializeSize() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 void CCObject::Serialize(const char *address, Stream *out) {
-	ScriptObject *shh = (ScriptObject *)address;
+	const ScriptObject *shh = (const ScriptObject *)address;
 	out->WriteInt32(shh->id);
 }
 

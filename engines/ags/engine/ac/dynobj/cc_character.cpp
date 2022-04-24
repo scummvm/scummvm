@@ -45,7 +45,7 @@ size_t CCCharacter::CalcSerializeSize() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 void CCCharacter::Serialize(const char *address, Stream *out) {
-	CharacterInfo *chaa = (CharacterInfo *)address;
+	const CharacterInfo *chaa = (const CharacterInfo *)address;
 	out->WriteInt32(chaa->index_id);
 }
 

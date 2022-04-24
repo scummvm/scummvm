@@ -42,7 +42,7 @@ size_t CCHotspot::CalcSerializeSize() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 void CCHotspot::Serialize(const char *address, Stream *out) {
-	ScriptHotspot *shh = (ScriptHotspot *)address;
+	const ScriptHotspot *shh = (const ScriptHotspot *)address;
 	out->WriteInt32(shh->id);
 }
 

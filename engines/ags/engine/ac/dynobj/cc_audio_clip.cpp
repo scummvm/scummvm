@@ -37,7 +37,7 @@ size_t CCAudioClip::CalcSerializeSize() {
 }
 
 void CCAudioClip::Serialize(const char *address, Stream *out) {
-	ScriptAudioClip *ach = (ScriptAudioClip *)address;
+	const ScriptAudioClip *ach = (const ScriptAudioClip *)address;
 	out->WriteInt32(ach->id);
 }
 
