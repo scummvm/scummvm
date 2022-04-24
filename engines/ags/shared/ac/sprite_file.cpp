@@ -116,7 +116,7 @@ static void UnpackIndexedBitmap(Bitmap *image, const uint8_t *data, size_t data_
 		switch (bpp) {
 		case 2: *((uint16_t *)dst) = color; break;
 		case 4: *((uint32_t *)dst) = color; break;
-		default: assert(0); break;
+		default: assert(0); return;
 		}
 	}
 }
@@ -373,8 +373,14 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 	uint32_t pal_bpp = GetPaletteBPP(hdr.SFormat);
 	if (pal_bpp > 0) { // read palette if format assumes one
 		switch (pal_bpp) {
-		case 2: for (uint32_t i = 0; i < hdr.PalCount; ++i) palette[i] = _stream->ReadInt16(); break;
-		case 4: for (uint32_t i = 0; i < hdr.PalCount; ++i) palette[i] = _stream->ReadInt32(); break;
+		case 2: for (uint32_t i = 0; i < hdr.PalCount; ++i) {
+			palette[i] = _stream->ReadInt16();
+		}
+			  break;
+		case 4: for (uint32_t i = 0; i < hdr.PalCount; ++i) {
+			palette[i] = _stream->ReadInt32();
+		}
+			  break;
 		default: assert(0); break;
 		}
 		indexed_buf.resize(w * h);
@@ -390,21 +396,26 @@ HError SpriteFile::LoadSprite(sprkey_t index, Shared::Bitmap *&sprite) {
 			return new Error(String::FromFormat("LoadSprite: bad compressed data for sprite %d.", index));
 		}
 		switch (hdr.Compress) {
-		case kSprCompress_RLE: rle_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get()); break;
-		case kSprCompress_LZW: lzw_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get()); break;
-		default: assert(!"Unsupported compression type!");
+		case kSprCompress_RLE: rle_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get());
+			break;
+		case kSprCompress_LZW: lzw_decompress(im_data.Buf, im_data.Size, im_data.BPP, _stream.get());
+			break;
+		default: assert(!"Unsupported compression type!"); break;
 		}
 		// TODO: test that not more than data_size was read!
 	}
 	// Otherwise (no compression) read directly
 	else {
 		switch (im_data.BPP) {
-		case 1: _stream->Read(im_data.Buf, im_data.Size); break;
+		case 1: _stream->Read(im_data.Buf, im_data.Size);
+			break;
 		case 2: _stream->ReadArrayOfInt16(
-			reinterpret_cast<int16_t *>(im_data.Buf), im_data.Size / sizeof(int16_t)); break;
+			reinterpret_cast<int16_t *>(im_data.Buf), im_data.Size / sizeof(int16_t));
+			break;
 		case 4: _stream->ReadArrayOfInt32(
-			reinterpret_cast<int32_t *>(im_data.Buf), im_data.Size / sizeof(int32_t)); break;
-		default: assert(0);
+			reinterpret_cast<int32_t *>(im_data.Buf), im_data.Size / sizeof(int32_t));
+			break;
+		default: assert(0); break;
 		}
 	}
 	// Finally revert storage options
@@ -611,9 +622,11 @@ void SpriteFileWriter::WriteBitmap(Bitmap *image) {
 		compress = _compress;
 		VectorStream mems(_membuf, kStream_Write);
 		switch (compress) {
-		case kSprCompress_RLE: rle_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems); break;
-		case kSprCompress_LZW: lzw_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems); break;
-		default: assert(!"Unsupported compression type!");
+		case kSprCompress_RLE: rle_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems);
+			break;
+		case kSprCompress_LZW: lzw_compress(im_data.Buf, im_data.Size, im_data.BPP, &mems);
+			break;
+		default: assert(!"Unsupported compression type!"); break;
 		}
 		// mark to write as a plain byte array
 		im_data = ImBufferCPtr(&_membuf[0], _membuf.size(), 1);
@@ -647,20 +660,27 @@ void SpriteFileWriter::WriteSpriteData(const SpriteDatHeader &hdr,
 	if (pal_bpp > 0) {
 		assert(hdr.PalCount > 0);
 		switch (pal_bpp) {
-		case 1: break;
-		case 2: for (uint32_t i = 0; i < hdr.PalCount; ++i) _out->WriteInt16(palette[i]); break;
-		case 4: for (uint32_t i = 0; i < hdr.PalCount; ++i) _out->WriteInt32(palette[i]); break;
-		default: assert(0); break;
+		case 2: for (uint32_t i = 0; i < hdr.PalCount; ++i) {
+			_out->WriteInt16(palette[i]);
+		}
+			  break;
+		case 4: for (uint32_t i = 0; i < hdr.PalCount; ++i) {
+			_out->WriteInt32(palette[i]);
+		}
+			  break;
 		}
 	}
 	// write the image pixel data
 	_out->WriteInt32(im_data_sz);
 	switch (im_bpp) {
-	case 1: _out->Write(im_data, im_data_sz); break;
+	case 1: _out->Write(im_data, im_data_sz);
+		break;
 	case 2: _out->WriteArrayOfInt16(reinterpret_cast<const int16_t *>(im_data),
-		im_data_sz / sizeof(int16_t)); break;
+		im_data_sz / sizeof(int16_t));
+		break;
 	case 4: _out->WriteArrayOfInt32(reinterpret_cast<const int32_t *>(im_data),
-		im_data_sz / sizeof(int32_t)); break;
+		im_data_sz / sizeof(int32_t));
+		break;
 	default: assert(0); break;
 	}
 }
