@@ -101,7 +101,6 @@ template<class T, class DL>
 class BasePtrTrackerDeletionImpl : public BasePtrTrackerInternal {
 public:
 	BasePtrTrackerDeletionImpl(T *ptr, DL d) : _ptr(ptr), _deleter(d) {}
-	~BasePtrTrackerDeletionImpl() { }
 
 private:
 	void destructObject() override {
