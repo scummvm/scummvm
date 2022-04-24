@@ -139,7 +139,6 @@ MODULE_OBJS = \
 	engine/ac/global_overlay.o \
 	engine/ac/global_palette.o \
 	engine/ac/global_parser.o \
-	engine/ac/global_record.o \
 	engine/ac/global_region.o \
 	engine/ac/global_room.o \
 	engine/ac/global_screen.o \

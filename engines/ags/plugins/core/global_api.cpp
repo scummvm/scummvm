@@ -47,7 +47,6 @@
 #include "ags/engine/ac/global_overlay.h"
 #include "ags/engine/ac/global_palette.h"
 #include "ags/engine/ac/global_parser.h"
-#include "ags/engine/ac/global_record.h"
 #include "ags/engine/ac/global_region.h"
 #include "ags/engine/ac/global_room.h"
 #include "ags/engine/ac/global_screen.h"

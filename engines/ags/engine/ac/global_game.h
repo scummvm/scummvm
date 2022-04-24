@@ -109,6 +109,8 @@ int WaitMouse(int nloops);
 int WaitMouseKey(int nloops);
 void SkipWait();
 
+void scStartRecording(int keyToStop);
+
 } // namespace AGS3
 
 #endif
