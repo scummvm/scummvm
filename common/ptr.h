@@ -333,7 +333,7 @@ private:
  * a pointer. It needs to be converted to a SharedPtr to access it.
  */
 template<class T>
-class WeakPtr : public SafeBool<WeakPtr<T> > {
+class WeakPtr {
 	template<class T2>
 	friend class WeakPtr;
 	template<class T2>
@@ -372,15 +372,6 @@ public:
 	 */
 	SharedPtr<T> lock() const {
 		return SharedPtr<T>(*this);
-	}
-
-	/**
-	 * Implicit conversion operator to bool for convenience, to make
-	 * checks like "if (weakPtr) ..." possible.  This only checks if the
-	 * weak pointer contains a pointer, not that the pointer is live.
-	 */
-	bool operator_bool() const {
-		return _pointer != nullptr;
 	}
 
 	/**
