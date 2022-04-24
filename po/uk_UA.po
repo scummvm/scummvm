@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-23 14:28+0000\n"
+"POT-Creation-Date: 2022-04-24 08:53+0000\n"
 "PO-Revision-Date: 2022-04-21 11:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -5139,19 +5139,19 @@ msgstr "Режим з кров'ю"
 msgid "Enable Gore Mode when available"
 msgstr "Ввімкнути режим з кров'ю, якщо є доступний"
 
-#: engines/hypno/detection.cpp:200 engines/ultima/detection.cpp:84
+#: engines/hypno/detection.cpp:211 engines/ultima/detection.cpp:84
 msgid "Enable cheats"
 msgstr "Ввімкнути чіти"
 
-#: engines/hypno/detection.cpp:201
+#: engines/hypno/detection.cpp:212
 msgid "Allow cheats using the C key."
 msgstr "Увімкніть чіт-коди за допомогою клавіші C."
 
-#: engines/hypno/detection.cpp:209
+#: engines/hypno/detection.cpp:220
 msgid "Enable restored content"
 msgstr "Ввімкнути відновлений контент"
 
-#: engines/hypno/detection.cpp:210
+#: engines/hypno/detection.cpp:221
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "Додатковий контент, який було вимкнуто в оригінальній грі."
 

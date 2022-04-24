@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-23 14:28+0000\n"
+"POT-Creation-Date: 2022-04-24 08:53+0000\n"
 "PO-Revision-Date: 2022-04-21 16:23+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5234,19 +5234,19 @@ msgstr "Λειτουργία Αίματος"
 msgid "Enable Gore Mode when available"
 msgstr "Ενεργοποίηση Λειτουργίας Αίματος όταν υπάρχει διαθεσιμότητα"
 
-#: engines/hypno/detection.cpp:200 engines/ultima/detection.cpp:84
+#: engines/hypno/detection.cpp:211 engines/ultima/detection.cpp:84
 msgid "Enable cheats"
 msgstr "Ενεργοποίηση cheats"
 
-#: engines/hypno/detection.cpp:201
+#: engines/hypno/detection.cpp:212
 msgid "Allow cheats using the C key."
 msgstr "Να επιτρέπονται τα cheats με χρήση του πλήκτρου C."
 
-#: engines/hypno/detection.cpp:209
+#: engines/hypno/detection.cpp:220
 msgid "Enable restored content"
 msgstr "Αποκατεστημένο περιεχόμενο"
 
-#: engines/hypno/detection.cpp:210
+#: engines/hypno/detection.cpp:221
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 "Επαναφορά πρόσθετου περιεχομένου που δεν είναι ενεργοποιημένο στην αρχική "

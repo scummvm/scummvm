@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-23 14:28+0000\n"
+"POT-Creation-Date: 2022-04-24 08:53+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -5219,21 +5219,21 @@ msgstr "Splatter-tilstand"
 msgid "Enable Gore Mode when available"
 msgstr "Aktivér splatter-tilstand når mulig"
 
-#: engines/hypno/detection.cpp:200 engines/ultima/detection.cpp:84
+#: engines/hypno/detection.cpp:211 engines/ultima/detection.cpp:84
 #, fuzzy
 msgid "Enable cheats"
 msgstr "Aktivér snydetilstand"
 
-#: engines/hypno/detection.cpp:201
+#: engines/hypno/detection.cpp:212
 msgid "Allow cheats using the C key."
 msgstr ""
 
-#: engines/hypno/detection.cpp:209
+#: engines/hypno/detection.cpp:220
 #, fuzzy
 msgid "Enable restored content"
 msgstr "Aktivér indholdscensurering"
 
-#: engines/hypno/detection.cpp:210
+#: engines/hypno/detection.cpp:221
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 

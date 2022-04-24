@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-23 14:28+0000\n"
+"POT-Creation-Date: 2022-04-24 08:53+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -5093,22 +5093,22 @@ msgstr ""
 msgid "Enable Gore Mode when available"
 msgstr ""
 
-#: engines/hypno/detection.cpp:200 engines/ultima/detection.cpp:84
+#: engines/hypno/detection.cpp:211 engines/ultima/detection.cpp:84
 #, fuzzy
 msgid "Enable cheats"
 msgstr "Oyunun tam ismi"
 
-#: engines/hypno/detection.cpp:201
+#: engines/hypno/detection.cpp:212
 msgid "Allow cheats using the C key."
 msgstr ""
 
-#: engines/hypno/detection.cpp:209
+#: engines/hypno/detection.cpp:220
 #, fuzzy
 #| msgid "Enable storage"
 msgid "Enable restored content"
 msgstr "Depolamayı aktif edin"
 
-#: engines/hypno/detection.cpp:210
+#: engines/hypno/detection.cpp:221
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 

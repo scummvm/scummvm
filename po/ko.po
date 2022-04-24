@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-23 14:28+0000\n"
+"POT-Creation-Date: 2022-04-24 08:53+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -5086,19 +5086,19 @@ msgstr "고어 모드"
 msgid "Enable Gore Mode when available"
 msgstr "가능한 경우 고어 모드를 활성화합니다"
 
-#: engines/hypno/detection.cpp:200 engines/ultima/detection.cpp:84
+#: engines/hypno/detection.cpp:211 engines/ultima/detection.cpp:84
 msgid "Enable cheats"
 msgstr "치트 활성화"
 
-#: engines/hypno/detection.cpp:201
+#: engines/hypno/detection.cpp:212
 msgid "Allow cheats using the C key."
 msgstr "C 키를 사용하여 치트를 허용합니다."
 
-#: engines/hypno/detection.cpp:209
+#: engines/hypno/detection.cpp:220
 msgid "Enable restored content"
 msgstr "복원된 컨텐츠 활성화"
 
-#: engines/hypno/detection.cpp:210
+#: engines/hypno/detection.cpp:221
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "원본 구현에서 활성화되지 않았던 컨텐츠를 추가합니다."
 
