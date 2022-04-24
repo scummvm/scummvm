@@ -283,7 +283,7 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		} else if (ags_strnicmp(arg, "--log-", 6) == 0 && arg[6] != 0) {
 			String logarg = arg + 6;
 			size_t split_at = logarg.FindChar('=');
-			if (split_at != String::npos)
+			if (split_at != String::NoIndex)
 				cfg["log"][logarg.Left(split_at)] = logarg.Mid(split_at + 1);
 			else
 				cfg["log"][logarg] = "";

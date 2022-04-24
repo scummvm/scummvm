@@ -66,7 +66,7 @@ void ListBox_Clear(GUIListBox *listbox) {
 
 static void FillSaveList(std::set<String> &files, const String &filePattern) {
 	size_t wildcard = filePattern.FindChar('*');
-	assert(wildcard != String::npos);
+	assert(wildcard != String::NoIndex);
 	Common::String prefix(filePattern.GetCStr(), wildcard);
 	Common::StringArray matches = g_system->getSavefileManager()->listSavefiles(filePattern);
 

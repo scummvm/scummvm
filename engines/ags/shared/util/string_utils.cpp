@@ -63,7 +63,7 @@ StrUtil::ConversionError StrUtil::StringToInt(const String &s, int &val, int def
 
 String StrUtil::Unescape(const String &s) {
 	size_t at = s.FindChar('\\');
-	if (at == String::npos)
+	if (at == String::NoIndex)
 		return s; // no unescaping necessary, return original string
 	char *buf = new char[s.GetLength()];
 	strncpy(buf, s.GetCStr(), at);
