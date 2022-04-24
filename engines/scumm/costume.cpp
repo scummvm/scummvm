@@ -932,6 +932,8 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 						xmoveCur--;
 				} else if (a->getFacing() == 270 && !_mirror) {
 					xmoveCur += 4;
+				} else if (a->getFacing() == 90) {
+					xmoveCur--;
 				}
 			}
 
