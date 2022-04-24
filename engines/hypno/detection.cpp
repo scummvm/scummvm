@@ -169,7 +169,18 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NOMIDI)},
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"wetlands", // Wetlands (KO)
+		nullptr,
+		AD_ENTRY2s("wetlands.exe", "edc5b0c0caf3d5b01d344cb555d9a085", 360151,
+				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
+		Common::KO_KOR,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
 	{
 		"soldierboyz", // Solidier Boyz (US)
 		nullptr,
