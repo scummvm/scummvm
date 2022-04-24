@@ -342,7 +342,8 @@ int enternumberwindow(char *prompttext) {
 	return atoi(ourbuf);
 }
 
-int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **roomNames) {
+int roomSelectorWindow(int currentRoom, int numRooms,
+		const std::vector<int> &roomNumbers, const std::vector<String> &roomNames) {
 	char labeltext[200];
 	strcpy(labeltext, get_global_message(MSG_SAVEDIALOG));
 	const int wnd_width = 240;
@@ -358,7 +359,7 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 
 	CSCISendControlMessage(ctrllist, CLB_CLEAR, 0, 0);    // clear the list box
 	for (int aa = 0; aa < numRooms; aa++) {
-		sprintf(_G(buff), "%3d %s", roomNumbers[aa], roomNames[aa]);
+		snprintf(_G(buff), sizeof(_G(buff)), "%3d %s", roomNumbers[aa], roomNames[aa].GetCStr());
 		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0, &_G(buff)[0]);
 		if (roomNumbers[aa] == currentRoom) {
 			CSCISendControlMessage(ctrllist, CLB_SETCURSEL, aa, 0);

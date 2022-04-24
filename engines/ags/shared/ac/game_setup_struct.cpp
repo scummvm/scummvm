@@ -35,8 +35,6 @@ using namespace AGS::Shared;
 GameSetupStruct::GameSetupStruct()
 	: filever(0)
 	, roomCount(0)
-	, roomNumbers(nullptr)
-	, roomNames(nullptr)
 	, scoreClipID(0) {
 	memset(invinfo, 0, sizeof(invinfo));
 	memset(lipSyncFrameLetters, 0, sizeof(lipSyncFrameLetters));
@@ -62,10 +60,8 @@ void GameSetupStruct::Free() {
 	invScripts.clear();
 	numinvitems = 0;
 
-	for (int i = 0; i < roomCount; i++)
-		delete roomNames[i];
-	delete[] roomNames;
-	delete[] roomNumbers;
+	roomNames.clear();
+	roomNumbers.clear();
 	roomCount = 0;
 
 	audioClips.clear();
@@ -324,14 +320,11 @@ HGameFileError GameSetupStruct::read_audio(Shared::Stream *in, GameDataVersion d
 void GameSetupStruct::read_room_names(Stream *in, GameDataVersion data_ver) {
 	if ((data_ver >= kGameVersion_301) && (options[OPT_DEBUGMODE] != 0)) {
 		roomCount = in->ReadInt32();
-		roomNumbers = new int[roomCount];
-		roomNames = new char *[roomCount];
-		String pexbuf;
-		for (int bb = 0; bb < roomCount; bb++) {
-			roomNumbers[bb] = in->ReadInt32();
-			pexbuf.Read(in, STD_BUFFER_SIZE);
-			roomNames[bb] = new char[pexbuf.GetLength() + 1];
-			strcpy(roomNames[bb], pexbuf.GetCStr());
+		roomNumbers.resize(roomCount);
+		roomNames.resize(roomCount);
+		for (int i = 0; i < roomCount; ++i) {
+			roomNumbers[i] = in->ReadInt32();
+			roomNames[i].Read(in);
 		}
 	} else {
 		roomCount = 0;
