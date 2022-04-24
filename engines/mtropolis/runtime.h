@@ -58,6 +58,7 @@ struct DynamicValueReadProxy;
 struct DynamicValueWriteProxy;
 class Element;
 class MessageDispatch;
+class MiniscriptThread;
 class Modifier;
 class PlugInModifier;
 class RuntimeObject;
@@ -217,6 +218,13 @@ struct Point16 {
 
 	inline bool operator!=(const Point16 &other) const {
 		return !((*this) == other);
+	}
+
+	inline static Point16 create(int16 x, int16 y) {
+		Point16 result;
+		result.x = x;
+		result.y = y;
+		return result;
 	}
 };
 
@@ -883,7 +891,11 @@ public:
 	void setDisplayResolution(uint16 width, uint16 height);
 	void getDisplayResolution(uint16 &outWidth, uint16 &outHeight) const;
 
+	ColorDepthMode getRealColorDepth() const;
+	ColorDepthMode getFakeColorDepth() const;	// Fake color depth that will be reported to scripts
+
 	const Graphics::PixelFormat &getRenderPixelFormat() const;
+
 	const Common::SharedPtr<Graphics::MacFontManager> &getMacFontManager() const;
 
 	const Common::SharedPtr<Structural> &getActiveMainScene() const;
@@ -1019,10 +1031,10 @@ public:
 	virtual bool isModifier() const;
 	virtual bool isElement() const;
 
-	virtual bool readAttribute(DynamicValue &result, const Common::String &attrib);
-	virtual bool readAttributeIndexed(DynamicValue &result, const Common::String &attrib, const DynamicValue &index);
-	virtual bool writeRefAttribute(DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
-	virtual bool writeRefAttributeIndexed(DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index);
+	virtual bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	virtual bool readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index);
+	virtual bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+	virtual bool writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index);
 
 protected:
 	// This is the static GUID stored in the data, it is not guaranteed
