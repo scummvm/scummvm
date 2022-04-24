@@ -61,7 +61,7 @@ int insert(int i, int run) {
 
 	k = l = 1;
 	match = THRESHOLD - 1;
-	p = &root[(unsigned char)_G(lzbuffer)[i]];
+	p = &root[_G(lzbuffer)[i]];
 	lson[i] = rson[i] = NIL;
 	while ((j = *p) != NIL) {
 		for (n = min(k, l); n < run && (c = (_G(lzbuffer)[j + n] - _G(lzbuffer)[i + n])) == 0; n++);
@@ -125,9 +125,9 @@ void _delete(int z) {
 
 bool lzwcompress(Stream *lzw_in, Stream *out) {
 	int ch, i, run, len, match, size, mask;
-	char buf[17];
+	uint8_t buf[17];
 
-	_G(lzbuffer) = (char *)malloc(N + F + (N + 1 + N + N + 256) * sizeof(int));       // 28.5 k !
+	_G(lzbuffer) = (uint8_t *)malloc(N + F + (N + 1 + N + N + 256) * sizeof(int));       // 28.5 k !
 	if (_G(lzbuffer) == nullptr) {
 		return false;
 	}
@@ -144,7 +144,7 @@ bool lzwcompress(Stream *lzw_in, Stream *out) {
 	i = N - F - F;
 
 	for (len = 0; len < F && (ch = lzw_in->ReadByte()) != -1; len++) {
-		_G(lzbuffer)[i + F] = ch;
+		_G(lzbuffer)[i + F] = static_cast<uint8_t>(ch);
 		i = (i + 1) & (N - 1);
 	}
 
@@ -154,10 +154,10 @@ bool lzwcompress(Stream *lzw_in, Stream *out) {
 		ch = lzw_in->ReadByte();
 		if (i >= N - F) {
 			_delete(i + F - N);
-			_G(lzbuffer)[i + F] = _G(lzbuffer)[i + F - N] = ch;
+			_G(lzbuffer)[i + F] = _G(lzbuffer)[i + F - N] = static_cast<uint8_t>(ch);
 		} else {
 			_delete(i + F);
-			_G(lzbuffer)[i + F] = ch;
+			_G(lzbuffer)[i + F] = static_cast<uint8_t>(ch);
 		}
 
 		match = insert(i, run);
@@ -170,7 +170,7 @@ bool lzwcompress(Stream *lzw_in, Stream *out) {
 			if (match >= THRESHOLD) {
 				buf[0] |= mask;
 				// possible fix: change int* to short* ??
-				*(short *)(buf + size) = ((match - 3) << 12) | ((i - _G(pos) - 1) & (N - 1));
+				*(short *)(buf + size) = static_cast<short>(((match - 3) << 12) | ((i - _G(pos) - 1) & (N - 1)));
 				size += 2;
 				len -= match;
 			} else {
@@ -197,7 +197,7 @@ bool lzwcompress(Stream *lzw_in, Stream *out) {
 	return true;
 }
 
-void myputc(int ccc, Stream *out) {
+inline void myputc(uint8_t ccc, Stream *out) {
 	if (_G(maxsize) > 0) {
 		_G(putbytes)++;
 		if (_G(putbytes) > _G(maxsize))

@@ -42,14 +42,14 @@ static void cpackbitl(const uint8_t *line, size_t size, Stream *out) {
 	size_t cnt = 0;               // bytes encoded
 
 	while (cnt < size) {
-		// note that the algorithm below requires signed operations
-		int i = cnt;
+		// IMPORTANT: the algorithm below requires signed operations
+		int i = static_cast<int32_t>(cnt);
 		int j = i + 1;
 		int jmax = i + 126;
-		if ((size_t)jmax >= size)
+		if (static_cast<uint32_t>(jmax) >= size)
 			jmax = size - 1;
 
-		if (i == (int)size - 1) {        //................last byte alone
+		if (static_cast<uint32_t>(i) == size - 1) { //......last byte alone
 			out->WriteInt8(0);
 			out->WriteInt8(line[i]);
 			cnt++;
@@ -78,14 +78,14 @@ static void cpackbitl16(const uint16_t *line, size_t size, Stream *out) {
 	size_t cnt = 0;               // bytes encoded
 
 	while (cnt < size) {
-		// note that the algorithm below requires signed operations
+		// IMPORTANT: the algorithm below requires signed operations
 		int i = cnt;
 		int j = i + 1;
 		int jmax = i + 126;
-		if ((size_t)jmax >= size)
+		if (static_cast<uint32_t>(jmax) >= size)
 			jmax = size - 1;
 
-		if (i == (int)size - 1) {        //................last byte alone
+		if (static_cast<uint32_t>(i) == size - 1) { //......last byte alone
 			out->WriteInt8(0);
 			out->WriteInt16(line[i]);
 			cnt++;
@@ -114,14 +114,14 @@ static void cpackbitl32(const uint32_t *line, size_t size, Stream *out) {
 	size_t cnt = 0;               // bytes encoded
 
 	while (cnt < size) {
-		// note that the algorithm below requires signed operations
+		// IMPORTANT: the algorithm below requires signed operations
 		int i = cnt;
 		int j = i + 1;
 		int jmax = i + 126;
-		if ((size_t)jmax >= size)
+		if (static_cast<uint32_t>(jmax) >= size)
 			jmax = size - 1;
 
-		if (i == (int)size - 1) {        //................last byte alone
+		if (static_cast<uint32_t>(i) == size - 1) { //......last byte alone
 			out->WriteInt8(0);
 			out->WriteInt32(line[i]);
 			cnt++;

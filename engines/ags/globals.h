@@ -1053,7 +1053,7 @@ public:
 	 * @{
 	 */
 
-	char *_lzbuffer = nullptr;
+	uint8_t *_lzbuffer = nullptr;
 	int *_node = nullptr;
 	int _pos = 0;
 	size_t _outbytes = 0, _maxsize = 0, _putbytes = 0;
