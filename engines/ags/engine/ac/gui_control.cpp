@@ -49,7 +49,7 @@ GUIObject *GetGUIControlAtLocation(int xx, int yy) {
 		return nullptr;
 
 	data_to_game_coords(&xx, &yy);
-	int toret = _GP(guis)[guinum].FindControlAt(xx, yy, 0, false);
+	int32_t toret = _GP(guis)[guinum].FindControlAt(xx, yy, 0, false);
 
 	if (toret < 0)
 		return nullptr;

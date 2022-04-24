@@ -70,7 +70,7 @@ int GetInvAt(int atx, int aty) {
 	int ongui = GetGUIAt(atx, aty);
 	if (ongui >= 0) {
 		data_to_game_coords(&atx, &aty);
-		int onobj = _GP(guis)[ongui].FindControlAt(atx, aty);
+		int32_t onobj = _GP(guis)[ongui].FindControlAt(atx, aty);
 		GUIObject *guio = _GP(guis)[ongui].GetControl(onobj);
 		if (guio) {
 			_G(mouse_ifacebut_xoffs) = atx - _GP(guis)[ongui].X - guio->X;

@@ -112,11 +112,11 @@ public:
 	// Gets the number of the GUI child controls
 	int32_t GetControlCount() const;
 	// Gets control by its child's index
-	GUIObject *GetControl(int index) const;
+	GUIObject *GetControl(int32_t index) const;
 	// Gets child control's type, looks up with child's index
-	GUIControlType GetControlType(int index) const;
+	GUIControlType GetControlType(int32_t index) const;
 	// Gets child control's global ID, looks up with child's index
-	int32_t GetControlID(int index) const;
+	int32_t GetControlID(int32_t index) const;
 
 	// Child control management
 	// Note that currently GUIMain does not own controls (should not delete them)
@@ -124,21 +124,21 @@ public:
 	void    RemoveAllControls();
 
 	// Operations
-	bool    BringControlToFront(int index);
+	bool    BringControlToFront(int32_t index);
 	void    Draw(Bitmap *ds);
 	void    DrawAt(Bitmap *ds, int x, int y);
 	// Polls GUI state, providing current cursor (mouse) coordinates
 	void    Poll(int mx, int my);
 	HError  RebuildArray();
 	void    ResortZOrder();
-	bool    SendControlToBack(int index);
+	bool    SendControlToBack(int32_t index);
 	// Sets whether GUI should react to player clicking on it
 	void    SetClickable(bool on);
 	// Override GUI visibility; when in concealed mode GUI won't show up
 	// even if Visible = true
 	void    SetConceal(bool on);
 	// Attempts to change control's zorder; returns if zorder changed
-	bool    SetControlZOrder(int index, int zorder);
+	bool    SetControlZOrder(int32_t index, int zorder);
 	// Changes GUI style to the text window or back
 	void    SetTextWindow(bool on);
 	// Sets GUI transparency as a percentage (0 - 100) where 100 = invisible

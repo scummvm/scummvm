@@ -91,7 +91,7 @@ void GUIMain::InitDefaults() {
 	_ctrlDrawOrder.clear();
 }
 
-int GUIMain::FindControlAt(int atx, int aty, int leeway, bool must_be_clickable) const {
+int32_t GUIMain::FindControlAt(int atx, int aty, int leeway, bool must_be_clickable) const {
 	// translate to GUI's local coordinates
 	return FindControlAtLocal(atx - X, aty - Y, leeway, must_be_clickable);
 }
@@ -125,19 +125,19 @@ int32_t GUIMain::GetControlCount() const {
 	return (int32_t)_controls.size();
 }
 
-GUIObject *GUIMain::GetControl(int index) const {
+GUIObject *GUIMain::GetControl(int32_t index) const {
 	if (index < 0 || (size_t)index >= _controls.size())
 		return nullptr;
 	return _controls[index];
 }
 
-GUIControlType GUIMain::GetControlType(int index) const {
+GUIControlType GUIMain::GetControlType(int32_t index) const {
 	if (index < 0 || (size_t)index >= _ctrlRefs.size())
 		return kGUIControlUndefined;
 	return _ctrlRefs[index].first;
 }
 
-int32_t GUIMain::GetControlID(int index) const {
+int32_t GUIMain::GetControlID(int32_t index) const {
 	if (index < 0 || (size_t)index >= _ctrlRefs.size())
 		return -1;
 	return _ctrlRefs[index].second;
@@ -200,7 +200,7 @@ void GUIMain::RemoveAllControls() {
 	_controls.clear();
 }
 
-bool GUIMain::BringControlToFront(int index) {
+bool GUIMain::BringControlToFront(int32_t index) {
 	return SetControlZOrder(index, (int)_controls.size() - 1);
 }
 
@@ -391,11 +391,11 @@ void GUIMain::SetConceal(bool on) {
 	MarkChanged();
 }
 
-bool GUIMain::SendControlToBack(int index) {
+bool GUIMain::SendControlToBack(int32_t index) {
 	return SetControlZOrder(index, 0);
 }
 
-bool GUIMain::SetControlZOrder(int index, int zorder) {
+bool GUIMain::SetControlZOrder(int32_t index, int zorder) {
 	if (index < 0 || (size_t)index >= _controls.size())
 		return false; // no such control
 
