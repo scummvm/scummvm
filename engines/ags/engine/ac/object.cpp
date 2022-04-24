@@ -169,19 +169,19 @@ void Object_SetVisible(ScriptObject *objj, int onoroff) {
 }
 
 int Object_GetView(ScriptObject *objj) {
-	if (_G(objs)[objj->id].view == (uint16_t)-1)
+	if (_G(objs)[objj->id].view == RoomObject::NO_VIEW)
 		return 0;
 	return _G(objs)[objj->id].view + 1;
 }
 
 int Object_GetLoop(ScriptObject *objj) {
-	if (_G(objs)[objj->id].view == (uint16_t)-1)
+	if (_G(objs)[objj->id].view == RoomObject::NO_VIEW)
 		return 0;
 	return _G(objs)[objj->id].loop;
 }
 
 int Object_GetFrame(ScriptObject *objj) {
-	if (_G(objs)[objj->id].view == (uint16_t)-1)
+	if (_G(objs)[objj->id].view == RoomObject::NO_VIEW)
 		return 0;
 	return _G(objs)[objj->id].frame;
 }

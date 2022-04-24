@@ -569,7 +569,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 			_G(croom)->obj[cc].y = _GP(thisroom).Objects[cc].Y;
 			_G(croom)->obj[cc].num = Math::InRangeOrDef<uint16_t>(_GP(thisroom).Objects[cc].Sprite, 0);
 			_G(croom)->obj[cc].on = _GP(thisroom).Objects[cc].IsOn;
-			_G(croom)->obj[cc].view = (uint16) - 1;
+			_G(croom)->obj[cc].view = RoomObject::NO_VIEW;
 			_G(croom)->obj[cc].loop = 0;
 			_G(croom)->obj[cc].frame = 0;
 			_G(croom)->obj[cc].wait = 0;

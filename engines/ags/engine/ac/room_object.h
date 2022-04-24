@@ -46,6 +46,8 @@ using namespace AGS; // FIXME later
 // keep that in mind if extending this struct, and dont change existing fields
 // unless you plan on adjusting plugin API as well.
 struct RoomObject {
+	static const uint16_t NO_VIEW = UINT16_MAX;
+
 	int   x, y;
 	int   transparent;    // current transparency setting
 	short tint_r, tint_g;   // specific object tint
