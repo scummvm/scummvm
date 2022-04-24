@@ -94,6 +94,24 @@ enum ColorDepthMode {
 	kColorDepthModeInvalid,
 };
 
+enum TransitionType {
+	kTransitionTypeNone = 0,
+	kTransitionTypePatternDissolve = 0x0406,
+	kTransitionTypeRandomDissolve = 0x0410, // No steps
+	kTransitionTypeFade = 0x041a,
+	kTransitionTypeSlide = 0x03e8, // Directional
+	kTransitionTypePush = 0x03f2,  // Directional
+	kTransitionTypeZoom = 0x03fc,
+	kTransitionTypeWipe = 0x0424, // Directional
+};
+
+enum TransitionDirection {
+	kTransitionDirectionUp = 0x385,
+	kTransitionDirectionDown = 0x385,
+	kTransitionDirectionLeft = 0x386,
+	kTransitionDirectionRight = 0x387,
+};
+
 namespace DynamicValueTypes {
 
 enum DynamicValueType {
@@ -794,6 +812,7 @@ struct LowLevelSceneStateTransitionAction {
 	};
 
 	explicit LowLevelSceneStateTransitionAction(const Common::SharedPtr<MessageDispatch> &msg);
+	explicit LowLevelSceneStateTransitionAction(ActionType actionType);
 	LowLevelSceneStateTransitionAction(const LowLevelSceneStateTransitionAction &other);
 	LowLevelSceneStateTransitionAction(const Common::SharedPtr<Structural> &scene, ActionType actionType);
 
@@ -821,6 +840,13 @@ struct HighLevelSceneTransition {
 	Type type;
 	bool addToDestinationScene;
 	bool addToReturnList;
+};
+
+struct SceneTransitionEffect {
+	uint32 duration; // 6000000 is maximum
+	uint16 steps;
+	TransitionType transitionType;
+	TransitionDirection transitionDirection;
 };
 
 class MessageDispatch {
@@ -901,6 +927,8 @@ public:
 	const Common::SharedPtr<Structural> &getActiveMainScene() const;
 	const Common::SharedPtr<Structural> &getActiveSharedScene() const;
 
+	bool mustDraw() const;
+
 	uint64 getRealTime() const;
 	uint64 getPlayTime() const;
 
@@ -913,6 +941,13 @@ public:
 #endif
 
 private:
+	enum SceneTransitionState {
+		kSceneTransitionStateNotTransitioning,
+		kSceneTransitionStateWaitingForDraw,
+		kSceneTransitionStateDrawingTargetFrame,
+		kSceneTransitionStateTransitioning,
+	};
+
 	struct SceneStackEntry {
 		SceneStackEntry();
 
@@ -972,6 +1007,10 @@ private:
 	Common::SharedPtr<Structural> _activeMainScene;
 	Common::SharedPtr<Structural> _activeSharedScene;
 	Common::Array<SceneReturnListEntry> _sceneReturnList;
+
+	SceneTransitionState _sceneTransitionState;
+	SceneTransitionEffect _sceneTransitionEffect;
+	uint32 _sceneTransitionEndTime;
 
 	Common::WeakPtr<Window> _mainWindow;
 	Common::Array<Common::SharedPtr<Window> > _windows;

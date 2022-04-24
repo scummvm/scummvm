@@ -219,23 +219,6 @@ class SceneTransitionModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::SceneTransitionModifier &data);
 
-	enum TransitionType {
-		kTransitionTypePatternDissolve = 0x0406,
-		kTransitionTypeRandomDissolve  = 0x0410,	// No steps
-		kTransitionTypeFade            = 0x041a,
-		kTransitionTypeSlide           = 0x03e8,	// Directional
-		kTransitionTypePush            = 0x03f2,	// Directional
-		kTransitionTypeZoom            = 0x03fc,
-		kTransitionTypeWipe            = 0x0424,	// Directional
-	};
-
-	enum TransitionDirection {
-		kTransitionDirectionUp = 0x385,
-		kTransitionDirectionDown = 0x385,
-		kTransitionDirectionLeft = 0x386,
-		kTransitionDirectionRight = 0x387,
-	};
-
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Scene Transition Modifier"; }
 #endif

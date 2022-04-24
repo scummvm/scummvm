@@ -1585,6 +1585,10 @@ LowLevelSceneStateTransitionAction::LowLevelSceneStateTransitionAction(const Com
 	: _actionType(LowLevelSceneStateTransitionAction::kSendMessage), _msg(msg) {
 }
 
+LowLevelSceneStateTransitionAction::LowLevelSceneStateTransitionAction(ActionType actionType)
+	: _actionType(actionType) {
+}
+
 LowLevelSceneStateTransitionAction::LowLevelSceneStateTransitionAction(const LowLevelSceneStateTransitionAction &other)
 	: _actionType(other._actionType), _msg(other._msg), _scene(other._scene) {
 }
@@ -1762,8 +1766,7 @@ Runtime::SceneStackEntry::SceneStackEntry() {
 
 
 Runtime::Runtime() : _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
-	_displayWidth(1024), _displayHeight(768),
-					 _realTime(0), _playTime(0) {
+					 _displayWidth(1024), _displayHeight(768), _realTime(0), _playTime(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning) {
 	_vthread.reset(new VThread());
 
 	for (int i = 0; i < kColorDepthModeCount; i++) {
@@ -1862,6 +1865,23 @@ bool Runtime::runProjectFrame() {
 			_pendingSceneTransitions.remove_at(0);
 
 			executeHighLevelSceneTransition(transition);
+			continue;
+		}
+
+		if (_sceneTransitionState == kSceneTransitionStateWaitingForDraw) {
+			if (_sceneTransitionEffect.duration == 0) {
+				// This needs to skip past the transition phase and hit the next condition
+				_sceneTransitionEndTime = _playTime;
+				_sceneTransitionState = kSceneTransitionStateTransitioning;
+			} else {
+				_sceneTransitionState = kSceneTransitionStateDrawingTargetFrame;
+				_sceneTransitionEndTime = _playTime + _sceneTransitionEffect.duration / 10;
+			}
+		}
+
+		if (_sceneTransitionState == kSceneTransitionStateTransitioning && _playTime >= _sceneTransitionEndTime) {
+			_sceneTransitionState = kSceneTransitionStateNotTransitioning;
+			_messageQueue.push_back(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneTransitionEnded, 0), _activeMainScene.get(), false, true)));
 			continue;
 		}
 
@@ -2049,6 +2069,11 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 
 	_activeMainScene = targetScene;
 	_activeSharedScene = targetSharedScene;
+
+	// Scene transitions have to be set up by the destination scene
+	_sceneTransitionState = kSceneTransitionStateWaitingForDraw;
+	_sceneTransitionEffect.transitionType = kTransitionTypeNone;
+	_sceneTransitionEffect.duration = 0;
 
 	executeSharedScenePostSceneChangeActions();
 }
@@ -2359,6 +2384,12 @@ const Common::SharedPtr<Structural> &Runtime::getActiveMainScene() const {
 
 const Common::SharedPtr<Structural> &Runtime::getActiveSharedScene() const {
 	return _activeSharedScene;
+}
+
+bool Runtime::mustDraw() const {
+	if (_sceneTransitionState == kSceneTransitionStateWaitingForDraw)
+		return true;
+	return false;
 }
 
 uint64 Runtime::getRealTime() const {

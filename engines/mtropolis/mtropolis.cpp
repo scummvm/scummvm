@@ -494,7 +494,7 @@ Common::Error MTropolisEngine::run() {
 
 		_runtime->runRealFrame(realElapsedThisFrame);
 
-		if (forceDraw || !skipDraw) {
+		if (forceDraw || !skipDraw || !_runtime->mustDraw()) {
 			_runtime->drawFrame(_system);
 			numSkippedFrames = 0;
 		} else {
