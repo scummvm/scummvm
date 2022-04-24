@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-24 08:53+0000\n"
-"PO-Revision-Date: 2022-04-12 01:27+0000\n"
+"PO-Revision-Date: 2022-04-24 20:27+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -22,10 +22,9 @@ msgstr ""
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:104
-#, fuzzy, c-format
-#| msgid "(built on %s)"
+#, c-format
 msgid "(built on %s with %s)"
-msgstr "(compilat el %s)"
+msgstr "(compilat el %s amb %s)"
 
 #: gui/about.cpp:111
 msgid "Features compiled in:"
@@ -6067,19 +6066,16 @@ msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 
 #: engines/sci/detection_options.h:43
-#, fuzzy
 msgid "Enable high resolution graphics"
-msgstr "Activa la barra gràfica dels punts d'impacte"
+msgstr "Habilita els gràfics d'alta resolució"
 
 #: engines/sci/detection_options.h:44
-#, fuzzy
 msgid "Enable high resolution graphics/content"
-msgstr "Activa la barra gràfica dels punts d'impacte"
+msgstr "Habilita els gràfics/continguts d'alta resolució"
 
 #: engines/sci/detection_options.h:55
-#, fuzzy
 msgid "Enable black-lined video"
-msgstr "Activa el Mode Roland GS"
+msgstr "Habilita el vídeo amb franges negres"
 
 #: engines/sci/detection_options.h:56
 msgid "Draw black lines over videos to increase their apparent sharpness"
@@ -6090,9 +6086,10 @@ msgid "Use high-quality video scaling"
 msgstr ""
 
 #: engines/sci/detection_options.h:69
-#, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Utilitza filtratge lineal quan s'escalin els gràfics"
+msgstr ""
+"Utilitza la interpolació lineal en escalar els vídeos, sempre que sigui "
+"possible"
 
 #: engines/sci/detection_options.h:81
 msgid "Use high-quality \"LarryScale\" cel scaling"
@@ -6135,28 +6132,23 @@ msgid "Use silver cursors"
 msgstr "Utilitza cursors platejats"
 
 #: engines/sci/detection_options.h:144
-#, fuzzy
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
-"Utilitza el conjunt alternatiu de cursors platejats, en lloc dels normals "
-"daurats"
+"Utilitza el conjunt alternatiu de cursors platejats enlloc dels daurats "
+"habituals"
 
 #: engines/sci/detection_options.h:156
-#, fuzzy
 msgid "Enable content censoring"
-msgstr "Activa els cursors flotants"
+msgstr "Habilita la censura de contingut"
 
 #: engines/sci/detection_options.h:157
-#, fuzzy
 msgid "Enable the game's built-in optional content censoring"
-msgstr "Activa els cursors flotants"
+msgstr "Habilita la censura de contingut opcional integrada del joc"
 
 #: engines/sci/detection_options.h:169
-#, fuzzy
-#| msgid "Unscaled"
 msgid "Upscale videos"
-msgstr "Sense escalat"
+msgstr "Escala els vídeos"
 
 #: engines/sci/detection_options.h:170
 msgid "Upscale videos to double their size"
@@ -6179,9 +6171,8 @@ msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
 
 #: engines/sci/detection_options.h:208
-#, fuzzy
 msgid "Enable bearded musicians"
-msgstr "Activa els cursors flotants"
+msgstr "Habilita els músics amb barba"
 
 #: engines/sci/detection_options.h:209
 msgid "Enable graphics that were disabled for legal reasons"
@@ -6394,10 +6385,8 @@ msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr ""
 
 #: engines/scumm/detection.cpp:220
-#, fuzzy
-#| msgid "Enable smooth scrolling"
 msgid "Allow semi-smooth scrolling"
-msgstr "Habilita el desplaçament suau"
+msgstr "Permet el desplaçament semi-suau"
 
 #: engines/scumm/detection.cpp:221
 msgid ""
@@ -7589,14 +7578,12 @@ msgid "Place actor at center of screen"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:155
-#, fuzzy
 msgid "Debug Menu"
-msgstr "Depurador"
+msgstr "Menú de depuració"
 
 #: engines/twine/metaengine.cpp:160
-#, fuzzy
 msgid "Debug Menu Execute"
-msgstr "Depurador"
+msgstr "Executa el menú de depuració"
 
 #: engines/twine/metaengine.cpp:165 engines/twine/metaengine.cpp:185
 msgid "Normal Behaviour"
@@ -7615,9 +7602,8 @@ msgid "Discreet Behaviour"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:205
-#, fuzzy
 msgid "Behaviour Action"
-msgstr "~A~nterior"
+msgstr "Acció de comportament"
 
 #: engines/twine/metaengine.cpp:211
 msgid "Change Behaviour"
