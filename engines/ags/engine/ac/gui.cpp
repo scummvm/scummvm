@@ -278,15 +278,9 @@ void GUI_Click(ScriptGUI *scgui, int mbut) {
 void GUI_ProcessClick(int x, int y, int mbut) {
 	int guiid = gui_get_interactable(x, y);
 	if (guiid >= 0) {
-		const int real_mousex = _G(mousex);
-		const int real_mousey = _G(mousey);
-		_G(mousex) = x;
-		_G(mousey) = y;
-		_GP(guis)[guiid].Poll();
+		_GP(guis)[guiid].Poll(x, y);
 		gui_on_mouse_down(guiid, mbut);
 		gui_on_mouse_up(guiid, mbut);
-		_G(mousex) = real_mousex;
-		_G(mousey) = real_mousey;
 	}
 }
 
@@ -613,7 +607,7 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 
 void gui_on_mouse_down(const int guin, const int mbut) {
 	debug_script_log("Mouse click over GUI %d", guin);
-	_GP(guis)[guin].OnMouseButtonDown();
+	_GP(guis)[guin].OnMouseButtonDown(_G(mousex), _G(mousey));
 	// run GUI click handler if not on any control
 	if ((_GP(guis)[guin].MouseDownCtrl < 0) && (!_GP(guis)[guin].OnClickHandler.IsEmpty()))
 		force_event(EV_IFACECLICK, guin, -1, mbut);

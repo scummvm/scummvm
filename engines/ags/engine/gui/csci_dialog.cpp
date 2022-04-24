@@ -19,7 +19,7 @@
  *
  */
 
-//include <cctype>
+#include "ags/engine/gui/csci_dialog.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/game_setup.h"

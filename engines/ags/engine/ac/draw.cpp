@@ -2029,7 +2029,7 @@ void draw_gui_and_overlays() {
 						(_G(all_buttons_disabled) >= 0) &&
 						(_GP(guis)[gg].PopupStyle != kGUIPopupNoAutoRemove))
 					continue;
-				_GP(guis)[gg].Poll();
+				_GP(guis)[gg].Poll(_G(mousex), _G(mousey));
 			}
 		}
 	}

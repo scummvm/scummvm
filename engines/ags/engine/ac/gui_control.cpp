@@ -22,6 +22,7 @@
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/gui_control.h"
 #include "ags/engine/ac/global_gui.h"
+#include "ags/engine/ac/mouse.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/gui/gui_button.h"
 #include "ags/shared/gui/gui_inv.h"
@@ -48,13 +49,8 @@ GUIObject *GetGUIControlAtLocation(int xx, int yy) {
 		return nullptr;
 
 	data_to_game_coords(&xx, &yy);
+	int toret = _GP(guis)[guinum].FindControlAt(xx, yy, 0, false);
 
-	int oldmousex = _G(mousex), oldmousey = _G(mousey);
-	_G(mousex) = xx - _GP(guis)[guinum].X;
-	_G(mousey) = yy - _GP(guis)[guinum].Y;
-	int toret = _GP(guis)[guinum].FindControlUnderMouse(0, false);
-	_G(mousex) = oldmousex;
-	_G(mousey) = oldmousey;
 	if (toret < 0)
 		return nullptr;
 
