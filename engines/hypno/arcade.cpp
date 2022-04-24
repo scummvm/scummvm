@@ -77,6 +77,8 @@ SegmentShootsSequence HypnoEngine::parseShootList(const Common::String &filename
 	}
 	Common::String n;
 	ShootInfo si;
+	si.timestamp = 0;
+	si.name = "";
 	SegmentShootsSequence seq;
 
 	// Patch to fix an issue in the parsing of the c3 level in Spiderman
@@ -107,7 +109,6 @@ SegmentShootsSequence HypnoEngine::parseShootList(const Common::String &filename
 				seq.push_back(ss);
 				break;
 			}
-
 			si.name = n;
 			si.timestamp = atoi(t.c_str());
 			if (si.timestamp == 0 && si.name != "0") // 0,0 is a special case
@@ -129,8 +130,14 @@ SegmentShootsSequence HypnoEngine::parseShootList(const Common::String &filename
 			Common::replace(n, "\nS", "");
 			Common::replace(n, "\nZ\n", "");
 			Common::replace(n, "\nZ", "");
+			uint32 timestamp = atoi(t.c_str());
+			if (timestamp < si.timestamp) {
+				debugC(1, kHypnoDebugParser, "WARNING: stopping the sequence earlier than expected");
+				break;
+			}
+
 			si.name = n;
-			si.timestamp = atoi(t.c_str());
+			si.timestamp = timestamp;
 			if (si.timestamp == 0)
 				error("Error at parsing '%s' with timestamp: %s", n.c_str(), t.c_str());
 			ss.shootSequence.push_back(si);
@@ -328,9 +335,10 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		if (!arc->transitions.empty()) {
 			ArcadeTransition at = *arc->transitions.begin();
 			int ttime = at.time;
-			if (ttime == 0)
-				_skipLevel = true;
-			else if (_background->decoder->getCurFrame() > ttime) {
+			if (ttime == 0) { // This special case is only reachable in Wetlands c33
+				_objIdx = 1;
+				arc->transitions.pop_front();
+			} else if (_background->decoder->getCurFrame() > ttime) {
 				transition = true;
 
 				if (_playerFrameSeps.size() == 1) {
