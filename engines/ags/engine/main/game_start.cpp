@@ -65,10 +65,10 @@ void start_game_init_editor_debugging() {
 	}
 }
 
-void start_game_load_savegame_on_startup() {
-	if (_G(loadSaveGameOnStartup) != -1) {
+static void start_game_load_savegame_on_startup(int loadSave) {
+	if (loadSave != -1) {
 		current_fade_out_effect();
-		try_restore_save(_G(loadSaveGameOnStartup));
+		try_restore_save(loadSave);
 	}
 }
 
@@ -99,7 +99,7 @@ void start_game() {
 	first_room_initialization();
 }
 
-void initialize_start_and_play_game(int override_start_room, int loadSaveGameOnStartup) {
+void initialize_start_and_play_game(int override_start_room, int loadSave) {
 	//try { // BEGIN try for ALI3DEXception
 
 	set_cursor_mode(MODE_WALK);
@@ -113,7 +113,7 @@ void initialize_start_and_play_game(int override_start_room, int loadSaveGameOnS
 
 	start_game_init_editor_debugging();
 
-	start_game_load_savegame_on_startup();
+	start_game_load_savegame_on_startup(loadSave);
 
 	// only start if not restored a save
 	if (_G(displayed_room) < 0)
