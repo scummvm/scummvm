@@ -955,9 +955,11 @@ bool read_savedgame_screenshot(const String &savedgame, int &want_shot) {
 
 // Test if the game file contains expected GUID / legacy id
 bool test_game_guid(const String &filepath, const String &guid, int legacy_id) {
+	std::unique_ptr<AssetManager> amgr(new AssetManager());
+	if (amgr->AddLibrary(filepath) != kAssetNoError)
+		return false;
 	MainGameSource src;
-	HGameFileError err = OpenMainGameFileFromDefaultAsset(src);
-	if (!err)
+	if (!OpenMainGameFileFromDefaultAsset(src, amgr.get()))
 		return false;
 	GameSetupStruct g;
 	PreReadGameData(g, src.InputStream.get(), src.DataVersion);
@@ -999,7 +1001,7 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 			String gamefile = FindGameData(_GP(ResPaths).DataDir, TestGame);
 
 			if (Shared::File::TestReadFile(gamefile)) {
-				RunAGSGame(desc.MainDataFilename, 0, 0);
+				RunAGSGame(gamefile.GetCStr(), 0, 0);
 				_G(load_new_game_restore) = slotNumber;
 				return HSaveError::None();
 			}

@@ -199,15 +199,15 @@ HGameFileError OpenMainGameFile(const String &filename, MainGameSource &src) {
 	return OpenMainGameFileBase(in, src);
 }
 
-HGameFileError OpenMainGameFileFromDefaultAsset(MainGameSource &src) {
+HGameFileError OpenMainGameFileFromDefaultAsset(MainGameSource &src, AssetManager *mgr) {
 	// Cleanup source struct
 	src = MainGameSource();
 	// Try to find and open main game file
 	String filename = MainGameSource::DefaultFilename_v3;
-	Stream *in = _GP(AssetMgr)->OpenAsset(filename);
+	Stream *in = mgr->OpenAsset(filename);
 	if (!in) {
 		filename = MainGameSource::DefaultFilename_v2;
-		in = _GP(AssetMgr)->OpenAsset(filename);
+		in = mgr->OpenAsset(filename);
 	}
 	if (!in)
 		return new MainGameFileError(kMGFErr_FileOpenFailed, String::FromFormat("Filename: %s.", filename.GetCStr()));

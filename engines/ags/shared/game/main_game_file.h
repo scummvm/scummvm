@@ -139,6 +139,8 @@ struct LoadedGameEntities {
 	~LoadedGameEntities();
 };
 
+class AssetManager;
+
 // Tells if the given path (library filename) contains main game file
 bool               IsMainGameLibrary(const String &filename);
 // Scans given directory path for a package containing main game data, returns first found or none.
@@ -146,8 +148,8 @@ String             FindGameData(const String &path);
 String             FindGameData(const String &path, bool(*fn_testfile)(const String &));
 // Opens main game file for reading from an arbitrary file
 HGameFileError     OpenMainGameFile(const String &filename, MainGameSource &src);
-// Opens main game file for reading from the asset library (uses default asset name)
-HGameFileError     OpenMainGameFileFromDefaultAsset(MainGameSource &src);
+// Opens main game file for reading using the current Asset Manager (uses default asset name)
+HGameFileError     OpenMainGameFileFromDefaultAsset(MainGameSource &src, AssetManager *mgr);
 // Reads game data, applies necessary conversions to match current format version
 HGameFileError     ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersion data_ver);
 // Pre-reads the heading game data, just enough to identify the game and its special file locations
