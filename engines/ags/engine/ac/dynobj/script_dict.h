@@ -38,6 +38,7 @@
 #include "ags/lib/std/map.h"
 #include "ags/lib/std/map.h"
 #include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
+#include "ags/shared/util/stream.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_types.h"
 
@@ -49,7 +50,6 @@ class ScriptDictBase : public AGSCCDynamicObject {
 public:
 	int Dispose(const char *address, bool force) override;
 	const char *GetType() override;
-	int Serialize(const char *address, char *buffer, int bufsize) override;
 	void Unserialize(int index, const char *serializedData, int dataSize) override;
 
 	virtual bool IsCaseSensitive() const = 0;
@@ -63,10 +63,14 @@ public:
 	virtual int GetItemCount() = 0;
 	virtual void GetKeys(std::vector<const char *> &buf) const = 0;
 	virtual void GetValues(std::vector<const char *> &buf) const = 0;
+protected:
+	// Calculate and return required space for serialization, in bytes
+	virtual size_t CalcSerializeSize() = 0;
+	// Write object data into the provided stream
+	void Serialize(const char *address, AGS::Shared::Stream *out) override;
 
 private:
-	virtual size_t CalcSerializeSize() = 0;
-	virtual void SerializeContainer() = 0;
+	virtual void SerializeContainer(AGS::Shared::Stream *out) = 0;
 	virtual void UnserializeContainer(const char *serializedData) = 0;
 };
 
@@ -145,7 +149,9 @@ private:
 	}
 
 	size_t CalcSerializeSize() override {
-		size_t total_sz = sizeof(int32_t);
+		// 2 class properties + item count
+		size_t total_sz = sizeof(int32_t) * 3;
+		// (int32 + string buffer) per item
 		for (auto it = _dic.begin(); it != _dic.end(); ++it) {
 			total_sz += sizeof(int32_t) + it->_key.GetLength();
 			total_sz += sizeof(int32_t) + it->_value.GetLength();
@@ -153,18 +159,17 @@ private:
 		return total_sz;
 	}
 
-	void SerializeContainer() override {
-		SerializeInt((int)_dic.size());
-		for (auto it = _dic.begin(); it != _dic.end(); ++it) {
-			SerializeInt((int)it->_key.GetLength());
-			memcpy(&serbuffer[bytesSoFar], it->_key.GetCStr(), it->_key.GetLength());
-			bytesSoFar += it->_key.GetLength();
-
-			SerializeInt((int)it->_value.GetLength());
-			memcpy(&serbuffer[bytesSoFar], it->_value.GetCStr(), it->_value.GetLength());
-			bytesSoFar += it->_value.GetLength();
-		}
-	}
+	void SerializeContainer(AGS::Shared::Stream *out) override
+    {
+        out->WriteInt32((int)_dic.size());
+        for (auto it = _dic.begin(); it != _dic.end(); ++it)
+        {
+            out->WriteInt32((int)it->_key.GetLength());
+            out->Write(it->_key.GetCStr(), it->_key.GetLength());
+            out->WriteInt32((int)it->_value.GetLength());
+            out->Write(it->_value.GetCStr(), it->_value.GetLength());
+        }
+    }
 
 	void UnserializeContainer(const char *serializedData) override {
 		size_t item_count = (size_t)UnserializeInt();

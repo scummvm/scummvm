@@ -23,22 +23,27 @@
 #include "ags/engine/ac/dynobj/script_object.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/game/room_struct.h"
+#include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 // return the type name of the object
 const char *CCObject::GetType() {
 	return "Object";
 }
 
+size_t CCObject::CalcSerializeSize() {
+	return sizeof(int32_t);
+}
+
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-int CCObject::Serialize(const char *address, char *buffer, int bufsize) {
-	const ScriptObject *shh = (const ScriptObject *)address;
-	StartSerialize(buffer);
-	SerializeInt(shh->id);
-	return EndSerialize();
+void CCObject::Serialize(const char *address, Stream *out) {
+	ScriptObject *shh = (ScriptObject *)address;
+	out->WriteInt32(shh->id);
 }
 
 void CCObject::Unserialize(int index, const char *serializedData, int dataSize) {

@@ -19,25 +19,35 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTSTRING_H
-#define AGS_ENGINE_AC_DYNOBJ_SCRIPTSTRING_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPT_STRING_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPT_STRING_H
 
 #include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
 
 namespace AGS3 {
 
 struct ScriptString final : AGSCCDynamicObject, ICCStringClass {
+	// TODO: the preallocated text buffer may be assigned externally;
+	// find out if it's possible to refactor while keeping same functionality
 	char *text;
 
 	int Dispose(const char *address, bool force) override;
 	const char *GetType() override;
-	int Serialize(const char *address, char *buffer, int bufsize) override;
 	void Unserialize(int index, const char *serializedData, int dataSize) override;
 
 	DynObjectRef CreateString(const char *fromText) override;
 
 	ScriptString();
 	ScriptString(const char *fromText);
+
+protected:
+	// Calculate and return required space for serialization, in bytes
+	size_t CalcSerializeSize() override;
+	// Write object data into the provided stream
+	void Serialize(const char *address, AGS::Shared::Stream *out) override;
+
+private:
+	size_t _len;
 };
 
 } // namespace AGS3

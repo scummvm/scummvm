@@ -22,22 +22,27 @@
 #include "ags/engine/ac/dynobj/cc_inventory.h"
 #include "ags/engine/ac/dynobj/script_inv_item.h"
 #include "ags/shared/ac/character_info.h"
+#include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 // return the type name of the object
 const char *CCInventory::GetType() {
 	return "Inventory";
 }
 
+size_t CCInventory::CalcSerializeSize() {
+	return sizeof(int32_t);
+}
+
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-int CCInventory::Serialize(const char *address, char *buffer, int bufsize) {
-	const ScriptInvItem *shh = (const ScriptInvItem *)address;
-	StartSerialize(buffer);
-	SerializeInt(shh->id);
-	return EndSerialize();
+void CCInventory::Serialize(const char *address, Stream *out) {
+	ScriptInvItem *shh = (ScriptInvItem *)address;
+	out->WriteInt32(shh->id);
 }
 
 void CCInventory::Unserialize(int index, const char *serializedData, int dataSize) {

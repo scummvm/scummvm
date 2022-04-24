@@ -22,6 +22,7 @@
 #include "ags/engine/ac/dynobj/script_viewport.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/shared/util/bbop.h"
+#include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -42,10 +43,12 @@ int ScriptViewport::Dispose(const char *address, bool force) {
 	return 1;
 }
 
-int ScriptViewport::Serialize(const char *address, char *buffer, int bufsize) {
-	StartSerialize(buffer);
-	SerializeInt(_id);
-	return EndSerialize();
+size_t ScriptViewport::CalcSerializeSize() {
+	return sizeof(int32_t);
+}
+
+void ScriptViewport::Serialize(const char *address, Stream *out) {
+	out->WriteInt32(_id);
 }
 
 void ScriptViewport::Unserialize(int index, const char *serializedData, int dataSize) {

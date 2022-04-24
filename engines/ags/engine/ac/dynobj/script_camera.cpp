@@ -22,6 +22,7 @@
 #include "ags/engine/ac/dynobj/script_camera.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/shared/util/bbop.h"
+#include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -42,10 +43,12 @@ int ScriptCamera::Dispose(const char *address, bool force) {
 	return 1;
 }
 
-int ScriptCamera::Serialize(const char *address, char *buffer, int bufsize) {
-	StartSerialize(buffer);
-	SerializeInt(_id);
-	return EndSerialize();
+size_t ScriptCamera::CalcSerializeSize() {
+	return sizeof(int32_t);
+}
+
+void ScriptCamera::Serialize(const char *address, Stream *out) {
+	out->WriteInt32(_id);
 }
 
 void ScriptCamera::Unserialize(int index, const char *serializedData, int dataSize) {

@@ -26,6 +26,8 @@
 
 namespace AGS3 {
 
+namespace AGS { namespace Shared { class Stream; } }
+
 struct AGSCCDynamicObject : ICCDynamicObject {
 protected:
 	virtual ~AGSCCDynamicObject() {}
@@ -34,6 +36,7 @@ public:
 	int Dispose(const char *address, bool force) override;
 
 	// TODO: pass savegame format version
+	int Serialize(const char *address, char *buffer, int bufsize) override;
 	virtual void Unserialize(int index, const char *serializedData, int dataSize) = 0;
 
 	// Legacy support for reading and writing object values by their relative offset
@@ -56,14 +59,13 @@ protected:
 	int totalBytes = 0;
 	char *serbuffer = nullptr;
 
-	void StartSerialize(char *sbuffer);
-	void SerializeInt(int val);
-	void SerializeFloat(float val);
-	int  EndSerialize();
+	// Calculate and return required space for serialization, in bytes
+	virtual size_t CalcSerializeSize() = 0;
+	// Write object data into the provided stream
+	virtual void Serialize(const char *address, AGS::Shared::Stream *out) = 0;
 	void StartUnserialize(const char *sbuffer, int pTotalBytes);
 	int  UnserializeInt();
 	float UnserializeFloat();
-
 };
 
 } // namespace AGS3

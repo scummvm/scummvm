@@ -74,23 +74,25 @@ const char *ScriptDrawingSurface::GetType() {
 	return "DrawingSurface";
 }
 
-int ScriptDrawingSurface::Serialize(const char *address, char *buffer, int bufsize) {
-	StartSerialize(buffer);
+size_t ScriptDrawingSurface::CalcSerializeSize() {
+	return sizeof(int32_t) * 9;
+}
+
+void ScriptDrawingSurface::Serialize(const char *address, Stream *out) {
 	// pack mask type in the last byte of a negative integer
 	// note: (-1) is reserved for "unused", for backward compatibility
 	if (roomMaskType > 0)
-		SerializeInt(0xFFFFFF00 | roomMaskType);
+		out->WriteInt32(0xFFFFFF00 | roomMaskType);
 	else
-		SerializeInt(roomBackgroundNumber);
-	SerializeInt(dynamicSpriteNumber);
-	SerializeInt(dynamicSurfaceNumber);
-	SerializeInt(currentColour);
-	SerializeInt(currentColourScript);
-	SerializeInt(highResCoordinates);
-	SerializeInt(modified);
-	SerializeInt(hasAlphaChannel);
-	SerializeInt(isLinkedBitmapOnly ? 1 : 0);
-	return EndSerialize();
+		out->WriteInt32(roomBackgroundNumber);
+	out->WriteInt32(dynamicSpriteNumber);
+	out->WriteInt32(dynamicSurfaceNumber);
+	out->WriteInt32(currentColour);
+	out->WriteInt32(currentColourScript);
+	out->WriteInt32(highResCoordinates);
+	out->WriteInt32(modified);
+	out->WriteInt32(hasAlphaChannel);
+	out->WriteInt32(isLinkedBitmapOnly ? 1 : 0);
 }
 
 void ScriptDrawingSurface::Unserialize(int index, const char *serializedData, int dataSize) {

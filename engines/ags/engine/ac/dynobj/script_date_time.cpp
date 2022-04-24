@@ -20,8 +20,11 @@
  */
 
 #include "ags/engine/ac/dynobj/script_date_time.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 int ScriptDateTime::Dispose(const char *address, bool force) {
 	// always dispose a DateTime
@@ -33,16 +36,18 @@ const char *ScriptDateTime::GetType() {
 	return "DateTime";
 }
 
-int ScriptDateTime::Serialize(const char *address, char *buffer, int bufsize) {
-	StartSerialize(buffer);
-	SerializeInt(year);
-	SerializeInt(month);
-	SerializeInt(day);
-	SerializeInt(hour);
-	SerializeInt(minute);
-	SerializeInt(second);
-	SerializeInt(rawUnixTime);
-	return EndSerialize();
+size_t ScriptDateTime::CalcSerializeSize() {
+	return sizeof(int32_t) * 7;
+}
+
+void ScriptDateTime::Serialize(const char *address, Stream *out) {
+	out->WriteInt32(year);
+	out->WriteInt32(month);
+	out->WriteInt32(day);
+	out->WriteInt32(hour);
+	out->WriteInt32(minute);
+	out->WriteInt32(second);
+	out->WriteInt32(rawUnixTime);
 }
 
 void ScriptDateTime::Unserialize(int index, const char *serializedData, int dataSize) {
