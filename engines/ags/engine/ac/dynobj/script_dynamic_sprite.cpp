@@ -48,9 +48,9 @@ void ScriptDynamicSprite::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(slot);
 }
 
-void ScriptDynamicSprite::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	slot = UnserializeInt();
+
+void ScriptDynamicSprite::Unserialize(int index, Stream *in, size_t data_sz) {
+	slot = in->ReadInt32();
 	ccRegisterUnserializedObject(index, this, this);
 }
 

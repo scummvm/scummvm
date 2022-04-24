@@ -49,9 +49,8 @@ void CCCharacter::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(chaa->index_id);
 }
 
-void CCCharacter::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	int num = UnserializeInt();
+void CCCharacter::Unserialize(int index, Stream *in, size_t data_sz) {
+	int num = in->ReadInt32();
 	ccRegisterUnserializedObject(index, &_GP(game).chars[num], this);
 }
 

@@ -49,7 +49,7 @@ class ScriptSetBase : public AGSCCDynamicObject {
 public:
 	int Dispose(const char *address, bool force) override;
 	const char *GetType() override;
-	void Unserialize(int index, const char *serializedData, int dataSize) override;
+	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
 
 	virtual bool IsCaseSensitive() const = 0;
 	virtual bool IsSorted() const = 0;
@@ -69,7 +69,7 @@ protected:
 
 private:
 	virtual void SerializeContainer(AGS::Shared::Stream *out) = 0;
-	virtual void UnserializeContainer(const char *serializedData) = 0;
+	virtual void UnserializeContainer(AGS::Shared::Stream *in) = 0;
 };
 
 template <typename TSet, bool is_sorted, bool is_casesensitive>
@@ -88,8 +88,7 @@ public:
 
 	bool Add(const char *item) override {
 		if (!item) return false;
-		size_t len = strlen(item);
-		return TryAddItem(item, len);
+		return TryAddItem(String(item));
 	}
 	void Clear() override {
 		for (auto it = _set.begin(); it != _set.end(); ++it)
@@ -115,11 +114,10 @@ public:
 	}
 
 private:
-	bool TryAddItem(const char *item, size_t len) {
-		return _set.insert(String(item, len))._value;
+	bool TryAddItem(const String &s) {
+		return _set.insert(s)._value;
 	}
-	void DeleteItem(ConstIterator it) { /* do nothing */
-	}
+	void DeleteItem(ConstIterator it) { /* do nothing */ }
 
 	size_t CalcSerializeSize() override {
 		// 2 class properties + item count
@@ -138,12 +136,12 @@ private:
 		}
 	}
 
-	void UnserializeContainer(const char *serializedData) override {
-		size_t item_count = (size_t)UnserializeInt();
+	void UnserializeContainer(AGS::Shared::Stream *in) override {
+		size_t item_count = in->ReadInt32();
 		for (size_t i = 0; i < item_count; ++i) {
-			size_t len = UnserializeInt();
-			TryAddItem(&serializedData[bytesSoFar], len);
-			bytesSoFar += len;
+			size_t len = in->ReadInt32();
+			String item = String::FromStreamCount(in, len);
+			TryAddItem(item);
 		}
 	}
 

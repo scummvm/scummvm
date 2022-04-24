@@ -46,9 +46,8 @@ void CCDialog::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(shh->id);
 }
 
-void CCDialog::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	int num = UnserializeInt();
+void CCDialog::Unserialize(int index, Stream *in, size_t data_sz) {
+	int num = in->ReadInt32();
 	ccRegisterUnserializedObject(index, &_G(scrDialog)[num], this);
 }
 

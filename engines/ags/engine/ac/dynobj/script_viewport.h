@@ -44,7 +44,7 @@ public:
 
 	const char *GetType() override;
 	int Dispose(const char *address, bool force) override;
-	void Unserialize(int index, const char *serializedData, int dataSize) override;
+	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
 
 protected:
 	// Calculate and return required space for serialization, in bytes
@@ -57,7 +57,7 @@ private:
 };
 
 // Unserialize viewport from the memory stream
-ScriptViewport *Viewport_Unserialize(int handle, const char *serializedData, int dataSize);
+ScriptViewport *Viewport_Unserialize(int handle, AGS::Shared::Stream *in, size_t data_sz);
 
 } // namespace AGS3
 

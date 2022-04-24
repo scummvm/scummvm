@@ -56,11 +56,11 @@ void ScriptString::Serialize(const char *address, Stream *out) {
 	out->Write(cstr, _len + 1);
 }
 
-void ScriptString::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	_len = UnserializeInt();
+void ScriptString::Unserialize(int index, Stream *in, size_t data_sz) {
+	_len = in->ReadInt32();
 	text = (char *)malloc(_len + 1);
-	strcpy(text, &serializedData[bytesSoFar]);
+	in->Read(text, _len + 1);
+	text[_len] = 0; // for safety
 	ccRegisterUnserializedObject(index, text, this);
 }
 

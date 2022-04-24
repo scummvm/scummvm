@@ -95,22 +95,21 @@ void ScriptDrawingSurface::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(isLinkedBitmapOnly ? 1 : 0);
 }
 
-void ScriptDrawingSurface::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	int room_ds = UnserializeInt();
+void ScriptDrawingSurface::Unserialize(int index, Stream *in, size_t data_sz) {
+	int room_ds = in->ReadInt32();
 	if (room_ds >= 0)
 		roomBackgroundNumber = room_ds;
 	// negative value may contain a mask type
 	else if ((room_ds & 0xFF) != 0xFF)
 		roomMaskType = (RoomAreaMask)(room_ds & 0xFF);
-	dynamicSpriteNumber = UnserializeInt();
-	dynamicSurfaceNumber = UnserializeInt();
-	currentColour = UnserializeInt();
-	currentColourScript = UnserializeInt();
-	highResCoordinates = UnserializeInt();
-	modified = UnserializeInt();
-	hasAlphaChannel = UnserializeInt();
-	isLinkedBitmapOnly = (UnserializeInt() != 0);
+	dynamicSpriteNumber = in->ReadInt32();
+	dynamicSurfaceNumber = in->ReadInt32();
+	currentColour = in->ReadInt32();
+	currentColourScript = in->ReadInt32();
+	highResCoordinates = in->ReadInt32();
+	modified = in->ReadInt32();
+	hasAlphaChannel = in->ReadInt32();
+	isLinkedBitmapOnly = (in->ReadInt32() != 0);
 	ccRegisterUnserializedObject(index, this, this);
 }
 

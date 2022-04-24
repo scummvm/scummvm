@@ -19,7 +19,7 @@
  *
  */
 
-//include <string.h>
+#include "ags/shared/util/memory_stream.h"
 #include "ags/engine/ac/dynobj/cc_serializer.h"
 #include "ags/engine/ac/dynobj/all_dynamic_classes.h"
 #include "ags/engine/ac/dynobj/all_script_classes.h"
@@ -36,28 +36,40 @@
 
 namespace AGS3 {
 
+using namespace AGS::Shared;
+
 // *** De-serialization of script objects
 
 void AGSDeSerializer::Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) {
+	if (dataSize < 0) {
+		quitprintf("Unserialise: invalid data size (%d) for object type '%s'", dataSize, objectType);
+		return; // TODO: don't quit, return error
+	}
+	// Note that while our builtin classes may accept Stream object,
+	// classes registered by plugin cannot, because streams are not (yet)
+	// part of the plugin API.
+	size_t data_sz = static_cast<size_t>(dataSize);
+	MemoryStream mems(reinterpret_cast<const uint8_t *>(serializedData), dataSize);
+
 	if (strcmp(objectType, "GUIObject") == 0) {
-		_GP(ccDynamicGUIObject).Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicGUIObject).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Character") == 0) {
-		_GP(ccDynamicCharacter).Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicCharacter).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Hotspot") == 0) {
-		_GP(ccDynamicHotspot).Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicHotspot).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Region") == 0) {
-		_GP(ccDynamicRegion).Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicRegion).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Inventory") == 0) {
-		_GP(ccDynamicInv).Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicInv).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Dialog") == 0) {
-		_GP(ccDynamicDialog).Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicDialog).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "GUI") == 0) {
-		_GP(ccDynamicGUI).Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicGUI).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Object") == 0) {
-		_GP(ccDynamicObject).Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicObject).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "String") == 0) {
 		ScriptString *scf = new ScriptString();
-		scf->Unserialize(index, serializedData, dataSize);
+		scf->Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "File") == 0) {
 		// files cannot be restored properly -- so just recreate
 		// the object; attempting any operations on it will fail
@@ -65,37 +77,37 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 		ccRegisterUnserializedObject(index, scf, scf);
 	} else if (strcmp(objectType, "Overlay") == 0) {
 		ScriptOverlay *scf = new ScriptOverlay();
-		scf->Unserialize(index, serializedData, dataSize);
+		scf->Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "DateTime") == 0) {
 		ScriptDateTime *scf = new ScriptDateTime();
-		scf->Unserialize(index, serializedData, dataSize);
+		scf->Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "ViewFrame") == 0) {
 		ScriptViewFrame *scf = new ScriptViewFrame();
-		scf->Unserialize(index, serializedData, dataSize);
+		scf->Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "DynamicSprite") == 0) {
 		ScriptDynamicSprite *scf = new ScriptDynamicSprite();
-		scf->Unserialize(index, serializedData, dataSize);
+		scf->Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "DrawingSurface") == 0) {
 		ScriptDrawingSurface *sds = new ScriptDrawingSurface();
-		sds->Unserialize(index, serializedData, dataSize);
+		sds->Unserialize(index, &mems, data_sz);
 
 		if (sds->isLinkedBitmapOnly) {
 			_G(dialogOptionsRenderingSurface) = sds;
 		}
 	} else if (strcmp(objectType, "DialogOptionsRendering") == 0) {
-		_GP(ccDialogOptionsRendering).Unserialize(index, serializedData, dataSize);
+		_GP(ccDialogOptionsRendering).Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "StringDictionary") == 0) {
-		Dict_Unserialize(index, serializedData, dataSize);
+		Dict_Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "StringSet") == 0) {
-		Set_Unserialize(index, serializedData, dataSize);
+		Set_Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Viewport2") == 0) {
-		Viewport_Unserialize(index, serializedData, dataSize);
+		Viewport_Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "Camera2") == 0) {
-		Camera_Unserialize(index, serializedData, dataSize);
+		Camera_Unserialize(index, &mems, data_sz);
 	} else if (strcmp(objectType, "UserObject") == 0) {
 		ScriptUserObject *suo = new ScriptUserObject();
-		suo->Unserialize(index, serializedData, dataSize);
-	} else if (!unserialize_audio_script_object(index, objectType, serializedData, dataSize)) {
+		suo->Unserialize(index, &mems, data_sz);
+	} else if (!unserialize_audio_script_object(index, objectType, &mems, data_sz)) {
 		// check if the type is read by a plugin
 		for (int ii = 0; ii < _G(numPluginReaders); ii++) {
 			if (strcmp(objectType, _G(pluginReaders)[ii].type) == 0) {

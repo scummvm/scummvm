@@ -47,10 +47,9 @@ void CCGUIObject::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(guio->Id);
 }
 
-void CCGUIObject::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	int guinum = UnserializeInt();
-	int objnum = UnserializeInt();
+void CCGUIObject::Unserialize(int index, Stream *in, size_t data_sz) {
+	int guinum = in->ReadInt32();
+	int objnum = in->ReadInt32();
 	ccRegisterUnserializedObject(index, _GP(guis)[guinum].GetControl(objnum), this);
 }
 

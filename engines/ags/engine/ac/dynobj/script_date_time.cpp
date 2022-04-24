@@ -50,15 +50,14 @@ void ScriptDateTime::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(rawUnixTime);
 }
 
-void ScriptDateTime::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	year = UnserializeInt();
-	month = UnserializeInt();
-	day = UnserializeInt();
-	hour = UnserializeInt();
-	minute = UnserializeInt();
-	second = UnserializeInt();
-	rawUnixTime = UnserializeInt();
+void ScriptDateTime::Unserialize(int index, Stream *in, size_t data_sz) {
+	year = in->ReadInt32();
+	month = in->ReadInt32();
+	day = in->ReadInt32();
+	hour = in->ReadInt32();
+	minute = in->ReadInt32();
+	second = in->ReadInt32();
+	rawUnixTime = in->ReadInt32();
 	ccRegisterUnserializedObject(index, this, this);
 }
 

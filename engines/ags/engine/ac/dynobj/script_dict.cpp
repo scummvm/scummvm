@@ -39,11 +39,10 @@ void ScriptDictBase::Serialize(const char *address, Stream *out) {
 	SerializeContainer(out);
 }
 
-void ScriptDictBase::Unserialize(int index, const char *serializedData, int dataSize) {
+void ScriptDictBase::Unserialize(int index, Stream *in, size_t data_sz) {
 	// NOTE: we expect sorted/case flags are read by external reader;
 	// this is awkward, but I did not find better design solution atm
-	StartUnserialize(serializedData, dataSize);
-	UnserializeContainer(serializedData);
+	UnserializeContainer(in);
 	ccRegisterUnserializedObject(index, this, this);
 }
 

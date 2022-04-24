@@ -40,7 +40,7 @@ size_t ScriptDialogOptionsRendering::CalcSerializeSize() {
 void ScriptDialogOptionsRendering::Serialize(const char *address, Stream *out) {
 }
 
-void ScriptDialogOptionsRendering::Unserialize(int index, const char *serializedData, int dataSize) {
+void ScriptDialogOptionsRendering::Unserialize(int index, Stream *in, size_t data_sz) {
 	ccRegisterUnserializedObject(index, this, this);
 }
 

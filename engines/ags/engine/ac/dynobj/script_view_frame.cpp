@@ -46,11 +46,10 @@ void ScriptViewFrame::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(frame);
 }
 
-void ScriptViewFrame::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	view = UnserializeInt();
-	loop = UnserializeInt();
-	frame = UnserializeInt();
+void ScriptViewFrame::Unserialize(int index, Stream *in, size_t data_sz) {
+	view = in->ReadInt32();
+	loop = in->ReadInt32();
+	frame = in->ReadInt32();
 	ccRegisterUnserializedObject(index, this, this);
 }
 

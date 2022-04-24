@@ -46,9 +46,8 @@ void CCHotspot::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(shh->id);
 }
 
-void CCHotspot::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	int num = UnserializeInt();
+void CCHotspot::Unserialize(int index, Stream *in, size_t data_sz) {
+	int num = in->ReadInt32();
 	ccRegisterUnserializedObject(index, &_G(scrHotspot)[num], this);
 }
 

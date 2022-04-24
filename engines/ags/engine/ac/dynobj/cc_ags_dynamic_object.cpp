@@ -47,30 +47,6 @@ int AGSCCDynamicObject::Serialize(const char *address, char *buffer, int bufsize
 	return static_cast<int32_t>(mems.GetPosition());
 }
 
-void AGSCCDynamicObject::StartUnserialize(const char *sbuffer, int pTotalBytes) {
-	bytesSoFar = 0;
-	totalBytes = pTotalBytes;
-	serbuffer = const_cast<char *>(sbuffer);
-}
-
-int AGSCCDynamicObject::UnserializeInt() {
-	if (bytesSoFar >= totalBytes) // FIXME: don't use quit! return error instead
-		quit("Unserialise: internal error: read past EOF");
-
-	char *chptr = &serbuffer[bytesSoFar];
-	bytesSoFar += 4;
-	return BBOp::Int32FromLE(*((const int *)chptr));
-}
-
-float AGSCCDynamicObject::UnserializeFloat() {
-	if (bytesSoFar >= totalBytes) // FIXME: don't use quit! return error instead
-		quit("Unserialise: internal error: read past EOF");
-
-	char *chptr = &serbuffer[bytesSoFar];
-	bytesSoFar += 4;
-	return BBOp::FloatFromLE(*((const float *)chptr));
-}
-
 const char *AGSCCDynamicObject::GetFieldPtr(const char *address, intptr_t offset) {
 	return address + offset;
 }

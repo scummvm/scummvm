@@ -37,7 +37,8 @@ public:
 
 	// TODO: pass savegame format version
 	int Serialize(const char *address, char *buffer, int bufsize) override;
-	virtual void Unserialize(int index, const char *serializedData, int dataSize) = 0;
+	// Try unserializing the object from the given input stream
+	virtual void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) = 0;
 
 	// Legacy support for reading and writing object values by their relative offset
 	const char *GetFieldPtr(const char *address, intptr_t offset) override;
@@ -54,18 +55,10 @@ public:
 
 protected:
 	// Savegame serialization
-	// TODO: reimplement with the proper memory stream?!
-	int bytesSoFar = 0;
-	int totalBytes = 0;
-	char *serbuffer = nullptr;
-
 	// Calculate and return required space for serialization, in bytes
 	virtual size_t CalcSerializeSize() = 0;
 	// Write object data into the provided stream
 	virtual void Serialize(const char *address, AGS::Shared::Stream *out) = 0;
-	void StartUnserialize(const char *sbuffer, int pTotalBytes);
-	int  UnserializeInt();
-	float UnserializeFloat();
 };
 
 } // namespace AGS3

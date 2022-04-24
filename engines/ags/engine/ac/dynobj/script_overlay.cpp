@@ -67,12 +67,11 @@ void ScriptOverlay::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(isBackgroundSpeech);
 }
 
-void ScriptOverlay::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	overlayId = UnserializeInt();
-	borderWidth = UnserializeInt();
-	borderHeight = UnserializeInt();
-	isBackgroundSpeech = UnserializeInt();
+void ScriptOverlay::Unserialize(int index, Stream *in, size_t data_sz) {
+	overlayId = in->ReadInt32();
+	borderWidth = in->ReadInt32();
+	borderHeight = in->ReadInt32();
+	isBackgroundSpeech = in->ReadInt32();
 	ccRegisterUnserializedObject(index, this, this);
 }
 
