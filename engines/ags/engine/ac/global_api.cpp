@@ -717,11 +717,13 @@ RuntimeScriptValue Sc_GetWalkableAreaAtScreen(const RuntimeScriptValue *params, 
 }
 
 RuntimeScriptValue Sc_GetDrawingSurfaceForWalkableArea(const RuntimeScriptValue *params, int32_t param_count) {
+	(void)params; (void)param_count;
 	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaWalkable);
 	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
 }
 
 RuntimeScriptValue Sc_GetDrawingSurfaceForWalkbehind(const RuntimeScriptValue *params, int32_t param_count) {
+	(void)params; (void)param_count;
 	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaWalkBehind);
 	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
 }

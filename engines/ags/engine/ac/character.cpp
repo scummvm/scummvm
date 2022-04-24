@@ -3546,7 +3546,7 @@ void ScPl_Character_Think(CharacterInfo *chaa, const char *texx, ...) {
 	Character_Think(chaa, scsf_buffer);
 }
 
-void RegisterCharacterAPI(ScriptAPIVersion base_api, ScriptAPIVersion compat_api) {
+void RegisterCharacterAPI(ScriptAPIVersion base_api, ScriptAPIVersion /* compat_api */) {
 	ccAddExternalObjectFunction("Character::AddInventory^2",            Sc_Character_AddInventory);
 	ccAddExternalObjectFunction("Character::AddWaypoint^2",             Sc_Character_AddWaypoint);
 	ccAddExternalObjectFunction("Character::Animate^5",                 Sc_Character_Animate);

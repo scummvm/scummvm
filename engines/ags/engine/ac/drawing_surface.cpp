@@ -550,7 +550,7 @@ RuntimeScriptValue Sc_DrawingSurface_GetWidth(void *self, const RuntimeScriptVal
 //
 //=============================================================================
 
-void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion compat_api) {
+void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion /*compat_api */) {
 	ccAddExternalObjectFunction("DrawingSurface::Clear^1", Sc_DrawingSurface_Clear);
 	ccAddExternalObjectFunction("DrawingSurface::CreateCopy^0", Sc_DrawingSurface_CreateCopy);
 	ccAddExternalObjectFunction("DrawingSurface::DrawCircle^3", Sc_DrawingSurface_DrawCircle);
