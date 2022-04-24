@@ -385,13 +385,6 @@ public:
 	 */
 	enum {
 		/**
-		 * Events containing a pitch bend command should be treated as
-		 * single-byte padding before the  real event. This allows the
-		 * MidiParser to work with some malformed SMF files from Simon 1/2.
-		 */
-		mpMalformedPitchBends = 1,
-
-		/**
 		 * Sets auto-looping, which can be used by lightweight clients
 		 * that don't provide their own flow control.
 		 */

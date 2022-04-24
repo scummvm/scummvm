@@ -30,7 +30,6 @@
 class MidiParser_SMF : public MidiParser {
 protected:
 	byte *_buffer;
-	bool _malformedPitchBends;
 
 protected:
 	/**
@@ -48,11 +47,10 @@ protected:
 	void parseNextEvent(EventInfo &info) override;
 
 public:
-	MidiParser_SMF(int8 source = -1) : MidiParser(source), _buffer(nullptr), _malformedPitchBends(false) {}
+	MidiParser_SMF(int8 source = -1) : MidiParser(source), _buffer(nullptr) {}
 	~MidiParser_SMF();
 
 	bool loadMusic(byte *data, uint32 size) override;
-	void property(int property, int value) override;
 
 	int32 determineDataSize(Common::SeekableReadStream *stream) override;
 };

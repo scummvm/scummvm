@@ -33,32 +33,15 @@ MidiParser_SMF::~MidiParser_SMF() {
 	free(_buffer);
 }
 
-void MidiParser_SMF::property(int prop, int value) {
-	switch (prop) {
-	case mpMalformedPitchBends:
-		_malformedPitchBends = (value > 0);
-		break;
-	default:
-		MidiParser::property(prop, value);
-		break;
-	}
-}
-
 void MidiParser_SMF::parseNextEvent(EventInfo &info) {
 	info.start = _position._playPos;
 	info.delta = readVLQ(_position._playPos);
 
-	// Process the next info. If mpMalformedPitchBends
-	// was set, we must skip over any pitch bend events
-	// because they are from Simon games and are not
-	// real pitch bend events, they're just two-byte
-	// prefixes before the real info.
-	do {
-		if ((_position._playPos[0] & 0xF0) >= 0x80)
-			info.event = *(_position._playPos++);
-		else
-			info.event = _position._runningStatus;
-	} while (_malformedPitchBends && (info.event & 0xF0) == 0xE0 && _position._playPos++);
+	// Process the next info.
+	if ((_position._playPos[0] & 0xF0) >= 0x80)
+		info.event = *(_position._playPos++);
+	else
+		info.event = _position._runningStatus;
 	if (info.event < 0x80)
 		return;
 
@@ -135,11 +118,9 @@ void MidiParser_SMF::parseNextEvent(EventInfo &info) {
 bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
 	uint32 len;
 	byte midiType;
-	bool isGMF;
 
 	unloadMusic();
 	byte *pos = data;
-	isGMF = false;
 
 	if (!memcmp(pos, "RIFF", 4)) {
 		// Skip the outer RIFF header.
@@ -166,16 +147,8 @@ bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
 		}
 		_ppqn = pos[4] << 8 | pos[5];
 		pos += len;
-	} else if (!memcmp(pos, "GMF\x1", 4)) {
-		// Older GMD/MUS file with no header info.
-		// Assume 1 track, 192 PPQN, and no MTrk headers.
-		isGMF = true;
-		midiType = 0;
-		_numTracks = 1;
-		_ppqn = 192;
-		pos += 7; // 'GMD\x1' + 3 bytes of useless (translate: unknown) information
 	} else {
-		warning("Expected MThd or GMD header but found '%c%c%c%c' instead", pos[0], pos[1], pos[2], pos[3]);
+		warning("Expected MThd header but found '%c%c%c%c' instead", pos[0], pos[1], pos[2], pos[3]);
 		return false;
 	}
 
@@ -187,26 +160,17 @@ bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
 
 	int tracksRead = 0;
 	while (tracksRead < _numTracks) {
-		if (memcmp(pos, "MTrk", 4) && !isGMF) {
+		if (memcmp(pos, "MTrk", 4)) {
 			warning("Position: %p ('%c')", (void *)pos, *pos);
 			warning("Hit invalid block '%c%c%c%c' while scanning for track locations", pos[0], pos[1], pos[2], pos[3]);
 			return false;
 		}
 
-		// If needed, skip the MTrk and length bytes
-		_tracks[tracksRead] = pos + (isGMF ? 0 : 8);
-		if (!isGMF) {
-			pos += 4;
-			len = read4high(pos);
-			pos += len;
-		} else {
-			// An SMF End of Track meta event must be placed
-			// at the end of the stream.
-			data[size++] = 0xFF;
-			data[size++] = 0x2F;
-			data[size++] = 0x00;
-			data[size++] = 0x00;
-		}
+		// Skip the MTrk and length bytes
+		_tracks[tracksRead] = pos + 8;
+		pos += 4;
+		len = read4high(pos);
+		pos += len;
 		++tracksRead;
 	}
 
@@ -220,7 +184,7 @@ bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
 		// Inherit the Earth MIDIs. Jamieson630 said something about a
 		// better fix, but this will have to do in the meantime.
 		_buffer = (byte *)malloc(size * 2);
-		compressToType0(_tracks, _numTracks, _buffer, _malformedPitchBends);
+		compressToType0(_tracks, _numTracks, _buffer, false);
 		_numTracks = 1;
 		_tracks[0] = _buffer;
 	}
