@@ -208,12 +208,8 @@ void ags_mouse_get_relxy(int &x, int &y) {
 	_G(mouse_accum_rely) = 0;
 }
 
-void ags_domouse(int what) {
-	// do mouse is "update the mouse x,y and also the cursor position", unless DOMOUSE_NOCURSOR is set.
-	if (what == DOMOUSE_NOCURSOR)
-		mgetgraphpos();
-	else
-		domouse(what);
+void ags_domouse() {
+	mgetgraphpos();
 }
 
 int ags_check_mouse_wheel() {

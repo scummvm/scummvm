@@ -270,7 +270,7 @@ void disable_cursor_mode(int modd) {
 }
 
 void RefreshMouse() {
-	ags_domouse(DOMOUSE_NOCURSOR);
+	ags_domouse();
 	_GP(scmouse).x = game_to_data_coord(_G(mousex));
 	_GP(scmouse).y = game_to_data_coord(_G(mousey));
 }

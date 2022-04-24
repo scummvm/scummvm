@@ -44,6 +44,7 @@
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
+#include "ags/engine/ac/sys_events.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_object_addr_and_manager.h"
 #include "ags/engine/ac/dynobj/script_string.h"
@@ -340,10 +341,8 @@ void IAGSEngine::BlitSpriteRotated(int32 x, int32 y, BITMAP *bmp, int32 angle) {
 	rotate_sprite(ds->GetAllegroBitmap(), bmp, x, y, itofix(angle));
 }
 
-extern void domouse(int);
-
 void IAGSEngine::PollSystem() {
-	domouse(DOMOUSE_NOCURSOR);
+	ags_domouse();
 	update_polled_stuff_if_runtime();
 	int mbut, mwheelz;
 	if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0 && !_GP(play).IsIgnoringInput())
