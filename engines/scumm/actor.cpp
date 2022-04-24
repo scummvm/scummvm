@@ -1313,11 +1313,14 @@ void Actor_v3::walkActor() {
 			return;
 		}
 
-		// Can't walk through locked boxes
-		int flags = _vm->getBoxFlags(next_box);
-		if ((flags & kBoxLocked) && !((flags & kBoxPlayerOnly) && !isPlayer())) {
-			_moving |= MF_LAST_LEG;
-			return;
+		// This is version specific for ZAK FM-TOWNS. The flags check that is present in later SCUMM versions does not exist
+		// in SCUMM3. I have looked at disams of ZAK FM-TOWNS, LOOM FM-TOWNS, LOOM DOS EGA, INDY3 FM-TOWNS, INDY3 DOS VGA.
+		if (_vm->_game.id == GID_ZAK) {
+			// Check for equals, not for a bit mask (otherwise: bug no. 13399)
+			if (_vm->getBoxFlags(next_box) == kBoxLocked) {
+				_moving |= MF_LAST_LEG;
+				return;
+			}
 		}
 
 		_walkdata.curbox = next_box;
