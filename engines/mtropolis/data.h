@@ -150,15 +150,15 @@ bool isAsset(DataObjectType type);
 
 namespace StructuralFlags {
 	enum StructuralFlags {
+		kHasModifiers = 0x1,
 		kHasChildren = 0x4,
 		kNoMoreSiblings = 0x8,
 	};
 } // End of namespace StructuralFlags
 
 class DataReader {
-
 public:
-	DataReader(Common::SeekableReadStreamEndian &stream, ProjectFormat projectFormat);
+	DataReader(int64 globalPosition, Common::SeekableReadStreamEndian &stream, ProjectFormat projectFormat);
 
 	bool readU8(uint8 &value);
 	bool readU16(uint16 &value);
@@ -188,6 +188,7 @@ public:
 	bool skip(size_t count);
 
 	int64 tell() const;
+	inline int64 tellGlobal() const { return _globalPosition + tell(); }
 
 	ProjectFormat getProjectFormat() const;
 	bool isBigEndian() const;
@@ -197,6 +198,7 @@ private:
 
 	Common::SeekableReadStreamEndian &_stream;
 	ProjectFormat _projectFormat;
+	int64 _globalPosition;
 };
 
 struct Rect {
@@ -670,6 +672,9 @@ protected:
 };
 
 struct BehaviorModifier : public DataObject {
+	enum BehaviorFlags {
+		kBehaviorFlagSwitchable = 1,
+	};
 
 	uint32 modifierFlags;
 	uint32 sizeIncludingTag;
@@ -681,7 +686,7 @@ struct BehaviorModifier : public DataObject {
 	Point editorLayoutPosition;
 	uint16 lengthOfName;
 	uint16 numChildren;
-	uint32 flags;
+	uint32 behaviorFlags;
 	Event enableWhen;
 	Event disableWhen;
 	uint8 unknown7[2];
@@ -1310,6 +1315,44 @@ struct ColorTableAsset : public DataObject {
 	uint32 unknown2; // Usually zero-fill but sometimes contains 0xb
 
 	ColorRGB16 colors[256];
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct MovieAsset : public DataObject {
+	struct MacPart {
+		uint8 unknown5_1[66];
+		uint8 unknown6[12];
+	};
+
+	struct WinPart {
+		uint8 unknown3_1[32];
+		uint8 unknown4[12];
+		uint8 unknown7[12];
+	};
+
+	union PlatformPart {
+		MacPart mac;
+		WinPart win;
+	};
+
+	uint32 persistFlags;
+	uint32 assetAndDataCombinedSize;
+	uint8 unknown1[4];
+	uint32 assetID;
+	uint8 unknown1_1[4];
+	uint16 extFileNameLength;
+
+	uint32 movieDataPos;
+	uint32 moovAtomPos;
+	uint32 movieDataSize;
+
+	bool haveMacPart;
+	bool haveWinPart;
+	PlatformPart platform;
+
+	Common::String extFileName;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

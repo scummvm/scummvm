@@ -100,12 +100,15 @@ namespace MiniscriptInstructions {
 		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
-	class Send : public UnimplementedInstruction {
+	class Send : public MiniscriptInstruction {
 	public:
-		explicit Send(const Event &evt);
+		explicit Send(const Event &evt, const MessageFlags &messageFlags);
 
 	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
+
 		Event _evt;
+		MessageFlags _messageFlags;
 	};
 
 	class Add : public UnimplementedInstruction {
@@ -123,34 +126,68 @@ namespace MiniscriptInstructions {
 	class Pow : public UnimplementedInstruction {
 	};
 
-	class And : public UnimplementedInstruction {
+	class And : public MiniscriptInstruction {
+	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
-	class Or : public UnimplementedInstruction {
+	class Or : public MiniscriptInstruction {
+	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
 	class Neg : public UnimplementedInstruction {
 	};
 
-	class Not : public UnimplementedInstruction {
+	class Not : public MiniscriptInstruction {
+	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
-	class CmpEqual : public UnimplementedInstruction {
+	class OrderedCompareInstruction : public MiniscriptInstruction{
+	protected:
+		virtual bool compareFloat(double a, double b) const = 0;
+
+	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
-	class CmpNotEqual : public UnimplementedInstruction {
+	class UnorderedCompareInstruction : public MiniscriptInstruction {
+	protected:
+		virtual bool resolve(bool isEqual) const = 0;
+
+	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
-	class CmpLessOrEqual : public UnimplementedInstruction {
+	class CmpEqual : public UnorderedCompareInstruction {
+	private:
+		bool resolve(bool isEqual) const override { return isEqual; };
 	};
 
-	class CmpLess : public UnimplementedInstruction {
+	class CmpNotEqual : public UnorderedCompareInstruction {
+	private:
+		bool resolve(bool isEqual) const override { return !isEqual; };
 	};
 
-	class CmpGreaterOrEqual : public UnimplementedInstruction {
+	class CmpLessOrEqual : public OrderedCompareInstruction {
+	private:
+		bool compareFloat(double a, double b) const override { return a <= b; }
 	};
 
-	class CmpGreater : public UnimplementedInstruction {
+	class CmpLess : public OrderedCompareInstruction {
+	private:
+		bool compareFloat(double a, double b) const override { return a < b; }
+	};
+
+	class CmpGreaterOrEqual : public OrderedCompareInstruction {
+	private:
+		bool compareFloat(double a, double b) const override { return a >= b; }
+	};
+
+	class CmpGreater : public OrderedCompareInstruction {
+	private:
+		bool compareFloat(double a, double b) const override { return a > b; }
 	};
 
 	class BuiltinFunc : public UnimplementedInstruction {
@@ -193,7 +230,9 @@ namespace MiniscriptInstructions {
 	class StrConcat : public UnimplementedInstruction {
 	};
 
-	class PointCreate : public UnimplementedInstruction {
+	class PointCreate : public MiniscriptInstruction {
+	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
 	class RangeCreate : public UnimplementedInstruction {
@@ -290,11 +329,13 @@ namespace MiniscriptInstructions {
 		Common::String _str;
 	};
 
-	class Jump : public UnimplementedInstruction {
+	class Jump : public MiniscriptInstruction {
 	public:
 		Jump(uint32 instrOffset, bool isConditional);
 
 	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
+
 		uint32 _instrOffset;
 		bool _isConditional;
 	};
@@ -307,7 +348,6 @@ struct MiniscriptStackValue {
 
 class MiniscriptThread {
 public:
-
 	MiniscriptThread(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msgProps, const Common::SharedPtr<MiniscriptProgram> &program, const Common::SharedPtr<MiniscriptReferences> &refs, Modifier *modifier);
 
 	static void runOnVThread(VThread &vthread, const Common::SharedPtr<MiniscriptThread> &thread);
@@ -325,7 +365,9 @@ public:
 	size_t getStackSize() const;
 	MiniscriptStackValue &getStackValueFromTop(size_t offset);
 
-	MiniscriptInstructionOutcome dereferenceRValue(size_t offset);
+	MiniscriptInstructionOutcome dereferenceRValue(size_t offset, bool cloneLists);
+
+	void jumpOffset(size_t offset);
 
 private:
 	struct ResumeTaskData {

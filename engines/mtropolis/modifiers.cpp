@@ -31,7 +31,7 @@ bool BehaviorModifier::load(ModifierLoaderContext &context, const Data::Behavior
 	if (data.numChildren > 0) {
 		ChildLoaderContext loaderContext;
 		loaderContext.containerUnion.modifierContainer = this;
-		loaderContext.type = ChildLoaderContext::kTypeModifierList;
+		loaderContext.type = ChildLoaderContext::kTypeCountedModifierList;
 		loaderContext.remainingCount = data.numChildren;
 
 		context.childLoaderStack->contexts.push_back(loaderContext);
@@ -43,6 +43,8 @@ bool BehaviorModifier::load(ModifierLoaderContext &context, const Data::Behavior
 	_guid = data.guid;
 	_name = data.name;
 	_modifierFlags.load(data.modifierFlags);
+	_switchable = ((data.behaviorFlags & Data::BehaviorModifier::kBehaviorFlagSwitchable) != 0);
+	_isEnabled = !_switchable;
 
 	return true;
 }
@@ -56,8 +58,74 @@ void BehaviorModifier::appendModifier(const Common::SharedPtr<Modifier> &modifie
 	modifier->setParent(getSelfReference());
 }
 
+IModifierContainer *BehaviorModifier::getMessagePropagationContainer() {
+	if (_isEnabled)
+		return this;
+	else
+		return nullptr;
+}
+
 IModifierContainer* BehaviorModifier::getChildContainer() {
 	return this;
+}
+
+bool BehaviorModifier::respondsToEvent(const Event &evt) const {
+	if (_switchable) {
+		if (_enableWhen.respondsTo(evt))
+			return true;
+		if (_disableWhen.respondsTo(evt))
+			return true;
+	}
+	return false;
+}
+
+VThreadState BehaviorModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_switchable) {
+		if (_disableWhen.respondsTo(msg->getEvent())) {
+			SwitchTaskData *taskData = runtime->getVThread().pushTask(this, &BehaviorModifier::switchTask);
+			taskData->targetState = false;
+			taskData->eventID = EventIDs::kParentDisabled;
+			taskData->runtime = runtime;
+		}
+		if (_enableWhen.respondsTo(msg->getEvent())) {
+			SwitchTaskData *taskData = runtime->getVThread().pushTask(this, &BehaviorModifier::switchTask);
+			taskData->targetState = true;
+			taskData->eventID = EventIDs::kParentEnabled;
+			taskData->runtime = runtime;
+		}
+	}
+
+	return kVThreadReturn;
+}
+
+VThreadState BehaviorModifier::switchTask(const SwitchTaskData &taskData) {
+	if (_isEnabled != taskData.targetState) {
+		_isEnabled = taskData.targetState;
+
+		if (_children.size() > 0) {
+			PropagateTaskData *propagateData = taskData.runtime->getVThread().pushTask(this, &BehaviorModifier::propagateTask);
+			propagateData->eventID = taskData.eventID;
+			propagateData->index = 0;
+			propagateData->runtime = taskData.runtime;
+		}
+	}
+
+	return kVThreadReturn;
+}
+
+VThreadState BehaviorModifier::propagateTask(const PropagateTaskData &taskData) {
+	if (taskData.index + 1 < _children.size()) {
+		PropagateTaskData *propagateData = taskData.runtime->getVThread().pushTask(this, &BehaviorModifier::propagateTask);
+		propagateData->eventID = taskData.eventID;
+		propagateData->index = taskData.index + 1;
+		propagateData->runtime = taskData.runtime;
+	}
+
+	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(taskData.eventID, 0), DynamicValue(), this->getSelfReference()));
+	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, _children[taskData.index].get(), true, true));
+	taskData.runtime->sendMessageOnVThread(dispatch);
+
+	return kVThreadReturn;
 }
 
 Common::SharedPtr<Modifier> BehaviorModifier::shallowClone() const {
@@ -69,7 +137,6 @@ void BehaviorModifier::visitInternalReferences(IStructuralReferenceVisitor* visi
 		visitor->visitChildModifierRef(*it);
 	}
 }
-
 
 // Miniscript modifier
 bool MiniscriptModifier::load(ModifierLoaderContext &context, const Data::MiniscriptModifier &data) {
@@ -156,6 +223,10 @@ uint32 AliasModifier::getAliasID() const {
 	return _aliasID;
 }
 
+bool AliasModifier::isAlias() const {
+	return true;
+}
+
 bool ChangeSceneModifier::load(ModifierLoaderContext& context, const Data::ChangeSceneModifier& data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -172,11 +243,115 @@ bool ChangeSceneModifier::load(ModifierLoaderContext& context, const Data::Chang
 	else
 		return false;
 
+	_targetSectionGUID = data.targetSectionGUID;
+	_targetSubsectionGUID = data.targetSubsectionGUID;
+	_targetSceneGUID = data.targetSceneGUID;
+
 	_addToReturnList = ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagAddToReturnList) != 0);
 	_addToDestList = ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagAddToDestList) != 0);
-	_addToWrapAround = ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagWrapAround) != 0);
+	_wrapAround = ((data.changeSceneFlags & Data::ChangeSceneModifier::kChangeSceneFlagWrapAround) != 0);
 
 	return true;
+}
+
+bool ChangeSceneModifier::respondsToEvent(const Event &evt) const {
+	if (_executeWhen.respondsTo(evt))
+		return true;
+
+	return false;
+}
+
+VThreadState ChangeSceneModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties>& msg) {
+	if (_executeWhen.respondsTo(msg->getEvent())) {
+		Common::SharedPtr<Structural> targetScene;
+		if (_sceneSelectionType == kSceneSelectionTypeSpecific) {
+			Structural *project = runtime->getProject();
+			Structural *section = nullptr;
+			for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = project->getChildren().begin(), itEnd = project->getChildren().end(); it != itEnd; ++it) {
+				Structural *candidate = it->get();
+				assert(candidate->isSection());
+				if (candidate->getStaticGUID() == _targetSectionGUID) {
+					section = candidate;
+					break;
+				}
+			}
+
+			if (section) {
+				Structural *subsection = nullptr;
+				for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = section->getChildren().begin(), itEnd = section->getChildren().end(); it != itEnd; ++it) {
+					Structural *candidate = it->get();
+					assert(candidate->isSubsection());
+					if (candidate->getStaticGUID() == _targetSubsectionGUID) {
+						subsection = candidate;
+						break;
+					}
+				}
+
+				if (subsection) {
+					for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = subsection->getChildren().begin(), itEnd = subsection->getChildren().end(); it != itEnd; ++it) {
+						const Common::SharedPtr<Structural> &candidate = *it;
+						assert(candidate->isElement() && static_cast<const Element *>(candidate.get())->isVisual());
+						if (candidate->getStaticGUID() == _targetSceneGUID) {
+							targetScene = candidate;
+							break;
+						}
+					}
+				} else {
+					warning("Change Scene Modifier failed, subsection could not be resolved");
+				}
+			} else {
+				warning("Change Scene Modifier failed, section could not be resolved");
+			}
+		} else {
+			Structural *mainScene = runtime->getActiveMainScene().get();
+			if (mainScene) {
+				Structural *subsection = mainScene->getParent();
+
+				const Common::Array<Common::SharedPtr<Structural> > &scenes = subsection->getChildren();
+				if (scenes.size() == 1)
+					error("Scene list is invalid");
+
+				size_t sceneIndex = 0;
+				for (size_t i = 1; i < scenes.size(); i++) {
+					if (scenes[i].get() == mainScene) {
+						sceneIndex = i;
+						break;
+					}
+				}
+
+				if (sceneIndex == 0) {
+					warning("Change Scene Modifier failed, couldn't identify current scene's cyclical position");
+				} else {
+					if (_sceneSelectionType == kSceneSelectionTypePrevious) {
+						if (sceneIndex == 1) {
+							if (!_wrapAround)
+								return kVThreadReturn;
+							targetScene = scenes.back();
+						} else {
+							targetScene = scenes[sceneIndex - 1];
+						}
+					} else if (_sceneSelectionType == kSceneSelectionTypeNext) {
+
+						if (sceneIndex == scenes.size() - 1) {
+							if (!_wrapAround)
+								return kVThreadReturn;
+							targetScene = scenes[1];
+						} else {
+							targetScene = scenes[sceneIndex + 1];
+						}
+					}
+				}
+			}
+		}
+
+		if (targetScene) {
+			runtime->addSceneStateTransition(HighLevelSceneTransition(targetScene, HighLevelSceneTransition::kTypeChangeToScene, _addToDestList, _addToReturnList));
+		} else {
+			warning("Change Scene Modifier failed, subsection could not be resolved");
+		}
+	}
+
+	return kVThreadReturn;
 }
 
 Common::SharedPtr<Modifier> ChangeSceneModifier::shallowClone() const {
@@ -512,7 +687,7 @@ bool CompoundVariableModifier::load(ModifierLoaderContext &context, const Data::
 	if (data.numChildren > 0) {
 		ChildLoaderContext loaderContext;
 		loaderContext.containerUnion.modifierContainer = this;
-		loaderContext.type = ChildLoaderContext::kTypeModifierList;
+		loaderContext.type = ChildLoaderContext::kTypeCountedModifierList;
 		loaderContext.remainingCount = data.numChildren;
 
 		context.childLoaderStack->contexts.push_back(loaderContext);

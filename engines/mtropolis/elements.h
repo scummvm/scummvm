@@ -45,6 +45,33 @@ private:
 	bool _cacheBitmap;
 };
 
+class MovieElement : public VisualElement {
+public:
+	MovieElement();
+	~MovieElement();
+
+	bool load(ElementLoaderContext &context, const Data::MovieElement &data);
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Movie Element"; }
+#endif
+
+private:
+	bool scriptSetDirect(const DynamicValue &dest);
+	bool scriptSetPaused(const DynamicValue &dest);
+
+	bool _directToScreen;
+	bool _cacheBitmap;
+	bool _paused;
+	bool _loop;
+	bool _alternate;
+	bool _playEveryFrame;
+	uint32 _assetID;
+};
+
 } // End of namespace MTropolis
 
 #endif

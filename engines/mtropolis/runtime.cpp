@@ -107,6 +107,12 @@ void ModifierChildMaterializer::visitWeakModifierRef(Common::SharedPtr<Modifier>
 	// Do nothing
 }
 
+char invariantToLower(char c) {
+	if (c >= 'A' && c <= 'Z')
+		return static_cast<char>(c - 'A' + 'a');
+	return c;
+}
+
 Common::String toCaseInsensitive(const Common::String &str) {
 	uint strLen = str.size();
 	if (strLen == 0)
@@ -116,15 +122,25 @@ Common::String toCaseInsensitive(const Common::String &str) {
 	Common::Array<char> lowered;
 	lowered.resize(strLen);
 
-	for (uint i = 0; i < strLen; i++) {
-		char c = str[i];
-		if (c >= 'A' && c <= 'Z') {
-			c = static_cast<char>(c - 'A' + 'a');
-		}
-		lowered[i] = c;
-	}
+	for (uint i = 0; i < strLen; i++)
+		lowered[i] = invariantToLower(str[i]);
 
 	return Common::String(&lowered[0], strLen);
+}
+
+
+bool caseInsensitiveEqual(const Common::String& str1, const Common::String& str2) {
+	size_t length1 = str1.size();
+	size_t length2 = str2.size();
+	if (length1 != length2)
+		return false;
+
+	for (size_t i = 0; i < length1; i++) {
+		if (invariantToLower(str1[i]) != invariantToLower(str2[i]))
+			return false;
+	}
+
+	return true;
 }
 
 bool Point16::load(const Data::Point &point) {
@@ -1287,6 +1303,10 @@ const Common::WeakPtr<RuntimeObject>& RuntimeObject::getSelfReference() const {
 	return _selfReference;
 }
 
+bool RuntimeObject::isStructural() const {
+	return false;
+}
+
 bool RuntimeObject::isProject() const {
 	return false;
 }
@@ -1355,6 +1375,10 @@ Structural::~Structural() {
 ProjectPresentationSettings::ProjectPresentationSettings() : width(640), height(480), bitsPerPixel(8) {
 }
 
+bool Structural::isStructural() const {
+	return true;
+}
+
 const Common::Array<Common::SharedPtr<Structural> > &Structural::getChildren() const {
 	return _children;
 }
@@ -1379,6 +1403,14 @@ void Structural::removeChild(Structural* child) {
 			return;
 		}
 	}
+}
+
+void Structural::removeAllAssets() {
+	_assets.clear();
+}
+
+void Structural::holdAssets(const Common::Array<Common::SharedPtr<Asset> >& assets) {
+	_assets = assets;
 }
 
 Structural *Structural::getParent() const {
@@ -1447,17 +1479,19 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 	for (Common::Array<Common::SharedPtr<Modifier> >::iterator it = _modifiers.begin(), itEnd = _modifiers.end(); it != itEnd; ++it) {
 		Modifier *modifier = it->get();
 		uint32 modifierGUID = modifier->getStaticGUID();
-		if (modifier->isAlias() && !modifier->isVariable()) {
+		if (modifier->isAlias()) {
 			Common::SharedPtr<Modifier> templateModifier = runtime->getProject()->resolveAlias(static_cast<AliasModifier *>(modifier)->getAliasID());
 			if (!templateModifier) {
 				error("Failed to resolve alias");
 			}
 
-			Common::SharedPtr<Modifier> clonedModifier = templateModifier->shallowClone();
-			clonedModifier->setName(modifier->getName());
+			if (!modifier->isVariable()) {
+				Common::SharedPtr<Modifier> clonedModifier = templateModifier->shallowClone();
+				clonedModifier->setName(modifier->getName());
 
-			(*it) = clonedModifier;
-			modifier = clonedModifier.get();
+				(*it) = clonedModifier;
+				modifier = clonedModifier.get();
+			}
 		}
 		modifierScope->addObject(modifierGUID, modifier->getName(), *it);
 	}
@@ -1622,10 +1656,8 @@ HighLevelSceneTransition::HighLevelSceneTransition(const Common::SharedPtr<Struc
 	: scene(scene), type(type), addToDestinationScene(addToDestinationScene), addToReturnList(addToReturnList) {
 }
 
-MessageDispatch::MessageDispatch(const Event &evt, Structural *root, bool cascade, bool relay)
-	: _cascade(cascade), _relay(relay), _terminated(false) {
-	_msg.reset(new MessageProperties(evt, DynamicValue(), Common::WeakPtr<RuntimeObject>()));
-
+MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Structural *root, bool cascade, bool relay)
+	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps) {
 	PropagationStack topEntry;
 	topEntry.index = 0;
 	topEntry.propagationStage = PropagationStack::kStageSendToStructuralSelf;
@@ -1634,10 +1666,8 @@ MessageDispatch::MessageDispatch(const Event &evt, Structural *root, bool cascad
 	_propagationStack.push_back(topEntry);
 }
 
-MessageDispatch::MessageDispatch(const Event &evt, Modifier *root, bool cascade, bool relay)
-	: _cascade(cascade), _relay(relay), _terminated(false) {
-	_msg.reset(new MessageProperties(evt, DynamicValue(), Common::WeakPtr<RuntimeObject>()));
-
+MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Modifier *root, bool cascade, bool relay)
+	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps) {
 	PropagationStack topEntry;
 	topEntry.index = 0;
 	topEntry.propagationStage = PropagationStack::kStageSendToModifier;
@@ -1710,7 +1740,7 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 					PropagationStack childPropagation;
 					childPropagation.propagationStage = PropagationStack::kStageSendToStructuralSelf;
 					childPropagation.index = 0;
-					childPropagation.ptr.structural = structural;
+					childPropagation.ptr.structural = children[stackTop.index++].get();
 					_propagationStack.push_back(childPropagation);
 				}
 			} break;
@@ -1881,7 +1911,7 @@ bool Runtime::runProjectFrame() {
 
 		if (_sceneTransitionState == kSceneTransitionStateTransitioning && _playTime >= _sceneTransitionEndTime) {
 			_sceneTransitionState = kSceneTransitionStateNotTransitioning;
-			_messageQueue.push_back(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneTransitionEnded, 0), _activeMainScene.get(), false, true)));
+			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneTransitionEnded, 0), _activeMainScene.get(), false, true);
 			continue;
 		}
 
@@ -1969,6 +1999,7 @@ void Runtime::executeTeardown(const Teardown &teardown) {
 	if (teardown.onlyRemoveChildren) {
 		structural->removeAllChildren();
 		structural->removeAllModifiers();
+		structural->removeAllAssets();
 	} else {
 		Structural *parent = structural->getParent();
 
@@ -2028,8 +2059,8 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 		if (stackedScene == targetScene) {
 			sceneAlreadyInStack = true;
 		} else {
-			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), false, true))));
-			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true))));
+			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), false, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
 			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
 
 			if (stackedScene == targetSharedScene)
@@ -2041,14 +2072,14 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 
 	if (targetSharedScene != _activeSharedScene) {
 		if (_activeSharedScene) {
-			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), false, true))));
-			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true))));
+			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), false, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true);
 			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeSharedScene, LowLevelSceneStateTransitionAction::kUnload));
 		}
 
 		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kLoad));
-		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true))));
-		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), false, true))));
+		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true);
+		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), false, true);
 
 		SceneStackEntry sharedSceneEntry;
 		sharedSceneEntry.scene = targetScene;
@@ -2058,8 +2089,8 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 
 	if (!sceneAlreadyInStack) {
 		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetScene, LowLevelSceneStateTransitionAction::kLoad));
-		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentEnabled, 0), targetScene.get(), true, true))));
-		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), false, true))));
+		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetScene.get(), true, true);
+		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), false, true);
 
 		SceneStackEntry sceneEntry;
 		sceneEntry.scene = targetScene;
@@ -2103,11 +2134,11 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 
 				if (sceneReturn.isAddToDestinationSceneTransition) {
 					// In this case we unload the active main scene and reactivate the old main
-					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), false, true))));
-					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true))));
+					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), false, true);
+					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
 					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
 
-					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneReactivated, 0), _activeMainScene.get(), false, true))));
+					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneReactivated, 0), sceneReturn.scene.get(), false, true);
 
 					_activeMainScene = sceneReturn.scene;
 
@@ -2137,18 +2168,18 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 					if (_activeMainScene == targetSharedScene)
 						error("Transitioned into scene currently being used as a target scene, this is not supported");
 
-					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneDeactivated, 0), _activeMainScene.get(), false, true))));
+					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneDeactivated, 0), _activeMainScene.get(), false, true);
 
 					if (targetSharedScene != _activeSharedScene) {
 						if (_activeSharedScene) {
-							_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), false, true))));
-							_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true))));
+							queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), false, true);
+							queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true);
 							_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeSharedScene, LowLevelSceneStateTransitionAction::kUnload));
 						}
 
 						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kLoad));
-						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true))));
-						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), false, true))));
+						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true);
+						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), false, true);
 
 						SceneStackEntry sharedSceneEntry;
 						sharedSceneEntry.scene = targetScene;
@@ -2169,8 +2200,8 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 					// This is probably wrong if it's already in the stack, but transitioning to already-in-stack scenes is extremely buggy in mTropolis Player anyway
 					if (!sceneAlreadyInStack) {
 						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetScene, LowLevelSceneStateTransitionAction::kLoad));
-						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kParentEnabled, 0), targetScene.get(), true, true))));
-						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), false, true))));
+						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetScene.get(), true, true);
+						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), false, true);
 
 						SceneStackEntry sceneEntry;
 						sceneEntry.scene = targetScene;
@@ -2197,13 +2228,19 @@ void Runtime::executeSharedScenePostSceneChangeActions() {
 
 	const Common::Array<Common::SharedPtr<Structural> > &subsectionScenes = subsection->getChildren();
 
-	_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSharedSceneSceneChanged, 0), _activeSharedScene.get(), false, true))));
+	queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSharedSceneSceneChanged, 0), _activeSharedScene.get(), false, true);
 	if (subsectionScenes.size() > 1) {
 		if (_activeMainScene == subsectionScenes[subsectionScenes.size() - 1])
-			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSharedSceneNoNextScene, 0), _activeSharedScene.get(), false, true))));
+			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSharedSceneNoNextScene, 0), _activeSharedScene.get(), false, true);
 		if (_activeMainScene == subsectionScenes[1])
-			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(Common::SharedPtr<MessageDispatch>(new MessageDispatch(Event::create(EventIDs::kSharedSceneNoPrevScene, 0), _activeSharedScene.get(), false, true))));
+			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSharedSceneNoPrevScene, 0), _activeSharedScene.get(), false, true);
 	}
+}
+
+void Runtime::queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay) {
+	Common::SharedPtr<MessageProperties> props(new MessageProperties(evt, DynamicValue(), Common::WeakPtr<RuntimeObject>()));
+	Common::SharedPtr<MessageDispatch> msg(new MessageDispatch(props, root, cascade, relay));
+	_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(msg));
 }
 
 void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
@@ -2505,7 +2542,7 @@ void Project::loadFromDescription(const ProjectDescription& desc) {
 		error("Unrecognized project segment header");
 	}
 
-	Data::DataReader reader(stream, _projectFormat);
+	Data::DataReader reader(2, stream, _projectFormat);
 
 	Common::SharedPtr<Data::DataObject> dataObject;
 	Data::loadDataObject(_plugInRegistry.getDataLoaderRegistry(), reader, dataObject);
@@ -2578,7 +2615,7 @@ void Project::loadSceneFromStream(const Common::SharedPtr<Structural>& scene, ui
 	openSegmentStream(segmentIndex);
 
 	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
-	Data::DataReader reader(stream, _projectFormat);
+	Data::DataReader reader(streamDesc.pos, stream, _projectFormat);
 
 	const Data::PlugInModifierRegistry &plugInDataLoaderRegistry = _plugInRegistry.getDataLoaderRegistry();
 
@@ -2630,9 +2667,11 @@ void Project::loadSceneFromStream(const Common::SharedPtr<Structural>& scene, ui
 		numObjectsLoaded++;
 	}
 
-	if (loaderStack.contexts.size() != 1 || loaderStack.contexts[0].type != ChildLoaderContext::kTypeFilteredElements) {
+	if ((loaderStack.contexts.size() == 1 && loaderStack.contexts[0].type != ChildLoaderContext::kTypeFilteredElements) || loaderStack.contexts.size() > 1) {
 		error("Scene stream loader finished in an expected state, something didn't finish loading");
 	}
+
+	scene->holdAssets(assetDefLoader.assets);
 }
 
 Common::SharedPtr<Modifier> Project::resolveAlias(uint32 aliasID) const {
@@ -2692,7 +2731,7 @@ void Project::loadBootStream(size_t streamIndex) {
 	openSegmentStream(segmentIndex);
 
 	Common::SeekableSubReadStreamEndian stream(_segments[segmentIndex].weakStream, streamDesc.pos, streamDesc.pos + streamDesc.size, _isBigEndian);
-	Data::DataReader reader(stream, _projectFormat);
+	Data::DataReader reader(streamDesc.pos, stream, _projectFormat);
 
 	ChildLoaderStack loaderStack;
 	AssetDefLoaderContext assetDefLoader;
@@ -2761,6 +2800,8 @@ void Project::loadBootStream(size_t streamIndex) {
 	if (loaderStack.contexts.size() != 1 || loaderStack.contexts[0].type != ChildLoaderContext::kTypeProject) {
 		error("Boot stream loader finished in an expected state, something didn't finish loading");
 	}
+
+	holdAssets(assetDefLoader.assets);
 }
 
 void Project::loadPresentationSettings(const Data::PresentationSettings &presentationSettings) {
@@ -2818,7 +2859,7 @@ void Project::loadGlobalObjectInfo(ChildLoaderStack& loaderStack, const Data::Gl
 		ChildLoaderContext loaderContext;
 		loaderContext.containerUnion.modifierContainer = &_globalModifiers;
 		loaderContext.remainingCount = globalObjectInfo.numGlobalModifiers;
-		loaderContext.type = ChildLoaderContext::kTypeModifierList;
+		loaderContext.type = ChildLoaderContext::kTypeCountedModifierList;
 
 		loaderStack.contexts.push_back(loaderContext);
 	}
@@ -2834,6 +2875,7 @@ Common::SharedPtr<Modifier> Project::loadModifierObject(ModifierLoaderContext &l
 	// Special case for plug-ins
 	if (dataObject.getType() == Data::DataObjectTypes::kPlugInModifier) {
 		const Data::PlugInModifier &plugInData = static_cast<const Data::PlugInModifier &>(dataObject);
+
 		const IPlugInModifierFactory *factory = _plugInRegistry.findPlugInModifierFactory(plugInData.modifierName);
 		if (!factory)
 			error("Unknown or unsupported plug-in modifier type");
@@ -2847,6 +2889,7 @@ Common::SharedPtr<Modifier> Project::loadModifierObject(ModifierLoaderContext &l
 
 		modifier = factory->createModifier(loaderContext, dataObject);
 	}
+	assert(modifier->getModifierFlags().flagsWereLoaded);
 	if (!modifier)
 		error("Modifier object failed to load");
 
@@ -2926,7 +2969,7 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 	// The stack entry must always be popped before loading the object because the load process may descend into more children,
 	// such as when behaviors are nested.
 	switch (topContext.type) {
-	case ChildLoaderContext::kTypeModifierList: {
+	case ChildLoaderContext::kTypeCountedModifierList: {
 			IModifierContainer *container = topContext.containerUnion.modifierContainer;
 
 			if ((--topContext.remainingCount) == 0)
@@ -2935,6 +2978,20 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 			ModifierLoaderContext loaderContext(&stack);
 
 			container->appendModifier(loadModifierObject(loaderContext, dataObject));
+		} break;
+	case ChildLoaderContext::kTypeFlagTerminatedModifierList: {
+		IModifierContainer *container = topContext.containerUnion.modifierContainer;
+
+			size_t modifierListContextOffset = stack.contexts.size() - 1;
+
+			ModifierLoaderContext loaderContext(&stack);
+
+			Common::SharedPtr<Modifier> modifier = loadModifierObject(loaderContext, dataObject);
+
+			if (modifier->getModifierFlags().isLastModifier)
+				stack.contexts.remove_at(modifierListContextOffset);
+
+			container->appendModifier(modifier);
 		} break;
 	case ChildLoaderContext::kTypeProject: {
 			Structural *project = topContext.containerUnion.structural;
@@ -2963,6 +3020,14 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 					loaderContext.containerUnion.structural = section.get();
 					loaderContext.remainingCount = 0;
 					loaderContext.type = ChildLoaderContext::kTypeSection;
+
+					stack.contexts.push_back(loaderContext);
+				}
+
+				if (sectionObject.structuralFlags & Data::StructuralFlags::kHasModifiers) {
+					ChildLoaderContext loaderContext;
+					loaderContext.containerUnion.modifierContainer = section.get();
+					loaderContext.type = ChildLoaderContext::kTypeFlagTerminatedModifierList;
 
 					stack.contexts.push_back(loaderContext);
 				}
@@ -2996,6 +3061,14 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 					loaderContext.containerUnion.filteredElements.filterFunc = Data::DataObjectTypes::isValidSceneRootElement;
 					loaderContext.remainingCount = 0;
 					loaderContext.type = ChildLoaderContext::kTypeFilteredElements;
+
+					stack.contexts.push_back(loaderContext);
+				}
+
+				if (subsectionObject.structuralFlags & Data::StructuralFlags::kHasModifiers) {
+					ChildLoaderContext loaderContext;
+					loaderContext.containerUnion.modifierContainer = subsection.get();
+					loaderContext.type = ChildLoaderContext::kTypeFlagTerminatedModifierList;
 
 					stack.contexts.push_back(loaderContext);
 				}
@@ -3033,6 +3106,14 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 					loaderContext.containerUnion.filteredElements.structural = container;
 					loaderContext.remainingCount = 0;
 					loaderContext.type = ChildLoaderContext::kTypeFilteredElements;
+
+					stack.contexts.push_back(loaderContext);
+				}
+
+				if (structuralDef.structuralFlags & Data::StructuralFlags::kHasModifiers) {
+					ChildLoaderContext loaderContext;
+					loaderContext.containerUnion.modifierContainer = element.get();
+					loaderContext.type = ChildLoaderContext::kTypeFlagTerminatedModifierList;
 
 					stack.contexts.push_back(loaderContext);
 				}
@@ -3116,13 +3197,44 @@ bool VisualElement::isVisual() const {
 	return true;
 }
 
+bool VisualElement::isVisible() const {
+	return _visible;
+}
+
+bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "visible") {
+		result.setBool(_visible);
+		return true;
+	}
+
+	return Element::readAttribute(thread, result, attrib);
+}
+
+bool VisualElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "visible") {
+		writeProxy = DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetVisibility>::create(this);
+		return true;
+	}
+
+	return Element::writeRefAttribute(thread, writeProxy, attrib);
+}
+
+bool VisualElement::scriptSetVisibility(const DynamicValue& result) {
+	if (result.getType() == DynamicValueTypes::kBoolean) {
+		_visible = result.getBool();
+		return true;
+	}
+
+	return false;
+}
+
 bool VisualElement::loadCommon(const Common::String &name, uint32 guid, const Data::Rect &rect, uint32 elementFlags, uint16 layer, uint32 streamLocator, uint16 sectionID) {
 	if (!_rect.load(rect))
 		return false;
 
 	_name = name;
 	_guid = guid;
-	_isHidden = ((elementFlags & Data::ElementFlags::kHidden) != 0);
+	_visible = ((elementFlags & Data::ElementFlags::kHidden) == 0);
 	_streamLocator = streamLocator;
 	_sectionID = sectionID;
 	_layer = layer;
@@ -3135,11 +3247,12 @@ bool NonVisualElement::isVisual() const {
 }
 
 
-ModifierFlags::ModifierFlags() : isLastModifier(false) {
+ModifierFlags::ModifierFlags() : isLastModifier(false), flagsWereLoaded(false) {
 }
 
 bool ModifierFlags::load(const uint32 dataModifierFlags) {
 	isLastModifier = ((dataModifierFlags & 0x2) != 0);
+	flagsWereLoaded = true;
 	return true;
 }
 
@@ -3221,12 +3334,17 @@ const Common::String& Modifier::getName() const {
 	return _name;
 }
 
+const ModifierFlags& Modifier::getModifierFlags() const {
+	return _modifierFlags;
+}
+
 void Modifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
 }
 
 bool Modifier::loadPlugInHeader(const PlugInModifierLoaderContext &plugInContext) {
 	_guid = plugInContext.plugInModifierData.guid;
 	_name = plugInContext.plugInModifierData.name;
+	_modifierFlags.load(plugInContext.plugInModifierData.modifierFlags);
 
 	return true;
 }

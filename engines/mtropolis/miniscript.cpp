@@ -29,6 +29,21 @@
 
 namespace MTropolis {
 
+static bool miniscriptEvaluateTruth(const DynamicValue& value) {
+	// NOTE: Comparing equal to "true" only passes for 1 exactly, but for conditions,
+	// any non-zero value is true.
+	switch (value.getType()) {
+	case DynamicValueTypes::kBoolean:
+		return value.getBool();
+	case DynamicValueTypes::kInteger:
+		return (value.getInt() != 0);
+	case DynamicValueTypes::kFloat:
+		return !(value.getFloat() == 0.0);
+	default:
+		return false;
+	}
+}
+
 MiniscriptInstruction::~MiniscriptInstruction() {
 }
 
@@ -89,7 +104,12 @@ bool MiniscriptInstructionLoader<MiniscriptInstructions::Send>::loadInstruction(
 	if (!evt.load(dataEvent))
 		return false;
 
-	new (dest) MiniscriptInstructions::Send(evt);
+	MessageFlags msgFlags;
+	msgFlags.immediate = ((instrFlags & 0x04) == 0);
+	msgFlags.cascade = ((instrFlags & 0x08) == 0);
+	msgFlags.relay = ((instrFlags & 0x10) == 0);
+
+	new (dest) MiniscriptInstructions::Send(evt, msgFlags);
 	return true;
 }
 
@@ -270,7 +290,7 @@ bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::Sha
 	}
 
 	Common::MemoryReadStreamEndian stream(&program.bytecode[0], program.bytecode.size(), program.isBigEndian);
-	Data::DataReader reader(stream, program.projectFormat);
+	Data::DataReader reader(0, stream, program.projectFormat);
 
 	struct InstructionData {
 		uint16 opcode;
@@ -346,7 +366,7 @@ bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::Sha
 			dataLoc = &rawInstruction.contents[0];
 
 		Common::MemoryReadStreamEndian instrContentsStream(static_cast<const byte *>(dataLoc), rawInstruction.contents.size(), reader.isBigEndian());
-		Data::DataReader instrContentsReader(instrContentsStream, reader.getProjectFormat());
+		Data::DataReader instrContentsReader(0, instrContentsStream, reader.getProjectFormat());
 
 		if (!rawInstruction.instrFactory->create(&programData[baseOffset + rawInstruction.pdPosition], rawInstruction.flags, instrContentsReader, miniscriptInstructions[i])) {
 			// Destroy any already-created instructions
@@ -448,7 +468,7 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 	}
 
 	// Convert value
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
@@ -484,10 +504,306 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-Send::Send(const Event &evt) : _evt(evt) {
+Send::Send(const Event &evt, const MessageFlags &messageFlags) : _evt(evt), _messageFlags(messageFlags) {
+}
+
+MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 2) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	outcome = thread->dereferenceRValue(1, true);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	DynamicValue &targetValue = thread->getStackValueFromTop(0).value;
+	DynamicValue &payloadValue = thread->getStackValueFromTop(1).value;
+
+	if (targetValue.getType() != DynamicValueTypes::kObject) {
+		thread->error("Invalid message destination");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	Common::SharedPtr<RuntimeObject> obj = targetValue.getObject().lock();
+
+	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(_evt, payloadValue, thread->getModifier()->getSelfReference()));
+	Common::SharedPtr<MessageDispatch> dispatch;
+	if (obj->isModifier())
+		dispatch.reset(new MessageDispatch(msgProps, static_cast<Modifier *>(obj.get()), _messageFlags.cascade, _messageFlags.relay));
+	else if (obj->isStructural())
+		dispatch.reset(new MessageDispatch(msgProps, static_cast<Structural *>(obj.get()), _messageFlags.cascade, _messageFlags.relay));
+	else {
+		thread->error("Message destination is not a structural object or modifier");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	thread->popValues(2);
+
+	if (_messageFlags.immediate) {
+		thread->getRuntime()->sendMessageOnVThread(dispatch);
+		return kMiniscriptInstructionOutcomeYieldToVThread;
+	} else {
+		thread->getRuntime()->queueMessage(dispatch);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+}
+
+MiniscriptInstructionOutcome UnorderedCompareInstruction::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 2) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	outcome = thread->dereferenceRValue(1, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	DynamicValue &rs = thread->getStackValueFromTop(0).value;
+	DynamicValue &lsDest = thread->getStackValueFromTop(1).value;
+
+	bool isEqual = false;
+	bool isUndefined = false;
+	switch (lsDest.getType()) {
+	case DynamicValueTypes::kString:
+		if (rs.getType() == DynamicValueTypes::kString)
+			isEqual = caseInsensitiveEqual(lsDest.getString(), rs.getString());
+		break;
+	case DynamicValueTypes::kBoolean: {
+			switch (rs.getType()) {
+			case DynamicValueTypes::kInteger:
+				isEqual = (rs.getInt() == (lsDest.getBool() ? 1 : 0));
+				break;
+			case DynamicValueTypes::kFloat:
+				isEqual = (rs.getFloat() == (lsDest.getBool() ? 1.0 : 0.0));
+				break;
+			case DynamicValueTypes::kBoolean:
+				isEqual = (rs.getBool() == lsDest.getBool());
+				break;
+			}
+		} break;
+	case DynamicValueTypes::kFloat: {
+			if (isnan(lsDest.getFloat()))
+				isUndefined = true;
+			else {
+				switch (rs.getType()) {
+				case DynamicValueTypes::kInteger:
+					isEqual = (rs.getInt() == lsDest.getFloat());
+					break;
+				case DynamicValueTypes::kFloat:
+					if (isnan(rs.getFloat()))
+						isUndefined = true;
+					else
+						isEqual = (rs.getFloat() == lsDest.getFloat());
+					break;
+				case DynamicValueTypes::kBoolean:
+					isEqual = ((rs.getBool() ? 1.0 : 0.0) == lsDest.getFloat());
+					break;
+				}
+			}
+		} break;
+	case DynamicValueTypes::kInteger: {
+			switch (rs.getType()) {
+			case DynamicValueTypes::kInteger:
+				isEqual = (rs.getInt() == lsDest.getInt());
+				break;
+			case DynamicValueTypes::kFloat:
+				if (isnan(rs.getFloat()))
+					isUndefined = true;
+				else
+					isEqual = (rs.getFloat() == lsDest.getInt());
+				break;
+			case DynamicValueTypes::kBoolean:
+				isEqual = ((rs.getBool() ? 1 : 0) == lsDest.getInt());
+				break;
+			}
+		} break;
+	default:
+		isEqual = (lsDest == rs);
+		break;
+	}
+
+	lsDest.setBool(isUndefined == false && this->resolve(isEqual));
+	thread->popValues(1);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+
+MiniscriptInstructionOutcome And::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 2) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	outcome = thread->dereferenceRValue(1, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	DynamicValue &rs = thread->getStackValueFromTop(0).value;
+	DynamicValue &lsDest = thread->getStackValueFromTop(1).value;
+	lsDest.setBool(miniscriptEvaluateTruth(lsDest) && miniscriptEvaluateTruth(rs));
+
+	thread->popValues(1);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome Or::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 2) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	outcome = thread->dereferenceRValue(1, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	DynamicValue &rs = thread->getStackValueFromTop(0).value;
+	DynamicValue &lsDest = thread->getStackValueFromTop(1).value;
+	lsDest.setBool(miniscriptEvaluateTruth(lsDest) || miniscriptEvaluateTruth(rs));
+
+	thread->popValues(1);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome Not::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 1) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	DynamicValue &value = thread->getStackValueFromTop(0).value;
+	value.setBool(!miniscriptEvaluateTruth(value));
+
+	thread->popValues(1);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome OrderedCompareInstruction::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 2) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	outcome = thread->dereferenceRValue(1, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	DynamicValue &rs = thread->getStackValueFromTop(0).value;
+	DynamicValue &lsDest = thread->getStackValueFromTop(1).value;
+
+	double leftValue = 0.0;
+	double rightValue = 0.0;
+	if (lsDest.getType() == DynamicValueTypes::kFloat)
+		leftValue = lsDest.getFloat();
+	else if (lsDest.getType() == DynamicValueTypes::kInteger)
+		leftValue = lsDest.getInt();
+	else {
+		thread->error("Left-side value is invalid for comparison");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	if (rs.getType() == DynamicValueTypes::kFloat)
+		rightValue = rs.getFloat();
+	else if (rs.getType() == DynamicValueTypes::kInteger)
+		rightValue = rs.getInt();
+	else {
+		thread->error("Right-side value is invalid for comparison");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	lsDest.setBool(this->compareFloat(leftValue, rightValue));
+	thread->popValues(1);
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 BuiltinFunc::BuiltinFunc(BuiltinFunctionID bfid) : _funcID(bfid) {
+}
+
+MiniscriptInstructionOutcome PointCreate::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 2) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	outcome = thread->dereferenceRValue(1, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	DynamicValue &yVal = thread->getStackValueFromTop(0).value;
+	DynamicValue &xValDest = thread->getStackValueFromTop(1).value;
+
+	int16 coords[2];
+	DynamicValue *coordInputs[2] = {&xValDest, &yVal};
+
+	for (int i = 0; i < 2; i++) {
+		DynamicValue *v = coordInputs[i];
+		DynamicValue listContents;
+
+		if (v->getType() == DynamicValueTypes::kList) {
+			// Yes this is actually allowed
+			const Common::SharedPtr<DynamicList> &list = v->getList();
+			if (list->getSize() != 1 || !list->getAtIndex(0, listContents)) {
+				thread->error("Can't convert list to integer");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+
+			v = &listContents;
+		}
+
+		switch (v->getType()) {
+		case DynamicValueTypes::kFloat:
+			coords[i] = static_cast<int16>(floor(v->getFloat() + 0.5)) & 0xffff;
+			break;
+		case DynamicValueTypes::kInteger:
+			coords[i] = static_cast<int16>(v->getInt());
+			break;
+		case DynamicValueTypes::kBoolean:
+			coords[i] = (v->getBool()) ? 1 : 0;
+			break;
+		default:
+			thread->error("Invalid input for point creation");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+	}
+
+	xValDest.setPoint(Point16::create(coords[0], coords[1]));
+
+	thread->popValues(1);
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 GetChild::GetChild(uint32 attribute, bool isLValue, bool isIndexed)
@@ -510,7 +826,7 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 		}
 
 		// Convert index
-		MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0);
+		MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
 		if (outcome != kMiniscriptInstructionOutcomeContinue)
 			return outcome;
 
@@ -563,10 +879,13 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 					return kMiniscriptInstructionOutcomeFailed;
 				}
 
-				if (!obj->readAttribute(thread, indexableValueSlot.value, attrib)) {
+				DynamicValueWriteProxy writeProxy;
+				if (!obj->writeRefAttribute(thread, writeProxy, attrib)) {
 					thread->error("Failed to read attribute '" + attrib + "'");
 					return kMiniscriptInstructionOutcomeFailed;
 				}
+
+				indexableValueSlot.value.setWriteProxy(nullptr, writeProxy);
 			} else if (indexableValueSlot.value.getType() == DynamicValueTypes::kWriteProxy) {
 				const DynamicValueWriteProxy &proxy = indexableValueSlot.value.getWriteProxy();
 				if (!proxy.ifc->refAttrib(indexableValueSlot.value, proxy.objectRef, proxy.ptrOrOffset, attrib)) {
@@ -613,10 +932,10 @@ MiniscriptInstructionOutcome GetChild::readRValueAttrib(MiniscriptThread *thread
 	case DynamicValueTypes::kObject: {
 			Common::SharedPtr<RuntimeObject> obj = valueSrcDest.getObject().lock();
 			if (!obj) {
-				thread->error("Unable to read attrib '" + attrib + "' from invalid object");
+				thread->error("Unable to read attribute '" + attrib + "' from invalid object");
 				return kMiniscriptInstructionOutcomeFailed;
 			} else if (!obj->readAttribute(thread, valueSrcDest, attrib)) {
-				thread->error("Unable to read attrib '" + attrib + "'");
+				thread->error("Unable to read attribute '" + attrib + "'");
 				return kMiniscriptInstructionOutcomeFailed;
 			}
 		} break;
@@ -682,7 +1001,7 @@ MiniscriptInstructionOutcome PushValue::execute(MiniscriptThread *thread) const 
 		value.setFloat(_value.f);
 		break;
 	case DataType::kDataTypeBool:
-		value.setFloat(_value.b);
+		value.setBool(_value.b);
 		break;
 	case DataType::kDataTypeLocalRef:
 		value.setObject(thread->getRefs()->getRefByIndex(_value.ref));
@@ -802,6 +1121,30 @@ PushString::PushString(const Common::String &str) : _str(str) {
 Jump::Jump(uint32 instrOffset, bool isConditional) : _instrOffset(instrOffset), _isConditional(isConditional) {
 }
 
+MiniscriptInstructionOutcome Jump::execute(MiniscriptThread *thread) const {
+	if (_isConditional) {
+		if (thread->getStackSize() < 1) {
+			thread->error("Stack underflow");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+
+		MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+		if (outcome != kMiniscriptInstructionOutcomeContinue)
+			return outcome;
+
+		bool isTrue = miniscriptEvaluateTruth(thread->getStackValueFromTop(0).value);
+
+		thread->popValues(1);
+
+		if (!isTrue)
+			thread->jumpOffset(this->_instrOffset);
+	} else {
+		thread->jumpOffset(this->_instrOffset);
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 } // End of namespace MiniscriptInstructions
 
 MiniscriptThread::MiniscriptThread(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msgProps, const Common::SharedPtr<MiniscriptProgram> &program, const Common::SharedPtr<MiniscriptReferences> &refs, Modifier *modifier)
@@ -865,7 +1208,7 @@ MiniscriptStackValue &MiniscriptThread::getStackValueFromTop(size_t offset) {
 	return _stack[_stack.size() - 1 - offset];
 }
 
-MiniscriptInstructionOutcome MiniscriptThread::dereferenceRValue(size_t offset) {
+MiniscriptInstructionOutcome MiniscriptThread::dereferenceRValue(size_t offset, bool cloneLists) {
 	assert(offset < _stack.size());
 	MiniscriptStackValue &stackValue = _stack[_stack.size() - 1 - offset];
 
@@ -890,11 +1233,25 @@ MiniscriptInstructionOutcome MiniscriptThread::dereferenceRValue(size_t offset) 
 			}
 		}
 		break;
+	case DynamicValueTypes::kList:
+			if (cloneLists)
+				stackValue.value.setList(stackValue.value.getList()->clone());
+			break;
 	default:
 		break;
 	}
 
 	return kMiniscriptInstructionOutcomeContinue;
+}
+
+void MiniscriptThread::jumpOffset(size_t offset) {
+	if (offset == 0) {
+		this->error("Invalid jump offset");
+		_failed = true;
+		return;
+	}
+
+	_currentInstruction += offset - 1;
 }
 
 VThreadState MiniscriptThread::resumeTask(const ResumeTaskData &data) {

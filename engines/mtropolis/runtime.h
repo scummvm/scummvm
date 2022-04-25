@@ -79,7 +79,9 @@ struct PlugInModifierLoaderContext;
 template<typename TElement, typename TElementData> class ElementFactory;
 
 
+char invariantToLower(char c);
 Common::String toCaseInsensitive(const Common::String &str);
+bool caseInsensitiveEqual(const Common::String &str1, const Common::String &str2);
 
 enum ColorDepthMode {
 	kColorDepthMode1Bit,
@@ -383,6 +385,33 @@ struct DynamicValueWriteProxy {
 	void *objectRef;
 	IDynamicValueWriteInterface *ifc;
 };
+
+template<class TClass, bool (TClass::*TWriteMethod)(const DynamicValue &dest)>
+struct DynamicValueWriteFuncHelper : public IDynamicValueWriteInterface {
+	bool write(const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const override {
+		return (static_cast<TClass *>(objectRef)->*TWriteMethod)(dest);
+	}
+	bool refAttrib(DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const override {
+		return false;
+	}
+	bool refAttribIndexed(DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override {
+		return false;
+	}
+
+	static DynamicValueWriteProxy create(TClass *obj) {
+		DynamicValueWriteProxy proxy;
+		proxy.ptrOrOffset = 0;
+		proxy.objectRef = obj;
+		proxy.ifc = &_instance;
+		return proxy;
+	}
+
+private:
+	static DynamicValueWriteFuncHelper _instance;
+};
+
+template<class TClass, bool (TClass::*TWriteMethod)(const DynamicValue &dest)>
+DynamicValueWriteFuncHelper<TClass, TWriteMethod> DynamicValueWriteFuncHelper<TClass, TWriteMethod>::_instance;
 
 class DynamicListContainerBase {
 public:
@@ -851,8 +880,8 @@ struct SceneTransitionEffect {
 
 class MessageDispatch {
 public:
-	MessageDispatch(const Event &evt, Structural *root, bool cascade, bool relay);
-	MessageDispatch(const Event &evt, Modifier *root, bool cascade, bool relay);
+	MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Structural *root, bool cascade, bool relay);
+	MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Modifier *root, bool cascade, bool relay);
 
 	bool isTerminated() const;
 	VThreadState continuePropagating(Runtime *runtime);
@@ -934,6 +963,10 @@ public:
 
 	VThread &getVThread() const;
 
+	// Sending a message on the VThread means "immediately"
+	void sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch);
+	void queueMessage(const Common::SharedPtr<MessageDispatch> &dispatch);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
@@ -980,11 +1013,9 @@ private:
 	void executeCompleteTransitionToScene(const Common::SharedPtr<Structural> &scene);
 	void executeSharedScenePostSceneChangeActions();
 
-	void loadScene(const Common::SharedPtr<Structural> &scene);
+	void queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay);
 
-	// Sending a message on the VThread means "immediately"
-	void sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch);
-	void queueMessage(const Common::SharedPtr<MessageDispatch> &dispatch);
+	void loadScene(const Common::SharedPtr<Structural> &scene);
 
 	void ensureMainWindowExists();
 
@@ -1064,6 +1095,7 @@ public:
 	void setSelfReference(const Common::WeakPtr<RuntimeObject> &selfReference);
 	const Common::WeakPtr<RuntimeObject> &getSelfReference() const;
 
+	virtual bool isStructural() const;
 	virtual bool isProject() const;
 	virtual bool isSection() const;
 	virtual bool isSubsection() const;
@@ -1116,11 +1148,16 @@ public:
 	Structural();
 	virtual ~Structural();
 
+	bool isStructural() const override;
+
 	const Common::Array<Common::SharedPtr<Structural> > &getChildren() const;
 	void addChild(const Common::SharedPtr<Structural> &child);
 	void removeAllChildren();
 	void removeAllModifiers();
 	void removeChild(Structural *child);
+	void removeAllAssets();
+
+	void holdAssets(const Common::Array<Common::SharedPtr<Asset> > &assets);
 
 	Structural *getParent() const;
 	void setParent(Structural *parent);
@@ -1156,6 +1193,8 @@ protected:
 	Common::Array<Common::SharedPtr<Modifier> > _modifiers;
 	Common::String _name;
 
+	Common::Array<Common::SharedPtr<Asset> > _assets;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<DebugInspector> _debugInspector;
 	Debugger *_debugger;
@@ -1170,18 +1209,6 @@ struct ProjectPresentationSettings {
 	uint32 bitsPerPixel;
 };
 
-class AssetInfo {
-public:
-	AssetInfo();
-	virtual ~AssetInfo();
-
-	void setSegmentIndex(int segmentIndex);
-	int getSegmentIndex() const;
-
-private:
-	int _segmentIndex;
-};
-
 struct AssetDefLoaderContext {
 	Common::Array<Common::SharedPtr<Asset> > assets;
 };
@@ -1189,7 +1216,8 @@ struct AssetDefLoaderContext {
 struct ChildLoaderContext {
 	enum Type {
 		kTypeUnknown,
-		kTypeModifierList,
+		kTypeCountedModifierList,
+		kTypeFlagTerminatedModifierList,
 		kTypeProject,
 		kTypeSection,
 		kTypeFilteredElements,
@@ -1296,7 +1324,7 @@ private:
 		Common::String name;
 
 		// If the asset is live, this will be its asset info
-		Common::SharedPtr<AssetInfo> assetInfo;
+		Common::WeakPtr<Asset> asset;
 	};
 
 	void openSegmentStream(int segmentIndex);
@@ -1394,10 +1422,17 @@ class VisualElement : public Element {
 public:
 	bool isVisual() const override;
 
+	bool isVisible() const;
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+
+	bool scriptSetVisibility(const DynamicValue &result);
+
 protected:
 	bool loadCommon(const Common::String &name, uint32 guid, const Data::Rect &rect, uint32 elementFlags, uint16 layer, uint32 streamLocator, uint16 sectionID);
 
-	bool _isHidden;
+	bool _visible;
 	Rect16 _rect;
 	uint16 _layer;
 };
@@ -1414,6 +1449,7 @@ struct ModifierFlags {
 	bool load(const uint32 dataModifierFlags);
 
 	bool isLastModifier : 1;
+	bool flagsWereLoaded : 1;
 };
 
 class Modifier : public RuntimeObject, public IMessageConsumer, public IDebuggable {
@@ -1439,6 +1475,8 @@ public:
 
 	void setName(const Common::String &name);
 	const Common::String &getName() const;
+
+	const ModifierFlags &getModifierFlags() const;
 
 	// Shallow clones only need to copy the object.  Descendent copies are done using visitInternalReferences.
 	virtual Common::SharedPtr<Modifier> shallowClone() const = 0;
