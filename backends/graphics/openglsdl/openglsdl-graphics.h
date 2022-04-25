@@ -55,8 +55,6 @@ protected:
 
 	void refreshScreen() override;
 
-	void *getProcAddress(const char *name) const override;
-
 	void handleResizeImpl(const int width, const int height) override;
 
 	bool saveScreenshot(const Common::String &filename) const override;
@@ -66,10 +64,12 @@ private:
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	int _glContextProfileMask, _glContextMajor, _glContextMinor;
+
 	SDL_GLContext _glContext;
 #else
 	uint32 _lastVideoModeLoad;
 #endif
+	OpenGL::ContextType _glContextType;
 
 	uint _lastRequestedWidth;
 	uint _lastRequestedHeight;

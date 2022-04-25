@@ -2215,7 +2215,7 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 	Bitmap *bmp;
 
 	if (useStored) {
-		if (OpenGLContext.type == OpenGL::kOGLContextGLES2) {
+		if (OpenGLContext.type == OpenGL::kContextGLES2) {
 			GLuint frameBuffer;
 			glGenFramebuffers(1, &frameBuffer);
 			glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);

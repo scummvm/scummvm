@@ -315,12 +315,12 @@ void OSystem_SDL::initBackend() {
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 void OSystem_SDL::detectOpenGLFeaturesSupport() {
-	_oglType = OpenGL::kOGLContextNone;
+	_oglType = OpenGL::kContextNone;
 	_supportsFrameBuffer = false;
 	_supportsShaders = false;
 #if USE_FORCED_GLES2
 	// Framebuffers and shaders are always available with GLES2
-	_oglType = OpenGL::kOGLContextGLES2;
+	_oglType = OpenGL::kContextGLES2;
 	_supportsFrameBuffer = true;
 	_supportsShaders = true;
 #else
@@ -342,13 +342,13 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 			return;
 		}
 		if (glContextMajor == 2) {
-			_oglType = OpenGL::kOGLContextGLES2;
+			_oglType = OpenGL::kContextGLES2;
 		} else {
 			SDL_DestroyWindow(window);
 			return;
 		}
 	} else {
-		_oglType = OpenGL::kOGLContextGL;
+		_oglType = OpenGL::kContextGL;
 	}
 	SDL_GLContext glContext = SDL_GL_CreateContext(window);
 	if (!glContext) {
@@ -358,7 +358,7 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 
 	OpenGLContext.initialize(_oglType);
 	_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
-	_supportsShaders = OpenGLContext.shadersSupported;
+	_supportsShaders = OpenGLContext.enginesShadersSupported;
 	OpenGLContext.reset();
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);
@@ -367,7 +367,7 @@ void OSystem_SDL::detectOpenGLFeaturesSupport() {
 	SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=center"));
 	// SDL 1.2 only supports OpenGL
-	_oglType = OpenGL::kOGLContextGL;
+	_oglType = OpenGL::kContextGL;
 	OpenGLContext.initialize(_oglType);
 	_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
 	_supportsShaders = OpenGLContext.shadersSupported;
@@ -519,6 +519,12 @@ void OSystem_SDL::setWindowCaption(const Common::U32String &caption) {
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 Common::Array<uint> OSystem_SDL::getSupportedAntiAliasingLevels() const {
 	return _antiAliasLevels;
+}
+#endif
+
+#if defined(USE_OPENGL) && defined(USE_GLAD)
+void *OSystem_SDL::getOpenGLProcAddress(const char *name) const {
+	return SDL_GL_GetProcAddress(name);
 }
 #endif
 

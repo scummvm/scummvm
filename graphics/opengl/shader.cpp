@@ -133,7 +133,7 @@ static GLuint createDirectShader(const char *shaderSource, GLenum shaderType, co
 }
 
 static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, const Common::String &name) {
-	const GLchar *versionSource = OpenGLContext.type == kOGLContextGLES2 ? "#version 100\n" : "#version 120\n";
+	const GLchar *versionSource = OpenGLContext.type == kContextGLES2 ? "#version 100\n" : "#version 120\n";
 	const GLchar *compatSource =
 			shaderType == GL_VERTEX_SHADER ? compatVertex : compatFragment;
 	const GLchar *shaderSources[] = {

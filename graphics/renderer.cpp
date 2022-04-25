@@ -93,7 +93,7 @@ uint32 Renderer::getAvailableTypes() {
 		/* Backend either support OpenGL or OpenGL ES(2) */
 #if defined(USE_OPENGL_GAME)
 		/* OpenGL classic is compiled in, check if hardware supports it */
-		if (g_system->getOpenGLType() == OpenGL::kOGLContextGL) {
+		if (g_system->getOpenGLType() == OpenGL::kContextGL) {
 			available |= kRendererTypeOpenGL;
 		}
 #endif

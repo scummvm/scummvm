@@ -26,20 +26,19 @@
 
 namespace OpenGL {
 
-enum ContextOGLType {
-	kOGLContextNone,
-	kOGLContextGL,
-	kOGLContextGLES2
+enum ContextType {
+	kContextNone,
+	kContextGL,
+	kContextGLES,
+	kContextGLES2
 };
 
 /**
  * Description structure of the OpenGL (ES) context.
- *
- * This class is based on LordHoto's OpenGL backend for ScummVM
  */
-class ContextGL : public Common::Singleton<ContextGL> {
+class Context : public Common::Singleton<Context> {
 public:
-	ContextGL();
+	Context();
 
 	/**
 	 * Initialize the context description from currently active context.
@@ -47,7 +46,7 @@ public:
 	 * The extensions and features are marked as available according
 	 * to the current context capabilities.
 	 */
-	void initialize(ContextOGLType contextType);
+	void initialize(ContextType contextType);
 
 	/**
 	 * Reset context.
@@ -57,7 +56,18 @@ public:
 	void reset();
 
 	/** The type of the active context. */
-	ContextOGLType type;
+	ContextType type;
+
+	/** Helper function for checking the GL version supported by the context. */
+	inline bool isGLVersionOrHigher(int major, int minor) const {
+		return ((majorVersion > major) || ((majorVersion == major) && (minorVersion >= minor)));
+	}
+
+	/** The GL version supported by the context. */
+	int majorVersion, minorVersion;
+
+	/** The GLSL version supported by the context */
+	int glslVersion;
 
 	/** The maximum texture size supported by the context. */
 	int maxTextureSize;
@@ -67,6 +77,12 @@ public:
 
 	/** Whether shader support is available or not. */
 	bool shadersSupported;
+
+	/** Whether shader support is good enough for engines or not. */
+	bool enginesShadersSupported;
+
+	/** Whether multi texture support is available or not. */
+	bool multitextureSupported;
 
 	/** Whether FBO support is available or not. */
 	bool framebufferObjectSupported;
@@ -80,6 +96,9 @@ public:
 	 */
 	int multisampleMaxSamples;
 
+	/** Whether packed pixels support is available or not. */
+	bool packedPixelsSupported;
+
 	/** Whether packing the depth and stencil buffers is possible or not. */
 	bool packedDepthStencilSupported;
 
@@ -89,12 +108,20 @@ public:
 	/** Whether depth component 24 is supported or not */
 	bool OESDepth24;
 
+	/** Whether texture coordinate edge clamping is available or not. */
+	bool textureEdgeClampSupported;
+
+private:
+	/**
+	 * Returns the native GLSL version supported by the driver.
+	 * This does NOT take shaders ARB extensions into account.
+	 */
 	int getGLSLVersion() const;
 };
 
 } // End of namespace OpenGL
 
 /** Shortcut for accessing the active OpenGL context. */
-#define OpenGLContext OpenGL::ContextGL::instance()
+#define OpenGLContext OpenGL::Context::instance()
 
 #endif

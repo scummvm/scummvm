@@ -19,75 +19,62 @@
  *
  */
 
+#define GLAD_GL_IMPLEMENTATION
+
 #include "graphics/opengl/context.h"
 
 #include "common/debug.h"
 #include "common/str.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/tokenizer.h"
 
 #include "graphics/opengl/system_headers.h"
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+#if defined(USE_OPENGL)
 
 #ifdef USE_GLAD
-
-#ifdef SDL_BACKEND
-#include "backends/platform/sdl/sdl-sys.h"
-
-static GLADapiproc loadFunc(void *userptr, const char *name) {
-	return (GLADapiproc)SDL_GL_GetProcAddress(name);
+static GLADapiproc loadFunc(const char *name) {
+	return (GLADapiproc)g_system->getOpenGLProcAddress(name);
 }
-
-#elif defined(__ANDROID__)
-// To keep includes light, don't include EGL here and don't include Android headers
-void *androidGLgetProcAddress(const char *name);
-
-static GLADapiproc loadFunc(void *userptr, const char *name) {
-	return (GLADapiproc)androidGLgetProcAddress(name);
-}
-
-#elif defined(IPHONE_IOS7)
-#include "backends/platform/ios7/ios7_common.h"
-
-static GLADapiproc loadFunc(void *userptr, const char *name) {
-	return (GLADapiproc)iOS7_getProcAddress(name);
-}
-
-#else
-#error Not implemented
-#endif
-
 #endif
 
 namespace Common {
-DECLARE_SINGLETON(OpenGL::ContextGL);
+DECLARE_SINGLETON(OpenGL::Context);
 }
 
 namespace OpenGL {
 
-ContextGL::ContextGL() {
+Context::Context() {
 	reset();
 }
 
-void ContextGL::reset() {
-	type = kOGLContextNone;
+void Context::reset() {
+	type = kContextNone;
 	maxTextureSize = 0;
+
+	majorVersion = 0;
+	minorVersion = 0;
+	glslVersion = 0;
 
 	NPOTSupported = false;
 	shadersSupported = false;
+	enginesShadersSupported = false;
+	multitextureSupported = false;
 	framebufferObjectSupported = false;
+	framebufferObjectMultisampleSupported = false;
+	multisampleMaxSamples = -1;
+	packedPixelsSupported = false;
 	packedDepthStencilSupported = false;
 	unpackSubImageSupported = false;
-	framebufferObjectMultisampleSupported = false;
 	OESDepth24 = false;
-	multisampleMaxSamples = -1;
+	textureEdgeClampSupported = false;
 }
 
-void ContextGL::initialize(ContextOGLType contextType) {
+void Context::initialize(ContextType contextType) {
 	// Initialize default state.
 	reset();
-	if (contextType == kOGLContextNone) {
+	if (contextType == kContextNone) {
 		return;
 	}
 
@@ -95,18 +82,58 @@ void ContextGL::initialize(ContextOGLType contextType) {
 
 #ifdef USE_GLAD
 	switch (type) {
-	case kOGLContextGL:
-		gladLoadGLUserPtr(loadFunc, this);
+	case kContextGL:
+		gladLoadGL(loadFunc);
 		break;
 
-	case kOGLContextGLES2:
-		gladLoadGLES2UserPtr(loadFunc, this);
+	case kContextGLES:
+		gladLoadGLES1(loadFunc);
+		break;
+
+	case kContextGLES2:
+		gladLoadGLES2(loadFunc);
 		break;
 
 	default:
 		break;
 	}
 #endif
+
+	const char *verString = (const char *)glGetString(GL_VERSION);
+	debug(5, "OpenGL version: %s", verString);
+
+	if (type == kContextGL) {
+		// OpenGL version number is either of the form major.minor or major.minor.release,
+		// where the numbers all have one or more digits
+		if (sscanf(verString, "%d.%d", &majorVersion, &minorVersion) != 2) {
+			majorVersion = minorVersion = 0;
+			warning("Could not parse GL version '%s'", verString);
+		}
+	} else if (type == kContextGLES) {
+		// The form of the string is "OpenGL ES-<profile> <major>.<minor>",
+		// where <profile> is either "CM" (Common) or "CL" (Common-Lite),
+		// and <major> and <minor> are integers.
+		char profile[3];
+		if (sscanf(verString, "OpenGL ES-%2s %d.%d", profile,
+					&majorVersion, &minorVersion) != 3) {
+			majorVersion = minorVersion = 0;
+			warning("Could not parse GL ES version '%s'", verString);
+		}
+	} else if (type == kContextGLES2) {
+		// The version is of the form
+		// OpenGL<space>ES<space><version number><space><vendor-specific information>
+		// version number format is not defined
+		// There is only OpenGL ES 2.0 anyway
+		if (sscanf(verString, "OpenGL ES %d.%d", &majorVersion, &minorVersion) != 2) {
+			minorVersion = 0;
+			if (sscanf(verString, "OpenGL ES %d ", &majorVersion) != 1) {
+				majorVersion = 0;
+				warning("Could not parse GL ES 2 version '%s'", verString);
+			}
+		}
+	}
+
+	glslVersion = getGLSLVersion();
 
 	// Obtain maximum texture size.
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, (GLint *)&maxTextureSize);
@@ -135,8 +162,12 @@ void ContextGL::initialize(ContextOGLType contextType) {
 			ARBVertexShader = true;
 		} else if (token == "GL_ARB_fragment_shader") {
 			ARBFragmentShader = true;
+		} else if (token == "GL_ARB_multitexture") {
+			multitextureSupported = true;
 		} else if (token == "GL_ARB_framebuffer_object") {
 			framebufferObjectSupported = true;
+		} else if (token == "GL_EXT_packed_pixels" || token == "GL_APPLE_packed_pixels") {
+			packedPixelsSupported = true;
 		} else if (token == "GL_EXT_packed_depth_stencil" || token == "GL_OES_packed_depth_stencil") {
 			packedDepthStencilSupported = true;
 		} else if (token == "GL_EXT_unpack_subimage") {
@@ -147,19 +178,22 @@ void ContextGL::initialize(ContextOGLType contextType) {
 			EXTFramebufferBlit = true;
 		} else if (token == "GL_OES_depth24") {
 			OESDepth24 = true;
+		} else if (token == "GL_SGIS_texture_edge_clamp") {
+			textureEdgeClampSupported = true;
 		}
-
 	}
 
-	int glslVersion = getGLSLVersion();
-	debug(5, "OpenGL GLSL version: %d", glslVersion);
-
-	if (type == kOGLContextGLES2) {
+	if (type == kContextGLES2) {
 		// GLES2 always has (limited) NPOT support.
 		NPOTSupported = true;
 
 		// GLES2 always has shader support.
 		shadersSupported = true;
+		// GLES2 should always have GLSL ES 1.00 support but let's make sure
+		enginesShadersSupported = (glslVersion >= 100);
+
+		// GLES2 always has multi texture support.
+		multitextureSupported = true;
 
 		// GLES2 always has FBO support.
 		framebufferObjectSupported = true;
@@ -167,8 +201,42 @@ void ContextGL::initialize(ContextOGLType contextType) {
 		// ScummVM does not support multisample FBOs with GLES2 for now
 		framebufferObjectMultisampleSupported = false;
 		multisampleMaxSamples = -1;
-	} else {
-		shadersSupported = ARBShaderObjects && ARBShadingLanguage100 && ARBVertexShader && ARBFragmentShader && glslVersion >= 120;
+
+		packedPixelsSupported = true;
+		textureEdgeClampSupported = true;
+		debug(5, "OpenGL: GLES2 context initialized");
+	} else if (type == kContextGLES) {
+		// GLES doesn't support shaders natively
+		// We don't do any aliasing in our code and expect standard OpenGL functions but GLAD does it
+		// So if we use GLAD we can check for ARB extensions and expect a GLSL of 1.00
+#ifdef USE_GLAD
+		shadersSupported = ARBShaderObjects && ARBShadingLanguage100 && ARBVertexShader && ARBFragmentShader;
+		glslVersion = 100;
+#endif
+		// We don't expect GLES to support shaders recent enough for engines
+
+		// ScummVM does not support multisample FBOs with GLES for now
+		framebufferObjectMultisampleSupported = false;
+		multisampleMaxSamples = -1;
+
+		packedPixelsSupported = true;
+		textureEdgeClampSupported = true;
+		debug(5, "OpenGL: GLES context initialized");
+	} else if (type == kContextGL) {
+		shadersSupported = glslVersion >= 100;
+
+		// We don't do any aliasing in our code and expect standard OpenGL functions but GLAD does it
+		// So if we use GLAD we can check for ARB extensions and expect a GLSL of 1.00
+#ifdef USE_GLAD
+		if (!shadersSupported) {
+			shadersSupported = ARBShaderObjects && ARBShadingLanguage100 && ARBVertexShader && ARBFragmentShader;
+			if (shadersSupported) {
+				glslVersion = 100;
+			}
+		}
+#endif
+		// In GL mode engines need GLSL 1.20
+		enginesShadersSupported = glslVersion >= 120;
 
 		// Desktop GL always has unpack sub-image support
 		unpackSubImageSupported = true;
@@ -178,31 +246,50 @@ void ContextGL::initialize(ContextOGLType contextType) {
 		if (framebufferObjectMultisampleSupported) {
 			glGetIntegerv(GL_MAX_SAMPLES, (GLint *)&multisampleMaxSamples);
 		}
-	}
 
-	// Log context type.
-	switch (type) {
-		case kOGLContextNone:
-			/* Shouldn't happen */
-			break;
-		case kOGLContextGL:
-			debug(5, "OpenGL: GL context initialized");
-			break;
-
-		case kOGLContextGLES2:
-			debug(5, "OpenGL: GLES2 context initialized");
-			break;
+		// OpenGL 1.2 and later always has packed pixels and texture edge clamp support
+		if (isGLVersionOrHigher(1, 2)) {
+			packedPixelsSupported = true;
+			textureEdgeClampSupported = true;
+		}
+		debug(5, "OpenGL: GL context initialized");
+	} else {
+		warning("OpenGL: Unknown context initialized");
 	}
 
 	// Log features supported by GL context.
+	debug(5, "OpenGL vendor: %s", glGetString(GL_VENDOR));
+	debug(5, "OpenGL renderer: %s", glGetString(GL_RENDERER));
+	debug(5, "OpenGL: version %d.%d", majorVersion, minorVersion);
+	debug(5, "OpenGL: GLSL version: %d", glslVersion);
+	debug(5, "OpenGL: Max texture size: %d", maxTextureSize);
 	debug(5, "OpenGL: NPOT texture support: %d", NPOTSupported);
 	debug(5, "OpenGL: Shader support: %d", shadersSupported);
+	debug(5, "OpenGL: Multitexture support: %d", multitextureSupported);
 	debug(5, "OpenGL: FBO support: %d", framebufferObjectSupported);
+	debug(5, "OpenGL: Multisample FBO support: %d", framebufferObjectMultisampleSupported);
+	debug(5, "OpenGL: Multisample max number: %d", multisampleMaxSamples);
+	debug(5, "OpenGL: Packed pixels support: %d", packedPixelsSupported);
 	debug(5, "OpenGL: Packed depth stencil support: %d", packedDepthStencilSupported);
 	debug(5, "OpenGL: Unpack subimage support: %d", unpackSubImageSupported);
+	debug(5, "OpenGL: OpenGL ES depth 24 support: %d", OESDepth24);
+	debug(5, "OpenGL: Texture edge clamping support: %d", textureEdgeClampSupported);
 }
 
-int ContextGL::getGLSLVersion() const {
+int Context::getGLSLVersion() const {
+#if USE_FORCED_GLES
+	return 0;
+#else
+	// No shader support in GLES
+	if (type == kContextGLES) {
+		return 0;
+	}
+
+	// No shader support in OpenGL 1.x
+	if (type == kContextGL && !isGLVersionOrHigher(2, 0)) {
+		return 0;
+	}
+
 	const char *glslVersionString = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
 	if (!glslVersionString) {
 		warning("Could not get GLSL version");
@@ -210,7 +297,7 @@ int ContextGL::getGLSLVersion() const {
 	}
 
 	const char *glslVersionFormat;
-	if (type == kOGLContextGL) {
+	if (type == kContextGL) {
 		glslVersionFormat = "%d.%d";
 	} else {
 		glslVersionFormat = "OpenGL ES GLSL ES %d.%d";
@@ -223,6 +310,7 @@ int ContextGL::getGLSLVersion() const {
 	}
 
 	return glslMajorVersion * 100 + glslMinorVersion;
+#endif
 }
 
 } // End of namespace OpenGL

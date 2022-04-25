@@ -22,7 +22,8 @@
 #ifndef BACKENDS_GRAPHICS_OPENGL_PIPELINES_PIPELINE_H
 #define BACKENDS_GRAPHICS_OPENGL_PIPELINES_PIPELINE_H
 
-#include "backends/graphics/opengl/opengl-sys.h"
+#include "graphics/opengl/system_headers.h"
+
 #include "backends/graphics/opengl/texture.h"
 
 namespace OpenGL {
@@ -148,6 +149,25 @@ protected:
 
 private:
 	bool _isActive;
+
+	/** Currently active rendering pipeline. */
+	static Pipeline *activePipeline;
+
+public:
+	/**
+	 * Set new pipeline.
+	 *
+	 * Client is responsible for any memory management related to pipelines.
+	 *
+	 * @param pipeline Pipeline to activate.
+	 * @return Formerly active pipeline.
+	 */
+	static Pipeline *setPipeline(Pipeline *pipeline);
+
+	/**
+	 * Query the currently active rendering pipeline.
+	 */
+	static Pipeline *getActivePipeline() { return activePipeline; }
 };
 
 } // End of namespace OpenGL

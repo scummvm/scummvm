@@ -22,6 +22,8 @@
 #ifndef BACKENDS_GRAPHICS_OPENGL_DEBUG_H
 #define BACKENDS_GRAPHICS_OPENGL_DEBUG_H
 
+#include "graphics/opengl/context.h"
+
 #define OPENGL_DEBUG
 
 #ifdef OPENGL_DEBUG
@@ -34,5 +36,14 @@ void checkGLError(const char *expr, const char *file, int line);
 #else
 #define GL_WRAP_DEBUG(call, name) do { (call); } while (false)
 #endif
+
+#define GL_CALL(x)                 GL_WRAP_DEBUG(x, x)
+#define GL_CALL_SAFE(func, params) \
+	do { \
+		if (OpenGLContext.type != kContextNone) { \
+			GL_CALL(func params); \
+		} \
+	} while (0)
+#define GL_ASSIGN(var, x)          GL_WRAP_DEBUG(var = x, x)
 
 #endif

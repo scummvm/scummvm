@@ -19,6 +19,7 @@
  *
  */
 
+#include "backends/graphics/opengl/debug.h"
 #include "backends/graphics/opengl/framebuffer.h"
 #include "backends/graphics/opengl/texture.h"
 #include "backends/graphics/opengl/pipelines/pipeline.h"
@@ -96,7 +97,7 @@ void Framebuffer::applyViewport() {
 }
 
 void Framebuffer::applyProjectionMatrix() {
-	g_context.getActivePipeline()->setProjectionMatrix(_projectionMatrix);
+	Pipeline::getActivePipeline()->setProjectionMatrix(_projectionMatrix);
 }
 
 void Framebuffer::applyClearColor() {
@@ -139,7 +140,7 @@ void Framebuffer::applyScissorBox() {
 
 void Backbuffer::activateInternal() {
 #if !USE_FORCED_GLES
-	if (g_context.framebufferObjectSupported) {
+	if (OpenGLContext.framebufferObjectSupported) {
 		GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	}
 #endif

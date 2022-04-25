@@ -20,6 +20,7 @@
  */
 
 #include "backends/graphics/opengl/pipelines/shader.h"
+#include "backends/graphics/opengl/debug.h"
 #include "backends/graphics/opengl/shader.h"
 #include "backends/graphics/opengl/framebuffer.h"
 
@@ -50,7 +51,7 @@ void ShaderPipeline::activateInternal() {
 	GL_CALL(glEnableVertexAttribArray(_texCoordAttribLocation));
 	GL_CALL(glEnableVertexAttribArray(_colorAttribLocation));
 
-	if (g_context.multitextureSupported) {
+	if (OpenGLContext.multitextureSupported) {
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
 	}
 

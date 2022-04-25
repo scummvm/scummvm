@@ -745,9 +745,24 @@ public:
 	 *
 	 * @return the OpenGL type of context which is supported.
 	 */
-	virtual OpenGL::ContextOGLType getOpenGLType() const {
-		return OpenGL::kOGLContextNone;
+	virtual OpenGL::ContextType getOpenGLType() const {
+		return OpenGL::kContextNone;
 	}
+
+#if defined(USE_OPENGL) && defined(USE_GLAD)
+	/**
+	 * Query the address of an OpenGL function by name.
+	 *
+	 * This can only be used after a context has been created.
+	 * Please note that this function can return valid addresses even if the
+	 * OpenGL context does not support the function.
+	 *
+	 * @param name The name of the OpenGL function.
+	 * @return An function pointer for the requested OpenGL function or
+	 *         nullptr in case of failure.
+	 */
+	virtual void *getOpenGLProcAddress(const char *name) const { return nullptr; }
+#endif
 
 	/**
 	 * Retrieve a list of all hardware shaders supported by this backend.

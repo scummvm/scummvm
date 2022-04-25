@@ -21,6 +21,7 @@
 
 
 #include "backends/graphics/opengl/opengl-graphics.h"
+#include "backends/graphics/opengl/debug.h"
 #include "backends/graphics/opengl/texture.h"
 #include "backends/graphics/opengl/pipelines/pipeline.h"
 #include "backends/graphics/opengl/pipelines/fixed.h"
@@ -79,7 +80,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 #endif
 	{
 	memset(_gamePalette, 0, sizeof(_gamePalette));
-	g_context.reset();
+	OpenGLContext.reset();
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {
@@ -391,8 +392,8 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		   // a context existing before, which means we don't know the maximum
 		   // supported texture size before this. Thus, we check whether the
 		   // requested game resolution is supported over here.
-		   || (   _currentState.gameWidth  > (uint)g_context.maxTextureSize
-		       || _currentState.gameHeight > (uint)g_context.maxTextureSize)) {
+		   || (   _currentState.gameWidth  > (uint)OpenGLContext.maxTextureSize
+		       || _currentState.gameHeight > (uint)OpenGLContext.maxTextureSize)) {
 			if (_transactionMode == kTransactionActive) {
 				// Try to setup the old state in case its valid and is
 				// actually different from the new one.
@@ -587,21 +588,21 @@ void OpenGLGraphicsManager::updateScreen() {
 	_backBuffer.enableBlend(Framebuffer::kBlendModeDisabled);
 
 	// First step: Draw the (virtual) game screen.
-	g_context.getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
+	Pipeline::getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
 
 	// Second step: Draw the overlay if visible.
 	if (_overlayVisible) {
 		int dstX = (_windowWidth - _overlayDrawRect.width()) / 2;
 		int dstY = (_windowHeight - _overlayDrawRect.height()) / 2;
 		_backBuffer.enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
-		g_context.getActivePipeline()->drawTexture(_overlay->getGLTexture(), dstX, dstY, _overlayDrawRect.width(), _overlayDrawRect.height());
+		Pipeline::getActivePipeline()->drawTexture(_overlay->getGLTexture(), dstX, dstY, _overlayDrawRect.width(), _overlayDrawRect.height());
 	}
 
 	// Third step: Draw the cursor if visible.
 	if (_cursorVisible && _cursor) {
 		_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
 
-		g_context.getActivePipeline()->drawTexture(_cursor->getGLTexture(),
+		Pipeline::getActivePipeline()->drawTexture(_cursor->getGLTexture(),
 		                         _cursorX - _cursorHotspotXScaled + _shakeOffsetScaled.x,
 		                         _cursorY - _cursorHotspotYScaled + _shakeOffsetScaled.y,
 		                         _cursorWidthScaled, _cursorHeightScaled);
@@ -631,17 +632,17 @@ void OpenGLGraphicsManager::updateScreen() {
 		}
 
 		// Set the OSD transparency.
-		g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, _osdMessageAlpha / 100.0f);
+		Pipeline::getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, _osdMessageAlpha / 100.0f);
 
 		int dstX = (_windowWidth - _osdMessageSurface->getWidth()) / 2;
 		int dstY = (_windowHeight - _osdMessageSurface->getHeight()) / 2;
 
 		// Draw the OSD texture.
-		g_context.getActivePipeline()->drawTexture(_osdMessageSurface->getGLTexture(),
+		Pipeline::getActivePipeline()->drawTexture(_osdMessageSurface->getGLTexture(),
 		                                           dstX, dstY, _osdMessageSurface->getWidth(), _osdMessageSurface->getHeight());
 
 		// Reset color.
-		g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+		Pipeline::getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 		if (_osdMessageAlpha <= 0) {
 			delete _osdMessageSurface;
@@ -658,7 +659,7 @@ void OpenGLGraphicsManager::updateScreen() {
 		int dstY = kOSDIconTopMargin;
 
 		// Draw the OSD icon texture.
-		g_context.getActivePipeline()->drawTexture(_osdIconSurface->getGLTexture(),
+		Pipeline::getActivePipeline()->drawTexture(_osdIconSurface->getGLTexture(),
 		                                           dstX, dstY, _osdIconSurface->getWidth(), _osdIconSurface->getHeight());
 	}
 #endif
@@ -1019,15 +1020,15 @@ void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) 
 	// possible and then scale it to the physical display size. This sounds
 	// bad but actually all recent chips should support full HD resolution
 	// anyway. Thus, it should not be a real issue for modern hardware.
-	if (   overlayWidth  > (uint)g_context.maxTextureSize
-	    || overlayHeight > (uint)g_context.maxTextureSize) {
+	if (   overlayWidth  > (uint)OpenGLContext.maxTextureSize
+	    || overlayHeight > (uint)OpenGLContext.maxTextureSize) {
 		const frac_t outputAspect = intToFrac(_windowWidth) / _windowHeight;
 
 		if (outputAspect > (frac_t)FRAC_ONE) {
-			overlayWidth  = g_context.maxTextureSize;
+			overlayWidth  = OpenGLContext.maxTextureSize;
 			overlayHeight = intToFrac(overlayWidth) / outputAspect;
 		} else {
-			overlayHeight = g_context.maxTextureSize;
+			overlayHeight = OpenGLContext.maxTextureSize;
 			overlayWidth  = fracToInt(overlayHeight * outputAspect);
 		}
 	}
@@ -1065,16 +1066,17 @@ void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) 
 	++_screenChangeID;
 }
 
-void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha) {
-	// Initialize context for use.
-	initializeGLContext();
-
+void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
+	const Graphics::PixelFormat &defaultFormat,
+	const Graphics::PixelFormat &defaultFormatAlpha) {
 	// Initialize pipeline.
 	delete _pipeline;
 	_pipeline = nullptr;
 
+	OpenGLContext.initialize(type);
+
 #if !USE_FORCED_GLES
-	if (g_context.shadersSupported) {
+	if (OpenGLContext.shadersSupported) {
 		ShaderMan.notifyCreate();
 		_pipeline = new ShaderPipeline(ShaderMan.query(ShaderManager::kDefault));
 	}
@@ -1086,21 +1088,21 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	}
 #endif
 
-	g_context.setPipeline(_pipeline);
+	Pipeline::setPipeline(_pipeline);
 
 	// Disable 3D properties.
 	GL_CALL(glDisable(GL_CULL_FACE));
 	GL_CALL(glDisable(GL_DEPTH_TEST));
 	GL_CALL(glDisable(GL_DITHER));
 
-	g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+	Pipeline::getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Setup backbuffer state.
 
 	// Default to black as clear color.
 	_backBuffer.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-	g_context.getActivePipeline()->setFramebuffer(&_backBuffer);
+	Pipeline::getActivePipeline()->setFramebuffer(&_backBuffer);
 
 	// We use a "pack" alignment (when reading from textures) to 4 here,
 	// since the only place where we really use it is the BMP screenshot
@@ -1165,18 +1167,18 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 #endif
 
 #if !USE_FORCED_GLES
-	if (g_context.shadersSupported) {
+	if (OpenGLContext.shadersSupported) {
 		ShaderMan.notifyDestroy();
 	}
 #endif
 
 	// Destroy rendering pipeline.
-	g_context.setPipeline(nullptr);
+	Pipeline::setPipeline(nullptr);
 	delete _pipeline;
 	_pipeline = nullptr;
 
 	// Rest our context description since the context is gone soon.
-	g_context.reset();
+	OpenGLContext.reset();
 }
 
 Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &format, bool wantAlpha, bool wantScaler) {
@@ -1213,7 +1215,7 @@ Surface *OpenGLGraphicsManager::createSurface(const Graphics::PixelFormat &forma
 		}
 	} else if (getGLPixelFormat(format, glIntFormat, glFormat, glType)) {
 		return new Texture(glIntFormat, glFormat, glType, format);
-	} else if (g_context.packedPixelsSupported && format == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {
+	} else if (OpenGLContext.packedPixelsSupported && format == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {
 		// OpenGL ES does not support a texture format usable for RGB555.
 		// Since SCUMM uses this pixel format for some games (and there is no
 		// hope for this to change anytime soon) we use pixel format
@@ -1244,7 +1246,7 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 		glFormat = GL_RGBA;
 		glType = GL_UNSIGNED_BYTE;
 		return true;
-	} else if (!g_context.packedPixelsSupported) {
+	} else if (!OpenGLContext.packedPixelsSupported) {
 		return false;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) { // RGB565
 		glIntFormat = GL_RGB;

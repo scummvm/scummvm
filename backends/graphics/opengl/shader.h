@@ -22,13 +22,19 @@
 #ifndef BACKENDS_GRAPHICS_OPENGL_SHADER_H
 #define BACKENDS_GRAPHICS_OPENGL_SHADER_H
 
-#include "backends/graphics/opengl/opengl-sys.h"
+#include "graphics/opengl/system_headers.h"
 
 #if !USE_FORCED_GLES
 
 #include "common/singleton.h"
 #include "common/hash-str.h"
 #include "common/ptr.h"
+
+// This is an addition from us to alias ARB shader object extensions to
+// OpenGL (ES) 2.0 style functions. It only works when GLhandleARB and GLuint
+// are type compatible.
+typedef GLuint GLprogram;
+typedef GLuint GLshader;
 
 namespace OpenGL {
 

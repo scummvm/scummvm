@@ -123,7 +123,7 @@ protected:
 	void deinitializeRenderer();
 #endif
 
-	OpenGL::ContextOGLType _glContextType;
+	OpenGL::ContextType _glContextType;
 
 	bool _supportsFrameBuffer;
 

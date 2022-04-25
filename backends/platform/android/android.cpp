@@ -121,11 +121,6 @@ void checkGlError(const char *expr, const char *file, int line) {
 }
 #endif
 
-void *androidGLgetProcAddress(const char *name) {
-	// This exists since Android 2.3 (API Level 9)
-	return (void *)eglGetProcAddress(name);
-}
-
 OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_audio_sample_rate(audio_sample_rate),
 	_audio_buffer_size(audio_buffer_size),
@@ -792,5 +787,12 @@ int OSystem_Android::getGraphicsMode() const {
 	// We only support one mode
 	return 0;
 }
+
+#if defined(USE_OPENGL) && defined(USE_GLAD)
+void *OSystem_Android::getOpenGLProcAddress(const char *name) const {
+	// This exists since Android 2.3 (API Level 9)
+	return (void *)eglGetProcAddress(name);
+}
+#endif
 
 #endif

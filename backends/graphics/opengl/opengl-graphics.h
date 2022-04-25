@@ -22,7 +22,6 @@
 #ifndef BACKENDS_GRAPHICS_OPENGL_OPENGL_GRAPHICS_H
 #define BACKENDS_GRAPHICS_OPENGL_OPENGL_GRAPHICS_H
 
-#include "backends/graphics/opengl/opengl-sys.h"
 #include "backends/graphics/opengl/framebuffer.h"
 #include "backends/graphics/windowed.h"
 
@@ -130,28 +129,22 @@ protected:
 	/**
 	 * Whether an GLES or GLES2 context is active.
 	 */
-	bool isGLESContext() const { return g_context.type == kContextGLES || g_context.type == kContextGLES2; }
-
-	/**
-	 * Sets the OpenGL (ES) type the graphics manager shall work with.
-	 *
-	 * This needs to be called at least once (and before ever calling
-	 * notifyContextCreate).
-	 *
-	 * @param type Type of the OpenGL (ES) contexts to be created.
-	 */
-	void setContextType(ContextType type);
+	bool isGLESContext() const { return OpenGLContext.type == kContextGLES || OpenGLContext.type == kContextGLES2; }
 
 	/**
 	 * Notify the manager of a OpenGL context change. This should be the first
 	 * thing to call after you created an OpenGL (ES) context!
 	 *
+	 * @param type               Type of the OpenGL (ES) contexts created.
 	 * @param defaultFormat      The new default format for the game screen
 	 *                           (this is used for the CLUT8 game screens).
 	 * @param defaultFormatAlpha The new default format with an alpha channel
 	 *                           (this is used for the overlay and cursor).
 	 */
-	void notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha);
+	void notifyContextCreate(
+			ContextType type,
+			const Graphics::PixelFormat &defaultFormat,
+			const Graphics::PixelFormat &defaultFormatAlpha);
 
 	/**
 	 * Notify the manager that the OpenGL context is about to be destroyed.
@@ -299,20 +292,6 @@ private:
 	 * OpenGL pipeline used for rendering.
 	 */
 	Pipeline *_pipeline;
-
-public:
-	/**
-	 * Query the address of an OpenGL function by name.
-	 *
-	 * This can only be used after a context has been created.
-	 * Please note that this function can return valid addresses even if the
-	 * OpenGL context does not support the function.
-	 *
-	 * @param name The name of the OpenGL function.
-	 * @return An function pointer for the requested OpenGL function or
-	 *         nullptr in case of failure.
-	 */
-	virtual void *getProcAddress(const char *name) const = 0;
 
 protected:
 	/**

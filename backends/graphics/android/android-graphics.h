@@ -98,8 +98,6 @@ protected:
 
 	void refreshScreen() override;
 
-	void *getProcAddress(const char *name) const override;
-
 private:
 	OpenGL::Surface *_touchcontrols;
 	int _old_touch_mode;
