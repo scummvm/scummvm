@@ -338,10 +338,10 @@ HError ReadCompSc3Block(RoomStruct *room, Stream *in, RoomFileVersion data_ver) 
 
 // Room object names
 HError ReadObjNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
-	size_t name_count = in->ReadByte();
+	size_t name_count = static_cast<uint8_t>(in->ReadInt8());
 	if (name_count != room->ObjectCount)
 		return new RoomFileError(kRoomFileErr_InconsistentData,
-			String::FromFormat("In the object names block, expected name count: %d, got %d", room->ObjectCount, name_count));
+			String::FromFormat("In the object names block, expected name count: %zu, got %zu", room->ObjectCount, name_count));
 
 	for (size_t i = 0; i < room->ObjectCount; ++i) {
 		if (data_ver >= kRoomVersion_3415)
@@ -354,10 +354,10 @@ HError ReadObjNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver)
 
 // Room object script names
 HError ReadObjScNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
-	size_t name_count = in->ReadByte();
+	size_t name_count = static_cast<uint8_t>(in->ReadInt8());
 	if (name_count != room->ObjectCount)
 		return new RoomFileError(kRoomFileErr_InconsistentData,
-			String::FromFormat("In the object script names block, expected name count: %d, got %d", room->ObjectCount, name_count));
+			String::FromFormat("In the object script names block, expected name count: %zu, got %zu", room->ObjectCount, name_count));
 
 	for (size_t i = 0; i < room->ObjectCount; ++i) {
 		if (data_ver >= kRoomVersion_3415)
