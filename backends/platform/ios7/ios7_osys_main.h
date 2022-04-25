@@ -143,6 +143,9 @@ public:
 	Graphics::PixelFormat getScreenFormat() const override { return _framebuffer.format; }
 	Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
+#if defined(USE_OPENGL) && defined(USE_GLAD)
+	void *getOpenGLProcAddress(const char *name) const override;
+#endif
 
 	PaletteManager *getPaletteManager() override { return this; }
 

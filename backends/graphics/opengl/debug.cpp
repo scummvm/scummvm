@@ -20,10 +20,11 @@
  */
 
 #include "backends/graphics/opengl/debug.h"
-#include "backends/graphics/opengl/opengl-sys.h"
 
 #include "common/str.h"
 #include "common/textconsole.h"
+
+#include "graphics/opengl/system_headers.h"
 
 #ifdef OPENGL_DEBUG
 

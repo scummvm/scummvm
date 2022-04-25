@@ -83,7 +83,7 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 	};
 
 #if USE_FORCED_GLES2
-	_glContextType = OpenGL::kOGLContextGLES2;
+	_glContextType = OpenGL::kContextGLES2;
 	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
 	_glContextMajor = DEFAULT_GLES2_MAJOR;
 	_glContextMinor = DEFAULT_GLES2_MINOR;
@@ -123,9 +123,9 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 
 	if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
 		// TODO: Support GLES1 for games
-		_glContextType = OpenGL::kOGLContextGLES2;
+		_glContextType = OpenGL::kContextGLES2;
 	} else if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_CORE) {
-		_glContextType = OpenGL::kOGLContextGL;
+		_glContextType = OpenGL::kContextGL;
 
 		// Core profile does not allow legacy functionality, which we use.
 		// Thus we request a standard OpenGL context.
@@ -133,11 +133,11 @@ OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSour
 		_glContextMajor = DEFAULT_GL_MAJOR;
 		_glContextMinor = DEFAULT_GL_MINOR;
 	} else {
-		_glContextType = OpenGL::kOGLContextGL;
+		_glContextType = OpenGL::kContextGL;
 	}
 #endif
 #else
-	_glContextType = OpenGL::kOGLContextGL;
+	_glContextType = OpenGL::kContextGL;
 #endif
 }
 
@@ -718,7 +718,7 @@ void OpenGLSdlGraphics3dManager::closeOverlay() {
 	delete _frameBuffer;
 	_frameBuffer = nullptr;
 
-	OpenGL::ContextGL::destroy();
+	OpenGLContext.reset();
 }
 
 int16 OpenGLSdlGraphics3dManager::getOverlayHeight() const {

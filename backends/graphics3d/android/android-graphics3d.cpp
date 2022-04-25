@@ -171,7 +171,7 @@ void AndroidGraphics3dManager::initSurface() {
 	_screenChangeID = JNI::surface_changeid;
 
 	// Initialize OpenGLES context.
-	OpenGLContext.initialize(OpenGL::kOGLContextGLES2);
+	OpenGLContext.initialize(OpenGL::kContextGLES2);
 	logExtensions();
 	GLESTexture::initGL();
 
@@ -244,7 +244,7 @@ void AndroidGraphics3dManager::deinitSurface() {
 		_touchcontrols_texture->release();
 	}
 
-	OpenGL::ContextGL::destroy();
+	OpenGLContext.reset();
 
 	JNI::deinitSurface();
 }

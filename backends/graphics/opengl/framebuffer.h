@@ -22,7 +22,7 @@
 #ifndef BACKENDS_GRAPHICS_OPENGL_FRAMEBUFFER_H
 #define BACKENDS_GRAPHICS_OPENGL_FRAMEBUFFER_H
 
-#include "backends/graphics/opengl/opengl-sys.h"
+#include "graphics/opengl/system_headers.h"
 
 namespace OpenGL {
 

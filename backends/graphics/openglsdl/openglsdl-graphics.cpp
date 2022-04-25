@@ -49,8 +49,6 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 
 	// Set up proper SDL OpenGL context creation.
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	OpenGL::ContextType glContextType;
-
 	// Context version 1.4 is choosen arbitrarily based on what most shader
 	// extensions were written against.
 	enum {
@@ -65,17 +63,17 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 	};
 
 #if USE_FORCED_GL
-	glContextType = OpenGL::kContextGL;
+	_glContextType = OpenGL::kContextGL;
 	_glContextProfileMask = 0;
 	_glContextMajor = DEFAULT_GL_MAJOR;
 	_glContextMinor = DEFAULT_GL_MINOR;
 #elif USE_FORCED_GLES
-	glContextType = OpenGL::kContextGLES;
+	_glContextType = OpenGL::kContextGLES;
 	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
 	_glContextMajor = DEFAULT_GLES_MAJOR;
 	_glContextMinor = DEFAULT_GLES_MINOR;
 #elif USE_FORCED_GLES2
-	glContextType = OpenGL::kContextGLES2;
+	_glContextType = OpenGL::kContextGLES2;
 	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
 	_glContextMajor = DEFAULT_GLES2_MAJOR;
 	_glContextMinor = DEFAULT_GLES2_MINOR;
@@ -115,12 +113,12 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 
 	if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
 		if (_glContextMajor >= 2) {
-			glContextType = OpenGL::kContextGLES2;
+			_glContextType = OpenGL::kContextGLES2;
 		} else {
-			glContextType = OpenGL::kContextGLES;
+			_glContextType = OpenGL::kContextGLES;
 		}
 	} else if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_CORE) {
-		glContextType = OpenGL::kContextGL;
+		_glContextType = OpenGL::kContextGL;
 
 		// Core profile does not allow legacy functionality, which we use.
 		// Thus we request a standard OpenGL context.
@@ -128,13 +126,11 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 		_glContextMajor = DEFAULT_GL_MAJOR;
 		_glContextMinor = DEFAULT_GL_MINOR;
 	} else {
-		glContextType = OpenGL::kContextGL;
+		_glContextType = OpenGL::kContextGL;
 	}
 #endif
-
-	setContextType(glContextType);
 #else
-	setContextType(OpenGL::kContextGL);
+	_glContextType = OpenGL::kContextGL;
 #endif
 
 	// Retrieve a list of working fullscreen modes
@@ -426,10 +422,6 @@ void OpenGLSdlGraphicsManager::refreshScreen() {
 #endif
 }
 
-void *OpenGLSdlGraphicsManager::getProcAddress(const char *name) const {
-	return SDL_GL_GetProcAddress(name);
-}
-
 void OpenGLSdlGraphicsManager::handleResizeImpl(const int width, const int height) {
 	OpenGLGraphicsManager::handleResizeImpl(width, height);
 	SdlGraphicsManager::handleResizeImpl(width, height);
@@ -550,7 +542,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	}
 #endif
 
-	notifyContextCreate(rgba8888, rgba8888);
+	notifyContextCreate(_glContextType, rgba8888, rgba8888);
 	int actualWidth, actualHeight;
 	getWindowSizeFromSdl(&actualWidth, &actualHeight);
 
@@ -617,7 +609,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	_lastVideoModeLoad = SDL_GetTicks();
 
 	if (_hwScreen) {
-		notifyContextCreate(rgba8888, rgba8888);
+		notifyContextCreate(_glContextType, rgba8888, rgba8888);
 		handleResize(_hwScreen->w, _hwScreen->h);
 	}
 

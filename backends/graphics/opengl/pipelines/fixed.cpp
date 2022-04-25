@@ -20,6 +20,7 @@
  */
 
 #include "backends/graphics/opengl/pipelines/fixed.h"
+#include "backends/graphics/opengl/debug.h"
 
 namespace OpenGL {
 
@@ -34,7 +35,7 @@ void FixedPipeline::activateInternal() {
 	GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
 
 #if !USE_FORCED_GLES
-	if (g_context.multitextureSupported) {
+	if (OpenGLContext.multitextureSupported) {
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
 	}
 #endif

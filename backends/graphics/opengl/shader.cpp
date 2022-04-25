@@ -20,9 +20,9 @@
  */
 
 #include "backends/graphics/opengl/shader.h"
+#include "backends/graphics/opengl/debug.h"
 
 #if !USE_FORCED_GLES
-
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -252,7 +252,7 @@ bool Shader::setUniform(const Common::String &name, ShaderUniformValue *value) {
 }
 
 GLshader Shader::compileShader(const char *source, GLenum shaderType) {
-	const GLchar *versionSource = g_context.type == kContextGLES2 ? "#version 100\n" : "#version 110\n";
+	const GLchar *versionSource = OpenGLContext.type == kContextGLES2 ? "#version 100\n" : "#version 110\n";
 	const GLchar *compatSource = shaderType == GL_VERTEX_SHADER ? "" : g_precisionDefines;
 
 	GLshader handle;

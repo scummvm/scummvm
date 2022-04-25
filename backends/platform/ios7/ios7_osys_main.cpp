@@ -124,6 +124,12 @@ bool OSystem_iOS7::touchpadModeEnabled() const {
 	return _touchpadModeEnabled;
 }
 
+#if defined(USE_OPENGL) && defined(USE_GLAD)
+void *OSystem_iOS7::getOpenGLProcAddress(const char *name) const {
+	return dlsym(RTLD_SELF, name);
+}
+#endif
+
 int OSystem_iOS7::timerHandler(int t) {
 	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
 	tm->handler();
@@ -412,8 +418,4 @@ void iOS7_main(int argc, char **argv) {
 		//*stderr = NULL;
 		fclose(newfp);
 	}
-}
-
-void *iOS7_getProcAddress(const char *name) {
-	return dlsym(RTLD_SELF, name);
 }

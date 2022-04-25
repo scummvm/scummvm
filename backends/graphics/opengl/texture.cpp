@@ -20,6 +20,7 @@
  */
 
 #include "backends/graphics/opengl/texture.h"
+#include "backends/graphics/opengl/debug.h"
 #include "backends/graphics/opengl/shader.h"
 #include "backends/graphics/opengl/pipelines/pipeline.h"
 #include "backends/graphics/opengl/pipelines/clut8.h"
@@ -80,7 +81,7 @@ void GLTexture::create() {
 	GL_CALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
-	if (g_context.textureEdgeClampSupported) {
+	if (OpenGLContext.textureEdgeClampSupported) {
 		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
 		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 	} else {
@@ -106,7 +107,7 @@ void GLTexture::setSize(uint width, uint height) {
 	const uint oldWidth  = _width;
 	const uint oldHeight = _height;
 
-	if (!g_context.NPOTSupported) {
+	if (!OpenGLContext.NPOTSupported) {
 		_width  = Common::nextHigher2(width);
 		_height = Common::nextHigher2(height);
 	} else {
@@ -734,13 +735,13 @@ void TextureCLUT8GPU::updateGLTexture() {
 
 void TextureCLUT8GPU::lookUpColors() {
 	// Setup pipeline to do color look up.
-	Pipeline *oldPipeline = g_context.setPipeline(_clut8Pipeline);
+	Pipeline *oldPipeline = Pipeline::setPipeline(_clut8Pipeline);
 
 	// Do color look up.
-	g_context.getActivePipeline()->drawTexture(_clut8Texture, _clut8Vertices);
+	Pipeline::getActivePipeline()->drawTexture(_clut8Texture, _clut8Vertices);
 
 	// Restore old state.
-	g_context.setPipeline(oldPipeline);
+	Pipeline::setPipeline(oldPipeline);
 }
 #endif // !USE_FORCED_GLES
 
