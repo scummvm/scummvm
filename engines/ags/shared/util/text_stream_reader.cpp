@@ -110,8 +110,8 @@ String TextStreamReader::ReadLine() {
 }
 
 String TextStreamReader::ReadAll() {
-	soff_t len = _stream->GetLength() - _stream->GetPosition();
-	return ReadString(len > SIZE_MAX ? SIZE_MAX : (size_t)len);
+	size_t len = Math::InRangeOrDef<size_t>(_stream->GetLength() - _stream->GetPosition(), SIZE_MAX);
+	return ReadString(len);
 }
 
 } // namespace Shared

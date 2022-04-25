@@ -611,7 +611,8 @@ HRoomFileError UpdateRoomData(RoomStruct *room, RoomFileVersion data_ver, bool g
 	// Older format room messages had flags appended to the message string
 	// TODO: find out which data versions had these; is it safe to assume this was before kRoomVersion_pre114_3?
 	for (size_t i = 0; i < room->MessageCount; ++i) {
-		if (!room->Messages[i].IsEmpty() && room->Messages[i].GetLast() == (char)ROOM_MESSAGE_FLAG_DISPLAYNEXT) {
+		if (!room->Messages[i].IsEmpty() &&
+				static_cast<uint8_t>(room->Messages[i].GetLast()) == ROOM_MESSAGE_FLAG_DISPLAYNEXT) {
 			room->Messages[i].ClipRight(1);
 			room->MessageInfos[i].Flags |= MSG_DISPLAYNEXT;
 		}

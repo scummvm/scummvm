@@ -105,14 +105,14 @@ Bitmap *AdjustBitmapSize(Bitmap *src, int width, int height) {
 template <class TPx, size_t BPP_>
 struct PixelTransCpy {
 	static const size_t BPP = BPP_;
-	inline void operator()(uint8_t *dst, const uint8_t *src, color_t mask_color, bool use_alpha) const {
+	inline void operator ()(uint8_t *dst, const uint8_t *src, uint32_t mask_color, bool use_alpha) const {
 		if (*(const TPx *)src == mask_color)
 			*(TPx *)dst = mask_color;
 	}
 };
 
 struct PixelNoSkip {
-	inline bool operator()(uint8_t *data, color_t mask_color, bool use_alpha) const {
+	inline bool operator ()(uint8_t *data, uint32_t mask_color, bool use_alpha) const {
 		return false;
 	}
 };
@@ -122,7 +122,7 @@ typedef PixelTransCpy<uint16_t, 2> PixelTransCpy16;
 
 struct PixelTransCpy24 {
 	static const size_t BPP = 3;
-	inline void operator()(uint8_t *dst, const uint8_t *src, color_t mask_color, bool use_alpha) const {
+	inline void operator ()(uint8_t *dst, const uint8_t *src, uint32_t mask_color, bool use_alpha) const {
 		const uint8_t *mcol_ptr = (const uint8_t *)&mask_color;
 		if (src[0] == mcol_ptr[0] && src[1] == mcol_ptr[1] && src[2] == mcol_ptr[2]) {
 			dst[0] = mcol_ptr[0];
@@ -134,8 +134,8 @@ struct PixelTransCpy24 {
 
 struct PixelTransCpy32 {
 	static const size_t BPP = 4;
-	inline void operator()(uint8_t *dst, const uint8_t *src, color_t mask_color, bool use_alpha) const {
-		if (*(const uint32_t *)src == (uint32_t)mask_color)
+	inline void operator ()(uint8_t *dst, const uint8_t *src, uint32_t mask_color, bool use_alpha) const {
+		if (*(const uint32_t *)src == mask_color)
 			*(uint32_t *)dst = mask_color;
 		else if (use_alpha)
 			dst[3] = src[3]; // copy alpha channel
@@ -151,7 +151,8 @@ struct PixelTransSkip32 {
 };
 
 template <class FnPxProc, class FnSkip>
-void ApplyMask(uint8_t *dst, const uint8_t *src, size_t pitch, size_t height, FnPxProc proc, FnSkip skip, color_t mask_color, bool dst_has_alpha, bool mask_has_alpha) {
+void ApplyMask(uint8_t *dst, const uint8_t *src, size_t pitch, size_t height, FnPxProc proc,
+		FnSkip skip, uint32_t mask_color, bool dst_has_alpha, bool mask_has_alpha) {
 	for (size_t y = 0; y < height; ++y) {
 		for (size_t x = 0; x < pitch; x += FnPxProc::BPP, src += FnPxProc::BPP, dst += FnPxProc::BPP) {
 			if (!skip(dst, mask_color, dst_has_alpha))

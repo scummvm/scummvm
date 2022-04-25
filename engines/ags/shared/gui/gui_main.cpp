@@ -712,8 +712,7 @@ GUILabelMacro FindLabelMacros(const String &text) {
 				// Test which macro it is (if any)
 				macro_at++;
 				const size_t macro_len = ptr - macro_at;
-				if (macro_len == (size_t)-1 || macro_len > 20); // skip zero-length or too long substrings
-				else if (ags_strnicmp(macro_at, "gamename", macro_len) == 0)
+				if (ags_strnicmp(macro_at, "gamename", macro_len) == 0)
 					macro_flags |= kLabelMacro_Gamename;
 				else if (ags_strnicmp(macro_at, "overhotspot", macro_len) == 0)
 					macro_flags |= kLabelMacro_Overhotspot;

@@ -49,7 +49,9 @@ MemoryStream::MemoryStream(uint8_t *buf, size_t buf_sz, StreamWorkMode mode, Dat
 void MemoryStream::Close() {
 	_cbuf = nullptr;
 	_buf = nullptr;
-	_pos = -1;
+	_buf_sz = 0;
+	_len = 0;
+	_pos = 0;
 }
 
 bool MemoryStream::Flush() {
@@ -88,9 +90,9 @@ size_t MemoryStream::Read(void *buffer, size_t size) {
 	if (EOS()) {
 		return 0;
 	}
-	soff_t remain = _len - _pos;
-	assert(remain > 0);
-	size_t read_sz = std::min((size_t)remain, size);
+	assert(_len > _pos);
+	size_t remain = _len - _pos;
+	size_t read_sz = std::min(remain, size);
 	memcpy(buffer, _cbuf + _pos, read_sz);
 	_pos += read_sz;
 	return read_sz;
@@ -100,28 +102,31 @@ int32_t MemoryStream::ReadByte() {
 	if (EOS()) {
 		return -1;
 	}
-	return _cbuf[(size_t)(_pos++)];
+	return _cbuf[_pos++];
 }
 
 bool MemoryStream::Seek(soff_t offset, StreamSeek origin) {
 	if (!CanSeek()) {
 		return false;
 	}
+	soff_t pos = 0;
 	switch (origin) {
-	case kSeekBegin:    _pos = 0 + offset; break;
-	case kSeekCurrent:  _pos = _pos + offset; break;
-	case kSeekEnd:      _pos = _len + offset; break;
+	case kSeekBegin:    pos = 0 + offset; break;
+	case kSeekCurrent:  pos = _pos + offset; break;
+	case kSeekEnd:      pos = _len + offset; break;
 	default:
 		return false;
 	}
-	_pos = std::max<soff_t>(0, _pos);
-	_pos = std::min<soff_t>(_len, _pos); // clamp to EOS
+	_pos = static_cast<size_t>(std::max<soff_t>(0, pos));
+	_pos = static_cast<size_t>(std::min<soff_t>(_len, pos)); // clamp to EOS
 	return true;
 }
 
 size_t MemoryStream::Write(const void *buffer, size_t size) {
-	if (_pos >= (soff_t)_buf_sz) { return 0; }
-	size = std::min(size, _buf_sz - (size_t)_pos);
+	if (_pos >= _buf_sz) {
+		return 0;
+	}
+	size = std::min(size, _buf_sz - _pos);
 	memcpy(_buf + _pos, buffer, size);
 	_pos += size;
 	_len += size;

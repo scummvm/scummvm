@@ -82,7 +82,7 @@ protected:
 	size_t                   _buf_sz; // hard buffer limit
 	size_t                   _len; // calculated length of stream
 	const StreamWorkMode     _mode;
-	soff_t                   _pos; // current stream pos
+	size_t                   _pos; // current stream pos
 
 private:
 	uint8_t *_buf;
