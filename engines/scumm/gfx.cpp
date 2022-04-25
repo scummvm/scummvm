@@ -4053,7 +4053,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	// think the original had any delay at all, so on modern hardware it
 	// wasn't even noticeable.
 	if (_game.id == GID_LOOM && (_game.version == 4))
-		blits_before_refresh *= 2;
+		blitsBeforeRefresh *= 2;
 
 	for (i = 0; i < w * h; i++) {
 		x = offsets[i] % vs->pitch;
