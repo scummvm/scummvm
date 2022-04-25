@@ -283,7 +283,7 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		project << "add_library(" << name << "\n";
 	} else {
 		enginesStr << "add_engine(" << name << "\n";
-		addFilesToProject(moduleDir, enginesStr, includeList, excludeList, {});
+		addFilesToProject(moduleDir, enginesStr, includeList, excludeList, filePrefix(setup, moduleDir));
 		enginesStr << ")\n\n";
 		return;
 	}
