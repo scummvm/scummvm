@@ -783,7 +783,6 @@ void addGCCWarnings(StringList &globalWarnings) {
 	globalWarnings.push_back("-Wcast-qual");
 	globalWarnings.push_back("-Wcast-align");
 	globalWarnings.push_back("-Wshadow");
-	globalWarnings.push_back("-Wimplicit");
 	globalWarnings.push_back("-Wnon-virtual-dtor");
 	globalWarnings.push_back("-Wwrite-strings");
 	// The following are not warnings at all... We should consider adding them to
