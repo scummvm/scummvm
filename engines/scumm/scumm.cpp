@@ -2101,12 +2101,13 @@ Common::Error ScummEngine::go() {
 		// that it will be in a different state each time you run the program.
 		_rnd.getRandomNumber(2);
 
-		// Notify the script about how much time has passed, in ticks (60 ticks per second)
+		// Notify the script about how much time has passed, in jiffies
+		// (the timing varies depending on the SCUMM version and the game)
 		uint32 diff = _system->getMillis() - _lastWaitTime;
 		if (VAR_TIMER != 0xFF)
-			VAR(VAR_TIMER) = diff * 60 / 1000;
+			VAR(VAR_TIMER) = diff * (_timerFrequency / 4) / 1000;
 		if (VAR_TIMER_TOTAL != 0xFF)
-			VAR(VAR_TIMER_TOTAL) += diff * 60 / 1000;
+			VAR(VAR_TIMER_TOTAL) += diff * (_timerFrequency / 4) / 1000;
 
 		// Determine how long to wait before the next loop iteration should start
 		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
