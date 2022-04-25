@@ -322,11 +322,15 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 }
 
 void CMakeProvider::writeWarnings(std::ofstream &output) const {
-	output << "set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS}";
+	output << "if (MSVC)\n";
+	// TODO: Support MSVC warnings
+	output << "else()\n";
+	output << "\tset(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS}";
 	for (const std::string &warning : _globalWarnings) {
 		output << ' ' << warning;
 	}
 	output << "\")\n";
+	output << "endif()\n";
 }
 
 void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output) const {
