@@ -910,7 +910,37 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 				_srcptr += 12;
 			}
 
-			return mainRoutine(xmoveCur, ymoveCur);
+			// WORKAROUND: During the intro, there are a couple of
+			// glitches when Bernard looks out of his Chron-O-John.
+			// The actor has two limbs: The lid and the face. The
+			// lid is slightly misaligned, and when Bernard faces to
+			// the left both the lid and the face are mirrored when
+			// only his face should be.
+			//
+			// We adjust the positioning a bit (though not while the
+			// lid is opening, since that causes further glitches),
+			// and make sure that the lid is always drawn the
+			// correct way.
+
+			bool mirror = _mirror;
+
+			if (_vm->_game.id == GID_TENTACLE && _vm->_currentRoom == 61 && a->_number == 1 && _loaded._id == 324 && _vm->_enableEnhancements) {
+				if (limb == 0) {
+					_mirror = true;
+					byte frm = a->_cost.curpos[3] & 0x0FF;
+					if (frm == 0x3D || frm == 0x3E)
+						xmoveCur--;
+				} else if (a->getFacing() == 270 && !_mirror) {
+					xmoveCur += 4;
+				} else if (a->getFacing() == 90) {
+					xmoveCur--;
+				}
+			}
+
+			bool result = mainRoutine(xmoveCur, ymoveCur);
+
+			_mirror = mirror;
+			return result;
 		}
 	}
 
