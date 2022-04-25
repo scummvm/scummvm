@@ -37,6 +37,7 @@ This folder contains a script to help build scummvm with Emscripten, it automati
   *   `games`: Download some demos and set up all data require for the demo page. See `--bundle-games=` below.
   *   `dist`: Copy all files into a single build-emscripten folder to bring it all together
   *   `add-games`: Runs ScummVM once to add all bundled games to the default `scummvm.ini`
+  *   `icons`: Adds additional icons to the `gui-icons.dat` file. Please note that the `scummvm-icons` repository needs to be located in the parent folder of the project.
 * `clean`: Cleanup build artifacts (keeps libs + emsdk in place)
 * `run`: Start webserver and launch ScummVM in Chrome  
   
