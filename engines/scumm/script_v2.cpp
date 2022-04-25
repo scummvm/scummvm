@@ -444,8 +444,13 @@ void ScummEngine_v2::writeVar(uint var, int value) {
 	// is initialized to 0, so that seems like a good place to inject our
 	// own check.
 
-	if (_game.id == GID_MANIAC && (_game.version == 1 || _game.version == 2) && vm.slot[_currentScript].number == 4 && VAR(VAR_CLICK_AREA) == kSentenceClickArea && var == 34 && value == 0 && _enableEnhancements)
+	if (_game.id == GID_MANIAC && (_game.version == 1 || _game.version == 2)
+			&& _game.platform != Common::kPlatformNES
+			&& vm.slot[_currentScript].number == 4
+			&& VAR(VAR_CLICK_AREA) == kSentenceClickArea
+			&& var == 34 && value == 0 && _enableEnhancements) {
 		value = 1;
+	}
 
 	_scummVars[var] = value;
 }
