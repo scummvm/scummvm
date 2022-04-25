@@ -30,9 +30,9 @@ void ScriptAudioClip::ReadFromFile(Stream *in) {
 	id = in->ReadInt32();
 	scriptName.ReadCount(in, SCRIPTAUDIOCLIP_SCRIPTNAMELENGTH);
 	fileName.ReadCount(in, SCRIPTAUDIOCLIP_FILENAMELENGTH);
-	bundlingType = in->ReadInt8();
-	type = in->ReadInt8();
-	fileType = in->ReadInt8();
+	bundlingType = static_cast<uint8_t>(in->ReadInt8());
+	type = static_cast<uint8_t>(in->ReadInt8());
+	fileType = static_cast<AudioFileType>(in->ReadInt8());
 	defaultRepeat = in->ReadInt8();
 	defaultPriority = in->ReadInt16();
 	defaultVolume = in->ReadInt16();
