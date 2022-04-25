@@ -634,9 +634,9 @@ void ConsoleDialog::saveHistory() {
 		if (!_history[idx].empty()) {
 			saveFile->writeString(_history[idx]);
 			saveFile->writeByte('\n');
+			++entriesWritten;
 		}
 		idx = (idx + 1) % kHistorySize;
-		++entriesWritten;
 	}
 	saveFile->finalize();
 	delete saveFile;
@@ -660,14 +660,16 @@ void ConsoleDialog::historyScroll(int direction) {
 		_history[_historyIndex] = getUserInput();
 
 	// Advance to the next line in the history
-	// Note that due to temporarily storing the user input line in the _history table,
-	//      without executing an AddToHistory() call,
+	// NOTE Due to temporarily storing the user input line in the
+	//      _history table, without executing an addToHistory() call,
 	//      that user input line is stored into the slot _historyIndex
 	//      where the next committed command will replace it.
 	//      However, since this slot is still a slot from the _history table,
-	//      when the table is full (kHistorySize entries) and while scrolling the history upwards
-	//      the user can reach this slot (top most) and get their user input again instead of a historic entry.
-	//      We prevent this by stopping upwards navigation one slot earlier, when the table is full.
+	//      when the table is full (kHistorySize entries) and while scrolling
+	//      the history upwards, the user can reach this slot (top most)
+	//      and get their user input again instead of a historic entry.
+	//      We prevent this by stopping upwards navigation one slot earlier,
+	//      when the table is full.
 	int line = _historyLine + direction;
 	if ((direction < 0 && line < 0)
 	    || (direction > 0 && (line > _historySize
