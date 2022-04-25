@@ -334,6 +334,29 @@ if [[ "dist" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; 
 fi
 
 #################################
+# Add icons
+#################################
+if [[ "icons" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; then
+
+  if [[ -d "${ROOT_FOLDER}/../scummvm-icons/" ]]; then
+    echo "Adding files from icons repository "
+    cp "${ROOT_FOLDER}/gui/themes/gui-icons.dat" "${ROOT_FOLDER}/build-emscripten/data"
+    cd "${ROOT_FOLDER}/../scummvm-icons/"
+    ${EMSDK_PYTHON:-'python3'} gen-set.py
+    echo "add icons"
+    zip -q -u "${ROOT_FOLDER}/build-emscripten/data/gui-icons.dat" icons/*
+    echo "add xml"
+    zip -q -u "${ROOT_FOLDER}/build-emscripten/data/gui-icons.dat" *.xml
+    echo "update index"
+    cd "${ROOT_FOLDER}/build-emscripten/data"
+    "$EMSDK_NODE" "$DIST_FOLDER/build-make_http_index.js" >index.json
+  else
+    echo "Icons repository not found"
+  fi
+
+fi
+
+#################################
 # Automatically detect games and create scummvm.ini file
 #################################
 if [[ "add-games" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; then
