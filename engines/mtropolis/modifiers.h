@@ -39,13 +39,33 @@ public:
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
+	IModifierContainer *getMessagePropagationContainer() override;
 	IModifierContainer *getChildContainer() override;
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Behavior Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
+	struct SwitchTaskData {
+		bool targetState;
+		EventIDs::EventID eventID;
+		Runtime *runtime;
+	};
+
+	struct PropagateTaskData {
+		size_t index;
+		EventIDs::EventID eventID;
+		Runtime *runtime;
+	};
+
+	VThreadState switchTask(const SwitchTaskData &taskData);
+	VThreadState propagateTask(const PropagateTaskData &taskData);
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
@@ -53,6 +73,8 @@ private:
 
 	Event _enableWhen;
 	Event _disableWhen;
+	bool _switchable;
+	bool _isEnabled;
 };
 
 class MiniscriptModifier : public Modifier {
@@ -64,7 +86,7 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Miniscript Modifier"; }
-	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
@@ -113,8 +135,11 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::AliasModifier &data);
 	uint32 getAliasID() const;
 
+	bool isAlias() const override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Alias Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
@@ -127,8 +152,12 @@ class ChangeSceneModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::ChangeSceneModifier &data);
 
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Change Scene Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
@@ -147,7 +176,7 @@ private:
 	uint32 _targetSceneGUID;
 	bool _addToReturnList;
 	bool _addToDestList;
-	bool _addToWrapAround;
+	bool _wrapAround;
 };
 
 class SoundEffectModifier : public Modifier {

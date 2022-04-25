@@ -64,6 +64,18 @@ private:
 	Common::Array<CuePoint> _cuePoints;
 };
 
+class MovieAsset : public Asset {
+public:
+	bool load(AssetLoaderContext &context, const Data::MovieAsset &data);
+
+private:
+	uint32 _movieDataPos;
+	uint32 _moovAtomPos;
+	uint32 _movieDataSize;
+
+	Common::String _extFileName;
+};
+
 } // End of namespace MTropolis
 
 #endif

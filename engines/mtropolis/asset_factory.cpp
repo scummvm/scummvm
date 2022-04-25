@@ -61,6 +61,8 @@ IAssetFactory *getAssetFactoryForDataObjectType(const Data::DataObjectTypes::Dat
 		return AssetFactory<ColorTableAsset, Data::ColorTableAsset>::getInstance();
 	case Data::DataObjectTypes::kAudioAsset:
 		return AssetFactory<AudioAsset, Data::AudioAsset>::getInstance();
+	case Data::DataObjectTypes::kMovieAsset:
+		return AssetFactory<MovieAsset, Data::MovieAsset>::getInstance();
 
 	default:
 		return nullptr;

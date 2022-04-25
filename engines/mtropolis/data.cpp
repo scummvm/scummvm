@@ -150,7 +150,8 @@ bool isAsset(DataObjectType type) {
 
 } // End of namespace DataObjectTypes
 
-DataReader::DataReader(Common::SeekableReadStreamEndian &stream, ProjectFormat projectFormat) : _stream(stream), _projectFormat(projectFormat) {
+DataReader::DataReader(int64 globalPosition, Common::SeekableReadStreamEndian &stream, ProjectFormat projectFormat)
+	: _globalPosition(globalPosition), _stream(stream), _projectFormat(projectFormat) {
 }
 
 bool DataReader::readU8(uint8 &value) {
@@ -387,7 +388,7 @@ double XPFloat::toDouble() const {
 	uint64 workMantissa = this->mantissa & (((static_cast<uint64>(1) << 52) - 1u) << 11);
 	workMantissa >>= 11;
 
-	if (mantissa != 0 || exponent != 0) {
+	if (workMantissa != 0 || exponent != 0) {
 		// Adjust exponent
 		exponent -= 15360;
 		if (exponent > 2046) {
@@ -407,7 +408,7 @@ double XPFloat::toDouble() const {
 		}
 	}
 
-	uint64_t recombined = (static_cast<uint64_t>(sign) << 63) | (static_cast<uint64_t>(exponent) << 52) | static_cast<uint64_t>(mantissa);
+	uint64_t recombined = (static_cast<uint64_t>(sign) << 63) | (static_cast<uint64_t>(exponent) << 52) | static_cast<uint64_t>(workMantissa);
 
 	double d;
 	memcpy(&d, &recombined, 8);
@@ -423,9 +424,11 @@ bool Label::load(DataReader &reader) {
 	return reader.readU32(superGroupID) && reader.readU32(labelID);
 }
 
-bool InternalTypeTaggedValue::load(DataReader& reader) {
+bool InternalTypeTaggedValue::load(DataReader &reader) {
 	if (!reader.readU16(type))
 		return false;
+
+	int64 valueGlobalPos = reader.tellGlobal();
 
 	uint8 contents[44];
 	if (!reader.readBytes(contents))
@@ -433,7 +436,7 @@ bool InternalTypeTaggedValue::load(DataReader& reader) {
 
 	Common::MemoryReadStreamEndian contentsStream(contents, sizeof(contents), reader.isBigEndian());
 
-	DataReader valueReader(contentsStream, reader.getProjectFormat());
+	DataReader valueReader(valueGlobalPos, contentsStream, reader.getProjectFormat());
 
 	switch (type) {
 	case kNull:
@@ -906,7 +909,7 @@ DataReadErrorCode BehaviorModifier::load(DataReader& reader) {
 	if (lengthOfName > 0 && !reader.readTerminatedStr(name, lengthOfName))
 		return kDataReadErrorReadFailed;
 
-	if (!reader.readU32(flags) || !enableWhen.load(reader) || !disableWhen.load(reader) || !reader.readBytes(unknown7))
+	if (!reader.readU32(behaviorFlags) || !enableWhen.load(reader) || !disableWhen.load(reader) || !reader.readBytes(unknown7))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1457,6 +1460,41 @@ DataReadErrorCode ColorTableAsset::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode MovieAsset::load(DataReader &reader) {
+	if (_revision != 0)
+		return kDataReadErrorUnsupportedRevision;
+
+	haveMacPart = false;
+	haveWinPart = false;
+
+	if (!reader.readU32(persistFlags) || !reader.readU32(assetAndDataCombinedSize) || !reader.readBytes(unknown1)
+		|| !reader.readU32(assetID) || !reader.readBytes(unknown1_1) || !reader.readU16(extFileNameLength))
+		return kDataReadErrorReadFailed;
+
+	if (reader.getProjectFormat() == Data::kProjectFormatMacintosh) {
+		haveMacPart = true;
+
+		if (!reader.readBytes(platform.mac.unknown5_1) || !reader.readU32(movieDataSize) || !reader.readBytes(platform.mac.unknown6) || !reader.readU32(moovAtomPos))
+			return kDataReadErrorReadFailed;
+	} else if (reader.getProjectFormat() == Data::kProjectFormatWindows) {
+		haveWinPart = true;
+
+		if (!reader.readBytes(platform.win.unknown3_1) || !reader.readU32(movieDataSize) || !reader.readBytes(platform.win.unknown4) || !reader.readU32(moovAtomPos) || !reader.readBytes(platform.win.unknown7))
+			return kDataReadErrorReadFailed;
+	} else
+		return kDataReadErrorReadFailed;
+
+	if (!reader.readTerminatedStr(extFileName, extFileNameLength))
+		return kDataReadErrorReadFailed;
+
+	movieDataPos = reader.tellGlobal();
+
+	if (!reader.skip(movieDataSize))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode AudioAsset::load(DataReader &reader) {
 	if (_revision != 2)
 		return kDataReadErrorUnsupportedRevision;
@@ -1680,8 +1718,21 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	case DataObjectTypes::kColorTableAsset:
 		dataObject = new ColorTableAsset();
 		break;
+
+	case DataObjectTypes::kMovieAsset:
+		dataObject = new MovieAsset();
+		break;
+
 	case DataObjectTypes::kAudioAsset:
 		dataObject = new AudioAsset();
+		break;
+
+	case DataObjectTypes::kImageAsset:
+		//dataObject = new ImageAsset();
+		break;
+
+	case DataObjectTypes::kMToonAsset:
+		//dataObject = new MToonAsset();
 		break;
 
 	case DataObjectTypes::kAssetDataChunk:

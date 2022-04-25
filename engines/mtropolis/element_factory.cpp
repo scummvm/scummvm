@@ -62,6 +62,8 @@ IElementFactory *getElementFactoryForDataObjectType(const Data::DataObjectTypes:
 	switch (dataObjectType) {
 	case Data::DataObjectTypes::kGraphicElement:
 		return ElementFactory<GraphicElement, Data::GraphicElement>::getInstance();
+	case Data::DataObjectTypes::kMovieElement:
+		return ElementFactory<MovieElement, Data::MovieElement>::getInstance();
 
 	default:
 		return nullptr;

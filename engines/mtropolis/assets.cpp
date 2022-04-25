@@ -73,5 +73,14 @@ bool AudioAsset::load(AssetLoaderContext &context, const Data::AudioAsset &data)
 	return true;
 }
 
+bool MovieAsset::load(AssetLoaderContext &context, const Data::MovieAsset &data) {
+	_moovAtomPos = data.moovAtomPos;
+	_movieDataPos = data.movieDataPos;
+	_movieDataSize = data.movieDataSize;
+	_extFileName = data.extFileName;
+
+	return true;
+}
+
 
 } // End of namespace MTropolis

@@ -122,6 +122,8 @@ void Debugger::notify(DebugSeverity severity, const Common::String& str) {
 		Window &window = *_toastNotifications[i].window;
 		window.setPosition(window.getX(), window.getY() - toastNotificationHeight);
 	}
+
+	debug(1, "%s", str.c_str());
 }
 
 void Debugger::notifyFmt(DebugSeverity severity, const char *fmt, ...) {
