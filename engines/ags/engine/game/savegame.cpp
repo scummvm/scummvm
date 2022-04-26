@@ -514,7 +514,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	if (_G(displayed_room) >= 0) {
 		// Fixup the frame index, in case the restored room does not have enough background frames
-		if (_GP(play).bg_frame < 0 || _GP(play).bg_frame >= (int)_GP(thisroom).BgFrameCount)
+		if (_GP(play).bg_frame < 0 || static_cast<size_t>(_GP(play).bg_frame) >= (int)_GP(thisroom).BgFrameCount)
 			_GP(play).bg_frame = 0;
 
 		for (int i = 0; i < MAX_ROOM_BGFRAMES; ++i) {
@@ -598,7 +598,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	}
 	update_directional_sound_vol();
 
-	adjust_fonts_for_render_mode(_GP(game).options[OPT_ANTIALIASFONTS]);
+	adjust_fonts_for_render_mode(_GP(game).options[OPT_ANTIALIASFONTS] != 0);
 
 	recreate_overlay_ddbs();
 

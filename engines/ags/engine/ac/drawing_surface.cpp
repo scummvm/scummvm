@@ -398,8 +398,8 @@ void DrawingSurface_DrawPixel(ScriptDrawingSurface *sds, int x, int y) {
 int DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y) {
 	sds->PointToGameResolution(&x, &y);
 	Bitmap *ds = sds->StartDrawing();
-	unsigned int rawPixel = ds->GetPixel(x, y);
-	unsigned int maskColor = ds->GetMaskColor();
+	int rawPixel = ds->GetPixel(x, y);
+	int maskColor = ds->GetMaskColor();
 	int colDepth = ds->GetColorDepth();
 
 	if (rawPixel == maskColor) {

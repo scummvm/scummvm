@@ -371,7 +371,7 @@ void override_config_ext(ConfigTree &cfg) {
 
 void apply_config(const ConfigTree &cfg) {
 	{
-		_GP(usetup).audio_enabled = INIreadint(cfg, "sound", "enabled", _GP(usetup).audio_enabled);
+		_GP(usetup).audio_enabled = INIreadint(cfg, "sound", "enabled", _GP(usetup).audio_enabled) != 0;
 		_GP(usetup).audio_driver = INIreadstring(cfg, "sound", "driver");
 
 		// Legacy graphics settings has to be translated into new options;
@@ -415,7 +415,7 @@ void apply_config(const ConfigTree &cfg) {
 		// This option is backwards (usevox is 0 if no_speech_pack)
 		_GP(usetup).no_speech_pack = INIreadint(cfg, "sound", "usespeech", 1) == 0;
 
-		_GP(usetup).clear_cache_on_room_change = INIreadint(cfg, "misc", "clear_cache_on_room_change", _GP(usetup).clear_cache_on_room_change);
+		_GP(usetup).clear_cache_on_room_change = INIreadint(cfg, "misc", "clear_cache_on_room_change", _GP(usetup).clear_cache_on_room_change) != 0;
 		_GP(usetup).user_data_dir = INIreadstring(cfg, "misc", "user_data_dir");
 		_GP(usetup).shared_data_dir = INIreadstring(cfg, "misc", "shared_data_dir");
 

@@ -30,18 +30,19 @@
 namespace AGS3 {
 
 int StrGetCharAt(const char *strin, int posn) {
-	if ((posn < 0) || (posn >= (int)strlen(strin)))
+	if ((posn < 0) || (static_cast<size_t>(posn) >= strlen(strin)))
 		return 0;
 	return strin[posn];
 }
 
 void StrSetCharAt(char *strin, int posn, int nchar) {
-	if ((posn < 0) || (posn > (int)strlen(strin)) || (posn >= MAX_MAXSTRLEN))
+	size_t len = strlen(strin);
+	if ((posn < 0) || (static_cast<size_t>(posn) > len) || (posn >= MAX_MAXSTRLEN))
 		quit("!StrSetCharAt: tried to write past end of string");
 
-	if (posn == (int)strlen(strin))
+	strin[posn] = static_cast<char>(nchar);
+	if (static_cast<size_t>(posn) == len)
 		strin[posn + 1] = 0;
-	strin[posn] = nchar;
 }
 
 void _sc_strcat(char *s1, const char *s2) {

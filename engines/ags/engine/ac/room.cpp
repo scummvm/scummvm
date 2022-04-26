@@ -472,7 +472,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	_GP(play).bg_anim_delay = _GP(play).anim_background_speed;
 
 	// Fixup the frame index, in case the new room does not have enough background frames
-	if (_GP(play).bg_frame < 0 || _GP(play).bg_frame >= (int)_GP(thisroom).BgFrameCount)
+	if (_GP(play).bg_frame < 0 || static_cast<size_t>(_GP(play).bg_frame) >= _GP(thisroom).BgFrameCount)
 		_GP(play).bg_frame = 0;
 
 	// do the palette
