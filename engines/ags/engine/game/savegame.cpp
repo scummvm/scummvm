@@ -157,9 +157,8 @@ String GetSavegameErrorText(SavegameErrorType err) {
 	case kSvgErr_GameObjectInitFailed:
 		return "Game object initialization failed after save restoration.";
 	default:
-		break;
+		return "Unknown error.";
 	}
-	return "Unknown error.";
 }
 
 Bitmap *RestoreSaveImage(Stream *in) {
