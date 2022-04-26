@@ -344,8 +344,10 @@ void runevent_now(int evtyp, int ev1, int ev2, int ev3) {
 }
 
 void processallevents() {
-	if (_G(inside_processevent))
+	if (_G(inside_processevent)) {
+		_GP(events).clear(); // flush queued events
 		return;
+	}
 
 	// Take ownership of the pending events
 	// Note: upstream AGS used std::move, which I haven't been able
