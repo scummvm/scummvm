@@ -54,7 +54,7 @@ class Notebook {
 public:
 	Notebook() = default;
 
-	// can be a title or clue
+	// Can be a title or clue
 	void AddEntry(int32 entryIdx, int32 page1, int32 page2);
 	// Adds a connection between a clue/title
 	void AddHyperlink(int32 id1, int32 id2);
