@@ -245,7 +245,7 @@ Common::Error MTropolisEngine::run() {
 	uint expectedFrameRate = 60;
 	ColorDepthMode preferredColorDepthMode = kColorDepthMode8Bit;
 
-	_runtime.reset(new Runtime());
+	_runtime.reset(new Runtime(_system));
 
 	if (_gameDescription->gameID == GID_OBSIDIAN && _gameDescription->desc.platform == Common::kPlatformWindows) {
 		preferredWidth = 640;
@@ -415,15 +415,6 @@ Common::Error MTropolisEngine::run() {
 	}
 #endif
 
-	uint32 prevTimeStamp = _system->getMillis();
-
-	int32 earliness = 0;	// In thousandths of a frame
-	const int32 aheadLimit = 5000;
-	const int32 behindLimit = -5000;
-	const int32 jitterTolerance = 500;	// Half a frame
-	const int skippedFrameLimit = 10;
-	uint32 limitRollingAccumulatedThousandthsOfFrames = 0;
-	uint32 limitRollingAccumulatedMSec = 0;
 	bool paused = false;
 
 	int frameCounter = 0;
@@ -436,71 +427,8 @@ Common::Error MTropolisEngine::run() {
 			paused = _runtime->debugGetDebugger()->isPaused();
 #endif
 
-		// Scheduling is a bit tricky here because the project frame can suspend mid-execution.
-		bool skipDraw = false;
-		bool forceDraw = false;
-		bool frameWasRun = false;
-		if (!paused)
-			frameWasRun = _runtime->runProjectFrame();
-
-		uint32 frameTime = _system->getMillis();
-		const uint32 realElapsedThisFrame = frameTime - prevTimeStamp;
-		prevTimeStamp = frameTime;
-
-		if (frameWasRun) {
-			frameCounter++;
-			uint32 timeAdvance = realElapsedThisFrame;
-
-			if (enableFrameRateLimit) {
-				earliness += 1000;
-				uint32 durationInThousandsthsOfAFrame = realElapsedThisFrame * expectedFrameRate;
-				earliness -= static_cast<int32>(durationInThousandsthsOfAFrame);
-				if (earliness > aheadLimit) {
-					earliness = aheadLimit;
-				} else if (earliness < behindLimit) {
-					earliness = behindLimit;
-				}
-
-				if (earliness < -1000) {
-					if (numSkippedFrames < skippedFrameLimit)
-						skipDraw = true; // If we're lagging behind then don't draw
-				} else if (earliness > jitterTolerance) {
-					// If we're ahead by enough then pause.  Tolerate some slight addition to avoid
-					// degenerate cases if the timer wobbles near a frame edge.
-					uint millis = earliness / expectedFrameRate;
-					if (millis)
-						_system->delayMillis(millis);
-				}
-
-				limitRollingAccumulatedThousandthsOfFrames += 1000;
-
-				const uint32 prevRollingTime = limitRollingAccumulatedMSec;
-
-				// Resolve the actual msec to increment via rolling timers.
-				// Round up so that if time is divided by 60 then to derive tick count then it will always be in sync.
-				limitRollingAccumulatedMSec = (limitRollingAccumulatedThousandthsOfFrames + expectedFrameRate - 1) / expectedFrameRate;
-
-				timeAdvance = limitRollingAccumulatedMSec - prevRollingTime;
-
-				if (limitRollingAccumulatedThousandthsOfFrames >= expectedFrameRate * 1000) {
-					const int32 secondsToRemove = limitRollingAccumulatedThousandthsOfFrames / (expectedFrameRate * 1000);
-					limitRollingAccumulatedThousandthsOfFrames -= secondsToRemove * 1000 * expectedFrameRate;
-					limitRollingAccumulatedMSec -= secondsToRemove * 1000;
-				}
-			}
-
-			_runtime->advanceProjectTime(timeAdvance);
-		}
-
-		_runtime->runRealFrame(realElapsedThisFrame);
-
-		if (forceDraw || !skipDraw || !_runtime->mustDraw()) {
-			_runtime->drawFrame(_system);
-			numSkippedFrames = 0;
-		} else {
-			if (frameWasRun)
-				numSkippedFrames++;
-		}
+		_runtime->runFrame();
+		_runtime->drawFrame();
 	}
 
 	_runtime.release();

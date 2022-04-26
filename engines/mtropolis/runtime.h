@@ -60,6 +60,7 @@ class Element;
 class MessageDispatch;
 class MiniscriptThread;
 class Modifier;
+class ObjectLinkingScope;
 class PlugInModifier;
 class RuntimeObject;
 class PlugIn;
@@ -73,11 +74,11 @@ struct IModifierContainer;
 struct IModifierFactory;
 struct IPlugInModifierFactory;
 struct IPlugInModifierFactoryAndDataFactory;
+struct IStructuralReferenceVisitor;
 struct MessageProperties;
 struct ModifierLoaderContext;
 struct PlugInModifierLoaderContext;
 template<typename TElement, typename TElementData> class ElementFactory;
-
 
 char invariantToLower(char c);
 Common::String toCaseInsensitive(const Common::String &str);
@@ -214,6 +215,7 @@ enum EventID {
 	kUserTimeout = 1801,
 	kProjectStarted = 1802,
 	kProjectEnded = 1803,
+	kFlushAllMedia = 1804,
 
 	kAttribGet = 1300,
 	kAttribSet = 1200,
@@ -221,8 +223,19 @@ enum EventID {
 	kClone = 226,
 	kKill = 228,
 
+	kPlay = 201,
+	kStop = 202,
+	kPause = 801,
+	kUnpause = 802,
+	kTogglePause = 803,
+	kAtFirstCel = 804,
+	kAtLastCel = 805,
+
+
 	kAuthorMessage = 900,
 };
+
+bool isCommand(EventID eventID);
 
 } // End of namespace EventIDs
 
@@ -710,10 +723,35 @@ struct MessengerSendSpec {
 	bool load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::InternalTypeTaggedValue &dataLocator, const Common::String &dataWithSource, const Common::String &dataWithString, uint32 dataDestination);
 	bool load(const Data::PlugInTypeTaggedValue &dataEvent, const MessageFlags &dataMessageFlags, const Data::PlugInTypeTaggedValue &dataWith, uint32 dataDestination);
 
+	void linkInternalReferences(ObjectLinkingScope *outerScope);
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor);
+	void resolveDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest) const;
+
+	void sendFromMessenger(Runtime *runtime, Modifier *sender) const;
+
 	Event send;
 	MessageFlags messageFlags;
 	DynamicValue with;
 	uint32 destination; // May be a MessageDestination or GUID
+
+	enum LinkType {
+		kLinkTypeNotYetLinked,
+		kLinkTypeStructural,
+		kLinkTypeModifier,
+		kLinkTypeCoded,
+		kLinkTypeUnresolved,
+	};
+
+	LinkType _linkType;
+	Common::WeakPtr<Structural> resolvedStructuralDest;
+	Common::WeakPtr<Modifier> resolvedModifierDest;
+
+private:
+	void resolveHierarchyStructuralDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest, bool (*compareFunc)(Structural *structural)) const;
+	static bool isSceneFilter(Structural *section);
+	static bool isSectionFilter(Structural *section);
+	static bool isSubsectionFilter(Structural *section);
+	static bool isElementFilter(Structural *section);
 };
 
 struct Message {
@@ -724,13 +762,15 @@ struct Message {
 };
 
 enum MessageDestination {
+	kMessageDestNone = 0,
+
 	kMessageDestSharedScene = 0x65,
 	kMessageDestScene = 0x66,
 	kMessageDestSection = 0x67,
 	kMessageDestProject = 0x68,
 	kMessageDestActiveScene = 0x69,
 	kMessageDestElementsParent = 0x6a,
-	kMessageDestChildren = 0x6b,
+	kMessageDestChildren = 0x6b,	// Saw this somewhere but can't find it any more?
 	kMessageDestModifiersParent = 0x6c,
 	kMessageDestSubsection = 0x6d,
 
@@ -880,8 +920,8 @@ struct SceneTransitionEffect {
 
 class MessageDispatch {
 public:
-	MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Structural *root, bool cascade, bool relay);
-	MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Modifier *root, bool cascade, bool relay);
+	MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Structural *root, bool cascade, bool relay, bool couldBeCommand);
+	MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Modifier *root, bool cascade, bool relay, bool couldBeCommand);
 
 	bool isTerminated() const;
 	VThreadState continuePropagating(Runtime *runtime);
@@ -901,6 +941,8 @@ private:
 			kStageSendToStructuralSelf,
 			kStageSendToStructuralModifiers,
 			kStageSendToStructuralChildren,
+
+			kStageSendCommand,
 		};
 
 		PropagationStage propagationStage;
@@ -913,16 +955,64 @@ private:
 	bool _cascade; // Traverses structure tree
 	bool _relay;   // Fire on multiple modifiers
 	bool _terminated;
+	bool _isCommand;
+};
+
+class Scheduler;
+
+class ScheduledEvent : Common::NonCopyable {
+	friend class Scheduler;
+
+public:
+	void cancel();
+	uint64 getScheduledTime() const;
+	void activate(Runtime *runtime) const;
+
+private:
+	ScheduledEvent(void *obj, void (*activateFunc)(void *, Runtime *), uint64 scheduledTime, Scheduler *scheduler);
+
+	void *_obj;
+	void (*_activateFunc)(void *obj, Runtime *runtime);
+
+	uint64 _scheduledTime;
+	Scheduler *_scheduler;
+};
+
+class Scheduler {
+	friend class ScheduledEvent;
+
+public:
+	Scheduler();
+	~Scheduler();
+
+	template<class T, void (T::*TMethodPtr)(Runtime *)>
+	Common::SharedPtr<ScheduledEvent> scheduleMethod(uint64 scheduledTime, T* obj) {
+		Common::SharedPtr<ScheduledEvent> evt(new ScheduledEvent(obj, Scheduler::methodActivateHelper<T, TMethodPtr>, scheduledTime, this));
+		insertEvent(evt);
+		return evt;
+	}
+
+	Common::SharedPtr<ScheduledEvent> getFirstEvent() const;
+	void descheduleFirstEvent();
+
+private:
+	template<class T, void (T::*TMethodPtr)(Runtime *)>
+	static void methodActivateHelper(void *obj, Runtime *runtime) {
+		(static_cast<T *>(obj)->*TMethodPtr)(runtime);
+	}
+
+	void insertEvent(const Common::SharedPtr<ScheduledEvent> &evt);
+	void removeEvent(const ScheduledEvent *evt);
+
+	Common::Array<Common::SharedPtr<ScheduledEvent>> _events;
 };
 
 class Runtime {
 public:
-	Runtime();
+	explicit Runtime(OSystem *system);
 
-	void runRealFrame(uint32 msec);
-	bool runProjectFrame();
-	void advanceProjectTime(uint32 msec);
-	void drawFrame(OSystem *osystem);
+	bool runFrame();
+	void drawFrame();
 	void queueProject(const Common::SharedPtr<ProjectDescription> &desc);
 
 	void addVolume(int volumeID, const char *name, bool isMounted);
@@ -931,6 +1021,7 @@ public:
 	Project *getProject() const;
 
 	void postConsumeMessageTask(IMessageConsumer *msgConsumer, const Common::SharedPtr<MessageProperties> &msg);
+	void postConsumeCommandTask(Structural *structural, const Common::SharedPtr<MessageProperties> &msg);
 
 	uint32 allocateRuntimeGUID();
 
@@ -966,6 +1057,8 @@ public:
 	// Sending a message on the VThread means "immediately"
 	void sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch);
 	void queueMessage(const Common::SharedPtr<MessageDispatch> &dispatch);
+
+	Scheduler &getScheduler();
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
@@ -1006,6 +1099,11 @@ private:
 		Common::SharedPtr<MessageProperties> message;
 	};
 
+	struct ConsumeCommandTaskData {
+		Structural *structural;
+		Common::SharedPtr<MessageProperties> message;
+	};
+
 	static Common::SharedPtr<Structural> findDefaultSharedSceneForScene(Structural *scene);
 	void executeTeardown(const Teardown &teardown);
 	void executeLowLevelSceneStateTransition(const LowLevelSceneStateTransitionAction &transitionAction);
@@ -1020,9 +1118,11 @@ private:
 	void ensureMainWindowExists();
 
 	void unloadProject();
+	void refreshPlayTime();	// Updates play time to be in sync with the system clock.  Used so that events occurring after storage access don't skip.
 
 	VThreadState dispatchMessageTask(const DispatchMethodTaskData &data);
 	VThreadState consumeMessageTask(const ConsumeMessageTaskData &data);
+	VThreadState consumeCommandTask(const ConsumeCommandTaskData &data);
 
 	Common::Array<VolumeState> _volumes;
 	Common::SharedPtr<ProjectDescription> _queuedProjectDesc;
@@ -1057,8 +1157,14 @@ private:
 	uint16 _displayWidth;
 	uint16 _displayHeight;
 
-	uint64 _realTime;
-	uint64 _playTime;
+	uint64 _realTimeBase;
+	uint64 _playTimeBase;
+
+	uint32 _realTime;
+	uint32 _playTime;
+
+	Scheduler _scheduler;
+	OSystem *_system;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<Debugger> _debugger;
@@ -1133,8 +1239,8 @@ private:
 struct IStructuralReferenceVisitor {
 	virtual void visitChildStructuralRef(Common::SharedPtr<Structural> &structural) = 0;
 	virtual void visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) = 0;
-	virtual void visitWeakStructuralRef(Common::SharedPtr<Structural> &structural) = 0;
-	virtual void visitWeakModifierRef(Common::SharedPtr<Modifier> &modifier) = 0;
+	virtual void visitWeakStructuralRef(Common::WeakPtr<Structural> &structural) = 0;
+	virtual void visitWeakModifierRef(Common::WeakPtr<Modifier> &modifier) = 0;
 };
 
 struct IMessageConsumer {
@@ -1173,6 +1279,8 @@ public:
 	void materializeSelfAndDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
 	void materializeDescendents(Runtime *runtime, ObjectLinkingScope *outerScope);
 
+	virtual VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	SupportStatus debugGetSupportStatus() const override;
 	const Common::String &debugGetName() const override;
@@ -1186,6 +1294,7 @@ protected:
 	virtual ObjectLinkingScope *getPersistentStructuralScope();
 	virtual ObjectLinkingScope *getPersistentModifierScope();
 
+	// If you override this, you must override visitInternalReferences too.
 	virtual void linkInternalReferences(ObjectLinkingScope *outerScope);
 
 	Structural *_parent;
@@ -1500,7 +1609,8 @@ public:
 protected:
 	bool loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeader);
 
-	// Links any references contained in the object, resolving static GUIDs to runtime object references
+	// Links any references contained in the object, resolving static GUIDs to runtime object references.
+	// If you override this, you must override visitInternalReferences too.
 	virtual void linkInternalReferences(ObjectLinkingScope *scope);
 
 	Common::String _name;

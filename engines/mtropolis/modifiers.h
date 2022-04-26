@@ -103,8 +103,15 @@ class MessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::MessengerModifier &data);
 
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void linkInternalReferences(ObjectLinkingScope *outerScope);
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Messenger Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
@@ -316,20 +323,33 @@ private:
 
 class TimerMessengerModifier : public Modifier {
 public:
+	~TimerMessengerModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::TimerMessengerModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void linkInternalReferences(ObjectLinkingScope *outerScope);
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Timer Messenger Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+
+	void activate(Runtime *runtime);
 
 	Event _executeWhen;
 	Event _terminateWhen;
 	MessengerSendSpec _sendSpec;
 	uint32 _milliseconds;
 	bool _looping;
+
+	Common::SharedPtr<ScheduledEvent> _scheduledEvent;
 };
 
 class BoundaryDetectionMessengerModifier : public Modifier {

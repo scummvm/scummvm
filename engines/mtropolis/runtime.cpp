@@ -47,8 +47,8 @@ public:
 
 	void visitChildStructuralRef(Common::SharedPtr<Structural> &structural) override;
 	void visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) override;
-	void visitWeakStructuralRef(Common::SharedPtr<Structural> &structural) override;
-	void visitWeakModifierRef(Common::SharedPtr<Modifier> &modifier) override;
+	void visitWeakStructuralRef(Common::WeakPtr<Structural> &structural) override;
+	void visitWeakModifierRef(Common::WeakPtr<Modifier> &modifier) override;
 
 private:
 	ObjectLinkingScope *_scope;
@@ -65,11 +65,10 @@ void ModifierInnerScopeBuilder::visitChildModifierRef(Common::SharedPtr<Modifier
 	_scope->addObject(modifier->getStaticGUID(), modifier->getName(), modifier);
 }
 
-void ModifierInnerScopeBuilder::visitWeakStructuralRef(Common::SharedPtr<Structural> &structural) {
-	assert(false);
+void ModifierInnerScopeBuilder::visitWeakStructuralRef(Common::WeakPtr<Structural> &structural) {
 }
 
-void ModifierInnerScopeBuilder::visitWeakModifierRef(Common::SharedPtr<Modifier> &modifier) {
+void ModifierInnerScopeBuilder::visitWeakModifierRef(Common::WeakPtr<Modifier> &modifier) {
 	// Do nothing
 }
 
@@ -79,8 +78,8 @@ public:
 
 	void visitChildStructuralRef(Common::SharedPtr<Structural> &structural) override;
 	void visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) override;
-	void visitWeakStructuralRef(Common::SharedPtr<Structural> &structural) override;
-	void visitWeakModifierRef(Common::SharedPtr<Modifier> &modifier) override;
+	void visitWeakStructuralRef(Common::WeakPtr<Structural> &structural) override;
+	void visitWeakModifierRef(Common::WeakPtr<Modifier> &modifier) override;
 
 private:
 	Runtime *_runtime;
@@ -99,11 +98,11 @@ void ModifierChildMaterializer::visitChildModifierRef(Common::SharedPtr<Modifier
 	modifier->materialize(_runtime, _outerScope);
 }
 
-void ModifierChildMaterializer::visitWeakStructuralRef(Common::SharedPtr<Structural> &structural) {
-	assert(false);
+void ModifierChildMaterializer::visitWeakStructuralRef(Common::WeakPtr<Structural> &structural) {
+	// Do nothing
 }
 
-void ModifierChildMaterializer::visitWeakModifierRef(Common::SharedPtr<Modifier> &modifier) {
+void ModifierChildMaterializer::visitWeakModifierRef(Common::WeakPtr<Modifier> &modifier) {
 	// Do nothing
 }
 
@@ -142,6 +141,41 @@ bool caseInsensitiveEqual(const Common::String& str1, const Common::String& str2
 
 	return true;
 }
+
+bool EventIDs::isCommand(EventID eventID) {
+	switch (eventID) {
+	case kElementShow:
+	case kElementHide:
+	case kElementSelect:
+	case kElementDeselect:
+	case kElementToggleSelect:
+	case kElementEnableEdit:
+	case kElementDisableEdit:
+	case kElementUpdatedCalculated:
+	case kElementScrollUp:
+	case kElementScrollDown:
+	case kElementScrollLeft:
+	case kElementScrollRight:
+	case kPreloadMedia:
+	case kFlushMedia:
+	case kPrerollMedia:
+	case kClone:
+	case kKill:
+	case kPlay:
+	case kStop:
+	case kPause:
+	case kUnpause:
+	case kTogglePause:
+	case kCloseProject:
+	case kFlushAllMedia:
+	case kAttribGet:
+	case kAttribSet:
+		return true;
+	default:
+		return false;
+	}
+}
+
 
 bool Point16::load(const Data::Point &point) {
 	x = point.x;
@@ -1118,7 +1152,7 @@ void DynamicValue::initFromOther(const DynamicValue &other) {
 	_type = other._type;
 }
 
-MessengerSendSpec::MessengerSendSpec() : destination(0) {
+MessengerSendSpec::MessengerSendSpec() : destination(0), _linkType(kLinkTypeNotYetLinked) {
 }
 
 bool MessengerSendSpec::load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::InternalTypeTaggedValue &dataLocator, const Common::String &dataWithSource, const Common::String &dataWithString, uint32 dataDestination) {
@@ -1150,6 +1184,160 @@ bool MessengerSendSpec::load(const Data::PlugInTypeTaggedValue &dataEvent, const
 	this->destination = dataDestination;
 
 	return true;
+}
+
+void MessengerSendSpec::linkInternalReferences(ObjectLinkingScope *outerScope) {
+	switch (destination) {
+	case kMessageDestNone:
+	case kMessageDestSharedScene:
+	case kMessageDestScene:
+	case kMessageDestSection:
+	case kMessageDestProject:
+	case kMessageDestActiveScene:
+	case kMessageDestElementsParent:
+	case kMessageDestChildren:
+	case kMessageDestModifiersParent:
+	case kMessageDestSubsection:
+	case kMessageDestElement:
+	case kMessageDestSourcesParent:
+	case kMessageDestBehavior:
+	case kMessageDestNextElement:
+	case kMessageDestPrevElement:
+	case kMessageDestBehaviorsParent:
+		_linkType = kLinkTypeCoded;
+		break;
+	default: {
+			Common::SharedPtr<RuntimeObject> resolution = outerScope->resolve(destination).lock();
+			if (resolution) {
+				if (resolution->isModifier()) {
+					resolvedModifierDest = resolution.staticCast<Modifier>();
+					_linkType = kLinkTypeModifier;
+				} else if (resolution->isStructural()) {
+					resolvedStructuralDest = resolution.staticCast<Structural>();
+					_linkType = kLinkTypeStructural;
+				} else {
+					_linkType = kLinkTypeUnresolved;
+				}
+			} else {
+				_linkType = kLinkTypeUnresolved;
+			}
+		} break;
+	}
+}
+
+void MessengerSendSpec::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	visitor->visitWeakModifierRef(resolvedModifierDest);
+	visitor->visitWeakStructuralRef(resolvedStructuralDest);
+}
+
+void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest) const {
+	outStructuralDest.reset();
+	outModifierDest.reset();
+
+	if (_linkType == kLinkTypeModifier) {
+		outModifierDest = resolvedModifierDest;
+	} else if (_linkType == kLinkTypeStructural) {
+		outStructuralDest = resolvedStructuralDest;
+	} else if (_linkType == kLinkTypeCoded) {
+		switch (destination) {
+		case kMessageDestNone:
+			break;
+		case kMessageDestSharedScene:
+			outStructuralDest = runtime->getActiveSharedScene();
+			break;
+		case kMessageDestScene:
+			resolveHierarchyStructuralDestination(runtime, sender, outStructuralDest, outModifierDest, isSceneFilter);
+			break;
+		case kMessageDestSection:
+			resolveHierarchyStructuralDestination(runtime, sender, outStructuralDest, outModifierDest, isSectionFilter);
+			break;
+		case kMessageDestProject:
+			outStructuralDest = runtime->getProject()->getSelfReference().staticCast<Project>();
+			break;
+		case kMessageDestActiveScene:
+			outStructuralDest = runtime->getActiveMainScene();
+			break;
+		case kMessageDestElement:
+			resolveHierarchyStructuralDestination(runtime, sender, outStructuralDest, outModifierDest, isElementFilter);
+			break;
+		case kMessageDestChildren:
+		case kMessageDestElementsParent:
+		case kMessageDestModifiersParent:
+		case kMessageDestSubsection:
+		case kMessageDestSourcesParent:
+		case kMessageDestBehavior:
+		case kMessageDestNextElement:
+		case kMessageDestPrevElement:
+		case kMessageDestBehaviorsParent:
+			warning("Not-yet-implemented message destination type");
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void MessengerSendSpec::sendFromMessenger(Runtime *runtime, Modifier *sender) const {
+
+	Common::SharedPtr<MessageProperties> props(new MessageProperties(this->send, this->with, sender->getSelfReference()));
+
+	Common::WeakPtr<Modifier> modifierDestRef;
+	Common::WeakPtr<Structural> structuralDestRef;
+
+	resolveDestination(runtime, sender, structuralDestRef, modifierDestRef);
+
+	Common::SharedPtr<Modifier> modifierDest = modifierDestRef.lock();
+	Common::SharedPtr<Structural> structuralDest = structuralDestRef.lock();
+
+	Common::SharedPtr<MessageDispatch> dispatch;
+	if (structuralDest)
+		dispatch.reset(new MessageDispatch(props, structuralDest.get(), messageFlags.cascade, messageFlags.relay, true));
+	else if (modifierDest)
+		dispatch.reset(new MessageDispatch(props, modifierDest.get(), messageFlags.cascade, messageFlags.relay, true));
+
+	if (dispatch) {
+		if (messageFlags.immediate)
+			runtime->sendMessageOnVThread(dispatch);
+		else
+			runtime->queueMessage(dispatch);
+	}
+}
+
+void MessengerSendSpec::resolveHierarchyStructuralDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest, bool (*compareFunc)(Structural *structural)) const {
+	RuntimeObject *obj = sender->getParent().lock().get();
+	while (obj) {
+		if (obj->isStructural()) {
+			Structural *structural = static_cast<Structural *>(obj);
+			if (compareFunc(structural)) {
+				outStructuralDest = structural->getSelfReference().staticCast<Structural>();
+				return;
+			}
+
+			obj = structural->getParent();
+		} else if (obj->isModifier()) {
+			Modifier *modifier = static_cast<Modifier *>(obj);
+			obj = modifier->getParent().lock().get();
+		} else {
+			break;
+		}
+	}
+}
+
+bool MessengerSendSpec::isSceneFilter(Structural *structural) {
+	Structural *parent = structural->getParent();
+	return parent != nullptr && parent->isSubsection();
+}
+
+bool MessengerSendSpec::isSectionFilter(Structural *structural) {
+	return structural->isSection();
+}
+
+bool MessengerSendSpec::isSubsectionFilter(Structural *structural) {
+	return structural->isSubsection();
+}
+
+bool MessengerSendSpec::isElementFilter(Structural *structural) {
+	return structural->isElement();
 }
 
 Event Event::create() {
@@ -1515,6 +1703,11 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 	}
 }
 
+VThreadState Structural::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	warning("Command type %i was ignored", msg->getEvent().eventType);
+	return kVThreadReturn;
+}
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 SupportStatus Structural::debugGetSupportStatus() const {
 	return kSupportStatusNone;
@@ -1656,24 +1849,42 @@ HighLevelSceneTransition::HighLevelSceneTransition(const Common::SharedPtr<Struc
 	: scene(scene), type(type), addToDestinationScene(addToDestinationScene), addToReturnList(addToReturnList) {
 }
 
-MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Structural *root, bool cascade, bool relay)
-	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps) {
-	PropagationStack topEntry;
-	topEntry.index = 0;
-	topEntry.propagationStage = PropagationStack::kStageSendToStructuralSelf;
-	topEntry.ptr.structural = root;
+MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Structural *root, bool cascade, bool relay, bool couldBeCommand)
+	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps), _isCommand(false) {
+	if (couldBeCommand && EventIDs::isCommand(msgProps->getEvent().eventType)) {
+		_isCommand = true;
 
-	_propagationStack.push_back(topEntry);
+		PropagationStack topEntry;
+		topEntry.index = 0;
+		topEntry.propagationStage = PropagationStack::kStageSendCommand;
+		topEntry.ptr.structural = root;
+
+		_propagationStack.push_back(topEntry);
+	} else {
+		PropagationStack topEntry;
+		topEntry.index = 0;
+		topEntry.propagationStage = PropagationStack::kStageSendToStructuralSelf;
+		topEntry.ptr.structural = root;
+
+		_propagationStack.push_back(topEntry);
+	}
 }
 
-MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Modifier *root, bool cascade, bool relay)
-	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps) {
-	PropagationStack topEntry;
-	topEntry.index = 0;
-	topEntry.propagationStage = PropagationStack::kStageSendToModifier;
-	topEntry.ptr.modifier = root;
+MessageDispatch::MessageDispatch(const Common::SharedPtr<MessageProperties> &msgProps, Modifier *root, bool cascade, bool relay, bool couldBeCommand)
+	: _cascade(cascade), _relay(relay), _terminated(false), _msg(msgProps), _isCommand(false) {
+	if (couldBeCommand && EventIDs::isCommand(msgProps->getEvent().eventType)) {
+		_isCommand = true;
+		// Can't actually send this so don't even bother.  Modifiers are not allowed to respond to commands.
+	} else {
+		PropagationStack topEntry;
+		topEntry.index = 0;
+		topEntry.propagationStage = PropagationStack::kStageSendToModifier;
+		topEntry.ptr.modifier = root;
 
-	_propagationStack.push_back(topEntry);
+		_isCommand = (couldBeCommand && EventIDs::isCommand(msgProps->getEvent().eventType));
+
+		_propagationStack.push_back(topEntry);
+	}
 }
 
 bool MessageDispatch::isTerminated() const {
@@ -1761,6 +1972,15 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 
 				return kVThreadReturn;
 			} break;
+		case PropagationStack::kStageSendCommand: {
+				Structural *structural = stackTop.ptr.structural;
+				_propagationStack.pop_back();
+				_terminated = true;
+
+				runtime->postConsumeCommandTask(structural, _msg);
+
+				return kVThreadReturn;
+			} break;
 		case PropagationStack::kStageSendToStructuralModifiers: {
 				Structural *structural = stackTop.ptr.structural;
 
@@ -1791,12 +2011,75 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 	return kVThreadReturn;
 }
 
-Runtime::SceneStackEntry::SceneStackEntry() {
+void ScheduledEvent::cancel() {
+	if (_scheduler)
+		_scheduler->removeEvent(this);
+
+	_scheduler = nullptr;
+}
+
+uint64 ScheduledEvent::getScheduledTime() const {
+	return _scheduledTime;
+}
+
+void ScheduledEvent::activate(Runtime *runtime) const {
+	_activateFunc(this->_obj, runtime);
 }
 
 
-Runtime::Runtime() : _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
-					 _displayWidth(1024), _displayHeight(768), _realTime(0), _playTime(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning) {
+ScheduledEvent::ScheduledEvent(void *obj, void (*activateFunc)(void *, Runtime *runtime), uint64 scheduledTime, Scheduler *scheduler)
+	: _obj(obj), _activateFunc(activateFunc), _scheduledTime(scheduledTime), _scheduler(scheduler) {
+}
+
+Scheduler::Scheduler() {
+}
+
+Scheduler::~Scheduler() {
+	for (Common::Array<Common::SharedPtr<ScheduledEvent>>::iterator it = _events.begin(), itEnd = _events.end(); it != itEnd; ++it) {
+		it->get()->_scheduler = nullptr;
+	}
+
+	_events.clear();
+}
+
+Common::SharedPtr<ScheduledEvent> Scheduler::getFirstEvent() const {
+	if (_events.size() > 0)
+		return _events[0];
+	return nullptr;
+}
+
+void Scheduler::descheduleFirstEvent() {
+	_events.remove_at(0);
+}
+
+void Scheduler::insertEvent(const Common::SharedPtr<ScheduledEvent> &evt) {
+	uint32 t = evt->getScheduledTime();
+	size_t insertionIndex = 0;
+	while (insertionIndex < _events.size()) {
+		if (_events[insertionIndex]->getScheduledTime() > t)
+			break;
+		insertionIndex++;
+	}
+
+	_events.insert_at(insertionIndex, evt);
+}
+
+void Scheduler::removeEvent(const ScheduledEvent *evt) {
+	for (size_t i = 0; i < _events.size(); i++) {
+		if (_events[i].get() == evt) {
+			_events[i].get()->_scheduler = nullptr;
+			_events.remove_at(i);
+			break;
+		}
+	}
+}
+
+Runtime::SceneStackEntry::SceneStackEntry() {
+}
+
+Runtime::Runtime(OSystem *system) : _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
+									_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0),
+									_sceneTransitionState(kSceneTransitionStateNotTransitioning), _system(system) {
 	_vthread.reset(new VThread());
 
 	for (int i = 0; i < kColorDepthModeCount; i++) {
@@ -1804,18 +2087,25 @@ Runtime::Runtime() : _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvali
 		_realDisplayMode = kColorDepthModeInvalid;
 		_fakeDisplayMode = kColorDepthModeInvalid;
 	}
+
+	_realTimeBase = system->getMillis();
+	_playTimeBase = system->getMillis();
 }
 
-void Runtime::runRealFrame(uint32 msec) {
-	_realTime += msec;
+bool Runtime::runFrame() {
+	uint32 timeMillis = _system->getMillis();
+
+	uint32 realMSec = timeMillis - _realTimeBase - _realTime;
+	uint32 playMSec = timeMillis - _playTimeBase - _playTime;
+
+	_realTime = timeMillis - _realTimeBase;
+	_playTime = timeMillis - _playTimeBase;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	if (_debugger)
-		_debugger->runFrame(msec);
+		_debugger->runFrame(realMSec);
 #endif
-}
 
-bool Runtime::runProjectFrame() {
 	for (;;) {
 		VThreadState state = _vthread->step();
 		if (state != kVThreadReturn) {
@@ -1911,8 +2201,18 @@ bool Runtime::runProjectFrame() {
 
 		if (_sceneTransitionState == kSceneTransitionStateTransitioning && _playTime >= _sceneTransitionEndTime) {
 			_sceneTransitionState = kSceneTransitionStateNotTransitioning;
-			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneTransitionEnded, 0), _activeMainScene.get(), false, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneTransitionEnded, 0), _activeMainScene.get(), true, true);
 			continue;
+		}
+
+		{
+			Common::SharedPtr<ScheduledEvent> firstScheduledEvent = _scheduler.getFirstEvent();
+			if (firstScheduledEvent && firstScheduledEvent->getScheduledTime() <= _playTime) {
+				_scheduler.descheduleFirstEvent();
+
+				firstScheduledEvent->activate(this);
+				continue;
+			}
 		}
 
 		// Ran out of actions
@@ -1923,15 +2223,11 @@ bool Runtime::runProjectFrame() {
 	return true;
 }
 
-void Runtime::advanceProjectTime(uint32 msec) {
-	_playTime += msec;
-}
+void Runtime::drawFrame() {
+	int width = _system->getWidth();
+	int height = _system->getHeight();
 
-void Runtime::drawFrame(OSystem* system) {
-	int width = system->getWidth();
-	int height = system->getHeight();
-
-	system->fillScreen(Render::resolveRGB(0, 0, 0, getRenderPixelFormat()));
+	_system->fillScreen(Render::resolveRGB(0, 0, 0, getRenderPixelFormat()));
 
 	for (Common::Array<Common::SharedPtr<Window> >::const_iterator it = _windows.begin(), itEnd = _windows.end(); it != itEnd; ++it) {
 		const Window &window = *it->get();
@@ -1975,10 +2271,10 @@ void Runtime::drawFrame(OSystem* system) {
 		if (destLeft >= destRight || destTop >= destBottom || destLeft >= width || destTop >= height || destRight <= 0 || destBottom <= 0)
 			continue;
 
-		system->copyRectToScreen(surface.getBasePtr(srcLeft, srcTop), surface.pitch, destLeft, destTop, destRight - destLeft, destBottom - destTop);
+		_system->copyRectToScreen(surface.getBasePtr(srcLeft, srcTop), surface.pitch, destLeft, destTop, destRight - destLeft, destBottom - destTop);
 	}
 
-	system->updateScreen();
+	_system->updateScreen();
 }
 
 Common::SharedPtr<Structural> Runtime::findDefaultSharedSceneForScene(Structural *scene) {
@@ -2239,7 +2535,7 @@ void Runtime::executeSharedScenePostSceneChangeActions() {
 
 void Runtime::queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay) {
 	Common::SharedPtr<MessageProperties> props(new MessageProperties(evt, DynamicValue(), Common::WeakPtr<RuntimeObject>()));
-	Common::SharedPtr<MessageDispatch> msg(new MessageDispatch(props, root, cascade, relay));
+	Common::SharedPtr<MessageDispatch> msg(new MessageDispatch(props, root, cascade, relay, false));
 	_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(msg));
 }
 
@@ -2261,6 +2557,8 @@ void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
 		_debugger->refreshSceneStatus();
 	}
 #endif
+
+	refreshPlayTime();
 }
 
 void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch) {
@@ -2289,9 +2587,18 @@ VThreadState Runtime::consumeMessageTask(const ConsumeMessageTaskData &data) {
 	return consumer->consumeMessage(this, data.message);
 }
 
+VThreadState Runtime::consumeCommandTask(const ConsumeCommandTaskData &data) {
+	Structural *structural = data.structural;
+	return structural->consumeCommand(this, data.message);
+}
+
 void Runtime::queueMessage(const Common::SharedPtr<MessageDispatch>& dispatch) {
 	_messageQueue.push_back(dispatch);
 }
+Scheduler &Runtime::getScheduler() {
+	return _scheduler;
+}
+
 
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
@@ -2326,6 +2633,11 @@ void Runtime::unloadProject() {
 	_rootLinkingScope.reset();
 }
 
+void Runtime::refreshPlayTime() {
+	_playTime = _system->getMillis() - _playTimeBase;
+}
+
+
 void Runtime::queueProject(const Common::SharedPtr<ProjectDescription> &desc) {
 	_queuedProjectDesc = desc;
 }
@@ -2350,6 +2662,12 @@ Project *Runtime::getProject() const {
 void Runtime::postConsumeMessageTask(IMessageConsumer *consumer, const Common::SharedPtr<MessageProperties> &msg) {
 	ConsumeMessageTaskData *params = _vthread->pushTask(this, &Runtime::consumeMessageTask);
 	params->consumer = consumer;
+	params->message = msg;
+}
+
+void Runtime::postConsumeCommandTask(Structural *structural, const Common::SharedPtr<MessageProperties> &msg) {
+	ConsumeCommandTaskData *params = _vthread->pushTask(this, &Runtime::consumeCommandTask);
+	params->structural = structural;
 	params->message = msg;
 }
 

@@ -534,9 +534,9 @@ MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
 	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(_evt, payloadValue, thread->getModifier()->getSelfReference()));
 	Common::SharedPtr<MessageDispatch> dispatch;
 	if (obj->isModifier())
-		dispatch.reset(new MessageDispatch(msgProps, static_cast<Modifier *>(obj.get()), _messageFlags.cascade, _messageFlags.relay));
+		dispatch.reset(new MessageDispatch(msgProps, static_cast<Modifier *>(obj.get()), _messageFlags.cascade, _messageFlags.relay, true));
 	else if (obj->isStructural())
-		dispatch.reset(new MessageDispatch(msgProps, static_cast<Structural *>(obj.get()), _messageFlags.cascade, _messageFlags.relay));
+		dispatch.reset(new MessageDispatch(msgProps, static_cast<Structural *>(obj.get()), _messageFlags.cascade, _messageFlags.relay, true));
 	else {
 		thread->error("Message destination is not a structural object or modifier");
 		return kMiniscriptInstructionOutcomeFailed;
