@@ -127,8 +127,8 @@ static inline SpriteFormat PaletteFormatForBPP(int bpp) {
 	case 1: return kSprFmt_PaletteRgb888;
 	case 2: return kSprFmt_PaletteRgb565;
 	case 4: return kSprFmt_PaletteArgb8888;
-	}
-	return kSprFmt_Undefined;
+	default: return kSprFmt_Undefined;
+	}	
 }
 
 static inline uint8_t GetPaletteBPP(SpriteFormat fmt) {
@@ -136,11 +136,9 @@ static inline uint8_t GetPaletteBPP(SpriteFormat fmt) {
 	case kSprFmt_PaletteRgb888: return 3;
 	case kSprFmt_PaletteArgb8888: return 4;
 	case kSprFmt_PaletteRgb565: return 2;
-	case kSprFmt_Undefined: return 0;
-	}
-	return 0; // means no palette
+	default: return 0; // means no palette
+	}	
 }
-
 
 SpriteFile::SpriteFile() {
 	_curPos = -2;

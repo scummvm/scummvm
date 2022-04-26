@@ -37,8 +37,8 @@ String GetDataExtErrorText(DataExtErrorType err) {
 		return "Block data overlapping.";
 	case kDataExtErr_BlockNotFound:
 		return "Block not found.";
+	default: return "Unknown error.";
 	}
-	return "Unknown error.";
 }
 
 HError DataExtParser::OpenBlock() {
