@@ -2470,6 +2470,52 @@ void ScummEngine_v5::o5_startScript() {
 		data[1] = 10;
 	}
 
+	// WORKAROUND bug #1025: in Loom, using the stealth draft on the
+	// shepherds would crash the game because of a missing actor number for
+	// their first reaction line ("We are the masters of stealth"...).
+	if (_game.id == GID_LOOM && _game.version == 3 && _roomResource == 23 && script == 232 && data[0] == 0) {
+		byte shepherdActor;
+		bool buggyShepherdsEGArelease = false;
+
+		switch (vm.slot[_currentScript].number) {
+		case 422:
+		case 423:
+		case 424:
+		case 425:
+			// It is assumed that the original intent was that any shepherd could
+			// say this line.
+			shepherdActor = vm.slot[_currentScript].number % 10;
+			break;
+		default:
+			// Match the behavior of the Talkie version, if necessary
+			shepherdActor = 4;
+			break;
+		}
+
+		// WORKAROUND: in some EGA releases, actor 3 may have been removed from the
+		// current room, although he's still on screen (the EGA English 1.1 release
+		// fixed this). In ScummVM, this invalid use means that you'd see no reaction
+		// at all from any shepherd when using the stealth draft on him.  In the
+		// original interpreter, the leftmost shepherd still says his own line, though.
+		// Forcing his appearance or ignoring his removal doesn't fix this bug either.
+		//
+		// Having no reaction at all is confusing for the player, so if we detect this
+		// behavior, we force the workaround, for now.
+		if (isValidActor(3) && !_actors[3]->isInCurrentRoom()) {
+			buggyShepherdsEGArelease = true;
+			if (shepherdActor == 3)
+				shepherdActor = 4;
+		}
+
+		if (isValidActor(shepherdActor) && _actors[shepherdActor]->isInCurrentRoom() && (_enableEnhancements || buggyShepherdsEGArelease)) {
+			// Restore the missing line by attaching it to its actor
+			data[0] = shepherdActor;
+		} else {
+			// Otherwise, behave as the original, and just skip this line
+			return;
+		}
+	}
+
 	// Method used by original games to skip copy protection scheme
 	if (!_copyProtection) {
 		// Copy protection was disabled in LucasArts Classic Adventures (PC Disk)
