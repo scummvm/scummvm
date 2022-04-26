@@ -170,7 +170,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"indyzak", "FM-TOWNS",    0, GID_ZAK, 3, 0, MDT_TOWNS, GF_OLD256 | GF_AUDIOTRACKS, Common::kPlatformFMTowns, GUIO4(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_MIDITOWNS, GUIO_TRIM_FMTOWNS_TO_200_PIXELS)},
 
 	{"indy3", "EGA",      "ega", GID_INDY3, 3, 0, MDT_PCSPK | MDT_PCJR | MDT_CMS | MDT_ADLIB, 0, UNK, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
-	{"indy3", "Mac",      "ega", GID_INDY3, 3, 0, MDT_PCSPK | MDT_PCJR,             Common::kPlatformMacintosh, UNK, GUIO3(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_ENHANCEMENTS)},
+	{"indy3", "Mac",      "ega", GID_INDY3, 3, 0, MDT_PCSPK | MDT_PCJR,             0, Common::kPlatformMacintosh, GUIO3(GUIO_NOSPEECH, GUIO_NOMIDI, GUIO_ENHANCEMENTS)},
 	{"indy3", "No AdLib", "ega", GID_INDY3, 3, 0, MDT_PCSPK | MDT_PCJR,             0, UNK, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
 	{"indy3", "VGA",      "vga", GID_INDY3, 3, 0, MDT_PCSPK | MDT_PCJR | MDT_CMS | MDT_ADLIB, GF_OLD256 | GF_FEW_LOCALS,                  Common::kPlatformDOS, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
 	{"indy3", "Steam",  "steam", GID_INDY3, 3, 0, MDT_PCSPK | MDT_PCJR | MDT_CMS | MDT_ADLIB, GF_OLD256 | GF_FEW_LOCALS, UNK, GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)},
