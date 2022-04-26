@@ -1370,14 +1370,14 @@ void Sound::stopCDTimer() {
 	if (_useReplacementAudioTracks)
 		return;
 
-	_cdMusicTimerMod = 0;
-	_cdMusicTimer = 0;
 	_vm->getTimerManager()->removeTimerProc(&cdTimerHandler);
 }
 
 void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 	// Reset the music timer variable at the start of a new track
 	_vm->VAR(_vm->VAR_MUSIC_TIMER) = 0;
+	_cdMusicTimerMod = 0;
+	_cdMusicTimer = 0;
 
 	// Play it
 	if (!_soundsPaused)
