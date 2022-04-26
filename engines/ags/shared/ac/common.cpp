@@ -26,8 +26,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-const char *game_file_sig = "Adventure Creator Game File v2";
-
 void quit(const String &str) {
 	quit(str.GetCStr());
 }
