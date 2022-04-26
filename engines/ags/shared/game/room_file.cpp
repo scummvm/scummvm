@@ -318,7 +318,7 @@ HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 }
 
 // Room script sources (original text)
-HError ReadScriptBlock(char *&buf, Stream *in, RoomFileVersion data_ver) {
+HError ReadScriptBlock(char *&buf, Stream *in, RoomFileVersion /*data_ver*/) {
 	size_t len = in->ReadInt32();
 	buf = new char[len + 1];
 	in->Read(buf, len);
@@ -329,7 +329,7 @@ HError ReadScriptBlock(char *&buf, Stream *in, RoomFileVersion data_ver) {
 }
 
 // Compiled room script
-HError ReadCompSc3Block(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
+HError ReadCompSc3Block(RoomStruct *room, Stream *in, RoomFileVersion /*data_ver*/) {
 	room->CompiledScript.reset(ccScript::CreateFromStream(in));
 	if (room->CompiledScript == nullptr)
 		return new RoomFileError(kRoomFileErr_ScriptLoadFailed, _G(ccErrorString));
@@ -389,7 +389,7 @@ HError ReadAnimBgBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 }
 
 // Read custom properties
-HError ReadPropertiesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
+HError ReadPropertiesBlock(RoomStruct *room, Stream *in, RoomFileVersion /*data_ver*/) {
 	int prop_ver = in->ReadInt32();
 	if (prop_ver != 1)
 		return new RoomFileError(kRoomFileErr_PropertiesBlockFormat, String::FromFormat("Expected version %d, got %d", 1, prop_ver));
@@ -476,7 +476,8 @@ private:
 	}
 
 	HError ReadBlock(int block_id, const String &ext_id,
-		soff_t block_len, bool &read_next) override {
+			soff_t block_len, bool &read_next) override {
+		read_next = true;
 		return ReadRoomBlock(_room, _in, (RoomFileBlock)block_id, ext_id, block_len, _dataVer);
 	}
 

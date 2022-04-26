@@ -102,17 +102,19 @@ Bitmap *AdjustBitmapSize(Bitmap *src, int width, int height) {
 	return bmp;
 }
 
+// Functor that copies the "mask color" pixels from source to dest
 template <class TPx, size_t BPP_>
 struct PixelTransCpy {
 	static const size_t BPP = BPP_;
-	inline void operator ()(uint8_t *dst, const uint8_t *src, uint32_t mask_color, bool use_alpha) const {
+	inline void operator ()(uint8_t *dst, const uint8_t *src, uint32_t mask_color, bool /*use_alpha*/) const {
 		if (*(const TPx *)src == mask_color)
 			*(TPx *)dst = mask_color;
 	}
 };
 
+// Functor that tells to never skip a pixel in the mask
 struct PixelNoSkip {
-	inline bool operator ()(uint8_t *data, uint32_t mask_color, bool use_alpha) const {
+	inline bool operator ()(uint8_t * /*data*/, uint32_t /*mask_color*/, bool /*use_alpha*/) const {
 		return false;
 	}
 };
@@ -120,9 +122,10 @@ struct PixelNoSkip {
 typedef PixelTransCpy<uint8_t, 1> PixelTransCpy8;
 typedef PixelTransCpy<uint16_t, 2> PixelTransCpy16;
 
+// Functor that copies the "mask color" pixels from source to dest, 24-bit depth
 struct PixelTransCpy24 {
 	static const size_t BPP = 3;
-	inline void operator ()(uint8_t *dst, const uint8_t *src, uint32_t mask_color, bool use_alpha) const {
+	inline void operator ()(uint8_t *dst, const uint8_t *src, uint32_t mask_color, bool /*use_alpha*/) const {
 		const uint8_t *mcol_ptr = (const uint8_t *)&mask_color;
 		if (src[0] == mcol_ptr[0] && src[1] == mcol_ptr[1] && src[2] == mcol_ptr[2]) {
 			dst[0] = mcol_ptr[0];
@@ -132,6 +135,7 @@ struct PixelTransCpy24 {
 	}
 };
 
+// Functor that copies the "mask color" pixels from source to dest, 32-bit depth, with alpha
 struct PixelTransCpy32 {
 	static const size_t BPP = 4;
 	inline void operator ()(uint8_t *dst, const uint8_t *src, uint32_t mask_color, bool use_alpha) const {
@@ -144,15 +148,19 @@ struct PixelTransCpy32 {
 	}
 };
 
+// Functor that tells to skip pixels if they match the mask color or have alpha = 0
 struct PixelTransSkip32 {
-	inline bool operator()(uint8_t *data, color_t mask_color, bool use_alpha) const {
-		return *(color_t *)data == (color_t)mask_color || (use_alpha && data[3] == 0);
+	inline bool operator ()(uint8_t *data, uint32_t mask_color, bool use_alpha) const {
+		return *(uint32_t *)data == mask_color || (use_alpha && data[3] == 0);
 	}
 };
 
+// Applies bitmap mask, using 2 functors:
+// - one that tells whether to skip current pixel;
+// - another that copies the color from src to dest
 template <class FnPxProc, class FnSkip>
-void ApplyMask(uint8_t *dst, const uint8_t *src, size_t pitch, size_t height, FnPxProc proc,
-		FnSkip skip, uint32_t mask_color, bool dst_has_alpha, bool mask_has_alpha) {
+void ApplyMask(uint8_t *dst, const uint8_t *src, size_t pitch, size_t height,
+	FnPxProc proc, FnSkip skip, uint32_t mask_color, bool dst_has_alpha, bool mask_has_alpha) {
 	for (size_t y = 0; y < height; ++y) {
 		for (size_t x = 0; x < pitch; x += FnPxProc::BPP, src += FnPxProc::BPP, dst += FnPxProc::BPP) {
 			if (!skip(dst, mask_color, dst_has_alpha))

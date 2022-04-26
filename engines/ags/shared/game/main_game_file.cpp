@@ -712,9 +712,10 @@ protected:
 	GameDataVersion _dataVer;
 };
 
-HError GameDataExtReader::ReadBlock(int block_id, const String &ext_id,
-		soff_t block_len, bool &read_next) {
-    // Add extensions here checking ext_id, which is an up to 16-chars name, for example:
+HError GameDataExtReader::ReadBlock(int /*block_id*/, const String &ext_id,
+		soff_t /*block_len*/, bool &read_next) {
+	read_next = true;
+	// Add extensions here checking ext_id, which is an up to 16-chars name, for example:
     // if (ext_id.CompareNoCase("GUI_NEWPROPS") == 0)
     // {
     //     // read new gui properties
@@ -768,7 +769,7 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 	if (!err)
 		return err;
 	game.ReadInvInfo_Aligned(in);
-	err = game.read_cursors(in, data_ver);
+	err = game.read_cursors(in);
 	if (!err)
 		return err;
 	game.read_interaction_scripts(in, data_ver);
@@ -794,7 +795,7 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 		in->Seek(count * 0x204);
 	}
 
-	game.read_characters(in, data_ver);
+	game.read_characters(in);
 	game.read_lipsync(in, data_ver);
 	game.read_messages(in, data_ver);
 

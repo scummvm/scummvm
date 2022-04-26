@@ -37,7 +37,7 @@ public:
 	// IAGSFontRenderer implementation
 	bool LoadFromDisk(int fontNumber, int fontSize) override;
 	void FreeMemory(int fontNumber) override;
-	bool SupportsExtendedCharacters(int fontNumber) override {
+	bool SupportsExtendedCharacters(int /*fontNumber*/) override {
 		return true;
 	}
 	int GetTextWidth(const char *text, int fontNumber) override;

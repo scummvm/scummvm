@@ -216,7 +216,7 @@ HError SpriteFile::OpenFile(const String &filename, const String &sprindex_filen
 	}
 
 	// Failed, index file is invalid; index sprites manually
-	return RebuildSpriteIndex(_stream.get(), topmost, _version, metrics);
+	return RebuildSpriteIndex(_stream.get(), topmost, metrics);
 }
 
 void SpriteFile::Close() {
@@ -326,7 +326,7 @@ static inline void ReadSprHeader(SpriteDatHeader &hdr, Stream *in,
 }
 
 HError SpriteFile::RebuildSpriteIndex(Stream *in, sprkey_t topmost,
-	SpriteFileVersion vers, std::vector<Size> &metrics) {
+		std::vector<Size> &metrics) {
 	topmost = std::min(topmost, (sprkey_t)_spriteData.size() - 1);
 	for (sprkey_t i = 0; !in->EOS() && (i <= topmost); ++i) {
 		_spriteData[i].Offset = in->GetPosition();
