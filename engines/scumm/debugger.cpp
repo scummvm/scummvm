@@ -913,11 +913,11 @@ void ScummDebugger::drawBox(int box) {
 
 bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	const char *names[] = {
-		"Opening",      "Straw to Gold", "Dyeing",
-		"Night Vision",	"Twisting",      "Sleep",
-		"Emptying",     "Invisibility",  "Terror",
-		"Sharpening",   "Reflection",    "Healing",
-		"Silence",      "Shaping",       "Unmaking",
+		"Opening",      "Straw Into Gold", "Dyeing",
+		"Night Vision",	"Twisting",        "Sleep",
+		"Emptying",     "Invisibility",    "Terror",
+		"Sharpening",   "Reflection",      "Healing",
+		"Silence",      "Shaping",         "Unmaking",
 		"Transcendence"
 	};
 
@@ -985,7 +985,7 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 
 	for (i = 0; i < 16; i++) {
 		draft = _vm->_scummVars[base + i * 2];
-		debugPrintf("%d %-13s %c%c%c%c %c%c\n",
+		debugPrintf("%d %-15s %c%c%c%c %c%c\n",
 			base + 2 * i,
 			names[i],
 			notes[draft & 0x0007],
