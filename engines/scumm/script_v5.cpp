@@ -511,6 +511,11 @@ void ScummEngine_v5::o5_actorOps() {
 			// remap the colors, it uses the wrong indexes. The
 			// CD animation uses colors 1-3, where the floppy
 			// version uses 2, 3, and 9.
+			//
+			// We don't touch the colours in general - the Special
+			// edition have pretty much made them canon anyway -
+			// but for the Smirk close-up we want the same colors
+			// as the floppy version.
 
 			if (_game.id == GID_MONKEY && _currentRoom == 76) {
 				if (i == 3)
@@ -1972,10 +1977,11 @@ void ScummEngine_v5::o5_roomOps() {
 			// we want the original color 3 for the cigar smoke. It
 			// should be ok since there is no GUI in this scene.
 
-			if (_game.id == GID_MONKEY && _currentRoom == 76 && d == 3 && _enableEnhancements)
-				break;
-
-			setPalColor(d, a, b, c);	/* index, r, g, b */
+			if (_game.id == GID_MONKEY && _currentRoom == 76 && d == 3 && _enableEnhancements) {
+				// Do nothing
+			} else {
+				setPalColor(d, a, b, c);	/* index, r, g, b */
+			}
 		}
 		break;
 	case 5:		// SO_ROOM_SHAKE_ON
