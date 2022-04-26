@@ -83,7 +83,8 @@ void RoomObject::UpdateCyclingView(int ref_id) {
 		wait--; return;
 	}
 
-	cycling = CycleViewAnim(view, loop, frame, cycling < ANIM_BACKWARDS, cycling % ANIM_BACKWARDS);
+	if (!CycleViewAnim(view, loop, frame, cycling < ANIM_BACKWARDS, cycling % ANIM_BACKWARDS))
+		cycling = 0; // finished animating
 
 	ViewFrame *vfptr = &_GP(views)[view].loops[loop].frames[frame];
 	if (vfptr->pic > UINT16_MAX)
