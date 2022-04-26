@@ -240,6 +240,7 @@ public:
 	// Arcade
 	Common::String _arcadeMode;
 	MVideo *_background;
+	virtual bool checkArcadeObjectives(ArcadeShooting *arc);
 	virtual Common::Point getPlayerPosition(bool needsUpdate);
 	virtual Common::Point computeTargetPosition(const Common::Point &mousePos);
 	virtual int detectTarget(const Common::Point &mousePos);
@@ -289,6 +290,7 @@ public:
 
 	Common::String _difficulty;
 	bool _skipLevel;
+	bool _loseLevel;
 	bool _skipDefeatVideo;
 
 	virtual void drawCursorArcade(const Common::Point &mousePos);

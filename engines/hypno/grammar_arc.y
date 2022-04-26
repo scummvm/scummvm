@@ -59,7 +59,7 @@ using namespace Hypno;
 %token<i> NUM BYTE
 // header
 %token COMMENT ALTOK AVTOK ABTOK CTOK DTOK HTOK HETOK HLTOK H12TOK HUTOK RETTOK QTOK RESTOK
-%token PTOK FTOK TTOK TATOK TPTOK ATOK VTOK OTOK LTOK MTOK NTOK NSTOK RTOK R01TOK
+%token PTOK FTOK TTOK TATOK TPTOK ATOK VTOK OTOK LTOK MTOK NTOK NSTOK RTOK R0TOK R1TOK
 %token ITOK I1TOK GTOK JTOK J0TOK KTOK UTOK ZTOK
 
 // body
@@ -415,10 +415,14 @@ bline: FNTOK FILENAME {
 		shoot->objMissesCount = $3;
 		debugC(1, kHypnoDebugParser, "R %d %d", $2, $3);
 	}
-	| R01TOK NUM NUM  {
+	| R0TOK NUM NUM  {
 		shoot->objKillsCount = $2;
 		shoot->objMissesCount = $3;
-		debugC(1, kHypnoDebugParser, "R0/1 %d %d", $2, $3); }
+		debugC(1, kHypnoDebugParser, "R0 %d %d", $2, $3);
+	}
+	| R1TOK NUM NUM  {
+		debugC(1, kHypnoDebugParser, "R1 %d %d", $2, $3);
+	}
 	| BNTOK NUM NUM {
 		FrameInfo fi($3, $2);
 		shoot->bodyFrames.push_back(fi);

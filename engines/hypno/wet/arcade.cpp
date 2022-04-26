@@ -196,19 +196,17 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 		} else {
 
 			// Objective checking
-			if (arc->objKillsRequired[_objIdx] > 0) {
-				if (_objKillsCount[_objIdx] >= arc->objKillsRequired[_objIdx] && _objMissesCount[_objIdx] <= arc->objMissesAllowed[_objIdx]) {
-					if (_objIdx == 0) {
-						_objIdx = 1;
-						if (_arcadeMode == "Y1") {
-							_segmentOffset = 8;
-							_segmentRepetition = 0;
-							_segmentShootSequenceOffset = 8;
-						}
-					} else {
-						_skipLevel = true; // RENAME
-						return;
+			if (checkArcadeObjectives(arc)) {
+				if (_objIdx == 0) {
+					_objIdx = 1;
+					if (_arcadeMode == "Y1") {
+						_segmentOffset = 8;
+						_segmentRepetition = 0;
+						_segmentShootSequenceOffset = 8;
 					}
+				} else {
+					_loseLevel = true;
+					return;
 				}
 			}
 			if (segments[_segmentIdx].type == 0xc9) {

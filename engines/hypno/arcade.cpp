@@ -182,6 +182,14 @@ void HypnoEngine::findNextSegment(ArcadeShooting *arc) { error("Function \"%s\" 
 
 byte *HypnoEngine::getTargetColor(Common::String name, int levelId) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
+bool HypnoEngine::checkArcadeObjectives(ArcadeShooting *arc) {
+	debugC(1, kHypnoDebugArcade, "Checking objective %d (%d/%d)", _objIdx, _objKillsCount[_objIdx], _objKillsRequired[_objIdx]);
+	if (_objKillsRequired[_objIdx] > 0)
+		return (_objKillsCount[_objIdx] >= _objKillsRequired[_objIdx] && \
+		        _objMissesCount[_objIdx] <= _objMissesAllowed[_objIdx]);
+	return true;
+}
+
 void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_arcadeMode = arc->mode;
 	Common::Point mousePos;
@@ -202,6 +210,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	debugC(1, kHypnoDebugArcade, "Starting segment of type %x", segments[_segmentIdx].type);
 	_shoots.clear();
 	_skipLevel = false;
+	_loseLevel = false;
 	_skipDefeatVideo = false;
 	_mask = nullptr;
 	_masks = nullptr;
@@ -336,6 +345,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			ArcadeTransition at = *arc->transitions.begin();
 			int ttime = at.time;
 			if (ttime == 0) { // This special case is only reachable in Wetlands c33
+				assert(_objIdx == 0);
 				_objIdx = 1;
 				arc->transitions.pop_front();
 			} else if (_background->decoder->getCurFrame() > ttime) {
@@ -358,7 +368,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 					debugC(1, kHypnoDebugArcade, "New separator frames %d %d %d", _playerFrameStart, _playerFrameSep, _playerFrameEnd);
 				}
 
-				if (!at.video.empty()) {
+				if (!checkArcadeObjectives(arc))
+					_loseLevel = true;   // No transition, just skip the level
+				else if (!at.video.empty()) {
 					_background->decoder->pauseVideo(true);
 					debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
 					MVideo video(at.video, Common::Point(0, 0), false, true, false);
@@ -407,23 +419,21 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			}
 		}
 
-		if (segments[_segmentIdx].end || _skipLevel) {
+		if (segments[_segmentIdx].end || _skipLevel || _loseLevel) {
 			skipVideo(*_background);
 			// Objectives
-			if ((_objKillsRequired[_objIdx] > 0 || _objMissesAllowed[_objIdx] > 0) && !_skipLevel) {
-				if (_objKillsCount[_objIdx] < _objKillsRequired[_objIdx] || _objMissesCount[_objIdx] > _objMissesAllowed[_objIdx]) {
-					if (!arc->defeatMissBossVideo.empty()) {
-						MVideo video(arc->defeatMissBossVideo, Common::Point(0, 0), false, true, false);
-						disableCursor();
-						runIntro(video);
-					}
-					assert(!arc->levelIfLose.empty());
-					_nextLevel = arc->levelIfLose;
-					_lives = _lives - 1;
-					_arcadeMode = "";
-					debugC(1, kHypnoDebugArcade, "Losing level (objectives) and jumping to %s", _nextLevel.c_str());
-					break;
+			if (!checkArcadeObjectives(arc) && !_skipLevel) {
+				if (!arc->defeatMissBossVideo.empty()) {
+					MVideo video(arc->defeatMissBossVideo, Common::Point(0, 0), false, true, false);
+					disableCursor();
+					runIntro(video);
 				}
+				assert(!arc->levelIfLose.empty());
+				_nextLevel = arc->levelIfLose;
+				_lives = _lives - 1;
+				_arcadeMode = "";
+				debugC(1, kHypnoDebugArcade, "Losing level (objectives) and jumping to %s", _nextLevel.c_str());
+				break;
 			}
 
 			if (!arc->nextLevelVideo.empty()) {

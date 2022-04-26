@@ -100,22 +100,23 @@ extern int HYPNO_ARC_debug;
     NTOK = 293,                    /* NTOK  */
     NSTOK = 294,                   /* NSTOK  */
     RTOK = 295,                    /* RTOK  */
-    R01TOK = 296,                  /* R01TOK  */
-    ITOK = 297,                    /* ITOK  */
-    I1TOK = 298,                   /* I1TOK  */
-    GTOK = 299,                    /* GTOK  */
-    JTOK = 300,                    /* JTOK  */
-    J0TOK = 301,                   /* J0TOK  */
-    KTOK = 302,                    /* KTOK  */
-    UTOK = 303,                    /* UTOK  */
-    ZTOK = 304,                    /* ZTOK  */
-    NONETOK = 305,                 /* NONETOK  */
-    A0TOK = 306,                   /* A0TOK  */
-    P0TOK = 307,                   /* P0TOK  */
-    WTOK = 308,                    /* WTOK  */
-    XTOK = 309,                    /* XTOK  */
-    CB3TOK = 310,                  /* CB3TOK  */
-    C02TOK = 311                   /* C02TOK  */
+    R0TOK = 296,                   /* R0TOK  */
+    R1TOK = 297,                   /* R1TOK  */
+    ITOK = 298,                    /* ITOK  */
+    I1TOK = 299,                   /* I1TOK  */
+    GTOK = 300,                    /* GTOK  */
+    JTOK = 301,                    /* JTOK  */
+    J0TOK = 302,                   /* J0TOK  */
+    KTOK = 303,                    /* KTOK  */
+    UTOK = 304,                    /* UTOK  */
+    ZTOK = 305,                    /* ZTOK  */
+    NONETOK = 306,                 /* NONETOK  */
+    A0TOK = 307,                   /* A0TOK  */
+    P0TOK = 308,                   /* P0TOK  */
+    WTOK = 309,                    /* WTOK  */
+    XTOK = 310,                    /* XTOK  */
+    CB3TOK = 311,                  /* CB3TOK  */
+    C02TOK = 312                   /* C02TOK  */
   };
   typedef enum HYPNO_ARC_tokentype HYPNO_ARC_token_kind_t;
 #endif
@@ -129,7 +130,7 @@ union HYPNO_ARC_STYPE
 	char *s; /* string value */
 	int i;	 /* integer value */
 
-#line 133 "engines/hypno/tokens_arc.h"
+#line 134 "engines/hypno/tokens_arc.h"
 
 };
 typedef union HYPNO_ARC_STYPE HYPNO_ARC_STYPE;
