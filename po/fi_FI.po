@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-24 08:53+0000\n"
-"PO-Revision-Date: 2022-04-17 16:27+0000\n"
+"PO-Revision-Date: 2022-04-26 18:27+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -6603,16 +6603,14 @@ msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(sen sijaan että vieritettäisiin 8 pikselin askeleissa)"
 
 #: engines/scumm/detection.cpp:220
-#, fuzzy
-#| msgid "Enable smooth scrolling"
 msgid "Allow semi-smooth scrolling"
-msgstr "Käytä jatkuvaa vieritystä"
+msgstr "Salli semi-pehmeä vieritys"
 
 #: engines/scumm/detection.cpp:221
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
-msgstr ""
+msgstr "Salli vähemmän pehmeä vieritys intron nopeissa kameraliikkeissä."
 
 #: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:730
 msgid "Enable game-specific enhancements"
