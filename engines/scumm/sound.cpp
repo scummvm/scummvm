@@ -62,6 +62,8 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	_replacementTrackStartTime(0),
 	_replacementTrackPauseTime(0),
 	_musicTimer(0),
+	_cdMusicTimerMod(0),
+	_cdMusicTimer(0),
 	_soundQuePos(0),
 	_soundQue2Pos(0),
 	_sfxFilename(),
@@ -1339,42 +1341,38 @@ bool Sound::isSfxFinished() const {
 	return !_mixer->hasActiveChannelOfType(Audio::Mixer::kSFXSoundType);
 }
 
-// We use a real timer in an attempt to get better sync with CD tracks. This is
-// necessary for games like Loom CD.
-
-static void cd_timer_handler(void *refCon) {
-	ScummEngine *scumm = (ScummEngine *)refCon;
+static void cdTimerHandler(void *refCon) {
+	Sound *snd = (Sound *)refCon;
 
 	// FIXME: Turn off the timer when it's no longer needed. In theory, it
 	// should be possible to check with pollCD(), but since CD sound isn't
 	// properly restarted when reloading a saved game, I don't dare to.
-
-	scumm->VAR(scumm->VAR_MUSIC_TIMER) += 6;
+	if ((snd->_cdMusicTimerMod++ & 3) == 0) {
+		snd->_cdMusicTimer++;
+	}
 }
 
 void Sound::startCDTimer() {
 	if (_useReplacementAudioTracks)
 		return;
 
-	// This timer interval is based on two scenes: The Monkey Island 1
-	// intro, and the scene in Loom CD where Chaos appears. In both cases
-	// the game plays the scene as two separate sounds, even though both
-	// halves are right next to each other in the CD track. Probably so
-	// that you can hit Escape to skip the first half.
+	// This CD timer implementation strictly follows the original interpreters for
+	// Monkey Island 1 CD and Loom CD: it works by incrementing _cdMusicTimerMod and _cdMusicTimer
+	// at each quarter frame (see ScummEngine::setTimerAndShakeFrequency() for what the exact
+	// frequency rate is for the particular game and engine version being ran).
 	//
-	// Make it too low, and the Monkey Island theme will be cut short. Make
-	// it too high, and there will be a nasty "hiccup" just as Chaos
-	// appears.
-
-	_vm->getTimerManager()->removeTimerProc(&cd_timer_handler);
-	_vm->getTimerManager()->installTimerProc(&cd_timer_handler, 100700, _vm, "scummCDtimer");
+	// Again as per the interpreters, VAR_MUSIC_TIMER is then updated inside the SCUMM main loop.
+	_vm->getTimerManager()->removeTimerProc(&cdTimerHandler);
+	_vm->getTimerManager()->installTimerProc(&cdTimerHandler, 1000000 / _vm->getTimerFrequency(), this, "scummCDtimer");
 }
 
 void Sound::stopCDTimer() {
 	if (_useReplacementAudioTracks)
 		return;
 
-	_vm->getTimerManager()->removeTimerProc(&cd_timer_handler);
+	_cdMusicTimerMod = 0;
+	_cdMusicTimer = 0;
+	_vm->getTimerManager()->removeTimerProc(&cdTimerHandler);
 }
 
 void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {

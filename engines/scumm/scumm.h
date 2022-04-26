@@ -1067,6 +1067,9 @@ protected:
 
 	void updateScreenShakeEffect();
 
+public:
+	double getTimerFrequency();
+
 protected:
 	bool _shakeEnabled = false;
 	uint _shakeFrame = 0;

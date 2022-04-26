@@ -112,6 +112,8 @@ public:
 	bool _soundsPaused;
 	byte _sfxMode;
 	uint _lastSound;
+	uint32 _cdMusicTimerMod;
+	uint32 _cdMusicTimer;
 
 	MidiDriverFlags _musicType;
 
@@ -154,6 +156,7 @@ public:
 	bool useReplacementAudioTracks() const { return _useReplacementAudioTracks; }
 	void updateMusicTimer();
 	int getMusicTimer() const { return _musicTimer; }
+	int getCDMusicTimer() const { return _cdMusicTimer; }
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 	void restoreAfterLoad();

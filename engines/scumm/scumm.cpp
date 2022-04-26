@@ -2267,6 +2267,10 @@ void ScummEngine::setTimerAndShakeFrequency() {
 	}
 }
 
+double ScummEngine::getTimerFrequency() {
+	return _timerFrequency;
+}
+
 void ScummEngine_v0::scummLoop(int delta) {
 	VAR(VAR_IS_SOUND_RUNNING) = (_sound->_lastSound && _sound->isSoundRunning(_sound->_lastSound) != 0);
 
@@ -2313,7 +2317,7 @@ void ScummEngine::scummLoop(int delta) {
 	scummLoop_updateScummVars();
 
 	if (_game.features & GF_AUDIOTRACKS) {
-		// Covered automatically by the Sound class
+		VAR(VAR_MUSIC_TIMER) = _sound->getCDMusicTimer();
 	} else if (VAR_MUSIC_TIMER != 0xFF) {
 		if (_sound->useReplacementAudioTracks() && _sound->getCurrentCDSound()) {
 			_sound->updateMusicTimer();
