@@ -122,7 +122,7 @@ VThreadState BehaviorModifier::propagateTask(const PropagateTaskData &taskData) 
 	}
 
 	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(taskData.eventID, 0), DynamicValue(), this->getSelfReference()));
-	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, _children[taskData.index].get(), true, true));
+	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, _children[taskData.index].get(), true, true, false));
 	taskData.runtime->sendMessageOnVThread(dispatch);
 
 	return kVThreadReturn;
@@ -184,6 +184,26 @@ bool MessengerModifier::load(ModifierLoaderContext &context, const Data::Messeng
 		return false;
 
 	return true;
+}
+
+bool MessengerModifier::respondsToEvent(const Event &evt) const {
+	return _when.respondsTo(evt);
+}
+
+VThreadState MessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_when.respondsTo(msg->getEvent())) {
+		_sendSpec.sendFromMessenger(runtime, this);
+	}
+
+	return kVThreadReturn;
+}
+
+void MessengerModifier::linkInternalReferences(ObjectLinkingScope *outerScope) {
+	_sendSpec.linkInternalReferences(outerScope);
+}
+
+void MessengerModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	_sendSpec.visitInternalReferences(visitor);
 }
 
 Common::SharedPtr<Modifier> MessengerModifier::shallowClone() const {
@@ -495,6 +515,11 @@ Common::SharedPtr<Modifier> IfMessengerModifier::shallowClone() const {
 	return clone;
 }
 
+TimerMessengerModifier::~TimerMessengerModifier() {
+	if (_scheduledEvent)
+		_scheduledEvent->cancel();
+}
+
 bool TimerMessengerModifier::load(ModifierLoaderContext &context, const Data::TimerMessengerModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -511,8 +536,46 @@ bool TimerMessengerModifier::load(ModifierLoaderContext &context, const Data::Ti
 	return true;
 }
 
+bool TimerMessengerModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt) || _terminateWhen.respondsTo(evt);
+}
+
+VThreadState TimerMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	// If this terminates AND starts then just cancel out and terminate
+	if (_terminateWhen.respondsTo(msg->getEvent())) {
+		if (_scheduledEvent)
+			_scheduledEvent->cancel();
+	} else if (_executeWhen.respondsTo(msg->getEvent())) {
+		if (!_scheduledEvent) {
+			_scheduledEvent = runtime->getScheduler().scheduleMethod<TimerMessengerModifier, &TimerMessengerModifier::activate>(runtime->getPlayTime() + _milliseconds, this);
+		}
+	}
+
+	return kVThreadReturn;
+}
+
+void TimerMessengerModifier::linkInternalReferences(ObjectLinkingScope *outerScope) {
+	_sendSpec.linkInternalReferences(outerScope);
+}
+
+void TimerMessengerModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	_sendSpec.visitInternalReferences(visitor);
+}
+
 Common::SharedPtr<Modifier> TimerMessengerModifier::shallowClone() const {
-	return Common::SharedPtr<Modifier>(new TimerMessengerModifier(*this));
+	TimerMessengerModifier *clone = new TimerMessengerModifier(*this);
+	clone->_scheduledEvent.reset();
+
+	return Common::SharedPtr<Modifier>(clone);
+}
+
+void TimerMessengerModifier::activate(Runtime *runtime) {
+	if (_looping)
+		_scheduledEvent = runtime->getScheduler().scheduleMethod<TimerMessengerModifier, &TimerMessengerModifier::activate>(runtime->getPlayTime() + _milliseconds, this);
+	else
+		_scheduledEvent.reset();
+
+	_sendSpec.sendFromMessenger(runtime, this);
 }
 
 bool BoundaryDetectionMessengerModifier::load(ModifierLoaderContext &context, const Data::BoundaryDetectionMessengerModifier &data) {
