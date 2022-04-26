@@ -167,10 +167,9 @@ void process_event(const EventHappened *evp) {
 				evpt = &_G(croom)->intrRoom;
 
 			_G(evblockbasename) = "room";
-			if (evp->data3 == 5) {
+			if (evp->data3 == EVROM_BEFOREFADEIN) {
 				_G(in_enters_screen)++;
 				run_on_event(GE_ENTER_ROOM, RuntimeScriptValue().SetInt32(_G(displayed_room)));
-
 			}
 			//Debug::Printf("Running room interaction, event %d", evp->data3);
 		}
@@ -188,7 +187,7 @@ void process_event(const EventHappened *evp) {
 		_G(evblockbasename) = oldbasename;
 		_G(evblocknum) = oldblocknum;
 
-		if ((evp->data3 == 5) && (evp->data1 == EVB_ROOM))
+		if ((evp->data1 == EVB_ROOM) && (evp->data3 == EVROM_BEFOREFADEIN))
 			_G(in_enters_screen)--;
 	} else if (evp->type == EV_FADEIN) {
 		// if they change the transition type before the fadein, make
