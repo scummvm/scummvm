@@ -126,7 +126,7 @@ static inline HError MakeScriptLoadError(const char *name) {
 // These are optional, so no error is raised if some of these are not found.
 // For those that do exist, reads them and replaces any scripts of same kind
 // in the already loaded game data.
-HError LoadGameScripts(LoadedGameEntities &ents, GameDataVersion data_ver) {
+HError LoadGameScripts(LoadedGameEntities &ents) {
 	// Global script 
 	std::unique_ptr<Stream> in(_GP(AssetMgr)->OpenAsset("GlobalScript.o"));
 	if (in) {
@@ -192,7 +192,7 @@ HError load_game_file() {
 
 	if (!err)
 		return err;
-	err = LoadGameScripts(ents, src.DataVersion);
+	err = LoadGameScripts(ents);
 	if (!err)
 		return err;
 	err = (HError)InitGameState(ents, src.DataVersion);

@@ -410,12 +410,12 @@ bool graphics_mode_init_any(const GraphicResolution &game_res, const DisplayMode
 
 	// Try to create renderer and init gfx mode, choosing one factory at a time
 	bool result = false;
-	for (StringV::const_iterator it2 = ids.begin(); it2 != ids.end(); ++it2) {
+	for (const auto &id : ids) {
 		result =
 #ifdef USE_SIMPLE_GFX_INIT
-			simple_create_gfx_driver_and_init_mode(*it2, game_res, setup, color_depth);
+			simple_create_gfx_driver_and_init_mode(id, game_res, setup, color_depth);
 #else
-			create_gfx_driver_and_init_mode_any(*it2, game_res, setup, color_depth);
+			create_gfx_driver_and_init_mode_any(id, game_res, setup, color_depth);
 #endif
 
 		if (result)

@@ -189,7 +189,8 @@ static int find_free_audio_channel(ScriptAudioClip *clip, int priority, bool int
 	return channelToUse;
 }
 
-bool is_audiotype_allowed_to_play(AudioFileType type) {
+bool is_audiotype_allowed_to_play(AudioFileType /*type*/) {
+	// TODO: this is a remnant of an old audio logic, think this function over
 	return _GP(usetup).audio_enabled;
 }
 
@@ -892,9 +893,9 @@ void update_music_volume() {
 	}
 }
 
-// Ensures crossfader is stable after loading (or failing to load)
-// new music
-void post_new_music_check(int newchannel) {
+// Ensures crossfader is stable after loading (or failing to load) new music
+// NOTE: part of the legacy audio logic
+void post_new_music_check() {
 	if ((_G(crossFading) > 0) && (AudioChans::GetChannel(_G(crossFading)) == nullptr)) {
 		_G(crossFading) = 0;
 		// Was fading out but then they played invalid music, continue to fade out
@@ -1016,7 +1017,7 @@ static void play_new_music(int mnum, SOUNDCLIP *music) {
 			_G(current_music_type) = ch->get_sound_type();
 	}
 
-	post_new_music_check(useChannel);
+	post_new_music_check();
 	update_music_volume();
 }
 

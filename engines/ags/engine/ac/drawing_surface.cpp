@@ -408,12 +408,10 @@ int DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y) {
 		int r = getr_depth(colDepth, rawPixel);
 		int g = getg_depth(colDepth, rawPixel);
 		int b = getb_depth(colDepth, rawPixel);
-
 		rawPixel = Game_GetColorFromRGB(r, g, b);
 	}
 
 	sds->FinishedDrawingReadOnly();
-
 	return rawPixel;
 }
 

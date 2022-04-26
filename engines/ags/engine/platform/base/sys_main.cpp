@@ -40,7 +40,7 @@ void sys_main_shutdown() {
 	sys_window_destroy();
 }
 
-void sys_set_background_mode(bool on) {
+void sys_set_background_mode(bool /*on*/) {
 	// TODO: consider if we want any implementation here, and what...
 }
 

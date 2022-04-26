@@ -73,7 +73,7 @@ IAGSEditorDebugger *GetEditorDebugger(const char *instanceToken) {
 
 #else   // AGS_PLATFORM_OS_WINDOWS
 
-IAGSEditorDebugger *GetEditorDebugger(const char *instanceToken) {
+IAGSEditorDebugger *GetEditorDebugger(const char * /*instanceToken*/) {
 	return nullptr;
 }
 

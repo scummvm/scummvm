@@ -117,7 +117,7 @@ private:
 	bool TryAddItem(const String &s) {
 		return _set.insert(s)._value;
 	}
-	void DeleteItem(ConstIterator it) { /* do nothing */ }
+	void DeleteItem(ConstIterator /*it*/) { /* do nothing */ }
 
 	size_t CalcSerializeSize() override {
 		// 2 class properties + item count

@@ -79,7 +79,7 @@ int ScummVMRendererGraphicsDriver::GetDisplayDepthForNativeDepth(int native_colo
 	return native_color_depth;
 }
 
-IGfxModeList *ScummVMRendererGraphicsDriver::GetSupportedModeList(int color_depth) {
+IGfxModeList *ScummVMRendererGraphicsDriver::GetSupportedModeList(int /*color_depth*/) {
 	std::vector<DisplayMode> modes;
 	sys_get_desktop_modes(modes);
 	return new ScummVMRendererGfxModeList(modes);
@@ -99,7 +99,7 @@ void ScummVMRendererGraphicsDriver::SetGraphicsFilter(PSDLRenderFilter filter) {
 	// SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
 }
 
-void ScummVMRendererGraphicsDriver::SetTintMethod(TintMethod method) {
+void ScummVMRendererGraphicsDriver::SetTintMethod(TintMethod /*method*/) {
 	// TODO: support new D3D-style tint method
 }
 
@@ -172,7 +172,7 @@ bool ScummVMRendererGraphicsDriver::SetRenderFrame(const Rect &dst_rect) {
 	return !_dstRect.IsEmpty();
 }
 
-void ScummVMRendererGraphicsDriver::ClearRectangle(int x1, int y1, int x2, int y2, RGB *colorToUse) {
+void ScummVMRendererGraphicsDriver::ClearRectangle(int /*x1*/, int /*y1*/, int /*x2*/, int /*y2*/, RGB * /*colorToUse*/) {
 	// TODO: but maybe is not necessary, as we use SDL_Renderer with accelerated gfx here?
 	// See SDL_RenderDrawRect
 }
@@ -279,7 +279,7 @@ void ScummVMRendererGraphicsDriver::DrawSprite(int x, int y, IDriverDependantBit
 	_spriteBatches[_actSpriteBatch].List.push_back(ALDrawListEntry((ALSoftwareBitmap *)bitmap, x, y));
 }
 
-void ScummVMRendererGraphicsDriver::SetScreenFade(int red, int green, int blue) {
+void ScummVMRendererGraphicsDriver::SetScreenFade(int /*red*/, int /*green*/, int /*blue*/) {
 	// TODO: was not necessary atm
 	// TODO: checkme later
 }
@@ -550,7 +550,8 @@ bool ScummVMRendererGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destinatio
 
     Author: Matthew Leverton
 **/
-void ScummVMRendererGraphicsDriver::highcolor_fade_in(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
+void ScummVMRendererGraphicsDriver::highcolor_fade_in(Bitmap *vs, void(*draw_callback)(),
+		int /*offx*/, int /*offy*/, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
 	Bitmap *bmp_orig = vs;
 	const int col_depth = bmp_orig->GetColorDepth();
 	const int clearColor = makecol_depth(col_depth, targetColourRed, targetColourGreen, targetColourBlue);
@@ -583,7 +584,8 @@ void ScummVMRendererGraphicsDriver::highcolor_fade_in(Bitmap *vs, void(*draw_cal
 	Present();
 }
 
-void ScummVMRendererGraphicsDriver::highcolor_fade_out(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
+void ScummVMRendererGraphicsDriver::highcolor_fade_out(Bitmap *vs, void(*draw_callback)(),
+		int /*offx*/, int /*offy*/, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
 	Bitmap *bmp_orig = vs;
 	const int col_depth = vs->GetColorDepth();
 	const int clearColor = makecol_depth(col_depth, targetColourRed, targetColourGreen, targetColourBlue);

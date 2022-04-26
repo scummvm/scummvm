@@ -98,6 +98,9 @@ void AGSPlatformDriver::RegisterGameWithGameExplorer() {
 void AGSPlatformDriver::UnRegisterGameWithGameExplorer() {
 }
 
+void AGSPlatformDriver::ValidateWindowSize(int & /*x*/, int & /*y*/, bool /*borderless*/) const {
+}
+
 void AGSPlatformDriver::PlayVideo(const char *name, int skip, int flags) {
 }
 
@@ -160,7 +163,7 @@ void AGSPlatformDriver::FinishedUsingGraphicsMode() {
 	// don't need to do anything on any OS except DOS
 }
 
-SetupReturnValue AGSPlatformDriver::RunSetup(const ConfigTree &cfg_in, ConfigTree &cfg_out) {
+SetupReturnValue AGSPlatformDriver::RunSetup(const ConfigTree & /*cfg_in*/, ConfigTree & /*cfg_out*/) {
 	return kSetup_Cancel;
 }
 

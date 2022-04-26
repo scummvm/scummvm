@@ -168,8 +168,7 @@ struct AGSPlatformDriver
 	virtual void UnRegisterGameWithGameExplorer();
 	virtual int  ConvertKeycodeToScanCode(int keyCode);
 	// Adjust window size to ensure it is in the supported limits
-	virtual void ValidateWindowSize(int &x, int &y, bool borderless) const {
-	}
+	virtual void ValidateWindowSize(int &x, int &y, bool /*borderless*/) const;
 
 	virtual int  InitializeCDPlayer() = 0;  // return 0 on success
 	virtual int  CDPlayerCommand(int cmdd, int datt) = 0;

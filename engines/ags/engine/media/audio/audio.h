@@ -105,7 +105,7 @@ void        apply_volume_drop_modifier(bool applyModifier);
 void        update_audio_system_on_game_loop();
 void        stopmusic();
 void        update_music_volume();
-void        post_new_music_check(int newchannel);
+void        post_new_music_check();
 // Sets up the crossfading for playing the new music track,
 // and returns the channel number to use; the channel is guaranteed to be free
 int         prepare_for_new_music();

@@ -158,7 +158,7 @@ int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 // Returns 0 normally, or -1 to indicate that the NewInteraction has
 // become invalid and don't run another interaction on it
 // (eg. a room change occurred)
-int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny, int isInv) {
+int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny) {
 
 	if ((nint->ScriptFuncNames[evnt] == nullptr) || (nint->ScriptFuncNames[evnt][0u] == 0)) {
 		// no response defined for this event
@@ -690,11 +690,10 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			PlayFlic(IPARAM1, IPARAM2);
 			break;
 		case 9: { // Run Dialog
-			int roomWas = _GP(play).room_changes;
 			RunDialog(IPARAM1);
 			// if they changed room within the dialog script,
 			// the interaction command list is no longer valid
-			if (roomWas != _GP(play).room_changes)
+			if (room_was != _GP(play).room_changes)
 				return -1;
 		}
 		break;

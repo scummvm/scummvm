@@ -169,22 +169,6 @@ void engine_pre_gfxmode_driver_cleanup() {
 	_G(gfxDriver)->SetMemoryBackBuffer(nullptr);
 }
 
-// Setup virtual screen
-void engine_post_gfxmode_screen_setup(const DisplayMode &dm, bool recreate_bitmaps) {
-	if (recreate_bitmaps) {
-		// TODO: find out if
-		// - we need to support this case at all;
-		// - if yes then which bitmaps need to be recreated (probably only video bitmaps and textures?)
-	}
-}
-
-void engine_pre_gfxmode_screen_cleanup() {
-}
-
-// Release virtual screen
-void engine_pre_gfxsystem_screen_destroy() {
-}
-
 // Setup color conversion parameters
 void engine_setup_color_conversions(int coldepth) {
 	// default shifts for how we store the sprite data
@@ -235,7 +219,7 @@ void engine_pre_gfxmode_draw_cleanup() {
 }
 
 // Setup mouse control mode and graphic area
-void engine_post_gfxmode_mouse_setup(const DisplayMode &dm, const Size &init_desktop) {
+void engine_post_gfxmode_mouse_setup(const Size &init_desktop) {
 	// Assign mouse control parameters.
 	//
 	// NOTE that we setup speed and other related properties regardless of
@@ -284,8 +268,7 @@ void engine_post_gfxmode_setup(const Size &init_desktop) {
 	if (has_driver_changed) {
 		engine_post_gfxmode_draw_setup(dm);
 	}
-	engine_post_gfxmode_screen_setup(dm, has_driver_changed);
-	engine_post_gfxmode_mouse_setup(dm, init_desktop);
+	engine_post_gfxmode_mouse_setup(init_desktop);
 
 	invalidate_screen();
 }
@@ -293,13 +276,11 @@ void engine_post_gfxmode_setup(const Size &init_desktop) {
 void engine_pre_gfxmode_release() {
 	engine_pre_gfxmode_mouse_cleanup();
 	engine_pre_gfxmode_driver_cleanup();
-	engine_pre_gfxmode_screen_cleanup();
 }
 
 void engine_pre_gfxsystem_shutdown() {
 	engine_pre_gfxmode_release();
 	engine_pre_gfxmode_draw_cleanup();
-	engine_pre_gfxsystem_screen_destroy();
 }
 
 void on_coordinates_scaling_changed() {

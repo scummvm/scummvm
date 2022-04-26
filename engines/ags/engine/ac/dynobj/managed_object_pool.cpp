@@ -48,14 +48,10 @@ int ManagedObjectPool::Remove(ManagedObject &o, bool force) {
 		return 0;
 	}
 
-	//auto handle = o.handle;
 	available_ids.push(o.handle);
-
 	handleByAddress.erase(o.addr);
+	ManagedObjectLog("Line %d Disposed managed object handle=%d", currentline, o.handle);
 	o = ManagedObject();
-
-	ManagedObjectLog("Line %d Disposed managed object handle=%d", _G(currentline), handle);
-
 	return 1;
 }
 

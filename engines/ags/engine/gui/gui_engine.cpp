@@ -50,10 +50,6 @@ using namespace AGS::Shared;
 // For engine these are defined in ac.cpp
 extern void replace_macro_tokens(const char *, String &);
 
-// For engine these are defined in acfonts.cpp
-extern void ensure_text_valid_for_font(char *, int);
-//
-
 // in ac_runningame
 
 
