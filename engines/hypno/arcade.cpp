@@ -190,6 +190,10 @@ bool HypnoEngine::checkArcadeObjectives(ArcadeShooting *arc) {
 	return true;
 }
 
+bool HypnoEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *arc) {
+	error("Function \"%s\" not implemented", __FUNCTION__);
+}
+
 void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_arcadeMode = arc->mode;
 	Common::Point mousePos;
@@ -201,6 +205,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	// segment/shoots
 	Segments segments = arc->segments;
 	initSegment(arc);
+
+	// Transitions
+	ArcadeTransitions transitions = arc->transitions;
 
 	_levelId = arc->id;
 	_shootSound = arc->shootSound;
@@ -235,8 +242,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		debugC(1, kHypnoDebugArcade, "Used frame rate looks odd: %f, increasing x 10", rate);
 		_background->decoder->setRate(10.0);
 	}
-	Filename currentPalette = arc->backgroundPalette;
-	loadPalette(currentPalette);
+	_currentPalette = arc->backgroundPalette;
+	loadPalette(_currentPalette);
 	bool shootingPrimary = false;
 	bool shootingSecondary = false;
 	bool needsUpdate = true;
@@ -341,60 +348,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			break;
 		}
 
-		if (!arc->transitions.empty()) {
-			ArcadeTransition at = *arc->transitions.begin();
-			int ttime = at.time;
-			if (ttime == 0) { // This special case is only reachable in Wetlands c33
-				assert(_objIdx == 0);
-				_objIdx = 1;
-				arc->transitions.pop_front();
-			} else if (_background->decoder->getCurFrame() > ttime) {
-				transition = true;
-
-				if (_playerFrameSeps.size() == 1) {
-					_playerFrameStart = _playerFrameEnd + 1;
-					_playerFrameSep = *_playerFrameSeps.begin();
-					_playerFrameSeps.pop_front();
-					_playerFrameEnd = _playerFrames.size();
-					_playerFrameIdx = _playerFrameStart;
-					debugC(1, kHypnoDebugArcade, "New separator frames %d %d %d", _playerFrameStart, _playerFrameSep, _playerFrameEnd);
-				} else if (_playerFrameSeps.size() >= 2) {
-					_playerFrameStart = _playerFrameEnd + 1;
-					_playerFrameSep = *_playerFrameSeps.begin();
-					_playerFrameSeps.pop_front();
-					_playerFrameEnd = *_playerFrameSeps.begin();
-					_playerFrameSeps.pop_front();
-					_playerFrameIdx = _playerFrameStart;
-					debugC(1, kHypnoDebugArcade, "New separator frames %d %d %d", _playerFrameStart, _playerFrameSep, _playerFrameEnd);
-				}
-
-				if (!checkArcadeObjectives(arc))
-					_loseLevel = true;   // No transition, just skip the level
-				else if (!at.video.empty()) {
-					_background->decoder->pauseVideo(true);
-					debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
-					MVideo video(at.video, Common::Point(0, 0), false, true, false);
-					disableCursor();
-					runIntro(video);
-
-					if (!at.palette.empty())
-						currentPalette = at.palette;
-
-					loadPalette(currentPalette);
-					_background->decoder->pauseVideo(false);
-					drawPlayer();
-					updateScreen(*_background);
-					drawScreen();
-					drawCursorArcade(mousePos);
-				} else if (!at.sound.empty()) {
-					playSound(at.sound, 1);
-				} else
-					error ("Invalid transition at %d", ttime);
-
-				arc->transitions.pop_front();
-				if (!_music.empty())
-					playSound(_music, 0, arc->musicRate); // restore music
-			}
+		if (!transitions.empty()) {
+			transition = checkTransition(transitions, arc);
 		}
 
 		if (_background->decoder && _background->decoder->getCurFrame() >= int(segments[_segmentIdx].start + segments[_segmentIdx].size - 2)) {

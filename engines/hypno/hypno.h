@@ -240,7 +240,9 @@ public:
 	// Arcade
 	Common::String _arcadeMode;
 	MVideo *_background;
+	Filename _currentPalette;
 	virtual bool checkArcadeObjectives(ArcadeShooting *arc);
+	virtual bool checkTransition(ArcadeTransitions &transitions, ArcadeShooting *arc);
 	virtual Common::Point getPlayerPosition(bool needsUpdate);
 	virtual Common::Point computeTargetPosition(const Common::Point &mousePos);
 	virtual int detectTarget(const Common::Point &mousePos);
@@ -400,6 +402,7 @@ public:
 
 	// Arcade
 	Common::Point getPlayerPosition(bool needsUpdate) override;
+	bool checkTransition(ArcadeTransitions &transitions, ArcadeShooting *arc) override;
 	void pressedKey(const int keycode) override;
 	void runBeforeArcade(ArcadeShooting *arc) override;
 	void runAfterArcade(ArcadeShooting *arc) override;

@@ -280,6 +280,85 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 	}
 }
 
+bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *arc) {
+	ArcadeTransition at = *transitions.begin();
+	int ttime = at.time;
+	if (ttime == 0) { // This special case is only reachable in c33
+		assert(_objIdx == 0);
+		_objIdx = 1;
+		transitions.pop_front();
+	} else if (_background->decoder->getCurFrame() > ttime) {
+
+		if (_playerFrameSeps.size() == 1) {
+			_playerFrameStart = _playerFrameEnd + 1;
+			_playerFrameSep = *_playerFrameSeps.begin();
+			_playerFrameSeps.pop_front();
+			_playerFrameEnd = _playerFrames.size();
+			_playerFrameIdx = _playerFrameStart;
+			debugC(1, kHypnoDebugArcade, "New separator frames %d %d %d", _playerFrameStart, _playerFrameSep, _playerFrameEnd);
+		} else if (_playerFrameSeps.size() >= 2) {
+			_playerFrameStart = _playerFrameEnd + 1;
+			_playerFrameSep = *_playerFrameSeps.begin();
+			_playerFrameSeps.pop_front();
+			_playerFrameEnd = *_playerFrameSeps.begin();
+			_playerFrameSeps.pop_front();
+			_playerFrameIdx = _playerFrameStart;
+			debugC(1, kHypnoDebugArcade, "New separator frames %d %d %d", _playerFrameStart, _playerFrameSep, _playerFrameEnd);
+		}
+
+		if (_levelId == 33) {
+			if (checkArcadeObjectives(arc)) {
+				_objIdx = 1;
+			} else {
+				// We do not play the transition, just skip the level
+				_loseLevel = true;
+				return true;
+			}
+		} else if (_levelId == 52) {
+			// Ignore the first objective, this will be checked when the targets are missed
+			// just go to the second one
+			_objIdx = 1;
+		} else if (_levelId == 61 && transitions.size() == 1) {
+			// Check the first objective during the second transition
+			if (checkArcadeObjectives(arc)) {
+				_objIdx = 1;
+			} else {
+				// We do not play the transition, just skip the level
+				_loseLevel = true;
+				return true;
+			}
+		}
+
+		if (!at.video.empty()) {
+			_background->decoder->pauseVideo(true);
+			debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
+			MVideo video(at.video, Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+
+			if (!at.palette.empty())
+				_currentPalette = at.palette;
+
+			loadPalette(_currentPalette);
+			_background->decoder->pauseVideo(false);
+			drawPlayer();
+			updateScreen(*_background);
+			drawScreen();
+			drawCursorArcade(g_system->getEventManager()->getMousePos());
+		} else if (!at.sound.empty()) {
+			playSound(at.sound, 1);
+		} else
+			error ("Invalid transition at %d", ttime);
+
+		transitions.pop_front();
+		if (!_music.empty())
+			playSound(_music, 0, arc->musicRate); // restore music
+		return true;
+	}
+	return false;
+}
+
+
 void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 	_checkpoint = _currentLevel;
 	if (_health < 0)
@@ -528,7 +607,7 @@ void WetEngine::pressedKey(const int keycode) {
 		}
 		_background->decoder->pauseVideo(true);
 		showCredits();
-		//loadPalette(currentPalette); //FIXME
+		loadPalette(_currentPalette);
 		changeScreenMode("320x200");
 		_background->decoder->pauseVideo(false);
 		updateScreen(*_background);
@@ -600,7 +679,7 @@ void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	} else if (_levelId == 60 && s->name == "DOOR1") {
 		_health = 0;
 		_background->decoder->pauseVideo(true);
-		// In the last level, the hit boss video is used to store this ending
+		// In this level, the hit boss video is used to store this ending
 		MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
 		runIntro(video);
 		loadPalette(arc->backgroundPalette);
