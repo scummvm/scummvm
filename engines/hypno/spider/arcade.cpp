@@ -118,7 +118,8 @@ void SpiderEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	if (_arcadeMode != "YC" && _arcadeMode != "YD")
 		return;
 	if ((uint32)(s->name[0]) == _currentPlayerPosition) {
-		_health = _health - s->attackWeight;
+		if (!_infiniteHealthCheat)
+			_health = _health - s->attackWeight;
 		hitPlayer();
 	}
 }
