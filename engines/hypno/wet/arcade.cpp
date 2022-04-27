@@ -659,7 +659,8 @@ bool WetEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	if (_ammo <= 0)
 		return false;
 
-	_ammo--;
+	if (!_infiniteAmmoCheat)
+		_ammo--;
 	incShotsFired();
 	return clickedPrimaryShoot(mousePos);
 }
@@ -668,7 +669,8 @@ void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	if (s->name == "SP_SWITCH_R" || s->name == "SP_SWITCH_L") {
 		_health = 0;
 	} else if (s->name == "SP_LIZARD1") {
-		_health = _health - 15;
+		if (!_infiniteHealthCheat)
+			_health = _health - 15;
 		_background->decoder->pauseVideo(true);
 		MVideo video(arc->additionalVideo, Common::Point(0, 0), false, true, false);
 		runIntro(video);
@@ -688,7 +690,8 @@ void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		drawScreen();
 		_skipDefeatVideo = true;
 	} else if (s->attackFrames.empty()) {
-		_health = _health - s->attackWeight;
+		if (!_infiniteHealthCheat)
+			_health = _health - s->attackWeight;
 		hitPlayer();
 	}
 }

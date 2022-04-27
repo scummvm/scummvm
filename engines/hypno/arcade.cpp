@@ -462,7 +462,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				if (it->attackFrames.size() > 0) {
 					uint32 attackFrame = it->attackFrames.front();
 					if (frame > 0 && frame >= (int)(attackFrame - 2) && !it->destroyed) {
-						_health = _health - it->attackWeight;
+						if (!_infiniteHealthCheat)
+							_health = _health - it->attackWeight;
 						hitPlayer();
 						it->attackFrames.pop_front();
 					}

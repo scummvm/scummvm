@@ -100,6 +100,8 @@ public:
 	Common::Platform _platform;
 	Common::String _variant;
 	bool _cheatsEnabled;
+	bool _infiniteHealthCheat;
+	bool _infiniteAmmoCheat;
 	bool _restoredContentEnabled;
 
 	Audio::SoundHandle _soundHandle;
