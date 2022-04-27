@@ -110,7 +110,7 @@ String TextStreamReader::ReadLine() {
 }
 
 String TextStreamReader::ReadAll() {
-	size_t len = Math::InRangeOrDef<size_t>(_stream->GetLength() - _stream->GetPosition(), SIZE_MAX);
+	size_t len = Math::InRangeOrDef<size_t>((size_t)(_stream->GetLength() - _stream->GetPosition()), SIZE_MAX);
 	return ReadString(len);
 }
 
