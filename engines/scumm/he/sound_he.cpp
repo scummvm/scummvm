@@ -600,6 +600,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 	if (READ_BE_UINT32(ptr) == MKTAG('R','I','F','F') || READ_BE_UINT32(ptr) == MKTAG('W','S','O','U')) {
 		uint16 compType;
 		int blockAlign;
+		int samplesPerBlock;
 		int codeOffs = -1;
 
 		priority = (soundID > _vm->_numSounds) ? 255 : *(ptr + 18);
@@ -623,7 +624,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 		size = READ_LE_UINT32(ptr + 4);
 		Common::MemoryReadStream memStream(ptr, size);
 
-		if (!Audio::loadWAVFromStream(memStream, size, rate, flags, &compType, &blockAlign)) {
+		if (!Audio::loadWAVFromStream(memStream, size, rate, flags, &compType, &blockAlign, &samplesPerBlock)) {
 			error("playHESound: Not a valid WAV file (%d)", soundID);
 		}
 
@@ -649,11 +650,15 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
 		if (compType == 17) {
-			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&memStream, DisposeAfterUse::NO, size, Audio::kADPCMMSIma, rate, (flags & Audio::FLAG_STEREO) ? 2 : 1, blockAlign);
+			int nChan = (flags & Audio::FLAG_STEREO) ? 2 : 1;
+			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&memStream, DisposeAfterUse::NO, size, Audio::kADPCMMSIma, rate, nChan, blockAlign);
 
 			// FIXME: Get rid of this crude hack to turn a ADPCM stream into a raw stream.
 			// It seems it is only there to allow looping -- if that is true, we certainly
 			// can do without it, using a LoopingAudioStream.
+
+			if (_heChannel[heChannel].timer)
+				_heChannel[heChannel].timer = size / nChan * samplesPerBlock / blockAlign * 1000 / rate;
 
 			byte *sound = (byte *)malloc(size * 4);
 			/* On systems where it matters, malloc will return
@@ -663,10 +668,6 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 			size = voxStream->readBuffer((int16 *)(void *)sound, size * 2);
 			size *= 2; // 16bits.
 			delete voxStream;
-
-			_heChannel[heChannel].rate = rate;
-			if (_heChannel[heChannel].timer)
-				_heChannel[heChannel].timer = size * 1000 / (rate * blockAlign);
 
 			// makeADPCMStream returns a stream in native endianness, but RawMemoryStream
 			// defaults to big endian. If we're on a little endian system, set the LE flag.
