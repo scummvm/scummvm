@@ -2814,6 +2814,17 @@ EOF
 			fi
 		fi
 
+		# Avoid "file has no symbols" noise from ranlib, if it's new enough
+		ranlib_version=`$_ranlib -V 2>/dev/null`
+		if test -n "$ranlib_version" ; then
+			ranlib_version="`echo "${ranlib_version}" | sed -ne 's/.*cctools-\([0-9]\{1,\}\).*/\1/gp'`"
+			if test -n "$ranlib_version" && test "$ranlib_version" -ge 862 ; then
+				append_var _ranlib "-no_warning_for_no_symbols"
+				# Also tell ar not to do its own calls to ranlib
+				append_var _ar "-S"
+			fi
+		fi
+
 		# Use pandoc to generate README and NEWS file for the bundle
 		# Also default to  HTML rather than plain text as it gives a nicer
 		# formating, especially for the README. We could consider using RTF
