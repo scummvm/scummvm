@@ -63,7 +63,7 @@ bool MemoryStream::IsValid() const {
 }
 
 bool MemoryStream::EOS() const {
-	return _pos >= (soff_t)_len;
+	return _pos >= _len;
 }
 
 soff_t MemoryStream::GetLength() const {
@@ -134,7 +134,7 @@ size_t MemoryStream::Write(const void *buffer, size_t size) {
 }
 
 int32_t MemoryStream::WriteByte(uint8_t val) {
-	if (_pos >= (soff_t)_buf_sz) { return -1; }
+	if (_pos >= _buf_sz) { return -1; }
 	*(_buf + _pos) = val;
 	_pos++; _len++;
 	return val;

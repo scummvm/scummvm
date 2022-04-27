@@ -193,7 +193,7 @@ bool FindFileRecursive::Next() {
 }
 
 bool FindFileRecursive::PushDir(const String &sub) {
-	if (_maxLevel != SIZE_MAX && (int)_fdirs.size() == _maxLevel)
+	if (_maxLevel != SIZE_MAX && (uint32_t)_fdirs.size() == _maxLevel)
 		return false; // no more nesting allowed
 
 	String path = Path::ConcatPaths(_fullDir, sub);

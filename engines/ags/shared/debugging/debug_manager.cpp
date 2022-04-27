@@ -52,7 +52,7 @@ void DebugOutput::SetEnabled(bool enable) {
 }
 
 void DebugOutput::SetGroupFilter(DebugGroupID id, MessageType verbosity) {
-	int key = _GP(DbgMgr).GetGroup(id).UID.ID;
+	uint32_t key = _GP(DbgMgr).GetGroup(id).UID.ID;
 	if (key != kDbgGroup_None)
 		_groupFilter[key] = verbosity;
 	else
