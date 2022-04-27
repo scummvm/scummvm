@@ -240,25 +240,19 @@ void LauncherDialog::build() {
 		new ButtonWidget(this, _title + ".QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
 
 	new ButtonWidget(this, _title + ".AboutButton", _("A~b~out"), _("About ScummVM"), kAboutCmd);
-	new ButtonWidgetAutoRes(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _c("Global Opts...", "lowres"), _("Change global ScummVM options"), kOptionsCmd);
+	new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd, 0, _c("Global Opts...", "lowres"));
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
+	DropdownButtonWidget *addButton =
+		new DropdownButtonWidget(this, _title + ".AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd);
+	addButton->setLowresLabel(_c("~A~dd Game...", "lowres"));
+	_addButton = addButton;
+	_removeButton =
+		new ButtonWidget(this, _title + ".RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd, 0, _c("~R~emove Game", "lowres"));
 	if (g_system->getOverlayWidth() > 320) {
-		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, _title + ".AddGameButton", _("~A~dd Game..."), _("Add games to the list"), kAddGameCmd);
 		addButton->appendEntry(_("Mass Add..."), kMassAddGameCmd);
-		_addButton = addButton;
-
-		_removeButton =
-			new ButtonWidget(this, _title + ".RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	} else {
-		DropdownButtonWidget *addButton =
-			new DropdownButtonWidget(this, _title + ".AddGameButton", _c("~A~dd Game...", "lowres"), _("Add games to the list"), kAddGameCmd);
 		addButton->appendEntry(_c("Mass Add...", "lowres"), kMassAddGameCmd);
-		_addButton = addButton;
-
-		_removeButton =
-		new ButtonWidget(this, _title + ".RemoveGameButton", _c("~R~emove Game", "lowres"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 	}
 
 	// Search box
@@ -993,7 +987,7 @@ void LauncherSimple::build() {
 
 	// Add edit button
 	_editButton =
-		new ButtonWidgetAutoRes(this, "Launcher.EditGameButton", _("~G~ame Options..."), _c("Game Opts...", "lowres"), _("Change game options"), kEditGameCmd);
+		new ButtonWidget(this, "Launcher.EditGameButton", _("~G~ame Options..."), _("Change game options"), kEditGameCmd, 0, _c("Game Opts...", "lowres"));
 
 	// Add list with game titles
 	_list = new GroupedListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);

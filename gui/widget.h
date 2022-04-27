@@ -225,9 +225,10 @@ class ButtonWidget : public StaticTextWidget, public CommandSender {
 protected:
 	uint32	_cmd;
 	uint8	_hotkey;
+	Common::U32String _lowresLabel;
 public:
-	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
-	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
+	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
 
 	void getMinSize(int &minWidth, int &minHeight) override;
 
@@ -236,6 +237,8 @@ public:
 
 	void setLabel(const Common::U32String &label);
 	void setLabel(const Common::String &label);
+	void setLowresLabel(const Common::U32String &label);
+	const Common::U32String &getLabel();
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
@@ -248,18 +251,6 @@ public:
 protected:
 	void drawWidget() override;
 	bool _duringPress;
-};
-
-/* ButtonWidgetAutoRes */
-class ButtonWidgetAutoRes : public ButtonWidget {
-	Common::U32String _lowresLabel;
-
-public:
-	ButtonWidgetAutoRes(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &lowresLabel, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
-	void setLowresLabel(const Common::U32String &label);
-
-protected:
-	void drawWidget() override;
 };
 
 /* DropdownButtonWidget */
