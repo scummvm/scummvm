@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-26 18:08+0000\n"
+"POT-Creation-Date: 2022-04-27 19:39+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -5225,9 +5225,9 @@ msgstr "Povolit násilné scény"
 msgid "Enable Gore Mode when available"
 msgstr "Povolit násilné scény, jsou-li dostupné"
 
-#: engines/hypno/detection.cpp:211 engines/ultima/detection.cpp:84
+#: engines/hypno/detection.cpp:211
 #, fuzzy
-msgid "Enable cheats"
+msgid "Enable original cheats"
 msgstr "Zapnout héliový režim"
 
 #: engines/hypno/detection.cpp:212
@@ -5236,10 +5236,28 @@ msgstr ""
 
 #: engines/hypno/detection.cpp:220
 #, fuzzy
-msgid "Enable restored content"
+msgid "Enable infinite health cheat"
 msgstr "Povolit cenzuru obsahu"
 
 #: engines/hypno/detection.cpp:221
+msgid "Player health will never decrease (except for game over scenes)."
+msgstr ""
+
+#: engines/hypno/detection.cpp:229
+#, fuzzy
+msgid "Enable infinite ammo cheat"
+msgstr "Zapnout héliový režim"
+
+#: engines/hypno/detection.cpp:230
+msgid "Player ammo will never decrease."
+msgstr ""
+
+#: engines/hypno/detection.cpp:238
+#, fuzzy
+msgid "Enable restored content"
+msgstr "Povolit cenzuru obsahu"
+
+#: engines/hypno/detection.cpp:239
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 
@@ -8023,6 +8041,11 @@ msgstr "Povolit cenzuru obsahu"
 #: engines/ultima/detection.cpp:77
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
+
+#: engines/ultima/detection.cpp:84
+#, fuzzy
+msgid "Enable cheats"
+msgstr "Zapnout héliový režim"
 
 #: engines/ultima/detection.cpp:85
 msgid "Allow cheats by commands and a menu when player is clicked."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-26 18:08+0000\n"
+"POT-Creation-Date: 2022-04-27 19:39+0000\n"
 "PO-Revision-Date: 2022-04-21 11:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -5139,8 +5139,10 @@ msgstr "Режим з кров'ю"
 msgid "Enable Gore Mode when available"
 msgstr "Ввімкнути режим з кров'ю, якщо є доступний"
 
-#: engines/hypno/detection.cpp:211 engines/ultima/detection.cpp:84
-msgid "Enable cheats"
+#: engines/hypno/detection.cpp:211
+#, fuzzy
+#| msgid "Enable cheats"
+msgid "Enable original cheats"
 msgstr "Ввімкнути чіти"
 
 #: engines/hypno/detection.cpp:212
@@ -5148,10 +5150,30 @@ msgid "Allow cheats using the C key."
 msgstr "Увімкніть чіт-коди за допомогою клавіші C."
 
 #: engines/hypno/detection.cpp:220
+#, fuzzy
+#| msgid "Enable font replacement"
+msgid "Enable infinite health cheat"
+msgstr "Ввімкнути заміну шрифтів"
+
+#: engines/hypno/detection.cpp:221
+msgid "Player health will never decrease (except for game over scenes)."
+msgstr ""
+
+#: engines/hypno/detection.cpp:229
+#, fuzzy
+#| msgid "Enable cheats"
+msgid "Enable infinite ammo cheat"
+msgstr "Ввімкнути чіти"
+
+#: engines/hypno/detection.cpp:230
+msgid "Player ammo will never decrease."
+msgstr ""
+
+#: engines/hypno/detection.cpp:238
 msgid "Enable restored content"
 msgstr "Ввімкнути відновлений контент"
 
-#: engines/hypno/detection.cpp:221
+#: engines/hypno/detection.cpp:239
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "Додатковий контент, який було вимкнуто в оригінальній грі."
 
@@ -7980,6 +8002,10 @@ msgstr "Ввімкнути лімітування кадрів"
 #: engines/ultima/detection.cpp:77
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr "Лімітує швідкість гри, щоб уникнути занадто швидкого відтворювання."
+
+#: engines/ultima/detection.cpp:84
+msgid "Enable cheats"
+msgstr "Ввімкнути чіти"
 
 #: engines/ultima/detection.cpp:85
 msgid "Allow cheats by commands and a menu when player is clicked."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-26 18:08+0000\n"
+"POT-Creation-Date: 2022-04-27 19:39+0000\n"
 "PO-Revision-Date: 2021-07-12 15:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -4940,8 +4940,8 @@ msgstr ""
 msgid "Enable Gore Mode when available"
 msgstr ""
 
-#: engines/hypno/detection.cpp:211 engines/ultima/detection.cpp:84
-msgid "Enable cheats"
+#: engines/hypno/detection.cpp:211
+msgid "Enable original cheats"
 msgstr ""
 
 #: engines/hypno/detection.cpp:212
@@ -4949,10 +4949,26 @@ msgid "Allow cheats using the C key."
 msgstr ""
 
 #: engines/hypno/detection.cpp:220
-msgid "Enable restored content"
+msgid "Enable infinite health cheat"
 msgstr ""
 
 #: engines/hypno/detection.cpp:221
+msgid "Player health will never decrease (except for game over scenes)."
+msgstr ""
+
+#: engines/hypno/detection.cpp:229
+msgid "Enable infinite ammo cheat"
+msgstr ""
+
+#: engines/hypno/detection.cpp:230
+msgid "Player ammo will never decrease."
+msgstr ""
+
+#: engines/hypno/detection.cpp:238
+msgid "Enable restored content"
+msgstr ""
+
+#: engines/hypno/detection.cpp:239
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 
@@ -7539,6 +7555,10 @@ msgstr ""
 
 #: engines/ultima/detection.cpp:77
 msgid "Limits the speed of the game to prevent running too fast."
+msgstr ""
+
+#: engines/ultima/detection.cpp:84
+msgid "Enable cheats"
 msgstr ""
 
 #: engines/ultima/detection.cpp:85

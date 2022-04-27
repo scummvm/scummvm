@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-26 18:08+0000\n"
+"POT-Creation-Date: 2022-04-27 19:39+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -5093,9 +5093,9 @@ msgstr ""
 msgid "Enable Gore Mode when available"
 msgstr ""
 
-#: engines/hypno/detection.cpp:211 engines/ultima/detection.cpp:84
+#: engines/hypno/detection.cpp:211
 #, fuzzy
-msgid "Enable cheats"
+msgid "Enable original cheats"
 msgstr "Oyunun tam ismi"
 
 #: engines/hypno/detection.cpp:212
@@ -5104,11 +5104,29 @@ msgstr ""
 
 #: engines/hypno/detection.cpp:220
 #, fuzzy
+msgid "Enable infinite health cheat"
+msgstr "3B Anti merdiven efekti:"
+
+#: engines/hypno/detection.cpp:221
+msgid "Player health will never decrease (except for game over scenes)."
+msgstr ""
+
+#: engines/hypno/detection.cpp:229
+#, fuzzy
+msgid "Enable infinite ammo cheat"
+msgstr "Oyunun tam ismi"
+
+#: engines/hypno/detection.cpp:230
+msgid "Player ammo will never decrease."
+msgstr ""
+
+#: engines/hypno/detection.cpp:238
+#, fuzzy
 #| msgid "Enable storage"
 msgid "Enable restored content"
 msgstr "Depolamayı aktif edin"
 
-#: engines/hypno/detection.cpp:221
+#: engines/hypno/detection.cpp:239
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 
@@ -7762,6 +7780,11 @@ msgstr "3B Anti merdiven efekti:"
 #: engines/ultima/detection.cpp:77
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
+
+#: engines/ultima/detection.cpp:84
+#, fuzzy
+msgid "Enable cheats"
+msgstr "Oyunun tam ismi"
 
 #: engines/ultima/detection.cpp:85
 msgid "Allow cheats by commands and a menu when player is clicked."

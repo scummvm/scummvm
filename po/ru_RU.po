@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-26 18:08+0000\n"
+"POT-Creation-Date: 2022-04-27 19:39+0000\n"
 "PO-Revision-Date: 2022-04-21 11:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -5138,8 +5138,10 @@ msgstr "Режим с кровью"
 msgid "Enable Gore Mode when available"
 msgstr "Включает режим с изображением крови, если он доступен"
 
-#: engines/hypno/detection.cpp:211 engines/ultima/detection.cpp:84
-msgid "Enable cheats"
+#: engines/hypno/detection.cpp:211
+#, fuzzy
+#| msgid "Enable cheats"
+msgid "Enable original cheats"
 msgstr "Включить чит-режим"
 
 #: engines/hypno/detection.cpp:212
@@ -5147,10 +5149,30 @@ msgid "Allow cheats using the C key."
 msgstr "Включите читы, нажав на клавишу С."
 
 #: engines/hypno/detection.cpp:220
+#, fuzzy
+#| msgid "Enable font replacement"
+msgid "Enable infinite health cheat"
+msgstr "Включить замену шрифтов"
+
+#: engines/hypno/detection.cpp:221
+msgid "Player health will never decrease (except for game over scenes)."
+msgstr ""
+
+#: engines/hypno/detection.cpp:229
+#, fuzzy
+#| msgid "Enable cheats"
+msgid "Enable infinite ammo cheat"
+msgstr "Включить чит-режим"
+
+#: engines/hypno/detection.cpp:230
+msgid "Player ammo will never decrease."
+msgstr ""
+
+#: engines/hypno/detection.cpp:238
 msgid "Enable restored content"
 msgstr "Включить восстановленный контент"
 
-#: engines/hypno/detection.cpp:221
+#: engines/hypno/detection.cpp:239
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "Добавить конент, который был удалён в огининальной игре."
 
@@ -7992,6 +8014,10 @@ msgstr "Включить ограничение кадров в секунду"
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 "Ограничивает скорость игры чтобы избежать слишком быстрого воспроизведения."
+
+#: engines/ultima/detection.cpp:84
+msgid "Enable cheats"
+msgstr "Включить чит-режим"
 
 #: engines/ultima/detection.cpp:85
 msgid "Allow cheats by commands and a menu when player is clicked."

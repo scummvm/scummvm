@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-26 18:08+0000\n"
+"POT-Creation-Date: 2022-04-27 19:39+0000\n"
 "PO-Revision-Date: 2022-04-22 11:43+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -5180,8 +5180,10 @@ msgstr "Modo sangriento"
 msgid "Enable Gore Mode when available"
 msgstr "Activa el modo sangriento si está disponible"
 
-#: engines/hypno/detection.cpp:211 engines/ultima/detection.cpp:84
-msgid "Enable cheats"
+#: engines/hypno/detection.cpp:211
+#, fuzzy
+#| msgid "Enable cheats"
+msgid "Enable original cheats"
 msgstr "Activar trucos"
 
 #: engines/hypno/detection.cpp:212
@@ -5189,10 +5191,30 @@ msgid "Allow cheats using the C key."
 msgstr "Permite el uso de trucos al pulsar la tecla C."
 
 #: engines/hypno/detection.cpp:220
+#, fuzzy
+#| msgid "Enable font replacement"
+msgid "Enable infinite health cheat"
+msgstr "Activar sustitución de fuentes"
+
+#: engines/hypno/detection.cpp:221
+msgid "Player health will never decrease (except for game over scenes)."
+msgstr ""
+
+#: engines/hypno/detection.cpp:229
+#, fuzzy
+#| msgid "Enable cheats"
+msgid "Enable infinite ammo cheat"
+msgstr "Activar trucos"
+
+#: engines/hypno/detection.cpp:230
+msgid "Player ammo will never decrease."
+msgstr ""
+
+#: engines/hypno/detection.cpp:238
 msgid "Enable restored content"
 msgstr "Activar contenidos restaurados"
 
-#: engines/hypno/detection.cpp:221
+#: engines/hypno/detection.cpp:239
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 "Añade contenidos adicionales que no se activan en la implementación original."
@@ -8062,6 +8084,10 @@ msgstr "Activar limitación de fotogramas"
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 "Limita la velocidad del juego para evitar que se ejecute demasiado rápido."
+
+#: engines/ultima/detection.cpp:84
+msgid "Enable cheats"
+msgstr "Activar trucos"
 
 #: engines/ultima/detection.cpp:85
 msgid "Allow cheats by commands and a menu when player is clicked."
