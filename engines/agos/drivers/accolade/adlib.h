@@ -54,6 +54,8 @@ public:
 	void setSfxNoteFraction(uint8 source, uint16 noteFraction);
 	// Writes out the current frequency for the specified SFX source.
 	void updateSfxNote(uint8 source);
+	// Applies a workaround for a Waxworks OPL3 instrument issue.
+	void patchWwInstruments();
 
 protected:
 	InstrumentInfo determineInstrument(uint8 channel, uint8 source, uint8 note) override;

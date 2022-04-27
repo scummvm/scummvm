@@ -253,6 +253,40 @@ void MidiDriver_Accolade_AdLib::updateSfxNote(uint8 source) {
 	writeFrequency(_channelAllocations[source][0]);
 }
 
+void MidiDriver_Accolade_AdLib::patchWwInstruments() {
+	// WORKAROUND Several instruments in Waxworks have a very slow attack (it
+	// takes a long time for a note to reach maximum volume). When a note
+	// played by this instrument is very short, only a small part of the attack
+	// phase is played and the note is barely audible. Example: the rapid notes
+	// in track 10 (played at the start of the London scenario).
+	// This problem only occurs in OPL3 mode. In OPL2 mode, these notes are all
+	// played on the same OPL channel. This means that each successive note
+	// builds on the volume reached by the previous note and apart from the
+	// first couple of notes they can be heard clearly. In OPL3 mode, each note
+	// is played on its own channel, so each note starts from 0 volume.
+	// This is fixed here by patching the attack value of this instrument to be
+	// 1/4th of the original length (from 3 to 5). The notes do not sound
+	// exactly as on OPL2, but they are clearly audible.
+
+	if (_oplType != OPL::Config::kOpl3)
+		// This workaround is only needed for OPL3 mode.
+		return;
+
+	// Patch the attack of instrument 0x22.
+	_instrumentBank[0x22].operator1.decayAttack &= 0x0F;
+	_instrumentBank[0x22].operator1.decayAttack |= 0x50;
+
+	// Patch the attack of instrument 0x25.
+	_instrumentBank[0x25].operator1.decayAttack &= 0x0F;
+	_instrumentBank[0x25].operator1.decayAttack |= 0x60;
+
+	// Patch the attack of instrument 0x7F.
+	_instrumentBank[0x7F].operator0.decayAttack &= 0x0F;
+	_instrumentBank[0x7F].operator0.decayAttack |= 0x60;
+	_instrumentBank[0x7F].operator1.decayAttack &= 0x0F;
+	_instrumentBank[0x7F].operator1.decayAttack |= 0x90;
+}
+
 MidiDriver_Accolade_AdLib::InstrumentInfo MidiDriver_Accolade_AdLib::determineInstrument(uint8 channel, uint8 source, uint8 note) {
 	if (_sources[source].type == SOURCE_TYPE_SFX) {
 		// For SFX sources, return an instrument from the SFX bank.

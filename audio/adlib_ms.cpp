@@ -648,7 +648,7 @@ void MidiDriver_ADLIB_Multisource::noteOn(uint8 channel, uint8 note, uint8 veloc
 	// will be played using the OPL rhythm register.
 	bool rhythmNote = _rhythmMode && channel == MIDI_RHYTHM_CHANNEL;
 
-	if (instrument.instrumentDef->isEmpty() ||
+	if (!instrument.instrumentDef || instrument.instrumentDef->isEmpty() ||
 			(rhythmNote && instrument.instrumentDef->rhythmType == RHYTHM_TYPE_UNDEFINED)) {
 		// Instrument definition contains no data or it is not suitable for
 		// rhythm mode, so the note cannot be played.
@@ -1286,7 +1286,7 @@ MidiDriver_ADLIB_Multisource::InstrumentInfo MidiDriver_ADLIB_Multisource::deter
 			return instrument;
 
 		// Set the high bit for rhythm instrument IDs.
-		instrument.instrumentId = 0x80 & note;
+		instrument.instrumentId = 0x80 | note;
 		instrument.instrumentDef = &_rhythmBank[note - _rhythmBankFirstNote];
 		// Get the note to play from the instrument definition.
 		instrument.oplNote = instrument.instrumentDef->rhythmNote;

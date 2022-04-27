@@ -198,13 +198,18 @@ int MidiPlayer::open() {
 		switch (_deviceType) {
 		case MT_ADLIB:
 			_driverMsMusic = _driverMsSfx = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename, oplType);
-			if (_vm->getGameType() == GType_WW)
+			if (_vm->getGameType() == GType_WW) {
 				// WORKAROUND Some Waxworks tracks do not set an instrument on
 				// a MIDI channel. This will cause that channel to play with
 				// whatever instrument was set there by a previous track.
 				// This is fixed by setting default instruments on all channels
 				// before starting a track.
 				_driverMsMusic->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM);
+				if (oplType == OPL::Config::kOpl3)
+					// WORKAROUND Some Waxworks OPL instruments do not work
+					// well in OPL3 mode and need some adjustments.
+					static_cast<MidiDriver_Accolade_AdLib *>(_driverMsMusic)->patchWwInstruments();
+			}
 			if (usesMidiSfx)
 				// Elvira 2 and Waxworks have AdLib SFX.
 				_parserSfxAccolade = new SfxParser_Accolade_AdLib();
