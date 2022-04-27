@@ -14027,11 +14027,41 @@ static const uint16 qfg3PatchNrsFloatingSpears[] = {
 	PATCH_END
 };
 
+// When purchasing from a vendor while a message box is on the screen, events
+//  are randomly dropped and clicks randomly have no effect. barter:doit runs an
+//  event processing loop that calls kGetEvent twice per iteration when a
+//  message is on screen. It's luck as to which call retrieves the input event.
+//  If the first call retrieves the input event then it's replaced by the second
+//  and never reaches the Messager object.
+//
+// We fix this by patching barter:dispatchEvent to use the current event that
+//  barter:doit provides instead of unnecessarily creating a new one.
+//
+// Applies to: All versions
+// Responsible method: barter:dispatchEvent
+// Fixes bug: #11422
+static const uint16 qfg3SignatureBarterEvents[] = {
+	0x39, SIG_SELECTOR8(new),           // pushi new
+	0x76,                               // push0
+	SIG_MAGICDWORD,
+	0x51, 0x07,                         // class Event
+	0x4a, 0x04,                         // send 04 [ Event new: ]
+	0xa5, 0x00,                         // sat 00  [ temp0 = (Event new:) ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchBarterEvents[] = {
+	0x87, 0x01,                         // lap 01 [ use current event ]
+	0x32, PATCH_UINT16(0x0002),         // jmp 0002
+	PATCH_END
+};
+
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",                     1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
 	{  true,   440, "dialog crash when asking about Woo",                 1, qfg3SignatureWooDialog,              qfg3PatchWooDialog },
 	{  true,   440, "dialog crash when asking about Woo",                 1, qfg3SignatureWooDialogAlt,           qfg3PatchWooDialogAlt },
+	{  true,    47, "barter events",                                      1, qfg3SignatureBarterEvents,           qfg3PatchBarterEvents },
 	{  true,    52, "export character save bug",                          2, qfg3SignatureExportChar,             qfg3PatchExportChar },
 	{  true,    54, "import character from QfG1 bug",                     1, qfg3SignatureImportQfG1Char,         qfg3PatchImportQfG1Char },
 	{  true,   640, "chief in hut priority fix",                          1, qfg3SignatureChiefPriority,          qfg3PatchChiefPriority },
