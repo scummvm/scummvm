@@ -184,6 +184,16 @@ void WetEngine::runMainMenu(Code *code) {
 	} else
 		_lastLevel = 0;
 
+	if (_name == "ELRAPIDO") {
+		_infiniteAmmoCheat = true;
+		playSound("sound/extra.raw", 1);
+	}
+
+	if (_name == "SAVANNAH") {
+		_infiniteHealthCheat = true;
+		playSound("sound/extra.raw", 1);
+	}
+
 	_name.toLowercase();
 	bool found = loadProfile(_name);
 
