@@ -2787,7 +2787,7 @@ void Runtime::removeWindow(Window *window) {
 	}
 }
 
-void Runtime::setupDisplayMode(ColorDepthMode displayMode, const Graphics::PixelFormat& pixelFormat) {
+void Runtime::setupDisplayMode(ColorDepthMode displayMode, const Graphics::PixelFormat &pixelFormat) {
 	_displayModeSupported[displayMode] = true;
 	_displayModePixelFormats[displayMode] = pixelFormat;
 }

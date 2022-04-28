@@ -1713,6 +1713,7 @@ enum AssetType {
 	kAssetTypeMovie,
 	kAssetTypeAudio,
 	kAssetTypeColorTable,
+	kAssetTypeImage,
 };
 
 class Asset {

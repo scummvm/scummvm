@@ -63,6 +63,8 @@ IAssetFactory *getAssetFactoryForDataObjectType(const Data::DataObjectTypes::Dat
 		return AssetFactory<AudioAsset, Data::AudioAsset>::getInstance();
 	case Data::DataObjectTypes::kMovieAsset:
 		return AssetFactory<MovieAsset, Data::MovieAsset>::getInstance();
+	case Data::DataObjectTypes::kImageAsset:
+		return AssetFactory<ImageAsset, Data::ImageAsset>::getInstance();
 
 	default:
 		return nullptr;
