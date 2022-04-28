@@ -284,8 +284,7 @@ bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *
 	ArcadeTransition at = *transitions.begin();
 	int ttime = at.time;
 	if (ttime == 0) { // This special case is only reachable in c33
-		assert(_objIdx == 0);
-		_objIdx = 1;
+		assert(_objIdx == 1);
 		transitions.pop_front();
 	} else if (_background->decoder->getCurFrame() > ttime) {
 
