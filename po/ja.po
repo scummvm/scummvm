@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-27 19:39+0000\n"
-"PO-Revision-Date: 2022-04-22 05:27+0000\n"
+"PO-Revision-Date: 2022-04-28 16:49+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5099,10 +5099,8 @@ msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
 #: engines/hypno/detection.cpp:229
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Enable infinite ammo cheat"
-msgstr "チートを有効化"
+msgstr "弾薬無限チートを有効化"
 
 #: engines/hypno/detection.cpp:230
 msgid "Player ammo will never decrease."
