@@ -71,7 +71,7 @@ void ScriptOverlay::Unserialize(int index, Stream *in, size_t data_sz) {
 	overlayId = in->ReadInt32();
 	in->ReadInt32(); // unused (was text window x padding)
 	in->ReadInt32(); // unused (was text window y padding)
-	hasInternalRef = in->ReadInt32();
+	hasInternalRef = in->ReadInt32() != 0;
 	ccRegisterUnserializedObject(index, this, this);
 }
 
