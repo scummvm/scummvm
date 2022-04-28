@@ -180,6 +180,8 @@ Globals::Globals() {
 	_actspswbcache = new std::vector<CachedActSpsData>();
 	_guibg = new std::vector<Shared::Bitmap *>();
 	_guibgbmp = new std::vector<Engine::IDriverDependantBitmap *>();
+	_debugRoomMaskBmp = new std::unique_ptr<Shared::Bitmap>();
+	_debugMoveListBmp = new std::unique_ptr<Shared::Bitmap>();
 
 	_maincoltable = new COLOR_MAP();
 	_palette = new color[256];
@@ -430,6 +432,8 @@ Globals::~Globals() {
 	delete _actspswbcache;
 	delete _guibg;
 	delete _guibgbmp;
+	delete _debugRoomMaskBmp;
+	delete _debugMoveListBmp;
 	delete[] _dynamicallyCreatedSurfaces;
 	delete[] _palette;
 	delete _maincoltable;

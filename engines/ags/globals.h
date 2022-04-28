@@ -589,9 +589,10 @@ public:
 	std::vector<Engine::IDriverDependantBitmap *> *_guibgbmp;
 	// For debugging room masks
 	RoomAreaMask _debugRoomMask = kRoomAreaNone;
+	std::unique_ptr<Shared::Bitmap> *_debugRoomMaskBmp;
 	Engine::IDriverDependantBitmap *_debugRoomMaskDDB = nullptr;
 	int _debugMoveListChar = -1;
-	Shared::Bitmap *_debugMoveListBmp = nullptr;
+	std::unique_ptr<Shared::Bitmap> *_debugMoveListBmp;
 	Engine::IDriverDependantBitmap *_debugMoveListDDB = nullptr;
 
 	bool _current_background_is_dirty = false;

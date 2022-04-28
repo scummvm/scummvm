@@ -385,11 +385,11 @@ void dispose_game_drawdata() {
 }
 
 static void dispose_debug_room_drawdata() {
+	_GP(debugRoomMaskBmp).reset();
 	if (_G(debugRoomMaskDDB) != nullptr)
 		_G(gfxDriver)->DestroyDDB(_G(debugRoomMaskDDB));
 	_G(debugRoomMaskDDB) = nullptr;
-	delete _G(debugMoveListBmp);
-	_G(debugMoveListBmp) = nullptr;
+	_GP(debugMoveListBmp).reset();
 	if (_G(debugMoveListDDB) != nullptr)
 		_G(gfxDriver)->DestroyDDB(_G(debugMoveListDDB));
 	_G(debugMoveListDDB) = nullptr;
@@ -2286,17 +2286,29 @@ void debug_draw_room_mask(RoomAreaMask mask) {
 	if (mask == kRoomAreaNone)
 		return;
 
-	Bitmap *mask_bmp;
+	Bitmap *bmp;
 	switch (mask) {
-	case kRoomAreaHotspot: mask_bmp = _GP(thisroom).HotspotMask.get(); break;
-	case kRoomAreaWalkBehind: mask_bmp = _GP(thisroom).WalkBehindMask.get(); break;
-	case kRoomAreaWalkable: mask_bmp = prepare_walkable_areas(-1); break;
-	case kRoomAreaRegion: mask_bmp = _GP(thisroom).RegionMask.get(); break;
+	case kRoomAreaHotspot: bmp = _GP(thisroom).HotspotMask.get(); break;
+	case kRoomAreaWalkBehind: bmp = _GP(thisroom).WalkBehindMask.get(); break;
+	case kRoomAreaWalkable: bmp = prepare_walkable_areas(-1); break;
+	case kRoomAreaRegion: bmp = _GP(thisroom).RegionMask.get(); break;
 	default: return;
 	}
 
-	_G(debugRoomMaskDDB) = recycle_ddb_bitmap(_G(debugRoomMaskDDB), mask_bmp, false, true);
+	// Software mode scaling
+	// note we don't use transparency in software mode - may be slow in hi-res games
+	if (!_G(gfxDriver)->HasAcceleratedTransform() &&
+		(mask != kRoomAreaWalkBehind) &&
+		(bmp->GetSize() != Size(_GP(thisroom).Width, _GP(thisroom).Height))) {
+		_GP(debugRoomMaskBmp).reset(recycle_bitmap(_GP(debugRoomMaskBmp).release(),
+			bmp->GetColorDepth(), _GP(thisroom).Width, _GP(thisroom).Height));
+		_GP(debugRoomMaskBmp)->StretchBlt(bmp, RectWH(0, 0, _GP(thisroom).Width, _GP(thisroom).Height));
+		bmp = _GP(debugRoomMaskBmp).get();
+	}
+
+	_G(debugRoomMaskDDB) = recycle_ddb_bitmap(_G(debugRoomMaskDDB), bmp, false, true);
 	_G(debugRoomMaskDDB)->SetTransparency(150);
+	_G(debugRoomMaskDDB)->SetStretch(_GP(thisroom).Width, _GP(thisroom).Height);
 }
 
 void debug_draw_movelist(int charnum) {
@@ -2305,13 +2317,27 @@ void debug_draw_movelist(int charnum) {
 
 void update_room_debug() {
 	if (_G(debugRoomMask) == kRoomAreaWalkable) {
-		Bitmap *mask_bmp = prepare_walkable_areas(-1);
-		_G(debugRoomMaskDDB) = recycle_ddb_bitmap(_G(debugRoomMaskDDB), mask_bmp, false, true);
+		Bitmap *bmp = prepare_walkable_areas(-1);
+		// Software mode scaling
+		if (!_G(gfxDriver)->HasAcceleratedTransform() && (_GP(thisroom).MaskResolution > 1)) {
+			_GP(debugRoomMaskBmp).reset(recycle_bitmap(_GP(debugRoomMaskBmp).release(),
+				bmp->GetColorDepth(), _GP(thisroom).Width, _GP(thisroom).Height));
+			_GP(debugRoomMaskBmp)->StretchBlt(bmp, RectWH(0, 0, _GP(thisroom).Width, _GP(thisroom).Height));
+			bmp = _GP(debugRoomMaskBmp).get();
+		}
+		_G(debugRoomMaskDDB) = recycle_ddb_bitmap(_G(debugRoomMaskDDB), bmp, false, true);
 		_G(debugRoomMaskDDB)->SetTransparency(150);
+		_G(debugRoomMaskDDB)->SetStretch(_GP(thisroom).Width, _GP(thisroom).Height);
 	}
 	if (_G(debugMoveListChar) >= 0) {
-		_G(debugMoveListBmp) = recycle_bitmap(_G(debugMoveListBmp), _GP(game).GetColorDepth(),
-			_GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight(), true);
+		const int mult = _G(gfxDriver)->HasAcceleratedTransform() ? _GP(thisroom).MaskResolution : 1;
+		if (_G(gfxDriver)->HasAcceleratedTransform())
+			_GP(debugMoveListBmp).reset(recycle_bitmap(_GP(debugMoveListBmp).release(), _GP(game).GetColorDepth(),
+				_GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight(), true));
+		else
+			_GP(debugMoveListBmp).reset(recycle_bitmap(_GP(debugMoveListBmp).release(), _GP(game).GetColorDepth(),
+				_GP(thisroom).Width, _GP(thisroom).Height, true));
+
 		if (_GP(game).chars[_G(debugMoveListChar)].walking > 0) {
 			int mlsnum = _GP(game).chars[_G(debugMoveListChar)].walking;
 			if (_GP(game).chars[_G(debugMoveListChar)].walking >= TURNING_AROUND)
@@ -2322,11 +2348,13 @@ void update_room_debug() {
 				short srcy = short(cmls.pos[i] & 0x00ffff);
 				short targetx = short((cmls.pos[i + 1] >> 16) & 0x00ffff);
 				short targety = short(cmls.pos[i + 1] & 0x00ffff);
-				_G(debugMoveListBmp)->DrawLine(Line(srcx, srcy, targetx, targety), MakeColor(i + 1));
+				_GP(debugMoveListBmp)->DrawLine(Line(srcx / mult, srcy / mult, targetx / mult, targety / mult),
+					MakeColor(i + 1));
 			}
 		}
-		_G(debugMoveListDDB) = recycle_ddb_bitmap(_G(debugMoveListDDB), _G(debugMoveListBmp), false, false);
+		_G(debugMoveListDDB) = recycle_ddb_bitmap(_G(debugMoveListDDB), _GP(debugMoveListBmp).get(), false, false);
 		_G(debugMoveListDDB)->SetTransparency(150);
+		_G(debugMoveListDDB)->SetStretch(_GP(thisroom).Width, _GP(thisroom).Height);
 	}
 }
 
