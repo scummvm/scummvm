@@ -243,7 +243,8 @@ public:
 	Common::String _arcadeMode;
 	MVideo *_background;
 	Filename _currentPalette;
-	virtual bool checkArcadeObjectives(ArcadeShooting *arc);
+	virtual bool availableObjectives();
+	virtual bool checkArcadeObjectives();
 	virtual bool checkTransition(ArcadeTransitions &transitions, ArcadeShooting *arc);
 	virtual Common::Point getPlayerPosition(bool needsUpdate);
 	virtual Common::Point computeTargetPosition(const Common::Point &mousePos);

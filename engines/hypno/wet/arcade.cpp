@@ -196,7 +196,7 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 		} else {
 
 			// Objective checking
-			if (checkArcadeObjectives(arc)) {
+			if (availableObjectives() && checkArcadeObjectives()) {
 				if (_objIdx == 0) {
 					_objIdx = 1;
 					if (_arcadeMode == "Y1") {
@@ -306,7 +306,7 @@ bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *
 		}
 
 		if (_levelId == 33) {
-			if (checkArcadeObjectives(arc)) {
+			if (checkArcadeObjectives()) {
 				_objIdx = 1;
 			} else {
 				// We do not play the transition, just skip the level
@@ -319,7 +319,7 @@ bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *
 			_objIdx = 1;
 		} else if (_levelId == 61 && transitions.size() == 1) {
 			// Check the first objective during the second transition
-			if (checkArcadeObjectives(arc)) {
+			if (checkArcadeObjectives()) {
 				_objIdx = 1;
 			} else {
 				// We do not play the transition, just skip the level

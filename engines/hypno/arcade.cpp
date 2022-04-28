@@ -182,7 +182,11 @@ void HypnoEngine::findNextSegment(ArcadeShooting *arc) { error("Function \"%s\" 
 
 byte *HypnoEngine::getTargetColor(Common::String name, int levelId) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
-bool HypnoEngine::checkArcadeObjectives(ArcadeShooting *arc) {
+bool HypnoEngine::availableObjectives() {
+	return (_objKillsRequired[_objIdx] > 0);
+}
+
+bool HypnoEngine::checkArcadeObjectives() {
 	debugC(1, kHypnoDebugArcade, "Checking objective %d (%d/%d)", _objIdx, _objKillsCount[_objIdx], _objKillsRequired[_objIdx]);
 	if (_objKillsRequired[_objIdx] > 0)
 		return (_objKillsCount[_objIdx] >= _objKillsRequired[_objIdx] && \
@@ -377,7 +381,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		if (segments[_segmentIdx].end || _skipLevel || _loseLevel) {
 			skipVideo(*_background);
 			// Objectives
-			if (!checkArcadeObjectives(arc) && !_skipLevel) {
+			if (!checkArcadeObjectives() && !_skipLevel) {
 				if (!arc->defeatMissBossVideo.empty()) {
 					MVideo video(arc->defeatMissBossVideo, Common::Point(0, 0), false, true, false);
 					disableCursor();
