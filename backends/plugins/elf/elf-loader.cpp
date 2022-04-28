@@ -157,7 +157,7 @@ bool DLObject::readProgramHeaders(Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, Elf32_Half
 
 	// Check program header values
 	if (phdr->p_type != PT_LOAD  || phdr->p_filesz > phdr->p_memsz) {
-		warning("elfloader: Invalid program header.");
+		warning("elfloader: Invalid program header %x", phdr->p_type);
 		return false;
 	}
 
