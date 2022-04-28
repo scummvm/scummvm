@@ -87,6 +87,32 @@ private:
 	size_t _streamIndex;
 };
 
+class ImageAsset : public Asset {
+public:
+	bool load(AssetLoaderContext &context, const Data::ImageAsset &data);
+	AssetType getAssetType() const override;
+
+	enum ImageFormat {
+		kImageFormatMac,
+		kImageFormatWindows,
+	};
+
+	const Rect16 &getRect() const;
+	ColorDepthMode getColorDepth() const;
+	uint32 getFilePosition() const;
+	uint32 getSize() const;
+	size_t getStreamIndex() const;
+	ImageFormat getImageFormat() const;
+
+private:
+	Rect16 _rect;
+	ColorDepthMode _colorDepth;
+	uint32 _filePosition;
+	uint32 _size;
+	size_t _streamIndex;
+	ImageFormat _imageFormat;
+};
+
 } // End of namespace MTropolis
 
 #endif

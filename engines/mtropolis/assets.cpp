@@ -122,5 +122,74 @@ size_t MovieAsset::getStreamIndex() const {
 	return _streamIndex;
 }
 
+bool ImageAsset::load(AssetLoaderContext &context, const Data::ImageAsset &data) {
+	_assetID = data.assetID;
+	if (!_rect.load(data.rect1))
+		return false;
+	_filePosition = data.filePosition;
+	_size = data.size;
+	_streamIndex = context.streamIndex;
+
+	switch (data.bitsPerPixel) {
+	case 1:
+		_colorDepth = kColorDepthMode1Bit;
+		break;
+	case 2:
+		_colorDepth = kColorDepthMode2Bit;
+		break;
+	case 4:
+		_colorDepth = kColorDepthMode4Bit;
+		break;
+	case 8:
+		_colorDepth = kColorDepthMode8Bit;
+		break;
+	case 16:
+		_colorDepth = kColorDepthMode16Bit;
+		break;
+	case 32:
+		_colorDepth = kColorDepthMode32Bit;
+		break;
+	default:
+		return false;
+	}
+
+	if (data.haveMacPart)
+		_imageFormat = kImageFormatMac;
+	else if (data.haveWinPart)
+		_imageFormat = kImageFormatWindows;
+	else
+		return false;
+
+	return true;
+}
+
+AssetType ImageAsset::getAssetType() const {
+	return kAssetTypeImage;
+}
+
+const Rect16& ImageAsset::getRect() const {
+	return _rect;
+}
+
+ColorDepthMode ImageAsset::getColorDepth() const {
+	return _colorDepth;
+}
+
+uint32 ImageAsset::getFilePosition() const {
+	return _filePosition;
+}
+
+uint32 ImageAsset::getSize() const {
+	return _size;
+}
+
+size_t ImageAsset::getStreamIndex() const {
+	return _streamIndex;
+}
+
+ImageAsset::ImageFormat ImageAsset::getImageFormat() const {
+	return _imageFormat;
+}
+
 
 } // End of namespace MTropolis

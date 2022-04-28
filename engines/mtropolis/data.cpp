@@ -1544,6 +1544,36 @@ DataReadErrorCode AudioAsset::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode ImageAsset::load(DataReader &reader) {
+	if (_revision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(persistFlags) || !reader.readU32(unknown1) || !reader.readBytes(unknown2)
+		|| !reader.readU32(assetID) || !reader.readU32(unknown3))
+		return kDataReadErrorReadFailed;
+
+	haveWinPart = false;
+	haveMacPart = false;
+
+	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+		haveMacPart = true;
+		if (!reader.readBytes(platform.mac.unknown7))
+			return kDataReadErrorReadFailed;
+	} else if (reader.getProjectFormat() == kProjectFormatWindows) {
+		haveWinPart = true;
+		if (!reader.readBytes(platform.win.unknown8))
+			return kDataReadErrorReadFailed;
+	} else
+		return kDataReadErrorUnrecognized;
+
+	if (!rect1.load(reader) || !reader.readU32(hdpiFixed) || !reader.readU32(vdpiFixed) || !reader.readU16(bitsPerPixel)
+		|| !reader.readBytes(unknown4) || !reader.readBytes(unknown5) || !reader.readBytes(unknown6)
+		|| !rect2.load(reader) || !reader.readU32(filePosition) || !reader.readU32(size))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode AssetDataChunk::load(DataReader &reader) {
 	if (_revision != 0)
 		return kDataReadErrorUnsupportedRevision;
@@ -1728,7 +1758,7 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 
 	case DataObjectTypes::kImageAsset:
-		//dataObject = new ImageAsset();
+		dataObject = new ImageAsset();
 		break;
 
 	case DataObjectTypes::kMToonAsset:

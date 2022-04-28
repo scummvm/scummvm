@@ -1412,6 +1412,45 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
+struct ImageAsset : public DataObject {
+	struct MacPart {
+		uint8 unknown7[44];
+	};
+
+	struct WinPart {
+		uint8 unknown8[10];
+	};
+
+	union PlatformPart {
+		WinPart win;
+		MacPart mac;
+	};
+
+	uint32 persistFlags;
+	uint32 unknown1;
+	uint8_t unknown2[4];
+	uint32 assetID;
+	uint32 unknown3;
+
+	Rect rect1;
+	uint32 hdpiFixed;
+	uint32 vdpiFixed;
+	uint16 bitsPerPixel;
+	uint8 unknown4[2];
+	uint8 unknown5[4];
+	uint8 unknown6[8];
+	Rect rect2;
+	uint32 filePosition;
+	uint32 size;
+
+	bool haveMacPart;
+	bool haveWinPart;
+	PlatformPart platform;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
 struct AssetDataChunk : public DataObject {
 	uint32 unknown1;
 	uint32 sizeIncludingTag;

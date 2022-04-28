@@ -137,7 +137,6 @@ void MovieElement::activate() {
 		return;
 	}
 
-
 	Video::QuickTimeDecoder *qtDecoder = new Video::QuickTimeDecoder();
 	qtDecoder->setChunkBeginOffset(movieAsset->getMovieDataPos());
 
@@ -229,6 +228,199 @@ VThreadState MovieElement::startPlayingTask(const StartPlayingTaskData &taskData
 	}
 
 	return kVThreadReturn;
+}
+
+
+ImageElement::ImageElement() : _cacheBitmap(false), _runtime(nullptr) {
+}
+
+ImageElement::~ImageElement() {
+}
+
+bool ImageElement::load(ElementLoaderContext &context, const Data::ImageElement &data) {
+	if (!VisualElement::loadCommon(data.name, data.guid, data.rect1, data.elementFlags, data.layer, data.streamLocator, data.sectionID))
+		return false;
+
+	_cacheBitmap = ((data.elementFlags & Data::ElementFlags::kCacheBitmap) != 0);
+	_runtime = context.runtime;
+	_assetID = data.imageAssetID;
+
+	return true;
+}
+
+bool ImageElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	return VisualElement::readAttribute(thread, result, attrib);
+}
+
+bool ImageElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	return VisualElement::writeRefAttribute(thread, writeProxy, attrib);
+}
+
+void ImageElement::activate() {
+	Project *project = _runtime->getProject();
+	Common::SharedPtr<Asset> asset = project->getAssetByID(_assetID).lock();
+
+	if (!asset) {
+		warning("Image element references asset %i but the asset isn't loaded!", _assetID);
+		return;
+	}
+
+	if (asset->getAssetType() != kAssetTypeImage) {
+		warning("Image element assigned an asset that isn't an image");
+		return;
+	}
+
+	ImageAsset *imageAsset = static_cast<ImageAsset *>(asset.get());
+	size_t streamIndex = imageAsset->getStreamIndex();
+	int segmentIndex = project->getSegmentForStreamIndex(streamIndex);
+	project->openSegmentStream(segmentIndex);
+	Common::SeekableReadStream *stream = project->getStreamForSegment(segmentIndex);
+
+	if (!stream->seek(imageAsset->getFilePosition())) {
+		warning("Image element failed to load");
+		return;
+	}
+
+	size_t bytesPerRow = 0;
+
+	Rect16 imageRect = imageAsset->getRect();
+	int width = imageRect.right - imageRect.left;
+	int height = imageRect.bottom - imageRect.top;
+
+	if (width <= 0 || height < 0) {
+		warning("Image asset has invalid size");
+		return;
+	}
+
+	Graphics::PixelFormat pixelFmt;
+	switch (imageAsset->getColorDepth()) {
+	case kColorDepthMode1Bit:
+		bytesPerRow = (width + 7) / 8;
+		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
+		break;
+	case kColorDepthMode2Bit:
+		bytesPerRow = (width + 3) / 4;
+		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
+		break;
+	case kColorDepthMode4Bit:
+		bytesPerRow = (width + 1) / 2;
+		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
+		break;
+	case kColorDepthMode8Bit:
+		bytesPerRow = width;
+		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
+		break;
+	case kColorDepthMode16Bit:
+		bytesPerRow = width * 2;
+		pixelFmt = Graphics::createPixelFormat<1555>();
+		break;
+	case kColorDepthMode32Bit:
+		bytesPerRow = width * 4;
+		pixelFmt = Graphics::createPixelFormat<8888>();
+		break;
+	default:
+		warning("Image asset has an unrecognizable pixel format");
+		return;
+	}
+
+	Common::Array<uint8> rowBuffer;
+	rowBuffer.resize(bytesPerRow);
+
+	ImageAsset::ImageFormat imageFormat = imageAsset->getImageFormat();
+	bool bottomUp = (imageFormat == ImageAsset::kImageFormatWindows);
+	bool isBigEndian = (imageFormat == ImageAsset::kImageFormatMac);
+
+	_imageSurface.reset(new Graphics::Surface());
+	_imageSurface->create(width, height, pixelFmt);
+
+	for (int inRow = 0; inRow < height; inRow++) {
+		int outRow = bottomUp ? (height - 1 - inRow) : inRow;
+
+		stream->read(&rowBuffer[0], bytesPerRow);
+		const uint8 *inRowBytes = &rowBuffer[0];
+
+		void *outBase = _imageSurface->getBasePtr(0, outRow);
+
+		switch (imageAsset->getColorDepth()) {
+		case kColorDepthMode1Bit: {
+				for (int x = 0; x < width; x++) {
+					int bit = (inRowBytes[x / 8] >> (7 - (x % 8))) & 1;
+					static_cast<uint8 *>(outBase)[x] = bit;
+				}
+			} break;
+		case kColorDepthMode2Bit: {
+				for (int x = 0; x < width; x++) {
+					int bit = (inRowBytes[x / 4] >> (3 - (x % 4))) & 3;
+					static_cast<uint8 *>(outBase)[x] = bit;
+				}
+			} break;
+		case kColorDepthMode4Bit: {
+				for (int x = 0; x < width; x++) {
+					int bit = (inRowBytes[x / 2] >> (1 - (x % 2))) & 15;
+					static_cast<uint8 *>(outBase)[x] = bit;
+				}
+			} break;
+		case kColorDepthMode8Bit:
+			memcpy(outBase, inRowBytes, width);
+			break;
+		case kColorDepthMode16Bit: {
+				if (isBigEndian) {
+					for (int x = 0; x < width; x++) {
+						uint16 packedPixel = inRowBytes[x * 2 + 1] + (inRowBytes[x * 2 + 0] << 8);
+						int r = ((packedPixel >> 10) & 0x1f);
+						int g = ((packedPixel >> 5) & 0x1f);
+						int b = (packedPixel & 0x1f);
+
+						uint16 repacked = (1 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
+						static_cast<uint16 *>(outBase)[x] = repacked;
+					}
+				} else {
+					for (int x = 0; x < width; x++) {
+						uint16 packedPixel = inRowBytes[x * 2 + 0] + (inRowBytes[x * 2 + 1] << 8);
+						int r = ((packedPixel >> 10) & 0x1f);
+						int g = ((packedPixel >> 5) & 0x1f);
+						int b = (packedPixel & 0x1f);
+
+						uint16 repacked = (1 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
+						static_cast<uint16 *>(outBase)[x] = repacked;
+					}
+				}
+			} break;
+		case kColorDepthMode32Bit: {
+				if (imageFormat == ImageAsset::kImageFormatMac) {
+					for (int x = 0; x < width; x++) {
+						uint8 r = inRowBytes[x * 4 + 0];
+						uint8 g = inRowBytes[x * 4 + 1];
+						uint8 b = inRowBytes[x * 4 + 2];
+						uint32 repacked = (255 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
+						static_cast<uint32 *>(outBase)[x] = repacked;
+					}
+				} else if (imageFormat == ImageAsset::kImageFormatWindows) {
+					for (int x = 0; x < width; x++) {
+						uint8 r = inRowBytes[x * 4 + 2];
+						uint8 g = inRowBytes[x * 4 + 1];
+						uint8 b = inRowBytes[x * 4 + 0];
+						uint32 repacked = (255 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
+						static_cast<uint32 *>(outBase)[x] = repacked;
+					}
+				}
+			} break;
+		default:
+			break;
+		}
+	}
+}
+
+void ImageElement::deactivate() {
+	_imageSurface.reset();
+}
+
+void ImageElement::render(Window *window) {
+	if (_imageSurface) {
+		Common::Rect srcRect(_imageSurface->w, _imageSurface->h);
+		Common::Rect destRect(_rect.left, _rect.top, _rect.right, _rect.bottom);
+		window->getSurface()->blitFrom(*_imageSurface, srcRect, destRect);
+	}
 }
 
 } // End of namespace MTropolis

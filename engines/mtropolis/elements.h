@@ -60,8 +60,8 @@ public:
 
 	bool load(ElementLoaderContext &context, const Data::MovieElement &data);
 
-	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
-	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
 	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	void activate() override;
@@ -99,6 +99,35 @@ private:
 	Common::SharedPtr<Video::VideoDecoder> _videoDecoder;
 	Common::SharedPtr<SegmentUnloadSignaller> _unloadSignaller;
 	Common::SharedPtr<PostRenderSignaller> _postRenderSignaller;
+
+	Runtime *_runtime;
+};
+
+class ImageElement : public VisualElement {
+public:
+	ImageElement();
+	~ImageElement();
+
+	bool load(ElementLoaderContext &context, const Data::ImageElement &data);
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+
+	void activate() override;
+	void deactivate() override;
+
+	void render(Window *window) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Image Element"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
+#endif
+
+private:
+	bool _cacheBitmap;
+	uint32 _assetID;
+
+	Common::SharedPtr<Graphics::Surface> _imageSurface;
 
 	Runtime *_runtime;
 };
