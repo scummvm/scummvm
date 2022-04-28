@@ -64,7 +64,7 @@ inline int quantize8To5(int value, byte orderedDither16x16) {
 	return (value * 249 + (orderedDither16x16 << 3)) >> 11;
 }
 
-Window::Window(int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format) : _x(x), _y(y) {
+Window::Window(Runtime *runtime, int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format) : _runtime(runtime), _x(x), _y(y) {
 	_surface.reset(new Graphics::ManagedSurface(width, height, format));
 }
 
@@ -93,6 +93,18 @@ const Graphics::PixelFormat& Window::getPixelFormat() const {
 	return _surface->format;
 }
 
+void Window::close() {
+	Runtime *runtime = _runtime;
+	_runtime = nullptr;
+
+	if (runtime)
+		runtime->removeWindow(this);
+}
+
+void Window::detachFromRuntime() {
+	_runtime = nullptr;
+}
+
 namespace Render {
 
 uint32 resolveRGB(uint8 r, uint8 g, uint8 b, const Graphics::PixelFormat &fmt) {
@@ -102,6 +114,66 @@ uint32 resolveRGB(uint8 r, uint8 g, uint8 b, const Graphics::PixelFormat &fmt) {
 	uint32 aPlaced = (static_cast<uint32>(255) >> (8 - fmt.aBits())) << fmt.aShift;
 
 	return rPlaced | gPlaced | bPlaced | aPlaced;
+}
+
+static void recursiveCollectDrawElements(Structural *structural, Common::Array<VisualElement *> &normalBucket, Common::Array<VisualElement *> &directBucket) {
+	if (structural->isElement()) {
+		Element *element = static_cast<Element *>(structural);
+		if (element->isVisual()) {
+			VisualElement *visualElement = static_cast<VisualElement *>(element);
+			if (visualElement->isVisible()) {
+				if (visualElement->isDirectToScreen())
+					directBucket.push_back(visualElement);
+				else
+					normalBucket.push_back(visualElement);
+			}
+		}
+	}
+
+	for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = structural->getChildren().begin(), itEnd = structural->getChildren().end(); it != itEnd; ++it) {
+		recursiveCollectDrawElements(it->get(), normalBucket, directBucket);
+	}
+}
+
+static bool visualElementLayerLess(VisualElement *a, VisualElement *b) {
+	return a->getLayer() < b->getLayer();
+}
+
+static void renderNormalElement(VisualElement *element, Window *mainWindow) {
+	element->render(mainWindow);
+}
+
+static void renderDirectElement(VisualElement *element, Window *mainWindow) {
+	renderNormalElement(element, mainWindow);	// Meh
+}
+
+void renderProject(Runtime *runtime, Window *mainWindow) {
+	Common::Array<Structural *> scenes;
+	runtime->getScenesInRenderOrder(scenes);
+
+	Common::Array<VisualElement *> normalBucket;
+	Common::Array<VisualElement *> directBucket;
+
+	for (Common::Array<Structural *>::const_iterator it = scenes.begin(), itEnd = scenes.end(); it != itEnd; ++it) {
+		size_t normalStart = normalBucket.size();
+		size_t directStart = directBucket.size();
+
+		recursiveCollectDrawElements(*it, normalBucket, directBucket);
+
+		size_t normalEnd = normalBucket.size();
+		size_t directEnd = directBucket.size();
+
+		if (normalEnd - normalStart > 1)
+			Common::sort(normalBucket.begin() + normalStart, normalBucket.end(), visualElementLayerLess);
+		if (directEnd - directStart > 1)
+			Common::sort(directBucket.begin() + directStart, directBucket.end(), visualElementLayerLess);
+	}
+
+	for (Common::Array<VisualElement *>::const_iterator it = normalBucket.begin(), itEnd = normalBucket.end(); it != itEnd; ++it)
+		renderNormalElement(*it, mainWindow);
+
+	for (Common::Array<VisualElement *>::const_iterator it = directBucket.begin(), itEnd = directBucket.end(); it != itEnd; ++it)
+		renderDirectElement(*it, mainWindow);
 }
 
 } // End of namespace Render

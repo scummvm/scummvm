@@ -28,7 +28,9 @@
 namespace MTropolis {
 
 struct AssetLoaderContext {
-	AssetLoaderContext();
+	explicit AssetLoaderContext(size_t streamIndex);
+
+	size_t streamIndex;
 };
 
 struct IAssetFactory {

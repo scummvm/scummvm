@@ -95,7 +95,7 @@ void Debugger::notify(DebugSeverity severity, const Common::String& str) {
 	const Graphics::PixelFormat pixelFmt = _runtime->getRenderPixelFormat();
 
 	ToastNotification toastNotification;
-	toastNotification.window.reset(new Window(0, displayHeight, width, toastNotificationHeight, pixelFmt));
+	toastNotification.window.reset(new Window(_runtime, 0, displayHeight, width, toastNotificationHeight, pixelFmt));
 
 	byte fillColor[3] = {255, 255, 255};
 	if (severity == kDebugSeverityError) {
@@ -165,7 +165,7 @@ void Debugger::refreshSceneStatus() {
 
 	const Graphics::PixelFormat pixelFmt = _runtime->getRenderPixelFormat();
 
-	_sceneStatusWindow.reset(new Window(0, 0, horizPadding * 2 + width, vertSpacing * sceneStrs.size(), pixelFmt));
+	_sceneStatusWindow.reset(new Window(_runtime, 0, 0, horizPadding * 2 + width, vertSpacing * sceneStrs.size(), pixelFmt));
 	_runtime->addWindow(_sceneStatusWindow);
 
 	for (uint i = 0; i < sceneStrs.size(); i++) {

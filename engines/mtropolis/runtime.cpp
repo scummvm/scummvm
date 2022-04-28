@@ -95,6 +95,20 @@ void ModifierChildMaterializer::visitChildStructuralRef(Common::SharedPtr<Struct
 }
 
 void ModifierChildMaterializer::visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) {
+	if (modifier->isAlias()) {
+		Common::SharedPtr<Modifier> templateModifier = _runtime->getProject()->resolveAlias(static_cast<AliasModifier *>(modifier.get())->getAliasID());
+		if (!templateModifier) {
+			error("Failed to resolve alias");
+		}
+
+		if (!modifier->isVariable()) {
+			Common::SharedPtr<Modifier> clonedModifier = templateModifier->shallowClone();
+			clonedModifier->setName(modifier->getName());
+
+			modifier = clonedModifier;
+		}
+	}
+
 	modifier->materialize(_runtime, _outerScope);
 }
 
@@ -1708,12 +1722,18 @@ VThreadState Structural::consumeCommand(Runtime *runtime, const Common::SharedPt
 	return kVThreadReturn;
 }
 
+void Structural::activate() {
+}
+
+void Structural::deactivate() {
+}
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 SupportStatus Structural::debugGetSupportStatus() const {
 	return kSupportStatusNone;
 }
 
-const Common::String& Structural::debugGetName() const {
+const Common::String &Structural::debugGetName() const {
 	return _name;
 }
 
@@ -2121,10 +2141,12 @@ bool Runtime::runFrame() {
 
 			_macFontMan.reset(new Graphics::MacFontManager(0, desc->getLanguage()));
 
-			_project.reset(new Project());
+			_project.reset(new Project(this));
 			_project->setSelfReference(_project);
 
 			_project->loadFromDescription(*desc);
+
+			ensureMainWindowExists();
 
 			_rootLinkingScope.addObject(_project->getStaticGUID(), _project->getName(), _project);
 
@@ -2229,6 +2251,12 @@ void Runtime::drawFrame() {
 
 	_system->fillScreen(Render::resolveRGB(0, 0, 0, getRenderPixelFormat()));
 
+	{
+		Common::SharedPtr<Window> mainWindow = _mainWindow.lock();
+		if (mainWindow)
+			Render::renderProject(this, mainWindow.get());
+	}
+
 	for (Common::Array<Common::SharedPtr<Window> >::const_iterator it = _windows.begin(), itEnd = _windows.end(); it != itEnd; ++it) {
 		const Window &window = *it->get();
 		const Graphics::ManagedSurface &surface = *window.getSurface();
@@ -2291,6 +2319,8 @@ void Runtime::executeTeardown(const Teardown &teardown) {
 	Common::SharedPtr<Structural> structural = teardown.structural.lock();
 	if (!structural)
 		return;	// Already gone
+
+	recursiveDeactivateStructural(structural.get());
 
 	if (teardown.onlyRemoveChildren) {
 		structural->removeAllChildren();
@@ -2533,6 +2563,24 @@ void Runtime::executeSharedScenePostSceneChangeActions() {
 	}
 }
 
+void Runtime::recursiveDeactivateStructural(Structural *structural) {
+	const Common::Array<Common::SharedPtr<Structural> > &children = structural->getChildren();
+	for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = children.begin(), itEnd = children.end(); it != itEnd; ++it) {
+		recursiveDeactivateStructural(it->get());
+	}
+
+	structural->deactivate();
+}
+
+void Runtime::recursiveActivateStructural(Structural *structural) {
+	structural->activate();
+
+	const Common::Array<Common::SharedPtr<Structural> > &children = structural->getChildren();
+	for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = children.begin(), itEnd = children.end(); it != itEnd; ++it) {
+		recursiveActivateStructural(it->get());
+	}
+}
+
 void Runtime::queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay) {
 	Common::SharedPtr<MessageProperties> props(new MessageProperties(evt, DynamicValue(), Common::WeakPtr<RuntimeObject>()));
 	Common::SharedPtr<MessageDispatch> msg(new MessageDispatch(props, root, cascade, relay, false));
@@ -2550,6 +2598,8 @@ void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
 	debug(1, "Scene loaded OK, materializing objects...");
 	scene->materializeDescendents(this, subsection->getSceneLoadMaterializeScope());
 	debug(1, "Scene materialized OK");
+	recursiveActivateStructural(scene.get());
+	debug(1, "Scene added to renderer OK");
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	if (_debugger) {
@@ -2599,6 +2649,12 @@ Scheduler &Runtime::getScheduler() {
 	return _scheduler;
 }
 
+void Runtime::getScenesInRenderOrder(Common::Array<Structural*> &scenes) const {
+	for (Common::Array<SceneStackEntry>::const_iterator it = _sceneStack.begin(), itEnd = _sceneStack.end(); it != itEnd; ++it) {
+		scenes.push_back(it->scene.get());
+	}
+}
+
 
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
@@ -2607,7 +2663,7 @@ void Runtime::ensureMainWindowExists() {
 
 		int32 centeredX = (static_cast<int32>(_displayWidth) - static_cast<int32>(presentationSettings.width)) / 2;
 		int32 centeredY = (static_cast<int32>(_displayHeight) - static_cast<int32>(presentationSettings.height)) / 2;
-		Common::SharedPtr<Window> mainWindow(new Window(centeredX, centeredY, presentationSettings.width, presentationSettings.height, _displayModePixelFormats[_realDisplayMode]));
+		Common::SharedPtr<Window> mainWindow(new Window(this, centeredX, centeredY, presentationSettings.width, presentationSettings.height, _displayModePixelFormats[_realDisplayMode]));
 		addWindow(mainWindow);
 		_mainWindow.reset(mainWindow);
 	}
@@ -2682,6 +2738,7 @@ void Runtime::addWindow(const Common::SharedPtr<Window> &window) {
 void Runtime::removeWindow(Window *window) {
 	for (size_t i = 0; i < _windows.size(); i++) {
 		if (_windows[i].get() == window) {
+			window->detachFromRuntime();
 			_windows.remove_at(i);
 			break;
 		}
@@ -2806,11 +2863,46 @@ const IPlugInModifierFactory *ProjectPlugInRegistry::findPlugInModifierFactory(c
 	return it->_value;
 }
 
-Project::Project()
-	: _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false), _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false) {
+
+SegmentUnloadSignaller::SegmentUnloadSignaller(Project *project, int segmentIndex) : _project(project), _segmentIndex(segmentIndex) {
+}
+
+SegmentUnloadSignaller::~SegmentUnloadSignaller() {
+}
+
+void SegmentUnloadSignaller::onSegmentUnloaded() {
+	_project = nullptr;
+
+	// Need to be careful here because a receiver may unload this object, causing _receivers.size() to be invalid
+	const size_t numReceivers = _receivers.size();
+	for (size_t i = 0; i < numReceivers; i++) {
+		_receivers[i]->onSegmentUnloaded(_segmentIndex);
+	}
+}
+
+void SegmentUnloadSignaller::addReceiver(ISegmentUnloadSignalReceiver *receiver) {
+	_receivers.push_back(receiver);
+}
+
+void SegmentUnloadSignaller::removeReceiver(ISegmentUnloadSignalReceiver *receiver) {
+	for (size_t i = 0; i < _receivers.size(); i++) {
+		if (_receivers[i] == receiver) {
+			_receivers.remove_at(i);
+			break;
+		}
+	}
+}
+
+Project::Segment::Segment() : weakStream(nullptr) {
+}
+
+Project::Project(Runtime *runtime)
+	: _runtime(runtime), _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false), _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false) {
 }
 
 Project::~Project() {
+	for (size_t i = 0; i < _segments.size(); i++)
+		closeSegmentStream(i);
 }
 
 void Project::loadFromDescription(const ProjectDescription& desc) {
@@ -2927,7 +3019,9 @@ void Project::loadSceneFromStream(const Common::SharedPtr<Structural>& scene, ui
 		error("Invalid stream ID");
 	}
 
-	const StreamDesc &streamDesc = _streams[streamID - 1];
+	size_t streamIndex = streamID - 1;
+
+	const StreamDesc &streamDesc = _streams[streamIndex];
 	uint segmentIndex = streamDesc.segmentIndex;
 
 	openSegmentStream(segmentIndex);
@@ -2972,12 +3066,12 @@ void Project::loadSceneFromStream(const Common::SharedPtr<Structural>& scene, ui
 
 		if (Data::DataObjectTypes::isAsset(dataObjectType)) {
 			// Asset defs can appear anywhere
-			loadAssetDef(assetDefLoader, *dataObject.get());
+			loadAssetDef(streamIndex, assetDefLoader, *dataObject.get());
 		} else if (dataObjectType == Data::DataObjectTypes::kAssetDataChunk) {
 			// Ignore
 			continue;
 		} else if (loaderStack.contexts.size() > 0) {
-			loadContextualObject(loaderStack, *dataObject.get());
+			loadContextualObject(streamIndex, loaderStack, *dataObject.get());
 		} else {
 			error("Unexpectedly exited scene context in loader");
 		}
@@ -2990,6 +3084,7 @@ void Project::loadSceneFromStream(const Common::SharedPtr<Structural>& scene, ui
 	}
 
 	scene->holdAssets(assetDefLoader.assets);
+	assignAssets(assetDefLoader.assets);
 }
 
 Common::SharedPtr<Modifier> Project::resolveAlias(uint32 aliasID) const {
@@ -3018,6 +3113,21 @@ bool Project::isProject() const {
 	return true;
 }
 
+Common::WeakPtr<Asset> Project::getAssetByID(uint32 assetID) const {
+	if (assetID >= _assetsByID.size())
+		return Common::WeakPtr<Asset>();
+
+	const AssetDesc *desc = _assetsByID[assetID];
+	if (desc == nullptr)
+		return Common::WeakPtr<Asset>();
+
+	return desc->asset;
+}
+
+size_t Project::getSegmentForStreamIndex(size_t streamIndex) const {
+	return _streams[streamIndex].segmentIndex;
+}
+
 void Project::openSegmentStream(int segmentIndex) {
 	if (segmentIndex < 0 || static_cast<size_t>(segmentIndex) > _segments.size()) {
 		error("Invalid segment index %i", segmentIndex);
@@ -3040,6 +3150,31 @@ void Project::openSegmentStream(int segmentIndex) {
 			error("Failed to open segment file %s", segment.desc.filePath.c_str());
 		}
 	}
+
+	segment.unloadSignaller.reset(new SegmentUnloadSignaller(this, segmentIndex));
+}
+
+void Project::closeSegmentStream(int segmentIndex) {
+	Segment &segment = _segments[segmentIndex];
+
+	if (!segment.weakStream)
+		return;
+
+	segment.unloadSignaller->onSegmentUnloaded();
+	segment.unloadSignaller.reset();
+	segment.rcStream.reset();
+	segment.weakStream = nullptr;
+}
+
+Common::SeekableReadStream* Project::getStreamForSegment(int segmentIndex) {
+	return _segments[segmentIndex].weakStream;
+}
+
+Common::SharedPtr<SegmentUnloadSignaller> Project::notifyOnSegmentUnload(int segmentIndex, ISegmentUnloadSignalReceiver *receiver) {
+	Common::SharedPtr<SegmentUnloadSignaller> signaller = _segments[segmentIndex].unloadSignaller;
+	if (signaller)
+		signaller->addReceiver(receiver);
+	return signaller;
 }
 
 void Project::loadBootStream(size_t streamIndex) {
@@ -3069,12 +3204,12 @@ void Project::loadBootStream(size_t streamIndex) {
 
 		if (Data::DataObjectTypes::isAsset(dataObjectType)) {
 			// Asset defs can appear anywhere
-			loadAssetDef(assetDefLoader, *dataObject.get());
+			loadAssetDef(streamIndex, assetDefLoader, *dataObject.get());
 		} else if (dataObjectType == Data::DataObjectTypes::kAssetDataChunk) {
 			// Ignore
 			continue;
 		} else if (loaderStack.contexts.size() > 0) {
-			loadContextualObject(loaderStack, *dataObject.get());
+			loadContextualObject(streamIndex, loaderStack, *dataObject.get());
 		} else {
 			// Root-level objects
 			switch (dataObject->getType()) {
@@ -3120,6 +3255,7 @@ void Project::loadBootStream(size_t streamIndex) {
 	}
 
 	holdAssets(assetDefLoader.assets);
+	assignAssets(assetDefLoader.assets);
 }
 
 void Project::loadPresentationSettings(const Data::PresentationSettings &presentationSettings) {
@@ -3167,7 +3303,7 @@ void Project::loadAssetCatalog(const Data::AssetCatalog &assetCatalog) {
 	}
 }
 
-void Project::loadGlobalObjectInfo(ChildLoaderStack& loaderStack, const Data::GlobalObjectInfo& globalObjectInfo) {
+void Project::loadGlobalObjectInfo(ChildLoaderStack &loaderStack, const Data::GlobalObjectInfo& globalObjectInfo) {
 	if (_haveGlobalObjectInfo)
 		error("Multiple global object infos");
 
@@ -3280,7 +3416,28 @@ ObjectLinkingScope *Project::getPersistentModifierScope() {
 	return &_modifierScope;
 }
 
-void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject) {
+void Project::assignAssets(const Common::Array<Common::SharedPtr<Asset> >& assets) {
+	for (Common::Array<Common::SharedPtr<Asset> >::const_iterator it = assets.begin(), itEnd = assets.end(); it != itEnd; ++it) {
+		Common::SharedPtr<Asset> asset = *it;
+		uint32 assetID = asset->getAssetID();
+
+		if (assetID >= _assetsByID.size()) {
+			warning("Bad asset ID %u", assetID);
+			continue;
+		}
+
+		AssetDesc *desc = _assetsByID[assetID];
+		if (desc == nullptr) {
+			warning("Asset attempting to use deleted asset slot %u", assetID);
+			continue;
+		}
+
+		if (desc->asset.expired())
+			desc->asset = asset;
+	}
+}
+
+void Project::loadContextualObject(size_t streamIndex, ChildLoaderStack &stack, const Data::DataObject &dataObject) {
 	ChildLoaderContext &topContext = stack.contexts.back();
 	const Data::DataObjectTypes::DataObjectType dataObjectType = dataObject.getType();
 
@@ -3408,7 +3565,7 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 					error("No element factory defined for structural object");
 				}
 
-				ElementLoaderContext elementLoaderContext;
+				ElementLoaderContext elementLoaderContext(_runtime, streamIndex);
 				Common::SharedPtr<Element> element = elementFactory->createElement(elementLoaderContext, dataObject);
 
 				container->addChild(element);
@@ -3448,7 +3605,7 @@ void Project::loadContextualObject(ChildLoaderStack &stack, const Data::DataObje
 	}
 }
 
-void Project::loadAssetDef(AssetDefLoaderContext& context, const Data::DataObject& dataObject) {
+void Project::loadAssetDef(size_t streamIndex, AssetDefLoaderContext& context, const Data::DataObject& dataObject) {
 	assert(Data::DataObjectTypes::isAsset(dataObject.getType()));
 
 	IAssetFactory *factory = getAssetFactoryForDataObjectType(dataObject.getType());
@@ -3457,7 +3614,7 @@ void Project::loadAssetDef(AssetDefLoaderContext& context, const Data::DataObjec
 		return;
 	}
 
-	AssetLoaderContext loaderContext;
+	AssetLoaderContext loaderContext(streamIndex);
 	context.assets.push_back(factory->createAsset(loaderContext, dataObject));
 }
 
@@ -3519,9 +3676,21 @@ bool VisualElement::isVisible() const {
 	return _visible;
 }
 
+bool VisualElement::isDirectToScreen() const {
+	return _directToScreen;
+}
+
+uint16 VisualElement::getLayer() const {
+	return _layer;
+}
+
 bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
 	if (attrib == "visible") {
 		result.setBool(_visible);
+		return true;
+	}
+	if (attrib == "direct") {
+		result.setBool(_directToScreen);
 		return true;
 	}
 
@@ -3533,11 +3702,16 @@ bool VisualElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWrit
 		writeProxy = DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetVisibility>::create(this);
 		return true;
 	}
+	if (attrib == "direct") {
+		writeProxy = DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetDirect>::create(this);
+		return true;
+	}
 
 	return Element::writeRefAttribute(thread, writeProxy, attrib);
 }
 
 bool VisualElement::scriptSetVisibility(const DynamicValue& result) {
+	// FIXME: Need to make this fire Show/Hide events!
 	if (result.getType() == DynamicValueTypes::kBoolean) {
 		_visible = result.getBool();
 		return true;
@@ -3553,11 +3727,32 @@ bool VisualElement::loadCommon(const Common::String &name, uint32 guid, const Da
 	_name = name;
 	_guid = guid;
 	_visible = ((elementFlags & Data::ElementFlags::kHidden) == 0);
+	_directToScreen = ((elementFlags & Data::ElementFlags::kNotDirectToScreen) == 0);
 	_streamLocator = streamLocator;
 	_sectionID = sectionID;
 	_layer = layer;
 
 	return true;
+}
+
+bool VisualElement::scriptSetDirect(const DynamicValue &dest) {
+	if (dest.getType() == DynamicValueTypes::kBoolean) {
+		_directToScreen = dest.getBool();
+		return true;
+	}
+	return false;
+}
+
+VThreadState VisualElement::changeVisibilityTask(const ChangeFlagTaskData &taskData) {
+	if (_visible != taskData.desiredFlag) {
+		_visible = taskData.desiredFlag;
+
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(_visible ? EventIDs::kElementHide : EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		taskData.runtime->sendMessageOnVThread(dispatch);
+	}
+
+	return kVThreadReturn;
 }
 
 bool NonVisualElement::isVisual() const {

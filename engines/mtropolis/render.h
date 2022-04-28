@@ -35,9 +35,12 @@ class ManagedSurface;
 
 namespace MTropolis {
 
+class Runtime;
+class Project;
+
 class Window {
 public:
-	Window(int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format);
+	Window(Runtime *runtime, int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format);
 	~Window();
 
 	int32 getX() const;
@@ -47,15 +50,20 @@ public:
 	const Common::SharedPtr<Graphics::ManagedSurface> &getSurface() const;
 	const Graphics::PixelFormat &getPixelFormat() const;
 
+	void close();
+	void detachFromRuntime();
+
 private:
 	int32 _x;
 	int32 _y;
 	Common::SharedPtr<Graphics::ManagedSurface> _surface;
+	Runtime *_runtime;
 };
 
 namespace Render {
 
 uint32 resolveRGB(uint8 r, uint8 g, uint8 b, const Graphics::PixelFormat &fmt);
+void renderProject(Runtime *runtime, Window *mainWindow);
 
 } // End of namespace Render
 

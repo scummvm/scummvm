@@ -241,8 +241,6 @@ void MTropolisEngine::handleEvents() {
 Common::Error MTropolisEngine::run() {
 	int preferredWidth = 1024;
 	int preferredHeight = 768;
-	bool enableFrameRateLimit = true;
-	uint expectedFrameRate = 60;
 	ColorDepthMode preferredColorDepthMode = kColorDepthMode8Bit;
 
 	_runtime.reset(new Runtime(_system));
@@ -417,8 +415,6 @@ Common::Error MTropolisEngine::run() {
 
 	bool paused = false;
 
-	int frameCounter = 0;
-	int numSkippedFrames = 0;
 	while (!shouldQuit()) {
 		handleEvents();
 
