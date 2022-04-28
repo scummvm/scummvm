@@ -79,7 +79,7 @@ Common::Event ags_get_next_keyevent() {
 }
 
 int ags_iskeydown(eAGSKeyCode ags_key) {
-	return ::AGS::g_events->isKeyPressed(ags_key);
+	return ::AGS::g_events->isKeyPressed(ags_key, _GP(game).options[OPT_KEYHANDLEAPI] == 0);
 }
 
 void ags_simulate_keypress(eAGSKeyCode ags_key) {
