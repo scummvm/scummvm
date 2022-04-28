@@ -1378,6 +1378,23 @@ private:
 	Common::HashMap<Common::String, const IPlugInModifierFactory *> _factoryRegistry;
 };
 
+struct IPostRenderSignalReceiver {
+	virtual void onPostRender(Runtime *runtime, Project *project) = 0;
+};
+
+class PostRenderSignaller {
+public:
+	PostRenderSignaller();
+	~PostRenderSignaller();
+
+	void onPostRender(Runtime *runtime, Project *project);
+	void addReceiver(IPostRenderSignalReceiver *receiver);
+	void removeReceiver(IPostRenderSignalReceiver *receiver);
+
+private:
+	Common::Array<IPostRenderSignalReceiver *> _receivers;
+};
+
 struct ISegmentUnloadSignalReceiver {
 	virtual void onSegmentUnloaded(int segmentIndex) = 0;
 };
@@ -1418,6 +1435,9 @@ public:
 	void closeSegmentStream(int segmentIndex);
 	Common::SeekableReadStream *getStreamForSegment(int segmentIndex);
 	Common::SharedPtr<SegmentUnloadSignaller> notifyOnSegmentUnload(int segmentIndex, ISegmentUnloadSignalReceiver *receiver);
+
+	void onPostRender();
+	Common::SharedPtr<PostRenderSignaller> notifyOnPostRender(IPostRenderSignalReceiver *receiver);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Project"; }
@@ -1514,6 +1534,8 @@ private:
 	Common::SharedPtr<ProjectResources> _resources;
 	ObjectLinkingScope _structuralScope;
 	ObjectLinkingScope _modifierScope;
+
+	Common::SharedPtr<PostRenderSignaller> _postRenderSignaller;
 
 	Runtime *_runtime;
 };
