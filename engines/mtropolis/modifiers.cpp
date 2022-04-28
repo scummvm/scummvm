@@ -783,6 +783,34 @@ void CompoundVariableModifier::visitInternalReferences(IStructuralReferenceVisit
 	}
 }
 
+bool CompoundVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	VariableModifier *var = findChildByName(attrib);
+	if (!var)
+		return false;
+
+	var->getValue(result);
+	return true;
+}
+
+bool CompoundVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	VariableModifier *var = findChildByName(attrib);
+	if (!var)
+		return false;
+
+	writeProxy = DynamicValueWriteFuncHelper<VariableModifier, &VariableModifier::setValue>::create(var);
+	return true;
+}
+
+VariableModifier *CompoundVariableModifier::findChildByName(const Common::String &name) const {
+	for (Common::Array<Common::SharedPtr<Modifier> >::const_iterator it = _children.begin(), itEnd = _children.end(); it != itEnd; ++it) {
+		Modifier *modifier = it->get();
+		if (modifier->isVariable() && caseInsensitiveEqual(name, modifier->getName()))
+			return static_cast<VariableModifier *>(modifier);
+	}
+
+	return nullptr;
+}
+
 Common::SharedPtr<Modifier> CompoundVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new CompoundVariableModifier(*this));
 }

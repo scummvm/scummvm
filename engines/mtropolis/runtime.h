@@ -1062,6 +1062,8 @@ public:
 
 	void getScenesInRenderOrder(Common::Array<Structural *> &scenes) const;
 
+	void instantiateIfAlias(Common::SharedPtr<Modifier> &modifier, const Common::WeakPtr<RuntimeObject> &relinkParent);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();

@@ -569,6 +569,11 @@ private:
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
+
+	VariableModifier *findChildByName(const Common::String &name) const;
+
 	Common::Array<Common::SharedPtr<Modifier> > _children;
 };
 

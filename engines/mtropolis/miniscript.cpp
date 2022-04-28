@@ -531,6 +531,11 @@ MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
 
 	Common::SharedPtr<RuntimeObject> obj = targetValue.getObject().lock();
 
+	if (!obj) {
+		thread->error("Invalid message destination");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
 	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(_evt, payloadValue, thread->getModifier()->getSelfReference()));
 	Common::SharedPtr<MessageDispatch> dispatch;
 	if (obj->isModifier())
