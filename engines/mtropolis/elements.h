@@ -53,7 +53,7 @@ private:
 	bool _cacheBitmap;
 };
 
-class MovieElement : public VisualElement, public ISegmentUnloadSignalReceiver {
+class MovieElement : public VisualElement, public ISegmentUnloadSignalReceiver, public IPostRenderSignalReceiver {
 public:
 	MovieElement();
 	~MovieElement();
@@ -68,9 +68,11 @@ public:
 	void deactivate() override;
 
 	void render(Window *window) override;
+	void onPostRender(Runtime *runtime, Project *project) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Movie Element"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
 #endif
 
 private:
@@ -89,10 +91,14 @@ private:
 	bool _loop;
 	bool _alternate;
 	bool _playEveryFrame;
+	bool _reversed;
+	bool _haveFiredAtLastCel;
+	bool _haveFiredAtFirstCel;
 	uint32 _assetID;
 
 	Common::SharedPtr<Video::VideoDecoder> _videoDecoder;
 	Common::SharedPtr<SegmentUnloadSignaller> _unloadSignaller;
+	Common::SharedPtr<PostRenderSignaller> _postRenderSignaller;
 
 	Runtime *_runtime;
 };

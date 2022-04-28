@@ -52,13 +52,15 @@ void GraphicElement::render(Window *window) {
 }
 
 MovieElement::MovieElement()
-	: _cacheBitmap(false), _paused(false)
+	: _cacheBitmap(false), _paused(false), _reversed(false), _haveFiredAtFirstCel(false), _haveFiredAtLastCel(false)
 	, _loop(false), _alternate(false), _playEveryFrame(false), _assetID(0), _runtime(nullptr) {
 }
 
 MovieElement::~MovieElement() {
 	if (_unloadSignaller)
 		_unloadSignaller->removeReceiver(this);
+	if (_postRenderSignaller)
+		_postRenderSignaller->removeReceiver(this);
 }
 
 bool MovieElement::load(ElementLoaderContext &context, const Data::MovieElement &data) {
@@ -147,12 +149,17 @@ void MovieElement::activate() {
 		_videoDecoder.reset();
 
 	_unloadSignaller = project->notifyOnSegmentUnload(segmentIndex, this);
+	_postRenderSignaller = project->notifyOnPostRender(this);
 }
 
 void MovieElement::deactivate() {
 	if (_unloadSignaller) {
 		_unloadSignaller->removeReceiver(this);
 		_unloadSignaller.reset();
+	}
+	if (_postRenderSignaller) {
+		_postRenderSignaller->removeReceiver(this);
+		_postRenderSignaller.reset();
 	}
 
 	_videoDecoder.reset();
@@ -171,6 +178,26 @@ void MovieElement::render(Window *window) {
 		Common::Rect srcRect(0, 0, videoSurface->w, videoSurface->h);
 		Common::Rect destRect(_rect.left, _rect.top, _rect.right, _rect.bottom);
 		target->blitFrom(*videoSurface, srcRect, destRect);
+	}
+}
+
+void MovieElement::onPostRender(Runtime *runtime, Project *project) {
+	if (_videoDecoder) {
+		if (_videoDecoder->isPlaying() && _videoDecoder->endOfVideo()) {
+			if (_alternate) {
+				_reversed = !_reversed;
+				if (!_videoDecoder->setReverse(_reversed)) {
+					warning("Failed to reverse video decoder, disabling it");
+					_videoDecoder.reset();
+				}
+			} else {
+				_videoDecoder->stop();
+			}
+
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(_reversed ? EventIDs::kAtFirstCel : EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+			runtime->queueMessage(dispatch);
+		}
 	}
 }
 

@@ -2317,6 +2317,8 @@ void Runtime::drawFrame() {
 	}
 
 	_system->updateScreen();
+
+	_project->onPostRender();
 }
 
 Common::SharedPtr<Structural> Runtime::findDefaultSharedSceneForScene(Structural *scene) {
@@ -2903,6 +2905,32 @@ const IPlugInModifierFactory *ProjectPlugInRegistry::findPlugInModifierFactory(c
 	return it->_value;
 }
 
+PostRenderSignaller::PostRenderSignaller() {
+}
+
+PostRenderSignaller::~PostRenderSignaller() {
+}
+
+void PostRenderSignaller::onPostRender(Runtime *runtime, Project *project) {
+	const size_t numReceivers = _receivers.size();
+	for (size_t i = 0; i < numReceivers; i++) {
+		_receivers[i]->onPostRender(runtime, project);
+	}
+}
+
+void PostRenderSignaller::addReceiver(IPostRenderSignalReceiver *receiver) {
+	_receivers.push_back(receiver);
+}
+
+void PostRenderSignaller::removeReceiver(IPostRenderSignalReceiver* receiver) {
+	for (size_t i = 0; i < _receivers.size(); i++) {
+		if (_receivers[i] == receiver) {
+			_receivers.remove_at(i);
+			break;
+		}
+	}
+}
+
 
 SegmentUnloadSignaller::SegmentUnloadSignaller(Project *project, int segmentIndex) : _project(project), _segmentIndex(segmentIndex) {
 }
@@ -2937,7 +2965,8 @@ Project::Segment::Segment() : weakStream(nullptr) {
 }
 
 Project::Project(Runtime *runtime)
-	: _runtime(runtime), _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false), _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false) {
+	: _runtime(runtime), _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false),
+	  _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false), _postRenderSignaller(new PostRenderSignaller()) {
 }
 
 Project::~Project() {
@@ -3215,6 +3244,15 @@ Common::SharedPtr<SegmentUnloadSignaller> Project::notifyOnSegmentUnload(int seg
 	if (signaller)
 		signaller->addReceiver(receiver);
 	return signaller;
+}
+
+void Project::onPostRender() {
+	_postRenderSignaller->onPostRender(_runtime, this);
+}
+
+Common::SharedPtr<PostRenderSignaller> Project::notifyOnPostRender(IPostRenderSignalReceiver *receiver) {
+	_postRenderSignaller->addReceiver(receiver);
+	return _postRenderSignaller;
 }
 
 void Project::loadBootStream(size_t streamIndex) {
