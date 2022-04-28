@@ -54,8 +54,8 @@ void Overlay_SetText(ScriptOverlay *scover, int wii, int fontid, int text_color,
 	int ovri = find_overlay_of_type(scover->overlayId);
 	if (ovri < 0)
 		quit("!Overlay.SetText: invalid overlay ID specified");
-	int xx = game_to_data_coord(_GP(screenover)[ovri].x) - scover->borderWidth;
-	int yy = game_to_data_coord(_GP(screenover)[ovri].y) - scover->borderHeight;
+	int xx = game_to_data_coord(_GP(screenover)[ovri].x);
+	int yy = game_to_data_coord(_GP(screenover)[ovri].y);
 
 	RemoveOverlay(scover->overlayId);
 	const int disp_type = scover->overlayId;
@@ -131,8 +131,6 @@ int Overlay_GetValid(ScriptOverlay *scover) {
 ScriptOverlay *Overlay_CreateGraphical(int x, int y, int slot, int transparent) {
 	ScriptOverlay *sco = new ScriptOverlay();
 	sco->overlayId = CreateGraphicOverlay(x, y, slot, transparent);
-	sco->borderHeight = 0;
-	sco->borderWidth = 0;
 	sco->isBackgroundSpeech = 0;
 
 	ccRegisterManagedObject(sco, sco);
@@ -146,10 +144,6 @@ ScriptOverlay *Overlay_CreateTextual(int x, int y, int width, int font, int colo
 	width = data_to_game_coord(width);
 
 	sco->overlayId = CreateTextOverlayCore(x, y, width, font, colour, text, DISPLAYTEXT_NORMALOVERLAY, 0);
-
-	int ovri = find_overlay_of_type(sco->overlayId);
-	sco->borderWidth = game_to_data_coord(_GP(screenover)[ovri].x - x);
-	sco->borderHeight = game_to_data_coord(_GP(screenover)[ovri].y - y);
 	sco->isBackgroundSpeech = 0;
 
 	ccRegisterManagedObject(sco, sco);
@@ -285,8 +279,8 @@ size_t add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic
 	over.bmp = _G(gfxDriver)->CreateDDBFromBitmap(piccy, alphaChannel);
 	over.x = x;
 	over.y = y;
-	over._offsetX = pic_offx;
-	over._offsetY = pic_offy;
+	over.offsetX = pic_offx;
+	over.offsetY = pic_offy;
 	// by default draw speech and portraits over GUI, and the rest under GUI
 	over.zorder = (type == OVER_TEXTMSG || type == OVER_PICTURE || type == OVER_TEXTSPEECH) ?
 		INT_MAX : INT_MIN;
@@ -341,8 +335,8 @@ void get_overlay_position(const ScreenOverlay &over, int *x, int *y) {
 	} else {
 		// Note: the internal offset is only needed when x,y coordinates are specified
 		// and only in the case where the overlay is using a GUI. See issue #1098
-		tdxp = over.x + over._offsetX;
-		tdyp = over.y + over._offsetY;
+		tdxp = over.x + over.offsetX;
+		tdyp = over.y + over.offsetY;
 
 		if (!over.positionRelativeToScreen) {
 			Point tdxy = _GP(play).RoomToScreen(tdxp, tdyp);

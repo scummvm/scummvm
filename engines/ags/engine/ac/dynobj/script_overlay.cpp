@@ -62,15 +62,15 @@ size_t ScriptOverlay::CalcSerializeSize() {
 
 void ScriptOverlay::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(overlayId);
-	out->WriteInt32(borderWidth);
-	out->WriteInt32(borderHeight);
+	out->WriteInt32(0); // unused (was text window x padding)
+	out->WriteInt32(0); // unused (was text window y padding)
 	out->WriteInt32(isBackgroundSpeech);
 }
 
 void ScriptOverlay::Unserialize(int index, Stream *in, size_t data_sz) {
 	overlayId = in->ReadInt32();
-	borderWidth = in->ReadInt32();
-	borderHeight = in->ReadInt32();
+	in->ReadInt32(); // unused (was text window x padding)
+	in->ReadInt32(); // unused (was text window y padding)
 	isBackgroundSpeech = in->ReadInt32();
 	ccRegisterUnserializedObject(index, this, this);
 }
@@ -83,14 +83,6 @@ void ScriptOverlay::Remove() {
 	}
 	remove_screen_overlay_index(overlayIndex);
 	overlayId = -1;
-}
-
-
-ScriptOverlay::ScriptOverlay() {
-	overlayId = -1;
-	borderWidth = 0;
-	borderHeight = 0;
-	isBackgroundSpeech = 0;
 }
 
 } // namespace AGS3

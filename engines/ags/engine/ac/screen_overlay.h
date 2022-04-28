@@ -42,18 +42,21 @@ class IDriverDependantBitmap;
 
 using namespace AGS; // FIXME later
 
-
 struct ScreenOverlay {
 	Engine::IDriverDependantBitmap *bmp = nullptr;
 	Shared::Bitmap *pic = nullptr;
 	bool hasAlphaChannel = false;
-	int type = 0, x = 0, y = 0, timeout = 0;
+	int type = 0, timeout = 0;
+	// Note that x,y are overlay's properties, that define its position in script;
+	// but real drawn position is x + offsetX, y + offsetY;
+	int x = 0, y = 0;
+	// Border/padding offset for the tiled text windows
+	int offsetX = 0, offsetY = 0;
 	int bgSpeechForChar = 0;
 	int associatedOverlayHandle = 0;
 	int zorder = INT_MIN;
 	bool positionRelativeToScreen = false;
 	bool hasSerializedBitmap = false;
-	int _offsetX = 0, _offsetY = 0;
 	int transparency = 0;
 
 	void ReadFromFile(Shared::Stream *in, int32_t cmp_ver);

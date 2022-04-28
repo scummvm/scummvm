@@ -42,8 +42,8 @@ void ScreenOverlay::ReadFromFile(Stream *in, int32_t cmp_ver) {
 	hasAlphaChannel = in->ReadBool();
 	positionRelativeToScreen = in->ReadBool();
 	if (cmp_ver >= 1) {
-		_offsetX = in->ReadInt32();
-		_offsetY = in->ReadInt32();
+		offsetX = in->ReadInt32();
+		offsetY = in->ReadInt32();
 	}
 	if (cmp_ver >= 2) {
 		zorder = in->ReadInt32();
@@ -66,8 +66,8 @@ void ScreenOverlay::WriteToFile(Stream *out) const {
 	out->WriteBool(hasAlphaChannel);
 	out->WriteBool(positionRelativeToScreen);
 	// since cmp_ver = 1
-	out->WriteInt32(_offsetX);
-	out->WriteInt32(_offsetY);
+	out->WriteInt32(offsetX);
+	out->WriteInt32(offsetY);
 	// since cmp_ver = 2
 	out->WriteInt32(zorder);
 	out->WriteInt32(transparency);

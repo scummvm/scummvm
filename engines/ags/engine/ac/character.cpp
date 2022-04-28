@@ -701,17 +701,13 @@ void Character_SayAt(CharacterInfo *chaa, int x, int y, int width, const char *t
 }
 
 ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx) {
-
 	int ovltype = DisplaySpeechBackground(chaa->index_id, texx);
 	int ovri = find_overlay_of_type(ovltype);
 	if (ovri < 0)
 		quit("!SayBackground internal error: no overlay");
 
 	ScriptOverlay *scOver = create_scriptobj_for_overlay(_GP(screenover)[ovri]);
-	scOver->borderHeight = 0;
-	scOver->borderWidth = 0;
-	scOver->isBackgroundSpeech = 1;
-
+	scOver->isBackgroundSpeech = true;
 	return scOver;
 }
 
