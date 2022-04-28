@@ -391,7 +391,7 @@ int roomSelectorWindow(int currentRoom, int numRooms,
 		} else if (mes.code == CM_SELCHANGE) {
 			int cursel = CSCISendControlMessage(ctrllist, CLB_GETCURSEL, 0, 0);
 			if (cursel >= 0) {
-				sprintf(_G(buffer2), "%d", roomNumbers[cursel]);
+				snprintf(_G(buffer2), sizeof(_G(buffer2)), "%d", roomNumbers[cursel]);
 				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &_G(buffer2)[0]);
 			}
 		}

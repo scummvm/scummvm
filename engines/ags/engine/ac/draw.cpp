@@ -1906,9 +1906,9 @@ void draw_fps(const Rect &viewport) {
 
 	char base_buffer[20];
 	if (!isTimerFpsMaxed()) {
-		sprintf(base_buffer, "%d", _G(frames_per_second));
+		snprintf(base_buffer, sizeof(base_buffer), "%d", _G(frames_per_second));
 	} else {
-		sprintf(base_buffer, "unlimited");
+		snprintf(base_buffer, sizeof(base_buffer), "unlimited");
 	}
 
 	char fps_buffer[60];
@@ -1921,7 +1921,7 @@ void draw_fps(const Rect &viewport) {
 	wouttext_outline(fpsDisplay, 1, 1, font, text_color, fps_buffer);
 
 	char loop_buffer[60];
-	sprintf(loop_buffer, "Loop %u", _G(loopcounter));
+	snprintf(loop_buffer, sizeof(loop_buffer), "Loop %u", _G(loopcounter));
 	wouttext_outline(fpsDisplay, viewport.GetWidth() / 2, 1, font, text_color, loop_buffer);
 
 	if (ddb)

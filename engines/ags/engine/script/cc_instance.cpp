@@ -1240,7 +1240,7 @@ void ccInstance::GetScriptPosition(ScriptPosition &script_pos) {
 RuntimeScriptValue ccInstance::GetSymbolAddress(const char *symname) {
 	int k;
 	char altName[200];
-	sprintf(altName, "%s$", symname);
+	snprintf(altName, sizeof(altName), "%s$", symname);
 	RuntimeScriptValue rval_null;
 
 	for (k = 0; k < instanceof->numexports; k++) {

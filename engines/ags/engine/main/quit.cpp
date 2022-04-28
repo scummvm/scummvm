@@ -138,7 +138,7 @@ void quit_message_on_exit(const String &qmsg, String &alertis, QuitReason qreaso
 	// successful exit or user abort displays no messages
 	if ((qreason & (kQuitKind_NormalExit | kQuit_UserAbort)) == 0 && !_G(handledErrorInEditor)) {
 		// Display the message (at this point the window still exists)
-		sprintf(_G(pexbuf), "%s\n", qmsg.GetCStr());
+		snprintf(_G(pexbuf), sizeof(_G(pexbuf)), "%s\n", qmsg.GetCStr());
 		alertis.Append(_G(pexbuf));
 		_G(platform)->DisplayAlert("%s", alertis.GetCStr());
 	}

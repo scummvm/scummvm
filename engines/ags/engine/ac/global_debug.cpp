@@ -116,7 +116,7 @@ void script_debug(int cmdd, int dataa) {
 		int goToRoom = -1;
 		if (_GP(game).roomCount == 0) {
 			char inroomtex[80];
-			sprintf(inroomtex, "!Enter new room: (in room %d)", _G(displayed_room));
+			snprintf(inroomtex, sizeof(inroomtex), "!Enter new room: (in room %d)", _G(displayed_room));
 			setup_for_dialog();
 			goToRoom = enternumberwindow(inroomtex);
 			restore_after_dialog();

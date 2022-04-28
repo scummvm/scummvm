@@ -427,7 +427,7 @@ void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t 
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsprintf(tbuffer, fmt, ap);
+	vsnprintf(tbuffer, sizeof(tbuffer), fmt, ap);
 	va_end(ap);
 	wouttextxy(ds, xxx, yyy, fontNumber, text_color, tbuffer);
 }

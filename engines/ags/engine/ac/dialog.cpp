@@ -171,10 +171,10 @@ int run_dialog_script(int dialogID, int offse, int optionIndex) {
 	int result = RUN_DIALOG_STAY;
 
 	if (_G(dialogScriptsInst)) {
-		char funcName[100];
-		sprintf(funcName, "_run_dialog%d", dialogID);
+		char func_name[100];
+		snprintf(func_name, sizeof(func_name), "_run_dialog%d", dialogID);
 		RuntimeScriptValue params[]{ optionIndex };
-		RunScriptFunction(_G(dialogScriptsInst), funcName, 1, params);
+		RunScriptFunction(_G(dialogScriptsInst), func_name, 1, params);
 		result = _G(dialogScriptsInst)->returnValue;
 	} else {
 		// old dialog format
@@ -342,7 +342,7 @@ int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, in
 			if (_GP(game).dialog_bullet > 0)
 				actualpicwid = _GP(game).SpriteInfos[_GP(game).dialog_bullet].Width + 3;
 
-			sprintf(tempbfr, "%d.", ww + 1);
+			snprintf(tempbfr, sizeof(tempbfr), "%d.", ww + 1);
 			wouttext_outline(ds, dlgxp + actualpicwid, curyp, usingfont, text_color, tempbfr);
 		}
 		for (size_t cc = 0; cc < _GP(Lines).Count(); cc++) {
