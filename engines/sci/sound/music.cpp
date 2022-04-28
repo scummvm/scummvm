@@ -261,10 +261,17 @@ void SciMusic::clearPlayList() {
 
 void SciMusic::pauseAll(bool pause) {
 	const MusicList::iterator end = _playList.end();
+	bool alreadyUnpaused = (_globalPause <= 0);
+
 	if (pause)
 		_globalPause++;
 	else
-		_globalPause = MAX<int>(_globalPause - 1, 0);
+		_globalPause--;
+
+	bool stillUnpaused = (_globalPause <= 0);
+	if (alreadyUnpaused && stillUnpaused)
+		return;
+
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 #ifdef ENABLE_SCI32
 		// The entire DAC will have been paused by the caller;
@@ -797,7 +804,7 @@ void SciMusic::soundResume(MusicEntry *pSnd) {
 		pSnd->pauseCounter--;
 	if (pSnd->pauseCounter != 0)
 		return;
-	if (pSnd->status != kSoundPaused || (_globalPause && !_needsResume))
+	if (pSnd->status != kSoundPaused || (_globalPause > 0 && !_needsResume))
 		return;
 	_needsResume = (_soundVersion > SCI_VERSION_0_LATE);
 	if (pSnd->pStreamAud) {
