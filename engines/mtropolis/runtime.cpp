@@ -74,7 +74,7 @@ void ModifierInnerScopeBuilder::visitWeakModifierRef(Common::WeakPtr<Modifier> &
 
 class ModifierChildMaterializer : public IStructuralReferenceVisitor {
 public:
-	ModifierChildMaterializer(Runtime *runtime, ObjectLinkingScope *outerScope);
+	ModifierChildMaterializer(Runtime *runtime, Modifier *modifier, ObjectLinkingScope *outerScope);
 
 	void visitChildStructuralRef(Common::SharedPtr<Structural> &structural) override;
 	void visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) override;
@@ -83,11 +83,26 @@ public:
 
 private:
 	Runtime *_runtime;
+	Modifier *_modifier;
 	ObjectLinkingScope *_outerScope;
 };
 
-ModifierChildMaterializer::ModifierChildMaterializer(Runtime *runtime, ObjectLinkingScope *outerScope)
-	: _runtime(runtime), _outerScope(outerScope) {
+class ModifierChildCloner : public IStructuralReferenceVisitor {
+public:
+	ModifierChildCloner(Runtime *runtime, const Common::WeakPtr<RuntimeObject> &relinkParent);
+
+	void visitChildStructuralRef(Common::SharedPtr<Structural> &structural) override;
+	void visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) override;
+	void visitWeakStructuralRef(Common::WeakPtr<Structural> &structural) override;
+	void visitWeakModifierRef(Common::WeakPtr<Modifier> &modifier) override;
+
+private:
+	Runtime *_runtime;
+	Common::WeakPtr<RuntimeObject> _relinkParent;
+};
+
+ModifierChildMaterializer::ModifierChildMaterializer(Runtime *runtime, Modifier *modifier, ObjectLinkingScope *outerScope)
+	: _runtime(runtime), _modifier(modifier), _outerScope(outerScope) {
 }
 
 void ModifierChildMaterializer::visitChildStructuralRef(Common::SharedPtr<Structural> &structural) {
@@ -95,20 +110,7 @@ void ModifierChildMaterializer::visitChildStructuralRef(Common::SharedPtr<Struct
 }
 
 void ModifierChildMaterializer::visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) {
-	if (modifier->isAlias()) {
-		Common::SharedPtr<Modifier> templateModifier = _runtime->getProject()->resolveAlias(static_cast<AliasModifier *>(modifier.get())->getAliasID());
-		if (!templateModifier) {
-			error("Failed to resolve alias");
-		}
-
-		if (!modifier->isVariable()) {
-			Common::SharedPtr<Modifier> clonedModifier = templateModifier->shallowClone();
-			clonedModifier->setName(modifier->getName());
-
-			modifier = clonedModifier;
-		}
-	}
-
+	_runtime->instantiateIfAlias(modifier, _modifier->getSelfReference());
 	modifier->materialize(_runtime, _outerScope);
 }
 
@@ -117,6 +119,31 @@ void ModifierChildMaterializer::visitWeakStructuralRef(Common::WeakPtr<Structura
 }
 
 void ModifierChildMaterializer::visitWeakModifierRef(Common::WeakPtr<Modifier> &modifier) {
+	// Do nothing
+}
+
+ModifierChildCloner::ModifierChildCloner(Runtime *runtime, const Common::WeakPtr<RuntimeObject> &relinkParent)
+	: _runtime(runtime), _relinkParent(relinkParent) {
+}
+
+void ModifierChildCloner::visitChildStructuralRef(Common::SharedPtr<Structural> &structural) {
+	assert(false);
+}
+
+void ModifierChildCloner::visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) {
+	modifier = modifier->shallowClone();
+	modifier->setSelfReference(modifier);
+	modifier->setParent(_relinkParent);
+
+	ModifierChildCloner recursiveCloner(_runtime, modifier);
+	modifier->visitInternalReferences(&recursiveCloner);
+}
+
+void ModifierChildCloner::visitWeakStructuralRef(Common::WeakPtr<Structural> &structural) {
+	// Do nothing
+}
+
+void ModifierChildCloner::visitWeakModifierRef(Common::WeakPtr<Modifier> &modifier) {
 	// Do nothing
 }
 
@@ -1679,23 +1706,10 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 	modifierScope->setParent(outerScope);
 
 	for (Common::Array<Common::SharedPtr<Modifier> >::iterator it = _modifiers.begin(), itEnd = _modifiers.end(); it != itEnd; ++it) {
-		Modifier *modifier = it->get();
-		uint32 modifierGUID = modifier->getStaticGUID();
-		if (modifier->isAlias()) {
-			Common::SharedPtr<Modifier> templateModifier = runtime->getProject()->resolveAlias(static_cast<AliasModifier *>(modifier)->getAliasID());
-			if (!templateModifier) {
-				error("Failed to resolve alias");
-			}
+		Common::SharedPtr<Modifier> &modifierRef = *it;
 
-			if (!modifier->isVariable()) {
-				Common::SharedPtr<Modifier> clonedModifier = templateModifier->shallowClone();
-				clonedModifier->setName(modifier->getName());
-
-				(*it) = clonedModifier;
-				modifier = clonedModifier.get();
-			}
-		}
-		modifierScope->addObject(modifierGUID, modifier->getName(), *it);
+		runtime->instantiateIfAlias(modifierRef, getSelfReference());
+		modifierScope->addObject(modifierRef->getStaticGUID(), modifierRef->getName(), modifierRef);
 	}
 
 	for (Common::Array<Common::SharedPtr<Modifier> >::const_iterator it = _modifiers.begin(), itEnd = _modifiers.end(); it != itEnd; ++it) {
@@ -2652,6 +2666,32 @@ Scheduler &Runtime::getScheduler() {
 void Runtime::getScenesInRenderOrder(Common::Array<Structural*> &scenes) const {
 	for (Common::Array<SceneStackEntry>::const_iterator it = _sceneStack.begin(), itEnd = _sceneStack.end(); it != itEnd; ++it) {
 		scenes.push_back(it->scene.get());
+	}
+}
+
+void Runtime::instantiateIfAlias(Common::SharedPtr<Modifier> &modifier, const Common::WeakPtr<RuntimeObject> &relinkParent) {
+	if (modifier->isAlias()) {
+		Common::SharedPtr<Modifier> templateModifier = _project->resolveAlias(static_cast<AliasModifier *>(modifier.get())->getAliasID());
+		if (templateModifier->getStaticGUID() == 0x34130c) {
+			int n = 0;
+		}
+		if (!templateModifier) {
+			error("Failed to resolve alias");
+		}
+
+		if (!modifier->isVariable()) {
+			Common::SharedPtr<Modifier> clonedModifier = templateModifier->shallowClone();
+			clonedModifier->setSelfReference(clonedModifier);
+			clonedModifier->setRuntimeGUID(allocateRuntimeGUID());
+
+			clonedModifier->setName(modifier->getName());
+
+			modifier = clonedModifier;
+			clonedModifier->setParent(relinkParent);
+
+			ModifierChildCloner cloner(this, clonedModifier);
+			clonedModifier->visitInternalReferences(&cloner);
+		}
 	}
 }
 
@@ -3789,7 +3829,7 @@ void Modifier::materialize(Runtime *runtime, ObjectLinkingScope *outerScope) {
 	ModifierInnerScopeBuilder innerScopeBuilder(&innerScope);
 	this->visitInternalReferences(&innerScopeBuilder);
 
-	ModifierChildMaterializer childMaterializer(runtime, &innerScope);
+	ModifierChildMaterializer childMaterializer(runtime, this, &innerScope);
 	this->visitInternalReferences(&childMaterializer);
 
 	linkInternalReferences(outerScope);
