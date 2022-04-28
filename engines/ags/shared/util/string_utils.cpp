@@ -65,7 +65,7 @@ float StrUtil::StringToFloat(const String &s, float def_val) {
 	if (!s.GetCStr())
 		return def_val;
 	char *stop_ptr;
-	int val = strtof(s.GetCStr(), &stop_ptr);
+	float val = strtof(s.GetCStr(), &stop_ptr);
 	return (stop_ptr == s.GetCStr() + s.GetLength()) ? val : def_val;
 }
 
