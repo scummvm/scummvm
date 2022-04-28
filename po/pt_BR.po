@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-27 19:39+0000\n"
-"PO-Revision-Date: 2022-04-21 16:23+0000\n"
+"PO-Revision-Date: 2022-04-28 09:45+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5153,34 +5153,28 @@ msgid "Enable Gore Mode when available"
 msgstr "Habilita Modo Sangrento quando disponível"
 
 #: engines/hypno/detection.cpp:211
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Enable original cheats"
-msgstr "Habilitar trapaças"
+msgstr "Habilitar trapaças originais"
 
 #: engines/hypno/detection.cpp:212
 msgid "Allow cheats using the C key."
 msgstr "Permitir trapaças utilizando a tecla C."
 
 #: engines/hypno/detection.cpp:220
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "Enable infinite health cheat"
-msgstr "Habilitar substituição de fonte"
+msgstr "Habilitar trapaça de saúde infinita"
 
 #: engines/hypno/detection.cpp:221
 msgid "Player health will never decrease (except for game over scenes)."
-msgstr ""
+msgstr "A saúde do jogador nunca diminuirá (exceto em cenas de game over)."
 
 #: engines/hypno/detection.cpp:229
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Enable infinite ammo cheat"
-msgstr "Habilitar trapaças"
+msgstr "Habilitar trapaça de munição infinita"
 
 #: engines/hypno/detection.cpp:230
 msgid "Player ammo will never decrease."
-msgstr ""
+msgstr "A munição do jogador nunca diminuirá."
 
 #: engines/hypno/detection.cpp:238
 msgid "Enable restored content"
