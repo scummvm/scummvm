@@ -52,7 +52,7 @@ struct ScreenOverlay {
 	int x = 0, y = 0;
 	// Border/padding offset for the tiled text windows
 	int offsetX = 0, offsetY = 0;
-	int bgSpeechForChar = 0;
+	int bgSpeechForChar = -1;
 	int associatedOverlayHandle = 0;
 	int zorder = INT_MIN;
 	bool positionRelativeToScreen = false;

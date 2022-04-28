@@ -707,7 +707,7 @@ ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx) {
 		quit("!SayBackground internal error: no overlay");
 
 	ScriptOverlay *scOver = create_scriptobj_for_overlay(_GP(screenover)[ovri]);
-	scOver->isBackgroundSpeech = true;
+	scOver->hasInternalRef = true; // keep at least until internal timeout
 	return scOver;
 }
 

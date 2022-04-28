@@ -44,7 +44,7 @@ int ScriptOverlay::Dispose(const char *address, bool force) {
 	// if this is being removed voluntarily (ie. pointer out of
 	// scope) then remove the associateed overlay
 	// Otherwise, it's a Restre Game or something so don't
-	if ((!force) && (!isBackgroundSpeech) && (Overlay_GetValid(this))) {
+	if ((!force) && (!hasInternalRef) && (Overlay_GetValid(this))) {
 		Remove();
 	}
 
@@ -64,14 +64,14 @@ void ScriptOverlay::Serialize(const char *address, Stream *out) {
 	out->WriteInt32(overlayId);
 	out->WriteInt32(0); // unused (was text window x padding)
 	out->WriteInt32(0); // unused (was text window y padding)
-	out->WriteInt32(isBackgroundSpeech);
+	out->WriteInt32(hasInternalRef);
 }
 
 void ScriptOverlay::Unserialize(int index, Stream *in, size_t data_sz) {
 	overlayId = in->ReadInt32();
 	in->ReadInt32(); // unused (was text window x padding)
 	in->ReadInt32(); // unused (was text window y padding)
-	isBackgroundSpeech = in->ReadInt32();
+	hasInternalRef = in->ReadInt32();
 	ccRegisterUnserializedObject(index, this, this);
 }
 

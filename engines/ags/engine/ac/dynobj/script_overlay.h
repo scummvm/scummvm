@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTOVERLAY_H
-#define AGS_ENGINE_AC_DYNOBJ_SCRIPTOVERLAY_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPT_OVERLAY_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPT_OVERLAY_H
 
 #include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
 
@@ -30,7 +30,7 @@ struct ScriptOverlay final : AGSCCDynamicObject {
 	int overlayId = -1;
 	// TODO: this flag is needed to mark an overlay which lifetime is managed
 	// by the engine; this may be solved with engine owning an object ref instead
-	bool isBackgroundSpeech = false;
+	bool hasInternalRef = false;
 
 	int Dispose(const char *address, bool force) override;
 	const char *GetType() override;

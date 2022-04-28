@@ -131,8 +131,6 @@ int Overlay_GetValid(ScriptOverlay *scover) {
 ScriptOverlay *Overlay_CreateGraphical(int x, int y, int slot, int transparent) {
 	ScriptOverlay *sco = new ScriptOverlay();
 	sco->overlayId = CreateGraphicOverlay(x, y, slot, transparent);
-	sco->isBackgroundSpeech = 0;
-
 	ccRegisterManagedObject(sco, sco);
 	return sco;
 }
@@ -144,8 +142,6 @@ ScriptOverlay *Overlay_CreateTextual(int x, int y, int width, int font, int colo
 	width = data_to_game_coord(width);
 
 	sco->overlayId = CreateTextOverlayCore(x, y, width, font, colour, text, DISPLAYTEXT_NORMALOVERLAY, 0);
-	sco->isBackgroundSpeech = 0;
-
 	ccRegisterManagedObject(sco, sco);
 	return sco;
 }
