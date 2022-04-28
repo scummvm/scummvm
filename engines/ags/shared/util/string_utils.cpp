@@ -61,6 +61,14 @@ StrUtil::ConversionError StrUtil::StringToInt(const String &s, int &val, int def
 	return StrUtil::kNoError;
 }
 
+float StrUtil::StringToFloat(const String &s, float def_val) {
+	if (!s.GetCStr())
+		return def_val;
+	char *stop_ptr;
+	int val = strtof(s.GetCStr(), &stop_ptr);
+	return (stop_ptr == s.GetCStr() + s.GetLength()) ? val : def_val;
+}
+
 String StrUtil::Unescape(const String &s) {
 	size_t at = s.FindChar('\\');
 	if (at == String::NoIndex)

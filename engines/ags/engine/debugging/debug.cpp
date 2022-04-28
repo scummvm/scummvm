@@ -153,7 +153,7 @@ typedef std::pair<CommonDebugGroup, MessageType> DbgGroupOption;
 void apply_log_config(const ConfigTree &cfg, const String &log_id,
                       bool def_enabled,
                       std::initializer_list<DbgGroupOption> def_opts) {
-	String value = INIreadstring(cfg, "log", log_id);
+	String value = CfgReadString(cfg, "log", log_id);
 	if (value.IsEmpty() && !def_enabled)
 		return;
 
@@ -161,7 +161,7 @@ void apply_log_config(const ConfigTree &cfg, const String &log_id,
 	auto dbgout = _GP(DbgMgr).GetOutput(log_id);
 	const bool was_created_earlier = dbgout != nullptr;
 	if (!dbgout) {
-		String path = INIreadstring(cfg, "log", String::FromFormat("%s-path", log_id.GetCStr()));
+		String path = CfgReadString(cfg, "log", String::FromFormat("%s-path", log_id.GetCStr()));
 		dbgout = create_log_output(log_id, path);
 		if (!dbgout)
 			return; // unknown output type
@@ -215,7 +215,7 @@ void init_debug(const ConfigTree &cfg, bool stderr_only) {
 
 void apply_debug_config(const ConfigTree &cfg) {
 	apply_log_config(cfg, OutputSystemID, /* defaults */ true, { DbgGroupOption(kDbgGroup_Main, kDbgMsg_Info) });
-	bool legacy_log_enabled = INIreadint(cfg, "misc", "log", 0) != 0;
+	bool legacy_log_enabled = CfgReadInt(cfg, "misc", "log", 0) != 0;
 	apply_log_config(cfg, OutputFileID,
 	                 /* defaults */
 	legacy_log_enabled, {

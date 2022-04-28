@@ -47,7 +47,7 @@ void TTFFontRenderer::AdjustYCoordinateForFont(int *ycoord, int /*fontNumber*/) 
 	ycoord[0]--;
 }
 
-void TTFFontRenderer::EnsureTextValidForFont(char */*text*/, int /*fontNumber*/) {
+void TTFFontRenderer::EnsureTextValidForFont(char * /*text*/, int /*fontNumber*/) {
 	// do nothing, TTF can handle all characters
 }
 
@@ -55,7 +55,7 @@ int TTFFontRenderer::GetTextWidth(const char *text, int fontNumber) {
 	return alfont_text_length(_fontData[fontNumber].AlFont, text);
 }
 
-int TTFFontRenderer::GetTextHeight(const char */*text*/, int fontNumber) {
+int TTFFontRenderer::GetTextHeight(const char * /*text*/, int fontNumber) {
 	return alfont_get_font_real_height(_fontData[fontNumber].AlFont);
 }
 

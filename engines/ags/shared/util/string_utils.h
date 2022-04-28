@@ -56,6 +56,9 @@ int             StringToInt(const String &s, int def_val = 0);
 // of range; the 'val' variable will be set with resulting integer, or
 // def_val on failure
 ConversionError StringToInt(const String &s, int &val, int def_val);
+// Tries to convert whole string into float value;
+// returns def_val on failure
+float           StringToFloat(const String &s, float def_val = 0.f);
 
 // A simple unescape string implementation, unescapes '\\x' into '\x'.
 String          Unescape(const String &s);
