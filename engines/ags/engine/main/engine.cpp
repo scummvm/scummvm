@@ -947,7 +947,7 @@ void engine_read_config(ConfigTree &cfg) {
 	if (_GP(usetup).user_conf_dir.IsEmpty())
 		_GP(usetup).user_conf_dir = CfgReadString(cfg, "misc", "user_conf_dir");
 	if (_GP(usetup).user_conf_dir.IsEmpty()) // also try deprecated option
-		_GP(usetup).user_conf_dir = CfgReadInt(cfg, "misc", "localuserconf") != 0 ? "." : "";
+		_GP(usetup).user_conf_dir = CfgReadBoolInt(cfg, "misc", "localuserconf") ? "." : "";
 	// Test if the file is writeable, if it is then both engine and setup
 	// applications may actually use it fully as a user config, otherwise
 	// fallback to default behavior.

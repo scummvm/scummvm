@@ -196,7 +196,7 @@ static void read_legacy_graphics_config(const ConfigTree &cfg) {
 		_GP(usetup).override_upscale = true; // run low-res game in high-res mode
 	}
 
-	_GP(usetup).Screen.Windowed = CfgReadInt(cfg, "misc", "windowed") > 0;
+	_GP(usetup).Screen.Windowed = CfgReadBoolInt(cfg, "misc", "windowed");
 	_GP(usetup).Screen.DriverID = CfgReadString(cfg, "misc", "gfxdriver", _GP(usetup).Screen.DriverID);
 
 	// Window setup: style and size definition, game frame style
@@ -213,8 +213,8 @@ static void read_legacy_graphics_config(const ConfigTree &cfg) {
 			// AGS 3.2.1 and 3.3.0 aspect ratio preferences for fullscreen
 			if (!_GP(usetup).Screen.Windowed) {
 				bool allow_borders =
-					(CfgReadInt(cfg, "misc", "sideborders") > 0 || CfgReadInt(cfg, "misc", "forceletterbox") > 0 ||
-						CfgReadInt(cfg, "misc", "prefer_sideborders") > 0 || CfgReadInt(cfg, "misc", "prefer_letterbox") > 0);
+					(CfgReadBoolInt(cfg, "misc", "sideborders") || CfgReadBoolInt(cfg, "misc", "forceletterbox") ||
+					CfgReadBoolInt(cfg, "misc", "prefer_sideborders") || CfgReadBoolInt(cfg, "misc", "prefer_letterbox"));
 				_GP(usetup).Screen.FsGameFrame = allow_borders ? kFrame_Proportional : kFrame_Stretch;
 			}
 		}
@@ -229,7 +229,7 @@ static void read_legacy_graphics_config(const ConfigTree &cfg) {
 		}
 
 		// AGS 3.5.* gfx mode with screen definition
-		const bool is_windowed = CfgReadInt(cfg, "graphics", "windowed") != 0;
+		const bool is_windowed = CfgReadBoolInt(cfg, "graphics", "windowed");
 		WindowSetup &ws = is_windowed ? _GP(usetup).Screen.WinSetup : _GP(usetup).Screen.FsSetup;
 		const WindowMode wm = is_windowed ? kWnd_Windowed : kWnd_Fullscreen;
 		ScreenSizeDefinition scr_def = parse_legacy_screendef(CfgReadString(cfg, "graphics", "screen_def"));
@@ -328,7 +328,7 @@ void override_config_ext(ConfigTree &cfg) {
 
 void apply_config(const ConfigTree &cfg) {
 	{
-		_GP(usetup).audio_enabled = CfgReadInt(cfg, "sound", "enabled", _GP(usetup).audio_enabled) != 0;
+		_GP(usetup).audio_enabled = CfgReadBoolInt(cfg, "sound", "enabled", _GP(usetup).audio_enabled);
 		_GP(usetup).audio_driver = CfgReadString(cfg, "sound", "driver");
 
 		// Legacy graphics settings has to be translated into new options;
@@ -337,7 +337,7 @@ void apply_config(const ConfigTree &cfg) {
 
 		// Graphics mode
 		_GP(usetup).Screen.DriverID = CfgReadString(cfg, "graphics", "driver", _GP(usetup).Screen.DriverID);
-		_GP(usetup).Screen.Windowed = CfgReadInt(cfg, "graphics", "windowed", _GP(usetup).Screen.Windowed ? 1 : 0) > 0;
+		_GP(usetup).Screen.Windowed = CfgReadBoolInt(cfg, "graphics", "windowed", _GP(usetup).Screen.Windowed);
 		_GP(usetup).Screen.FsSetup =
 			parse_window_mode(CfgReadString(cfg, "graphics", "fullscreen", "default"), false, _GP(usetup).Screen.FsSetup);
 		_GP(usetup).Screen.WinSetup =
@@ -355,8 +355,8 @@ void apply_config(const ConfigTree &cfg) {
 #endif
 
 		_GP(usetup).Screen.Params.RefreshRate = CfgReadInt(cfg, "graphics", "refresh");
-		_GP(usetup).Screen.Params.VSync = CfgReadInt(cfg, "graphics", "vsync") > 0;
-		_GP(usetup).RenderAtScreenRes = CfgReadInt(cfg, "graphics", "render_at_screenres") > 0;
+		_GP(usetup).Screen.Params.VSync = CfgReadBoolInt(cfg, "graphics", "vsync");
+		_GP(usetup).RenderAtScreenRes = CfgReadBoolInt(cfg, "graphics", "render_at_screenres");
 		_GP(usetup).Supersampling = CfgReadInt(cfg, "graphics", "supersampling", 1);
 		_GP(usetup).software_render_driver = CfgReadString(cfg, "graphics", "software_driver");
 
@@ -367,12 +367,12 @@ void apply_config(const ConfigTree &cfg) {
 			rotation_str, CstrArr<kNumScreenRotationOptions>{ "unlocked", "portrait", "landscape" },
 			_GP(usetup).rotation);
 #endif
-		_GP(usetup).enable_antialiasing = CfgReadInt(cfg, "misc", "antialias") > 0;
+		_GP(usetup).enable_antialiasing = CfgReadBoolInt(cfg, "misc", "antialias");
 
 		// This option is backwards (usevox is 0 if no_speech_pack)
-		_GP(usetup).no_speech_pack = CfgReadInt(cfg, "sound", "usespeech", 1) == 0;
+		_GP(usetup).no_speech_pack = !CfgReadBoolInt(cfg, "sound", "usespeech", true);
 
-		_GP(usetup).clear_cache_on_room_change = CfgReadInt(cfg, "misc", "clear_cache_on_room_change", _GP(usetup).clear_cache_on_room_change) != 0;
+		_GP(usetup).clear_cache_on_room_change = CfgReadBoolInt(cfg, "misc", "clear_cache_on_room_change", _GP(usetup).clear_cache_on_room_change);
 		_GP(usetup).user_data_dir = CfgReadString(cfg, "misc", "user_data_dir");
 		_GP(usetup).shared_data_dir = CfgReadString(cfg, "misc", "shared_data_dir");
 
@@ -382,7 +382,7 @@ void apply_config(const ConfigTree &cfg) {
 		if (cache_size_kb > 0)
 			_GP(spriteset).SetMaxCacheSize((size_t)cache_size_kb * 1024);
 
-		_GP(usetup).mouse_auto_lock = CfgReadInt(cfg, "mouse", "auto_lock") > 0;
+		_GP(usetup).mouse_auto_lock = CfgReadBoolInt(cfg, "mouse", "auto_lock");
 
 		_GP(usetup).mouse_speed = CfgReadFloat(cfg, "mouse", "speed", 1.f);
 		if (_GP(usetup).mouse_speed <= 0.f)
@@ -395,7 +395,7 @@ void apply_config(const ConfigTree &cfg) {
 				break;
 			}
 		}
-		_GP(usetup).mouse_ctrl_enabled = CfgReadInt(cfg, "mouse", "control_enabled", _GP(usetup).mouse_ctrl_enabled) > 0;
+		_GP(usetup).mouse_ctrl_enabled = CfgReadBoolInt(cfg, "mouse", "control_enabled", _GP(usetup).mouse_ctrl_enabled);
 		const char *mouse_speed_options[kNumMouseSpeedDefs] = { "absolute", "current_display" };
 		mouse_str = CfgReadString(cfg, "mouse", "speed_def", "current_display");
 		for (int i = 0; i < kNumMouseSpeedDefs; ++i) {
@@ -417,7 +417,7 @@ void apply_config(const ConfigTree &cfg) {
 		} else if (override_os.CompareNoCase("mac") == 0) {
 			_GP(usetup).override_script_os = eOS_Mac;
 		}
-		_GP(usetup).override_upscale = CfgReadInt(cfg, "override", "upscale", _GP(usetup).override_upscale) > 0;
+		_GP(usetup).override_upscale = CfgReadBoolInt(cfg, "override", "upscale", _GP(usetup).override_upscale);
 	}
 
 	// Apply logging configuration

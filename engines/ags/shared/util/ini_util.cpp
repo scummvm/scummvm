@@ -47,24 +47,38 @@ bool CfgReadItem(const ConfigTree &cfg, const String &sectn, const String &item,
 	return false;
 }
 
-int CfgReadInt(const ConfigTree &cfg, const String &sectn, const String &item, int def_value) {
+int CfgReadInt(const ConfigTree &cfg, const String &sectn, const String &item, int def) {
 	String str;
 	if (!CfgReadItem(cfg, sectn, item, str))
-		return def_value;
-	return StrUtil::StringToInt(str, def_value);
+		return def;
+	return StrUtil::StringToInt(str, def);
 }
 
-float CfgReadFloat(const ConfigTree &cfg, const String &sectn, const String &item, float def_value) {
-	String str;
-	if (!CfgReadItem(cfg, sectn, item, str))
-		return def_value;
-	return StrUtil::StringToFloat(str, def_value);
+int CfgReadInt(const ConfigTree &cfg, const String &sectn, const String &item, int min, int max, int def) {
+	int val = CfgReadInt(cfg, sectn, item, def);
+	if ((val < min) || (val > max))
+		return def;
+	return val;
 }
 
-String CfgReadString(const ConfigTree &cfg, const String &sectn, const String &item, const String &def_value) {
+float CfgReadFloat(const ConfigTree &cfg, const String &sectn, const String &item, float def) {
 	String str;
 	if (!CfgReadItem(cfg, sectn, item, str))
-		return def_value;
+		return def;
+	return StrUtil::StringToFloat(str, def);
+}
+
+float CfgReadFloat(const ConfigTree &cfg, const String &sectn, const String &item, float min, float max, float def) {
+	float val = CfgReadFloat(cfg, sectn, item, def);
+	if ((val < min) || (val > max))
+		return def;
+	return val;
+}
+
+String CfgReadString(const ConfigTree &cfg, const String &sectn, const String &item, const String &def) {
+	String str;
+	if (!CfgReadItem(cfg, sectn, item, str))
+		return def;
 	return str;
 }
 
