@@ -32,6 +32,7 @@ struct AssetLoaderContext;
 class ColorTableAsset : public Asset {
 public:
 	bool load(AssetLoaderContext &context, const Data::ColorTableAsset &data);
+	AssetType getAssetType() const override;
 
 private:
 	ColorRGB8 _colors[256];
@@ -51,6 +52,7 @@ public:
 	};
 
 	bool load(AssetLoaderContext &context, const Data::AudioAsset &data);
+	AssetType getAssetType() const override;
 
 private:
 	uint16 _sampleRate;
@@ -67,6 +69,14 @@ private:
 class MovieAsset : public Asset {
 public:
 	bool load(AssetLoaderContext &context, const Data::MovieAsset &data);
+	AssetType getAssetType() const override;
+
+	uint32 getMovieDataPos() const;
+	uint32 getMoovAtomPos() const;
+	uint32 getMovieDataSize() const;
+
+	const Common::String &getExtFileName() const;
+	size_t getStreamIndex() const;
 
 private:
 	uint32 _movieDataPos;
@@ -74,6 +84,7 @@ private:
 	uint32 _movieDataSize;
 
 	Common::String _extFileName;
+	size_t _streamIndex;
 };
 
 } // End of namespace MTropolis

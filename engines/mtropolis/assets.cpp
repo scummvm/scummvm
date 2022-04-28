@@ -20,6 +20,7 @@
  */
 
 #include "mtropolis/assets.h"
+#include "mtropolis/asset_factory.h"
 
 namespace MTropolis {
 
@@ -27,6 +28,10 @@ Asset::Asset() : _assetID(0) {
 }
 
 Asset::~Asset() {
+}
+
+uint32 Asset::getAssetID() const {
+	return _assetID;
 }
 
 bool ColorTableAsset::load(AssetLoaderContext &context, const Data::ColorTableAsset &data) {
@@ -37,6 +42,10 @@ bool ColorTableAsset::load(AssetLoaderContext &context, const Data::ColorTableAs
 	}
 
 	return true;
+}
+
+AssetType ColorTableAsset::getAssetType() const {
+	return kAssetTypeColorTable;
 }
 
 bool AudioAsset::load(AssetLoaderContext &context, const Data::AudioAsset &data) {
@@ -73,13 +82,44 @@ bool AudioAsset::load(AssetLoaderContext &context, const Data::AudioAsset &data)
 	return true;
 }
 
+AssetType AudioAsset::getAssetType() const {
+	return kAssetTypeAudio;
+}
+
 bool MovieAsset::load(AssetLoaderContext &context, const Data::MovieAsset &data) {
+	_assetID = data.assetID;
 	_moovAtomPos = data.moovAtomPos;
 	_movieDataPos = data.movieDataPos;
 	_movieDataSize = data.movieDataSize;
 	_extFileName = data.extFileName;
+	_streamIndex = context.streamIndex;
 
 	return true;
+}
+
+AssetType MovieAsset::getAssetType() const {
+	return kAssetTypeMovie;
+}
+
+uint32 MovieAsset::getMovieDataPos() const {
+	return _movieDataPos;
+}
+
+uint32 MovieAsset::getMoovAtomPos() const {
+	return _moovAtomPos;
+}
+
+uint32 MovieAsset::getMovieDataSize() const {
+	return _movieDataSize;
+}
+
+
+const Common::String &MovieAsset::getExtFileName() const {
+	return _extFileName;
+}
+
+size_t MovieAsset::getStreamIndex() const {
+	return _streamIndex;
 }
 
 

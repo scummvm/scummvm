@@ -25,7 +25,7 @@
 
 namespace MTropolis {
 
-ElementLoaderContext::ElementLoaderContext() {
+ElementLoaderContext::ElementLoaderContext(Runtime *runtime, size_t streamIndex) : runtime(runtime), streamIndex(streamIndex) {
 }
 
 template<typename TElement, typename TElementData>

@@ -25,6 +25,12 @@
 #include "mtropolis/data.h"
 #include "mtropolis/runtime.h"
 
+namespace Video {
+
+class VideoDecoder;
+
+} // End of namespace Video
+
 namespace MTropolis {
 
 struct ElementLoaderContext;
@@ -36,16 +42,18 @@ public:
 
 	bool load(ElementLoaderContext &context, const Data::GraphicElement &data);
 
+	void render(Window *window) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Graphic Element"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
 #endif
 
 private:
-	bool _directToScreen;
 	bool _cacheBitmap;
 };
 
-class MovieElement : public VisualElement {
+class MovieElement : public VisualElement, public ISegmentUnloadSignalReceiver {
 public:
 	MovieElement();
 	~MovieElement();
@@ -54,22 +62,39 @@ public:
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
 	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void activate() override;
+	void deactivate() override;
+
+	void render(Window *window) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Movie Element"; }
 #endif
 
 private:
-	bool scriptSetDirect(const DynamicValue &dest);
 	bool scriptSetPaused(const DynamicValue &dest);
 
-	bool _directToScreen;
+	void onSegmentUnloaded(int segmentIndex) override;
+
+	struct StartPlayingTaskData {
+		Runtime *runtime;
+	};
+
+	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
+
 	bool _cacheBitmap;
 	bool _paused;
 	bool _loop;
 	bool _alternate;
 	bool _playEveryFrame;
 	uint32 _assetID;
+
+	Common::SharedPtr<Video::VideoDecoder> _videoDecoder;
+	Common::SharedPtr<SegmentUnloadSignaller> _unloadSignaller;
+
+	Runtime *_runtime;
 };
 
 } // End of namespace MTropolis

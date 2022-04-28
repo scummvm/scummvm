@@ -1060,6 +1060,8 @@ public:
 
 	Scheduler &getScheduler();
 
+	void getScenesInRenderOrder(Common::Array<Structural *> &scenes) const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
@@ -1110,6 +1112,9 @@ private:
 	void executeHighLevelSceneTransition(const HighLevelSceneTransition &transition);
 	void executeCompleteTransitionToScene(const Common::SharedPtr<Structural> &scene);
 	void executeSharedScenePostSceneChangeActions();
+
+	void recursiveDeactivateStructural(Structural *structural);
+	void recursiveActivateStructural(Structural *structural);
 
 	void queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay);
 
@@ -1281,6 +1286,9 @@ public:
 
 	virtual VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg);
 
+	virtual void activate();
+	virtual void deactivate();
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	SupportStatus debugGetSupportStatus() const override;
 	const Common::String &debugGetName() const override;
@@ -1368,10 +1376,28 @@ private:
 	Common::HashMap<Common::String, const IPlugInModifierFactory *> _factoryRegistry;
 };
 
-class Project : public Structural {
+struct ISegmentUnloadSignalReceiver {
+	virtual void onSegmentUnloaded(int segmentIndex) = 0;
+};
 
+class SegmentUnloadSignaller {
 public:
-	Project();
+	explicit SegmentUnloadSignaller(Project *project, int segmentIndex);
+	~SegmentUnloadSignaller();
+
+	void onSegmentUnloaded();
+	void addReceiver(ISegmentUnloadSignalReceiver *receiver);
+	void removeReceiver(ISegmentUnloadSignalReceiver *receiver);
+
+private:
+	Project *_project;
+	int _segmentIndex;
+	Common::Array<ISegmentUnloadSignalReceiver *> _receivers;
+};
+
+class Project : public Structural {
+public:
+	explicit Project(Runtime *runtime);
 	~Project();
 
 	void loadFromDescription(const ProjectDescription &desc);
@@ -1383,6 +1409,13 @@ public:
 	const ProjectPresentationSettings &getPresentationSettings() const;
 
 	bool isProject() const override;
+
+	Common::WeakPtr<Asset> getAssetByID(uint32 assetID) const;
+	size_t getSegmentForStreamIndex(size_t streamIndex) const;
+	void openSegmentStream(int segmentIndex);
+	void closeSegmentStream(int segmentIndex);
+	Common::SeekableReadStream *getStreamForSegment(int segmentIndex);
+	Common::SharedPtr<SegmentUnloadSignaller> notifyOnSegmentUnload(int segmentIndex, ISegmentUnloadSignalReceiver *receiver);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Project"; }
@@ -1407,9 +1440,12 @@ private:
 	};
 
 	struct Segment {
+		Segment();
+
 		SegmentDescription desc;
 		Common::SharedPtr<Common::SeekableReadStream> rcStream;
 		Common::SeekableReadStream *weakStream;
+		Common::SharedPtr<SegmentUnloadSignaller> unloadSignaller;
 	};
 
 	enum StreamType {
@@ -1436,20 +1472,21 @@ private:
 		Common::WeakPtr<Asset> asset;
 	};
 
-	void openSegmentStream(int segmentIndex);
 	void loadBootStream(size_t streamIndex);
 
 	void loadPresentationSettings(const Data::PresentationSettings &presentationSettings);
 	void loadAssetCatalog(const Data::AssetCatalog &assetCatalog);
 	void loadGlobalObjectInfo(ChildLoaderStack &loaderStack, const Data::GlobalObjectInfo &globalObjectInfo);
-	void loadAssetDef(AssetDefLoaderContext &context, const Data::DataObject &dataObject);
-	void loadContextualObject(ChildLoaderStack &stack, const Data::DataObject &dataObject);
+	void loadAssetDef(size_t streamIndex, AssetDefLoaderContext &context, const Data::DataObject &dataObject);
+	void loadContextualObject(size_t streamIndex, ChildLoaderStack &stack, const Data::DataObject &dataObject);
 	Common::SharedPtr<Modifier> loadModifierObject(ModifierLoaderContext &loaderContext, const Data::DataObject &dataObject);
 	void loadLabelMap(const Data::ProjectLabelMap &projectLabelMap);
 	static size_t recursiveCountLabels(const Data::ProjectLabelMap::LabelTree &tree);
 
 	ObjectLinkingScope *getPersistentStructuralScope() override;
 	ObjectLinkingScope *getPersistentModifierScope() override;
+
+	void assignAssets(const Common::Array<Common::SharedPtr<Asset> > &assets);
 
 	Common::Array<Segment> _segments;
 	Common::Array<StreamDesc> _streams;
@@ -1475,6 +1512,8 @@ private:
 	Common::SharedPtr<ProjectResources> _resources;
 	ObjectLinkingScope _structuralScope;
 	ObjectLinkingScope _modifierScope;
+
+	Runtime *_runtime;
 };
 
 class Section : public Structural {
@@ -1532,15 +1571,29 @@ public:
 	bool isVisual() const override;
 
 	bool isVisible() const;
+	bool isDirectToScreen() const;
+	uint16 getLayer() const;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
 	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
 
 	bool scriptSetVisibility(const DynamicValue &result);
 
+	virtual void render(Window *window) = 0;
+
 protected:
 	bool loadCommon(const Common::String &name, uint32 guid, const Data::Rect &rect, uint32 elementFlags, uint16 layer, uint32 streamLocator, uint16 sectionID);
 
+	bool scriptSetDirect(const DynamicValue &dest);
+
+	struct ChangeFlagTaskData {
+		bool desiredFlag;
+		Runtime *runtime;
+	};
+
+	VThreadState changeVisibilityTask(const ChangeFlagTaskData &taskData);
+
+	bool _directToScreen;
 	bool _visible;
 	Rect16 _rect;
 	uint16 _layer;
@@ -1630,10 +1683,22 @@ public:
 	virtual void getValue(DynamicValue &dest) const = 0;
 };
 
+enum AssetType {
+	kAssetTypeNone,
+
+	kAssetTypeMovie,
+	kAssetTypeAudio,
+	kAssetTypeColorTable,
+};
+
 class Asset {
 public:
 	Asset();
 	virtual ~Asset();
+
+	uint32 getAssetID() const;
+
+	virtual AssetType getAssetType() const = 0;
 
 protected:
 	uint32 _assetID;
