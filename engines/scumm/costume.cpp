@@ -687,6 +687,11 @@ void ClassicCostumeRenderer::procPCEngine(Codec1 &v1) {
 	}
 }
 
+static const byte amigaMonkey2Costume55Room53[16] = {
+	0xfa, 0xca, 0xc2, 0xc0, 0xc1, 0xc3, 0xc4, 0xc5,
+	0xc6, 0xc7, 0xc8, 0xce, 0xcf, 0xcd, 0xc9, 0xcc
+};
+
 void ClassicCostumeLoader::loadCostume(int id) {
 	_id = id;
 	byte *ptr = _vm->getResourceAddress(rtCostume, id);
@@ -737,7 +742,6 @@ void ClassicCostumeLoader::loadCostume(int id) {
 		error("Costume %d with format 0x%X is invalid", id, _format);
 	}
 
-
 	// In GF_OLD_BUNDLE games, there is no actual palette, just a single color byte.
 	// Don't forget, these games were designed around a fixed 16 color HW palette :-)
 	// In addition, all offsets are shifted by 2; we accomodate that via a separate
@@ -755,6 +759,15 @@ void ClassicCostumeLoader::loadCostume(int id) {
 		_dataOffsets = ptr + 34;
 	}
 	_animCmds = _baseptr + READ_LE_UINT16(ptr);
+
+	// WORKAROUND bug #13433: Guybrush can give the stick to two dogs: the one
+	// guarding the jail, and the one in front of the mansion. But the palette
+	// for this costume is invalid in the second case on Amiga, causing a glitch.
+	if (_vm->_game.id == GID_MONKEY2 && _vm->_game.platform == Common::kPlatformAmiga && _vm->_currentRoom == 53 && id == 55 && _numColors == 16 && _vm->_enableEnhancements) {
+		// Note: handmade, trying to match the colors between rooms 53 and 29,
+		// and based on (similar) costume 1.
+		_palette = amigaMonkey2Costume55Room53;
+	}
 }
 
 byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
