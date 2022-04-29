@@ -231,6 +231,9 @@ bool Rect16::load(const Data::Rect &rect) {
 	bottom = rect.bottom;
 	right = rect.right;
 
+	if (bottom < top || right < left)
+		return false;
+
 	return true;
 }
 
@@ -2674,9 +2677,6 @@ void Runtime::getScenesInRenderOrder(Common::Array<Structural*> &scenes) const {
 void Runtime::instantiateIfAlias(Common::SharedPtr<Modifier> &modifier, const Common::WeakPtr<RuntimeObject> &relinkParent) {
 	if (modifier->isAlias()) {
 		Common::SharedPtr<Modifier> templateModifier = _project->resolveAlias(static_cast<AliasModifier *>(modifier.get())->getAliasID());
-		if (templateModifier->getStaticGUID() == 0x34130c) {
-			int n = 0;
-		}
 		if (!templateModifier) {
 			error("Failed to resolve alias");
 		}
@@ -3693,7 +3693,12 @@ void Project::loadAssetDef(size_t streamIndex, AssetDefLoaderContext& context, c
 	}
 
 	AssetLoaderContext loaderContext(streamIndex);
-	context.assets.push_back(factory->createAsset(loaderContext, dataObject));
+	Common::SharedPtr<Asset> asset = factory->createAsset(loaderContext, dataObject);
+	if (!asset) {
+		warning("An asset failed to load");
+		return;
+	}
+	context.assets.push_back(asset);
 }
 
 bool Section::load(const Data::SectionStructuralDef &data) {
@@ -3835,6 +3840,15 @@ VThreadState VisualElement::changeVisibilityTask(const ChangeFlagTaskData &taskD
 
 bool NonVisualElement::isVisual() const {
 	return false;
+}
+
+bool NonVisualElement::loadCommon(const Common::String &name, uint32 guid, uint32 elementFlags) {
+	_name = name;
+	_guid = guid;
+	_streamLocator = 0;
+	_sectionID = 0;
+
+	return true;
 }
 
 

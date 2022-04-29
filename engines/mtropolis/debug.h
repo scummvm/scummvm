@@ -26,8 +26,6 @@
 #include "common/ptr.h"
 #include "common/hashmap.h"
 
-#include <cstdarg>
-
 #define MTROPOLIS_DEBUG_VTHREAD_STACKS
 #define MTROPOLIS_DEBUG_ENABLE
 

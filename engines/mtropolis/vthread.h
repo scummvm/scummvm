@@ -22,8 +22,6 @@
 #ifndef MTROPOLIS_TASKSTACK_H
 #define MTROPOLIS_TASKSTACK_H
 
-#include <new>
-#include "mtropolis/alignment_helper.h"
 #include "mtropolis/debug.h"
 
 namespace MTropolis {
@@ -287,8 +285,8 @@ template<typename TClass, typename TData>
 TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
 	typedef VThreadMethodData<TClass, TData> FrameData_t; 
 
-	const size_t frameAlignment = AlignmentHelper<VThreadStackFrame>::getAlignment();
-	const size_t dataAlignment = AlignmentHelper<FrameData_t>::getAlignment();
+	const size_t frameAlignment = alignof(VThreadStackFrame);
+	const size_t dataAlignment = alignof(FrameData_t);
 	const size_t maxAlignment = (frameAlignment < dataAlignment) ? dataAlignment : frameAlignment;
 
 	void *framePtr;
@@ -314,8 +312,8 @@ template<typename TData>
 TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, VThreadState (*func)(const TData &data)) {
 	typedef VThreadFunctionData<TData> FrameData_t;
 
-	const size_t frameAlignment = AlignmentHelper<VThreadStackFrame>::getAlignment();
-	const size_t dataAlignment = AlignmentHelper<FrameData_t>::getAlignment();
+	const size_t frameAlignment = alignof(VThreadStackFrame);
+	const size_t dataAlignment = alignof(FrameData_t);
 	const size_t maxAlignment = (frameAlignment < dataAlignment) ? dataAlignment : frameAlignment;
 
 	void *framePtr;

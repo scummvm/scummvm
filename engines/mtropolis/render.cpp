@@ -64,6 +64,12 @@ inline int quantize8To5(int value, byte orderedDither16x16) {
 	return (value * 249 + (orderedDither16x16 << 3)) >> 11;
 }
 
+MacFontFormatting::MacFontFormatting() : fontID(0), fontFlags(0), size(12) {
+}
+
+MacFontFormatting::MacFontFormatting(uint16 fontID, uint8 fontFlags, uint16 size) : fontID(fontID), fontFlags(fontFlags), size(size) {
+}
+
 Window::Window(Runtime *runtime, int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format) : _runtime(runtime), _x(x), _y(y) {
 	_surface.reset(new Graphics::ManagedSurface(width, height, format));
 }

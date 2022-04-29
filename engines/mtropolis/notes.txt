@@ -16,7 +16,9 @@ copy of the original, and assigning new GUIDs to the new objects.
 
 Objects are only ever materialized once.  Aliasable variables in the global
 modifier table are materialized when the project is loaded, while everything
-else is materialized when it's imported into the project.
+else is materialized when it's imported into the project.  (Important note:
+This doesn't apply to aliased compound variables because they are not
+actually considered variable modifiers!)
 
 Objects cloned from already-materialized objects should NOT be materialized
 again, instead they should be fixed up using an object reference remap table,

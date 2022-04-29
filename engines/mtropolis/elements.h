@@ -24,6 +24,7 @@
 
 #include "mtropolis/data.h"
 #include "mtropolis/runtime.h"
+#include "mtropolis/render.h"
 
 namespace Video {
 
@@ -128,6 +129,68 @@ private:
 	uint32 _assetID;
 
 	Common::SharedPtr<Graphics::Surface> _imageSurface;
+
+	Runtime *_runtime;
+};
+
+class TextLabelElement : public VisualElement {
+public:
+	TextLabelElement();
+	~TextLabelElement();
+
+	bool load(ElementLoaderContext &context, const Data::TextLabelElement &data);
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+
+	void activate() override;
+	void deactivate() override;
+
+	void render(Window *window) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Text Label Element"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
+#endif
+
+private:
+	bool _cacheBitmap;
+	bool _needsRender;
+
+	bool _isBitmap;
+	uint32 _assetID;
+
+	Common::String _text;
+	Common::Array<MacFormattingSpan> _macFormattingSpans;
+	Common::SharedPtr<Graphics::Surface> _renderedText;	// NOTE: This may be a pre-rendered instance that is read-only.  Rendering must create a new surface!
+
+	Runtime *_runtime;
+};
+
+class SoundElement : public NonVisualElement {
+public:
+	SoundElement();
+	~SoundElement();
+
+	bool load(ElementLoaderContext &context, const Data::SoundElement &data);
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+
+	void activate() override;
+	void deactivate() override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Sound Element"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
+#endif
+
+private:
+	bool _paused;
+	uint16 _leftVolume;
+	uint16 _rightVolume;
+	int16 _balance;
+	uint32 _assetID;
 
 	Runtime *_runtime;
 };

@@ -276,6 +276,17 @@ struct Rect16 {
 	inline bool operator!=(const Rect16 &other) const {
 		return !((*this) == other);
 	}
+
+	inline uint16 getWidth() const { return static_cast<uint16>(right - left); }
+	inline uint16 getHeight() const { return static_cast<uint16>(bottom - top); }
+	inline static Rect16 create(int16 left, int16 top, int16 right, int16 bottom) {
+		Rect16 result;
+		result.left = left;
+		result.top = top;
+		result.right = right;
+		result.bottom = bottom;
+		return result;
+	}
 };
 
 struct IntRange {
@@ -1627,7 +1638,7 @@ class NonVisualElement : public Element {
 public:
 	bool isVisual() const override;
 
-	bool loadCommon(const Data::Rect &rect, const Common::String &str, uint32 elementFlags);
+	bool loadCommon(const Common::String &name, uint32 guid, uint32 elementFlags);
 };
 
 struct ModifierFlags {
@@ -1714,6 +1725,7 @@ enum AssetType {
 	kAssetTypeAudio,
 	kAssetTypeColorTable,
 	kAssetTypeImage,
+	kAssetTypeText,
 };
 
 class Asset {

@@ -23,8 +23,6 @@
 #include "common/debug.h"
 #include "common/memstream.h"
 
-#include <float.h>
-
 namespace MTropolis {
 
 namespace Data {
@@ -142,6 +140,7 @@ bool isAsset(DataObjectType type) {
 	case kColorTableAsset:
 	case kImageAsset:
 	case kMToonAsset:
+	case kTextAsset:
 		return true;
 	default:
 		return false;
@@ -775,18 +774,74 @@ DataReadErrorCode ImageElement::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode TextLabelElement::load(DataReader &reader) {
+	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+		if (_revision != 2)
+			return kDataReadErrorUnsupportedRevision;
+	} else if (reader.getProjectFormat() == kProjectFormatWindows) {
+		if (_revision != 0)
+			return kDataReadErrorUnsupportedRevision;
+	} else
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(structuralFlags) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
+		|| !reader.readU16(lengthOfName) || !reader.readU32(elementFlags) || !reader.readU16(layer)
+		|| !reader.readU16(sectionID))
+		return kDataReadErrorReadFailed;
+
+	haveMacPart = false;
+	haveWinPart = false;
+	if (reader.getProjectFormat() == kProjectFormatWindows) {
+		haveWinPart = true;
+		if (!reader.readBytes(platform.win.unknown3))
+			return kDataReadErrorReadFailed;
+	}
+
+	if (!rect1.load(reader) || !rect2.load(reader) || !reader.readU32(assetID))
+		return kDataReadErrorReadFailed;
+
+	if (reader.getProjectFormat() == kProjectFormatWindows) {
+		if (!reader.readBytes(platform.win.unknown4))
+			return kDataReadErrorReadFailed;
+	} else if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+		haveMacPart = true;
+		if (!reader.readBytes(platform.mac.unknown2))
+			return kDataReadErrorReadFailed;
+	} else
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readTerminatedStr(name, lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode SoundElement::load(DataReader& reader) {
+	if (_revision != 3)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(structuralFlags) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
+		|| !reader.readU16(lengthOfName) || !reader.readU32(elementFlags) || !reader.readU32(soundFlags)
+		|| !reader.readU16(unknown2) || !reader.readBytes(unknown3) || !reader.readU16(rightVolume)
+		|| !reader.readU16(leftVolume) || !reader.readS16(balance) || !reader.readU32(assetID)
+		|| !reader.readBytes(unknown5) || !reader.readTerminatedStr(name, lengthOfName))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode MovieElement::load(DataReader &reader) {
 	if (_revision != 2)
 		return kDataReadErrorUnsupportedRevision;
 	
 	if (!reader.readU32(structuralFlags) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
 		|| !reader.readU16(lengthOfName) || !reader.readU32(elementFlags) || !reader.readU16(layer)
-			|| !reader.readBytes(unknown3) || !reader.readU16(sectionID) || !reader.readBytes(unknown5)
-			|| !rect1.load(reader) || !rect2.load(reader) || !reader.readU32(assetID)
-			|| !reader.readU32(unknown7) || !reader.readU16(volume) || !reader.readU32(animationFlags)
-			|| !reader.readBytes(unknown10) || !reader.readBytes(unknown11) || !reader.readU32(streamLocator)
-			|| !reader.readBytes(unknown13) || !reader.readTerminatedStr(name, lengthOfName))
-			return kDataReadErrorReadFailed;
+		|| !reader.readBytes(unknown3) || !reader.readU16(sectionID) || !reader.readBytes(unknown5)
+		|| !rect1.load(reader) || !rect2.load(reader) || !reader.readU32(assetID)
+		|| !reader.readU32(unknown7) || !reader.readU16(volume) || !reader.readU32(animationFlags)
+		|| !reader.readBytes(unknown10) || !reader.readBytes(unknown11) || !reader.readU32(streamLocator)
+		|| !reader.readBytes(unknown13) || !reader.readTerminatedStr(name, lengthOfName))
+		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
 }
@@ -1574,6 +1629,60 @@ DataReadErrorCode ImageAsset::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode TextAsset::load(DataReader &reader) {
+	if (_revision != 3)
+		return kDataReadErrorReadFailed;
+
+	if (!reader.readU32(persistFlags) || !reader.readU32(sizeIncludingTag) || !reader.readU32(unknown1)
+		|| !reader.readU32(assetID) || !reader.readU32(unknown2))
+		return kDataReadErrorReadFailed;
+
+	haveMacPart = false;
+	haveWinPart = false;
+	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+		haveMacPart = true;
+		if (!reader.readBytes(platform.mac.unknown3))
+			return kDataReadErrorReadFailed;
+	} else if (reader.getProjectFormat() == kProjectFormatWindows) {
+		haveWinPart = true;
+		if (!reader.readBytes(platform.win.unknown4))
+			return kDataReadErrorReadFailed;
+	} else
+		return kDataReadErrorUnrecognized;
+
+	if (!bitmapRect.load(reader) || !reader.readU32(hdpi) || !reader.readU32(vdpi) || !reader.readU16(unknown5)
+		|| !reader.readBytes(pitchBigEndian) || !reader.readU32(unknown6) || !reader.readU32(bitmapSize)
+		|| !reader.readBytes(unknown7) || !reader.readU32(textSize) || !reader.readBytes(unknown8)
+		|| !reader.readU16(alignment) || !reader.readU16(isBitmap))
+		return kDataReadErrorReadFailed;
+
+	if ((isBitmap & 1) == 0) {
+		if (!reader.readNonTerminatedStr(text, textSize))
+			return kDataReadErrorReadFailed;
+
+		if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+			uint16_t numFormattingSpans;
+			if (!reader.readU16(numFormattingSpans))
+				return kDataReadErrorReadFailed;
+
+			macFormattingSpans.resize(numFormattingSpans);
+			for (size_t i = 0; i < numFormattingSpans; i++) {
+				MacFormattingSpan &span = macFormattingSpans[i];
+				if (!reader.readBytes(span.unknown9) || !reader.readU16(span.spanStart) || !reader.readBytes(span.unknown10)
+					|| !reader.readU16(span.fontID) || !reader.readU8(span.fontFlags) || !reader.readBytes(span.unknown11)
+					|| !reader.readU16(span.size) || !reader.readBytes(span.unknown12))
+					return kDataReadErrorReadFailed;
+			}
+		}
+	} else {
+		bitmapData.resize(bitmapSize);
+		if (bitmapSize > 0 && !reader.read(&bitmapData[0], bitmapSize))
+			return kDataReadErrorReadFailed;
+	}
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode AssetDataChunk::load(DataReader &reader) {
 	if (_revision != 0)
 		return kDataReadErrorUnsupportedRevision;
@@ -1651,10 +1760,10 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		dataObject = new ImageElement();
 		break;
 	case DataObjectTypes::kSoundElement:
-		//dataObject = new SoundElement();
+		dataObject = new SoundElement();
 		break;
 	case DataObjectTypes::kTextLabelElement:
-		//dataObject = new TextLabelElement();
+		dataObject = new TextLabelElement();
 		break;
 
 	case DataObjectTypes::kGlobalObjectInfo:
@@ -1763,6 +1872,10 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 
 	case DataObjectTypes::kMToonAsset:
 		//dataObject = new MToonAsset();
+		break;
+
+	case DataObjectTypes::kTextAsset:
+		dataObject = new TextAsset();
 		break;
 
 	case DataObjectTypes::kAssetDataChunk:

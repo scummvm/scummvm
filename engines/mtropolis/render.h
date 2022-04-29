@@ -38,6 +38,26 @@ namespace MTropolis {
 class Runtime;
 class Project;
 
+enum TextAlignment {
+	kTextAlignmentLeft,
+	kTextAlignmentCenter,
+	kTextAlignmentRight,
+};
+
+struct MacFontFormatting {
+	MacFontFormatting();
+	MacFontFormatting(uint16 fontID, uint8 fontFlags, uint16 size);
+
+	uint16 fontID;
+	uint8 fontFlags;
+	uint16 size;
+};
+
+struct MacFormattingSpan {
+	uint16 spanStart;
+	MacFontFormatting formatting;
+};
+
 class Window {
 public:
 	Window(Runtime *runtime, int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format);
