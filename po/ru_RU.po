@@ -5152,7 +5152,8 @@ msgstr "Включить чит бесконечного здоровья"
 
 #: engines/hypno/detection.cpp:221
 msgid "Player health will never decrease (except for game over scenes)."
-msgstr "Здоровье игрока никогда не уменьшается (кроме экранов завершения игры)."
+msgstr ""
+"Здоровье игрока никогда не уменьшается (кроме экранов завершения игры)."
 
 #: engines/hypno/detection.cpp:229
 msgid "Enable infinite ammo cheat"
