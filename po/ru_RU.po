@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-27 19:39+0000\n"
-"PO-Revision-Date: 2022-04-21 11:05+0000\n"
+"PO-Revision-Date: 2022-04-29 11:23+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -5139,34 +5139,28 @@ msgid "Enable Gore Mode when available"
 msgstr "Включает режим с изображением крови, если он доступен"
 
 #: engines/hypno/detection.cpp:211
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Enable original cheats"
-msgstr "Включить чит-режим"
+msgstr "Включить оригинальные читы"
 
 #: engines/hypno/detection.cpp:212
 msgid "Allow cheats using the C key."
 msgstr "Включите читы, нажав на клавишу С."
 
 #: engines/hypno/detection.cpp:220
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "Enable infinite health cheat"
-msgstr "Включить замену шрифтов"
+msgstr "Включить чит бесконечного здоровья"
 
 #: engines/hypno/detection.cpp:221
 msgid "Player health will never decrease (except for game over scenes)."
-msgstr ""
+msgstr "Здоровье игрока никогда не уменьшается (кроме экранов завершения игры)."
 
 #: engines/hypno/detection.cpp:229
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Enable infinite ammo cheat"
-msgstr "Включить чит-режим"
+msgstr "Включить чит бесконечных боеприпасов"
 
 #: engines/hypno/detection.cpp:230
 msgid "Player ammo will never decrease."
-msgstr ""
+msgstr "Боеприпасы игрока никогда не уменьшаются."
 
 #: engines/hypno/detection.cpp:238
 msgid "Enable restored content"
