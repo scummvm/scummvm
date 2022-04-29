@@ -239,7 +239,8 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 				//_segmentShootSequenceOffset = 0; // TODO
 				//_segmentShootSequenceMax = 7; // TODO
 			}
-
+			// TODO: refactor the following code to avoid using a variable here
+			bool addBarrier = false;
 			if (_arcadeMode == "Y4") {
 				if (_c40SegmentPath[_c40SegmentIdx] == _segmentIdx) {
 					_c40SegmentIdx++;
@@ -247,7 +248,7 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 					if (_c40lastTurn == int(_segmentIdx))
 						_health = 0;
 					else {
-						// TODO: this should also add a barrier near the end
+						addBarrier = true;
 						_c40lastTurn = int(_segmentIdx);
 					}
 				}
@@ -274,6 +275,12 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 					si.name = "SP_CBREAKER_U";
 
 				si.timestamp = 30 * (_segmentRepetitionMax + 1) - 3;
+				_shootSequence.push_back(si);
+			} else if (_arcadeMode == "Y4" && addBarrier) {
+				// Add a barrier near the end
+				ShootInfo si;
+				si.name = "SP_BLOCKADE";
+				si.timestamp = (30 * _segmentRepetitionMax) - 20;
 				_shootSequence.push_back(si);
 			}
 		}
