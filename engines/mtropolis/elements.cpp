@@ -423,4 +423,96 @@ void ImageElement::render(Window *window) {
 	}
 }
 
+TextLabelElement::TextLabelElement() : _needsRender(false), _isBitmap(false) {
+}
+
+TextLabelElement::~TextLabelElement() {
+}
+
+bool TextLabelElement::load(ElementLoaderContext &context, const Data::TextLabelElement &data) {
+	if (!loadCommon(data.name, data.guid, data.rect1, data.elementFlags, data.layer, 0, data.sectionID))
+		return false;
+
+	_cacheBitmap = ((data.elementFlags & Data::ElementFlags::kCacheBitmap) != 0);
+	_assetID = data.assetID;
+	_runtime = context.runtime;
+
+	return true;
+}
+
+bool TextLabelElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	return VisualElement::readAttribute(thread, result, attrib);
+}
+
+bool TextLabelElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	return VisualElement::writeRefAttribute(thread, writeProxy, attrib);
+}
+
+void TextLabelElement::activate() {
+	Project *project = _runtime->getProject();
+	Common::SharedPtr<Asset> asset = project->getAssetByID(_assetID).lock();
+
+	if (!asset) {
+		warning("Text element references asset %i but the asset isn't loaded!", _assetID);
+		return;
+	}
+
+	if (asset->getAssetType() != kAssetTypeText) {
+		warning("Text element assigned an asset that isn't text");
+		return;
+	}
+
+	TextAsset *textAsset = static_cast<TextAsset *>(asset.get());
+
+	if (textAsset->isBitmap()) {
+		_renderedText = textAsset->getBitmapSurface();
+		_needsRender = false;
+	} else {
+		_needsRender = true;
+		_text = textAsset->getString();
+		_macFormattingSpans = textAsset->getMacFormattingSpans();
+	}
+}
+
+void TextLabelElement::deactivate() {
+}
+
+
+void TextLabelElement::render(Window *window) {
+}
+
+SoundElement::SoundElement() {
+}
+
+SoundElement::~SoundElement() {
+}
+
+bool SoundElement::load(ElementLoaderContext &context, const Data::SoundElement &data) {
+	if (!NonVisualElement::loadCommon(data.name, data.guid, data.elementFlags))
+		return false;
+
+	_paused = ((data.soundFlags & Data::SoundElement::kPaused) != 0);
+	_leftVolume = data.leftVolume;
+	_rightVolume = data.rightVolume;
+	_balance = data.balance;
+	_assetID = data.assetID;
+	_runtime = context.runtime;
+
+	return true;
+}
+
+bool SoundElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	return NonVisualElement::readAttribute(thread, result, attrib);
+}
+
+bool SoundElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	return NonVisualElement::writeRefAttribute(thread, writeProxy, attrib);
+}
+
+void SoundElement::activate() {
+}
+
+void SoundElement::deactivate() {
+}
+
 } // End of namespace MTropolis

@@ -24,6 +24,7 @@
 
 #include "mtropolis/data.h"
 #include "mtropolis/runtime.h"
+#include "mtropolis/render.h"
 
 namespace MTropolis {
 
@@ -111,6 +112,27 @@ private:
 	uint32 _size;
 	size_t _streamIndex;
 	ImageFormat _imageFormat;
+};
+
+class TextAsset : public Asset {
+public:
+	bool load(AssetLoaderContext &context, const Data::TextAsset &data);
+	AssetType getAssetType() const override;
+
+	bool isBitmap() const;
+	const Common::SharedPtr<Graphics::Surface> &getBitmapSurface() const;
+	const Common::String &getString() const;
+	const Common::Array<MacFormattingSpan> &getMacFormattingSpans() const;
+
+private:
+	Rect16 _bitmapRect;
+	TextAlignment _alignment;
+	bool _isBitmap;
+
+	Common::SharedPtr<Graphics::Surface> _bitmapData;
+	Common::String _stringData;
+
+	Common::Array<MacFormattingSpan> _macFormattingSpans;
 };
 
 } // End of namespace MTropolis

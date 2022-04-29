@@ -20,12 +20,9 @@
  */
 
 #include "mtropolis/miniscript.h"
-#include "mtropolis/alignment_helper.h"
 #include "common/config-manager.h"
 
 #include "common/memstream.h"
-
-#include <new>
 
 namespace MTropolis {
 
@@ -254,7 +251,7 @@ bool MiniscriptInstructionFactory<T>::create(void *dest, uint32 instrFlags, Data
 template<class T>
 void MiniscriptInstructionFactory<T>::getSizeAndAlignment(size_t &outSize, size_t &outAlignment) const {
 	outSize = sizeof(T);
-	outAlignment = AlignmentHelper<T>::getAlignment();
+	outAlignment = alignof(T);
 }
 
 template<class T>

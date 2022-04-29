@@ -22,6 +22,8 @@
 #include "mtropolis/assets.h"
 #include "mtropolis/asset_factory.h"
 
+#include "graphics/surface.h"
+
 namespace MTropolis {
 
 Asset::Asset() : _assetID(0) {
@@ -49,6 +51,7 @@ AssetType ColorTableAsset::getAssetType() const {
 }
 
 bool AudioAsset::load(AssetLoaderContext &context, const Data::AudioAsset &data) {
+	_assetID = data.assetID;
 	_sampleRate = data.sampleRate1;
 	_bitsPerSample = data.bitsPerSample;
 
@@ -191,5 +194,90 @@ ImageAsset::ImageFormat ImageAsset::getImageFormat() const {
 	return _imageFormat;
 }
 
+bool TextAsset::load(AssetLoaderContext &context, const Data::TextAsset &data) {
+	_assetID = data.assetID;
+
+	switch (data.alignment) {
+	case Data::kTextAlignmentCodeLeft:
+		_alignment = kTextAlignmentLeft;
+		break;
+	case Data::kTextAlignmentCodeRight:
+		_alignment = kTextAlignmentRight;
+		break;
+	case Data::kTextAlignmentCodeCenter:
+		_alignment = kTextAlignmentCenter;
+		break;
+	default:
+		return false;
+	};
+
+	_isBitmap = ((data.isBitmap & 1) != 0);
+
+	if (_isBitmap) {
+		if (!_bitmapRect.load(data.bitmapRect))
+			return false;
+
+		_bitmapData.reset(new Graphics::Surface());
+		uint16 pitch = (data.pitchBigEndian[0] << 8) + data.pitchBigEndian[1];
+		uint16 width = _bitmapRect.getWidth();
+		uint16 height = _bitmapRect.getHeight();
+		if (static_cast<uint32>(pitch * width) != data.bitmapSize) {
+			// Pitch is normally aligned to 4 bytes, so if this fails, maybe compute it that way?
+			warning("Pre-rendered text bitmap pitch didn't compute to bitmap size correctly, maybe it's wrong?");
+			return false;
+		}
+
+		if (pitch * 8 < width) {
+			warning("Pre-rendered text pitch is too small");
+			return false;
+		}
+
+		_bitmapData->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+		for (int row = 0; row < height; row++) {
+			uint8 *outRow = static_cast<uint8 *>(_bitmapData->getBasePtr(0, row));
+			const uint8 *inRow = &data.bitmapData[row * pitch];
+			for (int col = 0; col < width; col++) {
+				int bit = ((inRow[col / 8] >> (7 - (col & 7))) & 1);
+				outRow[col] = bit;
+			}
+		}
+	} else {
+		_bitmapRect = Rect16::create(0, 0, 0, 0);
+
+		_stringData = data.text;
+
+		for (size_t i = 0; i < data.macFormattingSpans.size(); i++) {
+			const Data::TextAsset::MacFormattingSpan &inSpan = data.macFormattingSpans[i];
+			MacFormattingSpan fmtSpan;
+			fmtSpan.formatting = MacFontFormatting(inSpan.fontID, inSpan.fontFlags, inSpan.size);
+			fmtSpan.spanStart = inSpan.spanStart;
+
+			_macFormattingSpans.push_back(fmtSpan);
+		}
+	}
+
+	return true;
+}
+
+AssetType TextAsset::getAssetType() const {
+	return kAssetTypeText;
+}
+
+bool TextAsset::isBitmap() const {
+	return _isBitmap;
+}
+
+const Common::SharedPtr<Graphics::Surface>& TextAsset::getBitmapSurface() const {
+	return _bitmapData;
+}
+
+const Common::String& TextAsset::getString() const {
+	return _stringData;
+}
+
+const Common::Array<MacFormattingSpan> &TextAsset::getMacFormattingSpans() const {
+	return _macFormattingSpans;
+}
 
 } // End of namespace MTropolis

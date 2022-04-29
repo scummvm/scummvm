@@ -63,6 +63,12 @@ enum ModifierFlags {
 	kModifierFlagLast = 0x2,
 };
 
+enum TextAlignmentCode {
+	kTextAlignmentCodeLeft = 0,
+	kTextAlignmentCodeCenter = 1,
+	kTextAlignmentCodeRight = 0xffff,
+};
+
 
 namespace DataObjectTypes {
 
@@ -83,12 +89,12 @@ enum DataObjectType {
 	kSectionStructuralDef                = 0x3,
 	kSubsectionStructuralDef             = 0x21,
 
-	kGraphicElement                      = 0x8,		// NYI
-	kMovieElement                        = 0x5,		// NYI
+	kGraphicElement                      = 0x8,
+	kMovieElement                        = 0x5,
 	kMToonElement                        = 0x6,		// NYI
-	kImageElement                        = 0x7,		// NYI
-	kSoundElement                        = 0xa,		// NYI
-	kTextLabelElement                    = 0x15,	// NYI
+	kImageElement                        = 0x7,
+	kSoundElement                        = 0xa,
+	kTextLabelElement                    = 0x15,
 
 	kAliasModifier                       = 0x27,
 	kChangeSceneModifier                 = 0x136,
@@ -134,6 +140,7 @@ enum DataObjectType {
 	kColorTableAsset                     = 0x1e,
 	kImageAsset                          = 0xe,		// NYI
 	kMToonAsset                          = 0xf,		// NYI
+	kTextAsset                           = 0x1f,	// NYI
 
 	kAssetDataChunk                      = 0xffff,
 };
@@ -563,6 +570,68 @@ struct ImageElement : public StructuralDef {
 	uint32 imageAssetID;
 	uint32 streamLocator;
 	uint8 unknown7[4];
+
+	Common::String name;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct TextLabelElement : public StructuralDef {
+	// Possible element flags: NotDirectToScreen, CacheBitmap, Hidden
+	uint32 sizeIncludingTag;
+	uint32 guid;
+	uint16 lengthOfName;
+	uint32 elementFlags;
+	uint16 layer;
+	uint16 sectionID;
+	Rect rect1;
+	Rect rect2;
+	uint32 assetID;
+
+	struct MacPart {
+		uint8 unknown2[30];
+	};
+
+	struct WinPart {
+		uint8 unknown3[2];
+		uint8 unknown4[8];
+	};
+
+	union PlatformPart {
+		MacPart mac;
+		WinPart win;
+	};
+
+	bool haveMacPart;
+	bool haveWinPart;
+	PlatformPart platform;
+
+	Common::String name;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct SoundElement : public StructuralDef {
+	enum SoundFlags {
+		kPaused = 0x40000000,
+		kLoop = 0x80000000,
+	};
+
+	// Possible element flags: Loop, Paused
+	uint32 sizeIncludingTag;
+	uint32 guid;
+	uint16 lengthOfName;
+	uint32 elementFlags;
+	uint32 soundFlags;
+	uint16 unknown2;
+	uint8 unknown3[2];
+	uint16 rightVolume;
+	uint16 leftVolume;
+	int16 balance;
+	uint32 assetID;
+	uint8 unknown5[8];
 
 	Common::String name;
 
@@ -1446,6 +1515,63 @@ struct ImageAsset : public DataObject {
 	bool haveMacPart;
 	bool haveWinPart;
 	PlatformPart platform;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct TextAsset : public DataObject {
+	struct MacFormattingSpan {
+		uint8 unknown9[2];
+		uint16 spanStart;
+		uint8 unknown10[4];
+		uint16 fontID;
+		uint8 fontFlags;
+		uint8 unknown11[1];
+		uint16 size;
+		uint8 unknown12[6];
+	};
+
+	struct MacPart {
+		uint8 unknown3[44];
+	};
+
+	struct WinPart {
+		uint8 unknown4[10];
+	};
+
+	union PlatformPart {
+		MacPart mac;
+		WinPart win;
+	};
+
+	uint32 persistFlags;
+	uint32 sizeIncludingTag;
+	uint32 unknown1;
+	uint32 assetID;
+	uint32 unknown2;
+	Rect bitmapRect;
+	uint32 hdpi;
+	uint32 vdpi;
+	uint16 unknown5;
+	uint8 pitchBigEndian[2];
+	uint32 unknown6;
+
+	uint32 bitmapSize;
+	uint8 unknown7[20];
+	uint32 textSize;
+	uint8 unknown8[8];
+	uint16 alignment;
+	uint16 isBitmap;
+
+	bool haveMacPart;
+	bool haveWinPart;
+	PlatformPart platform;
+
+	Common::String text;
+	Common::Array<uint8> bitmapData;
+
+	Common::Array<MacFormattingSpan> macFormattingSpans;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
