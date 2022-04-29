@@ -27,6 +27,8 @@
 #include "mtropolis/runtime.h"
 #include "mtropolis/plugin/standard_data.h"
 
+class MidiDriver;
+
 namespace MTropolis {
 
 class Runtime;
@@ -34,6 +36,7 @@ class Runtime;
 namespace Standard {
 
 class StandardPlugIn;
+class MidiPlayer;
 
 class CursorModifier : public Modifier {
 public:
@@ -112,7 +115,13 @@ private:
 
 class MidiModifier : public Modifier {
 public:
+	MidiModifier();
+	~MidiModifier();
+
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::MidiModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "MIDI Modifier"; }
@@ -155,6 +164,10 @@ private:
 	ModeSpecificUnion _modeSpecific;
 
 	Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> _embeddedFile;
+
+	bool _isActive;
+
+	StandardPlugIn *_plugIn;
 };
 
 class ListVariableModifier : public VariableModifier {
@@ -206,11 +219,17 @@ struct StandardPlugInHacks {
 class StandardPlugIn : public MTropolis::PlugIn {
 public:
 	StandardPlugIn();
+	~StandardPlugIn();
 
 	void registerModifiers(IPlugInModifierRegistrar *registrar) const override;
 
 	const StandardPlugInHacks &getHacks() const;
 	StandardPlugInHacks &getHacks();
+
+	MidiPlayer *getMidi() const;
+
+	int8 allocateMidiSource();
+	void deallocateMidiSource(int8 source);
 
 private:
 	PlugInModifierFactory<CursorModifier, Data::Standard::CursorModifier> _cursorModifierFactory;
@@ -221,7 +240,11 @@ private:
 	PlugInModifierFactory<ListVariableModifier, Data::Standard::ListVariableModifier> _listVarModifierFactory;
 	PlugInModifierFactory<SysInfoModifier, Data::Standard::SysInfoModifier> _sysInfoModifierFactory;
 
+	Common::SharedPtr<MidiPlayer> _midi;
 	StandardPlugInHacks _hacks;
+
+	Common::Array<int8> _deallocatedSources;
+	int8 _lastAllocatedSourceID;
 };
 
 } // End of namespace Standard
