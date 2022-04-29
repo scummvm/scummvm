@@ -70,8 +70,7 @@ private:
 MidiDriver_CoreMIDI::MidiDriver_CoreMIDI(ItemCount device)
 	: mDevice(device), mClient(0), mOutPort(0), mDest(0) {
 
-	OSStatus err;
-	err = MIDIClientCreate(CFSTR("ScummVM MIDI Driver for macOS"), NULL, NULL, &mClient);
+	/*OSStatus err = */MIDIClientCreate(CFSTR("ScummVM MIDI Driver for macOS"), NULL, NULL, &mClient);
 }
 
 MidiDriver_CoreMIDI::~MidiDriver_CoreMIDI() {
