@@ -24,6 +24,8 @@
 
 #include "common/ptr.h"
 
+class MidiDriver;
+
 namespace MTropolis {
 
 class PlugIn;

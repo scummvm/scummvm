@@ -24,10 +24,76 @@
 
 #include "mtropolis/miniscript.h"
 
+#include "audio/mididrv.h"
+#include "audio/midiplayer.h"
+#include "audio/midiparser.h"
+
 
 namespace MTropolis {
 
 namespace Standard {
+
+class MidiPlayer : public Audio::MidiPlayer {
+public:
+	explicit MidiPlayer(int8 source);
+	~MidiPlayer();
+
+	void playFile(const void *data, size_t size);
+	int8 getSource() const;
+
+private:
+	int8 _source;
+	bool _isInitialized;
+};
+
+MidiPlayer::MidiPlayer(int8 source) : _isInitialized(false), _source(source) {
+	MidiDriver::DeviceHandle deviceHdl = MidiDriver::detectDevice(MDT_MIDI);
+	if (!deviceHdl)
+		return;
+
+	_driver = MidiDriver::createMidi(deviceHdl);
+	if (!_driver)
+		return;
+
+	if (_driver->open() != 0) {
+		_driver->close();
+		delete _driver;
+		_driver = nullptr;
+		return;
+	}
+
+	_driver->setTimerCallback(static_cast<Audio::MidiPlayer *>(this), &timerCallback);
+
+	_isInitialized = true;
+}
+
+MidiPlayer::~MidiPlayer() {
+	stop();
+
+	if (_parser)
+		delete _parser;
+}
+
+void MidiPlayer::playFile(const void *data, size_t size) {
+	Common::StackLock lock(_mutex);
+
+	stop();
+
+	_parser = MidiParser::createParser_SMF();
+	_parser->setMidiDriver(this);
+	_parser->setTimerRate(_driver->getBaseTempo());
+
+	// FIXME: MIDI API shouldn't need mutable void input...
+	_parser->loadMusic(static_cast<byte *>(const_cast<void *>(data)), size);
+	_parser->setTrack(0);
+	_parser->startPlaying();
+
+	resume();
+}
+
+int8 MidiPlayer::getSource() const {
+	return _source;
+}
 
 bool CursorModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::CursorModifier &data) {
 	if (!_applyWhen.load(data.applyWhen) || !_removeWhen.load(data.removeWhen))
@@ -134,7 +200,15 @@ Common::SharedPtr<Modifier> ObjectReferenceVariableModifier::shallowClone() cons
 	return Common::SharedPtr<Modifier>(new ObjectReferenceVariableModifier(*this));
 }
 
+MidiModifier::MidiModifier() : _plugIn(nullptr) {
+}
+
+MidiModifier::~MidiModifier() {
+}
+
 bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::MidiModifier &data) {
+	_plugIn = static_cast<StandardPlugIn *>(context.plugIn);
+
 	if (data.executeWhen.type != Data::PlugInTypeTaggedValue::kEvent)
 		return false;
 
@@ -176,8 +250,29 @@ bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::
 	return true;
 }
 
+bool MidiModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt) || _terminateWhen.respondsTo(evt);
+}
+
+VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_executeWhen.respondsTo(msg->getEvent())) {
+		if (_mode == kModeFile) {
+			if (_embeddedFile) {
+				_plugIn->getMidi()->playFile(&_embeddedFile->contents[0], _embeddedFile->contents.size());
+			}
+		}
+
+	}
+
+	return kVThreadReturn;
+}
+
 Common::SharedPtr<Modifier> MidiModifier::shallowClone() const {
-	return Common::SharedPtr<Modifier>(new MidiModifier(*this));
+	Common::SharedPtr<MidiModifier> clone(new MidiModifier(*this));
+
+	clone->_isActive = false;
+
+	return clone;
 }
 
 ListVariableModifier::ListVariableModifier() : _list(new DynamicList()) {
@@ -322,7 +417,12 @@ StandardPlugIn::StandardPlugIn()
 	, _objRefVarModifierFactory(this)
 	, _midiModifierFactory(this)
 	, _listVarModifierFactory(this)
-	, _sysInfoModifierFactory(this) {
+	, _sysInfoModifierFactory(this)
+	, _lastAllocatedSourceID(0) {
+	_midi.reset(new MidiPlayer(0));
+}
+
+StandardPlugIn::~StandardPlugIn() {
 }
 
 void StandardPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
@@ -341,6 +441,28 @@ const StandardPlugInHacks &StandardPlugIn::getHacks() const {
 
 StandardPlugInHacks& StandardPlugIn::getHacks() {
 	return _hacks;
+}
+
+MidiPlayer *StandardPlugIn::getMidi() const {
+	return _midi.get();
+}
+
+int8 StandardPlugIn::allocateMidiSource() {
+	if (_deallocatedSources.size() > 0) {
+		int8 src = _deallocatedSources.back();
+		_deallocatedSources.pop_back();
+		return src;
+	}
+
+	if (_lastAllocatedSourceID == INT8_MAX)
+		error("Ran out of MIDI sources");
+
+	_lastAllocatedSourceID++;
+	return _lastAllocatedSourceID;
+}
+
+void StandardPlugIn::deallocateMidiSource(int8 source) {
+	_deallocatedSources.push_back(source);
 }
 
 } // End of namespace Standard
