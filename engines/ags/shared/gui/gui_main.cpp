@@ -297,7 +297,7 @@ void GUIMain::DrawBlob(Bitmap *ds, int x, int y, color_t draw_color) {
 void GUIMain::Poll(int mx, int my) {
 	mx -= X, my -= Y; // translate to GUI's local coordinates
 	if (mx != MouseWasAt.X || my != MouseWasAt.Y) {
-		int ctrl_index = FindControlAtLocal(mx, my, 0, false);
+		int ctrl_index = FindControlAtLocal(mx, my, 0, true);
 
 		if (MouseOverCtrl == MOVER_MOUSEDOWNLOCKED)
 			_controls[MouseDownCtrl]->OnMouseMove(mx, my);
