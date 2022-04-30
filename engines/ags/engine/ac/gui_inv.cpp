@@ -39,7 +39,7 @@ int GUIInvWindow::GetCharacterId() const {
 	return CharId;
 }
 
-void GUIInvWindow::Draw(Bitmap *ds) {
+void GUIInvWindow::Draw(Bitmap *ds, int x, int y) {
 	const bool enabled = IsGUIEnabled(this);
 	if (!enabled && (GUI::Options.DisabledStyle == kGuiDis_Blackout))
 		return;
@@ -56,9 +56,9 @@ void GUIInvWindow::Draw(Bitmap *ds) {
 		TopItem = _GP(play).inv_top;
 
 	// draw the items
-	const int leftmost_x = X;
-	int at_x = X;
-	int at_y = Y;
+	const int leftmost_x = x;
+	int at_x = x;
+	int at_y = y;
 	int lastItem = TopItem + (ColCount * RowCount);
 	if (lastItem > _G(charextra)[GetCharacterId()].invorder_count)
 		lastItem = _G(charextra)[GetCharacterId()].invorder_count;
@@ -76,10 +76,10 @@ void GUIInvWindow::Draw(Bitmap *ds) {
 	}
 
 	if (!enabled &&
-			GUI::Options.DisabledStyle == kGuiDis_Greyout &&
-	        _GP(play).inventory_greys_out == 1) {
+		GUI::Options.DisabledStyle == kGuiDis_Greyout &&
+		_GP(play).inventory_greys_out == 1) {
 		// darken the inventory when disabled
-		GUI::DrawDisabledEffect(ds, RectWH(X, Y, Width, Height));
+		GUI::DrawDisabledEffect(ds, RectWH(x, y, Width, Height));
 	}
 }
 

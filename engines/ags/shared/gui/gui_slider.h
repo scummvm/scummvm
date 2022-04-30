@@ -41,7 +41,7 @@ public:
 	bool IsOverControl(int x, int y, int leeway) const override;
 
 	// Operations
-	void Draw(Bitmap *ds) override;
+	void Draw(Bitmap *ds, int x = 0, int y = 0) override;
 
 	// Events
 	bool OnMouseDown() override;

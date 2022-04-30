@@ -64,7 +64,8 @@ public:
     virtual bool    IsContentClipped() const { return true; }
 
 	// Operations
-	virtual void    Draw(Bitmap *) {
+	virtual void    Draw(Bitmap *ds, int x = 0, int y = 0) {
+		(void)ds; (void)x; (void)y;
 	}
 	void            SetClickable(bool on);
 	void            SetEnabled(bool on);

@@ -37,7 +37,7 @@ public:
 	bool IsBorderShown() const;
 
 	// Operations
-	void Draw(Bitmap *ds) override;
+	void Draw(Bitmap *ds, int x = 0, int y = 0) override;
 	void SetShowBorder(bool on);
 
 	// Events
@@ -58,7 +58,7 @@ public:
 private:
 	int32_t TextBoxFlags;
 
-	void DrawTextBoxContents(Bitmap *ds, color_t text_color);
+	void DrawTextBoxContents(Bitmap *ds, int x, int y, color_t text_color);
 };
 
 } // namespace Shared

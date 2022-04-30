@@ -47,16 +47,16 @@ bool GUITextBox::IsBorderShown() const {
 	return (TextBoxFlags & kTextBox_ShowBorder) != 0;
 }
 
-void GUITextBox::Draw(Bitmap *ds) {
+void GUITextBox::Draw(Bitmap *ds, int x, int y) {
 	color_t text_color = ds->GetCompatibleColor(TextColor);
 	color_t draw_color = ds->GetCompatibleColor(TextColor);
 	if (IsBorderShown()) {
-		ds->DrawRect(RectWH(X, Y, Width, Height), draw_color);
+		ds->DrawRect(RectWH(x, y, Width, Height), draw_color);
 		if (get_fixed_pixel_size(1) > 1) {
-			ds->DrawRect(Rect(X + 1, Y + 1, X + Width - get_fixed_pixel_size(1), Y + Height - get_fixed_pixel_size(1)), draw_color);
+			ds->DrawRect(Rect(x + 1, y + 1, x + Width - get_fixed_pixel_size(1), y + Height - get_fixed_pixel_size(1)), draw_color);
 		}
 	}
-	DrawTextBoxContents(ds, text_color);
+	DrawTextBoxContents(ds, x, y, text_color);
 }
 
 // TODO: a shared utility function

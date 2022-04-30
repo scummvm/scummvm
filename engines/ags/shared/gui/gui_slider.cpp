@@ -56,7 +56,7 @@ bool GUISlider::IsOverControl(int x, int y, int leeway) const {
 	return _cachedHandle.IsInside(Point(x, y));
 }
 
-void GUISlider::Draw(Shared::Bitmap *ds) {
+void GUISlider::Draw(Bitmap *ds, int x, int y) {
 	// Clamp Value
 	// TODO: this is necessary here because some Slider fields are still public
 	if (MinValue >= MaxValue)
@@ -95,7 +95,7 @@ void GUISlider::Draw(Shared::Bitmap *ds) {
 	if (IsHorizontal()) // horizontal slider
 	{
 		// Value pos is a coordinate corresponding to current slider's value
-		bar = RectWH(X + 1, Y + Height / 2 - thick_f, Width - 1, bar_thick);
+		bar = RectWH(x + 1, y + Height / 2 - thick_f, Width - 1, bar_thick);
 		handle_range = Width - 4;
 		int value_pos = (int)(((float)(Value - MinValue) * (float)handle_range) / (float)(MaxValue - MinValue));
 		handle = RectWH((bar.Left + get_fixed_pixel_size(2)) - (handle_sz.Width / 2) + 1 + value_pos - 2,
@@ -105,7 +105,7 @@ void GUISlider::Draw(Shared::Bitmap *ds) {
 	}
 	// vertical slider
 	else {
-		bar = RectWH(X + Width / 2 - thick_f, Y + 1, bar_thick, Height - 1);
+		bar = RectWH(x + Width / 2 - thick_f, y + 1, bar_thick, Height - 1);
 		handle_range = Height - 4;
 		int value_pos = (int)(((float)(MaxValue - Value) * (float)handle_range) / (float)(MaxValue - MinValue));
 		handle = RectWH(bar.Left + (bar.GetWidth() - handle_sz.Width) / 2,
@@ -122,11 +122,11 @@ void GUISlider::Draw(Shared::Bitmap *ds) {
 		if (IsHorizontal()) {
 			x_inc = get_adjusted_spritewidth(BgImage);
 			// centre the image vertically
-			bar.Top = Y + (Height / 2) - get_adjusted_spriteheight(BgImage) / 2;
+			bar.Top = y + (Height / 2) - get_adjusted_spriteheight(BgImage) / 2;
 		} else {
 			y_inc = get_adjusted_spriteheight(BgImage);
 			// centre the image horizontally
-			bar.Left = X + (Width / 2) - get_adjusted_spritewidth(BgImage) / 2;
+			bar.Left = x + (Width / 2) - get_adjusted_spritewidth(BgImage) / 2;
 		}
 		int cx = bar.Left;
 		int cy = bar.Top;

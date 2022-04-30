@@ -93,7 +93,7 @@ bool GUIButton::IsClippingImage() const {
 	return (Flags & kGUICtrl_Clip) != 0;
 }
 
-void GUIButton::Draw(Bitmap *ds) {
+void GUIButton::Draw(Bitmap *ds, int x, int y) {
 	bool draw_disabled = !IsGUIEnabled(this);
 
 	// if it's "Unchanged when disabled" or "GUI Off", don't grey out
@@ -111,10 +111,10 @@ void GUIButton::Draw(Bitmap *ds) {
 
 	// CHECKME: why testing both CurrentImage and Image?
 	if (CurrentImage > 0 && IsImageButton())
-		DrawImageButton(ds, draw_disabled);
+		DrawImageButton(ds, x, y, draw_disabled);
 	// CHECKME: why don't draw frame if no Text? this will make button completely invisible!
 	else if (!_text.IsEmpty())
-		DrawTextButton(ds, draw_disabled);
+		DrawTextButton(ds, x, y, draw_disabled);
 }
 
 void GUIButton::SetClipImage(bool on) {
@@ -282,19 +282,19 @@ void GUIButton::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(CurrentImage);
 }
 
-void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
+void GUIButton::DrawImageButton(Bitmap *ds, int x, int y, bool draw_disabled) {
 	// NOTE: the CLIP flag only clips the image, not the text
 	if (IsClippingImage() && !GUI::Options.ClipControls)
-		ds->SetClip(RectWH(X, Y, Width, Height));
+		ds->SetClip(RectWH(x, y, Width, Height));
 	if (_GP(spriteset)[CurrentImage] != nullptr)
-		draw_gui_sprite(ds, CurrentImage, X, Y, true);
+		draw_gui_sprite(ds, CurrentImage, x, y, true);
 
 	// Draw active inventory item
 	if (_placeholder != kButtonPlace_None && _G(gui_inv_pic) >= 0) {
 		GUIButtonPlaceholder place = _placeholder;
 		if (place == kButtonPlace_InvItemAuto) {
 			if ((get_adjusted_spritewidth(_G(gui_inv_pic)) > Width - 6) ||
-			        (get_adjusted_spriteheight(_G(gui_inv_pic)) > Height - 6)) {
+				(get_adjusted_spriteheight(_G(gui_inv_pic)) > Height - 6)) {
 				place = kButtonPlace_InvItemStretch;
 			} else {
 				place = kButtonPlace_InvItemCenter;
@@ -302,38 +302,39 @@ void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 		}
 
 		if (place == kButtonPlace_InvItemStretch) {
-			ds->StretchBlt(_GP(spriteset)[_G(gui_inv_pic)], RectWH(X + 3, Y + 3, Width - 6, Height - 6), Shared::kBitmap_Transparency);
+			ds->StretchBlt(_GP(spriteset)[_G(gui_inv_pic)], RectWH(x + 3, y + 3, Width - 6, Height - 6),
+				kBitmap_Transparency);
 		} else if (place == kButtonPlace_InvItemCenter) {
 			draw_gui_sprite(ds, _G(gui_inv_pic),
-			                X + Width / 2 - get_adjusted_spritewidth(_G(gui_inv_pic)) / 2,
-			                Y + Height / 2 - get_adjusted_spriteheight(_G(gui_inv_pic)) / 2,
-			                true);
+				x + Width / 2 - get_adjusted_spritewidth(_G(gui_inv_pic)) / 2,
+				y + Height / 2 - get_adjusted_spriteheight(_G(gui_inv_pic)) / 2,
+				true);
 		}
 	}
 
 	if ((draw_disabled) && (GUI::Options.DisabledStyle == kGuiDis_Greyout)) {
 		// darken the button when disabled
-		GUI::DrawDisabledEffect(ds, RectWH(X, Y,
-		                                   _GP(spriteset)[CurrentImage]->GetWidth(),
-		                                   _GP(spriteset)[CurrentImage]->GetHeight()));
+		GUI::DrawDisabledEffect(ds, RectWH(x, y,
+			_GP(spriteset)[CurrentImage]->GetWidth(),
+			_GP(spriteset)[CurrentImage]->GetHeight()));
 	}
 
 	// Don't print Text of (INV) (INVSHR) (INVNS)
 	if (_placeholder == kButtonPlace_None && !_unnamed)
-		DrawText(ds, draw_disabled);
+		DrawText(ds, x, y, draw_disabled);
 
 	if (IsClippingImage() && !GUI::Options.ClipControls)
 		ds->ResetClip();
 }
 
-void GUIButton::DrawText(Bitmap *ds, bool draw_disabled) {
+void GUIButton::DrawText(Bitmap *ds, int x, int y, bool draw_disabled) {
 	if (_text.IsEmpty())
 		return;
 	// TODO: need to find a way to cache Text prior to drawing;
 	// but that will require to update all gui controls when translation is changed in game
 	PrepareTextToDraw();
 
-	Rect frame = RectWH(X + 2, Y + 2, Width - 4, Height - 4);
+	Rect frame = RectWH(x + 2, y + 2, Width - 4, Height - 4);
 	if (IsPushed && IsMouseOver) {
 		// move the Text a bit while pushed
 		frame.Left++;
@@ -345,12 +346,12 @@ void GUIButton::DrawText(Bitmap *ds, bool draw_disabled) {
 	GUI::DrawTextAligned(ds, _textToDraw.GetCStr(), Font, text_color, frame, TextAlignment);
 }
 
-void GUIButton::DrawTextButton(Bitmap *ds, bool draw_disabled) {
+void GUIButton::DrawTextButton(Bitmap *ds, int x, int y, bool draw_disabled) {
 	color_t draw_color = ds->GetCompatibleColor(7);
-	ds->FillRect(Rect(X, Y, X + Width - 1, Y + Height - 1), draw_color);
+	ds->FillRect(Rect(x, y, x + Width - 1, y + Height - 1), draw_color);
 	if (Flags & kGUICtrl_Default) {
 		draw_color = ds->GetCompatibleColor(16);
-		ds->DrawRect(Rect(X - 1, Y - 1, X + Width, Y + Height), draw_color);
+		ds->DrawRect(Rect(x - 1, y - 1, x + Width, y + Height), draw_color);
 	}
 
 	// TODO: use color constants instead of literal numbers
@@ -359,18 +360,18 @@ void GUIButton::DrawTextButton(Bitmap *ds, bool draw_disabled) {
 	else
 		draw_color = ds->GetCompatibleColor(8);
 
-	ds->DrawLine(Line(X, Y + Height - 1, X + Width - 1, Y + Height - 1), draw_color);
-	ds->DrawLine(Line(X + Width - 1, Y, X + Width - 1, Y + Height - 1), draw_color);
+	ds->DrawLine(Line(x, y + Height - 1, x + Width - 1, y + Height - 1), draw_color);
+	ds->DrawLine(Line(x + Width - 1, y, x + Width - 1, y + Height - 1), draw_color);
 
 	if (draw_disabled || (IsMouseOver && IsPushed))
 		draw_color = ds->GetCompatibleColor(8);
 	else
 		draw_color = ds->GetCompatibleColor(15);
 
-	ds->DrawLine(Line(X, Y, X + Width - 1, Y), draw_color);
-	ds->DrawLine(Line(X, Y, X, Y + Height - 1), draw_color);
+	ds->DrawLine(Line(x, y, x + Width - 1, y), draw_color);
+	ds->DrawLine(Line(x, y, x, y + Height - 1), draw_color);
 
-	DrawText(ds, draw_disabled);
+	DrawText(ds, x, y, draw_disabled);
 }
 
 } // namespace Shared

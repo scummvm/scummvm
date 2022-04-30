@@ -257,7 +257,7 @@ void GUIMain::DrawWithControls(Bitmap *ds) {
 			ds->SetClip(RectWH(objToDraw->X, objToDraw->Y, objToDraw->Width, objToDraw->Height));
 		else
 			ds->ResetClip();
-		objToDraw->Draw(ds);
+		objToDraw->Draw(ds, objToDraw->X, objToDraw->Y);
 
 		int selectedColour = 14;
 
