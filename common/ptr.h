@@ -321,7 +321,44 @@ public:
 		_tracker = new BasePtrTrackerImpl<T>(ptr);
 	}
 
+	/**
+	 * Performs the equivalent of static_cast to a new pointer type
+	 */
+	template<class T2>
+	SharedPtr<T2> staticCast() const {
+		return SharedPtr<T2>(static_cast<T2 *>(_pointer), _tracker);
+	}
+
+	/**
+	 * Performs the equivalent of dynamic_cast to a new pointer type
+	 */
+	template<class T2>
+	SharedPtr<T2> dynamicCast() const {
+		return SharedPtr<T2>(dynamic_cast<T2 *>(_pointer), _tracker);
+	}
+
+	/**
+	 * Performs the equivalent of const_cast to a new pointer type
+	 */
+	template<class T2>
+	SharedPtr<T2> constCast() const {
+		return SharedPtr<T2>(const_cast<T2 *>(_pointer), _tracker);
+	}
+
+	/**
+	 * Performs the equivalent of const_cast to a new pointer type
+	 */
+	template<class T2>
+	SharedPtr<T2> reinterpretCast() const {
+		return SharedPtr<T2>(reinterpret_cast<T2 *>(_pointer), _tracker);
+	}
+
 private:
+	SharedPtr(T *pointer, BasePtrTrackerInternal *tracker) : _pointer(pointer), _tracker(tracker) {
+		if (tracker)
+			tracker->incStrong();
+	}
+
 	T *_pointer;
 	BasePtrTrackerInternal *_tracker;
 };
@@ -368,6 +405,38 @@ public:
 	}
 
 	/**
+	 * Performs the equivalent of static_cast to a new pointer type
+	 */
+	template<class T2>
+	WeakPtr<T2> staticCast() const {
+		return WeakPtr<T2>(expired() ? nullptr : static_cast<T2 *>(_pointer), _tracker);
+	}
+
+	/**
+	 * Performs the equivalent of dynamic_cast to a new pointer type
+	 */
+	template<class T2>
+	WeakPtr<T2> dynamicCast() const {
+		return WeakPtr<T2>(expired() ? nullptr : dynamic_cast<T2 *>(_pointer), _tracker);
+	}
+
+	/**
+	 * Performs the equivalent of const_cast to a new pointer type
+	 */
+	template<class T2>
+	WeakPtr<T2> constCast() const {
+		return WeakPtr<T2>(expired() ? nullptr : const_cast<T2 *>(_pointer), _tracker);
+	}
+
+	/**
+	 * Performs the equivalent of const_cast to a new pointer type
+	 */
+	template<class T2>
+	WeakPtr<T2> reinterpretCast() const {
+		return WeakPtr<T2>(expired() ? nullptr : reinterpret_cast<T2 *>(_pointer), _tracker);
+	}
+
+	/**
 	 * Creates a SharedPtr that manages the referenced object
 	 */
 	SharedPtr<T> lock() const {
@@ -388,6 +457,22 @@ public:
 	 */
 	bool expired() const {
 		return _tracker == nullptr || _tracker->getStrongCount() == 0;
+	}
+
+	/**
+	 * Returns whether this precedes another weak pointer in owner-based order
+	 */
+	template<class T2>
+	bool owner_before(const WeakPtr<T2>& other) const {
+		return _tracker < other._tracker;
+	}
+
+	/**
+	 * Returns whether this precedes a shared pointer in owner-based order
+	 */
+	template<class T2>
+	bool owner_before(const SharedPtr<T2> &other) const {
+		return _tracker < other._tracker;
 	}
 
 	WeakPtr<T> &operator=(const WeakPtr<T> &r) {
@@ -450,6 +535,11 @@ public:
 	}
 
 private:
+	WeakPtr(T *pointer, BasePtrTrackerInternal *tracker) : _pointer(pointer), _tracker(tracker) {
+		if (tracker)
+			tracker->incWeak();
+	}
+
 	T *_pointer;
 	BasePtrTrackerInternal *_tracker;
 };
