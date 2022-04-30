@@ -531,9 +531,13 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 						break;
 					}
 					if (!arc->briefingVideo.empty()) {
+						Graphics::Surface *bframe = decodeFrame(arc->briefingVideo, 1, &palette);
+						loadPalette(palette, 0, 256);
 						video = new MVideo(arc->briefingVideo, Common::Point(44, 22), false, false, false);
 						runIntro(*video);
 						delete video;
+						bframe->free();
+						delete bframe;
 					}
 					showedBriefing = true;
 					break;
