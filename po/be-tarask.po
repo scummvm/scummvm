@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-27 19:39+0000\n"
-"PO-Revision-Date: 2022-04-30 14:59+0000\n"
+"PO-Revision-Date: 2022-04-30 15:27+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -23,10 +23,9 @@ msgstr ""
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:104
-#, fuzzy, c-format
-#| msgid "(built on %s)"
+#, c-format
 msgid "(built on %s with %s)"
-msgstr "(збор ад %s)"
+msgstr "(збор ад %s з %s)"
 
 #: gui/about.cpp:111
 msgid "Features compiled in:"
@@ -727,48 +726,36 @@ msgstr "Няма"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:101
-#, fuzzy
-#| msgid "First letter"
 msgctxt "group"
 msgid "First letter"
 msgstr "Першая літара"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
-#, fuzzy
-#| msgid "Engine"
 msgctxt "group"
 msgid "Engine"
 msgstr "Рухавік"
 
 #. I18N: Group name for the game list, grouped by game series
 #: gui/launcher.cpp:105
-#, fuzzy
-#| msgid "Series"
 msgctxt "group"
 msgid "Series"
 msgstr "Сэрыя"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:107
-#, fuzzy
-#| msgid "Publisher"
 msgctxt "group"
 msgid "Publisher"
 msgstr "Выдавецтва"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
-#| msgid "Language"
 msgctxt "group"
 msgid "Language"
 msgstr "Мова"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
-#, fuzzy
-#| msgid "Platform"
 msgctxt "group"
 msgid "Platform"
 msgstr "Пляцформа"
@@ -802,18 +789,14 @@ msgid "About ScummVM"
 msgstr "Пра ScummVM"
 
 #: gui/launcher.cpp:243
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Global ~O~ptions..."
-msgstr "~Н~алады..."
+msgstr "Глябальныя ~н~алады..."
 
 #: gui/launcher.cpp:243 gui/launcher.cpp:245
 msgid "Change global ScummVM options"
 msgstr "Зьмяніць глябальныя налады ScummVM"
 
 #: gui/launcher.cpp:245
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "~Н~алады..."
@@ -951,21 +934,17 @@ msgid "Record..."
 msgstr "Запіс…"
 
 #: gui/launcher.cpp:999
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "~G~ame Options..."
-msgstr "~Н~алады..."
+msgstr "~Н~алады гульні..."
 
 #: gui/launcher.cpp:999 gui/launcher.cpp:1002
 msgid "Change game options"
 msgstr "Зьмяніць налады гульні"
 
 #: gui/launcher.cpp:1002
-#, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "~Н~алады..."
+msgstr "~Н~алады гульні..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
@@ -1876,7 +1855,6 @@ msgstr ""
 "Сьпіс гульняў:\n"
 
 #: gui/options.cpp:2581
-#, fuzzy
 msgid ""
 "\n"
 "And more..."
@@ -1994,10 +1972,8 @@ msgstr ""
 "Праверце вашае злучэньне з інтэрнэтам."
 
 #: gui/predictivedialog.cpp:66
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
-msgstr "Увод"
+msgstr "Напішыце тэкст"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:101
@@ -3925,7 +3901,6 @@ msgid "Server:"
 msgstr "Сэрвэр:"
 
 #: backends/platform/wii/options.cpp:109
-#, fuzzy
 msgid "Share:"
 msgstr "Мена:"
 
@@ -3958,7 +3933,6 @@ msgid "DVD not mounted"
 msgstr "DVD не ўмацаваны"
 
 #: backends/platform/wii/options.cpp:160
-#, fuzzy
 msgid "Network up, share mounted"
 msgstr "Сетка працуе, мена ўмацаваная"
 
@@ -3967,12 +3941,10 @@ msgid "Network up"
 msgstr "Сетка працуе"
 
 #: backends/platform/wii/options.cpp:165
-#, fuzzy
 msgid ", error while mounting the share"
 msgstr ", памылка падчас умацаваньня мены"
 
 #: backends/platform/wii/options.cpp:167
-#, fuzzy
 msgid ", share not mounted"
 msgstr ", мена не ўмацаваная"
 
@@ -4244,26 +4216,20 @@ msgstr ""
 "будзе гучаць няправільна."
 
 #: engines/ags/dialogs.cpp:58
-#, fuzzy
-#| msgid "Language:"
 msgid "Game language:"
-msgstr "Мова:"
+msgstr "Мова гульні:"
 
 #: engines/ags/dialogs.cpp:58
-#, fuzzy
-#| msgid "AdLib is used for music in many games"
 msgid "Language to use for multilingual games"
-msgstr "AdLib выкарыстоўваецца для музыкі ў многіх гульнях"
+msgstr "Мова для многамоўных гульняў"
 
 #: engines/ags/dialogs.cpp:78
-#, fuzzy
-#| msgid "Antialiased"
 msgid "Force antialiased text"
-msgstr "З памякчэньнем"
+msgstr "Тэкст з прымусным памякчэньнем"
 
 #: engines/ags/dialogs.cpp:78
 msgid "Use antialiasing to draw text even if the game does not ask for it"
-msgstr ""
+msgstr "Памякчаць шрыфты, нават калі гульня пра гэта не пытала"
 
 #: engines/ags/ags.cpp:125
 msgid ""
@@ -4282,7 +4248,6 @@ msgstr ""
 "ў вашай вэрсіі ScummVM."
 
 #: engines/asylum/metaengine.cpp:114
-#, fuzzy
 msgid "Show version"
 msgstr "Паказваць вэрсію"
 
@@ -4430,37 +4395,31 @@ msgstr "Брак коду гульні"
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:107
 msgid "common shortcuts"
-msgstr ""
+msgstr "асноўныя клявішы"
 
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:109
-#, fuzzy
-#| msgid "Main game controls:"
 msgid "main game shortcuts"
-msgstr "Асноўныя клявішы гульні:"
+msgstr "асноўныя клявішы гульні"
 
 #. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:111
 msgid "KIA only shortcuts"
-msgstr ""
+msgstr "клявішы KIA"
 
 #. I18N: This keymap is the main way for the user interact with the game.
 #. It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
 #: engines/bladerunner/metaengine.cpp:118
-#, fuzzy
-#| msgid "Walk / Look / Talk"
 msgid "Walk / Look / Talk / Select / Shoot"
-msgstr "Ісьці / Глядзець / Гаварыць"
+msgstr "Ісьці / Глядзець / Гаварыць / Выбраць / Стрэліць"
 
 #. I18N: This keymap toggles McCoy's status between combat mode (drawing his gun) and normal mode (holstering his gun)
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. TOGGLE MCCOY'S COMBAT MODE
 #: engines/bladerunner/metaengine.cpp:128
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Combat"
-msgstr "Прыбраць гук"
+msgstr "Пералучыць рэжым бою"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:137 engines/scumm/help.cpp:76
@@ -4473,8 +4432,6 @@ msgstr "Прапусьціць сцэнку"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SKIP PAST CURRENT LINE OF DIALOGUE
 #: engines/bladerunner/metaengine.cpp:150
-#, fuzzy
-#| msgid "Skip dialog lines"
 msgid "Skip dialogue"
 msgstr "Прапусьціць дыялёг"
 
@@ -4483,10 +4440,8 @@ msgstr "Прапусьціць дыялёг"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:161
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Game Options"
-msgstr "~Н~алады..."
+msgstr "~Н~алады гульні"
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
@@ -4495,7 +4450,7 @@ msgstr "~Н~алады..."
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
 #: engines/bladerunner/metaengine.cpp:172
 msgid "Open KIA Database"
-msgstr ""
+msgstr "Адкрыць зьвесткі KIA"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
@@ -4505,15 +4460,11 @@ msgstr "Выдаліць абраны захоў"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:204
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll Up"
 msgstr "Прагортваньне ўгару"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
 #: engines/bladerunner/metaengine.cpp:211
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll Down"
 msgstr "Прагортваньне ўніз"
 
@@ -4538,10 +4489,8 @@ msgstr "Заладаваць гульню"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CRIME SCENE DATABASE
 #: engines/bladerunner/metaengine.cpp:248
-#, fuzzy
-#| msgid "Scene Data"
 msgid "Crime Scene Database"
-msgstr "Зьвесткі сцэны"
+msgstr "Зьвесткі злачынстваў"
 
 #. I18N: This keymap opens KIA's SUSPECT DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4924,7 +4873,6 @@ msgstr ""
 "Ці хочаце вы шчэ запусьціць %s?"
 
 #: engines/grim/grim.cpp:475 engines/grim/grim.cpp:566
-#, fuzzy
 msgid "Run"
 msgstr "Запусьціць"
 
@@ -4971,10 +4919,8 @@ msgid "Error: the game could not be saved."
 msgstr "Памылка: ня выйшла захаваць гульню."
 
 #: engines/grim/inputdialog.cpp:79
-#, fuzzy
-#| msgid "Input"
 msgid "Input text"
-msgstr "Увод"
+msgstr "Увядзіце тэкст"
 
 #: engines/grim/md5check.cpp:558
 #, c-format
@@ -5164,44 +5110,36 @@ msgid "Enable Gore Mode when available"
 msgstr "Далучыць крывавы рэжым, калі даступна"
 
 #: engines/hypno/detection.cpp:211
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Enable original cheats"
-msgstr "Далучыць махлярства"
+msgstr "Далучыць арыґінальнае махлярства"
 
 #: engines/hypno/detection.cpp:212
 msgid "Allow cheats using the C key."
 msgstr "Дазваляе махлярства на клявішу C."
 
 #: engines/hypno/detection.cpp:220
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "Enable infinite health cheat"
-msgstr "Далучыць замену шрыфту"
+msgstr "Далучыць махлярства бясконцага здароўя"
 
 #: engines/hypno/detection.cpp:221
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr "Здароўе гульца ніколі ня зьменшыцца (акром экранаў скону гульні)."
 
 #: engines/hypno/detection.cpp:229
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Enable infinite ammo cheat"
-msgstr "Далучыць махлярства"
+msgstr "Далучыць махлярства бясконцага набою"
 
 #: engines/hypno/detection.cpp:230
 msgid "Player ammo will never decrease."
 msgstr "Набой гульца ніколі ня зьменшыцца."
 
 #: engines/hypno/detection.cpp:238
-#, fuzzy
-#| msgid "Enable Discord integration"
 msgid "Enable restored content"
-msgstr "Далучыць інтэґрацыю з Discord"
+msgstr "Далучыць адноўлены зьмест"
 
 #: engines/hypno/detection.cpp:239
 msgid "Add additional content that is not enabled the original implementation."
-msgstr "Дадаць зьмест, які не далучаны ў арыгінале."
+msgstr "Дадаць зьмест, які не далучаны ў арыґінале."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -5706,15 +5644,11 @@ msgid "Transitions:"
 msgstr "Пераходы:"
 
 #: engines/mohawk/dialogs.cpp:361
-#, fuzzy
-#| msgid ""
-#| "Toggle screen transitions on or off. Turning off screen transitions will "
-#| "enable you to navigate more quickly through the game."
 msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
-"Далучыць/адлучыць экранавыя пераходы. Адучыўшы пераходы, вы будзеце хутчэй "
+"Скорасьць пераходу між экранамі. Адучыўшы пераходы, вы будзеце хутчэй "
 "прасоўвацца па гульні."
 
 #: engines/mohawk/dialogs.cpp:366
@@ -6048,7 +5982,6 @@ msgid "Engine Options"
 msgstr "Налады рухавіку"
 
 #: engines/nancy/dialogs.cpp:103
-#, fuzzy
 msgid "General"
 msgstr "Галоўныя"
 
@@ -6313,21 +6246,20 @@ msgstr "Далучыць высокую разрознасьць"
 
 #: engines/sci/detection_options.h:55
 msgid "Enable black-lined video"
-msgstr ""
+msgstr "Далучыць чорныя лініі на відэа"
 
 #: engines/sci/detection_options.h:56
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "Маляваць чорныя лініі на відэа, каб павялічыць бачную выразнасьць"
 
 #: engines/sci/detection_options.h:68
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "Выкарыстоўваць павялічэньне відэа высокай якасьці"
 
 #: engines/sci/detection_options.h:69
-#, fuzzy
-#| msgid "Use linear filtering when scaling graphics"
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Ужывайце лінейнае фільтраваньне, калі павялічваеце графіку"
+msgstr ""
+"Па мажлівасьці выкарыстоўваць лінейную інтэрпаляцыю падчас павялічэньня відэа"
 
 #: engines/sci/detection_options.h:81
 msgid "Use high-quality \"LarryScale\" cel scaling"
