@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-27 19:39+0000\n"
-"PO-Revision-Date: 2022-04-30 15:27+0000\n"
+"PO-Revision-Date: 2022-04-30 15:47+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -6233,16 +6233,12 @@ msgstr ""
 "Прапусьціць дызэрынґ гульнях EGA, графіка будзе паказаная ў поўных колерах"
 
 #: engines/sci/detection_options.h:43
-#, fuzzy
-#| msgid "Enable high resolution"
 msgid "Enable high resolution graphics"
-msgstr "Далучыць высокую разрознасьць"
+msgstr "Далучыць графіку высокай разрознасьці"
 
 #: engines/sci/detection_options.h:44
-#, fuzzy
-#| msgid "Enable high resolution"
 msgid "Enable high resolution graphics/content"
-msgstr "Далучыць высокую разрознасьць"
+msgstr "Далучыць графіку/зьмест высокай разрознасьці"
 
 #: engines/sci/detection_options.h:55
 msgid "Enable black-lined video"
@@ -6263,81 +6259,61 @@ msgstr ""
 
 #: engines/sci/detection_options.h:81
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr ""
+msgstr "Выкарыстоўваць павялічэньне высокай разрознасьці „LarryScale“"
 
 #: engines/sci/detection_options.h:82
 msgid "Use special cartoon scaler for drawing character sprites"
-msgstr ""
+msgstr "Выкарыстоўваць мультыплікацыйнае павялічэньне для спрайтаў пэрсанажаў"
 
 #: engines/sci/detection_options.h:93
-#, fuzzy
-#| msgid "Special sound effects volume"
 msgid "Prefer digital sound effects"
-msgstr "Гучнасьць спэцыяльных гукавых эфэктаў"
+msgstr "Перавага дыґітальным гукавым эфэктам"
 
 #: engines/sci/detection_options.h:94
-#, fuzzy
-#| msgid "Use the original save/load screens instead of the ScummVM ones"
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr ""
-"Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня замест экранаў "
-"ScummVM"
+msgstr "Аддаваць перавагу дыґітальным гукавым эфэктам, а не сынтэзаваным"
 
 #: engines/sci/detection_options.h:117
-#, fuzzy
-#| msgid "SegaCD Audio"
 msgid "Use CD audio"
-msgstr "Гук SegaCD"
+msgstr "Выкарыстоўваць гук CD"
 
 #: engines/sci/detection_options.h:118
-#, fuzzy
-#| msgid "Use TTS to read text in the game (if TTS is available)"
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "Ператвараць тэкст у мову ў гульні (калі даступна)"
+msgstr "Па мажлівасьці выкарыстоўваць гук кампактных дыскаў замест гульнявога"
 
 #: engines/sci/detection_options.h:130
 msgid "Use Windows cursors"
-msgstr ""
+msgstr "Выкарыстоўваць паказальнікі Windows"
 
 #: engines/sci/detection_options.h:131
-#, fuzzy
-#| msgid "Use the original save/load screens instead of the ScummVM ones"
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
-"Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня замест экранаў "
-"ScummVM"
+"Выкарыстоўваць паказальнікі Windows (меньшыя й манахромныя) замест "
+"паказальнікаў DOS"
 
 #: engines/sci/detection_options.h:143
-#, fuzzy
-#| msgid "Regular cursor"
 msgid "Use silver cursors"
-msgstr "Звычайны паказальнік"
+msgstr "Выкарыстоўваць срэбныя паказальнікі"
 
 #: engines/sci/detection_options.h:144
-#, fuzzy
-#| msgid "Use the original save/load screens instead of the ScummVM ones"
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
-"Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня замест экранаў "
-"ScummVM"
+"Выкарыстоўваць альтэрнацыйны набор срэбных паказальнікаў замест звычайных "
+"залатых"
 
 #: engines/sci/detection_options.h:156
-#, fuzzy
-#| msgid "Enable font anti-aliasing"
 msgid "Enable content censoring"
-msgstr "Далучыць памякчэньне шрыфтоў"
+msgstr "Далучыць цэнзураваньне зьместу"
 
 #: engines/sci/detection_options.h:157
 msgid "Enable the game's built-in optional content censoring"
-msgstr ""
+msgstr "Далучыць умантаванае неабавязковае цэнзураваньне зьместу"
 
 #: engines/sci/detection_options.h:169
-#, fuzzy
-#| msgid "Unscaled"
 msgid "Upscale videos"
-msgstr "Без павялічэньня"
+msgstr "Павялічваць відэа"
 
 #: engines/sci/detection_options.h:170
 msgid "Upscale videos to double their size"
@@ -8103,7 +8079,7 @@ msgstr "Паказваць колькасьць кадраў на сэкунду
 
 #: engines/wintermute/detection.cpp:64
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr "Білінейная філтраваньне спрайтаў (марудна)"
+msgstr "Білінейнае філтраваньне спрайтаў (марудна)"
 
 #: engines/wintermute/detection.cpp:65
 msgid "Apply bilinear filtering to individual sprites"
