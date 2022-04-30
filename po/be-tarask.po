@@ -5636,8 +5636,8 @@ msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
 msgstr ""
-"Пералучае выкарыстаньне відэа QuickTime для візуальных эфэктаў вады ("
-"рабізна, хвалі й г.д.)."
+"Пералучае выкарыстаньне відэа QuickTime для візуальных эфэктаў вады "
+"(рабізна, хвалі й г.д.)."
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
