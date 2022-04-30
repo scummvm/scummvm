@@ -479,6 +479,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 					incTargetsMissed();
 					// No need to pop attackFrames or explosionFrames
 					skipVideo(*it->video);
+					shootsToRemove.push_back(i);
 				} else if (frame > 0 && frame >= (int)(it->lastFrame)) {
 					skipVideo(*it->video);
 					shootsToRemove.push_back(i);
@@ -497,7 +498,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			i++;
 		}
 		if (shootsToRemove.size() > 0) {
-			for (Common::List<uint32>::iterator it = shootsToRemove.begin(); it != shootsToRemove.end(); ++it) {
+			debugC(1, kHypnoDebugArcade, "Shoots to remove: %d", shootsToRemove.size());
+			Common::sort(shootsToRemove.begin(), shootsToRemove.end());
+			for (Common::List<uint32>::iterator it = shootsToRemove.reverse_begin(); it != shootsToRemove.end(); --it) {
 				debugC(1, kHypnoDebugArcade, "Removing %d from %d size", *it, _shoots.size());
 				delete _shoots[*it].video;
 				_shoots.remove_at(*it);
