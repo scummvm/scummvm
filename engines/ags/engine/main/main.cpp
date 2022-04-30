@@ -203,10 +203,6 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		} else if (ags_stricmp(arg, "--noexceptionhandler") == 0) _GP(usetup).disable_exception_handling = true;
 		else if (ags_stricmp(arg, "--setup") == 0) {
 			_G(justRunSetup) = true;
-		} else if (ags_stricmp(arg, "--registergame") == 0) {
-			_G(justRegisterGame) = true;
-		} else if (ags_stricmp(arg, "--unregistergame") == 0) {
-			_G(justUnRegisterGame) = true;
 		} else if ((ags_stricmp(arg, "--loadsavedgame") == 0) && (argc > ee + 1)) {
 			_G(loadSaveGameOnStartup) = atoi(argv[ee + 1]);
 			ee++;

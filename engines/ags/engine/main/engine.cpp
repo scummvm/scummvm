@@ -383,22 +383,6 @@ int engine_load_game_data() {
 	return 0;
 }
 
-int engine_check_register_game() {
-	if (_G(justRegisterGame)) {
-		_G(platform)->RegisterGameWithGameExplorer();
-		_G(proper_exit) = 1;
-		return EXIT_NORMAL;
-	}
-
-	if (_G(justUnRegisterGame)) {
-		_G(platform)->UnRegisterGameWithGameExplorer();
-		_G(proper_exit) = 1;
-		return EXIT_NORMAL;
-	}
-
-	return 0;
-}
-
 // Replace special tokens inside a user path option
 static void resolve_configured_path(String &option) {
 	option.Replace("$GAMENAME$", _GP(game).gamename);
@@ -1159,10 +1143,6 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	_G(our_eip) = -19;
 
 	int res = engine_load_game_data();
-	if (res != 0)
-		return res;
-
-	res = engine_check_register_game();
 	if (res != 0)
 		return res;
 

@@ -481,7 +481,7 @@ static long ags_pf_fwrite(AL_CONST void * /*p*/, long /*n*/, void * /*userdata*/
 	return -1; // don't support write
 }
 
-static int ags_pf_fseek(void */*userdata*/, int /*offset*/) {
+static int ags_pf_fseek(void * /*userdata*/, int /*offset*/) {
 	return -1; // don't support seek
 }
 

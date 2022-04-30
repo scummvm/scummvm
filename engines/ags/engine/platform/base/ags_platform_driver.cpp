@@ -92,12 +92,6 @@ void AGSPlatformDriver::AdjustWindowStyleForFullscreen() {
 void AGSPlatformDriver::AdjustWindowStyleForWindowed() {
 }
 
-void AGSPlatformDriver::RegisterGameWithGameExplorer() {
-}
-
-void AGSPlatformDriver::UnRegisterGameWithGameExplorer() {
-}
-
 void AGSPlatformDriver::ValidateWindowSize(int & /*x*/, int & /*y*/, bool /*borderless*/) const {
 }
 

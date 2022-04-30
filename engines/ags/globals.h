@@ -1076,8 +1076,6 @@ public:
 	bool _justDisplayHelp = false;
 	bool _justDisplayVersion = false;
 	bool _justRunSetup = false;
-	bool _justRegisterGame = false;
-	bool _justUnRegisterGame = false;
 	bool _justTellInfo = false;
 	std::set<String> _tellInfoKeys;
 	int _loadSaveGameOnStartup = -1;
