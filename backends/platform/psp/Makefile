@@ -121,13 +121,12 @@ LDFLAGS += -pg
 endif
 
 # PSP LIBS
-PSPLIBS =  -lpspprof -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspsdk \
-	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio -lpspaudiocodec \
-	-lpspkernel -lpspnet_inet
+PSPLIBS =  -lpspprof -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay \
+	-lpsppower -lpsphprm -lpspaudio -lpspaudiocodec
 
 
 # Add in PSPSDK includes and libraries.
-LIBS     += -lpng -lz -lstdc++ -lc -lm $(PSPLIBS)
+LIBS     += -lpng -lz -lstdc++ $(PSPLIBS)
 
 OBJS := powerman.o \
 	psp_main.o \

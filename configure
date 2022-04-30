@@ -4176,8 +4176,8 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 		_elf_loader=yes
 		append_var DEFINES "-DUNCACHED_PLUGINS"
 _mak_plugins='
-LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld
-PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
+LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld  -Wl,-zmax-page-size=128
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -Wl,-zmax-page-size=128 -lstdc++ 
 '
 		;;
 	*)
