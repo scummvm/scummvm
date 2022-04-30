@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-27 19:39+0000\n"
-"PO-Revision-Date: 2022-04-30 16:20+0000\n"
+"PO-Revision-Date: 2022-04-30 18:19+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -6390,7 +6390,7 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
-"Лёгіка покэру глыбока закадаваная ў зьнешняй DLL і шчэ ня дзейсная. Пакуль "
+"Лёгіка покеру глыбока закадаваная ў зьнешняй DLL і шчэ ня дзейсная. Пакуль "
 "што працуе імітацыя лёгікі, дзе дзеі супраціўнікаў выбіраюцца адвольна"
 
 #: engines/sci/engine/savegame.cpp:1453
@@ -7438,7 +7438,7 @@ msgstr "Рухавіковы файл „sky.cpt“ мае няправільн�
 
 #: engines/sky/detection.cpp:36
 msgid "Floppy intro"
-msgstr "Дыскэтны ўступ"
+msgstr "Дыскетны ўступ"
 
 #: engines/sky/detection.cpp:37
 msgid "Use the floppy version's intro (CD version only)"
