@@ -1058,6 +1058,7 @@ public:
 
 	const Common::SharedPtr<Structural> &getActiveMainScene() const;
 	const Common::SharedPtr<Structural> &getActiveSharedScene() const;
+	void getSceneStack(Common::Array<Common::SharedPtr<Structural> > &sceneStack) const;
 
 	bool mustDraw() const;
 
@@ -1671,6 +1672,8 @@ public:
 
 	virtual bool isAlias() const;
 	virtual bool isVariable() const;
+	virtual bool isBehavior() const;
+	virtual bool isCompoundVariable() const;
 	bool isModifier() const override;
 
 	// This should only return a propagation container if messages should actually be propagated (i.e. NOT switched-off behaviors!)

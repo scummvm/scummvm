@@ -217,7 +217,6 @@ MacObsidianResources::~MacObsidianResources() {
 }
 
 MTropolisEngine::MTropolisEngine(OSystem *syst, const MTropolisGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-
 	if (gameDesc->gameID == GID_OBSIDIAN && _gameDescription->desc.platform == Common::kPlatformWindows) {
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
 		SearchMan.addSubDirectoryMatching(gameDataDir, "Obsidian");

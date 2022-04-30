@@ -111,12 +111,14 @@ public:
 
 	virtual void update() {}
 	void render();
+	void trySetScrollOffset(int32 scrollOffset);
 
 protected:
 	const int kTopBarHeight = 12;
 	const int kScrollBarWidth = 12;
 	const int kCloseWidth = 12;
 	const int kResizeHeight = 12;
+	const int kMinScrollBarHandleSize = 20;
 
 	void onMouseDown(int32 x, int32 y, int mouseButton) override;
 	void onMouseMove(int32 x, int32 y) override;
@@ -135,12 +137,16 @@ protected:
 
 private:
 	void refreshChrome();
+	void cancelScrolling();
 
 	enum ToolWindowWidget {
 		kToolWindowWidgetNone,
 
 		kToolWindowWidgetClose,
-		kToolWindowWidgetScroll,
+		kToolWindowWidgetScrollEmpty,
+		kToolWindowWidgetScrollHandle,
+		kToolWindowWidgetScrollChannelUp,
+		kToolWindowWidgetScrollChannelDown,
 		kToolWindowWidgetResize,
 		kToolWindowWidgetMove,
 	};
@@ -155,10 +161,21 @@ private:
 	Common::String _title;
 	bool _isDirty;
 	int _scrollOffset;
+
+	int _scrollBarHandleSize;
+	int _scrollBarHandleOffset;
+	int _scrollBarHandleMaxOffset;
+	int _maxScrollOffset;
+	bool _haveScrollBar;
+	int32 _scrollStartOffset;
+
+	bool _havePreferredScrollOffset;
+	int32 _preferredScrollOffset;
 };
 
 DebugToolWindowBase::DebugToolWindowBase(DebuggerTool tool, const Common::String &title, Debugger *debugger, const WindowParameters &windowParams)
-	: Window(windowParams), _debugger(debugger), _tool(tool), _title(title), _activeWidget(kToolWindowWidgetNone), _isMouseCaptured(false), _isDirty(true), _scrollOffset(0) {
+	: Window(windowParams), _debugger(debugger), _tool(tool), _title(title), _activeWidget(kToolWindowWidgetNone), _isMouseCaptured(false),
+	  _isDirty(true), _scrollOffset(0), _haveScrollBar(false), _havePreferredScrollOffset(false) {
 
 	refreshChrome();
 }
@@ -185,16 +202,37 @@ void DebugToolWindowBase::render() {
 				needChromeUpdate = true;
 		}
 
-		if (needChromeUpdate)
-			refreshChrome();
-
 		if (_toolSurface) {
+			bool needToResetHandle = false;
+			if (_havePreferredScrollOffset) {
+				_scrollOffset = _preferredScrollOffset;
+				_havePreferredScrollOffset = false;
+				needToResetHandle = true;
+			}
+
 			int32 contentsBottom = _toolSurface->h - _scrollOffset;
 			if (contentsBottom < renderHeight) {
 				_scrollOffset -= (renderHeight - contentsBottom);
 			}
 			if (_scrollOffset < 0)
 				_scrollOffset = 0;
+
+			int surfaceHeight = _toolSurface->h;
+			if (surfaceHeight > renderHeight) {
+				int channelSpace = getHeight() - kTopBarHeight - kMinScrollBarHandleSize - kResizeHeight;
+
+				if (!_haveScrollBar || oldHeight != surfaceHeight || needToResetHandle) {
+					_maxScrollOffset = surfaceHeight - renderHeight;
+					_scrollBarHandleSize = renderHeight * channelSpace / surfaceHeight + kMinScrollBarHandleSize;
+					_scrollBarHandleMaxOffset = (channelSpace + kMinScrollBarHandleSize - _scrollBarHandleSize);
+					_scrollBarHandleOffset = _scrollOffset * _scrollBarHandleMaxOffset / _maxScrollOffset;
+				}
+
+				_haveScrollBar = true;
+			} else {
+				_haveScrollBar = false;
+				cancelScrolling();
+			}
 
 			int32 srcLeft = 0;
 			int32 srcTop = 0;
@@ -251,9 +289,21 @@ void DebugToolWindowBase::render() {
 
 			getSurface()->fillRect(Common::Rect(0, kTopBarHeight, renderWidth, getHeight()), getSurface()->format.RGBToColor(255, 255, 255));
 			getSurface()->rawBlitFrom(*_toolSurface.get(), Common::Rect(srcLeft, srcTop, srcRight, srcBottom), Common::Point(destLeft, destTop + kTopBarHeight), nullptr);
+		} else {
+			_haveScrollBar = false;
+			cancelScrolling();
 		}
+
+		if (needChromeUpdate)
+			refreshChrome();
 	}
 }
+
+void DebugToolWindowBase::trySetScrollOffset(int32 scrollOffset) {
+	_havePreferredScrollOffset = true;
+	_preferredScrollOffset = scrollOffset;
+}
+
 
 void DebugToolWindowBase::onMouseDown(int32 x, int32 y, int mouseButton) {
 	if (mouseButton != Actions::kMouseButtonLeft)
@@ -279,18 +329,32 @@ void DebugToolWindowBase::onMouseDown(int32 x, int32 y, int mouseButton) {
 			_activeWidget = kToolWindowWidgetResize;
 			_resizeStartWidth = getWidth();
 			_resizeStartHeight = getHeight();
+		} else {
+			if (_haveScrollBar) {
+				int32 relativeToScrollHandle = y - kTopBarHeight - _scrollBarHandleOffset;
+				if (relativeToScrollHandle < 0)
+					_activeWidget = kToolWindowWidgetScrollChannelUp;
+				else if (relativeToScrollHandle >= _scrollBarHandleSize)
+					_activeWidget = kToolWindowWidgetScrollChannelDown;
+				else {
+					_activeWidget = kToolWindowWidgetScrollHandle;
+					_scrollStartOffset = _scrollBarHandleOffset;
+				}
+
+				setDirty();
+			} else {
+				_activeWidget = kToolWindowWidgetScrollEmpty;
+			}
 		}
-		else
-			_activeWidget = kToolWindowWidgetScroll;
 	} else {
 		_activeWidget = kToolWindowWidgetNone;
-		toolOnMouseDown(x, y - kTopBarHeight, mouseButton);
+		toolOnMouseDown(x, y - kTopBarHeight + _scrollOffset, mouseButton);
 	}
 }
 
 void DebugToolWindowBase::onMouseMove(int32 x, int32 y) {
 	if (_activeWidget == kToolWindowWidgetNone)
-		toolOnMouseMove(x, y - kTopBarHeight);
+		toolOnMouseMove(x, y - kTopBarHeight + _scrollOffset);
 	else {
 		if (_activeWidget == kToolWindowWidgetMove) {
 			int32 relX = x - _dragStartX;
@@ -310,7 +374,20 @@ void DebugToolWindowBase::onMouseMove(int32 x, int32 y) {
 			if (newWidth != getWidth() || newHeight != getHeight()) {
 				_toolSurface.reset();
 				resizeWindow(newWidth, newHeight);
-				_isDirty = true;
+				setDirty();
+			}
+		} else if (_activeWidget == kToolWindowWidgetScrollHandle) {
+			int32 desiredOffset = y - _dragStartY + _scrollStartOffset;
+			if (desiredOffset < 0)
+				desiredOffset = 0;
+			else if (desiredOffset > _scrollBarHandleMaxOffset)
+				desiredOffset = _scrollBarHandleMaxOffset;
+
+			// Try to avoid scrolling unnecessarily, especially with zero offset
+			if (desiredOffset != _scrollBarHandleOffset) {
+				_scrollBarHandleOffset = desiredOffset;
+				_scrollOffset = _scrollBarHandleOffset * _maxScrollOffset / _scrollBarHandleMaxOffset;
+				setDirty();
 			}
 		}
 	}
@@ -326,13 +403,16 @@ void DebugToolWindowBase::onMouseUp(int32 x, int32 y, int mouseButton) {
 	_isMouseCaptured = false;
 
 	if (_activeWidget == kToolWindowWidgetNone)
-		toolOnMouseUp(x, y - kTopBarHeight, mouseButton);
+		toolOnMouseUp(x, y - kTopBarHeight + _scrollOffset, mouseButton);
 	else {
 		if (_activeWidget == kToolWindowWidgetClose) {
 			if (x < kCloseWidth && y < kTopBarHeight) {
 				_debugger->closeToolWindow(_tool);
 				return;
 			}
+		}
+		if (_activeWidget == kToolWindowWidgetScrollHandle) {
+			setDirty();
 		}
 
 		_activeWidget = kToolWindowWidgetNone;
@@ -341,6 +421,11 @@ void DebugToolWindowBase::onMouseUp(int32 x, int32 y, int mouseButton) {
 
 void DebugToolWindowBase::setDirty() {
 	_isDirty = true;
+}
+
+void DebugToolWindowBase::cancelScrolling() {
+	if (_activeWidget == kToolWindowWidgetScrollChannelDown || _activeWidget == kToolWindowWidgetScrollChannelUp || _activeWidget == kToolWindowWidgetScrollHandle)
+		_activeWidget = kToolWindowWidgetNone;
 }
 
 void DebugToolWindowBase::refreshChrome() {
@@ -355,7 +440,9 @@ void DebugToolWindowBase::refreshChrome() {
 	uint32 topBarColor = fmt.RGBToColor(192, 192, 192);
 	uint32 topTextColor = blackColor;
 
-	uint32 inactiveScrollColor = fmt.RGBToColor(225, 225, 225);
+	uint32 scrollBarChannelColor = fmt.RGBToColor(225, 225, 225);
+	uint32 scrollBarHandleInactiveColor = fmt.RGBToColor(160, 160, 160);
+	uint32 scrollBarHandleActiveColor = fmt.RGBToColor(128, 128, 128);
 
 	int width = surface->w;
 	int height = surface->h;
@@ -379,7 +466,16 @@ void DebugToolWindowBase::refreshChrome() {
 
 	font->drawString(surface, _title, kCloseWidth, titleY, titleAvailableWidth, topTextColor, Graphics::kTextAlignCenter, 0, true);
 
-	surface->fillRect(Common::Rect(width - kScrollBarWidth, kTopBarHeight, width, height - kResizeHeight), inactiveScrollColor);
+	surface->fillRect(Common::Rect(width - kScrollBarWidth, kTopBarHeight, width, height - kResizeHeight), scrollBarChannelColor);
+
+	if (_haveScrollBar) {
+		uint32 scrollHandleColor = scrollBarHandleInactiveColor;
+		if (_activeWidget == kToolWindowWidgetScrollHandle)
+			scrollHandleColor = scrollBarHandleActiveColor;
+
+		surface->fillRect(Common::Rect(width - kScrollBarWidth, kTopBarHeight + _scrollBarHandleOffset, width, kTopBarHeight + _scrollBarHandleOffset + _scrollBarHandleSize), scrollHandleColor);
+	}
+
 	surface->fillRect(Common::Rect(0, 0, kCloseWidth, kTopBarHeight), closeColor);
 	surface->drawThickLine(2, 2, kCloseWidth - 4, kTopBarHeight - 4, 2, 2, whiteColor);
 	surface->drawThickLine(kCloseWidth - 4, 2, 2, kTopBarHeight - 4, 2, 2, whiteColor);
@@ -399,11 +495,20 @@ private:
 	static const int kBaseLeftPadding = 14;
 	static const int kExpanderLeftOffset = 8;
 	static const int kPerLevelSpacing = 14;
+	static const int kTypeIndicatorPadding = 12;
+	static const int kSceneStackBaseHeight = 18;
+	static const int kSceneStackRowHeight = 14;
+	static const int kSceneStackGoToButtonWidth = 36;
+	static const int kSceneStackGoToButtonFirstY = 15;
+	static const int kSceneStackGoToButtonHeight = 12;
+	static const int kSceneStackGoToButtonX = 2;
+	
 
 	struct SceneTreeEntryUIState {
 		SceneTreeEntryUIState();
 
 		bool expanded;
+		bool selected;
 	};
 
 	struct SceneTreeEntry {
@@ -421,20 +526,63 @@ private:
 
 	static void recursiveBuildTree(int level, size_t parentIndex, RuntimeObject *object, Common::Array<SceneTreeEntry> &tree);
 
+	static uint32 getColorForObject(const RuntimeObject *object, const Graphics::PixelFormat &fmt);
+
+	int32 _treeYOffset;
 	Common::Array<SceneTreeEntry> _tree;
 	Common::Array<RenderEntry> _renderEntries;
+	Common::Array<Common::WeakPtr<Structural> > _sceneStack;
+	Common::WeakPtr<Structural> _mainScene;
+	Common::WeakPtr<Structural> _sharedScene;
+	Common::WeakPtr<RuntimeObject> _latentScrollTo;
 	bool _forceRender;
 };
 
-DebugSceneTreeWindow::SceneTreeEntryUIState::SceneTreeEntryUIState() : expanded(false) {
+DebugSceneTreeWindow::SceneTreeEntryUIState::SceneTreeEntryUIState() : expanded(false), selected(false) {
 }
 
 DebugSceneTreeWindow::DebugSceneTreeWindow(Debugger *debugger, const WindowParameters &windowParams)
-	: DebugToolWindowBase(kDebuggerToolSceneTree, "Project", debugger, windowParams), _forceRender(true) {
+	: DebugToolWindowBase(kDebuggerToolSceneTree, "Project", debugger, windowParams), _forceRender(true), _treeYOffset(20) {
 }
 
 void DebugSceneTreeWindow::update() {
 	bool needRerender = _forceRender;
+
+	Runtime *runtime = _debugger->getRuntime();
+
+	Common::Array<Common::SharedPtr<Structural> > newSceneStack;
+	runtime->getSceneStack(newSceneStack);
+
+	bool sceneStackChanged = false;
+	if (newSceneStack.size() != _sceneStack.size())
+		sceneStackChanged = true;
+	else {
+		for (size_t i = 0; i < newSceneStack.size(); i++) {
+			if (newSceneStack[i] != _sceneStack[i].lock()) {
+				sceneStackChanged = true;
+				break;
+			}
+		}
+	}
+
+	if (sceneStackChanged) {
+		needRerender = true;
+		_sceneStack.clear();
+		for (size_t i = 0; i < newSceneStack.size(); i++)
+			_sceneStack.push_back(newSceneStack[i]);
+	}
+	
+	Common::SharedPtr<Structural> sharedScene = runtime->getActiveSharedScene();
+	Common::SharedPtr<Structural> mainScene = runtime->getActiveMainScene();
+
+	if (_sharedScene != Common::WeakPtr<Structural>(sharedScene)) {
+		_sharedScene = sharedScene;
+		needRerender = true;
+	}
+	if (_mainScene != Common::WeakPtr<Structural>(mainScene)) {
+		_mainScene = mainScene;
+		needRerender = true;
+	}
 
 	// This is super expensive but still less expensive than a redraw and we're only using it to debug,
 	// so kind of just eating the massive perf hit...
@@ -454,10 +602,12 @@ void DebugSceneTreeWindow::update() {
 	// Keep existing reserve
 	_tree.resize(0);
 
+	// Generate the tree
 	Project *project = _debugger->getRuntime()->getProject();
 	if (project)
 		recursiveBuildTree(0, 0, project, _tree);
 
+	// If the tree changed, we need to re-render
 	if (_tree.size() != oldSize)
 		needRerender = true;
 
@@ -465,6 +615,22 @@ void DebugSceneTreeWindow::update() {
 		Common::HashMap<RuntimeObject *, SceneTreeEntryUIState>::const_iterator oldStateIt = stateCache.find(treeEntry.object.lock().get());
 		if (oldStateIt != stateCache.end())
 			treeEntry.uiState = oldStateIt->_value;
+	}
+
+	if (!_latentScrollTo.expired()) {
+		for (SceneTreeEntry &treeEntry : _tree) {
+			if (treeEntry.object == _latentScrollTo) {
+				size_t parentIndex = treeEntry.parentIndex;
+				do {
+					_tree[parentIndex].uiState.expanded = true;
+					parentIndex = _tree[parentIndex].parentIndex;
+				} while (parentIndex != 0);
+				_tree[0].uiState.expanded = true;
+				break;
+			}
+		}
+
+		needRerender = true;
 	}
 
 	if (needRerender) {
@@ -475,6 +641,7 @@ void DebugSceneTreeWindow::update() {
 }
 
 void DebugSceneTreeWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) {
+	// Render tree
 	Common::HashMap<const SceneTreeEntry *, size_t> treeToRenderIndex;
 	_renderEntries.clear();
 
@@ -496,7 +663,7 @@ void DebugSceneTreeWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHe
 		} else if (parentIndex == lastParentIndex) {
 			isParentExpanded = lastParentExpanded;
 			parentRenderIndex = lastParentRenderIndex;
-		}else {
+		} else {
 			const SceneTreeEntry *parent = &_tree[entry.parentIndex];
 			if (parent->uiState.expanded) {
 				// Parent is expanded, figure out if it's actually rendered
@@ -523,10 +690,13 @@ void DebugSceneTreeWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHe
 		}
 	}
 
+	// Draw
+	_treeYOffset = kSceneStackBaseHeight + kSceneStackRowHeight * _sceneStack.size();
+
 	Graphics::PixelFormat fmt = getSurface()->format;
 
 	int32 width = subAreaWidth;
-	int32 height = static_cast<int32>(_renderEntries.size()) * kRowHeight;
+	int32 height = static_cast<int32>(_renderEntries.size()) * kRowHeight + _treeYOffset;
 	if (!_toolSurface || (height != _toolSurface->h || width != _toolSurface->w)) {
 		_toolSurface.reset();
 		_toolSurface.reset(new Graphics::ManagedSurface(subAreaWidth, height, fmt));
@@ -540,6 +710,29 @@ void DebugSceneTreeWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHe
 
 	_toolSurface->fillRect(Common::Rect(0, 0, width, height), whiteColor);
 
+	// Draw scene stack
+	font->drawString(_toolSurface.get(), "Scene stack:", 2, 2, width, blackColor);
+	for (size_t i = 0; i < _sceneStack.size(); i++) {
+		Common::SharedPtr<Structural> structural = _sceneStack[i].lock();
+		if (!structural)
+			continue;
+
+		Common::String str = structural->getName();
+		if (structural == _mainScene.lock())
+			str += " (Main)";
+		if (structural == _sharedScene.lock())
+			str += " (Shared)";
+
+		font->drawString(_toolSurface.get(), str, kSceneStackGoToButtonWidth + 4, 16 + i * kSceneStackRowHeight, width, blackColor);
+
+		int buttonX = kSceneStackGoToButtonX;
+		int buttonY = kSceneStackGoToButtonFirstY + i * kSceneStackRowHeight;
+
+		_toolSurface->frameRect(Common::Rect(buttonX, buttonY, buttonX + kSceneStackGoToButtonWidth, buttonY + kSceneStackGoToButtonHeight), blackColor);
+		font->drawString(_toolSurface.get(), "Go To", buttonX + 1, buttonY + 1, kSceneStackGoToButtonWidth - 2, blackColor, Graphics::kTextAlignCenter);
+	}
+
+	// Draw tree
 	for (size_t row = 0; row < _renderEntries.size(); row++) {
 		const RenderEntry &renderEntry = _renderEntries[row];
 		const SceneTreeEntry &entry = _tree[renderEntry.treeIndex];
@@ -548,7 +741,9 @@ void DebugSceneTreeWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHe
 		if (!obj)
 			continue;	// ???
 
-		int32 y = static_cast<int32>(row) * kRowHeight + (kRowHeight - font->getFontAscent()) / 2;
+		int32 rowTopY = static_cast<int32>(row) * kRowHeight + _treeYOffset;
+		int32 rowBottomY = rowTopY + kRowHeight;
+		int32 y = rowTopY + (kRowHeight - font->getFontAscent()) / 2;
 		int32 x = kBaseLeftPadding + kPerLevelSpacing * entry.level;
 
 		Common::String name;
@@ -557,11 +752,26 @@ void DebugSceneTreeWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHe
 		else if (obj->isStructural())
 			name = static_cast<const Structural *>(obj.get())->getName();
 
-		font->drawString(_toolSurface.get(), name, x, y, width - x, blackColor, Graphics::kTextAlignLeft, 0, true);
+		uint32 objIndicatorColor = getColorForObject(obj.get(), fmt);
+		{
+			int32 indicatorCenterX = x + kTypeIndicatorPadding / 2;
+			int32 indicatorCenterY = rowTopY + (kRowHeight / 2);
+			_toolSurface->fillRect(Common::Rect(indicatorCenterX - 4, indicatorCenterY - 4, indicatorCenterX + 4, indicatorCenterY + 4), objIndicatorColor);
+		}
+
+		int textX = x + kTypeIndicatorPadding;
+		int strWidth = font->getStringWidth(name);
+		if (strWidth > width - textX)
+			strWidth = width - textX;
+
+		bool isSelected = entry.uiState.selected;
+		if (isSelected)
+			_toolSurface->fillRect(Common::Rect(textX - 1, rowTopY, textX + strWidth + 1, rowBottomY), blackColor);
+		font->drawString(_toolSurface.get(), name, textX, y, strWidth, isSelected ? whiteColor : blackColor, Graphics::kTextAlignLeft, 0, true);
 
 		if (entry.hasChildren) {
 			int32 expanderCenterX = x - kExpanderLeftOffset;
-			int32 expanderCenterY = static_cast<int32>(row) * kRowHeight + (kRowHeight / 2);
+			int32 expanderCenterY = rowTopY + (kRowHeight / 2);
 			_toolSurface->frameRect(Common::Rect(expanderCenterX - 4, expanderCenterY - 4, expanderCenterX + 5, expanderCenterY + 5), blackColor);
 			_toolSurface->drawLine(expanderCenterX - 2, expanderCenterY, expanderCenterX + 2, expanderCenterY, blackColor);
 			if (!entry.uiState.expanded)
@@ -585,10 +795,12 @@ void DebugSceneTreeWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHe
 		const SceneTreeEntry &treeEntry = _tree[renderEntry.treeIndex];
 		const SceneTreeEntry &parentTreeEntry = _tree[parentRenderEntry.treeIndex];
 
+		int32 rowTopY = static_cast<int32>(row) * kRowHeight + _treeYOffset;
+
 		int32 x = kBaseLeftPadding + kPerLevelSpacing * treeEntry.level;
 
 		int32 parentTracerRightX = x - 2;
-		int32 parentTracerY = static_cast<int32>(row) * kRowHeight + (kRowHeight / 2);
+		int32 parentTracerY = rowTopY + (kRowHeight / 2);
 		if (treeEntry.hasChildren)
 			parentTracerRightX -= kExpanderLeftOffset + 7;
 
@@ -598,20 +810,38 @@ void DebugSceneTreeWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHe
 		if (!haveRenderedParentTracers[renderEntry.parentRenderIndex]) {
 			haveRenderedParentTracers[renderEntry.parentRenderIndex] = true;
 
-			int32 parentTracerTopY = static_cast<int32>(renderEntry.parentRenderIndex + 1) * kRowHeight;
+			int32 parentTracerTopY = static_cast<int32>(renderEntry.parentRenderIndex + 1) * kRowHeight + _treeYOffset;
 			_toolSurface->drawLine(parentTracerLeftX, parentTracerY, parentTracerLeftX, parentTracerTopY, lightGrayColor);
 		}
+
+		if (treeEntry.object == _latentScrollTo)
+			trySetScrollOffset(rowTopY);
 	}
+
+	_latentScrollTo.reset();
 }
 
 void DebugSceneTreeWindow::toolOnMouseDown(int32 x, int32 y, int mouseButton) {
 	if (mouseButton != Actions::kMouseButtonLeft)
 		return;
 
-	if (y < 0)
+	for (int i = 0; i < _sceneStack.size(); i++) {
+		int buttonLeft = kSceneStackGoToButtonX;
+		int buttonRight = buttonLeft + kSceneStackGoToButtonWidth;
+		int buttonTop = kSceneStackGoToButtonFirstY + i * kSceneStackRowHeight;
+		int buttonBottom = buttonTop + kSceneStackGoToButtonHeight;
+
+		if (x >= buttonLeft && x < buttonRight && y >= buttonTop && y < buttonBottom) {
+			_forceRender = true;
+			_latentScrollTo = _sceneStack[i];
+			return;
+		}
+	}
+
+	if (y < _treeYOffset)
 		return;
 
-	int32 row = y / kRowHeight;
+	int32 row = (y - _treeYOffset) / kRowHeight;
 
 	if (row >= _renderEntries.size())
 		return;
@@ -619,8 +849,8 @@ void DebugSceneTreeWindow::toolOnMouseDown(int32 x, int32 y, int mouseButton) {
 	const RenderEntry &renderEntry = _renderEntries[row];
 	SceneTreeEntry &treeEntry = _tree[renderEntry.treeIndex];
 
-	int32 expanderCenterX = kBaseLeftPadding - kExpanderLeftOffset;
-	int32 expanderCenterY = row * kRowHeight + kRowHeight / 2;
+	int32 expanderCenterX = kBaseLeftPadding - kExpanderLeftOffset + treeEntry.level * kPerLevelSpacing;
+	int32 expanderCenterY = row * kRowHeight + kRowHeight / 2 + _treeYOffset;
 
 	if (x >= expanderCenterX - 5 && x <= expanderCenterX + 5 && y >= expanderCenterX - 5 && y <= expanderCenterY + 5) {
 		// Clicked the expander
@@ -656,6 +886,26 @@ void DebugSceneTreeWindow::recursiveBuildTree(int level, size_t parentIndex, Run
 
 	if (tree.size() - thisIndex > 1)
 		tree[thisIndex].hasChildren = true;
+}
+
+uint32 DebugSceneTreeWindow::getColorForObject(const RuntimeObject *object, const Graphics::PixelFormat &fmt) {
+	if (object->isStructural()) {
+		return fmt.RGBToColor(128, 128, 128);
+	} else if (object->isModifier()) {
+		const Modifier *mod = static_cast<const Modifier *>(object);
+		if (mod->isAlias())
+			return fmt.RGBToColor(255, 0, 255);
+		else if (mod->isVariable())
+			return fmt.RGBToColor(0, 0, 255);
+		else if (mod->isBehavior())
+			return fmt.RGBToColor(196, 0, 208);
+		else if (mod->isCompoundVariable())
+			return fmt.RGBToColor(100, 100, 200);
+		else
+			return fmt.RGBToColor(0, 196, 128);
+	} else {
+		return fmt.RGBToColor(0, 0, 0);
+	}
 }
 
 class DebugToolsWindow : public Window {

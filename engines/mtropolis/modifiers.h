@@ -36,6 +36,8 @@ class BehaviorModifier : public Modifier, public IModifierContainer {
 public:
 	bool load(ModifierLoaderContext &context, const Data::BehaviorModifier &data);
 
+	bool isBehavior() const override { return true; }
+
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
 
@@ -557,6 +559,9 @@ public:
 	bool load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data);
 
 	IModifierContainer *getChildContainer() override;
+
+	bool isCompoundVariable() const override { return true; }
+
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Compound Variable Modifier"; }
