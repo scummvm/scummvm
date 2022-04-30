@@ -71,4 +71,4 @@ private:
 
 } // End of namespace MTropolis
 
-#endif /* MTROPOLIS_H */
+#endif /* MTROPOLIS_MTROPOLIS_H */

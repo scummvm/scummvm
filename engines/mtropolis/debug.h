@@ -37,6 +37,7 @@ class Runtime;
 class Window;
 class Structural;
 class Modifier;
+class DebugToolWindowBase;
 
 struct IDebuggable;
 
@@ -88,6 +89,8 @@ public:
 	void setPaused(bool paused);
 	bool isPaused() const;
 
+	Runtime *getRuntime() const;
+
 	void notify(DebugSeverity severity, const Common::String &str);
 	void notifyFmt(DebugSeverity severity, const char *fmt, ...);
 	void vnotifyFmt(DebugSeverity severity, const char *fmt, va_list args);
@@ -114,7 +117,7 @@ private:
 	Runtime *_runtime;
 	Common::SharedPtr<Window> _sceneStatusWindow;
 	Common::SharedPtr<Window> _toolsWindow;
-	Common::SharedPtr<Window> _toolWindows[kDebuggerToolCount];
+	Common::SharedPtr<DebugToolWindowBase> _toolWindows[kDebuggerToolCount];
 	Common::Array<ToastNotification> _toastNotifications;
 };
 
