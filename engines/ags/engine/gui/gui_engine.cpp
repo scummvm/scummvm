@@ -124,14 +124,6 @@ void GUITextBox::DrawTextBoxContents(Bitmap *ds, color_t text_color) {
 	}
 }
 
-void GUIListBox::DrawItemsFix() {
-	// do nothing
-}
-
-void GUIListBox::DrawItemsUnfix() {
-	// do nothing
-}
-
 void GUIListBox::PrepareTextToDraw(const String &text) {
 	if (Flags & kGUICtrl_Translated)
 		_textToDraw = get_translation(text.GetCStr());

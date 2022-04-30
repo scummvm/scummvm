@@ -87,9 +87,7 @@ private:
 
 	// Updates dynamic metrics such as row height and others
 	void UpdateMetrics();
-	// A temporary solution for special drawing in the Editor
-	void DrawItemsFix();
-	void DrawItemsUnfix();
+	// Applies translation
 	void PrepareTextToDraw(const String &text);
 
 	// prepared text buffer/cache
