@@ -784,28 +784,44 @@ void CompoundVariableModifier::visitInternalReferences(IStructuralReferenceVisit
 }
 
 bool CompoundVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
-	VariableModifier *var = findChildByName(attrib);
-	if (!var)
+	Modifier *var = findChildByName(attrib);
+	if (!var || !var->isModifier())
 		return false;
 
-	var->getValue(result);
+	static_cast<VariableModifier *>(var)->getValue(result);
 	return true;
+}
+
+bool CompoundVariableModifier::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) {
+	Modifier *var = findChildByName(attrib);
+	if (!var || !var->isModifier())
+		return false;
+
+	return var->readAttributeIndexed(thread, result, "value", index);
 }
 
 bool CompoundVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
-	VariableModifier *var = findChildByName(attrib);
-	if (!var)
+	Modifier *var = findChildByName(attrib);
+	if (!var || !var->isModifier())
 		return false;
 
-	writeProxy = DynamicValueWriteFuncHelper<VariableModifier, &VariableModifier::setValue>::create(var);
+	writeProxy = DynamicValueWriteFuncHelper<VariableModifier, &VariableModifier::setValue>::create(static_cast<VariableModifier *>(var));
 	return true;
 }
 
-VariableModifier *CompoundVariableModifier::findChildByName(const Common::String &name) const {
+bool CompoundVariableModifier::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) {
+	Modifier *var = findChildByName(attrib);
+	if (!var || !var->isModifier())
+		return false;
+
+	return var->writeRefAttributeIndexed(thread, writeProxy, "value", index);
+}
+
+Modifier *CompoundVariableModifier::findChildByName(const Common::String &name) const {
 	for (Common::Array<Common::SharedPtr<Modifier> >::const_iterator it = _children.begin(), itEnd = _children.end(); it != itEnd; ++it) {
 		Modifier *modifier = it->get();
-		if (modifier->isVariable() && caseInsensitiveEqual(name, modifier->getName()))
-			return static_cast<VariableModifier *>(modifier);
+		if (caseInsensitiveEqual(name, modifier->getName()))
+			return modifier;
 	}
 
 	return nullptr;

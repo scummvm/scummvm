@@ -47,7 +47,7 @@ private:
 };
 
 MidiPlayer::MidiPlayer(int8 source) : _isInitialized(false), _source(source) {
-	MidiDriver::DeviceHandle deviceHdl = MidiDriver::detectDevice(MDT_MIDI);
+	MidiDriver::DeviceHandle deviceHdl = MidiDriver::detectDevice(MDT_MIDI | MDT_PREFER_GM);
 	if (!deviceHdl)
 		return;
 

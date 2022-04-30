@@ -29,6 +29,274 @@
 
 namespace MTropolis {
 
+static const byte g_sceneTreeGraphic[] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0,
+	0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0,
+	0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+static const byte g_inspectorGraphic[] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0,
+	0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0,
+	0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0,
+	0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0,
+	0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+static const byte g_stepThroughGraphic[] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0,
+	0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0,
+	0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0,
+	0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0,
+	0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0,
+	0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0,
+	0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0,
+	0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0,
+	0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+static const byte g_resizeGraphic[] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0,
+	0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0,
+	0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0,
+	0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+class DebugToolWindowBase : public Window {
+public:
+	DebugToolWindowBase(DebuggerTool tool, const Common::String &title, Debugger *debugger, const WindowParameters &windowParams);
+
+protected:
+	const int kTopBarHeight = 12;
+	const int kScrollBarWidth = 12;
+	const int kCloseWidth = 12;
+	const int kResizeHeight = 12;
+
+	void onMouseDown(int32 x, int32 y, int mouseButton) override;
+	void onMouseMove(int32 x, int32 y) override;
+	void onMouseUp(int32 x, int32 y, int mouseButton) override;
+
+	virtual void toolOnMouseDown(int32 x, int32 y, int mouseButton) {}
+	virtual void toolOnMouseMove(int32 x, int32 y) {}
+	virtual void toolOnMouseUp(int32 x, int32 y, int mouseButton) {}
+
+	void refreshChrome();
+
+	Debugger *_debugger;
+	Common::SharedPtr<Graphics::ManagedSurface> _toolSurface;
+
+private:
+	enum ToolWindowWidget {
+		kToolWindowWidgetNone,
+
+		kToolWindowWidgetClose,
+		kToolWindowWidgetScroll,
+		kToolWindowWidgetResize,
+		kToolWindowWidgetMove,
+	};
+	ToolWindowWidget _activeWidget;
+	bool _isMouseCaptured;
+	int32 _dragStartX;
+	int32 _dragStartY;
+	int32 _resizeStartWidth;
+	int32 _resizeStartHeight;
+	DebuggerTool _tool;
+
+	Common::String _title;
+};
+
+DebugToolWindowBase::DebugToolWindowBase(DebuggerTool tool, const Common::String &title, Debugger *debugger, const WindowParameters &windowParams)
+	: Window(windowParams), _debugger(debugger), _tool(tool), _title(title), _activeWidget(kToolWindowWidgetNone), _isMouseCaptured(false) {
+
+	refreshChrome();
+}
+
+void DebugToolWindowBase::onMouseDown(int32 x, int32 y, int mouseButton) {
+	if (mouseButton != Actions::kMouseButtonLeft)
+		return;
+
+	if (_isMouseCaptured)
+		return;
+
+	_isMouseCaptured = true;
+	_dragStartX = x;
+	_dragStartY = y;
+
+	if (y < kTopBarHeight) {
+		if (x < kCloseWidth)
+			_activeWidget = kToolWindowWidgetClose;
+		else
+			_activeWidget = kToolWindowWidgetMove;
+
+		_dragStartX = x;
+		_dragStartY = y;
+	} else if (x >= getWidth() - kScrollBarWidth) {
+		if (y >= getHeight() - kResizeHeight) {
+			_activeWidget = kToolWindowWidgetResize;
+			_resizeStartWidth = getWidth();
+			_resizeStartHeight = getHeight();
+		}
+		else
+			_activeWidget = kToolWindowWidgetScroll;
+	} else {
+		_activeWidget = kToolWindowWidgetNone;
+		toolOnMouseDown(x, y - kTopBarHeight, mouseButton);
+	}
+}
+
+void DebugToolWindowBase::onMouseMove(int32 x, int32 y) {
+	if (_activeWidget == kToolWindowWidgetNone)
+		toolOnMouseMove(x, y - kTopBarHeight);
+	else {
+		if (_activeWidget == kToolWindowWidgetMove) {
+			int32 relX = x - _dragStartX;
+			int32 relY = y - _dragStartY;
+			setPosition(getX() + relX, getY() + relY);
+		} else if (_activeWidget == kToolWindowWidgetResize) {
+			int32 relX = x - _dragStartX;
+			int32 relY = y - _dragStartY;
+			int32 newWidth = _resizeStartWidth + relX;
+			int32 newHeight = _resizeStartHeight + relY;
+
+			if (newWidth < 100)
+				newWidth = 100;
+			if (newHeight < 100)
+				newHeight = 100;
+
+			if (newWidth != getWidth() || newHeight != getHeight()) {
+				this->resizeWindow(newWidth, newHeight);
+				refreshChrome();
+			}
+		}
+	}
+}
+
+void DebugToolWindowBase::onMouseUp(int32 x, int32 y, int mouseButton) {
+	if (mouseButton != Actions::kMouseButtonLeft)
+		return;
+
+	if (!_isMouseCaptured)
+		return;
+
+	_isMouseCaptured = false;
+
+	if (_activeWidget == kToolWindowWidgetNone)
+		toolOnMouseUp(x, y - kTopBarHeight, mouseButton);
+	else {
+		if (_activeWidget == kToolWindowWidgetClose) {
+			if (x < kCloseWidth && y < kTopBarHeight) {
+				_debugger->closeToolWindow(_tool);
+				return;
+			}
+		}
+
+		_activeWidget = kToolWindowWidgetNone;
+	}
+}
+
+void DebugToolWindowBase::refreshChrome() {
+	Graphics::ManagedSurface *surface = getSurface().get();
+
+	const Graphics::PixelFormat &fmt = surface->rawSurface().format;
+
+	uint32 blackColor = fmt.RGBToColor(0, 0, 0);
+	uint32 whiteColor = fmt.RGBToColor(255, 255, 255);
+	uint32 closeColor = fmt.RGBToColor(255, 0, 0);
+
+	uint32 topBarColor = fmt.RGBToColor(192, 192, 192);
+	uint32 topTextColor = blackColor;
+
+	uint32 inactiveScrollColor = fmt.RGBToColor(225, 225, 225);
+
+	int width = surface->w;
+	int height = surface->h;
+
+	for (int y = 0; y < 12; y++) {
+		for (int x = 0; x < 12; x++) {
+			uint32 pixelColor = (g_resizeGraphic[y * 12 + x] == 0) ? blackColor : whiteColor;
+			surface->setPixel(width - 12 + x, height - 12 + y, pixelColor);
+		}
+	}
+
+	surface->fillRect(Common::Rect(0, 0, width, kTopBarHeight), topBarColor);
+
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	int titleWidth = font->getStringWidth(_title);
+	int titleAvailableWidth = width - kCloseWidth;
+	if (titleWidth < titleAvailableWidth)
+		titleWidth = titleAvailableWidth;
+
+	int titleY = (kTopBarHeight - font->getFontAscent()) / 2;
+
+	font->drawString(surface, _title, kCloseWidth, titleY, titleAvailableWidth, topTextColor, Graphics::kTextAlignCenter, 0, true);
+
+	surface->fillRect(Common::Rect(width - kScrollBarWidth, kTopBarHeight, width, height - kResizeHeight), inactiveScrollColor);
+	surface->fillRect(Common::Rect(0, 0, kCloseWidth, kTopBarHeight), closeColor);
+	surface->drawThickLine(2, 2, kCloseWidth - 4, kTopBarHeight - 4, 2, 2, whiteColor);
+	surface->drawThickLine(kCloseWidth - 4, 2, 2, kTopBarHeight - 4, 2, 2, whiteColor);
+}
+
+class DebugToolsWindow : public Window {
+public:
+	DebugToolsWindow(Debugger *debugger, const WindowParameters &windowParams);
+
+	void onMouseDown(int32 x, int32 y, int mouseButton) override;
+
+private:
+	Debugger *_debugger;
+};
+
+DebugToolsWindow::DebugToolsWindow(Debugger *debugger, const WindowParameters &windowParams)
+	: Window(windowParams), _debugger(debugger) {
+}
+
+void DebugToolsWindow::onMouseDown(int32 x, int32 y, int mouseButton) {
+	int tool = 0;
+	if (y > 1)
+		tool = (y - 1) / 17;
+	_debugger->openToolWindow(static_cast<DebuggerTool>(tool));
+}
+
+
 DebugInspector::DebugInspector(IDebuggable *debuggable) {
 }
 
@@ -41,11 +309,50 @@ void DebugInspector::onDestroyed() {
 
 Debugger::Debugger(Runtime *runtime) : _paused(false), _runtime(runtime) {
 	refreshSceneStatus();
+
+	const Graphics::PixelFormat renderFmt = runtime->getRenderPixelFormat();
+
+	const byte *toolGraphics[kDebuggerToolCount] = {
+		g_sceneTreeGraphic,
+		g_inspectorGraphic,
+		g_stepThroughGraphic,
+	};
+
+	_toolsWindow.reset(new DebugToolsWindow(this, WindowParameters(runtime, 0, 0, 18, 1 + kDebuggerToolCount * 17, renderFmt)));
+	Graphics::ManagedSurface *toolWindowSurface = _toolsWindow->getSurface().get();
+
+	uint32 whiteColor = renderFmt.RGBToColor(255, 255, 255);
+	uint32 blackColor = renderFmt.RGBToColor(0, 0, 0);
+
+	const uint32 toolGraphicPalette[] = {blackColor, whiteColor};
+
+	for (int y = 0; y < 1 + kDebuggerToolCount * 17; y++) {
+		for (int x = 0; x < 18; x++) {
+			toolWindowSurface->setPixel(x, y, whiteColor);
+		}
+	}
+
+	for (int tool = 0; tool < kDebuggerToolCount; tool++) {
+		const byte *toolGraphic = toolGraphics[tool];
+
+		for (int y = 0; y < 16; y++) {
+			for (int x = 0; x < 16; x++) {
+				toolWindowSurface->setPixel(x + 1, tool * 17 + 1 + y, toolGraphicPalette[toolGraphic[y * 16 + x]]);
+			}
+		}
+	}
+
+	_toolsWindow->setStrata(1);
+	runtime->addWindow(_toolsWindow);
 }
 
 Debugger::~Debugger() {
-	if (_runtime)
+	if (_runtime) {
 		_runtime->removeWindow(_sceneStatusWindow.get());
+		_runtime->removeWindow(_toolsWindow.get());
+		for (int i = 0; i < kDebuggerToolCount; i++)
+			_runtime->removeWindow(_toolWindows[i].get());
+	}
 }
 
 void Debugger::runFrame(uint32 msec) {
@@ -95,7 +402,9 @@ void Debugger::notify(DebugSeverity severity, const Common::String& str) {
 	const Graphics::PixelFormat pixelFmt = _runtime->getRenderPixelFormat();
 
 	ToastNotification toastNotification;
-	toastNotification.window.reset(new Window(_runtime, 0, displayHeight, width, toastNotificationHeight, pixelFmt));
+	toastNotification.window.reset(new Window(WindowParameters(_runtime, 0, displayHeight, width, toastNotificationHeight, pixelFmt)));
+	toastNotification.window->setStrata(3);
+	toastNotification.window->setMouseTransparent(true);
 
 	byte fillColor[3] = {255, 255, 255};
 	if (severity == kDebugSeverityError) {
@@ -165,12 +474,18 @@ void Debugger::refreshSceneStatus() {
 
 	const Graphics::PixelFormat pixelFmt = _runtime->getRenderPixelFormat();
 
-	_sceneStatusWindow.reset(new Window(_runtime, 0, 0, horizPadding * 2 + width, vertSpacing * sceneStrs.size(), pixelFmt));
+	_sceneStatusWindow.reset(new Window(WindowParameters(_runtime, 0, 0, horizPadding * 2 + width, vertSpacing * sceneStrs.size(), pixelFmt)));
+	_sceneStatusWindow->setMouseTransparent(true);
+	_sceneStatusWindow->setStrata(1);
+
 	_runtime->addWindow(_sceneStatusWindow);
 
 	for (uint i = 0; i < sceneStrs.size(); i++) {
 		font->drawString(_sceneStatusWindow->getSurface().get(), sceneStrs[i], horizPadding, vertSpacing * i + (vertSpacing - font->getFontAscent()) / 2, width, Render::resolveRGB(255, 255, 255, pixelFmt));
 	}
+
+	if (_toolsWindow)
+		_toolsWindow->setPosition(0, _sceneStatusWindow->getHeight());
 }
 
 void Debugger::complainAboutUnfinished(Structural *structural) {
@@ -202,6 +517,37 @@ void Debugger::complainAboutUnfinished(Structural *structural) {
 			}
 		}
 	}
+}
+
+void Debugger::openToolWindow(DebuggerTool tool) {
+	if (tool < 0 || tool >= kDebuggerToolCount)
+		return;	// This should never happen
+
+	Common::SharedPtr<Window> &windowRef = _toolWindows[tool];
+	if (windowRef)
+		return;
+
+	switch (tool) {
+	case kDebuggerToolSceneTree:
+		windowRef.reset(new DebugToolWindowBase(kDebuggerToolSceneTree, "SceneTree", this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
+		break;
+	case kDebuggerToolInspector:
+		windowRef.reset(new DebugToolWindowBase(kDebuggerToolInspector, "Inspector", this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
+		break;
+	case kDebuggerToolStepThrough:
+		windowRef.reset(new DebugToolWindowBase(kDebuggerToolStepThrough, "Debugger", this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
+		break;
+	default:
+		assert(false);
+		return;
+	}
+
+	_runtime->addWindow(windowRef);
+}
+
+void Debugger::closeToolWindow(DebuggerTool tool) {
+	_runtime->removeWindow(_toolWindows[tool].get());
+	_toolWindows[tool].reset();
 }
 
 void Debugger::scanStructuralStatus(Structural *structural, Common::HashMap<Common::String, SupportStatus> &unfinishedModifiers, Common::HashMap<Common::String, SupportStatus> &unfinishedElements) {

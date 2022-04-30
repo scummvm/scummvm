@@ -20,6 +20,8 @@
  */
 
 #include "mtropolis/mtropolis.h"
+
+#include "mtropolis/actions.h"
 #include "mtropolis/console.h"
 #include "mtropolis/debug.h"
 #include "mtropolis/runtime.h"
@@ -232,6 +234,28 @@ void MTropolisEngine::handleEvents() {
 
 	while (eventMan->pollEvent(evt)) {
 		switch (evt.type) {
+		case Common::EVENT_LBUTTONDOWN:
+			_runtime->onMouseDown(evt.mouse.x, evt.mouse.y, MTropolis::Actions::kMouseButtonLeft);
+			break;
+		case Common::EVENT_MBUTTONDOWN:
+			_runtime->onMouseDown(evt.mouse.x, evt.mouse.y, MTropolis::Actions::kMouseButtonMiddle);
+			break;
+		case Common::EVENT_RBUTTONDOWN:
+			_runtime->onMouseDown(evt.mouse.x, evt.mouse.y, MTropolis::Actions::kMouseButtonRight);
+			break;
+		case Common::EVENT_LBUTTONUP:
+			_runtime->onMouseUp(evt.mouse.x, evt.mouse.y, MTropolis::Actions::kMouseButtonLeft);
+			break;
+		case Common::EVENT_MBUTTONUP:
+			_runtime->onMouseUp(evt.mouse.x, evt.mouse.y, MTropolis::Actions::kMouseButtonMiddle);
+			break;
+		case Common::EVENT_RBUTTONUP:
+			_runtime->onMouseUp(evt.mouse.x, evt.mouse.y, MTropolis::Actions::kMouseButtonRight);
+			break;
+		case Common::EVENT_MOUSEMOVE:
+			_runtime->onMouseMove(evt.mouse.x, evt.mouse.y);
+			break;
+
 		default:
 			break;
 		}

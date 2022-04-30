@@ -323,6 +323,12 @@ void ImageElement::activate() {
 		return;
 	}
 
+	// If this is the same mode as the render target, then copy the exact mode
+	// so blits go faster
+	if (imageAsset->getColorDepth() == _runtime->getRealColorDepth()) {
+		pixelFmt = _runtime->getRenderPixelFormat();
+	}
+
 	Common::Array<uint8> rowBuffer;
 	rowBuffer.resize(bytesPerRow);
 

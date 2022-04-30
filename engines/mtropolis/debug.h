@@ -70,6 +70,14 @@ private:
 	Runtime *_runtime;
 };
 
+enum DebuggerTool {
+	kDebuggerToolSceneTree,
+	kDebuggerToolInspector,
+	kDebuggerToolStepThrough,
+
+	kDebuggerToolCount,
+};
+
 class Debugger {
 public:
 	explicit Debugger(Runtime *runtime);
@@ -87,6 +95,9 @@ public:
 	void refreshSceneStatus();
 	void complainAboutUnfinished(Structural *structural);
 
+	void openToolWindow(DebuggerTool tool);
+	void closeToolWindow(DebuggerTool tool);
+
 private:
 	Debugger();
 
@@ -102,6 +113,8 @@ private:
 	bool _paused;
 	Runtime *_runtime;
 	Common::SharedPtr<Window> _sceneStatusWindow;
+	Common::SharedPtr<Window> _toolsWindow;
+	Common::SharedPtr<Window> _toolWindows[kDebuggerToolCount];
 	Common::Array<ToastNotification> _toastNotifications;
 };
 
