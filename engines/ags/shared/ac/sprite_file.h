@@ -188,7 +188,9 @@ public:
 		return _index;
 	}
 
-	// Initializes new sprite file format
+	// Initializes new sprite file format;
+	// store_flags are SpriteStorage;
+	// optionally hint how many sprites will be written.
 	void Begin(int store_flags, SpriteCompression compress, sprkey_t last_slot = -1);
 	// Writes a bitmap into file, compressing if necessary
 	void WriteBitmap(Bitmap *image);
