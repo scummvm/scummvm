@@ -168,6 +168,7 @@ public:
 
 	//=========================================================================
 	// Clipping
+	// TODO: consider implementing push-pop clipping stack logic.
 	//=========================================================================
 	void    SetClip(const Rect &rc);
 	void    ResetClip();

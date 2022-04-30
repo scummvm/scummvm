@@ -113,7 +113,8 @@ void GUIListBox::Draw(Shared::Bitmap *ds) {
 	UpdateMetrics();
 
 	// draw the scroll bar in if necessary
-	if (ItemCount > VisibleItemCount && IsBorderShown() && AreArrowsShown()) {
+	bool scrollbar = (ItemCount > VisibleItemCount &&IsBorderShown() && AreArrowsShown());
+	if (scrollbar) {
 		int xstrt, ystrt;
 		ds->DrawRect(Rect(X + width - get_fixed_pixel_size(7), Y, (X + (pixel_size - 1) + width) - get_fixed_pixel_size(7), Y + height), draw_color);
 		ds->DrawRect(Rect(X + width - get_fixed_pixel_size(7), Y + height / 2, X + width, Y + height / 2 + (pixel_size - 1)), draw_color);
@@ -137,6 +138,10 @@ void GUIListBox::Draw(Shared::Bitmap *ds) {
 
 	// FIXME: cut this out, and let editor add real items for display
 	DrawItemsFix();
+
+	Rect old_clip = ds->GetClip();
+	if (scrollbar && GUI::Options.ClipControls)
+		ds->SetClip(Rect(X, Y, right_hand_edge + 1, Y + Height - 1));
 
 	for (int item = 0; item < VisibleItemCount; ++item) {
 		if (item + TopItem >= ItemCount)
@@ -163,6 +168,7 @@ void GUIListBox::Draw(Shared::Bitmap *ds) {
 		GUI::DrawTextAlignedHor(ds, _textToDraw.GetCStr(), Font, text_color, X + 1 + pixel_size, right_hand_edge, at_y + 1,
 		                        (FrameAlignment)TextAlignment);
 	}
+	ds->SetClip(old_clip);
 
 	DrawItemsUnfix();
 }
