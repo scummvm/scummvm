@@ -684,10 +684,10 @@ void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		_background->decoder->pauseVideo(false);
 		updateScreen(*_background);
 		drawScreen();
-	} else if (_levelId == 60 && s->name == "DOOR1") {
+	} else if (s->name == "DOOR1" || s->name == "DOOR2") {
 		_health = 0;
 		_background->decoder->pauseVideo(true);
-		// In this level, the hit boss video is used to store this ending
+		// In some levels, the hit boss video is used to store this ending
 		MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
 		runIntro(video);
 		loadPalette(arc->backgroundPalette);
