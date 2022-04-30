@@ -607,6 +607,11 @@ public:
 	color *_palette;
 	COLOR_MAP *_maincoltable;
 
+	// GUI control surfaces
+	std::vector<Shared::Bitmap *> *_guiobjbg;
+	std::vector<Engine::IDriverDependantBitmap *> *_guiobjbmp;
+	std::vector<int> *_guiobjbmpref; // first control texture index of each GUI
+
 	/**@}*/
 
 	/**

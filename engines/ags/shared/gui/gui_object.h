@@ -62,6 +62,8 @@ public:
 	bool            IsClickable() const;
     // Compatibility: should the control's graphic be clipped to its x,y,w,h
     virtual bool    IsContentClipped() const { return true; }
+	// Tells if the object image supports alpha channel
+	virtual bool    HasAlphaChannel() const;
 
 	// Operations
 	virtual void    Draw(Bitmap *ds, int x = 0, int y = 0) {

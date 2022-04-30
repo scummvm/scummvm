@@ -188,6 +188,10 @@ Globals::Globals() {
 	for (int i = 0; i < PALETTE_COUNT; ++i)
 		_palette[i].clear();
 
+	_guiobjbg = new std::vector<Shared::Bitmap *>();
+	_guiobjbmp = new std::vector<Engine::IDriverDependantBitmap *>();
+	_guiobjbmpref = new std::vector<int>();
+
 	// draw_software.cpp globals
 	_BlackRects = new DirtyRects();
 	_GlobalOffs = new Point();
@@ -437,6 +441,9 @@ Globals::~Globals() {
 	delete[] _dynamicallyCreatedSurfaces;
 	delete[] _palette;
 	delete _maincoltable;
+	delete _guiobjbg;
+	delete _guiobjbmp;
+	delete _guiobjbmpref;
 
 	// draw_software.cpp globals
 	delete _BlackRects;

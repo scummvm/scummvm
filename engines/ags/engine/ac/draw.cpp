@@ -61,6 +61,7 @@
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/gui_main.h"
+#include "ags/shared/gui/gui_object.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/plugin_engine.h"
@@ -370,6 +371,16 @@ void init_game_drawdata() {
 	_GP(actspswbcache).resize(actsps_num);
 	_GP(guibg).resize(_GP(game).numgui);
 	_GP(guibgbmp).resize(_GP(game).numgui);
+
+	size_t guio_num = 0;
+	// Prepare GUI cache lists and build the quick reference for controls cache
+	_GP(guiobjbmpref).resize(_GP(game).numgui);
+	for (const auto &gui : _GP(guis)) {
+		_GP(guiobjbmpref)[gui.ID] = guio_num;
+		guio_num += gui.GetControlCount();
+	}
+	_GP(guiobjbg).resize(guio_num);
+	_GP(guiobjbmp).resize(guio_num);
 }
 
 void dispose_game_drawdata() {
@@ -382,6 +393,10 @@ void dispose_game_drawdata() {
 	_GP(actspswbcache).clear();
 	_GP(guibg).clear();
 	_GP(guibgbmp).clear();
+
+	_GP(guiobjbg).clear();
+	_GP(guiobjbmp).clear();
+	_GP(guiobjbmpref).clear();
 }
 
 static void dispose_debug_room_drawdata() {
@@ -430,6 +445,14 @@ void clear_drawobj_cache() {
 		if (_GP(guibgbmp)[i])
 			_G(gfxDriver)->DestroyDDB(_GP(guibgbmp)[i]);
 		_GP(guibgbmp)[i] = nullptr;
+	}
+
+	for (uint i = 0; i < _GP(guiobjbg).size(); ++i) {
+		delete _GP(guiobjbg)[i];
+		_GP(guiobjbg)[i] = nullptr;
+		if (_GP(guiobjbmp)[i])
+			_G(gfxDriver)->DestroyDDB(_GP(guiobjbmp)[i]);
+		_GP(guiobjbmp)[i] = nullptr;
 	}
 
 	dispose_debug_room_drawdata();
@@ -747,6 +770,7 @@ static void clear_draw_list() {
 }
 
 static void add_thing_to_draw(IDriverDependantBitmap *bmp, int x, int y) {
+	assert(bmp != nullptr);
 	SpriteListEntry sprite;
 	sprite.bmp = bmp;
 	sprite.x = x;
@@ -1007,14 +1031,12 @@ Bitmap *recycle_bitmap(Bitmap *bimp, int coldep, int wid, int hit, bool make_tra
 }
 
 // Allocates texture for the GUI
-void recreate_guibg_image(GUIMain *tehgui) {
-	int ifn = tehgui->ID;
-	delete _GP(guibg)[ifn];
-	_GP(guibg)[ifn] = CreateCompatBitmap(tehgui->Width, tehgui->Height);
-
-	if (_GP(guibgbmp)[ifn] != nullptr) {
-		_G(gfxDriver)->DestroyDDB(_GP(guibgbmp)[ifn]);
-		_GP(guibgbmp)[ifn] = nullptr;
+void recreate_drawobj_bitmap(Bitmap *&raw, IDriverDependantBitmap *&ddb, int width, int height) {
+	delete raw;
+	raw = CreateCompatBitmap(width, height);
+	if (ddb != nullptr) {
+		_G(gfxDriver)->DestroyDDB(ddb);
+		ddb = nullptr;
 	}
 }
 
@@ -1933,8 +1955,45 @@ void draw_fps(const Rect &viewport) {
 	invalidate_sprite_glob(1, yp, ddb);
 }
 
+// Draw GUI controls as separate sprites
+void draw_gui_controls(GUIMain &gui) {
+	if (_G(all_buttons_disabled) && (GUI::Options.DisabledStyle == kGuiDis_Blackout))
+		return; // don't draw GUI controls
+
+	int draw_index = _GP(guiobjbmpref)[gui.ID];
+	for (int i = 0; i < gui.GetControlCount(); ++i, ++draw_index) {
+		GUIObject *obj = gui.GetControl(i);
+		if (_GP(guiobjbg)[draw_index] == nullptr ||
+			_GP(guiobjbg)[draw_index]->GetSize() != Size(obj->Width, obj->Height)) {
+			recreate_drawobj_bitmap(_GP(guiobjbg)[draw_index], _GP(guiobjbmp)[draw_index],
+				obj->Width, obj->Height);
+		}
+
+		if (!obj->IsVisible() ||
+			(!obj->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout)))
+			continue;
+
+		_GP(guiobjbg)[draw_index]->ClearTransparent();
+		obj->Draw(_GP(guiobjbg)[draw_index]);
+
+		if (_GP(guiobjbmp)[draw_index] != nullptr)
+			_G(gfxDriver)->UpdateDDBFromBitmap(_GP(guiobjbmp)[draw_index], _GP(guiobjbg)[draw_index], obj->HasAlphaChannel());
+		else
+			_GP(guiobjbmp)[draw_index] = _G(gfxDriver)->CreateDDBFromBitmap(_GP(guiobjbg)[draw_index], obj->HasAlphaChannel());
+	}
+}
+
 // Draw GUI and overlays of all kinds, anything outside the room space
 void draw_gui_and_overlays() {
+	// Draw gui controls on separate textures if:
+	// - it is a 3D renderer (software one may require adjustments -- needs testing)
+	// - not legacy alpha blending (may we implement specific texture blend?)
+	// - gui controls clipping is on (need to implement content size calc for all controls)
+	const bool draw_controls_as_textures =
+		_G(gfxDriver)->HasAcceleratedTransform()
+		&& (_GP(game).options[OPT_NEWGUIALPHA] == kGuiAlphaRender_Proper)
+		&& (_GP(game).options[OPT_CLIPGUICONTROLS] != 0);
+
 	if (pl_any_want_hook(AGSE_PREGUIDRAW))
 		add_render_stage(AGSE_PREGUIDRAW);
 
@@ -1973,14 +2032,20 @@ void draw_gui_and_overlays() {
 
 				_GP(guis)[aa].ClearChanged();
 				if (_GP(guibg)[aa] == nullptr ||
-					_GP(guibg)[aa]->GetSize() != Size(_GP(guis)[aa].Width, _GP(guis)[aa].Height))
-					recreate_guibg_image(&_GP(guis)[aa]);
+					_GP(guibg)[aa]->GetSize() != Size(_GP(guis)[aa].Width, _GP(guis)[aa].Height)) {
+					recreate_drawobj_bitmap(_GP(guibg)[aa], _GP(guibgbmp)[aa], _GP(guis)[aa].Width, _GP(guis)[aa].Height);
+				}
 
 				_G(eip_guinum) = aa;
 				_G(our_eip) = 370;
 				_GP(guibg)[aa]->ClearTransparent();
 				_G(our_eip) = 372;
-				_GP(guis)[aa].DrawWithControls(_GP(guibg)[aa]);
+				if (draw_controls_as_textures) {
+					_GP(guis)[aa].DrawSelf(_GP(guibg)[aa]);
+					draw_gui_controls(_GP(guis)[aa]);
+				} else {
+					_GP(guis)[aa].DrawWithControls(_GP(guibg)[aa]);
+				}
 				_G(our_eip) = 373;
 
 				bool isAlpha = false;
@@ -2016,6 +2081,21 @@ void draw_gui_and_overlays() {
 
 			_GP(guibgbmp)[aa]->SetTransparency(_GP(guis)[aa].Transparency);
 			add_to_sprite_list(_GP(guibgbmp)[aa], _GP(guis)[aa].X, _GP(guis)[aa].Y, _GP(guis)[aa].ZOrder, false);
+
+			// Add all the gui controls as separate textures
+			if (draw_controls_as_textures &&
+				!(_G(all_buttons_disabled) && (GUI::Options.DisabledStyle == kGuiDis_Blackout))) {
+				const int draw_index = _GP(guiobjbmpref)[aa];
+				for (const auto &obj_id : _GP(guis)[aa].GetControlsDrawOrder()) {
+					GUIObject *obj = _GP(guis)[aa].GetControl(obj_id);
+					if (!obj->IsVisible() ||
+						(!obj->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout)))
+						continue;
+					_GP(guiobjbmp)[draw_index + obj_id]->SetTransparency(_GP(guis)[aa].Transparency);
+					add_to_sprite_list(_GP(guiobjbmp)[draw_index + obj_id],
+						_GP(guis)[aa].X + obj->X, _GP(guis)[aa].Y + obj->Y, _GP(guis)[aa].ZOrder, false);
+				}
+			}
 		}
 
 		// Poll the GUIs

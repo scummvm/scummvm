@@ -143,6 +143,10 @@ int32_t GUIMain::GetControlID(int32_t index) const {
 	return _ctrlRefs[index].second;
 }
 
+const std::vector<int> &GUIMain::GetControlsDrawOrder() const {
+	return _ctrlDrawOrder;
+}
+
 bool GUIMain::IsClickable() const {
 	return (_flags & kGUIMain_Clickable) != 0;
 }
