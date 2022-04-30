@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-27 19:39+0000\n"
-"PO-Revision-Date: 2022-02-11 14:01+0000\n"
+"PO-Revision-Date: 2022-04-30 14:59+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -4501,7 +4501,7 @@ msgstr ""
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:190
 msgid "Delete Selected Saved Game"
-msgstr ""
+msgstr "Выдаліць абраны захоў"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:204
@@ -4549,7 +4549,7 @@ msgstr "Зьвесткі сцэны"
 #. SUSPECT DATABASE
 #: engines/bladerunner/metaengine.cpp:257
 msgid "Suspect Database"
-msgstr ""
+msgstr "Зьвесткі падазроных"
 
 #. I18N: This keymap opens KIA's CLUE DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4557,7 +4557,7 @@ msgstr ""
 #. CLUE DATABASE
 #: engines/bladerunner/metaengine.cpp:266
 msgid "Clue Database"
-msgstr ""
+msgstr "Зьвесткі даказак"
 
 #. I18N: This keymap opens KIA's QUIT GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4659,6 +4659,8 @@ msgid ""
 "The game prevents quitting at this moment. Are you sure you want to quit "
 "anyway?"
 msgstr ""
+"Гульня не дазваляе выйсьці цяпер. Ці сапраўды вы хочаце выйсьці, ня гледзячы "
+"на гэта?"
 
 #: engines/dragons/dragons.cpp:1802
 #, c-format
@@ -5179,7 +5181,7 @@ msgstr "Далучыць замену шрыфту"
 
 #: engines/hypno/detection.cpp:221
 msgid "Player health will never decrease (except for game over scenes)."
-msgstr ""
+msgstr "Здароўе гульца ніколі ня зьменшыцца (акром экранаў скону гульні)."
 
 #: engines/hypno/detection.cpp:229
 #, fuzzy
@@ -5189,7 +5191,7 @@ msgstr "Далучыць махлярства"
 
 #: engines/hypno/detection.cpp:230
 msgid "Player ammo will never decrease."
-msgstr ""
+msgstr "Набой гульца ніколі ня зьменшыцца."
 
 #: engines/hypno/detection.cpp:238
 #, fuzzy
@@ -5199,7 +5201,7 @@ msgstr "Далучыць інтэґрацыю з Discord"
 
 #: engines/hypno/detection.cpp:239
 msgid "Add additional content that is not enabled the original implementation."
-msgstr ""
+msgstr "Дадаць зьмест, які не далучаны ў арыгінале."
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
@@ -5696,6 +5698,8 @@ msgid ""
 "Toggles the use of QuickTime videos for visual effects related to water "
 "surfaces (ripples, waves, etc.)."
 msgstr ""
+"Пералучае выкарыстаньне відэа QuickTime для візуальных эфэктаў вады ("
+"рабізна, хвалі й г.д.)."
 
 #: engines/mohawk/dialogs.cpp:361
 msgid "Transitions:"
@@ -6288,11 +6292,12 @@ msgstr "Памылка ладаваньня зьвестак гульні."
 
 #: engines/sci/detection_options.h:31
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "Прапусьціць EGA-дызэрынґ (фоны поўныя колераў)"
 
 #: engines/sci/detection_options.h:32
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
+"Прапусьціць дызэрынґ гульнях EGA, графіка будзе паказаная ў поўных колерах"
 
 #: engines/sci/detection_options.h:43
 #, fuzzy
