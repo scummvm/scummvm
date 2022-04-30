@@ -90,6 +90,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	int               scoreClipID;
 	// number of allowed game audio channels (the ones under direct user control)
 	int               numGameChannels = 0;
+	int               numCompatGameChannels = 0;
 
 	// TODO: I converted original array of sprite infos to vector here, because
 	// statistically in most games sprites go in long continious sequences with minimal
