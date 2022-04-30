@@ -25,6 +25,8 @@
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"
 
+#include "graphics/cursorman.h"
+
 namespace MTropolis {
 
 template<class TNumber, int TResolution>
@@ -70,8 +72,13 @@ MacFontFormatting::MacFontFormatting() : fontID(0), fontFlags(0), size(12) {
 MacFontFormatting::MacFontFormatting(uint16 fontID, uint8 fontFlags, uint16 size) : fontID(fontID), fontFlags(fontFlags), size(size) {
 }
 
-Window::Window(Runtime *runtime, int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format) : _runtime(runtime), _x(x), _y(y) {
-	_surface.reset(new Graphics::ManagedSurface(width, height, format));
+WindowParameters::WindowParameters(Runtime *runtime, int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format)
+	: runtime(runtime), x(x), y(y), width(width), height(height), format(format) {
+}
+
+Window::Window(const WindowParameters &windowParams)
+	: _runtime(windowParams.runtime), _x(windowParams.x), _y(windowParams.y), _strata(0), _isMouseTransparent(false) {
+	_surface.reset(new Graphics::ManagedSurface(windowParams.width, windowParams.height, windowParams.format));
 }
 
 Window::~Window() {
@@ -85,11 +92,24 @@ int32 Window::getY() const {
 	return _y;
 }
 
+int32 Window::getWidth() const {
+	return _surface->w;
+}
+
+int32 Window::getHeight() const {
+	return _surface->h;
+}
+
 void Window::setPosition(int32 x, int32 y) {
 	_x = x;
 	_y = y;
 }
 
+void Window::resizeWindow(int32 width, int32 height) {
+	Graphics::PixelFormat pixFmt = _surface->format;
+	_surface.reset();
+	_surface.reset(new Graphics::ManagedSurface(width, height, pixFmt));
+}
 
 const Common::SharedPtr<Graphics::ManagedSurface> &Window::getSurface() const {
 	return _surface;
@@ -97,6 +117,23 @@ const Common::SharedPtr<Graphics::ManagedSurface> &Window::getSurface() const {
 
 const Graphics::PixelFormat& Window::getPixelFormat() const {
 	return _surface->format;
+}
+
+void Window::setStrata(int strata) {
+	_strata = strata;
+}
+
+int Window::getStrata() const {
+	return _strata;
+}
+
+// Mouse transparency = ignores mouse events
+void Window::setMouseTransparent(bool isTransparent) {
+	_isMouseTransparent = isTransparent;
+}
+
+bool Window::isMouseTransparent() const {
+	return _isMouseTransparent;
 }
 
 void Window::close() {
@@ -110,6 +147,16 @@ void Window::close() {
 void Window::detachFromRuntime() {
 	_runtime = nullptr;
 }
+
+void Window::onMouseDown(int32 x, int32 y, int mouseButton) {
+}
+
+void Window::onMouseMove(int32 x, int32 y) {
+}
+
+void Window::onMouseUp(int32 x, int32 y, int mouseButton) {
+}
+
 
 namespace Render {
 

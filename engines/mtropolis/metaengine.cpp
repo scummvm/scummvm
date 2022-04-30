@@ -20,8 +20,15 @@
  */
 
 #include "engines/advancedDetector.h"
+
+#include "mtropolis/actions.h"
+#include "mtropolis/debug.h"
 #include "mtropolis/detection.h"
+
 #include "mtropolis/mtropolis.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
 
 namespace MTropolis {
 
@@ -47,6 +54,8 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+
+	Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
 };
 
 bool MTropolisMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -54,12 +63,30 @@ bool MTropolisMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool MTropolis::MTropolisEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsReturnToLauncher);
+	switch (f) {
+	case kSupportsReturnToLauncher:
+		return true;
+	default:
+		return false;
+	};
 }
 
 Common::Error MTropolisMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new MTropolis::MTropolisEngine(syst, (const MTropolis::MTropolisGameDescription *)desc);
 	return Common::kNoError;
+}
+
+
+Common::Array<Common::Keymap *> MTropolisMetaEngine::initKeymaps(const char *target) const {
+	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "mtropolis", "mTropolis");
+
+	Common::Action *act;
+	act = new Common::Action("DEBUG_TOGGLE_OVERLAY", Common::convertUtf8ToUtf32("Toggle debug overlay"));
+	act->setCustomEngineActionEvent(MTropolis::Actions::kDebugToggleOverlay);
+	act->addDefaultInputMapping("F10");
+	keymap->addAction(act);
+
+	return Common::Keymap::arrayOf(keymap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MTROPOLIS)

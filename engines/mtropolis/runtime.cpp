@@ -33,6 +33,7 @@
 #include "common/substream.h"
 #include "common/system.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
 #include "graphics/surface.h"
 #include "graphics/wincursor.h"
@@ -2111,12 +2112,56 @@ void Scheduler::removeEvent(const ScheduledEvent *evt) {
 	}
 }
 
+class DefaultCursor : public Graphics::Cursor {
+public:
+	uint16 getWidth() const override { return 16; }
+	uint16 getHeight() const override { return 16; }
+	uint16 getHotspotX() const override { return 1; }
+	uint16 getHotspotY() const override { return 2; }
+	byte getKeyColor() const override { return 0; }
+
+	const byte *getSurface() const override { return _cursorGraphic; }
+
+	const byte *getPalette() const override { return _cursorPalette; }
+	byte getPaletteStartIndex() const override { return 0; }
+	uint16 getPaletteCount() const override { return 3; }
+
+private:
+	static const byte _cursorGraphic[256];
+	static const byte _cursorPalette[9];
+};
+
+const byte DefaultCursor::_cursorGraphic[256] = {
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
+	1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 2, 1, 1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 2, 1, 0, 1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
+	1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
+};
+
+const byte DefaultCursor::_cursorPalette[9] = {
+	255, 0, 255,
+	0, 0, 0,
+	255, 255, 255
+};
+
 Runtime::SceneStackEntry::SceneStackEntry() {
 }
 
 Runtime::Runtime(OSystem *system) : _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
-									_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0),
-									_sceneTransitionState(kSceneTransitionStateNotTransitioning), _system(system) {
+									_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
+									_system(system), _lastFrameCursor(nullptr), _defaultCursor(new DefaultCursor()) {
 	_vthread.reset(new VThread());
 
 	for (int i = 0; i < kColorDepthModeCount; i++) {
@@ -2127,6 +2172,9 @@ Runtime::Runtime(OSystem *system) : _nextRuntimeGUID(1), _realDisplayMode(kColor
 
 	_realTimeBase = system->getMillis();
 	_playTimeBase = system->getMillis();
+
+	for (int i = 0; i < Actions::kMouseButtonCount; i++)
+		_mouseFocusFlags[Actions::kMouseButtonCount] = false;
 }
 
 bool Runtime::runFrame() {
@@ -2262,6 +2310,22 @@ bool Runtime::runFrame() {
 	return true;
 }
 
+struct WindowSortingBucket
+{
+	size_t originalIndex;
+	Window *window;
+
+	static bool sortPredicate(const WindowSortingBucket &a, const WindowSortingBucket &b) {
+		int aStrata = a.window->getStrata();
+		int bStrata = b.window->getStrata();
+
+		if (aStrata != bStrata)
+			return aStrata < bStrata;
+
+		return a.originalIndex < b.originalIndex;
+	}
+};
+
 void Runtime::drawFrame() {
 	int width = _system->getWidth();
 	int height = _system->getHeight();
@@ -2274,8 +2338,27 @@ void Runtime::drawFrame() {
 			Render::renderProject(this, mainWindow.get());
 	}
 
-	for (Common::Array<Common::SharedPtr<Window> >::const_iterator it = _windows.begin(), itEnd = _windows.end(); it != itEnd; ++it) {
-		const Window &window = *it->get();
+	const size_t numWindows = _windows.size();
+	WindowSortingBucket singleBucket;
+	Common::Array<WindowSortingBucket> multipleBuckets;
+	WindowSortingBucket *sortedBuckets = &singleBucket;
+
+	if (numWindows < 2)
+		sortedBuckets = &singleBucket;
+	else {
+		multipleBuckets.resize(numWindows);
+		sortedBuckets = &multipleBuckets[0];
+	}
+
+	for (size_t i = 0; i < numWindows; i++) {
+		sortedBuckets[i].originalIndex = i;
+		sortedBuckets[i].window = _windows[i].get();
+	}
+
+	Common::sort(sortedBuckets, sortedBuckets + numWindows, WindowSortingBucket::sortPredicate);
+	
+	for (size_t i = 0; i < numWindows; i++) {
+		const Window &window = *sortedBuckets[i].window;
 		const Graphics::ManagedSurface &surface = *window.getSurface();
 
 		int32 destLeft = window.getX();
@@ -2320,6 +2403,19 @@ void Runtime::drawFrame() {
 	}
 
 	_system->updateScreen();
+
+	Graphics::Cursor *cursor = nullptr;
+
+	// ...
+	if (cursor == nullptr)
+		cursor = _defaultCursor.get();
+
+	if (cursor != _lastFrameCursor) {
+		_lastFrameCursor = cursor;
+
+		CursorMan.showMouse(true);
+		CursorMan.replaceCursor(cursor);
+	}
 
 	_project->onPostRender();
 }
@@ -2697,6 +2793,73 @@ void Runtime::instantiateIfAlias(Common::SharedPtr<Modifier> &modifier, const Co
 	}
 }
 
+Common::SharedPtr<Window> Runtime::findTopWindow(int32 x, int32 y) const {
+	Common::SharedPtr<Window> bestWindow;
+	int bestStrata = 0;
+	for (const Common::SharedPtr<Window> &window : _windows) {
+		if ((!bestWindow || bestStrata <= window->getStrata()) && !window->isMouseTransparent() && x >= window->getX() && y >= window->getY()) {
+			int32 relX = x - window->getX();
+			int32 relY = y - window->getY();
+			if (relX < window->getWidth() && relY < window->getHeight()) {
+				bestStrata = window->getStrata();
+				bestWindow = window;
+			}
+		}
+	}
+
+	return bestWindow;
+}
+
+void Runtime::onMouseDown(int32 x, int32 y, Actions::MouseButton mButton) {
+	Common::SharedPtr<Window> focusWindow = _mouseFocusWindow.lock();
+	if (!focusWindow) {
+		focusWindow = findTopWindow(x, y);
+		if (!focusWindow)
+			return;
+
+		// New focus window, clear all leftover mouse button flags
+		for (int i = 0; i < Actions::kMouseButtonCount; i++)
+			_mouseFocusFlags[i] = false;
+
+		_mouseFocusWindow = focusWindow;
+	}
+
+	focusWindow->onMouseDown(x - focusWindow->getX(), y - focusWindow->getY(), mButton);
+
+	_mouseFocusFlags[mButton] = true;
+}
+
+void Runtime::onMouseMove(int32 x, int32 y) {
+	Common::SharedPtr<Window> focusWindow = _mouseFocusWindow.lock();
+	if (!focusWindow)
+		focusWindow = findTopWindow(x, y);
+
+	if (focusWindow)
+		focusWindow->onMouseMove(x - focusWindow->getX(), y - focusWindow->getY());
+
+	// TODO: Change mouse to focus window's cursor
+}
+
+void Runtime::onMouseUp(int32 x, int32 y, Actions::MouseButton mButton) {
+	Common::SharedPtr<Window> focusWindow = _mouseFocusWindow.lock();
+	if (!focusWindow)
+		return;
+
+	focusWindow->onMouseUp(x - focusWindow->getX(), y - focusWindow->getY(), mButton);
+	_mouseFocusFlags[mButton] = false;
+	bool anyTrue = false;
+	for (int i = 0; i < Actions::kMouseButtonCount; i++) {
+		if (_mouseFocusFlags[i]) {
+			anyTrue = true;
+			break;
+		}
+	}
+
+	if (!anyTrue)
+		_mouseFocusWindow.reset();
+}
+
+
 
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
@@ -2705,7 +2868,7 @@ void Runtime::ensureMainWindowExists() {
 
 		int32 centeredX = (static_cast<int32>(_displayWidth) - static_cast<int32>(presentationSettings.width)) / 2;
 		int32 centeredY = (static_cast<int32>(_displayHeight) - static_cast<int32>(presentationSettings.height)) / 2;
-		Common::SharedPtr<Window> mainWindow(new Window(this, centeredX, centeredY, presentationSettings.width, presentationSettings.height, _displayModePixelFormats[_realDisplayMode]));
+		Common::SharedPtr<Window> mainWindow(new Window(WindowParameters(this, centeredX, centeredY, presentationSettings.width, presentationSettings.height, _displayModePixelFormats[_realDisplayMode])));
 		addWindow(mainWindow);
 		_mainWindow.reset(mainWindow);
 	}

@@ -32,6 +32,7 @@
 
 #include "graphics/pixelformat.h"
 
+#include "mtropolis/actions.h"
 #include "mtropolis/data.h"
 #include "mtropolis/debug.h"
 #include "mtropolis/vthread.h"
@@ -1075,6 +1076,12 @@ public:
 
 	void instantiateIfAlias(Common::SharedPtr<Modifier> &modifier, const Common::WeakPtr<RuntimeObject> &relinkParent);
 
+	Common::SharedPtr<Window> findTopWindow(int32 x, int32 y) const;
+
+	void onMouseDown(int32 x, int32 y, Actions::MouseButton mButton);
+	void onMouseMove(int32 x, int32 y);
+	void onMouseUp(int32 x, int32 y, Actions::MouseButton mButton);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
@@ -1183,6 +1190,12 @@ private:
 
 	Scheduler _scheduler;
 	OSystem *_system;
+
+	Graphics::Cursor *_lastFrameCursor;
+	Common::SharedPtr<Graphics::Cursor> _defaultCursor;
+
+	Common::WeakPtr<Window> _mouseFocusWindow;
+	bool _mouseFocusFlags[Actions::kMouseButtonCount];
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<Debugger> _debugger;

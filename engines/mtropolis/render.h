@@ -58,26 +58,53 @@ struct MacFormattingSpan {
 	MacFontFormatting formatting;
 };
 
+struct WindowParameters {
+	Runtime *runtime;
+	int32 x;
+	int32 y;
+	int16 width;
+	int16 height;
+	const Graphics::PixelFormat format;
+
+	WindowParameters(Runtime *runtime, int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format);
+};
+
 class Window {
 public:
-	Window(Runtime *runtime, int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format);
+	explicit Window(const WindowParameters &windowParams);
 	~Window();
 
 	int32 getX() const;
 	int32 getY() const;
+	int32 getWidth() const;
+	int32 getHeight() const;
 	void setPosition(int32 x, int32 y);
+	void resizeWindow(int32 width, int32 height);	// Destroys contents
 
 	const Common::SharedPtr<Graphics::ManagedSurface> &getSurface() const;
 	const Graphics::PixelFormat &getPixelFormat() const;
 
+	void setStrata(int strata);
+	int getStrata() const;
+
+	// Mouse transparency = ignores mouse events
+	void setMouseTransparent(bool isTransparent);
+	bool isMouseTransparent() const;
+
 	void close();
 	void detachFromRuntime();
+
+	virtual void onMouseDown(int32 x, int32 y, int mouseButton);
+	virtual void onMouseMove(int32 x, int32 y);
+	virtual void onMouseUp(int32 x, int32 y, int mouseButton);
 
 private:
 	int32 _x;
 	int32 _y;
 	Common::SharedPtr<Graphics::ManagedSurface> _surface;
 	Runtime *_runtime;
+	int _strata;
+	bool _isMouseTransparent;
 };
 
 namespace Render {

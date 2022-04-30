@@ -571,9 +571,11 @@ private:
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	bool readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) override;
 	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
+	bool writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) override;
 
-	VariableModifier *findChildByName(const Common::String &name) const;
+	Modifier *findChildByName(const Common::String &name) const;
 
 	Common::Array<Common::SharedPtr<Modifier> > _children;
 };
