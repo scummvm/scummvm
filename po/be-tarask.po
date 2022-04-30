@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-27 19:39+0000\n"
-"PO-Revision-Date: 2022-04-30 16:12+0000\n"
+"PO-Revision-Date: 2022-04-30 16:20+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -6329,11 +6329,11 @@ msgstr "Выкарыстоўваць RGB рэндэраваньне для па�
 
 #: engines/sci/detection_options.h:195
 msgid "Use per-resource modified palettes"
-msgstr ""
+msgstr "Выкарыстоўваць мадыфікаваныя палітры рэсурсаў"
 
 #: engines/sci/detection_options.h:196
 msgid "Use custom per-resource palettes to improve visuals"
-msgstr ""
+msgstr "Выкарыстоўваць нестандартныя палітры рэсурсаў, каб палепшыць візуал"
 
 #: engines/sci/detection_options.h:208
 msgid "Enable bearded musicians"
@@ -6761,6 +6761,8 @@ msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
 msgstr ""
+"Калі выкарыстоўваецца замена музыкі, то гэтая налада рэгулюе час, калі "
+"увэртура зьмяняецца на сцэну з лёгатыпамі Lucasfilm і Loom."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
@@ -6881,7 +6883,6 @@ msgid "  or incorrect game behavior."
 msgstr "  або няправільную працу гульні."
 
 #: engines/scumm/help.cpp:113
-#, fuzzy
 msgid "Spinning drafts on the keyboard:"
 msgstr "Прадзеньне чараў клявіятурай:"
 
@@ -6958,9 +6959,8 @@ msgid "Unlock"
 msgstr "Адчыніць"
 
 #: engines/scumm/help.cpp:148
-#, fuzzy
 msgid "Put on"
-msgstr "Надзець"
+msgstr "Паставіць"
 
 #: engines/scumm/help.cpp:149
 msgid "Take off"
@@ -7052,7 +7052,6 @@ msgid "turn oFf"
 msgstr "вымкнуць"
 
 #: engines/scumm/help.cpp:216
-#, fuzzy
 msgid "KeyUp"
 msgstr "Падвышаць"
 
@@ -8427,7 +8426,6 @@ msgid "Previous action"
 msgstr "Папярэдняя дзея"
 
 #: engines/wintermute/keymapper_tables.h:826
-#, fuzzy
 msgid "Volume off"
 msgstr "Гук адлучаны"
 
@@ -8535,7 +8533,6 @@ msgid "Ability: Sound"
 msgstr "Здольнасьць: Гук"
 
 #: engines/wintermute/keymapper_tables.h:1082
-#, fuzzy
 msgid "Ability: Esence"
 msgstr "Здольнасьць: Пах"
 
