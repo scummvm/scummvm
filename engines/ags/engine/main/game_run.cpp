@@ -308,10 +308,11 @@ bool run_service_key_controls(KeyInput &out_key) {
 		return false; // in backward mode the engine does not react to single mod keys
 
 	KeyInput ki = ags_keycode_from_scummvm(key_evt, old_keyhandle);
-	eAGSKeyCode agskey = ki.CompatKey; // use backward-compatible combined key here
-	if (agskey == eAGSKeyCodeNone)
+	if (ki.Key == eAGSKeyCodeNone)
 		return false; // should skip this key event
 
+	// Use backward-compatible combined key for service checks
+	eAGSKeyCode agskey = ki.CompatKey;
 	// LAlt or RAlt + Enter/Return
 	if ((cur_mod == Common::KBD_ALT) && agskey == eAGSKeyCodeReturn) {
 		engine_try_switch_windowed_gfxmode();
