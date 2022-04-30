@@ -622,6 +622,8 @@ protected:
 	int pop();
 	virtual int readVar(uint var);
 	virtual void writeVar(uint var, int value);
+	// SCUMM 1/2
+	virtual void resetSentence() {}
 
 protected:
 	void beginCutscene(int *args);

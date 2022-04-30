@@ -92,6 +92,13 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		_roomVars[i] = 0;
 	nukeArrays(0xFF);
 
+	// I don't know if this also belongs into v0, so I limit it to v1/2.
+	// I do suspect that v0 should have it, since the other use cases in
+	// o_loadRoomWithEgo/o2_loadRoomWithEgo and o_cutscene/o2_cutscene
+	// are also the same.
+	if (_game.version >= 1 && _game.version <= 2)
+		resetSentence();
+
 	for (i = 1; i < _numActors; i++) {
 		_actors[i]->hideActor();
 	}

@@ -88,7 +88,7 @@ protected:
 	void clearStateCommon(byte type);
 	void stopScriptCommon(int script);
 
-	void resetSentence();
+	void resetSentence() override;
 	void setUserState(byte state);
 
 	void handleMouseOver(bool updateInventory) override;
