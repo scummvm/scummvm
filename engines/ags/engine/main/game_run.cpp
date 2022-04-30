@@ -308,7 +308,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 		return false; // in backward mode the engine does not react to single mod keys
 
 	KeyInput ki = ags_keycode_from_scummvm(key_evt, old_keyhandle);
-	eAGSKeyCode agskey = ki.Key;
+	eAGSKeyCode agskey = ki.CompatKey; // use backward-compatible combined key here
 	if (agskey == eAGSKeyCodeNone)
 		return false; // should skip this key event
 
