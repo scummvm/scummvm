@@ -2523,7 +2523,7 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), false, true);
 
 		SceneStackEntry sharedSceneEntry;
-		sharedSceneEntry.scene = targetScene;
+		sharedSceneEntry.scene = targetSharedScene;
 
 		_sceneStack[0] = sharedSceneEntry;
 	}
@@ -3001,6 +3001,12 @@ const Common::SharedPtr<Structural> &Runtime::getActiveMainScene() const {
 
 const Common::SharedPtr<Structural> &Runtime::getActiveSharedScene() const {
 	return _activeSharedScene;
+}
+
+void Runtime::getSceneStack(Common::Array<Common::SharedPtr<Structural> >& sceneStack) const {
+	sceneStack.clear();
+	for (const SceneStackEntry &stackEntry : _sceneStack)
+		sceneStack.push_back(stackEntry.scene);
 }
 
 bool Runtime::mustDraw() const {
@@ -4065,6 +4071,14 @@ bool Modifier::isAlias() const {
 }
 
 bool Modifier::isVariable() const {
+	return false;
+}
+
+bool Modifier::isBehavior() const {
+	return false;
+}
+
+bool Modifier::isCompoundVariable() const {
 	return false;
 }
 
