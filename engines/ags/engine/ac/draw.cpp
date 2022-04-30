@@ -121,8 +121,8 @@ Bitmap *convert_32_to_32bgr(Bitmap *tempbl) {
 //
 Bitmap *AdjustBitmapForUseWithDisplayMode(Bitmap *bitmap, bool has_alpha) {
 	const int bmp_col_depth = bitmap->GetColorDepth();
-	const int compat_col_depth = _G(gfxDriver)->GetCompatibleBitmapFormat(bmp_col_depth);
 	const int game_col_depth = _GP(game).GetColorDepth();
+	const int compat_col_depth = _G(gfxDriver)->GetCompatibleBitmapFormat(game_col_depth);
 
 	const bool must_switch_palette = bitmap->GetColorDepth() == 8 && game_col_depth > 8;
 	if (must_switch_palette)
