@@ -591,16 +591,8 @@ void DialogOptions::Show() {
 	wantRefresh = false;
 	mouseison = -10;
 
-	update_polled_stuff_if_runtime();
-	if (!_GP(play).mouse_cursor_hidden)
-		ags_domouse();
-	update_polled_stuff_if_runtime();
-
 	Redraw();
 	while (Run() && !SHOULD_QUIT) {}
-
-	if (!_GP(play).mouse_cursor_hidden)
-		ags_domouse();
 }
 
 void DialogOptions::Redraw() {

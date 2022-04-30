@@ -196,19 +196,13 @@ void set_game_speed(int new_fps) {
 void setup_for_dialog() {
 	_G(cbuttfont) = _GP(play).normal_font;
 	_G(acdialog_font) = _GP(play).normal_font;
-	if (!_GP(play).mouse_cursor_hidden)
-		ags_domouse();
 	_G(oldmouse) = _G(cur_cursor);
 	set_mouse_cursor(CURS_ARROW);
 }
 void restore_after_dialog() {
 	set_mouse_cursor(_G(oldmouse));
-	if (!_GP(play).mouse_cursor_hidden)
-		ags_domouse();
 	invalidate_screen();
 }
-
-
 
 String get_save_game_directory() {
 	return _G(saveGameDirectory);
