@@ -575,11 +575,11 @@ void DebugSceneTreeWindow::update() {
 	Common::SharedPtr<Structural> sharedScene = runtime->getActiveSharedScene();
 	Common::SharedPtr<Structural> mainScene = runtime->getActiveMainScene();
 
-	if (_sharedScene != Common::WeakPtr<Structural>(sharedScene)) {
+	if (_sharedScene.lock() != sharedScene) {
 		_sharedScene = sharedScene;
 		needRerender = true;
 	}
-	if (_mainScene != Common::WeakPtr<Structural>(mainScene)) {
+	if (_mainScene.lock() != mainScene) {
 		_mainScene = mainScene;
 		needRerender = true;
 	}
@@ -618,8 +618,9 @@ void DebugSceneTreeWindow::update() {
 	}
 
 	if (!_latentScrollTo.expired()) {
+		Common::SharedPtr<RuntimeObject> scrollToTarget = _latentScrollTo.lock();
 		for (SceneTreeEntry &treeEntry : _tree) {
-			if (treeEntry.object == _latentScrollTo) {
+			if (treeEntry.object.lock() == scrollToTarget) {
 				size_t parentIndex = treeEntry.parentIndex;
 				do {
 					_tree[parentIndex].uiState.expanded = true;
@@ -814,8 +815,11 @@ void DebugSceneTreeWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHe
 			_toolSurface->drawLine(parentTracerLeftX, parentTracerY, parentTracerLeftX, parentTracerTopY, lightGrayColor);
 		}
 
-		if (treeEntry.object == _latentScrollTo)
-			trySetScrollOffset(rowTopY);
+		if (!_latentScrollTo.expired()) {
+			Common::SharedPtr<RuntimeObject> scrollToTarget = _latentScrollTo.lock();
+			if (treeEntry.object.lock() == scrollToTarget)
+				trySetScrollOffset(rowTopY);
+		}
 	}
 
 	_latentScrollTo.reset();

@@ -355,6 +355,28 @@ struct VarReference {
 	}
 };
 
+struct ObjectReference {
+	Common::WeakPtr<RuntimeObject> object;
+
+	inline ObjectReference() {
+	}
+
+	inline explicit ObjectReference(const Common::WeakPtr<RuntimeObject> object) : object(object) {
+	}
+
+	inline bool operator==(const ObjectReference &other) const {
+		return !object.owner_before(other.object) && !other.object.owner_before(object);
+	}
+
+	inline bool operator!=(const ObjectReference &other) const {
+		return !((*this) == other);
+	}
+
+	inline void reset() {
+		object.reset();
+	}
+};
+
 struct AngleMagVector {
 	double angleRadians;
 	double magnitude;
@@ -461,7 +483,7 @@ struct DynamicListDefaultSetter {
 	static void defaultSet(Event &value);
 	static void defaultSet(Common::String &value);
 	static void defaultSet(Common::SharedPtr<DynamicList> &value);
-	static void defaultSet(Common::WeakPtr<RuntimeObject> &value);
+	static void defaultSet(ObjectReference &value);
 };
 
 struct DynamicListValueImporter {
@@ -475,7 +497,7 @@ struct DynamicListValueImporter {
 	static bool importValue(const DynamicValue &dynValue, const Event *&outPtr);
 	static bool importValue(const DynamicValue &dynValue, const Common::String *&outPtr);
 	static bool importValue(const DynamicValue &dynValue, const Common::SharedPtr<DynamicList> *&outPtr);
-	static bool importValue(const DynamicValue &dynValue, const Common::WeakPtr<RuntimeObject> *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const ObjectReference *&outPtr);
 };
 
 struct DynamicListValueExporter {
@@ -489,7 +511,7 @@ struct DynamicListValueExporter {
 	static void exportValue(DynamicValue &dynValue, const Event &value);
 	static void exportValue(DynamicValue &dynValue, const Common::String &value);
 	static void exportValue(DynamicValue &dynValue, const Common::SharedPtr<DynamicList> &value);
-	static void exportValue(DynamicValue &dynValue, const Common::WeakPtr<RuntimeObject> &value);
+	static void exportValue(DynamicValue &dynValue, const ObjectReference &value);
 };
 
 template<class T>
@@ -667,7 +689,7 @@ struct DynamicValue {
 	const Common::String &getString() const;
 	const bool &getBool() const;
 	const Common::SharedPtr<DynamicList> &getList() const;
-	const Common::WeakPtr<RuntimeObject> &getObject() const;
+	const ObjectReference &getObject() const;
 	const DynamicValueReadProxy &getReadProxy() const;
 	const DynamicValueWriteProxy &getWriteProxy() const;
 	const Common::SharedPtr<DynamicList> &getReadProxyList() const;
@@ -686,6 +708,7 @@ struct DynamicValue {
 	void setString(const Common::String &value);
 	void setBool(bool value);
 	void setList(const Common::SharedPtr<DynamicList> &value);
+	void setObject(const ObjectReference &value);
 	void setObject(const Common::WeakPtr<RuntimeObject> &value);
 	void setReadProxy(const Common::SharedPtr<DynamicList> &list, const DynamicValueReadProxy &readProxy);
 	void setWriteProxy(const Common::SharedPtr<DynamicList> &list, const DynamicValueWriteProxy &writeProxy);
@@ -727,7 +750,7 @@ private:
 	ValueUnion _value;
 	Common::String _str;
 	Common::SharedPtr<DynamicList> _list;
-	Common::WeakPtr<RuntimeObject> _obj;
+	ObjectReference _obj;
 };
 
 struct MessengerSendSpec {

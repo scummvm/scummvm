@@ -108,7 +108,7 @@ private:
 
 	Event _setToSourceParentWhen;
 
-	mutable Common::WeakPtr<RuntimeObject> _object;
+	mutable ObjectReference _object;
 	mutable Common::String _objectPath;
 	mutable bool _isResolved;
 };

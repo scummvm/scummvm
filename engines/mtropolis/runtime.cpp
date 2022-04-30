@@ -309,7 +309,7 @@ void DynamicListDefaultSetter::defaultSet(Common::String &value) {
 void DynamicListDefaultSetter::defaultSet(Common::SharedPtr<DynamicList> &value) {
 }
 
-void DynamicListDefaultSetter::defaultSet(Common::WeakPtr<RuntimeObject> &value) {
+void DynamicListDefaultSetter::defaultSet(ObjectReference &value) {
 }
 
 bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const int32 *&outPtr) {
@@ -382,7 +382,7 @@ bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const C
 	return true;
 }
 
-bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const Common::WeakPtr<RuntimeObject> *&outPtr) {
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const ObjectReference *&outPtr) {
 	if (dynValue.getType() != DynamicValueTypes::kObject)
 		return false;
 	outPtr = &dynValue.getObject();
@@ -430,7 +430,7 @@ void DynamicListValueExporter::exportValue(DynamicValue &dynValue, const Common:
 	dynValue.setList(value);
 }
 
-void DynamicListValueExporter::exportValue(DynamicValue &dynValue, const Common::WeakPtr<RuntimeObject> &value) {
+void DynamicListValueExporter::exportValue(DynamicValue &dynValue, const ObjectReference &value) {
 	dynValue.setObject(value);
 }
 
@@ -736,7 +736,7 @@ bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
 		_container = new DynamicListContainer<Common::SharedPtr<DynamicList> >();
 		break;
 	case DynamicValueTypes::kObject:
-		_container = new DynamicListContainer<Common::WeakPtr<RuntimeObject> >();
+		_container = new DynamicListContainer<ObjectReference>();
 		break;
 	}
 
@@ -943,7 +943,7 @@ const Common::SharedPtr<DynamicList> &DynamicValue::getList() const {
 	return _list;
 }
 
-const Common::WeakPtr<RuntimeObject> &DynamicValue::getObject() const {
+const ObjectReference &DynamicValue::getObject() const {
 	assert(_type == DynamicValueTypes::kObject);
 	return _obj;
 }
@@ -1065,11 +1065,15 @@ void DynamicValue::setWriteProxy(const Common::SharedPtr<DynamicList> &list, con
 	_list = listRef;
 }
 
-void DynamicValue::setObject(const Common::WeakPtr<RuntimeObject> &value) {
+void DynamicValue::setObject(const ObjectReference &value) {
 	if (_type != DynamicValueTypes::kObject)
 		clear();
 	_type = DynamicValueTypes::kObject;
 	_obj = value;
+}
+
+void DynamicValue::setObject(const Common::WeakPtr<RuntimeObject> &value) {
+	setObject(ObjectReference(value));
 }
 
 void DynamicValue::swap(DynamicValue &other) {

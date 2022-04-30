@@ -186,7 +186,7 @@ bool ObjectReferenceVariableModifier::setValue(const DynamicValue &value) {
 
 void ObjectReferenceVariableModifier::getValue(DynamicValue &dest) const {
 	if (_isResolved) {
-		if (_object.expired())
+		if (_object.object.expired())
 			dest.clear();
 		else
 			dest.setObject(_object);

@@ -481,7 +481,7 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 	} else {
 		VariableModifier *var = nullptr;
 		if (target.value.getType() == DynamicValueTypes::kObject) {
-			Common::SharedPtr<RuntimeObject> obj = target.value.getObject().lock();
+			Common::SharedPtr<RuntimeObject> obj = target.value.getObject().object.lock();
 			if (obj && obj->isModifier() && static_cast<const Modifier *>(obj.get())->isVariable())
 				var = static_cast<VariableModifier *>(obj.get());
 		}
@@ -526,7 +526,7 @@ MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	Common::SharedPtr<RuntimeObject> obj = targetValue.getObject().lock();
+	Common::SharedPtr<RuntimeObject> obj = targetValue.getObject().object.lock();
 
 	if (!obj) {
 		thread->error("Invalid message destination");
@@ -837,7 +837,7 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 
 		if (_isLValue) {
 			if (indexableValueSlot.value.getType() == DynamicValueTypes::kObject) {
-				Common::SharedPtr<RuntimeObject> obj = indexableValueSlot.value.getObject().lock();
+				Common::SharedPtr<RuntimeObject> obj = indexableValueSlot.value.getObject().object.lock();
 				if (!obj) {
 					thread->error("Tried to write '" + attrib + "' to an invalid object reference");
 					return kMiniscriptInstructionOutcomeFailed;
@@ -875,7 +875,7 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 
 		if (_isLValue) {
 			if (indexableValueSlot.value.getType() == DynamicValueTypes::kObject) {
-				Common::SharedPtr<RuntimeObject> obj = indexableValueSlot.value.getObject().lock();
+				Common::SharedPtr<RuntimeObject> obj = indexableValueSlot.value.getObject().object.lock();
 				if (!obj) {
 					thread->error("Tried to read '" + attrib + "' to an invalid object reference");
 					return kMiniscriptInstructionOutcomeFailed;
@@ -932,7 +932,7 @@ MiniscriptInstructionOutcome GetChild::readRValueAttrib(MiniscriptThread *thread
 		}
 		break;
 	case DynamicValueTypes::kObject: {
-			Common::SharedPtr<RuntimeObject> obj = valueSrcDest.getObject().lock();
+			Common::SharedPtr<RuntimeObject> obj = valueSrcDest.getObject().object.lock();
 			if (!obj) {
 				thread->error("Unable to read attribute '" + attrib + "' from invalid object");
 				return kMiniscriptInstructionOutcomeFailed;
@@ -1006,7 +1006,7 @@ MiniscriptInstructionOutcome PushValue::execute(MiniscriptThread *thread) const 
 		value.setBool(_value.b);
 		break;
 	case DataType::kDataTypeLocalRef:
-		value.setObject(thread->getRefs()->getRefByIndex(_value.ref));
+		value.setObject(ObjectReference(thread->getRefs()->getRefByIndex(_value.ref)));
 		break;
 	case DataType::kDataTypeGlobalRef:
 		thread->error("Global references are not implemented");
@@ -1043,7 +1043,7 @@ MiniscriptInstructionOutcome PushGlobal::execute(MiniscriptThread *thread) const
 		value = thread->getMessageProperties()->getValue();
 		break;
 	case kGlobalRefSource:
-		value.setObject(thread->getMessageProperties()->getSource());
+		value.setObject(ObjectReference(thread->getMessageProperties()->getSource()));
 		break;
 	case kGlobalRefMouse:
 		thread->error("'mouse' global ref not yet implemented");
@@ -1052,10 +1052,10 @@ MiniscriptInstructionOutcome PushGlobal::execute(MiniscriptThread *thread) const
 		value.setInt(thread->getRuntime()->getPlayTime() * 60 / 1000);
 		break;
 	case kGlobalRefSharedScene:
-		value.setObject(thread->getRuntime()->getActiveSharedScene());
+		value.setObject(ObjectReference(thread->getRuntime()->getActiveSharedScene()));
 		break;
 	case kGlobalRefActiveScene:
-		value.setObject(thread->getRuntime()->getActiveMainScene());
+		value.setObject(ObjectReference(thread->getRuntime()->getActiveMainScene()));
 		break;
 	default:
 		assert(false);
@@ -1216,7 +1216,7 @@ MiniscriptInstructionOutcome MiniscriptThread::dereferenceRValue(size_t offset, 
 
 	switch (stackValue.value.getType()) {
 	case DynamicValueTypes::kObject: {
-			Common::SharedPtr<RuntimeObject> obj = stackValue.value.getObject().lock();
+			Common::SharedPtr<RuntimeObject> obj = stackValue.value.getObject().object.lock();
 			if (obj && obj->isModifier()) {
 				const Modifier *modifier = static_cast<const Modifier *>(obj.get());
 				if (modifier->isVariable()) {
@@ -1297,7 +1297,7 @@ VThreadState MiniscriptThread::resume(const ResumeTaskData &taskData) {
 
 MiniscriptInstructionOutcome MiniscriptThread::tryLoadVariable(MiniscriptStackValue &stackValue) {
 	if (stackValue.value.getType() == DynamicValueTypes::kObject) {
-		Common::SharedPtr<RuntimeObject> obj = stackValue.value.getObject().lock();
+		Common::SharedPtr<RuntimeObject> obj = stackValue.value.getObject().object.lock();
 		if (obj && obj->isModifier() && static_cast<Modifier *>(obj.get())->isVariable()) {
 			VariableModifier *varMod = static_cast<VariableModifier *>(obj.get());
 			varMod->getValue(stackValue.value);
