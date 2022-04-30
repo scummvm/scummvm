@@ -125,8 +125,8 @@ public:
 
 	// Operations
 	bool    BringControlToFront(int32_t index);
-	void    Draw(Bitmap *ds);
-	void    DrawAt(Bitmap *ds, int x, int y);
+	void    DrawSelf(Bitmap *ds);
+	void    DrawWithControls(Bitmap *ds);
 	// Polls GUI state, providing current cursor (mouse) coordinates
 	void    Poll(int mx, int my);
 	HError  RebuildArray();

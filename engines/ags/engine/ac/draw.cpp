@@ -1980,7 +1980,7 @@ void draw_gui_and_overlays() {
 				_G(our_eip) = 370;
 				_GP(guibg)[aa]->ClearTransparent();
 				_G(our_eip) = 372;
-				_GP(guis)[aa].DrawAt(_GP(guibg)[aa], 0, 0);
+				_GP(guis)[aa].DrawWithControls(_GP(guibg)[aa]);
 				_G(our_eip) = 373;
 
 				bool isAlpha = false;

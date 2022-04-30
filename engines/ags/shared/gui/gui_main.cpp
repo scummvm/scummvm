@@ -204,46 +204,44 @@ bool GUIMain::BringControlToFront(int32_t index) {
 	return SetControlZOrder(index, (int)_controls.size() - 1);
 }
 
-void GUIMain::Draw(Bitmap *ds) {
-	DrawAt(ds, X, Y);
-}
-
-void GUIMain::DrawAt(Bitmap *ds, int x, int y) {
-	SET_EIP(375)
+void GUIMain::DrawSelf(Bitmap *ds) {
+	SET_EIP(375);
 
 	if ((Width < 1) || (Height < 1))
 		return;
 
-	Bitmap subbmp;
-	subbmp.CreateSubBitmap(ds, RectWH(x, y, Width, Height));
-
-	SET_EIP(376)
+	SET_EIP(376);
 	// stop border being transparent, if the whole GUI isn't
 	if ((FgColor == 0) && (BgColor != 0))
 		FgColor = 16;
 
 	if (BgColor != 0)
-		subbmp.Fill(subbmp.GetCompatibleColor(BgColor));
+		ds->Fill(ds->GetCompatibleColor(BgColor));
 
-	SET_EIP(377)
+	SET_EIP(377);
 
 	color_t draw_color;
 	if (FgColor != BgColor) {
-		draw_color = subbmp.GetCompatibleColor(FgColor);
-		subbmp.DrawRect(Rect(0, 0, subbmp.GetWidth() - 1, subbmp.GetHeight() - 1), draw_color);
+		draw_color = ds->GetCompatibleColor(FgColor);
+		ds->DrawRect(Rect(0, 0, ds->GetWidth() - 1, ds->GetHeight() - 1), draw_color);
 		if (get_fixed_pixel_size(1) > 1)
-			subbmp.DrawRect(Rect(1, 1, subbmp.GetWidth() - 2, subbmp.GetHeight() - 2), draw_color);
+			ds->DrawRect(Rect(1, 1, ds->GetWidth() - 2, ds->GetHeight() - 2), draw_color);
 	}
 
-	SET_EIP(378)
+	SET_EIP(378);
 
 	if (BgImage > 0 && _GP(spriteset)[BgImage] != nullptr)
-		draw_gui_sprite(&subbmp, BgImage, 0, 0, false);
+		draw_gui_sprite(ds, BgImage, 0, 0, false);
 
-	SET_EIP(379)
+	SET_EIP(379);
+}
+
+void GUIMain::DrawWithControls(Bitmap *ds) {
+	ds->ResetClip();
+	DrawSelf(ds);
 
 	if ((_G(all_buttons_disabled) >= 0) && (GUI::Options.DisabledStyle == kGuiDis_Blackout))
-        return; // don't draw GUI controls
+		return; // don't draw GUI controls
 
 	for (size_t ctrl_index = 0; ctrl_index < _controls.size(); ++ctrl_index) {
 		set_eip_guiobj(_ctrlDrawOrder[ctrl_index]);
@@ -256,38 +254,38 @@ void GUIMain::DrawAt(Bitmap *ds, int x, int y) {
 			continue;
 
 		if (GUI::Options.ClipControls && objToDraw->IsContentClipped())
-			subbmp.SetClip(RectWH(objToDraw->X, objToDraw->Y, objToDraw->Width, objToDraw->Height));
+			ds->SetClip(RectWH(objToDraw->X, objToDraw->Y, objToDraw->Width, objToDraw->Height));
 		else
-			subbmp.ResetClip();
-		objToDraw->Draw(&subbmp);
+			ds->ResetClip();
+		objToDraw->Draw(ds);
 
 		int selectedColour = 14;
 
 		if (HighlightCtrl == _ctrlDrawOrder[ctrl_index]) {
 			if (GUI::Options.OutlineControls)
 				selectedColour = 13;
-			draw_color = subbmp.GetCompatibleColor(selectedColour);
-			DrawBlob(&subbmp, objToDraw->X + objToDraw->Width - get_fixed_pixel_size(1) - 1, objToDraw->Y, draw_color);
-			DrawBlob(&subbmp, objToDraw->X, objToDraw->Y + objToDraw->Height - get_fixed_pixel_size(1) - 1, draw_color);
-			DrawBlob(&subbmp, objToDraw->X, objToDraw->Y, draw_color);
-			DrawBlob(&subbmp, objToDraw->X + objToDraw->Width - get_fixed_pixel_size(1) - 1,
-			         objToDraw->Y + objToDraw->Height - get_fixed_pixel_size(1) - 1, draw_color);
+			color_t draw_color = ds->GetCompatibleColor(selectedColour);
+			DrawBlob(ds, objToDraw->X + objToDraw->Width - get_fixed_pixel_size(1) - 1, objToDraw->Y, draw_color);
+			DrawBlob(ds, objToDraw->X, objToDraw->Y + objToDraw->Height - get_fixed_pixel_size(1) - 1, draw_color);
+			DrawBlob(ds, objToDraw->X, objToDraw->Y, draw_color);
+			DrawBlob(ds, objToDraw->X + objToDraw->Width - get_fixed_pixel_size(1) - 1,
+				objToDraw->Y + objToDraw->Height - get_fixed_pixel_size(1) - 1, draw_color);
 		}
 		if (GUI::Options.OutlineControls) {
 			// draw a dotted outline round all objects
-			draw_color = subbmp.GetCompatibleColor(selectedColour);
+			color_t draw_color = ds->GetCompatibleColor(selectedColour);
 			for (int i = 0; i < objToDraw->Width; i += 2) {
-				subbmp.PutPixel(i + objToDraw->X, objToDraw->Y, draw_color);
-				subbmp.PutPixel(i + objToDraw->X, objToDraw->Y + objToDraw->Height - 1, draw_color);
+				ds->PutPixel(i + objToDraw->X, objToDraw->Y, draw_color);
+				ds->PutPixel(i + objToDraw->X, objToDraw->Y + objToDraw->Height - 1, draw_color);
 			}
 			for (int i = 0; i < objToDraw->Height; i += 2) {
-				subbmp.PutPixel(objToDraw->X, i + objToDraw->Y, draw_color);
-				subbmp.PutPixel(objToDraw->X + objToDraw->Width - 1, i + objToDraw->Y, draw_color);
+				ds->PutPixel(objToDraw->X, i + objToDraw->Y, draw_color);
+				ds->PutPixel(objToDraw->X + objToDraw->Width - 1, i + objToDraw->Y, draw_color);
 			}
 		}
 	}
 
-	SET_EIP(380)
+	SET_EIP(380);
 }
 
 void GUIMain::DrawBlob(Bitmap *ds, int x, int y, color_t draw_color) {
