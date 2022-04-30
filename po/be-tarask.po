@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-27 19:39+0000\n"
-"PO-Revision-Date: 2022-04-30 15:47+0000\n"
+"PO-Revision-Date: 2022-04-30 16:12+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -5648,7 +5648,7 @@ msgid ""
 "Adjusts the speed of screen transitions. Disabling screen transitions will "
 "enable you to navigate more quickly through the game."
 msgstr ""
-"Скорасьць пераходу між экранамі. Адучыўшы пераходы, вы будзеце хутчэй "
+"Скорасьць экранавых пераходаў. Адучыўшы пераходы, вы будзеце хутчэй "
 "прасоўвацца па гульні."
 
 #: engines/mohawk/dialogs.cpp:366
@@ -6317,15 +6317,15 @@ msgstr "Павялічваць відэа"
 
 #: engines/sci/detection_options.h:170
 msgid "Upscale videos to double their size"
-msgstr ""
+msgstr "Павялічаць відэа удвойчы"
 
 #: engines/sci/detection_options.h:182
 msgid "Use RGB rendering"
-msgstr ""
+msgstr "Выкарыстоўваць RGB рэндэраваньне"
 
 #: engines/sci/detection_options.h:183
 msgid "Use RGB rendering to improve screen transitions"
-msgstr ""
+msgstr "Выкарыстоўваць RGB рэндэраваньне для паляпшэньня экранавых пераходаў"
 
 #: engines/sci/detection_options.h:195
 msgid "Use per-resource modified palettes"
@@ -6336,38 +6336,36 @@ msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
 
 #: engines/sci/detection_options.h:208
-#, fuzzy
-#| msgid "Enable frame skipping"
 msgid "Enable bearded musicians"
-msgstr "Далучыць пропуск кадраў"
+msgstr "Далучыць барадатых музыкаў"
 
 #: engines/sci/detection_options.h:209
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "Далучыць графіку, якая была адлучана праз юрыдычныя прычыны"
 
 #: engines/sci/detection_options.h:237
-#, fuzzy
-#| msgid "MIDI gain:"
 msgid "MIDI mode:"
-msgstr "Узмацненьне MIDI:"
+msgstr "Рэжым MIDI:"
 
 #: engines/sci/detection_options.h:238
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
 msgstr ""
+"Калі вы выкарыстоўваеце зьнешнія прылады MIDI (кшталту USB-MIDI), то "
+"выбярыце вашую прыладу тут"
 
 #: engines/sci/detection_options.h:243
 msgid "Standard (GM / MT-32)"
-msgstr ""
+msgstr "Стандартная (GM / MT-32)"
 
 #: engines/sci/detection_options.h:247
 msgid "Roland D-110 / D-10 / D-20"
-msgstr ""
+msgstr "Roland D-110 / D-10 / D-20"
 
 #: engines/sci/detection_options.h:251
 msgid "Yamaha FB-01"
-msgstr ""
+msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_tables.h:4397
 msgid "Incomplete game detected. You have to copy data from all the CDs."
@@ -6604,28 +6602,27 @@ msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(замест звычайнага прагортваньня ў 8 піксэляў)"
 
 #: engines/scumm/detection.cpp:220
-#, fuzzy
-#| msgid "Enable smooth scrolling"
 msgid "Allow semi-smooth scrolling"
-msgstr "Далучыць плыўнае прагортваньне"
+msgstr "Далучыць напалову плыўнае прагортваньне"
 
 #: engines/scumm/detection.cpp:221
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr ""
+"Далучыць меней плыўнае прагортваньне падчас хуткага руху камэры ва ўступе."
 
 #: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:730
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "Enable game-specific enhancements"
-msgstr "Далучыць замену шрыфту"
+msgstr "Далучыць паляпшэньні для пэўных гульняў"
 
 #: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:730
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
 msgstr ""
+"ScummVM далучыць невялічкія паляпшэньні ў гульні, якія звычайна ґрунтуюцца "
+"на іншых вэрсіях той жа гульні."
 
 #: engines/scumm/detection_internal.h:358
 msgid ""
@@ -6636,6 +6633,12 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
+"Гэтая вэрсія Monkey Island не працуе, бо Limited Run Games паставіла "
+"сапсаваныя файлы DISK04.LEC і 903.LFL.\n"
+"\n"
+"Калі ласка, зьвярніцеся ў іхную тэхнічную падтрымку дзеля замены файлаў або "
+"пашукайце інструкцыі ў інтэрнэце, якія дапамогуць вам аднавіць сапраўдныя "
+"файлы з адбіткаў KryoFlux, якія таксама пастаўляе Limited Run Games."
 
 #: engines/scumm/dialogs.cpp:163
 #, c-format
