@@ -268,6 +268,14 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 	Common::Event event;
 	while (!shouldQuit()) {
+		if (_timerStarted) {
+			if (_countdown <= 0) {
+				_loseLevel = true;
+				debugC(1, kHypnoDebugArcade, "Finishing level (timeout)");
+				_timerStarted = false;
+				removeTimers();
+			}
+		}
 		needsUpdate = _background->decoder->needsUpdate();
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = getPlayerPosition(false);
@@ -553,6 +561,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		_masks = nullptr;
 	}
 
+	_timerStarted = false;
+	removeTimers();
 	stopSound();
 	_music.clear();
 }

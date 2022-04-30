@@ -602,6 +602,12 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 	if (arc->mode == "YT") {
 		_c33PlayerCursor = decodeFrames("c33/c33i2.smk");
 	}
+	if (arc->mode == "Y3") {
+		bool started = startCountdown(420); // 7 minutes
+		if (!started)
+			error("Failed to start countdown in level %d!", arc->id);
+	} else
+		_timerStarted = false;
 
 }
 
@@ -805,6 +811,14 @@ void WetEngine::drawPlayer() {
 
 	_compositeSurface->drawLine(113, 9, 119, 9, c);
 	_compositeSurface->drawLine(200, 9, 206, 9, c);
+
+	if (_timerStarted) {
+		assert(_arcadeMode == "Y3");
+		c = kHypnoColorYellow;
+		uint32 minutes = _countdown / 60;
+		uint32 seconds = _countdown % 60;
+		drawString("block05.fgx", Common::String::format("CLOCK: %02d:%02d", minutes, seconds), 19, 11, 0, c);
+	}
 
 	c = kHypnoColorRed; // red ?
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
