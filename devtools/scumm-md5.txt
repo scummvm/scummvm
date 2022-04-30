@@ -329,7 +329,7 @@ tentacle	Day of the Tentacle
 	ae94f110a14ce71fc515d5b648827a8f	-1	es	DOS	Floppy	Floppy	-	abnog, Andrea Petrucci
 
 	4167a92a1d46baa4f4127d918d561f88	7932	en	All?	-	CD	-	Fingolfin
-	8aa05d3cdb0e795436043f0546af2da2	-1	fr	All?	-	CD?	-	Andrea Petrucci
+	8aa05d3cdb0e795436043f0546af2da2	7932	fr	All?	-	CD	-	Andrea Petrucci
 	6e959d65358eedf9b68b81e304b97fa4	7932	de	All?	-	CD	-	Fingolfin
 	4fbbe9f64b8bc547503a379a301183ce	-1	it	All?	-	CD	-	Andrea Petrucci
 	883af4b0af4f77a92f1dcf1d0a283140	-1	es	All?	-	CD	-	Andrea Petrucci
