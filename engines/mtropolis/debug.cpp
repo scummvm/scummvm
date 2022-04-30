@@ -27,6 +27,10 @@
 
 #include "graphics/fontman.h"
 
+#include "common/hash-ptr.h"
+
+
+
 namespace MTropolis {
 
 static const byte g_sceneTreeGraphic[] = {
@@ -105,6 +109,9 @@ class DebugToolWindowBase : public Window {
 public:
 	DebugToolWindowBase(DebuggerTool tool, const Common::String &title, Debugger *debugger, const WindowParameters &windowParams);
 
+	virtual void update() {}
+	void render();
+
 protected:
 	const int kTopBarHeight = 12;
 	const int kScrollBarWidth = 12;
@@ -118,13 +125,17 @@ protected:
 	virtual void toolOnMouseDown(int32 x, int32 y, int mouseButton) {}
 	virtual void toolOnMouseMove(int32 x, int32 y) {}
 	virtual void toolOnMouseUp(int32 x, int32 y, int mouseButton) {}
+	virtual void toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) {}
 
-	void refreshChrome();
+	void setDirty();
 
-	Debugger *_debugger;
 	Common::SharedPtr<Graphics::ManagedSurface> _toolSurface;
 
+	Debugger *_debugger;
+
 private:
+	void refreshChrome();
+
 	enum ToolWindowWidget {
 		kToolWindowWidgetNone,
 
@@ -142,12 +153,106 @@ private:
 	DebuggerTool _tool;
 
 	Common::String _title;
+	bool _isDirty;
+	int _scrollOffset;
 };
 
 DebugToolWindowBase::DebugToolWindowBase(DebuggerTool tool, const Common::String &title, Debugger *debugger, const WindowParameters &windowParams)
-	: Window(windowParams), _debugger(debugger), _tool(tool), _title(title), _activeWidget(kToolWindowWidgetNone), _isMouseCaptured(false) {
+	: Window(windowParams), _debugger(debugger), _tool(tool), _title(title), _activeWidget(kToolWindowWidgetNone), _isMouseCaptured(false), _isDirty(true), _scrollOffset(0) {
 
 	refreshChrome();
+}
+
+void DebugToolWindowBase::render() {
+	if (_isDirty) {
+		_isDirty = false;
+
+		bool needChromeUpdate = false;
+		int oldWidth = 0;
+		int oldHeight = 0;
+		if (_toolSurface) {
+			oldWidth = _toolSurface->w;
+			oldHeight = _toolSurface->h;
+			needChromeUpdate = true;
+		}
+
+		int32 renderWidth = getWidth() - kScrollBarWidth;
+		int32 renderHeight = getHeight() - kTopBarHeight;
+		toolRenderSurface(renderWidth, renderHeight);
+
+		if (_toolSurface && !needChromeUpdate) {
+			if (oldWidth != _toolSurface->w || oldHeight != _toolSurface->h)
+				needChromeUpdate = true;
+		}
+
+		if (needChromeUpdate)
+			refreshChrome();
+
+		if (_toolSurface) {
+			int32 contentsBottom = _toolSurface->h - _scrollOffset;
+			if (contentsBottom < renderHeight) {
+				_scrollOffset -= (renderHeight - contentsBottom);
+			}
+			if (_scrollOffset < 0)
+				_scrollOffset = 0;
+
+			int32 srcLeft = 0;
+			int32 srcTop = 0;
+			int32 srcRight = _toolSurface->w;
+			int32 srcBottom = _toolSurface->h;
+			int32 destLeft = 0;
+			int32 destRight = _toolSurface->w;
+			int32 destTop = -_scrollOffset;
+			int32 destBottom = _toolSurface->h - _scrollOffset;
+
+			if (srcTop < 0) {
+				int32 adjust = -srcTop;
+				destTop += adjust;
+				srcTop += adjust;
+			}
+			if (destTop < 0) {
+				int32 adjust = -destTop;
+				destTop += adjust;
+				srcTop += adjust;
+			}
+			if (srcBottom > _toolSurface->h) {
+				int32 adjust = srcBottom - _toolSurface->h;
+				destBottom += adjust;
+				srcBottom += adjust;
+			}
+			if (destBottom > renderHeight) {
+				int32 adjust = destBottom - renderHeight;
+				destBottom += adjust;
+				srcBottom += adjust;
+			}
+			if (srcLeft < 0) {
+				int32 adjust = -srcLeft;
+				destLeft += adjust;
+				srcLeft += adjust;
+			}
+			if (destLeft < 0) {
+				int32 adjust = -destLeft;
+				destLeft += adjust;
+				srcLeft += adjust;
+			}
+			if (srcRight > _toolSurface->w) {
+				int32 adjust = srcRight - _toolSurface->w;
+				destRight += adjust;
+				srcRight += adjust;
+			}
+			if (destRight > renderWidth) {
+				int32 adjust = destRight - renderWidth;
+				destRight += adjust;
+				srcRight += adjust;
+			}
+
+			if (srcLeft >= srcRight || srcTop >= srcBottom)
+				return;
+
+			getSurface()->fillRect(Common::Rect(0, kTopBarHeight, renderWidth, getHeight()), getSurface()->format.RGBToColor(255, 255, 255));
+			getSurface()->rawBlitFrom(*_toolSurface.get(), Common::Rect(srcLeft, srcTop, srcRight, srcBottom), Common::Point(destLeft, destTop + kTopBarHeight), nullptr);
+		}
+	}
 }
 
 void DebugToolWindowBase::onMouseDown(int32 x, int32 y, int mouseButton) {
@@ -203,8 +308,9 @@ void DebugToolWindowBase::onMouseMove(int32 x, int32 y) {
 				newHeight = 100;
 
 			if (newWidth != getWidth() || newHeight != getHeight()) {
-				this->resizeWindow(newWidth, newHeight);
-				refreshChrome();
+				_toolSurface.reset();
+				resizeWindow(newWidth, newHeight);
+				_isDirty = true;
 			}
 		}
 	}
@@ -231,6 +337,10 @@ void DebugToolWindowBase::onMouseUp(int32 x, int32 y, int mouseButton) {
 
 		_activeWidget = kToolWindowWidgetNone;
 	}
+}
+
+void DebugToolWindowBase::setDirty() {
+	_isDirty = true;
 }
 
 void DebugToolWindowBase::refreshChrome() {
@@ -273,6 +383,279 @@ void DebugToolWindowBase::refreshChrome() {
 	surface->fillRect(Common::Rect(0, 0, kCloseWidth, kTopBarHeight), closeColor);
 	surface->drawThickLine(2, 2, kCloseWidth - 4, kTopBarHeight - 4, 2, 2, whiteColor);
 	surface->drawThickLine(kCloseWidth - 4, 2, 2, kTopBarHeight - 4, 2, 2, whiteColor);
+}
+
+class DebugSceneTreeWindow : public DebugToolWindowBase {
+public:
+	DebugSceneTreeWindow(Debugger *debugger, const WindowParameters &windowParams);
+
+	void update() override;
+	void toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) override;
+
+	void toolOnMouseDown(int32 x, int32 y, int mouseButton) override;
+
+private:
+	static const int kRowHeight = 12;
+	static const int kBaseLeftPadding = 14;
+	static const int kExpanderLeftOffset = 8;
+	static const int kPerLevelSpacing = 14;
+
+	struct SceneTreeEntryUIState {
+		SceneTreeEntryUIState();
+
+		bool expanded;
+	};
+
+	struct SceneTreeEntry {
+		SceneTreeEntryUIState uiState;
+		size_t parentIndex;
+		int level;
+		bool hasChildren;
+		Common::WeakPtr<RuntimeObject> object;
+	};
+
+	struct RenderEntry {
+		size_t treeIndex;
+		size_t parentRenderIndex;
+	};
+
+	static void recursiveBuildTree(int level, size_t parentIndex, RuntimeObject *object, Common::Array<SceneTreeEntry> &tree);
+
+	Common::Array<SceneTreeEntry> _tree;
+	Common::Array<RenderEntry> _renderEntries;
+	bool _forceRender;
+};
+
+DebugSceneTreeWindow::SceneTreeEntryUIState::SceneTreeEntryUIState() : expanded(false) {
+}
+
+DebugSceneTreeWindow::DebugSceneTreeWindow(Debugger *debugger, const WindowParameters &windowParams)
+	: DebugToolWindowBase(kDebuggerToolSceneTree, "Project", debugger, windowParams), _forceRender(true) {
+}
+
+void DebugSceneTreeWindow::update() {
+	bool needRerender = _forceRender;
+
+	// This is super expensive but still less expensive than a redraw and we're only using it to debug,
+	// so kind of just eating the massive perf hit...
+	Common::HashMap<RuntimeObject *, SceneTreeEntryUIState> stateCache;
+	for (const SceneTreeEntry &treeEntry : _tree) {
+		Common::SharedPtr<RuntimeObject> obj = treeEntry.object.lock();
+		if (obj) {
+			stateCache[obj.get()] = treeEntry.uiState;
+		} else {
+			needRerender = true;
+			continue;
+		}
+	}
+
+	size_t oldSize = _tree.size();
+
+	// Keep existing reserve
+	_tree.resize(0);
+
+	Project *project = _debugger->getRuntime()->getProject();
+	if (project)
+		recursiveBuildTree(0, 0, project, _tree);
+
+	if (_tree.size() != oldSize)
+		needRerender = true;
+
+	for (SceneTreeEntry &treeEntry : _tree) {
+		Common::HashMap<RuntimeObject *, SceneTreeEntryUIState>::const_iterator oldStateIt = stateCache.find(treeEntry.object.lock().get());
+		if (oldStateIt != stateCache.end())
+			treeEntry.uiState = oldStateIt->_value;
+	}
+
+	if (needRerender) {
+		setDirty();
+		_renderEntries.clear();
+		_forceRender = false;
+	}
+}
+
+void DebugSceneTreeWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) {
+	Common::HashMap<const SceneTreeEntry *, size_t> treeToRenderIndex;
+	_renderEntries.clear();
+
+	treeToRenderIndex[&_tree[0]] = 0;
+
+	size_t lastParentIndex = _tree.size(); // So we can skip some hash map lookups, yuck
+	size_t lastParentRenderIndex = 0;
+	bool lastParentExpanded = true;
+
+	size_t numTreeNodes = _tree.size();
+	for (size_t i = 0; i < numTreeNodes; i++) {
+		const SceneTreeEntry &entry = _tree[i];
+		size_t parentIndex = entry.parentIndex;
+		size_t parentRenderIndex = 0;
+		bool isParentExpanded = false;
+		if (i == 0) {
+			isParentExpanded = true;
+			parentRenderIndex = 0;
+		} else if (parentIndex == lastParentIndex) {
+			isParentExpanded = lastParentExpanded;
+			parentRenderIndex = lastParentRenderIndex;
+		}else {
+			const SceneTreeEntry *parent = &_tree[entry.parentIndex];
+			if (parent->uiState.expanded) {
+				// Parent is expanded, figure out if it's actually rendered
+				Common::HashMap<const SceneTreeEntry *, size_t>::const_iterator t2r = treeToRenderIndex.find(parent);
+				if (t2r != treeToRenderIndex.end()) {
+					isParentExpanded = true;
+					parentRenderIndex = t2r->_value;
+				}
+			}
+
+			lastParentIndex = entry.parentIndex;
+			lastParentRenderIndex = parentRenderIndex;
+			lastParentExpanded = isParentExpanded;
+		}
+
+		if (isParentExpanded) {
+			treeToRenderIndex[&entry] = _renderEntries.size();
+
+			RenderEntry renderEntry;
+			renderEntry.treeIndex = i;
+			renderEntry.parentRenderIndex = parentRenderIndex;
+
+			_renderEntries.push_back(renderEntry);
+		}
+	}
+
+	Graphics::PixelFormat fmt = getSurface()->format;
+
+	int32 width = subAreaWidth;
+	int32 height = static_cast<int32>(_renderEntries.size()) * kRowHeight;
+	if (!_toolSurface || (height != _toolSurface->h || width != _toolSurface->w)) {
+		_toolSurface.reset();
+		_toolSurface.reset(new Graphics::ManagedSurface(subAreaWidth, height, fmt));
+	}
+
+	uint32 whiteColor = fmt.RGBToColor(255, 255, 255);
+	uint32 lightGrayColor = fmt.RGBToColor(192, 192, 192);
+	uint32 blackColor = fmt.RGBToColor(0, 0, 0);
+
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+
+	_toolSurface->fillRect(Common::Rect(0, 0, width, height), whiteColor);
+
+	for (size_t row = 0; row < _renderEntries.size(); row++) {
+		const RenderEntry &renderEntry = _renderEntries[row];
+		const SceneTreeEntry &entry = _tree[renderEntry.treeIndex];
+
+		Common::SharedPtr<RuntimeObject> obj = entry.object.lock();
+		if (!obj)
+			continue;	// ???
+
+		int32 y = static_cast<int32>(row) * kRowHeight + (kRowHeight - font->getFontAscent()) / 2;
+		int32 x = kBaseLeftPadding + kPerLevelSpacing * entry.level;
+
+		Common::String name;
+		if (obj->isModifier())
+			name = static_cast<const Modifier *>(obj.get())->getName();
+		else if (obj->isStructural())
+			name = static_cast<const Structural *>(obj.get())->getName();
+
+		font->drawString(_toolSurface.get(), name, x, y, width - x, blackColor, Graphics::kTextAlignLeft, 0, true);
+
+		if (entry.hasChildren) {
+			int32 expanderCenterX = x - kExpanderLeftOffset;
+			int32 expanderCenterY = static_cast<int32>(row) * kRowHeight + (kRowHeight / 2);
+			_toolSurface->frameRect(Common::Rect(expanderCenterX - 4, expanderCenterY - 4, expanderCenterX + 5, expanderCenterY + 5), blackColor);
+			_toolSurface->drawLine(expanderCenterX - 2, expanderCenterY, expanderCenterX + 2, expanderCenterY, blackColor);
+			if (!entry.uiState.expanded)
+				_toolSurface->drawLine(expanderCenterX, expanderCenterY - 2, expanderCenterX, expanderCenterY + 2, blackColor);
+		}
+	}
+
+	Common::Array<bool> haveRenderedParentTracers;
+	haveRenderedParentTracers.resize(_renderEntries.size());
+	for (size_t i = 0; i < _renderEntries.size(); i++)
+		haveRenderedParentTracers[i] = false;
+
+	for (size_t ri = 0; ri < _renderEntries.size(); ri++) {
+		size_t row = _renderEntries.size() - 1 - ri;
+		const RenderEntry &renderEntry = _renderEntries[row];
+
+		if (row == 0)
+			continue;
+
+		const RenderEntry &parentRenderEntry = _renderEntries[renderEntry.parentRenderIndex];
+		const SceneTreeEntry &treeEntry = _tree[renderEntry.treeIndex];
+		const SceneTreeEntry &parentTreeEntry = _tree[parentRenderEntry.treeIndex];
+
+		int32 x = kBaseLeftPadding + kPerLevelSpacing * treeEntry.level;
+
+		int32 parentTracerRightX = x - 2;
+		int32 parentTracerY = static_cast<int32>(row) * kRowHeight + (kRowHeight / 2);
+		if (treeEntry.hasChildren)
+			parentTracerRightX -= kExpanderLeftOffset + 7;
+
+		int32 parentTracerLeftX = kBaseLeftPadding + kPerLevelSpacing * parentTreeEntry.level - kExpanderLeftOffset;
+
+		_toolSurface->drawLine(parentTracerRightX, parentTracerY, parentTracerLeftX, parentTracerY, lightGrayColor);
+		if (!haveRenderedParentTracers[renderEntry.parentRenderIndex]) {
+			haveRenderedParentTracers[renderEntry.parentRenderIndex] = true;
+
+			int32 parentTracerTopY = static_cast<int32>(renderEntry.parentRenderIndex + 1) * kRowHeight;
+			_toolSurface->drawLine(parentTracerLeftX, parentTracerY, parentTracerLeftX, parentTracerTopY, lightGrayColor);
+		}
+	}
+}
+
+void DebugSceneTreeWindow::toolOnMouseDown(int32 x, int32 y, int mouseButton) {
+	if (mouseButton != Actions::kMouseButtonLeft)
+		return;
+
+	if (y < 0)
+		return;
+
+	int32 row = y / kRowHeight;
+
+	if (row >= _renderEntries.size())
+		return;
+
+	const RenderEntry &renderEntry = _renderEntries[row];
+	SceneTreeEntry &treeEntry = _tree[renderEntry.treeIndex];
+
+	int32 expanderCenterX = kBaseLeftPadding - kExpanderLeftOffset;
+	int32 expanderCenterY = row * kRowHeight + kRowHeight / 2;
+
+	if (x >= expanderCenterX - 5 && x <= expanderCenterX + 5 && y >= expanderCenterX - 5 && y <= expanderCenterY + 5) {
+		// Clicked the expander
+		treeEntry.uiState.expanded = !treeEntry.uiState.expanded;
+		_forceRender = true;
+		return;
+	}
+}
+
+void DebugSceneTreeWindow::recursiveBuildTree(int level, size_t parentIndex, RuntimeObject *object, Common::Array<SceneTreeEntry> &tree) {
+	SceneTreeEntry treeEntry;
+	treeEntry.level = level;
+	treeEntry.object = object->getSelfReference();
+	treeEntry.parentIndex = parentIndex;
+	treeEntry.hasChildren = false;
+
+	size_t thisIndex = tree.size();
+	tree.push_back(treeEntry);
+
+	if (object->isStructural()) {
+		Structural *structural = static_cast<Structural *>(object);
+		for (const Common::SharedPtr<Modifier> &modifier : structural->getModifiers())
+			recursiveBuildTree(level + 1, thisIndex, modifier.get(), tree);
+		for (const Common::SharedPtr<Structural> &child : structural->getChildren())
+			recursiveBuildTree(level + 1, thisIndex, child.get(), tree);
+	} else if (object->isModifier()) {
+		IModifierContainer *childContainer = static_cast<Modifier *>(object)->getChildContainer();
+		if (childContainer) {
+			for (const Common::SharedPtr<Modifier> &child : childContainer->getModifiers())
+				recursiveBuildTree(level + 1, thisIndex, child.get(), tree);
+		}
+	}
+
+	if (tree.size() - thisIndex > 1)
+		tree[thisIndex].hasChildren = true;
 }
 
 class DebugToolsWindow : public Window {
@@ -377,6 +760,13 @@ void Debugger::runFrame(uint32 msec) {
 			}
 		}
 	}
+
+	for (const Common::SharedPtr<DebugToolWindowBase> &toolWindow : _toolWindows) {
+		if (toolWindow) {
+			toolWindow->update();
+			toolWindow->render();
+		}
+	}
 }
 
 void Debugger::setPaused(bool paused) {
@@ -385,6 +775,10 @@ void Debugger::setPaused(bool paused) {
 
 bool Debugger::isPaused() const {
 	return _paused;
+}
+
+Runtime *Debugger::getRuntime() const {
+	return _runtime;
 }
 
 void Debugger::notify(DebugSeverity severity, const Common::String& str) {
@@ -523,13 +917,13 @@ void Debugger::openToolWindow(DebuggerTool tool) {
 	if (tool < 0 || tool >= kDebuggerToolCount)
 		return;	// This should never happen
 
-	Common::SharedPtr<Window> &windowRef = _toolWindows[tool];
+	Common::SharedPtr<DebugToolWindowBase> &windowRef = _toolWindows[tool];
 	if (windowRef)
 		return;
 
 	switch (tool) {
 	case kDebuggerToolSceneTree:
-		windowRef.reset(new DebugToolWindowBase(kDebuggerToolSceneTree, "SceneTree", this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
+		windowRef.reset(new DebugSceneTreeWindow(this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
 		break;
 	case kDebuggerToolInspector:
 		windowRef.reset(new DebugToolWindowBase(kDebuggerToolInspector, "Inspector", this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));

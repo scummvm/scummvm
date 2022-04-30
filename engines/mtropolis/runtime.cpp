@@ -3470,6 +3470,10 @@ void Project::loadBootStream(size_t streamIndex) {
 					if (_haveProjectStructuralDef)
 						error("Multiple project structural defs");
 
+					const Data::ProjectStructuralDef *def = static_cast<const Data::ProjectStructuralDef *>(dataObject.get());
+					_name = def->name;
+					_guid = def->guid;
+
 					_haveProjectStructuralDef = true;
 
 					ChildLoaderContext loaderContext;

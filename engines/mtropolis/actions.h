@@ -44,4 +44,4 @@ enum MouseButton {
 
 } // End of namespace MTropolis
 
-#endif
+#endif /* MTROPOLIS_ACTIONS_H */
