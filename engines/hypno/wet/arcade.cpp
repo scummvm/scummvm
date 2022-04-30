@@ -772,9 +772,11 @@ void WetEngine::drawShoot(const Common::Point &mousePos) {
 	uint32 c = kHypnoColorYellow;
 
 	if (_arcadeMode == "YT") {
-		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y + 1, c);
-		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y, c);
-		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x, mousePos.y - 1, c);
+		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x + 5, mousePos.y, c);
+		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x + 5, mousePos.y, c);
+
+		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x - 5, mousePos.y, c);
+		_compositeSurface->drawLine(mousePos.x, mousePos.y - 20, mousePos.x - 5, mousePos.y, c);
 	} else if (_arcadeMode == "Y4") {
 		_compositeSurface->drawLine(_screenW/2 - 50, _screenH, mousePos.x, mousePos.y, c);
 		_compositeSurface->drawLine(_screenW/2 - 50, _screenH, mousePos.x - 1, mousePos.y, c);
