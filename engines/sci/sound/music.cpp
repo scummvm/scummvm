@@ -269,6 +269,16 @@ void SciMusic::pauseAll(bool pause) {
 		_globalPause--;
 
 	bool stillUnpaused = (_globalPause <= 0);
+	// This check is for a specific situation (the ScummVM autosave) which will try to unpause the music,
+	// although it is already unpaused, and after the save it will then pause it again. We allow the
+	// _globalPause counter to go into the negative, so that the final outcome of both calls is a _globalPause
+	// counter of 0 (First: 0, then -1, then 0 again). However, the pause counters of the individual sounds
+	// do not support negatives. And it would be somewhat more likely to cause regressions to add that
+	// support than to just contain it here...
+	// So, for cases where the status of the _globalPause counter only changes in the range below or equal 0
+	// we return here. The individual sounds only need to get targeted if they ACTUALLY get paused or
+	// unpaused (_globalPause counter changes from 0 to 1 or from 1 to 0) or if the pause counter is
+	// increased above 1 (since positive counters are supported and required for the individual sounds).
 	if (alreadyUnpaused && stillUnpaused)
 		return;
 
