@@ -536,6 +536,7 @@ public:
 	}
 	void clear() {
 		nextLevelVideo.clear();
+		postStatsVideo.clear();
 		backgroundVideo.clear();
 		transitions.clear();
 		maskVideo.clear();
@@ -581,6 +582,7 @@ public:
 
 	// Videos
 	Filename nextLevelVideo;
+	Filename postStatsVideo;
 	Filename defeatNoEnergyFirstVideo;
 	Filename defeatNoEnergySecondVideo;
 	Filename defeatMissBossVideo;

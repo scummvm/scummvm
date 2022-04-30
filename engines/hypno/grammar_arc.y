@@ -197,6 +197,8 @@ hline: 	CTOK NUM {
 			g_parsedArc->missBoss2Video = $2;
 		else if (Common::String("BA") == $1)
 			g_parsedArc->briefingVideo = $2;
+		else if (Common::String("BB") == $1)
+			g_parsedArc->postStatsVideo = $2;
 
 		debugC(1, kHypnoDebugParser, "BN %s", $2);
 	}

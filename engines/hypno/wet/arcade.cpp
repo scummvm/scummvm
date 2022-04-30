@@ -434,6 +434,11 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 		delete frame;
 	}
 
+	if (!arc->postStatsVideo.empty()) {
+		MVideo video(arc->postStatsVideo, Common::Point(0, 0), false, true, false);
+		disableCursor();
+		runIntro(video);
+	}
 }
 
 uint32 WetEngine::findPaletteIndexZones(uint32 id) {
