@@ -64,6 +64,7 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	_musicTimer(0),
 	_cdMusicTimerMod(0),
 	_cdMusicTimer(0),
+	_speechTimerMod(0),
 	_soundQuePos(0),
 	_soundQue2Pos(0),
 	_sfxFilename(),
@@ -105,6 +106,13 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 
 	_loomSteamCDAudioHandle = new Audio::SoundHandle();
 	_talkChannelHandle = new Audio::SoundHandle();
+
+	// This timer targets every talkie game, except for LOOM CD
+	// which is handled differently, and except for COMI which
+	// handles lipsync within Digital iMUSE.
+	if (_vm->_game.version >= 5 && _vm->_game.version <= 7) {
+		startSpeechTimer();
+	}
 }
 
 Sound::~Sound() {
@@ -113,6 +121,9 @@ Sound::~Sound() {
 	free(_offsetTable);
 	delete _loomSteamCDAudioHandle;
 	delete _talkChannelHandle;
+	if (_vm->_game.version >= 5 && _vm->_game.version <= 7) {
+		stopSpeechTimer();
+	}
 }
 
 bool Sound::isRolandLoom() const {
@@ -590,16 +601,17 @@ void Sound::processSfxQueues() {
 
 		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
+			if (_vm->_game.id == GID_CMI) {
 #if defined(ENABLE_SCUMM_7_8)
-			_curSoundPos = _vm->_imuseDigital->getSoundElapsedTimeInMs(kTalkSoundID) * 60 / 1000;
+				_curSoundPos = _vm->_imuseDigital->getSoundElapsedTimeInMs(kTalkSoundID) * 60 / 1000;
 #endif
+			}
 		} else if (_vm->_game.heversion >= 60) {
 			finished = !isSoundRunning(1);
 		} else {
 			finished = !_mixer->isSoundHandleActive(*_talkChannelHandle);
-			// calculate speech sound position simulating increment at 60FPS
-			_curSoundPos = (_mixer->getSoundElapsedTime(*_talkChannelHandle) * 60) / 1000;
 		}
+
 		if ((uint) act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim))) {
 			a = _vm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom()) {
@@ -692,7 +704,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		_sfxMode |= mode;
 
 		if (_vm->_game.id == GID_DIG)
-			_curSoundPos = 0;
+			resetSpeechTimer();
 
 		return;
 	} else if (_vm->_game.id == GID_DIG && (_vm->_game.features & GF_DEMO)) {
@@ -777,7 +789,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 
 			_mouthSyncTimes[i] = 0xFFFF;
 			_sfxMode |= mode;
-			_curSoundPos = 0;
+			resetSpeechTimer();
 			_mouthSyncMode = true;
 
 			totalOffset = offset + b;
@@ -877,7 +889,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 
 		_mouthSyncTimes[i] = 0xFFFF;
 		_sfxMode |= mode;
-		_curSoundPos = 0;
+		resetSpeechTimer();
 		_mouthSyncMode = true;
 	}
 
@@ -958,6 +970,7 @@ bool Sound::isMouthSyncOff(uint pos) {
 	uint j;
 	bool val = true;
 	uint16 *ms = _mouthSyncTimes;
+	uint delay = (_vm->_game.version == 6) ? 10 : 0;
 
 	if (_vm->_game.id == GID_DIG && !(_vm->_game.features & GF_DEMO)) {
 		pos = 1000 * pos / 60;
@@ -972,7 +985,7 @@ bool Sound::isMouthSyncOff(uint pos) {
 			_endOfMouthSync = true;
 			break;
 		}
-	} while (pos > j);
+	} while (pos + delay > j);
 	return val;
 }
 
@@ -1339,6 +1352,30 @@ void Sound::setupSfxFile() {
 
 bool Sound::isSfxFinished() const {
 	return !_mixer->hasActiveChannelOfType(Audio::Mixer::kSFXSoundType);
+}
+
+void Sound::incrementSpeechTimer() {
+	if (!_soundsPaused)
+		_curSoundPos++;
+}
+
+void Sound::resetSpeechTimer() {
+	_curSoundPos = 0;
+}
+
+static void speechTimerHandler(void *refCon) {
+	Sound *snd = (Sound *)refCon;
+	if ((snd->_speechTimerMod++ & 3) == 0) {
+		snd->incrementSpeechTimer();
+	}
+}
+
+void Sound::startSpeechTimer() {
+	_vm->getTimerManager()->installTimerProc(&speechTimerHandler, 1000000 / _vm->getTimerFrequency(), this, "scummSpeechTimer");
+}
+
+void Sound::stopSpeechTimer() {
+	_vm->getTimerManager()->removeTimerProc(&speechTimerHandler);
 }
 
 static void cdTimerHandler(void *refCon) {
