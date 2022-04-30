@@ -114,6 +114,7 @@ public:
 	uint _lastSound;
 	uint32 _cdMusicTimerMod;
 	uint32 _cdMusicTimer;
+	uint32 _speechTimerMod;
 
 	MidiDriverFlags _musicType;
 
@@ -140,6 +141,10 @@ public:
 	bool hasSfxFile() const;
 	ScummFile *restoreDiMUSESpeechFile(const char *fileName);
 	void extractSyncsFromDiMUSEMarker(const char *marker);
+	void incrementSpeechTimer();
+	void resetSpeechTimer();
+	void startSpeechTimer();
+	void stopSpeechTimer();
 
 	void startCDTimer();
 	void stopCDTimer();
