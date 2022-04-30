@@ -1,0 +1,44 @@
+name: CI PSP
+
+on:
+  push:
+  pull_request:
+  repository_dispatch:
+    types: [run_build]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: pspdev/pspdev:latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Prepare Distribution
+      run: |
+        ./configure --host=psp --disable-debug --enable-plugins --default-dynamic --enable-release
+        make distclean
+
+    - name: Compile ScummVM
+      run: |
+        ./configure --host=psp --disable-debug --enable-plugins --default-dynamic --enable-release
+        make -j$(getconf _NPROCESSORS_ONLN)
+
+    - name: Prepare Release
+      run: |
+        export VERSION=`make print-distversion`
+        export DISTS=`make print-dists`
+        mkdir scummvm-$VERSION
+        cp -r $DISTS EBOOT.PBP plugins scummvm-$VERSION
+        mkdir scummvm-$VERSION/kbd
+        cp -r backends/platform/psp/kbd/*.png scummvm-$VERSION/kbd
+
+    - name: Get Version
+      id: slug
+      run: echo "::set-output name=version::$(make print-distversion)"
+    
+    - uses: actions/upload-artifact@v2
+      with:
+        name: scummvm-${{ steps.slug.outputs.version }}-psp
+        path: |
+          scummvm-${{ steps.slug.outputs.version }}
