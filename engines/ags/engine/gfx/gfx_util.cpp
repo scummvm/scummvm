@@ -103,12 +103,7 @@ void DrawSpriteWithTransparency(Bitmap *ds, Bitmap *sprite, int x, int y, int al
 	int surface_depth = ds->GetColorDepth();
 	int sprite_depth = sprite->GetColorDepth();
 
-	if (sprite_depth < surface_depth
-	        // CHECKME: what is the purpose of this hack and is this still relevant?
-#if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
-	        || (ds->GetBPP() < surface_depth && _G(psp_gfx_renderer) > 0) // Fix for corrupted speechbox outlines with the OGL driver
-#endif
-	   ) {
+	if (sprite_depth < surface_depth) {
 		// If sprite is lower color depth than destination surface, e.g.
 		// 8-bit sprites drawn on 16/32-bit surfaces.
 		if (sprite_depth == 8 && surface_depth >= 24) {
