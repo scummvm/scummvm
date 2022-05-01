@@ -1887,7 +1887,8 @@ int Dialogs::InvItemId(int x, int y) {
 int Dialogs::WhichMenuBox(int curX, int curY, bool bSlides) {
 	if (bSlides) {
 		for (int i = 0; i < _numMdSlides; i++) {
-			if (curY > MultiHighest(_mdSlides[i].obj) && curY < MultiLowest(_mdSlides[i].obj) && curX > MultiLeftmost(_mdSlides[i].obj) && curX < MultiRightmost(_mdSlides[i].obj))
+			Common::Rect bounds = MultiBounds(_mdSlides[i].obj);
+			if (curY > bounds.top && curY < bounds.bottom && curX > bounds.left && curX < bounds.right)
 				return _mdSlides[i].num | IS_SLIDER;
 		}
 	}
@@ -2258,6 +2259,15 @@ void Dialogs::AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extra
  */
 void Dialogs::AddBackground(OBJECT **rect, int extraH, int extraV) {
 	AddBackground(rect, NULL, extraH, extraV, 0);
+}
+
+Common::Rect MultiBounds(OBJECT *obj) {
+	Common::Rect bounds;
+	bounds.left = MultiLeftmost(obj);
+	bounds.right = MultiRightmost(obj);
+	bounds.top = MultiHighest(obj);
+	bounds.bottom = MultiLowest(obj);
+	return bounds;
 }
 
 /**

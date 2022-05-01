@@ -735,10 +735,11 @@ void BMVPlayer::BmvDrawText(bool bDraw) {
 
 	for (int i = 0; i < 2; i++) {
 		if (texts[i].pText) {
-			x = MultiLeftmost(texts[i].pText);
-			y = MultiHighest(texts[i].pText);
-			w = MIN(MultiRightmost(texts[i].pText) + 1, (int)SCREEN_WIDTH) - x;
-			h = MIN(MultiLowest(texts[i].pText) + 1, SCREEN_HIGH) - y;
+			Common::Rect bounds = MultiBounds(texts[i].pText);
+			x = bounds.left;
+			y = bounds.top;
+			w = MIN(bounds.right + 1, (int)SCREEN_WIDTH) - x;
+			h = MIN(bounds.bottom + 1, SCREEN_HIGH) - y;
 
 			const byte *src = ScreenBeg + (y * SCREEN_WIDTH) + x;
 			byte *dest = (byte *)_vm->screen().getBasePtr(x, y);

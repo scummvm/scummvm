@@ -111,20 +111,23 @@ void MultiSetZPosition(		// Sets the z position of a multi-part object
 void MultiReshape(		// Reshape a multi-part object
 	OBJECT *pMultiObj);	// multi-part object to re-shape
 
-int MultiLeftmost(		// Returns the left-most point of a multi-part object
-	OBJECT *pMulti);	// multi-part object
+Common::Rect MultiBounds( // Returns the bounds of a multi-part object
+	OBJECT *pMulti);      // multi-part object
 
-int MultiRightmost(		// Returns the right-most point of a multi-part object
-	OBJECT *pMulti);	// multi-part object
+int MultiLeftmost(		  // Returns the left-most point of a multi-part object
+	OBJECT *pMulti);	  // multi-part object
 
-int MultiHighest(		// Returns the highest point of a multi-part object
-	OBJECT *pMulti);	// multi-part object
+int MultiRightmost(		  // Returns the right-most point of a multi-part object
+	OBJECT *pMulti);	  // multi-part object
 
-int MultiLowest(		// Returns the lowest point of a multi-part object
-	OBJECT *pMulti);	// multi-part object
+int MultiHighest(		  // Returns the highest point of a multi-part object
+	OBJECT *pMulti);	  // multi-part object
 
-bool MultiHasShape(		// Returns TRUE if the object currently has an image
-	OBJECT *pMulti);	// multi-part object
+int MultiLowest(		  // Returns the lowest point of a multi-part object
+	OBJECT *pMulti);	  // multi-part object
+
+bool MultiHasShape(		  // Returns TRUE if the object currently has an image
+	OBJECT *pMulti);	  // multi-part object
 
 void MultiForceRedraw(
 	OBJECT *pMultiObj);	// multi-part object to be forced
