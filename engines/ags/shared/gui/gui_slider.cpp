@@ -136,7 +136,7 @@ void GUISlider::UpdateMetrics() {
 
 	_cachedBar = bar;
 	_cachedHandle = handle;
-	_handleRange = handle_range;
+	_handleRange = std::max(1, handle_range);
 }
 
 void GUISlider::Draw(Bitmap *ds, int x, int y) {
@@ -208,6 +208,7 @@ void GUISlider::OnMouseMove(int x, int y) {
 		return;
 
 	int value;
+	assert(_handleRange > 0);
 	if (IsHorizontal())
 		value = (int)(((float)((x - X) - 2) * (float)(MaxValue - MinValue)) / (float)_handleRange) + MinValue;
 	else
