@@ -158,6 +158,9 @@ enum PARTS_INDEX {
 	IX2_RIGHT1 = 40,
 	IX2_RIGHT2 = 41,
 
+	IX3_TICK = 27,
+	IX3_CROSS = 28,
+
 	T1_HOPEDFORREELS = 50,
 	T2_HOPEDFORREELS = 42
 };
@@ -196,7 +199,7 @@ enum PARTS_INDEX {
 #define ITEM_HEIGHT ((TinselVersion >= 2) ? 50 : 25) //
 #define I_SEPARATION ((TinselVersion >= 2) ? 2 : 1)  // Item separation
 
-#define NM_TOFF 11                // Title text Y offset from top
+#define NM_TOFF ((TinselVersion == 3) ? 21 : 11) // Title text Y offset from top
 #define NM_TBT ((TinselVersion >= 2) ? 4 : 0) // Y, title box top
 #define NM_TBB 33
 #define NM_LSX ((TinselVersion >= 2) ? 4 : 0) // X, left side
@@ -331,6 +334,9 @@ struct CONFINIT {
 #define BW 44 // Width of crosses and ticks etc. buttons
 #define BH 41 // Height of crosses and ticks etc. buttons
 
+#define BW_T3 49
+#define BH_T3 45
+
 /*-------------------------------------------------------------*\
 | This is the main menu (that comes up when you hit F1 on a PC)	|
 \*-------------------------------------------------------------*/
@@ -349,10 +355,13 @@ struct CONFINIT {
 
 #define BOXX 56 // X-position of text boxes
 #define BOXY 50 // Y-position of text boxes
+#define T3_BOXX 60
+#define T3_BOXY 69
 #define T2_OPTX 33
 #define T2_OPTY 36
 #define T2_BOX_V_SEP 12
 #define T2_BOX_V2_SEP 6
+#define T3_BOX_V2_SEP 7
 
 static CONFBOX t1OptionBox[] = {
 
@@ -387,8 +396,32 @@ static CONFBOX t2OptionBox[] = {
 
 static CONFINIT t2ciOption = {6, 4, 144, 60, false, t2OptionBox, sizeof(t2OptionBox) / sizeof(CONFBOX), NO_HEADING};
 
-#define ciOption ((TinselVersion >= 2) ? t2ciOption : t1ciOption)
-#define optionBox ((TinselVersion >= 2) ? t2OptionBox : t1OptionBox)
+static CONFBOX t3OptionBox[] = {
+	{ARSBUT, OPENLOAD, TM_INDEX, NULL, SS_LOAD_OPTION, T2_OPTX, T2_OPTY, T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{ARSBUT, OPENSAVE, TM_INDEX, NULL, SS_SAVE_OPTION, T2_OPTX, T2_OPTY + (T2_BOX_HEIGHT + T2_BOX_V_SEP), T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{ARSBUT, OPENREST, TM_INDEX, NULL, SS_RESTART_OPTION, T2_OPTX, T2_OPTY + 2 * (T2_BOX_HEIGHT + T2_BOX_V_SEP), T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{ARSBUT, OPENSOUND, TM_INDEX, NULL, SS_SOUND_OPTION, T2_OPTX, T2_OPTY + 3 * (T2_BOX_HEIGHT + T2_BOX_V_SEP), T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{ARSBUT, OPENQUIT, TM_INDEX, NULL, SS_QUIT_OPTION, T2_OPTX, T2_OPTY + 4 * (T2_BOX_HEIGHT + T2_BOX_V_SEP), T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0}
+};
+
+static CONFINIT t3ciOption = {6, 4, 144, 60, false, t3OptionBox, sizeof(t3OptionBox) / sizeof(CONFBOX), NO_HEADING};
+
+static CONFINIT* ciOptionLookup[] = {
+	&t1ciOption,
+	&t1ciOption,
+	&t2ciOption,
+	&t3ciOption
+};
+
+static CONFBOX* ciOptionBoxLookup[] = {
+	t1OptionBox,
+	t1OptionBox,
+	t2OptionBox,
+	t3OptionBox
+};
+
+#define ciOption (*ciOptionLookup[TinselVersion])
+#define optionBox (ciOptionBoxLookup[TinselVersion])
 
 /*-------------------------------------------------------------*\
 | These are the load and save game menus.			|
@@ -433,8 +466,22 @@ static CONFBOX t2LoadBox[] = {
 	{ARSGBUT, LOADGAME, TM_NONE, NULL, 0, 460, 100, BW, BH, NULL, IX2_TICK1},
 	{AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 100 + 100, BW, BH, NULL, IX2_CROSS1}};
 
+static CONFBOX t3LoadBox[] = {
+	{RGROUP, LOADGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY, T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, LOADGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, LOADGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + 2 * (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, LOADGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + 3 * (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, LOADGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + 4 * (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, LOADGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + 5 * (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, LOADGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + 6 * (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, LOADGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + 7 * (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+
+	{AABUT, LOADGAME, TM_NONE, NULL, 0, 460, 100, BW, BH, NULL, IX2_TICK1},
+	{AATBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 100 + 100, BW, BH, NULL, IX2_CROSS1}};
+
 static CONFINIT t1ciLoad = {10, 6, 20, 16, true, t1LoadBox, ARRAYSIZE(t1LoadBox), SIX_LOAD_HEADING};
 static CONFINIT t2ciLoad = {10, 6, 40, 16, true, t2LoadBox, sizeof(t2LoadBox) / sizeof(CONFBOX), SS_LOAD_HEADING};
+static CONFINIT t3ciLoad = {10, 6, 40, 16, true, t3LoadBox, sizeof(t3LoadBox) / sizeof(CONFBOX), SS_LOAD_HEADING};
 
 static CONFBOX t1SaveBox[NUM_RGROUP_BOXES + 2] = {
 	{RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28, SY, EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0},
@@ -465,13 +512,55 @@ static CONFBOX t2SaveBox[] = {
 	{ARSGBUT, SAVEGAME, TM_NONE, NULL, 0, 460, 100, BW, BH, NULL, IX2_TICK1},
 	{AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 100 + 100, BW, BH, NULL, IX2_CROSS1}};
 
+static CONFBOX t3SaveBox[] = {
+	{RGROUP, SAVEGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY, T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, SAVEGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, SAVEGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + 2 * (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, SAVEGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + 3 * (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, SAVEGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + 4 * (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, SAVEGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + 5 * (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, SAVEGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + 6 * (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+	{RGROUP, SAVEGAME, TM_POINTER, NULL, 0, T3_BOXX, T3_BOXY + 7 * (T2_BOX_HEIGHT + T3_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0},
+
+	{AABUT, SAVEGAME, TM_NONE, NULL, 0, 460, 100, BW, BH, NULL, IX2_TICK1},
+	{AATBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 100 + 100, BW, BH, NULL, IX2_CROSS1}};
+
 static CONFINIT t1ciSave = {10, 6, 20, 16, true, t1SaveBox, ARRAYSIZE(t1SaveBox), SIX_SAVE_HEADING};
 static CONFINIT t2ciSave = {10, 6, 40, 16, true, t2SaveBox, sizeof(t2SaveBox) / sizeof(CONFBOX), SS_SAVE_HEADING};
+static CONFINIT t3ciSave = {10, 6, 40, 16, true, t3SaveBox, sizeof(t3SaveBox) / sizeof(CONFBOX), SS_SAVE_HEADING};
 
-#define ciLoad ((TinselVersion >= 2) ? t2ciLoad : t1ciLoad)
-#define loadBox ((TinselVersion >= 2) ? t2LoadBox : t1LoadBox)
-#define ciSave ((TinselVersion >= 2) ? t2ciSave : t1ciSave)
-#define saveBox ((TinselVersion >= 2) ? t2SaveBox : t1SaveBox)
+static CONFINIT* ciLoadLookup[] = {
+	&t1ciLoad,
+	&t1ciLoad,
+	&t2ciLoad,
+	&t3ciLoad
+};
+
+static CONFBOX* ciLoadBoxLookup[] = {
+	t1LoadBox,
+	t1LoadBox,
+	t2LoadBox,
+	t3LoadBox
+};
+
+static CONFINIT* ciSaveLookup[] = {
+	&t1ciSave,
+	&t1ciSave,
+	&t2ciSave,
+	&t3ciSave
+};
+
+static CONFBOX* ciSaveBoxLookup[] = {
+	t1SaveBox,
+	t1SaveBox,
+	t2SaveBox,
+	t3SaveBox
+};
+
+#define ciLoad (*ciLoadLookup[TinselVersion])
+#define loadBox (ciLoadBoxLookup[TinselVersion])
+#define ciSave (*ciSaveLookup[TinselVersion])
+#define saveBox (ciSaveBoxLookup[TinselVersion])
 
 /*-------------------------------------------------------------*\
 | This is the restart confirmation 'menu'.			|
@@ -495,6 +584,10 @@ static CONFBOX t2RestartBox[] = {
 	{AAGBUT, INITGAME, TM_NONE, NULL, 0, 140, 78, BW, BH, NULL, IX2_TICK1},
 	{AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 60, 78, BW, BH, NULL, IX2_CROSS1}};
 
+static CONFBOX t3RestartBox[] = {
+	{AATBUT, INITGAME, TM_UNK4, NULL, 0, 140, 64, BW_T3, BH_T3, NULL, IX2_TICK1},
+	{AATBUT, CLOSEWIN, TM_UNK4, NULL, 0, 60, 64, BW_T3, BH_T3, NULL, IX2_CROSS1}};
+
 #ifdef JAPAN
 static CONFINIT t1ciRestart = {6, 2, 72, 53, false, t1RestartBox, ARRAYSIZE(t1RestartBox), SIX_RESTART_HEADING};
 #else
@@ -502,8 +595,16 @@ static CONFINIT t1ciRestart = {4, 2, 98, 53, false, t1RestartBox, ARRAYSIZE(t1Re
 #endif
 static CONFINIT t1ciRestartPSX = {8, 2, 46, 53, false, t1RestartBoxPSX, ARRAYSIZE(t1RestartBoxPSX), SIX_RESTART_HEADING};
 static CONFINIT t2ciRestart = {4, 2, 196, 53, false, t2RestartBox, sizeof(t2RestartBox) / sizeof(CONFBOX), SS_RESTART_HEADING};
+static CONFINIT t3ciRestart = {4, 2, 196, 53, false, t3RestartBox, sizeof(t3RestartBox) / sizeof(CONFBOX), SS_RESTART_HEADING};
 
-#define ciRestart ((TinselVersion >= 2) ? t2ciRestart : (TinselV1PSX ? t1ciRestartPSX : t1ciRestart))
+static CONFINIT* ciRestartLookup[] = {
+	&t1ciRestart,
+	&t1ciRestart,
+	&t2ciRestart,
+	&t3ciRestart
+};
+
+#define ciRestart (TinselV1PSX ? t1ciRestartPSX : *ciRestartLookup[TinselVersion])
 
 /*-------------------------------------------------------------*\
 | This is the sound control 'menu'. In Discworld 2, it also		|
@@ -524,10 +625,27 @@ static CONFBOX t2SoundBox[] = {
 	{TOGGLE2, NOFUNC, TM_INDEX, NULL, SS_STITLE_TOGGLE, 100, 220, BW, BH, 0 /*&_vm->_config->_useSubtitles*/, 0},
 	{ROTATE, NOFUNC, TM_INDEX, NULL, SS_LANGUAGE_SELECT, 320, 220, BW, BH, NULL, 0}};
 
+static CONFBOX t3SoundBox[] = {
+	{ARSGBUT, MUSICVOL, TM_INDEX, NULL, SS_MVOL_SLIDER, 280, 50, 100, 2, /*&_vm->_config->_musicVolume*/ 0, 0},
+	{ARSGBUT, NOFUNC, TM_INDEX, NULL, SS_SVOL_SLIDER, 280, 50 + 30 * 1, 100, 2, /*&_vm->_config->_soundVolume*/ 0, 0},
+	{ARSGBUT, NOFUNC, TM_INDEX, NULL, SS_VVOL_SLIDER, 280, 50 + 30 * 2, 100, 2, /*&_vm->_config->_voiceVolume*/ 0, 0},
+	{ARSGBUT, NOFUNC, TM_INDEX, NULL, SS_TSPEED_SLIDER, 280, 160, 100, 2, /*&_vm->_config->_textSpeed*/ 0, 0},
+	{SLIDER, NOFUNC, TM_INDEX, NULL, SS_STITLE_TOGGLE, 100, 220, BW_T3, BH_T3, /*&_vm->_config->_useSubtitles*/ 0, 0}, // Should have type 7
+	{TOGGLE1, NOFUNC, TM_INDEX, NULL, SS_LANGUAGE_SELECT, 320, 220, BW_T3, BH_T3, NULL, 0}
+};
+
 static CONFINIT t1ciSound = {10, 5, 20, 16, false, t1SoundBox, ARRAYSIZE(t1SoundBox), NO_HEADING};
 static CONFINIT t2ciSound = {10, 5, 40, 16, false, t2SoundBox, sizeof(t2SoundBox) / sizeof(CONFBOX), SS_SOUND_HEADING};
+static CONFINIT t3ciSound = {10, 5, 40, 16, false, t3SoundBox, sizeof(t3SoundBox) / sizeof(CONFBOX), SS_SOUND_HEADING};
 
-#define ciSound ((TinselVersion >= 2) ? t2ciSound : t1ciSound)
+static CONFINIT* ciSoundLookup[] = {
+	&t1ciSound,
+	&t1ciSound,
+	&t2ciSound,
+	&t3ciSound
+};
+
+#define ciSound (*ciSoundLookup[TinselVersion])
 
 /*-------------------------------------------------------------*\
 | This is the (mouse) control 'menu'.				|
@@ -610,11 +728,22 @@ static CONFBOX t2QuitBox[] = {
 	{AAGBUT, IQUITGAME, TM_NONE, NULL, 0, 140, 78, BW, BH, NULL, IX2_TICK1},
 	{AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 60, 78, BW, BH, NULL, IX2_CROSS1}};
 
+static CONFBOX t3QuitBox[] = {
+	{AATBUT, IQUITGAME, TM_NONE, NULL, 0, 140, 64, BW_T3, BH_T3, NULL, IX3_CROSS},
+	{AATBUT, CLOSEWIN, TM_NONE, NULL, 0, 60, 64, BW_T3, BH_T3, NULL, IX3_TICK}};
+
 static CONFINIT t1ciQuit = {4, 2, 98, 53, false, t1QuitBox, ARRAYSIZE(t1QuitBox), SIX_QUIT_HEADING};
 static CONFINIT t2ciQuit = {4, 2, 196, 53, false, t2QuitBox, sizeof(t2QuitBox) / sizeof(CONFBOX), SS_QUIT_HEADING};
+static CONFINIT t3ciQuit = {4, 2, 196, 53, false, t3QuitBox, sizeof(t3QuitBox) / sizeof(CONFBOX), SS_QUIT_HEADING};
 
-#define quitBox ((TinselVersion >= 2) ? t2QuitBox : t1QuitBox)
-#define ciQuit ((TinselVersion >= 2) ? t2ciQuit : t1ciQuit)
+static CONFINIT* ciQuitLookup[] = {
+	&t1ciQuit,
+	&t1ciQuit,
+	&t2ciQuit,
+	&t3ciQuit
+};
+
+#define ciQuit (*ciQuitLookup[TinselVersion])
 
 /***************************************************************************\
 |************************    Startup and shutdown    ***********************|
@@ -2201,22 +2330,25 @@ enum { FROM_HANDLE,
  * Set up a rectangle as the background to the inventory window.
  *  Additionally, sticks the window title up.
  */
-void Dialogs::AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extraV, int textFrom) {
+void Dialogs::AddBackground(OBJECT **rect, const Common::Rect &bounds, OBJECT **title, int textFrom) {
 	// Why not 2 ????
-	int width = _TLwidth + extraH + _TRwidth + NM_BG_SIZ_X;
-	int height = _TLheight + extraV + _BLheight + NM_BG_SIZ_Y;
+	int width = bounds.width();
+	int height = bounds.height();
 
 	// Create a rectangle object
 	_rectObject = *rect = TranslucentObject(width, height);
 
 	// add it to display list and position it
 	MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *rect);
-	MultiSetAniXYZ(*rect, _invD[_activeInv].inventoryX + NM_BG_POS_X,
-	               _invD[_activeInv].inventoryY + NM_BG_POS_Y,
-	               Z_INV_BRECT);
+	PositionInventory(*rect,
+	                  (TinselVersion < 3 ? NM_BG_POS_X : 0),
+	                  (TinselVersion < 3 ? NM_BG_POS_Y : 0),
+	                  Z_INV_BRECT);
 
 	if (title == NULL)
 		return;
+
+	assert(TinselVersion < 3);
 
 	// Create text object using title string
 	if (textFrom == FROM_HANDLE) {
@@ -2236,13 +2368,6 @@ void Dialogs::AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extra
 	}
 }
 
-/**
- * Set up a rectangle as the background to the inventory window.
- */
-void Dialogs::AddBackground(OBJECT **rect, int extraH, int extraV) {
-	AddBackground(rect, NULL, extraH, extraV, 0);
-}
-
 Common::Rect MultiBounds(OBJECT *obj) {
 	Common::Rect bounds;
 	bounds.left = MultiLeftmost(obj);
@@ -2255,15 +2380,14 @@ Common::Rect MultiBounds(OBJECT *obj) {
 /**
  * Adds a title for a dialog
  */
-void Dialogs::AddTitle(OBJECT **title, int extraH) {
-	int width = _TLwidth + extraH + _TRwidth + NM_BG_SIZ_X;
-
-	// Create text object using title string
+void Dialogs::AddTitle(OBJECT **title, const Common::Rect &bounds) {
 	if (_invD[_activeInv].hInvTitle != (SCNHANDLE)NO_HEADING) {
 		LoadStringRes(_invD[_activeInv].hInvTitle, _vm->_font->TextBufferAddr(), TBUFSZ);
+		
+		int xOffset = (TinselVersion == 3) ? 0 : NM_BG_POS_X;
 		*title = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_font->TextBufferAddr(), 0,
-		                       _invD[_activeInv].inventoryX + (width / 2) + NM_BG_POS_X, _invD[_activeInv].inventoryY + NM_TOFF,
-		                       _vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
+							   _invD[_activeInv].inventoryX + (bounds.width() / 2) + xOffset, _invD[_activeInv].inventoryY + NM_TOFF,
+							   _vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
 		assert(*title);
 		MultiSetZPosition(*title, Z_INV_HTEXT);
 	}
@@ -2658,6 +2782,87 @@ int Dialogs::AddExtraWindow(int x, int y, OBJECT **retObj) {
 	return n;
 }
 
+void Dialogs::ConstructInventoryCommon(SysReel reel, bool hasTitle) {
+	DumpObjArray();
+
+	// Get the frame's data
+	_objArray[0] = InsertSystemReelObj(reel);
+
+	// Center the inventory.
+	auto bounds = MultiBounds(_objArray[0]);
+	_invD[_activeInv].inventoryX = (SCREEN_WIDTH - bounds.width()) / 2;
+	_invD[_activeInv].inventoryY = (SCREEN_HEIGHT - bounds.height()) / 2;
+    PositionInventory(_objArray[0], 0, 0, Z_INV_MFRAME);
+	MultiSetZPosition(_objArray[0], 16);
+
+	AddBackground(&_objArray[1], bounds);
+	if (hasTitle) {
+		AddTitle(&_objArray[2], bounds);
+		if (_objArray[2]) {
+			// We currently skip this, as AddTitle still needs ObjTextOut updates.
+			warning("TODO: Align title");
+		}
+	}
+}
+
+void Dialogs::ConstructMainInventory() {
+	warning("TODO: Complete implementation of ConstructMainInventory");
+	ConstructInventoryCommon(SysReel::INVMAIN, false);
+	_invD[_activeInv].FirstDisp = 0;
+
+	// TODO: Slider, Scrolling
+
+	FillInInventory();
+}
+
+void Dialogs::PositionInventory(OBJECT *pMultiObj, int xOffset, int yOffset, int zPosition) {
+	MultiSetAniXYZ(pMultiObj, _invD[_activeInv].inventoryX + xOffset, _invD[_activeInv].inventoryY + yOffset, zPosition);
+}
+
+SysReel GetSysReelForMenu(int menuId) {
+	switch(menuId) {
+	case MAIN_MENU:
+		return SysReel::OPTIONS_MENU;
+		break;
+	case LOAD_MENU:
+	case SAVE_MENU:
+		return SysReel::LOADSAVE_MENU;
+		break;
+	case QUIT_MENU:
+		return SysReel::QUIT_MENU;
+		break;
+	case SOUND_MENU:
+		return SysReel::SUBTITLES_MENU;
+		break;
+	default:
+		error("Unknown menu: %d", menuId);
+	}
+}
+
+void Dialogs::ConstructConversationInventory() {
+	warning("TODO: Complete implementation of ConstructConversationInventory");
+	ConstructInventoryCommon(SysReel::CONVERSATION_FRAME, true);
+}
+
+void Dialogs::ConstructOtherInventory(int menuId) {
+	warning("TODO: Complete implementation of ConstructOtherInventory");
+	SysReel reel = GetSysReelForMenu(menuId);
+	ConstructInventoryCommon(reel, true);
+
+	if (cd.bExtraWin) {
+		warning("TODO: Complete scrollbar implementation");
+		SCNHANDLE sliderReel = _vm->_systemReel->Get(SysReel::SLIDER);
+		const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(sliderReel);
+		_objArray[3] = _slideObject = InsertReelObj(pfilm->reels);
+		MultiSetAniXYZ(_slideObject,
+					   _invD[_activeInv].inventoryX + 420,
+					   _sliderYpos,
+					   Z_INV_MFRAME - 1);
+	}
+	AddBoxes(true);
+
+}
+
 /**
  * Construct an inventory window - either a standard one, with
  * background, slider and icons, or a re-sizing window.
@@ -2682,10 +2887,7 @@ void Dialogs::ConstructInventory(InventoryType filling) {
 
 	// Dispose of anything it may be replacing
 	for (int i = 0; i < MAX_WCOMP; i++) {
-		if (retObj[i] != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), retObj[i]);
-			retObj[i] = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &retObj[i]);
 	}
 
 	// Get the frame's data
@@ -2831,10 +3033,13 @@ void Dialogs::ConstructInventory(InventoryType filling) {
 
 	OBJECT **rect, **title;
 
+	Common::Rect bounds;
+	bounds.right = _TLwidth + eH + _TRwidth + NM_BG_SIZ_X;
+	bounds.bottom = _TLheight + eV + _BLheight + NM_BG_SIZ_Y;
 	// Draw background, slider and icons
 	if ((TinselVersion >= 2) && (filling != EMPTY)) {
-		AddBackground(&retObj[n++], eH, eV);
-		AddTitle(&retObj[n++], eH);
+		AddBackground(&retObj[n++], bounds);
+		AddTitle(&retObj[n++], bounds);
 	}
 
 	if (filling == FULL) {
@@ -2842,7 +3047,7 @@ void Dialogs::ConstructInventory(InventoryType filling) {
 			rect = &retObj[n++];
 			title = &retObj[n++];
 
-			AddBackground(rect, title, eH, eV, FROM_HANDLE);
+			AddBackground(rect, bounds, title, FROM_HANDLE);
 		}
 
 		if (_activeInv == INV_CONV) {
@@ -2868,7 +3073,7 @@ void Dialogs::ConstructInventory(InventoryType filling) {
 			rect = &retObj[n++];
 			title = &retObj[n++];
 
-			AddBackground(rect, title, eH, eV, FROM_STRING);
+			AddBackground(rect, bounds, title, FROM_STRING);
 			if (cd.bExtraWin)
 				n += AddExtraWindow(invX, invY, &retObj[n]);
 		} else {
@@ -3341,7 +3546,7 @@ bool Dialogs::ConvIsHidden() {
 /**
  * Start up an inventory window.
  */
-void Dialogs::PopUpInventory(int invno) {
+void Dialogs::PopUpInventory(int invno, int menuId) {
 	assert(invno == INV_1 || invno == INV_2 || invno == INV_CONV || invno == INV_CONF || invno == INV_MENU); // Trying to open illegal inventory
 
 	if (_inventoryState == IDLE_INV) {
@@ -3376,17 +3581,36 @@ void Dialogs::PopUpInventory(int invno) {
 		_inventoryState = ACTIVE_INV; // Inventory actiive
 		_InventoryHidden = false;     // Not hidden
 		_InventoryMaximised = _invD[_activeInv].bMax;
-		if (invno != INV_CONF)        // Configuration window?
-			ConstructInventory(FULL); // Draw it up
-		else {
-			ConstructInventory(CONF); // Draw it up
+		if (TinselVersion == 3) {
+			switch (invno) {
+			case INV_CONV:
+				ConstructConversationInventory();
+				 break;
+			case INV_1:
+			case INV_2:
+			case INV_3:
+			case INV_4:
+				ConstructMainInventory();
+				break;
+			default: // Should be menu.
+				ConstructOtherInventory(menuId);
+				break;
+			}
+		} else {
+			if (invno != INV_CONF)        // Configuration window?
+				ConstructInventory(FULL); // Draw it up
+			else {
+				ConstructInventory(CONF); // Draw it up
+			}
 		}
 	}
 }
 
 void Dialogs::SetMenuGlobals(CONFINIT *ci) {
-	_invD[INV_CONF].MinHicons = _invD[INV_CONF].MaxHicons = _invD[INV_CONF].NoofHicons = ci->h;
-	_invD[INV_CONF].MaxVicons = _invD[INV_CONF].MinVicons = _invD[INV_CONF].NoofVicons = ci->v;
+	if (TinselVersion < 3) {
+		_invD[INV_CONF].MinHicons = _invD[INV_CONF].MaxHicons = _invD[INV_CONF].NoofHicons = ci->h;
+		_invD[INV_CONF].MaxVicons = _invD[INV_CONF].MinVicons = _invD[INV_CONF].NoofVicons = ci->v;
+	}
 	_invD[INV_CONF].inventoryX = ci->x;
 	_invD[INV_CONF].inventoryY = ci->y;
 	cd.bExtraWin = ci->bExtraWin;
@@ -3454,7 +3678,13 @@ void Dialogs::OpenMenu(CONFTYPE menuType) {
 			_displayedLanguage = TextLanguage();
 #if 1
 		// FIXME: Hack to setup CONFBOX pointer to data in the global Config object
-		if (TinselVersion >= 2) {
+		if (TinselVersion == 3) {
+			t3SoundBox[0].ival = &_vm->_config->_musicVolume;
+			t3SoundBox[1].ival = &_vm->_config->_soundVolume;
+			t3SoundBox[2].ival = &_vm->_config->_voiceVolume;
+			t3SoundBox[3].ival = &_vm->_config->_textSpeed;
+			t3SoundBox[4].ival = &_vm->_config->_useSubtitles;
+		} else if (TinselVersion >= 2) {
 			t2SoundBox[0].ival = &_vm->_config->_musicVolume;
 			t2SoundBox[1].ival = &_vm->_config->_soundVolume;
 			t2SoundBox[2].ival = &_vm->_config->_voiceVolume;
@@ -3550,7 +3780,7 @@ void Dialogs::OpenMenu(CONFTYPE menuType) {
 	if (_heldItem != INV_NOICON)
 		_vm->_cursor->DelAuxCursor(); // no longer aux cursor
 
-	PopUpInventory(INV_CONF);
+	PopUpInventory(INV_CONF, menuType);
 
 	// Make initial box selections if appropriate
 	if (menuType == SAVE_MENU || menuType == LOAD_MENU || menuType == HOPPER_MENU1 || menuType == HOPPER_MENU2)

@@ -21,10 +21,12 @@
  */
 
 #include "tinsel/background.h"
+#include "tinsel/film.h"
 #include "tinsel/multiobj.h"
 #include "tinsel/handle.h"
 #include "tinsel/object.h"
 #include "tinsel/tinsel.h"
+#include "tinsel/noir/sysreel.h"
 
 namespace Tinsel {
 
@@ -81,6 +83,28 @@ OBJECT *MultiInitObject(const MULTI_INIT *pInitTbl) {
 
 	// return master object
 	return pFirst;
+}
+
+OBJECT *InsertReelObj(const FREEL *reels) {
+	const MULTI_INIT *pmi = (const MULTI_INIT*)_vm->_handle->LockMem(reels->mobj);
+	// Verify that there is an image defined
+	const FRAME *frame = (const FRAME*)_vm->_handle->LockMem(pmi->hMulFrame);
+	const IMAGE *image = (const IMAGE*)_vm->_handle->LockMem(*frame);
+	assert(image);
+
+	auto pInsObj = MultiInitObject(pmi);
+	MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), pInsObj);
+	return pInsObj; // Result
+}
+
+const FILM *GetSystemReelFilm(SysReel reelIndex) {
+	SCNHANDLE hFilm = _vm->_systemReel->Get(reelIndex);
+	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(hFilm);
+	return pfilm;
+}
+
+OBJECT *InsertSystemReelObj(SysReel reelIndex) {
+	return InsertReelObj(GetSystemReelFilm(reelIndex)->reels);
 }
 
 /**

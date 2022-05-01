@@ -132,6 +132,13 @@ bool MultiHasShape(		  // Returns TRUE if the object currently has an image
 void MultiForceRedraw(
 	OBJECT *pMultiObj);	// multi-part object to be forced
 
+struct FREEL;
+OBJECT* InsertReelObj(const FREEL *reels);
+struct FILM;
+enum class SysReel;
+const FILM* GetSystemReelFilm(SysReel reelIndex);
+OBJECT* InsertSystemReelObj(SysReel reelIndex);
+
 } // End of namespace Tinsel
 
 #endif	// TINSEL_MULTIOBJ_H

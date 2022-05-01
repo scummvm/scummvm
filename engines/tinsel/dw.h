@@ -64,7 +64,7 @@ typedef int HPOLYGON;
 // i.e. it gets a Z position of 0
 
 #define Z_INV_BRECT	10	// Inventory background rectangle
-#define Z_INV_MFRAME	15	// Inventory window frame
+#define Z_INV_MFRAME	((TinselVersion == 3) ? 16 : 15)	// Inventory window frame
 #define Z_INV_HTEXT	15	// Inventory heading text
 #define Z_INV_ICONS	16	// Icons in inventory
 #define Z_INV_ITEXT	995	// Icon text
