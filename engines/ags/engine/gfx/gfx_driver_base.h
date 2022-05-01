@@ -42,6 +42,7 @@ using Shared::PlaneScaling;
 
 // Sprite batch, defines viewport and an optional model transformation for the list of sprites
 struct SpriteBatchDesc {
+	uint32_t                 Parent = 0;
 	// View rectangle for positioning and clipping, in resolution coordinates
 	// (this may be screen or game frame resolution, depending on circumstances)
 	Rect                     Viewport;
@@ -50,15 +51,15 @@ struct SpriteBatchDesc {
 	// Global node offset applied to the whole batch as the last transform
 	Point                    Offset;
 	// Global node flip applied to the whole batch as the last transform
-	GlobalFlipType           Flip;
+	GlobalFlipType           Flip = kFlip_None;
 	// Optional bitmap to draw sprites upon. Used exclusively by the software rendering mode.
 	PBitmap                  Surface;
 
-	SpriteBatchDesc() : Flip(kFlip_None) {
-	}
-	SpriteBatchDesc(const Rect viewport, const SpriteTransform &transform, const Point offset = Point(),
-	                GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr)
-		: Viewport(viewport)
+	SpriteBatchDesc() = default;
+	SpriteBatchDesc(uint32_t parent, const Rect viewport, const SpriteTransform & transform, const Point offset = Point(),
+		GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr)
+		: Parent(parent)
+		, Viewport(viewport)
 		, Transform(transform)
 		, Offset(offset)
 		, Flip(flip)
@@ -102,6 +103,7 @@ public:
 
 	void        BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
 	                             const Point offset = Point(), GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr) override;
+	void        EndSpriteBatch() override;
 	void        ClearDrawLists() override;
 
 	void        SetCallbackForPolling(GFXDRV_CLIENTCALLBACK callback) override {

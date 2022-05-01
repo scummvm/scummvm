@@ -135,8 +135,12 @@ public:
 	// Prepares next sprite batch, a list of sprites with defined viewport and optional
 	// global model transformation; all subsequent calls to DrawSprite will be adding
 	// sprites to this batch's list.
+	// Beginning a batch while the previous was not ended will create a sub-batch
+	// (think of it as of a child scene node).
 	virtual void BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-	                              const Point offset = Point(), GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr) = 0;
+		const Point offset = Point(), GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr) = 0;
+	// Ends current sprite batch
+	virtual void EndSpriteBatch() = 0;
 	// Adds sprite to the active batch
 	virtual void DrawSprite(int x, int y, IDriverDependantBitmap *bitmap) = 0;
 	// Adds fade overlay fx to the active batch

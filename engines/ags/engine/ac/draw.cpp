@@ -661,15 +661,16 @@ void render_black_borders() {
 			_G(gfxDriver)->DrawSprite(0, 0, _G(blankSidebarImage));
 			_G(gfxDriver)->DrawSprite(viewport.Right + 1, 0, _G(blankSidebarImage));
 		}
+		_G(gfxDriver)->EndSpriteBatch();
 	}
 }
-
 
 void render_to_screen() {
 	// Stage: final plugin callback (still drawn on game screen
 	if (pl_any_want_hook(AGSE_FINALSCREENDRAW)) {
 		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
 		_G(gfxDriver)->DrawSprite(AGSE_FINALSCREENDRAW, 0, nullptr);
+		_G(gfxDriver)->EndSpriteBatch();
 	}
 	// Stage: engine overlay
 	construct_engine_overlay();
@@ -2207,6 +2208,7 @@ static void construct_room_view() {
 			}
 		}
 		put_sprite_list_on_screen(true);
+		_G(gfxDriver)->EndSpriteBatch();
 	}
 
 	clear_draw_list();
@@ -2217,6 +2219,7 @@ static void construct_ui_view() {
 	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetUIViewportAbs(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
 	draw_gui_and_overlays();
 	put_sprite_list_on_screen(false);
+	_G(gfxDriver)->EndSpriteBatch();
 	clear_draw_list();
 }
 
@@ -2265,9 +2268,13 @@ void construct_game_scene(bool full_redraw) {
 }
 
 void construct_game_screen_overlay(bool draw_mouse) {
-	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
-	if (pl_any_want_hook(AGSE_POSTSCREENDRAW))
+	if (pl_any_want_hook(AGSE_POSTSCREENDRAW)) {
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(),
+			SpriteTransform(), Point(0, _GP(play).shake_screen_yoff),
+			(GlobalFlipType)_GP(play).screen_flipped);
 		_G(gfxDriver)->DrawSprite(AGSE_POSTSCREENDRAW, 0, nullptr);
+		_G(gfxDriver)->EndSpriteBatch();
+	}
 
 	// TODO: find out if it's okay to move cursor animation and state update
 	// to the update loop instead of doing it in the drawing routine
@@ -2301,18 +2308,19 @@ void construct_game_screen_overlay(bool draw_mouse) {
 		_G(lastmy) = _G(mousey);
 	}
 
-	// Stage: mouse cursor
-	if (draw_mouse && !_GP(play).mouse_cursor_hidden && _GP(play).screen_is_faded_out == 0) {
-		_G(gfxDriver)->DrawSprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty),
-		                          _G(mouseCursor));
-		invalidate_sprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor), false);
-	}
-
 	if (_GP(play).screen_is_faded_out == 0) {
+		// Stage: mouse cursor
+		_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetMainViewport(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
+		if (draw_mouse && !_GP(play).mouse_cursor_hidden) {
+			_G(gfxDriver)->DrawSprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor));
+			invalidate_sprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor), false);
+		}
 		// Stage: screen fx
 		if (_GP(play).screen_tint >= 1)
 			_G(gfxDriver)->SetScreenTint(_GP(play).screen_tint & 0xff, (_GP(play).screen_tint >> 8) & 0xff, (_GP(play).screen_tint >> 16) & 0xff);
-		// Stage: legacy letterbox mode borders
+		_G(gfxDriver)->EndSpriteBatch();
+
+		// Stage: legacy letterbox mode borders (has its own sprite batch)
 		render_black_borders();
 	}
 
@@ -2320,6 +2328,7 @@ void construct_game_screen_overlay(bool draw_mouse) {
 		const Rect &main_viewport = _GP(play).GetMainViewport();
 		_G(gfxDriver)->BeginSpriteBatch(main_viewport, SpriteTransform());
 		_G(gfxDriver)->SetScreenFade(_GP(play).fade_to_red, _GP(play).fade_to_green, _GP(play).fade_to_blue);
+		_G(gfxDriver)->EndSpriteBatch();
 	}
 }
 
@@ -2357,6 +2366,8 @@ void construct_engine_overlay() {
 
 	if (_G(display_fps) != kFPS_Hide)
 		draw_fps(viewport);
+
+	_G(gfxDriver)->EndSpriteBatch();
 }
 
 static void update_shakescreen() {

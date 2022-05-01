@@ -66,10 +66,14 @@ Rect GraphicsDriverBase::GetRenderDestination() const {
 }
 
 void GraphicsDriverBase::BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-        const Point offset, GlobalFlipType flip, PBitmap surface) {
-	_actSpriteBatch++;
-	_spriteBatchDesc.push_back(SpriteBatchDesc(viewport, transform, offset, flip, surface));
+	const Point offset, GlobalFlipType flip, PBitmap surface) {
+	_spriteBatchDesc.push_back(SpriteBatchDesc(_actSpriteBatch, viewport, transform, offset, flip, surface));
+	_actSpriteBatch = _spriteBatchDesc.size() - 1;
 	InitSpriteBatch(_actSpriteBatch, _spriteBatchDesc[_actSpriteBatch]);
+}
+
+void GraphicsDriverBase::EndSpriteBatch() {
+	_actSpriteBatch = _spriteBatchDesc[_actSpriteBatch].Parent;
 }
 
 void GraphicsDriverBase::ClearDrawLists() {
