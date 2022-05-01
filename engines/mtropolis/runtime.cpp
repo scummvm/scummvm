@@ -226,6 +226,19 @@ bool Point16::load(const Data::Point &point) {
 	return true;
 }
 
+bool Point16::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
+	if (attrib == "x") {
+		DynamicValueWriteIntegerHelper<int16>::create(&x, proxy);
+		return true;
+	}
+	if (attrib == "y") {
+		DynamicValueWriteIntegerHelper<int16>::create(&y, proxy);
+		return true;
+	}
+
+	return false;
+}
+
 bool Rect16::load(const Data::Rect &rect) {
 	top = rect.top;
 	left = rect.left;
@@ -243,6 +256,19 @@ bool IntRange::load(const Data::IntRange &range) {
 	min = range.min;
 
 	return true;
+}
+
+bool IntRange::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
+	if (attrib == "start") {
+		DynamicValueWriteIntegerHelper<int32>::create(&min, proxy);
+		return true;
+	}
+	if (attrib == "y") {
+		DynamicValueWriteIntegerHelper<int32>::create(&max, proxy);
+		return true;
+	}
+
+	return false;
 }
 
 bool Label::load(const Data::Label &label) {
@@ -441,6 +467,10 @@ bool DynamicListContainer<void>::setAtIndex(size_t index, const DynamicValue &dy
 	return true;
 }
 
+bool DynamicListContainer<void>::expandToMinimumSize(size_t sz) {
+	return false;
+}
+
 bool DynamicListContainer<void>::getAtIndex(size_t index, DynamicValue &dynValue) const {
 	dynValue.clear();
 	return true;
@@ -451,6 +481,10 @@ void DynamicListContainer<void>::setFrom(const DynamicListContainerBase &other) 
 }
 
 const void *DynamicListContainer<void>::getConstArrayPtr() const {
+	return nullptr;
+}
+
+void *DynamicListContainer<void>::getArrayPtr() {
 	return nullptr;
 }
 
@@ -477,7 +511,7 @@ bool DynamicListContainer<VarReference>::setAtIndex(size_t index, const DynamicV
 		_array.resize(requiredSize);
 		_strings.resize(requiredSize);
 
-		for (size_t i = prevSize; i < index; prevSize++) {
+		for (size_t i = prevSize; i < index; i++) {
 			_array[i].guid = 0;
 		}
 
@@ -490,6 +524,21 @@ bool DynamicListContainer<VarReference>::setAtIndex(size_t index, const DynamicV
 		const VarReference &varRef = dynValue.getVarReference();
 		_array[index].guid = varRef.guid;
 		_strings[index] = *varRef.source;
+	}
+
+	return true;
+}
+
+bool DynamicListContainer<VarReference>::expandToMinimumSize(size_t sz) {
+	if (_array.size() < sz) {
+		size_t prevSize = _array.size();
+		_array.resize(sz);
+		_strings.resize(sz);
+
+		for (size_t i = prevSize; i < sz; prevSize++) {
+			_array[i].guid = 0;
+			_array[i].source = nullptr;
+		}
 	}
 
 	return true;
@@ -513,6 +562,10 @@ void DynamicListContainer<VarReference>::setFrom(const DynamicListContainerBase 
 }
 
 const void *DynamicListContainer<VarReference>::getConstArrayPtr() const {
+	return &_array;
+}
+
+void *DynamicListContainer<VarReference>::getArrayPtr() {
 	return &_array;
 }
 
@@ -603,6 +656,76 @@ const Common::Array<bool> &DynamicList::getBool() const {
 	return *static_cast<const Common::Array<bool> *>(_container->getConstArrayPtr());
 }
 
+const Common::Array<Common::SharedPtr<DynamicList> > &DynamicList::getList() const {
+	assert(_type == DynamicValueTypes::kList);
+	return *static_cast<const Common::Array<Common::SharedPtr<DynamicList> > *>(_container->getConstArrayPtr());
+}
+
+const Common::Array<ObjectReference> &DynamicList::getObjectReference() const {
+	assert(_type == DynamicValueTypes::kObject);
+	return *static_cast<const Common::Array<ObjectReference> *>(_container->getConstArrayPtr());
+}
+
+Common::Array<int32> &DynamicList::getInt() {
+	assert(_type == DynamicValueTypes::kInteger);
+	return *static_cast<Common::Array<int32> *>(_container->getArrayPtr());
+}
+
+Common::Array<double> &DynamicList::getFloat() {
+	assert(_type == DynamicValueTypes::kFloat);
+	return *static_cast<Common::Array<double> *>(_container->getArrayPtr());
+}
+
+Common::Array<Point16> &DynamicList::getPoint() {
+	assert(_type == DynamicValueTypes::kPoint);
+	return *static_cast<Common::Array<Point16> *>(_container->getArrayPtr());
+}
+
+Common::Array<IntRange> &DynamicList::getIntRange() {
+	assert(_type == DynamicValueTypes::kIntegerRange);
+	return *static_cast<Common::Array<IntRange> *>(_container->getArrayPtr());
+}
+
+Common::Array<AngleMagVector> &DynamicList::getVector() {
+	assert(_type == DynamicValueTypes::kVector);
+	return *static_cast<Common::Array<AngleMagVector> *>(_container->getArrayPtr());
+}
+
+Common::Array<Label> &DynamicList::getLabel() {
+	assert(_type == DynamicValueTypes::kLabel);
+	return *static_cast<Common::Array<Label> *>(_container->getArrayPtr());
+}
+
+Common::Array<Event> &DynamicList::getEvent() {
+	assert(_type == DynamicValueTypes::kEvent);
+	return *static_cast<Common::Array<Event> *>(_container->getArrayPtr());
+}
+
+Common::Array<VarReference> &DynamicList::getVarReference() {
+	assert(_type == DynamicValueTypes::kVariableReference);
+	return *static_cast<Common::Array<VarReference> *>(_container->getArrayPtr());
+}
+
+Common::Array<Common::String> &DynamicList::getString() {
+	assert(_type == DynamicValueTypes::kString);
+	return *static_cast<Common::Array<Common::String> *>(_container->getArrayPtr());
+}
+
+Common::Array<bool> &DynamicList::getBool() {
+	assert(_type == DynamicValueTypes::kBoolean);
+	return *static_cast<Common::Array<bool> *>(_container->getArrayPtr());
+}
+
+Common::Array<Common::SharedPtr<DynamicList> > &DynamicList::getList() {
+	assert(_type == DynamicValueTypes::kList);
+	return *static_cast<Common::Array<Common::SharedPtr<DynamicList> > *>(_container->getArrayPtr());
+}
+
+Common::Array<ObjectReference> &DynamicList::getObjectReference() {
+	assert(_type == DynamicValueTypes::kObject);
+	return *static_cast<Common::Array<ObjectReference> *>(_container->getArrayPtr());
+}
+
 bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
 	if (_type != value.getType()) {
 		if (_container != nullptr && _container->getSize() != 0)
@@ -615,6 +738,11 @@ bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
 	} else {
 		return _container->setAtIndex(index, value);
 	}
+}
+
+void DynamicList::expandToMinimumSize(size_t sz) {
+	if (_container)
+		_container->expandToMinimumSize(sz);
 }
 
 bool DynamicList::getAtIndex(size_t index, DynamicValue &value) const {
@@ -694,6 +822,12 @@ Common::SharedPtr<DynamicList> DynamicList::clone() const {
 	return clonedList;
 }
 
+void DynamicList::createWriteProxyForIndex(size_t index, DynamicValueWriteProxy &proxy) {
+	proxy.pod.ifc = &WriteProxyInterface::_instance;
+	proxy.pod.objectRef = this;
+	proxy.pod.ptrOrOffset = index;
+}
+
 bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
 	switch (type) {
 	case DynamicValueTypes::kNull:
@@ -761,6 +895,76 @@ void DynamicList::initFromOther(const DynamicList &other) {
 		_container->setFrom(*other._container);
 	}
 }
+
+bool DynamicList::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr_t ptrOrOffset) const {
+	return static_cast<DynamicList *>(objectRef)->setAtIndex(ptrOrOffset, value);
+}
+
+bool DynamicList::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const {
+	DynamicList *list = static_cast<DynamicList *>(objectRef);
+	switch (list->getType()) {
+	case DynamicValueTypes::kPoint:
+		list->expandToMinimumSize(ptrOrOffset + 1);
+		return list->getPoint()[ptrOrOffset].refAttrib(thread, proxy, attrib);
+		break;
+	case DynamicValueTypes::kIntegerRange:
+		list->expandToMinimumSize(ptrOrOffset + 1);
+		return list->getIntRange()[ptrOrOffset].refAttrib(thread, proxy, attrib);
+	case DynamicValueTypes::kVector:
+		list->expandToMinimumSize(ptrOrOffset + 1);
+		return list->getVector()[ptrOrOffset].refAttrib(thread, proxy, attrib);
+	case DynamicValueTypes::kObject: {
+			if (list->getSize() <= ptrOrOffset)
+				return false;
+
+			Common::SharedPtr<RuntimeObject> obj = list->getObjectReference()[ptrOrOffset].object.lock();
+			proxy.containerList.reset();
+			if (!obj && !obj->writeRefAttribute(thread, proxy, attrib))
+				return false;
+
+			return true;
+		}
+	default:
+		return false;
+	}
+}
+
+bool DynamicList::WriteProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+	DynamicList *list = static_cast<DynamicList *>(objectRef);
+	switch (list->getType()) {
+	case DynamicValueTypes::kList: {
+			if (list->getSize() <= ptrOrOffset)
+				return false;
+
+			Common::SharedPtr<DynamicList> subList = list->getList()[ptrOrOffset];
+
+			size_t subIndex = 0;
+			if (!subList->dynamicValueToIndex(subIndex, index))
+				return false;
+
+			subList->createWriteProxyForIndex(subIndex, proxy);
+			proxy.containerList = subList;
+			return true;
+		}
+	case DynamicValueTypes::kObject: {
+			if (list->getSize() <= ptrOrOffset)
+				return false;
+
+			Common::SharedPtr<RuntimeObject> obj = list->getObjectReference()[ptrOrOffset].object.lock();
+			proxy.containerList.reset();
+			if (!obj && !obj->writeRefAttributeIndexed(thread, proxy, attrib, index))
+				return false;
+
+			return true;
+		}
+	default:
+		return false;
+	}
+
+	return false;
+}
+
+DynamicList::WriteProxyInterface DynamicList::WriteProxyInterface::_instance;
 
 DynamicValue::DynamicValue() : _type(DynamicValueTypes::kNull) {
 }
@@ -948,22 +1152,41 @@ const ObjectReference &DynamicValue::getObject() const {
 	return _obj;
 }
 
-const DynamicValueReadProxy& DynamicValue::getReadProxy() const {
+const DynamicValueReadProxyPOD &DynamicValue::getReadProxyPOD() const {
 	assert(_type == DynamicValueTypes::kReadProxy);
 	return _value.asReadProxy;
 }
 
-const DynamicValueWriteProxy &DynamicValue::getWriteProxy() const {
+const DynamicValueWriteProxyPOD &DynamicValue::getWriteProxyPOD() const {
 	assert(_type == DynamicValueTypes::kWriteProxy);
 	return _value.asWriteProxy;
 }
 
-const Common::SharedPtr<DynamicList> &DynamicValue::getReadProxyList() const {
+
+DynamicValueReadProxy DynamicValue::getReadProxyTEMP() const {
+	assert(_type == DynamicValueTypes::kReadProxy);
+
+	DynamicValueReadProxy proxy;
+	proxy.pod = _value.asReadProxy;
+	proxy.containerList = _list;
+	return proxy;
+}
+
+DynamicValueWriteProxy DynamicValue::getWriteProxyTEMP() const {
+	assert(_type == DynamicValueTypes::kWriteProxy);
+
+	DynamicValueWriteProxy proxy;
+	proxy.pod = _value.asWriteProxy;
+	proxy.containerList = _list;
+	return proxy;
+}
+
+const Common::SharedPtr<DynamicList> &DynamicValue::getReadProxyContainer() const {
 	assert(_type == DynamicValueTypes::kReadProxy);
 	return _list;
 }
 
-const Common::SharedPtr<DynamicList> &DynamicValue::getWriteProxyList() const {
+const Common::SharedPtr<DynamicList> &DynamicValue::getWriteProxyContainer() const {
 	assert(_type == DynamicValueTypes::kWriteProxy);
 	return _list;
 }
@@ -1047,21 +1270,21 @@ void DynamicValue::setList(const Common::SharedPtr<DynamicList> &value) {
 	_list = value;
 }
 
-void DynamicValue::setReadProxy(const Common::SharedPtr<DynamicList> &list, const DynamicValueReadProxy &readProxy) {
-	Common::SharedPtr<DynamicList> listRef = list;	// Back up list ref in case this is a self-assign
+void DynamicValue::setReadProxy(const DynamicValueReadProxy &readProxy) {
+	Common::SharedPtr<DynamicList> listRef = readProxy.containerList;	// Back up list ref in case this is a self-assign
 	if (_type != DynamicValueTypes::kReadProxy)
 		clear();
 	_type = DynamicValueTypes::kReadProxy;
-	_value.asReadProxy = readProxy;
+	_value.asReadProxy = readProxy.pod;
 	_list = listRef;
 }
 
-void DynamicValue::setWriteProxy(const Common::SharedPtr<DynamicList> &list, const DynamicValueWriteProxy &writeProxy) {
-	Common::SharedPtr<DynamicList> listRef = list; // Back up list ref in case this is a self-assign
+void DynamicValue::setWriteProxy(const DynamicValueWriteProxy &writeProxy) {
+	Common::SharedPtr<DynamicList> listRef = writeProxy.containerList; // Back up list ref in case this is a self-assign
 	if (_type != DynamicValueTypes::kWriteProxy)
 		clear();
 	_type = DynamicValueTypes::kWriteProxy;
-	_value.asWriteProxy = writeProxy;
+	_value.asWriteProxy = writeProxy.pod;
 	_list = listRef;
 }
 
@@ -1414,6 +1637,43 @@ bool Event::load(const Data::Event &data) {
 	eventInfo = data.eventInfo;
 
 	return true;
+}
+
+bool AngleMagVector::dynSetAngleDegrees(const DynamicValue &value) {
+	double degrees = 0.0;
+	switch (value.getType())
+	{
+	case DynamicValueTypes::kInteger:
+		degrees = static_cast<double>(value.getInt());
+		break;
+	case DynamicValueTypes::kFloat:
+		degrees = value.getFloat();
+		break;
+	default:
+		return false;
+	}
+
+	angleRadians = degrees * (M_PI / 180.0);
+
+	return true;
+}
+
+void AngleMagVector::dynGetAngleDegrees(DynamicValue &value) const {
+	value.setFloat(angleRadians * (180.0 / M_PI));
+}
+
+
+bool AngleMagVector::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
+	if (attrib == "angle") {
+		DynamicValueWriteFuncHelper<AngleMagVector, &AngleMagVector::dynSetAngleDegrees>::create(this, proxy);
+		return true;
+	}
+	if (attrib == "magnitude") {
+		DynamicValueWriteFloatHelper<double>::create(&magnitude, proxy);
+		return true;
+	}
+
+	return false;
 }
 
 void IPlugInModifierRegistrar::registerPlugInModifier(const char *name, const IPlugInModifierFactoryAndDataFactory *loaderFactory) {
@@ -3996,11 +4256,11 @@ bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result
 
 bool VisualElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	if (attrib == "visible") {
-		writeProxy = DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetVisibility>::create(this);
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetVisibility>::create(this, writeProxy);
 		return true;
 	}
 	if (attrib == "direct") {
-		writeProxy = DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetDirect>::create(this);
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetDirect>::create(this, writeProxy);
 		return true;
 	}
 
@@ -4199,6 +4459,28 @@ DebugInspector *Modifier::debugCreateInspector() {
 bool VariableModifier::isVariable() const {
 	return true;
 }
+
+DynamicValueWriteProxy VariableModifier::createWriteProxy() {
+	DynamicValueWriteProxy proxy;
+	proxy.pod.objectRef = this;
+	proxy.pod.ptrOrOffset = 0;
+	proxy.pod.ifc = &VariableModifier::WriteProxyInterface::_instance;
+	return proxy;
+}
+
+bool VariableModifier::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const {
+	return static_cast<VariableModifier *>(objectRef)->varSetValue(dest);
+}
+
+bool VariableModifier::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const {
+	return static_cast<VariableModifier *>(objectRef)->writeRefAttribute(thread, dest, attrib);
+}
+
+bool VariableModifier::WriteProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+	return static_cast<VariableModifier *>(objectRef)->writeRefAttributeIndexed(thread, dest, attrib, index);
+}
+
+VariableModifier::WriteProxyInterface VariableModifier::WriteProxyInterface::_instance;
 
 bool Modifier::loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeader) {
 	if (!_modifierFlags.load(typicalHeader.modifierFlags))

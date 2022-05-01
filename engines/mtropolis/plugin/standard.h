@@ -96,8 +96,11 @@ public:
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data);
 
-	bool setValue(const DynamicValue &value) override;
-	void getValue(DynamicValue &dest) const override;
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
+
+	bool varSetValue(const DynamicValue &value) override;
+	void varGetValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Object Reference Variable Modifier"; }
@@ -106,11 +109,15 @@ public:
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
+	bool dynSetPath(const DynamicValue &value);
+	bool dynSetObject(const DynamicValue &value);
+
+	void resolve();
+
 	Event _setToSourceParentWhen;
 
 	mutable ObjectReference _object;
 	mutable Common::String _objectPath;
-	mutable bool _isResolved;
 };
 
 class MidiModifier : public Modifier {
@@ -176,8 +183,8 @@ public:
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data);
 
-	bool setValue(const DynamicValue &value) override;
-	void getValue(DynamicValue &dest) const override;
+	bool varSetValue(const DynamicValue &value) override;
+	void varGetValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "List Variable Modifier"; }

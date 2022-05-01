@@ -70,6 +70,7 @@ class Runtime;
 class Structural;
 class VisualElement;
 class Window;
+struct DynamicValue;
 struct IMessageConsumer;
 struct IModifierContainer;
 struct IModifierFactory;
@@ -264,6 +265,8 @@ struct Point16 {
 		result.y = y;
 		return result;
 	}
+
+	bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
 };
 
 struct Rect16 {
@@ -307,6 +310,8 @@ struct IntRange {
 	inline bool operator!=(const IntRange &other) const {
 		return !((*this) == other);
 	}
+
+	bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
 };
 
 struct Label {
@@ -392,6 +397,11 @@ struct AngleMagVector {
 	inline bool operator!=(const AngleMagVector &other) const {
 		return !((*this) == other);
 	}
+
+	bool dynSetAngleDegrees(const DynamicValue &value);
+	void dynGetAngleDegrees(DynamicValue &value) const;
+
+	bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
 };
 
 struct ColorRGB8 {
@@ -414,63 +424,49 @@ struct DynamicValue;
 struct DynamicList;
 
 struct IDynamicValueReadInterface {
-	virtual bool read(DynamicValue &dest, const void *objectRef, uintptr_t ptrOrOffset) const = 0;
-	virtual bool readAttrib(DynamicValue &dest, const void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const = 0;
-	virtual bool readAttribIndexed(DynamicValue &dest, const void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const = 0;
+	virtual bool read(MiniscriptThread *thread, DynamicValue &dest, const void *objectRef, uintptr_t ptrOrOffset) const = 0;
+	virtual bool readAttrib(MiniscriptThread *thread, DynamicValue &dest, const void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const = 0;
+	virtual bool readAttribIndexed(MiniscriptThread *thread, DynamicValue &dest, const void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const = 0;
 };
 
 struct IDynamicValueWriteInterface {
-	virtual bool write(const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const = 0;
-	virtual bool refAttrib(DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const = 0;
-	virtual bool refAttribIndexed(DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const = 0;
+	virtual bool write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const = 0;
+	virtual bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const = 0;
+	virtual bool refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const = 0;
 };
 
-struct DynamicValueReadProxy {
+struct DynamicValueReadProxyPOD {
 	uintptr_t ptrOrOffset;
 	const void *objectRef;
 	IDynamicValueReadInterface *ifc;
 };
 
-struct DynamicValueWriteProxy {
+struct DynamicValueReadProxy {
+	DynamicValueReadProxyPOD pod;
+	Common::SharedPtr<DynamicList> containerList;
+};
+
+struct DynamicValueWriteProxyPOD {
 	uintptr_t ptrOrOffset;
 	void *objectRef;
 	IDynamicValueWriteInterface *ifc;
 };
 
-template<class TClass, bool (TClass::*TWriteMethod)(const DynamicValue &dest)>
-struct DynamicValueWriteFuncHelper : public IDynamicValueWriteInterface {
-	bool write(const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const override {
-		return (static_cast<TClass *>(objectRef)->*TWriteMethod)(dest);
-	}
-	bool refAttrib(DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const override {
-		return false;
-	}
-	bool refAttribIndexed(DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override {
-		return false;
-	}
-
-	static DynamicValueWriteProxy create(TClass *obj) {
-		DynamicValueWriteProxy proxy;
-		proxy.ptrOrOffset = 0;
-		proxy.objectRef = obj;
-		proxy.ifc = &_instance;
-		return proxy;
-	}
-
-private:
-	static DynamicValueWriteFuncHelper _instance;
+struct DynamicValueWriteProxy {
+	DynamicValueWriteProxyPOD pod;
+	Common::SharedPtr<DynamicList> containerList;
 };
 
-template<class TClass, bool (TClass::*TWriteMethod)(const DynamicValue &dest)>
-DynamicValueWriteFuncHelper<TClass, TWriteMethod> DynamicValueWriteFuncHelper<TClass, TWriteMethod>::_instance;
 
 class DynamicListContainerBase {
 public:
 	virtual ~DynamicListContainerBase();
 	virtual bool setAtIndex(size_t index, const DynamicValue &dynValue) = 0;
 	virtual bool getAtIndex(size_t index, DynamicValue &dynValue) const = 0;
+	virtual bool expandToMinimumSize(size_t sz) = 0;
 	virtual void setFrom(const DynamicListContainerBase &other) = 0; // Only supports setting same type!
 	virtual const void *getConstArrayPtr() const = 0;
+	virtual void *getArrayPtr() = 0;
 	virtual size_t getSize() const = 0;
 	virtual bool compareEqual(const DynamicListContainerBase &other) const = 0;
 	virtual DynamicListContainerBase *clone() const = 0;
@@ -523,8 +519,10 @@ class DynamicListContainer : public DynamicListContainerBase {
 public:
 	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
 	bool getAtIndex(size_t index, DynamicValue &dynValue) const override;
+	bool expandToMinimumSize(size_t sz) override;
 	void setFrom(const DynamicListContainerBase &other) override;
 	const void *getConstArrayPtr() const override;
+	void *getArrayPtr() override;
 	size_t getSize() const override;
 	bool compareEqual(const DynamicListContainerBase &other) const override;
 	DynamicListContainerBase *clone() const override;
@@ -540,8 +538,10 @@ public:
 
 	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
 	bool getAtIndex(size_t index, DynamicValue &dynValue) const override;
+	bool expandToMinimumSize(size_t sz) override;
 	void setFrom(const DynamicListContainerBase &other) override;
 	const void *getConstArrayPtr() const override;
+	void *getArrayPtr() override;
 	size_t getSize() const override;
 	bool compareEqual(const DynamicListContainerBase &other) const override;
 	DynamicListContainerBase *clone() const override;
@@ -555,8 +555,10 @@ class DynamicListContainer<VarReference> : public DynamicListContainerBase {
 public:
 	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
 	bool getAtIndex(size_t index, DynamicValue &dynValue) const override;
+	bool expandToMinimumSize(size_t sz) override;
 	void setFrom(const DynamicListContainerBase &other) override;
 	const void *getConstArrayPtr() const override;
+	void *getArrayPtr() override;
 	size_t getSize() const override;
 	bool compareEqual(const DynamicListContainerBase &other) const override;
 	DynamicListContainerBase *clone() const override;
@@ -592,6 +594,20 @@ bool DynamicListContainer<T>::setAtIndex(size_t index, const DynamicValue &dynVa
 }
 
 template<class T>
+bool DynamicListContainer<T>::expandToMinimumSize(size_t sz) {
+	_array.reserve(sz);
+	if (_array.size() < sz) {
+		T defaultValue;
+		DynamicListDefaultSetter::defaultSet(defaultValue);
+		while (_array.size() < sz) {
+			_array.push_back(defaultValue);
+		}
+	}
+
+	return true;
+}
+
+template<class T>
 bool DynamicListContainer<T>::getAtIndex(size_t index, DynamicValue &dynValue) const {
 	if (index >= _array.size())
 		return false;
@@ -607,6 +623,11 @@ void DynamicListContainer<T>::setFrom(const DynamicListContainerBase &other) {
 
 template<class T>
 const void *DynamicListContainer<T>::getConstArrayPtr() const {
+	return &_array;
+}
+
+template<class T>
+void *DynamicListContainer<T>::getArrayPtr() {
 	return &_array;
 }
 
@@ -643,9 +664,25 @@ struct DynamicList {
 	const Common::Array<VarReference> &getVarReference() const;
 	const Common::Array<Common::String> &getString() const;
 	const Common::Array<bool> &getBool() const;
+	const Common::Array<Common::SharedPtr<DynamicList> > &getList() const;
+	const Common::Array<ObjectReference> &getObjectReference() const;
+
+	Common::Array<int32> &getInt();
+	Common::Array<double> &getFloat();
+	Common::Array<Point16> &getPoint();
+	Common::Array<IntRange> &getIntRange();
+	Common::Array<AngleMagVector> &getVector();
+	Common::Array<Label> &getLabel();
+	Common::Array<Event> &getEvent();
+	Common::Array<VarReference> &getVarReference();
+	Common::Array<Common::String> &getString();
+	Common::Array<bool> &getBool();
+	Common::Array<Common::SharedPtr<DynamicList> > &getList();
+	Common::Array<ObjectReference> &getObjectReference();
 
 	bool getAtIndex(size_t index, DynamicValue &value) const;
 	bool setAtIndex(size_t index, const DynamicValue &value);
+	void expandToMinimumSize(size_t sz);
 	size_t getSize() const;
 
 	static bool dynamicValueToIndex(size_t &outIndex, const DynamicValue &value);
@@ -661,7 +698,17 @@ struct DynamicList {
 
 	Common::SharedPtr<DynamicList> clone() const;
 
+	void createWriteProxyForIndex(size_t index, DynamicValueWriteProxy &proxy);
+
 private:
+	struct WriteProxyInterface : public IDynamicValueWriteInterface {
+		bool write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const override;
+		bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const override;
+		bool refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override;
+
+		static WriteProxyInterface _instance;
+	};
+
 	void clear();
 	void initFromOther(const DynamicList &other);
 	bool changeToType(DynamicValueTypes::DynamicValueType type);
@@ -694,10 +741,12 @@ struct DynamicValue {
 	const bool &getBool() const;
 	const Common::SharedPtr<DynamicList> &getList() const;
 	const ObjectReference &getObject() const;
-	const DynamicValueReadProxy &getReadProxy() const;
-	const DynamicValueWriteProxy &getWriteProxy() const;
-	const Common::SharedPtr<DynamicList> &getReadProxyList() const;
-	const Common::SharedPtr<DynamicList> &getWriteProxyList() const;
+	const DynamicValueReadProxyPOD &getReadProxyPOD() const;
+	const DynamicValueWriteProxyPOD &getWriteProxyPOD() const;
+	DynamicValueReadProxy getReadProxyTEMP() const;
+	DynamicValueWriteProxy getWriteProxyTEMP() const;
+	const Common::SharedPtr<DynamicList> &getReadProxyContainer() const;
+	const Common::SharedPtr<DynamicList> &getWriteProxyContainer() const;
 
 	void clear();
 
@@ -714,8 +763,8 @@ struct DynamicValue {
 	void setList(const Common::SharedPtr<DynamicList> &value);
 	void setObject(const ObjectReference &value);
 	void setObject(const Common::WeakPtr<RuntimeObject> &value);
-	void setReadProxy(const Common::SharedPtr<DynamicList> &list, const DynamicValueReadProxy &readProxy);
-	void setWriteProxy(const Common::SharedPtr<DynamicList> &list, const DynamicValueWriteProxy &writeProxy);
+	void setReadProxy(const DynamicValueReadProxy &readProxy);
+	void setWriteProxy(const DynamicValueWriteProxy &writeProxy);
 
 	DynamicValue &operator=(const DynamicValue &other);
 
@@ -737,8 +786,8 @@ private:
 		Event asEvent;
 		Point16 asPoint;
 		bool asBool;
-		DynamicValueReadProxy asReadProxy;
-		DynamicValueWriteProxy asWriteProxy;
+		DynamicValueReadProxyPOD asReadProxy;
+		DynamicValueWriteProxyPOD asWriteProxy;
 	};
 
 	template<class T>
@@ -756,6 +805,101 @@ private:
 	Common::SharedPtr<DynamicList> _list;
 	ObjectReference _obj;
 };
+
+template<class TFloat>
+struct DynamicValueWriteFloatHelper : public IDynamicValueWriteInterface {
+	bool write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr_t ptrOrOffset) const override {
+		TFloat &dest = *static_cast<TFloat *>(objectRef);
+		switch (value.getType()) {
+		case DynamicValueTypes::kFloat:
+			dest = static_cast<TFloat>(value.getFloat());
+			return true;
+		case DynamicValueTypes::kInteger:
+			dest = static_cast<TFloat>(value.getInt());
+			return true;
+		default:
+			return false;
+		}
+	}
+	bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const override {
+		return false;
+	}
+	bool refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override {
+		return false;
+	}
+
+	static void create(TFloat *floatValue, DynamicValueWriteProxy &proxy) {
+		proxy.pod.ptrOrOffset = 0;
+		proxy.pod.objectRef = floatValue;
+		proxy.pod.ifc = &_instance;
+	}
+
+private:
+	static DynamicValueWriteFloatHelper _instance;
+};
+
+template<class TFloat>
+DynamicValueWriteFloatHelper<TFloat> DynamicValueWriteFloatHelper<TFloat>::_instance;
+
+template<class TInteger>
+struct DynamicValueWriteIntegerHelper : public IDynamicValueWriteInterface {
+	bool write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr_t ptrOrOffset) const override {
+		TInteger &dest = *static_cast<TInteger *>(objectRef);
+		switch (value.getType()) {
+		case DynamicValueTypes::kFloat:
+			dest = static_cast<TInteger>(floor(value.getFloat() + 0.5));
+			return true;
+		case DynamicValueTypes::kInteger:
+			dest = static_cast<TInteger>(value.getInt());
+			return true;
+		default:
+			return false;
+		}
+	}
+	bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const override {
+		return false;
+	}
+	bool refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override {
+		return false;
+	}
+
+	static void create(TInteger *intValue, DynamicValueWriteProxy &proxy) {
+		proxy.pod.ptrOrOffset = 0;
+		proxy.pod.objectRef = intValue;
+		proxy.pod.ifc = &_instance;
+	}
+
+private:
+	static DynamicValueWriteIntegerHelper _instance;
+};
+
+template<class TInteger>
+DynamicValueWriteIntegerHelper<TInteger> DynamicValueWriteIntegerHelper<TInteger>::_instance;
+
+template<class TClass, bool (TClass::*TWriteMethod)(const DynamicValue &dest)>
+struct DynamicValueWriteFuncHelper : public IDynamicValueWriteInterface {
+	bool write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const override {
+		return (static_cast<TClass *>(objectRef)->*TWriteMethod)(dest);
+	}
+	bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const override {
+		return false;
+	}
+	bool refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override {
+		return false;
+	}
+
+	static void create(TClass *obj, DynamicValueWriteProxy &proxy) {
+		proxy.pod.ptrOrOffset = 0;
+		proxy.pod.objectRef = obj;
+		proxy.pod.ifc = &_instance;
+	}
+
+private:
+	static DynamicValueWriteFuncHelper _instance;
+};
+
+template<class TClass, bool (TClass::*TWriteMethod)(const DynamicValue &dest)>
+DynamicValueWriteFuncHelper<TClass, TWriteMethod> DynamicValueWriteFuncHelper<TClass, TWriteMethod>::_instance;
 
 struct MessengerSendSpec {
 	MessengerSendSpec();
@@ -1271,8 +1415,8 @@ public:
 
 	virtual bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
 	virtual bool readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index);
-	virtual bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
-	virtual bool writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index);
+	virtual bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
+	virtual bool writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib, const DynamicValue &index);
 
 protected:
 	// This is the static GUID stored in the data, it is not guaranteed
@@ -1756,8 +1900,19 @@ protected:
 class VariableModifier : public Modifier {
 public:
 	virtual bool isVariable() const;
-	virtual bool setValue(const DynamicValue &value) = 0;
-	virtual void getValue(DynamicValue &dest) const = 0;
+	virtual bool varSetValue(const DynamicValue &value) = 0;
+	virtual void varGetValue(DynamicValue &dest) const = 0;
+
+	virtual DynamicValueWriteProxy createWriteProxy();
+
+private:
+	struct WriteProxyInterface : public IDynamicValueWriteInterface {
+		bool write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const override;
+		bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const override;
+		bool refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override;
+
+		static WriteProxyInterface _instance;
+	};
 };
 
 enum AssetType {

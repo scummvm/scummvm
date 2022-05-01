@@ -91,7 +91,7 @@ bool MovieElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 bool MovieElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 
 	if (attrib == "paused") {
-		writeProxy = DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetPaused>::create(this);
+		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetPaused>::create(this, writeProxy);
 		return true;
 	}
 	

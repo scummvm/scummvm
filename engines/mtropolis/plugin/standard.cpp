@@ -150,7 +150,7 @@ Common::SharedPtr<Modifier> MediaCueMessengerModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new MediaCueMessengerModifier(*this));
 }
 
-ObjectReferenceVariableModifier::ObjectReferenceVariableModifier() : _isResolved(false) {
+ObjectReferenceVariableModifier::ObjectReferenceVariableModifier() {
 }
 
 bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data) {
@@ -163,41 +163,76 @@ bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &co
 		return false;
 
 	_objectPath = data.objectPath.str;
-	_isResolved = false;
+	_object.reset();
 
 	return true;
 }
 
-bool ObjectReferenceVariableModifier::setValue(const DynamicValue &value) {
-	if (value.getType() == DynamicValueTypes::kNull) {
-		_object.reset();
-		_objectPath.clear();
-		_isResolved = true;
-	} else if (value.getType() == DynamicValueTypes::kObject) {
-		_object = value.getObject();
-		_objectPath.clear();
-		_isResolved = true;
-	} else {
-		return false;
+// Object reference variables are somewhat unusual in that they don't store a simple value,
+// they instead have "object" and "path" attributes AND as a value, they resolve to the
+// modifier itself.
+bool ObjectReferenceVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "path") {
+		result.setString(_objectPath);
+		return true;
 	}
-
-	return true;
-}
-
-void ObjectReferenceVariableModifier::getValue(DynamicValue &dest) const {
-	if (_isResolved) {
+	if (attrib == "object") {
 		if (_object.object.expired())
-			dest.clear();
-		else
-			dest.setObject(_object);
-	} else {
-		error("Resolving default objects from variable modifiers is not implemented!");
-		dest.clear();
+			resolve();
+
+		if (_object.object.expired())
+			result.setObject(nullptr);
+		result.setObject(_object);
+		return true;
 	}
+
+	return VariableModifier::readAttribute(thread, result, attrib);
+}
+
+bool ObjectReferenceVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "path") {
+		DynamicValueWriteFuncHelper<ObjectReferenceVariableModifier, &ObjectReferenceVariableModifier::dynSetPath>::create(this, result);
+		return true;
+	}
+	if (attrib == "object") {
+		DynamicValueWriteFuncHelper<ObjectReferenceVariableModifier, &ObjectReferenceVariableModifier::dynSetObject>::create(this, result);
+		return true;
+	}
+
+	return VariableModifier::writeRefAttribute(thread, result, attrib);
+}
+
+bool ObjectReferenceVariableModifier::varSetValue(const DynamicValue &value) {
+	return false;
+}
+
+void ObjectReferenceVariableModifier::varGetValue(DynamicValue &dest) const {
+	dest.setObject(this->getSelfReference());
 }
 
 Common::SharedPtr<Modifier> ObjectReferenceVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new ObjectReferenceVariableModifier(*this));
+}
+
+bool ObjectReferenceVariableModifier::dynSetPath(const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kString)
+		return false;
+
+	_isResolved = false;
+	_objectPath = value.getString();
+	_object.reset();
+
+	return true;
+}
+bool ObjectReferenceVariableModifier::dynSetObject(const DynamicValue& value) {
+
+}
+
+void ObjectReferenceVariableModifier::resolve() {
+	if (_isResolved)
+		return;
+
+	_isResolved = true;
 }
 
 MidiModifier::MidiModifier() : _plugIn(nullptr) {
@@ -338,7 +373,7 @@ bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, cons
 	return true;
 }
 
-bool ListVariableModifier::setValue(const DynamicValue &value) {
+bool ListVariableModifier::varSetValue(const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kList)
 		_list = value.getList()->clone();
 	else
@@ -347,7 +382,7 @@ bool ListVariableModifier::setValue(const DynamicValue &value) {
 	return true;
 }
 
-void ListVariableModifier::getValue(DynamicValue &dest) const {
+void ListVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setList(_list);
 }
 

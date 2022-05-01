@@ -459,8 +459,9 @@ MiniscriptInstructionOutcome UnimplementedInstruction::execute(MiniscriptThread 
 }
 
 MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
-	if (thread->getStackSize() < 2) {
-		thread->error("Stack underflow");
+	if (thread->getStackSize() != 2) {
+		// Sets are only allowed when they would empty the stack
+		thread->error("Invalid stack state for set instruction");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
@@ -473,8 +474,8 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 	MiniscriptStackValue &target = thread->getStackValueFromTop(1);
 
 	if (target.value.getType() == DynamicValueTypes::kWriteProxy) {
-		const DynamicValueWriteProxy &proxy = target.value.getWriteProxy();
-		if (!proxy.ifc->write(srcValue.value, proxy.objectRef, proxy.ptrOrOffset)) {
+		const DynamicValueWriteProxyPOD &proxy = target.value.getWriteProxyPOD();
+		if (!proxy.ifc->write(thread, srcValue.value, proxy.objectRef, proxy.ptrOrOffset)) {
 			thread->error("Failed to assign value");
 			return kMiniscriptInstructionOutcomeFailed;
 		}
@@ -487,7 +488,7 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 		}
 
 		if (var != nullptr) {
-			if (!var->setValue(srcValue.value)) {
+			if (!var->varSetValue(srcValue.value)) {
 				thread->error("Couldn't assign value to variable, probably wrong type");
 				return kMiniscriptInstructionOutcomeFailed;
 			}
@@ -505,8 +506,9 @@ Send::Send(const Event &evt, const MessageFlags &messageFlags) : _evt(evt), _mes
 }
 
 MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
-	if (thread->getStackSize() < 2) {
-		thread->error("Stack underflow");
+	if (thread->getStackSize() != 2) {
+		// Send instructions are only allowed if they empty the stack
+		thread->error("Invalid stack state for send instruction");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
@@ -522,14 +524,14 @@ MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
 	DynamicValue &payloadValue = thread->getStackValueFromTop(1).value;
 
 	if (targetValue.getType() != DynamicValueTypes::kObject) {
-		thread->error("Invalid message destination");
+		thread->error("Invalid message destination (target isn't an object reference)");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
 	Common::SharedPtr<RuntimeObject> obj = targetValue.getObject().object.lock();
 
 	if (!obj) {
-		thread->error("Invalid message destination");
+		thread->error("Invalid message destination (object reference is invalid)");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
@@ -849,11 +851,14 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 					return kMiniscriptInstructionOutcomeFailed;
 				}
 			} else if (indexableValueSlot.value.getType() == DynamicValueTypes::kWriteProxy) {
-				const DynamicValueWriteProxy &proxy = indexableValueSlot.value.getWriteProxy();
-				if (!proxy.ifc->refAttribIndexed(indexableValueSlot.value, proxy.objectRef, proxy.ptrOrOffset, attrib, indexSlot.value)) {
-					thread->error("Can't write to attribute '" + attrib + "'");
+				DynamicValueWriteProxy proxy = indexableValueSlot.value.getWriteProxyTEMP();
+
+				if (!proxy.pod.ifc->refAttribIndexed(thread, proxy, proxy.pod.objectRef, proxy.pod.ptrOrOffset, attrib, indexSlot.value)) {
+					thread->error("Can't write to indexed attribute '" + attrib + "'");
 					return kMiniscriptInstructionOutcomeFailed;
 				}
+
+				indexableValueSlot.value.setWriteProxy(proxy);
 			} else {
 				thread->error("Tried to l-value index something that was not writeable");
 				return kMiniscriptInstructionOutcomeFailed;
@@ -887,13 +892,14 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 					return kMiniscriptInstructionOutcomeFailed;
 				}
 
-				indexableValueSlot.value.setWriteProxy(nullptr, writeProxy);
+				indexableValueSlot.value.setWriteProxy(writeProxy);
 			} else if (indexableValueSlot.value.getType() == DynamicValueTypes::kWriteProxy) {
-				const DynamicValueWriteProxy &proxy = indexableValueSlot.value.getWriteProxy();
-				if (!proxy.ifc->refAttrib(indexableValueSlot.value, proxy.objectRef, proxy.ptrOrOffset, attrib)) {
+				DynamicValueWriteProxy proxy = indexableValueSlot.value.getWriteProxyTEMP();
+				if (!proxy.pod.ifc->refAttrib(thread, proxy, proxy.pod.objectRef, proxy.pod.ptrOrOffset, attrib)) {
 					thread->error("Can't write to attribute '" + attrib + "'");
 					return kMiniscriptInstructionOutcomeFailed;
 				}
+				indexableValueSlot.value.setWriteProxy(proxy);
 			} else {
 				thread->error("Tried to l-value index something that was not writeable");
 				return kMiniscriptInstructionOutcomeFailed;
@@ -1099,8 +1105,8 @@ MiniscriptInstructionOutcome PushGlobal::executeFindFilteredParent(MiniscriptThr
 
 		if (isMatch)
 			break;
-		else if (obj->isElement()) {
-			ref = static_cast<Element *>(obj.get())->getParent()->getSelfReference();
+		else if (obj->isStructural()) {
+			ref = static_cast<Structural *>(obj.get())->getParent()->getSelfReference();
 		} else if (obj->isModifier()) {
 			ref = static_cast<Modifier *>(obj.get())->getParent();
 		} else {
@@ -1118,6 +1124,14 @@ MiniscriptInstructionOutcome PushGlobal::executeFindFilteredParent(MiniscriptThr
 }
 
 PushString::PushString(const Common::String &str) : _str(str) {
+}
+
+MiniscriptInstructionOutcome PushString::execute(MiniscriptThread *thread) const {
+	DynamicValue str;
+	str.setString(_str);
+	thread->pushValue(str);
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 Jump::Jump(uint32 instrOffset, bool isConditional) : _instrOffset(instrOffset), _isConditional(isConditional) {
@@ -1220,7 +1234,7 @@ MiniscriptInstructionOutcome MiniscriptThread::dereferenceRValue(size_t offset, 
 			if (obj && obj->isModifier()) {
 				const Modifier *modifier = static_cast<const Modifier *>(obj.get());
 				if (modifier->isVariable()) {
-					static_cast<const VariableModifier *>(modifier)->getValue(stackValue.value);
+					static_cast<const VariableModifier *>(modifier)->varGetValue(stackValue.value);
 				}
 			}
 		} break;
@@ -1228,8 +1242,8 @@ MiniscriptInstructionOutcome MiniscriptThread::dereferenceRValue(size_t offset, 
 		this->error("Attempted to dereference an lvalue proxy");
 		return kMiniscriptInstructionOutcomeFailed;
 	case DynamicValueTypes::kReadProxy: {
-			const DynamicValueReadProxy &readProxy = stackValue.value.getReadProxy();
-			if (!readProxy.ifc->read(stackValue.value, readProxy.objectRef, readProxy.ptrOrOffset)) {
+			const DynamicValueReadProxyPOD &readProxy = stackValue.value.getReadProxyPOD();
+			if (!readProxy.ifc->read(this, stackValue.value, readProxy.objectRef, readProxy.ptrOrOffset)) {
 				this->error("Failed to access a proxy value");
 				return kMiniscriptInstructionOutcomeFailed;
 			}
@@ -1300,7 +1314,7 @@ MiniscriptInstructionOutcome MiniscriptThread::tryLoadVariable(MiniscriptStackVa
 		Common::SharedPtr<RuntimeObject> obj = stackValue.value.getObject().object.lock();
 		if (obj && obj->isModifier() && static_cast<Modifier *>(obj.get())->isVariable()) {
 			VariableModifier *varMod = static_cast<VariableModifier *>(obj.get());
-			varMod->getValue(stackValue.value);
+			varMod->varGetValue(stackValue.value);
 		}
 	}
 
