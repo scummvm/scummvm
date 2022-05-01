@@ -117,6 +117,20 @@ int Overlay_GetHeight(ScriptOverlay *scover) {
 	return game_to_data_coord(_GP(screenover)[ovri].scaleHeight);
 }
 
+int Overlay_GetGraphicWidth(ScriptOverlay *scover) {
+	int ovri = find_overlay_of_type(scover->overlayId);
+	if (ovri < 0)
+		quit("!invalid overlay ID specified");
+	return game_to_data_coord(_GP(screenover)[ovri].pic->GetWidth());
+}
+
+int Overlay_GetGraphicHeight(ScriptOverlay *scover) {
+	int ovri = find_overlay_of_type(scover->overlayId);
+	if (ovri < 0)
+		quit("!invalid overlay ID specified");
+	return game_to_data_coord(_GP(screenover)[ovri].pic->GetHeight());
+}
+
 void Overlay_SetScaledSize(ScreenOverlay &over, int width, int height) {
 	data_to_game_coords(&width, &height);
 	if (width < 1 || height < 1) {
@@ -456,6 +470,14 @@ RuntimeScriptValue Sc_Overlay_SetHeight(void *self, const RuntimeScriptValue *pa
 	API_OBJCALL_VOID_PINT(ScriptOverlay, Overlay_SetHeight);
 }
 
+RuntimeScriptValue Sc_Overlay_GetGraphicWidth(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_INT(ScriptOverlay, Overlay_GetGraphicWidth);
+}
+
+RuntimeScriptValue Sc_Overlay_GetGraphicHeight(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_INT(ScriptOverlay, Overlay_GetGraphicHeight);
+}
+
 RuntimeScriptValue Sc_Overlay_GetTransparency(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptOverlay, Overlay_GetTransparency);
 }
@@ -499,6 +521,8 @@ void RegisterOverlayAPI() {
 	ccAddExternalObjectFunction("Overlay::set_Width", Sc_Overlay_SetWidth);
 	ccAddExternalObjectFunction("Overlay::get_Height", Sc_Overlay_GetHeight);
 	ccAddExternalObjectFunction("Overlay::set_Height", Sc_Overlay_SetHeight);
+	ccAddExternalObjectFunction("Overlay::get_GraphicWidth", Sc_Overlay_GetGraphicWidth);
+	ccAddExternalObjectFunction("Overlay::get_GraphicHeight", Sc_Overlay_GetGraphicHeight);
 	ccAddExternalObjectFunction("Overlay::get_Transparency", Sc_Overlay_GetTransparency);
 	ccAddExternalObjectFunction("Overlay::set_Transparency", Sc_Overlay_SetTransparency);
 	ccAddExternalObjectFunction("Overlay::get_ZOrder", Sc_Overlay_GetZOrder);
