@@ -209,7 +209,8 @@ void VThreadMethodData<TClass, TData>::relocateTo(void *newPosition) {
 #endif
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
-	relocated->_debugInspector->onDebuggableRelocated(this);
+	if (relocated->_debugInspector)
+		relocated->_debugInspector->onDebuggableRelocated(this);
 #else
 	(void)relocated;
 #endif
@@ -270,7 +271,8 @@ void VThreadFunctionData<TData>::relocateTo(void *newPosition) {
 #endif
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
-	relocated->_debugInspector->onDebuggableRelocated(this);
+	if (relocated->_debugInspector)
+		relocated->_debugInspector->onDebuggableRelocated(this);
 #else
 	(void)relocated;
 #endif
