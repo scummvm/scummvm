@@ -168,8 +168,8 @@ Bitmap *AdjustBitmapForUseWithDisplayMode(Bitmap *bitmap, bool has_alpha) {
 	}
 
 	// Finally, if we did not create a new copy already, - convert to driver compatible format
-	if ((new_bitmap == bitmap) && (bmp_col_depth != compat_col_depth))
-		new_bitmap = GfxUtil::ConvertBitmap(bitmap, compat_col_depth);
+	if (new_bitmap == bitmap)
+		new_bitmap = GfxUtil::ConvertBitmap(bitmap, _G(gfxDriver)->GetCompatibleBitmapFormat(bitmap->GetColorDepth()));
 
 	if (must_switch_palette)
 		unselect_palette();
