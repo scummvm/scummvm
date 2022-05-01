@@ -1986,12 +1986,9 @@ void draw_gui_and_overlays() {
 		if (over.transparency == 255) continue; // skip fully transparent
 		if (_GP(screenover)[i].HasChanged()) {
 			// For software mode - prepare transformed bitmap if necessary
-			Bitmap *use_bmp = over.pic;
-			if (is_software_mode && (over.pic->GetSize() != Size(over.scaleWidth, over.scaleHeight))) {
-				_GP(overlaybmp)[i] = recycle_bitmap(_GP(overlaybmp)[i], over.pic->GetColorDepth(), over.scaleWidth, over.scaleHeight);
-				_GP(overlaybmp)[i]->StretchBlt(over.pic, RectWH(_GP(overlaybmp)[i]->GetSize()));
-				use_bmp = _GP(overlaybmp)[i];
-			}
+			Bitmap *use_bmp = is_software_mode ?
+				transform_sprite(over.pic, over.hasAlphaChannel, overlaybmp[i], Size(over.scaleWidth, over.scaleHeight)) :
+				over.pic;
 			over.ddb = recycle_ddb_bitmap(over.ddb, use_bmp, over.hasAlphaChannel);
 			over.ClearChanged();
 		}
