@@ -403,7 +403,6 @@ void GUIMain::SetConceal(bool on) {
 		_flags |= kGUIMain_Concealed;
 	else
 		_flags &= ~kGUIMain_Concealed;
-	MarkChanged();
 }
 
 bool GUIMain::SendControlToBack(int32_t index) {
@@ -448,7 +447,6 @@ void GUIMain::SetTextWindow(bool on) {
 
 void GUIMain::SetTransparencyAsPercentage(int percent) {
 	Transparency = GfxDef::Trans100ToLegacyTrans255(percent);
-	MarkChanged();
 }
 
 void GUIMain::SetVisible(bool on) {
@@ -456,7 +454,6 @@ void GUIMain::SetVisible(bool on) {
 		_flags |= kGUIMain_Visible;
 	else
 		_flags &= ~kGUIMain_Visible;
-	MarkChanged();
 }
 
 void GUIMain::OnMouseButtonDown(int mx, int my) {

@@ -102,6 +102,8 @@ public:
 	bool        HasChanged() const;
 	bool        HasControlsChanged() const;
 	// Manually marks GUI as graphically changed
+	// NOTE: this only matters if GUI's own graphic changes (content, size etc),
+	// but not its state (visible) or texture drawing mode (transparency, etc).
 	void        MarkChanged();
 	void        MarkControlsChanged();
 	// Clears changed flag
