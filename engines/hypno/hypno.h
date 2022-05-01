@@ -478,6 +478,10 @@ public:
 	void loadGame(const Common::String &nextLevel, int score, int puzzleDifficulty, int combatDifficulty) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	bool canSaveAutosaveCurrently() override {
+		return false; // No hypno engine should perform autosave using the default implementation
+	}
+
 	bool hasFeature(EngineFeature f) const override {
 		return (f == kSupportsSavingDuringRuntime || f == kSupportsLoadingDuringRuntime);
 	}
