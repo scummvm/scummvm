@@ -444,7 +444,7 @@ void unload_game_file() {
 	ccUnregisterAllObjects();
 
 	free_do_once_tokens();
-	free(_GP(play).gui_draw_order);
+	_GP(play).gui_draw_order.clear();
 
 	resetRoomStatuses();
 

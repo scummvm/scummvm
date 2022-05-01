@@ -154,21 +154,18 @@ static void restore_game_play_ex_data(Stream *in) {
 		_GP(play).do_once_tokens[i] = rbuffer;
 	}
 
-	in->ReadArrayOfInt32(&_GP(play).gui_draw_order[0], _GP(game).numgui);
+	in->Seek(_GP(game).numgui * sizeof(int32_t)); // gui_draw_order
 }
 
 static void restore_game_play(Stream *in, RestoredData &r_data) {
 	int screenfadedout_was = _GP(play).screen_is_faded_out;
 	int roomchanges_was = _GP(play).room_changes;
-	// make sure the pointer is preserved
-	int32_t *gui_draw_order_was = _GP(play).gui_draw_order;
 
 	ReadGameState_Aligned(in, r_data);
 	r_data.Cameras[0].Flags = r_data.Camera0_Flags;
 
 	_GP(play).screen_is_faded_out = screenfadedout_was;
 	_GP(play).room_changes = roomchanges_was;
-	_GP(play).gui_draw_order = gui_draw_order_was;
 
 	restore_game_play_ex_data(in);
 }
