@@ -56,20 +56,27 @@ enum TintMethod {
 	TintSpecifyMaximum = 1
 };
 
+struct SpriteColorTransform {
+	int Alpha = 255; // alpha color value (0 - 255)
+
+	SpriteColorTransform() = default;
+	SpriteColorTransform(int alpha) : Alpha(alpha) {
+	}
+};
+
 // Sprite transformation
 // TODO: combine with stretch parameters in the IDriverDependantBitmap?
 struct SpriteTransform {
 	// Translate
-	int X, Y;
-	float ScaleX, ScaleY;
-	float Rotate; // angle, in radians
+	int X = 0, Y = 0;
+	float ScaleX = 1.f, ScaleY = 1.f;
+	float Rotate = 0.f; // angle, in radians
+	SpriteColorTransform Color;
 
-	SpriteTransform()
-		: X(0), Y(0), ScaleX(1.f), ScaleY(1.f), Rotate(0.f) {
-	}
-
-	SpriteTransform(int x, int y, float scalex = 1.0f, float scaley = 1.0f, float rotate = 0.0f)
-		: X(x), Y(y), ScaleX(scalex), ScaleY(scaley), Rotate(rotate) {
+	SpriteTransform() = default;
+	SpriteTransform(int x, int y, float scalex = 1.0f, float scaley = 1.0f, float rotate = 0.0f,
+		SpriteColorTransform color = SpriteColorTransform())
+		: X(x), Y(y), ScaleX(scalex), ScaleY(scaley), Rotate(rotate), Color(color) {
 	}
 };
 

@@ -2128,7 +2128,8 @@ void draw_gui_and_overlays() {
 		_G(gfxDriver)->DrawSprite(s.x, s.y, s.ddb);
 		if (s.id < 0) continue; // not a group parent (gui)
 		// Create a sub-batch
-		_G(gfxDriver)->BeginSpriteBatch(RectWH(s.x, s.y, s.ddb->GetWidth(), s.ddb->GetHeight()), SpriteTransform());
+		_G(gfxDriver)->BeginSpriteBatch(RectWH(s.x, s.y, s.ddb->GetWidth(), s.ddb->GetHeight()),
+			SpriteTransform(0, 0, 1.f, 1.f, 0.f, s.ddb->GetAlpha()));
 		const int draw_index = _GP(guiobjbmpref)[s.id];
 		for (const auto &obj_id : _GP(guis)[s.id].GetControlsDrawOrder()) {
 			GUIObject *obj = _GP(guis)[s.id].GetControl(obj_id);
@@ -2138,7 +2139,7 @@ void draw_gui_and_overlays() {
 			auto *obj_ddb = _GP(guiobjbmp)[draw_index + obj_id];
 			assert(obj_ddb); // Test for missing texture, might happen if not marked for update
 			if (!obj_ddb) continue;
-			obj_ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(_GP(guis)[s.id].Transparency));
+			obj_ddb->SetAlpha(255);
 			_G(gfxDriver)->DrawSprite(
 				_GP(guiobjoff)[draw_index + obj_id].X,
 				_GP(guiobjoff)[draw_index + obj_id].Y,
