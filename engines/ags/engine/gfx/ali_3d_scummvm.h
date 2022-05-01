@@ -59,13 +59,11 @@ enum RendererFlip {
 
 class ALSoftwareBitmap : public BaseDDB {
 public:
-	// Transparency is a bit counter-intuitive
-	// 0=not transparent, 255=invisible, 1..254 barely visible .. mostly visible
-	int  GetTransparency() const override {
-		return _transparency;
+	int  GetAlpha() const override {
+		return _alpha;
 	}
-	void SetTransparency(int transparency) override {
-		_transparency = transparency;
+	void SetAlpha(int alpha) override {
+		_alpha = alpha;
 	}
 	void SetFlippedLeftRight(bool isFlipped) override {
 		_flipped = isFlipped;
@@ -80,9 +78,7 @@ public:
 	Bitmap *_bmp = nullptr;
 	bool _flipped = false;
 	int _stretchToWidth = 0, _stretchToHeight = 0;
-	bool _opaque = false; // no mask color
-	bool _hasAlpha = false;
-	int _transparency = 0;
+	int _alpha = 255;
 
 	ALSoftwareBitmap(int width, int height, int color_depth, bool opaque) {
 		_width = width;

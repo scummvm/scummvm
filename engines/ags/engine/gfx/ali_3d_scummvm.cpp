@@ -358,26 +358,25 @@ size_t ScummVMRendererGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &bat
 		int drawAtX = sprite.x + surf_offx;
 		int drawAtY = sprite.y + surf_offy;
 
-		if (bitmap->_transparency >= 255) {
+		if (bitmap->_alpha == 0) {
 		} // fully transparent, do nothing
-		else if ((bitmap->_opaque) && (bitmap->_bmp == surface) && (bitmap->_transparency == 0)) {
+		else if ((bitmap->_opaque) && (bitmap->_bmp == surface) && (bitmap->_alpha == 255)) {
 		} else if (bitmap->_opaque) {
 			surface->Blit(bitmap->_bmp, 0, 0, drawAtX, drawAtY, bitmap->_bmp->GetWidth(), bitmap->_bmp->GetHeight());
 			// TODO: we need to also support non-masked translucent blend, but...
 			// Allegro 4 **does not have such function ready** :( (only masked blends, where it skips magenta pixels);
 			// I am leaving this problem for the future, as coincidentally software mode does not need this atm.
 		} else if (bitmap->_hasAlpha) {
-			if (bitmap->_transparency == 0) // no global transparency, simple alpha blend
+			if (bitmap->_alpha == 255) // no global transparency, simple alpha blend
 				set_alpha_blender();
 			else
-				// here _transparency is used as alpha (between 1 and 254)
-				set_blender_mode(kArgbToRgbBlender, 0, 0, 0, bitmap->_transparency);
+				set_blender_mode(kArgbToRgbBlender, 0, 0, 0, bitmap->_alpha);
 
 			surface->TransBlendBlt(bitmap->_bmp, drawAtX, drawAtY);
 		} else {
 			// here _transparency is used as alpha (between 1 and 254), but 0 means opaque!
 			GfxUtil::DrawSpriteWithTransparency(surface, bitmap->_bmp, drawAtX, drawAtY,
-				bitmap->_transparency ? bitmap->_transparency : 255);
+				bitmap->_alpha);
 		}
 	}
 	return from;

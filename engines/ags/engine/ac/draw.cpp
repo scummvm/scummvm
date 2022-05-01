@@ -794,7 +794,7 @@ static void clear_sprite_list() {
 static void add_to_sprite_list(IDriverDependantBitmap *ddb, int x, int y, int zorder, bool isWalkBehind, int id = -1) {
 	assert(ddb);
 	// completely invisible, so don't draw it at all
-	if (ddb->GetTransparency() == 255)
+	if (ddb->GetAlpha() == 0)
 		return;
 
 	SpriteListEntry sprite;
@@ -1517,7 +1517,7 @@ void prepare_objects_for_drawing() {
 				_GP(actspsbmp)[useindx]->SetLightLevel(0);
 		}
 
-		_GP(actspsbmp)[useindx]->SetTransparency(_G(objs)[aa].transparent);
+		_GP(actspsbmp)[useindx]->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(_G(objs)[aa].transparent));
 		add_to_sprite_list(_GP(actspsbmp)[useindx], atxp, atyp, usebasel, false);
 	}
 }
@@ -1810,7 +1810,7 @@ void prepare_characters_for_drawing() {
 		chin->actx = atxp;
 		chin->acty = atyp;
 
-		_GP(actspsbmp)[useindx]->SetTransparency(chin->transparency);
+		_GP(actspsbmp)[useindx]->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(chin->transparency));
 		add_to_sprite_list(_GP(actspsbmp)[useindx], bgX, bgY, usebasel, false);
 	}
 }
@@ -2017,7 +2017,7 @@ void draw_gui_and_overlays() {
 	// Add active overlays to the sprite list
 	for (auto &over : _GP(screenover)) {
 		if (over.transparency == 255) continue; // skip fully transparent
-		over.bmp->SetTransparency(over.transparency);
+		over.bmp->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(over.transparency));
 		int tdxp, tdyp;
 		get_overlay_position(over, &tdxp, &tdyp);
 		add_to_sprite_list(over.bmp, tdxp, tdyp, over.zorder, false, -1);
@@ -2093,7 +2093,7 @@ void draw_gui_and_overlays() {
 			auto *gui_ddb = _GP(guibgbmp)[aa];
 			assert(gui_ddb); // Test for missing texture, might happen if not marked for update
 			if (!gui_ddb) continue;
-			gui_ddb->SetTransparency(_GP(guis)[aa].Transparency);
+			gui_ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(_GP(guis)[aa].Transparency));
 			add_to_sprite_list(gui_ddb, _GP(guis)[aa].X, _GP(guis)[aa].Y, _GP(guis)[aa].ZOrder, false, aa);
 		}
 
@@ -2138,7 +2138,7 @@ void draw_gui_and_overlays() {
 			auto *obj_ddb = _GP(guiobjbmp)[draw_index + obj_id];
 			assert(obj_ddb); // Test for missing texture, might happen if not marked for update
 			if (!obj_ddb) continue;
-			obj_ddb->SetTransparency(_GP(guis)[s.id].Transparency);
+			obj_ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(_GP(guis)[s.id].Transparency));
 			_G(gfxDriver)->DrawSprite(
 				_GP(guiobjoff)[draw_index + obj_id].X,
 				_GP(guiobjoff)[draw_index + obj_id].Y,
@@ -2155,7 +2155,7 @@ void put_sprite_list_on_screen(bool in_room) {
 	for (const auto &t : _GP(thingsToDrawList)) {
 		assert(t.ddb || (t.renderStage >= 0));
 		if (t.ddb) {
-			if (t.ddb->GetTransparency() == 255)
+			if (t.ddb->GetAlpha() == 0)
 				continue; // skip completely invisible things
 			// mark the image's region as dirty
 			invalidate_sprite(t.x, t.y, t.ddb, in_room);
@@ -2419,7 +2419,7 @@ void debug_draw_room_mask(RoomAreaMask mask) {
 	}
 
 	_G(debugRoomMaskDDB) = recycle_ddb_bitmap(_G(debugRoomMaskDDB), bmp, false, true);
-	_G(debugRoomMaskDDB)->SetTransparency(150);
+	_G(debugRoomMaskDDB)->SetAlpha(150);
 	_G(debugRoomMaskDDB)->SetStretch(_GP(thisroom).Width, _GP(thisroom).Height);
 }
 
@@ -2438,7 +2438,7 @@ void update_room_debug() {
 			bmp = _GP(debugRoomMaskBmp).get();
 		}
 		_G(debugRoomMaskDDB) = recycle_ddb_bitmap(_G(debugRoomMaskDDB), bmp, false, true);
-		_G(debugRoomMaskDDB)->SetTransparency(150);
+		_G(debugRoomMaskDDB)->SetAlpha(150);
 		_G(debugRoomMaskDDB)->SetStretch(_GP(thisroom).Width, _GP(thisroom).Height);
 	}
 	if (_G(debugMoveListChar) >= 0) {
@@ -2465,7 +2465,7 @@ void update_room_debug() {
 			}
 		}
 		_G(debugMoveListDDB) = recycle_ddb_bitmap(_G(debugMoveListDDB), _GP(debugMoveListBmp).get(), false, false);
-		_G(debugMoveListDDB)->SetTransparency(150);
+		_G(debugRoomMaskDDB)->SetAlpha(150);
 		_G(debugMoveListDDB)->SetStretch(_GP(thisroom).Width, _GP(thisroom).Height);
 	}
 }
