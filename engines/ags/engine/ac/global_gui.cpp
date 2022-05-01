@@ -76,7 +76,7 @@ void InterfaceOn(int ifn) {
 	// modal interface
 	if (_GP(guis)[ifn].PopupStyle == kGUIPopupModal) PauseGame();
 	// clear the cached mouse position
-	_GP(guis)[ifn].OnControlPositionChanged();
+	_GP(guis)[ifn].MarkControlsChanged();
 	_GP(guis)[ifn].Poll(_G(mousex), _G(mousey));
 }
 
@@ -93,7 +93,7 @@ void InterfaceOff(int ifn) {
 		_GP(guis)[ifn].GetControl(_GP(guis)[ifn].MouseOverCtrl)->OnMouseLeave();
 		_GP(guis)[ifn].MouseOverCtrl = -1;
 	}
-	_GP(guis)[ifn].OnControlPositionChanged();
+	_GP(guis)[ifn].MarkControlsChanged();
 	// modal interface
 	if (_GP(guis)[ifn].PopupStyle == kGUIPopupModal) UnPauseGame();
 }

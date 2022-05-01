@@ -153,7 +153,6 @@ public:
 	// Events
 	void    OnMouseButtonDown(int mx, int my);
 	void    OnMouseButtonUp();
-	void    OnControlPositionChanged();
 
 	// Serialization
 	void    ReadFromFile(Stream *in, GuiVersion gui_version);

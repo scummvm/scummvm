@@ -198,6 +198,9 @@ void GUIMain::MarkChanged() {
 
 void GUIMain::MarkControlsChanged() {
 	_hasControlsChanged = true;
+	// force it to re-check for which control is under the mouse
+	MouseWasAt.X = -1;
+	MouseWasAt.Y = -1;
 }
 
 void GUIMain::ClearChanged() {
@@ -432,7 +435,7 @@ bool GUIMain::SetControlZOrder(int32_t index, int zorder) {
 		}
 	}
 	ResortZOrder();
-	OnControlPositionChanged(); // this marks GUI as changed
+	MarkControlsChanged();
 	return true;
 }
 
@@ -453,13 +456,6 @@ void GUIMain::SetVisible(bool on) {
 		_flags |= kGUIMain_Visible;
 	else
 		_flags &= ~kGUIMain_Visible;
-	MarkChanged();
-}
-
-void GUIMain::OnControlPositionChanged() {
-	// force it to re-check for which control is under the mouse
-	MouseWasAt.X = -1;
-	MouseWasAt.Y = -1;
 	MarkChanged();
 }
 

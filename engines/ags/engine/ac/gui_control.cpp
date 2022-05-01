@@ -65,7 +65,6 @@ void GUIControl_SetVisible(GUIObject *guio, int visible) {
 	const bool on = visible != 0;
 	if (on != guio->IsVisible()) {
 		guio->SetVisible(on);
-		_GP(guis)[guio->ParentId].OnControlPositionChanged();
 	}
 }
 
@@ -81,7 +80,8 @@ void GUIControl_SetClickable(GUIObject *guio, int enabled) {
 	else
 		guio->SetClickable(false);
 
-	_GP(guis)[guio->ParentId].OnControlPositionChanged();
+	// clickable property may change control behavior under mouse
+	_GP(guis)[guio->ParentId].MarkControlsChanged();
 }
 
 int GUIControl_GetEnabled(GUIObject *guio) {
@@ -92,7 +92,6 @@ void GUIControl_SetEnabled(GUIObject *guio, int enabled) {
 	const bool on = enabled != 0;
 	if (on != guio->IsEnabled()) {
 		guio->SetEnabled(on);
-		_GP(guis)[guio->ParentId].OnControlPositionChanged();
 	}
 }
 
@@ -153,7 +152,7 @@ int GUIControl_GetX(GUIObject *guio) {
 
 void GUIControl_SetX(GUIObject *guio, int xx) {
 	guio->X = data_to_game_coord(xx);
-	_GP(guis)[guio->ParentId].OnControlPositionChanged();
+	_GP(guis)[guio->ParentId].MarkControlsChanged(); // update control under cursor
 }
 
 int GUIControl_GetY(GUIObject *guio) {
@@ -162,7 +161,7 @@ int GUIControl_GetY(GUIObject *guio) {
 
 void GUIControl_SetY(GUIObject *guio, int yy) {
 	guio->Y = data_to_game_coord(yy);
-	_GP(guis)[guio->ParentId].OnControlPositionChanged();
+	_GP(guis)[guio->ParentId].MarkControlsChanged(); // update control under cursor
 }
 
 int GUIControl_GetZOrder(GUIObject *guio) {
@@ -186,7 +185,6 @@ int GUIControl_GetWidth(GUIObject *guio) {
 void GUIControl_SetWidth(GUIObject *guio, int newwid) {
 	guio->Width = data_to_game_coord(newwid);
 	guio->OnResized();
-	_GP(guis)[guio->ParentId].OnControlPositionChanged();
 }
 
 int GUIControl_GetHeight(GUIObject *guio) {
@@ -196,7 +194,6 @@ int GUIControl_GetHeight(GUIObject *guio) {
 void GUIControl_SetHeight(GUIObject *guio, int newhit) {
 	guio->Height = data_to_game_coord(newhit);
 	guio->OnResized();
-	_GP(guis)[guio->ParentId].OnControlPositionChanged();
 }
 
 void GUIControl_SetSize(GUIObject *guio, int newwid, int newhit) {
