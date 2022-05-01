@@ -71,19 +71,15 @@ typedef std::vector<SpriteBatchDesc> SpriteBatchDescs;
 // The single sprite entry in the render list
 template<class T_DDB>
 struct SpriteDrawListEntry {
-	T_DDB *bitmap; // TODO: use shared pointer?
-	int x, y; // sprite position, in camera coordinates
-	bool skip;
+	T_DDB *ddb = nullptr; // TODO: use shared pointer?
+	uint32_t node = 0; // sprite batch / scene node index
+	int x = 0, y = 0; // sprite position, in local batch / node coordinates
+	bool skip = false;
 
-	SpriteDrawListEntry()
-		: bitmap(nullptr)
-		, x(0)
-		, y(0)
-		, skip(false) {
-	}
-
-	SpriteDrawListEntry(T_DDB *ddb, int x_ = 0, int y_ = 0)
-		: bitmap(ddb)
+	SpriteDrawListEntry() = default;
+	SpriteDrawListEntry(T_DDB * ddb_, uint32_t node_, int x_, int y_)
+		: ddb(ddb_)
+		, node(node_)
 		, x(x_)
 		, y(y_)
 		, skip(false) {
@@ -123,6 +119,11 @@ public:
 	}
 
 protected:
+	// Special internal values, applied to DrawListEntry
+	static const intptr_t DRAWENTRY_STAGECALLBACK = 0x0;
+	static const intptr_t DRAWENTRY_FADE = 0x1;
+	static const intptr_t DRAWENTRY_TINT = 0x2;
+
 	// Called after graphics driver was initialized for use for the first time
 	virtual void OnInit();
 	// Called just before graphics mode is going to be uninitialized and its
