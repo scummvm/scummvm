@@ -900,9 +900,8 @@ void WetEngine::drawHealth() {
 
 		drawString("block05.fgx", Common::String::format("ENERGY %d%%", p), ep.x, ep.y, 65, c);
 		drawString("block05.fgx", Common::String::format("SCORE  %04d", s), sp.x, sp.y, 72, c);
-		// Objectives are always in the zero in the demo
 		if (op.x > 0 && op.y > 0)
-			drawString("block05.fgx", Common::String::format("M.O.  %d/%d", mo, mm), op.x, op.y, 60, c);
+			drawString("block05.fgx", Common::String::format("M.O. %d/%d", mo, mm), op.x, op.y, 60, c);
 	}
 }
 
