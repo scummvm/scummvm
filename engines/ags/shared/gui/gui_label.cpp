@@ -102,6 +102,8 @@ void GUILabel::Draw(Bitmap *ds, int x, int y) {
 }
 
 void GUILabel::SetText(const String &text) {
+	if (text == Text)
+		return;
 	Text = text;
 	// Check for macros within text
 	_textMacro = GUI::FindLabelMacros(Text);

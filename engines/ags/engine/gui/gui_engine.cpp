@@ -106,6 +106,10 @@ void GUIObject::MarkChanged() {
 	_GP(guis)[ParentId].MarkControlsChanged();
 }
 
+void GUIObject::NotifyParentChanged() {
+	_GP(guis)[ParentId].MarkControlsChanged();
+}
+
 bool GUIObject::HasChanged() const {
 	return _hasChanged;
 }

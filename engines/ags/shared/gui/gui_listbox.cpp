@@ -114,6 +114,9 @@ int GUIListBox::AddItem(const String &text) {
 }
 
 void GUIListBox::Clear() {
+	if (Items.size() == 0)
+		return;
+
 	Items.clear();
 	SavedGameIndex.clear();
 	ItemCount = 0;
@@ -223,19 +226,21 @@ void GUIListBox::RemoveItem(int index) {
 }
 
 void GUIListBox::SetShowArrows(bool on) {
+	if (on != ((ListBoxFlags & kListBox_ShowArrows) != 0))
+		MarkChanged();
 	if (on)
 		ListBoxFlags |= kListBox_ShowArrows;
 	else
 		ListBoxFlags &= ~kListBox_ShowArrows;
-	MarkChanged();
 }
 
 void GUIListBox::SetShowBorder(bool on) {
+	if (on != ((ListBoxFlags & kListBox_ShowBorder) != 0))
+		MarkChanged();
 	if (on)
 		ListBoxFlags |= kListBox_ShowBorder;
 	else
 		ListBoxFlags &= ~kListBox_ShowBorder;
-	MarkChanged();
 }
 
 void GUIListBox::SetSvgIndex(bool on) {
@@ -246,13 +251,15 @@ void GUIListBox::SetSvgIndex(bool on) {
 }
 
 void GUIListBox::SetFont(int font) {
+	if (Font == font)
+		return;
 	Font = font;
 	UpdateMetrics();
 	MarkChanged();
 }
 
 void GUIListBox::SetItemText(int index, const String &text) {
-	if (index >= 0 && index < ItemCount) {
+	if ((index >= 0) && (index < ItemCount) && (text != Items[index])) {
 		Items[index] = text;
 		MarkChanged();
 	}

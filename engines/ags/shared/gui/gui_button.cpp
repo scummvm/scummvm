@@ -163,14 +163,18 @@ void GUIButton::Draw(Bitmap *ds, int x, int y) {
 }
 
 void GUIButton::SetClipImage(bool on) {
+	if (on != ((Flags & kGUICtrl_Clip) != 0))
+		MarkChanged();
 	if (on)
 		Flags |= kGUICtrl_Clip;
 	else
 		Flags &= ~kGUICtrl_Clip;
-	MarkChanged();
 }
 
 void GUIButton::SetText(const String &text) {
+	if (_text == text)
+		return;
+
 	_text = text;
 	// Active inventory item placeholders
 	if (_text.CompareNoCase("(INV)") == 0)

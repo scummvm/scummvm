@@ -90,27 +90,30 @@ void GUIObject::SetClickable(bool on) {
 }
 
 void GUIObject::SetEnabled(bool on) {
+	if (on != ((Flags & kGUICtrl_Enabled) != 0))
+		MarkChanged();
 	if (on)
 		Flags |= kGUICtrl_Enabled;
 	else
 		Flags &= ~kGUICtrl_Enabled;
-	MarkChanged();
 }
 
 void GUIObject::SetTranslated(bool on) {
+	if (on != ((Flags & kGUICtrl_Translated) != 0))
+		MarkChanged();
 	if (on)
 		Flags |= kGUICtrl_Translated;
 	else
 		Flags &= ~kGUICtrl_Translated;
-	MarkChanged();
 }
 
 void GUIObject::SetVisible(bool on) {
+	if (on != ((Flags & kGUICtrl_Visible) != 0))
+		NotifyParentChanged(); // for software mode
 	if (on)
 		Flags |= kGUICtrl_Visible;
 	else
 		Flags &= ~kGUICtrl_Visible;
-	MarkChanged();
 }
 
 // TODO: replace string serialization with StrUtil::ReadString and WriteString

@@ -338,13 +338,14 @@ int ListBox_GetTopItem(GUIListBox *listbox) {
 }
 
 void ListBox_SetTopItem(GUIListBox *guisl, int item) {
-	if ((guisl->ItemCount == 0) && (item == 0))
-		;  // allow resetting an empty box to the top
-	else if ((item >= guisl->ItemCount) || (item < 0))
-		quit("!ListBoxSetTopItem: tried to set top to beyond top or bottom of list");
-
-	guisl->TopItem = item;
-	guisl->MarkChanged();
+	if ((item >= guisl->ItemCount) || (item < 0)) {
+		item = Math::Clamp(item, 0, guisl->ItemCount);
+		debug_script_warn("ListBoxSetTopItem: tried to set top to beyond top or bottom of list");
+	}
+	if (guisl->TopItem != item) {
+		guisl->TopItem = item;
+		guisl->MarkChanged();
+	}
 }
 
 int ListBox_GetRowCount(GUIListBox *listbox) {

@@ -207,13 +207,17 @@ void GUISlider::OnMouseMove(int x, int y) {
 	if (!IsMousePressed)
 		return;
 
+	int value;
 	if (IsHorizontal())
-		Value = (int)(((float)((x - X) - 2) * (float)(MaxValue - MinValue)) / (float)_handleRange) + MinValue;
+		value = (int)(((float)((x - X) - 2) * (float)(MaxValue - MinValue)) / (float)_handleRange) + MinValue;
 	else
-		Value = (int)(((float)(((Y + Height) - y) - 2) * (float)(MaxValue - MinValue)) / (float)_handleRange) + MinValue;
+		value = (int)(((float)(((Y + Height) - y) - 2) * (float)(MaxValue - MinValue)) / (float)_handleRange) + MinValue;
 
-	Value = Math::Clamp(Value, MinValue, MaxValue);
-	MarkChanged();
+	value = Math::Clamp(value, MinValue, MaxValue);
+	if (value != Value) {
+		Value = value;
+		MarkChanged();
+	}
 	IsActivated = true;
 }
 

@@ -109,8 +109,12 @@ public:
 
 	// TODO: these members are currently public; hide them later
 public:
-	// Notifies parent GUI that this control has changed
+	// Manually marks GUIObject as graphically changed
+	// NOTE: this only matters if control's own graphic changes (content, size etc),
+	// but not its state (visible) or texture drawing mode (transparency, etc).
 	void     MarkChanged();
+	// Notifies parent GUI that this control has changed its state (but not graphic)
+	void     NotifyParentChanged();
 
 	bool     HasChanged() const;
 	void     ClearChanged();
