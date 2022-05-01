@@ -645,8 +645,15 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 	if (_arcadeMode == "YT") {
 		if (needsUpdate) {
 			Common::Point diff = mousePos - _c33PlayerPosition;
-			if (diff.x > 1 || diff.y > 1)
+			if (abs(diff.x) > 1 || abs(diff.y) > 1)
 				diff = diff / 10;
+
+			if (abs(diff.x) >= 10)
+				diff.x = (diff.x / abs(diff.x)) * 10;
+
+			if (abs(diff.y) >= 10)
+				diff.y = (diff.x / abs(diff.x)) * 10;
+
 			_c33PlayerPosition = _c33PlayerPosition + diff;
 
 			if (diff.x > 0 && abs(diff.x) > abs(diff.y))

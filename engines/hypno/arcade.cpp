@@ -311,18 +311,20 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 					g_system->warpMouse(arc->mouseBox.right-1, mousePos.y);
 				} else if (mousePos.y >= arc->mouseBox.bottom-1) {
 					g_system->warpMouse(mousePos.x, arc->mouseBox.bottom-1);
-				} else if (mousePos.x <= 100 && offset.x < 0) {
+				} else if (mousePos.x <= 40 && offset.x < 0) {
 					for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
 						if (it->video && it->video->decoder)
 							it->video->position.x = it->video->position.x + 1;
 					}
 					offset.x = offset.x + 1;
-				} else if (mousePos.x >= 300 && offset.x > 320 - _background->decoder->getWidth()) {
+					needsUpdate = true;
+				} else if (mousePos.x >= 280 && offset.x > 320 - _background->decoder->getWidth()) {
 					for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
 						if (it->video && it->video->decoder)
 							it->video->position.x = it->video->position.x - 1;
 					}
 					offset.x = offset.x - 1;
+					needsUpdate = true;
 				}
 				_background->position = offset;
 				break;
