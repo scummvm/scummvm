@@ -155,7 +155,7 @@ enum MASTER_LIB_CODES {
 	WAITSCROLL, WAITTIME, WALK, WALKED, WALKEDPOLY, WALKEDTAG, WALKINGACTOR, WALKPOLY,
 	WALKTAG, WALKXPOS, WALKYPOS, WHICHCD, WHICHINVENTORY, ZZZZZZ, DEC3D, DECINVMAIN,
 	ADDNOTEBOOK, ADDINV3, ADDCONV, SET3DTEXTURE, FADEMUSIC, VOICEOVER, SETVIEW,
-	HELDOBJECTORTOPIC, BOOKADDHYPERLINK, HIGHEST_LIBCODE
+	HELDOBJECTORTOPIC, BOOKADDHYPERLINK, OPENNOTEBOOK, HIGHEST_LIBCODE
 };
 
 static const MASTER_LIB_CODES DW1DEMO_CODES[] = {
@@ -4729,7 +4729,8 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3]);
 		break;
 	case 103: // 0 parameters
-		error("Unsupported libCode %d open_notebook", libCode);
+		mapping = NoirMapping{"OPENNOTEBOOK", OPENNOTEBOOK, 0};
+		debug(7, "%s()", mapping.name);
 	case 104: // 1 parameter
 		error("Unsupported libCode %d OFFSET variant", libCode);
 	case 105: // 0 parameters
@@ -6037,6 +6038,11 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case OTHEROBJECT:
 		// DW2 only
 		pp[0] = OtherObject(pic->pinvo);
+		return 0;
+
+	case OPENNOTEBOOK:
+		// Noir only
+		_vm->_notebook->Show(0);
 		return 0;
 
 	case PAUSE:

@@ -59,4 +59,9 @@ void Notebook::AddHyperlink(int32 id1, int32 id2) {
 	error("Too many hyperlinks");
 }
 
+
+void Notebook::Show(bool isOpen) {
+	error("TODO: Implement Notebook::Show()");
+}
+
 } // End of namespace Tinsel
