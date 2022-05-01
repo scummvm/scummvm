@@ -26,8 +26,10 @@
 
 namespace AGS3 {
 
+// Describes a texture or node description, for sorting and passing into renderer
 struct SpriteListEntry {
-	Engine::IDriverDependantBitmap *bmp = nullptr;
+	int id = -1; // user identifier, for any custom purpose
+	Engine::IDriverDependantBitmap *ddb = nullptr;
 	AGS::Shared::Bitmap *pic = nullptr;
 	int x = 0, y = 0;
 	int zorder = 0;

@@ -772,10 +772,10 @@ static void clear_draw_list() {
 	_GP(thingsToDrawList).clear();
 }
 
-static void add_thing_to_draw(IDriverDependantBitmap *bmp, int x, int y) {
-	assert(bmp != nullptr);
+static void add_thing_to_draw(IDriverDependantBitmap *ddb, int x, int y) {
+	assert(ddb != nullptr);
 	SpriteListEntry sprite;
-	sprite.bmp = bmp;
+	sprite.ddb = ddb;
 	sprite.x = x;
 	sprite.y = y;
 	_GP(thingsToDrawList).push_back(sprite);
@@ -791,18 +791,18 @@ static void clear_sprite_list() {
 	_GP(sprlist).clear();
 }
 
-static void add_to_sprite_list(IDriverDependantBitmap *spp, int xx, int yy, int zorder, bool isWalkBehind) {
-	if (spp == nullptr)
-		quit("add_to_sprite_list: attempted to draw NULL sprite");
+static void add_to_sprite_list(IDriverDependantBitmap *ddb, int x, int y, int zorder, bool isWalkBehind, int id = -1) {
+	assert(ddb);
 	// completely invisible, so don't draw it at all
-	if (spp->GetTransparency() == 255)
+	if (ddb->GetTransparency() == 255)
 		return;
 
 	SpriteListEntry sprite;
-	sprite.bmp = spp;
+	sprite.id = id;
+	sprite.ddb = ddb;
 	sprite.zorder = zorder;
-	sprite.x = xx;
-	sprite.y = yy;
+	sprite.x = x;
+	sprite.y = y;
 
 	if (_G(walkBehindMethod) == DrawAsSeparateSprite)
 		sprite.takesPriorityIfEqual = !isWalkBehind;
@@ -812,8 +812,14 @@ static void add_to_sprite_list(IDriverDependantBitmap *spp, int xx, int yy, int 
 	_GP(sprlist).push_back(sprite);
 }
 
-// function to sort the sprites into zorder order
+// z-order sorting function for sprites
 static bool spritelistentry_less(const SpriteListEntry &e1, const SpriteListEntry &e2) {
+	return (e1.zorder < e2.zorder);
+}
+
+// room-specialized function to sort the sprites into baseline order
+// has special handling for walk-behinds (this is complicated...)
+static bool spritelistentry_room_less(const SpriteListEntry &e1, const SpriteListEntry &e2) {
 	if (e1.zorder == e2.zorder) {
 		if (e1.takesPriorityIfEqual)
 			return false;
@@ -824,11 +830,14 @@ static bool spritelistentry_less(const SpriteListEntry &e1, const SpriteListEntr
 }
 
 // copy the sorted sprites into the Things To Draw list
-static void draw_sprite_list() {
-	std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), spritelistentry_less);
-	_GP(thingsToDrawList).insert(_GP(thingsToDrawList).end(), _GP(sprlist).begin(), _GP(sprlist).end());
+static void draw_sprite_list(bool is_room) {
+	std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), is_room ? spritelistentry_room_less : spritelistentry_less);
+	_GP(thingsToDrawList).insert(_GP(thingsToDrawList).end(),
+		_GP(sprlist).begin(), _GP(sprlist).end());
 }
 
+// Push the gathered list of sprites into the active graphic renderer
+void put_sprite_list_on_screen(bool in_room);
 //
 //------------------------------------------------------------------------
 
@@ -1857,7 +1866,7 @@ void prepare_room_sprites() {
 			if (pl_any_want_hook(AGSE_PRESCREENDRAW))
 				add_render_stage(AGSE_PRESCREENDRAW);
 
-			draw_sprite_list();
+			draw_sprite_list(true);
 		}
 	}
 	_G(our_eip) = 36;
@@ -2001,37 +2010,32 @@ void draw_gui_and_overlays() {
 		&& (_GP(game).options[OPT_NEWGUIALPHA] == kGuiAlphaRender_Proper);
 
 	if (pl_any_want_hook(AGSE_PREGUIDRAW))
-		add_render_stage(AGSE_PREGUIDRAW);
+		_G(gfxDriver)->DrawSprite(AGSE_PREGUIDRAW, 0, nullptr); // render stage
 
 	clear_sprite_list();
 
 	// Add active overlays to the sprite list
 	for (auto &over : _GP(screenover)) {
-		if (over.transparency == 255)
-			continue; // skip fully transparent
+		if (over.transparency == 255) continue; // skip fully transparent
 		over.bmp->SetTransparency(over.transparency);
-
 		int tdxp, tdyp;
 		get_overlay_position(over, &tdxp, &tdyp);
-		add_to_sprite_list(over.bmp, tdxp, tdyp, over.zorder, false);
+		add_to_sprite_list(over.bmp, tdxp, tdyp, over.zorder, false, -1);
 	}
 
 	// Add GUIs
 	_G(our_eip) = 35;
 	if (((_G(debug_flags) & DBG_NOIFACE) == 0) && (_G(displayed_room) >= 0)) {
-		int aa;
-
 		if (_G(playerchar)->activeinv >= MAX_INV) {
 			quit("!The player.activeinv variable has been corrupted, probably as a result\n"
-			     "of an incorrect assignment in the game script.");
+				"of an incorrect assignment in the game script.");
 		}
-		if (_G(playerchar)->activeinv < 1)
-			_G(gui_inv_pic) = -1;
-		else
-			_G(gui_inv_pic) = _GP(game).invinfo[_G(playerchar)->activeinv].pic;
+		if (_G(playerchar)->activeinv < 1) _G(gui_inv_pic) = -1;
+		else _G(gui_inv_pic) = _GP(game).invinfo[_G(playerchar)->activeinv].pic;
 		_G(our_eip) = 37;
+		// Prepare and update GUI textures
 		{
-			for (aa = 0; aa < _GP(game).numgui; aa++) {
+			for (int aa = 0; aa < _GP(game).numgui; aa++) {
 				if (!_GP(guis)[aa].IsDisplayed()) continue; // not on screen
 				if (!_GP(guis)[aa].HasChanged() && !_GP(guis)[aa].HasControlsChanged()) continue; // no changes: no need to update image
 				if (_GP(guis)[aa].Transparency == 255) continue; // 100% transparent
@@ -2076,78 +2080,90 @@ void draw_gui_and_overlays() {
 		}
 		_G(our_eip) = 38;
 		// Draw the GUIs
-		for (int gg = 0; gg < _GP(game).numgui; gg++) {
-			aa = _GP(play).gui_draw_order[gg];
+		for (int aa = 0; aa < _GP(game).numgui; ++aa) {
 			if (!_GP(guis)[aa].IsDisplayed()) continue; // not on screen
 			if (_GP(guis)[aa].Transparency == 255) continue; // 100% transparent
 
 			// Don't draw GUI if "GUIs Turn Off When Disabled"
 			if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) &&
-					(_G(all_buttons_disabled) >= 0) &&
-					(_GP(guis)[aa].PopupStyle != kGUIPopupNoAutoRemove))
+				(_G(all_buttons_disabled) >= 0) &&
+				(_GP(guis)[aa].PopupStyle != kGUIPopupNoAutoRemove))
 				continue;
 
-			_GP(guibgbmp)[aa]->SetTransparency(_GP(guis)[aa].Transparency);
-			add_to_sprite_list(_GP(guibgbmp)[aa], _GP(guis)[aa].X, _GP(guis)[aa].Y, _GP(guis)[aa].ZOrder, false);
-
-			// Add all the gui controls as separate textures
-			if (draw_controls_as_textures &&
-				!(_G(all_buttons_disabled) && (GUI::Options.DisabledStyle == kGuiDis_Blackout))) {
-				const int draw_index = _GP(guiobjbmpref)[aa];
-				for (const auto &obj_id : _GP(guis)[aa].GetControlsDrawOrder()) {
-					GUIObject *obj = _GP(guis)[aa].GetControl(obj_id);
-					if (!obj->IsVisible() ||
-						(!obj->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout)))
-						continue;
-					_GP(guiobjbmp)[draw_index + obj_id]->SetTransparency(_GP(guis)[aa].Transparency);
-					add_to_sprite_list(_GP(guiobjbmp)[draw_index + obj_id],
-						_GP(guis)[aa].X + _GP(guiobjoff)[draw_index + obj_id].X,
-						_GP(guis)[aa].Y + _GP(guiobjoff)[draw_index + obj_id].Y,
-						_GP(guis)[aa].ZOrder, false);
-				}
-			}
+			auto *gui_ddb = _GP(guibgbmp)[aa];
+			assert(gui_ddb); // Test for missing texture, might happen if not marked for update
+			if (!gui_ddb) continue;
+			gui_ddb->SetTransparency(_GP(guis)[aa].Transparency);
+			add_to_sprite_list(gui_ddb, _GP(guis)[aa].X, _GP(guis)[aa].Y, _GP(guis)[aa].ZOrder, false, aa);
 		}
 
 		// Poll the GUIs
 		// TODO: move this out of the draw routine into game update!!
-		// only poll if the interface is enabled
-		if (IsInterfaceEnabled()) {
+		if (IsInterfaceEnabled()) // only poll if the interface is enabled
+		{
 			for (int gg = 0; gg < _GP(game).numgui; gg++) {
 				if (!_GP(guis)[gg].IsDisplayed()) continue; // not on screen
 				// Don't touch GUI if "GUIs Turn Off When Disabled"
 				if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) &&
-						(_G(all_buttons_disabled) >= 0) &&
-						(_GP(guis)[gg].PopupStyle != kGUIPopupNoAutoRemove))
+					(_G(all_buttons_disabled) >= 0) &&
+					(_GP(guis)[gg].PopupStyle != kGUIPopupNoAutoRemove))
 					continue;
 				_GP(guis)[gg].Poll(_G(mousex), _G(mousey));
 			}
 		}
 	}
 
-	// sort and append ui sprites to the global draw things list
-	draw_sprite_list();
+	// If not adding gui controls as textures, simply move the resulting sprlist to render
+	if (!draw_controls_as_textures ||
+		(_G(all_buttons_disabled) && (GUI::Options.DisabledStyle == kGuiDis_Blackout))) {
+		draw_sprite_list(false);
+		put_sprite_list_on_screen(false);
+		return;
+	}
+	// If adding control textures, sort the ui list, and then pass into renderer,
+	// adding controls and creating sub-batches as necessary
+	std::sort(_GP(sprlist).begin(), _GP(sprlist).end(), spritelistentry_less);
+	for (const auto &s : _GP(sprlist)) {
+		invalidate_sprite(s.x, s.y, s.ddb, false);
+		_G(gfxDriver)->DrawSprite(s.x, s.y, s.ddb);
+		if (s.id < 0) continue; // not a group parent (gui)
+		// Create a sub-batch
+		_G(gfxDriver)->BeginSpriteBatch(RectWH(s.x, s.y, s.ddb->GetWidth(), s.ddb->GetHeight()), SpriteTransform());
+		const int draw_index = _GP(guiobjbmpref)[s.id];
+		for (const auto &obj_id : _GP(guis)[s.id].GetControlsDrawOrder()) {
+			GUIObject *obj = _GP(guis)[s.id].GetControl(obj_id);
+			if (!obj->IsVisible() ||
+				(!obj->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout)))
+				continue;
+			auto *obj_ddb = _GP(guiobjbmp)[draw_index + obj_id];
+			assert(obj_ddb); // Test for missing texture, might happen if not marked for update
+			if (!obj_ddb) continue;
+			obj_ddb->SetTransparency(_GP(guis)[s.id].Transparency);
+			_G(gfxDriver)->DrawSprite(
+				_GP(guiobjoff)[draw_index + obj_id].X,
+				_GP(guiobjoff)[draw_index + obj_id].Y,
+				obj_ddb);
+		}
+		_G(gfxDriver)->EndSpriteBatch();
+	}
 
 	_G(our_eip) = 1099;
 }
 
 // Push the gathered list of sprites into the active graphic renderer
 void put_sprite_list_on_screen(bool in_room) {
-	for (size_t i = 0; i < _GP(thingsToDrawList).size(); ++i) {
-		const auto *thisThing = &_GP(thingsToDrawList)[i];
-
-		if (thisThing->bmp != nullptr) {
-			if (thisThing->bmp->GetTransparency() == 255)
+	for (const auto &t : _GP(thingsToDrawList)) {
+		assert(t.ddb || (t.renderStage >= 0));
+		if (t.ddb) {
+			if (t.ddb->GetTransparency() == 255)
 				continue; // skip completely invisible things
 			// mark the image's region as dirty
-			invalidate_sprite(thisThing->x, thisThing->y, thisThing->bmp, in_room);
-
+			invalidate_sprite(t.x, t.y, t.ddb, in_room);
 			// push to the graphics driver
-			_G(gfxDriver)->DrawSprite(thisThing->x, thisThing->y, thisThing->bmp);
-		} else if (thisThing->renderStage >= 0) {
+			_G(gfxDriver)->DrawSprite(t.x, t.y, t.ddb);
+		} else if (t.renderStage >= 0) {
 			// meta entry to run the plugin hook
-			_G(gfxDriver)->DrawSprite(thisThing->renderStage, 0, nullptr);
-		} else {
-			quit("Null pointer added to draw list");
+			_G(gfxDriver)->DrawSprite(t.renderStage, 0, nullptr);
 		}
 	}
 
@@ -2218,7 +2234,6 @@ static void construct_room_view() {
 static void construct_ui_view() {
 	_G(gfxDriver)->BeginSpriteBatch(_GP(play).GetUIViewportAbs(), SpriteTransform(), Point(0, _GP(play).shake_screen_yoff), (GlobalFlipType)_GP(play).screen_flipped);
 	draw_gui_and_overlays();
-	put_sprite_list_on_screen(false);
 	_G(gfxDriver)->EndSpriteBatch();
 	clear_draw_list();
 }
