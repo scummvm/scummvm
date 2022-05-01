@@ -65,6 +65,7 @@ struct StripTable {
 };
 
 enum {
+	kNoDelay = 0,
 	kPictureDelay = 5
 };
 
@@ -3813,7 +3814,7 @@ void ScummEngine::fadeIn(int effect) {
 		transitionEffect(effect - 1);
 		break;
 	case 128:
-		unkScreenEffect6();
+		dissolveEffectSelector();
 		break;
 	case 129:
 		break;
@@ -3875,7 +3876,7 @@ void ScummEngine::fadeOut(int effect) {
 			transitionEffect(effect - 1);
 			break;
 		case 128:
-			unkScreenEffect6();
+			dissolveEffectSelector();
 			break;
 		case 129:
 			// Just blit screen 0 to the display (i.e. display will be black)
@@ -3912,13 +3913,31 @@ void ScummEngine::fadeOut(int effect) {
  * @param a		the transition effect to perform
  */
 void ScummEngine::transitionEffect(int a) {
-	int delta[16];								// Offset applied during each iteration
+	int delta[16]; // Offset applied during each iteration
 	int tab_2[16];
 	int i, j;
 	int bottom;
 	int l, t, r, b;
+	int delay, numOfIterations;
 	const int height = MIN((int)_virtscr[kMainVirtScreen].h, _screenHeight);
-	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : kPictureDelay;
+
+	if (VAR_FADE_DELAY == 0xFF) {
+		if (_game.version >= 2) {
+			delay = kPictureDelay;
+		} else {
+			delay = kNoDelay;
+		}
+	} else {
+		delay = VAR(VAR_FADE_DELAY);
+	}
+
+	// V3+ games have the number of iterations hardcoded; we also
+	// have that number hardcoded for MM NES, so let's target that too:
+	if (_game.version >= 3 || _game.platform == Common::kPlatformNES) {
+		numOfIterations = transitionEffects[a].numOfIterations;
+	} else {
+		numOfIterations = (a == 0 || a == 4) ? ceil((height / 8.0) / 2) : height / 8;
+	}
 
 	for (i = 0; i < 16; i++) {
 		delta[i] = transitionEffects[a].deltaTable[i];
@@ -3929,7 +3948,7 @@ void ScummEngine::transitionEffect(int a) {
 	}
 
 	bottom = height / 8;
-	for (j = 0; j < transitionEffects[a].numOfIterations; j++) {
+	for (j = 0; j < numOfIterations; j++) {
 		for (i = 0; i < 4; i++) {
 			l = tab_2[i * 4];
 			t = tab_2[i * 4 + 1];
@@ -3960,9 +3979,11 @@ void ScummEngine::transitionEffect(int a) {
 		for (i = 0; i < 16; i++)
 			tab_2[i] += delta[i];
 
-		// Draw the current state to the screen and wait a few secs so the
-		// user can watch the effect taking place.
-		waitForTimer(delay);
+		// Draw the current state to the screen and wait
+		// for the appropriate number of quarter frames
+		if (!_fastMode) {
+			waitForTimer(delay);
+		}
 	}
 }
 
@@ -4118,7 +4139,6 @@ void ScummEngine::scrollEffect(int dir) {
 					vsPitch,
 					0, (vs->h - step) * m,
 					vs->w * m, step * m);
-				_system->updateScreen();
 			}
 
 			waitForTimer(delay);
@@ -4141,7 +4161,6 @@ void ScummEngine::scrollEffect(int dir) {
 					vsPitch,
 					0, 0,
 					vs->w * m, step * m);
-				_system->updateScreen();
 			}
 
 			waitForTimer(delay);
@@ -4159,7 +4178,6 @@ void ScummEngine::scrollEffect(int dir) {
 				vsPitch,
 				(vs->w - step) * m, 0,
 				step * m, vs->h * m);
-			_system->updateScreen();
 
 			waitForTimer(delay);
 			x += step;
@@ -4176,7 +4194,6 @@ void ScummEngine::scrollEffect(int dir) {
 				vsPitch,
 				0, 0,
 				step, vs->h);
-			_system->updateScreen();
 
 			waitForTimer(delay);
 			x += step;
@@ -4187,7 +4204,7 @@ void ScummEngine::scrollEffect(int dir) {
 	}
 }
 
-void ScummEngine::unkScreenEffect6() {
+void ScummEngine::dissolveEffectSelector() {
 	// CD Loom (but not EGA Loom!) uses a more fine-grained dissolve
 	if (_game.id == GID_LOOM && _game.version == 4)
 		dissolveEffect(1, 1);

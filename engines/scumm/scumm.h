@@ -1060,7 +1060,7 @@ protected:
 	void fadeOut(int effect);
 	void setScrollBuffer();
 
-	void unkScreenEffect6();
+	void dissolveEffectSelector();
 	void transitionEffect(int a);
 	void dissolveEffect(int width, int height);
 	void scrollEffect(int dir);
