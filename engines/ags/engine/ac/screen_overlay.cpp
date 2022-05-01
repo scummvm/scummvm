@@ -27,12 +27,11 @@ namespace AGS3 {
 using AGS::Shared::Stream;
 
 void ScreenOverlay::ReadFromFile(Stream *in, int32_t cmp_ver) {
-	// Skipping bmp and pic pointer values
-	// TODO: find out if it's safe to just drop these pointers!! replace with unique_ptr?
-	bmp = nullptr;
 	pic = nullptr;
-	in->ReadInt32(); // bmp
-	hasSerializedBitmap = in->ReadInt32() != 0;
+	ddb = nullptr;
+	// Skipping pointers (were saved by old engine)
+	in->ReadInt32(); // ddb
+	hasSerializedBitmap = in->ReadInt32() != 0; // pic
 	type = in->ReadInt32();
 	x = in->ReadInt32();
 	y = in->ReadInt32();
@@ -48,14 +47,14 @@ void ScreenOverlay::ReadFromFile(Stream *in, int32_t cmp_ver) {
 	if (cmp_ver >= 2) {
 		zorder = in->ReadInt32();
 		transparency = in->ReadInt32();
-		in->ReadInt32(); // reserve 2 ints
-		in->ReadInt32();
+		scaleWidth = in->ReadInt32();
+		scaleHeight = in->ReadInt32();
 	}
 }
 
 void ScreenOverlay::WriteToFile(Stream *out) const {
 	// Writing bitmap "pointers" to correspond to full structure writing
-	out->WriteInt32(0); // bmp
+	out->WriteInt32(0); // ddb
 	out->WriteInt32(pic ? 1 : 0); // pic
 	out->WriteInt32(type);
 	out->WriteInt32(x);
@@ -71,8 +70,8 @@ void ScreenOverlay::WriteToFile(Stream *out) const {
 	// since cmp_ver = 2
 	out->WriteInt32(zorder);
 	out->WriteInt32(transparency);
-	out->WriteInt32(0); // reserve 2 ints
-	out->WriteInt32(0);
+	out->WriteInt32(scaleWidth);
+	out->WriteInt32(scaleHeight);
 }
 
 } // namespace AGS3

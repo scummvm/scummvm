@@ -42,8 +42,18 @@ class IDriverDependantBitmap;
 
 using namespace AGS; // FIXME later
 
+// Overlay class.
+// TODO: currently overlay creates and stores its own bitmap, even if
+// created using existing sprite. As a side-effect, changing that sprite
+// (if it were a dynamic one) will not affect overlay (unlike other objects).
+// For future perfomance optimization it may be desired to store sprite index
+// instead; but that would mean that overlay will have to receive sprite
+// changes. For backward compatibility there may be a game switch that
+// forces it to make a copy.
 struct ScreenOverlay {
-	Engine::IDriverDependantBitmap *bmp = nullptr;
+	// Texture
+	Engine::IDriverDependantBitmap *ddb = nullptr;
+	// Original bitmap
 	Shared::Bitmap *pic = nullptr;
 	bool hasAlphaChannel = false;
 	int type = 0, timeout = 0;
@@ -52,6 +62,8 @@ struct ScreenOverlay {
 	int x = 0, y = 0;
 	// Border/padding offset for the tiled text windows
 	int offsetX = 0, offsetY = 0;
+	// Width and height to stretch the texture to
+	int scaleWidth = 0, scaleHeight = 0;
 	int bgSpeechForChar = -1;
 	int associatedOverlayHandle = 0;
 	int zorder = INT_MIN;
@@ -59,8 +71,24 @@ struct ScreenOverlay {
 	bool hasSerializedBitmap = false;
 	int transparency = 0;
 
+	// Tells if Overlay has graphically changed recently
+	bool HasChanged() const {
+		return _hasChanged;
+	}
+	// Manually marks GUI as graphically changed
+	void MarkChanged() {
+		_hasChanged = true;
+	}
+	// Clears changed flag
+	void ClearChanged() {
+		_hasChanged = false;
+	}
+
 	void ReadFromFile(Shared::Stream *in, int32_t cmp_ver);
 	void WriteToFile(Shared::Stream *out) const;
+
+private:
+	bool _hasChanged = false;
 };
 
 } // namespace AGS3

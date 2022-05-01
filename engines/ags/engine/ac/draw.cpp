@@ -753,7 +753,7 @@ void draw_sprite_slot_support_alpha(Bitmap *ds, bool ds_has_alpha, int xpos, int
 IDriverDependantBitmap *recycle_ddb_bitmap(IDriverDependantBitmap *bimp, Bitmap *source, bool hasAlpha, bool opaque) {
 	if (bimp != nullptr) {
 		// same colour depth, width and height -> reuse
-		if (((bimp->GetColorDepth() + 1) / 8 == source->GetBPP()) &&
+		if ((bimp->GetColorDepth() == source->GetColorDepth()) &&
 		        (bimp->GetWidth() == source->GetWidth()) && (bimp->GetHeight() == source->GetHeight())) {
 			_G(gfxDriver)->UpdateDDBFromBitmap(bimp, source, hasAlpha);
 			return bimp;
@@ -2021,13 +2021,30 @@ void draw_gui_and_overlays() {
 
 	clear_sprite_list();
 
+	const bool is_software_mode = !_G(gfxDriver)->HasAcceleratedTransform();
 	// Add active overlays to the sprite list
-	for (auto &over : _GP(screenover)) {
+	if (_GP(overlaybmp).size() < _GP(screenover).size())
+		_GP(overlaybmp).resize(_GP(screenover).size());
+	for (size_t i = 0; i < _GP(screenover).size(); ++i) {
+		auto &over = _GP(screenover)[i];
 		if (over.transparency == 255) continue; // skip fully transparent
-		over.bmp->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(over.transparency));
+		if (_GP(screenover)[i].HasChanged()) {
+			// For software mode - prepare transformed bitmap if necessary
+			Bitmap *use_bmp = over.pic;
+			if (is_software_mode && (over.pic->GetSize() != Size(over.scaleWidth, over.scaleHeight))) {
+				_GP(overlaybmp)[i] = recycle_bitmap(_GP(overlaybmp)[i], over.pic->GetColorDepth(), over.scaleWidth, over.scaleHeight);
+				_GP(overlaybmp)[i]->StretchBlt(over.pic, RectWH(_GP(overlaybmp)[i]->GetSize()));
+				use_bmp = _GP(overlaybmp)[i];
+			}
+			over.ddb = recycle_ddb_bitmap(over.ddb, use_bmp, over.hasAlphaChannel);
+			over.ClearChanged();
+		}
+
+		over.ddb->SetStretch(over.scaleWidth, over.scaleHeight);
+		over.ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(over.transparency));
 		int tdxp, tdyp;
 		get_overlay_position(over, &tdxp, &tdyp);
-		add_to_sprite_list(over.bmp, tdxp, tdyp, over.zorder, false, -1);
+		add_to_sprite_list(over.ddb, tdxp, tdyp, over.zorder, false, -1);
 	}
 
 	// Add GUIs

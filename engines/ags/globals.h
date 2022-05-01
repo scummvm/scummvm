@@ -612,6 +612,8 @@ public:
 	std::vector<Engine::IDriverDependantBitmap *> *_guiobjbmp;
 	std::vector<Point> *_guiobjoff; // because surface may be larger than logical position
 	std::vector<int> *_guiobjbmpref; // first control texture index of each GUI
+	// Overlay's cached transformed bitmap, for software mode
+	std::vector<Shared::Bitmap *> *_overlaybmp;
 
 	/**@}*/
 

@@ -192,6 +192,7 @@ Globals::Globals() {
 	_guiobjbmp = new std::vector<Engine::IDriverDependantBitmap *>();
 	_guiobjoff = new std::vector<Point>();
 	_guiobjbmpref = new std::vector<int>();
+	_overlaybmp = new std::vector<Shared::Bitmap *>();
 
 	// draw_software.cpp globals
 	_BlackRects = new DirtyRects();
@@ -446,6 +447,7 @@ Globals::~Globals() {
 	delete _guiobjbmp;
 	delete _guiobjoff;
 	delete _guiobjbmpref;
+	delete _overlaybmp;
 
 	// draw_software.cpp globals
 	delete _BlackRects;
