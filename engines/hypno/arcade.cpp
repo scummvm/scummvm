@@ -216,6 +216,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_levelId = arc->id;
 	_shootSound = arc->shootSound;
 	_hitSound = arc->hitSound;
+	_additionalSound = arc->additionalSound;
 	_health = arc->health;
 	_maxHealth = _health;
 	debugC(1, kHypnoDebugArcade, "Starting segment of type %x", segments[_segmentIdx].type);

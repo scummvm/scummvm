@@ -221,6 +221,9 @@ hline: 	CTOK NUM {
 		} else if (Common::String("S4") == $1) {
 			g_parsedArc->enemySound = $2;
 			g_parsedArc->enemySoundRate = sampleRate;
+		} else if (Common::String("S5") == $1) {
+			g_parsedArc->additionalSound = $2;
+			g_parsedArc->additionalSoundRate = sampleRate;
 		}
 		debugC(1, kHypnoDebugParser, "SN %s", $2);
 	}

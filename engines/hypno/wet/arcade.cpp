@@ -665,6 +665,12 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 			else
 				drawImage(*_c33PlayerCursor[10], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
 		}
+		uint32 c = _compositeSurface->getPixel(_c33PlayerPosition.x, _c33PlayerPosition.y);
+		if (c >= 225 && c <= 231) {
+			if (!_infiniteHealthCheat)
+				_health = _health - 1;
+			generateStaticEffect();
+		}
 		return _c33PlayerPosition;
 	}
 	return mousePos;
@@ -753,6 +759,37 @@ void WetEngine::missNoTarget(ArcadeShooting *arc) {
 			if (!_music.empty())
 				playSound(_music, 0, arc->musicRate); // restore music
 			break;
+		}
+	}
+}
+
+void WetEngine::generateStaticEffect() {
+	// random static
+	uint8 c = _compositeSurface->getPixel(150, 120); // some pixel in the middle
+	if (c != 0 && c != 254) {
+		for (int i = 0; i < _screenW; i++) {
+			for (int j = 50; j < 60; j++) {
+				c = _rnd->getRandomBit() ? 254 : 0;
+				_compositeSurface->setPixel(i, j, c);
+			}
+		}
+
+		for (int i = 0; i < _screenW; i++) {
+			for (int j = 80; j < 90; j++) {
+				c = _rnd->getRandomBit() ? 254 : 0;
+				_compositeSurface->setPixel(i, j, c);
+			}
+		}
+
+		for (int i = 0; i < _screenW; i++) {
+			for (int j = 120; j < 150; j++) {
+				c = _rnd->getRandomBit() ? 254 : 0;
+				_compositeSurface->setPixel(i, j, c);
+			}
+		}
+		drawScreen();
+		if (!_additionalSound.empty()) {
+			playSound(_soundPath + _additionalSound, 1, 11025);
 		}
 	}
 }

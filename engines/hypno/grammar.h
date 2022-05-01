@@ -533,6 +533,7 @@ public:
 		shootSoundRate = 0;
 		enemySoundRate = 0;
 		hitSoundRate = 0;
+		additionalSoundRate = 0;
 	}
 	void clear() {
 		nextLevelVideo.clear();
@@ -553,6 +554,7 @@ public:
 		beforeVideo.clear();
 		briefingVideo.clear();
 		additionalVideo.clear();
+		additionalSound.clear();
 		segments.clear();
 		script.clear();
 		objKillsRequired[0] = 0;
@@ -611,6 +613,8 @@ public:
 	uint32 enemySoundRate;
 	Filename hitSound;
 	uint32 hitSoundRate;
+	Filename additionalSound;
+	uint32 additionalSoundRate;
 };
 
 class Transition : public Level {

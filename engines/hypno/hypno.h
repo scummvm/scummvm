@@ -313,6 +313,7 @@ public:
 	int _lives;
 	Filename _shootSound;
 	Filename _hitSound;
+	Filename _additionalSound;
 	Shoots _shoots;
 	Frames _playerFrames;
 	int _playerFrameIdx;
@@ -423,6 +424,7 @@ private:
 
 	Frames _c33PlayerCursor;
 	Common::Point _c33PlayerPosition;
+	void generateStaticEffect();
 
 	Common::BitArray _font05;
 	Common::BitArray _font08;
