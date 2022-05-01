@@ -190,8 +190,8 @@ void DebugToolWindowBase::render() {
 		if (_toolSurface) {
 			oldWidth = _toolSurface->w;
 			oldHeight = _toolSurface->h;
+		} else
 			needChromeUpdate = true;
-		}
 
 		int32 renderWidth = getWidth() - kScrollBarWidth;
 		int32 renderHeight = getHeight() - kTopBarHeight;
@@ -642,6 +642,9 @@ void DebugSceneTreeWindow::update() {
 }
 
 void DebugSceneTreeWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) {
+	if (_tree.size() == 0)
+		return;
+
 	// Render tree
 	Common::HashMap<const SceneTreeEntry *, size_t> treeToRenderIndex;
 	_renderEntries.clear();
@@ -912,6 +915,91 @@ uint32 DebugSceneTreeWindow::getColorForObject(const RuntimeObject *object, cons
 	}
 }
 
+// Step through ("debugger") window
+class DebugStepThroughWindow : public DebugToolWindowBase {
+public:
+	DebugStepThroughWindow(Debugger *debugger, const WindowParameters &windowParams);
+
+	void update() override;
+	void toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) override;
+
+	void toolOnMouseDown(int32 x, int32 y, int mouseButton) override;
+
+private:
+	static const int kRowHeight = 14;
+
+	Common::Array<Common::SharedPtr<DebugPrimaryTaskList> > _primaryTasks;
+	Common::Array<size_t> _primaryTaskRowStarts;
+	Common::Array<size_t> _primaryTaskNumEntries;
+	size_t _totalRows;
+};
+
+DebugStepThroughWindow::DebugStepThroughWindow(Debugger *debugger, const WindowParameters &windowParams)
+	: DebugToolWindowBase(kDebuggerToolStepThrough, "Debugger", debugger, windowParams), _totalRows(0) {
+}
+
+void DebugStepThroughWindow::update() {
+	setDirty();
+
+	_primaryTasks.clear();
+	_debugger->getRuntime()->debugGetPrimaryTaskList(_primaryTasks);
+
+	_primaryTaskRowStarts.resize(_primaryTasks.size());
+	_primaryTaskNumEntries.resize(_primaryTasks.size());
+
+	_totalRows = 0;
+	for (size_t i = 0; i < _primaryTasks.size(); i++) {
+		_totalRows++;
+		_primaryTaskRowStarts[i] = _totalRows;
+
+		size_t numEntries = _primaryTasks[i]->getItems().size();
+		_primaryTaskNumEntries[i] = numEntries;
+		_totalRows += numEntries;
+	}
+}
+
+void DebugStepThroughWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) {
+
+	const Graphics::PixelFormat fmt = _debugger->getRuntime()->getRenderPixelFormat();
+
+	uint32 whiteColor = fmt.RGBToColor(255, 255, 255);
+	uint32 blackColor = fmt.RGBToColor(0, 0, 0);
+
+	int32 renderHeight = subAreaHeight;
+	int32 renderWidth = subAreaWidth;
+
+	if (_primaryTasks.size() > 0)
+		renderHeight = static_cast<int32>(_primaryTaskRowStarts.back() + _primaryTaskNumEntries.back()) * kRowHeight;
+
+	if (!_toolSurface || renderWidth != _toolSurface->w || renderHeight != _toolSurface->h) {
+		_toolSurface.reset();
+		_toolSurface.reset(new Graphics::ManagedSurface(renderWidth, renderHeight, fmt));
+	}
+
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+
+	for (size_t catIndex = 0; catIndex < _primaryTasks.size(); catIndex++) {
+		int32 startY = (_primaryTaskRowStarts[catIndex] - 1) * kRowHeight;
+
+		const DebugPrimaryTaskList *taskList = _primaryTasks[catIndex].get();
+
+		font->drawString(_toolSurface.get(), taskList->getName(), 2, startY + 2, renderWidth - 2, blackColor);
+
+		const Common::Array<IDebuggable *> &items = taskList->getItems();
+
+		const size_t numChildren = items.size();
+		for (size_t chIndex = 0; chIndex < numChildren; chIndex++) {
+			int32 rowY = (_primaryTaskRowStarts[catIndex] + chIndex) * kRowHeight;
+			font->drawString(_toolSurface.get(), items[chIndex]->debugGetName(), 10, startY + 2, renderWidth - 2, blackColor);
+		}
+	}
+}
+
+void DebugStepThroughWindow::toolOnMouseDown(int32 x, int32 y, int mouseButton) {
+	if (mouseButton != Actions::kMouseButtonLeft)
+		return;
+}
+
 class DebugToolsWindow : public Window {
 public:
 	DebugToolsWindow(Debugger *debugger, const WindowParameters &windowParams);
@@ -943,6 +1031,26 @@ DebugInspector::~DebugInspector() {
 void DebugInspector::onDestroyed() {
 	_debuggable = nullptr;
 }
+
+void DebugInspector::onDebuggableRelocated(IDebuggable *debuggable) {
+	_debuggable = debuggable;
+}
+
+DebugPrimaryTaskList::DebugPrimaryTaskList(const Common::String &name) : _name(name) {
+}
+
+void DebugPrimaryTaskList::addItem(IDebuggable *debuggable) {
+	_primaryTasks.push_back(debuggable);
+}
+
+const Common::Array<IDebuggable*> &DebugPrimaryTaskList::getItems() const {
+	return _primaryTasks;
+}
+
+const Common::String &DebugPrimaryTaskList::getName() const {
+	return _name;
+}
+
 
 Debugger::Debugger(Runtime *runtime) : _paused(false), _runtime(runtime) {
 	refreshSceneStatus();
@@ -1177,13 +1285,13 @@ void Debugger::openToolWindow(DebuggerTool tool) {
 
 	switch (tool) {
 	case kDebuggerToolSceneTree:
-		windowRef.reset(new DebugSceneTreeWindow(this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
+		windowRef.reset(new DebugSceneTreeWindow(this, WindowParameters(_runtime, 32, 32, 250, 120, _runtime->getRenderPixelFormat())));
 		break;
 	case kDebuggerToolInspector:
 		windowRef.reset(new DebugToolWindowBase(kDebuggerToolInspector, "Inspector", this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
 		break;
 	case kDebuggerToolStepThrough:
-		windowRef.reset(new DebugToolWindowBase(kDebuggerToolStepThrough, "Debugger", this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
+		windowRef.reset(new DebugStepThroughWindow(this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
 		break;
 	default:
 		assert(false);

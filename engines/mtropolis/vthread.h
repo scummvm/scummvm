@@ -44,14 +44,29 @@ struct VThreadFaultIdentifierSingleton {
 template<typename T>
 VThreadFaultIdentifier VThreadFaultIdentifierSingleton<T>::_identifier;
 
-class VThreadTaskData {
-
+class VThreadTaskData : public IDebuggable {
 public:
+	VThreadTaskData();
 	virtual ~VThreadTaskData();
 
 	virtual VThreadState destructAndRunTask() = 0;
 	virtual void relocateTo(void *newPosition) = 0;
 	virtual bool handlesFault(const VThreadFaultIdentifier *faultID) const = 0;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+public:
+	void debugInit(const char *name);
+
+protected:
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	const char *debugGetTypeName() const override { return "Task"; }
+	const Common::String &debugGetName() const override { return _debugName; }
+	Common::SharedPtr<DebugInspector> debugGetInspector() const override { return _debugInspector; }
+
+	Common::SharedPtr<DebugInspector> _debugInspector;
+
+	Common::String _debugName;
+#endif
 };
 
 struct VThreadStackFrame {
@@ -66,7 +81,6 @@ struct VThreadStackFrame {
 
 template<typename TClass, typename TData>
 class VThreadMethodData : public VThreadTaskData {
-
 public:
 	VThreadMethodData(const VThreadFaultIdentifier *faultID, TClass *target, VThreadState (TClass::*method)(const TData &data));
 	VThreadMethodData(const VThreadMethodData &other);
@@ -118,25 +132,25 @@ public:
 	~VThread();
 
 	template<typename TClass, typename TData>
-	TData *pushTask(TClass *obj, VThreadState (TClass::*method)(const TData &data));
+	TData *pushTask(const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data));
 
 	template<typename TData>
-	TData *pushTask(VThreadState (*func)(const TData &data));
+	TData *pushTask(const char *name, VThreadState (*func)(const TData &data));
 
 	template<typename TFaultType, typename TClass, typename TData>
-	TData *pushFaultHandler(TClass *obj, VThreadState (TClass::*method)(const TData &data));
+	TData *pushFaultHandler(const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data));
 
 	template<typename TFaultType, typename TData>
-	TData *pushFaultHandler(VThreadState (*func)(const TData &data));
+	TData *pushFaultHandler(const char *name, VThreadState (*func)(const TData &data));
 
 	VThreadState step();
 
 private:
 	template<typename TClass, typename TData>
-	TData *pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, TClass *obj, VThreadState (TClass::*method)(const TData &data));
+	TData *pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data));
 
 	template<typename TData>
-	TData *pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, VThreadState (*func)(const TData &data));
+	TData *pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, const char *name, VThreadState (*func)(const TData &data));
 
 	void reserveFrame(size_t size, size_t alignment, void *&outFramePtr, void *&outUnadjustedDataPtr, size_t &outPrevFrameOffset);
 	bool popFrame(void *&dataPtr, void *&outFramePtr);
@@ -189,9 +203,15 @@ void VThreadMethodData<TClass, TData>::relocateTo(void *newPosition) {
 	void *adjustedPtr = static_cast<VThreadMethodData<TClass, TData> *>(static_cast<VThreadTaskData *>(newPosition));
 
 #if __cplusplus >= 201103L
-	new (adjustedPtr) VThreadMethodData<TClass, TData>(static_cast<VThreadMethodData<TClass, TData> &&>(*this));
+	VThreadMethodData<TClass, TData> *relocated = new (adjustedPtr) VThreadMethodData<TClass, TData>(static_cast<VThreadMethodData<TClass, TData> &&>(*this));
 #else
-	new (adjustedPtr) VThreadMethodData<TClass, TData>(*this);
+	VThreadMethodData<TClass, TData> *relocated = new (adjustedPtr) VThreadMethodData<TClass, TData>(*this);
+#endif
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	relocated->_debugInspector->onDebuggableRelocated(this);
+#else
+	(void)relocated;
 #endif
 }
 
@@ -244,9 +264,15 @@ void VThreadFunctionData<TData>::relocateTo(void *newPosition) {
 	void *adjustedPtr = static_cast<VThreadFunctionData<TData> *>(static_cast<VThreadTaskData *>(newPosition));
 
 #if __cplusplus >= 201103L
-	new (adjustedPtr) VThreadFunctionData<TData>(static_cast<VThreadFunctionData<TData> &&>(*this));
+	VThreadFunctionData<TData> *relocated = new (adjustedPtr) VThreadFunctionData<TData>(static_cast<VThreadFunctionData<TData> &&>(*this));
 #else
-	new (adjustedPtr) VThreadFunctionData<TData>(*this);
+	VThreadFunctionData<TData> *relocated = new (adjustedPtr) VThreadFunctionData<TData>(*this);
+#endif
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	relocated->_debugInspector->onDebuggableRelocated(this);
+#else
+	(void)relocated;
 #endif
 }
 
@@ -261,28 +287,28 @@ TData &VThreadFunctionData<TData>::getData() {
 }
 
 template<typename TClass, typename TData>
-TData *VThread::pushTask(TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
-	return this->pushTaskWithFaultHandler(nullptr, obj, method);
+TData *VThread::pushTask(const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
+	return this->pushTaskWithFaultHandler(nullptr, name, obj, method);
 }
 
 template<typename TData>
-TData *VThread::pushTask(VThreadState (*func)(const TData &data)) {
-	return this->pushTaskWithFaultHandler(nullptr, func);
+TData *VThread::pushTask(const char *name, VThreadState (*func)(const TData &data)) {
+	return this->pushTaskWithFaultHandler(nullptr, name, func);
 }
 
 template<typename TFaultType, typename TClass, typename TData>
-TData *VThread::pushFaultHandler(TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
-	return this->pushTaskWithFaultHandler(&VThreadFaultIdentifierSingleton<TFaultType>::_identifier, obj, method);
+TData *VThread::pushFaultHandler(const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
+	return this->pushTaskWithFaultHandler(&VThreadFaultIdentifierSingleton<TFaultType>::_identifier, name, obj, method);
 }
 
 template<typename TFaultType, typename TData>
-TData *VThread::pushFaultHandler(VThreadState (*func)(const TData &data)) {
-	return this->pushTaskWithFaultHandler(&VThreadFaultIdentifierSingleton<TFaultType>::_identifier, func);
+TData *VThread::pushFaultHandler(const char *name, VThreadState (*func)(const TData &data)) {
+	return this->pushTaskWithFaultHandler(&VThreadFaultIdentifierSingleton<TFaultType>::_identifier, name, func);
 }
 
 
 template<typename TClass, typename TData>
-TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
+TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, const char *name, TClass *obj, VThreadState (TClass::*method)(const TData &data)) {
 	typedef VThreadMethodData<TClass, TData> FrameData_t; 
 
 	const size_t frameAlignment = alignof(VThreadStackFrame);
@@ -304,12 +330,15 @@ TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, 
 	frame->prevFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + prevFrameOffset);
 	frame->data = frameData;
 #endif
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	frameData->debugInit(name);
+#endif
 
 	return &frameData->getData();
 }
 
 template<typename TData>
-TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, VThreadState (*func)(const TData &data)) {
+TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, const char *name, VThreadState (*func)(const TData &data)) {
 	typedef VThreadFunctionData<TData> FrameData_t;
 
 	const size_t frameAlignment = alignof(VThreadStackFrame);
@@ -330,6 +359,9 @@ TData *VThread::pushTaskWithFaultHandler(const VThreadFaultIdentifier *faultID, 
 #ifdef MTROPOLIS_DEBUG_VTHREAD_STACKS
 	frame->prevFrame = reinterpret_cast<VThreadStackFrame *>(static_cast<char *>(_stackAlignedBase) + prevFrameOffset);
 	frame->data = frameData;
+#endif
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	frameData->debugInit(name);
 #endif
 
 	return &frameData->getData();

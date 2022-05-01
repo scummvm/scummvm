@@ -23,12 +23,20 @@
 
 namespace MTropolis {
 
+VThreadTaskData::VThreadTaskData() {
+}
+
 VThreadTaskData::~VThreadTaskData() {
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void VThreadTaskData::debugInit(const char *name) {
+	_debugName = name;
+}
+#endif
+
 VThread::VThread() : _faultID(nullptr), _stackUnalignedBase(nullptr), _stackAlignedBase(nullptr), _size(0), _alignment(1), _used(0) {
 }
-
 
 VThread::~VThread() {
 	void *dataPtr;
