@@ -4116,6 +4116,9 @@ void ScummEngine::scrollEffect(int dir) {
 
 	int x, y;
 	const int step = 8;
+
+	// Keep in mind: this effect is only present in v5 and v6, so VAR_FADE_DELAY is
+	// never uninitialized. The following check is here for good measure only.
 	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : kPictureDelay;
 
 	byte *src;
