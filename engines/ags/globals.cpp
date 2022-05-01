@@ -179,7 +179,7 @@ Globals::Globals() {
 	_actspswbbmp = new std::vector<Engine::IDriverDependantBitmap *>();
 	_actspswbcache = new std::vector<CachedActSpsData>();
 	_guibg = new std::vector<Shared::Bitmap *>();
-	_guibgbmp = new std::vector<Engine::IDriverDependantBitmap *>();
+	_guibgddb = new std::vector<Engine::IDriverDependantBitmap *>();
 	_debugRoomMaskBmp = new std::unique_ptr<Shared::Bitmap>();
 	_debugMoveListBmp = new std::unique_ptr<Shared::Bitmap>();
 
@@ -189,9 +189,9 @@ Globals::Globals() {
 		_palette[i].clear();
 
 	_guiobjbg = new std::vector<Shared::Bitmap *>();
-	_guiobjbmp = new std::vector<Engine::IDriverDependantBitmap *>();
+	_guiobjddb = new std::vector<Engine::IDriverDependantBitmap *>();
 	_guiobjoff = new std::vector<Point>();
-	_guiobjbmpref = new std::vector<int>();
+	_guiobjddbref = new std::vector<int>();
 	_overlaybmp = new std::vector<Shared::Bitmap *>();
 
 	// draw_software.cpp globals
@@ -437,16 +437,16 @@ Globals::~Globals() {
 	delete _actspswbbmp;
 	delete _actspswbcache;
 	delete _guibg;
-	delete _guibgbmp;
+	delete _guibgddb;
 	delete _debugRoomMaskBmp;
 	delete _debugMoveListBmp;
 	delete[] _dynamicallyCreatedSurfaces;
 	delete[] _palette;
 	delete _maincoltable;
 	delete _guiobjbg;
-	delete _guiobjbmp;
+	delete _guiobjddb;
 	delete _guiobjoff;
-	delete _guiobjbmpref;
+	delete _guiobjddbref;
 	delete _overlaybmp;
 
 	// draw_software.cpp globals

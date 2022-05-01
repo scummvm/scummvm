@@ -586,7 +586,7 @@ public:
 	std::vector<CachedActSpsData> *_actspswbcache;
 	// GUI surfaces
 	std::vector<Shared::Bitmap *> *_guibg;
-	std::vector<Engine::IDriverDependantBitmap *> *_guibgbmp;
+	std::vector<Engine::IDriverDependantBitmap *> *_guibgddb;
 	// For debugging room masks
 	RoomAreaMask _debugRoomMask = kRoomAreaNone;
 	std::unique_ptr<Shared::Bitmap> *_debugRoomMaskBmp;
@@ -609,9 +609,9 @@ public:
 
 	// GUI control surfaces
 	std::vector<Shared::Bitmap *> *_guiobjbg;
-	std::vector<Engine::IDriverDependantBitmap *> *_guiobjbmp;
+	std::vector<Engine::IDriverDependantBitmap *> *_guiobjddb;
 	std::vector<Point> *_guiobjoff; // because surface may be larger than logical position
-	std::vector<int> *_guiobjbmpref; // first control texture index of each GUI
+	std::vector<int> *_guiobjddbref; // first control texture index of each GUI
 	// Overlay's cached transformed bitmap, for software mode
 	std::vector<Shared::Bitmap *> *_overlaybmp;
 
