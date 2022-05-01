@@ -35,6 +35,7 @@ enum class SysReel {
 	CURSOR = 11,
 	INVMAIN = 15,
 	SLIDER = 16,
+	CONVERSATION_FRAME = 19,
 	OPTIONS_MENU = 21,
 	LOADSAVE_MENU = 22,
 	QUIT_MENU = 23,
@@ -52,6 +53,7 @@ public:
 
 	SCNHANDLE Get(SysReel index);
 	void Set(int32 index, SCNHANDLE reel);
+
 private:
 	const static int32 MAX_SYSREELS = 0x28;
 

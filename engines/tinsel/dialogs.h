@@ -47,7 +47,7 @@ enum {
 	INV_CONV 		= 0,
 	INV_1 			= 1,
 	INV_2 			= 2,
-	INV_CONF 		= 3,
+	DW0_INV_CONF	= 3,
 	INV_MENU 		= 3, // DW2 constant
 	NUM_INV_V0 		= 4,
 
@@ -58,7 +58,8 @@ enum {
 	// Noir constants
 	INV_3		 	= 3,
 	INV_4 		 	= 4,
-	NUM_INV_V3 	 	= 5,
+	NOIR_INV_CONF   = 5,
+	NUM_INV_V3 	 	= 6,
 	INV_7NOINV 	 	= 7,
 	INV_8NOINV 	 	= 8,
 	INV_NOTEBOOK 	= 9,
@@ -66,6 +67,7 @@ enum {
 	MAX_NUM_INV 	= NUM_INV_V3 // For determination of _invD array size
 };
 
+#define INV_CONF ((TinselVersion == 3) ? NOIR_INV_CONF : DW0_INV_CONF)
 #define NUM_INV ((TinselVersion == 3) ? NUM_INV_V3 : NUM_INV_V0)
 
 enum {
@@ -226,6 +228,7 @@ enum BFUNC {
 enum TM { TM_POINTER,
 	      TM_INDEX,
 	      TM_STRINGNUM,
+	      TM_UNK4,
 	      TM_NONE };
 
 // For SlideSlider() and similar
@@ -259,12 +262,14 @@ struct BUTTONEFFECT {
 	bool press; // true = button press; false = button toggle
 };
 
+enum class SysReel;
+
 class Dialogs {
 public:
 	Dialogs();
 	virtual ~Dialogs();
 
-	void PopUpInventory(int invno);
+	void PopUpInventory(int invno, int menuId = -1);
 	void OpenMenu(CONFTYPE type);
 
 	void Xmovement(int x);
@@ -394,14 +399,18 @@ private:
 	void InvLabels(bool InBody, int aniX, int aniY);
 	void AdjustTop();
 	OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm);
-	void AddBackground(OBJECT **rect, OBJECT **title, int extraH, int extraV, int textFrom);
-	void AddBackground(OBJECT **rect, int extraH, int extraV);
-	void AddTitle(OBJECT **title, int extraH);
+	void AddBackground(OBJECT **rect, const Common::Rect &bounds, OBJECT **title = nullptr, int textFrom = 0);
+	void AddTitle(OBJECT **title, const Common::Rect &rect);
 	void AddSlider(OBJECT **slide, const FILM *pfilm);
 	void AddBox(int *pi, const int i);
 	void AddEWSlider(OBJECT **slide, const FILM *pfilm);
+	void PositionInventory(OBJECT *pMultiObj, int xOffset, int yOffset, int zPosition);
 	int AddExtraWindow(int x, int y, OBJECT **retObj);
+	void ConstructInventoryCommon(SysReel reel, bool hasTitle);
+	void ConstructConversationInventory();
 	void ConstructInventory(InventoryType filling);
+	void ConstructOtherInventory(int menuId);
+	void ConstructMainInventory();
 	void AlterCursor(int num);
 	void SetMenuGlobals(CONFINIT *ci);
 	void CloseInventory();
