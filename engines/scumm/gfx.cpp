@@ -66,7 +66,13 @@ struct StripTable {
 
 enum {
 	kNoDelay = 0,
-	kPictureDelay = 5
+	// This should actually be 3 in all games using it;
+	// every one of those games seems to accumulate some
+	// kind of internal random delay while performing
+	// the screen effect (like sound interrupts running,
+	// forcing the SCUMM timer to a lower frequency).
+	// I have added an extra quarter frame to emulate that.
+	kPictureDelay = 4
 };
 
 #define NUM_SHAKE_POSITIONS 8
@@ -81,11 +87,9 @@ static const int8 shake_positions[NUM_SHAKE_POSITIONS] = {
  * that the screen has 40 vertical strips (i.e. 320 pixel), and 25 horizontal
  * strips (i.e. 200 pixel). There is a hack in transitionEffect that
  * makes it work correctly in games which have a different screen height
- * (for example, 240 pixel), but nothing is done regarding the width, so this
- * code won't work correctly in COMI. Also, the number of iteration depends
- * on min(vertStrips, horizStrips}. So the 13 is derived from 25/2, rounded up.
- * And the 25 = min(25,40). Hence for Zak256 instead of 13 and 25, the values
- * 15 and 30 should be used, and for COMI probably 30 and 60.
+ * (for example, 240 pixel), but nothing is done regarding the width.
+ * The number of iterations is hardcoded from version 3 up to 7.
+ * Version 8 doesn't have any of these effects at all.
  */
 struct TransitionEffect {
 	byte numOfIterations;
