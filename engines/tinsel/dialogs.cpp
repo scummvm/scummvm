@@ -5239,13 +5239,9 @@ void Dialogs::idec_invMain(SCNHANDLE text, int MaxContents) {
 			72, false);
 
 	warning("TODO: idec_invMain: implement language scene playback");
-	// This is not yet actived because playing the loadsceen scene
-	// currently produces an invalid corountine stack.
-#if 0
 	const char *fileName = _vm->getSceneFile(TextLanguage());
 	SCNHANDLE sceneHandle = _vm->_handle->FindLanguageSceneHandle(fileName);
 	DoHailScene(sceneHandle);
-#endif
 }
 
 /**

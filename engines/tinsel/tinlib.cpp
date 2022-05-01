@@ -4675,9 +4675,9 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		debug(7, "%s(%d)", mapping.name, pp[0]);
 		break;
 	case 90: // 2 parameters, play anim based on item
-		mapping = NoirMapping{"INVPLAY", ZZZZZZ, 2};
+		mapping = NoirMapping{"INVPLAY", INVPLAY, 2};
 		pp -= mapping.numArgs - 1;
-		debug(7, "%s(%d, %d)", mapping.name, pp[0], pp[1]);
+		debug(7, "%s(%d %d)", mapping.name, pp[0], pp[1]);
 		break;
 	case 91:
 		mapping = NoirMapping{"INWHICHINV", INWHICHINV, 0};
