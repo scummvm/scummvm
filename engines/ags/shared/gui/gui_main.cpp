@@ -643,6 +643,21 @@ namespace GUI {
 
 GuiVersion GameGuiVersion = kGuiVersion_Initial;
 
+Rect CalcTextPosition(const char *text, int font, const Rect &frame, FrameAlignment align) {
+	int use_height = (_G(loaded_game_file_version) < kGameVersion_360_21) ?
+		get_font_height(font) + ((align & kMAlignVCenter) ? 1 : 0) :
+		get_font_height_outlined(font);
+	Rect rc = AlignInRect(frame, RectWH(0, 0, get_text_width_outlined(text, font), use_height), align);
+	rc.SetHeight(get_font_surface_height(font));
+	return rc;
+}
+
+Line CalcTextPositionHor(const char *text, int font, int x1, int x2, int y, FrameAlignment align) {
+	int w = get_text_width_outlined(text, font);
+	int x = AlignInHRange(x1, x2, 0, w, align);
+	return Line(x, y, x + w - 1, y);
+}
+
 void DrawDisabledEffect(Bitmap *ds, const Rect &rc) {
 	color_t draw_color = ds->GetCompatibleColor(8);
 	for (int at_x = rc.Left; at_x <= rc.Right; ++at_x) {
@@ -653,16 +668,13 @@ void DrawDisabledEffect(Bitmap *ds, const Rect &rc) {
 }
 
 void DrawTextAligned(Bitmap *ds, const char *text, int font, color_t text_color, const Rect &frame, FrameAlignment align) {
-	int text_height = (_G(loaded_game_file_version) < kGameVersion_360_21) ?
-		get_font_height(font) + ((align & kMAlignVCenter) ? 1 : 0) :
-		get_font_height_outlined(font);
-	Rect item = AlignInRect(frame, RectWH(0, 0, get_text_width_outlined(text, font), text_height), align);
+	Rect item = CalcTextPosition(text, font, frame, align);
 	wouttext_outline(ds, item.Left, item.Top, font, text_color, text);
 }
 
 void DrawTextAlignedHor(Bitmap *ds, const char *text, int font, color_t text_color, int x1, int x2, int y, FrameAlignment align) {
-	int x = AlignInHRange(x1, x2, 0, get_text_width_outlined(text, font), align);
-	wouttext_outline(ds, x, y, font, text_color, text);
+	Line line = CalcTextPositionHor(text, font, x1, x2, y, align);
+	wouttext_outline(ds, line.X1, y, font, text_color, text);
 }
 
 void MarkAllGUIForUpdate() {

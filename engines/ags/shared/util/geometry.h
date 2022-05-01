@@ -364,6 +364,10 @@ Rect OffsetRect(const Rect &r, const Point off);
 Rect CenterInRect(const Rect &place, const Rect &item);
 Rect ClampToRect(const Rect &place, const Rect &item);
 Rect PlaceInRect(const Rect &place, const Rect &item, const RectPlacement &placement);
+// Sum two rectangles, the result is the rectangle bounding them both
+Rect SumRects(const Rect &r1, const Rect &r2);
+// Intersect two rectangles, the resolt is the rectangle bounding their intersection
+Rect IntersectRects(const Rect &r1, const Rect &r2);
 
 //} // namespace Shared
 //} // namespace AGS

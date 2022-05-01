@@ -215,6 +215,10 @@ namespace GUI {
 extern GuiVersion GameGuiVersion;
 extern GuiOptions Options;
 
+// Calculates the text's graphical position, given the alignment
+Rect CalcTextPosition(const char *text, int font, const Rect &frame, FrameAlignment align);
+// Calculates the text's graphical position, given the horizontal alignment
+Line CalcTextPositionHor(const char *text, int font, int x1, int x2, int y, FrameAlignment align);
 // Draw standart "shading" effect over rectangle
 void DrawDisabledEffect(Bitmap *ds, const Rect &rc);
 // Draw text aligned inside rectangle

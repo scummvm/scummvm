@@ -19,6 +19,7 @@
  *
  */
 
+#include "ags/lib/std/algorithm.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/gui/gui_slider.h"
@@ -56,7 +57,22 @@ bool GUISlider::IsOverControl(int x, int y, int leeway) const {
 	return _cachedHandle.IsInside(Point(x, y));
 }
 
-void GUISlider::Draw(Bitmap *ds, int x, int y) {
+Rect GUISlider::CalcGraphicRect(bool clipped) {
+	// Sliders are never clipped as of 3.6.0
+	// TODO: precalculate everything on width/height/graphic change!!
+	UpdateMetrics();
+	Rect logical = RectWH(X, Y, Width, Height);
+	Rect bar = Rect::MoveBy(_cachedBar, X, Y);
+	Rect handle = Rect::MoveBy(_cachedHandle, X, Y);
+	return Rect(
+		std::min(std::min(logical.Left, bar.Left), handle.Left),
+		std::min(std::min(logical.Top, bar.Top), handle.Top),
+		std::max(std::max(logical.Right, bar.Right), handle.Right),
+		std::max(std::max(logical.Bottom, bar.Bottom), handle.Bottom)
+	);
+}
+
+void GUISlider::UpdateMetrics() {
 	// Clamp Value
 	// TODO: this is necessary here because some Slider fields are still public
 	if (MinValue >= MaxValue)
@@ -95,7 +111,7 @@ void GUISlider::Draw(Bitmap *ds, int x, int y) {
 	if (IsHorizontal()) // horizontal slider
 	{
 		// Value pos is a coordinate corresponding to current slider's value
-		bar = RectWH(x + 1, y + Height / 2 - thick_f, Width - 1, bar_thick);
+		bar = RectWH(1, Height / 2 - thick_f, Width - 1, bar_thick);
 		handle_range = Width - 4;
 		int value_pos = (int)(((float)(Value - MinValue) * (float)handle_range) / (float)(MaxValue - MinValue));
 		handle = RectWH((bar.Left + get_fixed_pixel_size(2)) - (handle_sz.Width / 2) + 1 + value_pos - 2,
@@ -105,7 +121,7 @@ void GUISlider::Draw(Bitmap *ds, int x, int y) {
 	}
 	// vertical slider
 	else {
-		bar = RectWH(x + Width / 2 - thick_f, y + 1, bar_thick, Height - 1);
+		bar = RectWH(Width / 2 - thick_f, 1, bar_thick, Height - 1);
 		handle_range = Height - 4;
 		int value_pos = (int)(((float)(MaxValue - Value) * (float)handle_range) / (float)(MaxValue - MinValue));
 		handle = RectWH(bar.Left + (bar.GetWidth() - handle_sz.Width) / 2,
@@ -113,6 +129,17 @@ void GUISlider::Draw(Bitmap *ds, int x, int y) {
 			handle_sz.Width, handle_sz.Height);
 		handle.MoveToX(handle.Left + data_to_game_coord(HandleOffset));
 	}
+
+	_cachedBar = bar;
+	_cachedHandle = handle;
+	_handleRange = handle_range;
+}
+
+void GUISlider::Draw(Bitmap *ds, int x, int y) {
+	UpdateMetrics();
+
+	Rect bar = Rect::MoveBy(_cachedBar, x, y);
+	Rect handle = Rect::MoveBy(_cachedHandle, x, y);
 
 	color_t draw_color;
 	if (BgImage > 0) {
@@ -164,9 +191,6 @@ void GUISlider::Draw(Bitmap *ds, int x, int y) {
 		ds->DrawLine(Line(handle.Right, handle.Top + 1, handle.Right, handle.Bottom), draw_color);
 		ds->DrawLine(Line(handle.Left + 1, handle.Bottom, handle.Right, handle.Bottom), draw_color);
 	}
-
-	_cachedHandle = handle;
-	_handleRange = handle_range;
 }
 
 bool GUISlider::OnMouseDown() {

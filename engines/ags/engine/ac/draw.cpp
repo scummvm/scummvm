@@ -381,6 +381,7 @@ void init_game_drawdata() {
 	}
 	_GP(guiobjbg).resize(guio_num);
 	_GP(guiobjbmp).resize(guio_num);
+	_GP(guiobjoff).resize(guio_num);
 }
 
 void dispose_game_drawdata() {
@@ -397,6 +398,7 @@ void dispose_game_drawdata() {
 	_GP(guiobjbg).clear();
 	_GP(guiobjbmp).clear();
 	_GP(guiobjbmpref).clear();
+	_GP(guiobjoff).clear();
 }
 
 static void dispose_debug_room_drawdata() {
@@ -1970,19 +1972,21 @@ void draw_gui_controls(GUIMain &gui) {
 			continue;
 		obj->ClearChanged();
 
+		Rect obj_surf = obj->CalcGraphicRect(GUI::Options.ClipControls);
 		if (_GP(guiobjbg)[draw_index] == nullptr ||
-			_GP(guiobjbg)[draw_index]->GetSize() != Size(obj->Width, obj->Height)) {
+			_GP(guiobjbg)[draw_index]->GetSize() != obj_surf.GetSize()) {
 			recreate_drawobj_bitmap(_GP(guiobjbg)[draw_index], _GP(guiobjbmp)[draw_index],
-				obj->Width, obj->Height);
+				obj_surf.GetWidth(), obj_surf.GetHeight());
 		}
 
 		_GP(guiobjbg)[draw_index]->ClearTransparent();
-		obj->Draw(_GP(guiobjbg)[draw_index]);
+		obj->Draw(_GP(guiobjbg)[draw_index], obj->X - obj_surf.Left, obj->Y - obj_surf.Top);
 
 		if (_GP(guiobjbmp)[draw_index] != nullptr)
 			_G(gfxDriver)->UpdateDDBFromBitmap(_GP(guiobjbmp)[draw_index], _GP(guiobjbg)[draw_index], obj->HasAlphaChannel());
 		else
 			_GP(guiobjbmp)[draw_index] = _G(gfxDriver)->CreateDDBFromBitmap(_GP(guiobjbg)[draw_index], obj->HasAlphaChannel());
+		_GP(guiobjoff)[draw_index] = Point(obj_surf.GetLT());
 	}
 }
 
@@ -1991,11 +1995,9 @@ void draw_gui_and_overlays() {
 	// Draw gui controls on separate textures if:
 	// - it is a 3D renderer (software one may require adjustments -- needs testing)
 	// - not legacy alpha blending (may we implement specific texture blend?)
-	// - gui controls clipping is on (need to implement content size calc for all controls)
 	const bool draw_controls_as_textures =
 		_G(gfxDriver)->HasAcceleratedTransform()
-		&& (_GP(game).options[OPT_NEWGUIALPHA] == kGuiAlphaRender_Proper)
-		&& (_GP(game).options[OPT_CLIPGUICONTROLS] != 0);
+		&& (_GP(game).options[OPT_NEWGUIALPHA] == kGuiAlphaRender_Proper);
 
 	if (pl_any_want_hook(AGSE_PREGUIDRAW))
 		add_render_stage(AGSE_PREGUIDRAW);
@@ -2098,7 +2100,9 @@ void draw_gui_and_overlays() {
 						continue;
 					_GP(guiobjbmp)[draw_index + obj_id]->SetTransparency(_GP(guis)[aa].Transparency);
 					add_to_sprite_list(_GP(guiobjbmp)[draw_index + obj_id],
-						_GP(guis)[aa].X + obj->X, _GP(guis)[aa].Y + obj->Y, _GP(guis)[aa].ZOrder, false);
+						_GP(guis)[aa].X + _GP(guiobjoff)[draw_index + obj_id].X,
+						_GP(guis)[aa].Y + _GP(guiobjoff)[draw_index + obj_id].Y,
+						_GP(guis)[aa].ZOrder, false);
 				}
 			}
 		}

@@ -610,6 +610,7 @@ public:
 	// GUI control surfaces
 	std::vector<Shared::Bitmap *> *_guiobjbg;
 	std::vector<Engine::IDriverDependantBitmap *> *_guiobjbmp;
+	std::vector<Point> *_guiobjoff; // because surface may be larger than logical position
 	std::vector<int> *_guiobjbmpref; // first control texture index of each GUI
 
 	/**@}*/

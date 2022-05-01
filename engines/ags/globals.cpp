@@ -190,6 +190,7 @@ Globals::Globals() {
 
 	_guiobjbg = new std::vector<Shared::Bitmap *>();
 	_guiobjbmp = new std::vector<Engine::IDriverDependantBitmap *>();
+	_guiobjoff = new std::vector<Point>();
 	_guiobjbmpref = new std::vector<int>();
 
 	// draw_software.cpp globals
@@ -443,6 +444,7 @@ Globals::~Globals() {
 	delete _maincoltable;
 	delete _guiobjbg;
 	delete _guiobjbmp;
+	delete _guiobjoff;
 	delete _guiobjbmpref;
 
 	// draw_software.cpp globals
