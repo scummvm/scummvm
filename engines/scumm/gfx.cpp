@@ -4068,13 +4068,13 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	// but might still need some tuning.
 
 	blits = 0;
-	blitsBeforeRefresh = (3 * w * h) / 25; // TODO: Check
+	blitsBeforeRefresh = (w * h) / 8;
 
 	// Speed up the effect for CD Loom since it uses it so often. I don't
 	// think the original had any delay at all, so on modern hardware it
 	// wasn't even noticeable.
-	if (_game.id == GID_LOOM && (_game.version == 4))
-		blitsBeforeRefresh *= 2;
+	//if (_game.id == GID_LOOM && (_game.version == 4))
+	//	blitsBeforeRefresh *= 2;
 
 	for (i = 0; i < w * h; i++) {
 		x = offsets[i] % vs->pitch;
@@ -4095,10 +4095,6 @@ void ScummEngine::dissolveEffect(int width, int height) {
 			blits = 0;
 			waitForTimer(4);
 		}
-	}
-
-	if (blits != 0) {
-		waitForTimer(4);
 	}
 
 	free(offsets);
