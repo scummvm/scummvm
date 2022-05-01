@@ -1201,87 +1201,58 @@ void apply_tint_or_light(int actspsindex, int light_level,
 
 }
 
+Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, Bitmap *&dst, const Size dst_sz, BitmapFlip flip) {
+	if ((src->GetSize() == dst_sz) && (flip == kFlip_None))
+		return src; // No transform: return source image
+
+	dst = recycle_bitmap(dst, src->GetColorDepth(), dst_sz.Width, dst_sz.Height, true);
+	_G(our_eip) = 339;
+
+	// If scaled: first scale then optionally mirror
+	if (src->GetSize() != dst_sz) {
+		// 8-bit support: ensure that anti-aliasing routines have a palette
+		// to use for mapping while faded out.
+		// TODO: find out if this may be moved out and not repeated?
+		if (_G(in_new_room) > 0)
+			select_palette(_G(palette));
+
+		if (flip != kFlip_None) {
+			Bitmap tempbmp;
+			tempbmp.CreateTransparent(dst_sz.Width, dst_sz.Height, src->GetColorDepth());
+			if ((IS_ANTIALIAS_SPRITES) && !src_has_alpha)
+				tempbmp.AAStretchBlt(src, RectWH(dst_sz), kBitmap_Transparency);
+			else
+				tempbmp.StretchBlt(src, RectWH(dst_sz), kBitmap_Transparency);
+			dst->FlipBlt(&tempbmp, 0, 0, kBitmap_HFlip);
+		} else {
+			if ((IS_ANTIALIAS_SPRITES) && !src_has_alpha)
+				dst->AAStretchBlt(src, RectWH(dst_sz), kBitmap_Transparency);
+			else
+				dst->StretchBlt(src, RectWH(dst_sz), kBitmap_Transparency);
+		}
+
+		if (_G(in_new_room) > 0)
+			unselect_palette();
+	} else {
+		// If not scaled, then simply blit mirrored
+		dst->FlipBlt(src, 0, 0, kBitmap_HFlip);
+	}
+	return dst; // return transformed result
+}
+
 // Draws the specified 'sppic' sprite onto _GP(actsps)[useindx] at the
 // specified width and height, and flips the sprite if necessary.
 // Returns 1 if something was drawn to actsps; returns 0 if no
 // scaling or stretching was required, in which case nothing was done
-int scale_and_flip_sprite(int useindx, int coldept, int zoom_level,
-                          int sppic, int newwidth, int newheight,
-                          int isMirrored) {
-
-	int actsps_used = 1;
-
-	// create and blank out the new sprite
-	_GP(actsps)[useindx] = recycle_bitmap(_GP(actsps)[useindx], coldept, newwidth, newheight, true);
-	Bitmap *active_spr = _GP(actsps)[useindx];
-
-	if (zoom_level != 100) {
-		// Scaled character
-
-		_G(our_eip) = 334;
-
-		// Ensure that anti-aliasing routines have a palette to
-		// use for mapping while faded out
-		if (_G(in_new_room))
-			select_palette(_G(palette));
-
-
-		if (isMirrored) {
-			Bitmap *tempspr = BitmapHelper::CreateBitmap(newwidth, newheight, coldept);
-			tempspr->Fill(_GP(actsps)[useindx]->GetMaskColor());
-			if ((IS_ANTIALIAS_SPRITES) && ((_GP(game).SpriteInfos[sppic].Flags & SPF_ALPHACHANNEL) == 0))
-				tempspr->AAStretchBlt(_GP(spriteset)[sppic], RectWH(0, 0, newwidth, newheight), Shared::kBitmap_Transparency);
-			else
-				tempspr->StretchBlt(_GP(spriteset)[sppic], RectWH(0, 0, newwidth, newheight), Shared::kBitmap_Transparency);
-			active_spr->FlipBlt(tempspr, 0, 0, Shared::kBitmap_HFlip);
-			delete tempspr;
-		} else if ((IS_ANTIALIAS_SPRITES) && ((_GP(game).SpriteInfos[sppic].Flags & SPF_ALPHACHANNEL) == 0))
-			active_spr->AAStretchBlt(_GP(spriteset)[sppic], RectWH(0, 0, newwidth, newheight), Shared::kBitmap_Transparency);
-		else
-			active_spr->StretchBlt(_GP(spriteset)[sppic], RectWH(0, 0, newwidth, newheight), Shared::kBitmap_Transparency);
-
-		/*  AASTR2 version of code (doesn't work properly, gives black borders)
-		if (IS_ANTIALIAS_SPRITES) {
-		int aa_mode = AA_MASKED;
-		if (_GP(game).spriteflags[sppic] & SPF_ALPHACHANNEL)
-		aa_mode |= AA_ALPHA | AA_RAW_ALPHA;
-		if (isMirrored)
-		aa_mode |= AA_HFLIP;
-
-		aa_set_mode(aa_mode);
-		->AAStretchBlt(_GP(actsps)[useindx],_GP(spriteset)[sppic],0,0,newwidth,newheight);
-		}
-		else if (isMirrored) {
-		Bitmap *tempspr = BitmapHelper::CreateBitmap_ (coldept, newwidth, newheight);
-		->Clear (tempspr, ->GetMaskColor(_GP(actsps)[useindx]));
-		->StretchBlt (tempspr, _GP(spriteset)[sppic], 0, 0, newwidth, newheight);
-		->FlipBlt(Shared::kBitmap_HFlip, (_GP(actsps)[useindx], tempspr, 0, 0);
-		wfreeblock (tempspr);
-		}
-		else
-		->StretchBlt(_GP(actsps)[useindx],_GP(spriteset)[sppic],0,0,newwidth,newheight);
-		*/
-		if (_G(in_new_room))
-			unselect_palette();
-
-	} else {
-		// Not a scaled character, draw at normal size
-
-		_G(our_eip) = 339;
-
-		if (isMirrored)
-			active_spr->FlipBlt(_GP(spriteset)[sppic], 0, 0, Shared::kBitmap_HFlip);
-		else
-			actsps_used = 0;
-		//->Blit (_GP(spriteset)[sppic], _GP(actsps)[useindx], 0, 0, 0, 0, _GP(actsps)[useindx]->GetWidth(), _GP(actsps)[useindx]->GetHeight());
-	}
-
-	return actsps_used;
+static bool scale_and_flip_sprite(int useindx, int sppic, int newwidth, int newheight, bool hmirror) {
+	Bitmap *src = _GP(spriteset)[sppic];
+	Bitmap *&dst = _GP(actsps)[useindx];
+	Bitmap *result = transform_sprite(src, (_GP(game).SpriteInfos[sppic].Flags & SPF_ALPHACHANNEL) != 0,
+		dst, Size(newwidth, newheight), hmirror ? kBitmap_HFlip : kBitmap_NoFlip);
+	return result != src;
 }
 
-
-
-// create the _GP(actsps)[aa] image with the object drawn correctly
+// create the actsps[aa] image with the object drawn correctly
 // returns 1 if nothing at all has changed and actsps is still
 // intact from last time; 0 otherwise
 int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware) {
@@ -1292,8 +1263,10 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 		quitprintf("There was an error drawing object %d. Its current sprite, %d, is invalid.", aa, _G(objs)[aa].num);
 
 	int coldept = _GP(spriteset)[_G(objs)[aa].num]->GetColorDepth();
-	int sprwidth = _GP(game).SpriteInfos[_G(objs)[aa].num].Width;
-	int sprheight = _GP(game).SpriteInfos[_G(objs)[aa].num].Height;
+	const int src_sprwidth = _GP(game).SpriteInfos[_G(objs)[aa].num].Width;
+	const int src_sprheight = _GP(game).SpriteInfos[_G(objs)[aa].num].Height;
+	int sprwidth = src_sprwidth;
+	int sprheight = src_sprheight;
 
 	int tint_red, tint_green, tint_blue;
 	int tint_level, tint_light, light_level;
@@ -1350,11 +1323,11 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	}
 
 	// check whether the image should be flipped
-	int isMirrored = 0;
+	bool isMirrored = false;
 	if ((_G(objs)[aa].view != (uint16_t)-1) &&
-	        (_GP(views)[_G(objs)[aa].view].loops[_G(objs)[aa].loop].frames[_G(objs)[aa].frame].pic == _G(objs)[aa].num) &&
-	        ((_GP(views)[_G(objs)[aa].view].loops[_G(objs)[aa].loop].frames[_G(objs)[aa].frame].flags & VFLG_FLIPSPRITE) != 0)) {
-		isMirrored = 1;
+		(_GP(views)[_G(objs)[aa].view].loops[_G(objs)[aa].loop].frames[_G(objs)[aa].frame].pic == _G(objs)[aa].num) &&
+		((_GP(views)[_G(objs)[aa].view].loops[_G(objs)[aa].loop].frames[_G(objs)[aa].frame].flags & VFLG_FLIPSPRITE) != 0)) {
+		isMirrored = true;
 	}
 
 	if ((hardwareAccelerated) &&
@@ -1410,14 +1383,14 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 
 	// Not cached, so draw the image
 
-	int actspsUsed = 0;
+	bool actspsUsed = false;
 	if (!hardwareAccelerated) {
 		// draw the base sprite, scaled and flipped as appropriate
-		actspsUsed = scale_and_flip_sprite(useindx, coldept, zoom_level,
-		                                   _G(objs)[aa].num, sprwidth, sprheight, isMirrored);
-	} else {
-		// ensure actsps exists
-		_GP(actsps)[useindx] = recycle_bitmap(_GP(actsps)[useindx], coldept, _GP(game).SpriteInfos[_G(objs)[aa].num].Width, _GP(game).SpriteInfos[_G(objs)[aa].num].Height);
+		actspsUsed = scale_and_flip_sprite(useindx, _G(objs)[aa].num, sprwidth, sprheight, isMirrored);
+	}
+	if (!actspsUsed) {
+		// ensure actsps exists // CHECKME: why do we need this in hardware accel mode too?
+		_GP(actsps)[useindx] = recycle_bitmap(_GP(actsps)[useindx], coldept, src_sprwidth, src_sprheight);
 	}
 
 	// direct read from source bitmap, where possible
@@ -1429,10 +1402,10 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	// the source bitmap
 	if (!hardwareAccelerated && ((tint_level > 0) || (light_level != 0))) {
 		apply_tint_or_light(useindx, light_level, tint_level, tint_red,
-		                    tint_green, tint_blue, tint_light, coldept,
-		                    comeFrom);
+			tint_green, tint_blue, tint_light, coldept,
+			comeFrom);
 	} else if (!actspsUsed) {
-		_GP(actsps)[useindx]->Blit(_GP(spriteset)[_G(objs)[aa].num], 0, 0, 0, 0, _GP(game).SpriteInfos[_G(objs)[aa].num].Width, _GP(game).SpriteInfos[_G(objs)[aa].num].Height);
+		_GP(actsps)[useindx]->Blit(_GP(spriteset)[_G(objs)[aa].num], 0, 0);
 	}
 
 	// Re-use the bitmap if it's the same size
@@ -1450,9 +1423,6 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	_G(objcache)[aa].mirroredWas = isMirrored;
 	return 0;
 }
-
-
-
 
 // This is only called from draw_screen_background, but it's separated
 // to help with profiling the program
@@ -1644,7 +1614,8 @@ void prepare_characters_for_drawing() {
 		}
 
 		_G(our_eip) = 3330;
-		int isMirrored = 0, specialpic = sppic;
+		bool isMirrored = false;
+		int specialpic = sppic;
 		bool usingCachedImage = false;
 
 		coldept = _GP(spriteset)[sppic]->GetColorDepth();
@@ -1652,7 +1623,7 @@ void prepare_characters_for_drawing() {
 		// adjust the sppic if mirrored, so it doesn't accidentally
 		// cache the mirrored frame as the real one
 		if (_GP(views)[chin->view].loops[chin->loop].frames[chin->frame].flags & VFLG_FLIPSPRITE) {
-			isMirrored = 1;
+			isMirrored = true;
 			specialpic = -sppic;
 		}
 
@@ -1686,6 +1657,9 @@ void prepare_characters_for_drawing() {
 
 		_G(our_eip) = 3332;
 
+		const int src_sprwidth = _GP(game).SpriteInfos[sppic].Width;
+		const int src_sprheight = _GP(game).SpriteInfos[sppic].Height;
+
 		if (zoom_level != 100) {
 			// it needs to be stretched, so calculate the new dimensions
 
@@ -1697,8 +1671,8 @@ void prepare_characters_for_drawing() {
 			// TODO: store width and height always, that's much simplier to use for reference!
 			_G(charextra)[aa].width = 0;
 			_G(charextra)[aa].height = 0;
-			newwidth = _GP(game).SpriteInfos[sppic].Width;
-			newheight = _GP(game).SpriteInfos[sppic].Height;
+			newwidth = src_sprwidth;
+			newheight = src_sprheight;
 		}
 
 		_G(our_eip) = 3336;
@@ -1723,14 +1697,13 @@ void prepare_characters_for_drawing() {
 
 			// create the base sprite in _GP(actsps)[useindx], which will
 			// be scaled and/or flipped, as appropriate
-			int actspsUsed = 0;
+			bool actspsUsed = false;
 			if (!_G(gfxDriver)->HasAcceleratedTransform()) {
-				actspsUsed = scale_and_flip_sprite(
-				                 useindx, coldept, zoom_level, sppic,
-				                 newwidth, newheight, isMirrored);
-			} else {
-				// ensure actsps exists
-				_GP(actsps)[useindx] = recycle_bitmap(_GP(actsps)[useindx], coldept, _GP(game).SpriteInfos[sppic].Width, _GP(game).SpriteInfos[sppic].Height);
+				actspsUsed = scale_and_flip_sprite(useindx, sppic, newwidth, newheight, isMirrored);
+			}
+			if (!actspsUsed) {
+				// ensure actsps exists // CHECKME: why do we need this in hardware accel mode too?
+				_GP(actsps)[useindx] = recycle_bitmap(_GP(actsps)[useindx], coldept, src_sprwidth, src_sprheight);
 			}
 
 			_G(our_eip) = 335;
@@ -1748,7 +1721,7 @@ void prepare_characters_for_drawing() {
 				                    comeFrom);
 			} else if (!actspsUsed) {
 				// no scaling, flipping or tinting was done, so just blit it normally
-				_GP(actsps)[useindx]->Blit(_GP(spriteset)[sppic], 0, 0, 0, 0, _GP(actsps)[useindx]->GetWidth(), _GP(actsps)[useindx]->GetHeight());
+				_GP(actsps)[useindx]->Blit(_GP(spriteset)[sppic], 0, 0);
 			}
 
 			// update the character cache with the new image
@@ -1785,7 +1758,7 @@ void prepare_characters_for_drawing() {
 
 		if (_G(gfxDriver)->HasAcceleratedTransform()) {
 			_GP(actspsbmp)[useindx]->SetStretch(newwidth, newheight);
-			_GP(actspsbmp)[useindx]->SetFlippedLeftRight(isMirrored != 0);
+			_GP(actspsbmp)[useindx]->SetFlippedLeftRight(isMirrored);
 			_GP(actspsbmp)[useindx]->SetTint(tint_red, tint_green, tint_blue, (tint_amount * 256) / 100);
 
 			if (tint_amount != 0) {
@@ -1799,7 +1772,6 @@ void prepare_characters_for_drawing() {
 				_GP(actspsbmp)[useindx]->SetLightLevel((light_level * 25) / 10 + 256);
 			else
 				_GP(actspsbmp)[useindx]->SetLightLevel(0);
-
 		}
 
 		_G(our_eip) = 337;

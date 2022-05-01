@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_OBJECTCACHE_H
-#define AGS_ENGINE_AC_OBJECTCACHE_H
+#ifndef AGS_ENGINE_AC_OBJECT_CACHE_H
+#define AGS_ENGINE_AC_OBJECT_CACHE_H
 
 namespace AGS3 {
 
@@ -30,9 +30,11 @@ struct ObjectCache {
 	int   sppic = 0;
 	short tintredwas = 0, tintgrnwas = 0, tintbluwas = 0;
 	short tintamntwas = 0, tintlightwas = 0;
-	short lightlevwas = 0, mirroredWas = 0, zoomWas = 0;
+	short lightlevwas = 0, zoomWas = 0;
+	bool  mirroredWas = false;
+
 	// The following are used to determine if the character has moved
-	int   xwas, ywas;
+	int   xwas = 0, ywas = 0;
 };
 
 } // namespace AGS3
