@@ -1372,7 +1372,7 @@ void game_sprite_updated(int sprnum) {
 	// gui buttons
 	for (size_t i = 0; i < (size_t)_G(numguibuts); ++i) {
 		if (_GP(guibuts)[i].CurrentImage == sprnum) {
-			_GP(guibuts)[i].NotifyParentChanged();
+			_GP(guibuts)[i].MarkChanged();
 		}
 	}
 }
@@ -1411,7 +1411,7 @@ void game_sprite_deleted(int sprnum) {
 
 		if (_GP(guibuts)[i].CurrentImage == sprnum) {
 			_GP(guibuts)[i].CurrentImage = 0;
-			_GP(guibuts)[i].NotifyParentChanged();
+			_GP(guibuts)[i].MarkChanged();
 		}
 	}
 	// views

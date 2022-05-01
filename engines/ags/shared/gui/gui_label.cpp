@@ -75,7 +75,7 @@ void GUILabel::SetText(const String &text) {
 	Text = text;
 	// Check for macros within text
 	_textMacro = GUI::FindLabelMacros(Text);
-	NotifyParentChanged();
+	MarkChanged();
 }
 
 // TODO: replace string serialization with StrUtil::ReadString and WriteString

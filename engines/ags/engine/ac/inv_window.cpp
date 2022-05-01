@@ -64,7 +64,7 @@ void InvWindow_SetCharacterToUse(GUIInvWindow *guii, CharacterInfo *chaa) {
 	// reset to top of list
 	guii->TopItem = 0;
 
-	guii->NotifyParentChanged();
+	guii->MarkChanged();
 }
 
 CharacterInfo *InvWindow_GetCharacterToUse(GUIInvWindow *guii) {
@@ -95,7 +95,7 @@ int InvWindow_GetItemHeight(GUIInvWindow *guii) {
 void InvWindow_SetTopItem(GUIInvWindow *guii, int topitem) {
 	if (guii->TopItem != topitem) {
 		guii->TopItem = topitem;
-		guii->NotifyParentChanged();
+		guii->MarkChanged();
 	}
 }
 
@@ -119,7 +119,7 @@ void InvWindow_ScrollDown(GUIInvWindow *guii) {
 	if ((_G(charextra)[guii->GetCharacterId()].invorder_count) >
 	        (guii->TopItem + (guii->ColCount * guii->RowCount))) {
 		guii->TopItem += guii->ColCount;
-		guii->NotifyParentChanged();
+		guii->MarkChanged();
 	}
 }
 
@@ -129,7 +129,7 @@ void InvWindow_ScrollUp(GUIInvWindow *guii) {
 		if (guii->TopItem < 0)
 			guii->TopItem = 0;
 
-		guii->NotifyParentChanged();
+		guii->MarkChanged();
 	}
 }
 

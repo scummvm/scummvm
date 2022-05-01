@@ -83,7 +83,7 @@ void GUITextBox::OnKeyPress(const KeyInput &ki) {
 		return;
 	}
 
-	NotifyParentChanged();
+	MarkChanged();
 	// backspace, remove character
 	if (keycode == eAGSKeyCodeBackspace) {
 		Backspace(Text);

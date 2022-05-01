@@ -272,7 +272,7 @@ int ListBox_GetSelectedBackColor(GUIListBox *listbox) {
 void ListBox_SetSelectedBackColor(GUIListBox *listbox, int colr) {
 	if (listbox->SelectedBgColor != colr) {
 		listbox->SelectedBgColor = colr;
-		listbox->NotifyParentChanged();
+		listbox->MarkChanged();
 	}
 }
 
@@ -283,7 +283,7 @@ int ListBox_GetSelectedTextColor(GUIListBox *listbox) {
 void ListBox_SetSelectedTextColor(GUIListBox *listbox, int colr) {
 	if (listbox->SelectedTextColor != colr) {
 		listbox->SelectedTextColor = colr;
-		listbox->NotifyParentChanged();
+		listbox->MarkChanged();
 	}
 }
 
@@ -294,7 +294,7 @@ int ListBox_GetTextAlignment(GUIListBox *listbox) {
 void ListBox_SetTextAlignment(GUIListBox *listbox, int align) {
 	if (listbox->TextAlignment != align) {
 		listbox->TextAlignment = (HorAlignment)align;
-		listbox->NotifyParentChanged();
+		listbox->MarkChanged();
 	}
 }
 
@@ -305,7 +305,7 @@ int ListBox_GetTextColor(GUIListBox *listbox) {
 void ListBox_SetTextColor(GUIListBox *listbox, int colr) {
 	if (listbox->TextColor != colr) {
 		listbox->TextColor = colr;
-		listbox->NotifyParentChanged();
+		listbox->MarkChanged();
 	}
 }
 
@@ -328,7 +328,7 @@ void ListBox_SetSelectedIndex(GUIListBox *guisl, int newsel) {
 			if (newsel >= guisl->TopItem + guisl->VisibleItemCount)
 				guisl->TopItem = (newsel - guisl->VisibleItemCount) + 1;
 		}
-		guisl->NotifyParentChanged();
+		guisl->MarkChanged();
 	}
 
 }
@@ -344,7 +344,7 @@ void ListBox_SetTopItem(GUIListBox *guisl, int item) {
 		quit("!ListBoxSetTopItem: tried to set top to beyond top or bottom of list");
 
 	guisl->TopItem = item;
-	guisl->NotifyParentChanged();
+	guisl->MarkChanged();
 }
 
 int ListBox_GetRowCount(GUIListBox *listbox) {
@@ -354,14 +354,14 @@ int ListBox_GetRowCount(GUIListBox *listbox) {
 void ListBox_ScrollDown(GUIListBox *listbox) {
 	if (listbox->TopItem + listbox->VisibleItemCount < listbox->ItemCount) {
 		listbox->TopItem++;
-		listbox->NotifyParentChanged();
+		listbox->MarkChanged();
 	}
 }
 
 void ListBox_ScrollUp(GUIListBox *listbox) {
 	if (listbox->TopItem > 0) {
 		listbox->TopItem--;
-		listbox->NotifyParentChanged();
+		listbox->MarkChanged();
 	}
 }
 

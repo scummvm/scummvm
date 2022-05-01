@@ -185,7 +185,7 @@ void GUISlider::OnMouseMove(int x, int y) {
 		Value = (int)(((float)(((Y + Height) - y) - 2) * (float)(MaxValue - MinValue)) / (float)_handleRange) + MinValue;
 
 	Value = Math::Clamp(Value, MinValue, MaxValue);
-	NotifyParentChanged();
+	MarkChanged();
 	IsActivated = true;
 }
 

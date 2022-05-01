@@ -447,7 +447,7 @@ void clear_drawobj_cache() {
 		_GP(guibgbmp)[i] = nullptr;
 	}
 
-	for (uint i = 0; i < _GP(guiobjbg).size(); ++i) {
+	for (size_t i = 0; i < _GP(guiobjbg).size(); ++i) {
 		delete _GP(guiobjbg)[i];
 		_GP(guiobjbg)[i] = nullptr;
 		if (_GP(guiobjbmp)[i])
@@ -1963,15 +1963,18 @@ void draw_gui_controls(GUIMain &gui) {
 	int draw_index = _GP(guiobjbmpref)[gui.ID];
 	for (int i = 0; i < gui.GetControlCount(); ++i, ++draw_index) {
 		GUIObject *obj = gui.GetControl(i);
+		if (!obj->IsVisible() ||
+			(!obj->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout)))
+			continue;
+		if (!obj->HasChanged())
+			continue;
+		obj->ClearChanged();
+
 		if (_GP(guiobjbg)[draw_index] == nullptr ||
 			_GP(guiobjbg)[draw_index]->GetSize() != Size(obj->Width, obj->Height)) {
 			recreate_drawobj_bitmap(_GP(guiobjbg)[draw_index], _GP(guiobjbmp)[draw_index],
 				obj->Width, obj->Height);
 		}
-
-		if (!obj->IsVisible() ||
-			(!obj->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout)))
-			continue;
 
 		_GP(guiobjbg)[draw_index]->ClearTransparent();
 		obj->Draw(_GP(guiobjbg)[draw_index]);
@@ -2027,43 +2030,45 @@ void draw_gui_and_overlays() {
 		{
 			for (aa = 0; aa < _GP(game).numgui; aa++) {
 				if (!_GP(guis)[aa].IsDisplayed()) continue; // not on screen
-				if (!_GP(guis)[aa].HasChanged()) continue; // no changes: no need to update image
+				if (!_GP(guis)[aa].HasChanged() && !_GP(guis)[aa].HasControlsChanged()) continue; // no changes: no need to update image
 				if (_GP(guis)[aa].Transparency == 255) continue; // 100% transparent
 
-				_GP(guis)[aa].ClearChanged();
 				if (_GP(guibg)[aa] == nullptr ||
 					_GP(guibg)[aa]->GetSize() != Size(_GP(guis)[aa].Width, _GP(guis)[aa].Height)) {
 					recreate_drawobj_bitmap(_GP(guibg)[aa], _GP(guibgbmp)[aa], _GP(guis)[aa].Width, _GP(guis)[aa].Height);
 				}
 
 				_G(eip_guinum) = aa;
-				_G(our_eip) = 370;
-				_GP(guibg)[aa]->ClearTransparent();
 				_G(our_eip) = 372;
-				if (draw_controls_as_textures) {
-					_GP(guis)[aa].DrawSelf(_GP(guibg)[aa]);
-					draw_gui_controls(_GP(guis)[aa]);
-				} else {
-					_GP(guis)[aa].DrawWithControls(_GP(guibg)[aa]);
-				}
-				_G(our_eip) = 373;
+				const bool draw_with_controls = !draw_controls_as_textures;
+				if (_GP(guis)[aa].HasChanged() || (draw_with_controls && _GP(guis)[aa].HasControlsChanged())) {
+					_GP(guibg)[aa]->ClearTransparent();
+					if (draw_with_controls)
+						_GP(guis)[aa].DrawWithControls(_GP(guibg)[aa]);
+					else
+						_GP(guis)[aa].DrawSelf(_GP(guibg)[aa]);
 
-				bool isAlpha = false;
-				if (_GP(guis)[aa].HasAlphaChannel()) {
-					isAlpha = true;
-
-					if ((_GP(game).options[OPT_NEWGUIALPHA] == kGuiAlphaRender_Legacy) && (_GP(guis)[aa].BgImage > 0)) {
-						// old-style (pre-3.0.2) GUI alpha rendering
-						repair_alpha_channel(_GP(guibg)[aa], _GP(spriteset)[_GP(guis)[aa].BgImage]);
+					const bool is_alpha = _GP(guis)[aa].HasAlphaChannel();
+					if (is_alpha) {
+						if ((_GP(game).options[OPT_NEWGUIALPHA] == kGuiAlphaRender_Legacy) && (_GP(guis)[aa].BgImage > 0)) {
+							// old-style (pre-3.0.2) GUI alpha rendering
+							repair_alpha_channel(_GP(guibg)[aa], _GP(spriteset)[_GP(guis)[aa].BgImage]);
+						}
 					}
+
+					if (_GP(guibgbmp)[aa])
+						_G(gfxDriver)->UpdateDDBFromBitmap(_GP(guibgbmp)[aa], _GP(guibg)[aa], is_alpha);
+					else
+						_GP(guibgbmp)[aa] = _G(gfxDriver)->CreateDDBFromBitmap(_GP(guibg)[aa], is_alpha);
 				}
 
-				if (_GP(guibgbmp)[aa] != nullptr) {
-					_G(gfxDriver)->UpdateDDBFromBitmap(_GP(guibgbmp)[aa], _GP(guibg)[aa], isAlpha);
-				} else {
-					_GP(guibgbmp)[aa] = _G(gfxDriver)->CreateDDBFromBitmap(_GP(guibg)[aa], isAlpha);
+				_G(our_eip) = 373;
+				if (!draw_with_controls && _GP(guis)[aa].HasControlsChanged()) {
+					draw_gui_controls(_GP(guis)[aa]);
 				}
 				_G(our_eip) = 374;
+
+				_GP(guis)[aa].ClearChanged();
 			}
 		}
 		_G(our_eip) = 38;

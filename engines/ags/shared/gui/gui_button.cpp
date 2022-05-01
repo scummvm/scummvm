@@ -122,7 +122,7 @@ void GUIButton::SetClipImage(bool on) {
 		Flags |= kGUICtrl_Clip;
 	else
 		Flags &= ~kGUICtrl_Clip;
-	NotifyParentChanged();
+	MarkChanged();
 }
 
 void GUIButton::SetText(const String &text) {
@@ -142,14 +142,14 @@ void GUIButton::SetText(const String &text) {
 
 	// TODO: find a way to remove this bogus limitation ("New Button" is a valid Text too)
 	_unnamed = _text.Compare("New Button") == 0;
-	NotifyParentChanged();
+	MarkChanged();
 }
 
 
 bool GUIButton::OnMouseDown() {
 	int new_image = (PushedImage > 0) ? PushedImage : CurrentImage;
 	if (CurrentImage != new_image || !IsImageButton())
-		NotifyParentChanged();
+		MarkChanged();
 	CurrentImage = new_image;
 	IsPushed = true;
 	return false;
@@ -160,7 +160,7 @@ void GUIButton::OnMouseEnter() {
 		(MouseOverImage > 0) ? MouseOverImage : Image;
 	if ((CurrentImage != new_image) || (IsPushed && !IsImageButton())) {
 		CurrentImage = new_image;
-		NotifyParentChanged();
+		MarkChanged();
 	}
 	IsMouseOver = true;
 }
@@ -168,7 +168,7 @@ void GUIButton::OnMouseEnter() {
 void GUIButton::OnMouseLeave() {
 	if ((CurrentImage != Image) || (IsPushed && !IsImageButton())) {
 		CurrentImage = Image;
-		NotifyParentChanged();
+		MarkChanged();
 	}
 	IsMouseOver = false;
 }
@@ -185,7 +185,7 @@ void GUIButton::OnMouseUp() {
 
 	if ((CurrentImage != new_image) || (IsPushed && !IsImageButton())) {
 		CurrentImage = new_image;
-		NotifyParentChanged();
+		MarkChanged();
 	}
 	IsPushed = false;
 }

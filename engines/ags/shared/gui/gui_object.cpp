@@ -39,6 +39,7 @@ GUIObject::GUIObject() {
 	ZOrder = -1;
 	IsActivated = false;
 	_scEventCount = 0;
+	_hasChanged = true;
 }
 
 String GUIObject::GetScriptName() const {
@@ -97,7 +98,7 @@ void GUIObject::SetEnabled(bool on) {
 		Flags |= kGUICtrl_Enabled;
 	else
 		Flags &= ~kGUICtrl_Enabled;
-	NotifyParentChanged();
+	MarkChanged();
 }
 
 void GUIObject::SetTranslated(bool on) {
@@ -105,7 +106,7 @@ void GUIObject::SetTranslated(bool on) {
 		Flags |= kGUICtrl_Translated;
 	else
 		Flags &= ~kGUICtrl_Translated;
-	NotifyParentChanged();
+	MarkChanged();
 }
 
 void GUIObject::SetVisible(bool on) {
