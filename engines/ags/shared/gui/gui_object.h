@@ -63,7 +63,7 @@ public:
     // Compatibility: should the control's graphic be clipped to its x,y,w,h
     virtual bool    IsContentClipped() const { return true; }
 	// Tells if the object image supports alpha channel
-	virtual bool    HasAlphaChannel() const;
+	virtual bool    HasAlphaChannel() const { return false; }
 
 	// Operations
 	// Returns the (untransformed!) visual rectangle of this control,

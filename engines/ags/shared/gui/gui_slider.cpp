@@ -49,6 +49,10 @@ bool GUISlider::IsHorizontal() const {
 	return Width > Height;
 }
 
+bool GUISlider::HasAlphaChannel() const {
+	return is_sprite_alpha(BgImage) || is_sprite_alpha(HandleImage);
+}
+
 bool GUISlider::IsOverControl(int x, int y, int leeway) const {
 	// check the overall boundary
 	if (GUIObject::IsOverControl(x, y, leeway))

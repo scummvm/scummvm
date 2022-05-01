@@ -82,10 +82,6 @@ bool GUIObject::IsVisible() const {
 	return (Flags & kGUICtrl_Visible) != 0;
 }
 
-bool GUIObject::HasAlphaChannel() const {
-	return false;
-}
-
 void GUIObject::SetClickable(bool on) {
 	if (on)
 		Flags |= kGUICtrl_Clickable;
