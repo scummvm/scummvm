@@ -139,6 +139,9 @@ void draw_sprite_slot_support_alpha(Shared::Bitmap *ds, bool ds_has_alpha, int x
                                     Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
 void draw_gui_sprite(Shared::Bitmap *ds, int pic, int x, int y, bool use_alpha = true, Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha);
 void draw_gui_sprite_v330(Shared::Bitmap *ds, int pic, int x, int y, bool use_alpha = true, Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha);
+void draw_gui_sprite(Shared::Bitmap *ds, bool use_alpha, int xpos, int ypos,
+	Shared::Bitmap *image, bool src_has_alpha, Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
+
 // Render game on screen
 void render_to_screen();
 // Callbacks for the graphics driver

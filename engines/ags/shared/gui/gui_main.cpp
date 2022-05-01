@@ -261,6 +261,7 @@ void GUIMain::DrawWithControls(Bitmap *ds) {
 	if ((_G(all_buttons_disabled) >= 0) && (GUI::Options.DisabledStyle == kGuiDis_Blackout))
 		return; // don't draw GUI controls
 
+	Bitmap tempbmp; // in case we need transforms
 	for (size_t ctrl_index = 0; ctrl_index < _controls.size(); ++ctrl_index) {
 		set_eip_guiobj(_ctrlDrawOrder[ctrl_index]);
 
@@ -271,11 +272,20 @@ void GUIMain::DrawWithControls(Bitmap *ds) {
 		if (!objToDraw->IsVisible())
 			continue;
 
-		if (GUI::Options.ClipControls && objToDraw->IsContentClipped())
-			ds->SetClip(RectWH(objToDraw->X, objToDraw->Y, objToDraw->Width, objToDraw->Height));
-		else
-			ds->ResetClip();
-		objToDraw->Draw(ds, objToDraw->X, objToDraw->Y);
+		// Depending on draw properties - draw directly on the gui surface, or use a buffer
+		if (objToDraw->GetTransparency() == 0) {
+			if (GUI::Options.ClipControls && objToDraw->IsContentClipped())
+				ds->SetClip(RectWH(objToDraw->X, objToDraw->Y, objToDraw->Width, objToDraw->Height));
+			else
+				ds->ResetClip();
+			objToDraw->Draw(ds, objToDraw->X, objToDraw->Y);
+		} else {
+			const Rect rc = objToDraw->CalcGraphicRect(GUI::Options.ClipControls && objToDraw->IsContentClipped());
+			tempbmp.CreateTransparent(rc.GetWidth(), rc.GetHeight());
+			objToDraw->Draw(&tempbmp, objToDraw->X - rc.Left, objToDraw->Y - rc.Top);
+			draw_gui_sprite(ds, true, objToDraw->X, objToDraw->Y, &tempbmp, objToDraw->HasAlphaChannel(), kBlendMode_Alpha,
+				GfxDef::LegacyTrans255ToAlpha255(objToDraw->GetTransparency()));
+		}
 
 		int selectedColour = 14;
 
