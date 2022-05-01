@@ -1945,6 +1945,7 @@ void draw_gui_controls(GUIMain &gui) {
 	for (int i = 0; i < gui.GetControlCount(); ++i, ++draw_index) {
 		GUIObject *obj = gui.GetControl(i);
 		if (!obj->IsVisible() ||
+			(obj->Width <= 0 || obj->Height <= 0) ||
 			(!obj->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout)))
 			continue;
 		if (!obj->HasChanged())
@@ -1987,7 +1988,7 @@ void draw_gui_and_overlays() {
 		if (_GP(screenover)[i].HasChanged()) {
 			// For software mode - prepare transformed bitmap if necessary
 			Bitmap *use_bmp = is_software_mode ?
-				transform_sprite(over.pic, over.hasAlphaChannel, overlaybmp[i], Size(over.scaleWidth, over.scaleHeight)) :
+				transform_sprite(over.pic, over.hasAlphaChannel, _GP(overlaybmp)[i], Size(over.scaleWidth, over.scaleHeight)) :
 				over.pic;
 			over.ddb = recycle_ddb_bitmap(over.ddb, use_bmp, over.hasAlphaChannel);
 			over.ClearChanged();
@@ -2109,6 +2110,7 @@ void draw_gui_and_overlays() {
 		for (const auto &obj_id : _GP(guis)[s.id].GetControlsDrawOrder()) {
 			GUIObject *obj = _GP(guis)[s.id].GetControl(obj_id);
 			if (!obj->IsVisible() ||
+				(obj->Width <= 0 || obj->Height <= 0) ||
 				(!obj->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout)))
 				continue;
 			auto *obj_ddb = _GP(guiobjddb)[draw_index + obj_id];

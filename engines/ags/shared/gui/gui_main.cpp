@@ -267,9 +267,9 @@ void GUIMain::DrawWithControls(Bitmap *ds) {
 
 		GUIObject *objToDraw = _controls[_ctrlDrawOrder[ctrl_index]];
 
-		if (!objToDraw->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout))
+		if (!objToDraw->IsVisible() || (objToDraw->Width <= 0 || objToDraw->Height <= 0))
 			continue;
-		if (!objToDraw->IsVisible())
+		if (!objToDraw->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout))
 			continue;
 
 		// Depending on draw properties - draw directly on the gui surface, or use a buffer
