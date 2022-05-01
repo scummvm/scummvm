@@ -66,6 +66,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/shared/gui/gui_button.h"
+#include "ags/shared/gui/gui_slider.h"
 #include "ags/engine/gui/gui_dialog.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/media/audio/audio_system.h"
@@ -1375,6 +1376,12 @@ void game_sprite_updated(int sprnum) {
 			_GP(guibuts)[i].MarkChanged();
 		}
 	}
+	// gui sliders
+	for (size_t i = 0; i < (size_t)_G(numguislider); ++i) {
+		if ((_GP(guislider)[i].BgImage == sprnum) || (_GP(guislider)[i].HandleImage == sprnum)) {
+			_GP(guislider)[i].MarkChanged();
+		}
+	}
 }
 
 void game_sprite_deleted(int sprnum) {
@@ -1413,6 +1420,15 @@ void game_sprite_deleted(int sprnum) {
 			_GP(guibuts)[i].CurrentImage = 0;
 			_GP(guibuts)[i].MarkChanged();
 		}
+	}
+	// gui sliders
+	for (size_t i = 0; i < (size_t)_G(numguislider); ++i) {
+		if ((_GP(guislider)[i].BgImage == sprnum) || (_GP(guislider)[i].HandleImage == sprnum))
+			_GP(guislider)[i].MarkChanged();
+		if (_GP(guislider)[i].BgImage == sprnum)
+			_GP(guislider)[i].BgImage = 0;
+		if (_GP(guislider)[i].HandleImage == sprnum)
+			_GP(guislider)[i].HandleImage = 0;
 	}
 	// views
 	for (size_t v = 0; v < (size_t)_GP(game).numviews; ++v) {
