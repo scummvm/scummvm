@@ -424,6 +424,8 @@ private:
 
 	Frames _c33PlayerCursor;
 	Common::Point _c33PlayerPosition;
+	Common::List<PlayerPosition> _c33PlayerDirection;
+	bool _c33UseMouse;
 	void generateStaticEffect();
 
 	Common::BitArray _font05;

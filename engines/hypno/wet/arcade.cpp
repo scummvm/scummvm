@@ -610,6 +610,8 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 
 	if (arc->mode == "YT") {
 		_c33PlayerCursor = decodeFrames("c33/c33i2.smk");
+		_c33UseMouse = true;
+		_c33PlayerDirection.clear();
 	}
 	if (arc->mode == "Y3") {
 		bool started = startCountdown(420); // 7 minutes
@@ -637,6 +639,30 @@ void WetEngine::pressedKey(const int keycode) {
 		_health = 0;
 	} else if (keycode == Common::KEYCODE_ESCAPE) {
 		openMainMenuDialog();
+	} else if (keycode == Common::KEYCODE_LEFT) {
+		if (_arcadeMode == "YT" && _c33PlayerPosition.x > 0) {
+			_c33UseMouse = false;
+			if (_c33PlayerDirection.size() < 3)
+				_c33PlayerDirection.push_back(kPlayerLeft);
+		}
+	} else if (keycode == Common::KEYCODE_DOWN) {
+		if (_arcadeMode == "YT" && _c33PlayerPosition.y < 130) { // Viewport value minus 30
+			_c33UseMouse = false;
+			if (_c33PlayerDirection.size() < 3)
+				_c33PlayerDirection.push_back(kPlayerBottom);
+		}
+	} else if (keycode == Common::KEYCODE_RIGHT) {
+		if (_arcadeMode == "YT" && _c33PlayerPosition.x < _screenW) {
+			_c33UseMouse = false;
+			if (_c33PlayerDirection.size() < 3)
+				_c33PlayerDirection.push_back(kPlayerRight);
+		}
+	} else if (keycode == Common::KEYCODE_UP) {
+		if (_arcadeMode == "YT" && _c33PlayerPosition.y > 0) {
+			_c33UseMouse = false;
+			if (_c33PlayerDirection.size() < 3)
+				_c33PlayerDirection.push_back(kPlayerTop);
+		}
 	}
 }
 
@@ -644,26 +670,49 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 	if (_arcadeMode == "YT") {
 		if (needsUpdate) {
-			Common::Point diff = mousePos - _c33PlayerPosition;
-			if (abs(diff.x) > 1 || abs(diff.y) > 1)
-				diff = diff / 10;
+			if (!_c33UseMouse) {
+				disableCursor();
+				if (_c33PlayerDirection.size() == 0)
+					drawImage(*_c33PlayerCursor[10], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				else if (_c33PlayerDirection.front() == kPlayerRight) {
+					_c33PlayerPosition.x = _c33PlayerPosition.x + 4;
+					drawImage(*_c33PlayerCursor[4], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				} else if (_c33PlayerDirection.front() == kPlayerLeft) {
+					_c33PlayerPosition.x = _c33PlayerPosition.x - 4;
+					drawImage(*_c33PlayerCursor[8], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				} else if (_c33PlayerDirection.front() == kPlayerBottom) {
+					_c33PlayerPosition.y = _c33PlayerPosition.y + 4;
+					drawImage(*_c33PlayerCursor[12], _c33PlayerPosition.x - 10,  _c33PlayerPosition.y, true);
+				} else if (_c33PlayerDirection.front() == kPlayerTop) {
+					_c33PlayerPosition.y = _c33PlayerPosition.y - 4;
+					drawImage(*_c33PlayerCursor[10], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				} else
+					error("Invalid condition in getPlayerPosition");
 
-			if (abs(diff.x) >= 10)
-				diff.x = (diff.x / abs(diff.x)) * 10;
+				if (_c33PlayerDirection.size() > 0)
+					_c33PlayerDirection.pop_front();
+			} else {
+				Common::Point diff = mousePos - _c33PlayerPosition;
+				if (abs(diff.x) > 1 || abs(diff.y) > 1)
+					diff = diff / 10;
 
-			if (abs(diff.y) >= 10)
-				diff.y = (diff.x / abs(diff.x)) * 10;
+				if (abs(diff.x) >= 10)
+					diff.x = (diff.x / abs(diff.x)) * 10;
 
-			_c33PlayerPosition = _c33PlayerPosition + diff;
+				if (abs(diff.y) >= 10)
+					diff.y = (diff.x / abs(diff.x)) * 10;
 
-			if (diff.x > 0 && abs(diff.x) > abs(diff.y))
-				drawImage(*_c33PlayerCursor[4], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
-			else if (diff.x < 0 && abs(diff.x) > abs(diff.y))
-				drawImage(*_c33PlayerCursor[8], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
-			else if (diff.y > 0)
-				drawImage(*_c33PlayerCursor[12], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
-			else
-				drawImage(*_c33PlayerCursor[10], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				_c33PlayerPosition = _c33PlayerPosition + diff;
+
+				if (diff.x > 0 && abs(diff.x) > abs(diff.y))
+					drawImage(*_c33PlayerCursor[4], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				else if (diff.x < 0 && abs(diff.x) > abs(diff.y))
+					drawImage(*_c33PlayerCursor[8], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				else if (diff.y > 0)
+					drawImage(*_c33PlayerCursor[12], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+				else
+					drawImage(*_c33PlayerCursor[10], _c33PlayerPosition.x - 10, _c33PlayerPosition.y, true);
+			}
 		}
 		uint32 c = _compositeSurface->getPixel(_c33PlayerPosition.x, _c33PlayerPosition.y);
 		if (c >= 225 && c <= 231) {
@@ -679,7 +728,10 @@ Common::Point WetEngine::getPlayerPosition(bool needsUpdate) {
 void WetEngine::drawCursorArcade(const Common::Point &mousePos) {
 	int i = detectTarget(mousePos);
 	if (_arcadeMode == "YT") {
-		changeCursor("arcade");
+		if (_c33UseMouse)
+			changeCursor("arcade");
+		else
+			disableCursor();
 		return;
 	}
 

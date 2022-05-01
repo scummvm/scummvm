@@ -290,6 +290,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 			case Common::EVENT_KEYDOWN:
 				pressedKey(event.kbd.keycode);
+				if (event.kbd.keycode == Common::KEYCODE_LCTRL)
+					if (clickedPrimaryShoot(mousePos))
+						shootingPrimary = true;
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
