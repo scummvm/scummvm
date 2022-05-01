@@ -119,9 +119,11 @@ enum InvCursorFN { IC_AREA,
 #define SG_DESC_LEN 40   // Max. saved game description length
 
 // Number of objects that makes up an empty window
-#define MAX_WCOMP 21 // 4 corners + (3+3) sides + (2+2) extra sides
-	                 // + Bground + title + slider
-	                 // + more Needed for save game window
+#define MAX_WCOMP_T0 21 // 4 corners + (3+3) sides + (2+2) extra sides
+						// + Bground + title + slider
+	                    // + more Needed for save game window
+#define MAX_WCOMP_T3 84
+#define MAX_WCOMP (TinselVersion == 3 ? MAX_WCOMP_T3 : MAX_WCOMP_T0)
 
 #define MAX_ICONS MAXHICONS *MAXVICONS
 #define MAX_ININV_TOT 160
@@ -503,8 +505,8 @@ private:
 
 	LANGUAGE _displayedLanguage;
 
-	OBJECT *_objArray[MAX_WCOMP];  // Current display objects (window)
-	OBJECT *_dispObjArray[MAX_WCOMP]; // Current display objects (re-sizing window)
+	OBJECT *_objArray[MAX_WCOMP_T3];  // Current display objects (window)
+	OBJECT *_dispObjArray[MAX_WCOMP_T3]; // Current display objects (re-sizing window)
 	ANIM _iconAnims[MAX_ICONS];
 
 	OBJECT *_rectObject, *_slideObject; // Current display objects, for reference
