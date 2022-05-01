@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-04-27 19:39+0000\n"
-"PO-Revision-Date: 2021-03-21 08:24+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2022-05-01 15:27+0000\n"
+"Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -24,10 +24,9 @@ msgstr ""
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:104
-#, fuzzy, c-format
-#| msgid "(built on %s)"
+#, c-format
 msgid "(built on %s with %s)"
-msgstr "(sestaveno %s)"
+msgstr "(sestaveno %s pomocí %s)"
 
 #: gui/about.cpp:111
 msgid "Features compiled in:"
@@ -213,16 +212,13 @@ msgid "Download speed: %s %S"
 msgstr "Rychlost stahování: %s %S"
 
 #: gui/downloadiconsdialog.cpp:81 gui/downloadiconsdialog.cpp:135
-#, fuzzy
-#| msgid "Downloading saves..."
 msgid "Downloading icons list..."
-msgstr "Stažení uložených pozic..."
+msgstr "Stahování seznamu ikon..."
 
 #: gui/downloadiconsdialog.cpp:145
-#, fuzzy, c-format
-#| msgid "Downloading saves..."
+#, c-format
 msgid "Downloading icons list... %d entries"
-msgstr "Stažení uložených pozic..."
+msgstr "Stahování seznamu ikon... %d položek"
 
 #: gui/downloadiconsdialog.cpp:155
 #, c-format
