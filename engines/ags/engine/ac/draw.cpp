@@ -1010,12 +1010,12 @@ void draw_gui_sprite(Bitmap *ds, bool use_alpha, int x, int y, Bitmap *sprite, b
 	if (alpha <= 0)
 		return;
 
-	const bool ds_has_alpha = use_alpha && (ds->GetColorDepth() == 32);
-	if (_GP(game).options[OPT_NEWGUIALPHA] == kGuiAlphaRender_Proper) {
+	const bool ds_has_alpha = (ds->GetColorDepth() == 32);
+	if (use_alpha && _GP(game).options[OPT_NEWGUIALPHA] == kGuiAlphaRender_Proper) {
 		GfxUtil::DrawSpriteBlend(ds, Point(x, y), sprite, blend_mode, ds_has_alpha, src_has_alpha, alpha);
 	}
 	// Backwards-compatible drawing
-	else if (ds_has_alpha && (_GP(game).options[OPT_NEWGUIALPHA] == kGuiAlphaRender_AdditiveAlpha) && (alpha == 0xFF)) {
+	else if (use_alpha && ds_has_alpha && (_GP(game).options[OPT_NEWGUIALPHA] == kGuiAlphaRender_AdditiveAlpha) && (alpha == 0xFF)) {
 		if (src_has_alpha)
 			set_additive_alpha_blender();
 		else
