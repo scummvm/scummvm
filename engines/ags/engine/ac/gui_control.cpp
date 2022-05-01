@@ -213,6 +213,16 @@ void GUIControl_BringToFront(GUIObject *guio) {
 	_GP(guis)[guio->ParentId].BringControlToFront(guio->Id);
 }
 
+int GUIControl_GetTransparency(GUIObject *guio) {
+	return GfxDef::LegacyTrans255ToTrans100(guio->GetTransparency());
+}
+
+void GUIControl_SetTransparency(GUIObject *guio, int trans) {
+	if ((trans < 0) | (trans > 100))
+		quit("!SetGUITransparency: transparency value must be between 0 and 100");
+	guio->SetTransparency(GfxDef::Trans100ToLegacyTrans255(trans));
+}
+
 //=============================================================================
 //
 // Script API Functions
@@ -362,6 +372,13 @@ RuntimeScriptValue Sc_GUIControl_SetZOrder(void *self, const RuntimeScriptValue 
 	API_OBJCALL_VOID_PINT(GUIObject, GUIControl_SetZOrder);
 }
 
+RuntimeScriptValue Sc_GUIControl_GetTransparency(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_INT(GUIObject, GUIControl_GetTransparency);
+}
+
+RuntimeScriptValue Sc_GUIControl_SetTransparency(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT(GUIObject, GUIControl_SetTransparency);
+}
 
 
 void RegisterGUIControlAPI() {
@@ -394,6 +411,8 @@ void RegisterGUIControlAPI() {
 	ccAddExternalObjectFunction("GUIControl::set_Y", Sc_GUIControl_SetY);
 	ccAddExternalObjectFunction("GUIControl::get_ZOrder", Sc_GUIControl_GetZOrder);
 	ccAddExternalObjectFunction("GUIControl::set_ZOrder", Sc_GUIControl_SetZOrder);
+	ccAddExternalObjectFunction("GUIControl::get_Transparency", Sc_GUIControl_GetTransparency);
+	ccAddExternalObjectFunction("GUIControl::set_Transparency", Sc_GUIControl_SetTransparency);
 }
 
 } // namespace AGS3

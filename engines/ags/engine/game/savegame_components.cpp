@@ -20,6 +20,7 @@
  */
 
 #include "ags/lib/std/map.h"
+#include "ags/engine/game/savegame_components.h"
 #include "ags/shared/ac/audio_clip_type.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/dialog_topic.h"
@@ -41,7 +42,6 @@
 #include "ags/engine/ac/system.h"
 #include "ags/engine/ac/dynobj/cc_serializer.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/engine/game/savegame_components.h"
 #include "ags/engine/game/savegame_internal.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gui/animating_gui_button.h"
@@ -1048,7 +1048,7 @@ ComponentHandler ComponentHandlers[] = {
 	},
 	{
 		"GUI",
-		kGuiSvgVersion_36020,
+		kGuiSvgVersion_36023,
 		kGuiSvgVersion_Initial,
 		WriteGUI,
 		ReadGUI

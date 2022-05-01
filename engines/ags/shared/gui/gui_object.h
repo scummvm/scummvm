@@ -60,7 +60,8 @@ public:
 	bool            IsVisible() const;
 	// implemented separately in engine and editor
 	bool            IsClickable() const;
-    // Compatibility: should the control's graphic be clipped to its x,y,w,h
+	int             GetTransparency() const { return _transparency; }
+	// Compatibility: should the control's graphic be clipped to its x,y,w,h
     virtual bool    IsContentClipped() const { return true; }
 	// Tells if the object image supports alpha channel
 	virtual bool    HasAlphaChannel() const { return false; }
@@ -78,6 +79,7 @@ public:
 	void            SetEnabled(bool on);
 	void            SetTranslated(bool on);
 	void            SetVisible(bool on);
+	void            SetTransparency(int trans);
 
 	// Events
 	// Key pressed for control
@@ -134,6 +136,7 @@ public:
 
 protected:
 	uint32_t Flags;      // generic style and behavior flags
+	int32_t  _transparency; // "incorrect" alpha (in legacy 255-range units)
 	bool     _hasChanged;
 
 	// TODO: explicit event names & handlers for every event
