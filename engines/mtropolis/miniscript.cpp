@@ -1154,7 +1154,7 @@ MiniscriptThread::MiniscriptThread(Runtime *runtime, const Common::SharedPtr<Mes
 }
 
 void MiniscriptThread::runOnVThread(VThread &vthread, const Common::SharedPtr<MiniscriptThread> &thread) {
-	ResumeTaskData *taskData = vthread.pushTask(resumeTask);
+	ResumeTaskData *taskData = vthread.pushTask("MiniscriptThread::resumeTask", resumeTask);
 	taskData->thread = thread;
 }
 
@@ -1274,7 +1274,7 @@ VThreadState MiniscriptThread::resume(const ResumeTaskData &taskData) {
 
 	// Requeue now so that any VThread tasks queued by instructions run in front of the resume
 	{
-		ResumeTaskData *requeueData = _runtime->getVThread().pushTask(resumeTask);
+		ResumeTaskData *requeueData = _runtime->getVThread().pushTask("MiniscriptThread::resumeTask", resumeTask);
 		requeueData->thread = taskData.thread;
 	}
 

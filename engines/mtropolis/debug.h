@@ -27,7 +27,12 @@
 #include "common/hashmap.h"
 
 #define MTROPOLIS_DEBUG_VTHREAD_STACKS
+
 #define MTROPOLIS_DEBUG_ENABLE
+#if defined(MTROPOLIS_DEBUG_ENABLE) && !defined(MTROPOLIS_DEBUG_VTHREAD_STACKS)
+// VThread stack debugging is mandatory when debugging
+#define MTROPOLIS_DEBUG_VTHREAD_STACKS
+#endif
 
 namespace MTropolis {
 
@@ -54,8 +59,24 @@ public:
 
 	virtual void onDestroyed();
 
+	void onDebuggableRelocated(IDebuggable *debuggable);
+
 private:
 	IDebuggable *_debuggable;
+};
+
+class DebugPrimaryTaskList {
+public:
+	explicit DebugPrimaryTaskList(const Common::String &name);
+
+	void addItem(IDebuggable *debuggable);
+	const Common::Array<IDebuggable *> &getItems() const;
+
+	const Common::String &getName() const;
+
+private:
+	Common::String _name;
+	Common::Array<IDebuggable *> _primaryTasks;
 };
 
 enum DebugSeverity {
@@ -84,6 +105,7 @@ public:
 	explicit Debugger(Runtime *runtime);
 	~Debugger();
 
+	// runFrame runs after the frame, before rendering, and before event processing for the following frame
 	void runFrame(uint32 msec);
 
 	void setPaused(bool paused);
@@ -121,14 +143,6 @@ private:
 	Common::Array<ToastNotification> _toastNotifications;
 };
 
-#define MTROPOLIS_DEBUG_NOTIFY(...) \
-		(static_cast<const IDebuggable *>(this)->debugGetDebugger()->notifyFmt(__VA_ARGS__));
-
-
-#else /* MTROPOLIS_DEBUG_ENABLE */
-
-#define MTROPOLIS_DEBUG_NOTIFY(...) ((void)0)
-
 #endif /* !MTROPOLIS_DEBUG_ENABLE */
 
 struct IDebuggable {
@@ -137,7 +151,6 @@ struct IDebuggable {
 	virtual const char *debugGetTypeName() const = 0;
 	virtual const Common::String &debugGetName() const = 0;
 	virtual Common::SharedPtr<DebugInspector> debugGetInspector() const = 0;
-	virtual Debugger *debugGetDebugger() const = 0;
 #endif
 };
 

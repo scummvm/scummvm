@@ -100,10 +100,10 @@ bool MovieElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWrite
 
 VThreadState MovieElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (Event::create(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
-		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask(this, &MovieElement::startPlayingTask);
+		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("MovieElement::startPlayingTask", this, &MovieElement::startPlayingTask);
 		startPlayingTaskData->runtime = runtime;
 
-		ChangeFlagTaskData *becomeVisibleTaskData = runtime->getVThread().pushTask(static_cast<VisualElement *>(this), &MovieElement::changeVisibilityTask);
+		ChangeFlagTaskData *becomeVisibleTaskData = runtime->getVThread().pushTask("MovieElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MovieElement::changeVisibilityTask);
 		becomeVisibleTaskData->desiredFlag = true;
 		becomeVisibleTaskData->runtime = runtime;
 	}

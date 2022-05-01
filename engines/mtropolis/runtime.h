@@ -81,6 +81,10 @@ struct ModifierLoaderContext;
 struct PlugInModifierLoaderContext;
 template<typename TElement, typename TElementData> class ElementFactory;
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+class DebugPrimaryTaskList;
+#endif
+
 char invariantToLower(char c);
 Common::String toCaseInsensitive(const Common::String &str);
 bool caseInsensitiveEqual(const Common::String &str1, const Common::String &str2);
@@ -1110,6 +1114,8 @@ public:
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
 	Debugger *debugGetDebugger() const;
+
+	void debugGetPrimaryTaskList(Common::Array<Common::SharedPtr<DebugPrimaryTaskList> > &primaryTaskLists);
 #endif
 
 private:
@@ -1343,7 +1349,6 @@ public:
 	SupportStatus debugGetSupportStatus() const override;
 	const Common::String &debugGetName() const override;
 	Common::SharedPtr<DebugInspector> debugGetInspector() const override;
-	Debugger *debugGetDebugger() const override;
 
 	virtual DebugInspector *debugCreateInspector();
 #endif
@@ -1364,7 +1369,6 @@ protected:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<DebugInspector> _debugInspector;
-	Debugger *_debugger;
 #endif
 };
 
@@ -1728,7 +1732,6 @@ public:
 	SupportStatus debugGetSupportStatus() const override;
 	const Common::String &debugGetName() const override;
 	Common::SharedPtr<DebugInspector> debugGetInspector() const override;
-	Debugger *debugGetDebugger() const override;
 
 	virtual DebugInspector *debugCreateInspector();
 #endif

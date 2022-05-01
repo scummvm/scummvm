@@ -82,13 +82,13 @@ bool BehaviorModifier::respondsToEvent(const Event &evt) const {
 VThreadState BehaviorModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_switchable) {
 		if (_disableWhen.respondsTo(msg->getEvent())) {
-			SwitchTaskData *taskData = runtime->getVThread().pushTask(this, &BehaviorModifier::switchTask);
+			SwitchTaskData *taskData = runtime->getVThread().pushTask("BehaviorModifier::switchTask", this, &BehaviorModifier::switchTask);
 			taskData->targetState = false;
 			taskData->eventID = EventIDs::kParentDisabled;
 			taskData->runtime = runtime;
 		}
 		if (_enableWhen.respondsTo(msg->getEvent())) {
-			SwitchTaskData *taskData = runtime->getVThread().pushTask(this, &BehaviorModifier::switchTask);
+			SwitchTaskData *taskData = runtime->getVThread().pushTask("BehaviorModifier::switchTask", this, &BehaviorModifier::switchTask);
 			taskData->targetState = true;
 			taskData->eventID = EventIDs::kParentEnabled;
 			taskData->runtime = runtime;
@@ -103,7 +103,7 @@ VThreadState BehaviorModifier::switchTask(const SwitchTaskData &taskData) {
 		_isEnabled = taskData.targetState;
 
 		if (_children.size() > 0) {
-			PropagateTaskData *propagateData = taskData.runtime->getVThread().pushTask(this, &BehaviorModifier::propagateTask);
+			PropagateTaskData *propagateData = taskData.runtime->getVThread().pushTask("BehaviorModifier::propagateTask", this, &BehaviorModifier::propagateTask);
 			propagateData->eventID = taskData.eventID;
 			propagateData->index = 0;
 			propagateData->runtime = taskData.runtime;
@@ -115,7 +115,7 @@ VThreadState BehaviorModifier::switchTask(const SwitchTaskData &taskData) {
 
 VThreadState BehaviorModifier::propagateTask(const PropagateTaskData &taskData) {
 	if (taskData.index + 1 < _children.size()) {
-		PropagateTaskData *propagateData = taskData.runtime->getVThread().pushTask(this, &BehaviorModifier::propagateTask);
+		PropagateTaskData *propagateData = taskData.runtime->getVThread().pushTask("BehaviorModifier::propagateTask", this, &BehaviorModifier::propagateTask);
 		propagateData->eventID = taskData.eventID;
 		propagateData->index = taskData.index + 1;
 		propagateData->runtime = taskData.runtime;

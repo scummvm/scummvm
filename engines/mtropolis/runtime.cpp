@@ -1597,9 +1597,6 @@ const Common::WeakPtr<RuntimeObject>& MessageProperties::getSource() const {
 }
 
 Structural::Structural() : _parent(nullptr) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-	_debugger = nullptr;
-#endif
 }
 
 Structural::~Structural() {
@@ -1761,10 +1758,6 @@ const Common::String &Structural::debugGetName() const {
 
 Common::SharedPtr<DebugInspector> Structural::debugGetInspector() const {
 	return _debugInspector;
-}
-
-Debugger* Structural::debugGetDebugger() const {
-	return _debugger;
 }
 
 DebugInspector *Structural::debugCreateInspector() {
@@ -2190,16 +2183,16 @@ bool Runtime::runFrame() {
 	_realTime = timeMillis - _realTimeBase;
 	_playTime = timeMillis - _playTimeBase;
 
+	for (;;) {
 #ifdef MTROPOLIS_DEBUG_ENABLE
-	if (_debugger)
-		_debugger->runFrame(realMSec);
+		if (_debugger->isPaused())
+			break;
 #endif
 
-	for (;;) {
 		VThreadState state = _vthread->step();
 		if (state != kVThreadReturn) {
 			// Still doing blocking tasks
-			return false;
+			break;
 		}
 
 		if (_queuedProjectDesc) {
@@ -2309,6 +2302,12 @@ bool Runtime::runFrame() {
 		// Ran out of actions
 		break;
 	}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	if (_debugger)
+		_debugger->runFrame(realMSec);
+
+#endif
 
 	// Frame completed
 	return true;
@@ -2421,7 +2420,8 @@ void Runtime::drawFrame() {
 		CursorMan.replaceCursor(cursor);
 	}
 
-	_project->onPostRender();
+	if (_project)
+		_project->onPostRender();
 }
 
 Common::SharedPtr<Structural> Runtime::findDefaultSharedSceneForScene(Structural *scene) {
@@ -2731,7 +2731,7 @@ void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
 }
 
 void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch) {
-	DispatchMethodTaskData *taskData = _vthread->pushTask(this, &Runtime::dispatchMessageTask);
+	DispatchMethodTaskData *taskData = _vthread->pushTask("Runtime::dispatchMessageTask", this, &Runtime::dispatchMessageTask);
 	taskData->dispatch = dispatch;
 }
 
@@ -2743,7 +2743,7 @@ VThreadState Runtime::dispatchMessageTask(const DispatchMethodTaskData &data) {
 		return kVThreadReturn;
 	else {
 		// Requeue propagation after whatever happens with this propagation step
-		DispatchMethodTaskData *requeueData = _vthread->pushTask(this, &Runtime::dispatchMessageTask);
+		DispatchMethodTaskData *requeueData = _vthread->pushTask("Runtime::dispatchMessageTask", this, &Runtime::dispatchMessageTask);
 		requeueData->dispatch = dispatchPtr;
 
 		return dispatch.continuePropagating(this);
@@ -2925,13 +2925,13 @@ Project *Runtime::getProject() const {
 }
 
 void Runtime::postConsumeMessageTask(IMessageConsumer *consumer, const Common::SharedPtr<MessageProperties> &msg) {
-	ConsumeMessageTaskData *params = _vthread->pushTask(this, &Runtime::consumeMessageTask);
+	ConsumeMessageTaskData *params = _vthread->pushTask("Runtime::consumeMessageTask", this, &Runtime::consumeMessageTask);
 	params->consumer = consumer;
 	params->message = msg;
 }
 
 void Runtime::postConsumeCommandTask(Structural *structural, const Common::SharedPtr<MessageProperties> &msg) {
-	ConsumeCommandTaskData *params = _vthread->pushTask(this, &Runtime::consumeCommandTask);
+	ConsumeCommandTaskData *params = _vthread->pushTask("Runtime::consumeMessageTask", this, &Runtime::consumeCommandTask);
 	params->structural = structural;
 	params->message = msg;
 }
@@ -3046,8 +3046,45 @@ void Runtime::debugBreak() {
 	_debugger->setPaused(true);
 }
 
-Debugger* Runtime::debugGetDebugger() const {
+Debugger *Runtime::debugGetDebugger() const {
 	return _debugger.get();
+}
+
+void Runtime::debugGetPrimaryTaskList(Common::Array<Common::SharedPtr<DebugPrimaryTaskList> > &primaryTaskLists) {
+	{
+		Common::SharedPtr<DebugPrimaryTaskList> vthreadTaskList(new DebugPrimaryTaskList("Execute"));
+		primaryTaskLists.push_back(vthreadTaskList);
+	}
+
+	{
+		Common::SharedPtr<DebugPrimaryTaskList> projectQueueTaskList(new DebugPrimaryTaskList("Project queue"));
+		primaryTaskLists.push_back(projectQueueTaskList);
+	}
+
+	{
+		Common::SharedPtr<DebugPrimaryTaskList> messageQueueTaskList(new DebugPrimaryTaskList("Message queue"));
+		primaryTaskLists.push_back(messageQueueTaskList);
+	}
+
+	{
+		Common::SharedPtr<DebugPrimaryTaskList> teardownTaskList(new DebugPrimaryTaskList("Teardowns"));
+		primaryTaskLists.push_back(teardownTaskList);
+	}
+
+	{
+		Common::SharedPtr<DebugPrimaryTaskList> llstTasks(new DebugPrimaryTaskList("Low-level scene transitions"));
+		primaryTaskLists.push_back(llstTasks);
+	}
+
+	{
+		Common::SharedPtr<DebugPrimaryTaskList> hlstTasks(new DebugPrimaryTaskList("High-level scene transitions"));
+		primaryTaskLists.push_back(hlstTasks);
+	}
+
+	{
+		Common::SharedPtr<DebugPrimaryTaskList> scheduledEventsTasks(new DebugPrimaryTaskList("Scheduled events"));
+		primaryTaskLists.push_back(scheduledEventsTasks);
+	}
 }
 
 #endif /* MTROPOLIS_DEBUG_ENABLE */
@@ -4151,10 +4188,6 @@ const Common::String &Modifier::debugGetName() const {
 
 Common::SharedPtr<DebugInspector> Modifier::debugGetInspector() const {
 	return _debugInspector;
-}
-
-Debugger *Modifier::debugGetDebugger() const {
-	return _debugger;
 }
 
 DebugInspector *Modifier::debugCreateInspector() {
