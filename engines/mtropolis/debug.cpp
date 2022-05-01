@@ -990,7 +990,7 @@ void DebugStepThroughWindow::toolRenderSurface(int32 subAreaWidth, int32 subArea
 		const size_t numChildren = items.size();
 		for (size_t chIndex = 0; chIndex < numChildren; chIndex++) {
 			int32 rowY = (_primaryTaskRowStarts[catIndex] + chIndex) * kRowHeight;
-			font->drawString(_toolSurface.get(), items[chIndex]->debugGetName(), 10, startY + 2, renderWidth - 2, blackColor);
+			font->drawString(_toolSurface.get(), items[chIndex]->debugGetName(), 10, rowY + 2, renderWidth - 2, blackColor);
 		}
 	}
 }

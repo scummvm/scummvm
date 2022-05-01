@@ -326,6 +326,8 @@ namespace MiniscriptInstructions {
 		explicit PushString(const Common::String &str);
 
 	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
+
 		Common::String _str;
 	};
 

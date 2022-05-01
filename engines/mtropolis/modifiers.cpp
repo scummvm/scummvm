@@ -788,7 +788,7 @@ bool CompoundVariableModifier::readAttribute(MiniscriptThread *thread, DynamicVa
 	if (!var || !var->isModifier())
 		return false;
 
-	static_cast<VariableModifier *>(var)->getValue(result);
+	static_cast<VariableModifier *>(var)->varGetValue(result);
 	return true;
 }
 
@@ -805,7 +805,7 @@ bool CompoundVariableModifier::writeRefAttribute(MiniscriptThread *thread, Dynam
 	if (!var || !var->isModifier())
 		return false;
 
-	writeProxy = DynamicValueWriteFuncHelper<VariableModifier, &VariableModifier::setValue>::create(static_cast<VariableModifier *>(var));
+	writeProxy = static_cast<VariableModifier *>(var)->createWriteProxy();
 	return true;
 }
 
@@ -840,7 +840,7 @@ bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::B
 	return true;
 }
 
-bool BooleanVariableModifier::setValue(const DynamicValue &value) {
+bool BooleanVariableModifier::varSetValue(const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kBoolean)
 		_value = value.getBool();
 	else
@@ -849,7 +849,7 @@ bool BooleanVariableModifier::setValue(const DynamicValue &value) {
 	return true;
 }
 
-void BooleanVariableModifier::getValue(DynamicValue &dest) const {
+void BooleanVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setBool(_value);
 }
 
@@ -866,7 +866,7 @@ bool IntegerVariableModifier::load(ModifierLoaderContext& context, const Data::I
 	return true;
 }
 
-bool IntegerVariableModifier::setValue(const DynamicValue &value) {
+bool IntegerVariableModifier::varSetValue(const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kFloat)
 		_value = static_cast<int32>(floor(value.getFloat() + 0.5));
 	else if (value.getType() == DynamicValueTypes::kInteger)
@@ -877,7 +877,7 @@ bool IntegerVariableModifier::setValue(const DynamicValue &value) {
 	return true;
 }
 
-void IntegerVariableModifier::getValue(DynamicValue &dest) const {
+void IntegerVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setInt(_value);
 }
 
@@ -895,7 +895,7 @@ bool IntegerRangeVariableModifier::load(ModifierLoaderContext& context, const Da
 	return true;
 }
 
-bool IntegerRangeVariableModifier::setValue(const DynamicValue &value) {
+bool IntegerRangeVariableModifier::varSetValue(const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kIntegerRange)
 		_range = value.getIntRange();
 	else
@@ -904,7 +904,7 @@ bool IntegerRangeVariableModifier::setValue(const DynamicValue &value) {
 	return true;
 }
 
-void IntegerRangeVariableModifier::getValue(DynamicValue &dest) const {
+void IntegerRangeVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setIntRange(_range);
 }
 
@@ -922,7 +922,7 @@ bool VectorVariableModifier::load(ModifierLoaderContext &context, const Data::Ve
 	return true;
 }
 
-bool VectorVariableModifier::setValue(const DynamicValue &value) {
+bool VectorVariableModifier::varSetValue(const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kVector)
 		_vector = value.getVector();
 	else
@@ -931,7 +931,7 @@ bool VectorVariableModifier::setValue(const DynamicValue &value) {
 	return true;
 }
 
-void VectorVariableModifier::getValue(DynamicValue &dest) const {
+void VectorVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setVector(_vector);
 }
 
@@ -949,7 +949,7 @@ bool PointVariableModifier::load(ModifierLoaderContext &context, const Data::Poi
 	return true;
 }
 
-bool PointVariableModifier::setValue(const DynamicValue &value) {
+bool PointVariableModifier::varSetValue(const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kPoint)
 		_value = value.getPoint();
 	else
@@ -958,7 +958,7 @@ bool PointVariableModifier::setValue(const DynamicValue &value) {
 	return true;
 }
 
-void PointVariableModifier::getValue(DynamicValue &dest) const {
+void PointVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setPoint(_value);
 }
 
@@ -975,7 +975,7 @@ bool FloatingPointVariableModifier::load(ModifierLoaderContext &context, const D
 	return true;
 }
 
-bool FloatingPointVariableModifier::setValue(const DynamicValue &value) {
+bool FloatingPointVariableModifier::varSetValue(const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kInteger)
 		_value = value.getInt();
 	else if (value.getType() == DynamicValueTypes::kFloat)
@@ -986,7 +986,7 @@ bool FloatingPointVariableModifier::setValue(const DynamicValue &value) {
 	return true;
 }
 
-void FloatingPointVariableModifier::getValue(DynamicValue &dest) const {
+void FloatingPointVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setFloat(_value);
 }
 
@@ -1003,7 +1003,7 @@ bool StringVariableModifier::load(ModifierLoaderContext &context, const Data::St
 	return true;
 }
 
-bool StringVariableModifier::setValue(const DynamicValue &value) {
+bool StringVariableModifier::varSetValue(const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kString)
 		_value = value.getString();
 	else
@@ -1012,7 +1012,7 @@ bool StringVariableModifier::setValue(const DynamicValue &value) {
 	return true;
 }
 
-void StringVariableModifier::getValue(DynamicValue &dest) const {
+void StringVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setString(_value);
 }
 
