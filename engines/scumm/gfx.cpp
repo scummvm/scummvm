@@ -4002,11 +4002,12 @@ void ScummEngine::transitionEffect(int a) {
 void ScummEngine::dissolveEffect(int width, int height) {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 	int *offsets;
-	int blitsBeforeRefresh, blits;
+	int blitsBeforeRefresh, blits, blitsToFreeze;
 	int x, y;
 	int w, h;
 	int i;
-
+	bool canHalt = false;
+	bool is1x1Pattern = (width == height == 1);
 	// There's probably some less memory-hungry way of doing this. But
 	// since we're only dealing with relatively small images, it shouldn't
 	// be too bad.
@@ -4066,19 +4067,31 @@ void ScummEngine::dissolveEffect(int width, int height) {
 		free(offsets2);
 	}
 
-	// Blit the image piece by piece to the screen. The idea here is that
-	// the whole update should take about a quarter of a second, assuming
-	// most of the time is spent in waitForTimer(). It looks good to me,
-	// but might still need some tuning.
+	// The whole effect has a variable duration, depending on
+	// the host machine speed. We want to be accurate, but we
+	// also want to actually *see* the effect, given that in modern
+	// machines this code would run at lightspeed, so let's declare
+	// a blitsBeforeRefresh variable, which serves as a threshold
+	// value allowing us to pause rendering every N blits.
+	//
+	// Pattern 1x1:
+	//   The original construct the image piece by piece but blits it
+	//   every 8 iterations of a loop with duration h. We try to imitate
+	//   this behavior by using blitsBeforeRefresh and by assigning it a value
+	//   which is a factor of blitsToFreeze.
+	//
+	// Pattern NxM:
+	//   The original construct the image piece by piece but blits it
+	//   every time it finds an offset smaller than the height of the virtual
+	//   screen. This is trivial to do in our code, so we just sleep for a
+	//   quarter frame everytime the condition above is met.
+	//
+	// If we ever get a blitsToFreeze == 0, we will use 18 in its place
+	// since it's the most typical value got out of the calculations.
 
 	blits = 0;
-	blitsBeforeRefresh = (w * h) / 8;
-
-	// Speed up the effect for CD Loom since it uses it so often. I don't
-	// think the original had any delay at all, so on modern hardware it
-	// wasn't even noticeable.
-	//if (_game.id == GID_LOOM && (_game.version == 4))
-	//	blitsBeforeRefresh *= 2;
+	blitsToFreeze = (h / 8); // The number of blits between which we delay rendering for pattern 1x1
+	blitsBeforeRefresh = (w * h) / (blitsToFreeze == 0 ? 18 : blitsToFreeze);
 
 	for (i = 0; i < w * h; i++) {
 		x = offsets[i] % vs->pitch;
@@ -4094,10 +4107,21 @@ void ScummEngine::dissolveEffect(int width, int height) {
 		else
 			_system->copyRectToScreen(vs->getPixels(x, y), vs->pitch, x, y + vs->topline, width, height);
 
+		// Test for 1x1 pattern...
+		canHalt |= is1x1Pattern && ++blits >= blitsBeforeRefresh;
 
-		if (++blits >= blitsBeforeRefresh) {
+		// If that is true, then reset the blits var...
+		if (canHalt) {
 			blits = 0;
-			waitForTimer(4);
+		}
+
+		// Test for NxM pattern...
+		canHalt |= !is1x1Pattern && (offsets[i] < vs->h);
+
+		// Halt rendering for a quarter frame...
+		if (canHalt) {
+			canHalt = false;
+			waitForTimer(1);
 		}
 	}
 
