@@ -983,15 +983,14 @@ void WetEngine::drawHealth() {
 
 		if (_arcadeMode == "Y1" || _arcadeMode == "Y3" || _arcadeMode == "Y4" || _arcadeMode == "Y5") {
 			Common::Rect r;
-			r = Common::Rect(ep.x - 2, ep.y - 2, ep.x + 69, sp.y + 9);
+			r = Common::Rect(ep.x - 2, ep.y - 2, ep.x + 69, sp.y + 7);
 			_compositeSurface->frameRect(r, kHypnoColorGreen);
 
-			r = Common::Rect(sp.x - 2, sp.y - 2, sp.x + 74, sp.y + 8);
+			r = Common::Rect(sp.x - 2, sp.y - 2, sp.x + 74, sp.y + 7);
 			_compositeSurface->frameRect(r, kHypnoColorGreen);
 
-			// TODO: not rendering correctly
-			//r = Common::Rect(op.x - 2, op.y - 2, op.x + 75, op.y + 9);
-			//_compositeSurface->frameRect(r, kHypnoColorGreen);
+			r = Common::Rect(op.x - 2, op.y - 2, op.x + 74, op.y + 7);
+			_compositeSurface->frameRect(r, kHypnoColorGreen);
 		}
 
 		drawString("block05.fgx", Common::String::format("ENERGY %d%%", p), ep.x, ep.y, 65, c);
