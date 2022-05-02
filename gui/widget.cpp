@@ -328,8 +328,7 @@ void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 	}
 }
 
-void StaticTextWidget::setFontColor(const ThemeEngine::FontColor color)
-{
+void StaticTextWidget::setFontColor(const ThemeEngine::FontColor color) {
 	_fontColor = color; 
 }
 

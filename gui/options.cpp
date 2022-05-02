@@ -2112,38 +2112,24 @@ void GlobalOptionsDialog::build() {
 	OptionsDialog::build();
 
 #if !defined(__DC__)
-	// Set _savePath to the current save path
-	Common::String savePath(ConfMan.get("savepath", _domain));
-	Common::String themePath(ConfMan.get("themepath", _domain));
-	Common::String iconPath(ConfMan.get("iconspath", _domain));
-	Common::String extraPath(ConfMan.get("extrapath", _domain));
+	const auto setPath = 
+	[&](GUI::StaticTextWidget *const widget, const Common::String& pathType, const Common::U32String &defaultLabel) {
+		Common::String path(ConfMan.get(pathType)); 
+		if (ConfMan.isKeyTemporary(pathType)) {
+			widget->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
+		}
+		if (path.empty() || !ConfMan.hasKey(pathType, _domain)) {
+			widget->setLabel(defaultLabel);
+		} else {
+			widget->setLabel(path);
+		}
 
-	if (ConfMan.isKeyTemporary("savepath")) {
-		_savePath->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
-	}
-	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
-		_savePath->setLabel(_("Default"));
-	} else {
-		_savePath->setLabel(savePath);
-	}
+	};
 
-	if (themePath.empty() || !ConfMan.hasKey("themepath", _domain)) {
-		_themePath->setLabel(_c("None", "path"));
-	} else {
-		_themePath->setLabel(themePath);
-	}
-
-	if (iconPath.empty() || !ConfMan.hasKey("iconspath", _domain)) {
-		_iconPath->setLabel(_c("None", "path"));
-	} else {
-		_iconPath->setLabel(iconPath);
-	}
-
-	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
-		_extraPath->setLabel(_c("None", "path"));
-	} else {
-		_extraPath->setLabel(extraPath);
-	}
+	setPath(_savePath, "savepath", _("Default")); 
+	setPath(_themePath, "themepath", _c("None", "path"));
+	setPath(_iconPath, "iconpath", _c("None", "path"));
+	setPath(_extraPath, "extrapath", _c("None", "path"));
 
 #ifdef DYNAMIC_MODULES
 	Common::String pluginsPath(ConfMan.get("pluginspath", _domain));
@@ -2617,32 +2603,22 @@ void GlobalOptionsDialog::apply() {
 
 	bool isRebuildNeeded = false;
 
-	Common::U32String savePath(_savePath->getLabel());
-	if (savePath != ConfMan.get("savepath")) {
-		_savePath->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
-		if (savePath.empty() || (savePath == _("Default")))
-			ConfMan.removeKey("savepath", _domain);
-		else 
-			ConfMan.set("savepath", savePath.encode(), _domain);
-	}
+	const auto changePath = 
+	[&](GUI::StaticTextWidget *const widget, const Common::String& pathType, const Common::U32String &defaultLabel){
+		Common::U32String label(widget->getLabel());
+		if (label != ConfMan.get(pathType)) {
+			widget->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+			if (label.empty() || (label == defaultLabel))
+				ConfMan.removeKey(pathType, _domain); 
+			else 
+				ConfMan.set(pathType, label.encode(), _domain); 
+		} 
+	}; 
 
-	Common::U32String themePath(_themePath->getLabel());
-	if (!themePath.empty() && (themePath != _c("None", "path")))
-		ConfMan.set("themepath", themePath.encode(), _domain);
-	else
-		ConfMan.removeKey("themepath", _domain);
-
-	Common::U32String iconPath(_iconPath->getLabel());
-	if (!iconPath.empty() && (iconPath != _c("None", "path")))
-		ConfMan.set("iconspath", iconPath.encode(), _domain);
-	else
-		ConfMan.removeKey("iconspath", _domain);
-
-	Common::U32String extraPath(_extraPath->getLabel());
-	if (!extraPath.empty() && (extraPath != _c("None", "path")))
-		ConfMan.set("extrapath", extraPath.encode(), _domain);
-	else
-		ConfMan.removeKey("extrapath", _domain);
+	changePath(_savePath, "savepath", _("Default")); 
+	changePath(_themePath, "themepath", _c("None", "path")); 
+	changePath(_iconPath, "iconpath", _c("None", "path")); 
+	changePath(_extraPath, "extrapath", _c("None", "path")); 
 
 #ifdef DYNAMIC_MODULES
 	Common::U32String pluginsPath(_pluginsPath->getLabel());

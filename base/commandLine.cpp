@@ -1833,6 +1833,12 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	if (settings.contains("savepath")) {
 		ConfMan.set("savepath", settings["savepath"], Common::ConfigManager::kSessionDomain); 
 	}
+	if (settings.contains("themepath")) {
+		ConfMan.set("themepath", settings["themepath"], Common::ConfigManager::kSessionDomain); 
+	}	
+	if (settings.contains("extrapath")) {
+		ConfMan.set("extrapath", settings["extrapath"], Common::ConfigManager::kSessionDomain); 
+	}
 
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
