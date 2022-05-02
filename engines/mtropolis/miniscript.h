@@ -246,6 +246,15 @@ namespace MiniscriptInstructions {
 		explicit BuiltinFunc(BuiltinFunctionID bfid);
 
 	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
+
+		MiniscriptInstructionOutcome executeFunction(MiniscriptThread *thread, DynamicValue *returnValue) const;
+		MiniscriptInstructionOutcome executeSimpleNumericInstruction(MiniscriptThread *thread, DynamicValue *returnValue) const;
+		MiniscriptInstructionOutcome executeRectToPolar(MiniscriptThread *thread, DynamicValue *returnValue) const;
+		MiniscriptInstructionOutcome executePolarToRect(MiniscriptThread *thread, DynamicValue *returnValue) const;
+		MiniscriptInstructionOutcome executeNum2Str(MiniscriptThread *thread, DynamicValue *returnValue) const;
+		MiniscriptInstructionOutcome executeStr2Num(MiniscriptThread *thread, DynamicValue *returnValue) const;
+
 		BuiltinFunctionID _funcID;
 	};
 

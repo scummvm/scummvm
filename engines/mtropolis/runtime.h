@@ -39,6 +39,12 @@
 
 class OSystem;
 
+namespace Common {
+
+class RandomSource;
+
+} // End of namespace Common
+
 namespace Graphics {
 
 struct WinCursorGroup;
@@ -396,6 +402,13 @@ struct AngleMagVector {
 
 	inline bool operator!=(const AngleMagVector &other) const {
 		return !((*this) == other);
+	}
+
+	inline static AngleMagVector create(double angleRadians, double magnitude) {
+		AngleMagVector result;
+		result.angleRadians = angleRadians;
+		result.magnitude = magnitude;
+		return result;
 	}
 
 	bool dynSetAngleDegrees(const DynamicValue &value);
@@ -1267,6 +1280,8 @@ public:
 	void onMouseMove(int32 x, int32 y);
 	void onMouseUp(int32 x, int32 y, Actions::MouseButton mButton);
 
+	Common::RandomSource *getRandom() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
@@ -1359,6 +1374,8 @@ private:
 	Common::Array<Common::SharedPtr<Window> > _windows;
 
 	Common::SharedPtr<Graphics::MacFontManager> _macFontMan;
+
+	Common::SharedPtr<Common::RandomSource> _random;
 
 	uint32 _nextRuntimeGUID;
 
@@ -1823,6 +1840,9 @@ protected:
 	bool loadCommon(const Common::String &name, uint32 guid, const Data::Rect &rect, uint32 elementFlags, uint16 layer, uint32 streamLocator, uint16 sectionID);
 
 	bool scriptSetDirect(const DynamicValue &dest);
+	bool scriptSetPosition(const DynamicValue &dest);
+
+	void offsetTranslate(int32 xDelta, int32 yDelta);
 
 	struct ChangeFlagTaskData {
 		bool desiredFlag;
