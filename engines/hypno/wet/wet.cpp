@@ -57,6 +57,8 @@ WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(s
 	_lives = 2;
 	_lastLevel = 0;
 
+	_c33UseMouse = true;
+
 	_c40SegmentIdx = -1;
 	_c40lastTurn = -1;
 
