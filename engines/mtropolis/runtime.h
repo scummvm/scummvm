@@ -876,6 +876,17 @@ private:
 template<class TInteger>
 DynamicValueWriteIntegerHelper<TInteger> DynamicValueWriteIntegerHelper<TInteger>::_instance;
 
+struct DynamicValueWriteStringHelper : public IDynamicValueWriteInterface {
+	bool write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr_t ptrOrOffset) const override;
+	bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const override;
+	bool refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override;
+
+	static void create(Common::String *strValue, DynamicValueWriteProxy &proxy);
+
+private:
+	static DynamicValueWriteStringHelper _instance;
+};
+
 template<class TClass, bool (TClass::*TWriteMethod)(const DynamicValue &dest)>
 struct DynamicValueWriteFuncHelper : public IDynamicValueWriteInterface {
 	bool write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const override {
@@ -909,6 +920,8 @@ struct MessengerSendSpec {
 	void linkInternalReferences(ObjectLinkingScope *outerScope);
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor);
 	void resolveDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest) const;
+
+	static void resolveVariableObjectType(RuntimeObject *obj, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest);
 
 	void sendFromMessenger(Runtime *runtime, Modifier *sender) const;
 
@@ -1461,6 +1474,9 @@ public:
 
 	bool isStructural() const override;
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
+
 	const Common::Array<Common::SharedPtr<Structural> > &getChildren() const;
 	void addChild(const Common::SharedPtr<Structural> &child);
 	void removeAllChildren();
@@ -1758,6 +1774,8 @@ class Subsection : public Structural {
 public:
 	bool load(const Data::SubsectionStructuralDef &data);
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+
 	ObjectLinkingScope *getSceneLoadMaterializeScope();
 
 	bool isSubsection() const override;
@@ -1900,8 +1918,8 @@ protected:
 class VariableModifier : public Modifier {
 public:
 	virtual bool isVariable() const;
-	virtual bool varSetValue(const DynamicValue &value) = 0;
-	virtual void varGetValue(DynamicValue &dest) const = 0;
+	virtual bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) = 0;
+	virtual void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const = 0;
 
 	virtual DynamicValueWriteProxy createWriteProxy();
 

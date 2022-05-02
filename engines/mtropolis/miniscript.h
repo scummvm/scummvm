@@ -227,7 +227,9 @@ namespace MiniscriptInstructions {
 	class Modulo : public UnimplementedInstruction {
 	};
 
-	class StrConcat : public UnimplementedInstruction {
+	class StrConcat : public MiniscriptInstruction {
+	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
 	class PointCreate : public MiniscriptInstruction {

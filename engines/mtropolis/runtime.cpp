@@ -1424,6 +1424,34 @@ void DynamicValue::initFromOther(const DynamicValue &other) {
 	_type = other._type;
 }
 
+bool DynamicValueWriteStringHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr_t ptrOrOffset) const {
+	Common::String &dest = *static_cast<Common::String *>(objectRef);
+	switch (value.getType()) {
+	case DynamicValueTypes::kString:
+		dest = value.getString();
+		return true;
+	default:
+		return false;
+	}
+}
+
+bool DynamicValueWriteStringHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const {
+	return false;
+}
+
+bool DynamicValueWriteStringHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+	return false;
+}
+
+void DynamicValueWriteStringHelper::create(Common::String *strValue, DynamicValueWriteProxy &proxy) {
+	proxy.pod.ptrOrOffset = 0;
+	proxy.pod.objectRef = strValue;
+	proxy.pod.ifc = &_instance;
+}
+
+DynamicValueWriteStringHelper DynamicValueWriteStringHelper::_instance;
+
+
 MessengerSendSpec::MessengerSendSpec() : destination(0), _linkType(kLinkTypeNotYetLinked) {
 }
 
@@ -1532,9 +1560,11 @@ void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, C
 		case kMessageDestElement:
 			resolveHierarchyStructuralDestination(runtime, sender, outStructuralDest, outModifierDest, isElementFilter);
 			break;
+		case kMessageDestModifiersParent:
+			resolveVariableObjectType(sender->getParent().lock().get(), outStructuralDest, outModifierDest);
+			break;
 		case kMessageDestChildren:
 		case kMessageDestElementsParent:
-		case kMessageDestModifiersParent:
 		case kMessageDestSubsection:
 		case kMessageDestSourcesParent:
 		case kMessageDestBehavior:
@@ -1546,6 +1576,22 @@ void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, C
 		default:
 			break;
 		}
+	}
+}
+
+void MessengerSendSpec::resolveVariableObjectType(RuntimeObject *obj, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest) {
+	if (!obj) {
+		warning("Couldn't resolve mesenger destination");
+		return;
+	}
+
+	if (obj->isStructural())
+		outStructuralDest = obj->getSelfReference().staticCast<Structural>();
+	else if (obj->isModifier())
+		outModifierDest = obj->getSelfReference().staticCast<Modifier>();
+	else {
+		warning("Messenger destination was not a valid recipient type");
+		return;
 	}
 }
 
@@ -1871,6 +1917,24 @@ ProjectPresentationSettings::ProjectPresentationSettings() : width(640), height(
 
 bool Structural::isStructural() const {
 	return true;
+}
+
+bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "name") {
+		result.setString(_name);
+		return true;
+	}
+
+	return RuntimeObject::readAttribute(thread, result, attrib);
+}
+
+bool Structural::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "name") {
+		DynamicValueWriteStringHelper::create(&_name, result);
+		return true;
+	}
+
+	return RuntimeObject::writeRefAttribute(thread, result, attrib);
 }
 
 const Common::Array<Common::SharedPtr<Structural> > &Structural::getChildren() const {
@@ -4201,6 +4265,16 @@ bool Subsection::load(const Data::SubsectionStructuralDef &data) {
 	return true;
 }
 
+bool Subsection::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "subsection") {
+		// Unclear why this is necessary
+		result.setObject(getSelfReference());
+		return true;
+	}
+
+	return Structural::readAttribute(thread, result, attrib);
+}
+
 bool Subsection::isSubsection() const {
 	return true;
 }
@@ -4469,7 +4543,7 @@ DynamicValueWriteProxy VariableModifier::createWriteProxy() {
 }
 
 bool VariableModifier::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const {
-	return static_cast<VariableModifier *>(objectRef)->varSetValue(dest);
+	return static_cast<VariableModifier *>(objectRef)->varSetValue(thread, dest);
 }
 
 bool VariableModifier::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const {

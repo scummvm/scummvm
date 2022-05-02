@@ -99,8 +99,8 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
 	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
 
-	bool varSetValue(const DynamicValue &value) override;
-	void varGetValue(DynamicValue &dest) const override;
+	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
+	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Object Reference Variable Modifier"; }
@@ -113,11 +113,17 @@ private:
 	bool dynSetObject(const DynamicValue &value);
 
 	void resolve();
+	void resolveRelativePath(RuntimeObject *obj, const Common::String &path, size_t startPos);
+	void resolveAbsolutePath();
+
+	bool computeObjectPath(RuntimeObject *obj, Common::String &outPath);
+	static RuntimeObject *getObjectParent(RuntimeObject *obj);
 
 	Event _setToSourceParentWhen;
 
 	mutable ObjectReference _object;
-	mutable Common::String _objectPath;
+	Common::String _objectPath;
+	Common::String _fullPath;
 };
 
 class MidiModifier : public Modifier {
@@ -183,8 +189,8 @@ public:
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data);
 
-	bool varSetValue(const DynamicValue &value) override;
-	void varGetValue(DynamicValue &dest) const override;
+	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
+	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "List Variable Modifier"; }
