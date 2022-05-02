@@ -160,6 +160,8 @@ private:
 
 	Common::String _title;
 	bool _isDirty;
+	bool _forceRedrawChrome;
+
 	int _scrollOffset;
 
 	int _scrollBarHandleSize;
@@ -175,7 +177,7 @@ private:
 
 DebugToolWindowBase::DebugToolWindowBase(DebuggerTool tool, const Common::String &title, Debugger *debugger, const WindowParameters &windowParams)
 	: Window(windowParams), _debugger(debugger), _tool(tool), _title(title), _activeWidget(kToolWindowWidgetNone), _isMouseCaptured(false),
-	  _isDirty(true), _scrollOffset(0), _haveScrollBar(false), _havePreferredScrollOffset(false) {
+	  _isDirty(true), _scrollOffset(0), _haveScrollBar(false), _havePreferredScrollOffset(false), _forceRedrawChrome(false) {
 
 	refreshChrome();
 }
@@ -184,7 +186,9 @@ void DebugToolWindowBase::render() {
 	if (_isDirty) {
 		_isDirty = false;
 
-		bool needChromeUpdate = false;
+		bool needChromeUpdate = _forceRedrawChrome;
+		_forceRedrawChrome = false;
+
 		int oldWidth = 0;
 		int oldHeight = 0;
 		if (_toolSurface) {
@@ -342,6 +346,7 @@ void DebugToolWindowBase::onMouseDown(int32 x, int32 y, int mouseButton) {
 				}
 
 				setDirty();
+				_forceRedrawChrome = true;
 			} else {
 				_activeWidget = kToolWindowWidgetScrollEmpty;
 			}
@@ -387,6 +392,7 @@ void DebugToolWindowBase::onMouseMove(int32 x, int32 y) {
 			if (desiredOffset != _scrollBarHandleOffset) {
 				_scrollBarHandleOffset = desiredOffset;
 				_scrollOffset = _scrollBarHandleOffset * _maxScrollOffset / _scrollBarHandleMaxOffset;
+				_forceRedrawChrome = true;
 				setDirty();
 			}
 		}
@@ -413,6 +419,7 @@ void DebugToolWindowBase::onMouseUp(int32 x, int32 y, int mouseButton) {
 		}
 		if (_activeWidget == kToolWindowWidgetScrollHandle) {
 			setDirty();
+			_forceRedrawChrome = true;
 		}
 
 		_activeWidget = kToolWindowWidgetNone;
