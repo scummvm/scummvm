@@ -4330,6 +4330,12 @@ bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result
 	} else if (attrib == "position") {
 		result.setPoint(Point16::create(_rect.left, _rect.top));
 		return true;
+	} else if (attrib == "width") {
+		result.setInt(_rect.right - _rect.left);
+		return true;
+	} else if (attrib == "height") {
+		result.setInt(_rect.bottom - _rect.top);
+		return true;
 	}
 
 	return Element::readAttribute(thread, result, attrib);
