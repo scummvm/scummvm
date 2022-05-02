@@ -44,13 +44,6 @@ using namespace AGS; // FIXME later
 
 #define IS_ANTIALIAS_SPRITES _GP(usetup).enable_antialiasing && (_GP(play).disable_antialiasing == 0)
 
-struct CachedActSpsData {
-	int xWas, yWas;
-	int baselineWas;
-	int isWalkBehindHere;
-	int valid;
-};
-
 /**
  * Buffer and info flags for viewport/camera pairs rendering in software mode
  */
@@ -112,7 +105,6 @@ void invalidate_camera_frame(int index);
 void invalidate_rect(int x1, int y1, int x2, int y2, bool in_room);
 
 void mark_current_background_dirty();
-void invalidate_cached_walkbehinds();
 
 // Avoid freeing and reallocating the memory if possible
 Shared::Bitmap *recycle_bitmap(Shared::Bitmap *bimp, int coldep, int wid, int hit, bool make_transparent = false);

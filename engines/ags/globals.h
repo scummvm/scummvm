@@ -581,9 +581,6 @@ public:
 	std::vector<Shared::Bitmap *> *_actsps;
 	std::vector<Engine::IDriverDependantBitmap *> *_actspsbmp;
 	// temporary cache of walk-behind for this actsps image
-	std::vector<Shared::Bitmap *> *_actspswb;
-	std::vector<Engine::IDriverDependantBitmap *> *_actspswbbmp;
-	std::vector<CachedActSpsData> *_actspswbcache;
 	// GUI surfaces
 	std::vector<Shared::Bitmap *> *_guibg;
 	std::vector<Engine::IDriverDependantBitmap *> *_guibgddb;

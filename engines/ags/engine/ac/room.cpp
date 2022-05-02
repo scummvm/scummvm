@@ -1012,10 +1012,8 @@ void compile_room_script() {
 }
 
 void on_background_frame_change() {
-
 	invalidate_screen();
 	mark_current_background_dirty();
-	invalidate_cached_walkbehinds();
 
 	// get the new frame's palette
 	memcpy(_G(palette), _GP(thisroom).BgFrames[_GP(play).bg_frame].Palette, sizeof(RGB) * 256);

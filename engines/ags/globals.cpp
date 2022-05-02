@@ -175,9 +175,6 @@ Globals::Globals() {
 
 	_actsps = new std::vector<Shared::Bitmap *>();
 	_actspsbmp = new std::vector<Engine::IDriverDependantBitmap *>();
-	_actspswb = new	std::vector<Shared::Bitmap *>();
-	_actspswbbmp = new std::vector<Engine::IDriverDependantBitmap *>();
-	_actspswbcache = new std::vector<CachedActSpsData>();
 	_guibg = new std::vector<Shared::Bitmap *>();
 	_guibgddb = new std::vector<Engine::IDriverDependantBitmap *>();
 	_debugRoomMaskBmp = new std::unique_ptr<Shared::Bitmap>();
@@ -433,9 +430,6 @@ Globals::~Globals() {
 	delete _thingsToDrawList;
 	delete _actsps;
 	delete _actspsbmp;
-	delete _actspswb;
-	delete _actspswbbmp;
-	delete _actspswbcache;
 	delete _guibg;
 	delete _guibgddb;
 	delete _debugRoomMaskBmp;
