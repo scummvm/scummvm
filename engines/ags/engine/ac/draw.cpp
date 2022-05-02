@@ -844,7 +844,7 @@ int sort_out_walk_behinds(Bitmap *sprit, int xx, int yy, int basel, int zoom = 1
 	int maskcol = sprit->GetMaskColor();
 	int spcoldep = sprit->GetColorDepth();
 	int screenhit = _GP(thisroom).WalkBehindMask->GetHeight();
-	short *shptr, *shptr2;
+	short *shptr;
 	int *loptr;
 	int pixelsChanged = 0;
 	int ee = 0;
@@ -1124,7 +1124,7 @@ void apply_tint_or_light(int actspsindex, int light_level,
 }
 
 Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, Bitmap *&dst, const Size dst_sz, BitmapFlip flip) {
-	if ((src->GetSize() == dst_sz) && (flip == kFlip_None))
+	if ((src->GetSize() == dst_sz) && (flip == kBitmap_NoFlip))
 		return src; // No transform: return source image
 
 	dst = recycle_bitmap(dst, src->GetColorDepth(), dst_sz.Width, dst_sz.Height, true);
@@ -1138,7 +1138,7 @@ Bitmap *transform_sprite(Bitmap *src, bool src_has_alpha, Bitmap *&dst, const Si
 		if (_G(in_new_room) > 0)
 			select_palette(_G(palette));
 
-		if (flip != kFlip_None) {
+		if (flip != kBitmap_NoFlip) {
 			Bitmap tempbmp;
 			tempbmp.CreateTransparent(dst_sz.Width, dst_sz.Height, src->GetColorDepth());
 			if ((IS_ANTIALIAS_SPRITES) && !src_has_alpha)

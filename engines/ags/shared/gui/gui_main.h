@@ -258,10 +258,6 @@ extern int get_adjusted_spritewidth(int spr);
 extern int get_adjusted_spriteheight(int spr);
 extern bool is_sprite_alpha(int spr);
 
-extern void draw_gui_sprite(Shared::Bitmap *ds, bool use_alpha, int x, int y,
-	Shared::Bitmap *image, bool src_has_alpha,
-	Shared::BlendMode blend_mode, int alpha);
-
 #define SET_EIP(x) set_our_eip(x);
 extern void set_eip_guiobj(int eip);
 extern int get_eip_guiobj();
