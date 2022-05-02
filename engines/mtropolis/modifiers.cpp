@@ -785,11 +785,15 @@ void CompoundVariableModifier::visitInternalReferences(IStructuralReferenceVisit
 
 bool CompoundVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
 	Modifier *var = findChildByName(attrib);
-	if (!var || !var->isVariable())
-		return false;
-
-	static_cast<VariableModifier *>(var)->varGetValue(thread, result);
-	return true;
+	if (var) {
+		if (var->isVariable()) {
+			static_cast<VariableModifier *>(var)->varGetValue(thread, result);
+		} else {
+			result.setObject(var->getSelfReference());
+		}
+		return true;
+	}
+	return Modifier::readAttribute(thread, result, attrib);
 }
 
 bool CompoundVariableModifier::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) {
