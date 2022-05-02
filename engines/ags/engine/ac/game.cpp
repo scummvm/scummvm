@@ -364,18 +364,16 @@ void unload_game_file() {
 
 	_GP(characterScriptObjNames).clear();
 	free(_G(charextra));
+	_G(charextra) = nullptr;
 	free(_G(mls));
+	_G(mls) = nullptr;
 
 	dispose_game_drawdata();
 
-	if ((_G(gameinst) != nullptr) && (_G(gameinst)->pc != 0)) {
-		quit("Error: unload_game called while script still running");
-	} else {
-		delete _G(gameinstFork);
-		delete _G(gameinst);
-		_G(gameinstFork) = nullptr;
-		_G(gameinst) = nullptr;
-	}
+	delete _G(gameinstFork);
+	delete _G(gameinst);
+	_G(gameinstFork) = nullptr;
+	_G(gameinst) = nullptr;
 
 	_GP(gamescript).reset();
 

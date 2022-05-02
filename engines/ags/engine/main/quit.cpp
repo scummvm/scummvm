@@ -25,6 +25,7 @@
 
 #include "ags/shared/core/platform.h"
 #include "ags/engine/ac/cd_audio.h"
+#include "ags/engine/ac/game.h"
 #include "ags/engine/ac/game_setup.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
@@ -148,7 +149,7 @@ void quit_release_data() {
 	resetRoomStatuses();
 	_GP(thisroom).Free();
 	_GP(play).Free();
-	_GP(AssetMgr).reset();
+	unload_game_file();
 }
 
 void quit_delete_temp_files() {
@@ -224,19 +225,15 @@ void quit_free() {
 
 	_GP(spriteset).Reset();
 
-	_G(our_eip) = 9907;
-
-	close_translation();
-
 	_G(our_eip) = 9908;
 
 	shutdown_pathfinder();
 
+	quit_release_data();
+
 	engine_shutdown_gfxmode();
 
 	quit_message_on_exit(quitmsg, alertis, qreason);
-
-	quit_release_data();
 
 	_G(platform)->PreBackendExit();
 
