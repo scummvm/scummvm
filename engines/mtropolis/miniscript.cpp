@@ -22,6 +22,7 @@
 #include "mtropolis/miniscript.h"
 #include "common/config-manager.h"
 
+#include "common/random.h"
 #include "common/memstream.h"
 
 namespace MTropolis {
@@ -856,6 +857,245 @@ MiniscriptInstructionOutcome OrderedCompareInstruction::execute(MiniscriptThread
 }
 
 BuiltinFunc::BuiltinFunc(BuiltinFunctionID bfid) : _funcID(bfid) {
+}
+
+MiniscriptInstructionOutcome BuiltinFunc::execute(MiniscriptThread *thread) const {
+	size_t stackArgsNeeded = 1;
+	bool returnsValue = true;
+
+	if (thread->getStackSize() < stackArgsNeeded) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	for (size_t i = 0; i < stackArgsNeeded; i++) {
+		MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(i, false);
+		if (outcome != kMiniscriptInstructionOutcomeContinue)
+			return outcome;
+	}
+
+	DynamicValue staticDest;
+	DynamicValue *dest = nullptr;
+
+	if (returnsValue) {
+		if (stackArgsNeeded > 0)
+			dest = &thread->getStackValueFromTop(stackArgsNeeded - 1).value;
+		else
+			dest = &staticDest;
+	}
+
+	MiniscriptInstructionOutcome outcome = executeFunction(thread, dest);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	if (stackArgsNeeded > 0) {
+		size_t valuesToPop = stackArgsNeeded;
+		if (returnsValue)
+			valuesToPop--;
+
+		if (valuesToPop > 0)
+			thread->popValues(valuesToPop);
+	} else {
+		if (returnsValue)
+			thread->pushValue(staticDest);
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome BuiltinFunc::executeFunction(MiniscriptThread *thread, DynamicValue *returnValue) const {
+	switch (_funcID) {
+	case kSin:
+	case kCos:
+	case kRandom:
+	case kSqrt:
+	case kTan:
+	case kAbs:
+	case kSign:
+	case kArctangent:
+	case kExp:
+	case kLn:
+	case kLog:
+	case kCosH:
+	case kSinH:
+	case kTanH:
+	case kTrunc:
+	case kRound:
+		return executeSimpleNumericInstruction(thread, returnValue);
+	case kRect2Polar:
+		return executeRectToPolar(thread, returnValue);
+	case kPolar2Rect:
+		return executePolarToRect(thread, returnValue);
+	case kNum2Str:
+		return executeNum2Str(thread, returnValue);
+	case kStr2Num:
+		return executeStr2Num(thread, returnValue);
+	default:
+		thread->error("Unimplemented built-in function");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+}
+
+MiniscriptInstructionOutcome BuiltinFunc::executeSimpleNumericInstruction(MiniscriptThread *thread, DynamicValue *returnValue) const {
+	double result = 0.0;
+
+	double input = 0.0;
+	const DynamicValue &inputDynamicValue = thread->getStackValueFromTop(0).value;
+
+	switch (inputDynamicValue.getType()) {
+	case DynamicValueTypes::kInteger:
+		input = inputDynamicValue.getInt();
+		break;
+	case DynamicValueTypes::kFloat:
+		input = inputDynamicValue.getFloat();
+		break;
+	default:
+		thread->error("Invalid numeric function input type");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	switch (_funcID) {
+	case kSin:
+		result = sin(input * (M_PI / 180.0));
+		break;
+	case kCos:
+		result = cos(input * (M_PI / 180.0));
+		break;
+	case kRandom:
+		if (input < 1.5)
+			result = 0.0;
+		else {
+			uint rngMax = static_cast<uint>(floor(input + 0.5)) - 1;
+			result = thread->getRuntime()->getRandom()->getRandomNumber(rngMax);
+		}
+		break;
+	case kSqrt:
+		result = sqrt(input);
+		break;
+	case kTan:
+		result = tan(input * (M_PI / 180.0));
+		break;
+	case kAbs:
+		result = fabs(input);
+		break;
+	case kSign:
+		if (input < 0.0)
+			result = -1;
+		else if (input > 0.0)
+			result = 1;
+		else
+			result = 0;
+		break;
+	case kArctangent:
+		result = atan(input) * (180.0 / M_PI);
+		break;
+	case kExp:
+		result = exp(input);
+		break;
+	case kLn:
+		result = log(input);
+		break;
+	case kLog:
+		result = log10(input);
+		break;
+	case kCosH:
+		result = cosh(input * (M_PI / 180.0));
+		break;
+	case kSinH:
+		result = sinh(input * (M_PI / 180.0));
+		break;
+	case kTanH:
+		result = tanh(input * (M_PI / 180.0));
+		break;
+	case kTrunc:
+		result = trunc(input);
+		break;
+	case kRound:
+		result = round(input);
+		break;
+	default:
+		thread->error("Unimplemented numeric function");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	returnValue->setFloat(result);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome BuiltinFunc::executeRectToPolar(MiniscriptThread *thread, DynamicValue *returnValue) const {
+	const DynamicValue &inputDynamicValue = thread->getStackValueFromTop(0).value;
+
+	if (inputDynamicValue.getType() != DynamicValueTypes::kPoint) {
+		thread->error("Polar to rect input must be a vector");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	const Point16 &pt = inputDynamicValue.getPoint();
+
+	double angle = atan2(pt.x, pt.y);
+	double magnitude = sqrt(pt.x * pt.x + pt.y * pt.y);
+
+	returnValue->setVector(AngleMagVector::create(angle, magnitude));
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome BuiltinFunc::executePolarToRect(MiniscriptThread *thread, DynamicValue *returnValue) const {
+	const DynamicValue &inputDynamicValue = thread->getStackValueFromTop(0).value;
+
+	if (inputDynamicValue.getType() != DynamicValueTypes::kVector) {
+		thread->error("Polar to rect input must be a vector");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	const AngleMagVector &vec = inputDynamicValue.getVector();
+
+	double x = cos(vec.angleRadians) * vec.magnitude;
+	double y = sin(vec.angleRadians) * vec.magnitude;
+
+	returnValue->setPoint(Point16::create(static_cast<int16>(round(x)), static_cast<int16>(round(y))));
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome BuiltinFunc::executeNum2Str(MiniscriptThread *thread, DynamicValue *returnValue) const {
+	Common::String result;
+
+	const DynamicValue &inputDynamicValue = thread->getStackValueFromTop(0).value;
+	switch (inputDynamicValue.getType()) {
+	case DynamicValueTypes::kInteger:
+		result.format("%i", static_cast<int>(inputDynamicValue.getInt()));
+		break;
+	case DynamicValueTypes::kFloat:
+		result.format("%g", static_cast<double>(inputDynamicValue.getFloat()));
+		break;
+	default:
+		thread->error("Invalid input value to num2str");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome BuiltinFunc::executeStr2Num(MiniscriptThread *thread, DynamicValue *returnValue) const {
+	double result = 0.0;
+
+	const DynamicValue &inputDynamicValue = thread->getStackValueFromTop(0).value;
+	if (inputDynamicValue.getType() != DynamicValueTypes::kString) {
+		thread->error("Invalid input value to str2num");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	const Common::String &str = inputDynamicValue.getString();
+	if (str.size() == 0 || !sscanf(str.c_str(), "%lf", &result)) {
+		thread->error("Couldn't parse number");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	returnValue->setFloat(result);
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 MiniscriptInstructionOutcome StrConcat::execute(MiniscriptThread *thread) const {

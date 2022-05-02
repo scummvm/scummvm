@@ -30,6 +30,7 @@
 
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/random.h"
 #include "common/substream.h"
 #include "common/system.h"
 
@@ -2483,6 +2484,8 @@ Runtime::SceneStackEntry::SceneStackEntry() {
 Runtime::Runtime(OSystem *system) : _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
 									_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
 									_system(system), _lastFrameCursor(nullptr), _defaultCursor(new DefaultCursor()) {
+	_random.reset(new Common::RandomSource("mtropolis"));
+
 	_vthread.reset(new VThread());
 
 	for (int i = 0; i < kColorDepthModeCount; i++) {
@@ -3187,7 +3190,9 @@ void Runtime::onMouseUp(int32 x, int32 y, Actions::MouseButton mButton) {
 		_mouseFocusWindow.reset();
 }
 
-
+Common::RandomSource* Runtime::getRandom() const {
+	return _random.get();
+}
 
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
@@ -4319,9 +4324,11 @@ bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result
 	if (attrib == "visible") {
 		result.setBool(_visible);
 		return true;
-	}
-	if (attrib == "direct") {
+	} else if (attrib == "direct") {
 		result.setBool(_directToScreen);
+		return true;
+	} else if (attrib == "position") {
+		result.setPoint(Point16::create(_rect.left, _rect.top));
 		return true;
 	}
 
@@ -4332,9 +4339,11 @@ bool VisualElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWrit
 	if (attrib == "visible") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetVisibility>::create(this, writeProxy);
 		return true;
-	}
-	if (attrib == "direct") {
+	} else if (attrib == "direct") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetDirect>::create(this, writeProxy);
+		return true;
+	} else if (attrib == "position") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetPosition>::create(this, writeProxy);
 		return true;
 	}
 
@@ -4372,6 +4381,34 @@ bool VisualElement::scriptSetDirect(const DynamicValue &dest) {
 		return true;
 	}
 	return false;
+}
+
+bool VisualElement::scriptSetPosition(const DynamicValue &dest) {
+	if (dest.getType() == DynamicValueTypes::kPoint) {
+		const Point16 &destPoint = dest.getPoint();
+		int32 xDelta = destPoint.x - _rect.left;
+		int32 yDelta = destPoint.y - _rect.right;
+
+		offsetTranslate(xDelta, yDelta);
+
+		return true;
+	}
+	return false;
+}
+
+void VisualElement::offsetTranslate(int32 xDelta, int32 yDelta) {
+	_rect.left += xDelta;
+	_rect.right += xDelta;
+	_rect.top += yDelta;
+	_rect.bottom += yDelta;
+
+	for (const Common::SharedPtr<Structural> &child : _children) {
+		if (child->isElement()) {
+			Element *element = static_cast<Element *>(child.get());
+			if (element->isVisual())
+				static_cast<VisualElement *>(element)->offsetTranslate(xDelta, yDelta);
+		}
+	}
 }
 
 VThreadState VisualElement::changeVisibilityTask(const ChangeFlagTaskData &taskData) {

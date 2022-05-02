@@ -44,22 +44,14 @@ protected:
 };
 
 struct STransCtModifier : public PlugInModifierData {
-	uint16 unknown1;	// Type tag? (0x17)
-	Event unknown2;		// Probably "apply when"
-	uint16 unknown3;	// Type tag? (0x17)
-	Event unknown4;		// Probably "remove when"
-	uint16 unknown5;	// Type tag? (1)
-	uint32 unknown6;
-	uint16 unknown7;	// Type tag? (1)
-	uint32 unknown8;
-	uint16 unknown9;	// Type tag? (1)
-	uint32 unknown10;
-	uint16 unknown11;	// Type tag? (1)
-	uint32 unknown12;
-	uint16 unknown13;	// Type tag? (1)
-	uint32 unknown14;
-	uint16 unknown15;	// Type tag? (0x14)
-	uint8 unknown16[2];
+	PlugInTypeTaggedValue enableWhen;  // Event
+	PlugInTypeTaggedValue disableWhen;	// Event
+	PlugInTypeTaggedValue transitionType;	// int
+	PlugInTypeTaggedValue transitionDirection;	// int
+	PlugInTypeTaggedValue unknown1; // int, seems to always be 1
+	PlugInTypeTaggedValue steps;	// int, seems to always be 32
+	PlugInTypeTaggedValue duration;    // int, always observed as 60000
+	PlugInTypeTaggedValue fullScreen; // bool
 
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;

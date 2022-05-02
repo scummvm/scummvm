@@ -43,10 +43,9 @@ DataReadErrorCode STransCtModifier::load(PlugIn &plugIn, const PlugInModifier &p
 	if (prefix.plugInRevision != 0)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!reader.readU16(unknown1) || !unknown2.load(reader) || !reader.readU16(unknown3) || !unknown4.load(reader)
-		|| !reader.readU16(unknown5) || !reader.readU32(unknown6) || !reader.readU16(unknown7) || !reader.readU32(unknown8)
-		|| !reader.readU16(unknown9) || !reader.readU32(unknown10) || !reader.readU16(unknown11) || !reader.readU32(unknown12)
-		|| !reader.readU16(unknown13) || !reader.readU32(unknown14) || !reader.readU16(unknown15) || !reader.readBytes(unknown16))
+	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !transitionType.load(reader) ||
+		!transitionDirection.load(reader) || !unknown1.load(reader) || !steps.load(reader) ||
+		!duration.load(reader) || !fullScreen.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
