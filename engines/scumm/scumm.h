@@ -281,7 +281,7 @@ typedef uint16 ResId;
 class ResourceManager;
 
 /**
- * DOS Programmable Interrupt Timer constants.
+ * DOS Programmable Interval Timer constants.
  *
  * The SCUMM engine (v1-v7, DOS) timer ticks are based on the jiffy unit (roughly 60Hz).
  * Well, if we want to be pedantic about it, it operates on quarter jiffies (240Hz),
@@ -298,7 +298,7 @@ class ResourceManager;
  * - Divisor:        the base frequency in DOS is not used as-is, but it is instead
  *                   divided by a customizable divisor which can range between
  *                   0 and (2^16-1), where 0 is a shortcut for 2^16. This operation
- *                   yields the custom frequency at which the custom assigned interrupt
+ *                   yields the custom frequency at which our custom interrupt
  *                   gets called (hence "Programmable");
  *
  * - Orchestrator:   starting from SCUMM v5, games started using iMUSE, and apparently
