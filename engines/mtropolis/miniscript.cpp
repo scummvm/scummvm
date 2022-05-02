@@ -1261,13 +1261,13 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 			if (indexableValueSlot.value.getType() == DynamicValueTypes::kObject) {
 				Common::SharedPtr<RuntimeObject> obj = indexableValueSlot.value.getObject().object.lock();
 				if (!obj) {
-					thread->error("Tried to read '" + attrib + "' to an invalid object reference");
+					thread->error("Tried to indirect '" + attrib + "' using an invalid object reference");
 					return kMiniscriptInstructionOutcomeFailed;
 				}
 
 				DynamicValueWriteProxy writeProxy;
 				if (!obj->writeRefAttribute(thread, writeProxy, attrib)) {
-					thread->error("Failed to read attribute '" + attrib + "'");
+					thread->error("Failed to get a writeable reference to attribute '" + attrib + "'");
 					return kMiniscriptInstructionOutcomeFailed;
 				}
 
