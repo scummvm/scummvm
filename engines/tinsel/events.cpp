@@ -42,6 +42,7 @@
 #include "tinsel/tinlib.h"	// For control()
 #include "tinsel/tinsel.h"
 #include "tinsel/token.h"
+#include "tinsel/noir/notebook.h"
 
 namespace Tinsel {
 
@@ -446,6 +447,18 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 
 	case PLR_MENU:
 		_vm->_dialogs->OpenMenu(MAIN_MENU);
+		break;
+
+	case PLR_INVENTORY:
+		if (TinselVersion == 3) {
+			_vm->_dialogs->PopUpInventory(INV_1);
+		}
+		break;
+
+	case PLR_NOTEBOOK:
+		if (TinselVersion == 3) {
+			_vm->_notebook->Show(false);
+		}
 		break;
 
 	case PLR_JUMP:

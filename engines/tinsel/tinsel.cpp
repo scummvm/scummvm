@@ -228,6 +228,12 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 			// Options dialog
 			ProcessKeyEvent(PLR_MENU);
 			continue;
+		case Common::KEYCODE_F2:
+			ProcessKeyEvent(PLR_INVENTORY);
+			continue;
+		case Common::KEYCODE_F3:
+			ProcessKeyEvent(PLR_NOTEBOOK);
+			continue;
 		case Common::KEYCODE_5:
 		case Common::KEYCODE_F5:
 			// Save game
