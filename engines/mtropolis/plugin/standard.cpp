@@ -181,8 +181,9 @@ bool ObjectReferenceVariableModifier::readAttribute(MiniscriptThread *thread, Dy
 			resolve();
 
 		if (_object.object.expired())
-			result.setObject(nullptr);
-		result.setObject(_object);
+			result.clear();
+		else
+			result.setObject(_object);
 		return true;
 	}
 
@@ -202,11 +203,21 @@ bool ObjectReferenceVariableModifier::writeRefAttribute(MiniscriptThread *thread
 	return VariableModifier::writeRefAttribute(thread, result, attrib);
 }
 
-bool ObjectReferenceVariableModifier::varSetValue(const DynamicValue &value) {
-	return false;
+bool ObjectReferenceVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
+	// Somewhat strangely, setting an object reference variable to something sets the path or object,
+	// but getting the variable returns the modifier
+	switch (value.getType()) {
+	case DynamicValueTypes::kNull:
+	case DynamicValueTypes::kObject:
+		return dynSetObject(value);
+	case DynamicValueTypes::kString:
+		return dynSetPath(value);
+	default:
+		return false;
+	}
 }
 
-void ObjectReferenceVariableModifier::varGetValue(DynamicValue &dest) const {
+void ObjectReferenceVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
 	dest.setObject(this->getSelfReference());
 }
 
@@ -218,21 +229,200 @@ bool ObjectReferenceVariableModifier::dynSetPath(const DynamicValue &value) {
 	if (value.getType() != DynamicValueTypes::kString)
 		return false;
 
-	_isResolved = false;
 	_objectPath = value.getString();
 	_object.reset();
 
 	return true;
 }
-bool ObjectReferenceVariableModifier::dynSetObject(const DynamicValue& value) {
 
+bool ObjectReferenceVariableModifier::dynSetObject(const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kNull) {
+		_object.reset();
+		_objectPath.clear();
+		_fullPath.clear();
+
+		return true;
+	} else if (value.getType() == DynamicValueTypes::kObject) {
+		Common::SharedPtr<RuntimeObject> obj = value.getObject().object.lock();
+		if (!obj)
+			return dynSetObject(DynamicValue());
+
+		if (!computeObjectPath(obj.get(), _fullPath))
+			return dynSetObject(DynamicValue());
+
+		_objectPath = _fullPath;
+		_object.object = obj;
+
+		return true;
+	} else
+		return false;
 }
 
 void ObjectReferenceVariableModifier::resolve() {
-	if (_isResolved)
+	if (!_object.object.expired())
 		return;
 
-	_isResolved = true;
+	_fullPath.clear();
+	_object.reset();
+
+	if (_objectPath.size() == 0)
+		return;
+
+	if (_objectPath[0] == '/')
+		resolveAbsolutePath();
+	else if (_objectPath[0] == '.')
+		resolveRelativePath(this, _objectPath, 0);
+	else
+		warning("Object reference variable had an unknown path format");
+
+	if (!_object.object.expired()) {
+		if (!computeObjectPath(_object.object.lock().get(), _fullPath)) {
+			_object.reset();
+		}
+	}
+}
+
+void ObjectReferenceVariableModifier::resolveRelativePath(RuntimeObject *obj, const Common::String &path, size_t startPos) {
+	bool haveNextLevel = true;
+	size_t nextLevelPos = startPos;
+
+	while (haveNextLevel) {
+		startPos = nextLevelPos;
+		size_t endPos = path.find('/', startPos);
+		if (endPos == Common::String::npos) {
+			haveNextLevel = false;
+			endPos = path.size();
+		} else {
+			nextLevelPos = endPos + 1;
+		}
+
+		Common::String levelName = path.substr(startPos, endPos - startPos);
+
+		// This is technically more forgiving than mTropolis, which only allows ".." chains at the start of the path
+		// Adjust this if it turns out to be a problem...
+		if (levelName == "..") {
+			obj = getObjectParent(obj);
+			if (obj == nullptr)
+				return;
+		}
+
+		const Common::Array<Common::SharedPtr<Modifier> > *modifierChildren = nullptr;
+		const Common::Array<Common::SharedPtr<Structural> > *structuralChildren = nullptr;
+
+		if (obj->isStructural()) {
+			Structural *structural = static_cast<Structural *>(obj);
+			modifierChildren = &structural->getModifiers();
+			structuralChildren = &structural->getChildren();
+		} else if (obj->isModifier()) {
+			Modifier *modifier = static_cast<Modifier *>(obj);
+			IModifierContainer *childContainer = modifier->getChildContainer();
+			if (childContainer)
+				modifierChildren = &childContainer->getModifiers();
+		}
+
+		bool foundMatch = false;
+		if (modifierChildren) {
+			for (const Common::SharedPtr<Modifier> &modifier : *modifierChildren) {
+				if (caseInsensitiveEqual(levelName, modifier->getName())) {
+					foundMatch = true;
+					obj = modifier.get();
+					break;
+				}
+			}
+		}
+		if (structuralChildren && !foundMatch) {
+			for (const Common::SharedPtr<Structural> &structural : *structuralChildren) {
+				if (caseInsensitiveEqual(levelName, structural->getName())) {
+					foundMatch = true;
+					obj = structural.get();
+					break;
+				}
+			}
+		}
+
+		if (!foundMatch)
+			return;
+	}
+}
+
+void ObjectReferenceVariableModifier::resolveAbsolutePath() {
+	assert(_objectPath[0] == '/');
+
+	RuntimeObject *project = this;
+	for (;;) {
+		RuntimeObject *parent = getObjectParent(project);
+		if (!parent)
+			break;
+		project = parent;
+	}
+
+	if (!project->isProject())
+		return; // Some sort of detached object
+
+	Common::String projectPrefixes[2] = {
+		"/" + static_cast<Structural *>(project)->getName(),
+		"/<project>"};
+
+	size_t prefixEnd = 0;
+
+	bool foundPrefix = false;
+	for (const Common::String &prefix : projectPrefixes) {
+		if (_objectPath.size() >= prefix.size() && caseInsensitiveEqual(_objectPath.substr(0, prefix.size()), prefix)) {
+			prefixEnd = prefix.size();
+			foundPrefix = true;
+			break;
+		}
+	}
+
+	if (!foundPrefix)
+		return;
+
+	// If the object path is longer, then there must be a slash separator, otherwise this doesn't match the project
+	if (prefixEnd == _objectPath.size()) {
+		_object = ObjectReference(project->getSelfReference());
+		return;
+	}
+
+	if (_objectPath[prefixEnd] != '/')
+		return;
+
+	return resolveRelativePath(project, _objectPath, prefixEnd + 1);
+}
+
+bool ObjectReferenceVariableModifier::computeObjectPath(RuntimeObject *obj, Common::String &outPath) {
+	Common::String pathForThis = "/";
+
+	if (obj->isStructural()) {
+		Structural *structural = static_cast<Structural *>(obj);
+		pathForThis += structural->getName();
+	} else if (obj->isModifier()) {
+		Modifier *modifier = static_cast<Modifier *>(obj);
+		pathForThis += modifier->getName();
+	}
+
+	RuntimeObject *parent = getObjectParent(this);
+
+	if (parent) {
+		Common::String pathForParent;
+		if (!computeObjectPath(parent, pathForParent))
+			return false;
+
+		outPath = pathForParent + pathForThis;
+	} else
+		outPath = pathForThis;
+
+	return true;
+}
+
+RuntimeObject *ObjectReferenceVariableModifier::getObjectParent(RuntimeObject *obj) {
+	if (obj->isStructural()) {
+		Structural *structural = static_cast<Structural *>(obj);
+		return structural->getParent();
+	} else if (obj->isModifier()) {
+		Modifier *modifier = static_cast<Modifier *>(obj);
+		return modifier->getParent().lock().get();
+	}
+	return nullptr;
 }
 
 MidiModifier::MidiModifier() : _plugIn(nullptr) {
@@ -373,7 +563,7 @@ bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, cons
 	return true;
 }
 
-bool ListVariableModifier::varSetValue(const DynamicValue &value) {
+bool ListVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kList)
 		_list = value.getList()->clone();
 	else
@@ -382,7 +572,7 @@ bool ListVariableModifier::varSetValue(const DynamicValue &value) {
 	return true;
 }
 
-void ListVariableModifier::varGetValue(DynamicValue &dest) const {
+void ListVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
 	dest.setList(_list);
 }
 

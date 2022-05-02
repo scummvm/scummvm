@@ -589,8 +589,8 @@ class BooleanVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data);
 
-	bool varSetValue(const DynamicValue &value) override;
-	void varGetValue(DynamicValue &dest) const override;
+	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
+	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Boolean Variable Modifier"; }
@@ -607,8 +607,8 @@ class IntegerVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IntegerVariableModifier &data);
 
-	bool varSetValue(const DynamicValue &value) override;
-	void varGetValue(DynamicValue &dest) const override;
+	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
+	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Integer Variable Modifier"; }
@@ -625,8 +625,8 @@ class IntegerRangeVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IntegerRangeVariableModifier &data);
 
-	bool varSetValue(const DynamicValue &value) override;
-	void varGetValue(DynamicValue &dest) const override;
+	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
+	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Integer Range Variable Modifier"; }
@@ -643,8 +643,8 @@ class VectorVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::VectorVariableModifier &data);
 
-	bool varSetValue(const DynamicValue &value) override;
-	void varGetValue(DynamicValue &dest) const override;
+	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
+	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Vector Variable Modifier"; }
@@ -661,8 +661,8 @@ class PointVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::PointVariableModifier &data);
 
-	bool varSetValue(const DynamicValue &value) override;
-	void varGetValue(DynamicValue &dest) const override;
+	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
+	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Point Variable Modifier"; }
@@ -679,8 +679,8 @@ class FloatingPointVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::FloatingPointVariableModifier &data);
 
-	bool varSetValue(const DynamicValue &value) override;
-	void varGetValue(DynamicValue &dest) const override;
+	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
+	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Floating Point Variable Modifier"; }
@@ -697,8 +697,8 @@ class StringVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::StringVariableModifier &data);
 
-	bool varSetValue(const DynamicValue &value) override;
-	void varGetValue(DynamicValue &dest) const override;
+	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
+	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "String Variable Modifier"; }

@@ -488,7 +488,7 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 		}
 
 		if (var != nullptr) {
-			if (!var->varSetValue(srcValue.value)) {
+			if (!var->varSetValue(thread, srcValue.value)) {
 				thread->error("Couldn't assign value to variable, probably wrong type");
 				return kMiniscriptInstructionOutcomeFailed;
 			}
@@ -750,6 +750,39 @@ MiniscriptInstructionOutcome OrderedCompareInstruction::execute(MiniscriptThread
 }
 
 BuiltinFunc::BuiltinFunc(BuiltinFunctionID bfid) : _funcID(bfid) {
+}
+
+MiniscriptInstructionOutcome StrConcat::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 2) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	outcome = thread->dereferenceRValue(1, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	DynamicValue &rVal = thread->getStackValueFromTop(0).value;
+	DynamicValue &lValDest = thread->getStackValueFromTop(1).value;
+
+	if (rVal.getType() != DynamicValueTypes::kString) {
+		thread->error("String concat right side was not a string");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	if (lValDest.getType() != DynamicValueTypes::kString) {
+		thread->error("String concat left side was not a string");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	lValDest.setString(lValDest.getString() + rVal.getString());
+	thread->popValues(1);
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 MiniscriptInstructionOutcome PointCreate::execute(MiniscriptThread *thread) const {
@@ -1084,7 +1117,7 @@ MiniscriptInstructionOutcome PushGlobal::executeFindFilteredParent(MiniscriptThr
 		bool isMatch = false;
 		switch (_globalID) {
 		case kGlobalRefElement:
-			isMatch = obj->isElement();
+			isMatch = obj->isStructural();	// We don't classify the project, sections, and subsections as elements, but mTropolis does
 			break;
 		case kGlobalRefSection:
 			isMatch = obj->isSection();
@@ -1106,7 +1139,13 @@ MiniscriptInstructionOutcome PushGlobal::executeFindFilteredParent(MiniscriptThr
 		if (isMatch)
 			break;
 		else if (obj->isStructural()) {
-			ref = static_cast<Structural *>(obj.get())->getParent()->getSelfReference();
+			Structural *parent = static_cast<Structural *>(obj.get())->getParent();
+			if (parent)
+				ref = parent->getSelfReference();
+			else {
+				ref.reset();
+				break;
+			}
 		} else if (obj->isModifier()) {
 			ref = static_cast<Modifier *>(obj.get())->getParent();
 		} else {
@@ -1234,7 +1273,7 @@ MiniscriptInstructionOutcome MiniscriptThread::dereferenceRValue(size_t offset, 
 			if (obj && obj->isModifier()) {
 				const Modifier *modifier = static_cast<const Modifier *>(obj.get());
 				if (modifier->isVariable()) {
-					static_cast<const VariableModifier *>(modifier)->varGetValue(stackValue.value);
+					static_cast<const VariableModifier *>(modifier)->varGetValue(this, stackValue.value);
 				}
 			}
 		} break;
@@ -1314,7 +1353,7 @@ MiniscriptInstructionOutcome MiniscriptThread::tryLoadVariable(MiniscriptStackVa
 		Common::SharedPtr<RuntimeObject> obj = stackValue.value.getObject().object.lock();
 		if (obj && obj->isModifier() && static_cast<Modifier *>(obj.get())->isVariable()) {
 			VariableModifier *varMod = static_cast<VariableModifier *>(obj.get());
-			varMod->varGetValue(stackValue.value);
+			varMod->varGetValue(this, stackValue.value);
 		}
 	}
 
