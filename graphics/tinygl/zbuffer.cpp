@@ -95,6 +95,8 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelFormat &for
 	_offscreenBuffer.zbuf = _zbuf;
 
 	_currentTexture = nullptr;
+
+	_enableScissor = false;
 }
 
 FrameBuffer::~FrameBuffer() {
