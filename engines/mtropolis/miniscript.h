@@ -111,19 +111,47 @@ namespace MiniscriptInstructions {
 		MessageFlags _messageFlags;
 	};
 
-	class Add : public UnimplementedInstruction {
+	class BinaryArithInstruction : public MiniscriptInstruction {
+	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
+
+	protected:
+		virtual MiniscriptInstructionOutcome arithExecute(MiniscriptThread *thread, double &result, double left, double right) const = 0;
 	};
 
-	class Sub : public UnimplementedInstruction {
+	class Add : public BinaryArithInstruction {
+	private:
+		MiniscriptInstructionOutcome arithExecute(MiniscriptThread *thread, double &result, double left, double right) const override;
 	};
 
-	class Mul : public UnimplementedInstruction {
+	class Sub : public BinaryArithInstruction {
+	private:
+		MiniscriptInstructionOutcome arithExecute(MiniscriptThread *thread, double &result, double left, double right) const override;
 	};
 
-	class Div : public UnimplementedInstruction {
+	class Mul : public BinaryArithInstruction {
+	private:
+		MiniscriptInstructionOutcome arithExecute(MiniscriptThread *thread, double &result, double left, double right) const override;
 	};
 
-	class Pow : public UnimplementedInstruction {
+	class Div : public BinaryArithInstruction {
+	private:
+		MiniscriptInstructionOutcome arithExecute(MiniscriptThread *thread, double &result, double left, double right) const override;
+	};
+
+	class Pow : public BinaryArithInstruction {
+	private:
+		MiniscriptInstructionOutcome arithExecute(MiniscriptThread *thread, double &result, double left, double right) const override;
+	};
+
+	class DivInt : public BinaryArithInstruction {
+	private:
+		MiniscriptInstructionOutcome arithExecute(MiniscriptThread *thread, double &result, double left, double right) const override;
+	};
+
+	class Modulo : public BinaryArithInstruction {
+	private:
+		MiniscriptInstructionOutcome arithExecute(MiniscriptThread *thread, double &result, double left, double right) const override;
 	};
 
 	class And : public MiniscriptInstruction {
@@ -219,12 +247,6 @@ namespace MiniscriptInstructions {
 
 	private:
 		BuiltinFunctionID _funcID;
-	};
-
-	class DivInt : public UnimplementedInstruction {
-	};
-
-	class Modulo : public UnimplementedInstruction {
 	};
 
 	class StrConcat : public MiniscriptInstruction {

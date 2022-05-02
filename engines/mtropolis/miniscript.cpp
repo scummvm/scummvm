@@ -557,6 +557,112 @@ MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
 	}
 }
 
+MiniscriptInstructionOutcome BinaryArithInstruction::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 2) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	outcome = thread->dereferenceRValue(1, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	DynamicValue &rs = thread->getStackValueFromTop(0).value;
+	DynamicValue &lsDest = thread->getStackValueFromTop(1).value;
+
+	double leftVal = 0.0;
+	switch (lsDest.getType()) {
+	case DynamicValueTypes::kInteger:
+		leftVal = lsDest.getInt();
+		break;
+	case DynamicValueTypes::kFloat:
+		leftVal = lsDest.getFloat();
+		break;
+	default:
+		thread->error("Invalid left-side type for binary arithmetic operator");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	double rightVal = 0.0;
+	switch (rs.getType()) {
+	case DynamicValueTypes::kInteger:
+		rightVal = rs.getInt();
+		break;
+	case DynamicValueTypes::kFloat:
+		rightVal = rs.getFloat();
+		break;
+	default:
+		thread->error("Invalid right-side type for binary arithmetic operator");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	double result = 0.0;
+	outcome = arithExecute(thread, result, leftVal, rightVal);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	lsDest.setFloat(result);
+
+	thread->popValues(1);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome Add::arithExecute(MiniscriptThread *thread, double &result, double left, double right) const {
+	result = left + right;
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome Sub::arithExecute(MiniscriptThread *thread, double &result, double left, double right) const {
+	result = left - right;
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome Mul::arithExecute(MiniscriptThread *thread, double &result, double left, double right) const {
+	result = left * right;
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome Div::arithExecute(MiniscriptThread *thread, double &result, double left, double right) const {
+	if (right == 0.0) {
+		thread->error("Arithmetic error: Division by zero");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+	result = left / right;
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome Pow::arithExecute(MiniscriptThread *thread, double &result, double left, double right) const {
+	if (left < 0.0 && right != floor(right)) {
+		thread->error("Arithmetic error: Left side is negative but right side is not an integer");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+	result = pow(left, right);
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome DivInt::arithExecute(MiniscriptThread *thread, double &result, double left, double right) const {
+	if (right == 0.0) {
+		thread->error("Arithmetic error: Integer division by zero");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+	result = floor(left / right);
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome Modulo::arithExecute(MiniscriptThread *thread, double &result, double left, double right) const {
+	if (right == 0.0) {
+		thread->error("Arithmetic error: Modulo division by zero");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+	result = fmod(left, right);
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 MiniscriptInstructionOutcome UnorderedCompareInstruction::execute(MiniscriptThread *thread) const {
 	if (thread->getStackSize() < 2) {
 		thread->error("Stack underflow");
