@@ -4007,7 +4007,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 	int w, h;
 	int i;
 	bool canHalt = false;
-	bool is1x1Pattern = (width == height == 1);
+	bool is1x1Pattern = (width == 1 && height == 1);
 	// There's probably some less memory-hungry way of doing this. But
 	// since we're only dealing with relatively small images, it shouldn't
 	// be too bad.
