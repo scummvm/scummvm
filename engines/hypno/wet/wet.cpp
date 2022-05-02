@@ -481,12 +481,20 @@ void WetEngine::loadFonts() {
 }
 
 void WetEngine::drawString(const Common::String &font, const Common::String &str, int x, int y, int w, uint32 color) {
+	int offset = 0;
 	if (font == "block05.fgx") {
 		for (uint32 c = 0; c < str.size(); c++) {
+
+			offset = 0;
+			if (str[c] == ':')
+				offset = 1;
+			else if (str[c] == '.')
+				offset = 4;
+
 			for (int i = 0; i < 5; i++) {
 				for (int j = 0; j < 5; j++) {
 					if (!_font05.get(275 + 40*str[c] + j*8 + i))
-						_compositeSurface->setPixel(x + 5 - i + 6*c, y + j, color);
+						_compositeSurface->setPixel(x + 5 - i + 6*c, offset + y + j, color);
 				}
 			}
 		}
@@ -495,10 +503,18 @@ void WetEngine::drawString(const Common::String &font, const Common::String &str
 			if (str[c] == 0)
 				continue;
 			assert(str[c] >= 32);
+			offset = 0;
+			if (str[c] == 't')
+				offset = 0;
+			else if (str[c] == 'i' || str[c] == '%')
+				offset = 1;
+			else if (Common::isLower(str[c]) || str[c] == ':')
+				offset = 2;
+
 			for (int i = 0; i < 6; i++) {
 				for (int j = 0; j < 8; j++) {
 					if (!_font08.get(1554 + 72*(str[c]-32) + j*8 + i))
-						_compositeSurface->setPixel(x + 6 - i + 7*c, y + j, color);
+						_compositeSurface->setPixel(x + 6 - i + 7*c, offset + y + j, color);
 				}
 			}
 		}
