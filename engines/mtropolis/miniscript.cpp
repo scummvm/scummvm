@@ -476,9 +476,10 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 
 	if (target.value.getType() == DynamicValueTypes::kWriteProxy) {
 		const DynamicValueWriteProxyPOD &proxy = target.value.getWriteProxyPOD();
-		if (!proxy.ifc->write(thread, srcValue.value, proxy.objectRef, proxy.ptrOrOffset)) {
+		outcome = proxy.ifc->write(thread, srcValue.value, proxy.objectRef, proxy.ptrOrOffset);
+		if (outcome == kMiniscriptInstructionOutcomeFailed) {
 			thread->error("Failed to assign value");
-			return kMiniscriptInstructionOutcomeFailed;
+			return outcome;
 		}
 	} else {
 		VariableModifier *var = nullptr;
@@ -551,7 +552,7 @@ MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
 
 	if (_messageFlags.immediate) {
 		thread->getRuntime()->sendMessageOnVThread(dispatch);
-		return kMiniscriptInstructionOutcomeYieldToVThread;
+		return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
 	} else {
 		thread->getRuntime()->queueMessage(dispatch);
 		return kMiniscriptInstructionOutcomeContinue;
@@ -1202,6 +1203,8 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 
 	const Common::String &attrib = attribs[_attribute].name;
 
+	MiniscriptInstructionOutcome outcome = kMiniscriptInstructionOutcomeFailed;
+
 	if (_isIndexed) {
 		if (thread->getStackSize() < 2) {
 			thread->error("Stack underflow");
@@ -1209,7 +1212,7 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 		}
 
 		// Convert index
-		MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+		outcome = thread->dereferenceRValue(0, false);
 		if (outcome != kMiniscriptInstructionOutcomeContinue)
 			return outcome;
 
@@ -1225,16 +1228,20 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 				}
 
 				DynamicValueWriteProxy proxy;
-				if (!obj->writeRefAttributeIndexed(thread, proxy, attrib, indexSlot.value)) {
-					thread->error("Failed to get a writeable reference to attribute '" + attrib + "'");
-					return kMiniscriptInstructionOutcomeFailed;
+				outcome = obj->writeRefAttributeIndexed(thread, proxy, attrib, indexSlot.value);
+				if (outcome == kMiniscriptInstructionOutcomeFailed) {
+					thread->error("Failed to get a writeable reference to indexed attribute '" + attrib + "'");
+					return outcome;
 				}
+
+				indexableValueSlot.value.setWriteProxy(proxy);
 			} else if (indexableValueSlot.value.getType() == DynamicValueTypes::kWriteProxy) {
 				DynamicValueWriteProxy proxy = indexableValueSlot.value.getWriteProxyTEMP();
 
-				if (!proxy.pod.ifc->refAttribIndexed(thread, proxy, proxy.pod.objectRef, proxy.pod.ptrOrOffset, attrib, indexSlot.value)) {
+				outcome = proxy.pod.ifc->refAttribIndexed(thread, proxy, proxy.pod.objectRef, proxy.pod.ptrOrOffset, attrib, indexSlot.value);
+				if (outcome == kMiniscriptInstructionOutcomeFailed) {
 					thread->error("Can't write to indexed attribute '" + attrib + "'");
-					return kMiniscriptInstructionOutcomeFailed;
+					return outcome;
 				}
 
 				indexableValueSlot.value.setWriteProxy(proxy);
@@ -1266,17 +1273,19 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 				}
 
 				DynamicValueWriteProxy writeProxy;
-				if (!obj->writeRefAttribute(thread, writeProxy, attrib)) {
+				outcome = obj->writeRefAttribute(thread, writeProxy, attrib);
+				if (outcome == kMiniscriptInstructionOutcomeFailed) {
 					thread->error("Failed to get a writeable reference to attribute '" + attrib + "'");
-					return kMiniscriptInstructionOutcomeFailed;
+					return outcome;
 				}
 
 				indexableValueSlot.value.setWriteProxy(writeProxy);
 			} else if (indexableValueSlot.value.getType() == DynamicValueTypes::kWriteProxy) {
 				DynamicValueWriteProxy proxy = indexableValueSlot.value.getWriteProxyTEMP();
-				if (!proxy.pod.ifc->refAttrib(thread, proxy, proxy.pod.objectRef, proxy.pod.ptrOrOffset, attrib)) {
+				outcome = proxy.pod.ifc->refAttrib(thread, proxy, proxy.pod.objectRef, proxy.pod.ptrOrOffset, attrib);
+				if (outcome == kMiniscriptInstructionOutcomeFailed) {
 					thread->error("Can't write to attribute '" + attrib + "'");
-					return kMiniscriptInstructionOutcomeFailed;
+					return outcome;
 				}
 				indexableValueSlot.value.setWriteProxy(proxy);
 			} else {
@@ -1284,13 +1293,11 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 				return kMiniscriptInstructionOutcomeFailed;
 			}
 		} else {
-			MiniscriptInstructionOutcome outcome = readRValueAttrib(thread, indexableValueSlot.value, attrib);
-			if (outcome != kMiniscriptInstructionOutcomeContinue)
-				return outcome;
+			outcome = readRValueAttrib(thread, indexableValueSlot.value, attrib);
 		}
 	}
 
-	return kMiniscriptInstructionOutcomeContinue;
+	return outcome;
 }
 
 MiniscriptInstructionOutcome GetChild::readRValueAttrib(MiniscriptThread *thread, DynamicValue &valueSrcDest, const Common::String &attrib) const {
@@ -1678,7 +1685,8 @@ VThreadState MiniscriptThread::resume(const ResumeTaskData &taskData) {
 	}
 
 	while (_currentInstruction < numInstrs && !_failed) {
-		MiniscriptInstruction *instr = instrs[_currentInstruction++];
+		size_t instrNum = _currentInstruction++;
+		MiniscriptInstruction *instr = instrs[instrNum];
 
 		MiniscriptInstructionOutcome outcome = instr->execute(this);
 		if (outcome == kMiniscriptInstructionOutcomeFailed) {
@@ -1687,7 +1695,12 @@ VThreadState MiniscriptThread::resume(const ResumeTaskData &taskData) {
 			return kVThreadReturn;
 		}
 
-		if (outcome == kMiniscriptInstructionOutcomeYieldToVThread)
+		if (outcome == kMiniscriptInstructionOutcomeYieldToVThreadAndRetry) {
+			_currentInstruction = instrNum;
+			return kVThreadReturn;
+		}
+
+		if (outcome == kMiniscriptInstructionOutcomeYieldToVThreadNoRetry)
 			return kVThreadReturn;
 	}
 

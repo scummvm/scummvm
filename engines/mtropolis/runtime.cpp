@@ -24,6 +24,7 @@
 #include "mtropolis/vthread.h"
 #include "mtropolis/asset_factory.h"
 #include "mtropolis/element_factory.h"
+#include "mtropolis/miniscript.h"
 #include "mtropolis/modifier_factory.h"
 #include "mtropolis/modifiers.h"
 #include "mtropolis/render.h"
@@ -227,17 +228,17 @@ bool Point16::load(const Data::Point &point) {
 	return true;
 }
 
-bool Point16::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
+MiniscriptInstructionOutcome Point16::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
 	if (attrib == "x") {
 		DynamicValueWriteIntegerHelper<int16>::create(&x, proxy);
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "y") {
 		DynamicValueWriteIntegerHelper<int16>::create(&y, proxy);
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
-	return false;
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
 bool Rect16::load(const Data::Rect &rect) {
@@ -897,72 +898,79 @@ void DynamicList::initFromOther(const DynamicList &other) {
 	}
 }
 
-bool DynamicList::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr_t ptrOrOffset) const {
-	return static_cast<DynamicList *>(objectRef)->setAtIndex(ptrOrOffset, value);
+MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr_t ptrOrOffset) const {
+	if (!static_cast<DynamicList *>(objectRef)->setAtIndex(ptrOrOffset, value))
+		return kMiniscriptInstructionOutcomeFailed;
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
-bool DynamicList::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const {
+MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const {
 	DynamicList *list = static_cast<DynamicList *>(objectRef);
+	bool succeeded = false;
 	switch (list->getType()) {
 	case DynamicValueTypes::kPoint:
 		list->expandToMinimumSize(ptrOrOffset + 1);
-		return list->getPoint()[ptrOrOffset].refAttrib(thread, proxy, attrib);
+		succeeded = list->getPoint()[ptrOrOffset].refAttrib(thread, proxy, attrib);
 		break;
 	case DynamicValueTypes::kIntegerRange:
 		list->expandToMinimumSize(ptrOrOffset + 1);
-		return list->getIntRange()[ptrOrOffset].refAttrib(thread, proxy, attrib);
+		succeeded = list->getIntRange()[ptrOrOffset].refAttrib(thread, proxy, attrib);
+		break;
 	case DynamicValueTypes::kVector:
 		list->expandToMinimumSize(ptrOrOffset + 1);
-		return list->getVector()[ptrOrOffset].refAttrib(thread, proxy, attrib);
+		succeeded = list->getVector()[ptrOrOffset].refAttrib(thread, proxy, attrib);
 	case DynamicValueTypes::kObject: {
 			if (list->getSize() <= ptrOrOffset)
-				return false;
+			return kMiniscriptInstructionOutcomeFailed;
 
 			Common::SharedPtr<RuntimeObject> obj = list->getObjectReference()[ptrOrOffset].object.lock();
 			proxy.containerList.reset();
-			if (!obj && !obj->writeRefAttribute(thread, proxy, attrib))
-				return false;
-
-			return true;
-		}
+			succeeded = (obj && obj->writeRefAttribute(thread, proxy, attrib));
+		} break;
 	default:
-		return false;
+		succeeded = false;
+		break;
 	}
+
+	if (succeeded)
+		return kMiniscriptInstructionOutcomeContinue;
+
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
-bool DynamicList::WriteProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
 	DynamicList *list = static_cast<DynamicList *>(objectRef);
 	switch (list->getType()) {
 	case DynamicValueTypes::kList: {
 			if (list->getSize() <= ptrOrOffset)
-				return false;
+				return kMiniscriptInstructionOutcomeFailed;
 
 			Common::SharedPtr<DynamicList> subList = list->getList()[ptrOrOffset];
 
 			size_t subIndex = 0;
 			if (!subList->dynamicValueToIndex(subIndex, index))
-				return false;
+				return kMiniscriptInstructionOutcomeFailed;
 
 			subList->createWriteProxyForIndex(subIndex, proxy);
 			proxy.containerList = subList;
-			return true;
+			return kMiniscriptInstructionOutcomeContinue;
 		}
 	case DynamicValueTypes::kObject: {
 			if (list->getSize() <= ptrOrOffset)
-				return false;
+				return kMiniscriptInstructionOutcomeFailed;
 
 			Common::SharedPtr<RuntimeObject> obj = list->getObjectReference()[ptrOrOffset].object.lock();
 			proxy.containerList.reset();
 			if (!obj && !obj->writeRefAttributeIndexed(thread, proxy, attrib, index))
-				return false;
+				return kMiniscriptInstructionOutcomeFailed;
 
-			return true;
+			return kMiniscriptInstructionOutcomeContinue;
 		}
 	default:
-		return false;
+		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	return false;
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
 DynamicList::WriteProxyInterface DynamicList::WriteProxyInterface::_instance;
@@ -1425,23 +1433,23 @@ void DynamicValue::initFromOther(const DynamicValue &other) {
 	_type = other._type;
 }
 
-bool DynamicValueWriteStringHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr_t ptrOrOffset) const {
+MiniscriptInstructionOutcome DynamicValueWriteStringHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr_t ptrOrOffset) const {
 	Common::String &dest = *static_cast<Common::String *>(objectRef);
 	switch (value.getType()) {
 	case DynamicValueTypes::kString:
 		dest = value.getString();
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	default:
-		return false;
+		return kMiniscriptInstructionOutcomeFailed;
 	}
 }
 
-bool DynamicValueWriteStringHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const {
-	return false;
+MiniscriptInstructionOutcome DynamicValueWriteStringHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const {
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
-bool DynamicValueWriteStringHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
-	return false;
+MiniscriptInstructionOutcome DynamicValueWriteStringHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
 void DynamicValueWriteStringHelper::create(Common::String *strValue, DynamicValueWriteProxy &proxy) {
@@ -1686,7 +1694,7 @@ bool Event::load(const Data::Event &data) {
 	return true;
 }
 
-bool AngleMagVector::dynSetAngleDegrees(const DynamicValue &value) {
+MiniscriptInstructionOutcome AngleMagVector::scriptSetAngleDegrees(MiniscriptThread *thread, const DynamicValue &value) {
 	double degrees = 0.0;
 	switch (value.getType())
 	{
@@ -1697,30 +1705,31 @@ bool AngleMagVector::dynSetAngleDegrees(const DynamicValue &value) {
 		degrees = value.getFloat();
 		break;
 	default:
-		return false;
+		return kMiniscriptInstructionOutcomeFailed;
 	}
 
 	angleRadians = degrees * (M_PI / 180.0);
 
-	return true;
+	return kMiniscriptInstructionOutcomeContinue;
+	;
 }
 
-void AngleMagVector::dynGetAngleDegrees(DynamicValue &value) const {
+void AngleMagVector::scriptGetAngleDegrees(DynamicValue &value) const {
 	value.setFloat(angleRadians * (180.0 / M_PI));
 }
 
 
-bool AngleMagVector::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
+MiniscriptInstructionOutcome AngleMagVector::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
 	if (attrib == "angle") {
-		DynamicValueWriteFuncHelper<AngleMagVector, &AngleMagVector::dynSetAngleDegrees>::create(this, proxy);
-		return true;
+		DynamicValueWriteFuncHelper<AngleMagVector, &AngleMagVector::scriptSetAngleDegrees>::create(this, proxy);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "magnitude") {
 		DynamicValueWriteFloatHelper<double>::create(&magnitude, proxy);
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
-	return false;
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
 void IPlugInModifierRegistrar::registerPlugInModifier(const char *name, const IPlugInModifierFactoryAndDataFactory *loaderFactory) {
@@ -1879,12 +1888,12 @@ bool RuntimeObject::readAttributeIndexed(MiniscriptThread *thread, DynamicValue 
 	return false;
 }
 
-bool RuntimeObject::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
-	return false;
+MiniscriptInstructionOutcome RuntimeObject::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
-bool RuntimeObject::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) {
-	return false;
+MiniscriptInstructionOutcome RuntimeObject::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) {
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
 MessageProperties::MessageProperties(const Event &evt, const DynamicValue &value, const Common::WeakPtr<RuntimeObject> &source)
@@ -1903,7 +1912,7 @@ const Common::WeakPtr<RuntimeObject>& MessageProperties::getSource() const {
 	return _source;
 }
 
-Structural::Structural() : _parent(nullptr) {
+Structural::Structural() : _parent(nullptr), _paused(false) {
 }
 
 Structural::~Structural() {
@@ -1925,14 +1934,22 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 		result.setString(_name);
 		return true;
 	}
+	if (attrib == "paused") {
+		result.setBool(_paused);
+		return true;
+	}
 
 	return RuntimeObject::readAttribute(thread, result, attrib);
 }
 
-bool Structural::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "name") {
 		DynamicValueWriteStringHelper::create(&_name, result);
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "paused") {
+		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetPaused>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return RuntimeObject::writeRefAttribute(thread, result, attrib);
@@ -2093,12 +2110,34 @@ DebugInspector *Structural::debugCreateInspector() {
 void Structural::linkInternalReferences(ObjectLinkingScope *scope) {
 }
 
+void Structural::onPauseStateChanged() {
+}
+
 ObjectLinkingScope *Structural::getPersistentStructuralScope() {
 	return nullptr;
 }
 
 ObjectLinkingScope* Structural::getPersistentModifierScope() {
 	return nullptr;
+}
+
+MiniscriptInstructionOutcome Structural::scriptSetPaused(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kBoolean)
+		return kMiniscriptInstructionOutcomeFailed;
+
+	const bool targetValue = value.getBool();
+
+	if (targetValue == _paused)
+		return kMiniscriptInstructionOutcomeContinue;
+
+	_paused = targetValue;
+	onPauseStateChanged();
+
+	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(targetValue ? EventIDs::kPause : EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
+	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+	thread->getRuntime()->sendMessageOnVThread(dispatch);
+
+	return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
 }
 
 ObjectLinkingScope::ObjectLinkingScope() : _parent(nullptr) {
@@ -4341,29 +4380,29 @@ bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result
 	return Element::readAttribute(thread, result, attrib);
 }
 
-bool VisualElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	if (attrib == "visible") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetVisibility>::create(this, writeProxy);
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "direct") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetDirect>::create(this, writeProxy);
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "position") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetPosition>::create(this, writeProxy);
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return Element::writeRefAttribute(thread, writeProxy, attrib);
 }
 
-bool VisualElement::scriptSetVisibility(const DynamicValue& result) {
+MiniscriptInstructionOutcome VisualElement::scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result) {
 	// FIXME: Need to make this fire Show/Hide events!
 	if (result.getType() == DynamicValueTypes::kBoolean) {
 		_visible = result.getBool();
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
-	return false;
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
 bool VisualElement::loadCommon(const Common::String &name, uint32 guid, const Data::Rect &rect, uint32 elementFlags, uint16 layer, uint32 streamLocator, uint16 sectionID) {
@@ -4381,15 +4420,15 @@ bool VisualElement::loadCommon(const Common::String &name, uint32 guid, const Da
 	return true;
 }
 
-bool VisualElement::scriptSetDirect(const DynamicValue &dest) {
+MiniscriptInstructionOutcome VisualElement::scriptSetDirect(MiniscriptThread *thread, const DynamicValue &dest) {
 	if (dest.getType() == DynamicValueTypes::kBoolean) {
 		_directToScreen = dest.getBool();
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	}
-	return false;
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
-bool VisualElement::scriptSetPosition(const DynamicValue &dest) {
+MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *thread, const DynamicValue &dest) {
 	if (dest.getType() == DynamicValueTypes::kPoint) {
 		const Point16 &destPoint = dest.getPoint();
 		int32 xDelta = destPoint.x - _rect.left;
@@ -4397,9 +4436,9 @@ bool VisualElement::scriptSetPosition(const DynamicValue &dest) {
 
 		offsetTranslate(xDelta, yDelta);
 
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	}
-	return false;
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
 void VisualElement::offsetTranslate(int32 xDelta, int32 yDelta) {
@@ -4585,15 +4624,17 @@ DynamicValueWriteProxy VariableModifier::createWriteProxy() {
 	return proxy;
 }
 
-bool VariableModifier::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const {
-	return static_cast<VariableModifier *>(objectRef)->varSetValue(thread, dest);
+MiniscriptInstructionOutcome VariableModifier::WriteProxyInterface::write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr_t ptrOrOffset) const {
+	if (!static_cast<VariableModifier *>(objectRef)->varSetValue(thread, dest))
+		return kMiniscriptInstructionOutcomeFailed;
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
-bool VariableModifier::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const {
+MiniscriptInstructionOutcome VariableModifier::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const {
 	return static_cast<VariableModifier *>(objectRef)->writeRefAttribute(thread, dest, attrib);
 }
 
-bool VariableModifier::WriteProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+MiniscriptInstructionOutcome VariableModifier::WriteProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &dest, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
 	return static_cast<VariableModifier *>(objectRef)->writeRefAttributeIndexed(thread, dest, attrib, index);
 }
 

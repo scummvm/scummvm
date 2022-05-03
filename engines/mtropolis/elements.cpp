@@ -52,7 +52,7 @@ void GraphicElement::render(Window *window) {
 }
 
 MovieElement::MovieElement()
-	: _cacheBitmap(false), _paused(false), _reversed(false), _haveFiredAtFirstCel(false), _haveFiredAtLastCel(false)
+	: _cacheBitmap(false), _reversed(false), _haveFiredAtFirstCel(false), _haveFiredAtLastCel(false)
 	, _loop(false), _alternate(false), _playEveryFrame(false), _assetID(0), _runtime(nullptr) {
 }
 
@@ -77,25 +77,6 @@ bool MovieElement::load(ElementLoaderContext &context, const Data::MovieElement 
 	_runtime = context.runtime;
 
 	return true;
-}
-
-bool MovieElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
-	if (attrib == "paused") {
-		result.setBool(_paused);
-		return true;
-	}
-
-	return VisualElement::readAttribute(thread, result, attrib);
-}
-
-bool MovieElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
-
-	if (attrib == "paused") {
-		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetPaused>::create(this, writeProxy);
-		return true;
-	}
-	
-	return VisualElement::writeRefAttribute(thread, writeProxy, attrib);
 }
 
 VThreadState MovieElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
@@ -200,14 +181,6 @@ void MovieElement::onPostRender(Runtime *runtime, Project *project) {
 	}
 }
 
-bool MovieElement::scriptSetPaused(const DynamicValue& dest) {
-	if (dest.getType() == DynamicValueTypes::kBoolean) {
-		_paused = dest.getBool();
-		return true;
-	}
-	return false;
-}
-
 void MovieElement::onSegmentUnloaded(int segmentIndex) {
 	_videoDecoder.reset();
 }
@@ -252,7 +225,7 @@ bool ImageElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 	return VisualElement::readAttribute(thread, result, attrib);
 }
 
-bool ImageElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+MiniscriptInstructionOutcome ImageElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	return VisualElement::writeRefAttribute(thread, writeProxy, attrib);
 }
 
@@ -450,7 +423,7 @@ bool TextLabelElement::readAttribute(MiniscriptThread *thread, DynamicValue &res
 	return VisualElement::readAttribute(thread, result, attrib);
 }
 
-bool TextLabelElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+MiniscriptInstructionOutcome TextLabelElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	return VisualElement::writeRefAttribute(thread, writeProxy, attrib);
 }
 
@@ -511,7 +484,7 @@ bool SoundElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 	return NonVisualElement::readAttribute(thread, result, attrib);
 }
 
-bool SoundElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+MiniscriptInstructionOutcome SoundElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	return NonVisualElement::writeRefAttribute(thread, writeProxy, attrib);
 }
 

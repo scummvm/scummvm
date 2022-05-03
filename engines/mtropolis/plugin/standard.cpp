@@ -190,14 +190,14 @@ bool ObjectReferenceVariableModifier::readAttribute(MiniscriptThread *thread, Dy
 	return VariableModifier::readAttribute(thread, result, attrib);
 }
 
-bool ObjectReferenceVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+MiniscriptInstructionOutcome ObjectReferenceVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "path") {
-		DynamicValueWriteFuncHelper<ObjectReferenceVariableModifier, &ObjectReferenceVariableModifier::dynSetPath>::create(this, result);
-		return true;
+		DynamicValueWriteFuncHelper<ObjectReferenceVariableModifier, &ObjectReferenceVariableModifier::scriptSetPath>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "object") {
-		DynamicValueWriteFuncHelper<ObjectReferenceVariableModifier, &ObjectReferenceVariableModifier::dynSetObject>::create(this, result);
-		return true;
+		DynamicValueWriteFuncHelper<ObjectReferenceVariableModifier, &ObjectReferenceVariableModifier::scriptSetObject>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return VariableModifier::writeRefAttribute(thread, result, attrib);
@@ -209,9 +209,9 @@ bool ObjectReferenceVariableModifier::varSetValue(MiniscriptThread *thread, cons
 	switch (value.getType()) {
 	case DynamicValueTypes::kNull:
 	case DynamicValueTypes::kObject:
-		return dynSetObject(value);
+		return scriptSetObject(thread, value);
 	case DynamicValueTypes::kString:
-		return dynSetPath(value);
+		return scriptSetPath(thread, value);
 	default:
 		return false;
 	}
@@ -225,37 +225,37 @@ Common::SharedPtr<Modifier> ObjectReferenceVariableModifier::shallowClone() cons
 	return Common::SharedPtr<Modifier>(new ObjectReferenceVariableModifier(*this));
 }
 
-bool ObjectReferenceVariableModifier::dynSetPath(const DynamicValue &value) {
+MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptSetPath(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() != DynamicValueTypes::kString)
-		return false;
+		return kMiniscriptInstructionOutcomeFailed;
 
 	_objectPath = value.getString();
 	_object.reset();
 
-	return true;
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
-bool ObjectReferenceVariableModifier::dynSetObject(const DynamicValue &value) {
+MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptSetObject(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kNull) {
 		_object.reset();
 		_objectPath.clear();
 		_fullPath.clear();
 
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	} else if (value.getType() == DynamicValueTypes::kObject) {
 		Common::SharedPtr<RuntimeObject> obj = value.getObject().object.lock();
 		if (!obj)
-			return dynSetObject(DynamicValue());
+			return scriptSetObject(thread, DynamicValue());
 
 		if (!computeObjectPath(obj.get(), _fullPath))
-			return dynSetObject(DynamicValue());
+			return scriptSetObject(thread, DynamicValue());
 
 		_objectPath = _fullPath;
 		_object.object = obj;
 
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	} else
-		return false;
+		return kMiniscriptInstructionOutcomeFailed;
 }
 
 void ObjectReferenceVariableModifier::resolve() {
@@ -576,6 +576,26 @@ void ListVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &d
 	dest.setList(_list);
 }
 
+bool ListVariableModifier::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) {
+	if (attrib == "value") {
+		size_t realIndex = 0;
+		return _list->dynamicValueToIndex(realIndex, index) && _list->getAtIndex(realIndex, result);
+	}
+	return false;
+}
+
+MiniscriptInstructionOutcome ListVariableModifier::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) {
+	if (attrib == "value") {
+		size_t realIndex = 0;
+		if (!_list->dynamicValueToIndex(realIndex, index))
+			return kMiniscriptInstructionOutcomeFailed;
+
+		_list->createWriteProxyForIndex(realIndex, writeProxy);
+		writeProxy.containerList = _list;
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	return kMiniscriptInstructionOutcomeFailed;
+}
 
 ListVariableModifier::ListVariableModifier(const ListVariableModifier &other) {
 	if (other._list)

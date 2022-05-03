@@ -804,19 +804,19 @@ bool CompoundVariableModifier::readAttributeIndexed(MiniscriptThread *thread, Dy
 	return var->readAttributeIndexed(thread, result, "value", index);
 }
 
-bool CompoundVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+MiniscriptInstructionOutcome CompoundVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	Modifier *var = findChildByName(attrib);
 	if (!var || !var->isVariable())
-		return false;
+		return kMiniscriptInstructionOutcomeFailed;
 
 	writeProxy = static_cast<VariableModifier *>(var)->createWriteProxy();
-	return true;
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
-bool CompoundVariableModifier::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) {
+MiniscriptInstructionOutcome CompoundVariableModifier::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) {
 	Modifier *var = findChildByName(attrib);
 	if (!var || !var->isModifier())
-		return false;
+		return kMiniscriptInstructionOutcomeFailed;
 
 	return var->writeRefAttributeIndexed(thread, writeProxy, "value", index);
 }
