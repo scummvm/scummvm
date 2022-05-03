@@ -943,6 +943,8 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 		MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
 		// set debug flags before call detectGames
 		DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
+		// Clear md5 cache before detection starts
+		MD5Man.clear();
 		DetectedGames candidates = metaEngine.detectGames(files);
 		if (candidates.empty()) {
 			warning("No games supported by the engine '%s' were found in path '%s' when upgrading target '%s'",
