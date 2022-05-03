@@ -47,8 +47,7 @@ IMuseDigiFilesHandler::IMuseDigiFilesHandler(IMuseDigital *engine, ScummEngine_v
 }
 
 IMuseDigiFilesHandler::~IMuseDigiFilesHandler() {
-	if (_ftSpeechFile)
-		_ftSpeechFile->close();
+	delete _ftSpeechFile;
 	delete _sound;
 }
 
@@ -426,6 +425,7 @@ int IMuseDigiFilesHandler::setCurrentSpeechFilename(const char *fileName) {
 
 void IMuseDigiFilesHandler::setCurrentFtSpeechFile(const char *fileName, ScummFile *file, uint32 offset, uint32 size) {
 	Common::strlcpy(_ftSpeechFilename, fileName, sizeof(_ftSpeechFilename));
+	delete _ftSpeechFile;
 	_ftSpeechFile = file;
 	_ftSpeechSubFileOffset = offset;
 	_ftSpeechFileSize = size;
