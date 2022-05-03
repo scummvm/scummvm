@@ -211,7 +211,7 @@ static const ExtraGuiOption hypnoExtraGuiOptionOriginalCheats = {
 	_s("Enable original cheats"),
 	_s("Allow cheats using the C key."),
 	"cheats",
-	false,
+	true,
 	0,
 	0
 };
@@ -238,7 +238,7 @@ static const ExtraGuiOption hypnoExtraGuiOptionRestoredContent = {
 	_s("Enable restored content"),
 	_s("Add additional content that is not enabled the original implementation."),
 	"restored",
-	false,
+	true,
 	0,
 	0
 };
@@ -247,7 +247,7 @@ class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	HypnoMetaEngineDetection() : AdvancedMetaEngineDetection(Hypno::gameDescriptions, sizeof(ADGameDescription), Hypno::hypnoGames) {
 		_guiOptions = GUIO1(GUIO_NOMIDI);
-		_maxScanDepth = 3;
+		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
 
