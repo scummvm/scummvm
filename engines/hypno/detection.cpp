@@ -148,7 +148,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -158,7 +158,7 @@ static const ADGameDescription gameDescriptions[] = {
 			    "missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -168,7 +168,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -178,7 +178,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"missions.lib", "aeaaa8b26ab17e37f060334a311a3ff6", 309793),
 		Common::KO_KOR,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
