@@ -924,7 +924,14 @@ void WetEngine::drawPlayer() {
 		c = kHypnoColorYellow;
 		uint32 minutes = _countdown / 60;
 		uint32 seconds = _countdown % 60;
-		drawString("block05.fgx", Common::String::format("CLOCK: %02d:%02d", minutes, seconds), 19, 11, 0, c);
+		drawString("block05.fgx", Common::String::format("CLOCK %02d:%02d", minutes, seconds), 19, 11, 0, c);
+
+		const chapterEntry *entry = _chapterTable[_levelId];
+		Common::Point ep(entry->energyPos[0], entry->energyPos[1]);
+
+		Common::Rect r = Common::Rect(ep.x - 2, ep.y + 6, ep.x + 69, ep.y + 15);
+		_compositeSurface->frameRect(r, kHypnoColorGreen);
+
 	}
 
 	c = kHypnoColorRed; // red ?
@@ -981,6 +988,10 @@ void WetEngine::drawHealth() {
 		Common::Point sp(entry->scorePos[0], entry->scorePos[1]);
 		Common::Point op(entry->objectivesPos[0], entry->objectivesPos[1]);
 
+		drawString("block05.fgx", Common::String::format("ENERGY %d%%", p), ep.x, ep.y, 65, c);
+		Common::String scoreFormat = "SCORE  %04d";
+		Common::String moFormat = "M.O. %d/%d";
+
 		if (_arcadeMode == "Y1" || _arcadeMode == "Y3" || _arcadeMode == "Y4" || _arcadeMode == "Y5") {
 			Common::Rect r;
 			r = Common::Rect(ep.x - 2, ep.y - 2, ep.x + 69, sp.y + 7);
@@ -991,12 +1002,14 @@ void WetEngine::drawHealth() {
 
 			r = Common::Rect(op.x - 2, op.y - 2, op.x + 74, op.y + 7);
 			_compositeSurface->frameRect(r, kHypnoColorGreen);
+
+			scoreFormat = "SCORE   %04d";
+			moFormat = "M.O.    %d/%d";
 		}
 
-		drawString("block05.fgx", Common::String::format("ENERGY %d%%", p), ep.x, ep.y, 65, c);
-		drawString("block05.fgx", Common::String::format("SCORE  %04d", s), sp.x, sp.y, 72, c);
+		drawString("block05.fgx", Common::String::format(scoreFormat.c_str(), s), sp.x, sp.y, 72, c);
 		if (op.x > 0 && op.y > 0)
-			drawString("block05.fgx", Common::String::format("M.O. %d/%d", mo, mm), op.x, op.y, 60, c);
+			drawString("block05.fgx", Common::String::format(moFormat.c_str(), mo, mm), op.x, op.y, 60, c);
 	}
 }
 
