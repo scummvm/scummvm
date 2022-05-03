@@ -61,8 +61,6 @@ public:
 
 	bool load(ElementLoaderContext &context, const Data::MovieElement &data);
 
-	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
-	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
 	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	void activate() override;
@@ -77,8 +75,6 @@ public:
 #endif
 
 private:
-	bool scriptSetPaused(const DynamicValue &dest);
-
 	void onSegmentUnloaded(int segmentIndex) override;
 
 	struct StartPlayingTaskData {
@@ -88,7 +84,6 @@ private:
 	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
 
 	bool _cacheBitmap;
-	bool _paused;
 	bool _loop;
 	bool _alternate;
 	bool _playEveryFrame;
@@ -112,7 +107,7 @@ public:
 	bool load(ElementLoaderContext &context, const Data::ImageElement &data);
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
-	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
 
 	void activate() override;
 	void deactivate() override;
@@ -141,7 +136,7 @@ public:
 	bool load(ElementLoaderContext &context, const Data::TextLabelElement &data);
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
-	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
 
 	void activate() override;
 	void deactivate() override;
@@ -175,7 +170,7 @@ public:
 	bool load(ElementLoaderContext &context, const Data::SoundElement &data);
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
-	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
 
 	void activate() override;
 	void deactivate() override;
@@ -186,7 +181,6 @@ public:
 #endif
 
 private:
-	bool _paused;
 	uint16 _leftVolume;
 	uint16 _rightVolume;
 	int16 _balance;

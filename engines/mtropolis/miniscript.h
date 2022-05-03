@@ -31,12 +31,6 @@ class MiniscriptThread;
 struct MiniscriptStackValue;
 struct IMiniscriptInstructionFactory;
 
-enum MiniscriptInstructionOutcome {
-	kMiniscriptInstructionOutcomeContinue,			// Continue executing next instruction
-	kMiniscriptInstructionOutcomeYieldToVThread,	// Instruction pushed a VThread task
-	kMiniscriptInstructionOutcomeFailed,			// Instruction errored
-};
-
 class MiniscriptInstruction {
 public:
 	virtual ~MiniscriptInstruction();

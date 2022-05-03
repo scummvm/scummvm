@@ -97,7 +97,7 @@ public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data);
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
-	bool writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
@@ -109,8 +109,8 @@ public:
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
-	bool dynSetPath(const DynamicValue &value);
-	bool dynSetObject(const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetPath(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetObject(MiniscriptThread *thread, const DynamicValue &value);
 
 	void resolve();
 	void resolveRelativePath(RuntimeObject *obj, const Common::String &path, size_t startPos);
@@ -191,6 +191,10 @@ public:
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
+
+	bool readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) override;
+	MiniscriptInstructionOutcome writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) override;
+
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "List Variable Modifier"; }
