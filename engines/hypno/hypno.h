@@ -361,6 +361,7 @@ struct chapterEntry {
 	int scorePos[2];
 	int objectivesPos[2];
 	int ammoPos[2];
+	int ammoOffset;
 	int targetColor;
 };
 

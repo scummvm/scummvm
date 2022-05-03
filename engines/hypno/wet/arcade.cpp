@@ -1025,6 +1025,7 @@ void WetEngine::drawAmmo() {
 	if (d >= 13)
 		return;
 	Common::Point p(entry->ammoPos[0], entry->ammoPos[1]);
+	int ao = entry->ammoOffset;
 	Common::Rect r;
 	if (_arcadeMode == "Y1" || _arcadeMode == "Y3" || _arcadeMode == "Y4" || _arcadeMode == "Y5") {
 		r = Common::Rect(p.x - 1, p.y - 1, p.x + 16, p.y + 14);
@@ -1037,6 +1038,13 @@ void WetEngine::drawAmmo() {
 	} else {
 		r = Common::Rect(p.x, p.y + d, p.x + 15, p.y + 13);
 		_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
+
+		if (ao > 0) {
+			r = Common::Rect(p.x + ao, p.y + d, p.x + 15 + ao, p.y + 13);
+			_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
+		}
+
+
 	}
 }
 
