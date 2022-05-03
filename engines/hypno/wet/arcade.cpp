@@ -1035,6 +1035,11 @@ void WetEngine::drawAmmo() {
 	if (_levelId / 10 == 5 && _arcadeMode != "Y5") {
 		r = Common::Rect(p.x, p.y + d, p.x + 13, p.y + 13);
 		_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
+
+		if (ao > 0) {
+			r = Common::Rect(p.x + ao, p.y + d, p.x + 13 + ao, p.y + 13);
+			_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
+		}
 	} else {
 		r = Common::Rect(p.x, p.y + d, p.x + 15, p.y + 13);
 		_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
@@ -1043,8 +1048,6 @@ void WetEngine::drawAmmo() {
 			r = Common::Rect(p.x + ao, p.y + d, p.x + 15 + ao, p.y + 13);
 			_compositeSurface->fillRect(r, kHypnoColorWhiteOrBlue); // blue
 		}
-
-
 	}
 }
 
