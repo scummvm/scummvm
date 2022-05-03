@@ -339,7 +339,7 @@ int ListBox_GetTopItem(GUIListBox *listbox) {
 
 void ListBox_SetTopItem(GUIListBox *guisl, int item) {
 	if ((item >= guisl->ItemCount) || (item < 0)) {
-		item = Math::Clamp(item, 0, guisl->ItemCount);
+		item = Math::Clamp<int>(item, 0, guisl->ItemCount);
 		debug_script_warn("ListBoxSetTopItem: tried to set top to beyond top or bottom of list");
 	}
 	if (guisl->TopItem != item) {

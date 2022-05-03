@@ -70,7 +70,7 @@ int Slider_GetMin(GUISlider *guisl) {
 }
 
 void Slider_SetValue(GUISlider *guisl, int valn) {
-	valn = Math::Clamp(valn, guisl->MinValue, guisl->MaxValue);
+	valn = Math::Clamp<int>(valn, guisl->MinValue, guisl->MaxValue);
 
 	if (valn != guisl->Value) {
 		guisl->Value = valn;
