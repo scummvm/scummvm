@@ -208,7 +208,7 @@ private:
 	// Array of child control references (not exclusively owned!)
 	std::vector<GUIObject *> _controls;
 	// Sorted array of controls in z-order.
-	std::vector<int32_t>    _ctrlDrawOrder;
+	std::vector<int>         _ctrlDrawOrder;
 };
 
 

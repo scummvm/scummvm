@@ -207,7 +207,7 @@ void GUISlider::OnMouseMove(int x, int y) {
 	if (!IsMousePressed)
 		return;
 
-	int value;
+	int32_t value;
 	assert(_handleRange > 0);
 	if (IsHorizontal())
 		value = (int)(((float)((x - X) - 2) * (float)(MaxValue - MinValue)) / (float)_handleRange) + MinValue;
