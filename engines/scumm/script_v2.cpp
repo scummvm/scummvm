@@ -967,6 +967,7 @@ void ScummEngine_v2::drawPreposition(int index) {
 			{ " ", " in", " con", " su", " a" },     // Italian
 			{ " ", " en", " con", " en", " a" },     // Spanish
 			{ " ", " \x7f", " \x7f", " na", " \x7f" },// Russian
+			{ " ", " B", " SN", " SM", " M" },       // Hebrew
 			};
 		int lang;
 		switch (_language) {
@@ -984,6 +985,9 @@ void ScummEngine_v2::drawPreposition(int index) {
 			break;
 		case Common::RU_RUS:
 			lang = 5;
+			break;
+		case Common::HE_ISR:
+			lang = 6;
 			break;
 		default:
 			lang = 0;	// Default to english
