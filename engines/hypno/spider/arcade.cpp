@@ -64,6 +64,11 @@ void SpiderEngine::runAfterArcade(ArcadeShooting *arc) {
 		_score -= _bonus;
 	}
 
+	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
+		(*it)->free();
+		delete (*it);
+	}
+
 	if (isDemo() && _restoredContentEnabled) {
 		if (_health == 0)
 			showScore("Spider-man was defeated!");

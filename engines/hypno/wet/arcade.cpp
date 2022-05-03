@@ -367,6 +367,13 @@ bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *
 
 void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 	_checkpoint = _currentLevel;
+
+	_playerFrameSeps.clear();
+	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
+		(*it)->free();
+		delete (*it);
+	}
+
 	if (_health < 0)
 		_health = 0;
 
