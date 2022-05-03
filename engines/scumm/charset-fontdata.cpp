@@ -549,7 +549,7 @@ static const byte russCharsetDataV2[] = {
 	125, 233,
 	126, 231,
 };
-// Hebrew Zak and MM font map.
+    // Hebrew Zak and MM font map.
     static const byte hebrewCharsetMapV2[] = {
             65, 0,
             66, 1,
@@ -580,7 +580,7 @@ static const byte russCharsetDataV2[] = {
             91, 26,
     };
 
-//Hebrew Zak and MM font data
+    // Hebrew Zak and MM font data
     static const byte hebrewCharsetDataV2[] = {
             0x00, 0x84, 0x44, 0x64, 0x98, 0x88, 0x84, 0x00,
             0x00, 0xf0, 0x08, 0x08, 0x08, 0x08, 0xfc, 0x00,
@@ -690,7 +690,7 @@ CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 		}
 		break;
 	case Common::HE_ISR:
-		if (((_vm->_game.id == GID_MANIAC) || (_vm->_game.id == GID_ZAK)) && (_vm->_game.version == 2)) {
+		if ((_vm->_game.id == GID_MANIAC || _vm->_game.id == GID_ZAK) && _vm->_game.version == 2) {
 			replacementMap = hebrewCharsetMapV2;
 			replacementChars = sizeof(hebrewCharsetMapV2) / 2;
 			replacementData = hebrewCharsetDataV2;
