@@ -82,7 +82,7 @@ void WetEngine::loadAssets() {
 	}
 	_difficulty = ""; // No difficulty selection in demo
 
-	if (_variant == "Demo")
+	if (_variant == "Demo" || _variant == "DemoHebrew")
 		loadAssetsDemoDisc();
 	else if (_variant == "PCWDemo")
 		loadAssetsPCW();
@@ -97,7 +97,7 @@ void WetEngine::loadAssets() {
 
 void WetEngine::loadAssetsDemoDisc() {
 
-	bool encrypted = _language == Common::HE_ISR ? false : true;
+	bool encrypted = _variant == "Demo" ? true : false;
 	LibFile *missions = loadLib("", "wetlands/c_misc/missions.lib", encrypted);
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
@@ -139,9 +139,9 @@ void WetEngine::loadAssetsDemoDisc() {
 	_levels["<start>"] = start;
 
 	Transition *intro;
-	if (_language == Common::EN_USA)
+	if (_variant == "Demo")
 		intro = new Transition("c31");
-	else if (_language == Common::HE_ISR)
+	else if (_variant == "DemoHebrew")
 		intro = new Transition("c31.mis");
 	else
 		error("Unsupported language");
@@ -174,14 +174,14 @@ void WetEngine::loadAssetsDemoDisc() {
 	movies->frameNumber = 0;
 	_levels["<movies>"] = movies;
 
-	if (_language == Common::EN_USA) {
+	if (_variant == "Demo") {
 		loadArcadeLevel("c31.mi_", "c52", "c52", "wetlands");
 		loadArcadeLevel("c52.mi_", "<game_over>", "<quit>", "wetlands");
-	} else if (_language == Common::HE_ISR) {
+	} else if (_variant == "DemoHebrew") {
 		loadArcadeLevel("c31.mis", "c52.mis", "c52.mis", "wetlands");
 		loadArcadeLevel("c52.mis", "<game_over>", "<quit>", "wetlands");
 	} else {
-		error("Unsupported language");
+		error("Unsupported variant");
 	}
 
 	Transition *over = new Transition("<quit>");

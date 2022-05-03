@@ -101,12 +101,12 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
-		"wetlands", // Wetlands Demo Hebrew
-		"Demo",
+		"wetlands", // Wetlands Demo from a Hebrew magazine
+		"DemoHebrew",
 		AD_ENTRY3s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 629503,
 				"wetdemo.exe", "15a6b1b3819ef002438df340509b5373", 458319,
 				"demo.exe", "15a6b1b3819ef002438df340509b5373", 533221),
-		Common::HE_ISR,
+		Common::EN_USA,
 		Common::kPlatformDOS,
 		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
@@ -116,7 +116,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"PCWDemo",
 		AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 553355,
 				"missions.lib", "6ffa658f22a00b6e17d7f920fcc13578", 12469),
-		Common::EN_GRB,
+		Common::EN_USA,
 		Common::kPlatformDOS,
 		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
