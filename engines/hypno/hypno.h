@@ -381,6 +381,7 @@ public:
 
 	void loadAssets() override;
 	void loadAssetsDemoDisc();
+	void loadAssetsGen4();
 	void loadAssetsPCW();
 	void loadAssetsPCG();
 	void loadAssetsFullGame();

@@ -132,6 +132,17 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"wetlands", // Génération 4 (FR) - Number 81 (October 1995) - Chapters 31/52 demo
+		"Gen4",
+		AD_ENTRY2s("wetlands.exe", "15a6b1b3819ef002438df340509b5373", 629503,
+				"missions.lib", "34b922fac8f64546c0690aa83f09e98e", 40891),
+		Common::EN_USA,
+		Common::kPlatformDOS,
+		ADGF_TESTING | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+
+	{
 		"wetlands", // Non Interactive demo featured in several game magazines
 		"NonInteractive",
 		AD_ENTRY2s("playsmks.exe", "edc5b0c0caf3d5b01d344cb555d9a085", 422607,

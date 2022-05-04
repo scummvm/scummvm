@@ -387,7 +387,7 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 
 	if (isDemo() && _variant != "Demo" && _restoredContentEnabled) {
 		showDemoScore();
-	} else if (!isDemo() || _variant == "Demo") {
+	} else if (!isDemo() || _variant == "Demo" || _variant == "Gen4") {
 		byte *palette;
 		Graphics::Surface *frame = decodeFrame("c_misc/zones.smk", 12, &palette);
 		loadPalette(palette, 0, 256);

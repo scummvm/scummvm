@@ -93,6 +93,8 @@ void WetEngine::loadAssets() {
 
 	if (_variant == "Demo" || _variant == "DemoHebrew")
 		loadAssetsDemoDisc();
+	else if (_variant == "Gen4")
+		loadAssetsGen4();
 	else if (_variant == "PCWDemo")
 		loadAssetsPCW();
 	else if (_variant == "PCGDemo")
@@ -200,6 +202,37 @@ void WetEngine::loadAssetsDemoDisc() {
 	loadLib("", "wetlands/c_misc/fonts.lib", true);
 	loadFonts();
 	loadLib("wetlands/sound/", "wetlands/c_misc/sound.lib", true);
+	_nextLevel = "<start>";
+}
+
+void WetEngine::loadAssetsGen4() {
+
+	bool encrypted = false;
+	LibFile *missions = loadLib("", "c_misc/missions.lib", encrypted);
+	Common::ArchiveMemberList files;
+	if (missions->listMembers(files) == 0)
+		error(failedDetectionError);
+
+	Transition *intro;
+	intro = new Transition("c31.mis");
+
+	intro->intros.push_back("c_misc/nw_logo.smk");
+	intro->intros.push_back("c_misc/h.s");
+	intro->intros.push_back("c_misc/w.s");
+	intro->frameImage = "c_misc/c.s";
+	intro->frameNumber = 0;
+	_levels["<start>"] = intro;
+
+	loadArcadeLevel("c31.mis", "c52.mis", "c52.mis", "");
+	loadArcadeLevel("c52.mis", "<game_over>", "<quit>", "");
+
+	Transition *over = new Transition("<quit>");
+	over->intros.push_back("c_misc/g.s");
+	_levels["<game_over>"] = over;
+
+	loadLib("", "c_misc/fonts.lib", true);
+	loadFonts();
+	loadLib("sound/", "c_misc/sound.lib", true);
 	_nextLevel = "<start>";
 }
 
