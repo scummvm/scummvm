@@ -105,6 +105,15 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOASPECT)
 	},
+	{
+			"sword25",
+			"",
+			AD_ENTRY1s("lang_he.b25c", "7b0e58798793e0dd87023ef112a11d0f", 461034),
+			Common::HE_ISR,
+			Common::kPlatformUnknown,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+	},
 	// Hungarian "psylog" version.
 	// Submitted by goodoldgeorg in bug report #5888.
 	{
