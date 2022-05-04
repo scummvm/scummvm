@@ -382,7 +382,10 @@ void OSystem_PSP::setupMixer(void) {
 	// at least 1/16th of a second (though at most 8192 samples). Note
 	// that it must be a power of two. So e.g. at 22050 Hz, we request a
 	// sample buffer size of 2048.
-	uint32 samples = 8192;
+	// HACK: This used to be set to 8192, but with the introduction of the new
+	// dimuse sound engine, a lower setting became necessary to keep audio lag
+	// small. The value 16 seems very small value but seems to work fine.
+	uint32 samples = 16;
 	while (samples * 16 > samplesPerSec * 2)
 		samples >>= 1;
 
@@ -393,7 +396,7 @@ void OSystem_PSP::setupMixer(void) {
 		return;
 	}
 	samplesPerSec = _audio.getFrequency();	// may have been changed by audio system
-	_mixer = new Audio::MixerImpl(samplesPerSec);
+	_mixer = new Audio::MixerImpl(samplesPerSec, samples);
 	assert(_mixer);
 	_mixer->setReady(true);
 	_audio.unpause();
