@@ -242,6 +242,8 @@ Common::String HypnoEngine::findNextLevel(const Transition *trans) { error("Func
 void HypnoEngine::runTransition(Transition *trans) {
 	Common::String nextLevel = findNextLevel(trans);
 	if (!trans->frameImage.empty()) {
+		// This is only used in Wetlands, and therefore, resolution should be 320x200
+		changeScreenMode("320x200");
 		debugC(1, kHypnoDebugScene, "Rendering %s frame in transaction", trans->frameImage.c_str());
 		loadImage(trans->frameImage, 0, 0, false, true, trans->frameNumber);
 		drawScreen();
