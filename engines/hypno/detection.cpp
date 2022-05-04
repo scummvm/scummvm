@@ -247,7 +247,7 @@ class HypnoMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	HypnoMetaEngineDetection() : AdvancedMetaEngineDetection(Hypno::gameDescriptions, sizeof(ADGameDescription), Hypno::hypnoGames) {
 		_guiOptions = GUIO1(GUIO_NOMIDI);
-		_maxScanDepth = 2;
+		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}
 

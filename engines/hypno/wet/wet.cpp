@@ -27,6 +27,11 @@
 
 namespace Hypno {
 
+static const char *failedDetectionError = \
+  "Failed to load any files from missions.lib.\
+   Please review https://wiki.scummvm.org/index.php?title=Wetlands\
+   and re-add the game.";
+
 static const chapterEntry rawChapterTable[] = {
 	{11, {44, 172}, {218, 172}, {0,   0},   {127, 172}, 0,   kHypnoColorRed}, 	 // c11
 	{10, {19, 3},   {246, 3}, 	{246, 11},  {2, 2},     0,   kHypnoNoColor}, 	 // c10
@@ -101,7 +106,7 @@ void WetEngine::loadAssetsDemoDisc() {
 	LibFile *missions = loadLib("", "wetlands/c_misc/missions.lib", encrypted);
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
-		error("Failed to load any files from missions.lib");
+		error(failedDetectionError);
 
 	Hotspot h(MakeMenu);
 	Hotspots hs;
@@ -241,7 +246,7 @@ void WetEngine::loadAssetsPCW() {
 	LibFile *missions = loadLib("", "c_misc/missions.lib", false);
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
-		error("Failed to load any files from missions.lib");
+		error(failedDetectionError);
 
 	Transition *intro = new Transition("c11.mis");
 	intro->intros.push_back("c_misc/nw_logo.smk");
@@ -265,7 +270,7 @@ void WetEngine::loadAssetsPCG() {
 	LibFile *missions = loadLib("", "missions.lib", false);
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
-		error("Failed to load any files from missions.lib");
+		error(failedDetectionError);
 
 	Transition *intro = new Transition("c31.mis");
 	intro->intros.push_back("nw_logo.smk");
@@ -291,7 +296,7 @@ void WetEngine::loadAssetsFullGame() {
 	LibFile *missions = loadLib("", "c_misc/missions.lib", true);
 	Common::ArchiveMemberList files;
 	if (missions == nullptr || missions->listMembers(files) == 0)
-		error("Failed to load any files from missions.lib");
+		error(failedDetectionError);
 
 	Transition *logos = new Transition("<main_menu>");
 	logos->intros.push_back("c_misc/logo.smk");
