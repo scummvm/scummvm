@@ -196,6 +196,8 @@ Common::String LuaFileConfig::getLanguage() {
 		return "pt";
 	case Common::RU_RUS:
 		return "ru";
+	case Common::HE_ISR:
+		return "he";
 	default:
 		error("Unknown language '%s' encountered", ConfMan.get("language").c_str());
 		break;
@@ -226,6 +228,8 @@ void LuaFileConfig::setLanguage(const Common::String &lang) {
 		ConfMan.set("language", Common::getLanguageCode(Common::PT_BRA));
 	else if (lang == "ru")
 		ConfMan.set("language", Common::getLanguageCode(Common::RU_RUS));
+	else if (lang == "he")
+		ConfMan.set("language", Common::getLanguageCode(Common::HE_ISR));
 	else
 		error("Unknown language encountered: %s", lang.c_str());
 }
