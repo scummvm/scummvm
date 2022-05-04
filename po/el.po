@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-27 19:39+0000\n"
+"POT-Creation-Date: 2022-05-04 21:39+0000\n"
 "PO-Revision-Date: 2022-04-28 16:49+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5234,37 +5234,37 @@ msgstr "Λειτουργία Αίματος"
 msgid "Enable Gore Mode when available"
 msgstr "Ενεργοποίηση Λειτουργίας Αίματος όταν υπάρχει διαθεσιμότητα"
 
-#: engines/hypno/detection.cpp:211
+#: engines/hypno/detection.cpp:231
 msgid "Enable original cheats"
 msgstr "Ενεργοποίηση αρχικών cheats"
 
-#: engines/hypno/detection.cpp:212
+#: engines/hypno/detection.cpp:232
 msgid "Allow cheats using the C key."
 msgstr "Να επιτρέπονται τα cheats με χρήση του πλήκτρου C."
 
-#: engines/hypno/detection.cpp:220
+#: engines/hypno/detection.cpp:240
 msgid "Enable infinite health cheat"
 msgstr "Cheat για άπειρη ενέργεια (υγεία)"
 
-#: engines/hypno/detection.cpp:221
+#: engines/hypno/detection.cpp:241
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 "Η υγεία του παίκτη δεν θα μειωθεί ποτέ (εξαιρώντας την περίπτωση κακού "
 "τερματισμού / game over)."
 
-#: engines/hypno/detection.cpp:229
+#: engines/hypno/detection.cpp:249
 msgid "Enable infinite ammo cheat"
 msgstr "Cheat για άπειρα πυρομαχικά"
 
-#: engines/hypno/detection.cpp:230
+#: engines/hypno/detection.cpp:250
 msgid "Player ammo will never decrease."
 msgstr "Τα πυρομαχικά του παίκτη δεν θα μειωθούν ποτέ."
 
-#: engines/hypno/detection.cpp:238
+#: engines/hypno/detection.cpp:258
 msgid "Enable restored content"
 msgstr "Αποκατεστημένο περιεχόμενο"
 
-#: engines/hypno/detection.cpp:239
+#: engines/hypno/detection.cpp:259
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 "Επαναφορά πρόσθετου περιεχομένου που δεν είναι ενεργοποιημένο στην αρχική "

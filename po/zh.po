@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-27 19:39+0000\n"
+"POT-Creation-Date: 2022-05-04 21:39+0000\n"
 "PO-Revision-Date: 2021-07-12 15:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -4940,35 +4940,35 @@ msgstr ""
 msgid "Enable Gore Mode when available"
 msgstr ""
 
-#: engines/hypno/detection.cpp:211
+#: engines/hypno/detection.cpp:231
 msgid "Enable original cheats"
 msgstr ""
 
-#: engines/hypno/detection.cpp:212
+#: engines/hypno/detection.cpp:232
 msgid "Allow cheats using the C key."
 msgstr ""
 
-#: engines/hypno/detection.cpp:220
+#: engines/hypno/detection.cpp:240
 msgid "Enable infinite health cheat"
 msgstr ""
 
-#: engines/hypno/detection.cpp:221
+#: engines/hypno/detection.cpp:241
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
-#: engines/hypno/detection.cpp:229
+#: engines/hypno/detection.cpp:249
 msgid "Enable infinite ammo cheat"
 msgstr ""
 
-#: engines/hypno/detection.cpp:230
+#: engines/hypno/detection.cpp:250
 msgid "Player ammo will never decrease."
 msgstr ""
 
-#: engines/hypno/detection.cpp:238
+#: engines/hypno/detection.cpp:258
 msgid "Enable restored content"
 msgstr ""
 
-#: engines/hypno/detection.cpp:239
+#: engines/hypno/detection.cpp:259
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-04-27 19:39+0000\n"
+"POT-Creation-Date: 2022-05-04 21:39+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -5273,39 +5273,39 @@ msgstr "Modo Gore"
 msgid "Enable Gore Mode when available"
 msgstr "Activa o modo Gore, de ser o caso."
 
-#: engines/hypno/detection.cpp:211
+#: engines/hypno/detection.cpp:231
 #, fuzzy
 msgid "Enable original cheats"
 msgstr "Activa o modo Helio."
 
-#: engines/hypno/detection.cpp:212
+#: engines/hypno/detection.cpp:232
 msgid "Allow cheats using the C key."
 msgstr ""
 
-#: engines/hypno/detection.cpp:220
+#: engines/hypno/detection.cpp:240
 #, fuzzy
 msgid "Enable infinite health cheat"
 msgstr "Activar censura de contidos"
 
-#: engines/hypno/detection.cpp:221
+#: engines/hypno/detection.cpp:241
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
-#: engines/hypno/detection.cpp:229
+#: engines/hypno/detection.cpp:249
 #, fuzzy
 msgid "Enable infinite ammo cheat"
 msgstr "Activa o modo Helio."
 
-#: engines/hypno/detection.cpp:230
+#: engines/hypno/detection.cpp:250
 msgid "Player ammo will never decrease."
 msgstr ""
 
-#: engines/hypno/detection.cpp:238
+#: engines/hypno/detection.cpp:258
 #, fuzzy
 msgid "Enable restored content"
 msgstr "Activar censura de contidos"
 
-#: engines/hypno/detection.cpp:239
+#: engines/hypno/detection.cpp:259
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 
