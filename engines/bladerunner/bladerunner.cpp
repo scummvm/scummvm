@@ -296,6 +296,8 @@ bool BladeRunnerEngine::canSaveGameStateCurrently() {
 	return
 		playerHasControl() &&
 		_gameIsRunning &&
+		!_actorIsSpeaking &&
+		!_vqaIsPlaying &&
 		!_gameJustLaunched &&
 		!_sceneScript->isInsideScript() &&
 		!_aiScripts->isInsideScript() &&
