@@ -286,4 +286,43 @@ void WetEngine::showDemoScore() {
 	dialog.runModal();
 }
 
+Common::String WetEngine::getLocalizedString(const Common::String name) {
+	if (name == "health") {
+		switch (_language) {
+		case Common::FR_FRA:
+			return "ENERGIE";
+		case Common::ES_ESP:
+			return "ENERGIA";
+		default:
+			return "HEALTH";
+		}
+	} else if (name == "objectives") {
+		switch (_language) {
+		case Common::FR_FRA:
+			return "OBJ.";
+		case Common::ES_ESP:
+			return "O. M.";
+		default:
+			return "M. O.";
+		}
+	} else if (name == "score") {
+		switch (_language) {
+		case Common::ES_ESP:
+			return "PUNTOS";
+		default:
+			return "SCORE";
+		}
+	} else if (name == "target") {
+		switch (_language) {
+		case Common::FR_FRA:
+			return "VERROUILLAGE";
+		case Common::ES_ESP:
+			return "BLANCO FIJADO";
+		default:
+			return "TARGET ACQUIRED";
+		}
+	} else
+		error("Invalid string name to localize: %s", name.c_str());
+}
+
 } // End of namespace Hypno

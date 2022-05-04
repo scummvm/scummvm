@@ -945,7 +945,7 @@ void WetEngine::drawPlayer() {
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 	int i = detectTarget(mousePos);
 	if (i >= 0)
-		drawString("block05.fgx", "TARGET ACQUIRED", 116, 3, 80, c);
+		drawString("block05.fgx", _targetString.c_str(), 116, 3, 80, c);
 
 	if (_arcadeMode == "Y1" || _arcadeMode == "Y3")
 		return;
@@ -994,10 +994,10 @@ void WetEngine::drawHealth() {
 		Common::Point ep(entry->energyPos[0], entry->energyPos[1]);
 		Common::Point sp(entry->scorePos[0], entry->scorePos[1]);
 		Common::Point op(entry->objectivesPos[0], entry->objectivesPos[1]);
-
-		drawString("block05.fgx", Common::String::format("ENERGY %d%%", p), ep.x, ep.y, 65, c);
-		Common::String scoreFormat = "SCORE  %04d";
-		Common::String moFormat = "M.O. %d/%d";
+		Common::String healthFormat = _healthString + " %d%%";
+		drawString("block05.fgx", Common::String::format(healthFormat.c_str(), p), ep.x, ep.y, 65, c);
+		Common::String scoreFormat = _scoreString + "  %04d";
+		Common::String moFormat = _objString + " %d/%d";
 
 		if (_arcadeMode == "Y1" || _arcadeMode == "Y3" || _arcadeMode == "Y4" || _arcadeMode == "Y5") {
 			Common::Rect r;
@@ -1010,8 +1010,8 @@ void WetEngine::drawHealth() {
 			r = Common::Rect(op.x - 2, op.y - 2, op.x + 74, op.y + 7);
 			_compositeSurface->frameRect(r, kHypnoColorGreen);
 
-			scoreFormat = "SCORE   %04d";
-			moFormat = "M.O.    %d/%d";
+			scoreFormat = _scoreString + "   %04d";
+			moFormat = _objString + "    %d/%d";
 		}
 
 		drawString("block05.fgx", Common::String::format(scoreFormat.c_str(), s), sp.x, sp.y, 72, c);

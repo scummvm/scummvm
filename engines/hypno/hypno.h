@@ -311,6 +311,12 @@ public:
 	int _score;
 	int _bonus;
 	int _lives;
+
+	Common::String _healthString;
+	Common::String _scoreString;
+	Common::String _objString;
+	Common::String _targetString;
+
 	Filename _shootSound;
 	Filename _hitSound;
 	Filename _additionalSound;
@@ -416,6 +422,7 @@ public:
 	byte *getTargetColor(Common::String name, int levelId) override;
 
 private:
+	Common::String getLocalizedString(const Common::String name);
 	void runMainMenu(Code *code);
 	void runLevelMenu(Code *code);
 	void runCheckLives(Code *code);
