@@ -68,6 +68,7 @@ void SpiderEngine::runAfterArcade(ArcadeShooting *arc) {
 		(*it)->free();
 		delete (*it);
 	}
+	_playerFrames.clear();
 
 	if (isDemo() && _restoredContentEnabled) {
 		if (_health == 0)

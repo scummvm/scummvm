@@ -373,6 +373,7 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 		(*it)->free();
 		delete (*it);
 	}
+	_playerFrames.clear();
 
 	if (_health < 0)
 		_health = 0;
