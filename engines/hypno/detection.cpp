@@ -141,12 +141,21 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
-
 	{
-		"wetlands", // Non Interactive demo featured in several game magazines
+		"wetlands", // Non Interactive: PC Review 49 (November 1995)
 		"NonInteractive",
 		AD_ENTRY2s("playsmks.exe", "edc5b0c0caf3d5b01d344cb555d9a085", 422607,
 				"wetmusic.81m", "0d99c63ce19633d09569b1fdcdff1505", 2833439),
+		Common::EN_USA,
+		Common::kPlatformDOS,
+		ADGF_TESTING | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"wetlands", // Non Interactive: Joystick HS 7 (September 1995)
+		"NonInteractiveJoystick",
+		AD_ENTRY2s("playsmks.exe", "edc5b0c0caf3d5b01d344cb555d9a085", 422607,
+				"c44_22k.raw", "4b2279af59ce3049cc5177b0047e8447", 5247618),
 		Common::EN_USA,
 		Common::kPlatformDOS,
 		ADGF_TESTING | ADGF_DEMO,

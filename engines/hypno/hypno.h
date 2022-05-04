@@ -236,6 +236,7 @@ public:
 	// Sounds
 	Filename _soundPath;
 	Filename _music;
+	bool _doNotStopSounds;
 	void playSound(const Filename &filename, uint32 loops, uint32 sampleRate = 22050);
 	void stopSound();
 

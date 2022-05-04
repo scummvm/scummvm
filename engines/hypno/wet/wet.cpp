@@ -99,7 +99,7 @@ void WetEngine::loadAssets() {
 		loadAssetsPCW();
 	else if (_variant == "PCGDemo")
 		loadAssetsPCG();
-	else if (_variant == "NonInteractive")
+	else if (_variant == "NonInteractive" || _variant == "NonInteractiveJoystick")
 		loadAssetsNI();
 	else
 		error("Invalid demo version: \"%s\"", _variant.c_str());
@@ -237,8 +237,13 @@ void WetEngine::loadAssetsGen4() {
 }
 
 void WetEngine::loadAssetsNI() {
-	playSound("wetmusic.81m", 0, 11025);
+	Common::String musicFile = _variant == "NonInteractive" ? "wetmusic.81m" : "c44_22k.raw";
+	int musicRate = _variant == "NonInteractive" ? 11025 : 22050;
+
 	Transition *movies = new Transition("<quit>");
+	movies->music = musicFile;
+	movies->musicRate = musicRate;
+	movies->playMusicDuringIntro = true;
 	movies->intros.push_back("demo/nw_logo.smk");
 	movies->intros.push_back("demo/hypnotix.smk");
 	movies->intros.push_back("demo/wetlogo.smk");
