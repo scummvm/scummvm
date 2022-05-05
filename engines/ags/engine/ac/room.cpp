@@ -521,7 +521,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	update_polled_stuff_if_runtime();
 	redo_walkable_areas();
 	update_polled_stuff_if_runtime();
-	recache_walk_behinds();
+	walkbehinds_recalc();
 	update_polled_stuff_if_runtime();
 
 	_G(our_eip) = 205;

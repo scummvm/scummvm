@@ -49,6 +49,7 @@
 #include "ags/engine/ac/room.h"
 #include "ags/engine/ac/room_object.h"
 #include "ags/engine/ac/room_status.h"
+#include "ags/engine/ac/walk_behind.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/device/mouse_w32.h"

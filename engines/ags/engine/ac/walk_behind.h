@@ -19,8 +19,12 @@
  *
  */
 
+// Walk-behinds calculation logic.
+
 #ifndef AGS_ENGINE_AC_WALK_BEHIND_H
 #define AGS_ENGINE_AC_WALK_BEHIND_H
+
+#include "ags/shared/util/geometry.h"
 
 namespace AGS3 {
 
@@ -36,8 +40,16 @@ enum WalkBehindMethodEnum {
 	DrawAsSeparateSprite
 };
 
-void update_walk_behind_images();
-void recache_walk_behinds();
+namespace AGS { namespace Shared { class Bitmap; } }
+using namespace AGS; // FIXME later
+
+// Recalculates walk-behind positions
+void walkbehinds_recalc();
+// Generates walk-behinds as separate sprites
+void walkbehinds_generate_sprites();
+// Edits the given game object's sprite, cutting out pixels covered by walk-behinds;
+// returns whether any pixels were updated
+bool walkbehinds_cropout(Shared::Bitmap *sprit, int sprx, int spry, int basel, int zoom = 100);
 
 } // namespace AGS3
 

@@ -579,6 +579,8 @@ public:
 	// actsps is used for temporary storage of the bitamp image
 	// of the latest version of the sprite
 	std::vector<ObjTexture> *_actsps;
+	// Walk-behind textures (3D renderers only)
+	std::vector<ObjTexture> *_walkbehindobj;
 	// GUI surfaces
 	std::vector<ObjTexture> *_guibg;
 	// GUI control surfaces

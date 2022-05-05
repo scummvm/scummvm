@@ -391,6 +391,7 @@ void init_game_drawdata() {
 
 	size_t actsps_num = _GP(game).numcharacters + MAX_ROOM_OBJECTS;
 	_GP(actsps).resize(actsps_num);
+
 	_GP(guibg).resize(_GP(game).numgui);
 
 	size_t guio_num = 0;
@@ -407,6 +408,8 @@ void dispose_game_drawdata() {
 	clear_drawobj_cache();
 
 	_GP(actsps).clear();
+	_GP(walkbehindobj).clear();
+
 	_GP(guibg).clear();
 	_GP(guiobjbg).clear();
 	_GP(guiobjddbref).clear();
@@ -430,8 +433,8 @@ void clear_drawobj_cache() {
 	}
 
 	// cleanup Character + Room object textures
-	// cleanup Character + Room object textures
 	for (auto &o : _GP(actsps)) o = ObjTexture();
+	for (auto &o : _GP(walkbehindobj)) o = ObjTexture();
 	// cleanup GUI and controls textures
 	for (auto &o : _GP(guibg)) o = ObjTexture();
 	for (auto &o : _GP(guiobjbg)) o = ObjTexture();
@@ -823,83 +826,6 @@ static void draw_sprite_list(bool is_room) {
 void put_sprite_list_on_screen(bool in_room);
 //
 //------------------------------------------------------------------------
-
-// sort_out_walk_behinds: modifies the supplied sprite by overwriting parts
-// of it with transparent pixels where there are walk-behind areas
-// Returns whether any pixels were updated
-int sort_out_walk_behinds(Bitmap *sprit, int xx, int yy, int basel, int zoom = 100) {
-	if (_G(noWalkBehindsAtAll))
-		return 0;
-
-	if ((!_GP(thisroom).WalkBehindMask->IsMemoryBitmap()) ||
-	        (!sprit->IsMemoryBitmap()))
-		quit("!sort_out_walk_behinds: wb bitmap not linear");
-
-	int rr, tmm, toheight; //,tcol;
-	// precalculate this to try and shave some time off
-	int maskcol = sprit->GetMaskColor();
-	int spcoldep = sprit->GetColorDepth();
-	int screenhit = _GP(thisroom).WalkBehindMask->GetHeight();
-	short *shptr;
-	int *loptr;
-	int pixelsChanged = 0;
-	int ee = 0;
-	if (xx < 0)
-		ee = 0 - xx;
-
-	for (; ee < sprit->GetWidth(); ee++) {
-		if (ee + xx >= _GP(thisroom).WalkBehindMask->GetWidth())
-			break;
-
-		if ((!_G(walkBehindExists)[ee + xx]) ||
-		        (_G(walkBehindEndY)[ee + xx] <= yy) ||
-		        (_G(walkBehindStartY)[ee + xx] > yy + sprit->GetHeight()))
-			continue;
-
-		toheight = sprit->GetHeight();
-
-		if (_G(walkBehindStartY)[ee + xx] < yy)
-			rr = 0;
-		else
-			rr = (_G(walkBehindStartY)[ee + xx] - yy);
-
-		// Since we will use _getpixel, ensure we only check within the screen
-		if (rr + yy < 0)
-			rr = 0 - yy;
-		if (toheight + yy > screenhit)
-			toheight = screenhit - yy;
-		if (toheight + yy > _G(walkBehindEndY)[ee + xx])
-			toheight = _G(walkBehindEndY)[ee + xx] - yy;
-		if (rr < 0)
-			rr = 0;
-
-		for (; rr < toheight; rr++) {
-			// we're ok with _getpixel because we've checked the screen edges
-			//tmm = _getpixel(_GP(thisroom).WalkBehindMask,ee+xx,rr+yy);
-			// actually, _getpixel is well inefficient, do it ourselves
-			// since we know it's 8-bit bitmap
-			tmm = _GP(thisroom).WalkBehindMask->GetScanLine(rr + yy)[ee + xx];
-			if (tmm < 1) continue;
-			if (_G(croom)->walkbehind_base[tmm] <= basel) continue;
-
-			pixelsChanged = 1;
-			if (spcoldep <= 8)
-				sprit->GetScanLineForWriting(rr)[ee] = maskcol;
-			else if (spcoldep <= 16) {
-				shptr = (short *)&sprit->GetScanLine(rr)[0];
-				shptr[ee] = maskcol;
-			} else if (spcoldep == 24) {
-				char *chptr = (char *)&sprit->GetScanLine(rr)[0];
-				memcpy(&chptr[ee * 3], &maskcol, 3);
-			} else if (spcoldep <= 32) {
-				loptr = (int *)&sprit->GetScanLine(rr)[0];
-				loptr[ee] = maskcol;
-			} else
-				quit("!Sprite colour depth >32 ??");
-		}
-	}
-	return pixelsChanged;
-}
 
 void repair_alpha_channel(Bitmap *dest, Bitmap *bgpic) {
 	// Repair the alpha channel, because sprites may have been drawn
@@ -1377,7 +1303,7 @@ void prepare_objects_for_drawing() {
 				usebasel += _GP(thisroom).Height;
 			}
 		} else if ((!actspsIntact) && (_G(walkBehindMethod) == DrawOverCharSprite)) {
-			sort_out_walk_behinds(actsp.Bmp.get(), atxp, atyp, usebasel);
+			walkbehinds_cropout(actsp.Bmp.get(), atxp, atyp, usebasel);
 		}
 
 		if ((!actspsIntact) || (actsp.Ddb == nullptr)) {
@@ -1664,7 +1590,7 @@ void prepare_characters_for_drawing() {
 				usebasel += _GP(thisroom).Height;
 			}
 		} else if (_G(walkBehindMethod) == DrawOverCharSprite) {
-			sort_out_walk_behinds(actsp.Bmp.get(), bgX, bgY, usebasel);
+			walkbehinds_cropout(actsp.Bmp.get(), bgX, bgY, usebasel);
 		}
 
 		if ((!usingCachedImage) || (actsp.Ddb == nullptr)) {
@@ -1708,6 +1634,13 @@ Bitmap *get_cached_object_image(int objid) {
 	return _GP(actsps)[objid].Bmp.get();
 }
 
+void add_walkbehind_image(size_t index, Shared::Bitmap *bmp, int x, int y) {
+	if (_GP(walkbehindobj).size() <= index)
+		_GP(walkbehindobj).resize(index + 1);
+	_GP(walkbehindobj)[index].Bmp.reset(); // don't store bitmap if added this way
+	_GP(walkbehindobj)[index].Ddb = recycle_ddb_bitmap(_GP(walkbehindobj)[index].Ddb, bmp);
+	_GP(walkbehindobj)[index].Pos = Point(x, y);
+}
 
 // Compiles a list of room sprites (characters, objects, background)
 void prepare_room_sprites() {
@@ -1724,7 +1657,7 @@ void prepare_room_sprites() {
 	if (_G(gfxDriver)->RequiresFullRedrawEachFrame()) {
 		if (_G(current_background_is_dirty) || _G(walkBehindsCachedForBgNum) != _GP(play).bg_frame) {
 			if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
-				update_walk_behind_images();
+				walkbehinds_generate_sprites();
 			}
 		}
 		add_thing_to_draw(_G(roomBackgroundBmp), 0, 0);
@@ -1741,10 +1674,12 @@ void prepare_room_sprites() {
 			_G(our_eip) = 34;
 
 			if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
-				for (int ee = 1; ee < MAX_WALK_BEHINDS; ee++) {
-					if (_G(walkBehindBitmap)[ee] != nullptr) {
-						add_to_sprite_list(_G(walkBehindBitmap)[ee], _G(walkBehindLeft)[ee], _G(walkBehindTop)[ee],
-							_G(croom)->walkbehind_base[ee], true);
+				for (int wb = 1 /* 0 is "no area" */;
+					(wb < MAX_WALK_BEHINDS) && (wb < _GP(walkbehindobj).size()); ++wb) {
+					const auto &wbobj = _GP(walkbehindobj)[wb];
+					if (wbobj.Ddb) {
+						add_to_sprite_list(wbobj.Ddb, wbobj.Pos.X, wbobj.Pos.Y,
+							_G(croom)->walkbehind_base[wb], true);
 					}
 				}
 			}

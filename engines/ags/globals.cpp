@@ -174,6 +174,7 @@ Globals::Globals() {
 	             MAX_DYNAMIC_SURFACES, (AGS::Shared::Bitmap *)nullptr);
 
 	_actsps = new std::vector<ObjTexture>();
+	_walkbehindobj = new std::vector<ObjTexture>();
 	_guibg = new std::vector<ObjTexture>();
 	_guiobjbg = new std::vector<ObjTexture>();
 
@@ -428,6 +429,7 @@ Globals::~Globals() {
 	delete _sprlist;
 	delete _thingsToDrawList;
 	delete _actsps;
+	delete _walkbehindobj;
 	delete _guibg;
 	delete _guiobjbg;
 	delete _guiobjddbref;
