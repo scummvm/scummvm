@@ -208,7 +208,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY2s("boyz.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 263347,
 					"setup.exe", "bac1d734f2606dbdd0816dfa7a5cf518", 160740),
 		Common::EN_USA,
-		Common::kPlatformWindows,
+		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
