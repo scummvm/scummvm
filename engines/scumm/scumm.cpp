@@ -106,15 +106,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _game(dr.game),
 	  _filenamePattern(dr.fp),
 	  _language(dr.language),
-	  _currentScript(0xFF), // Let debug() work on init stage
-	  _messageDialog(nullptr), _pauseDialog(nullptr), _versionDialog(nullptr),
 	  _rnd("scumm"),
-	  _shakeTimerRate(dr.game.version <= 3 ? 236696 : 291304),
-	  _enableEnhancements(false)
-	  {
-
-	_localizer = nullptr;
-
+	  _shakeTimerRate(dr.game.version <= 3 ? 236696 : 291304)
+{
 #ifdef USE_RGB_COLOR
 	if (_game.features & GF_16BIT_COLOR) {
 		if (_game.platform == Common::kPlatformPCEngine)
@@ -147,206 +141,40 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_gameMD5[i] = (byte)tmpVal;
 	}
 
-	_fileHandle = nullptr;
-
 	// Init all vars
-	_imuse = nullptr;
-	_imuseDigital = nullptr;
-	_musicEngine = nullptr;
-	_townsPlayer = nullptr;
-	_verbs = nullptr;
-	_objs = nullptr;
-	_sound = nullptr;
 	memset(&vm, 0, sizeof(vm));
-	_pauseDialog = nullptr;
-	_versionDialog = nullptr;
-	_fastMode = 0;
-	_actors = _sortedActors = nullptr;
-	_arraySlot = nullptr;
-	_inventory = nullptr;
-	_newNames = nullptr;
-	_scummVars = nullptr;
-	_roomVars = nullptr;
-	_varwatch = 0;
-	_bitVars = nullptr;
-	_numVariables = 0;
-	_numBitVariables = 0;
-	_numRoomVariables = 0;
-	_numLocalObjects = 0;
-	_numGlobalObjects = 0;
-	_numArray = 0;
-	_numVerbs = 0;
-	_numFlObject = 0;
-	_numInventory = 0;
-	_numRooms = 0;
-	_numScripts = 0;
-	_numSounds = 0;
-	_numCharsets = 0;
-	_numNewNames = 0;
-	_numGlobalScripts = 0;
-	_numCostumes = 0;
-	_numImages = 0;
-	_numLocalScripts = 60;
-	_numSprites = 0;
-	_numTalkies = 0;
-	_numPalettes = 0;
-	_numUnk = 0;
-	_curPalIndex = 0;
-	_currentRoom = 0;
-	_egoPositioned = false;
-	_mouseAndKeyboardStat = 0;
-	_leftBtnPressed = 0;
-	_rightBtnPressed = 0;
-	_lastInputScriptTime = 0;
-	_bootParam = 0;
-	_dumpScripts = false;
-	_debugMode = false;
-	_objectOwnerTable = nullptr;
-	_objectRoomTable = nullptr;
-	_objectStateTable = nullptr;
-	_numObjectsInRoom = 0;
-	_userPut = 0;
-	_userState = 0;
-	_resourceHeaderSize = 8;
-	_saveLoadFlag = 0;
-	_saveLoadSlot = 0;
-	_lastSaveTime = 0;
-	_saveTemporaryState = false;
 	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
-	_scriptPointer = nullptr;
-	_scriptOrgPointer = nullptr;
-	_opcode = 0;
 	vm.numNestedScripts = 0;
-	_lastCodePtr = nullptr;
-	_scummStackPos = 0;
 	memset(_vmStack, 0, sizeof(_vmStack));
-	_fileOffset = 0;
 	memset(_resourceMapper, 0, sizeof(_resourceMapper));
-	_lastLoadedRoom = 0;
-	_roomResource = 0;
-	OF_OWNER_ROOM = 0;
-	_verbMouseOver = 0;
-	_classData = nullptr;
-	_actorToPrintStrFor = 0;
-	_sentenceNum = 0;
 	memset(_sentence, 0, sizeof(_sentence));
 	memset(_string, 0, sizeof(_string));
-	_screenB = 0;
-	_screenH = 0;
-	_roomHeight = 0;
-	_roomWidth = 0;
-	_screenHeight = 0;
-	_screenWidth = 0;
 	for (uint i = 0; i < ARRAYSIZE(_virtscr); i++) {
 		_virtscr[i].clear();
 	}
 	camera.reset();
 	memset(_colorCycle, 0, sizeof(_colorCycle));
 	memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
-	_ENCD_offs = 0;
-	_EXCD_offs = 0;
-	_CLUT_offs = 0;
-	_EPAL_offs = 0;
-	_IM00_offs = 0;
-	_PALS_offs = 0;
-	_fullRedraw = false;
-	_bgNeedsRedraw = false;
-	_screenEffectFlag = false;
-	_completeScreenRedraw = false;
-	_disableFadeInEffect = false;
 	memset(&_cursor, 0, sizeof(_cursor));
 	memset(_grabbedCursor, 0, sizeof(_grabbedCursor));
-	_currentCursor = 0;
-	_newEffect = 0;
-	_switchRoomEffect2 = 0;
-	_switchRoomEffect = 0;
-
-	_bytesPerPixel = 1;
-	_doEffect = false;
-	_snapScroll = false;
-	_shakeEnabled = false;
-	_shakeNextTick = _shakeTickCounter = 0;
-	_shakeFrame = 0;
-	_screenStartStrip = 0;
-	_screenEndStrip = 0;
-	_screenTop = 0;
-	_drawObjectQueNr = 0;
 	memset(_drawObjectQue, 0, sizeof(_drawObjectQue));
-	_palManipStart = 0;
-	_palManipEnd = 0;
-	_palManipCounter = 0;
-	_palManipPalette = nullptr;
-	_palManipIntermediatePal = nullptr;
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
-	_hePalettes = nullptr;
-	_hePaletteSlot = 0;
-	_16BitPalette = nullptr;
-	_macScreen = nullptr;
-	_macIndy3TextBox = nullptr;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	_townsScreen = nullptr;
-	_scrollRequest = _scrollDeltaAdjust = 0;
-	_scrollDestOffset = _scrollTimer = 0;
 	_scrollNeedDeltaAdjust = scumm_stricmp(_game.gameid, "indyzak");
-	_refreshNeedCatchUp = false;
 	_enableSmoothScrolling = (_game.platform == Common::kPlatformFMTowns);
 	memset(_refreshDuration, 0, sizeof(_refreshDuration));
-	_refreshArrayPos = 0;
-#ifdef USE_RGB_COLOR
-	_cjkFont = nullptr;
 #endif
-#endif
-	_shadowPalette = nullptr;
-	_shadowPaletteSize = 0;
-	_verbPalette = nullptr;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
 	memset(_darkenPalette, 0, sizeof(_darkenPalette));
 	memset(_HEV7ActorPalette, 0, sizeof(_HEV7ActorPalette));
-	_palDirtyMin = 0;
-	_palDirtyMax = 0;
-	_haveMsg = 0;
-	_haveActorSpeechMsg = false;
-	_useTalkAnims = false;
-	_defaultTalkDelay = 0;
-	_saveSound = 0;
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 	memset(_scaleSlots, 0, sizeof(_scaleSlots));
-	_charset = nullptr;
-	_charsetColor = 0;
 	memset(_charsetColorMap, 0, sizeof(_charsetColorMap));
 	memset(_charsetData, 0, sizeof(_charsetData));
-	_charsetBufPos = 0;
 	memset(_charsetBuffer, 0, sizeof(_charsetBuffer));
-	_copyProtection = false;
-	_voiceMode = 0;
-	_talkDelay = 0;
-	_NES_lastTalkingActor = 0;
-	_NES_talkColor = 0;
-	_keepText = false;
-	_msgCount = 0;
-	_costumeLoader = nullptr;
-	_costumeRenderer = nullptr;
-	_existLanguageFile = false;
-	_languageBuffer = nullptr;
-	_numTranslatedLines = 0;
-	_translatedLines = nullptr;
-	_languageLineIndex = nullptr;
-	_2byteFontPtr = nullptr;
-	_2byteWidth = 0;
-	_2byteHeight = 0;
-	_2byteShadow = 0;
-	_krStrPost = 0;
-	_V1TalkingActor = 0;
 	for (int i = 0; i < 20; i++)
 		_2byteMultiFontPtr[i] = nullptr;
-	_NESStartStrip = 0;
-
-	_skipDrawObject = 0;
-
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	_townsPaletteFlags = 0;
-	_townsClearLayerFlag = 1;
-	_townsActiveLayerFlags = 3;
 	_curStringRect.top = -1;
 	_curStringRect.left = -1;
 	_curStringRect.bottom = -1;
@@ -359,147 +187,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_cyclRects[i].right = 0;
 	}
 
-	_numCyclRects = 0;
 	memset(_scrollFeedStrips, 0, sizeof(_scrollFeedStrips));
 #endif
-
-	//
-	// Init all VARS to 0xFF
-	//
-	VAR_KEYPRESS = 0xFF;
-	VAR_SYNC = 0xFF;
-	VAR_EGO = 0xFF;
-	VAR_CAMERA_POS_X = 0xFF;
-	VAR_HAVE_MSG = 0xFF;
-	VAR_ROOM = 0xFF;
-	VAR_OVERRIDE = 0xFF;
-	VAR_MACHINE_SPEED = 0xFF;
-	VAR_ME = 0xFF;
-	VAR_NUM_ACTOR = 0xFF;
-	VAR_CURRENT_LIGHTS = 0xFF;
-	VAR_CURRENTDRIVE = 0xFF;	// How about merging this with VAR_CURRENTDISK?
-	VAR_CURRENTDISK = 0xFF;
-	VAR_TMR_1 = 0xFF;
-	VAR_TMR_2 = 0xFF;
-	VAR_TMR_3 = 0xFF;
-	VAR_MUSIC_TIMER = 0xFF;
-	VAR_ACTOR_RANGE_MIN = 0xFF;
-	VAR_ACTOR_RANGE_MAX = 0xFF;
-	VAR_CAMERA_MIN_X = 0xFF;
-	VAR_CAMERA_MAX_X = 0xFF;
-	VAR_TIMER_NEXT = 0xFF;
-	VAR_VIRT_MOUSE_X = 0xFF;
-	VAR_VIRT_MOUSE_Y = 0xFF;
-	VAR_ROOM_RESOURCE = 0xFF;
-	VAR_LAST_SOUND = 0xFF;
-	VAR_CUTSCENEEXIT_KEY = 0xFF;
-	VAR_OPTIONS_KEY = 0xFF;
-	VAR_TALK_ACTOR = 0xFF;
-	VAR_CAMERA_FAST_X = 0xFF;
-	VAR_SCROLL_SCRIPT = 0xFF;
-	VAR_ENTRY_SCRIPT = 0xFF;
-	VAR_ENTRY_SCRIPT2 = 0xFF;
-	VAR_EXIT_SCRIPT = 0xFF;
-	VAR_EXIT_SCRIPT2 = 0xFF;
-	VAR_VERB_SCRIPT = 0xFF;
-	VAR_SENTENCE_SCRIPT = 0xFF;
-	VAR_INVENTORY_SCRIPT = 0xFF;
-	VAR_CUTSCENE_START_SCRIPT = 0xFF;
-	VAR_CUTSCENE_END_SCRIPT = 0xFF;
-	VAR_CHARINC = 0xFF;
-	VAR_CHARCOUNT = 0xFF;
-	VAR_WALKTO_OBJ = 0xFF;
-	VAR_DEBUGMODE = 0xFF;
-	VAR_HEAPSPACE = 0xFF;
-	VAR_RESTART_KEY = 0xFF;
-	VAR_PAUSE_KEY = 0xFF;
-	VAR_MOUSE_X = 0xFF;
-	VAR_MOUSE_Y = 0xFF;
-	VAR_TIMER = 0xFF;
-	VAR_TIMER_TOTAL = 0xFF;
-	VAR_SOUNDCARD = 0xFF;
-	VAR_VIDEOMODE = 0xFF;
-	VAR_MAINMENU_KEY = 0xFF;
-	VAR_FIXEDDISK = 0xFF;
-	VAR_CURSORSTATE = 0xFF;
-	VAR_USERPUT = 0xFF;
-	VAR_SOUNDRESULT = 0xFF;
-	VAR_TALKSTOP_KEY = 0xFF;
-	VAR_FADE_DELAY = 0xFF;
-	VAR_NOSUBTITLES = 0xFF;
-
-	VAR_SOUNDPARAM = 0xFF;
-	VAR_SOUNDPARAM2 = 0xFF;
-	VAR_SOUNDPARAM3 = 0xFF;
-	VAR_INPUTMODE = 0xFF;
-	VAR_MEMORY_PERFORMANCE = 0xFF;
-
-	VAR_VIDEO_PERFORMANCE = 0xFF;
-	VAR_ROOM_FLAG = 0xFF;
-	VAR_GAME_LOADED = 0xFF;
-	VAR_NEW_ROOM = 0xFF;
-	VAR_VERSION_KEY = 0xFF;
-
-	VAR_V5_TALK_STRING_Y = 0xFF;
-
-	VAR_ROOM_WIDTH = 0xFF;
-	VAR_ROOM_HEIGHT = 0xFF;
-	VAR_SUBTITLES = 0xFF;
-	VAR_V6_EMSSPACE = 0xFF;
-
-	VAR_CAMERA_POS_Y = 0xFF;
-	VAR_CAMERA_MIN_Y = 0xFF;
-	VAR_CAMERA_MAX_Y = 0xFF;
-	VAR_CAMERA_THRESHOLD_X = 0xFF;
-	VAR_CAMERA_THRESHOLD_Y = 0xFF;
-	VAR_CAMERA_SPEED_X = 0xFF;
-	VAR_CAMERA_SPEED_Y = 0xFF;
-	VAR_CAMERA_ACCEL_X = 0xFF;
-	VAR_CAMERA_ACCEL_Y = 0xFF;
-	VAR_CAMERA_DEST_X = 0xFF;
-	VAR_CAMERA_DEST_Y = 0xFF;
-	VAR_CAMERA_FOLLOWED_ACTOR = 0xFF;
-
-	VAR_LEFTBTN_DOWN = 0xFF;
-	VAR_RIGHTBTN_DOWN = 0xFF;
-	VAR_LEFTBTN_HOLD = 0xFF;
-	VAR_RIGHTBTN_HOLD = 0xFF;
-
-	VAR_SAVELOAD_SCRIPT = 0xFF;
-	VAR_SAVELOAD_SCRIPT2 = 0xFF;
-
-	VAR_DEFAULT_TALK_DELAY = 0xFF;
-	VAR_CHARSET_MASK = 0xFF;
-
-	VAR_CUSTOMSCALETABLE = 0xFF;
-	VAR_V6_SOUNDMODE = 0xFF;
-
-	VAR_ACTIVE_VERB = 0xFF;
-	VAR_ACTIVE_OBJECT1 = 0xFF;
-	VAR_ACTIVE_OBJECT2 = 0xFF;
-	VAR_VERB_ALLOWED = 0xFF;
-
-	VAR_BLAST_ABOVE_TEXT = 0xFF;
-	VAR_VOICE_MODE = 0xFF;
-	VAR_MUSIC_BUNDLE_LOADED = 0xFF;
-	VAR_VOICE_BUNDLE_LOADED = 0xFF;
-
-	VAR_REDRAW_ALL_ACTORS = 0xFF;
-	VAR_SKIP_RESET_TALK_ACTOR = 0xFF;
-
-	VAR_SOUND_CHANNEL = 0xFF;
-	VAR_TALK_CHANNEL = 0xFF;
-	VAR_SOUNDCODE_TMR = 0xFF;
-	VAR_RESERVED_SOUND_CHANNELS = 0xFF;
-
-	VAR_MAIN_SCRIPT = 0xFF;
-
-	VAR_NUM_SCRIPT_CYCLES = 0xFF;
-	VAR_SCRIPT_CYCLE = 0xFF;
-
-	VAR_QUIT_SCRIPT = 0xFF;
-
-	VAR_NUM_GLOBAL_OBJS = 0xFF;
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
@@ -576,9 +265,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		break;
 	}
 
-	_hexdumpScripts = false;
-	_showStack = false;
-
 	if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {	// FM-TOWNS V3 games originally use 320x240, and we have an option to trim to 200
 		_screenWidth = 320;
 		if (ConfMan.getBool("trim_fmtowns_to_200_pixels"))
@@ -622,7 +308,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	else
 		_compositeBuf = nullptr;
 
-	_herculesBuf = nullptr;
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_herculesBuf = (byte *)malloc(kHercWidth * kHercHeight);
 	}
