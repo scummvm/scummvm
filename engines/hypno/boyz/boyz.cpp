@@ -41,6 +41,15 @@ void BoyzEngine::loadAssets() {
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
+
+	Transition *logos = new Transition("c19.mi_");
+	logos->intros.push_back("intro/dclogos.smk");
+	logos->intros.push_back("intro/mplogos.smk");
+	logos->intros.push_back("intro/hyplogos.smk");
+	logos->intros.push_back("intro/sblogos.smk");
+	_levels["<start>"] = logos;
+
+	loadArcadeLevel("c19.mi_", "c11.mi_", "??", "");
 	loadArcadeLevel("c11.mi_", "c12.mi_", "??", "");
 	loadArcadeLevel("c12.mi_", "c14.mi_", "??", "");
 	//loadArcadeLevel("c13.mi_", "??", "??", "");
@@ -48,8 +57,7 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c15.mi_", "c16.mi_", "??", "");
 	loadArcadeLevel("c16.mi_", "c17.mi_", "??", "");
 	loadArcadeLevel("c17.mi_", "c18.mi_", "??", "");
-	loadArcadeLevel("c18.mi_", "c19.mi_", "??", "");
-	loadArcadeLevel("c19.mi_", "c21.mi_", "??", "");
+	loadArcadeLevel("c18.mi_", "c21.mi_", "??", "");
 
 	loadLib("sound/", "misc/sound.lib", true);
 
@@ -159,7 +167,13 @@ void BoyzEngine::loadAssets() {
 
 	targets->free();
 	delete targets;
-	_nextLevel = "c11.mi_";
+	_nextLevel = "<start>";
+}
+
+Common::String BoyzEngine::findNextLevel(const Transition *trans) {
+	if (trans->nextLevel.empty())
+		error("Invalid transition!");
+	return trans->nextLevel;
 }
 
 Common::String BoyzEngine::findNextLevel(const Common::String &level) { return level; }
