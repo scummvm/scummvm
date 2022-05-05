@@ -444,7 +444,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	_GP(scriptModules) = ents.ScriptModules;
 	AllocScriptModules();
 	if (create_global_script())
-		return new GameInitError(kGameInitErr_ScriptLinkFailed, _G(ccErrorString));
+		return new GameInitError(kGameInitErr_ScriptLinkFailed, cc_get_error().ErrorString);
 
 	return HGameInitError::None();
 }

@@ -302,22 +302,21 @@ static bool DoRunScriptFuncCantBlock(ccInstance *sci, NonBlockingScriptFunction 
 	}
 
 	// this might be nested, so don't disrupt blocked scripts
-	_G(ccErrorString) = "";
-	_G(ccError) = 0;
+	cc_clear_error();
 	_G(no_blocking_functions)--;
 	return (hasTheFunc);
 }
 
 static int PrepareTextScript(ccInstance *sci, const char **tsname) {
-	_G(ccError) = 0;
+	cc_clear_error();
 	// FIXME: try to make it so this function is not called with NULL sci
 	if (sci == nullptr) return -1;
 	if (sci->GetSymbolAddress(tsname[0]).IsNull()) {
-		_G(ccErrorString) = "no such function in script";
+		cc_error("no such function in script");
 		return -2;
 	}
 	if (sci->IsBeingRun()) {
-		_G(ccErrorString) = "script is already in execution";
+		cc_error("script is already in execution");
 		return -3;
 	}
 	_G(scripts)[_G(num_scripts)].init();
@@ -339,35 +338,20 @@ static int PrepareTextScript(ccInstance *sci, const char **tsname) {
 	tsname[0] = &scfunctionname[0];
 	update_script_mouse_coords();
 	_G(inside_script)++;
-	//  aborted_ip=0;
-	//  abort_executor=0;
 	return 0;
 }
 
 int RunScriptFunction(ccInstance *sci, const char *tsname, size_t numParam, const RuntimeScriptValue *params) {
 	int oldRestoreCount = _G(gameHasBeenRestored);
-	// First, save the current ccError state
-	// This is necessary because we might be attempting
-	// to run Script B, while Script A is still running in the
-	// background.
-	// If CallInstance here has an error, it would otherwise
-	// also abort Script A because ccError is a global variable.
-	int cachedCcError = _G(ccError);
-	_G(ccError) = 0;
 
+	cc_clear_error();
 	int toret = PrepareTextScript(sci, &tsname);
 	if (toret) {
-		_G(ccError) = cachedCcError;
 		return -18;
 	}
 
-	// Clear the error message
-	_G(ccErrorString) = "";
-
+	cc_clear_error();
 	toret = _G(curscript)->inst->CallScriptFunction(tsname, numParam, params);
-
-	if (_G(abort_engine))
-		return -1;
 
 	// 100 is if Aborted (eg. because we are LoadAGSGame'ing)
 	if ((toret != 0) && (toret != -2) && (toret != 100)) {
@@ -382,9 +366,6 @@ int RunScriptFunction(ccInstance *sci, const char *tsname, size_t numParam, cons
 	post_script_cleanup();
 
 	_G(post_script_cleanup_stack)--;
-
-	// restore cached error state
-	_G(ccError) = cachedCcError;
 
 	// if the game has been restored, ensure that any further scripts are not run
 	if ((oldRestoreCount != _G(gameHasBeenRestored)) && (_G(eventClaimed) == EVENT_INPROGRESS))
@@ -408,7 +389,7 @@ int RunScriptFunctionInRoom(const char *tsname, size_t param_count, const Runtim
 	// If it's a obligatory room event, and return code means missing function - error
 	if (strict_room_event && (toret == -18))
 		quitprintf("RunScriptFunction: error %d (%s) trying to run '%s'   (Room %d)",
-			toret, _G(ccErrorString).GetCStr(), tsname, _G(displayed_room));
+			toret, cc_get_error().ErrorString.GetCStr(), tsname, _G(displayed_room));
 	return toret;
 }
 
@@ -487,7 +468,8 @@ char *make_ts_func_name(const char *base, int iii, int subd) {
 
 void post_script_cleanup() {
 	// should do any post-script stuff here, like go to new room
-	if (_G(ccError)) quit(_G(ccErrorString));
+	if (cc_has_error())
+		quit(cc_get_error().ErrorString);
 	ExecutingScript copyof = _G(scripts)[_G(num_scripts) - 1];
 	if (_G(scripts)[_G(num_scripts) - 1].forked)
 		delete _G(scripts)[_G(num_scripts) - 1].inst;
@@ -577,10 +559,12 @@ void quit_with_script_error(const char *functionName) {
 	// TODO: clean up the error reporting logic. Now engine will append call
 	// stack info in quit_check_for_error_state() but only in case of explicit
 	// script error ("!" type), and not in other case.
-	if (_G(ccErrorIsUserError))
-		quitprintf("!Error running function '%s':\n%s", functionName, _G(ccErrorString).GetCStr());
+	const auto &error = cc_get_error();
+	if (error.IsUserError)
+		quitprintf("!Error running function '%s':\n%s", functionName, error.ErrorString.GetCStr());
 	else
-		quitprintf("Error running function '%s':\n%s\n\n%s", functionName, _G(ccErrorString).GetCStr(), get_cur_script(5).GetCStr());
+		quitprintf("Error running function '%s':\n%s\n\n%s", functionName,
+			error.ErrorString.GetCStr(), get_cur_script(5).GetCStr());
 }
 
 int get_nivalue(InteractionCommandList *nic, int idx, int parm) {

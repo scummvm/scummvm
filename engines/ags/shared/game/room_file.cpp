@@ -332,7 +332,7 @@ HError ReadScriptBlock(char *&buf, Stream *in, RoomFileVersion /*data_ver*/) {
 HError ReadCompSc3Block(RoomStruct *room, Stream *in, RoomFileVersion /*data_ver*/) {
 	room->CompiledScript.reset(ccScript::CreateFromStream(in));
 	if (room->CompiledScript == nullptr)
-		return new RoomFileError(kRoomFileErr_ScriptLoadFailed, _G(ccErrorString));
+		return new RoomFileError(kRoomFileErr_ScriptLoadFailed, cc_get_error().ErrorString);
 	return HError::None();
 }
 

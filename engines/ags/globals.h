@@ -162,6 +162,7 @@ struct ScriptAudioChannel;
 struct ScriptDialog;
 struct ScriptDialogOptionsRendering;
 struct ScriptDrawingSurface;
+struct ScriptError;
 struct ScriptGUI;
 struct ScriptHotspot;
 struct ScriptInvItem;
@@ -350,17 +351,11 @@ public:
 	/**@}*/
 
 	/**
-	 * @defgroup agscc_errorglobals cc_error globals
+	 * @defgroup agscc_commonglobals cc_common globals
 	 * @ingroup agsglobals
 	 * @{
 	 */
-
-	int _ccError = 0;
-	int _ccErrorLine = 0;
-	String _ccErrorString;
-	String _ccErrorCallStack;
-	bool _ccErrorIsUserError = false;
-	const char *_ccCurScriptName = "";
+	ScriptError *_ccError;
 
 	/**@}*/
 

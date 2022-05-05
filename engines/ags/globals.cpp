@@ -141,6 +141,9 @@ Globals::Globals() {
 	// cc_dynamicarray.cpp globals
 	_globalDynamicArray = new CCDynamicArray();
 
+	// cc_common globals
+	_ccError = new ScriptError();
+
 	// csc_dialog.cpp globals
 	_vobjs = new NewControl *[MAXCONTROLS];
 	_oswi = new OnScreenWindow[MAXSCREENWINDOWS];
@@ -406,6 +409,9 @@ Globals::~Globals() {
 
 	// cc_dynamic_array.cpp globals
 	delete _globalDynamicArray;
+
+	// cc_common.cpp globals
+	delete _ccError;
 
 	// cscdialog.cpp globals
 	delete[] _vobjs;

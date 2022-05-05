@@ -133,7 +133,7 @@ void force_event(int evtyp, int ev1, int ev2, int ev3) {
 void process_event(const EventHappened *evp) {
 	RuntimeScriptValue rval_null;
 	if (evp->type == EV_TEXTSCRIPT) {
-		_G(ccError) = 0;
+		cc_clear_error();
 		RuntimeScriptValue params[2]{ evp->data2, evp->data3 };
 		if (evp->data3 > -1000)
 			QueueScriptFunction(kScInstGame, _G(tsnames)[evp->data1], 2, params);

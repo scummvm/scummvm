@@ -322,7 +322,7 @@ String get_cur_script(int numberOfLinesOfCallStack) {
 	if (sci)
 		callstack = sci->GetCallStack(numberOfLinesOfCallStack);
 	if (callstack.IsEmpty())
-		callstack = _G(ccErrorCallStack);
+		callstack = cc_get_error().CallStack;
 	return callstack;
 }
 

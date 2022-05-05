@@ -493,7 +493,7 @@ HSaveError restore_save_data_v321(Stream *in, const PreservedParams &pp, Restore
 
 	if (ccUnserializeAllObjects(in, &_GP(ccUnserializer))) {
 		return new SavegameError(kSvgErr_GameObjectInitFailed,
-		                         String::FromFormat("Managed pool deserialization failed: %s.", _G(ccErrorString).GetCStr()));
+		                         String::FromFormat("Managed pool deserialization failed: %s.", cc_get_error().ErrorString.GetCStr()));
 	}
 
 	// preserve legacy music type setting

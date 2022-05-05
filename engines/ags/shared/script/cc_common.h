@@ -43,7 +43,18 @@ extern int ccGetOption(int);
 
 // error reporting
 
-extern void cc_error(const char *, ...);
+struct ScriptError {
+	bool HasError = false; // set if error occurs
+	bool IsUserError = false; // marks script use errors
+	AGS::Shared::String ErrorString; // description of the error
+	int Line = 0;  // line number of the error
+	AGS::Shared::String CallStack; // callstack where error happened
+};
+
+void cc_clear_error();
+bool cc_has_error();
+const ScriptError &cc_get_error();
+void cc_error(const char *, ...);
 
 } // namespace AGS3
 

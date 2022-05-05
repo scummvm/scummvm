@@ -47,10 +47,22 @@ extern std::pair<String, String> cc_error_at_line(const char *error_msg);
 // Returns script error message without location or callstack
 extern String cc_error_without_line(const char *error_msg);
 
+void cc_clear_error() {
+	_GP(ccError) = ScriptError();
+}
+
+bool cc_has_error() {
+	return _GP(ccError).HasError;
+}
+
+const ScriptError &cc_get_error() {
+	return _GP(ccError);
+}
+
 void cc_error(const char *descr, ...) {
-	_G(ccErrorIsUserError) = false;
+	_GP(ccError).IsUserError = false;
 	if (descr[0] == '!') {
-		_G(ccErrorIsUserError) = true;
+		_GP(ccError).IsUserError = true;
 		descr++;
 	}
 
@@ -62,15 +74,15 @@ void cc_error(const char *descr, ...) {
 	if (_G(currentline) > 0) {
 		// [IKM] Implementation is project-specific
 		std::pair<String, String> errinfo = cc_error_at_line(displbuf.GetCStr());
-		_G(ccErrorString) = errinfo.first;
-		_G(ccErrorCallStack) = errinfo.second;
+		_GP(ccError).ErrorString = errinfo.first;
+		_GP(ccError).CallStack = errinfo.second;
 	} else {
-		_G(ccErrorString) = cc_error_without_line(displbuf.GetCStr());
-		_G(ccErrorCallStack) = "";
+		_GP(ccError).ErrorString = cc_error_without_line(displbuf.GetCStr());
+		_GP(ccError).CallStack = "";
 	}
 
-	_G(ccError) = 1;
-	_G(ccErrorLine) = _G(currentline);
+	_GP(ccError).HasError = 1;
+	_GP(ccError).Line = _G(currentline);
 }
 
 } // namespace AGS3

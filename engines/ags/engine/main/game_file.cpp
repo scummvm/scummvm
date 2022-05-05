@@ -119,7 +119,7 @@ HError preload_game_data() {
 static inline HError MakeScriptLoadError(const char *name) {
 	return new Error(String::FromFormat(
 		"Failed to load a script module: %s", name),
-		_G(ccErrorString));
+		cc_get_error().ErrorString);
 }
 
 // Looks up for the game scripts available as separate assets.

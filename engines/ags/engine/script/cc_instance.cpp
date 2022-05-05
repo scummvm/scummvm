@@ -262,7 +262,7 @@ void ccInstance::AbortAndDestroy() {
 	}
 
 int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const RuntimeScriptValue *params) {
-	_G(ccError) = 0;
+	cc_clear_error();
 	_G(currentline) = 0;
 
 	if (numargs > 0 && !params) {
@@ -367,7 +367,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 		cc_error("stack pointer was not zero at completion of script");
 		return -5;
 	}
-	return _G(ccError);
+	return cc_has_error();
 }
 
 // Macros to maintain the call stack
@@ -532,7 +532,7 @@ int ccInstance::Run(int32_t curpc) {
 					registers[SREG_SP].RValue++;
 				} else {
 					PushDataToStack(arg2.IValue);
-					if (_G(ccError)) {
+					if (cc_has_error()) {
 						return -1;
 					}
 				}
@@ -553,7 +553,7 @@ int ccInstance::Run(int32_t curpc) {
 					// This is practically LOADSPOFFS
 					reg1 = GetStackPtrOffsetRw(arg2.IValue);
 				}
-				if (_G(ccError)) {
+				if (cc_has_error()) {
 					return -1;
 				}
 			} else {
@@ -614,7 +614,7 @@ int ccInstance::Run(int32_t curpc) {
 			break;
 		case SCMD_LOADSPOFFS:
 			registers[SREG_MAR] = GetStackPtrOffsetRw(arg1.IValue);
-			if (_G(ccError)) {
+			if (cc_has_error()) {
 				return -1;
 			}
 			break;
@@ -693,9 +693,6 @@ int ccInstance::Run(int32_t curpc) {
 
 			ASSERT_STACK_SPACE_AVAILABLE(1);
 			PushValueToStack(RuntimeScriptValue().SetInt32(pc + codeOp.ArgCount + 1));
-			if (_G(ccError)) {
-				return -1;
-			}
 
 			if (thisbase[curnest] == 0)
 				pc = reg1.IValue;
@@ -741,9 +738,6 @@ int ccInstance::Run(int32_t curpc) {
 			// Push reg[arg1] value to the stack
 			ASSERT_STACK_SPACE_AVAILABLE(1);
 			PushValueToStack(reg1);
-			if (_G(ccError)) {
-				return -1;
-			}
 			break;
 		case SCMD_POPREG:
 			ASSERT_STACK_SIZE(1);
@@ -796,7 +790,7 @@ int ccInstance::Run(int32_t curpc) {
 		// 64 bit: Handles are always 32 bit values. They are not C pointer.
 
 		case SCMD_MEMREADPTR: {
-			_G(ccError) = 0;
+			cc_clear_error();
 
 			int32_t handle = registers[SREG_MAR].ReadInt32();
 			void *object;
@@ -809,7 +803,7 @@ int ccInstance::Run(int32_t curpc) {
 			}
 
 			// if error occurred, cc_error will have been set
-			if (_G(ccError))
+			if (cc_has_error())
 				return -1;
 			break;
 		}
@@ -925,7 +919,7 @@ int ccInstance::Run(int32_t curpc) {
 			// 0, so that the cc_run_code returns
 			RuntimeScriptValue oldstack = registers[SREG_SP];
 			PushValueToStack(RuntimeScriptValue().SetInt32(0));
-			if (_G(ccError)) {
+			if (cc_has_error()) {
 				return -1;
 			}
 
@@ -1021,7 +1015,7 @@ int ccInstance::Run(int32_t curpc) {
 				cc_error("invalid pointer type for function call: %d", reg1.Type);
 			}
 
-			if (_G(ccError) || _G(abort_engine)) {
+			if (cc_has_error() || _G(abort_engine)) {
 				return -1;
 			}
 
