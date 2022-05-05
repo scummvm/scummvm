@@ -36,6 +36,7 @@ static const PlainGameDescriptor hypnoGames[] = {
 	{"sinistersix", "Marvel Comics Spider-Man: The Sinister Six"},
 	{"wetlands", "Wetlands"},
 	{"soldierboyz", "Soldier Boyz"},
+	{"teacher", "Bruce Coville's My Teacher Is an Alien"},
 	{nullptr, nullptr}};
 
 static const ADGameDescription gameDescriptions[] = {
@@ -211,6 +212,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
+	{
+		"teacher", // Bruce Coville's My Teacher Is an Alien Demo - PC Collector 10 (July 1997)
+		"Demo",
+		AD_ENTRY2s("teacher.exe", "7650ab104a21e2ca33a1d0d54a51e9d1", 258560,
+				"demomenu.smk", "abb06755ff1d345b11b0f2c2d42e5dc7", 2424),
+		Common::EN_USA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
 	AD_TABLE_END_MARKER
 };
 } // End of namespace Hypno
@@ -224,6 +235,8 @@ static const char *const directoryGlobs[] = {
 	"factory",
 	"movie",
 	"c_misc",
+	"data",
+	"demo",
 	nullptr
 };
 
