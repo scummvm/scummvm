@@ -583,6 +583,18 @@ public:
 	}
 
 	/**
+	 * Replaces the ScopedPtr with another scoped ScopedPtr.
+	 */
+	template<class T2>
+	ScopedPtr &operator=(ScopedPtr<T2> &&other) {
+		PointerType oldPointer = _pointer;
+		_pointer = other._pointer;
+		other._pointer = nullptr;
+		DL()(oldPointer);
+		return *this;
+	}
+
+	/**
 	 * Returns the plain pointer value.
 	 *
 	 * @return the pointer the ScopedPtr manages
