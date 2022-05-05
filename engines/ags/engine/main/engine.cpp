@@ -582,8 +582,8 @@ void engine_init_game_settings() {
 		_GP(game).chars[ee].baseline = -1;
 		_GP(game).chars[ee].walkwaitcounter = 0;
 		_GP(game).chars[ee].z = 0;
-		_G(charextra)[ee].xwas = INVALID_X;
-		_G(charextra)[ee].zoom = 100;
+		_GP(charextra)[ee].xwas = INVALID_X;
+		_GP(charextra)[ee].zoom = 100;
 		if (_GP(game).chars[ee].view >= 0) {
 			// set initial loop to 0
 			_GP(game).chars[ee].loop = 0;
@@ -591,10 +591,10 @@ void engine_init_game_settings() {
 			if (_GP(views)[_GP(game).chars[ee].view].loops[0].numFrames < 1)
 				_GP(game).chars[ee].loop = 1;
 		}
-		_G(charextra)[ee].process_idle_this_time = 0;
-		_G(charextra)[ee].invorder_count = 0;
-		_G(charextra)[ee].slow_move_counter = 0;
-		_G(charextra)[ee].animwait = 0;
+		_GP(charextra)[ee].process_idle_this_time = 0;
+		_GP(charextra)[ee].invorder_count = 0;
+		_GP(charextra)[ee].slow_move_counter = 0;
+		_GP(charextra)[ee].animwait = 0;
 	}
 
 	_G(our_eip) = -5;

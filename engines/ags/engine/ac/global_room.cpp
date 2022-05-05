@@ -124,7 +124,7 @@ void NewRoom(int nrnum) {
 		if (is_char_walking_ndirect(_G(playerchar))) {
 			// nasty hack - make sure it doesn't move the character
 			// to a walkable area
-			_G(mls)[_G(playerchar)->walking].direct = 1;
+			_GP(mls)[_G(playerchar)->walking].direct = 1;
 			StopMoving(_GP(game).playercharacter);
 		}
 	} else if (_G(in_graph_script))

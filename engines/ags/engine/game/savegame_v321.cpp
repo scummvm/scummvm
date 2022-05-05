@@ -173,7 +173,7 @@ static void restore_game_play(Stream *in, RestoredData &r_data) {
 static void ReadMoveList_Aligned(Stream *in) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < _GP(game).numcharacters + MAX_ROOM_OBJECTS + 1; ++i) {
-		_G(mls)[i].ReadFromFile_Legacy(&align_s);
+		_GP(mls)[i].ReadFromFile_Legacy(&align_s);
 
 		align_s.Reset();
 	}
@@ -187,7 +187,7 @@ static void ReadGameSetupStructBase_Aligned(Stream *in) {
 static void ReadCharacterExtras_Aligned(Stream *in) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
-		_G(charextra)[i].ReadFromFile(&align_s);
+		_GP(charextra)[i].ReadFromFile(&align_s);
 		align_s.Reset();
 	}
 }

@@ -439,8 +439,8 @@ void move_object(int objj, int tox, int toy, int spee, int ignwal) {
 	set_color_depth(_GP(game).GetColorDepth());
 	if (mslot > 0) {
 		_G(objs)[objj].moving = mslot;
-		_G(mls)[mslot].direct = ignwal;
-		convert_move_path_to_room_resolution(&_G(mls)[mslot]);
+		_GP(mls)[mslot].direct = ignwal;
+		convert_move_path_to_room_resolution(&_GP(mls)[mslot]);
 	}
 }
 

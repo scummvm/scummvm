@@ -483,12 +483,12 @@ HSaveError WriteCharacters(Stream *out) {
 	out->WriteInt32(_GP(game).numcharacters);
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
 		_GP(game).chars[i].WriteToFile(out);
-		_G(charextra)[i].WriteToFile(out);
+		_GP(charextra)[i].WriteToFile(out);
 		Properties::WriteValues(_GP(play).charProps[i], out);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			WriteTimesRun272(*_GP(game).intrChar[i], out);
 		// character movement path cache
-		_G(mls)[CHMLSOFFS + i].WriteToFile(out);
+		_GP(mls)[CHMLSOFFS + i].WriteToFile(out);
 	}
 	return HSaveError::None();
 }
@@ -499,12 +499,12 @@ HSaveError ReadCharacters(Stream *in, int32_t cmp_ver, const PreservedParams & /
 		return err;
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
 		_GP(game).chars[i].ReadFromFile(in);
-		_G(charextra)[i].ReadFromFile(in);
+		_GP(charextra)[i].ReadFromFile(in);
 		Properties::ReadValues(_GP(play).charProps[i], in);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			ReadTimesRun272(*_GP(game).intrChar[i], in);
 		// character movement path cache
-		err = _G(mls)[CHMLSOFFS + i].ReadFromFile(in, cmp_ver > 0 ? 1 : 0);
+		err = _GP(mls)[CHMLSOFFS + i].ReadFromFile(in, cmp_ver > 0 ? 1 : 0);
 		if (!err)
 			return err;
 	}
@@ -919,7 +919,7 @@ HSaveError WriteThisRoom(Stream *out) {
 	// room object movement paths cache
 	out->WriteInt32(_GP(thisroom).ObjectCount + 1);
 	for (size_t i = 0; i < _GP(thisroom).ObjectCount + 1; ++i) {
-		_G(mls)[i].WriteToFile(out);
+		_GP(mls)[i].WriteToFile(out);
 	}
 
 	// room music volume
@@ -966,7 +966,7 @@ HSaveError ReadThisRoom(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 	if (!AssertCompatLimit(err, objmls_count, CHMLSOFFS, "room object move lists"))
 		return err;
 	for (int i = 0; i < objmls_count; ++i) {
-		err = _G(mls)[i].ReadFromFile(in, cmp_ver > 0 ? 1 : 0); // FIXME!!
+		err = _GP(mls)[i].ReadFromFile(in, cmp_ver > 0 ? 1 : 0); // FIXME!!
 		if (!err)
 			return err;
 	}

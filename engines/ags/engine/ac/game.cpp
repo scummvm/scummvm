@@ -45,6 +45,7 @@
 #include "ags/shared/ac/keycode.h"
 #include "ags/engine/ac/lip_sync.h"
 #include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/move_list.h"
 #include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/path_helper.h"
@@ -363,10 +364,8 @@ void unload_game_file() {
 	_GP(play).FreeViewportsAndCameras();
 
 	_GP(characterScriptObjNames).clear();
-	free(_G(charextra));
-	_G(charextra) = nullptr;
-	free(_G(mls));
-	_G(mls) = nullptr;
+	_GP(charextra).clear();
+	_GP(mls).clear();
 
 	dispose_game_drawdata();
 

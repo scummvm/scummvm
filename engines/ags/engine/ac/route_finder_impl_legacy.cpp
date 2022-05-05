@@ -733,7 +733,7 @@ void calculate_move_stage(MoveList *mlsp, int aaa) {
 
 int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int movlst, int nocross, int ignore_walls) {
 	assert(onscreen != nullptr);
-	assert(_G(mls) != nullptr);
+	assert((int)_GP(mls).size() > movlst);
 	assert(pathbackx != nullptr);
 	assert(pathbacky != nullptr);
 
@@ -843,23 +843,23 @@ stage_again:
 		AGS::Shared::Debug::Printf("Route from %d,%d to %d,%d - %d stage, %d stages", orisrcx, orisrcy, xx, yy, pathbackstage, numstages);
 #endif
 		int mlist = movlst;
-		_G(mls)[mlist].numstage = numstages;
-		memcpy(&_G(mls)[mlist].pos[0], &reallyneed[0], sizeof(int) * numstages);
+		_GP(mls)[mlist].numstage = numstages;
+		memcpy(&_GP(mls)[mlist].pos[0], &reallyneed[0], sizeof(int) * numstages);
 #ifdef DEBUG_PATHFINDER
 		AGS::Shared::Debug::Printf("stages: %d\n", numstages);
 #endif
 
 		for (aaa = 0; aaa < numstages - 1; aaa++) {
-			calculate_move_stage(&_G(mls)[mlist], aaa);
+			calculate_move_stage(&_GP(mls)[mlist], aaa);
 		}
 
-		_G(mls)[mlist].fromx = orisrcx;
-		_G(mls)[mlist].fromy = orisrcy;
-		_G(mls)[mlist].onstage = 0;
-		_G(mls)[mlist].onpart = 0;
-		_G(mls)[mlist].doneflag = 0;
-		_G(mls)[mlist].lastx = -1;
-		_G(mls)[mlist].lasty = -1;
+		_GP(mls)[mlist].fromx = orisrcx;
+		_GP(mls)[mlist].fromy = orisrcy;
+		_GP(mls)[mlist].onstage = 0;
+		_GP(mls)[mlist].onpart = 0;
+		_GP(mls)[mlist].doneflag = 0;
+		_GP(mls)[mlist].lastx = -1;
+		_GP(mls)[mlist].lasty = -1;
 #ifdef DEBUG_PATHFINDER
 		// getch();
 #endif

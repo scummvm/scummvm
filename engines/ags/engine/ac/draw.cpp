@@ -1428,29 +1428,29 @@ void prepare_characters_for_drawing() {
 
 		// calculates the zoom level
 		if (chin->flags & CHF_MANUALSCALING)  // character ignores scaling
-			zoom_level = _G(charextra)[aa].zoom;
+			zoom_level = _GP(charextra)[aa].zoom;
 		else if ((onarea <= 0) && (_GP(thisroom).WalkAreas[0].ScalingFar == 0)) {
-			zoom_level = _G(charextra)[aa].zoom;
+			zoom_level = _GP(charextra)[aa].zoom;
 			// NOTE: room objects don't have this fix
 			if (zoom_level == 0)
 				zoom_level = 100;
 		} else
 			zoom_level = get_area_scaling(onarea, chin->x, chin->y);
 
-		_G(charextra)[aa].zoom = zoom_level;
+		_GP(charextra)[aa].zoom = zoom_level;
 
 		tint_red = tint_green = tint_blue = tint_amount = tint_light = light_level = 0;
 
 		if (chin->flags & CHF_HASTINT) {
 			// object specific tint, use it
-			tint_red = _G(charextra)[aa].tint_r;
-			tint_green = _G(charextra)[aa].tint_g;
-			tint_blue = _G(charextra)[aa].tint_b;
-			tint_amount = _G(charextra)[aa].tint_level;
-			tint_light = _G(charextra)[aa].tint_light;
+			tint_red = _GP(charextra)[aa].tint_r;
+			tint_green = _GP(charextra)[aa].tint_g;
+			tint_blue = _GP(charextra)[aa].tint_b;
+			tint_amount = _GP(charextra)[aa].tint_level;
+			tint_light = _GP(charextra)[aa].tint_light;
 			light_level = 0;
 		} else if (chin->flags & CHF_HASLIGHT) {
-			light_level = _G(charextra)[aa].tint_light;
+			light_level = _GP(charextra)[aa].tint_light;
 		} else {
 			get_local_tint(chin->x, chin->y, chin->flags & CHF_NOLIGHTING,
 			               &tint_amount, &tint_red, &tint_green, &tint_blue,
@@ -1510,13 +1510,13 @@ void prepare_characters_for_drawing() {
 			// it needs to be stretched, so calculate the new dimensions
 
 			scale_sprite_size(sppic, zoom_level, &newwidth, &newheight);
-			_G(charextra)[aa].width = newwidth;
-			_G(charextra)[aa].height = newheight;
+			_GP(charextra)[aa].width = newwidth;
+			_GP(charextra)[aa].height = newheight;
 		} else {
 			// draw at original size, so just use the sprite width and height
 			// TODO: store width and height always, that's much simplier to use for reference!
-			_G(charextra)[aa].width = 0;
-			_G(charextra)[aa].height = 0;
+			_GP(charextra)[aa].width = 0;
+			_GP(charextra)[aa].height = 0;
 			newwidth = src_sprwidth;
 			newheight = src_sprheight;
 		}
@@ -2280,7 +2280,7 @@ void update_room_debug() {
 			int mlsnum = _GP(game).chars[_G(debugMoveListChar)].walking;
 			if (_GP(game).chars[_G(debugMoveListChar)].walking >= TURNING_AROUND)
 				mlsnum %= TURNING_AROUND;
-			const MoveList &cmls = _G(mls)[mlsnum];
+			const MoveList &cmls = _GP(mls)[mlsnum];
 			for (int i = 0; i < cmls.numstage - 1; i++) {
 				short srcx = short((cmls.pos[i] >> 16) & 0x00ffff);
 				short srcy = short(cmls.pos[i] & 0x00ffff);

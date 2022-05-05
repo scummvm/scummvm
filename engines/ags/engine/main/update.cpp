@@ -57,7 +57,7 @@ int do_movelist_move(short *mlnum, int *xx, int *yy) {
 	int need_to_fix_sprite = 0;
 	if (mlnum[0] < 1) quit("movelist_move: attempted to move on a non-exist movelist");
 	MoveList *cmls;
-	cmls = &_G(mls)[mlnum[0]];
+	cmls = &_GP(mls)[mlnum[0]];
 	fixed xpermove = cmls->xpermove[cmls->onstage], ypermove = cmls->ypermove[cmls->onstage];
 
 	short targetx = short((cmls->pos[cmls->onstage + 1] >> 16) & 0x00ffff);
@@ -203,7 +203,7 @@ void update_character_move_and_anim(std::vector<int> &followingAsSheep) {
 		if (_GP(game).chars[aa].on != 1) continue;
 
 		CharacterInfo *chi = &_GP(game).chars[aa];
-		CharacterExtras *chex = &_G(charextra)[aa];
+		CharacterExtras *chex = &_GP(charextra)[aa];
 
 		chi->UpdateMoveAndAnim(aa, chex, followingAsSheep);
 	}

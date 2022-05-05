@@ -377,7 +377,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 			        _GP(game).chars[chd].x, _GP(game).chars[chd].y, _GP(game).chars[chd].z,
 			        _GP(game).chars[chd].idleview, _GP(game).chars[chd].idletime, _GP(game).chars[chd].idleleft,
 			        _GP(game).chars[chd].walking, _GP(game).chars[chd].animating, _GP(game).chars[chd].following,
-			        _GP(game).chars[chd].flags, _GP(game).chars[chd].wait, _G(charextra)[chd].zoom);
+			        _GP(game).chars[chd].flags, _GP(game).chars[chd].wait, _GP(charextra)[chd].zoom);
 		}
 		Display(bigbuffer);
 		return false;

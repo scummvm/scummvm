@@ -279,7 +279,7 @@ void unload_old_room() {
 			_G(charcache)[ff].inUse = 0;
 		}
 		// ensure that any half-moves (eg. with scaled movement) are stopped
-		_G(charextra)[ff].xwas = INVALID_X;
+		_GP(charextra)[ff].xwas = INVALID_X;
 	}
 
 	_GP(play).swap_portrait_lastchar = -1;

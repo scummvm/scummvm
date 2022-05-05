@@ -430,7 +430,6 @@ public:
 	 * @{
 	 */
 
-	CharacterExtras *_charextra = nullptr;
 	CharacterInfo *_playerchar = nullptr;
 	int32_t _sc_PlayerCharPtr = 0;
 	int _char_lowest_yp = 0;
@@ -753,7 +752,9 @@ public:
 	std::vector<ViewStruct> *_views;
 	CharacterCache *_charcache = nullptr;
 	ObjectCache *_objcache;
-	MoveList *_mls = nullptr;
+	std::vector<CharacterExtras> *_charextra;
+	std::vector<MoveList> *_mls;
+
 	GameSetup *_usetup;
 	AGS::Shared::String _saveGameDirectory;
 	AGS::Shared::String _saveGameSuffix;

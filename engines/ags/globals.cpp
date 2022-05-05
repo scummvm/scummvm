@@ -38,6 +38,7 @@
 #include "ags/shared/gui/gui_textbox.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/shared/util/directory.h"
+#include "ags/engine/ac/character_extras.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
 #include "ags/engine/ac/event.h"
@@ -237,6 +238,8 @@ Globals::Globals() {
 	_scrRegion = new ScriptRegion[MAX_ROOM_REGIONS];
 	_scrInv = new ScriptInvItem[MAX_INV];
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
+	_charextra = new std::vector<CharacterExtras>();
+	_mls = new std::vector<MoveList>();
 	_views = new std::vector<ViewStruct>();
 	_saveGameDirectory = AGS::Shared::SAVE_FOLDER_PREFIX;
 
@@ -493,6 +496,8 @@ Globals::~Globals() {
 	delete[] _scrRegion;
 	delete[] _scrInv;
 	delete[] _objcache;
+	delete _charextra;
+	delete _mls;
 	delete _views;
 
 	// game_init.cpp globals

@@ -96,8 +96,8 @@ void Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addInd
 
 	if (_GP(game).options[OPT_DUPLICATEINV] == 0) {
 		// Ensure it is only in the list once
-		for (ee = 0; ee < _G(charextra)[charid].invorder_count; ee++) {
-			if (_G(charextra)[charid].invorder[ee] == inum) {
+		for (ee = 0; ee < _GP(charextra)[charid].invorder_count; ee++) {
+			if (_GP(charextra)[charid].invorder[ee] == inum) {
 				// They already have the item, so don't add it to the list
 				if (chaa == _G(playerchar))
 					run_on_event(GE_ADD_INV, RuntimeScriptValue().SetInt32(inum));
@@ -105,22 +105,22 @@ void Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addInd
 			}
 		}
 	}
-	if (_G(charextra)[charid].invorder_count >= MAX_INVORDER)
+	if (_GP(charextra)[charid].invorder_count >= MAX_INVORDER)
 		quit("!Too many inventory items added, max 500 display at one time");
 
 	if ((addIndex == SCR_NO_VALUE) ||
-	        (addIndex >= _G(charextra)[charid].invorder_count) ||
+	        (addIndex >= _GP(charextra)[charid].invorder_count) ||
 	        (addIndex < 0)) {
 		// add new item at end of list
-		_G(charextra)[charid].invorder[_G(charextra)[charid].invorder_count] = inum;
+		_GP(charextra)[charid].invorder[_GP(charextra)[charid].invorder_count] = inum;
 	} else {
 		// insert new item at index
-		for (ee = _G(charextra)[charid].invorder_count - 1; ee >= addIndex; ee--)
-			_G(charextra)[charid].invorder[ee + 1] = _G(charextra)[charid].invorder[ee];
+		for (ee = _GP(charextra)[charid].invorder_count - 1; ee >= addIndex; ee--)
+			_GP(charextra)[charid].invorder[ee + 1] = _GP(charextra)[charid].invorder[ee];
 
-		_G(charextra)[charid].invorder[addIndex] = inum;
+		_GP(charextra)[charid].invorder[addIndex] = inum;
 	}
-	_G(charextra)[charid].invorder_count++;
+	_GP(charextra)[charid].invorder_count++;
 	GUI::MarkInventoryForUpdate(charid, charid == _GP(game).playercharacter);
 	if (chaa == _G(playerchar))
 		run_on_event(GE_ADD_INV, RuntimeScriptValue().SetInt32(inum));
@@ -137,7 +137,7 @@ void Character_AddWaypoint(CharacterInfo *chaa, int x, int y) {
 		return;
 	}
 
-	MoveList *cmls = &_G(mls)[chaa->walking % TURNING_AROUND];
+	MoveList *cmls = &_GP(mls)[chaa->walking % TURNING_AROUND];
 	if (cmls->numstage >= MAXNEEDSTAGES) {
 		debug_script_warn("Character_AddWaypoint: move is too complex, cannot add any further paths");
 		return;
@@ -263,7 +263,7 @@ void Character_ChangeView(CharacterInfo *chap, int vii) {
 	chap->frame = 0;
 	chap->wait = 0;
 	chap->walkwait = 0;
-	_G(charextra)[chap->index_id].animwait = 0;
+	_GP(charextra)[chap->index_id].animwait = 0;
 	FindReasonableLoopForCharacter(chap);
 }
 
@@ -651,11 +651,11 @@ void Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
 
 	if ((chap->inv[inum] == 0) || (_GP(game).options[OPT_DUPLICATEINV] > 0)) {
 		int xx, tt;
-		for (xx = 0; xx < _G(charextra)[charid].invorder_count; xx++) {
-			if (_G(charextra)[charid].invorder[xx] == inum) {
-				_G(charextra)[charid].invorder_count--;
-				for (tt = xx; tt < _G(charextra)[charid].invorder_count; tt++)
-					_G(charextra)[charid].invorder[tt] = _G(charextra)[charid].invorder[tt + 1];
+		for (xx = 0; xx < _GP(charextra)[charid].invorder_count; xx++) {
+			if (_GP(charextra)[charid].invorder[xx] == inum) {
+				_GP(charextra)[charid].invorder_count--;
+				for (tt = xx; tt < _GP(charextra)[charid].invorder_count; tt++)
+					_GP(charextra)[charid].invorder[tt] = _GP(charextra)[charid].invorder[tt + 1];
 				break;
 			}
 		}
@@ -786,7 +786,7 @@ void Character_SetIdleView(CharacterInfo *chaa, int iview, int itime) {
 	}
 	// if they switch to a swimming animation, kick it off immediately
 	if (itime == 0)
-		_G(charextra)[chaa->index_id].process_idle_this_time = 1;
+		_GP(charextra)[chaa->index_id].process_idle_this_time = 1;
 
 }
 
@@ -795,35 +795,35 @@ bool Character_GetHasExplicitLight(CharacterInfo *ch) {
 }
 
 int Character_GetLightLevel(CharacterInfo *ch) {
-	return ch->has_explicit_light() ? _G(charextra)[ch->index_id].tint_light : 0;
+	return ch->has_explicit_light() ? _GP(charextra)[ch->index_id].tint_light : 0;
 }
 
 void Character_SetLightLevel(CharacterInfo *chaa, int light_level) {
 	light_level = Math::Clamp(light_level, -100, 100);
 
-	_G(charextra)[chaa->index_id].tint_light = light_level;
+	_GP(charextra)[chaa->index_id].tint_light = light_level;
 	chaa->flags &= ~CHF_HASTINT;
 	chaa->flags |= CHF_HASLIGHT;
 }
 
 int Character_GetTintRed(CharacterInfo *ch) {
-	return ch->has_explicit_tint() ? _G(charextra)[ch->index_id].tint_r : 0;
+	return ch->has_explicit_tint() ? _GP(charextra)[ch->index_id].tint_r : 0;
 }
 
 int Character_GetTintGreen(CharacterInfo *ch) {
-	return ch->has_explicit_tint() ? _G(charextra)[ch->index_id].tint_g : 0;
+	return ch->has_explicit_tint() ? _GP(charextra)[ch->index_id].tint_g : 0;
 }
 
 int Character_GetTintBlue(CharacterInfo *ch) {
-	return ch->has_explicit_tint() ? _G(charextra)[ch->index_id].tint_b : 0;
+	return ch->has_explicit_tint() ? _GP(charextra)[ch->index_id].tint_b : 0;
 }
 
 int Character_GetTintSaturation(CharacterInfo *ch) {
-	return ch->has_explicit_tint() ? _G(charextra)[ch->index_id].tint_level : 0;
+	return ch->has_explicit_tint() ? _GP(charextra)[ch->index_id].tint_level : 0;
 }
 
 int Character_GetTintLuminance(CharacterInfo *ch) {
-	return ch->has_explicit_tint() ? ((_G(charextra)[ch->index_id].tint_light * 10) / 25) : 0;
+	return ch->has_explicit_tint() ? ((_GP(charextra)[ch->index_id].tint_light * 10) / 25) : 0;
 }
 
 void Character_SetOption(CharacterInfo *chaa, int flag, int yesorno) {
@@ -867,21 +867,21 @@ void Character_StopMoving(CharacterInfo *charp) {
 	if (chaa == _GP(play).skip_until_char_stops)
 		EndSkippingUntilCharStops();
 
-	if (_G(charextra)[chaa].xwas != INVALID_X) {
-		charp->x = _G(charextra)[chaa].xwas;
-		charp->y = _G(charextra)[chaa].ywas;
-		_G(charextra)[chaa].xwas = INVALID_X;
+	if (_GP(charextra)[chaa].xwas != INVALID_X) {
+		charp->x = _GP(charextra)[chaa].xwas;
+		charp->y = _GP(charextra)[chaa].ywas;
+		_GP(charextra)[chaa].xwas = INVALID_X;
 	}
 	if ((charp->walking > 0) && (charp->walking < TURNING_AROUND)) {
 		// if it's not a MoveCharDirect, make sure they end up on a walkable area
-		if ((_G(mls)[charp->walking].direct == 0) && (charp->room == _G(displayed_room)))
+		if ((_GP(mls)[charp->walking].direct == 0) && (charp->room == _G(displayed_room)))
 			Character_PlaceOnWalkableArea(charp);
 
 		debug_script_log("%s: stop moving", charp->scrname);
 
 		charp->idleleft = charp->idletime;
 		// restart the idle animation straight away
-		_G(charextra)[chaa].process_idle_this_time = 1;
+		_GP(charextra)[chaa].process_idle_this_time = 1;
 	}
 	if (charp->walking) {
 		// If the character is currently moving, stop them and reset their frame
@@ -900,11 +900,11 @@ void Character_Tint(CharacterInfo *chaa, int red, int green, int blue, int opaci
 
 	debug_script_log("Set %s tint RGB(%d,%d,%d) %d%%", chaa->scrname, red, green, blue, opacity);
 
-	_G(charextra)[chaa->index_id].tint_r = red;
-	_G(charextra)[chaa->index_id].tint_g = green;
-	_G(charextra)[chaa->index_id].tint_b = blue;
-	_G(charextra)[chaa->index_id].tint_level = opacity;
-	_G(charextra)[chaa->index_id].tint_light = (luminance * 25) / 10;
+	_GP(charextra)[chaa->index_id].tint_r = red;
+	_GP(charextra)[chaa->index_id].tint_g = green;
+	_GP(charextra)[chaa->index_id].tint_b = blue;
+	_GP(charextra)[chaa->index_id].tint_level = opacity;
+	_GP(charextra)[chaa->index_id].tint_light = (luminance * 25) / 10;
 	chaa->flags &= ~CHF_HASLIGHT;
 	chaa->flags |= CHF_HASTINT;
 }
@@ -938,7 +938,7 @@ void Character_UnlockViewEx(CharacterInfo *chaa, int stopMoving) {
 	chaa->pic_xoffs = 0;
 	chaa->pic_yoffs = 0;
 	// restart the idle animation straight away
-	_G(charextra)[chaa->index_id].process_idle_this_time = 1;
+	_GP(charextra)[chaa->index_id].process_idle_this_time = 1;
 
 }
 
@@ -1237,7 +1237,7 @@ void Character_SetIgnoreScaling(CharacterInfo *chaa, int yesorno) {
 	if (yesorno) {
 		// when setting IgnoreScaling to 1, should reset zoom level
 		// like it used to in pre-2.71
-		_G(charextra)[chaa->index_id].zoom = 100;
+		_GP(charextra)[chaa->index_id].zoom = 100;
 	}
 	Character_SetManualScaling(chaa, yesorno);
 }
@@ -1300,7 +1300,7 @@ int Character_GetMoving(CharacterInfo *chaa) {
 
 int Character_GetDestinationX(CharacterInfo *chaa) {
 	if (chaa->walking) {
-		MoveList *cmls = &_G(mls)[chaa->walking % TURNING_AROUND];
+		MoveList *cmls = &_GP(mls)[chaa->walking % TURNING_AROUND];
 		return cmls->pos[cmls->numstage - 1] >> 16;
 	} else
 		return chaa->x;
@@ -1308,7 +1308,7 @@ int Character_GetDestinationX(CharacterInfo *chaa) {
 
 int Character_GetDestinationY(CharacterInfo *chaa) {
 	if (chaa->walking) {
-		MoveList *cmls = &_G(mls)[chaa->walking % TURNING_AROUND];
+		MoveList *cmls = &_GP(mls)[chaa->walking % TURNING_AROUND];
 		return cmls->pos[cmls->numstage - 1] & 0xFFFF;
 	} else
 		return chaa->y;
@@ -1372,7 +1372,7 @@ void Character_SetScaleVolume(CharacterInfo *chaa, int yesorno) {
 }
 
 int Character_GetScaling(CharacterInfo *chaa) {
-	return _G(charextra)[chaa->index_id].zoom;
+	return _GP(charextra)[chaa->index_id].zoom;
 }
 
 void Character_SetScaling(CharacterInfo *chaa, int zoomlevel) {
@@ -1386,7 +1386,7 @@ void Character_SetScaling(CharacterInfo *chaa, int zoomlevel) {
 		debug_script_warn("Character.Scaling: scaling level must be between 1 and %d%%, asked for: %d",
 			(int)(INT16_MAX), zoomlevel);
 
-	_G(charextra)[chaa->index_id].zoom = zoom_fixed;
+	_GP(charextra)[chaa->index_id].zoom = zoom_fixed;
 }
 
 int Character_GetSolid(CharacterInfo *chaa) {
@@ -1600,7 +1600,7 @@ void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims) 
 	// if they are currently walking, save the current Wait
 	if (chin->walking) {
 		waitWas = chin->walkwait;
-		animWaitWas = _G(charextra)[chac].animwait;
+		animWaitWas = _GP(charextra)[chac].animwait;
 	}
 
 	StopMoving(chac);
@@ -1625,8 +1625,8 @@ void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims) 
 	set_color_depth(_GP(game).GetColorDepth());
 	if (mslot > 0) {
 		chin->walking = mslot;
-		_G(mls)[mslot].direct = ignwal;
-		convert_move_path_to_room_resolution(&_G(mls)[mslot]);
+		_GP(mls)[mslot].direct = ignwal;
+		convert_move_path_to_room_resolution(&_GP(mls)[mslot]);
 
 		// cancel any pending waits on current animations
 		// or if they were already moving, keep the current wait -
@@ -1634,10 +1634,10 @@ void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims) 
 		// are already moving
 		if (autoWalkAnims) {
 			chin->walkwait = waitWas;
-			_G(charextra)[chac].animwait = animWaitWas;
+			_GP(charextra)[chac].animwait = animWaitWas;
 
-			if (_G(mls)[mslot].pos[0] != _G(mls)[mslot].pos[1]) {
-				fix_player_sprite(&_G(mls)[mslot], chin);
+			if (_GP(mls)[mslot].pos[0] != _GP(mls)[mslot].pos[1]) {
+				fix_player_sprite(&_GP(mls)[mslot], chin);
 			}
 		} else
 			chin->flags |= CHF_MOVENOTWALK;
@@ -1781,7 +1781,7 @@ int doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *che
 
 	if (do_movelist_move(&chi->walking, &chi->x, &chi->y) == 2) {
 		if ((chi->flags & CHF_MOVENOTWALK) == 0)
-			fix_player_sprite(&_G(mls)[chi->walking], chi);
+			fix_player_sprite(&_GP(mls)[chi->walking], chi);
 	}
 
 	ntf = has_hit_another_character(char_index);
@@ -1800,8 +1800,8 @@ int doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *che
 		}
 
 		if ((chi->walking < 1) || (chi->walking >= TURNING_AROUND)) ;
-		else if (_G(mls)[chi->walking].onpart > 0) {
-			_G(mls)[chi->walking].onpart --;
+		else if (_GP(mls)[chi->walking].onpart > 0) {
+			_GP(mls)[chi->walking].onpart --;
 			chi->x = xwas;
 			chi->y = ywas;
 		}
@@ -1813,7 +1813,7 @@ int doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *che
 
 bool is_char_walking_ndirect(CharacterInfo *chi) {
 	return ((chi->walking > 0) && (chi->walking < TURNING_AROUND)) &&
-		(_G(mls)[chi->walking].direct == 0);
+		(_GP(mls)[chi->walking].direct == 0);
 }
 
 int find_nearest_walkable_area_within(int *xx, int *yy, int range, int step) {
@@ -2058,7 +2058,7 @@ void CheckViewFrameForCharacter(CharacterInfo *chi) {
 
 	if (chi->flags & CHF_SCALEVOLUME) {
 		// adjust the sound volume using the character's zoom level
-		int zoom_level = _G(charextra)[chi->index_id].zoom;
+		int zoom_level = _GP(charextra)[chi->index_id].zoom;
 		if (zoom_level == 0)
 			zoom_level = 100;
 
@@ -2118,8 +2118,8 @@ int is_pos_on_character(int xx, int yy) {
 		}
 
 		sppic = _GP(views)[chin->view].loops[chin->loop].frames[chin->frame].pic;
-		int usewid = _G(charextra)[cc].width;
-		int usehit = _G(charextra)[cc].height;
+		int usewid = _GP(charextra)[cc].width;
+		int usehit = _GP(charextra)[cc].height;
 		if (usewid == 0) usewid = _GP(game).SpriteInfos[sppic].Width;
 		if (usehit == 0) usehit = _GP(game).SpriteInfos[sppic].Height;
 		int xxx = chin->x - game_to_data_coord(usewid) / 2;
@@ -2411,7 +2411,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 		if (tdyp < 0) {
 			int sppic = _GP(views)[speakingChar->view].loops[speakingChar->loop].frames[0].pic;
-			int height = (_G(charextra)[aschar].height < 1) ? _GP(game).SpriteInfos[sppic].Height : _G(charextra)[aschar].height;
+			int height = (_GP(charextra)[aschar].height < 1) ? _GP(game).SpriteInfos[sppic].Height : _GP(charextra)[aschar].height;
 			tdyp = view->RoomToScreen(0, data_to_game_coord(_GP(game).chars[aschar].get_effective_y()) - height).first.Y
 			       - get_fixed_pixel_size(5);
 			if (isThought) // if it's a thought, lift it a bit further up
@@ -2702,7 +2702,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		speakingChar->wait = 0;
 		speakingChar->idleleft = speakingChar->idletime;
 		// restart the idle animation straight away
-		_G(charextra)[aschar].process_idle_this_time = 1;
+		_GP(charextra)[aschar].process_idle_this_time = 1;
 	}
 	_G(char_speaking) = -1;
 	_G(char_thinking) = -1;
@@ -2783,7 +2783,7 @@ int update_lip_sync(int talkview, int talkloop, int *talkframeptr) {
 
 Rect GetCharacterRoomBBox(int charid, bool use_frame_0) {
 	int width, height;
-	const CharacterExtras &chex = _G(charextra)[charid];
+	const CharacterExtras &chex = _GP(charextra)[charid];
 	const CharacterInfo &chin = _GP(game).chars[charid];
 	int frame = use_frame_0 ? 0 : chin.frame;
 	int pic = _GP(views)[chin.view].loops[chin.loop].frames[frame].pic;
