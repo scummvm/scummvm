@@ -21,6 +21,7 @@
 
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/ac/game_struct_defines.h"
+#include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/gui_button.h"
 #include "ags/shared/gui/gui_main.h" // TODO: extract helper functions
 #include "ags/shared/util/stream.h"
@@ -28,7 +29,6 @@
 #include "ags/globals.h"
 
 namespace AGS3 {
-
 namespace AGS {
 namespace Shared {
 
@@ -82,6 +82,11 @@ GUIButton::GUIButton() {
 	_scEventArgs[0] = "GUIControl *control, MouseButton button";
 }
 
+bool GUIButton::HasAlphaChannel() const {
+	return ((CurrentImage > 0) && is_sprite_alpha(CurrentImage)) ||
+		(!_unnamed && is_font_antialiased(Font));
+}
+
 const String &GUIButton::GetText() const {
 	return _text;
 }
@@ -92,10 +97,6 @@ bool GUIButton::IsImageButton() const {
 
 bool GUIButton::IsClippingImage() const {
 	return (Flags & kGUICtrl_Clip) != 0;
-}
-
-bool GUIButton::HasAlphaChannel() const {
-	return is_sprite_alpha(CurrentImage);
 }
 
 Rect GUIButton::CalcGraphicRect(bool clipped) {

@@ -49,6 +49,10 @@ GUIListBox::GUIListBox() {
 	_scEventArgs[0] = "GUIControl *control";
 }
 
+bool GUIListBox::HasAlphaChannel() const {
+	return is_font_antialiased(Font);
+}
+
 int GUIListBox::GetItemAt(int x, int y) const {
 	if (RowHeight <= 0 || IsInRightMargin(x))
 		return -1;

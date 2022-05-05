@@ -34,6 +34,7 @@ class GUITextBox : public GUIObject {
 public:
 	GUITextBox();
 
+	bool HasAlphaChannel() const override;
 	bool IsBorderShown() const;
 
 	// Operations

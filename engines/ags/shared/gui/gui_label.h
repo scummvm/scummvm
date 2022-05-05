@@ -37,6 +37,7 @@ class GUILabel : public GUIObject {
 public:
 	GUILabel();
 
+	bool HasAlphaChannel() const override;
 	// Gets label's text property in original set form (with macros etc)
 	String       GetText() const;
 	// Gets which macro are contained within label's text

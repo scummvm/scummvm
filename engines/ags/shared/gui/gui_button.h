@@ -62,10 +62,10 @@ class GUIButton : public GUIObject {
 public:
 	GUIButton();
 
+	bool HasAlphaChannel() const override;
 	const String &GetText() const;
 	bool IsImageButton() const;
 	bool IsClippingImage() const;
-	bool HasAlphaChannel() const override;
 
 	// Operations
 	Rect CalcGraphicRect(bool clipped) override;

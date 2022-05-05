@@ -116,6 +116,7 @@ int get_text_lines_surf_height(size_t fontNumber, size_t numlines);
 // Set font's outline type
 void set_font_outline(size_t font_number, int outline_type,
 	enum FontInfo::AutoOutlineStyle style = FontInfo::kSquared, int thickness = 1);
+bool is_font_antialiased(size_t font_number);
 // Outputs a single line of text on the defined position on bitmap, using defined font, color and parameters
 void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, const char *texx);
 // Assigns FontInfo to the font
@@ -135,6 +136,9 @@ void adjust_fonts_for_render_mode(bool aa_mode);
 void wfreefont(size_t fontNumber);
 // Free all fonts data
 void free_all_fonts();
+
+// Tells if the text should be antialiased when possible
+bool ShouldAntiAliasText();
 
 // SplitLines class represents a list of lines and is meant to reduce
 // subsequent memory (de)allocations if used often during game loops

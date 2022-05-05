@@ -41,6 +41,10 @@ GUILabel::GUILabel() {
 	_scEventCount = 0;
 }
 
+bool GUILabel::HasAlphaChannel() const {
+	return is_font_antialiased(Font);
+}
+
 String GUILabel::GetText() const {
 	return Text;
 }

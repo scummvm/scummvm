@@ -32,6 +32,12 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
+bool GUIInvWindow::HasAlphaChannel() const {
+	// We would have to test every inventory item's graphic to tell precisely,
+	// so just test game color depth instead:
+	return _GP(game).GetColorDepth() == 32;
+}
+
 int GUIInvWindow::GetCharacterId() const {
 	if (CharId < 0)
 		return _GP(game).playercharacter;

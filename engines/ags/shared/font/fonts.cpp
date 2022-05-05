@@ -188,6 +188,12 @@ void set_font_outline(size_t font_number, int outline_type,
 	_GP(fonts)[font_number].Info.AutoOutlineThickness = thickness;
 }
 
+bool is_font_antialiased(size_t font_number) {
+	if (font_number >= _GP(fonts).size())
+		return false;
+	return ShouldAntiAliasText() && !is_bitmap_font(font_number);
+}
+
 int get_font_height(size_t fontNumber) {
 	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
 		return 0;
