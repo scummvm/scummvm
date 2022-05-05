@@ -101,37 +101,23 @@ bool walkbehinds_cropout(Bitmap *sprit, int sprx, int spry, int basel, int zoom)
 
 	const int maskcol = sprit->GetMaskColor();
 	const int spcoldep = sprit->GetColorDepth();
-	const int screenhit = _GP(thisroom).WalkBehindMask->GetHeight();
 
 	bool pixels_changed = false;
-	int x = 0;
-	if (sprx < 0)
-		x = 0 - sprx;
-	for (; (x < sprit->GetWidth()) && (x + sprx < _GP(thisroom).WalkBehindMask->GetWidth()); ++x) {
+	// pass along the sprite's pixels, but skip those that lie outside the mask
+	for (int x = std::max(0, 0 - sprx);
+		(x < sprit->GetWidth()) && (x + sprx < _GP(thisroom).WalkBehindMask->GetWidth()); ++x) {
+		// select the WB column at this x
 		const auto &wbcol = walkBehindCols[x + sprx];
+		// skip if no area, or sprite lies outside of all areas in this column
 		if ((!wbcol.Exists) ||
 			(wbcol.Y2 <= spry) ||
 			(wbcol.Y1 > spry + sprit->GetHeight()))
 			continue;
 
-		int y;
-		if (wbcol.Y1 < spry)
-			y = 0;
-		else
-			y = (wbcol.Y1 - spry);
-
-		// ensure we only check within the mask
-		int height = sprit->GetHeight();
-		if (y + spry < 0)
-			y = 0 - spry;
-		if (height + spry > screenhit)
-			height = screenhit - spry;
-		if (height + spry > wbcol.Y2)
-			height = wbcol.Y2 - spry;
-		if (y < 0)
-			y = 0;
-
-		for (; y < height; ++y) {
+		// ensure we only check within the valid areas (between Y1 and Y2)
+		// we assume that Y1 and Y2 are always within the mask
+		for (int y = std::max(0, wbcol.Y1 - spry);
+				(y < sprit->GetHeight()) && (y + spry < wbcol.Y2); ++y) {
 			const int wb = _GP(thisroom).WalkBehindMask->GetScanLine(y + spry)[x + sprx];
 			if (wb < 1) continue; // "no area"
 			if (_G(croom)->walkbehind_base[wb] <= basel) continue;
