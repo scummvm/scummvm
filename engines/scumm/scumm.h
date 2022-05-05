@@ -1221,6 +1221,7 @@ private:
 	};
 
 	bool _existLanguageFile = false;
+	bool _isRTL = false;
 	byte *_languageBuffer = nullptr;
 	int _numTranslatedLines = 0;
 	TranslatedLine *_translatedLines = nullptr;

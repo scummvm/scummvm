@@ -312,6 +312,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_herculesBuf = (byte *)malloc(kHercWidth * kHercHeight);
 	}
 
+	_isRTL = (_game.version >= 4 && _game.version < 7 && _game.heversion == 0 && _language == Common::HE_ISR);
 #ifndef DISABLE_HELP
 	// Create custom GMM dialog providing a help subdialog
 	assert(!_mainMenuDialog);
