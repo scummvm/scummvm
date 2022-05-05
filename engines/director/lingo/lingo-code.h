@@ -98,7 +98,6 @@ void c_swap();
 void c_theentitypush();
 void c_themenuentitypush();
 void c_theentityassign();
-void c_themenuitementityassign();
 void c_objectproppush();
 void c_objectpropassign();
 
