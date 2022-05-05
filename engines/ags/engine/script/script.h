@@ -88,6 +88,7 @@ void    can_run_delayed_command();
 
 // Gets current running script position
 bool    get_script_position(ScriptPosition &script_pos);
+AGS::Shared::String cc_get_callstack(int max_lines = INT_MAX);
 
 } // namespace AGS3
 

@@ -42,9 +42,6 @@ int ccGetOption(int optbit) {
 	return 0;
 }
 
-// Returns current running script callstack as a human-readable text
-extern String cc_get_callstack(int max_lines = INT_MAX);
-
 void cc_clear_error() {
 	_GP(ccError) = ScriptError();
 }
