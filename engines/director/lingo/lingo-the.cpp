@@ -931,6 +931,8 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(%s, %s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field), d.asString(true).c_str());
 	}
 
+	Datum menuItemParam;												//Extra Datum required for setting MenuItem Parameter
+
 	Movie *movie = _vm->getCurrentMovie();
 	Score *score = movie->getScore();
 
@@ -1019,7 +1021,11 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheMenu);
 		break;
 	case kTheMenuItem:
-		setTheEntitySTUB(kTheMenuItem);
+		//Pop the MenuItem Parameter Datum (Name, value of checkbox, ifEnabled, Script)
+		//Then pass it to setThemMenuItemEntity() to set the menuItemId (d) with parameter menuItemParam
+		//id tells the menuId, field tells which property to change (checkmark, enabled, name, script)
+		menuItemParam = g_lingo->pop();
+		g_lingo->setTheMenuItemEntity(entity, id, field, d, menuItemParam);
 		break;
 	case kTheMouseDownScript:
 		movie->setPrimaryEventHandler(kEventMouseDown, d.asString());
