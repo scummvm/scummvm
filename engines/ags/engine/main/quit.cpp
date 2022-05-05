@@ -48,6 +48,7 @@
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/platform/base/sys_main.h"
 #include "ags/plugins/plugin_engine.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/globals.h"
 #include "ags/ags.h"
@@ -114,7 +115,7 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 			               "(ACI version %s)\n\n", _G(EngineVersion).LongString.GetCStr());
 		}
 
-		alertis.Append(get_cur_script(5));
+		alertis.Append(cc_get_error().CallStack);
 
 		if (qreason != kQuit_UserAbort)
 			alertis.Append("\nError: ");
@@ -125,7 +126,7 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 		qmsg++;
 		alertis.Format("A warning has been generated. This is not normally fatal, but you have selected "
 		               "to treat warnings as errors.\n"
-		               "(ACI version %s)\n\n%s\n", _G(EngineVersion).LongString.GetCStr(), get_cur_script(5).GetCStr());
+		               "(ACI version %s)\n\n%s\n", _G(EngineVersion).LongString.GetCStr(), cc_get_error().CallStack.GetCStr());
 		return kQuit_GameWarning;
 	} else {
 		alertis.Format("An internal error has occurred. Please note down the following information.\n"

@@ -159,12 +159,12 @@ public:
 	int     CallScriptFunction(const char *funcname, int32_t num_params, const RuntimeScriptValue *params);
 
 	// Get the script's execution position and callstack as human-readable text
-	Shared::String GetCallStack(int maxLines);
+	Shared::String GetCallStack(int max_lines = INT_MAX) const;
 	// Get the script's execution position
-	void    GetScriptPosition(ScriptPosition &script_pos);
+	void    GetScriptPosition(ScriptPosition &script_pos) const;
 	// Get the address of an exported symbol (function or variable) in the script
-	RuntimeScriptValue GetSymbolAddress(const char *symname);
-	void    DumpInstruction(const ScriptOperation &op);
+	RuntimeScriptValue GetSymbolAddress(const char *symname) const;
+	void    DumpInstruction(const ScriptOperation &op) const;
 	// Tells whether this instance is in the process of executing the byte-code
 	bool    IsBeingRun() const;
 

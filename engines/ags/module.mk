@@ -279,7 +279,6 @@ MODULE_OBJS = \
 	engine/script/runtime_script_value.o \
 	engine/script/script.o \
 	engine/script/script_api.o \
-	engine/script/script_engine.o \
 	engine/script/script_runtime.o \
 	engine/script/system_imports.o \
 	plugins/ags_plugin.o \

@@ -129,7 +129,7 @@ Globals::Globals() {
 	_animbuts = new std::vector<AnimatingGUIButton>();
 
 	// cc_instance.cpp globals
-	_InstThreads = new std::stack<ccInstance *>();
+	_InstThreads = new std::deque<ccInstance *>();
 	_GlobalReturnValue = new RuntimeScriptValue();
 
 	// cc_options.cpp globals

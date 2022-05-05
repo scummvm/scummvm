@@ -1675,7 +1675,7 @@ void prepare_room_sprites() {
 
 			if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
 				for (int wb = 1 /* 0 is "no area" */;
-					(wb < MAX_WALK_BEHINDS) && (wb < _GP(walkbehindobj).size()); ++wb) {
+					(wb < MAX_WALK_BEHINDS) && (wb < (int)_GP(walkbehindobj).size()); ++wb) {
 					const auto &wbobj = _GP(walkbehindobj)[wb];
 					if (wbobj.Ddb) {
 						add_to_sprite_list(wbobj.Ddb, wbobj.Pos.X, wbobj.Pos.Y,

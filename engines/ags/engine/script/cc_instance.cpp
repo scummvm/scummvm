@@ -157,6 +157,18 @@ const char *regnames[] = { "null", "sp", "mar", "ax", "bx", "cx", "op", "dx" };
 
 const char *fixupnames[] = { "null", "fix_gldata", "fix_func", "fix_string", "fix_import", "fix_datadata", "fix_stack" };
 
+String cc_get_callstack(int max_lines) {
+	String callstack;
+	for (auto sci = _GP(InstThreads).crbegin(); sci != _GP(InstThreads).crend(); ++sci) {
+		if (callstack.IsEmpty())
+			callstack.Append("in the active script:\n");
+		else
+			callstack.Append("in the waiting script:\n");
+		callstack.Append((*sci)->GetCallStack(max_lines));
+	}
+	return callstack;
+}
+
 // Function call stack is used to temporarily store
 // values before passing them to script function
 #define MAX_FUNC_PARAMS 20
@@ -181,7 +193,7 @@ struct FunctionCallStack {
 
 
 ccInstance *ccInstance::GetCurrentInstance() {
-	return _GP(InstThreads).size() > 0 ? _GP(InstThreads).top() : nullptr;
+	return _GP(InstThreads).size() > 0 ? _GP(InstThreads).back() : nullptr;
 }
 
 ccInstance *ccInstance::CreateFromScript(PScript scri) {
@@ -335,14 +347,14 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 		}
 	PushValueToStack(RuntimeScriptValue().SetInt32(0)); // return address on stack
 
-	_GP(InstThreads).push(this); // push instance thread
+	_GP(InstThreads).push_back(this); // push instance thread
 	runningInst = this;
 	int reterr = Run(startat);
 	// Cleanup before returning, even if error
 	ASSERT_STACK_SIZE(numargs);
 	PopValuesFromStack(numargs);
 	pc = 0;
-	_GP(InstThreads).pop(); // pop instance thread
+	_GP(InstThreads).pop_back(); // pop instance thread
 	if (reterr != 0)
 		return reterr;
 
@@ -1198,7 +1210,7 @@ int ccInstance::Run(int32_t curpc) {
 	}
 }
 
-String ccInstance::GetCallStack(int maxLines) {
+String ccInstance::GetCallStack(int maxLines) const {
 	String buffer = String::FromFormat("in \"%s\", line %d\n", runningInst->instanceof->GetSectionName(pc), line_number);
 
 	int linesDone = 0;
@@ -1212,13 +1224,13 @@ String ccInstance::GetCallStack(int maxLines) {
 	return buffer;
 }
 
-void ccInstance::GetScriptPosition(ScriptPosition &script_pos) {
+void ccInstance::GetScriptPosition(ScriptPosition &script_pos) const {
 	script_pos.Section = runningInst->instanceof->GetSectionName(pc);
 	script_pos.Line    = line_number;
 }
 
 // get a pointer to a variable or function exported by the script
-RuntimeScriptValue ccInstance::GetSymbolAddress(const char *symname) {
+RuntimeScriptValue ccInstance::GetSymbolAddress(const char *symname) const {
 	int k;
 	char altName[200];
 	snprintf(altName, sizeof(altName), "%s$", symname);
@@ -1234,7 +1246,7 @@ RuntimeScriptValue ccInstance::GetSymbolAddress(const char *symname) {
 	return rval_null;
 }
 
-void ccInstance::DumpInstruction(const ScriptOperation &op) {
+void ccInstance::DumpInstruction(const ScriptOperation &op) const {
 	// line_num local var should be shared between all the instances
 	static int line_num = 0;
 
