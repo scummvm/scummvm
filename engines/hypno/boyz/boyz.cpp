@@ -42,12 +42,16 @@ void BoyzEngine::loadAssets() {
 	if (missions->listMembers(files) == 0)
 		error("Failed to load any files from missions.lib");
 
-	Transition *logos = new Transition("c19.mi_");
+	Transition *logos = new Transition("<main_menu>");
 	logos->intros.push_back("intro/dclogos.smk");
 	logos->intros.push_back("intro/mplogos.smk");
 	logos->intros.push_back("intro/hyplogos.smk");
 	logos->intros.push_back("intro/sblogos.smk");
 	_levels["<start>"] = logos;
+
+	Code *menu = new Code("<main_menu>");
+	_levels["<main_menu>"] = menu;
+	_levels["<main_menu>"]->levelIfWin = "c19.mi_";
 
 	loadArcadeLevel("c19.mi_", "c11.mi_", "??", "");
 	loadArcadeLevel("c11.mi_", "c12.mi_", "??", "");
@@ -167,8 +171,81 @@ void BoyzEngine::loadAssets() {
 
 	targets->free();
 	delete targets;
+
+	loadLib("", "misc/fonts.lib", true);
+	loadFonts();
+
 	_nextLevel = "<start>";
 }
+
+void BoyzEngine::loadFonts() {
+	Common::File file;
+
+	if (!file.open("block05.fgx"))
+		error("Cannot open font");
+
+	byte *font = (byte *)malloc(file.size());
+	file.read(font, file.size());
+
+	_font05.set_size(file.size()*8);
+	_font05.set_bits((byte *)font);
+
+	file.close();
+	free(font);
+	if (!file.open("scifi08.fgx"))
+		error("Cannot open font");
+
+	font = (byte *)malloc(file.size());
+	file.read(font, file.size());
+
+	_font08.set_size(file.size()*8);
+	_font08.set_bits((byte *)font);
+
+	free(font);
+}
+
+void BoyzEngine::drawString(const Common::String &font, const Common::String &str, int x, int y, int w, uint32 color) {
+	int offset = 0;
+	if (font == "block05.fgx") {
+		for (uint32 c = 0; c < str.size(); c++) {
+
+			offset = 0;
+			if (str[c] == ':')
+				offset = 1;
+			else if (str[c] == '.')
+				offset = 4;
+
+			for (int i = 0; i < 5; i++) {
+				for (int j = 0; j < 5; j++) {
+					if (!_font05.get(275 + 40*str[c] + j*8 + i))
+						_compositeSurface->setPixel(x + 5 - i + 6*c, offset + y + j, color);
+				}
+			}
+		}
+	} else if (font == "scifi08.fgx") {
+		for (uint32 c = 0; c < str.size(); c++) {
+			if (str[c] == 0)
+				continue;
+			assert(str[c] >= 32);
+			offset = 0;
+			if (str[c] == 't')
+				offset = 0;
+			else if (str[c] == 'i' || str[c] == '%')
+				offset = 1;
+			else if (Common::isLower(str[c]) || str[c] == ':')
+				offset = 2;
+
+			for (int i = 0; i < 6; i++) {
+				for (int j = 0; j < 8; j++) {
+					if (!_font08.get(1554 + 72*(str[c]-32) + j*8 + i))
+						_compositeSurface->setPixel(x + 6 - i + 7*c, offset + y + j, color);
+				}
+			}
+		}
+	} else
+		error("Invalid font: '%s'", font.c_str());
+}
+
 
 Common::String BoyzEngine::findNextLevel(const Transition *trans) {
 	if (trans->nextLevel.empty())

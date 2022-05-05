@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	actions.o \
 	arcade.o \
 	boyz/arcade.o \
+	boyz/hard.o \
 	boyz/boyz.o \
 	cursors.o \
 	grammar_mis.o \

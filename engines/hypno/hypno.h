@@ -530,7 +530,9 @@ private:
 class BoyzEngine : public HypnoEngine {
 public:
 	BoyzEngine(OSystem *syst, const ADGameDescription *gd);
+	Common::String _name;
 	void loadAssets() override;
+	void runCode(Code *code) override;
 	Common::String findNextLevel(const Common::String &level) override;
 	Common::String findNextLevel(const Transition *trans) override;
 
@@ -550,7 +552,12 @@ public:
 	void initSegment(ArcadeShooting *arc) override;
 	bool checkTransition(ArcadeTransitions &transitions, ArcadeShooting *arc) override;
 
+	void loadFonts() override;
+	void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) override;
+
 	private:
+	void runMainMenu(Code *code);
+
 	Graphics::Surface _healthBar[6];
 	Graphics::Surface _ammoBar[6];
 	Graphics::Surface _portrait[6];
@@ -569,6 +576,8 @@ public:
 	uint32 _currentActor;
 	uint32 _currentWeapon;
 
+	Common::BitArray _font05;
+	Common::BitArray _font08;
 };
 
 } // End of namespace Hypno
