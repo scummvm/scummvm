@@ -135,6 +135,39 @@ void BoyzEngine::findNextSegment(ArcadeShooting *arc) {
 	_segmentIdx = _segmentIdx + 1;
 }
 
+bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *arc) {
+	ArcadeTransition at = *transitions.begin();
+	int ttime = at.time;
+	if (_background->decoder->getCurFrame() > ttime) {
+		if (!at.video.empty()) {
+			_background->decoder->pauseVideo(true);
+			debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
+			MVideo video(at.video, Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+
+			if (!at.palette.empty())
+				_currentPalette = at.palette;
+
+			loadPalette(_currentPalette);
+			_background->decoder->pauseVideo(false);
+			drawPlayer();
+			updateScreen(*_background);
+			drawScreen();
+			drawCursorArcade(g_system->getEventManager()->getMousePos());
+		} else if (!at.sound.empty()) {
+			playSound(at.sound, 1);
+		} else
+			error ("Invalid transition at %d", ttime);
+
+		transitions.pop_front();
+		if (!_music.empty())
+			playSound(_music, 0, arc->musicRate); // restore music
+		return true;
+	}
+	return false;
+}
+
 int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 	Common::Point target = computeTargetPosition(mousePos);
 	assert(_shoots.size() <= 1);

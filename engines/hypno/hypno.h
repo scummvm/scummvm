@@ -547,6 +547,7 @@ public:
 	void drawPlayer() override;
 	void findNextSegment(ArcadeShooting *arc) override;
 	void initSegment(ArcadeShooting *arc) override;
+	bool checkTransition(ArcadeTransitions &transitions, ArcadeShooting *arc) override;
 
 	private:
 	Graphics::Surface _healthBar[6];
