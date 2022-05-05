@@ -19,9 +19,9 @@
  *
  */
 
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/shared/script/cc_script.h"
-#include "ags/shared/script/script_common.h"
+#include "ags/shared/script/cc_internal.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/globals.h"

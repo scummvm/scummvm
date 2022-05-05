@@ -24,7 +24,7 @@
 
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/map.h"
-#include "ags/shared/script/script_common.h"
+#include "ags/shared/script/cc_internal.h"
 #include "ags/shared/script/cc_script.h"  // ccScript
 #include "ags/engine/script/non_blocking_script_function.h"
 #include "ags/shared/util/string.h"
@@ -47,9 +47,6 @@ using namespace AGS;
 #define INSTANCE_ID_SHIFT 24LL
 #define INSTANCE_ID_MASK  0x00000000000000ffLL
 #define INSTANCE_ID_REMOVEMASK 0x0000000000ffffffLL
-
-struct ccInstance;
-struct ScriptImport;
 
 struct ScriptInstruction {
 	ScriptInstruction() {
@@ -100,7 +97,6 @@ struct ScriptPosition {
 // Running instance of the script
 struct ccInstance {
 public:
-	// TODO: change to std:: if moved to C++11
 	typedef std::unordered_map<int32_t, ScriptVariable> ScVarMap;
 	typedef std::shared_ptr<ScVarMap>                   PScVarMap;
 public:

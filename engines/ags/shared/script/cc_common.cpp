@@ -20,13 +20,27 @@
  */
 
 #include "ags/lib/std/utility.h"
-#include "ags/shared/script/script_common.h"  // current_line
+#include "ags/shared/script/cc_common.h"
 #include "ags/shared/util/string.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
+
+void ccSetOption(int optbit, int onoroff) {
+	if (onoroff)
+		_G(ccCompOptions) |= optbit;
+	else
+		_G(ccCompOptions) &= ~optbit;
+}
+
+int ccGetOption(int optbit) {
+	if (_G(ccCompOptions) & optbit)
+		return 1;
+
+	return 0;
+}
 
 // Returns full script error message and callstack (if possible)
 extern std::pair<String, String> cc_error_at_line(const char *error_msg);

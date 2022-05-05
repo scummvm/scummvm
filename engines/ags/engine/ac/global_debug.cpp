@@ -37,12 +37,12 @@
 #include "ags/engine/ac/walkable_area.h"
 #include "ags/engine/gfx/gfxfilter.h"
 #include "ags/engine/gui/gui_dialog.h"
-#include "ags/shared/script/cc_options.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/main/main.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/main/graphics_mode.h"
 

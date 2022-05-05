@@ -32,7 +32,7 @@
 #include "ags/shared/game/main_game_file.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/gui_main.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/data_ext.h"
 #include "ags/shared/util/path.h"

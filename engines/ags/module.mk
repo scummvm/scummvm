@@ -68,8 +68,7 @@ MODULE_OBJS = \
 	shared/gui/gui_object.o \
 	shared/gui/gui_slider.o \
 	shared/gui/gui_textbox.o \
-	shared/script/cc_error.o \
-	shared/script/cc_options.o \
+	shared/script/cc_common.o \
 	shared/script/cc_script.o \
 	shared/util/aligned_stream.o \
 	shared/util/buffered_stream.o \

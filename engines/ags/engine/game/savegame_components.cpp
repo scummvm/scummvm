@@ -54,7 +54,7 @@
 #include "ags/shared/gui/gui_textbox.h"
 #include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/plugin_engine.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/util/file_stream.h" // TODO: needed only because plugins expect file handle
 #include "ags/engine/media/audio/audio_system.h"

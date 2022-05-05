@@ -45,7 +45,7 @@
 #include "ags/shared/gui/gui_label.h"
 #include "ags/engine/main/main.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/stream.h"

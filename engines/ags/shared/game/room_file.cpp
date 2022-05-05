@@ -29,7 +29,7 @@
 #include "ags/shared/game/room_file.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/shared/script/cc_script.h"
 #include "ags/shared/util/compress.h"
 #include "ags/shared/util/data_ext.h"

@@ -20,7 +20,7 @@
  */
 
 #include "ags/shared/ac/game_version.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/shared/util/math.h"

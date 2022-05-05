@@ -33,15 +33,11 @@
 //
 //=============================================================================
 
-#include "ags/engine/script/script_runtime.h"
-#include "ags/shared/script/script_common.h"
-#include "ags/shared/script/cc_error.h"
-#include "ags/shared/script/cc_options.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_array.h"
-#include "ags/engine/script/system_imports.h"
 #include "ags/engine/ac/statobj/static_object.h"
-#include "ags/plugins/ags_plugin.h"
-#include "ags/plugins/plugin_base.h"
+#include "ags/shared/script/cc_common.h"
+#include "ags/engine/script/system_imports.h"
+#include "ags/engine/script/script_runtime.h"
 #include "ags/globals.h"
 
 namespace AGS3 {

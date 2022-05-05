@@ -36,7 +36,7 @@
 #include "ags/shared/gui/gui_listbox.h"
 #include "ags/shared/gui/gui_slider.h"
 #include "ags/shared/gui/gui_textbox.h"
-#include "ags/shared/script/cc_options.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/shared/util/directory.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"

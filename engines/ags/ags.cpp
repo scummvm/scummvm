@@ -56,7 +56,7 @@
 #include "ags/engine/ac/route_finder.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/shared/util/directory.h"
-#include "ags/shared/script/cc_options.h"
+#include "ags/shared/script/cc_common.h"
 
 #ifdef ENABLE_AGS_TESTS
 #include "ags/tests/test_all.h"

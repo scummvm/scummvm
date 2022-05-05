@@ -49,7 +49,7 @@
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/plugin_engine.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/exports.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/script_runtime.h"
