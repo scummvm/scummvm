@@ -69,13 +69,10 @@ void cc_error(const char *descr, ...) {
 	String displbuf = String::FromFormatV(descr, ap);
 	va_end(ap);
 
-	String callstack = cc_get_callstack();
-	if ((_G(currentline) > 0) && callstack.IsEmpty())
-		_GP(ccError).ErrorString = String::FromFormat("Error (line %d): %s", _G(currentline), displbuf.GetCStr());
-	else
-		_GP(ccError).ErrorString = String::FromFormat("Error: %s", displbuf.GetCStr());
-	_GP(ccError).CallStack = callstack;
-
+	// TODO: because this global ccError is a global shared variable,
+	// we have to use project-dependent function to format the final message
+	_GP(ccError).ErrorString = cc_format_error(displbuf);
+	_GP(ccError).CallStack = cc_get_callstack();
 	_GP(ccError).HasError = 1;
 	_GP(ccError).Line = _G(currentline);
 }

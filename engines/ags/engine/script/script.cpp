@@ -882,4 +882,11 @@ bool get_script_position(ScriptPosition &script_pos) {
 	return false;
 }
 
+String cc_format_error(const String &message) {
+	if (_G(currentline) > 0)
+		return String::FromFormat("Error (line %d): %s", _G(currentline), message.GetCStr());
+	else
+		return String::FromFormat("Error (line unknown): %s", message.GetCStr());
+}
+
 } // namespace AGS3

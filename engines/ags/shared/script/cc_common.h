@@ -55,6 +55,8 @@ void cc_clear_error();
 bool cc_has_error();
 const ScriptError &cc_get_error();
 void cc_error(const char *, ...);
+// Project-dependent script error formatting
+AGS::Shared::String cc_format_error(const AGS::Shared::String &message);
 
 } // namespace AGS3
 
