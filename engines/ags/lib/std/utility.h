@@ -46,7 +46,17 @@ pair<T1, T2> make_pair(T1 first, T2 second) {
 // STRUCT TEMPLATE remove_reference
 template <class _Ty>
 struct remove_reference {
-	using type = _Ty;
+	typedef _Ty type;
+};
+
+template<class _Ty>
+struct remove_reference<_Ty &> {
+	typedef _Ty type;
+};
+
+template<class _Ty>
+struct remove_reference<_Ty &&> {
+	typedef _Ty type;
 };
 
 template <class _Ty>

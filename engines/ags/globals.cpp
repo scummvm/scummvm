@@ -173,23 +173,22 @@ Globals::Globals() {
 	Common::fill(_dynamicallyCreatedSurfaces, _dynamicallyCreatedSurfaces +
 	             MAX_DYNAMIC_SURFACES, (AGS::Shared::Bitmap *)nullptr);
 
-	_actsps = new std::vector<Shared::Bitmap *>();
-	_actspsbmp = new std::vector<Engine::IDriverDependantBitmap *>();
-	_guibg = new std::vector<Shared::Bitmap *>();
-	_guibgddb = new std::vector<Engine::IDriverDependantBitmap *>();
-	_debugRoomMaskBmp = new std::unique_ptr<Shared::Bitmap>();
-	_debugMoveListBmp = new std::unique_ptr<Shared::Bitmap>();
+	_actsps = new std::vector<ObjTexture>();
+	_guibg = new std::vector<ObjTexture>();
+	_guiobjbg = new std::vector<ObjTexture>();
+
+	_guiobjddb = new std::vector<Engine::IDriverDependantBitmap *>();
+	_guiobjoff = new std::vector<Point>();
+	_guiobjddbref = new std::vector<int>();
+	_overlaybmp = new std::vector<std::unique_ptr<Shared::Bitmap> >();
+	_debugRoomMaskObj =  new ObjTexture();
+	_debugMoveListObj = new ObjTexture();
 
 	_maincoltable = new COLOR_MAP();
 	_palette = new color[256];
 	for (int i = 0; i < PALETTE_COUNT; ++i)
 		_palette[i].clear();
 
-	_guiobjbg = new std::vector<Shared::Bitmap *>();
-	_guiobjddb = new std::vector<Engine::IDriverDependantBitmap *>();
-	_guiobjoff = new std::vector<Point>();
-	_guiobjddbref = new std::vector<int>();
-	_overlaybmp = new std::vector<Shared::Bitmap *>();
 
 	// draw_software.cpp globals
 	_BlackRects = new DirtyRects();
@@ -429,19 +428,18 @@ Globals::~Globals() {
 	delete _sprlist;
 	delete _thingsToDrawList;
 	delete _actsps;
-	delete _actspsbmp;
 	delete _guibg;
-	delete _guibgddb;
-	delete _debugRoomMaskBmp;
-	delete _debugMoveListBmp;
+	delete _guiobjbg;
+	delete _guiobjddbref;
+	delete _guiobjddb;
+	delete _guiobjoff;
+	delete _overlaybmp;
+	delete _debugRoomMaskObj;
+	delete _debugMoveListObj;
+
 	delete[] _dynamicallyCreatedSurfaces;
 	delete[] _palette;
 	delete _maincoltable;
-	delete _guiobjbg;
-	delete _guiobjddb;
-	delete _guiobjoff;
-	delete _guiobjddbref;
-	delete _overlaybmp;
 
 	// draw_software.cpp globals
 	delete _BlackRects;

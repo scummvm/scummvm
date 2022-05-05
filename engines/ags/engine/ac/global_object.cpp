@@ -521,12 +521,12 @@ void GetObjectPropertyText(int item, const char *property, char *bufer) {
 
 Bitmap *GetObjectImage(int obj, int *isFlipped) {
 	if (!_G(gfxDriver)->HasAcceleratedTransform()) {
-		if (_GP(actsps)[obj] != nullptr) {
-			// the actsps image is pre-flipped, so no longer register the image as such
+		Bitmap *actsp = get_cached_object_image(obj);
+		if (actsp) {
+			// the cached image is pre-flipped, so no longer register the image as such
 			if (isFlipped)
 				*isFlipped = 0;
-
-			return _GP(actsps)[obj];
+			return actsp;
 		}
 	}
 	return _GP(spriteset)[_G(objs)[obj].num];

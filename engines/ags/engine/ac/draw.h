@@ -26,6 +26,7 @@
 #include "ags/shared/core/types.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/gfx/gfx_def.h"
+#include "ags/shared/gfx/allegro_bitmap.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/game/room_struct.h"
 
@@ -57,6 +58,28 @@ struct RoomCameraDrawData {
 	AGS::Shared::PBitmap Frame;       // this is either same bitmap reference or sub-bitmap of virtual screen
 	bool    IsOffscreen; // whether room viewport was offscreen (cannot use sub-bitmap)
 	bool    IsOverlap;   // whether room viewport overlaps any others (marking dirty rects is complicated)
+};
+
+// ObjTexture is a helper struct that pairs a raw bitmap with
+// a renderer's texture and an optional position
+struct ObjTexture {
+	// Raw bitmap
+	std::unique_ptr<Shared::Bitmap> Bmp;
+	// Corresponding texture, created by renderer
+	Engine::IDriverDependantBitmap *Ddb = nullptr;
+	// Sprite's position, may be used in case the texture's pos is different
+	// from the object's logical position (x,y,w,h) for some reason.
+	Point Pos;
+
+	ObjTexture() = default;
+	ObjTexture(Shared::Bitmap *bmp, Engine::IDriverDependantBitmap *ddb, int x, int y)
+		: Bmp(bmp), Ddb(ddb), Pos(x, y) {
+	}
+	ObjTexture(const ObjTexture &) = default;
+	ObjTexture(ObjTexture &&o);
+	~ObjTexture();
+
+	ObjTexture &operator =(ObjTexture &&o);
 };
 
 // Converts AGS color index to the actual bitmap color using game's color depth
@@ -108,7 +131,8 @@ void mark_current_background_dirty();
 
 // Avoid freeing and reallocating the memory if possible
 Shared::Bitmap *recycle_bitmap(Shared::Bitmap *bimp, int coldep, int wid, int hit, bool make_transparent = false);
-Engine::IDriverDependantBitmap *recycle_ddb_bitmap(Engine::IDriverDependantBitmap *bimp, Shared::Bitmap *source, bool hasAlpha = false, bool opaque = false);
+void recycle_bitmap(std::unique_ptr<Shared::Bitmap> &bimp, int coldep, int wid, int hit, bool make_transparent = false);
+Engine::IDriverDependantBitmap *recycle_ddb_bitmap(Engine::IDriverDependantBitmap *ddb, Shared::Bitmap *source, bool has_alpha = false, bool opaque = false);
 // Draw everything
 void render_graphics(Engine::IDriverDependantBitmap *extraBitmap = nullptr, int extraX = 0, int extraY = 0);
 // Construct game scene, scheduling drawing list for the renderer
@@ -137,7 +161,7 @@ void draw_gui_sprite(Shared::Bitmap *ds, bool use_alpha, int xpos, int ypos,
 // Generates a transformed sprite, using src image and parameters;
 // * if transformation is necessary - writes into dst and returns dst;
 // * if no transformation is necessary - simply returns src;
-Shared::Bitmap *transform_sprite(Shared::Bitmap *src, bool src_has_alpha, Shared::Bitmap *&dst,
+Shared::Bitmap *transform_sprite(Shared::Bitmap *src, bool src_has_alpha, std::unique_ptr<Shared::Bitmap> &dst,
 	const Size dst_sz, Shared::BitmapFlip flip = Shared::kBitmap_NoFlip);
 // Render game on screen
 void render_to_screen();

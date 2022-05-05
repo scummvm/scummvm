@@ -578,19 +578,20 @@ public:
 
 	// actsps is used for temporary storage of the bitamp image
 	// of the latest version of the sprite
-	std::vector<Shared::Bitmap *> *_actsps;
-	std::vector<Engine::IDriverDependantBitmap *> *_actspsbmp;
-	// temporary cache of walk-behind for this actsps image
+	std::vector<ObjTexture> *_actsps;
 	// GUI surfaces
-	std::vector<Shared::Bitmap *> *_guibg;
-	std::vector<Engine::IDriverDependantBitmap *> *_guibgddb;
+	std::vector<ObjTexture> *_guibg;
+	// GUI control surfaces
+	std::vector<ObjTexture> *_guiobjbg;
+	// first control texture index of each GUI
+	std::vector<int> *_guiobjddbref;
+	// Overlay's cached transformed bitmap, for software mode
+	std::vector<std::unique_ptr<Shared::Bitmap> > *_overlaybmp;
 	// For debugging room masks
+	ObjTexture *_debugRoomMaskObj;
+	ObjTexture *_debugMoveListObj;
 	RoomAreaMask _debugRoomMask = kRoomAreaNone;
-	std::unique_ptr<Shared::Bitmap> *_debugRoomMaskBmp;
-	Engine::IDriverDependantBitmap *_debugRoomMaskDDB = nullptr;
 	int _debugMoveListChar = -1;
-	std::unique_ptr<Shared::Bitmap> *_debugMoveListBmp;
-	Engine::IDriverDependantBitmap *_debugMoveListDDB = nullptr;
 
 	bool _current_background_is_dirty = false;
 	// Room background sprite
@@ -604,13 +605,8 @@ public:
 	color *_palette;
 	COLOR_MAP *_maincoltable;
 
-	// GUI control surfaces
-	std::vector<Shared::Bitmap *> *_guiobjbg;
 	std::vector<Engine::IDriverDependantBitmap *> *_guiobjddb;
 	std::vector<Point> *_guiobjoff; // because surface may be larger than logical position
-	std::vector<int> *_guiobjddbref; // first control texture index of each GUI
-	// Overlay's cached transformed bitmap, for software mode
-	std::vector<Shared::Bitmap *> *_overlaybmp;
 
 	/**@}*/
 
