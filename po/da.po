@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-04 21:39+0000\n"
+"POT-Creation-Date: 2022-05-05 18:30+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -5219,39 +5219,39 @@ msgstr "Splatter-tilstand"
 msgid "Enable Gore Mode when available"
 msgstr "Aktivér splatter-tilstand når mulig"
 
-#: engines/hypno/detection.cpp:231
+#: engines/hypno/detection.cpp:244
 #, fuzzy
 msgid "Enable original cheats"
 msgstr "Aktivér snydetilstand"
 
-#: engines/hypno/detection.cpp:232
+#: engines/hypno/detection.cpp:245
 msgid "Allow cheats using the C key."
 msgstr ""
 
-#: engines/hypno/detection.cpp:240
+#: engines/hypno/detection.cpp:253
 #, fuzzy
 msgid "Enable infinite health cheat"
 msgstr "Aktivér indholdscensurering"
 
-#: engines/hypno/detection.cpp:241
+#: engines/hypno/detection.cpp:254
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
-#: engines/hypno/detection.cpp:249
+#: engines/hypno/detection.cpp:262
 #, fuzzy
 msgid "Enable infinite ammo cheat"
 msgstr "Aktivér snydetilstand"
 
-#: engines/hypno/detection.cpp:250
+#: engines/hypno/detection.cpp:263
 msgid "Player ammo will never decrease."
 msgstr ""
 
-#: engines/hypno/detection.cpp:258
+#: engines/hypno/detection.cpp:271
 #, fuzzy
 msgid "Enable restored content"
 msgstr "Aktivér indholdscensurering"
 
-#: engines/hypno/detection.cpp:259
+#: engines/hypno/detection.cpp:272
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 

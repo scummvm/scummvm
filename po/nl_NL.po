@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-04 21:39+0000\n"
+"POT-Creation-Date: 2022-05-05 18:30+0000\n"
 "PO-Revision-Date: 2022-03-29 10:46+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -5177,41 +5177,41 @@ msgstr "Gore Modus"
 msgid "Enable Gore Mode when available"
 msgstr "Gore modus inschakelen waar mogelijk"
 
-#: engines/hypno/detection.cpp:231
+#: engines/hypno/detection.cpp:244
 #, fuzzy
 #| msgid "Enable cheats"
 msgid "Enable original cheats"
 msgstr "Zet valsspelen aan"
 
-#: engines/hypno/detection.cpp:232
+#: engines/hypno/detection.cpp:245
 msgid "Allow cheats using the C key."
 msgstr "Sta cheaten toe met de C toets."
 
-#: engines/hypno/detection.cpp:240
+#: engines/hypno/detection.cpp:253
 #, fuzzy
 #| msgid "Enable font replacement"
 msgid "Enable infinite health cheat"
 msgstr "Lettertypes vervangen"
 
-#: engines/hypno/detection.cpp:241
+#: engines/hypno/detection.cpp:254
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
-#: engines/hypno/detection.cpp:249
+#: engines/hypno/detection.cpp:262
 #, fuzzy
 #| msgid "Enable cheats"
 msgid "Enable infinite ammo cheat"
 msgstr "Zet valsspelen aan"
 
-#: engines/hypno/detection.cpp:250
+#: engines/hypno/detection.cpp:263
 msgid "Player ammo will never decrease."
 msgstr ""
 
-#: engines/hypno/detection.cpp:258
+#: engines/hypno/detection.cpp:271
 msgid "Enable restored content"
 msgstr "Gerestaureerde inhoud inschakelen"
 
-#: engines/hypno/detection.cpp:259
+#: engines/hypno/detection.cpp:272
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 "Voeg extra content toe die niet in de originele implementatie gebruikt werd."

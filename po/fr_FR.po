@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-04 21:39+0000\n"
+"POT-Creation-Date: 2022-05-05 18:30+0000\n"
 "PO-Revision-Date: 2022-04-28 09:44+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -5189,36 +5189,36 @@ msgstr "Mode Sanglant"
 msgid "Enable Gore Mode when available"
 msgstr "Active le Mode Sanglant quand il est disponible"
 
-#: engines/hypno/detection.cpp:231
+#: engines/hypno/detection.cpp:244
 msgid "Enable original cheats"
 msgstr "Activer les cheats originaux"
 
-#: engines/hypno/detection.cpp:232
+#: engines/hypno/detection.cpp:245
 msgid "Allow cheats using the C key."
 msgstr "Permet les triches (ou cheats) en utilisant la touche C."
 
-#: engines/hypno/detection.cpp:240
+#: engines/hypno/detection.cpp:253
 msgid "Enable infinite health cheat"
 msgstr "Activer le cheat Santé infinie"
 
-#: engines/hypno/detection.cpp:241
+#: engines/hypno/detection.cpp:254
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 "La santé du joueur ne baissera jamais (sauf lors des scènes de game over)."
 
-#: engines/hypno/detection.cpp:249
+#: engines/hypno/detection.cpp:262
 msgid "Enable infinite ammo cheat"
 msgstr "Activer le cheat Munitions infinies"
 
-#: engines/hypno/detection.cpp:250
+#: engines/hypno/detection.cpp:263
 msgid "Player ammo will never decrease."
 msgstr "La quantité de munitions ne baissera jamais."
 
-#: engines/hypno/detection.cpp:258
+#: engines/hypno/detection.cpp:271
 msgid "Enable restored content"
 msgstr "Activer le contenu restauré"
 
-#: engines/hypno/detection.cpp:259
+#: engines/hypno/detection.cpp:272
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 "Ajoute le contenu additionnel qui n'est pas activé dans l'implémentation "
