@@ -986,7 +986,12 @@ bool Sound::isMouthSyncOff(uint pos) {
 			break;
 		}
 	} while (pos + delay > j);
-	return val;
+
+	if (_vm->_game.version < 7) {
+		return val;
+	} else {
+		return (j != 0xFFFF) ? val : false;
+	}
 }
 
 int Sound::isSoundRunning(int sound) const {
