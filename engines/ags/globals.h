@@ -25,6 +25,7 @@
 #include "ags/shared/core/platform.h"
 #define AGS_PLATFORM_DEFINES_PSP_VARS (AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID)
 
+#include "ags/lib/std/stack.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/util/stdio_compat.h"
 #include "ags/shared/util/string.h"
@@ -369,7 +370,11 @@ public:
 	 * @{
 	 */
 
-	ccInstance *_current_instance = nullptr;
+	// Instance thread stack holds a list of running or suspended script instances;
+	// In AGS currently only one thread is running, others are waiting in the queue.
+	// An example situation is repeatedly_execute_always callback running while
+	// another instance is waiting at the blocking action or Wait().
+	std::stack<ccInstance *> *_InstThreads;
 	// [IKM] 2012-10-21:
 	// NOTE: This is temporary solution (*sigh*, one of many) which allows certain
 	// exported functions return value as a RuntimeScriptValue object;

@@ -86,6 +86,9 @@ InteractionVariable *FindGraphicalVariable(const char *varName);
 void    run_unhandled_event(int evnt);
 void    can_run_delayed_command();
 
+// Gets current running script position
+bool    get_script_position(ScriptPosition &script_pos);
+
 } // namespace AGS3
 
 #endif

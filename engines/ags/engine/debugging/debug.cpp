@@ -326,15 +326,6 @@ String get_cur_script(int numberOfLinesOfCallStack) {
 	return callstack;
 }
 
-bool get_script_position(ScriptPosition &script_pos) {
-	ccInstance *cur_instance = ccInstance::GetCurrentInstance();
-	if (cur_instance) {
-		cur_instance->GetScriptPosition(script_pos);
-		return true;
-	}
-	return false;
-}
-
 struct Breakpoint {
 	char scriptName[80];
 	int lineNumber;

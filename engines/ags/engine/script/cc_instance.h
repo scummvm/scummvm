@@ -161,8 +161,6 @@ public:
 
 	// Call an exported function in the script
 	int     CallScriptFunction(const char *funcname, int32_t num_params, const RuntimeScriptValue *params);
-	// Begin executing script starting from the given bytecode index
-	int     Run(int32_t curpc);
 
 	// Get the script's execution position and callstack as human-readable text
 	Shared::String GetCallStack(int maxLines);
@@ -193,6 +191,8 @@ protected:
 	bool    CreateRuntimeCodeFixups(const ccScript *scri);
 	//bool    ReadOperation(ScriptOperation &op, int32_t at_pc);
 
+	// Begin executing script starting from the given bytecode index
+	int     Run(int32_t curpc);
 	// Runtime fixups
 	//bool    FixupArgument(intptr_t code_value, char fixup_type, RuntimeScriptValue &argument);
 

@@ -129,6 +129,7 @@ Globals::Globals() {
 	_animbuts = new std::vector<AnimatingGUIButton>();
 
 	// cc_instance.cpp globals
+	_InstThreads = new std::stack<ccInstance *>();
 	_GlobalReturnValue = new RuntimeScriptValue();
 
 	// cc_options.cpp globals
@@ -396,6 +397,7 @@ Globals::~Globals() {
 	delete _animbuts;
 
 	// cc_instance.cpp globals
+	delete _InstThreads;
 	delete _GlobalReturnValue;
 	delete _scriptDumpFile;
 

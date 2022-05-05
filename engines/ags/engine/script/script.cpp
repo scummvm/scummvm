@@ -890,4 +890,13 @@ void run_unhandled_event(int evnt) {
 	}
 }
 
+bool get_script_position(ScriptPosition &script_pos) {
+	ccInstance *cur_instance = ccInstance::GetCurrentInstance();
+	if (cur_instance) {
+		cur_instance->GetScriptPosition(script_pos);
+		return true;
+	}
+	return false;
+}
+
 } // namespace AGS3

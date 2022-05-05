@@ -182,7 +182,7 @@ struct FunctionCallStack {
 
 
 ccInstance *ccInstance::GetCurrentInstance() {
-	return _G(current_instance);
+	return _GP(InstThreads).size() > 0 ? _GP(InstThreads).top() : nullptr;
 }
 
 ccInstance *ccInstance::CreateFromScript(PScript scri) {
@@ -321,49 +321,40 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 		return -2;
 	}
 
+	// Prepare instance for run
+	flags &= ~INSTF_ABORTED;
 	// Allow to pass less parameters if script callback has less declared args
 	numargs = std::min(numargs, export_args);
-
-	//numargs++;                    // account for return address
-	flags &= ~INSTF_ABORTED;
-
 	// object pointer needs to start zeroed
 	registers[SREG_OP].SetDynamicObject(nullptr, nullptr);
-
-	ccInstance *currentInstanceWas = _G(current_instance);
 	registers[SREG_SP].SetStackPtr(&stack[0]);
 	stackdata_ptr = stackdata;
 	// NOTE: Pushing parameters to stack in reverse order
 	ASSERT_STACK_SPACE_AVAILABLE(numargs + 1 /* return address */)
-	for (int i = numargs - 1; i >= 0; --i) {
-		PushValueToStack(params[i]);
-	}
+		for (int i = numargs - 1; i >= 0; --i) {
+			PushValueToStack(params[i]);
+		}
 	PushValueToStack(RuntimeScriptValue().SetInt32(0)); // return address on stack
-	if (_G(ccError)) {
-		return -1;
-	}
-	runningInst = this;
 
+	_GP(InstThreads).push(this); // push instance thread
+	runningInst = this;
 	int reterr = Run(startat);
+	// Cleanup before returning, even if error
 	ASSERT_STACK_SIZE(numargs);
 	PopValuesFromStack(numargs);
 	pc = 0;
-	_G(current_instance) = currentInstanceWas;
-
-	if (_G(abort_engine))
-		return -1;
+	_GP(InstThreads).pop(); // pop instance thread
+	if (reterr != 0)
+		return reterr;
 
 	// NOTE that if proper multithreading is added this will need
-	// to be reconsidered, since the GC could be run in the middle
-	// of a RET from a function or something where there is an
+	// to be reconsidered, since the GC could be run in the middle 
+	// of a RET from a function or something where there is an 
 	// object with ref count 0 that is in use
 	_GP(pool).RunGarbageCollectionIfAppropriate();
 
 	if (_G(new_line_hook))
 		_G(new_line_hook)(nullptr, 0);
-
-	if (reterr)
-		return -6;
 
 	if (flags & INSTF_ABORTED) {
 		flags &= ~INSTF_ABORTED;
@@ -419,7 +410,6 @@ int ccInstance::Run(int32_t curpc) {
 	int loopIterationCheckDisabled = 0;
 	thisbase[0] = 0;
 	funcstart[0] = pc;
-	_G(current_instance) = this;
 	ccInstance *codeInst = runningInst;
 	bool write_debug_dump = ccGetOption(SCOPT_DEBUGRUN) ||
 		(gDebugLevel > 0 && DebugMan.isDebugChannelEnabled(::AGS::kDebugScript));
@@ -609,7 +599,6 @@ int ccInstance::Run(int32_t curpc) {
 				returnValue = registers[SREG_AX].IValue;
 				return 0;
 			}
-			_G(current_instance) = this;
 			POP_CALL_STACK;
 			continue; // continue so that the PC doesn't get overwritten
 		}
@@ -1038,7 +1027,6 @@ int ccInstance::Run(int32_t curpc) {
 			}
 
 			registers[SREG_AX] = return_value;
-			_G(current_instance) = this;
 			next_call_needs_object = 0;
 			num_args_to_func = -1;
 			break;

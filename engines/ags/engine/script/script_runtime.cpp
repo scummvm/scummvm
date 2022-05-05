@@ -124,8 +124,9 @@ void ccSetScriptAliveTimer(int numloop) {
 }
 
 void ccNotifyScriptStillAlive() {
-	if (_G(current_instance) != nullptr)
-		_G(current_instance)->flags |= INSTF_RUNNING;
+	ccInstance *cur_inst = ccInstance::GetCurrentInstance();
+	if (cur_inst)
+		cur_inst->flags |= INSTF_RUNNING;
 }
 
 void ccSetDebugHook(new_line_hook_type jibble) {
