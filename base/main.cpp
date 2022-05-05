@@ -366,12 +366,6 @@ static void setupGraphics(OSystem &system) {
 
 	system.applyBackendSettings();
 
-	// When starting up launcher for the first time, the user might have specified
-	// a --gui-theme option, to allow that option to be working, we need to initialize
-	// GUI here.
-	// FIXME: Find a nicer way to allow --gui-theme to be working
-	GUI::GuiManager::instance();
-
 	// Set initial window caption
 	system.setWindowCaption(Common::U32String(gScummVMFullVersion));
 
