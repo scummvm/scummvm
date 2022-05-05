@@ -220,9 +220,6 @@ void quit_free() {
 
 	_G(our_eip) = 9901;
 
-	shutdown_font_renderer();
-	_G(our_eip) = 9902;
-
 	_GP(spriteset).Reset();
 
 	_G(our_eip) = 9908;
@@ -240,7 +237,9 @@ void quit_free() {
 	// release backed library
 	// WARNING: no Allegro objects should remain in memory after this,
 	// if their destruction is called later, program will crash!
+	shutdown_font_renderer();
 	allegro_exit();
+	sys_main_shutdown();
 
 	_G(platform)->PostAllegroExit();
 
