@@ -1839,6 +1839,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	if (settings.contains("extrapath")) {
 		ConfMan.set("extrapath", settings["extrapath"], Common::ConfigManager::kSessionDomain); 
 	}
+	if (settings.contains("gui-theme")) {
+		ConfMan.set("gui_theme", settings["gui-theme"], Common::ConfigManager::kSessionDomain); 
+	}
+	
 
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {

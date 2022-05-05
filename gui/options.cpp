@@ -2256,7 +2256,8 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
 	new ButtonWidget(boss, prefix + "ThemeButton", _("Theme:"), Common::U32String(), kChooseThemeCmd);
 	_curTheme = new StaticTextWidget(boss, prefix + "CurTheme", g_gui.theme()->getThemeName());
-
+	if (ConfMan.isKeyTemporary("gui_theme"))
+		_curTheme->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
 
 	_guiBasePopUpDesc = new StaticTextWidget(boss, prefix + "GUIBasePopupDesc", _("GUI scale:"));
 	_guiBasePopUp = new PopUpWidget(boss, prefix + "GUIBasePopup");
@@ -2963,6 +2964,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			_newTheme = browser.getSelected();
 			_curTheme->setLabel(browser.getSelectedName());
+			_curTheme->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
 		}
 		break;
 	}
