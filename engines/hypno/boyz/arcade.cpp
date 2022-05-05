@@ -45,6 +45,11 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_playerFrameSep = _playerFrames.size();
 	_playerFrameIdx = -1;
 
+	if (!arc->beforeVideo.empty()) {
+		MVideo video(arc->beforeVideo, Common::Point(0, 0), false, true, false);
+		runIntro(video);
+	}
+
 	_currentScript = arc->script;
 	updateFromScript();
 }
