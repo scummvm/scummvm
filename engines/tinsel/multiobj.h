@@ -90,6 +90,12 @@ void MultiSetAniXY(		// Set the x & y anim position of a multi-part object
 	int newAniX,		// new x animation position
 	int newAniY);		// new y animation position
 
+void MultiSetAniXYZ(     // Set the x & y anim position of a multi-part object
+	OBJECT *pMultiObj,   // multi-part object whose position is to be changed
+	int newAniX,         // new x animation position
+	int newAniY,         // new y animation position
+	int zPosition);      // new Z order
+
 void MultiSetAniX(		// Set the x anim position of a multi-part object
 	OBJECT *pMultiObj,	// multi-part object whose x position is to be changed
 	int newAniX);		// new x animation position

@@ -99,8 +99,7 @@ void Cursor::InitCurTrailObj(int i, int x, int y) {
 	// Initialize and insert the object, set its Z-pos, and hide it
 	_trailData[i].trailObj = MultiInitObject(pmi);
 	MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _trailData[i].trailObj);
-	MultiSetZPosition(_trailData[i].trailObj, Z_CURSORTRAIL);
-	MultiSetAniXY(_trailData[i].trailObj, x, y);
+	MultiSetAniXYZ(_trailData[i].trailObj, x, y, Z_CURSORTRAIL);
 
 	// Initialize the animation script
 	InitStepAnimScript(&_trailData[i].trailAnim, _trailData[i].trailObj, FROM_32(pfr->script), ONE_SECOND / FROM_32(pFilm->frate));
@@ -336,8 +335,7 @@ void Cursor::SetAuxCursor(SCNHANDLE hFilm) {
 
 	// Initialize the animation and set its position
 	InitStepAnimScript(&_auxCursorAnim, _auxCursor, FROM_32(pfr->script), ONE_SECOND / FROM_32(pfilm->frate));
-	MultiSetAniXY(_auxCursor, x - _auxCursorOffsetX, y - _auxCursorOffsetY);
-	MultiSetZPosition(_auxCursor, Z_ACURSOR);
+	MultiSetAniXYZ(_auxCursor, x - _auxCursorOffsetX, y - _auxCursorOffsetY, Z_ACURSOR);
 
 	if (_hiddenCursor)
 		MultiHideObject(_auxCursor);
