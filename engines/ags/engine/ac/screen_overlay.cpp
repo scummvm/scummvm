@@ -26,12 +26,11 @@ namespace AGS3 {
 
 using AGS::Shared::Stream;
 
-void ScreenOverlay::ReadFromFile(Stream *in, int32_t cmp_ver) {
+void ScreenOverlay::ReadFromFile(Stream *in, bool &has_bitmap, int32_t cmp_ver) {
 	pic = nullptr;
 	ddb = nullptr;
-	// Skipping pointers (were saved by old engine)
-	in->ReadInt32(); // ddb
-	hasSerializedBitmap = in->ReadInt32() != 0; // pic
+	in->ReadInt32(); // ddb 32-bit pointer value (nasty legacy format)
+	has_bitmap = in->ReadInt32() != 0;
 	type = in->ReadInt32();
 	x = in->ReadInt32();
 	y = in->ReadInt32();
@@ -53,9 +52,8 @@ void ScreenOverlay::ReadFromFile(Stream *in, int32_t cmp_ver) {
 }
 
 void ScreenOverlay::WriteToFile(Stream *out) const {
-	// Writing bitmap "pointers" to correspond to full structure writing
-	out->WriteInt32(0); // ddb
-	out->WriteInt32(pic ? 1 : 0); // pic
+	out->WriteInt32(0); // ddb 32-bit pointer value (nasty legacy format)
+	out->WriteInt32(pic ? 1 : 0); // has bitmap
 	out->WriteInt32(type);
 	out->WriteInt32(x);
 	out->WriteInt32(y);
