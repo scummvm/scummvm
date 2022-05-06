@@ -34,10 +34,10 @@ namespace Tinsel {
  *
  * @param index reel to get the handle to
  */
-SCNHANDLE SystemReel::Get(int32 index) {
-	assert(index >= 0 && index < MAX_SYSREELS);
+SCNHANDLE SystemReel::Get(SysReel index) {
+	assert((int)index >= 0 && (int)index < MAX_SYSREELS);
 
-	return _reels[index];
+	return _reels[(int)index];
 }
 
 /**
@@ -49,7 +49,7 @@ SCNHANDLE SystemReel::Get(int32 index) {
 void SystemReel::Set(int32 index, SCNHANDLE reel) {
 	assert(index >= 0 && index < MAX_SYSREELS);
 
-	if (index == SYSREEL_LOADSCREEN) {
+	if (index == (int)SysReel::LOADSCREEN) {
 		if (CoroScheduler.getCurrentPID() != PID_SCENE) {
 			return;
 		}
@@ -59,7 +59,7 @@ void SystemReel::Set(int32 index, SCNHANDLE reel) {
 
 	// Noir actually calls a function specifically for doing DwInitCursor on
 	// system reel 11.
-	if (index == SYSREEL_CURSOR && reel != 0) {
+	if (index == (int)SysReel::CURSOR && reel != 0) {
 		_vm->_cursor->DwInitCursor(reel);
 	}
 }

@@ -26,20 +26,34 @@
 
 namespace Tinsel {
 
+enum class SysReel {
+	NOTEPAD_OPENING = 4,
+	NOTEPAD_OPEN = 5,
+	NOTEPAD_CLOSED = 6,
+	NOTEPAD_FLIPDOWN = 7,
+	NOTEPAD_FLIPUP = 8,
+	CURSOR = 11,
+	INVMAIN = 15,
+	SLIDER = 16,
+	OPTIONS_MENU = 21,
+	LOADSAVE_MENU = 22,
+	QUIT_MENU = 23,
+	SUBTITLES_MENU = 24,
+	SLIDER_BG = 25,
+	SLIDER_HI = 26,
+	LEFT = 29,
+	RIGHT = 30,
+	LOADSCREEN = 31
+};
+
 class SystemReel {
 public:
 	SystemReel() = default;
 
-	SCNHANDLE Get(int32 index);
+	SCNHANDLE Get(SysReel index);
 	void Set(int32 index, SCNHANDLE reel);
-
 private:
 	const static int32 MAX_SYSREELS = 0x28;
-
-	enum {
-		SYSREEL_CURSOR = 11,
-		SYSREEL_LOADSCREEN = 0x1f
-	};
 
 	SCNHANDLE _reels[MAX_SYSREELS];
 };

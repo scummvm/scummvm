@@ -1159,7 +1159,7 @@ void Dialogs::InventoryIconCursor(bool bNewItem) {
 					INV_OBJECT *invObj = GetInvObject(_heldItem);
 
 					if (invObj->attribute & V3ATTR_X200) {
-						_heldFilm = _vm->_systemReel->Get(objIndex);
+						_heldFilm = _vm->_systemReel->Get((SysReel)objIndex);
 					} else {
 						_heldFilm = _invFilms[objIndex];
 					}
