@@ -717,8 +717,7 @@ void BMVPlayer::FettleMovieText() {
 	for (i = 0; i < 2; i++) {
 		if (texts[i].pText) {
 			if (currentFrame > texts[i].dieFrame) {
-				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), texts[i].pText);
-				texts[i].pText = nullptr;
+				MultiDeleteObjectIfExists(FIELD_STATUS, &texts[i].pText);
 			} else {
 				MultiForceRedraw(texts[i].pText);
 				bIsText = true;
@@ -785,8 +784,7 @@ void BMVPlayer::MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, CO
 		index = 1;
 	}
 
-	if (texts[index].pText)
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), texts[index].pText);
+	MultiDeleteObjectIfExists(FIELD_STATUS, &texts[index].pText);
 
 	LoadSubString(stringId, 0, _vm->_font->TextBufferAddr(), TBUFSZ);
 
@@ -1025,10 +1023,7 @@ void BMVPlayer::FinishBMV() {
 
 	// Ditch any text objects
 	for (i = 0; i < 2; i++) {
-		if (texts[i].pText) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), texts[i].pText);
-			texts[i].pText = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &texts[i].pText);
 	}
 	bMovieOn = false;
 

@@ -200,8 +200,7 @@ void SetMoverInEffect(int index, bool tf) {
 void KillMover(MOVER *pMover) {
 	if (pMover->bActive) {
 		pMover->bActive = false;
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
-		pMover->actorObj = nullptr;
+		MultiDeleteObjectIfExists(FIELD_WORLD, &pMover->actorObj);
 		assert(CoroScheduler.getCurrentProcess() != pMover->pProc);
 		CoroScheduler.killProcess(pMover->pProc);
 	}

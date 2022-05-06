@@ -637,9 +637,9 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 
 	// Ditch the object
 	if (!ppi->bTop)
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
+		MultiDeleteObjectIfExists(FIELD_WORLD, &_ctx->pPlayObj);
 	else
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pPlayObj);
 
 	if (_ctx->mActor) {
 		if (!_ctx->replaced)

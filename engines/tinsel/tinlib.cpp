@@ -2093,8 +2093,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 	}
 
 	// Delete the text
-	if (_ctx->pText != NULL)
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pText);
 	_vm->_mixer->stopHandle(_ctx->handle);
 
 	CORO_END_CODE;
@@ -2225,8 +2224,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					// Give way to non-POINTED-generated text
 					if (g_bNotPointedRunning) {
 						// Delete the text, and wait for the all-clear
-						MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
-						_ctx->pText = nullptr;
+						MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pText);
 
 						while (g_bNotPointedRunning)
 							CORO_SLEEP(1);
@@ -2311,8 +2309,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 		}
 
 		// Delete the text, if haven't already
-		if (_ctx->pText)
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pText);
 
 		// If it hasn't already finished, stop sample
 		if (_ctx->bSample)
@@ -2342,8 +2339,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 			// Give way to non-POINTED-generated text
 			if (g_bNotPointedRunning) {
 				// Delete the text, and wait for the all-clear
-				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), pText);
-				pText = nullptr;
+				MultiDeleteObjectIfExists(FIELD_STATUS, &pText);
 				while (g_bNotPointedRunning)
 					CORO_SLEEP(1);
 
@@ -3555,10 +3551,8 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 			}
 		} while (1);
 
-		if (_ctx->pText != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
-			_ctx->pText = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pText);
+
 		if ((TinselVersion >= 2) && _ctx->bSample)
 			_vm->_sound->stopSpecSample(hText, _ctx->sub);
 	}
@@ -3570,8 +3564,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 	 */
 	if (_ctx->bTalkReel)
 		CORO_INVOKE_2(FinishTalkingReel, _ctx->pActor, _ctx->actor);
-	if (_ctx->pText != NULL)
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pText);
 
 	if (TinselVersion >= 2) {
 		if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_SAYAT)) {

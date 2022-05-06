@@ -94,8 +94,7 @@ void Cursor::InitCurTrailObj(int i, int x, int y) {
 	PokeInPalette(pmi);
 
 	// Get rid of old object
-	if (_trailData[i].trailObj != NULL)
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _trailData[i].trailObj);
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_trailData[i].trailObj);
 
 	// Initialize and insert the object, set its Z-pos, and hide it
 	_trailData[i].trailObj = MultiInitObject(pmi);
@@ -234,10 +233,7 @@ void Cursor::DwHideCursor() {
 		MultiHideObject(_auxCursor);
 
 	for (int i = 0; i < _numTrails; i++) {
-		if (_trailData[i].trailObj != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _trailData[i].trailObj);
-			_trailData[i].trailObj = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_trailData[i].trailObj);
 	}
 }
 
@@ -283,10 +279,7 @@ void Cursor::HideCursorTrails() {
 	_hiddenTrails = true;
 
 	for (i = 0; i < _numTrails; i++)	{
-		if (_trailData[i].trailObj != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _trailData[i].trailObj);
-			_trailData[i].trailObj = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_trailData[i].trailObj);
 	}
 }
 
@@ -301,10 +294,7 @@ void Cursor::UnHideCursorTrails() {
  * Delete auxillary cursor. Restore animation offsets in the image.
  */
 void Cursor::DelAuxCursor() {
-	if (_auxCursor != NULL) {
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _auxCursor);
-		_auxCursor = nullptr;
-	}
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_auxCursor);
 }
 
 /**
@@ -481,9 +471,9 @@ void Cursor::DwInitCursor(SCNHANDLE bfilm) {
 void Cursor::DropCursor() {
 	if (TinselVersion >= 2) {
 		if (_auxCursor)
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _auxCursor);
+			MultiDeleteObjectIfExists(FIELD_STATUS, &_auxCursor);
 		if (_mainCursor)
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _mainCursor);
+			MultiDeleteObjectIfExists(FIELD_STATUS, &_mainCursor);
 
 		_cursorProcessesRestarted = false;
 	}
@@ -495,10 +485,7 @@ void Cursor::DropCursor() {
 	_cursorProcessesStopped = true;		// Suspend cursor processes
 
 	for (int i = 0; i < _numTrails; i++) {
-		if (_trailData[i].trailObj != NULL)		{
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _trailData[i].trailObj);
-			_trailData[i].trailObj = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_trailData[i].trailObj);
 	}
 }
 
@@ -550,8 +537,7 @@ void Cursor::AnimateProcess() {
 	for (int i = 0; i < _vm->_cursor->NumTrails(); i++) {
 		if (_trailData[i].trailObj != NULL) {
 			if (StepAnimScript(&_trailData[i].trailAnim) == ScriptFinished) {
-				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _trailData[i].trailObj);
-				_trailData[i].trailObj = nullptr;
+				MultiDeleteObjectIfExists(FIELD_STATUS, &_trailData[i].trailObj);
 			}
 		}
 	}
