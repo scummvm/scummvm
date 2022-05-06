@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-05 18:30+0000\n"
+"POT-Creation-Date: 2022-05-06 17:51+0000\n"
 "PO-Revision-Date: 2022-04-28 16:49+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -179,7 +179,7 @@ msgstr ""
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:924
 #: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1358
 #: engines/scumm/scumm.cpp:1384 engines/scumm/scumm.cpp:1406
-#: engines/scumm/scumm.cpp:1684 engines/scumm/scumm.cpp:2155
+#: engines/scumm/scumm.cpp:1685 engines/scumm/scumm.cpp:2156
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
 #: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
 #: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
@@ -4249,7 +4249,7 @@ msgstr ""
 "Η γρήγορη φόρτωση ή αποθήκευση παιχνιδιού δεν υποστηρίζεται σε αυτή την "
 "περιοχή"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2782
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2783
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4260,7 +4260,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2772
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2773
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4271,7 +4271,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2795
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2796
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7539,7 +7539,7 @@ msgstr ""
 "Δεν ήταν δυνατή η εύρεση του εκτελέσιμου Macintosh 'Monkey Island' από\n"
 "το οποίο να διαβαστούν τα όργανα μουσικής. Η μουσική θα απενεργοποιηθεί."
 
-#: engines/scumm/scumm.cpp:1681
+#: engines/scumm/scumm.cpp:1682
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7552,7 +7552,7 @@ msgstr ""
 "Παρακαλούμε να αντιγράψετε τα αυθεντικά (original) ασυμπίεστα αρχεία ήχου "
 "του παιχνιδιού."
 
-#: engines/scumm/scumm.cpp:2153
+#: engines/scumm/scumm.cpp:2154
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7561,7 +7561,7 @@ msgstr ""
 "Η υποστήριξη native MIDI απαιτεί την Αναβάθμιση Roland από τη LucasArts,\n"
 "αλλά το %s λείπει. Γίνεται χρήση AdLib αντ 'αυτού."
 
-#: engines/scumm/scumm.cpp:3094
+#: engines/scumm/scumm.cpp:3095
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
