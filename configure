@@ -2655,17 +2655,11 @@ case $_host_os in
 		exit 1
 		;;
 	darwin*)
-		# Pass -mlongcall to gcc so that it emits long calls
-		# which will allow for calls larger than 32MB. The linker
-		# will discard the calls if they are not needed, but we
-		# need to ensure the compiler emits them in the first place.
-		# Also the executable has grown to a size where using -Os is necessary to avoid a
-		# 'virtual memory exhausted' error when running the executable.
 		case $_host_cpu in
 		powerpc*)
-			append_var CFLAGS "-mlongcall"
-			append_var CXXFLAGS "-mlongcall"
-			_optimization_level=-Os
+			if test "$_dynamic_modules" = no ; then
+				echo "WARNING: Building static engines will probably fail at link time on Mac PowerPC"
+			fi
 			;;
 		esac
 
