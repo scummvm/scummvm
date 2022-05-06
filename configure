@@ -2159,7 +2159,7 @@ if test "$have_gcc" = yes ; then
 elif test "$have_icc" = yes ; then
 	# ICC does not support pedantic, while GCC and clang do.
 	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
-fi;
+fi
 
 #
 # Set status about C++11 mode
@@ -2818,7 +2818,7 @@ EOF
 			fi
 		fi
 
-		# Avoid "file has no symbols" noise from ranlib, if it's new enough
+		# Avoid "file has no symbols" noise from ranlib, if it's new enough
 		ranlib_version=`$_ranlib -V 2>/dev/null`
 		if test -n "$ranlib_version" ; then
 			ranlib_version="`echo "${ranlib_version}" | sed -ne 's/.*cctools-\([0-9]\{1,\}\).*/\1/gp'`"
@@ -4084,6 +4084,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 		_plugin_prefix=""
 		_plugin_suffix=".plugin"
 		append_var LIBS "-ldl"
+		append_var _strip "-x"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
 PLUGIN_LDFLAGS  += -bundle -bundle_loader $(EXECUTABLE) -exported_symbols_list "$(srcdir)/plugin.exp"
