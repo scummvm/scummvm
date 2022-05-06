@@ -22,6 +22,7 @@
 #include "ags/lib/std/algorithm.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/shared/ac/common.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/ac/view.h"
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/character_extras.h"
@@ -167,20 +168,36 @@ int Overlay_GetValid(ScriptOverlay *scover) {
 	return 1;
 }
 
+ScreenOverlay *Overlay_CreateGraphicCore(int x, int y, int slot, bool transparent) {
+	data_to_game_coords(&x, &y);
+	Bitmap *screeno = BitmapHelper::CreateTransparentBitmap(_GP(game).SpriteInfos[slot].Width, _GP(game).SpriteInfos[slot].Height, _GP(game).GetColorDepth());
+	screeno->Blit(_GP(spriteset)[slot], 0, 0, transparent ? kBitmap_Transparency : kBitmap_Copy);
+	size_t nse = add_screen_overlay(x, y, OVER_CUSTOM, screeno, (_GP(game).SpriteInfos[slot].Flags & SPF_ALPHACHANNEL) != 0);
+	return nse < SIZE_MAX ? &_GP(screenover)[nse] : nullptr;
+}
+
+ScreenOverlay *Overlay_CreateTextCore(int x, int y, int width, int font, int text_color,
+	const char *text, int disp_type, int allow_shrink) {
+	if (width < 8) width = _GP(play).GetUIViewport().GetWidth() / 2;
+	if (x < 0) x = _GP(play).GetUIViewport().GetWidth() / 2 - width / 2;
+	if (text_color == 0) text_color = 16;
+	return _display_main(x, y, width, text, disp_type, font, -text_color, 0, allow_shrink, false);
+}
+
 ScriptOverlay *Overlay_CreateGraphical(int x, int y, int slot, int transparent) {
+	auto *over = Overlay_CreateGraphicCore(x, y, slot, transparent != 0);
 	ScriptOverlay *sco = new ScriptOverlay();
-	sco->overlayId = CreateGraphicOverlay(x, y, slot, transparent);
+	sco->overlayId = over->type;
 	ccRegisterManagedObject(sco, sco);
 	return sco;
 }
 
 ScriptOverlay *Overlay_CreateTextual(int x, int y, int width, int font, int colour, const char *text) {
-	ScriptOverlay *sco = new ScriptOverlay();
-
 	data_to_game_coords(&x, &y);
 	width = data_to_game_coord(width);
-
-	sco->overlayId = CreateTextOverlayCore(x, y, width, font, colour, text, DISPLAYTEXT_NORMALOVERLAY, 0);
+	auto *over = Overlay_CreateTextCore(x, y, width, font, colour, text, DISPLAYTEXT_NORMALOVERLAY, 0);
+	ScriptOverlay *sco = new ScriptOverlay();
+	sco->overlayId = over->type;
 	ccRegisterManagedObject(sco, sco);
 	return sco;
 }

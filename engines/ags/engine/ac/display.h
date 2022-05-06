@@ -37,7 +37,12 @@ using AGS::Shared::GUIMain;
 #define DISPLAYTEXT_NORMALOVERLAY 2
 // also accepts explicit overlay ID >= OVER_CUSTOM
 
-int  _display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont, int asspch, int isThought, int allowShrink, bool overlayPositionFixed);
+struct ScreenOverlay;
+// Creates a textual overlay using the given parameters;
+// Pass yy = -1 to find Y co-ord automatically
+// allowShrink = 0 for none, 1 for leftwards, 2 for rightwards
+// pass blocking=2 to create permanent overlay
+ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont, int asspch, int isThought, int allowShrink, bool overlayPositionFixed);
 void _display_at(int xx, int yy, int wii, const char *text, int disp_type, int asspch, int isThought, int allowShrink, bool overlayPositionFixed);
 // Tests the given string for the voice-over tags and plays cue clip for the given character;
 // will assign replacement string, which will be blank string if game is in "voice-only" mode

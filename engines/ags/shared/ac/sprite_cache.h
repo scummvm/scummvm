@@ -143,7 +143,7 @@ public:
 	void        SetMaxCacheSize(size_t size);
 
 	// Loads (if it's not in cache yet) and returns bitmap by the sprite index
-	Shared::Bitmap *operator[] (sprkey_t index);
+	Shared::Bitmap *operator[](sprkey_t index);
 
 private:
 	void        Init();
