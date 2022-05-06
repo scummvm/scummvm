@@ -70,9 +70,9 @@ private:
 public:
 	deque() = default;
 	typedef typename vector<T>::iterator iterator;
-	typedef typename const vector<T>::const_iterator const_iterator;
+	typedef const typename vector<T>::const_iterator const_iterator;
 	typedef typename vector<T>::reverse_iterator reverse_iterator;
-	typedef typename const vector<T>::const_reverse_iterator const_reverse_iterator;
+	typedef const typename vector<T>::const_reverse_iterator const_reverse_iterator;
 
 	void clear() {
 		_intern.clear();
