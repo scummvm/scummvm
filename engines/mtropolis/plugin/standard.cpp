@@ -486,7 +486,6 @@ VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::Shared
 				_plugIn->getMidi()->playFile(&_embeddedFile->contents[0], _embeddedFile->contents.size());
 			}
 		}
-
 	}
 
 	return kVThreadReturn;

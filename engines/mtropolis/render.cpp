@@ -39,6 +39,10 @@ struct OrderedDitherGenerator<TNumber, 1> {
 	static void generateOrderedDither(TNumber (&pattern)[1][1]);
 };
 
+struct RenderItem {
+	VisualElement *element;
+};
+
 template<class TNumber, int TResolution>
 void OrderedDitherGenerator<TNumber, TResolution>::generateOrderedDither(TNumber (&pattern)[TResolution][TResolution]) {
 	const int kHalfResolution = TResolution / 2;
@@ -169,63 +173,74 @@ uint32 resolveRGB(uint8 r, uint8 g, uint8 b, const Graphics::PixelFormat &fmt) {
 	return rPlaced | gPlaced | bPlaced | aPlaced;
 }
 
-static void recursiveCollectDrawElements(Structural *structural, Common::Array<VisualElement *> &normalBucket, Common::Array<VisualElement *> &directBucket) {
+static void recursiveCollectDrawElementsAndUpdateOrigins(const Point16 &parentOrigin, Structural *structural, Common::Array<RenderItem> &normalBucket, Common::Array<RenderItem> &directBucket) {
+	Point16 elementOrigin = parentOrigin;
 	if (structural->isElement()) {
 		Element *element = static_cast<Element *>(structural);
 		if (element->isVisual()) {
 			VisualElement *visualElement = static_cast<VisualElement *>(element);
+			const Rect16 &elementRect = visualElement->getRelativeRect();
+
+			elementOrigin.x += elementRect.left;
+			elementOrigin.y += elementRect.top;
+
+			visualElement->setCachedAbsoluteOrigin(Point16::create(elementOrigin.x, elementOrigin.y));
+
+			RenderItem item;
+			item.element = visualElement;
+
 			if (visualElement->isVisible()) {
 				if (visualElement->isDirectToScreen())
-					directBucket.push_back(visualElement);
+					directBucket.push_back(item);
 				else
-					normalBucket.push_back(visualElement);
+					normalBucket.push_back(item);
 			}
 		}
 	}
 
 	for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = structural->getChildren().begin(), itEnd = structural->getChildren().end(); it != itEnd; ++it) {
-		recursiveCollectDrawElements(it->get(), normalBucket, directBucket);
+		recursiveCollectDrawElementsAndUpdateOrigins(elementOrigin, it->get(), normalBucket, directBucket);
 	}
 }
 
-static bool visualElementLayerLess(VisualElement *a, VisualElement *b) {
-	return a->getLayer() < b->getLayer();
+static bool renderItemLess(const RenderItem &a, const RenderItem &b) {
+	return a.element->getLayer() < b.element->getLayer();
 }
 
-static void renderNormalElement(VisualElement *element, Window *mainWindow) {
-	element->render(mainWindow);
+static void renderNormalElement(const RenderItem &item, Window *mainWindow) {
+	item.element->render(mainWindow);
 }
 
-static void renderDirectElement(VisualElement *element, Window *mainWindow) {
-	renderNormalElement(element, mainWindow);	// Meh
+static void renderDirectElement(const RenderItem &item, Window *mainWindow) {
+	renderNormalElement(item, mainWindow);	// Meh
 }
 
 void renderProject(Runtime *runtime, Window *mainWindow) {
 	Common::Array<Structural *> scenes;
 	runtime->getScenesInRenderOrder(scenes);
 
-	Common::Array<VisualElement *> normalBucket;
-	Common::Array<VisualElement *> directBucket;
+	Common::Array<RenderItem> normalBucket;
+	Common::Array<RenderItem> directBucket;
 
 	for (Common::Array<Structural *>::const_iterator it = scenes.begin(), itEnd = scenes.end(); it != itEnd; ++it) {
 		size_t normalStart = normalBucket.size();
 		size_t directStart = directBucket.size();
 
-		recursiveCollectDrawElements(*it, normalBucket, directBucket);
+		recursiveCollectDrawElementsAndUpdateOrigins(Point16::create(0, 0), *it, normalBucket, directBucket);
 
 		size_t normalEnd = normalBucket.size();
 		size_t directEnd = directBucket.size();
 
 		if (normalEnd - normalStart > 1)
-			Common::sort(normalBucket.begin() + normalStart, normalBucket.end(), visualElementLayerLess);
+			Common::sort(normalBucket.begin() + normalStart, normalBucket.end(), renderItemLess);
 		if (directEnd - directStart > 1)
-			Common::sort(directBucket.begin() + directStart, directBucket.end(), visualElementLayerLess);
+			Common::sort(directBucket.begin() + directStart, directBucket.end(), renderItemLess);
 	}
 
-	for (Common::Array<VisualElement *>::const_iterator it = normalBucket.begin(), itEnd = normalBucket.end(); it != itEnd; ++it)
+	for (Common::Array<RenderItem>::const_iterator it = normalBucket.begin(), itEnd = normalBucket.end(); it != itEnd; ++it)
 		renderNormalElement(*it, mainWindow);
 
-	for (Common::Array<VisualElement *>::const_iterator it = directBucket.begin(), itEnd = directBucket.end(); it != itEnd; ++it)
+	for (Common::Array<RenderItem>::const_iterator it = directBucket.begin(), itEnd = directBucket.end(); it != itEnd; ++it)
 		renderDirectElement(*it, mainWindow);
 }
 

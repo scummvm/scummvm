@@ -640,6 +640,11 @@ Common::SharedPtr<Modifier> CollisionDetectionMessengerModifier::shallowClone() 
 	return Common::SharedPtr<Modifier>(new CollisionDetectionMessengerModifier(*this));
 }
 
+KeyboardMessengerModifier::~KeyboardMessengerModifier() {
+	if (_signaller)
+		_signaller->removeReceiver(this);
+}
+
 bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data::KeyboardMessengerModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -673,7 +678,7 @@ bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data:
 		break;
 	default:
 		_keyCodeType = kMacRomanChar;
-		_macRomanChar = data.keycode;
+		memcpy(&_macRomanChar, &data.keycode, 1);
 		break;
 	}
 
@@ -683,8 +688,162 @@ bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data:
 	return true;
 }
 
+bool KeyboardMessengerModifier::respondsToEvent(const Event &evt) const {
+	if (Event::create(EventIDs::kParentEnabled, 0).respondsTo(evt) || Event::create(EventIDs::kParentDisabled, 0).respondsTo(evt))
+		return true;
+
+	return false;
+}
+
+VThreadState KeyboardMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+ 	if (Event::create(EventIDs::kParentEnabled, 0).respondsTo(msg->getEvent())) {
+		if (!_signaller)
+			_signaller = runtime->getProject()->notifyOnKeyboardEvent(this);
+	} else if (Event::create(EventIDs::kParentDisabled, 0).respondsTo(msg->getEvent())) {
+		if (_signaller) {
+			_signaller->removeReceiver(this);
+			_signaller.reset();
+		}
+	}
+
+	return kVThreadReturn;
+}
+
+
 Common::SharedPtr<Modifier> KeyboardMessengerModifier::shallowClone() const {
-	return Common::SharedPtr<Modifier>(new KeyboardMessengerModifier(*this));
+	Common::SharedPtr<KeyboardMessengerModifier> cloned(new KeyboardMessengerModifier(*this));
+
+	cloned->_signaller.reset();
+	return cloned;
+}
+
+void KeyboardMessengerModifier::onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
+	bool responds = false;
+	if (evtType == Common::EVENT_KEYDOWN) {
+		if (repeat)
+			responds = _onRepeat;
+		else
+			responds = _onDown;
+	} else if (evtType == Common::EVENT_KEYUP)
+		responds = _onUp;
+
+	if (!responds)
+		return;
+
+	if (_keyModCommand) {
+		if (runtime->getPlatform() == kProjectPlatformWindows) {
+			// Windows projects check "alt"
+			if ((keyEvt.flags & Common::KBD_ALT) == 0)
+				return;
+		} else if (runtime->getPlatform() == kProjectPlatformMacintosh) {
+			if ((keyEvt.flags & Common::KBD_META) == 0)
+				return;
+		}
+	}
+
+	if (_keyModControl) {
+		if ((keyEvt.flags & Common::KBD_CTRL) == 0)
+			return;
+	}
+
+	if (_keyModOption) {
+		if ((keyEvt.flags & Common::KBD_ALT) == 0)
+			return;
+	}
+
+	Common::String encodedChar;
+
+	Common::String resolvedCharStr;
+
+	KeyCodeType resolvedType = kAny;
+	switch (keyEvt.keycode) {
+	case Common::KEYCODE_HOME:
+		resolvedType = kHome;
+		break;
+	case Common::KEYCODE_KP_ENTER:
+		resolvedType = kEnter;
+		break;
+	case Common::KEYCODE_END:
+		resolvedType = kEnd;
+		break;
+	case Common::KEYCODE_HELP:
+		resolvedType = kHelp;
+		break;
+	case Common::KEYCODE_F1:
+		// Windows projects map F1 to "help"
+		if (runtime->getPlatform() == kProjectPlatformWindows)
+			resolvedType = kHelp;
+		break;
+	case Common::KEYCODE_BACKSPACE:
+		resolvedType = kBackspace;
+		break;
+	case Common::KEYCODE_TAB:
+		resolvedType = kTab;
+		break;
+	case Common::KEYCODE_PAGEUP:
+		resolvedType = kPageUp;
+		break;
+	case Common::KEYCODE_PAGEDOWN:
+		resolvedType = kPageDown;
+		break;
+	case Common::KEYCODE_RETURN:
+		resolvedType = kReturn;
+		break;
+	case Common::KEYCODE_ESCAPE:
+		resolvedType = kEscape;
+		break;
+	case Common::KEYCODE_LEFT:
+		resolvedType = kArrowLeft;
+		break;
+	case Common::KEYCODE_RIGHT:
+		resolvedType = kArrowRight;
+		break;
+	case Common::KEYCODE_UP:
+		resolvedType = kArrowUp;
+		break;
+	case Common::KEYCODE_DOWN:
+		resolvedType = kDelete;
+		break;
+	default: {
+			bool isQuestion = (keyEvt.ascii == '?');
+			uint32 uchar = keyEvt.ascii;
+			Common::U32String u(&uchar, 1);
+			resolvedCharStr = u.encode(Common::kMacRoman);
+
+			// STUPID HACK PLEASE FIX ME: ScummVM has no way of just telling us that the character mapping failed,
+			// we we have to check if it encoded "?"
+			if (resolvedCharStr.size() < 1 || (resolvedCharStr[0] == '?' && !isQuestion))
+				return;
+
+			resolvedType = kMacRomanChar;
+		} break;
+	}
+
+	if (_keyCodeType != kAny && resolvedType != _keyCodeType)
+		return;
+
+	if (_keyCodeType == kMacRomanChar && (resolvedCharStr.size() == 0 || resolvedCharStr[0] != _macRomanChar))
+		return;
+
+	Common::SharedPtr<MessageProperties> msgProps;
+	if (_sendSpec.with.getType() == DynamicValueTypes::kIncomingData) {
+		if (resolvedCharStr.size() != 1)
+			warning("Keyboard messenger is supposed to send the character code, but they key was a special key and we haven't implemented conversion of those keycodes");
+
+		DynamicValue charStr;
+		charStr.setString(resolvedCharStr);
+		_sendSpec.sendFromMessengerWithCustomData(runtime, this, charStr);
+	} else {
+		_sendSpec.sendFromMessenger(runtime, this);
+	}
+}
+
+void KeyboardMessengerModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	_sendSpec.visitInternalReferences(visitor);
+}
+
+void KeyboardMessengerModifier::linkInternalReferences(ObjectLinkingScope *scope) {
+	_sendSpec.linkInternalReferences(scope);
 }
 
 TextStyleModifier::StyleFlags::StyleFlags() : bold(false), italic(false), underline(false), outline(false), shadow(false), condensed(false), expanded(false) {
@@ -806,10 +965,16 @@ bool CompoundVariableModifier::readAttributeIndexed(MiniscriptThread *thread, Dy
 
 MiniscriptInstructionOutcome CompoundVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
 	Modifier *var = findChildByName(attrib);
-	if (!var || !var->isVariable())
+	if (!var)
 		return kMiniscriptInstructionOutcomeFailed;
 
-	writeProxy = static_cast<VariableModifier *>(var)->createWriteProxy();
+	if (var->isVariable())
+		writeProxy = static_cast<VariableModifier *>(var)->createWriteProxy();
+	else if (var->isModifier())
+		DynamicValueWriteObjectHelper::create(var, writeProxy);
+	else
+		return kMiniscriptInstructionOutcomeFailed;
+
 	return kMiniscriptInstructionOutcomeContinue;
 }
 

@@ -42,6 +42,8 @@
 #include "graphics/maccursor.h"
 #include "graphics/macgui/macfontmanager.h"
 
+#include "audio/mixer.h"
+
 namespace MTropolis {
 
 class ModifierInnerScopeBuilder : public IStructuralReferenceVisitor {
@@ -1297,6 +1299,18 @@ void DynamicValue::setWriteProxy(const DynamicValueWriteProxy &writeProxy) {
 	_list = listRef;
 }
 
+bool DynamicValue::roundToInt(int32 &outInt) const {
+	if (_type == DynamicValueTypes::kInteger) {
+		outInt = _value.asInt;
+		return true;
+	} else if (_type == DynamicValueTypes::kFloat) {
+		outInt = static_cast<int32>(floor(_value.asFloat + 0.5));
+		return true;
+	}
+
+	return false;
+}
+
 void DynamicValue::setObject(const ObjectReference &value) {
 	if (_type != DynamicValueTypes::kObject)
 		clear();
@@ -1460,6 +1474,27 @@ void DynamicValueWriteStringHelper::create(Common::String *strValue, DynamicValu
 
 DynamicValueWriteStringHelper DynamicValueWriteStringHelper::_instance;
 
+MiniscriptInstructionOutcome DynamicValueWriteObjectHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr_t ptrOrOffset) const {
+	thread->error("Can't write to read-only object value");
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome DynamicValueWriteObjectHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const {
+	return static_cast<RuntimeObject *>(objectRef)->writeRefAttribute(thread, proxy, attrib);
+}
+
+MiniscriptInstructionOutcome DynamicValueWriteObjectHelper::refAttribIndexed(MiniscriptThread* thread, DynamicValueWriteProxy& proxy, void* objectRef, uintptr_t ptrOrOffset, const Common::String& attrib, const DynamicValue& index) const {
+	return static_cast<RuntimeObject *>(objectRef)->writeRefAttributeIndexed(thread, proxy, attrib, index);
+}
+
+void DynamicValueWriteObjectHelper::create(RuntimeObject *obj, DynamicValueWriteProxy &proxy) {
+	proxy.containerList.reset();	// Object references are always anchored while threads are running, so don't need to preserve the container
+	proxy.pod.ifc = &DynamicValueWriteObjectHelper::_instance;
+	proxy.pod.objectRef = obj;
+	proxy.pod.ptrOrOffset = 0;
+}
+
+DynamicValueWriteObjectHelper DynamicValueWriteObjectHelper::_instance;
 
 MessengerSendSpec::MessengerSendSpec() : destination(0), _linkType(kLinkTypeNotYetLinked) {
 }
@@ -1585,6 +1620,8 @@ void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, C
 		default:
 			break;
 		}
+	} else if (_linkType == kLinkTypeNotYetLinked) {
+		error("Messenger wasn't linked, programmer probably forgot to call linkInternalReferences on the send spec");
 	}
 }
 
@@ -1605,8 +1642,11 @@ void MessengerSendSpec::resolveVariableObjectType(RuntimeObject *obj, Common::We
 }
 
 void MessengerSendSpec::sendFromMessenger(Runtime *runtime, Modifier *sender) const {
+	sendFromMessengerWithCustomData(runtime, sender, this->with);
+}
 
-	Common::SharedPtr<MessageProperties> props(new MessageProperties(this->send, this->with, sender->getSelfReference()));
+void MessengerSendSpec::sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data) const {
+	Common::SharedPtr<MessageProperties> props(new MessageProperties(this->send, data, sender->getSelfReference()));
 
 	Common::WeakPtr<Modifier> modifierDestRef;
 	Common::WeakPtr<Structural> structuralDestRef;
@@ -1765,7 +1805,7 @@ void CursorGraphicCollection::addMacCursor(uint32 cursorID, const Common::Shared
 }
 
 
-ProjectDescription::ProjectDescription() : _language(Common::EN_ANY) {
+ProjectDescription::ProjectDescription(ProjectPlatform platform) : _language(Common::EN_ANY), _platform(platform) {
 }
 
 ProjectDescription::~ProjectDescription() {
@@ -1818,6 +1858,10 @@ void ProjectDescription::setLanguage(const Common::Language &language) {
 
 const Common::Language &ProjectDescription::getLanguage() const {
 	return _language;
+}
+
+ProjectPlatform ProjectDescription::getPlatform() const {
+	return _platform;
 }
 
 const Common::Array<Common::SharedPtr<Modifier> >& SimpleModifierContainer::getModifiers() const {
@@ -1912,6 +1956,166 @@ const Common::WeakPtr<RuntimeObject>& MessageProperties::getSource() const {
 	return _source;
 }
 
+SystemInterface::SystemInterface() : _masterVolume(kFullVolume) {
+}
+
+bool SystemInterface::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "mastervolume") {
+		result.setInt(_masterVolume);
+		return true;
+	} else if (attrib == "monitorbitdepth") {
+		int bitDepth = displayModeToBitDepth(thread->getRuntime()->getFakeColorDepth());
+		if (bitDepth <= 0)
+			return false;
+
+		result.setInt(bitDepth);
+		return true;
+	} else if (attrib == "volumeismounted") {
+		int volID = 0;
+		bool isMounted = false;
+		bool hasVolume = thread->getRuntime()->getVolumeState(_volumeName.c_str(), volID, isMounted);
+
+		result.setBool(hasVolume && isMounted);
+		return true;
+	}
+
+	return RuntimeObject::readAttribute(thread, result, attrib);
+}
+
+bool SystemInterface::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) {
+	if (attrib == "supportsbitdepth") {
+		int32 asInteger = 0;
+		if (!index.roundToInt(asInteger))
+			return false;
+
+		bool supported = false;
+		ColorDepthMode mode = bitDepthToDisplayMode(asInteger);
+
+		if (mode != kColorDepthModeInvalid)
+			supported = thread->getRuntime()->isDisplayModeSupported(mode);
+
+		result.setBool(supported);
+		return true;
+	}
+
+	return RuntimeObject::readAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome SystemInterface::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "ejectcd") {
+		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setEjectCD>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "gamemode") {
+		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setGameMode>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "mastervolume") {
+		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setMasterVolume>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "monitorbitdepth") {
+		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setMonitorBitDepth>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "volumename") {
+		DynamicValueWriteFuncHelper<SystemInterface, &SystemInterface::setVolumeName>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return RuntimeObject::writeRefAttribute(thread, result, attrib);
+}
+
+int32 SystemInterface::displayModeToBitDepth(ColorDepthMode displayMode) {
+	switch (displayMode) {
+	case kColorDepthMode1Bit:
+		return 1;
+	case kColorDepthMode2Bit:
+		return 2;
+	case kColorDepthMode4Bit:
+		return 4;
+	case kColorDepthMode8Bit:
+		return 8;
+	case kColorDepthMode16Bit:
+		return 16;
+	case kColorDepthMode32Bit:
+		return 32;
+	default:
+		return 0;
+	}
+}
+
+ColorDepthMode SystemInterface::bitDepthToDisplayMode(int32 bits) {
+	switch (bits) {
+	case 1:
+		return kColorDepthMode1Bit;
+	case 2:
+		return kColorDepthMode2Bit;
+	case 4:
+		return kColorDepthMode4Bit;
+	case 8:
+		return kColorDepthMode8Bit;
+	case 16:
+		return kColorDepthMode16Bit;
+	case 32:
+		return kColorDepthMode32Bit;
+	default:
+		return kColorDepthModeInvalid;
+	}
+}
+
+MiniscriptInstructionOutcome SystemInterface::setEjectCD(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kBoolean)
+		return kMiniscriptInstructionOutcomeFailed;
+
+	// If set to true, supposed to eject the CD.
+	// Maybe we could dismount one of the runtime volumes here if we really wanted to, but ironically,
+	// while volumeIsMounted supports multiple CD drives at once, ejectCD doesn't, so... do nothing?
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome SystemInterface::setGameMode(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kBoolean)
+		return kMiniscriptInstructionOutcomeFailed;
+
+	// Nothing to do here
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome SystemInterface::setMasterVolume(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (asInteger < 0)
+		asInteger = 0;
+	else if (asInteger > kFullVolume)
+		asInteger = kFullVolume;
+
+	thread->getRuntime()->setVolume(static_cast<double>(asInteger) / kFullVolume);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome SystemInterface::setMonitorBitDepth(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	const ColorDepthMode depthMode = SystemInterface::bitDepthToDisplayMode(asInteger);
+	if (depthMode != kColorDepthModeInvalid) {
+		thread->getRuntime()->switchDisplayMode(thread->getRuntime()->getRealColorDepth(), depthMode);
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome SystemInterface::setVolumeName(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kString)
+		return kMiniscriptInstructionOutcomeFailed;
+
+	_volumeName = value.getString();
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 Structural::Structural() : _parent(nullptr), _paused(false) {
 }
 
@@ -1933,9 +2137,21 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 	if (attrib == "name") {
 		result.setString(_name);
 		return true;
-	}
-	if (attrib == "paused") {
+	} else if (attrib == "paused") {
 		result.setBool(_paused);
+		return true;
+	} else if (attrib == "this") {
+		// Yes, "this" is an attribute
+		result.setObject(thread->getModifier()->getSelfReference());
+		return true;
+	} else if (attrib == "wm" || attrib == "worldmanager") {
+		result.setObject(thread->getRuntime()->getWorldManagerInterface()->getSelfReference());
+		return true;
+	} else if (attrib == "assetmanager") {
+		result.setObject(thread->getRuntime()->getAssetManagerInterface()->getSelfReference());
+		return true;
+	} else if (attrib == "system") {
+		result.setObject(thread->getRuntime()->getSystemInterface()->getSelfReference());
 		return true;
 	}
 
@@ -1946,9 +2162,21 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 	if (attrib == "name") {
 		DynamicValueWriteStringHelper::create(&_name, result);
 		return kMiniscriptInstructionOutcomeContinue;
-	}
-	if (attrib == "paused") {
+	} else if (attrib == "paused") {
 		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetPaused>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "this") {
+		// Yes, "this" is an attribute
+		DynamicValueWriteObjectHelper::create(thread->getModifier(), result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "wm" || attrib == "worldmanager") {
+		DynamicValueWriteObjectHelper::create(thread->getRuntime()->getWorldManagerInterface(), result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "assetmanager") {
+		DynamicValueWriteObjectHelper::create(thread->getRuntime()->getAssetManagerInterface(), result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "system") {
+		DynamicValueWriteObjectHelper::create(thread->getRuntime()->getSystemInterface(), result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -2522,7 +2750,7 @@ Runtime::SceneStackEntry::SceneStackEntry() {
 
 Runtime::Runtime(OSystem *system) : _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
 									_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
-									_system(system), _lastFrameCursor(nullptr), _defaultCursor(new DefaultCursor()) {
+									_system(system), _lastFrameCursor(nullptr), _defaultCursor(new DefaultCursor()), _platform(kProjectPlatformUnknown) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -2538,6 +2766,15 @@ Runtime::Runtime(OSystem *system) : _nextRuntimeGUID(1), _realDisplayMode(kColor
 
 	for (int i = 0; i < Actions::kMouseButtonCount; i++)
 		_mouseFocusFlags[Actions::kMouseButtonCount] = false;
+	
+	_worldManagerInterface.reset(new WorldManagerInterface());
+	_worldManagerInterface->setSelfReference(_worldManagerInterface);
+
+	_assetManagerInterface.reset(new AssetManagerInterface());
+	_assetManagerInterface->setSelfReference(_assetManagerInterface);
+
+	_systemInterface.reset(new SystemInterface());
+	_systemInterface->setSelfReference(_systemInterface);
 }
 
 bool Runtime::runFrame() {
@@ -2551,7 +2788,7 @@ bool Runtime::runFrame() {
 
 	for (;;) {
 #ifdef MTROPOLIS_DEBUG_ENABLE
-		if (_debugger->isPaused())
+		if (_debugger && _debugger->isPaused())
 			break;
 #endif
 
@@ -2600,6 +2837,10 @@ bool Runtime::runFrame() {
 			if (firstSubsection->getChildren().size() < 2) {
 				error("Project has no subsections");
 			}
+
+			Common::SharedPtr<MessageProperties> psProps(new MessageProperties(Event::create(EventIDs::kProjectStarted, 0), DynamicValue(), _project->getSelfReference()));
+			Common::SharedPtr<MessageDispatch> psDispatch(new MessageDispatch(psProps, _project.get(), false, true, false));
+			queueMessage(psDispatch);
 
 			_pendingSceneTransitions.push_back(HighLevelSceneTransition(firstSubsection->getChildren()[1], HighLevelSceneTransition::kTypeChangeToScene, false, false));
 			continue;
@@ -3049,9 +3290,8 @@ void Runtime::executeSharedScenePostSceneChangeActions() {
 }
 
 void Runtime::recursiveDeactivateStructural(Structural *structural) {
-	const Common::Array<Common::SharedPtr<Structural> > &children = structural->getChildren();
-	for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = children.begin(), itEnd = children.end(); it != itEnd; ++it) {
-		recursiveDeactivateStructural(it->get());
+	for (const Common::SharedPtr<Structural> &child : structural->getChildren()) {
+		recursiveDeactivateStructural(child.get());
 	}
 
 	structural->deactivate();
@@ -3060,9 +3300,8 @@ void Runtime::recursiveDeactivateStructural(Structural *structural) {
 void Runtime::recursiveActivateStructural(Structural *structural) {
 	structural->activate();
 
-	const Common::Array<Common::SharedPtr<Structural> > &children = structural->getChildren();
-	for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = children.begin(), itEnd = children.end(); it != itEnd; ++it) {
-		recursiveActivateStructural(it->get());
+	for (const Common::SharedPtr<Structural> &child : structural->getChildren()) {
+		recursiveActivateStructural(child.get());
 	}
 }
 
@@ -3180,6 +3419,18 @@ Common::SharedPtr<Window> Runtime::findTopWindow(int32 x, int32 y) const {
 	return bestWindow;
 }
 
+void Runtime::setVolume(double volume) {
+	Audio::Mixer *mixer = _system->getMixer();
+	mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, static_cast<int>(volume * Audio::Mixer::kMaxMixerVolume));
+	mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, static_cast<int>(volume * Audio::Mixer::kMaxMixerVolume));
+	mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, static_cast<int>(volume * Audio::Mixer::kMaxMixerVolume));
+	mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, static_cast<int>(volume * Audio::Mixer::kMaxMixerVolume));
+}
+
+ProjectPlatform Runtime::getPlatform() const {
+	return _platform;
+}
+
 void Runtime::onMouseDown(int32 x, int32 y, Actions::MouseButton mButton) {
 	Common::SharedPtr<Window> focusWindow = _mouseFocusWindow.lock();
 	if (!focusWindow) {
@@ -3229,9 +3480,27 @@ void Runtime::onMouseUp(int32 x, int32 y, Actions::MouseButton mButton) {
 		_mouseFocusWindow.reset();
 }
 
+void Runtime::onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
+	if (_project)
+		_project->onKeyboardEvent(this, evtType, repeat, keyEvt);
+}
+
 Common::RandomSource* Runtime::getRandom() const {
 	return _random.get();
 }
+
+WorldManagerInterface *Runtime::getWorldManagerInterface() const {
+	return _worldManagerInterface.get();
+}
+
+AssetManagerInterface *Runtime::getAssetManagerInterface() const {
+	return _assetManagerInterface.get();
+}
+
+SystemInterface *Runtime::getSystemInterface() const {
+	return _systemInterface.get();
+}
+
 
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
@@ -3284,6 +3553,18 @@ void Runtime::addVolume(int volumeID, const char *name, bool isMounted) {
 	_volumes.push_back(volume);
 }
 
+bool Runtime::getVolumeState(const Common::String &name, int &outVolumeID, bool &outIsMounted) const {
+	for (const VolumeState &volume : _volumes) {
+		if (caseInsensitiveEqual(volume.name, name)) {
+			outVolumeID = volume.volumeID;
+			outIsMounted = volume.isMounted;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Runtime::addSceneStateTransition(const HighLevelSceneTransition &transition) {
 	_pendingSceneTransitions.push_back(transition);
 }
@@ -3325,6 +3606,10 @@ void Runtime::removeWindow(Window *window) {
 void Runtime::setupDisplayMode(ColorDepthMode displayMode, const Graphics::PixelFormat &pixelFormat) {
 	_displayModeSupported[displayMode] = true;
 	_displayModePixelFormats[displayMode] = pixelFormat;
+}
+
+bool Runtime::isDisplayModeSupported(ColorDepthMode displayMode) const {
+	return _displayModeSupported[displayMode];
 }
 
 bool Runtime::switchDisplayMode(ColorDepthMode realDisplayMode, ColorDepthMode fakeDisplayMode) {
@@ -3539,12 +3824,39 @@ void SegmentUnloadSignaller::removeReceiver(ISegmentUnloadSignalReceiver *receiv
 	}
 }
 
+KeyboardEventSignaller::KeyboardEventSignaller() {
+}
+
+KeyboardEventSignaller::~KeyboardEventSignaller() {
+}
+
+void KeyboardEventSignaller::onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
+	const size_t numReceivers = _receivers.size();
+	for (size_t i = 0; i < numReceivers; i++) {
+		_receivers[i]->onKeyboardEvent(runtime, evtType, repeat, keyEvt);
+	}
+}
+
+void KeyboardEventSignaller::addReceiver(IKeyboardEventReceiver *receiver) {
+	_receivers.push_back(receiver);
+}
+
+void KeyboardEventSignaller::removeReceiver(IKeyboardEventReceiver *receiver) {
+	for (size_t i = 0; i < _receivers.size(); i++) {
+		if (_receivers[i] == receiver) {
+			_receivers.remove_at(i);
+			break;
+		}
+	}
+}
+
 Project::Segment::Segment() : weakStream(nullptr) {
 }
 
 Project::Project(Runtime *runtime)
 	: _runtime(runtime), _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false),
-	  _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false), _postRenderSignaller(new PostRenderSignaller()) {
+	  _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false), _postRenderSignaller(new PostRenderSignaller()),
+	  _keyboardEventSignaller(new KeyboardEventSignaller()) {
 }
 
 Project::~Project() {
@@ -3831,6 +4143,15 @@ void Project::onPostRender() {
 Common::SharedPtr<PostRenderSignaller> Project::notifyOnPostRender(IPostRenderSignalReceiver *receiver) {
 	_postRenderSignaller->addReceiver(receiver);
 	return _postRenderSignaller;
+}
+
+void Project::onKeyboardEvent(Runtime *runtime, const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
+	_keyboardEventSignaller->onKeyboardEvent(runtime, evtType, repeat, keyEvt);
+}
+
+Common::SharedPtr<KeyboardEventSignaller> Project::notifyOnKeyboardEvent(IKeyboardEventReceiver *receiver) {
+	_keyboardEventSignaller->addReceiver(receiver);
+	return _keyboardEventSignaller;
 }
 
 void Project::loadBootStream(size_t streamIndex) {
@@ -4343,6 +4664,9 @@ uint32 Element::getStreamLocator() const {
 	return _streamLocator;
 }
 
+VisualElement::VisualElement() : _rect(Rect16::create(0, 0, 0, 0)), _cachedAbsoluteOrigin(Point16::create(0, 0)) {
+}
+
 bool VisualElement::isVisual() const {
 	return true;
 }
@@ -4395,6 +4719,18 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 	return Element::writeRefAttribute(thread, writeProxy, attrib);
 }
 
+const Rect16 &VisualElement::getRelativeRect() const {
+	return _rect;
+}
+
+const Point16 &VisualElement::getCachedAbsoluteOrigin() const {
+	return _cachedAbsoluteOrigin;
+}
+
+void VisualElement::setCachedAbsoluteOrigin(const Point16 &absOrigin) {
+	_cachedAbsoluteOrigin = absOrigin;
+}
+
 MiniscriptInstructionOutcome VisualElement::scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result) {
 	// FIXME: Need to make this fire Show/Hide events!
 	if (result.getType() == DynamicValueTypes::kBoolean) {
@@ -4434,24 +4770,30 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *
 		int32 xDelta = destPoint.x - _rect.left;
 		int32 yDelta = destPoint.y - _rect.right;
 
-		offsetTranslate(xDelta, yDelta);
+		if (xDelta != 0 || yDelta != 0)
+			offsetTranslate(xDelta, yDelta, false);
 
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-void VisualElement::offsetTranslate(int32 xDelta, int32 yDelta) {
-	_rect.left += xDelta;
-	_rect.right += xDelta;
-	_rect.top += yDelta;
-	_rect.bottom += yDelta;
+void VisualElement::offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOriginOnly) {
+	if (!cachedOriginOnly) {
+		_rect.left += xDelta;
+		_rect.right += xDelta;
+		_rect.top += yDelta;
+		_rect.bottom += yDelta;
+	}
+
+	_cachedAbsoluteOrigin.x += xDelta;
+	_cachedAbsoluteOrigin.y += yDelta;
 
 	for (const Common::SharedPtr<Structural> &child : _children) {
 		if (child->isElement()) {
 			Element *element = static_cast<Element *>(child.get());
 			if (element->isVisual())
-				static_cast<VisualElement *>(element)->offsetTranslate(xDelta, yDelta);
+				static_cast<VisualElement *>(element)->offsetTranslate(xDelta, yDelta, true);
 		}
 	}
 }

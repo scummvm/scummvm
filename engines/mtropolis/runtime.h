@@ -23,6 +23,7 @@
 #define MTROPOLIS_RUNTIME_H
 
 #include "common/array.h"
+#include "common/events.h"
 #include "common/language.h"
 #include "common/platform.h"
 #include "common/ptr.h"
@@ -59,10 +60,9 @@ struct Surface;
 namespace MTropolis {
 
 class Asset;
+class AssetManagerInterface;
 class CursorGraphic;
 class CursorGraphicCollection;
-struct DynamicValueReadProxy;
-struct DynamicValueWriteProxy;
 class Element;
 class MessageDispatch;
 class MiniscriptThread;
@@ -74,9 +74,13 @@ class PlugIn;
 class Project;
 class Runtime;
 class Structural;
+class SystemInterface;
 class VisualElement;
 class Window;
+class WorldManagerInterface;
 struct DynamicValue;
+struct DynamicValueReadProxy;
+struct DynamicValueWriteProxy;
 struct IMessageConsumer;
 struct IModifierContainer;
 struct IModifierFactory;
@@ -787,6 +791,8 @@ struct DynamicValue {
 	void setReadProxy(const DynamicValueReadProxy &readProxy);
 	void setWriteProxy(const DynamicValueWriteProxy &writeProxy);
 
+	bool roundToInt(int32 &outInt) const;
+
 	DynamicValue &operator=(const DynamicValue &other);
 
 	bool operator==(const DynamicValue &other) const;
@@ -933,6 +939,17 @@ private:
 template<class TClass, MiniscriptInstructionOutcome (TClass::*TWriteMethod)(MiniscriptThread *thread, const DynamicValue &dest)>
 DynamicValueWriteFuncHelper<TClass, TWriteMethod> DynamicValueWriteFuncHelper<TClass, TWriteMethod>::_instance;
 
+struct DynamicValueWriteObjectHelper : public IDynamicValueWriteInterface {
+	MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr_t ptrOrOffset) const override;
+	MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib) const override;
+	MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr_t ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override;
+
+	static void create(RuntimeObject *obj, DynamicValueWriteProxy &proxy);
+
+private:
+	static DynamicValueWriteObjectHelper _instance;
+};
+
 struct MessengerSendSpec {
 	MessengerSendSpec();
 	bool load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::InternalTypeTaggedValue &dataLocator, const Common::String &dataWithSource, const Common::String &dataWithString, uint32 dataDestination);
@@ -945,6 +962,7 @@ struct MessengerSendSpec {
 	static void resolveVariableObjectType(RuntimeObject *obj, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest);
 
 	void sendFromMessenger(Runtime *runtime, Modifier *sender) const;
+	void sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data) const;
 
 	Event send;
 	MessageFlags messageFlags;
@@ -1037,9 +1055,16 @@ private:
 	Common::Array<Common::SharedPtr<Graphics::MacCursor> > _macCursors;
 };
 
+enum ProjectPlatform {
+	kProjectPlatformUnknown,
+
+	kProjectPlatformWindows,
+	kProjectPlatformMacintosh,
+};
+
 class ProjectDescription {
 public:
-	ProjectDescription();
+	explicit ProjectDescription(ProjectPlatform platform);
 	~ProjectDescription();
 
 	void addSegment(int volumeID, const char *filePath);
@@ -1057,12 +1082,15 @@ public:
 	void setLanguage(const Common::Language &language);
 	const Common::Language &getLanguage() const;
 
+	ProjectPlatform getPlatform() const;
+
 private:
 	Common::Array<SegmentDescription> _segments;
 	Common::Array<Common::SharedPtr<PlugIn> > _plugIns;
 	Common::SharedPtr<ProjectResources> _resources;
 	Common::SharedPtr<CursorGraphicCollection> _cursorGraphics;
 	Common::Language _language;
+	ProjectPlatform _platform;
 };
 
 struct VolumeState {
@@ -1233,6 +1261,8 @@ public:
 	void queueProject(const Common::SharedPtr<ProjectDescription> &desc);
 
 	void addVolume(int volumeID, const char *name, bool isMounted);
+	bool getVolumeState(const Common::String &name, int &outVolumeID, bool &outIsMounted) const;
+
 	void addSceneStateTransition(const HighLevelSceneTransition &transition);
 
 	Project *getProject() const;
@@ -1248,9 +1278,12 @@ public:
 	// Sets up a supported display mode
 	void setupDisplayMode(ColorDepthMode displayMode, const Graphics::PixelFormat &pixelFormat);
 
+	bool isDisplayModeSupported(ColorDepthMode displayMode) const;
+
 	// Switches to a specified display mode.  Returns true if the mode was actually changed.  If so, all windows will need
 	// to be recreated.
 	bool switchDisplayMode(ColorDepthMode realDisplayMode, ColorDepthMode fakeDisplayMode);
+
 	void setDisplayResolution(uint16 width, uint16 height);
 	void getDisplayResolution(uint16 &outWidth, uint16 &outHeight) const;
 
@@ -1284,11 +1317,19 @@ public:
 
 	Common::SharedPtr<Window> findTopWindow(int32 x, int32 y) const;
 
+	void setVolume(double volume);
+
+	ProjectPlatform getPlatform() const;
+
 	void onMouseDown(int32 x, int32 y, Actions::MouseButton mButton);
 	void onMouseMove(int32 x, int32 y);
 	void onMouseUp(int32 x, int32 y, Actions::MouseButton mButton);
+	void onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
 
 	Common::RandomSource *getRandom() const;
+	WorldManagerInterface *getWorldManagerInterface() const;
+	AssetManagerInterface *getAssetManagerInterface() const;
+	SystemInterface *getSystemInterface() const;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
@@ -1409,6 +1450,12 @@ private:
 	Common::WeakPtr<Window> _mouseFocusWindow;
 	bool _mouseFocusFlags[Actions::kMouseButtonCount];
 
+	ProjectPlatform _platform;
+
+	Common::SharedPtr<SystemInterface> _systemInterface;
+	Common::SharedPtr<WorldManagerInterface> _worldManagerInterface;
+	Common::SharedPtr<AssetManagerInterface> _assetManagerInterface;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<Debugger> _debugger;
 #endif
@@ -1490,6 +1537,36 @@ struct IMessageConsumer {
 	// These should only be implemented as direct responses - child traversal is handled by the message propagation process
 	virtual bool respondsToEvent(const Event &evt) const = 0;
 	virtual VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) = 0;
+};
+
+class WorldManagerInterface : public RuntimeObject {
+};
+
+class AssetManagerInterface : public RuntimeObject {
+};
+
+class SystemInterface : public RuntimeObject {
+public:
+	const int kFullVolume = 7;
+
+	SystemInterface();
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	bool readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) override;
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
+
+private:
+	static ColorDepthMode bitDepthToDisplayMode(int32 bitDepth);
+	static int32 displayModeToBitDepth(ColorDepthMode displayMode);
+
+	MiniscriptInstructionOutcome setEjectCD(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome setGameMode(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome setMasterVolume(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome setMonitorBitDepth(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome setVolumeName(MiniscriptThread *thread, const DynamicValue &value);
+
+	Common::String _volumeName;
+	int _masterVolume;
 };
 
 class Structural : public RuntimeObject, public IModifierContainer, public IMessageConsumer, public IDebuggable {
@@ -1660,6 +1737,24 @@ private:
 	Common::Array<ISegmentUnloadSignalReceiver *> _receivers;
 };
 
+struct IKeyboardEventReceiver {
+	virtual void onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) = 0;
+};
+
+class KeyboardEventSignaller {
+public:
+	KeyboardEventSignaller();
+	~KeyboardEventSignaller();
+
+	void onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
+	void addReceiver(IKeyboardEventReceiver *receiver);
+	void removeReceiver(IKeyboardEventReceiver *receiver);
+
+private:
+	Common::Array<IKeyboardEventReceiver *> _receivers;
+	Common::SharedPtr<KeyboardEventSignaller> _signaller;
+};
+
 class Project : public Structural {
 public:
 	explicit Project(Runtime *runtime);
@@ -1684,6 +1779,9 @@ public:
 
 	void onPostRender();
 	Common::SharedPtr<PostRenderSignaller> notifyOnPostRender(IPostRenderSignalReceiver *receiver);
+
+	void onKeyboardEvent(Runtime *runtime, const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
+	Common::SharedPtr<KeyboardEventSignaller> notifyOnKeyboardEvent(IKeyboardEventReceiver *receiver);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Project"; }
@@ -1782,6 +1880,7 @@ private:
 	ObjectLinkingScope _modifierScope;
 
 	Common::SharedPtr<PostRenderSignaller> _postRenderSignaller;
+	Common::SharedPtr<KeyboardEventSignaller> _keyboardEventSignaller;
 
 	Runtime *_runtime;
 };
@@ -1840,6 +1939,8 @@ protected:
 
 class VisualElement : public Element {
 public:
+	VisualElement();
+
 	bool isVisual() const override;
 
 	bool isVisible() const;
@@ -1848,6 +1949,13 @@ public:
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
+
+	const Rect16 &getRelativeRect() const;
+
+	// The cached absolute origin is from the last time the element was rendered.
+	// Do not rely on it mid-frame.
+	const Point16 &getCachedAbsoluteOrigin() const;
+	void setCachedAbsoluteOrigin(const Point16 &absOrigin);
 
 	virtual void render(Window *window) = 0;
 
@@ -1858,7 +1966,7 @@ protected:
 	MiniscriptInstructionOutcome scriptSetPosition(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result);
 
-	void offsetTranslate(int32 xDelta, int32 yDelta);
+	void offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOriginOnly);
 
 	struct ChangeFlagTaskData {
 		bool desiredFlag;
@@ -1870,6 +1978,7 @@ protected:
 	bool _directToScreen;
 	bool _visible;
 	Rect16 _rect;
+	Point16 _cachedAbsoluteOrigin;
 	uint16 _layer;
 };
 
@@ -1940,6 +2049,8 @@ protected:
 	// Links any references contained in the object, resolving static GUIDs to runtime object references.
 	// If you override this, you must override visitInternalReferences too.
 	virtual void linkInternalReferences(ObjectLinkingScope *scope);
+
+	Structural *findStructuralOwner() const;
 
 	Common::String _name;
 	ModifierFlags _modifierFlags;
