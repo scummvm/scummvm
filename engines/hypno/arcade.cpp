@@ -249,6 +249,13 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	}
 	_currentPalette = arc->backgroundPalette;
 	loadPalette(_currentPalette);
+
+	if (segments[_segmentIdx].start > 1) {
+		_background->decoder->forceSeekToFrame(segments[_segmentIdx].start - 10);
+		segments[_segmentIdx].size -= segments[_segmentIdx].start;
+		segments[_segmentIdx].start = 1;
+	}
+
 	bool shootingPrimary = false;
 	bool shootingSecondary = false;
 	bool needsUpdate = true;
