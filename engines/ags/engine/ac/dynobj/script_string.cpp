@@ -34,9 +34,9 @@ DynObjectRef ScriptString::CreateString(const char *fromText) {
 
 int ScriptString::Dispose(const char *address, bool force) {
 	// always dispose
-	if (text) {
-		free(text);
-		text = nullptr;
+	if (_text) {
+		free(_text);
+		_text = nullptr;
 	}
 	delete this;
 	return 1;
@@ -50,29 +50,34 @@ size_t ScriptString::CalcSerializeSize() {
 	return _len + 1 + sizeof(int32_t);
 }
 
-void ScriptString::Serialize(const char *address, Stream *out) {
-	const auto *cstr = text ? text : "";
+void ScriptString::Serialize(const char * /*address*/, Stream *out) {
+	const auto *cstr = _text ? _text : "";
 	out->WriteInt32(_len);
 	out->Write(cstr, _len + 1);
 }
 
-void ScriptString::Unserialize(int index, Stream *in, size_t data_sz) {
+void ScriptString::Unserialize(int index, Stream *in, size_t /*data_sz*/) {
 	_len = in->ReadInt32();
-	text = (char *)malloc(_len + 1);
-	in->Read(text, _len + 1);
-	text[_len] = 0; // for safety
-	ccRegisterUnserializedObject(index, text, this);
+	_text = (char *)malloc(_len + 1);
+	in->Read(_text, _len + 1);
+	_text[_len] = 0; // for safety
+	ccRegisterUnserializedObject(index, _text, this);
 }
 
-ScriptString::ScriptString() {
-	text = nullptr;
-	_len = 0;
+ScriptString::ScriptString(const char *text) {
+	_len = strlen(text);
+	_text = (char *)malloc(_len + 1);
+	memcpy(_text, text, _len + 1);
 }
 
-ScriptString::ScriptString(const char *fromText) {
-	_len = strlen(fromText);
-	text = (char *)malloc(_len + 1);
-	memcpy(text, fromText, _len + 1);
+ScriptString::ScriptString(char *text, bool take_ownership) {
+	_len = strlen(text);
+	if (take_ownership) {
+		_text = text;
+	} else {
+		_text = (char *)malloc(_len + 1);
+		memcpy(_text, text, _len + 1);
+	}
 }
 
 } // namespace AGS3
