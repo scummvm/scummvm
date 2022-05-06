@@ -5044,6 +5044,15 @@ bool VariableModifier::isVariable() const {
 	return true;
 }
 
+bool VariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "value") {
+		varGetValue(thread, result);
+		return true;
+	}
+
+	return Modifier::readAttribute(thread, result, attrib);
+}
+
 DynamicValueWriteProxy VariableModifier::createWriteProxy() {
 	DynamicValueWriteProxy proxy;
 	proxy.pod.objectRef = this;

@@ -125,6 +125,51 @@ size_t MovieAsset::getStreamIndex() const {
 	return _streamIndex;
 }
 
+
+CachedImage::CachedImage() : _colorDepth(kColorDepthModeInvalid), _isOptimized(false) {
+}
+
+void CachedImage::resetSurface(ColorDepthMode colorDepth, const Common::SharedPtr<Graphics::Surface> &surface) {
+	_optimizedSurface.reset();
+	_isOptimized = false;
+
+	_colorDepth = colorDepth;
+	_surface = surface;
+}
+
+const Common::SharedPtr<Graphics::Surface> &CachedImage::optimize(Runtime *runtime) {
+	ColorDepthMode renderDepth = runtime->getRealColorDepth();
+	const Graphics::PixelFormat &renderFmt = runtime->getRenderPixelFormat();
+
+	if (renderDepth != _colorDepth) {
+		size_t w = _surface->w;
+		size_t h = _surface->h;
+
+		if (renderDepth == kColorDepthMode16Bit && _colorDepth == kColorDepthMode32Bit) {
+			_optimizedSurface.reset(new Graphics::Surface());
+			_optimizedSurface->create(w, h, renderFmt);
+			Render::convert32To16(*_optimizedSurface, *_surface);
+		} else if (renderDepth == kColorDepthMode32Bit && _colorDepth == kColorDepthMode16Bit) {
+			_optimizedSurface.reset(new Graphics::Surface());
+			_optimizedSurface->create(w, h, renderFmt);
+			Render::convert16To32(*_optimizedSurface, *_surface);
+		} else {
+			_optimizedSurface = _surface;	// Can't optimize
+		}
+	} else {
+		_surface->convertToInPlace(renderFmt, nullptr);
+		_optimizedSurface = _surface;
+	}
+
+	return _optimizedSurface;
+}
+
+ImageAsset::ImageAsset() {
+}
+
+ImageAsset::~ImageAsset() {
+}
+
 bool ImageAsset::load(AssetLoaderContext &context, const Data::ImageAsset &data) {
 	_assetID = data.assetID;
 	if (!_rect.load(data.rect1))
@@ -194,6 +239,158 @@ ImageAsset::ImageFormat ImageAsset::getImageFormat() const {
 	return _imageFormat;
 }
 
+const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *runtime) {
+	if (_imageCache)
+		return _imageCache;
+
+	ColorDepthMode renderDepth = runtime->getRealColorDepth();
+
+	size_t streamIndex = getStreamIndex();
+	int segmentIndex = runtime->getProject()->getSegmentForStreamIndex(streamIndex);
+	runtime->getProject()->openSegmentStream(segmentIndex);
+	Common::SeekableReadStream *stream = runtime->getProject()->getStreamForSegment(segmentIndex);
+
+	if (!stream || !stream->seek(getFilePosition())) {
+		warning("Image element failed to load");
+		return _imageCache;
+	}
+
+	size_t bytesPerRow = 0;
+
+	Rect16 imageRect = getRect();
+	int width = imageRect.right - imageRect.left;
+	int height = imageRect.bottom - imageRect.top;
+
+	if (width <= 0 || height < 0) {
+		warning("Image asset has invalid size");
+		return _imageCache;
+	}
+
+	Graphics::PixelFormat pixelFmt;
+	switch (getColorDepth()) {
+	case kColorDepthMode1Bit:
+		bytesPerRow = (width + 7) / 8;
+		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
+		break;
+	case kColorDepthMode2Bit:
+		bytesPerRow = (width + 3) / 4;
+		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
+		break;
+	case kColorDepthMode4Bit:
+		bytesPerRow = (width + 1) / 2;
+		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
+		break;
+	case kColorDepthMode8Bit:
+		bytesPerRow = width;
+		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
+		break;
+	case kColorDepthMode16Bit:
+		bytesPerRow = (width * 2 + 3) / 4 * 4;
+		pixelFmt = Graphics::createPixelFormat<1555>();
+		break;
+	case kColorDepthMode32Bit:
+		bytesPerRow = width * 4;
+		pixelFmt = Graphics::createPixelFormat<8888>();
+		break;
+	default:
+		warning("Image asset has an unrecognizable pixel format");
+		return _imageCache;
+	}
+
+	Common::Array<uint8> rowBuffer;
+	rowBuffer.resize(bytesPerRow);
+
+	ImageAsset::ImageFormat imageFormat = getImageFormat();
+	bool bottomUp = (imageFormat == ImageAsset::kImageFormatWindows);
+	bool isBigEndian = (imageFormat == ImageAsset::kImageFormatMac);
+
+	Common::SharedPtr<Graphics::Surface> imageSurface;
+	imageSurface.reset(new Graphics::Surface());
+	imageSurface->create(width, height, pixelFmt);
+
+	for (int inRow = 0; inRow < height; inRow++) {
+		int outRow = bottomUp ? (height - 1 - inRow) : inRow;
+
+		stream->read(&rowBuffer[0], bytesPerRow);
+		const uint8 *inRowBytes = &rowBuffer[0];
+
+		void *outBase = imageSurface->getBasePtr(0, outRow);
+
+		switch (getColorDepth()) {
+		case kColorDepthMode1Bit: {
+				for (int x = 0; x < width; x++) {
+					int bit = (inRowBytes[x / 8] >> (7 - (x % 8))) & 1;
+					static_cast<uint8 *>(outBase)[x] = bit;
+				}
+			} break;
+		case kColorDepthMode2Bit: {
+				for (int x = 0; x < width; x++) {
+					int bit = (inRowBytes[x / 4] >> (3 - (x % 4))) & 3;
+					static_cast<uint8 *>(outBase)[x] = bit;
+				}
+			} break;
+		case kColorDepthMode4Bit: {
+				for (int x = 0; x < width; x++) {
+					int bit = (inRowBytes[x / 2] >> (1 - (x % 2))) & 15;
+					static_cast<uint8 *>(outBase)[x] = bit;
+				}
+			} break;
+		case kColorDepthMode8Bit:
+			memcpy(outBase, inRowBytes, width);
+			break;
+		case kColorDepthMode16Bit: {
+				if (isBigEndian) {
+					for (int x = 0; x < width; x++) {
+						uint16 packedPixel = inRowBytes[x * 2 + 1] + (inRowBytes[x * 2 + 0] << 8);
+						int r = ((packedPixel >> 10) & 0x1f);
+						int g = ((packedPixel >> 5) & 0x1f);
+						int b = (packedPixel & 0x1f);
+
+						uint16 repacked = (1 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
+						static_cast<uint16 *>(outBase)[x] = repacked;
+					}
+				} else {
+					for (int x = 0; x < width; x++) {
+						uint16 packedPixel = inRowBytes[x * 2 + 0] + (inRowBytes[x * 2 + 1] << 8);
+						int r = ((packedPixel >> 10) & 0x1f);
+						int g = ((packedPixel >> 5) & 0x1f);
+						int b = (packedPixel & 0x1f);
+
+						uint16 repacked = (1 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
+						static_cast<uint16 *>(outBase)[x] = repacked;
+					}
+				}
+			} break;
+		case kColorDepthMode32Bit: {
+				if (imageFormat == ImageAsset::kImageFormatMac) {
+					for (int x = 0; x < width; x++) {
+						uint8 r = inRowBytes[x * 4 + 0];
+						uint8 g = inRowBytes[x * 4 + 1];
+						uint8 b = inRowBytes[x * 4 + 2];
+						uint32 repacked = (255 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
+						static_cast<uint32 *>(outBase)[x] = repacked;
+					}
+				} else if (imageFormat == ImageAsset::kImageFormatWindows) {
+					for (int x = 0; x < width; x++) {
+						uint8 r = inRowBytes[x * 4 + 2];
+						uint8 g = inRowBytes[x * 4 + 1];
+						uint8 b = inRowBytes[x * 4 + 0];
+						uint32 repacked = (255 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
+						static_cast<uint32 *>(outBase)[x] = repacked;
+					}
+				}
+			} break;
+		default:
+			break;
+		}
+	}
+
+	_imageCache.reset(new CachedImage());
+	_imageCache->resetSurface(renderDepth, imageSurface);
+
+	return _imageCache;
+}
+
 bool MToonAsset::load(AssetLoaderContext &context, const Data::MToonAsset &data) {
 	if (data.haveMacPart)
 		_imageFormat = kImageFormatMac;
@@ -224,6 +421,8 @@ bool MToonAsset::load(AssetLoaderContext &context, const Data::MToonAsset &data)
 	}
 
 	_codecData = data.codecData;
+
+	return true;
 }
 
 AssetType MToonAsset::getAssetType() const {

@@ -46,9 +46,9 @@ struct RenderItem {
 template<class TNumber, int TResolution>
 void OrderedDitherGenerator<TNumber, TResolution>::generateOrderedDither(TNumber (&pattern)[TResolution][TResolution]) {
 	const int kHalfResolution = TResolution / 2;
-	byte halfRes[kHalfResolution][kHalfResolution];
+	TNumber halfRes[kHalfResolution][kHalfResolution];
 
-	OrderedDitherGenerator<kHalfResolution>::generateOrderedDither(halfRes);
+	OrderedDitherGenerator<TNumber, kHalfResolution>::generateOrderedDither(halfRes);
 
 	const int kHalfResNumSteps = kHalfResolution * kHalfResolution;
 	for (int y = 0; y < kHalfResolution; y++) {
@@ -66,8 +66,16 @@ void OrderedDitherGenerator<TNumber, 1>::generateOrderedDither(TNumber (&pattern
 	pattern[0][0] = 0;
 }
 
-inline int quantize8To5(int value, byte orderedDither16x16) {
+inline int quantize8To5Byte(int value, byte orderedDither16x16) {
 	return (value * 249 + (orderedDither16x16 << 3)) >> 11;
+}
+
+inline int quantize8To5UShort(int value, uint16 orderedDither16x16) {
+	return (value * 249 + orderedDither16x16) >> 11;
+}
+
+inline int expand5To8(int value) {
+	return (value * 33) >> 2;
 }
 
 MacFontFormatting::MacFontFormatting() : fontID(0), fontFlags(0), size(12) {
@@ -242,6 +250,77 @@ void renderProject(Runtime *runtime, Window *mainWindow) {
 
 	for (Common::Array<RenderItem>::const_iterator it = directBucket.begin(), itEnd = directBucket.end(); it != itEnd; ++it)
 		renderDirectElement(*it, mainWindow);
+}
+
+void convert32To16(Graphics::Surface &destSurface, const Graphics::Surface &srcSurface) {
+	const Graphics::PixelFormat srcFmt = srcSurface.format;
+	const Graphics::PixelFormat destFmt = destSurface.format;
+
+	assert(srcFmt.bytesPerPixel == 4);
+	assert(destFmt.bytesPerPixel == 2);
+	assert(destSurface.w == srcSurface.w);
+	assert(srcSurface.h == destSurface.h);
+
+	uint16 ditherPattern[16][16];
+	OrderedDitherGenerator<uint16, 16>::generateOrderedDither(ditherPattern);
+
+	for (int x = 0; x < 16; x++) {
+		for (int y = 0; y < 16; y++)
+			ditherPattern[y][x] <<= 3;
+	}
+
+
+	size_t w = srcSurface.w;
+	size_t h = srcSurface.h;
+
+	for (size_t y = 0; y < h; y++) {
+		const uint16 *ditherRow = ditherPattern[y % 16];
+		const uint32 *srcRow = static_cast<const uint32*>(srcSurface.getBasePtr(0, y));
+		uint16 *destRow = static_cast<uint16 *>(destSurface.getBasePtr(0, y));
+
+		for (size_t x = 0; x < w; x++) {
+			uint16 ditherOffset = ditherRow[x % 16];
+			uint32 packed32 = srcRow[x];
+			uint8 r = (packed32 >> srcFmt.rShift) & 0xff;
+			uint8 g = (packed32 >> srcFmt.gShift) & 0xff;
+			uint8 b = (packed32 >> srcFmt.bShift) & 0xff;
+
+			r = quantize8To5UShort(r, ditherOffset);
+			g = quantize8To5UShort(g, ditherOffset);
+			b = quantize8To5UShort(b, ditherOffset);
+			destRow[x] = (r << destFmt.rShift) | (g << destFmt.gShift) | (b << destFmt.bShift);
+		}
+	}
+}
+
+void convert16To32(Graphics::Surface &destSurface, const Graphics::Surface &srcSurface) {
+	const Graphics::PixelFormat srcFmt = srcSurface.format;
+	const Graphics::PixelFormat destFmt = destSurface.format;
+
+	assert(srcFmt.bytesPerPixel == 2);
+	assert(destFmt.bytesPerPixel == 4);
+	assert(destSurface.w == srcSurface.w);
+	assert(srcSurface.h == destSurface.h);
+
+	size_t w = srcSurface.w;
+	size_t h = srcSurface.h;
+
+	for (size_t y = 0; y < h; y++) {
+		const uint32 *srcRow = static_cast<const uint32 *>(srcSurface.getBasePtr(0, y));
+		uint16 *destRow = static_cast<uint16 *>(destSurface.getBasePtr(0, y));
+
+		for (size_t x = 0; x < w; x++) {
+			uint32 packed16 = srcRow[x];
+			uint8 r = (packed16 >> srcFmt.rShift) & 0x1f;
+			uint8 g = (packed16 >> srcFmt.gShift) & 0x1f;
+			uint8 b = (packed16 >> srcFmt.bShift) & 0x1f;
+
+			r = expand5To8(r);
+			g = expand5To8(g);
+			b = expand5To8(b);
+			destRow[x] = (r << destFmt.rShift) | (g << destFmt.gShift) | (b << destFmt.bShift);
+		}
+	}
 }
 
 } // End of namespace Render
