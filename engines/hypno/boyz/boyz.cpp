@@ -36,6 +36,24 @@ BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine
 	_crosshairsPalette = nullptr;
 }
 
+static const char *selectBoyz = "\
+MENU preload\\slct_boy.smk\n\
+HOTS /BBOX= 19  3   66  199\n\
+SOND tollop1.raw 22K\n\
+HOTS /BBOX= 69  3   116 199\n\
+SOND tollam.raw  22K\n\
+HOTS /BBOX= 119 3   166 199\n\
+SOND tolvas1.raw 22K\n\
+HOTS /BBOX= 169 3   216 199\n\
+SOND tolbut1.raw 22K\n\
+HOTS /BBOX= 219 3   266 199\n\
+SOND tolbro1.raw 22K\n\
+HOTS /BBOX= 269 3   316 170\n\
+SOND tolmon1.raw 22K\n\
+HOTS /BBOX= 262 172 312 194\n\
+SOND pstlfire.raw\n\
+END\n";
+
 void BoyzEngine::loadAssets() {
 	LibFile *missions = loadLib("", "preload/missions.lib", true);
 	Common::ArchiveMemberList files;
@@ -51,7 +69,7 @@ void BoyzEngine::loadAssets() {
 
 	Code *menu = new Code("<main_menu>");
 	_levels["<main_menu>"] = menu;
-	_levels["<main_menu>"]->levelIfWin = "c19.mi_";
+	_levels["<main_menu>"]->levelIfWin = "<select_boyz>";
 
 	loadArcadeLevel("c19.mi_", "c11.mi_", "??", "");
 	loadArcadeLevel("c11.mi_", "c12.mi_", "??", "");
@@ -62,6 +80,12 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c16.mi_", "c17.mi_", "??", "");
 	loadArcadeLevel("c17.mi_", "c18.mi_", "??", "");
 	loadArcadeLevel("c18.mi_", "c21.mi_", "??", "");
+
+	loadSceneLevel(selectBoyz, "<select_boyz>", "", "");
+	Scene *sc = (Scene *) _levels["<select_boyz>"];
+
+	ChangeLevel *cl = new ChangeLevel("c19.mi_");
+	sc->hots[7].actions.push_back(cl);
 
 	loadLib("sound/", "misc/sound.lib", true);
 

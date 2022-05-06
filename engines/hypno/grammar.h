@@ -105,6 +105,7 @@ public:
 	Common::String flags[3];
 	Common::Rect rect;
 	Common::String setting;
+	Common::String background;
 	Actions actions;
 	Hotspots *smenu;
 };

@@ -69,47 +69,49 @@ extern int HYPNO_MIS_debug;
     GSSWITCH = 262,                /* GSSWITCH  */
     COMMAND = 263,                 /* COMMAND  */
     WALNTOK = 264,                 /* WALNTOK  */
-    NUM = 265,                     /* NUM  */
-    HOTSTOK = 266,                 /* HOTSTOK  */
-    CUTSTOK = 267,                 /* CUTSTOK  */
-    BACKTOK = 268,                 /* BACKTOK  */
-    INTRTOK = 269,                 /* INTRTOK  */
-    RETTOK = 270,                  /* RETTOK  */
-    TIMETOK = 271,                 /* TIMETOK  */
-    PALETOK = 272,                 /* PALETOK  */
-    BBOXTOK = 273,                 /* BBOXTOK  */
-    OVERTOK = 274,                 /* OVERTOK  */
-    MICETOK = 275,                 /* MICETOK  */
-    PLAYTOK = 276,                 /* PLAYTOK  */
-    ENDTOK = 277,                  /* ENDTOK  */
-    MENUTOK = 278,                 /* MENUTOK  */
-    SMENTOK = 279,                 /* SMENTOK  */
-    ESCPTOK = 280,                 /* ESCPTOK  */
-    NRTOK = 281,                   /* NRTOK  */
-    AMBITOK = 282,                 /* AMBITOK  */
-    SWPTTOK = 283,                 /* SWPTTOK  */
-    MPTRTOK = 284,                 /* MPTRTOK  */
-    GLOBTOK = 285,                 /* GLOBTOK  */
-    TONTOK = 286,                  /* TONTOK  */
-    TOFFTOK = 287,                 /* TOFFTOK  */
-    TALKTOK = 288,                 /* TALKTOK  */
-    INACTOK = 289,                 /* INACTOK  */
-    FDTOK = 290,                   /* FDTOK  */
-    BOXXTOK = 291,                 /* BOXXTOK  */
-    ESCAPETOK = 292,               /* ESCAPETOK  */
-    SECONDTOK = 293,               /* SECONDTOK  */
-    INTROTOK = 294,                /* INTROTOK  */
-    DEFAULTTOK = 295,              /* DEFAULTTOK  */
-    PG = 296,                      /* PG  */
-    PA = 297,                      /* PA  */
-    PD = 298,                      /* PD  */
-    PH = 299,                      /* PH  */
-    PF = 300,                      /* PF  */
-    PE = 301,                      /* PE  */
-    PP = 302,                      /* PP  */
-    PI = 303,                      /* PI  */
-    PL = 304,                      /* PL  */
-    PS = 305                       /* PS  */
+    ENCTOK = 265,                  /* ENCTOK  */
+    NUM = 266,                     /* NUM  */
+    HOTSTOK = 267,                 /* HOTSTOK  */
+    CUTSTOK = 268,                 /* CUTSTOK  */
+    BACKTOK = 269,                 /* BACKTOK  */
+    INTRTOK = 270,                 /* INTRTOK  */
+    RETTOK = 271,                  /* RETTOK  */
+    TIMETOK = 272,                 /* TIMETOK  */
+    PALETOK = 273,                 /* PALETOK  */
+    BBOXTOK = 274,                 /* BBOXTOK  */
+    OVERTOK = 275,                 /* OVERTOK  */
+    MICETOK = 276,                 /* MICETOK  */
+    SONDTOK = 277,                 /* SONDTOK  */
+    PLAYTOK = 278,                 /* PLAYTOK  */
+    ENDTOK = 279,                  /* ENDTOK  */
+    MENUTOK = 280,                 /* MENUTOK  */
+    SMENTOK = 281,                 /* SMENTOK  */
+    ESCPTOK = 282,                 /* ESCPTOK  */
+    NRTOK = 283,                   /* NRTOK  */
+    AMBITOK = 284,                 /* AMBITOK  */
+    SWPTTOK = 285,                 /* SWPTTOK  */
+    MPTRTOK = 286,                 /* MPTRTOK  */
+    GLOBTOK = 287,                 /* GLOBTOK  */
+    TONTOK = 288,                  /* TONTOK  */
+    TOFFTOK = 289,                 /* TOFFTOK  */
+    TALKTOK = 290,                 /* TALKTOK  */
+    INACTOK = 291,                 /* INACTOK  */
+    FDTOK = 292,                   /* FDTOK  */
+    BOXXTOK = 293,                 /* BOXXTOK  */
+    ESCAPETOK = 294,               /* ESCAPETOK  */
+    SECONDTOK = 295,               /* SECONDTOK  */
+    INTROTOK = 296,                /* INTROTOK  */
+    DEFAULTTOK = 297,              /* DEFAULTTOK  */
+    PG = 298,                      /* PG  */
+    PA = 299,                      /* PA  */
+    PD = 300,                      /* PD  */
+    PH = 301,                      /* PH  */
+    PF = 302,                      /* PF  */
+    PE = 303,                      /* PE  */
+    PP = 304,                      /* PP  */
+    PI = 305,                      /* PI  */
+    PL = 306,                      /* PL  */
+    PS = 307                       /* PS  */
   };
   typedef enum HYPNO_MIS_tokentype HYPNO_MIS_token_kind_t;
 #endif
@@ -118,12 +120,12 @@ extern int HYPNO_MIS_debug;
 #if ! defined HYPNO_MIS_STYPE && ! defined HYPNO_MIS_STYPE_IS_DECLARED
 union HYPNO_MIS_STYPE
 {
-#line 56 "engines/hypno/grammar_mis.y"
+#line 55 "engines/hypno/grammar_mis.y"
 
 	char *s; /* string value */
 	int i;	 /* integer value */
 
-#line 127 "engines/hypno/tokens_mis.h"
+#line 129 "engines/hypno/tokens_mis.h"
 
 };
 typedef union HYPNO_MIS_STYPE HYPNO_MIS_STYPE;

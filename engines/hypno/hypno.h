@@ -135,6 +135,8 @@ public:
 	SegmentShootsSequence parseShootList(const Common::String &name, const Common::String &data);
 	void loadArcadeLevel(const Common::String &current, const Common::String &nextWin, const Common::String &nextLose, const Common::String &prefix);
 	void loadSceneLevel(const Common::String &current, const Common::String &next, const Common::String &prefix);
+	void loadSceneLevel(const char *buf, const Common::String &name, const Common::String &next, const Common::String &prefix);
+
 	LibFile *loadLib(const Filename &prefix, const Filename &filename, bool encrypted);
 
 	// User input
