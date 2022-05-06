@@ -1842,6 +1842,15 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	if (settings.contains("gui-theme")) {
 		ConfMan.set("gui_theme", settings["gui-theme"], Common::ConfigManager::kSessionDomain); 
 	}
+	if (settings.contains("gfx-mode")) {
+		ConfMan.set("gfx_mode", settings["gfx-mode"], Common::ConfigManager::kSessionDomain); 
+	}
+	if (settings.contains("stretch-mode")) {
+		ConfMan.set("stretch_mode", settings["stretch-mode"], Common::ConfigManager::kSessionDomain); 
+	}
+	if (settings.contains("render-mode")) {
+		ConfMan.set("render_mode", settings["render-mode"], Common::ConfigManager::kSessionDomain); 
+	}
 	
 
 	// Finally, store the command line settings into the config manager.
