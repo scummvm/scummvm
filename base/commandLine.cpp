@@ -1851,6 +1851,15 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	if (settings.contains("render-mode")) {
 		ConfMan.set("render_mode", settings["render-mode"], Common::ConfigManager::kSessionDomain); 
 	}
+	if (settings.contains("music-volume")) {
+		ConfMan.set("music_volume", settings["music-volume"], Common::ConfigManager::kSessionDomain); 
+	}
+	if (settings.contains("sfx-volume")) {
+		ConfMan.set("sfx_volume", settings["sfx-volume"], Common::ConfigManager::kSessionDomain); 
+	}
+	if (settings.contains("speech-volume")) {
+		ConfMan.set("speech_volume", settings["speech-volume"], Common::ConfigManager::kSessionDomain); 
+	}
 	
 
 	// Finally, store the command line settings into the config manager.
