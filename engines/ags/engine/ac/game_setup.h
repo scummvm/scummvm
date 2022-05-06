@@ -95,6 +95,7 @@ struct GameSetup {
 	bool  clear_cache_on_room_change; // for low-end devices: clear resource caches on room change
 	bool  load_latest_save; // load latest saved game on launch
 	ScreenRotation rotation;
+	bool  show_fps;
 
 	DisplayModeSetup Screen;
 	String software_render_driver;

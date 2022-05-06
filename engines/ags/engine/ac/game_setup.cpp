@@ -43,6 +43,7 @@ GameSetup::GameSetup() {
 	clear_cache_on_room_change = false;
 	load_latest_save = false;
 	rotation = kScreenRotation_Unlocked;
+	show_fps = false;
 
 	Screen.Params.RefreshRate = 0;
 	Screen.Params.VSync = false;

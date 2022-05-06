@@ -316,6 +316,7 @@ void apply_config(const ConfigTree &cfg) {
 		_GP(usetup).load_latest_save = CfgReadBoolInt(cfg, "misc", "load_latest_save", _GP(usetup).load_latest_save);
 		_GP(usetup).user_data_dir = CfgReadString(cfg, "misc", "user_data_dir");
 		_GP(usetup).shared_data_dir = CfgReadString(cfg, "misc", "shared_data_dir");
+		_GP(usetup).show_fps = CfgReadBoolInt(cfg, "misc", "show_fps");
 
 		_GP(usetup).translation = CfgReadString(cfg, "language", "translation");
 
