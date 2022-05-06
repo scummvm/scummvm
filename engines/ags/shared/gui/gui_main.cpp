@@ -282,8 +282,9 @@ void GUIMain::DrawWithControls(Bitmap *ds) {
 		} else {
 			const Rect rc = objToDraw->CalcGraphicRect(GUI::Options.ClipControls && objToDraw->IsContentClipped());
 			tempbmp.CreateTransparent(rc.GetWidth(), rc.GetHeight());
-			objToDraw->Draw(&tempbmp, objToDraw->X - rc.Left, objToDraw->Y - rc.Top);
-			draw_gui_sprite(ds, true, objToDraw->X, objToDraw->Y, &tempbmp, objToDraw->HasAlphaChannel(), kBlendMode_Alpha,
+			objToDraw->Draw(&tempbmp, -rc.Left, -rc.Top);
+			draw_gui_sprite(ds, true, objToDraw->X + rc.Left, objToDraw->Y + rc.Top,
+				&tempbmp, objToDraw->HasAlphaChannel(), kBlendMode_Alpha,
 				GfxDef::LegacyTrans255ToAlpha255(objToDraw->GetTransparency()));
 		}
 

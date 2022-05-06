@@ -68,9 +68,9 @@ public:
 
 	// Operations
 	// Returns the (untransformed!) visual rectangle of this control,
-	// optionally clipped by the logical position
+	// in *relative* coordinates, optionally clipped by the logical size
 	virtual Rect    CalcGraphicRect(bool clipped) {
-		return RectWH(X, Y, Width, Height);
+		return RectWH(0, 0, Width, Height);
 	}
 	virtual void    Draw(Bitmap *ds, int x = 0, int y = 0) {
 		(void)ds; (void)x; (void)y;

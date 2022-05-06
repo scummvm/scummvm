@@ -103,6 +103,7 @@ ObjTexture &ObjTexture::operator=(ObjTexture &&o) {
 	Ddb = o.Ddb;
 	o.Ddb = nullptr;
 	Pos = o.Pos;
+	Off = o.Off;
 	return *this;
 }
 
@@ -1821,10 +1822,10 @@ void draw_gui_controls(GUIMain &gui) {
 		auto &objbg = _GP(guiobjbg)[draw_index];
 		Rect obj_surf = obj->CalcGraphicRect(GUI::Options.ClipControls);
 		recycle_bitmap(objbg.Bmp, _GP(game).GetColorDepth(), obj_surf.GetWidth(), obj_surf.GetHeight(), true);
-		obj->Draw(objbg.Bmp.get(), obj->X - obj_surf.Left, obj->Y - obj_surf.Top);
+		obj->Draw(objbg.Bmp.get(), -obj_surf.Left, -obj_surf.Top);
 
 		sync_object_texture(objbg, obj->HasAlphaChannel());
-		objbg.Pos = Point(obj_surf.GetLT());
+		objbg.Off = Point(obj_surf.GetLT());
 		obj->ClearChanged();
 	}
 }
@@ -1976,14 +1977,12 @@ void draw_gui_and_overlays() {
 				(obj->Width <= 0 || obj->Height <= 0) ||
 				(!obj->IsEnabled() && (GUI::Options.DisabledStyle == kGuiDis_Blackout)))
 				continue;
-			auto *obj_ddb = _GP(guiobjbg)[draw_index + obj_id].Ddb;
+			const auto &obj_tx = _GP(guiobjbg)[draw_index + obj_id];
+			auto *obj_ddb = obj_tx.Ddb;
 			assert(obj_ddb); // Test for missing texture, might happen if not marked for update
 			if (!obj_ddb) continue;
 			obj_ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(obj->GetTransparency()));
-			_G(gfxDriver)->DrawSprite(
-				_GP(guiobjbg)[draw_index + obj_id].Pos.X,
-				_GP(guiobjbg)[draw_index + obj_id].Pos.Y,
-				obj_ddb);
+			_G(gfxDriver)->DrawSprite(obj->X + obj_tx.Off.X, obj->Y + obj_tx.Off.Y, obj_ddb);
 		}
 		_G(gfxDriver)->EndSpriteBatch();
 	}

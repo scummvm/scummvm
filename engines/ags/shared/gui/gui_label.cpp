@@ -55,12 +55,12 @@ GUILabelMacro GUILabel::GetTextMacros() const {
 
 Rect GUILabel::CalcGraphicRect(bool clipped) {
 	if (clipped)
-		return RectWH(X, Y, Width, Height);
+		return RectWH(0, 0, Width, Height);
 	// TODO: need to find a way to text position, or there'll be some repetition
 	// have to precache text and size on some events:
 	// - translation change
 	// - macro value change (score, overhotspot etc)
-	Rect rc = RectWH(X, Y, Width, Height);
+	Rect rc = RectWH(0, 0, Width, Height);
 	PrepareTextToDraw();
 	if (SplitLinesForDrawing(_GP(Lines)) == 0)
 		return rc;
@@ -79,7 +79,7 @@ Rect GUILabel::CalcGraphicRect(bool clipped) {
 			(FrameAlignment)TextAlignment);
 		max_line.X2 = std::max(max_line.X2, lpos.X2);
 	}
-	return SumRects(rc, RectWH(X, Y, max_line.X2 - max_line.X1 + 1, at_y - linespacing + get_font_surface_height(Font)));
+	return SumRects(rc, RectWH(0, 0, max_line.X2 - max_line.X1 + 1, at_y - linespacing + get_font_surface_height(Font)));
 }
 
 void GUILabel::Draw(Bitmap *ds, int x, int y) {

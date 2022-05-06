@@ -67,13 +67,15 @@ struct ObjTexture {
 	std::unique_ptr<Shared::Bitmap> Bmp;
 	// Corresponding texture, created by renderer
 	Engine::IDriverDependantBitmap *Ddb = nullptr;
-	// Sprite's position, may be used in case the texture's pos is different
-	// from the object's logical position (x,y,w,h) for some reason.
+	// Sprite's position
 	Point Pos;
+	// Texture's offset, *relative* to the logical sprite's position;
+	// may be used in case the texture's size is different for any reason
+	Point Off;
 
 	ObjTexture() = default;
-	ObjTexture(Shared::Bitmap *bmp, Engine::IDriverDependantBitmap *ddb, int x, int y)
-		: Bmp(bmp), Ddb(ddb), Pos(x, y) {
+	ObjTexture(Shared::Bitmap *bmp, Engine::IDriverDependantBitmap *ddb, int x, int y, int xoff = 0, int yoff = 0)
+		: Bmp(bmp), Ddb(ddb), Pos(x, y), Off(xoff, yoff) {
 	}
 	ObjTexture(const ObjTexture &) = default;
 	ObjTexture(ObjTexture &&o);

@@ -83,14 +83,15 @@ bool GUIListBox::IsInRightMargin(int x) const {
 
 Rect GUIListBox::CalcGraphicRect(bool clipped) {
 	if (clipped)
-		return RectWH(X, Y, Width, Height);
+		return RectWH(0, 0, Width, Height);
 	// TODO: need to find a way to text position, or there'll be some repetition
 	// have to precache text and size on some events:
 	// - translation change
 	// - macro value change (score, overhotspot etc)
-	Rect rc = RectWH(X, Y, Width, Height);
+	Rect rc = RectWH(0, 0, Width, Height);
 	UpdateMetrics();
 	const int width = Width - 1;
+	const int height = Height - 1;
 	const int pixel_size = get_fixed_pixel_size(1);
 	int right_hand_edge = width - pixel_size - 1;
 	// calculate the scroll bar's width if necessary
@@ -105,7 +106,7 @@ Rect GUIListBox::CalcGraphicRect(bool clipped) {
 			(FrameAlignment)TextAlignment);
 		max_line.X2 = std::max(max_line.X2, lpos.X2);
 	}
-	return SumRects(rc, RectWH(X, Y, max_line.X2 - max_line.X1 + 1, Height));
+	return SumRects(rc, RectWH(0, 0, max_line.X2 - max_line.X1 + 1, Height));
 }
 
 int GUIListBox::AddItem(const String &text) {

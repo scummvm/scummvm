@@ -65,9 +65,9 @@ Rect GUISlider::CalcGraphicRect(bool clipped) {
 	// Sliders are never clipped as of 3.6.0
 	// TODO: precalculate everything on width/height/graphic change!!
 	UpdateMetrics();
-	Rect logical = RectWH(X, Y, Width, Height);
-	Rect bar = Rect::MoveBy(_cachedBar, X, Y);
-	Rect handle = Rect::MoveBy(_cachedHandle, X, Y);
+	Rect logical = RectWH(0, 0, Width, Height);
+	Rect bar = _cachedBar;
+	Rect handle = _cachedHandle;
 	return Rect(
 		std::min(std::min(logical.Left, bar.Left), handle.Left),
 		std::min(std::min(logical.Top, bar.Top), handle.Top),
