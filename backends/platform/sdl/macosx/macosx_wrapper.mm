@@ -30,6 +30,7 @@
 #include <Foundation/NSPathUtilities.h>
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CFString.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
 #define NSPasteboardTypeString NSStringPboardType
@@ -109,4 +110,19 @@ Common::String getDesktopPathMacOSX() {
 	if (path == nil)
 		return Common::String();
 	return Common::String([path fileSystemRepresentation]);
+}
+
+Common::String getResourceAppBundlePathMacOSX() {
+	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
+	if (fileUrl) {
+		// Try to convert the URL to an absolute path
+		UInt8 buf[MAXPATHLEN];
+		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
+			CFRelease(fileUrl);
+			return Common::String((const char *)buf);
+		}
+		CFRelease(fileUrl);
+	}
+
+	return Common::String();
 }
