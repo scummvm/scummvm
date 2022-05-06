@@ -132,6 +132,10 @@ Common::SharedPtr<Modifier> BehaviorModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new BehaviorModifier(*this));
 }
 
+void BehaviorModifier::linkInternalReferences(ObjectLinkingScope *scope) {
+	Modifier::linkInternalReferences(scope);
+}
+
 void BehaviorModifier::visitInternalReferences(IStructuralReferenceVisitor* visitor) {
 	for (Common::Array<Common::SharedPtr<Modifier> >::iterator it = _children.begin(), itEnd = _children.end(); it != itEnd; ++it) {
 		visitor->visitChildModifierRef(*it);
@@ -174,6 +178,49 @@ Common::SharedPtr<Modifier> MiniscriptModifier::shallowClone() const {
 
 void MiniscriptModifier::linkInternalReferences(ObjectLinkingScope* scope) {
 	_references->linkInternalReferences(scope);
+}
+
+void MiniscriptModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	_references->visitInternalReferences(visitor);
+}
+
+bool SaveAndRestoreModifier::load(ModifierLoaderContext &context, const Data::SaveAndRestoreModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_saveWhen.load(data.saveWhen) || !_restoreWhen.load(data.restoreWhen))
+		return false;
+
+	if (!_saveOrRestoreValue.load(data.saveOrRestoreValue, data.varName, data.varString))
+		return false;
+
+	_filePath = data.filePath;
+	_fileName = data.fileName;
+
+	return true;
+}
+
+bool SaveAndRestoreModifier::respondsToEvent(const Event &evt) const {
+	if (_saveWhen.respondsTo(evt) || _restoreWhen.respondsTo(evt))
+		return true;
+
+	return false;
+}
+
+VThreadState SaveAndRestoreModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_saveWhen.respondsTo(msg->getEvent())) {
+		error("Saves not implemented yet");
+		return kVThreadReturn;
+	} else if (_restoreWhen.respondsTo(msg->getEvent())) {
+		error("Restores not implemented yet");
+		return kVThreadReturn;
+	}
+
+	return kVThreadError;
+}
+
+Common::SharedPtr<Modifier> SaveAndRestoreModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new SaveAndRestoreModifier(*this));
 }
 
 bool MessengerModifier::load(ModifierLoaderContext &context, const Data::MessengerModifier &data) {

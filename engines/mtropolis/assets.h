@@ -105,6 +105,8 @@ public:
 	size_t getStreamIndex() const;
 	ImageFormat getImageFormat() const;
 
+	const Common::SharedPtr<Graphics::Surface> &loadContent();
+
 private:
 	Rect16 _rect;
 	ColorDepthMode _colorDepth;
@@ -112,6 +114,54 @@ private:
 	uint32 _size;
 	size_t _streamIndex;
 	ImageFormat _imageFormat;
+
+	Common::SharedPtr<Graphics::Surface> _surface;
+};
+
+
+struct MToonAsset : public Asset {
+public:
+	bool load(AssetLoaderContext &context, const Data::MToonAsset &data);
+	AssetType getAssetType() const override;
+
+	enum ImageFormat {
+		kImageFormatMac,
+		kImageFormatWindows,
+	};
+
+	struct FrameDef {
+		Rect16 rect;
+		uint32 dataOffset;
+		uint32 compressedSize;
+		uint32 decompressedSize;
+		uint16 decompressedBytesPerRow;
+		bool isKeyFrame;
+
+		bool load(AssetLoaderContext &context, const Data::MToonAsset::FrameDef &data);
+	};
+
+	struct FrameRangeDef {
+		uint32 startFrame;
+		uint32 endFrame;
+
+		Common::String name;
+
+		bool load(AssetLoaderContext &context, const Data::MToonAsset::FrameRangeDef &data);
+	};
+
+private:
+	ImageFormat _imageFormat;
+
+	uint32 _frameDataPosition;
+	uint32 _sizeOfFrameData;
+
+	Rect16 _rect;
+	uint16 _bitsPerPixel;
+	uint32 _codecID;
+
+	Common::Array<FrameDef> _frames;
+	Common::Array<FrameRangeDef> _frameRanges;
+	Common::Array<uint8> _codecData;
 };
 
 class TextAsset : public Asset {

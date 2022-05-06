@@ -49,6 +49,7 @@ public:
 	explicit MiniscriptReferences(const Common::Array<LocalRef> &localRefs);
 
 	void linkInternalReferences(ObjectLinkingScope *scope);
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor);
 
 	Common::WeakPtr<RuntimeObject> getRefByIndex(uint index) const;
 

@@ -66,6 +66,8 @@ IElementFactory *getElementFactoryForDataObjectType(const Data::DataObjectTypes:
 		return ElementFactory<MovieElement, Data::MovieElement>::getInstance();
 	case Data::DataObjectTypes::kImageElement:
 		return ElementFactory<ImageElement, Data::ImageElement>::getInstance();
+	case Data::DataObjectTypes::kMToonElement:
+		return ElementFactory<MToonElement, Data::MToonElement>::getInstance();
 	case Data::DataObjectTypes::kTextLabelElement:
 		return ElementFactory<TextLabelElement, Data::TextLabelElement>::getInstance();
 	case Data::DataObjectTypes::kSoundElement:

@@ -284,7 +284,7 @@ void ImageElement::activate() {
 		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
 		break;
 	case kColorDepthMode16Bit:
-		bytesPerRow = width * 2;
+		bytesPerRow = (width * 2 + 3) / 4 * 4;
 		pixelFmt = Graphics::createPixelFormat<1555>();
 		break;
 	case kColorDepthMode32Bit:
@@ -401,6 +401,43 @@ void ImageElement::render(Window *window) {
 		window->getSurface()->blitFrom(*_imageSurface, srcRect, destRect);
 	}
 }
+
+MToonElement::MToonElement() {
+}
+
+MToonElement::~MToonElement() {
+}
+
+bool MToonElement::load(ElementLoaderContext &context, const Data::MToonElement &data) {
+	if (!loadCommon(data.name, data.guid, data.rect1, data.elementFlags, data.layer, data.streamLocator, data.sectionID))
+		return false;
+
+	_cacheBitmap = ((data.elementFlags & Data::ElementFlags::kCacheBitmap) != 0);
+	_paused = ((data.elementFlags & Data::ElementFlags::kPaused) != 0);
+	_loop = ((data.animationFlags & Data::AnimationFlags::kLoop) != 0);
+	_maintainRate = ((data.elementFlags & Data::AnimationFlags::kPlayEveryFrame) == 0);	// NOTE: Inverted intentionally
+	_assetID = data.assetID;
+	_runtime = context.runtime;
+	_rateTimes10000 = data.rateTimes10000;
+
+	return true;
+}
+
+void MToonElement::activate() {
+}
+
+void MToonElement::deactivate() {
+	_renderSurface.reset();
+}
+
+void MToonElement::render(Window *window) {
+	if (_renderSurface) {
+		Common::Rect srcRect(_renderSurface->w, _renderSurface->h);
+		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.getWidth(), _cachedAbsoluteOrigin.y + _rect.getHeight());
+		window->getSurface()->blitFrom(*_renderSurface, srcRect, destRect);
+	}
+}
+
 
 TextLabelElement::TextLabelElement() : _needsRender(false), _isBitmap(false) {
 }

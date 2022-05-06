@@ -1958,6 +1958,7 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
 
+	Point16 getGlobalPosition() const;
 	const Rect16 &getRelativeRect() const;
 
 	// The cached absolute origin is from the last time the element was rendered.
@@ -2055,7 +2056,7 @@ protected:
 	bool loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeader);
 
 	// Links any references contained in the object, resolving static GUIDs to runtime object references.
-	// If you override this, you must override visitInternalReferences too.
+	// If you override this, you should override visitInternalReferences too
 	virtual void linkInternalReferences(ObjectLinkingScope *scope);
 
 	Structural *findStructuralOwner() const;
@@ -2096,6 +2097,7 @@ enum AssetType {
 	kAssetTypeColorTable,
 	kAssetTypeImage,
 	kAssetTypeText,
+	kAssetTypeMToon,
 };
 
 class Asset {

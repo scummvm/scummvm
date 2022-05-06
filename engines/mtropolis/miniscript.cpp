@@ -56,6 +56,23 @@ void MiniscriptReferences::linkInternalReferences(ObjectLinkingScope *scope) {
 	}
 }
 
+void MiniscriptReferences::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	for (LocalRef &ref : _localRefs) {
+		Common::SharedPtr<RuntimeObject> obj = ref.resolution.lock();
+		if (obj) {
+			if (obj->isModifier()) {
+				Common::WeakPtr<Modifier> mod = obj.staticCast<Modifier>();
+				visitor->visitWeakModifierRef(mod);
+				ref.resolution = mod;
+			} else if (obj->isStructural()) {
+				Common::WeakPtr<Structural> struc = obj.staticCast<Structural>();
+				visitor->visitWeakStructuralRef(struc);
+				ref.resolution = struc;
+			}
+		}
+	}
+}
+
 Common::WeakPtr<RuntimeObject> MiniscriptReferences::getRefByIndex(uint index) const {
 	if (index >= _localRefs.size())
 		return Common::WeakPtr<RuntimeObject>();
@@ -1075,15 +1092,17 @@ MiniscriptInstructionOutcome BuiltinFunc::executeNum2Str(MiniscriptThread *threa
 	const DynamicValue &inputDynamicValue = thread->getStackValueFromTop(0).value;
 	switch (inputDynamicValue.getType()) {
 	case DynamicValueTypes::kInteger:
-		result.format("%i", static_cast<int>(inputDynamicValue.getInt()));
+		result = Common::String::format("%i", static_cast<int>(inputDynamicValue.getInt()));
 		break;
 	case DynamicValueTypes::kFloat:
-		result.format("%g", static_cast<double>(inputDynamicValue.getFloat()));
+		result = Common::String::format("%g", static_cast<double>(inputDynamicValue.getFloat()));
 		break;
 	default:
 		thread->error("Invalid input value to num2str");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
+
+	returnValue->setString(result);
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
