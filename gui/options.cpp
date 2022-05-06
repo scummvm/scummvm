@@ -572,6 +572,7 @@ void OptionsDialog::apply() {
 			bool isSet = false;
 
 			if ((int32)_gfxPopUp->getSelectedTag() >= 0) {
+				_gfxPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 							
 				const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
 				while (gm->name) {
@@ -591,12 +592,16 @@ void OptionsDialog::apply() {
 					graphicsModeChanged = true;
 			}
 
-			if ((int32)_renderModePopUp->getSelectedTag() >= 0)
+			if ((int32)_renderModePopUp->getSelectedTag() >= 0) {
+				_renderModePopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 				
 				ConfMan.set("render_mode", Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()), _domain);
+			}
 
 			isSet = false;
 			if ((int32)_stretchPopUp->getSelectedTag() >= 0) {
+				_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
 				const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
+
 				while (sm->name) {
 					if (sm->id == (int)_stretchPopUp->getSelectedTag()) {
 						if (ConfMan.get("stretch_mode", _domain) != sm->name)
@@ -1383,6 +1388,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	// The GFX mode popup
 	_gfxPopUpDesc = new StaticTextWidget(boss, prefix + "grModePopupDesc", _("Graphics mode:"));
+	if (ConfMan.isKeyTemporary("gfx_mode"))
+		_gfxPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
 	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup");
 
 	_gfxPopUp->appendEntry(_("<default>"));
@@ -1397,6 +1404,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	bool renderingTypeDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != nullptr);
 
 	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", _("Render mode:"), _("Special dithering modes supported by some games"));
+	if (ConfMan.isKeyTemporary("render_mode"))
+		_renderModePopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
 	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", _("Special dithering modes supported by some games"));
 	_renderModePopUp->appendEntry(_("<default>"), Common::kRenderDefault);
 	_renderModePopUp->appendEntry(Common::U32String());
@@ -1410,6 +1419,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	// The Stretch mode popup
 	const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
 	_stretchPopUpDesc = new StaticTextWidget(boss, prefix + "grStretchModePopupDesc", _("Stretch mode:"));
+	if (ConfMan.isKeyTemporary("stretch_mode"))
+		_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
 	_stretchPopUp = new PopUpWidget(boss, prefix + "grStretchModePopup");
 
 	_stretchPopUp->appendEntry(_("<default>"));
