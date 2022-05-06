@@ -354,7 +354,7 @@ int RunScriptFunction(ccInstance *sci, const char *tsname, size_t numParam, cons
 	toret = _G(curscript)->inst->CallScriptFunction(tsname, numParam, params);
 
 	// 100 is if Aborted (eg. because we are LoadAGSGame'ing)
-	if ((toret != 0) && (toret != -2) && (toret != 100)) {
+	if (!_G(abort_engine) && (toret != 0) && (toret != -2) && (toret != 100)) {
 		quit_with_script_error(tsname);
 	}
 

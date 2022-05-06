@@ -325,9 +325,11 @@ void process_event(const EventHappened *evp) {
 			_G(gfxDriver)->DestroyDDB(ddb);
 		}
 
-	} else if (evp->type == EV_IFACECLICK)
+	} else if (evp->type == EV_IFACECLICK) {
 		process_interface_click(evp->data1, evp->data2, evp->data3);
-	else quit("process_event: unknown event to process");
+	} else {
+		quit("process_event: unknown event to process");
+	}
 }
 
 
@@ -358,7 +360,7 @@ void processallevents() {
 
 	_G(inside_processevent)++;
 
-	for (size_t i = 0; i < evtCopy->size(); ++i) {
+	for (size_t i = 0; i < evtCopy->size() && !_G(abort_engine); ++i) {
 		process_event(&(*evtCopy)[i]);
 
 		if (room_was != _GP(play).room_changes)
