@@ -156,7 +156,7 @@ void MovieElement::render(Window *window) {
 	if (videoSurface) {
 		Graphics::ManagedSurface *target = window->getSurface().get();
 		Common::Rect srcRect(0, 0, videoSurface->w, videoSurface->h);
-		Common::Rect destRect(_rect.left, _rect.top, _rect.right, _rect.bottom);
+		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.getWidth(), _cachedAbsoluteOrigin.y + _rect.getHeight());
 		target->blitFrom(*videoSurface, srcRect, destRect);
 	}
 }
@@ -397,7 +397,7 @@ void ImageElement::deactivate() {
 void ImageElement::render(Window *window) {
 	if (_imageSurface) {
 		Common::Rect srcRect(_imageSurface->w, _imageSurface->h);
-		Common::Rect destRect(_rect.left, _rect.top, _rect.right, _rect.bottom);
+		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.getWidth(), _cachedAbsoluteOrigin.y + _rect.getHeight());
 		window->getSurface()->blitFrom(*_imageSurface, srcRect, destRect);
 	}
 }

@@ -254,6 +254,10 @@ void MTropolisEngine::handleEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			_runtime->onMouseMove(evt.mouse.x, evt.mouse.y);
 			break;
+		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_KEYUP:
+			_runtime->onKeyboardEvent(evt.type, evt.kbdRepeat, evt.kbd);
+			break;
 
 		default:
 			break;
@@ -280,7 +284,7 @@ Common::Error MTropolisEngine::run() {
 		_runtime->addVolume(4, "OBSIDIAN4", true);
 		_runtime->addVolume(5, "OBSIDIAN5", true);
 
-		Common::SharedPtr<ProjectDescription> desc(new ProjectDescription());
+		Common::SharedPtr<ProjectDescription> desc(new ProjectDescription(kProjectPlatformWindows));
 		desc->addSegment(0, "Obsidian Data 1.MPL");
 		desc->addSegment(1, "Obsidian Data 2.MPX");
 		desc->addSegment(2, "Obsidian Data 3.MPX");
@@ -327,7 +331,7 @@ Common::Error MTropolisEngine::run() {
 		_runtime->addVolume(4, "OBSIDIAN4", true);
 		_runtime->addVolume(5, "OBSIDIAN5", true);
 
-		Common::SharedPtr<ProjectDescription> desc(new ProjectDescription());
+		Common::SharedPtr<ProjectDescription> desc(new ProjectDescription(kProjectPlatformMacintosh));
 
 		for (int i = 0; i < 6; i++)
 			desc->addSegment(i, resources->getSegmentStream(i));

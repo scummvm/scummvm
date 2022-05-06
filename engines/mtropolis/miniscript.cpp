@@ -533,6 +533,15 @@ MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
 	Common::SharedPtr<RuntimeObject> obj = targetValue.getObject().object.lock();
 
 	if (!obj) {
+		// HACK: Obsidian triggers NAV_Restart on Project Started, which triggers "<init globals> on NAV_Restart"
+		// which sends PRG_Toggle_Status_Display to sharedScene.  Apparently, mTropolis will not trigger an error
+		// on sends to sharedScene at that point even though the destination is invalid.
+		// Maybe invalid sends aren't even an error?  I don't know.
+		if (!thread->getRuntime()->getActiveSharedScene().get()) {
+			thread->popValues(2);
+			return kMiniscriptInstructionOutcomeContinue;
+		}
+
 		thread->error("Invalid message destination (object reference is invalid)");
 		return kMiniscriptInstructionOutcomeFailed;
 	}

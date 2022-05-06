@@ -25,6 +25,8 @@
 #include "mtropolis/runtime.h"
 #include "mtropolis/data.h"
 
+#include "common/events.h"
+
 namespace MTropolis {
 
 struct ModifierLoaderContext;
@@ -415,9 +417,14 @@ private:
 	bool _sendToOnlyFirstCollidingElement;
 };
 
-class KeyboardMessengerModifier : public Modifier {
+class KeyboardMessengerModifier : public Modifier, public IKeyboardEventReceiver {
 public:
+	~KeyboardMessengerModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::KeyboardMessengerModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Keyboard Messenger Modifier"; }
@@ -425,6 +432,11 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+
+	void onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) override;
+
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+	void linkInternalReferences(ObjectLinkingScope *scope) override;
 
 	Event _send;
 
@@ -455,9 +467,11 @@ private:
 	bool _keyModCommand : 1;
 	bool _keyModOption : 1;
 	KeyCodeType _keyCodeType;
-	uint8_t _macRomanChar;
+	char _macRomanChar;
 
 	MessengerSendSpec _sendSpec;
+
+	Common::SharedPtr<KeyboardEventSignaller> _signaller;
 };
 
 class TextStyleModifier : public Modifier {
