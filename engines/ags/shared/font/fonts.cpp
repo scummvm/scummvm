@@ -164,7 +164,7 @@ int get_text_width_outlined(const char *text, size_t font_number) {
 		return self_width + 2 * _GP(fonts)[font_number].Info.AutoOutlineThickness;
 	}
 	int outline_width = _GP(fonts)[outline].Renderer->GetTextWidth(text, outline);
-	return std::max(self_width, outline_width);
+	return MAX(self_width, outline_width);
 }
 
 int get_font_outline(size_t font_number) {
@@ -209,7 +209,7 @@ int get_font_height_outlined(size_t fontNumber) {
 		return self_height + 2 * _GP(fonts)[fontNumber].Info.AutoOutlineThickness;
 	}
 	int outline_height = _GP(fonts)[outline].Metrics.CompatHeight;
-	return std::max(self_height, outline_height);
+	return MAX(self_height, outline_height);
 }
 
 int get_font_surface_height(size_t fontNumber) {
@@ -449,8 +449,8 @@ void alloc_font_outline_buffers(size_t font_number,
 		(f.TextStencil.GetWidth() < text_width) || (f.TextStencil.GetHeight() < text_height)) {
 		int sw = f.TextStencil.IsNull() ? 0 : f.TextStencil.GetWidth();
 		int sh = f.TextStencil.IsNull() ? 0 : f.TextStencil.GetHeight();
-		sw = std::max(text_width, sw);
-		sh = std::max(text_height, sh);
+		sw = MAX(text_width, sw);
+		sh = MAX(text_height, sh);
 		f.TextStencil.Create(sw, sh, color_depth);
 		f.OutlineStencil.Create(sw, sh + thick, color_depth);
 		f.TextStencilSub.CreateSubBitmap(&f.TextStencil, RectWH(Size(text_width, text_height)));

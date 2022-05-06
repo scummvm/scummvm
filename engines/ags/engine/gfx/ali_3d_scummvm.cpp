@@ -199,9 +199,9 @@ void ScummVMRendererGraphicsDriver::SetGamma(int newGamma) {
 	uint16 gamma_blue[256];
 
 	for (int i = 0; i < 256; i++) {
-		gamma_red[i] = std::min(((int)_defaultGammaRed[i] * newGamma) / 100, 0xffff);
-		gamma_green[i] = std::min(((int)_defaultGammaGreen[i] * newGamma) / 100, 0xffff);
-		gamma_blue[i] = std::min(((int)_defaultGammaBlue[i] * newGamma) / 100, 0xffff);
+		gamma_red[i] = MIN(((int)_defaultGammaRed[i] * newGamma) / 100, 0xffff);
+		gamma_green[i] = MIN(((int)_defaultGammaGreen[i] * newGamma) / 100, 0xffff);
+		gamma_blue[i] = MIN(((int)_defaultGammaBlue[i] * newGamma) / 100, 0xffff);
 	}
 
 	SDL_SetWindowGammaRamp(sys_get_window(), gamma_red, gamma_green, gamma_blue);

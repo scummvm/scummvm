@@ -325,7 +325,7 @@ static inline void ReadSprHeader(SpriteDatHeader &hdr, Stream *in,
 
 HError SpriteFile::RebuildSpriteIndex(Stream *in, sprkey_t topmost,
 		std::vector<Size> &metrics) {
-	topmost = std::min(topmost, (sprkey_t)_spriteData.size() - 1);
+	topmost = MIN(topmost, (sprkey_t)_spriteData.size() - 1);
 	for (sprkey_t i = 0; !in->EOS() && (i <= topmost); ++i) {
 		_spriteData[i].Offset = in->GetPosition();
 		SpriteDatHeader hdr;

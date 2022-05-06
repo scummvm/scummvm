@@ -356,10 +356,10 @@ Point get_overlay_position(const ScreenOverlay &over) {
 		Point screenpt = view->RoomToScreen(
 			data_to_game_coord(_GP(game).chars[charid].x),
 			data_to_game_coord(_GP(game).chars[charid].get_effective_y()) - height).first;
-		int tdxp = std::max(0, screenpt.X - over.pic->GetWidth() / 2);
+		int tdxp = MAX(0, screenpt.X - over.pic->GetWidth() / 2);
 		int tdyp = screenpt.Y - get_fixed_pixel_size(5);
 		tdyp -= over.pic->GetHeight();
-		tdyp = std::max(5, tdyp);
+		tdyp = MAX(5, tdyp);
 
 		if ((tdxp + over.pic->GetWidth()) >= ui_view.GetWidth())
 			tdxp = (ui_view.GetWidth() - over.pic->GetWidth()) - 1;

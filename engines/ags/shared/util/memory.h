@@ -222,7 +222,7 @@ inline void BlockCopy(uint8_t *dst, const size_t dst_pitch, const size_t dst_off
                       const uint8_t *src, const size_t src_pitch, const size_t src_offset,
                       const size_t height) {
 	for (size_t y = 0; y < height; ++y, src += src_pitch, dst += dst_pitch)
-		memcpy(dst + dst_offset, src + src_offset, Math::Min(dst_pitch - dst_offset, src_pitch - src_offset));
+		memcpy(dst + dst_offset, src + src_offset, MIN(dst_pitch - dst_offset, src_pitch - src_offset));
 }
 
 } // namespace Memory

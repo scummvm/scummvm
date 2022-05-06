@@ -92,7 +92,7 @@ size_t MemoryStream::Read(void *buffer, size_t size) {
 	}
 	assert(_len > _pos);
 	size_t remain = _len - _pos;
-	size_t read_sz = std::min(remain, size);
+	size_t read_sz = MIN(remain, size);
 	memcpy(buffer, _cbuf + _pos, read_sz);
 	_pos += read_sz;
 	return read_sz;
@@ -117,8 +117,8 @@ bool MemoryStream::Seek(soff_t offset, StreamSeek origin) {
 	default:
 		return false;
 	}
-	_pos = static_cast<size_t>(std::max<soff_t>(0, pos));
-	_pos = static_cast<size_t>(std::min<soff_t>(_len, pos)); // clamp to EOS
+	_pos = static_cast<size_t>(MAX<soff_t>(0, pos));
+	_pos = static_cast<size_t>(MIN<soff_t>(_len, pos)); // clamp to EOS
 	return true;
 }
 
@@ -126,7 +126,7 @@ size_t MemoryStream::Write(const void *buffer, size_t size) {
 	if (_pos >= _buf_sz) {
 		return 0;
 	}
-	size = std::min(size, _buf_sz - _pos);
+	size = MIN(size, _buf_sz - _pos);
 	memcpy(_buf + _pos, buffer, size);
 	_pos += size;
 	_len += size;

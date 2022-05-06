@@ -258,7 +258,7 @@ void AGSPlatformDriver::Delay(int millis) {
 			break;
 		}
 
-		auto duration = std::min<std::chrono::milliseconds>(delayUntil - now,
+		auto duration = MIN<std::chrono::milliseconds>(delayUntil - now,
 		                _G(MaximumDelayBetweenPolling));
 		std::this_thread::sleep_for(duration);
 		now = AGS_Clock::now(); // update now

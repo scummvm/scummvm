@@ -335,7 +335,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	// Prepare instance for run
 	flags &= ~INSTF_ABORTED;
 	// Allow to pass less parameters if script callback has less declared args
-	numargs = std::min(numargs, export_args);
+	numargs = MIN(numargs, export_args);
 	// object pointer needs to start zeroed
 	registers[SREG_OP].SetDynamicObject(nullptr, nullptr);
 	registers[SREG_SP].SetStackPtr(&stack[0]);

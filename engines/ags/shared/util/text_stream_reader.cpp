@@ -85,10 +85,10 @@ String TextStreamReader::ReadLine() {
 		if (c < chars_read_last && *seek_ptr == '\n') {
 			line_break_position = seek_ptr - char_buffer;
 			if (str_len < max_chars) {
-				append_length = Math::Min(line_break_position, max_chars - str_len);
+				append_length = MIN(line_break_position, max_chars - str_len);
 			}
 		} else {
-			append_length = Math::Min(chars_read_last, max_chars - str_len);
+			append_length = MIN(chars_read_last, max_chars - str_len);
 		}
 
 		if (append_length > 0) {

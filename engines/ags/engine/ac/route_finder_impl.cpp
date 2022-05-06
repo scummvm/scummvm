@@ -96,7 +96,7 @@ static int find_route_jps(int fromx, int fromy, int destx, int desty) {
 	_G(num_navpoints) = 0;
 
 	// new behavior: cut path if too complex rather than abort with error message
-	int count = std::min<int>((int)cpath.size(), MAXNAVPOINTS);
+	int count = MIN<int>((int)cpath.size(), MAXNAVPOINTS);
 
 	for (int i = 0; i < count; i++) {
 		int x, y;

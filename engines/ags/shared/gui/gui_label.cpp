@@ -77,7 +77,7 @@ Rect GUILabel::CalcGraphicRect(bool clipped) {
 		++i, at_y += linespacing) {
 		Line lpos = GUI::CalcTextPositionHor(_GP(Lines)[i].GetCStr(), Font, 0, 0 + Width - 1, at_y,
 			(FrameAlignment)TextAlignment);
-		max_line.X2 = std::max(max_line.X2, lpos.X2);
+		max_line.X2 = MAX(max_line.X2, lpos.X2);
 	}
 	return SumRects(rc, RectWH(0, 0, max_line.X2 - max_line.X1 + 1, at_y - linespacing + get_font_surface_height(Font)));
 }

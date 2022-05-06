@@ -466,7 +466,7 @@ static int ags_pf_ungetc(int /*c*/, void * /*userdata*/) {
 static long ags_pf_fread(void *p, long n, void *userdata) {
 	AGS_PACKFILE_OBJ *obj = (AGS_PACKFILE_OBJ *)userdata;
 	if (obj->remains > 0) {
-		size_t read = Math::Min(obj->remains, (size_t)n);
+		size_t read = MIN(obj->remains, (size_t)n);
 		obj->remains -= read;
 		return obj->stream->Read(p, read);
 	}

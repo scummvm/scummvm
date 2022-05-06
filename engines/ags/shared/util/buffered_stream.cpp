@@ -85,7 +85,7 @@ size_t BufferedStream::Read(void *toBuffer, size_t toSize) {
 		soff_t bufferOffset = _position - _bufferPosition;
 		assert(bufferOffset >= 0);
 		size_t bytesLeft = _buffer.size() - (size_t)bufferOffset;
-		size_t chunkSize = std::min<size_t>(bytesLeft, toSize);
+		size_t chunkSize = MIN<size_t>(bytesLeft, toSize);
 
 		memcpy(to, _buffer.data() + bufferOffset, chunkSize);
 
@@ -133,7 +133,7 @@ bool BufferedStream::Seek(soff_t offset, StreamSeek origin) {
 	}
 
 	// clamp
-	_position = std::min(std::max(want_pos, (soff_t)_start), _end);
+	_position = MIN(MAX(want_pos, (soff_t)_start), _end);
 	return _position == want_pos;
 }
 
@@ -141,9 +141,9 @@ BufferedSectionStream::BufferedSectionStream(const String &file_name, soff_t sta
 	FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess)
 	: BufferedStream(file_name, open_mode, work_mode, stream_endianess) {
 	assert(start_pos <= end_pos);
-	start_pos = std::min(start_pos, end_pos);
-	_start = std::min(start_pos, _end);
-	_end = std::min(end_pos, _end);
+	start_pos = MIN(start_pos, end_pos);
+	_start = MIN(start_pos, _end);
+	_end = MIN(end_pos, _end);
 	Seek(0, kSeekBegin);
 }
 

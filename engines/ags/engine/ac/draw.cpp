@@ -299,8 +299,8 @@ AGS_INLINE void ctx_data_to_game_coord(int &x, int &y, bool hires_ctx) {
 
 AGS_INLINE void ctx_data_to_game_size(int &w, int &h, bool hires_ctx) {
 	if (hires_ctx && !_GP(game).IsLegacyHiRes()) {
-		w = Math::Max(1, (w / HIRES_COORD_MULTIPLIER));
-		h = Math::Max(1, (h / HIRES_COORD_MULTIPLIER));
+		w = MAX(1, (w / HIRES_COORD_MULTIPLIER));
+		h = MAX(1, (h / HIRES_COORD_MULTIPLIER));
 	} else if (!hires_ctx && _GP(game).IsLegacyHiRes()) {
 		w *= HIRES_COORD_MULTIPLIER;
 		h *= HIRES_COORD_MULTIPLIER;
@@ -309,7 +309,7 @@ AGS_INLINE void ctx_data_to_game_size(int &w, int &h, bool hires_ctx) {
 
 AGS_INLINE int ctx_data_to_game_size(int size, bool hires_ctx) {
 	if (hires_ctx && !_GP(game).IsLegacyHiRes())
-		return Math::Max(1, (size / HIRES_COORD_MULTIPLIER));
+		return MAX(1, (size / HIRES_COORD_MULTIPLIER));
 	if (!hires_ctx && _GP(game).IsLegacyHiRes())
 		return size * HIRES_COORD_MULTIPLIER;
 	return size;
@@ -319,7 +319,7 @@ AGS_INLINE int game_to_ctx_data_size(int size, bool hires_ctx) {
 	if (hires_ctx && !_GP(game).IsLegacyHiRes())
 		return size * HIRES_COORD_MULTIPLIER;
 	else if (!hires_ctx && _GP(game).IsLegacyHiRes())
-		return Math::Max(1, (size / HIRES_COORD_MULTIPLIER));
+		return MAX(1, (size / HIRES_COORD_MULTIPLIER));
 	return size;
 }
 

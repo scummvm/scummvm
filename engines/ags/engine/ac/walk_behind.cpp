@@ -104,7 +104,7 @@ bool walkbehinds_cropout(Bitmap *sprit, int sprx, int spry, int basel, int zoom)
 
 	bool pixels_changed = false;
 	// pass along the sprite's pixels, but skip those that lie outside the mask
-	for (int x = std::max(0, 0 - sprx);
+	for (int x = MAX(0, 0 - sprx);
 		(x < sprit->GetWidth()) && (x + sprx < _GP(thisroom).WalkBehindMask->GetWidth()); ++x) {
 		// select the WB column at this x
 		const auto &wbcol = walkBehindCols[x + sprx];
@@ -116,7 +116,7 @@ bool walkbehinds_cropout(Bitmap *sprit, int sprx, int spry, int basel, int zoom)
 
 		// ensure we only check within the valid areas (between Y1 and Y2)
 		// we assume that Y1 and Y2 are always within the mask
-		for (int y = std::max(0, wbcol.Y1 - spry);
+		for (int y = MAX(0, wbcol.Y1 - spry);
 				(y < sprit->GetHeight()) && (y + spry < wbcol.Y2); ++y) {
 			const int wb = _GP(thisroom).WalkBehindMask->GetScanLine(y + spry)[x + sprx];
 			if (wb < 1) continue; // "no area"
@@ -167,10 +167,10 @@ void walkbehinds_recalc() {
 				}
 				wbcol.Y2 = y + 1; // +1 to allow bottom line of screen to work (CHECKME??)
 				// resize the bounding rect
-				walkBehindAABB[wb].Left = std::min(col, walkBehindAABB[wb].Left);
-				walkBehindAABB[wb].Top = std::min(y, walkBehindAABB[wb].Top);
-				walkBehindAABB[wb].Right = std::max(col, walkBehindAABB[wb].Right);
-				walkBehindAABB[wb].Bottom = std::max(y, walkBehindAABB[wb].Bottom);
+				walkBehindAABB[wb].Left = MIN(col, walkBehindAABB[wb].Left);
+				walkBehindAABB[wb].Top = MIN(y, walkBehindAABB[wb].Top);
+				walkBehindAABB[wb].Right = MAX(col, walkBehindAABB[wb].Right);
+				walkBehindAABB[wb].Bottom = MAX(y, walkBehindAABB[wb].Bottom);
 			}
 		}
 	}

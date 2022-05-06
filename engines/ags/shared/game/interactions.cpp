@@ -227,7 +227,7 @@ Interaction &Interaction::operator =(const Interaction &ni) {
 
 void Interaction::CopyTimesRun(const Interaction &inter) {
 	assert(Events.size() == inter.Events.size());
-	size_t count = Math::Min(Events.size(), inter.Events.size());
+	size_t count = MIN(Events.size(), inter.Events.size());
 	for (size_t i = 0; i < count; ++i) {
 		Events[i].TimesRun = inter.Events[i].TimesRun;
 	}

@@ -228,7 +228,7 @@ void engine_post_gfxmode_mouse_setup(const Size &init_desktop) {
 	if (_GP(usetup).mouse_speed_def == kMouseSpeed_CurrentDisplay) {
 		Size cur_desktop;
 		if (sys_get_desktop_resolution(cur_desktop.Width, cur_desktop.Height) == 0)
-			_GP(mouse).SetSpeedUnit(Math::Max((float)cur_desktop.Width / (float)init_desktop.Width,
+			_GP(mouse).SetSpeedUnit(MAX((float)cur_desktop.Width / (float)init_desktop.Width,
 			                                  (float)cur_desktop.Height / (float)init_desktop.Height));
 	}
 

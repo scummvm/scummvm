@@ -114,7 +114,7 @@ const char *String_Substring(const char *thisString, int index, int length) {
 	size_t strlen = ustrlen(thisString);
 	if ((index < 0) || ((size_t)index > strlen))
 		quit("!String.Substring: invalid index");
-	size_t sublen = std::min((size_t)length, strlen - index);
+	size_t sublen = MIN((size_t)length, strlen - index);
 	size_t start = uoffset(thisString, index);
 	size_t end = uoffset(thisString + start, sublen) + start;
 	size_t copysz = end - start;

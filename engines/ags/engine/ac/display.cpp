@@ -174,8 +174,8 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	if (disp_type < DISPLAYTEXT_NORMALOVERLAY)
 		remove_screen_overlay(_GP(play).text_overlay_on); // remove any previous blocking texts
 
-	const int bmp_width = std::max(2, wii);
-	const int bmp_height = std::max(2, disp.fulltxtheight + extraHeight);
+	const int bmp_width = MAX(2, wii);
+	const int bmp_height = MAX(2, disp.fulltxtheight + extraHeight);
 	Bitmap *text_window_ds = BitmapHelper::CreateTransparentBitmap(
 		bmp_width, bmp_height, _GP(game).GetColorDepth());
 

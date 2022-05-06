@@ -110,7 +110,7 @@ void decrypt_text(char *toenc, size_t buf_sz) {
 
 void read_string_decrypt(Stream *in, char *buf, size_t buf_sz) {
 	size_t len = in->ReadInt32();
-	size_t slen = std::min(buf_sz - 1, len);
+	size_t slen = MIN(buf_sz - 1, len);
 	in->Read(buf, slen);
 	if (len > slen)
 		in->Seek(len - slen);
