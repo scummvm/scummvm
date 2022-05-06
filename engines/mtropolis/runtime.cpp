@@ -1956,6 +1956,58 @@ const Common::WeakPtr<RuntimeObject>& MessageProperties::getSource() const {
 	return _source;
 }
 
+WorldManagerInterface::WorldManagerInterface() {
+}
+
+bool WorldManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "currentscene") {
+		Common::SharedPtr<RuntimeObject> mainScene = thread->getRuntime()->getActiveMainScene();
+		if (mainScene)
+			result.setObject(mainScene->getSelfReference());
+		else
+			result.clear();
+		return true;
+	}
+
+	return RuntimeObject::readAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome WorldManagerInterface::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "currentscene") {
+		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setCurrentScene>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return RuntimeObject::writeRefAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome WorldManagerInterface::setCurrentScene(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kObject)
+		return kMiniscriptInstructionOutcomeFailed;
+
+	Common::SharedPtr<RuntimeObject> sceneObj = value.getObject().object.lock();
+	if (!sceneObj) {
+		thread->error("Failed to get scene reference");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	if (!sceneObj->isStructural()) {
+		thread->error("Tried to change to a non-structural object as a scene");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	Structural *scene = static_cast<Structural *>(sceneObj.get());
+	Structural *subsection = scene->getParent();
+	if (!subsection->isSubsection()) {
+		thread->error("Tried to change to a non-scene as a scene");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	thread->getRuntime()->addSceneStateTransition(HighLevelSceneTransition(scene->getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeChangeToScene, false, false));
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 SystemInterface::SystemInterface() : _masterVolume(kFullVolume) {
 }
 
@@ -2153,6 +2205,13 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 	} else if (attrib == "system") {
 		result.setObject(thread->getRuntime()->getSystemInterface()->getSelfReference());
 		return true;
+	} else if (attrib == "parent") {
+		Structural *parent = getParent();
+		if (parent)
+			result.setObject(parent->getSelfReference());
+		else
+			result.clear();
+		return true;
 	}
 
 	return RuntimeObject::readAttribute(thread, result, attrib);
@@ -2178,6 +2237,15 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 	} else if (attrib == "system") {
 		DynamicValueWriteObjectHelper::create(thread->getRuntime()->getSystemInterface(), result);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "parent") {
+		// NOTE: Re-parenting objects is allowed by mTropolis but we don't currently support that.
+		Structural *parent = getParent();
+		if (parent) {
+			DynamicValueWriteObjectHelper::create(getParent(), result);
+			return kMiniscriptInstructionOutcomeContinue;
+		} else {
+			return kMiniscriptInstructionOutcomeFailed;
+		}
 	}
 
 	return RuntimeObject::writeRefAttribute(thread, result, attrib);

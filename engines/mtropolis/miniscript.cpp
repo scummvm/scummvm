@@ -1393,6 +1393,77 @@ PushValue::PushValue(DataType dataType, const void *value, bool isLValue)
 	}
 }
 
+MiniscriptInstructionOutcome ListCreate::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 2) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	outcome = thread->dereferenceRValue(1, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	MiniscriptStackValue &rs = thread->getStackValueFromTop(0);
+	MiniscriptStackValue &lsDest = thread->getStackValueFromTop(1);
+
+	Common::SharedPtr<DynamicList> list(new DynamicList());
+	if (!list->setAtIndex(1, rs.value)) {
+		thread->error("Failed to set value 2 of list");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+	if (!list->setAtIndex(0, lsDest.value)) {
+		thread->error("Failed to set value 1 of list");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	lsDest.value.setList(list);
+	thread->popValues(1);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome ListAppend::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 2) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	outcome = thread->dereferenceRValue(1, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	MiniscriptStackValue &rs = thread->getStackValueFromTop(0);
+	MiniscriptStackValue &lsDest = thread->getStackValueFromTop(1);
+
+	if (lsDest.value.getType() != DynamicValueTypes::kList) {
+		thread->error("Expected list on left side of list_append");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	Common::SharedPtr<DynamicList> listRef = lsDest.value.getList();
+	if (listRef.refCount() != 2) {
+		listRef = listRef->clone();
+		lsDest.value.setList(listRef);
+	}
+
+	if (!listRef->setAtIndex(listRef->getSize(), rs.value)) {
+		thread->error("Failed to expand list");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	thread->popValues(1);
+
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
 MiniscriptInstructionOutcome PushValue::execute(MiniscriptThread *thread) const {
 	DynamicValue value;
 
@@ -1578,7 +1649,7 @@ void MiniscriptThread::error(const Common::String &message) {
 	if (_runtime->debugGetDebugger())
 		_runtime->debugGetDebugger()->notify(kDebugSeverityError, Common::String("Miniscript error: " + message));
 #endif
-	warning("Miniscript error: %s", message.c_str());
+	warning("Miniscript error in (%x '%s'): %s", _modifier->getStaticGUID(), _modifier->getName().c_str(), message.c_str());
 
 	// This should be redundant
 	_failed = true;

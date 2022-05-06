@@ -343,6 +343,8 @@ void ObjectReferenceVariableModifier::resolveRelativePath(RuntimeObject *obj, co
 		if (!foundMatch)
 			return;
 	}
+
+	_object.object = obj->getSelfReference();
 }
 
 void ObjectReferenceVariableModifier::resolveAbsolutePath() {
@@ -400,7 +402,7 @@ bool ObjectReferenceVariableModifier::computeObjectPath(RuntimeObject *obj, Comm
 		pathForThis += modifier->getName();
 	}
 
-	RuntimeObject *parent = getObjectParent(this);
+	RuntimeObject *parent = getObjectParent(obj);
 
 	if (parent) {
 		Common::String pathForParent;
