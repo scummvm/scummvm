@@ -128,6 +128,37 @@ private:
 	Runtime *_runtime;
 };
 
+class MToonElement : public VisualElement {
+public:
+	MToonElement();
+	~MToonElement();
+
+	bool load(ElementLoaderContext &context, const Data::MToonElement &data);
+
+	void activate() override;
+	void deactivate() override;
+
+	void render(Window *window) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "mToon Element"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
+#endif
+
+private:
+	bool _cacheBitmap;
+	bool _loop;
+
+	// If set, then carry over residual frame time and display at the desired rate.  If not set, reset residual each frame for smoother animation.
+	bool _maintainRate;
+
+	uint32 _assetID;
+	Runtime *_runtime;
+	uint32 _rateTimes10000;
+
+	Common::SharedPtr<Graphics::Surface> _renderSurface;
+};
+
 class TextLabelElement : public VisualElement {
 public:
 	TextLabelElement();

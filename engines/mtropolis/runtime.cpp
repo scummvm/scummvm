@@ -3391,7 +3391,7 @@ void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
 	scene->materializeDescendents(this, subsection->getSceneLoadMaterializeScope());
 	debug(1, "Scene materialized OK");
 	recursiveActivateStructural(scene.get());
-	debug(1, "Scene added to renderer OK");
+	debug(1, "Structural elements activated OK");
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	if (_debugger) {
@@ -4767,6 +4767,9 @@ bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result
 	} else if (attrib == "height") {
 		result.setInt(_rect.bottom - _rect.top);
 		return true;
+	} else if (attrib == "globalposition") {
+		result.setPoint(getGlobalPosition());
+		return true;
 	}
 
 	return Element::readAttribute(thread, result, attrib);
@@ -4789,6 +4792,21 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 
 const Rect16 &VisualElement::getRelativeRect() const {
 	return _rect;
+}
+
+Point16 VisualElement::getGlobalPosition() const {
+	Point16 pos = Point16::create(0, 0);
+	if (_parent && _parent->isElement()) {
+		Element *element = static_cast<Element *>(_parent);
+		if (element->isVisual()) {
+			pos = static_cast<VisualElement *>(element)->getGlobalPosition();
+		}
+	}
+
+	pos.x += _rect.left;
+	pos.y += _rect.top;
+
+	return pos;
 }
 
 const Point16 &VisualElement::getCachedAbsoluteOrigin() const {

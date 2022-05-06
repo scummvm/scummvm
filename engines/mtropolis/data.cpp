@@ -853,7 +853,7 @@ DataReadErrorCode MToonElement::load(DataReader &reader) {
 	if (!reader.readU32(structuralFlags) || !reader.readU32(sizeIncludingTag) || !reader.readU32(guid)
 			|| !reader.readU16(lengthOfName) || !reader.readU32(elementFlags) || !reader.readU16(layer)
 			|| !reader.readU32(animationFlags) || !reader.readBytes(unknown4) || !reader.readU16(sectionID)
-			|| !rect1.load(reader) || !rect2.load(reader) || !reader.readU32(unknown5)
+			|| !rect1.load(reader) || !rect2.load(reader) || !reader.readU32(assetID)
 			|| !reader.readU32(rateTimes10000) || !reader.readU32(streamLocator) || !reader.readU32(unknown6)
 			|| !reader.readTerminatedStr(name, lengthOfName))
 		return kDataReadErrorReadFailed;
@@ -1027,6 +1027,20 @@ DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !enableWhen.load(reader) || !reader.readBytes(unknown6) || !reader.readU8(unknown7) || !program.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode SaveAndRestoreModifier::load(DataReader &reader) {
+	if (_revision != 0x3e9)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !saveWhen.load(reader) || !restoreWhen.load(reader)
+		|| !saveOrRestoreValue.load(reader) || !reader.readBytes(unknown5) || !reader.readU8(lengthOfFilePath)
+		|| !reader.readU8(lengthOfFileName) || !reader.readU8(lengthOfVariableName) || !reader.readU8(lengthOfVariableString)
+		|| !reader.readNonTerminatedStr(varName, lengthOfVariableName) || !reader.readNonTerminatedStr(varString, lengthOfVariableString)
+		|| !reader.readNonTerminatedStr(filePath, lengthOfFilePath) || !reader.readNonTerminatedStr(fileName, lengthOfFileName))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1629,6 +1643,95 @@ DataReadErrorCode ImageAsset::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode MToonAsset::load(DataReader &reader) {
+	if (_revision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!reader.readU32(marker) || !reader.readBytes(unknown1) || !reader.readU32(assetID))
+		return kDataReadErrorReadFailed;
+
+	haveMacPart = false;
+	haveWinPart = false;
+
+	if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+		haveMacPart = true;
+
+		if (!reader.readBytes(platform.mac.unknown10))
+			return kDataReadErrorReadFailed;
+	} else if (reader.getProjectFormat() == kProjectFormatWindows) {
+		haveWinPart = true;
+
+		if (!reader.readBytes(platform.win.unknown11))
+			return kDataReadErrorReadFailed;
+	} else
+		return kDataReadErrorUnrecognized;
+
+	if (!reader.readU32(frameDataPosition) || !reader.readU32(sizeOfFrameData) || !reader.readU32(mtoonHeader[0])
+		|| !reader.readU32(mtoonHeader[1]) || !reader.readU16(version) || !reader.readBytes(unknown2)
+		|| !reader.readU32(encodingFlags) || !rect.load(reader) || !reader.readU16(numFrames)
+		|| !reader.readBytes(unknown3) || !reader.readU16(bitsPerPixel) || !reader.readU32(codecID)
+		|| !reader.readBytes(unknown4_1) || !reader.readU32(codecDataSize) || !reader.readBytes(unknown4_2))
+		return kDataReadErrorReadFailed;
+
+	if (mtoonHeader[0] != 0 || mtoonHeader[1] != 0x546f6f6e)
+		return kDataReadErrorUnrecognized;
+
+	if (numFrames > 0) {
+		frames.resize(numFrames);
+		for (size_t i = 0; i < numFrames; i++) {
+			FrameDef &frame = frames[i];
+
+			if (!reader.readBytes(frame.unknown12) || !frame.rect1.load(reader) || !reader.readU32(frame.dataOffset)
+				|| !reader.readBytes(frame.unknown13) || !reader.readU32(frame.compressedSize) || !reader.readU8(frame.unknown14)
+				|| !reader.readU8(frame.keyframeFlag) || !reader.readU8(frame.platformBit) || !reader.readU8(frame.unknown15)
+				|| !frame.rect2.load(reader) || !reader.readU32(frame.hdpiFixed) || !reader.readU32(frame.vdpiFixed)
+				|| !reader.readU16(frame.bitsPerPixel) || !reader.readU32(frame.unknown16) || !reader.readU16(frame.decompressedBytesPerRow))
+				return kDataReadErrorReadFailed;
+
+			if (reader.getProjectFormat() == kProjectFormatMacintosh) {
+				if (!reader.readBytes(frame.platform.mac.unknown17))
+					return kDataReadErrorReadFailed;
+			} else if (reader.getProjectFormat() == kProjectFormatWindows) {
+				if (!reader.readBytes(frame.platform.win.unknown18))
+					return kDataReadErrorReadFailed;
+			} else
+				return kDataReadErrorUnrecognized;
+
+			if (!reader.readU32(frame.decompressedSize))
+				return kDataReadErrorReadFailed;
+		}
+	}
+
+	if (codecDataSize > 0) {
+		codecData.resize(codecDataSize);
+		if (!reader.read(&codecData[0], codecDataSize))
+			return kDataReadErrorReadFailed;
+	}
+
+	if (encodingFlags & kEncodingFlag_HasRanges) {
+		if (!reader.readU32(frameRangesPart.tag) || !reader.readU32(frameRangesPart.sizeIncludingTag) || !reader.readU32(frameRangesPart.numFrameRanges))
+			return kDataReadErrorReadFailed;
+
+		if (frameRangesPart.tag != 1)
+			return kDataReadErrorUnrecognized;
+
+		if (frameRangesPart.numFrameRanges > 0) {
+			frameRangesPart.frameRanges.resize(frameRangesPart.numFrameRanges);
+			for (size_t i = 0; i < frameRangesPart.numFrameRanges; i++) {
+				FrameRangeDef &frameRange = frameRangesPart.frameRanges[i];
+
+				if (!reader.readU32(frameRange.startFrame) || !reader.readU32(frameRange.endFrame) || !reader.readU8(frameRange.lengthOfName) || !reader.readU8(frameRange.unknown14))
+					return kDataReadErrorReadFailed;
+
+				if (!reader.readTerminatedStr(frameRange.name, frameRange.lengthOfName))
+					return kDataReadErrorReadFailed;
+			}
+		}
+	}
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode TextAsset::load(DataReader &reader) {
 	if (_revision != 3)
 		return kDataReadErrorReadFailed;
@@ -1775,6 +1878,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	case DataObjectTypes::kMiniscriptModifier:
 		dataObject = new MiniscriptModifier();
 		break;
+	case DataObjectTypes::kSaveAndRestoreModifier:
+		dataObject = new SaveAndRestoreModifier();
+		break;
 	case DataObjectTypes::kMessengerModifier:
 		dataObject = new MessengerModifier();
 		break;
@@ -1871,7 +1977,7 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 
 	case DataObjectTypes::kMToonAsset:
-		//dataObject = new MToonAsset();
+		dataObject = new MToonAsset();
 		break;
 
 	case DataObjectTypes::kTextAsset:

@@ -122,7 +122,7 @@ enum DataObjectType {
 	kCursorModifierV1                    = 0x3ca,	// NYI - Obsolete version
 	kGradientModifier                    = 0x4b0,	// NYI
 	kColorTableModifier                  = 0x4c4,	// NYI
-	kSaveAndRestoreModifier              = 0x4d8,	// NYI
+	kSaveAndRestoreModifier              = 0x4d8,
 
 	kCompoundVariableModifier            = 0x2c7,
 	kBooleanVariableModifier             = 0x321,
@@ -272,7 +272,7 @@ struct Label {
 //
 // InternalTypeTaggedValue is used by internal modifiers for messenger payloads and set modifiers
 // and seems to match Miniscript ops too.
-// InternalTypeTaggedValue is always 44 bytes in size and stores string data elsewhere in the containing structure.
+// InternalTypeTaggedValue is always 46 bytes in size and stores string data elsewhere in the containing structure.
 //
 // PlugInTypeTaggedValue is used by plug-ins and is fully self-contained.
 //
@@ -394,7 +394,7 @@ struct ProjectLabelMap : public DataObject {
 
 		Common::String name;
 
-		uint32_t numChildren;
+		uint32 numChildren;
 		LabelTree *children;
 	};
 
@@ -407,7 +407,7 @@ struct ProjectLabelMap : public DataObject {
 		uint32 unknown2;
 		Common::String name;
 
-		uint32_t numChildren;
+		uint32 numChildren;
 		LabelTree *tree;
 	};
 
@@ -678,7 +678,7 @@ struct MToonElement : public StructuralDef {
 	uint16 sectionID;
 	Rect rect1;
 	Rect rect2;
-	uint32 unknown5;
+	uint32 assetID;
 	uint32 rateTimes10000;
 	uint32 streamLocator;
 	uint32 unknown6;
@@ -814,13 +814,36 @@ struct TypicalModifierHeader {
 };
 
 struct MiniscriptModifier : public DataObject {
-
 	TypicalModifierHeader modHeader;
 	Event enableWhen;
 	uint8 unknown6[11];
 	uint8 unknown7;
 
 	MiniscriptProgram program;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+
+struct SaveAndRestoreModifier : public DataObject {
+	TypicalModifierHeader modHeader;
+	uint8 unknown1[4];
+	Event saveWhen;
+	Event restoreWhen;
+	InternalTypeTaggedValue saveOrRestoreValue;
+
+	uint8 unknown5[8];
+
+	uint8 lengthOfFilePath;
+	uint8 lengthOfFileName;
+	uint8 lengthOfVariableName;
+	uint8 lengthOfVariableString;
+
+	Common::String varName;
+	Common::String varString;
+	Common::String filePath;
+	Common::String fileName;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -936,15 +959,15 @@ struct DragMotionModifier : public DataObject {
 	Event disableWhen;
 
 	struct WinPart {
-		uint8_t unknown2;
-		uint8_t constrainHorizontal;
-		uint8_t constrainVertical;
-		uint8_t constrainToParent;
+		uint8 unknown2;
+		uint8 constrainHorizontal;
+		uint8 constrainVertical;
+		uint8 constrainToParent;
 	};
 
 	struct MacPart {
-		uint8_t flags;
-		uint8_t unknown3;
+		uint8 flags;
+		uint8 unknown3;
 
 		enum Flags {
 			kConstrainToParent = 0x10,
@@ -963,7 +986,7 @@ struct DragMotionModifier : public DataObject {
 	bool haveMacPart;
 	bool haveWinPart;
 	Rect constraintMargin;
-	uint16_t unknown1;
+	uint16 unknown1;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
@@ -1205,7 +1228,7 @@ struct TextStyleModifier : public DataObject {
 	uint16 unknown3;
 	Event applyWhen;
 	Event removeWhen;
-	uint16_t lengthOfFontFamilyName;
+	uint16 lengthOfFontFamilyName;
 
 	Common::String fontFamilyName;
 
@@ -1497,7 +1520,7 @@ struct ImageAsset : public DataObject {
 
 	uint32 persistFlags;
 	uint32 unknown1;
-	uint8_t unknown2[4];
+	uint8 unknown2[4];
 	uint32 assetID;
 	uint32 unknown3;
 
@@ -1515,6 +1538,112 @@ struct ImageAsset : public DataObject {
 	bool haveMacPart;
 	bool haveWinPart;
 	PlatformPart platform;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct MToonAsset : public DataObject {
+	struct MacPart {
+		uint8 unknown10[88];
+	};
+
+	struct WinPart {
+		uint8 unknown11[54];
+	};
+
+	struct FrameDef {
+		struct MacPart {
+			uint8 unknown17[4];
+		};
+
+		struct WinPart {
+			uint8 unknown18[2];
+		};
+
+		union PlatformUnion {
+			MacPart mac;
+			WinPart win;
+		};
+
+		uint8 unknown12[4];
+		Rect rect1;
+		uint32 dataOffset;
+		uint8 unknown13[2];
+		uint32 compressedSize;
+		uint8 unknown14;
+		uint8 keyframeFlag;
+		uint8 platformBit;
+		uint8 unknown15;
+		Rect rect2;
+		uint32 hdpiFixed;
+		uint32 vdpiFixed;
+		uint16 bitsPerPixel;
+		uint32 unknown16;
+		uint16 decompressedBytesPerRow;
+		uint32 decompressedSize;
+
+		PlatformUnion platform;
+	};
+
+	struct FrameRangeDef {
+		uint32 startFrame;
+		uint32 endFrame;
+		uint8 lengthOfName;
+		uint8 unknown14;
+
+		Common::String name; // Null terminated
+	};
+
+	enum {
+		kEncodingFlag_TemporalCompression = 0x80,
+		kEncodingFlag_HasRanges = 0x20000000,
+		kEncodingFlag_Trimming = 0x08,
+	};
+
+	uint32 marker;
+	uint8 unknown1[8];
+	uint32 assetID;
+
+	bool haveMacPart;
+	bool haveWinPart;
+
+	union PlatformUnion {
+		MacPart mac;
+		WinPart win;
+	} platform;
+
+	uint32 frameDataPosition;
+	uint32 sizeOfFrameData;
+
+	// mToon data
+	uint32 mtoonHeader[2];
+	uint16 version;
+	uint8 unknown2[4];
+	uint32 encodingFlags;
+	Rect rect;
+
+	uint16 numFrames;
+	uint8 unknown3[14];
+	uint16 bitsPerPixel;
+	uint32 codecID;
+	uint8 unknown4_1[8];
+	uint32 codecDataSize;
+	uint8 unknown4_2[4];
+
+	Common::Array<FrameDef> frames;
+
+	Common::Array<uint8> codecData;
+
+	struct FrameRangePart {
+		uint32 tag;
+		uint32 sizeIncludingTag;
+
+		uint32 numFrameRanges;
+		Common::Array<FrameRangeDef> frameRanges;
+	};
+
+	FrameRangePart frameRangesPart;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

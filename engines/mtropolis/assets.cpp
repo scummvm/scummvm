@@ -194,6 +194,62 @@ ImageAsset::ImageFormat ImageAsset::getImageFormat() const {
 	return _imageFormat;
 }
 
+bool MToonAsset::load(AssetLoaderContext &context, const Data::MToonAsset &data) {
+	if (data.haveMacPart)
+		_imageFormat = kImageFormatMac;
+	else if (data.haveWinPart)
+		_imageFormat = kImageFormatWindows;
+	else
+		return false;
+
+	_frameDataPosition = data.frameDataPosition;
+	_sizeOfFrameData = data.sizeOfFrameData;
+
+	if (!_rect.load(data.rect))
+		return false;
+
+	_bitsPerPixel = data.bitsPerPixel;
+	_codecID = data.codecID;
+
+	_frames.resize(data.frames.size());
+	for (size_t i = 0; i < _frames.size(); i++) {
+		if (!_frames[i].load(context, data.frames[i]))
+			return false;
+	}
+
+	_frameRanges.resize(data.frameRangesPart.frameRanges.size());
+	for (size_t i = 0; i < _frameRanges.size(); i++) {
+		if (!_frameRanges[i].load(context, data.frameRangesPart.frameRanges[i]))
+			return false;
+	}
+
+	_codecData = data.codecData;
+}
+
+AssetType MToonAsset::getAssetType() const {
+	return kAssetTypeMToon;
+}
+
+bool MToonAsset::FrameDef::load(AssetLoaderContext &context, const Data::MToonAsset::FrameDef &data) {
+	compressedSize = data.compressedSize;
+	dataOffset = data.dataOffset;
+	decompressedBytesPerRow = data.decompressedBytesPerRow;
+	decompressedSize = data.decompressedSize;
+	isKeyFrame = (data.keyframeFlag != 0);
+	if (!rect.load(data.rect1))
+		return false;
+
+	return true;
+}
+
+bool MToonAsset::FrameRangeDef::load(AssetLoaderContext &context, const Data::MToonAsset::FrameRangeDef &data) {
+	name = data.name;
+	startFrame = data.startFrame;
+	endFrame = data.endFrame;
+
+	return true;
+}
+
 bool TextAsset::load(AssetLoaderContext &context, const Data::TextAsset &data) {
 	_assetID = data.assetID;
 

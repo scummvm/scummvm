@@ -65,6 +65,8 @@ IAssetFactory *getAssetFactoryForDataObjectType(const Data::DataObjectTypes::Dat
 		return AssetFactory<MovieAsset, Data::MovieAsset>::getInstance();
 	case Data::DataObjectTypes::kImageAsset:
 		return AssetFactory<ImageAsset, Data::ImageAsset>::getInstance();
+	case Data::DataObjectTypes::kMToonAsset:
+		return AssetFactory<MToonAsset, Data::MToonAsset>::getInstance();
 	case Data::DataObjectTypes::kTextAsset:
 		return AssetFactory<TextAsset, Data::TextAsset>::getInstance();
 

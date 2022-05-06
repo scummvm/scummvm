@@ -71,6 +71,7 @@ private:
 	VThreadState propagateTask(const PropagateTaskData &taskData);
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	void linkInternalReferences(ObjectLinkingScope *scope) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 	Common::Array<Common::SharedPtr<Modifier> > _children;
@@ -96,11 +97,36 @@ public:
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 	Event _enableWhen;
 
 	Common::SharedPtr<MiniscriptProgram> _program;
 	Common::SharedPtr<MiniscriptReferences> _references;
+};
+
+class SaveAndRestoreModifier : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::SaveAndRestoreModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Save And Restore Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
+	Event _saveWhen;
+	Event _restoreWhen;
+
+	DynamicValue _saveOrRestoreValue;
+
+	Common::String _filePath;
+	Common::String _fileName;
 };
 
 class MessengerModifier : public Modifier {
