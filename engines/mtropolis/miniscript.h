@@ -282,10 +282,14 @@ namespace MiniscriptInstructions {
 		bool _isIndexed;
 	};
 
-	class ListAppend : public UnimplementedInstruction {
+	class ListAppend : public MiniscriptInstruction {
+	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
-	class ListCreate : public UnimplementedInstruction {
+	class ListCreate : public MiniscriptInstruction {
+	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
 	class PushValue : public MiniscriptInstruction {

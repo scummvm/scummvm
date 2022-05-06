@@ -116,7 +116,7 @@ private:
 	void resolveRelativePath(RuntimeObject *obj, const Common::String &path, size_t startPos);
 	void resolveAbsolutePath();
 
-	bool computeObjectPath(RuntimeObject *obj, Common::String &outPath);
+	static bool computeObjectPath(RuntimeObject *obj, Common::String &outPath);
 	static RuntimeObject *getObjectParent(RuntimeObject *obj);
 
 	Event _setToSourceParentWhen;

@@ -1540,6 +1540,14 @@ struct IMessageConsumer {
 };
 
 class WorldManagerInterface : public RuntimeObject {
+public:
+	WorldManagerInterface();
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
+
+private:
+	MiniscriptInstructionOutcome setCurrentScene(MiniscriptThread *thread, const DynamicValue &value);
 };
 
 class AssetManagerInterface : public RuntimeObject {
