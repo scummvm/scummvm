@@ -1628,7 +1628,8 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 		_bootParam = -7873;
 	}
 
-	if (!_copyProtection && _game.id == GID_SAMNMAX && _bootParam == 0) {
+	// Skip the sound pre-loading
+	if (_game.id == GID_SAMNMAX && _bootParam == 0 && _enableEnhancements) {
 		_bootParam = -1;
 	}
 
