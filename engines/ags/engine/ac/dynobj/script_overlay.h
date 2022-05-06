@@ -28,9 +28,6 @@ namespace AGS3 {
 
 struct ScriptOverlay final : AGSCCDynamicObject {
 	int overlayId = -1;
-	// TODO: this flag is needed to mark an overlay which lifetime is managed
-	// by the engine; this may be solved with engine owning an object ref instead
-	bool hasInternalRef = false;
 
 	int Dispose(const char *address, bool force) override;
 	const char *GetType() override;

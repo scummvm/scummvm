@@ -706,9 +706,8 @@ ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx) {
 	if (ovri < 0)
 		quit("!SayBackground internal error: no overlay");
 
-	ScriptOverlay *scOver = create_scriptobj_for_overlay(_GP(screenover)[ovri]);
-	scOver->hasInternalRef = true; // keep at least until internal timeout
-	return scOver;
+	// Create script object with an internal ref, keep at least until internal timeout
+	return create_scriptobj_for_overlay(_GP(screenover)[ovri], true);
 }
 
 void Character_SetAsPlayer(CharacterInfo *chaa) {

@@ -222,19 +222,14 @@ void Overlay_SetZOrder(ScriptOverlay *scover, int zorder) {
 //=============================================================================
 
 // Creates and registers a managed script object for existing overlay object
-ScriptOverlay *create_scriptobj_for_overlay(ScreenOverlay &over) {
+// optionally adds an internal engine reference to prevent object's disposal
+ScriptOverlay *create_scriptobj_for_overlay(ScreenOverlay &over, bool internal_ref) {
 	ScriptOverlay *scover = new ScriptOverlay();
 	scover->overlayId = over.type;
 	int handl = ccRegisterManagedObject(scover, scover);
 	over.associatedOverlayHandle = handl;
-	return scover;
-}
-
-// Creates managed script object for overlay and adds internal engine's reference to it,
-// so that it does not get disposed even if there are no user references in script.
-static ScriptOverlay *create_scriptobj_addref(ScreenOverlay &over) {
-	ScriptOverlay *scover = create_scriptobj_for_overlay(over);
-	ccAddObjectReference(over.associatedOverlayHandle);
+	if (internal_ref)
+		ccAddObjectReference(handl);
 	return scover;
 }
 
@@ -270,7 +265,10 @@ void remove_screen_overlay_index(size_t over_idx) {
 		if (_GP(play).speech_face_scover)
 			invalidate_and_subref(over, _GP(play).speech_face_scover);
 		_G(face_talking) = -1;
+	} else if (over.bgSpeechForChar > 0) { // release internal ref for bg speech
+		ccReleaseObjectReference(over.associatedOverlayHandle);
 	}
+
 	dispose_overlay(over);
 	_GP(screenover).erase(_GP(screenover).begin() + over_idx);
 	// if an overlay before the sierra-style speech one is removed, update the index
@@ -334,9 +332,9 @@ size_t add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic
 		// only make script object for blocking speech now, because messagebox blocks all script
 		// and therefore cannot be accessed, so no practical reason for that atm
 		if (type == OVER_TEXTSPEECH)
-			_GP(play).speech_text_scover = create_scriptobj_addref(over);
+			_GP(play).speech_text_scover = create_scriptobj_for_overlay(over, true);
 	} else if (type == OVER_PICTURE) {
-		_GP(play).speech_face_scover = create_scriptobj_addref(over);
+		_GP(play).speech_face_scover = create_scriptobj_for_overlay(over, true);
 	}
 
 	over.MarkChanged();

@@ -53,8 +53,9 @@ Point get_overlay_position(const ScreenOverlay &over);
 size_t add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, bool alphaChannel = false);
 size_t  add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic_offx, int pic_offy, bool alphaChannel = false);
 void remove_screen_overlay_index(size_t over_idx);
-// Creates and registers a managed script object for existing overlay object
-ScriptOverlay *create_scriptobj_for_overlay(ScreenOverlay &over);
+// Creates and registers a managed script object for existing overlay object;
+// optionally adds an internal engine reference to prevent object's disposal
+ScriptOverlay *create_scriptobj_for_overlay(ScreenOverlay &over, bool internal_ref = false);
 void recreate_overlay_ddbs();
 
 } // namespace AGS3

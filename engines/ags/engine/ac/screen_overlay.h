@@ -65,7 +65,7 @@ struct ScreenOverlay {
 	// Width and height to stretch the texture to
 	int scaleWidth = 0, scaleHeight = 0;
 	int bgSpeechForChar = -1;
-	int associatedOverlayHandle = 0;
+	int associatedOverlayHandle = 0; // script obj handle
 	int zorder = INT_MIN;
 	bool positionRelativeToScreen = false;
 	bool hasSerializedBitmap = false;
