@@ -150,6 +150,18 @@ int MidiPlayer::open() {
 	// Check the type of device that the user has configured.
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(devFlags);
 	_deviceType = MidiDriver::getMusicType(dev);
+
+	// Check if a Casio device has been configured for Elvira 1 DOS.
+	if (_vm->getGameType() == GType_ELVIRA1 && _vm->getPlatform() == Common::kPlatformDOS &&
+			_deviceType == MT_GM && ConfMan.hasKey("midi_mode")) {
+		int midiMode = ConfMan.getInt("midi_mode");
+		if (midiMode == 3) {
+			_deviceType = MT_MT540;
+		} else if (midiMode == 4) {
+			_deviceType = MT_CT460;
+		}
+	}
+
 	if (_deviceType == MT_GM && ConfMan.getBool("native_mt32"))
 		_deviceType = MT_MT32;
 
@@ -235,6 +247,11 @@ int MidiPlayer::open() {
 					_parserSfxAccolade = new SfxParser_Accolade_MT32();
 				}
 			}
+			break;
+		case MT_MT540:
+		case MT_CT460:
+			// Casio devices are supported by Elvira 1 DOS only.
+			_driverMsMusic = MidiDriver_Accolade_Casio_create(accoladeDriverFilename);
 			break;
 		default:
 			_driverMsMusic = new MidiDriver_NULL_Multisource();

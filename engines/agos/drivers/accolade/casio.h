@@ -19,31 +19,31 @@
  *
  */
 
-#ifndef AGOS_DRIVERS_ACCOLADE_MIDIDRIVER_H
-#define AGOS_DRIVERS_ACCOLADE_MIDIDRIVER_H
+#ifndef AGOS_DRIVERS_ACCOLADE_CASIO_H
+#define AGOS_DRIVERS_ACCOLADE_CASIO_H
 
-#include "agos/agos.h"
-
-#include "audio/fmopl.h"
-#include "audio/mididrv.h"
-#include "audio/mididrv_ms.h"
-
-#include "common/error.h"
+#include "audio/casio.h"
 
 namespace AGOS {
 
-#define AGOS_MIDI_CHANNEL_COUNT 16
-#define AGOS_MIDI_INSTRUMENT_COUNT 128
+class MidiDriver_Accolade_Casio : public MidiDriver_Casio {
+public:
+	MidiDriver_Accolade_Casio();
 
-#define AGOS_MIDI_KEYNOTE_COUNT 64
+	int open();
+	int8 mapSourceChannel(uint8 source, uint8 dataChannel) override;
 
-extern void MidiDriver_Accolade_readDriver(Common::String filename, MusicType requestedDriverType, byte *&driverData, uint16 &driverDataSize, bool &isMusicDrvFile);
+	void readDriverData(byte *driverData, uint16 driverDataSize);
 
-extern MidiDriver_Multisource *MidiDriver_Accolade_AdLib_create(Common::String driverFilename, OPL::Config::OplType oplType);
-extern MidiDriver_Multisource *MidiDriver_Accolade_MT32_create(Common::String driverFilename);
-extern MidiDriver_Multisource *MidiDriver_Accolade_Casio_create(Common::String driverFilename);
-extern MidiDriver *MidiDriverPC98_create(MidiDriver::DeviceHandle dev);
+protected:
+	// Mapping between MT-32 data MIDI channels and Casio channels.
+	byte _channelRemapping[16];
+	// Mapping between MT-32 data instruments and Casio instruments.
+	byte _instrumentRemappingData[128];
+	// Mapping between MT-32 data rhythm notes and Casio rhythm notes.
+	byte _rhythmNoteRemappingData[128];
+};
 
 } // End of namespace AGOS
 
-#endif // AGOS_DRIVERS_ACCOLADE_MIDIDRIVER_H
+#endif
