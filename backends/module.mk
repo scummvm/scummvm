@@ -211,6 +211,11 @@ MODULE_OBJS += \
 	text-to-speech/macosx/macosx-text-to-speech.o
 endif
 
+ifdef SDL_BACKEND
+MODULE_OBJS += \
+	plugins/sdl/macosx/macosx-provider.o
+endif
+
 endif
 
 ifdef WIN32

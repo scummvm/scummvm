@@ -21,32 +21,17 @@
 
 #include "common/scummsys.h"
 
-#ifdef MACOSX
+#if defined(DYNAMIC_MODULES) && defined(SDL_BACKEND) && defined(MACOSX)
 
-#include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/plugins/sdl/macosx/macosx-provider.h"
-#include "base/main.h"
+#include "backends/platform/sdl/macosx/macosx_wrapper.h"
 
-int main(int argc, char *argv[]) {
+#include "common/fs.h"
 
-	// Create our OSystem instance
-	g_system = new OSystem_MacOSX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	g_system->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new MacOSXPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	g_system->destroy();
-
-	return res;
+void MacOSXPluginProvider::addCustomDirectories(Common::FSList &dirs) const {
+	Common::String bundlePath = getResourceAppBundlePathMacOSX();
+	if (!bundlePath.empty())
+		dirs.push_back(Common::FSNode(bundlePath));
 }
 
-#endif
+#endif // defined(DYNAMIC_MODULES) && defined(SDL_BACKEND) && defined(MACOSX)
