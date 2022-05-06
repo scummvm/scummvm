@@ -1040,10 +1040,7 @@ void Dialogs::HopAction() {
  */
 void Dialogs::DumpIconArray() {
 	for (int i = 0; i < MAX_ICONS; i++) {
-		if (_iconArray[i] != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _iconArray[i]);
-			_iconArray[i] = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_iconArray[i]);
 	}
 }
 
@@ -1052,10 +1049,7 @@ void Dialogs::DumpIconArray() {
  */
 void Dialogs::DumpDobjArray() {
 	for (int i = 0; i < MAX_WCOMP; i++) {
-		if (_dispObjArray[i] != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _dispObjArray[i]);
-			_dispObjArray[i] = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_dispObjArray[i]);
 	}
 }
 
@@ -1064,10 +1058,7 @@ void Dialogs::DumpDobjArray() {
  */
 void Dialogs::DumpObjArray() {
 	for (int i = 0; i < MAX_WCOMP; i++) {
-		if (_objArray[i] != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _objArray[i]);
-			_objArray[i] = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_objArray[i]);
 	}
 }
 
@@ -1254,18 +1245,9 @@ void Dialogs::InvLoadGame() {
 	if (cd.selBox != NOBOX && (cd.selBox + cd.extraBase < cd.numSaved)) {
 		rGame = cd.selBox;
 		cd.selBox = NOBOX;
-		if (_iconArray[HL3] != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _iconArray[HL3]);
-			_iconArray[HL3] = nullptr;
-		}
-		if (_iconArray[HL2] != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _iconArray[HL2]);
-			_iconArray[HL2] = nullptr;
-		}
-		if (_iconArray[HL1] != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _iconArray[HL1]);
-			_iconArray[HL1] = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_iconArray[HL3]);
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_iconArray[HL2]);
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_iconArray[HL1]);
 		RestoreGame(rGame + cd.extraBase);
 	}
 }
@@ -1330,10 +1312,7 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
 			* Delete display of text currently being edited,
 			* and replace it with freshly edited text.
 			*/
-			if (_vm->_dialogs->_iconArray[HL3] != NULL) {
-				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_iconArray[HL3]);
-				_vm->_dialogs->_iconArray[HL3] = nullptr;
-			}
+			MultiDeleteObjectIfExists(FIELD_STATUS, &_vm->_dialogs->_iconArray[HL3]);
 			_vm->_dialogs->_iconArray[HL3] = ObjectTextOut(
 			    _vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_saveGameDesc, 0,
 			    _vm->_dialogs->CurrentInventoryX() + cd.box[cd.selBox].xpos + 2,
@@ -1373,14 +1352,8 @@ void Dialogs::Select(int i, bool force) {
 	cd.selBox = i;
 
 	// Clear previous selected highlight and text
-	if (_iconArray[HL2] != NULL) {
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _iconArray[HL2]);
-		_iconArray[HL2] = nullptr;
-	}
-	if (_iconArray[HL3] != NULL) {
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _iconArray[HL3]);
-		_iconArray[HL3] = nullptr;
-	}
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_iconArray[HL2]);
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_iconArray[HL3]);
 
 	// New highlight box
 	switch (cd.box[i].boxType) {
@@ -2019,17 +1992,11 @@ void Dialogs::InvBoxes(bool InBody, int curX, int curY) {
 	if (index < 0) {
 		// unhigh-light box (if one was)
 		cd.pointBox = NOBOX;
-		if (_iconArray[HL1] != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _iconArray[HL1]);
-			_iconArray[HL1] = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_iconArray[HL1]);
 	} else if (index != cd.pointBox) {
 		cd.pointBox = index;
 		// A new box is pointed to - high-light it
-		if (_iconArray[HL1] != NULL) {
-			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _iconArray[HL1]);
-			_iconArray[HL1] = nullptr;
-		}
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_iconArray[HL1]);
 		if ((cd.box[cd.pointBox].boxType == ARSBUT && cd.selBox != NOBOX) ||
 		    ///* I don't agree */ cd.box[cd.pointBox].boxType == RGROUP ||
 		    cd.box[cd.pointBox].boxType == AATBUT ||
@@ -5470,8 +5437,7 @@ static void ButtonPress(CORO_PARAM, CONFBOX *box) {
 
 	// Replace highlight image with normal image
 	pfilm = _vm->_dialogs->GetWindowData();
-	if (_vm->_dialogs->_iconArray[HL1] != NULL)
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_iconArray[HL1]);
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_vm->_dialogs->_iconArray[HL1]);
 	pfilm = _vm->_dialogs->GetWindowData();
 	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->AddObject(&pfilm->reels[box->bi + NORMGRAPH], -1);
 	MultiSetAniXY(_vm->_dialogs->_iconArray[HL1], _vm->_dialogs->CurrentInventoryX() + box->xpos, _vm->_dialogs->CurrentInventoryY() + box->ypos);
@@ -5517,10 +5483,7 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 	assert((box->boxType == TOGGLE) || (box->boxType == TOGGLE1) || (box->boxType == TOGGLE2));
 
 	// Remove hilight image
-	if (_vm->_dialogs->_iconArray[HL1] != NULL) {
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_iconArray[HL1]);
-		_vm->_dialogs->_iconArray[HL1] = nullptr;
-	}
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_vm->_dialogs->_iconArray[HL1]);
 
 	// Hold normal image for 1 frame
 	CORO_SLEEP(1);
@@ -5548,8 +5511,7 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 
 	// New state, depressed image
 	pfilm = _vm->_dialogs->GetWindowData();
-	if (_vm->_dialogs->_iconArray[HL1] != NULL)
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_iconArray[HL1]);
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_vm->_dialogs->_iconArray[HL1]);
 	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->AddObject(&pfilm->reels[box->bi + DOWNGRAPH], -1);
 	MultiSetAniXY(_vm->_dialogs->_iconArray[HL1], _vm->_dialogs->CurrentInventoryX() + box->xpos, _vm->_dialogs->CurrentInventoryY() + box->ypos);
 	MultiSetZPosition(_vm->_dialogs->_iconArray[HL1], Z_INV_ICONS + 1);
@@ -5560,8 +5522,7 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 		return;
 
 	// New state, normal
-	MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_iconArray[HL1]);
-	_vm->_dialogs->_iconArray[HL1] = nullptr;
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_vm->_dialogs->_iconArray[HL1]);
 
 	// Hold normal image for 1 frame
 	CORO_SLEEP(1);
@@ -5570,8 +5531,7 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 
 	// New state, highlighted
 	pfilm = _vm->_dialogs->GetWindowData();
-	if (_vm->_dialogs->_iconArray[HL1] != NULL)
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_iconArray[HL1]);
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_vm->_dialogs->_iconArray[HL1]);
 	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->AddObject(&pfilm->reels[box->bi + HIGRAPH], -1);
 	MultiSetAniXY(_vm->_dialogs->_iconArray[HL1], _vm->_dialogs->CurrentInventoryX() + box->xpos, _vm->_dialogs->CurrentInventoryY() + box->ypos);
 	MultiSetZPosition(_vm->_dialogs->_iconArray[HL1], Z_INV_ICONS + 1);

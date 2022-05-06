@@ -62,6 +62,10 @@ void MultiDeleteObject(		// Delete all the pieces of a multi-part object
 	OBJECT **pObjList,	// list to delete multi-part object from
 	OBJECT *pMultiObj);	// multi-part object to be deleted
 
+void MultiDeleteObjectIfExists( // Delete all the pieces of a multi-part object (if it exists)
+	unsigned int playfield, // playfield to delete the objects from
+	OBJECT **pMultiObj); // multi-part object to be deleted
+
 void MultiHideObject(		// Hide a multi-part object
 	OBJECT *pMultiObj);	// multi-part object to be hidden
 

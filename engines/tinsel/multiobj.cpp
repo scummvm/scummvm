@@ -20,6 +20,7 @@
  * This file contains utilities to handle multi-part objects.
  */
 
+#include "tinsel/background.h"
 #include "tinsel/multiobj.h"
 #include "tinsel/handle.h"
 #include "tinsel/object.h"
@@ -122,6 +123,19 @@ void MultiDeleteObject(OBJECT **pObjList, OBJECT *pMultiObj) {
 		// next obj in list
 		pMultiObj = pMultiObj->pSlave;
 	} while (pMultiObj != NULL);
+}
+
+/**
+ * Deletes all the pieces of a multi-part object from the
+ * specified playfield's object list, then sets the pointer to nullptr.
+ * @param which				The playfield whos object list we delete from.
+ * @param pMultiObj			Multi-part object to be deleted
+ */
+void MultiDeleteObjectIfExists(unsigned int playfield, OBJECT **pMultiObj) {
+	if (*pMultiObj) {
+		MultiDeleteObject(_vm->_bg->GetPlayfieldList(playfield), *pMultiObj);
+		*pMultiObj = nullptr;
+	}
 }
 
 /**
