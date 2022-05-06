@@ -44,6 +44,11 @@ class IDriverDependantBitmap;
 
 using namespace AGS; // FIXME later
 
+enum OverlayFlags {
+	kOver_AlphaChannel = 0x0001,
+	kOver_PositionAtRoomXY = 0x0002, // room-relative position
+};
+
 // Overlay class.
 // TODO: currently overlay creates and stores its own bitmap, even if
 // created using existing sprite. As a side-effect, changing that sprite
@@ -57,7 +62,6 @@ struct ScreenOverlay {
 	Engine::IDriverDependantBitmap *ddb = nullptr;
 	// Original bitmap
 	Shared::Bitmap *pic = nullptr;
-	bool hasAlphaChannel = false;
 	int type = 0, timeout = 0;
 	// Note that x,y are overlay's properties, that define its position in script;
 	// but real drawn position is x + offsetX, y + offsetY;
@@ -69,8 +73,20 @@ struct ScreenOverlay {
 	int bgSpeechForChar = -1;
 	int associatedOverlayHandle = 0; // script obj handle
 	int zorder = INT_MIN;
-	bool positionRelativeToScreen = false;
 	int transparency = 0;
+
+	bool HasAlphaChannel() const {
+		return (_flags & kOver_AlphaChannel) != 0;
+	}
+	bool IsRoomRelative() const {
+		return (_flags & kOver_PositionAtRoomXY) != 0;
+	}
+	void SetAlphaChannel(bool on) {
+		on ? _flags |= kOver_AlphaChannel : _flags &= ~kOver_AlphaChannel;
+	}
+	void SetRoomRelative(bool on) {
+		on ? _flags |= kOver_PositionAtRoomXY : _flags &= ~kOver_PositionAtRoomXY;
+	}
 
 	// Tells if Overlay has graphically changed recently
 	bool HasChanged() const {
@@ -89,6 +105,7 @@ struct ScreenOverlay {
 	void WriteToFile(Shared::Stream *out) const;
 
 private:
+	int _flags = 0; // OverlayFlags
 	bool _hasChanged = false;
 };
 

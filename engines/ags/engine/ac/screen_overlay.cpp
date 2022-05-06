@@ -37,8 +37,15 @@ void ScreenOverlay::ReadFromFile(Stream *in, bool &has_bitmap, int32_t cmp_ver) 
 	timeout = in->ReadInt32();
 	bgSpeechForChar = in->ReadInt32();
 	associatedOverlayHandle = in->ReadInt32();
-	hasAlphaChannel = in->ReadBool();
-	positionRelativeToScreen = in->ReadBool();
+	if (cmp_ver >= 3) {
+		_flags = in->ReadInt16();
+	} else {
+		if (in->ReadBool()) // has alpha
+			_flags |= kOver_AlphaChannel;
+		if (!(in->ReadBool())) // screen relative position
+			_flags |= kOver_PositionAtRoomXY;
+	}
+
 	if (cmp_ver >= 1) {
 		offsetX = in->ReadInt32();
 		offsetY = in->ReadInt32();
@@ -60,8 +67,7 @@ void ScreenOverlay::WriteToFile(Stream *out) const {
 	out->WriteInt32(timeout);
 	out->WriteInt32(bgSpeechForChar);
 	out->WriteInt32(associatedOverlayHandle);
-	out->WriteBool(hasAlphaChannel);
-	out->WriteBool(positionRelativeToScreen);
+	out->WriteInt16(_flags);
 	// since cmp_ver = 1
 	out->WriteInt32(offsetX);
 	out->WriteInt32(offsetY);

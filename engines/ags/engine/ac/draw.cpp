@@ -1868,9 +1868,9 @@ void draw_gui_and_overlays() {
 		if (_GP(screenover)[i].HasChanged()) {
 			// For software mode - prepare transformed bitmap if necessary
 			Bitmap *use_bmp = is_software_mode ?
-				transform_sprite(over.pic, over.hasAlphaChannel, _GP(overlaybmp)[i], Size(over.scaleWidth, over.scaleHeight)) :
+				transform_sprite(over.pic, over.HasAlphaChannel(), _GP(overlaybmp)[i], Size(over.scaleWidth, over.scaleHeight)) :
 				over.pic;
-			over.ddb = recycle_ddb_bitmap(over.ddb, use_bmp, over.hasAlphaChannel);
+			over.ddb = recycle_ddb_bitmap(over.ddb, use_bmp, over.HasAlphaChannel());
 			over.ClearChanged();
 		}
 

@@ -341,7 +341,7 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 			_GP(play).messagetime = 2;
 
 		if (!overlayPositionFixed) {
-			_GP(screenover)[nse].positionRelativeToScreen = false;
+			_GP(screenover)[nse].SetRoomRelative(true);
 			VpPoint vpt = _GP(play).GetRoomViewport(0)->ScreenToRoom(_GP(screenover)[nse].x, _GP(screenover)[nse].y, false);
 			_GP(screenover)[nse].x = vpt.first.X;
 			_GP(screenover)[nse].y = vpt.first.Y;
