@@ -22,7 +22,6 @@
 #include "ags/lib/std/math.h"
 #include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/shared/ac/common.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/game.h"
 #include "ags/shared/ac/game_setup_struct.h"
@@ -30,7 +29,6 @@
 #include "ags/engine/ac/global_dynamic_sprite.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/math.h"    // M_PI
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/room_object.h"
 #include "ags/engine/ac/room_status.h"

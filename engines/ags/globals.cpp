@@ -38,7 +38,6 @@
 #include "ags/shared/gui/gui_textbox.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/shared/util/directory.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/character_extras.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
@@ -47,7 +46,6 @@
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/move_list.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/route_finder_jps.h"
 #include "ags/engine/ac/screen_overlay.h"
@@ -238,7 +236,7 @@ Globals::Globals() {
 	_scrHotspot = new ScriptHotspot[MAX_ROOM_HOTSPOTS];
 	_scrRegion = new ScriptRegion[MAX_ROOM_REGIONS];
 	_scrInv = new ScriptInvItem[MAX_INV];
-	_charcache = new std::vector<CharacterCache>();
+	_charcache = new std::vector<ObjectCache>();
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
 	_charextra = new std::vector<CharacterExtras>();
 	_mls = new std::vector<MoveList>();

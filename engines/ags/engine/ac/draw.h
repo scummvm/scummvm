@@ -84,6 +84,18 @@ struct ObjTexture {
 	ObjTexture &operator =(ObjTexture &&o);
 };
 
+// ObjectCache stores cached object data, used to determine
+// if active sprite / texture should be reconstructed
+struct ObjectCache {
+	Shared::Bitmap *image = nullptr;
+	bool  in_use = false;
+	int   sppic = 0;
+	short tintr = 0, tintg = 0, tintb = 0, tintamnt = 0, tintlight = 0;
+	short lightlev = 0, zoom = 0;
+	bool  mirrored = 0;
+	int   x = 0, y = 0;
+};
+
 // Converts AGS color index to the actual bitmap color using game's color depth
 int MakeColor(int color_index);
 
@@ -116,8 +128,10 @@ void on_roomviewport_changed(Viewport *view);
 void detect_roomviewport_overlaps(size_t z_index);
 // Updates drawing settings if room camera's size has changed
 void on_roomcamera_changed(Camera *cam);
-// Marks particular object as need too update the texture
+// Marks particular object as need to update the texture
 void mark_object_changed(int objid);
+// Resets all object caches which reference this sprite
+void reset_objcache_for_sprite(int sprnum);
 
 // whether there are currently remnants of a DisplaySpeech
 void mark_screen_dirty();

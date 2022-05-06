@@ -23,7 +23,6 @@
 #include "ags/shared/util/string_utils.h" //strlwr()
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/character_extras.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/event.h"
@@ -38,7 +37,6 @@
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/move_list.h"
 #include "ags/engine/ac/mouse.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/region.h"

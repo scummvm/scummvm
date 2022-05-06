@@ -31,7 +31,6 @@
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/object.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/room_object.h"
 #include "ags/engine/ac/room_status.h"

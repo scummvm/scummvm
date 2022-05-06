@@ -25,7 +25,6 @@
 
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/shared/ac/dialog_topic.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/game.h"

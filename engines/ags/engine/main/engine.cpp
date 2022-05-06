@@ -39,7 +39,6 @@
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/gui.h"
 #include "ags/engine/ac/lip_sync.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/route_finder.h"
 #include "ags/engine/ac/sys_events.h"

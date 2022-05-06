@@ -20,7 +20,6 @@
  */
 
 #include "ags/engine/ac/character.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/dialog.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"

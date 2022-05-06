@@ -752,7 +752,7 @@ public:
 	std::vector<ViewStruct> *_views;
 	// Cached character and object states, used to determine
 	// whether these require texture update
-	std::vector<CharacterCache> *_charcache;
+	std::vector<ObjectCache> *_charcache;
 	ObjectCache *_objcache;
 	std::vector<CharacterExtras> *_charextra;
 	std::vector<MoveList> *_mls;

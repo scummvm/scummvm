@@ -26,7 +26,6 @@
 #include "ags/engine/ac/audio_channel.h"
 #include "ags/engine/ac/button.h"
 #include "ags/engine/ac/character.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/shared/ac/dialog_topic.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/dynamic_sprite.h"
@@ -46,7 +45,6 @@
 #include "ags/engine/ac/lip_sync.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/move_list.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/sys_events.h"
@@ -1342,19 +1340,9 @@ bool unserialize_audio_script_object(int index, const char *objectType, Stream *
 }
 
 void game_sprite_updated(int sprnum) {
-	// Check if this sprite is assigned to any game object, and update them if necessary
-	// room objects cache
-	if (_G(croom) != nullptr) {
-		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
-			if (_G(objs)[i].num == sprnum)
-				_G(objcache)[i].sppic = -1;
-		}
-	}
-	// character cache
-	for (size_t i = 0; i < (size_t)_GP(game).numcharacters; ++i) {
-		if (_GP(charcache)[i].sppic == sprnum)
-			_GP(charcache)[i].sppic = -1;
-	}
+	// character and object draw caches
+	reset_objcache_for_sprite(sprnum);
+
 	// gui backgrounds
 	for (size_t i = 0; i < (size_t)_GP(game).numgui; ++i) {
 		if (_GP(guis)[i].BgImage == sprnum) {
@@ -1376,20 +1364,14 @@ void game_sprite_updated(int sprnum) {
 }
 
 void game_sprite_deleted(int sprnum) {
-	// Check if this sprite is assigned to any game object, and update them if necessary
-	// room objects and their cache
+	// character and object draw caches
+	reset_objcache_for_sprite(sprnum);
+	// room object graphics
 	if (_G(croom) != nullptr) {
 		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
-			if (_G(objs)[i].num == sprnum) {
+			if (_G(objs)[i].num == sprnum)
 				_G(objs)[i].num = 0;
-				_G(objcache)[i].sppic = -1;
-			}
 		}
-	}
-	// character cache
-	for (size_t i = 0; i < (size_t)_GP(game).numcharacters; ++i) {
-		if (_GP(charcache)[i].sppic == sprnum)
-			_GP(charcache)[i].sppic = -1;
 	}
 	// gui backgrounds
 	for (size_t i = 0; i < (size_t)_GP(game).numgui; ++i) {
