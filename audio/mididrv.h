@@ -57,7 +57,9 @@ enum MusicType {
 	MT_SEGACD,			// SegaCD
 	MT_GM,				// General MIDI
 	MT_MT32,			// MT-32
-	MT_GS				// Roland GS
+	MT_GS,				// Roland GS
+	MT_MT540,			// Casio MT-540
+	MT_CT460			// Casio CT-460 / CSM-1
 };
 
 /**
