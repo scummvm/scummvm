@@ -128,7 +128,7 @@ ifdef USE_SPARKLE
 	rm -rf $(bundle_name)/Contents/Frameworks/Sparkle.framework
 	cp -RP $(SPARKLEPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
 endif
-ifdef MACOSX_USE_LEGACY_ICONS
+ifdef MACOSX_LEOPARD_OR_BELOW
 	cp $(srcdir)/icons/scummvm_legacy.icns $(bundle_name)/Contents/Resources/scummvm.icns
 else
 	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/scummvm.icns
@@ -172,7 +172,9 @@ ifdef USE_DOCKTILEPLUGIN
 	mkdir -p $(bundle_name)/Contents/PlugIns
 	cp -r scummvm.docktileplugin $(bundle_name)/Contents/PlugIns/
 endif
+ifndef MACOSX_LEOPARD_OR_BELOW
 	codesign -s - --deep --force $(bundle_name)
+endif
 
 ifdef USE_DOCKTILEPLUGIN
 bundle: scummvm-static plugins scummvm.docktileplugin bundle-pack

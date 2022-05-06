@@ -2806,9 +2806,9 @@ EOF
 
 		# Version-specific quirks
 		if test -n "$_macos_min_version" ; then
-			# When building for MacOS X 10.5 or below we need to use the legacy icon
+			# When building for MacOS X 10.5 or below
 			if test "$_macos_min_version" -lt 1060 ; then
-				add_line_to_config_mk 'MACOSX_USE_LEGACY_ICONS = 1'
+				add_line_to_config_mk 'MACOSX_LEOPARD_OR_BELOW = 1'
 			fi
 
 			# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
