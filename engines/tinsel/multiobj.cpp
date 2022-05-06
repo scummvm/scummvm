@@ -297,6 +297,17 @@ void MultiSetAniXY(OBJECT *pMultiObj, int newAniX, int newAniY) {
 }
 
 /**
+ * Sets the x & y anim position of all pieces of a multi-part object, as well as the Z Position.
+ * @param pMultiObj			Multi-part object whose position is to be changed
+ * @param newAniX			New x animation position
+ * @param newAniY			New y animation position
+ */
+void MultiSetAniXYZ(OBJECT *pMultiObj, int newAniX, int newAniY, int zPosition) {
+	MultiSetAniXY(pMultiObj, newAniX, newAniY);
+	MultiSetZPosition(pMultiObj, zPosition);
+}
+
+/**
  * Sets the x anim position of all pieces of a multi-part object.
  * @param pMultiObj			Multi-part object whose x position is to be changed
  * @param newAniX			New x animation position
