@@ -958,7 +958,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 				updateSpeechVolume(newValue);
 			}
 		}
-
+		_musicVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
 		break;
 	}
 	case kSfxVolumeChanged: {
@@ -973,7 +973,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		if (_guioptions.contains(GUIO_LINKSPEECHTOSFX)) {
 			updateSpeechVolume(newValue);
 		}
-
+		_sfxVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
 		break;
 	}
 	case kSpeechVolumeChanged: {
@@ -988,7 +988,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 				updateMusicVolume(newValue);
 			}
 		}
-
+		_speechVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
 		break;
 	}
 	case kMuteAllChanged:
@@ -1676,6 +1676,8 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _("Music volume:"));
 	else
 		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _c("Music volume:", "lowres"));
+	if (ConfMan.isKeyTemporary("music_volume")) 
+		_musicVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
 	_musicVolumeSlider = new SliderWidget(boss, prefix + "vcMusicSlider", Common::U32String(), kMusicVolumeChanged);
 	_musicVolumeLabel = new StaticTextWidget(boss, prefix + "vcMusicLabel", Common::U32String("100%"), Common::U32String(), ThemeEngine::kFontStyleBold, Common::UNK_LANG, false);
 	_musicVolumeSlider->setMinValue(0);
@@ -1688,6 +1690,8 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 		_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _("SFX volume:"), _("Special sound effects volume"));
 	else
 		_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _c("SFX volume:", "lowres"), _("Special sound effects volume"));
+	if (ConfMan.isKeyTemporary("sfx_volume"))
+		_sfxVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 	_sfxVolumeSlider = new SliderWidget(boss, prefix + "vcSfxSlider", _("Special sound effects volume"), kSfxVolumeChanged);
 	_sfxVolumeLabel = new StaticTextWidget(boss, prefix + "vcSfxLabel", Common::U32String("100%"), Common::U32String(), ThemeEngine::kFontStyleBold, Common::UNK_LANG, false);
 	_sfxVolumeSlider->setMinValue(0);
@@ -1698,6 +1702,8 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _("Speech volume:"));
 	else
 		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _c("Speech volume:", "lowres"));
+	if (ConfMan.isKeyTemporary("speech_volume"))
+		_speechVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
 	_speechVolumeSlider = new SliderWidget(boss, prefix + "vcSpeechSlider", Common::U32String(), kSpeechVolumeChanged);
 	_speechVolumeLabel = new StaticTextWidget(boss, prefix + "vcSpeechLabel", Common::U32String("100%"), Common::U32String(), ThemeEngine::kFontStyleBold, Common::UNK_LANG, false);
 	_speechVolumeSlider->setMinValue(0);
