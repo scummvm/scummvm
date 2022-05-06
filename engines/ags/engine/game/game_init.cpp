@@ -363,7 +363,6 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	//
 	// 3. Allocate and init game objects
 	//
-	_G(charcache) = (CharacterCache *)calloc(1, sizeof(CharacterCache) * game.numcharacters + 5);
 	_GP(charextra).resize(game.numcharacters);
 	_GP(mls).resize(game.numcharacters + MAX_ROOM_OBJECTS + 1);
 	init_game_drawdata();

@@ -271,14 +271,8 @@ void unload_old_room() {
 	for (size_t i = 0; i < _GP(thisroom).LocalVariables.size() && i < MAX_GLOBAL_VARIABLES; ++i)
 		_G(croom)->interactionVariableValues[i] = _GP(thisroom).LocalVariables[i].Value;
 
-	// wipe the character cache when we change rooms
+	// ensure that any half-moves (eg. with scaled movement) are stopped
 	for (ff = 0; ff < _GP(game).numcharacters; ff++) {
-		if (_G(charcache)[ff].inUse) {
-			delete _G(charcache)[ff].image;
-			_G(charcache)[ff].image = nullptr;
-			_G(charcache)[ff].inUse = 0;
-		}
-		// ensure that any half-moves (eg. with scaled movement) are stopped
 		_GP(charextra)[ff].xwas = INVALID_X;
 	}
 

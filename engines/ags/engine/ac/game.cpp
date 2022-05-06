@@ -407,9 +407,6 @@ void unload_game_file() {
 
 	_GP(views).clear();
 
-	free(_G(charcache));
-	_G(charcache) = nullptr;
-
 	if (_G(splipsync) != nullptr) {
 		for (int i = 0; i < _G(numLipLines); ++i) {
 			free(_G(splipsync)[i].endtimeoffs);
@@ -1355,8 +1352,8 @@ void game_sprite_updated(int sprnum) {
 	}
 	// character cache
 	for (size_t i = 0; i < (size_t)_GP(game).numcharacters; ++i) {
-		if (_G(charcache)[i].sppic == sprnum)
-			_G(charcache)[i].sppic = -1;
+		if (_GP(charcache)[i].sppic == sprnum)
+			_GP(charcache)[i].sppic = -1;
 	}
 	// gui backgrounds
 	for (size_t i = 0; i < (size_t)_GP(game).numgui; ++i) {
@@ -1391,8 +1388,8 @@ void game_sprite_deleted(int sprnum) {
 	}
 	// character cache
 	for (size_t i = 0; i < (size_t)_GP(game).numcharacters; ++i) {
-		if (_G(charcache)[i].sppic == sprnum)
-			_G(charcache)[i].sppic = -1;
+		if (_GP(charcache)[i].sppic == sprnum)
+			_GP(charcache)[i].sppic = -1;
 	}
 	// gui backgrounds
 	for (size_t i = 0; i < (size_t)_GP(game).numgui; ++i) {

@@ -114,6 +114,8 @@ void on_roomviewport_changed(Viewport *view);
 void detect_roomviewport_overlaps(size_t z_index);
 // Updates drawing settings if room camera's size has changed
 void on_roomcamera_changed(Camera *cam);
+// Marks particular object as need too update the texture
+void mark_object_changed(int objid);
 
 // whether there are currently remnants of a DisplaySpeech
 void mark_screen_dirty();

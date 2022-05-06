@@ -200,8 +200,8 @@ void SetObjectBaseline(int obn, int basel) {
 	if (!is_valid_object(obn)) quit("!SetObjectBaseline: invalid object number specified");
 	// baseline has changed, invalidate the cache
 	if (_G(objs)[obn].baseline != basel) {
-		_G(objcache)[obn].ywas = -9999;
 		_G(objs)[obn].baseline = basel;
+		mark_object_changed(obn);
 	}
 }
 
@@ -411,8 +411,7 @@ void SetObjectIgnoreWalkbehinds(int cha, int clik) {
 	_G(objs)[cha].flags &= ~OBJF_NOWALKBEHINDS;
 	if (clik)
 		_G(objs)[cha].flags |= OBJF_NOWALKBEHINDS;
-	// clear the cache
-	_G(objcache)[cha].ywas = -9999;
+	mark_object_changed(cha);
 }
 
 void RunObjectInteraction(int aa, int mood) {

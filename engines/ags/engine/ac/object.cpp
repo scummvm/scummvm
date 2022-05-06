@@ -333,7 +333,7 @@ void Object_SetManualScaling(ScriptObject *objj, bool on) {
 	if (on) _G(objs)[objj->id].flags &= ~OBJF_USEROOMSCALING;
 	else _G(objs)[objj->id].flags |= OBJF_USEROOMSCALING;
 	// clear the cache
-	_G(objcache)[objj->id].ywas = -9999;
+	mark_object_changed(objj->id);
 }
 
 void Object_SetIgnoreScaling(ScriptObject *objj, int newval) {

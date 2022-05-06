@@ -38,6 +38,7 @@
 #include "ags/shared/gui/gui_textbox.h"
 #include "ags/shared/script/cc_common.h"
 #include "ags/shared/util/directory.h"
+#include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/character_extras.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
@@ -237,6 +238,7 @@ Globals::Globals() {
 	_scrHotspot = new ScriptHotspot[MAX_ROOM_HOTSPOTS];
 	_scrRegion = new ScriptRegion[MAX_ROOM_REGIONS];
 	_scrInv = new ScriptInvItem[MAX_INV];
+	_charcache = new std::vector<CharacterCache>();
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
 	_charextra = new std::vector<CharacterExtras>();
 	_mls = new std::vector<MoveList>();
@@ -495,6 +497,7 @@ Globals::~Globals() {
 	delete[] _scrHotspot;
 	delete[] _scrRegion;
 	delete[] _scrInv;
+	delete _charcache;
 	delete[] _objcache;
 	delete _charextra;
 	delete _mls;

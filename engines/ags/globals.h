@@ -750,7 +750,9 @@ public:
 	ScriptInvItem *_scrInv;
 	ScriptDialog *_scrDialog = nullptr;
 	std::vector<ViewStruct> *_views;
-	CharacterCache *_charcache = nullptr;
+	// Cached character and object states, used to determine
+	// whether these require texture update
+	std::vector<CharacterCache> *_charcache;
 	ObjectCache *_objcache;
 	std::vector<CharacterExtras> *_charextra;
 	std::vector<MoveList> *_mls;
