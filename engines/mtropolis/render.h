@@ -30,6 +30,7 @@
 namespace Graphics {
 
 class ManagedSurface;
+struct Surface;
 
 } // End of namespace Graphics
 
@@ -111,6 +112,8 @@ namespace Render {
 
 uint32 resolveRGB(uint8 r, uint8 g, uint8 b, const Graphics::PixelFormat &fmt);
 void renderProject(Runtime *runtime, Window *mainWindow);
+void convert32To16(Graphics::Surface &destSurface, const Graphics::Surface &srcSurface);
+void convert16To32(Graphics::Surface &destSurface, const Graphics::Surface &srcSurface);
 
 } // End of namespace Render
 

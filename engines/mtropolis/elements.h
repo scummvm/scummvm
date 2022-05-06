@@ -34,6 +34,7 @@ class VideoDecoder;
 
 namespace MTropolis {
 
+class CachedImage;
 struct ElementLoaderContext;
 
 class GraphicElement : public VisualElement {
@@ -123,7 +124,7 @@ private:
 	bool _cacheBitmap;
 	uint32 _assetID;
 
-	Common::SharedPtr<Graphics::Surface> _imageSurface;
+	Common::SharedPtr<CachedImage> _cachedImage;
 
 	Runtime *_runtime;
 };

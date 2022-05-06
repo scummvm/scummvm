@@ -2077,6 +2077,8 @@ public:
 	virtual bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) = 0;
 	virtual void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const = 0;
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+
 	virtual DynamicValueWriteProxy createWriteProxy();
 
 private:

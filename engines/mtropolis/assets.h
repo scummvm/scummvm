@@ -88,8 +88,27 @@ private:
 	size_t _streamIndex;
 };
 
+class CachedImage {
+public:
+	CachedImage();
+
+	const Common::SharedPtr<Graphics::Surface> &optimize(Runtime *runtime);
+
+	void resetSurface(ColorDepthMode colorDepth, const Common::SharedPtr<Graphics::Surface> &surface);
+
+private:
+	Common::SharedPtr<Graphics::Surface> _surface;
+	Common::SharedPtr<Graphics::Surface> _optimizedSurface;
+
+	ColorDepthMode _colorDepth;
+	bool _isOptimized;
+};
+
 class ImageAsset : public Asset {
 public:
+	ImageAsset();
+	~ImageAsset();
+
 	bool load(AssetLoaderContext &context, const Data::ImageAsset &data);
 	AssetType getAssetType() const override;
 
@@ -105,7 +124,7 @@ public:
 	size_t getStreamIndex() const;
 	ImageFormat getImageFormat() const;
 
-	const Common::SharedPtr<Graphics::Surface> &loadContent();
+	const Common::SharedPtr<CachedImage> &loadAndCacheImage(Runtime *runtime);
 
 private:
 	Rect16 _rect;
@@ -115,7 +134,7 @@ private:
 	size_t _streamIndex;
 	ImageFormat _imageFormat;
 
-	Common::SharedPtr<Graphics::Surface> _surface;
+	Common::SharedPtr<CachedImage> _imageCache;
 };
 
 
