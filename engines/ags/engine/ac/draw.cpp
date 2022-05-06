@@ -1876,9 +1876,8 @@ void draw_gui_and_overlays() {
 
 		over.ddb->SetStretch(over.scaleWidth, over.scaleHeight);
 		over.ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(over.transparency));
-		int tdxp, tdyp;
-		get_overlay_position(over, &tdxp, &tdyp);
-		add_to_sprite_list(over.ddb, tdxp, tdyp, over.zorder, false, -1);
+		Point pos = get_overlay_position(over);
+		add_to_sprite_list(over.ddb, pos.X, pos.Y, over.zorder, false);
 	}
 
 	// Add GUIs
