@@ -43,10 +43,6 @@
 
 namespace AGS3 {
 
-#if AGS_PLATFORM_OS_WINDOWS && !AGS_PLATFORM_DEBUG
-#define USE_CUSTOM_EXCEPTION_HANDLER
-#endif
-
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -185,6 +181,7 @@ void main_print_help() {
 }
 
 int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
+	int datafile_argv = 0;
 	for (int ee = 1; ee < argc; ++ee) {
 		const char *arg = argv[ee];
 		//
@@ -283,11 +280,12 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 				cfg["log"][logarg.Left(split_at)] = logarg.Mid(split_at + 1);
 			else
 				cfg["log"][logarg] = "";
-		}
+		} else if (arg[0] != '-') datafile_argv = ee;
 	}
 
-	// assign standard path (defined in their own platform implementation)
-	_G(cmdGameDataPath) = _G(psp_game_file_name);
+	if (datafile_argv > 0) {
+		_G(cmdGameDataPath) = _G(platform)->GetCommandArg(datafile_argv);
+	}
 
 	if (_G(tellInfoKeys).size() > 0)
 		_G(justTellInfo) = true;

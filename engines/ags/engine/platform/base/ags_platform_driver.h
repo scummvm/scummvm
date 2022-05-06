@@ -86,6 +86,8 @@ struct AGSPlatformDriver
 	virtual void DisplayAlert(const char *, ...) = 0;
 	virtual void AttachToParentConsole();
 	virtual int  GetLastSystemError();
+	// Optionally fill in config tree from the platform-specific config source
+	virtual void ReadConfiguration(Shared::ConfigTree &cfg) {}
 	// Get root directory for storing per-game shared data
 	virtual FSLocation GetAllUsersDataDirectory() {
 		return FSLocation(".");

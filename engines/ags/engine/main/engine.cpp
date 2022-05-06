@@ -792,10 +792,13 @@ void engine_prepare_to_start_game() {
 
 	engine_setup_scsystem_auxiliary();
 
-#if AGS_PLATFORM_OS_ANDROID
-	if (psp_load_latest_savegame)
-		selectLatestSavegame();
+	if (_GP(usetup).load_latest_save) {
+#ifndef AGS_PLATFORM_SCUMMVM
+		int slot = GetLastSaveSlot();
+		if (slot >= 0)
+			loadSaveGameOnStartup = get_save_game_path(slot);
 #endif
+	}
 }
 
 // TODO: move to test unit
@@ -961,11 +964,9 @@ void engine_read_config(ConfigTree &cfg) {
 	        Path::ComparePaths(user_cfg_file, user_global_cfg_file) != 0)
 		IniUtil::Read(user_cfg_file, cfg);
 
-	// Apply overriding options from mobile port settings
+	// Apply overriding options from platform settings
 	// TODO: normally, those should be instead stored in the same config file in a uniform way
-	// NOTE: the variable is historically called "ignore" but we use it in "override" meaning here
-	if (_G(psp_ignore_acsetup_cfg_file))
-		override_config_ext(cfg);
+	override_config_ext(cfg);
 }
 
 // Gathers settings from all available sources into single ConfigTree
