@@ -203,9 +203,16 @@ void BoyzEngine::loadAssets() {
 	_weaponMaxAmmo[1] = 10;
 	_weaponMaxAmmo[2] = 2; // large shotgun
 	_weaponMaxAmmo[3] = 8;
-	_weaponMaxAmmo[4] = 0;
+	_weaponMaxAmmo[4] = 6; // pistol?
 	_weaponMaxAmmo[5] = 6; // small shotgun
 	_weaponMaxAmmo[6] = 0;
+
+	_maxHealth = 100;
+
+	// Set initial health for the team
+	for (int i = 0; i < 7; i++) {
+		_healthTeam[i] = _maxHealth;
+	}
 
 	targets->free();
 	delete targets;

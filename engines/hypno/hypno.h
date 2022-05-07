@@ -564,6 +564,7 @@ public:
 	void runMainMenu(Code *code);
 
 	int _ammoTeam[6];
+	int _healthTeam[7];
 	Graphics::Surface _healthBar[7];
 	Graphics::Surface _ammoBar[7];
 	Graphics::Surface _portrait[7];

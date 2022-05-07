@@ -104,25 +104,33 @@ void BoyzEngine::drawPlayer() {
 void BoyzEngine::drawHealth() {
 	updateFromScript();
 
-	Common::Rect healthBarBox(0, 0, _healthBar[_currentActor].w, _healthBar[_currentActor].h/2);
+	float w = float(_healthTeam[_currentActor]) / float(_maxHealth);
+	Common::Rect healthBarBox(0, 0, int((_healthBar[_currentActor].w - 3) * w), _healthBar[_currentActor].h / 2);
+
 	uint32 c = kHypnoColorWhiteOrBlue; // white
 	_compositeSurface->fillRect(healthBarBox, c);
+
+	for (int i = 0; i < _maxHealth; i = i + 10) {
+		int x = (_healthBar[_currentActor].w - 3) * float(i) / float(_maxHealth);
+		_compositeSurface->drawLine(x, 2, x, 6, 0);
+	}
+
 	drawImage(_healthBar[_currentActor], 0, 0, true);
 }
 
 void BoyzEngine::drawAmmo() {
 	updateFromScript();
 
-	float w = _ammoBar[_currentWeapon].w / _weaponMaxAmmo[_currentWeapon];
+	float w = float(_ammoBar[_currentWeapon].w) / float(_weaponMaxAmmo[_currentWeapon]);
 
-	Common::Rect ammoBarBox(320 - int(_ammoTeam[_currentActor] * w), 0, 320, _ammoBar[_currentActor].h/2);
+	Common::Rect ammoBarBox(320 - int(_ammoTeam[_currentActor] * w), 0, 320, _ammoBar[_currentActor].h / 2);
 	uint32 c = kHypnoColorGreen; // green
 	_compositeSurface->fillRect(ammoBarBox, c);
 
 	drawImage(_ammoBar[_currentActor], 320 - _ammoBar[_currentWeapon].w, 0, true);
 	for (int i = 1; i < _weaponMaxAmmo[_currentWeapon]; i++) {
 		int x = 320 - _ammoBar[_currentWeapon].w + int (i * w);
-		_compositeSurface->drawLine(x, 2, x, 5, 0);
+		_compositeSurface->drawLine(x, 2, x, 6, 0);
 	}
 }
 
@@ -130,6 +138,8 @@ void BoyzEngine::hitPlayer() {
 	uint32 c = kHypnoColorRed; // red
 	_compositeSurface->fillRect(Common::Rect(0, 0, _screenW, _screenH), c);
 	drawScreen();
+	if (!_infiniteHealthCheat)
+		_healthTeam[_currentActor] = _healthTeam[_currentActor] - 10;
 	if (!_hitSound.empty())
 		playSound(_soundPath + _hitSound, 1, 11025);
 }
@@ -202,8 +212,8 @@ void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
 
 	if (_ammoTeam[_currentActor] == 0)
 		return; // TODO: out of ammo sound is missing
-
-	_ammoTeam[_currentActor]--;
+	if (!_infiniteAmmoCheat)
+		_ammoTeam[_currentActor]--;
 	playSound(_soundPath + _weaponShootSound[_currentWeapon], 1);
 	incShotsFired();
 	int i = detectTarget(mousePos);
