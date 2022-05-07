@@ -45,18 +45,18 @@ void Overlay_SetY(ScriptOverlay *scover, int newy);
 int  Overlay_GetValid(ScriptOverlay *scover);
 ScriptOverlay *Overlay_CreateGraphical(int x, int y, int slot, int transparent);
 ScriptOverlay *Overlay_CreateTextual(int x, int y, int width, int font, int colour, const char *text);
-ScreenOverlay *Overlay_CreateGraphicCore(int x, int y, int slot, bool transparent);
-ScreenOverlay *Overlay_CreateTextCore(int x, int y, int width, int font, int text_color,
+ScreenOverlay *Overlay_CreateGraphicCore(bool room_layer, int x, int y, int slot, bool transparent);
+ScreenOverlay *Overlay_CreateTextCore(bool room_layer, int x, int y, int width, int font, int text_color,
 	const char *text, int disp_type, int allow_shrink);
 
 int  find_overlay_of_type(int type);
 void remove_screen_overlay(int type);
-// Calculates overlay position in screen coordinates
+// Calculates overlay position in its respective layer (screen or room)
 Point get_overlay_position(const ScreenOverlay &over);
-size_t add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, bool alphaChannel = false);
-size_t  add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic_offx, int pic_offy, bool alphaChannel = false);
+size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Shared::Bitmap *piccy, bool alphaChannel = false);
+size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Shared::Bitmap *piccy, int pic_offx, int pic_offy, bool alphaChannel = false);
 void remove_screen_overlay_index(size_t over_idx);
-// Creates and registers a managed script object for existing overlay object;
+// Creates and registers a managed script object for // Creates and registers a managed script object for existing overlay object;
 // optionally adds an internal engine reference to prevent object's disposal
 ScriptOverlay *create_scriptoverlay(ScreenOverlay &over, bool internal_ref = false);
 void recreate_overlay_ddbs();

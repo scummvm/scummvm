@@ -70,7 +70,8 @@ struct DisplayVars {
 // Pass yy = -1 to find Y co-ord automatically
 // allowShrink = 0 for none, 1 for leftwards, 2 for rightwards
 // pass blocking=2 to create permanent overlay
-ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont, int asspch, int isThought, int allowShrink, bool overlayPositionFixed) {
+ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp_type, int usingfont,
+		int asspch, int isThought, int allowShrink, bool overlayPositionFixed, bool roomlayer) {
 	const bool use_speech_textwindow = (asspch < 0) && (_GP(game).options[OPT_SPEECHTYPE] >= 2);
 	const bool use_thought_gui = (isThought) && (_GP(game).options[OPT_THOUGHTGUI] > 0);
 
@@ -252,7 +253,7 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 	default: ovrtype = disp_type; break; // must be precreated overlay id
 	}
 
-	size_t nse = add_screen_overlay(xx, yy, ovrtype, text_window_ds, adjustedXX - xx, adjustedYY - yy, alphaChannel);
+	size_t nse = add_screen_overlay(roomlayer, xx, yy, ovrtype, text_window_ds, adjustedXX - xx, adjustedYY - yy, alphaChannel);
 	// we should not delete text_window_ds here, because it is now owned by Overlay
 
 	if (disp_type >= DISPLAYTEXT_NORMALOVERLAY) {

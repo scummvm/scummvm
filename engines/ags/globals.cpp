@@ -238,6 +238,7 @@ Globals::Globals() {
 	_scrInv = new ScriptInvItem[MAX_INV];
 	_charcache = new std::vector<ObjectCache>();
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
+	_screenovercache = new std::vector<Point>();
 	_charextra = new std::vector<CharacterExtras>();
 	_mls = new std::vector<MoveList>();
 	_views = new std::vector<ViewStruct>();
@@ -497,6 +498,7 @@ Globals::~Globals() {
 	delete[] _scrInv;
 	delete _charcache;
 	delete[] _objcache;
+	delete _screenovercache;
 	delete _charextra;
 	delete _mls;
 	delete _views;

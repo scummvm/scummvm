@@ -754,6 +754,7 @@ public:
 	// whether these require texture update
 	std::vector<ObjectCache> *_charcache;
 	ObjectCache *_objcache;
+	std::vector<Point> *_screenovercache;
 	std::vector<CharacterExtras> *_charextra;
 	std::vector<MoveList> *_mls;
 

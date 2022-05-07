@@ -443,6 +443,9 @@ void clear_drawobj_cache() {
 		_G(objcache)[i].image = nullptr;
 	}
 
+	// room overlays cache
+	_GP(screenovercache).clear();
+
 	// cleanup Character + Room object textures
 	for (auto &o : _GP(actsps)) o = ObjTexture();
 	for (auto &o : _GP(walkbehindobj)) o = ObjTexture();
@@ -1672,6 +1675,17 @@ void add_walkbehind_image(size_t index, Shared::Bitmap *bmp, int x, int y) {
 	_GP(walkbehindobj)[index].Pos = Point(x, y);
 }
 
+// Add active room overlays to the sprite list
+static void add_roomovers_for_drawing() {
+	for (size_t i = 0; i < _GP(screenover).size(); ++i) {
+		auto &over = _GP(screenover)[i];
+		if (!over.IsRoomLayer()) continue; // not a room layer
+		if (over.transparency == 255) continue; // skip fully transparent
+		Point pos = get_overlay_position(over);
+		add_to_sprite_list(over.ddb, pos.X, pos.Y, over.zorder, false);
+	}
+}
+
 // Compiles a list of room sprites (characters, objects, background)
 void prepare_room_sprites() {
 	// Background sprite is required for the non-software renderers always,
@@ -1699,6 +1713,7 @@ void prepare_room_sprites() {
 	if ((_G(debug_flags) & DBG_NOOBJECTS) == 0) {
 		prepare_objects_for_drawing();
 		prepare_characters_for_drawing();
+		add_roomovers_for_drawing();
 
 		if ((_G(debug_flags) & DBG_NODRAWSPRITES) == 0) {
 			_G(our_eip) = 34;
@@ -1860,22 +1875,10 @@ void draw_gui_and_overlays() {
 
 	const bool is_software_mode = !_G(gfxDriver)->HasAcceleratedTransform();
 	// Add active overlays to the sprite list
-	if (_GP(overlaybmp).size() < _GP(screenover).size())
-		_GP(overlaybmp).resize(_GP(screenover).size());
 	for (size_t i = 0; i < _GP(screenover).size(); ++i) {
 		auto &over = _GP(screenover)[i];
+		if (over.IsRoomLayer()) continue; // not a ui layer
 		if (over.transparency == 255) continue; // skip fully transparent
-		if (_GP(screenover)[i].HasChanged()) {
-			// For software mode - prepare transformed bitmap if necessary
-			Bitmap *use_bmp = is_software_mode ?
-				transform_sprite(over.pic, over.HasAlphaChannel(), _GP(overlaybmp)[i], Size(over.scaleWidth, over.scaleHeight)) :
-				over.pic;
-			over.ddb = recycle_ddb_bitmap(over.ddb, use_bmp, over.HasAlphaChannel());
-			over.ClearChanged();
-		}
-
-		over.ddb->SetStretch(over.scaleWidth, over.scaleHeight);
-		over.ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(over.transparency));
 		Point pos = get_overlay_position(over);
 		add_to_sprite_list(over.ddb, pos.X, pos.Y, over.zorder, false);
 	}
@@ -2091,6 +2094,52 @@ static void construct_ui_view() {
 	clear_draw_list();
 }
 
+// Prepares overlay textures;
+// but does not put them on screen yet - that's done in respective construct_*_view functions
+static void construct_overlays() {
+	const bool is_software_mode = !_G(gfxDriver)->HasAcceleratedTransform();
+	if (_GP(overlaybmp).size() < _GP(screenover).size()) {
+		_GP(overlaybmp).resize(_GP(screenover).size());
+		_GP(screenovercache).resize(_GP(screenover).size());
+	}
+	for (size_t i = 0; i < _GP(screenover).size(); ++i) {
+		auto &over = _GP(screenover)[i];
+		if (over.transparency == 255) continue; // skip fully transparent
+
+		bool has_changed = over.HasChanged();
+		if (over.IsRoomLayer() && (_G(walkBehindMethod) == DrawOverCharSprite)) {
+			Point pos = get_overlay_position(over);
+			has_changed |= (pos.X != _GP(screenovercache)[i].X || pos.Y != _GP(screenovercache)[i].Y);
+			_GP(screenovercache)[i].X = pos.X; _GP(screenovercache)[i].Y = pos.Y;
+		}
+
+		if (has_changed) {
+			// For software mode - prepare transformed bitmap if necessary
+			Bitmap *use_bmp = is_software_mode ?
+				transform_sprite(over.pic, over.HasAlphaChannel(), _GP(overlaybmp)[i], Size(over.scaleWidth, over.scaleHeight)) :
+				over.pic;
+
+			if ((_G(walkBehindMethod) == DrawOverCharSprite) && over.IsRoomLayer()) {
+				if (use_bmp != _GP(overlaybmp)[i].get()) {
+					recycle_bitmap(_GP(overlaybmp)[i], over.pic->GetColorDepth(), over.pic->GetWidth(), over.pic->GetHeight(), true);
+					_GP(overlaybmp)[i]->Blit(over.pic);
+				}
+				Point pos = get_overlay_position(over);
+				walkbehinds_cropout(_GP(overlaybmp)[i].get(), pos.X, pos.Y, over.zorder);
+				use_bmp = _GP(overlaybmp)[i].get();
+			}
+
+			over.ddb = recycle_ddb_bitmap(over.ddb, use_bmp, over.HasAlphaChannel());
+			over.ClearChanged();
+		}
+
+		assert(over.ddb); // Test for missing texture, might happen if not marked for update
+		if (!over.ddb) continue;
+		over.ddb->SetStretch(over.scaleWidth, over.scaleHeight);
+		over.ddb->SetAlpha(GfxDef::LegacyTrans255ToAlpha255(over.transparency));
+	}
+}
+
 void construct_game_scene(bool full_redraw) {
 	_G(gfxDriver)->ClearDrawLists();
 
@@ -2110,6 +2159,9 @@ void construct_game_scene(bool full_redraw) {
 	// Possible reasons to invalidate whole screen for the software renderer
 	if (full_redraw || _GP(play).screen_tint > 0 || _GP(play).shakesc_length > 0)
 		invalidate_screen();
+
+	// Overlays may be both in rooms and ui layer, prepare their textures beforehand
+	construct_overlays();
 
 	// TODO: move to game update! don't call update during rendering pass!
 	// IMPORTANT: keep the order same because sometimes script may depend on it

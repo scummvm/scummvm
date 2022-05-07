@@ -2596,7 +2596,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			}
 			if (_GP(game).options[OPT_SPEECHTYPE] == 3)
 				overlay_x = 0;
-			_G(face_talking) = add_screen_overlay(overlay_x, ovr_yp, ovr_type, closeupface, closeupface_has_alpha);
+			_G(face_talking) = add_screen_overlay(false, overlay_x, ovr_yp, ovr_type, closeupface, closeupface_has_alpha);
 			_G(facetalkframe) = 0;
 			_G(facetalkwait) = viptr->loops[0].frames[0].speed + GetCharacterSpeechAnimationDelay(speakingChar);
 			_G(facetalkloop) = 0;

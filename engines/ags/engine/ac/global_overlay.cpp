@@ -36,8 +36,8 @@ void RemoveOverlay(int ovrid) {
 	remove_screen_overlay(ovrid);
 }
 
-int CreateGraphicOverlay(int x, int y, int slot, int trans) {
-	auto *over = Overlay_CreateGraphicCore(x, y, slot, trans != 0);
+int CreateGraphicOverlay(int xx, int yy, int slott, int trans) {
+	auto *over = Overlay_CreateGraphicCore(false, xx, yy, slott, trans);
 	return over ? over->type : 0;
 }
 
@@ -50,7 +50,7 @@ int CreateTextOverlay(int xx, int yy, int wii, int fontid, int text_color, const
 	} else  // allow DisplaySpeechBackground to be shrunk
 		allowShrink = 1;
 
-	auto *over = Overlay_CreateTextCore(xx, yy, wii, fontid, text_color, text, disp_type, allowShrink);
+	auto *over = Overlay_CreateTextCore(false, xx, yy, wii, fontid, text_color, text, disp_type, allowShrink);
 	return over ? over->type : 0;
 }
 
