@@ -5198,8 +5198,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		mapping = NoirMapping{"WHICHCD", WHICHCD, 0};
 		debug(7, "%s()", mapping.name);
 		break;
-	case 208: // WhichInventory is implemented differently in v3, checking notebookstate
-		warning("TODO: Implement WHICHINVENTORY v3");
+	case 208:
 		mapping = NoirMapping{"WHICHINVENTORY", WHICHINVENTORY, 0};
 		debug(7, "%s()", mapping.name);
 		break;

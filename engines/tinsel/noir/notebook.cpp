@@ -64,4 +64,8 @@ void Notebook::Show(bool isOpen) {
 	error("TODO: Implement Notebook::Show()");
 }
 
+bool Notebook::IsOpen() const {
+	return _state != BOOKSTATE::CLOSED;
+}
+
 } // End of namespace Tinsel

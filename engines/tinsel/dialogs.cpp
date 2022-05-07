@@ -57,6 +57,7 @@
 #include "tinsel/tinlib.h"
 #include "tinsel/tinsel.h" // For engine access
 #include "tinsel/token.h"
+#include "tinsel/noir/notebook.h"
 #include "tinsel/noir/sysreel.h"
 
 #include "common/textconsole.h"
@@ -1182,10 +1183,14 @@ bool Dialogs::InventoryActive() {
 }
 
 int Dialogs::WhichInventoryOpen() {
+	if (TinselVersion == 3 && _vm->_notebook->IsOpen()) {
+		return INV_NOTEBOOK;
+	}
 	if (_inventoryState != ACTIVE_INV)
 		return 0;
-	else
+	else {
 		return _activeInv;
+	}
 }
 
 /**************************************************************************/

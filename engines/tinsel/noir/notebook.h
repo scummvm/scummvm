@@ -64,6 +64,7 @@ public:
 	void EventToNotebook(PLR_EVENT event, bool p2, bool p3);
 	// Called from OPENNOTEBOOK
 	void Show(bool isOpen);
+	bool IsOpen() const;
 private:
 	const static uint32 MAX_ENTRIES = 100;
 	const static uint32 MAX_PAGES = 0x15;
