@@ -46,6 +46,53 @@
 
 namespace MTropolis {
 
+class MainWindow : public Window {
+public:
+	MainWindow(const WindowParameters &windowParams);
+
+	void onMouseDown(int32 x, int32 y, int mouseButton) override;
+	void onMouseMove(int32 x, int32 y) override;
+	void onMouseUp(int32 x, int32 y, int mouseButton) override;
+	void onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) override;
+
+private:
+	bool _mouseButtonStates[Actions::kMouseButtonCount];
+};
+
+MainWindow::MainWindow(const WindowParameters &windowParams) : Window(windowParams) {
+	for (int i = 0; i < Actions::kMouseButtonCount; i++)
+		_mouseButtonStates[i] = false;
+}
+
+void MainWindow::onMouseDown(int32 x, int32 y, int mouseButton) {
+	if (!_mouseButtonStates[mouseButton]) {
+		_mouseButtonStates[mouseButton] = true;
+
+		if (mouseButton == Actions::kMouseButtonLeft) {
+			_runtime->queueOSEvent(Common::SharedPtr<OSEvent>(new MouseInputEvent(kOSEventTypeMouseDown, x, y, static_cast<Actions::MouseButton>(mouseButton))));
+		}
+	}
+}
+
+void MainWindow::onMouseMove(int32 x, int32 y) {
+	_runtime->queueOSEvent(Common::SharedPtr<OSEvent>(new MouseInputEvent(kOSEventTypeMouseMove, x, y, Actions::kMouseButtonLeft)));
+}
+
+void MainWindow::onMouseUp(int32 x, int32 y, int mouseButton) {
+	if (_mouseButtonStates[mouseButton]) {
+		_mouseButtonStates[mouseButton] = false;
+
+		if (mouseButton == Actions::kMouseButtonLeft) {
+			_runtime->queueOSEvent(Common::SharedPtr<OSEvent>(new MouseInputEvent(kOSEventTypeMouseUp, x, y, static_cast<Actions::MouseButton>(mouseButton))));
+		}
+	}
+}
+
+void MainWindow::onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
+	_runtime->queueOSEvent(Common::SharedPtr<OSEvent>(new KeyboardInputEvent(kOSEventTypeKeyboard, evtType, repeat, keyEvt)));
+}
+
+
 class ModifierInnerScopeBuilder : public IStructuralReferenceVisitor {
 public:
 	ModifierInnerScopeBuilder(ObjectLinkingScope *scope);
@@ -2427,6 +2474,17 @@ void Structural::activate() {
 void Structural::deactivate() {
 }
 
+void Structural::recursiveCollectObjectsMatchingCriteria(Common::Array<Common::WeakPtr<RuntimeObject> > &results, bool (*evalFunc)(void *userData, RuntimeObject *object), void *userData, bool onlyEnabled) {
+	if (evalFunc(userData, this))
+		results.push_back(this->getSelfReference().lock());
+
+	for (const Common::SharedPtr<Structural> &child : _children)
+		child->recursiveCollectObjectsMatchingCriteria(results, evalFunc, userData, onlyEnabled);
+
+	for (const Common::SharedPtr<Modifier> &modifier : _modifiers)
+		modifier->recursiveCollectObjectsMatchingCriteria(results, evalFunc, userData, onlyEnabled);
+}
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 SupportStatus Structural::debugGetSupportStatus() const {
 	return kSupportStatusNone;
@@ -2748,6 +2806,47 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 	return kVThreadReturn;
 }
 
+KeyEventDispatch::KeyEventDispatch(const Common::SharedPtr<KeyboardInputEvent> &evt) : _dispatchIndex(0), _evt(evt) {
+}
+
+Common::Array<Common::WeakPtr<RuntimeObject> >& KeyEventDispatch::getKeyboardMessengerArray() {
+	return _keyboardMessengers;
+}
+
+bool KeyEventDispatch::keyboardMessengerFilterFunc(void *userData, RuntimeObject *object) {
+	if (!object->isModifier())
+		return false;
+
+	return static_cast<Modifier *>(object)->isKeyboardMessenger();
+}
+
+bool KeyEventDispatch::isTerminated() const {
+	return _dispatchIndex == _keyboardMessengers.size();
+}
+
+VThreadState KeyEventDispatch::continuePropagating(Runtime *runtime) {
+	KeyboardInputEvent *evt = _evt.get();
+
+	// This is kind of messy but we have to guard against situations where a key event triggers a clone
+	// which may itself contain a keyboard messenger.  (Do multiple messengers respond to keystrokes?)
+	while (_dispatchIndex < _keyboardMessengers.size()) {
+		Common::SharedPtr<RuntimeObject> obj = _keyboardMessengers[_dispatchIndex++].lock();
+		assert(obj->isModifier());
+
+		Modifier *modifier = static_cast<Modifier *>(obj.get());
+		assert(modifier->isKeyboardMessenger());
+
+		KeyboardMessengerModifier *msgr = static_cast<KeyboardMessengerModifier *>(modifier);
+		Common::String charStr;
+		if (msgr->checkKeyEventTrigger(runtime, evt->getKeyEventType(), evt->isRepeat(), evt->getKeyState(), charStr)) {
+			msgr->dispatchMessage(runtime, charStr);
+			return kVThreadReturn;
+		}
+	}
+
+	return kVThreadReturn;
+}
+
 void ScheduledEvent::cancel() {
 	if (_scheduler)
 		_scheduler->removeEvent(this);
@@ -2855,12 +2954,56 @@ const byte DefaultCursor::_cursorPalette[9] = {
 	255, 255, 255
 };
 
+
+OSEvent::OSEvent(OSEventType eventType) : _eventType(eventType) {
+}
+
+OSEvent::~OSEvent() {
+}
+
+OSEventType OSEvent::getEventType() const {
+	return _eventType;
+}
+
+MouseInputEvent::MouseInputEvent(OSEventType eventType, int32 x, int32 y, Actions::MouseButton button) : OSEvent(eventType), _x(x), _y(y), _button(button) {
+}
+
+int32 MouseInputEvent::getX() const {
+	return _x;
+}
+
+int32 MouseInputEvent::getY() const {
+	return _y;
+}
+
+Actions::MouseButton MouseInputEvent::getButton() const {
+	return _button;
+}
+
+
+KeyboardInputEvent::KeyboardInputEvent(OSEventType osEventType, Common::EventType keyEventType, bool repeat, const Common::KeyState &keyEvt)
+	: OSEvent(osEventType), _keyEventType(keyEventType), _repeat(repeat), _keyEvt(keyEvt) {
+}
+
+Common::EventType KeyboardInputEvent::getKeyEventType() const {
+	return _keyEventType;
+}
+
+bool KeyboardInputEvent::isRepeat() const {
+	return _repeat;
+}
+
+const Common::KeyState &KeyboardInputEvent::getKeyState() const {
+	return _keyEvt;
+}
+
 Runtime::SceneStackEntry::SceneStackEntry() {
 }
 
 Runtime::Runtime(OSystem *system) : _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
 									_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
-									_system(system), _lastFrameCursor(nullptr), _defaultCursor(new DefaultCursor()), _platform(kProjectPlatformUnknown) {
+									_system(system), _lastFrameCursor(nullptr), _defaultCursor(new DefaultCursor()), _platform(kProjectPlatformUnknown),
+									_cachedMousePosition(Point16::create(0, 0)), _trackedMouseOutside(false) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -2906,6 +3049,53 @@ bool Runtime::runFrame() {
 		if (state != kVThreadReturn) {
 			// Still doing blocking tasks
 			break;
+		}
+
+		if (_osEventQueue.size() > 0) {
+			Common::SharedPtr<OSEvent> evt = _osEventQueue[0];
+			_osEventQueue.remove_at(0);
+
+			OSEventType evtType = evt->getEventType();
+			switch (evtType)
+			{
+			case kOSEventTypeKeyboard:
+				if (_project) {
+					Common::SharedPtr<KeyEventDispatch> dispatch(new KeyEventDispatch(evt.staticCast<KeyboardInputEvent>()));
+
+					// We don't want to filter by enabled because of the edge case where a keyboard
+					// messenger fires and disables or enables other keyboard messengers.
+					// Not sure this is actually possible though... can multiple messengers respond to
+					// the same keystroke?  Not sure.
+					_project->recursiveCollectObjectsMatchingCriteria(dispatch->getKeyboardMessengerArray(), KeyEventDispatch::keyboardMessengerFilterFunc, dispatch.get(), false);
+
+					if (dispatch->getKeyboardMessengerArray().size() > 0) {
+						DispatchKeyTaskData *taskData = _vthread->pushTask("Runtime::dispatchKeyTask", this, &Runtime::dispatchKeyTask);
+						taskData->dispatch = dispatch;
+					}
+				}
+				break;
+			case kOSEventTypeMouseDown:
+			case kOSEventTypeMouseUp:
+			case kOSEventTypeMouseMove: {
+					MouseInputEvent *mouseEvt = static_cast<MouseInputEvent *>(evt.get());
+
+					// Maybe shouldn't post the update mouse button task if non-left buttons are pressed?
+					if ((evtType == kOSEventTypeMouseDown || evtType == kOSEventTypeMouseUp) && mouseEvt->getButton() == Actions::kMouseButtonLeft) {
+						UpdateMouseStateTaskData *taskData = _vthread->pushTask("Runtime::updateMouseStateTask", this, &Runtime::updateMouseStateTask);
+						taskData->mouseDown = (evtType == kOSEventTypeMouseDown);
+					}
+
+					// Pushed second, so this happens first
+					if (mouseEvt->getX() != _cachedMousePosition.x || mouseEvt->getY() != _cachedMousePosition.y) {
+						UpdateMousePositionTaskData *taskData = _vthread->pushTask("Runtime::updateMousePositionTask1", this, &Runtime::updateMousePositionTask1);
+						taskData->x = mouseEvt->getX();
+						taskData->y = mouseEvt->getY();
+					}
+				} break;
+			default:
+				break;
+			}
+			continue;
 		}
 
 		if (_queuedProjectDesc) {
@@ -3415,6 +3605,68 @@ void Runtime::recursiveActivateStructural(Structural *structural) {
 	}
 }
 
+bool Runtime::isStructuralMouseInteractive(Structural *structural) {
+	for (const Common::SharedPtr<Modifier> &modifier : structural->getModifiers()) {
+		if (isModifierMouseInteractive(modifier.get()))
+			return true;
+	}
+
+	return false;
+}
+
+bool Runtime::isModifierMouseInteractive(Modifier *modifier) {
+	const EventIDs::EventID evtIDs[] = {
+		EventIDs::kMouseUp,
+		EventIDs::kMouseDown,
+		EventIDs::kMouseOver,
+		EventIDs::kMouseOutside,
+		EventIDs::kMouseTrackedInside,
+		EventIDs::kMouseTracking,
+		EventIDs::kMouseTrackedOutside,
+		EventIDs::kMouseUpInside,
+		EventIDs::kMouseUpOutside
+	};
+
+	for (EventIDs::EventID evtID : evtIDs) {
+		if (modifier->respondsToEvent(Event::create(evtID, 0)))
+			return true;
+	}
+
+	IModifierContainer *propagationContainer = modifier->getMessagePropagationContainer();
+	if (propagationContainer) {
+		for (const Common::SharedPtr<Modifier> &child : propagationContainer->getModifiers()) {
+			if (isModifierMouseInteractive(child.get()))
+				return true;
+		}
+	}
+
+	return false;
+}
+
+void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, Structural *candidate, int32 relativeX, int32 relativeY) {
+	int32 childRelativeX = relativeX;
+	int32 childRelativeY = relativeY;
+	if (candidate->isElement()) {
+		Element *element = static_cast<Element *>(candidate);
+		if (element->isVisual()) {
+			VisualElement *visual = static_cast<VisualElement *>(candidate);
+			int layer = visual->getLayer();
+			if (layer > bestLayer && visual->isMouseInsideBox(relativeX, relativeY) && isStructuralMouseInteractive(visual) && visual->isMouseCollisionAtPoint(relativeX, relativeY)) {
+				bestResult = candidate;
+				bestLayer = layer;
+			}
+
+			childRelativeX -= visual->getRelativeRect().left;
+			childRelativeY -= visual->getRelativeRect().top;
+		}
+	}
+
+
+	for (const Common::SharedPtr<Structural> &child : candidate->getChildren()) {
+		recursiveFindMouseCollision(bestResult, bestLayer, child.get(), childRelativeX, childRelativeY);
+	}
+}
+
 void Runtime::queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay) {
 	Common::SharedPtr<MessageProperties> props(new MessageProperties(evt, DynamicValue(), Common::WeakPtr<RuntimeObject>()));
 	Common::SharedPtr<MessageDispatch> msg(new MessageDispatch(props, root, cascade, relay, false));
@@ -3465,6 +3717,21 @@ VThreadState Runtime::dispatchMessageTask(const DispatchMethodTaskData &data) {
 	}
 }
 
+VThreadState Runtime::dispatchKeyTask(const DispatchKeyTaskData &data) {
+	Common::SharedPtr<KeyEventDispatch> dispatchPtr = data.dispatch;
+	KeyEventDispatch &dispatch = *dispatchPtr.get();
+
+	if (dispatch.isTerminated())
+		return kVThreadReturn;
+	else {
+		// Requeue propagation after whatever happens with this propagation step
+		DispatchKeyTaskData *requeueData = _vthread->pushTask("Runtime::dispatchKeyTask", this, &Runtime::dispatchKeyTask);
+		requeueData->dispatch = dispatchPtr;
+
+		return dispatch.continuePropagating(this);
+	}
+}
+
 VThreadState Runtime::consumeMessageTask(const ConsumeMessageTaskData &data) {
 	IMessageConsumer *consumer = data.consumer;
 	assert(consumer->respondsToEvent(data.message->getEvent()));
@@ -3476,9 +3743,176 @@ VThreadState Runtime::consumeCommandTask(const ConsumeCommandTaskData &data) {
 	return structural->consumeCommand(this, data.message);
 }
 
+VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data) {
+	struct MessageToSend {
+		EventIDs::EventID eventID;
+		Structural *target;
+	};
+
+	Common::Array<MessageToSend> messagesToSend;
+
+	if (data.mouseDown) {
+		// Mouse down
+		Common::SharedPtr<Structural> tracked = _mouseOverObject.lock();
+		if (tracked) {
+			_mouseTrackingObject = tracked;
+			_trackedMouseOutside = false;
+
+			MessageToSend msg;
+			msg.eventID = EventIDs::kMouseUp;
+			msg.target = tracked.get();
+			messagesToSend.push_back(msg);
+		}
+	} else {
+		// Mouse up
+		Common::SharedPtr<Structural> tracked = _mouseTrackingObject.lock();
+		if (tracked) {
+			{
+				MessageToSend msg;
+				msg.eventID = EventIDs::kMouseUp;
+				msg.target = tracked.get();
+				messagesToSend.push_back(msg);
+			}
+
+			{
+				MessageToSend msg;
+				msg.eventID = _trackedMouseOutside ? EventIDs::kMouseUpOutside : EventIDs::kMouseUpInside;
+				msg.target = tracked.get();
+				messagesToSend.push_back(msg);
+			}
+
+			_mouseTrackingObject.reset();
+			_trackedMouseOutside = false;
+		}
+	}
+
+	DynamicValue mousePtValue;
+	mousePtValue.setPoint(Point16::create(_cachedMousePosition.x, _cachedMousePosition.y));
+
+	for (size_t ri = 0; ri < messagesToSend.size(); ri++) {
+		const MessageToSend &msg = messagesToSend[messagesToSend.size() - 1 - ri];
+		Common::SharedPtr<MessageProperties> props(new MessageProperties(Event::create(msg.eventID, 0), mousePtValue, nullptr));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(props, msg.target, false, true, false));
+		sendMessageOnVThread(dispatch);
+	}
+
+	return kVThreadReturn;
+}
+
+
+VThreadState Runtime::updateMousePositionTask1(const UpdateMousePositionTaskData &data) {
+	if (!_project)
+		return kVThreadReturn;
+
+	// This intentionally replicates a mTropolis bug/quirk where drag motion modifiers DO NOT
+	// prevent "Mouse Outside" events from occurring if the mouse is moved fast enough to get
+	// outside of the object.  Also, note that "Mouse Outside" intentionally DOES NOT match up
+	// with the logic of "Mouse Up Inside" and "Mouse Up Outside" in updateMouseStateTask.
+	//
+	// e.g. if you drag an object under another object and then release the mouse, then
+	// what should happen is a Mouse Outside event is sent to the bottom object, and then
+	// a Mouse Up Inside event is sent when the button is released.
+
+	Structural *collisionItem = nullptr;
+	int bestLayer = INT_MIN;
+
+	for (size_t ri = 0; ri < _sceneStack.size(); ri++) {
+		const SceneStackEntry &sceneStackEntry = _sceneStack[_sceneStack.size() - 1 - ri];
+		recursiveFindMouseCollision(collisionItem, bestLayer, sceneStackEntry.scene.get(), data.x, data.y);
+		if (collisionItem)
+			break;
+	}
+
+	Common::SharedPtr<Structural> newMouseOver;
+	Common::SharedPtr<Structural> oldMouseOver = _mouseOverObject.lock();
+	if (collisionItem)
+		newMouseOver = collisionItem->getSelfReference().lock().staticCast<Structural>();
+
+	struct MessageToSend {
+		EventIDs::EventID eventID;
+		Structural *target;
+	};
+
+	Common::Array<MessageToSend> messagesToSend;
+
+	if (newMouseOver != oldMouseOver) {
+		if (oldMouseOver) {
+			MessageToSend msg;
+			msg.eventID = EventIDs::kMouseOutside;
+			msg.target = oldMouseOver.get();
+			messagesToSend.push_back(msg);
+		}
+		if (newMouseOver) {
+			MessageToSend msg;
+			msg.eventID = EventIDs::kMouseOver;
+			msg.target = newMouseOver.get();
+			messagesToSend.push_back(msg);
+		}
+
+		_mouseOverObject = newMouseOver;
+	}
+
+	Common::SharedPtr<Structural> tracked = _mouseTrackingObject.lock();
+
+
+	if (tracked) {
+		{
+			MessageToSend msg;
+			msg.eventID = EventIDs::kMouseTracking;
+			msg.target = tracked.get();
+			messagesToSend.push_back(msg);
+		}
+
+		assert(tracked->isElement());
+		Element *element = static_cast<Element *>(tracked.get());
+		assert(element->isVisual());
+		VisualElement *visual = static_cast<VisualElement *>(element);
+		Point16 parentOrigin = visual->getParentOrigin();
+		int32 relativeX = data.x - parentOrigin.x;
+		int32 relativeY = data.y - parentOrigin.y;
+		bool mouseOutside = !visual->isMouseInsideBox(relativeX, relativeY) || !visual->isMouseCollisionAtPoint(relativeX, relativeY);
+
+		if (mouseOutside != _trackedMouseOutside) {
+			if (mouseOutside) {
+				MessageToSend msg;
+				msg.eventID = EventIDs::kMouseTrackedOutside;
+				msg.target = tracked.get();
+				messagesToSend.push_back(msg);
+			} else {
+				MessageToSend msg;
+				msg.eventID = EventIDs::kMouseTrackedInside;
+				msg.target = tracked.get();
+				messagesToSend.push_back(msg);
+			}
+
+			_trackedMouseOutside = mouseOutside;
+		}
+	}
+
+	DynamicValue mousePtValue;
+	mousePtValue.setPoint(Point16::create(data.x, data.y));
+
+	for (size_t ri = 0; ri < messagesToSend.size(); ri++) {
+		const MessageToSend &msg = messagesToSend[messagesToSend.size() - 1 - ri];
+		Common::SharedPtr<MessageProperties> props(new MessageProperties(Event::create(msg.eventID, 0), mousePtValue, nullptr));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(props, msg.target, false, true, false));
+		sendMessageOnVThread(dispatch);
+	}
+
+	_cachedMousePosition.x = data.x;
+	_cachedMousePosition.y = data.y;
+
+	return kVThreadReturn;
+}
+
 void Runtime::queueMessage(const Common::SharedPtr<MessageDispatch>& dispatch) {
 	_messageQueue.push_back(dispatch);
 }
+
+void Runtime::queueOSEvent(const Common::SharedPtr<OSEvent> &osEvent) {
+	_osEventQueue.push_back(osEvent);
+}
+
 Scheduler &Runtime::getScheduler() {
 	return _scheduler;
 }
@@ -3591,8 +4025,9 @@ void Runtime::onMouseUp(int32 x, int32 y, Actions::MouseButton mButton) {
 }
 
 void Runtime::onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
-	if (_project)
-		_project->onKeyboardEvent(this, evtType, repeat, keyEvt);
+	Common::SharedPtr<Window> focusWindow = _keyFocusWindow.lock();
+	if (focusWindow)
+		focusWindow->onKeyboardEvent(evtType, repeat, keyEvt);
 }
 
 Common::RandomSource* Runtime::getRandom() const {
@@ -3619,9 +4054,11 @@ void Runtime::ensureMainWindowExists() {
 
 		int32 centeredX = (static_cast<int32>(_displayWidth) - static_cast<int32>(presentationSettings.width)) / 2;
 		int32 centeredY = (static_cast<int32>(_displayHeight) - static_cast<int32>(presentationSettings.height)) / 2;
-		Common::SharedPtr<Window> mainWindow(new Window(WindowParameters(this, centeredX, centeredY, presentationSettings.width, presentationSettings.height, _displayModePixelFormats[_realDisplayMode])));
+		Common::SharedPtr<Window> mainWindow(new MainWindow(WindowParameters(this, centeredX, centeredY, presentationSettings.width, presentationSettings.height, _displayModePixelFormats[_realDisplayMode])));
 		addWindow(mainWindow);
 		_mainWindow.reset(mainWindow);
+
+		_keyFocusWindow = mainWindow;
 	}
 }
 
@@ -4669,7 +5106,7 @@ void Project::loadContextualObject(size_t streamIndex, ChildLoaderStack &stack, 
 					// Visual elements can contain non-visual element children, but non-visual elements
 					// can only contain non-visual element children
 					loaderContext.containerUnion.filteredElements.filterFunc = element->isVisual() ? Data::DataObjectTypes::isElement : Data::DataObjectTypes::isNonVisualElement;
-					loaderContext.containerUnion.filteredElements.structural = container;
+					loaderContext.containerUnion.filteredElements.structural = element.get();
 					loaderContext.remainingCount = 0;
 					loaderContext.type = ChildLoaderContext::kTypeFilteredElements;
 
@@ -4793,6 +5230,14 @@ uint16 VisualElement::getLayer() const {
 	return _layer;
 }
 
+bool VisualElement::isMouseInsideBox(int32 relativeX, int32 relativeY) const {
+	return relativeX >= _rect.left && relativeX < _rect.right && relativeY >= _rect.top && relativeY < _rect.bottom;
+}
+
+bool VisualElement::isMouseCollisionAtPoint(int32 relativeX, int32 relativeY) const {
+	return true;
+}
+
 bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
 	if (attrib == "visible") {
 		result.setBool(_visible);
@@ -4842,7 +5287,7 @@ const Rect16 &VisualElement::getRelativeRect() const {
 	return _rect;
 }
 
-Point16 VisualElement::getGlobalPosition() const {
+Point16 VisualElement::getParentOrigin() const {
 	Point16 pos = Point16::create(0, 0);
 	if (_parent && _parent->isElement()) {
 		Element *element = static_cast<Element *>(_parent);
@@ -4850,6 +5295,12 @@ Point16 VisualElement::getGlobalPosition() const {
 			pos = static_cast<VisualElement *>(element)->getGlobalPosition();
 		}
 	}
+
+	return pos;
+}
+
+Point16 VisualElement::getGlobalPosition() const {
+	Point16 pos = getParentOrigin();
 
 	pos.x += _rect.left;
 	pos.y += _rect.top;
@@ -5035,6 +5486,10 @@ bool Modifier::isCompoundVariable() const {
 	return false;
 }
 
+bool Modifier::isKeyboardMessenger() const {
+	return false;
+}
+
 bool Modifier::isModifier() const {
 	return true;
 }
@@ -5086,6 +5541,22 @@ bool Modifier::loadPlugInHeader(const PlugInModifierLoaderContext &plugInContext
 	_modifierFlags.load(plugInContext.plugInModifierData.modifierFlags);
 
 	return true;
+}
+
+void Modifier::recursiveCollectObjectsMatchingCriteria(Common::Array<Common::WeakPtr<RuntimeObject> > &results, bool (*evalFunc)(void *userData, RuntimeObject *object), void *userData, bool onlyEnabled) {
+	if (evalFunc(userData, this))
+		results.push_back(getSelfReference());
+
+	IModifierContainer *childContainer = nullptr;
+	if (onlyEnabled)
+		childContainer = getMessagePropagationContainer();
+	else
+		childContainer = getChildContainer();
+
+	if (childContainer) {
+		for (const Common::SharedPtr<Modifier> &child : childContainer->getModifiers())
+			child->recursiveCollectObjectsMatchingCriteria(results, evalFunc, userData, onlyEnabled);
+	}
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE

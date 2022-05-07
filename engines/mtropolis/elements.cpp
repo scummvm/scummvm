@@ -449,7 +449,6 @@ void SoundElement::setLoop(bool loop) {
 
 void SoundElement::setVolume(uint16 volume) {
 	uint16 fullVolumeLeft = 100 - _balance;
-	uint16 fullVolumeRight = 100 + _balance;
 
 	// Weird math to ensure _leftVolume + _rightVolume stays divisible by 2
 	_leftVolume = (volume * fullVolumeLeft + 50) / 100;

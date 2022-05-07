@@ -688,8 +688,13 @@ Common::SharedPtr<Modifier> CollisionDetectionMessengerModifier::shallowClone() 
 }
 
 KeyboardMessengerModifier::~KeyboardMessengerModifier() {
-	if (_signaller)
-		_signaller->removeReceiver(this);
+}
+
+KeyboardMessengerModifier::KeyboardMessengerModifier() : _isEnabled(false) {
+}
+
+bool KeyboardMessengerModifier::isKeyboardMessenger() const {
+	return true;
 }
 
 bool KeyboardMessengerModifier::load(ModifierLoaderContext &context, const Data::KeyboardMessengerModifier &data) {
@@ -744,27 +749,24 @@ bool KeyboardMessengerModifier::respondsToEvent(const Event &evt) const {
 
 VThreadState KeyboardMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
  	if (Event::create(EventIDs::kParentEnabled, 0).respondsTo(msg->getEvent())) {
-		if (!_signaller)
-			_signaller = runtime->getProject()->notifyOnKeyboardEvent(this);
+		_isEnabled = true;
 	} else if (Event::create(EventIDs::kParentDisabled, 0).respondsTo(msg->getEvent())) {
-		if (_signaller) {
-			_signaller->removeReceiver(this);
-			_signaller.reset();
-		}
+		_isEnabled = false;
 	}
 
 	return kVThreadReturn;
 }
 
-
 Common::SharedPtr<Modifier> KeyboardMessengerModifier::shallowClone() const {
 	Common::SharedPtr<KeyboardMessengerModifier> cloned(new KeyboardMessengerModifier(*this));
-
-	cloned->_signaller.reset();
+	cloned->_isEnabled = false;
 	return cloned;
 }
 
-void KeyboardMessengerModifier::onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
+bool KeyboardMessengerModifier::checkKeyEventTrigger(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt, Common::String &outCharStr) const {
+	if (!_isEnabled)
+		return false;
+
 	bool responds = false;
 	if (evtType == Common::EVENT_KEYDOWN) {
 		if (repeat)
@@ -775,32 +777,30 @@ void KeyboardMessengerModifier::onKeyboardEvent(Runtime *runtime, Common::EventT
 		responds = _onUp;
 
 	if (!responds)
-		return;
+		return false;
 
 	if (_keyModCommand) {
 		if (runtime->getPlatform() == kProjectPlatformWindows) {
 			// Windows projects check "alt"
 			if ((keyEvt.flags & Common::KBD_ALT) == 0)
-				return;
+				return false;
 		} else if (runtime->getPlatform() == kProjectPlatformMacintosh) {
 			if ((keyEvt.flags & Common::KBD_META) == 0)
-				return;
+				return false;
 		}
 	}
 
 	if (_keyModControl) {
 		if ((keyEvt.flags & Common::KBD_CTRL) == 0)
-			return;
+			return false;
 	}
 
 	if (_keyModOption) {
 		if ((keyEvt.flags & Common::KBD_ALT) == 0)
-			return;
+			return false;
 	}
 
-	Common::String encodedChar;
-
-	Common::String resolvedCharStr;
+	outCharStr.clear();
 
 	KeyCodeType resolvedType = kAny;
 	switch (keyEvt.keycode) {
@@ -855,31 +855,35 @@ void KeyboardMessengerModifier::onKeyboardEvent(Runtime *runtime, Common::EventT
 			bool isQuestion = (keyEvt.ascii == '?');
 			uint32 uchar = keyEvt.ascii;
 			Common::U32String u(&uchar, 1);
-			resolvedCharStr = u.encode(Common::kMacRoman);
+			outCharStr = u.encode(Common::kMacRoman);
 
 			// STUPID HACK PLEASE FIX ME: ScummVM has no way of just telling us that the character mapping failed,
 			// we we have to check if it encoded "?"
-			if (resolvedCharStr.size() < 1 || (resolvedCharStr[0] == '?' && !isQuestion))
-				return;
+			if (outCharStr.size() < 1 || (outCharStr[0] == '?' && !isQuestion))
+				return false;
 
 			resolvedType = kMacRomanChar;
 		} break;
 	}
 
 	if (_keyCodeType != kAny && resolvedType != _keyCodeType)
-		return;
+		return false;
 
-	if (_keyCodeType == kMacRomanChar && (resolvedCharStr.size() == 0 || resolvedCharStr[0] != _macRomanChar))
-		return;
+	if (_keyCodeType == kMacRomanChar && (outCharStr.size() == 0 || outCharStr[0] != _macRomanChar))
+		return false;
 
+	return true;
+}
+
+void KeyboardMessengerModifier::dispatchMessage(Runtime *runtime, const Common::String &charStr) {
 	Common::SharedPtr<MessageProperties> msgProps;
 	if (_sendSpec.with.getType() == DynamicValueTypes::kIncomingData) {
-		if (resolvedCharStr.size() != 1)
+		if (charStr.size() != 1)
 			warning("Keyboard messenger is supposed to send the character code, but they key was a special key and we haven't implemented conversion of those keycodes");
 
-		DynamicValue charStr;
-		charStr.setString(resolvedCharStr);
-		_sendSpec.sendFromMessengerWithCustomData(runtime, this, charStr);
+		DynamicValue charStrValue;
+		charStrValue.setString(charStr);
+		_sendSpec.sendFromMessengerWithCustomData(runtime, this, charStrValue);
 	} else {
 		_sendSpec.sendFromMessenger(runtime, this);
 	}
