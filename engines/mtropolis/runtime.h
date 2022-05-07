@@ -205,13 +205,13 @@ enum EventID {
 	kTransitionStarted = 503,
 	kTransitionEnded = 504,
 
-	kMouseUp = 301,
-	kMouseDown = 302,
+	kMouseDown = 301,
+	kMouseUp = 302,
 	kMouseOver = 303,
 	kMouseOutside = 304,
 	kMouseTrackedInside = 305,
-	kMouseTracking = 306,
-	kMouseTrackedOutside = 307,
+	kMouseTrackedOutside = 306,
+	kMouseTracking = 307,
 	kMouseUpInside = 309,
 	kMouseUpOutside = 310,
 

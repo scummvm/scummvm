@@ -1654,8 +1654,12 @@ void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, C
 		case kMessageDestModifiersParent:
 			resolveVariableObjectType(sender->getParent().lock().get(), outStructuralDest, outModifierDest);
 			break;
-		case kMessageDestChildren:
 		case kMessageDestElementsParent:
+			resolveHierarchyStructuralDestination(runtime, sender, outStructuralDest, outModifierDest, isElementFilter);
+			if (!outStructuralDest.expired())
+				outStructuralDest = outStructuralDest.lock()->getParent()->getSelfReference().staticCast<Structural>();
+			break;
+		case kMessageDestChildren:
 		case kMessageDestSubsection:
 		case kMessageDestSourcesParent:
 		case kMessageDestBehavior:
