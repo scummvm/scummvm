@@ -169,6 +169,8 @@ void Window::onMouseMove(int32 x, int32 y) {
 void Window::onMouseUp(int32 x, int32 y, int mouseButton) {
 }
 
+void Window::onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {
+}
 
 namespace Render {
 

@@ -443,14 +443,20 @@ private:
 	bool _sendToOnlyFirstCollidingElement;
 };
 
-class KeyboardMessengerModifier : public Modifier, public IKeyboardEventReceiver {
+class KeyboardMessengerModifier : public Modifier {
 public:
+	KeyboardMessengerModifier();
 	~KeyboardMessengerModifier();
+
+	bool isKeyboardMessenger() const;
 
 	bool load(ModifierLoaderContext &context, const Data::KeyboardMessengerModifier &data);
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	bool checkKeyEventTrigger(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt, Common::String &outChar) const;
+	void dispatchMessage(Runtime *runtime, const Common::String &charStr);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Keyboard Messenger Modifier"; }
@@ -458,8 +464,6 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
-
-	void onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) override;
 
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
@@ -492,12 +496,11 @@ private:
 	bool _keyModControl : 1;
 	bool _keyModCommand : 1;
 	bool _keyModOption : 1;
+	bool _isEnabled : 1;
 	KeyCodeType _keyCodeType;
 	char _macRomanChar;
 
 	MessengerSendSpec _sendSpec;
-
-	Common::SharedPtr<KeyboardEventSignaller> _signaller;
 };
 
 class TextStyleModifier : public Modifier {

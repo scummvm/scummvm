@@ -64,6 +64,7 @@ class AssetManagerInterface;
 class CursorGraphic;
 class CursorGraphicCollection;
 class Element;
+class KeyboardInputEvent;
 class MessageDispatch;
 class MiniscriptThread;
 class Modifier;
@@ -1203,6 +1204,22 @@ private:
 	bool _isCommand;
 };
 
+class KeyEventDispatch {
+public:
+	explicit KeyEventDispatch(const Common::SharedPtr<KeyboardInputEvent> &evt);
+
+	Common::Array<Common::WeakPtr<RuntimeObject> > &getKeyboardMessengerArray();
+	static bool keyboardMessengerFilterFunc(void *userData, RuntimeObject *object);
+
+	bool isTerminated() const;
+	VThreadState continuePropagating(Runtime *runtime);
+	
+private:
+	Common::Array<Common::WeakPtr<RuntimeObject> > _keyboardMessengers;
+	size_t _dispatchIndex;
+	const Common::SharedPtr<KeyboardInputEvent> _evt;
+};
+
 class Scheduler;
 
 class ScheduledEvent : Common::NonCopyable {
@@ -1250,6 +1267,53 @@ private:
 	void removeEvent(const ScheduledEvent *evt);
 
 	Common::Array<Common::SharedPtr<ScheduledEvent>> _events;
+};
+
+enum OSEventType {
+	kOSEventTypeMouseDown,
+	kOSEventTypeMouseUp,
+	kOSEventTypeMouseMove,
+
+	kOSEventTypeKeyboard,
+};
+
+class OSEvent {
+public:
+	explicit OSEvent(OSEventType eventType);
+	virtual ~OSEvent();
+
+	OSEventType getEventType() const;
+
+private:
+	OSEventType _eventType;
+};
+
+class MouseInputEvent : public OSEvent {
+public:
+	explicit MouseInputEvent(OSEventType eventType, int32 x, int32 y, Actions::MouseButton button);
+
+	int32 getX() const;
+	int32 getY() const;
+	Actions::MouseButton getButton() const;
+
+private:
+	int32 _x;
+	int32 _y;
+	Actions::MouseButton _button;
+};
+
+class KeyboardInputEvent : public OSEvent {
+public:
+	explicit KeyboardInputEvent(OSEventType osEventType, Common::EventType keyEventType, bool repeat, const Common::KeyState &keyEvt);
+
+	Common::EventType getKeyEventType() const;
+	bool isRepeat() const;
+	const Common::KeyState &getKeyState() const;
+
+private:
+	Common::EventType _keyEventType;
+	bool _repeat;
+	const Common::KeyState _keyEvt;
 };
 
 class Runtime {
@@ -1309,6 +1373,8 @@ public:
 	void sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch);
 	void queueMessage(const Common::SharedPtr<MessageDispatch> &dispatch);
 
+	void queueOSEvent(const Common::SharedPtr<OSEvent> &osEvent);
+
 	Scheduler &getScheduler();
 
 	void getScenesInRenderOrder(Common::Array<Structural *> &scenes) const;
@@ -1367,6 +1433,10 @@ private:
 		Common::SharedPtr<MessageDispatch> dispatch;
 	};
 
+	struct DispatchKeyTaskData {
+		Common::SharedPtr<KeyEventDispatch> dispatch;
+	};
+
 	struct ConsumeMessageTaskData {
 		IMessageConsumer *consumer;
 		Common::SharedPtr<MessageProperties> message;
@@ -1375,6 +1445,15 @@ private:
 	struct ConsumeCommandTaskData {
 		Structural *structural;
 		Common::SharedPtr<MessageProperties> message;
+	};
+
+	struct UpdateMouseStateTaskData {
+		bool mouseDown;
+	};
+
+	struct UpdateMousePositionTaskData {
+		int32 x;
+		int32 y;
 	};
 
 	static Common::SharedPtr<Structural> findDefaultSharedSceneForScene(Structural *scene);
@@ -1387,6 +1466,10 @@ private:
 	void recursiveDeactivateStructural(Structural *structural);
 	void recursiveActivateStructural(Structural *structural);
 
+	static bool isStructuralMouseInteractive(Structural *structural);
+	static bool isModifierMouseInteractive(Modifier *modifier);
+	static void recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, Structural *candidate, int32 relativeX, int32 relativeY);
+
 	void queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay);
 
 	void loadScene(const Common::SharedPtr<Structural> &scene);
@@ -1397,14 +1480,19 @@ private:
 	void refreshPlayTime();	// Updates play time to be in sync with the system clock.  Used so that events occurring after storage access don't skip.
 
 	VThreadState dispatchMessageTask(const DispatchMethodTaskData &data);
+	VThreadState dispatchKeyTask(const DispatchKeyTaskData &data);
 	VThreadState consumeMessageTask(const ConsumeMessageTaskData &data);
 	VThreadState consumeCommandTask(const ConsumeCommandTaskData &data);
+	VThreadState updateMouseStateTask(const UpdateMouseStateTaskData &data);
+	VThreadState updateMousePositionTask1(const UpdateMousePositionTaskData &data);
+	VThreadState updateMousePositionTask2(const UpdateMousePositionTaskData &data);
 
 	Common::Array<VolumeState> _volumes;
 	Common::SharedPtr<ProjectDescription> _queuedProjectDesc;
 	Common::SharedPtr<Project> _project;
 	Common::ScopedPtr<VThread> _vthread;
 	Common::Array<Common::SharedPtr<MessageDispatch> > _messageQueue;
+	Common::Array<Common::SharedPtr<OSEvent> > _osEventQueue;
 	ObjectLinkingScope _rootLinkingScope;
 
 	Common::Array<Teardown> _pendingTeardowns;
@@ -1448,6 +1536,7 @@ private:
 	Common::SharedPtr<Graphics::Cursor> _defaultCursor;
 
 	Common::WeakPtr<Window> _mouseFocusWindow;
+	Common::WeakPtr<Window> _keyFocusWindow;
 	bool _mouseFocusFlags[Actions::kMouseButtonCount];
 
 	ProjectPlatform _platform;
@@ -1455,6 +1544,17 @@ private:
 	Common::SharedPtr<SystemInterface> _systemInterface;
 	Common::SharedPtr<WorldManagerInterface> _worldManagerInterface;
 	Common::SharedPtr<AssetManagerInterface> _assetManagerInterface;
+
+	Point16 _cachedMousePosition;
+
+	// Mouse control is tracked in two ways: Mouse over is detected with mouse movement AND when
+	// "refreshCursor" is set on the world manager, it indicates the frontmost object that
+	// responds to any mouse event.  The mouse tracking object is the object that was clicked.
+	// These can differ if the user holds down the mouse and moves it to a spot where the tracked
+	// object is either not clickable, or is behind another object with mouse collision.
+	Common::WeakPtr<Structural> _mouseOverObject;
+	Common::WeakPtr<Structural> _mouseTrackingObject;
+	bool _trackedMouseOutside;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<Debugger> _debugger;
@@ -1614,6 +1714,8 @@ public:
 
 	virtual void activate();
 	virtual void deactivate();
+
+	void recursiveCollectObjectsMatchingCriteria(Common::Array<Common::WeakPtr<RuntimeObject> > &results, bool (*evalFunc)(void *userData, RuntimeObject *object), void *userData, bool onlyEnabled);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	SupportStatus debugGetSupportStatus() const override;
@@ -1955,9 +2057,15 @@ public:
 	bool isDirectToScreen() const;
 	uint16 getLayer() const;
 
+	bool isMouseInsideBox(int32 relativeX, int32 relativeY) const;
+
+	// Returns true if there is mouse collision at a specified point, assuming it has already passed isMouseInsideBox
+	virtual bool isMouseCollisionAtPoint(int32 relativeX, int32 relativeY) const;
+
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
 
+	Point16 getParentOrigin() const;
 	Point16 getGlobalPosition() const;
 	const Rect16 &getRelativeRect() const;
 
@@ -2019,6 +2127,8 @@ public:
 	virtual bool isVariable() const;
 	virtual bool isBehavior() const;
 	virtual bool isCompoundVariable() const;
+	virtual bool isKeyboardMessenger() const;
+
 	bool isModifier() const override;
 
 	// This should only return a propagation container if messages should actually be propagated (i.e. NOT switched-off behaviors!)
@@ -2045,6 +2155,8 @@ public:
 	virtual void visitInternalReferences(IStructuralReferenceVisitor *visitor);
 
 	bool loadPlugInHeader(const PlugInModifierLoaderContext &plugInContext);
+
+	void recursiveCollectObjectsMatchingCriteria(Common::Array<Common::WeakPtr<RuntimeObject> > &results, bool (*evalFunc)(void *userData, RuntimeObject *object), void *userData, bool onlyEnabled);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	SupportStatus debugGetSupportStatus() const override;
