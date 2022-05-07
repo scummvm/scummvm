@@ -80,8 +80,7 @@ using namespace AGS::Engine;
 int _places_r = 3, _places_g = 2, _places_b = 3;
 
 ObjTexture::ObjTexture(ObjTexture &&o) {
-//	*this = std::move(o);
-	error("TODO: ObjTexture");
+	*this = std::move(o);
 }
 
 ObjTexture::~ObjTexture() {
