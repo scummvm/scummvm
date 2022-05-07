@@ -542,7 +542,7 @@ void SetView(int sceneId, int scale) {
 	int i = 0;
 	CAMERA_STRUC *pCamera = (CAMERA_STRUC *)_vm->_handle->LockMem(g_tempStruc.hCamera);
 	for (i = 0; i < g_tempStruc.numCameras; ++i, ++pCamera) {
-		if (sceneId == FROM_32(pCamera->sceneId)) {
+		if (sceneId == (int)FROM_32(pCamera->sceneId)) {
 			// set camera
 			SetSysVar(SV_SPRITER_SCENE_ID, sceneId);
 			break;
@@ -556,7 +556,7 @@ void SetView(int sceneId, int scale) {
 
 	LIGHT_STRUC *pLight = (LIGHT_STRUC *)_vm->_handle->LockMem(g_tempStruc.hLight);
 	for (i = 0; i < g_tempStruc.numLights; ++i, ++pLight) {
-		if (sceneId == FROM_32(pLight->sceneId)) {
+		if (sceneId == (int)FROM_32(pLight->sceneId)) {
 			// set light
 			break;
 		}
