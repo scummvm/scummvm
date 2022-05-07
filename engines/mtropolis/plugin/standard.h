@@ -218,6 +218,7 @@ public:
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	bool readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) override;
 	MiniscriptInstructionOutcome writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) override;
 

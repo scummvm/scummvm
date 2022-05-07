@@ -1392,6 +1392,8 @@ public:
 	void onMouseUp(int32 x, int32 y, Actions::MouseButton mButton);
 	void onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
 
+	const Point16 &getCachedMousePosition() const;
+
 	Common::RandomSource *getRandom() const;
 	WorldManagerInterface *getWorldManagerInterface() const;
 	AssetManagerInterface *getAssetManagerInterface() const;

@@ -996,11 +996,8 @@ void CompoundVariableModifier::visitInternalReferences(IStructuralReferenceVisit
 bool CompoundVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
 	Modifier *var = findChildByName(attrib);
 	if (var) {
-		if (var->isVariable()) {
-			static_cast<VariableModifier *>(var)->varGetValue(thread, result);
-		} else {
-			result.setObject(var->getSelfReference());
-		}
+		// Shouldn't dereference the value here, some scripts (e.g. "<go dest> on MUI" in Obsidian) depend on it not being dereferenced
+		result.setObject(var->getSelfReference());
 		return true;
 	}
 	return Modifier::readAttribute(thread, result, attrib);
