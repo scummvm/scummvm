@@ -103,6 +103,8 @@ void WetEngine::runLevelMenu(Code *code) {
 					playSound("sound/m_choice.raw", 1, 11025);
 					_nextLevel = Common::String::format("c%d", _ids[currentLevel]);
 					cont = false;
+				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					openMainMenuDialog();
 				}
 
 				for (int i = 0; i < maxLevel; i++)
@@ -156,10 +158,11 @@ void WetEngine::runMainMenu(Code *code) {
 					_name.deleteLastChar();
 				else if (event.kbd.keycode == Common::KEYCODE_RETURN && !_name.empty()) {
 					cont = false;
-				}
-				else if (Common::isAlpha(event.kbd.keycode)) {
+				} else if (Common::isAlpha(event.kbd.keycode)) {
 					playSound("sound/m_choice.raw", 1);
 					_name = _name + char(event.kbd.keycode - 32);
+				} if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					openMainMenuDialog();
 				}
 
 				drawImage(*menu, 0, 0, false);
