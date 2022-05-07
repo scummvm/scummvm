@@ -4785,6 +4785,12 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 	} else if (attrib == "position") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetPosition>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "width") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetWidth>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "height") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetHeight>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return Element::writeRefAttribute(thread, writeProxy, attrib);
@@ -4842,17 +4848,17 @@ bool VisualElement::loadCommon(const Common::String &name, uint32 guid, const Da
 	return true;
 }
 
-MiniscriptInstructionOutcome VisualElement::scriptSetDirect(MiniscriptThread *thread, const DynamicValue &dest) {
-	if (dest.getType() == DynamicValueTypes::kBoolean) {
-		_directToScreen = dest.getBool();
+MiniscriptInstructionOutcome VisualElement::scriptSetDirect(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kBoolean) {
+		_directToScreen = value.getBool();
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *thread, const DynamicValue &dest) {
-	if (dest.getType() == DynamicValueTypes::kPoint) {
-		const Point16 &destPoint = dest.getPoint();
+MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kPoint) {
+		const Point16 &destPoint = value.getPoint();
 		int32 xDelta = destPoint.x - _rect.left;
 		int32 yDelta = destPoint.y - _rect.right;
 
@@ -4862,6 +4868,26 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome VisualElement::scriptSetWidth(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	_rect.right = _rect.left + asInteger;
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome VisualElement::scriptSetHeight(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	_rect.bottom = _rect.top + asInteger;
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 void VisualElement::offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOriginOnly) {

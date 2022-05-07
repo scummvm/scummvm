@@ -213,10 +213,19 @@ public:
 #endif
 
 private:
+	MiniscriptInstructionOutcome scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetVolume(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetBalance(MiniscriptThread *thread, const DynamicValue &value);
+
+	void setLoop(bool loop);
+	void setVolume(uint16 volume);
+	void setBalance(int16 balance);
+
 	uint16 _leftVolume;
 	uint16 _rightVolume;
 	int16 _balance;
 	uint32 _assetID;
+	bool _loop;
 
 	Runtime *_runtime;
 };
