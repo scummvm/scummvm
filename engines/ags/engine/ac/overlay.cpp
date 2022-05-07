@@ -101,6 +101,13 @@ void Overlay_SetY(ScriptOverlay *scover, int newy) {
 	_GP(screenover)[ovri].y = data_to_game_coord(newy);
 }
 
+bool Overlay_InRoom(ScriptOverlay *scover) {
+	int ovri = find_overlay_of_type(scover->overlayId);
+	if (ovri < 0)
+		quit("!invalid overlay ID specified");
+	return _GP(screenover)[ovri].IsRoomLayer();
+}
+
 int Overlay_GetWidth(ScriptOverlay *scover) {
 	int ovri = find_overlay_of_type(scover->overlayId);
 	if (ovri < 0)
@@ -490,6 +497,10 @@ RuntimeScriptValue Sc_Overlay_SetY(void *self, const RuntimeScriptValue *params,
 	API_OBJCALL_VOID_PINT(ScriptOverlay, Overlay_SetY);
 }
 
+RuntimeScriptValue Sc_Overlay_InRoom(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_BOOL(ScriptOverlay, Overlay_InRoom);
+}
+
 RuntimeScriptValue Sc_Overlay_GetWidth(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_INT(ScriptOverlay, Overlay_GetWidth);
 }
@@ -555,6 +566,7 @@ void RegisterOverlayAPI() {
 	ccAddExternalObjectFunction("Overlay::set_X", Sc_Overlay_SetX);
 	ccAddExternalObjectFunction("Overlay::get_Y", Sc_Overlay_GetY);
 	ccAddExternalObjectFunction("Overlay::set_Y", Sc_Overlay_SetY);
+	ccAddExternalObjectFunction("Overlay::get_InRoom", Sc_Overlay_InRoom);
 	ccAddExternalObjectFunction("Overlay::get_Width", Sc_Overlay_GetWidth);
 	ccAddExternalObjectFunction("Overlay::set_Width", Sc_Overlay_SetWidth);
 	ccAddExternalObjectFunction("Overlay::get_Height", Sc_Overlay_GetHeight);
