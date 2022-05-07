@@ -637,11 +637,18 @@ void DimPartPalette(SCNHANDLE hDimPal, int startColor, int length, int brightnes
 	}
 }
 
+int32 DarkGreen() {
+	return _vm->screen().format.RGBToColor(0x00, 0x40, 0x00);
+}
+
 int TranslucentColor() {
 	return g_translucentIndex;
 }
 
 int HighlightColor() {
+	if (TinselVersion == 3) {
+		return _vm->screen().format.RGBToColor(0x00, 0x80, 0x00);
+	}
 	UpdateDACqueue(g_talkIndex, (COLORREF)SysVar(SYS_HighlightRGB));
 
 	return g_talkIndex;
