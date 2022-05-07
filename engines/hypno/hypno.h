@@ -263,6 +263,7 @@ public:
 	virtual byte *getTargetColor(Common::String name, int levelId);
 
 	// Segments
+	Segments _segments;
 	uint32 _segmentIdx;
 	uint32 _segmentOffset;
 	uint32 _segmentRepetition;

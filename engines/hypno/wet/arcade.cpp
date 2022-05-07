@@ -89,6 +89,7 @@ void WetEngine::initSegment(ArcadeShooting *arc) {
 	uint32 randomSegmentShootSequence = _segmentShootSequenceOffset + _rnd->getRandomNumber(_segmentShootSequenceMax);
 	debugC(1, kHypnoDebugArcade, "Select random sequence %d", randomSegmentShootSequence);
 	SegmentShoots segmentShoots = arc->shootSequence[randomSegmentShootSequence];
+	_segments = arc->segments;
 	_shootSequence = segmentShoots.shootSequence;
 	_segmentRepetitionMax = segmentShoots.segmentRepetition; // Usually zero
 	_segmentRepetition = 0;
@@ -106,14 +107,13 @@ void WetEngine::initSegment(ArcadeShooting *arc) {
 void WetEngine::findNextSegment(ArcadeShooting *arc) {
 	debugC(1, kHypnoDebugArcade, "Repetition %d of %d", _segmentRepetition, _segmentRepetitionMax);
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
-	Segments segments = arc->segments;
 
 	if (_segmentRepetition < _segmentRepetitionMax) {
 		_segmentRepetition = _segmentRepetition + 1;
 	} else {
 		_segmentRepetition = 0;
 		_segmentRepetitionMax = 0;
-		if (segments[_segmentIdx].type == 0xb3) {
+		if (_segments[_segmentIdx].type == 0xb3) {
 			if (_arcadeMode == "Y1") {
 				if (_rnd->getRandomBit())
 					_segmentIdx = _segmentIdx + 1;
@@ -128,16 +128,16 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 				else
 					_segmentIdx = r + 4;
 
-				if (segments[_segmentIdx].type == 'L') {
+				if (_segments[_segmentIdx].type == 'L') {
 					_shootSequence = arc->shootSequence[11].shootSequence;
 					_segmentRepetitionMax = 0;
-				} else if (segments[_segmentIdx].type == 'R') {
+				} else if (_segments[_segmentIdx].type == 'R') {
 					_shootSequence = arc->shootSequence[12].shootSequence;
 					_segmentRepetitionMax = 0;
-				} else if (segments[_segmentIdx].type == 'A') {
+				} else if (_segments[_segmentIdx].type == 'A') {
 					_shootSequence = arc->shootSequence[15].shootSequence;
 					_segmentRepetitionMax = 0;
-				} else if (segments[_segmentIdx].type == 'P') {
+				} else if (_segments[_segmentIdx].type == 'P') {
 					r = _rnd->getRandomNumber(1);
 					_shootSequence = arc->shootSequence[13 + r].shootSequence; //13-14
 					_segmentRepetitionMax = 0;
@@ -145,7 +145,7 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 			} else
 				_segmentIdx = _segmentIdx + 1;
 
-		} else if (segments[_segmentIdx].type == 0xc5) {
+		} else if (_segments[_segmentIdx].type == 0xc5) {
 			if (_arcadeMode == "Y1") {
 				if (mousePos.x <= 106)
 					_segmentIdx = _segmentIdx + 1;
@@ -171,27 +171,27 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 				} else
 					_segmentIdx = _segmentIdx + 1;
 			} else
-				error("Invalid segment type for mode: %s at the end of segment %x", _arcadeMode.c_str(), segments[_segmentIdx].type);
+				error("Invalid segment type for mode: %s at the end of segment %x", _arcadeMode.c_str(), _segments[_segmentIdx].type);
 
-		} else if (segments[_segmentIdx].type == 0xc2) {
+		} else if (_segments[_segmentIdx].type == 0xc2) {
 			if (mousePos.x <= 160)
 				_segmentIdx = _segmentIdx + 1;
 			else
 				_segmentIdx = _segmentIdx + 2;
-		} else if (segments[_segmentIdx].type == 0xcc) {
+		} else if (_segments[_segmentIdx].type == 0xcc) {
 			if (mousePos.x <= 160)
 				_segmentIdx = _segmentIdx + 1;
 			else
 				_segmentIdx = _segmentIdx + 2;
-		} else if (segments[_segmentIdx].type == 'Y') {
+		} else if (_segments[_segmentIdx].type == 'Y') {
 			if (mousePos.x <= 160)
 				_segmentIdx = _segmentIdx + 2;
 			else
 				_segmentIdx = _segmentIdx + 1;
 
-		/*} else if (segments[_segmentIdx].type == 'a') {
+		/*} else if (_segments[_segmentIdx].type == 'a') {
 			_segmentIdx = 1;*/
-		} else if (segments[_segmentIdx].type == 's') {
+		} else if (_segments[_segmentIdx].type == 's') {
 			_segmentIdx = _segmentIdx + 10; // _segmentIdx = 11;
 		} else {
 
@@ -209,7 +209,7 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 					return;
 				}
 			}
-			if (segments[_segmentIdx].type == 0xc9) {
+			if (_segments[_segmentIdx].type == 0xc9) {
 				if (_arcadeMode == "Y3") {
 					_segmentOffset = _segmentIdx + 1;
 					_segmentShootSequenceOffset = 8;
@@ -225,16 +225,16 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 						_segmentShootSequenceMax = 5;
 					}
 				} else
-					error("Invalid segment type for mode: %s at the end of segment %x", _arcadeMode.c_str(), segments[_segmentIdx].type);
-			} else if (segments[_segmentIdx].type == 0xbb) {
+					error("Invalid segment type for mode: %s at the end of segment %x", _arcadeMode.c_str(), _segments[_segmentIdx].type);
+			} else if (_segments[_segmentIdx].type == 0xbb) {
 				_segmentOffset = 0;
 				_segmentShootSequenceOffset = 0;
 				_segmentShootSequenceMax = 7;
-			} else if (segments[_segmentIdx].type == 0x61) {
+			} else if (_segments[_segmentIdx].type == 0x61) {
 				_segmentOffset = _segmentOffset + 1; // _segmentOffset = 1;
 				_segmentShootSequenceOffset = 6;
 				_segmentShootSequenceMax = 4;
-			} else if (segments[_segmentIdx].type == 0x63) {
+			} else if (_segments[_segmentIdx].type == 0x63) {
 				_segmentOffset = _segmentOffset - 1; // _segmentOffset = 0;
 				//_segmentShootSequenceOffset = 0; // TODO
 				//_segmentShootSequenceMax = 7; // TODO
@@ -916,6 +916,11 @@ void WetEngine::drawShoot(const Common::Point &mousePos) {
 }
 
 void WetEngine::drawPlayer() {
+	uint8 segmentType = _segments[_segmentIdx].type;
+	if (segmentType == 0xc5 || segmentType == 0xc2 || segmentType == 0xcc)
+		if (_background->decoder->getCurFrame() % 3 > 0) // Avoid flashing too much
+			drawString("block05.fgx", "CHOOSE DIRECTION", 113, 13, 80, kHypnoColorCyan);
+
 	// TARGET ACQUIRED frame
 	uint32 c = kHypnoColorGreen; // green
 	_compositeSurface->drawLine(113, 1, 119, 1, c);
