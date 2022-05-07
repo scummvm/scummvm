@@ -112,7 +112,7 @@ void WetEngine::loadAssetsDemoDisc() {
 	LibFile *missions = loadLib("", "wetlands/c_misc/missions.lib", encrypted);
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
-		error(failedDetectionError);
+		error("%s", failedDetectionError);
 
 	Hotspot h(MakeMenu);
 	Hotspots hs;
@@ -211,7 +211,7 @@ void WetEngine::loadAssetsGen4() {
 	LibFile *missions = loadLib("", "c_misc/missions.lib", encrypted);
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
-		error(failedDetectionError);
+		error("%s", failedDetectionError);
 
 	Transition *intro;
 	intro = new Transition("c31.mis");
@@ -288,7 +288,7 @@ void WetEngine::loadAssetsPCW() {
 	LibFile *missions = loadLib("", "c_misc/missions.lib", false);
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
-		error(failedDetectionError);
+		error("%s", failedDetectionError);
 
 	Transition *intro = new Transition("c11.mis");
 	intro->intros.push_back("c_misc/nw_logo.smk");
@@ -312,7 +312,7 @@ void WetEngine::loadAssetsPCG() {
 	LibFile *missions = loadLib("", "missions.lib", false);
 	Common::ArchiveMemberList files;
 	if (missions->listMembers(files) == 0)
-		error(failedDetectionError);
+		error("%s", failedDetectionError);
 
 	Transition *intro = new Transition("c31.mis");
 	intro->intros.push_back("nw_logo.smk");
@@ -338,7 +338,7 @@ void WetEngine::loadAssetsFullGame() {
 	LibFile *missions = loadLib("", "c_misc/missions.lib", true);
 	Common::ArchiveMemberList files;
 	if (missions == nullptr || missions->listMembers(files) == 0)
-		error(failedDetectionError);
+		error("%s", failedDetectionError);
 
 	Transition *logos = new Transition("<main_menu>");
 	logos->intros.push_back("c_misc/logo.smk");
