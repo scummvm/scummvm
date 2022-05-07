@@ -364,9 +364,9 @@ const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *run
 		case kColorDepthMode32Bit: {
 				if (imageFormat == ImageAsset::kImageFormatMac) {
 					for (int x = 0; x < width; x++) {
-						uint8 r = inRowBytes[x * 4 + 0];
-						uint8 g = inRowBytes[x * 4 + 1];
-						uint8 b = inRowBytes[x * 4 + 2];
+						uint8 r = inRowBytes[x * 4 + 1];
+						uint8 g = inRowBytes[x * 4 + 2];
+						uint8 b = inRowBytes[x * 4 + 3];
 						uint32 repacked = (255 << pixelFmt.aShift) | (r << pixelFmt.rShift) | (g << pixelFmt.gShift) | (b << pixelFmt.bShift);
 						static_cast<uint32 *>(outBase)[x] = repacked;
 					}
