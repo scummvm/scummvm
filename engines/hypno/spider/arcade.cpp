@@ -281,6 +281,15 @@ void SpiderEngine::drawPlayer() {
 			}
 		}
 	} else if (_arcadeMode == "YE" || _arcadeMode == "YF") {
+		if (_arcadeMode == "YF") {
+			int fraction = _background->decoder->getFrameCount() / (_maxHealth / 2);
+			if (_background->decoder->getCurFrame() % fraction == 0)
+				_health = MAX(1, _health - 1);
+
+			if (checkArcadeObjectives())
+				_skipLevel = true;
+		}
+
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		uint32 idx = mousePos.x / (_screenW / 5);
 		_playerFrameIdx = oIndexYE[idx];
