@@ -2212,6 +2212,48 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 		else
 			result.clear();
 		return true;
+	} else if (attrib == "previous") {
+		Structural *parent = getParent();
+		if (parent) {
+			const Common::Array<Common::SharedPtr<Structural> > &neighborhood = parent->getChildren();
+			bool found = false;
+			size_t foundIndex = 0;
+			for (size_t i = 0; i < neighborhood.size(); i++) {
+				if (neighborhood[i].get() == this) {
+					foundIndex = i;
+					found = true;
+					break;
+				}
+			}
+
+			if (found && foundIndex > 0)
+				result.setObject(neighborhood[foundIndex - 1]->getSelfReference());
+			else
+				result.clear();
+		} else
+			result.clear();
+		return true;
+	} else if (attrib == "next") {
+		Structural *parent = getParent();
+		if (parent) {
+			const Common::Array<Common::SharedPtr<Structural> > &neighborhood = parent->getChildren();
+			bool found = false;
+			size_t foundIndex = 0;
+			for (size_t i = 0; i < neighborhood.size(); i++) {
+				if (neighborhood[i].get() == this) {
+					foundIndex = i;
+					found = true;
+					break;
+				}
+			}
+
+			if (found && foundIndex < neighborhood.size() - 1)
+				result.setObject(neighborhood[foundIndex + 1]->getSelfReference());
+			else
+				result.clear();
+		} else
+			result.clear();
+		return true;
 	}
 
 	return RuntimeObject::readAttribute(thread, result, attrib);
