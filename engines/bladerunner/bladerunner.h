@@ -396,6 +396,7 @@ public:
 	void loopQueuedDialogueStillPlaying();
 
 	void outtakePlay(int id, bool no_localization, int container = -1);
+	void outtakePlay(const Common::String &basenameNoExt, bool no_localization, int container = -3);
 
 	bool openArchive(const Common::String &name);
 	bool closeArchive(const Common::String &name);

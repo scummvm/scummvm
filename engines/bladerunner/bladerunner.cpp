@@ -1220,7 +1220,11 @@ void BladeRunnerEngine::gameTick() {
 		//      is too cumbersome to be worth it.
 		int ambientSoundsPreOuttakeVol = _mixer->getVolumeForSoundType(_mixer->kPlainSoundType);
 		_mixer->setVolumeForSoundType(_mixer->kPlainSoundType, 0);
-		outtakePlay(_debugger->_dbgPendingOuttake.outtakeId, _debugger->_dbgPendingOuttake.notLocalized, _debugger->_dbgPendingOuttake.container);
+		if (_debugger->_dbgPendingOuttake.outtakeId == -1 && _debugger->_dbgPendingOuttake.container < -1) {
+			outtakePlay(_debugger->_dbgPendingOuttake.externalFilename, _debugger->_dbgPendingOuttake.notLocalized, _debugger->_dbgPendingOuttake.container);
+		} else {
+			outtakePlay(_debugger->_dbgPendingOuttake.outtakeId, _debugger->_dbgPendingOuttake.notLocalized, _debugger->_dbgPendingOuttake.container);
+		}
 		_mixer->setVolumeForSoundType(_mixer->kPlainSoundType, ambientSoundsPreOuttakeVol);
 		_debugger->resetPendingOuttake();
 	}
@@ -2258,9 +2262,13 @@ void BladeRunnerEngine::loopQueuedDialogueStillPlaying() {
 void BladeRunnerEngine::outtakePlay(int id, bool noLocalization, int container) {
 	Common::String name = _gameInfo->getOuttake(id);
 
+	outtakePlay(name, noLocalization, container);
+}
+
+void BladeRunnerEngine::outtakePlay(const Common::String &basenameNoExt, bool noLocalization, int container) {
 	OuttakePlayer player(this);
 
-	player.play(name, noLocalization, container);
+	player.play(basenameNoExt, noLocalization, container);
 }
 
 bool BladeRunnerEngine::openArchive(const Common::String &name) {

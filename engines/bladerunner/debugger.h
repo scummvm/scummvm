@@ -53,7 +53,7 @@ enum DebuggerDrawnObjectType {
 	debuggerObjTypeFog           = 11
 };
 
-class Debugger : public GUI::Debugger{
+class Debugger : public GUI::Debugger {
 	BladeRunnerEngine *_vm;
 
 	static const uint kMaxSpecificObjectsDrawnCount = 100;
@@ -63,6 +63,8 @@ class Debugger : public GUI::Debugger{
 		int                     setId;
 		int                     objId;
 		DebuggerDrawnObjectType type;
+
+		DebuggerDrawnObject() : sceneId(0), setId(0), objId(0), type(debuggerObjTypeUndefined) {};
 	};
 
 	struct DebuggerPendingOuttake {
@@ -70,6 +72,9 @@ class Debugger : public GUI::Debugger{
 		int  outtakeId;
 		bool notLocalized;
 		int  container;
+		Common::String externalFilename;
+
+		DebuggerPendingOuttake() : pending(false), outtakeId(-1), notLocalized(true), container(-1), externalFilename("") {};
 	};
 
 public:
@@ -128,6 +133,7 @@ public:
 	bool cmdMouse(int argc, const char **argv);
 	bool cmdDifficulty(int argc, const char **argv);
 	bool cmdOuttake(int argc, const char** argv);
+	bool cmdPlayVqa(int argc, const char** argv);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	bool cmdEffect(int argc, const char **argv);
