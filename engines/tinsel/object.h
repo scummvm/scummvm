@@ -121,8 +121,6 @@ struct OBJECT {
 	OBJECT() { reset(); }
 };
 
-#include "common/pack-start.h"	// START STRUCT PACKING
-
 // object initialisation structure
 struct OBJ_INIT {
 	SCNHANDLE hObjImg;	// objects shape - handle to IMAGE structure
@@ -131,10 +129,7 @@ struct OBJ_INIT {
 	int32 objX;		// objects initial x position
 	int32 objY;		// objects initial y position
 	int32 objZ;		// objects initial z position
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
+};
 
 /*----------------------------------------------------------------------*\
 |*			Object Function Prototypes			*|
