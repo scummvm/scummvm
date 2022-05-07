@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-06 17:51+0000\n"
-"PO-Revision-Date: 2022-04-28 09:44+0000\n"
+"PO-Revision-Date: 2022-05-07 00:29+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1370,7 +1370,7 @@ msgstr "Ambos"
 
 #: gui/options.cpp:1638
 msgid "Subtitle speed:"
-msgstr "Vel. de subtítulos:"
+msgstr "Vel. subtítulos:"
 
 #: gui/options.cpp:1640
 msgctxt "lowres"
@@ -3136,7 +3136,7 @@ msgstr "Modo de ajuste"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:66
 msgid "SDL Surface"
-msgstr "«SDL Surface»"
+msgstr "SDL Surface"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2416
 msgid "Active graphics filter:"
