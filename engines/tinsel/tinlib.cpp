@@ -4731,6 +4731,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 	case 103: // 0 parameters
 		mapping = NoirMapping{"OPENNOTEBOOK", OPENNOTEBOOK, 0};
 		debug(7, "%s()", mapping.name);
+		break;
 	case 104: // 1 parameter
 		error("Unsupported libCode %d OFFSET variant", libCode);
 	case 105: // 0 parameters
