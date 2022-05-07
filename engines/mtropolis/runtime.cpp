@@ -2305,6 +2305,31 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 		} else
 			result.clear();
 		return true;
+	} else if (attrib == "scene") {
+		result.clear();
+
+		// Scene returns the scene of the Miniscript modifier, even though it's looked up
+		// as if it's an element property, because it's treated like a keyword.
+		RuntimeObject *possibleScene = thread->getModifier();
+		while (possibleScene) {
+			if (possibleScene->isModifier()) {
+				possibleScene = static_cast<Modifier *>(possibleScene)->getParent().lock().get();
+				continue;
+			}
+
+			if (possibleScene->isStructural()) {
+				Structural *parent = static_cast<Structural *>(possibleScene)->getParent();
+				if (parent->isSubsection())
+					break;
+				else
+					possibleScene = parent;
+			}
+		}
+		if (possibleScene)
+			result.setObject(possibleScene->getSelfReference());
+		else
+			result.clear();
+		return true;
 	}
 
 	return RuntimeObject::readAttribute(thread, result, attrib);
@@ -4034,7 +4059,11 @@ void Runtime::onKeyboardEvent(const Common::EventType evtType, bool repeat, cons
 		focusWindow->onKeyboardEvent(evtType, repeat, keyEvt);
 }
 
-Common::RandomSource* Runtime::getRandom() const {
+const Point16 &Runtime::getCachedMousePosition() const {
+	return _cachedMousePosition;
+}
+
+Common::RandomSource *Runtime::getRandom() const {
 	return _random.get();
 }
 

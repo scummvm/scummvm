@@ -495,7 +495,7 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 		const DynamicValueWriteProxyPOD &proxy = target.value.getWriteProxyPOD();
 		outcome = proxy.ifc->write(thread, srcValue.value, proxy.objectRef, proxy.ptrOrOffset);
 		if (outcome == kMiniscriptInstructionOutcomeFailed) {
-			thread->error("Failed to assign value");
+			thread->error("Failed to assign value to proxy");
 			return outcome;
 		}
 	} else {
@@ -1330,13 +1330,23 @@ MiniscriptInstructionOutcome GetChild::execute(MiniscriptThread *thread) const {
 
 MiniscriptInstructionOutcome GetChild::readRValueAttrib(MiniscriptThread *thread, DynamicValue &valueSrcDest, const Common::String &attrib) const {
 	switch (valueSrcDest.getType()) {
+	case DynamicValueTypes::kPoint:
+		if (attrib == "x")
+			valueSrcDest.setInt(valueSrcDest.getPoint().x);
+		else if (attrib == "y")
+			valueSrcDest.setInt(valueSrcDest.getPoint().y);
+		else {
+			thread->error("Point has no attribute '" + attrib + "'");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+		break;
 	case DynamicValueTypes::kIntegerRange:
 		if (attrib == "start")
 			valueSrcDest.setInt(valueSrcDest.getIntRange().min);
 		else if (attrib == "end")
 			valueSrcDest.setInt(valueSrcDest.getIntRange().max);
 		else {
-			thread->error(Common::String("Integer range has no attribute '") + attrib + "'");
+			thread->error("Integer range has no attribute '" + attrib + "'");
 			return kMiniscriptInstructionOutcomeFailed;
 		}
 		break;
@@ -1347,21 +1357,31 @@ MiniscriptInstructionOutcome GetChild::readRValueAttrib(MiniscriptThread *thread
 		else if (attrib == "magnitude")
 			valueSrcDest.setInt(valueSrcDest.getVector().magnitude);
 		else {
-			thread->error(Common::String("Vector has no attribute '") + attrib + "'");
+			thread->error("Vector has no attribute '" + attrib + "'");
 			return kMiniscriptInstructionOutcomeFailed;
 		}
 		break;
 	case DynamicValueTypes::kObject: {
 			Common::SharedPtr<RuntimeObject> obj = valueSrcDest.getObject().object.lock();
 			if (!obj) {
-				thread->error("Unable to read attribute '" + attrib + "' from invalid object");
+				thread->error("Unable to read object attribute '" + attrib + "' from invalid object");
 				return kMiniscriptInstructionOutcomeFailed;
 			} else if (!obj->readAttribute(thread, valueSrcDest, attrib)) {
-				thread->error("Unable to read attribute '" + attrib + "'");
+				thread->error("Unable to read object attribute '" + attrib + "'");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+		} break;
+	case DynamicValueTypes::kList: {
+			Common::SharedPtr<DynamicList> list = valueSrcDest.getList();
+			if (attrib == "count") {
+				valueSrcDest.setInt(list->getSize());
+			} else {
+				thread->error("Unable to read list attribute '" + attrib + "'");
 				return kMiniscriptInstructionOutcomeFailed;
 			}
 		} break;
 	default:
+		thread->error("Unable to read attribute '" + attrib + "' from rvalue");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
@@ -1537,7 +1557,7 @@ MiniscriptInstructionOutcome PushGlobal::execute(MiniscriptThread *thread) const
 		value.setObject(ObjectReference(thread->getMessageProperties()->getSource()));
 		break;
 	case kGlobalRefMouse:
-		thread->error("'mouse' global ref not yet implemented");
+		value.setPoint(thread->getRuntime()->getCachedMousePosition());
 		return kMiniscriptInstructionOutcomeFailed;
 	case kGlobalRefTicks:
 		value.setInt(thread->getRuntime()->getPlayTime() * 60 / 1000);

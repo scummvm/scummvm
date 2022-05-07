@@ -292,9 +292,9 @@ bool ObjectReferenceVariableModifier::varSetValue(MiniscriptThread *thread, cons
 	switch (value.getType()) {
 	case DynamicValueTypes::kNull:
 	case DynamicValueTypes::kObject:
-		return scriptSetObject(thread, value);
+		return scriptSetObject(thread, value) == kMiniscriptInstructionOutcomeContinue;
 	case DynamicValueTypes::kString:
-		return scriptSetPath(thread, value);
+		return scriptSetPath(thread, value) == kMiniscriptInstructionOutcomeContinue;
 	default:
 		return false;
 	}
@@ -723,12 +723,21 @@ void ListVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &d
 	dest.setList(_list);
 }
 
+bool ListVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "count") {
+		result.setInt(_list->getSize());
+		return true;
+	}
+
+	return Modifier::readAttribute(thread, result, attrib);
+}
+
 bool ListVariableModifier::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) {
 	if (attrib == "value") {
 		size_t realIndex = 0;
 		return _list->dynamicValueToIndex(realIndex, index) && _list->getAtIndex(realIndex, result);
 	}
-	return false;
+	return Modifier::readAttributeIndexed(thread, result, attrib, index);
 }
 
 MiniscriptInstructionOutcome ListVariableModifier::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) {
