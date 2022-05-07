@@ -57,7 +57,12 @@ private:
 
 class TextWorkModifier : public Modifier {
 public:
+	TextWorkModifier();
+
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::TextWorkModifier &data);
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "TextWork Modifier"; }
@@ -65,6 +70,13 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+
+	Common::String _string;
+	Common::String _token;
+
+	// These appear to be 1-based?
+	int32 _firstChar;
+	int32 _lastChar;
 };
 
 class ObsidianPlugIn : public MTropolis::PlugIn {
