@@ -130,6 +130,11 @@ void MovieElement::activate() {
 
 	_unloadSignaller = project->notifyOnSegmentUnload(segmentIndex, this);
 	_postRenderSignaller = project->notifyOnPostRender(this);
+
+	if (!_paused && _visible) {
+		StartPlayingTaskData *startPlayingTaskData = _runtime->getVThread().pushTask("MovieElement::startPlayingTask", this, &MovieElement::startPlayingTask);
+		startPlayingTaskData->runtime = _runtime;
+	}
 }
 
 void MovieElement::deactivate() {

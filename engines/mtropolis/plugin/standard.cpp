@@ -570,8 +570,10 @@ VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::Shared
 	if (_executeWhen.respondsTo(msg->getEvent())) {
 		if (_mode == kModeFile) {
 			if (_embeddedFile) {
-				debug(2, "MIDI (%p): Playing embedded file", this);
+				debug(2, "MIDI (%x '%s'): Playing embedded file", getStaticGUID(), getName().c_str());
 				_plugIn->getMidi()->playFile(&_embeddedFile->contents[0], _embeddedFile->contents.size());
+			} else {
+				debug(2, "MIDI (%x '%s'): Digested execute event but don't have anything to play", getStaticGUID(), getName().c_str());
 			}
 		}
 	}
@@ -622,7 +624,7 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetVolume(MiniscriptThread *thr
 
 	if (_mode == kModeFile) {
 		const int normalizedVolume = (_volume * 1306) >> 9;
-		debug(2, "MIDI (%p): Changing volume to %i", this, normalizedVolume);
+		debug(2, "MIDI (%x '%s'): Changing volume to %i", getStaticGUID(), getName().c_str(), normalizedVolume);
 		_plugIn->getMidi()->setVolume(normalizedVolume); // 100 -> 255 range
 	}
 
@@ -640,7 +642,7 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetNoteVelocity(MiniscriptThrea
 		asInteger = 127;
 
 	if (_mode == kModeSingleNote) {
-		debug(2, "MIDI (%p): Changing note velocity to %i", this, asInteger);
+		debug(2, "MIDI (%x '%s'): Changing note velocity to %i", getStaticGUID(), getName().c_str(), asInteger);
 		_modeSpecific.singleNote.velocity = asInteger;
 	}
 
