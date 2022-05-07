@@ -364,6 +364,7 @@ bool SoundElement::load(ElementLoaderContext &context, const Data::SoundElement 
 		return false;
 
 	_paused = ((data.soundFlags & Data::SoundElement::kPaused) != 0);
+	_loop = ((data.soundFlags & Data::SoundElement::kLoop) != 0);
 	_leftVolume = data.leftVolume;
 	_rightVolume = data.rightVolume;
 	_balance = data.balance;
@@ -374,10 +375,29 @@ bool SoundElement::load(ElementLoaderContext &context, const Data::SoundElement 
 }
 
 bool SoundElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "loop") {
+		result.setBool(_loop);
+		return true;
+	} else if (attrib == "volume") {
+		result.setInt((_leftVolume + _rightVolume) / 2);
+		return true;
+	}
+
 	return NonVisualElement::readAttribute(thread, result, attrib);
 }
 
 MiniscriptInstructionOutcome SoundElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "loop") {
+		DynamicValueWriteFuncHelper<SoundElement, &SoundElement::scriptSetLoop>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "volume") {
+		DynamicValueWriteFuncHelper<SoundElement, &SoundElement::scriptSetVolume>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "balance") {
+		DynamicValueWriteFuncHelper<SoundElement, &SoundElement::scriptSetBalance>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
 	return NonVisualElement::writeRefAttribute(thread, writeProxy, attrib);
 }
 
@@ -385,6 +405,60 @@ void SoundElement::activate() {
 }
 
 void SoundElement::deactivate() {
+}
+
+MiniscriptInstructionOutcome SoundElement::scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kBoolean)
+		return kMiniscriptInstructionOutcomeFailed;
+
+	setLoop(value.getBool());
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome SoundElement::scriptSetVolume(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (asInteger < 0)
+		asInteger = 0;
+	else if (asInteger > 100)
+		asInteger = 100;
+
+	setVolume(asInteger);
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome SoundElement::scriptSetBalance(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (asInteger < -100)
+		asInteger = -100;
+	else if (asInteger > 100)
+		asInteger = 100;
+
+	setBalance(asInteger);
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+void SoundElement::setLoop(bool loop) {
+	_loop = loop;
+}
+
+void SoundElement::setVolume(uint16 volume) {
+	uint16 fullVolumeLeft = 100 - _balance;
+	uint16 fullVolumeRight = 100 + _balance;
+
+	// Weird math to ensure _leftVolume + _rightVolume stays divisible by 2
+	_leftVolume = (volume * fullVolumeLeft + 50) / 100;
+	_rightVolume = volume * 2 - _leftVolume;
+}
+
+void SoundElement::setBalance(int16 balance) {
+	_balance = balance;
+	setVolume((_leftVolume + _rightVolume) / 2);
 }
 
 } // End of namespace MTropolis

@@ -107,13 +107,96 @@ Common::SharedPtr<Modifier> CursorModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new CursorModifier(*this));
 }
 
-bool STransCtModifier::load(const PlugInModifierLoaderContext& context, const Data::Standard::STransCtModifier& data) {
+bool STransCtModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data) {
+	if (data.enableWhen.type != Data::PlugInTypeTaggedValue::kEvent ||
+		data.disableWhen.type != Data::PlugInTypeTaggedValue::kEvent ||
+		data.transitionType.type != Data::PlugInTypeTaggedValue::kInteger ||
+		data.transitionDirection.type != Data::PlugInTypeTaggedValue::kInteger ||
+		data.steps.type != Data::PlugInTypeTaggedValue::kInteger ||
+		data.duration.type != Data::PlugInTypeTaggedValue::kInteger ||
+		data.fullScreen.type != Data::PlugInTypeTaggedValue::kBoolean)
+		return false;
+
+	if (!_enableWhen.load(data.enableWhen.value.asEvent) || !_disableWhen.load(data.disableWhen.value.asEvent))
+		return false;
+
+	_transitionType = data.transitionType.value.asInt;
+	_transitionDirection = data.transitionDirection.value.asInt;
+	_steps = data.steps.value.asInt;
+	_duration = data.duration.value.asInt;
+	_fullScreen = data.fullScreen.value.asBoolean;
+
 	return true;
 }
+
+bool STransCtModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "rate") {
+		if (_duration <= (kMaxDuration / 100))
+			result.setInt(100);
+		else if (_duration >= kMaxDuration)
+			result.setInt(1);
+		else
+			result.setInt((kMaxDuration + (_duration / 2)) / _duration);
+		return true;
+	} else if (attrib == "steps") {
+		result.setInt(_steps);
+		return true;
+	}
+
+	return Modifier::readAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome STransCtModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "rate") {
+		DynamicValueWriteFuncHelper<STransCtModifier, &STransCtModifier::scriptSetRate>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "steps") {
+		DynamicValueWriteFuncHelper<STransCtModifier, &STransCtModifier::scriptSetSteps>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return Modifier::writeRefAttribute(thread, result, attrib);
+;
+}
+
 
 Common::SharedPtr<Modifier> STransCtModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new STransCtModifier(*this));
 }
+
+MiniscriptInstructionOutcome STransCtModifier::scriptSetRate(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (asInteger < 1)
+		asInteger = 1;
+	else if (asInteger > 100)
+		asInteger = 100;
+
+	if (asInteger == 100)
+		_duration = 0;
+	else
+		_duration = kMaxDuration / asInteger;
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome STransCtModifier::scriptSetSteps(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (asInteger < 4)
+		asInteger = 4;
+	else if (asInteger > 256)
+		asInteger = 100;
+
+	_steps = asInteger;
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 
 bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext& context, const Data::Standard::MediaCueMessengerModifier& data) {
 	if (data.enableWhen.type != Data::PlugInTypeTaggedValue::kEvent)
@@ -451,7 +534,7 @@ bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::
 
 		_modeSpecific.file.loop = (data.modeSpecific.embedded.loop != 0);
 		_modeSpecific.file.overrideTempo = (data.modeSpecific.embedded.overrideTempo != 0);
-		_modeSpecific.file.volume = (data.modeSpecific.embedded.volume != 0);
+		_volume = data.modeSpecific.embedded.volume;
 
 		if (data.embeddedFadeIn.type != Data::PlugInTypeTaggedValue::kFloat
 			|| data.embeddedFadeOut.type != Data::PlugInTypeTaggedValue::kFloat
@@ -472,6 +555,8 @@ bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::
 		_modeSpecific.singleNote.velocity = data.modeSpecific.singleNote.velocity;
 		_modeSpecific.singleNote.program = data.modeSpecific.singleNote.program;
 		_modeSpecific.singleNote.duration = data.singleNoteDuration.value.asFloat.toDouble();
+
+		_volume = 100;
 	}
 
 	return true;
@@ -493,12 +578,67 @@ VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::Shared
 	return kVThreadReturn;
 }
 
+bool MidiModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "volume") {
+		result.setInt(_volume);
+		return true;
+	}
+
+	return Modifier::readAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome MidiModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "volume") {
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetVolume>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "notevelocity") {
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteVelocity>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return Modifier::writeRefAttribute(thread, result, attrib);
+}
+
 Common::SharedPtr<Modifier> MidiModifier::shallowClone() const {
 	Common::SharedPtr<MidiModifier> clone(new MidiModifier(*this));
 
 	clone->_isActive = false;
 
 	return clone;
+}
+
+MiniscriptInstructionOutcome MidiModifier::scriptSetVolume(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (asInteger < 0)
+		asInteger = 0;
+	else if (asInteger > 100)
+		asInteger = 100;
+
+	_volume = asInteger;
+
+	if (_mode == kModeFile)
+		_plugIn->getMidi()->setVolume((_volume * 1306) >> 9);	// 100 -> 255 range
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome MidiModifier::scriptSetNoteVelocity(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (asInteger < 0)
+		asInteger = 0;
+	else if (asInteger > 127)
+		asInteger = 127;
+
+	if (_mode == kModeSingleNote)
+		_modeSpecific.singleNote.velocity = asInteger;
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 ListVariableModifier::ListVariableModifier() : _list(new DynamicList()) {

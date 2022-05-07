@@ -54,17 +54,36 @@ private:
 	uint32 _cursorID;
 };
 
-// Some sort of scene transition modifier
+// This appears to be basically a duplicate of scene transition modifier, except unlike that,
+// its parameters are controllable via script, and the duration scaling appears to be different
+// (probably 600000 max rate instead of 6000000)
 class STransCtModifier : public Modifier {
 public:
+	static const int32 kMaxDuration = 600000;
+
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data);
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
-	const char *debugGetTypeName() const override { return "Unknown STransCt Modifier"; }
+	const char *debugGetTypeName() const override { return "STransCt Scene Transition Modifier"; }
 #endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+
+	MiniscriptInstructionOutcome scriptSetRate(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetSteps(MiniscriptThread *thread, const DynamicValue &value);
+
+	Event _enableWhen;
+	Event _disableWhen;
+
+	int32 _transitionType;
+	int32 _transitionDirection;
+	int32 _steps;
+	int32 _duration;
+	bool _fullScreen;
 };
 
 class MediaCueMessengerModifier : public Modifier {
@@ -136,17 +155,23 @@ public:
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "MIDI Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
 #endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
+	MiniscriptInstructionOutcome scriptSetVolume(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetNoteVelocity(MiniscriptThread *thread, const DynamicValue &value);
+
 	struct FilePart {
 		bool loop;
 		bool overrideTempo;
-		bool volume;
 		double tempo;
 		double fadeIn;
 		double fadeOut;
@@ -175,6 +200,7 @@ private:
 
 	Mode _mode;
 	ModeSpecificUnion _modeSpecific;
+	uint8 _volume;	// We need this always available because scripts will try to set it and then read it even in single note mode
 
 	Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> _embeddedFile;
 
