@@ -100,7 +100,7 @@ void HypnoEngine::disableCursor() {
 
 void HypnoEngine::defaultCursor() {
 	if (!_defaultCursor.empty())
-		changeCursor(_defaultCursor, 0);
+		changeCursor(_defaultCursor, _defaultCursorIdx);
 	else
 		changeCursor("default");
 }

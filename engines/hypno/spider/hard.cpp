@@ -575,13 +575,17 @@ void SpiderEngine::runFusePanel(Code *code) {
 					runIntro(v);
 					_isFuseRust = false;
 					_isFuseUnreadable = true;
+					_defaultCursorIdx = 0;
 					loadImage("int_alof/fuseclea.smk", 0, 0, false, true);
+					defaultCursor();
 				} else if (_isFuseUnreadable && _sceneState["GS_SWITCH9"]) {
 					MVideo v("cine/spv032s.smk", Common::Point(0, 0), false, false, false);
 					runIntro(v);
 					_isFuseRust = false;
 					_isFuseUnreadable = false;
+					_defaultCursorIdx = 0;
 					loadImage("int_alof/fuseread.smk", 0, 0, false, true);
+					defaultCursor();
 				}
 
 				if (_isFuseRust || _isFuseUnreadable)

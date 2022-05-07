@@ -207,6 +207,10 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			runPalette((Palette *)action);
 			break;
 
+		case SwapPointerAction:
+			runSwapPointer((SwapPointer *)action);
+			break;
+
 		default:
 			break;
 		}
@@ -479,6 +483,7 @@ void HypnoEngine::runScene(Scene *scene) {
 					debugC(1, kHypnoDebugScene, "Resetting level variables");
 					resetSceneState();
 					_checkpoint = _nextLevel;
+					_defaultCursorIdx = 0;
 				}
 				_sceneState["GS_LEVELCOMPLETE"] = 0;
 

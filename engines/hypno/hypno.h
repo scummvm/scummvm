@@ -170,6 +170,7 @@ public:
 
 	// Cursors
 	Common::String _defaultCursor;
+	uint32 _defaultCursorIdx;
 	void disableCursor();
 	void defaultCursor();
 	void changeCursor(const Common::String &cursor, uint32 n, bool centerCursor = false);
@@ -195,6 +196,7 @@ public:
 	void runWalN(WalN *a);
 	bool runGlobal(Global *a);
 	void runTalk(Talk *a);
+	void runSwapPointer(SwapPointer *a);
 	void runChangeLevel(ChangeLevel *a);
 	virtual void drawBackToMenu(Hotspot *h);
 

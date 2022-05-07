@@ -471,6 +471,29 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("boilhard.mi_", "", prefix);
 	sc = (Scene *) _levels["boilhard.mi_"];
+	Hotspots *hots = sc->hots[1].smenu;
+
+	SwapPointer *swpt = (SwapPointer *) (*hots)[1].actions[4];
+	swpt->index--;
+
+	swpt = (SwapPointer *) (*hots)[2].actions[4];
+	swpt->index--;
+
+	swpt = (SwapPointer *) (*hots)[3].actions[4];
+	swpt->index--;
+
+	swpt = (SwapPointer *) (*hots)[4].actions[4];
+	swpt->index--;
+
+	swpt = (SwapPointer *) (*hots)[5].actions[4];
+	swpt->index--;
+
+	swpt = (SwapPointer *) (*hots)[6].actions[4];
+	swpt->index--;
+
+	swpt = (SwapPointer *) (*hots)[7].actions[4];
+	swpt->index--;
+
 	over = (Overlay*) sc->hots[0].actions[2];
 	over->path = "int_alof\\BOILB1.SMK"; // seems to be a bug?
 
@@ -575,7 +598,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadArcadeLevel("c5h.mi_", "<trans_apt_6>", "<over_hob2>", prefix);
 	if (_restoredContentEnabled)
-		_levels["c5.mi_"]->intros.push_back("cine/ppv006bs.smk");
+		_levels["c5h.mi_"]->intros.push_back("cine/ppv006bs.smk");
 	_levels["c5h.mi_"]->intros.push_back("cine/ctss001s.smk");
 
 	Transition *trans_apt_6 = new Transition("factory1.mi_");

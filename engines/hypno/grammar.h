@@ -78,6 +78,7 @@ enum ActionType {
 	WalNAction,
 	GlobalAction,
 	TalkAction,
+	SwapPointerAction,
 	ChangeLevelAction
 };
 
@@ -118,6 +119,15 @@ public:
 		index = index_;
 	}
 	Filename path;
+	uint32 index;
+};
+
+class SwapPointer : public Action {
+public:
+	SwapPointer(uint32 index_) {
+		type = SwapPointerAction;
+		index = index_;
+	}
 	uint32 index;
 };
 

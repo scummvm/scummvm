@@ -110,6 +110,11 @@ void HypnoEngine::runMice(Mice *a) {
 	changeCursor(a->path, a->index);
 }
 
+void HypnoEngine::runSwapPointer(SwapPointer *a) {
+	_defaultCursorIdx = a->index;
+	defaultCursor();
+}
+
 void HypnoEngine::runPalette(Palette *a) {
 	loadPalette(a->path);
 }

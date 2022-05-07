@@ -151,7 +151,12 @@ line: MENUTOK mflag mflag mflag {
 		Hotspot *hot = &cur->back();
 		hot->actions.push_back(a);
 		debugC(1, kHypnoDebugParser, "TIME %d", $2); }
-	|  SWPTTOK NUM { debugC(1, kHypnoDebugParser, "SWPT %d", $2); }
+	|  SWPTTOK NUM {
+		SwapPointer *a = new SwapPointer($2);
+		Hotspots *cur = stack->back();
+		Hotspot *hot = &cur->back();
+		hot->actions.push_back(a);
+		debugC(1, kHypnoDebugParser, "SWPT %d", $2); }
 	|  BACKTOK FILENAME NUM NUM gsswitch flag flag {
 		Background *a = new Background($2, Common::Point($3, $4), $5, $6, $7);
 		Hotspots *cur = stack->back();
