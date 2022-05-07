@@ -5163,9 +5163,21 @@ void Dialogs::idec_inv2(SCNHANDLE text, int MaxContents,
 						int MinWidth, int MinHeight,
 						int StartWidth, int StartHeight,
 						int MaxWidth, int MaxHeight) {
+	int startx = 100;
+	int starty = 100;
+	if (TinselVersion == 3) {
+		MinWidth = 3;
+		MinHeight = 2;
+		StartWidth = 3;
+		StartHeight = 2;
+		MaxWidth = 3;
+		MaxHeight = 2;
+		startx = 0;
+		starty = 50;
+	}
 	idec_inv(INV_2, text, MaxContents, MinWidth, MinHeight,
-	         StartWidth, StartHeight, MaxWidth, MaxHeight,
-	         100, 100, true);
+			 StartWidth, StartHeight, MaxWidth, MaxHeight,
+			 startx, starty, true);
 }
 
 /**
@@ -5180,7 +5192,6 @@ void Dialogs::idec_invMain(SCNHANDLE text, int MaxContents) {
 	idec_inv(INV_4, text, MaxContents,3, 2, 3, 2, 3, 2, 39,
 			72, false);
 
-	warning("TODO: idec_invMain: implement language scene playback");
 	const char *fileName = _vm->getSceneFile(TextLanguage());
 	SCNHANDLE sceneHandle = _vm->_handle->FindLanguageSceneHandle(fileName);
 	DoHailScene(sceneHandle);
