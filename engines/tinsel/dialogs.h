@@ -55,6 +55,7 @@ enum {
 	INV_DEFAULT  	= 6,
 
 	// Noir constants
+	INV_3		 	= 3,
 	INV_4 		 	= 4,
 	NUM_INV_V3 	 	= 5,
 	INV_7NOINV 	 	= 7,

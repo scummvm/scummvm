@@ -624,7 +624,7 @@ static void AddTopic(int icon) {
  */
 static void AddInv(int invno, int object) {
 	// illegal inventory number
-	assert(invno == INV_1 || invno == INV_2 || invno == INV_OPEN || invno == INV_DEFAULT);
+	assert(invno == INV_1 || invno == INV_2 || invno == INV_3 || invno == INV_OPEN || invno == INV_DEFAULT);
 
 	_vm->_dialogs->AddToInventory(invno, object, false);
 }
@@ -5390,7 +5390,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case ADDINV3:
 		// Noir only
-		warning("TODO: Implement ADDINV3");
+		AddInv(INV_3, pp[0]);
 		return -1;
 
 	case ADDNOTEBOOK:

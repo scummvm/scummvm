@@ -1464,7 +1464,7 @@ void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 	INV_OBJECT *invObj;
 
 	// Validate trying to add to a legal inventory
-	assert(invno == INV_1 || invno == INV_2 || invno == INV_CONV || invno == INV_OPEN || (invno == INV_DEFAULT && TinselVersion >= 2));
+	assert(invno == INV_1 || invno == INV_2 || invno == INV_3 || invno == INV_CONV || invno == INV_OPEN || (invno == INV_DEFAULT && TinselVersion >= 2));
 
 	if (invno == INV_OPEN) {
 		assert(_inventoryState == ACTIVE_INV && (_activeInv == INV_1 || _activeInv == INV_2)); // addopeninv() with inventry not open
