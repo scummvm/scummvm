@@ -37,9 +37,9 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	Common::Rect portraitBox(0, 40, 57, 94);
 
 	for (int i = 0; i < int(_playerFrames.size()); i++) {
-		_healthBar[i] = _playerFrames[i]->getSubArea(healthBarBox);
-		_ammoBar[i] = _playerFrames[i]->getSubArea(ammoBarBox);
-		_portrait[i] = _playerFrames[i]->getSubArea(portraitBox);
+		_healthBar[i+1] = _playerFrames[i]->getSubArea(healthBarBox);
+		_ammoBar[i+1] = _playerFrames[i]->getSubArea(ammoBarBox);
+		_portrait[i+1] = _playerFrames[i]->getSubArea(portraitBox);
 	}
 
 	_playerFrameSep = _playerFrames.size();
@@ -51,6 +51,11 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	}
 
 	_currentScript = arc->script;
+	// Reload all weapons
+	for (Script::iterator it = _currentScript.begin(); it != _currentScript.end(); ++it) {
+		_ammoTeam[it->actor] = _weaponMaxAmmo[it->cursor];
+	}
+
 	updateFromScript();
 }
 
@@ -66,9 +71,9 @@ void BoyzEngine::updateFromScript() {
 		ScriptInfo si = *_currentScript.begin();
 		//debug("%d %d %d", si.time, _background->decoder->getCurFrame(), si.actor);
 		if (!_background || int(si.time) <= _background->decoder->getCurFrame()) {
-			_currentActor = si.actor - 1;
+			_currentActor = si.actor;
 			_currentMode = si.mode;
-			_currentWeapon = si.cursor - 1;
+			_currentWeapon = si.cursor;
 			_currentScript.pop_front();
 
 			if (_currentMode == NonInteractive)
@@ -108,10 +113,17 @@ void BoyzEngine::drawHealth() {
 void BoyzEngine::drawAmmo() {
 	updateFromScript();
 
-	Common::Rect ammoBarBox(320 - _ammoBar[_currentActor].w, 0, 320, _ammoBar[_currentActor].h/2);
+	float w = _ammoBar[_currentWeapon].w / _weaponMaxAmmo[_currentWeapon];
+
+	Common::Rect ammoBarBox(320 - int(_ammoTeam[_currentActor] * w), 0, 320, _ammoBar[_currentActor].h/2);
 	uint32 c = kHypnoColorGreen; // green
 	_compositeSurface->fillRect(ammoBarBox, c);
-	drawImage(_ammoBar[_currentActor], 320 - _ammoBar[_currentActor].w, 0, true);
+
+	drawImage(_ammoBar[_currentActor], 320 - _ammoBar[_currentWeapon].w, 0, true);
+	for (int i = 1; i < _weaponMaxAmmo[_currentWeapon]; i++) {
+		int x = 320 - _ammoBar[_currentWeapon].w + int (i * w);
+		_compositeSurface->drawLine(x, 2, x, 5, 0);
+	}
 }
 
 void BoyzEngine::hitPlayer() {
@@ -188,6 +200,10 @@ void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
 		return;
 	}
 
+	if (_ammoTeam[_currentActor] == 0)
+		return; // TODO: out of ammo sound is missing
+
+	_ammoTeam[_currentActor]--;
 	playSound(_soundPath + _weaponShootSound[_currentWeapon], 1);
 	incShotsFired();
 	int i = detectTarget(mousePos);

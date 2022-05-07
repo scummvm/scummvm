@@ -34,6 +34,11 @@ BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine
 	_currentActor = 0;
 	_currentMode = NonInteractive;
 	_crosshairsPalette = nullptr;
+
+	for (int i = 0; i < 6; i++) {
+		_ammoTeam[i] = 0;
+		_weaponMaxAmmo[i] = 0;
+	}
 }
 
 static const char *selectBoyz = "\
@@ -89,12 +94,13 @@ void BoyzEngine::loadAssets() {
 
 	loadLib("sound/", "misc/sound.lib", true);
 
-	_weaponShootSound[0] = "pstlfire.raw";
-	_weaponShootSound[1] = "ak47fire.raw";
-	_weaponShootSound[2] = "dblfire.raw";
-	_weaponShootSound[3] = "m16fire.raw";
-	_weaponShootSound[4] = "shotfire.raw";
-	_weaponShootSound[5] = "glm60fr.raw";
+	_weaponShootSound[0] = "";
+	_weaponShootSound[1] = "pstlfire.raw";
+	_weaponShootSound[2] = "ak47fire.raw";
+	_weaponShootSound[3] = "dblfire.raw";
+	_weaponShootSound[4] = "m16fire.raw";
+	_weaponShootSound[5] = "shotfire.raw";
+	_weaponShootSound[6] = "glm60fr.raw";
 
 	Graphics::Surface *targets = decodeFrame("preload/targets.smk", 0, &_crosshairsPalette);
 
@@ -102,53 +108,53 @@ void BoyzEngine::loadAssets() {
 
 	// Pistol?
 	cursorBox = Common::Rect(62, 6, 83, 26);
-	_crosshairsInactive[0].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsInactive[0].copyRectToSurface(*targets, 0, 0, cursorBox);
+	_crosshairsInactive[1].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsInactive[1].copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	cursorBox = Common::Rect(62, 38, 83, 58);
-	_crosshairsActive[0].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsActive[0].copyRectToSurface(*targets, 0, 0, cursorBox);
+	_crosshairsActive[1].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsActive[1].copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	cursorBox = Common::Rect(62, 70, 83, 90);
-	_crosshairsTarget[0].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsTarget[0].copyRectToSurface(*targets, 0, 0, cursorBox);
+	_crosshairsTarget[1].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsTarget[1].copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	cursorBox = Common::Rect(16, 8, 32, 24);
-	_crosshairsInactive[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsInactive[2].copyRectToSurface(*targets, 0, 0, cursorBox);
-
-	cursorBox = Common::Rect(16, 40, 32, 56);
-	_crosshairsActive[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsActive[2].copyRectToSurface(*targets, 0, 0, cursorBox);
-
-	cursorBox = Common::Rect(16, 72, 32, 88);
-	_crosshairsTarget[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsTarget[2].copyRectToSurface(*targets, 0, 0, cursorBox);
-
-	cursorBox = Common::Rect(163, 11, 173, 21);
 	_crosshairsInactive[3].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsInactive[3].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	cursorBox = Common::Rect(163, 43, 173, 53);
+	cursorBox = Common::Rect(16, 40, 32, 56);
 	_crosshairsActive[3].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsActive[3].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	cursorBox = Common::Rect(163, 75, 173, 85);
+	cursorBox = Common::Rect(16, 72, 32, 88);
 	_crosshairsTarget[3].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[3].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	// Shotgun
-	cursorBox = Common::Rect(104, 7, 136, 25);
+	cursorBox = Common::Rect(163, 11, 173, 21);
 	_crosshairsInactive[4].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsInactive[4].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	cursorBox = Common::Rect(104, 39, 136, 57);
+	cursorBox = Common::Rect(163, 43, 173, 53);
 	_crosshairsActive[4].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsActive[4].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	cursorBox = Common::Rect(104, 71, 136, 83);
+	cursorBox = Common::Rect(163, 75, 173, 85);
 	_crosshairsTarget[4].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[4].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	// Shotgun
+	cursorBox = Common::Rect(104, 7, 136, 25);
+	_crosshairsInactive[5].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsInactive[5].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(104, 39, 136, 57);
+	_crosshairsActive[5].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsActive[5].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(104, 71, 136, 83);
+	_crosshairsTarget[5].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsTarget[5].copyRectToSurface(*targets, 0, 0, cursorBox);
 
     // Double small
 	/*
@@ -193,13 +199,21 @@ void BoyzEngine::loadAssets() {
 	_crosshairsTarget[6].copyRectToSurface(*targets, 0, 0, cursorBox);
 	*/
 
+	_weaponMaxAmmo[0] = 0;
+	_weaponMaxAmmo[1] = 10;
+	_weaponMaxAmmo[2] = 2; // large shotgun
+	_weaponMaxAmmo[3] = 8;
+	_weaponMaxAmmo[4] = 0;
+	_weaponMaxAmmo[5] = 6; // small shotgun
+	_weaponMaxAmmo[6] = 0;
+
 	targets->free();
 	delete targets;
 
 	loadLib("", "misc/fonts.lib", true);
 	loadFonts();
 
-	_nextLevel = "<start>";
+	_nextLevel = "c11.mi_";
 }
 
 void BoyzEngine::loadFonts() {

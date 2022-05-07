@@ -560,11 +560,13 @@ public:
 	private:
 	void runMainMenu(Code *code);
 
-	Graphics::Surface _healthBar[6];
-	Graphics::Surface _ammoBar[6];
-	Graphics::Surface _portrait[6];
+	int _ammoTeam[6];
+	Graphics::Surface _healthBar[7];
+	Graphics::Surface _ammoBar[7];
+	Graphics::Surface _portrait[7];
 
-	Filename _weaponShootSound[6];
+	Filename _weaponShootSound[7];
+	int _weaponMaxAmmo[7];
 
 	byte *_crosshairsPalette;
 	Graphics::Surface _crosshairsInactive[8];
