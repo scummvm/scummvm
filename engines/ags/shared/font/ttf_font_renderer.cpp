@@ -33,10 +33,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-// project-specific implementation
-extern bool ShouldAntiAliasText();
-
-
 // ***** TTF RENDERER *****
 void TTFFontRenderer::AdjustYCoordinateForFont(int *ycoord, int /*fontNumber*/) {
 	// TTF fonts already have space at the top, so try to remove the gap

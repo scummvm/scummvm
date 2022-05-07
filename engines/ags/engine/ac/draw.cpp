@@ -1872,7 +1872,6 @@ void draw_gui_and_overlays() {
 
 	clear_sprite_list();
 
-	const bool is_software_mode = !_G(gfxDriver)->HasAcceleratedTransform();
 	// Add active overlays to the sprite list
 	for (size_t i = 0; i < _GP(screenover).size(); ++i) {
 		auto &over = _GP(screenover)[i];
