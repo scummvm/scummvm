@@ -150,9 +150,15 @@ struct INV_OBJECT {
 	SCNHANDLE hScript;	// inventory objects event handling script
 	int32 attribute;		// inventory object's attribute
 
+	// TODO: Commented out because there are variables
+	// with this struct type that are cast from memory blobs,
+	// so this breaks DW1 and DW2. We need to read these
+	// struct members individually instead of casting the blobs
+	// to this struct
+
 	// Noir
-	int32 unknown;
-	int32 title;	// id of associated notebook title
+	//int32 unknown;
+	//int32 title;	// id of associated notebook title
 };
 
 struct INV_DEF {
