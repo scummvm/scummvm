@@ -259,6 +259,24 @@ void MultiMidiPlayer::send(uint32 b) {
 	_driver->send(b);
 }
 
+CursorModifier::CursorModifier() {
+}
+
+bool CursorModifier::respondsToEvent(const Event &evt) const {
+	return _applyWhen.respondsTo(evt) || _removeWhen.respondsTo(evt);
+}
+
+VThreadState CursorModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	// As with mTropolis, this doesn't support stacking cursors
+ 	if (_applyWhen.respondsTo(msg->getEvent())) {
+		runtime->setModifierCursorOverride(_cursorID);
+	}
+	if (_removeWhen.respondsTo(msg->getEvent())) {
+		runtime->clearModifierCursorOverride();
+	}
+	return kVThreadReturn;
+}
+
 bool CursorModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::CursorModifier &data) {
 	if (!_applyWhen.load(data.applyWhen) || !_removeWhen.load(data.removeWhen))
 		return false;
@@ -268,7 +286,8 @@ bool CursorModifier::load(const PlugInModifierLoaderContext &context, const Data
 }
 
 Common::SharedPtr<Modifier> CursorModifier::shallowClone() const {
-	return Common::SharedPtr<Modifier>(new CursorModifier(*this));
+	Common::SharedPtr<CursorModifier> clone(new CursorModifier(*this));
+	return clone;
 }
 
 bool STransCtModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data) {

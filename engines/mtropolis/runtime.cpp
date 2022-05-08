@@ -816,7 +816,7 @@ bool DynamicList::dynamicValueToIndex(size_t &outIndex, const DynamicValue &valu
 		if (!isfinite(rounded) || rounded < 1.0 || rounded > UINT32_MAX)
 			return false;
 
-		outIndex = static_cast<size_t>(rounded);
+		outIndex = static_cast<size_t>(rounded - 1.0);
 	} else if (value.getType() == DynamicValueTypes::kInteger) {
 		int32 i = value.getInt();
 		if (i < 1)
@@ -1882,6 +1882,23 @@ PlugIn::~PlugIn() {
 ProjectResources::~ProjectResources() {
 }
 
+CursorGraphic::~CursorGraphic() {
+}
+
+MacCursorGraphic::MacCursorGraphic(const Common::SharedPtr<Graphics::MacCursor>& macCursor) : _macCursor(macCursor) {
+}
+
+Graphics::Cursor *MacCursorGraphic::getCursor() const {
+	return _macCursor.get();
+}
+
+WinCursorGraphic::WinCursorGraphic(const Common::SharedPtr<Graphics::WinCursorGroup> &winCursorGroup, Graphics::Cursor *cursor) : _winCursorGroup(winCursorGroup), _cursor(cursor) {
+}
+
+Graphics::Cursor *WinCursorGraphic::getCursor() const {
+	return _cursor;
+}
+
 CursorGraphicCollection::CursorGraphicCollection() {
 }
 
@@ -1889,21 +1906,27 @@ CursorGraphicCollection::~CursorGraphicCollection() {
 }
 
 void CursorGraphicCollection::addWinCursorGroup(uint32 cursorGroupID, const Common::SharedPtr<Graphics::WinCursorGroup> &cursorGroup) {
+	Graphics::Cursor *selectedCursor = nullptr;
 	if (cursorGroup->cursors.size() > 0) {
 		// Not sure what the proper logic should be here, but the second one seems to be the one we usually want
 		if (cursorGroup->cursors.size() > 1)
-			_cursorGraphics[cursorGroupID] = cursorGroup->cursors[1].cursor;
+			selectedCursor = cursorGroup->cursors[1].cursor;
 		else
-			_cursorGraphics[cursorGroupID] = cursorGroup->cursors.back().cursor;
-		_winCursorGroups.push_back(cursorGroup);
+			selectedCursor = cursorGroup->cursors.back().cursor;
+		_cursorGraphics[cursorGroupID].reset(new WinCursorGraphic(cursorGroup, selectedCursor));
 	}
 }
 
 void CursorGraphicCollection::addMacCursor(uint32 cursorID, const Common::SharedPtr<Graphics::MacCursor> &cursor) {
-	_cursorGraphics[cursorID] = cursor.get();
-	_macCursors.push_back(cursor);
+	_cursorGraphics[cursorID].reset(new MacCursorGraphic(cursor));
 }
 
+Common::SharedPtr<CursorGraphic> CursorGraphicCollection::getGraphicByID(uint32 id) const {
+	Common::HashMap<uint32, Common::SharedPtr<CursorGraphic> >::const_iterator it = _cursorGraphics.find(id);
+	if (it != _cursorGraphics.end())
+		return it->_value;
+	return nullptr;
+}
 
 ProjectDescription::ProjectDescription(ProjectPlatform platform) : _language(Common::EN_ANY), _platform(platform) {
 }
@@ -1950,6 +1973,10 @@ const Common::SharedPtr<ProjectResources> &ProjectDescription::getResources() co
 
 void ProjectDescription::setCursorGraphics(const Common::SharedPtr<CursorGraphicCollection>& cursorGraphics) {
 	_cursorGraphics = cursorGraphics;
+}
+
+const Common::SharedPtr<CursorGraphicCollection> &ProjectDescription::getCursorGraphics() const {
+	return _cursorGraphics;
 }
 
 void ProjectDescription::setLanguage(const Common::Language &language) {
@@ -2466,6 +2493,17 @@ void Structural::setParent(Structural *parent) {
 	_parent = parent;
 }
 
+VisualElement *Structural::findScene() {
+	Structural *parent = _parent;
+	if (!parent)
+		return nullptr;
+
+	if (parent->isSubsection())
+		return static_cast<VisualElement *>(this);
+	else
+		return parent->findScene();
+}
+
 const Common::String &Structural::getName() const {
 	return _name;
 }
@@ -2811,6 +2849,10 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 
 				// Post to the message action itself to VThread
 				if (responds) {
+					if (modifier->getStaticGUID() == 0x5b965)
+					{
+						int n = 0;
+					}
 					debug(3, "Modifier %x '%s' consumed message (%i,%i)", modifier->getStaticGUID(), modifier->getName().c_str(), _msg->getEvent().eventType, _msg->getEvent().eventInfo);
 					runtime->postConsumeMessageTask(modifier, _msg);
 				}
@@ -3082,6 +3124,19 @@ const byte DefaultCursor::_cursorPalette[9] = {
 };
 
 
+class DefaultCursorGraphic : public CursorGraphic {
+public:
+	Graphics::Cursor *getCursor() const override;
+
+private:
+	mutable DefaultCursor _cursor;
+};
+
+Graphics::Cursor *DefaultCursorGraphic::getCursor() const {
+	return &_cursor;
+}
+
+
 OSEvent::OSEvent(OSEventType eventType) : _eventType(eventType) {
 }
 
@@ -3131,8 +3186,8 @@ Runtime::Runtime(OSystem *system, ISaveUIProvider *saveProvider, ILoadUIProvider
 	: _system(system), _saveProvider(saveProvider), _loadProvider(loadProvider),
 	_nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
 	_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
-	_lastFrameCursor(nullptr), _defaultCursor(new DefaultCursor()), _platform(kProjectPlatformUnknown),
-	_cachedMousePosition(Point16::create(0, 0)), _trackedMouseOutside(false) {
+	_lastFrameCursor(nullptr), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
+	_cachedMousePosition(Point16::create(0, 0)), _realMousePosition(Point16::create(0, 0)), _trackedMouseOutside(false), _haveModifierOverrideCursor(false) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -3216,7 +3271,7 @@ bool Runtime::runFrame() {
 
 					// Pushed second, so this happens first
 					if (mouseEvt->getX() != _cachedMousePosition.x || mouseEvt->getY() != _cachedMousePosition.y) {
-						UpdateMousePositionTaskData *taskData = _vthread->pushTask("Runtime::updateMousePositionTask1", this, &Runtime::updateMousePositionTask1);
+						UpdateMousePositionTaskData *taskData = _vthread->pushTask("Runtime::updateMousePositionTask", this, &Runtime::updateMousePositionTask);
 						taskData->x = mouseEvt->getX();
 						taskData->y = mouseEvt->getY();
 					}
@@ -3443,17 +3498,24 @@ void Runtime::drawFrame() {
 
 	_system->updateScreen();
 
-	Graphics::Cursor *cursor = nullptr;
+	Common::SharedPtr<CursorGraphic> cursor;
+	
+	Common::SharedPtr<Window> focusWindow = _mouseFocusWindow.lock();
 
-	// ...
-	if (cursor == nullptr)
-		cursor = _defaultCursor.get();
+	if (!focusWindow)
+		focusWindow = findTopWindow(_realMousePosition.x, _realMousePosition.y);
+
+	if (focusWindow)
+		cursor = focusWindow->getCursorGraphic();
+
+	if (!cursor)
+		cursor = _defaultCursor;
 
 	if (cursor != _lastFrameCursor) {
-		_lastFrameCursor = cursor;
-
 		CursorMan.showMouse(true);
-		CursorMan.replaceCursor(cursor);
+		CursorMan.replaceCursor(cursor->getCursor());
+
+		_lastFrameCursor = cursor;
 	}
 
 	if (_project)
@@ -3772,7 +3834,7 @@ bool Runtime::isModifierMouseInteractive(Modifier *modifier) {
 	return false;
 }
 
-void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, Structural *candidate, int32 relativeX, int32 relativeY) {
+void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, int &bestStackHeight, Structural *candidate, int stackHeight, int32 relativeX, int32 relativeY) {
 	int32 childRelativeX = relativeX;
 	int32 childRelativeY = relativeY;
 	if (candidate->isElement()) {
@@ -3780,9 +3842,15 @@ void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLaye
 		if (element->isVisual()) {
 			VisualElement *visual = static_cast<VisualElement *>(candidate);
 			int layer = visual->getLayer();
-			if (layer > bestLayer && visual->isMouseInsideBox(relativeX, relativeY) && isStructuralMouseInteractive(visual) && visual->isMouseCollisionAtPoint(relativeX, relativeY)) {
+
+			// Weird layering behavior:
+			// Objects in a higher layer in lower scenes still have higher render order, so they're on top
+			const bool isInFront = (layer > bestLayer) || (layer == bestLayer && stackHeight > bestStackHeight);
+
+			if (isInFront && visual->isMouseInsideBox(relativeX, relativeY) && isStructuralMouseInteractive(visual) && visual->isMouseCollisionAtPoint(relativeX, relativeY)) {
 				bestResult = candidate;
 				bestLayer = layer;
+				bestStackHeight = stackHeight;
 			}
 
 			childRelativeX -= visual->getRelativeRect().left;
@@ -3792,7 +3860,7 @@ void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLaye
 
 
 	for (const Common::SharedPtr<Structural> &child : candidate->getChildren()) {
-		recursiveFindMouseCollision(bestResult, bestLayer, child.get(), childRelativeX, childRelativeY);
+		recursiveFindMouseCollision(bestResult, bestLayer, bestStackHeight, child.get(), stackHeight, childRelativeX, childRelativeY);
 	}
 }
 
@@ -3857,12 +3925,249 @@ void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dis
 	bool relay = dispatch->isRelay();
 
 	Common::String msgDebugString;
-	if (evt.eventType == EventIDs::kAuthorMessage && _project)
-		msgDebugString = Common::String::format("'%s'", _project->findAuthorMessageName(evt.eventInfo));
-	else
-		msgDebugString = Common::String::format("(%i,%i)", evt.eventType, evt.eventInfo);
+	msgDebugString = Common::String::format("(%i,%i)", evt.eventType, evt.eventInfo);
+	if (evt.eventType == EventIDs::kAuthorMessage && _project) {
+		msgDebugString += " '";
+		msgDebugString += _project->findAuthorMessageName(evt.eventInfo);
+		msgDebugString += "'";
+	} else {
+		const char *extType = nullptr;
+		switch (evt.eventType) {
+		case EventIDs::kElementEnableEdit:
+			extType = "Element Enable Edit";
+			break;
+		case EventIDs::kElementDisableEdit:
+			extType = "Element Disable Edit";
+			break;
+		case EventIDs::kElementSelect:
+			extType = "Element Select";
+			break;
+		case EventIDs::kElementDeselect:
+			extType = "Element Deselect";
+			break;
+		case EventIDs::kElementToggleSelect:
+			extType = "Element Toggle Select";
+			break;
+		case EventIDs::kElementUpdatedCalculated:
+			extType = "Element Updated Calculated";
+			break;
+		case EventIDs::kElementShow:
+			extType = "Element Show";
+			break;
+		case EventIDs::kElementHide:
+			extType = "Element Hide";
+			break;
+		case EventIDs::kElementScrollUp:
+			extType = "Element Scroll Up";
+			break;
+		case EventIDs::kElementScrollDown:
+			extType = "Element Scroll Down";
+			break;
+		case EventIDs::kElementScrollRight:
+			extType = "Element Scroll Right";
+			break;
+		case EventIDs::kElementScrollLeft:
+			extType = "Element Scroll Left";
+			break;
 
-	debug(3, "Object %x '%s' posted message %s to %x '%s'  mod: %s   ele: %s", srcID, nameStr, msgDebugString.c_str(), destID, destStr, relay ? "all" : "first", cascade ? "all" : "targetOnly");
+		case EventIDs::kMotionStarted:
+			extType = "Motion Ended";
+			break;
+		case EventIDs::kMotionEnded:
+			extType = "Motion Started";
+			break;
+
+		case EventIDs::kTransitionStarted:
+			extType = "Transition Started";
+			break;
+		case EventIDs::kTransitionEnded:
+			extType = "Transition Ended";
+			break;
+
+		case EventIDs::kMouseDown:
+			extType = "Mouse Down";
+			break;
+		case EventIDs::kMouseUp:
+			extType = "Mouse Up";
+			break;
+		case EventIDs::kMouseOver:
+			extType = "Mouse Over";
+			break;
+		case EventIDs::kMouseOutside:
+			extType = "Mouse Outside";
+			break;
+		case EventIDs::kMouseTrackedInside:
+			extType = "Mouse Tracked Inside";
+			break;
+		case EventIDs::kMouseTrackedOutside:
+			extType = "Mouse Tracked Outside";
+			break;
+		case EventIDs::kMouseTracking:
+			extType = "Mouse Tracking";
+			break;
+		case EventIDs::kMouseUpInside:
+			extType = "Mouse Up Inside";
+			break;
+		case EventIDs::kMouseUpOutside:
+			extType = "Mouse Up Outside";
+			break;
+
+		case EventIDs::kSceneStarted:
+			extType = "Mouse Up Outside";
+			break;
+		case EventIDs::kSceneEnded:
+			extType = "Scene Ended";
+			break;
+		case EventIDs::kSceneDeactivated:
+			extType = "Scene Deactivate";
+			break;
+		case EventIDs::kSceneReactivated:
+			extType = "Scene Reactivated";
+			break;
+		case EventIDs::kSceneTransitionEnded:
+			extType = "Scene Transition Ended";
+			break;
+
+		case EventIDs::kSharedSceneReturnedToScene:
+			extType = "Scene Returned To Scene";
+			break;
+		case EventIDs::kSharedSceneSceneChanged:
+			extType = "Scene Scene Changed";
+			break;
+		case EventIDs::kSharedSceneNoNextScene:
+			extType = "Shared Scene No Next Scene";
+			break;
+		case EventIDs::kSharedSceneNoPrevScene:
+			extType = "Shared Scene No Prev Scene";
+			break;
+
+		case EventIDs::kParentEnabled:
+			extType = "Parent Enabled";
+			break;
+		case EventIDs::kParentDisabled:
+			extType = "Parent Disabled";
+			break;
+		case EventIDs::kParentChanged:
+			extType = "Parent Changed";
+			break;
+
+		case EventIDs::kPreloadMedia:
+			extType = "Preload Media";
+			break;
+		case EventIDs::kFlushMedia:
+			extType = "Flush Media";
+			break;
+		case EventIDs::kPrerollMedia:
+			extType = "Preroll Media";
+			break;
+
+		case EventIDs::kCloseProject:
+			extType = "Close Project";
+			break;
+
+		case EventIDs::kUserTimeout:
+			extType = "User Timeout";
+			break;
+		case EventIDs::kProjectStarted:
+			extType = "Project Started";
+			break;
+		case EventIDs::kProjectEnded:
+			extType = "Project Ended";
+			break;
+		case EventIDs::kFlushAllMedia:
+			extType = "Flush All Media";
+			break;
+
+		case EventIDs::kAttribGet:
+			extType = "Attrib Get";
+			break;
+		case EventIDs::kAttribSet:
+			extType = "Attrib Set";
+			break;
+
+		case EventIDs::kClone:
+			extType = "Clone";
+			break;
+		case EventIDs::kKill:
+			extType = "Kill";
+			break;
+
+		case EventIDs::kPlay:
+			extType = "Play";
+			break;
+		case EventIDs::kStop:
+			extType = "Stop";
+			break;
+		case EventIDs::kPause:
+			extType = "Pause";
+			break;
+		case EventIDs::kUnpause:
+			extType = "Unpause";
+			break;
+		case EventIDs::kTogglePause:
+			extType = "Toggle Pause";
+			break;
+		case EventIDs::kAtFirstCel:
+			extType = "At First Cel";
+			break;
+		case EventIDs::kAtLastCel:
+			extType = "At Last Cell";
+			break;
+		default:
+			break;
+		}
+
+		if (extType) {
+			msgDebugString += " '";
+			msgDebugString += extType;
+			msgDebugString += "'";
+		}
+	}
+
+	Common::String valueStr;
+	const DynamicValue &payload = dispatch->getMsg()->getValue();
+
+	if (payload.getType() != DynamicValueTypes::kNull) {
+		switch (payload.getType())
+		{
+		case DynamicValueTypes::kBoolean:
+			valueStr = (payload.getBool() ? "true" : "false");
+			break;
+		case DynamicValueTypes::kInteger:
+			valueStr = Common::String::format("%i", payload.getInt());
+			break;
+		case DynamicValueTypes::kFloat:
+			valueStr = Common::String::format("%g", payload.getFloat());
+			break;
+		case DynamicValueTypes::kPoint:
+			valueStr = Common::String::format("(%i,%i)", payload.getPoint().x, payload.getPoint().y);
+			break;
+		case DynamicValueTypes::kIntegerRange:
+			valueStr = Common::String::format("(%i thru %i)", payload.getIntRange().min, payload.getIntRange().max);
+			break;
+		case DynamicValueTypes::kVector:
+			valueStr = Common::String::format("(%g deg %g mag)", payload.getVector().angleRadians * (180.0 / M_PI), payload.getVector().magnitude);
+			break;
+		case DynamicValueTypes::kString:
+			valueStr = "'" + payload.getString() + "'";
+			break;
+		case DynamicValueTypes::kList:
+			valueStr = "List";
+			break;
+		case DynamicValueTypes::kObject:
+			valueStr = "Object";
+			if (RuntimeObject *obj = payload.getObject().object.lock().get())
+				valueStr += Common::String::format(" %x", obj->getStaticGUID());
+			break;
+		default:
+			valueStr = "<BAD TYPE> (this is a bug!)";
+			break;
+		}
+
+		valueStr = " with value " + valueStr;
+	}
+
+	debug(3, "Object %x '%s' posted message %s to %x '%s'%s  mod: %s   ele: %s", srcID, nameStr, msgDebugString.c_str(), destID, destStr, valueStr.c_str(), relay ? "all" : "first", cascade ? "all" : "targetOnly");
 #endif
 
 	DispatchMethodTaskData *taskData = _vthread->pushTask("Runtime::dispatchMessageTask", this, &Runtime::dispatchMessageTask);
@@ -3926,7 +4231,7 @@ VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data)
 			_trackedMouseOutside = false;
 
 			MessageToSend msg;
-			msg.eventID = EventIDs::kMouseUp;
+			msg.eventID = EventIDs::kMouseDown;
 			msg.target = tracked.get();
 			messagesToSend.push_back(msg);
 		}
@@ -3967,7 +4272,7 @@ VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data)
 }
 
 
-VThreadState Runtime::updateMousePositionTask1(const UpdateMousePositionTaskData &data) {
+VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData &data) {
 	if (!_project)
 		return kVThreadReturn;
 
@@ -3981,13 +4286,12 @@ VThreadState Runtime::updateMousePositionTask1(const UpdateMousePositionTaskData
 	// a Mouse Up Inside event is sent when the button is released.
 
 	Structural *collisionItem = nullptr;
+	int bestSceneStack = INT_MIN;
 	int bestLayer = INT_MIN;
 
 	for (size_t ri = 0; ri < _sceneStack.size(); ri++) {
 		const SceneStackEntry &sceneStackEntry = _sceneStack[_sceneStack.size() - 1 - ri];
-		recursiveFindMouseCollision(collisionItem, bestLayer, sceneStackEntry.scene.get(), data.x, data.y);
-		if (collisionItem)
-			break;
+		recursiveFindMouseCollision(collisionItem, bestSceneStack, bestLayer, sceneStackEntry.scene.get(), _sceneStack.size() - 1 - ri, data.x, data.y);
 	}
 
 	Common::SharedPtr<Structural> newMouseOver;
@@ -4072,6 +4376,31 @@ VThreadState Runtime::updateMousePositionTask1(const UpdateMousePositionTaskData
 	return kVThreadReturn;
 }
 
+void Runtime::updateMainWindowCursor() {
+	const uint32 kHandPointUpID = 10005;
+	const uint32 kArrowID = 10011;
+
+	if (!_mainWindow.expired()) {
+		uint32 selectedCursor = kArrowID;
+		if (!_mouseOverObject.expired())
+			selectedCursor = kHandPointUpID;
+
+		if (_haveModifierOverrideCursor)
+			selectedCursor = _modifierOverrideCursorID;
+
+		if (_project) {
+			Common::SharedPtr<CursorGraphicCollection> cursorGraphics = _project->getCursorGraphics();
+			if (cursorGraphics) {
+				Common::SharedPtr<CursorGraphic> graphic = cursorGraphics->getGraphicByID(selectedCursor);
+				if (graphic) {
+					Common::SharedPtr<Window> mainWindow = _mainWindow.lock();
+					mainWindow->setCursorGraphic(graphic);
+				}
+			}
+		}
+	}
+}
+
 void Runtime::queueMessage(const Common::SharedPtr<MessageDispatch>& dispatch) {
 	_messageQueue.push_back(dispatch);
 }
@@ -4143,6 +4472,9 @@ ProjectPlatform Runtime::getPlatform() const {
 }
 
 void Runtime::onMouseDown(int32 x, int32 y, Actions::MouseButton mButton) {
+	_realMousePosition.x = x;
+	_realMousePosition.y = y;
+
 	Common::SharedPtr<Window> focusWindow = _mouseFocusWindow.lock();
 	if (!focusWindow) {
 		focusWindow = findTopWindow(x, y);
@@ -4162,17 +4494,22 @@ void Runtime::onMouseDown(int32 x, int32 y, Actions::MouseButton mButton) {
 }
 
 void Runtime::onMouseMove(int32 x, int32 y) {
+	_realMousePosition.x = x;
+	_realMousePosition.y = y;
+
 	Common::SharedPtr<Window> focusWindow = _mouseFocusWindow.lock();
+
 	if (!focusWindow)
 		focusWindow = findTopWindow(x, y);
 
 	if (focusWindow)
 		focusWindow->onMouseMove(x - focusWindow->getX(), y - focusWindow->getY());
-
-	// TODO: Change mouse to focus window's cursor
 }
 
 void Runtime::onMouseUp(int32 x, int32 y, Actions::MouseButton mButton) {
+	_realMousePosition.x = x;
+	_realMousePosition.y = y;
+
 	Common::SharedPtr<Window> focusWindow = _mouseFocusWindow.lock();
 	if (!focusWindow)
 		return;
@@ -4199,6 +4536,22 @@ void Runtime::onKeyboardEvent(const Common::EventType evtType, bool repeat, cons
 
 const Point16 &Runtime::getCachedMousePosition() const {
 	return _cachedMousePosition;
+}
+
+void Runtime::setModifierCursorOverride(uint32 cursorID) {
+	if (!_haveModifierOverrideCursor || _modifierOverrideCursorID != cursorID) {
+		_haveModifierOverrideCursor = true;
+		_modifierOverrideCursorID = cursorID;
+		updateMainWindowCursor();
+	}
+}
+
+void Runtime::clearModifierCursorOverride() {
+	if (_haveModifierOverrideCursor) {
+		_haveModifierOverrideCursor = false;
+		updateMainWindowCursor();
+
+	}
 }
 
 Common::RandomSource *Runtime::getRandom() const {
@@ -4237,6 +4590,8 @@ void Runtime::ensureMainWindowExists() {
 		_mainWindow.reset(mainWindow);
 
 		_keyFocusWindow = mainWindow;
+
+		updateMainWindowCursor();
 	}
 }
 
@@ -4258,6 +4613,8 @@ void Runtime::unloadProject() {
 	// These should be last
 	_project.reset();
 	_rootLinkingScope.reset();
+
+	_haveModifierOverrideCursor = false;
 }
 
 void Runtime::refreshPlayTime() {
@@ -4591,6 +4948,7 @@ Project::~Project() {
 
 void Project::loadFromDescription(const ProjectDescription& desc) {
 	_resources = desc.getResources();
+	_cursorGraphics = desc.getCursorGraphics();
 
 	debug(1, "Loading new project...");
 
@@ -4896,6 +5254,10 @@ const char *Project::findAuthorMessageName(uint32 id) const {
 	}
 
 	return "Unknown";
+}
+
+const Common::SharedPtr<CursorGraphicCollection> &Project::getCursorGraphics() const {
+	return _cursorGraphics;
 }
 
 void Project::loadBootStream(size_t streamIndex) {
@@ -5375,12 +5737,6 @@ bool Subsection::load(const Data::SubsectionStructuralDef &data) {
 }
 
 bool Subsection::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
-	if (attrib == "subsection") {
-		// Unclear why this is necessary
-		result.setObject(getSelfReference());
-		return true;
-	}
-
 	return Structural::readAttribute(thread, result, attrib);
 }
 
@@ -5454,6 +5810,9 @@ bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result
 	} else if (attrib == "globalposition") {
 		result.setPoint(getGlobalPosition());
 		return true;
+	} else if (attrib == "layer") {
+		result.setInt(_layer);
+		return true;
 	}
 
 	return Element::readAttribute(thread, result, attrib);
@@ -5474,6 +5833,9 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "height") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetHeight>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "layer") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetLayer>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -5550,7 +5912,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *
 	if (value.getType() == DynamicValueTypes::kPoint) {
 		const Point16 &destPoint = value.getPoint();
 		int32 xDelta = destPoint.x - _rect.left;
-		int32 yDelta = destPoint.y - _rect.right;
+		int32 yDelta = destPoint.y - _rect.top;
 
 		if (xDelta != 0 || yDelta != 0)
 			offsetTranslate(xDelta, yDelta, false);
@@ -5576,6 +5938,26 @@ MiniscriptInstructionOutcome VisualElement::scriptSetHeight(MiniscriptThread *th
 		return kMiniscriptInstructionOutcomeFailed;
 
 	_rect.bottom = _rect.top + asInteger;
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome VisualElement::scriptSetLayer(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (asInteger != _layer) {
+		VisualElement *scene = findScene();
+
+		// If a layer is assigned and a colliding element exists, then the layers are swapped
+		if (scene) {
+			VisualElement *collision = recursiveFindItemWithLayer(scene, asInteger);
+			if (collision)
+				collision->_layer = _layer;
+		}
+		_layer = asInteger;
+	}
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -5610,6 +5992,24 @@ VThreadState VisualElement::changeVisibilityTask(const ChangeFlagTaskData &taskD
 	}
 
 	return kVThreadReturn;
+}
+
+VisualElement *VisualElement::recursiveFindItemWithLayer(VisualElement *element, int32 layer) {
+	if (element->_layer == layer)
+		return element;
+
+	for (const Common::SharedPtr<Structural> &child : element->getChildren()) {
+		if (child->isElement()) {
+			Element *childElement = static_cast<Element *>(child.get());
+			if (childElement->isVisual()) {
+				VisualElement *result = recursiveFindItemWithLayer(static_cast<VisualElement *>(childElement), layer);
+				if (result)
+					return result;
+			}
+		}
+	}
+
+	return nullptr;
 }
 
 bool NonVisualElement::isVisual() const {
@@ -5684,6 +6084,37 @@ Modifier::~Modifier() {
 		_debugInspector->onDestroyed();
 #endif
 }
+
+bool Modifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "parent") {
+		result.setObject(_parent);
+		return true;
+	}
+	if (attrib == "subsection") {
+		RuntimeObject *scan = _parent.lock().get();
+		while (scan) {
+			if (scan->isSubsection()) {
+				result.setObject(scan->getSelfReference());
+				return true;
+			}
+
+			if (scan->isStructural())
+				scan = static_cast<Structural *>(scan)->getParent();
+			else if (scan->isModifier())
+				scan = static_cast<Modifier *>(scan)->getParent().lock().get();
+			else
+				break;
+		}
+
+		return false;
+	}
+
+	return false;
+
+}
+
+
+
 
 void Modifier::materialize(Runtime *runtime, ObjectLinkingScope *outerScope) {
 	ObjectLinkingScope innerScope;

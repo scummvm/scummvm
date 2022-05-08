@@ -1050,6 +1050,34 @@ struct ProjectResources {
 	virtual ~ProjectResources();
 };
 
+class CursorGraphic {
+public:
+	virtual ~CursorGraphic();
+
+	virtual Graphics::Cursor *getCursor() const = 0;
+};
+
+class MacCursorGraphic : public CursorGraphic {
+public:
+	explicit MacCursorGraphic(const Common::SharedPtr<Graphics::MacCursor> &macCursor);
+
+	Graphics::Cursor *getCursor() const override;
+
+private:
+	Common::SharedPtr<Graphics::MacCursor> _macCursor;
+};
+
+class WinCursorGraphic : public CursorGraphic {
+public:
+	explicit WinCursorGraphic(const Common::SharedPtr<Graphics::WinCursorGroup> &winCursorGroup, Graphics::Cursor *cursor);
+
+	Graphics::Cursor *getCursor() const override;
+
+private:
+	Common::SharedPtr<Graphics::WinCursorGroup> _winCursorGroup;
+	Graphics::Cursor *_cursor;
+};
+
 class CursorGraphicCollection {
 public:
 	CursorGraphicCollection();
@@ -1058,11 +1086,10 @@ public:
 	void addWinCursorGroup(uint32 cursorGroupID, const Common::SharedPtr<Graphics::WinCursorGroup> &cursorGroup);
 	void addMacCursor(uint32 cursorID, const Common::SharedPtr<Graphics::MacCursor> &cursor);
 
-private:
-	Common::HashMap<uint32, Graphics::Cursor *> _cursorGraphics;
+	Common::SharedPtr<CursorGraphic> getGraphicByID(uint32 id) const;
 
-	Common::Array<Common::SharedPtr<Graphics::WinCursorGroup> > _winCursorGroups;
-	Common::Array<Common::SharedPtr<Graphics::MacCursor> > _macCursors;
+private:
+	Common::HashMap<uint32, Common::SharedPtr<CursorGraphic> > _cursorGraphics;
 };
 
 enum ProjectPlatform {
@@ -1088,6 +1115,7 @@ public:
 	const Common::SharedPtr<ProjectResources> &getResources() const;
 
 	void setCursorGraphics(const Common::SharedPtr<CursorGraphicCollection> &cursorGraphics);
+	const Common::SharedPtr<CursorGraphicCollection> &getCursorGraphics() const;
 
 	void setLanguage(const Common::Language &language);
 	const Common::Language &getLanguage() const;
@@ -1408,6 +1436,8 @@ public:
 	void onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
 
 	const Point16 &getCachedMousePosition() const;
+	void setModifierCursorOverride(uint32 cursorID);
+	void clearModifierCursorOverride();
 
 	Common::RandomSource *getRandom() const;
 	WorldManagerInterface *getWorldManagerInterface() const;
@@ -1488,7 +1518,7 @@ private:
 
 	static bool isStructuralMouseInteractive(Structural *structural);
 	static bool isModifierMouseInteractive(Modifier *modifier);
-	static void recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, Structural *candidate, int32 relativeX, int32 relativeY);
+	static void recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, int &bestStackHeight, Structural *candidate, int stackHeight, int32 relativeX, int32 relativeY);
 
 	void queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay);
 
@@ -1504,8 +1534,9 @@ private:
 	VThreadState consumeMessageTask(const ConsumeMessageTaskData &data);
 	VThreadState consumeCommandTask(const ConsumeCommandTaskData &data);
 	VThreadState updateMouseStateTask(const UpdateMouseStateTaskData &data);
-	VThreadState updateMousePositionTask1(const UpdateMousePositionTaskData &data);
-	VThreadState updateMousePositionTask2(const UpdateMousePositionTaskData &data);
+	VThreadState updateMousePositionTask(const UpdateMousePositionTaskData &data);
+
+	void updateMainWindowCursor();
 
 	Common::Array<VolumeState> _volumes;
 	Common::SharedPtr<ProjectDescription> _queuedProjectDesc;
@@ -1554,12 +1585,13 @@ private:
 	ISaveUIProvider *_saveProvider;
 	ILoadUIProvider *_loadProvider;
 
-	Graphics::Cursor *_lastFrameCursor;
-	Common::SharedPtr<Graphics::Cursor> _defaultCursor;
+	Common::SharedPtr<CursorGraphic> _lastFrameCursor;
+	Common::SharedPtr<CursorGraphic> _defaultCursor;
 
 	Common::WeakPtr<Window> _mouseFocusWindow;
-	Common::WeakPtr<Window> _keyFocusWindow;
 	bool _mouseFocusFlags[Actions::kMouseButtonCount];
+
+	Common::WeakPtr<Window> _keyFocusWindow;
 
 	ProjectPlatform _platform;
 
@@ -1567,7 +1599,11 @@ private:
 	Common::SharedPtr<WorldManagerInterface> _worldManagerInterface;
 	Common::SharedPtr<AssetManagerInterface> _assetManagerInterface;
 
+	// The cached mouse position is updated at frame end
 	Point16 _cachedMousePosition;
+
+	// The real mouse position is updated all the time (even when suspended)
+	Point16 _realMousePosition;
 
 	// Mouse control is tracked in two ways: Mouse over is detected with mouse movement AND when
 	// "refreshCursor" is set on the world manager, it indicates the frontmost object that
@@ -1577,6 +1613,9 @@ private:
 	Common::WeakPtr<Structural> _mouseOverObject;
 	Common::WeakPtr<Structural> _mouseTrackingObject;
 	bool _trackedMouseOutside;
+
+	uint32 _modifierOverrideCursorID;
+	bool _haveModifierOverrideCursor;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<Debugger> _debugger;
@@ -1720,6 +1759,9 @@ public:
 
 	Structural *getParent() const;
 	void setParent(Structural *parent);
+
+	// Helper that finds the scene containing the structural object, or itself if it is the scene
+	VisualElement *findScene();
 
 	const Common::String &getName() const;
 
@@ -1922,6 +1964,8 @@ public:
 
 	const char *findAuthorMessageName(uint32 id) const;
 
+	const Common::SharedPtr<CursorGraphicCollection> &getCursorGraphics() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Project"; }
 #endif
@@ -2015,6 +2059,8 @@ private:
 
 	Common::Array<Common::SharedPtr<PlugIn> > _plugIns;
 	Common::SharedPtr<ProjectResources> _resources;
+	Common::SharedPtr<CursorGraphicCollection> _cursorGraphics;
+
 	ObjectLinkingScope _structuralScope;
 	ObjectLinkingScope _modifierScope;
 
@@ -2113,6 +2159,7 @@ protected:
 	MiniscriptInstructionOutcome scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result);
 	MiniscriptInstructionOutcome scriptSetWidth(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetHeight(MiniscriptThread *thread, const DynamicValue &dest);
+	MiniscriptInstructionOutcome scriptSetLayer(MiniscriptThread *thread, const DynamicValue &dest);
 
 	void offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOriginOnly);
 
@@ -2122,6 +2169,8 @@ protected:
 	};
 
 	VThreadState changeVisibilityTask(const ChangeFlagTaskData &taskData);
+
+	static VisualElement *recursiveFindItemWithLayer(VisualElement *element, int32 layer);
 
 	bool _directToScreen;
 	bool _visible;
@@ -2166,6 +2215,8 @@ class Modifier : public RuntimeObject, public IMessageConsumer, public IDebuggab
 public:
 	Modifier();
 	virtual ~Modifier();
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 
 	void materialize(Runtime *runtime, ObjectLinkingScope *outerScope);
 

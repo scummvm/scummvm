@@ -1574,10 +1574,12 @@ MiniscriptInstructionOutcome PushGlobal::execute(MiniscriptThread *thread) const
 	switch (_globalID) {
 	case kGlobalRefElement:
 	case kGlobalRefSection:
-	case kGlobalRefSubsection:
 	case kGlobalRefScene:
 	case kGlobalRefProject:
 		return executeFindFilteredParent(thread);
+	case kGlobalRefModifier:
+		value.setObject(thread->getModifier()->getSelfReference());
+		break;
 	case kGlobalRefIncomingData:
 		value = thread->getMessageProperties()->getValue();
 		break;
@@ -1621,9 +1623,6 @@ MiniscriptInstructionOutcome PushGlobal::executeFindFilteredParent(MiniscriptThr
 			break;
 		case kGlobalRefSection:
 			isMatch = obj->isSection();
-			break;
-		case kGlobalRefSubsection:
-			isMatch = obj->isSubsection();
 			break;
 		case kGlobalRefScene:
 			// FIXME: Need better detection of scenes
@@ -1818,6 +1817,10 @@ VThreadState MiniscriptThread::resume(const ResumeTaskData &taskData) {
 
 	if (instrsArray.size() == 0)
 		return kVThreadReturn;
+
+	if (_modifier->getStaticGUID() == 0x985d1) {
+		int n = 0;
+	}
 
 	MiniscriptInstruction *const *instrs = &instrsArray[0];
 	size_t numInstrs = instrsArray.size();

@@ -1157,10 +1157,19 @@ Common::SharedPtr<ModifierSaveLoad> BooleanVariableModifier::getSaveLoad() {
 }
 
 bool BooleanVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
-	if (value.getType() == DynamicValueTypes::kBoolean)
+	switch (value.getType()) {
+	case DynamicValueTypes::kBoolean:
 		_value = value.getBool();
-	else
+		break;
+	case DynamicValueTypes::kFloat:
+		_value = (value.getFloat() != 0.0);
+		break;
+	case DynamicValueTypes::kInteger:
+		_value = (value.getInt() != 0);
+		break;
+	default:
 		return false;
+	}
 
 	return true;
 }
