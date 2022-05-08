@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-07 19:56+0000\n"
+"POT-Creation-Date: 2022-05-08 16:07+0000\n"
 "PO-Revision-Date: 2022-04-29 11:23+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4273,7 +4273,7 @@ msgstr "リソースの初期化に失敗しました"
 msgid "A required game resource was not found"
 msgstr "必要なゲームリソースが見つかりませんでした"
 
-#: engines/bladerunner/bladerunner.cpp:2599
+#: engines/bladerunner/bladerunner.cpp:2607
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4283,7 +4283,7 @@ msgstr ""
 "ナルモードでプレイ中です。ゲームを完全に終了するまで、ディレクターズカット"
 "モードとして調整されます。"
 
-#: engines/bladerunner/bladerunner.cpp:2601
+#: engines/bladerunner/bladerunner.cpp:2609
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4293,7 +4293,7 @@ msgstr ""
 "カットモードでプレイ中です。ゲームを完全に終了するまで、オリジナルモードとし"
 "て調整されます。"
 
-#: engines/bladerunner/bladerunner.cpp:2603
+#: engines/bladerunner/bladerunner.cpp:2611
 msgid "Continue"
 msgstr "つづく"
 

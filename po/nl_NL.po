@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-07 19:56+0000\n"
+"POT-Creation-Date: 2022-05-08 16:07+0000\n"
 "PO-Revision-Date: 2022-03-29 10:46+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4334,7 +4334,7 @@ msgstr "Initialisatie van bronnen mislukt"
 msgid "A required game resource was not found"
 msgstr "Een vereist spel bron was niet gevonden"
 
-#: engines/bladerunner/bladerunner.cpp:2599
+#: engines/bladerunner/bladerunner.cpp:2607
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4344,7 +4344,7 @@ msgstr ""
 "speelt in Original Content modus. De modus zal aangepast worden naar "
 "Restored Cut Content voor deze sessie totdat u het spel volledig verlaat."
 
-#: engines/bladerunner/bladerunner.cpp:2601
+#: engines/bladerunner/bladerunner.cpp:2609
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4354,7 +4354,7 @@ msgstr ""
 "speelt in Restored Cut Content modus. De modus zal aangepast worden naar "
 "Original Content voor deze sessie totdat u het spel volledig verlaat."
 
-#: engines/bladerunner/bladerunner.cpp:2603
+#: engines/bladerunner/bladerunner.cpp:2611
 msgid "Continue"
 msgstr "Doorgaan"
 
