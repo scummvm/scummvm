@@ -82,11 +82,13 @@ class WorldManagerInterface;
 struct DynamicValue;
 struct DynamicValueReadProxy;
 struct DynamicValueWriteProxy;
+struct ILoadUIProvider;
 struct IMessageConsumer;
 struct IModifierContainer;
 struct IModifierFactory;
 struct IPlugInModifierFactory;
 struct IPlugInModifierFactoryAndDataFactory;
+struct ISaveUIProvider;
 struct IStructuralReferenceVisitor;
 struct MessageProperties;
 struct ModifierLoaderContext;
@@ -381,6 +383,13 @@ struct VarReference {
 	inline bool operator!=(const VarReference &other) const {
 		return !((*this) == other);
 	}
+
+	bool resolve(Structural *structuralScope, Common::WeakPtr<RuntimeObject> &outObject) const;
+	bool resolve(Modifier *modifierScope, Common::WeakPtr<RuntimeObject> &outObject) const;
+
+private:
+	bool resolveContainer(IModifierContainer *modifierContainer, Common::WeakPtr<RuntimeObject> &outObject) const;
+	bool resolveSingleModifier(Modifier *modifier, Common::WeakPtr<RuntimeObject> &outObject) const;
 };
 
 struct ObjectReference {
@@ -1324,7 +1333,7 @@ private:
 
 class Runtime {
 public:
-	explicit Runtime(OSystem *system);
+	explicit Runtime(OSystem *system, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider);
 
 	bool runFrame();
 	void drawFrame();
@@ -1404,6 +1413,9 @@ public:
 	WorldManagerInterface *getWorldManagerInterface() const;
 	AssetManagerInterface *getAssetManagerInterface() const;
 	SystemInterface *getSystemInterface() const;
+
+	ISaveUIProvider *getSaveProvider() const;
+	ILoadUIProvider *getLoadProvider() const;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
@@ -1539,6 +1551,8 @@ private:
 
 	Scheduler _scheduler;
 	OSystem *_system;
+	ISaveUIProvider *_saveProvider;
+	ILoadUIProvider *_loadProvider;
 
 	Graphics::Cursor *_lastFrameCursor;
 	Common::SharedPtr<Graphics::Cursor> _defaultCursor;
@@ -2131,6 +2145,23 @@ struct ModifierFlags {
 	bool flagsWereLoaded : 1;
 };
 
+class ModifierSaveLoad {
+public:
+	virtual ~ModifierSaveLoad();
+
+	void save(Modifier *modifier, Common::WriteStream *stream);
+	bool load(Modifier *modifier, Common::ReadStream *stream);
+	virtual void commitLoad() const = 0;
+
+protected:
+	// Saves the modifier state to a stream
+	virtual void saveInternal(Common::WriteStream *stream) const = 0;
+
+	// Loads the modifier state from a stream into the save/load state and returns true
+	// if successful.  This will not trigger any actual changes until "commit" is called.
+	virtual bool loadInternal(Common::ReadStream *stream) = 0;
+};
+
 class Modifier : public RuntimeObject, public IMessageConsumer, public IDebuggable {
 public:
 	Modifier();
@@ -2143,6 +2174,7 @@ public:
 	virtual bool isBehavior() const;
 	virtual bool isCompoundVariable() const;
 	virtual bool isKeyboardMessenger() const;
+	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad();
 
 	bool isModifier() const override;
 
@@ -2205,6 +2237,7 @@ public:
 	virtual bool isVariable() const;
 	virtual bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) = 0;
 	virtual void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const = 0;
+	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override = 0;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 

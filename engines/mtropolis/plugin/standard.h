@@ -116,6 +116,8 @@ public:
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ObjectReferenceVariableModifier &data);
 
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
 
@@ -127,6 +129,19 @@ public:
 #endif
 
 private:
+	class SaveLoad : public ModifierSaveLoad {
+	public:
+		explicit SaveLoad(ObjectReferenceVariableModifier *modifier);
+
+	private:
+		void commitLoad() const override;
+		void saveInternal(Common::WriteStream *stream) const override;
+		bool loadInternal(Common::ReadStream *stream) override;
+
+		ObjectReferenceVariableModifier *_modifier;
+		Common::String _objectPath;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
 	MiniscriptInstructionOutcome scriptSetPath(MiniscriptThread *thread, const DynamicValue &value);
@@ -217,6 +232,8 @@ public:
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data);
 
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
@@ -230,6 +247,19 @@ public:
 #endif
 
 private:
+	class SaveLoad : public ModifierSaveLoad {
+	public:
+		explicit SaveLoad(ListVariableModifier *modifier);
+
+	private:
+		void commitLoad() const override;
+		void saveInternal(Common::WriteStream *stream) const override;
+		bool loadInternal(Common::ReadStream *stream) override;
+
+		ListVariableModifier *_modifier;
+		Common::SharedPtr<DynamicList> _list;
+	};
+
 	ListVariableModifier(const ListVariableModifier &other);
 	ListVariableModifier &operator=(const ListVariableModifier &other);
 

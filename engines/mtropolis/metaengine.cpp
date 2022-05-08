@@ -59,7 +59,19 @@ public:
 };
 
 bool MTropolisMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	switch (f) {
+	case kSupportsListSaves:
+	case kSupportsDeleteSave:
+	case kSavesSupportMetaInfo:
+	case kSavesSupportThumbnail:
+	case kSavesSupportCreationDate:
+	case kSavesSupportPlayTime:
+	case kSimpleSavesNames:
+	case kSavesUseExtendedFormat:
+		return true;
+	default:
+		return false;
+	}
 }
 
 bool MTropolis::MTropolisEngine::hasFeature(EngineFeature f) const {
