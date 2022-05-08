@@ -560,6 +560,7 @@ public:
 	typedef T &ReferenceType;
 
 	explicit ScopedPtr(PointerType o = nullptr) : _pointer(o) {}
+	ScopedPtr(nullptr_t) : _pointer(nullptr) {}
 
 	ReferenceType operator*() const { return *_pointer; }
 	PointerType operator->() const { return _pointer; }
@@ -580,6 +581,13 @@ public:
 	void reset(PointerType o = nullptr) {
 		DL()(_pointer);
 		_pointer = o;
+	}
+
+	/**
+	 * Affectation with nullptr
+	 */
+	ScopedPtr &operator=(nullptr_t) {
+		reset(nullptr);
 	}
 
 	/**
