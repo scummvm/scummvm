@@ -26,18 +26,16 @@
 namespace Tinsel {
 
 void Notebook::AddHyperlink(int32 id1, int32 id2) {
+#if 0
 	INV_OBJECT *invObject = _vm->_dialogs->GetInvObject(id1);
 
-#if 0
 	if (invObject->title != 0) {
 		error("A clue can only be hyperlinked if it only has one title!");
 		return;
 	}
-#endif
 
 	invObject = _vm->_dialogs->GetInvObject(id2);
 
-#if 0
 	if (invObject->title != 0) {
 		error("A clue can only be hyperlinked if it only has one title!");
 		return;

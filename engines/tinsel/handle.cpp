@@ -426,7 +426,7 @@ const ACTORDATA *Handle::GetActorData(SCNHANDLE offset, uint32 count) {
 
 	ACTORDATA *actorData = new ACTORDATA[count];
 
-	for (int i = 0; i < count; i++) {
+	for (uint32 i = 0; i < count; i++) {
 		if (TinselVersion <= 1) {
 			actorData[i].masking = stream->readSint32();
 			actorData[i].hActorId = stream->readUint32();
@@ -461,7 +461,7 @@ const PROCESS_STRUC *Handle::GetProcessData(SCNHANDLE offset, uint32 count) {
 
 	PROCESS_STRUC *processData = new PROCESS_STRUC[count];
 
-	for (int i = 0; i < count; i++) {
+	for (uint32 i = 0; i < count; i++) {
 		processData[i].processId = stream->readUint32();
 		processData[i].hProcessCode = stream->readUint32();
 	}
