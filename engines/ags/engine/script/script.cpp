@@ -343,13 +343,21 @@ static int PrepareTextScript(ccInstance *sci, const char **tsname) {
 
 int RunScriptFunction(ccInstance *sci, const char *tsname, size_t numParam, const RuntimeScriptValue *params) {
 	int oldRestoreCount = _G(gameHasBeenRestored);
+	// TODO: research why this is really necessary, and refactor to avoid such hacks!
+	// First, save the current ccError state
+	// This is necessary because we might be attempting
+	// to run Script B, while Script A is still running in the
+	// background.
+	// If CallInstance here has an error, it would otherwise
+	// also abort Script A because ccError is a global variable.
+	ScriptError cachedCcError = cc_get_error();
 
 	cc_clear_error();
 	int toret = PrepareTextScript(sci, &tsname);
 	if (toret) {
+		cc_error(cachedCcError);
 		return -18;
 	}
-
 	cc_clear_error();
 	toret = _G(curscript)->inst->CallScriptFunction(tsname, numParam, params);
 
@@ -366,6 +374,9 @@ int RunScriptFunction(ccInstance *sci, const char *tsname, size_t numParam, cons
 	post_script_cleanup();
 
 	_G(post_script_cleanup_stack)--;
+
+	// restore cached error state
+	cc_error(cachedCcError);
 
 	// if the game has been restored, ensure that any further scripts are not run
 	if ((oldRestoreCount != _G(gameHasBeenRestored)) && (_G(eventClaimed) == EVENT_INPROGRESS))

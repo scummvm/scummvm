@@ -74,4 +74,8 @@ void cc_error(const char *descr, ...) {
 	_GP(ccError).Line = _G(currentline);
 }
 
+void cc_error(const ScriptError &err) {
+	_GP(ccError) = err;
+}
+
 } // namespace AGS3

@@ -55,6 +55,7 @@ void cc_clear_error();
 bool cc_has_error();
 const ScriptError &cc_get_error();
 void cc_error(const char *, ...);
+void cc_error(const ScriptError &err);
 // Project-dependent script error formatting
 AGS::Shared::String cc_format_error(const AGS::Shared::String &message);
 
