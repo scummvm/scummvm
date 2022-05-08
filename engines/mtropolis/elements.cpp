@@ -53,7 +53,7 @@ void GraphicElement::render(Window *window) {
 
 MovieElement::MovieElement()
 	: _cacheBitmap(false), _reversed(false), _haveFiredAtFirstCel(false), _haveFiredAtLastCel(false)
-	, _loop(false), _alternate(false), _playEveryFrame(false), _assetID(0), _runtime(nullptr) {
+	, _alternate(false), _playEveryFrame(false), _assetID(0), _runtime(nullptr) {
 }
 
 MovieElement::~MovieElement() {

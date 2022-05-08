@@ -821,7 +821,7 @@ bool DynamicList::dynamicValueToIndex(size_t &outIndex, const DynamicValue &valu
 		int32 i = value.getInt();
 		if (i < 1)
 			return false;
-		static_cast<size_t>(i - 1);
+		outIndex = static_cast<size_t>(i - 1);
 	}
 	return true;
 }
@@ -869,6 +869,7 @@ Common::SharedPtr<DynamicList> DynamicList::clone() const {
 
 	if (_container)
 		clonedList->_container = _container->clone();
+	clonedList->_type = _type;
 
 	return clonedList;
 }
@@ -2219,7 +2220,7 @@ MiniscriptInstructionOutcome SystemInterface::setVolumeName(MiniscriptThread *th
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-Structural::Structural() : _parent(nullptr), _paused(false) {
+Structural::Structural() : _parent(nullptr), _paused(false), _loop(false) {
 }
 
 Structural::~Structural() {
@@ -2241,6 +2242,9 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 		result.setString(_name);
 		return true;
 	} else if (attrib == "paused") {
+		result.setBool(_paused);
+		return true;
+	} else if (attrib == "loop") {
 		result.setBool(_paused);
 		return true;
 	} else if (attrib == "this") {
@@ -2364,6 +2368,9 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 		} else {
 			return kMiniscriptInstructionOutcomeFailed;
 		}
+	} else if (attrib == "loop") {
+		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetLoop>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return RuntimeObject::writeRefAttribute(thread, result, attrib);
@@ -2565,6 +2572,15 @@ MiniscriptInstructionOutcome Structural::scriptSetPaused(MiniscriptThread *threa
 	return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
 }
 
+MiniscriptInstructionOutcome Structural::scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kBoolean)
+		return kMiniscriptInstructionOutcomeFailed;
+
+	_loop = value.getBool();
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 ObjectLinkingScope::ObjectLinkingScope() : _parent(nullptr) {
 }
 
@@ -2746,8 +2762,10 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 				}
 
 				// Post to the message action itself to VThread
-				if (responds)
+				if (responds) {
+					debug(3, "Modifier %x '%s' consumed message (%i,%i)", modifier->getStaticGUID(), modifier->getName().c_str(), _msg->getEvent().eventType, _msg->getEvent().eventInfo);
 					runtime->postConsumeMessageTask(modifier, _msg);
+				}
 
 				return kVThreadReturn;
 			} break;
@@ -2833,6 +2851,38 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 	_terminated = true;
 
 	return kVThreadReturn;
+}
+
+const Common::SharedPtr<MessageProperties> &MessageDispatch::getMsg() const {
+	return _msg;
+}
+
+bool MessageDispatch::isCascade() const {
+	return _cascade;
+}
+
+bool MessageDispatch::isRelay() const {
+	return _relay;
+}
+
+
+RuntimeObject *MessageDispatch::getRootPropagator() const {
+	if (_propagationStack.size() > 0) {
+		const PropagationStack &lowest = _propagationStack[0];
+		switch (lowest.propagationStage) {
+		case PropagationStack::kStageSendToModifier:
+			return lowest.ptr.modifier;
+		case PropagationStack::kStageSendCommand:
+		case PropagationStack::kStageSendToStructuralChildren:
+		case PropagationStack::kStageSendToStructuralModifiers:
+		case PropagationStack::kStageSendToStructuralSelf:
+			return lowest.ptr.structural;
+		default:
+			break;
+		}
+	}
+
+	return nullptr;
 }
 
 KeyEventDispatch::KeyEventDispatch(const Common::SharedPtr<KeyboardInputEvent> &evt) : _dispatchIndex(0), _evt(evt) {
@@ -3727,6 +3777,44 @@ void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
 }
 
 void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dispatch) {
+#ifndef DISABLE_TEXT_CONSOLE
+	const char *nameStr = "";
+	int srcID = 0;
+	const char *destStr = "";
+	int destID = 0;
+	Common::SharedPtr<RuntimeObject> src = dispatch->getMsg()->getSource().lock();
+
+	if (src) {
+		srcID = src->getStaticGUID();
+		if (src->isStructural())
+			nameStr = static_cast<Structural *>(src.get())->getName().c_str();
+		else if (src->isModifier())
+			nameStr = static_cast<Modifier *>(src.get())->getName().c_str();
+	}
+
+	RuntimeObject *dest = dispatch->getRootPropagator();
+	if (dest) {
+		destID = dest->getStaticGUID();
+		if (dest->isStructural())
+			destStr = static_cast<Structural *>(dest)->getName().c_str();
+		else if (dest->isModifier())
+			destStr = static_cast<Modifier *>(dest)->getName().c_str();
+
+	}
+
+	const Event evt = dispatch->getMsg()->getEvent();
+	bool cascade = dispatch->isCascade();
+	bool relay = dispatch->isRelay();
+
+	Common::String msgDebugString;
+	if (evt.eventType == EventIDs::kAuthorMessage && _project)
+		msgDebugString = Common::String::format("'%s'", _project->findAuthorMessageName(evt.eventInfo));
+	else
+		msgDebugString = Common::String::format("(%i,%i)", evt.eventType, evt.eventInfo);
+
+	debug(3, "Object %x '%s' posted message %s to %x '%s'  mod: %s   ele: %s", srcID, nameStr, msgDebugString.c_str(), destID, destStr, relay ? "all" : "first", cascade ? "all" : "targetOnly");
+#endif
+
 	DispatchMethodTaskData *taskData = _vthread->pushTask("Runtime::dispatchMessageTask", this, &Runtime::dispatchMessageTask);
 	taskData->dispatch = dispatch;
 }
@@ -4732,6 +4820,25 @@ void Project::onKeyboardEvent(Runtime *runtime, const Common::EventType evtType,
 Common::SharedPtr<KeyboardEventSignaller> Project::notifyOnKeyboardEvent(IKeyboardEventReceiver *receiver) {
 	_keyboardEventSignaller->addReceiver(receiver);
 	return _keyboardEventSignaller;
+}
+
+const char *Project::findAuthorMessageName(uint32 id) const {
+	for (size_t i = 0; i < _labelSuperGroups.size(); i++) {
+		const LabelSuperGroup &sg = _labelSuperGroups[i];
+		if (sg.name == "Author Messages") {
+			size_t firstNode = sg.firstRootNodeIndex;
+			size_t numNodes = sg.numTotalNodes;
+			for (size_t j = 0; j < numNodes; j++) {
+				const LabelTree &treeNode = _labelTree[j + firstNode];
+				if (treeNode.id == id)
+					return treeNode.name.c_str();
+			}
+
+			break;
+		}
+	}
+
+	return "Unknown";
 }
 
 void Project::loadBootStream(size_t streamIndex) {

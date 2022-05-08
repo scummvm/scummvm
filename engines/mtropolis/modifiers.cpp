@@ -593,6 +593,7 @@ VThreadState TimerMessengerModifier::consumeMessage(Runtime *runtime, const Comm
 		if (_scheduledEvent)
 			_scheduledEvent->cancel();
 	} else if (_executeWhen.respondsTo(msg->getEvent())) {
+		debug(3, "Timer %x '%s' scheduled to execute in %i milliseconds", getStaticGUID(), getName().c_str(), _milliseconds);
 		if (!_scheduledEvent) {
 			_scheduledEvent = runtime->getScheduler().scheduleMethod<TimerMessengerModifier, &TimerMessengerModifier::activate>(runtime->getPlayTime() + _milliseconds, this);
 		}
@@ -617,6 +618,7 @@ Common::SharedPtr<Modifier> TimerMessengerModifier::shallowClone() const {
 }
 
 void TimerMessengerModifier::activate(Runtime *runtime) {
+	debug(3, "Timer %x '%s' triggered", getStaticGUID(), getName().c_str());
 	if (_looping)
 		_scheduledEvent = runtime->getScheduler().scheduleMethod<TimerMessengerModifier, &TimerMessengerModifier::activate>(runtime->getPlayTime() + _milliseconds, this);
 	else
@@ -1151,6 +1153,31 @@ bool VectorVariableModifier::varSetValue(MiniscriptThread *thread, const Dynamic
 void VectorVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
 	dest.setVector(_vector);
 }
+
+bool VectorVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "magnitude") {
+		result.setFloat(_vector.magnitude);
+		return true;
+	} else if (attrib == "angle") {
+		_vector.scriptGetAngleDegrees(result);
+		return true;
+	}
+
+	return VariableModifier::readAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome VectorVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "magnitude") {
+		DynamicValueWriteFloatHelper<double>::create(&_vector.magnitude, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "angle") {
+		DynamicValueWriteFuncHelper<AngleMagVector, &AngleMagVector::scriptSetAngleDegrees>::create(&_vector, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return writeRefAttribute(thread, result, attrib);
+}
+
 
 Common::SharedPtr<Modifier> VectorVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new VectorVariableModifier(*this));

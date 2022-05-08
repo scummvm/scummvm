@@ -85,7 +85,6 @@ private:
 	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
 
 	bool _cacheBitmap;
-	bool _loop;
 	bool _alternate;
 	bool _playEveryFrame;
 	bool _reversed;
@@ -148,7 +147,6 @@ public:
 
 private:
 	bool _cacheBitmap;
-	bool _loop;
 
 	// If set, then carry over residual frame time and display at the desired rate.  If not set, reset residual each frame for smoother animation.
 	bool _maintainRate;
@@ -225,7 +223,6 @@ private:
 	uint16 _rightVolume;
 	int16 _balance;
 	uint32 _assetID;
-	bool _loop;
 
 	Runtime *_runtime;
 };
