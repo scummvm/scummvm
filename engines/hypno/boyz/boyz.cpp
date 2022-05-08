@@ -79,12 +79,37 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c19.mi_", "c11.mi_", "??", "");
 	loadArcadeLevel("c11.mi_", "c12.mi_", "??", "");
 	loadArcadeLevel("c12.mi_", "c14.mi_", "??", "");
-	//loadArcadeLevel("c13.mi_", "??", "??", "");
+	loadArcadeLevel("c13.mi_", "??", "??", "");
 	loadArcadeLevel("c14.mi_", "c15.mi_", "??", "");
 	loadArcadeLevel("c15.mi_", "c16.mi_", "??", "");
 	loadArcadeLevel("c16.mi_", "c17.mi_", "??", "");
 	loadArcadeLevel("c17.mi_", "c18.mi_", "??", "");
 	loadArcadeLevel("c18.mi_", "c21.mi_", "??", "");
+
+	loadArcadeLevel("c21.mi_", "c22.mi_", "??", "");
+	loadArcadeLevel("c22.mi_", "c23.mi_", "??", "");
+	loadArcadeLevel("c31.mi_", "c32.mi_", "??", "");
+	loadArcadeLevel("c32.mi_", "c33.mi_", "??", "");
+	loadArcadeLevel("c33.mi_", "c34.mi_", "??", "");
+	loadArcadeLevel("c34.mi_", "c35.mi_", "??", "");
+	loadArcadeLevel("c35.mi_", "c352.mi_", "??", "");
+	loadArcadeLevel("c352.mi_", "c353.mi_", "??", "");
+	loadArcadeLevel("c353.mi_", "c354.mi_", "??", "");
+	loadArcadeLevel("c354.mi_", "c355.mi_", "??", "");
+	loadArcadeLevel("c355.mi_", "c36.mi_", "??", "");
+	loadArcadeLevel("c36.mi_", "c41.mi_", "??", "");
+	loadArcadeLevel("c41.mi_", "c42.mi_", "??", "");
+	//loadArcadeLevel("c42.mi_", "c51.mi_", "??", "");
+
+	loadArcadeLevel("c51.mi_", "c52.mi_", "??", "");
+	loadArcadeLevel("c52.mi_", "c53.mi_", "??", "");
+	loadArcadeLevel("c53.mi_", "c54.mi_", "??", "");
+	loadArcadeLevel("c54.mi_", "c55.mi_", "??", "");
+	loadArcadeLevel("c55.mi_", "c56.mi_", "??", "");
+	loadArcadeLevel("c56.mi_", "c57.mi_", "??", "");
+	loadArcadeLevel("c57.mi_", "c58.mi_", "??", "");
+	loadArcadeLevel("c58.mi_", "c59.mi_", "??", "");
+	loadArcadeLevel("c59.mi_", "<credits>", "??", "");
 
 	loadSceneLevel(selectBoyz, "<select_boyz>", "", "");
 	Scene *sc = (Scene *) _levels["<select_boyz>"];

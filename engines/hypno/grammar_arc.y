@@ -48,6 +48,32 @@ int HYPNO_ARC_wrap() {
 
 using namespace Hypno;
 
+void parseSN(const char *sn, const char *path, const char *enc, const char *flag) {
+	uint32 sampleRate = 11025;
+	if (Common::String("22K") == enc || Common::String("22k") == enc)
+		sampleRate = 22050;
+	else if (HYPNO_ARC_default_sound_rate > 0)
+		sampleRate = HYPNO_ARC_default_sound_rate;
+
+	if (Common::String("S0") == sn) {
+		g_parsedArc->music = path;
+		g_parsedArc->musicRate = sampleRate;
+	} else if (Common::String("S1") == sn) {
+		g_parsedArc->shootSound = path;
+		g_parsedArc->shootSoundRate = sampleRate;
+	} else if (Common::String("S2") == sn) {
+		g_parsedArc->hitSound = path;
+		g_parsedArc->hitSoundRate = sampleRate;
+	} else if (Common::String("S4") == sn) {
+		g_parsedArc->enemySound = path;
+		g_parsedArc->enemySoundRate = sampleRate;
+	} else if (Common::String("S5") == sn) {
+		g_parsedArc->additionalSound = path;
+		g_parsedArc->additionalSoundRate = sampleRate;
+	}
+	debugC(1, kHypnoDebugParser, "SN %s", path);
+}
+
 %}
 
 %union {
@@ -55,11 +81,11 @@ using namespace Hypno;
 	int i;	 /* integer value */
 }
 
-%token<s> NAME FILENAME BNTOK SNTOK KNTOK YXTOK FNTOK ENCTOK ONTOK
+%token<s> NAME FILENAME BNTOK SNTOK KNTOK YXTOK FNTOK ENCTOK ONTOK H12TOK
 %token<i> NUM BYTE
 // header
-%token COMMENT ALTOK AVTOK ABTOK CTOK DTOK HTOK HETOK HLTOK H12TOK HUTOK RETTOK QTOK RESTOK
-%token PTOK FTOK TTOK TATOK TPTOK ATOK VTOK OTOK LTOK MTOK NTOK NSTOK RTOK R0TOK R1TOK
+%token COMMENT ALTOK AVTOK ABTOK CTOK DTOK HTOK HETOK HLTOK HUTOK RETTOK QTOK RESTOK
+%token PTOK FTOK TTOK TATOK TPTOK TSTOK ATOK VTOK OTOK LTOK MTOK NTOK NRTOK NSTOK RTOK R0TOK R1TOK
 %token ITOK I1TOK GTOK JTOK J0TOK KTOK UTOK ZTOK
 
 // body
@@ -139,6 +165,14 @@ hline: 	CTOK NUM {
 			error("Invalid objective: '%s'", $1);
 		debugC(1, kHypnoDebugParser, "ON %d", $2);
 	}
+	| TPTOK NONETOK NUM FILENAME {
+		ArcadeTransition at("NONE", $4, "", $3);
+		g_parsedArc->transitions.push_back(at);
+		debugC(1, kHypnoDebugParser, "Tp %s %d %s", "NONE", $3, $4);
+	}
+	| TSTOK FILENAME NUM NUM {
+		debugC(1, kHypnoDebugParser, "Ts %s %d %d", $2, $3, $4);
+	}
 	| TPTOK FILENAME NUM FILENAME {
 		ArcadeTransition at($2, $4, "", $3);
 		g_parsedArc->transitions.push_back(at);
@@ -203,29 +237,10 @@ hline: 	CTOK NUM {
 		debugC(1, kHypnoDebugParser, "BN %s", $2);
 	}
 	| SNTOK FILENAME enc flag {
-		uint32 sampleRate = 11025;
-		if (Common::String("22K") == $3 || Common::String("22k") == $3)
-			sampleRate = 22050;
-		else if (HYPNO_ARC_default_sound_rate > 0)
-			sampleRate = HYPNO_ARC_default_sound_rate;
-
-		if (Common::String("S0") == $1) {
-			g_parsedArc->music = $2;
-			g_parsedArc->musicRate = sampleRate;
-		} else if (Common::String("S1") == $1) {
-			g_parsedArc->shootSound = $2;
-			g_parsedArc->shootSoundRate = sampleRate;
-		} else if (Common::String("S2") == $1) {
-			g_parsedArc->hitSound = $2;
-			g_parsedArc->hitSoundRate = sampleRate;
-		} else if (Common::String("S4") == $1) {
-			g_parsedArc->enemySound = $2;
-			g_parsedArc->enemySoundRate = sampleRate;
-		} else if (Common::String("S5") == $1) {
-			g_parsedArc->additionalSound = $2;
-			g_parsedArc->additionalSoundRate = sampleRate;
-		}
-		debugC(1, kHypnoDebugParser, "SN %s", $2);
+		parseSN($1, $2, $3, $4);
+	}
+	| SNTOK FILENAME flag enc {
+		parseSN($1, $2, $4, $3);
 	}
 	| HETOK BYTE NUM NUM {
 		Segment segment($2, $4, $3);
@@ -311,6 +326,8 @@ bline: FNTOK FILENAME {
 	| ABTOK NUM {
 		debugC(1, kHypnoDebugParser, "AB %d", $2);
 	}
+	| DTOK LTOK  { debugC(1, kHypnoDebugParser, "D L");
+	}
 	| J0TOK NUM {
 		debugC(1, kHypnoDebugParser, "J0 %d", $2);
 	}
@@ -355,6 +372,10 @@ bline: FNTOK FILENAME {
 	| ITOK HTOK  { // Workaround for NAME == H
 		shoot->name = "H";
 		debugC(1, kHypnoDebugParser, "I H");
+	}
+	| ITOK H12TOK  { // Workaround for NAME == H1/H2
+		shoot->name = $2;
+		debugC(1, kHypnoDebugParser, "I %s", $2);
 	}
 	| ITOK ITOK  { // Workaround for NAME == I
 		shoot->name = "I";
@@ -456,6 +477,7 @@ bline: FNTOK FILENAME {
 		shoot->attackFrames.push_back($2);
 		debugC(1, kHypnoDebugParser, "H %d", $2); }
 	| VTOK NUM  { debugC(1, kHypnoDebugParser, "V %d", $2); }
+	| VTOK { debugC(1, kHypnoDebugParser, "V"); }
 	| WTOK NUM  {
 		shoot->attackWeight = $2;
 		debugC(1, kHypnoDebugParser, "W %d", $2); }
@@ -474,9 +496,13 @@ bline: FNTOK FILENAME {
 	| MTOK NUM { debugC(1, kHypnoDebugParser, "M %d", $2);
 		shoot->missedAnimation = $2;
 	}
+	| KTOK { debugC(1, kHypnoDebugParser, "K"); }
 	| KTOK NUM { debugC(1, kHypnoDebugParser, "K %d", $2);
 		FrameInfo fi($2, 1);
 		shoot->explosionFrames.push_back(fi);
+	}
+	| KTOK NUM NUM NUM {
+		debugC(1, kHypnoDebugParser, "K %d %d %d", $2, $3, $4);
 	}
 	| KTOK NUM NUM { debugC(1, kHypnoDebugParser, "K %d %d", $2, $3);
 		FrameInfo fi($2, 1);
@@ -491,7 +517,14 @@ bline: FNTOK FILENAME {
 			shoot->hitSound = $2;
 
 		debugC(1, kHypnoDebugParser, "SN %s", $2); }
+	| SNTOK {
+		debugC(1, kHypnoDebugParser, "SN");
+	}
+
 	| GTOK { debugC(1, kHypnoDebugParser, "G"); }
+	| TTOK NUM NUM NUM {
+		debugC(1, kHypnoDebugParser, "T %d %d %d", $2, $3, $4);
+	}
 	| TTOK NUM {
 		debugC(1, kHypnoDebugParser, "T %d", $2);
 	}
@@ -504,6 +537,8 @@ bline: FNTOK FILENAME {
 	| NTOK {
 		shoot->noEnemySound = true;
 		debugC(1, kHypnoDebugParser, "N"); }
+	| NRTOK {
+		debugC(1, kHypnoDebugParser, "NR"); }
 	| ZTOK {
 		g_parsedArc->shoots.push_back(*shoot);
 		//delete shoot;
