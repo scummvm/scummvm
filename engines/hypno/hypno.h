@@ -258,7 +258,7 @@ public:
 	virtual bool clickedPrimaryShoot(const Common::Point &mousePos);
 	virtual bool clickedSecondaryShoot(const Common::Point &mousePos);
 	virtual void drawShoot(const Common::Point &mousePos);
-	virtual void shoot(const Common::Point &mousePos, ArcadeShooting *arc);
+	virtual bool shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool secondary);
 	virtual void hitPlayer();
 	virtual void missedTarget(Shoot *s, ArcadeShooting *arc);
 	virtual void missNoTarget(ArcadeShooting *arc);
@@ -546,7 +546,8 @@ public:
 	void pressedKey(const int keycode) override;
 	int detectTarget(const Common::Point &mousePos) override;
 	void drawCursorArcade(const Common::Point &mousePos) override;
-	void shoot(const Common::Point &mousePos, ArcadeShooting *arc) override;
+	bool shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool secondary) override;
+	bool clickedSecondaryShoot(const Common::Point &mousePos) override;
 
 	void missedTarget(Shoot *s, ArcadeShooting *arc) override;
 	void drawHealth() override;

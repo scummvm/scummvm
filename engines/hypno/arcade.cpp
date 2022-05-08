@@ -535,14 +535,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 		if (needsUpdate) {
 			if (shootingPrimary) {
-				shoot(mousePos, arc);
-				drawShoot(mousePos);
-				shootingPrimary = false;
+				shootingPrimary = shoot(mousePos, arc, false);
 			} else if (shootingSecondary) {
-				shoot(mousePos, arc);
-				if (_background->decoder->getCurFrame() % 2 == 0)
-					drawShoot(mousePos);
-				shootingSecondary = clickedSecondaryShoot(mousePos);
+				shootingSecondary = shoot(mousePos, arc, true);
 			}
 
 			drawPlayer();
@@ -625,7 +620,7 @@ void HypnoEngine::drawCursorArcade(const Common::Point &mousePos) {
 
 bool HypnoEngine::clickedPrimaryShoot(const Common::Point &mousePos) { return true; }
 
-void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
+bool HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool secondary) {
 	incShotsFired();
 	int i = detectTarget(mousePos);
 	if (i < 0) {
@@ -639,7 +634,7 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
 			_shoots[i].timesToShoot = _shoots[i].timesToShoot - 1;
 			// Redraw cursor
 			drawCursorArcade(mousePos);
-			return;
+			goto end;
 		}
 
 		if (!_shoots[i].deathSound.empty())
@@ -711,6 +706,15 @@ void HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
 		}
 		// Redraw cursor
 		drawCursorArcade(mousePos);
+	}
+	end:
+	if (secondary) {
+		if (_background->decoder->getCurFrame() % 2 == 0)
+			drawShoot(mousePos);
+		return clickedSecondaryShoot(mousePos);
+	} else {
+		drawShoot(mousePos);
+		return false;
 	}
 }
 

@@ -218,13 +218,13 @@ int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 	return -1;
 }
 
-void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
+bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool secondary) {
 	if (_currentMode == NonInteractive) {
-		return;
+		return false;
 	}
 
 	if (_ammoTeam[_currentActor] == 0)
-		return; // TODO: out of ammo sound is missing
+		return false; // TODO: out of ammo sound is missing
 	if (!_infiniteAmmoCheat)
 		_ammoTeam[_currentActor]--;
 	playSound(_soundPath + _weaponShootSound[_currentWeapon], 1);
@@ -249,6 +249,7 @@ void BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc) {
 		_shoots.clear();
 		changeCursor(_crosshairsActive[_currentWeapon], _crosshairsPalette, true);
 	}
+	return false;
 }
 
 void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
@@ -265,6 +266,20 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	s->missedAnimation = s->missedAnimation + 3;
 	_background->decoder->forceSeekToFrame(s->missedAnimation);
 	_masks->decoder->forceSeekToFrame(s->missedAnimation);
+}
+
+bool BoyzEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
+	if (_currentMode == NonInteractive) {
+		return false;
+	}
+
+	Common::Rect ammoBarBox(320 - _ammoBar[_currentActor].w, 0, 320, _ammoBar[_currentActor].h);
+	if (ammoBarBox.contains(mousePos)) {
+		_ammoTeam[_currentActor] = _weaponMaxAmmo[_currentWeapon];
+		// TODO: play reload sound
+		return false;
+	}
+	return true;
 }
 
 } // namespace Hypno
