@@ -23,6 +23,7 @@
 #define MTROPOLIS_MTROPOLIS_H
 
 #include "mtropolis/detection.h"
+#include "mtropolis/saveload.h"
 
 #include "engines/engine.h"
 
@@ -38,11 +39,10 @@
  */
 namespace MTropolis {
 
-
-
 class Runtime;
+class RuntimeObject;
 
-class MTropolisEngine : public ::Engine {
+class MTropolisEngine : public ::Engine, public ISaveUIProvider {
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -58,6 +58,9 @@ public:
 	uint32 getGameID() const;
 	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
+
+	bool promptSave(ISaveWriter *writer) override;
+	//bool promptLoad(ISaveReader *reader) override;
 
 public:
 	void handleEvents();

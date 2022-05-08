@@ -601,10 +601,11 @@ class CompoundVariableModifier : public Modifier, public IModifierContainer {
 public:
 	bool load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data);
 
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+
 	IModifierContainer *getChildContainer() override;
 
 	bool isCompoundVariable() const override { return true; }
-
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Compound Variable Modifier"; }
@@ -612,6 +613,25 @@ public:
 #endif
 
 private:
+	class SaveLoad : public ModifierSaveLoad {
+	public:
+		explicit SaveLoad(CompoundVariableModifier *modifier);
+
+		void saveInternal(Common::WriteStream *stream) const override;
+		bool loadInternal(Common::ReadStream *stream) override;
+		void commitLoad() const override;
+
+	private:
+		struct ChildSaveLoad {
+			Modifier *modifier;
+			Common::SharedPtr<ModifierSaveLoad> saveLoad;
+		};
+
+		Common::Array<ChildSaveLoad> _childrenSaveLoad;
+
+		CompoundVariableModifier *_modifier;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
@@ -632,6 +652,8 @@ class BooleanVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data);
 
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
@@ -641,6 +663,19 @@ public:
 #endif
 
 private:
+	class SaveLoad : public ModifierSaveLoad {
+	public:
+		explicit SaveLoad(BooleanVariableModifier *modifier);
+
+	private:
+		void commitLoad() const override;
+		void saveInternal(Common::WriteStream *stream) const override;
+		bool loadInternal(Common::ReadStream *stream) override;
+
+		BooleanVariableModifier *_modifier;
+		bool _value;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
 	bool _value;
@@ -649,6 +684,8 @@ private:
 class IntegerVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IntegerVariableModifier &data);
+
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
@@ -659,6 +696,19 @@ public:
 #endif
 
 private:
+	class SaveLoad : public ModifierSaveLoad {
+	public:
+		explicit SaveLoad(IntegerVariableModifier *modifier);
+
+	private:
+		void commitLoad() const override;
+		void saveInternal(Common::WriteStream *stream) const override;
+		bool loadInternal(Common::ReadStream *stream) override;
+
+		IntegerVariableModifier *_modifier;
+		int32 _value;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
 	int32 _value;
@@ -667,6 +717,8 @@ private:
 class IntegerRangeVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IntegerRangeVariableModifier &data);
+
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
@@ -677,6 +729,19 @@ public:
 #endif
 
 private:
+	class SaveLoad : public ModifierSaveLoad {
+	public:
+		explicit SaveLoad(IntegerRangeVariableModifier *modifier);
+
+	private:
+		void commitLoad() const override;
+		void saveInternal(Common::WriteStream *stream) const override;
+		bool loadInternal(Common::ReadStream *stream) override;
+
+		IntegerRangeVariableModifier *_modifier;
+		IntRange _range;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
 	IntRange _range;
@@ -685,6 +750,8 @@ private:
 class VectorVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::VectorVariableModifier &data);
+
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
@@ -698,6 +765,19 @@ public:
 #endif
 
 private:
+	class SaveLoad : public ModifierSaveLoad {
+	public:
+		explicit SaveLoad(VectorVariableModifier *modifier);
+
+	private:
+		void commitLoad() const override;
+		void saveInternal(Common::WriteStream *stream) const override;
+		bool loadInternal(Common::ReadStream *stream) override;
+
+		VectorVariableModifier *_modifier;
+		AngleMagVector _vector;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
 	AngleMagVector _vector;
@@ -706,6 +786,8 @@ private:
 class PointVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::PointVariableModifier &data);
+
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
@@ -716,6 +798,19 @@ public:
 #endif
 
 private:
+	class SaveLoad : public ModifierSaveLoad {
+	public:
+		explicit SaveLoad(PointVariableModifier *modifier);
+
+	private:
+		void commitLoad() const override;
+		void saveInternal(Common::WriteStream *stream) const override;
+		bool loadInternal(Common::ReadStream *stream) override;
+
+		PointVariableModifier *_modifier;
+		Point16 _value;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
 	Point16 _value;
@@ -724,6 +819,8 @@ private:
 class FloatingPointVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::FloatingPointVariableModifier &data);
+
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
@@ -734,6 +831,19 @@ public:
 #endif
 
 private:
+	class SaveLoad : public ModifierSaveLoad {
+	public:
+		explicit SaveLoad(FloatingPointVariableModifier *modifier);
+
+	private:
+		void commitLoad() const override;
+		void saveInternal(Common::WriteStream *stream) const override;
+		bool loadInternal(Common::ReadStream *stream) override;
+
+		FloatingPointVariableModifier *_modifier;
+		double _value;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
 	double _value;
@@ -742,6 +852,8 @@ private:
 class StringVariableModifier : public VariableModifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::StringVariableModifier &data);
+
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
@@ -752,6 +864,19 @@ public:
 #endif
 
 private:
+	class SaveLoad : public ModifierSaveLoad {
+	public:
+		explicit SaveLoad(StringVariableModifier *modifier);
+
+	private:
+		void commitLoad() const override;
+		void saveInternal(Common::WriteStream *stream) const override;
+		bool loadInternal(Common::ReadStream *stream) override;
+
+		StringVariableModifier *_modifier;
+		Common::String _value;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
 	Common::String _value;

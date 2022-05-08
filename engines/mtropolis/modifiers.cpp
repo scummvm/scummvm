@@ -22,10 +22,40 @@
 #include "mtropolis/miniscript.h"
 #include "mtropolis/modifiers.h"
 #include "mtropolis/modifier_factory.h"
+#include "mtropolis/saveload.h"
 
 #include "common/memstream.h"
 
 namespace MTropolis {
+
+class CompoundVarSaver : public ISaveWriter {
+public:
+	explicit CompoundVarSaver(RuntimeObject *object);
+
+	bool writeSave(Common::WriteStream *stream) override;
+
+private:
+	RuntimeObject *_object;
+};
+
+CompoundVarSaver::CompoundVarSaver(RuntimeObject *object) : _object(object) {
+}
+
+bool CompoundVarSaver::writeSave(Common::WriteStream *stream) {
+	if (_object == nullptr || !_object->isModifier())
+		return false;
+
+	Modifier *modifier = static_cast<Modifier *>(_object);
+	Common::SharedPtr<ModifierSaveLoad> saveLoad = modifier->getSaveLoad();
+	if (!saveLoad)
+		return false;
+
+	saveLoad->save(modifier, stream);
+	return !stream->err();
+}
+
+
+
 
 bool BehaviorModifier::load(ModifierLoaderContext &context, const Data::BehaviorModifier &data) {
 	if (data.numChildren > 0) {
@@ -208,8 +238,26 @@ bool SaveAndRestoreModifier::respondsToEvent(const Event &evt) const {
 }
 
 VThreadState SaveAndRestoreModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_saveOrRestoreValue.getType() != DynamicValueTypes::kVariableReference) {
+		warning("Save/restore failed, don't know how to use something that isn't a var reference");
+		return kVThreadError;
+	}
+
+	const VarReference &var = _saveOrRestoreValue.getVarReference();
+
+	Common::WeakPtr<RuntimeObject> objWeak;
+	var.resolve(this, objWeak);
+
+	if (objWeak.expired()) {
+		warning("Save failed, couldn't resolve compound var");
+		return kVThreadError;
+	}
+
+	RuntimeObject *obj = objWeak.lock().get();
+
 	if (_saveWhen.respondsTo(msg->getEvent())) {
-		error("Saves not implemented yet");
+		CompoundVarSaver saver(obj);
+		runtime->getSaveProvider()->promptSave(&saver);
 		return kVThreadReturn;
 	} else if (_restoreWhen.respondsTo(msg->getEvent())) {
 		error("Restores not implemented yet");
@@ -853,19 +901,21 @@ bool KeyboardMessengerModifier::checkKeyEventTrigger(Runtime *runtime, Common::E
 	case Common::KEYCODE_DOWN:
 		resolvedType = kDelete;
 		break;
-	default: {
+	default:
+		if (keyEvt.ascii != 0) {
 			bool isQuestion = (keyEvt.ascii == '?');
 			uint32 uchar = keyEvt.ascii;
 			Common::U32String u(&uchar, 1);
 			outCharStr = u.encode(Common::kMacRoman);
 
 			// STUPID HACK PLEASE FIX ME: ScummVM has no way of just telling us that the character mapping failed,
-			// we we have to check if it encoded "?"
+			// so we have to check if it encoded "?"
 			if (outCharStr.size() < 1 || (outCharStr[0] == '?' && !isQuestion))
 				return false;
 
 			resolvedType = kMacRomanChar;
-		} break;
+		}
+		break;
 	}
 
 	if (_keyCodeType != kAny && resolvedType != _keyCodeType)
@@ -976,6 +1026,10 @@ bool CompoundVariableModifier::load(ModifierLoaderContext &context, const Data::
 	return true;
 }
 
+Common::SharedPtr<ModifierSaveLoad> CompoundVariableModifier::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
+}
+
 IModifierContainer *CompoundVariableModifier::getChildContainer() {
 	return this;
 }
@@ -1046,6 +1100,45 @@ Modifier *CompoundVariableModifier::findChildByName(const Common::String &name) 
 	return nullptr;
 }
 
+CompoundVariableModifier::SaveLoad::SaveLoad(CompoundVariableModifier *modifier) : _modifier(modifier) {
+	for (const Common::SharedPtr<Modifier> &child : modifier->_children) {
+		Common::SharedPtr<ModifierSaveLoad> childSL = child->getSaveLoad();
+		if (childSL) {
+			ChildSaveLoad childSaveLoad;
+			childSaveLoad.saveLoad = childSL;
+			childSaveLoad.modifier = child.get();
+			_childrenSaveLoad.push_back(childSaveLoad);
+		}
+	}
+}
+
+void CompoundVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	stream->writeUint32BE(_childrenSaveLoad.size());
+	for (const ChildSaveLoad &childSL : _childrenSaveLoad)
+		childSL.saveLoad->save(childSL.modifier, stream);
+}
+
+bool CompoundVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+	const uint32 numChildren = stream->readUint32BE();
+	if (stream->err())
+		return false;
+
+	if (numChildren != _childrenSaveLoad.size())
+		return false;
+
+	for (const ChildSaveLoad &childSL : _childrenSaveLoad) {
+		if (!childSL.saveLoad->load(childSL.modifier, stream))
+			return false;
+	}
+
+	return true;
+}
+
+void CompoundVariableModifier::SaveLoad::commitLoad() const {
+	for (const ChildSaveLoad &childSL : _childrenSaveLoad)
+		childSL.saveLoad->commitLoad();
+}
+
 Common::SharedPtr<Modifier> CompoundVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new CompoundVariableModifier(*this));
 }
@@ -1057,6 +1150,10 @@ bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::B
 	_value = (data.value != 0);
 
 	return true;
+}
+
+Common::SharedPtr<ModifierSaveLoad> BooleanVariableModifier::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool BooleanVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -1076,6 +1173,27 @@ Common::SharedPtr<Modifier> BooleanVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new BooleanVariableModifier(*this));
 }
 
+BooleanVariableModifier::SaveLoad::SaveLoad(BooleanVariableModifier *modifier) : _modifier(modifier) {
+	_value = _modifier->_value;
+}
+
+void BooleanVariableModifier::SaveLoad::commitLoad() const {
+	_modifier->_value = _value;
+}
+
+void BooleanVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	stream->writeByte(_value ? 1 : 0);
+}
+
+bool BooleanVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+	byte b = stream->readByte();
+	if (stream->err())
+		return false;
+
+	_value = (b != 0);
+	return true;
+}
+
 bool IntegerVariableModifier::load(ModifierLoaderContext& context, const Data::IntegerVariableModifier& data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -1083,6 +1201,10 @@ bool IntegerVariableModifier::load(ModifierLoaderContext& context, const Data::I
 	_value = data.value;
 
 	return true;
+}
+
+Common::SharedPtr<ModifierSaveLoad> IntegerVariableModifier::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool IntegerVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -1104,6 +1226,27 @@ Common::SharedPtr<Modifier> IntegerVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new IntegerVariableModifier(*this));
 }
 
+IntegerVariableModifier::SaveLoad::SaveLoad(IntegerVariableModifier *modifier) : _modifier(modifier) {
+	_value = _modifier->_value;
+}
+
+void IntegerVariableModifier::SaveLoad::commitLoad() const {
+	_modifier->_value = _value;
+}
+
+void IntegerVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	stream->writeSint32BE(_value);
+}
+
+bool IntegerVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+	_value = stream->readSint32BE();
+
+	if (stream->err())
+		return false;
+
+	return true;
+}
+
 bool IntegerRangeVariableModifier::load(ModifierLoaderContext& context, const Data::IntegerRangeVariableModifier& data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -1112,6 +1255,10 @@ bool IntegerRangeVariableModifier::load(ModifierLoaderContext& context, const Da
 		return false;
 
 	return true;
+}
+
+Common::SharedPtr<ModifierSaveLoad> IntegerRangeVariableModifier::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool IntegerRangeVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -1131,6 +1278,29 @@ Common::SharedPtr<Modifier> IntegerRangeVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new IntegerRangeVariableModifier(*this));
 }
 
+IntegerRangeVariableModifier::SaveLoad::SaveLoad(IntegerRangeVariableModifier *modifier) : _modifier(modifier) {
+	_range = _modifier->_range;
+}
+
+void IntegerRangeVariableModifier::SaveLoad::commitLoad() const {
+	_modifier->_range = _range;
+}
+
+void IntegerRangeVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	stream->writeSint32BE(_range.min);
+	stream->writeSint32BE(_range.max);
+}
+
+bool IntegerRangeVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+	_range.min = stream->readSint32BE();
+	_range.max = stream->readSint32BE();
+
+	if (stream->err())
+		return false;
+
+	return true;
+}
+
 bool VectorVariableModifier::load(ModifierLoaderContext &context, const Data::VectorVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -1139,6 +1309,10 @@ bool VectorVariableModifier::load(ModifierLoaderContext &context, const Data::Ve
 	_vector.magnitude = data.vector.magnitude.toDouble();
 
 	return true;
+}
+
+Common::SharedPtr<ModifierSaveLoad> VectorVariableModifier::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool VectorVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -1183,6 +1357,29 @@ Common::SharedPtr<Modifier> VectorVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new VectorVariableModifier(*this));
 }
 
+VectorVariableModifier::SaveLoad::SaveLoad(VectorVariableModifier *modifier) : _modifier(modifier) {
+	_vector = _modifier->_vector;
+}
+
+void VectorVariableModifier::SaveLoad::commitLoad() const {
+	_modifier->_vector = _vector;
+}
+
+void VectorVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	stream->writeDoubleBE(_vector.angleRadians);
+	stream->writeDoubleBE(_vector.magnitude);
+}
+
+bool VectorVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+	_vector.angleRadians = stream->readDoubleBE();
+	_vector.magnitude = stream->readDoubleBE();
+
+	if (stream->err())
+		return false;
+
+	return true;
+}
+
 bool PointVariableModifier::load(ModifierLoaderContext &context, const Data::PointVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -1191,6 +1388,10 @@ bool PointVariableModifier::load(ModifierLoaderContext &context, const Data::Poi
 	_value.y = data.value.y;
 
 	return true;
+}
+
+Common::SharedPtr<ModifierSaveLoad> PointVariableModifier::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool PointVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -1210,6 +1411,29 @@ Common::SharedPtr<Modifier> PointVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new PointVariableModifier(*this));
 }
 
+PointVariableModifier::SaveLoad::SaveLoad(PointVariableModifier *modifier) : _modifier(modifier) {
+	_value = _modifier->_value;
+}
+
+void PointVariableModifier::SaveLoad::commitLoad() const {
+	_modifier->_value = _value;
+}
+
+void PointVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	stream->writeSint16BE(_value.x);
+	stream->writeSint16BE(_value.y);
+}
+
+bool PointVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+	_value.x = stream->readSint16BE();
+	_value.y = stream->readSint16BE();
+
+	if (stream->err())
+		return false;
+
+	return true;
+}
+
 bool FloatingPointVariableModifier::load(ModifierLoaderContext &context, const Data::FloatingPointVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -1217,6 +1441,10 @@ bool FloatingPointVariableModifier::load(ModifierLoaderContext &context, const D
 	_value = data.value.toDouble();
 
 	return true;
+}
+
+Common::SharedPtr<ModifierSaveLoad> FloatingPointVariableModifier::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool FloatingPointVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -1238,6 +1466,27 @@ Common::SharedPtr<Modifier> FloatingPointVariableModifier::shallowClone() const 
 	return Common::SharedPtr<Modifier>(new FloatingPointVariableModifier(*this));
 }
 
+FloatingPointVariableModifier::SaveLoad::SaveLoad(FloatingPointVariableModifier *modifier) : _modifier(modifier) {
+	_value = _modifier->_value;
+}
+
+void FloatingPointVariableModifier::SaveLoad::commitLoad() const {
+	_modifier->_value = _value;
+}
+
+void FloatingPointVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	stream->writeDoubleBE(_value);
+}
+
+bool FloatingPointVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+	_value = stream->readDoubleBE();
+
+	if (stream->err())
+		return false;
+
+	return true;
+}
+
 bool StringVariableModifier::load(ModifierLoaderContext &context, const Data::StringVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -1245,6 +1494,10 @@ bool StringVariableModifier::load(ModifierLoaderContext &context, const Data::St
 	_value = data.value;
 
 	return true;
+}
+
+Common::SharedPtr<ModifierSaveLoad> StringVariableModifier::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 bool StringVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
@@ -1262,6 +1515,40 @@ void StringVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue 
 
 Common::SharedPtr<Modifier> StringVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new StringVariableModifier(*this));
+}
+
+StringVariableModifier::SaveLoad::SaveLoad(StringVariableModifier *modifier) : _modifier(modifier) {
+	_value = _modifier->_value;
+}
+
+void StringVariableModifier::SaveLoad::commitLoad() const {
+	_modifier->_value = _value;
+}
+
+void StringVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	stream->writeUint32BE(_value.size());
+	stream->writeString(_value);
+}
+
+bool StringVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+	uint32 size = stream->readUint32BE();
+
+	if (stream->err())
+		return false;
+
+	_value.clear();
+
+	if (size > 0) {
+		Common::Array<char> chars;
+		chars.resize(size);
+		stream->read(&chars[0], size);
+		if (stream->err())
+			return false;
+
+		_value = Common::String(&chars[0], size);
+	}
+
+	return true;
 }
 
 } // End of namespace MTropolis

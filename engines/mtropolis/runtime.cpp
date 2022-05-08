@@ -1786,6 +1786,54 @@ bool Event::load(const Data::Event &data) {
 	return true;
 }
 
+bool VarReference::resolve(Structural *structuralScope, Common::WeakPtr<RuntimeObject> &outObject) const {
+	if (resolveContainer(structuralScope, outObject))
+		return true;
+
+	Structural *parent = structuralScope->getParent();
+	if (!parent)
+		return false;
+
+	return resolve(parent, outObject);
+}
+
+bool VarReference::resolve(Modifier *modifierScope, Common::WeakPtr<RuntimeObject> &outObject) const {
+	if (resolveSingleModifier(modifierScope, outObject))
+		return true;
+
+	RuntimeObject *parent = modifierScope->getParent().lock().get();
+	if (parent->isStructural())
+		return resolve(static_cast<Structural *>(parent), outObject);
+
+	if (parent->isModifier()) {
+		Modifier *parentModifier = static_cast<Modifier *>(parent);
+		IModifierContainer *parentContainer = parentModifier->getChildContainer();
+		if (parentContainer && resolveContainer(parentContainer, outObject))
+			return true;
+
+		return resolve(parentModifier, outObject);
+	}
+
+	return false;
+}
+
+bool VarReference::resolveContainer(IModifierContainer *modifierContainer, Common::WeakPtr<RuntimeObject> &outObject) const {
+	for (const Common::SharedPtr<Modifier> &modifier : modifierContainer->getModifiers())
+		if (resolveSingleModifier(modifier.get(), outObject))
+			return true;
+
+	return false;
+}
+
+bool VarReference::resolveSingleModifier(Modifier *modifier, Common::WeakPtr<RuntimeObject> &outObject) const {
+	if (modifier->getStaticGUID() == guid || (source && caseInsensitiveEqual(modifier->getName(), *source))) {
+		outObject = modifier->getSelfReference();
+		return true;
+	}
+
+	return false;
+}
+
 MiniscriptInstructionOutcome AngleMagVector::scriptSetAngleDegrees(MiniscriptThread *thread, const DynamicValue &value) {
 	double degrees = 0.0;
 	switch (value.getType())
@@ -3079,10 +3127,12 @@ const Common::KeyState &KeyboardInputEvent::getKeyState() const {
 Runtime::SceneStackEntry::SceneStackEntry() {
 }
 
-Runtime::Runtime(OSystem *system) : _nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
-									_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
-									_system(system), _lastFrameCursor(nullptr), _defaultCursor(new DefaultCursor()), _platform(kProjectPlatformUnknown),
-									_cachedMousePosition(Point16::create(0, 0)), _trackedMouseOutside(false) {
+Runtime::Runtime(OSystem *system, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider)
+	: _system(system), _saveProvider(saveProvider), _loadProvider(loadProvider),
+	_nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
+	_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
+	_lastFrameCursor(nullptr), _defaultCursor(new DefaultCursor()), _platform(kProjectPlatformUnknown),
+	_cachedMousePosition(Point16::create(0, 0)), _trackedMouseOutside(false) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -4167,6 +4217,13 @@ SystemInterface *Runtime::getSystemInterface() const {
 	return _systemInterface.get();
 }
 
+ISaveUIProvider *Runtime::getSaveProvider() const {
+	return _saveProvider;
+}
+
+ILoadUIProvider *Runtime::getLoadProvider() const {
+	return _loadProvider;
+}
 
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
@@ -5578,6 +5635,43 @@ bool ModifierFlags::load(const uint32 dataModifierFlags) {
 	return true;
 }
 
+ModifierSaveLoad::~ModifierSaveLoad() {
+}
+
+void ModifierSaveLoad::save(Modifier *modifier, Common::WriteStream *stream) {
+	const Common::String &name = modifier->getName();
+
+	stream->writeUint32BE(modifier->getStaticGUID());
+	stream->writeUint16BE(name.size());
+	stream->writeString(name);
+
+	saveInternal(stream);
+}
+
+bool ModifierSaveLoad::load(Modifier *modifier, Common::ReadStream *stream) {
+	uint32 checkGUID = stream->readUint32BE();
+	uint16 nameLen = stream->readUint16BE();
+
+	if (stream->err())
+		return false;
+
+	const Common::String &name = modifier->getName();
+
+	if (name.size() != nameLen)
+		return false;
+
+	Common::Array<char> checkName;
+	checkName.resize(nameLen);
+
+	if (nameLen > 0) {
+		stream->read(&checkName[0], nameLen);
+		if (stream->err() || !memcmp(&checkName[0], name.c_str(), nameLen))
+			return false;
+	}
+
+	return loadInternal(stream);
+}
+
 Modifier::Modifier() : _parent(nullptr) {
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	_debugger = nullptr;
@@ -5628,6 +5722,10 @@ bool Modifier::isCompoundVariable() const {
 
 bool Modifier::isKeyboardMessenger() const {
 	return false;
+}
+
+Common::SharedPtr<ModifierSaveLoad> Modifier::getSaveLoad() {
+	return nullptr;
 }
 
 bool Modifier::isModifier() const {

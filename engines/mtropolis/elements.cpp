@@ -263,7 +263,7 @@ void ImageElement::render(Window *window) {
 	}
 }
 
-MToonElement::MToonElement() {
+MToonElement::MToonElement() : _cel1Based(1) {
 }
 
 MToonElement::~MToonElement() {
@@ -282,6 +282,25 @@ bool MToonElement::load(ElementLoaderContext &context, const Data::MToonElement 
 	_rateTimes10000 = data.rateTimes10000;
 
 	return true;
+}
+
+bool MToonElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "cel") {
+		result.setInt(_cel1Based);
+		return true;
+	}
+
+	return VisualElement::readAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome MToonElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "cel") {
+		// TODO proper support
+		DynamicValueWriteIntegerHelper<uint32>::create(&_cel1Based, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return VisualElement::writeRefAttribute(thread, result, attrib);
 }
 
 void MToonElement::activate() {

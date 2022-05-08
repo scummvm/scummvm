@@ -167,17 +167,7 @@ void MidiFilePlayerImpl::send(uint32 b) {
 }
 
 MultiMidiPlayer::MultiMidiPlayer() {
-	createDriver();
-
-	/*
-	MidiDriver::DeviceHandle deviceHdl = MidiDriver::detectDevice(MDT_MIDI | MDT_PREFER_GM);
-	if (!deviceHdl)
-		return;
-
-	_driver = MidiDriver::createMidi(deviceHdl);
-	if (!_driver)
-		return;
-	*/
+	createDriver(MDT_MIDI | MDT_PREFER_GM);
 
 	if (_driver->open() != 0) {
 		_driver->close();
@@ -423,6 +413,10 @@ bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &co
 	_object.reset();
 
 	return true;
+}
+
+Common::SharedPtr<ModifierSaveLoad> ObjectReferenceVariableModifier::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
 }
 
 // Object reference variables are somewhat unusual in that they don't store a simple value,
@@ -684,6 +678,41 @@ RuntimeObject *ObjectReferenceVariableModifier::getObjectParent(RuntimeObject *o
 	return nullptr;
 }
 
+ObjectReferenceVariableModifier::SaveLoad::SaveLoad(ObjectReferenceVariableModifier *modifier) : _modifier(modifier) {
+	_objectPath = _modifier->_objectPath;
+}
+
+void ObjectReferenceVariableModifier::SaveLoad::commitLoad() const {
+	_modifier->_object.reset();
+	_modifier->_fullPath.clear();
+	_modifier->_objectPath = _objectPath;
+}
+
+void ObjectReferenceVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	stream->writeUint32BE(_objectPath.size());
+	stream->writeString(_objectPath);
+}
+
+bool ObjectReferenceVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+	uint32 stringLen = stream->readUint32BE();
+	if (stream->err())
+		return false;
+
+	_objectPath.clear();
+
+	if (stringLen) {
+		Common::Array<char> strChars;
+		strChars.resize(stringLen);
+		stream->read(&strChars[0], stringLen);
+		if (stream->err())
+			return false;
+
+		_objectPath = Common::String(&strChars[0], stringLen);
+	}
+
+	return true;
+}
+
 MidiModifier::MidiModifier() : _plugIn(nullptr), _filePlayer(nullptr) {
 }
 
@@ -890,6 +919,10 @@ bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, cons
 	return true;
 }
 
+Common::SharedPtr<ModifierSaveLoad> ListVariableModifier::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
+}
+
 bool ListVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kList)
 		_list = value.getList()->clone();
@@ -940,6 +973,127 @@ ListVariableModifier::ListVariableModifier(const ListVariableModifier &other) {
 
 Common::SharedPtr<Modifier> ListVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new ListVariableModifier(*this));
+}
+
+ListVariableModifier::SaveLoad::SaveLoad(ListVariableModifier *modifier) : _modifier(modifier), _list(new DynamicList()) {
+}
+
+void ListVariableModifier::SaveLoad::commitLoad() const {
+	_modifier->_list = _list;
+}
+
+void ListVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	stream->writeUint32BE(_list->getType());
+	stream->writeUint32BE(_list->getSize());
+
+	size_t listSize = _list->getSize();
+	for (size_t i = 0; i < listSize; i++) {
+		switch (_list->getType()) {
+		case DynamicValueTypes::kInteger:
+			stream->writeSint32BE(_list->getInt()[i]);
+			break;
+		case DynamicValueTypes::kPoint: {
+				const Point16 &pt = _list->getPoint()[i];
+				stream->writeSint16BE(pt.x);
+				stream->writeSint16BE(pt.y);
+			}
+			break;
+		case DynamicValueTypes::kIntegerRange: {
+				const IntRange &range = _list->getIntRange()[i];
+				stream->writeSint32BE(range.min);
+				stream->writeSint32BE(range.max);
+			} break;
+		case DynamicValueTypes::kFloat:
+			stream->writeDoubleBE(_list->getFloat()[i]);
+			break;
+		case DynamicValueTypes::kString: {
+				const Common::String &str = _list->getString()[i];
+				stream->writeUint32BE(str.size());
+				stream->writeString(str);
+			} break;
+		case DynamicValueTypes::kVector: {
+				const AngleMagVector &vec = _list->getVector()[i];
+				stream->writeDoubleBE(vec.angleRadians);
+				stream->writeDoubleBE(vec.magnitude);
+			} break;
+		case DynamicValueTypes::kBoolean:
+			stream->writeByte(_list->getBool()[i] ? 1 : 0);
+			break;
+		default:
+			error("Can't figure out how to write a saved variable");
+			break;
+		}
+	}
+}
+
+bool ListVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+	uint32 typeCode = stream->readUint32BE();
+	uint32 size = stream->readUint32BE();
+
+	if (stream->err())
+		return false;
+
+	for (size_t i = 0; i < size; i++) {
+		DynamicValue val;
+
+		switch (typeCode) {
+		case DynamicValueTypes::kInteger: {
+				int32 i32 = stream->readSint32BE();
+				val.setInt(i32);
+			} break;
+		case DynamicValueTypes::kPoint: {
+				Point16 pt;
+				pt.x = stream->readSint16BE();
+				pt.y = stream->readSint16BE();
+				val.setPoint(pt);
+			} break;
+		case DynamicValueTypes::kIntegerRange: {
+				IntRange range;
+				range.min = stream->readSint32BE();
+				range.max = stream->readSint32BE();
+				val.setIntRange(range);
+			} break;
+		case DynamicValueTypes::kFloat: {
+				double f;
+				f = stream->readDoubleBE();
+				val.setFloat(f);
+			} break;
+		case DynamicValueTypes::kString: {
+			uint32 strLen = stream->readUint32BE();
+			if (stream->err())
+				return false;
+
+				Common::String str;
+				if (strLen > 0) {
+					Common::Array<char> chars;
+					chars.resize(strLen);
+					stream->read(&chars[0], strLen);
+					str = Common::String(&chars[0], strLen);
+				}
+				val.setString(str);
+			} break;
+		case DynamicValueTypes::kVector: {
+				AngleMagVector vec;
+				vec.angleRadians = stream->readDoubleBE();
+				vec.magnitude = stream->readDoubleBE();
+				val.setVector(vec);
+			} break;
+		case DynamicValueTypes::kBoolean: {
+				byte b = stream->readByte();
+				val.setBool(b != 0);
+			} break;
+		default:
+			error("Can't figure out how to write a saved variable");
+			break;
+		}
+
+		if (stream->err())
+			return false;
+
+		_list->setAtIndex(i, val);
+	}
+
+	return true;
 }
 
 bool SysInfoModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::SysInfoModifier &data) {

@@ -1,0 +1,54 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef MTROPOLIS_SAVELOAD_H
+#define MTROPOLIS_SAVELOAD_H
+
+namespace Common {
+
+class ReadStream;
+class WriteStream;
+
+} // End of namespace Common
+
+namespace MTropolis {
+
+class RuntimeObject;
+
+struct ISaveWriter {
+	virtual bool writeSave(Common::WriteStream *stream) = 0;
+};
+
+struct ISaveReader {
+	virtual bool readSave(Common::ReadStream *stream) = 0;
+};
+
+struct ISaveUIProvider {
+	virtual bool promptSave(ISaveWriter *writer) = 0;
+};
+
+struct ILoadUIProvider {
+	virtual bool promptLoad(ISaveReader *reader) = 0;
+};
+
+} // End of namespace MTropolis
+
+#endif /* MTROPOLIS_SAVELOAD_H */

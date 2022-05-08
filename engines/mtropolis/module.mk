@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	plugin/standard_data.o \
 	render.o \
 	runtime.o \
+	saveload.o \
 	vthread.o
 
 # This module can be built as a plugin

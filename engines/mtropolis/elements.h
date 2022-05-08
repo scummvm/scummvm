@@ -135,6 +135,9 @@ public:
 
 	bool load(ElementLoaderContext &context, const Data::MToonElement &data);
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
+
 	void activate() override;
 	void deactivate() override;
 
@@ -152,9 +155,10 @@ private:
 	bool _maintainRate;
 
 	uint32 _assetID;
-	Runtime *_runtime;
 	uint32 _rateTimes10000;
+	uint32 _cel1Based;
 
+	Runtime *_runtime;
 	Common::SharedPtr<Graphics::Surface> _renderSurface;
 };
 
