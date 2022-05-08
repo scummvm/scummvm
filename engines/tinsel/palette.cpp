@@ -637,7 +637,7 @@ void DimPartPalette(SCNHANDLE hDimPal, int startColor, int length, int brightnes
 	}
 }
 
-int32 DarkGreen() {
+int DarkGreen() {
 	return _vm->screen().format.RGBToColor(0x00, 0x40, 0x00);
 }
 
