@@ -5005,7 +5005,7 @@ void Dialogs::RegisterIcons(void *cptr, int num) {
 		_invObjects = (INV_OBJECT *)MemoryDeref(node);
 		assert(_invObjects);
 		byte *srcP = (byte *)cptr;
-		INV_OBJECT *destP = (INV_OBJECT *)_invObjects;
+		INV_OBJECT *destP = _invObjects;
 
 		for (int i = 0; i < num; ++i, ++destP, srcP += 12) {
 			memmove(destP, srcP, 12);
