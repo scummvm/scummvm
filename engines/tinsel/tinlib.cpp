@@ -1520,7 +1520,7 @@ void Offset(EXTREME extreme, int x, int y) {
 /**
  * OtherObject()
  */
-int OtherObject(INV_OBJECT *pinvo) {
+int OtherObject(const InventoryObject *pinvo) {
 	assert(pinvo != NULL);
 
 	// return held object or object clicked on - whichever is not the calling object
@@ -1529,9 +1529,9 @@ int OtherObject(INV_OBJECT *pinvo) {
 	// WhichItemHeld() gives the held object
 	// GetIcon() gives the object clicked on
 
-	assert(_vm->_dialogs->GetIcon() == pinvo->id || _vm->_dialogs->WhichItemHeld() == pinvo->id);
+	assert(_vm->_dialogs->GetIcon() == pinvo->getId() || _vm->_dialogs->WhichItemHeld() == pinvo->getId());
 
-	if (_vm->_dialogs->GetIcon() == pinvo->id)
+	if (_vm->_dialogs->GetIcon() == pinvo->getId())
 		return _vm->_dialogs->WhichItemHeld();
 	else
 		return _vm->_dialogs->GetIcon();
@@ -2101,13 +2101,13 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 }
 
 
-static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *pinvo, OBJECT *&pText, const int textx, const int texty, const int item);
+static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const InventoryObject *pinvo, OBJECT *&pText, const int textx, const int texty, const int item);
 static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *pText);
 
 /**
  * Print the given inventory object's name or whatever.
  */
-static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo, const int event, int myEscape) {
+static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const InventoryObject *pinvo, const int event, int myEscape) {
 	CORO_BEGIN_CONTEXT;
 		OBJECT *pText;		// text object pointer
 		int	textx, texty;
@@ -2219,7 +2219,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 				int x, y;
 				do {
 					// Give up if this item gets picked up
-					if (_vm->_dialogs->WhichItemHeld() == pinvo->id)
+					if (_vm->_dialogs->WhichItemHeld() == pinvo->getId())
 						break;
 
 					// Give way to non-POINTED-generated text
@@ -2250,7 +2250,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					// Carry on until the cursor leaves this icon
 					_vm->_cursor->GetCursorXY(&x, &y, false);
 
-				} while (_vm->_dialogs->InvItemId(x, y) == pinvo->id);
+				} while (_vm->_dialogs->InvItemId(x, y) == pinvo->getId());
 			} else {
 				/*
 				 * PrintObj() called from other event
@@ -2324,7 +2324,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 	CORO_END_CODE;
 }
 
-static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *pinvo, OBJECT *&pText, const int textx, const int texty, const int item) {
+static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const InventoryObject *pinvo, OBJECT *&pText, const int textx, const int texty, const int item) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -2334,7 +2334,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 		int	x, y;
 		do {
 			// Give up if this item gets picked up
-		    if (_vm->_dialogs->WhichItemHeld() == pinvo->id)
+		    if (_vm->_dialogs->WhichItemHeld() == pinvo->getId())
 				break;
 
 			// Give way to non-POINTED-generated text
@@ -2360,7 +2360,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const INV_OBJECT *
 
 			// Carry on until the cursor leaves this icon
 		    _vm->_cursor->GetCursorXY(&x, &y, false);
-	    } while (_vm->_dialogs->InvItemId(x, y) == pinvo->id);
+	    } while (_vm->_dialogs->InvItemId(x, y) == pinvo->getId());
 
 	CORO_END_CODE;
 }
@@ -3677,10 +3677,10 @@ static void TalkVia(int actor) {
 /**
  * ThisObject
  */
-static int ThisObject(INV_OBJECT *pinvo) {
+static int ThisObject(const InventoryObject *pinvo) {
 	assert(pinvo != NULL);
 
-	return pinvo->id;
+	return pinvo->getId();
 }
 
 /**

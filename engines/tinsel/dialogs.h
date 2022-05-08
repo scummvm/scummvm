@@ -26,6 +26,7 @@
 
 #include "tinsel/dw.h"
 #include "tinsel/events.h"	// for PLR_EVENT, PLR_EVENT
+#include "tinsel/inv_objects.h"
 #include "tinsel/object.h"
 #include "tinsel/movers.h"
 
@@ -141,24 +142,6 @@ enum CONFTYPE {
 	HOPPER_MENU1,
 	HOPPER_MENU2,
 	TOP_WINDOW
-};
-
-/** structure of each inventory object */
-struct INV_OBJECT {
-	int32 id;		// inventory objects id
-	SCNHANDLE hIconFilm;	// inventory objects animation film
-	SCNHANDLE hScript;	// inventory objects event handling script
-	int32 attribute;		// inventory object's attribute
-
-	// TODO: Commented out because there are variables
-	// with this struct type that are cast from memory blobs,
-	// so this breaks DW1 and DW2. We need to read these
-	// struct members individually instead of casting the blobs
-	// to this struct
-
-	// Noir
-	//int32 unknown;
-	//int32 title;	// id of associated notebook title
 };
 
 struct INV_DEF {
@@ -379,7 +362,7 @@ public:
 	void Select(int i, bool force);
 	void FillInInventory();
 	void InvCursor(InvCursorFN fn, int CurX, int CurY);
-	INV_OBJECT *GetInvObject(int id);
+	const InventoryObject *GetInvObject(int id);
 	bool UpdateString(const Common::KeyState &kbd);
 	bool InventoryIsActive() { return _inventoryState == ACTIVE_INV; }
 	bool IsMixingDeskControl() { return _invDragging == ID_MDCONT; }
@@ -473,8 +456,7 @@ private:
 
 	INV_DEF _invD[MAX_NUM_INV];        // Conversation + 2 inventories + ...
 	int _activeInv;                      // Which inventory is currently active
-	INV_OBJECT *_invObjects; // Inventory objects' data
-	int _numObjects;               // Number of inventory objects
+	InventoryObjects *_invObjects; // Inventory objects' data
 	SCNHANDLE *_invFilms;
 	DIRECTION _initialDirection;
 

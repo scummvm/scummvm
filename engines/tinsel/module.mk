@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	graphics.o \
 	handle.o \
 	heapmem.o \
+	inv_objects.o \
 	mareels.o \
 	metaengine.o \
 	move.o \

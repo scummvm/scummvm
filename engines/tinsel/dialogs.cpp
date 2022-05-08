@@ -743,7 +743,7 @@ enum {
 
 /*-------------------------------------------------------------------------*/
 
-static void InvTinselEvent(INV_OBJECT *pinvo, TINSEL_EVENT event, PLR_EVENT be, int index);
+static void InvTinselEvent(const InventoryObject *pinvo, TINSEL_EVENT event, PLR_EVENT be, int index);
 static void InvPdProcess(CORO_PARAM, const void *param);
 
 Dialogs::Dialogs() {
@@ -756,7 +756,6 @@ Dialogs::Dialogs() {
 	memset(_configStrings, 0, sizeof(_configStrings));
 
 	_invObjects = nullptr;
-	_numObjects = 0;
 	_invFilms = nullptr;
 	_noLanguage = false;
 
@@ -843,6 +842,7 @@ Dialogs::Dialogs() {
 }
 
 Dialogs::~Dialogs() {
+	delete _invObjects;
 	if (_objArray[0] != NULL) {
 		DumpObjArray();
 		DumpDobjArray();
@@ -1067,43 +1067,31 @@ void Dialogs::DumpObjArray() {
  * Convert item ID number to pointer to item's compiled data
  * i.e. Image data and Glitter code.
  */
-INV_OBJECT *Dialogs::GetInvObject(int id) {
-	INV_OBJECT *pObject = _invObjects;
-
-	for (int i = 0; i < _numObjects; i++, pObject++) {
-		if (pObject->id == id)
-			return pObject;
+const InventoryObject *Dialogs::GetInvObject(int id) {
+	auto object = _invObjects->GetInvObject(id);
+	if (!object) {
+		error("GetInvObject(%d): Trying to manipulate undefined inventory icon", id);
 	}
-
-	error("GetInvObject(%d): Trying to manipulate undefined inventory icon", id);
+	return object;
 }
 
 /**
  * Returns true if the given id represents a valid inventory object
  */
 bool Dialogs::GetIsInvObject(int id) {
-	INV_OBJECT *pObject = _invObjects;
-
-	for (int i = 0; i < _numObjects; i++, pObject++) {
-		if (pObject->id == id)
-			return true;
-	}
-
-	return false;
+	int index = _invObjects->GetObjectIndexIfExists(id);
+	return index != -1;
 }
 
 /**
  * Convert item ID number to index.
  */
 int Dialogs::GetObjectIndex(int id) {
-	INV_OBJECT *pObject = _invObjects;
-
-	for (int i = 0; i < _numObjects; i++, pObject++) {
-		if (pObject->id == id)
-			return i;
+	int index = _invObjects->GetObjectIndexIfExists(id);
+	if (index == -1) {
+		error("GetObjectIndex(%d): Trying to manipulate undefined inventory icon", id);
 	}
-
-	error("GetObjectIndex(%d): Trying to manipulate undefined inventory icon", id);
+	return index;
 }
 
 /**
@@ -1156,9 +1144,9 @@ void Dialogs::InventoryIconCursor(bool bNewItem) {
 				int objIndex = GetObjectIndex(_heldItem);
 
 				if (TinselVersion == 3) {
-					INV_OBJECT *invObj = GetInvObject(_heldItem);
+					auto invObj = GetInvObject(_heldItem);
 
-					if (invObj->attribute & V3ATTR_X200) {
+					if (invObj->getAttribute() & V3ATTR_X200) {
 						_heldFilm = _vm->_systemReel->Get((SysReel)objIndex);
 					} else {
 						_heldFilm = _invFilms[objIndex];
@@ -1169,8 +1157,8 @@ void Dialogs::InventoryIconCursor(bool bNewItem) {
 			}
 			_vm->_cursor->SetAuxCursor(_heldFilm);
 		} else {
-			INV_OBJECT *invObj = GetInvObject(_heldItem);
-			_vm->_cursor->SetAuxCursor(invObj->hIconFilm);
+			auto invObj = GetInvObject(_heldItem);
+			_vm->_cursor->SetAuxCursor(invObj->getIconFilm());
 		}
 	}
 }
@@ -1461,7 +1449,6 @@ void Dialogs::ClearInventory(int invno) {
 void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 	int i;
 	bool bOpen;
-	INV_OBJECT *invObj;
 
 	// Validate trying to add to a legal inventory
 	assert(invno == INV_1 || invno == INV_2 || invno == INV_3 || invno == INV_CONV || invno == INV_OPEN || (invno == INV_DEFAULT && TinselVersion >= 2));
@@ -1477,10 +1464,10 @@ void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 		bOpen = false;
 
 		if ((TinselVersion >= 2) && invno == INV_DEFAULT) {
-			invObj = GetInvObject(icon);
-			if (invObj->attribute & DEFINV2)
+			auto invObj = GetInvObject(icon);
+			if (invObj->getAttribute() & DEFINV2)
 				invno = INV_2;
-			else if (invObj->attribute & DEFINV1)
+			else if (invObj->getAttribute() & DEFINV1)
 				invno = INV_1;
 			else
 				invno = SysVar(SV_DEFAULT_INV);
@@ -1507,8 +1494,8 @@ void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 
 					// Count how many current contents have end attribute
 					for (i = 0, nei = 0; i < _invD[INV_CONV].NoofItems; i++) {
-						invObj = GetInvObject(_invD[INV_CONV].contents[i]);
-						if (invObj->attribute & CONVENDITEM)
+						auto invObj = GetInvObject(_invD[INV_CONV].contents[i]);
+						if (invObj->getAttribute() & CONVENDITEM)
 							nei++;
 					}
 
@@ -1592,8 +1579,6 @@ bool Dialogs::RemFromInventory(int invno, int icon) {
  * If the item is not already held, hold it.
  */
 void Dialogs::HoldItem(int item, bool bKeepFilm) {
-	INV_OBJECT *invObj;
-
 	if (_heldItem != item) {
 		if ((TinselVersion >= 2) && (_heldItem != INV_NOICON)) {
 			// No longer holding previous item
@@ -1602,14 +1587,14 @@ void Dialogs::HoldItem(int item, bool bKeepFilm) {
 			// If old held object is not in an inventory, and
 			// has a default, stick it in its default inventory.
 			if (!IsInInventory(_heldItem, INV_1) && !IsInInventory(_heldItem, INV_2)) {
-				invObj = GetInvObject(_heldItem);
+				auto invObj = GetInvObject(_heldItem);
 
-				if (invObj->attribute & DEFINV1)
+				if (invObj->getAttribute() & DEFINV1)
 					AddToInventory(INV_1, _heldItem);
-				else if (invObj->attribute & DEFINV2)
+				else if (invObj->getAttribute() & DEFINV2)
 					AddToInventory(INV_2, _heldItem);
 				else {
-					if ((TinselVersion < 3) || (!(invObj->attribute & V3ATTR_X200) && !(invObj->attribute & V3ATTR_X400))) {
+					if ((TinselVersion < 3) || (!(invObj->getAttribute() & V3ATTR_X200) && !(invObj->getAttribute() & V3ATTR_X400))) {
 						// Hook for definable default inventory
 						AddToInventory(INV_1, _heldItem);
 					}
@@ -1621,8 +1606,8 @@ void Dialogs::HoldItem(int item, bool bKeepFilm) {
 				_vm->_cursor->DelAuxCursor(); // no longer aux cursor
 
 			if (item != INV_NOICON) {
-				invObj = GetInvObject(item);
-				_vm->_cursor->SetAuxCursor(invObj->hIconFilm); // and is aux. cursor
+				auto invObj = GetInvObject(item);
+				_vm->_cursor->SetAuxCursor(invObj->getIconFilm()); // and is aux. cursor
 			}
 
 			// WORKAROUND: If a held item is being removed that's not in either inventory (i.e. it was picked up
@@ -2056,7 +2041,6 @@ void Dialogs::InvBoxes(bool InBody, int curX, int curY) {
  */
 void Dialogs::InvLabels(bool InBody, int aniX, int aniY) {
 	int index; // Icon pointed to on this call
-	INV_OBJECT *invObj;
 
 	// Find out which icon is currently pointed to
 	if (!InBody)
@@ -2077,8 +2061,8 @@ void Dialogs::InvLabels(bool InBody, int aniX, int aniY) {
 		_pointedIcon = INV_NOICON;
 	} else if (index != _pointedIcon) {
 		// A new icon is pointed to - run its script with POINTED event
-		invObj = GetInvObject(index);
-		if (invObj->hScript)
+		auto invObj = GetInvObject(index);
+		if (invObj->getScript())
 			InvTinselEvent(invObj, POINTED, PLR_NOEVENT, index);
 		_pointedIcon = index;
 	}
@@ -2157,8 +2141,8 @@ void Dialogs::AdjustTop() {
  * Insert an inventory icon object onto the display list.
  */
 OBJECT *Dialogs::AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
-	INV_OBJECT *invObj = GetInvObject(num);
-	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(invObj->hIconFilm);
+	auto invObj = GetInvObject(num);
+	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(invObj->getIconFilm());
 	const FREEL *pfr = (const FREEL *)&pFilm->reels[0];
 	const MULTI_INIT *pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
 	OBJECT *pPlayObj; // The object we insert
@@ -4556,8 +4540,6 @@ void Dialogs::InvPutDown(int index) {
 }
 
 void Dialogs::InvPickup(int index) {
-	INV_OBJECT *invObj;
-
 	// Do nothing if not clicked on anything
 	if (index == NOOBJECT)
 		return;
@@ -4566,22 +4548,22 @@ void Dialogs::InvPickup(int index) {
 	if (_heldItem == INV_NOICON && _invD[_activeInv].contents[index] &&
 	    ((TinselVersion <= 1) || _invD[_activeInv].contents[index] != _heldItem)) {
 		// Pick-up
-		invObj = GetInvObject(_invD[_activeInv].contents[index]);
+		auto invObj = GetInvObject(_invD[_activeInv].contents[index]);
 		_thisIcon = _invD[_activeInv].contents[index];
 		if (TinselVersion >= 2)
 			InvTinselEvent(invObj, PICKUP, INV_PICKUP, index);
-		else if (invObj->hScript)
+		else if (invObj->getScript())
 			InvTinselEvent(invObj, WALKTO, INV_PICKUP, index);
 
 	} else if (_heldItem != INV_NOICON) {
 		// Put-down
-		invObj = GetInvObject(_heldItem);
+		auto invObj = GetInvObject(_heldItem);
 
 		// If DROPCODE set, send event, otherwise it's a putdown
-		if (invObj->attribute & IO_DROPCODE && invObj->hScript)
+		if (invObj->getAttribute() & IO_DROPCODE && invObj->getScript())
 			InvTinselEvent(invObj, PUTDOWN, INV_PICKUP, index);
 
-		else if (!(invObj->attribute & IO_ONLYINV1 && _activeInv != INV_1) && !(invObj->attribute & IO_ONLYINV2 && _activeInv != INV_2)) {
+		else if (!(invObj->getAttribute() & IO_ONLYINV1 && _activeInv != INV_1) && !(invObj->getAttribute() & IO_ONLYINV2 && _activeInv != INV_2)) {
 			if (TinselVersion >= 2)
 				InvPutDown(index);
 			else
@@ -4679,7 +4661,7 @@ void Dialogs::InvWalkTo(const Common::Point &coOrds) {
 
 void Dialogs::InvAction() {
 	int index;
-	INV_OBJECT *invObj;
+	const InventoryObject *invObj;
 	int aniX, aniY;
 	int i;
 
@@ -4700,7 +4682,7 @@ void Dialogs::InvAction() {
 					invObj = GetInvObject(_invD[_activeInv].contents[index]);
 					if (TinselVersion >= 2)
 						_thisIcon = _invD[_activeInv].contents[index];
-					if ((TinselVersion >= 2) || (invObj->hScript))
+					if ((TinselVersion >= 2) || (invObj->getScript()))
 						InvTinselEvent(invObj, ACTION, INV_ACTION, index);
 				}
 			}
@@ -4763,7 +4745,6 @@ void Dialogs::InvAction() {
 
 void Dialogs::InvLook(const Common::Point &coOrds) {
 	int index;
-	INV_OBJECT *invObj;
 	Common::Point pt = coOrds;
 
 	switch (InvArea(pt.x, pt.y)) {
@@ -4771,8 +4752,8 @@ void Dialogs::InvLook(const Common::Point &coOrds) {
 		index = InvItem(pt, false);
 		if (index != INV_NOICON) {
 			if (_invD[_activeInv].contents[index] && _invD[_activeInv].contents[index] != _heldItem) {
-				invObj = GetInvObject(_invD[_activeInv].contents[index]);
-				if (invObj->hScript)
+				auto invObj = GetInvObject(_invD[_activeInv].contents[index]);
+				if (invObj->getScript())
 					InvTinselEvent(invObj, LOOK, INV_LOOK, index);
 			}
 		}
@@ -4939,10 +4920,7 @@ void Dialogs::EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
  * Changes (permanently) the animation film for that object.
  */
 void Dialogs::SetObjectFilm(int object, SCNHANDLE hFilm) {
-	INV_OBJECT *invObj;
-
-	invObj = GetInvObject(object);
-	invObj->hIconFilm = hFilm;
+	_invObjects->SetObjectFilm(object, hFilm);
 
 	if (_heldItem != object)
 		_ItemsChanged = true;
@@ -4978,7 +4956,7 @@ void Dialogs::syncInvInfo(Common::Serializer &s) {
 	}
 
 	if (TinselVersion >= 2) {
-		for (int i = 0; i < _numObjects; ++i)
+		for (int i = 0; i < _invObjects->numObjects(); ++i)
 			s.syncAsUint32LE(_invFilms[i]);
 		s.syncAsUint32LE(_heldFilm);
 	}
@@ -4994,45 +4972,31 @@ void Dialogs::syncInvInfo(Common::Serializer &s) {
  */
 // Note: the SCHANDLE type here has been changed to a void*
 void Dialogs::RegisterIcons(void *cptr, int num) {
-	_numObjects = num;
-	_invObjects = (INV_OBJECT *)cptr;
-
-	if (TinselVersion == 0) {
-		// In Tinsel 0, the INV_OBJECT structure doesn't have an attributes field, so we
-		// need to 'unpack' the source structures into the standard Tinsel v1/v2 format
-		MEM_NODE *node = MemoryAllocFixed(_numObjects * sizeof(INV_OBJECT));
-		assert(node);
-		_invObjects = (INV_OBJECT *)MemoryDeref(node);
-		assert(_invObjects);
-		byte *srcP = (byte *)cptr;
-		INV_OBJECT *destP = _invObjects;
-
-		for (int i = 0; i < num; ++i, ++destP, srcP += 12) {
-			memmove(destP, srcP, 12);
-			destP->attribute = 0;
-		}
-	} else if (TinselVersion >= 2) {
+	int numObjects = num;
+	_invObjects = InstantiateInventoryObjects((const byte*)cptr, numObjects);
+	if (TinselVersion >= 2) {
 		if (_invFilms == NULL) {
 			// First time - allocate memory
-			MEM_NODE *node = MemoryAllocFixed(_numObjects * sizeof(SCNHANDLE));
+			MEM_NODE *node = MemoryAllocFixed(numObjects * sizeof(SCNHANDLE));
 			assert(node);
 			_invFilms = (SCNHANDLE *)MemoryDeref(node);
 			if (_invFilms == NULL)
 				error(NO_MEM, "inventory scripts");
-			memset(_invFilms, 0, _numObjects * sizeof(SCNHANDLE));
+			memset(_invFilms, 0, numObjects * sizeof(SCNHANDLE));
 		}
 
 		// Add defined permanent conversation icons
 		// and store all the films separately
-		int i;
-		INV_OBJECT *pio;
-		for (i = 0, pio = _invObjects; i < _numObjects; i++, pio++) {
-			if (pio->attribute & PERMACONV)
-				PermaConvIcon(pio->id, pio->attribute & CONVENDITEM);
+		for (int i = 0; i < numObjects; i++) {
+			auto pio = _invObjects->GetObjectByIndex(i);
+			if (pio->getAttribute() & PERMACONV)
+				PermaConvIcon(pio->getId(), pio->getAttribute() & CONVENDITEM);
 
-			_invFilms[i] = pio->hIconFilm;
+			_invFilms[i] = pio->getIconFilm();
 		}
 	}
+
+
 }
 
 /**
@@ -5572,7 +5536,7 @@ extern void InventoryProcess(CORO_PARAM, const void *) {
 /**************************************************************************/
 
 struct OP_INIT {
-	INV_OBJECT *pinvo;
+	const InventoryObject *pinvo;
 	TINSEL_EVENT event;
 	PLR_EVENT bev;
 	int myEscape;
@@ -5596,7 +5560,7 @@ static void ObjectProcess(CORO_PARAM, const void *param) {
 	if (TinselVersion <= 1)
 		CORO_INVOKE_1(AllowDclick, to->bev);
 
-	_ctx->pic = InitInterpretContext(GS_INVENTORY, to->pinvo->hScript, to->event, NOPOLY, 0, to->pinvo,
+	_ctx->pic = InitInterpretContext(GS_INVENTORY, to->pinvo->getScript(), to->event, NOPOLY, 0, to->pinvo,
 	                                 to->myEscape);
 	CORO_INVOKE_1(Interpret, _ctx->pic);
 
@@ -5606,7 +5570,7 @@ static void ObjectProcess(CORO_PARAM, const void *param) {
 			CORO_SLEEP(1);
 			int x, y;
 			_vm->_cursor->GetCursorXY(&x, &y, false);
-			if (_vm->_dialogs->InvItemId(x, y) != to->pinvo->id)
+			if (_vm->_dialogs->InvItemId(x, y) != to->pinvo->getId())
 				break;
 
 			// Fix the 'repeated pressing bug'
@@ -5614,7 +5578,7 @@ static void ObjectProcess(CORO_PARAM, const void *param) {
 				CORO_KILL_SELF();
 		}
 
-		_ctx->pic = InitInterpretContext(GS_INVENTORY, to->pinvo->hScript, UNPOINT, NOPOLY, 0, to->pinvo);
+		_ctx->pic = InitInterpretContext(GS_INVENTORY, to->pinvo->getScript(), UNPOINT, NOPOLY, 0, to->pinvo);
 		CORO_INVOKE_1(Interpret, _ctx->pic);
 	}
 
@@ -5624,10 +5588,10 @@ static void ObjectProcess(CORO_PARAM, const void *param) {
 /**
  * Run inventory item's Glitter code
  */
-static void InvTinselEvent(INV_OBJECT *pinvo, TINSEL_EVENT event, PLR_EVENT be, int index) {
+static void InvTinselEvent(const InventoryObject *pinvo, TINSEL_EVENT event, PLR_EVENT be, int index) {
 	OP_INIT to = {pinvo, event, be, 0};
 
-	if (_vm->_dialogs->InventoryIsHidden() || ((TinselVersion >= 2) && !pinvo->hScript))
+	if (_vm->_dialogs->InventoryIsHidden() || ((TinselVersion >= 2) && !pinvo->getScript()))
 		return;
 
 	_vm->_dialogs->_glitterIndex = index;
@@ -5638,7 +5602,7 @@ extern void ObjectEvent(CORO_PARAM, int objId, TINSEL_EVENT event, bool bWait, i
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
 	Common::PROCESS *pProc;
-	INV_OBJECT *pInvo;
+	const InventoryObject *pInvo;
 	OP_INIT op;
 	CORO_END_CONTEXT(_ctx);
 
@@ -5647,7 +5611,7 @@ extern void ObjectEvent(CORO_PARAM, int objId, TINSEL_EVENT event, bool bWait, i
 	if (result)
 		*result = false;
 	_ctx->pInvo = _vm->_dialogs->GetInvObject(objId);
-	if (!_ctx->pInvo->hScript)
+	if (!_ctx->pInvo->getScript())
 		return;
 
 	_ctx->op.pinvo = _ctx->pInvo;

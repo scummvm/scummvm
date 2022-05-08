@@ -809,16 +809,6 @@ void LoadBasicChunks() {
 	RegisterGlobals(game.numGlobals);
 
 	cptr = FindChunk(INV_OBJ_SCNHANDLE, CHUNK_OBJECTS);
-
-	// Convert to native endianness
-	INV_OBJECT *io = (INV_OBJECT *)cptr;
-	for (int i = 0; i < game.numObjects; i++, io++) {
-		io->id        = FROM_32(io->id);
-		io->hIconFilm = FROM_32(io->hIconFilm);
-		io->hScript   = FROM_32(io->hScript);
-		io->attribute = FROM_32(io->attribute);
-	}
-
 	_vm->_dialogs->RegisterIcons(cptr, game.numObjects);
 
 	// Max polygons are 0 in the original DW1 V0 demo and in DW1 Mac (both in the demo and the full version)
