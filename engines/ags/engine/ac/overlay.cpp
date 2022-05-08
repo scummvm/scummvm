@@ -101,6 +101,24 @@ void Overlay_SetY(ScriptOverlay *scover, int newy) {
 	_GP(screenover)[ovri].y = data_to_game_coord(newy);
 }
 
+int Overlay_GetGraphic(ScriptOverlay *scover) {
+	int ovri = find_overlay_of_type(scover->overlayId);
+	if (ovri < 0)
+		quit("!invalid overlay ID specified");
+	return _GP(screenover)[ovri].GetSpriteNum();
+}
+
+void Overlay_SetGraphic(ScriptOverlay *scover, int slot) {
+	if (!_GP(spriteset).DoesSpriteExist(slot)) {
+		debug_script_warn("Overlay.SetGraphic: sprite %d is invalid", slot);
+		slot = 0;
+	}
+	int ovri = find_overlay_of_type(scover->overlayId);
+	if (ovri < 0)
+		quit("!invalid overlay ID specified");
+	_GP(screenover)[ovri].SetSpriteNum(slot);
+}
+
 bool Overlay_InRoom(ScriptOverlay *scover) {
 	int ovri = find_overlay_of_type(scover->overlayId);
 	if (ovri < 0)
@@ -354,8 +372,6 @@ size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnu
 	over.y = y;
 	over.offsetX = pic_offx;
 	over.offsetY = pic_offy;
-	over.scaleWidth = over.GetImage()->GetWidth();
-	over.scaleHeight = over.GetImage()->GetHeight();
 	// by default draw speech and portraits over GUI, and the rest under GUI
 	over.zorder = (roomlayer || type == OVER_TEXTMSG || type == OVER_PICTURE || type == OVER_TEXTSPEECH) ?
 		INT_MAX : INT_MIN;
@@ -521,6 +537,14 @@ RuntimeScriptValue Sc_Overlay_SetY(void *self, const RuntimeScriptValue *params,
 	API_OBJCALL_VOID_PINT(ScriptOverlay, Overlay_SetY);
 }
 
+RuntimeScriptValue Sc_Overlay_GetGraphic(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_INT(ScriptOverlay, Overlay_GetGraphic);
+}
+
+RuntimeScriptValue Sc_Overlay_SetGraphic(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT(ScriptOverlay, Overlay_SetGraphic);
+}
+
 RuntimeScriptValue Sc_Overlay_InRoom(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_BOOL(ScriptOverlay, Overlay_InRoom);
 }
@@ -591,6 +615,8 @@ void RegisterOverlayAPI() {
 	ccAddExternalObjectFunction("Overlay::set_X", Sc_Overlay_SetX);
 	ccAddExternalObjectFunction("Overlay::get_Y", Sc_Overlay_GetY);
 	ccAddExternalObjectFunction("Overlay::set_Y", Sc_Overlay_SetY);
+	ccAddExternalObjectFunction("Overlay::get_Graphic", Sc_Overlay_GetGraphic);
+	ccAddExternalObjectFunction("Overlay::set_Graphic", Sc_Overlay_SetGraphic);
 	ccAddExternalObjectFunction("Overlay::get_InRoom", Sc_Overlay_InRoom);
 	ccAddExternalObjectFunction("Overlay::get_Width", Sc_Overlay_GetWidth);
 	ccAddExternalObjectFunction("Overlay::set_Width", Sc_Overlay_SetWidth);

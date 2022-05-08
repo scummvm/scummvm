@@ -39,12 +39,28 @@ void ScreenOverlay::SetImage(Shared::Bitmap *pic) {
 	_flags &= ~kOver_SpriteReference;
 	_pic.reset(pic);
 	_sprnum = -1;
+	offsetX = offsetY = 0;
+	scaleWidth = scaleHeight = 0;
+	const auto *img = GetImage();
+	if (img) {
+		scaleWidth = img->GetWidth();
+		scaleHeight = img->GetHeight();
+	}
+	MarkChanged();
 }
 
 void ScreenOverlay::SetSpriteNum(int sprnum) {
 	_flags |= kOver_SpriteReference;
 	_pic.reset();
 	_sprnum = sprnum;
+	offsetX = offsetY = 0;
+	scaleWidth = scaleHeight = 0;
+	const auto *img = GetImage();
+	if (img) {
+		scaleWidth = img->GetWidth();
+		scaleHeight = img->GetHeight();
+	}
+	MarkChanged();
 }
 
 void ScreenOverlay::ReadFromFile(Stream *in, bool &has_bitmap, int32_t cmp_ver) {
