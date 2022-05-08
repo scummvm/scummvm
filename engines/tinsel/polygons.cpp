@@ -737,7 +737,7 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
 }
 
 /**
- * Returns TRUE if two paths are asdjacent.
+ * Returns TRUE if two paths are adjacent.
  */
 bool IsAdjacentPath(HPOLYGON hPath1, HPOLYGON hPath2) {
 	const POLYGON *pp1, *pp2;
