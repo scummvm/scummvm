@@ -53,8 +53,9 @@ int  find_overlay_of_type(int type);
 void remove_screen_overlay(int type);
 // Calculates overlay position in its respective layer (screen or room)
 Point get_overlay_position(const ScreenOverlay &over);
-size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Shared::Bitmap *piccy, bool alphaChannel = false);
-size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Shared::Bitmap *piccy, int pic_offx, int pic_offy, bool alphaChannel = false);
+size_t add_screen_overlay(bool roomlayer, int x, int y, int type, int sprnum);
+size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Shared::Bitmap *piccy, bool has_alpha);
+size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Shared::Bitmap *piccy, int pic_offx, int pic_offy, bool has_alpha);
 void remove_screen_overlay_index(size_t over_idx);
 // Creates and registers a managed script object for // Creates and registers a managed script object for existing overlay object;
 // optionally adds an internal engine reference to prevent object's disposal

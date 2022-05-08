@@ -126,14 +126,14 @@ int Overlay_GetGraphicWidth(ScriptOverlay *scover) {
 	int ovri = find_overlay_of_type(scover->overlayId);
 	if (ovri < 0)
 		quit("!invalid overlay ID specified");
-	return game_to_data_coord(_GP(screenover)[ovri].pic->GetWidth());
+	return game_to_data_coord(_GP(screenover)[ovri].GetImage()->GetWidth());
 }
 
 int Overlay_GetGraphicHeight(ScriptOverlay *scover) {
 	int ovri = find_overlay_of_type(scover->overlayId);
 	if (ovri < 0)
 		quit("!invalid overlay ID specified");
-	return game_to_data_coord(_GP(screenover)[ovri].pic->GetHeight());
+	return game_to_data_coord(_GP(screenover)[ovri].GetImage()->GetHeight());
 }
 
 void Overlay_SetScaledSize(ScreenOverlay &over, int width, int height) {
@@ -177,11 +177,17 @@ int Overlay_GetValid(ScriptOverlay *scover) {
 
 ScreenOverlay *Overlay_CreateGraphicCore(bool room_layer, int x, int y, int slot, bool transparent) {
 	data_to_game_coords(&x, &y);
-	Bitmap *screeno = BitmapHelper::CreateTransparentBitmap(_GP(game).SpriteInfos[slot].Width, _GP(game).SpriteInfos[slot].Height, _GP(game).GetColorDepth());
-	screeno->Blit(_GP(spriteset)[slot], 0, 0, transparent ? kBitmap_Transparency : kBitmap_Copy);
-	size_t nse = add_screen_overlay(room_layer, x, y, OVER_CUSTOM, screeno,
-		(_GP(game).SpriteInfos[slot].Flags & SPF_ALPHACHANNEL) != 0);
-	return nse < SIZE_MAX ? &_GP(screenover)[nse] : nullptr;
+	size_t overid;
+	// We clone only dynamic sprites, because it makes no sense to clone normal ones
+	if ((_GP(game).SpriteInfos[slot].Flags & SPF_DYNAMICALLOC) != 0) {
+		Bitmap *screeno = BitmapHelper::CreateTransparentBitmap(_GP(game).SpriteInfos[slot].Width, _GP(game).SpriteInfos[slot].Height, _GP(game).GetColorDepth());
+		screeno->Blit(_GP(spriteset)[slot], 0, 0, transparent ? kBitmap_Transparency : kBitmap_Copy);
+		overid = add_screen_overlay(room_layer, x, y, OVER_CUSTOM, screeno,
+			(_GP(game).SpriteInfos[slot].Flags & SPF_ALPHACHANNEL) != 0);
+	} else {
+		overid = add_screen_overlay(room_layer, x, y, OVER_CUSTOM, slot);
+	}
+	return overid < SIZE_MAX ? &_GP(screenover)[overid] : nullptr;
 }
 
 ScreenOverlay *Overlay_CreateTextCore(bool room_layer, int x, int y, int width, int font, int text_color,
@@ -276,8 +282,7 @@ static void invalidate_and_subref(ScreenOverlay &over, ScriptOverlay **scover) {
 
 // Frees overlay resources and tell to dispose script object if there are no refs left
 static void dispose_overlay(ScreenOverlay &over) {
-	delete over.pic;
-	over.pic = nullptr;
+	over.SetImage(nullptr);
 	if (over.ddb != nullptr)
 		_G(gfxDriver)->DestroyDDB(over.ddb);
 	over.ddb = nullptr;
@@ -326,12 +331,8 @@ int find_overlay_of_type(int type) {
 	}
 	return -1;
 }
-
-size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Bitmap *piccy, bool alphaChannel) {
-	return add_screen_overlay(roomlayer, x, y, type, piccy, 0, 0, alphaChannel);
-}
-
-size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Bitmap *piccy, int pic_offx, int pic_offy, bool alphaChannel) {
+size_t add_screen_overlay_impl(bool roomlayer, int x, int y, int type, int sprnum, Bitmap *piccy,
+	int pic_offx, int pic_offy, bool has_alpha) {
 	if (type == OVER_CUSTOM) {
 		// find an unused custom ID; TODO: find a better approach!
 		for (int id = OVER_CUSTOM + 1; (size_t)id <= _GP(screenover).size() + OVER_CUSTOM + 1; ++id) {
@@ -340,16 +341,21 @@ size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Bitmap *piccy,
 			}
 		}
 	}
-
 	ScreenOverlay over;
-	over.pic = piccy;
+	if (piccy) {
+		over.SetImage(piccy);
+		over.SetAlphaChannel(has_alpha);
+	} else {
+		over.SetSpriteNum(sprnum);
+		over.SetAlphaChannel((_GP(game).SpriteInfos[sprnum].Flags & SPF_ALPHACHANNEL) != 0);
+	}
 	over.ddb = nullptr; // is generated during first draw pass
 	over.x = x;
 	over.y = y;
 	over.offsetX = pic_offx;
 	over.offsetY = pic_offy;
-	over.scaleWidth = piccy->GetWidth();
-	over.scaleHeight = piccy->GetHeight();
+	over.scaleWidth = over.GetImage()->GetWidth();
+	over.scaleHeight = over.GetImage()->GetHeight();
 	// by default draw speech and portraits over GUI, and the rest under GUI
 	over.zorder = (roomlayer || type == OVER_TEXTMSG || type == OVER_PICTURE || type == OVER_TEXTSPEECH) ?
 		INT_MAX : INT_MIN;
@@ -357,7 +363,6 @@ size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Bitmap *piccy,
 	over.timeout = 0;
 	over.bgSpeechForChar = -1;
 	over.associatedOverlayHandle = 0;
-	over.SetAlphaChannel(alphaChannel);
 	over.SetRoomLayer(roomlayer);
 	// TODO: move these custom settings outside of this function
 	if (type == OVER_COMPLETE) _GP(play).complete_overlay_on = type;
@@ -370,10 +375,21 @@ size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Bitmap *piccy,
 	} else if (type == OVER_PICTURE) {
 		_GP(play).speech_face_scover = create_scriptoverlay(over, true);
 	}
-
 	over.MarkChanged();
 	_GP(screenover).push_back(std::move(over));
 	return _GP(screenover).size() - 1;
+}
+
+size_t add_screen_overlay(bool roomlayer, int x, int y, int type, int sprnum) {
+	return add_screen_overlay_impl(roomlayer, x, y, type, sprnum, nullptr, 0, 0, false);
+}
+
+size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Bitmap *piccy, bool has_alpha) {
+	return add_screen_overlay_impl(roomlayer, x, y, type, -1, piccy, 0, 0, has_alpha);
+}
+
+size_t add_screen_overlay(bool roomlayer, int x, int y, int type, Shared::Bitmap *piccy, int pic_offx, int pic_offy, bool has_alpha) {
+	return add_screen_overlay_impl(roomlayer, x, y, type, -1, piccy, pic_offx, pic_offy, has_alpha);
 }
 
 Point get_overlay_position(const ScreenOverlay &over) {
@@ -392,16 +408,17 @@ Point get_overlay_position(const ScreenOverlay &over) {
 		Point screenpt = view->RoomToScreen(
 			data_to_game_coord(_GP(game).chars[charid].x),
 			data_to_game_coord(_GP(game).chars[charid].get_effective_y()) - height).first;
-		int tdxp = MAX(0, screenpt.X - over.pic->GetWidth() / 2);
+		Bitmap *pic = over.GetImage();
+		int tdxp = std::max(0, screenpt.X - pic->GetWidth() / 2);
 		int tdyp = screenpt.Y - get_fixed_pixel_size(5);
-		tdyp -= over.pic->GetHeight();
-		tdyp = MAX(5, tdyp);
+		tdyp -= pic->GetHeight();
+		tdyp = std::max(5, tdyp);
 
-		if ((tdxp + over.pic->GetWidth()) >= ui_view.GetWidth())
-			tdxp = (ui_view.GetWidth() - over.pic->GetWidth()) - 1;
+		if ((tdxp + pic->GetWidth()) >= ui_view.GetWidth())
+			tdxp = (ui_view.GetWidth() - pic->GetWidth()) - 1;
 		if (_GP(game).chars[charid].room != _G(displayed_room)) {
-			tdxp = ui_view.GetWidth() / 2 - over.pic->GetWidth() / 2;
-			tdyp = ui_view.GetHeight() / 2 - over.pic->GetHeight() / 2;
+			tdxp = ui_view.GetWidth() / 2 - pic->GetWidth() / 2;
+			tdyp = ui_view.GetHeight() / 2 - pic->GetHeight() / 2;
 		}
 		return Point(tdxp, tdyp);
 	} else {

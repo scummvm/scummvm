@@ -759,10 +759,10 @@ HSaveError ReadDynamicSprites(Stream *in, int32_t /*cmp_ver*/, const PreservedPa
 }
 
 HSaveError WriteOverlays(Stream *out) {
-	out->WriteInt32(_GP(screenover).size());
 	for (const auto &over : _GP(screenover)) {
 		over.WriteToFile(out);
-		serialize_bitmap(over.pic, out);
+		if (!over.IsSpriteReference())
+			serialize_bitmap(over.GetImage(), out);
 	}
 	return HSaveError::None();
 }
@@ -774,12 +774,12 @@ HSaveError ReadOverlays(Stream *in, int32_t cmp_ver, const PreservedParams & /*p
 		bool has_bitmap;
 		over.ReadFromFile(in, has_bitmap, cmp_ver);
 		if (has_bitmap)
-			over.pic = read_serialized_bitmap(in);
+			over.SetImage(read_serialized_bitmap(in));
 		if (over.scaleWidth <= 0 || over.scaleHeight <= 0) {
-			over.scaleWidth = over.pic->GetWidth();
-			over.scaleHeight = over.pic->GetHeight();
+			over.scaleWidth = over.GetImage()->GetWidth();
+			over.scaleHeight = over.GetImage()->GetHeight();
 		}
-		_GP(screenover).push_back(over);
+		_GP(screenover).push_back(std::move(over));
 	}
 	return HSaveError::None();
 }

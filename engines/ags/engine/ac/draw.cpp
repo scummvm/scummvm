@@ -2114,13 +2114,13 @@ static void construct_overlays() {
 		if (has_changed) {
 			// For software mode - prepare transformed bitmap if necessary
 			Bitmap *use_bmp = is_software_mode ?
-				transform_sprite(over.pic, over.HasAlphaChannel(), _GP(overlaybmp)[i], Size(over.scaleWidth, over.scaleHeight)) :
-				over.pic;
+				transform_sprite(over.GetImage(), over.HasAlphaChannel(), _GP(overlaybmp)[i], Size(over.scaleWidth, over.scaleHeight)) :
+				over.GetImage();
 
 			if ((_G(walkBehindMethod) == DrawOverCharSprite) && over.IsRoomLayer()) {
 				if (use_bmp != _GP(overlaybmp)[i].get()) {
-					recycle_bitmap(_GP(overlaybmp)[i], over.pic->GetColorDepth(), over.pic->GetWidth(), over.pic->GetHeight(), true);
-					_GP(overlaybmp)[i]->Blit(over.pic);
+					recycle_bitmap(_GP(overlaybmp)[i], use_bmp->GetColorDepth(), use_bmp->GetWidth(), use_bmp->GetHeight(), true);
+					_GP(overlaybmp)[i]->Blit(use_bmp);
 				}
 				Point pos = get_overlay_position(over);
 				walkbehinds_cropout(_GP(overlaybmp)[i].get(), pos.X, pos.Y, over.zorder);

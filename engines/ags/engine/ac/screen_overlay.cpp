@@ -19,18 +19,39 @@
  *
  */
 
+#include "ags/lib/std/utility.h"
 #include "ags/engine/ac/screen_overlay.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/util/stream.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
-using AGS::Shared::Stream;
+using namespace AGS::Shared;
+
+Bitmap *ScreenOverlay::GetImage() const {
+	return IsSpriteReference() ?
+		_GP(spriteset)[_sprnum] :
+		_pic.get();
+}
+
+void ScreenOverlay::SetImage(Shared::Bitmap *pic) {
+	_flags &= ~kOver_SpriteReference;
+	_pic.reset(pic);
+	_sprnum = -1;
+}
+
+void ScreenOverlay::SetSpriteNum(int sprnum) {
+	_flags |= kOver_SpriteReference;
+	_pic.reset();
+	_sprnum = sprnum;
+}
 
 void ScreenOverlay::ReadFromFile(Stream *in, bool &has_bitmap, int32_t cmp_ver) {
-	pic = nullptr;
+	_pic.reset();
 	ddb = nullptr;
 	in->ReadInt32(); // ddb 32-bit pointer value (nasty legacy format)
-	has_bitmap = in->ReadInt32() != 0;
+	int pic = in->ReadInt32();
 	type = in->ReadInt32();
 	x = in->ReadInt32();
 	y = in->ReadInt32();
@@ -56,11 +77,22 @@ void ScreenOverlay::ReadFromFile(Stream *in, bool &has_bitmap, int32_t cmp_ver) 
 		scaleWidth = in->ReadInt32();
 		scaleHeight = in->ReadInt32();
 	}
+
+	if (_flags & kOver_SpriteReference) {
+		_sprnum = pic;
+		has_bitmap = false;
+	} else {
+		_sprnum = -1;
+		has_bitmap = pic != 0;
+	}
 }
 
 void ScreenOverlay::WriteToFile(Stream *out) const {
 	out->WriteInt32(0); // ddb 32-bit pointer value (nasty legacy format)
-	out->WriteInt32(pic ? 1 : 0); // has bitmap
+	if (_flags & kOver_SpriteReference)
+		out->WriteInt32(_sprnum); // sprite reference
+	else
+		out->WriteInt32(_pic ? 1 : 0); // has bitmap
 	out->WriteInt32(type);
 	out->WriteInt32(x);
 	out->WriteInt32(y);
