@@ -689,6 +689,9 @@ public:
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Vector Variable Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }

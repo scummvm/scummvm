@@ -1,0 +1,3 @@
+MIDI behavior:
+
+Uses a special MIDI file "ANO&Vol.mid" which triggers AllNoteOff on all channels.

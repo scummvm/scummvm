@@ -602,38 +602,55 @@ MiniscriptInstructionOutcome BinaryArithInstruction::execute(MiniscriptThread *t
 	DynamicValue &rs = thread->getStackValueFromTop(0).value;
 	DynamicValue &lsDest = thread->getStackValueFromTop(1).value;
 
-	double leftVal = 0.0;
-	switch (lsDest.getType()) {
-	case DynamicValueTypes::kInteger:
-		leftVal = lsDest.getInt();
-		break;
-	case DynamicValueTypes::kFloat:
-		leftVal = lsDest.getFloat();
-		break;
-	default:
-		thread->error("Invalid left-side type for binary arithmetic operator");
-		return kMiniscriptInstructionOutcomeFailed;
+	if (lsDest.getType() == DynamicValueTypes::kPoint && rs.getType() == DynamicValueTypes::kPoint) {
+		Point16 lsPoint = lsDest.getPoint();
+		Point16 rsPoint = rs.getPoint();
+
+		double resultX = 0.0;
+		double resultY = 0.0;
+		outcome = arithExecute(thread, resultX, lsPoint.x, rsPoint.x);
+		if (outcome != kMiniscriptInstructionOutcomeContinue)
+			return outcome;
+
+		outcome = arithExecute(thread, resultY, lsPoint.y, rsPoint.y);
+		if (outcome != kMiniscriptInstructionOutcomeContinue)
+			return outcome;
+
+		lsDest.setPoint(Point16::create(static_cast<int16>(round(resultX)), static_cast<int16>(round(resultY))));
+	} else {
+		double leftVal = 0.0;
+		switch (lsDest.getType()) {
+		case DynamicValueTypes::kInteger:
+			leftVal = lsDest.getInt();
+			break;
+		case DynamicValueTypes::kFloat:
+			leftVal = lsDest.getFloat();
+			break;
+		default:
+			thread->error("Invalid left-side type for binary arithmetic operator");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+
+		double rightVal = 0.0;
+		switch (rs.getType()) {
+		case DynamicValueTypes::kInteger:
+			rightVal = rs.getInt();
+			break;
+		case DynamicValueTypes::kFloat:
+			rightVal = rs.getFloat();
+			break;
+		default:
+			thread->error("Invalid right-side type for binary arithmetic operator");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+
+		double result = 0.0;
+		outcome = arithExecute(thread, result, leftVal, rightVal);
+		if (outcome != kMiniscriptInstructionOutcomeContinue)
+			return outcome;
+
+		lsDest.setFloat(result);
 	}
-
-	double rightVal = 0.0;
-	switch (rs.getType()) {
-	case DynamicValueTypes::kInteger:
-		rightVal = rs.getInt();
-		break;
-	case DynamicValueTypes::kFloat:
-		rightVal = rs.getFloat();
-		break;
-	default:
-		thread->error("Invalid right-side type for binary arithmetic operator");
-		return kMiniscriptInstructionOutcomeFailed;
-	}
-
-	double result = 0.0;
-	outcome = arithExecute(thread, result, leftVal, rightVal);
-	if (outcome != kMiniscriptInstructionOutcomeContinue)
-		return outcome;
-
-	lsDest.setFloat(result);
 
 	thread->popValues(1);
 
@@ -1353,9 +1370,9 @@ MiniscriptInstructionOutcome GetChild::readRValueAttrib(MiniscriptThread *thread
 
 	case DynamicValueTypes::kVector:
 		if (attrib == "angle")
-			valueSrcDest.setInt(valueSrcDest.getVector().angleRadians * (180.0 / M_PI));
+			valueSrcDest.setFloat(valueSrcDest.getVector().angleRadians * (180.0 / M_PI));
 		else if (attrib == "magnitude")
-			valueSrcDest.setInt(valueSrcDest.getVector().magnitude);
+			valueSrcDest.setFloat(valueSrcDest.getVector().magnitude);
 		else {
 			thread->error("Vector has no attribute '" + attrib + "'");
 			return kMiniscriptInstructionOutcomeFailed;
@@ -1404,7 +1421,18 @@ MiniscriptInstructionOutcome GetChild::readRValueAttribIndexed(MiniscriptThread 
 			return kMiniscriptInstructionOutcomeFailed;
 		}
 		break;
+	case DynamicValueTypes::kObject: {
+			Common::SharedPtr<RuntimeObject> obj = valueSrcDest.getObject().object.lock();
+			if (!obj) {
+				thread->error("Unable to read object indexed attribute '" + attrib + "' from invalid object");
+				return kMiniscriptInstructionOutcomeFailed;
+			} else if (!obj->readAttributeIndexed(thread, valueSrcDest, attrib, index)) {
+				thread->error("Unable to read object indexed attribute '" + attrib + "'");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+		} break;
 	default:
+		thread->error("Unable to read indexed rvalue attribute '" + attrib + "'");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
@@ -1500,7 +1528,7 @@ MiniscriptInstructionOutcome ListAppend::execute(MiniscriptThread *thread) const
 
 	thread->popValues(1);
 
-	return kMiniscriptInstructionOutcomeFailed;
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 MiniscriptInstructionOutcome PushValue::execute(MiniscriptThread *thread) const {
@@ -1558,7 +1586,7 @@ MiniscriptInstructionOutcome PushGlobal::execute(MiniscriptThread *thread) const
 		break;
 	case kGlobalRefMouse:
 		value.setPoint(thread->getRuntime()->getCachedMousePosition());
-		return kMiniscriptInstructionOutcomeFailed;
+		break;
 	case kGlobalRefTicks:
 		value.setInt(thread->getRuntime()->getPlayTime() * 60 / 1000);
 		break;

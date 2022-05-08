@@ -1172,6 +1172,12 @@ public:
 	bool isTerminated() const;
 	VThreadState continuePropagating(Runtime *runtime);
 
+	const Common::SharedPtr<MessageProperties> &getMsg() const;
+	RuntimeObject *getRootPropagator() const;
+
+	bool isCascade() const;
+	bool isRelay() const;
+
 private:
 	struct PropagationStack {
 		union Ptr {
@@ -1732,6 +1738,7 @@ protected:
 	virtual ObjectLinkingScope *getPersistentModifierScope();
 
 	MiniscriptInstructionOutcome scriptSetPaused(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value);
 
 	// If you override this, you must override visitInternalReferences too.
 	virtual void linkInternalReferences(ObjectLinkingScope *outerScope);
@@ -1749,6 +1756,10 @@ protected:
 	// Changing it does not affect modifiers on the object that play media, but does fire
 	// "Paused"/"Unpaused" events.
 	bool _paused;
+
+	// "loop" appears to have been made available on everything in 1.2.  Obsidian depends on it
+	// being available for sound indexes to be properly set up.
+	bool _loop;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<DebugInspector> _debugInspector;
@@ -1894,6 +1905,8 @@ public:
 
 	void onKeyboardEvent(Runtime *runtime, const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
 	Common::SharedPtr<KeyboardEventSignaller> notifyOnKeyboardEvent(IKeyboardEventReceiver *receiver);
+
+	const char *findAuthorMessageName(uint32 id) const;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Project"; }
