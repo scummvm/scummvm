@@ -53,7 +53,7 @@ void GraphicElement::render(Window *window) {
 
 MovieElement::MovieElement()
 	: _cacheBitmap(false), _reversed(false), _haveFiredAtFirstCel(false), _haveFiredAtLastCel(false)
-	, _alternate(false), _playEveryFrame(false), _assetID(0), _runtime(nullptr) {
+	, _alternate(false), _playEveryFrame(false), _assetID(0), _runtime(nullptr), _displayFrame(nullptr) {
 }
 
 MovieElement::~MovieElement() {
@@ -151,18 +151,17 @@ void MovieElement::deactivate() {
 }
 
 void MovieElement::render(Window *window) {
-	const Graphics::Surface *videoSurface = nullptr;
 	while (_videoDecoder->needsUpdate()) {
-		videoSurface = _videoDecoder->decodeNextFrame();
+		_displayFrame = _videoDecoder->decodeNextFrame();
 		if (_playEveryFrame)
 			break;
 	}
 
-	if (videoSurface) {
+	if (_displayFrame) {
 		Graphics::ManagedSurface *target = window->getSurface().get();
-		Common::Rect srcRect(0, 0, videoSurface->w, videoSurface->h);
+		Common::Rect srcRect(0, 0, _displayFrame->w, _displayFrame->h);
 		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.getWidth(), _cachedAbsoluteOrigin.y + _rect.getHeight());
-		target->blitFrom(*videoSurface, srcRect, destRect);
+		target->blitFrom(*_displayFrame, srcRect, destRect);
 	}
 }
 

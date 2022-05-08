@@ -37,6 +37,7 @@ struct Surface;
 
 namespace MTropolis {
 
+class CursorGraphic;
 class Runtime;
 class Project;
 
@@ -86,6 +87,9 @@ public:
 	const Common::SharedPtr<Graphics::ManagedSurface> &getSurface() const;
 	const Graphics::PixelFormat &getPixelFormat() const;
 
+	const Common::SharedPtr<CursorGraphic> &getCursorGraphic() const;
+	void setCursorGraphic(const Common::SharedPtr<CursorGraphic> &cursor);
+
 	void setStrata(int strata);
 	int getStrata() const;
 
@@ -104,10 +108,12 @@ public:
 protected:
 	int32 _x;
 	int32 _y;
-	Common::SharedPtr<Graphics::ManagedSurface> _surface;
 	Runtime *_runtime;
 	int _strata;
 	bool _isMouseTransparent;
+
+	Common::SharedPtr<Graphics::ManagedSurface> _surface;
+	Common::SharedPtr<CursorGraphic> _cursor;
 };
 
 namespace Render {

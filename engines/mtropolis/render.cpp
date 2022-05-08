@@ -131,6 +131,14 @@ const Graphics::PixelFormat& Window::getPixelFormat() const {
 	return _surface->format;
 }
 
+const Common::SharedPtr<CursorGraphic> &Window::getCursorGraphic() const {
+	return _cursor;
+}
+
+void Window::setCursorGraphic(const Common::SharedPtr<CursorGraphic>& cursor) {
+	_cursor = cursor;
+}
+
 void Window::setStrata(int strata) {
 	_strata = strata;
 }

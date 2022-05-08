@@ -41,7 +41,12 @@ class MultiMidiPlayer;
 
 class CursorModifier : public Modifier {
 public:
+	CursorModifier();
+
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::CursorModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Cursor Modifier"; }

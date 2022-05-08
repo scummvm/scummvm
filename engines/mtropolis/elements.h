@@ -93,6 +93,8 @@ private:
 	uint32 _assetID;
 
 	Common::SharedPtr<Video::VideoDecoder> _videoDecoder;
+	const Graphics::Surface *_displayFrame;
+
 	Common::SharedPtr<SegmentUnloadSignaller> _unloadSignaller;
 	Common::SharedPtr<PostRenderSignaller> _postRenderSignaller;
 

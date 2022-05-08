@@ -335,7 +335,7 @@ namespace MiniscriptInstructions {
 	private:
 		enum {
 			kGlobalRefElement = 1,
-			kGlobalRefSubsection = 2,
+			kGlobalRefModifier = 2,
 			kGlobalRefSource = 3,
 			kGlobalRefIncomingData = 4,
 			kGlobalRefMouse = 5,
