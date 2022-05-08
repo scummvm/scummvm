@@ -66,6 +66,19 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 	}
 }
 
+void BoyzEngine::pressedKey(const int keycode) {
+	if (keycode == Common::KEYCODE_c) {
+		if (_cheatsEnabled) {
+			_skipLevel = true;
+			return;
+		}
+	} else if (keycode == Common::KEYCODE_k) { // Added for testing
+		_health = 0;
+	} else if (keycode == Common::KEYCODE_ESCAPE) {
+		openMainMenuDialog();
+	}
+}
+
 void BoyzEngine::updateFromScript() {
 	if (_currentScript.size() > 0) {
 		ScriptInfo si = *_currentScript.begin();

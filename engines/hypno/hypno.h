@@ -543,6 +543,7 @@ public:
 
 	void runBeforeArcade(ArcadeShooting *arc) override;
 	void runAfterArcade(ArcadeShooting *arc) override;
+	void pressedKey(const int keycode) override;
 	int detectTarget(const Common::Point &mousePos) override;
 	void drawCursorArcade(const Common::Point &mousePos) override;
 	void shoot(const Common::Point &mousePos, ArcadeShooting *arc) override;
