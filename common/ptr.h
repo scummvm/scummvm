@@ -562,6 +562,14 @@ public:
 	explicit ScopedPtr(PointerType o = nullptr) : _pointer(o) {}
 	ScopedPtr(std::nullptr_t) : _pointer(nullptr) {}
 
+	/**
+	 * Move constructor
+	 */
+	template<class T2>
+	ScopedPtr(ScopedPtr<T2> &&o) : _pointer(o._pointer) {
+		o._pointer = nullptr;
+        }
+
 	ReferenceType operator*() const { return *_pointer; }
 	PointerType operator->() const { return _pointer; }
 
