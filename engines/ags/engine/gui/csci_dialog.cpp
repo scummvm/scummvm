@@ -137,6 +137,7 @@ int CSCIWaitMessage(CSCIMessage *cscim) {
 		KeyInput ki;
 		if (run_service_key_controls(ki) && !_GP(play).IsIgnoringInput()) {
 			int keywas = ki.Key;
+			int uchar = ki.UChar;
 			if (keywas == eAGSKeyCodeReturn) {
 				cscim->id = finddefaultcontrol(CNF_DEFAULT);
 				cscim->code = CM_COMMAND;
@@ -147,7 +148,7 @@ int CSCIWaitMessage(CSCIMessage *cscim) {
 			else if ((keywas >= eAGSKeyCodeUpArrow) & (keywas <= eAGSKeyCodePageDown) & (finddefaultcontrol(CNT_LISTBOX) >= 0))
 				_G(vobjs)[finddefaultcontrol(CNT_LISTBOX)]->processmessage(CTB_KEYPRESS, keywas, 0);
 			else if (finddefaultcontrol(CNT_TEXTBOX) >= 0)
-				_G(vobjs)[finddefaultcontrol(CNT_TEXTBOX)]->processmessage(CTB_KEYPRESS, keywas, 0);
+				_G(vobjs)[finddefaultcontrol(CNT_TEXTBOX)]->processmessage(CTB_KEYPRESS, keywas, uchar);
 
 			if (cscim->id < 0) {
 				cscim->code = CM_KEYPRESS;
