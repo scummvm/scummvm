@@ -3635,17 +3635,17 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("hpunk", "H_punk.exe", "7971a7c02d414dc8cb33b6ec36080b91", 37544988),
 	DEMO_ENTRY_EN("hpunk", "H_punk.ags", "a6d34e62d2584acb00cea1a45d88c2b5", 35047948),
 	DEMO_ENTRY_EN("huxzadventure", "Huxsadv.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 2053897),
-	DEMO_ENTRY_LANG("indycrownofsolomon", "IndyCoS.exe", "f120690b506dd63cd7d1112ea6af2f77", 5483592, Common::EN_ANY),  // English
+	DEMO_ENTRY_EN("indycrownofsolomon", "IndyCoS.exe", "f120690b506dd63cd7d1112ea6af2f77", 5483592),
 	DEMO_ENTRY_LANG("indycrownofsolomon", "cosdemo2.1-it.exe", "f120690b506dd63cd7d1112ea6af2f77", 5772985, Common::IT_ITA),  //Italian
 	DEMO_ENTRY_LANG("indycrownofsolomon", "CoSdemo2.1.exe", "f120690b506dd63cd7d1112ea6af2f77", 6178327, Common::DE_DEU),  //German
 	DEMO_ENTRY_LANG("indycrownofsolomon", "CoSdemo2.1.exe", "f120690b506dd63cd7d1112ea6af2f77", 6069990, Common::ES_ESP),  //Spanish
 	DEMO_ENTRY_LANG("indycrownofsolomon", "CoSdemo2.1.exe", "06a03fe35791b0578068ab1873455463", 6903169, Common::FI_FIN),  //Finnish
-	DEMO_ENTRY("indycrystalcursor", "cursoid.exe", "06a03fe35791b0578068ab1873455463", 12136127),
-	DEMO_ENTRY("indysevencities", "Seven Cities.exe", "c9cd3e2cdd295c33e62cfa97b14461e9", 12561314),  //v1.2.1.1
-	DEMO_ENTRY("infectionep2", "Infection_Ep_II_AGS.exe", "a524cbb1c51589903c4043b98917f1d9", 23691417),
-	DEMO_ENTRY("inferno", "inf.exe", "97d700529f5cc826f230c27acf81adfd", 8783105),
-	DEMO_ENTRY("intergalacticspacepancake", "space.exe", "4d17844029d8910fbaae1bdc99e250f2", 1993173),
-	DEMO_ENTRY("intraworld", "1 Intra World.exe", "0241777c2537fc5d077c05cde10bfa9f", 40044701),
+	DEMO_ENTRY_EN("indycrystalcursor", "cursoid.exe", "06a03fe35791b0578068ab1873455463", 12136127),
+	DEMO_ENTRY_EN("indysevencities", "Seven Cities.exe", "c9cd3e2cdd295c33e62cfa97b14461e9", 12561314),  //v1.2.1.1
+	DEMO_ENTRY_EN("infectionep2", "Infection_Ep_II_AGS.exe", "a524cbb1c51589903c4043b98917f1d9", 23691417),
+	DEMO_ENTRY_EN("inferno", "inf.exe", "97d700529f5cc826f230c27acf81adfd", 8783105),
+	DEMO_ENTRY_EN("intergalacticspacepancake", "space.exe", "4d17844029d8910fbaae1bdc99e250f2", 1993173),
+	DEMO_ENTRY_EN("intraworld", "1 Intra World.exe", "0241777c2537fc5d077c05cde10bfa9f", 40044701),
 	DEMO_ENTRY("jacquelinewhitecurseofthemummies", "CurseOfTheMummies.exe", "e9bdea51db49da499c69e8c21a821a7f", 193723250),
 	DEMO_ENTRY("jamesperis2", "james2.exe", "06a03fe35791b0578068ab1873455463", 35766505),
 	DEMO_ENTRY("jimmsquest3", "JQ3.EXE", "0b7529a76f38283d6e850b8d56526fc1", 4930906),
@@ -4879,87 +4879,87 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("hydrate", "Hydrate.exe", "b3ba6cb504a31fd2ce43e86280eb06a7", 3968325),  // Windows
 	GAME_ENTRY_EN("hydrate", "Hydrate.ags", "eb7203ea3e432183394a36f0b58d7d88", 1470261),  // Linux
 	GAME_ENTRY_EN("hypnotoad", "Hypnotoad.exe", "06a03fe35791b0578068ab1873455463", 1947740),
-	GAME_ENTRY("iamjason", "IAMJASON.exe", "e8985d9ffbfa1eda77f2eb8d1331944a", 4843842),
-	GAME_ENTRY("icantsleep", "The Bait that Lures.exe", "7e2043ac91777f83869ea255d9fcbc28", 67515438),
-	GAME_ENTRY("iceintheair", "IceInTheAir.exe", "bf2a2e7c608d33102f4d532e5cdcddda", 4365231),  //v1.2
-	GAME_ENTRY("icestationzero", "Ice Station Zero.exe", "9f8a9d74c09f188af9af3e263f8b59bc", 36606112),  // Windows
-	GAME_ENTRY("icestationzero", "Ice Station Zero.ags", "970bc84550c7e623e7bce6191f372137", 33569932),  // Linux
+	GAME_ENTRY_EN("iamjason", "IAMJASON.exe", "e8985d9ffbfa1eda77f2eb8d1331944a", 4843842),
+	GAME_ENTRY_EN("icantsleep", "The Bait that Lures.exe", "7e2043ac91777f83869ea255d9fcbc28", 67515438),
+	GAME_ENTRY_EN("iceintheair", "IceInTheAir.exe", "bf2a2e7c608d33102f4d532e5cdcddda", 4365231),  //v1.2
+	GAME_ENTRY_EN("icestationzero", "Ice Station Zero.exe", "9f8a9d74c09f188af9af3e263f8b59bc", 36606112),  // Windows
+	GAME_ENTRY_EN("icestationzero", "Ice Station Zero.ags", "970bc84550c7e623e7bce6191f372137", 33569932),  // Linux
 	GAME_ENTRY_EN("icecreammystery", "testgame3.ags.exe", "615e73fc1874e92d60a1996c2330ea36", 19578323),
-	GAME_ENTRY("id", "iD.exe", "495d45fb8adfd49690ae3b97921feec6", 19035497),
-	GAME_ENTRY("iforgot", "Forgot.exe", "6aa30185326552359c7865e55c045a74", 7743871),
-	GAME_ENTRY("iggrok", "grok.exe", "9cf51833e787cc919837d9a8bd8fc14c", 1046039),
-	GAME_ENTRY("igspaceadventure", "david.exe", "0710e2ec71042617f565c01824f0cf3c", 1922597),
-	GAME_ENTRY("igspaceadventurer", "IGS.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 1204802),
-	GAME_ENTRY("igspaceoddities", "Space Oddities.exe", "0b7529a76f38283d6e850b8d56526fc1", 1783628),
+	GAME_ENTRY_EN("id", "iD.exe", "495d45fb8adfd49690ae3b97921feec6", 19035497),
+	GAME_ENTRY_EN("iforgot", "Forgot.exe", "6aa30185326552359c7865e55c045a74", 7743871),
+	GAME_ENTRY_EN("iggrok", "grok.exe", "9cf51833e787cc919837d9a8bd8fc14c", 1046039),
+	GAME_ENTRY_EN("igspaceadventure", "david.exe", "0710e2ec71042617f565c01824f0cf3c", 1922597),
+	GAME_ENTRY_EN("igspaceadventurer", "IGS.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 1204802),
+	GAME_ENTRY_EN("igspaceoddities", "Space Oddities.exe", "0b7529a76f38283d6e850b8d56526fc1", 1783628),
 	GAME_ENTRY_EN("igstrangeplanet", "tsp.exe", "b25674056fe8cc0b7bf0a4409c5c5bfc", 2207926),
-	GAME_ENTRY("iiispy", "IIISpy.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 6696408),  // v1
-	GAME_ENTRY("iiispy", "IIISpy.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 6696286),
-	GAME_ENTRY_PLATFORM("iiispy", "IIISpy.ags", "0a4731cd3995a4d055e84ab5e63ebb80", 6428749, "v1.2"),  // v1.2 Linux
-	GAME_ENTRY_PLATFORM("iiispy", "IIISpy.exe", "21d7482c8e968857e2653debeaa8a384", 8909917, "v1.2"),  // v1.2 Win
-	GAME_ENTRY("iisstabbings", "MAGS_11_2012.exe", "82da2565c456dcfb265ded6fe3189c0b", 4759681),
-	GAME_ENTRY("illuminationdiminishing", "IlluminationDiminishing.exe", "b142b43c146c25443a1d155d441a6a81", 21227029),
-	GAME_ENTRY("illuminationdiminishing", "IlluminationDiminishing.exe", "b142b43c146c25443a1d155d441a6a81", 49006279),
-	GAME_ENTRY("illuminationdiminishing", "IlluminationDiminishing.exe", "b142b43c146c25443a1d155d441a6a81", 49006319),
-	GAME_ENTRY("illusion", "Illusions.exe", "0710e2ec71042617f565c01824f0cf3c", 2576009),
-	GAME_ENTRY("imfree", "I'm free.exe", "d90cd956022235ed9b272fb0b2ab5792", 241986165),
-	GAME_ENTRY("imfree", "Soy Libre.exe", "d90cd956022235ed9b272fb0b2ab5792", 241924247),
-	GAME_ENTRY("imnotcrazyrightthecell", "I'm not crazy.exe", "9cb3c8dc7a8ab9c44815955696be2677", 3152216),
-	GAME_ENTRY("imnotcrazyrightthewell", "The Well.exe", "9cb3c8dc7a8ab9c44815955696be2677", 5000358),
-	GAME_ENTRY("imonlysleeping", "sleeping.exe", "465f972675db2da6040518221af5b0ba", 2489565),
+	GAME_ENTRY_EN("iiispy", "IIISpy.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 6696408),  // v1
+	GAME_ENTRY_EN("iiispy", "IIISpy.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 6696286),
+	GAME_ENTRY_EN_PLATFORM("iiispy", "IIISpy.ags", "0a4731cd3995a4d055e84ab5e63ebb80", 6428749, "v1.2"),  // v1.2 Linux
+	GAME_ENTRY_EN_PLATFORM("iiispy", "IIISpy.exe", "21d7482c8e968857e2653debeaa8a384", 8909917, "v1.2"),  // v1.2 Win
+	GAME_ENTRY_EN("iisstabbings", "MAGS_11_2012.exe", "82da2565c456dcfb265ded6fe3189c0b", 4759681),
+	GAME_ENTRY_EN("illuminationdiminishing", "IlluminationDiminishing.exe", "b142b43c146c25443a1d155d441a6a81", 21227029),
+	GAME_ENTRY_EN("illuminationdiminishing", "IlluminationDiminishing.exe", "b142b43c146c25443a1d155d441a6a81", 49006279),
+	GAME_ENTRY_EN("illuminationdiminishing", "IlluminationDiminishing.exe", "b142b43c146c25443a1d155d441a6a81", 49006319),
+	GAME_ENTRY_EN("illusion", "Illusions.exe", "0710e2ec71042617f565c01824f0cf3c", 2576009),
+	GAME_ENTRY_EN("imfree", "I'm free.exe", "d90cd956022235ed9b272fb0b2ab5792", 241986165),
+	GAME_ENTRY_LANG("imfree", "Soy Libre.exe", "d90cd956022235ed9b272fb0b2ab5792", 241924247, Common::ES_ESP),
+	GAME_ENTRY_EN("imnotcrazyrightthecell", "I'm not crazy.exe", "9cb3c8dc7a8ab9c44815955696be2677", 3152216),
+	GAME_ENTRY_EN("imnotcrazyrightthewell", "The Well.exe", "9cb3c8dc7a8ab9c44815955696be2677", 5000358),
+	GAME_ENTRY_EN("imonlysleeping", "sleeping.exe", "465f972675db2da6040518221af5b0ba", 2489565),
 	GAME_ENTRY_EN("impostersyndrome", "wgj2021.exe", "4d5d25446373d4df71c6bda77a15230a", 124105480),
-	GAME_ENTRY("imstillhere", "PostApocalypse.exe", "615e73fc1874e92d60a1996c2330ea36", 5436580),
-	GAME_ENTRY("inbloom", "In-Bloom.exe", "f43f4ceb97c8b2317fce6e0b921998a5", 9288711),  // v1.4 Win
-	GAME_ENTRY("inbloom", "In-Bloom.ags", "a663a1c1bbd052f1339526066cce8117", 3400809),  // v1.4 Linux
-	GAME_ENTRY("indianarodent", "Indiana Rodent.exe", "89df481678b2ddc40ecc9f83caa76b89", 5629366),  //v1.1
-	GAME_ENTRY_PLATFORM("indianarodent", "Indiana Rodent.exe", "510be04e5eec2aa92bb78b060f138d64", 4564295, "MAGS"),  //MAGS
-	GAME_ENTRY("indybones", "Book of the Gods.exe", "4064f82b96cab962a1d1bca434ad9c8d", 48937857),
-	GAME_ENTRY("indycomingofage", "IndyCOA.exe", "90413e9ae57e222f8913b09d2bc847bc", 2368083),
-	GAME_ENTRY("indygoldofgenghiskhan", "Indy.exe", "b676bb7963adc3611bc67635123d293a", 6325803),
-	GAME_ENTRY("indypassageofsaints", "Compiled_AGS3.2.1.exe", "4370edcb2ef8b9ecb323fb5a94770117", 78409939),
-	GAME_ENTRY("indyrelicoftheviking", "Indiana Jones and the relic of the viking.exe", "de375dffcb0635bb84daf82eaddf4e3b", 63943198),  //v1.1
-	GAME_ENTRY("infantrydivision", "Infantry.exe", "0710e2ec71042617f565c01824f0cf3c", 9144372),
-	GAME_ENTRY("infectionep1", "Infection I.exe", "7132ff7d6b0bc1e9f3e4bd4755390626", 25974295),
+	GAME_ENTRY_EN("imstillhere", "PostApocalypse.exe", "615e73fc1874e92d60a1996c2330ea36", 5436580),
+	GAME_ENTRY_EN("inbloom", "In-Bloom.exe", "f43f4ceb97c8b2317fce6e0b921998a5", 9288711),  // v1.4 Win
+	GAME_ENTRY_EN("inbloom", "In-Bloom.ags", "a663a1c1bbd052f1339526066cce8117", 3400809),  // v1.4 Linux
+	GAME_ENTRY_EN("indianarodent", "Indiana Rodent.exe", "89df481678b2ddc40ecc9f83caa76b89", 5629366),  //v1.1
+	GAME_ENTRY_EN_PLATFORM("indianarodent", "Indiana Rodent.exe", "510be04e5eec2aa92bb78b060f138d64", 4564295, "MAGS"),  //MAGS
+	GAME_ENTRY_EN("indybones", "Book of the Gods.exe", "4064f82b96cab962a1d1bca434ad9c8d", 48937857),
+	GAME_ENTRY_EN("indycomingofage", "IndyCOA.exe", "90413e9ae57e222f8913b09d2bc847bc", 2368083),
+	GAME_ENTRY("indygoldofgenghiskhan", "Indy.exe", "b676bb7963adc3611bc67635123d293a", 6325803),  // En-It
+	GAME_ENTRY_EN("indypassageofsaints", "Compiled_AGS3.2.1.exe", "4370edcb2ef8b9ecb323fb5a94770117", 78409939),
+	GAME_ENTRY("indyrelicoftheviking", "Indiana Jones and the relic of the viking.exe", "de375dffcb0635bb84daf82eaddf4e3b", 63943198),  //v1.1 Multilang
+	GAME_ENTRY_EN("infantrydivision", "Infantry.exe", "0710e2ec71042617f565c01824f0cf3c", 9144372),
+	GAME_ENTRY("infectionep1", "Infection I.exe", "7132ff7d6b0bc1e9f3e4bd4755390626", 25974295),  // En-De
 	GAME_ENTRY("infinitemonkeys", "InfiniteMonkeys.exe", "4d7d2addcde045dae6e0363a43f9acad", 4841557),
-	GAME_ENTRY("infinitemonkeys", "InfiniteMonkeys.exe", "21fd0f65dfa48de2b39cb8ec23b30889", 4531999), //MAGS 2006
-	GAME_ENTRY("infinitemonkeys", "InfiniteMonkeys.exe", "60e8d15faf490b2d317e2036b4fb9a9c", 6126255), //version 1.3
-	GAME_ENTRY("infinitybit", "InfinityBit.exe", "27343924ddad3be0b97bdcaa71858b1b", 48338191),
-	GAME_ENTRY("inlimbo", "inLIMBO.exe", "0710e2ec71042617f565c01824f0cf3c", 1883031),
-	GAME_ENTRY("innersanctum", "Inner Sanctum.exe", "36f44e064eab15e502caeb60fd09f52d", 88875883),
-	GAME_ENTRY("insanebert", "Insane Bert.exe", "18b284c22010850f79bc5c20054a70c4", 1675739),
-	GAME_ENTRY("insidemonkeyisland", "MIIM.exe", "06a03fe35791b0578068ab1873455463", 5186306),
-	GAME_ENTRY("insidemonkeyislandch2", "MIIM2.exe", "06a03fe35791b0578068ab1873455463", 5885525),
+	GAME_ENTRY_EN_PLATFORM("infinitemonkeys", "InfiniteMonkeys.exe", "21fd0f65dfa48de2b39cb8ec23b30889", 4531999, "MAGS"),
+	GAME_ENTRY("infinitemonkeys", "InfiniteMonkeys.exe", "60e8d15faf490b2d317e2036b4fb9a9c", 6126255), //v1.3 En-De-Es-Por
+	GAME_ENTRY_EN("infinitybit", "InfinityBit.exe", "27343924ddad3be0b97bdcaa71858b1b", 48338191),
+	GAME_ENTRY_EN("inlimbo", "inLIMBO.exe", "0710e2ec71042617f565c01824f0cf3c", 1883031),
+	GAME_ENTRY_EN("innersanctum", "Inner Sanctum.exe", "36f44e064eab15e502caeb60fd09f52d", 88875883),
+	GAME_ENTRY_EN("insanebert", "Insane Bert.exe", "18b284c22010850f79bc5c20054a70c4", 1675739),
+	GAME_ENTRY("insidemonkeyisland", "MIIM.exe", "06a03fe35791b0578068ab1873455463", 5186306),  // En-It
+	GAME_ENTRY("insidemonkeyislandch2", "MIIM2.exe", "06a03fe35791b0578068ab1873455463", 5885525),  // En-It
 	GAME_ENTRY_LANG("insidemonkeyislandch3", "IMI3.exe", "06a03fe35791b0578068ab1873455463", 7337235, Common::IT_ITA),
-	GAME_ENTRY("inspectorgismoe", "police.exe", "465f972675db2da6040518221af5b0ba", 2899579),
-	GAME_ENTRY("integerbattleship", "intbattl.exe", "0500aacb6c176d47ac0f8158f055db83", 4158273),
-	GAME_ENTRY("intergalacticspacepancake", "space.exe", "97d700529f5cc826f230c27acf81adfd", 1797309),
-	GAME_ENTRY("interstellarborders", "Interstellar Borders New.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 13864633),
-	GAME_ENTRY("intestinator", "intestinator.exe", "3421b46ff95c5885603086c39a038a20", 1722265),
-	GAME_ENTRY("intothelight", "ITL.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 12146182),
-	GAME_ENTRY("intraworld", "Intra World.exe", "0241777c2537fc5d077c05cde10bfa9f", 44338673),
-	GAME_ENTRY("intraworld2", "troll.exe", "495d45fb8adfd49690ae3b97921feec6", 2935816),
-	GAME_ENTRY("invincibleisland", "Invincible.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4218160),
-	GAME_ENTRY("invincibleisland", "Invincible.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 1751882),  //v1
-	GAME_ENTRY("ioawn4t", "ioawn4t.ags", "34455803b41269a1a2dd44cc8b2d549f", 884275141), // Linux
-	GAME_ENTRY("ioawn4t", "ioawn4t.exe", "b93a59eb67e202f5e807d7a7e678ad85", 887314393), // Windows
-	GAME_ENTRY("ioawn4t", "ioawn4t.exe", "b93a59eb67e202f5e807d7a7e678ad85", 887315687),
-	GAME_ENTRY("ioawn4t", "ioawn4t.exe", "11bd8123982f9442f372ed5defc88b50", 888895169),
-	GAME_ENTRY("ioawn4t", "game.ags", "11bd8123982f9442f372ed5defc88b50", 888895169),
-	GAME_ENTRY("irentedaboat", "I_rented_a_boat.exe", "792c0a0eaeba1a8846cb7b1af1e3266e", 144007992),  // Windows
-	GAME_ENTRY("irentedaboat", "I_rented_a_boat.ags", "9c8cbf1ee6f0a797fdaee29177a43224", 140971300),  // Linux
-	GAME_ENTRY("isaacodyssey", "isaacsoddysee.exe", "615e73fc1874e92d60a1996c2330ea36", 5339324),  //v1.1
-	GAME_ENTRY("isnkill", "ISN.exe", "4d17844029d8910fbaae1bdc99e250f2", 7932669),
-	GAME_ENTRY("isos", "ISOS.exe", "06a03fe35791b0578068ab1873455463", 7362937),
-	GAME_ENTRY("ispy2", "I Spy II.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 2293873),
-	GAME_ENTRY("itsabugslife", "It's a Bugs Life.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 201172081),
-	GAME_ENTRY("itsjustarongame", "RONgames.exe", "97d700529f5cc826f230c27acf81adfd", 2171873),
-	GAME_ENTRY("iwalkedapath", "I walked a path.exe", "fd3ecd8289bebadbf775fe8a13b9c5d7", 89018261),
-	GAME_ENTRY("iwantanidentity", "Quiero una identidad - Akkad Estudios.exe", "ffaf92297a381f2770f204122b4cc26a", 404765762),
-	GAME_ENTRY("iwantout", "I_want_out!.exe", "c2cb8ff1ad3028b08fd3dab91578b934", 22218677),  //v1.1.5
+	GAME_ENTRY_EN("inspectorgismoe", "police.exe", "465f972675db2da6040518221af5b0ba", 2899579),
+	GAME_ENTRY_EN("integerbattleship", "intbattl.exe", "0500aacb6c176d47ac0f8158f055db83", 4158273),
+	GAME_ENTRY_EN("intergalacticspacepancake", "space.exe", "97d700529f5cc826f230c27acf81adfd", 1797309),
+	GAME_ENTRY_EN("interstellarborders", "Interstellar Borders New.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 13864633),
+	GAME_ENTRY_EN("intestinator", "intestinator.exe", "3421b46ff95c5885603086c39a038a20", 1722265),
+	GAME_ENTRY_EN("intothelight", "ITL.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 12146182),
+	GAME_ENTRY_EN("intraworld", "Intra World.exe", "0241777c2537fc5d077c05cde10bfa9f", 44338673),
+	GAME_ENTRY_EN("intraworld2", "troll.exe", "495d45fb8adfd49690ae3b97921feec6", 2935816),
+	GAME_ENTRY_EN("invincibleisland", "Invincible.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4218160),
+	GAME_ENTRY_EN("invincibleisland", "Invincible.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 1751882),  //v1
+	GAME_ENTRY_EN("ioawn4t", "ioawn4t.ags", "34455803b41269a1a2dd44cc8b2d549f", 884275141), // Linux
+	GAME_ENTRY_EN("ioawn4t", "ioawn4t.exe", "b93a59eb67e202f5e807d7a7e678ad85", 887314393), // Windows
+	GAME_ENTRY_EN("ioawn4t", "ioawn4t.exe", "b93a59eb67e202f5e807d7a7e678ad85", 887315687),
+	GAME_ENTRY_EN("ioawn4t", "ioawn4t.exe", "11bd8123982f9442f372ed5defc88b50", 888895169),
+	GAME_ENTRY_EN("ioawn4t", "game.ags", "11bd8123982f9442f372ed5defc88b50", 888895169),
+	GAME_ENTRY_EN("irentedaboat", "I_rented_a_boat.exe", "792c0a0eaeba1a8846cb7b1af1e3266e", 144007992),  // Windows
+	GAME_ENTRY_EN("irentedaboat", "I_rented_a_boat.ags", "9c8cbf1ee6f0a797fdaee29177a43224", 140971300),  // Linux
+	GAME_ENTRY("isaacodyssey", "isaacsoddysee.exe", "615e73fc1874e92d60a1996c2330ea36", 5339324),  //v1.1 Eng-Esp
+	GAME_ENTRY_EN("isnkill", "ISN.exe", "4d17844029d8910fbaae1bdc99e250f2", 7932669),
+	GAME_ENTRY_EN("isos", "ISOS.exe", "06a03fe35791b0578068ab1873455463", 7362937),
+	GAME_ENTRY_EN("ispy2", "I Spy II.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 2293873),
+	GAME_ENTRY_EN("itsabugslife", "It's a Bugs Life.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 201172081),
+	GAME_ENTRY_EN("itsjustarongame", "RONgames.exe", "97d700529f5cc826f230c27acf81adfd", 2171873),
+	GAME_ENTRY_EN("iwalkedapath", "I walked a path.exe", "fd3ecd8289bebadbf775fe8a13b9c5d7", 89018261),
+	GAME_ENTRY("iwantanidentity", "Quiero una identidad - Akkad Estudios.exe", "ffaf92297a381f2770f204122b4cc26a", 404765762),  // Eng-Esp
+	GAME_ENTRY("iwantout", "I_want_out!.exe", "c2cb8ff1ad3028b08fd3dab91578b934", 22218677),  //v1.1.5  Multilang
 	GAME_ENTRY("iwantout", "I_want_out!.ags", "2a31f07d3105c978d9b0392000f38461", 22718900),
 	GAME_ENTRY("iwantout", "I_want_out!.ags", "7db3059844c14f1d817f68b958b66f45", 22718900),
-	GAME_ENTRY("iwanttodie", "ElMito.exe", "f120690b506dd63cd7d1112ea6af2f77", 11304944),
-	GAME_ENTRY("iwanttodieremake", "IWTD.exe", "981e60a9be515bb56c634856462abbc7", 62882828),
-	GAME_ENTRY("iwwhiiwwhitomirotpgthegame", "IWWHIIWWHITOMIROTPG - The Game.exe", "5fd79c32d2b8bbd589f6254d611d2742", 3576019),
+	GAME_ENTRY("iwanttodie", "ElMito.exe", "f120690b506dd63cd7d1112ea6af2f77", 11304944),  // Eng-Esp
+	GAME_ENTRY("iwanttodieremake", "IWTD.exe", "981e60a9be515bb56c634856462abbc7", 62882828),  // Eng-Esp
+	GAME_ENTRY_EN("iwwhiiwwhitomirotpgthegame", "IWWHIIWWHITOMIROTPG - The Game.exe", "5fd79c32d2b8bbd589f6254d611d2742", 3576019),
 	GAME_ENTRY("jack", "JACK.exe", "615e73fc1874e92d60a1996c2330ea36", 243357628),
 	GAME_ENTRY("jacktrasheaterch1", "carrin.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2376923),
 	GAME_ENTRY("jacktrekker", "Jack Trekker.exe", "cb07ae51acec1830dd67c508b90f8951", 51900973),
