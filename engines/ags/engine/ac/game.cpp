@@ -1361,6 +1361,11 @@ void game_sprite_updated(int sprnum) {
 			_GP(guislider)[i].MarkChanged();
 		}
 	}
+	// overlays
+	for (auto &over : _GP(screenover)) {
+		if (over.GetSpriteNum() == sprnum)
+			over.MarkChanged();
+	}
 }
 
 void game_sprite_deleted(int sprnum) {
@@ -1411,6 +1416,11 @@ void game_sprite_deleted(int sprnum) {
 					_GP(views)[v].loops[l].frames[f].pic = 0;
 			}
 		}
+	}
+	// overlays
+	for (auto &over : _GP(screenover)) {
+		if (over.GetSpriteNum() == sprnum)
+			over.SetSpriteNum(0);
 	}
 }
 

@@ -36,8 +36,8 @@ void RemoveOverlay(int ovrid) {
 	remove_screen_overlay(ovrid);
 }
 
-int CreateGraphicOverlay(int xx, int yy, int slott, int trans) {
-	auto *over = Overlay_CreateGraphicCore(false, xx, yy, slott, trans);
+int CreateGraphicOverlay(int x, int y, int slott, int trans) {
+	auto *over = Overlay_CreateGraphicCore(false, x, y, slott, trans != 0, true); // always clone
 	return over ? over->type : 0;
 }
 

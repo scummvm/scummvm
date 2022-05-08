@@ -175,11 +175,11 @@ int Overlay_GetValid(ScriptOverlay *scover) {
 	return 1;
 }
 
-ScreenOverlay *Overlay_CreateGraphicCore(bool room_layer, int x, int y, int slot, bool transparent) {
+ScreenOverlay *Overlay_CreateGraphicCore(bool room_layer, int x, int y, int slot, bool transparent, bool clone) {
 	data_to_game_coords(&x, &y);
 	size_t overid;
 	// We clone only dynamic sprites, because it makes no sense to clone normal ones
-	if ((_GP(game).SpriteInfos[slot].Flags & SPF_DYNAMICALLOC) != 0) {
+	if (clone && (_GP(game).SpriteInfos[slot].Flags & SPF_DYNAMICALLOC) != 0) {
 		Bitmap *screeno = BitmapHelper::CreateTransparentBitmap(_GP(game).SpriteInfos[slot].Width, _GP(game).SpriteInfos[slot].Height, _GP(game).GetColorDepth());
 		screeno->Blit(_GP(spriteset)[slot], 0, 0, transparent ? kBitmap_Transparency : kBitmap_Copy);
 		overid = add_screen_overlay(room_layer, x, y, OVER_CUSTOM, screeno,
@@ -198,13 +198,13 @@ ScreenOverlay *Overlay_CreateTextCore(bool room_layer, int x, int y, int width, 
 	return _display_main(x, y, width, text, disp_type, font, -text_color, 0, allow_shrink, false);
 }
 
-ScriptOverlay *Overlay_CreateGraphicalEx(bool room_layer, int x, int y, int slot, int transparent) {
-	auto *over = Overlay_CreateGraphicCore(room_layer, x, y, slot, transparent != 0);
+ScriptOverlay *Overlay_CreateGraphicalEx(bool room_layer, int x, int y, int slot, int transparent, bool clone) {
+	auto *over = Overlay_CreateGraphicCore(room_layer, x, y, slot, transparent != 0, clone);
 	return over ? create_scriptoverlay(*over) : nullptr;
 }
 
 ScriptOverlay *Overlay_CreateGraphical(int x, int y, int slot, int transparent) {
-	auto *over = Overlay_CreateGraphicCore(false, x, y, slot, transparent != 0);
+	auto *over = Overlay_CreateGraphicCore(false, x, y, slot, transparent != 0, true); // always clone
 	return over ? create_scriptoverlay(*over) : nullptr;
 }
 
@@ -451,14 +451,21 @@ void recreate_overlay_ddbs() {
 RuntimeScriptValue Sc_Overlay_CreateGraphical(const RuntimeScriptValue *params, int32_t param_count) {
 	ASSERT_PARAM_COUNT(FUNCTION, 4);
 	ScriptOverlay *overlay = Overlay_CreateGraphicalEx(false, params[0].IValue, params[1].IValue, params[2].IValue,
-		params[3].IValue);
+		params[3].IValue, true); // always clone image
+	return RuntimeScriptValue().SetDynamicObject(overlay, overlay);
+}
+
+RuntimeScriptValue Sc_Overlay_CreateGraphicalRef(const RuntimeScriptValue *params, int32_t param_count) {
+	ASSERT_PARAM_COUNT(FUNCTION, 5);
+	ScriptOverlay *overlay = Overlay_CreateGraphicalEx(false, params[0].IValue, params[1].IValue, params[2].IValue,
+		params[3].IValue, params[4].GetAsBool());
 	return RuntimeScriptValue().SetDynamicObject(overlay, overlay);
 }
 
 RuntimeScriptValue Sc_Overlay_CreateRoomGraphical(const RuntimeScriptValue *params, int32_t param_count) {
-	ASSERT_PARAM_COUNT(FUNCTION, 4);
+	ASSERT_PARAM_COUNT(FUNCTION, 5);
 	ScriptOverlay *overlay = Overlay_CreateGraphicalEx(true, params[0].IValue, params[1].IValue, params[2].IValue,
-		params[3].IValue);
+		params[3].IValue, params[4].GetAsBool());
 	return RuntimeScriptValue().SetDynamicObject(overlay, overlay);
 }
 
@@ -573,8 +580,9 @@ void ScPl_Overlay_SetText(ScriptOverlay *scover, int wii, int fontid, int clr, c
 
 void RegisterOverlayAPI() {
 	ccAddExternalStaticFunction("Overlay::CreateGraphical^4", Sc_Overlay_CreateGraphical);
+	ccAddExternalStaticFunction("Overlay::CreateGraphical^5", Sc_Overlay_CreateGraphicalRef);
 	ccAddExternalStaticFunction("Overlay::CreateTextual^106", Sc_Overlay_CreateTextual);
-	ccAddExternalStaticFunction("Overlay::CreateRoomGraphical^4", Sc_Overlay_CreateRoomGraphical);
+	ccAddExternalStaticFunction("Overlay::CreateRoomGraphical^5", Sc_Overlay_CreateRoomGraphical);
 	ccAddExternalStaticFunction("Overlay::CreateRoomTextual^106", Sc_Overlay_CreateRoomTextual);
 	ccAddExternalObjectFunction("Overlay::SetText^104", Sc_Overlay_SetText);
 	ccAddExternalObjectFunction("Overlay::Remove^0", Sc_Overlay_Remove);
