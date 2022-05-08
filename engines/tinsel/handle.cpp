@@ -34,7 +34,7 @@
 #include "tinsel/handle.h"
 #include "tinsel/heapmem.h"			// heap memory manager
 #include "tinsel/palette.h"
-#include "tinsel/scn.h"		// for the DW1 Mac resource handler
+#include "tinsel/sched.h"
 #include "tinsel/timers.h"	// for DwGetCurrentTime()
 #include "tinsel/tinsel.h"
 #include "tinsel/scene.h"
@@ -414,18 +414,19 @@ SCNHANDLE Handle::GetFontImageHandle(SCNHANDLE offset) {
  * Return an actor's data specified by a SCNHANDLE
  * Handles endianess internally
  * @param offset			Handle and offset to data
+ * @param count				Data count
  * @return IMAGE structure
 */
-const ACTORDATA *Handle::GetActorData(SCNHANDLE offset, int numActors) {
+const ACTORDATA *Handle::GetActorData(SCNHANDLE offset, uint32 count) {
 	byte *data = LockMem(offset);
 	const bool isBE = TinselV1Mac || TinselV1Saturn;
 	const uint32 size = (TinselVersion >= 2) ? 20 : 12; // ACTORDATA struct size
 
-	Common::MemoryReadStreamEndian *stream = new Common::MemoryReadStreamEndian(data, size * numActors, isBE);
+	Common::MemoryReadStreamEndian *stream = new Common::MemoryReadStreamEndian(data, size * count, isBE);
 
-	ACTORDATA *actorData = new ACTORDATA[numActors];
+	ACTORDATA *actorData = new ACTORDATA[count];
 
-	for (int i = 0; i < numActors; i++) {
+	for (int i = 0; i < count; i++) {
 		if (TinselVersion <= 1) {
 			actorData[i].masking = stream->readSint32();
 			actorData[i].hActorId = stream->readUint32();
@@ -442,6 +443,32 @@ const ACTORDATA *Handle::GetActorData(SCNHANDLE offset, int numActors) {
 	delete stream;
 
 	return actorData;
+}
+
+/**
+ * Return a process specified by a SCNHANDLE
+ * Handles endianess internally
+ * @param offset			Handle and offset to data
+ * @param count				Data count
+ * @return PROCESS_STRUC structure
+*/
+const PROCESS_STRUC *Handle::GetProcessData(SCNHANDLE offset, uint32 count) {
+	byte *data = LockMem(offset);
+	const bool isBE = TinselV1Mac || TinselV1Saturn;
+	const uint32 size = 8; // PROCESS_STRUC struct size
+
+	Common::MemoryReadStreamEndian *stream = new Common::MemoryReadStreamEndian(data, size * count, isBE);
+
+	PROCESS_STRUC *processData = new PROCESS_STRUC[count];
+
+	for (int i = 0; i < count; i++) {
+		processData[i].processId = stream->readUint32();
+		processData[i].hProcessCode = stream->readUint32();
+	}
+
+	delete stream;
+
+	return processData;
 }
 
 /**
