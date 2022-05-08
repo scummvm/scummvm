@@ -36,7 +36,8 @@ class Runtime;
 namespace Standard {
 
 class StandardPlugIn;
-class MidiPlayer;
+class MidiFilePlayer;
+class MultiMidiPlayer;
 
 class CursorModifier : public Modifier {
 public:
@@ -207,6 +208,7 @@ private:
 	bool _isActive;
 
 	StandardPlugIn *_plugIn;
+	MidiFilePlayer *_filePlayer;
 };
 
 class ListVariableModifier : public VariableModifier {
@@ -270,7 +272,7 @@ public:
 	const StandardPlugInHacks &getHacks() const;
 	StandardPlugInHacks &getHacks();
 
-	MidiPlayer *getMidi() const;
+	MultiMidiPlayer *getMidi() const;
 
 	int8 allocateMidiSource();
 	void deallocateMidiSource(int8 source);
@@ -284,7 +286,7 @@ private:
 	PlugInModifierFactory<ListVariableModifier, Data::Standard::ListVariableModifier> _listVarModifierFactory;
 	PlugInModifierFactory<SysInfoModifier, Data::Standard::SysInfoModifier> _sysInfoModifierFactory;
 
-	Common::SharedPtr<MidiPlayer> _midi;
+	Common::SharedPtr<MultiMidiPlayer> _midi;
 	StandardPlugInHacks _hacks;
 
 	Common::Array<int8> _deallocatedSources;
