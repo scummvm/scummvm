@@ -27,26 +27,46 @@
 
 namespace Tinsel {
 
+// attribute values - not a bit bit field to prevent portability problems
+enum class InvObjAttr {
+	IO_DROPCODE = 0x01,
+	IO_ONLYINV1 = 0x02,
+	IO_ONLYINV2 = 0x04,
+	DEFINV1 = 0x08,
+	DEFINV2 = 0x10,
+	PERMACONV = 0x20,
+	CONVENDITEM = 0x40,
+
+	// Noir only
+	V3ATTR_X80 = 0x80,
+	V3ATTR_X200 = 0x200,
+	V3ATTR_X400 = 0x400,
+	NOTEBOOK_TITLE = 0x800, // is a notebook title
+	V3ATTR_X1000 = 0x1000,
+	V3ATTR_X2000 = 0x2000,
+};
+
 class InventoryObject {
 public:
-	InventoryObject(Common::MemoryReadStreamEndian &stream) {
-		_id = stream.readUint32();
-		_hIconFilm = stream.readUint32();
-		_hScript = stream.readUint32();
-	}
+	InventoryObject(Common::MemoryReadStreamEndian &stream);
 	virtual ~InventoryObject() {}
 	int32 getId() const { return _id; }
 	SCNHANDLE getIconFilm() const { return _hIconFilm; };
 	void setIconFilm(SCNHANDLE hIconFilm) { _hIconFilm = hIconFilm; }
 	SCNHANDLE getScript() const { return _hScript; }
 	// Tinsel1+
-	virtual int32 getAttribute() const {
-		return 0;
-	};
+	bool hasAttribute(InvObjAttr attribute) const {
+		return getAttribute() & (int32)attribute;
+	}
 	// Noir:
 	virtual int32 getUnknown() const;
 	virtual int32 getTitle() const;
 	static const int SIZE = 12;
+protected:
+	// Tinsel 1+
+	virtual int32 getAttribute() const {
+		return 0;
+	};
 private:
 	int32 _id;            // inventory objects id
 	SCNHANDLE _hIconFilm; // inventory objects animation film

@@ -97,22 +97,6 @@ enum InventoryType { EMPTY,
 enum InvCursorFN { IC_AREA,
 	               IC_DROP };
 
-// attribute values - not a bit bit field to prevent portability problems
-#define DROPCODE 0x01
-#define ONLYINV1 0x02
-#define ONLYINV2 0x04
-#define DEFINV1 0x08
-#define DEFINV2 0x10
-#define PERMACONV 0x20
-#define CONVENDITEM 0x40
-// Noir only
-#define V3ATTR_X80 0x80
-#define V3ATTR_X200 0x200
-#define V3ATTR_X400 0x400
-#define NOTEBOOK_TITLE 0x800 // is a notebook title
-#define V3ATTR_X1000 0x1000
-#define V3ATTR_X2000 0x2000
-
 #define sliderRange (_sliderYmax - _sliderYmin)
 #define MAXSLIDES 4
 #define MAX_PERMICONS 10 // Max permanent conversation icons

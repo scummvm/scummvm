@@ -72,13 +72,6 @@ namespace Tinsel {
 #define INV_LOOK PLR_SRIGHT  //	for button events
 #define INV_ACTION PLR_DLEFT //
 
-/** attribute values - may become bit field if further attributes are added */
-enum {
-	IO_ONLYINV1 = 0x01,
-	IO_ONLYINV2 = 0x02,
-	IO_DROPCODE = 0x04
-};
-
 //-----------------------
 // Moveable window translucent rectangle position limits
 enum {
@@ -1146,7 +1139,7 @@ void Dialogs::InventoryIconCursor(bool bNewItem) {
 				if (TinselVersion == 3) {
 					auto invObj = GetInvObject(_heldItem);
 
-					if (invObj->getAttribute() & V3ATTR_X200) {
+					if (invObj->hasAttribute(InvObjAttr::V3ATTR_X200)) {
 						_heldFilm = _vm->_systemReel->Get((SysReel)objIndex);
 					} else {
 						_heldFilm = _invFilms[objIndex];
@@ -1465,9 +1458,9 @@ void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 
 		if ((TinselVersion >= 2) && invno == INV_DEFAULT) {
 			auto invObj = GetInvObject(icon);
-			if (invObj->getAttribute() & DEFINV2)
+			if (invObj->hasAttribute(InvObjAttr::DEFINV2))
 				invno = INV_2;
-			else if (invObj->getAttribute() & DEFINV1)
+			else if (invObj->hasAttribute(InvObjAttr::DEFINV1))
 				invno = INV_1;
 			else
 				invno = SysVar(SV_DEFAULT_INV);
@@ -1495,7 +1488,7 @@ void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 					// Count how many current contents have end attribute
 					for (i = 0, nei = 0; i < _invD[INV_CONV].NoofItems; i++) {
 						auto invObj = GetInvObject(_invD[INV_CONV].contents[i]);
-						if (invObj->getAttribute() & CONVENDITEM)
+						if (invObj->hasAttribute(InvObjAttr::CONVENDITEM))
 							nei++;
 					}
 
@@ -1589,12 +1582,12 @@ void Dialogs::HoldItem(int item, bool bKeepFilm) {
 			if (!IsInInventory(_heldItem, INV_1) && !IsInInventory(_heldItem, INV_2)) {
 				auto invObj = GetInvObject(_heldItem);
 
-				if (invObj->getAttribute() & DEFINV1)
+				if (invObj->hasAttribute(InvObjAttr::DEFINV1))
 					AddToInventory(INV_1, _heldItem);
-				else if (invObj->getAttribute() & DEFINV2)
+				else if (invObj->hasAttribute(InvObjAttr::DEFINV2))
 					AddToInventory(INV_2, _heldItem);
 				else {
-					if ((TinselVersion < 3) || (!(invObj->getAttribute() & V3ATTR_X200) && !(invObj->getAttribute() & V3ATTR_X400))) {
+					if ((TinselVersion < 3) || (!(invObj->hasAttribute(InvObjAttr::V3ATTR_X200)) && !(invObj->hasAttribute(InvObjAttr::V3ATTR_X400)))) {
 						// Hook for definable default inventory
 						AddToInventory(INV_1, _heldItem);
 					}
@@ -4560,10 +4553,10 @@ void Dialogs::InvPickup(int index) {
 		auto invObj = GetInvObject(_heldItem);
 
 		// If DROPCODE set, send event, otherwise it's a putdown
-		if (invObj->getAttribute() & IO_DROPCODE && invObj->getScript())
+		if (invObj->hasAttribute(InvObjAttr::IO_DROPCODE) && invObj->getScript())
 			InvTinselEvent(invObj, PUTDOWN, INV_PICKUP, index);
 
-		else if (!(invObj->getAttribute() & IO_ONLYINV1 && _activeInv != INV_1) && !(invObj->getAttribute() & IO_ONLYINV2 && _activeInv != INV_2)) {
+		else if (!(invObj->hasAttribute(InvObjAttr::IO_ONLYINV1) && _activeInv != INV_1) && !(invObj->hasAttribute(InvObjAttr::IO_ONLYINV2) && _activeInv != INV_2)) {
 			if (TinselVersion >= 2)
 				InvPutDown(index);
 			else
@@ -4989,8 +4982,8 @@ void Dialogs::RegisterIcons(void *cptr, int num) {
 		// and store all the films separately
 		for (int i = 0; i < numObjects; i++) {
 			auto pio = _invObjects->GetObjectByIndex(i);
-			if (pio->getAttribute() & PERMACONV)
-				PermaConvIcon(pio->getId(), pio->getAttribute() & CONVENDITEM);
+			if (pio->hasAttribute(InvObjAttr::PERMACONV))
+				PermaConvIcon(pio->getId(), pio->hasAttribute(InvObjAttr::CONVENDITEM));
 
 			_invFilms[i] = pio->getIconFilm();
 		}
