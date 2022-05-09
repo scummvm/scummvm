@@ -176,6 +176,7 @@ static const char *const selectorNameTable[] = {
 	"track",        // Phant2
 	"update",       // Phant2
 	"xOff",         // Phant2
+	"addRespondVerb",// KQ7
 	"eachElementDo",// KQ7
 	"fore",         // KQ7
 	"back",         // KQ7
@@ -310,6 +311,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_track,
 	SELECTOR_update,
 	SELECTOR_xOff,
+	SELECTOR_addRespondVerb,
 	SELECTOR_eachElementDo,
 	SELECTOR_fore,
 	SELECTOR_back,
@@ -7075,6 +7077,43 @@ static const uint16 kq7StopTimersPatch[] = {
 	PATCH_END
 };
 
+// The wooden nickel can't be given to the Faux Shop owner in early versions of
+//  KQ7 because the script doesn't register the hotspot. This was fixed in later
+//  versions. We add the missing shopOwner:addRespondVerb call.
+//
+// Applies to: PC 1.4 and PC 1.51 English/German/French
+// Responsible method: rm5000:init
+static const uint16 kq7FauxShopWoodenNickelSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(ignoreActors),     // pushi ignoreActors
+	0x78,                                   // push1
+	0x78,                                   // push1
+	SIG_ADDTOOFFSET(+13),
+	0x34, SIG_UINT16(0x1000),               // ldi 1000 [ signal ]
+	SIG_ADDTOOFFSET(+2),
+	0x38, SIG_SELECTOR16(setCel),           // pushi setCel
+	0x78,                                   // push1
+	0x39, 0x09,                             // pushi 09
+	0x38, SIG_SELECTOR16(init),             // pushi init
+	0x76,                                   // push0
+	SIG_END
+};
+
+static const uint16 kq7FauxShopWoodenNickelPatch[] = {
+	0x39, PATCH_SELECTOR8(cel),             // pushi cel
+	0x78,                                   // push1
+	0x39, 0x09,                             // pushi 09
+	PATCH_ADDTOOFFSET(+13),
+	0x34, PATCH_UINT16(0x5000),             // ldi 5000 [ signal | ignoreActors flag ]
+	PATCH_ADDTOOFFSET(+2),
+	0x38, PATCH_SELECTOR16(init),           // pushi init
+	0x76,                                   // push0
+	0x38, PATCH_SELECTOR16(addRespondVerb), // pushi addRespondVerb
+	0x78,                                   // push1
+	0x39, 0x3b,                             // pushi 3b [ wooden nickel ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
@@ -7084,6 +7123,7 @@ static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,    30, "fix allowing too many saves",                 1, kq7TooManySavesSignature,                 kq7TooManySavesPatch },
 	{  true,  1250, "fix opening cartoon",                         1, kq7OpeningCartoonSignature,               kq7OpeningCartoonPatch },
 	{  true,  1250, "fix statue gem cel",                          1, kq7StatueGemCelSignature,                 kq7StatueGemCelPatch },
+	{  true,  5000, "fix wooden nickel in faux shop",              1, kq7FauxShopWoodenNickelSignature,         kq7FauxShopWoodenNickelPatch },
 	{  true,  5300, "fix snake oil salesman disposal",             1, kq7SnakeOilSalesmanSignature,             kq7SnakeOilSalesmanPatch },
 	{  true,  5301, "fix chicken cartoon",                         1, kq7ChickenCartoonSignature,               kq7ChickenCartoonPatch },
 	{  true,  6100, "fix extra ambrosia",                          1, kq7ExtraAmbrosiaSignature,                kq7ExtraAmbrosiaPatch },
