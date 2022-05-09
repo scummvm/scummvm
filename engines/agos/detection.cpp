@@ -79,7 +79,9 @@ static const ExtraGuiOption opl3Mode = {
 	game, this will prevent cut-off notes, add extra notes or instruments \
 	and/or add stereo."),
 	"opl3_mode",
-	false
+	false,
+	0,
+	0
 };
 
 static const ExtraGuiOption useDosTempos = {
@@ -88,14 +90,18 @@ static const ExtraGuiOption useDosTempos = {
 	the DOS version of the game. Otherwise, the faster tempos of the Windows \
 	version will be used."),
 	"dos_music_tempos",
-	false
+	false,
+	0,
+	0
 };
 
 static const ExtraGuiOption preferDigitalSfx = {
 	_s("Prefer digital sound effects"),
 	_s("Prefer digital sound effects instead of synthesized ones"),
 	"prefer_digitalsfx",
-	true
+	true,
+	0,
+	0
 };
 
 class AgosMetaEngineDetection : public AdvancedMetaEngineDetection {
