@@ -209,7 +209,14 @@ int MidiPlayer::open() {
 
 		switch (_deviceType) {
 		case MT_ADLIB:
-			_driverMsMusic = _driverMsSfx = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename, oplType);
+			if (usesMidiSfx) {
+				// Elvira 2 and Waxworks have AdLib SFX.
+				_parserSfxAccolade = new SfxParser_Accolade_AdLib();
+				// Sync the driver to the AdLib SFX script timer.
+				_driverMsMusic = _driverMsSfx = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename, oplType, SfxParser_Accolade::SCRIPT_TIMER_FREQUENCY);
+			} else {
+				_driverMsMusic = _driverMsSfx = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename, oplType);
+			}
 			if (_vm->getGameType() == GType_WW) {
 				// WORKAROUND Some Waxworks tracks do not set an instrument on
 				// a MIDI channel. This will cause that channel to play with
@@ -222,9 +229,6 @@ int MidiPlayer::open() {
 					// well in OPL3 mode and need some adjustments.
 					static_cast<MidiDriver_Accolade_AdLib *>(_driverMsMusic)->patchWwInstruments();
 			}
-			if (usesMidiSfx)
-				// Elvira 2 and Waxworks have AdLib SFX.
-				_parserSfxAccolade = new SfxParser_Accolade_AdLib();
 			break;
 		case MT_MT32:
 		case MT_GM:
@@ -239,7 +243,7 @@ int MidiPlayer::open() {
 			if (usesMidiSfx) {
 				if (ConfMan.getBool("multi_midi")) {
 					// Use AdLib SFX with MT-32 music.
-					_driverMsSfx = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename, oplType);
+					_driverMsSfx = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename, oplType, SfxParser_Accolade::SCRIPT_TIMER_FREQUENCY);
 					_parserSfxAccolade = new SfxParser_Accolade_AdLib();
 				} else {
 					// Use MT-32 SFX.

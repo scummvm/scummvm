@@ -66,7 +66,8 @@ const uint16 MidiDriver_Accolade_AdLib::OPL_NOTE_FREQUENCIES_MUSIC_DRV[] = {
 // feature was at least definitely disabled for Simon, the Sorcerer 1 demo and for the Waxworks demo too.
 //
 // I have currently not implemented dynamic channel allocation.
-MidiDriver_Accolade_AdLib::MidiDriver_Accolade_AdLib(OPL::Config::OplType oplType, bool newVersion) : MidiDriver_ADLIB_Multisource(oplType) {
+MidiDriver_Accolade_AdLib::MidiDriver_Accolade_AdLib(OPL::Config::OplType oplType, bool newVersion, int timerFrequency) :
+		MidiDriver_ADLIB_Multisource(oplType, timerFrequency) {
 	_instrumentBank = nullptr;
 	_rhythmBank = nullptr;
 	_newVersion = newVersion;
@@ -517,7 +518,7 @@ void MidiDriver_Accolade_AdLib::readDriverData(byte *driverData, uint16 driverDa
 	}
 }
 
-MidiDriver_Multisource *MidiDriver_Accolade_AdLib_create(Common::String driverFilename, OPL::Config::OplType oplType) {
+MidiDriver_Multisource *MidiDriver_Accolade_AdLib_create(Common::String driverFilename, OPL::Config::OplType oplType, int timerFrequency) {
 	byte *driverData = nullptr;
 	uint16 driverDataSize = 0;
 	bool newVersion = false;
@@ -526,7 +527,7 @@ MidiDriver_Multisource *MidiDriver_Accolade_AdLib_create(Common::String driverFi
 	if (!driverData)
 		error("ACCOLADE-ADLIB: error during readDriver()");
 
-	MidiDriver_Accolade_AdLib *driver = new MidiDriver_Accolade_AdLib(oplType, newVersion);
+	MidiDriver_Accolade_AdLib *driver = new MidiDriver_Accolade_AdLib(oplType, newVersion, timerFrequency);
 	if (!driver)
 		error("ACCOLADE-ADLIB: could not create driver");
 

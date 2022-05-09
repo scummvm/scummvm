@@ -73,6 +73,8 @@ int16 SfxParser_Accolade::SfxSlot::readScript(bool opCode) {
 }
 
 const byte SfxParser_Accolade::INSTRUMENT_SIZE_MT32;
+const uint16 SfxParser_Accolade::SCRIPT_TIMER_FREQUENCY;
+const uint16 SfxParser_Accolade::SCRIPT_TIMER_RATE;
 
 SfxParser_Accolade::SfxParser_Accolade() : _driver(nullptr), _timerRate(0), _sfxData(),
 	_numSfx(0), _sourceAllocations { -1, -1, -1, -1 }, _paused(false) { }
@@ -351,12 +353,6 @@ void SfxParser_Accolade::onTimer() {
 			_sfxSlots[i].programChanged = true;
 		}
 
-		// Note that ScummVM timer callback frequency is limited by what SDL
-		// can provide, which is every 10ms minimum. The original interpreter
-		// processes a script tick about every 3.25ms. So every onTimer call
-		// multiple script ticks are processed at the same time. Because of
-		// this, the sound effect audio is not entirely accurate.
-
 		// Determine the end time of the timer callback period that will be
 		// processed.
 		uint32 endTime = _sfxSlots[i].playTime + _timerRate;
@@ -417,7 +413,7 @@ void SfxParser_Accolade::onTimer() {
 				processOpCode(&_sfxSlots[i], opCode);
 			}
 		}
-
+		
 		// If the sound effect is still active, update the play timestamp.
 		if (_sfxSlots[i].active)
 			_sfxSlots[i].playTime = endTime;

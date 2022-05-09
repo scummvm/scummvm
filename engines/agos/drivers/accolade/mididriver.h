@@ -39,7 +39,7 @@ namespace AGOS {
 
 extern void MidiDriver_Accolade_readDriver(Common::String filename, MusicType requestedDriverType, byte *&driverData, uint16 &driverDataSize, bool &isMusicDrvFile);
 
-extern MidiDriver_Multisource *MidiDriver_Accolade_AdLib_create(Common::String driverFilename, OPL::Config::OplType oplType);
+extern MidiDriver_Multisource *MidiDriver_Accolade_AdLib_create(Common::String driverFilename, OPL::Config::OplType oplType, int callbackFrequency = OPL::OPL::kDefaultCallbackFrequency);
 extern MidiDriver_Multisource *MidiDriver_Accolade_MT32_create(Common::String driverFilename);
 extern MidiDriver_Multisource *MidiDriver_Accolade_Casio_create(Common::String driverFilename);
 extern MidiDriver *MidiDriverPC98_create(MidiDriver::DeviceHandle dev);

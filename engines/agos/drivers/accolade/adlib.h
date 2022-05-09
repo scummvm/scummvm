@@ -33,7 +33,7 @@ protected:
 	static const uint16 OPL_NOTE_FREQUENCIES_MUSIC_DRV[12];
 
 public:
-	MidiDriver_Accolade_AdLib(OPL::Config::OplType oplType, bool newVersion = false);
+	MidiDriver_Accolade_AdLib(OPL::Config::OplType oplType, bool newVersion, int timerFrequency);
 	~MidiDriver_Accolade_AdLib() override;
 
 	int open() override;

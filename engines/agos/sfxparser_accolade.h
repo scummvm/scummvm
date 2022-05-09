@@ -34,10 +34,12 @@ class SfxParser_Accolade {
 public:
 	// Size in bytes of MT-32 instrument data in the SFX data.
 	static const byte INSTRUMENT_SIZE_MT32 = 0xF9;
+	// Number of script ticks per second.
+	static const uint16 SCRIPT_TIMER_FREQUENCY = 292;
+	// Number of microseconds per script tick.
+	static const uint16 SCRIPT_TIMER_RATE = 1000000 / SCRIPT_TIMER_FREQUENCY;
 
 protected:
-	// Number of microseconds per script tick.
-	static const uint16 SCRIPT_TIMER_RATE = 3250;
 	// Size in bytes of AdLib instrument data in the SFX data.
 	static const byte INSTRUMENT_SIZE_ADLIB = 0x09;
 	// Maximum number of words in an SFX script.
