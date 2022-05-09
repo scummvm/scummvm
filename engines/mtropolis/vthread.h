@@ -44,7 +44,7 @@ struct VThreadFaultIdentifierSingleton {
 template<typename T>
 VThreadFaultIdentifier VThreadFaultIdentifierSingleton<T>::_identifier;
 
-class VThreadTaskData : public IDebuggable {
+class VThreadTaskData : public Debuggable {
 public:
 	VThreadTaskData();
 	virtual ~VThreadTaskData();
@@ -61,9 +61,7 @@ protected:
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 	const char *debugGetTypeName() const override { return "Task"; }
 	const Common::String &debugGetName() const override { return _debugName; }
-	Common::SharedPtr<DebugInspector> debugGetInspector() const override { return _debugInspector; }
-
-	Common::SharedPtr<DebugInspector> _debugInspector;
+	void debugInspect(IDebugInspectionReport *report) const override;
 
 	Common::String _debugName;
 #endif
@@ -84,10 +82,7 @@ class VThreadMethodData : public VThreadTaskData {
 public:
 	VThreadMethodData(const VThreadFaultIdentifier *faultID, TClass *target, VThreadState (TClass::*method)(const TData &data));
 	VThreadMethodData(const VThreadMethodData &other);
-
-#if __cplusplus >= 201103L
 	VThreadMethodData(VThreadMethodData &&other);
-#endif
 
 	VThreadState destructAndRunTask() override;
 	void relocateTo(void *newPosition) override;
@@ -109,9 +104,7 @@ public:
 	explicit VThreadFunctionData(const VThreadFaultIdentifier *faultID, VThreadState (*func)(const TData &data));
 	VThreadFunctionData(const VThreadFunctionData &other);
 
-#if __cplusplus >= 201103L
 	VThreadFunctionData(VThreadFunctionData &&other);
-#endif
 
 	VThreadState destructAndRunTask() override;
 	void relocateTo(void *newPosition) override;
@@ -173,22 +166,14 @@ VThreadMethodData<TClass, TData>::VThreadMethodData(const VThreadMethodData& oth
 	: _faultID(other._faultID), _target(other._target), _method(other._method), _data(other._data) {
 }
 
-#if __cplusplus >= 201103L
-
 template<typename TClass, typename TData>
 VThreadMethodData<TClass, TData>::VThreadMethodData(VThreadMethodData &&other)
-	: _faultID(other.faultID), _target(other._target), _method(other._method), _data(static_cast<TData &&>(*static_cast<TData *>(other._data))) {
+	: _faultID(other._faultID), _target(other._target), _method(other._method), _data(static_cast<TData &&>(other._data)) {
 }
-
-#endif
 
 template<typename TClass, typename TData>
 VThreadState VThreadMethodData<TClass, TData>::destructAndRunTask() {
-#if __cplusplus >= 201103L
 	TData data(static_cast<TData &&>(_data));
-#else
-	TData data(_data);
-#endif
 
 	TClass *target = _target;
 	VThreadState (TClass::*method)(const TData &) = _method;
@@ -202,18 +187,7 @@ template<typename TClass, typename TData>
 void VThreadMethodData<TClass, TData>::relocateTo(void *newPosition) {
 	void *adjustedPtr = static_cast<VThreadMethodData<TClass, TData> *>(static_cast<VThreadTaskData *>(newPosition));
 
-#if __cplusplus >= 201103L
-	VThreadMethodData<TClass, TData> *relocated = new (adjustedPtr) VThreadMethodData<TClass, TData>(static_cast<VThreadMethodData<TClass, TData> &&>(*this));
-#else
-	VThreadMethodData<TClass, TData> *relocated = new (adjustedPtr) VThreadMethodData<TClass, TData>(*this);
-#endif
-
-#ifdef MTROPOLIS_DEBUG_ENABLE
-	if (relocated->_debugInspector)
-		relocated->_debugInspector->onDebuggableRelocated(this);
-#else
-	(void)relocated;
-#endif
+	new (adjustedPtr) VThreadMethodData<TClass, TData>(static_cast<VThreadMethodData<TClass, TData> &&>(*this));
 }
 
 template<typename TClass, typename TData>
@@ -236,22 +210,14 @@ VThreadFunctionData<TData>::VThreadFunctionData(const VThreadFunctionData &other
 	: _faultID(other._faultID), _func(other._func), _data(other._data) {
 }
 
-#if __cplusplus >= 201103L
-
 template<typename TData>
 VThreadFunctionData<TData>::VThreadFunctionData(VThreadFunctionData &&other)
 	: _faultID(other._faultID), _func(other._func), _data(static_cast<TData &&>(other._data)) {
 }
 
-#endif
-
 template<typename TData>
 VThreadState VThreadFunctionData<TData>::destructAndRunTask() {
-#if __cplusplus >= 201103L
 	TData data(static_cast<TData &&>(_data));
-#else
-	TData data(_data);
-#endif
 
 	VThreadState (*func)(const TData &) = _func;
 
@@ -264,18 +230,7 @@ template<typename TData>
 void VThreadFunctionData<TData>::relocateTo(void *newPosition) {
 	void *adjustedPtr = static_cast<VThreadFunctionData<TData> *>(static_cast<VThreadTaskData *>(newPosition));
 
-#if __cplusplus >= 201103L
-	VThreadFunctionData<TData> *relocated = new (adjustedPtr) VThreadFunctionData<TData>(static_cast<VThreadFunctionData<TData> &&>(*this));
-#else
-	VThreadFunctionData<TData> *relocated = new (adjustedPtr) VThreadFunctionData<TData>(*this);
-#endif
-
-#ifdef MTROPOLIS_DEBUG_ENABLE
-	if (relocated->_debugInspector)
-		relocated->_debugInspector->onDebuggableRelocated(this);
-#else
-	(void)relocated;
-#endif
+	new (adjustedPtr) VThreadFunctionData<TData>(static_cast<VThreadFunctionData<TData> &&>(*this));
 }
 
 template<typename TData>

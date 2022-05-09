@@ -778,6 +778,7 @@ void DebugSceneTreeWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHe
 		bool isSelected = entry.uiState.selected;
 		if (isSelected)
 			_toolSurface->fillRect(Common::Rect(textX - 1, rowTopY, textX + strWidth + 1, rowBottomY), blackColor);
+
 		font->drawString(_toolSurface.get(), name, textX, y, strWidth, isSelected ? whiteColor : blackColor, Graphics::kTextAlignLeft, 0, true);
 
 		if (entry.hasChildren) {
@@ -871,6 +872,16 @@ void DebugSceneTreeWindow::toolOnMouseDown(int32 x, int32 y, int mouseButton) {
 		treeEntry.uiState.expanded = !treeEntry.uiState.expanded;
 		_forceRender = true;
 		return;
+	} else if (x >= kBaseLeftPadding + treeEntry.level * kPerLevelSpacing) {
+		if (!treeEntry.uiState.selected) {
+			for (SceneTreeEntry &clearTreeEntry : _tree)
+				clearTreeEntry.uiState.selected = false;
+
+			treeEntry.uiState.selected = true;
+			setDirty();
+
+			_debugger->tryInspectObject(treeEntry.object.lock().get());
+		}
 	}
 }
 
@@ -920,6 +931,115 @@ uint32 DebugSceneTreeWindow::getColorForObject(const RuntimeObject *object, cons
 	} else {
 		return fmt.RGBToColor(0, 0, 0);
 	}
+}
+
+
+class DebugInspectorWindow : public DebugToolWindowBase, private IDebugInspectionReport {
+public:
+	DebugInspectorWindow(Debugger *debugger, const WindowParameters &windowParams);
+
+	void update() override;
+	void toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) override;
+
+private:
+	static const int kRowHeight = 14;
+
+	struct InspectorLabeledRow {
+		Common::String label;
+		Common::String text;
+	};
+
+	struct InspectorUnlabeledRow {
+		Common::String str;
+	};
+
+	bool declareStatic(const char *name) override;
+	void declareStaticContents(const Common::String &data) override;
+	void declareDynamic(const char *name, const Common::String &data) override;
+	void declareLoose(const char *name, const Common::String &data) override;
+
+	Common::SharedPtr<DebugInspector> _inspector;
+
+	Common::Array<InspectorLabeledRow> _labeledRow;
+	Common::Array<InspectorUnlabeledRow> _unlabeledRow;
+
+	int32 _maxLabelWidth;
+	size_t _declLabeledRow;
+	size_t _declUnlabeledRow;
+};
+
+DebugInspectorWindow::DebugInspectorWindow(Debugger *debugger, const WindowParameters &windowParams)
+	: DebugToolWindowBase(kDebuggerToolInspector, "Inspector", debugger, windowParams), _maxLabelWidth(0), _declLabeledRow(0), _declUnlabeledRow(0) {
+}
+
+void DebugInspectorWindow::update() {
+	const Common::SharedPtr<DebugInspector> inspector = _debugger->getInspector();
+
+	bool inspectorChanged = false;
+	if (inspector != _inspector) {
+		_maxLabelWidth = 0;
+		_labeledRow.clear();
+		_unlabeledRow.clear();
+
+		_inspector = inspector;
+		inspectorChanged = true;
+	}
+
+	_declLabeledRow = 0;
+	_declUnlabeledRow = 0;
+
+	if (inspector == nullptr || inspector->getDebuggable() == nullptr) {
+		_unlabeledRow.resize(0);
+		_unlabeledRow[0].str = "No object selected";
+
+		_labeledRow.clear();
+	} else {
+		size_t oldNumLabeled = _unlabeledRow.size();
+		inspector->getDebuggable()->debugInspect(this);
+
+		_unlabeledRow.resize(_declUnlabeledRow);
+	}
+}
+
+bool DebugInspectorWindow::declareStatic(const char *name) {
+	if (_labeledRow.size() <= _declLabeledRow) {
+		InspectorLabeledRow newRow;
+		newRow.label = name;
+		_labeledRow.push_back(newRow);
+
+		return true;
+	} else {
+		_declLabeledRow++;
+		return false;
+	}
+}
+
+void DebugInspectorWindow::declareStaticContents(const Common::String &data) {
+	assert(_declLabeledRow + 1 == _labeledRow.size());
+	_labeledRow[_declLabeledRow].text = data;
+
+	_declLabeledRow++;
+}
+
+void DebugInspectorWindow::declareDynamic(const char *name, const Common::String &data) {
+	if (_declLabeledRow == _labeledRow.size()) {
+		InspectorLabeledRow row;
+		row.label = name;
+		_labeledRow.push_back(row);
+	}
+	_labeledRow[_declLabeledRow].text = data;
+}
+
+void DebugInspectorWindow::declareLoose(const char *name, const Common::String &data) {
+	if (_declLabeledRow == _labeledRow.size()) {
+		InspectorLabeledRow row;
+		row.label = name;
+		_labeledRow.push_back(row);
+	}
+	_labeledRow[_declLabeledRow].text = data;
+}
+
+void DebugInspectorWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) {
 }
 
 // Step through ("debugger") window
@@ -1028,6 +1148,24 @@ void DebugToolsWindow::onMouseDown(int32 x, int32 y, int mouseButton) {
 	_debugger->openToolWindow(static_cast<DebuggerTool>(tool));
 }
 
+Debuggable::Debuggable() {
+}
+
+Debuggable::Debuggable(const Debuggable &other) : _inspector(other._inspector) {
+	if (_inspector)
+		_inspector->changePrimaryInstance(this);
+}
+
+Debuggable::~Debuggable() {
+	if (_inspector)
+		_inspector->onDestroyed(this);
+}
+
+const Common::SharedPtr<DebugInspector> &Debuggable::debugGetInspector() {
+	if (!_inspector)
+		_inspector.reset(new DebugInspector(this));
+	return _inspector;
+}
 
 DebugInspector::DebugInspector(IDebuggable *debuggable) {
 }
@@ -1035,13 +1173,19 @@ DebugInspector::DebugInspector(IDebuggable *debuggable) {
 DebugInspector::~DebugInspector() {
 }
 
-void DebugInspector::onDestroyed() {
-	_debuggable = nullptr;
+void DebugInspector::onDestroyed(IDebuggable *debuggable) {
+	if (_instance == debuggable)
+		_instance = nullptr;
 }
 
-void DebugInspector::onDebuggableRelocated(IDebuggable *debuggable) {
-	_debuggable = debuggable;
+void DebugInspector::changePrimaryInstance(IDebuggable *instance) {
+	_instance = instance;
 }
+
+IDebuggable *DebugInspector::getDebuggable() const {
+	return _instance;
+}
+
 
 DebugPrimaryTaskList::DebugPrimaryTaskList(const Common::String &name) : _name(name) {
 }
@@ -1313,6 +1457,28 @@ void Debugger::closeToolWindow(DebuggerTool tool) {
 	_toolWindows[tool].reset();
 }
 
+void Debugger::inspectObject(IDebuggable *debuggable) {
+	_inspector = debuggable->debugGetInspector();
+
+	if (!_toolWindows[kDebuggerToolInspector])
+		openToolWindow(kDebuggerToolInspector);
+}
+
+void Debugger::tryInspectObject(RuntimeObject *object) {
+	if (!object)
+		return;
+
+	if (object->isStructural())
+		inspectObject(static_cast<Structural *>(object));
+	else if (object->isModifier())
+		inspectObject(static_cast<Modifier *>(object));
+}
+
+const Common::SharedPtr<DebugInspector>& Debugger::getInspector() const {
+	return _inspector;
+}
+
+
 void Debugger::scanStructuralStatus(Structural *structural, Common::HashMap<Common::String, SupportStatus> &unfinishedModifiers, Common::HashMap<Common::String, SupportStatus> &unfinishedElements) {
 	for (Common::Array<Common::SharedPtr<Structural>>::const_iterator it = structural->getChildren().begin(), itEnd = structural->getChildren().end(); it != itEnd; ++it) {
 		scanStructuralStatus(it->get(), unfinishedModifiers, unfinishedElements);
@@ -1336,7 +1502,7 @@ void Debugger::scanModifierStatus(Modifier *modifier, Common::HashMap<Common::St
 	scanDebuggableStatus(modifier, unfinishedModifiers);
 }
 
-void Debugger::scanDebuggableStatus(IDebuggable* debuggable, Common::HashMap<Common::String, SupportStatus>& unfinished) {
+void Debugger::scanDebuggableStatus(IDebuggable *debuggable, Common::HashMap<Common::String, SupportStatus> &unfinished) {
 	SupportStatus supportStatus = debuggable->debugGetSupportStatus();
 	if (supportStatus != kSupportStatusDone)
 		unfinished[Common::String(debuggable->debugGetTypeName())] = supportStatus;

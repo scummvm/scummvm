@@ -364,7 +364,7 @@ bool MiniscriptParser::parse(const Data::MiniscriptProgram &program, Common::Sha
 	}
 
 	programData.resize(programDataSize + maxAlignment - 1);
-	uintptr_t programDataAddress = reinterpret_cast<uintptr_t>(&programData[0]);
+	uintptr programDataAddress = reinterpret_cast<uintptr>(&programData[0]);
 
 	size_t baseOffset = 0;
 	if (programDataAddress % maxAlignment != 0)

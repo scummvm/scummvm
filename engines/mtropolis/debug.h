@@ -42,7 +42,9 @@ class Runtime;
 class Window;
 class Structural;
 class Modifier;
+class DebugInspector;
 class DebugToolWindowBase;
+class RuntimeObject;
 
 struct IDebuggable;
 
@@ -52,17 +54,56 @@ enum SupportStatus {
 	kSupportStatusDone,
 };
 
+struct IDebugInspectionReport {
+	// Attempts to declare a row with static contents.  If this returns true, then declareStaticContents must be called.
+	virtual bool declareStatic(const char *name) = 0;
+
+	// Declares the contents of a static row
+	virtual void declareStaticContents(const Common::String &data) = 0;
+
+	// Declares the contents of a dynamic row
+	virtual void declareDynamic(const char *name, const Common::String &data) = 0;
+
+	// Declares the contents of a loose row
+	virtual void declareLoose(const char *name, const Common::String &data) = 0;
+};
+
+struct IDebuggable {
+	virtual SupportStatus debugGetSupportStatus() const = 0;
+	virtual const char *debugGetTypeName() const = 0;
+	virtual const Common::String &debugGetName() const = 0;
+	virtual const Common::SharedPtr<DebugInspector> &debugGetInspector() = 0;
+	virtual void debugInspect(IDebugInspectionReport *report) const = 0;
+};
+
+// The debug inspector link goes inside of a debuggable, it contains an inspector and
+// will notify the inspector of the object's destruction
+class Debuggable : public IDebuggable {
+public:
+	Debuggable();
+	Debuggable(const Debuggable &other);
+	~Debuggable();
+
+private:
+	const Common::SharedPtr<DebugInspector> &debugGetInspector() override;
+
+	Debuggable &operator=(const Debuggable &other);
+
+	Common::SharedPtr<DebugInspector> _inspector;
+};
+
 class DebugInspector {
 public:
 	explicit DebugInspector(IDebuggable *debuggable);
 	virtual ~DebugInspector();
 
-	virtual void onDestroyed();
+	void onDestroyed(IDebuggable *instance);
+	void changePrimaryInstance(IDebuggable *instance);
 
-	void onDebuggableRelocated(IDebuggable *debuggable);
+	IDebuggable *getDebuggable() const;
 
 private:
-	IDebuggable *_debuggable;
+	IDebuggable *_instance;
 };
 
 class DebugPrimaryTaskList {
@@ -123,6 +164,11 @@ public:
 	void openToolWindow(DebuggerTool tool);
 	void closeToolWindow(DebuggerTool tool);
 
+	void inspectObject(IDebuggable *debuggable);
+	void tryInspectObject(RuntimeObject *object);
+
+	const Common::SharedPtr<DebugInspector> &getInspector() const;
+
 private:
 	Debugger();
 
@@ -141,18 +187,18 @@ private:
 	Common::SharedPtr<Window> _toolsWindow;
 	Common::SharedPtr<DebugToolWindowBase> _toolWindows[kDebuggerToolCount];
 	Common::Array<ToastNotification> _toastNotifications;
+	Common::SharedPtr<DebugInspector> _inspector;
+};
+
+#else
+
+struct IDebuggable {
+};
+
+struct Debuggable : public IDebuggable {
 };
 
 #endif /* !MTROPOLIS_DEBUG_ENABLE */
-
-struct IDebuggable {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-	virtual SupportStatus debugGetSupportStatus() const = 0;
-	virtual const char *debugGetTypeName() const = 0;
-	virtual const Common::String &debugGetName() const = 0;
-	virtual Common::SharedPtr<DebugInspector> debugGetInspector() const = 0;
-#endif
-};
 
 } // End of namespace MTropolis
 

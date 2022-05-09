@@ -33,6 +33,9 @@ VThreadTaskData::~VThreadTaskData() {
 void VThreadTaskData::debugInit(const char *name) {
 	_debugName = name;
 }
+
+void VThreadTaskData::debugInspect(IDebugInspectionReport *report) const {
+}
 #endif
 
 VThread::VThread() : _faultID(nullptr), _stackUnalignedBase(nullptr), _stackAlignedBase(nullptr), _size(0), _alignment(1), _used(0) {
@@ -79,7 +82,7 @@ void VThread::reserveFrame(size_t size, size_t alignment, void *&outFramePtr, vo
 
 	bool needToReallocate = false;
 	if (alignment > _alignment || frameAlignment > _alignment) {
-		if ((reinterpret_cast<uintptr_t>(_stackAlignedBase) & dataAlignmentMask) != 0) {
+		if ((reinterpret_cast<uintptr>(_stackAlignedBase) & dataAlignmentMask) != 0) {
 			needToReallocate = true;
 		}
 	}
@@ -110,7 +113,7 @@ void VThread::reserveFrame(size_t size, size_t alignment, void *&outFramePtr, vo
 			maxAlignment = frameAlignment;
 
 		void *unalignedBase = malloc(offsetOfEndOfFrame + maxAlignment - 1);
-		size_t alignPadding = maxAlignment - (reinterpret_cast<uintptr_t>(unalignedBase) % maxAlignment);
+		size_t alignPadding = maxAlignment - (reinterpret_cast<uintptr>(unalignedBase) % maxAlignment);
 		if (alignPadding == maxAlignment)
 			alignPadding = 0;
 
