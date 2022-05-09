@@ -75,9 +75,7 @@ using namespace AGOS;
 
 static const ExtraGuiOption opl3Mode = {
 	_s("AdLib OPL3 mode"),
-	_s("When AdLib is selected, OPL3 features will be used. Depending on the \
-	game, this will prevent cut-off notes, add extra notes or instruments \
-	and/or add stereo."),
+	_s("When AdLib is selected, OPL3 features will be used. Depending on the game, this will prevent cut-off notes, add extra notes or instruments and/or add stereo."),
 	"opl3_mode",
 	false,
 	0,
@@ -86,9 +84,7 @@ static const ExtraGuiOption opl3Mode = {
 
 static const ExtraGuiOption useDosTempos = {
 	_s("Use DOS version music tempos"),
-	_s("Selecting this option will play the music using the tempos used by \
-	the DOS version of the game. Otherwise, the faster tempos of the Windows \
-	version will be used."),
+	_s("Selecting this option will play the music using the tempos used by the DOS version of the game. Otherwise, the faster tempos of the Windows version will be used."),
 	"dos_music_tempos",
 	false,
 	0,
