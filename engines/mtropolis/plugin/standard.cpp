@@ -994,7 +994,7 @@ Common::SharedPtr<Modifier> ListVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new ListVariableModifier(*this));
 }
 
-ListVariableModifier::SaveLoad::SaveLoad(ListVariableModifier *modifier) : _modifier(modifier), _list(new DynamicList()) {
+ListVariableModifier::SaveLoad::SaveLoad(ListVariableModifier *modifier) : _modifier(modifier), _list(_modifier->_list) {
 }
 
 void ListVariableModifier::SaveLoad::commitLoad() const {
@@ -1046,6 +1046,8 @@ void ListVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) c
 }
 
 bool ListVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+	_list.reset(new DynamicList());
+
 	uint32 typeCode = stream->readUint32BE();
 	uint32 size = stream->readUint32BE();
 
