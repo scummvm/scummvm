@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-09 16:03+0000\n"
+"POT-Creation-Date: 2022-05-09 17:37+0000\n"
 "PO-Revision-Date: 2022-05-09 17:52+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4274,11 +4274,11 @@ msgstr ""
 "que se pierdan notas, se añadan notas o instrumentos de más o se añada una "
 "panoramización estéreo indeseada, en función de cada juego."
 
-#: engines/agos/detection.cpp:86
+#: engines/agos/detection.cpp:88
 msgid "Use DOS version music tempos"
 msgstr "Usar tempos de la versión para DOS en la música"
 
-#: engines/agos/detection.cpp:87
+#: engines/agos/detection.cpp:89
 msgid ""
 "Selecting this option will play the music using the tempos used by \tthe DOS "
 "version of the game. Otherwise, the faster tempos of the Windows \tversion "
@@ -4288,11 +4288,11 @@ msgstr ""
 "la versión para DOS del juego. En caso contrario, se utilizarán los tempos "
 "más acelerados de la versión para Windows."
 
-#: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
+#: engines/agos/detection.cpp:99 engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
 msgstr "Preferir efectos de sonido digitales"
 
-#: engines/agos/detection.cpp:96 engines/sci/detection_options.h:94
+#: engines/agos/detection.cpp:100 engines/sci/detection_options.h:94
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Utiliza efectos de sonido digitales en vez de los sintetizados"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-09 16:03+0000\n"
+"POT-Creation-Date: 2022-05-09 17:37+0000\n"
 "PO-Revision-Date: 2022-04-30 03:27+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4238,22 +4238,22 @@ msgid ""
 "stereo."
 msgstr ""
 
-#: engines/agos/detection.cpp:86
+#: engines/agos/detection.cpp:88
 msgid "Use DOS version music tempos"
 msgstr ""
 
-#: engines/agos/detection.cpp:87
+#: engines/agos/detection.cpp:89
 msgid ""
 "Selecting this option will play the music using the tempos used by \tthe DOS "
 "version of the game. Otherwise, the faster tempos of the Windows \tversion "
 "will be used."
 msgstr ""
 
-#: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
+#: engines/agos/detection.cpp:99 engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
 msgstr "Käytä mieluiten digitaalisia äänitehosteita"
 
-#: engines/agos/detection.cpp:96 engines/sci/detection_options.h:94
+#: engines/agos/detection.cpp:100 engines/sci/detection_options.h:94
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr ""
 "Käytä mieluiten digitaalisia äänitehosteita synteettisten tehosteiden sijaan"
