@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-09 17:37+0000\n"
+"POT-Creation-Date: 2022-05-09 17:55+0000\n"
 "PO-Revision-Date: 2022-04-24 20:27+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -4235,27 +4235,27 @@ msgstr ""
 
 #: engines/agos/detection.cpp:78
 msgid ""
-"When AdLib is selected, OPL3 features will be used. Depending on the \tgame, "
-"this will prevent cut-off notes, add extra notes or instruments \tand/or add "
+"When AdLib is selected, OPL3 features will be used. Depending on the game, "
+"this will prevent cut-off notes, add extra notes or instruments and/or add "
 "stereo."
 msgstr ""
 
-#: engines/agos/detection.cpp:88
+#: engines/agos/detection.cpp:86
 msgid "Use DOS version music tempos"
 msgstr ""
 
-#: engines/agos/detection.cpp:89
+#: engines/agos/detection.cpp:87
 msgid ""
-"Selecting this option will play the music using the tempos used by \tthe DOS "
-"version of the game. Otherwise, the faster tempos of the Windows \tversion "
+"Selecting this option will play the music using the tempos used by the DOS "
+"version of the game. Otherwise, the faster tempos of the Windows version "
 "will be used."
 msgstr ""
 
-#: engines/agos/detection.cpp:99 engines/sci/detection_options.h:93
+#: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
 msgstr "Prefereix efectes de so digitals"
 
-#: engines/agos/detection.cpp:100 engines/sci/detection_options.h:94
+#: engines/agos/detection.cpp:96 engines/sci/detection_options.h:94
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Prefereix els efectes de so digitals en lloc dels sintetitzats"
 
