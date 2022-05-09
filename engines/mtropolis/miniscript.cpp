@@ -852,8 +852,6 @@ MiniscriptInstructionOutcome Not::execute(MiniscriptThread *thread) const {
 	DynamicValue &value = thread->getStackValueFromTop(0).value;
 	value.setBool(!miniscriptEvaluateTruth(value));
 
-	thread->popValues(1);
-
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
@@ -1806,6 +1804,16 @@ void MiniscriptThread::jumpOffset(size_t offset) {
 	}
 
 	_currentInstruction += offset - 1;
+}
+
+bool MiniscriptThread::evaluateTruthOfResult(bool &isTrue) {
+	if (_stack.size() != 1) {
+		this->error("Miniscript program didn't return a result");
+		return false;
+	}
+
+	isTrue = miniscriptEvaluateTruth(_stack[0].value);
+	return true;
 }
 
 VThreadState MiniscriptThread::resumeTask(const ResumeTaskData &data) {

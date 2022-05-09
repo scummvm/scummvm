@@ -2849,15 +2849,10 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 
 				// Post to the message action itself to VThread
 				if (responds) {
-					if (modifier->getStaticGUID() == 0x5b965)
-					{
-						int n = 0;
-					}
 					debug(3, "Modifier %x '%s' consumed message (%i,%i)", modifier->getStaticGUID(), modifier->getName().c_str(), _msg->getEvent().eventType, _msg->getEvent().eventInfo);
 					runtime->postConsumeMessageTask(modifier, _msg);
+					return kVThreadReturn;
 				}
-
-				return kVThreadReturn;
 			} break;
 		case PropagationStack::kStageSendToModifierContainer: {
 				IModifierContainer *container = stackTop.ptr.modifierContainer;
@@ -5801,6 +5796,9 @@ bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result
 	} else if (attrib == "position") {
 		result.setPoint(Point16::create(_rect.left, _rect.top));
 		return true;
+	} else if (attrib == "centerposition") {
+		result.setPoint(getCenterPosition());
+		return true;
 	} else if (attrib == "width") {
 		result.setInt(_rect.right - _rect.left);
 		return true;
@@ -5827,6 +5825,9 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "position") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetPosition>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "centerposition") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetCenterPosition>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "width") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetWidth>::create(this, writeProxy);
@@ -5922,6 +5923,21 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
+MiniscriptInstructionOutcome VisualElement::scriptSetCenterPosition(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kPoint) {
+		const Point16 &destPoint = value.getPoint();
+		const Point16 &srcPoint = getCenterPosition();
+		int32 xDelta = destPoint.x - srcPoint.x;
+		int32 yDelta = destPoint.y - srcPoint.y;
+
+		if (xDelta != 0 || yDelta != 0)
+			offsetTranslate(xDelta, yDelta, false);
+
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
 MiniscriptInstructionOutcome VisualElement::scriptSetWidth(MiniscriptThread *thread, const DynamicValue &value) {
 	int32 asInteger = 0;
 	if (!value.roundToInt(asInteger))
@@ -5980,6 +5996,10 @@ void VisualElement::offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOrigi
 				static_cast<VisualElement *>(element)->offsetTranslate(xDelta, yDelta, true);
 		}
 	}
+}
+
+Point16 VisualElement::getCenterPosition() const {
+	return Point16::create((_rect.left + _rect.right) / 2, (_rect.top + _rect.bottom) / 2);
 }
 
 VThreadState VisualElement::changeVisibilityTask(const ChangeFlagTaskData &taskData) {
@@ -6065,7 +6085,7 @@ bool ModifierSaveLoad::load(Modifier *modifier, Common::ReadStream *stream) {
 
 	if (nameLen > 0) {
 		stream->read(&checkName[0], nameLen);
-		if (stream->err() || !memcmp(&checkName[0], name.c_str(), nameLen))
+		if (stream->err() || memcmp(&checkName[0], name.c_str(), nameLen))
 			return false;
 	}
 

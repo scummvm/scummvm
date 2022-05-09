@@ -29,11 +29,10 @@
 namespace MTropolis {
 
 bool MTropolisEngine::promptSave(ISaveWriter *writer) {
-	GUI::SaveLoadChooser *dialog;
 	Common::String desc;
 	int slot;
 
-	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	Common::SharedPtr<GUI::SaveLoadChooser> dialog(new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true));
 
 	slot = dialog->runModalWithCurrentTarget();
 	desc = dialog->getResultString();
@@ -42,8 +41,6 @@ bool MTropolisEngine::promptSave(ISaveWriter *writer) {
 		// create our own description for the saved game, the user didnt enter it
 		desc = dialog->createDefaultSaveDescription(slot);
 	}
-
-	delete dialog;
 
 	if (slot < 0)
 		return true;
@@ -54,6 +51,28 @@ bool MTropolisEngine::promptSave(ISaveWriter *writer) {
 		warning("An error occurred while writing file '%s'", saveFileName.c_str());
 
 	getMetaEngine()->appendExtendedSave(out.get(), getTotalPlayTime(), desc, false);
+
+	return true;
+}
+
+bool MTropolisEngine::promptLoad(ISaveReader *reader) {
+	Common::String desc;
+	int slot;
+
+	{
+		Common::SharedPtr<GUI::SaveLoadChooser> dialog(new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false));
+		slot = dialog->runModalWithCurrentTarget();
+	}
+
+	if (slot < 0)
+		return true;
+
+	Common::String saveFileName = getSaveStateName(slot);
+	Common::SharedPtr<Common::InSaveFile> in(_saveFileMan->openForLoading(saveFileName));
+	if (!reader->readSave(in.get())) {
+		warning("An error occurred while reading file '%s'", saveFileName.c_str());
+		return false;
+	}
 
 	return true;
 }

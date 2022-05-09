@@ -337,12 +337,25 @@ class IfMessengerModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data);
 
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "If Messenger Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
+	struct EvaluateAndSendTaskData {
+		Common::SharedPtr<MiniscriptThread> thread;
+		Runtime *runtime;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	void linkInternalReferences(ObjectLinkingScope *scope) override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
+	VThreadState evaluateAndSendTask(const EvaluateAndSendTaskData &taskData);
 
 	Event _when;
 	MessengerSendSpec _sendSpec;

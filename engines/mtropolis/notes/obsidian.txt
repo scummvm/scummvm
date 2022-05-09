@@ -1,3 +1,8 @@
 MIDI behavior:
 
 Uses a special MIDI file "ANO&Vol.mid" which triggers AllNoteOff on all channels.
+
+
+Navigation mapping:
+	current  fwright right       rear       left fwleft
+	+0       +1      +2    +3    +4   +5    +6   +7

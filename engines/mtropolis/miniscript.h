@@ -403,6 +403,8 @@ public:
 
 	void jumpOffset(size_t offset);
 
+	bool evaluateTruthOfResult(bool &isTrue);
+
 private:
 	struct ResumeTaskData {
 		Common::SharedPtr<MiniscriptThread> thread;

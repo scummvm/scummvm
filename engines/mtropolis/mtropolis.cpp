@@ -270,7 +270,7 @@ Common::Error MTropolisEngine::run() {
 	int preferredHeight = 768;
 	ColorDepthMode preferredColorDepthMode = kColorDepthMode8Bit;
 
-	_runtime.reset(new Runtime(_system, this, nullptr));
+	_runtime.reset(new Runtime(_system, this, this));
 
 	if (_gameDescription->gameID == GID_OBSIDIAN && _gameDescription->desc.platform == Common::kPlatformWindows) {
 		preferredWidth = 640;
