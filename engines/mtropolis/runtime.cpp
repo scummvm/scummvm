@@ -813,7 +813,7 @@ size_t DynamicList::getSize() const {
 bool DynamicList::dynamicValueToIndex(size_t &outIndex, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kFloat) {
 		double rounded = floor(value.getFloat() + 0.5);
-		if (!isfinite(rounded) || rounded < 1.0 || rounded > UINT32_MAX)
+		if (!isfinite(rounded) || rounded < 1.0 || rounded > 0xffffffffu)
 			return false;
 
 		outIndex = static_cast<size_t>(rounded - 1.0);
@@ -4962,7 +4962,7 @@ void Project::loadFromDescription(const ProjectDescription& desc) {
 	openSegmentStream(0);
 
 	Common::SeekableReadStream *baseStream = _segments[0].weakStream;
-	uint16_t startValue = baseStream->readUint16LE();
+	uint16 startValue = baseStream->readUint16LE();
 
 	if (startValue == 1) {
 		// Windows format
