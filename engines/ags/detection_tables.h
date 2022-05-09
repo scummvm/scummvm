@@ -3646,13 +3646,13 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("inferno", "inf.exe", "97d700529f5cc826f230c27acf81adfd", 8783105),
 	DEMO_ENTRY_EN("intergalacticspacepancake", "space.exe", "4d17844029d8910fbaae1bdc99e250f2", 1993173),
 	DEMO_ENTRY_EN("intraworld", "1 Intra World.exe", "0241777c2537fc5d077c05cde10bfa9f", 40044701),
-	DEMO_ENTRY("jacquelinewhitecurseofthemummies", "CurseOfTheMummies.exe", "e9bdea51db49da499c69e8c21a821a7f", 193723250),
-	DEMO_ENTRY("jamesperis2", "james2.exe", "06a03fe35791b0578068ab1873455463", 35766505),
-	DEMO_ENTRY("jimmsquest3", "JQ3.EXE", "0b7529a76f38283d6e850b8d56526fc1", 4930906),
+	DEMO_ENTRY_EN("jacquelinewhitecurseofthemummies", "CurseOfTheMummies.exe", "e9bdea51db49da499c69e8c21a821a7f", 193723250),
+	DEMO_ENTRY("jamesperis2", "james2.exe", "06a03fe35791b0578068ab1873455463", 35766505),  // Eng-Esp
+	DEMO_ENTRY_EN("jimmsquest3", "JQ3.EXE", "0b7529a76f38283d6e850b8d56526fc1", 4930906),
 	DEMO_ENTRY_LANG("johnsinclair", "John Sinclair - Voodoo in London.exe", "d72e72697a755c7de395b0f6c8cbbf0d", 56795991, Common::DE_DEU),
-	DEMO_ENTRY("jonstickman", "J.S.exe", "a2230d4ac3c39431b51c9bb20929932c", 9570622),
-	DEMO_ENTRY("jorry", "jorry demo.exe", "fe5f7dc7785b335aec72a2a834629bad", 124667001),
-	DEMO_ENTRY("justignorethem", "justignorethem.exe", "7a3096ac0237cb6aa8e1718e28caf039", 98544330),  //itch.io - Steam
+	DEMO_ENTRY_EN("jonstickman", "J.S.exe", "a2230d4ac3c39431b51c9bb20929932c", 9570622),
+	DEMO_ENTRY("jorry", "jorry demo.exe", "fe5f7dc7785b335aec72a2a834629bad", 124667001),  // En-Fr
+	DEMO_ENTRY("justignorethem", "justignorethem.exe", "7a3096ac0237cb6aa8e1718e28caf039", 98544330),  //itch.io - Steam Multilang
 	DEMO_ENTRY("karelianninja", "Karelian ninja.exe", "25976a689b0f4d73eac69b1728377ecb", 14407656),
 	DEMO_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "434e24a12ba3cfb07d7b4b2f0e0bb1bf", 197487685, AGSSPRITEFONT_CLIFFTOP), // Steam
 	DEMO_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197490245, AGSSPRITEFONT_CLIFFTOP), // GOG
@@ -4960,47 +4960,48 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("iwanttodie", "ElMito.exe", "f120690b506dd63cd7d1112ea6af2f77", 11304944),  // Eng-Esp
 	GAME_ENTRY("iwanttodieremake", "IWTD.exe", "981e60a9be515bb56c634856462abbc7", 62882828),  // Eng-Esp
 	GAME_ENTRY_EN("iwwhiiwwhitomirotpgthegame", "IWWHIIWWHITOMIROTPG - The Game.exe", "5fd79c32d2b8bbd589f6254d611d2742", 3576019),
-	GAME_ENTRY("jack", "JACK.exe", "615e73fc1874e92d60a1996c2330ea36", 243357628),
-	GAME_ENTRY("jacktrasheaterch1", "carrin.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2376923),
-	GAME_ENTRY("jacktrekker", "Jack Trekker.exe", "cb07ae51acec1830dd67c508b90f8951", 51900973),
-	GAME_ENTRY("jacob", "Jacob.exe", "90413e9ae57e222f8913b09d2bc847bc", 7101001),
-	GAME_ENTRY("jacobvacut", "JacobVAcut.exe", "06a03fe35791b0578068ab1873455463", 8017226),
-	GAME_ENTRY("jacquelinewhitereddesert", "Jacqueline White.exe", "02ab2c5f53f42d494491b7f411da8d47", 119383318),
-	GAME_ENTRY("jailhouse", "viki.exe", "465f972675db2da6040518221af5b0ba", 3769307),
-	GAME_ENTRY("jamesbond", "platform2.exe", "949f7440e3692b7366c2029979dee9a0", 4467701),
-	GAME_ENTRY("jamesinneverland", "JamesNeverland.exe", "06a03fe35791b0578068ab1873455463", 36488607),
-	GAME_ENTRY("jamesperis", "James1.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 85631684),  // Eng/Spa
+	GAME_ENTRY_EN("jack", "JACK.exe", "615e73fc1874e92d60a1996c2330ea36", 243357628),
+	GAME_ENTRY("jacktrasheaterch1", "carrin.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2376923),  //En-It
+	GAME_ENTRY_EN("jacktrekker", "Jack Trekker.exe", "cb07ae51acec1830dd67c508b90f8951", 51900973),
+	GAME_ENTRY_EN("jacob", "Jacob.exe", "90413e9ae57e222f8913b09d2bc847bc", 7101001),
+	GAME_ENTRY_EN("jacobvacut", "JacobVAcut.exe", "06a03fe35791b0578068ab1873455463", 8017226),
+	GAME_ENTRY_EN("jacquelinewhitereddesert", "Jacqueline White.exe", "02ab2c5f53f42d494491b7f411da8d47", 119383318),
+	GAME_ENTRY_EN("jailhouse", "viki.exe", "465f972675db2da6040518221af5b0ba", 3769307),
+	GAME_ENTRY_EN("jamesbond", "platform2.exe", "949f7440e3692b7366c2029979dee9a0", 4467701),
+	GAME_ENTRY("jamesinneverland", "JamesNeverland.exe", "06a03fe35791b0578068ab1873455463", 36488607),  // En-Fr
+	GAME_ENTRY("jamesperis", "James1.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 85631684),  // Eng-Esp
 	GAME_ENTRY_LANG("jamesperis", "James1.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 85605688, Common::ES_ESP),
-	GAME_ENTRY("jasongoldenapple", "Jason and the Golden Apple.exe", "7446ce302043dac2acc8cd5cc7cc8f68", 732192390),
-	GAME_ENTRY("javelincatch", "JvlnCtch.exe", "3421b46ff95c5885603086c39a038a20", 1626263),
-	GAME_ENTRY("jetpacksam", "Jetpack Sam.exe", "173f00e582eebd082d66f1291702b373", 12574372),
-	GAME_ENTRY("jimmysday", "jimmy.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 13419394),
-	GAME_ENTRY("jimmythetroublemaker", "Jimmy The Troublemaker.exe", "25976a689b0f4d73eac69b1728377ecb", 200843118),
-	GAME_ENTRY("joeshorriblehell", "Joe's Horrible Hell.exe", "cdcc787023c51c6fc9ffc17118f6adff", 61061393),
-	GAME_ENTRY("joesmiserablelife", "Joe's Miserable Life.exe", "1b9f13d430bb15bf30d0fd044358db68", 36705304),
-	GAME_ENTRY("johnharris", "totp.exe", "74dc062c5f68f3d70da911f2db5737b6", 36463878),
-	GAME_ENTRY("johnjebediahgun", "JJG.exe", "a28cb95e1769ba1bfa48f850390746c2", 88957123),
-	GAME_ENTRY("johnlosthiskeyep1", "Newgame.exe", "0b7529a76f38283d6e850b8d56526fc1", 1453831),
-	GAME_ENTRY("johnlosthiskeyep2", "Johnny.exe", "0500aacb6c176d47ac0f8158f055db83", 1182438),
-	GAME_ENTRY("johnnyrocket", "Rocket.exe", "a524cbb1c51589903c4043b98917f1d9", 10366294),
+	GAME_ENTRY_EN("jasongoldenapple", "Jason and the Golden Apple.exe", "7446ce302043dac2acc8cd5cc7cc8f68", 732192390),
+	GAME_ENTRY_EN("javelincatch", "JvlnCtch.exe", "3421b46ff95c5885603086c39a038a20", 1626263),
+	GAME_ENTRY_EN("jetpacksam", "Jetpack Sam.exe", "173f00e582eebd082d66f1291702b373", 12574372),
+	GAME_ENTRY_EN("jimmysday", "jimmy.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 13419394),
+	GAME_ENTRY_EN("jimmythetroublemaker", "Jimmy The Troublemaker.exe", "25976a689b0f4d73eac69b1728377ecb", 200843118),
+	GAME_ENTRY_EN("joeshorriblehell", "Joe's Horrible Hell.exe", "cdcc787023c51c6fc9ffc17118f6adff", 61061393),
+	GAME_ENTRY_EN("joesmiserablelife", "Joe's Miserable Life.exe", "1b9f13d430bb15bf30d0fd044358db68", 36705304),
+	GAME_ENTRY("johnharris", "totp.exe", "74dc062c5f68f3d70da911f2db5737b6", 36463878),  // Eng-Hun
+	GAME_ENTRY("johnjebediahgun", "JJG.exe", "a28cb95e1769ba1bfa48f850390746c2", 88957123),  // En-It
+	GAME_ENTRY_EN("johnlosthiskeyep1", "Newgame.exe", "0b7529a76f38283d6e850b8d56526fc1", 1453831),
+	GAME_ENTRY_EN("johnlosthiskeyep2", "Johnny.exe", "0500aacb6c176d47ac0f8158f055db83", 1182438),
+	GAME_ENTRY_EN("johnnyrocket", "Rocket.exe", "a524cbb1c51589903c4043b98917f1d9", 10366294),
 	GAME_ENTRY_LANG("johnsinclair", "John Sinclair- Voodoo in London.exe", "68c4cdee67c40bf96cf78e11f9073ddd", 238169392, Common::DE_DEU),
-	GAME_ENTRY("jonahsplace", "Jonah's Place.exe", "615e73fc1874e92d60a1996c2330ea36", 28368426),
-	GAME_ENTRY("jonnyfeces", "Jonny Smallvalley.exe", "01d0e6bd812abaa307bcb10fc2193416", 34437869),
-	GAME_ENTRY("journey", "journey.exe", "be858e83311d4f1b49e05b933b92f0a9", 2617447),
-	GAME_ENTRY("journeyhell", "Cropcircles.exe", "e80586fdc2db32f65658b235d8cbc159", 211064206),
-	GAME_ENTRY("journeyhome", "Journey Home.exe", "20aa2fac9f64e876da8ed437f609bad6", 1982898758),  //v1.1 Win
-	GAME_ENTRY("journeyhome", "Journey Home.ags", "0c80d863920b7b2002764a11ab825fff", 1980416054),  //v1.1 Linux
-	GAME_ENTRY("jugglequest", "JuggleQuest.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 1934098),
+	GAME_ENTRY_EN("jonahsplace", "Jonah's Place.exe", "615e73fc1874e92d60a1996c2330ea36", 28368426),
+	GAME_ENTRY_EN("jonnyfeces", "Jonny Smallvalley.exe", "01d0e6bd812abaa307bcb10fc2193416", 34437869),
+	GAME_ENTRY_EN("journey", "journey.exe", "be858e83311d4f1b49e05b933b92f0a9", 2617447),
+	GAME_ENTRY_EN("journeyhell", "Cropcircles.exe", "e80586fdc2db32f65658b235d8cbc159", 211064206),
+	GAME_ENTRY_EN("journeyhome", "Journey Home.exe", "20aa2fac9f64e876da8ed437f609bad6", 1982898758),  //v1.1 Win
+	GAME_ENTRY_EN("journeyhome", "Journey Home.ags", "0c80d863920b7b2002764a11ab825fff", 1980416054),  //v1.1 Linux
+	GAME_ENTRY_EN("jugglequest", "JuggleQuest.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 1934098),
 	GAME_ENTRY_LANG("juliusdangerous1", "Julius Dangerous.exe", "ddaf3807f1fe16b2813ff832b4fb471a", 83137140, Common::IT_ITA),
 	GAME_ENTRY_LANG("juliusdangerous1", "Julius Dangerous.exe", "79077a68e53562082494933a21e2714f", 83175251, Common::IT_ITA),  //v1.0.0.3
-	GAME_ENTRY("juliusdangerous2", "Julius Dangerous 2.exe", "e2d4a98de69b1f8e6462c387710a441a", 146931732),
-	GAME_ENTRY("juliusdangerous2", "Julius Dangerous 2.exe", "15ee13935b9555a041df569af8598bfe", 159441130),  //v1.2
-	GAME_ENTRY("jumpinjack", "Jumpin' Jack.exe", "338fa79960d40689063af31c671b8729", 36458660),
-	GAME_ENTRY("jumpinjones", "ags.exe", "36f44e064eab15e502caeb60fd09f52d", 19633830),
-	GAME_ENTRY("jumpjackflash", "Jump! Jack! Flash!.exe", "6b4ceb9e327ac99479c08d825461f4cb", 20103698),
-	GAME_ENTRY("june20th", "June 20th.exe", "f18443f98fd61d2c655e76a17f7da905", 11198272),
-	GAME_ENTRY("justanotherpointnclickadventure", "Advent.exe", "6a98b4cc2f5a55421248be53f15a6a99", 9582620),
-	GAME_ENTRY("justyouandme", "it'swithyou.exe", "495d45fb8adfd49690ae3b97921feec6", 19545407),
+	GAME_ENTRY_LANG("juliusdangerous2", "Julius Dangerous 2.exe", "e2d4a98de69b1f8e6462c387710a441a", 146931732, Common::IT_ITA),  //v1.01
+	GAME_ENTRY("juliusdangerous2", "Julius Dangerous 2.exe", "15ee13935b9555a041df569af8598bfe", 159441130),  //v1.2 Win En-It
+	GAME_ENTRY("juliusdangerous2", "Julius Dangerous 2.ags", "2b76bb39e520e37a829430b70486e96f", 156408534),  //v1.2 Linux En-It
+	GAME_ENTRY_EN("jumpinjack", "Jumpin' Jack.exe", "338fa79960d40689063af31c671b8729", 36458660),
+	GAME_ENTRY_EN("jumpinjones", "ags.exe", "36f44e064eab15e502caeb60fd09f52d", 19633830),
+	GAME_ENTRY_EN("jumpjackflash", "Jump! Jack! Flash!.exe", "6b4ceb9e327ac99479c08d825461f4cb", 20103698),
+	GAME_ENTRY_EN("june20th", "June 20th.exe", "f18443f98fd61d2c655e76a17f7da905", 11198272),
+	GAME_ENTRY_EN("justanotherpointnclickadventure", "Advent.exe", "6a98b4cc2f5a55421248be53f15a6a99", 9582620),
+	GAME_ENTRY_EN("justyouandme", "it'swithyou.exe", "495d45fb8adfd49690ae3b97921feec6", 19545407),
 	GAME_ENTRY("kanjigakusei", "KanjiGakusei.exe", "c1bce0ccfa858f0f5d2fe19997d89b05", 17604764),
 	GAME_ENTRY("kartquest", "Kart.exe", "465f972675db2da6040518221af5b0ba", 77317312),
 	GAME_ENTRY("kata", "KATA.exe", "06a03fe35791b0578068ab1873455463", 4631650),
