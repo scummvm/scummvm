@@ -82,12 +82,11 @@ class Debuggable : public IDebuggable {
 public:
 	Debuggable();
 	Debuggable(const Debuggable &other);
+	Debuggable(Debuggable &&other);
 	~Debuggable();
 
 private:
 	const Common::SharedPtr<DebugInspector> &debugGetInspector() override;
-
-	Debuggable &operator=(const Debuggable &other);
 
 	Common::SharedPtr<DebugInspector> _inspector;
 };
