@@ -25,7 +25,12 @@
 
 namespace Tinsel {
 
-/** structure of each inventory object */
+InventoryObject::InventoryObject(Common::MemoryReadStreamEndian &stream) {
+	_id = stream.readUint32();
+	_hIconFilm = stream.readUint32();
+	_hScript = stream.readUint32();
+}
+
 int32 InventoryObject::getUnknown() const {
 	error("Querying Noir-value from non-Noir game");
 }
