@@ -589,8 +589,10 @@ public:
 	 * of OPL chip.
 	 * 
 	 * @param oplType The type of OPL chip that should be used.
+	 * @param timerFrequency The number of timer callbacks per second that
+	 * should be generated.
 	 */
-	MidiDriver_ADLIB_Multisource(OPL::Config::OplType oplType);
+	MidiDriver_ADLIB_Multisource(OPL::Config::OplType oplType, int timerFrequency = OPL::OPL::kDefaultCallbackFrequency);
 	~MidiDriver_ADLIB_Multisource();
 
 	/**
@@ -1118,6 +1120,8 @@ protected:
 
 	// True if the driver has been successfully opened.
 	bool _isOpen;
+	// The number of timer callbacks per second.
+	int _timerFrequency;
 	// Controls the behavior for calculating note frequency and volume.
 	AccuracyMode _accuracyMode;
 	// Controls the OPL channel allocation behavior.

@@ -394,7 +394,7 @@ bool MidiDriver_ADLIB_Multisource::detectOplType(OPL::Config::OplType oplType) {
 	return OPL::Config::detect(oplType) >= 0;
 }
 
-MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(OPL::Config::OplType oplType) :
+MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(OPL::Config::OplType oplType, int timerFrequency) :
 		_oplType(oplType),
 		_opl(nullptr),
 		_isOpen(false),
@@ -413,9 +413,11 @@ MidiDriver_ADLIB_Multisource::MidiDriver_ADLIB_Multisource(OPL::Config::OplType 
 		_melodicChannels(nullptr),
 		_numMelodicChannels(0),
 		_noteCounter(1),
-		_oplFrequencyConversionFactor(pow(2, 20) / 49716.0f) {
+		_oplFrequencyConversionFactor(pow(2, 20) / 49716.0f),
+		_timerFrequency(timerFrequency) {
 	memset(_channelAllocations, 0xFF, sizeof(_channelAllocations));
 	Common::fill(_shadowRegisters, _shadowRegisters + sizeof(_shadowRegisters), 0);
+	_timerRate = 1000000 / _timerFrequency;
 }
 
 MidiDriver_ADLIB_Multisource::~MidiDriver_ADLIB_Multisource() {
@@ -463,10 +465,9 @@ int MidiDriver_ADLIB_Multisource::open() {
 	// Set default OPL register values.
 	initOpl();
 
-	_timerRate = getBaseTempo();
 	// Start the emulator / hardware interface. This will also start the timer
 	// callbacks.
-	_opl->start(new Common::Functor0Mem<void, MidiDriver_ADLIB_Multisource>(this, &MidiDriver_ADLIB_Multisource::onTimer));
+	_opl->start(new Common::Functor0Mem<void, MidiDriver_ADLIB_Multisource>(this, &MidiDriver_ADLIB_Multisource::onTimer), _timerFrequency);
 
 	return 0;
 }
@@ -533,7 +534,7 @@ uint32 MidiDriver_ADLIB_Multisource::property(int prop, uint32 param) {
 }
 
 uint32 MidiDriver_ADLIB_Multisource::getBaseTempo() {
-	return 1000000 / OPL::OPL::kDefaultCallbackFrequency;
+	return _timerRate;
 }
 
 MidiChannel *MidiDriver_ADLIB_Multisource::allocateChannel() {
