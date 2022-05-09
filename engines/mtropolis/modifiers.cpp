@@ -38,6 +38,16 @@ private:
 	RuntimeObject *_object;
 };
 
+class CompoundVarLoader : public ISaveReader {
+public:
+	explicit CompoundVarLoader(RuntimeObject *object);
+
+	bool readSave(Common::ReadStream *stream) override;
+
+private:
+	RuntimeObject *_object;
+};
+
 CompoundVarSaver::CompoundVarSaver(RuntimeObject *object) : _object(object) {
 }
 
@@ -52,6 +62,29 @@ bool CompoundVarSaver::writeSave(Common::WriteStream *stream) {
 
 	saveLoad->save(modifier, stream);
 	return !stream->err();
+}
+
+CompoundVarLoader::CompoundVarLoader(RuntimeObject *object) : _object(object) {
+}
+
+bool CompoundVarLoader::readSave(Common::ReadStream *stream) {
+	if (_object == nullptr || !_object->isModifier())
+		return false;
+
+	Modifier *modifier = static_cast<Modifier *>(_object);
+	Common::SharedPtr<ModifierSaveLoad> saveLoad = modifier->getSaveLoad();
+	if (!saveLoad)
+		return false;
+
+	if (!saveLoad->load(modifier, stream))
+		return false;
+
+	if (stream->err())
+		return false;
+
+	saveLoad->commitLoad();
+
+	return true;
 }
 
 
@@ -260,7 +293,8 @@ VThreadState SaveAndRestoreModifier::consumeMessage(Runtime *runtime, const Comm
 		runtime->getSaveProvider()->promptSave(&saver);
 		return kVThreadReturn;
 	} else if (_restoreWhen.respondsTo(msg->getEvent())) {
-		error("Restores not implemented yet");
+		CompoundVarLoader loader(obj);
+		runtime->getLoadProvider()->promptLoad(&loader);
 		return kVThreadReturn;
 	}
 
@@ -600,6 +634,24 @@ bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMes
 	return true;
 }
 
+bool IfMessengerModifier::respondsToEvent(const Event &evt) const {
+	return _when.respondsTo(evt);
+}
+
+VThreadState IfMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_when.respondsTo(msg->getEvent())) {
+		Common::SharedPtr<MiniscriptThread> thread(new MiniscriptThread(runtime, msg, _program, _references, this));
+
+		EvaluateAndSendTaskData *evalAndSendData = runtime->getVThread().pushTask("IfMessengerModifier::evaluateAndSendTask", this, &IfMessengerModifier::evaluateAndSendTask);
+		evalAndSendData->thread = thread;
+		evalAndSendData->runtime = runtime;
+
+		MiniscriptThread::runOnVThread(runtime->getVThread(), thread);
+	}
+
+	return kVThreadReturn;
+}
+
 Common::SharedPtr<Modifier> IfMessengerModifier::shallowClone() const {
 	IfMessengerModifier *clonePtr = new IfMessengerModifier(*this);
 	Common::SharedPtr<Modifier> clone(clonePtr);
@@ -608,6 +660,29 @@ Common::SharedPtr<Modifier> IfMessengerModifier::shallowClone() const {
 	clonePtr->_references.reset(new MiniscriptReferences(*_references));
 
 	return clone;
+}
+void IfMessengerModifier::linkInternalReferences(ObjectLinkingScope *scope) {
+	_sendSpec.linkInternalReferences(scope);
+	_references->linkInternalReferences(scope);
+}
+
+void IfMessengerModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	_sendSpec.visitInternalReferences(visitor);
+	_references->visitInternalReferences(visitor);
+}
+
+
+VThreadState IfMessengerModifier::evaluateAndSendTask(const EvaluateAndSendTaskData &taskData) {
+	MiniscriptThread *thread = taskData.thread.get();
+
+	bool isTrue = false;
+	if (!thread->evaluateTruthOfResult(isTrue))
+		return kVThreadError;
+
+	if (isTrue)
+		_sendSpec.sendFromMessenger(taskData.runtime, this);
+
+	return kVThreadReturn;
 }
 
 TimerMessengerModifier::~TimerMessengerModifier() {
