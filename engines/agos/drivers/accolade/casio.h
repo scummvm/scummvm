@@ -30,7 +30,7 @@ class MidiDriver_Accolade_Casio : public MidiDriver_Casio {
 public:
 	MidiDriver_Accolade_Casio();
 
-	int open();
+	int open() override;
 	int8 mapSourceChannel(uint8 source, uint8 dataChannel) override;
 
 	void readDriverData(byte *driverData, uint16 driverDataSize);

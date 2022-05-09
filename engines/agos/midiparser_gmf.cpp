@@ -97,7 +97,6 @@ bool MidiParser_GMF::loadMusic(byte *data, uint32 size) {
 
 	// Determine start and end of the MIDI track(s) in the data, as well as
 	// tempo and loop flag.
-	byte midiType;
 	uint8 headerTempo;
 	bool headerLoop;
 
@@ -106,7 +105,6 @@ bool MidiParser_GMF::loadMusic(byte *data, uint32 size) {
 	// respectively.
 	if (!memcmp(data, "GMF", 3)) {
 		// Single track file.
-		midiType = 0;
 		_numTracks = 1;
 
 		// GMF header is GMF<majorVersion><minorVersion><tempo><loop>.
@@ -119,7 +117,6 @@ bool MidiParser_GMF::loadMusic(byte *data, uint32 size) {
 		_tracksEndPos[0] = data + size;
 	} else {
 		// Assume multi-track file.
-		midiType = 2;
 
 		// Each track has its own GMF header, but tempo and loop flags are all
 		// the same for Simon 1.
