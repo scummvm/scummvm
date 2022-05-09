@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGOS_MIDIPARSER_SMF_H
-#define AGOS_MIDIPARSER_SMF_H
+#ifndef AGOS_MIDIPARSER_GMF_H
+#define AGOS_MIDIPARSER_GMF_H
 
 #include "audio/midiparser_smf.h"
 
