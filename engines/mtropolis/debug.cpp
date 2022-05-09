@@ -983,13 +983,14 @@ void DebugInspectorWindow::update() {
 
 		_inspector = inspector;
 		inspectorChanged = true;
+		setDirty();
 	}
 
 	_declLabeledRow = 0;
 	_declUnlabeledRow = 0;
 
 	if (inspector == nullptr || inspector->getDebuggable() == nullptr) {
-		_unlabeledRow.resize(0);
+		_unlabeledRow.resize(1);
 		_unlabeledRow[0].str = "No object selected";
 
 		_labeledRow.clear();
@@ -998,6 +999,8 @@ void DebugInspectorWindow::update() {
 		inspector->getDebuggable()->debugInspect(this);
 
 		_unlabeledRow.resize(_declUnlabeledRow);
+
+		setDirty();
 	}
 }
 
@@ -1040,6 +1043,60 @@ void DebugInspectorWindow::declareLoose(const char *name, const Common::String &
 }
 
 void DebugInspectorWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) {
+	const Graphics::PixelFormat fmt = _debugger->getRuntime()->getRenderPixelFormat();
+
+	uint32 whiteColor = fmt.RGBToColor(255, 255, 255);
+	uint32 blackColor = fmt.RGBToColor(0, 0, 0);
+
+	const size_t numLabeledRows = _labeledRow.size();
+	const size_t numUnlabeledRows = _unlabeledRow.size();
+
+	int32 renderHeight = (_labeledRow.size() + _unlabeledRow.size()) * kRowHeight;
+	int32 renderWidth = subAreaWidth;
+
+	if (!_toolSurface || renderWidth != _toolSurface->w || renderHeight != _toolSurface->h) {
+		_toolSurface.reset();
+		_toolSurface.reset(new Graphics::ManagedSurface(renderWidth, renderHeight, fmt));
+	}
+
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+
+	if (_maxLabelWidth == 0) {
+		for (const InspectorLabeledRow &row : _labeledRow) {
+			int width = font->getStringWidth(row.label);
+			if (width > _maxLabelWidth)
+				_maxLabelWidth = width;
+		}
+	}
+
+	_toolSurface->fillRect(Common::Rect(0, 0, renderWidth, renderHeight), whiteColor);
+
+	for (size_t i = 0; i < numLabeledRows; i++) {
+		const InspectorLabeledRow &row = _labeledRow[i];
+
+		int32 startY = i * kRowHeight;
+
+		int32 labelX = 4;
+		int32 labelW = renderWidth - labelX;
+		if (labelW > 1)
+			font->drawString(_toolSurface.get(), row.label, labelX, startY + 2, labelW, blackColor);
+
+		int32 valueX = _maxLabelWidth + 8;
+		int32 valueW = renderWidth - valueX;
+		if (valueW > 1)
+			font->drawString(_toolSurface.get(), row.text, valueX, startY + 2, valueW, blackColor, Graphics::kTextAlignLeft, 0, true);
+	}
+
+	for (size_t i = 0; i < numUnlabeledRows; i++) {
+		const InspectorUnlabeledRow &row = _unlabeledRow[i];
+
+		int32 startY = (i + numLabeledRows) * kRowHeight;
+
+		int32 contentsX = 4;
+		int32 contentsW = renderWidth - contentsX;
+		if (contentsW > 1)
+			font->drawString(_toolSurface.get(), row.str, contentsX, startY + 2, contentsW, blackColor);
+	}
 }
 
 // Step through ("debugger") window
@@ -1086,7 +1143,6 @@ void DebugStepThroughWindow::update() {
 }
 
 void DebugStepThroughWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) {
-
 	const Graphics::PixelFormat fmt = _debugger->getRuntime()->getRenderPixelFormat();
 
 	uint32 whiteColor = fmt.RGBToColor(255, 255, 255);
@@ -1151,9 +1207,14 @@ void DebugToolsWindow::onMouseDown(int32 x, int32 y, int mouseButton) {
 Debuggable::Debuggable() {
 }
 
-Debuggable::Debuggable(const Debuggable &other) : _inspector(other._inspector) {
-	if (_inspector)
+Debuggable::Debuggable(const Debuggable &other) : _inspector(nullptr) {
+}
+
+Debuggable::Debuggable(Debuggable &&other) : _inspector(other._inspector) {
+	if (_inspector) {
 		_inspector->changePrimaryInstance(this);
+		other._inspector.reset();
+	}
 }
 
 Debuggable::~Debuggable() {
@@ -1167,7 +1228,7 @@ const Common::SharedPtr<DebugInspector> &Debuggable::debugGetInspector() {
 	return _inspector;
 }
 
-DebugInspector::DebugInspector(IDebuggable *debuggable) {
+DebugInspector::DebugInspector(IDebuggable *debuggable) : _instance(debuggable) {
 }
 
 DebugInspector::~DebugInspector() {
@@ -1439,7 +1500,7 @@ void Debugger::openToolWindow(DebuggerTool tool) {
 		windowRef.reset(new DebugSceneTreeWindow(this, WindowParameters(_runtime, 32, 32, 250, 120, _runtime->getRenderPixelFormat())));
 		break;
 	case kDebuggerToolInspector:
-		windowRef.reset(new DebugToolWindowBase(kDebuggerToolInspector, "Inspector", this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
+		windowRef.reset(new DebugInspectorWindow(this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
 		break;
 	case kDebuggerToolStepThrough:
 		windowRef.reset(new DebugStepThroughWindow(this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
@@ -1459,9 +1520,6 @@ void Debugger::closeToolWindow(DebuggerTool tool) {
 
 void Debugger::inspectObject(IDebuggable *debuggable) {
 	_inspector = debuggable->debugGetInspector();
-
-	if (!_toolWindows[kDebuggerToolInspector])
-		openToolWindow(kDebuggerToolInspector);
 }
 
 void Debugger::tryInspectObject(RuntimeObject *object) {
