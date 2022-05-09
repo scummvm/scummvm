@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-08 16:07+0000\n"
+"POT-Creation-Date: 2022-05-09 16:03+0000\n"
 "PO-Revision-Date: 2022-05-01 15:27+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -4297,7 +4297,7 @@ msgstr "Soubor videa '%s' nenalezen'!"
 msgid "AGOS 2 support is not compiled in"
 msgstr "Zakompilované funkce:"
 
-#: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:75
+#: engines/agos/midi.cpp:180 engines/kyra/sound/sound_pc_midi.cpp:75
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -4310,6 +4310,36 @@ msgstr ""
 "Snažíme se mapovat nástroje Roland MT32 na\n"
 "ty od General MIDI. Je stále možné, že\n"
 "některé stopy nebudou znít správně."
+
+#: engines/agos/detection.cpp:77
+msgid "AdLib OPL3 mode"
+msgstr ""
+
+#: engines/agos/detection.cpp:78
+msgid ""
+"When AdLib is selected, OPL3 features will be used. Depending on the \tgame, "
+"this will prevent cut-off notes, add extra notes or instruments \tand/or add "
+"stereo."
+msgstr ""
+
+#: engines/agos/detection.cpp:86
+msgid "Use DOS version music tempos"
+msgstr ""
+
+#: engines/agos/detection.cpp:87
+msgid ""
+"Selecting this option will play the music using the tempos used by \tthe DOS "
+"version of the game. Otherwise, the faster tempos of the Windows \tversion "
+"will be used."
+msgstr ""
+
+#: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
+msgid "Prefer digital sound effects"
+msgstr "Upřednostňovat digitální zvukové efekty"
+
+#: engines/agos/detection.cpp:96 engines/sci/detection_options.h:94
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr "Upřednostňovat digitální zvukové efekty před syntetizovanými"
 
 #: engines/ags/dialogs.cpp:58
 #, fuzzy
@@ -6363,14 +6393,6 @@ msgstr "Použít vysokou kvalitu škálování videa"
 #: engines/sci/detection_options.h:82
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
-
-#: engines/sci/detection_options.h:93
-msgid "Prefer digital sound effects"
-msgstr "Upřednostňovat digitální zvukové efekty"
-
-#: engines/sci/detection_options.h:94
-msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "Upřednostňovat digitální zvukové efekty před syntetizovanými"
 
 #: engines/sci/detection_options.h:117
 msgid "Use CD audio"

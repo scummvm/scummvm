@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-08 16:07+0000\n"
+"POT-Creation-Date: 2022-05-09 16:03+0000\n"
 "PO-Revision-Date: 2022-05-05 19:27+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -4221,7 +4221,7 @@ msgstr "Fant ikke cutscenefil '%s'!"
 msgid "AGOS 2 support is not compiled in"
 msgstr "AGOS 2-støtte er ikke innkompilert"
 
-#: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:75
+#: engines/agos/midi.cpp:180 engines/kyra/sound/sound_pc_midi.cpp:75
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -4234,6 +4234,36 @@ msgstr ""
 "Vi forsøker å koble Roland MT32-instrumentene til\n"
 "General MIDI-instrumentene. Allikevel, kan det\n"
 "skje at enkelte spor ikke vil spilles riktig."
+
+#: engines/agos/detection.cpp:77
+msgid "AdLib OPL3 mode"
+msgstr ""
+
+#: engines/agos/detection.cpp:78
+msgid ""
+"When AdLib is selected, OPL3 features will be used. Depending on the \tgame, "
+"this will prevent cut-off notes, add extra notes or instruments \tand/or add "
+"stereo."
+msgstr ""
+
+#: engines/agos/detection.cpp:86
+msgid "Use DOS version music tempos"
+msgstr ""
+
+#: engines/agos/detection.cpp:87
+msgid ""
+"Selecting this option will play the music using the tempos used by \tthe DOS "
+"version of the game. Otherwise, the faster tempos of the Windows \tversion "
+"will be used."
+msgstr ""
+
+#: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
+msgid "Prefer digital sound effects"
+msgstr "Foretrekk digitale lydeffekter"
+
+#: engines/agos/detection.cpp:96 engines/sci/detection_options.h:94
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr "Foretrekk digitale lydeffekter fremfor syntetiske"
 
 #: engines/ags/dialogs.cpp:58
 msgid "Game language:"
@@ -6310,14 +6340,6 @@ msgstr "Bruk «LarryScale»-celskalering av høykvalitet"
 #: engines/sci/detection_options.h:82
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr "Bruk spesialisert tegneserieskalering for tegning av figurgrafikk"
-
-#: engines/sci/detection_options.h:93
-msgid "Prefer digital sound effects"
-msgstr "Foretrekk digitale lydeffekter"
-
-#: engines/sci/detection_options.h:94
-msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "Foretrekk digitale lydeffekter fremfor syntetiske"
 
 #: engines/sci/detection_options.h:117
 msgid "Use CD audio"

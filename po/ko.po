@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-08 16:07+0000\n"
+"POT-Creation-Date: 2022-05-09 16:03+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4188,7 +4188,7 @@ msgstr "컷씬 파일 '%s' 을 찾을 수 없습니다!"
 msgid "AGOS 2 support is not compiled in"
 msgstr "AGOS 2 지원은 컴파일 되지 않음"
 
-#: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:75
+#: engines/agos/midi.cpp:180 engines/kyra/sound/sound_pc_midi.cpp:75
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -4200,6 +4200,36 @@ msgstr ""
 "하지만 이 게임은 Roland MT32 MIDI만 지원합니다.\n"
 "Roland MT32 악기를 General MIDI로 변환하는 경우\n"
 "일부 음악이 올바르지 않게 들릴 수 있습니다."
+
+#: engines/agos/detection.cpp:77
+msgid "AdLib OPL3 mode"
+msgstr ""
+
+#: engines/agos/detection.cpp:78
+msgid ""
+"When AdLib is selected, OPL3 features will be used. Depending on the \tgame, "
+"this will prevent cut-off notes, add extra notes or instruments \tand/or add "
+"stereo."
+msgstr ""
+
+#: engines/agos/detection.cpp:86
+msgid "Use DOS version music tempos"
+msgstr ""
+
+#: engines/agos/detection.cpp:87
+msgid ""
+"Selecting this option will play the music using the tempos used by \tthe DOS "
+"version of the game. Otherwise, the faster tempos of the Windows \tversion "
+"will be used."
+msgstr ""
+
+#: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
+msgid "Prefer digital sound effects"
+msgstr "디지털 사운드 효과 선호"
+
+#: engines/agos/detection.cpp:96 engines/sci/detection_options.h:94
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr "합성 음원 대신 디지털 사운드 이펙트 선호"
 
 #: engines/ags/dialogs.cpp:58
 msgid "Game language:"
@@ -6231,14 +6261,6 @@ msgstr "고품질 \"래리스케일\" 셀 크기조절 사용"
 #: engines/sci/detection_options.h:82
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr "캐릭터를 표시할 때 특별한 카툰 크기조절 방식을 사용합니다"
-
-#: engines/sci/detection_options.h:93
-msgid "Prefer digital sound effects"
-msgstr "디지털 사운드 효과 선호"
-
-#: engines/sci/detection_options.h:94
-msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "합성 음원 대신 디지털 사운드 이펙트 선호"
 
 #: engines/sci/detection_options.h:117
 msgid "Use CD audio"

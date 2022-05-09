@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-08 16:07+0000\n"
+"POT-Creation-Date: 2022-05-09 16:03+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4231,7 +4231,7 @@ msgstr "קובץ חיתוך '%s' לא נמצא!"
 msgid "AGOS 2 support is not compiled in"
 msgstr "תכונות שנבנו:"
 
-#: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:75
+#: engines/agos/midi.cpp:180 engines/kyra/sound/sound_pc_midi.cpp:75
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -4244,6 +4244,36 @@ msgstr ""
 "אנו מנסים למפות את מכשירי רולנד MT32 ל\n"
 "MIDI כללי. זה עדיין אפשרי\n"
 "כמה רצועות נשמעות לא נכונות."
+
+#: engines/agos/detection.cpp:77
+msgid "AdLib OPL3 mode"
+msgstr ""
+
+#: engines/agos/detection.cpp:78
+msgid ""
+"When AdLib is selected, OPL3 features will be used. Depending on the \tgame, "
+"this will prevent cut-off notes, add extra notes or instruments \tand/or add "
+"stereo."
+msgstr ""
+
+#: engines/agos/detection.cpp:86
+msgid "Use DOS version music tempos"
+msgstr ""
+
+#: engines/agos/detection.cpp:87
+msgid ""
+"Selecting this option will play the music using the tempos used by \tthe DOS "
+"version of the game. Otherwise, the faster tempos of the Windows \tversion "
+"will be used."
+msgstr ""
+
+#: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
+msgid "Prefer digital sound effects"
+msgstr "העדיפו אפקטים של צליל דיגיטלי"
+
+#: engines/agos/detection.cpp:96 engines/sci/detection_options.h:94
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr "העדיפו אפקטים של צליל דיגיטלי במקום על סינתזות"
 
 #: engines/ags/dialogs.cpp:58
 #, fuzzy
@@ -6322,14 +6352,6 @@ msgstr "השתמש בקנה מידה גדול של סולם \"LarryScale\""
 #: engines/sci/detection_options.h:82
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr "השתמש בקולנוע מצויר מיוחד לציור שודדי תווים"
-
-#: engines/sci/detection_options.h:93
-msgid "Prefer digital sound effects"
-msgstr "העדיפו אפקטים של צליל דיגיטלי"
-
-#: engines/sci/detection_options.h:94
-msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "העדיפו אפקטים של צליל דיגיטלי במקום על סינתזות"
 
 #: engines/sci/detection_options.h:117
 msgid "Use CD audio"

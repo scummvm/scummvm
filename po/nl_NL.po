@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-08 16:07+0000\n"
+"POT-Creation-Date: 2022-05-09 16:03+0000\n"
 "PO-Revision-Date: 2022-03-29 10:46+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4242,7 +4242,7 @@ msgstr "Cutscene bestand '%s' niet gevonden!"
 msgid "AGOS 2 support is not compiled in"
 msgstr "Ondersteuning voor AGOS 2 is niet meegecompileerd"
 
-#: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:75
+#: engines/agos/midi.cpp:180 engines/kyra/sound/sound_pc_midi.cpp:75
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
@@ -4255,6 +4255,36 @@ msgstr ""
 "We zullen proberen te Roland MT32 instrumenten te\n"
 "vertalen naar General MIDI instrumenten. Het is mogelijk\n"
 "dat sommige tracks niet goed klinken."
+
+#: engines/agos/detection.cpp:77
+msgid "AdLib OPL3 mode"
+msgstr ""
+
+#: engines/agos/detection.cpp:78
+msgid ""
+"When AdLib is selected, OPL3 features will be used. Depending on the \tgame, "
+"this will prevent cut-off notes, add extra notes or instruments \tand/or add "
+"stereo."
+msgstr ""
+
+#: engines/agos/detection.cpp:86
+msgid "Use DOS version music tempos"
+msgstr ""
+
+#: engines/agos/detection.cpp:87
+msgid ""
+"Selecting this option will play the music using the tempos used by \tthe DOS "
+"version of the game. Otherwise, the faster tempos of the Windows \tversion "
+"will be used."
+msgstr ""
+
+#: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
+msgid "Prefer digital sound effects"
+msgstr "Geef de voorkeur aan digitale geluidseffecten"
+
+#: engines/agos/detection.cpp:96 engines/sci/detection_options.h:94
+msgid "Prefer digital sound effects instead of synthesized ones"
+msgstr "Geef de voorkeur aan digitale geluidseffecten boven gesynthetiseerde"
 
 #: engines/ags/dialogs.cpp:58
 msgid "Game language:"
@@ -6350,14 +6380,6 @@ msgstr "Gebruik hoge kwaliteit \"LarryScale\" cel schaling"
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
 "Gebruik speciale cartoon schaler voor het tekenen van de personage sprites"
-
-#: engines/sci/detection_options.h:93
-msgid "Prefer digital sound effects"
-msgstr "Geef de voorkeur aan digitale geluidseffecten"
-
-#: engines/sci/detection_options.h:94
-msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "Geef de voorkeur aan digitale geluidseffecten boven gesynthetiseerde"
 
 #: engines/sci/detection_options.h:117
 msgid "Use CD audio"
