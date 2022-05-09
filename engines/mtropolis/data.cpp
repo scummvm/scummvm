@@ -205,7 +205,7 @@ bool DataReader::readF64(double &value) {
 
 bool DataReader::read(void *dest, size_t size) {
 	while (size > 0) {
-		uint32 thisChunkSize = UINT32_MAX;
+		uint32 thisChunkSize = 0xffffffffu;
 		if (size < thisChunkSize) {
 			thisChunkSize = static_cast<uint32>(size);
 		}
@@ -260,18 +260,11 @@ bool DataReader::seek(int64 pos) {
 }
 
 bool DataReader::skip(size_t count) {
-	while (count > 0) {
-		uint64 thisChunkSize = INT64_MAX;
-		if (count < thisChunkSize) {
-			thisChunkSize = static_cast<uint64>(count);
-		}
-
+	if (count > 0) {
 		if (!_stream.seek(static_cast<int64>(count), SEEK_CUR)) {
 			checkErrorAndReset();
 			return false;
 		}
-
-		count -= static_cast<size_t>(thisChunkSize);
 	}
 	return true;
 }
@@ -393,10 +386,10 @@ double XPFloat::toDouble() const {
 		if (exponent > 2046) {
 			// Too big, set to largest finite magnitude
 			exponent = 2046;
-			workMantissa = (static_cast<uint64_t>(1) << 52) - 1u;
+			workMantissa = (static_cast<uint64>(1) << 52) - 1u;
 		} else if (exponent < 0) {
 			// Subnormal number
-			workMantissa |= (static_cast<uint64_t>(1) << 52);
+			workMantissa |= (static_cast<uint64>(1) << 52);
 			if (exponent < -52) {
 				workMantissa = 0;
 				exponent = 0;
@@ -407,7 +400,7 @@ double XPFloat::toDouble() const {
 		}
 	}
 
-	uint64_t recombined = (static_cast<uint64_t>(sign) << 63) | (static_cast<uint64_t>(exponent) << 52) | static_cast<uint64_t>(workMantissa);
+	uint64 recombined = (static_cast<uint64>(sign) << 63) | (static_cast<uint64>(exponent) << 52) | static_cast<uint64>(workMantissa);
 
 	double d;
 	memcpy(&d, &recombined, 8);
@@ -1764,7 +1757,7 @@ DataReadErrorCode TextAsset::load(DataReader &reader) {
 			return kDataReadErrorReadFailed;
 
 		if (reader.getProjectFormat() == kProjectFormatMacintosh) {
-			uint16_t numFormattingSpans;
+			uint16 numFormattingSpans;
 			if (!reader.readU16(numFormattingSpans))
 				return kDataReadErrorReadFailed;
 
