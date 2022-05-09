@@ -26,7 +26,7 @@
 namespace AGOS {
 
 MidiParser_GMF::MidiParser_GMF(int8 source, bool useDosTempos) : MidiParser_SMF(source), _useDosTempos(useDosTempos) {
-	memset(_tracksEndPos, 0, 120);
+	memset(_tracksEndPos, 0, sizeof(_tracksEndPos));
 }
 
 void MidiParser_GMF::parseNextEvent(EventInfo &info) {
