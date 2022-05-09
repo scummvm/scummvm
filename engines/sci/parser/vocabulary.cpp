@@ -495,6 +495,7 @@ void Vocabulary::lookupWordPrefix(ResultWordListList &parent_retval, ResultWordL
 	PrefixMeaning prefixes[] = {
 		{0xe1, "1hebrew1prefix1bet"},           // "Bet"
 		{0xe4, "the"},                          // "He Hayedia"
+		{0xe5, "and"},                          // "Vav"
 		{0xec, "1hebrew1prefix1lamed"},         // "Lamed"
 		{0xee, "1hebrew1prefix1mem"}            // "Mem"
 	};
