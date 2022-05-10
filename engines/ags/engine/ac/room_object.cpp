@@ -96,7 +96,7 @@ void RoomObject::UpdateCyclingView(int ref_id) {
 		return;
 
 	wait = vfptr->speed + overall_speed;
-	CheckViewFrame(view, loop, frame);
+	CheckViewFrame(view, loop, frame, anim_volume);
 }
 
 void RoomObject::ReadFromSavegame(Stream *in, int save_ver) {

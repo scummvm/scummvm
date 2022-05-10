@@ -19,6 +19,7 @@
  *
  */
 
+#include "ags/lib/std/algorithm.h"
 #include "ags/engine/ac/global_object.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/object.h"
@@ -213,7 +214,7 @@ int GetObjectBaseline(int obn) {
 	return _G(objs)[obn].baseline;
 }
 
-void AnimateObjectImpl(int obn, int loopn, int spdd, int rept, int direction, int blocking, int sframe) {
+void AnimateObjectImpl(int obn, int loopn, int spdd, int rept, int direction, int blocking, int sframe, int volume) {
 	if (obn >= MANOBJNUM) {
 		scAnimateCharacter(obn - 100, loopn, spdd, rept);
 		return;
@@ -257,7 +258,8 @@ void AnimateObjectImpl(int obn, int loopn, int spdd, int rept, int direction, in
 	_G(objs)[obn].num = Math::InRangeOrDef<uint16_t>(pic, 0);
 	if (pic > UINT16_MAX)
 		debug_script_warn("Warning: object's (id %d) sprite %d is outside of internal range (%d), reset to 0", obn, pic, UINT16_MAX);
-	CheckViewFrame(_G(objs)[obn].view, loopn, _G(objs)[obn].frame);
+	_G(objs)[obn].anim_volume = std::min(volume, 100); // NOTE: negative volume means use defaults
+	CheckViewFrame(_G(objs)[obn].view, loopn, _G(objs)[obn].frame, _G(objs)[obn].anim_volume);
 
 	if (blocking)
 		GameLoopUntilValueIsZero(&_G(objs)[obn].cycling);

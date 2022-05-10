@@ -120,26 +120,29 @@ int Object_GetBaseline(ScriptObject *objj) {
 	return GetObjectBaseline(objj->id);
 }
 
-void Object_AnimateFrom(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction, int sframe) {
+void Object_AnimateEx(ScriptObject *objj, int loop, int delay, int repeat,
+	int blocking, int direction, int sframe, int volume = -1) {
 	if (direction == FORWARDS)
 		direction = 0;
 	else if (direction == BACKWARDS)
 		direction = 1;
-	else
-		quit("!Object.Animate: Invalid DIRECTION parameter");
-
-	if ((blocking == BLOCKING) || (blocking == 1))
+	if (blocking == BLOCKING)
 		blocking = 1;
-	else if ((blocking == IN_BACKGROUND) || (blocking == 0))
+	else if (blocking == IN_BACKGROUND)
 		blocking = 0;
-	else
-		quit("!Object.Animate: Invalid BLOCKING parameter");
 
-	AnimateObjectImpl(objj->id, loop, delay, repeat, direction, blocking, sframe);
+	if ((repeat < 0) || (repeat > 1))
+		quit("!Object.Animate: invalid repeat value");
+	if ((blocking < 0) || (blocking > 1))
+		quit("!Object.Animate: invalid blocking value");
+	if ((direction < 0) || (direction > 1))
+		quit("!Object.Animate: invalid direction");
+
+	AnimateObjectImpl(objj->id, loop, delay, repeat, direction, blocking, sframe, volume);
 }
 
 void Object_Animate(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction) {
-	Object_AnimateFrom(objj, loop, delay, repeat, blocking, direction, 0);
+	Object_AnimateEx(objj, loop, delay, repeat, blocking, direction, 0, -1);
 }
 
 void Object_StopAnimating(ScriptObject *objj) {
@@ -629,8 +632,12 @@ RuntimeScriptValue Sc_Object_Animate(void *self, const RuntimeScriptValue *param
 	API_OBJCALL_VOID_PINT5(ScriptObject, Object_Animate);
 }
 
-RuntimeScriptValue Sc_Object_AnimateFrom(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_VOID_PINT6(ScriptObject, Object_AnimateFrom);
+RuntimeScriptValue Sc_Object_Animate6(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT6(ScriptObject, Object_AnimateEx);
+}
+
+RuntimeScriptValue Sc_Object_Animate7(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT7(ScriptObject, Object_AnimateEx);
 }
 
 // int (ScriptObject *objj, ScriptObject *obj2)
@@ -935,7 +942,8 @@ RuntimeScriptValue Sc_Object_SetY(void *self, const RuntimeScriptValue *params, 
 
 void RegisterObjectAPI() {
 	ccAddExternalObjectFunction("Object::Animate^5", Sc_Object_Animate);
-	ccAddExternalObjectFunction("Object::Animate^6", Sc_Object_AnimateFrom);
+	ccAddExternalObjectFunction("Object::Animate^6", Sc_Object_Animate6);
+	ccAddExternalObjectFunction("Object::Animate^7", Sc_Object_Animate7);
 	ccAddExternalObjectFunction("Object::IsCollidingWithObject^1", Sc_Object_IsCollidingWithObject);
 	ccAddExternalObjectFunction("Object::GetName^1", Sc_Object_GetName);
 	ccAddExternalObjectFunction("Object::GetProperty^1", Sc_Object_GetProperty);

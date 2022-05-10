@@ -443,6 +443,11 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
     METHOD((CLASS*)self, params[0].IValue, params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue, params[5].IValue, params[6].IValue); \
     return RuntimeScriptValue((int32_t)0)
 
+#define API_OBJCALL_VOID_PINT8(CLASS, METHOD) \
+    ASSERT_OBJ_PARAM_COUNT(METHOD, 8); \
+    METHOD((CLASS*)self, params[0].IValue, params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue, params[5].IValue, params[6].IValue, params[7].IValue); \
+    return RuntimeScriptValue((int32_t)0)
+
 #define API_OBJCALL_VOID_PFLOAT(CLASS, METHOD) \
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 1); \
 	METHOD((CLASS*)self, params[0].FValue); \
