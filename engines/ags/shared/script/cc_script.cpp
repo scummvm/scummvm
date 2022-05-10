@@ -342,8 +342,7 @@ void ccScript::Free() {
 	numSections = 0;
 }
 
-const char *ccScript::GetSectionName(int32_t offs) {
-
+const char *ccScript::GetSectionName(int32_t offs) const {
 	int i;
 	for (i = 0; i < numSections; i++) {
 		if (sectionOffsets[i] < offs)
