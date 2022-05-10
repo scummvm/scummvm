@@ -2393,6 +2393,30 @@ load_game:
 			for (int i = 0; i < _numVerbs; i++)
 				drawVerb(i, 0);
 		} else {
+			if (_game.platform != Common::kPlatformNES && _game.platform != Common::kPlatformC64 && _game.platform != Common::kPlatformMacintosh) {
+				// MM and ZAK (v1/2)
+				int saveLoadRoom = 50;
+				int saveLoadVar = 21;
+				int saveLoadEnable = 1;
+
+				if (_game.id == GID_INDY3) {
+					saveLoadRoom = 14;
+					saveLoadVar = 58;
+				} else if (_game.platform == Common::kPlatformFMTowns) {
+					// ZAK FM-Towns
+					saveLoadVar = 115;
+				}
+
+				// Only execute this if the original would even allow saving in that situation
+				if (VAR(saveLoadVar) == saveLoadEnable && _userPut > 0 && !(VAR_VERB_SCRIPT != 0xFF && isScriptRunning(VAR(VAR_VERB_SCRIPT)))) {
+					int args[NUM_SCRIPT_LOCAL];
+					memset(args, 0, sizeof(args));
+					beginCutscene(args);
+					startScene(saveLoadRoom, nullptr, 0);
+					endCutscene();
+				}
+			}
+
 			redrawVerbs();
 		}
 

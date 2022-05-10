@@ -717,8 +717,8 @@ protected:
 	virtual void resetSentence() {}
 
 protected:
-	void beginCutscene(int *args);
-	void endCutscene();
+	virtual void beginCutscene(int *args);
+	virtual void endCutscene();
 	void abortCutscene();
 	void beginOverride();
 	void endOverride();
