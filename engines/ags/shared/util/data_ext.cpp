@@ -122,7 +122,7 @@ HError DataExtReader::Read() {
 }
 
 // Generic function that saves a block and automatically adds its size into header
-void WriteExtBlock(int block, const String &ext_id, PfnWriteExtBlock writer, int flags, Stream *out) {
+void WriteExtBlock(int block, const String &ext_id, const PfnWriteExtBlock &writer, int flags, Stream *out) {
 	// Write block's header
 	(flags & kDataExt_NumID32) != 0 ?
 		out->WriteInt32(block) :

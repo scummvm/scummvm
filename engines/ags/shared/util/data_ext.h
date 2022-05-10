@@ -156,7 +156,7 @@ protected:
 
 // Type of function that writes a single data block.
 typedef void(*PfnWriteExtBlock)(Stream *out);
-void WriteExtBlock(int block, const String &ext_id, PfnWriteExtBlock writer, int flags, Stream *out);
+void WriteExtBlock(int block, const String &ext_id, const PfnWriteExtBlock &writer, int flags, Stream *out);
 // Writes a block with a new-style string id
 inline void WriteExtBlock(const String &ext_id, PfnWriteExtBlock writer, int flags, Stream *out) {
 	WriteExtBlock(0, ext_id, writer, flags, out);
