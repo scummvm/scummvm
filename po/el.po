@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-09 17:55+0000\n"
-"PO-Revision-Date: 2022-04-28 16:49+0000\n"
+"PO-Revision-Date: 2022-05-10 10:33+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -4307,7 +4307,7 @@ msgstr ""
 
 #: engines/agos/detection.cpp:77
 msgid "AdLib OPL3 mode"
-msgstr ""
+msgstr "Λειτουργία AdLib OPL3"
 
 #: engines/agos/detection.cpp:78
 msgid ""
@@ -4315,10 +4315,14 @@ msgid ""
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
 "stereo."
 msgstr ""
+"Όταν είναι επιλεγμένη η Adlib, θα χρησιμοποιηθούν οι δυνατότητες OPL3. "
+"Ανάλογα το παιχνίδι, αυτό μπορεί να αποτρέψει το απότομο κόψιμο σε μουσικές "
+"νότες, να προσθέσει έξτρα νότες ή μουσικά όργανα ή/και να αποδόσει δικάναλο "
+"(stereo) ήχο."
 
 #: engines/agos/detection.cpp:86
 msgid "Use DOS version music tempos"
-msgstr ""
+msgstr "Χρήση μουσικών τέμπο της DOS έκδοσης"
 
 #: engines/agos/detection.cpp:87
 msgid ""
@@ -4326,6 +4330,9 @@ msgid ""
 "version of the game. Otherwise, the faster tempos of the Windows version "
 "will be used."
 msgstr ""
+"Με αυτή την επιλογή η μουσική θα παίξει με τα τέμπο που χρησιμοποιεί η "
+"έκδοση του παιχνιδιού για DOS. Αλλιώς, θα χρησιμοποιηθούν τα πιο γρήγορα "
+"τέμπο της έκδοσης για Windows."
 
 #: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
