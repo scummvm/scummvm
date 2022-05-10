@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-09 17:55+0000\n"
-"PO-Revision-Date: 2022-04-28 09:45+0000\n"
+"PO-Revision-Date: 2022-05-10 08:41+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -4224,7 +4224,7 @@ msgstr ""
 
 #: engines/agos/detection.cpp:77
 msgid "AdLib OPL3 mode"
-msgstr ""
+msgstr "AdLib OPL3 mód"
 
 #: engines/agos/detection.cpp:78
 msgid ""
@@ -4232,10 +4232,13 @@ msgid ""
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
 "stereo."
 msgstr ""
+"Ha az AdLib van kiválasztva, az OPL3 funkcióit használja a rendszer. A "
+"játéktól függően ez megakadályozza a hangok levágását, további hangjegyeket "
+"vagy hangszereket és/vagy sztereót ad hozzá."
 
 #: engines/agos/detection.cpp:86
 msgid "Use DOS version music tempos"
-msgstr ""
+msgstr "Használjon DOS verziójú zenei tempókat"
 
 #: engines/agos/detection.cpp:87
 msgid ""
@@ -4243,6 +4246,9 @@ msgid ""
 "version of the game. Otherwise, the faster tempos of the Windows version "
 "will be used."
 msgstr ""
+"Ha ezt az opciót választja, akkor a zene a játék DOS-os verziója által "
+"használt tempóval fog lejátszani. Ellenkező esetben a Windows-verzió "
+"gyorsabb tempói lesznek használatban."
 
 #: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
