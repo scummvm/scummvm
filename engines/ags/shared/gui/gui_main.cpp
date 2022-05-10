@@ -209,7 +209,7 @@ void GUIMain::ClearChanged() {
 }
 
 void GUIMain::AddControl(GUIControlType type, int32_t id, GUIObject *control) {
-	_ctrlRefs.push_back(std::make_pair(type, id));
+	_ctrlRefs.emplace_back(type, id);
 	_controls.push_back(control);
 }
 
