@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-09 17:55+0000\n"
-"PO-Revision-Date: 2022-05-09 17:52+0000\n"
+"PO-Revision-Date: 2022-05-10 08:41+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -4265,11 +4265,6 @@ msgid "AdLib OPL3 mode"
 msgstr "Modo AdLib OPL3"
 
 #: engines/agos/detection.cpp:78
-#, fuzzy
-#| msgid ""
-#| "When AdLib is selected, OPL3 features will be used. Depending on the "
-#| "\tgame, this will prevent cut-off notes, add extra notes or instruments "
-#| "\tand/or add stereo."
 msgid ""
 "When AdLib is selected, OPL3 features will be used. Depending on the game, "
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
@@ -4284,11 +4279,6 @@ msgid "Use DOS version music tempos"
 msgstr "Usar tempos de la versión para DOS en la música"
 
 #: engines/agos/detection.cpp:87
-#, fuzzy
-#| msgid ""
-#| "Selecting this option will play the music using the tempos used by \tthe "
-#| "DOS version of the game. Otherwise, the faster tempos of the Windows "
-#| "\tversion will be used."
 msgid ""
 "Selecting this option will play the music using the tempos used by the DOS "
 "version of the game. Otherwise, the faster tempos of the Windows version "
