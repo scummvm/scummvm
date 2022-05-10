@@ -77,9 +77,7 @@ size_t BufferedStream::Read(void *toBuffer, size_t toSize) {
 		if (_position < _bufferPosition || _position >= _bufferPosition + _buffer.size()) {
 			FillBufferFromPosition(_position);
 		}
-		if (_buffer.size() <= 0) {
-			break;
-		} // reached EOS
+		if (_buffer.empty()) { break; } // reached EOS
 		assert(_position >= _bufferPosition && _position < _bufferPosition + _buffer.size());  // sanity check only, should be checked by above.
 
 		soff_t bufferOffset = _position - _bufferPosition;
