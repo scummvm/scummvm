@@ -87,7 +87,7 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c18.mi_", "c21.mi_", "??", "");
 
 	loadArcadeLevel("c21.mi_", "c22.mi_", "??", "");
-	loadArcadeLevel("c22.mi_", "c23.mi_", "??", "");
+	loadArcadeLevel("c22.mi_", "c31.mi_", "??", "");
 	loadArcadeLevel("c31.mi_", "c32.mi_", "??", "");
 	loadArcadeLevel("c32.mi_", "c33.mi_", "??", "");
 	loadArcadeLevel("c33.mi_", "c34.mi_", "??", "");
@@ -143,6 +143,19 @@ void BoyzEngine::loadAssets() {
 	cursorBox = Common::Rect(62, 70, 83, 90);
 	_crosshairsTarget[1].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[1].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	// Double big crossair, shotgun?
+	cursorBox = Common::Rect(104, 7, 136, 25);
+	_crosshairsInactive[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsInactive[2].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(104, 39, 136, 57);
+	_crosshairsActive[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsActive[2].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(104, 71, 136, 83);
+	_crosshairsTarget[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsTarget[2].copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	cursorBox = Common::Rect(16, 8, 32, 24);
 	_crosshairsInactive[3].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
@@ -251,7 +264,7 @@ void BoyzEngine::loadAssets() {
 	loadLib("", "misc/fonts.lib", true);
 	loadFonts();
 
-	_nextLevel = "c11.mi_";
+	_nextLevel = "<start>";
 }
 
 void BoyzEngine::loadFonts() {
