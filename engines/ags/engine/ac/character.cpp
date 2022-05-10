@@ -2075,17 +2075,18 @@ void stop_character_anim(CharacterInfo *chap) { // TODO: may expand with resetti
 	_GP(charextra)[chap->index_id].cur_anim_volume = -1;
 }
 
-void CheckViewFrameForCharacter(CharacterInfo *chi) {
-	int frame_vol = -1;
-	// If there's an explicit animation volume - use that first
-	if (_GP(charextra)[chi->index_id].cur_anim_volume >= 0) {
+void CheckViewFrameForCharacter(CharacterInfo * chi) {
+	// We view the audio property relation as the relation of the entities:
+	// system -> audio type -> audio emitter (character) -> animation's audio
+	// therefore the sound volume is a multiplication of factors.
+	int frame_vol = 100; // default to full volume
+	// Try the active animation volume
+	if (_GP(charextra)[chi->index_id].cur_anim_volume >= 0)
 		frame_vol = _GP(charextra)[chi->index_id].cur_anim_volume;
-	}
-	// Next check the character's animation volume setting
-	else if (_GP(charextra)[chi->index_id].anim_volume >= 0) {
-		frame_vol = _GP(charextra)[chi->index_id].anim_volume;
-	}
-	// Adjust the sound volume using the character's zoom level
+	// Try the character's own animation volume property
+	if (_GP(charextra)[chi->index_id].anim_volume >= 0)
+		frame_vol = frame_vol * _GP(charextra)[chi->index_id].anim_volume / 100;
+	// Try the character's zoom volume scaling (optional)
 	// NOTE: historically scales only in 0-100 range :/
 	if (chi->flags & CHF_SCALEVOLUME) {
 		int zoom_level = _GP(charextra)[chi->index_id].zoom;
@@ -2093,10 +2094,7 @@ void CheckViewFrameForCharacter(CharacterInfo *chi) {
 			zoom_level = 100;
 		else
 			zoom_level = std::min(zoom_level, 100);
-		if (frame_vol < 0)
-			frame_vol = zoom_level;
-		else
-			frame_vol = frame_vol * zoom_level / 100;
+		frame_vol = frame_vol * zoom_level / 100;
 	}
 
 	CheckViewFrame(chi->view, chi->loop, chi->frame, frame_vol);
