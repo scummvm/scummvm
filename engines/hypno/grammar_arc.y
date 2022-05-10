@@ -515,6 +515,8 @@ bline: FNTOK FILENAME {
 			shoot->deathSound = $2;
 		else if (Common::String("S2") == $1)
 			shoot->hitSound = $2;
+		else if (Common::String("S4") == $1)
+			shoot->animalSound = $2;
 
 		debugC(1, kHypnoDebugParser, "SN %s", $2); }
 	| SNTOK {

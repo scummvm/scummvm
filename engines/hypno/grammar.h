@@ -425,6 +425,7 @@ public:
 		lastFrame = 1024;
 		noEnemySound = false;
 		isAnimal = false;
+		animalSound = "";
 	}
 	Common::String name;
 	Filename animation;
@@ -452,6 +453,7 @@ public:
 	Filename enemySound;
 	Filename deathSound;
 	Filename hitSound;
+	Filename animalSound;
 
 	MVideo *video;
 	Common::List<uint32> attackFrames;

@@ -572,6 +572,7 @@ public:
 	Graphics::Surface _portrait[7];
 
 	Filename _weaponShootSound[7];
+	Filename _heySound[7];
 	int _weaponMaxAmmo[7];
 
 	byte *_crosshairsPalette;

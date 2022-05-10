@@ -143,6 +143,14 @@ void BoyzEngine::loadAssets() {
 	_weaponShootSound[5] = "shotfire.raw";
 	_weaponShootSound[6] = "glm60fr.raw";
 
+	_heySound[0] = "";
+	_heySound[1] = "lopzheys.raw";
+	_heySound[2] = "lambheys.raw";
+	_heySound[3] = "vasqheyl.raw";
+	_heySound[4] = "butsheyl.raw";
+	_heySound[5] = "bropheys.raw";
+	_heySound[6] = "monsheys.raw";
+
 	Graphics::Surface *targets = decodeFrame("preload/targets.smk", 0, &_crosshairsPalette);
 
 	Common::Rect cursorBox;

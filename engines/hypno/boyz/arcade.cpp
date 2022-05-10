@@ -236,8 +236,12 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 	} else {
 
 		if (i == 9 && secondary) {
-			if (_shoots[0].isAnimal)
+			playSound(_soundPath + _heySound[_currentActor], 1);
+
+			if (_shoots[0].isAnimal) {
+				playSound(_soundPath + _shoots[0].animalSound, 1);
 				return false;
+			}
 
 			_background->decoder->pauseVideo(true);
 			MVideo video(arc->missBoss2Video, Common::Point(0, 0), false, true, false);
