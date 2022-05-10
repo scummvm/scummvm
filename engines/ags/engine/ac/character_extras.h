@@ -54,6 +54,7 @@ struct CharacterExtras {
 	int8  process_idle_this_time = 0;
 	int8  slow_move_counter = 0;
 	short animwait = 0;
+	int   anim_volume = -1; // default animation volume (-1 use clip default)
 	int   cur_anim_volume = -1; // current animation sound volume (-1 = default)
 
 	void ReadFromFile(Shared::Stream *in);
