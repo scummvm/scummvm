@@ -529,6 +529,7 @@ bline: FNTOK FILENAME {
 		debugC(1, kHypnoDebugParser, "T %d", $2);
 	}
 	| TTOK {
+		shoot->isAnimal = true;
 		debugC(1, kHypnoDebugParser, "T");
 	}
 	| MTOK {

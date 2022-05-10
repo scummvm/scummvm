@@ -79,8 +79,8 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c19.mi_", "c11.mi_", "??", "");
 	loadArcadeLevel("c11.mi_", "c12.mi_", "??", "");
 	loadArcadeLevel("c12.mi_", "c14.mi_", "??", "");
-	loadArcadeLevel("c13.mi_", "??", "??", "");
-	loadArcadeLevel("c14.mi_", "c15.mi_", "??", "");
+	loadArcadeLevel("c14.mi_", "c13.mi_", "??", "");
+	loadArcadeLevel("c13.mi_", "c15.mi_", "??", "");
 	loadArcadeLevel("c15.mi_", "c16.mi_", "??", "");
 	loadArcadeLevel("c16.mi_", "c17.mi_", "??", "");
 	loadArcadeLevel("c17.mi_", "c18.mi_", "??", "");
@@ -233,6 +233,12 @@ void BoyzEngine::loadAssets() {
 	_weaponMaxAmmo[6] = 0;
 
 	_maxHealth = 100;
+	_civiliansShoot = 0;
+	_warningAnimals = "warnings/w01s.smk";
+	_warningCivilians.push_back("warnings/w02s.smk");
+	_warningCivilians.push_back("warnings/w03s.smk");
+	_warningCivilians.push_back("warnings/w04s.smk");
+	_warningCivilians.push_back("warnings/w05s.smk");
 
 	// Set initial health for the team
 	for (int i = 0; i < 7; i++) {

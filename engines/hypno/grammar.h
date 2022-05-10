@@ -424,6 +424,7 @@ public:
 		startFrame = 0;
 		lastFrame = 1024;
 		noEnemySound = false;
+		isAnimal = false;
 	}
 	Common::String name;
 	Filename animation;
@@ -461,6 +462,7 @@ public:
 	Filename explosionAnimation;
 	bool destroyed;
 	bool noEnemySound;
+	bool isAnimal;
 };
 
 typedef Common::Array<Shoot> Shoots;

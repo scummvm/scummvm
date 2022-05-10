@@ -212,8 +212,7 @@ int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 	Common::Point target = computeTargetPosition(mousePos);
 	assert(_shoots.size() <= 1);
 	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
-		if (_mask->getPixel(target.x, target.y) == 1)
-			return 0;
+		return _mask->getPixel(target.x, target.y) - 1;
 	}
 	return -1;
 }
@@ -223,29 +222,81 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 		return false;
 	}
 
-	if (_ammoTeam[_currentActor] == 0)
-		return false; // TODO: out of ammo sound is missing
-	if (!_infiniteAmmoCheat)
-		_ammoTeam[_currentActor]--;
-	playSound(_soundPath + _weaponShootSound[_currentWeapon], 1);
-	incShotsFired();
+	if (!secondary) {
+		if (_ammoTeam[_currentActor] == 0)
+			return false; // TODO: out of ammo sound is missing
+		if (!_infiniteAmmoCheat)
+			_ammoTeam[_currentActor]--;
+		playSound(_soundPath + _weaponShootSound[_currentWeapon], 1);
+		incShotsFired();
+	}
 	int i = detectTarget(mousePos);
 	if (i < 0) {
 		missNoTarget(arc);
 	} else {
-		if (!_shoots[i].hitSound.empty())
+
+		if (i == 9 && secondary) {
+			if (_shoots[0].isAnimal)
+				return false;
+
+			_background->decoder->pauseVideo(true);
+			MVideo video(arc->missBoss2Video, Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+			// Should be currentPalette?
+			loadPalette(arc->backgroundPalette);
+			_background->decoder->pauseVideo(false);
+			updateScreen(*_background);
+			drawScreen();
+			if (!_music.empty())
+				playSound(_music, 0, arc->musicRate); // restore music
+
+			return false;
+		} else if (i == 9 && !secondary) {
+
+			Common::String filename;
+			if (_shoots[0].isAnimal)
+				filename = _warningAnimals;
+			else {
+				filename = _warningCivilians[_civiliansShoot];
+				_civiliansShoot++;
+			}
+
+			_background->decoder->pauseVideo(true);
+			MVideo video(filename, Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+			// Should be currentPalette?
+			loadPalette(arc->backgroundPalette);
+			_background->decoder->pauseVideo(false);
+			updateScreen(*_background);
+			drawScreen();
+			if (!_music.empty())
+				playSound(_music, 0, arc->musicRate); // restore music
+
+			_healthTeam[_currentActor] = _healthTeam[_currentActor] - 10;
+			return false;
+		} else if (i == 0 && secondary) {
+			// Nothing
+			return false;
+		}
+
+		if (i != 0 || secondary)
+			error("Invalid target %d", i);
+
+		if (!_shoots[0].hitSound.empty())
 			playSound(_soundPath + _shoots[i].hitSound, 1);
 
 		incEnemyHits();
-		if (!_shoots[i].deathSound.empty())
+		if (!_shoots[0].deathSound.empty())
 			playSound(_soundPath + _shoots[i].deathSound, 1);
 
 		incTargetsDestroyed();
-		incScore(_shoots[i].pointsToShoot);
-		incBonus(_shoots[i].pointsToShoot);
+		incScore(_shoots[0].pointsToShoot);
+		incBonus(_shoots[0].pointsToShoot);
 		_shoots[i].destroyed = true;
-		_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
-		_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
+		_background->decoder->forceSeekToFrame(_shoots[0].explosionFrames[0].start - 3);
+		_masks->decoder->forceSeekToFrame(_shoots[0].explosionFrames[0].start - 3);
 		_shoots.clear();
 		changeCursor(_crosshairsActive[_currentWeapon], _crosshairsPalette, true);
 	}

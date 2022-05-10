@@ -585,6 +585,9 @@ public:
 	ScriptMode _currentMode;
 	uint32 _currentActor;
 	uint32 _currentWeapon;
+	uint32 _civiliansShoot;
+	Filename _warningAnimals;
+	Common::Array<Filename> _warningCivilians;
 
 	Common::BitArray _font05;
 	Common::BitArray _font08;
