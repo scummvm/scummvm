@@ -240,8 +240,6 @@ void GUIButton::OnMouseUp() {
 	IsPushed = false;
 }
 
-// TODO: replace string serialization with StrUtil::ReadString and WriteString
-// methods in the future, to keep this organized.
 void GUIButton::WriteToFile(Stream *out) const {
 	GUIObject::WriteToFile(out);
 
