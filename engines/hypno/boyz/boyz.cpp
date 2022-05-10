@@ -59,6 +59,20 @@ HOTS /BBOX= 262 172 312 194\n\
 SOND pstlfire.raw\n\
 END\n";
 
+static const char *selectC3 = "\
+MENU preload\\slct_c3.smk\n\
+HOTS /BBOX= 143 78 286 138\n\
+SOND tollopz2.raw 22K\n\
+HOTS /BBOX=  159 141 319 197\n\
+SOND tolbuts3.raw 22K\n\
+HOTS /BBOX= 26 14 126 89\n\
+SOND tolvasq1.raw 22K\n\
+HOTS /BBOX= 24 114 126 190\n\
+SOND tolmons1.raw 22K\n\
+HOTS /BBOX= 190 4 292 76\n\
+SOND tollamb1.raw  22K\n\
+END\n";
+
 void BoyzEngine::loadAssets() {
 	LibFile *missions = loadLib("", "preload/missions.lib", true);
 	Common::ArchiveMemberList files;
@@ -116,6 +130,8 @@ void BoyzEngine::loadAssets() {
 
 	ChangeLevel *cl = new ChangeLevel("c19.mi_");
 	sc->hots[7].actions.push_back(cl);
+
+	loadSceneLevel(selectC3, "<select_c3>", "", "");
 
 	loadLib("sound/", "misc/sound.lib", true);
 
