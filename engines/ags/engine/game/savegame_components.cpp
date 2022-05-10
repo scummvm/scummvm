@@ -483,7 +483,7 @@ HSaveError WriteCharacters(Stream *out) {
 	out->WriteInt32(_GP(game).numcharacters);
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
 		_GP(game).chars[i].WriteToFile(out);
-		_GP(charextra)[i].WriteToFile(out);
+		_GP(charextra)[i].WriteToSavegame(out);
 		Properties::WriteValues(_GP(play).charProps[i], out);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			WriteTimesRun272(*_GP(game).intrChar[i], out);
@@ -499,7 +499,7 @@ HSaveError ReadCharacters(Stream *in, int32_t cmp_ver, const PreservedParams & /
 		return err;
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
 		_GP(game).chars[i].ReadFromFile(in);
-		_GP(charextra)[i].ReadFromFile(in);
+		_GP(charextra)[i].ReadFromSavegame(in, cmp_ver);
 		Properties::ReadValues(_GP(play).charProps[i], in);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			ReadTimesRun272(*_GP(game).intrChar[i], in);
@@ -571,7 +571,7 @@ HSaveError WriteGUI(Stream *out) {
 	size_t num_abuts = GetAnimatingButtonCount();
 	out->WriteInt32(num_abuts);
 	for (size_t i = 0; i < num_abuts; ++i)
-		GetAnimatingButtonByIndex(i)->WriteToFile(out);
+		GetAnimatingButtonByIndex(i)->WriteToSavegame(out);
 	return HSaveError::None();
 }
 
@@ -635,7 +635,7 @@ HSaveError ReadGUI(Stream *in, int32_t cmp_ver, const PreservedParams & /*pp*/, 
 	int anim_count = in->ReadInt32();
 	for (int i = 0; i < anim_count; ++i) {
 		AnimatingGUIButton abut;
-		abut.ReadFromFile(in, cmp_ver);
+		abut.ReadFromSavegame(in, cmp_ver);
 		AddButtonAnimation(abut);
 	}
 	return err;
@@ -1040,7 +1040,7 @@ ComponentHandler ComponentHandlers[] = {
 	},
 	{
 		"Characters",
-		1,
+		2,
 		0,
 		WriteCharacters,
 		ReadCharacters
@@ -1054,7 +1054,7 @@ ComponentHandler ComponentHandlers[] = {
 	},
 	{
 		"GUI",
-		kGuiSvgVersion_36023,
+		kGuiSvgVersion_36025,
 		kGuiSvgVersion_Initial,
 		WriteGUI,
 		ReadGUI
@@ -1110,14 +1110,14 @@ ComponentHandler ComponentHandlers[] = {
 	},
 	{
 		"Room States",
-		2,
+		3,
 		0,
 		WriteRoomStates,
 		ReadRoomStates
 	},
 	{
 		"Loaded Room State",
-		2, // should correspond to "Room States"
+		3, // must correspond to "Room States"
 		0,
 		WriteThisRoom,
 		ReadThisRoom

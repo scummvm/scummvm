@@ -47,8 +47,8 @@ struct AnimatingGUIButton {
 	// relative volume of the frame sounds
 	int volume = -1;
 
-	void ReadFromFile(Shared::Stream *in, int cmp_ver);
-	void WriteToFile(Shared::Stream *out);
+	void ReadFromSavegame(Shared::Stream *in, int cmp_ver);
+	void WriteToSavegame(Shared::Stream *out);
 };
 
 } // namespace AGS3
