@@ -504,7 +504,7 @@ void PrinceEngine::loadMobTranslationTexts() {
 }
 
 void PrinceEngine::setMobTranslationTexts() {
-	int locationOffset = READ_UINT16(_mobTranslationData + (_locationNr - 1) * 2);
+	int locationOffset = READ_LE_UINT16(_mobTranslationData + (_locationNr - 1) * 2);
 	if (locationOffset) {
 		byte *locationText = _mobTranslationData + locationOffset;
 		for (uint i = 0; i < _mobList.size(); i++) {
