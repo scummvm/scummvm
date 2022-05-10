@@ -30,6 +30,10 @@
 #include "common/tokenizer.h"
 #include "common/debug.h"
 
+#ifdef MACOSX
+#include <AvailabilityMacros.h>
+#endif
+
 namespace OpenGL {
 
 void Context::reset() {
@@ -202,6 +206,12 @@ void OpenGLGraphicsManager::initializeGLContext() {
 		g_context.packedPixelsSupported = true;
 		g_context.textureEdgeClampSupported = true;
 	}
+
+	// HACK FIXME: glBindFramebuffer(GL_FRAMEBUFFER, 0) crashes on Leopard if FBO
+	// has been enabled by the GL_EXT_framebuffer_object extension.
+#if defined(MACOSX) && __MAC_OS_X_VERSION_MIN_REQUIRED < 1060
+	g_context.framebufferObjectSupported = false;
+#endif
 
 	// Log context type.
 	switch (g_context.type) {

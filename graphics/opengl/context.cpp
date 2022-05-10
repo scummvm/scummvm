@@ -30,6 +30,10 @@
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
+#ifdef MACOSX
+#include <AvailabilityMacros.h>
+#endif
+
 #ifdef USE_GLAD
 
 #ifdef SDL_BACKEND
@@ -179,6 +183,12 @@ void ContextGL::initialize(ContextOGLType contextType) {
 			glGetIntegerv(GL_MAX_SAMPLES, (GLint *)&multisampleMaxSamples);
 		}
 	}
+
+	// HACK FIXME: glBindFramebuffer(GL_FRAMEBUFFER, 0) crashes on Leopard if FBO
+	// has been enabled by the GL_EXT_framebuffer_object extension.
+#if defined(MACOSX) && __MAC_OS_X_VERSION_MIN_REQUIRED < 1060
+	framebufferObjectSupported = false;
+#endif
 
 	// Log context type.
 	switch (type) {
