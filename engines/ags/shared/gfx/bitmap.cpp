@@ -151,7 +151,7 @@ struct PixelTransCpy32 {
 // Functor that tells to skip pixels if they match the mask color or have alpha = 0
 struct PixelTransSkip32 {
 	inline bool operator ()(uint8_t *data, uint32_t mask_color, bool use_alpha) const {
-		return *(uint32_t *)data == mask_color || (use_alpha && data[3] == 0);
+		return *(const uint32_t *)data == mask_color || (use_alpha && data[3] == 0);
 	}
 };
 
