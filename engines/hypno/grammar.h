@@ -574,6 +574,7 @@ public:
 		briefingVideo.clear();
 		additionalVideo.clear();
 		additionalSound.clear();
+		noAmmoSound.clear();
 		segments.clear();
 		script.clear();
 		objKillsRequired[0] = 0;
@@ -585,6 +586,7 @@ public:
 		shootSoundRate = 0;
 		enemySoundRate = 0;
 		hitSoundRate = 0;
+		noAmmoSoundRate = 0;
 	}
 
 	uint32 id;
@@ -634,6 +636,8 @@ public:
 	uint32 hitSoundRate;
 	Filename additionalSound;
 	uint32 additionalSoundRate;
+	Filename noAmmoSound;
+	uint32 noAmmoSoundRate;
 };
 
 class Transition : public Level {

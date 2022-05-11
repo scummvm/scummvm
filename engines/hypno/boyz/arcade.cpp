@@ -223,8 +223,11 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 	}
 
 	if (!secondary) {
-		if (_ammoTeam[_currentActor] == 0)
-			return false; // TODO: out of ammo sound is missing
+		if (_ammoTeam[_currentActor] == 0) {
+			if (!arc->noAmmoSound.empty())
+				playSound(_soundPath + arc->noAmmoSound, 1, arc->noAmmoSoundRate);
+			return false;
+		}
 		if (!_infiniteAmmoCheat)
 			_ammoTeam[_currentActor]--;
 		playSound(_soundPath + _weaponShootSound[_currentWeapon], 1);
