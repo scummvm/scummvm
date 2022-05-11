@@ -47,10 +47,12 @@ OuttakePlayer::~OuttakePlayer() {
 }
 
 void OuttakePlayer::play(const Common::String &name, bool noLocalization, int container) {
-	Common::String oldOuttakeFile = Common::String::format("OUTTAKE%d.MIX", _vm->_chapters->currentResourceId());
-	Common::String newOuttakeFile = Common::String::format("OUTTAKE%d.MIX", container);
-
+	Common::String oldOuttakeFile;
+	Common::String newOuttakeFile;
 	if (container > 0) {
+		oldOuttakeFile = Common::String::format("OUTTAKE%d.MIX", _vm->_chapters->currentResourceId());
+		newOuttakeFile = Common::String::format("OUTTAKE%d.MIX", container);
+
 		if (_vm->isArchiveOpen(oldOuttakeFile)
 		    && _vm->_chapters->currentResourceId() != container) {
 			_vm->closeArchive(oldOuttakeFile);
