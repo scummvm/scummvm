@@ -260,6 +260,10 @@ bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
 bool BladeRunnerEngine::canLoadGameStateCurrently() {
 	return
 		playerHasControl() &&
+		_gameIsRunning &&
+		!_actorIsSpeaking &&
+		!_vqaIsPlaying &&
+		!_gameJustLaunched &&
 		!_sceneScript->isInsideScript() &&
 		!_aiScripts->isInsideScript() &&
 		!_kia->isOpen() &&
