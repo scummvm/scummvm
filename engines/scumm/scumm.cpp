@@ -2342,6 +2342,7 @@ load_game:
 	if (_completeScreenRedraw) {
 		clearCharsetMask();
 		_charset->_hasMask = false;
+		bool restoreFMTownsSounds = (_townsPlayer != nullptr);
 
 		if (_game.id == GID_LOOM) {
 			// HACK as in game save stuff isn't supported exactly as in the original interpreter when using the
@@ -2378,6 +2379,17 @@ load_game:
 				VAR(saveLoadVar) = 0;
 				VAR(214) &= ~blockVerbsFlag;
 				endCutscene();
+
+				if (_game.platform == Common::kPlatformFMTowns && VAR(163)) {
+					// Sound restore script. Unlike other versions which handle this
+					// inside the usual entry scripts, FM-Towns calls this from the save script.
+					memset(args, 0, sizeof(args));
+					args[0] = VAR(163);
+					runScript(38, false, false, args);
+				}
+
+				restoreFMTownsSounds = false;
+
 			} else if (VAR(saveLoadVar) == 2) {
 				// This is our old hack. If verbs should be shown restore them.
 				byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
@@ -2392,6 +2404,7 @@ load_game:
 		} else if (_game.version > 3) {
 			for (int i = 0; i < _numVerbs; i++)
 				drawVerb(i, 0);
+
 		} else {
 			if (_game.platform != Common::kPlatformNES && _game.platform != Common::kPlatformC64 && _game.platform != Common::kPlatformMacintosh) {
 				// MM and ZAK (v1/2)
@@ -2414,11 +2427,17 @@ load_game:
 					beginCutscene(args);
 					startScene(saveLoadRoom, nullptr, 0);
 					endCutscene();
+					restoreFMTownsSounds = false;
 				}
 			}
-
 			redrawVerbs();
 		}
+
+		// Update volume settings
+		syncSoundSettings();
+
+		if (restoreFMTownsSounds)
+			_townsPlayer->restoreAfterLoad();
 
 		handleMouseOver(false);
 

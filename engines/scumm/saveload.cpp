@@ -396,6 +396,10 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	hdr.name[sizeof(hdr.name)-1] = 0;
 	_saveLoadDescription = hdr.name;
 
+	// Set to 0 during load to minimize stuttering
+	if (_musicEngine)
+		_musicEngine->setMusicVolume(0);
+
 	// Unless specifically requested with _saveSound, we do not save the iMUSE
 	// state for temporary state saves - such as certain cutscenes in DOTT,
 	// FOA, Sam and Max, etc.
@@ -449,12 +453,6 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	ser.setVersion(hdr.ver);
 	saveLoadWithSerializer(ser);
 	delete in;
-
-	// Update volume settings
-	syncSoundSettings();
-
-	if (_townsPlayer && (hdr.ver >= VER(81)))
-		_townsPlayer->restoreAfterLoad();
 
 	// Init NES costume data
 	if (_game.platform == Common::kPlatformNES) {
@@ -1497,7 +1495,8 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		// If we are loading, and the music being loaded was supposed to loop
 		// forever, then resume playing it. This helps a lot when the audio CD
 		// is used to provide ambient music (see bug #1150).
-		if (s.isLoading() && info.playing && info.numLoops < 0)
+		// FM-Towns versions handle this in Player_Towns_v1::restoreAfterLoad().
+		if (s.isLoading() && info.playing && info.numLoops < 0 && _game.platform != Common::kPlatformFMTowns)
 			_sound->playCDTrackInternal(info.track, info.numLoops, info.start, info.duration);
 	}
 
