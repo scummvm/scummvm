@@ -308,19 +308,18 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 }
 
 void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
-	hitPlayer();
-	if (s->missedAnimation == 0)
+	if (s->missedAnimation == 0) {
 		return;
-	else if (s->missedAnimation == uint32(-1)) {
+	} else if (s->missedAnimation == uint32(-1)) {
 		uint32 last = _background->decoder->getFrameCount()-1;
 		_background->decoder->forceSeekToFrame(last);
 		_masks->decoder->forceSeekToFrame(last);
-		return;
+	} else {
+		s->missedAnimation = s->missedAnimation + 3;
+		_background->decoder->forceSeekToFrame(s->missedAnimation);
+		_masks->decoder->forceSeekToFrame(s->missedAnimation);
 	}
-
-	s->missedAnimation = s->missedAnimation + 3;
-	_background->decoder->forceSeekToFrame(s->missedAnimation);
-	_masks->decoder->forceSeekToFrame(s->missedAnimation);
+	hitPlayer();
 }
 
 bool BoyzEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
