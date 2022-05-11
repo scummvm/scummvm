@@ -403,9 +403,9 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	//
 	// 5. Initialize runtime state of certain game objects
 	//
-	for (int i = 0; i < _G(numguilabels); ++i) {
+	for (auto &label : _GP(guilabels)) {
 		// labels are not clickable by default
-		_GP(guilabels)[i].SetClickable(false);
+		label.SetClickable(false);
 	}
 	_GP(play).gui_draw_order.resize(game.numgui);
 	for (int i = 0; i < game.numgui; ++i)

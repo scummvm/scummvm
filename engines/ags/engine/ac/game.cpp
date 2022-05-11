@@ -1344,21 +1344,21 @@ void game_sprite_updated(int sprnum) {
 	reset_objcache_for_sprite(sprnum);
 
 	// gui backgrounds
-	for (size_t i = 0; i < (size_t)_GP(game).numgui; ++i) {
-		if (_GP(guis)[i].BgImage == sprnum) {
-			_GP(guis)[i].MarkChanged();
+	for (auto &gui : _GP(guis)) {
+		if (gui.BgImage == sprnum) {
+			gui.MarkChanged();
 		}
 	}
 	// gui buttons
-	for (size_t i = 0; i < (size_t)_G(numguibuts); ++i) {
-		if (_GP(guibuts)[i].CurrentImage == sprnum) {
-			_GP(guibuts)[i].MarkChanged();
+	for (auto &but : _GP(guibuts)) {
+		if (but.CurrentImage == sprnum) {
+			but.MarkChanged();
 		}
 	}
 	// gui sliders
-	for (size_t i = 0; i < (size_t)_G(numguislider); ++i) {
-		if ((_GP(guislider)[i].BgImage == sprnum) || (_GP(guislider)[i].HandleImage == sprnum)) {
-			_GP(guislider)[i].MarkChanged();
+	for (auto &slider : _GP(guislider)) {
+		if ((slider.BgImage == sprnum) || (slider.HandleImage == sprnum)) {
+			slider.MarkChanged();
 		}
 	}
 	// overlays
@@ -1386,27 +1386,27 @@ void game_sprite_deleted(int sprnum) {
 		}
 	}
 	// gui buttons
-	for (size_t i = 0; i < (size_t)_G(numguibuts); ++i) {
-		if (_GP(guibuts)[i].Image == sprnum)
-			_GP(guibuts)[i].Image = 0;
-		if (_GP(guibuts)[i].MouseOverImage == sprnum)
-			_GP(guibuts)[i].MouseOverImage = 0;
-		if (_GP(guibuts)[i].PushedImage == sprnum)
-			_GP(guibuts)[i].PushedImage = 0;
+	for (auto &but : _GP(guibuts)) {
+		if (but.Image == sprnum)
+			but.Image = 0;
+		if (but.MouseOverImage == sprnum)
+			but.MouseOverImage = 0;
+		if (but.PushedImage == sprnum)
+			but.PushedImage = 0;
 
-		if (_GP(guibuts)[i].CurrentImage == sprnum) {
-			_GP(guibuts)[i].CurrentImage = 0;
-			_GP(guibuts)[i].MarkChanged();
+		if (but.CurrentImage == sprnum) {
+			but.CurrentImage = 0;
+			but.MarkChanged();
 		}
 	}
 	// gui sliders
-	for (size_t i = 0; i < (size_t)_G(numguislider); ++i) {
-		if ((_GP(guislider)[i].BgImage == sprnum) || (_GP(guislider)[i].HandleImage == sprnum))
-			_GP(guislider)[i].MarkChanged();
-		if (_GP(guislider)[i].BgImage == sprnum)
-			_GP(guislider)[i].BgImage = 0;
-		if (_GP(guislider)[i].HandleImage == sprnum)
-			_GP(guislider)[i].HandleImage = 0;
+	for (auto &slider : _GP(guislider)) {
+		if ((slider.BgImage == sprnum) || (slider.HandleImage == sprnum))
+			slider.MarkChanged();
+		if (slider.BgImage == sprnum)
+			slider.BgImage = 0;
+		if (slider.HandleImage == sprnum)
+			slider.HandleImage = 0;
 	}
 	// views
 	for (size_t v = 0; v < (size_t)_GP(game).numviews; ++v) {

@@ -941,7 +941,6 @@ public:
 	 */
 
 	std::vector<AGS::Shared::GUIButton> *_guibuts;
-	int _numguibuts = 0;
 
 	/**@}*/
 
@@ -975,7 +974,6 @@ public:
 	 */
 
 	std::vector<AGS::Shared::GUIInvWindow> *_guiinv;
-	int _numguiinv = 0;
 
 	/**@}*/
 
@@ -986,7 +984,6 @@ public:
 	 */
 
 	std::vector<AGS::Shared::GUILabel> *_guilabels;
-	int _numguilabels = 0;
 
 	/**@}*/
 
@@ -997,7 +994,6 @@ public:
 	 */
 
 	std::vector<AGS::Shared::GUIListBox> *_guilist;
-	int _numguilist = 0;
 
 	/**@}*/
 
@@ -1019,7 +1015,6 @@ public:
 	 */
 
 	std::vector<AGS::Shared::GUISlider> *_guislider;
-	int _numguislider = 0;
 
 	/**@}*/
 
@@ -1030,7 +1025,6 @@ public:
 	 */
 
 	std::vector<AGS::Shared::GUITextBox> *_guitext;
-	int _numguitext = 0;
 
 	/**@}*/
 

@@ -835,45 +835,45 @@ HError ReadGUI(Stream *in, bool is_savegame) {
 	}
 
 	// buttons
-	_G(numguibuts) = in->ReadInt32();
-	_GP(guibuts).resize(_G(numguibuts));
-	for (int i = 0; i < _G(numguibuts); ++i) {
+	size_t numguibuts = static_cast<uint32_t>(in->ReadInt32());
+	_GP(guibuts).resize(numguibuts);
+	for (size_t i = 0; i < numguibuts; ++i) {
 		_GP(guibuts)[i].ReadFromFile(in, GameGuiVersion);
 	}
 	// labels
-	_G(numguilabels) = in->ReadInt32();
-	_GP(guilabels).resize(_G(numguilabels));
-	for (int i = 0; i < _G(numguilabels); ++i) {
+	size_t numguilabels = static_cast<uint32_t>(in->ReadInt32());
+	_GP(guilabels).resize(numguilabels);
+	for (size_t i = 0; i < numguilabels; ++i) {
 		_GP(guilabels)[i].ReadFromFile(in, GameGuiVersion);
 	}
 	// inv controls
-	_G(numguiinv) = in->ReadInt32();
-	_GP(guiinv).resize(_G(numguiinv));
-	for (int i = 0; i < _G(numguiinv); ++i) {
+	size_t numguiinv = static_cast<uint32_t>(in->ReadInt32());
+	_GP(guiinv).resize(numguiinv);
+	for (size_t i = 0; i < numguiinv; ++i) {
 		_GP(guiinv)[i].ReadFromFile(in, GameGuiVersion);
 	}
 
 	if (GameGuiVersion >= kGuiVersion_214) {
 		// sliders
-		_G(numguislider) = in->ReadInt32();
-		_GP(guislider).resize(_G(numguislider));
-		for (int i = 0; i < _G(numguislider); ++i) {
+		size_t numguislider = static_cast<uint32_t>(in->ReadInt32());
+		_GP(guislider).resize(numguislider);
+		for (size_t i = 0; i < numguislider; ++i) {
 			_GP(guislider)[i].ReadFromFile(in, GameGuiVersion);
 		}
 	}
 	if (GameGuiVersion >= kGuiVersion_222) {
 		// text boxes
-		_G(numguitext) = in->ReadInt32();
-		_GP(guitext).resize(_G(numguitext));
-		for (int i = 0; i < _G(numguitext); ++i) {
+		size_t numguitext = static_cast<uint32_t>(in->ReadInt32());
+		_GP(guitext).resize(numguitext);
+		for (size_t i = 0; i < numguitext; ++i) {
 			_GP(guitext)[i].ReadFromFile(in, GameGuiVersion);
 		}
 	}
 	if (GameGuiVersion >= kGuiVersion_230) {
 		// list boxes
-		_G(numguilist) = in->ReadInt32();
-		_GP(guilist).resize(_G(numguilist));
-		for (int i = 0; i < _G(numguilist); ++i) {
+		size_t numguilist = static_cast<uint32_t>(in->ReadInt32());
+		_GP(guilist).resize(numguilist);
+		for (size_t i = 0; i < numguilist; ++i) {
 			_GP(guilist)[i].ReadFromFile(in, GameGuiVersion);
 		}
 	}
@@ -885,32 +885,32 @@ void WriteGUI(Stream *out) {
 	out->WriteInt32(kGuiVersion_Current);
 	out->WriteInt32(_GP(guis).size());
 
-	for (size_t i = 0; i < _GP(guis).size(); ++i) {
-		_GP(guis)[i].WriteToFile(out);
-	} 
-	out->WriteInt32(_G(numguibuts));
-	for (int i = 0; i < _G(numguibuts); ++i) {
-		_GP(guibuts)[i].WriteToFile(out);
+	for (const auto &gui : _GP(guis)) {
+		gui.WriteToFile(out);
 	}
-	out->WriteInt32(_G(numguilabels));
-	for (int i = 0; i < _G(numguilabels); ++i) {
-		_GP(guilabels)[i].WriteToFile(out);
+	out->WriteInt32(static_cast<int32_t>(_GP(guibuts).size()));
+	for (const auto &but : _GP(guibuts)) {
+		but.WriteToFile(out);
 	}
-	out->WriteInt32(_G(numguiinv));
-	for (int i = 0; i < _G(numguiinv); ++i) {
-		_GP(guiinv)[i].WriteToFile(out);
+	out->WriteInt32(static_cast<int32_t>(_GP(guilabels).size()));
+	for (const auto &label : _GP(guilabels)) {
+		label.WriteToFile(out);
 	}
-	out->WriteInt32(_G(numguislider));
-	for (int i = 0; i < _G(numguislider); ++i) {
-		_GP(guislider)[i].WriteToFile(out);
+	out->WriteInt32(static_cast<int32_t>(_GP(guiinv).size()));
+	for (const auto &inv : _GP(guiinv)) {
+		inv.WriteToFile(out);
 	}
-	out->WriteInt32(_G(numguitext));
-	for (int i = 0; i < _G(numguitext); ++i) {
-		_GP(guitext)[i].WriteToFile(out);
+	out->WriteInt32(static_cast<int32_t>(_GP(guislider).size()));
+	for (const auto &slider : _GP(guislider)) {
+		slider.WriteToFile(out);
 	}
-	out->WriteInt32(_G(numguilist));
-	for (int i = 0; i < _G(numguilist); ++i) {
-		_GP(guilist)[i].WriteToFile(out);
+	out->WriteInt32(static_cast<int32_t>(_GP(guitext).size()));
+	for (const auto &tb : _GP(guitext)) {
+		tb.WriteToFile(out);
+	}
+	out->WriteInt32(static_cast<int32_t>(_GP(guilist).size()));
+	for (const auto &list : _GP(guilist)) {
+		list.WriteToFile(out);
 	}
 }
 
