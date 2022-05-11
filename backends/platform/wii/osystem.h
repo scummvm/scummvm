@@ -156,7 +156,7 @@ public:
 #endif
 	int getGraphicsMode() const override;
 	virtual void initSize(uint width, uint height,
-							const Graphics::PixelFormat *format) override;
+							const Graphics::PixelFormat &format) override;
 	int16 getWidth() override;
 	int16 getHeight() override;
 
@@ -190,7 +190,7 @@ public:
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 								int hotspotY, uint32 keycolor,
 								bool dontScale,
-								const Graphics::PixelFormat *format) override;
+								const Graphics::PixelFormat &format) override;
 
 	bool pollEvent(Common::Event &event) override;
 	uint32 getMillis(bool skipRecord = false) override;

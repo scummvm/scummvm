@@ -221,17 +221,12 @@ Common::List<Graphics::PixelFormat> OSystem_Wii::getSupportedFormats() const {
 #endif
 
 void OSystem_Wii::initSize(uint width, uint height,
-							const Graphics::PixelFormat *format) {
+							const Graphics::PixelFormat &format) {
 	bool update = false;
 	gfx_tex_format_t tex_format;
 
 #ifdef USE_RGB_COLOR
-	Graphics::PixelFormat newFormat;
-
-	if (format)
-		newFormat = *format;
-	else
-		newFormat = Graphics::PixelFormat::createFormatCLUT8();
+	Graphics::PixelFormat newFormat = format;
 
 	if (newFormat.bytesPerPixel > 2)
 		newFormat = Graphics::PixelFormat::createFormatCLUT8();
@@ -651,16 +646,13 @@ void OSystem_Wii::warpMouse(int x, int y) {
 void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 									int hotspotY, uint32 keycolor,
 									bool dontScale,
-									const Graphics::PixelFormat *format) {
+									const Graphics::PixelFormat &format) {
 	gfx_tex_format_t tex_format = GFX_TF_PALETTE_RGB5A3;
 	uint tw, th;
 	uint32 oldKeycolor = _mouseKeyColor;
 
 #ifdef USE_RGB_COLOR
-	if (!format)
-		_pfCursor = Graphics::PixelFormat::createFormatCLUT8();
-	else
-		_pfCursor = *format;
+	_pfCursor = format;
 
 	if (_pfCursor.bytesPerPixel > 1) {
 		tex_format = GFX_TF_RGB5A3;

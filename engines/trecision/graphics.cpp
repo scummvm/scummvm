@@ -736,7 +736,7 @@ void GraphicsManager::initCursor() {
 		cursor[cx + cw * i] = cursorColor; // vertical
 	}
 
-	CursorMan.pushCursor(cursor, cw, ch, cx, cy, 0, false, &_screenFormat);
+	CursorMan.pushCursor(cursor, cw, ch, cx, cy, 0, false, _screenFormat);
 }
 
 void GraphicsManager::showCursor() {

@@ -85,7 +85,7 @@ public:
 	void init();
 	bool allocate();
 	void setShakePos(int shakeXOffset, int shakeYOffset);
-	void setScummvmPixelFormat(const Graphics::PixelFormat *format);
+	void setScummvmPixelFormat(const Graphics::PixelFormat &format);
 	const Graphics::PixelFormat &getScummvmPixelFormat() const { return _pixelFormat; }
 	Graphics::Surface *lockAndGetForEditing();
 	void unlock() { setDirty(); } // set dirty here because of changes

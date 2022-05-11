@@ -85,7 +85,7 @@ public:
 	Graphics::PixelFormat getScreenFormat() const override final;
 	Common::List<Graphics::PixelFormat> getSupportedFormats() const override final;
 #endif
-	void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) override final;
+	void initSize(uint width, uint height, const Graphics::PixelFormat &format) override final;
 	void initSizeHint(const Graphics::ModeList &modes) override final;
 	int getScreenChangeID() const override final;
 
@@ -118,7 +118,7 @@ public:
 
 	bool showMouse(bool visible) override final;
 	void warpMouse(int x, int y) override final;
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override final;
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat &format) override final;
 	void setCursorPalette(const byte *colors, uint start, uint num) override final;
 	bool lockMouse(bool lock) override final;
 

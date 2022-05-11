@@ -216,7 +216,7 @@ inline void Cursor::adjustXYForScreenSize(int32 &x, int32 &y) {
 }
 
 // This is only called when we have a new screen
-void Cursor::setScreenPaletteScummvmPixelFormat(const Graphics::PixelFormat *format) {
+void Cursor::setScreenPaletteScummvmPixelFormat(const Graphics::PixelFormat &format) {
 	DEBUG_ENTER_FUNC();
 
 	PSPPixelFormat::Type bufferType = PSPPixelFormat::Type_Unknown;
@@ -237,7 +237,7 @@ void Cursor::setScreenPaletteScummvmPixelFormat(const Graphics::PixelFormat *for
 }
 
 // This is called many many times
-void Cursor::setSizeAndScummvmPixelFormat(uint32 width, uint32 height, const Graphics::PixelFormat *format) {
+void Cursor::setSizeAndScummvmPixelFormat(uint32 width, uint32 height, const Graphics::PixelFormat &format) {
 	DEBUG_ENTER_FUNC();
 
 	PSP_DEBUG_PRINT("useCursorPalette[%s]\n", _useCursorPalette ? "true" : "false");
@@ -272,12 +272,10 @@ void Cursor::setSizeAndScummvmPixelFormat(uint32 width, uint32 height, const Gra
 
 	if (paletteType == PSPPixelFormat::Type_None) {
 		setRendererModePalettized(false);	// use non-palettized mechanism
-		if (format) {
-			if (format->aBits() == 0)
-				_fakeAlpha = true;		// we are treating e.g. 555 as 5551
-			else
-				_fakeAlpha = false;		// we have a genuine alpha channel
-		}
+		if (format.aBits() == 0)
+			_fakeAlpha = true;		// we are treating e.g. 555 as 5551
+		else
+			_fakeAlpha = false;		// we have a genuine alpha channel
 	} else {	// We have a palette
 		_palette.setPixelFormats(paletteType, bufferType);
 		setRendererModePalettized(true);	// use palettized mechanism

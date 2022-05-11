@@ -87,7 +87,7 @@ public:
 	bool setStretchMode(int mode) override;
 	int getStretchMode() const override;
 #endif
-	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL) override;
+	void initSize(uint w, uint h, const Graphics::PixelFormat &format) override;
 	int getScreenChangeID() const override { return _screenChangeCount; }
 
 	void beginGFXTransaction() override;
@@ -123,7 +123,7 @@ public:
 	int16 getOverlayHeight() const override { return _videoMode.overlayHeight; }
 	int16 getOverlayWidth() const override { return _videoMode.overlayWidth; }
 
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override;
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat &format) override;
 	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 #ifdef USE_OSD

@@ -122,8 +122,8 @@ float OSystem_iOS7::getHiDPIScreenFactor() const {
 	return [UIScreen mainScreen].scale;
 }
 
-void OSystem_iOS7::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
-	//printf("initSize(%u, %u, %p)\n", width, height, (const void *)format);
+void OSystem_iOS7::initSize(uint width, uint height, const Graphics::PixelFormat &format) {
+	//printf("initSize(%u, %u, %s)\n", width, height, format.toString().c_str());
 
 	_videoContext->screenWidth = width;
 	_videoContext->screenHeight = height;
@@ -144,19 +144,13 @@ void OSystem_iOS7::initSize(uint width, uint height, const Graphics::PixelFormat
 
 	// In case the client code tries to set up a non supported mode, we will
 	// fall back to CLUT8 and set the transaction error accordingly.
-	if (format && format->bytesPerPixel != 1 && *format != _videoContext->screenTexture.format) {
-		format = 0;
+	if (format.bytesPerPixel != 1 && format != _videoContext->screenTexture.format) {
 		_gfxTransactionError = kTransactionFormatNotSupported;
 	}
 
-	if (!format || format->bytesPerPixel == 1) {
+	if (format.bytesPerPixel == 1) {
 		_framebuffer.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	} else {
-#if 0
-		printf("bytesPerPixel: %u RGBAlosses: %u,%u,%u,%u RGBAshifts: %u,%u,%u,%u\n", format->bytesPerPixel,
-		       format->rLoss, format->gLoss, format->bLoss, format->aLoss,
-		       format->rShift, format->gShift, format->bShift, format->aShift);
-#endif
 		// We directly draw on the screen texture in hi-color mode. Thus
 		// we copy over its settings here and just replace the width and
 		// height to avoid any problems.
@@ -480,15 +474,11 @@ void OSystem_iOS7::dirtyFullOverlayScreen() {
 	}
 }
 
-void OSystem_iOS7::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
-	//printf("setMouseCursor(%p, %u, %u, %i, %i, %u, %d, %p)\n", (const void *)buf, w, h, hotspotX, hotspotY, keycolor, dontScale, (const void *)format);
+void OSystem_iOS7::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat &format) {
+	//printf("setMouseCursor(%p, %u, %u, %i, %i, %u, %d, %s)\n", (const void *)buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format.toString().c_str());
 
-	const Graphics::PixelFormat pixelFormat = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
-#if 0
-	printf("bytesPerPixel: %u RGBAlosses: %u,%u,%u,%u RGBAshifts: %u,%u,%u,%u\n", pixelFormat.bytesPerPixel,
-	       pixelFormat.rLoss, pixelFormat.gLoss, pixelFormat.bLoss, pixelFormat.aLoss,
-	       pixelFormat.rShift, pixelFormat.gShift, pixelFormat.bShift, pixelFormat.aShift);
-#endif
+	const Graphics::PixelFormat pixelFormat = format;
+
 	assert(pixelFormat.bytesPerPixel == 1 || pixelFormat.bytesPerPixel == 2 || pixelFormat.bytesPerPixel == 4);
 
 	if (_mouseBuffer.w != (int16)w || _mouseBuffer.h != (int16)h || _mouseBuffer.format != pixelFormat || !_mouseBuffer.getPixels())

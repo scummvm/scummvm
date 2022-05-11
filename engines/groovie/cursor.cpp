@@ -375,7 +375,7 @@ void Cursor_v2::showFrame(uint16 frame) {
 	int offset = _width * _height * frame * 4;
 	// SDL uses keycolor even though we're using ABGR8888, so just set it to a pink color that isn't used
 	uint32 keycolor = _format.ARGBToColor(0, 255, 128, 255);
-	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _hotspotX, _hotspotY, keycolor, false, &_format);
+	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _hotspotX, _hotspotY, keycolor, false, _format);
 }
 
 void blendCursorPixel(uint32 &d, uint32 &s) {
@@ -433,7 +433,7 @@ void Cursor_v2::show2Cursors(Cursor_v2 *c1, uint16 frame1, Cursor_v2 *c2, uint16
 	uint32 keycolor = format.ARGBToColor(0, 255, 128, 255);
 
 	// replaceCursor copies the buffer, so we're ok to delete it
-	CursorMan.replaceCursor((const byte *)img, width, height, c1->_hotspotX, c1->_hotspotY, keycolor, false, &c1->_format);
+	CursorMan.replaceCursor((const byte *)img, width, height, c1->_hotspotX, c1->_hotspotY, keycolor, false, c1->_format);
 	delete[] img;
 }
 

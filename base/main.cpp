@@ -356,7 +356,7 @@ static void setupGraphics(OSystem &system) {
 		system.setShader(ConfMan.get("shader").c_str());
 		system.setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
 
-		system.initSize(320, 200);
+		system.initSize(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 		// Parse graphics configuration, implicit fallback to defaults set with RegisterDefaults()
 		system.setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));

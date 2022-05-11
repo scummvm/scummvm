@@ -65,54 +65,49 @@ void PSPPixelFormat::set(Type type, bool swap /* = false */) {
 
 // Convert from ScummVM general PixelFormat to our pixel format
 // For buffer and palette.
-void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *pf,
+void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat &pf,
 		PSPPixelFormat::Type &bufferType,
 		PSPPixelFormat::Type &paletteType,
 		bool &swapRedBlue) {
 	swapRedBlue = false;	 // no red-blue swap by default
 	PSPPixelFormat::Type *target = nullptr;	// which one we'll be filling
 
-	if (!pf) {	// Default, pf is NULL
+	if (pf.bytesPerPixel == 1) {
 		bufferType = Type_Palette_8bit;
-		paletteType = Type_5551;
-	} else {	// We have a pf
-		if (pf->bytesPerPixel == 1) {
-			bufferType = Type_Palette_8bit;
-			target = &paletteType;	// The type describes the palette
-		} else if (pf->bytesPerPixel == 2 || pf->bytesPerPixel == 4) {
-			paletteType = Type_None;
-			target = &bufferType;	// The type describes the buffer
-		} else {
-			PSP_ERROR("Unknown bpp[%u] in pixeltype. Reverting to 8bpp\n", pf->bytesPerPixel);
-			bufferType = Type_Palette_8bit;
-			target = &paletteType;	// The type describes the palette
-		}
+		target = &paletteType;	// The type describes the palette
+	} else if (pf.bytesPerPixel == 2 || pf.bytesPerPixel == 4) {
+		paletteType = Type_None;
+		target = &bufferType;	// The type describes the buffer
+	} else {
+		PSP_ERROR("Unknown bpp[%u] in pixeltype. Reverting to 8bpp\n", pf.bytesPerPixel);
+		bufferType = Type_Palette_8bit;
+		target = &paletteType;	// The type describes the palette
+	}
 
-		// Find out the exact type of the target
-		if (pf->rLoss == 3 && pf->bLoss == 3) {
-			if (pf->gLoss == 3)
-				*target = Type_5551;
-			else
-				*target = Type_5650;
-		} else if (pf->rLoss == 4 && pf->gLoss == 4 && pf->bLoss == 4) {
-			*target = Type_4444;
-		} else if (pf->gLoss == 0 && pf->gShift == 8) {
-			*target = Type_8888;
-		} else if ((pf->gLoss == 0 && pf->gShift == 0) ||
-		           (pf->gLoss == 8 && pf->gShift == 0)) {	// Default CLUT8 can have weird values
+	// Find out the exact type of the target
+	if (pf.rLoss == 3 && pf.bLoss == 3) {
+		if (pf.gLoss == 3)
 			*target = Type_5551;
-		} else {
-			PSP_ERROR("Unknown Scummvm pixel format.\n");
-			PSP_ERROR("\trLoss[%d], gLoss[%d], bLoss[%d], aLoss[%d]\n\trShift[%d], gShift[%d], bShift[%d], aShift[%d]\n",
-			          pf->rLoss, pf->gLoss, pf->bLoss, pf->aLoss,
-			          pf->rShift, pf->gShift, pf->bShift, pf->aShift);
-			*target = Type_Unknown;
-		}
+		else
+			*target = Type_5650;
+	} else if (pf.rLoss == 4 && pf.gLoss == 4 && pf.bLoss == 4) {
+		*target = Type_4444;
+	} else if (pf.gLoss == 0 && pf.gShift == 8) {
+		*target = Type_8888;
+	} else if ((pf.gLoss == 0 && pf.gShift == 0) ||
+	           (pf.gLoss == 8 && pf.gShift == 0)) {	// Default CLUT8 can have weird values
+		*target = Type_5551;
+	} else {
+		PSP_ERROR("Unknown Scummvm pixel format.\n");
+		PSP_ERROR("\trLoss[%d], gLoss[%d], bLoss[%d], aLoss[%d]\n\trShift[%d], gShift[%d], bShift[%d], aShift[%d]\n",
+		          pf.rLoss, pf.gLoss, pf.bLoss, pf.aLoss,
+		          pf.rShift, pf.gShift, pf.bShift, pf.aShift);
+		*target = Type_Unknown;
+	}
 
-		if (pf->rShift != 0)	{// We allow backend swap of red and blue
-			swapRedBlue = true;
-			PSP_DEBUG_PRINT("detected red/blue swap\n");
-		}
+	if (pf.rShift != 0)	{// We allow backend swap of red and blue
+		swapRedBlue = true;
+		PSP_DEBUG_PRINT("detected red/blue swap\n");
 	}
 }
 

@@ -136,7 +136,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		transColor = temp.format.RGBToColor(r, g, b);
 	}
 
-	CursorMan.replaceCursor(temp.getPixels(), temp.w, temp.h, hotspot.x, hotspot.y, transColor, false, &temp.format);
+	CursorMan.replaceCursor(temp.getPixels(), temp.w, temp.h, hotspot.x, hotspot.y, transColor, false, temp.format);
 }
 
 void CursorManager::setCursorType(CursorType type) {

@@ -319,7 +319,7 @@ int OSystem_N64::getGraphicsMode() const {
 	return _graphicMode;
 }
 
-void OSystem_N64::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
+void OSystem_N64::initSize(uint width, uint height, const Graphics::PixelFormat &format) {
 	_gameWidth = width;
 	_gameHeight = height;
 
@@ -758,7 +758,7 @@ void OSystem_N64::warpMouse(int x, int y) {
 	_dirtyOffscreen = true;
 }
 
-void OSystem_N64::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void OSystem_N64::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat &format) {
 	if (!w || !h) return;
 
 	_mouseHotspotX = hotspotX;

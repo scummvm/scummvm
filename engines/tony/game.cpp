@@ -1569,7 +1569,7 @@ void RMPointer::updateCursor() {
 
 	// Get the raw pixel data and set the cursor to it
 	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	CursorMan.replaceCursor(cursorData, 64, 64, _cursorHotspot._x, _cursorHotspot._y, 0, 1, &pixelFormat);
+	CursorMan.replaceCursor(cursorData, 64, 64, _cursorHotspot._x, _cursorHotspot._y, 0, 1, pixelFormat);
 }
 
 /**

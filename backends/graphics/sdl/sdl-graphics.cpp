@@ -86,9 +86,9 @@ bool SdlGraphicsManager::setState(const State &state) {
 		Common::List<Graphics::PixelFormat> supportedFormats = getSupportedFormats();
 		if (!supportedFormats.empty() && Common::find(supportedFormats.begin(), supportedFormats.end(), format) == supportedFormats.end())
 			format = supportedFormats.front();
-		initSize(state.screenWidth, state.screenHeight, &format);
+		initSize(state.screenWidth, state.screenHeight, format);
 #else
-		initSize(state.screenWidth, state.screenHeight, nullptr);
+		initSize(state.screenWidth, state.screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 #endif
 		setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
 		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);

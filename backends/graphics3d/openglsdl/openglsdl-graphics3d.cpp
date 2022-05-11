@@ -230,7 +230,7 @@ int OpenGLSdlGraphics3dManager::getGraphicsMode() const {
 	return 0;
 }
 
-void OpenGLSdlGraphics3dManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
+void OpenGLSdlGraphics3dManager::initSize(uint w, uint h, const Graphics::PixelFormat &format) {
 	_engineRequestedWidth = w;
 	_engineRequestedHeight = h;
 	if (_transactionMode == kTransactionNone)

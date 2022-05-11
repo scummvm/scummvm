@@ -100,7 +100,7 @@ public:
 	virtual void clearFocusRectangle() {}
 
 	virtual void initSize(uint width, uint height,
-	                      const Graphics::PixelFormat *format) override;
+	                      const Graphics::PixelFormat &format) override;
 	virtual int getScreenChangeID() const override;
 
 	virtual bool showMouse(bool visible) override;
@@ -109,7 +109,7 @@ public:
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 	                            int hotspotY, uint32 keycolor,
 	                            bool dontScale,
-	                            const Graphics::PixelFormat *format) override;
+	                            const Graphics::PixelFormat &format) override;
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 	float getHiDPIScreenFactor() const override;

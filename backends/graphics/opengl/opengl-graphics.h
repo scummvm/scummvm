@@ -91,7 +91,7 @@ public:
 
 	int getScreenChangeID() const override;
 
-	void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;
+	void initSize(uint width, uint height, const Graphics::PixelFormat &format) override;
 
 	int16 getWidth() const override;
 	int16 getHeight() const override;
@@ -116,7 +116,7 @@ public:
 	void clearOverlay() override;
 	void grabOverlay(Graphics::Surface &surface) const override;
 
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) override;
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat &format) override;
 	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 	void displayMessageOnOSD(const Common::U32String &msg) override;

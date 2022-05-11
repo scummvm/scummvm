@@ -600,12 +600,9 @@ void AndroidGraphics3dManager::copyRectToScreen(const void *buf, int pitch,
 }
 
 void AndroidGraphics3dManager::initSize(uint width, uint height,
-                                        const Graphics::PixelFormat *format) {
+                                        const Graphics::PixelFormat &format) {
 	// resize game texture
-	ENTER("%d, %d, %p", width, height, format);
-
-	// We do only 3D with this manager and in 3D there is no format
-	assert(format == nullptr);
+	ENTER("%d, %d, %s", width, height, format.toString().c_str());
 
 	bool engineSupportsArbitraryResolutions = !g_engine ||
 	        g_engine->hasFeature(Engine::kSupportsArbitraryResolutions);
@@ -692,14 +689,14 @@ void AndroidGraphics3dManager::updateCursorScaling() {
 void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
         int hotspotX, int hotspotY,
         uint32 keycolor, bool dontScale,
-        const Graphics::PixelFormat *format) {
-	ENTER("%p, %u, %u, %d, %d, %u, %d, %p", buf, w, h, hotspotX, hotspotY,
-	      keycolor, dontScale, format);
+        const Graphics::PixelFormat &format) {
+	ENTER("%p, %u, %u, %d, %d, %u, %d, %s", buf, w, h, hotspotX, hotspotY,
+	      keycolor, dontScale, format.toString().c_str());
 
 	GLTHREADCHECK;
 
 #ifdef USE_RGB_COLOR
-	if (format && format->bytesPerPixel > 1) {
+	if (format.bytesPerPixel > 1) {
 		if (_mouse_texture != _mouse_texture_rgb) {
 			LOGD("switching to rgb mouse cursor");
 
@@ -745,9 +742,9 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 		byte *tmp = new byte[pitch * h];
 
 		// meh, a n-bit cursor without alpha bits... this is so silly
-		if (!crossBlit(tmp, (const byte *)buf, pitch, w * format->bytesPerPixel, w, h,
+		if (!crossBlit(tmp, (const byte *)buf, pitch, w * format.bytesPerPixel, w, h,
 		               _mouse_texture->getPixelFormat(),
-		               *format)) {
+		               format)) {
 			LOGE("crossblit failed");
 
 			delete[] tmp;
@@ -757,7 +754,7 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 			return;
 		}
 
-		if (format->bytesPerPixel == 2) {
+		if (format.bytesPerPixel == 2) {
 			const uint16 *s = (const uint16 *)buf;
 			byte *d = tmp;
 			for (uint16 y = 0; y < h; ++y, d += pitch / 2 - w)
@@ -765,7 +762,7 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 					if (*s++ == (keycolor & 0xffff)) {
 						memset(d, 0, bpp);
 					}
-		} else if (format->bytesPerPixel == 4) {
+		} else if (format.bytesPerPixel == 4) {
 			const uint32 *s = (const uint32 *)buf;
 			byte *d = tmp;
 			for (uint16 y = 0; y < h; ++y, d += pitch / 2 - w)
@@ -774,7 +771,7 @@ void AndroidGraphics3dManager::setMouseCursor(const void *buf, uint w, uint h,
 						memset(d, 0, bpp);
 					}
 		} else {
-			error("AndroidGraphics3dManager::setMouseCursor: invalid bytesPerPixel %d", format->bytesPerPixel);
+			error("AndroidGraphics3dManager::setMouseCursor: invalid bytesPerPixel %d", format.bytesPerPixel);
 		}
 
 		_mouse_texture->updateBuffer(0, 0, w, h, tmp, pitch);

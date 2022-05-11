@@ -403,7 +403,7 @@ void ThemeEngine::refresh() {
 #ifndef USE_RGB_COLOR
 			CursorMan.replaceCursorPalette(_cursorPal, 0, _cursorPalSize);
 #endif
-			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, _cursorTransparent, true, &_cursorFormat);
+			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, _cursorTransparent, true, _cursorFormat);
 		}
 	}
 }
@@ -2069,7 +2069,7 @@ void ThemeEngine::showCursor() {
 #ifndef USE_RGB_COLOR
 		CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
 #endif
-		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, _cursorTransparent, true, &_cursorFormat);
+		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, _cursorTransparent, true, _cursorFormat);
 		CursorMan.showMouse(true);
 	}
 }

@@ -320,8 +320,8 @@ Common::List<Graphics::PixelFormat> OSystem_DS::getSupportedFormats() const {
 	return res;
 }
 
-void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
-	Graphics::PixelFormat actualFormat = format ? *format : _pfCLUT8;
+void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat &format) {
+	Graphics::PixelFormat actualFormat = format;
 	bool isRGB = (actualFormat != _pfCLUT8), swScale = ((_graphicsMode == GFX_SWSCALE) && (width == 320));
 
 	// For Lost in Time, the title screen is displayed in 640x400.
@@ -493,11 +493,11 @@ void OSystem_DS::warpMouse(int x, int y) {
 		_cursorPos = _framebuffer.scaledToReal(x, y);
 }
 
-void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat &format) {
 	if (!buf || w == 0 || h == 0)
 		return;
 
-	Graphics::PixelFormat actualFormat = format ? *format : _pfCLUT8;
+	Graphics::PixelFormat actualFormat = format;
 	if (_cursor.w != (int16)w || _cursor.h != (int16)h || _cursor.format != actualFormat)
 		_cursor.create(w, h, actualFormat);
 	_cursor.copyRectToSurface(buf, w * actualFormat.bytesPerPixel, 0, 0, w, h);

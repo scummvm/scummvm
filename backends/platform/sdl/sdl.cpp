@@ -852,7 +852,7 @@ bool OSystem_SDL::setGraphicsMode(int mode, uint flags) {
 		_graphicsManager->beginGFXTransaction();
 		if (!_graphicsManager->setGraphicsMode(_graphicsModeIds[mode], flags))
 			return false;
-		_graphicsManager->initSize(_gfxManagerState.screenWidth, _gfxManagerState.screenHeight);
+		_graphicsManager->initSize(_gfxManagerState.screenWidth, _gfxManagerState.screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 		_graphicsManager->endGFXTransaction();
 
 		// This failing will probably have bad consequences...

@@ -170,16 +170,11 @@ void Screen::setSize(uint32 width, uint32 height) {
 	_renderer.setDrawWholeBuffer();	// We need to let the renderer know how much to draw
 }
 
-void Screen::setScummvmPixelFormat(const Graphics::PixelFormat *format) {
+void Screen::setScummvmPixelFormat(const Graphics::PixelFormat &format) {
 	DEBUG_ENTER_FUNC();
-	PSP_DEBUG_PRINT("format[%p], _buffer[%p], _palette[%p]\n", format, &_buffer, &_palette);
+	PSP_DEBUG_PRINT("format[%s], _buffer[%p], _palette[%p]\n", format.toString().c_str(), &_buffer, &_palette);
 
-	if (!format) {
-		memset(&_pixelFormat, 0, sizeof(_pixelFormat));
-		_pixelFormat.bytesPerPixel = 1;	// default
-	} else {
-		_pixelFormat = *format;
-	}
+	_pixelFormat = format;
 
 	PSPPixelFormat::Type bufferFormat, paletteFormat;
 	bool swapRedBlue = false;

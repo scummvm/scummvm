@@ -163,7 +163,7 @@ void Draw_v2::animateCursor(int16 cursor) {
 			keyColor = _cursorKeyColors[cursorIndex];
 
 		CursorMan.replaceCursor(_scummvmCursor->getData(),
-				_cursorWidth, _cursorHeight, hotspotX, hotspotY, keyColor, false, &_vm->getPixelFormat());
+				_cursorWidth, _cursorHeight, hotspotX, hotspotY, keyColor, false, _vm->getPixelFormat());
 
 		if (_doCursorPalettes && _doCursorPalettes[cursorIndex]) {
 			CursorMan.replaceCursorPalette(_cursorPalettes + (cursorIndex * 256 * 3),

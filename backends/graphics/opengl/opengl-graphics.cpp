@@ -500,15 +500,9 @@ int OpenGLGraphicsManager::getScreenChangeID() const {
 	return _screenChangeID;
 }
 
-void OpenGLGraphicsManager::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
-	Graphics::PixelFormat requestedFormat;
+void OpenGLGraphicsManager::initSize(uint width, uint height, const Graphics::PixelFormat &format) {
 #ifdef USE_RGB_COLOR
-	if (!format) {
-		requestedFormat = Graphics::PixelFormat::createFormatCLUT8();
-	} else {
-		requestedFormat = *format;
-	}
-	_currentState.gameFormat = requestedFormat;
+	_currentState.gameFormat = format;
 #endif
 
 	_currentState.gameWidth = width;
@@ -756,7 +750,7 @@ void multiplyColorWithAlpha(const byte *src, byte *dst, const uint w, const uint
 }
 } // End of anonymous namespace
 
-void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat &format) {
 
 	_cursorKeyColor = keycolor;
 	_cursorHotspotX = hotspotX;
@@ -769,16 +763,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		return;
 	}
 
-	Graphics::PixelFormat inputFormat;
-#ifdef USE_RGB_COLOR
-	if (format) {
-		inputFormat = *format;
-	} else {
-		inputFormat = Graphics::PixelFormat::createFormatCLUT8();
-	}
-#else
-	inputFormat = Graphics::PixelFormat::createFormatCLUT8();
-#endif
+	Graphics::PixelFormat inputFormat = format;
 
 	// In case the color format has changed we will need to create the texture.
 	if (!_cursor || _cursor->getFormat() != inputFormat) {

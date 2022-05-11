@@ -47,10 +47,10 @@ public:
 		return list;
 	}
 
-	void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) override {
+	void initSize(uint width, uint height, const Graphics::PixelFormat &format) override {
 		_width = width;
 		_height = height;
-		_format = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
+		_format = format;
 	}
 
 	int getScreenChangeID() const override { return 0; }
@@ -83,7 +83,7 @@ public:
 
 	bool showMouse(bool visible) override { return !visible; }
 	void warpMouse(int x, int y) override {}
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override {}
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat &format) override {}
 	void setCursorPalette(const byte *colors, uint start, uint num) override {}
 
 private:

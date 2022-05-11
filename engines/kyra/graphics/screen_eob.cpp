@@ -242,7 +242,7 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 	colorKey = _16bitConversionPalette ? _16bitConversionPalette[colorKey] : colorKey;
 	Graphics::PixelFormat pixelFormat = _system->getScreenFormat();
 
-	CursorMan.replaceCursor(cursor, mouseW * scaleFactor, mouseH * scaleFactor, x * scaleFactor, y * scaleFactor, colorKey, false, &pixelFormat);
+	CursorMan.replaceCursor(cursor, mouseW * scaleFactor, mouseH * scaleFactor, x * scaleFactor, y * scaleFactor, colorKey, false, pixelFormat);
 	if (isMouseVisible())
 		CursorMan.showMouse(true);
 	delete[] cursor;
