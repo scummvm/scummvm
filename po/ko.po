@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-09 17:55+0000\n"
+"POT-Creation-Date: 2022-05-11 20:45+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4299,15 +4299,15 @@ msgstr "경고: 이전 버전에서 저장한 게임을 로드하려고 시도�
 msgid "Load anyway"
 msgstr "확인"
 
-#: engines/bladerunner/bladerunner.cpp:370
+#: engines/bladerunner/bladerunner.cpp:390
 msgid "Failed to initialize resources"
 msgstr "리소스 초기화 실패"
 
-#: engines/bladerunner/bladerunner.cpp:1086
+#: engines/bladerunner/bladerunner.cpp:1143
 msgid "A required game resource was not found"
 msgstr "필요한 게임 리소스를 찾을 수 없습니다"
 
-#: engines/bladerunner/bladerunner.cpp:2607
+#: engines/bladerunner/bladerunner.cpp:2664
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -4317,7 +4317,7 @@ msgstr ""
 "Original Content 모드로 플레이 중입니다. 게임을 완전히 종료하기 전까지 "
 "Restored Cut Content 모드가 활성화됩니다."
 
-#: engines/bladerunner/bladerunner.cpp:2609
+#: engines/bladerunner/bladerunner.cpp:2666
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -4327,7 +4327,7 @@ msgstr ""
 "Cut Content 모드로 플레이 중입니다. 게임을 완전히 종료하기 전까지 Original "
 "Content 모드가 활성화됩니다."
 
-#: engines/bladerunner/bladerunner.cpp:2611
+#: engines/bladerunner/bladerunner.cpp:2668
 msgid "Continue"
 msgstr "계속"
 
