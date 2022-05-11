@@ -759,6 +759,7 @@ HSaveError ReadDynamicSprites(Stream *in, int32_t /*cmp_ver*/, const PreservedPa
 }
 
 HSaveError WriteOverlays(Stream *out) {
+	out->WriteInt32(_GP(screenover).size());
 	for (const auto &over : _GP(screenover)) {
 		over.WriteToFile(out);
 		if (!over.IsSpriteReference())
