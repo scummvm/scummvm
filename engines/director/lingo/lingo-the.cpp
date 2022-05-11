@@ -741,13 +741,16 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = g_lingo->_theResult;
 		break;
 	case kTheRightMouseDown:
-		getTheEntitySTUB(kTheRightMouseDown);
+		d.type = INT;
+		d.u.i = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_RIGHT) ? 1 : 0;
 		break;
 	case kTheRightMouseUp:
-		getTheEntitySTUB(kTheRightMouseUp);
+		d.type = INT;
+		d.u.i = g_system->getEventManager()->getButtonState() & (1 << Common::MOUSE_BUTTON_RIGHT) ? 0 : 1;
 		break;
 	case kTheRomanLingo:
-		getTheEntitySTUB(kTheRomanLingo);
+		d.type = INT;
+		d.u.i = 0;		//Set to FALSE to support non-roman character set in Lingo
 		break;
 	case kTheScummvmVersion:
 		d.type = INT;
