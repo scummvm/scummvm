@@ -4206,7 +4206,9 @@ msgid ""
 "When AdLib is selected, OPL3 features will be used. Depending on the game, "
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
 "stereo."
-msgstr "AdLibを選ぶと、OPL3の機能が使用されます。ゲームによっては音飛び防止、音や楽器の追加、ステレオ対応などの効果が得られます。"
+msgstr ""
+"AdLibを選ぶと、OPL3の機能が使用されます。ゲームによっては音飛び防止、音や楽器"
+"の追加、ステレオ対応などの効果が得られます。"
 
 #: engines/agos/detection.cpp:86
 msgid "Use DOS version music tempos"
@@ -4217,7 +4219,9 @@ msgid ""
 "Selecting this option will play the music using the tempos used by the DOS "
 "version of the game. Otherwise, the faster tempos of the Windows version "
 "will be used."
-msgstr "このオプションを選択すると、DOS版のテンポでBGMが再生されます。選択しない場合、Windows版の(より速い)テンポで再生されます。"
+msgstr ""
+"このオプションを選択すると、DOS版のテンポでBGMが再生されます。選択しない場"
+"合、Windows版の(より速い)テンポで再生されます。"
 
 #: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
