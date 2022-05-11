@@ -467,13 +467,12 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 							s.lastFrame = s.bodyFrames[s.bodyFrames.size() - 1].lastFrame();
 							loadPalette(s.video->decoder->getPalette() + 3*s.paletteOffset, s.paletteOffset, s.paletteSize);
 							_shoots.push_back(s);
-
-							if (!s.noEnemySound) {
-								if (!s.enemySound.empty())
-									playSound(_soundPath + s.enemySound, 1);
-								else if (!arc->enemySound.empty())
-									playSound(_soundPath + arc->enemySound, 1);
-							}
+						}
+						if (!s.noEnemySound) {
+							if (!s.enemySound.empty())
+								playSound(_soundPath + s.enemySound, 1);
+							else if (!arc->enemySound.empty())
+								playSound(_soundPath + arc->enemySound, 1);
 						}
 					}
 				}
