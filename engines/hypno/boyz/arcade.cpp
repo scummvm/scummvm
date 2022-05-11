@@ -243,17 +243,18 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				return false;
 			}
 
-			assert(_shoots[0].interactionFrame > 0);
-			_background->decoder->forceSeekToFrame(_shoots[0].interactionFrame);
-			_masks->decoder->forceSeekToFrame(_shoots[0].interactionFrame);
-			_shoots[0].video = new MVideo(arc->missBoss2Video, Common::Point(0, 0), true, false, false);
-			_shoots[0].lastFrame = _background->decoder->getFrameCount();
-			_shoots[0].destroyed = true;
-			playVideo(*_shoots[0].video);
+			if (_shoots[0].interactionFrame > 0) {
+				_background->decoder->forceSeekToFrame(_shoots[0].interactionFrame);
+				_masks->decoder->forceSeekToFrame(_shoots[0].interactionFrame);
+				_shoots[0].video = new MVideo(arc->missBoss2Video, Common::Point(0, 0), true, false, false);
+				_shoots[0].lastFrame = _background->decoder->getFrameCount();
+				_shoots[0].destroyed = true;
+				playVideo(*_shoots[0].video);
 
-			updateScreen(*_background);
-			updateScreen(*_shoots[0].video);
-			drawScreen();
+				updateScreen(*_background);
+				updateScreen(*_shoots[0].video);
+				drawScreen();
+			}
 			return false;
 		} else if (i == 9 && !secondary) {
 
