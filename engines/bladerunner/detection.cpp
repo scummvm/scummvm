@@ -121,7 +121,17 @@ BladeRunnerMetaEngineDetection::BladeRunnerMetaEngineDetection()
 		BladeRunner::gameDescriptions,
 		sizeof(BladeRunner::gameDescriptions[0]),
 		BladeRunner::bladeRunnerGames,
-		BladeRunner::optionsList) {}
+		BladeRunner::optionsList) {
+		// Setting this, allows the demo files to be copied in the BladeRunner
+		// game data folder and be detected and subsequently launched without
+		// any issues (eg. like ScummVM launching Blade Runner instead of the demo).
+		// Although the demo files are not part of the original game's installation
+		// or CD content, it's nice to support the use case whereby the user
+		// manually copies the demo files in the Blade Runner game data folder
+		// and expects ScummVM to detect both, offer a choice on which to add,
+		// and finally launch the proper one depending on which was added.
+		_flags = kADFlagUseExtraAsHint;
+}
 
 const char *BladeRunnerMetaEngineDetection::getEngineId() const {
 	return "bladerunner";
