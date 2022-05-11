@@ -415,8 +415,8 @@ void DialogueMenu::calculatePosition(int unusedX, int unusedY) {
 	_screenX = _centerX - w / 2;
 	_screenY = _centerY - h / 2;
 
-	_screenX = CLIP(_screenX, 0, 640 - w);
-	_screenY = CLIP(_screenY, 0, 480 - h);
+	_screenX = CLIP(_screenX, 0, BladeRunnerEngine::kOriginalGameWidth  - w);
+	_screenY = CLIP(_screenY, 0, BladeRunnerEngine::kOriginalGameHeight - h);
 
 	_fadeInItemIndex = 0;
 }
@@ -544,8 +544,8 @@ void DialogueMenu::reset() {
 void DialogueMenu::darkenRect(Graphics::Surface &s, int x1, int y1, int x2, int y2) {
 	x1 = MAX(x1, 0);
 	y1 = MAX(y1, 0);
-	x2 = MIN(x2, 640);
-	y2 = MIN(y2, 480);
+	x2 = MIN<int32>(x2, BladeRunnerEngine::kOriginalGameWidth);
+	y2 = MIN<int32>(y2, BladeRunnerEngine::kOriginalGameHeight);
 
 	if (x1 < x2 && y1 < y2) {
 		for (int y = y1; y != y2; ++y) {

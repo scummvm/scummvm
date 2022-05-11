@@ -94,7 +94,7 @@ void ZBuffer::init(int width, int height) {
 }
 
 static int decodePartialZBuffer(const uint8 *src, uint16 *curZBUF, uint32 srcLen) {
-	uint32 dstSize = 640 * 480; // This is taken from global variables?
+	const uint32 dstSize = BladeRunnerEngine::kOriginalGameWidth * BladeRunnerEngine::kOriginalGameHeight;
 	uint32 dstRemain = dstSize;
 
 	uint16 *curzp = curZBUF;

@@ -113,6 +113,9 @@ public:
 	static const int kActorVoiceOver = kActorCount - 1;
 	static const int kMaxCustomConcurrentRepeatableEvents = 20;
 
+	static const int16 kOriginalGameWidth  = 640;
+	static const int16 kOriginalGameHeight = 480;
+
 	// Incremental number to keep track of significant revisions of the ScummVM bladerunner engine
 	// that could potentially introduce incompatibilities with old save files or require special actions to restore compatibility
 	// This is stored in game global variable "kVariableGameVersion"

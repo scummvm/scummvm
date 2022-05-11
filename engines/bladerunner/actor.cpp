@@ -1355,7 +1355,8 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 	if (!voiceOver && _id != BladeRunnerEngine::kActorVoiceOver) {
 #if BLADERUNNER_ORIGINAL_BUGS
 		Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
-		pan = (75 * (2 *  CLIP<int>(screenPosition.x, 0, 640) - 640)) / 640; // map [0..640] to [-75..75]
+		// pan:: map [0..640] to [-75..75]
+		pan = (75 * (2 *  CLIP<int>(screenPosition.x, 0, BladeRunnerEngine::kOriginalGameWidth) - BladeRunnerEngine::kOriginalGameWidth)) / BladeRunnerEngine::kOriginalGameWidth;
 #else
 		// There are a few situations whereby 
 		// the actor is not actually in the set when speaking, 
@@ -1465,7 +1466,8 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 			default:
 				actorScreenPosition = _vm->_view->calculateScreenPosition(_position);
 			}
-			pan	= (75 * (2 *  CLIP<int>(actorScreenPosition.x, 0, 640) - 640)) / 640; // map [0..640] to [-75..75]
+			// map [0..640] to [-75..75]
+			pan	= (75 * (2 *  CLIP<int>(actorScreenPosition.x, 0, BladeRunnerEngine::kOriginalGameWidth) - BladeRunnerEngine::kOriginalGameWidth)) / BladeRunnerEngine::kOriginalGameWidth;
 		}
 		// debug("actor: %d, pan: %d", _id, pan);
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -1583,7 +1585,7 @@ int Actor::soundPan(uint8 overrideRange) const {
 	Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
 	// By default map [0..640] to [-overrideRange..overrideRange] (default range [-35..35])
 	CLIP<int>(overrideRange, 35, 100);
-	return (overrideRange * (2 * CLIP<int>(screenPosition.x, 0, 640) - 640)) / 640;
+	return (overrideRange * (2 * CLIP<int>(screenPosition.x, 0, BladeRunnerEngine::kOriginalGameWidth) - BladeRunnerEngine::kOriginalGameWidth)) / BladeRunnerEngine::kOriginalGameWidth;
 }
 
 bool Actor::isObstacleBetween(const Vector3 &target) {

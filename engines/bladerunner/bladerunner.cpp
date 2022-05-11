@@ -359,8 +359,8 @@ Common::Error BladeRunnerEngine::run() {
 		_screenPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
 	}
 	debug("Using pixel format: %s", _screenPixelFormat.toString().c_str());
-	initGraphics(640, 480, &_screenPixelFormat);
 
+	initGraphics(kOriginalGameWidth, kOriginalGameHeight, &_screenPixelFormat);
 	_system->showMouse(true);
 
 	bool hasSavegames = !SaveFileManager::list(getMetaEngine(), _targetName).empty();
@@ -370,7 +370,7 @@ Common::Error BladeRunnerEngine::run() {
 		return Common::Error(Common::kUnknownError, _("Failed to initialize resources"));
 	}
 
-	// improvement: Use a do-while() loop to handle the normal end-game state
+	// Improvement: Use a do-while() loop to handle the normal end-game state
 	// so that the game won't exit abruptly after end credits
 	do {
 		// additional code for gracefully handling end-game after _endCredits->show()
@@ -402,7 +402,7 @@ Common::Error BladeRunnerEngine::run() {
 
 			if (getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kKiaKeymapId) != nullptr) {
 				// When disabling a keymap, make sure all their active events in the _activeCustomEvents array
-				// are cleared, because as they won't get an explicit "EVENT_CUSTOM_ENGINE_ACTION_END" event.
+				// are cleared, because they won't get an explicit "EVENT_CUSTOM_ENGINE_ACTION_END" event.
 				cleanupPendingRepeatingEvents(BladeRunnerEngine::kKiaKeymapId);
 				getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kKiaKeymapId)->setEnabled(false);
 			}
@@ -548,10 +548,9 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	setDebugger(_debugger);
 
 	// This is the original startup in the game
-
-	_surfaceFront.create(640, 480, screenPixelFormat());
+	_surfaceFront.create(kOriginalGameWidth, kOriginalGameHeight, screenPixelFormat());
 	_surfaceFrontCreated = true;
-	_surfaceBack.create(640, 480, screenPixelFormat());
+	_surfaceBack.create(kOriginalGameWidth, kOriginalGameHeight, screenPixelFormat());
 	_surfaceBackCreated = true;
 
 	_time = new Time(this);
@@ -657,7 +656,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_overlays->init();
 
 	_zbuffer = new ZBuffer();
-	_zbuffer->init(640, 480);
+	_zbuffer->init(kOriginalGameWidth, kOriginalGameHeight);
 
 	int actorCount = (int)_gameInfo->getActorCount();
 	assert(actorCount < kActorCount);
@@ -1200,10 +1199,10 @@ void BladeRunnerEngine::gameTick() {
 		// The surface front pixel format is 32 bit now,
 		// but the _zbuffer->getData() still returns 16bit pixels
 		// We need to copy pixel by pixel, converting each pixel from 16 to 32bit
-		for (int y = 0; y < 480; ++y) {
-			for (int x = 0; x < 640; ++x) {
+		for (int y = 0; y < kOriginalGameHeight; ++y) {
+			for (int x = 0; x < kOriginalGameWidth; ++x) {
 				uint8 a, r, g, b;
-				getGameDataColor(_zbuffer->getData()[y*640 + x], a, r, g, b);
+				getGameDataColor(_zbuffer->getData()[y*kOriginalGameWidth + x], a, r, g, b);
 				void   *dstPixel = _surfaceFront.getBasePtr(x, y);
 				drawPixel(_surfaceFront, dstPixel, _surfaceFront.format.ARGBToColor(a, r, g, b));
 			}
@@ -2743,7 +2742,7 @@ void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) const {
 
 Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 	Graphics::Surface thumbnail;
-	thumbnail.create(640 / 8, 480 / 8, gameDataPixelFormat());
+	thumbnail.create(kOriginalGameWidth / 8, kOriginalGameHeight / 8, gameDataPixelFormat());
 
 	for (int y = 0; y < thumbnail.h; ++y) {
 		for (int x = 0; x < thumbnail.w; ++x) {
