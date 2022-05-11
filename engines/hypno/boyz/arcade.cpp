@@ -277,7 +277,10 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 			if (!_music.empty())
 				playSound(_music, 0, arc->musicRate); // restore music
 
-			_healthTeam[_currentActor] = _healthTeam[_currentActor] - 10;
+			hitPlayer();
+
+			_background->decoder->forceSeekToFrame(_shoots[0].explosionFrames[0].start - 3);
+			_masks->decoder->forceSeekToFrame(_shoots[0].explosionFrames[0].start - 3);
 			return false;
 		} else if (i == 0 && secondary) {
 			// Nothing
@@ -318,7 +321,8 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		_background->decoder->forceSeekToFrame(s->missedAnimation);
 		_masks->decoder->forceSeekToFrame(s->missedAnimation);
 	}
-	hitPlayer();
+	if (s->interactionFrame == 0)
+		hitPlayer();
 }
 
 bool BoyzEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
