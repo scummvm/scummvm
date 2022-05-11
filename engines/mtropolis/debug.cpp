@@ -956,7 +956,7 @@ private:
 	bool declareStatic(const char *name) override;
 	void declareStaticContents(const Common::String &data) override;
 	void declareDynamic(const char *name, const Common::String &data) override;
-	void declareLoose(const char *name, const Common::String &data) override;
+	void declareLoose(const Common::String &data) override;
 
 	Common::SharedPtr<DebugInspector> _inspector;
 
@@ -1033,13 +1033,15 @@ void DebugInspectorWindow::declareDynamic(const char *name, const Common::String
 	_labeledRow[_declLabeledRow].text = data;
 }
 
-void DebugInspectorWindow::declareLoose(const char *name, const Common::String &data) {
+void DebugInspectorWindow::declareLoose(const Common::String &data) {
 	if (_declLabeledRow == _labeledRow.size()) {
-		InspectorLabeledRow row;
-		row.label = name;
-		_labeledRow.push_back(row);
-	}
-	_labeledRow[_declLabeledRow].text = data;
+		InspectorUnlabeledRow row;
+		row.str = data;
+		_unlabeledRow.push_back(row);
+	} else
+		_unlabeledRow[_declLabeledRow].str = data;
+
+	_declUnlabeledRow++;
 }
 
 void DebugInspectorWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) {

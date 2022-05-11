@@ -1253,6 +1253,14 @@ void BooleanVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue
 	dest.setBool(_value);
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void BooleanVariableModifier::debugInspect(IDebugInspectionReport *report) const {
+	VariableModifier::debugInspect(report);
+
+	report->declareDynamic("value", _value ? "true" : "false");
+}
+#endif
+
 Common::SharedPtr<Modifier> BooleanVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new BooleanVariableModifier(*this));
 }
@@ -1306,6 +1314,14 @@ void IntegerVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue
 	dest.setInt(_value);
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void IntegerVariableModifier::debugInspect(IDebugInspectionReport *report) const {
+	VariableModifier::debugInspect(report);
+
+	report->declareDynamic("value", Common::String::format("%i", _value));
+}
+#endif
+
 Common::SharedPtr<Modifier> IntegerVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new IntegerVariableModifier(*this));
 }
@@ -1358,6 +1374,14 @@ void IntegerRangeVariableModifier::varGetValue(MiniscriptThread *thread, Dynamic
 	dest.setIntRange(_range);
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void IntegerRangeVariableModifier::debugInspect(IDebugInspectionReport *report) const {
+	VariableModifier::debugInspect(report);
+
+	report->declareDynamic("value", _range.toString());
+}
+#endif
+
 Common::SharedPtr<Modifier> IntegerRangeVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new IntegerRangeVariableModifier(*this));
 }
@@ -1389,7 +1413,7 @@ bool VectorVariableModifier::load(ModifierLoaderContext &context, const Data::Ve
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	_vector.angleRadians = data.vector.angleRadians.toDouble();
+	_vector.angleDegrees = data.vector.angleRadians.toDouble() * (180 / M_PI);
 	_vector.magnitude = data.vector.magnitude.toDouble();
 
 	return true;
@@ -1417,7 +1441,7 @@ bool VectorVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValu
 		result.setFloat(_vector.magnitude);
 		return true;
 	} else if (attrib == "angle") {
-		_vector.scriptGetAngleDegrees(result);
+		result.setFloat(_vector.angleDegrees);
 		return true;
 	}
 
@@ -1429,13 +1453,20 @@ MiniscriptInstructionOutcome VectorVariableModifier::writeRefAttribute(Miniscrip
 		DynamicValueWriteFloatHelper<double>::create(&_vector.magnitude, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "angle") {
-		DynamicValueWriteFuncHelper<AngleMagVector, &AngleMagVector::scriptSetAngleDegrees>::create(&_vector, result);
+		DynamicValueWriteFloatHelper<double>::create(&_vector.angleDegrees, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return writeRefAttribute(thread, result, attrib);
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void VectorVariableModifier::debugInspect(IDebugInspectionReport *report) const {
+	VariableModifier::debugInspect(report);
+
+	report->declareDynamic("value", _vector.toString());
+}
+#endif
 
 Common::SharedPtr<Modifier> VectorVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new VectorVariableModifier(*this));
@@ -1450,12 +1481,12 @@ void VectorVariableModifier::SaveLoad::commitLoad() const {
 }
 
 void VectorVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
-	stream->writeDoubleBE(_vector.angleRadians);
+	stream->writeDoubleBE(_vector.angleDegrees);
 	stream->writeDoubleBE(_vector.magnitude);
 }
 
 bool VectorVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
-	_vector.angleRadians = stream->readDoubleBE();
+	_vector.angleDegrees = stream->readDoubleBE();
 	_vector.magnitude = stream->readDoubleBE();
 
 	if (stream->err())
@@ -1490,6 +1521,40 @@ bool PointVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicV
 void PointVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
 	dest.setPoint(_value);
 }
+
+bool PointVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "x") {
+		result.setInt(_value.x);
+		return true;
+	}
+	if (attrib == "y") {
+		result.setInt(_value.y);
+		return true;
+	}
+
+	return VariableModifier::readAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome PointVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "x") {
+		DynamicValueWriteIntegerHelper<int16>::create(&_value.x, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "y") {
+		DynamicValueWriteIntegerHelper<int16>::create(&_value.y, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return writeRefAttribute(thread, writeProxy, attrib);
+}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void PointVariableModifier::debugInspect(IDebugInspectionReport *report) const {
+	VariableModifier::debugInspect(report);
+
+	report->declareDynamic("value", _value.toString());
+}
+#endif
 
 Common::SharedPtr<Modifier> PointVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new PointVariableModifier(*this));
@@ -1546,6 +1611,14 @@ void FloatingPointVariableModifier::varGetValue(MiniscriptThread *thread, Dynami
 	dest.setFloat(_value);
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void FloatingPointVariableModifier::debugInspect(IDebugInspectionReport *report) const {
+	VariableModifier::debugInspect(report);
+
+	report->declareDynamic("value", Common::String::format("%g", _value));
+}
+#endif
+
 Common::SharedPtr<Modifier> FloatingPointVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new FloatingPointVariableModifier(*this));
 }
@@ -1596,6 +1669,14 @@ bool StringVariableModifier::varSetValue(MiniscriptThread *thread, const Dynamic
 void StringVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
 	dest.setString(_value);
 }
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void StringVariableModifier::debugInspect(IDebugInspectionReport *report) const {
+	VariableModifier::debugInspect(report);
+
+	report->declareDynamic("value", _value);
+}
+#endif
 
 Common::SharedPtr<Modifier> StringVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new StringVariableModifier(*this));

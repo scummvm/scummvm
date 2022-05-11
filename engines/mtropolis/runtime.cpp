@@ -290,6 +290,10 @@ MiniscriptInstructionOutcome Point16::refAttrib(MiniscriptThread *thread, Dynami
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
+Common::String Point16::toString() const {
+	return Common::String::format("(%i,%i)", x, y);
+}
+
 bool Rect16::load(const Data::Rect &rect) {
 	top = rect.top;
 	left = rect.left;
@@ -321,6 +325,11 @@ bool IntRange::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy
 
 	return false;
 }
+
+Common::String IntRange::toString() const {
+	return Common::String::format("(%i thru %i)", min, max);
+}
+
 
 bool Label::load(const Data::Label &label) {
 	id = label.labelID;
@@ -366,7 +375,7 @@ void DynamicListDefaultSetter::defaultSet(bool &value) {
 }
 
 void DynamicListDefaultSetter::defaultSet(AngleMagVector &value) {
-	value.angleRadians = 0.0;
+	value.angleDegrees = 0.0;
 	value.magnitude = 0.0;
 }
 
@@ -1834,34 +1843,10 @@ bool VarReference::resolveSingleModifier(Modifier *modifier, Common::WeakPtr<Run
 	return false;
 }
 
-MiniscriptInstructionOutcome AngleMagVector::scriptSetAngleDegrees(MiniscriptThread *thread, const DynamicValue &value) {
-	double degrees = 0.0;
-	switch (value.getType())
-	{
-	case DynamicValueTypes::kInteger:
-		degrees = static_cast<double>(value.getInt());
-		break;
-	case DynamicValueTypes::kFloat:
-		degrees = value.getFloat();
-		break;
-	default:
-		return kMiniscriptInstructionOutcomeFailed;
-	}
-
-	angleRadians = degrees * (M_PI / 180.0);
-
-	return kMiniscriptInstructionOutcomeContinue;
-	;
-}
-
-void AngleMagVector::scriptGetAngleDegrees(DynamicValue &value) const {
-	value.setFloat(angleRadians * (180.0 / M_PI));
-}
-
 
 MiniscriptInstructionOutcome AngleMagVector::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
 	if (attrib == "angle") {
-		DynamicValueWriteFuncHelper<AngleMagVector, &AngleMagVector::scriptSetAngleDegrees>::create(this, proxy);
+		DynamicValueWriteFloatHelper<double>::create(&angleDegrees, proxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "magnitude") {
@@ -1870,6 +1855,10 @@ MiniscriptInstructionOutcome AngleMagVector::refAttrib(MiniscriptThread *thread,
 	}
 
 	return kMiniscriptInstructionOutcomeFailed;
+}
+
+Common::String AngleMagVector::toString() const {
+	return Common::String::format("(%g deg %g mag)", angleDegrees, magnitude);
 }
 
 void IPlugInModifierRegistrar::registerPlugInModifier(const char *name, const IPlugInModifierFactoryAndDataFactory *loaderFactory) {
@@ -4133,7 +4122,7 @@ void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dis
 			valueStr = Common::String::format("(%i thru %i)", payload.getIntRange().min, payload.getIntRange().max);
 			break;
 		case DynamicValueTypes::kVector:
-			valueStr = Common::String::format("(%g deg %g mag)", payload.getVector().angleRadians * (180.0 / M_PI), payload.getVector().magnitude);
+			valueStr = Common::String::format("(%g deg %g mag)", payload.getVector().angleDegrees, payload.getVector().magnitude);
 			break;
 		case DynamicValueTypes::kString:
 			valueStr = "'" + payload.getString() + "'";

@@ -65,7 +65,7 @@ struct IDebugInspectionReport {
 	virtual void declareDynamic(const char *name, const Common::String &data) = 0;
 
 	// Declares the contents of a loose row
-	virtual void declareLoose(const char *name, const Common::String &data) = 0;
+	virtual void declareLoose(const Common::String &data) = 0;
 };
 
 struct IDebuggable {

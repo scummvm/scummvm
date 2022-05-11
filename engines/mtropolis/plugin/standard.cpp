@@ -105,7 +105,7 @@ MidiFilePlayer::~MidiFilePlayer() {
 }
 
 MidiFilePlayerImpl::MidiFilePlayerImpl(MidiDriver_BASE *outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume)
-	: _file(file), _outputDriver(outputDriver), _parser(nullptr) {
+	: _file(file), _outputDriver(outputDriver), _parser(nullptr), _volume(255) {
 	Common::SharedPtr<MidiParser> parser(MidiParser::createParser_SMF());
 
 	if (file->contents.size() != 0 && parser->loadMusic(&file->contents[0], file->contents.size())) {
@@ -490,6 +490,15 @@ bool ObjectReferenceVariableModifier::varSetValue(MiniscriptThread *thread, cons
 void ObjectReferenceVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
 	dest.setObject(this->getSelfReference());
 }
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void ObjectReferenceVariableModifier::debugInspect(IDebugInspectionReport *report) const {
+	VariableModifier::debugInspect(report);
+
+	report->declareDynamic("path", _objectPath);
+	report->declareDynamic("fullPath", _fullPath);
+}
+#endif
 
 Common::SharedPtr<Modifier> ObjectReferenceVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new ObjectReferenceVariableModifier(*this));
@@ -985,6 +994,62 @@ MiniscriptInstructionOutcome ListVariableModifier::writeRefAttributeIndexed(Mini
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void ListVariableModifier::debugInspect(IDebugInspectionReport *report) const {
+	VariableModifier::debugInspect(report);
+
+	size_t listSize = _list->getSize();
+
+	for (size_t i = 0; i < listSize; i++) {
+		int cardinal = i + 1;
+		switch (_list->getType()) {
+		case DynamicValueTypes::kInteger:
+			report->declareLoose(Common::String::format("[%i] = %i", cardinal, _list->getInt()[i]));
+			break;
+		case DynamicValueTypes::kFloat:
+			report->declareLoose(Common::String::format("[%i] = %g", cardinal, _list->getFloat()[i]));
+			break;
+		case DynamicValueTypes::kPoint:
+			report->declareLoose(Common::String::format("[%i] = ", cardinal) + _list->getPoint()[i].toString());
+			break;
+		case DynamicValueTypes::kIntegerRange:
+			report->declareLoose(Common::String::format("[%i] = ", cardinal) + _list->getIntRange()[i].toString());
+			break;
+		case DynamicValueTypes::kBoolean:
+			report->declareLoose(Common::String::format("[%i] = %s", cardinal, _list->getBool()[i] ? "true" : "false"));
+			break;
+		case DynamicValueTypes::kVector:
+			report->declareLoose(Common::String::format("[%i] = ", cardinal) + _list->getVector()[i].toString());
+			break;
+		case DynamicValueTypes::kLabel:
+			report->declareLoose(Common::String::format("[%i] = Label?", cardinal));
+			break;
+		case DynamicValueTypes::kEvent:
+			report->declareLoose(Common::String::format("[%i] = Event?", cardinal));
+			break;
+		case DynamicValueTypes::kVariableReference:
+			report->declareLoose(Common::String::format("[%i] = VarRef?", cardinal));
+			break;
+		case DynamicValueTypes::kIncomingData:
+			report->declareLoose(Common::String::format("[%i] = IncomingData??", cardinal));
+			break;
+		case DynamicValueTypes::kString:
+			report->declareLoose(Common::String::format("[%i] = ", cardinal) + _list->getString()[i]);
+			break;
+		case DynamicValueTypes::kList:
+			report->declareLoose(Common::String::format("[%i] = List", cardinal));
+			break;
+		case DynamicValueTypes::kObject:
+			report->declareLoose(Common::String::format("[%i] = Object?", cardinal));
+			break;
+		default:
+			report->declareLoose(Common::String::format("[%i] = <BAD TYPE>", cardinal));
+			break;
+		}
+	}
+}
+#endif
+
 ListVariableModifier::ListVariableModifier(const ListVariableModifier &other) {
 	if (other._list)
 		_list = other._list->clone();
@@ -1032,7 +1097,7 @@ void ListVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) c
 			} break;
 		case DynamicValueTypes::kVector: {
 				const AngleMagVector &vec = _list->getVector()[i];
-				stream->writeDoubleBE(vec.angleRadians);
+				stream->writeDoubleBE(vec.angleDegrees);
 				stream->writeDoubleBE(vec.magnitude);
 			} break;
 		case DynamicValueTypes::kBoolean:
@@ -1095,7 +1160,7 @@ bool ListVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
 			} break;
 		case DynamicValueTypes::kVector: {
 				AngleMagVector vec;
-				vec.angleRadians = stream->readDoubleBE();
+				vec.angleDegrees = stream->readDoubleBE();
 				vec.magnitude = stream->readDoubleBE();
 				val.setVector(vec);
 			} break;

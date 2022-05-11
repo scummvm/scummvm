@@ -151,11 +151,23 @@ void MovieElement::deactivate() {
 }
 
 void MovieElement::render(Window *window) {
+	int framesDecodedThisFrame = 0;
 	while (_videoDecoder->needsUpdate()) {
-		_displayFrame = _videoDecoder->decodeNextFrame();
-		if (_playEveryFrame)
-			break;
+		const Graphics::Surface *decodedFrame = _videoDecoder->decodeNextFrame();
+		framesDecodedThisFrame++;
+
+		// GNARLY HACK: QuickTimeDecoder doesn't return true for endOfVideo or false for needsUpdate until it
+		// tries decoding past the end, so we're assuming that the decoded frame memory stays valid until we
+		// actually have a new frame and continuing to use it.
+		if (decodedFrame) {
+			_displayFrame = decodedFrame;
+			if (_playEveryFrame)
+				break;
+		}
 	}
+
+	if (framesDecodedThisFrame > 1)
+		debug(1, "Perf warning: %i video frames decoded in one frame", framesDecodedThisFrame);
 
 	if (_displayFrame) {
 		Graphics::ManagedSurface *target = window->getSurface().get();
