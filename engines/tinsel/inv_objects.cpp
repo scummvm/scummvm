@@ -101,7 +101,7 @@ public:
 		_objects[index].setIconFilm(hFilm);
 	}
 	int GetObjectIndexIfExists(int id) const {
-		for (int i = 0; i < _objects.size(); i++) {
+		for (uint i = 0; i < _objects.size(); i++) {
 			if (_objects[i].getId() == id) {
 				return i;
 			}
