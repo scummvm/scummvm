@@ -528,6 +528,7 @@ bline: FNTOK FILENAME {
 		debugC(1, kHypnoDebugParser, "T %d %d %d", $2, $3, $4);
 	}
 	| TTOK NUM {
+		shoot->interactionFrame = $2;
 		debugC(1, kHypnoDebugParser, "T %d", $2);
 	}
 	| TTOK {

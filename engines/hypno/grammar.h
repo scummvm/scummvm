@@ -423,6 +423,7 @@ public:
 		explosionAnimation = "";
 		startFrame = 0;
 		lastFrame = 1024;
+		interactionFrame = 0;
 		noEnemySound = false;
 		isAnimal = false;
 		animalSound = "";
@@ -461,6 +462,7 @@ public:
 	Common::Array<FrameInfo> explosionFrames;
 	uint32 startFrame;
 	uint32 lastFrame;
+	uint32 interactionFrame;
 	Filename explosionAnimation;
 	bool destroyed;
 	bool noEnemySound;

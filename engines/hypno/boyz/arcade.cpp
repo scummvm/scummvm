@@ -243,18 +243,17 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				return false;
 			}
 
-			_background->decoder->pauseVideo(true);
-			MVideo video(arc->missBoss2Video, Common::Point(0, 0), false, true, false);
-			disableCursor();
-			runIntro(video);
-			// Should be currentPalette?
-			loadPalette(arc->backgroundPalette);
-			_background->decoder->pauseVideo(false);
-			updateScreen(*_background);
-			drawScreen();
-			if (!_music.empty())
-				playSound(_music, 0, arc->musicRate); // restore music
+			assert(_shoots[0].interactionFrame > 0);
+			_background->decoder->forceSeekToFrame(_shoots[0].interactionFrame);
+			_masks->decoder->forceSeekToFrame(_shoots[0].interactionFrame);
+			_shoots[0].video = new MVideo(arc->missBoss2Video, Common::Point(0, 0), true, false, false);
+			_shoots[0].lastFrame = _background->decoder->getFrameCount();
+			_shoots[0].destroyed = true;
+			playVideo(*_shoots[0].video);
 
+			updateScreen(*_background);
+			updateScreen(*_shoots[0].video);
+			drawScreen();
 			return false;
 		} else if (i == 9 && !secondary) {
 
@@ -298,7 +297,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 		incTargetsDestroyed();
 		incScore(_shoots[0].pointsToShoot);
 		incBonus(_shoots[0].pointsToShoot);
-		_shoots[i].destroyed = true;
+		_shoots[0].destroyed = true;
 		_background->decoder->forceSeekToFrame(_shoots[0].explosionFrames[0].start - 3);
 		_masks->decoder->forceSeekToFrame(_shoots[0].explosionFrames[0].start - 3);
 		_shoots.clear();
