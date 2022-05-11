@@ -2669,6 +2669,7 @@ case $_host_os in
 		# SDL2 doesn't seem to add Cocoa for us.
 		append_var LIBS "-framework Cocoa"
 		add_line_to_config_mk 'MACOSX = 1'
+		_seq_midi=no
 
 		# Now we may have MacPorts or Fink installed
 		# Which put libraries and headers in non-standard places
