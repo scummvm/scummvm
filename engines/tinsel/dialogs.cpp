@@ -171,7 +171,6 @@ enum PARTS_INDEX {
 #define IX_CURDU ((TinselVersion >= 2) ? IX2_CURDU : IX1_CURDU)
 #define IX_CURLR ((TinselVersion >= 2) ? IX2_CURLR : IX1_CURLR)
 #define IX_CURUD ((TinselVersion >= 2) ? IX2_CURUD : IX1_CURUD)
-#define IX_CURUL ((TinselVersion >= 2) ? IX2_CURUL : IX1_CURUL)
 #define IX_MDGROOVE ((TinselVersion >= 2) ? IX2_MDGROOVE : IX1_MDGROOVE)
 #define IX_MDSLIDER ((TinselVersion >= 2) ? IX2_MDSLIDER : IX1_MDSLIDER)
 #define IX_NTR ((TinselVersion >= 2) ? IX2_NTR : IX1_NTR)
@@ -190,7 +189,6 @@ enum PARTS_INDEX {
 #define FIX_IT 3
 #define FIX_SP 4
 #define FIX_USA 5
-#define HOPEDFORFREELS 6 // Expected flag reels
 //-----------------------
 
 #define MAX_ININV ((TinselVersion >= 2) ? 160 : 150) // Max in an inventory
@@ -214,9 +212,7 @@ enum PARTS_INDEX {
 #define NM_BG_SIZ_X ((TinselVersion >= 2) ? -18 : -3) // }
 #define NM_BG_SIZ_Y ((TinselVersion >= 2) ? -18 : -3) // } How much larger it is than edges
 
-#define NM_RS_T_INSET 3
 #define NM_RS_B_INSET 4
-#define NM_RS_L_INSET 3
 #define NM_RS_R_INSET 4
 #define NM_RS_THICKNESS 5
 #define NM_MOVE_AREA_B_Y 30
@@ -278,7 +274,6 @@ static const int vFillers[MAXVICONS] = {
 
 //----- Data pertinant to configure (incl. load/save game) -----
 
-#define COL_MAINBOX TBLUE1 // Base blue color
 #define COL_BOX TBLUE1
 #define COL_HILIGHT TBLUE4
 
@@ -348,10 +343,6 @@ struct CONFINIT {
 #define FBY 20 // y-offset of first button
 #define FBX 15 // x-offset of first button
 #endif
-
-#define OPTX 33
-#define OPTY 30
-#define BOX_V_SEP 7
 
 #define BOXX 56 // X-position of text boxes
 #define BOXY 50 // Y-position of text boxes
@@ -426,8 +417,6 @@ static CONFBOX* ciOptionBoxLookup[] = {
 /*-------------------------------------------------------------*\
 | These are the load and save game menus.			|
 \*-------------------------------------------------------------*/
-
-#define NUM_RGROUP_BOXES 9
 
 #ifdef JAPAN
 #define NUM_RGROUP_BOXES 7 // number of visible slots
@@ -837,7 +826,6 @@ enum {
 /*-------------------------------------------------------------------------*/
 /***	Magic numbers	***/
 
-#define M_SW 5 // Side width
 #define M_TH 5 // Top height
 #ifdef JAPAN
 #define M_TOFF 6 // Title text Y offset from top

@@ -52,9 +52,7 @@ HPOLYGON InitExtraBlock(MOVER *ca, MOVER *ta);
 //----------------- LOCAL DEFINES --------------------
 
 #define XMDIST	((TinselVersion >= 2) ? 6 : 4)
-#define XHMDIST	((TinselVersion >= 2) ? 3 : 2)
 #define YMDIST	((TinselVersion >= 2) ? 3 : 2)
-#define YHMDIST	((TinselVersion >= 2) ? 3 : 2)
 
 #define XTHERE		1
 #define XRESTRICT	2

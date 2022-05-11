@@ -26,18 +26,12 @@
 #include "tinsel/palette.h"
 #include "tinsel/scene.h"
 #include "tinsel/tinsel.h"
-#include "tinsel/scn.h"
 
 #include "common/textconsole.h"
 
 namespace Tinsel {
 
 //----------------- LOCAL DEFINES --------------------
-
-// Defines used in graphic drawing
-#define CHARPTR_OFFSET 16
-#define CHAR_WIDTH 4
-#define CHAR_HEIGHT 4
 
 extern uint8 g_transPalette[MAX_COLORS];
 

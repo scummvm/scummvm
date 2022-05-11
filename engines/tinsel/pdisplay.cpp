@@ -55,13 +55,6 @@ extern int g_newestString;	// The overrun counter, in STRRES.C
 
 //----------------- LOCAL DEFINES --------------------
 
-#define LPOSX	295		// X-co-ord of lead actor's position display
-#define CPOSX	24		// X-co-ord of cursor's position display
-#define OPOSX	SCRN_CENTER_X	// X-co-ord of overrun counter's display
-#define SPOSX	SCRN_CENTER_X	// X-co-ord of string numbner's display
-
-#define POSY	0		// Y-co-ord of these position displays
-
 enum HotSpotTag {
 	NO_HOTSPOT_TAG,
 	POLY_HOTSPOT_TAG,

@@ -50,9 +50,6 @@ namespace Tinsel {
 #define BMOVIE_EXTENSION	".bmv"
 
 #define SZ_C_BLOB	65
-#define SZ_U_BLOB	128
-
-#define BLANK_SOUND	0x0	// for 16 bit silence
 
 #define PT_A	20	// Number of times PT_B may be reached
 #define PT_B	6
@@ -64,8 +61,6 @@ namespace Tinsel {
 
 #define CD_SLOT_NOP	0x00	// Skip to next slot
 #define CD_LE_FIN	0x01	// End of movie
-#define CD_PDELTA	0x02	// Image compressed to previous one
-#define CD_SDELTA	0x03	// Image self-compressed
 
 #define BIT0		0x01
 
