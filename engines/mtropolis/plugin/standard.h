@@ -131,6 +131,8 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Object Reference Variable Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
@@ -249,6 +251,8 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "List Variable Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:

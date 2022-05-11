@@ -673,6 +673,7 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Boolean Variable Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
@@ -706,6 +707,7 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Integer Variable Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
@@ -739,6 +741,7 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Integer Range Variable Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
@@ -775,6 +778,7 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Vector Variable Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
@@ -805,9 +809,13 @@ public:
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
 	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Point Variable Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
@@ -841,6 +849,7 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Floating Point Variable Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
@@ -874,6 +883,7 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "String Variable Modifier"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:

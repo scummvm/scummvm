@@ -287,6 +287,7 @@ struct Point16 {
 	}
 
 	MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
+	Common::String toString() const;
 };
 
 struct Rect16 {
@@ -333,6 +334,7 @@ struct IntRange {
 	}
 
 	bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
+	Common::String toString() const;
 };
 
 struct Label {
@@ -415,28 +417,33 @@ struct ObjectReference {
 };
 
 struct AngleMagVector {
-	double angleRadians;
+	double angleDegrees; // These are stored as radians in the data but scripts treat them as degrees so it's just pointless constantly doing conversion...
 	double magnitude;
 
 	inline bool operator==(const AngleMagVector &other) const {
-		return angleRadians == other.angleRadians && magnitude == other.magnitude;
+		return angleDegrees == other.angleDegrees && magnitude == other.magnitude;
 	}
 
 	inline bool operator!=(const AngleMagVector &other) const {
 		return !((*this) == other);
 	}
 
-	inline static AngleMagVector create(double angleRadians, double magnitude) {
+	inline static AngleMagVector createRadians(double angleRadians, double magnitude) {
 		AngleMagVector result;
-		result.angleRadians = angleRadians;
+		result.angleDegrees = angleRadians * (180.0 / M_PI);
 		result.magnitude = magnitude;
 		return result;
 	}
 
-	MiniscriptInstructionOutcome scriptSetAngleDegrees(MiniscriptThread *thread, const DynamicValue &value);
-	void scriptGetAngleDegrees(DynamicValue &value) const;
+	inline static AngleMagVector createDegrees(double angleDegrees, double magnitude) {
+		AngleMagVector result;
+		result.angleDegrees = angleDegrees;
+		result.magnitude = magnitude;
+		return result;
+	}
 
 	MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
+	Common::String toString() const;
 };
 
 struct ColorRGB8 {

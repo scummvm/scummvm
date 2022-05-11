@@ -1078,7 +1078,7 @@ MiniscriptInstructionOutcome BuiltinFunc::executeRectToPolar(MiniscriptThread *t
 	double angle = atan2(pt.x, pt.y);
 	double magnitude = sqrt(pt.x * pt.x + pt.y * pt.y);
 
-	returnValue->setVector(AngleMagVector::create(angle, magnitude));
+	returnValue->setVector(AngleMagVector::createRadians(angle, magnitude));
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -1093,8 +1093,8 @@ MiniscriptInstructionOutcome BuiltinFunc::executePolarToRect(MiniscriptThread *t
 
 	const AngleMagVector &vec = inputDynamicValue.getVector();
 
-	double x = cos(vec.angleRadians) * vec.magnitude;
-	double y = sin(vec.angleRadians) * vec.magnitude;
+	double x = cos(vec.angleDegrees * (M_PI / 180.0)) * vec.magnitude;
+	double y = sin(vec.angleDegrees * (M_PI / 180.0)) * vec.magnitude;
 
 	returnValue->setPoint(Point16::create(static_cast<int16>(round(x)), static_cast<int16>(round(y))));
 
@@ -1368,7 +1368,7 @@ MiniscriptInstructionOutcome GetChild::readRValueAttrib(MiniscriptThread *thread
 
 	case DynamicValueTypes::kVector:
 		if (attrib == "angle")
-			valueSrcDest.setFloat(valueSrcDest.getVector().angleRadians * (180.0 / M_PI));
+			valueSrcDest.setFloat(valueSrcDest.getVector().angleDegrees);
 		else if (attrib == "magnitude")
 			valueSrcDest.setFloat(valueSrcDest.getVector().magnitude);
 		else {
