@@ -180,7 +180,15 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 	int ttime = at.time;
 	if (_background->decoder->getCurFrame() > ttime) {
 		if (at.video == "NONE") {
-			if (!arc->additionalSound.empty())
+			if (!at.palette.empty()) {
+				_background->decoder->pauseVideo(true);
+				_currentPalette = at.palette;
+				loadPalette(_currentPalette);
+				_background->decoder->pauseVideo(false);
+				drawPlayer();
+				updateScreen(*_background);
+				drawScreen();
+			} else if (!arc->additionalSound.empty())
 				playSound(arc->additionalSound, 1, arc->additionalSoundRate);
 		} else if (!at.video.empty()) {
 			_background->decoder->pauseVideo(true);

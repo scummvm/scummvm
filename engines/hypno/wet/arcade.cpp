@@ -295,6 +295,11 @@ bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *
 		transitions.pop_front();
 	} else if (_background->decoder->getCurFrame() > ttime) {
 
+		if (at.video == "NONE") {
+			//TODO
+			return true;
+		}
+
 		if (_playerFrameSeps.size() == 1) {
 			_playerFrameStart = _playerFrameEnd + 1;
 			_playerFrameSep = *_playerFrameSeps.begin();
@@ -351,14 +356,12 @@ bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *
 			updateScreen(*_background);
 			drawScreen();
 			drawCursorArcade(g_system->getEventManager()->getMousePos());
-		} else if (!at.sound.empty()) {
-			playSound(at.sound, 1);
+			if (!_music.empty())
+				playSound(_music, 0, arc->musicRate); // restore music
 		} else
 			error ("Invalid transition at %d", ttime);
 
 		transitions.pop_front();
-		if (!_music.empty())
-			playSound(_music, 0, arc->musicRate); // restore music
 		return true;
 	}
 	return false;
