@@ -24,6 +24,10 @@
 
 #include "graphics/surface.h"
 
+#include "audio/audiostream.h"
+
+#include "common/endian.h"
+
 namespace MTropolis {
 
 Asset::Asset() : _assetID(0) {
@@ -50,36 +54,93 @@ AssetType ColorTableAsset::getAssetType() const {
 	return kAssetTypeColorTable;
 }
 
+
+CachedAudio::CachedAudio() {
+}
+
+bool CachedAudio::loadFromStream(const AudioMetadata &metadata, Common::ReadStream *stream, size_t size) {
+	_data.resize(size);
+	if (size > 0) {
+		stream->read(&_data[0], size);
+		if (stream->err())
+			return false;
+
+		if (metadata.encoding == AudioMetadata::kEncodingUncompressed && metadata.bitsPerSample == 16) {
+			int16 *samples = reinterpret_cast<int16 *>(&_data[0]);
+			size_t numSamples = _data.size() / 2;
+
+			if (metadata.isBigEndian) {
+				for (size_t i = 0; i < numSamples; i++)
+					samples[i] = FROM_BE_16(samples[i]);
+			} else {
+				for (size_t i = 0; i < numSamples; i++)
+					samples[i] = FROM_LE_16(samples[i]);
+			}
+		}
+
+		return true;
+	}
+	return true;
+}
+
+const void *CachedAudio::getData() const {
+	if (_data.size() == 0)
+		return nullptr;
+	return &_data[0];
+}
+
+size_t CachedAudio::getSize() const {
+	return _data.size();
+}
+
+size_t CachedAudio::getNumSamples(const AudioMetadata &metadata) const {
+	switch (metadata.encoding) {
+	case AudioMetadata::kEncodingMace6:
+		return _data.size() * 6 / metadata.channels;
+	case AudioMetadata::kEncodingMace3:
+		return _data.size() * 3 / metadata.channels;
+	case AudioMetadata::kEncodingUncompressed:
+		return _data.size() / (metadata.channels * metadata.bitsPerSample / 8);
+	default:
+		return 0;
+	}
+}
+
 bool AudioAsset::load(AssetLoaderContext &context, const Data::AudioAsset &data) {
 	_assetID = data.assetID;
-	_sampleRate = data.sampleRate1;
-	_bitsPerSample = data.bitsPerSample;
+
+	_metadata.reset(new AudioMetadata());
+	_metadata->sampleRate = data.sampleRate1;
+	_metadata->bitsPerSample = data.bitsPerSample;
+
+	_streamIndex = context.streamIndex;
 
 	switch (data.encoding1) {
 	case 0:
-		_encoding = kEncodingUncompressed;
+		_metadata->encoding = AudioMetadata::kEncodingUncompressed;
 		break;
 	case 3:
-		_encoding = kEncodingMace3;
+		_metadata->encoding = AudioMetadata::kEncodingMace3;
 		break;
 	case 4:
-		_encoding = kEncodingMace6;
+		_metadata->encoding = AudioMetadata::kEncodingMace6;
 		break;
 	default:
 		return false;
 	}
 
-	_channels = data.channels;
+	_metadata->channels = data.channels;
 	// Hours Minutes Seconds Hundredths -> msec
 	// Maximum is 0x37a4f52e so this fits in 30 bits
-	_durationMSec = ((((data.codedDuration[0] * 60u) + data.codedDuration[1]) * 60u + data.codedDuration[2]) * 100u + data.codedDuration[3]) * 10u;
+	_metadata->durationMSec = ((((data.codedDuration[0] * 60u) + data.codedDuration[1]) * 60u + data.codedDuration[2]) * 100u + data.codedDuration[3]) * 10u;
 	_filePosition = data.filePosition;
 	_size = data.size;
-	_cuePoints.resize(data.cuePoints.size());
+	_metadata->cuePoints.resize(data.cuePoints.size());
+	_metadata->isBigEndian = data.isBigEndian;
 
-	for (size_t i = 0; i < _cuePoints.size(); i++) {
-		_cuePoints[i].cuePointID = data.cuePoints[i].cuePointID;
-		_cuePoints[i].position = data.cuePoints[i].position;
+	for (size_t i = 0; i < data.cuePoints.size(); i++) {
+		_metadata->cuePoints[i].cuePointID = data.cuePoints[i].cuePointID;
+		_metadata->cuePoints[i].position = data.cuePoints[i].position;
 	}
 
 	return true;
@@ -87,6 +148,41 @@ bool AudioAsset::load(AssetLoaderContext &context, const Data::AudioAsset &data)
 
 AssetType AudioAsset::getAssetType() const {
 	return kAssetTypeAudio;
+}
+
+size_t AudioAsset::getStreamIndex() const {
+	return _streamIndex;
+}
+
+const Common::SharedPtr<AudioMetadata> &AudioAsset::getMetadata() const {
+	return _metadata;
+}
+
+
+const Common::SharedPtr<CachedAudio> &AudioAsset::loadAndCacheAudio(Runtime *runtime) {
+	if (_audioCache)
+		return _audioCache;
+
+	size_t streamIndex = getStreamIndex();
+	int segmentIndex = runtime->getProject()->getSegmentForStreamIndex(streamIndex);
+	runtime->getProject()->openSegmentStream(segmentIndex);
+	Common::SeekableReadStream *stream = runtime->getProject()->getStreamForSegment(segmentIndex);
+
+	if (!stream || !stream->seek(_filePosition)) {
+		warning("Audio asset failed to load, couldn't seek to position");
+		return _audioCache;
+	}
+
+	Common::SharedPtr<CachedAudio> audio(new CachedAudio());
+	if (!audio->loadFromStream(*_metadata, stream, _size)) {
+		warning("Audio asset failed to load, couldn't read data");
+		return _audioCache;
+	}
+
+	_audioCache.reset();
+	_audioCache = audio;
+
+	return _audioCache;
 }
 
 bool MovieAsset::load(AssetLoaderContext &context, const Data::MovieAsset &data) {

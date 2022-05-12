@@ -40,6 +40,12 @@
 
 class OSystem;
 
+namespace Audio {
+
+class Mixer;
+
+} // End of namespace Audio
+
 namespace Common {
 
 class RandomSource;
@@ -1368,7 +1374,7 @@ private:
 
 class Runtime {
 public:
-	explicit Runtime(OSystem *system, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider);
+	explicit Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider);
 
 	bool runFrame();
 	void drawFrame();
@@ -1453,6 +1459,8 @@ public:
 
 	ISaveUIProvider *getSaveProvider() const;
 	ILoadUIProvider *getLoadProvider() const;
+
+	Audio::Mixer *getAudioMixer() const;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
@@ -1589,6 +1597,7 @@ private:
 
 	Scheduler _scheduler;
 	OSystem *_system;
+	Audio::Mixer *_mixer;
 	ISaveUIProvider *_saveProvider;
 	ILoadUIProvider *_loadProvider;
 
@@ -1881,21 +1890,21 @@ private:
 	Common::HashMap<Common::String, const IPlugInModifierFactory *> _factoryRegistry;
 };
 
-struct IPostRenderSignalReceiver {
-	virtual void onPostRender(Runtime *runtime, Project *project) = 0;
+struct IPlayMediaSignalReceiver {
+	virtual void playMedia(Runtime *runtime, Project *project) = 0;
 };
 
-class PostRenderSignaller {
+class PlayMediaSignaller {
 public:
-	PostRenderSignaller();
-	~PostRenderSignaller();
+	PlayMediaSignaller();
+	~PlayMediaSignaller();
 
-	void onPostRender(Runtime *runtime, Project *project);
-	void addReceiver(IPostRenderSignalReceiver *receiver);
-	void removeReceiver(IPostRenderSignalReceiver *receiver);
+	void playMedia(Runtime *runtime, Project *project);
+	void addReceiver(IPlayMediaSignalReceiver *receiver);
+	void removeReceiver(IPlayMediaSignalReceiver *receiver);
 
 private:
-	Common::Array<IPostRenderSignalReceiver *> _receivers;
+	Common::Array<IPlayMediaSignalReceiver *> _receivers;
 };
 
 struct ISegmentUnloadSignalReceiver {
@@ -1955,13 +1964,13 @@ public:
 	void openSegmentStream(int segmentIndex);
 	void closeSegmentStream(int segmentIndex);
 	Common::SeekableReadStream *getStreamForSegment(int segmentIndex);
-	Common::SharedPtr<SegmentUnloadSignaller> notifyOnSegmentUnload(int segmentIndex, ISegmentUnloadSignalReceiver *receiver);
 
 	void onPostRender();
-	Common::SharedPtr<PostRenderSignaller> notifyOnPostRender(IPostRenderSignalReceiver *receiver);
-
 	void onKeyboardEvent(Runtime *runtime, const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
+
+	Common::SharedPtr<SegmentUnloadSignaller> notifyOnSegmentUnload(int segmentIndex, ISegmentUnloadSignalReceiver *receiver);
 	Common::SharedPtr<KeyboardEventSignaller> notifyOnKeyboardEvent(IKeyboardEventReceiver *receiver);
+	Common::SharedPtr<PlayMediaSignaller> notifyOnPlayMedia(IPlayMediaSignalReceiver *receiver);
 
 	const char *findAuthorMessageName(uint32 id) const;
 
@@ -2065,7 +2074,7 @@ private:
 	ObjectLinkingScope _structuralScope;
 	ObjectLinkingScope _modifierScope;
 
-	Common::SharedPtr<PostRenderSignaller> _postRenderSignaller;
+	Common::SharedPtr<PlayMediaSignaller> _playMediaSignaller;
 	Common::SharedPtr<KeyboardEventSignaller> _keyboardEventSignaller;
 
 	Runtime *_runtime;

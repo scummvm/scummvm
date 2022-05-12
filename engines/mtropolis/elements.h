@@ -26,6 +26,8 @@
 #include "mtropolis/runtime.h"
 #include "mtropolis/render.h"
 
+#include "audio/mixer.h"
+
 namespace Video {
 
 class VideoDecoder;
@@ -34,8 +36,17 @@ class VideoDecoder;
 
 namespace MTropolis {
 
+class AudioPlayer;
+class CachedAudio;
 class CachedImage;
+struct AudioMetadata;
 struct ElementLoaderContext;
+
+enum MediaState {
+	kMediaStatePlaying,
+	kMediaStateStopped,
+	kMediaStatePaused,
+};
 
 class GraphicElement : public VisualElement {
 public:
@@ -55,7 +66,7 @@ private:
 	bool _cacheBitmap;
 };
 
-class MovieElement : public VisualElement, public ISegmentUnloadSignalReceiver, public IPostRenderSignalReceiver {
+class MovieElement : public VisualElement, public ISegmentUnloadSignalReceiver, public IPlayMediaSignalReceiver {
 public:
 	MovieElement();
 	~MovieElement();
@@ -68,7 +79,7 @@ public:
 	void deactivate() override;
 
 	void render(Window *window) override;
-	void onPostRender(Runtime *runtime, Project *project) override;
+	void playMedia(Runtime *runtime, Project *project) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Movie Element"; }
@@ -90,13 +101,16 @@ private:
 	bool _reversed;
 	bool _haveFiredAtLastCel;
 	bool _haveFiredAtFirstCel;
+	bool _shouldPlayIfNotPaused;
+	bool _needsReset;	// If true, then the video position was reset by a seek or stop and decoding must be restarted even if the target state is the same as the play state.
+	MediaState _currentPlayState;
 	uint32 _assetID;
 
 	Common::SharedPtr<Video::VideoDecoder> _videoDecoder;
 	const Graphics::Surface *_displayFrame;
 
 	Common::SharedPtr<SegmentUnloadSignaller> _unloadSignaller;
-	Common::SharedPtr<PostRenderSignaller> _postRenderSignaller;
+	Common::SharedPtr<PlayMediaSignaller> _playMediaSignaller;
 
 	Runtime *_runtime;
 };
@@ -198,7 +212,7 @@ private:
 	Runtime *_runtime;
 };
 
-class SoundElement : public NonVisualElement {
+class SoundElement : public NonVisualElement, public IPlayMediaSignalReceiver {
 public:
 	SoundElement();
 	~SoundElement();
@@ -208,8 +222,12 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
 
+	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg);
+
 	void activate() override;
 	void deactivate() override;
+
+	void playMedia(Runtime *runtime, Project *project) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Sound Element"; }
@@ -221,6 +239,12 @@ private:
 	MiniscriptInstructionOutcome scriptSetVolume(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetBalance(MiniscriptThread *thread, const DynamicValue &value);
 
+	struct StartPlayingTaskData {
+		Runtime *runtime;
+	};
+
+	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
+
 	void setLoop(bool loop);
 	void setVolume(uint16 volume);
 	void setBalance(int16 balance);
@@ -229,6 +253,15 @@ private:
 	uint16 _rightVolume;
 	int16 _balance;
 	uint32 _assetID;
+
+	Common::SharedPtr<CachedAudio> _cachedAudio;
+	Common::SharedPtr<AudioMetadata> _metadata;
+	Common::SharedPtr<AudioPlayer> _player;
+	uint64 _finishTime;
+	bool _shouldPlayIfNotPaused;
+	bool _needsReset;
+
+	Common::SharedPtr<PlayMediaSignaller> _playMediaSignaller;
 
 	Runtime *_runtime;
 };
