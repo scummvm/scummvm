@@ -71,6 +71,16 @@ This has a bunch of confirmed broken cases:
 - Probably a bunch of other cases.
 
 
+Media play times:
+
+Sounds, QuickTime movies, and mToons can be commanded to play at any time during
+initial scene loads, but their play times start when the scene transition completes.
+This applies even when there is no scene transition because actions that occur
+prior to the drawing of the first frame may change the media's play state.
+Obsidian, for instance, starts with a bunch of sounds in a non-paused state and
+sets them all to paused via a script, so they must not ever play.
+
+
 Object reference liveness:
 
 A lot of things internally go off of an assumption that structural objects and

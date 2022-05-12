@@ -1567,9 +1567,11 @@ DataReadErrorCode AudioAsset::load(DataReader &reader) {
 
 	haveMacPart = false;
 	haveWinPart = false;
+	isBigEndian = false;
 
 	if (reader.getProjectFormat() == Data::ProjectFormat::kProjectFormatMacintosh) {
 		haveMacPart = true;
+		isBigEndian = true;
 
 		if (!reader.readBytes(platform.mac.unknown4) || !reader.readU16(sampleRate1) || !reader.readBytes(platform.mac.unknown5)
 			|| !reader.readU8(bitsPerSample) || !reader.readU8(encoding1) || !reader.readU8(channels)

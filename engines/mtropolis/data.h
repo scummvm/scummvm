@@ -1498,6 +1498,7 @@ struct AudioAsset : public DataObject {
 
 	bool haveMacPart;
 	bool haveWinPart;
+	bool isBigEndian;
 	PlatformPart platform;
 
 protected:

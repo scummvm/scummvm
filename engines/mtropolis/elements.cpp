@@ -32,6 +32,130 @@
 
 namespace MTropolis {
 
+
+// Audio player, this does not support requeueing.  If the sound exhausts, then you must create a
+// new audio player.  In particular, since time is being tracked separately, if the loop status
+// changes when the timer thinks the sound should still be playing, but the sound has actually
+// exhausted, then the sound needs to be requeued.
+class AudioPlayer : public Audio::AudioStream {
+public:
+	AudioPlayer(Audio::Mixer *mixer, byte volume, int8 balance, const Common::SharedPtr<AudioMetadata> &metadata, const Common::SharedPtr<CachedAudio> &audio, bool isLooping, size_t currentPos, size_t startPos, size_t endPos);
+	~AudioPlayer();
+	
+	int readBuffer(int16 *buffer, const int numSamples) override;
+	bool isStereo() const override;
+	int getRate() const override;
+	bool endOfData() const override;
+
+	void sendToMixer(Audio::Mixer *mixer, byte volume, int8 balance);
+	void stop();
+
+private:
+	Common::Mutex _mutex;
+
+	Common::SharedPtr<AudioMetadata> _metadata;
+	Common::SharedPtr<CachedAudio> _audio;
+	Audio::SoundHandle _handle;
+	bool _isLooping;
+	bool _exhausted;
+	size_t _currentPos;
+	size_t _startPos;
+	size_t _endPos;
+	Audio::Mixer *_mixer;
+};
+
+AudioPlayer::AudioPlayer(Audio::Mixer *mixer, byte volume, int8 balance, const Common::SharedPtr<AudioMetadata> &metadata, const Common::SharedPtr<CachedAudio> &audio, bool isLooping, size_t currentPos, size_t startPos, size_t endPos)
+	: _metadata(metadata), _audio(audio), _isLooping(isLooping), _currentPos(currentPos), _startPos(startPos), _endPos(endPos), _exhausted(false), _mixer(nullptr) {
+	if (_startPos >= _endPos) {
+		// ???
+		_exhausted = true;
+		_isLooping = false;
+	}
+	if (_currentPos < _startPos)
+		_currentPos = _startPos;
+
+	if (!_exhausted) {
+		_mixer = mixer;
+		mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, this, -1, volume, balance, DisposeAfterUse::NO);
+	}
+}
+
+AudioPlayer::~AudioPlayer() {
+	stop();
+}
+
+int AudioPlayer::readBuffer(int16 *buffer, const int numSamplesTimesChannelCount) {
+	Common::StackLock lock(_mutex);
+
+	int samplesRead = 0;
+	if (_exhausted)
+		return 0;
+
+	uint8 numChannels = _metadata->channels;
+
+	size_t numSamples = numSamplesTimesChannelCount / numChannels;
+
+	while (numSamples > 0) {
+		size_t samplesAvailable = _endPos - _currentPos;
+		if (samplesAvailable == 0) {
+			if (_isLooping) {
+				_currentPos = _startPos;
+				continue;
+			} else {
+				_exhausted = true;
+				break;
+			}
+		}
+
+		size_t numSamplesThisIteration = numSamples;
+		if (numSamplesThisIteration > samplesAvailable)
+			numSamplesThisIteration = samplesAvailable;
+
+		size_t numSampleValues = numSamplesThisIteration * numChannels;
+		// TODO: Support more formats
+		if (_metadata->bitsPerSample == 8 && _metadata->encoding == AudioMetadata::kEncodingUncompressed) {
+			const uint8 *inSamples = static_cast<const uint8 *>(_audio->getData()) + _currentPos * numChannels;
+			for (int i = 0; i < numSampleValues; i++)
+				buffer[i] = (inSamples[i] - 0x80) * 256;
+		} else if (_metadata->bitsPerSample == 16 && _metadata->encoding == AudioMetadata::kEncodingUncompressed) {
+			const int16 *inSamples = static_cast<const int16 *>(_audio->getData()) + _currentPos * numChannels;
+			memcpy(buffer, inSamples, sizeof(int16) * numSampleValues);
+		}
+
+		buffer += numSampleValues;
+		numSamples -= numSamplesThisIteration;
+
+		samplesRead += numSamplesThisIteration * numChannels;
+		_currentPos += numSamplesThisIteration;
+	}
+
+	return samplesRead;
+}
+
+bool AudioPlayer::isStereo() const {
+	return _metadata->channels == 2;
+}
+
+int AudioPlayer::getRate() const {
+	return _metadata->sampleRate;
+}
+
+bool AudioPlayer::endOfData() const {
+	return _exhausted;
+}
+
+void AudioPlayer::sendToMixer(Audio::Mixer *mixer, byte volume, int8 balance) {
+	mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, this, -1, volume, balance, DisposeAfterUse::NO);
+}
+
+void AudioPlayer::stop() {
+	if (_mixer)
+		_mixer->stopHandle(_handle);
+
+	_exhausted = true;
+	_mixer = nullptr;
+}
+
 GraphicElement::GraphicElement() : _cacheBitmap(false) {
 }
 
@@ -53,14 +177,15 @@ void GraphicElement::render(Window *window) {
 
 MovieElement::MovieElement()
 	: _cacheBitmap(false), _reversed(false), _haveFiredAtFirstCel(false), _haveFiredAtLastCel(false)
-	, _alternate(false), _playEveryFrame(false), _assetID(0), _runtime(nullptr), _displayFrame(nullptr) {
+	, _alternate(false), _playEveryFrame(false), _assetID(0), _runtime(nullptr), _displayFrame(nullptr)
+	, _shouldPlayIfNotPaused(true), _needsReset(true), _currentPlayState(kMediaStateStopped) {
 }
 
 MovieElement::~MovieElement() {
 	if (_unloadSignaller)
 		_unloadSignaller->removeReceiver(this);
-	if (_postRenderSignaller)
-		_postRenderSignaller->removeReceiver(this);
+	if (_playMediaSignaller)
+		_playMediaSignaller->removeReceiver(this);
 }
 
 bool MovieElement::load(ElementLoaderContext &context, const Data::MovieElement &data) {
@@ -87,11 +212,12 @@ VThreadState MovieElement::consumeCommand(Runtime *runtime, const Common::Shared
 		ChangeFlagTaskData *becomeVisibleTaskData = runtime->getVThread().pushTask("MovieElement::changeVisibilityTask", static_cast<VisualElement *>(this), &MovieElement::changeVisibilityTask);
 		becomeVisibleTaskData->desiredFlag = true;
 		becomeVisibleTaskData->runtime = runtime;
+
+		return kVThreadReturn;
 	}
 
-	return kVThreadReturn;
+	return Structural::consumeCommand(runtime, msg);
 }
-
 
 void MovieElement::activate() {
 	Project *project = _runtime->getProject();
@@ -129,7 +255,7 @@ void MovieElement::activate() {
 		_videoDecoder.reset();
 
 	_unloadSignaller = project->notifyOnSegmentUnload(segmentIndex, this);
-	_postRenderSignaller = project->notifyOnPostRender(this);
+	_playMediaSignaller = project->notifyOnPlayMedia(this);
 
 	if (!_paused && _visible) {
 		StartPlayingTaskData *startPlayingTaskData = _runtime->getVThread().pushTask("MovieElement::startPlayingTask", this, &MovieElement::startPlayingTask);
@@ -142,9 +268,9 @@ void MovieElement::deactivate() {
 		_unloadSignaller->removeReceiver(this);
 		_unloadSignaller.reset();
 	}
-	if (_postRenderSignaller) {
-		_postRenderSignaller->removeReceiver(this);
-		_postRenderSignaller.reset();
+	if (_playMediaSignaller) {
+		_playMediaSignaller->removeReceiver(this);
+		_playMediaSignaller.reset();
 	}
 
 	_videoDecoder.reset();
@@ -152,14 +278,30 @@ void MovieElement::deactivate() {
 
 void MovieElement::render(Window *window) {
 	int framesDecodedThisFrame = 0;
-	while (_videoDecoder->needsUpdate()) {
+
+	if (_needsReset) {
+		// TODO: Seek elsewhere
+		_videoDecoder->seekToFrame(0);
 		const Graphics::Surface *decodedFrame = _videoDecoder->decodeNextFrame();
-		framesDecodedThisFrame++;
+		if (decodedFrame) {
+			_displayFrame = decodedFrame;
+			framesDecodedThisFrame++;
+		}
+
+		_needsReset = false;
+	}
+
+	while (_videoDecoder->needsUpdate()) {
+		if (_playEveryFrame && framesDecodedThisFrame > 0)
+			break;
+
+		const Graphics::Surface *decodedFrame = _videoDecoder->decodeNextFrame();
 
 		// GNARLY HACK: QuickTimeDecoder doesn't return true for endOfVideo or false for needsUpdate until it
 		// tries decoding past the end, so we're assuming that the decoded frame memory stays valid until we
 		// actually have a new frame and continuing to use it.
 		if (decodedFrame) {
+			framesDecodedThisFrame++;
 			_displayFrame = decodedFrame;
 			if (_playEveryFrame)
 				break;
@@ -177,9 +319,33 @@ void MovieElement::render(Window *window) {
 	}
 }
 
-void MovieElement::onPostRender(Runtime *runtime, Project *project) {
+void MovieElement::playMedia(Runtime *runtime, Project *project) {
 	if (_videoDecoder) {
-		if (_videoDecoder->isPlaying() && _videoDecoder->endOfVideo()) {
+		if (_shouldPlayIfNotPaused) {
+			if (_paused) {
+				// Goal state is paused
+				if (_videoDecoder->isPlaying()) {
+					_videoDecoder->pauseVideo(true);
+					_currentPlayState = kMediaStatePaused;
+				}
+			} else {
+				// Goal state is playing
+				if (_videoDecoder->isPaused())
+					_videoDecoder->pauseVideo(false);
+				if (!_videoDecoder->isPlaying())
+					_videoDecoder->start();
+
+				_currentPlayState = kMediaStatePlaying;
+			}
+		} else {
+			// Goal state is stopped
+			if (_videoDecoder->isPlaying())
+				_videoDecoder->stop();
+
+			_currentPlayState = kMediaStateStopped;
+		}
+
+		if (_currentPlayState == kMediaStatePlaying && _videoDecoder->endOfVideo()) {
 			if (_alternate) {
 				_reversed = !_reversed;
 				if (!_videoDecoder->setReverse(_reversed)) {
@@ -188,6 +354,7 @@ void MovieElement::onPostRender(Runtime *runtime, Project *project) {
 				}
 			} else {
 				_videoDecoder->stop();
+				_currentPlayState = kMediaStateStopped;
 			}
 
 			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(_reversed ? EventIDs::kAtFirstCel : EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));
@@ -202,16 +369,13 @@ void MovieElement::onSegmentUnloaded(int segmentIndex) {
 }
 
 VThreadState MovieElement::startPlayingTask(const StartPlayingTaskData &taskData) {
-	if (_videoDecoder && !_videoDecoder->isPlaying()) {
-		EventIDs::EventID eventToSend = EventIDs::kPlay;
-		if (_paused) {
-			_paused = false;
-			eventToSend = EventIDs::kUnpause;
-		}
+	if (_videoDecoder) {
+		// TODO: Frame ranges
+		_needsReset = true;
+		_shouldPlayIfNotPaused = true;
+		_paused = false;
 
-		_videoDecoder->start();
-
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(eventToSend, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		taskData.runtime->sendMessageOnVThread(dispatch);
 	}
@@ -388,10 +552,12 @@ void TextLabelElement::deactivate() {
 void TextLabelElement::render(Window *window) {
 }
 
-SoundElement::SoundElement() {
+SoundElement::SoundElement() : _finishTime(0), _shouldPlayIfNotPaused(true), _needsReset(true) {
 }
 
 SoundElement::~SoundElement() {
+	if (_playMediaSignaller)
+		_playMediaSignaller->removeReceiver(this);
 }
 
 bool SoundElement::load(ElementLoaderContext &context, const Data::SoundElement &data) {
@@ -436,10 +602,100 @@ MiniscriptInstructionOutcome SoundElement::writeRefAttribute(MiniscriptThread *t
 	return NonVisualElement::writeRefAttribute(thread, writeProxy, attrib);
 }
 
-void SoundElement::activate() {
+VThreadState SoundElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (Event::create(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
+		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("SoundElement::startPlayingTask", this, &SoundElement::startPlayingTask);
+		startPlayingTaskData->runtime = runtime;
+
+		return kVThreadReturn;
+	}
+
+	return Structural::consumeCommand(runtime, msg);
 }
 
+void SoundElement::activate() {
+	Project *project = _runtime->getProject();
+	Common::SharedPtr<Asset> asset = project->getAssetByID(_assetID).lock();
+
+	if (!asset) {
+		warning("Sound element references asset %i but the asset isn't loaded!", _assetID);
+		return;
+	}
+
+	if (asset->getAssetType() != kAssetTypeAudio) {
+		warning("Sound element assigned an asset that isn't audio");
+		return;
+	}
+
+	_cachedAudio = static_cast<AudioAsset *>(asset.get())->loadAndCacheAudio(_runtime);
+	_metadata = static_cast<AudioAsset *>(asset.get())->getMetadata();
+
+	_playMediaSignaller = project->notifyOnPlayMedia(this);
+
+	if (!_paused) {
+		StartPlayingTaskData *startPlayingTaskData = _runtime->getVThread().pushTask("SoundElement::startPlayingTask", this, &SoundElement::startPlayingTask);
+		startPlayingTaskData->runtime = _runtime;
+	}
+}
+
+
 void SoundElement::deactivate() {
+	if (_playMediaSignaller) {
+		_playMediaSignaller->removeReceiver(this);
+		_playMediaSignaller.reset();
+	}
+
+	_metadata.reset();
+	_cachedAudio.reset();
+	_player.reset();
+}
+
+void SoundElement::playMedia(Runtime *runtime, Project *project) {
+	if (_shouldPlayIfNotPaused) {
+		if (_paused) {
+			// Goal state is paused
+			// TODO: Track pause time
+			_player.reset();
+		} else {
+			// Goal state is playing
+			if (_needsReset) {
+				// TODO: Reset to start time
+				_player.reset();
+				_needsReset = false;
+			}
+
+			if (!_player) {
+				_finishTime = _runtime->getPlayTime() + _metadata->durationMSec;
+
+				_player.reset();
+
+				int normalizedVolume = (_leftVolume + _rightVolume) * 255 / 2;
+				int normalizedBalance = _balance * 127 / 100;
+
+				// TODO: Support ranges
+				size_t numSamples = _cachedAudio->getNumSamples(*_metadata);
+				_player.reset(new AudioPlayer(_runtime->getAudioMixer(), normalizedVolume, normalizedBalance, _metadata, _cachedAudio, _loop, 0, 0, numSamples));
+			}
+
+			// TODO: Check cue points and queue them here
+			
+			if (!_loop && _runtime->getPlayTime() >= _finishTime) {
+				// Don't throw out the handle - It can still be playing but we just treat it like it's not.
+				// If it has anything left, then we let it finish and avoid clipping the sound, but we need
+				// to know that the handle is still here so we can actually stop it if the element is
+				// destroyed, since the stream is tied to the CachedAudio.
+
+				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kStop, 0), DynamicValue(), getSelfReference()));
+				Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+				runtime->queueMessage(dispatch);
+
+				_shouldPlayIfNotPaused = false;
+			}
+		}
+	} else {
+		// Goal state is stopped
+		_player.reset();
+	}
 }
 
 MiniscriptInstructionOutcome SoundElement::scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value) {
@@ -493,6 +749,18 @@ void SoundElement::setVolume(uint16 volume) {
 void SoundElement::setBalance(int16 balance) {
 	_balance = balance;
 	setVolume((_leftVolume + _rightVolume) / 2);
+}
+
+VThreadState SoundElement::startPlayingTask(const StartPlayingTaskData &taskData) {
+	_paused = false;
+	_shouldPlayIfNotPaused = true;
+	_needsReset = true;
+
+	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
+	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+	taskData.runtime->sendMessageOnVThread(dispatch);
+
+	return kVThreadReturn;
 }
 
 } // End of namespace MTropolis

@@ -3158,8 +3158,8 @@ const Common::KeyState &KeyboardInputEvent::getKeyState() const {
 Runtime::SceneStackEntry::SceneStackEntry() {
 }
 
-Runtime::Runtime(OSystem *system, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider)
-	: _system(system), _saveProvider(saveProvider), _loadProvider(loadProvider),
+Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider)
+	: _system(system), _mixer(mixer), _saveProvider(saveProvider), _loadProvider(loadProvider),
 	_nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
 	_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
 	_lastFrameCursor(nullptr), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
@@ -4554,6 +4554,10 @@ ILoadUIProvider *Runtime::getLoadProvider() const {
 	return _loadProvider;
 }
 
+Audio::Mixer *Runtime::getAudioMixer() const {
+	return _mixer;
+}
+
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
 	if (_mainWindow.expired() && _project) {
@@ -4826,24 +4830,24 @@ const IPlugInModifierFactory *ProjectPlugInRegistry::findPlugInModifierFactory(c
 	return it->_value;
 }
 
-PostRenderSignaller::PostRenderSignaller() {
+PlayMediaSignaller::PlayMediaSignaller() {
 }
 
-PostRenderSignaller::~PostRenderSignaller() {
+PlayMediaSignaller::~PlayMediaSignaller() {
 }
 
-void PostRenderSignaller::onPostRender(Runtime *runtime, Project *project) {
+void PlayMediaSignaller::playMedia(Runtime *runtime, Project *project) {
 	const size_t numReceivers = _receivers.size();
 	for (size_t i = 0; i < numReceivers; i++) {
-		_receivers[i]->onPostRender(runtime, project);
+		_receivers[i]->playMedia(runtime, project);
 	}
 }
 
-void PostRenderSignaller::addReceiver(IPostRenderSignalReceiver *receiver) {
+void PlayMediaSignaller::addReceiver(IPlayMediaSignalReceiver *receiver) {
 	_receivers.push_back(receiver);
 }
 
-void PostRenderSignaller::removeReceiver(IPostRenderSignalReceiver* receiver) {
+void PlayMediaSignaller::removeReceiver(IPlayMediaSignalReceiver *receiver) {
 	for (size_t i = 0; i < _receivers.size(); i++) {
 		if (_receivers[i] == receiver) {
 			_receivers.remove_at(i);
@@ -4913,7 +4917,7 @@ Project::Segment::Segment() : weakStream(nullptr) {
 
 Project::Project(Runtime *runtime)
 	: _runtime(runtime), _projectFormat(Data::kProjectFormatUnknown), _isBigEndian(false),
-	  _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false), _postRenderSignaller(new PostRenderSignaller()),
+	  _haveGlobalObjectInfo(false), _haveProjectStructuralDef(false), _playMediaSignaller(new PlayMediaSignaller()),
 	  _keyboardEventSignaller(new KeyboardEventSignaller()) {
 }
 
@@ -5196,12 +5200,12 @@ Common::SharedPtr<SegmentUnloadSignaller> Project::notifyOnSegmentUnload(int seg
 }
 
 void Project::onPostRender() {
-	_postRenderSignaller->onPostRender(_runtime, this);
+	_playMediaSignaller->playMedia(_runtime, this);
 }
 
-Common::SharedPtr<PostRenderSignaller> Project::notifyOnPostRender(IPostRenderSignalReceiver *receiver) {
-	_postRenderSignaller->addReceiver(receiver);
-	return _postRenderSignaller;
+Common::SharedPtr<PlayMediaSignaller> Project::notifyOnPlayMedia(IPlayMediaSignalReceiver *receiver) {
+	_playMediaSignaller->addReceiver(receiver);
+	return _playMediaSignaller;
 }
 
 void Project::onKeyboardEvent(Runtime *runtime, const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) {

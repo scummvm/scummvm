@@ -26,9 +26,14 @@
 #include "mtropolis/runtime.h"
 #include "mtropolis/render.h"
 
+namespace Audio {
+} // End of namespace Audio
+
 namespace MTropolis {
 
 struct AssetLoaderContext;
+struct AudioMetadata;
+class AudioPlayer;
 
 class ColorTableAsset : public Asset {
 public:
@@ -39,8 +44,22 @@ private:
 	ColorRGB8 _colors[256];
 };
 
-class AudioAsset : public Asset {
+class CachedAudio {
 public:
+	CachedAudio();
+
+	bool loadFromStream(const AudioMetadata &metadata, Common::ReadStream *stream, size_t size);
+
+	const void *getData() const;
+	size_t getSize() const;
+
+	size_t getNumSamples(const AudioMetadata &metadata) const;
+
+private:
+	Common::Array<uint8> _data;
+};
+
+struct AudioMetadata {
 	struct CuePoint {
 		uint32 position;
 		uint32 cuePointID;
@@ -52,19 +71,34 @@ public:
 		kEncodingMace6,
 	};
 
+	Encoding encoding;
+	uint32 durationMSec;
+	uint16 sampleRate;
+	uint8 channels;
+	uint8 bitsPerSample;
+	bool isBigEndian;
+
+	Common::Array<CuePoint> cuePoints;
+};
+
+class AudioAsset : public Asset {
+public:
 	bool load(AssetLoaderContext &context, const Data::AudioAsset &data);
 	AssetType getAssetType() const override;
 
+	size_t getStreamIndex() const;
+	const Common::SharedPtr<AudioMetadata> &getMetadata() const;
+
+	const Common::SharedPtr<CachedAudio> &loadAndCacheAudio(Runtime *runtime);
+
 private:
-	uint16 _sampleRate;
-	uint8 _bitsPerSample;
-	Encoding _encoding;
-	uint8 _channels;
-	uint32 _durationMSec;
 	uint32 _filePosition;
 	uint32 _size;
 
-	Common::Array<CuePoint> _cuePoints;
+	size_t _streamIndex;
+
+	Common::SharedPtr<CachedAudio> _audioCache;
+	Common::SharedPtr<AudioMetadata> _metadata;
 };
 
 class MovieAsset : public Asset {
