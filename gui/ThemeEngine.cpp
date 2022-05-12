@@ -1057,7 +1057,8 @@ void ThemeEngine::drawLineSeparator(const Common::Rect &r) {
 	drawDD(kDDSeparator, r);
 }
 
-void ThemeEngine::drawCheckbox(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked, WidgetStateInfo state, bool rtl) {
+void ThemeEngine::drawCheckbox(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked, 
+							   WidgetStateInfo state, bool override, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1087,7 +1088,8 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, int spacing, const Common:
 	}
 
 	if (r2.right > r2.left) {
-		drawDDText(getTextData(dd), getTextColor(dd), r2, str, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
+		TextColor color = override ? GUI::TextColor::kTextColorOverride : getTextColor(dd); 
+		drawDDText(getTextData(dd), color, r2, str, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
 		           _widgets[dd]->_textAlignV);
 	}
 }
