@@ -321,12 +321,16 @@ bline: FNTOK FILENAME {
 		debugC(1, kHypnoDebugParser, "FN %s", $2);
 	}
 	| AVTOK NUM {
+		assert($2 == 0);
+		shoot->nonHostile = true;
 		debugC(1, kHypnoDebugParser, "AV %d", $2);
 	}
 	| ALTOK NUM {
 		debugC(1, kHypnoDebugParser, "AL %d", $2);
 	}
 	| ABTOK NUM {
+		assert($2 == 1);
+		shoot->playInteractionAudio = true;
 		debugC(1, kHypnoDebugParser, "AB %d", $2);
 	}
 	| DTOK LTOK  { debugC(1, kHypnoDebugParser, "D L");

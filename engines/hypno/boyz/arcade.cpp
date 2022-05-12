@@ -210,11 +210,23 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 
 int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 	Common::Point target = computeTargetPosition(mousePos);
-	assert(_shoots.size() <= 1);
+	if (!_mask)
+		return -1;
+
+	uint32 m = _mask->getPixel(target.x, target.y);
+	if (m == 0)
+		return -1;
+
+	int i = 0;
 	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
-		return _mask->getPixel(target.x, target.y) - 1;
+		if (m == it->paletteOffset && !_shoots[i].destroyed)
+			return i;
+		i++;
 	}
-	return -1;
+	if (i == int(_shoots.size()))
+		return -1;
+
+	error("Invalid mask state (%d)!", m);
 }
 
 bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool secondary) {
@@ -237,32 +249,31 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 	if (i < 0) {
 		missNoTarget(arc);
 	} else {
-
-		if (i == 9 && secondary) {
+		debug("Shoot target %s, flag: %d", _shoots[i].name.c_str(), _shoots[i].playInteractionAudio);
+		if (_shoots[i].nonHostile && secondary) {
 			playSound(_soundPath + _heySound[_currentActor], 1);
 
-			if (_shoots[0].isAnimal) {
-				playSound(_soundPath + _shoots[0].animalSound, 1);
+			if (_shoots[i].isAnimal) {
+				playSound(_soundPath + _shoots[i].animalSound, 1);
 				return false;
 			}
 
-			if (_shoots[0].interactionFrame > 0) {
-				_background->decoder->forceSeekToFrame(_shoots[0].interactionFrame);
-				_masks->decoder->forceSeekToFrame(_shoots[0].interactionFrame);
-				_shoots[0].video = new MVideo(arc->missBoss2Video, Common::Point(0, 0), true, false, false);
-				_shoots[0].lastFrame = _background->decoder->getFrameCount();
-				_shoots[0].destroyed = true;
-				playVideo(*_shoots[0].video);
+			if (_shoots[i].interactionFrame > 0) {
+				_background->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
+				_masks->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
+				_additionalVideo = new MVideo(arc->missBoss2Video, Common::Point(0, 0), true, false, false);
+				playVideo(*_additionalVideo);
+				//_shoots[i].lastFrame = _background->decoder->getFrameCount();
+				_shoots[i].destroyed = true;
 
 				updateScreen(*_background);
-				updateScreen(*_shoots[0].video);
 				drawScreen();
 			}
 			return false;
-		} else if (i == 9 && !secondary) {
+		} else if (_shoots[i].nonHostile && !secondary) {
 
 			Common::String filename;
-			if (_shoots[0].isAnimal)
+			if (_shoots[i].isAnimal)
 				filename = _warningAnimals;
 			else {
 				filename = _warningCivilians[_civiliansShoot];
@@ -283,31 +294,32 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 
 			hitPlayer();
 
-			_background->decoder->forceSeekToFrame(_shoots[0].explosionFrames[0].start - 3);
-			_masks->decoder->forceSeekToFrame(_shoots[0].explosionFrames[0].start - 3);
+			_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
+			_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 			return false;
-		} else if (i == 0 && secondary) {
+		} else if (!_shoots[i].nonHostile && secondary) {
 			// Nothing
 			return false;
 		}
 
-		if (i != 0 || secondary)
-			error("Invalid target %d", i);
-
-		if (!_shoots[0].hitSound.empty())
+		if (!_shoots[i].hitSound.empty())
 			playSound(_soundPath + _shoots[i].hitSound, 1);
 
 		incEnemyHits();
-		if (!_shoots[0].deathSound.empty())
+		if (!_shoots[i].deathSound.empty())
 			playSound(_soundPath + _shoots[i].deathSound, 1);
 
+		if (_shoots[i].playInteractionAudio) {
+			_additionalVideo = new MVideo(arc->missBoss2Video, Common::Point(0, 0), true, false, false);
+			playVideo(*_additionalVideo);
+		}
+
 		incTargetsDestroyed();
-		incScore(_shoots[0].pointsToShoot);
-		incBonus(_shoots[0].pointsToShoot);
-		_shoots[0].destroyed = true;
-		_background->decoder->forceSeekToFrame(_shoots[0].explosionFrames[0].start - 3);
-		_masks->decoder->forceSeekToFrame(_shoots[0].explosionFrames[0].start - 3);
-		_shoots.clear();
+		incScore(_shoots[i].pointsToShoot);
+		incBonus(_shoots[i].pointsToShoot);
+		_shoots[i].destroyed = true;
+		_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
+		_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		changeCursor(_crosshairsActive[_currentWeapon], _crosshairsPalette, true);
 	}
 	return false;

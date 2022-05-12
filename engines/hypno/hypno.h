@@ -235,6 +235,7 @@ public:
 	Videos _videosPlaying;
 	Videos _videosLooping;
 	MVideo *_masks;
+	MVideo *_additionalVideo;
 	const Graphics::Surface *_mask;
 
 	// Sounds

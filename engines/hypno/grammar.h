@@ -426,6 +426,8 @@ public:
 		interactionFrame = 0;
 		noEnemySound = false;
 		isAnimal = false;
+		nonHostile = false;
+		playInteractionAudio = false;
 		animalSound = "";
 	}
 	Common::String name;
@@ -464,8 +466,10 @@ public:
 	uint32 lastFrame;
 	uint32 interactionFrame;
 	Filename explosionAnimation;
+	bool playInteractionAudio;
 	bool destroyed;
 	bool noEnemySound;
+	bool nonHostile;
 	bool isAnimal;
 };
 

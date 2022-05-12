@@ -353,6 +353,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			updateScreen(*_background);
 			if (!arc->maskVideo.empty() && _masks->decoder->needsUpdate())
 				_mask = _masks->decoder->decodeNextFrame();
+			if (_additionalVideo && _additionalVideo->decoder->needsUpdate())
+				_additionalVideo->decoder->decodeNextFrame(); // only audio?
 		}
 
 		if (_health <= 0) {
@@ -447,10 +449,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 						s.startFrame = si.timestamp;
 						if (_masks) {
 							s.startFrame = 0;
-							if (_shoots.size() == 0)
-								_shoots.push_back(s);
-							else
-								_shoots[0] = s;
+							_shoots.push_back(s);
 						} else if (it->animation == "NONE") {
 							byte *c = getTargetColor(it->name, _levelId);
 							assert(s.paletteSize == 1 || s.paletteSize == 0);
@@ -568,6 +567,12 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		delete _masks;
 		_mask = nullptr;
 		_masks = nullptr;
+	}
+
+	if (_additionalVideo) {
+		skipVideo(*_additionalVideo);
+		delete _additionalVideo;
+		_additionalVideo = nullptr;
 	}
 
 	_timerStarted = false;
