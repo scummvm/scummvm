@@ -603,6 +603,7 @@ protected:
 	byte _saveLoadFlag = 0, _saveLoadSlot = 0;
 	uint32 _lastSaveTime = 0;
 	bool _saveTemporaryState = false;
+	bool _loadFromLauncher = false;
 	Common::String _saveLoadFileName;
 	Common::String _saveLoadDescription;
 

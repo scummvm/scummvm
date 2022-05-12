@@ -141,7 +141,16 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_gameMD5[i] = (byte)tmpVal;
 	}
 
+	_fileHandle = nullptr;
+
 	// Init all vars
+	_imuse = nullptr;
+	_imuseDigital = nullptr;
+	_musicEngine = nullptr;
+	_townsPlayer = nullptr;
+	_verbs = nullptr;
+	_objs = nullptr;
+	_sound = nullptr;
 	memset(&vm, 0, sizeof(vm));
 	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
 	vm.numNestedScripts = 0;
@@ -2095,6 +2104,7 @@ Common::Error ScummEngine::go() {
 		_saveLoadFlag = 0;
 		runBootscript();
 	} else {
+		_loadFromLauncher = true; // The only purpose of this is triggering the IQ points update for INDY3/4
 		_saveLoadFlag = 0;
 	}
 
@@ -2515,7 +2525,8 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 
 			if (!_saveTemporaryState)
 				_lastSaveTime = _system->getMillis();
-		} else {
+		}
+		else {
 			success = loadState(_saveLoadSlot, _saveTemporaryState, filename);
 			if (!success)
 				errMsg = _("Failed to load saved game from file:\n\n%s");
@@ -2529,8 +2540,9 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 
 			GUI::MessageDialog dialog(buf);
 			runDialog(dialog);
-		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
-			// Display "Save successful" message, except for auto saves
+		}
+		else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
+		 // Display "Save successful" message, except for auto saves
 			Common::U32String buf = Common::U32String::format(_("Successfully saved game in file:\n\n%s"), filename.c_str());
 
 			GUI::TimedMessageDialog dialog(buf, 1500);
@@ -2544,8 +2556,8 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 }
 
 void ScummEngine_v3::scummLoop_handleSaveLoad() {
-	// copy saveLoadFlag as handleSaveLoad() resets it
-	byte saveLoad = _saveLoadFlag;
+	bool processIQPoints = (_game.id == GID_INDY3) && (_saveLoadFlag == 2 || _loadFromLauncher);
+	_loadFromLauncher = false;
 
 	ScummEngine::scummLoop_handleSaveLoad();
 
@@ -2648,10 +2660,8 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 			}
 
 			// update IQ points after loading
-			if (saveLoad == 2) {
-				if (_game.id == GID_INDY3)
-					updateIQPoints();
-			}
+			if (processIQPoints)
+				updateIQPoints();
 
 			redrawVerbs();
 		}
@@ -2661,16 +2671,14 @@ void ScummEngine_v3::scummLoop_handleSaveLoad() {
 	}
 }
 void ScummEngine_v5::scummLoop_handleSaveLoad() {
-	// copy saveLoadFlag as handleSaveLoad() resets it
-	byte saveLoad = _saveLoadFlag;
+	bool processIQPoints = (_game.id == GID_INDY4) && (_saveLoadFlag == 2 || _loadFromLauncher);
+	_loadFromLauncher = false;
 
 	ScummEngine::scummLoop_handleSaveLoad();
 
 	// update IQ points after loading
-	if (saveLoad == 2) {
-		if (_game.id == GID_INDY4)
-			runScript(145, 0, 0, nullptr);
-	}
+	if (processIQPoints)
+		runScript(145, 0, 0, nullptr);
 }
 
 #ifdef ENABLE_SCUMM_7_8
