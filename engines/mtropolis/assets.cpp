@@ -473,10 +473,13 @@ bool TextAsset::load(AssetLoaderContext &context, const Data::TextAsset &data) {
 			return false;
 
 		_bitmapData.reset(new Graphics::Surface());
-		uint16 pitch = (data.pitchBigEndian[0] << 8) + data.pitchBigEndian[1];
+
 		uint16 width = _bitmapRect.getWidth();
 		uint16 height = _bitmapRect.getHeight();
-		if (static_cast<uint32>(pitch * width) != data.bitmapSize) {
+
+		uint16 pitch = (data.pitchBigEndian[0] << 8) + data.pitchBigEndian[1];
+
+		if (static_cast<uint32>(pitch * height) != data.bitmapSize) {
 			// Pitch is normally aligned to 4 bytes, so if this fails, maybe compute it that way?
 			warning("Pre-rendered text bitmap pitch didn't compute to bitmap size correctly, maybe it's wrong?");
 			return false;
