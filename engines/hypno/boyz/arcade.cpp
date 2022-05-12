@@ -349,7 +349,7 @@ bool BoyzEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 	Common::Rect ammoBarBox(320 - _ammoBar[_currentActor].w, 0, 320, _ammoBar[_currentActor].h);
 	if (ammoBarBox.contains(mousePos)) {
 		_ammoTeam[_currentActor] = _weaponMaxAmmo[_currentWeapon];
-		// TODO: play reload sound
+		playSound(_soundPath + _weaponReloadSound[_currentWeapon], 1);
 		return false;
 	}
 	return true;

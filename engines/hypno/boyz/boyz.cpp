@@ -143,6 +143,14 @@ void BoyzEngine::loadAssets() {
 	_weaponShootSound[5] = "shotfire.raw";
 	_weaponShootSound[6] = "glm60fr.raw";
 
+	_weaponReloadSound[0] = "";
+	_weaponReloadSound[1] = "pstlload.raw";
+	_weaponReloadSound[2] = "ak47load.raw";
+	_weaponReloadSound[3] = "dblload.raw";
+	_weaponReloadSound[4] = "m16load.raw";
+	_weaponReloadSound[5] = "shotload.raw";
+	_weaponReloadSound[6] = "glm60rl.raw";
+
 	_heySound[0] = "";
 	_heySound[1] = "lopzheys.raw";
 	_heySound[2] = "lambheys.raw";
