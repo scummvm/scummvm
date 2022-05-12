@@ -707,14 +707,14 @@ void PicButtonWidget::drawWidget() {
 #pragma mark -
 
 CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey), _state(false) {
+	: ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey), _state(false), _override(false) {
 	setFlags(WIDGET_ENABLED);
 	_type = kCheckboxWidget;
 	_spacing = g_gui.xmlEval()->getVar("Globals.Checkbox.Spacing", 15);
 }
 
 CheckboxWidget::CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, name, label, tooltip, cmd, hotkey), _state(false) {
+	: ButtonWidget(boss, name, label, tooltip, cmd, hotkey), _state(false), _override(false) {
 	setFlags(WIDGET_ENABLED);
 	_type = kCheckboxWidget;
 	_spacing = g_gui.xmlEval()->getVar("Globals.Checkbox.Spacing", 15);
@@ -736,9 +736,13 @@ void CheckboxWidget::setState(bool state) {
 	}
 	sendCommand(_cmd, _state);
 }
+	
+void CheckboxWidget::setOverride(bool override) {
+		_override = override; 
+}
 
 void CheckboxWidget::drawWidget() {
-	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, (g_gui.useRTL() && _useRTL));
+	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, _override, (g_gui.useRTL() && _useRTL));
 }
 
 #pragma mark -

@@ -378,6 +378,8 @@ void OptionsDialog::build() {
 		// Fullscreen setting
 		if (g_system->hasFeature(OSystem::kFeatureFullscreenMode)) {
 			_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
+			if (ConfMan.isKeyTemporary("fullscreen"))
+				_fullscreenCheckbox->setOverride(true); 
 		} else {
 			_fullscreenCheckbox->setState(true);
 			_fullscreenCheckbox->setEnabled(false);
@@ -557,8 +559,10 @@ void OptionsDialog::apply() {
 		if (_enableGraphicSettings) {
 			if (ConfMan.getBool("filtering", _domain) != _filteringCheckbox->getState())
 				graphicsModeChanged = true;
-			if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState())
+			if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState()) {
 				graphicsModeChanged = true;
+				_fullscreenCheckbox->setOverride(false); 
+			}
 			if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
 				graphicsModeChanged = true;
 			if (ConfMan.getBool("vsync", _domain) != _vsyncCheckbox->getState())

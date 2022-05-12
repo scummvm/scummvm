@@ -471,7 +471,7 @@ public:
 	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawCheckbox(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked,
-	                  WidgetStateInfo state = kStateEnabled, bool rtl = false);
+	                  WidgetStateInfo state = kStateEnabled, bool override = false, bool rtl = false);
 
 	void drawRadiobutton(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked,
 	                     WidgetStateInfo state = kStateEnabled, bool rtl = false);
