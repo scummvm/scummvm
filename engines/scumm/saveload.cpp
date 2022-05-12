@@ -586,19 +586,6 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 
 	_sound->pauseSounds(false);
 
-	// WORKAROUND: Original save/load script ran this script
-	// after game load, and o2_loadRoomWithEgo() does as well
-	// this script starts character-dependent music
-	//
-	// Fixes bug #3362: MANIACNES: Music Doesn't Start On Load Game
-	if (_game.platform == Common::kPlatformNES) {
-		runScript(5, 0, 0, nullptr);
-
-		if (VAR(224)) {
-			_sound->addSoundToQueue(VAR(224));
-		}
-	}
-
 	_sound->restoreAfterLoad();
 
 	return true;
