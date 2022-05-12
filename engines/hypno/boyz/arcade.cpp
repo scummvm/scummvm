@@ -194,18 +194,19 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 
 			loadPalette(_currentPalette);
 			_background->decoder->pauseVideo(false);
+			if (!_music.empty())
+				playSound(_music, 0, arc->musicRate); // restore music
 			drawPlayer();
 			updateScreen(*_background);
 			drawScreen();
 			drawCursorArcade(g_system->getEventManager()->getMousePos());
 		} else if (!at.sound.empty()) {
-			playSound(at.sound, 1);
+			playSound(at.sound, 1, at.soundRate);
 		} else
 			error ("Invalid transition at %d", ttime);
 
 		transitions.pop_front();
-		if (!_music.empty())
-			playSound(_music, 0, arc->musicRate); // restore music
+
 		return true;
 	}
 	return false;

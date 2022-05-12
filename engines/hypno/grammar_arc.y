@@ -172,7 +172,7 @@ hline: 	CTOK NUM {
 		debugC(1, kHypnoDebugParser, "ON %d", $2);
 	}
 	| TPTOK NONETOK NUM FILENAME {
-		ArcadeTransition at("NONE", $4, "", $3);
+		ArcadeTransition at("NONE", $4, "", 0, $3);
 		g_parsedArc->transitions.push_back(at);
 		debugC(1, kHypnoDebugParser, "Tp %s %d %s", "NONE", $3, $4);
 	}
@@ -180,22 +180,26 @@ hline: 	CTOK NUM {
 		debugC(1, kHypnoDebugParser, "Ts %s %d %d", $2, $3, $4);
 	}
 	| TPTOK FILENAME NUM FILENAME {
-		ArcadeTransition at($2, $4, "", $3);
+		ArcadeTransition at($2, $4, "", 0, $3);
 		g_parsedArc->transitions.push_back(at);
 		debugC(1, kHypnoDebugParser, "Tp %s %d %s", $2, $3, $4);
 	}
 	| TATOK NUM FILENAME flag enc {
-		ArcadeTransition at("", "", $3, $2);
+		uint32 sampleRate = 11025;
+		if (Common::String("22K") == $5 || Common::String("22k") == $5)
+			sampleRate = 22050;
+
+		ArcadeTransition at("", "", $3, sampleRate, $2);
 		g_parsedArc->transitions.push_back(at);
 		debugC(1, kHypnoDebugParser, "Ta %d %s", $2, $3);
 	}
 	| TTOK FILENAME NUM {
-		ArcadeTransition at($2, "", "", $3);
+		ArcadeTransition at($2, "", "", 0, $3);
 		g_parsedArc->transitions.push_back(at);
 		debugC(1, kHypnoDebugParser, "T %s %d", $2, $3);
 	}
 	| TTOK NONETOK NUM {
-		ArcadeTransition at("NONE", "", "", $3);
+		ArcadeTransition at("NONE", "", "", 0, $3);
 		g_parsedArc->transitions.push_back(at);
 		debugC(1, kHypnoDebugParser, "T NONE %d", $3); }
 	| NTOK FILENAME  {
