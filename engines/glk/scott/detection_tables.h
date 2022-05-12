@@ -148,6 +148,8 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRY0("topsecretadv",     "effb411e74dfe3a8d69b57b9bc3a2cef", 15575),
 
 	//ZX Spectrum games
+	DT_ENTRY1("marveladventure", "ZXSpectrum", "0eec511d3cde815c73e5464ab0cdbef9", 40727),
+
 	//11 Mysterious Adventures
 	DT_ENTRY1("goldenbaton", "ZXSpectrum", "cb7dadc9d5f8bce453b9139265e4dd7d", 32060),
 	DT_ENTRY1("timemachine", "ZXSpectrum", "b22d1f4d46c99ff4443d541d3fe424c1", 30928),
