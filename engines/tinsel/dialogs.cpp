@@ -1186,6 +1186,18 @@ const InventoryObject *Dialogs::GetInvObject(int id) {
 }
 
 /**
+ * Convert item ID number to pointer to item's compiled data
+ * i.e. Image data and Glitter code.
+ */
+const InventoryObjectT3 *Dialogs::GetInvObjectT3(int id) {
+	auto object = _invObjects->GetInvObjectT3(id);
+	if (!object) {
+		error("GetInvObjectT3(%d): Trying to manipulate undefined inventory icon", id);
+	}
+	return object;
+}
+
+/**
  * Returns true if the given id represents a valid inventory object
  */
 bool Dialogs::GetIsInvObject(int id) {
