@@ -4217,6 +4217,8 @@ static const uint16 gk2BenchmarkPatch[] = {
 //
 // We fix this by clearing SoundManager's timer state in SoundManager:play.
 //  This prevents the delay timer from ever running while music is playing.
+//  Note that this bug is unrelated to lockups when the music volume slider
+//  is set to its lowest value. We fix that in Sci::Audio32::fadeChannel().
 //
 // Applies to: All versions
 // Responsible method: SoundManager:play
