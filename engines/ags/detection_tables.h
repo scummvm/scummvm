@@ -3664,17 +3664,17 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("kq3plus", "Intro.ags", "06a03fe35791b0578068ab1873455463", 4866555),
 	DEMO_ENTRY_EN("kq9vga", "KQ9DEMO1.exe", "06a03fe35791b0578068ab1873455463", 2635933),
 	DEMO_ENTRY_EN("kumastory", "Kuma Story.exe", "54e966a013d104bf23603c780438d089", 2893472),
-	DEMO_ENTRY("laportenoire", "proute.exe", "06a03fe35791b0578068ab1873455463", 17087125),
-	DEMO_ENTRY("lazytownthenewkid", "newkiddemo1.2.exe", "9cb3c8dc7a8ab9c44815955696be2677", 15515508),
-	DEMO_ENTRY("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75795600),
-	DEMO_ENTRY("leisuresuitlarrylil", "LSL.exe", "34cf71d28e1e9c55934f624969011c7e", 18440862),
-	DEMO_ENTRY("littlesimulatedpeople", "LSP.exe", "9444eb2427a9fc090dde9ab8330a149f", 2622652),
-	DEMO_ENTRY("longexpectedfriday", "LEFRIDAY.exe", "28f82e420b82d07651b68114f90223c8", 7595812),
-	DEMO_ENTRY("loomiireturnoftheswans", "loom2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 9761097),
-	DEMO_ENTRY("lostinparadise", "2paradise.exe", "06a03fe35791b0578068ab1873455463", 37279978),
-	DEMO_ENTRY("lostinthenightmare2", "litn_umtechdemo.exe", "f120690b506dd63cd7d1112ea6af2f77", 3507831),
-	DEMO_ENTRY("lucasmendoza", "Lucas Mendoza - Detective Amateur DEMO v1.0.exe", "211fb66118926f6df948a857715a299c", 17956030),
-	DEMO_ENTRY("lucasmendoza", "Lucas Mendoza - Detective Amateur DEMO v1.0.ags", "1bdac796b6fbcbcfbbe2671965384f99", 14914218),
+	DEMO_ENTRY_EN("laportenoire", "proute.exe", "06a03fe35791b0578068ab1873455463", 17087125),
+	DEMO_ENTRY_EN("lazytownthenewkid", "newkiddemo1.2.exe", "9cb3c8dc7a8ab9c44815955696be2677", 15515508),
+	DEMO_ENTRY_EN("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75795600),
+	DEMO_ENTRY_EN("leisuresuitlarrylil", "LSL.exe", "34cf71d28e1e9c55934f624969011c7e", 18440862),
+	DEMO_ENTRY_EN("littlesimulatedpeople", "LSP.exe", "9444eb2427a9fc090dde9ab8330a149f", 2622652),
+	DEMO_ENTRY_EN("longexpectedfriday", "LEFRIDAY.exe", "28f82e420b82d07651b68114f90223c8", 7595812),
+	DEMO_ENTRY_EN("loomiireturnoftheswans", "loom2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 9761097),
+	DEMO_ENTRY_EN("lostinparadise", "2paradise.exe", "06a03fe35791b0578068ab1873455463", 37279978),
+	DEMO_ENTRY("lostinthenightmare2", "litn_umtechdemo.exe", "f120690b506dd63cd7d1112ea6af2f77", 3507831),  // Eng-Tur
+	DEMO_ENTRY("lucasmendoza", "Lucas Mendoza - Detective Amateur DEMO v1.0.exe", "211fb66118926f6df948a857715a299c", 17956030),  // Eng-Esp
+	DEMO_ENTRY("lucasmendoza", "Lucas Mendoza - Detective Amateur DEMO v1.0.ags", "1bdac796b6fbcbcfbbe2671965384f99", 14914218),  // Eng-Esp
 	DEMO_ENTRY("maelstrom", "Maelstrom Obscura.exe", "b45a11f5a7d53a105bb6cf5927d05086", 1186254833),
 	DETECTION_ENTRY("maniacmansiondott", "Dott-Villa.exe", "06a03fe35791b0578068ab1873455463", 6536886, Common::DE_DEU, "Kitchen Tech Demo", nullptr, ADGF_DEMO),
 	DETECTION_ENTRY("maniacmansiondott", "dott-tech.exe", "06a03fe35791b0578068ab1873455463", 6488944, Common::DE_DEU, "Laboratory Tech Demo", nullptr, ADGF_DEMO),
@@ -5046,106 +5046,107 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("kristmaskrisis", "Kristmas Krisis.exe", "90413e9ae57e222f8913b09d2bc847bc", 2067681),  // En-De
 	GAME_ENTRY_EN("ktx1", "KTX-1.exe", "615e73fc1874e92d60a1996c2330ea36", 13806290),
 	GAME_ENTRY_EN("kumastory", "Kuma Story.exe", "5d82ab003f108bf44999421884d69f55", 5621765),
-	GAME_ENTRY("labratescape", "Joel.exe", "06a03fe35791b0578068ab1873455463", 3256136),
-	GAME_ENTRY("labratmaze", "LabRatMaze.exe", "99b6964357e805b3d0fd1a3d447593b0", 26746990),  //v1.02
-	GAME_ENTRY("labyrinth", "labyrnth.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2259514),  //v1.0
-	GAME_ENTRY("labyrinth", "labyrnth.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2358666),  //v2.0
-	GAME_ENTRY("labyrinth", "labyrnth.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2595160),  //v2.0u4
-	GAME_ENTRY("labyrinth", "labyrnth.exe", "0710e2ec71042617f565c01824f0cf3c", 7686481),  //v3.0 final
-	GAME_ENTRY("lacarbonara", "La Carbonara.ags", "086024ea12068a5787d9562b266d2159", 2412912),  //v0.4 Win/Linux
+	GAME_ENTRY_EN("labratescape", "Joel.exe", "06a03fe35791b0578068ab1873455463", 3256136),
+	GAME_ENTRY_EN("labratmaze", "LabRatMaze.exe", "99b6964357e805b3d0fd1a3d447593b0", 26746990),  //v1.02
+	GAME_ENTRY_EN("labyrinth", "labyrnth.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2259514),  //v1.0
+	GAME_ENTRY_EN("labyrinth", "labyrnth.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2358666),  //v2.0
+	GAME_ENTRY_EN("labyrinth", "labyrnth.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2595160),  //v2.0u4
+	GAME_ENTRY_EN("labyrinth", "labyrnth.exe", "0710e2ec71042617f565c01824f0cf3c", 7686481),  //v3.0 final
+	GAME_ENTRY("lacarbonara", "La Carbonara.ags", "086024ea12068a5787d9562b266d2159", 2412912),  //v0.4 Win/Linux Eng-Esp
 	GAME_ENTRY_LANG("lacicuta", "Cicuta1.exe", "1290e191d4f24893ce83ba0af5debd9e", 8665956, Common::ES_ESP),
-	GAME_ENTRY("lacroixpan", "La Croix Pan.exe", "c91bf675d6839c42924cf3c9a390ded3", 12411833), //v1.00
-	GAME_ENTRY("lacroixpan", "La Croix Pan.exe", "d9018b1792f6d959d7add4dc3f7cdb46", 12102643),
+	GAME_ENTRY_EN("lacroixpan", "La Croix Pan.exe", "c91bf675d6839c42924cf3c9a390ded3", 12411833), //v1.00
+	GAME_ENTRY_EN("lacroixpan", "La Croix Pan.exe", "c91bf675d6839c42924cf3c9a390ded3", 12445773), //v1.06
+	GAME_ENTRY("lacroixpan", "La Croix Pan.exe", "d9018b1792f6d959d7add4dc3f7cdb46", 12102643),  //v1.1 En-Ru-Hun
 	GAME_ENTRY_LANG("lagrancastanya", "PROJECT1.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 39298012, Common::CA_ESP),
 	GAME_ENTRY_LANG("lallaveyfabianshones", "LLAVE.exe", "a8d73d686b2eb77caab8c05e3e1f1d57", 3374527, Common::ES_ESP),
-	GAME_ENTRY("lamaleta", "La Maleta.ags", "144566549a27ad1b41346627ec82f586", 43741777),
-	GAME_ENTRY("lancethepenguin", "LanceThePenguin.exe", "a524cbb1c51589903c4043b98917f1d9", 3838581),
+	GAME_ENTRY("lamaleta", "La Maleta.ags", "144566549a27ad1b41346627ec82f586", 43741777),  // Eng-Esp
+	GAME_ENTRY_EN("lancethepenguin", "LanceThePenguin.exe", "a524cbb1c51589903c4043b98917f1d9", 3838581),
 	GAME_ENTRY_LANG("laodiseadelfracaso2", "La Odisea II.exe", "0710e2ec71042617f565c01824f0cf3c", 3083622, Common::ES_ESP),
 	GAME_ENTRY_EN_PLATFORM("larrylotter", "Warthogs.exe", "06a03fe35791b0578068ab1873455463", 3387147, "MAGS"),
-	GAME_ENTRY("lasol", "LaSol.exe", "615e73fc1874e92d60a1996c2330ea36", 19677458),
-	GAME_ENTRY("lastclown", "ZOM.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 867344),
-	GAME_ENTRY("lastnfurious", "Last'n'Furious.exe", "3569271305cddb7156260cce9439e543", 17696093),
-	GAME_ENTRY("lastnfurious", "Last'n'Furious.exe", "3569271305cddb7156260cce9439e543", 17697035),  //v1.0.4
-	GAME_ENTRY("latelastnite", "late_last_nite v1.2.exe", "c12e28ec3233b26320026cfea4015e6b", 291463873),  //v1.2
-	GAME_ENTRY_PLATFORM("latelastnite", "late-last-nite.exe", "46aa841ae28db17994aa1045736627ed", 341530019, "Speakeasy Edition"),
-	GAME_ENTRY("laundryday", "Laundry Day.exe", "06a03fe35791b0578068ab1873455463", 2456888),
-	GAME_ENTRY("lavablava", "Rumble.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 2294674),
-	GAME_ENTRY("lazaruswantspants", "pants.exe", "9cf51833e787cc919837d9a8bd8fc14c", 1311852),
+	GAME_ENTRY("lasol", "LaSol.exe", "615e73fc1874e92d60a1996c2330ea36", 19677458),  // Multilang
+	GAME_ENTRY_EN("lastclown", "ZOM.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 867344),
+	GAME_ENTRY_EN("lastnfurious", "Last'n'Furious.exe", "3569271305cddb7156260cce9439e543", 17696093),
+	GAME_ENTRY_EN("lastnfurious", "Last'n'Furious.exe", "3569271305cddb7156260cce9439e543", 17697035),  //v1.0.4
+	GAME_ENTRY_EN("latelastnite", "late_last_nite v1.2.exe", "c12e28ec3233b26320026cfea4015e6b", 291463873),  //v1.2
+	GAME_ENTRY_EN_PLATFORM("latelastnite", "late-last-nite.exe", "46aa841ae28db17994aa1045736627ed", 341530019, "Speakeasy Edition"),
+	GAME_ENTRY_EN("laundryday", "Laundry Day.exe", "06a03fe35791b0578068ab1873455463", 2456888),
+	GAME_ENTRY_EN("lavablava", "Rumble.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 2294674),
+	GAME_ENTRY_EN("lazaruswantspants", "pants.exe", "9cf51833e787cc919837d9a8bd8fc14c", 1311852),
 	GAME_ENTRY_EN("legacyicecream", "Cold.exe", "82da2565c456dcfb265ded6fe3189c0b", 9033418),
 	GAME_ENTRY_LANG("lechuckstories", "CHUCK_272.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 6274861, Common::DE_DEU),
 	GAME_ENTRY_LANG("legendofrovendale", "Vampire.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 10018497, Common::RU_RUS),
 	GAME_ENTRY_EN("legendofseththebard", "LOSTB 1.48.exe", "a524cbb1c51589903c4043b98917f1d9", 10669482),  //v1.48
 	GAME_ENTRY_EN("legendofseththebard", "LOSTB 1.50.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 10670757),  //v1.50
 	GAME_ENTRY_LANG("legendsofmardaram", "LOM.exe", "0710e2ec71042617f565c01824f0cf3c", 50183544, Common::DE_DEU),
-	GAME_ENTRY("leisuresuitlarry2", "Larry 2.exe", "949f7440e3692b7366c2029979dee9a0", 11971760),
-	GAME_ENTRY("lemasabachthani", "Lema Sabachthani.exe", "c723c7872e39e4bceec1d5a2936e0172", 20641847),
+	GAME_ENTRY_EN("leisuresuitlarry2", "Larry 2.exe", "949f7440e3692b7366c2029979dee9a0", 11971760),
+	GAME_ENTRY("lemasabachthani", "Lema Sabachthani.exe", "c723c7872e39e4bceec1d5a2936e0172", 20641847),  // En-Fr-Es
 	GAME_ENTRY_EN("leopoldkettle", "The Adventures of Leopold Kettle.exe", "92ddda7d8b443e02c39b2e28d24073b4", 10316570),
-	GAME_ENTRY("lesmiserables", "Les Miserables.exe", "0514661a4ba6772cf0db0cf839fc7003", 127582664),
-	GAME_ENTRY("lessthanthree", "Less Than Three.exe", "3e62eafed0fc365821b7afdbf1aec3d8", 6506759),
-	GAME_ENTRY("letscook", "Let's Cook School of cooking.exe", "338fa79960d40689063af31c671b8729", 96730408),
-	GAME_ENTRY("lichdomwheresdidiputthat", "Lichdom.exe", "0e6ae2b49c1a38363a77024f3ce31771", 7412719),
-	GAME_ENTRY("life", "Life.exe", "97a2a2feb82708da8f6ed30c15a7eb53", 43833851),
-	GAME_ENTRY("lifeboatstoryofcedrick", "lifeboat.exe", "3128b9f90e2f954ba704414ae854d10b", 2952689),
-	GAME_ENTRY_PLATFORM("lifeboatstoryofcedrick", "lifeboat.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3563681, "Director's Cut"),
-	GAME_ENTRY("lifeinabox", "box.exe", "0500aacb6c176d47ac0f8158f055db83", 890794),
-	GAME_ENTRY("lifeofdduck", "D Duck.exe", "0710e2ec71042617f565c01824f0cf3c", 49461615),
-	GAME_ENTRY("lifeofdduck2", "D. Duck II.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 135923689),
-	GAME_ENTRY("liftreasureofthetanones", "Lif.exe", "18b284c22010850f79bc5c20054a70c4", 3946641),
-	GAME_ENTRY("lightcycles", "LightCycles.exe", "495d45fb8adfd49690ae3b97921feec6", 3415108),
-	GAME_ENTRY("lightningmaster", "Master.exe", "27343924ddad3be0b97bdcaa71858b1b", 231301393),
-	GAME_ENTRY("likeadream", "Dream.exe", "ad1801105cfae0915313c73ca7fb7f1c", 5704211),
-	GAME_ENTRY("likeafox", "likeafox.exe", "c7916b82f00c94013a3f7706b4d333c6", 2707737),
-	GAME_ENTRY("lillywizard", "Lilly.exe", "7c0c89edf8e321fad4191ee1d7fcaaae", 22269463),
-	GAME_ENTRY("limeylizardwastewizard", "LLWW.exe", "fab982fd31570655ac3b1858bd8265e4", 33755872),
-	GAME_ENTRY("limeylizardwastewizard", "LLWW.exe", "1991fde090b8c3b7cf53561d11593836", 38188301),
-	GAME_ENTRY("linegame", "a_noble_game.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3580379),
-	GAME_ENTRY("linkattus", "DaringCommandoRaid.exe", "78dd4ca028ee0156b6a093d6d780aa65", 71449594),  // Windows
-	GAME_ENTRY("linkattus", "DaringCommandoRaid.ags", "4d18c5e9affca7547a191a73223b70f8", 68964842),  // Linux
-	GAME_ENTRY("linnprotector", "Linn the Protector.exe", "3f5853e83facd0854a1a58c10ef86f1c", 19753875),
-	GAME_ENTRY("littlegirlinunderland", "Underland.exe", "06a03fe35791b0578068ab1873455463", 10125940),
+	GAME_ENTRY_EN("lesmiserables", "Les Miserables.exe", "0514661a4ba6772cf0db0cf839fc7003", 127582664),
+	GAME_ENTRY_EN("lessthanthree", "Less Than Three.exe", "3e62eafed0fc365821b7afdbf1aec3d8", 6506759),
+	GAME_ENTRY_EN("letscook", "Let's Cook School of cooking.exe", "338fa79960d40689063af31c671b8729", 96730408),
+	GAME_ENTRY_EN("lichdomwheresdidiputthat", "Lichdom.exe", "0e6ae2b49c1a38363a77024f3ce31771", 7412719),
+	GAME_ENTRY_EN("life", "Life.exe", "97a2a2feb82708da8f6ed30c15a7eb53", 43833851),
+	GAME_ENTRY_EN("lifeboatstoryofcedrick", "lifeboat.exe", "3128b9f90e2f954ba704414ae854d10b", 2952689),
+	GAME_ENTRY_EN_PLATFORM("lifeboatstoryofcedrick", "lifeboat.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3563681, "Director's Cut"),
+	GAME_ENTRY_EN("lifeinabox", "box.exe", "0500aacb6c176d47ac0f8158f055db83", 890794),
+	GAME_ENTRY_EN("lifeofdduck", "D Duck.exe", "0710e2ec71042617f565c01824f0cf3c", 49461615),
+	GAME_ENTRY_EN("lifeofdduck2", "D. Duck II.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 135923689),
+	GAME_ENTRY_EN("liftreasureofthetanones", "Lif.exe", "18b284c22010850f79bc5c20054a70c4", 3946641),
+	GAME_ENTRY_EN("lightcycles", "LightCycles.exe", "495d45fb8adfd49690ae3b97921feec6", 3415108),
+	GAME_ENTRY_EN("lightningmaster", "Master.exe", "27343924ddad3be0b97bdcaa71858b1b", 231301393),
+	GAME_ENTRY_EN("likeadream", "Dream.exe", "ad1801105cfae0915313c73ca7fb7f1c", 5704211),
+	GAME_ENTRY_EN("likeafox", "likeafox.exe", "c7916b82f00c94013a3f7706b4d333c6", 2707737),
+	GAME_ENTRY_EN("lillywizard", "Lilly.exe", "7c0c89edf8e321fad4191ee1d7fcaaae", 22269463),
+	GAME_ENTRY_EN("limeylizardwastewizard", "LLWW.exe", "fab982fd31570655ac3b1858bd8265e4", 33755872),
+	GAME_ENTRY_EN("limeylizardwastewizard", "LLWW.exe", "1991fde090b8c3b7cf53561d11593836", 38188301),
+	GAME_ENTRY_EN("linegame", "a_noble_game.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3580379),
+	GAME_ENTRY_EN("linkattus", "DaringCommandoRaid.exe", "78dd4ca028ee0156b6a093d6d780aa65", 71449594),  // Windows
+	GAME_ENTRY_EN("linkattus", "DaringCommandoRaid.ags", "4d18c5e9affca7547a191a73223b70f8", 68964842),  // Linux
+	GAME_ENTRY_EN("linnprotector", "Linn the Protector.exe", "3f5853e83facd0854a1a58c10ef86f1c", 19753875),
+	GAME_ENTRY_EN("littlegirlinunderland", "Underland.exe", "06a03fe35791b0578068ab1873455463", 10125940),
 	GAME_ENTRY_EN("littleleonardo", "Little Leonardo.exe", "b3510ded3dccac859e386ce206b167fc", 171287601),  // Windows
 	GAME_ENTRY_EN("littleleonardo", "Little Leonardo.ags", "d5fceb85f63338197a8c54ad7911145a", 168239133),  // Linux
-	GAME_ENTRY("livingnightmare", "Living Nightmare.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 3356797),
-	GAME_ENTRY_PLATFORM("livingnightmare", "Living Nightmare.exe", "4415d633ea1a2dcd03ff0eff43f182ee", 9997554, "Deluxe"),
-	GAME_ENTRY_PLATFORM("livingnightmareendlessdream", "LNED.exe", "4415d633ea1a2dcd03ff0eff43f182ee", 10671309, "MAGS"),
-	GAME_ENTRY("livingnightmareendlessdream", "LNED.exe", "4415d633ea1a2dcd03ff0eff43f182ee", 14438626),
-	GAME_ENTRY("livingnightmarefreedom", "LNF.exe", "6aa30185326552359c7865e55c045a74", 26580184),
-	GAME_ENTRY("lockedin", "locked.exe", "0710e2ec71042617f565c01824f0cf3c", 1197367),
-	GAME_ENTRY("lockedout", "locked-out.exe", "465f972675db2da6040518221af5b0ba", 1930862),
-	GAME_ENTRY("lockeescape", "Brett 3.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 3525589),
-	GAME_ENTRY("loftusandtheskycap", "loftus.exe", "4c83816b87e6e253dc8e324e89bcbca3", 24333349),
-	GAME_ENTRY("lonecase1", "LoneCase.exe", "8661936f40669fa1672dced4df0521a0", 3550717),  // v2.0
-	GAME_ENTRY("lonecase2", "Lone Case 2.exe", "cb3bbab6e565fcbd57af8f33a8609210", 6015178),
-	GAME_ENTRY("lonecase3", "lc 3.exe", "893df6568c294926f7efa3f3ec2ce14d", 7997004),  // v4.0
-	GAME_ENTRY("lonecase4", "Lone Case 4.exe", "8a27ae1c8ac0bc1ea78524fdf847c15e", 4439756),
-	GAME_ENTRY("lonelynight", "Lonely night.exe", "0710e2ec71042617f565c01824f0cf3c", 2488077),
-	GAME_ENTRY("lonkeyisland", "lonkey.exe", "4e92c6db88a34b62eef37a621aabfb53", 44134488),
-	GAME_ENTRY("lonkeyisland", "lonkey.exe", "4e92c6db88a34b62eef37a621aabfb53", 44114957),
-	GAME_ENTRY("lookingfordread", "Looking For Dread Mac Farlane.exe", "2321081ba51d1869ebe11b9ba126911b", 417051695),  // Windows
-	GAME_ENTRY("lookingfordread", "Looking For Dread Mac Farlane.ags", "bde1905a3c6a6f7f4491378789512a68", 414566943),  // Linux
+	GAME_ENTRY_EN("livingnightmare", "Living Nightmare.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 3356797),
+	GAME_ENTRY_EN_PLATFORM("livingnightmare", "Living Nightmare.exe", "4415d633ea1a2dcd03ff0eff43f182ee", 9997554, "Deluxe"),
+	GAME_ENTRY_EN_PLATFORM("livingnightmareendlessdream", "LNED.exe", "4415d633ea1a2dcd03ff0eff43f182ee", 10671309, "MAGS"),
+	GAME_ENTRY_EN("livingnightmareendlessdream", "LNED.exe", "4415d633ea1a2dcd03ff0eff43f182ee", 14438626),
+	GAME_ENTRY_EN("livingnightmarefreedom", "LNF.exe", "6aa30185326552359c7865e55c045a74", 26580184),
+	GAME_ENTRY_EN("lockedin", "locked.exe", "0710e2ec71042617f565c01824f0cf3c", 1197367),
+	GAME_ENTRY_EN("lockedout", "locked-out.exe", "465f972675db2da6040518221af5b0ba", 1930862),
+	GAME_ENTRY_EN("lockeescape", "Brett 3.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 3525589),
+	GAME_ENTRY_EN("loftusandtheskycap", "loftus.exe", "4c83816b87e6e253dc8e324e89bcbca3", 24333349),
+	GAME_ENTRY_EN("lonecase1", "LoneCase.exe", "8661936f40669fa1672dced4df0521a0", 3550717),  // v2.0
+	GAME_ENTRY_EN("lonecase2", "Lone Case 2.exe", "cb3bbab6e565fcbd57af8f33a8609210", 6015178),
+	GAME_ENTRY_EN("lonecase3", "lc 3.exe", "893df6568c294926f7efa3f3ec2ce14d", 7997004),  // v4.0
+	GAME_ENTRY_EN("lonecase4", "Lone Case 4.exe", "8a27ae1c8ac0bc1ea78524fdf847c15e", 4439756),
+	GAME_ENTRY_EN("lonelynight", "Lonely night.exe", "0710e2ec71042617f565c01824f0cf3c", 2488077),
+	GAME_ENTRY("lonkeyisland", "lonkey.exe", "4e92c6db88a34b62eef37a621aabfb53", 44134488),  // En-De
+	GAME_ENTRY("lonkeyisland", "lonkey.exe", "4e92c6db88a34b62eef37a621aabfb53", 44114957),  // En-De-It
+	GAME_ENTRY("lookingfordread", "Looking For Dread Mac Farlane.exe", "2321081ba51d1869ebe11b9ba126911b", 417051695),  // Windows  En-Fr
+	GAME_ENTRY("lookingfordread", "Looking For Dread Mac Farlane.ags", "bde1905a3c6a6f7f4491378789512a68", 414566943),  // Linux  En-Fr
 	GAME_ENTRY_LANG("lookingfordread", "A la recherche de Dread Mac Farlane.exe", "2321081ba51d1869ebe11b9ba126911b", 417052014, Common::FR_FRA),  // Windows
 	GAME_ENTRY_LANG("lookingfordread", "A la recherche de Dread Mac Farlane.ags", "4d232dca7faf065d24f554b7be03740d", 414567262, Common::FR_FRA),  // Linux
-	GAME_ENTRY("lordoflight", "LordofLight.exe", "0564de07d3fd5c16e6947a647061913c", 98630583),
-	GAME_ENTRY("lordoflight", "LordofLight.ags", "020597575b9a190f6d770c3d4b9bb180", 95597987),
-	GAME_ENTRY("losjovenesdelaguerra", "guerra.exe", "97d700529f5cc826f230c27acf81adfd", 4286035),
-	GAME_ENTRY("lostanswers", "Lost Answers.exe", "c88de182eae58fdb43e5b4e587095ff5", 254684884),  // Windows
-	GAME_ENTRY("lostanswers", "Lost Answers.ags", "ee0ec2b06f61dd4cb5e57fe5d7898aa0", 252104900),  // Linux
-	GAME_ENTRY("lostdollar", "Ron.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 4542929),
-	GAME_ENTRY("lostinthenightmare", "litn.exe", "0710e2ec71042617f565c01824f0cf3c", 5492994),  //v1.0
-	GAME_ENTRY("lostinthenightmare", "litn.exe", "0710e2ec71042617f565c01824f0cf3c", 5493239),  //v1.1
-	GAME_ENTRY_PLATFORM("lostinthenightmare", "litn.exe", "06a03fe35791b0578068ab1873455463", 7973076, "Deluxe"),  // Deluxe/SoS
-	GAME_ENTRY("lostinthewoods", "LITW.exe", "00328f4f1e7729144483107b96b11df8", 55203461),
+	GAME_ENTRY_EN("lordoflight", "LordofLight.exe", "0564de07d3fd5c16e6947a647061913c", 98630583),
+	GAME_ENTRY_EN("lordoflight", "LordofLight.ags", "020597575b9a190f6d770c3d4b9bb180", 95597987),
+	GAME_ENTRY_EN("losjovenesdelaguerra", "guerra.exe", "97d700529f5cc826f230c27acf81adfd", 4286035),
+	GAME_ENTRY("lostanswers", "Lost Answers.exe", "c88de182eae58fdb43e5b4e587095ff5", 254684884),  // Windows  Eng-Tur
+	GAME_ENTRY("lostanswers", "Lost Answers.ags", "ee0ec2b06f61dd4cb5e57fe5d7898aa0", 252104900),  // Linux  Eng-Tur
+	GAME_ENTRY_EN("lostdollar", "Ron.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 4542929),
+	GAME_ENTRY_EN("lostinthenightmare", "litn.exe", "0710e2ec71042617f565c01824f0cf3c", 5492994),  //v1.0
+	GAME_ENTRY_EN("lostinthenightmare", "litn.exe", "0710e2ec71042617f565c01824f0cf3c", 5493239),  //v1.1
+	GAME_ENTRY_EN_PLATFORM("lostinthenightmare", "litn.exe", "06a03fe35791b0578068ab1873455463", 7973076, "Deluxe"),  // Deluxe/SoS
+	GAME_ENTRY_EN("lostinthewoods", "LITW.exe", "00328f4f1e7729144483107b96b11df8", 55203461),
 	GAME_ENTRY_PLATFORM("lotto", "Lott.exe", "0564de07d3fd5c16e6947a647061913c", 6585796, "Icelandic"),
 	GAME_ENTRY_PLATFORM("lotto", "Lott.ags", "1578011383e302e787d3ff906776483f", 3553200, "Icelandic"),
-	GAME_ENTRY("lucasmaniac", "LucasManiac !.exe", "f120690b506dd63cd7d1112ea6af2f77", 28361487),
-	GAME_ENTRY("lucidlucy", "LUCID LUCY.exe", "655363c390c7ae7225c237108edf50b7", 182038828),
-	GAME_ENTRY("lucylavender", "Lucy.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 7944054),
-	GAME_ENTRY("lukesexistentialnightmare", "Lukeexit.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 653834),
-	GAME_ENTRY("lunarlander", "LunarLanderPrototype.exe", "495d45fb8adfd49690ae3b97921feec6", 3510282),  // Windows
-	GAME_ENTRY("lunarlander", "LunarLanderPrototype.ags", "0600d67c93fb0a1b07e9fdf716d9f020", 1029626),  // Linux
-	GAME_ENTRY("lutherinhood", "afroTest4.exe", "2ca80bd50763378b72cd1e1cf25afac3", 26440699),
-	GAME_ENTRY("lydia", "Kill The Lights.exe", "9b54ea3557373188d8388ec4d1ae5eed", 20416736),
-	GAME_ENTRY("lydiaandthemysteryofnellrenomanor", "LydiaW.exe", "615e73fc1874e92d60a1996c2330ea36", 33971307),
+	GAME_ENTRY("lucasmaniac", "LucasManiac !.exe", "f120690b506dd63cd7d1112ea6af2f77", 28361487),  // En-Fr
+	GAME_ENTRY_EN("lucidlucy", "LUCID LUCY.exe", "655363c390c7ae7225c237108edf50b7", 182038828),
+	GAME_ENTRY_EN("lucylavender", "Lucy.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 7944054),
+	GAME_ENTRY_EN("lukesexistentialnightmare", "Lukeexit.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 653834),
+	GAME_ENTRY_EN("lunarlander", "LunarLanderPrototype.exe", "495d45fb8adfd49690ae3b97921feec6", 3510282),  // Windows
+	GAME_ENTRY_EN("lunarlander", "LunarLanderPrototype.ags", "0600d67c93fb0a1b07e9fdf716d9f020", 1029626),  // Linux
+	GAME_ENTRY_EN("lutherinhood", "afroTest4.exe", "2ca80bd50763378b72cd1e1cf25afac3", 26440699),
+	GAME_ENTRY_EN("lydia", "Kill The Lights.exe", "9b54ea3557373188d8388ec4d1ae5eed", 20416736),
+	GAME_ENTRY_EN("lydiaandthemysteryofnellrenomanor", "LydiaW.exe", "615e73fc1874e92d60a1996c2330ea36", 33971307),
 	GAME_ENTRY("mafaldawest", "realgame.exe", "be559b7205d41c3f3813cb8a7e8196f6", 16292195),
 	GAME_ENTRY("magic8ball", "Magic-8-Ball.exe", "82da2565c456dcfb265ded6fe3189c0b", 4233735),
 	GAME_ENTRY("magicalwhatevergirlrocksoutinthestoneage", "mwg.exe", "b2b99b5b3dcaee0fa292343c5a2c429b", 7784104),
