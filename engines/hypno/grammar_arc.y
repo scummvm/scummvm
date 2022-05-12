@@ -73,6 +73,9 @@ void parseSN(const char *sn, const char *path, const char *enc, const char *flag
 	} else if (Common::String("S7") == sn) {
 		g_parsedArc->noAmmoSound = path;
 		g_parsedArc->noAmmoSoundRate = sampleRate;
+	} else if (Common::String("S8") == sn) {
+		g_parsedArc->additionalSound = path;
+		g_parsedArc->additionalSoundRate = sampleRate;
 	}
 	debugC(1, kHypnoDebugParser, "SN %s", path);
 }
@@ -191,7 +194,10 @@ hline: 	CTOK NUM {
 		g_parsedArc->transitions.push_back(at);
 		debugC(1, kHypnoDebugParser, "T %s %d", $2, $3);
 	}
-	| TTOK NONETOK NUM { debugC(1, kHypnoDebugParser, "T NONE %d", $3); }
+	| TTOK NONETOK NUM {
+		ArcadeTransition at("NONE", "", "", $3);
+		g_parsedArc->transitions.push_back(at);
+		debugC(1, kHypnoDebugParser, "T NONE %d", $3); }
 	| NTOK FILENAME  {
 		g_parsedArc->backgroundVideo = $2;
 		debugC(1, kHypnoDebugParser, "N %s", $2);

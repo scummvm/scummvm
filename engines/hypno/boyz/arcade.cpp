@@ -179,7 +179,10 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 	ArcadeTransition at = *transitions.begin();
 	int ttime = at.time;
 	if (_background->decoder->getCurFrame() > ttime) {
-		if (!at.video.empty()) {
+		if (at.video == "NONE") {
+			if (!arc->additionalSound.empty())
+				playSound(arc->additionalSound, 1, arc->additionalSoundRate);
+		} else if (!at.video.empty()) {
 			_background->decoder->pauseVideo(true);
 			debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
 			MVideo video(at.video, Common::Point(0, 0), false, true, false);
@@ -249,7 +252,6 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 	if (i < 0) {
 		missNoTarget(arc);
 	} else {
-		debug("Shoot target %s, flag: %d", _shoots[i].name.c_str(), _shoots[i].playInteractionAudio);
 		if (_shoots[i].nonHostile && secondary) {
 			playSound(_soundPath + _heySound[_currentActor], 1);
 
