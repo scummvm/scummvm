@@ -711,7 +711,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = (movie->_keyFlags & Common::KBD_ALT) ? 1 : 0;
 		break;
 	case kThePauseState:
-		getTheEntitySTUB(kThePauseState);
+		d.type = INT;
+		d.u.i = (int) g_director->_playbackPaused;
 		break;
 	case kThePerFrameHook:
 		d = _perFrameHook;
