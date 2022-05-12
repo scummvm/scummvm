@@ -881,7 +881,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->getMacTicks() - movie->_lastTimerReset;
 		break;
 	case kTheTrace:
-		getTheEntitySTUB(kTheTrace);
+		d.type = INT;
+		d.u.i = (int) g_lingo->_trace;
 		break;
 	case kTheTraceLoad:
 		d.type = INT;
@@ -1115,7 +1116,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		movie->_lastTimerReset = _vm->getMacTicks() - d.asInt();
 		break;
 	case kTheTrace:
-		setTheEntitySTUB(kTheTrace);
+		g_lingo->_trace = (bool) d.asInt();
 		break;
 	case kTheTraceLoad:
 		g_lingo->_traceLoad = d.asInt();
