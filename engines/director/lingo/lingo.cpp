@@ -172,6 +172,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_searchPath.type = ARRAY;
 	_searchPath.u.farr = new FArray;
 
+	_trace = false;
 	_traceLoad = 0;
 	_updateMovieEnabled = false;
 
