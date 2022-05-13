@@ -2136,7 +2136,10 @@ MiniscriptInstructionOutcome WorldManagerInterface::writeRefAttribute(Miniscript
 		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setCurrentScene>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
-
+	if (attrib == "refreshcursor") {
+		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setRefreshCursor>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
 	return RuntimeObject::writeRefAttribute(thread, result, attrib);
 }
 
@@ -2163,6 +2166,16 @@ MiniscriptInstructionOutcome WorldManagerInterface::setCurrentScene(MiniscriptTh
 	}
 
 	thread->getRuntime()->addSceneStateTransition(HighLevelSceneTransition(scene->getSelfReference().lock().staticCast<Structural>(), HighLevelSceneTransition::kTypeChangeToScene, false, false));
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome WorldManagerInterface::setRefreshCursor(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kBoolean)
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (value.getBool())
+		thread->getRuntime()->forceCursorRefreshOnce();
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -3206,7 +3219,8 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	_nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
 	_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
 	_lastFrameCursor(nullptr), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
-	_cachedMousePosition(Point16::create(0, 0)), _realMousePosition(Point16::create(0, 0)), _trackedMouseOutside(false), _haveModifierOverrideCursor(false) {
+	_cachedMousePosition(Point16::create(0, 0)), _realMousePosition(Point16::create(0, 0)), _trackedMouseOutside(false),
+	_forceCursorRefreshOnce(true), _haveModifierOverrideCursor(false) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -3299,6 +3313,13 @@ bool Runtime::runFrame() {
 				break;
 			}
 			continue;
+		}
+
+		if (_forceCursorRefreshOnce) {
+			_forceCursorRefreshOnce = false;
+			UpdateMousePositionTaskData *taskData = _vthread->pushTask("Runtime::updateMousePositionTask", this, &Runtime::updateMousePositionTask);
+			taskData->x = _cachedMousePosition.x;
+			taskData->y = _cachedMousePosition.y;
 		}
 
 		if (_queuedProjectDesc) {
@@ -4571,6 +4592,10 @@ void Runtime::clearModifierCursorOverride() {
 		updateMainWindowCursor();
 
 	}
+}
+
+void Runtime::forceCursorRefreshOnce() {
+	_forceCursorRefreshOnce = true;
 }
 
 Common::RandomSource *Runtime::getRandom() const {

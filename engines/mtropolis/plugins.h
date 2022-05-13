@@ -28,12 +28,18 @@ class MidiDriver;
 
 namespace MTropolis {
 
+namespace Obsidian {
+
+class WordGameData;
+
+} // End of namespace Obsidian
+
 class PlugIn;
 
 namespace PlugIns {
 
 Common::SharedPtr<PlugIn> createStandard();
-Common::SharedPtr<PlugIn> createObsidian();
+Common::SharedPtr<PlugIn> createObsidian(const Common::SharedPtr<Obsidian::WordGameData> &wgData);
 
 } // End of namespace PlugIns
 

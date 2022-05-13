@@ -31,6 +31,9 @@ namespace MTropolis {
 
 namespace Obsidian {
 
+class ObsidianPlugIn;
+class WordGameData;
+
 class MovementModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::MovementModifier &data);
@@ -79,16 +82,91 @@ private:
 	int32 _lastChar;
 };
 
+class DictionaryModifier : public Modifier {
+public:
+	DictionaryModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::DictionaryModifier &data);
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Dictionary Modifier"; }
+#endif
+
+private:
+	void resolveStringIndex();
+	MiniscriptInstructionOutcome scriptSetString(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetIndex(MiniscriptThread *thread, const DynamicValue &value);
+
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
+	Common::String _str;
+
+	const ObsidianPlugIn *_plugIn;
+	int32 _index;
+	bool _isIndexResolved;
+};
+
+class WordMixerModifier : public Modifier {
+public:
+	WordMixerModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::WordMixerModifier &data);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "WordMixer Modifier"; }
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+};
+
 class ObsidianPlugIn : public MTropolis::PlugIn {
 public:
-	ObsidianPlugIn();
+	ObsidianPlugIn(const Common::SharedPtr<WordGameData> &wgData);
 
 	void registerModifiers(IPlugInModifierRegistrar *registrar) const override;
+
+	const Common::SharedPtr<WordGameData> &getWordGameData() const;
 
 private:
 	PlugInModifierFactory<MovementModifier, Data::Obsidian::MovementModifier> _movementModifierFactory;
 	PlugInModifierFactory<RectShiftModifier, Data::Obsidian::RectShiftModifier> _rectShiftModifierFactory;
 	PlugInModifierFactory<TextWorkModifier, Data::Obsidian::TextWorkModifier> _textWorkModifierFactory;
+	PlugInModifierFactory<WordMixerModifier, Data::Obsidian::WordMixerModifier> _wordMixerModifierFactory;
+	PlugInModifierFactory<DictionaryModifier, Data::Obsidian::DictionaryModifier> _dictionaryModifierFactory;
+
+	Common::SharedPtr<WordGameData> _wgData;
+};
+
+struct WordGameLoadBucket {
+	uint32 startAddress;
+	uint32 endAddress;
+};
+
+class WordGameData {
+public:
+	struct WordBucket {
+		Common::Array<char> chars;
+		Common::Array<uint16> wordIndexes;
+		uint32 spacing;
+	};
+
+	struct SortedWord {
+		const char *chars;
+		uint length;
+	};
+
+	bool load(Common::SeekableReadStream *stream, const WordGameLoadBucket *buckets, uint numBuckets, uint alignment, bool backwards);
+
+	const Common::Array<WordBucket> &getWordBuckets() const;
+	const Common::Array<SortedWord> &getSortedWords() const;
+
+private:
+	Common::Array<WordBucket> _buckets;
+	Common::Array<SortedWord> _sortedWords;
 };
 
 } // End of namespace Obsidian

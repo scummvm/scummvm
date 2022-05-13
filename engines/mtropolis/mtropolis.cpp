@@ -28,6 +28,7 @@
 
 #include "mtropolis/plugins.h"
 #include "mtropolis/plugin/standard.h"
+#include "mtropolis/plugin/obsidian.h"
 
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -48,6 +49,49 @@
 #include "graphics/wincursor.h"
 
 namespace MTropolis {
+
+static Common::SharedPtr<Obsidian::WordGameData> loadWinObsidianWordGameData() {
+	Common::File f;
+	if (!f.open("RSGKit.r95")) {
+		error("Couldn't open word game data file");
+		return nullptr;
+	}
+
+	Common::SharedPtr<Obsidian::WordGameData> wgData(new Obsidian::WordGameData());
+
+	Obsidian::WordGameLoadBucket buckets[] = {
+		{0, 0},             // 0 letters
+		{0x63D54, 0x63D5C}, // 1 letter
+		{0x63BF8, 0x63CA4}, // 2 letter
+		{0x627D8, 0x631E8}, // 3 letter
+		{0x5C2C8, 0x60628}, // 4 letter
+		{0x52F4C, 0x5919C}, // 5 letter
+		{0x47A64, 0x4F2FC}, // 6 letter
+		{0x3BC98, 0x43B20}, // 7 letter
+		{0x2DA78, 0x38410}, // 8 letter
+		{0x218F8, 0x2AA18}, // 9 letter
+		{0x19D78, 0x1FA18}, // 10 letter
+		{0x15738, 0x18BE8}, // 11 letter
+		{0x128A8, 0x14DE8}, // 12 letter
+		{0x1129C, 0x1243C}, // 13 letter
+		{0x10974, 0x110C4}, // 14 letter
+		{0x105EC, 0x108BC}, // 15 letter
+		{0x10454, 0x105A8}, // 16 letter
+		{0x103A8, 0x10434}, // 17 letter
+		{0x10348, 0x10398}, // 18 letter
+		{0, 0},				// 19 letter
+		{0x10328, 0x10340}, // 20 letter
+		{0x102EC, 0x1031C}, // 21 letter
+		{0x102D0, 0x102E8},	// 22 letter
+	};
+
+	if (!wgData->load(&f, buckets, 23, 4, true)) {
+		error("Failed to load word game data file");
+		return nullptr;
+	}
+
+	return wgData;
+}
 
 static bool loadCursorsFromPE(CursorGraphicCollection &cursorGraphics, Common::SeekableReadStream *stream) {
 	Common::SharedPtr<Common::WinResources> winRes(Common::WinResources::createFromEXE(stream));
@@ -131,6 +175,7 @@ struct MacObsidianResources : public ProjectResources {
 	void setup();
 	Common::SeekableReadStream *getSegmentStream(int index) const;
 	const Common::SharedPtr<CursorGraphicCollection> &getCursorGraphics() const;
+	const Common::SharedPtr<Obsidian::WordGameData> &getWordGameData() const;
 
 private:
 	Common::MacResManager _installerResMan;
@@ -141,6 +186,7 @@ private:
 	Common::SeekableReadStream *_segmentStreams[6];
 
 	Common::SharedPtr<CursorGraphicCollection> _cursorGraphics;
+	Common::SharedPtr<Obsidian::WordGameData> _wordGameData;
 };
 
 MacObsidianResources::MacObsidianResources() : _installerArchive(nullptr), _installerDataForkStream(nullptr) {
@@ -197,6 +243,49 @@ void MacObsidianResources::setup() {
 			error("Failed to read cursor resources from file '%s'", fileName);
 	}
 
+	debug(1, "Loading word games...");
+
+	{
+		Common::ArchiveMemberPtr rsgKit = _installerArchive->getMember(Common::Path("RSGKit.rPP"));
+		if (!rsgKit)
+			error("Couldn't find word game file in installer archive");
+
+		_wordGameData.reset(new Obsidian::WordGameData());
+
+		Common::SharedPtr<Common::SeekableReadStream> stream(rsgKit->createReadStream());
+		if (!stream)
+			error("Failed to open word game file");
+
+		Obsidian::WordGameLoadBucket buckets[] = {
+			{0, 0},				// 0 letters
+			{0xD7C8, 0xD7CC},	// 1 letter
+			{0xD7CC, 0xD84D},	// 2 letter
+			{0xD84D, 0xE25D},	// 3 letter
+			{0x1008C, 0x12AA8},	// 4 letter
+			{0x14C58, 0x19614},	// 5 letter
+			{0x1C73C, 0x230C1},	// 6 letter
+			{0x26D10, 0x2EB98},	// 7 letter
+			{0x32ADC, 0x3AA0E},	// 8 letter
+			{0x3E298, 0x45B88},	// 9 letter
+			{0x48BE8, 0x4E0D0},	// 10 letter
+			{0x4FFB0, 0x53460},	// 11 letter
+			{0x545F0, 0x56434},	// 12 letter
+			{0x56D84, 0x57CF0}, // 13 letter
+			{0x58158, 0x58833}, // 14 letter
+			{0x58A08, 0x58CD8}, // 15 letter
+			{0x58D8C, 0x58EAD}, // 16 letter
+			{0x58EF4, 0x58F72}, // 17 letter
+			{0x58F90, 0x58FDC},	// 18 letter
+			{0, 0},				// 19 letter
+			{0x58FEC, 0x59001},	// 20 letter
+			{0x59008, 0x59034},	// 21 letter
+			{0x5903C, 0x59053},	// 22 letter
+		};
+
+		if (!_wordGameData->load(stream.get(), buckets, 23, 1, false))
+			error("Failed to load word game data");
+	}
+
 	debug(1, "Finished unpacking installer resources");
 }
 
@@ -204,8 +293,12 @@ Common::SeekableReadStream *MacObsidianResources::getSegmentStream(int index) co
 	return _segmentStreams[index];
 }
 
-const Common::SharedPtr<CursorGraphicCollection>& MacObsidianResources::getCursorGraphics() const {
+const Common::SharedPtr<CursorGraphicCollection> &MacObsidianResources::getCursorGraphics() const {
 	return _cursorGraphics;
+}
+
+const Common::SharedPtr<Obsidian::WordGameData>& MacObsidianResources::getWordGameData() const {
+	return _wordGameData;
 }
 
 MacObsidianResources::~MacObsidianResources() {
@@ -307,13 +400,15 @@ Common::Error MTropolisEngine::run() {
 			}
 		}
 
+		Common::SharedPtr<Obsidian::WordGameData> wgData = loadWinObsidianWordGameData();
+
 		desc->setCursorGraphics(cursors);
 
 		Common::SharedPtr<MTropolis::PlugIn> standardPlugIn = PlugIns::createStandard();
 		static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
 		desc->addPlugIn(standardPlugIn);
 
-		desc->addPlugIn(PlugIns::createObsidian());
+		desc->addPlugIn(PlugIns::createObsidian(wgData));
 
 		_runtime->queueProject(desc);
 
@@ -345,7 +440,7 @@ Common::Error MTropolisEngine::run() {
 		static_cast<Standard::StandardPlugIn *>(standardPlugIn.get())->getHacks().allowGarbledListModData = true;
 		desc->addPlugIn(standardPlugIn);
 
-		desc->addPlugIn(PlugIns::createObsidian());
+		desc->addPlugIn(PlugIns::createObsidian(resources->getWordGameData()));
 
 		desc->setResources(resPtr);
 		desc->setCursorGraphics(resources->getCursorGraphics());

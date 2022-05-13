@@ -1489,6 +1489,7 @@ public:
 	const Point16 &getCachedMousePosition() const;
 	void setModifierCursorOverride(uint32 cursorID);
 	void clearModifierCursorOverride();
+	void forceCursorRefreshOnce();
 
 	Common::RandomSource *getRandom() const;
 	WorldManagerInterface *getWorldManagerInterface() const;
@@ -1670,6 +1671,7 @@ private:
 	Common::WeakPtr<Structural> _mouseOverObject;
 	Common::WeakPtr<Structural> _mouseTrackingObject;
 	bool _trackedMouseOutside;
+	bool _forceCursorRefreshOnce;
 
 	uint32 _modifierOverrideCursorID;
 	bool _haveModifierOverrideCursor;
@@ -1768,6 +1770,7 @@ public:
 
 private:
 	MiniscriptInstructionOutcome setCurrentScene(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome setRefreshCursor(MiniscriptThread *thread, const DynamicValue &value);
 };
 
 class AssetManagerInterface : public RuntimeObject {
