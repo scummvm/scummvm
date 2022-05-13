@@ -466,6 +466,7 @@ public:
 	uint32 lastFrame;
 	uint32 interactionFrame;
 	Filename explosionAnimation;
+	Filename additionalVideo;
 	bool playInteractionAudio;
 	bool destroyed;
 	bool noEnemySound;

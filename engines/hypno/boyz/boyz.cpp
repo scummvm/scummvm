@@ -296,7 +296,7 @@ void BoyzEngine::loadAssets() {
 	loadLib("", "misc/fonts.lib", true);
 	loadFonts();
 
-	_nextLevel = "<start>";
+	_nextLevel = "c31.mi_";
 }
 
 void BoyzEngine::loadFonts() {

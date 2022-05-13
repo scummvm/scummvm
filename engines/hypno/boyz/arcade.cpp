@@ -261,6 +261,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 	if (i < 0) {
 		missNoTarget(arc);
 	} else {
+		debugC(1, kHypnoDebugArcade, "Hit target %s", _shoots[i].name.c_str());
 		if (_shoots[i].nonHostile && secondary) {
 			playSound(_soundPath + _heySound[_currentActor], 1);
 
@@ -268,8 +269,23 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				playSound(_soundPath + _shoots[i].animalSound, 1);
 				return false;
 			}
+			if (!_shoots[i].additionalVideo.empty()) {
+				_background->decoder->pauseVideo(true);
+				MVideo video(_shoots[i].additionalVideo, Common::Point(0, 0), false, true, false);
+				disableCursor();
+				runIntro(video);
+				loadPalette(_currentPalette);
+				_background->decoder->pauseVideo(false);
 
-			if (_shoots[i].interactionFrame > 0) {
+				// Skip the rest of the interaction
+				_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start + 3);
+				_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start + 3);
+
+				updateScreen(*_background);
+				drawScreen();
+				if (!_music.empty())
+					playSound(_music, 0, arc->musicRate); // restore music
+			} else if (_shoots[i].interactionFrame > 0) {
 				_background->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
 				_masks->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
 				_additionalVideo = new MVideo(arc->missBoss2Video, Common::Point(0, 0), true, false, false);
@@ -304,12 +320,18 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				playSound(_music, 0, arc->musicRate); // restore music
 
 			hitPlayer();
-
 			_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 			_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 			return false;
 		} else if (!_shoots[i].nonHostile && secondary) {
-			// Nothing
+			if (_shoots[i].interactionFrame > 0) {
+				_background->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
+				_masks->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
+				_shoots[i].destroyed = true;
+
+				updateScreen(*_background);
+				drawScreen();
+			}
 			return false;
 		}
 

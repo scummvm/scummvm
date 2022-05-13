@@ -328,6 +328,8 @@ bline: FNTOK FILENAME {
 			shoot->animation = $2;
 		else if (Common::String("F4") == $1)
 			shoot->explosionAnimation = $2;
+		else if (Common::String("F6") == $1)
+			shoot->additionalVideo = $2;
 		debugC(1, kHypnoDebugParser, "FN %s", $2);
 	}
 	| AVTOK NUM {
@@ -523,6 +525,8 @@ bline: FNTOK FILENAME {
 	}
 	| KTOK NUM NUM { debugC(1, kHypnoDebugParser, "K %d %d", $2, $3);
 		FrameInfo fi($2, 1);
+		shoot->explosionFrames.push_back(fi);
+		fi = FrameInfo($3, 1);
 		shoot->explosionFrames.push_back(fi);
 	}
 	| SNTOK FILENAME enc {
