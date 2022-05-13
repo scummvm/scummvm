@@ -84,6 +84,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      of The Secret of Monkey Island.
    - Fixed Full Throttle distorted graphics when Ben runs past the Corley
      Motors entrance.
+   - Fixed incorrect dark rooms colors in MM NES on strict-alignment ports such
+     as Dreamcast, Apple silicon and various handheld devices.
 
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
