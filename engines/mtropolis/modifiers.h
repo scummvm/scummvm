@@ -384,7 +384,7 @@ public:
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
-	void activate(Runtime *runtime);
+	void trigger(Runtime *runtime);
 
 	Event _executeWhen;
 	Event _terminateWhen;

@@ -884,7 +884,7 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetNoteVelocity(MiniscriptThrea
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-ListVariableModifier::ListVariableModifier() : _list(new DynamicList()) {
+ListVariableModifier::ListVariableModifier() : _list(new DynamicList()), _preferredContentType(DynamicValueTypes::kInteger) {
 }
 
 bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::ListVariableModifier &data) {
@@ -944,6 +944,8 @@ bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, cons
 		}
 	}
 
+	_preferredContentType = expectedType;
+
 	return true;
 }
 
@@ -979,6 +981,15 @@ bool ListVariableModifier::readAttributeIndexed(MiniscriptThread *thread, Dynami
 		return _list->dynamicValueToIndex(realIndex, index) && _list->getAtIndex(realIndex, result);
 	}
 	return Modifier::readAttributeIndexed(thread, result, attrib, index);
+}
+
+MiniscriptInstructionOutcome ListVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "count") {
+		DynamicValueWriteFuncHelper<ListVariableModifier, &ListVariableModifier::scriptSetCount>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return VariableModifier::writeRefAttribute(thread, writeProxy, attrib);
 }
 
 MiniscriptInstructionOutcome ListVariableModifier::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) {
@@ -1053,6 +1064,33 @@ void ListVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 ListVariableModifier::ListVariableModifier(const ListVariableModifier &other) {
 	if (other._list)
 		_list = other._list->clone();
+}
+
+MiniscriptInstructionOutcome ListVariableModifier::scriptSetCount(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger)) {
+		thread->error("Tried to set a list variable count to something other than an integer");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	if (asInteger < 0) {
+		thread->error("Tried to set a list variable count to a negative value");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	size_t newSize = asInteger;
+	if (newSize > _list->getSize()) {
+		if (_list->getSize() == 0) {
+			thread->error("Restoring an empty list by setting its count isn't implemented");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+
+		_list->expandToMinimumSize(newSize);
+	} else if (newSize < _list->getSize()) {
+		_list->truncateToSize(newSize);
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 Common::SharedPtr<Modifier> ListVariableModifier::shallowClone() const {

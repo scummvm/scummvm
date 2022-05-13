@@ -277,6 +277,8 @@ Common::Error MTropolisEngine::run() {
 		preferredHeight = 480;
 		preferredColorDepthMode = kColorDepthMode16Bit;
 
+		_runtime->getHacks().ignoreMismatchedProjectNameInObjectLookups = true;
+
 		_runtime->addVolume(0, "Installed", true);
 		_runtime->addVolume(1, "OBSIDIAN1", true);
 		_runtime->addVolume(2, "OBSIDIAN2", true);
@@ -314,10 +316,13 @@ Common::Error MTropolisEngine::run() {
 		desc->addPlugIn(PlugIns::createObsidian());
 
 		_runtime->queueProject(desc);
+
 	} else if (_gameDescription->gameID == GID_OBSIDIAN && _gameDescription->desc.platform == Common::kPlatformMacintosh) {
 		preferredWidth = 640;
 		preferredHeight = 480;
 		preferredColorDepthMode = kColorDepthMode16Bit;
+
+		_runtime->getHacks().ignoreMismatchedProjectNameInObjectLookups = true;
 
 		MacObsidianResources *resources = new MacObsidianResources();
 		Common::SharedPtr<ProjectResources> resPtr(resources);

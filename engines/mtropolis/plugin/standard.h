@@ -246,8 +246,8 @@ public:
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	bool readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) override;
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) override;
-
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "List Variable Modifier"; }
@@ -272,9 +272,12 @@ private:
 	ListVariableModifier(const ListVariableModifier &other);
 	ListVariableModifier &operator=(const ListVariableModifier &other);
 
+	MiniscriptInstructionOutcome scriptSetCount(MiniscriptThread *thread, const DynamicValue &value);
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
 	Common::SharedPtr<DynamicList> _list;
+	DynamicValueTypes::DynamicValueType _preferredContentType;
 };
 
 class SysInfoModifier : public Modifier {
