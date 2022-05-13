@@ -149,7 +149,7 @@ void CachedMToon::decompressNonTemporalFrames(const Common::Array<uint8> &data) 
 }
 
 template<class TFrame, class TNumber, uint32 TLiteralMask, uint32 TTransparentRowSkipMask>
-static bool decompressMToonRLE(const TFrame &frame, Graphics::Surface &surface) {
+static bool decompressMToonRLE(const TFrame &frame, Graphics::Surface &surface, bool isBottomUp) {
 	assert(sizeof(TNumber) == surface.format.bytesPerPixel);
 
 	const Common::Array<TNumber> &coefsArray = frame.data;
@@ -168,7 +168,7 @@ static bool decompressMToonRLE(const TFrame &frame, Graphics::Surface &surface) 
 	if (w != frame.width || h != frame.height)
 		return false;
 
-	TNumber *rowData = static_cast<TNumber *>(surface.getBasePtr(0, 0));
+	TNumber *rowData = static_cast<TNumber *>(surface.getBasePtr(0, isBottomUp ? (h - 1) : 0));
 
 	for (;;) {
 		if (size == 0)
@@ -191,7 +191,7 @@ static bool decompressMToonRLE(const TFrame &frame, Graphics::Surface &surface) 
 				y += (transparentCountCode - TTransparentRowSkipMask);
 				x = 0;
 				if (y < h) {
-					rowData = static_cast<TNumber *>(surface.getBasePtr(0, y));
+					rowData = static_cast<TNumber *>(surface.getBasePtr(0, isBottomUp ? (h - 1 - y) : y));
 					continue;
 				} else {
 					break;
@@ -227,8 +227,9 @@ static bool decompressMToonRLE(const TFrame &frame, Graphics::Surface &surface) 
 
 		if (x == w) {
 			y++;
+			x = 0;
 			if (y < h) {
-				rowData = static_cast<TNumber *>(surface.getBasePtr(0, y));
+				rowData = static_cast<TNumber *>(surface.getBasePtr(0, isBottomUp ? (h - 1 - y) : y));
 				continue;
 			} else {
 				break;
@@ -247,13 +248,15 @@ void CachedMToon::decompressRLEFrameToImage(size_t frameIndex, Graphics::Surface
 	int32 originX = frameDef.rect.left;
 	int32 originY = frameDef.rect.top;
 
+	bool isBottomUp = (_metadata->imageFormat == MToonMetadata::kImageFormatWindows);
+
 	bool decompressedOK = false;
 	if (_rleOptimizedFormat.bytesPerPixel == 4) {
-		decompressedOK = decompressMToonRLE<Rle32Frame, uint32, 0x80000000u, 0x80000000u>(_dataRLE32[frameIndex], surface);
+		decompressedOK = decompressMToonRLE<Rle32Frame, uint32, 0x80000000u, 0x80000000u>(_dataRLE32[frameIndex], surface, isBottomUp);
 	} else if (_rleOptimizedFormat.bytesPerPixel == 2) {
-		decompressedOK = decompressMToonRLE<Rle16Frame, uint16, 0x8000u, 0x8000u>(_dataRLE16[frameIndex], surface);
+		decompressedOK = decompressMToonRLE<Rle16Frame, uint16, 0x8000u, 0x8000u>(_dataRLE16[frameIndex], surface, isBottomUp);
 	} else if (_rleOptimizedFormat.bytesPerPixel == 1) {
-		decompressedOK = decompressMToonRLE<Rle8Frame, uint8, 0x80u, 0u>(_dataRLE8[frameIndex], surface);
+		decompressedOK = decompressMToonRLE<Rle8Frame, uint8, 0x80u, 0u>(_dataRLE8[frameIndex], surface, isBottomUp);
 	} else
 		error("Unknown mToon encoding");
 
@@ -317,8 +320,13 @@ void CachedMToon::loadRLEFrames(const Common::Array<uint8> &data) {
 				memcpy(&_dataRLE16[i].data[0], &data[baseOffset + 20], numDWords * 2);
 
 				uint16 *i16 = &_dataRLE16[i].data[0];
-				for (size_t swapIndex = 0; swapIndex < numDWords; swapIndex++)
-					i16[swapIndex] = FROM_BE_16(i16[swapIndex]);
+				if (_metadata->imageFormat == MToonMetadata::kImageFormatWindows) {
+					for (size_t swapIndex = 0; swapIndex < numDWords; swapIndex++)
+						i16[swapIndex] = FROM_LE_16(i16[swapIndex]);
+				} else if (_metadata->imageFormat == MToonMetadata::kImageFormatMac) {
+					for (size_t swapIndex = 0; swapIndex < numDWords; swapIndex++)
+						i16[swapIndex] = FROM_BE_16(i16[swapIndex]);
+				}
 			} else
 				error("Unknown mToon encoding");
 		}
@@ -558,13 +566,15 @@ void CachedMToon::getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common:
 			surface->create(_metadata->rect.getWidth(), _metadata->rect.getHeight(), _rleOptimizedFormat);
 		}
 
+		bool isBottomUp = (_metadata->imageFormat == MToonMetadata::kImageFormatWindows);
+
 		for (size_t i = firstFrameToRender; i <= targetFrame; i++) {
 			if (_rleOptimizedFormat.bytesPerPixel == 1)
-				decompressMToonRLE<Rle8Frame, uint8, 0x80u, 0>(_dataRLE8[i], *surface);
+				decompressMToonRLE<Rle8Frame, uint8, 0x80u, 0>(_dataRLE8[i], *surface, isBottomUp);
 			else if (_rleOptimizedFormat.bytesPerPixel == 2)
-				decompressMToonRLE<Rle16Frame, uint16, 0x8000u, 0x8000u>(_dataRLE16[i], *surface);
+				decompressMToonRLE<Rle16Frame, uint16, 0x8000u, 0x8000u>(_dataRLE16[i], *surface, isBottomUp);
 			else if (_rleOptimizedFormat.bytesPerPixel == 4)
-				decompressMToonRLE<Rle32Frame, uint32, 0x80000000u, 0x80000000u>(_dataRLE32[i], *surface);
+				decompressMToonRLE<Rle32Frame, uint32, 0x80000000u, 0x80000000u>(_dataRLE32[i], *surface, isBottomUp);
 		}
 	}
 }
