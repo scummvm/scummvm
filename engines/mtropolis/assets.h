@@ -33,6 +33,7 @@ namespace MTropolis {
 
 struct AssetLoaderContext;
 struct AudioMetadata;
+struct MToonMetadata;
 class AudioPlayer;
 
 class ColorTableAsset : public Asset {
@@ -57,6 +58,104 @@ public:
 
 private:
 	Common::Array<uint8> _data;
+};
+
+struct MToonMetadata {
+	enum ImageFormat {
+		kImageFormatMac,
+		kImageFormatWindows,
+	};
+
+	struct FrameDef {
+		Rect16 rect;
+		uint32 dataOffset;
+		uint32 compressedSize;
+		uint32 decompressedSize;
+		uint16 decompressedBytesPerRow;
+		bool isKeyFrame;
+
+		bool load(AssetLoaderContext &context, const Data::MToonAsset::FrameDef &data);
+	};
+
+	struct FrameRangeDef {
+		uint32 startFrame;
+		uint32 endFrame;
+
+		Common::String name;
+
+		bool load(AssetLoaderContext &context, const Data::MToonAsset::FrameRangeDef &data);
+	};
+
+	ImageFormat imageFormat;
+
+	Rect16 rect;
+	uint16 bitsPerPixel;
+	uint32 codecID;
+	bool temporalCompression;
+
+	Common::Array<FrameDef> frames;
+	Common::Array<FrameRangeDef> frameRanges;
+	Common::Array<uint8> codecData;
+};
+
+class CachedMToon {
+public:
+	CachedMToon();
+
+	bool loadFromStream(const Common::SharedPtr<MToonMetadata> &metadata, Common::ReadStream *stream, size_t size);
+
+	void optimize(Runtime *runtime);
+
+	void getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common::SharedPtr<Graphics::Surface> &surface) const;
+	const Common::SharedPtr<MToonMetadata> &getMetadata() const;
+
+private:
+	void optimizeNonTemporal(const Graphics::PixelFormat &targetFormat);
+	void optimizeRLE(const Graphics::PixelFormat &targetFormat);
+
+	struct RleFrame {
+		uint32 version;
+		uint32 width;
+		uint32 height;
+		bool isKeyframe;
+	};
+
+	struct Rle32Frame : public RleFrame {
+		Common::Array<uint32> data;
+	};
+
+	struct Rle16Frame : public RleFrame {
+		Common::Array<uint16> data;
+	};
+
+	struct Rle8Frame : public RleFrame {
+		Common::Array<uint8> data;
+	};
+
+	static const uint32 kMToonRLECodecID = 0x2e524c45;
+	static const uint32 kMToonRLEKeyframePrefix = 0x524c4520;
+	static const uint32 kMToonRLETemporalFramePrefix = 1;
+
+	void decompressNonTemporalFrames(const Common::Array<uint8> &data);
+	void decompressRLEFrameToImage(size_t frameIndex, Graphics::Surface &surface);
+	void loadRLEFrames(const Common::Array<uint8> &data);
+	void decompressRLEFrame(size_t frameIndex);
+	void loadUncompressedFrame(const Common::Array<uint8> &data, size_t frameIndex);
+
+	template<class TSrcFrame, class TSrcNumber, uint32 TSrcLiteralMask, uint32 TSrcTransparentSkipMask, class TDestFrame, class TDestNumber, uint32 TDestLiteralMask, uint32 TDestTransparentSkipMask>
+	void rleReformat(const TSrcFrame &srcFrame, const Graphics::PixelFormat &srcFormatRef, TDestFrame &destFrame, const Graphics::PixelFormat &destFormatRef);
+
+	Common::Array<Rle8Frame> _dataRLE8;
+	Common::Array<Rle16Frame> _dataRLE16;
+	Common::Array<Rle32Frame> _dataRLE32;
+
+	Common::Array<Common::SharedPtr<Graphics::Surface> > _ntSurfaces;
+	Common::Array<Common::SharedPtr<Graphics::Surface> > _optimizedNTSurfaces;
+
+	Graphics::PixelFormat _rleInternalFormat;
+	Graphics::PixelFormat _rleOptimizedFormat;
+
+	Common::SharedPtr<MToonMetadata> _metadata;
 };
 
 struct AudioMetadata {
@@ -177,44 +276,15 @@ public:
 	bool load(AssetLoaderContext &context, const Data::MToonAsset &data);
 	AssetType getAssetType() const override;
 
-	enum ImageFormat {
-		kImageFormatMac,
-		kImageFormatWindows,
-	};
-
-	struct FrameDef {
-		Rect16 rect;
-		uint32 dataOffset;
-		uint32 compressedSize;
-		uint32 decompressedSize;
-		uint16 decompressedBytesPerRow;
-		bool isKeyFrame;
-
-		bool load(AssetLoaderContext &context, const Data::MToonAsset::FrameDef &data);
-	};
-
-	struct FrameRangeDef {
-		uint32 startFrame;
-		uint32 endFrame;
-
-		Common::String name;
-
-		bool load(AssetLoaderContext &context, const Data::MToonAsset::FrameRangeDef &data);
-	};
+	const Common::SharedPtr<CachedMToon> &loadAndCacheMToon(Runtime *runtime);
 
 private:
-	ImageFormat _imageFormat;
-
 	uint32 _frameDataPosition;
 	uint32 _sizeOfFrameData;
+	size_t _streamIndex;
 
-	Rect16 _rect;
-	uint16 _bitsPerPixel;
-	uint32 _codecID;
-
-	Common::Array<FrameDef> _frames;
-	Common::Array<FrameRangeDef> _frameRanges;
-	Common::Array<uint8> _codecData;
+	Common::SharedPtr<MToonMetadata> _metadata;
+	Common::SharedPtr<CachedMToon> _cachedMToon;
 };
 
 class TextAsset : public Asset {
