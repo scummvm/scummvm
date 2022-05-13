@@ -1031,15 +1031,16 @@ void DebugInspectorWindow::declareDynamic(const char *name, const Common::String
 		_labeledRow.push_back(row);
 	}
 	_labeledRow[_declLabeledRow].text = data;
+	_declLabeledRow++;
 }
 
 void DebugInspectorWindow::declareLoose(const Common::String &data) {
-	if (_declLabeledRow == _labeledRow.size()) {
+	if (_declUnlabeledRow == _unlabeledRow.size()) {
 		InspectorUnlabeledRow row;
 		row.str = data;
 		_unlabeledRow.push_back(row);
 	} else
-		_unlabeledRow[_declLabeledRow].str = data;
+		_unlabeledRow[_declUnlabeledRow].str = data;
 
 	_declUnlabeledRow++;
 }

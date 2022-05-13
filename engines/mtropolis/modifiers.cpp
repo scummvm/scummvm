@@ -746,6 +746,9 @@ Common::SharedPtr<Modifier> TimerMessengerModifier::shallowClone() const {
 }
 
 void TimerMessengerModifier::trigger(Runtime *runtime) {
+	if (getStaticGUID() == 0xd9550) {
+		int n = 0;
+	}
 	debug(3, "Timer %x '%s' triggered", getStaticGUID(), getName().c_str());
 	if (_looping) {
 		uint32 realMilliseconds = _milliseconds;

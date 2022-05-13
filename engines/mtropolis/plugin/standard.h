@@ -265,6 +265,9 @@ private:
 		void saveInternal(Common::WriteStream *stream) const override;
 		bool loadInternal(Common::ReadStream *stream) override;
 
+		static void recursiveWriteList(DynamicList *list, Common::WriteStream *stream);
+		static Common::SharedPtr<DynamicList> recursiveReadList(Common::ReadStream *stream);
+
 		ListVariableModifier *_modifier;
 		Common::SharedPtr<DynamicList> _list;
 	};
