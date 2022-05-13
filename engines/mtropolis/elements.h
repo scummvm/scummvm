@@ -39,8 +39,10 @@ namespace MTropolis {
 class AudioPlayer;
 class CachedAudio;
 class CachedImage;
+class CachedMToon;
 struct AudioMetadata;
 struct ElementLoaderContext;
+struct MToonMetadata;
 
 enum MediaState {
 	kMediaStatePlaying,
@@ -141,6 +143,8 @@ private:
 
 	Common::SharedPtr<CachedImage> _cachedImage;
 
+	Common::String _text;	// ...???
+
 	Runtime *_runtime;
 };
 
@@ -173,9 +177,14 @@ private:
 	uint32 _assetID;
 	uint32 _rateTimes10000;
 	uint32 _cel1Based;
+	int32 _flushPriority;
 
 	Runtime *_runtime;
 	Common::SharedPtr<Graphics::Surface> _renderSurface;
+	uint32 _renderedFrame;
+
+	Common::SharedPtr<MToonMetadata> _metadata;
+	Common::SharedPtr<CachedMToon> _cachedMToon;
 };
 
 class TextLabelElement : public VisualElement {

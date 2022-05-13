@@ -401,10 +401,22 @@ bool ImageElement::load(ElementLoaderContext &context, const Data::ImageElement 
 }
 
 bool ImageElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "text") {
+		// Obsidian accesses this on an image element in the menus, and if it fails, the "save first" warning
+		// prompt buttons aren't layered correctly?
+		result.setString(_text);
+		return true;
+	}
+
 	return VisualElement::readAttribute(thread, result, attrib);
 }
 
 MiniscriptInstructionOutcome ImageElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "text") {
+		DynamicValueWriteStringHelper::create(&_text, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
 	return VisualElement::writeRefAttribute(thread, writeProxy, attrib);
 }
 
@@ -438,7 +450,7 @@ void ImageElement::render(Window *window) {
 	}
 }
 
-MToonElement::MToonElement() : _cel1Based(1) {
+MToonElement::MToonElement() : _cel1Based(1), _renderedFrame(0), _flushPriority(0) {
 }
 
 MToonElement::~MToonElement() {
@@ -463,6 +475,9 @@ bool MToonElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 	if (attrib == "cel") {
 		result.setInt(_cel1Based);
 		return true;
+	} else if (attrib == "flushpriority") {
+		result.setInt(_flushPriority);
+		return true;
 	}
 
 	return VisualElement::readAttribute(thread, result, attrib);
@@ -473,12 +488,31 @@ MiniscriptInstructionOutcome MToonElement::writeRefAttribute(MiniscriptThread *t
 		// TODO proper support
 		DynamicValueWriteIntegerHelper<uint32>::create(&_cel1Based, result);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "flushpriority") {
+		DynamicValueWriteIntegerHelper<int32>::create(&_flushPriority, result);
+		return kMiniscriptInstructionOutcomeContinue;
+
 	}
 
 	return VisualElement::writeRefAttribute(thread, result, attrib);
 }
 
 void MToonElement::activate() {
+	Project *project = _runtime->getProject();
+	Common::SharedPtr<Asset> asset = project->getAssetByID(_assetID).lock();
+
+	if (!asset) {
+		warning("mToon element references asset %i but the asset isn't loaded!", _assetID);
+		return;
+	}
+
+	if (asset->getAssetType() != kAssetTypeMToon) {
+		warning("mToon element assigned an asset that isn't an mToon");
+		return;
+	}
+
+	_cachedMToon = static_cast<MToonAsset *>(asset.get())->loadAndCacheMToon(_runtime);
+	_metadata = _cachedMToon->getMetadata();
 }
 
 void MToonElement::deactivate() {
@@ -486,6 +520,21 @@ void MToonElement::deactivate() {
 }
 
 void MToonElement::render(Window *window) {
+	if (_cachedMToon) {
+		_cachedMToon->optimize(_runtime);
+		uint32 frame = 0;
+
+		if (_cel1Based < 1)
+			frame = 0;
+		else if (_cel1Based > _metadata->frames.size())
+			frame = _metadata->frames.size() - 1;
+		else
+			frame = _cel1Based - 1;
+
+		_cachedMToon->getOrRenderFrame(_renderedFrame, frame, _renderSurface);
+		_renderedFrame = frame;
+	}
+
 	if (_renderSurface) {
 		Common::Rect srcRect(_renderSurface->w, _renderSurface->h);
 		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.getWidth(), _cachedAbsoluteOrigin.y + _rect.getHeight());
