@@ -280,9 +280,9 @@ void CachedMToon::loadRLEFrames(const Common::Array<uint8> &data) {
 
 		RleFrame *rleFrame = nullptr;
 		if (bpp == 8)
-			rleFrame = &_dataRLE8[0];
+			rleFrame = &_dataRLE8[i];
 		else if (bpp == 16)
-			rleFrame = &_dataRLE16[0];
+			rleFrame = &_dataRLE16[i];
 
 		size_t baseOffset = frameDef.dataOffset;
 
