@@ -1,3 +1,6 @@
+ifndef .FEATURES
+	$(error GNU Make 3.81 or higher is required)
+endif
 
 #######################################################################
 # Default compilation parameters. Normally don't edit these           #
