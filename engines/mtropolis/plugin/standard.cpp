@@ -812,6 +812,12 @@ VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::Shared
 			}
 		}
 	}
+	if (_terminateWhen.respondsTo(msg->getEvent())) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = runtime->debugGetDebugger())
+			debugger->notify(kDebugSeverityWarning, "MIDI player ordered to terminate, which isn't supported yet");
+#endif
+	}
 
 	return kVThreadReturn;
 }

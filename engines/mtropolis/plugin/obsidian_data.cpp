@@ -65,6 +65,23 @@ DataReadErrorCode TextWorkModifier::load(PlugIn& plugIn, const PlugInModifier& p
 	return kDataReadErrorNone;
 }
 
+DataReadErrorCode WordMixerModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode DictionaryModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!str.load(reader) || !index.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 } // End of namespace Obsidian
 
 } // End of namespace Data

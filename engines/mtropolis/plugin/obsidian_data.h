@@ -71,6 +71,19 @@ protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
+struct DictionaryModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue str;
+	PlugInTypeTaggedValue index;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct WordMixerModifier : public PlugInModifierData {
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
 } // End of namespace Obsidian
 
 } // End of namespace Data

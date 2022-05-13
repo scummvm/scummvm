@@ -1315,7 +1315,13 @@ bool IntegerVariableModifier::varSetValue(MiniscriptThread *thread, const Dynami
 		_value = static_cast<int32>(floor(value.getFloat() + 0.5));
 	else if (value.getType() == DynamicValueTypes::kInteger)
 		_value = value.getInt();
-	else
+	else if (value.getType() == DynamicValueTypes::kString) {
+		// Should this scan %lf to a double and round it instead?
+		int i;
+		if (!sscanf(value.getString().c_str(), "%i", &i))
+			return false;
+		_value = i;
+	} else
 		return false;
 
 	return true;
@@ -1383,6 +1389,30 @@ bool IntegerRangeVariableModifier::varSetValue(MiniscriptThread *thread, const D
 
 void IntegerRangeVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
 	dest.setIntRange(_range);
+}
+
+bool IntegerRangeVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "start") {
+		result.setInt(_range.min);
+		return true;
+	}
+	if (attrib == "end") {
+		result.setInt(_range.max);
+		return true;
+	}
+	return Modifier::readAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome IntegerRangeVariableModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "start") {
+		DynamicValueWriteIntegerHelper<int32>::create(&_range.min, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "end") {
+		DynamicValueWriteIntegerHelper<int32>::create(&_range.max, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	return Modifier::writeRefAttribute(thread, result, attrib);
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE

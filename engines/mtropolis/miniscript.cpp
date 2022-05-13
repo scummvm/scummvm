@@ -856,6 +856,36 @@ MiniscriptInstructionOutcome Or::execute(MiniscriptThread *thread) const {
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
+MiniscriptInstructionOutcome Neg::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 1) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	DynamicValue &value = thread->getStackValueFromTop(0).value;
+	switch (value.getType()) {
+	case DynamicValueTypes::kFloat:
+		value.setFloat(-value.getFloat());
+		break;
+	case DynamicValueTypes::kInteger: {
+		int32 i = value.getInt();
+		if (i == (0 - 1 -0x7fffffff))
+			value.setFloat(-static_cast<double>(i));
+		else
+			value.setInt(-i);
+		} break;
+	default:
+		thread->error("Couldn't negate a value of a non-numeric type");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 MiniscriptInstructionOutcome Not::execute(MiniscriptThread *thread) const {
 	if (thread->getStackSize() < 1) {
 		thread->error("Stack underflow");

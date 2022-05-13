@@ -159,7 +159,9 @@ namespace MiniscriptInstructions {
 		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
-	class Neg : public UnimplementedInstruction {
+	class Neg : public MiniscriptInstruction {
+	private:
+		MiniscriptInstructionOutcome execute(MiniscriptThread *thread) const override;
 	};
 
 	class Not : public MiniscriptInstruction {
