@@ -1105,41 +1105,58 @@ void ListVariableModifier::SaveLoad::commitLoad() const {
 }
 
 void ListVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) const {
-	stream->writeUint32BE(_list->getType());
-	stream->writeUint32BE(_list->getSize());
+	recursiveWriteList(_list.get(), stream);
+}
 
-	size_t listSize = _list->getSize();
+bool ListVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
+	Common::SharedPtr<DynamicList> list = recursiveReadList(stream);
+	if (list) {
+		_list = list;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void ListVariableModifier::SaveLoad::recursiveWriteList(DynamicList *list, Common::WriteStream *stream) {
+	stream->writeUint32BE(list->getType());
+	stream->writeUint32BE(list->getSize());
+
+	size_t listSize = list->getSize();
 	for (size_t i = 0; i < listSize; i++) {
-		switch (_list->getType()) {
+		switch (list->getType()) {
 		case DynamicValueTypes::kInteger:
-			stream->writeSint32BE(_list->getInt()[i]);
+			stream->writeSint32BE(list->getInt()[i]);
 			break;
 		case DynamicValueTypes::kPoint: {
-				const Point16 &pt = _list->getPoint()[i];
+				const Point16 &pt = list->getPoint()[i];
 				stream->writeSint16BE(pt.x);
 				stream->writeSint16BE(pt.y);
 			}
 			break;
 		case DynamicValueTypes::kIntegerRange: {
-				const IntRange &range = _list->getIntRange()[i];
+				const IntRange &range = list->getIntRange()[i];
 				stream->writeSint32BE(range.min);
 				stream->writeSint32BE(range.max);
 			} break;
 		case DynamicValueTypes::kFloat:
-			stream->writeDoubleBE(_list->getFloat()[i]);
+			stream->writeDoubleBE(list->getFloat()[i]);
 			break;
 		case DynamicValueTypes::kString: {
-				const Common::String &str = _list->getString()[i];
+				const Common::String &str = list->getString()[i];
 				stream->writeUint32BE(str.size());
 				stream->writeString(str);
 			} break;
 		case DynamicValueTypes::kVector: {
-				const AngleMagVector &vec = _list->getVector()[i];
+				const AngleMagVector &vec = list->getVector()[i];
 				stream->writeDoubleBE(vec.angleDegrees);
 				stream->writeDoubleBE(vec.magnitude);
 			} break;
 		case DynamicValueTypes::kBoolean:
-			stream->writeByte(_list->getBool()[i] ? 1 : 0);
+			stream->writeByte(list->getBool()[i] ? 1 : 0);
+			break;
+		case DynamicValueTypes::kList:
+			recursiveWriteList(list->getList()[i].get(), stream);
 			break;
 		default:
 			error("Can't figure out how to write a saved variable");
@@ -1148,14 +1165,15 @@ void ListVariableModifier::SaveLoad::saveInternal(Common::WriteStream *stream) c
 	}
 }
 
-bool ListVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
-	_list.reset(new DynamicList());
+Common::SharedPtr<DynamicList> ListVariableModifier::SaveLoad::recursiveReadList(Common::ReadStream *stream) {
+	Common::SharedPtr<DynamicList> list;
+	list.reset(new DynamicList());
 
 	uint32 typeCode = stream->readUint32BE();
 	uint32 size = stream->readUint32BE();
 
 	if (stream->err())
-		return false;
+		return nullptr;
 
 	for (size_t i = 0; i < size; i++) {
 		DynamicValue val;
@@ -1183,9 +1201,9 @@ bool ListVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
 				val.setFloat(f);
 			} break;
 		case DynamicValueTypes::kString: {
-			uint32 strLen = stream->readUint32BE();
-			if (stream->err())
-				return false;
+				uint32 strLen = stream->readUint32BE();
+				if (stream->err())
+					return nullptr;
 
 				Common::String str;
 				if (strLen > 0) {
@@ -1206,18 +1224,24 @@ bool ListVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream) {
 				byte b = stream->readByte();
 				val.setBool(b != 0);
 			} break;
+		case DynamicValueTypes::kList: {
+				Common::SharedPtr<DynamicList> childList = recursiveReadList(stream);
+				if (!childList)
+					return nullptr;
+				val.setList(childList);
+			} break;
 		default:
 			error("Can't figure out how to write a saved variable");
 			break;
 		}
 
 		if (stream->err())
-			return false;
+			return nullptr;
 
-		_list->setAtIndex(i, val);
+		list->setAtIndex(i, val);
 	}
 
-	return true;
+	return list;
 }
 
 bool SysInfoModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::SysInfoModifier &data) {

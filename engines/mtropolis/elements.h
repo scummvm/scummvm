@@ -241,6 +241,7 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Sound Element"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:

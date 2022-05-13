@@ -743,6 +743,9 @@ MiniscriptInstructionOutcome UnorderedCompareInstruction::execute(MiniscriptThre
 			case DynamicValueTypes::kBoolean:
 				isEqual = (rs.getBool() == lsDest.getBool());
 				break;
+			default:
+				isEqual = (lsDest.getBool() == false);
+				break;
 			}
 		} break;
 	case DynamicValueTypes::kFloat: {
@@ -780,6 +783,20 @@ MiniscriptInstructionOutcome UnorderedCompareInstruction::execute(MiniscriptThre
 				isEqual = ((rs.getBool() ? 1 : 0) == lsDest.getInt());
 				break;
 			}
+		} break;
+	case DynamicValueTypes::kLabel: {
+			// Really not sure how this works but there are buggy scripts in Obsidian which
+			// were probably written as "if loop = false then ..." except Miniscript resolved
+			// "loop" as a sound marker (!) because a sound marker with that name exists instead
+			// of resolving it as equivalent to element.loop as it usually would.
+			// Strict equality checks prevent the "GEN_Streaming_Update on ALC" script from
+			// working, which prevents the bqtstreaming and bstreaming flags from being cleared,
+			// causing, among other things, the player to get stuck after the Forest->Bureau
+			// transition because the stuck streaming flags are blocking the VO.
+			if (rs.getType() == DynamicValueTypes::kBoolean)
+				isEqual = !rs.getBool();
+			else
+				isEqual = (lsDest == rs);
 		} break;
 	default:
 		isEqual = (lsDest == rs);
@@ -1826,7 +1843,7 @@ VThreadState MiniscriptThread::resume(const ResumeTaskData &taskData) {
 	if (instrsArray.size() == 0)
 		return kVThreadReturn;
 
-	if (_modifier->getStaticGUID() == 0x48890) {
+	if (_modifier->getStaticGUID() == 0x31ae0e) {
 		int n = 0;
 	}
 

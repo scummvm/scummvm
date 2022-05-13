@@ -747,6 +747,24 @@ void SoundElement::playMedia(Runtime *runtime, Project *project) {
 	}
 }
 
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void SoundElement::debugInspect(IDebugInspectionReport *report) const {
+	NonVisualElement::debugInspect(report);
+
+	report->declareDynamic("leftVol", Common::String::format("%i", _leftVolume));
+	report->declareDynamic("rightVol", Common::String::format("%i", _rightVolume));
+	report->declareDynamic("balance", Common::String::format("%i", _balance));
+	report->declareDynamic("asset", Common::String::format("%i", _assetID));
+
+	AudioMetadata *metadata = _metadata.get();
+	report->declareDynamic("duration", metadata ? Common::String::format("%i", metadata->durationMSec) : Common::String("Unknown"));
+	report->declareDynamic("finishTime", Common::String::format("%i", static_cast<int>(_finishTime)));
+	report->declareDynamic("shouldPlayIfNotPaused", _shouldPlayIfNotPaused ? "true" : "false");
+	report->declareDynamic("paused", _paused ? "true" : "false");
+	report->declareDynamic("needsReset", _needsReset ? "true" : "false");
+}
+#endif
+
 MiniscriptInstructionOutcome SoundElement::scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() != DynamicValueTypes::kBoolean)
 		return kMiniscriptInstructionOutcomeFailed;
