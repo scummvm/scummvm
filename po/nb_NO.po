@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-12 17:01+0000\n"
-"PO-Revision-Date: 2022-05-05 19:27+0000\n"
+"PO-Revision-Date: 2022-05-13 13:59+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -4228,7 +4228,7 @@ msgstr ""
 
 #: engines/agos/detection.cpp:77
 msgid "AdLib OPL3 mode"
-msgstr ""
+msgstr "AdLib OPL3-modus"
 
 #: engines/agos/detection.cpp:78
 msgid ""
@@ -4236,10 +4236,13 @@ msgid ""
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
 "stereo."
 msgstr ""
+"Hvis AdLib er valgt, vil OPL3-funksjonalitet bli brukt. Dette kan, avhengig "
+"av spillet, forhindre avbrytelser i toner, legge til ekstra toner/"
+"instrumenter og/eller legge til stereolyd."
 
 #: engines/agos/detection.cpp:86
 msgid "Use DOS version music tempos"
-msgstr ""
+msgstr "Bruk musikktempo fra DOS-versjon"
 
 #: engines/agos/detection.cpp:87
 msgid ""
@@ -4247,6 +4250,9 @@ msgid ""
 "version of the game. Otherwise, the faster tempos of the Windows version "
 "will be used."
 msgstr ""
+"Hvis dette alternativet er valg vil musikken bli avspilt i samme tempo som "
+"DOS-versjonen av spillet. Til vanlig vil det raskere tempoet til Windows-"
+"versjonen bli brukt."
 
 #: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
