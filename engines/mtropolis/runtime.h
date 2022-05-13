@@ -36,6 +36,7 @@
 #include "mtropolis/actions.h"
 #include "mtropolis/data.h"
 #include "mtropolis/debug.h"
+#include "mtropolis/hacks.h"
 #include "mtropolis/vthread.h"
 
 class OSystem;
@@ -511,6 +512,7 @@ public:
 	virtual ~DynamicListContainerBase();
 	virtual bool setAtIndex(size_t index, const DynamicValue &dynValue) = 0;
 	virtual bool getAtIndex(size_t index, DynamicValue &dynValue) const = 0;
+	virtual void truncateToSize(size_t sz) = 0;
 	virtual bool expandToMinimumSize(size_t sz) = 0;
 	virtual void setFrom(const DynamicListContainerBase &other) = 0; // Only supports setting same type!
 	virtual const void *getConstArrayPtr() const = 0;
@@ -567,6 +569,7 @@ class DynamicListContainer : public DynamicListContainerBase {
 public:
 	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
 	bool getAtIndex(size_t index, DynamicValue &dynValue) const override;
+	void truncateToSize(size_t sz) override;
 	bool expandToMinimumSize(size_t sz) override;
 	void setFrom(const DynamicListContainerBase &other) override;
 	const void *getConstArrayPtr() const override;
@@ -586,6 +589,7 @@ public:
 
 	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
 	bool getAtIndex(size_t index, DynamicValue &dynValue) const override;
+	void truncateToSize(size_t sz) override;
 	bool expandToMinimumSize(size_t sz) override;
 	void setFrom(const DynamicListContainerBase &other) override;
 	const void *getConstArrayPtr() const override;
@@ -603,6 +607,7 @@ class DynamicListContainer<VarReference> : public DynamicListContainerBase {
 public:
 	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
 	bool getAtIndex(size_t index, DynamicValue &dynValue) const override;
+	void truncateToSize(size_t sz) override;
 	bool expandToMinimumSize(size_t sz) override;
 	void setFrom(const DynamicListContainerBase &other) override;
 	const void *getConstArrayPtr() const override;
@@ -639,6 +644,12 @@ bool DynamicListContainer<T>::setAtIndex(size_t index, const DynamicValue &dynVa
 	}
 
 	return true;
+}
+
+template<class T>
+void DynamicListContainer<T>::truncateToSize(size_t sz) {
+	if (_array.size() > sz)
+		_array.resize(sz);
 }
 
 template<class T>
@@ -730,6 +741,7 @@ struct DynamicList {
 
 	bool getAtIndex(size_t index, DynamicValue &value) const;
 	bool setAtIndex(size_t index, const DynamicValue &value);
+	void truncateToSize(size_t sz);
 	void expandToMinimumSize(size_t sz);
 	size_t getSize() const;
 
@@ -936,6 +948,32 @@ struct DynamicValueWriteStringHelper : public IDynamicValueWriteInterface {
 private:
 	static DynamicValueWriteStringHelper _instance;
 };
+
+template<class TClass, MiniscriptInstructionOutcome (TClass::*TWriteMethod)(MiniscriptThread *thread, const DynamicValue &dest), MiniscriptInstructionOutcome (TClass::*TRefAttribMethod)(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib)>
+struct DynamicValueWriteOrRefAttribFuncHelper : public IDynamicValueWriteInterface {
+	MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) const override {
+		return (static_cast<TClass *>(objectRef)->*TWriteMethod)(thread, dest);
+	}
+	MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const override {
+		return (static_cast<TClass *>(objectRef)->*TRefAttribMethod)(thread, proxy, attrib);
+	}
+	MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override {
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	static void create(TClass *obj, DynamicValueWriteProxy &proxy) {
+		proxy.pod.ptrOrOffset = 0;
+		proxy.pod.objectRef = obj;
+		proxy.pod.ifc = &_instance;
+	}
+
+private:
+	static DynamicValueWriteOrRefAttribFuncHelper _instance;
+};
+
+template<class TClass, MiniscriptInstructionOutcome (TClass::*TWriteMethod)(MiniscriptThread *thread, const DynamicValue &dest), MiniscriptInstructionOutcome (TClass::*TRefAttribMethod)(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib)>
+DynamicValueWriteOrRefAttribFuncHelper<TClass, TWriteMethod, TRefAttribMethod> DynamicValueWriteOrRefAttribFuncHelper<TClass, TWriteMethod, TRefAttribMethod>::_instance;
+
 
 template<class TClass, MiniscriptInstructionOutcome (TClass::*TWriteMethod)(MiniscriptThread *thread, const DynamicValue &dest)>
 struct DynamicValueWriteFuncHelper : public IDynamicValueWriteInterface {
@@ -1462,6 +1500,9 @@ public:
 
 	Audio::Mixer *getAudioMixer() const;
 
+	Hacks &getHacks();
+	const Hacks &getHacks() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
@@ -1632,6 +1673,8 @@ private:
 
 	uint32 _modifierOverrideCursorID;
 	bool _haveModifierOverrideCursor;
+
+	Hacks _hacks;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	Common::SharedPtr<Debugger> _debugger;
@@ -2166,11 +2209,15 @@ protected:
 
 	MiniscriptInstructionOutcome scriptSetDirect(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetPosition(MiniscriptThread *thread, const DynamicValue &dest);
+	MiniscriptInstructionOutcome scriptSetPositionX(MiniscriptThread *thread, const DynamicValue &dest);
+	MiniscriptInstructionOutcome scriptSetPositionY(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetCenterPosition(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result);
 	MiniscriptInstructionOutcome scriptSetWidth(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetHeight(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetLayer(MiniscriptThread *thread, const DynamicValue &dest);
+
+	MiniscriptInstructionOutcome scriptWriteRefPositionAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
 
 	void offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOriginOnly);
 

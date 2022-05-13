@@ -527,6 +527,9 @@ bool DynamicListContainer<void>::setAtIndex(size_t index, const DynamicValue &dy
 	return true;
 }
 
+void DynamicListContainer<void>::truncateToSize(size_t sz) {
+}
+
 bool DynamicListContainer<void>::expandToMinimumSize(size_t sz) {
 	return false;
 }
@@ -587,6 +590,11 @@ bool DynamicListContainer<VarReference>::setAtIndex(size_t index, const DynamicV
 	}
 
 	return true;
+}
+
+void DynamicListContainer<VarReference>::truncateToSize(size_t sz) {
+	if (_array.size() > sz)
+		_array.resize(sz);
 }
 
 bool DynamicListContainer<VarReference>::expandToMinimumSize(size_t sz) {
@@ -798,6 +806,13 @@ bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
 	} else {
 		return _container->setAtIndex(index, value);
 	}
+}
+
+void DynamicList::truncateToSize(size_t sz) {
+	if (sz == 0)
+		clear();
+	else if (_container)
+		_container->truncateToSize(sz);
 }
 
 void DynamicList::expandToMinimumSize(size_t sz) {
@@ -1669,12 +1684,40 @@ void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, C
 			if (!outStructuralDest.expired())
 				outStructuralDest = outStructuralDest.lock()->getParent()->getSelfReference().staticCast<Structural>();
 			break;
+		case kMessageDestNextElement:
+		case kMessageDestPrevElement: {
+				Common::WeakPtr<Structural> elementWeak;
+				Common::WeakPtr<Modifier> modifier;
+				resolveHierarchyStructuralDestination(runtime, sender, elementWeak, modifier, isElementFilter);
+
+				Common::SharedPtr<Structural> sibling;
+				Common::SharedPtr<Structural> element = elementWeak.lock();
+				if (element) {
+					Structural *parent = element->getParent();
+					if (parent) {
+						const Common::Array<Common::SharedPtr<Structural> > &siblings = parent->getChildren();
+						for (size_t i = 0; i < siblings.size(); i++) {
+							if (siblings[i] == element) {
+								if (destination == kMessageDestPrevElement) {
+									if (i != 0)
+										sibling = siblings[i - 1];
+								} else if (destination == kMessageDestNextElement) {
+									if (i != siblings.size() - 1)
+										sibling = siblings[i + 1];
+								}
+								break;
+							}
+						}
+					}
+				}
+
+				if (sibling)
+					outStructuralDest = sibling;
+			} break;
 		case kMessageDestChildren:
 		case kMessageDestSubsection:
 		case kMessageDestSourcesParent:
 		case kMessageDestBehavior:
-		case kMessageDestNextElement:
-		case kMessageDestPrevElement:
 		case kMessageDestBehaviorsParent:
 			warning("Not-yet-implemented message destination type");
 			break;
@@ -4558,6 +4601,15 @@ Audio::Mixer *Runtime::getAudioMixer() const {
 	return _mixer;
 }
 
+Hacks &Runtime::getHacks() {
+	return _hacks;
+}
+
+const Hacks &Runtime::getHacks() const {
+	return _hacks;
+}
+
+
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
 	if (_mainWindow.expired() && _project) {
@@ -5809,7 +5861,7 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetDirect>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "position") {
-		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetPosition>::create(this, writeProxy);
+		DynamicValueWriteOrRefAttribFuncHelper<VisualElement, &VisualElement::scriptSetPosition, &VisualElement::scriptWriteRefPositionAttribute>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "centerposition") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetCenterPosition>::create(this, writeProxy);
@@ -5908,6 +5960,32 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
+MiniscriptInstructionOutcome VisualElement::scriptSetPositionX(MiniscriptThread *thread, const DynamicValue &dest) {
+	int32 asInteger = 0;
+	if (!dest.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	int32 xDelta = asInteger - _rect.left;
+
+	if (xDelta != 0)
+		offsetTranslate(xDelta, 0, false);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome VisualElement::scriptSetPositionY(MiniscriptThread *thread, const DynamicValue &dest) {
+	int32 asInteger = 0;
+	if (!dest.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	int32 yDelta = asInteger - _rect.top;
+
+	if (yDelta != 0)
+		offsetTranslate(0, yDelta, false);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 MiniscriptInstructionOutcome VisualElement::scriptSetCenterPosition(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kPoint) {
 		const Point16 &destPoint = value.getPoint();
@@ -5961,6 +6039,18 @@ MiniscriptInstructionOutcome VisualElement::scriptSetLayer(MiniscriptThread *thr
 	}
 
 	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome VisualElement::scriptWriteRefPositionAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "x") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetPositionX>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "y") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetPositionY>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
 void VisualElement::offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOriginOnly) {

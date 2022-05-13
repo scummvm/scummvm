@@ -716,9 +716,14 @@ VThreadState TimerMessengerModifier::consumeMessage(Runtime *runtime, const Comm
 		if (_scheduledEvent)
 			_scheduledEvent->cancel();
 	} else if (_executeWhen.respondsTo(msg->getEvent())) {
-		debug(3, "Timer %x '%s' scheduled to execute in %i milliseconds", getStaticGUID(), getName().c_str(), _milliseconds);
+		// 0-time events are not allowed
+		uint32 realMilliseconds = _milliseconds;
+		if (realMilliseconds == 0)
+			realMilliseconds = 1;
+
+		debug(3, "Timer %x '%s' scheduled to execute in %i milliseconds", getStaticGUID(), getName().c_str(), realMilliseconds);
 		if (!_scheduledEvent) {
-			_scheduledEvent = runtime->getScheduler().scheduleMethod<TimerMessengerModifier, &TimerMessengerModifier::activate>(runtime->getPlayTime() + _milliseconds, this);
+			_scheduledEvent = runtime->getScheduler().scheduleMethod<TimerMessengerModifier, &TimerMessengerModifier::trigger>(runtime->getPlayTime() + realMilliseconds, this);
 		}
 	}
 
@@ -740,11 +745,14 @@ Common::SharedPtr<Modifier> TimerMessengerModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(clone);
 }
 
-void TimerMessengerModifier::activate(Runtime *runtime) {
+void TimerMessengerModifier::trigger(Runtime *runtime) {
 	debug(3, "Timer %x '%s' triggered", getStaticGUID(), getName().c_str());
-	if (_looping)
-		_scheduledEvent = runtime->getScheduler().scheduleMethod<TimerMessengerModifier, &TimerMessengerModifier::activate>(runtime->getPlayTime() + _milliseconds, this);
-	else
+	if (_looping) {
+		uint32 realMilliseconds = _milliseconds;
+		if (realMilliseconds == 0)
+			realMilliseconds = 1;
+		_scheduledEvent = runtime->getScheduler().scheduleMethod<TimerMessengerModifier, &TimerMessengerModifier::trigger>(runtime->getPlayTime() + realMilliseconds, this);
+	} else
 		_scheduledEvent.reset();
 
 	_sendSpec.sendFromMessenger(runtime, this);

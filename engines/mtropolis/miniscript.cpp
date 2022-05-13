@@ -1826,7 +1826,7 @@ VThreadState MiniscriptThread::resume(const ResumeTaskData &taskData) {
 	if (instrsArray.size() == 0)
 		return kVThreadReturn;
 
-	if (_modifier->getStaticGUID() == 0x985d1) {
+	if (_modifier->getStaticGUID() == 0x48890) {
 		int n = 0;
 	}
 

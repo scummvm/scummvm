@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	detection.o \
 	element_factory.o \
 	elements.o \
+	hacks.o \
 	metaengine.o \
 	miniscript.o \
 	modifiers.o \
