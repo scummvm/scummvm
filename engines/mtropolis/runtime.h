@@ -949,6 +949,17 @@ private:
 	static DynamicValueWriteStringHelper _instance;
 };
 
+struct DynamicValueWriteBoolHelper : public IDynamicValueWriteInterface {
+	MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const override;
+	MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const override;
+	MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override;
+
+	static void create(bool *boolValue, DynamicValueWriteProxy &proxy);
+
+private:
+	static DynamicValueWriteBoolHelper _instance;
+};
+
 template<class TClass, MiniscriptInstructionOutcome (TClass::*TWriteMethod)(MiniscriptThread *thread, const DynamicValue &dest), MiniscriptInstructionOutcome (TClass::*TRefAttribMethod)(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib)>
 struct DynamicValueWriteOrRefAttribFuncHelper : public IDynamicValueWriteInterface {
 	MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) const override {

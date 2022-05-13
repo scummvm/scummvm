@@ -454,6 +454,8 @@ MToonElement::MToonElement() : _cel1Based(1), _renderedFrame(0), _flushPriority(
 }
 
 MToonElement::~MToonElement() {
+	if (_playMediaSignaller)
+		_playMediaSignaller->removeReceiver(this);
 }
 
 bool MToonElement::load(ElementLoaderContext &context, const Data::MToonElement &data) {
@@ -491,7 +493,9 @@ MiniscriptInstructionOutcome MToonElement::writeRefAttribute(MiniscriptThread *t
 	} else if (attrib == "flushpriority") {
 		DynamicValueWriteIntegerHelper<int32>::create(&_flushPriority, result);
 		return kMiniscriptInstructionOutcomeContinue;
-
+	} else if (attrib == "maintainrate") {
+		DynamicValueWriteBoolHelper::create(&_maintainRate, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return VisualElement::writeRefAttribute(thread, result, attrib);
@@ -513,9 +517,16 @@ void MToonElement::activate() {
 
 	_cachedMToon = static_cast<MToonAsset *>(asset.get())->loadAndCacheMToon(_runtime);
 	_metadata = _cachedMToon->getMetadata();
+
+	_playMediaSignaller = project->notifyOnPlayMedia(this);
 }
 
 void MToonElement::deactivate() {
+	if (_playMediaSignaller) {
+		_playMediaSignaller->removeReceiver(this);
+		_playMediaSignaller.reset();
+	}
+
 	_renderSurface.reset();
 }
 
@@ -542,6 +553,8 @@ void MToonElement::render(Window *window) {
 	}
 }
 
+void MToonElement::playMedia(Runtime *runtime, Project *project) {
+}
 
 TextLabelElement::TextLabelElement() : _needsRender(false), _isBitmap(false) {
 }

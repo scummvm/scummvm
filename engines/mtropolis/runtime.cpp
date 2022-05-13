@@ -1546,6 +1546,33 @@ void DynamicValueWriteStringHelper::create(Common::String *strValue, DynamicValu
 
 DynamicValueWriteStringHelper DynamicValueWriteStringHelper::_instance;
 
+MiniscriptInstructionOutcome DynamicValueWriteBoolHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+	bool &dest = *static_cast<bool *>(objectRef);
+	switch (value.getType()) {
+	case DynamicValueTypes::kBoolean:
+		dest = value.getBool();
+		return kMiniscriptInstructionOutcomeContinue;
+	default:
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+}
+
+MiniscriptInstructionOutcome DynamicValueWriteBoolHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome DynamicValueWriteBoolHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+void DynamicValueWriteBoolHelper::create(bool *boolValue, DynamicValueWriteProxy &proxy) {
+	proxy.pod.ptrOrOffset = 0;
+	proxy.pod.objectRef = boolValue;
+	proxy.pod.ifc = &_instance;
+}
+
+DynamicValueWriteBoolHelper DynamicValueWriteBoolHelper::_instance;
+
 MiniscriptInstructionOutcome DynamicValueWriteObjectHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
 	thread->error("Can't write to read-only object value");
 	return kMiniscriptInstructionOutcomeFailed;
