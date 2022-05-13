@@ -384,21 +384,19 @@ Common::SeekableWriteStream *AmigaOSFilesystemNode::createWriteStream() {
 }
 
 bool AmigaOSFilesystemNode::createDirectory() {
-	BPTR lock = IDOS->Lock(_sPath.c_str(), SHARED_LOCK);
-	if (lock) {
-		IDOS->UnLock(lock);
-		debug("AmigaOSFilesystemNode::createDirectory() -> Directory '%s' already exists!", _sPath.c_str());
-		return _bIsValid && _bIsDirectory; // TODO: Should we make sure it's really a directory?
+	Common::String temp = _sPath;
+	if (temp.lastChar() == '/') {
+		temp = temp.substr(0, temp.size() - 1);
 	}
 
-	lock = IDOS->CreateDir(_sPath.c_str());
+	BPTR lock = IDOS->CreateDir(temp.c_str());
 	if (lock) {
 		IDOS->UnLock(lock);
-		debug("AmigaOSFilesystemNode::createDirectory() -> Directory '%s' created!", _sPath.c_str());
+		debug(6, "AmigaOSFilesystemNode::createDirectory() -> Directory '%s' created", temp.c_str());
 		_bIsValid = true;
 		_bIsDirectory = true;
 	} else {
-		warning("AmigaOSFilesystemNode::createDirectory() -> Failed to create '%s'!", _sPath.c_str());
+		debug(6, "AmigaOSFilesystemNode::createDirectory() failed -> Directory '%s' not created", temp.c_str());
 	}
 
 	return _bIsValid && _bIsDirectory;
