@@ -1256,10 +1256,13 @@ static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8
 static void clear8Col(byte *dst, int dstPitch, int height, uint8 bitDepth) {
 	do {
 #if defined(SCUMM_NEED_ALIGNMENT)
-		memset(dst, 0, 8 * bitDepth);
+		if (g_scumm->_game.platform == Common::kPlatformNES)
+			memset(dst, 0x1d, 8 * bitDepth);
+		else
+			memset(dst, 0, 8 * bitDepth);
 #else
 		if (g_scumm->_game.platform == Common::kPlatformNES) {
-			memset(dst, 0x1d, 8);
+			memset(dst, 0x1d, 8 * bitDepth);
 		} else {
 			((uint32*)dst)[0] = 0;
 			((uint32*)dst)[1] = 0;
