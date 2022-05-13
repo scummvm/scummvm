@@ -91,7 +91,6 @@ struct MToonMetadata {
 	Rect16 rect;
 	uint16 bitsPerPixel;
 	uint32 codecID;
-	bool temporalCompression;
 
 	Common::Array<FrameDef> frames;
 	Common::Array<FrameRangeDef> frameRanges;
@@ -136,7 +135,7 @@ private:
 	static const uint32 kMToonRLEKeyframePrefix = 0x524c4520;
 	static const uint32 kMToonRLETemporalFramePrefix = 1;
 
-	void decompressNonTemporalFrames(const Common::Array<uint8> &data);
+	void decompressFrames(const Common::Array<uint8> &data);
 	void decompressRLEFrameToImage(size_t frameIndex, Graphics::Surface &surface);
 	void loadRLEFrames(const Common::Array<uint8> &data);
 	void decompressRLEFrame(size_t frameIndex);
@@ -148,9 +147,10 @@ private:
 	Common::Array<Rle8Frame> _dataRLE8;
 	Common::Array<Rle16Frame> _dataRLE16;
 	Common::Array<Rle32Frame> _dataRLE32;
+	bool _isRLETemporalCompressed;
 
-	Common::Array<Common::SharedPtr<Graphics::Surface> > _ntSurfaces;
-	Common::Array<Common::SharedPtr<Graphics::Surface> > _optimizedNTSurfaces;
+	Common::Array<Common::SharedPtr<Graphics::Surface> > _decompressedFrames;
+	Common::Array<Common::SharedPtr<Graphics::Surface> > _optimizedFrames;
 
 	Graphics::PixelFormat _rleInternalFormat;
 	Graphics::PixelFormat _rleOptimizedFormat;

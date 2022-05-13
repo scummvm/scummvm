@@ -148,7 +148,7 @@ private:
 	Runtime *_runtime;
 };
 
-class MToonElement : public VisualElement {
+class MToonElement : public VisualElement, public IPlayMediaSignalReceiver {
 public:
 	MToonElement();
 	~MToonElement();
@@ -169,6 +169,8 @@ public:
 #endif
 
 private:
+	void playMedia(Runtime *runtime, Project *project) override;
+
 	bool _cacheBitmap;
 
 	// If set, then carry over residual frame time and display at the desired rate.  If not set, reset residual each frame for smoother animation.
@@ -185,6 +187,7 @@ private:
 
 	Common::SharedPtr<MToonMetadata> _metadata;
 	Common::SharedPtr<CachedMToon> _cachedMToon;
+	Common::SharedPtr<PlayMediaSignaller> _playMediaSignaller;
 };
 
 class TextLabelElement : public VisualElement {

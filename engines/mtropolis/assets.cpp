@@ -106,7 +106,7 @@ size_t CachedAudio::getNumSamples(const AudioMetadata &metadata) const {
 	}
 }
 
-CachedMToon::CachedMToon() {
+CachedMToon::CachedMToon() : _isRLETemporalCompressed(false) {
 }
 
 bool CachedMToon::loadFromStream(const Common::SharedPtr<MToonMetadata> &metadata, Common::ReadStream *stream, size_t size) {
@@ -120,20 +120,32 @@ bool CachedMToon::loadFromStream(const Common::SharedPtr<MToonMetadata> &metadat
 			return false;
 	}
 
-	if (metadata->codecID == kMToonRLECodecID)
+	if (metadata->codecID == kMToonRLECodecID) {
 		loadRLEFrames(data);
+		uint16 firstFrameWidth = metadata->frames[0].rect.getWidth();
+		uint16 firstFrameHeight = metadata->frames[0].rect.getHeight();
 
-	if (!metadata->temporalCompression)
-		decompressNonTemporalFrames(data);
+		_isRLETemporalCompressed = true;
+		for (size_t i = 0; i < metadata->frames.size(); i++) {
+			const MToonMetadata::FrameDef &frame = metadata->frames[i];
+			if (frame.rect.getWidth() != firstFrameWidth || frame.rect.getHeight() != firstFrameHeight) {
+				_isRLETemporalCompressed = false;
+				break;
+			}
+		}
+	}
+
+	if (!_isRLETemporalCompressed)
+		decompressFrames(data);
 
 	return true;
 }
 
-void CachedMToon::decompressNonTemporalFrames(const Common::Array<uint8> &data) {
+void CachedMToon::decompressFrames(const Common::Array<uint8> &data) {
 	size_t numFrames = _metadata->frames.size();
 
-	_ntSurfaces.resize(numFrames);
-	_optimizedNTSurfaces.resize(numFrames);
+	_decompressedFrames.resize(numFrames);
+	_optimizedFrames.resize(numFrames);
 
 	for (size_t i = 0; i < numFrames; i++) {
 		if (_metadata->codecID == kMToonRLECodecID) {
@@ -357,7 +369,7 @@ void CachedMToon::decompressRLEFrame(size_t frameIndex) {
 
 	decompressRLEFrameToImage(frameIndex, *surface);
 
-	this->_ntSurfaces[frameIndex] = surface;
+	this->_decompressedFrames[frameIndex] = surface;
 }
 
 void CachedMToon::loadUncompressedFrame(const Common::Array<uint8> &data, size_t frameIndex) {
@@ -420,7 +432,7 @@ void CachedMToon::loadUncompressedFrame(const Common::Array<uint8> &data, size_t
 		}
 	}
 
-	_ntSurfaces[frameIndex] = surface;
+	_decompressedFrames[frameIndex] = surface;
 }
 
 template<class TSrcFrame, class TSrcNumber, uint32 TSrcLiteralMask, uint32 TSrcTransparentSkipMask, class TDestFrame, class TDestNumber, uint32 TDestLiteralMask, uint32 TDestTransparentSkipMask>
@@ -474,21 +486,20 @@ void CachedMToon::rleReformat(const TSrcFrame &srcFrame, const Graphics::PixelFo
 
 void CachedMToon::optimize(Runtime *runtime) {
 	Graphics::PixelFormat renderFmt = runtime->getRenderPixelFormat();
-	if (!_metadata->temporalCompression) {
-		optimizeNonTemporal(renderFmt);
-	} else if (_metadata->codecID == kMToonRLECodecID) {
+	if (_isRLETemporalCompressed)
 		optimizeRLE(renderFmt);
-	}
+	else
+		optimizeNonTemporal(renderFmt);
 }
 
 void CachedMToon::optimizeNonTemporal(const Graphics::PixelFormat &targetFormatRef) {
 	const Graphics::PixelFormat targetFormat = targetFormatRef;
 
-	_optimizedNTSurfaces.resize(_ntSurfaces.size());
+	_optimizedFrames.resize(_decompressedFrames.size());
 
-	for (size_t i = 0; i < _ntSurfaces.size(); i++) {
-		Common::SharedPtr<Graphics::Surface> srcSurface = _ntSurfaces[i];
-		Common::SharedPtr<Graphics::Surface> &optimizedSurfRef = _optimizedNTSurfaces[i];
+	for (size_t i = 0; i < _decompressedFrames.size(); i++) {
+		Common::SharedPtr<Graphics::Surface> srcSurface = _decompressedFrames[i];
+		Common::SharedPtr<Graphics::Surface> &optimizedSurfRef = _optimizedFrames[i];
 
 		// FIXME: Aggregate these checks and merge into a single format field
 		if (optimizedSurfRef == nullptr || optimizedSurfRef->format != targetFormat) {
@@ -538,8 +549,8 @@ void CachedMToon::optimizeRLE(const Graphics::PixelFormat &targetFormatRef) {
 }
 
 void CachedMToon::getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common::SharedPtr<Graphics::Surface>& surface) const {
-	if (!_metadata->temporalCompression) {
-		surface = _optimizedNTSurfaces[targetFrame];
+	if (!_isRLETemporalCompressed) {
+		surface = _optimizedFrames[targetFrame];
 	} else if (_metadata->codecID == kMToonRLECodecID) {
 		uint32 firstFrameToRender = 0;
 		uint32 backStopFrame = 0;
@@ -999,7 +1010,6 @@ bool MToonAsset::load(AssetLoaderContext &context, const Data::MToonAsset &data)
 	}
 
 	_metadata->codecData = data.codecData;
-	_metadata->temporalCompression = ((data.encodingFlags & Data::MToonAsset::kEncodingFlag_TemporalCompression) != 0);
 
 	return true;
 }
