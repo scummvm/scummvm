@@ -631,7 +631,7 @@ static const yytype_int16 yyrline[] =
      403,   407,   411,   415,   419,   423,   427,   431,   435,   439,
      443,   447,   451,   454,   458,   463,   468,   471,   476,   481,
      485,   491,   495,   498,   499,   500,   503,   507,   510,   515,
-     518,   519,   523,   526,   532,   543,   547,   548,   551,   555,
+     518,   519,   523,   528,   532,   543,   547,   548,   551,   555,
      559,   562,   565,   567
 };
 #endif
@@ -2183,17 +2183,17 @@ yyreduce:
   case 102: /* bline: KTOK NUM NUM NUM  */
 #line 523 "engines/hypno/grammar_arc.y"
                            {
+		FrameInfo fi((yyvsp[-1].i), 1);
+		shoot->explosionFrames.push_back(fi);
 		debugC(1, kHypnoDebugParser, "K %d %d %d", (yyvsp[-2].i), (yyvsp[-1].i), (yyvsp[0].i));
 	}
-#line 2189 "engines/hypno/grammar_arc.cpp"
+#line 2191 "engines/hypno/grammar_arc.cpp"
     break;
 
   case 103: /* bline: KTOK NUM NUM  */
-#line 526 "engines/hypno/grammar_arc.y"
+#line 528 "engines/hypno/grammar_arc.y"
                        { debugC(1, kHypnoDebugParser, "K %d %d", (yyvsp[-1].i), (yyvsp[0].i));
 		FrameInfo fi((yyvsp[-1].i), 1);
-		shoot->explosionFrames.push_back(fi);
-		fi = FrameInfo((yyvsp[0].i), 1);
 		shoot->explosionFrames.push_back(fi);
 	}
 #line 2200 "engines/hypno/grammar_arc.cpp"

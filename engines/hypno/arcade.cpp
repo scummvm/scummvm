@@ -254,7 +254,6 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 		int start = segments[_segmentIdx].start;
 		_background->decoder->forceSeekToFrame(start);
 		_masks->decoder->forceSeekToFrame(start);
-		segments[_segmentIdx].size -= start;
 		segments[_segmentIdx].start = 1;
 	}
 
