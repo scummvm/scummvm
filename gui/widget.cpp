@@ -452,15 +452,15 @@ void ButtonWidget::setUnpressedState() {
 
 #pragma mark -
 
-DropdownButtonWidget::DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey) :
-		ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey) {
+DropdownButtonWidget::DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey, const Common::U32String &lowresLabel) :
+		ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey, lowresLabel) {
 	setFlags(getFlags() | WIDGET_TRACK_MOUSE);
 
 	reset();
 }
 
-DropdownButtonWidget::DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey) :
-		ButtonWidget(boss, name, label, tooltip, cmd, hotkey) {
+DropdownButtonWidget::DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey, const Common::U32String &lowresLabel) :
+		ButtonWidget(boss, name, label, tooltip, cmd, hotkey, lowresLabel) {
 	setFlags(getFlags() | WIDGET_TRACK_MOUSE);
 
 	reset();
