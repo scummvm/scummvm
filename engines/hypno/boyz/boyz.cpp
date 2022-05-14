@@ -288,6 +288,9 @@ void BoyzEngine::loadAssets() {
 	_warningFriendlySoldiers.push_back("warnings/w06s.smk");
 	_warningFriendlySoldiers.push_back("warnings/w07s.smk");
 
+	_warningAlarmDay.push_back("warnings/w10s.smk");
+	_warningAlarmDay.push_back("warnings/w11s.smk");
+
 	_warningHostage = "warnings/w08s.smk";
 
 	// Set initial health for the team

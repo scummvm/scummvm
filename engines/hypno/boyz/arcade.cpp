@@ -367,6 +367,13 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		runIntro(video);
 		_health = 0; // TODO: not sure about this
 		return;
+	} else if (s->name.contains("ALARM")) {
+		_background->decoder->pauseVideo(true);
+		MVideo video(_warningAlarmDay.front(), Common::Point(0, 0), false, true, false);
+		disableCursor();
+		runIntro(video);
+		_health = 0;
+		return;
 	}
 
 	if (s->missedAnimation == 0) {
