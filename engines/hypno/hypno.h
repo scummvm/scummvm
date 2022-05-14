@@ -590,7 +590,10 @@ public:
 	uint32 _currentWeapon;
 	uint32 _civiliansShoot;
 	Filename _warningAnimals;
+	Filename _warningHostage;
 	Common::Array<Filename> _warningCivilians;
+	Common::Array<Filename> _warningFriendlySoldiers;
+
 
 	Common::BitArray _font05;
 	Common::BitArray _font08;

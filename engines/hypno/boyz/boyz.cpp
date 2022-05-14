@@ -285,6 +285,11 @@ void BoyzEngine::loadAssets() {
 	_warningCivilians.push_back("warnings/w04s.smk");
 	_warningCivilians.push_back("warnings/w05s.smk");
 
+	_warningFriendlySoldiers.push_back("warnings/w06s.smk");
+	_warningFriendlySoldiers.push_back("warnings/w07s.smk");
+
+	_warningHostage = "warnings/w08s.smk";
+
 	// Set initial health for the team
 	for (int i = 0; i < 7; i++) {
 		_healthTeam[i] = _maxHealth;
