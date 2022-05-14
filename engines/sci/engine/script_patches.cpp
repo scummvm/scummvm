@@ -7757,6 +7757,35 @@ static const uint16 longbowPatchAmigaSpeedTest[] = {
 	PATCH_END
 };
 
+// The Amiga version introduced a script bug that prevents setting the flag when
+//  saving the peasant woman on day one. To get a perfect score, Robin must give
+//  the woman money as she walks away, but this causes the rest of the game to
+//  behave as if she was left to die. The script savedTheWoman was altered to
+//  set flag 173 in a later state than before, but this was a mistake because
+//  giveWomanBucks interrupts savedTheWoman and completes the scene. The Amiga
+//  script also allows exiting to the map before flag 173 is set.
+//
+// We fix this by setting flag 173 as soon as savedTheWoman enables input, just
+//  like in the PC versions. We make room by overwriting an Amiga-only test of
+//  the machine's speed. This is unnecessary as we disable the speed test above.
+//
+// Applies to: English Amiga Floppy
+// Responsible method: savedTheWoman:changeState(13)
+static const uint16 longbowSignatureAmigaPeasantWoman[] = {
+	0x89, SIG_MAGICDWORD, 0x57,     // lsg 87 [ machine speed, always 2 ]
+	0x35, 0x01,                     // ldi 01
+	0x20,                           // ge?    [ machine speed >= 1 ]
+	0x30, SIG_UINT16(0x0012),       // bnt 0012
+	SIG_END
+};
+
+static const uint16 longbowPatchAmigaPeasantWoman[] = {
+	0x39, 0x01,                     // pushi 01
+	0x38, PATCH_UINT16(0x00ad),     // pushi 00ad    [ flag 173 ]
+	0x45, 0x06, 0x02,               // callb proc0_6 [ set saved-woman flag ]
+	PATCH_END
+};
+
 // When Robin is sentenced to death, King Richard and Robin discuss Marian's
 //  death even if she is alive and just finished testifying at the trial.
 //
@@ -7807,6 +7836,7 @@ static const uint16 longbowPatchMarianMessagesFix[] = {
 
 //          script, description,                                      signature                                patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
+	{  true,    29, "amiga day 1 peasant woman",                   1, longbowSignatureAmigaPeasantWoman,       longbowPatchAmigaPeasantWoman},
 	{  true,   140, "green man riddles and forest sweep fix",      1, longbowSignatureGreenManForestSweepFix,  longbowPatchGreenManForestSweepFix },
 	{  true,   150, "day 5/6 camp sunset fix",                     2, longbowSignatureCampSunsetFix,           longbowPatchCampSunsetFix },
 	{  true,   150, "day 7 tuck net fix",                          1, longbowSignatureTuckNetFix,              longbowPatchTuckNetFix },
