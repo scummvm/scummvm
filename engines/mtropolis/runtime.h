@@ -1509,6 +1509,8 @@ public:
 	void clearModifierCursorOverride();
 	void forceCursorRefreshOnce();
 
+	bool isAwaitingSceneTransition() const;
+
 	Common::RandomSource *getRandom() const;
 	WorldManagerInterface *getWorldManagerInterface() const;
 	AssetManagerInterface *getAssetManagerInterface() const;

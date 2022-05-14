@@ -75,6 +75,9 @@ public:
 
 	bool load(ElementLoaderContext &context, const Data::MovieElement &data);
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
+
 	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	void activate() override;
@@ -91,11 +94,24 @@ public:
 private:
 	void onSegmentUnloaded(int segmentIndex) override;
 
+	MiniscriptInstructionOutcome scriptSetRange(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetRangeStart(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetRangeEnd(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptRangeWriteRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
+
+	MiniscriptInstructionOutcome scriptSetRangeTyped(MiniscriptThread *thread, const IntRange &range);
+
 	struct StartPlayingTaskData {
 		Runtime *runtime;
 	};
 
+	struct SeekToTimeTaskData {
+		Runtime *runtime;
+		uint32 timestamp;
+	};
+
 	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
+	VThreadState seekToTimeTask(const SeekToTimeTaskData &taskData);
 
 	bool _cacheBitmap;
 	bool _alternate;
@@ -109,6 +125,11 @@ private:
 	uint32 _assetID;
 
 	Common::SharedPtr<Video::VideoDecoder> _videoDecoder;
+	uint32 _maxTimestamp;
+	uint32 _timeScale;
+	uint32 _currentTimestamp;
+	IntRange _playRange;
+
 	const Graphics::Surface *_displayFrame;
 
 	Common::SharedPtr<SegmentUnloadSignaller> _unloadSignaller;

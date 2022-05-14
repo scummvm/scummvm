@@ -518,7 +518,7 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 	}
 	thread->popValues(2);
 
-	return kMiniscriptInstructionOutcomeContinue;
+	return outcome;
 }
 
 Send::Send(const Event &evt, const MessageFlags &messageFlags) : _evt(evt), _messageFlags(messageFlags) {
