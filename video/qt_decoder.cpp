@@ -558,6 +558,22 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 	return frame;
 }
 
+Audio::Timestamp QuickTimeDecoder::VideoTrackHandler::getFrameTime(uint frame) const {
+	// TODO: This probably doesn't work right with edit lists
+	int cumulativeDuration = 0;
+	for (int ttsIndex = 0; ttsIndex < _parent->timeToSampleCount; ttsIndex++) {
+		const TimeToSampleEntry &tts = _parent->timeToSample[ttsIndex];
+		if (frame < tts.count)
+			return Audio::Timestamp(0, _parent->timeScale).addFrames(cumulativeDuration + frame * tts.duration);
+		else {
+			frame -= tts.count;
+			cumulativeDuration += tts.duration * tts.count;
+		}
+	}
+
+	return Audio::Timestamp().addFrames(-1);
+}
+
 const byte *QuickTimeDecoder::VideoTrackHandler::getPalette() const {
 	_dirtyPalette = false;
 	return _forcedDitherPalette ? _forcedDitherPalette : _curPalette;

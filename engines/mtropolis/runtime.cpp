@@ -2745,9 +2745,15 @@ MiniscriptInstructionOutcome Structural::scriptSetPaused(MiniscriptThread *threa
 	_paused = targetValue;
 	onPauseStateChanged();
 
-	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(targetValue ? EventIDs::kPause : EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
-	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-	thread->getRuntime()->sendMessageOnVThread(dispatch);
+	// Quirk: "pause" state changes during scene transitions don't fire "Paused" events.
+	// This is necessary in Obsidian to prevent the rotator lever from triggering when leaving the menu
+	// while at the Bureau light carousel, since the lever isn't flagged as paused but is set paused
+	// via an init script, and the lever trigger is detected via the pause event.
+	if (!thread->getRuntime()->isAwaitingSceneTransition()) {
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(targetValue ? EventIDs::kPause : EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		thread->getRuntime()->sendMessageOnVThread(dispatch);
+	}
 
 	return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
 }
@@ -4653,6 +4659,10 @@ void Runtime::clearModifierCursorOverride() {
 
 void Runtime::forceCursorRefreshOnce() {
 	_forceCursorRefreshOnce = true;
+}
+
+bool Runtime::isAwaitingSceneTransition() const {
+	return _sceneTransitionState != kSceneTransitionStateNotTransitioning;
 }
 
 Common::RandomSource *Runtime::getRandom() const {

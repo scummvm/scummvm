@@ -205,6 +205,25 @@ bool MovieElement::load(ElementLoaderContext &context, const Data::MovieElement 
 	return true;
 }
 
+bool MovieElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "range") {
+		result.setIntRange(_playRange);
+		return true;
+	}
+
+	return VisualElement::readAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome MovieElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "range") {
+		DynamicValueWriteOrRefAttribFuncHelper<MovieElement, &MovieElement::scriptSetRange, &MovieElement::scriptRangeWriteRefAttribute>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return VisualElement::writeRefAttribute(thread, result, attrib);
+}
+
+
 VThreadState MovieElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (Event::create(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
 		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("MovieElement::startPlayingTask", this, &MovieElement::startPlayingTask);
@@ -255,8 +274,14 @@ void MovieElement::activate() {
 	if (!_videoDecoder->loadStream(movieDataStream))
 		_videoDecoder.reset();
 
+	_timeScale = qtDecoder->getTimeScale();
+
 	_unloadSignaller = project->notifyOnSegmentUnload(segmentIndex, this);
 	_playMediaSignaller = project->notifyOnPlayMedia(this);
+
+	_maxTimestamp = qtDecoder->getDuration().convertToFramerate(qtDecoder->getTimeScale()).totalNumberOfFrames();
+	_playRange = IntRange::create(0, _maxTimestamp);
+	_currentTimestamp = 0;
 
 	if (!_paused && _visible) {
 		StartPlayingTaskData *startPlayingTaskData = _runtime->getVThread().pushTask("MovieElement::startPlayingTask", this, &MovieElement::startPlayingTask);
@@ -278,39 +303,16 @@ void MovieElement::deactivate() {
 }
 
 void MovieElement::render(Window *window) {
-	int framesDecodedThisFrame = 0;
-
 	if (_needsReset) {
-		// TODO: Seek elsewhere
-		_videoDecoder->seekToFrame(0);
+		_videoDecoder->setReverse(_reversed);
+		_videoDecoder->seek(Audio::Timestamp(0, _timeScale).addFrames(_currentTimestamp));
+		_videoDecoder->setEndTime(Audio::Timestamp(0, _timeScale).addFrames(_reversed ? _playRange.min : _playRange.max));
 		const Graphics::Surface *decodedFrame = _videoDecoder->decodeNextFrame();
-		if (decodedFrame) {
+		if (decodedFrame)
 			_displayFrame = decodedFrame;
-			framesDecodedThisFrame++;
-		}
 
 		_needsReset = false;
 	}
-
-	while (_videoDecoder->needsUpdate()) {
-		if (_playEveryFrame && framesDecodedThisFrame > 0)
-			break;
-
-		const Graphics::Surface *decodedFrame = _videoDecoder->decodeNextFrame();
-
-		// GNARLY HACK: QuickTimeDecoder doesn't return true for endOfVideo or false for needsUpdate until it
-		// tries decoding past the end, so we're assuming that the decoded frame memory stays valid until we
-		// actually have a new frame and continuing to use it.
-		if (decodedFrame) {
-			framesDecodedThisFrame++;
-			_displayFrame = decodedFrame;
-			if (_playEveryFrame)
-				break;
-		}
-	}
-
-	if (framesDecodedThisFrame > 1)
-		debug(1, "Perf warning: %i video frames decoded in one frame", framesDecodedThisFrame);
 
 	if (_displayFrame) {
 		Graphics::ManagedSurface *target = window->getSurface().get();
@@ -321,6 +323,10 @@ void MovieElement::render(Window *window) {
 }
 
 void MovieElement::playMedia(Runtime *runtime, Project *project) {
+	// If this isn't visible, then it wasn't rendered
+	if (!_visible)
+		return;
+
 	if (_videoDecoder) {
 		if (_shouldPlayIfNotPaused) {
 			if (_paused) {
@@ -331,10 +337,10 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 				}
 			} else {
 				// Goal state is playing
-				if (_videoDecoder->isPaused())
-					_videoDecoder->pauseVideo(false);
 				if (!_videoDecoder->isPlaying())
 					_videoDecoder->start();
+				if (_videoDecoder->isPaused())
+					_videoDecoder->pauseVideo(false);
 
 				_currentPlayState = kMediaStatePlaying;
 			}
@@ -346,6 +352,63 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 			_currentPlayState = kMediaStateStopped;
 		}
 
+		uint32 minTS = _playRange.min;
+		uint32 maxTS = _playRange.max;
+		uint32 targetTS = _currentTimestamp;
+
+		int framesDecodedThisFrame = 0;
+		while (_videoDecoder->needsUpdate()) {
+			if (_playEveryFrame && framesDecodedThisFrame > 0)
+				break;
+
+			const Graphics::Surface *decodedFrame = _videoDecoder->decodeNextFrame();
+
+			// GNARLY HACK: QuickTimeDecoder doesn't return true for endOfVideo or false for needsUpdate until it
+			// tries decoding past the end, so we're assuming that the decoded frame memory stays valid until we
+			// actually have a new frame and continuing to use it.
+			if (decodedFrame) {
+				framesDecodedThisFrame++;
+				_displayFrame = decodedFrame;
+				if (_playEveryFrame)
+					break;
+			}
+		}
+
+		if (_currentPlayState == kMediaStatePlaying) {
+			if (_videoDecoder->endOfVideo())
+				targetTS = _reversed ? _playRange.min : _playRange.max;
+			else
+				targetTS = (_videoDecoder->getTime() * _timeScale + 500) / 1000;
+		}
+
+		if (framesDecodedThisFrame > 1)
+			debug(1, "Perf warning: %i video frames decoded in one frame", framesDecodedThisFrame);
+
+		if (targetTS < _playRange.min)
+			targetTS = _playRange.min;
+		if (targetTS > _playRange.max)
+			targetTS = _playRange.max;
+
+		// Sync TS to the end of video if we hit the end
+
+		if (targetTS != _currentTimestamp) {
+			assert(!_paused);
+
+			_currentTimestamp = targetTS;
+
+			if (_currentTimestamp == maxTS) {
+				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));
+				Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+				runtime->queueMessage(dispatch);
+			}
+
+			if (_currentTimestamp == minTS) {
+				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
+				Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+				runtime->queueMessage(dispatch);
+			}
+		}
+
 		if (_currentPlayState == kMediaStatePlaying && _videoDecoder->endOfVideo()) {
 			if (_alternate) {
 				_reversed = !_reversed;
@@ -353,14 +416,14 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 					warning("Failed to reverse video decoder, disabling it");
 					_videoDecoder.reset();
 				}
+
+				uint32 endTS = _reversed ? _playRange.min : _playRange.max;
+				_videoDecoder->setEndTime(Audio::Timestamp(0, _timeScale).addFrames(endTS));
 			} else {
+				// It doesn't look like movies fire any events upon reaching the end, just At Last Cel and At First Cel
 				_videoDecoder->stop();
 				_currentPlayState = kMediaStateStopped;
 			}
-
-			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(_reversed ? EventIDs::kAtFirstCel : EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));
-			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-			runtime->queueMessage(dispatch);
 		}
 	}
 }
@@ -369,14 +432,128 @@ void MovieElement::onSegmentUnloaded(int segmentIndex) {
 	_videoDecoder.reset();
 }
 
+MiniscriptInstructionOutcome MovieElement::scriptSetRange(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kIntegerRange) {
+		thread->error("Wrong type for movie element range");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	return scriptSetRangeTyped(thread, value.getIntRange());
+}
+
+MiniscriptInstructionOutcome MovieElement::scriptSetRangeStart(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger)) {
+		thread->error("Couldn't set movie element range start");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	return scriptSetRangeTyped(thread, IntRange::create(asInteger, _playRange.max));
+}
+
+MiniscriptInstructionOutcome MovieElement::scriptSetRangeEnd(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger)) {
+		thread->error("Couldn't set movie element range end");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	return scriptSetRangeTyped(thread, IntRange::create(_playRange.min, asInteger));
+}
+
+MiniscriptInstructionOutcome MovieElement::scriptRangeWriteRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "start") {
+		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetRangeStart>::create(this, result);
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+	if (attrib == "end") {
+		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetRangeStart>::create(this, result);
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome MovieElement::scriptSetRangeTyped(MiniscriptThread *thread, const IntRange &range) {
+	_playRange = range;
+
+	if (_playRange.min < 0)
+		_playRange.min = 0;
+	else if (_playRange.min > _maxTimestamp)
+		_playRange.min = _maxTimestamp;
+
+	if (_playRange.max > _maxTimestamp)
+		_playRange.max = _maxTimestamp;
+
+	if (_playRange.max < _playRange.min)
+		_playRange.max = _playRange.min;
+
+	uint32 minTS = _playRange.min;
+	uint32 maxTS = _playRange.max;
+	uint32 targetTS = _currentTimestamp;
+
+	if (targetTS < minTS)
+		targetTS = minTS;
+	if (targetTS > maxTS)
+		targetTS = maxTS;
+
+	if (targetTS != _currentTimestamp) {
+		SeekToTimeTaskData *taskData = thread->getRuntime()->getVThread().pushTask("MovieElement::seekToTimeTask", this, &MovieElement::seekToTimeTask);
+		taskData->runtime = _runtime;
+		taskData->timestamp = targetTS;
+
+		return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 VThreadState MovieElement::startPlayingTask(const StartPlayingTaskData &taskData) {
 	if (_videoDecoder) {
-		// TODO: Frame ranges
+		_videoDecoder->stop();
+		_currentPlayState = kMediaStateStopped;
 		_needsReset = true;
+
 		_shouldPlayIfNotPaused = true;
 		_paused = false;
 
 		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		taskData.runtime->sendMessageOnVThread(dispatch);
+	}
+
+	return kVThreadReturn;
+}
+
+VThreadState MovieElement::seekToTimeTask(const SeekToTimeTaskData &taskData) {
+	uint32 minTS = _playRange.min;
+	uint32 maxTS = _playRange.max;
+
+	uint32 targetTS = taskData.timestamp;
+
+	if (targetTS < minTS)
+		targetTS = minTS;
+	if (targetTS > maxTS)
+		targetTS = maxTS;
+
+	if (targetTS == _currentTimestamp)
+		return kVThreadReturn;
+
+	_currentTimestamp = targetTS;
+	if (_videoDecoder) {
+		_videoDecoder->stop();
+		_currentPlayState = kMediaStateStopped;
+	}
+	_needsReset = true;
+
+	if (_currentTimestamp == minTS) {
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		taskData.runtime->sendMessageOnVThread(dispatch);
+	}
+
+	if (_currentTimestamp == maxTS) {
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		taskData.runtime->sendMessageOnVThread(dispatch);
 	}
@@ -727,6 +904,9 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRange(MiniscriptThread *thre
 	size_t numFrames = _metadata->frames.size();
 	if (intRange.min < 1)
 		intRange.min = 1;
+	else if (intRange.min > numFrames)
+		intRange.min = numFrames;
+
 	if (intRange.max > numFrames)
 		intRange.max = numFrames;
 

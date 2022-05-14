@@ -139,6 +139,7 @@ private:
 		int getFrameCount() const;
 		uint32 getNextFrameStartTime() const; // milliseconds
 		const Graphics::Surface *decodeNextFrame();
+		Audio::Timestamp getFrameTime(uint frame) const;
 		const byte *getPalette() const;
 		bool hasDirtyPalette() const { return _curPalette; }
 		bool setReverse(bool reverse);

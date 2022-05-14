@@ -84,6 +84,11 @@ public:
 	 */
 	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
 
+	/**
+	 * Returns the movie time scale
+	 */
+	uint32 getTimeScale() const { return _timeScale; }
+
 	/** Find out if this parser has an open file handle */
 	bool isOpen() const { return _fd != nullptr; }
 
