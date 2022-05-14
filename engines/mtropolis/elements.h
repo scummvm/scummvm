@@ -158,6 +158,8 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
+	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
 	void activate() override;
 	void deactivate() override;
 
@@ -169,7 +171,24 @@ public:
 #endif
 
 private:
+	struct StartPlayingTaskData {
+		Runtime *runtime;
+	};
+
+	struct ChangeFrameTaskData {
+		Runtime *runtime;
+		uint32 frame;
+	};
+
+	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
+	VThreadState changeFrameTask(const ChangeFrameTaskData &taskData);
+
 	void playMedia(Runtime *runtime, Project *project) override;
+	MiniscriptInstructionOutcome scriptSetRate(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetCel(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetRange(MiniscriptThread *thread, const DynamicValue &value);
+
+	void onPauseStateChanged();
 
 	bool _cacheBitmap;
 
@@ -177,9 +196,11 @@ private:
 	bool _maintainRate;
 
 	uint32 _assetID;
-	uint32 _rateTimes10000;
-	uint32 _cel1Based;
+	int32 _rateTimes10000;
+	uint32 _frame;
 	int32 _flushPriority;
+	uint32 _celStartTimeMSec;
+	bool _isPlaying;	// Is actually rolling media, this is only set by playMedia because it needs to start after scene transition
 
 	Runtime *_runtime;
 	Common::SharedPtr<Graphics::Surface> _renderSurface;
@@ -188,6 +209,8 @@ private:
 	Common::SharedPtr<MToonMetadata> _metadata;
 	Common::SharedPtr<CachedMToon> _cachedMToon;
 	Common::SharedPtr<PlayMediaSignaller> _playMediaSignaller;
+
+	IntRange _playRange;
 };
 
 class TextLabelElement : public VisualElement {
