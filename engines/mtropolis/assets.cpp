@@ -327,10 +327,9 @@ void CachedMToon::loadRLEFrames(const Common::Array<uint8> &data) {
 				_dataRLE8[i].data.resize(frameDataSize);
 				memcpy(&_dataRLE8[i].data[0], &data[baseOffset + 20], frameDataSize);
 			} else if (bpp == 16) {
-				// RLE16 data size excludes the header
-				frameDataSize -= 20;
-
-				uint32 numDWords = frameDataSize / 2;
+				// In RLE16, frameDataSize is sometimes set to frameDef.compressedSize but sometimes contains garbage,
+				// so we need to ignore it and derive size from the frameDef instead.
+				uint32 numDWords = (frameDef.compressedSize - 20) / 2;
 				_dataRLE16[i].data.resize(numDWords);
 				memcpy(&_dataRLE16[i].data[0], &data[baseOffset + 20], numDWords * 2);
 
