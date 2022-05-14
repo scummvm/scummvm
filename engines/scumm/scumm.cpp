@@ -2458,8 +2458,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 
 			if (!_saveTemporaryState)
 				_lastSaveTime = _system->getMillis();
-		}
-		else {
+		} else {
 			success = loadState(_saveLoadSlot, _saveTemporaryState, filename);
 			if (!success)
 				errMsg = _("Failed to load saved game from file:\n\n%s");
@@ -2473,9 +2472,8 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 
 			GUI::MessageDialog dialog(buf);
 			runDialog(dialog);
-		}
-		else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
-		 // Display "Save successful" message, except for auto saves
+		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
+			// Display "Save successful" message, except for auto saves
 			Common::U32String buf = Common::U32String::format(_("Successfully saved game in file:\n\n%s"), filename.c_str());
 
 			GUI::TimedMessageDialog dialog(buf, 1500);
