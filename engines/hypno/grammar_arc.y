@@ -518,6 +518,12 @@ bline: FNTOK FILENAME {
 	| KTOK { debugC(1, kHypnoDebugParser, "K"); }
 	| KTOK NUM { debugC(1, kHypnoDebugParser, "K %d", $2);
 		FrameInfo fi($2, 1);
+		int bodyFramesSize = shoot->bodyFrames.size();
+		if ($2 > 0 && bodyFramesSize > 0) { // Correct last bodyFrame length
+			int start = shoot->bodyFrames[bodyFramesSize - 1].start;
+			assert($2 > start);
+			shoot->bodyFrames[bodyFramesSize - 1].length = $2 - start;
+		}
 		shoot->explosionFrames.push_back(fi);
 	}
 	| KTOK NUM NUM NUM {
