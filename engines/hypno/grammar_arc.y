@@ -338,6 +338,8 @@ bline: FNTOK FILENAME {
 		debugC(1, kHypnoDebugParser, "AV %d", $2);
 	}
 	| ALTOK NUM {
+		assert(g_parsedArc->shoots.size() > 0);
+		shoot->checkIfDestroyed = g_parsedArc->shoots.back().name;
 		debugC(1, kHypnoDebugParser, "AL %d", $2);
 	}
 	| ABTOK NUM {

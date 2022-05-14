@@ -470,8 +470,12 @@ public:
 	bool playInteractionAudio;
 	bool destroyed;
 	bool noEnemySound;
+
+	// Soldier Boyz specific
 	bool nonHostile;
 	bool isAnimal;
+	Common::String checkIfDestroyed;
+
 };
 
 typedef Common::Array<Shoot> Shoots;

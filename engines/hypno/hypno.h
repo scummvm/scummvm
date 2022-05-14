@@ -594,6 +594,7 @@ public:
 	Common::Array<Filename> _warningCivilians;
 	Common::Array<Filename> _warningFriendlySoldiers;
 	Common::Array<Filename> _warningAlarmDay;
+	Common::HashMap<Common::String, bool> _shootsDestroyed;
 
 	Common::BitArray _font05;
 	Common::BitArray _font08;

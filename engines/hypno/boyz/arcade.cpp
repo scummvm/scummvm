@@ -57,6 +57,7 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	}
 
 	updateFromScript();
+	_shootsDestroyed.clear();
 }
 
 void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
@@ -281,6 +282,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start + 3);
 				_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start + 3);
 				_shoots[i].destroyed = true;
+				_shootsDestroyed[_shoots[i].name] = true;
 				updateScreen(*_background);
 				drawScreen();
 				if (!_music.empty())
@@ -292,7 +294,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				playVideo(*_additionalVideo);
 				//_shoots[i].lastFrame = _background->decoder->getFrameCount();
 				_shoots[i].destroyed = true;
-
+				_shootsDestroyed[_shoots[i].name] = true;
 				updateScreen(*_background);
 				drawScreen();
 			}
@@ -352,6 +354,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 		incScore(_shoots[i].pointsToShoot);
 		incBonus(_shoots[i].pointsToShoot);
 		_shoots[i].destroyed = true;
+		_shootsDestroyed[_shoots[i].name] = true;
 		_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		changeCursor(_crosshairsActive[_currentWeapon], _crosshairsPalette, true);
@@ -360,6 +363,11 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 }
 
 void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
+	if (!s->checkIfDestroyed.empty()) {
+		if (_shootsDestroyed.contains(s->checkIfDestroyed))
+			return;  // Precondition was destroyed, so we ignore the missed shoot
+	}
+
 	if (s->name == "CAPTOR") {
 		_background->decoder->pauseVideo(true);
 		MVideo video(_warningHostage, Common::Point(0, 0), false, true, false);
@@ -379,11 +387,13 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	if (s->missedAnimation == 0) {
 		return;
 	} else if (s->missedAnimation == uint32(-1)) {
-		uint32 last = _background->decoder->getFrameCount()-1;
-		_background->decoder->forceSeekToFrame(last);
-		_masks->decoder->forceSeekToFrame(last);
+		_skipLevel = true;
 	} else {
 		int missedAnimation = s->missedAnimation + 3;
+		if (missedAnimation > int(_background->decoder->getFrameCount()) - 1) {
+			_skipLevel = true;
+			return;
+		}
 		if (_background->decoder->getCurFrame() > missedAnimation)
 			return; // Too late for this
 		_background->decoder->forceSeekToFrame(missedAnimation);
