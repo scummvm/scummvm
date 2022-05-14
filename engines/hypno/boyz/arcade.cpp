@@ -360,6 +360,15 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 }
 
 void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
+	if (s->name == "CAPTOR") {
+		_background->decoder->pauseVideo(true);
+		MVideo video(_warningHostage, Common::Point(0, 0), false, true, false);
+		disableCursor();
+		runIntro(video);
+		_health = 0; // TODO: not sure about this
+		return;
+	}
+
 	if (s->missedAnimation == 0) {
 		return;
 	} else if (s->missedAnimation == uint32(-1)) {
