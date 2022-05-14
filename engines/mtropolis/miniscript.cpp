@@ -626,6 +626,9 @@ MiniscriptInstructionOutcome BinaryArithInstruction::execute(MiniscriptThread *t
 		case DynamicValueTypes::kFloat:
 			leftVal = lsDest.getFloat();
 			break;
+		case DynamicValueTypes::kBoolean:
+			leftVal = lsDest.getBool() ? 1.0 : 0.0;
+			break;
 		default:
 			thread->error("Invalid left-side type for binary arithmetic operator");
 			return kMiniscriptInstructionOutcomeFailed;
@@ -638,6 +641,9 @@ MiniscriptInstructionOutcome BinaryArithInstruction::execute(MiniscriptThread *t
 			break;
 		case DynamicValueTypes::kFloat:
 			rightVal = rs.getFloat();
+			break;
+		case DynamicValueTypes::kBoolean:
+			rightVal = rs.getBool() ? 1.0 : 0.0;
 			break;
 		default:
 			thread->error("Invalid right-side type for binary arithmetic operator");
