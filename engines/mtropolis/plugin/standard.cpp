@@ -425,10 +425,11 @@ bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &co
 
 	_setToSourceParentWhen.load(data.setToSourceParentWhen.value.asEvent);
 
-	if (data.objectPath.type != Data::PlugInTypeTaggedValue::kString)
+	if (data.objectPath.type == Data::PlugInTypeTaggedValue::kString)
+		_objectPath = data.objectPath.str;
+	else if (data.objectPath.type != Data::PlugInTypeTaggedValue::kNull)
 		return false;
 
-	_objectPath = data.objectPath.str;
 	_object.reset();
 
 	return true;
