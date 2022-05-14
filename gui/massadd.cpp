@@ -27,6 +27,8 @@
 #include "common/taskbar.h"
 #include "common/translation.h"
 
+#include "engines/advancedDetector.h"
+
 #include "gui/massadd.h"
 
 #ifndef DISABLE_MASS_ADD
@@ -174,7 +176,7 @@ void MassAddDialog::handleTickle() {
 		}
 
 		// Run the detector on the dir
-		DetectionResults detectionResults = EngineMan.detectGames(files);
+		DetectionResults detectionResults = EngineMan.detectGames(files, (ADGF_WARNING | ADGF_UNSUPPORTED));
 
 		if (detectionResults.foundUnknownGames()) {
 			Common::U32String report = detectionResults.generateUnknownGameReport(false, 80);

@@ -252,7 +252,7 @@ bool AdvancedMetaEngineDetection::cleanupPirated(ADDetectedGames &matched) const
 	return false;
 }
 
-DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fslist) {
+DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 skipADFlags) {
 	FileMap allFiles;
 
 	if (fslist.empty())
@@ -266,7 +266,7 @@ DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fsl
 	composeFileHashMap(allFiles, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
 
 	// Run the detector on this
-	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "");
+	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "", skipADFlags);
 
 	cleanupPirated(matches);
 
@@ -573,7 +573,7 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 	return true;
 }
 
-ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) {
+ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, uint32 skipADFlags) {
 	FilePropertiesMap filesProps;
 	ADDetectedGames matched;
 
@@ -626,6 +626,11 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 
 		if ((_flags & kADFlagUseExtraAsHint) && !extra.empty() && g->extra != extra)
 			continue;
+
+		if (g->flags & skipADFlags) {
+			debugC(3, kDebugGlobalDetection, "Skipping unsupported target for engine '%s' for the following reasons:\n\t'%s'", g->gameId, g->extra);
+			continue;
+		}
 
 		ADDetectedGame game(g);
 		bool allFilesPresent = true;
