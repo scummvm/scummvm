@@ -280,7 +280,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				// Skip the rest of the interaction
 				_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start + 3);
 				_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start + 3);
-
+				_shoots[i].destroyed = true;
 				updateScreen(*_background);
 				drawScreen();
 				if (!_music.empty())
@@ -376,9 +376,11 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		_background->decoder->forceSeekToFrame(last);
 		_masks->decoder->forceSeekToFrame(last);
 	} else {
-		s->missedAnimation = s->missedAnimation + 3;
-		_background->decoder->forceSeekToFrame(s->missedAnimation);
-		_masks->decoder->forceSeekToFrame(s->missedAnimation);
+		int missedAnimation = s->missedAnimation + 3;
+		if (_background->decoder->getCurFrame() > missedAnimation)
+			return; // Too late for this
+		_background->decoder->forceSeekToFrame(missedAnimation);
+		_masks->decoder->forceSeekToFrame(missedAnimation);
 	}
 	if (s->interactionFrame == 0)
 		hitPlayer();
