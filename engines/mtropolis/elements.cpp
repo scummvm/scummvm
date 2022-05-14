@@ -223,9 +223,15 @@ MiniscriptInstructionOutcome MovieElement::writeRefAttribute(MiniscriptThread *t
 	return VisualElement::writeRefAttribute(thread, result, attrib);
 }
 
-
 VThreadState MovieElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (Event::create(EventIDs::kPlay, 0).respondsTo(msg->getEvent())) {
+		// These reverse order
+		{
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+			runtime->sendMessageOnVThread(dispatch);
+		}
+
 		StartPlayingTaskData *startPlayingTaskData = runtime->getVThread().pushTask("MovieElement::startPlayingTask", this, &MovieElement::startPlayingTask);
 		startPlayingTaskData->runtime = runtime;
 
@@ -516,10 +522,6 @@ VThreadState MovieElement::startPlayingTask(const StartPlayingTaskData &taskData
 
 		_shouldPlayIfNotPaused = true;
 		_paused = false;
-
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
-		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-		taskData.runtime->sendMessageOnVThread(dispatch);
 	}
 
 	return kVThreadReturn;
@@ -806,35 +808,35 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 		_celStartTimeMSec = runtime->getPlayTime();
 	}
 
-	if (_rateTimes10000 < 0) {
-		warning("Playing mToons backwards is not implemented yet");
-		_rateTimes10000 = 0; 
-		return;
-	}
+	const bool isReversed = (_rateTimes10000 < 0);
+	uint32 absRateTimes10000;
+	if (isReversed)
+		absRateTimes10000 = -_rateTimes10000;
+	else
+		absRateTimes10000 = _rateTimes10000;
 
 	// Might be possible due to drift?
 	if (playTime < _celStartTimeMSec)
 		return;
 
 	uint64 timeSinceCelStart = playTime - _celStartTimeMSec;
-	uint64 framesAdvanced = timeSinceCelStart * static_cast<uint64>(_rateTimes10000) / static_cast<uint64>(10000000);
+	uint64 framesAdvanced = timeSinceCelStart * static_cast<uint64>(absRateTimes10000) / static_cast<uint64>(10000000);
 
 	if (framesAdvanced > 0) {
-		// This needs to be handled correctly: Reaching the last frame triggers At Last Cel,
-		// but going PAST the last frame triggers automatic stop and pause.
-		// The Obsidian bureau filing cabinets depend on this, since they reset the cel when
-		// reaching the last cel but do not unpause.
+		// This needs to be handled correctly: Reaching the last frame triggers At Last Cel or At First Cel,
+		// but going PAST the end frame triggers automatic stop and pause. The Obsidian bureau filing cabinets
+		// depend on this, since they reset the cel when reaching the last cel but do not unpause.
 		bool ranPastEnd = false;
 
-		size_t framesRemainingToOnePastEnd = (maxFrame + 1) -_frame;
+		size_t framesRemainingToOnePastEnd = isReversed ? (_frame - minFrame + 1) : (maxFrame + 1 - _frame);
 		if (framesRemainingToOnePastEnd <= framesAdvanced) {
 			ranPastEnd = true;
 			if (_loop)
-				targetFrame = minFrame;
+				targetFrame = isReversed ? maxFrame : minFrame;
 			else
-				targetFrame = maxFrame;
+				targetFrame = isReversed ? minFrame : maxFrame;
 		} else
-			targetFrame = _frame + framesAdvanced;
+			targetFrame = isReversed ? (_frame - framesAdvanced) : (_frame + framesAdvanced);
 
 		if (_frame != targetFrame) {
 			_frame = targetFrame;
@@ -855,7 +857,6 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 		if (ranPastEnd && !_loop) {
 			_paused = true;
 
-			// Unlike movies, reaching the end of an mToon fires "Paused" not "Stopped"
 			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPause, 0), DynamicValue(), getSelfReference()));
 			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 			runtime->queueMessage(dispatch);
@@ -864,7 +865,7 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 		if (_maintainRate)
 			_celStartTimeMSec = playTime;
 		else
-			_celStartTimeMSec += (static_cast<uint64>(10000000) * framesAdvanced) / _rateTimes10000;
+			_celStartTimeMSec += (static_cast<uint64>(10000000) * framesAdvanced) / absRateTimes10000;
 	}
 }
 
