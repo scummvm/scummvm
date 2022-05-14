@@ -74,7 +74,7 @@ AGSMetaEngineDetection::AGSMetaEngineDetection() : AdvancedMetaEngineDetection(A
 	        sizeof(AGS::AGSGameDescription), AGS::GAME_NAMES) {
 }
 
-DetectedGames AGSMetaEngineDetection::detectGames(const Common::FSList &fslist) {
+DetectedGames AGSMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 skipADFlags) {
 	FileMap allFiles;
 
 	if (fslist.empty())
@@ -84,7 +84,7 @@ DetectedGames AGSMetaEngineDetection::detectGames(const Common::FSList &fslist) 
 	composeFileHashMap(allFiles, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
 
 	// Run the detector on this
-	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "");
+	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "", skipADFlags);
 
 	cleanupPirated(matches);
 

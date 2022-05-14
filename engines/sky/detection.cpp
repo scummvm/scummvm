@@ -76,7 +76,7 @@ public:
 	PlainGameList getSupportedGames() const override;
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
-	DetectedGames detectGames(const Common::FSList &fslist) override;
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/) override;
 };
 
 const char *SkyMetaEngineDetection::getName() const {
@@ -118,7 +118,7 @@ PlainGameDescriptor SkyMetaEngineDetection::findGame(const char *gameid) const {
 	return PlainGameDescriptor::empty();
 }
 
-DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist) {
+DetectedGames SkyMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/) {
 	DetectedGames detectedGames;
 	bool hasSkyDsk = false;
 	bool hasSkyDnr = false;

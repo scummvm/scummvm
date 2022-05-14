@@ -82,7 +82,7 @@ public:
 
 	PlainGameList getSupportedGames() const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
-	DetectedGames detectGames(const Common::FSList &fslist) override;
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/) override;
 
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
@@ -121,7 +121,7 @@ static Common::String generatePreferredTarget(const DetectorResult &x) {
 	return res;
 }
 
-DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist) {
+DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/) {
 	DetectedGames detectedGames;
 	Common::List<DetectorResult> results;
 	::detectGames(fslist, results, nullptr);

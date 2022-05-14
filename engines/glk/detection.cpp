@@ -180,7 +180,7 @@ PlainGameDescriptor GlkMetaEngineDetection::findGame(const char *gameId) const {
 
 #undef FIND_GAME
 
-DetectedGames GlkMetaEngineDetection::detectGames(const Common::FSList &fslist) {
+DetectedGames GlkMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/) {
 #ifndef RELEASE_BUILD
 	// This is as good a place as any to detect multiple sub-engines using the same Ids
 	detectClashes();
