@@ -340,6 +340,13 @@ struct IntRange {
 		return !((*this) == other);
 	}
 
+	inline static IntRange create(int32 min, int32 max) {
+		IntRange result;
+		result.min = min;
+		result.max = max;
+		return result;
+	}
+
 	bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
 	Common::String toString() const;
 };
@@ -1831,6 +1838,8 @@ public:
 	void holdAssets(const Common::Array<Common::SharedPtr<Asset> > &assets);
 
 	Structural *getParent() const;
+	Structural *findNextSibling() const;
+	Structural *findPrevSibling() const;
 	void setParent(Structural *parent);
 
 	// Helper that finds the scene containing the structural object, or itself if it is the scene

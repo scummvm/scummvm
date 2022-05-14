@@ -2411,45 +2411,17 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 			result.clear();
 		return true;
 	} else if (attrib == "previous") {
-		Structural *parent = getParent();
-		if (parent) {
-			const Common::Array<Common::SharedPtr<Structural> > &neighborhood = parent->getChildren();
-			bool found = false;
-			size_t foundIndex = 0;
-			for (size_t i = 0; i < neighborhood.size(); i++) {
-				if (neighborhood[i].get() == this) {
-					foundIndex = i;
-					found = true;
-					break;
-				}
-			}
-
-			if (found && foundIndex > 0)
-				result.setObject(neighborhood[foundIndex - 1]->getSelfReference());
-			else
-				result.clear();
-		} else
+		Structural *sibling = findPrevSibling();
+		if (sibling)
+			result.setObject(sibling->getSelfReference());
+		else
 			result.clear();
 		return true;
 	} else if (attrib == "next") {
-		Structural *parent = getParent();
-		if (parent) {
-			const Common::Array<Common::SharedPtr<Structural> > &neighborhood = parent->getChildren();
-			bool found = false;
-			size_t foundIndex = 0;
-			for (size_t i = 0; i < neighborhood.size(); i++) {
-				if (neighborhood[i].get() == this) {
-					foundIndex = i;
-					found = true;
-					break;
-				}
-			}
-
-			if (found && foundIndex < neighborhood.size() - 1)
-				result.setObject(neighborhood[foundIndex + 1]->getSelfReference());
-			else
-				result.clear();
-		} else
+		Structural *sibling = findNextSibling();
+		if (sibling)
+			result.setObject(sibling->getSelfReference());
+		else
 			result.clear();
 		return true;
 	} else if (attrib == "scene") {
@@ -2511,6 +2483,22 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 		} else {
 			return kMiniscriptInstructionOutcomeFailed;
 		}
+	} else if (attrib == "next") {
+		Structural *sibling = findNextSibling();
+		if (sibling) {
+			DynamicValueWriteObjectHelper::create(sibling, result);
+			return kMiniscriptInstructionOutcomeContinue;
+		} else {
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+	} else if (attrib == "previous") {
+		Structural *sibling = findPrevSibling();
+		if (sibling) {
+			DynamicValueWriteObjectHelper::create(sibling, result);
+			return kMiniscriptInstructionOutcomeContinue;
+		} else {
+			return kMiniscriptInstructionOutcomeFailed;
+		}
 	} else if (attrib == "loop") {
 		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetLoop>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
@@ -2555,6 +2543,48 @@ void Structural::holdAssets(const Common::Array<Common::SharedPtr<Asset> >& asse
 
 Structural *Structural::getParent() const {
 	return _parent;
+}
+
+Structural *Structural::findNextSibling() const {
+	Structural *parent = getParent();
+	if (parent) {
+		const Common::Array<Common::SharedPtr<Structural> > &neighborhood = parent->getChildren();
+		bool found = false;
+		size_t foundIndex = 0;
+		for (size_t i = 0; i < neighborhood.size(); i++) {
+			if (neighborhood[i].get() == this) {
+				foundIndex = i;
+				found = true;
+				break;
+			}
+		}
+
+		if (found && foundIndex < neighborhood.size() - 1)
+			return neighborhood[foundIndex + 1].get();
+	}
+
+	return nullptr;
+}
+
+Structural *Structural::findPrevSibling() const {
+	Structural *parent = getParent();
+	if (parent) {
+		const Common::Array<Common::SharedPtr<Structural> > &neighborhood = parent->getChildren();
+		bool found = false;
+		size_t foundIndex = 0;
+		for (size_t i = 0; i < neighborhood.size(); i++) {
+			if (neighborhood[i].get() == this) {
+				foundIndex = i;
+				found = true;
+				break;
+			}
+		}
+
+		if (found && foundIndex > 0)
+			return neighborhood[foundIndex - 1].get();
+	}
+
+	return nullptr;
 }
 
 void Structural::setParent(Structural *parent) {

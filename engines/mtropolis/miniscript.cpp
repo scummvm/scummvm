@@ -1280,6 +1280,64 @@ MiniscriptInstructionOutcome PointCreate::execute(MiniscriptThread *thread) cons
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
+MiniscriptInstructionOutcome RangeCreate::execute(MiniscriptThread *thread) const {
+	if (thread->getStackSize() < 2) {
+		thread->error("Stack underflow");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	outcome = thread->dereferenceRValue(1, false);
+	if (outcome != kMiniscriptInstructionOutcomeContinue)
+		return outcome;
+
+	DynamicValue &yVal = thread->getStackValueFromTop(0).value;
+	DynamicValue &xValDest = thread->getStackValueFromTop(1).value;
+
+	int32 coords[2];
+	DynamicValue *coordInputs[2] = {&xValDest, &yVal};
+
+	for (int i = 0; i < 2; i++) {
+		DynamicValue *v = coordInputs[i];
+		DynamicValue listContents;
+
+		if (v->getType() == DynamicValueTypes::kList) {
+			// Yes this is actually allowed
+			const Common::SharedPtr<DynamicList> &list = v->getList();
+			if (list->getSize() != 1 || !list->getAtIndex(0, listContents)) {
+				thread->error("Can't convert list to integer");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+
+			v = &listContents;
+		}
+
+		switch (v->getType()) {
+		case DynamicValueTypes::kFloat:
+			coords[i] = static_cast<int32>(floor(v->getFloat() + 0.5)) & 0xffff;
+			break;
+		case DynamicValueTypes::kInteger:
+			coords[i] = v->getInt();
+			break;
+		case DynamicValueTypes::kBoolean:
+			coords[i] = (v->getBool()) ? 1 : 0;
+			break;
+		default:
+			thread->error("Invalid input for point creation");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+	}
+
+	xValDest.setIntRange(IntRange::create(coords[0], coords[1]));
+
+	thread->popValues(1);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 GetChild::GetChild(uint32 attribute, bool isLValue, bool isIndexed)
 	: _attribute(attribute), _isLValue(isLValue), _isIndexed(isIndexed) {
 }
@@ -1872,10 +1930,6 @@ VThreadState MiniscriptThread::resume(const ResumeTaskData &taskData) {
 
 	if (instrsArray.size() == 0)
 		return kVThreadReturn;
-
-	if (_modifier->getStaticGUID() == 0x31ae0e) {
-		int n = 0;
-	}
 
 	MiniscriptInstruction *const *instrs = &instrsArray[0];
 	size_t numInstrs = instrsArray.size();
