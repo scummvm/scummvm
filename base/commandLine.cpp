@@ -1872,7 +1872,12 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	if (settings.contains("multi-midi")) {
 		ConfMan.set("multi_midi", settings["multi-midi"], Common::ConfigManager::kSessionDomain); 
 	}
-
+	if (settings.contains("midi-gain")) {
+		ConfMan.set("midi_gain", settings["midi-gain"], Common::ConfigManager::kSessionDomain); 
+	}
+	if (settings.contains("soundfont")) {
+		ConfMan.set("soundfont", settings["soundfont"], Common::ConfigManager::kSessionDomain); 
+	}
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
 		Common::String key(x->_key);
