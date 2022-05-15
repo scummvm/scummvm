@@ -1212,8 +1212,8 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
 		uint8 *topBlockRowColorIndexForPalette = nullptr;
 		uint8 *currBlockRowColorIndexForPalette = nullptr;
 		if (scale2xPossible && !(_vqaDecoder->_allowVerticalScanlines && _vqaDecoder->_allowHorizontalScanlines)) {
-			topBlockRowColorIndexForPalette  = new uint8[2 * _blockH * 2 * _blockW * blocks_per_line];
-			currBlockRowColorIndexForPalette = new uint8[2 * _blockH * 2 * _blockW * blocks_per_line];
+			topBlockRowColorIndexForPalette  = new uint8[2 * _blockH * 2 * _width];
+			currBlockRowColorIndexForPalette = new uint8[2 * _blockH * 2 * _width];
 		}
 
 		uint8 r, g, b;
@@ -1232,7 +1232,7 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
 						const uint8 cbdbyte = _codebook[_blockW * _blockH * (((uint32)srcPartB << 8) | srcPartA) + i * _blockW + k];
 
 						if (scale2xPossible && !(_vqaDecoder->_allowVerticalScanlines && _vqaDecoder->_allowHorizontalScanlines)) {
-							currBlockRowColorIndexForPalette[(2 * i * 2 * _blockW * blocks_per_line) + ((currColumnBlock * 2 * _blockW) + 2 * k)] = cbdbyte;
+							currBlockRowColorIndexForPalette[(2 * i * 2 * _width) + ((currColumnBlock * 2 * _blockW) + 2 * k)] = cbdbyte;
 						}
 
 						// R, G, B values are in 6bits which are converted to 8bits
@@ -1261,7 +1261,7 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
 						const uint8 colorByte = srcPartA;
 
 						if (scale2xPossible && !(_vqaDecoder->_allowVerticalScanlines && _vqaDecoder->_allowHorizontalScanlines)) {
-							currBlockRowColorIndexForPalette[(2 * i * 2 * _blockW * blocks_per_line) + ((currColumnBlock * 2 * _blockW) + 2 * k)] = colorByte;
+							currBlockRowColorIndexForPalette[(2 * i * 2 * _width) + ((currColumnBlock * 2 * _blockW) + 2 * k)] = colorByte;
 						}
 
 						r = (0x3F & _cpalPointer[colorByte * 3]);
@@ -1283,23 +1283,27 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
 				if (scale2xPossible && !(_vqaDecoder->_allowVerticalScanlines && _vqaDecoder->_allowHorizontalScanlines)) {
 					//    When VQP data is available, we can fill in any gaps in the 2x scaled video image:
 					// 1. First go through currBlockRowColorIndexForPalette and fill in the gaps in the even rows of blocks
-					//    Skip the last entry since we don't have info on a right pixel color for it.
+					//    Since we don't have info on a right pixel color for the last entry, just copy the left pixel color.
 					// 2. Then go through the now filled currBlockRowColorIndexForPalette and the topBlockRowColorIndexForPalette,
 					//    (if the latter exists --so not for the first line of blocks) and fill in the last pixels' row of the
 					//    topBlockRowColorIndexForPalette, by using the data on the color of the previous to last pixels' row in
 					//    topBlockRowColorIndexForPalette and the color of the first pixels' row in currBlockRowColorIndexForPalette.
 					// 3. Swap topBlockRowColorIndexForPalette and currBlockRowColorIndexForPalette (to preserve it as previous row of blocks)
+					// 4. For the last row of pixels, since we don't have info on a below pixel color, just copy the previous row of pixels.
 					uint8 midColorIdx = 0;
 					if (!_vqaDecoder->_allowVerticalScanlines) {
 						uint8 leftColorIdx = 0;
 						uint8 rightColorIdx = 0;
 						for (int i = 0; i < 2 * _blockH - 1; i += 2) {
-							for (int j = 1; j < 2 * _blockW * blocks_per_line - 1; j += 2) {
-								// Skip last column, because we lack info for pixels to the right to interpolate
-								leftColorIdx = currBlockRowColorIndexForPalette[(i * 2 * _blockW * blocks_per_line) + j - 1];
-								rightColorIdx = currBlockRowColorIndexForPalette[(i * 2 * _blockW * blocks_per_line) + j + 1];
+							for (int j = 1; j < 2 * _width; j += 2) {
+								leftColorIdx = currBlockRowColorIndexForPalette[(i * 2 * _width) + j - 1];
+								if (j == 2 * _width - 1) {
+									rightColorIdx = leftColorIdx;
+								} else {
+									rightColorIdx = currBlockRowColorIndexForPalette[(i * 2 * _width) + j + 1];
+								}
 								midColorIdx = _vqaDecoder->_vqpPalsArr[_currentPaletteId].interpol2D[leftColorIdx][rightColorIdx];
-								currBlockRowColorIndexForPalette[(i * 2 * _blockW * blocks_per_line) + j] = midColorIdx;
+								currBlockRowColorIndexForPalette[(i * 2 * _width) + j] = midColorIdx;
 								r = (0x3F & _cpalPointer[midColorIdx * 3]);
 								g = (0x3F & _cpalPointer[midColorIdx * 3 + 1]);
 								b = (0x3F & _cpalPointer[midColorIdx * 3 + 2]);
@@ -1326,11 +1330,11 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
 							jIncr = 2;
 						}
 						for (int i = 1; i < 2 * _blockH - 1; i += 2) {
-							for (int j = 0; j < 2 * _blockW * blocks_per_line - 1; j += jIncr) {
-								topColorIdx = currBlockRowColorIndexForPalette[((i - 1) * 2 * _blockW * blocks_per_line) + j];
-								botColorIdx = currBlockRowColorIndexForPalette[((i + 1) * 2 * _blockW * blocks_per_line) + j];
+							for (int j = 0; j < 2 * _width; j += jIncr) {
+								topColorIdx = currBlockRowColorIndexForPalette[((i - 1) * 2 * _width) + j];
+								botColorIdx = currBlockRowColorIndexForPalette[((i + 1) * 2 * _width) + j];
 								midColorIdx = _vqaDecoder->_vqpPalsArr[_currentPaletteId].interpol2D[topColorIdx][botColorIdx];
-								currBlockRowColorIndexForPalette[(i * 2 * _blockW * blocks_per_line) + j] = midColorIdx;
+								currBlockRowColorIndexForPalette[(i * 2 * _width) + j] = midColorIdx;
 								r = (0x3F & _cpalPointer[midColorIdx * 3]);
 								g = (0x3F & _cpalPointer[midColorIdx * 3 + 1]);
 								b = (0x3F & _cpalPointer[midColorIdx * 3 + 2]);
@@ -1344,14 +1348,16 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
 								drawPixel(*surface, dstPtr, surface->format.RGBToColor(r, g, b));
 							}
 						}
-						// If we are at a row of blocks with index y > 0, then use info from the previous to last row of topBlockRowColorIndexForPalette
-						// and first row of currBlockRowColorIndexForPalette to fill the last row of topBlockRowColorIndexForPalette and draw those pixels too.
+						// If we are at a row of blocks with index currLineBlock > 0, then use info
+						// from the previous to last row of topBlockRowColorIndexForPalette
+						// and the first row of currBlockRowColorIndexForPalette to fill the last row
+						// of topBlockRowColorIndexForPalette and draw those pixels too.
 						if (currLineBlock > 0) {
-							for (int j = 0; j < 2 * _blockW * blocks_per_line - 1; j += jIncr) {
-								topColorIdx = topBlockRowColorIndexForPalette[((2 * _blockH - 2) * 2 * _blockW * blocks_per_line) + j];
+							for (int j = 0; j < 2 * _width; j += jIncr) {
+								topColorIdx = topBlockRowColorIndexForPalette[((2 * _blockH - 2) * 2 * _width) + j];
 								botColorIdx = currBlockRowColorIndexForPalette[j];
 								midColorIdx = _vqaDecoder->_vqpPalsArr[_currentPaletteId].interpol2D[topColorIdx][botColorIdx];
-								topBlockRowColorIndexForPalette[((2 * _blockH - 1) * 2 * _blockW * blocks_per_line) + j] = midColorIdx;
+								topBlockRowColorIndexForPalette[((2 * _blockH - 1) * 2 * _width) + j] = midColorIdx;
 								r = (0x3F & _cpalPointer[midColorIdx * 3]);
 								g = (0x3F & _cpalPointer[midColorIdx * 3 + 1]);
 								b = (0x3F & _cpalPointer[midColorIdx * 3 + 2]);
@@ -1363,6 +1369,25 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
 								dst_y = yOffs + (currLineBlock * 2 * _blockH) - 1;
 								dstPtr = surface->getBasePtr(dst_x, dst_y);
 								drawPixel(*surface, dstPtr, surface->format.RGBToColor(r, g, b));
+								if (currLineBlock == blocks_per_column - 1) {
+									// For last row of blocks, fill in the last row pixels by assuming that
+									// "bottom" pixel color is the same as previous to last row pixel's color
+									topColorIdx = currBlockRowColorIndexForPalette[((2 * _blockH - 2) * 2 * _width) + j];
+									botColorIdx = topColorIdx;
+									midColorIdx = _vqaDecoder->_vqpPalsArr[_currentPaletteId].interpol2D[topColorIdx][botColorIdx];
+									currBlockRowColorIndexForPalette[((2 * _blockH - 1) * 2 * _width) + j] = midColorIdx;
+									r = (0x3F & _cpalPointer[midColorIdx * 3]);
+									g = (0x3F & _cpalPointer[midColorIdx * 3 + 1]);
+									b = (0x3F & _cpalPointer[midColorIdx * 3 + 2]);
+									r = (r << 2) | (r >> 4); // 6 to 8 bits
+									g = (g << 2) | (g >> 4); // 6 to 8 bits
+									b = (b << 2) | (b >> 4); // 6 to 8 bits
+
+									dst_x = xOffs + j;
+									dst_y = yOffs + (blocks_per_column * 2 * _blockH) - 1;
+									dstPtr = surface->getBasePtr(dst_x, dst_y);
+									drawPixel(*surface, dstPtr, surface->format.RGBToColor(r, g, b));
+								}
 							}
 						}
 					}
