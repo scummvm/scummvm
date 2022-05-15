@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-15 13:26+0000\n"
-"PO-Revision-Date: 2022-05-10 08:41+0000\n"
+"PO-Revision-Date: 2022-05-16 09:27+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -797,12 +797,9 @@ msgid "Change global ScummVM options"
 msgstr "Globális ScummVM opciók cseréje"
 
 #: gui/launcher.cpp:243
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "Global ~O~pts..."
 msgctxt "lowres"
 msgid "Global Opts..."
-msgstr "Globális ~O~pciók..."
+msgstr "Globális Opc..."
 
 #: gui/launcher.cpp:247
 msgid "~A~dd Game..."
@@ -946,12 +943,9 @@ msgid "Change game options"
 msgstr "Játék beállítások megváltoztatása"
 
 #: gui/launcher.cpp:989
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "~G~ame Opts..."
 msgctxt "lowres"
 msgid "Game Opts..."
-msgstr "Játék Opciók..."
+msgstr "Játék Opc..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
