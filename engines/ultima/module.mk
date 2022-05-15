@@ -375,7 +375,7 @@ MODULE_OBJS := \
 	nuvie/views/spell_view_gump.o \
 	nuvie/views/sun_moon_ribbon.o \
 	nuvie/views/sun_moon_strip_widget.o \
-	nuvie/views/vew.o \
+	nuvie/views/view.o \
 	nuvie/views/view_manager.o \
 	ultima8/meta_engine.o \
 	ultima8/ultima8.o \
