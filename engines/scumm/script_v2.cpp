@@ -396,6 +396,24 @@ void ScummEngine_v2::decodeParseString() {
 	}
 	*ptr = 0;
 
+	// WORKAROUND bug #13473: in the French version of Maniac Mansion, the cutscene
+	// where Purple Tentacle is bullying Sandy hangs once Dr Fred is done talking,
+	// because his reaction line in shorter in this translation (which is unusual for
+	// French which tends to be more verbose) and the `unless (VAR_CHARCOUNT > 90)`
+	// loop in script #155 hasn't been ajusted for this shorter length.
+	//
+	// So we add some extra spaces at the end of the string if it's too short; this
+	// unblocks the cutscene and also lets Sandy react as intended.
+	//
+	// (Not using `_enableEnhancements` because some users could be really confused
+	// by the game hanging and they may not know about the Esc key.)
+	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && vm.slot[_currentScript].number == 155 && _roomResource == 31 && _actorToPrintStrFor == 9) {
+		while (ptr - buffer < 100) {
+			*ptr++ = ' ';
+		}
+		*ptr = 0;
+	}
+
 	int textSlot = 0;
 	_string[textSlot].xpos = 0;
 	_string[textSlot].ypos = 0;
