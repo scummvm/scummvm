@@ -4041,18 +4041,6 @@ _mak_plugins=
 if test "$_dynamic_modules" = yes ; then
 	echo_n "Checking whether building plugins is supported... "
 	case $_host_os in
-	emscripten)
-		_plugin_prefix="lib"
-		_plugin_suffix=".wasm"
-		append_var CXXFLAGS "-fPIC"
-		append_var LIBS ""
-_mak_plugins='
-PLUGIN_EXTRA_DEPS =
-PLUGIN_LDFLAGS  += -s SIDE_MODULE=1 -s EXPORT_ALL=1
-PRE_OBJS_FLAGS  := -s MAIN_MODULE=1 -s EXPORT_ALL=1
-POST_OBJS_FLAGS :=
-'
-		;;
 	3ds)
 		_elf_loader=yes
 		append_var DEFINES "-DUNCACHED_PLUGINS"
@@ -4121,6 +4109,18 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 		append_var DEFINES "-DELF_NO_MEM_MANAGER"
 _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb -mthumb-interwork -mfloat-abi=soft
+'
+		;;
+	emscripten)
+		_plugin_prefix="lib"
+		_plugin_suffix=".wasm"
+		append_var CXXFLAGS "-fPIC"
+		append_var LIBS ""
+_mak_plugins='
+PLUGIN_EXTRA_DEPS =
+PLUGIN_LDFLAGS  += -s SIDE_MODULE=1 -s EXPORT_ALL=1
+PRE_OBJS_FLAGS  := -s MAIN_MODULE=1 -s EXPORT_ALL=1
+POST_OBJS_FLAGS :=
 '
 		;;
 	freebsd* | openbsd*)
