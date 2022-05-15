@@ -2262,6 +2262,8 @@ void ScummEngine::setTimerAndShakeFrequency() {
 		default:
 			_shakeTimerRate = _timerFrequency = 240.0;
 		}
+	} else if (_game.platform == Common::kPlatformAmiga) {
+		_shakeTimerRate = _timerFrequency = AMIGA_NTSC_VBLANK_RATE;
 	}
 }
 

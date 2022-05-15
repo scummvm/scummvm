@@ -3935,6 +3935,10 @@ void ScummEngine::transitionEffect(int a) {
 		delay = VAR(VAR_FADE_DELAY);
 	}
 
+	if (_game.platform == Common::kPlatformAmiga) {
+		delay *= 4;
+	}
+
 	// V3+ games have the number of iterations hardcoded; we also
 	// have that number hardcoded for MM NES, so let's target that too:
 	if (_game.version >= 3 || _game.platform == Common::kPlatformNES) {
@@ -4118,10 +4122,14 @@ void ScummEngine::dissolveEffect(int width, int height) {
 		// Test for NxM pattern...
 		canHalt |= !is1x1Pattern && (offsets[i] < vs->h);
 
-		// Halt rendering for a quarter frame...
+		// Halt rendering for a quarter frame (or a whole frame in case of Amiga)...
 		if (canHalt) {
 			canHalt = false;
-			waitForTimer(1);
+			if (_game.platform == Common::kPlatformAmiga) {
+				waitForTimer(4);
+			} else {
+				waitForTimer(1);
+			}
 		}
 	}
 
@@ -4143,7 +4151,11 @@ void ScummEngine::scrollEffect(int dir) {
 
 	// Keep in mind: this effect is only present in v5 and v6, so VAR_FADE_DELAY is
 	// never uninitialized. The following check is here for good measure only.
-	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : kPictureDelay;
+	int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : kPictureDelay;
+
+	if (_game.platform == Common::kPlatformAmiga) {
+		delay *= 4;
+	}
 
 	byte *src;
 	int m = _textSurfaceMultiplier;

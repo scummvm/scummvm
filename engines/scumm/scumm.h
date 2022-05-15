@@ -333,6 +333,22 @@ class ResourceManager;
 #define PIT_V7_SUBTIMER_THRESH         4971.0
 
 /**
+ * Amiga timing constants.
+ *
+ * Amiga versions of SCUMM games update the game timer at every
+ * V-Blank interrupt, incrementing it by 4 each time (which means
+ * a full frame/jiffie). The shake timer is instead updated every
+ * other V-Blank interrupt, so 8 quarter frames (2 frames/jiffies)
+ * at a time.
+ *
+ * The base rate is 50Hz for PAL systems and 60Hz for NTSC systems.
+ * We're going to target the latter in here, converting it in a quarter
+ * frame frequency.
+ */
+
+#define AMIGA_NTSC_VBLANK_RATE 240.0
+
+/**
  * Base class for all SCUMM engines.
  */
 class ScummEngine : public Engine, public Common::Serializable {
