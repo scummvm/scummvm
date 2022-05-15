@@ -75,6 +75,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      findest du jetzt dort.
    - Fehler bei der Wiedergabe von MIDI-Musik in der EGA/VGA-Diskettenversion von The Secret of Monkey Island behoben.
    - Fehlerhafte Grafik-Darstellung in Full Throttle korrigiert, die auftritt, wenn Ben am Eingang von Corley Motors vorbeiläuft.
+   - Fehlerhafte Farben in der NES-Version von Maniac Mansion auf Plattformen mit striktem Aligment wie Dreamcast,
+     Apple silicon und diversen Handheld-Geräten korrigiert.
 
  Sherlock:
    - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
