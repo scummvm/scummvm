@@ -3935,8 +3935,17 @@ void ScummEngine::transitionEffect(int a) {
 		delay = VAR(VAR_FADE_DELAY);
 	}
 
+	// Amiga handles timing a whole frame at a time
+	// instead of using quarter frames; the following
+	// code gives my best approximation of that behavior
+	// and the resulting timing
 	if (_game.platform == Common::kPlatformAmiga) {
-		delay *= 4;
+		int amigaRest = (delay % 4);
+		delay = (delay / 4);
+		if (amigaRest > 0) {
+			delay += 1;
+		}
+		delay *= 10;
 	}
 
 	// V3+ games have the number of iterations hardcoded; we also
@@ -4153,8 +4162,17 @@ void ScummEngine::scrollEffect(int dir) {
 	// never uninitialized. The following check is here for good measure only.
 	int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : kPictureDelay;
 
+	// Amiga handles timing a whole frame at a time
+	// instead of using quarter frames; the following
+	// code gives my best approximation of that behavior
+	// and the resulting timing
 	if (_game.platform == Common::kPlatformAmiga) {
-		delay *= 4;
+		int amigaRest = (delay % 4);
+		delay = (delay / 4);
+		if (amigaRest > 0) {
+			delay += 1;
+		}
+		delay *= 10;
 	}
 
 	byte *src;
