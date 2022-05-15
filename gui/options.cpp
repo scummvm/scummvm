@@ -388,6 +388,8 @@ void OptionsDialog::build() {
 		// Filtering setting
 		if (g_system->hasFeature(OSystem::kFeatureFilteringMode)) {
 			_filteringCheckbox->setState(ConfMan.getBool("filtering", _domain));
+			if (ConfMan.isKeyTemporary("filtering"))
+				_filteringCheckbox->setOverride(true); 
 		} else {
 			_filteringCheckbox->setState(false);
 			_filteringCheckbox->setEnabled(false);
@@ -452,6 +454,8 @@ void OptionsDialog::build() {
 
 		// Multi midi setting
 		_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
+		if (ConfMan.isKeyTemporary("multi_midi"))
+			_multiMidiCheckbox->setOverride(true); 
 
 		Common::String soundFont(ConfMan.get("soundfont", _domain));
 		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
@@ -559,8 +563,11 @@ void OptionsDialog::apply() {
 	// Graphic options
 	if (_fullscreenCheckbox) {
 		if (_enableGraphicSettings) {
-			if (ConfMan.getBool("filtering", _domain) != _filteringCheckbox->getState())
+			if (ConfMan.getBool("filtering", _domain) != _filteringCheckbox->getState()) {
 				graphicsModeChanged = true;
+				ConfMan.setBool("filtering", _filteringCheckbox->getState(), _domain);
+				_filteringCheckbox->setOverride(false); 
+			}
 			if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState()) {
 				graphicsModeChanged = true;
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
@@ -571,7 +578,6 @@ void OptionsDialog::apply() {
 			if (ConfMan.getBool("vsync", _domain) != _vsyncCheckbox->getState())
 				graphicsModeChanged = true;
 
-			ConfMan.setBool("filtering", _filteringCheckbox->getState(), _domain);
 			ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
 			ConfMan.setBool("vsync", _vsyncCheckbox->getState(), _domain);
 
@@ -874,7 +880,10 @@ void OptionsDialog::apply() {
 		if (_enableMIDISettings) {
 			saveMusicDeviceSetting(_gmDevicePopUp, "gm_device");
 
-			ConfMan.setBool("multi_midi", _multiMidiCheckbox->getState(), _domain);
+			if (_multiMidiCheckbox->getState() != ConfMan.getBool("multi_midi", _domain)) {
+				ConfMan.setBool("multi_midi", _multiMidiCheckbox->getState(), _domain);
+				_multiMidiCheckbox->setOverride(false); 
+			}
 			ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
 
 			Common::U32String soundFont(_soundFont->getLabel());
