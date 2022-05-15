@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-15 10:16+0000\n"
+"POT-Creation-Date: 2022-05-15 13:26+0000\n"
 "PO-Revision-Date: 2021-07-12 15:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -174,9 +174,9 @@ msgstr "无法创建下载目录 —— 指定的目录中有相同文件名的�
 #: engines/groovie/script.cpp:652 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:924
-#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1044
-#: engines/scumm/scumm.cpp:1070 engines/scumm/scumm.cpp:1092
-#: engines/scumm/scumm.cpp:1371 engines/scumm/scumm.cpp:1842
+#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1045
+#: engines/scumm/scumm.cpp:1071 engines/scumm/scumm.cpp:1093
+#: engines/scumm/scumm.cpp:1372 engines/scumm/scumm.cpp:1843
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
 #: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
 #: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
@@ -4068,7 +4068,7 @@ msgstr ""
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2497
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2498
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4076,7 +4076,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2487
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2488
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4084,7 +4084,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2510
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2511
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6982,39 +6982,39 @@ msgid ""
 "320x200, under 'engine' tab."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1043
+#: engines/scumm/scumm.cpp:1044
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1069
+#: engines/scumm/scumm.cpp:1070
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1091
+#: engines/scumm/scumm.cpp:1092
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1368
+#: engines/scumm/scumm.cpp:1369
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1840
+#: engines/scumm/scumm.cpp:1841
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:2809
+#: engines/scumm/scumm.cpp:2810
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
