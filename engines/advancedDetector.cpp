@@ -252,7 +252,7 @@ bool AdvancedMetaEngineDetection::cleanupPirated(ADDetectedGames &matched) const
 	return false;
 }
 
-DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 skipADFlags) {
+DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
 	FileMap allFiles;
 
 	if (fslist.empty())
@@ -266,7 +266,7 @@ DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fsl
 	composeFileHashMap(allFiles, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
 
 	// Run the detector on this
-	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "", skipADFlags);
+	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "", skipADFlags, skipIncomplete);
 
 	cleanupPirated(matches);
 
@@ -573,7 +573,7 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 	return true;
 }
 
-ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, uint32 skipADFlags) {
+ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, uint32 skipADFlags, bool skipIncomplete) {
 	FilePropertiesMap filesProps;
 	ADDetectedGames matched;
 
@@ -678,10 +678,9 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 		// cases.
 		if (allFilesPresent && !gotAnyMatchesWithAllFiles) {
 			// Do sanity check
-			if (game.hasUnknownFiles && isEntryGrayListed(g)) {
-				debugC(3, kDebugGlobalDetection, "Skipping game: %s (%s %s/%s) (%d), didn't pass sanity", g->gameId, g->extra,
-					getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
-
+			if (game.hasUnknownFiles && (skipIncomplete || isEntryGrayListed(g))) {
+				debugC(3, kDebugGlobalDetection, "Skipping game: %s (%s %s/%s) (%d), %s %s", g->gameId, g->extra, getPlatformDescription(g->platform),
+					getLanguageDescription(g->language), i, skipIncomplete ? "(ignore incomplete matches)" : "", isEntryGrayListed(g) ? "(didn't pass sanity test)" : "");
 				continue;
 			}
 

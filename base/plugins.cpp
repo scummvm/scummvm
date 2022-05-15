@@ -717,7 +717,7 @@ QualifiedGameList EngineManager::findGameInLoadedPlugins(const Common::String &g
 	return results;
 }
 
-DetectionResults EngineManager::detectGames(const Common::FSList &fslist, uint32 skipADFlags) {
+DetectionResults EngineManager::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
 	DetectedGames candidates;
 	PluginList plugins;
 	PluginList::const_iterator iter;
@@ -735,7 +735,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist, uint32
 		MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		// set the debug flags
 		DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
-		DetectedGames engineCandidates = metaEngine.detectGames(fslist, skipADFlags);
+		DetectedGames engineCandidates = metaEngine.detectGames(fslist, skipADFlags, skipIncomplete);
 
 		for (uint i = 0; i < engineCandidates.size(); i++) {
 			engineCandidates[i].path = fslist.begin()->getParent().getPath();

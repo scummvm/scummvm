@@ -53,7 +53,7 @@ public:
 	PlainGameList getSupportedGames() const override;
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
-	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/) override;
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 };
 
 PlainGameList Sword2MetaEngineDetection::getSupportedGames() const {
@@ -82,7 +82,7 @@ PlainGameDescriptor Sword2MetaEngineDetection::findGame(const char *gameid) cons
 	return PlainGameDescriptor::of(g->gameid, g->description);
 }
 
-DetectedGames Sword2MetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/) {
+DetectedGames Sword2MetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) {
 	// The required game data files can be located in the game directory, or in
 	// a subdirectory called "clusters". In the latter case, we don't want to
 	// detect the game in that subdirectory, as this will detect the game twice
