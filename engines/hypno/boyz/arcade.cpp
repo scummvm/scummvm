@@ -191,6 +191,10 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 				drawScreen();
 			} else if (!arc->additionalSound.empty())
 				playSound(arc->additionalSound, 1, arc->additionalSoundRate);
+			else if (_levelId == 36) {
+				if (!checkArcadeObjectives())
+					_health = 0;
+			}
 		} else if (!at.video.empty()) {
 			_background->decoder->pauseVideo(true);
 			debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
@@ -359,6 +363,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 		incScore(_shoots[i].pointsToShoot);
 		incBonus(_shoots[i].pointsToShoot);
 		_shoots[i].destroyed = true;
+		_objKillsCount[_objIdx] = _objKillsCount[_objIdx] + _shoots[i].objKillsCount;
 		_shootsDestroyed[_shoots[i].name] = true;
 		_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
