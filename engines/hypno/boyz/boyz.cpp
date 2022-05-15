@@ -151,6 +151,26 @@ void BoyzEngine::loadAssets() {
 	_weaponReloadSound[5] = "shotload.raw";
 	_weaponReloadSound[6] = "glm60rl.raw";
 
+	_deathDay[0] = "";
+	_deathDay[1] = "preload/deathd1s.smk";
+	_deathDay[2] = "preload/deathd2s.smk";
+	_deathDay[3] = "preload/deathd3s.smk";
+	_deathDay[4] = "preload/deathd4s.smk";
+	_deathDay[5] = "preload/deathd5s.smk";
+	_deathDay[6] = "preload/deathd6s.smk";
+
+	_deathNight[0] = "";
+	_deathNight[1] = "preload/deathn2s.smk";
+	_deathNight[2] = "preload/deathn3s.smk";
+	_deathNight[3] = "preload/deathn4s.smk";
+	_deathNight[4] = "";
+	_deathNight[5] = "";
+	_deathNight[6] = "";
+
+	_deathVideo.push_back("preload/cdeath1s.smk");
+	_deathVideo.push_back("preload/cdeath2s.smk");
+	_deathVideo.push_back("preload/cdeath3s.smk");
+
 	_heySound[0] = "";
 	_heySound[1] = "lopzheys.raw";
 	_heySound[2] = "lambheys.raw";

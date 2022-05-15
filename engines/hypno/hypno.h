@@ -571,6 +571,8 @@ public:
 	Graphics::Surface _healthBar[7];
 	Graphics::Surface _ammoBar[7];
 	Graphics::Surface _portrait[7];
+	Filename _deathDay[7];
+	Filename _deathNight[7];
 
 	Filename _weaponShootSound[7];
 	Filename _weaponReloadSound[7];
@@ -594,6 +596,7 @@ public:
 	Common::Array<Filename> _warningCivilians;
 	Common::Array<Filename> _warningFriendlySoldiers;
 	Common::Array<Filename> _warningAlarmDay;
+	Common::Array<Filename> _deathVideo;
 	Common::HashMap<Common::String, bool> _shootsDestroyed;
 
 	Common::BitArray _font05;

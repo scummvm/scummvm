@@ -65,6 +65,13 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		_playerFrames[i]->free();
 		delete _playerFrames[i];
 	}
+
+	if (_healthTeam[_currentActor] <= 0) {
+		MVideo video(_deathDay[_currentActor], Common::Point(0, 0), false, true, false);
+		disableCursor();
+		runIntro(video);
+	}
+
 }
 
 void BoyzEngine::pressedKey(const int keycode) {
@@ -74,6 +81,7 @@ void BoyzEngine::pressedKey(const int keycode) {
 			return;
 		}
 	} else if (keycode == Common::KEYCODE_k) { // Added for testing
+		_healthTeam[_currentActor] = 0;
 		_health = 0;
 	} else if (keycode == Common::KEYCODE_ESCAPE) {
 		openMainMenuDialog();
@@ -152,8 +160,10 @@ void BoyzEngine::hitPlayer() {
 	uint32 c = kHypnoColorRed; // red
 	_compositeSurface->fillRect(Common::Rect(0, 0, _screenW, _screenH), c);
 	drawScreen();
-	if (!_infiniteHealthCheat)
+	if (!_infiniteHealthCheat) {
 		_healthTeam[_currentActor] = _healthTeam[_currentActor] - 10;
+		_health = _healthTeam[_currentActor];
+	}
 	if (!_hitSound.empty())
 		playSound(_soundPath + _hitSound, 1, 11025);
 }
@@ -192,8 +202,10 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 			} else if (!arc->additionalSound.empty())
 				playSound(arc->additionalSound, 1, arc->additionalSoundRate);
 			else if (_levelId == 36) {
-				if (!checkArcadeObjectives())
+				if (!checkArcadeObjectives()) {
 					_health = 0;
+					// Not sure how to handle this
+				}
 			}
 		} else if (!at.video.empty()) {
 			_background->decoder->pauseVideo(true);
