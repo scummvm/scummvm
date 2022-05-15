@@ -221,6 +221,10 @@ int MidiPlayer::open() {
 			} else {
 				_driverMsMusic = _driverMsSfx = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename, oplType);
 			}
+			if (_vm->getGameType() == GType_ELVIRA1 && oplType == OPL::Config::kOpl3)
+				// WORKAROUND Some Elvira 1 OPL instruments do not work
+				// well in OPL3 mode and need some adjustments.
+				static_cast<MidiDriver_Accolade_AdLib *>(_driverMsMusic)->patchE1Instruments();
 			if (_vm->getGameType() == GType_WW) {
 				// WORKAROUND Some Waxworks tracks do not set an instrument on
 				// a MIDI channel. This will cause that channel to play with

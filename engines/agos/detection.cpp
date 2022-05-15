@@ -134,9 +134,9 @@ public:
 		const Common::String extra = ConfMan.get("extra", target);
 
 		ExtraGuiOptions options;
-		if (target.empty() || ((gameid == "elvira2" || gameid == "waxworks" || gameid == "simon1") && platform == "pc")) {
-			// DOS versions of Elvira 2, Waxworks and Simon 1 can optionally
-			// make use of AdLib OPL3 features.
+		if (target.empty() || ((gameid == "elvira1" || gameid == "elvira2" || gameid == "waxworks" || gameid == "simon1") && platform == "pc")) {
+			// DOS versions of Elvira 1 and 2, Waxworks and Simon 1 can
+			// optionally make use of AdLib OPL3 features.
 			options.push_back(opl3Mode);
 		}
 		if (target.empty() || (gameid == "simon1" && ((platform == "pc" && extra != "Floppy Demo") || platform == "windows" ||
