@@ -55,7 +55,7 @@ void ScummEngine::loadCJKFont() {
 	_textSurfaceMultiplier = 1;
 	_newLineCharacter = 0;
 
-	_useMultiFont = 0;	// Korean Multi-Font
+	_useMultiFont = false;	// Korean Multi-Font
 
 	// Special case for Korean
 	if (isScummvmKorTarget()) {
@@ -179,7 +179,7 @@ void ScummEngine::loadKorFont() {
 	_useCJKMode = true;
 
 	if (_game.version < 7 || _game.id == GID_FT)
-		_useMultiFont = 1;
+		_useMultiFont = true;
 
 	if (_useMultiFont) {
 		debug("Loading Korean Multi Font System");
@@ -213,7 +213,7 @@ void ScummEngine::loadKorFont() {
 		}
 		if (_numLoadedFont == 0) {
 			warning("Cannot load any font for multi font");
-			_useMultiFont = 0;
+			_useMultiFont = false;
 		} else {
 			debug("%d fonts are loaded", _numLoadedFont);
 		}
