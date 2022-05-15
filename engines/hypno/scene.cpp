@@ -270,6 +270,7 @@ void HypnoEngine::runTransition(Transition *trans) {
 }
 
 void HypnoEngine::runScene(Scene *scene) {
+	changeScreenMode(scene->resolution);
 	_refreshConversation = false;
 	_timerStarted = false;
 	Common::Event event;

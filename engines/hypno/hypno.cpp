@@ -204,7 +204,6 @@ void HypnoEngine::runLevel(Common::String &name) {
 		runCode((Code *)_levels[name]);
 	} else if (_levels[name]->type == SceneLevel) {
 		debugC(1, kHypnoDebugScene, "Executing scene level %s with next level: %s", name.c_str(), _levels[name]->levelIfWin.c_str());
-		changeScreenMode("640x480");
 		runScene((Scene *)_levels[name]);
 	} else {
 		error("Invalid level %s", name.c_str());

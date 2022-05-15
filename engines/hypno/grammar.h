@@ -367,7 +367,9 @@ class Scene : public Level {
 public:
 	Scene()  {
 		type = SceneLevel;
+		resolution = "640x480";
 	}
+	Common::String resolution;
 	Hotspots hots;
 };
 

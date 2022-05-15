@@ -127,11 +127,14 @@ void BoyzEngine::loadAssets() {
 
 	loadSceneLevel(selectBoyz, "<select_boyz>", "", "");
 	Scene *sc = (Scene *) _levels["<select_boyz>"];
+	sc->resolution = "320x200";
 
 	ChangeLevel *cl = new ChangeLevel("c19.mi_");
 	sc->hots[7].actions.push_back(cl);
 
 	loadSceneLevel(selectC3, "<select_c3>", "", "");
+	sc = (Scene *) _levels["<select_c3>"];
+	sc->resolution = "320x200";
 
 	loadLib("sound/", "misc/sound.lib", true);
 
