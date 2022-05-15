@@ -458,6 +458,9 @@ void OptionsDialog::build() {
 			_multiMidiCheckbox->setOverride(true); 
 
 		Common::String soundFont(ConfMan.get("soundfont", _domain));
+		if (ConfMan.isKeyTemporary("soundfont")) {
+			_soundFont->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
+		}
 		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
 			_soundFont->setLabel(_c("None", "soundfont"));
 			_soundFontClearButton->setEnabled(false);
@@ -469,6 +472,8 @@ void OptionsDialog::build() {
 		// MIDI gain setting
 		_midiGainSlider->setValue(ConfMan.getInt("midi_gain", _domain));
 		_midiGainLabel->setLabel(Common::String::format("%.2f", (double)_midiGainSlider->getValue() / 100.0));
+		if (ConfMan.isKeyTemporary("midi_gain"))
+			_midiGainDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
 	}
 
 	// MT-32 options
@@ -884,18 +889,27 @@ void OptionsDialog::apply() {
 				ConfMan.setBool("multi_midi", _multiMidiCheckbox->getState(), _domain);
 				_multiMidiCheckbox->setOverride(false); 
 			}
-			ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
+			if (_midiGainSlider->getValue() != ConfMan.getInt("midi_gain", _domain)) {
+				ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
+				_midiGainDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+			}
 
 			Common::U32String soundFont(_soundFont->getLabel());
-			if (!soundFont.empty() && (soundFont != _c("None", "soundfont")))
-				ConfMan.set("soundfont", soundFont.encode(), _domain);
-			else
-				ConfMan.removeKey("soundfont", _domain);
+			if (soundFont != ConfMan.get("soundfont", _domain)) {
+				_soundFont->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+				if (soundFont.empty() || (soundFont != _c("None", "soundfont")))
+					ConfMan.removeKey("soundpath", _domain); 
+				else 
+					ConfMan.set("soundfont", soundFont.encode(), _domain); 
+			} 
 		} else {
 			ConfMan.removeKey("gm_device", _domain);
 			ConfMan.removeKey("multi_midi", _domain);
+			_multiMidiCheckbox->setOverride(false); 
 			ConfMan.removeKey("midi_gain", _domain);
+			_midiGainDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 			ConfMan.removeKey("soundfont", _domain);
+			_soundFont->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
 		}
 	}
 
@@ -2163,7 +2177,6 @@ void GlobalOptionsDialog::build() {
 		} else {
 			widget->setLabel(path);
 		}
-
 	};
 
 	setPath(_savePath, "savepath", _("Default")); 
