@@ -30,7 +30,9 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "Adrift", "Adrift IF Game" },
 
 	// English Games
+	{ "1sttime", "1st Time" },
 	{ "3monkeys", "Three Monkeys, One Cage" },
+	{ "adriftorama", "ADRIFT-O-Rama" },
 	{ "adventurestrikes", "Adventure Strikes When You Least Expect It" },
 	{ "akron", "Akron" },
 	{ "albridgemanor", "Albridge Manor" },
@@ -63,6 +65,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "deadreckoningadrift", "Dead Reckoning" },
 	{ "dontgoadrift", "Don't Go" },
 	{ "doortoutopia", "The Door to Utopia" },
+	{ "driftingin", "Adrift Drifting In" },
 	{ "drwhovortexlust", "Doctor Who and The Vortex of Lust" },
 	{ "edithscats", "Edith's Cats" },
 	{ "enc1", "Encounter 1 : Tim's Mom" },
@@ -106,6 +109,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "phonebooth", "Pick Up the Phone Booth and Cry" },
 	{ "pkgirl", "The PK Girl" },
 	{ "plagueredux", "The Plague - Redux" },
+	{ "praxis", "from the Files of Sigmund Sigmund Praxis, Guerrilla Therapist" },
 	{ "ptbad65", "PTBAD6.5: THE URL THAT DIDN'T WORK" },
 	{ "ptgood", "PTGOOD" },
 	{ "professorvonwitt", "Professor von Witt's Fabulous Flying Machine" },
@@ -119,6 +123,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "skybreak", "Skybreak!" },
 	{ "sommeril", "Sommeril" },
 	{ "sophia", "Sophia" },
+	{ "spaceboy", "The Adventure of Space Boy!" },
 	{ "stowaway", "Stowaway" },
 	{ "superheroday", "A Day In The Life Of A Super Hero" },
 	{ "takeone", "Take One" },
@@ -303,7 +308,9 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 
 const GlkDetectionEntry ADRIFT_GAMES[] = {
 	// English Games
+	DT_ENTRY0("1sttime", "2ee60ee51dc1a2c672df78a3c91614bc", 29101),
 	DT_ENTRY0("3monkeys", "dec34c282511b1eadfe231dbbb49f625", 79286),
+	DT_ENTRY0("adriftorama", "db66d96e2cbd397fc668abcd32d59aeb", 46432),
 	DT_ENTRY0("adventurestrikes", "f5e18081fd6ec4955ed0665aee8580de", 3770),
 	DT_ENTRY0("akron", "2461ceeef3ef1eac15a2051a549b4402", 22258),
 	DT_ENTRY0("albridgemanor", "268003e454c4ade042d593af8397a490", 31353),
@@ -338,6 +345,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("deadreckoningadrift", "c49f787df29d6a73e77a0a33386614d3", 82279),
 	DT_ENTRY0("dontgoadrift", "f192abcc4e1f04787a7f1fde2ad05385", 13789),
 	DT_ENTRY0("doortoutopia", "9e727b8ad5b9c62d712d4a302083f6d8", 15432),
+	DT_ENTRY0("driftingin", "7ee4b9d8cc9547b22a3fac8e34a70a03", 34637),
 	DT_ENTRY0("drwhovortexlust", "e2b76d720096fb6427927456fc80c5a2", 166913),
 	DT_ENTRY0("edithscats", "0c6bbf3d292a427182458bd5332f2348", 18316),
 	DT_ENTRY0("enc1", "d297f4376e5ba5b05985ca12a60d8671", 101668),
@@ -384,6 +392,8 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("phonebooth", "25f4977d7b8df28322df945809826f43", 1372),
 	DT_ENTRY0("pkgirl", "038fb1c7d80bc03a48f71ab5231ab08f", 1627482),
 	DT_ENTRY0("plagueredux", "ed6ea0a04b135e4531636dc4e5005195", 92327),
+	DT_ENTRY0("praxis", "da2b19b01df82d147f214a737a641a52", 9977),
+	DT_ENTRY1("praxis", "Text Only", "da2b19b01df82d147f214a737a641a52", 9977),
 	DT_ENTRY0("ptbad65", "2a90b684c6c086b6e4d7143d70da3d4f", 3349),
 	DT_ENTRY0("ptgood", "aca9cde82850a28b2da871c4d9e34edb", 1971),
 	DT_ENTRY0("professorvonwitt", "570e7d90fa42a199ee0cba44a3c95d6b", 31253),
@@ -459,6 +469,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("rtc", "58729d1f54ca2311d7ff584f223c6396", 149000),
 	DT_ENTRY0("rtcc", "c79ed07084f08890c2ec4912c353ed34", 300308),
 	DT_ENTRY0("sophia", "53ff34729255845adad73eb8d133ef7c", 1242046),
+	DT_ENTRY0("spaceboy", "b9c350309385706eb7ae30e2e52e1096", 22605),
 	DT_ENTRY0("spacedetective1", "170517dae3a195f37d876f5645637953", 34044),
 	DT_ENTRY0("spacedetective2", "1e12b19d8777173cbf9866b3dd2fc2f0", 32632),
 	DT_ENTRY0("spacedetective3", "fc9fb75830d7f59bf932896152b1e759", 30560),
