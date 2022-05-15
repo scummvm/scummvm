@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-13 19:35+0000\n"
+"POT-Creation-Date: 2022-05-14 23:48+0000\n"
 "PO-Revision-Date: 2022-05-10 08:41+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -177,9 +177,9 @@ msgstr ""
 #: engines/groovie/script.cpp:652 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:924
-#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1043
-#: engines/scumm/scumm.cpp:1069 engines/scumm/scumm.cpp:1091
-#: engines/scumm/scumm.cpp:1370 engines/scumm/scumm.cpp:1841
+#: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1044
+#: engines/scumm/scumm.cpp:1070 engines/scumm/scumm.cpp:1092
+#: engines/scumm/scumm.cpp:1371 engines/scumm/scumm.cpp:1842
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:531
 #: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
 #: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
@@ -4208,7 +4208,7 @@ msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 "Le chargement ou sauvegarde rapide du jeu n'est pas possible à cet endroit"
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2496
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2497
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4219,7 +4219,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2486
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2487
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4230,7 +4230,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2509
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2510
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7467,7 +7467,7 @@ msgstr ""
 "La correction du rapport d'aspect peut être obtenue en rognant la résolution "
 "à 320x200, sous l'onglet \"moteur\"."
 
-#: engines/scumm/scumm.cpp:1042
+#: engines/scumm/scumm.cpp:1043
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
@@ -7475,7 +7475,7 @@ msgstr ""
 "L'exécutable Macintosh de 'Indy' n'a pas été trouvé. Les polices haute\n"
 "résolution seront désactivées."
 
-#: engines/scumm/scumm.cpp:1068
+#: engines/scumm/scumm.cpp:1069
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
@@ -7483,7 +7483,7 @@ msgstr ""
 "L'exécutable Macintosh de 'Loom' n'a pas été trouvé. La musique ainsi que\n"
 "les versions haute résolution des polices et du curseur seront désactivées."
 
-#: engines/scumm/scumm.cpp:1090
+#: engines/scumm/scumm.cpp:1091
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -7491,7 +7491,7 @@ msgstr ""
 "L'exécutable Macintosh de 'Monkey Island' n'a pas été trouvé pour\n"
 "y lire les instruments. La musique sera désactivée."
 
-#: engines/scumm/scumm.cpp:1367
+#: engines/scumm/scumm.cpp:1368
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -7503,7 +7503,7 @@ msgstr ""
 "désactivé.\n"
 "Veuillez copier le jeu à partir du support original sans compression."
 
-#: engines/scumm/scumm.cpp:1839
+#: engines/scumm/scumm.cpp:1840
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -7512,7 +7512,7 @@ msgstr ""
 "Le support MIDI natif requiert la mise à jour Roland de LucasArts,\n"
 "mais %s est manquant. AdLib sera utilisé."
 
-#: engines/scumm/scumm.cpp:2808
+#: engines/scumm/scumm.cpp:2809
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
