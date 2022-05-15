@@ -4049,10 +4049,12 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/3ds/plugin.ld -march=armv6k 
 '
 		;;
 	amigaos | morphos)
-		_plugin_prefix="lib"
-		_plugin_suffix=".so"
+		_plugin_prefix=""
+		_plugin_suffix=".plugin"
 		append_var CXXFLAGS "-fPIC"
 		append_var LIBS "-use-dynld"
+		append_var LIBS "-ldl -lauto"
+		append_var _strip "-x"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
 PLUGIN_LDFLAGS  += -shared
