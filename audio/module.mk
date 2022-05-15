@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	adlib_ms.o \
 	audiostream.o \
 	casio.o \
+	cms.o \
 	fmopl.o \
 	mididrv.o \
 	mididrv_ms.o \

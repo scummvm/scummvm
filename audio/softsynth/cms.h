@@ -77,6 +77,8 @@ public:
 
 	void portWrite(int port, int val);
 	void readBuffer(int16 *buffer, const int numSamples);
+	void reset();
+
 private:
 	uint32 _sampleRate;
 
