@@ -145,6 +145,7 @@ void BoyzEngine::loadAssets() {
 	_weaponShootSound[4] = "m16fire.raw";
 	_weaponShootSound[5] = "shotfire.raw";
 	_weaponShootSound[6] = "glm60fr.raw";
+	_weaponShootSound[7] = "dblfire.raw"; // Not sure
 
 	_weaponReloadSound[0] = "";
 	_weaponReloadSound[1] = "pstlload.raw";
@@ -153,6 +154,7 @@ void BoyzEngine::loadAssets() {
 	_weaponReloadSound[4] = "m16load.raw";
 	_weaponReloadSound[5] = "shotload.raw";
 	_weaponReloadSound[6] = "glm60rl.raw";
+	_weaponReloadSound[7] = "dblload.raw"; // Not sure
 
 	_deathDay[0] = "";
 	_deathDay[1] = "preload/deathd1s.smk";
@@ -276,21 +278,20 @@ void BoyzEngine::loadAssets() {
 	cursorBox = Common::Rect(256, 66, 273, 93);
 	_crosshairsTarget[5].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[5].copyRectToSurface(*targets, 0, 0, cursorBox);
-
+    */
 	// Large crossair
 
 	cursorBox = Common::Rect(56, 98, 88, 125);
-	_crosshairsInactive[6].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsInactive[6].copyRectToSurface(*targets, 0, 0, cursorBox);
+	_crosshairsInactive[7].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsInactive[7].copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	cursorBox = Common::Rect(57, 130, 88, 158);
-	_crosshairsActive[6].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsActive[6].copyRectToSurface(*targets, 0, 0, cursorBox);
+	_crosshairsActive[7].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsActive[7].copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	cursorBox = Common::Rect(57, 162, 88, 189);
-	_crosshairsTarget[6].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsTarget[6].copyRectToSurface(*targets, 0, 0, cursorBox);
-	*/
+	_crosshairsTarget[7].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsTarget[7].copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	_weaponMaxAmmo[0] = 0;
 	_weaponMaxAmmo[1] = 10;
@@ -299,6 +300,7 @@ void BoyzEngine::loadAssets() {
 	_weaponMaxAmmo[4] = 6; // pistol?
 	_weaponMaxAmmo[5] = 6; // small shotgun
 	_weaponMaxAmmo[6] = 0;
+	_weaponMaxAmmo[7] = 25; // Boat machine-gun
 
 	_maxHealth = 100;
 	_civiliansShoot = 0;

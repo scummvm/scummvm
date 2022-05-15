@@ -574,10 +574,10 @@ public:
 	Filename _deathDay[7];
 	Filename _deathNight[7];
 
-	Filename _weaponShootSound[7];
-	Filename _weaponReloadSound[7];
+	Filename _weaponShootSound[8];
+	Filename _weaponReloadSound[8];
 	Filename _heySound[7];
-	int _weaponMaxAmmo[7];
+	int _weaponMaxAmmo[8];
 
 	byte *_crosshairsPalette;
 	Graphics::Surface _crosshairsInactive[8];

@@ -143,15 +143,15 @@ void BoyzEngine::drawHealth() {
 void BoyzEngine::drawAmmo() {
 	updateFromScript();
 
-	float w = float(_ammoBar[_currentWeapon].w) / float(_weaponMaxAmmo[_currentWeapon]);
+	float w = float(_ammoBar[_currentActor].w) / float(_weaponMaxAmmo[_currentWeapon]);
 
 	Common::Rect ammoBarBox(320 - int(_ammoTeam[_currentActor] * w), 0, 320, _ammoBar[_currentActor].h / 2);
 	uint32 c = kHypnoColorGreen; // green
 	_compositeSurface->fillRect(ammoBarBox, c);
 
-	drawImage(_ammoBar[_currentActor], 320 - _ammoBar[_currentWeapon].w, 0, true);
+	drawImage(_ammoBar[_currentActor], 320 - _ammoBar[_currentActor].w, 0, true);
 	for (int i = 1; i < _weaponMaxAmmo[_currentWeapon]; i++) {
-		int x = 320 - _ammoBar[_currentWeapon].w + int (i * w);
+		int x = 320 - _ammoBar[_currentActor].w + int (i * w);
 		_compositeSurface->drawLine(x, 2, x, 6, 0);
 	}
 }
