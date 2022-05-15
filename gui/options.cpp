@@ -378,7 +378,7 @@ void OptionsDialog::build() {
 		// Fullscreen setting
 		if (g_system->hasFeature(OSystem::kFeatureFullscreenMode)) {
 			_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
-			if (ConfMan.isKeyTemporary("fullscreen"))
+			if (ConfMan.isKeyTemporary("fullscreen")) 
 				_fullscreenCheckbox->setOverride(true); 
 		} else {
 			_fullscreenCheckbox->setState(true);
@@ -477,6 +477,8 @@ void OptionsDialog::build() {
 
 		// GS extensions setting
 		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
+		if (ConfMan.isKeyTemporary("enable_gs"))
+			_enableGSCheckbox->setOverride(true); 
 	}
 
 	// Volume options
@@ -561,6 +563,7 @@ void OptionsDialog::apply() {
 				graphicsModeChanged = true;
 			if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState()) {
 				graphicsModeChanged = true;
+				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 				_fullscreenCheckbox->setOverride(false); 
 			}
 			if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
@@ -569,21 +572,21 @@ void OptionsDialog::apply() {
 				graphicsModeChanged = true;
 
 			ConfMan.setBool("filtering", _filteringCheckbox->getState(), _domain);
-			ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 			ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
 			ConfMan.setBool("vsync", _vsyncCheckbox->getState(), _domain);
 
 			bool isSet = false;
 
 			if ((int32)_gfxPopUp->getSelectedTag() >= 0) {
-				_gfxPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 							
 				const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
 				while (gm->name) {
 					if (gm->id == (int)_gfxPopUp->getSelectedTag()) {
-						if (ConfMan.get("gfx_mode", _domain) != gm->name)
+						if (ConfMan.get("gfx_mode", _domain) != gm->name) {
+							_gfxPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 							
 							graphicsModeChanged = true;
-						ConfMan.set("gfx_mode", gm->name, _domain);
+							ConfMan.set("gfx_mode", gm->name, _domain);
+						}
 						isSet = true;
 						break;
 					}
@@ -591,26 +594,31 @@ void OptionsDialog::apply() {
 				}
 			}
 			if (!isSet) {
+				_gfxPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 							
 				ConfMan.removeKey("gfx_mode", _domain);
 				if (g_system->getGraphicsMode() != g_system->getDefaultGraphicsMode())
 					graphicsModeChanged = true;
 			}
 
 			if ((int32)_renderModePopUp->getSelectedTag() >= 0) {
-				_renderModePopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 				
-				ConfMan.set("render_mode", Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()), _domain);
+				Common::String renderModeCode = Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()); 
+				if (_renderModePopUp->getSelectedTag() == 0 || ConfMan.get("render_mode", _domain) != renderModeCode) {
+					ConfMan.set("render_mode", renderModeCode, _domain);
+					_renderModePopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 				
+				}
 			}
 
 			isSet = false;
 			if ((int32)_stretchPopUp->getSelectedTag() >= 0) {
-				_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
 				const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
 
 				while (sm->name) {
 					if (sm->id == (int)_stretchPopUp->getSelectedTag()) {
-						if (ConfMan.get("stretch_mode", _domain) != sm->name)
+						if (ConfMan.get("stretch_mode", _domain) != sm->name) {
 							graphicsModeChanged = true;
-						ConfMan.set("stretch_mode", sm->name, _domain);
+							ConfMan.set("stretch_mode", sm->name, _domain);
+							_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+						}
 						isSet = true;
 						break;
 					}
@@ -618,6 +626,7 @@ void OptionsDialog::apply() {
 				}
 			}
 			if (!isSet) {
+				_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
 				ConfMan.removeKey("stretch_mode", _domain);
 				if (g_system->getStretchMode() != g_system->getDefaultStretchMode())
 					graphicsModeChanged = true;
@@ -892,6 +901,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("native_mt32", _domain);
 			ConfMan.removeKey("enable_gs", _domain);
 		}
+		_enableGSCheckbox->setOverride(false); 
 	}
 
 	// Subtitle options
