@@ -1863,6 +1863,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	if (settings.contains("fullscreen")) {
 		ConfMan.set("fullscreen", settings["fullscreen"], Common::ConfigManager::kSessionDomain); 
 	}
+	if (settings.contains("enable-gs")) {
+		ConfMan.set("enable_gs", settings["enable-gs"], Common::ConfigManager::kSessionDomain); 
+	} 
 
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {

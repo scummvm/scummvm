@@ -575,9 +575,12 @@ void ConfigManager::set(const String &key, const String &value, const String &do
 		error("ConfigManager::set(%s,%s,%s) called on non-existent domain",
 		      key.c_str(), value.c_str(), domName.c_str());
 
+	if (domName != kSessionDomain && domName != kTransientDomain)
+		_sessionDomain.erase(key); 
+
 	(*domain).setVal(key, value);
 
-	// TODO/FIXME: We used to erase the given key from the transient domain
+		// TODO/FIXME: We used to erase the given key from the transient domain
 	// here. Do we still want to do that?
 	// It was probably there to simplify the options dialogs code:
 	// Imagine you are editing the current options (via the SCUMM ConfigDialog,
