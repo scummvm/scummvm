@@ -713,8 +713,10 @@ bool TimerMessengerModifier::respondsToEvent(const Event &evt) const {
 VThreadState TimerMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	// If this terminates AND starts then just cancel out and terminate
 	if (_terminateWhen.respondsTo(msg->getEvent())) {
-		if (_scheduledEvent)
+		if (_scheduledEvent) {
 			_scheduledEvent->cancel();
+			_scheduledEvent.reset();
+		}
 	} else if (_executeWhen.respondsTo(msg->getEvent())) {
 		// 0-time events are not allowed
 		uint32 realMilliseconds = _milliseconds;
