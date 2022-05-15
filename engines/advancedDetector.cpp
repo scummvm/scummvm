@@ -785,6 +785,8 @@ static const char *grayList[] = {
 	"engine.exe",
 	"install.exe",
 	"play.exe",
+	"start.exe",
+	"item.dat",
 	0
 };
 
