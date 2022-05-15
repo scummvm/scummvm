@@ -85,7 +85,7 @@ public:
 
 	PlainGameList getSupportedGames() const override;
 	PlainGameDescriptor findGame(const char *gameId) const override;
-	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/) override;
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 };
 
 PlainGameList SwordMetaEngineDetection::getSupportedGames() const {
@@ -132,7 +132,7 @@ void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound) {
 	}
 }
 
-DetectedGames SwordMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/) {
+DetectedGames SwordMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) {
 	int i, j;
 	DetectedGames detectedGames;
 	bool filesFound[NUM_FILES_TO_CHECK];

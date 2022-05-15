@@ -157,7 +157,7 @@ public:
 	 * (possibly empty) list of games supported by the engine that were
 	 * found among the given files.
 	 */
-	virtual DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags = 0) = 0;
+	virtual DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags = 0, bool skipIncomplete = false) = 0;
 
 	/**
 	 * Return a list of extra GUI options for the specified target.
@@ -575,9 +575,10 @@ public:
 	/**
 	 * Given a list of FSNodes in a given directory, detect a set of games contained within.
 	 * @ param skipADFlags		Ignore results which are flagged with the ADGF flags specified here (for mass add)
+	 * @ param skipIncomplete	Ignore incomplete file/md5/size matches (for mass add)
 	 * Returns an empty list if none are found.
 	 */
-	DetectionResults detectGames(const Common::FSList &fslist, uint32 skipADFlags = 0);
+	DetectionResults detectGames(const Common::FSList &fslist, uint32 skipADFlags = 0, bool skipIncomplete = false);
 
 	/** Find a plugin by its engine ID. */
 	const Plugin *findPlugin(const Common::String &engineId) const;
