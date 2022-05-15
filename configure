@@ -2569,25 +2569,32 @@ case $_host_os in
 		append_var LIBS "-lcitro3d"
 		;;
 	amigaos*)
-		# On building dynamic, everything (possible) should be built as plugin.
+		# Leave out resources by default to save binary size
+		_builtin_resources=no
+		# AmigaOS (PPC) target
+		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
+		add_line_to_config_mk 'AMIGAOS = 1'
+		append_var CXXFLAGS "-mlongcall"
+		# Enable optimizations for non-debug builds
+		if test "$_debug_build" = no; then
+			_optimization_level=-O2
+			append_var CXXFLAGS "-fomit-frame-pointer"
+			append_var CXXFLAGS "-fstrict-aliasing"
+		else
+			_optimization_level=-O0
+			append_var CXXFLAGS "-fno-omit-frame-pointer"
+			append_var CXXFLAGS "-fno-strict-aliasing"
+		fi
+		# When building dynamic, add everything possible as plugin
 		if test "$_dynamic_modules" = yes ; then
 			_detection_features_static=no
 			_plugins_default=dynamic
 		fi
-		# We have to use 'long' for our 4 byte typedef, because
-		# AmigaOS already typedefs (u)int32 as (unsigned) long.
+		# Use 'long' for ScummVM's 4 byte typedef, because
+		# AmigaOS already typedefs (u)int32 as (unsigned) long
 		type_4_byte='long'
-		# Supress format warnings, as the 'long' 4 byte causes noisy ones.
+		# Suppress format warnings as the 'long' 4 byte causes noisy ones
 		append_var CXXFLAGS "-Wno-format"
-		# Enable optimizations for non-debug builds.
-		if test "$_debug_build" = no; then
-			_optimization_level=-O2
-		fi
-		append_var LDFLAGS "-Wl,--export-dynamic"
-		add_line_to_config_mk 'AMIGAOS = 1'
-		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
-		# Leave out resources by default, save binary size.
-		_builtin_resources=no
 		;;
 	android)
 		case $_host in
