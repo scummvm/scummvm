@@ -529,7 +529,8 @@ bline: FNTOK FILENAME {
 		shoot->explosionFrames.push_back(fi);
 	}
 	| KTOK NUM NUM NUM {
-		FrameInfo fi($3, 1);
+		assert($3 > $2);
+		FrameInfo fi($2, $3 - $2);
 		shoot->explosionFrames.push_back(fi);
 		debugC(1, kHypnoDebugParser, "K %d %d %d", $2, $3, $4);
 	}

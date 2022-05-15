@@ -232,6 +232,11 @@ int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 
 	int i = 0;
 	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
+		if (_background->decoder->getCurFrame() > int(it->bodyFrames.back().start)) {
+			i++;
+			continue;  // This shoot is old!
+		}
+
 		if (m == it->paletteOffset && !_shoots[i].destroyed)
 			return i;
 		i++;
@@ -363,6 +368,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 }
 
 void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
+	debugC(1, kHypnoDebugArcade, "Missed target %s!", s->name.c_str());
 	if (!s->checkIfDestroyed.empty()) {
 		if (_shootsDestroyed.contains(s->checkIfDestroyed))
 			return;  // Precondition was destroyed, so we ignore the missed shoot
@@ -376,6 +382,8 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		_health = 0; // TODO: not sure about this
 		return;
 	} else if (s->name.contains("ALARM")) {
+		if (_background->decoder->getCurFrame() > int(s->missedAnimation))
+			return;
 		_background->decoder->pauseVideo(true);
 		MVideo video(_warningAlarmDay.front(), Common::Point(0, 0), false, true, false);
 		disableCursor();
