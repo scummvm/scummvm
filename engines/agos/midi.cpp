@@ -32,6 +32,7 @@
 
 #include "agos/drivers/accolade/mididriver.h"
 #include "agos/drivers/accolade/adlib.h"
+#include "agos/drivers/accolade/cms.h"
 #include "agos/drivers/accolade/mt32.h"
 #include "agos/drivers/simon1/adlib.h"
 // Miles Audio for Simon 2
@@ -146,6 +147,9 @@ int MidiPlayer::open() {
 	// instruments compared to the MT-32 tracks, so GM is preferred.
 	int devFlags = MDT_MIDI | (_pc98 ? MDT_PC98 : MDT_ADLIB) |
 		(_vm->getGameType() == GType_SIMON2 ? MDT_PREFER_GM : MDT_PREFER_MT32);
+	if (_vm->getGameType() == GType_ELVIRA1 && _vm->getPlatform() == Common::kPlatformDOS)
+		// CMS is only supported by Elvira 1 DOS.
+		devFlags |= MDT_CMS;
 
 	// Check the type of device that the user has configured.
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(devFlags);
@@ -257,11 +261,19 @@ int MidiPlayer::open() {
 			// Casio devices are supported by Elvira 1 DOS only.
 			_driverMsMusic = MidiDriver_Accolade_Casio_create(accoladeDriverFilename);
 			break;
+		case MT_CMS:
+			// CMS is supported by Elvira 1 DOS only.
+			if (_vm->getGameType() == GType_ELVIRA1 && _vm->getPlatform() == Common::kPlatformDOS) {
+				_driver = new MidiDriver_Accolade_Cms();
+				break;
+			}
+			// fall through
 		default:
 			_driverMsMusic = new MidiDriver_NULL_Multisource();
 			break;
 		}
-		_driver = _driverMsMusic;
+		if (!_driver)
+			_driver = _driverMsMusic;
 
 		// These games use the MUS MIDI format used by several Accolade games.
 		// The Elvira 2 / Waxworks version of the AdLib driver has a mechanism
