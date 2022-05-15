@@ -39,6 +39,7 @@ private:
 	struct Loop {
 		uint16 timer;
 		byte *start, *end;
+		bool noDelta;
 	} _loops[16];
 
 	// Data for monophonic chords mode.
@@ -65,7 +66,7 @@ protected:
 	public:
 	MidiParser_S1D(uint8 source = 0, bool monophonicChords = false) : MidiParser(source),
 			_monophonicChords(monophonicChords), _data(nullptr), _noDelta(false) {
-		Common::fill(_loops, _loops + ARRAYSIZE(_loops), Loop { 0, 0, 0 });
+		Common::fill(_loops, _loops + ARRAYSIZE(_loops), Loop { 0, 0, 0, false });
 		Common::fill(_highestNote, _highestNote + ARRAYSIZE(_highestNote), 0);
 		Common::fill(_lastPlayedNoteTime, _lastPlayedNoteTime + ARRAYSIZE(_lastPlayedNoteTime), 0);
 	}
@@ -133,6 +134,7 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 			const int16 loopIterations = int8(*_position._playPos++);
 			if (!loopIterations) {
 				_loops[info.channel()].start = _position._playPos;
+				_loops[info.channel()].noDelta = _noDelta;
 			} else {
 				if (!_loops[info.channel()].timer) {
 					if (_loops[info.channel()].start) {
@@ -141,11 +143,13 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 
 						// Go to the start of the loop
 						_position._playPos = _loops[info.channel()].start;
+						_noDelta = _loops[info.channel()].noDelta;
 						info.loop = true;
 					}
 				} else {
 					if (_loops[info.channel()].timer) {
 						_position._playPos = _loops[info.channel()].start;
+						_noDelta = _loops[info.channel()].noDelta;
 						info.loop = true;
 					}
 					--_loops[info.channel()].timer;
@@ -277,7 +281,7 @@ void MidiParser_S1D::resetTracking() {
 	MidiParser::resetTracking();
 	// The first event never contains any delta.
 	_noDelta = true;
-	memset(_loops, 0, sizeof(_loops));
+	Common::fill(_loops, _loops + ARRAYSIZE(_loops), Loop { 0, 0, 0, false });
 }
 
 MidiParser *MidiParser_createS1D(uint8 source, bool monophonicChords) { return new MidiParser_S1D(source, monophonicChords); }
