@@ -313,17 +313,18 @@ bool IntRange::load(const Data::IntRange &range) {
 	return true;
 }
 
-bool IntRange::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
+MiniscriptInstructionOutcome IntRange::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
 	if (attrib == "start") {
 		DynamicValueWriteIntegerHelper<int32>::create(&min, proxy);
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	}
-	if (attrib == "y") {
+	if (attrib == "end") {
 		DynamicValueWriteIntegerHelper<int32>::create(&max, proxy);
-		return true;
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
-	return false;
+	thread->error("Couldn't reference int range attribute '" + attrib + "'");
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
 Common::String IntRange::toString() const {
@@ -796,9 +797,12 @@ Common::Array<ObjectReference> &DynamicList::getObjectReference() {
 
 bool DynamicList::setAtIndex(size_t index, const DynamicValue &value) {
 	if (_type != value.getType()) {
-		if (_container != nullptr && _container->getSize() != 0)
-			return false;
-		else {
+		if (_container != nullptr && _container->getSize() != 0) {
+			DynamicValue converted;
+			if (!value.convertToType(_type, converted))
+				return false;
+			return setAtIndex(index, converted);
+		} else {
 			clear();
 			changeToType(value.getType());
 			return _container->setAtIndex(index, value);
@@ -980,36 +984,35 @@ MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::write(MiniscriptT
 
 MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
 	DynamicList *list = static_cast<DynamicList *>(objectRef);
-	bool succeeded = false;
+
 	switch (list->getType()) {
 	case DynamicValueTypes::kPoint:
 		list->expandToMinimumSize(ptrOrOffset + 1);
-		succeeded = list->getPoint()[ptrOrOffset].refAttrib(thread, proxy, attrib);
-		break;
+		return list->getPoint()[ptrOrOffset].refAttrib(thread, proxy, attrib);
 	case DynamicValueTypes::kIntegerRange:
 		list->expandToMinimumSize(ptrOrOffset + 1);
-		succeeded = list->getIntRange()[ptrOrOffset].refAttrib(thread, proxy, attrib);
-		break;
+		return list->getIntRange()[ptrOrOffset].refAttrib(thread, proxy, attrib);
 	case DynamicValueTypes::kVector:
 		list->expandToMinimumSize(ptrOrOffset + 1);
-		succeeded = list->getVector()[ptrOrOffset].refAttrib(thread, proxy, attrib);
+		return list->getVector()[ptrOrOffset].refAttrib(thread, proxy, attrib);
 	case DynamicValueTypes::kObject: {
-			if (list->getSize() <= ptrOrOffset)
-			return kMiniscriptInstructionOutcomeFailed;
+			if (list->getSize() <= ptrOrOffset) {
+				return kMiniscriptInstructionOutcomeFailed;
+				}
 
 			Common::SharedPtr<RuntimeObject> obj = list->getObjectReference()[ptrOrOffset].object.lock();
 			proxy.containerList.reset();
-			succeeded = (obj && obj->writeRefAttribute(thread, proxy, attrib));
+			if (!obj) {
+				thread->error("Attempted to reference an attribute of an invalid object reference");
+				return kMiniscriptInstructionOutcomeFailed;
+			}
+
+			return obj->writeRefAttribute(thread, proxy, attrib);
 		} break;
 	default:
-		succeeded = false;
-		break;
+		thread->error("Couldn't reference an attribute of a list element");
+		return kMiniscriptInstructionOutcomeFailed;
 	}
-
-	if (succeeded)
-		return kMiniscriptInstructionOutcomeContinue;
-
-	return kMiniscriptInstructionOutcomeFailed;
 }
 
 MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
@@ -1383,6 +1386,25 @@ bool DynamicValue::roundToInt(int32 &outInt) const {
 	return false;
 }
 
+bool DynamicValue::convertToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const {
+	if (_type == targetType) {
+		result = *this;
+		return true;
+	}
+
+	switch (_type) {
+	case DynamicValueTypes::kInteger:
+		return convertIntToType(targetType, result);
+	case DynamicValueTypes::kFloat:
+		return convertFloatToType(targetType, result);
+	case DynamicValueTypes::kBoolean:
+		return convertBoolToType(targetType, result);
+	default:
+		warning("Couldn't convert dynamic value from source type");
+		return false;
+	}
+}
+
 void DynamicValue::setObject(const ObjectReference &value) {
 	if (_type != DynamicValueTypes::kObject)
 		clear();
@@ -1464,6 +1486,63 @@ void DynamicValue::clear() {
 	_obj.reset();
 	_str.clear();
 	_type = DynamicValueTypes::kNull;
+}
+
+bool DynamicValue::convertIntToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const {
+	int32 value = this->getInt();
+
+	switch (targetType) {
+	case DynamicValueTypes::kInteger:
+		result.setInt(value);
+		return true;
+	case DynamicValueTypes::kBoolean:
+		result.setBool(value != 0);
+		return true;
+	case DynamicValueTypes::kFloat:
+		result.setFloat(value);
+		return true;
+	default:
+		warning("Unable to implicitly convert dynamic value");
+		return false;
+	}
+}
+
+bool DynamicValue::convertFloatToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const {
+	double value = this->getFloat();
+
+	switch (targetType) {
+	case DynamicValueTypes::kInteger:
+		result.setInt(static_cast<int32>(round(value)));
+		return true;
+	case DynamicValueTypes::kBoolean:
+		result.setBool(value != 0.0);
+		return true;
+	case DynamicValueTypes::kFloat:
+		result.setFloat(value);
+		return true;
+	default:
+		warning("Unable to implicitly convert dynamic value");
+		return false;
+	}
+}
+
+bool DynamicValue::convertBoolToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const {
+	bool value = this->getBool();
+
+	switch (targetType) {
+	case DynamicValueTypes::kInteger:
+		result.setInt(value ? 1 : 0);
+		return true;
+	case DynamicValueTypes::kBoolean:
+		result.setBool(value);
+		return true;
+	case DynamicValueTypes::kFloat:
+		result.setFloat(value ? 1.0 : 0.0);
+		return true;
+	default:
+		warning("Unable to implicitly convert dynamic value");
+		return false;
+	}
 }
 
 void DynamicValue::initFromOther(const DynamicValue &other) {
@@ -2795,7 +2874,6 @@ Common::WeakPtr<RuntimeObject> ObjectLinkingScope::resolve(uint32 staticGUID) co
 		if (_parent)
 			return _parent->resolve(staticGUID);
 
-		warning("Couldn't resolve static GUID %x", staticGUID);
 		return Common::WeakPtr<RuntimeObject>();
 	}
 }
@@ -2816,7 +2894,6 @@ Common::WeakPtr<RuntimeObject> ObjectLinkingScope::resolve(const Common::String 
 		if (_parent)
 			return _parent->resolve(*namePtr, true);
 
-		warning("Couldn't resolve object name '%s'", name.c_str());
 		return Common::WeakPtr<RuntimeObject>();
 	}
 }
@@ -2825,8 +2902,13 @@ Common::WeakPtr<RuntimeObject> ObjectLinkingScope::resolve(uint32 staticGUID, co
 	Common::WeakPtr<RuntimeObject> byGUIDResult = resolve(staticGUID);
 	if (!byGUIDResult.expired())
 		return byGUIDResult;
-	else
-		return resolve(name, isNameAlreadyInsensitive);
+	else {
+		Common::WeakPtr<RuntimeObject> fallback = resolve(name, isNameAlreadyInsensitive);
+		if (fallback.expired()) {
+			warning("Couldn't resolve static guid '%x' with name '%s'", staticGUID, name.c_str());
+		}
+		return fallback;
+	}
 }
 
 void ObjectLinkingScope::reset() {
@@ -6288,13 +6370,26 @@ bool Modifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, con
 
 		return false;
 	}
+	if (attrib == "name") {
+		result.setString(_name);
+		return true;
+	}
 
 	return false;
 
 }
 
+MiniscriptInstructionOutcome Modifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "parent") {
+		DynamicValueWriteObjectHelper::create(_parent.lock().get(), writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "name") {
+		DynamicValueWriteStringHelper::create(&_name, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
 
-
+	return RuntimeObject::writeRefAttribute(thread, writeProxy, attrib);
+}
 
 void Modifier::materialize(Runtime *runtime, ObjectLinkingScope *outerScope) {
 	ObjectLinkingScope innerScope;

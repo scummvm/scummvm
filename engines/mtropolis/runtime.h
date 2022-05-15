@@ -347,7 +347,7 @@ struct IntRange {
 		return result;
 	}
 
-	bool refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
+	MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
 	Common::String toString() const;
 };
 
@@ -835,6 +835,8 @@ struct DynamicValue {
 
 	bool roundToInt(int32 &outInt) const;
 
+	bool convertToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
+
 	DynamicValue &operator=(const DynamicValue &other);
 
 	bool operator==(const DynamicValue &other) const;
@@ -865,6 +867,10 @@ private:
 		a = b;
 		b = temp;
 	}
+
+	bool convertIntToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
+	bool convertFloatToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
+	bool convertBoolToType(DynamicValueTypes::DynamicValueType targetType, DynamicValue &result) const;
 
 	void initFromOther(const DynamicValue &other);
 
@@ -2302,6 +2308,7 @@ public:
 	virtual ~Modifier();
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
 
 	void materialize(Runtime *runtime, ObjectLinkingScope *outerScope);
 
