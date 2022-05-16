@@ -533,7 +533,7 @@ bool DragMotionModifier::load(ModifierLoaderContext &context, const Data::DragMo
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen) || !_constraintMargin.load(data.constraintMargin))
+	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen) || !_constraintMargin.loadUnchecked(data.constraintMargin))
 		return false;
 
 	bool constrainVertical = false;
