@@ -104,15 +104,17 @@ if [[ "setup" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]];
     ./emsdk install ${EMSCRIPTEN_VERSION}
     # We currently require a few patches for unreleased changes in SDL2 and Emscripten
     if [[ "$EMSCRIPTEN_VERSION" == "3.1.8" ]]; then
+      echo "Patching Emscripten"
       cd upstream/emscripten
       # until https://github.com/emscripten-core/emscripten/pull/15893 gets merged and released, we need to manually patch it
+      # as the upstream PR has been rebased against an incompatible main,  we'll actually use https://github.com/chkuendig/emscripten/pull/2
+      wget -nc https://github.com/chkuendig/emscripten/pull/2.patch  -O "$DIST_FOLDER/emscripten-15893.patch" || true 
       patch -p1 --verbose <"$DIST_FOLDER/emscripten-15893.patch"
-      # some additional fixes on top of 15893:
-      patch -p1 --verbose <"$DIST_FOLDER/emscripten-15893-fix.patch"
-
       # until https://github.com/emscripten-core/emscripten/pull/16559 gets merged and released, we need to manually patch it
+      wget -nc https://github.com/emscripten-core/emscripten/pull/16559.patch  -O "$DIST_FOLDER/emscripten-16559.patch" || true 
       patch -p1 --verbose <"$DIST_FOLDER/emscripten-16559.patch"
       # until https://github.com/emscripten-core/emscripten/pull/16687 gets merged and released, we need to manually patch it
+      wget -nc https://github.com/emscripten-core/emscripten/pull/16559.patch  -O "$DIST_FOLDER/emscripten-16559.patch" || true 
       patch -p1 --verbose <"$DIST_FOLDER/emscripten-16687.patch"
     fi
 
@@ -179,7 +181,7 @@ if [[ "libs" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; 
     cd "$LIBS_FOLDER"
     wget -nc "https://downloads.xiph.org/releases/theora/libtheora-1.1.1.tar.xz"
     tar -xf libtheora-1.1.1.tar.xz
-    cd "./libtheora-1.1.1/"
+    cd "$LIBS_FOLDER/libtheora-1.1.1/"
     CFLAGS="-fPIC -s USE_OGG=1" emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/" --disable-asm
     emmake make -j 3
     emmake make install
@@ -191,7 +193,7 @@ if [[ "libs" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; 
     cd "$LIBS_FOLDER"
     wget -nc "https://sourceforge.net/projects/faac/files/faad2-src/faad2-2.8.0/faad2-2.8.8.tar.gz"
     tar -xf faad2-2.8.8.tar.gz
-    cd "./faad2-2.8.8/"
+    cd "$LIBS_FOLDER/faad2-2.8.8/"
     CFLAGS="-fPIC" emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/"
     emmake make
     emmake make install
@@ -201,14 +203,14 @@ if [[ "libs" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; 
   if [[ ! -f "$LIBS_FOLDER/build/lib/libmad.a" ]]; then
     echo "building libmad-0.15.1b"
     cd "$LIBS_FOLDER"
-    # libmad needs patching: https://stackoverflow.com/questions/14015747/gccs-fforce-mem-option
-    wget -nc "http://www.linuxfromscratch.org/patches/blfs/svn/libmad-0.15.1b-fixes-1.patch"
     wget -nc "https://downloads.sourceforge.net/mad/libmad-0.15.1b.tar.gz"
+    # libmad needs patching: https://stackoverflow.com/questions/14015747/gccs-fforce-mem-option
+    wget -nc "http://www.linuxfromscratch.org/patches/blfs/svn/libmad-0.15.1b-fixes-1.patch" -O "$DIST_FOLDER/libmad-0.15.1b-fixes-1.patch" || true
     rm -rf "$LIBS_FOLDER/libmad-0.15.1b/"
     tar -xf libmad-0.15.1b.tar.gz
     cd "$LIBS_FOLDER/libmad-0.15.1b/"
-    patch -Np1 -i ../libmad-0.15.1b-fixes-1.patch &&
-      emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/" --with-pic --enable-fpm=no
+    patch -Np1 -i "$DIST_FOLDER/libmad-0.15.1b-fixes-1.patch"
+    emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/" --with-pic --enable-fpm=no
     emmake make
     emmake make install
   fi

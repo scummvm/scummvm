@@ -59,36 +59,37 @@ See e.g. [chkuendig/scummvm-demo/.github/workflows/main.yml](https://github.com/
 ## Current Status of Port
 In general, ScummVM runs in the browser sufficiently to run all demos and freeware games.
 
-* All engines compile (though I didn't test all of them), including ResidualVM with WebGL acceleration and shaders work as plugins (which means the initial page load is somewhat limited)
+* All engines compile (though I didn't test all of them), including ResidualVM with WebGL acceleration and shaders and run as plugins (which means the initial page load is somewhat limited)
 * Audio works and 3rd-party libraries for sound and video decoding are integrated.
 * All data can be downloaded on demand (or in the case of the testbed generated as part of the build script)
 
 ## Known Issues + Possible Improvements
 
-### Emscripten Optimizations
-*   Optimize asyncify behaviour (we only have SDL functions calling wait currently), e.g with [SDL_HINT_EMSCRIPTEN_ASYNCIFY](https://wiki.libsdl.org/SDL_HINT_EMSCRIPTEN_ASYNCIFY)
+### Emscripten Asyncify Optimizations
+ScummVM relies heavily on Asyncify (see note above), and this comes with a quite heavy performance penalty. Possible optimizations in this regard could be:
 *   Specify a `ASYNCIFY_ONLY` list in `configure` to  make asyncify only instrument functions in the call path as described in [emscripten.org: Asyncify](https://emscripten.org/docs/porting/asyncify.html)
-*   Limit asyncify overhead by having a more specific setting for `ASYNCIFY_IMPORTS` in `configure`.
+*   Limit asyncify overhead by having a more specific setting for `ASYNCIFY_IMPORTS` in `configure`. This is especailly critical for plugins as when plugins are enabled, we currently add all functions as imports. 
+*   🐞 We currently can't update beyond Emscripten 3.1.8 as the build fails since WebAssembly/binaryen#4567  if plugins enabled (because all functions become locals with `ASYNCIFY_IMPORTS=[*]`)
 *   Don't use asyncify but rewrite main loop to improve performance
+*   Look into emscripten-core/emscripten#16779 as an alternative
 
 ### Storage Integration
 *   BrowserFS seems abandoned and never did a stable 2.0.0 release. It's worth replacing it.  
     * `scummvm_fs.js` is an early prototype for a custom FS which can be adopted for ScummVM specific needs, i.e.
       * Download all game assets in background once the game has started
       * Presist last game and last plugin for offline use
-      * Implement support for range requests (currently not supported with `emrun` so another development server would have to be included as well)
       * Pre-load assets asynchronously (not blocking) - i.e. rest of the data of a game which has been launched
-      * Loading indicators
-
+      * Loading indicators (doesn't work with the current synchronous/blocking filesystem)
 *   Add support for save games (and game data?) on personal cloud storage (Dropbox, Google Drive).
+
+
+Emscripten is currently re-doing their filesystem code, which could help address some of the above issues ( emscripten-core/emscripten#15041 ).
 
 ### UI Integration
 *   Build a nice webpage around the canvas.
-    *   Allow showing/hiding of console, replace buttons/checkboxes from default emscripten template.
+    *   Allow showing/hiding of console (at the moment there's only the browser console)
     *   Bonus: Adapt page padding/background color to theme (black when in game)
-
 *   Automatically show console in case of exceptions
-
-* Aspect Ratio is broken when starting a game until the window is resized once. Good starting points might be  https://github.com/emscripten-ports/SDL2/issues/47 or https://github.com/emscripten-core/emscripten/issues/10285
-    * doesn't seem to affect 3d engines in opengl mode
-    * definitely affects testbed in opengl or other modes
+* 🐞 Aspect Ratio is broken when starting a game until the window is resized once. Good starting points might be  https://github.com/emscripten-ports/SDL2/issues/47 or https://github.com/emscripten-core/emscripten/issues/10285
+    * doesn't seem to affect 3D engines in opengl mode
+    * definitely affects testbed in OpenGL or other modes
