@@ -483,6 +483,8 @@ void OptionsDialog::build() {
 
 		// Native mt32 setting
 		_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
+		if (ConfMan.isKeyTemporary("native_mt32"))
+			_mt32Checkbox->setOverride(true); 
 
 		// GS extensions setting
 		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
@@ -918,13 +920,21 @@ void OptionsDialog::apply() {
 		if (_enableMT32Settings) {
 			saveMusicDeviceSetting(_mt32DevicePopUp, "mt32_device");
 			ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
-			ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
+			if (ConfMan.getBool("native_mt32", _domain) != _mt32Checkbox->getState()) {
+				ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
+				_mt32Checkbox->setOverride(false); 
+			}
+			if (ConfMan.getBool("enable_gs", _domain) != _enableGSCheckbox->getState()) {
+				ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
+				_enableGSCheckbox->setOverride(false); 
+			}
 		} else {
 			ConfMan.removeKey("mt32_device", _domain);
 			ConfMan.removeKey("native_mt32", _domain);
+			_mt32Checkbox->setOverride(false); 
 			ConfMan.removeKey("enable_gs", _domain);
+			_enableGSCheckbox->setOverride(false); 
 		}
-		_enableGSCheckbox->setOverride(false); 
 	}
 
 	// Subtitle options
