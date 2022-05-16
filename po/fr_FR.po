@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-15 13:26+0000\n"
+"POT-Creation-Date: 2022-05-16 11:25+0000\n"
 "PO-Revision-Date: 2022-05-10 08:41+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -2903,7 +2903,7 @@ msgstr "Pas de musique"
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Émulateur Apple II GS (PAS IMPLÉMENTÉ)"
 
-#: audio/softsynth/cms.cpp:350
+#: audio/softsynth/cms.cpp:354
 msgid "Creative Music System emulator"
 msgstr "Émulateur Creative Music System"
 
@@ -4256,7 +4256,7 @@ msgstr "Fichier de séquence '%s' non trouvé !"
 msgid "AGOS 2 support is not compiled in"
 msgstr "La prise en charge de AGOS 2 n'est pas incluse"
 
-#: engines/agos/midi.cpp:180 engines/kyra/sound/sound_pc_midi.cpp:75
+#: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:75
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
