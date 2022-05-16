@@ -1866,6 +1866,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	if (settings.contains("enable-gs")) {
 		ConfMan.set("enable_gs", settings["enable-gs"], Common::ConfigManager::kSessionDomain); 
 	} 
+	if (settings.contains("native-mt32")) {
+		ConfMan.set("native_mt32", settings["native-mt32"], Common::ConfigManager::kSessionDomain); 
+	} 
 	if (settings.contains("filtering")) {
 		ConfMan.set("filtering", settings["filtering"], Common::ConfigManager::kSessionDomain); 
 	}
