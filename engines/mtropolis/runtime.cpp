@@ -306,6 +306,15 @@ bool Rect16::load(const Data::Rect &rect) {
 	return true;
 }
 
+bool Rect16::loadUnchecked(const Data::Rect &rect) {
+	top = rect.top;
+	left = rect.left;
+	bottom = rect.bottom;
+	right = rect.right;
+
+	return true;
+}
+
 bool IntRange::load(const Data::IntRange &range) {
 	max = range.max;
 	min = range.min;

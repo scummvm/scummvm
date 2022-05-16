@@ -304,6 +304,7 @@ struct Rect16 {
 	int16 right;
 
 	bool load(const Data::Rect &rect);
+	bool loadUnchecked(const Data::Rect &rect);
 
 	inline bool operator==(const Rect16 &other) const {
 		return top == other.top && left == other.left && bottom == other.bottom && right == other.right;
