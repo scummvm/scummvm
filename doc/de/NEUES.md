@@ -30,7 +30,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Abhängig von dem gewählten Spiel wird diese Einstellung "abgeschnittene" Noten verhindern sowie
      zusätzliche Noten und Instrumente sowie Stereo-Unterstützung anbieten.
    - Elvira 2, Waxworks: Unterstützung für AdLib- und MT-32-Soundeffekte hinzugefügt.
-   - Elvira 2, Waxworks, Simon the Sorcerer (Diskettenversion): UNterstützung für abgemischte MIDI-Wiedergabe
+   - Elvira 2, Waxworks, Simon the Sorcerer (Diskettenversion): Unterstützung für abgemischte MIDI-Wiedergabe
      (MT-32-Musik mit AdLib-Soundeffekten) hinzugefügt.
    - Simon the Sorcerer (Diskettenversion): Verbesserung der Genauigkeit von AdLib-Soundeffekten.
    - Simon the Sorcerer: Die Audio-Wiedergabegeschwindigkeit der DOS-Version ist nun genauer. Sowohl die DOS-
