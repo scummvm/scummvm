@@ -24,6 +24,22 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGI:
    - Added support for Macintosh versions of Manhunter 1-2.
 
+ AGOS:
+   - Elvira 1: Added support for Casio MT-540/CT-460/CSM-1 and CMS/GameBlaster.
+   - Elvira 1 & 2, Waxworks, Simon the Sorcerer: Added AdLib OPL3 mode.
+     Depending on the game, this will prevent cut-off notes, add extra notes or
+     instruments and/or add stereo.
+   - Elvira 2, Waxworks: Added support for AdLib and MT-32 sound effects.
+   - Elvira 2, Waxworks, Simon the Sorcerer floppy: Added Mixed MIDI support
+     (MT-32 music with AdLib sound effects).
+   - Simon the Sorcerer floppy: Improved AdLib sound effects accuracy.
+   - Simon the Sorcerer: DOS version music tempos are now accurate. Both DOS
+     and Windows versions now offer the choice of the DOS music tempos or the
+     faster Windows tempos.
+   - Simon the Sorcerer 2: Improved AdLib and GM support.
+   - Simon the Sorcerer 2: Added workaround for the missing MT-32 tracks in the
+     intro.
+
  BBVS:
    - Fixed the size of the main menu buttons being incorrect in some cases.
    - Fixed crash at the end of the Hock-A-Loogie mini game.
