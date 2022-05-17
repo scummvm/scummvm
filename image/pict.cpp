@@ -32,8 +32,8 @@
 namespace Image {
 
 // The PICT code is based off of the QuickDraw specs:
-// http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-461.html
-// http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-269.html
+// https://developer.apple.com/library/archive/documentation/mac/QuickDraw/QuickDraw-461.html
+// https://developer.apple.com/library/archive/documentation/mac/QuickDraw/QuickDraw-269.html
 
 PICTDecoder::PICTDecoder() {
 	_outputSurface = 0;
@@ -306,7 +306,7 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 
 	// Read in the palette if there is one present
 	if (withPalette) {
-		// See http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-267.html
+		// See https://developer.apple.com/library/archive/documentation/mac/QuickDraw/QuickDraw-267.html
 		stream.readUint32BE(); // seed
 		stream.readUint16BE(); // flags
 		_paletteColorCount = stream.readUint16BE() + 1;
@@ -537,8 +537,8 @@ void PICTDecoder::skipBitsRect(Common::SeekableReadStream &stream, bool withPale
 }
 
 // Compressed QuickTime details can be found here:
-// http://developer.apple.com/legacy/mac/library/#documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/B-Chapter/2TheImageCompression.html
-// http://developer.apple.com/legacy/mac/library/#documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/F-Chapter/6WorkingwiththeImage.html
+// https://developer.apple.com/library/archive/documentation/QuickTime/RM/CompressDecompress/ImageComprMgr/B-Chapter/2TheImageCompression.html
+// https://developer.apple.com/library/archive/documentation/QuickTime/RM/CompressDecompress/ImageComprMgr/F-Chapter/6WorkingwiththeImage.html
 void PICTDecoder::decodeCompressedQuickTime(Common::SeekableReadStream &stream) {
 	// First, read all the fields from the opcode
 	uint32 dataSize = stream.readUint32BE();

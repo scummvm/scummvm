@@ -21,7 +21,7 @@
 
 // Based on http://wiki.multimedia.cx/index.php?title=Smacker
 // and the FFmpeg Smacker decoder (libavcodec/smacker.c), revision 16143
-// http://git.ffmpeg.org/?p=ffmpeg;a=blob;f=libavcodec/smacker.c;hb=b8437a00a2f14d4a437346455d624241d726128e
+// https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/40a19c443430de520d86bbd644033c8e2ca87e9b
 
 #include "video/smk_decoder.h"
 
@@ -713,7 +713,7 @@ void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStreamMemory8LSB 
 						for (i = 0; i < 2; i++) {
 							// We first get p2 and then p1
 							// Check ffmpeg thread "[PATCH] Smacker video decoder bug fix"
-							// http://article.gmane.org/gmane.comp.video.ffmpeg.devel/78768
+							// https://ffmpeg.org/pipermail/ffmpeg-devel/2008-December/044246.html
 							p2 = _FullTree->getCode(bs);
 							p1 = _FullTree->getCode(bs);
 							for (j = 0; j < doubleY; ++j) {

@@ -461,7 +461,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("bickadoodle", "Version 1.2",
 		WME_ENTRY1s("data.dcp", "1796a48f3ed72dd785ce93334ab883cc", 35337760), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
-	// Bickadoodle (download from http://aethericgames.com/games/bickadoodle/download-bickadoodle/)
+	// Bickadoodle (https://web.archive.org/web/20150516210632/http://aethericgames.com/games/bickadoodle/download-bickadoodle/)
 	WME_WINENTRY("bickadoodle", "",
 		WME_ENTRY1s("data.dcp", "1584d83577c32add0fce27fae91141a2", 35337728), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 

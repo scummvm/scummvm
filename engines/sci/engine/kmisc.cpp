@@ -462,7 +462,7 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 }
 
 // Likely modelled after the Windows 3.1 function GetPrivateProfileInt:
-// http://msdn.microsoft.com/en-us/library/windows/desktop/ms724345%28v=vs.85%29.aspx
+// https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getprivateprofileint
 reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv) {
 	if (g_sci->getPlatform() != Common::kPlatformWindows) {
 		return s->r_acc;

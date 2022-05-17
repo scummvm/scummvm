@@ -117,7 +117,7 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 	/* SCI uses these in a less-than-portable way to delete savegames.
-	** Read http://www-plan.cs.colorado.edu/creichen/freesci-logs/2005.10/log20051019.html
+	** Read https://web.archive.org/web/20060913122014/http://www-plan.cs.colorado.edu/creichen/freesci-logs/2005.10/log20051019.html
 	** for more information on our workaround for this.
 	*/
 	case K_DEVICE_INFO_GET_SAVECAT_NAME: {

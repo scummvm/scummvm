@@ -170,7 +170,7 @@ void MidiDriver_Miles_Midi::initMidiDevice() {
 	}
 }
 
-// MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
+// MIDI messages can be found at https://web.archive.org/web/20120128110425/http://www.midi.org/techspecs/midimessages.php
 void MidiDriver_Miles_Midi::send(int8 source, uint32 b) {
 	assert(source < MAXIMUM_SOURCES);
 

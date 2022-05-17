@@ -993,7 +993,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_GK2_DEMO },
 
 	// Gabriel Knight 2 - English DOS (GOG version) - ressci.* merged in ressci.000
-	// using Enrico Rolfi's HD/DVD installer: http://gkpatches.vogons.zetafleet.com/
+	// using Enrico Rolfi's HD/DVD installer: https://gkpatches.vogons.org/english.php
 	{"gk2", "", {
 		{"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
 		{"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
@@ -1001,13 +1001,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
 	
 	// Gabriel Knight 2 - Korean DOS (GOG version) (from swkim01)
-    // using swkim01's SCI Message Editor: http://github.com/swkim01/scime/
-    {"gk2", "", {
-        {"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
-        {"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
-        {"resource.msg", 0, "1c4439abcfda38be40090a37a91ad7d2", 331954},
-        AD_LISTEND},
-        Common::KO_KOR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
+	// using swkim01's SCI Message Editor: http://github.com/swkim01/scime/
+	{"gk2", "", {
+		{"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
+		{"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
+		{"resource.msg", 0, "1c4439abcfda38be40090a37a91ad7d2", 331954},
+		AD_LISTEND},
+		Common::KO_KOR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
 
 	// Gabriel Knight 2 - English DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.1"

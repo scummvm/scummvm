@@ -312,7 +312,7 @@ bool MacFONTFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *fa
 
 	// If positive, _nDescent holds the high bits of the offset to the
 	// width/offset table.
-	// http://mirror.informatimago.com/next/developer.apple.com/documentation/mac/Text/Text-252.html
+	// https://web.archive.org/web/20080724120946/developer.apple.com/documentation/mac/Text/Text-252.html
 	if (_data._nDescent > 0)
 		_data._owTLoc |= _data._nDescent << 16;
 

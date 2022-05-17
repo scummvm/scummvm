@@ -23,7 +23,7 @@
 
 //
 // Code taken from Pablo Medina (aka "pm") (pjmedina3@yahoo.com)
-// You can find it here: http://2xpm.freeservers.com
+// You can find it here: https://web.archive.org/web/20051018114450/http://2xpm.freeservers.com/ 
 // Thanks for his great work
 // Implemented and fixed for ScummVM by Johannes Schickel (aka "LordHoto") (lordhoto [at] gmail [dot] com)
 //
