@@ -6140,7 +6140,10 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *
 
 		return kMiniscriptInstructionOutcomeContinue;
 	}
-	return kMiniscriptInstructionOutcomeFailed;
+
+	// Assigning non-point values to position silently fails
+	// Obsidian relies on this behavior due to a bug in the air puzzle completion script
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 MiniscriptInstructionOutcome VisualElement::scriptSetPositionX(MiniscriptThread *thread, const DynamicValue &dest) {
