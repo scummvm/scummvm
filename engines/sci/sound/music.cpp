@@ -699,7 +699,7 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 	pSnd->fadeStep = 0; // end fading, if fading was in progress
 
 	// SSCI0 resumes the next available sound from the (priority ordered) list with a paused status.
-	if (_soundVersion <= SCI_VERSION_0_LATE && (pSnd = getFirstSlotWithStatus(kSoundPaused)))
+	if (_soundVersion <= SCI_VERSION_0_LATE && previousStatus == kSoundPlaying && (pSnd = getFirstSlotWithStatus(kSoundPaused)))
 		soundResume(pSnd);
 }
 
