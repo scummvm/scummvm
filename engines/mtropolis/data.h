@@ -679,7 +679,7 @@ struct MToonElement : public StructuralDef {
 	Rect rect1;
 	Rect rect2;
 	uint32 assetID;
-	uint32 rateTimes10000;
+	uint32 rateTimes100000;
 	uint32 streamLocator;
 	uint32 unknown6;
 

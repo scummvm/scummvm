@@ -847,7 +847,7 @@ DataReadErrorCode MToonElement::load(DataReader &reader) {
 			|| !reader.readU16(lengthOfName) || !reader.readU32(elementFlags) || !reader.readU16(layer)
 			|| !reader.readU32(animationFlags) || !reader.readBytes(unknown4) || !reader.readU16(sectionID)
 			|| !rect1.load(reader) || !rect2.load(reader) || !reader.readU32(assetID)
-			|| !reader.readU32(rateTimes10000) || !reader.readU32(streamLocator) || !reader.readU32(unknown6)
+			|| !reader.readU32(rateTimes100000) || !reader.readU32(streamLocator) || !reader.readU32(unknown6)
 			|| !reader.readTerminatedStr(name, lengthOfName))
 		return kDataReadErrorReadFailed;
 

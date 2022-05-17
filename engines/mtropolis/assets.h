@@ -91,6 +91,7 @@ struct MToonMetadata {
 	Rect16 rect;
 	uint16 bitsPerPixel;
 	uint32 codecID;
+	uint32 encodingFlags;
 
 	Common::Array<FrameDef> frames;
 	Common::Array<FrameRangeDef> frameRanges;
@@ -117,18 +118,9 @@ private:
 		uint32 width;
 		uint32 height;
 		bool isKeyframe;
-	};
-
-	struct Rle32Frame : public RleFrame {
-		Common::Array<uint32> data;
-	};
-
-	struct Rle16Frame : public RleFrame {
-		Common::Array<uint16> data;
-	};
-
-	struct Rle8Frame : public RleFrame {
-		Common::Array<uint8> data;
+		Common::Array<uint8> data8;
+		Common::Array<uint16> data16;
+		Common::Array<uint32> data32;
 	};
 
 	static const uint32 kMToonRLECodecID = 0x2e524c45;
@@ -141,12 +133,10 @@ private:
 	void decompressRLEFrame(size_t frameIndex);
 	void loadUncompressedFrame(const Common::Array<uint8> &data, size_t frameIndex);
 
-	template<class TSrcFrame, class TSrcNumber, uint32 TSrcLiteralMask, uint32 TSrcTransparentSkipMask, class TDestFrame, class TDestNumber, uint32 TDestLiteralMask, uint32 TDestTransparentSkipMask>
-	void rleReformat(const TSrcFrame &srcFrame, const Graphics::PixelFormat &srcFormatRef, TDestFrame &destFrame, const Graphics::PixelFormat &destFormatRef);
+	template<class TSrcNumber, uint32 TSrcLiteralMask, uint32 TSrcTransparentSkipMask, class TDestNumber, uint32 TDestLiteralMask, uint32 TDestTransparentSkipMask>
+	void rleReformat(RleFrame &frame, const Common::Array<TSrcNumber> &srcData, const Graphics::PixelFormat &srcFormatRef, Common::Array<TDestNumber> &destData, const Graphics::PixelFormat &destFormatRef);
 
-	Common::Array<Rle8Frame> _dataRLE8;
-	Common::Array<Rle16Frame> _dataRLE16;
-	Common::Array<Rle32Frame> _dataRLE32;
+	Common::Array<RleFrame> _rleData;
 	bool _isRLETemporalCompressed;
 
 	Common::Array<Common::SharedPtr<Graphics::Surface> > _decompressedFrames;

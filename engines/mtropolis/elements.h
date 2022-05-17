@@ -217,7 +217,7 @@ private:
 	bool _maintainRate;
 
 	uint32 _assetID;
-	int32 _rateTimes10000;
+	int32 _rateTimes100000;
 	uint32 _frame;
 	int32 _flushPriority;
 	uint32 _celStartTimeMSec;
