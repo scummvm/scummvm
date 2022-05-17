@@ -19,6 +19,7 @@
  *
  */
 
+#include "mm/mm1/mm1.h"
 #include "mm/xeen/xeen.h"
 #include "mm/xeen/worldofxeen/worldofxeen.h"
 #include "mm/xeen/swordsofxeen/swordsofxeen.h"
@@ -107,6 +108,9 @@ Common::Error MMMetaEngine::createInstance(OSystem *syst, Engine **engine, const
 	const MM::MightAndMagicGameDescription *gd = (const MM::MightAndMagicGameDescription *)desc;
 
 	switch (gd->gameID) {
+	case MM::GType_MightAndMagic1:
+		*engine = new MM::MM1::MM1Engine(syst, gd);
+		break;
 	case MM::GType_Clouds:
 	case MM::GType_DarkSide:
 	case MM::GType_WorldOfXeen:

@@ -23,6 +23,22 @@ namespace MM {
 
 static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 	{
+		// Might and Magic 1
+		{
+			"mm1",
+			nullptr,
+			AD_ENTRY1s("wallpix.dta", "86a7ef03fd5bf434d83012b07fa92680", 123059),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GType_MightAndMagic1,
+		0
+	},
+
+
+	{
 		// World of Xeen
 		{
 			"worldofxeen",
