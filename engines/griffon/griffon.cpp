@@ -75,6 +75,7 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 	_saveSlot = 0;
 
 	_ticks = g_system->getMillis();
+	_ticksAtPauseStart = 0;
 
 	for (int i = 0; i < 33; ++i) {
 		for (int j = 0; j < 6; ++j) {
@@ -191,6 +192,16 @@ Common::Error GriffonEngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+void GriffonEngine::pauseEngineIntern(bool pause) {
+	if (pause) {
+		_ticksAtPauseStart = _ticks;
+	} else {
+		uint32 diff = _system->getMillis() - _ticksAtPauseStart;
+		_ticks += diff;
+		_nextTicks += diff;
+	}
 }
 
 }

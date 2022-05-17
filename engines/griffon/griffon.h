@@ -442,6 +442,8 @@ private:
 	void setupAudio();
 	void updateMusic();
 
+	// Common engine overrides
+	void pauseEngineIntern(bool pause) override;
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveGameStateCurrently() override { return _gameMode == kGameModePlay; }
 	int getAutosaveSlot() const override { return 4; }
@@ -476,7 +478,7 @@ private:
 	int _scriptFlag[100][10], _saveSlot;  // script, flag
 
 	// timer related - move to local later
-	int _ticks, _ticksPassed, _nextTicks;
+	uint _ticks, _ticksPassed, _nextTicks, _ticksAtPauseStart;
 	float _fp, _fps, _fpsr; // CHECKME: _fp and _fps seems to be integers
 	int _secsInGame, _secStart;
 
