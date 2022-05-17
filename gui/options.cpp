@@ -649,19 +649,24 @@ void OptionsDialog::apply() {
 			const PluginList &scalerPlugins = ScalerMan.getPlugins();
 			if ((int32)_scalerPopUp->getSelectedTag() >= 0) {
 				const char *name = scalerPlugins[_scalerPopUp->getSelectedTag()]->get<ScalerPluginObject>().getName();
-				if (ConfMan.get("scaler", _domain) != name)
+				if (ConfMan.get("scaler", _domain) != name) {
 					graphicsModeChanged = true;
-				ConfMan.set("scaler", name, _domain);
+					ConfMan.set("scaler", name, _domain);
+					_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);  
+				}
 
 				int factor = _scaleFactorPopUp->getSelectedTag();
-				if (ConfMan.getInt("scale_factor", _domain) != factor)
+				if (ConfMan.getInt("scale_factor", _domain) != factor) {
+					ConfMan.setInt("scale_factor", factor, _domain);
 					graphicsModeChanged = true;
-				ConfMan.setInt("scale_factor", factor, _domain);
+					_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+				}
 				isSet = true;
 			}
 			if (!isSet) {
 				ConfMan.removeKey("scaler", _domain);
 				ConfMan.removeKey("scale_factor", _domain);
+				_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);  
 
 				uint defaultScaler = g_system->getDefaultScaler();
 				uint defaultScaleFactor = g_system->getDefaultScaleFactor();
@@ -1875,6 +1880,8 @@ void OptionsDialog::setupGraphicsTab() {
 
 	if (g_system->hasFeature(OSystem::kFeatureScalers)) {
 		_scalerPopUpDesc->setVisible(true);
+		if (ConfMan.isKeyTemporary("scaler") || ConfMan.isKeyTemporary("scale_factor"))
+			_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
 		_scalerPopUp->setVisible(true);
 		_scaleFactorPopUp->setVisible(true);
 	} else {
