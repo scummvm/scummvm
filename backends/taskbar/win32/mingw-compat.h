@@ -21,7 +21,7 @@
 
 // TODO: Remove header when the latest changes to the Windows SDK have been integrated into MingW
 //       For reference, the interface definitions here are imported the SDK headers and from the
-//       EcWin7 project (https://code.google.com/p/dukto/)
+//       EcWin7 project (https://github.com/colomboe/EcWin7)
 
 #ifndef BACKEND_WIN32_TASKBAR_MINGW_H
 #define BACKEND_WIN32_TASKBAR_MINGW_H

@@ -141,7 +141,7 @@ void GameState::initEngineVars() {
 	_engine->_actor->_previousHeroBehaviour = HeroBehaviourType::kNormal;
 }
 
-// http://lbafileinfo.kazekr.net/index.php?title=LBA1:Savegame
+// https://web.archive.org/web/*/http://lbafileinfo.kazekr.net/index.php?title=LBA1:Savegame
 bool GameState::loadGame(Common::SeekableReadStream *file) {
 	if (file == nullptr) {
 		return false;

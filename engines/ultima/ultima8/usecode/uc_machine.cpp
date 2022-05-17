@@ -319,7 +319,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 			// REALLY MAJOR HACK:
 			// see docs/u8bugs.txt and
-			// http://sourceforge.net/tracker/index.php?func=detail&aid=2025145&group_id=53819&atid=471706
+			// https://sourceforge.net/p/pentagram/bugs/196/
 			if (GAME_IS_U8 && p->_classId == 0x7C) {
 				if (!strcmp(str, " Irgendetwas stimmt nicht!")) {
 					str[25] = '.'; // ! to .
@@ -412,7 +412,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 			// REALLY MAJOR HACK:
 			// see docs/u8bugs.txt and
-			// https://sourceforge.net/tracker/index.php?func=detail&aid=1018748&group_id=53819&atid=471709
+			// https://sourceforge.net/p/pentagram/feature-requests/6/
 			if (GAME_IS_U8 && p->_classId == 0x48B && func == 0xD0) {
 				// 0xD0 = setAvatarInStasis
 				_globals->setEntries(0, 1, 1);

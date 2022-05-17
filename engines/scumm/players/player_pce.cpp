@@ -21,8 +21,8 @@
 
 /*
  * The PSG_HuC6280 class is based on the HuC6280 sound chip emulator
- * by Charles MacDonald (E-mail: cgfm2@hotmail.com, WWW: http://cgfm2.emuviews.com)
- * The implementation used here was taken from MESS (http://www.mess.org/)
+ * by Charles MacDonald (E-mail: cgfm2@hotmail.com, WWW: http://www.techno-junk.org)
+ * The implementation used here was taken from MESS (http://mess.redump.net)
  * the Multiple Emulator Super System (sound/c6280.c).
  * LFO and noise channel support have been removed (not used by Loom PCE).
  */

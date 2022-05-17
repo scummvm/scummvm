@@ -334,7 +334,7 @@ int16 ScriptFunctions::sfPlayNote(int16 argc, int16 *argv) {
 	// depending on which of the 3 keys on the right has been pressed.
 	// This value seems to be [12, 14] in NE and [1, 3] in EGA.
 
-	// Note frequencies based on http://www.phy.mtu.edu/~suits/notefreqs.html
+	// Note frequencies based on https://pages.mtu.edu/~suits/notefreqs.html
 	static const int freqTable[] = {
 		16, 17, 18, 19, 21, 22, 23, 24, 26, 28, 29,
 		30, 32, 35, 37, 39, 41, 44, 46, 49, 52, 55,

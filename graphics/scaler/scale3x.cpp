@@ -24,7 +24,7 @@
  *
  * You can find an high level description of the effect at :
  *
- * http://scale2x.sourceforge.net/
+ * https://www.scale2x.it
  *
  * Alternatively at the previous license terms, you are allowed to use this
  * code in your program with these conditions:

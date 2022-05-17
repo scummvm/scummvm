@@ -33,7 +33,7 @@ class TwinEEngine;
 /**
  * High Quality Resource
  *
- * http://lbafileinfo.kazekr.net/index.php?title=High_quality_resource
+ * https://web.archive.org/web/20181218233826/http://lbafileinfo.kazekr.net/index.php?title=High_quality_resource
  */
 namespace HQR {
 

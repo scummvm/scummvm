@@ -32,7 +32,7 @@
 namespace Graphics {
 
 // Source: Apple IIGS Technical Note #41, "Font Family Numbers"
-// http://apple2.boldt.ca/?page=til/tn.iigs.041
+// https://www.1000bit.it/support/manuali/apple/technotes/iigs/tn.iigs.041.html
 static struct FontProto {
 	int id;
 	Common::Language lang;

@@ -437,7 +437,7 @@ void MidiDriver_Miles_AdLib::resetAdLibFMVoiceChannelRegisters(byte baseRegister
 	}
 }
 
-// MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
+// MIDI messages can be found at https://web.archive.org/web/20120128110425/http://www.midi.org/techspecs/midimessages.php
 void MidiDriver_Miles_AdLib::send(uint32 b) {
 	byte command = b & 0xf0;
 	byte channel = b & 0xf;

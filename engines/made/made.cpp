@@ -192,7 +192,7 @@ void MadeEngine::handleEvents() {
 
 		case Common::EVENT_KEYDOWN:
 			// Handle any special keys here
-			// Supported keys taken from http://www.allgame.com/game.php?id=13542&tab=controls
+			// Supported keys taken from https://web.archive.org/web/20141114142447/http://www.allgame.com/game.php?id=13542&tab=controls
 
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_KP_PLUS:	// action (same as left mouse click)

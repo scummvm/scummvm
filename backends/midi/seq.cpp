@@ -22,7 +22,7 @@
 /*
  * Raw output support by Michael Pearce
  * Alsa support by Nicolas Noble <nicolas@nobis-crew.org> copied from
- *    both the QuickTime support and (vkeybd http://www.alsa-project.org/~iwai/alsa.html)
+ * both the QuickTime support and (vkeybd https://web.archive.org/web/20070629122111/http://www.alsa-project.org/~iwai/alsa.html)
  */
 
 // Disable symbol overrides so that we can use system headers.

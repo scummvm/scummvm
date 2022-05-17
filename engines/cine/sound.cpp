@@ -1564,7 +1564,7 @@ void PaulaSound::musicTimerCallback() {
 const int PaulaSound::_channelBalance[NUM_CHANNELS] = {
 	// L/R/R/L This is according to the Hardware Reference Manual.
 	// TODO: It seems the order is swapped for some Amiga models:
-	// http://www.amiga.org/forums/archive/index.php/t-7862.html
+	// https://forum.amiga.org/index.php?topic=7862.0
 	// Maybe we should consider using R/L/L/R to match Amiga 500?
 	// This also is a bit more drastic to what WineUAE defaults,
 	// which is only 70% of full panning.

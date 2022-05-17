@@ -19,7 +19,7 @@
  *
  */
 
-// StuffIt parsing based on http://code.google.com/p/theunarchiver/wiki/StuffItFormat
+// StuffIt parsing based on https://github.com/mietek/theunarchiver/wiki/StuffItFormat
 // Compression 14 based on libxad (http://sourceforge.net/projects/libxad/)
 
 #include "common/stuffit.h"

@@ -465,7 +465,7 @@ Common::SeekableReadStream *TTFFont::readTTFTable(FT_ULong tag) const {
 int TTFFont::readPointSizeFromVDMXTable(int height) const {
 	// The Vertical Device Metrics table matches font heights with point sizes.
 	// FreeType does not expose it, we have to parse it ourselves.
-	// See https://www.microsoft.com/typography/otspec/vdmx.htm
+	// See https://docs.microsoft.com/en-us/typography/opentype/spec/vdmx
 
 	Common::ScopedPtr<Common::SeekableReadStream> vdmxBuf(readTTFTable(TTAG_VDMX));
 	if (!vdmxBuf) {

@@ -21,7 +21,7 @@
 
 /*
  * This file is based on WME Lite.
- * http://dead-code.org/redir.php?target=wmelite
+ * http://res.dead-code.org/doku.php/wmelite:start
  * Copyright (c) 2011 Jan Nedoma
  */
 

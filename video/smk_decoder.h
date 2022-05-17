@@ -48,7 +48,7 @@ class BigHuffmanTree;
  *
  * Based on http://wiki.multimedia.cx/index.php?title=Smacker
  * and the FFmpeg Smacker decoder (libavcodec/smacker.c), revision 16143
- * http://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/smacker.c?revision=16143&view=markup
+ * https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/40a19c443430de520d86bbd644033c8e2ca87e9b
  *
  * Video decoder used in engines:
  *  - agos
