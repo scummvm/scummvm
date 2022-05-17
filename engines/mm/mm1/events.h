@@ -19,10 +19,67 @@
  *
  */
 
-#include "mm/mm1/ui_element.h"
+#ifndef MM1_EVENTS_H
+#define MM1_EVENTS_H
+
+#include "common/array.h"
+#include "common/events.h"
+#include "graphics/screen.h"
 
 namespace MM {
 namespace MM1 {
 
+class UIElement {
+protected:
+	UIElement *_parent;
+	Common::Array<UIElement *> _children;
+public:
+	UIElement(UIElement *uiParent = nullptr);
+	virtual ~UIElement() {}
+
+	/**
+	 * Returns the game view
+	 */
+	virtual Graphics::Screen *getScreen() const {
+		return _parent ? _parent->getScreen() : nullptr;
+	}
+
+	/**
+	 * Called for game frame ticks
+	 */
+	virtual bool tick();
+
+	/**
+	 * Handles a keypress
+	 */
+	virtual bool keypressEvent(const Common::Event &e) {
+		return false;
+	}
+};
+
+class Events : public UIElement {
+private:
+	Graphics::Screen *_screen = nullptr;
+protected:
+	/**
+	 * Process an event
+	 */
+	void processEvent(Common::Event &ev);
+public:
+	Events() {}
+	virtual ~Events() {}
+
+	/**
+	 * Main game loop
+	 */
+	void runGame();
+
+	Graphics::Screen *getScreen() const override {
+		return _screen;
+	}
+};
+
 } // namespace MM1
 } // namespace MM
+
+#endif

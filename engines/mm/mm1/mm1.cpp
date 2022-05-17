@@ -41,6 +41,9 @@ MM1Engine::~MM1Engine() {
 }
 
 Common::Error MM1Engine::run() {
+	initGraphics(320, 200);
+
+	runGame();
 	return Common::kNoError;
 }
 

@@ -19,43 +19,62 @@
  *
  */
 
-#ifndef MM1_MM1_H
-#define MM1_MM1_H
-
-#include "common/random.h"
-#include "mm/detection.h"
-#include "mm/mm.h"
+#include "common/system.h"
+#include "graphics/screen.h"
 #include "mm/mm1/events.h"
 
-/**
- * This is the Might and Magic I engine
- */
 namespace MM {
 namespace MM1 {
 
-class MM1Engine : public Engine, public Events {
-private:
-	const MightAndMagicGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
-private:
-	// Engine APIs
-	Common::Error run() override;
+#define FRAME_RATE 20
+#define FRAME_DELAY (1000 / FRAME_RATE)
 
-public:
-	MM1Engine(OSystem *syst, const MightAndMagicGameDescription *gameDesc);
-	~MM1Engine() override;
+void Events::runGame() {
+	uint currTime, nextFrameTime = 0;
+	_screen = new Graphics::Screen();
 
-	/**
-	 * Returns a random number
-	 */
-	int getRandomNumber(int minNumber, int maxNumber) {
-		return _randomSource.getRandomNumber(maxNumber - minNumber + 1) + minNumber;
+	Common::Event e;
+	for (;;) {
+		while (g_system->getEventManager()->pollEvent(e)) {
+			if (e.type == Common::EVENT_QUIT)
+				return;
+			else
+				processEvent(e);
+		}
+
+		g_system->delayMillis(10);
+		if ((currTime = g_system->getMillis()) >= nextFrameTime) {
+			nextFrameTime = currTime + FRAME_DELAY;
+			tick();
+		}
 	}
-};
 
-extern MM1Engine *g_engine;
+	delete _screen;
+}
+
+void Events::processEvent(Common::Event &ev) {
+	switch (ev.type) {
+	case Common::EVENT_KEYDOWN:
+		keypressEvent(ev);
+		break;
+	default:
+		break;
+	}
+}
+
+UIElement::UIElement(UIElement *uiParent) : _parent(uiParent) {
+	if (_parent)
+		_parent->_children.push_back(this);
+}
+
+bool UIElement::tick() {
+	for (size_t i = 0; i < _children.size(); ++i) {
+		if (_children[i]->tick())
+			return true;
+	}
+
+	return false;
+}
 
 } // namespace MM1
 } // namespace MM
-
-#endif
