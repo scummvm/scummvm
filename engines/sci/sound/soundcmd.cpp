@@ -137,8 +137,12 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
-	if (oldSound)
-		processDisposeSound(obj);
+	if (oldSound) {
+		if (_soundVersion <= SCI_VERSION_0_LATE)
+			_music->soundKill(oldSound);
+		else
+			processDisposeSound(obj);
+	}
 
 	MusicEntry *newSound = new MusicEntry();
 	newSound->resourceId = resourceId;
