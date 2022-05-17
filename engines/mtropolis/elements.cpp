@@ -648,7 +648,7 @@ bool MToonElement::load(ElementLoaderContext &context, const Data::MToonElement 
 	_maintainRate = ((data.elementFlags & Data::AnimationFlags::kPlayEveryFrame) == 0);	// NOTE: Inverted intentionally
 	_assetID = data.assetID;
 	_runtime = context.runtime;
-	_rateTimes10000 = data.rateTimes10000;
+	_rateTimes100000 = data.rateTimes100000;
 
 	return true;
 }
@@ -661,7 +661,7 @@ bool MToonElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 		result.setInt(_flushPriority);
 		return true;
 	} else if (attrib == "rate") {
-		result.setFloat(_rateTimes10000 / 10000.0);
+		result.setFloat(_rateTimes100000 / 100000.0);
 		return true;
 	} else if (attrib == "range") {
 		result.setIntRange(_playRange);
@@ -808,19 +808,21 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 		_celStartTimeMSec = runtime->getPlayTime();
 	}
 
-	const bool isReversed = (_rateTimes10000 < 0);
-	uint32 absRateTimes10000;
+	const bool isReversed = (_rateTimes100000 < 0);
+	uint32 absRateTimes100000;
 	if (isReversed)
-		absRateTimes10000 = -_rateTimes10000;
+		absRateTimes100000 = -_rateTimes100000;
 	else
-		absRateTimes10000 = _rateTimes10000;
+		absRateTimes100000 = _rateTimes100000;
 
 	// Might be possible due to drift?
 	if (playTime < _celStartTimeMSec)
 		return;
 
 	uint64 timeSinceCelStart = playTime - _celStartTimeMSec;
-	uint64 framesAdvanced = timeSinceCelStart * static_cast<uint64>(absRateTimes10000) / static_cast<uint64>(10000000);
+	uint64 framesAdvanced = timeSinceCelStart * static_cast<uint64>(absRateTimes100000) / static_cast<uint64>(100000000);
+
+	debug(3, "mToon frames advanced in %i msec since %i at rate %i: %i", static_cast<int>(timeSinceCelStart), static_cast<int>(_celStartTimeMSec), static_cast<int>(absRateTimes100000), static_cast<int>(framesAdvanced));
 
 	if (framesAdvanced > 0) {
 		// This needs to be handled correctly: Reaching the last frame triggers At Last Cel or At First Cel,
@@ -865,7 +867,7 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 		if (_maintainRate)
 			_celStartTimeMSec = playTime;
 		else
-			_celStartTimeMSec += (static_cast<uint64>(10000000) * framesAdvanced) / absRateTimes10000;
+			_celStartTimeMSec += (static_cast<uint64>(100000000) * framesAdvanced) / absRateTimes100000;
 	}
 }
 
@@ -941,10 +943,10 @@ void MToonElement::onPauseStateChanged() {
 MiniscriptInstructionOutcome MToonElement::scriptSetRate(MiniscriptThread *thread, const DynamicValue &value) {
 	switch (value.getType()) {
 	case DynamicValueTypes::kFloat:
-		_rateTimes10000 = static_cast<int32>(round(value.getFloat()) * 10000.0);
+		_rateTimes100000 = static_cast<int32>(round(value.getFloat()) * 100000.0);
 		break;
 	case DynamicValueTypes::kInteger:
-		_rateTimes10000 = value.getInt() * 10000;
+		_rateTimes100000 = value.getInt() * 100000;
 		break;
 	default:
 		thread->error("Invalid type for Miniscript rate");
