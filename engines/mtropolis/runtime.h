@@ -1047,7 +1047,7 @@ struct MessengerSendSpec {
 
 	static void resolveVariableObjectType(RuntimeObject *obj, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest);
 
-	void sendFromMessenger(Runtime *runtime, Modifier *sender) const;
+	void sendFromMessenger(Runtime *runtime, Modifier *sender, const DynamicValue &incomingData) const;
 	void sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data) const;
 
 	Event send;
@@ -1769,6 +1769,8 @@ struct MessageProperties {
 	const DynamicValue &getValue() const;
 	const Common::WeakPtr<RuntimeObject> &getSource() const;
 
+	void setValue(const DynamicValue &value);
+
 private:
 	Event _evt;
 	DynamicValue _value;
@@ -2212,6 +2214,7 @@ public:
 	VisualElement();
 
 	bool isVisual() const override;
+	virtual bool isTextLabel() const;
 
 	bool isVisible() const;
 	bool isDirectToScreen() const;

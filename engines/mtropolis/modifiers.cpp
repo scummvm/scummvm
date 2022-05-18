@@ -24,6 +24,8 @@
 #include "mtropolis/modifier_factory.h"
 #include "mtropolis/saveload.h"
 
+#include "mtropolis/elements.h"
+
 #include "common/memstream.h"
 
 namespace MTropolis {
@@ -321,7 +323,7 @@ bool MessengerModifier::respondsToEvent(const Event &evt) const {
 
 VThreadState MessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_when.respondsTo(msg->getEvent())) {
-		_sendSpec.sendFromMessenger(runtime, this);
+		_sendSpec.sendFromMessenger(runtime, this, msg->getValue());
 	}
 
 	return kVThreadReturn;
@@ -645,6 +647,7 @@ VThreadState IfMessengerModifier::consumeMessage(Runtime *runtime, const Common:
 		EvaluateAndSendTaskData *evalAndSendData = runtime->getVThread().pushTask("IfMessengerModifier::evaluateAndSendTask", this, &IfMessengerModifier::evaluateAndSendTask);
 		evalAndSendData->thread = thread;
 		evalAndSendData->runtime = runtime;
+		evalAndSendData->incomingData = msg->getValue();
 
 		MiniscriptThread::runOnVThread(runtime->getVThread(), thread);
 	}
@@ -680,7 +683,7 @@ VThreadState IfMessengerModifier::evaluateAndSendTask(const EvaluateAndSendTaskD
 		return kVThreadError;
 
 	if (isTrue)
-		_sendSpec.sendFromMessenger(taskData.runtime, this);
+		_sendSpec.sendFromMessenger(taskData.runtime, this, taskData.incomingData);
 
 	return kVThreadReturn;
 }
@@ -726,6 +729,9 @@ VThreadState TimerMessengerModifier::consumeMessage(Runtime *runtime, const Comm
 		debug(3, "Timer %x '%s' scheduled to execute in %i milliseconds", getStaticGUID(), getName().c_str(), realMilliseconds);
 		if (!_scheduledEvent) {
 			_scheduledEvent = runtime->getScheduler().scheduleMethod<TimerMessengerModifier, &TimerMessengerModifier::trigger>(runtime->getPlayTime() + realMilliseconds, this);
+			_incomingData = msg->getValue();
+			if (_incomingData.getType() == DynamicValueTypes::kList)
+				_incomingData.setList(_incomingData.getList()->clone());
 		}
 	}
 
@@ -757,7 +763,7 @@ void TimerMessengerModifier::trigger(Runtime *runtime) {
 	} else
 		_scheduledEvent.reset();
 
-	_sendSpec.sendFromMessenger(runtime, this);
+	_sendSpec.sendFromMessenger(runtime, this, _incomingData);
 }
 
 bool BoundaryDetectionMessengerModifier::load(ModifierLoaderContext &context, const Data::BoundaryDetectionMessengerModifier &data) {
@@ -1014,16 +1020,13 @@ bool KeyboardMessengerModifier::checkKeyEventTrigger(Runtime *runtime, Common::E
 
 void KeyboardMessengerModifier::dispatchMessage(Runtime *runtime, const Common::String &charStr) {
 	Common::SharedPtr<MessageProperties> msgProps;
-	if (_sendSpec.with.getType() == DynamicValueTypes::kIncomingData) {
-		if (charStr.size() != 1)
-			warning("Keyboard messenger is supposed to send the character code, but they key was a special key and we haven't implemented conversion of those keycodes");
 
-		DynamicValue charStrValue;
-		charStrValue.setString(charStr);
-		_sendSpec.sendFromMessengerWithCustomData(runtime, this, charStrValue);
-	} else {
-		_sendSpec.sendFromMessenger(runtime, this);
-	}
+	if (charStr.size() != 1)
+		warning("Keyboard messenger is supposed to send the character code, but they key was a special key and we haven't implemented conversion of those keycodes");
+
+	DynamicValue charStrValue;
+	charStrValue.setString(charStr);
+	_sendSpec.sendFromMessenger(runtime, this, charStrValue);
 }
 
 void KeyboardMessengerModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
@@ -1032,20 +1035,6 @@ void KeyboardMessengerModifier::visitInternalReferences(IStructuralReferenceVisi
 
 void KeyboardMessengerModifier::linkInternalReferences(ObjectLinkingScope *scope) {
 	_sendSpec.linkInternalReferences(scope);
-}
-
-TextStyleModifier::StyleFlags::StyleFlags() : bold(false), italic(false), underline(false), outline(false), shadow(false), condensed(false), expanded(false) {
-}
-
-bool TextStyleModifier::StyleFlags::load(uint8 dataStyleFlags) {
-	bold = ((dataStyleFlags & 0x01) != 0);
-	italic = ((dataStyleFlags & 0x02) != 0);
-	underline = ((dataStyleFlags & 0x03) != 0);
-	outline = ((dataStyleFlags & 0x04) != 0);
-	shadow = ((dataStyleFlags & 0x10) != 0);
-	condensed = ((dataStyleFlags & 0x20) != 0);
-	expanded = ((dataStyleFlags & 0x40) != 0);
-	return true;
 }
 
 bool TextStyleModifier::load(ModifierLoaderContext &context, const Data::TextStyleModifier &data) {
@@ -1057,11 +1046,58 @@ bool TextStyleModifier::load(ModifierLoaderContext &context, const Data::TextSty
 
 	_macFontID = data.macFontID;
 	_size = data.size;
-	_alignment = static_cast<Alignment>(data.alignment);
 	_fontFamilyName = data.fontFamilyName;
+
+	if (!_styleFlags.load(data.flags))
+		return false;
+
+	switch (data.alignment) {
+	case 0:
+		_alignment = kTextAlignmentLeft;
+		break;
+	case 1:
+		_alignment = kTextAlignmentCenter;
+		break;
+	case 0xffff:
+		_alignment = kTextAlignmentRight;
+		break;
+	default:
+		warning("Unrecognized text alignment");
+		return false;
+	}
 
 	return true;
 }
+
+bool TextStyleModifier::respondsToEvent(const Event &evt) const {
+	if (_applyWhen.respondsTo(evt) || _removeWhen.respondsTo(evt))
+		return true;
+
+	return Modifier::respondsToEvent(evt);
+}
+
+VThreadState TextStyleModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_applyWhen.respondsTo(msg->getEvent())) {
+		Structural *owner = findStructuralOwner();
+		if (owner && owner->isElement()) {
+			Element *element = static_cast<Element *>(owner);
+			if (element->isVisual()) {
+				VisualElement *visualElement = static_cast<VisualElement *>(element);
+				if (visualElement->isTextLabel()) {
+					static_cast<TextLabelElement *>(visualElement)->setTextStyle(_macFontID, _fontFamilyName, _size, _alignment, _styleFlags);
+				}
+			}
+		}
+
+		return kVThreadReturn;
+	} else if (_removeWhen.respondsTo(msg->getEvent())) {
+		// Doesn't actually do anything
+		return kVThreadReturn;
+	}
+
+	return Modifier::consumeMessage(runtime, msg);
+}
+
 
 Common::SharedPtr<Modifier> TextStyleModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new TextStyleModifier(*this));

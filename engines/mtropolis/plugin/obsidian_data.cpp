@@ -66,8 +66,12 @@ DataReadErrorCode TextWorkModifier::load(PlugIn& plugIn, const PlugInModifier& p
 }
 
 DataReadErrorCode WordMixerModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
-	if (prefix.plugInRevision != 1)
+	if (prefix.plugInRevision != 0)
 		return kDataReadErrorUnsupportedRevision;
+
+	// Looks like this contains matches, but don't really need them...
+	if (!reader.skip(prefix.subObjectSize))
+		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
 }
