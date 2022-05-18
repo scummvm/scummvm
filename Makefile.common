@@ -192,7 +192,7 @@ base/version.o: base/version.cpp
 else
 
 # Dumb compile rule, for C++ compilers that don't allow dependency tracking or
-# where it is broken (such as GCC 2.95).
+# where it is broken
 %.o: %.cpp
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET_CXX)$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $@
