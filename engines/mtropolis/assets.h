@@ -283,7 +283,7 @@ public:
 	AssetType getAssetType() const override;
 
 	bool isBitmap() const;
-	const Common::SharedPtr<Graphics::Surface> &getBitmapSurface() const;
+	const Common::SharedPtr<Graphics::ManagedSurface> &getBitmapSurface() const;
 	const Common::String &getString() const;
 	const Common::Array<MacFormattingSpan> &getMacFormattingSpans() const;
 
@@ -292,7 +292,7 @@ private:
 	TextAlignment _alignment;
 	bool _isBitmap;
 
-	Common::SharedPtr<Graphics::Surface> _bitmapData;
+	Common::SharedPtr<Graphics::ManagedSurface> _bitmapData;
 	Common::String _stringData;
 
 	Common::Array<MacFormattingSpan> _macFormattingSpans;

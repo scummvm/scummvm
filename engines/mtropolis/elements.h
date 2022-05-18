@@ -239,15 +239,21 @@ public:
 	TextLabelElement();
 	~TextLabelElement();
 
+	bool isTextLabel() const override;
+
 	bool load(ElementLoaderContext &context, const Data::TextLabelElement &data);
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	bool readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+	MiniscriptInstructionOutcome writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) override;
 
 	void activate() override;
 	void deactivate() override;
 
 	void render(Window *window) override;
+
+	void setTextStyle(uint16 macFontID, const Common::String &fontFamilyName, uint size, TextAlignment alignment, const TextStyleFlags &styleFlags);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Text Label Element"; }
@@ -255,6 +261,20 @@ public:
 #endif
 
 private:
+	struct TextLabelLineWriteInterface : public IDynamicValueWriteInterface {
+		MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) const override;
+		MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const override;
+		MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override;
+
+		static TextLabelLineWriteInterface _instance;
+	};
+
+	MiniscriptInstructionOutcome scriptSetText(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetLine(MiniscriptThread *thread, size_t lineIndex, const DynamicValue &value);
+
+	bool findLineRange(size_t lineNum, uint32 &outStartPos, uint32 &outEndPos) const;
+	size_t countLines() const;
+
 	bool _cacheBitmap;
 	bool _needsRender;
 
@@ -262,8 +282,18 @@ private:
 	uint32 _assetID;
 
 	Common::String _text;
+	uint16 _macFontID;
+	Common::String _fontFamilyName;
+	uint _size;
+	TextAlignment _alignment;
+	TextStyleFlags _styleFlags;
+
 	Common::Array<MacFormattingSpan> _macFormattingSpans;
-	Common::SharedPtr<Graphics::Surface> _renderedText;	// NOTE: This may be a pre-rendered instance that is read-only.  Rendering must create a new surface!
+
+	// NOTE: This may be a surface loaded from data, so it must not be altered.
+	// If you need to render again, recreate the surface.  If you want to change
+	// this behavior, please add a flag indicating that it is from the asset.
+	Common::SharedPtr<Graphics::ManagedSurface> _renderedText;
 
 	Runtime *_runtime;
 };
@@ -275,8 +305,8 @@ public:
 
 	bool load(ElementLoaderContext &context, const Data::SoundElement &data);
 
-	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
-	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
 
 	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg);
 

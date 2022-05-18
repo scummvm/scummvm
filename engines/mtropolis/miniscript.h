@@ -351,7 +351,7 @@ namespace MiniscriptInstructions {
 			kGlobalRefActiveScene = 11,
 		};
 
-		MiniscriptInstructionOutcome executeFindFilteredParent(MiniscriptThread *thread) const;
+		MiniscriptInstructionOutcome executeFindFilteredParent(MiniscriptThread *thread, DynamicValue &result) const;
 
 		uint32 _globalID;
 		bool _isLValue;
@@ -409,7 +409,17 @@ public:
 
 	bool evaluateTruthOfResult(bool &isTrue);
 
+	void createWriteIncomingDataProxy(DynamicValueWriteProxy &proxy);
+
 private:
+	struct IncomingDataWriteInterface : public IDynamicValueWriteInterface {
+		MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) const override;
+		MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const override;
+		MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override;
+
+		static IncomingDataWriteInterface _instance;
+	};
+
 	struct ResumeTaskData {
 		Common::SharedPtr<MiniscriptThread> thread;
 	};

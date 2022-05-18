@@ -47,6 +47,19 @@ enum TextAlignment {
 	kTextAlignmentRight,
 };
 
+struct TextStyleFlags {
+	bool bold : 1;
+	bool italic : 1;
+	bool underline : 1;
+	bool outline : 1;
+	bool shadow : 1;
+	bool condensed : 1;
+	bool expanded : 1;
+
+	TextStyleFlags();
+	bool load(uint8 dataStyleFlags);
+};
+
 struct MacFontFormatting {
 	MacFontFormatting();
 	MacFontFormatting(uint16 fontID, uint8 fontFlags, uint16 size);

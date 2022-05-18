@@ -484,7 +484,7 @@ MiniscriptInstructionOutcome Set::execute(MiniscriptThread *thread) const {
 	}
 
 	// Convert value
-	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, false);
+	MiniscriptInstructionOutcome outcome = thread->dereferenceRValue(0, true);
 	if (outcome != kMiniscriptInstructionOutcomeContinue)
 		return outcome;
 
@@ -1679,18 +1679,26 @@ PushGlobal::PushGlobal(uint32 globalID, bool isLValue) : _globalID(globalID), _i
 }
 
 MiniscriptInstructionOutcome PushGlobal::execute(MiniscriptThread *thread) const {
-	DynamicValue value;
+	thread->pushValue(DynamicValue());
+
+	DynamicValue &value = thread->getStackValueFromTop(0).value;
+
 	switch (_globalID) {
 	case kGlobalRefElement:
 	case kGlobalRefSection:
 	case kGlobalRefScene:
 	case kGlobalRefProject:
-		return executeFindFilteredParent(thread);
+		return executeFindFilteredParent(thread, value);
 	case kGlobalRefModifier:
 		value.setObject(thread->getModifier()->getSelfReference());
 		break;
 	case kGlobalRefIncomingData:
-		value = thread->getMessageProperties()->getValue();
+		if (_isLValue) {
+			DynamicValueWriteProxy proxy;
+			thread->createWriteIncomingDataProxy(proxy);
+			value.setWriteProxy(proxy);
+		} else
+			value = thread->getMessageProperties()->getValue();
 		break;
 	case kGlobalRefSource:
 		value.setObject(ObjectReference(thread->getMessageProperties()->getSource()));
@@ -1713,12 +1721,10 @@ MiniscriptInstructionOutcome PushGlobal::execute(MiniscriptThread *thread) const
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	thread->pushValue(value);
-
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-MiniscriptInstructionOutcome PushGlobal::executeFindFilteredParent(MiniscriptThread *thread) const {
+MiniscriptInstructionOutcome PushGlobal::executeFindFilteredParent(MiniscriptThread *thread, DynamicValue &result) const {
 	Common::WeakPtr<RuntimeObject> ref = thread->getModifier()->getSelfReference();
 	for (;;) {
 		Common::SharedPtr<RuntimeObject> obj = ref.lock();
@@ -1762,10 +1768,7 @@ MiniscriptInstructionOutcome PushGlobal::executeFindFilteredParent(MiniscriptThr
 		}
 	}
 
-	DynamicValue value;
-	value.setObject(ref);
-
-	thread->pushValue(value);
+	result.setObject(ref);
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -1926,6 +1929,31 @@ bool MiniscriptThread::evaluateTruthOfResult(bool &isTrue) {
 	isTrue = miniscriptEvaluateTruth(_stack[0].value);
 	return true;
 }
+
+void MiniscriptThread::createWriteIncomingDataProxy(DynamicValueWriteProxy &proxy) {
+	proxy.pod.ifc = &IncomingDataWriteInterface::_instance;
+	proxy.pod.objectRef = this;
+	proxy.pod.ptrOrOffset = 0;
+}
+
+MiniscriptInstructionOutcome MiniscriptThread::IncomingDataWriteInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+	thread->_msgProps->setValue(value);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome MiniscriptThread::IncomingDataWriteInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+	// TODO: Generic refAttrib for dynamic values
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome MiniscriptThread::IncomingDataWriteInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+	// TODO: Generic refAttribIndexed for dynamic values
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptThread::IncomingDataWriteInterface MiniscriptThread::IncomingDataWriteInterface::_instance;
+
 
 VThreadState MiniscriptThread::resumeTask(const ResumeTaskData &data) {
 	return data.thread->resume(data);

@@ -22,6 +22,7 @@
 #include "mtropolis/assets.h"
 #include "mtropolis/asset_factory.h"
 
+#include "graphics/managed_surface.h"
 #include "graphics/surface.h"
 
 #include "audio/audiostream.h"
@@ -1078,7 +1079,7 @@ bool TextAsset::load(AssetLoaderContext &context, const Data::TextAsset &data) {
 		if (!_bitmapRect.load(data.bitmapRect))
 			return false;
 
-		_bitmapData.reset(new Graphics::Surface());
+		_bitmapData.reset(new Graphics::ManagedSurface());
 
 		uint16 width = _bitmapRect.getWidth();
 		uint16 height = _bitmapRect.getHeight();
@@ -1132,7 +1133,7 @@ bool TextAsset::isBitmap() const {
 	return _isBitmap;
 }
 
-const Common::SharedPtr<Graphics::Surface>& TextAsset::getBitmapSurface() const {
+const Common::SharedPtr<Graphics::ManagedSurface>& TextAsset::getBitmapSurface() const {
 	return _bitmapData;
 }
 

@@ -85,8 +85,18 @@ bool TextWorkModifier::readAttribute(MiniscriptThread *thread, DynamicValue &res
 		result.setInt(index);
 		return true;
 	} else if (attrib == "numword") {
-		thread->error("Not-yet-implemented TextWork attribute 'numword'");
-		return false;
+		int numWords = 0;
+		bool lastWasWhitespace = true;
+		for (size_t i = 0; i < _string.size(); i++) {
+			char c = _string[i];
+			bool isWhitespace = (c <= ' ');
+			if (lastWasWhitespace && !isWhitespace)
+				numWords++;
+			lastWasWhitespace = isWhitespace;
+		}
+
+		result.setInt(numWords);
+		return true;
 	}
 
 	return Modifier::readAttribute(thread, result, attrib);
@@ -106,11 +116,11 @@ MiniscriptInstructionOutcome TextWorkModifier::writeRefAttribute(MiniscriptThrea
 		DynamicValueWriteStringHelper::create(&_token, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "firstword") {
-		thread->error("Not-yet-implemented TextWork attrib 'firstword'");
-		return kMiniscriptInstructionOutcomeFailed;
+		DynamicValueWriteFuncHelper<TextWorkModifier, &TextWorkModifier::scriptSetFirstWord>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "lastword") {
-		thread->error("Not-yet-implemented TextWork attrib 'lastword'");
-		return kMiniscriptInstructionOutcomeFailed;
+		DynamicValueWriteFuncHelper<TextWorkModifier, &TextWorkModifier::scriptSetLastWord>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return Modifier::writeRefAttribute(thread, result, attrib);
@@ -119,6 +129,75 @@ MiniscriptInstructionOutcome TextWorkModifier::writeRefAttribute(MiniscriptThrea
 Common::SharedPtr<Modifier> TextWorkModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new TextWorkModifier(*this));
 }
+
+MiniscriptInstructionOutcome TextWorkModifier::scriptSetFirstWord(MiniscriptThread *thread, const DynamicValue &value) {
+	// This and lastword are only used in tandem with lastword, exact functionality is unclear since it's
+	// also used in tandem with "output" which is normally used with firstchar+lastchar.
+	// We attempt to emulate it by setting firstchar+lastchar to the correct values
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	int numWords = 0;
+	bool lastWasWhitespace = true;
+	for (size_t i = 0; i < _string.size(); i++) {
+		char c = _string[i];
+		bool isWhitespace = (c <= ' ');
+		if (lastWasWhitespace && !isWhitespace) {
+			numWords++;
+
+			if (numWords == asInteger) {
+				_firstChar = i + 1;
+				return kMiniscriptInstructionOutcomeContinue;
+			}
+		}
+		lastWasWhitespace = isWhitespace;
+
+	}
+
+	thread->error("Invalid index for 'firstword'");
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome TextWorkModifier::scriptSetLastWord(MiniscriptThread* thread, const DynamicValue& value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	int numWordEnds = 0;
+	bool lastWasWhitespace = true;
+	for (size_t i = 0; i < _string.size(); i++) {
+		char c = _string[i];
+		bool isWhitespace = (c <= ' ');
+		if (!lastWasWhitespace && isWhitespace) {
+			numWordEnds++;
+
+			if (numWordEnds == asInteger) {
+				_firstChar = i - 1;
+				return kMiniscriptInstructionOutcomeContinue;
+			}
+		}
+		lastWasWhitespace = isWhitespace;
+
+		if (numWordEnds == asInteger) {
+			_lastChar = i;
+			return kMiniscriptInstructionOutcomeContinue;
+		}
+	}
+
+	if (!lastWasWhitespace) {
+		numWordEnds++;
+		if (numWordEnds == asInteger) {
+			_lastChar = _string.size();
+			return kMiniscriptInstructionOutcomeContinue;
+		}
+	}
+
+	thread->error("Invalid index for 'firstword'");
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+
 
 DictionaryModifier::DictionaryModifier() : _plugIn(nullptr) {
 }
@@ -257,11 +336,153 @@ Common::SharedPtr<Modifier> DictionaryModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new DictionaryModifier(*this));
 }
 
-WordMixerModifier::WordMixerModifier() {
+WordMixerModifier::WordMixerModifier() : _matches(0), _result(0) {
 }
 
 bool WordMixerModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::WordMixerModifier &data) {
+	_plugIn = static_cast<const ObsidianPlugIn *>(context.plugIn);
+
 	return true;
+}
+
+bool WordMixerModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "result") {
+		result.setInt(_result);
+		return true;
+	}
+	if (attrib == "matches") {
+		result.setInt(_matches);
+		return true;
+	}
+	if (attrib == "output") {
+		result.setString(_output);
+		return true;
+	}
+
+	return Modifier::readAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome WordMixerModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "input") {
+		DynamicValueWriteFuncHelper<WordMixerModifier, &WordMixerModifier::scriptSetInput>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "search") {
+		DynamicValueWriteFuncHelper<WordMixerModifier, &WordMixerModifier::scriptSetSearch>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return Modifier::writeRefAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome WordMixerModifier::scriptSetInput(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kString) {
+		thread->error("Invalid type for WordMixer input attribute");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	_input = value.getString();
+
+	Common::Array<char> sourceChars;
+	for (char c : _input) {
+		if (c > ' ')
+			sourceChars.push_back(invariantToLower(c));
+	}
+
+	Common::Array<bool> charIsUsed;
+	charIsUsed.resize(sourceChars.size());
+
+	const Common::Array<WordGameData::WordBucket> &wordBuckets = _plugIn->getWordGameData()->getWordBuckets();
+
+	_output.clear();
+	_matches = 0;
+
+	size_t numWordBuckets = wordBuckets.size();
+	for (size_t rbucket = 0; rbucket < numWordBuckets; rbucket++) {
+		size_t wordLength = numWordBuckets - 1 - rbucket;
+
+		const WordGameData::WordBucket &bucket = wordBuckets[wordLength];
+
+		size_t numWords = bucket.wordIndexes.size();
+
+		for (size_t wi = 0; wi < numWords; wi++) {
+			const char *wordChars = &bucket.chars[bucket.spacing * wi];
+
+			for (bool &b : charIsUsed)
+				b = false;
+
+			bool isMatch = true;
+			for (size_t ci = 0; ci < wordLength; ci++) {
+				const char wordChar = wordChars[ci];
+
+				bool foundAvailableSource = false;
+				for (size_t srci = 0; srci < sourceChars.size(); srci++) {
+					if (sourceChars[srci] == wordChar && !charIsUsed[srci]) {
+						foundAvailableSource = true;
+						charIsUsed[srci] = true;
+						break;
+					}
+				}
+
+				if (!foundAvailableSource) {
+					isMatch = false;
+					break;
+				}
+			}
+
+			if (isMatch) {
+				if (_matches > 0)
+					_output += ' ';
+				_output += Common::String(wordChars, wordLength);
+				_matches++;
+			}
+		}
+
+		if (_matches > 0)
+			break;
+	}
+
+	if (_matches == 0)
+		_output = "xxx";
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome WordMixerModifier::scriptSetSearch(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kBoolean) {
+		thread->error("Invalid type for WordMixer search attribute");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	if (!value.getBool())
+		return kMiniscriptInstructionOutcomeContinue;
+
+	size_t searchLength = _input.size();
+	const Common::Array<WordGameData::WordBucket> &buckets = _plugIn->getWordGameData()->getWordBuckets();
+	_result = 0;
+	if (searchLength < buckets.size()) {
+		const WordGameData::WordBucket &bucket = buckets[searchLength];
+
+		bool found = false;
+		for (size_t wi = 0; wi < bucket.wordIndexes.size(); wi++) {
+			const char *wordChars = &bucket.chars[wi * bucket.spacing];
+
+			bool isMatch = true;
+			for (size_t ci = 0; ci < searchLength; ci++) {
+				if (invariantToLower(_input[ci]) != wordChars[ci]) {
+					isMatch = false;
+					break;
+				}
+			}
+
+			if (isMatch) {
+				_result = 1;
+				break;
+			}
+		}
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 Common::SharedPtr<Modifier> WordMixerModifier::shallowClone() const {

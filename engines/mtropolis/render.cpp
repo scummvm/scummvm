@@ -78,6 +78,20 @@ inline int expand5To8(int value) {
 	return (value * 33) >> 2;
 }
 
+TextStyleFlags::TextStyleFlags() : bold(false), italic(false), underline(false), outline(false), shadow(false), condensed(false), expanded(false) {
+}
+
+bool TextStyleFlags::load(uint8 dataStyleFlags) {
+	bold = ((dataStyleFlags & 0x01) != 0);
+	italic = ((dataStyleFlags & 0x02) != 0);
+	underline = ((dataStyleFlags & 0x03) != 0);
+	outline = ((dataStyleFlags & 0x04) != 0);
+	shadow = ((dataStyleFlags & 0x10) != 0);
+	condensed = ((dataStyleFlags & 0x20) != 0);
+	expanded = ((dataStyleFlags & 0x40) != 0);
+	return true;
+}
+
 MacFontFormatting::MacFontFormatting() : fontID(0), fontFlags(0), size(12) {
 }
 

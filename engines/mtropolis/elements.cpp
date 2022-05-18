@@ -29,6 +29,10 @@
 #include "video/qt_decoder.h"
 
 #include "common/substream.h"
+
+#include "graphics/macgui/macfontmanager.h"
+#include "graphics/fontman.h"
+#include "graphics/font.h"
 #include "graphics/managed_surface.h"
 
 namespace MTropolis {
@@ -958,10 +962,14 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRate(MiniscriptThread *threa
 }
 
 
-TextLabelElement::TextLabelElement() : _needsRender(false), _isBitmap(false) {
+TextLabelElement::TextLabelElement() : _needsRender(false), _isBitmap(false), _macFontID(0), _size(12), _alignment(kTextAlignmentLeft) {
 }
 
 TextLabelElement::~TextLabelElement() {
+}
+
+bool TextLabelElement::isTextLabel() const {
+	return true;
 }
 
 bool TextLabelElement::load(ElementLoaderContext &context, const Data::TextLabelElement &data) {
@@ -976,11 +984,60 @@ bool TextLabelElement::load(ElementLoaderContext &context, const Data::TextLabel
 }
 
 bool TextLabelElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "text") {
+		result.setString(_text);
+		return true;
+	}
+
 	return VisualElement::readAttribute(thread, result, attrib);
 }
 
+bool TextLabelElement::readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) {
+	if (attrib == "line") {
+		int32 asInteger = 0;
+		if (!index.roundToInt(asInteger) || asInteger < 1) {
+			thread->error("Invalid text label line index");
+			return false;
+		}
+
+		size_t lineIndex = asInteger - 1;
+		uint32 startPos;
+		uint32 endPos;
+		if (findLineRange(lineIndex, startPos, endPos))
+			result.setString(_text.substr(startPos, endPos - startPos));
+		else
+			result.setString("");
+
+		return true;
+	}
+
+	return VisualElement::readAttributeIndexed(thread, result, attrib, index);
+}
+
 MiniscriptInstructionOutcome TextLabelElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "text") {
+		DynamicValueWriteFuncHelper<TextLabelElement, &TextLabelElement::scriptSetText>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
 	return VisualElement::writeRefAttribute(thread, writeProxy, attrib);
+}
+
+MiniscriptInstructionOutcome TextLabelElement::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib, const DynamicValue &index) {
+	if (attrib == "line") {
+		int32 asInteger = 0;
+		if (!index.roundToInt(asInteger) || asInteger < 1) {
+			thread->error("Invalid text label line set index");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+
+		writeProxy.pod.ifc = &TextLabelLineWriteInterface::_instance;
+		writeProxy.pod.objectRef = this;
+		writeProxy.pod.ptrOrOffset = asInteger - 1;
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return VisualElement::writeRefAttributeIndexed(thread, writeProxy, attrib, index);
 }
 
 void TextLabelElement::activate() {
@@ -1012,9 +1069,250 @@ void TextLabelElement::activate() {
 void TextLabelElement::deactivate() {
 }
 
-
 void TextLabelElement::render(Window *window) {
+	if (!_visible)
+		return;
+
+	int renderWidth = _rect.getWidth();
+	int renderHeight = _rect.getHeight();
+	if (_renderedText) {
+		if (renderWidth != _renderedText->w || renderHeight != _renderedText->h)
+			_needsRender = true;
+	}
+
+	if (_needsRender) {
+		_needsRender = false;
+
+		_renderedText.reset();
+		_renderedText.reset(new Graphics::ManagedSurface());
+
+		_renderedText->create(renderWidth, renderHeight, Graphics::PixelFormat::createFormatCLUT8());
+		_renderedText->fillRect(Common::Rect(0, 0, renderWidth, renderHeight), 0);
+
+		const Graphics::Font *font = nullptr;
+		if (_fontFamilyName.size() > 0) {
+			font = FontMan.getFontByName(_fontFamilyName.c_str());
+		} else if (_macFontID != 0) {
+			// TODO: Formatting spans
+			int slant = 0;
+			// FIXME/HACK: These aren't public...
+			if (_styleFlags.bold)
+				slant |= 1;
+			if (_styleFlags.italic)
+				slant |= 2;
+			if (_styleFlags.underline)
+				slant |= 4;
+			if (_styleFlags.outline)
+				slant |= 8;
+			if (_styleFlags.shadow)
+				slant |= 16;
+			if (_styleFlags.condensed)
+				slant |= 32;
+			if (_styleFlags.expanded)
+				slant |= 64;
+
+			// FIXME/HACK: This is a stupid way to make getFont return null on failure
+			font = _runtime->getMacFontManager()->getFont(Graphics::MacFont(_macFontID, _size, slant, static_cast<Graphics::FontManager::FontUsage>(-1)));
+		}
+
+		if (!font)
+			font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+
+		int height = font->getFontHeight();
+		int ascent = font->getFontAscent();
+
+		Graphics::TextAlign textAlign = Graphics::kTextAlignLeft;
+		switch (_alignment) {
+		case kTextAlignmentLeft:
+			textAlign = Graphics::kTextAlignLeft;
+			break;
+		case kTextAlignmentCenter:
+			textAlign = Graphics::kTextAlignCenter;
+			break;
+		case kTextAlignmentRight:
+			textAlign = Graphics::kTextAlignRight;
+			break;
+		default:
+			break;
+		}
+
+		int line = 0;
+		uint32 lineStart = 0;
+		while (lineStart < _text.size()) {
+			bool noMoreLines = false;
+			uint32 lineEndPos = _text.find('\r', lineStart);
+			if (lineEndPos == Common::String::npos) {
+				lineEndPos = _text.size();
+				noMoreLines = true;
+			}
+
+			Common::String lineStr;
+			if (lineStart != 0 || lineEndPos != _text.size())
+				lineStr = _text.substr(lineStart, lineEndPos - lineStart);
+			else
+				lineStr = _text;
+
+			// Split the line into sublines
+			while (lineStr.size() > 0) {
+				size_t lineCommitted = 0;
+				bool prevWasWhitespace = true;
+				bool hasWhitespaceAtStart = false;
+				for (size_t i = 0; i <= lineStr.size(); i++) {
+					bool isWhitespace = (i == lineStr.size() || lineStr[i] < ' ');
+
+					if (isWhitespace) {
+						if (!prevWasWhitespace) {
+							int width = font->getStringWidth(lineStr.substr(0, i));
+							if (width > renderWidth)
+								break;
+						}
+						lineCommitted = i + 1;
+					}
+
+					prevWasWhitespace = isWhitespace;
+				}
+
+				if (lineCommitted > lineStr.size())
+					lineCommitted = lineStr.size();
+
+				// Too little space for anything
+				if (lineCommitted == 0) {
+					lineCommitted = 1;
+					for (size_t i = 2; i <= lineStr.size(); i++) {
+						int width = font->getStringWidth(lineStr.substr(0, i));
+						if (width > renderWidth)
+							break;
+						lineCommitted = i;
+					}
+				}
+
+				font->drawString(_renderedText.get(), lineStr.substr(0, lineCommitted), 0, line * height + (height - ascent) / 2, renderWidth, 1, textAlign, 0, false);
+
+				if (lineCommitted == lineStr.size())
+					lineStr.clear();
+				else {
+					lineStr = lineStr.substr(lineCommitted);
+					line++;
+				}
+			}
+
+			if (noMoreLines)
+				break;
+
+			line++;
+			lineStart = lineEndPos + 1;
+		}
+	}
+
+	Graphics::ManagedSurface *target = window->getSurface().get();
+	Common::Rect srcRect(0, 0, renderWidth, renderHeight);
+	Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.getWidth(), _cachedAbsoluteOrigin.y + _rect.getHeight());
+
+	const uint32 opaqueColor = 0xff000000;
+	const uint32 drawPalette[2] = {0, opaqueColor};
+
+	if (_renderedText) {
+		_renderedText->setPalette(drawPalette, 0, 2);
+		target->transBlitFrom(*_renderedText.get(), srcRect, destRect, 0);
+	}
 }
+
+void TextLabelElement::setTextStyle(uint16 macFontID, const Common::String &fontFamilyName, uint size, TextAlignment alignment, const TextStyleFlags &styleFlags) {
+	_needsRender = true;
+
+	_macFontID = macFontID;
+	_fontFamilyName = fontFamilyName;
+	_size = size;
+	_alignment = alignment;
+	_styleFlags = styleFlags;
+}
+
+MiniscriptInstructionOutcome TextLabelElement::scriptSetText(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kString) {
+		thread->error("Tried to set a text label element's text to something that wasn't a string");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	_text = value.getString();
+	_needsRender = true;
+	_macFormattingSpans.clear();
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+
+MiniscriptInstructionOutcome TextLabelElement::scriptSetLine(MiniscriptThread *thread, size_t lineIndex, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kString) {
+		thread->error("Tried to set a text label element's text to something that wasn't a string");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	uint32 startPos;
+	uint32 endPos;
+	if (findLineRange(lineIndex, startPos, endPos))
+		_text = _text.substr(0, startPos) + value.getString() + _text.substr(endPos, _text.size() - endPos);
+	else {
+		size_t numLines = countLines();
+		while (numLines <= lineIndex) {
+			_text += '\r';
+			numLines++;
+		}
+		_text += value.getString();
+	}
+
+	_needsRender = true;
+	_macFormattingSpans.clear();
+	
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+bool TextLabelElement::findLineRange(size_t lineIndex, uint32 &outStartPos, uint32 &outEndPos) const {
+	uint32 lineStart = 0;
+	uint32 lineEnd = _text.size();
+	size_t linesToScan = lineIndex + 1;
+
+	while (linesToScan > 0) {
+		linesToScan--;
+
+		lineEnd = _text.find('\r', lineStart);
+		if (lineEnd == Common::String::npos) {
+			lineEnd = _text.size();
+			break;
+		}
+	}
+
+	if (linesToScan > 0)
+		return false;
+
+	outStartPos = lineStart;
+	outEndPos = lineEnd;
+
+	return true;
+}
+
+size_t TextLabelElement::countLines() const {
+	size_t numLines = 1;
+	for (char c : _text)
+		if (c == '\r')
+			numLines++;
+
+	return numLines;
+}
+
+MiniscriptInstructionOutcome TextLabelElement::TextLabelLineWriteInterface::write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) const {
+	return static_cast<TextLabelElement *>(objectRef)->scriptSetLine(thread, ptrOrOffset, dest);
+}
+
+MiniscriptInstructionOutcome TextLabelElement::TextLabelLineWriteInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome TextLabelElement::TextLabelLineWriteInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+TextLabelElement::TextLabelLineWriteInterface TextLabelElement::TextLabelLineWriteInterface::_instance;
+
 
 SoundElement::SoundElement() : _finishTime(0), _shouldPlayIfNotPaused(true), _needsReset(true) {
 }

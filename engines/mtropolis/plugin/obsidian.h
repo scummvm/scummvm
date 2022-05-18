@@ -74,6 +74,9 @@ public:
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
+	MiniscriptInstructionOutcome scriptSetFirstWord(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetLastWord(MiniscriptThread *thread, const DynamicValue &value);
+
 	Common::String _string;
 	Common::String _token;
 
@@ -115,12 +118,25 @@ public:
 
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::WordMixerModifier &data);
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "WordMixer Modifier"; }
 #endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+
+	MiniscriptInstructionOutcome scriptSetInput(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetSearch(MiniscriptThread *thread, const DynamicValue &value);
+
+	Common::String _input;
+	Common::String _output;
+	int _matches;
+	int _result;
+
+	const ObsidianPlugIn *_plugIn;
 };
 
 class ObsidianPlugIn : public MTropolis::PlugIn {

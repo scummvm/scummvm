@@ -1559,7 +1559,7 @@ void DynamicValue::initFromOther(const DynamicValue &other) {
 
 	switch (other._type) {
 	case DynamicValueTypes::kNull:
-	case DynamicValueTypes::kIncomingData:
+	case DynamicValueTypes::kIncomingData:	// FIXME: Get rid of this
 		break;
 	case DynamicValueTypes::kInteger:
 		_value.asInt = other._value.asInt;
@@ -1860,8 +1860,11 @@ void MessengerSendSpec::resolveVariableObjectType(RuntimeObject *obj, Common::We
 	}
 }
 
-void MessengerSendSpec::sendFromMessenger(Runtime *runtime, Modifier *sender) const {
-	sendFromMessengerWithCustomData(runtime, sender, this->with);
+void MessengerSendSpec::sendFromMessenger(Runtime *runtime, Modifier *sender, const DynamicValue &incomingData) const {
+	if (this->with.getType() == DynamicValueTypes::kIncomingData)
+		sendFromMessengerWithCustomData(runtime, sender, incomingData);
+	else
+		sendFromMessengerWithCustomData(runtime, sender, this->with);
 }
 
 void MessengerSendSpec::sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data) const {
@@ -2228,6 +2231,13 @@ const DynamicValue& MessageProperties::getValue() const {
 
 const Common::WeakPtr<RuntimeObject>& MessageProperties::getSource() const {
 	return _source;
+}
+
+void MessageProperties::setValue(const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kList)
+		_value.setList(value.getList()->clone());
+	else
+		_value = value;
 }
 
 WorldManagerInterface::WorldManagerInterface() {
@@ -5986,6 +5996,10 @@ bool VisualElement::isVisual() const {
 	return true;
 }
 
+bool VisualElement::isTextLabel() const {
+	return false;
+}
+
 bool VisualElement::isVisible() const {
 	return _visible;
 }
@@ -6573,6 +6587,20 @@ bool Modifier::loadTypicalHeader(const Data::TypicalModifierHeader &typicalHeade
 	_name = typicalHeader.name;
 
 	return true;
+}
+
+Structural *Modifier::findStructuralOwner() const {
+	RuntimeObject *scan = _parent.lock().get();
+	while (scan) {
+		if (scan->isModifier())
+			scan = static_cast<Modifier *>(scan)->_parent.lock().get();
+		else if (scan->isStructural())
+			return static_cast<Structural *>(scan);
+		else
+			return nullptr;
+	}
+
+	return nullptr;
 }
 
 void Modifier::linkInternalReferences(ObjectLinkingScope *scope) {

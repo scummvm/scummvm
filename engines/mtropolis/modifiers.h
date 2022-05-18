@@ -22,6 +22,7 @@
 #ifndef MTROPOLIS_MODIFIERS_H
 #define MTROPOLIS_MODIFIERS_H
 
+#include "mtropolis/render.h"
 #include "mtropolis/runtime.h"
 #include "mtropolis/data.h"
 
@@ -349,6 +350,7 @@ private:
 	struct EvaluateAndSendTaskData {
 		Common::SharedPtr<MiniscriptThread> thread;
 		Runtime *runtime;
+		DynamicValue incomingData;
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
@@ -391,6 +393,7 @@ private:
 	MessengerSendSpec _sendSpec;
 	uint32 _milliseconds;
 	bool _looping;
+	DynamicValue _incomingData;
 
 	Common::SharedPtr<ScheduledEvent> _scheduledEvent;
 };
@@ -521,24 +524,8 @@ class TextStyleModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::TextStyleModifier &data);
 
-	enum Alignment {
-		kAlignmentLeft = 0,
-		kAlignmentCenter = 1,
-		kAlignmentRight = 0xffff,
-	};
-
-	struct StyleFlags {
-		bool bold : 1;
-		bool italic : 1;
-		bool underline : 1;
-		bool outline : 1;
-		bool shadow : 1;
-		bool condensed : 1;
-		bool expanded : 1;
-
-		StyleFlags();
-		bool load(uint8 dataStyleFlags);
-	};
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Text Style Modifier"; }
@@ -551,7 +538,8 @@ private:
 	uint16 _size;
 	ColorRGB8 _textColor;
 	ColorRGB8 _backgroundColor;
-	Alignment _alignment;
+	TextAlignment _alignment;
+	TextStyleFlags _styleFlags;
 	Event _applyWhen;
 	Event _removeWhen;
 	Common::String _fontFamilyName;

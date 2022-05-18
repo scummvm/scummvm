@@ -963,8 +963,11 @@ Common::SharedPtr<ModifierSaveLoad> ListVariableModifier::getSaveLoad() {
 bool ListVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kList)
 		_list = value.getList()->clone();
-	else
-		return false;
+	else {
+		if (!_list)
+			_list.reset(new DynamicList());
+		return _list->setAtIndex(0, value);
+	}
 
 	return true;
 }
