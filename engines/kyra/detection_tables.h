@@ -1695,6 +1695,19 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_CMP_FLAGS
 	},
 
+	{ // Spanish floppy version
+		{
+			"lol",
+			0,
+			AD_ENTRY1s("WESTWOOD.1", "6c99a3e6b904cc9e8c026061305309de", -1),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO9(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS, GAMEOPTION_LOL_SAVENAMES)
+		},
+		LOL_FLOPPY_CMP_FLAGS
+	},
+
 	{
 		{
 			"lol",
