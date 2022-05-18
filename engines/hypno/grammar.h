@@ -431,6 +431,7 @@ public:
 		nonHostile = false;
 		playInteractionAudio = false;
 		animalSound = "";
+		jumpToTimeAfterKilled = 0;
 	}
 	Common::String name;
 	Filename animation;
@@ -451,7 +452,7 @@ public:
 	uint32 paletteOffset;
 	uint32 paletteSize;
 
-	// Mask
+	// Missed animation
 	uint32 missedAnimation;
 
 	// Sounds
@@ -477,7 +478,7 @@ public:
 	bool nonHostile;
 	bool isAnimal;
 	Common::String checkIfDestroyed;
-
+	int jumpToTimeAfterKilled;
 };
 
 typedef Common::Array<Shoot> Shoots;
@@ -537,6 +538,8 @@ public:
 		palette = palette_;
 		sound = sound_;
 		soundRate = soundRate_;
+		loseLevel = false;
+		jumpToTime = 0;
 		time = time_;
 	}
 
@@ -544,6 +547,8 @@ public:
 	Filename palette;
 	Filename sound;
 	uint32 soundRate;
+	bool loseLevel;
+	uint32 jumpToTime;
 	uint32 time;
 };
 

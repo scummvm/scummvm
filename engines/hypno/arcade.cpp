@@ -211,7 +211,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	initSegment(arc);
 
 	// Transitions
-	ArcadeTransitions transitions = arc->transitions;
+	_transitions = arc->transitions;
 
 	_levelId = arc->id;
 	_shootSound = arc->shootSound;
@@ -376,8 +376,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			break;
 		}
 
-		if (!transitions.empty()) {
-			transition = checkTransition(transitions, arc);
+		if (!_transitions.empty()) {
+			transition = checkTransition(_transitions, arc);
 		}
 
 		if (_background->decoder && _background->decoder->getCurFrame() >= int(segments[_segmentIdx].start + segments[_segmentIdx].size - 2)) {

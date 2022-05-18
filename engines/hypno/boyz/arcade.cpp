@@ -227,6 +227,11 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 			drawCursorArcade(g_system->getEventManager()->getMousePos());
 		} else if (!at.sound.empty()) {
 			playSound(at.sound, 1, at.soundRate);
+		} else if (at.jumpToTime > 0) {
+			_background->decoder->forceSeekToFrame(at.jumpToTime);
+			_masks->decoder->forceSeekToFrame(at.jumpToTime);
+		} else if (at.loseLevel) {
+			_health = 0;
 		} else
 			error ("Invalid transition at %d", ttime);
 
@@ -346,6 +351,14 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 
 			_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 			_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
+
+
+			if (_shoots[i].jumpToTimeAfterKilled == -1000) {
+				ArcadeTransition at("", 0, "", 0, _shoots[i].explosionFrames[0].lastFrame() - 1);
+				at.loseLevel = true;
+				_transitions.push_front(at);
+			}
+
 			return false;
 		} else if (!_shoots[i].nonHostile && secondary) {
 			if (_shoots[i].interactionFrame > 0) {
@@ -380,6 +393,12 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 		_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		changeCursor(_crosshairsActive[_currentWeapon], _crosshairsPalette, true);
+
+		if (_shoots[i].jumpToTimeAfterKilled > 0) {
+			ArcadeTransition at("", 0, "", 0, _shoots[i].explosionFrames[0].lastFrame() - 1);
+			at.jumpToTime = _shoots[i].jumpToTimeAfterKilled;
+			_transitions.push_front(at);
+		}
 	}
 	return false;
 }
@@ -413,6 +432,8 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		return;
 	} else if (s->missedAnimation == uint32(-1)) {
 		_skipLevel = true;
+	} else if (s->missedAnimation == uint32(-1000)) {
+		_health = 0;
 	} else {
 		int missedAnimation = s->missedAnimation + 3;
 		if (missedAnimation > int(_background->decoder->getFrameCount()) - 1) {

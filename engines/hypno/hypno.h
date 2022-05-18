@@ -251,6 +251,7 @@ public:
 	Filename _currentPalette;
 	virtual bool availableObjectives();
 	virtual bool checkArcadeObjectives();
+	ArcadeTransitions _transitions;
 	virtual bool checkTransition(ArcadeTransitions &transitions, ArcadeShooting *arc);
 	virtual Common::Point getPlayerPosition(bool needsUpdate);
 	virtual Common::Point computeTargetPosition(const Common::Point &mousePos);
