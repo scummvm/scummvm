@@ -72,8 +72,9 @@ void ScreenView::loadScreen(int screenNum) {
 	destP = (byte *)_surface.getPixels();
 
 	for (size_t i = 0; i < IMAGE_SIZE; ++i, ++srcP) {
-		*destP++ = *srcP & 0xf;
-		*destP++ = *srcP >> 4;
+		v = *srcP;
+		for (int j = 0; j < 4; ++j, v <<= 2)
+			*destP++ = v >> 6;
 	}
 }
 
