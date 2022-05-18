@@ -2578,8 +2578,6 @@ case $_host_os in
 		# Enable optimizations for non-debug builds
 		if test "$_debug_build" = no; then
 			_optimization_level=-O2
-			append_var CXXFLAGS "-fomit-frame-pointer"
-			append_var CXXFLAGS "-fstrict-aliasing"
 		else
 			_optimization_level=-O0
 			append_var CXXFLAGS "-fno-omit-frame-pointer"
@@ -2590,10 +2588,10 @@ case $_host_os in
 			_detection_features_static=no
 			_plugins_default=dynamic
 		fi
-		# Use 'long' for ScummVM's 4 byte typedef, because
-		# AmigaOS already typedefs (u)int32 as (unsigned) long
+		# Use 'long' for ScummVM's 4 byte typedef, because AmigaOS
+		# already typedefs (u)int32 as (unsigned) long and suppress
+		# those noisy format warnings caused by the 'long' 4 byte
 		type_4_byte='long'
-		# Suppress format warnings as the 'long' 4 byte causes noisy ones
 		append_var CXXFLAGS "-Wno-format"
 		;;
 	android)
