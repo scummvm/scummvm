@@ -3,7 +3,10 @@ MODULE := engines/mm
 MODULE_OBJS := \
 	metaengine.o \
 	mm1/events.o \
+	mm1/gfx.o \
 	mm1/mm1.o \
+	mm1/views/screen_view.o \
+	mm1/views/text_view.o \
 	xeen/worldofxeen/clouds_cutscenes.o \
 	xeen/worldofxeen/darkside_cutscenes.o \
 	xeen/worldofxeen/worldofxeen_cutscenes.o \

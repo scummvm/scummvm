@@ -45,6 +45,11 @@ public:
 	}
 
 	/**
+	 * Draws the element
+	 */
+	virtual void draw();
+
+	/**
 	 * Called for game frame ticks
 	 */
 	virtual bool tick();
