@@ -61,22 +61,11 @@ typedef sc_int(*sc_read_callbackref_t)(void *, sc_byte *, sc_int);
 typedef void (*sc_write_callbackref_t)(void *, const sc_byte *, sc_int);
 
 /*
- * Small utility and wrapper functions.  For printf wrappers, try to apply
- * gcc printf argument checking; this code is cautious about applying the
- * checks.
+ * Small utility and wrapper functions.
  */
-#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95)
-extern void sc_trace(const sc_char *format, ...)
-__attribute__((__format__(__printf__, 1, 2)));
-extern void sc_error(const sc_char *format, ...)
-__attribute__((__format__(__printf__, 1, 2)));
-extern void sc_fatal(const sc_char *format, ...)
-__attribute__((__format__(__printf__, 1, 2)));
-#else
-extern void sc_trace(const sc_char *format, ...);
-extern void sc_error(const sc_char *format, ...);
-extern void sc_fatal(const sc_char *format, ...);
-#endif
+extern void sc_trace(const sc_char *format, ...) GCC_PRINTF(1, 2);
+extern void sc_error(const sc_char *format, ...) GCC_PRINTF(1, 2);
+extern void sc_fatal(const sc_char *format, ...) GCC_PRINTF(1, 2);
 extern void *sc_malloc(size_t size);
 extern void *sc_realloc(void *pointer, size_t size);
 extern void sc_free(void *pointer);

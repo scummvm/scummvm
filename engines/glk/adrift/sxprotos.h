@@ -47,22 +47,11 @@ typedef struct sx_test_descriptor_s {
 } sx_test_descriptor_t;
 
 /*
- * Small utility and wrapper functions.  For printf wrappers, try to apply
- * gcc printf argument checking; this code is cautious about applying the
- * checks.
+ * Small utility and wrapper functions.
  */
-#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95)
-extern void sx_trace(const sc_char *format, ...)
-__attribute__((__format__(__printf__, 1, 2)));
-extern void sx_error(const sc_char *format, ...)
-__attribute__((__format__(__printf__, 1, 2)));
-extern void sx_fatal(const sc_char *format, ...)
-__attribute__((__format__(__printf__, 1, 2)));
-#else
-extern void sx_trace(const sc_char *format, ...);
-extern void sx_error(const sc_char *format, ...);
-extern void sx_fatal(const sc_char *format, ...);
-#endif
+extern void sx_trace(const sc_char *format, ...) GCC_PRINTF(1, 2);
+extern void sx_error(const sc_char *format, ...) GCC_PRINTF(1, 2);
+extern void sx_fatal(const sc_char *format, ...) GCC_PRINTF(1, 2);
 extern void *sx_malloc(size_t size);
 extern void *sx_realloc(void *pointer, size_t size);
 extern void sx_free(void *pointer);
