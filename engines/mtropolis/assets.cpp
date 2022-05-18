@@ -732,7 +732,14 @@ const Common::SharedPtr<Graphics::Surface> &CachedImage::optimize(Runtime *runti
 			_optimizedSurface = _surface;	// Can't optimize
 		}
 	} else {
-		_surface->convertToInPlace(renderFmt, nullptr);
+		static const byte bwPalette[6] = {255, 255, 255, 0, 0, 0};
+
+		const byte *palette = nullptr;
+
+		if (_colorDepth == kColorDepthMode16Bit)
+			palette = bwPalette;
+
+		_surface->convertToInPlace(renderFmt, palette);
 		_optimizedSurface = _surface;
 	}
 
@@ -844,19 +851,19 @@ const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *run
 	Graphics::PixelFormat pixelFmt;
 	switch (getColorDepth()) {
 	case kColorDepthMode1Bit:
-		bytesPerRow = (width + 7) / 8;
+		bytesPerRow = (width + 31) / 32 * 4;
 		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
 		break;
 	case kColorDepthMode2Bit:
-		bytesPerRow = (width + 3) / 4;
+		bytesPerRow = (width + 15) / 16 * 4;
 		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
 		break;
 	case kColorDepthMode4Bit:
-		bytesPerRow = (width + 1) / 2;
+		bytesPerRow = (width + 7) / 8 * 4;
 		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
 		break;
 	case kColorDepthMode8Bit:
-		bytesPerRow = width;
+		bytesPerRow = (width + 3) / 4 * 4;
 		pixelFmt = Graphics::PixelFormat::createFormatCLUT8();
 		break;
 	case kColorDepthMode16Bit:
