@@ -178,11 +178,6 @@ private:
 	int findMinBrightnessColorIndex(uint minColorIndex = 1);
 	byte brightness(byte colorIndex);
 	void setColorFormat(const Graphics::PixelFormat format);
-
-	// WORKAROUND: Using a reference to a result here instead of returning an Color object.
-	// This is needed because when using a Color as return value, this would crash Chrilith's
-	// compiler for PalmOS.
-	// TODO: Add more information about the compiler.
 	void saturatedAddColor(Color &result, const Color &baseColor, signed r, signed g, signed b) const;
 
 private:
