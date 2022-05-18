@@ -211,11 +211,10 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 		curChar = (*(const byte *)textPtr);
 		if (_font->isDoubleByte(curChar)) {
 			curChar |= (*(const byte *)(textPtr + 1)) << 8;
-		}
-		if (escapedNewLine) {
+		} else if (escapedNewLine) {
 			escapedNewLine = false;
 			curChar = 0x0D;
-		} else if (isJapaneseNewLine(curChar, *(textPtr + 1))) {
+		} else if (curChar && isJapaneseNewLine(curChar, *(textPtr + 1))) {
 			escapedNewLine = true;
 			curChar = ' ';
 		}
@@ -391,11 +390,10 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 			if (_font->isDoubleByte(curChar)) {
 				curChar |= (*(const byte *)text++) << 8;
 				len--;
-			}
-			if (escapedNewLine) {
+			} else if (escapedNewLine) {
 				escapedNewLine = false;
 				curChar = 0x0D;
-			} else if (isJapaneseNewLine(curChar, *text)) {
+			} else if (curChar && isJapaneseNewLine(curChar, *text)) {
 				escapedNewLine = true;
 				curChar = ' ';
 			}
@@ -513,11 +511,10 @@ void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgF
 		if (_font->isDoubleByte(curChar)) {
 			curChar |= (*(const byte *)text++) << 8;
 			len--;
-		}
-		if (escapedNewLine) {
+		} else if (escapedNewLine) {
 			escapedNewLine = false;
 			curChar = 0x0D;
-		} else if (isJapaneseNewLine(curChar, *text)) {
+		} else if (curChar && isJapaneseNewLine(curChar, *text)) {
 			escapedNewLine = true;
 			curChar = ' ';
 		}
