@@ -95,6 +95,9 @@ void process_file(const char *filename) {
 		sprintf(destFilename, "../../engines/%s/%s",
 			engineLowercase, filename);
 
+	printf("Creating file %s...", destFilename);
+	fflush(stdout);
+
 	FILE *in, *out;
 	if (!(in = fopen(srcFilename, "r"))) {
 		printf("Could not locate file - %s\n", srcFilename);
@@ -107,6 +110,8 @@ void process_file(const char *filename) {
 	}
 
 	process_file(in, out);
+
+	printf("done\n");
 
 	fclose(in);
 	fclose(out);
@@ -164,10 +169,15 @@ int main(int argc, char *argv[]) {
 	// Create a directory for the new engine
 	char folder[MAX_LINE_LENGTH];
 	sprintf(folder, "../../engines/%s", engineLowercase);
+
+	printf("Creating directory ../../engines/%s...", engineLowercase);
+	fflush(stdout);
+
 	if (mkdir(folder, 0755)) {
 		printf("Could not create engine folder.\n");
 		return 0;
 	}
+	printf("done\n");
 
 	// Process the files
 	for (const char *const *filename = FILENAMES; *filename; ++filename)
