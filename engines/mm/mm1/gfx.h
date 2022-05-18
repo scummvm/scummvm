@@ -19,37 +19,20 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "mm/mm1/mm1.h"
-#include "mm/mm1/gfx.h"
-#include "mm/mm1/views/screen_view.h"
+#ifndef MM1_GFX_H
+#define MM1_GFX_H
+
+#include "graphics/palette.h"
 
 namespace MM {
 namespace MM1 {
 
-MM1Engine *g_engine = nullptr;
+class GFX {
+public:
+	static void setEgaPalette(int palNum);
+};
 
-MM1Engine::MM1Engine(OSystem *syst, const MightAndMagicGameDescription *gameDesc)
-	: Engine(syst), _gameDescription(gameDesc), _randomSource("MM1") {
-	g_engine = this;
-}
+} // namespace MM1
+} // namespace MM
 
-MM1Engine::~MM1Engine() {
-	g_engine = nullptr;
-}
-
-Common::Error MM1Engine::run() {
-	initGraphics(320, 200);
-	GFX::setEgaPalette(0);
-	Views::ScreenView screenView(this);
-
-	runGame();
-	return Common::kNoError;
-}
-
-} // End of namespace Xeen
-} // End of namespace MM
+#endif

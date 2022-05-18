@@ -46,6 +46,8 @@ void Events::runGame() {
 		if ((currTime = g_system->getMillis()) >= nextFrameTime) {
 			nextFrameTime = currTime + FRAME_DELAY;
 			tick();
+			draw();
+			_screen->update();
 		}
 	}
 
@@ -65,6 +67,11 @@ void Events::processEvent(Common::Event &ev) {
 UIElement::UIElement(UIElement *uiParent) : _parent(uiParent) {
 	if (_parent)
 		_parent->_children.push_back(this);
+}
+
+void UIElement::draw() {
+	for (size_t i = 0; i < _children.size(); ++i)
+		_children[i]->draw();
 }
 
 bool UIElement::tick() {
