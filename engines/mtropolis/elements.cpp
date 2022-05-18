@@ -778,12 +778,25 @@ void MToonElement::render(Window *window) {
 
 		_cachedMToon->getOrRenderFrame(_renderedFrame, _frame, _renderSurface);
 		_renderedFrame = _frame;
-	}
 
-	if (_renderSurface) {
-		Common::Rect srcRect(_renderSurface->w, _renderSurface->h);
-		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.getWidth(), _cachedAbsoluteOrigin.y + _rect.getHeight());
-		window->getSurface()->blitFrom(*_renderSurface, srcRect, destRect);
+		Rect16 frameRect = _metadata->frames[_frame].rect;
+
+		if (_renderSurface) {
+			Common::Rect srcRect;
+			Common::Rect destRect;
+
+			if (frameRect.getWidth() == _renderSurface->w && frameRect.getHeight() == _renderSurface->h) {
+				// Frame rect is the size of the render surface, meaning the frame rect is an offset
+				srcRect = Common::Rect(0, 0, frameRect.getWidth(), frameRect.getHeight());
+				destRect = Common::Rect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + frameRect.getWidth(), _cachedAbsoluteOrigin.y + frameRect.getHeight());
+			} else {
+				// Frame rect is a sub-area of the rendered rect
+				srcRect = Common::Rect(frameRect.left, frameRect.top, frameRect.right, frameRect.bottom);
+				destRect = Common::Rect(_cachedAbsoluteOrigin.x + frameRect.left, _cachedAbsoluteOrigin.y + frameRect.left, _cachedAbsoluteOrigin.x + frameRect.right, _cachedAbsoluteOrigin.y + frameRect.bottom);
+			}
+
+			window->getSurface()->blitFrom(*_renderSurface, srcRect, destRect);
+		}
 	}
 }
 
