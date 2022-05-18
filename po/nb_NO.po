@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-16 11:25+0000\n"
-"PO-Revision-Date: 2022-05-13 13:59+0000\n"
+"PO-Revision-Date: 2022-05-18 11:18+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -800,12 +800,9 @@ msgid "Change global ScummVM options"
 msgstr "Endre globale ScummVM-innstillinger"
 
 #: gui/launcher.cpp:243
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "Global ~O~pts..."
 msgctxt "lowres"
 msgid "Global Opts..."
-msgstr "Globale ~i~nnst..."
+msgstr "Globale innst..."
 
 #: gui/launcher.cpp:247
 msgid "~A~dd Game..."
@@ -949,12 +946,9 @@ msgid "Change game options"
 msgstr "Endre spillinstillinger"
 
 #: gui/launcher.cpp:989
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "~G~ame Opts..."
 msgctxt "lowres"
 msgid "Game Opts..."
-msgstr "Spill~i~innst..."
+msgstr "Spillinnst..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
