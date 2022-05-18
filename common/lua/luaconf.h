@@ -182,11 +182,7 @@
 #define LUAI_FUNC	static
 #define LUAI_DATA	/* empty */
 
-#elif GCC_ATLEAST(3, 2) && defined(__ELF__)
-/*
-** The PS2 gcc compiler doesn't like the visibility attribute, so
-** we use the normal "extern" definitions in the block below
-*/
+#elif defined(__GNUC__) && defined(__ELF__)
 #define LUAI_FUNC	__attribute__((visibility("hidden"))) extern
 #define LUAI_DATA	LUAI_FUNC
 
