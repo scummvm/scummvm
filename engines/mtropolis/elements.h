@@ -98,6 +98,7 @@ private:
 	MiniscriptInstructionOutcome scriptSetRangeStart(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetRangeEnd(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptRangeWriteRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
+	MiniscriptInstructionOutcome scriptSetVolume(MiniscriptThread *thread, const DynamicValue &value);
 
 	MiniscriptInstructionOutcome scriptSetRangeTyped(MiniscriptThread *thread, const IntRange &range);
 
@@ -128,6 +129,7 @@ private:
 	uint32 _maxTimestamp;
 	uint32 _timeScale;
 	uint32 _currentTimestamp;
+	int32 _volume;
 	IntRange _playRange;
 
 	const Graphics::Surface *_displayFrame;

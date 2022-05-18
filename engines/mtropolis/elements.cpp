@@ -203,6 +203,7 @@ bool MovieElement::load(ElementLoaderContext &context, const Data::MovieElement 
 	_alternate = ((data.animationFlags & Data::AnimationFlags::kAlternate) != 0);
 	_playEveryFrame = ((data.animationFlags & Data::AnimationFlags::kPlayEveryFrame) != 0);
 	_assetID = data.assetID;
+	_volume = data.volume;
 
 	_runtime = context.runtime;
 
@@ -221,6 +222,10 @@ bool MovieElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 MiniscriptInstructionOutcome MovieElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "range") {
 		DynamicValueWriteOrRefAttribFuncHelper<MovieElement, &MovieElement::scriptSetRange, &MovieElement::scriptRangeWriteRefAttribute>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "volume") {
+		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetVolume>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -276,6 +281,7 @@ void MovieElement::activate() {
 
 	Video::QuickTimeDecoder *qtDecoder = new Video::QuickTimeDecoder();
 	qtDecoder->setChunkBeginOffset(movieAsset->getMovieDataPos());
+	qtDecoder->setVolume(_volume * 255 / 100);
 
 	_videoDecoder.reset(qtDecoder);
 
@@ -449,6 +455,25 @@ MiniscriptInstructionOutcome MovieElement::scriptSetRange(MiniscriptThread *thre
 	}
 
 	return scriptSetRangeTyped(thread, value.getIntRange());
+}
+
+MiniscriptInstructionOutcome MovieElement::scriptSetVolume(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger)) {
+		thread->error("Wrong type for movie element range");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	if (asInteger < 0)
+		asInteger = 0;
+	else if (asInteger > 100)
+		asInteger = 100;
+
+	_volume = asInteger;
+	if (_videoDecoder)
+		_videoDecoder->setVolume(_volume * 255 / 100);
+
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 MiniscriptInstructionOutcome MovieElement::scriptSetRangeStart(MiniscriptThread *thread, const DynamicValue &value) {
@@ -826,8 +851,6 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 	uint64 timeSinceCelStart = playTime - _celStartTimeMSec;
 	uint64 framesAdvanced = timeSinceCelStart * static_cast<uint64>(absRateTimes100000) / static_cast<uint64>(100000000);
 
-	debug(3, "mToon frames advanced in %i msec since %i at rate %i: %i", static_cast<int>(timeSinceCelStart), static_cast<int>(_celStartTimeMSec), static_cast<int>(absRateTimes100000), static_cast<int>(framesAdvanced));
-
 	if (framesAdvanced > 0) {
 		// This needs to be handled correctly: Reaching the last frame triggers At Last Cel or At First Cel,
 		// but going PAST the end frame triggers automatic stop and pause. The Obsidian bureau filing cabinets
@@ -1156,7 +1179,6 @@ void TextLabelElement::render(Window *window) {
 			while (lineStr.size() > 0) {
 				size_t lineCommitted = 0;
 				bool prevWasWhitespace = true;
-				bool hasWhitespaceAtStart = false;
 				for (size_t i = 0; i <= lineStr.size(); i++) {
 					bool isWhitespace = (i == lineStr.size() || lineStr[i] < ' ');
 
