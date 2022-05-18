@@ -27,10 +27,10 @@
 
 #include <AppKit/NSPasteboard.h>
 #include <Foundation/NSArray.h>
+#include <Foundation/NSBundle.h>
 #include <Foundation/NSPathUtilities.h>
 #include <AvailabilityMacros.h>
 #include <CoreFoundation/CFString.h>
-#include <CoreFoundation/CoreFoundation.h>
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
 #define NSPasteboardTypeString NSStringPboardType
@@ -113,16 +113,8 @@ Common::String getDesktopPathMacOSX() {
 }
 
 Common::String getResourceAppBundlePathMacOSX() {
-	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-	if (fileUrl) {
-		// Try to convert the URL to an absolute path
-		UInt8 buf[MAXPATHLEN];
-		if (CFURLGetFileSystemRepresentation(fileUrl, true, buf, sizeof(buf))) {
-			CFRelease(fileUrl);
-			return Common::String((const char *)buf);
-		}
-		CFRelease(fileUrl);
-	}
-
-	return Common::String();
+	NSString *bundlePath = [[NSBundle mainBundle] resourcePath];
+	if (bundlePath == nil)
+		return Common::String();
+	return Common::String([bundlePath fileSystemRepresentation]);
 }
