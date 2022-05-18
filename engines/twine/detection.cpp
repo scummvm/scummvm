@@ -434,6 +434,37 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Little Big Adventure - DotEmu Enhanced Version (Android)
+	// liblba.so
+	// 8 Sep 2014 at 15:56
+	{
+		"lba",
+		"DotEmu",
+		AD_ENTRY1s("text.hqr", "a374c93450dd2bb874b7167a63974e8d", 377224),
+		Common::EN_ANY,
+		Common::kPlatformAndroid,
+		ADGF_UNSTABLE | TwinE::TF_DOTEMU_ENHANCED,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"DotEmu",
+		AD_ENTRY1s("text.hqr", "a374c93450dd2bb874b7167a63974e8d", 377224),
+		Common::FR_FRA,
+		Common::kPlatformAndroid,
+		ADGF_UNSTABLE | TwinE::TF_DOTEMU_ENHANCED,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"DotEmu",
+		AD_ENTRY1s("text.hqr", "a374c93450dd2bb874b7167a63974e8d", 377224),
+		Common::DE_DEU,
+		Common::kPlatformAndroid,
+		ADGF_UNSTABLE | TwinE::TF_DOTEMU_ENHANCED,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Little Big Adventure - GOG Version
 	// LBA.GOG
 	// 11 October 2011 at 17:30
