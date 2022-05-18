@@ -141,8 +141,8 @@
 		}
 	}
 
-// Test for GCC >= 4.3.0 as this version added the bswap builtin
-#elif GCC_ATLEAST(4, 3)
+// Test for GCC-compatible
+#elif defined(__GNUC__)
 
 	FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
 		return __builtin_bswap32(a);
@@ -187,8 +187,8 @@
 		}
 	}
 
-// Test for GCC >= 4.3.0 as this version added the bswap builtin
-#elif GCC_ATLEAST(4, 3)
+// Test for GCC-compatible
+#elif defined(__GNUC__)
 
 	FORCEINLINE uint64 SWAP_BYTES_64(uint64 a) {
 		return __builtin_bswap64(a);
@@ -239,14 +239,10 @@
  *  @{
  */
 
-// Test for GCC >= 4.0. These implementations will automatically use
+// Test for GCC and compatible. These implementations will automatically use
 // CPU-specific instructions for unaligned data when they are available (eg.
-// MIPS). See also this email thread on scummvm-devel for details:
-// <http://thread.gmane.org/gmane.games.devel.scummvm/8063>
-//
-// Moreover, we activate this code for GCC >= 3.3 but *only* if unaligned access
-// is allowed.
-#if GCC_ATLEAST(4, 0) || (GCC_ATLEAST(3, 3) && !defined(SCUMM_NEED_ALIGNMENT))
+// MIPS).
+#if defined(__GNUC__)
 
 	FORCEINLINE uint16 READ_UINT16(const void *ptr) {
 		struct Unaligned16 { uint16 val; } __attribute__ ((__packed__, __may_alias__));

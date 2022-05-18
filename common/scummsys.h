@@ -27,7 +27,8 @@
 #endif
 
 // This is a convenience macro to test whether the compiler used is a GCC
-// version, which is at least major.minor.
+// version, which is at least major.minor.  Note that Clang will also define
+// it and report itself as GCC 4.2.1.
 #ifdef __GNUC__
 	#define GCC_ATLEAST(major, minor) (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor)))
 #else
@@ -362,7 +363,7 @@
 #ifndef FORCEINLINE
 	#if defined(_MSC_VER)
 		#define FORCEINLINE __forceinline
-	#elif GCC_ATLEAST(3, 1)
+	#elif defined(__GNUC__)
 		#define FORCEINLINE inline __attribute__((__always_inline__))
 	#else
 		#define FORCEINLINE inline
@@ -398,7 +399,7 @@
 #ifndef WARN_UNUSED_RESULT
 	#if __cplusplus >= 201703L
 		#define WARN_UNUSED_RESULT [[nodiscard]]
-	#elif GCC_ATLEAST(3, 4)
+	#elif defined(__GNUC__)
 		#define WARN_UNUSED_RESULT __attribute__((__warn_unused_result__))
 	#elif defined(_Check_return_)
 		#define WARN_UNUSED_RESULT _Check_return_
