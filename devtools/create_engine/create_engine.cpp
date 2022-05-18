@@ -164,7 +164,7 @@ int main(int argc, char *argv[]) {
 	// Create a directory for the new engine
 	char folder[MAX_LINE_LENGTH];
 	sprintf(folder, "../../engines/%s", engineLowercase);
-	if (!mkdir(folder, 0755)) {
+	if (mkdir(folder, 0755)) {
 		printf("Could not create engine folder.\n");
 		return 0;
 	}
