@@ -25,7 +25,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/stat.h>
-#include <Windows.h>
 
 // Specified engine name with different cases
 #define MAX_LINE_LENGTH 256
@@ -165,7 +164,7 @@ int main(int argc, char *argv[]) {
 	// Create a directory for the new engine
 	char folder[MAX_LINE_LENGTH];
 	sprintf(folder, "../../engines/%s", engineLowercase);
-	if (!CreateDirectoryA(folder, NULL)) {
+	if (!mkdir(folder, 0755)) {
 		printf("Could not create engine folder.\n");
 		return 0;
 	}
