@@ -4048,12 +4048,13 @@ _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/3ds/plugin.ld -march=armv6k -mfloat-abi=hard
 '
 		;;
-	amigaos | morphos)
+	amigaos)
 		_plugin_prefix=""
 		_plugin_suffix=".plugin"
 		append_var CXXFLAGS "-fPIC"
 		append_var LIBS "-use-dynld"
-		append_var LIBS "-ldl -lauto"
+		append_var LIBS "-ldl"
+		append_var LIBS "-lauto"
 		append_var _strip "-x"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
@@ -4189,6 +4190,18 @@ PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libscummvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
+'
+		;;
+	morphos)
+		_plugin_prefix="lib"
+		_plugin_suffix=".so"
+		append_var CXXFLAGS "-fPIC"
+		append_var LIBS "-use-dynld"
+_mak_plugins='
+PLUGIN_EXTRA_DEPS =
+PLUGIN_LDFLAGS  += -shared
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
 	psp)
