@@ -467,7 +467,9 @@ MiniscriptInstructionOutcome ObjectReferenceVariableModifier::writeRefAttribute(
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "object") {
-		DynamicValueWriteFuncHelper<ObjectReferenceVariableModifier, &ObjectReferenceVariableModifier::scriptSetObject>::create(this, result);
+		result.pod.ptrOrOffset = 0;
+		result.pod.objectRef = this;
+		result.pod.ifc = &ObjectWriteInterface::_instance;
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -536,6 +538,28 @@ MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptSetObject(Mi
 		return kMiniscriptInstructionOutcomeContinue;
 	} else
 		return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptObjectRefAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
+	resolve();
+
+	if (_object.object.expired()) {
+		thread->error("Attempted to reference an attribute of an object variable object, but the reference is dead");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	return _object.object.lock()->writeRefAttribute(thread, proxy, attrib);
+}
+
+MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptObjectRefAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib, const DynamicValue &index) {
+	resolve();
+
+	if (_object.object.expired()) {
+		thread->error("Attempted to reference an attribute of an object variable object, but the reference is dead");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	return _object.object.lock()->writeRefAttributeIndexed(thread, proxy, attrib, index);
 }
 
 void ObjectReferenceVariableModifier::resolve() {
@@ -707,9 +731,23 @@ RuntimeObject *ObjectReferenceVariableModifier::getObjectParent(RuntimeObject *o
 	return nullptr;
 }
 
+MiniscriptInstructionOutcome ObjectReferenceVariableModifier::ObjectWriteInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+	return static_cast<ObjectReferenceVariableModifier *>(objectRef)->scriptSetObject(thread, value);
+}
+
+MiniscriptInstructionOutcome ObjectReferenceVariableModifier::ObjectWriteInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+	return static_cast<ObjectReferenceVariableModifier *>(objectRef)->scriptObjectRefAttrib(thread, proxy, attrib);
+}
+
+MiniscriptInstructionOutcome ObjectReferenceVariableModifier::ObjectWriteInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+	return static_cast<ObjectReferenceVariableModifier *>(objectRef)->scriptObjectRefAttribIndexed(thread, proxy, attrib, index);
+}
+
 ObjectReferenceVariableModifier::SaveLoad::SaveLoad(ObjectReferenceVariableModifier *modifier) : _modifier(modifier) {
 	_objectPath = _modifier->_objectPath;
 }
+
+ObjectReferenceVariableModifier::ObjectWriteInterface ObjectReferenceVariableModifier::ObjectWriteInterface::_instance;
 
 void ObjectReferenceVariableModifier::SaveLoad::commitLoad() const {
 	_modifier->_object.reset();

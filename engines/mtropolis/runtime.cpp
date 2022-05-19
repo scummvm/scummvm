@@ -2549,6 +2549,21 @@ bool Structural::readAttribute(MiniscriptThread *thread, DynamicValue &result, c
 		return true;
 	}
 
+	// Traverse children (modifiers must be first)
+	for (const Common::SharedPtr<Modifier> &modifier : _modifiers) {
+		if (caseInsensitiveEqual(modifier->getName(), attrib)) {
+			result.setObject(modifier);
+			return true;
+		}
+	}
+
+	for (const Common::SharedPtr<Structural> &child : _children) {
+		if (caseInsensitiveEqual(child->getName(), attrib)) {
+			result.setObject(child);
+			return true;
+		}
+	}
+
 	return RuntimeObject::readAttribute(thread, result, attrib);
 }
 
@@ -6141,8 +6156,6 @@ void VisualElement::handleDragMotion(Runtime *runtime, const Point16 &initialPoi
 		targetPoint.y = initialPoint.y;
 	if (_dragProps->constraintDirection == kConstraintDirectionVertical)
 		targetPoint.x = initialPoint.x;
-
-	const bool isConstrainedToParent = _dragProps->constrainToParent;
 
 	if (_dragProps->constrainToParent && _parent && _parent->isElement() && static_cast<Element *>(_parent)->isVisual()) {
 		Rect16 constrainInset = _dragProps->constraintMargin;
