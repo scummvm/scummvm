@@ -29,7 +29,34 @@ namespace MTropolis {
 namespace Obsidian {
 
 bool MovementModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::MovementModifier &data) {
+	// FIXME: Map these
+	_rate = 0;
+	_frequency = 0;
+	_type = false;
+	_dest = Point16::create(0, 0);
+
 	return true;
+}
+
+MiniscriptInstructionOutcome MovementModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "type") {
+		DynamicValueWriteBoolHelper::create(&_type, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "dest") {
+		DynamicValueWritePointHelper::create(&_dest, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "rate") {
+		DynamicValueWriteIntegerHelper<int32>::create(&_rate, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "frequency") {
+		DynamicValueWriteIntegerHelper<int32>::create(&_frequency, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return Modifier::writeRefAttribute(thread, result, attrib);
 }
 
 Common::SharedPtr<Modifier> MovementModifier::shallowClone() const {
@@ -37,7 +64,26 @@ Common::SharedPtr<Modifier> MovementModifier::shallowClone() const {
 }
 
 bool RectShiftModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::RectShiftModifier &data) {
+	if (data.rate.type != Data::PlugInTypeTaggedValue::kInteger)
+		return false;
+
+	_direction = 0;
+	_rate = data.rate.value.asInt;
+
 	return true;
+}
+
+MiniscriptInstructionOutcome RectShiftModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "rate") {
+		DynamicValueWriteIntegerHelper<int32>::create(&_rate, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "direction") {
+		DynamicValueWriteIntegerHelper<int32>::create(&_direction, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return Modifier::writeRefAttribute(thread, result, attrib);
 }
 
 Common::SharedPtr<Modifier> RectShiftModifier::shallowClone() const {

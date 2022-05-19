@@ -52,7 +52,7 @@ DataReadErrorCode RectShiftModifier::load(PlugIn &plugIn, const PlugInModifier &
 	if (prefix.plugInRevision != 1)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!unknown1Event.load(reader) || !unknown2Event.load(reader) || !unknown3Int.load(reader))
+	if (!unknown1Event.load(reader) || !unknown2Event.load(reader) || !rate.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;

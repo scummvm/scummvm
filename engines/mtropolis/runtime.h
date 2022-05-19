@@ -963,15 +963,15 @@ private:
 template<class TInteger>
 DynamicValueWriteIntegerHelper<TInteger> DynamicValueWriteIntegerHelper<TInteger>::_instance;
 
-struct DynamicValueWriteStringHelper : public IDynamicValueWriteInterface {
+struct DynamicValueWritePointHelper : public IDynamicValueWriteInterface {
 	MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const override;
 	MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const override;
 	MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override;
 
-	static void create(Common::String *strValue, DynamicValueWriteProxy &proxy);
+	static void create(Point16 *pointValue, DynamicValueWriteProxy &proxy);
 
 private:
-	static DynamicValueWriteStringHelper _instance;
+	static DynamicValueWritePointHelper _instance;
 };
 
 struct DynamicValueWriteBoolHelper : public IDynamicValueWriteInterface {
@@ -983,6 +983,17 @@ struct DynamicValueWriteBoolHelper : public IDynamicValueWriteInterface {
 
 private:
 	static DynamicValueWriteBoolHelper _instance;
+};
+
+struct DynamicValueWriteStringHelper : public IDynamicValueWriteInterface {
+	MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const override;
+	MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const override;
+	MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override;
+
+	static void create(Common::String *strValue, DynamicValueWriteProxy &proxy);
+
+private:
+	static DynamicValueWriteStringHelper _instance;
 };
 
 template<class TClass, MiniscriptInstructionOutcome (TClass::*TWriteMethod)(MiniscriptThread *thread, const DynamicValue &dest), MiniscriptInstructionOutcome (TClass::*TRefAttribMethod)(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib)>
