@@ -102,7 +102,7 @@ enum DataObjectType {
 	kSoundEffectModifier                 = 0x1a4,
 	kDragMotionModifier                  = 0x208,
 	kPathMotionModifierV1                = 0x21c,	// NYI - Obsolete version
-	kPathMotionModifierV2                = 0x21b,	// NYI
+	kPathMotionModifierV2                = 0x21b,
 	kVectorMotionModifier                = 0x226,
 	kSceneTransitionModifier             = 0x26c,
 	kElementTransitionModifier           = 0x276,
@@ -947,6 +947,56 @@ struct SoundEffectModifier : public DataObject {
 	uint8 unknown3[4];
 	uint32 assetID;
 	uint8 unknown5[4];
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct PathMotionModifierV2 : public DataObject {
+	struct PointDef {
+		enum FrameFlags {
+			kFrameFlagPlaySequentially = 1,
+		};
+
+		Point point;
+		uint32 frame;
+		uint32 frameFlags;
+		uint32 messageFlags;
+		Event send;
+		uint16 unknown11;
+		uint32 destination;
+		uint8 unknown13[10];
+		InternalTypeTaggedValue with;
+		uint8 withSourceLength;
+		uint8 withStringLength;
+
+		Common::String withSource;
+		Common::String withString;
+
+		bool load(DataReader &reader);
+	};
+
+	enum Flags {
+		kFlagReverse = 0x00100000,
+		kFlagLoop = 0x10000000,
+		kFlagAlternate = 0x02000000,
+		kFlagStartAtBeginning = 0x08000000,
+	};
+
+	TypicalModifierHeader modHeader;
+	uint32 flags;
+
+	Event executeWhen;
+	Event terminateWhen;
+
+	uint8 unknown2[2];
+	uint16 numPoints;
+	uint8 unknown3[4];
+	uint32 frameDurationTimes10Million;
+	uint8 unknown5[4];
+	uint32 unknown6;
+
+	Common::Array<PointDef> points;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
