@@ -19,19 +19,26 @@
  *
  */
 
-#ifndef MM1_GFX_H
-#define MM1_GFX_H
+#ifndef MM1_VIEWS_TITLE_VIEW_H
+#define MM1_VIEWS_TITLE_VIEW_H
 
-#include "graphics/palette.h"
+#include "mm/mm1/events.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 
-class GFX {
+class TitleView : public UIElement {
+private:
+	Graphics::ManagedSurface _surface;
 public:
-	static void setEgaPalette(int palNum);
+	TitleView(UIElement *uiParent = nullptr);
+	virtual ~TitleView() {}
+
+	void draw() override;
 };
 
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 

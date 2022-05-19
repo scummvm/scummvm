@@ -19,37 +19,36 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "mm/mm1/mm1.h"
-#include "mm/mm1/gfx/gfx.h"
-#include "mm/mm1/views/title_view.h"
+#ifndef MM1_GFX_SCREEN_DECODER_H
+#define MM1_GFX_SCREEN_DECODER_H
+
+#include "image/image_decoder.h"
+#include "graphics/managed_surface.h"
 
 namespace MM {
 namespace MM1 {
+namespace Gfx {
 
-MM1Engine *g_engine = nullptr;
+class ScreenDecoder : public Image::ImageDecoder {
+private:
+	Graphics::Surface _surface;
+public:
+	ScreenDecoder() {}
+	~ScreenDecoder() override;
 
-MM1Engine::MM1Engine(OSystem *syst, const MightAndMagicGameDescription *gameDesc)
-	: Engine(syst), _gameDescription(gameDesc), _randomSource("MM1") {
-	g_engine = this;
-}
+	void destroy() override;
+	bool loadFile(const Common::String &fname);
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	const Graphics::Surface *getSurface() const override {
+		return &_surface;
+	}
+	const byte *getPalette() const override { return nullptr; }
+	uint16 getPaletteColorCount() const override { return 0; }
+	void clear() { _surface.free(); }
+};
 
-MM1Engine::~MM1Engine() {
-	g_engine = nullptr;
-}
+} // namespace Gfx
+} // namespace MM1
+} // namespace MM
 
-Common::Error MM1Engine::run() {
-	initGraphics(320, 200);
-	Gfx::GFX::setEgaPalette(0);
-	Views::TitleView screenView(this);
-
-	runGame();
-	return Common::kNoError;
-}
-
-} // End of namespace Xeen
-} // End of namespace MM
+#endif

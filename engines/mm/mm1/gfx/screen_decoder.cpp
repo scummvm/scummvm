@@ -20,15 +20,28 @@
  */
 
 #include "common/file.h"
-#include "mm/mm1/views/screen_view.h"
+#include "mm/mm1/gfx/screen_decoder.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace Gfx {
 
 #define IMAGE_SIZE 16000
 
-void ScreenView::loadScreen(int screenNum) {
+ScreenDecoder::~ScreenDecoder() {
+	destroy();
+}
+
+void ScreenDecoder::destroy() {
+	_surface.free();
+}
+
+bool ScreenDecoder::loadFile(const Common::String &fname) {
+	Common::File f;
+	return f.open(fname) && loadStream(f);
+}
+
+bool ScreenDecoder::loadStream(Common::SeekableReadStream &stream) {
 	byte bytes[IMAGE_SIZE];
 	byte v;
 	int len;
@@ -36,22 +49,19 @@ void ScreenView::loadScreen(int screenNum) {
 	byte *destP = &bytes[0];
 	int index = 0;
 
-	_screenNum = screenNum;
-
-	Common::File f;
-	if (!f.open(Common::String::format("screen%d", screenNum)))
-		error("Could not open screen%d", screenNum);
-	int size = f.readUint16LE();
+	int size = stream.readUint16LE();
+	if (size < 0 || size > stream.size())
+		return false;
 
 	// Decompress the image bytes
 	while (size > 0) {
-		v = f.readByte();
+		v = stream.readByte();
 		if (v != 0x7B) {
 			len = 1;
 			--size;
 		} else {
-			len = f.readByte() + 1;
-			v = f.readByte();
+			len = stream.readByte() + 1;
+			v = stream.readByte();
 			size -= 3;
 		}
 
@@ -67,7 +77,7 @@ void ScreenView::loadScreen(int screenNum) {
 	}
 
 	// Create surface from splitting up the nibbles
-	_surface.create(320, 200);
+	_surface.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	srcP = &bytes[0];
 	destP = (byte *)_surface.getPixels();
 
@@ -76,16 +86,10 @@ void ScreenView::loadScreen(int screenNum) {
 		for (int j = 0; j < 4; ++j, v <<= 2)
 			*destP++ = v >> 6;
 	}
+
+	return true;
 }
 
-void ScreenView::draw() {
-	if (_surface.empty())
-		loadScreen(0);
-
-	getScreen()->blitFrom(_surface);
-}
-
-
-} // namespace Views
-} // namespace MM1
-} // namespace MM
+} // namespace Gfx
+} // End of namespace Xeen
+} // End of namespace MM

@@ -19,32 +19,26 @@
  *
  */
 
-#ifndef MM1_VIEWS_SCREEN_VIEW_H
-#define MM1_VIEWS_SCREEN_VIEW_H
-
-#include "mm/mm1/events.h"
+#include "mm/mm1/views/title_view.h"
+#include "mm/mm1/gfx/screen_decoder.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
-class ScreenView : public UIElement {
-private:
-	Graphics::ManagedSurface _surface;
-protected:
-	int _screenNum;
+TitleView::TitleView(UIElement *uiParent) : UIElement(uiParent) {
+	Gfx::ScreenDecoder decoder;
+	if (decoder.loadFile("screen0")) {
+		_surface.copyFrom(decoder.getSurface());
+	} else {
+		error("Could not load screen0");
+	}
+}
 
-	void loadScreen(int screenNum);
-public:
-	ScreenView(UIElement *uiParent = nullptr) :
-		UIElement(uiParent), _screenNum(0) {}
-	virtual ~ScreenView() {}
-
-	void draw() override;
-};
+void TitleView::draw() {
+	getScreen()->blitFrom(_surface);
+}
 
 } // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif
