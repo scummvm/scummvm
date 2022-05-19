@@ -298,7 +298,6 @@ void SmushPlayer::init(int32 speed) {
 	_vm->_mixer->stopHandle(*_compressedFileSoundHandle);
 	_vm->_mixer->stopHandle(*_IACTchannel);
 	_IACTpos = 0;
-	resetAudioTracks();
 }
 
 void SmushPlayer::release() {
@@ -1300,6 +1299,8 @@ void SmushPlayer::initAudio(int samplerate, int32 maxChunkSize) {
 	_smushAudioSampleRate = samplerate;
 	_smushAudioInitialized = true;
 	_smushAudioCallbackEnabled = true;
+
+	resetAudioTracks();
 }
 
 void SmushPlayer::terminateAudio() {
