@@ -788,12 +788,11 @@ void MToonElement::render(Window *window) {
 			if (frameRect.getWidth() == _renderSurface->w && frameRect.getHeight() == _renderSurface->h) {
 				// Frame rect is the size of the render surface, meaning the frame rect is an offset
 				srcRect = Common::Rect(0, 0, frameRect.getWidth(), frameRect.getHeight());
-				destRect = Common::Rect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + frameRect.getWidth(), _cachedAbsoluteOrigin.y + frameRect.getHeight());
 			} else {
 				// Frame rect is a sub-area of the rendered rect
 				srcRect = Common::Rect(frameRect.left, frameRect.top, frameRect.right, frameRect.bottom);
-				destRect = Common::Rect(_cachedAbsoluteOrigin.x + frameRect.left, _cachedAbsoluteOrigin.y + frameRect.left, _cachedAbsoluteOrigin.x + frameRect.right, _cachedAbsoluteOrigin.y + frameRect.bottom);
 			}
+			destRect = Common::Rect(_cachedAbsoluteOrigin.x + frameRect.left, _cachedAbsoluteOrigin.y + frameRect.top, _cachedAbsoluteOrigin.x + frameRect.right, _cachedAbsoluteOrigin.y + frameRect.bottom);
 
 			window->getSurface()->blitFrom(*_renderSurface, srcRect, destRect);
 		}

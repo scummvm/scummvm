@@ -154,6 +154,11 @@ enum ConstraintDirection {
 	kConstraintDirectionVertical,
 };
 
+enum MouseInteractivityTestType {
+	kMouseInteractivityTestAnything,
+	kMouseInteractivityTestMouseClick,
+};
+
 namespace DynamicValueTypes {
 
 enum DynamicValueType {
@@ -1612,9 +1617,9 @@ private:
 	void recursiveDeactivateStructural(Structural *structural);
 	void recursiveActivateStructural(Structural *structural);
 
-	static bool isStructuralMouseInteractive(Structural *structural);
-	static bool isModifierMouseInteractive(Modifier *modifier);
-	static void recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, int &bestStackHeight, Structural *candidate, int stackHeight, int32 relativeX, int32 relativeY);
+	static bool isStructuralMouseInteractive(Structural *structural, MouseInteractivityTestType testType);
+	static bool isModifierMouseInteractive(Modifier *modifier, MouseInteractivityTestType testType);
+	static void recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, int &bestStackHeight, Structural *candidate, int stackHeight, int32 relativeX, int32 relativeY, MouseInteractivityTestType testType);
 
 	void queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay);
 
@@ -1707,6 +1712,7 @@ private:
 	// responds to any mouse event.  The mouse tracking object is the object that was clicked.
 	// These can differ if the user holds down the mouse and moves it to a spot where the tracked
 	// object is either not clickable, or is behind another object with mouse collision.
+	// Note that mouseOverObject is also NOT necessarily what will receive mouse down events.
 	Common::WeakPtr<Structural> _mouseOverObject;
 	Common::WeakPtr<Structural> _mouseTrackingObject;
 	Point16 _mouseTrackingDragStart;

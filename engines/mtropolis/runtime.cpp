@@ -4015,17 +4015,26 @@ void Runtime::recursiveActivateStructural(Structural *structural) {
 	}
 }
 
-bool Runtime::isStructuralMouseInteractive(Structural *structural) {
+bool Runtime::isStructuralMouseInteractive(Structural *structural, MouseInteractivityTestType testType) {
+	if (structural->isElement()) {
+		Element *element = static_cast<Element *>(structural);
+		if (element->isVisual()) {
+			VisualElement *visual = static_cast<VisualElement *>(element);
+			if (visual->getDragMotionProperties())
+				return true;	// Drag motion is always mouse interactive
+		}
+	}
+
 	for (const Common::SharedPtr<Modifier> &modifier : structural->getModifiers()) {
-		if (isModifierMouseInteractive(modifier.get()))
+		if (isModifierMouseInteractive(modifier.get(), testType))
 			return true;
 	}
 
 	return false;
 }
 
-bool Runtime::isModifierMouseInteractive(Modifier *modifier) {
-	const EventIDs::EventID evtIDs[] = {
+bool Runtime::isModifierMouseInteractive(Modifier *modifier, MouseInteractivityTestType testType) {
+	static const EventIDs::EventID allEventIDs[] = {
 		EventIDs::kMouseUp,
 		EventIDs::kMouseDown,
 		EventIDs::kMouseOver,
@@ -4037,7 +4046,30 @@ bool Runtime::isModifierMouseInteractive(Modifier *modifier) {
 		EventIDs::kMouseUpOutside
 	};
 
-	for (EventIDs::EventID evtID : evtIDs) {
+
+	static const EventIDs::EventID mouseClickEventIDs[] = {
+		EventIDs::kMouseUp,
+		EventIDs::kMouseDown,
+		EventIDs::kMouseTrackedInside,
+		EventIDs::kMouseTracking,
+		EventIDs::kMouseTrackedOutside,
+		EventIDs::kMouseUpInside,
+		EventIDs::kMouseUpOutside
+	};
+
+	const EventIDs::EventID *evtIDs = nullptr;
+	size_t numEventIDs = 0;
+
+	if (testType == kMouseInteractivityTestAnything) {
+		evtIDs = allEventIDs;
+		numEventIDs = ARRAYSIZE(allEventIDs);
+	} else if (testType == kMouseInteractivityTestMouseClick) {
+		evtIDs = mouseClickEventIDs;
+		numEventIDs = ARRAYSIZE(mouseClickEventIDs);
+	}
+
+	for (size_t i = 0; i < numEventIDs; i++) {
+		EventIDs::EventID evtID = evtIDs[i];
 		if (modifier->respondsToEvent(Event::create(evtID, 0)))
 			return true;
 	}
@@ -4045,7 +4077,7 @@ bool Runtime::isModifierMouseInteractive(Modifier *modifier) {
 	IModifierContainer *propagationContainer = modifier->getMessagePropagationContainer();
 	if (propagationContainer) {
 		for (const Common::SharedPtr<Modifier> &child : propagationContainer->getModifiers()) {
-			if (isModifierMouseInteractive(child.get()))
+			if (isModifierMouseInteractive(child.get(), testType))
 				return true;
 		}
 	}
@@ -4053,7 +4085,7 @@ bool Runtime::isModifierMouseInteractive(Modifier *modifier) {
 	return false;
 }
 
-void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, int &bestStackHeight, Structural *candidate, int stackHeight, int32 relativeX, int32 relativeY) {
+void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, int &bestStackHeight, Structural *candidate, int stackHeight, int32 relativeX, int32 relativeY, MouseInteractivityTestType testType) {
 	int32 childRelativeX = relativeX;
 	int32 childRelativeY = relativeY;
 	if (candidate->isElement()) {
@@ -4066,7 +4098,7 @@ void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLaye
 			// Objects in a higher layer in lower scenes still have higher render order, so they're on top
 			const bool isInFront = (layer > bestLayer) || (layer == bestLayer && stackHeight > bestStackHeight);
 
-			if (isInFront && visual->isMouseInsideBox(relativeX, relativeY) && isStructuralMouseInteractive(visual) && visual->isMouseCollisionAtPoint(relativeX, relativeY)) {
+			if (isInFront && visual->isMouseInsideBox(relativeX, relativeY) && isStructuralMouseInteractive(visual, testType) && visual->isMouseCollisionAtPoint(relativeX, relativeY)) {
 				bestResult = candidate;
 				bestLayer = layer;
 				bestStackHeight = stackHeight;
@@ -4079,7 +4111,7 @@ void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLaye
 
 
 	for (const Common::SharedPtr<Structural> &child : candidate->getChildren()) {
-		recursiveFindMouseCollision(bestResult, bestLayer, bestStackHeight, child.get(), stackHeight, childRelativeX, childRelativeY);
+		recursiveFindMouseCollision(bestResult, bestLayer, bestStackHeight, child.get(), stackHeight, childRelativeX, childRelativeY, testType);
 	}
 }
 
@@ -4444,12 +4476,20 @@ VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data)
 
 	if (data.mouseDown) {
 		// Mouse down
-		Common::SharedPtr<Structural> tracked = _mouseOverObject.lock();
+		Structural *tracked = nullptr;
+		int bestSceneStack = INT_MIN;
+		int bestLayer = INT_MIN;
+
+		for (size_t ri = 0; ri < _sceneStack.size(); ri++) {
+			const SceneStackEntry &sceneStackEntry = _sceneStack[_sceneStack.size() - 1 - ri];
+			recursiveFindMouseCollision(tracked, bestSceneStack, bestLayer, sceneStackEntry.scene.get(), _sceneStack.size() - 1 - ri, _cachedMousePosition.x, _cachedMousePosition.y, kMouseInteractivityTestMouseClick);
+		}
+
 		if (tracked) {
-			_mouseTrackingObject = tracked;
+			_mouseTrackingObject = tracked->getSelfReference().staticCast<Structural>();
 			_mouseTrackingDragStart = _cachedMousePosition;
-			if (tracked->isElement() && static_cast<Element *>(tracked.get())->isVisual()) {
-				Rect16 initialRect = static_cast<VisualElement *>(tracked.get())->getRelativeRect();
+			if (tracked->isElement() && static_cast<Element *>(tracked)->isVisual()) {
+				Rect16 initialRect = static_cast<VisualElement *>(tracked)->getRelativeRect();
 				_mouseTrackingObjectInitialOrigin = Point16::create(initialRect.left, initialRect.top);
 			} else
 				_mouseTrackingObjectInitialOrigin = Point16::create(0, 0);
@@ -4457,7 +4497,7 @@ VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data)
 
 			MessageToSend msg;
 			msg.eventID = EventIDs::kMouseDown;
-			msg.target = tracked.get();
+			msg.target = tracked;
 			messagesToSend.push_back(msg);
 		}
 	} else {
@@ -4516,7 +4556,7 @@ VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData 
 
 	for (size_t ri = 0; ri < _sceneStack.size(); ri++) {
 		const SceneStackEntry &sceneStackEntry = _sceneStack[_sceneStack.size() - 1 - ri];
-		recursiveFindMouseCollision(collisionItem, bestSceneStack, bestLayer, sceneStackEntry.scene.get(), _sceneStack.size() - 1 - ri, data.x, data.y);
+		recursiveFindMouseCollision(collisionItem, bestSceneStack, bestLayer, sceneStackEntry.scene.get(), _sceneStack.size() - 1 - ri, data.x, data.y, kMouseInteractivityTestAnything);
 	}
 
 	Common::SharedPtr<Structural> newMouseOver;
