@@ -25,7 +25,11 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/stat.h>
+#ifdef _MSC_VER
+#include <windows.h>
+#else
 #include <unistd.h>
+#endif
 
 // Specified engine name with different cases
 #define MAX_LINE_LENGTH 256
@@ -176,10 +180,18 @@ int main(int argc, char *argv[]) {
 
 	char prefix[100];
 	char prefix2[100];
+#ifdef _MSC_VER
+	if (GetFileAttributesA("../../engines") != INVALID_FILE_ATTRIBUTES) {
+#else
 	if (!access("../../engines", F_OK)) {
+#endif
 		strcpy(prefix, "../..");
 		strcpy(prefix2, ".");
+#ifdef _MSC_VER
+	} else 	if (GetFileAttributesA("engines") != INVALID_FILE_ATTRIBUTES) {
+#else
 	} else if (!access("engines", F_OK)) {
+#endif
 		strcpy(prefix, ".");
 		strcpy(prefix2, "devtools/create_engine");
 	} else {
@@ -195,7 +207,11 @@ int main(int argc, char *argv[]) {
 	printf("Creating directory %s...", folder);
 	fflush(stdout);
 
+#ifdef _MSC_VER
+	if (!CreateDirectoryA(folder, NULL)) {
+#else
 	if (mkdir(folder, 0755)) {
+#endif
 		printf("Could not create engine folder.\n");
 		return 0;
 	}
