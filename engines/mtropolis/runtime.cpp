@@ -4432,6 +4432,12 @@ VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data)
 		Common::SharedPtr<Structural> tracked = _mouseOverObject.lock();
 		if (tracked) {
 			_mouseTrackingObject = tracked;
+			_mouseTrackingDragStart = _cachedMousePosition;
+			if (tracked->isElement() && static_cast<Element *>(tracked.get())->isVisual()) {
+				Rect16 initialRect = static_cast<VisualElement *>(tracked.get())->getRelativeRect();
+				_mouseTrackingObjectInitialOrigin = Point16::create(initialRect.left, initialRect.top);
+			} else
+				_mouseTrackingObjectInitialOrigin = Point16::create(0, 0);
 			_trackedMouseOutside = false;
 
 			MessageToSend msg;
@@ -4561,6 +4567,12 @@ VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData 
 			}
 
 			_trackedMouseOutside = mouseOutside;
+		}
+
+		// TODO: Figure out the right location for this
+		if (element->isVisual()) {
+			Point16 targetPoint = Point16::create(data.x - _mouseTrackingDragStart.x + _mouseTrackingObjectInitialOrigin.x, data.y - _mouseTrackingDragStart.y + _mouseTrackingObjectInitialOrigin.y);
+			static_cast<VisualElement *>(element)->handleDragMotion(this, _mouseTrackingObjectInitialOrigin, targetPoint);
 		}
 	}
 
@@ -6108,6 +6120,56 @@ const Point16 &VisualElement::getCachedAbsoluteOrigin() const {
 
 void VisualElement::setCachedAbsoluteOrigin(const Point16 &absOrigin) {
 	_cachedAbsoluteOrigin = absOrigin;
+}
+
+void VisualElement::setDragMotionProperties(const Common::SharedPtr<DragMotionProperties>& dragProps) {
+	_dragProps = dragProps;
+}
+
+const Common::SharedPtr<DragMotionProperties> &VisualElement::getDragMotionProperties() const {
+	return _dragProps;
+}
+
+void VisualElement::handleDragMotion(Runtime *runtime, const Point16 &initialPoint, const Point16 &targetPointRef) {
+	if (!_dragProps)
+		return;
+
+	Point16 targetPoint = targetPointRef;
+
+	// NOTE: Constraints do not override insets if the object is out of bounds
+	if (_dragProps->constraintDirection == kConstraintDirectionHorizontal)
+		targetPoint.y = initialPoint.y;
+	if (_dragProps->constraintDirection == kConstraintDirectionVertical)
+		targetPoint.x = initialPoint.x;
+
+	const bool isConstrainedToParent = _dragProps->constrainToParent;
+
+	if (_dragProps->constrainToParent && _parent && _parent->isElement() && static_cast<Element *>(_parent)->isVisual()) {
+		Rect16 constrainInset = _dragProps->constraintMargin;
+
+		Rect16 parentRect = static_cast<VisualElement *>(_parent)->getRelativeRect();
+
+		// rect.width - inset.right
+		int32 minX = constrainInset.left;
+		int32 minY = constrainInset.top;
+		int32 maxX = parentRect.getWidth() - constrainInset.right - _rect.getWidth();
+		int32 maxY = parentRect.getHeight() - constrainInset.bottom - _rect.getHeight();
+
+		// TODO: Handle "squished" case where max < min, it does work but it's weird
+		if (targetPoint.x < minX)
+			targetPoint.x = minX;
+
+		if (targetPoint.y < minY)
+			targetPoint.y = minY;
+
+		if (targetPoint.x > maxX)
+			targetPoint.x = maxX;
+
+		if (targetPoint.y > maxY)
+			targetPoint.y = maxY;
+
+		offsetTranslate(targetPoint.x - _rect.left, targetPoint.y - _rect.top, false);
+	}
 }
 
 MiniscriptInstructionOutcome VisualElement::scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result) {
