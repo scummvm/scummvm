@@ -535,17 +535,19 @@ bool DragMotionModifier::load(ModifierLoaderContext &context, const Data::DragMo
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen) || !_constraintMargin.loadUnchecked(data.constraintMargin))
+	_dragProps.reset(new DragMotionProperties());
+
+	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen) || !_dragProps->constraintMargin.loadUnchecked(data.constraintMargin))
 		return false;
 
 	bool constrainVertical = false;
 	bool constrainHorizontal = false;
 	if (data.haveMacPart) {
-		_constrainToParent = ((data.platform.mac.flags & Data::DragMotionModifier::MacPart::kConstrainToParent) != 0);
+		_dragProps->constrainToParent = ((data.platform.mac.flags & Data::DragMotionModifier::MacPart::kConstrainToParent) != 0);
 		constrainVertical = ((data.platform.mac.flags & Data::DragMotionModifier::MacPart::kConstrainHorizontal) != 0);
 		constrainHorizontal = ((data.platform.mac.flags & Data::DragMotionModifier::MacPart::kConstrainVertical) != 0);
 	} else if (data.haveWinPart) {
-		_constrainToParent = (data.platform.win.constrainToParent != 0);
+		_dragProps->constrainToParent = (data.platform.win.constrainToParent != 0);
 		constrainVertical = (data.platform.win.constrainVertical != 0);
 		constrainHorizontal = (data.platform.win.constrainHorizontal != 0);
 	} else {
@@ -556,19 +558,42 @@ bool DragMotionModifier::load(ModifierLoaderContext &context, const Data::DragMo
 		if (constrainHorizontal)
 			return false;	// ???
 		else
-			_constraintDirection = kConstraintDirectionVertical;
+			_dragProps->constraintDirection = kConstraintDirectionVertical;
 	} else {
 		if (constrainHorizontal)
-			_constraintDirection = kConstraintDirectionHorizontal;
+			_dragProps->constraintDirection = kConstraintDirectionHorizontal;
 		else
-			_constraintDirection = kConstraintDirectionNone;
+			_dragProps->constraintDirection = kConstraintDirectionNone;
 	}
 
 	return true;
 }
 
 Common::SharedPtr<Modifier> DragMotionModifier::shallowClone() const {
-	return Common::SharedPtr<Modifier>(new DragMotionModifier(*this));
+	Common::SharedPtr<DragMotionModifier> clone = Common::SharedPtr<DragMotionModifier>(new DragMotionModifier(*this));
+	clone->_dragProps.reset(new DragMotionProperties(*_dragProps));
+	return clone;
+}
+
+bool DragMotionModifier::respondsToEvent(const Event &evt) const {
+	return _enableWhen.respondsTo(evt) || _disableWhen.respondsTo(evt);
+}
+
+VThreadState DragMotionModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_enableWhen.respondsTo(msg->getEvent())) {
+		Structural *owner = this->findStructuralOwner();
+		if (owner->isElement() && static_cast<Element *>(owner)->isVisual())
+			static_cast<VisualElement *>(owner)->setDragMotionProperties(_dragProps);
+		return kVThreadReturn;
+	}
+	if (_disableWhen.respondsTo(msg->getEvent())) {
+		Structural *owner = this->findStructuralOwner();
+		if (owner->isElement() && static_cast<Element *>(owner)->isVisual())
+			static_cast<VisualElement *>(owner)->setDragMotionProperties(nullptr);
+		return kVThreadReturn;
+	}
+
+	return kVThreadReturn;
 }
 
 bool VectorMotionModifier::load(ModifierLoaderContext &context, const Data::VectorMotionModifier &data) {

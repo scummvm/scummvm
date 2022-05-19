@@ -244,6 +244,9 @@ class DragMotionModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::DragMotionModifier &data);
 
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Drag Motion Modifier"; }
 #endif
@@ -254,15 +257,7 @@ private:
 	Event _enableWhen;
 	Event _disableWhen;
 
-	enum ConstraintDirection {
-		kConstraintDirectionNone,
-		kConstraintDirectionHorizontal,
-		kConstraintDirectionVertical,
-	};
-
-	ConstraintDirection _constraintDirection;
-	Rect16 _constraintMargin;
-	bool _constrainToParent;
+	Common::SharedPtr<DragMotionProperties> _dragProps;
 };
 
 class VectorMotionModifier : public Modifier {

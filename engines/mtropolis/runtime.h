@@ -148,6 +148,12 @@ enum TransitionDirection {
 	kTransitionDirectionRight = 0x387,
 };
 
+enum ConstraintDirection {
+	kConstraintDirectionNone,
+	kConstraintDirectionHorizontal,
+	kConstraintDirectionVertical,
+};
+
 namespace DynamicValueTypes {
 
 enum DynamicValueType {
@@ -1435,6 +1441,12 @@ private:
 	const Common::KeyState _keyEvt;
 };
 
+struct DragMotionProperties {
+	ConstraintDirection constraintDirection;
+	Rect16 constraintMargin;
+	bool constrainToParent;
+};
+
 class Runtime {
 public:
 	explicit Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider);
@@ -1697,6 +1709,8 @@ private:
 	// object is either not clickable, or is behind another object with mouse collision.
 	Common::WeakPtr<Structural> _mouseOverObject;
 	Common::WeakPtr<Structural> _mouseTrackingObject;
+	Point16 _mouseTrackingDragStart;
+	Point16 _mouseTrackingObjectInitialOrigin;
 	bool _trackedMouseOutside;
 	bool _forceCursorRefreshOnce;
 
@@ -2237,6 +2251,11 @@ public:
 	const Point16 &getCachedAbsoluteOrigin() const;
 	void setCachedAbsoluteOrigin(const Point16 &absOrigin);
 
+	void setDragMotionProperties(const Common::SharedPtr<DragMotionProperties> &dragProps);
+	const Common::SharedPtr<DragMotionProperties> &getDragMotionProperties() const;
+
+	void handleDragMotion(Runtime *runtime, const Point16 &initialOrigin, const Point16 &targetOrigin);
+
 	virtual void render(Window *window) = 0;
 
 protected:
@@ -2272,6 +2291,8 @@ protected:
 	Rect16 _rect;
 	Point16 _cachedAbsoluteOrigin;
 	uint16 _layer;
+
+	Common::SharedPtr<DragMotionProperties> _dragProps;
 };
 
 class NonVisualElement : public Element {
