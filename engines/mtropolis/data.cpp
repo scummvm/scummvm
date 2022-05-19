@@ -1113,6 +1113,52 @@ DataReadErrorCode SoundEffectModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+bool PathMotionModifierV2::PointDef::load(DataReader &reader)
+{
+	if (!point.load(reader)
+		|| !reader.readU32(frame)
+		|| !reader.readU32(frameFlags)
+		|| !reader.readU32(messageFlags)
+		|| !send.load(reader)
+		|| !reader.readU16(unknown11)
+		|| !reader.readU32(destination)
+		|| !reader.readBytes(unknown13)
+		|| !with.load(reader)
+		|| !reader.readU8(withSourceLength)
+		|| !reader.readU8(withStringLength)
+		|| !reader.readNonTerminatedStr(withSource, withSourceLength)
+		|| !reader.readNonTerminatedStr(withString, withStringLength))
+		return false;
+
+	return true;
+}
+
+DataReadErrorCode PathMotionModifierV2::load(DataReader &reader) {
+	if (_revision != 0x3e9)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader)
+		|| !reader.readU32(flags)
+		|| !executeWhen.load(reader)
+		|| !terminateWhen.load(reader)
+		|| !reader.readBytes(unknown2)
+		|| !reader.readU16(numPoints)
+		|| !reader.readBytes(unknown3)
+		|| !reader.readU32(frameDurationTimes10Million)
+		|| !reader.readBytes(unknown5)
+		|| !reader.readU32(unknown6))
+		return kDataReadErrorReadFailed;
+
+	points.resize(numPoints);
+
+	for (size_t i = 0; i < numPoints; i++) {
+		if (!points[i].load(reader))
+			return kDataReadErrorReadFailed;
+	}
+
+	return kDataReadErrorNone;
+}
+
 DataReadErrorCode DragMotionModifier::load(DataReader &reader) {
 	if (_revision != 0x3e8)
 		return kDataReadErrorUnsupportedRevision;
@@ -1893,6 +1939,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kDragMotionModifier:
 		dataObject = new DragMotionModifier();
+		break;
+	case DataObjectTypes::kPathMotionModifierV2:
+		dataObject = new PathMotionModifierV2();
 		break;
 	case DataObjectTypes::kVectorMotionModifier:
 		dataObject = new VectorMotionModifier();

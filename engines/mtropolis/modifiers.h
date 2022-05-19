@@ -240,6 +240,44 @@ private:
 	uint32 _assetID;
 };
 
+class PathMotionModifierV2 : public Modifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::PathMotionModifierV2 &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Path Motion Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
+#endif
+
+private:
+	struct PointDef {
+		Point16 point;
+		uint32 frame;
+		bool useFrame;
+
+		MessengerSendSpec sendSpec;
+	};
+
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
+	Event _executeWhen;
+	Event _terminateWhen;
+
+	bool _reverse;
+	bool _loop;
+	bool _alternate;
+	bool _startAtBeginning;
+
+	uint32 _frameDurationTimes10Million;
+
+	Common::Array<PointDef> _points;
+
+	DynamicValue _incomingData;
+};
+
 class DragMotionModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::DragMotionModifier &data);

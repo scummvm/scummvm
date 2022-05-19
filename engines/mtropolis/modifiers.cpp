@@ -531,6 +531,67 @@ Common::SharedPtr<Modifier> SoundEffectModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new SoundEffectModifier(*this));
 }
 
+bool PathMotionModifierV2::load(ModifierLoaderContext &context, const Data::PathMotionModifierV2 &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_executeWhen.load(data.executeWhen) || !_terminateWhen.load(data.terminateWhen))
+		return false;
+
+	_reverse = ((data.flags & Data::PathMotionModifierV2::kFlagReverse) != 0);
+	_loop = ((data.flags & Data::PathMotionModifierV2::kFlagLoop) != 0);
+	_alternate = ((data.flags & Data::PathMotionModifierV2::kFlagAlternate) != 0);
+	_startAtBeginning = ((data.flags & Data::PathMotionModifierV2::kFlagStartAtBeginning) != 0);
+
+	_frameDurationTimes10Million = data.frameDurationTimes10Million;
+
+	_points.resize(data.numPoints);
+
+	for (size_t i = 0; i < _points.size(); i++) {
+		const Data::PathMotionModifierV2::PointDef &inPoint = data.points[i];
+		PointDef &outPoint = _points[i];
+
+		outPoint.frame = inPoint.frame;
+		outPoint.useFrame = ((inPoint.frameFlags & Data::PathMotionModifierV2::PointDef::kFrameFlagPlaySequentially) != 0);
+		if (!outPoint.point.load(inPoint.point) || !outPoint.sendSpec.load(inPoint.send, inPoint.messageFlags, inPoint.with, inPoint.withSource, inPoint.withString, inPoint.destination))
+			return false;
+	}
+
+	return true;
+}
+
+bool PathMotionModifierV2::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt) || _terminateWhen.respondsTo(evt);
+}
+
+VThreadState PathMotionModifierV2::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_executeWhen.respondsTo(msg->getEvent())) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = runtime->debugGetDebugger())
+			debugger->notify(kDebugSeverityWarning, "Path motion modifier was supposed to execute, but this isn't implemented yet");
+#endif
+		_incomingData = msg->getValue();
+
+		return kVThreadReturn;
+	}
+	if (_terminateWhen.respondsTo(msg->getEvent())) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = runtime->debugGetDebugger())
+			debugger->notify(kDebugSeverityWarning, "Path motion modifier was supposed to terminate, but this isn't implemented yet");
+#endif
+		return kVThreadReturn;
+	}
+
+	return kVThreadReturn;
+}
+
+
+Common::SharedPtr<Modifier> PathMotionModifierV2::shallowClone() const {
+	Common::SharedPtr<PathMotionModifierV2> clone(new PathMotionModifierV2(*this));
+	clone->_incomingData = DynamicValue();
+	return clone;
+}
+
 bool DragMotionModifier::load(ModifierLoaderContext &context, const Data::DragMotionModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
