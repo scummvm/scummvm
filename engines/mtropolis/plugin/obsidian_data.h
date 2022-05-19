@@ -60,7 +60,7 @@ protected:
 struct RectShiftModifier : public PlugInModifierData {
 	PlugInTypeTaggedValue unknown1Event; // Probably "enable when"
 	PlugInTypeTaggedValue unknown2Event; // Probably "disable when"
-	PlugInTypeTaggedValue unknown3Int;
+	PlugInTypeTaggedValue rate;
 
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;

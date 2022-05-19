@@ -38,17 +38,26 @@ class MovementModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::MovementModifier &data);
 
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Movement Modifier"; }
 #endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+
+	Point16 _dest;
+	bool _type;
+	int32 _rate;
+	int32 _frequency;
 };
 
 class RectShiftModifier : public Modifier {
 public:
 	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::RectShiftModifier &data);
+
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Rect Shift Modifier"; }
@@ -56,6 +65,9 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+
+	int32 _rate;
+	int32 _direction;
 };
 
 class TextWorkModifier : public Modifier {

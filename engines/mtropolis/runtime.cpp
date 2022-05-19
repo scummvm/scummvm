@@ -1634,6 +1634,43 @@ void DynamicValueWriteStringHelper::create(Common::String *strValue, DynamicValu
 
 DynamicValueWriteStringHelper DynamicValueWriteStringHelper::_instance;
 
+MiniscriptInstructionOutcome DynamicValueWritePointHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+	if (value.getType() != DynamicValueTypes::kPoint) {
+		thread->error("Can't set point to invalid type");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	*static_cast<Point16 *>(objectRef) = value.getPoint();
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome DynamicValueWritePointHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+	if (attrib == "x") {
+		DynamicValueWriteIntegerHelper<int16>::create(&static_cast<Point16 *>(objectRef)->x, proxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "y") {
+		DynamicValueWriteIntegerHelper<int16>::create(&static_cast<Point16 *>(objectRef)->y, proxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	thread->error("Invalid attribute for point");
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome DynamicValueWritePointHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+void DynamicValueWritePointHelper::create(Point16 *pointValue, DynamicValueWriteProxy &proxy) {
+	proxy.pod.ptrOrOffset = 0;
+	proxy.pod.objectRef = pointValue;
+	proxy.pod.ifc = &_instance;
+}
+
+DynamicValueWritePointHelper DynamicValueWritePointHelper::_instance;
+
 MiniscriptInstructionOutcome DynamicValueWriteBoolHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
 	bool &dest = *static_cast<bool *>(objectRef);
 	switch (value.getType()) {
