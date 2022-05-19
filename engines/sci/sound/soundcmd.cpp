@@ -918,6 +918,10 @@ void SoundCommandParser::pauseAll(bool pause) {
 	_music->pauseAll(pause);
 }
 
+void SoundCommandParser::resetGlobalPauseCounter() {
+	_music->resetGlobalPauseCounter();
+}
+
 MusicType SoundCommandParser::getMusicType() const {
 	assert(_music);
 	return _music->soundGetMusicType();

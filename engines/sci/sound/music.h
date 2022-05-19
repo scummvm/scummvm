@@ -193,6 +193,7 @@ private:
 public:
 	void clearPlayList();
 	void pauseAll(bool pause);
+	void resetGlobalPauseCounter();
 	void stopAll();
 	void stopAllSamples();
 
