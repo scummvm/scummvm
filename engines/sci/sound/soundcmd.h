@@ -55,6 +55,7 @@ public:
 	// Functions used for the ScummVM menus
 	void setMasterVolume(int vol);
 	void pauseAll(bool pause);
+	void resetGlobalPauseCounter();
 #ifdef ENABLE_SCI32
 	void setVolume(const reg_t obj, const int vol);
 #endif

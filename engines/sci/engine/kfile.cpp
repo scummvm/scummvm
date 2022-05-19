@@ -1238,10 +1238,11 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = TRUE_REG; // signals failure
 	}
 
-	if (!s->r_acc.isNull()) {
-		// no success?
-		if (pausedMusic)
+	if (pausedMusic) {
+		if (!s->r_acc.isNull()) // no success?
 			g_sci->_soundCmd->pauseAll(false); // unpause music
+		else
+			g_sci->_soundCmd->resetGlobalPauseCounter(); // reset music global pause counter without affecting the individual sounds
 	}
 
 	return s->r_acc;
