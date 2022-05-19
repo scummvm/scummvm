@@ -543,24 +543,20 @@ MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
 	DynamicValue &payloadValue = thread->getStackValueFromTop(1).value;
 
 	if (targetValue.getType() != DynamicValueTypes::kObject) {
-		thread->error("Invalid message destination (target isn't an object reference)");
-		return kMiniscriptInstructionOutcomeFailed;
+		// Failed sends are non-fatal (Obsidian requires this in the aircraft propulsion room to enter the propulsion puzzle)
+		warning("Invalid message destination (target isn't an object reference)");
+		thread->popValues(2);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	Common::SharedPtr<RuntimeObject> obj = targetValue.getObject().object.lock();
 
 	if (!obj) {
-		// HACK: Obsidian triggers NAV_Restart on Project Started, which triggers "<init globals> on NAV_Restart"
-		// which sends PRG_Toggle_Status_Display to sharedScene.  Apparently, mTropolis will not trigger an error
-		// on sends to sharedScene at that point even though the destination is invalid.
-		// Maybe invalid sends aren't even an error?  I don't know.
-		if (!thread->getRuntime()->getActiveSharedScene().get()) {
-			thread->popValues(2);
-			return kMiniscriptInstructionOutcomeContinue;
-		}
-
-		thread->error("Invalid message destination (object reference is invalid)");
-		return kMiniscriptInstructionOutcomeFailed;
+		// Obsidian also triggers NAV_Restart on Project Started, which triggers "<init globals> on NAV_Restart"
+		// which sends PRG_Toggle_Status_Display to sharedScene, even though at that point there is no shared scene.
+		warning("Invalid message destination (target object is invalid)");
+		thread->popValues(2);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(_evt, payloadValue, thread->getModifier()->getSelfReference()));
@@ -570,8 +566,8 @@ MiniscriptInstructionOutcome Send::execute(MiniscriptThread *thread) const {
 	else if (obj->isStructural())
 		dispatch.reset(new MessageDispatch(msgProps, static_cast<Structural *>(obj.get()), _messageFlags.cascade, _messageFlags.relay, true));
 	else {
-		thread->error("Message destination is not a structural object or modifier");
-		return kMiniscriptInstructionOutcomeFailed;
+		warning("Invalid message destination (target object is not a modifier or structural object)");
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	thread->popValues(2);
