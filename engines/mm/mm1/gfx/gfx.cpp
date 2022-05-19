@@ -21,10 +21,11 @@
 
 #include "common/system.h"
 #include "graphics/palette.h"
-#include "mm/mm1/gfx.h"
+#include "mm/mm1/gfx/gfx.h"
 
 namespace MM {
 namespace MM1 {
+namespace Gfx {
 
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
@@ -50,5 +51,6 @@ void GFX::setEgaPalette(int palNum) {
 	g_system->getPaletteManager()->setPalette(pal, 0, 16);
 }
 
-} // End of namespace Xeen
-} // End of namespace MM
+} // namespace Gfx
+} // namespace MM1
+} // namespace MM
