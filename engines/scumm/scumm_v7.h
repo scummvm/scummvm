@@ -78,17 +78,6 @@ protected:
 	int _languageIndexSize;
 	char _lastStringTag[12+1];
 
-#if defined(__SYMBIAN32__) // for some reason VC6 cannot find the base class TextObject
-	struct SubtitleText {
-		int16 xpos, ypos;
-		byte color;
-		byte charset;
-		byte text[256];
-		bool actorSpeechMsg;
-		bool center;
-		bool wrap;
-	};
-#else
 	struct SubtitleText : TextObject {
 		void clear() {
 			TextObject::clear();
@@ -98,7 +87,6 @@ protected:
 		bool center;
 		bool wrap;
 	};
-#endif
 
 	friend void syncWithSerializer(Common::Serializer &, SubtitleText &);
 
