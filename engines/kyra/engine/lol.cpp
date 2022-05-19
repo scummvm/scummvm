@@ -50,6 +50,8 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 	_tim = 0;
 
 	_lang = 0;
+	_langIntern = 0;
+
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 	if (lang == _flags.fanLang && _flags.replacedLang != Common::UNK_LANG)
 		lang = _flags.replacedLang;
@@ -69,8 +71,14 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 		_lang = 2;
 		break;
 
+	case Common::ES_ESP:
+		_lang = 0;
+		_langIntern = 2;
+		break;
+
 	case Common::JA_JPN:
 		_lang = 0;
+		_langIntern = 1;
 		break;
 
 	default:
@@ -937,8 +945,10 @@ void LoLEngine::writeSettings() {
 
 	case 0:
 	default:
-		if (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformFMTowns)
+		if (_langIntern == 1)
 			_flags.lang = Common::JA_JPN;
+		else if (_langIntern == 2)
+			_flags.lang = Common::ES_ESP;
 		else
 			_flags.lang = Common::EN_ANY;
 	}
