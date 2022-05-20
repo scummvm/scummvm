@@ -215,6 +215,10 @@ bool MovieElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 		result.setIntRange(_playRange);
 		return true;
 	}
+	if (attrib == "timevalue") {
+		result.setInt(_currentTimestamp);
+		return true;
+	}
 
 	return VisualElement::readAttribute(thread, result, attrib);
 }
@@ -226,6 +230,10 @@ MiniscriptInstructionOutcome MovieElement::writeRefAttribute(MiniscriptThread *t
 	}
 	if (attrib == "volume") {
 		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetVolume>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "timevalue") {
+		DynamicValueWriteFuncHelper<MovieElement, &MovieElement::scriptSetTimestamp>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -472,6 +480,29 @@ MiniscriptInstructionOutcome MovieElement::scriptSetVolume(MiniscriptThread *thr
 	_volume = asInteger;
 	if (_videoDecoder)
 		_videoDecoder->setVolume(_volume * 255 / 100);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome MovieElement::scriptSetTimestamp(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger)) {
+		thread->error("Wrong type for movie element timevalue");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	if (asInteger < _playRange.min)
+		asInteger = _playRange.min;
+	else if (asInteger > _playRange.max)
+		asInteger = _playRange.max;
+
+	if (asInteger != _currentTimestamp) {
+		SeekToTimeTaskData *taskData = thread->getRuntime()->getVThread().pushTask("MovieElement::seekToTimeTask", this, &MovieElement::seekToTimeTask);
+		taskData->runtime = _runtime;
+		taskData->timestamp = asInteger;
+
+		return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
+	}
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
