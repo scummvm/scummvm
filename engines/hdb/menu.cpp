@@ -174,9 +174,11 @@ Menu::Menu() {
 	_titleActive = false;
 	_menuActive = false;
 	_optionsActive = false;
+	_optionsScreenId = 0;
 	_gamefilesActive = false;
 	_newgameActive = false;
 	_warpActive = false;
+	_warpMapId = -1;
 	_optionsScrolling = false;
 	_optionsScrollX = _menuX;
 	_rocketX = _mRocketX;
@@ -264,7 +266,8 @@ Menu::Menu() {
 	_handangoGfx = nullptr;
 	_clickDelay = 0;
 	_saveSlot = 0;
-	_quitActive = 0;
+	_quitActive = false;
+	_quitCounter = 0;
 	_optionsXV = 0;
 	_oBannerY = 0;
 	_introSong = SONG_NONE;
@@ -538,9 +541,10 @@ void Menu::drawMenu() {
 				switch (_nextScreen) {
 				case 0:
 					_optionsActive = true;
+					_optionsScreenId = 1;
 					break;
 				case 1:
-					_gamefilesActive = 1;
+					_gamefilesActive = true;
 					break;
 				case 2:
 					_newgameActive = true;
@@ -668,11 +672,12 @@ void Menu::drawMenu() {
 				_oBannerY = -48;
 				_optionsScrolling = false;
 				_optionsActive = false;
+				_optionsScreenId = 0;
 				_menuActive = true;
 			}
 
 			drawRocketAndSelections();
-		} else if (_optionsActive == 1) {
+		} else if (_optionsScreenId == 1) {
 			//
 			// Options menu content
 			//
@@ -715,7 +720,7 @@ void Menu::drawMenu() {
 
 			// Ignore Controls Screen Button
 			//_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), _mControlsY);
-		} else if (_optionsActive == 2) {
+		} else if (_optionsScreenId == 2) {
 			//
 			// Draw CONTROLS screen
 			//
@@ -821,9 +826,9 @@ void Menu::drawMenu() {
 			g_hdb->_gfx->drawText(textString.c_str());
 		}
 
-		if (_warpActive > 1) {
+		if (_warpMapId >= 0) {
 			g_hdb->_gfx->setCursor(_warpX + 60, _warpY + 164);
-			textString = Common::String::format("Warping to MAP%d", _warpActive - 2);
+			textString = Common::String::format("Warping to MAP%d", _warpMapId);
 			g_hdb->_gfx->centerPrint(textString.c_str());
 		}
 	} else if (_quitActive) {
@@ -833,13 +838,13 @@ void Menu::drawMenu() {
 		g_hdb->_gfx->draw3DStars();
 		drawNebula();
 
-		if (_quitActive == 3 || !g_hdb->isDemo()) {
+		if (_quitCounter == 3 || !g_hdb->isDemo()) {
 			if (!_quitScreen)
 				_quitScreen = g_hdb->_gfx->loadPic(PIC_QUITSCREEN);
 			_quitScreen->drawMasked(_quitX, _quitY);
-		} else if (_quitActive == 1) {
+		} else if (_quitCounter == 1) {
 			_screenshots1agfx->drawMasked(_quitX, _quitY);
-		} else if (_quitActive == 2) { // XXXX
+		} else if (_quitCounter == 2) { // XXXX
 			_screenshots1gfx->drawMasked(_quitX, _quitY);
 
 			if (!g_hdb->isPPC())
@@ -1288,7 +1293,8 @@ void Menu::processInput(int x, int y) {
 			y >= _menuY + _mQuitY && y < _menuY + _mQuitY + _menuItemHeight) {
 			g_hdb->_sound->playSound(SND_BYE);
 			_quitTimer = g_hdb->getTimeSlice() + 1000;
-			_quitActive = 1;
+			_quitActive = true;
+			_quitCounter = 1;
 			_menuActive = false;
 			return;
 		} else if (x >= _menuX && x < _menuX + _menuItemWidth &&
@@ -1339,6 +1345,7 @@ void Menu::processInput(int x, int y) {
 				y >= kStarRedY && y <= kStarRedY + _starRedGfx[0]->_height &&
 				g_hdb->getStarsMonkeystone7() == STARS_MONKEYSTONE_7) {
 				_optionsActive = false;
+				_optionsScreenId = 0;
 				g_hdb->setGameState(GAME_PLAY);
 				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))	// don't save if we're already on 30!
 					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
@@ -1349,6 +1356,7 @@ void Menu::processInput(int x, int y) {
 				y >= kStarGreenY && y <= kStarGreenY + _starGreenGfx[0]->_height &&
 				g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14) {
 				_optionsActive = false;
+				_optionsScreenId = 0;
 				g_hdb->setGameState(GAME_PLAY);
 				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))	// don't save if we're already on 30!
 					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
@@ -1360,6 +1368,7 @@ void Menu::processInput(int x, int y) {
 				y >= kStarBlueY && y <= kStarBlueY + _starBlueGfx[0]->_height &&
 				g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21) {
 				_optionsActive = false;
+				_optionsScreenId = 0;
 				g_hdb->setGameState(GAME_PLAY);
 				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))	// don't save if we're already on 30!
 					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
@@ -1381,6 +1390,7 @@ void Menu::processInput(int x, int y) {
 
 			_menuActive = false;
 			_warpActive = true;
+			_warpMapId = -1;
 			_clickDelay = 30;
 		}
 	} else if (_newgameActive) {
@@ -1418,7 +1428,7 @@ void Menu::processInput(int x, int y) {
 		//
 		// Controls screen
 		//
-		if (_optionsActive == 2) {
+		if (_optionsScreenId == 2) {
 			controlsInput(x, y);
 			return;
 		}
@@ -1467,7 +1477,7 @@ void Menu::processInput(int x, int y) {
 			// CONTROLS BUTTON!
 
 			// Ignore Controls Button
-			//_optionsActive = 2;
+			//_optionsScreenId = 2;
 			//_clickDelay = 20;
 			//g_hdb->_sound->playSound(SND_POP);
 		}
@@ -1536,6 +1546,7 @@ void Menu::processInput(int x, int y) {
 		if ((y >= _menuExitY && x < _menuExitXLeft) || xit) {
 			_menuActive = true;
 			_warpActive = false;
+			_warpMapId = -1;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 			_clickDelay = 10;
 		} else if (y >= _warpY && y < _warpY + 160) {
@@ -1551,11 +1562,12 @@ void Menu::processInput(int x, int y) {
 
 			map += (y - _warpY) / 16;
 
-			_warpActive = map + 2;
+			_warpMapId = map;
 			g_hdb->paint();
 			if (g_hdb->getDebug())
 				g_hdb->_gfx->updateVideo();
-			_warpActive = 0;
+			_warpActive = false;
+			_warpMapId = -1;
 
 			Common::String mapString = Common::String::format("MAP%02d", map);
 
@@ -1584,7 +1596,8 @@ void Menu::processInput(int x, int y) {
 				_quitScreen = nullptr;
 
 				_menuActive = true;
-				_quitActive = 0;
+				_quitActive = false;
+				_quitCounter = 0;
 			} else if (_quitTimer < g_hdb->getTimeSlice()) {
 				if (x >= _quitYesX1 && x <= _quitYesX2 && y > _quitYesY1 && y < _quitYesY2) {
 					writeConfig();
@@ -1592,18 +1605,19 @@ void Menu::processInput(int x, int y) {
 				}
 			}
 		} else {
-			if ((_quitActive == 1 || _quitActive == 2) && _quitTimer < g_hdb->getTimeSlice()) {
-				_quitActive++;
+			if ((_quitCounter == 1 || _quitCounter == 2) && _quitTimer < g_hdb->getTimeSlice()) {
+				_quitCounter++;
 				_quitTimer = g_hdb->getTimeSlice() + 1000;
 			} else {
-				if (_quitActive == 3 && (x >= _quitNoX1 && x <= _quitNoX2 && y > _quitNoY1 && y < _quitNoY2 && _quitTimer < g_hdb->getTimeSlice())) {
+				if (_quitCounter == 3 && (x >= _quitNoX1 && x <= _quitNoX2 && y > _quitNoY1 && y < _quitNoY2 && _quitTimer < g_hdb->getTimeSlice())) {
 					g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 					delete _quitScreen;
 					_quitScreen = nullptr;
 
 					_menuActive = true;
-					_quitActive = 0;
-				} else if (_quitActive == 3 && _quitTimer < g_hdb->getTimeSlice()){
+					_quitActive = false;
+					_quitCounter = 0;
+				} else if (_quitCounter == 3 && _quitTimer < g_hdb->getTimeSlice()){
 					writeConfig();
 					g_hdb->quitGame();
 				}
