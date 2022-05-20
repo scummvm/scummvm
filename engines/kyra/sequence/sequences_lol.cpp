@@ -40,7 +40,12 @@ int LoLEngine::processPrologue() {
 		return playDemo();
 	} else {
 		setupPrologueData(true);
-		if (!saveFileLoadable(0) || _flags.isDemo)
+		bool hasSave = false;
+		for (int i = 0; i < 20 && !hasSave; ++i) {
+			if (saveFileLoadable(i)) 
+				hasSave = true;
+		}
+		if (!hasSave || _flags.isDemo)
 			showIntro();
 	}
 
@@ -305,7 +310,7 @@ int LoLEngine::chooseCharacter() {
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
 
-	_screen->loadBitmap("CHAR.CPS", 2, 2, &_screen->getPalette(0));
+	_screen->loadBitmap(_flags.lang == Common::ZH_TWN ? "CHARCHI.CPS" : "CHAR.CPS", 2, 2, &_screen->getPalette(0));
 	_screen->loadBitmap("BACKGRND.CPS", 4, 4, &_screen->getPalette(0));
 
 	if (!_chargenWSA->open("CHARGEN.WSA", 1, 0))

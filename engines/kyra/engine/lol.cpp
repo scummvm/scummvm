@@ -60,7 +60,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 	case Common::EN_ANY:
 	case Common::EN_USA:
 	case Common::EN_GRB:
-		_lang = 0;
 		break;
 
 	case Common::FR_FRA:
@@ -72,18 +71,16 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 		break;
 
 	case Common::ES_ESP:
-		_lang = 0;
 		_langIntern = 2;
 		break;
 
 	case Common::JA_JPN:
-		_lang = 0;
 		_langIntern = 1;
 		break;
 
 	default:
 		warning("unsupported language, switching back to English");
-		_lang = 0;
+		break;
 	}
 
 	_chargenFrameTable = _flags.isTalkie ? _chargenFrameTableTalkie : _chargenFrameTableFloppy;
@@ -661,7 +658,11 @@ uint8 *LoLEngine::getItemIconShapePtr(int index) {
 }
 
 int LoLEngine::mainMenu() {
-	bool hasSave = saveFileLoadable(0);
+	bool hasSave = false;
+	for (int i = 0; i < 20 && !hasSave; ++i) {
+		if (saveFileLoadable(i)) 
+			hasSave = true;
+	}
 
 	MainMenu::StaticData data[] = {
 		// 256 color ASCII mode
@@ -934,6 +935,8 @@ void LoLEngine::writeSettings() {
 	ConfMan.setBool("smooth_scrolling", _smoothScrollingEnabled);
 	ConfMan.setBool("auto_savenames", _autoSaveNamesEnabled);
 
+	static const Common::Language extraLanguages[] = { Common::EN_ANY, Common::JA_JPN, Common::ES_ESP, Common::ZH_TWN };
+
 	switch (_lang) {
 	case 1:
 		_flags.lang = Common::FR_FRA;
@@ -945,12 +948,9 @@ void LoLEngine::writeSettings() {
 
 	case 0:
 	default:
-		if (_langIntern == 1)
-			_flags.lang = Common::JA_JPN;
-		else if (_langIntern == 2)
-			_flags.lang = Common::ES_ESP;
-		else
-			_flags.lang = Common::EN_ANY;
+		assert (_langIntern >= 0 && _langIntern < ARRAYSIZE(extraLanguages));
+		_flags.lang = extraLanguages[_langIntern];
+		break;
 	}
 
 	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG)
