@@ -88,5 +88,5 @@ This file contains scripts and game data used by Ultima engine.
 wintermute.zip:
 This file contains additional graphics resources used by Wintermute engine.
 
-xeen.ccs:
-This file contains all the various strings and figures needed for the games.
+mm.dat:
+This file contains all the various strings and data needed for the Might & Magic games.
