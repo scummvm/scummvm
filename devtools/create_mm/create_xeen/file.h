@@ -33,6 +33,9 @@
 
 namespace Common {
 
+#define MAX_MEM_SIZE 65536
+#define BUFFER_SIZE 16384
+
 enum AccessMode {
 	kFileReadMode = 1,
 	kFileWriteMode = 2
@@ -125,50 +128,6 @@ public:
 	}
 };
 
-class File : public Stream {
-private:
-	::FILE *_f;
-public:
-	File() : _f(nullptr) {}
-	virtual ~File() { close(); }
-
-	bool open(const char *filename, AccessMode mode = kFileReadMode) {
-		_f = fopen(filename, (mode == kFileReadMode) ? "rb" : "wb+");
-		return (_f != NULL);
-	}
-	void close() {
-		if (_f)
-			fclose(_f);
-		_f = nullptr;
-	}
-
-	virtual int seek(int offset, int whence = SEEK_SET) {
-		return fseek(_f, offset, whence);
-	}
-	virtual long read(void *buffer, size_t len) {
-		return fread(buffer, 1, len, _f);
-	}
-	virtual void write(const void *buffer, size_t len) {
-		assert(_f);
-		fwrite(buffer, 1, len, _f);
-	}
-	virtual uint pos() const {
-		return ftell(_f);
-	}
-	virtual uint size() const {
-		uint currentPos = pos();
-		fseek(_f, 0, SEEK_END);
-		uint result = pos();
-		fseek(_f, currentPos, SEEK_SET);
-		return result;
-	}
-	virtual bool eof() const {
-		return feof(_f) != 0;
-	}
-};
-
-#define MAX_MEM_SIZE 65536
-
 class MemFile : public Stream {
 private:
 	byte _data[MAX_MEM_SIZE];
@@ -180,7 +139,8 @@ public:
 	MemFile(const byte *data, size_t size) : _size(size), _offset(0) {
 		memcpy(_data, data, size);
 	}
-	virtual ~MemFile() {}
+	virtual ~MemFile() {
+	}
 
 	bool open() {
 		memset(_data, 0, MAX_MEM_SIZE);
@@ -202,8 +162,9 @@ public:
 		return _offset;
 	}
 	virtual long read(void *buffer, size_t len) {
-		len = MAX(len, _size - _offset);
+		len = MIN(len, _size - _offset);
 		memcpy(buffer, &_data[_offset], len);
+		_offset += len;
 		return len;
 	}
 	virtual void write(const void *buffer, size_t len) {
@@ -222,7 +183,9 @@ public:
 		return _offset >= _size;
 	}
 
-	const byte *getData() const { return _data; }
+	const byte *getData() const {
+		return _data;
+	}
 
 	void syncString(const char *str) {
 		write(str, strlen(str) + 1);
@@ -263,6 +226,70 @@ public:
 	void syncBytes2D(const byte *vals, int count1, int count2) {
 		writeLong(MKTAG(count1, count2, 0, 0));
 		write(vals, count1 * count2);
+	}
+};
+
+class File : public Stream {
+private:
+	::FILE *_f;
+public:
+	File() : _f(nullptr) {}
+	virtual ~File() { close(); }
+
+	bool open(const char *filename, AccessMode mode = kFileReadMode) {
+		if (mode == kFileReadMode) {
+			_f = fopen(filename, "rb");
+		} else {
+			char fname[256];
+			sprintf(fname, "../files/xeen/%s", filename);
+			_f = fopen(fname, "wb+");
+		}
+
+		return (_f != NULL);
+	}
+	void close() {
+		if (_f)
+			fclose(_f);
+		_f = nullptr;
+	}
+
+	virtual int seek(int offset, int whence = SEEK_SET) {
+		return fseek(_f, offset, whence);
+	}
+	virtual long read(void *buffer, size_t len) {
+		return fread(buffer, 1, len, _f);
+	}
+	virtual void write(const void *buffer, size_t len) {
+		assert(_f);
+		fwrite(buffer, 1, len, _f);
+	}
+	virtual uint pos() const {
+		return ftell(_f);
+	}
+	virtual uint size() const {
+		uint currentPos = pos();
+		fseek(_f, 0, SEEK_END);
+		uint result = pos();
+		fseek(_f, currentPos, SEEK_SET);
+		return result;
+	}
+	virtual bool eof() const {
+		return feof(_f) != 0;
+	}
+
+	static void write(const char *fname, MemFile &src) {
+		File f;
+		if (!f.open(fname, kFileWriteMode)) {
+			printf("Could not open %s for writing", fname);
+			exit(1);
+		}
+		src.seek(0);
+		char buffer[BUFFER_SIZE];
+		size_t count = 0;
+
+		while ((count = src.read(buffer, BUFFER_SIZE)) != 0) {
+			f.write(buffer, count);
+		}
 	}
 };
 

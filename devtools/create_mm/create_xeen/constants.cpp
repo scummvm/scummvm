@@ -830,7 +830,7 @@ const char *const LangConstants::MUSIC_FILES2[6][7] = {
 };
 
 
-void LangConstants::writeConstants(Common::String num, CCArchive &cc) {
+void LangConstants::writeConstants(Common::String num) {
 	Common::MemFile file;
 	file.syncString(CLOUDS_CREDITS());
 	file.syncString(DARK_SIDE_CREDITS());
@@ -1195,7 +1195,8 @@ void LangConstants::writeConstants(Common::String num, CCArchive &cc) {
 	file.syncStrings(CLOUDS_MONSTERS(), 91);
 	file.syncStrings(CLOUDS_SPELLS(), 77);
 
-	cc.add("CONSTANTS" + num, file);
+	Common::String fname = "CONSTANTS" + num;
+	Common::File::write(fname.c_str(), file);
 
 	Common::MemFile keys;
 	keys.syncNumber(keyConstants()->dialogsCharInfo()->KEY_ITEM());
@@ -1281,14 +1282,15 @@ void LangConstants::writeConstants(Common::String num, CCArchive &cc) {
 	keys.syncNumber(keyConstants()->cloudsOfXeenMenu()->KEY_SHOW_CREDITS());
 	keys.syncNumber(keyConstants()->cloudsOfXeenMenu()->KEY_VIEW_ENDGAME());
 
-	cc.add("CONSTKEYS" + num, keys);
+	fname = "CONSTKEYS" + num;
+	Common::File::write(fname.c_str(), keys);
 }
 
-void writeConstants(CCArchive &cc) {
+void writeConstants() {
 	EN eng;
-	eng.writeConstants(Common::String::format("_%i", 7 /*Common::EN_ANY */), cc);
+	eng.writeConstants(Common::String::format("_%i", 7 /*Common::EN_ANY */));
 	RU ru;
-	ru.writeConstants(Common::String::format("_%i", 26 /* Common::RU_RUS */), cc);
+	ru.writeConstants(Common::String::format("_%i", 26 /* Common::RU_RUS */));
 	DE de;
-	de.writeConstants(Common::String::format("_%i", 4 /* Common::DE_DEU */), cc);	
+	de.writeConstants(Common::String::format("_%i", 4 /* Common::DE_DEU */));	
 }

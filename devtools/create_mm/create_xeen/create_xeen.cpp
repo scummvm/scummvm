@@ -22,30 +22,57 @@
  // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "cc.h"
 #include "file.h"
+#include "clouds.h"
 #include "swords.h"
+#include "constants.h"
+#include "map.h"
 
-#define MONSTERS_COUNT 150
+void NORETURN_PRE error(const char *s, ...) {
+	va_list ap;
 
-void writeSwordsData(CCArchive &cc, const char *swordsDatName) {
+	va_start(ap, s);
+	vfprintf(stderr, s, ap);
+	va_end(ap);
+
+	fputc('\n', stderr);
+
+	exit(1);
+}
+
+static void writeVersion() {
 	Common::File f;
-	Common::MemFile monsters;
-	const int size = MONSTERS_COUNT * 61;
-	const int32 offset = 0x44200;
-	byte buffer[size];
+	if (!f.open("version.txt", Common::kFileWriteMode))
+		error("Could not create version.txt");
 
-	if (!f.open(swordsDatName, Common::kFileReadMode))
-		error("Could not open '%s'", swordsDatName);
+	f.write("1.0\n", 4);
+	f.close();
+}
 
-	if (f.seek(offset) != 0)
-		error("Failed to seek to 0x%x for '%s'", offset, swordsDatName);
+/**
+ * Creates the different files in the xeen/ subfolder of
+ * the files/ folder. The files folder overall is zipped
+ * up to form the xeen data file
+ */
+int main(int argc, char *argv[]) {
+	if (argc != 3) {
+		error("Format: %s dark.cc \"swords xeen.dat\"", argv[0]);
+	}
 
-	if (f.read(buffer, size) != size)
-		error("Failed to read %d bytes from '%s'", size, swordsDatName);
+	writeVersion();
+	writeConstants();
+	writeMap();
 
-	if (strcmp((const char *)buffer + 0x33, "Slime"))
-		error("Invalid '%s'", swordsDatName);
+	const char *darkName = argv[1];
+	writeCloudsData(darkName);
 
-	monsters.write(buffer, size);
-	cc.add("monsters.swd", monsters);
+	const char *swordsDatName = argv[2];
+	writeSwordsData(swordsDatName);
+
+	printf("File creation done");
+	return 0;
 }

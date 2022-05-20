@@ -22,57 +22,32 @@
  // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "cc.h"
 #include "file.h"
-#include "clouds.h"
 #include "swords.h"
-#include "constants.h"
-#include "map.h"
 
-#define VERSION_NUMBER 5
+#define MONSTERS_COUNT 150
 
-void NORETURN_PRE error(const char *s, ...) {
-	va_list ap;
+extern void NORETURN_PRE error(const char *s, ...);
 
-	va_start(ap, s);
-	vfprintf(stderr, s, ap);
-	va_end(ap);
+void writeSwordsData(const char *swordsDatName) {
+	Common::File f;
+	Common::MemFile monsters;
+	const int size = MONSTERS_COUNT * 61;
+	const int32 offset = 0x44200;
+	byte buffer[size];
 
-	fputc('\n', stderr);
+	if (!f.open(swordsDatName, Common::kFileReadMode))
+		error("Could not open '%s'", swordsDatName);
 
-	exit(1);
-}
+	if (f.seek(offset) != 0)
+		error("Failed to seek to 0x%x for '%s'", offset, swordsDatName);
 
-static void writeVersion(CCArchive &cc) {
-	Common::MemFile f;
-	f.writeLong(VERSION_NUMBER);
-	cc.add("VERSION", f);
-}
+	if (f.read(buffer, size) != size)
+		error("Failed to read %d bytes from '%s'", size, swordsDatName);
 
-int main(int argc, char *argv[]) {
-	if (argc != 3) {
-		error("Format: %s dark.cc \"swords xeen.dat\"", argv[0]);
-	}
+	if (strcmp((const char *)buffer + 0x33, "Slime"))
+		error("Invalid '%s'", swordsDatName);
 
-	Common::File outputFile;
-	if (!outputFile.open("xeen.ccs", Common::kFileWriteMode)) {
-		error("Could not open input file");
-	}
-
-	CCArchive cc(outputFile, kWrite);
-	writeVersion(cc);
-	writeConstants(cc);
-	writeMap(cc);
-
-	const char *darkName = argv[1];
-	writeCloudsData(cc, darkName);
-
-	const char *swordsDatName = argv[2];
-	writeSwordsData(cc, swordsDatName);
-
-	cc.close();
-	return 0;
+	monsters.write(buffer, size);
+	Common::File::write("monsters.swd", monsters);
 }

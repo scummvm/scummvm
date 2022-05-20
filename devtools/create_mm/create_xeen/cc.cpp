@@ -82,65 +82,7 @@ void CCArchive::loadIndex() {
 	delete[] rawIndex;
 }
 
-void CCArchive::saveIndex() {
-	// Fill up the data for the index entries into a raw data block
-	byte *rawIndex = new byte[_index.size() * 8];
-	byte b;
-
-	byte *entryP = rawIndex;
-	uint entryOffset = 8 * _index.size() + 2;
-	for (uint i = 0; i < _index.size(); ++i, entryP += 8) {
-		CCEntry &entry = _index[i];
-		entry._offset = entryOffset;
-		entryOffset += entry._size;
-
-		WRITE_LE_UINT16(&entryP[0], entry._id);
-		WRITE_LE_UINT32(&entryP[2], entry._offset);
-		WRITE_LE_UINT16(&entryP[5], entry._size);
-		entryP[7] = 0;
-	}
-
-	// Encrypt the index
-	int seed = 0xac;
-	for (uint i = 0; i < _index.size() * 8; ++i, seed += 0x67) {
-		b = (rawIndex[i] - seed) & 0xff;
-		b = (byte)((b >> 2) | (b << 6));
-
-		assert(rawIndex[i] == (byte)((((b << 2) | (b >> 6)) + seed) & 0xff));
-		rawIndex[i] = b;
-	}
-
-	// Write out the number of entries and the encrypted index data
-	_file.writeWord(_index.size());
-	_file.write(rawIndex, _index.size() * 8);
-
-	delete[] rawIndex;
-}
-
-void CCArchive::saveEntries() {
-	for (uint idx = 0; idx < _index.size(); ++idx) {
-		CCEntry &ccEntry = _index[idx];
-
-		// Encrypt the entry
-		for (int i = 0; i < ccEntry._size; ++i)
-			ccEntry._data[i] ^= 0x35;
-
-		// Write out the entry
-		_file.seek(ccEntry._offset);
-		_file.write(ccEntry._data, ccEntry._size);
-	}
-}
-
 void CCArchive::close() {
-	if (_mode == kWrite) {
-		saveIndex();
-		saveEntries();
-	}
-}
-
-void CCArchive::add(const Common::String &name, Common::MemFile &f) {
-	assert(_mode == kWrite);
-	_index.push_back(CCEntry(convertNameToId(name), f.getData(), f.size()));
 }
 
 Common::MemFile CCArchive::getMember(const Common::String &name) {

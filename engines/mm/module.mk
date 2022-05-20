@@ -2,6 +2,7 @@ MODULE := engines/mm
 
 MODULE_OBJS := \
 	metaengine.o \
+	utils/engine_data.o \
 	mm1/events.o \
 	mm1/mm1.o \
 	mm1/gfx/gfx.o \

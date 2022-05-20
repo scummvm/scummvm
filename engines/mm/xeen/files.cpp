@@ -27,6 +27,7 @@
 #include "mm/xeen/xeen.h"
 #include "mm/xeen/files.h"
 #include "mm/xeen/saves.h"
+#include "mm/utils/engine_data.h"
 
 namespace MM {
 namespace Xeen {
@@ -266,20 +267,12 @@ bool FileManager::setup() {
 		File::_darkCc : File::_xeenCc;
 	assert(File::_currentArchive);
 
-	// Ensure the custom CC archive is present
-	File f;
-	if (!f.exists("xeen.ccs")) {
-		GUIErrorMessage("Could not find xeen.ccs data file");
+	// Set up the engine data file
+	Common::U32String errMsg;
+	if (!MM::load_engine_data("xeen", 1, 0, errMsg)) {
+		GUIErrorMessage(errMsg);
 		return false;
 	}
-
-	// Verify the version of the CC is correct
-	CCArchive *dataCc = new CCArchive("xeen.ccs", "data", true);
-	if (!f.open("VERSION", *dataCc) || f.readUint32LE() != 5) {
-		GUIErrorMessage("xeen.ccs is out of date");
-		return false;
-	}
-	SearchMan.add("data", dataCc);
 
 	return true;
 }

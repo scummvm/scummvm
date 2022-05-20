@@ -1948,7 +1948,7 @@ public:
 	}
 
 	const char **CLOUDS_MAE_NAMES() {	// mae.cld
-		static const char *_maeNames[] = {
+		static const char *_maeNames[131] = {
 			" ",
 			"\xA6\xA0\xE0\xA0 ",                                             //жара
 			"\xAE\xA3\xAD\xA5\xA9 ",                                         //огней
@@ -2085,7 +2085,7 @@ public:
 	}
 
 	const char **CLOUDS_MIRROR_LOCATIONS() {	// xeenmirr.txt
-		static const char *_mirrLocs[] = {
+		static const char *_mirrLocs[59] = {
 			"\xA2\xA5\xE0\xE2\xA8\xA3\xAE",                                                                            // вертиго
 			"\xAD\xA0\xA9\xE2\xE8\xED\xA4\xAE\xE3",                                                                    // найтшэдоу
 			"\xE0\xA8\xA2\xA5\xE0\xE1\xA8\xE2\xA8",                                                                    // риверсити
@@ -2242,7 +2242,7 @@ public:
 	}
 
 	const char **CLOUDS_MONSTERS() {	// monsters.cld
-		static const char *_monsters[] = {
+		static const char *_monsters[91] = {
 			"\x91\xAB\xA8\xA7\xA5\xAD\xEC ",                                               // Слизень
 			"\x81\xAE\xAB\xEC\xE8\xA0\xEF \xAB\xA5\xE2\xE3\xE7\xA0\xEF \xAC\xEB\xE8\xEC ", // Большая летучая мышь
 			"\x97\xE3\xA4\xAE\xA2\xA8\xE9\xAD\xA0\xEF \xE1\xA0\xE0\xA0\xAD\xE7\xA0 ",      // Чудовищная саранча
@@ -2339,7 +2339,7 @@ public:
 	}
 
 	const char **CLOUDS_SPELLS() {	// spells.cld
-		static const char *_spells[] = {
+		static const char *_spells[77] = {
 			"\x90\xA0\xE1\xAF\xEB\xAB\xA5\xAD\xA8\xA5 \xAA\xA8\xE1\xAB\xAE\xE2\xEB ", // Распыление кислоты
 			"\x8F\xE0\xAE\xA1\xE3\xA6\xA4\xA5\xAD\xA8\xA5 ",                          // Пробуждение
 			"\x8F\xAE\xA2\xA5\xAB\xA8\xE2\xA5\xAB\xEC \xA7\xA2\xA5\xE0\xA5\xA9 ",     // Повелитель зверей

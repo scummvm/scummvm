@@ -59,7 +59,7 @@ static const byte SURFACE_TYPES_255[16] = { 1, 1, 2, 3, 4, 0, 6, 7, 0, 9, 0, 0, 
 /**
  * Write out new mirror entries
  */
-static void writeMirrorText(CCArchive &cc) {
+static void writeMirrorText() {
 	Common::MemFile f;
 
 	for (int idx = 0; idx < MIRROR_COUNT; ++idx) {
@@ -71,13 +71,13 @@ static void writeMirrorText(CCArchive &cc) {
 		f.writeByte(me._direction);
 	}
 
-	cc.add("xeenmirr.ext", f);
+	Common::File::write("xeenmirr.ext", f);
 }
 
 /**
  * Write out the maze
  */
-static void writeMaze(CCArchive &cc) {
+static void writeMaze() {
 	Common::MemFile f;
 
 	// Wall data
@@ -106,26 +106,26 @@ static void writeMaze(CCArchive &cc) {
 	f.writeByte(0, MAP_WIDTH * MAP_HEIGHT / 8);	// Seen tiles
 	f.writeByte(0, MAP_WIDTH * MAP_HEIGHT / 8);	// Stepped on tiles
 
-	cc.add("mazex255.dat", f);
+	Common::File::write("mazex255.dat", f);
 }
 
 /**
  * Write out the maze name
  */
-static void writeMazeName(CCArchive &cc) {
+static void writeMazeName() {
 	Common::MemFile f;
 	char mazeName[33];
 	memset(mazeName, 0, 33);
 	strcpy(mazeName, "ScummVM");
 	f.write(mazeName, 33);
 
-	cc.add("xeenx255.txt", f);
+	Common::File::write("xeenx255.txt", f);
 }
 
 /**
  * Write out maze events
  */
-static void writeMazeEvents(CCArchive &cc) {
+static void writeMazeEvents() {
 	Common::MemFile f;
 
 	// Mirror events
@@ -151,13 +151,13 @@ static void writeMazeEvents(CCArchive &cc) {
 	f.write(BENCH1_EVENTS, 32);
 	f.write(BENCH2_EVENTS, 30);
 
-	cc.add("mazex255.evt", f);
+	Common::File::write("mazex255.evt", f);
 }
 
 /**
  * Write out maze event text
  */
-static void writeMazeText(CCArchive &cc) {
+static void writeMazeText() {
 	Common::MemFile f;
 
 	f.writeString("Where to?");
@@ -165,13 +165,13 @@ static void writeMazeText(CCArchive &cc) {
 	f.writeString("You have done well to find this ancient isle. This will aid you on your journey.");
 	f.writeString("It is my hope that this isle will be but the first of many such new destinations the mirror may take you.");
 
-	cc.add("aazex255.txt", f);
+	Common::File::write("aazex255.txt", f);
 }
 
 /**
  * Write out the monster/object data
  */
-static void writeMonstersObjects(CCArchive &cc) {
+static void writeMonstersObjects() {
 	Common::MemFile f;
 	f.writeByte(8);			// Object sprites
 	f.writeByte(2);
@@ -220,27 +220,27 @@ static void writeMonstersObjects(CCArchive &cc) {
 		}
 	}
 
-	cc.add("mazex255.mob", f);
+	Common::File::write("mazex255.mob", f);
 }
 
 /**
  * Write out the data for the head danger senses
  */
-static void writeHeadData(CCArchive &cc) {
+static void writeHeadData() {
 	Common::MemFile f;
 	f.writeByte(0, MAP_HEIGHT * MAP_HEIGHT * 2);
-	cc.add("aazex255.hed", f);
+	Common::File::write("aazex255.hed", f);
 }
 
 /**
  * Write out the new ScummVM map
  */
-void writeMap(CCArchive &cc) {
-	writeMirrorText(cc);
-	writeMaze(cc);
-	writeMazeName(cc);
-	writeMazeEvents(cc);
-	writeMazeText(cc);
-	writeMonstersObjects(cc);
-	writeHeadData(cc);
+void writeMap() {
+	writeMirrorText();
+	writeMaze();
+	writeMazeName();
+	writeMazeEvents();
+	writeMazeText();
+	writeMonstersObjects();
+	writeHeadData();
 }

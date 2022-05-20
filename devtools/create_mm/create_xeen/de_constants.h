@@ -1941,16 +1941,12 @@ public:
 	}
 
 	const char **CLOUDS_MAE_NAMES() {
-		static const char *_maeNames[] = {
-			"",
-		};
+		static const char *_maeNames[131] = { "" };
 		return _maeNames;
 	}
 
 	const char **CLOUDS_MIRROR_LOCATIONS() {
-		static const char *_mirrLocs[] = {
-			"",
-		};
+		static const char *_mirrLocs[59] = { "" };
 		return _mirrLocs;
 	}
 
@@ -1962,16 +1958,12 @@ public:
 	}
 
 	const char **CLOUDS_MONSTERS() {
-		static const char *_monsters[] = {
-			"",
-		};
+		static const char *_monsters[91] = { "" };
 		return _monsters;
 	}
 
 	const char **CLOUDS_SPELLS() {
-		static const char *_spells[] = {
-			"",
-		};
+		static const char *_spells[77] = { "" };
 		return _spells;
 	}
 
