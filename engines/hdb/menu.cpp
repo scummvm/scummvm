@@ -251,8 +251,6 @@ Menu::Menu() {
 	_versionGfx = nullptr;
 	_warpGfx = nullptr;
 
-	_warpBackoutX = 0;
-	_warpBackoutY = 0;
 	_titleCycle = 0;
 	_titleDelay = 0;
 	_resumeSong = SONG_NONE;
