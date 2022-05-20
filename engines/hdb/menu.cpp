@@ -346,7 +346,7 @@ void Menu::readConfig() {
 		needFlush = true;
 	}
 
-	if (ConfMan.hasKey(CONFIG_CHEAT)) {
+	if (ConfMan.hasKey(CONFIG_CHEAT) && ConfMan.getBool(CONFIG_CHEAT)) {
 		g_hdb->setCheatingOn();
 		debug("Cheating enabled");
 	}
@@ -366,7 +366,7 @@ void Menu::writeConfig() {
 	ConfMan.setInt(CONFIG_MSTONE21, value);
 
 	if (g_hdb->getCheatingOn())
-		ConfMan.set(CONFIG_CHEAT, "1");
+		ConfMan.setBool(CONFIG_CHEAT, true);
 
 	ConfMan.flushToDisk();
 }
