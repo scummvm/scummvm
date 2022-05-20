@@ -3716,15 +3716,16 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("mybigsister", "my big sister.exe", "4dc50ca8b5d2c762fe86a528b09973cf", 90464651),
 	DEMO_ENTRY_EN("mythicalgambitflawlessfatality", "MGFF.exe", "4887d3dca056a0772741b42f66e018fb", 59711760),
 	DEMO_ENTRY_EN("mythicalgambitflawlessfatality", "MGFF.exe", "4887d3dca056a0772741b42f66e018fb", 59710890),
-	DEMO_ENTRY("nefasto", "NefAdventure.exe", "1f9e4ca7abc1833fd7a674842567df0c", 101421026),  // v2.01
-	DEMO_ENTRY("neofeud", "neofeud demo.exe", "6e861b1f476ff7cdf036082abb271329", 1886913453),
-	DEMO_ENTRY("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078743282), // 1.3 itch.io
-	DEMO_ENTRY("neofeud", "Neofeud_LINUX_TEST_9_2_17.ags", "a23f0c48d8128bb7045ab8685665a464", 2076260110), // itch.io Linux
-	DEMO_ENTRY("nightmare", "B&B.exe", "465f972675db2da6040518221af5b0ba", 1521168),
-	DEMO_ENTRY("nightmareframes", "Nightmare Frames Prologue.exe", "046f9ddd1ebe44b01417ab1f55dd0f45", 894156266),  // Steam/itch.io
-	DEMO_ENTRY("nightoftheravingfeminist", "Prueba1.exe", "b25674056fe8cc0b7bf0a4409c5c5bfc", 7015243),
-	DEMO_ENTRY("notravellerreturns", "Test.exe", "f120690b506dd63cd7d1112ea6af2f77", 19656975),
-	DEMO_ENTRY("nostalgik", "NOLGASTIK.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 143891265),
+	DEMO_ENTRY_EN("nefasto", "NefAdventure.exe", "1f9e4ca7abc1833fd7a674842567df0c", 101421026),  // v2.01
+	DEMO_ENTRY_EN("neofeud", "neofeud demo.exe", "6e861b1f476ff7cdf036082abb271329", 1886913453),
+	DEMO_ENTRY_EN("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078743282), // 1.3 itch.io
+	DEMO_ENTRY_EN("neofeud", "Neofeud_LINUX_TEST_9_2_17.ags", "a23f0c48d8128bb7045ab8685665a464", 2076260110), // itch.io Linux
+	DEMO_ENTRY_EN("nightmare", "B&B.exe", "465f972675db2da6040518221af5b0ba", 1521168),
+	DEMO_ENTRY("nightmareframes", "Nightmare Frames Prologue.exe", "046f9ddd1ebe44b01417ab1f55dd0f45", 894156266),  // Steam/itch.io Eng-Esp
+	DEMO_ENTRY("nightmareframes", "Nightmare Frames Prologue.exe", "1965ea84b883d67c781a7e9dc3427e6a", 894702132),  // Steam/itch.io Eng-Esp
+	DEMO_ENTRY_EN("nightoftheravingfeminist", "Prueba1.exe", "b25674056fe8cc0b7bf0a4409c5c5bfc", 7015243),
+	DEMO_ENTRY_EN("notravellerreturns", "Test.exe", "f120690b506dd63cd7d1112ea6af2f77", 19656975),
+	DEMO_ENTRY_EN("nostalgik", "NOLGASTIK.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 143891265),
 	DEMO_ENTRY("oott", "demo_tkc.exe", "54da0ce99f3e8b556db6d236c8ef76ba", 415137576), // Steam
 	DEMO_ENTRY("osdlgs", "OSD - Leather Gear Smooth.exe", "82da2565c456dcfb265ded6fe3189c0b", 114550556),
 	DEMO_ENTRY("osdrots", "Rise of the spirit.exe", "415faaf03c892f5a8ce2c136a8fa3478", 17049026),
@@ -5506,65 +5507,65 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("myfirstquest", "test.exe", "0500aacb6c176d47ac0f8158f055db83", 837473),
 	GAME_ENTRY_EN("mysterioushouse", "mh.exe", "495d45fb8adfd49690ae3b97921feec6", 42400316),
 	GAME_ENTRY_EN("mysticseer", "NickOfTime.exe", "f120690b506dd63cd7d1112ea6af2f77", 4460113),
-	GAME_ENTRY("nakedfear", "NakedFear.exe", "9f68485286be3e9295ecba2e0b4b8784", 128358123),
-	GAME_ENTRY("nanobots", "Nanobots.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 41977727),
-	GAME_ENTRY("nauticell", "Nauticell.exe", "49551ed74971e7422bd188a87bca6e19", 8457064),
-	GAME_ENTRY("necroquest", "necroquest01.exe", "2d111a69de0723f337bad661cb006239", 9545924),
-	GAME_ENTRY_PLATFORM("necroquest", "necroquest01.exe", "6d4adcef07a14b53369d23edf5117252", 12389204, "Deluxe"),
-	GAME_ENTRY_PLATFORM("nedysadventure", "Nedy.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 6463558, "Deluxe"),
-	GAME_ENTRY("nekusnewtrip", "nnt.exe", "c0c1865c3c8369e034095a725ca1ddbf", 35012412),
-	GAME_ENTRY_PLATFORM("nekusnewtrip", "square enix.exe", "a524cbb1c51589903c4043b98917f1d9", 10630694, "Chapter 1"),
-	GAME_ENTRY("nellycootalot", "Nelly Cootalot.exe", "18b284c22010850f79bc5c20054a70c4", 108256323),
-	GAME_ENTRY("nellycootalot", "Nelly.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 198349190),
+	GAME_ENTRY_EN("nakedfear", "NakedFear.exe", "9f68485286be3e9295ecba2e0b4b8784", 128358123),
+	GAME_ENTRY_EN("nanobots", "Nanobots.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 41977727),
+	GAME_ENTRY_EN("nauticell", "Nauticell.exe", "49551ed74971e7422bd188a87bca6e19", 8457064),
+	GAME_ENTRY_EN("necroquest", "necroquest01.exe", "2d111a69de0723f337bad661cb006239", 9545924),
+	GAME_ENTRY_EN_PLATFORM("necroquest", "necroquest01.exe", "6d4adcef07a14b53369d23edf5117252", 12389204, "Deluxe"),
+	GAME_ENTRY_PLATFORM("nedysadventure", "Nedy.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 6463558, "Deluxe"),  //v1.4 Eng-Esp
+	GAME_ENTRY_EN("nekusnewtrip", "nnt.exe", "c0c1865c3c8369e034095a725ca1ddbf", 35012412),
+	GAME_ENTRY_EN_PLATFORM("nekusnewtrip", "square enix.exe", "a524cbb1c51589903c4043b98917f1d9", 10630694, "Chapter 1"),
+	GAME_ENTRY_EN("nellycootalot", "Nelly Cootalot.exe", "18b284c22010850f79bc5c20054a70c4", 108256323),  // v1.5
+	GAME_ENTRY("nellycootalot", "Nelly.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 198349190),  // v1.8 Multi
 	GAME_ENTRY_STEAM("nellycootalot-hd", "Nelly.exe", "521aecdb5343c8d8f1c1000c4c2fa468", 11069524),
 	GAME_ENTRY_STEAM("nellycootalot-hd", "Nelly.exe", "28f22ae60e2f3524665c1d5be60a0bf3", 11069220),
-	GAME_ENTRY("neosaires2070", "Neos Aires 2070 - Sunday Comes First.exe", "76703ac67835bdbfde5b378a147c8ba2", 84186100), // 1.0
-	GAME_ENTRY("neosaires2070", "Neos Aires 2070.exe", "78dd4ca028ee0156b6a093d6d780aa65", 84126492), // 1.1
-	GAME_ENTRY("nerdyquest", "Nerdy Quest.exe", "430eaebb21d406061d67a9972ad33947", 19707725),
-	GAME_ENTRY("nesquest", "NES Quest.exe", "8b72036706da98095057df615d07460b", 20881972),
-	GAME_ENTRY("neveralonehl", "Hotline.exe", "615e73fc1874e92d60a1996c2330ea36", 3808222),
-	GAME_ENTRY("newkidgottasteal", "YoNewKid.exe", "7ddb9e776648faed5a51170d087074e9", 7785618),
-	GAME_ENTRY("newkidgottasteal", "YoNewKid.ags", "6d6c74ff8c514978c5a5e045d2b3f22b", 5298306),
-	GAME_ENTRY("news", "WI-AA.exe", "06a03fe35791b0578068ab1873455463", 29631312),
-	GAME_ENTRY("nexttoevil", "Next to Evil.exe", "67c6422982dfeb22ebbb53ed8469b907", 4279802),
-	GAME_ENTRY("nickitandrun", "NIAREnglish.exe", "b25674056fe8cc0b7bf0a4409c5c5bfc", 14180082),
+	GAME_ENTRY_EN("neosaires2070", "Neos Aires 2070 - Sunday Comes First.exe", "76703ac67835bdbfde5b378a147c8ba2", 84186100), // 1.0
+	GAME_ENTRY_LANG("neosaires2070", "Neos Aires 2070.exe", "78dd4ca028ee0156b6a093d6d780aa65", 84126492, Common::ES_ESP), // 1.1
+	GAME_ENTRY_EN("nerdyquest", "Nerdy Quest.exe", "430eaebb21d406061d67a9972ad33947", 19707725),
+	GAME_ENTRY("nesquest", "NES Quest.exe", "8b72036706da98095057df615d07460b", 20881972),  // En-Fr-Es
+	GAME_ENTRY("neveralonehl", "Hotline.exe", "615e73fc1874e92d60a1996c2330ea36", 3808222),  // Eng-Rus
+	GAME_ENTRY_EN("newkidgottasteal", "YoNewKid.exe", "7ddb9e776648faed5a51170d087074e9", 7785618),
+	GAME_ENTRY_EN("newkidgottasteal", "YoNewKid.ags", "6d6c74ff8c514978c5a5e045d2b3f22b", 5298306),
+	GAME_ENTRY_EN("news", "WI-AA.exe", "06a03fe35791b0578068ab1873455463", 29631312),
+	GAME_ENTRY_EN("nexttoevil", "Next to Evil.exe", "67c6422982dfeb22ebbb53ed8469b907", 4279802),
+	GAME_ENTRY_EN("nickitandrun", "NIAREnglish.exe", "b25674056fe8cc0b7bf0a4409c5c5bfc", 14180082),
 	GAME_ENTRY_LANG("niemandsland", "Das Niemandsland.exe", "430eaebb21d406061d67a9972ad33947", 14852973, Common::DE_DEU),
-	GAME_ENTRY("nightandday", "Night and Day.exe", "430eaebb21d406061d67a9972ad33947", 17187367),  //v1.0
-	GAME_ENTRY("nightandday", "Night and Day.exe", "430eaebb21d406061d67a9972ad33947", 17206287),  //v1.1
-	GAME_ENTRY("nightandday", "Night and Day.exe", "430eaebb21d406061d67a9972ad33947", 17209105),  //v1.2
-	GAME_ENTRY("nightofthetesticle", "testicle2.exe", "18b284c22010850f79bc5c20054a70c4", 145543486),
-	GAME_ENTRY("nightwatch", "NWATCH.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 2451134),
-	GAME_ENTRY("nightwitch", "NightWitch.exe", "9632da1faae3ef66d7ea9dd60cc19440", 28701275),
-	GAME_ENTRY("nightwitch", "NightWitch.ags", "220d7fcf6fc747f1861265c338ff3fdd", 25658951),
-	GAME_ENTRY("nightwitches", "Night Witches.exe", "c1feaa2d7845fbe03d9791e4cae121b3", 245899448),
-	GAME_ENTRY("nightwitches", "Night Witches.ags", "a59c9ce1f40bb5aa71d27dd2d5744170", 242868388),
-	GAME_ENTRY("nightwork", "Nightwork.exe", "f10516e88ec858700804ee69d041aead", 23059420),
+	GAME_ENTRY_EN("nightandday", "Night and Day.exe", "430eaebb21d406061d67a9972ad33947", 17187367),  //v1.0
+	GAME_ENTRY_EN("nightandday", "Night and Day.exe", "430eaebb21d406061d67a9972ad33947", 17206287),  //v1.1
+	GAME_ENTRY_EN("nightandday", "Night and Day.exe", "430eaebb21d406061d67a9972ad33947", 17209105),  //v1.2
+	GAME_ENTRY_EN("nightofthetesticle", "testicle2.exe", "18b284c22010850f79bc5c20054a70c4", 145543486),
+	GAME_ENTRY_EN("nightwatch", "NWATCH.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 2451134),
+	GAME_ENTRY_EN("nightwitch", "NightWitch.exe", "9632da1faae3ef66d7ea9dd60cc19440", 28701275),
+	GAME_ENTRY_EN("nightwitch", "NightWitch.ags", "220d7fcf6fc747f1861265c338ff3fdd", 25658951),
+	GAME_ENTRY_EN("nightwitches", "Night Witches.exe", "c1feaa2d7845fbe03d9791e4cae121b3", 245899448),
+	GAME_ENTRY_EN("nightwitches", "Night Witches.ags", "a59c9ce1f40bb5aa71d27dd2d5744170", 242868388),
+	GAME_ENTRY_EN("nightwork", "Nightwork.exe", "f10516e88ec858700804ee69d041aead", 23059420),
 	GAME_ENTRY_LANG("ninatonnerre", "NinaTonnerre.exe", "a524cbb1c51589903c4043b98917f1d9", 14361859, Common::FR_FRA),
-	GAME_ENTRY("noactionjackson", "current.exe", "3128b9f90e2f954ba704414ae854d10b", 28343366),
-	GAME_ENTRY("noahsquest", "Noah's Quest.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 107188362),
-	GAME_ENTRY("noahsquest", "Noah's Quest.ags", "c6809578c489733b6e1c3f988a167adc", 104708218),
-	GAME_ENTRY("nobodycares", "Nobody Cares.exe", "618d7dce9631229b4579340b964c6810", 20897642),
+	GAME_ENTRY_EN("noactionjackson", "current.exe", "3128b9f90e2f954ba704414ae854d10b", 28343366),
+	GAME_ENTRY_EN("noahsquest", "Noah's Quest.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 107188362),
+	GAME_ENTRY_EN("noahsquest", "Noah's Quest.ags", "c6809578c489733b6e1c3f988a167adc", 104708218),
+	GAME_ENTRY_EN("nobodycares", "Nobody Cares.exe", "618d7dce9631229b4579340b964c6810", 20897642),
 	GAME_ENTRY_EN("nofear", "Where No Fear Was.exe", "f35829c1b06e878863bd10084593a2c9", 153491794),
-	GAME_ENTRY("noiamspartacus", "spartacus.exe", "28f82e420b82d07651b68114f90223c8", 1133879),
-	GAME_ENTRY("noisymountain", "NoisyMountainE.exe", "465f972675db2da6040518221af5b0ba", 8031142),
-	GAME_ENTRY("nomonkeysbanana", "NMB.exe", "36f44e064eab15e502caeb60fd09f52d", 2750366),
-	GAME_ENTRY("norbisquest", "Norbi's quest.exe", "3128b9f90e2f954ba704414ae854d10b", 4912333),
-	GAME_ENTRY("norbisquest15", "Norbi 1,5.exe", "f120690b506dd63cd7d1112ea6af2f77", 5455598),
-	GAME_ENTRY("norbisquest2", "Norbi 2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 14114728),
-	GAME_ENTRY("norbiwinterspecial", "NWS.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 10149860),
-	GAME_ENTRY("normalday", "Normal.exe", "465f972675db2da6040518221af5b0ba", 2401147),
-	GAME_ENTRY("normancooks", "NORMAN.exe", "4d17844029d8910fbaae1bdc99e250f2", 9397734),
-	GAME_ENTRY("norserunereader", "NorseRuneReader.exe", "f120690b506dd63cd7d1112ea6af2f77", 2111273),
-	GAME_ENTRY("nosferatu", "Nos.exe", "9cf51833e787cc919837d9a8bd8fc14c", 1680823),
-	GAME_ENTRY("notetoself", "elandra_nts.exe", "7e706ca442dd1277f09480b9ba08a1ec", 7176224),
-	GAME_ENTRY("notexplainable", "not the explanable.exe", "82da2565c456dcfb265ded6fe3189c0b", 125719833),
-	GAME_ENTRY("notfine", "NotFine.exe", "615e73fc1874e92d60a1996c2330ea36", 4974090),
-	GAME_ENTRY("noughtscrosses", "Noughts.exe", "615e73fc1874e92d60a1996c2330ea36", 2159904),
-	GAME_ENTRY("nsfware", "NSFWare Arcade Version.exe", "495d45fb8adfd49690ae3b97921feec6", 300940923),  // Windows
-	GAME_ENTRY("nsfware", "NSFWare Arcade Version.ags", "ff5e0639e60a09b037f271644cdafe8b", 298460267),  // Linux
-	GAME_ENTRY("ntgtfoi", "NTGTFOI.exe", "ed54d3b6e0d4532028d1cbc83c397e5f", 60697898),
-	GAME_ENTRY("nukemdukem", "Nukem.exe", "465f972675db2da6040518221af5b0ba", 2112440),
-	GAME_ENTRY("numberrescue", "NumberRescue.exe", "0241777c2537fc5d077c05cde10bfa9f", 6442933), //v1.07
+	GAME_ENTRY_EN("noiamspartacus", "spartacus.exe", "28f82e420b82d07651b68114f90223c8", 1133879),
+	GAME_ENTRY_EN("noisymountain", "NoisyMountainE.exe", "465f972675db2da6040518221af5b0ba", 8031142),
+	GAME_ENTRY_EN("nomonkeysbanana", "NMB.exe", "36f44e064eab15e502caeb60fd09f52d", 2750366),
+	GAME_ENTRY("norbisquest", "Norbi's quest.exe", "3128b9f90e2f954ba704414ae854d10b", 4912333),  // Eng-Hun
+	GAME_ENTRY("norbisquest15", "Norbi 1,5.exe", "f120690b506dd63cd7d1112ea6af2f77", 5455598),  // Eng-Hun
+	GAME_ENTRY("norbisquest2", "Norbi 2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 14114728),  // Eng-Hun
+	GAME_ENTRY("norbiwinterspecial", "NWS.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 10149860),  // Eng-Hun
+	GAME_ENTRY("normalday", "Normal.exe", "465f972675db2da6040518221af5b0ba", 2401147),  // Eng-Rus
+	GAME_ENTRY_EN("normancooks", "NORMAN.exe", "4d17844029d8910fbaae1bdc99e250f2", 9397734),
+	GAME_ENTRY_EN("norserunereader", "NorseRuneReader.exe", "f120690b506dd63cd7d1112ea6af2f77", 2111273),
+	GAME_ENTRY_EN("nosferatu", "Nos.exe", "9cf51833e787cc919837d9a8bd8fc14c", 1680823),
+	GAME_ENTRY_EN("notetoself", "elandra_nts.exe", "7e706ca442dd1277f09480b9ba08a1ec", 7176224),
+	GAME_ENTRY_EN("notexplainable", "not the explanable.exe", "82da2565c456dcfb265ded6fe3189c0b", 125719833),
+	GAME_ENTRY_EN("notfine", "NotFine.exe", "615e73fc1874e92d60a1996c2330ea36", 4974090),
+	GAME_ENTRY_EN("noughtscrosses", "Noughts.exe", "615e73fc1874e92d60a1996c2330ea36", 2159904),
+	GAME_ENTRY_EN("nsfware", "NSFWare Arcade Version.exe", "495d45fb8adfd49690ae3b97921feec6", 300940923),  // Windows
+	GAME_ENTRY_EN("nsfware", "NSFWare Arcade Version.ags", "ff5e0639e60a09b037f271644cdafe8b", 298460267),  // Linux
+	GAME_ENTRY_EN("ntgtfoi", "NTGTFOI.exe", "ed54d3b6e0d4532028d1cbc83c397e5f", 60697898),
+	GAME_ENTRY_EN("nukemdukem", "Nukem.exe", "465f972675db2da6040518221af5b0ba", 2112440),
+	GAME_ENTRY_EN("numberrescue", "NumberRescue.exe", "0241777c2537fc5d077c05cde10bfa9f", 6442933), //v1.07
 	GAME_ENTRY_EN("obsession", "Obsession.exe", "387ff720e746ae46e93f463fd58d77a4", 12874285), //v1.0.3
 	GAME_ENTRY_EN("obsession", "Obsession.ags", "c3c9c5e7446541a79ed010cc0e0bb860", 10382365), //v1.0.3
 	GAME_ENTRY("odottamaton", "Odottamaton.exe", "9d9e5ea323793fc526b1533d78c4f9c6", 23822268),
