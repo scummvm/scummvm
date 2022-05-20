@@ -646,7 +646,7 @@ void Menu::drawMenu() {
 
 			// title logo
 			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
-			_menuBackoutGfx->drawMasked(_backoutX, g_hdb->_menu->_backoutY);
+			_menuBackoutGfx->drawMasked(_backoutX, _backoutY);
 		}
 	} else if (_optionsActive) {
 		//-------------------------------------------------------------------
@@ -711,7 +711,7 @@ void Menu::drawMenu() {
 
 			// title logo
 			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
-			_menuBackoutGfx->drawMasked(_backoutX, g_hdb->_menu->_backoutY);
+			_menuBackoutGfx->drawMasked(_backoutX, _backoutY);
 
 			// Ignore Controls Screen Button
 			//_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), _mControlsY);
@@ -756,7 +756,7 @@ void Menu::drawMenu() {
 			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
 			// CHOOSE SLOT screen
 			_modeLoadGfx->drawMasked(centerPic(_modeLoadGfx), _oBannerY);
-			_menuBackoutGfx->drawMasked(_backoutX, g_hdb->_menu->_backoutY);
+			_menuBackoutGfx->drawMasked(_backoutX, _backoutY);
 
 			if (!g_hdb->isPPC()) {
 				if (_saveGames[kAutoSaveSlot].seconds)
@@ -802,7 +802,7 @@ void Menu::drawMenu() {
 		drawWarpScreen();
 		// title logo
 		_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
-		_menuBackoutGfx->drawMasked(_warpBackoutX, g_hdb->_menu->_warpBackoutY);
+		_menuBackoutGfx->drawMasked(_warpBackoutX, _warpBackoutY);
 
 		Common::String textString;
 		for (int i = 0; i < 10; i++) {
@@ -1373,7 +1373,7 @@ void Menu::processInput(int x, int y) {
 		if (!g_hdb->getCheatingOn())
 			open = (x >= _nebulaX && x < _nebulaX + 16 && y >= _nebulaY && y < _nebulaY + 16);
 		else
-			open = (y > g_hdb->_menu->_menuExitY && x < _menuExitXLeft);
+			open = (y > _menuExitY && x < _menuExitXLeft);
 
 		if (open) {
 
@@ -1389,7 +1389,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if (y >= g_hdb->_menu->_menuExitY || y < _menuExitYTop || xit) {
+		if (y >= _menuExitY || y < _menuExitYTop || xit) {
 			_optionsScrolling = true;
 			_optionsXV = -5;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
@@ -1402,7 +1402,7 @@ void Menu::processInput(int x, int y) {
 			_newgameActive = false;
 			g_hdb->changeGameState();
 			// that's it!  the Game Loop takes over from here...
-		} else if (y >= _modeActionY - 10 && y <= g_hdb->_menu->_menuExitY) {
+		} else if (y >= _modeActionY - 10 && y <= _menuExitY) {
 			// ACTION MODE area
 			g_hdb->setActionMode(1);
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
@@ -1458,7 +1458,7 @@ void Menu::processInput(int x, int y) {
 				g_hdb->_sound->setVoiceStatus(value);
 				g_hdb->_sound->playSound(SND_GUI_INPUT);
 			}
-		} else if (y >= g_hdb->_menu->_menuExitY || y < _menuExitYTop || xit) {
+		} else if (y >= _menuExitY || y < _menuExitYTop || xit) {
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 			_optionsScrolling = true;
 			_optionsXV = -5;
@@ -1477,7 +1477,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if (y >= g_hdb->_menu->_menuExitY + 15 || y < _menuExitYTop || xit) {
+		if (y >= _menuExitY + 15 || y < _menuExitYTop || xit) {
 			_optionsScrolling = true;
 			_optionsXV = -5;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
@@ -1533,7 +1533,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if ((y >= g_hdb->_menu->_menuExitY && x < _menuExitXLeft) || xit) {
+		if ((y >= _menuExitY && x < _menuExitXLeft) || xit) {
 			_menuActive = true;
 			_warpActive = false;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
