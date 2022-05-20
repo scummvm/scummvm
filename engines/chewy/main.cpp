@@ -1920,7 +1920,7 @@ ChewyFont::ChewyFont(Common::String filename) {
 	_displayWidth = _dataWidth;
 	_displayHeight = _dataHeight;
 
-	_fontSurface.create(_dataWidth * _count, _dataHeight, ::Graphics::PixelFormat::createFormatCLUT8());
+	_fontSurface.create(_dataWidth * _count, _dataHeight, Graphics::PixelFormat::createFormatCLUT8());
 
 	int bitIndex = 7;
 
@@ -1956,13 +1956,13 @@ void ChewyFont::setDeltaX(uint16 deltaX) {
 	_deltaX = deltaX;
 }
 
-::Graphics::Surface *ChewyFont::getLine(const Common::String &texts) {
+Graphics::Surface *ChewyFont::getLine(const Common::String &texts) {
 	Graphics::Surface *line = new Graphics::Surface();
 	if (texts.size() == 0)
 		return line;
 
 	Common::Rect subrect(0, 0, _dataWidth, _dataHeight);
-	line->create(texts.size() * _deltaX, _dataHeight, ::Graphics::PixelFormat::createFormatCLUT8());
+	line->create(texts.size() * _deltaX, _dataHeight, Graphics::PixelFormat::createFormatCLUT8());
 	line->fillRect(Common::Rect(line->w, line->h), 0xFF);
 
 	for (uint i = 0; i < texts.size(); i++) {
@@ -1973,7 +1973,7 @@ void ChewyFont::setDeltaX(uint16 deltaX) {
 	return line;
 }
 
-::Graphics::Surface *FontMgr::getLine(const Common::String &texts) {
+Graphics::Surface *FontMgr::getLine(const Common::String &texts) {
 	return _font->getLine(texts);
 }
 

@@ -107,7 +107,7 @@ void CfoDecoder::CfoVideoTrack::readHeader() {
 #define FRAME_TYPE 0xF1FA
 #define CUSTOM_FRAME_TYPE 0xFAF1
 
-const ::Graphics::Surface *CfoDecoder::CfoVideoTrack::decodeNextFrame() {
+const Graphics::Surface *CfoDecoder::CfoVideoTrack::decodeNextFrame() {
 	uint16 frameType;
 
 	// Read chunk

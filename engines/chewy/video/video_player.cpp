@@ -68,7 +68,7 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 
 	while (!g_engine->shouldQuit() && !cfoDecoder->endOfVideo() && !skipVideo && keepPlaying) {
 		if (cfoDecoder->needsUpdate()) {
-			const ::Graphics::Surface *frame = cfoDecoder->decodeNextFrame();
+			const Graphics::Surface *frame = cfoDecoder->decodeNextFrame();
 			if (frame) {
 				const byte *srcP = (const byte *)frame->getPixels();
 				byte *destP = (byte *)g_screen->getPixels();
