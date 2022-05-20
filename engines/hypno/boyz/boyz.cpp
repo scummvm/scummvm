@@ -304,17 +304,17 @@ void BoyzEngine::loadAssets() {
 
 	_maxHealth = 100;
 	_civiliansShoot = 0;
-	_warningAnimals = "warnings/w01s.smk";
-	_warningCivilians.push_back("warnings/w02s.smk");
-	_warningCivilians.push_back("warnings/w03s.smk");
-	_warningCivilians.push_back("warnings/w04s.smk");
-	_warningCivilians.push_back("warnings/w05s.smk");
+	_warningVideosDay.push_back("");
+	_warningVideosDay.push_back("warnings/w01s.smk");
+	_warningVideosDay.push_back("warnings/w02s.smk");
+	_warningVideosDay.push_back("warnings/w03s.smk");
+	_warningVideosDay.push_back("warnings/w04s.smk");
+	_warningVideosDay.push_back("warnings/w05s.smk");
+	_warningVideosDay.push_back("warnings/w06s.smk");
+	_warningVideosDay.push_back("warnings/w07s.smk");
 
-	_warningFriendlySoldiers.push_back("warnings/w06s.smk");
-	_warningFriendlySoldiers.push_back("warnings/w07s.smk");
-
-	_warningAlarmDay.push_back("warnings/w10s.smk");
-	_warningAlarmDay.push_back("warnings/w11s.smk");
+	_warningAlarmVideos.push_back("warnings/w10s.smk");
+	_warningAlarmVideos.push_back("warnings/w11s.smk");
 
 	_warningHostage = "warnings/w08s.smk";
 

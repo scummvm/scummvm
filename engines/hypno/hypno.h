@@ -592,11 +592,11 @@ public:
 	uint32 _currentActor;
 	uint32 _currentWeapon;
 	uint32 _civiliansShoot;
-	Filename _warningAnimals;
+	Common::Array<Filename> _warningVideosDay;
+	Common::Array<Filename> _warningVideosNight;
+	Common::Array<Filename> _warningAlarmVideos;
 	Filename _warningHostage;
-	Common::Array<Filename> _warningCivilians;
-	Common::Array<Filename> _warningFriendlySoldiers;
-	Common::Array<Filename> _warningAlarmDay;
+
 	Common::Array<Filename> _deathVideo;
 	Common::HashMap<Common::String, bool> _shootsDestroyed;
 

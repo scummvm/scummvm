@@ -327,13 +327,8 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 			return false;
 		} else if (_shoots[i].nonHostile && !secondary) {
 
-			Common::String filename;
-			if (_shoots[i].isAnimal)
-				filename = _warningAnimals;
-			else {
-				filename = _warningCivilians[_civiliansShoot];
-				_civiliansShoot++;
-			}
+			Common::String filename = _warningVideosDay[_shoots[i].warningVideoIdx];
+			_civiliansShoot++;
 
 			_background->decoder->pauseVideo(true);
 			MVideo video(filename, Common::Point(0, 0), false, true, false);
@@ -417,11 +412,11 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		runIntro(video);
 		_health = 0; // TODO: not sure about this
 		return;
-	} else if (s->name.contains("ALARM")) {
+	} else if (s->name.hasPrefix("ALARM")) {
 		if (_background->decoder->getCurFrame() > int(s->missedAnimation))
 			return;
 		_background->decoder->pauseVideo(true);
-		MVideo video(_warningAlarmDay.front(), Common::Point(0, 0), false, true, false);
+		MVideo video(_warningAlarmVideos.front(), Common::Point(0, 0), false, true, false);
 		disableCursor();
 		runIntro(video);
 		_health = 0;
@@ -431,6 +426,7 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	if (s->missedAnimation == 0) {
 		return;
 	} else if (s->missedAnimation == uint32(-1)) {
+		debugC(1, kHypnoDebugArcade, "Jumping to end of level");
 		_skipLevel = true;
 	} else if (s->missedAnimation == uint32(-1000)) {
 		_health = 0;
@@ -442,6 +438,7 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		}
 		if (_background->decoder->getCurFrame() > missedAnimation)
 			return; // Too late for this
+		debugC(1, kHypnoDebugArcade, "Jumping to: %d", missedAnimation);
 		_background->decoder->forceSeekToFrame(missedAnimation);
 		_masks->decoder->forceSeekToFrame(missedAnimation);
 	}

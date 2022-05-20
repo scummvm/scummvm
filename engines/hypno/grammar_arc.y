@@ -350,6 +350,8 @@ bline: FNTOK FILENAME {
 	| DTOK LTOK  { debugC(1, kHypnoDebugParser, "D L");
 	}
 	| J0TOK NUM {
+		assert($2 > 0);
+		shoot->warningVideoIdx = $2;
 		debugC(1, kHypnoDebugParser, "J0 %d", $2);
 	}
 	| FNTOK NONETOK {
@@ -520,12 +522,6 @@ bline: FNTOK FILENAME {
 	| KTOK { debugC(1, kHypnoDebugParser, "K"); }
 	| KTOK NUM { debugC(1, kHypnoDebugParser, "K %d", $2);
 		FrameInfo fi($2, 1);
-		int bodyFramesSize = shoot->bodyFrames.size();
-		if ($2 > 0 && bodyFramesSize > 0) { // Correct last bodyFrame length
-			int start = shoot->bodyFrames[bodyFramesSize - 1].start;
-			assert($2 > start);
-			shoot->bodyFrames[bodyFramesSize - 1].length = $2 - start;
-		}
 		shoot->explosionFrames.push_back(fi);
 	}
 	| KTOK NUM NUM NUM {
