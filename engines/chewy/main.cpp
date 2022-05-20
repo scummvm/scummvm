@@ -1957,12 +1957,17 @@ void ChewyFont::setDeltaX(uint16 deltaX) {
 }
 
 ::Graphics::Surface *ChewyFont::getLine(const Common::String &texts) {
-	::Graphics::Surface *line = new ::Graphics::Surface();
-	line->create(texts.size() * _dataWidth, _dataHeight, ::Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::Surface *line = new Graphics::Surface();
+	if (texts.size() == 0)
+		return line;
+
+	Common::Rect subrect(0, 0, _dataWidth, _dataHeight);
+	line->create(texts.size() * _deltaX, _dataHeight, ::Graphics::PixelFormat::createFormatCLUT8());
+	line->fillRect(Common::Rect(line->w, line->h), 0xFF);
 
 	for (uint i = 0; i < texts.size(); i++) {
-		uint x = (texts[i] - _first) * _dataWidth;
-		line->copyRectToSurface(_fontSurface, i * _dataWidth, 0, Common::Rect(x, 0, x + _dataWidth, _dataHeight));
+		subrect.moveTo((texts[i] - _first) * _dataWidth, 0);
+		line->copyRectToSurface(_fontSurface, i * (_deltaX - 2), 0, subrect);
 	}
 
 	return line;
