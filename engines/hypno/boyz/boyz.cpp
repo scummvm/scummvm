@@ -113,7 +113,7 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c355.mi_", "c36.mi_", "??", "");
 	loadArcadeLevel("c36.mi_", "c41.mi_", "??", "");
 	loadArcadeLevel("c41.mi_", "c42.mi_", "??", "");
-	//loadArcadeLevel("c42.mi_", "c51.mi_", "??", "");
+	loadArcadeLevel("c42.mi_", "c51.mi_", "??", "");
 
 	loadArcadeLevel("c51.mi_", "c52.mi_", "??", "");
 	loadArcadeLevel("c52.mi_", "c53.mi_", "??", "");

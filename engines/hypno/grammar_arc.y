@@ -347,8 +347,8 @@ bline: FNTOK FILENAME {
 		shoot->playInteractionAudio = true;
 		debugC(1, kHypnoDebugParser, "AB %d", $2);
 	}
-	| DTOK LTOK  { debugC(1, kHypnoDebugParser, "D L");
-	}
+	| DTOK LTOK  { debugC(1, kHypnoDebugParser, "D L"); }
+	| DTOK RTOK  { debugC(1, kHypnoDebugParser, "D R"); }
 	| J0TOK NUM {
 		assert($2 > 0);
 		shoot->warningVideoIdx = $2;

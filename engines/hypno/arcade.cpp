@@ -31,14 +31,16 @@ namespace Hypno {
 extern int parse_arc(const char *);
 
 void HypnoEngine::splitArcadeFile(const Common::String &filename, Common::String &arc, Common::String &list) {
+	debugC(1, kHypnoDebugParser, "Splitting %s", filename.c_str());
 	Common::File file;
 	if (!file.open(filename.c_str()))
 		error("Failed to open %s", filename.c_str());
 
 	while (!file.eos()) {
 		byte x = file.readByte();
+		byte p = arc.lastChar();
 		arc += x;
-		if (x == 'X') {
+		if (x == 'X' && p == '\n') {
 			while (!file.eos()) {
 				x = file.readByte();
 				if (x == 'Y' && list.size() > 0 && list[list.size()-1] == '\n')
