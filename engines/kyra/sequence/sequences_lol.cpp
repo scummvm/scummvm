@@ -26,8 +26,6 @@
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
 
-#include "base/version.h"
-
 #include "common/system.h"
 
 namespace Kyra {
@@ -60,7 +58,7 @@ int LoLEngine::processPrologue() {
 
 	preInit();
 
-	Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+	Common::String versionString = "ScummVM " + _versionString;
 
 	int processSelection = -1;
 	while (!shouldQuit() && processSelection == -1) {

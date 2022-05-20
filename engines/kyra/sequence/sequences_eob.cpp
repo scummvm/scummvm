@@ -32,8 +32,6 @@
 #include "common/system.h"
 #include "common/substream.h"
 
-#include "base/version.h"
-
 namespace Kyra {
 
 class EoBSeqPlayerCommon {
@@ -2172,7 +2170,7 @@ int EoBEngine::mainMenu() {
 			else
 				_screen->setScreenPalette(_screen->getPalette(0));
 
-			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+			Common::String versionString = "ScummVM " + _versionString;
 
 			if (_flags.platform == Common::kPlatformSegaCD) {
 				_txt->clearDim(3);
