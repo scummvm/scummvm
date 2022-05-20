@@ -2273,6 +2273,13 @@ public:
 
 	void handleDragMotion(Runtime *runtime, const Point16 &initialOrigin, const Point16 &targetOrigin);
 
+	struct OffsetTranslateTaskData {
+		int32 dx;
+		int32 dy;
+	};
+
+	VThreadState offsetTranslateTask(const OffsetTranslateTaskData &data);
+
 	virtual void render(Window *window) = 0;
 
 protected:

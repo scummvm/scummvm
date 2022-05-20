@@ -300,7 +300,12 @@ private:
 
 class VectorMotionModifier : public Modifier {
 public:
+	~VectorMotionModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::VectorMotionModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Vector Modifier"; }
@@ -308,11 +313,23 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	void linkInternalReferences(ObjectLinkingScope *scope) override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
+	void trigger(Runtime *runtime);
 
 	Event _enableWhen;
 	Event _disableWhen;
 
 	DynamicValue _vec;
+	Common::WeakPtr<Modifier> _vecVar;
+
+	AngleMagVector _resolvedVector;
+	uint16 _subpixelX;
+	uint16 _subpixelY;
+
+	Common::SharedPtr<ScheduledEvent> _scheduledEvent;
+	uint64 _lastTickTime;
 };
 
 class SceneTransitionModifier : public Modifier {

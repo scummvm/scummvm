@@ -657,6 +657,13 @@ VThreadState DragMotionModifier::consumeMessage(Runtime *runtime, const Common::
 	return kVThreadReturn;
 }
 
+VectorMotionModifier::~VectorMotionModifier() {
+	if (_scheduledEvent) {
+		_scheduledEvent->cancel();
+		_scheduledEvent.reset();
+	}
+}
+
 bool VectorMotionModifier::load(ModifierLoaderContext &context, const Data::VectorMotionModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -667,8 +674,123 @@ bool VectorMotionModifier::load(ModifierLoaderContext &context, const Data::Vect
 	return true;
 }
 
+bool VectorMotionModifier::respondsToEvent(const Event &evt) const {
+	return _enableWhen.respondsTo(evt) || _disableWhen.respondsTo(evt);
+}
+
+VThreadState VectorMotionModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_enableWhen.respondsTo(msg->getEvent())) {
+		DynamicValue vec;
+		if (_vec.getType() == DynamicValueTypes::kIncomingData) {
+			vec = msg->getValue();
+		} else if (!_vecVar.expired()) {
+			Modifier *modifier = _vecVar.lock().get();
+
+			if (!modifier->isVariable()) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+				if (Debugger *debugger = runtime->debugGetDebugger())
+					debugger->notify(kDebugSeverityError, "Vector variable reference was to a non-variable");
+#endif
+				return kVThreadError;
+			}
+
+			VariableModifier *varModifier = static_cast<VariableModifier *>(modifier);
+			varModifier->varGetValue(nullptr, vec);
+		} else {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+			if (Debugger *debugger = runtime->debugGetDebugger())
+				debugger->notify(kDebugSeverityError, "Vector variable reference wasn't resolved");
+#endif
+			return kVThreadError;
+		}
+
+		if (vec.getType() != DynamicValueTypes::kVector) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+			if (Debugger *debugger = runtime->debugGetDebugger())
+				debugger->notify(kDebugSeverityError, "Vector value was not actually a vector");
+#endif
+			return kVThreadError;
+		}
+
+		_resolvedVector = vec.getVector();
+
+		if (!_scheduledEvent) {
+			_lastTickTime = runtime->getPlayTime();
+			_subpixelX = 0;
+			_subpixelY = 0;
+			_scheduledEvent = runtime->getScheduler().scheduleMethod<VectorMotionModifier, &VectorMotionModifier::trigger>(_lastTickTime + 1, this);
+			return kVThreadReturn;
+		}
+	}
+	if (_disableWhen.respondsTo(msg->getEvent())) {
+		if (_scheduledEvent) {
+			_scheduledEvent->cancel();
+			_scheduledEvent.reset();
+		}
+		return kVThreadReturn;
+	}
+
+	return kVThreadReturn;
+}
+
+void VectorMotionModifier::trigger(Runtime *runtime) {
+	uint64 currentTime = runtime->getPlayTime();
+	_scheduledEvent = runtime->getScheduler().scheduleMethod<VectorMotionModifier, &VectorMotionModifier::trigger>(currentTime + 1, this);
+
+	double radians = _resolvedVector.angleDegrees * (M_PI / 180.0);
+
+	// Distance is per-tick, which is 1/60 of a sec, so the multiplier is 60.0/1000.0 or 0.06
+	// We then scale the entire thing up by 2^64, so the result is 60*65536/1000
+	double distance = static_cast<double>(currentTime - _lastTickTime) * _resolvedVector.magnitude * 3932.16;
+
+	int32 dx = static_cast<int32>(cos(radians) * distance) + static_cast<int32>(_subpixelX);
+	int32 dy = static_cast<int32>(-sin(radians) * distance) + static_cast<int32>(_subpixelY);
+	_subpixelX = (dx & 0xffff);
+	_subpixelY = (dy & 0xffff);
+
+	dx -= _subpixelX;
+	dy -= _subpixelY;
+
+	dx /= 65536;
+	dy /= 65536;
+
+	Structural *structural = findStructuralOwner();
+	if (structural->isElement()) {
+		Element *element = static_cast<Element *>(structural);
+		if (element->isVisual()) {
+			VisualElement *visual = static_cast<VisualElement *>(element);
+
+			VisualElement::OffsetTranslateTaskData *taskData = runtime->getVThread().pushTask("VisualElement::offsetTranslateTask", visual, &VisualElement::offsetTranslateTask);
+			taskData->dx = dx;
+			taskData->dy = dy;
+		}
+	}
+
+	_lastTickTime = currentTime;
+}
+
 Common::SharedPtr<Modifier> VectorMotionModifier::shallowClone() const {
-	return Common::SharedPtr<Modifier>(new VectorMotionModifier(*this));
+	Common::SharedPtr<VectorMotionModifier> clone(new VectorMotionModifier(*this));
+	clone->_scheduledEvent.reset();
+	return clone;
+}
+
+void VectorMotionModifier::linkInternalReferences(ObjectLinkingScope *scope) {
+	if (_vec.getType() == DynamicValueTypes::kVariableReference) {
+		const VarReference &varRef = _vec.getVarReference();
+		Common::WeakPtr<RuntimeObject> objRef = scope->resolve(varRef.guid, *varRef.source, false);
+
+		RuntimeObject *obj = objRef.lock().get();
+		if (obj == nullptr || !obj->isModifier()) {
+			warning("Vector motion modifier source was set to a variable, but the variable reference was invalid");
+		} else {
+			_vecVar = objRef.staticCast<Modifier>();
+		}
+	}
+}
+
+void VectorMotionModifier::visitInternalReferences(IStructuralReferenceVisitor* visitor) {
+	visitor->visitWeakModifierRef(_vecVar);
 }
 
 bool SceneTransitionModifier::load(ModifierLoaderContext &context, const Data::SceneTransitionModifier &data) {

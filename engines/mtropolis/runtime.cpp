@@ -6262,6 +6262,11 @@ void VisualElement::handleDragMotion(Runtime *runtime, const Point16 &initialPoi
 	}
 }
 
+VThreadState VisualElement::offsetTranslateTask(const OffsetTranslateTaskData& data) {
+	offsetTranslate(data.dx, data.dy, false);
+	return kVThreadReturn;
+}
+
 MiniscriptInstructionOutcome VisualElement::scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result) {
 	// FIXME: Need to make this fire Show/Hide events!
 	if (result.getType() == DynamicValueTypes::kBoolean) {

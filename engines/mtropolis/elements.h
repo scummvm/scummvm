@@ -99,6 +99,7 @@ private:
 	MiniscriptInstructionOutcome scriptSetRangeEnd(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptRangeWriteRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
 	MiniscriptInstructionOutcome scriptSetVolume(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetTimestamp(MiniscriptThread *thread, const DynamicValue &value);
 
 	MiniscriptInstructionOutcome scriptSetRangeTyped(MiniscriptThread *thread, const IntRange &range);
 
