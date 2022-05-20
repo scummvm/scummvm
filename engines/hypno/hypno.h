@@ -567,6 +567,8 @@ public:
 	private:
 	void runMainMenu(Code *code);
 	void runRetryMenu(Code *code);
+	Common::String firstLevelTerritory(const Common::String &level);
+
 
 	int _ammoTeam[7];
 	int _healthTeam[7];

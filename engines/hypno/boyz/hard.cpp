@@ -99,7 +99,7 @@ void BoyzEngine::runRetryMenu(Code *code) {
 
 	Common::Event event;
 	byte *palette;
-	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 3, &palette);
+	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 5, &palette);
 	loadPalette(palette, 0, 256);
 	drawImage(*menu, 0, 0, false);
 	bool cont = true;
@@ -116,6 +116,15 @@ void BoyzEngine::runRetryMenu(Code *code) {
 				if (event.kbd.keycode == Common::KEYCODE_s) {
 					_nextLevel = _checkpoint;
 					cont = false;
+				} else if (event.kbd.keycode == Common::KEYCODE_t) {
+					// Restore initial health for the team
+					for (int i = 0; i < 7; i++)
+						_healthTeam[i] = _maxHealth;
+
+					_nextLevel = firstLevelTerritory(_checkpoint);
+					cont = false;
+				} else if (event.kbd.keycode == Common::KEYCODE_q) {
+					quitGame();
 				}
 				break;
 
@@ -132,5 +141,19 @@ void BoyzEngine::runRetryMenu(Code *code) {
 	delete menu;
 }
 
+Common::String BoyzEngine::firstLevelTerritory(const Common::String &level) {
+	if (Common::matchString(level.c_str(), "c1#.mi_"))
+		return "c19.mi_";
+	else if (Common::matchString(level.c_str(), "c2#.mi_"))
+		return "c21.mi_";
+	else if (Common::matchString(level.c_str(), "c3#.mi_"))
+		return "c31.mi_";
+	else if (Common::matchString(level.c_str(), "c4#.mi_"))
+		return "c41.mi_";
+	else if (Common::matchString(level.c_str(), "c5#.mi_"))
+		return "c51.mi_";
+	else
+		error("Invalid territory for level %s", level.c_str());
+}
 
 } // End of namespace Hypno
