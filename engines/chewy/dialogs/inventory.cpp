@@ -67,7 +67,7 @@ void Inventory::plot_menu() {
 	if (k != -1) {
 		if (k < 5)
 			_G(out)->boxFill(inventoryHotspots[k].left, inventoryHotspots[k].top,
-	  						 inventoryHotspots[k].bottom + 1, inventoryHotspots[k].right + 5, 41);
+	  						 inventoryHotspots[k].right + 1, inventoryHotspots[k].bottom + 5, 41);
 		else {
 			int16 x = (g_events->_mousePos.x - (WIN_INF_X)) / 54;
 			y = (g_events->_mousePos.y - (WIN_INF_Y + 4 + 30)) / 30;
