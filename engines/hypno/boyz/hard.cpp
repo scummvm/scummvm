@@ -118,8 +118,7 @@ void BoyzEngine::runRetryMenu(Code *code) {
 					cont = false;
 				} else if (event.kbd.keycode == Common::KEYCODE_t) {
 					// Restore initial health for the team
-					for (int i = 0; i < 7; i++)
-						_healthTeam[i] = _maxHealth;
+					_health = _maxHealth;
 
 					_nextLevel = firstLevelTerritory(_checkpoint);
 					cont = false;

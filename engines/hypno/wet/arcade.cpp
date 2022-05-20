@@ -497,6 +497,8 @@ uint32 WetEngine::findPaletteIndexZones(uint32 id) {
 }
 
 void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
+	_health = arc->health;
+	_maxHealth = _health;
 	resetStatistics();
 	_checkpoint = _currentLevel;
 	MVideo *video;

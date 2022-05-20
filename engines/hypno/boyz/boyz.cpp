@@ -322,9 +322,8 @@ void BoyzEngine::loadAssets() {
 	_warningHostage = "warnings/w08s.smk";
 
 	// Set initial health for the team
-	for (int i = 0; i < 7; i++) {
-		_healthTeam[i] = _maxHealth;
-	}
+	_health = _maxHealth;
+	_previousHealth = _maxHealth;
 
 	targets->free();
 	delete targets;

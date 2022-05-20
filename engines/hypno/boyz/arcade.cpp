@@ -58,6 +58,7 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 
 	updateFromScript();
 	_shootsDestroyed.clear();
+	_health = _previousHealth;
 }
 
 void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
@@ -66,11 +67,12 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		delete _playerFrames[i];
 	}
 
-	if (_healthTeam[_currentActor] <= 0) {
+	if (_health <= 0) {
 		MVideo video(_deathDay[_currentActor], Common::Point(0, 0), false, true, false);
 		disableCursor();
 		runIntro(video);
-	}
+	} else
+		_previousHealth = _health;
 
 }
 
@@ -81,7 +83,6 @@ void BoyzEngine::pressedKey(const int keycode) {
 			return;
 		}
 	} else if (keycode == Common::KEYCODE_k) { // Added for testing
-		_healthTeam[_currentActor] = 0;
 		_health = 0;
 	} else if (keycode == Common::KEYCODE_ESCAPE) {
 		openMainMenuDialog();
@@ -126,7 +127,7 @@ void BoyzEngine::drawPlayer() {
 void BoyzEngine::drawHealth() {
 	updateFromScript();
 
-	float w = float(_healthTeam[_currentActor]) / float(_maxHealth);
+	float w = float(_health) / float(_maxHealth);
 	Common::Rect healthBarBox(0, 0, int((_healthBar[_currentActor].w - 3) * w), _healthBar[_currentActor].h / 2);
 
 	uint32 c = kHypnoColorWhiteOrBlue; // white
@@ -161,8 +162,7 @@ void BoyzEngine::hitPlayer() {
 	_compositeSurface->fillRect(Common::Rect(0, 0, _screenW, _screenH), c);
 	drawScreen();
 	if (!_infiniteHealthCheat) {
-		_healthTeam[_currentActor] = _healthTeam[_currentActor] - 10;
-		_health = _healthTeam[_currentActor];
+		_health = _health - 10;
 	}
 	if (!_hitSound.empty())
 		playSound(_soundPath + _hitSound, 1, 11025);
