@@ -39,7 +39,7 @@ f 0644 root sys usr/ScummVM/share/scummvm/toon.dat toon.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/ultima.dat ultima.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/freescape.dat freescape.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/wintermute.zip wintermute.zip scummvm.sw.eoe
-f 0644 root sys usr/ScummVM/share/scummvm/xeen.ccs xeen.ccs scummvm.sw.eoe
+f 0644 root sys usr/ScummVM/share/scummvm/mm.dat mm.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/pred.dic pred.dic scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/scummmodern.zip scummmodern.zip scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/scummremastered.zip scummremastered.zip scummvm.sw.eoe
