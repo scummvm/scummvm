@@ -49,8 +49,6 @@ GfxPorts::~GfxPorts() {
 }
 
 void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *text16) {
-	int16 offTop = 10;
-
 	_usesOldGfxFunctions = usesOldGfxFunctions;
 	_paint16 = paint16;
 	_text16 = text16;
@@ -85,6 +83,8 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	// Mother Goose (SCI1) uses -Nw 0 0 159 262. The game will later use
 	// SetPort so we don't need to set the other fields.
 	// This actually meant not skipping the first 10 pixellines in windowMgrPort
+	int16 offTop = 10;
+	bool useMacStatusBarSizing = false;
 	switch (g_sci->getGameId()) {
 	case GID_JONES:
 	case GID_SLATER:
@@ -102,6 +102,19 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 		// Mixed-Up Fairy Tales (& its demo) uses -w 26 0 200 320. If we don't
 		// also do this we will get not-fully-removed windows everywhere.
 		offTop = 26;
+		break;
+	case GID_QFG1VGA:
+		// QFG1VGA relies on the Mac interpreter initializing the state of the
+		// pic window differently in order to draw its first pic. Pic 748 is a
+		// Mac-only 320x200 version of pic 750 (320x190) that PC drew with the
+		// usual 10 pixel black bar above. Only this game depends on this subtle
+		// difference. It's a byproduct of a complex set of workarounds to
+		// implement the HasStatusBar config flag (the first byte in the `cnfg`
+		// resource in the Mac interpreter's resource fork). This flag is also
+		// set in LSL6, Brain, and Hoyle4 but they don't depend on the altered
+		// initial state. We achieve the same effect by adjusting the initial
+		// pic window size to cover the entire screen.
+		useMacStatusBarSizing = true;
 		break;
 	default:
 		// For Mac games running with a height of 190, we do not have a menu bar
@@ -127,7 +140,11 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	_wmgrPort->curLeft = 0;
 	_windowList.push_front(_wmgrPort);
 
-	_picWind = addWindow(Common::Rect(0, offTop, _screen->getScriptWidth(), _screen->getScriptHeight()), nullptr, nullptr, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
+	Common::Rect picWindowRect(0, offTop, _screen->getScriptWidth(), _screen->getScriptHeight());
+	if (useMacStatusBarSizing) {
+		picWindowRect.top = 0;
+	}
+	_picWind = addWindow(picWindowRect, nullptr, nullptr, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
 	// For SCI0 games till kq4 (.502 - not including) we set _picWind top to offTop instead
 	//  Because of the menu/status bar
 	if (_usesOldGfxFunctions)
