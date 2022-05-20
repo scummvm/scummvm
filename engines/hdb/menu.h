@@ -197,8 +197,8 @@ public:
 	Picture	*_starRedGfx[2], *_starGreenGfx[2], *_starBlueGfx[2], *_versionGfx;
 	Picture *_screenshots1gfx, *_screenshots1agfx, *_screenshots2gfx, *_demoPlaqueGfx, *_handangoGfx;
 
-	bool _menuActive, _optionsScrolling, _newgameActive, _sayHDB;
-	int	_gamefilesActive, _clickDelay, _saveSlot, _optionsActive, _quitActive, _warpActive;
+	bool _menuActive, _optionsScrolling, _newgameActive, _sayHDB, _warpActive, _gamefilesActive, _optionsActive, _quitActive;
+	int	_clickDelay, _saveSlot, _optionsScreenId, _quitCounter, _warpMapId;
 	int	_optionsScrollX, _optionsXV, _oBannerY;
 	int	_nextScreen;
 
