@@ -32,6 +32,8 @@ namespace Hypno {
 void BoyzEngine::runCode(Code *code) {
 	if (code->name == "<main_menu>")
 		runMainMenu(code);
+	else if (code->name == "<retry_menu>")
+		runRetryMenu(code);
 	else
 		error("invalid hardcoded level: %s", code->name.c_str());
 }
@@ -85,5 +87,50 @@ void BoyzEngine::runMainMenu(Code *code) {
 	menu->free();
 	delete menu;
 }
+
+void BoyzEngine::runRetryMenu(Code *code) {
+	_lives--;
+
+	uint32 idx = _rnd->getRandomNumber(_deathVideo.size() - 1);
+	Filename filename = _deathVideo[idx];
+	MVideo video(filename, Common::Point(0, 0), false, true, false);
+	disableCursor();
+	runIntro(video);
+
+	Common::Event event;
+	byte *palette;
+	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 3, &palette);
+	loadPalette(palette, 0, 256);
+	drawImage(*menu, 0, 0, false);
+	bool cont = true;
+	while (!shouldQuit() && cont) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_s) {
+					_nextLevel = _checkpoint;
+					cont = false;
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+
+	menu->free();
+	delete menu;
+}
+
 
 } // End of namespace Hypno

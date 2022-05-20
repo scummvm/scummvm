@@ -566,6 +566,7 @@ public:
 
 	private:
 	void runMainMenu(Code *code);
+	void runRetryMenu(Code *code);
 
 	int _ammoTeam[7];
 	int _healthTeam[7];
