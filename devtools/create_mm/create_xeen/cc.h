@@ -45,13 +45,10 @@ struct CCEntry {
 	}
 };
 
-enum CCAccess { kRead = 0, kWrite = 1 };
-
 class CCArchive {
 private:
 	Common::Array<CCEntry> _index;
 	Common::File &_file;
-	CCAccess _mode;
 private:
 	/**
 	 * Convert a resource name to it's equivalent hash key
@@ -62,41 +59,22 @@ private:
 	 * Loads an index from the file
 	 */
 	void loadIndex();
-
-	/**
-	 * Saves the index to the file
-	 */
-	void saveIndex();
-
-	/**
-	 * Saves the individual entries to the file
-	 */
-	void saveEntries();
 public:
 	/**
 	 * Constructor
 	 */
-	CCArchive(Common::File &file, CCAccess mode) : _file(file), _mode(mode) {
-		if (mode == kRead)
-			loadIndex();
+	CCArchive(Common::File &file) : _file(file) {
+		loadIndex();
 	}
 
 	~CCArchive() {
 		_file.close();
 	}
 
-	/**
-	 * In write mode, finishes the CC file, writing out the resulting content
-	 */
 	void close();
 
 	/**
-	 * Adds an entry to the CC
-	 */
-	void add(const Common::String &name, Common::MemFile &f);
-
-	/**
-	 * In read mode, gets a member
+	 * Gets a member
 	 */
 	Common::MemFile getMember(const Common::String &name);
 };

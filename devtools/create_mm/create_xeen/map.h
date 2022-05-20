@@ -32,6 +32,6 @@ struct MirrorEntry {
 	byte _direction;
 };
 
-extern void writeMap(CCArchive &cc);
+extern void writeMap();
 
 #endif

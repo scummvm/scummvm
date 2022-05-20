@@ -48,7 +48,9 @@ class Resources {
 		char *_buffer;
 		char *_buffStart;
 	public:
-		ResFile(const char *type, char *buffer, int num) : File(type + Common::String::format("%i", num)), _buffer(buffer), _buffStart(buffer) {
+		ResFile(const char *type, char *buffer, int num) :
+			File(Common::String::format("%s%i", type, num)),
+			_buffer(buffer), _buffStart(buffer) {
 		}
 
 		void syncString(const char *&str) {
@@ -107,7 +109,8 @@ private:
 	char _buffer[STRING_BUFFER_SIZE];
 private:
 	/**
-	 * Loads all the constants data stored in the xeen.ccs archive shipped with ScummVM
+	 * Loads all the constants data stored in the engine data
+	 * shipped with ScummVM
 	 */
 	void loadData();
 public:
@@ -117,7 +120,7 @@ public:
 	Common::StringArray _cloudsMapNames;	// Clouds of Xeen map names
 	const char **ITEM_NAMES[4];
 
-	// Data loaded from xeen.ccs
+	// Data loaded from the engine data
 	const char *CLOUDS_CREDITS;
 	const char *DARK_SIDE_CREDITS;
 	const char *SWORDS_CREDITS1;

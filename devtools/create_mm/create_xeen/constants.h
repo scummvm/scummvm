@@ -472,7 +472,7 @@ public:
 	virtual const char **CLOUDS_MONSTERS() = 0;
 	virtual const char **CLOUDS_SPELLS() = 0;
 
-	void writeConstants(Common::String num, CCArchive &cc);
+	void writeConstants(Common::String num);
 
 	class KeyConstants {
 	public:
@@ -618,6 +618,6 @@ public:
 	virtual KeyConstants *keyConstants() = 0;
 };
 
-extern void writeConstants(CCArchive &cc);
+extern void writeConstants();
 
 #endif

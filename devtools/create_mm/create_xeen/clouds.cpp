@@ -22,8 +22,9 @@
  // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "file.h"
 #include "clouds.h"
+#include "cc.h"
+#include "file.h"
 
 static const char *const MAP_NAMES[86] = {
 	"", "Area A1", "Area A2", "Area A3", "Area A4", "Area B1", "Area B2",
@@ -52,10 +53,10 @@ static const char *const MAP_NAMES[86] = {
 	"The Warzone"
 };
 
-void writeCloudsData(CCArchive &cc, const char *darkName) {
+void writeCloudsData(const char *darkName) {
 	Common::File darkFile;
 	if (darkFile.open(darkName, Common::kFileReadMode)) {
-		CCArchive darkCc(darkFile, kRead);
+		CCArchive darkCc(darkFile);
 
 		Common::MemFile mae = darkCc.getMember("mae.xen");
 		Common::MemFile spells = darkCc.getMember("spells.xen");
@@ -64,17 +65,17 @@ void writeCloudsData(CCArchive &cc, const char *darkName) {
 		Common::MemFile wallPics = darkCc.getMember("xeenpic.dat");
 		Common::MemFile mirror = darkCc.getMember("xeenmirr.txt");
 
-		cc.add("mae.cld", mae);
-		cc.add("spells.cld", spells);
-		cc.add("animinfo.cld", animInfo);
-		cc.add("monsters.cld", monsters);
-		cc.add("wallpics.cld", wallPics);
-		cc.add("xeenmirr.txt", mirror);
+		Common::File::write("mae.cld", mae);
+		Common::File::write("spells.cld", spells);
+		Common::File::write("animinfo.cld", animInfo);
+		Common::File::write("monsters.cld", monsters);
+		Common::File::write("wallpics.cld", wallPics);
+		Common::File::write("xeenmirr.txt", mirror);
 
 		Common::MemFile mapNames;
 		for (int idx = 0; idx < 86; ++idx)
 			mapNames.syncString(MAP_NAMES[idx]);
-		cc.add("mapnames.cld", mapNames);
+		Common::File::write("mapnames.cld", mapNames);
 
 		darkFile.close();
 	} else {

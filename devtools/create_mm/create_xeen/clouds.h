@@ -19,12 +19,9 @@
  *
  */
 
-#ifndef SWORDS_H
-#define SWORDS_H
+#ifndef CLOUDS_H
+#define CLOUDS_H
 
-#include "common/scummsys.h"
-#include "cc.h"
-
-extern void writeSwordsData(CCArchive &cc, const char *swordsDatName);
+extern void writeCloudsData(const char *darkName);
 
 #endif
