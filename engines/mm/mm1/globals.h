@@ -31,7 +31,7 @@ namespace MM1 {
 class Globals {
 public:
 	StringsData _strings;
-	Graphics::Font *_font = nullptr;
+	const Graphics::Font *_font = nullptr;
 public:
 	Globals();
 	virtual ~Globals();

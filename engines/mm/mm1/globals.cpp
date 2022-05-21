@@ -23,6 +23,7 @@
 #include "graphics/fonts/ttf.h"
 #include "mm/mm1/globals.h"
 #include "mm/utils/engine_data.h"
+#include "graphics/fontman.h"
 
 namespace MM {
 namespace MM1 {
@@ -35,7 +36,6 @@ Globals::Globals() {
 
 Globals::~Globals() {
 	g_globals = nullptr;
-	delete _font;
 }
 
 bool Globals::load() {
@@ -50,7 +50,7 @@ bool Globals::load() {
 		return false;
 
 	// Load the font
-	_font = Graphics::loadTTFFontFromArchive("GoMono-Regular.ttf", 8);
+	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 
 	return true;
 }
