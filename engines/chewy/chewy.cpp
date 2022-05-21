@@ -25,7 +25,7 @@
 #include "engines/util.h"
 #include "graphics/palette.h"
 #include "chewy/chewy.h"
-#include "chewy/debugger.h"
+#include "chewy/console.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
@@ -73,7 +73,7 @@ void ChewyEngine::initialize() {
 	_sound = new Sound(_mixer);
 	_video = new VideoPlayer();
 
-	setDebugger(new Debugger());
+	setDebugger(new Console());
 }
 
 Common::Error ChewyEngine::run() {

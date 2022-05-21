@@ -20,7 +20,7 @@
  */
 
 #include "common/file.h"
-#include "chewy/debugger.h"
+#include "chewy/console.h"
 #include "chewy/globals.h"
 #include "chewy/chewy.h"
 #include "chewy/video/video_player.h"
@@ -43,18 +43,18 @@ static int strToInt(const char *s) {
 	return (int)tmp;
 }
 
-Debugger::Debugger() : GUI::Debugger() {
-	registerCmd("room", WRAP_METHOD(Debugger, Cmd_GotoRoom));
-	registerCmd("item", WRAP_METHOD(Debugger, Cmd_Item));
-	registerCmd("video", WRAP_METHOD(Debugger, Cmd_PlayVideo));
-	registerCmd("walk", WRAP_METHOD(Debugger, Cmd_WalkAreas));
-	registerCmd("text", WRAP_METHOD(Debugger, Cmd_Text));
+Console::Console() : GUI::Debugger() {
+	registerCmd("room", WRAP_METHOD(Console, Cmd_GotoRoom));
+	registerCmd("item", WRAP_METHOD(Console, Cmd_Item));
+	registerCmd("video", WRAP_METHOD(Console, Cmd_PlayVideo));
+	registerCmd("walk", WRAP_METHOD(Console, Cmd_WalkAreas));
+	registerCmd("text", WRAP_METHOD(Console, Cmd_Text));
 }
 
-Debugger::~Debugger() {
+Console::~Console() {
 }
 
-bool Debugger::Cmd_GotoRoom(int argc, const char **argv) {
+bool Console::Cmd_GotoRoom(int argc, const char **argv) {
 	if (argc == 1) {
 		debugPrintf("%s <roomNum>\n", argv[0]);
 		return true;
@@ -70,7 +70,7 @@ bool Debugger::Cmd_GotoRoom(int argc, const char **argv) {
 	}
 }
 
-bool Debugger::Cmd_Item(int argc, const char **argv) {
+bool Console::Cmd_Item(int argc, const char **argv) {
 	if (argc == 1) {
 		debugPrintf("%s <itemNum>\n", argv[0]);
 	} else {
@@ -82,7 +82,7 @@ bool Debugger::Cmd_Item(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::Cmd_PlayVideo(int argc, const char **argv) {
+bool Console::Cmd_PlayVideo(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: play_video <number>\n");
 		return true;
@@ -94,12 +94,12 @@ bool Debugger::Cmd_PlayVideo(int argc, const char **argv) {
 	return false;
 }
 
-bool Debugger::Cmd_WalkAreas(int argc, const char **argv) {
+bool Console::Cmd_WalkAreas(int argc, const char **argv) {
 	g_engine->_showWalkAreas = (argc == 2) && !strcmp(argv[1], "on");
 	return false;
 }
 
-bool Debugger::Cmd_Text(int argc, const char **argv) {
+bool Console::Cmd_Text(int argc, const char **argv) {
 	if (argc < 4) {
 		debugPrintf("Usage: text <chunk> <entry> <type>\n");
 		return true;

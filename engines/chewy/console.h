@@ -19,14 +19,14 @@
  *
  */
 
-#ifndef CHEWY_DEBUGGER_H
-#define CHEWY_DEBUGGER_H
+#ifndef CHEWY_CONSOLE_H
+#define CHEWY_CONSOLE_H
 
 #include "gui/debugger.h"
 
 namespace Chewy {
 
-class Debugger : public GUI::Debugger {
+class Console : public GUI::Debugger {
 protected:
 	bool Cmd_GotoRoom(int argc, const char **argv);
 	bool Cmd_Item(int argc, const char **argv);
@@ -35,8 +35,8 @@ protected:
 	bool Cmd_Text(int argc, const char **argv);
 
 public:
-	Debugger();
-	~Debugger() override;
+	Console();
+	~Console() override;
 };
 
 } // End of namespace Chewy
