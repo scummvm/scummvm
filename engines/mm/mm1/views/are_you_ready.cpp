@@ -19,34 +19,19 @@
  *
  */
 
-#ifndef MM1_GLOBALS_H
-#define MM1_GLOBALS_H
-
-#include "graphics/font.h"
-#include "mm/utils/strings_data.h"
+#include "mm/mm1/views/are_you_ready.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 
-class Globals {
-public:
-	StringsData _strings;
-	Graphics::Font *_font = nullptr;
-public:
-	Globals();
-	virtual ~Globals();
+void AreYouReady::draw() {
+	drawTextBorder();
+	writeString(11, 11, STRING["dialogs.ready.1"]);
+	writeString(11, 13, STRING["dialogs.ready.2"]);
+}
 
-	/**
-	 * Loads data for the globals
-	 */
-	bool load();
-};
-
-extern Globals *g_globals;
-
-#define STRING (g_globals->_strings)
-
+} // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif

@@ -49,6 +49,10 @@ void GFX::setEgaPalette(int palNum) {
 		*pDest = VGA_COLOR_TRANS(*pSrc);
 
 	g_system->getPaletteManager()->setPalette(pal, 0, 16);
+
+	uint32 c = 0xffffffff;
+	for (int i = 1; i < 256; ++i)
+		g_system->getPaletteManager()->setPalette((const byte *)&c, i, 1);
 }
 
 } // namespace Gfx

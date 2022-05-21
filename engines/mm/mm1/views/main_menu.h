@@ -19,33 +19,28 @@
  *
  */
 
-#ifndef MM1_GLOBALS_H
-#define MM1_GLOBALS_H
+#ifndef MM1_VIEWS_MAIN_MENU_H
+#define MM1_VIEWS_MAIN_MENU_H
 
-#include "graphics/font.h"
-#include "mm/utils/strings_data.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 
-class Globals {
+class MainMenu : public TextView {
 public:
-	StringsData _strings;
-	Graphics::Font *_font = nullptr;
-public:
-	Globals();
-	virtual ~Globals();
+	MainMenu(UIElement *uiParent = nullptr) :
+		TextView(uiParent) {
+	}
+	virtual ~MainMenu() {
+	}
 
-	/**
-	 * Loads data for the globals
-	 */
-	bool load();
+	void draw() override;
 };
 
-extern Globals *g_globals;
 
-#define STRING (g_globals->_strings)
-
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 

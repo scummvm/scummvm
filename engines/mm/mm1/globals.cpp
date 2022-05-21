@@ -20,11 +20,23 @@
  */
 
 #include "engines/engine.h"
+#include "graphics/fonts/ttf.h"
 #include "mm/mm1/globals.h"
 #include "mm/utils/engine_data.h"
 
 namespace MM {
 namespace MM1 {
+
+Globals *g_globals;
+
+Globals::Globals() {
+	g_globals = this;
+}
+
+Globals::~Globals() {
+	g_globals = nullptr;
+	delete _font;
+}
 
 bool Globals::load() {
 	// Initialise engine data for the game
@@ -36,6 +48,9 @@ bool Globals::load() {
 
 	if (!_strings.load("strings_en.yml"))
 		return false;
+
+	// Load the font
+	_font = Graphics::loadTTFFontFromArchive("GoMono-Regular.ttf", 8);
 
 	return true;
 }
