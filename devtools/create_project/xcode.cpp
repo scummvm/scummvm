@@ -1339,9 +1339,6 @@ void XcodeProvider::setupDefines(const BuildSetup &setup) {
 	REMOVE_DEFINE(_defines, "IPHONE_IOS7");
 	REMOVE_DEFINE(_defines, "IPHONE_SANDBOXED");
 	REMOVE_DEFINE(_defines, "SDL_BACKEND");
-	if (!CONTAINS_DEFINE(_defines, "USE_TEXT_CONSOLE_FOR_DEBUGGER")) {
-		ADD_DEFINE(_defines, "USE_TEXT_CONSOLE_FOR_DEBUGGER");
-	}
 	ADD_DEFINE(_defines, "CONFIG_H");
 	ADD_DEFINE(_defines, "UNIX");
 	ADD_DEFINE(_defines, "SCUMMVM");
