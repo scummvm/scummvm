@@ -436,7 +436,6 @@ VThreadState ChangeSceneModifier::consumeMessage(Runtime *runtime, const Common:
 					}
 				}
 			}
-			
 
 			if (section) {
 				Structural *subsection = nullptr;
