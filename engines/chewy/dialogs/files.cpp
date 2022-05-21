@@ -107,12 +107,12 @@ bool Files::execute(bool isInGame) {
 				if (!mode[j])
 					// Not pressed
 					_G(out)->spriteSet(
-						ti->_image[i], 16 + ti->_correction[i << 1] + pt[j].x,
-						76 + ti->_correction[(i << 1) + 1] + pt[j].y, 0);
+						ti->image[i], 16 + ti->correction[i << 1] + pt[j].x,
+						76 + ti->correction[(i << 1) + 1] + pt[j].y, 0);
 				else
 					// Pressed
-					_G(out)->spriteSet(ti->_image[i], 16 + ti->_correction[i << 1],
-						76 + ti->_correction[(i << 1) + 1], 0);
+					_G(out)->spriteSet(ti->image[i], 16 + ti->correction[i << 1],
+						76 + ti->correction[(i << 1) + 1], 0);
 			}
 		}
 
@@ -170,7 +170,7 @@ bool Files::execute(bool isInGame) {
 			Dialogs::Options::execute(ti);
 		}
 
-		if (!flag && _G(minfo)._button == 1) {
+		if (!flag && _G(minfo).button == 1) {
 			int16 rect = _G(in)->findHotspot(fileHotspots);
 			flag = true;
 			key = 0;
@@ -215,7 +215,7 @@ bool Files::execute(bool isInGame) {
 				break;
 			}
 
-		} else if (flag && _G(minfo)._button == 0) {
+		} else if (flag && _G(minfo).button == 0) {
 			flag = false;
 		}
 

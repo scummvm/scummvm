@@ -88,15 +88,15 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 
 	// Different event types handling
 	if (event.type != Common::EVENT_MOUSEMOVE)
-		_G(minfo)._button = 0;
+		_G(minfo).button = 0;
 
 	switch (event.type) {
 	case Common::EVENT_LBUTTONUP:
-		_G(minfo)._button = 1;
+		_G(minfo).button = 1;
 		break;
 
 	case Common::EVENT_RBUTTONUP:
-		_G(minfo)._button = 2;
+		_G(minfo).button = 2;
 		break;
 
 	case Common::EVENT_WHEELUP:
@@ -165,7 +165,7 @@ void EventsManager::clearEvents() {
 
 	_kbInfo._scanCode = Common::KEYCODE_INVALID;
 	_kbInfo._keyCode = '\0';
-	_G(minfo)._button = 0;
+	_G(minfo).button = 0;
 }
 
 void EventsManager::update() {

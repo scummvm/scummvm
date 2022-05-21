@@ -71,8 +71,8 @@ void game_main() {
 void alloc_buffers() {
 	_G(workpage) = (byte *)MALLOC(64004l);
 	_G(pal) = (byte *)MALLOC(768l);
-	_G(Ci).TempArea = (byte *)MALLOC(64004l);
-	_G(det)->set_taf_ani_mem(_G(Ci).TempArea);
+	_G(Ci).tempArea = (byte *)MALLOC(64004l);
+	_G(det)->set_taf_ani_mem(_G(Ci).tempArea);
 }
 
 void free_buffers() {
@@ -85,7 +85,7 @@ void free_buffers() {
 	free((char *)_G(chewy));
 
 	free((char *)_G(curtaf));
-	free(_G(Ci).TempArea);
+	free(_G(Ci).tempArea);
 	free(_G(pal));
 	free(_G(workpage));
 }
@@ -95,7 +95,7 @@ void cursorChoice(int16 nr) {
 	int16 delay = -1;
 
 	if (nr != CUR_USER) {
-		_G(curblk).sprite = _G(curtaf)->_image;
+		_G(curblk).sprite = _G(curtaf)->image;
 		delay = (1 + _G(gameState).DelaySpeed) * 5;
 	}
 	switch (nr) {
@@ -563,7 +563,7 @@ void setupScreen(SetupScreenMode mode) {
 			_G(cur)->plot_cur();
 
 			if ((_G(gameState).inv_cur) && (_G(flags).CursorStatus == true))
-				_G(out)->spriteSet(_G(curtaf)->_image[_G(pfeil_ani) + 32], g_events->_mousePos.x, g_events->_mousePos.y,
+				_G(out)->spriteSet(_G(curtaf)->image[_G(pfeil_ani) + 32], g_events->_mousePos.x, g_events->_mousePos.y,
 				                _G(scr_width));
 			if (_G(pfeil_delay) == 0) {
 				_G(pfeil_delay) = _G(gameState).DelaySpeed;
@@ -797,13 +797,13 @@ void mouseAction() {
 		_G(inv_disp_ok) = false;
 	}
 	if (_G(atds)->aadGetStatus() == -1) {
-		if (_G(minfo)._button || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+		if (_G(minfo).button || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 
-			if (_G(minfo)._button == 2 || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE) {
+			if (_G(minfo).button == 2 || g_events->_kbInfo._keyCode == Common::KEYCODE_ESCAPE) {
 				if (!_G(flags).mainMouseFlag) {
 					g_events->_kbInfo._scanCode = Common::KEYCODE_ESCAPE;
 				}
-			} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+			} else if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 				if (!_G(flags).mainMouseFlag) {
 					if (_G(menu_display) == MENU_DISPLAY)
 						g_events->_kbInfo._scanCode = Common::KEYCODE_RETURN;
@@ -1412,21 +1412,21 @@ int16 is_mouse_person(int16 x, int16 y) {
 				if (!_G(spz_ani)[i]) {
 					switch (i) {
 					case P_CHEWY:
-						xy = (int16 *)_G(chewy)->_image[_G(chewy_ph)[_G(spieler_vector)[P_CHEWY].Phase * 8 + _G(spieler_vector)[P_CHEWY].PhNr]];
+						xy = (int16 *)_G(chewy)->image[_G(chewy_ph)[_G(spieler_vector)[P_CHEWY].Phase * 8 + _G(spieler_vector)[P_CHEWY].PhNr]];
 						break;
 
 					case P_HOWARD:
 					case P_NICHELLE:
 						if (_G(gameState)._personRoomNr[i] != _G(gameState)._personRoomNr[P_CHEWY])
 							check = false;
-						xy = (int16 *)_G(PersonTaf)[i]->_image[_G(PersonSpr)[i][_G(spieler_vector)[i].PhNr]];
+						xy = (int16 *)_G(PersonTaf)[i]->image[_G(PersonSpr)[i][_G(spieler_vector)[i].PhNr]];
 						break;
 
 					default:
 						break;
 					}
 				} else
-					xy = (int16 *)_G(spz_tinfo)->_image[_G(spz_spr_nr)[_G(spieler_vector)[i].PhNr]];
+					xy = (int16 *)_G(spz_tinfo)->image[_G(spz_spr_nr)[_G(spieler_vector)[i].PhNr]];
 				if (check) {
 					if (x + _G(gameState).scrollx >= _G(spieler_vector)[i].Xypos[0] &&
 					        x + _G(gameState).scrollx <= _G(spieler_vector)[i].Xypos[0] + xy[0] + _G(spieler_vector)[i].Xzoom &&

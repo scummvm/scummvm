@@ -97,7 +97,7 @@ int16 Room4::comp_probe() {
 		_G(spr_info)[0]._x = CUR_POS[curX][0];
 		_G(spr_info)[0]._y = CUR_POS[curX][1];
 
-		if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+		if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			_G(cur)->setAnimation(HAND_CLICK, HAND_CLICK, -1);
 		} else {
 			_G(cur)->setAnimation(HAND_NORMAL, HAND_NORMAL, -1);
@@ -120,7 +120,7 @@ int16 Room4::comp_probe() {
 
 	_G(spieler_vector)[P_CHEWY]._delayCount = 0;
 	_G(mouseLeftClick) = false;
-	_G(minfo)._button = 0;
+	_G(minfo).button = 0;
 	_G(gameState)._personRoomNr[P_CHEWY] = 3;
 	_G(room)->loadRoom(&_G(room_blk), 3, &_G(gameState));
 	setPersonPos(110, 139, P_CHEWY, P_LEFT);

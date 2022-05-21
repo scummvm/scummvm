@@ -685,7 +685,7 @@ void Room97::sensorAnim() {
 	
 	while (_G(det)->get_ani_status(16)) {
 		get_user_key(NO_SETUP);
-		if (_G(minfo)._button == 1 || _G(in)->getSwitchCode() == 28) {
+		if (_G(minfo).button == 1 || _G(in)->getSwitchCode() == 28) {
 			if (_G(gameState).inv_cur)
 				_G(mouseLeftClick) = true;
 		}

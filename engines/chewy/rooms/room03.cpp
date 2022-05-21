@@ -142,7 +142,7 @@ void Room3::terminal() {
 	case 1:
 		_G(auto_obj) = 1;
 		_G(mouseLeftClick) = false;
-		_G(minfo)._button = 0;
+		_G(minfo).button = 0;
 		stopPerson(P_CHEWY);
 		start_spz(15, 255, false, P_CHEWY);
 		startAadWait(51);
@@ -348,7 +348,7 @@ void Room3::probeTransfer() {
 
 			if (i == 2 || i == 1) {
 				if (mouse_auto_obj(SONDE_OBJ, 50, 100)) {
-					if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+					if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 						if (isCurInventory(SPINAT_INV)) {
 							_G(atds)->set_split_win(0, 120, 100);
 							if (_G(gameState)._personRoomNr[P_CHEWY] == 3)

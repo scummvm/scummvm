@@ -27,24 +27,24 @@
 namespace Chewy {
 
 struct TafInfo {
-	int16 _count = 0;
-	byte *_palette = nullptr;
-	int16 *_correction = nullptr;
-	byte **_image = nullptr;
+	int16 count = 0;
+	byte *palette = nullptr;
+	int16 *correction = nullptr;
+	byte **image = nullptr;
 };
 
 struct TafSeqInfo {
-	int16 _count = 0;
-	int16 *_correction = nullptr;
-	byte **_image = nullptr;
+	int16 count = 0;
+	int16 *correction = nullptr;
+	byte **image = nullptr;
 };
 
 struct MouseInfo {
-	int16 _button = 0;
+	int16 button = 0;
 };
 
 struct MusicInfo {
-	int16 musik_playing = 0;
+	int16 playing = 0;
 	int16 play_mode = 0;
 	int16 pattern_line = 0;
 	int16 sequence_pos = 0;
@@ -62,7 +62,7 @@ struct CurBlk {
 };
 
 struct CustomInfo {
-	byte *TempArea = 0;
+	byte *tempArea = 0;
 };
 
 } // namespace Chewy

@@ -300,7 +300,7 @@ void Room0::eyeWait() {
 
 void Room0::calcEyeClick(int16 aniNr) {
 	if (mouse_on_prog_ani() == aniNr) {
-		if (_G(minfo)._button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
+		if (_G(minfo).button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
 			const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
 			Common::StringArray desc = _G(atds)->getTextArray(roomNum, 172, ATS_DATA);
 			if (desc.size() > 0) {
@@ -311,7 +311,7 @@ void Room0::calcEyeClick(int16 aniNr) {
 				for (int16 i = 0; i < (int16)desc.size(); i++)
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), desc[i].c_str());
 			}
-		} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+		} else if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(SLIME_INV)) {
 				delInventory(_G(gameState).AkInvent);
 				_G(gameState).R0SlimeUsed = true;
@@ -538,7 +538,7 @@ void Room0::feederExtend() {
 
 void Room0::calcPillowClick(int16 aniNr) {
 	if (mouse_on_prog_ani() == aniNr) {
-		if (_G(minfo)._button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
+		if (_G(minfo).button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
 			const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
 			Common::StringArray desc = _G(atds)->getTextArray(roomNum, 173, ATS_DATA);
 			if (desc.size() > 0) {
@@ -549,7 +549,7 @@ void Room0::calcPillowClick(int16 aniNr) {
 				for (int16 i = 0; i < (int16)desc.size(); i++)
 					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), desc[i].c_str());
 			}
-		} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+		} else if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(PILLOW_INV) && _G(gameState).R0SlimeUsed) {
 				delInventory(_G(gameState).AkInvent);
 				_G(gameState).R0PillowThrow = true;

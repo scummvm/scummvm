@@ -91,27 +91,27 @@ void Options::execute(TafInfo *ti) {
 			warning("stop_clock = (clock() / CLK_TCK) + 1;");
 		}
 
-		_G(out)->spriteSet(ti->_image[surimy_ani], 18 + ti->_correction[surimy_ani << 1],
-			8 + ti->_correction[(surimy_ani << 1) + 1], 0);
+		_G(out)->spriteSet(ti->image[surimy_ani], 18 + ti->correction[surimy_ani << 1],
+			8 + ti->correction[(surimy_ani << 1) + 1], 0);
 		short bar_off = (_G(gameState).FramesPerSecond - 6) * 16;
 		_G(out)->boxFill(33 + bar_off, 65, 33 + 17 + bar_off, 65 + 8, 0);
 		Common::String fps = Common::String::format("%d", _G(gameState).FramesPerSecond << 1);
 		_G(out)->printxy(36 + bar_off, 65, 255, 300, 0, fps.c_str());
 
 		if (g_engine->_sound->soundEnabled()) {
-			_G(out)->spriteSet(ti->_image[mund_ani],
-				18 + ti->_correction[mund_ani << 1],
-				8 + ti->_correction[(mund_ani << 1) + 1], 0);
-			_G(out)->spriteSet(ti->_image[SCHNULL_OFF],
-				18 + ti->_correction[SCHNULL_OFF << 1],
-				8 + ti->_correction[(SCHNULL_OFF << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[mund_ani],
+				18 + ti->correction[mund_ani << 1],
+				8 + ti->correction[(mund_ani << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[SCHNULL_OFF],
+				18 + ti->correction[SCHNULL_OFF << 1],
+				8 + ti->correction[(SCHNULL_OFF << 1) + 1], 0);
 		} else {
-			_G(out)->spriteSet(ti->_image[SCHNULLER],
-				18 + ti->_correction[SCHNULLER << 1],
-				8 + ti->_correction[(SCHNULLER << 1) + 1], 0);
-			_G(out)->spriteSet(ti->_image[SCHNULL_BAND],
-				18 + ti->_correction[SCHNULL_BAND << 1],
-				8 + ti->_correction[(SCHNULL_BAND << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[SCHNULLER],
+				18 + ti->correction[SCHNULLER << 1],
+				8 + ti->correction[(SCHNULLER << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[SCHNULL_BAND],
+				18 + ti->correction[SCHNULL_BAND << 1],
+				8 + ti->correction[(SCHNULL_BAND << 1) + 1], 0);
 		}
 		_G(out)->pop_box(32 - 2, 104 - 12, 42 + 4, 136 + 2, 192, 183, 182);
 		_G(out)->printxy(32 + 3, 104 - 10, 15, 300, 0, "S");
@@ -121,35 +121,35 @@ void Options::execute(TafInfo *ti) {
 		_G(out)->printxy(52 + 3, 104 - 10, 31, 300, 0, "M");
 		_G(out)->boxFill(53, 136 - (_G(gameState).MusicVol >> 1), 62, 136, 31);
 		if (g_engine->_sound->musicEnabled()) {
-			_G(out)->spriteSet(ti->_image[MUSIC_ON1],
-				18 + ti->_correction[MUSIC_ON1 << 1],
-				8 + ti->_correction[(MUSIC_ON1 << 1) + 1], 0);
-			_G(out)->spriteSet(ti->_image[MUSIC_ON2],
-				18 + ti->_correction[MUSIC_ON2 << 1],
-				8 + ti->_correction[(MUSIC_ON2 << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[MUSIC_ON1],
+				18 + ti->correction[MUSIC_ON1 << 1],
+				8 + ti->correction[(MUSIC_ON1 << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[MUSIC_ON2],
+				18 + ti->correction[MUSIC_ON2 << 1],
+				8 + ti->correction[(MUSIC_ON2 << 1) + 1], 0);
 		} else
-			_G(out)->spriteSet(ti->_image[MUSIC_OFF],
-				18 + ti->_correction[MUSIC_OFF << 1],
-				8 + ti->_correction[(MUSIC_OFF << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[MUSIC_OFF],
+				18 + ti->correction[MUSIC_OFF << 1],
+				8 + ti->correction[(MUSIC_OFF << 1) + 1], 0);
 
 		if (g_engine->_sound->subtitlesEnabled()) {
-			_G(out)->spriteSet(ti->_image[tdisp_ani],
-				18 + ti->_correction[tdisp_ani << 1],
-				8 + ti->_correction[(tdisp_ani << 1) + 1], 0);
-			_G(out)->spriteSet(ti->_image[TDISP_EIN],
-				18 + ti->_correction[TDISP_EIN << 1],
-				8 + ti->_correction[(TDISP_EIN << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[tdisp_ani],
+				18 + ti->correction[tdisp_ani << 1],
+				8 + ti->correction[(tdisp_ani << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[TDISP_EIN],
+				18 + ti->correction[TDISP_EIN << 1],
+				8 + ti->correction[(TDISP_EIN << 1) + 1], 0);
 		} else
-			_G(out)->spriteSet(ti->_image[TDISP_AUS],
-				18 + ti->_correction[TDISP_AUS << 1],
-				8 + ti->_correction[(TDISP_AUS << 1) + 1], 0);
+			_G(out)->spriteSet(ti->image[TDISP_AUS],
+				18 + ti->correction[TDISP_AUS << 1],
+				8 + ti->correction[(TDISP_AUS << 1) + 1], 0);
 
-		_G(out)->spriteSet(ti->_image[EXIT],
-			18 + ti->_correction[EXIT << 1],
-			8 + ti->_correction[(EXIT << 1) + 1], 0);
+		_G(out)->spriteSet(ti->image[EXIT],
+			18 + ti->correction[EXIT << 1],
+			8 + ti->correction[(EXIT << 1) + 1], 0);
 
 		key = _G(in)->getSwitchCode();
-		if ((_G(minfo)._button == 1) || (key == Common::KEYCODE_RETURN)) {
+		if ((_G(minfo).button == 1) || (key == Common::KEYCODE_RETURN)) {
 			WAIT_TASTE_LOS
 
 			int16 rect = _G(in)->findHotspot(optionHotspots);
@@ -206,7 +206,7 @@ void Options::execute(TafInfo *ti) {
 			default:
 				break;
 			}
-			_G(minfo)._button = 0;
+			_G(minfo).button = 0;
 		}
 		switch (key) {
 

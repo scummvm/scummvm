@@ -48,7 +48,7 @@ void plotMainMenu() {
 	const int16 x = MAX(g_events->_mousePos.x - 32, 0);
 	_G(menu_item) = (x / (MOUSE_MENU_MAX_X / 5));
 
-	int16 *correction = (int16 *)_G(menutaf)->_correction;
+	int16 *correction = (int16 *)_G(menutaf)->correction;
 
 	for (int16 i = MENU_START_SPRITE; i < MAX_MENU_SPRITE; i++) {
 		int deltaX = 0;
@@ -66,7 +66,7 @@ void plotMainMenu() {
 				deltaX = -40;
 		}
 
-		_G(out)->scale_set(_G(menutaf)->_image[i],
+		_G(out)->scale_set(_G(menutaf)->image[i],
 			MENU_X + deltaX + correction[i * 2],
 		    _G(gameState).MainMenuY + correction[i * 2 + 1],
 			zoomX, zoomY, 0);
@@ -83,7 +83,7 @@ void plotMainMenu() {
 			deltaX = 40;
 
 		int img = IMAGES[_G(menu_item)];
-		_G(out)->scale_set(_G(menutaf)->_image[img],
+		_G(out)->scale_set(_G(menutaf)->image[img],
 		    MENU_X + deltaX + correction[img * 2] - 5,
 		    _G(gameState).MainMenuY + correction[img * 2 + 1] - 10,
 			zoomX, zoomY, 0);
@@ -166,14 +166,14 @@ void buildMenu(int16 x, int16 y, int16 xNr, int16 yNr, int16 col, int16 mode) {
 	xy[3][1] = y + 16 * (yNr - 1);
 
 	for (i = 0; i < 4; i++)
-		_G(out)->spriteSet(_G(menutaf)->_image[(int16)spriteCornerNr[i]],
+		_G(out)->spriteSet(_G(menutaf)->image[(int16)spriteCornerNr[i]],
 		                 xy[i][0], xy[i][1], _G(scr_width));
 
 	int16 s_nr = BUILDING_MENU_SIDE_L;
 	for (j = 0; j < 2; j++) {
 		y = xy[j][1] + 16;
 		for (i = 0; i < yNr - 2; i++) {
-			_G(out)->spriteSet(_G(menutaf)->_image[s_nr], xy[j][0], y + i * 16, _G(scr_width));
+			_G(out)->spriteSet(_G(menutaf)->image[s_nr], xy[j][0], y + i * 16, _G(scr_width));
 		}
 		++s_nr;
 	}
@@ -183,7 +183,7 @@ void buildMenu(int16 x, int16 y, int16 xNr, int16 yNr, int16 col, int16 mode) {
 		x = xy[j * 2][0] + 16;
 		if ((!mode) || (mode == 1 && j == 1)) {
 			for (i = 0; i < xNr - 2; i++) {
-				_G(out)->spriteSet(_G(menutaf)->_image[s_nr], x + i * 16, xy[j * 2][1], _G(scr_width));
+				_G(out)->spriteSet(_G(menutaf)->image[s_nr], x + i * 16, xy[j * 2][1], _G(scr_width));
 			}
 		}
 		s_nr -= 3;
@@ -208,15 +208,15 @@ void buildMenu(int16 x, int16 y, int16 xNr, int16 yNr, int16 col, int16 mode) {
 		x = xy[0][0] + 16;
 		for (j = 0; j < 2; j++) {
 			for (i = 0; i < leer; i++)
-				_G(out)->spriteSet(_G(menutaf)->_image[BUILDING_MENU_ABOVE], x + i * 16, xy[0][1], _G(scr_width));
+				_G(out)->spriteSet(_G(menutaf)->image[BUILDING_MENU_ABOVE], x + i * 16, xy[0][1], _G(scr_width));
 			x = xy[1][0] - leer * 16;
 		}
-		_G(out)->spriteSet(_G(menutaf)->_image[BUILDING_MENU_ABOVE_L], xy[0][0] + 16 + leer * 16, xy[0][1], _G(scr_width));
+		_G(out)->spriteSet(_G(menutaf)->image[BUILDING_MENU_ABOVE_L], xy[0][0] + 16 + leer * 16, xy[0][1], _G(scr_width));
 
 		x = xy[0][0] + 16 + leer * 16 + 32;
 		for (i = 0; i < center; i++)
-			_G(out)->spriteSet(_G(menutaf)->_image[BUILDING_MENU_ABOVE_M], x + i * 16, xy[0][1], _G(scr_width));
-		_G(out)->spriteSet(_G(menutaf)->_image[BUILDING_MENU_ABOVE_R], x + i * 16, xy[0][1], _G(scr_width));
+			_G(out)->spriteSet(_G(menutaf)->image[BUILDING_MENU_ABOVE_M], x + i * 16, xy[0][1], _G(scr_width));
+		_G(out)->spriteSet(_G(menutaf)->image[BUILDING_MENU_ABOVE_R], x + i * 16, xy[0][1], _G(scr_width));
 	}
 
 	_G(out)->boxFill(xy[0][0] + 16, xy[0][1] + 16, xy[0][0] + 16 + (xNr - 2) * 16, xy[0][1] + 16 + (yNr - 2) * 16, col);
@@ -325,7 +325,7 @@ void stop_ads_dialog() {
 	_G(flags).AdsDialog = false;
 	_G(mouseLeftClick) = false;
 	_G(atds)->stop_ads();
-	if (_G(minfo)._button)
+	if (_G(minfo).button)
 		_G(flags).mainMouseFlag = 1;
 }
 

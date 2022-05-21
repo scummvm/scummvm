@@ -88,7 +88,7 @@ void Cinema::execute() {
 			_G(out)->printxy(40, 68, 14, 300, _G(scr_width), cutsceneName.c_str());
 		}
 
-		if (_G(minfo)._button == 1 && !flag) {
+		if (_G(minfo).button == 1 && !flag) {
 			flag = true;
 			switch (_G(in)->findHotspot(cinematicsHotspots)) {
 			case 0:
@@ -117,10 +117,10 @@ void Cinema::execute() {
 			default:
 				break;
 			}
-		} else if (_G(minfo)._button == 2 && !flag) {
+		} else if (_G(minfo).button == 2 && !flag) {
 			g_events->_kbInfo._scanCode = Common::KEYCODE_ESCAPE;
 			flag = true;
-		} else if (_G(minfo)._button != 1) {
+		} else if (_G(minfo).button != 1) {
 			flag = false;
 			delay = 0;
 		} else if (flag) {
@@ -179,7 +179,7 @@ void Cinema::execute() {
 
 		// The below are hacks to get the dialog to work in ScummVM
 		g_events->_kbInfo._scanCode = 0;
-		_G(minfo)._button = 0;
+		_G(minfo).button = 0;
 		txt_anz = 0;
 
 		if (!txt_anz) {

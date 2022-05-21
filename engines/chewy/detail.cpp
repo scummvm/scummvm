@@ -253,11 +253,11 @@ TafInfo *Detail::init_taf_tbl(const char *fname_) {
 	byte *tmp = (byte *)MALLOC((int32)nr * sizeof(byte *) + sizeof(TafInfo));
 
 	Tt = (TafInfo *)tmp;
-	Tt->_count = nr;
-	Tt->_correction = (int16 *)MALLOC((int32)Tt->_count * 2 * sizeof(int16));
-	Tt->_image = (byte **)(tmp + sizeof(TafInfo));
-	memcpy(Tt->_correction, (byte *)res->getSpriteCorrectionsTable(), Tt->_count * 2 * sizeof(int16));
-	Tt->_palette = nullptr;
+	Tt->count = nr;
+	Tt->correction = (int16 *)MALLOC((int32)Tt->count * 2 * sizeof(int16));
+	Tt->image = (byte **)(tmp + sizeof(TafInfo));
+	memcpy(Tt->correction, (byte *)res->getSpriteCorrectionsTable(), Tt->count * 2 * sizeof(int16));
+	Tt->palette = nullptr;
 
 	delete res;
 
@@ -268,19 +268,19 @@ void Detail::del_taf_tbl(TafInfo *Tt) {
 	if (!Tt) {
 		Tt = _rdi.dptr;
 	}
-	for (int16 i = 0; i < Tt->_count; i++) {
-		free(Tt->_image[i]);
+	for (int16 i = 0; i < Tt->count; i++) {
+		free(Tt->image[i]);
 	}
-	free((char *) Tt->_correction);
+	free((char *) Tt->correction);
 	free((char *) Tt);
 }
 
 void Detail::del_taf_tbl(int16 start, int16 nr, TafInfo *Tt) {
 	if (!Tt)
 		Tt = _rdi.dptr;
-	for (int16 i = start; i < start + nr && i < Tt->_count; i++) {
-		free(Tt->_image[i]);
-		Tt->_image[i] = nullptr;
+	for (int16 i = start; i < start + nr && i < Tt->count; i++) {
+		free(Tt->image[i]);
+		Tt->image[i] = nullptr;
 	}
 }
 
@@ -291,8 +291,8 @@ void Detail::load_taf_seq(int16 sprNr, int16 sprCount, TafInfo *Tt) {
 	SpriteResource *res = new SpriteResource(_tafName);
 
 	for (int16 i = 0; i < sprCount; i++) {
-		if (!Tt->_image[sprNr + i]) {
-			res->getSpriteData(sprNr + i, &Tt->_image[sprNr + i], true);
+		if (!Tt->image[sprNr + i]) {
+			res->getSpriteData(sprNr + i, &Tt->image[sprNr + i], true);
 		}
 	}
 
@@ -311,7 +311,7 @@ void Detail::showStaticSpr(int16 nr) {
 
 void Detail::setStaticPos(int16 detNr, int16 x, int16 y, bool hideFl, bool correctionFlag) {
 	if (correctionFlag) {
-		int16 *Cxy = &_rdi.dptr->_correction[_rdi.Sinfo[detNr].SprNr];
+		int16 *Cxy = &_rdi.dptr->correction[_rdi.Sinfo[detNr].SprNr];
 		x += Cxy[0];
 		y += Cxy[1];
 	}
@@ -380,7 +380,7 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 		AniDetailInfo *adiptr = &_rdi.Ainfo[i];
 		if ((adiptr->start_flag) && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
 			int16 sprnr = adiptr->ani_count;
-			int16 *Cxy = _rdi.dptr->_correction + (sprnr << 1);
+			int16 *Cxy = _rdi.dptr->correction + (sprnr << 1);
 			int16 kx = Cxy[0];
 			int16 ky = Cxy[1];
 			if (zoomx != 0 || zoomy != 0)
@@ -391,7 +391,7 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 				load_taf_ani_sprite(sprnr);
 				_G(out)->scale_set(_tafLoadBuffer, x, y, zoomx, zoomy, 0);
 			} else
-				_G(out)->scale_set(_rdi.dptr->_image[sprnr], x, y, zoomx, zoomy, 0);
+				_G(out)->scale_set(_rdi.dptr->image[sprnr], x, y, zoomx, zoomy, 0);
 
 			Sound *sound = g_engine->_sound;
 
@@ -466,7 +466,7 @@ void Detail::plot_static_details(int16 scrx, int16 scry, int16 start, int16 end)
 		if (_rdi.Sinfo[i].SprNr != -1 && !_rdi.Sinfo[i].Hide) {
 			int16 x = _rdi.Sinfo[i].x - scrx;
 			int16 y = _rdi.Sinfo[i].y - scry;
-			byte *simage = _rdi.dptr->_image[_rdi.Sinfo[i].SprNr];
+			byte *simage = _rdi.dptr->image[_rdi.Sinfo[i].SprNr];
 			_G(out)->spriteSet(simage, x, y, 0);
 		}
 	}
@@ -525,9 +525,9 @@ SprInfo Detail::plot_detail_sprite(int16 scrx, int16 scry, int16 det_nr, int16 s
 		spr_nr = adiptr->start_ani;
 	if (spr_nr > adiptr->end_ani)
 		spr_nr = adiptr->end_ani - 1;
-	int16 *Cxy = &_rdi.dptr->_correction[spr_nr << 1];
-	int16 *Xy = (int16 *)_rdi.dptr->_image[spr_nr];
-	_sprInfo._image = _rdi.dptr->_image[spr_nr];
+	int16 *Cxy = &_rdi.dptr->correction[spr_nr << 1];
+	int16 *Xy = (int16 *)_rdi.dptr->image[spr_nr];
+	_sprInfo._image = _rdi.dptr->image[spr_nr];
 	_sprInfo._x = adiptr->x + Cxy[0] - scrx;
 	_sprInfo._y = adiptr->y + Cxy[1] - scry;
 	_sprInfo.X1 = _sprInfo._x + Xy[0];
@@ -667,14 +667,14 @@ int16 Detail::mouse_on_detail(int16 mouse_x, int16 mouse_y, int16 scrx, int16 sc
 		AniDetailInfo *adiptr = &_rdi.Ainfo[i];
 		if ((adiptr->start_flag) && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
 			int16 sprnr = adiptr->ani_count;
-			int16 *Cxy = _rdi.dptr->_correction + (sprnr << 1);
+			int16 *Cxy = _rdi.dptr->correction + (sprnr << 1);
 			int16 x = adiptr->x + Cxy[0] - scrx;
 			int16 y = adiptr->y + Cxy[1] - scry;
 			int16 *Xy;
 			if (adiptr->load_flag == 1) {
 				Xy = (int16 *)_tafLoadBuffer;
 			} else {
-				Xy = (int16 *)_rdi.dptr->_image[sprnr];
+				Xy = (int16 *)_rdi.dptr->image[sprnr];
 			}
 			if (mouse_x >= x && mouse_x <= x + Xy[0] &&
 			        mouse_y >= y && mouse_y <= y + Xy[1]) {
