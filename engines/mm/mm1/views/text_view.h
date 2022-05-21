@@ -29,6 +29,21 @@ namespace MM1 {
 namespace Views {
 
 class TextView : public UIElement {
+protected:
+	/**
+	 * Draws a text border
+	 */
+	void drawTextBorder();
+
+	/**
+	 * Write a character
+	 */
+	void writeChar(int x, int y, char c);
+
+	/**
+	 * Write some text
+	 */
+	void writeString(int x, int y, const Common::String &str);
 public:
 	TextView(UIElement *uiParent = nullptr) :
 		UIElement(uiParent) {}

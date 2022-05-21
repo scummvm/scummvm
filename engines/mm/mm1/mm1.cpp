@@ -26,7 +26,9 @@
 #include "engines/util.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/gfx/gfx.h"
+
 #include "mm/mm1/views/title_view.h"
+#include "mm/mm1/views/are_you_ready.h"
 
 namespace MM {
 namespace MM1 {
@@ -52,7 +54,9 @@ Common::Error MM1Engine::run() {
 		return Common::kNoError;
 
 	// Run the game
-	Views::TitleView screenView(this);
+//	Views::TitleView view1(this);
+	Views::AreYouReady view1(this);
+
 	runGame();
 	return Common::kNoError;
 }
