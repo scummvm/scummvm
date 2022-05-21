@@ -948,7 +948,7 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 				}
 			}
 
-			bool result = mainRoutine(xmoveCur, ymoveCur);
+			byte result = mainRoutine(xmoveCur, ymoveCur);
 
 			_mirror = mirror;
 			return result;
