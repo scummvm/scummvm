@@ -538,6 +538,8 @@ class BoyzEngine : public HypnoEngine {
 public:
 	BoyzEngine(OSystem *syst, const ADGameDescription *gd);
 	Common::String _name;
+	Common::Array<int> _ids;
+	int _lastLevel;
 	void loadAssets() override;
 	void runCode(Code *code) override;
 	Common::String findNextLevel(const Common::String &level) override;
@@ -564,6 +566,12 @@ public:
 
 	void loadFonts() override;
 	void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) override;
+
+	// Saves
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	bool loadProfile(const Common::String &name);
+	void saveProfile(const Common::String &name, int levelId);
 
 	private:
 	void runMainMenu(Code *code);

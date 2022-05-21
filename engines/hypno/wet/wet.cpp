@@ -70,12 +70,12 @@ WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(s
 	_c50LeftTurns = 0;
 	_c50RigthTurns = 0;
 
-    const chapterEntry *entry = rawChapterTable;
-    while (entry->id) {
+	const chapterEntry *entry = rawChapterTable;
+	while (entry->id) {
 		_ids.push_back(entry->id);
 		_chapterTable[entry->id] = entry;
 		entry++;
-    }
+	}
 
 	_healthString = getLocalizedString("health");
 	_scoreString = getLocalizedString("score");

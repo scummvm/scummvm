@@ -28,6 +28,7 @@ namespace Hypno {
 
 void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_checkpoint = _currentLevel;
+	saveProfile(_name, int(arc->id));
 	assert(!arc->player.empty());
 	_playerFrames = decodeFrames(arc->player);
 	_playerFrameSep = 0;

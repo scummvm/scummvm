@@ -82,12 +82,17 @@ void BoyzEngine::runMainMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
-
-	_name.toLowercase();
-
-	_nextLevel = code->levelIfWin;
 	menu->free();
 	delete menu;
+
+	_name.toLowercase();
+	bool found = loadProfile(_name);
+	if (!found) {
+		saveProfile(_name, 0);
+		_nextLevel = code->levelIfWin;
+	}
+	assert(!_nextLevel.empty());
+
 }
 
 void BoyzEngine::runDifficultyMenu(Code *code) {

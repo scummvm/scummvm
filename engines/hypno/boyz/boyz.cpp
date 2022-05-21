@@ -26,14 +26,34 @@
 
 namespace Hypno {
 
+static const chapterEntry rawChapterTable[] = {
+	{19, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{11, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{12, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{13, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{14, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{15, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{16, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{17, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{18, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{0,  {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor}
+};
+
 BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {
 	_screenW = 320;
 	_screenH = 200;
-	_lives = 2;
+	_lives = 0; // This counts the number of lives used
 	_currentWeapon = 0;
 	_currentActor = 0;
 	_currentMode = NonInteractive;
 	_crosshairsPalette = nullptr;
+	_lastLevel = 0;
+
+    const chapterEntry *entry = rawChapterTable;
+    while (entry->id) {
+		_ids.push_back(entry->id);
+		entry++;
+    }
 
 	for (int i = 0; i < 6; i++) {
 		_weaponMaxAmmo[i] = 0;
@@ -403,6 +423,79 @@ void BoyzEngine::drawString(const Common::String &font, const Common::String &st
 		}
 	} else
 		error("Invalid font: '%s'", font.c_str());
+}
+
+void BoyzEngine::saveProfile(const Common::String &name, int levelId) {
+	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
+
+	// Find the correct level index to before saving
+	for (uint32 i = 0; i < _ids.size(); i++) {
+		if (levelId == _ids[i]) {
+			if (_lastLevel < int(i))
+				_lastLevel = int(i);
+			break;
+		}
+	}
+
+	uint32 slot = 0;
+	for (SaveStateList::iterator save = saves.begin(); save != saves.end(); ++save) {
+		if (save->getDescription() == name)
+			break;
+		slot++;
+	}
+	debugC(1, kHypnoDebugMedia, "Saving profile %s with last level %d", name.c_str(), _lastLevel);
+	saveGameState(slot, name, false);
+}
+
+bool BoyzEngine::loadProfile(const Common::String &name) {
+	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
+	uint32 slot = 0;
+	for (SaveStateList::iterator save = saves.begin(); save != saves.end(); ++save) {
+		if (save->getDescription() == name)
+			break;
+		slot++;
+	}
+
+	if (slot == saves.size()) {
+		debugC(1, kHypnoDebugMedia, "Failed to load %s", name.c_str());
+		return false;
+	}
+
+	loadGameState(slot);
+	return true;
+}
+
+Common::Error BoyzEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	if (isAutosave)
+		return Common::kNoError;
+
+	if (_lastLevel < 0 || _lastLevel >= 20)
+		error("Invalid last level!");
+
+	stream->writeString(_name);
+	stream->writeByte(0);
+
+	stream->writeString(_difficulty);
+	stream->writeByte(0);
+
+	stream->writeUint32LE(_lives);
+	stream->writeUint32LE(_previousHealth);
+	stream->writeUint32LE(_score);
+
+	stream->writeUint32LE(_lastLevel);
+	return Common::kNoError;
+}
+
+Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	_name = stream->readString();
+	_difficulty = stream->readString();
+	_lives = stream->readUint32LE();
+	_previousHealth = stream->readUint32LE();
+	_score = stream->readUint32LE();
+	_lastLevel = stream->readUint32LE();
+
+	_nextLevel = Common::String::format("c%d.mi_", _ids[_lastLevel]);
+	return Common::kNoError;
 }
 
 
