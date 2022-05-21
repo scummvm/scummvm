@@ -921,13 +921,13 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 			_frame = targetFrame;
 
 			if (_frame == maxFrame) {
-				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));
+				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(isReversed ? EventIDs::kAtFirstCel : EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));
 				Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 				runtime->queueMessage(dispatch);
 			}
 
 			if (_frame == minFrame) {
-				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
+				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(isReversed ? EventIDs::kAtLastCel : EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
 				Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 				runtime->queueMessage(dispatch);
 			}
