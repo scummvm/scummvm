@@ -550,6 +550,7 @@ public:
 	void drawCursorArcade(const Common::Point &mousePos) override;
 	bool shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool secondary) override;
 	bool clickedSecondaryShoot(const Common::Point &mousePos) override;
+	void showCredits() override;
 
 	void missedTarget(Shoot *s, ArcadeShooting *arc) override;
 	void drawHealth() override;
@@ -567,6 +568,7 @@ public:
 	private:
 	void runMainMenu(Code *code);
 	void runRetryMenu(Code *code);
+	void endCredits(Code *code);
 	Common::String firstLevelTerritory(const Common::String &level);
 
 

@@ -159,6 +159,18 @@ void BoyzEngine::runRetryMenu(Code *code) {
 	delete menu;
 }
 
+void BoyzEngine::endCredits(Code *code) {
+	showCredits();
+	_nextLevel = "<main_menu>";
+}
+
+void BoyzEngine::showCredits() {
+	MVideo c1("intro/sbcred1.smk", Common::Point(0, 0), false, true, false);
+	runIntro(c1);
+	MVideo c2("intro/sbcred2.smk", Common::Point(0, 0), false, true, false);
+	runIntro(c2);
+}
+
 Common::String BoyzEngine::firstLevelTerritory(const Common::String &level) {
 	if (Common::matchString(level.c_str(), "c1#.mi_"))
 		return "c19.mi_";
