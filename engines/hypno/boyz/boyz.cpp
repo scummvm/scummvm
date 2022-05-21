@@ -42,7 +42,7 @@ static const chapterEntry rawChapterTable[] = {
 BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {
 	_screenW = 320;
 	_screenH = 200;
-	_lives = 0; // This counts the number of lives used
+	_lives = uint32(-1); // This counts the number of lives used
 	_currentWeapon = 0;
 	_currentActor = 0;
 	_currentMode = NonInteractive;
