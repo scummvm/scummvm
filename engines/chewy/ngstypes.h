@@ -39,19 +39,11 @@ struct TafSeqInfo {
 	byte **_image = nullptr;
 };
 
-struct NewPhead {
-	char _id[4] = { 0 };
-	uint16 _type = 0;
-	uint16 _poolNr = 0;
-
-	bool load(Common::SeekableReadStream *src);
-};
-
 struct MouseInfo {
 	int16 _button = 0;
 };
 
-struct musik_info {
+struct MusicInfo {
 	int16 musik_playing = 0;
 	int16 play_mode = 0;
 	int16 pattern_line = 0;
@@ -60,13 +52,9 @@ struct musik_info {
 	char *cur_pattern = nullptr;
 };
 
-struct GedChunkHeader {
-	uint32 Len = 0;
-	int16 X = 0;
-	int16 Y = 0;
-	int16 Ebenen = 0;
-
-	bool load(Common::SeekableReadStream *src);
+struct GedChunkInfo {
+	Common::Point pos = Common::Point(0, 0);
+	int16 level = 0;
 };
 
 struct CurBlk {

@@ -30,7 +30,7 @@ class GedClass {
 public:
 	GedClass() {}
 
-	void load_ged_pool(GedChunkHeader *Gh, int16 ch_nr, byte *speicher);
+	void load_ged_pool(GedChunkInfo *Gh, int16 ch_nr, byte *speicher);
 
 	int16 getBarrierId(int16 x, int16 y, int16 x_anz, byte *speicher);
 	int16 getBarrierId(int16 g_idx, byte *speicher);

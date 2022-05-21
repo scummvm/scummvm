@@ -19,7 +19,6 @@ MODULE_OBJS = \
 	menus.o \
 	metaengine.o \
 	movclass.o \
-	ngstypes.o \
 	object.o \
 	object_extra.o \
 	r_event.o \

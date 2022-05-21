@@ -423,11 +423,11 @@ static void showWalkAreas() {
 
 	for (int y = 0, yp = ys; y < 200 / 8; ++y, yp += 8) {
 		for (int x = 0, xp = xs; x < 320 / 8; ++x, xp += 8) {
-			const int paletteId = _G(ged)->getBarrierId(xp, yp,
+			const int barrierId = _G(ged)->getBarrierId(xp, yp,
 				_G(room)->_gedXNr[_G(room_blk).AkAblage],
 				_G(ged_mem)[_G(room_blk).AkAblage]);
 
-			if (paletteId) {
+			if (barrierId) {
 				Common::Rect r(xp, yp, xp + 8, yp + 8);
 				r.translate(-_G(gameState).scrollx, -_G(gameState).scrolly);
 				r.clip(Common::Rect(0, 0, 320, 200));
@@ -507,7 +507,7 @@ void setupScreen(SetupScreenMode mode) {
 						_G(gpkt).Breite = _G(room)->_gedXNr[_G(room_blk).AkAblage];
 						_G(gpkt).Hoehe = _G(room)->_gedYNr[_G(room_blk).AkAblage];
 						_G(gpkt).Mem = _G(ged_mem)[_G(room_blk).AkAblage];
-						_G(gpkt).Ebenen = _G(room)->_gedInfo[_G(room_blk).AkAblage].Ebenen;
+						_G(gpkt).Ebenen = _G(room)->_gedInfo[_G(room_blk).AkAblage].level;
 						_G(gpkt).AkMovEbene = 1;
 						_G(mov)->goto_xy(&_G(gpkt));
 						_G(spieler_mi)[P_CHEWY].XyzStart[0] = _G(spieler_vector)[P_CHEWY].Xypos[0];
@@ -1152,7 +1152,7 @@ bool autoMove(int16 movNr, int16 playerNum) {
 			_G(gpkt).Breite = _G(room)->_gedXNr[_G(room_blk).AkAblage];
 			_G(gpkt).Hoehe = _G(room)->_gedYNr[_G(room_blk).AkAblage];
 			_G(gpkt).Mem = _G(ged_mem)[_G(room_blk).AkAblage];
-			_G(gpkt).Ebenen = _G(room)->_gedInfo[_G(room_blk).AkAblage].Ebenen;
+			_G(gpkt).Ebenen = _G(room)->_gedInfo[_G(room_blk).AkAblage].level;
 			_G(gpkt).AkMovEbene = 1;
 			_G(mov)->goto_xy(&_G(gpkt));
 

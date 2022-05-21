@@ -312,8 +312,8 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const cha
 
 		if (mode == GED_LOAD) {
 			_G(ged)->load_ged_pool(&_gedInfo[Rb->AkAblage], nr, _gedMem[Rb->AkAblage]);
-			_gedXNr[Rb->AkAblage] = img->width / _gedInfo[Rb->AkAblage].X;
-			_gedYNr[Rb->AkAblage] = img->height / _gedInfo[Rb->AkAblage].Y;
+			_gedXNr[Rb->AkAblage] = img->width / _gedInfo[Rb->AkAblage].pos.x;
+			_gedYNr[Rb->AkAblage] = img->height / _gedInfo[Rb->AkAblage].pos.y;
 		}
 	}
 

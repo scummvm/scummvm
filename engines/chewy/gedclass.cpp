@@ -26,7 +26,7 @@
 
 namespace Chewy {
 
-void GedClass::load_ged_pool(GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
+void GedClass::load_ged_pool(GedChunkInfo *Gh, int16 ch_nr, byte *speicher) {
 	Common::File f;
 	if (!f.open(EPISODE1_GEP))
 		error("load_ged_pool error");
@@ -35,15 +35,22 @@ void GedClass::load_ged_pool(GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
 
 	// Scan for the correct index entry
 	int i = 0;
+	uint32 length = 0;
+
 	do {
-		Gh->load(&f);
+		length = f.readUint32LE();
+
+		Gh->pos.x = f.readSint16LE();
+		Gh->pos.y = f.readSint16LE();
+		Gh->level = f.readSint16LE();
+
 		if (i != ch_nr) {
 			// Skip over the entry's data
-			f.seek(Gh->Len, SEEK_CUR);
+			f.seek(length, SEEK_CUR);
 		}
 	} while (++i <= ch_nr);
 
-	if (f.read(speicher, Gh->Len) != Gh->Len) {
+	if (f.read(speicher, length) != length) {
 		error("load_ged_chunk error");
 	}
 }

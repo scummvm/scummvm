@@ -96,7 +96,7 @@ public:
 
 	RaumTimer _roomTimer;
 	RoomInfo *_roomInfo;
-	GedChunkHeader _gedInfo[MAX_ABLAGE];
+	GedChunkInfo _gedInfo[MAX_ABLAGE];
 	int16 _gedXNr[MAX_ABLAGE];
 	int16 _gedYNr[MAX_ABLAGE];
 
