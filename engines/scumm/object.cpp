@@ -307,7 +307,7 @@ int ScummEngine::getState(int obj) {
 		// it. Fortunately this does not prevent frustrated players from
 		// blowing up the mansion, should they feel the urge to.
 
-		if (_game.id == GID_MANIAC && _game.version != 0 && (obj == 182 || obj == 193))
+		if (_game.id == GID_MANIAC && _game.version != 0 && _game.platform != Common::kPlatformNES && (obj == 182 || obj == 193))
 			_objectStateTable[obj] |= kObjectState_08;
 	}
 
