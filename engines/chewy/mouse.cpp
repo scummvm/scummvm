@@ -26,8 +26,6 @@
 
 namespace Chewy {
 
-bool _cursorMoveFl;
-
 InputMgr::InputMgr() {
 }
 

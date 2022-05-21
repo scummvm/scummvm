@@ -169,7 +169,6 @@ void cursorChoice(int16 nr) {
 	}
 
 	if (ok) {
-		_cursorMoveFl = true;
 		_G(gameState)._curWidth = READ_LE_INT16(_G(curblk).sprite[_G(cur)->getAnimStart()]);
 		_G(gameState)._curHeight = READ_LE_INT16(_G(curblk).sprite[_G(cur)->getAnimStart()] + 2);
 	}

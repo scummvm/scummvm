@@ -129,11 +129,8 @@ void EventsManager::handleMouseEvent(const Common::Event &event) {
 	}
 
 	// Set mouse position
-	if (!_cursorMoveFl) {
-		_cursorMoveFl = true;
-		g_events->_mousePos.x = event.mouse.x;
-		g_events->_mousePos.y = event.mouse.y;
-	}
+	g_events->_mousePos.x = event.mouse.x;
+	g_events->_mousePos.y = event.mouse.y;
 }
 
 void EventsManager::handleKbdEvent(const Common::Event &event) {
