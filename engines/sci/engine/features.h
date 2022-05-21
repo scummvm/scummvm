@@ -281,6 +281,14 @@ public:
 	 * games which don't follow the normal saving scheme.
 	*/
 	bool canSaveFromGMM() const;
+	
+	/**
+	 * Returns the global variable index to the start of the game's
+	 * global flags array. This is used by the console debugger.
+	 *
+	 * @return Non-zero index if successful, otherwise zero.
+	 */
+	uint16 getGameFlagsGlobal() const;
 
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
