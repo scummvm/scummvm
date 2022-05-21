@@ -65,6 +65,7 @@ public:
 class Events : public UIElement {
 private:
 	Graphics::Screen *_screen = nullptr;
+	UIElement *_focusedElement;
 protected:
 	/**
 	 * Process an event
@@ -79,8 +80,25 @@ public:
 	 */
 	void runGame();
 
+	/**
+	 * Sets the focus to a new view
+	 */
+	void focusElement(UIElement *ui) {
+		_focusedElement = ui;
+	}
+
 	Graphics::Screen *getScreen() const override {
 		return _screen;
+	}
+
+
+	void draw() override {
+		if (_focusedElement)
+			_focusedElement->draw();
+	}
+
+	bool tick() override {
+		return _focusedElement ? _focusedElement->tick() : false;
 	}
 };
 

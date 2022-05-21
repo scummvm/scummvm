@@ -54,8 +54,9 @@ Common::Error MM1Engine::run() {
 		return Common::kNoError;
 
 	// Run the game
-//	Views::TitleView view1(this);
-	Views::AreYouReady view1(this);
+	Views::TitleView view1(this);
+	Views::AreYouReady view2(this);
+	focusElement(&view2);
 
 	runGame();
 	return Common::kNoError;
