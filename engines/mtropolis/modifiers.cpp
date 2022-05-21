@@ -418,14 +418,25 @@ VThreadState ChangeSceneModifier::consumeMessage(Runtime *runtime, const Common:
 		if (_sceneSelectionType == kSceneSelectionTypeSpecific) {
 			Structural *project = runtime->getProject();
 			Structural *section = nullptr;
-			for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = project->getChildren().begin(), itEnd = project->getChildren().end(); it != itEnd; ++it) {
-				Structural *candidate = it->get();
-				assert(candidate->isSection());
-				if (candidate->getStaticGUID() == _targetSectionGUID) {
-					section = candidate;
-					break;
+
+			if (_targetSectionGUID == 0xfffffffeu) {
+				// For some reason, some scene change modifiers have a garbled section ID.  In that case, look in the current section.
+				Structural *sectionSearch = findStructuralOwner();
+				while (sectionSearch && !sectionSearch->isSection())
+					sectionSearch = sectionSearch->getParent();
+
+				section = sectionSearch;
+			} else {
+				for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = project->getChildren().begin(), itEnd = project->getChildren().end(); it != itEnd; ++it) {
+					Structural *candidate = it->get();
+					assert(candidate->isSection());
+					if (candidate->getStaticGUID() == _targetSectionGUID) {
+						section = candidate;
+						break;
+					}
 				}
 			}
+			
 
 			if (section) {
 				Structural *subsection = nullptr;
@@ -498,7 +509,7 @@ VThreadState ChangeSceneModifier::consumeMessage(Runtime *runtime, const Common:
 		if (targetScene) {
 			runtime->addSceneStateTransition(HighLevelSceneTransition(targetScene, HighLevelSceneTransition::kTypeChangeToScene, _addToDestList, _addToReturnList));
 		} else {
-			warning("Change Scene Modifier failed, subsection could not be resolved");
+			warning("Change Scene Modifier failed, scene could not be resolved");
 		}
 	}
 

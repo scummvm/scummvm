@@ -2052,6 +2052,24 @@ private:
 	Common::SharedPtr<KeyboardEventSignaller> _signaller;
 };
 
+struct MediaCueState {
+	enum TriggerTiming {
+		kTriggerTimingStart = 0,
+		kTriggerTimingDuring = 1,
+		kTriggerTimingEnd = 2,
+	};
+
+	int32 minTime;
+	int32 maxTime;
+
+	Modifier *sourceModifier;
+	TriggerTiming triggerTiming;
+	MessengerSendSpec send;
+	DynamicValue incomingData;
+
+	void checkTimestampChange(Runtime *runtime, uint32 oldTS, uint32 newTS, bool continuousTimestamps, bool canTriggerDuring);
+};
+
 class Project : public Structural {
 public:
 	explicit Project(Runtime *runtime);
@@ -2235,9 +2253,16 @@ public:
 
 	uint32 getStreamLocator() const;
 
+	void addMediaCue(MediaCueState *mediaCue);
+	void removeMediaCue(const MediaCueState *mediaCue);
+
+	virtual bool resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const;
+
 protected:
 	uint32 _streamLocator;
 	uint16 _sectionID;
+
+	Common::Array<MediaCueState *> _mediaCues;
 };
 
 class VisualElement : public Element {

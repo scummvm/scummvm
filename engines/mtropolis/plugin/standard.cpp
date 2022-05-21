@@ -380,8 +380,11 @@ MiniscriptInstructionOutcome STransCtModifier::scriptSetSteps(MiniscriptThread *
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
+MediaCueMessengerModifier::MediaCueMessengerModifier() : _isActive(false) {
+	_mediaCue.sourceModifier = this;
+}
 
-bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext& context, const Data::Standard::MediaCueMessengerModifier& data) {
+bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::MediaCueMessengerModifier &data) {
 	if (data.enableWhen.type != Data::PlugInTypeTaggedValue::kEvent)
 		return false;
 
@@ -395,7 +398,7 @@ bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext& context,
 	if (data.triggerTiming.type != Data::PlugInTypeTaggedValue::kInteger)
 		return false;
 
-	_triggerTiming = static_cast<TriggerTiming>(data.triggerTiming.value.asInt);
+	_mediaCue.triggerTiming = static_cast<MediaCueState::TriggerTiming>(data.triggerTiming.value.asInt);
 
 	if (data.nonStandardMessageFlags.type != Data::PlugInTypeTaggedValue::kInteger)
 		return false;
@@ -406,14 +409,134 @@ bool MediaCueMessengerModifier::load(const PlugInModifierLoaderContext& context,
 	messageFlags.immediate = ((msgFlags & Data::Standard::MediaCueMessengerModifier::kMessageFlagImmediate) != 0);
 	messageFlags.cascade = ((msgFlags & Data::Standard::MediaCueMessengerModifier::kMessageFlagCascade) != 0);
 	messageFlags.relay = ((msgFlags & Data::Standard::MediaCueMessengerModifier::kMessageFlagRelay) != 0);
-	if (!_send.load(data.sendEvent, messageFlags, data.with, data.destination))
+	if (!_mediaCue.send.load(data.sendEvent, messageFlags, data.with, data.destination))
 		return false;
+
+	switch (data.executeAt.type) {
+	case Data::PlugInTypeTaggedValue::kInteger:
+		_cueSourceType = kCueSourceInteger;
+		_cueSource.asInt = data.executeAt.value.asInt;
+		break;
+	case Data::PlugInTypeTaggedValue::kIntegerRange:
+		_cueSourceType = kCueSourceIntegerRange;
+		if (!_cueSource.asIntRange.load(data.executeAt.value.asIntRange))
+			return false;
+		break;
+	case Data::PlugInTypeTaggedValue::kVariableReference:
+		_cueSourceType = kCueSourceVariableReference;
+		_cueSource.asVarRefGUID = data.executeAt.value.asVarRefGUID;
+		break;
+	case Data::PlugInTypeTaggedValue::kLabel:
+		_cueSourceType = kCueSourceLabel;
+		if (!_cueSource.asLabel.load(data.executeAt.value.asLabel))
+			return false;
+		break;
+	default:
+		return false;
+	}
 
 	return true;
 }
 
+bool MediaCueMessengerModifier::respondsToEvent(const Event &evt) const {
+	return _enableWhen.respondsTo(evt) || _disableWhen.respondsTo(evt);
+}
+
+VThreadState MediaCueMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_enableWhen.respondsTo(msg->getEvent())) {
+		Structural *owner = findStructuralOwner();
+		if (owner && owner->isElement()) {
+
+			Element *element = static_cast<Element *>(owner);
+
+			switch (_cueSourceType) {
+			case kCueSourceInteger:
+				_mediaCue.minTime = _mediaCue.maxTime = _cueSource.asInt;
+				break;
+			case kCueSourceIntegerRange:
+				_mediaCue.minTime = _cueSource.asIntRange.min;
+				_mediaCue.maxTime = _cueSource.asIntRange.max;
+				break;
+			case kCueSourceLabel: {
+					int32 resolved = 0;
+					if (element->resolveMediaMarkerLabel(_cueSource.asLabel, resolved))
+						_mediaCue.minTime = _mediaCue.maxTime = resolved;
+					else {
+						warning("Failed to resolve media cue marker label");
+						return kVThreadError;
+					}
+				} break;
+			case kCueSourceVariableReference: {
+					Modifier *modifier = _cueSourceModifier.lock().get();
+					if (!modifier->isVariable()) {
+						warning("Media cue source variable couldn't be resolved");
+						return kVThreadReturn;
+					}
+
+					DynamicValue value;
+					static_cast<VariableModifier *>(modifier)->varGetValue(nullptr, value);
+
+					switch (value.getType()) {
+					case DynamicValueTypes::kInteger:
+						_mediaCue.minTime = _mediaCue.maxTime = value.getInt();
+						break;
+					case DynamicValueTypes::kIntegerRange:
+						_mediaCue.minTime = value.getIntRange().min;
+						_mediaCue.maxTime = value.getIntRange().max;
+						break;
+					case DynamicValueTypes::kFloat:
+						_mediaCue.minTime = _mediaCue.maxTime = static_cast<int32>(round(value.getFloat()));
+						break;
+					default:
+						warning("Media cue variable was not a usable type");
+						return kVThreadError;
+					}
+
+				} break;
+			default:
+				assert(false);	// Something wasn't handled in the loader
+				return kVThreadReturn;
+			}
+
+			element->addMediaCue(&_mediaCue);
+			_isActive = true;
+		}
+	}
+	if (_disableWhen.respondsTo(msg->getEvent())) {
+		if (_isActive) {
+			Structural *owner = findStructuralOwner();
+			if (owner && owner->isElement())
+				static_cast<Element *>(owner)->removeMediaCue(&_mediaCue);
+
+			_isActive = false;
+		}
+	}
+
+	return kVThreadReturn;
+}
+
 Common::SharedPtr<Modifier> MediaCueMessengerModifier::shallowClone() const {
-	return Common::SharedPtr<Modifier>(new MediaCueMessengerModifier(*this));
+	Common::SharedPtr<MediaCueMessengerModifier> clone(new MediaCueMessengerModifier(*this));
+	clone->_isActive = false;
+	clone->_mediaCue.sourceModifier = clone.get();
+	clone->_mediaCue.incomingData = DynamicValue();
+	return clone;
+}
+
+void MediaCueMessengerModifier::linkInternalReferences(ObjectLinkingScope *scope) {
+	if (_cueSourceType == kCueSourceVariableReference) {
+		Common::WeakPtr<RuntimeObject> obj = scope->resolve(_cueSource.asVarRefGUID);
+		RuntimeObject *objPtr = obj.lock().get();
+		if (objPtr && objPtr->isModifier())
+			_cueSourceModifier = obj.staticCast<Modifier>();
+	}
+
+	_mediaCue.send.linkInternalReferences(scope);
+}
+
+void MediaCueMessengerModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	visitor->visitWeakModifierRef(_cueSourceModifier);
+	_mediaCue.send.visitInternalReferences(visitor);
 }
 
 ObjectReferenceVariableModifier::ObjectReferenceVariableModifier() {
