@@ -43,10 +43,16 @@ MM1Engine::~MM1Engine() {
 }
 
 Common::Error MM1Engine::run() {
+	// Initialize graphics mode
 	initGraphics(320, 200);
 	Gfx::GFX::setEgaPalette(0);
-	Views::TitleView screenView(this);
 
+	// Load globals
+	if (!_globals.load())
+		return Common::kNoError;
+
+	// Run the game
+	Views::TitleView screenView(this);
 	runGame();
 	return Common::kNoError;
 }

@@ -1,2 +1,3 @@
 engines/mm/detection.cpp
+engines/mm/utils/engine_data.cpp
 engines/mm/xeen/saves.cpp

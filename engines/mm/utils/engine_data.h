@@ -32,7 +32,7 @@
  * within it, and as part of the release process, this folder will be
  * zipped up as a file 'mm.dat', and included with ScummVM releases.
  *
- * For development purposes, if you go the Edit Game dialog for a
+ * For development purposes, if you go the Game Options dialog for a
  * game in the ScummVM launcher, and set the extra path to
  * /devtools/create_mm, the engine will access the files directly
  * without requiring you to keep regenerating mm.dat.
