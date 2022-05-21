@@ -5261,6 +5261,32 @@ void KeyboardEventSignaller::removeReceiver(IKeyboardEventReceiver *receiver) {
 	}
 }
 
+void MediaCueState::checkTimestampChange(Runtime *runtime, uint32 oldTS, uint32 newTS, bool continuousTimestamps, bool canTriggerDuring) {
+	bool entersRange = (oldTS < minTime && newTS >= minTime);
+	bool exitsRange = (oldTS <= maxTime && newTS > maxTime);
+	bool endsInRange = (newTS >= minTime && newTS <= maxTime);
+
+	bool shouldTrigger = false;
+	switch (triggerTiming)
+	{
+	case kTriggerTimingStart:
+		shouldTrigger = continuousTimestamps ? entersRange : endsInRange;
+		break;
+	case kTriggerTimingEnd:
+		shouldTrigger = continuousTimestamps ? exitsRange : false;
+		break;
+	case kTriggerTimingDuring:
+		shouldTrigger = canTriggerDuring ? endsInRange : false;
+		break;
+	default:
+		break;
+	}
+
+	// Given the positioning of this, there's not really a way for the immediate flag to have any effect?
+	if (shouldTrigger)
+		send.sendFromMessenger(runtime, sourceModifier, incomingData);
+}
+
 Project::Segment::Segment() : weakStream(nullptr) {
 }
 
@@ -6091,6 +6117,23 @@ bool Element::isElement() const {
 
 uint32 Element::getStreamLocator() const {
 	return _streamLocator;
+}
+
+void Element::addMediaCue(MediaCueState *mediaCue) {
+	_mediaCues.push_back(mediaCue);
+}
+
+void Element::removeMediaCue(const MediaCueState *mediaCue) {
+	for (size_t i = 0; i < _mediaCues.size(); i++) {
+		if (_mediaCues[i] == mediaCue) {
+			_mediaCues.remove_at(i);
+			break;
+		}
+	}
+}
+
+bool Element::resolveMediaMarkerLabel(const Label& label, int32 &outResolution) const {
+	return false;
 }
 
 VisualElement::VisualElement() : _rect(Rect16::create(0, 0, 0, 0)), _cachedAbsoluteOrigin(Point16::create(0, 0)) {

@@ -352,6 +352,7 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 		return;
 
 	if (_videoDecoder) {
+		bool checkContinuously = false;
 		if (_shouldPlayIfNotPaused) {
 			if (_paused) {
 				// Goal state is paused
@@ -367,6 +368,7 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 					_videoDecoder->pauseVideo(false);
 
 				_currentPlayState = kMediaStatePlaying;
+				checkContinuously = true;
 			}
 		} else {
 			// Goal state is stopped
@@ -417,6 +419,11 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 
 		if (targetTS != _currentTimestamp) {
 			assert(!_paused);
+
+			
+			// Check media cues
+			for (MediaCueState *mediaCue : _mediaCues)
+				mediaCue->checkTimestampChange(runtime, _currentTimestamp, targetTS, checkContinuously, true);
 
 			_currentTimestamp = targetTS;
 

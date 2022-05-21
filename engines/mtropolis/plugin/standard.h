@@ -95,25 +95,47 @@ private:
 
 class MediaCueMessengerModifier : public Modifier {
 public:
+	MediaCueMessengerModifier();
+
 	bool load(const PlugInModifierLoaderContext &context, const Data::Standard::MediaCueMessengerModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Media Cue Modifier"; }
 #endif
 
 private:
+	enum CueSourceType {
+		kCueSourceInteger,
+		kCueSourceIntegerRange,
+		kCueSourceVariableReference,
+		kCueSourceLabel,
+	};
+
+	union CueSourceUnion {
+		int32 asInt;
+		IntRange asIntRange;
+		uint32 asVarRefGUID;
+		Label asLabel;
+	};
+
 	Common::SharedPtr<Modifier> shallowClone() const override;
 
-	enum TriggerTiming {
-		kTriggerTimingStart = 0,
-		kTriggerTimingDuring = 1,
-		kTriggerTimingEnd = 2,
-	};
+	void linkInternalReferences(ObjectLinkingScope *scope) override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
+
+	CueSourceType _cueSourceType;
+	CueSourceUnion _cueSource;
+
+	Common::WeakPtr<Modifier> _cueSourceModifier;
 
 	Event _enableWhen;
 	Event _disableWhen;
-	TriggerTiming _triggerTiming;
-	MessengerSendSpec _send;
+
+	MediaCueState _mediaCue;
+	bool _isActive;
 };
 
 class ObjectReferenceVariableModifier : public VariableModifier {
