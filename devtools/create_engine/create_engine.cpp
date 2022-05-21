@@ -47,7 +47,23 @@ static const char *const FILENAMES[] = {
 };
 const char *const ENGINES = "create_project ..\\.. --use-canonical-lib-names --msvc\n";
 
-// Replaces any occurances of the xyzzy placeholder with
+bool fileExists(const char *name) {
+#ifdef _MSC_VER
+	return (GetFileAttributesA(name) != INVALID_FILE_ATTRIBUTES);
+#else
+	return (!access(name, F_OK));
+#endif
+}
+
+bool createDirectory(const char *name) {
+#ifdef _MSC_VER
+	return CreateDirectoryA(name);
+#else
+	return (!mkdir(name, 0755));
+#endif
+}
+
+// Replaces any occurrences of the xyzzy placeholder with
 // whatever engine name was specified
 void replace_placeholders(char line[MAX_LINE_LENGTH]) {
 	char buf[MAX_LINE_LENGTH];
@@ -180,18 +196,10 @@ int main(int argc, char *argv[]) {
 
 	char prefix[100];
 	char prefix2[100];
-#ifdef _MSC_VER
-	if (GetFileAttributesA("../../engines") != INVALID_FILE_ATTRIBUTES) {
-#else
-	if (!access("../../engines", F_OK)) {
-#endif
+	if (fileExists("../../engines")) {
 		strcpy(prefix, "../..");
 		strcpy(prefix2, ".");
-#ifdef _MSC_VER
-	} else 	if (GetFileAttributesA("engines") != INVALID_FILE_ATTRIBUTES) {
-#else
-	} else if (!access("engines", F_OK)) {
-#endif
+	} else if (fileExists("engines")) {
 		strcpy(prefix, ".");
 		strcpy(prefix2, "devtools/create_engine");
 	} else {
@@ -207,11 +215,7 @@ int main(int argc, char *argv[]) {
 	printf("Creating directory %s...", folder);
 	fflush(stdout);
 
-#ifdef _MSC_VER
-	if (!CreateDirectoryA(folder, NULL)) {
-#else
-	if (mkdir(folder, 0755)) {
-#endif
+	if (!createDirectory(folder)) {
 		printf("Could not create engine folder.\n");
 		return 0;
 	}
