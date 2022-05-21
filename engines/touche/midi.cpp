@@ -42,9 +42,6 @@ static const uint8 _gmToRol[256] = {
 
 MidiPlayer::MidiPlayer() {
 
-	// FIXME: Necessary?
-	memset(_channelsVolume, 0, sizeof(_channelsVolume));
-
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 	_driver = MidiDriver::createMidi(dev);
