@@ -1883,7 +1883,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "one", "One" },
 	{ "oneofthem", "One of them" },
 	{ "onemorefathom", "One More Fathom" },
-	{ "oneofakind", "One Of A Kind: A Divine Comedy of Mistakes" },
+	{ "oneofakind", "One of A Kind: a divine comedy of mistakes" },
 	{ "onerainyday", "One Rainy Day" },
 	{ "oneroom", "One Room" },
 	{ "oneroomonecheese", "One Room, One Cheese" },
@@ -1906,10 +1906,13 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "osdenise", "Oceanspirit Denise: Heroics In The Nick Of Time!" },
 	{ "osdfamous", "Oceanspirit Dennis Sorta 99% FAMOUS" },
 	{ "osdholiday", "Oceanspirit Dennis's Holiday Havoc!" },
-	{ "osdlastboss", "Oceanspirit Dennis - Last Boss DX" },
+	{ "osdlastboss", "Oceanspirit Dennis - Last Boss" },
 	{ "osdlgs", "Oceanspirit Dennis: Leather Gear Smooth" },
+	{ "osdlol", "LOL, Oceanspirit Dennis" },
 	{ "osdlostworld", "Oceanspirit Dennis: The Lost World" },
-	{ "osdmighty", "Oceanspirit Dennis: Mighty Viking" },
+	{ "osdmancake", "A Taste of Man Cake" },
+	{ "osdmightypirate", "Oceanspirit Dennis: Mighty Pirate" },
+	{ "osdmightyviking", "Oceanspirit Dennis: Mighty Viking" },
 	{ "osdmoby", "Oceanspirit Dennis Moby GearWhaleDX" },
 	{ "osdninja", "Oceanspirit Dennis: The Naked & The Ninja" },
 	{ "osdocd", "Oceanspirit Dennis: The Full Name Of This Game Won't Fit In The Subject Line!!1" },
@@ -1920,6 +1923,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "osdscourge", "Oceanspirit Dennis: Scourge of the Underworld" },
 	{ "osdscourgehd", "Oceanspirit Dennis: Scourge of the Underworld HD" },
 	{ "osdsearch", "The Search for Oceanspirit Dennis" },
+	{ "osdshindig", "The Shindig of Dennis" },
+	{ "osdsquares", "Oceanspirit Dennis: [][][][][][][][][]" },
+	{ "osdsweet", "Oceanspirit Dennis: Sweet Revenge" },
 	{ "osdtextual", "Oceanspirit Dennis Gets Textual" },
 	{ "osdvaginity", "Oceanspirit Dennis LOSERS HIS VAGINITY" },
 	{ "osdvscloud", "Oceanspirit Dennis vs. Cloud Strife" },
@@ -1930,7 +1936,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "otakurivals", "Otaku Rivals" },
 	{ "otherworlds", "Other Worlds" },
 	{ "otisbuildsafire", "Otis Builds a Fire" },
-	{ "ouja", "Ouja" },
 	{ "ourfinesthour", "Our Finest Hour" },
 	{ "ouroborossacrifice", "Ouroboros: The Sacrifice" },
 	{ "ourobouros", "I am Ourobouros" },
@@ -2345,6 +2350,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "spellbound", "Spellbound: A Clive Mandrake Adventure" },
 	{ "spidertrek", "Spider Trek" },
 	{ "spilakassinn", "Spilakassinn - The Slot Machine" },
+	{ "spiritboard", "Midnight Spirit Board" },
 	{ "spitboy", "Spit Boy" },
 	{ "splinter", "Splinter" },
 	{ "splitfighters", "Split Fighters" },
@@ -3383,14 +3389,14 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("mountainsofmadness", "MountainsOfMadness.exe", "95822b7957b8f239d3216b9209cfb1f5", 337894184),
 	GAME_ENTRY_EN_STEAM("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078740517),
 	GAME_ENTRY_EN("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078743375),
-	GAME_ENTRY("odissea", "ODISSEA.exe", "5bb86de9245242046c309711ff02dad3", 717438956),  // itch.io
+	GAME_ENTRY("odissea", "ODISSEA.exe", "5bb86de9245242046c309711ff02dad3", 717438956),  // itch.io  Eng-Ita
 	GAME_ENTRY_EN_GOG("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467834855),
 	GAME_ENTRY_EN_GOG("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467845009),
 	GAME_ENTRY_EN_STEAM("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467844896),
 	GAME_ENTRY_EN_STEAM("oott", "agsgame.dat", "801b35fe313a432e44671ab04178b679", 465670839), // Linux
 	GAME_ENTRY_EN_GOG("oott", "agsgame.dat", "ca8414acc5dc5687891db2d8ac5a0e76", 465662744), // Linux
-	GAME_ENTRY("ozorwell1", "OZORWELL.exe", "7036a7f21cfe585bc890093b4e004d52", 588631118), // itch.io
-	GAME_ENTRY("ozorwell2", "OZ2.exe", "99a9a592b2ffe51a93b5f18b927441b0", 1028373987), // itch.io
+	GAME_ENTRY("ozorwell1", "OZORWELL.exe", "7036a7f21cfe585bc890093b4e004d52", 588631118), // itch.io  Eng-Ita
+	GAME_ENTRY("ozorwell2", "OZ2.exe", "99a9a592b2ffe51a93b5f18b927441b0", 1028373987), // itch.io  Eng-Ita
 	GAME_ENTRY_STEAM("perfecttides", "game.ags", "63f8a60cc094996bd070e68cb3c4722c", 1201066930),
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973495830),
 	GAME_ENTRY_GOG("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377890),
@@ -3726,9 +3732,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("nightoftheravingfeminist", "Prueba1.exe", "b25674056fe8cc0b7bf0a4409c5c5bfc", 7015243),
 	DEMO_ENTRY_EN("notravellerreturns", "Test.exe", "f120690b506dd63cd7d1112ea6af2f77", 19656975),
 	DEMO_ENTRY_EN("nostalgik", "NOLGASTIK.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 143891265),
-	DEMO_ENTRY("oott", "demo_tkc.exe", "54da0ce99f3e8b556db6d236c8ef76ba", 415137576), // Steam
-	DEMO_ENTRY("osdlgs", "OSD - Leather Gear Smooth.exe", "82da2565c456dcfb265ded6fe3189c0b", 114550556),
-	DEMO_ENTRY("osdrots", "Rise of the spirit.exe", "415faaf03c892f5a8ce2c136a8fa3478", 17049026),
+	DEMO_ENTRY_EN("oott", "demo_tkc.exe", "54da0ce99f3e8b556db6d236c8ef76ba", 415137576), // Steam
+	DEMO_ENTRY_EN("osdlgs", "OSD - Leather Gear Smooth.exe", "82da2565c456dcfb265ded6fe3189c0b", 114550556),
+	DEMO_ENTRY_EN("osdrots", "Rise of the spirit.exe", "415faaf03c892f5a8ce2c136a8fa3478", 17049026),
 	DEMO_ENTRY_EN("outscore", "Outscore.exe", "22d2d13d88310758fc76ff9d6e4f23b8", 31265367),
 	DEMO_ENTRY_EN("outscore", "Outscore.exe", "dbe281d93c914899886e77c09c3c65ec", 39079910),  // v1.0.3
 	DEMO_ENTRY("paramnesia", "Paramnesia.exe", "7b665533f5d1fe08284fd9dbff395b06", 20233668),
@@ -5568,95 +5574,102 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("numberrescue", "NumberRescue.exe", "0241777c2537fc5d077c05cde10bfa9f", 6442933), //v1.07
 	GAME_ENTRY_EN("obsession", "Obsession.exe", "387ff720e746ae46e93f463fd58d77a4", 12874285), //v1.0.3
 	GAME_ENTRY_EN("obsession", "Obsession.ags", "c3c9c5e7446541a79ed010cc0e0bb860", 10382365), //v1.0.3
-	GAME_ENTRY("odottamaton", "Odottamaton.exe", "9d9e5ea323793fc526b1533d78c4f9c6", 23822268),
-	GAME_ENTRY("odow", "ODOW.exe", "6e6f33162242d74dd1fa042429f16562", 3968102),
-	GAME_ENTRY("odr3", "ODR3.exe", "af11e94f91b66e11450e8daf51d09292", 7637876),
-	GAME_ENTRY("odr4", "ODR4.exe", "510be04e5eec2aa92bb78b060f138d64", 24227828),
-	GAME_ENTRY("officeshenanigans", "OfficeShenanigans.exe", "25976a689b0f4d73eac69b1728377ecb", 6111931),
-	GAME_ENTRY("offtheclock", "Off The Clock.ags", "8918895c5c695bae90af13ea4f1a9807", 495345700), // Linux
-	GAME_ENTRY("offtheclock", "Off The Clock.exe", "b2eb107c1f9784b7fc4f58c2a7678dea", 498392456), // Windows
-	GAME_ENTRY("offtheclock", "ac2game.dat", "b2eb107c1f9784b7fc4f58c2a7678dea", 498257938), // Mac
-	GAME_ENTRY("ohdulieber", "Augustin.exe", "b142b43c146c25443a1d155d441a6a81", 13477896),
-	GAME_ENTRY("ohitschristmas", "soi_c.exe", "0241777c2537fc5d077c05cde10bfa9f", 17522925),
-	GAME_ENTRY("ohitschristmas", "soi_c.exe", "0241777c2537fc5d077c05cde10bfa9f", 17524490),
-	GAME_ENTRY("ohnonotagain", "ONNA.exe", "17aed5910365e6b114d667febf8ada7f", 1677534),
+	GAME_ENTRY_EN("odottamaton", "Odottamaton.exe", "9d9e5ea323793fc526b1533d78c4f9c6", 23822268),
+	GAME_ENTRY_EN("odow", "ODOW.exe", "6e6f33162242d74dd1fa042429f16562", 3968102),
+	GAME_ENTRY_EN("odr3", "ODR3.exe", "af11e94f91b66e11450e8daf51d09292", 7637876),
+	GAME_ENTRY_EN("odr4", "ODR4.exe", "510be04e5eec2aa92bb78b060f138d64", 24227828),
+	GAME_ENTRY_EN("officeshenanigans", "OfficeShenanigans.exe", "25976a689b0f4d73eac69b1728377ecb", 6111931),
+	GAME_ENTRY_EN("offtheclock", "Off The Clock.ags", "8918895c5c695bae90af13ea4f1a9807", 495345700), // Linux
+	GAME_ENTRY_EN("offtheclock", "Off The Clock.exe", "b2eb107c1f9784b7fc4f58c2a7678dea", 498392456), // Windows
+	GAME_ENTRY_EN("offtheclock", "ac2game.dat", "b2eb107c1f9784b7fc4f58c2a7678dea", 498257938), // Mac
+	GAME_ENTRY("ohdulieber", "Augustin.exe", "b142b43c146c25443a1d155d441a6a81", 13477896),  // En-Fr-De
+	GAME_ENTRY_EN("ohitschristmas", "soi_c.exe", "0241777c2537fc5d077c05cde10bfa9f", 17522925),
+	GAME_ENTRY_EN("ohitschristmas", "soi_c.exe", "0241777c2537fc5d077c05cde10bfa9f", 17524490),
+	GAME_ENTRY_EN("ohnonotagain", "ONNA.exe", "17aed5910365e6b114d667febf8ada7f", 1677534),
 	GAME_ENTRY_EN("oldmansea", "OldMan.exe", "615e73fc1874e92d60a1996c2330ea36", 2244474),
-	GAME_ENTRY("omnipotenttarot", "OmnipotentTarot.exe", "f120690b506dd63cd7d1112ea6af2f77", 7166774),
-	GAME_ENTRY("onceuponacrime", "OUAC.exe", "6ee842f73649ced615c44d4eb303687c", 6580658),
-	GAME_ENTRY("onceuponatime", "Oncetime.exe", "18b284c22010850f79bc5c20054a70c4", 11633390),  // v2
-	GAME_ENTRY("onceuponatime70s", "funky.exe", "1e724c14c98a833481dec98800c1b44c", 3926226),
-	GAME_ENTRY("onceuponatimekeel", "MAGS TEST.exe", "615e73fc1874e92d60a1996c2330ea36", 3004625),
-	GAME_ENTRY("one", "one.exe", "0710e2ec71042617f565c01824f0cf3c", 53482630),
-	GAME_ENTRY("oneofthem", "One_of_them.exe", "f18443f98fd61d2c655e76a17f7da905", 11052036),  // Win/Mac
-	GAME_ENTRY("oneofthem", "One_of_them.ags", "67af54ac6f3b9729e8a12f45b20fb098", 8909409),  // Linux
-	GAME_ENTRY("onemorefathom", "AGS_OMF.exe", "9b47600b5662d7f8b6a4c6ed6854a12c", 24492467),
-	GAME_ENTRY("oneofakind", "OneOfAKind.exe", "a524cbb1c51589903c4043b98917f1d9", 4031186),
-	GAME_ENTRY("onerainyday", "gewitter.exe", "82da2565c456dcfb265ded6fe3189c0b", 8409861),
-	GAME_ENTRY_PLATFORM("oneroom", "One Room.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 14331940, "OROW"),
-	GAME_ENTRY("oneroom", "One Room.exe", "7a5f69f3034dc2b629ee53bd7ee5f95b", 21431873),  // v2
-	GAME_ENTRY("oneroomonecheese", "One Cheese.exe", "c4f5b7b29be90ba0f8128298afb917de", 3698736),
-	GAME_ENTRY("onespytoomany", "One spy too many.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 70521403),
-	GAME_ENTRY("onespytoomany", "One spy too many.ags", "8adaee00eac1982da79aedb33002ce96", 68041259),
+	GAME_ENTRY_EN("omnipotenttarot", "OmnipotentTarot.exe", "f120690b506dd63cd7d1112ea6af2f77", 7166774),
+	GAME_ENTRY_EN("onceuponacrime", "OUAC.exe", "6ee842f73649ced615c44d4eb303687c", 6580658),
+	GAME_ENTRY_EN("onceuponatime", "Oncetime.exe", "18b284c22010850f79bc5c20054a70c4", 11633390),  // v2
+	GAME_ENTRY_EN("onceuponatime70s", "funky.exe", "1e724c14c98a833481dec98800c1b44c", 3926226),
+	GAME_ENTRY_EN("onceuponatimekeel", "MAGS TEST.exe", "615e73fc1874e92d60a1996c2330ea36", 3004625),
+	GAME_ENTRY_EN("one", "one.exe", "0710e2ec71042617f565c01824f0cf3c", 53482630),
+	GAME_ENTRY_EN("oneofthem", "One_of_them.exe", "f18443f98fd61d2c655e76a17f7da905", 11052036),  // Win/Mac
+	GAME_ENTRY_EN("oneofthem", "One_of_them.ags", "67af54ac6f3b9729e8a12f45b20fb098", 8909409),  // Linux
+	GAME_ENTRY_EN("onemorefathom", "AGS_OMF.exe", "9b47600b5662d7f8b6a4c6ed6854a12c", 24492467),
+	GAME_ENTRY_EN("oneofakind", "OneOfAKind.exe", "a524cbb1c51589903c4043b98917f1d9", 4031186),
+	GAME_ENTRY_EN("onerainyday", "gewitter.exe", "82da2565c456dcfb265ded6fe3189c0b", 8409861),
+	GAME_ENTRY_EN_PLATFORM("oneroom", "One Room.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 14331940, "OROW"),
+	GAME_ENTRY_EN("oneroom", "One Room.exe", "7a5f69f3034dc2b629ee53bd7ee5f95b", 21431873),  // v2
+	GAME_ENTRY_EN("oneroomonecheese", "One Cheese.exe", "c4f5b7b29be90ba0f8128298afb917de", 3698736),
+	GAME_ENTRY_EN("onespytoomany", "One spy too many.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 70521403),
+	GAME_ENTRY_EN("onespytoomany", "One spy too many.ags", "8adaee00eac1982da79aedb33002ce96", 68041259),
 	GAME_ENTRY_EN("onethatremains", "TOR.exe", "7ddb9e776648faed5a51170d087074e9", 22754797),  // v1.4 Win
 	GAME_ENTRY_EN("onethatremains", "TOR.ags", "bea02edae2cd3e37540dff0480f4f2e6", 20267485),  // v1.4 Linux
-	GAME_ENTRY("oneweekoneroom", "1 week 1 room.exe", "06a03fe35791b0578068ab1873455463", 4275934),
-	GAME_ENTRY("onleavingthebuilding", "On Leaving The Building.exe", "fd68fced8b89792d2e90be87b33d4b19", 64776995),
-	GAME_ENTRY("onlythegooddieyoung", "OtGDY_En.exe", "87ccd318a469128530699388f916b86f", 153980124),
-	GAME_ENTRY("openquest", "OpenQuest.exe", "90413e9ae57e222f8913b09d2bc847bc", 3407165),
-	GAME_ENTRY("operationforklift", "Pancake.exe", "c9cd3e2cdd295c33e62cfa97b14461e9", 35971047),
-	GAME_ENTRY("operationnovi", "Operation Novi.exe", "465f972675db2da6040518221af5b0ba", 24583968),
-	GAME_ENTRY("operationreddice", "Red Dice.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 7858840),
-	GAME_ENTRY("operationsavebluecup", "OSBC.exe", "f120690b506dd63cd7d1112ea6af2f77", 3040865),
+	GAME_ENTRY_EN("oneweekoneroom", "1 week 1 room.exe", "06a03fe35791b0578068ab1873455463", 4275934),
+	GAME_ENTRY_EN("onleavingthebuilding", "On Leaving The Building.exe", "fd68fced8b89792d2e90be87b33d4b19", 64776995),
+	GAME_ENTRY_EN("onlythegooddieyoung", "OtGDY_En.exe", "87ccd318a469128530699388f916b86f", 153980124),
+	GAME_ENTRY_EN("openquest", "OpenQuest.exe", "90413e9ae57e222f8913b09d2bc847bc", 3407165),
+	GAME_ENTRY_EN("operationforklift", "Pancake.exe", "c9cd3e2cdd295c33e62cfa97b14461e9", 35971047),
+	GAME_ENTRY_EN("operationnovi", "Operation Novi.exe", "465f972675db2da6040518221af5b0ba", 24583968),
+	GAME_ENTRY_EN("operationreddice", "Red Dice.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 7858840),
+	GAME_ENTRY_EN("operationsavebluecup", "OSBC.exe", "f120690b506dd63cd7d1112ea6af2f77", 3040865),
 	GAME_ENTRY_EN("orangeman", "Orange man.exe", "c38d6846c402bfcdedcf5c34cd8bc3ee", 1960932),
-	GAME_ENTRY("osd2", "OSD.TLW2.exe", "67a2bba344cd1c2df32e785800c04929", 80360684),  // v2.0
-	GAME_ENTRY_PLATFORM("osd2", "OSD.TLW2.exe", "a80ae4d0aea21508f1df9d18f2839bcb", 22076715, "Beta"),
-	GAME_ENTRY("osd3d", "OSD.3D.exe", "ade2e3bec80e9d26ef195e515cecc01e", 21843606),
-	GAME_ENTRY("osdanish", "OSDanish.exe", "4fdacfd1e49508d3b12f9414a375067f", 8552024),  // v1.2.0
-	GAME_ENTRY("osdarayofhope", "ray_of_hope.exe", "25976a689b0f4d73eac69b1728377ecb", 6595789),
-	GAME_ENTRY("osdarayofhope", "ray_of_hope.exe", "25976a689b0f4d73eac69b1728377ecb", 6596689),
-	GAME_ENTRY("osdarchipelago", "OSD Archipelago.exe", "510be04e5eec2aa92bb78b060f138d64", 131491224),
-	GAME_ENTRY("osdenise", "OSDHITNOT.exe", "82da2565c456dcfb265ded6fe3189c0b", 4471818),
-	GAME_ENTRY("osdfamous", "OSD Famous.exe", "4e2abe054d3f40473fc1786a9f76e58e", 2569942),
-	GAME_ENTRY("osdholiday", "holidayhavoc.exe", "a524cbb1c51589903c4043b98917f1d9", 3938420),
-	GAME_ENTRY("osdlastboss", "Oceanspirit Dennis.exe", "615e73fc1874e92d60a1996c2330ea36", 3713959),
-	GAME_ENTRY("osdlostworld", "OSD.TLW.exe", "67c6422982dfeb22ebbb53ed8469b907", 47977264),
-	GAME_ENTRY("osdmighty", "OSD-MIGHTYVIKING.exe", "804add6fbbb791b7be195dc0097434a1", 4782522),
-	GAME_ENTRY("osdmoby", "OSD Moby.exe", "615e73fc1874e92d60a1996c2330ea36", 35355373),
-	GAME_ENTRY("osdninja", "OSD Ninjas.exe", "510be04e5eec2aa92bb78b060f138d64", 176644020),
-	GAME_ENTRY("osdocd", "OSD-OCD.exe", "9dbf699a0e41550bb080813a233e73a8", 47758168),
-	GAME_ENTRY("osdpoop", "OSD Poopdeck.exe", "510be04e5eec2aa92bb78b060f138d64", 10502790),
-	GAME_ENTRY("osdprincess", "OSDPrincess.exe", "0241777c2537fc5d077c05cde10bfa9f", 18091230),
-	GAME_ENTRY("osdrpg", "Oceanspirit Dennis.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 3195930),
-	GAME_ENTRY("osdscourge", "Oceanspirit Dennis.exe", "18456f28d9bf843b087e80072c85beca", 2419770),
-	GAME_ENTRY("osdscourgehd", "OSD HD.exe", "e80586fdc2db32f65658b235d8cbc159", 8355557),
+	GAME_ENTRY_EN("osd2", "OSD.TLW2.exe", "67a2bba344cd1c2df32e785800c04929", 80360684),  // v2.0
+	GAME_ENTRY_EN_PLATFORM("osd2", "OSD.TLW2.exe", "a80ae4d0aea21508f1df9d18f2839bcb", 22076715, "Beta"),
+	GAME_ENTRY_EN("osd3d", "OSD.3D.exe", "ade2e3bec80e9d26ef195e515cecc01e", 21843606),
+	GAME_ENTRY("osdanish", "OSDanish.exe", "4fdacfd1e49508d3b12f9414a375067f", 8552024),  // v1.2.0 Eng-Esp
+	GAME_ENTRY_EN("osdarayofhope", "ray_of_hope.exe", "25976a689b0f4d73eac69b1728377ecb", 6595789),
+	GAME_ENTRY_EN("osdarayofhope", "ray_of_hope.exe", "25976a689b0f4d73eac69b1728377ecb", 6596689),
+	GAME_ENTRY_EN("osdarchipelago", "OSD Archipelago.exe", "510be04e5eec2aa92bb78b060f138d64", 131491224),
+	GAME_ENTRY_EN("osdenise", "OSDHITNOT.exe", "82da2565c456dcfb265ded6fe3189c0b", 4471818),
+	GAME_ENTRY_EN("osdfamous", "OSD Famous.exe", "4e2abe054d3f40473fc1786a9f76e58e", 2569942),
+	GAME_ENTRY_EN("osdholiday", "holidayhavoc.exe", "a524cbb1c51589903c4043b98917f1d9", 3938420),
+	GAME_ENTRY_EN("osdlastboss", "Oceanspirit Dennis.exe", "615e73fc1874e92d60a1996c2330ea36", 3581898),
+	GAME_ENTRY_EN_PLATFORM("osdlastboss", "Oceanspirit Dennis.exe", "615e73fc1874e92d60a1996c2330ea36", 3713959, "DX"),
+	GAME_ENTRY_EN("osdlol", "lol, Oceanspirit Dennis.exe", "615e73fc1874e92d60a1996c2330ea36", 2343043),
+	GAME_ENTRY_EN("osdlostworld", "OSD.TLW.exe", "67c6422982dfeb22ebbb53ed8469b907", 47977264),
+	GAME_ENTRY_EN("osdmancake", "OSD Birthday.exe", "510be04e5eec2aa92bb78b060f138d64", 69824389),
+	GAME_ENTRY_EN("osdmightypirate", "Oceanspirit Dennis - Mighty Pirate.exe", "60394aca1e046aacd53ce9540814c4ea", 2370180),
+	GAME_ENTRY_EN("osdmightyviking", "OSD-MIGHTYVIKING.exe", "804add6fbbb791b7be195dc0097434a1", 4782522),
+	GAME_ENTRY_EN("osdmoby", "OSD Moby.exe", "615e73fc1874e92d60a1996c2330ea36", 35355373),
+	GAME_ENTRY_EN("osdninja", "OSD Ninjas.exe", "510be04e5eec2aa92bb78b060f138d64", 176644020),
+	GAME_ENTRY_EN("osdocd", "OSD-OCD.exe", "9dbf699a0e41550bb080813a233e73a8", 47758168),
+	GAME_ENTRY_EN("osdpoop", "OSD Poopdeck.exe", "510be04e5eec2aa92bb78b060f138d64", 10502790),
+	GAME_ENTRY_EN("osdprincess", "OSDPrincess.exe", "0241777c2537fc5d077c05cde10bfa9f", 18091230),
+	GAME_ENTRY_EN("osdrpg", "Oceanspirit Dennis.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 3195930),
+	GAME_ENTRY_EN("osdscourge", "Oceanspirit Dennis.exe", "18456f28d9bf843b087e80072c85beca", 2419770),
+	GAME_ENTRY_EN_PLATFORM("osdscourge", "Oceanspirit Dennis Source.exe", "18456f28d9bf843b087e80072c85beca", 4675107, "DX"),
+	GAME_ENTRY_EN("osdscourgehd", "OSD HD.exe", "e80586fdc2db32f65658b235d8cbc159", 8355557),
 	GAME_ENTRY_EN("osdsearch", "OSDSearch.exe", "c2e87de9507f0443368b300e8c882f30", 37505243),
-	GAME_ENTRY("osdtextual", "textual.exe", "256752c9a97b4780fc5e6f3239c8cdf1", 2655808),
-	GAME_ENTRY("osdvaginity", "OSDLHV.exe", "615e73fc1874e92d60a1996c2330ea36", 2154722),
-	GAME_ENTRY("osdvscloud", "DvsC.exe", "e80586fdc2db32f65658b235d8cbc159", 21550013),
-	GAME_ENTRY("osdvsron", "RON vs OSD.exe", "7e7d6148fa1efad740c664c4f68f4246", 15930882),
-	GAME_ENTRY("osdwetspot", "The Wet Spot.exe", "510be04e5eec2aa92bb78b060f138d64", 13699948),
+	GAME_ENTRY_EN("osdshindig", "TSOD.exe", "615e73fc1874e92d60a1996c2330ea36", 3399768),
+	GAME_ENTRY_EN("osdsquares", "Oceanspirit Dennis.exe", "615e73fc1874e92d60a1996c2330ea36", 2077415),
+	GAME_ENTRY_EN("osdsweet", "OSD_LPR_3rd.exe", "c0a8c43c14bbf5f407318e8bca2b0fec", 4249689),
+	GAME_ENTRY_EN("osdtextual", "textual.exe", "256752c9a97b4780fc5e6f3239c8cdf1", 2655808),
+	GAME_ENTRY_EN("osdvaginity", "OSDLHV.exe", "615e73fc1874e92d60a1996c2330ea36", 2154722),
+	GAME_ENTRY_EN("osdvscloud", "DvsC.exe", "e80586fdc2db32f65658b235d8cbc159", 21550013),
+	GAME_ENTRY_EN("osdvsron", "RON vs OSD.exe", "7e7d6148fa1efad740c664c4f68f4246", 15930882),
+	GAME_ENTRY_EN("osdwetspot", "The Wet Spot.exe", "510be04e5eec2aa92bb78b060f138d64", 13699948),
 	GAME_ENTRY_LANG("osher", "Osher.exe", "18b284c22010850f79bc5c20054a70c4", 389177994, Common::HE_ISR),
-	GAME_ENTRY("ossuarium", "Ossuarium.exe", "027d708642a97398eef18f83d2f2014b", 138816038),  // Windows
-	GAME_ENTRY("ossuarium", "Ossuarium Mac.ags", "0751be81595883d67a986db51dacd070", 135730902),  // Linux
-	GAME_ENTRY("ossuarium", "ac2game.dat", "cafd9003e9b343ee3da52863bec4a00c", 138868970),  // Mac
-	GAME_ENTRY("otakurivals", "Kintaro.exe", "465f972675db2da6040518221af5b0ba", 4045893),
-	GAME_ENTRY("otherworlds", "Other Worlds.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 10669659),
+	GAME_ENTRY_EN("ossuarium", "Ossuarium.exe", "027d708642a97398eef18f83d2f2014b", 138816038),  // Windows
+	GAME_ENTRY_EN("ossuarium", "Ossuarium Mac.ags", "0751be81595883d67a986db51dacd070", 135730902),  // Linux
+	GAME_ENTRY_EN("ossuarium", "ac2game.dat", "cafd9003e9b343ee3da52863bec4a00c", 138868970),  // Mac
+	GAME_ENTRY_EN("otakurivals", "Kintaro.exe", "465f972675db2da6040518221af5b0ba", 4045893),
+	GAME_ENTRY_EN("otherworlds", "Other Worlds.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 10669659),
 	GAME_ENTRY_LANG("otherworlds", "Other Worlds I.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 10709710, Common::IT_ITA),
-	GAME_ENTRY("otisbuildsafire", "obaf.exe", "c8d330b58da0a00a136c52ed3a20ae23", 4260705),
-	GAME_ENTRY("ouja", "Ouja.exe", "4d7d2addcde045dae6e0363a43f9acad", 6254682),
-	GAME_ENTRY("ourfinesthour", "OFH.exe", "72a1e963da14255d2b7523133f7147d9", 13617005),
-	GAME_ENTRY("ouroborossacrifice", "Ouroboros 1.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 109618879),  // v1.6
-	GAME_ENTRY("ourobouros", "I am Ourobouros.exe", "615e73fc1874e92d60a1996c2330ea36", 5841551),
+	GAME_ENTRY_EN("otisbuildsafire", "obaf.exe", "c8d330b58da0a00a136c52ed3a20ae23", 4260705),
+	GAME_ENTRY_EN("ourfinesthour", "OFH.exe", "72a1e963da14255d2b7523133f7147d9", 13617005),
+	GAME_ENTRY_EN("ouroborossacrifice", "Ouroboros 1.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 109618879),  // v1.6
+	GAME_ENTRY_EN("ourobouros", "I am Ourobouros.exe", "615e73fc1874e92d60a1996c2330ea36", 5841551),
 	GAME_ENTRY_LANG("ourobouros", "I am Ourobouros - French.exe", "615e73fc1874e92d60a1996c2330ea36", 5843873, Common::FR_FRA),  // French
-	GAME_ENTRY("outbreak", "outbreak.exe", "0500aacb6c176d47ac0f8158f055db83", 3271348),
-	GAME_ENTRY("outofgas", "OutOfGas.exe", "6b4ceb9e327ac99479c08d825461f4cb", 18187986),
-	GAME_ENTRY("outofgas", "OutOfGas.exe", "f0e74b3673867316e1cb3120c4289c66", 18200877),
-	GAME_ENTRY("outtajuice", "Outta' Juice.exe", "0241777c2537fc5d077c05cde10bfa9f", 6549919),
-	GAME_ENTRY("overroger", "Over Roger.exe", "939eb39fce13405d53501bd6551c63c1", 64883691),
+	GAME_ENTRY_EN("outbreak", "outbreak.exe", "0500aacb6c176d47ac0f8158f055db83", 3271348),
+	GAME_ENTRY_EN("outofgas", "OutOfGas.exe", "6b4ceb9e327ac99479c08d825461f4cb", 18187986),
+	GAME_ENTRY_EN("outofgas", "OutOfGas.exe", "f0e74b3673867316e1cb3120c4289c66", 18200877),  // v1.2
+	GAME_ENTRY_EN("outtajuice", "Outta' Juice.exe", "0241777c2537fc5d077c05cde10bfa9f", 6549919),
+	GAME_ENTRY_EN("overroger", "Over Roger.exe", "939eb39fce13405d53501bd6551c63c1", 64883691),
 	GAME_ENTRY_EN("overtheedge", "jdags.exe", "05f7ff300b322bc431e7cda6a07b5976", 235453945),  // v1.0
 	GAME_ENTRY_EN("overtheedge", "jdags.exe", "05f7ff300b322bc431e7cda6a07b5976", 235453751),  // v1.01
-	GAME_ENTRY("owlhunt", "owlhunt.exe", "09c656a68c53a182ce343f17a26430e1", 3265006),
-	GAME_ENTRY("owlsquest", "King.exe", "a6906aec8617b81af44cf9420731fc34", 3506408),
+	GAME_ENTRY_EN("owlhunt", "owlhunt.exe", "09c656a68c53a182ce343f17a26430e1", 3265006),
+	GAME_ENTRY_EN("owlsquest", "King.exe", "a6906aec8617b81af44cf9420731fc34", 3506408),
 	GAME_ENTRY("palacin", "palacin.exe", "a524cbb1c51589903c4043b98917f1d9", 19835364),
 	GAME_ENTRY("palettequest", "Palette Quest.exe", "0710e2ec71042617f565c01824f0cf3c", 754395),
 	GAME_ENTRY("palettequest2", "PaletteQuest2.exe", "2b7ae26333ba15529a8bbbdb49605133", 771805),
@@ -6114,6 +6127,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("spidertrek", "Spider Trek.exe", "ba539d8020d4dcb134693e357e37e8ff", 4181363),  // Windows
 	GAME_ENTRY("spidertrek", "Spider Trek.ags", "6ef42c5f6cd0a61f400f0f465a9f8717", 1073503),  // Linux
 	GAME_ENTRY("spilakassinn", "Splakassinn.exe", "06a03fe35791b0578068ab1873455463", 2658189),
+	GAME_ENTRY_EN("spiritboard", "Ouja.exe", "4d7d2addcde045dae6e0363a43f9acad", 6254682),
 	GAME_ENTRY("spitboy", "Spit boy.exe", "173f00e582eebd082d66f1291702b373", 6352569),  // v2.1
 	GAME_ENTRY("splinter", "Splinter.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 610251511),
 	GAME_ENTRY("splinter", "Splinter.ags", "0b0f455bf34c8ec12cbd2f285c337592", 607771367),
