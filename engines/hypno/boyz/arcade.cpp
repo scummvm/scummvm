@@ -415,7 +415,9 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		MVideo video(_warningHostage, Common::Point(0, 0), false, true, false);
 		disableCursor();
 		runIntro(video);
-		_health = 0; // TODO: not sure about this
+		hitPlayer();
+		if (_health > 0)
+			_skipLevel = true;
 		return;
 	} else if (s->name.hasPrefix("ALARM")) {
 		if (_background->decoder->getCurFrame() > int(s->missedAnimation))
