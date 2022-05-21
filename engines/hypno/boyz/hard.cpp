@@ -50,6 +50,12 @@ void BoyzEngine::runMainMenu(Code *code) {
 	_name.clear();
 	bool cont = true;
     uint32 c = kHypnoColorWhiteOrBlue; // white
+	uint32 posY = 105;
+	Common::StringArray profiles = listProfiles();
+	for (Common::StringArray::iterator it = profiles.begin(); it != profiles.end(); ++it) {
+		drawString("block05.fgx", *it, 130, posY, 170, c);
+		posY = posY + 10;
+	}
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Events
@@ -71,7 +77,14 @@ void BoyzEngine::runMainMenu(Code *code) {
 				}
 
 				drawImage(*menu, 0, 0, false);
-				drawString("block05.fgx", _name, 130, 57, 170, c);
+				drawString("block05.fgx", _name, 130, 58, 170, c);
+				posY = 105;
+				for (Common::StringArray::iterator it = profiles.begin(); it != profiles.end(); ++it) {
+					drawString("block05.fgx", *it, 130, posY, 170, c);
+					posY = posY + 10;
+					if (posY >= 185)
+						break;
+				}
 				break;
 
 			default:
@@ -88,7 +101,6 @@ void BoyzEngine::runMainMenu(Code *code) {
 	_name.toLowercase();
 	bool found = loadProfile(_name);
 	if (!found) {
-		saveProfile(_name, 0);
 		_nextLevel = code->levelIfWin;
 	}
 	assert(!_nextLevel.empty());
@@ -162,8 +174,11 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 
 	if (_difficulty.empty())
 		_nextLevel = "<main_menu>";
-	else
+	else {
+		saveProfile(_name, 0);
 		_nextLevel = code->levelIfWin;
+	}
+
 	menu->free();
 	delete menu;
 }

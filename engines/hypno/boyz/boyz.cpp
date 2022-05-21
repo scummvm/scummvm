@@ -447,6 +447,17 @@ void BoyzEngine::saveProfile(const Common::String &name, int levelId) {
 	saveGameState(slot, name, false);
 }
 
+Common::Array<Common::String> BoyzEngine::listProfiles() {
+	Common::Array<Common::String> profiles;
+	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
+	for (SaveStateList::iterator save = saves.begin(); save != saves.end(); ++save) {
+		Common::String profile = save->getDescription();
+		profile.toUppercase();
+		profiles.push_back(profile);
+	}
+	return profiles;
+}
+
 bool BoyzEngine::loadProfile(const Common::String &name) {
 	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
 	uint32 slot = 0;
