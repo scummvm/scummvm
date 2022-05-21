@@ -27,7 +27,6 @@
 #include "chewy/globals.h"
 #include "chewy/mcga_graphics.h"
 #include "chewy/memory.h"
-#include "chewy/ngsdefs.h"
 
 namespace Chewy {
 namespace Dialogs {

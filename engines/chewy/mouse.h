@@ -29,6 +29,9 @@ namespace Chewy {
 
 extern bool _cursorMoveFl;
 
+#define MOUSE_LEFT 255
+#define MOUSE_CENTER 254
+
 class InputMgr {
 public:
 	InputMgr();

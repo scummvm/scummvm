@@ -27,7 +27,6 @@
 #include "chewy/main.h"
 #include "chewy/mcga_graphics.h"
 #include "chewy/mouse.h"
-#include "chewy/ngsdefs.h"
 #include "chewy/sound.h"
 #include "chewy/text.h"
 

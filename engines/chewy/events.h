@@ -157,6 +157,7 @@ extern char getch();
 
 #define EVENTS_UPDATE g_events->update()
 #define EVENTS_CLEAR g_events->clearEvents()
+#define ALT 0x1000
 
 } // namespace Chewy
 
