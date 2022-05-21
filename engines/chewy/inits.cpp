@@ -38,7 +38,7 @@ void standard_init() {
 	_G(in) = new InputMgr();
 	_G(fx) = new Effect();
 	_G(txt) = new Text();
-	_G(ged) = new GedClass(&ged_user_func);
+	_G(ged) = new GedClass();
 	_G(room) = new Room();
 	_G(obj) = new Object(&_G(gameState));
 	_G(uhr) = new Timer(MAX_TIMER_OBJ, _G(ani_timer));
@@ -158,8 +158,6 @@ void init_room() {
 	_G(room_blk).Rsi = _G(gameState).room_s_obj;
 	_G(room_blk).AadLoad = true;
 	_G(room_blk).AtsLoad = true;
-
-	_G(room)->open_handle(EPISODE1_GEP, R_GEP_DATA);
 }
 
 void new_game() {

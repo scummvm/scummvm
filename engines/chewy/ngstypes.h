@@ -60,13 +60,6 @@ struct musik_info {
 	char *cur_pattern = nullptr;
 };
 
-struct GedPoolHeader {
-	char _id[4] = { 0 };
-	int16 _nr = 0;
-
-	bool load(Common::SeekableReadStream *src);
-};
-
 struct GedChunkHeader {
 	uint32 Len = 0;
 	int16 X = 0;

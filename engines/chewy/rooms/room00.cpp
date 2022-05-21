@@ -752,7 +752,7 @@ void Room0::feederAni() {
 			               _G(Rdi)->AutoMov[4]._y - CH_HOT_MOV_Y, P_CHEWY, P_RIGHT);
 			_G(spieler_vector)[P_CHEWY]._delayCount = 0;
 
-			check_shad(4, 0);
+			checkShadow(4, 0);
 			_G(fx_blend) = BLEND1;
 			setupScreen(DO_SETUP);
 		} else {

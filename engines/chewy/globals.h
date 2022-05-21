@@ -305,7 +305,7 @@ void delInventory(int16 nr);
 
 bool isCurInventory(int16 nr);
 
-void check_shad(int16 palIdx, int16 mode);
+void checkShadow(int16 palIdx, int16 mode);
 
 void get_scroll_off(int16 x, int16 y, int16 pic_x, int16 pic_y,
                     int16 *sc_x, int16 *sc_y);
@@ -388,8 +388,6 @@ void play_scene_ani(int16 nr, int16 mode);
 void timer_action(int16 t_nr);
 
 void check_ged_action(int16 index);
-
-int16 ged_user_func(int16 idx_nr);
 
 void enter_room(int16 eib_nr);
 

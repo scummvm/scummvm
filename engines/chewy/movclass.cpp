@@ -207,7 +207,7 @@ void MovClass::calc_xy() {
 	int16 xvector = 0;
 	int16 yvector = 0;
 
-	if (!_G(ged)->ged_idx(_gpkt->Dx, _gpkt->Dy, _gpkt->Breite, _gpkt->Mem)) {
+	if (!_G(ged)->getBarrierId(_gpkt->Dx, _gpkt->Dy, _gpkt->Breite, _gpkt->Mem)) {
 		int16 ende = 0;
 		int16 count = 0;
 		int16 min_x = -1;
@@ -249,7 +249,7 @@ void MovClass::calc_xy() {
 				for (int16 i = 0; i < anz; i++) {
 					if (x >= 0 && x < _gpkt->Breite * 8 &&
 					        y >= 0 && y < _gpkt->Hoehe * 8) {
-						if (_G(ged)->ged_idx(x, y, _gpkt->Breite, _gpkt->Mem)) {
+						if (_G(ged)->getBarrierId(x, y, _gpkt->Breite, _gpkt->Mem)) {
 							int16 aksteps = abs(_gpkt->Dx - x);
 							aksteps += abs(_gpkt->Dy - y);
 							if (aksteps < min_steps) {
@@ -328,15 +328,15 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 			}
 
 			tmpz = 0;
-			if (!_G(ged)->ged_idx(om.Xypos[0] + tmpx + tmpz,
+			if (!_G(ged)->getBarrierId(om.Xypos[0] + tmpx + tmpz,
 			                  om.Xypos[1] + tmpy + tmpz,
 			                  _gpkt->Breite, _gpkt->Mem)) {
 
-				if (!_G(ged)->ged_idx(om.Xypos[0] + tmpx + tmpz,
+				if (!_G(ged)->getBarrierId(om.Xypos[0] + tmpx + tmpz,
 				                  om.Xypos[1] + tmpz,
 				                  _gpkt->Breite, _gpkt->Mem)) {
 
-					if (!_G(ged)->ged_idx(om.Xypos[0] + tmpz,
+					if (!_G(ged)->getBarrierId(om.Xypos[0] + tmpz,
 					                  om.Xypos[1] + tmpy + tmpz,
 					                  _gpkt->Breite, _gpkt->Mem)) {
 
@@ -426,12 +426,12 @@ void MovClass::get_mov_line() {
 		while (!ende) {
 
 			int16 tmp_feld = start_feld + count * count_vect;
-			if (_G(ged)->ged_idx(tmp_feld, _gpkt->Breite, _gpkt->Mem)) {
+			if (_G(ged)->getBarrierId(tmp_feld, _gpkt->Mem)) {
 				int16 abbruch = 0;
 				int16 vector = 0;
 				while ((tmp_feld % _gpkt->Breite) < (_gpkt->Breite - 1) && !abbruch)
 				{
-					if (_G(ged)->ged_idx(tmp_feld + vector, _gpkt->Breite, _gpkt->Mem)) {
+					if (_G(ged)->getBarrierId(tmp_feld + vector, _gpkt->Mem)) {
 						tmp_feld += vector;
 						if (speicher[tmp_feld] == MOV_LINE_IDX) {
 							ak_steps = abs((tmp_feld % _gpkt->Breite) - (start_feld % _gpkt->Breite));
@@ -452,7 +452,7 @@ void MovClass::get_mov_line() {
 				vector = LEFT_VECT;
 				abbruch = 0;
 				while ((tmp_feld % _gpkt->Breite) > 0 && !abbruch) {
-					if (_G(ged)->ged_idx(tmp_feld + vector, _gpkt->Breite, _gpkt->Mem)) {
+					if (_G(ged)->getBarrierId(tmp_feld + vector, _gpkt->Mem)) {
 						tmp_feld += vector;
 						if (speicher[tmp_feld] == MOV_LINE_IDX) {
 							ak_steps = abs((tmp_feld % _gpkt->Breite) - (start_feld % _gpkt->Breite));

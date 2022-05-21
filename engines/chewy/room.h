@@ -38,12 +38,7 @@ extern const int16 SURIMY_TAF19_PHASES[4][2];
 
 #define ABLAGE_BLOCK_SIZE 64000l
 #define GED_BLOCK_SIZE 3000l
-#define MAX_ROOM_HANDLE 2
 #define GED_LOAD 1
-
-#define R_VOC_DATA 0
-#define R_GEP_DATA 1
-
 
 class JungleRoom {
 protected:
@@ -84,7 +79,6 @@ public:
 	Room();
 	~Room();
 
-	Common::Stream *open_handle(const char *fname, int16 mode);
 	void loadRoom(RaumBlk *Rb, int16 room_nr, GameState *player);
 	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName);
 	byte *get_ablage(int16 nr);
@@ -113,7 +107,6 @@ private:
 	int16 get_ablage_g1(int16 ablage_bedarf, int16 ak_pos);
 	void set_ablage_info(int16 ablagenr, int16 bildnr, uint32 pic_size);
 
-	GedPoolHeader _gedPoolHeader;
 	int16 _akAblage;
 	int16 _lastAblageSave;
 
@@ -122,7 +115,6 @@ private:
 	int16 _ablageInfo[MAX_ABLAGE][2];
 
 	byte *_gedMem[MAX_ABLAGE];
-	Common::Stream *_roomHandle[MAX_ROOM_HANDLE];
 };
 
 void load_chewy_taf(int16 taf_nr);

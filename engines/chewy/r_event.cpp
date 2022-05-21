@@ -172,135 +172,6 @@ void check_ged_action(int16 index) {
 	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 }
 
-int16 ged_user_func(int16 idx_nr) {
-	switch (idx_nr) {
-	case 40:
-		switch (_G(gameState)._personRoomNr[P_CHEWY]) {
-		case 8:
-			if (_G(gameState).R8GTuer)
-				idx_nr = 0;
-			break;
-
-		case 9:
-			if (!_G(gameState).R9Gitter)
-				idx_nr = 0;
-			break;
-
-		case 16:
-			if (!_G(gameState).R16F5Exit)
-				idx_nr = 0;
-			break;
-
-		case 17:
-			if (_G(gameState).R17Location != 1)
-				idx_nr = 0;
-			break;
-
-		case 21:
-			if (!_G(gameState).R21Laser2Weg)
-				idx_nr = 0;
-			break;
-
-		case 31:
-			if (!_G(gameState).R31KlappeZu)
-				idx_nr = 0;
-			break;
-
-		case 41:
-			if (!_G(gameState).R41LolaOk)
-				idx_nr = 0;
-			break;
-
-		case 52:
-			if (!_G(gameState).R52LichtAn)
-				idx_nr = 2;
-			else
-				idx_nr = 4;
-			break;
-
-		case 71:
-			idx_nr = _G(gameState).R71LeopardVined ? 1 : 0;
-			break;
-
-		case 76:
-			idx_nr = _G(gameState).flags29_4 ? 4 : 0;
-			break;
-
-		case 84:
-			if (!_G(gameState).R88UsedMonkey)
-				_G(gameState).R84GoonsPresent = true;
-			break;
-
-		case 86:
-			if (!_G(gameState).flags32_2)
-				idx_nr = 0;
-			break;
-
-		case 94:
-			if (!_G(gameState).flags35_10)
-				idx_nr = 0;
-			break;
-
-		case 97:
-			if (_G(gameState).flags35_80)
-				idx_nr = 0;
-			break;
-
-		default:
-			break;
-		}
-		break;
-
-	case 41:
-		switch (_G(gameState)._personRoomNr[P_CHEWY]) {
-		case 17:
-			if (_G(gameState).R17Location != 2)
-				idx_nr = 0;
-			break;
-
-		case 21:
-			if (!_G(gameState).R21Laser1Weg) {
-				idx_nr = 0;
-			} else
-				idx_nr = 3;
-			break;
-
-		case 37:
-			if (!_G(gameState).R37Kloppe)
-				idx_nr = 0;
-			break;
-
-		case 52:
-			if (!_G(gameState).R52TuerAuf)
-				idx_nr = 2;
-			else
-				idx_nr = 4;
-			break;
-
-		case 97:
-			if (_G(gameState).flags36_20)
-				idx_nr = 0;
-			break;
-
-		default:
-			break;
-		}
-		break;
-
-	case 42:
-		if (_G(gameState)._personRoomNr[P_CHEWY] == 97) {
-			if (!_G(gameState).flags37_1)
-				idx_nr = 0;
-		}
-		break;
-
-	default:
-		break;
-	}
-
-	return idx_nr;
-}
-
 void enter_room(int16 eib_nr) {
 	load_room_music(_G(gameState)._personRoomNr[P_CHEWY]);
 	load_chewy_taf(_G(gameState).ChewyAni);
@@ -1243,7 +1114,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 	case SIB_LAMPE_R52:
 		_G(atds)->delControlBit(338, ATS_ACTIVE_BIT);
 		_G(gameState).R52LichtAn ^= 1;
-		check_shad(2 * (_G(gameState).R52LichtAn + 1), 1);
+		checkShadow(2 * (_G(gameState).R52LichtAn + 1), 1);
 		break;
 
 	case SIB_KAUTABAK_R56:

@@ -423,11 +423,11 @@ static void showWalkAreas() {
 
 	for (int y = 0, yp = ys; y < 200 / 8; ++y, yp += 8) {
 		for (int x = 0, xp = xs; x < 320 / 8; ++x, xp += 8) {
-			int idx = _G(ged)->ged_idx(xp, yp,
+			const int paletteId = _G(ged)->getBarrierId(xp, yp,
 				_G(room)->_gedXNr[_G(room_blk).AkAblage],
 				_G(ged_mem)[_G(room_blk).AkAblage]);
 
-			if (idx) {
+			if (paletteId) {
 				Common::Rect r(xp, yp, xp + 8, yp + 8);
 				r.translate(-_G(gameState).scrollx, -_G(gameState).scrolly);
 				r.clip(Common::Rect(0, 0, 320, 200));
@@ -526,12 +526,12 @@ void setupScreen(SetupScreenMode mode) {
 		calc_auto_go();
 
 		if (_G(fx_blend)) {
-			int16 idx = _G(ged)->ged_idx(
+			const int16 paletteId = _G(ged)->getBarrierId(
 				_G(spieler_vector)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
 				_G(spieler_vector)[P_CHEWY].Xypos[1] + _G(spieler_mi)[P_CHEWY].HotY,
 				_G(room)->_gedXNr[_G(room_blk).AkAblage],
 				_G(ged_mem)[_G(room_blk).AkAblage]);
-			check_shad(idx, 0);
+			checkShadow(paletteId, 0);
 		} else {
 			for (i = 0; i < MAX_PERSON; i++) {
 				mov_objekt(&_G(spieler_vector)[i], &_G(spieler_mi)[i]);
@@ -1034,7 +1034,7 @@ void palcopy(byte *destPal, const byte *srcPal, int16 destStartIndex, int16 srcS
 	}
 }
 
-void check_shad(int16 palIdx, int16 mode) {
+void checkShadow(int16 palIdx, int16 mode) {
 	static const uint8 PAL_0[] = {
 		0, 0, 0,
 		39, 0, 26,
@@ -1708,11 +1708,11 @@ void calc_ausgang(int16 x, int16 y) {
 				               ScrXy[0], ScrXy[1],
 				               &_G(gameState).scrollx, &_G(gameState).scrolly);
 
-				int16 u_idx = _G(ged)->ged_idx(_G(spieler_vector)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
+				const int16 paletteId = _G(ged)->getBarrierId(_G(spieler_vector)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
 				                               _G(spieler_vector)[P_CHEWY].Xypos[1] + _G(spieler_mi)[P_CHEWY].HotY,
 				                               _G(room)->_gedXNr[_G(room_blk).AkAblage],
 				                               _G(ged_mem)[_G(room_blk).AkAblage]);
-				check_shad(u_idx, 0);
+				checkShadow(paletteId, 0);
 				setPersonSpr(_G(Rdi)->AutoMov[_G(gameState).room_e_obj[nr].ExitMov]._sprNr, P_CHEWY);
 				_G(spieler_vector)[P_CHEWY]._delayCount = 0;
 				_G(fx_blend) = BLEND1;

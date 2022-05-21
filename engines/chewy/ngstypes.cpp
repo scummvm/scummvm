@@ -32,13 +32,6 @@ bool NewPhead::load(Common::SeekableReadStream *src) {
 	return true;
 }
 
-bool GedPoolHeader::load(Common::SeekableReadStream *src) {
-	src->read(_id, 4);
-	_nr = src->readUint16LE();
-
-	return true;
-}
-
 bool GedChunkHeader::load(Common::SeekableReadStream *src) {
 	Len = src->readUint32LE();
 	X = src->readSint16LE();

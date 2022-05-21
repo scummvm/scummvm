@@ -150,34 +150,11 @@ Room::Room() {
 	_roomTimer._timerMaxNr = 0;
 	_roomTimer._timerStart = 0;
 	init_ablage();
-	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++)
-		_roomHandle[i] = nullptr;
 	_roomInfo = nullptr;
 }
 
 Room::~Room() {
-	for (int16 i = 0; i < MAX_ROOM_HANDLE; i++) {
-		if (_roomHandle[i])
-			delete _roomHandle[i];
-	}
-
 	free_ablage();
-}
-
-Common::Stream *Room::open_handle(const char *fname1, int16 mode) {
-	assert(mode == R_GEP_DATA || mode == R_VOC_DATA);
-
-	Common::File *f = new Common::File();
-	f->open(fname1);
-	if (f->isOpen()) {
-		if (_roomHandle[mode])
-			delete _roomHandle[mode];
-		_roomHandle[mode] = f;
-	} else {
-		error("open_handle error");
-	}
-
-	return _roomHandle[mode];
 }
 
 void Room::loadRoom(RaumBlk *Rb, int16 room_nr, GameState *player) {
@@ -334,10 +311,7 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const cha
 		set_ablage_info(Rb->AkAblage, nr + (1000 * tgp_idx), img->size);
 
 		if (mode == GED_LOAD) {
-			Common::SeekableReadStream *gstream = dynamic_cast<Common::SeekableReadStream *>(
-				_roomHandle[R_GEP_DATA]);
-			_G(ged)->load_ged_pool(gstream, &_gedInfo[Rb->AkAblage],
-						        nr, _gedMem[Rb->AkAblage]);
+			_G(ged)->load_ged_pool(&_gedInfo[Rb->AkAblage], nr, _gedMem[Rb->AkAblage]);
 			_gedXNr[Rb->AkAblage] = img->width / _gedInfo[Rb->AkAblage].X;
 			_gedYNr[Rb->AkAblage] = img->height / _gedInfo[Rb->AkAblage].Y;
 		}

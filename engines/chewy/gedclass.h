@@ -26,24 +26,14 @@
 
 namespace Chewy {
 
-typedef int16(*GedUserFunc)(int16 idx_nr);
-
 class GedClass {
 public:
-	GedClass(GedUserFunc func) : _gedUserFunc(func) {
-	}
+	GedClass() {}
 
-	void load_ged_pool(const char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher);
+	void load_ged_pool(GedChunkHeader *Gh, int16 ch_nr, byte *speicher);
 
-	void load_ged_pool(Common::SeekableReadStream *stream, GedChunkHeader *Gh, int16 ch_nr, byte *speicher);
-	int16 ged_idx(int16 x, int16 y, int16 x_anz, byte *speicher);
-	int16 ged_idx(int16 g_idx, int16 x_anz, byte *speicher);
-
-private:
-	void load_ged_chunk(GedChunkHeader *Gh, Common::SeekableReadStream *stream, int16 nr, byte *speicher);
-
-	GedPoolHeader _gedPoolHeader;
-	GedUserFunc _gedUserFunc;
+	int16 getBarrierId(int16 x, int16 y, int16 x_anz, byte *speicher);
+	int16 getBarrierId(int16 g_idx, byte *speicher);
 };
 
 } // namespace Chewy

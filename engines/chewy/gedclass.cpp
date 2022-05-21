@@ -26,60 +26,161 @@
 
 namespace Chewy {
 
-void GedClass::load_ged_pool(const char *fname, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
+void GedClass::load_ged_pool(GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
 	Common::File f;
-	if (f.open(fname)) {
-		load_ged_pool(&f, Gh, ch_nr, speicher);
-	} else {
+	if (!f.open(EPISODE1_GEP))
 		error("load_ged_pool error");
-	}
-}
 
-void GedClass::load_ged_pool(Common::SeekableReadStream *stream, GedChunkHeader *Gh, int16 ch_nr, byte *speicher) {
-	if (stream) {
-		stream->seek(0, SEEK_SET);
-		if (_gedPoolHeader.load(stream)) {
-			load_ged_chunk(Gh, stream, ch_nr, speicher);
+	f.seek(6, SEEK_SET); // skip header (4 bytes ID + 2 bytes number)
+
+	// Scan for the correct index entry
+	int i = 0;
+	do {
+		Gh->load(&f);
+		if (i != ch_nr) {
+			// Skip over the entry's data
+			f.seek(Gh->Len, SEEK_CUR);
 		}
-	} else {
-		error("load_ged_pool error");
-	}
-}
+	} while (++i <= ch_nr);
 
-void GedClass::load_ged_chunk(GedChunkHeader *Gh, Common::SeekableReadStream *stream, int16 nr, byte *speicher) {
-	if (stream) {
-		// Scan for the correct index entry
-		int i = 0;
-		do {
-			Gh->load(stream);
-			if (i != nr) {
-				// Skip over the entry's data
-				stream->seek(Gh->Len, SEEK_CUR);
-			}
-		} while (++i <= nr);
-
-		if (stream->read(speicher, Gh->Len) != Gh->Len) {
-			error("load_ged_chunk error");
-		}
-	} else {
+	if (f.read(speicher, Gh->Len) != Gh->Len) {
 		error("load_ged_chunk error");
 	}
 }
 
-int16 GedClass::ged_idx(int16 x, int16 y, int16 x_anz, byte *speicher) {
-	int16 result = 0;
-	if (_gedUserFunc)
-		result = _gedUserFunc(speicher[((y / 8) * x_anz) + (x / 8)]);
-
-	return result;
+int16 GedClass::getBarrierId(int16 x, int16 y, int16 x_anz, byte *speicher) {
+	return getBarrierId(((y / 8) * x_anz) + (x / 8), speicher);
 }
 
-int16 GedClass::ged_idx(int16 g_idx, int16 x_anz, byte *speicher) {
-	int16 result = 0;
-	if (_gedUserFunc)
-		result = _gedUserFunc(speicher[g_idx]);
+int16 GedClass::getBarrierId(int16 g_idx, byte *speicher) {
+	int16 idx_nr = speicher[g_idx];
 
-	return result;
+	switch (idx_nr) {
+	case 40:
+		switch (_G(gameState)._personRoomNr[P_CHEWY]) {
+		case 8:
+			if (_G(gameState).R8GTuer)
+				idx_nr = 0;
+			break;
+
+		case 9:
+			if (!_G(gameState).R9Gitter)
+				idx_nr = 0;
+			break;
+
+		case 16:
+			if (!_G(gameState).R16F5Exit)
+				idx_nr = 0;
+			break;
+
+		case 17:
+			if (_G(gameState).R17Location != 1)
+				idx_nr = 0;
+			break;
+
+		case 21:
+			if (!_G(gameState).R21Laser2Weg)
+				idx_nr = 0;
+			break;
+
+		case 31:
+			if (!_G(gameState).R31KlappeZu)
+				idx_nr = 0;
+			break;
+
+		case 41:
+			if (!_G(gameState).R41LolaOk)
+				idx_nr = 0;
+			break;
+
+		case 52:
+			if (!_G(gameState).R52LichtAn)
+				idx_nr = 2;
+			else
+				idx_nr = 4;
+			break;
+
+		case 71:
+			idx_nr = _G(gameState).R71LeopardVined ? 1 : 0;
+			break;
+
+		case 76:
+			idx_nr = _G(gameState).flags29_4 ? 4 : 0;
+			break;
+
+		case 84:
+			if (!_G(gameState).R88UsedMonkey)
+				_G(gameState).R84GoonsPresent = true;
+			break;
+
+		case 86:
+			if (!_G(gameState).flags32_2)
+				idx_nr = 0;
+			break;
+
+		case 94:
+			if (!_G(gameState).flags35_10)
+				idx_nr = 0;
+			break;
+
+		case 97:
+			if (_G(gameState).flags35_80)
+				idx_nr = 0;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 41:
+		switch (_G(gameState)._personRoomNr[P_CHEWY]) {
+		case 17:
+			if (_G(gameState).R17Location != 2)
+				idx_nr = 0;
+			break;
+
+		case 21:
+			if (!_G(gameState).R21Laser1Weg) {
+				idx_nr = 0;
+			} else
+				idx_nr = 3;
+			break;
+
+		case 37:
+			if (!_G(gameState).R37Kloppe)
+				idx_nr = 0;
+			break;
+
+		case 52:
+			if (!_G(gameState).R52TuerAuf)
+				idx_nr = 2;
+			else
+				idx_nr = 4;
+			break;
+
+		case 97:
+			if (_G(gameState).flags36_20)
+				idx_nr = 0;
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 42:
+		if (_G(gameState)._personRoomNr[P_CHEWY] == 97) {
+			if (!_G(gameState).flags37_1)
+				idx_nr = 0;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return idx_nr;
 }
 
 } // namespace Chewy
