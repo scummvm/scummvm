@@ -96,8 +96,14 @@ void BoyzEngine::runRetryMenu(Code *code) {
 	MVideo video(filename, Common::Point(0, 0), false, true, false);
 	disableCursor();
 	runIntro(video);
+	changeCursor("crosshair");
+
+	Common::Rect retryMissionBox(73, 62, 245, 77);
+	Common::Rect restartTerritoryBox(73, 81, 245, 96);
+	Common::Rect quitBox(73, 119, 245, 133);
 
 	Common::Event event;
+	Common::Point mousePos;
 	byte *palette;
 	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 5, &palette);
 	loadPalette(palette, 0, 256);
@@ -105,11 +111,26 @@ void BoyzEngine::runRetryMenu(Code *code) {
 	bool cont = true;
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
+			mousePos = g_system->getEventManager()->getMousePos();
+
 			// Events
 			switch (event.type) {
 
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				if (retryMissionBox.contains(mousePos)) {
+					_nextLevel = _checkpoint;
+					cont = false;
+				} else if (restartTerritoryBox.contains(mousePos)) {
+					// Restore initial health for the team
+					_health = _maxHealth;
+					_nextLevel = firstLevelTerritory(_checkpoint);
+					cont = false;
+				} else if (quitBox.contains(mousePos))
+					quitGame();
 				break;
 
 			case Common::EVENT_KEYDOWN:
@@ -119,12 +140,10 @@ void BoyzEngine::runRetryMenu(Code *code) {
 				} else if (event.kbd.keycode == Common::KEYCODE_t) {
 					// Restore initial health for the team
 					_health = _maxHealth;
-
 					_nextLevel = firstLevelTerritory(_checkpoint);
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_q) {
+				} else if (event.kbd.keycode == Common::KEYCODE_q)
 					quitGame();
-				}
 				break;
 
 			default:

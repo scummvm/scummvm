@@ -72,6 +72,21 @@ static const byte targetCursor[] = {
 	0, 0, 1, 0, 0, 2, 2, 2, 2, 2, 0, 0, 1, 0, 0,
 	0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0};
 
+static const byte crosshairCursor[] = {
+	0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 2, 0, 0, 2, 0, 0, 2, 2, 0, 0, 0,
+	0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+	0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+	0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
+	2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2,
+	0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
+	0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+	0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+	0, 0, 0, 2, 2, 0, 0, 2, 0, 0, 2, 2, 0, 1, 0,
+	0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 1, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0};
+
 static const byte cursorPalette[] = {
 	0x00, 0x00, 0x00, // Black / Transparent
 	0x00, 0x00, 0xff, // Blue
@@ -92,6 +107,7 @@ static const CursorTable cursorTable[] = {
 	{"default", MOUSECURSOR_SCI, 11, 16, 0, 0},
 	{"arcade", circleCursor, 13, 11, 7, 5},
 	{"target", targetCursor, 15, 13, 8, 6},
+	{"crosshair", crosshairCursor, 15, 13, 8, 6},
 	{nullptr, nullptr, 0, 0, 0, 0}};
 
 void HypnoEngine::disableCursor() {
