@@ -570,7 +570,6 @@ public:
 	Common::String firstLevelTerritory(const Common::String &level);
 
 
-	int _ammoTeam[7];
 	int _previousHealth;
 	Graphics::Surface _healthBar[7];
 	Graphics::Surface _ammoBar[7];

@@ -53,7 +53,7 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_currentScript = arc->script;
 	// Reload all weapons
 	for (Script::iterator it = _currentScript.begin(); it != _currentScript.end(); ++it) {
-		_ammoTeam[it->actor] = _weaponMaxAmmo[it->cursor];
+		_ammo = _weaponMaxAmmo[it->cursor];
 	}
 
 	updateFromScript();
@@ -94,6 +94,9 @@ void BoyzEngine::updateFromScript() {
 		ScriptInfo si = *_currentScript.begin();
 		//debug("%d %d %d", si.time, _background->decoder->getCurFrame(), si.actor);
 		if (!_background || int(si.time) <= _background->decoder->getCurFrame()) {
+			if (_currentActor != si.actor)
+				_ammo = _weaponMaxAmmo[si.cursor];
+
 			_currentActor = si.actor;
 			_currentMode = si.mode;
 			_currentWeapon = si.cursor;
@@ -146,7 +149,7 @@ void BoyzEngine::drawAmmo() {
 
 	float w = float(_ammoBar[_currentActor].w) / float(_weaponMaxAmmo[_currentWeapon]);
 
-	Common::Rect ammoBarBox(320 - int(_ammoTeam[_currentActor] * w), 0, 320, _ammoBar[_currentActor].h / 2);
+	Common::Rect ammoBarBox(320 - int(_ammo * w), 0, 320, _ammoBar[_currentActor].h / 2);
 	uint32 c = kHypnoColorGreen; // green
 	_compositeSurface->fillRect(ammoBarBox, c);
 
@@ -274,13 +277,13 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 	}
 
 	if (!secondary) {
-		if (_ammoTeam[_currentActor] == 0) {
+		if (_ammo == 0) {
 			if (!arc->noAmmoSound.empty())
 				playSound(_soundPath + arc->noAmmoSound, 1, arc->noAmmoSoundRate);
 			return false;
 		}
 		if (!_infiniteAmmoCheat)
-			_ammoTeam[_currentActor]--;
+			_ammo--;
 		playSound(_soundPath + _weaponShootSound[_currentWeapon], 1);
 		incShotsFired();
 	}
@@ -453,7 +456,7 @@ bool BoyzEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 
 	Common::Rect ammoBarBox(320 - _ammoBar[_currentActor].w, 0, 320, _ammoBar[_currentActor].h);
 	if (ammoBarBox.contains(mousePos)) {
-		_ammoTeam[_currentActor] = _weaponMaxAmmo[_currentWeapon];
+		_ammo = _weaponMaxAmmo[_currentWeapon];
 		playSound(_soundPath + _weaponReloadSound[_currentWeapon], 1);
 		return false;
 	}

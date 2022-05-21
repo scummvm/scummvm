@@ -36,7 +36,6 @@ BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine
 	_crosshairsPalette = nullptr;
 
 	for (int i = 0; i < 6; i++) {
-		_ammoTeam[i] = 0;
 		_weaponMaxAmmo[i] = 0;
 	}
 }
