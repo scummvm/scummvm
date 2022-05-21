@@ -19,46 +19,23 @@
  *
  */
 
-#ifndef MM1_MM1_H
-#define MM1_MM1_H
+#ifndef MM_UTILS_STRINGS_DATA_H
+#define MM_UTILS_STRINGS_DATA_H
 
-#include "common/random.h"
-#include "mm/detection.h"
-#include "mm/mm.h"
-#include "mm/mm1/events.h"
-#include "mm/mm1/globals.h"
+#include "common/hash-str.h"
 
-/**
- * This is the Might and Magic I engine
- */
 namespace MM {
-namespace MM1 {
 
-class MM1Engine : public Engine, public Events {
-private:
-	const MightAndMagicGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
-private:
-	// Engine APIs
-	Common::Error run() override;
-
+class StringsData : public Common::StringMap {
 public:
-	Globals _globals;
-public:
-	MM1Engine(OSystem *syst, const MightAndMagicGameDescription *gameDesc);
-	~MM1Engine() override;
+	StringsData() : Common::StringMap() {}
 
 	/**
-	 * Returns a random number
+	 * Loads the data
 	 */
-	int getRandomNumber(int minNumber, int maxNumber) {
-		return _randomSource.getRandomNumber(maxNumber - minNumber + 1) + minNumber;
-	}
+	bool load(const Common::String &filename);
 };
 
-extern MM1Engine *g_engine;
-
-} // namespace MM1
 } // namespace MM
 
 #endif

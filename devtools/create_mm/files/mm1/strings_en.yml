@@ -1,0 +1,14 @@
+dialogs:
+	ready:
+		1: "  ARE YOU READY? "
+		2: "THEN PRESS ENTER!"
+	main_menu:
+		title1: "MIGHT AND MAGIC"
+		title2: "SECRET OF THE INNER SANCTUM"
+		title3: "OPTIONS"
+		title4: "-------"
+		option1: "'C'.......CREATE NEW CHARACTERS"
+		option2: "'V'.......VIEW ALL CHARACTERS"
+		option3: "'#'.......GO TO TOWN"
+		copyright1: "COPR. 1986,1987-JON VAN CANEGHEM"
+		copyright2: "ALL RIGHTS RESERVED"
