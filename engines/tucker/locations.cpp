@@ -2813,14 +2813,14 @@ void TuckerEngine::updateSprite_locationNum65(int i) {
 		_spritesTable[i]._gfxBackgroundOffset = 100;
 	} else if (_flagsTable[188] > 0 && _flagsTable[189] > 0) {
 		state = -1;
-		if (_xPosCurrent < 150 || _yPosCurrent > 240) {
+		if (_xPosCurrent < 150 || _xPosCurrent > 240) {
 			_flagsTable[189] = 0;
 		}
 	} else {
-		if (_xPosCurrent >= 150 && _yPosCurrent < 240) { // FIXME: bug
+		if (_xPosCurrent >= 150 && _xPosCurrent < 240) {
 			if (getRandomNumber() > 32000) {
 				state = 2;
-				_flagsTable[189] = 1;
+				_flagsTable[189] = 1; // animate manhole
 			} else {
 				state = -1;
 			}
