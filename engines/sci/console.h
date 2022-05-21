@@ -146,6 +146,10 @@ private:
 	bool cmdGo(int argc, const char **argv);
 	bool cmdLogKernel(int argc, const char **argv);
 	bool cmdMapVocab994(int argc, const char **argv);
+	bool cmdGameFlagsInit(int argc, const char **argv);
+	bool cmdGameFlagsTest(int argc, const char **argv);
+	bool cmdGameFlagsSet(int argc, const char **argv);
+	bool cmdGameFlagsClear(int argc, const char **argv);
 	// Breakpoints
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);
@@ -200,11 +204,19 @@ private:
 #endif
 
 	void writeIntegrityDumpLine(const Common::String &statusName, const Common::String &resourceName, Common::WriteStream &out, Common::ReadStream *const data, const int size, const bool writeHash);
+	
+	enum GameFlagsOperation {
+		kGameFlagsTest,
+		kGameFlagsSet,
+		kGameFlagsClear
+	};
+	bool processGameFlagsOperation(GameFlagsOperation operation, int argc, const char **argv);
 
 	SciEngine *_engine;
 	DebugState &_debugState;
 	Common::String _videoFile;
 	int _videoFrameDelay;
+	uint16 _gameFlagsGlobal;
 };
 
 } // End of namespace Sci
