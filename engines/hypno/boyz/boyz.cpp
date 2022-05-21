@@ -36,6 +36,12 @@ static const chapterEntry rawChapterTable[] = {
 	{16, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
 	{17, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
 	{18, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{21, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{22, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{31, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{32, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{33, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{34, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
 	{0,  {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor}
 };
 
