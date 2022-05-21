@@ -57,7 +57,7 @@ void Events::runGame() {
 void Events::processEvent(Common::Event &ev) {
 	switch (ev.type) {
 	case Common::EVENT_KEYDOWN:
-		keypressEvent(ev);
+		msgKeypress(KeypressMessage(ev.kbd));
 		break;
 	default:
 		break;

@@ -29,6 +29,7 @@
 
 #include "mm/mm1/views/title_view.h"
 #include "mm/mm1/views/are_you_ready.h"
+#include "mm/mm1/views/main_menu.h"
 
 namespace MM {
 namespace MM1 {
@@ -56,6 +57,7 @@ Common::Error MM1Engine::run() {
 	// Run the game
 	Views::TitleView view1(this);
 	Views::AreYouReady view2(this);
+	Views::MainMenu view3(this);
 	focusElement(&view2);
 
 	runGame();
