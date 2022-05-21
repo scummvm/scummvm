@@ -35,6 +35,7 @@ public:
 	virtual ~AreYouReady() {}
 
 	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Views

@@ -21,6 +21,7 @@
 
 #include "mm/mm1/views/are_you_ready.h"
 #include "mm/mm1/globals.h"
+#include "engines/engine.h"
 
 namespace MM {
 namespace MM1 {
@@ -30,6 +31,15 @@ void AreYouReady::draw() {
 	drawTextBorder();
 	writeString(11, 11, STRING["dialogs.ready.1"]);
 	writeString(11, 13, STRING["dialogs.ready.2"]);
+}
+
+bool AreYouReady::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_RETURN) {
+		GUIErrorMessage("Enter pressed");
+		return true;
+	}
+
+	return false;
 }
 
 } // namespace Views

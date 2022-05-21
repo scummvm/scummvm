@@ -29,6 +29,15 @@
 namespace MM {
 namespace MM1 {
 
+struct Message {
+};
+
+struct KeypressMessage : public Message, public Common::KeyState {
+	KeypressMessage() : Message() {}
+	KeypressMessage(const Common::KeyState &ks) :
+		Message(), Common::KeyState(ks) {}
+};
+
 class UIElement {
 protected:
 	UIElement *_parent;
@@ -55,11 +64,19 @@ public:
 	virtual bool tick();
 
 	/**
-	 * Handles a keypress
+	 * Handles events
 	 */
-	virtual bool keypressEvent(const Common::Event &e) {
-		return false;
-	}
+	#define MESSAGE(NAME) \
+		virtual bool msg##NAME(const NAME##Message &e) { \
+			for (Common::Array<UIElement *>::iterator it = _children.begin(); \
+					it != _children.end(); ++it) { \
+				if ((*it)->msg##NAME(e)) return true; \
+			} \
+			return false; \
+		}
+
+	MESSAGE(Keypress);
+	#undef MESSAGE
 };
 
 class Events : public UIElement {
@@ -100,6 +117,16 @@ public:
 	bool tick() override {
 		return _focusedElement ? _focusedElement->tick() : false;
 	}
+
+	/**
+	 * Handles events
+	 */
+	#define MESSAGE(NAME) \
+		bool msg##NAME(const NAME##Message &e) override { \
+			return (_focusedElement) ? _focusedElement->msg##NAME(e) : false; \
+		}
+	MESSAGE(Keypress);
+	#undef MESSAGE
 };
 
 } // namespace MM1
