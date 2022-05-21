@@ -85,9 +85,13 @@ void BoyzEngine::loadAssets() {
 	logos->intros.push_back("intro/sblogos.smk");
 	_levels["<start>"] = logos;
 
-	Code *menu = new Code("<main_menu>");
-	_levels["<main_menu>"] = menu;
-	_levels["<main_menu>"]->levelIfWin = "<select_boyz>";
+	Code *main_menu = new Code("<main_menu>");
+	_levels["<main_menu>"] = main_menu;
+	_levels["<main_menu>"]->levelIfWin = "<difficulty_menu>";
+
+	Code *difficulty_menu = new Code("<difficulty_menu>");
+	_levels["<difficulty_menu>"] = difficulty_menu;
+	_levels["<difficulty_menu>"]->levelIfWin = "<select_boyz>";
 
 	Code *retry = new Code("<retry_menu>");
 	_levels["<retry_menu>"] = retry;

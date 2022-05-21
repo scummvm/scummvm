@@ -32,6 +32,8 @@ namespace Hypno {
 void BoyzEngine::runCode(Code *code) {
 	if (code->name == "<main_menu>")
 		runMainMenu(code);
+	else if (code->name == "<difficulty_menu>")
+		runDifficultyMenu(code);
 	else if (code->name == "<retry_menu>")
 		runRetryMenu(code);
 	else
@@ -84,6 +86,79 @@ void BoyzEngine::runMainMenu(Code *code) {
 	_name.toLowercase();
 
 	_nextLevel = code->levelIfWin;
+	menu->free();
+	delete menu;
+}
+
+void BoyzEngine::runDifficultyMenu(Code *code) {
+	changeCursor("crosshair");
+	_difficulty.clear();
+	Common::Rect chumpBox(121, 62, 199, 77);
+	Common::Rect punkBox(121, 81, 199, 96);
+	Common::Rect badAssBox(121, 100, 199, 115);
+	Common::Rect cancelBox(121, 138, 245, 153);
+
+	Common::Event event;
+	Common::Point mousePos;
+	byte *palette;
+	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 1, &palette);
+	loadPalette(palette, 0, 256);
+	drawImage(*menu, 0, 0, false);
+	bool cont = true;
+	while (!shouldQuit() && cont) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			mousePos = g_system->getEventManager()->getMousePos();
+
+			// Events
+			switch (event.type) {
+
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RETURN_TO_LAUNCHER:
+				break;
+
+			case Common::EVENT_LBUTTONDOWN:
+				if (chumpBox.contains(mousePos)) {
+					_difficulty = "chump";
+					cont = false;
+				} else if (punkBox.contains(mousePos)) {
+					_difficulty = "punk";
+					cont = false;
+				} else if (badAssBox.contains(mousePos)) {
+					_difficulty = "bad ass";
+					cont = false;
+				} else if (cancelBox.contains(mousePos)) {
+					cont = false;
+				}
+				break;
+
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_c) {
+					_difficulty = "chump";
+					cont = false;
+				} else if (event.kbd.keycode == Common::KEYCODE_p) {
+					_difficulty = "punk";
+					cont = false;
+				} else if (event.kbd.keycode == Common::KEYCODE_b) {
+					_difficulty = "bad ass";
+					cont = false;
+				} else if (event.kbd.keycode == Common::KEYCODE_a) {
+					cont = false;
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+
+	if (_difficulty.empty())
+		_nextLevel = "<main_menu>";
+	else
+		_nextLevel = code->levelIfWin;
 	menu->free();
 	delete menu;
 }
