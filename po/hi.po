@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-19 19:32+0000\n"
+"POT-Creation-Date: 2022-05-20 20:21+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -5154,25 +5154,25 @@ msgstr ""
 msgid "Eye of Beholder support is not compiled in"
 msgstr "सुविधा बनाए गए:"
 
-#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:461
+#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:458
 #: engines/ultima/ultima4/meta_engine.cpp:224
 #: engines/ultima/ultima8/meta_engine.cpp:142
 msgid "Interact via Left Click"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:462
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:459
 #: engines/ultima/ultima4/meta_engine.cpp:230
 #: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Interact via Right Click"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:469
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:466
 #: engines/twine/metaengine.cpp:248
 #, fuzzy
 msgid "Move Forward"
 msgstr "नीचे देखो"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:470
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:467
 msgid "Move Back"
 msgstr ""
 
@@ -5186,13 +5186,13 @@ msgstr "बाएं"
 msgid "Move Right"
 msgstr "दाहिने"
 
-#: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:473
+#: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:470
 #: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:269
 #: engines/zvision/metaengine.cpp:140
 msgid "Turn Left"
 msgstr "बांए मुड़िए"
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:474
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:471
 #: engines/pegasus/pegasus.cpp:2742 engines/twine/metaengine.cpp:262
 #: engines/zvision/metaengine.cpp:146
 #, fuzzy
@@ -5239,41 +5239,41 @@ msgstr ""
 msgid "Spell Level 6"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:465
+#: engines/kyra/engine/lol.cpp:462
 msgid "Attack 1"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:466
+#: engines/kyra/engine/lol.cpp:463
 msgid "Attack 2"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:467
+#: engines/kyra/engine/lol.cpp:464
 msgid "Attack 3"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:468
+#: engines/kyra/engine/lol.cpp:465
 msgid "Show Map"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:471
+#: engines/kyra/engine/lol.cpp:468
 msgid "Slide Left"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:472
+#: engines/kyra/engine/lol.cpp:469
 #, fuzzy
 msgid "Slide Right"
 msgstr "दाहिने"
 
-#: engines/kyra/engine/lol.cpp:475
+#: engines/kyra/engine/lol.cpp:472
 msgid "Rest"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:476
+#: engines/kyra/engine/lol.cpp:473
 #, fuzzy
 msgid "Options"
 msgstr "विकल्प(O)..."
 
-#: engines/kyra/engine/lol.cpp:477
+#: engines/kyra/engine/lol.cpp:474
 #, fuzzy
 msgid "Choose Spell"
 msgstr "चुनें"
