@@ -46,6 +46,7 @@ protected:
 	UIElement *_parent;
 	Common::Array<UIElement *> _children;
 	bool _needsRedraw = true;
+	Common::String _name;
 private:
 	/**
 	 * Outer method for doing drawing
@@ -53,7 +54,7 @@ private:
 	 */
 	void drawElements();
 public:
-	UIElement(UIElement *uiParent = nullptr);
+	UIElement(const Common::String &name, UIElement *uiParent);
 	virtual ~UIElement() {}
 
 	/**
@@ -84,6 +85,11 @@ public:
 	virtual bool tick();
 
 	/**
+	 * Find an element by name
+	 */
+	virtual UIElement *findElement(const Common::String &name);
+
+	/**
 	 * Handles events
 	 */
 	#define MESSAGE(NAME) \
@@ -109,7 +115,7 @@ protected:
 	 */
 	void processEvent(Common::Event &ev);
 public:
-	Events() {}
+	Events() : UIElement("", nullptr) {}
 	virtual ~Events() {}
 
 	/**
