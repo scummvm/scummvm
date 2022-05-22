@@ -47,6 +47,18 @@ class Picture;
 class Sound;
 class Window;
 
+#define	CONFIG_MUSICVOL     "music_volume"
+#define	CONFIG_SFXVOL       "sfx_volume"
+#define	CONFIG_SPEECHVOL    "speech_volume"
+#define	CONFIG_MSTONE7      "hdb_memory_heap"
+#define	CONFIG_MSTONE14     "lua_stack_offset"
+#define	CONFIG_MSTONE21     "fmod_mix_timer"
+#define	CONFIG_SOUNDCACHE   "sound_cache_max" // Unused
+#define	CONFIG_GFXCACHE     "gfx_cache_max"   // Unused
+#define	CONFIG_CHEAT        "hypercheat"
+#define	CONFIG_NOSPEECH     "speech_mute"
+#define	CONFIG_MUTEALL      "mute"
+
 enum {
 	kTileWidth = 32,
 	kTileHeight = 32,
@@ -143,6 +155,7 @@ public:
 	void initializePath(const Common::FSNode &gamePath) override;
 
 	Common::Error run() override;
+	void syncSoundSettings() override;
 
 	// Detection related members;
 	const ADGameDescription *_gameDescription;
@@ -370,6 +383,7 @@ private:
 		int  slot;
 	} _saveInfo, _loadInfo;
 
+	bool  _noMusicDriver; // If "Music Device" is set to "No Music" from Audio tab
 };
 
 extern HDBGame *g_hdb;
