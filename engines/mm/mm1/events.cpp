@@ -23,6 +23,7 @@
 #include "graphics/screen.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/mm1.h"
+#include "mm/mm1/views/dialogs.h"
 
 namespace MM {
 namespace MM1 {
@@ -31,6 +32,11 @@ namespace MM1 {
 #define FRAME_DELAY (1000 / FRAME_RATE)
 
 void Events::runGame() {
+	Views::Dialogs dialogsContainer;	// Load up all the dialogs
+
+	// Run the game
+	addView("AreYouReady");
+
 	uint currTime, nextFrameTime = 0;
 	_screen = new Graphics::Screen();
 
@@ -66,6 +72,7 @@ void Events::processEvent(Common::Event &ev) {
 }
 
 void Events::replaceView(UIElement *ui) {
+	assert(ui);
 	if (!_views.empty()) {
 		focusedView()->msgUnfocus(UnfocusMessage());
 		_views.clear();
@@ -80,6 +87,7 @@ void Events::replaceView(const Common::String &name) {
 }
 
 void Events::addView(UIElement *ui) {
+	assert(ui);
 	if (!_views.empty())
 		focusedView()->msgUnfocus(UnfocusMessage());
 

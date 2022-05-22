@@ -20,15 +20,42 @@
  */
 
 #include "mm/mm1/views/main_menu.h"
+#include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
 void MainMenu::draw() {
-	// TODO
 	drawTextBorder();
-	writeString(10, 10, "Main menu");
+	writeString(12, 4, STRING["dialogs.main_menu.title1"]);
+	writeString(6, 6, STRING["dialogs.main_menu.title2"]);
+	writeString(15, 9, STRING["dialogs.main_menu.title3"]);
+	writeString(15, 10, STRING["dialogs.main_menu.title4"]);
+
+	writeString(5, 12, STRING["dialogs.main_menu.option1"]);
+	writeString(5, 14, STRING["dialogs.main_menu.option2"]);
+	writeString(5, 16, STRING["dialogs.main_menu.option3"]);
+	writeString(4, 22, STRING["dialogs.main_menu.copyright1"]);
+	writeString(10, 24, STRING["dialogs.main_menu.copyright2"]);
+}
+
+bool MainMenu::msgKeypress(const KeypressMessage &msg) {
+	switch (msg.keycode) {
+	case Common::KEYCODE_c:
+		g_engine->replaceView("CreateCharacters");
+		return true;
+
+	case Common::KEYCODE_v:
+		g_engine->replaceView("ViewAllCharacters");
+		return true;
+
+	default:
+		break;
+	}
+
+	return false;
 }
 
 } // namespace Views
