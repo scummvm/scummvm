@@ -4051,7 +4051,6 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/3ds/plugin.ld -march=armv6k 
 		_plugin_suffix=".plugin"
 		append_var CXXFLAGS "-fPIC"
 		append_var LIBS "-use-dynld"
-		append_var LIBS "-ldl"
 		append_var LIBS "-lauto"
 		append_var _strip "-x"
 _mak_plugins='
