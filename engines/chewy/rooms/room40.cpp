@@ -115,10 +115,10 @@ void Room40::xit(int16 eib_nr) {
 				_G(obj)->hide_sib(SIB_MUENZE_R40);
 
 				_G(uhr)->disableTimer();
-				_G(out)->ausblenden(0);
+				_G(out)->fadeOut();
 				hide_person();
 				setupScreen(DO_SETUP);
-				_G(out)->einblenden(_G(pal), 0);
+				_G(out)->fadeIn(_G(pal), 0);
 				_G(uhr)->enableTimer();
 
 				_G(mouseLeftClick) = false;
@@ -341,7 +341,7 @@ int16 Room40::use_mr_pumpkin() {
 						autoMove(8, P_CHEWY);
 						start_spz_wait(CH_PUMP_GET1, 1, false, P_CHEWY);
 						delInventory(_G(gameState).AkInvent);
-						_G(out)->ausblenden(1);
+						_G(out)->fadeOut();
 						Room43::catch_pg();
 						remove_inventory(LIKOER_INV);
 						_G(obj)->addInventory(LIKOER2_INV, &_G(room_blk));
@@ -474,10 +474,10 @@ int16 Room40::use_haendler() {
 				_G(det)->del_static_ani(5);
 				_G(det)->set_static_ani(3, -1);
 				startAadWait(211);
-				_G(out)->ausblenden(0);
+				_G(out)->fadeOut();
 				_G(out)->set_partialpalette(_G(pal), 255, 1);
 				startAadWait(212);
-				_G(out)->ausblenden(0);
+				_G(out)->fadeOut();
 				_G(gameState).R40Wettbewerb = true;
 				_G(gameState)._personRoomNr[P_HOWARD] = 28;
 				_G(flags).NoScroll = false;

@@ -81,7 +81,7 @@ void McgaGraphics::raster_col(int16 c, int16 r, int16 g, int16 b) {
 	setScummVMPalette(&_palTable[c * 3], c, 1);
 }
 
-void McgaGraphics::einblenden(byte *palette, int16 frames) {
+void McgaGraphics::fadeIn(byte *palette, int16 frames) {
 	for (int16 j = 63; j >= 0; j--) {
 		int16 k = 0;
 		for (int16 i = 0; i < 256; i++) {
@@ -103,7 +103,7 @@ void McgaGraphics::einblenden(byte *palette, int16 frames) {
 	}
 }
 
-void McgaGraphics::ausblenden(int16 frames) {
+void McgaGraphics::fadeOut() {
 	for (int16 j = 0; j < 64; j++) {
 		int16 k = 0;
 		for (int16 i = 0; i < 256; i++) {
@@ -165,8 +165,9 @@ void McgaGraphics::pop_box(int16 x, int16 y, int16 x1, int16 y1, int16 col1, int
 	drawLine(x, y, x, y1 + 1, col1);
 }
 
-void McgaGraphics::back2screen(byte *ptr) {
+void McgaGraphics::copyToScreen() {
 	byte *destP = (byte *)g_screen->getPixels();
+	const byte *ptr = _G(workpage);
 	Common::copy(ptr + 4, ptr + 4 + (SCREEN_WIDTH * SCREEN_HEIGHT), destP);
 	g_screen->markAllDirty();
 }

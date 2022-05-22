@@ -196,7 +196,7 @@ int Room82::proc6() {
 
 	if (_G(gameState).flags30_10) {
 		startAadWait(450);
-		_G(out)->ausblenden(0);
+		_G(out)->fadeOut();
 		_G(out)->set_partialpalette(_G(pal), 255, 1);
 		_G(atds)->enableEvents(false);
 		startAadWait(598);

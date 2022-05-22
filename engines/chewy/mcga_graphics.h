@@ -38,8 +38,8 @@ public:
 
 	void setPalette(byte *palette);
 	void raster_col(int16 c, int16 r, int16 g, int16 b);
-	void einblenden(byte *palette, int16 frames);
-	void ausblenden(int16 frames);
+	void fadeIn(byte *palette, int16 frames);
+	void fadeOut();
 	void set_partialpalette(const byte *palette, int16 startCol, int16 nr);
 
 	void cls();
@@ -49,7 +49,7 @@ public:
 	void pop_box(int16 x, int16 y, int16 x1, int16 y1,
 	             int16 col1, int16 col2, int16 back_col);
 
-	void back2screen(byte *ptr);
+	void copyToScreen();
 
 	void spriteSave(byte *spritePtr, int16 x, int16 y, int16 width,
 	                int16 height);

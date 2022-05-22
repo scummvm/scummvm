@@ -236,7 +236,7 @@ void Room0::eyeStart(EyeMode mode) {
 
 		_G(cur)->plot_cur();
 		calcEyeClick(3);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 
 		if (adi->delay_count > 0)
 			--adi->delay_count;
@@ -281,7 +281,7 @@ void Room0::eyeWait() {
 		setupScreen(NO_SETUP);
 		_G(cur)->plot_cur();
 		calcEyeClick(2);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 
 		if (adi->delay_count > 0) {
 			--adi->delay_count;
@@ -491,7 +491,7 @@ void Room0::feederStart(int16 mode) {
 		if (!mode)
 			calcPillowClick(1);
 
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
@@ -530,7 +530,7 @@ void Room0::feederExtend() {
 		setupScreen(NO_SETUP);
 		_G(cur)->plot_cur();
 		calcPillowClick(1);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 	}
 
 	clear_prog_ani();

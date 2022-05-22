@@ -723,7 +723,7 @@ void flic_cut(int16 nr) {
 
 		// TODO: Reimplement
 		//_G(sndPlayer)->fadeOut(0);
-		_G(out)->ausblenden(1);
+		_G(out)->fadeOut();
 		_G(out)->cls();
 		//while (_G(sndPlayer)->musicPlaying()) {}
 		break;
@@ -743,7 +743,7 @@ void flic_cut(int16 nr) {
 
 		// TODO: Reimplement
 		//_G(sndPlayer)->fadeOut(0);
-		_G(out)->ausblenden(1);
+		_G(out)->fadeOut();
 		_G(out)->cls();
 		//while (_G(sndPlayer)->musicPlaying() && !SHOULD_QUIT) {}
 		break;

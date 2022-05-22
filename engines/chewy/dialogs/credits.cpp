@@ -258,7 +258,7 @@ void Credits::execute() {
 			break;
 
 		_G(out)->setPointer(nullptr);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 	}
 
 	_G(fontMgr)->setFont(_G(font8));

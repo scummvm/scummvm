@@ -296,7 +296,7 @@ void Inventory::menu() {
 						inv_rand_y = -1;
 						plot_menu();
 						_G(cur)->plot_cur();
-						_G(out)->back2screen(_G(workpage));
+						_G(out)->copyToScreen();
 					}
 				} else {
 					if (menu_flag1 != MENU_DISPLAY) {
@@ -360,7 +360,7 @@ void Inventory::menu() {
 				_G(fx)->blende1(_G(workptr), _G(screen0), nullptr, 200, 1, 300);
 			menu_flag1 = false;
 			_G(out)->setClip(0, 0, 320, 200);
-			_G(out)->back2screen(_G(workpage));
+			_G(out)->copyToScreen();
 		} else {
 			showCur();
 		}
@@ -374,7 +374,7 @@ void Inventory::menu() {
 	while (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 		setupScreen(NO_SETUP);
 		_G(cur)->plot_cur();
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 	}
 
 	_G(flags).InventMenu = false;
@@ -534,7 +534,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		}
 
 		_G(cur)->plot_cur();
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 		SHOULD_QUIT_RETURN0;
 	}
 
@@ -542,7 +542,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 		setupScreen(NO_SETUP);
 		plot_menu();
 		_G(cur)->plot_cur();
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 		SHOULD_QUIT_RETURN0;
 	}
 
@@ -654,7 +654,7 @@ void Inventory::showDiary() {
 	_G(room)->load_tgp(DIARY_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(gameState).scrollx, _G(gameState).scrolly);
-	_G(out)->back2screen(_G(workpage));
+	_G(out)->copyToScreen();
 	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(out)->setPointer(nullptr);
 	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);

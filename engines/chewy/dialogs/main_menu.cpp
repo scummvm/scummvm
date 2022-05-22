@@ -164,7 +164,7 @@ void MainMenu::animate() {
 	_G(mouseLeftClick) = false;
 	_G(menu_flag) = 0;
 	_G(out)->setPointer(nullptr);
-	_G(out)->back2screen(_G(workpage));
+	_G(out)->copyToScreen();
 
 	g_screen->update();
 	g_events->update();

@@ -81,7 +81,7 @@ void Room28::entry(int16 eib_nr) {
 					_G(det)->showStaticSpr(6);
 
 					if (!_G(gameState).R40TeilKarte) {
-						_G(out)->ausblenden(0);
+						_G(out)->fadeOut();
 						_G(out)->set_partialpalette(_G(pal), 255, 1);
 						startAadWait(607);
 						_G(fx_blend) = BLEND3;

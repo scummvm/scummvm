@@ -193,7 +193,7 @@ void Room86::proc3(bool cond) {
 		_G(det)->setStaticPos(0, 352, destY, false, false);
 		destY += deltaY;
 		_G(out)->setPointer(nullptr);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 	}
 
 	g_engine->_sound->stopSound(1);

@@ -191,7 +191,7 @@ void Cinema::execute() {
 				_G(room)->set_ak_pal(&_G(room_blk));
 				_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
 			} else {
-				_G(out)->back2screen(_G(workpage));
+				_G(out)->copyToScreen();
 			}
 		}
 

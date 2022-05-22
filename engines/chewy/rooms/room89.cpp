@@ -102,7 +102,7 @@ void Room89::entry() {
 			_G(out)->cls();
 			_G(out)->scale_set(_G(Ci).tempArea, ABS(edi) / 2, ABS(var24) / 2, edi, var24, _G(scr_width));
 			_G(out)->setPointer(nullptr);
-			_G(out)->back2screen(_G(workpage));
+			_G(out)->copyToScreen();
 			g_events->delay(30);
 			SHOULD_QUIT_RETURN;
 		}
@@ -124,13 +124,13 @@ void Room89::entry() {
 			_G(out)->cls();
 			_G(out)->scale_set(_G(Ci).tempArea, ABS(edi) / 2, ABS(var30) / 2, edi, var30, _G(scr_width));
 			_G(out)->setPointer(nullptr);
-			_G(out)->back2screen(_G(workpage));
+			_G(out)->copyToScreen();
 			g_events->delay(30);
 			SHOULD_QUIT_RETURN;
 		}
 
 		g_events->delay(3000);
-		_G(out)->ausblenden(2);
+		_G(out)->fadeOut();
 		_G(out)->setPointer(_G(workptr));
 		_G(out)->cls();
 		_G(out)->setPointer(nullptr);
@@ -139,7 +139,7 @@ void Room89::entry() {
 		Dialogs::Credits::execute();
 		
 		_G(gameState).SVal4 = 1;
-		_G(out)->ausblenden(2);
+		_G(out)->fadeOut();
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 	}

@@ -65,7 +65,7 @@ void standard_init() {
 	_G(pal)[765] = 63;
 	_G(pal)[766] = 63;
 	_G(pal)[767] = 63;
-	_G(out)->einblenden(_G(pal), 0);
+	_G(out)->fadeIn(_G(pal), 0);
 	_G(room)->set_timer_start(1);
 
 	_G(out)->cls();
@@ -77,7 +77,7 @@ void standard_init() {
 	_G(pal)[765] = 63;
 	_G(pal)[766] = 63;
 	_G(pal)[767] = 63;
-	_G(out)->einblenden(_G(pal), 0);
+	_G(out)->fadeIn(_G(pal), 0);
 	_G(out)->cls();
 	_G(uhr)->setNewTimer(0, 5, SEC_10_MODE);
 

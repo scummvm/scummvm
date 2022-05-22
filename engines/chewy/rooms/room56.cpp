@@ -308,7 +308,7 @@ int16 Room56::use_kneipe() {
 				startAadWait(307);
 				_G(det)->stop_detail(10);
 				g_engine->_sound->playSound(10, 0);
-				_G(out)->ausblenden(0);
+				_G(out)->fadeOut();
 				setupScreen(DO_SETUP);
 				_G(gameState)._personHide[P_CHEWY] = false;
 				_G(gameState)._personHide[P_HOWARD] = false;

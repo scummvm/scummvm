@@ -149,14 +149,14 @@ void Effect::border(byte *workpage_, int16 lines, uint8 mode, int16 color) {
 			_G(out)->setPointer(workpage_ + 4);
 			_G(out)->boxFill(152 - x, 0, 152 - x + 8, 200, color);
 			_G(out)->boxFill(x + 160, 0, x + 168, 200, color);
-			_G(out)->back2screen(workpage_);
+			_G(out)->copyToScreen();
 		}
 	} else {
 		for (int i = 0, x = 0; i < 20; ++i, x += 8) {
 			_G(out)->setPointer(workpage_ + 4);
 			_G(out)->boxFill(x, 0, x + 8, 200, color);
 			_G(out)->boxFill(312 - x, 0, 31 - x + 8, 200, color);
-			_G(out)->back2screen(workpage_);
+			_G(out)->copyToScreen();
 		}
 	}
 }

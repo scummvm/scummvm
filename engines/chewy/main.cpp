@@ -596,7 +596,7 @@ void setupScreen(SetupScreenMode mode) {
 			break;
 
 		default:
-			_G(out)->back2screen(_G(workpage));
+			_G(out)->copyToScreen();
 			break;
 		}
 

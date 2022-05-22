@@ -2171,7 +2171,7 @@ void calc_inv_use_txt(int16 test_nr) {
 		_G(room)->load_tgp(NOTEBOOK_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 		_G(out)->setPointer(_G(workptr));
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(gameState).scrollx, _G(gameState).scrolly);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 
 		while (_G(in)->getSwitchCode() != Common::KEYCODE_ESCAPE) {
 			g_events->update();

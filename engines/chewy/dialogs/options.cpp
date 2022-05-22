@@ -231,7 +231,7 @@ void Options::execute(TafInfo *ti) {
 		}
 
 		_G(cur)->plot_cur();
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 		EVENTS_UPDATE;
 		SHOULD_QUIT_RETURN;
 

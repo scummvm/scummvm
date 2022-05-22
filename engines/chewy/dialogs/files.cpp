@@ -152,7 +152,7 @@ bool Files::execute(bool isInGame) {
 			--mode[QUIT];
 		if (mode[QUIT] == 1) {
 			_G(out)->printxy(120, 138, 255, 300, 0, g_engine->getLanguage() == Common::Language::DE_DEU ? QUIT_MSG_DE : QUIT_MSG_EN);
-			_G(out)->back2screen(_G(workpage));
+			_G(out)->copyToScreen();
 
 			key = getch();
 			if (key == 'j' || key == 'J' || key == 'y' || key == 'Y' || key == 'z' || key == 'Z') {
@@ -279,7 +279,7 @@ enter:
 					}
 				}
 			} else if (mode[SAVE]) {
-				_G(out)->back2screen(_G(workpage));
+				_G(out)->copyToScreen();
 				_G(out)->setPointer(_G(screen0));
 				char slotName[81];
 				slotName[0] = '\0';
@@ -300,7 +300,7 @@ enter:
 		}
 
 		_G(cur)->plot_cur();
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 
 		EVENTS_UPDATE;
 	}
