@@ -2088,6 +2088,8 @@ int ScummEngine::getTalkSpeed() {
 Common::Error ScummEngine::go() {
 	setTotalPlayTime();
 
+	_lastWaitTime = _system->getMillis();
+
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveTemporaryState)) {
 		_saveLoadFlag = 0;
