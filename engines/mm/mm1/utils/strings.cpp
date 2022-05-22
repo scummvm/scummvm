@@ -19,36 +19,15 @@
  *
  */
 
-#ifndef MM1_GLOBALS_H
-#define MM1_GLOBALS_H
-
-#include "graphics/font.h"
-#include "mm/utils/strings_data.h"
-#include "mm/mm1/utils/roster.h"
+#include "mm/mm1/utils/strings.h"
 
 namespace MM {
 namespace MM1 {
 
-class Globals {
-public:
-	StringsData _strings;
-	Roster _roster;
-	const Graphics::Font *_font = nullptr;
-public:
-	Globals();
-	virtual ~Globals();
-
-	/**
-	 * Loads data for the globals
-	 */
-	bool load();
-};
-
-extern Globals *g_globals;
-
-#define STRING (g_globals->_strings)
+void pad_string(Common::String &str, size_t len, char c) {
+	while (str.size() < len)
+		str += c;
+}
 
 } // namespace MM1
 } // namespace MM
-
-#endif

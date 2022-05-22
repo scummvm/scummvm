@@ -19,34 +19,48 @@
  *
  */
 
-#ifndef MM1_GLOBALS_H
-#define MM1_GLOBALS_H
+#ifndef MM1_UTILS_ROSTER_H
+#define MM1_UTILS_ROSTER_H
 
-#include "graphics/font.h"
-#include "mm/utils/strings_data.h"
-#include "mm/mm1/utils/roster.h"
+#include "common/serializer.h"
 
 namespace MM {
 namespace MM1 {
 
-class Globals {
-public:
-	StringsData _strings;
-	Roster _roster;
-	const Graphics::Font *_font = nullptr;
-public:
-	Globals();
-	virtual ~Globals();
+#define CHARACTERS_COUNT 18
 
-	/**
-	 * Loads data for the globals
-	 */
-	bool load();
+enum CharacterClass {
+	KNIGHT = 1, PALADIN = 2, ARCHER = 3, CLERIC = 4,
+	SORCERER = 5, ROBBER = 6, NONE = 0
 };
 
-extern Globals *g_globals;
+enum Race {
+	HUMAN = 1, ELF = 2, DWARF = 3, GNOME = 4, HALF_ORC = 5
+};
 
-#define STRING (g_globals->_strings)
+enum Alignment {
+	GOOD = 1, NEUTRAL = 2, EVIL = 3
+};
+
+enum Sex {
+	MALE = 1, FEMALE = 2, YES_PLEASE = 3
+};
+
+struct RosterEntry {
+	char _name[15] = { 0 };
+	uint8 _level = 0;
+	CharacterClass _class = NONE;
+};
+
+struct Roster {
+	RosterEntry _items[CHARACTERS_COUNT];
+	uint8 _nums[CHARACTERS_COUNT] = { 0 };
+
+	RosterEntry &operator[](uint idx) {
+		assert(idx < CHARACTERS_COUNT);
+		return _items[idx];
+	}
+};
 
 } // namespace MM1
 } // namespace MM
