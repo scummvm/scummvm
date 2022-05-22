@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-22 11:07+0000\n"
+"POT-Creation-Date: 2022-05-22 12:47+0000\n"
 "PO-Revision-Date: 2022-03-29 10:46+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -5335,13 +5335,13 @@ msgstr ""
 msgid "Demo plays simple animations without using Westwood's Engine."
 msgstr "Demo speelt simpele animaties zonder de Westwood's Engine."
 
-#: engines/kyra/detection_tables.h:1447
+#: engines/kyra/detection_tables.h:1460
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
 "Het spel is onjuist toegoevoegd. Voeg a.u.b. de root map van het spel toe."
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1463
+#: engines/kyra/detection_tables.h:1476
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
