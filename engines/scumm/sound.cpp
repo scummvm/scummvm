@@ -134,6 +134,9 @@ bool Sound::isRolandLoom() const {
 		(_vm->VAR(_vm->VAR_SOUNDCARD) == 4);
 }
 
+#define TICKS_TO_TIMER(x) ((((x) * 204) / _loomOvertureTransition) + 1)
+#define TIMER_TO_TICKS(x) ((((x) - 1) * _loomOvertureTransition) / 204)
+
 void Sound::updateMusicTimer() {
 	bool isLoomOverture = (isRolandLoom() && _currentCDSound == 56 && !(_vm->_game.features & GF_DEMO));
 

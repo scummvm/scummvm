@@ -35,9 +35,6 @@
 
 #define DEFAULT_LOOM_OVERTURE_TRANSITION 1160
 
-#define TICKS_TO_TIMER(x) ((((x) * 204) / _loomOvertureTransition) + 1)
-#define TIMER_TO_TICKS(x) ((((x) - 1) * _loomOvertureTransition) / 204)
-
 namespace Audio {
 class Mixer;
 class SoundHandle;
