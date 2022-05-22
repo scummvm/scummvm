@@ -29,7 +29,7 @@
 #include "chewy/room.h"
 #include "chewy/movclass.h"
 #include "chewy/timer.h"
-#include "chewy/gedclass.h"
+#include "chewy/barriers.h"
 #include "chewy/text.h"
 #include "chewy/object.h"
 #include "chewy/effect.h"
@@ -183,7 +183,7 @@ public:
 	TafSeqInfo *_howard_taf = nullptr;
 	TafInfo *_chewy = nullptr;
 	int16 *_chewy_kor = nullptr;
-	GedClass *_ged = nullptr;
+	Barriers *_barriers = nullptr;
 	Text *_txt = nullptr;
 	Room *_room = nullptr;
 	Object *_obj = nullptr;

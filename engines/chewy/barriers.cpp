@@ -22,11 +22,11 @@
 #include "common/file.h"
 #include "chewy/chewy.h"
 #include "chewy/globals.h"
-#include "chewy/gedclass.h"
+#include "chewy/barriers.h"
 
 namespace Chewy {
 
-int16 GedClass::getBarrierId(int16 x, int16 y) {
+int16 Barriers::getBarrierId(int16 x, int16 y) {
 	const int16 width = _G(room)->_barriers->getWidth();
 	const byte *data = _G(room)->_barriers->getData();
 	const int16 result = getBarrierId(((y / 8) * width) + (x / 8), data + 6);
@@ -34,7 +34,7 @@ int16 GedClass::getBarrierId(int16 x, int16 y) {
 	return result;
 }
 
-int16 GedClass::getBarrierId(int16 g_idx, const byte *buffer) {
+int16 Barriers::getBarrierId(int16 g_idx, const byte *buffer) {
 	int16 idx_nr = buffer[g_idx];
 
 	switch (idx_nr) {

@@ -38,7 +38,7 @@ void standard_init() {
 	_G(in) = new InputMgr();
 	_G(fx) = new Effect();
 	_G(txt) = new Text();
-	_G(ged) = new GedClass();
+	_G(barriers) = new Barriers();
 	_G(room) = new Room();
 	_G(obj) = new Object(&_G(gameState));
 	_G(uhr) = new Timer(MAX_TIMER_OBJ, _G(ani_timer));
@@ -230,7 +230,7 @@ void tidy() {
 	delete _G(uhr);
 	delete _G(obj);
 	delete _G(room);
-	delete _G(ged);
+	delete _G(barriers);
 	delete _G(txt);
 	delete _G(fx);
 	delete _G(in);
@@ -244,7 +244,7 @@ void tidy() {
 	_G(uhr) = nullptr;
 	_G(obj) = nullptr;
 	_G(room) = nullptr;
-	_G(ged) = nullptr;
+	_G(barriers) = nullptr;
 	_G(txt) = nullptr;
 	_G(fx) = nullptr;
 	_G(in) = nullptr;

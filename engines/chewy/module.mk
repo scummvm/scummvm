@@ -2,13 +2,13 @@ MODULE := engines/chewy
 
 MODULE_OBJS = \
 	atds.o \
+	barriers.o \
 	chewy.o \
 	cursor.o \
 	console.o \
 	detail.o \
 	effect.o \
 	events.o \
-	gedclass.o \
 	globals.o \
 	inits.o \
 	m_event.o \

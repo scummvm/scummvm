@@ -19,16 +19,14 @@
  *
  */
 
-#ifndef CHEWY_GEDCLASS_H
-#define CHEWY_GEDCLASS_H
-
-#include "chewy/ngstypes.h"
+#ifndef CHEWY_BARRIERS_H
+#define CHEWY_BARRIERS_H
 
 namespace Chewy {
 
-class GedClass {
+class Barriers {
 public:
-	GedClass() {}
+	Barriers() {}
 
 	int16 getBarrierId(int16 x, int16 y);
 	int16 getBarrierId(int16 g_idx, const byte *buffer);

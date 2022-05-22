@@ -211,7 +211,7 @@ void MovClass::calc_xy() {
 	int16 xvector = 0;
 	int16 yvector = 0;
 
-	if (!_G(ged)->getBarrierId(_gpkt->Dx, _gpkt->Dy)) {
+	if (!_G(barriers)->getBarrierId(_gpkt->Dx, _gpkt->Dy)) {
 		int16 ende = 0;
 		int16 count = 0;
 		int16 min_x = -1;
@@ -255,7 +255,7 @@ void MovClass::calc_xy() {
 				for (int16 i = 0; i < anz; i++) {
 					if (x >= 0 && x < width * 8 &&
 					        y >= 0 && y < height * 8) {
-						if (_G(ged)->getBarrierId(x, y)) {
+						if (_G(barriers)->getBarrierId(x, y)) {
 							int16 aksteps = abs(_gpkt->Dx - x);
 							aksteps += abs(_gpkt->Dy - y);
 							if (aksteps < min_steps) {
@@ -334,13 +334,13 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 			}
 
 			tmpz = 0;
-			if (!_G(ged)->getBarrierId(om.Xypos[0] + tmpx + tmpz,
+			if (!_G(barriers)->getBarrierId(om.Xypos[0] + tmpx + tmpz,
 			                           om.Xypos[1] + tmpy + tmpz)) {
 
-				if (!_G(ged)->getBarrierId(om.Xypos[0] + tmpx + tmpz,
+				if (!_G(barriers)->getBarrierId(om.Xypos[0] + tmpx + tmpz,
 				                           om.Xypos[1] + tmpz)) {
 
-					if (!_G(ged)->getBarrierId(om.Xypos[0] + tmpz,
+					if (!_G(barriers)->getBarrierId(om.Xypos[0] + tmpz,
 					                           om.Xypos[1] + tmpy + tmpz)) {
 
 						abbruch = MOV_UNPASSABLE;
@@ -433,12 +433,12 @@ void MovClass::get_mov_line() {
 		while (!ende) {
 
 			int16 tmp_feld = start_feld + count * count_vect;
-			if (_G(ged)->getBarrierId(tmp_feld, data + 6)) {
+			if (_G(barriers)->getBarrierId(tmp_feld, data + 6)) {
 				int16 abbruch = 0;
 				int16 vector = 0;
 				while ((tmp_feld % width) < (width - 1) && !abbruch)
 				{
-					if (_G(ged)->getBarrierId(tmp_feld + vector, data + 6)) {
+					if (_G(barriers)->getBarrierId(tmp_feld + vector, data + 6)) {
 						tmp_feld += vector;
 						if (buffer[tmp_feld] == MOV_LINE_IDX) {
 							ak_steps = abs((tmp_feld % width) - (start_feld % width));
@@ -459,7 +459,7 @@ void MovClass::get_mov_line() {
 				vector = LEFT_VECT;
 				abbruch = 0;
 				while ((tmp_feld % width) > 0 && !abbruch) {
-					if (_G(ged)->getBarrierId(tmp_feld + vector, data + 6)) {
+					if (_G(barriers)->getBarrierId(tmp_feld + vector, data + 6)) {
 						tmp_feld += vector;
 						if (buffer[tmp_feld] == MOV_LINE_IDX) {
 							ak_steps = abs((tmp_feld % width) - (start_feld % width));
