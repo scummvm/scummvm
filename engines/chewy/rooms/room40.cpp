@@ -118,7 +118,7 @@ void Room40::xit(int16 eib_nr) {
 				_G(out)->fadeOut();
 				hide_person();
 				setupScreen(DO_SETUP);
-				_G(out)->fadeIn(_G(pal), 0);
+				_G(out)->fadeIn(_G(pal));
 				_G(uhr)->enableTimer();
 
 				_G(mouseLeftClick) = false;

@@ -258,7 +258,7 @@ int16 Room51::use_door(int16 txt_nr) {
 					_G(out)->fadeOut();
 					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
-					_G(out)->fadeIn(_G(pal), 0);
+					_G(out)->fadeIn(_G(pal));
 					_G(flags).NoPalAfterFlc = true;
 					_G(det)->showStaticSpr(16);
 					flic_cut(FCUT_068);

@@ -247,7 +247,6 @@ public:
 	int _spriteWidth = 0;
 
 	// mcga_graphics.cpp
-	int16 _clipx1 = 0, _clipx2 = 0, _clipy1 = 0, _clipy2 = 0;
 	int16 _gcurx = 0, _gcury = 0;
 
 	// menus.cpp

@@ -359,7 +359,6 @@ void Inventory::menu() {
 			} else if (menu_flag1 == MENU_HIDE)
 				_G(fx)->blende1(_G(workptr), _G(screen0), nullptr, 200, 1, 300);
 			menu_flag1 = false;
-			_G(out)->setClip(0, 0, 320, 200);
 			_G(out)->copyToScreen();
 		} else {
 			showCur();

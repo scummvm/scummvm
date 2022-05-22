@@ -48,7 +48,6 @@ void standard_init() {
 
 	_G(out)->init();
 	_G(out)->cls();
-	_G(out)->setClip(0, 0, 320, 200);
 	_G(scr_width) = 0;
 	_G(screen0) = (byte *)g_screen->getPixels();
 
@@ -65,7 +64,7 @@ void standard_init() {
 	_G(pal)[765] = 63;
 	_G(pal)[766] = 63;
 	_G(pal)[767] = 63;
-	_G(out)->fadeIn(_G(pal), 0);
+	_G(out)->fadeIn(_G(pal));
 	_G(room)->set_timer_start(1);
 
 	_G(out)->cls();
@@ -77,7 +76,7 @@ void standard_init() {
 	_G(pal)[765] = 63;
 	_G(pal)[766] = 63;
 	_G(pal)[767] = 63;
-	_G(out)->fadeIn(_G(pal), 0);
+	_G(out)->fadeIn(_G(pal));
 	_G(out)->cls();
 	_G(uhr)->setNewTimer(0, 5, SEC_10_MODE);
 

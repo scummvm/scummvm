@@ -33,12 +33,11 @@ public:
 
 	void init();
 
-	void setClip(int16 x1, int16 y1, int16 x2, int16 y2);
 	void setPointer(byte *ptr);
 
 	void setPalette(byte *palette);
 	void raster_col(int16 c, int16 r, int16 g, int16 b);
-	void fadeIn(byte *palette, int16 frames);
+	void fadeIn(byte *palette);
 	void fadeOut();
 	void set_partialpalette(const byte *palette, int16 startCol, int16 nr);
 

@@ -53,13 +53,6 @@ void setScummVMPalette(const byte *palette, uint start, uint count) {
 	g_system->getPaletteManager()->setPalette(tempPal, start, count);
 }
 
-void McgaGraphics::setClip(int16 x1, int16 y1, int16 x2, int16 y2) {
-	_G(clipx1) = x1;
-	_G(clipx2) = x2;
-	_G(clipy1) = y1;
-	_G(clipy2) = y2;
-}
-
 void McgaGraphics::setPointer(byte *ptr) {
 	if (ptr) {
 		_G(currentScreen) = ptr;
@@ -81,7 +74,7 @@ void McgaGraphics::raster_col(int16 c, int16 r, int16 g, int16 b) {
 	setScummVMPalette(&_palTable[c * 3], c, 1);
 }
 
-void McgaGraphics::fadeIn(byte *palette, int16 frames) {
+void McgaGraphics::fadeIn(byte *palette) {
 	for (int16 j = 63; j >= 0; j--) {
 		int16 k = 0;
 		for (int16 i = 0; i < 256; i++) {
@@ -177,18 +170,18 @@ void McgaGraphics::spriteSave(byte *spritePtr, int16 x, int16 y, int16 width, in
 		width = 4;
 	if (height <= 0)
 		height = 1;
-	if (x < _G(clipx1)) {
-		x = _G(clipx1);
-		width -= (_G(clipx1) - x);
+	if (x < 0) {
+		x = 0;
+		width -= (0 - x);
 	}
-	if ((x + width) > _G(clipx2) + 1)
-		width = _G(clipx2) - x;
-	if (y < _G(clipy1)) {
-		y = _G(clipy1);
-		height -= (_G(clipy1) - y);
+	if ((x + width) > 320 + 1)
+		width = 320 - x;
+	if (y < 0) {
+		y = 0;
+		height -= (0 - y);
 	}
-	if ((y + height) > _G(clipy2) + 1)
-		height = _G(clipy2) - y;
+	if ((y + height) > 200 + 1)
+		height = 200 - y;
 	if (width < 1)
 		width = 0;
 	if (height <= 0)
@@ -212,35 +205,35 @@ void McgaGraphics::spriteSave(byte *spritePtr, int16 x, int16 y, int16 width, in
 }
 
 static bool mspr_set_mcga_clip(int x, int y, int pitch, int &width, int &height, const byte *&srcP, byte *&destP) {
-	if (y < _G(clipy1)) {
-		int yDiff = ABS(_G(clipy1) - y);
+	if (y < 0) {
+		int yDiff = ABS(0 - y);
 		height -= yDiff;
 		srcP += yDiff * width;
-		y = _G(clipy1);
+		y = 0;
 	}
 	if (height < 1)
 		return false;
 
-	if (x < _G(clipx1)) {
-		int xDiff = ABS(_G(clipx1) - x);
+	if (x < 0) {
+		int xDiff = ABS(0 - x);
 		width -= xDiff;
 		srcP += xDiff;
-		x = _G(clipx1);
+		x = 0;
 	}
 	if (width < 1)
 		return false;
 
 	int x2 = x + width;
-	if (x2 > _G(clipx2)) {
-		int xDiff = x2 - _G(clipx2);
+	if (x2 > 320) {
+		int xDiff = x2 - 320;
 		width -= xDiff;
 	}
 	if (width <= 1)
 		return false;
 
 	int y2 = y + height;
-	if (y2 > _G(clipy2)) {
-		int yDiff = y2 - _G(clipy2);
+	if (y2 > 200) {
+		int yDiff = y2 - 200;
 		height -= yDiff;
 	}
 	if (height < 1)
@@ -818,8 +811,8 @@ void McgaGraphics::setYVals(int spriteHeight) {
 }
 
 void McgaGraphics::clip(byte *&source, byte *&dest, int16 &x, int16 &y) {
-	if (y < _G(clipy1)) {
-		int yCount = _G(clipy1) - y;
+	if (y < 0) {
+		int yCount = 0 - y;
 		_zoomSpriteDeltaY2 -= yCount;
 
 		--yCount;
@@ -841,8 +834,8 @@ void McgaGraphics::clip(byte *&source, byte *&dest, int16 &x, int16 &y) {
 		return;
 	}
 
-	if (x < _G(clipx1)) {
-		int xCount = _G(clipx1) - x;
+	if (x < 0) {
+		int xCount = 0 - x;
 		_zoomSpriteDeltaX2 -= xCount;
 		dest += xCount;
 
@@ -860,14 +853,14 @@ void McgaGraphics::clip(byte *&source, byte *&dest, int16 &x, int16 &y) {
 
 	if (_zoomSpriteDeltaX2 > 0) {
 		int x2 = x + _zoomSpriteDeltaX2;
-		if (x2 >= _G(clipx2)) {
-			_zoomSpriteDeltaX2 -= x2 - _G(clipx2);
+		if (x2 >= 320) {
+			_zoomSpriteDeltaX2 -= x2 - 320;
 		}
 
 		if (_zoomSpriteDeltaY2 > 0) {
 			int y2 = y + _zoomSpriteDeltaY2;
-			if (y2 >= _G(clipy2)) {
-				_zoomSpriteDeltaY2 -= y2 - _G(clipy2);
+			if (y2 >= 200) {
+				_zoomSpriteDeltaY2 -= y2 - 200;
 			}
 			if (_zoomSpriteDeltaY2 <= 0)
 				source = nullptr;
