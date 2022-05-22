@@ -28,16 +28,6 @@
 
 namespace HDB {
 
-#define	CONFIG_MUSICVOL		"music_volume"
-#define	CONFIG_SOUNDVOL		"sound_volume"
-#define	CONFIG_MSTONE7		"hdb_memory_heap"
-#define	CONFIG_MSTONE14		"lua_stack_offset"
-#define	CONFIG_MSTONE21		"fmod_mix_timer"
-#define	CONFIG_SOUNDCACHE	"sound_cache_max"
-#define	CONFIG_GFXCACHE		"gfx_cache_max"
-#define	CONFIG_CHEAT		"hypercheat"
-#define	CONFIG_VOICES		"voices"
-
 #define	TITLE_DELAY1		2				// time to wait before OOH OOH
 #define	TITLE_DELAY2		0.5				// time to spend doing OOH OOH
 #define	TITLE_DELAY3		1				// time to wait before ending title

@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "hdb/hdb.h"
 #include "hdb/ai.h"
 #include "hdb/ai-player.h"
@@ -825,7 +827,7 @@ void AI::killPlayer(Death method) {
 	}
 
 	// sound.StopMusic();
-	if (!g_hdb->_sound->getMusicVolume())
+	if (ConfMan.getInt(CONFIG_MUSICVOL) == 0)
 		g_hdb->_sound->playSound(SND_TRY_AGAIN);
 }
 

@@ -494,6 +494,8 @@ void Menu::startMenu() {
 	// did we already say "HYPERSPACE DELIVERY BOY!" ??
 	// if not, this is a great time to check for Copy Protection!
 	if (_sayHDB == false) {
+		// NOTE The game intro "HYPERSPACE DELIVERY BOY!" sound plays as a SFX type sound.
+		//      It is not a Voice (Speech) quote.
 		g_hdb->_sound->playSound(SND_HDB);
 		_sayHDB = true;
 	}
@@ -686,20 +688,20 @@ void Menu::drawMenu() {
 			_optionsGfx->drawMasked(centerPic(_optionsGfx), _oBannerY);
 
 			g_hdb->_gfx->setCursor(_optionsX + kOptionSPC, _optionsY);
-			if (!g_hdb->_sound->getMusicVolume())
+			if (ConfMan.getInt(CONFIG_MUSICVOL) == 0)
 				g_hdb->_gfx->drawText("Music OFF");
 			else
 				g_hdb->_gfx->drawText("Music Volume");
 
-			drawSlider(_optionsX, _optionsY + 20, g_hdb->_sound->getMusicVolume());
+			drawSlider(_optionsX, _optionsY + 20, ConfMan.getInt(CONFIG_MUSICVOL));
 
 			g_hdb->_gfx->setCursor(_optionsX + kOptionSPC, _optionsY + kOptionLineSPC * 2);
-			if (!g_hdb->_sound->getSFXVolume())
+			if (ConfMan.getInt(CONFIG_SFXVOL) == 0)
 				g_hdb->_gfx->drawText("Sound Effects OFF");
 			else
 				g_hdb->_gfx->drawText("Sound Effects Volume");
 
-			drawSlider(_optionsX, _optionsY + kOptionLineSPC * 2 + 20, g_hdb->_sound->getSFXVolume());
+			drawSlider(_optionsX, _optionsY + kOptionLineSPC * 2 + 20, ConfMan.getInt(CONFIG_SFXVOL));
 
 			if (!g_hdb->isPPC()) {
 				// Voices ON or OFF
@@ -1437,16 +1439,18 @@ void Menu::processInput(int x, int y) {
 		// Slider 1
 		if (x >= 0 && x <= _optionsX + 200 &&
 			y >= _optionsY + 20 && y <= _optionsY + 36) {
-			int oldVol = g_hdb->_sound->getMusicVolume();
+			int oldVol = ConfMan.getInt(CONFIG_MUSICVOL);
 			if (x < _optionsX) {
-				if (oldVol) {
+				if (oldVol > 0) {
 					g_hdb->_sound->stopMusic();
-					g_hdb->_sound->setMusicVolume(0);
+					ConfMan.setInt(CONFIG_MUSICVOL, 0);
+					g_hdb->syncSoundSettings();
 					g_hdb->_sound->playSound(SND_GUI_INPUT);
 				}
 			} else {
-				offset = ((x - _optionsX) * 256) / 200;
-				g_hdb->_sound->setMusicVolume(offset);
+				offset = ((x - _optionsX) * Audio::Mixer::kMaxMixerVolume) / 200;
+				ConfMan.setInt(CONFIG_MUSICVOL, offset);
+				g_hdb->syncSoundSettings();
 				if (!oldVol)
 					g_hdb->_sound->startMusic(_resumeSong);
 			}
@@ -1454,18 +1458,20 @@ void Menu::processInput(int x, int y) {
 			y >= _optionsY + kOptionLineSPC * 2 + 20 && y <= _optionsY + kOptionLineSPC * 2 + 36) {
 			// Slider 2
 			if (x >= _optionsX)
-				offset = ((x - _optionsX) * 256) / 200;
+				offset = ((x - _optionsX) * Audio::Mixer::kMaxMixerVolume) / 200;
 			else
 				offset = 0;
-			g_hdb->_sound->setSFXVolume(offset);
+			ConfMan.setInt(CONFIG_SFXVOL, offset);
+			g_hdb->syncSoundSettings();
 			g_hdb->_sound->playSound(SND_MENU_SLIDER);
 		} else if (x >= _optionsX && x <= _optionsX + 200 &&
 			y >= _optionsY + kOptionLineSPC * 4 + 24 && y <= _optionsY + kOptionLineSPC * 4 + 40) {
 			// Voices ON/OFF
 			if (!g_hdb->isVoiceless()) {
-				bool value = g_hdb->_sound->getVoiceStatus();
-				value ^= true;
+				bool value = !g_hdb->_sound->getVoiceStatus();
 				g_hdb->_sound->setVoiceStatus(value);
+				ConfMan.setBool(CONFIG_NOSPEECH, !value);
+				g_hdb->syncSoundSettings();
 				g_hdb->_sound->playSound(SND_GUI_INPUT);
 			}
 		} else if (y >= _menuExitY || y < _menuExitYTop || xit) {
