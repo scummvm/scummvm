@@ -61,11 +61,10 @@ struct EMCState {
 
 #ifdef RELEASE_BUILD
 #define stackPos(x) (script->stack[script->sp+x])
-#define safeStackPos(x) (script->sp+x < EMCState::kStackSize ? stackPos(x) : 0)
 #else
 #define stackPos(x) emcSafeReadStack(script, x, __LINE__, __FILE__)
-#define safeStackPos(x) stackPos(x)
 #endif
+#define safeStackPos(x) (script->sp+x < EMCState::kStackSize ? stackPos(x) : 0)
 #define stackPosString(x) ((const char *)&script->dataPtr->text[READ_BE_UINT16(&script->dataPtr->text[stackPos(x)<<1])])
 
 class Resource;
