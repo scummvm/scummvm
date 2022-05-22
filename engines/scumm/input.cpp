@@ -545,7 +545,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	bool talkstopKeyEnabled = (VAR_TALKSTOP_KEY == 0xFF || VAR(VAR_TALKSTOP_KEY) != 0);
 	bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
 	bool mainmenuKeyEnabled = (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
-	bool snapScrollKeyEnabled = (_game.version <= 2 || VAR_CAMERA_FAST_X != 0xFF);
+	bool snapScrollKeyEnabled = (_game.version >= 2 && _game.version <= 4);
 
 	// In FM-TOWNS games F8 / restart is always enabled
 	if (_game.platform == Common::kPlatformFMTowns)
