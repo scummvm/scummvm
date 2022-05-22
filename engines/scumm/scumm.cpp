@@ -2103,14 +2103,6 @@ Common::Error ScummEngine::go() {
 		// that it will be in a different state each time you run the program.
 		_rnd.getRandomNumber(2);
 
-		// Notify the script about how much time has passed, in jiffies
-		// (the timing varies depending on the SCUMM version and the game)
-		uint32 diff = _system->getMillis() - _lastWaitTime;
-		if (VAR_TIMER != 0xFF)
-			VAR(VAR_TIMER) = diff * (_timerFrequency / 4) / 1000;
-		if (VAR_TIMER_TOTAL != 0xFF)
-			VAR(VAR_TIMER_TOTAL) += diff * (_timerFrequency / 4) / 1000;
-
 		// Determine how long to wait before the next loop iteration should start
 		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
@@ -2282,6 +2274,12 @@ void ScummEngine_v0::scummLoop(int delta) {
 }
 
 void ScummEngine::scummLoop(int delta) {
+	// Notify the script about how much time has passed, in jiffies
+	if (VAR_TIMER != 0xFF)
+		VAR(VAR_TIMER) = delta;
+	if (VAR_TIMER_TOTAL != 0xFF)
+		VAR(VAR_TIMER_TOTAL) += delta;
+
 	if (_game.version >= 3) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
