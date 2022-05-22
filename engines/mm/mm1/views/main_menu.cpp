@@ -44,11 +44,11 @@ void MainMenu::draw() {
 bool MainMenu::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
 	case Common::KEYCODE_c:
-		g_engine->replaceView("CreateCharacters");
+		replaceView("CreateCharacters");
 		return true;
 
 	case Common::KEYCODE_v:
-		g_engine->replaceView("ViewAllCharacters");
+		replaceView("ViewAllCharacters");
 		return true;
 
 	default:

@@ -31,6 +31,16 @@ namespace MM1 {
 #define FRAME_RATE 20
 #define FRAME_DELAY (1000 / FRAME_RATE)
 
+Events *g_events;
+
+Events::Events() : UIElement("", nullptr) {
+	g_events = this;
+}
+
+Events::~Events() {
+	g_events = nullptr;
+}
+
 void Events::runGame() {
 	Views::Dialogs dialogsContainer;	// Load up all the dialogs
 
@@ -107,7 +117,7 @@ void Events::popView() {
 		focusedView()->msgFocus(FocusMessage());
 }
 
-/*-------------------------------------------------------------------*/
+/*------------------------------------------------------------------------*/
 
 UIElement::UIElement(const Common::String &name, UIElement *uiParent) :
 		_name(name), _parent(uiParent) {
@@ -163,6 +173,21 @@ UIElement *UIElement::findView(const Common::String &name) {
 	return nullptr;
 }
 
+void UIElement::replaceView(UIElement *ui) {
+	g_events->replaceView(ui);
+}
+
+void UIElement::replaceView(const Common::String &name) {
+	g_events->replaceView(name);
+}
+
+void UIElement::addView(UIElement *ui) {
+	g_events->addView(ui);
+}
+
+void UIElement::addView(const Common::String &name) {
+	g_events->addView(name);
+}
 
 } // namespace MM1
 } // namespace MM

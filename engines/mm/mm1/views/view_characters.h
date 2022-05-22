@@ -40,6 +40,27 @@ public:
 	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
+class CharacterStats : public TextView {
+protected:
+	void printStats();
+	void printSummary();
+	void printCondition();
+	void printInventory();
+public:
+	CharacterStats(const Common::String &name) : TextView(name) {}
+	~CharacterStats() {}
+};
+
+class ViewCharacter : public CharacterStats {
+public:
+	ViewCharacter() : CharacterStats("ViewCharacter") {}
+	virtual ~ViewCharacter() {}
+
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+};
+
+
 } // namespace Views
 } // namespace MM1
 } // namespace MM

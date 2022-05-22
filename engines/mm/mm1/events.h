@@ -32,9 +32,7 @@ namespace MM1 {
 
 class Events;
 
-struct Message {
-};
-
+struct Message {};
 struct FocusMessage : public Message {};
 struct UnfocusMessage : public Message {};
 
@@ -81,6 +79,18 @@ public:
 	 * via addView, so there's a remaining view afterwards
 	 */
 	void close();
+
+	/**
+	 * Sets the focus to a new view
+	 */
+	void replaceView(UIElement *ui);
+	void replaceView(const Common::String &name);
+
+	/**
+	 * Adds a focused view to the view stack without replacing current one
+	 */
+	void addView(UIElement *ui);
+	void addView(const Common::String &name);
 
 	/**
 	 * Returns the game view
@@ -132,8 +142,8 @@ protected:
 	 */
 	void processEvent(Common::Event &ev);
 public:
-	Events() : UIElement("", nullptr) {}
-	virtual ~Events() {}
+	Events();
+	virtual ~Events();
 
 	/**
 	 * Main game loop
@@ -191,6 +201,8 @@ public:
 	MESSAGE(Keypress);
 	#undef MESSAGE
 };
+
+extern Events *g_events;
 
 } // namespace MM1
 } // namespace MM
