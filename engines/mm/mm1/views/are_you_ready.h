@@ -30,8 +30,7 @@ namespace Views {
 
 class AreYouReady : public TextView {
 public:
-	AreYouReady(UIElement *uiParent = nullptr) :
-		TextView("AreYouReady", uiParent) {}
+	AreYouReady() : TextView("AreYouReady") {}
 	virtual ~AreYouReady() {}
 
 	void draw() override;

@@ -45,8 +45,7 @@ protected:
 	 */
 	void writeString(int x, int y, const Common::String &str);
 public:
-	TextView(const Common::String &name, UIElement *uiParent = nullptr) :
-		UIElement(name, uiParent) {}
+	TextView(const Common::String &name);
 	virtual ~TextView() {}
 };
 

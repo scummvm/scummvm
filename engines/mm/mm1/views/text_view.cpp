@@ -22,10 +22,15 @@
 #include "mm/mm1/globals.h"
 #include "mm/mm1/gfx/gfx.h"
 #include "mm/mm1/views/text_view.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
+
+TextView::TextView(const Common::String &name) :
+		UIElement(name, g_engine) {
+}
 
 void TextView::writeChar(int x, int y, char c) {
 	g_globals->_font->drawChar(getScreen(), c,

@@ -23,7 +23,7 @@
 #define MM1_VIEWS_DIALOGS_H
 
 #include "mm/mm1/events.h"
-#include "mm/mm1/views/title_view.h"
+#include "mm/mm1/views/title.h"
 #include "mm/mm1/views/are_you_ready.h"
 #include "mm/mm1/views/main_menu.h"
 
@@ -33,11 +33,11 @@ namespace Views {
 
 struct Dialogs {
 private:
-	Views::TitleView _titleView;
+	Views::Title _title;
 	Views::AreYouReady _areYouReady;
 	Views::MainMenu _mainMenu;
 public:
-	Dialogs();
+	Dialogs() {}
 };
 
 } // namespace Views
