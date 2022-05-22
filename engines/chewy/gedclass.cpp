@@ -26,41 +26,16 @@
 
 namespace Chewy {
 
-void GedClass::load_ged_pool(GedChunkInfo *Gh, int16 ch_nr, byte *speicher) {
-	Common::File f;
-	if (!f.open(EPISODE1_GEP))
-		error("load_ged_pool error");
-
-	f.seek(6, SEEK_SET); // skip header (4 bytes ID + 2 bytes number)
-
-	// Scan for the correct index entry
-	int i = 0;
-	uint32 length = 0;
-
-	do {
-		length = f.readUint32LE();
-
-		Gh->pos.x = f.readSint16LE();
-		Gh->pos.y = f.readSint16LE();
-		Gh->level = f.readSint16LE();
-
-		if (i != ch_nr) {
-			// Skip over the entry's data
-			f.seek(length, SEEK_CUR);
-		}
-	} while (++i <= ch_nr);
-
-	if (f.read(speicher, length) != length) {
-		error("load_ged_chunk error");
-	}
+int16 GedClass::getBarrierId(int16 x, int16 y) {
+	const int16 width = _G(room)->_barriers->getWidth();
+	const byte *data = _G(room)->_barriers->getData();
+	const int16 result = getBarrierId(((y / 8) * width) + (x / 8), data + 6);
+	delete[] data;
+	return result;
 }
 
-int16 GedClass::getBarrierId(int16 x, int16 y, int16 x_anz, byte *speicher) {
-	return getBarrierId(((y / 8) * x_anz) + (x / 8), speicher);
-}
-
-int16 GedClass::getBarrierId(int16 g_idx, byte *speicher) {
-	int16 idx_nr = speicher[g_idx];
+int16 GedClass::getBarrierId(int16 g_idx, const byte *buffer) {
+	int16 idx_nr = buffer[g_idx];
 
 	switch (idx_nr) {
 	case 40:

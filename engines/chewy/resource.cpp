@@ -36,16 +36,18 @@ Resource::Resource(Common::String filename) {
 	const uint32 headerTxtDec  = MKTAG('T', 'C', 'F', '\0');
 	const uint32 headerTxtEnc  = MKTAG('T', 'C', 'F', '\1');
 	const uint32 headerSprite  = MKTAG('T', 'A', 'F', '\0');
+	const uint32 headerBarrier = MKTAG('G', 'E', 'P', '\0');
 
 	filename.toLowercase();
 	_stream.open(filename);
 
-	uint32 header = _stream.readUint32BE();
-	bool isText = (header == headerTxtDec || header == headerTxtEnc);
-	bool isSprite = (header == headerSprite);
-	bool isSpeech = filename.contains("speech.tvp");
+	const uint32 header = _stream.readUint32BE();
+	const bool isText = (header == headerTxtDec || header == headerTxtEnc);
+	const bool isSprite = (header == headerSprite);
+	const bool isSpeech = filename.contains("speech.tvp");
+	const bool isBarrier = (header == headerBarrier);
 
-	if (header != headerGeneric && !isSprite && !isText)
+	if (header != headerGeneric && !isSprite && !isText && !isBarrier)
 		error("Invalid resource - %s", filename.c_str());
 
 	if (isText) {
@@ -54,6 +56,9 @@ Resource::Resource(Common::String filename) {
 	} else if (isSprite) {
 		initSprite(filename);
 		return;
+	} else if (isBarrier) {
+		_resType = kResourceGEP;
+		_encrypted = false;
 	} else {
 		_resType = (ResourceType)_stream.readUint16LE();
 		_encrypted = false;
@@ -69,12 +74,16 @@ Resource::Resource(Common::String filename) {
 		Chunk cur;
 		cur.size = _stream.readUint32LE();
 
-		if (!isText) {
-			cur.type = (ResourceType)_stream.readUint16LE();
-			cur.num = 0;
-		} else {
+		if (isText) {
 			cur.type = kResourceUnknown;
 			cur.num = _stream.readUint16LE();
+		} else if (isBarrier) {
+			cur.type = kResourceUnknown;
+			cur.num = i;
+			cur.size += 6;
+		} else {
+			cur.type = (ResourceType)_stream.readUint16LE();
+			cur.num = 0;
 		}	
 
 		cur.pos = _stream.pos();
@@ -428,6 +437,19 @@ void DialogResource::loadStream(Common::SeekableReadStream *s) {
 void DialogResource::saveStream(Common::WriteStream* s) {
 	_dialogStream->seek(0, SEEK_SET);
 	s->writeStream(_dialogStream, _stream.size());
+}
+
+void BarrierResource::init(int16 room, int16 bgWidth, int16 bgHeight) {
+	assert(room < _chunkList.size());
+
+	Chunk *chunk = &_chunkList[room];
+	_stream.seek(chunk->pos, SEEK_SET);
+	_x = _stream.readSint16LE();
+	_y = _stream.readSint16LE();
+	_level = _stream.readSint16LE();
+	_w = bgWidth / _x;
+	_h = bgHeight / _y;
+	_room = room;
 }
 
 }

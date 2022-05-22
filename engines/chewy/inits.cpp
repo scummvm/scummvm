@@ -72,7 +72,6 @@ void standard_init() {
 
 	var_init();
 	_G(ablage) = _G(room)->get_ablage();
-	_G(ged_mem) = _G(room)->get_ged_mem();
 
 	_G(zoom_horizont) = 140;
 	_G(pal)[765] = 63;

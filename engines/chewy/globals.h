@@ -129,7 +129,6 @@ public:
 	byte **_ablage = nullptr;
 	byte *_workpage = nullptr;
 	byte *_workptr = nullptr;
-	byte **_ged_mem = nullptr;
 	byte *_spblende = nullptr;
 	char **_ads_item_ptr = nullptr;
 

@@ -151,9 +151,11 @@ Room::Room() {
 	_roomTimer._timerStart = 0;
 	init_ablage();
 	_roomInfo = nullptr;
+	_barriers = new BarrierResource(EPISODE1_GEP);
 }
 
 Room::~Room() {
+	delete _barriers;
 	free_ablage();
 }
 
@@ -311,9 +313,7 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const cha
 		set_ablage_info(Rb->AkAblage, nr + (1000 * tgp_idx), img->size);
 
 		if (mode == GED_LOAD) {
-			_G(ged)->load_ged_pool(&_gedInfo[Rb->AkAblage], nr, _gedMem[Rb->AkAblage]);
-			_gedXNr[Rb->AkAblage] = img->width / _gedInfo[Rb->AkAblage].pos.x;
-			_gedYNr[Rb->AkAblage] = img->height / _gedInfo[Rb->AkAblage].pos.y;
+			_barriers->init(nr, img->width, img->height);
 		}
 	}
 
@@ -327,19 +327,16 @@ void Room::init_ablage() {
 	_lastAblageSave = 0;
 	_ablage[0] = (byte *)MALLOC(MAX_ABLAGE * (ABLAGE_BLOCK_SIZE + 4l));
 	_ablagePal[0] = (byte *)MALLOC(MAX_ABLAGE * 768l);
-	_gedMem[0] = (byte *)MALLOC(MAX_ABLAGE * GED_BLOCK_SIZE);
 	_akAblage = 0;
 	for (int16 i = 0; i < MAX_ABLAGE; i++) {
 		_ablage[i] = _ablage[0] + (ABLAGE_BLOCK_SIZE + 4l) * i;
 		_ablageInfo[i][0] = -1;
 		_ablageInfo[i][1] = -1;
 		_ablagePal[i] = _ablagePal[0] + 768l * i;
-		_gedMem[i] = _gedMem[0] + (GED_BLOCK_SIZE * i);
 	}
 }
 
 void Room::free_ablage() {
-	free(_gedMem[0]);
 	free(_ablagePal[0]);
 	free(_ablage[0]);
 	_akAblage = -1;
@@ -359,15 +356,6 @@ byte **Room::get_ablage() {
 
 	if (_akAblage != -1) {
 		ret = &_ablage[0];
-	}
-	return ret;
-}
-
-byte **Room::get_ged_mem() {
-	byte **ret = nullptr;
-
-	if (_akAblage != -1) {
-		ret = &_gedMem[0];
 	}
 	return ret;
 }

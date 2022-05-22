@@ -52,11 +52,6 @@ struct MusicInfo {
 	char *cur_pattern = nullptr;
 };
 
-struct GedChunkInfo {
-	Common::Point pos = Common::Point(0, 0);
-	int16 level = 0;
-};
-
 struct CurBlk {
 	byte **sprite = nullptr;
 };

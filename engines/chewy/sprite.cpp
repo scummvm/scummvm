@@ -323,9 +323,7 @@ void setPersonPos(int16 x, int16 y, int16 personNr, int16 direction) {
 	int16 y1 = _G(spieler_vector)[personNr].Xypos[1] - _G(gameState).scrolly;
 	_G(atds)->set_split_win(tmpNr, x1, y1);
 	if (!_G(flags).ExitMov && personNr == P_CHEWY) {
-		const int16 paletteId = _G(ged)->getBarrierId(x + _G(spieler_mi)[personNr].HotX, y + _G(spieler_mi)[personNr].HotY,
-		                                 _G(room)->_gedXNr[_G(room_blk).AkAblage],
-		                                 _G(ged_mem)[_G(room_blk).AkAblage]);
+		const int16 paletteId = _G(ged)->getBarrierId(x + _G(spieler_mi)[personNr].HotX, y + _G(spieler_mi)[personNr].HotY);
 		checkShadow(paletteId, 1);
 	}
 }
@@ -775,19 +773,13 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 
 			if (!mi->Mode) {
 				if (!(u_index = _G(ged)->getBarrierId(om->Xypos[0] + mi->HotX + tmpx,
-				                              om->Xypos[1] + mi->HotY + tmpy,
-				                              _G(room)->_gedXNr[_G(room_blk).AkAblage],
-				                              _G(ged_mem)[_G(room_blk).AkAblage]))) {
+				                                      om->Xypos[1] + mi->HotY + tmpy))) {
 
 					if (!(u_index = _G(ged)->getBarrierId(om->Xypos[0] + mi->HotX + tmpx,
-					                              om->Xypos[1] + mi->HotY,
-					                              _G(room)->_gedXNr[_G(room_blk).AkAblage],
-					                              _G(ged_mem)[_G(room_blk).AkAblage]))) {
+					                                      om->Xypos[1] + mi->HotY))) {
 
 						if (!(u_index = _G(ged)->getBarrierId(om->Xypos[0] + mi->HotX,
-						                              om->Xypos[1] + mi->HotY + tmpy,
-						                              _G(room)->_gedXNr[_G(room_blk).AkAblage],
-						                              _G(ged_mem)[_G(room_blk).AkAblage]))) {
+						                                      om->Xypos[1] + mi->HotY + tmpy))) {
 							om->Count = 0;
 						} else {
 							if (!tmpy) {
@@ -890,9 +882,7 @@ void mov_objekt(ObjMov *om, MovInfo *mi) {
 				om->Xypos[2] += tmpz;
 				if (mi->Id == CHEWY_OBJ) {
 					u_index = _G(ged)->getBarrierId(om->Xypos[0] + mi->HotX,
-					                        om->Xypos[1] + mi->HotY,
-					                        _G(room)->_gedXNr[_G(room_blk).AkAblage],
-					                        _G(ged_mem)[_G(room_blk).AkAblage]);
+					                                om->Xypos[1] + mi->HotY);
 					checkShadow(u_index, 1);
 				}
 			}

@@ -27,8 +27,6 @@ namespace Chewy {
 
 #define LEFT_VECT -1
 #define RIGHT_VECT 1
-#define UP_VECT -_gpkt->Breite
-#define DOWN_VECT _gpkt->Breite
 #define MOV_START 0
 #define MOV_FOUND 1
 #define MOV_UNPASSABLE 2
@@ -59,11 +57,12 @@ MovClass::~MovClass() {
 }
 
 void MovClass::goto_xy(GotoPkt *gp) {
+	const int16 width = _G(room)->_barriers->getWidth();
 	_gpkt = gp;
 	_agv.AutoGo = false;
 	_agv.Continue = false;
-	_vecTbl[0] = -_gpkt->Breite;
-	_vecTbl[2] = _gpkt->Breite;
+	_vecTbl[0] = -width;
+	_vecTbl[2] = width;
 	_plotDelay = 20;
 	calc_xy();
 	_plotDelay = 0;
@@ -98,9 +97,12 @@ void MovClass::goto_xy(GotoPkt *gp) {
 int16 MovClass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 	int16 ret = -1;
 
+	const int16 width = _G(room)->_barriers->getWidth();
+	const int16 height = _G(room)->_barriers->getHeight();
 	if (_agv.AutoGo == true) {
-		byte *speicher = _gpkt->Mem;
-		speicher += (_gpkt->Breite * _gpkt->Hoehe) * _gpkt->AkMovEbene;
+		const byte *data = _G(room)->_barriers->getData();
+		const byte *buffer = data + 6;
+		buffer += (width * height) * _gpkt->AkMovEbene;
 		if (!_agv.Start) {
 			_agv.Start = _agv.PktAnz;
 			if (_agv.PktAnz == 1) {
@@ -126,7 +128,7 @@ int16 MovClass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 					if (_agv.LastFeld == -1) {
 						_agv.LastFeld = _gml.MLineFeld;
 						_agv.AkFeld = _gml.MLineFeld + _mle.Direction;
-						if (speicher[_agv.AkFeld] == MOV_LINE_KNOTEN) {
+						if (buffer[_agv.AkFeld] == MOV_LINE_KNOTEN) {
 							_feld1knoten = true;
 						} else
 							_feld1knoten = false;
@@ -151,13 +153,13 @@ int16 MovClass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 									ok = 1;
 							} else {
 								for (int16 i = 0; i < 4 && !ok; i++) {
-									if (speicher[_agv.AkFeld + _vecTbl[i]] == MOV_LINE_IDX) {
+									if (buffer[_agv.AkFeld + _vecTbl[i]] == MOV_LINE_IDX) {
 										if (_agv.AkFeld + _vecTbl[i] != _agv.LastFeld) {
 											_agv.LastFeld = _agv.AkFeld;
 											_agv.AkFeld += _vecTbl[i];
 											ok = 1;
 										}
-									} else if (speicher[_agv.AkFeld + _vecTbl[i]] == MOV_LINE_KNOTEN) {
+									} else if (buffer[_agv.AkFeld + _vecTbl[i]] == MOV_LINE_KNOTEN) {
 										if (_agv.AkFeld + _vecTbl[i] != _agv.LastFeld) {
 											_agv.LastFeld = _agv.AkFeld + _vecTbl[i];
 											_agv.AkFeld = _mle.KnPkt[_agv.AkKnoten];
@@ -185,6 +187,8 @@ int16 MovClass::calc_auto_go(int16 x, int16 y, int16 *auto_x, int16 *auto_y) {
 				}
 			}
 		}
+
+		delete[] data;
 	}
 
 	return ret;
@@ -207,11 +211,13 @@ void MovClass::calc_xy() {
 	int16 xvector = 0;
 	int16 yvector = 0;
 
-	if (!_G(ged)->getBarrierId(_gpkt->Dx, _gpkt->Dy, _gpkt->Breite, _gpkt->Mem)) {
+	if (!_G(ged)->getBarrierId(_gpkt->Dx, _gpkt->Dy)) {
 		int16 ende = 0;
 		int16 count = 0;
 		int16 min_x = -1;
 		int16 min_y = -1;
+		const int16 width = _G(room)->_barriers->getWidth();
+		const int16 height = _G(room)->_barriers->getHeight();
 
 		while (!ende) {
 			int16 min_steps = 30000;
@@ -247,9 +253,9 @@ void MovClass::calc_xy() {
 				}
 
 				for (int16 i = 0; i < anz; i++) {
-					if (x >= 0 && x < _gpkt->Breite * 8 &&
-					        y >= 0 && y < _gpkt->Hoehe * 8) {
-						if (_G(ged)->getBarrierId(x, y, _gpkt->Breite, _gpkt->Mem)) {
+					if (x >= 0 && x < width * 8 &&
+					        y >= 0 && y < height * 8) {
+						if (_G(ged)->getBarrierId(x, y)) {
 							int16 aksteps = abs(_gpkt->Dx - x);
 							aksteps += abs(_gpkt->Dy - y);
 							if (aksteps < min_steps) {
@@ -329,16 +335,13 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 
 			tmpz = 0;
 			if (!_G(ged)->getBarrierId(om.Xypos[0] + tmpx + tmpz,
-			                  om.Xypos[1] + tmpy + tmpz,
-			                  _gpkt->Breite, _gpkt->Mem)) {
+			                           om.Xypos[1] + tmpy + tmpz)) {
 
 				if (!_G(ged)->getBarrierId(om.Xypos[0] + tmpx + tmpz,
-				                  om.Xypos[1] + tmpz,
-				                  _gpkt->Breite, _gpkt->Mem)) {
+				                           om.Xypos[1] + tmpz)) {
 
 					if (!_G(ged)->getBarrierId(om.Xypos[0] + tmpz,
-					                  om.Xypos[1] + tmpy + tmpz,
-					                  _gpkt->Breite, _gpkt->Mem)) {
+					                           om.Xypos[1] + tmpy + tmpz)) {
 
 						abbruch = MOV_UNPASSABLE;
 					} else {
@@ -409,33 +412,37 @@ short MovClass::calc_go(int16 src_feld, int16 *dst_feld) {
 }
 
 void MovClass::get_mov_line() {
+	const int16 width = _G(room)->_barriers->getWidth();
+	const int16 height = _G(room)->_barriers->getHeight();
+	const int16 level = _G(room)->_barriers->getLevel();
+	const byte *data = _G(room)->_barriers->getData();
+	const byte *buffer = data + 6;
 	int16 ak_steps;
+
 	_gml.GotoFeld = -1;
 	_gml.MLineFeld = -1;
-	if (_gpkt->Ebenen > 1) {
-		byte *speicher = _gpkt->Mem;
 
-		speicher += (_gpkt->Breite * _gpkt->Hoehe) * _gpkt->AkMovEbene;
-
+	if (level > 1) {
+		buffer += (width * height) * _gpkt->AkMovEbene;
 		int16 start_feld = get_feld_nr(_gpkt->Sx, _gpkt->Sy);
 		int16 ende = 0;
 		int16 count = 0;
 		int16 min_steps = 30000;
-		int16 count_vect = DOWN_VECT;
+		int16 count_vect = width;
 		int16 y_richtung = Y_DOWN;
 		while (!ende) {
 
 			int16 tmp_feld = start_feld + count * count_vect;
-			if (_G(ged)->getBarrierId(tmp_feld, _gpkt->Mem)) {
+			if (_G(ged)->getBarrierId(tmp_feld, data + 6)) {
 				int16 abbruch = 0;
 				int16 vector = 0;
-				while ((tmp_feld % _gpkt->Breite) < (_gpkt->Breite - 1) && !abbruch)
+				while ((tmp_feld % width) < (width - 1) && !abbruch)
 				{
-					if (_G(ged)->getBarrierId(tmp_feld + vector, _gpkt->Mem)) {
+					if (_G(ged)->getBarrierId(tmp_feld + vector, data + 6)) {
 						tmp_feld += vector;
-						if (speicher[tmp_feld] == MOV_LINE_IDX) {
-							ak_steps = abs((tmp_feld % _gpkt->Breite) - (start_feld % _gpkt->Breite));
-							ak_steps += abs((tmp_feld / _gpkt->Breite) - (start_feld / _gpkt->Breite));
+						if (buffer[tmp_feld] == MOV_LINE_IDX) {
+							ak_steps = abs((tmp_feld % width) - (start_feld % width));
+							ak_steps += abs((tmp_feld / width) - (start_feld / width));
 							if (ak_steps < min_steps) {
 								min_steps = ak_steps;
 								_gml.GotoFeld = start_feld + count * count_vect;
@@ -451,12 +458,12 @@ void MovClass::get_mov_line() {
 				tmp_feld = start_feld + count * count_vect;
 				vector = LEFT_VECT;
 				abbruch = 0;
-				while ((tmp_feld % _gpkt->Breite) > 0 && !abbruch) {
-					if (_G(ged)->getBarrierId(tmp_feld + vector, _gpkt->Mem)) {
+				while ((tmp_feld % width) > 0 && !abbruch) {
+					if (_G(ged)->getBarrierId(tmp_feld + vector, data + 6)) {
 						tmp_feld += vector;
-						if (speicher[tmp_feld] == MOV_LINE_IDX) {
-							ak_steps = abs((tmp_feld % _gpkt->Breite) - (start_feld % _gpkt->Breite));
-							ak_steps += abs((tmp_feld / _gpkt->Breite) - (start_feld / _gpkt->Breite));
+						if (buffer[tmp_feld] == MOV_LINE_IDX) {
+							ak_steps = abs((tmp_feld % width) - (start_feld % width));
+							ak_steps += abs((tmp_feld / width) - (start_feld / width));
 							if (ak_steps < min_steps) {
 								min_steps = ak_steps;
 								_gml.GotoFeld = start_feld + count * count_vect;
@@ -473,21 +480,26 @@ void MovClass::get_mov_line() {
 
 					y_richtung = Y_UP;
 					count = 1;
-					count_vect = UP_VECT;
+					count_vect = -_G(room)->_barriers->getWidth();
 				} else
 					ende = 1;
 			}
 		}
 	}
+
+	delete[] data;
 }
 
 void MovClass::calc_mov_line_xit(int16 start_feld) {
+	const int16 width = _G(room)->_barriers->getWidth();
+	const int16 height = _G(room)->_barriers->getHeight();
+	const int16 level = _G(room)->_barriers->getLevel();
+	const byte *data = _G(room)->_barriers->getData();
 	int16 tmp_feld;
 	int16 i;
 	int16 dest_steps;
 
 	int16 k;
-	//int16 found_min;
 	int16 TmpKnPkt[MAX_KNOTEN_PKT];
 	int16 dir_unerreicht = 0;
 	int16 KnPkt_unrreicht[MAX_KNOTEN_PKT];
@@ -496,10 +508,10 @@ void MovClass::calc_mov_line_xit(int16 start_feld) {
 
 	for (i = 0; i < MAX_KNOTEN_PKT; i++)
 		TmpKnPkt[i] = -1;
-	if (_gpkt->Ebenen > 1) {
-		memset((char *)knoten_felder, -1, MAX_KNOTEN_PKT * 6);
-		byte *speicher = _gpkt->Mem;
-		speicher += (_gpkt->Breite * _gpkt->Hoehe) * _gpkt->AkMovEbene;
+	if (level > 1) {
+		memset(knoten_felder, -1, MAX_KNOTEN_PKT * 6);
+		const byte *buffer = data + 6;
+		buffer += (width * height) * _gpkt->AkMovEbene;
 		_mle.Steps = 30000;
 		int16 min_step_unerreicht = 30000;
 		_mle.FNr = -1;
@@ -519,8 +531,8 @@ void MovClass::calc_mov_line_xit(int16 start_feld) {
 			tmp_feld = ziel_feld;
 			calc_go(calc_feld, &tmp_feld);
 			if (tmp_feld == ziel_feld) {
-				dest_steps = abs((ziel_feld % _gpkt->Breite) - (calc_feld % _gpkt->Breite));
-				dest_steps += abs((ziel_feld / _gpkt->Breite) - (calc_feld / _gpkt->Breite));
+				dest_steps = abs((ziel_feld % width) - (calc_feld % width));
+				dest_steps += abs((ziel_feld / width) - (calc_feld / width));
 				if (dest_steps < _mle.Steps) {
 					_mle.Steps = dest_steps;
 					_mle.FNr = calc_feld;
@@ -532,8 +544,8 @@ void MovClass::calc_mov_line_xit(int16 start_feld) {
 						_mle.KnPkt[i] = TmpKnPkt[i];
 				}
 			} else {
-				dest_steps = abs((ziel_feld % _gpkt->Breite) - (tmp_feld % _gpkt->Breite));
-				dest_steps += abs((ziel_feld / _gpkt->Breite) - (tmp_feld / _gpkt->Breite));
+				dest_steps = abs((ziel_feld % width) - (tmp_feld % width));
+				dest_steps += abs((ziel_feld / width) - (tmp_feld / width));
 				if (dest_steps < min_step_unerreicht) {
 					min_step_unerreicht = dest_steps;
 					feld_unerreicht = tmp_feld;
@@ -547,7 +559,7 @@ void MovClass::calc_mov_line_xit(int16 start_feld) {
 			}
 			int16 ok = 0;
 			for (i = 0; i < 4 && !ok; i++) {
-				if (speicher[calc_feld + _vecTbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_IDX)
+				if (buffer[calc_feld + _vecTbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_IDX)
 				{
 					if (calc_feld + _vecTbl[tbl_ptr + i * tbl_dir] != last_feld)
 					{
@@ -564,7 +576,7 @@ void MovClass::calc_mov_line_xit(int16 start_feld) {
 							knoten_flag = false;
 						}
 					}
-				} else if (speicher[calc_feld + _vecTbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_KNOTEN) {
+				} else if (buffer[calc_feld + _vecTbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_KNOTEN) {
 					if (calc_feld + _vecTbl[tbl_ptr + i * tbl_dir] != last_feld) {
 						if (dir == 30000) {
 							dir = _vecTbl[tbl_ptr + i * tbl_dir];
@@ -605,7 +617,7 @@ void MovClass::calc_mov_line_xit(int16 start_feld) {
 					for (i = 0; i < 4 && !ok; i++) {
 						if (knoten_felder[ak_knoten][tbl_ptr + i * tbl_dir] == -1) {
 							tmp_feld = knoten_felder[ak_knoten][4];
-							if (speicher[tmp_feld + _vecTbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_IDX)
+							if (buffer[tmp_feld + _vecTbl[tbl_ptr + i * tbl_dir]] == MOV_LINE_IDX)
 							{
 								last_feld = knoten_felder[ak_knoten][4];
 								calc_feld = tmp_feld + _vecTbl[tbl_ptr + i * tbl_dir];
@@ -644,18 +656,22 @@ void MovClass::calc_mov_line_xit(int16 start_feld) {
 			}
 		}
 	}
+
+	delete[] data;
 }
 
 int16 MovClass::get_feld_nr(int16 x, int16 y) {
+	const int16 width = _G(room)->_barriers->getWidth();
 	x >>= 3;
 	y >>= 3;
 
-	return x + (y * _gpkt->Breite);
+	return x + (y * width);
 }
 
 void MovClass::get_feld_xy(int16 fnr, int16 *x, int16 *y) {
-	*x = (fnr % _gpkt->Breite);
-	*y = (fnr / _gpkt->Breite);
+	const int16 width = _G(room)->_barriers->getWidth();
+	*x = (fnr % width);
+	*y = (fnr / width);
 	*x <<= 3;
 	*y <<= 3;
 }

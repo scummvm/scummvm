@@ -422,9 +422,7 @@ static void showWalkAreas() {
 
 	for (int y = 0, yp = ys; y < 200 / 8; ++y, yp += 8) {
 		for (int x = 0, xp = xs; x < 320 / 8; ++x, xp += 8) {
-			const int barrierId = _G(ged)->getBarrierId(xp, yp,
-				_G(room)->_gedXNr[_G(room_blk).AkAblage],
-				_G(ged_mem)[_G(room_blk).AkAblage]);
+			const int barrierId = _G(ged)->getBarrierId(xp, yp);
 
 			if (barrierId) {
 				Common::Rect r(xp, yp, xp + 8, yp + 8);
@@ -503,10 +501,6 @@ void setupScreen(SetupScreenMode mode) {
 						          _G(spieler_mi)[P_CHEWY].HotX;
 						_G(gpkt).Sy = _G(spieler_vector)[P_CHEWY].Xypos[1] +
 						          _G(spieler_mi)[P_CHEWY].HotY;
-						_G(gpkt).Breite = _G(room)->_gedXNr[_G(room_blk).AkAblage];
-						_G(gpkt).Hoehe = _G(room)->_gedYNr[_G(room_blk).AkAblage];
-						_G(gpkt).Mem = _G(ged_mem)[_G(room_blk).AkAblage];
-						_G(gpkt).Ebenen = _G(room)->_gedInfo[_G(room_blk).AkAblage].level;
 						_G(gpkt).AkMovEbene = 1;
 						_G(mov)->goto_xy(&_G(gpkt));
 						_G(spieler_mi)[P_CHEWY].XyzStart[0] = _G(spieler_vector)[P_CHEWY].Xypos[0];
@@ -527,9 +521,7 @@ void setupScreen(SetupScreenMode mode) {
 		if (_G(fx_blend)) {
 			const int16 paletteId = _G(ged)->getBarrierId(
 				_G(spieler_vector)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
-				_G(spieler_vector)[P_CHEWY].Xypos[1] + _G(spieler_mi)[P_CHEWY].HotY,
-				_G(room)->_gedXNr[_G(room_blk).AkAblage],
-				_G(ged_mem)[_G(room_blk).AkAblage]);
+				_G(spieler_vector)[P_CHEWY].Xypos[1] + _G(spieler_mi)[P_CHEWY].HotY);
 			checkShadow(paletteId, 0);
 		} else {
 			for (i = 0; i < MAX_PERSON; i++) {
@@ -1148,10 +1140,6 @@ bool autoMove(int16 movNr, int16 playerNum) {
 						  _G(spieler_mi)[playerNum].HotMovY + _G(spieler_mi)[playerNum].HotY;
 			_G(gpkt).Sx = _G(spieler_vector)[playerNum].Xypos[0] + _G(spieler_mi)[playerNum].HotX;
 			_G(gpkt).Sy = _G(spieler_vector)[playerNum].Xypos[1] + _G(spieler_mi)[playerNum].HotY;
-			_G(gpkt).Breite = _G(room)->_gedXNr[_G(room_blk).AkAblage];
-			_G(gpkt).Hoehe = _G(room)->_gedYNr[_G(room_blk).AkAblage];
-			_G(gpkt).Mem = _G(ged_mem)[_G(room_blk).AkAblage];
-			_G(gpkt).Ebenen = _G(room)->_gedInfo[_G(room_blk).AkAblage].level;
 			_G(gpkt).AkMovEbene = 1;
 			_G(mov)->goto_xy(&_G(gpkt));
 
@@ -1708,9 +1696,7 @@ void calc_ausgang(int16 x, int16 y) {
 				               &_G(gameState).scrollx, &_G(gameState).scrolly);
 
 				const int16 paletteId = _G(ged)->getBarrierId(_G(spieler_vector)[P_CHEWY].Xypos[0] + _G(spieler_mi)[P_CHEWY].HotX,
-				                               _G(spieler_vector)[P_CHEWY].Xypos[1] + _G(spieler_mi)[P_CHEWY].HotY,
-				                               _G(room)->_gedXNr[_G(room_blk).AkAblage],
-				                               _G(ged_mem)[_G(room_blk).AkAblage]);
+				                                              _G(spieler_vector)[P_CHEWY].Xypos[1] + _G(spieler_mi)[P_CHEWY].HotY);
 				checkShadow(paletteId, 0);
 				setPersonSpr(_G(Rdi)->AutoMov[_G(gameState).room_e_obj[nr].ExitMov]._sprNr, P_CHEWY);
 				_G(spieler_vector)[P_CHEWY]._delayCount = 0;

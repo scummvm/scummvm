@@ -37,7 +37,6 @@ extern const int16 SURIMY_TAF19_PHASES[4][2];
 #define MAX_ABLAGE 4
 
 #define ABLAGE_BLOCK_SIZE 64000l
-#define GED_BLOCK_SIZE 3000l
 #define GED_LOAD 1
 
 class JungleRoom {
@@ -83,7 +82,6 @@ public:
 	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName);
 	byte *get_ablage(int16 nr);
 	byte **get_ablage();
-	byte **get_ged_mem();
 	void set_timer_start(int16 timer_start);
 	void add_timer_new_room();
 	void del_timer_old_room();
@@ -96,9 +94,7 @@ public:
 
 	RaumTimer _roomTimer;
 	RoomInfo *_roomInfo;
-	GedChunkInfo _gedInfo[MAX_ABLAGE];
-	int16 _gedXNr[MAX_ABLAGE];
-	int16 _gedYNr[MAX_ABLAGE];
+	BarrierResource *_barriers;
 
 private:
 	void init_ablage();
@@ -113,8 +109,6 @@ private:
 	byte *_ablage[MAX_ABLAGE];
 	byte *_ablagePal[MAX_ABLAGE];
 	int16 _ablageInfo[MAX_ABLAGE][2];
-
-	byte *_gedMem[MAX_ABLAGE];
 };
 
 void load_chewy_taf(int16 taf_nr);

@@ -24,14 +24,9 @@
 
 #include "common/scummsys.h"
 #include "common/file.h"
-#include "common/util.h"
 #include "common/str.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
 #include "common/memstream.h"
-#include "common/random.h"
-#include "common/stream.h"
-#include "graphics/surface.h"
+#include "common/rect.h"
 
 namespace Chewy {
 
@@ -63,7 +58,8 @@ enum ResourceType {
 	kResourceTTP = 23,		// unused
 	kResourceTAP = 24,		// container for sound effects, music and cutscenes, used in sound/details.tap and cut/cut.tap
 	kResourceCFO = 25,		// unused
-	kResourceTCF = 26		// error messages, used in err/err_e.tcf (English) and err/err_d.tcf (German)
+	kResourceTCF = 26,		// error messages, used in err/err_e.tcf (English) and err/err_d.tcf (German)
+	kResourceGEP = 27		// barriers / walkable areas
 };
 
 // Generic chunk header
@@ -228,6 +224,24 @@ public:
 private:
 	Common::MemorySeekableReadWriteStream *_dialogStream;
 	byte *_dialogBuffer;
+};
+
+class BarrierResource : public Resource {
+public:
+	BarrierResource(Common::String filename) : Resource(filename) {}
+	virtual ~BarrierResource() {}
+
+	void init(int16 room, int16 bgWidth, int16 bgHeight);
+
+	int16 getX() const { return _x; }
+	int16 getY() const { return _y; }
+	int16 getLevel() const { return _level; }
+	int16 getWidth() const { return _w; }
+	int16 getHeight() const { return _h; }
+	uint8 *getData() { return getChunkData(_room); }
+
+private:
+	int16 _x = 0, _y = 0, _level = 0, _w = 0, _h = 0, _room = 0;
 };
 
 } // namespace Chewy
