@@ -29,6 +29,8 @@
 namespace MM {
 namespace MM1 {
 
+class Events;
+
 struct Message {
 };
 
@@ -39,12 +41,30 @@ struct KeypressMessage : public Message, public Common::KeyState {
 };
 
 class UIElement {
+	friend class Events;
 protected:
 	UIElement *_parent;
 	Common::Array<UIElement *> _children;
+	bool _needsRedraw = true;
+private:
+	/**
+	 * Outer method for doing drawing
+	 *
+	 */
+	void drawElements();
 public:
 	UIElement(UIElement *uiParent = nullptr);
 	virtual ~UIElement() {}
+
+	/**
+	 * Returns true if the elements needs to be redrawn
+	 */
+	bool needsRedraw() const { return _needsRedraw; }
+
+	/**
+	 * Sets that the element needs to be redrawn
+	 */
+	void redraw();
 
 	/**
 	 * Returns the game view
@@ -56,7 +76,7 @@ public:
 	/**
 	 * Draws the element
 	 */
-	virtual void draw();
+	virtual void draw() = 0;
 
 	/**
 	 * Called for game frame ticks
@@ -109,10 +129,12 @@ public:
 	}
 
 
-	void draw() override {
+	void drawElements() {
 		if (_focusedElement)
-			_focusedElement->draw();
+			_focusedElement->drawElements();
 	}
+
+	void draw() override {}
 
 	bool tick() override {
 		return _focusedElement ? _focusedElement->tick() : false;

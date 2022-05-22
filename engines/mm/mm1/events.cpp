@@ -46,7 +46,7 @@ void Events::runGame() {
 		if ((currTime = g_system->getMillis()) >= nextFrameTime) {
 			nextFrameTime = currTime + FRAME_DELAY;
 			tick();
-			draw();
+			drawElements();
 			_screen->update();
 		}
 	}
@@ -69,9 +69,21 @@ UIElement::UIElement(UIElement *uiParent) : _parent(uiParent) {
 		_parent->_children.push_back(this);
 }
 
-void UIElement::draw() {
+void UIElement::redraw() {
+	_needsRedraw = true;
+
 	for (size_t i = 0; i < _children.size(); ++i)
-		_children[i]->draw();
+		_children[i]->redraw();
+}
+
+void UIElement::drawElements() {
+	if (_needsRedraw) {
+		draw();
+		_needsRedraw = false;
+
+		for (size_t i = 0; i < _children.size(); ++i)
+			_children[i]->drawElements();
+	}
 }
 
 bool UIElement::tick() {
