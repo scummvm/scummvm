@@ -886,8 +886,8 @@ void OptionsDialog::apply() {
 					ConfMan.removeKey("opl_driver", _domain);
 			}
 		} else {
-			ConfMan.removeKey("opl_driver", _domain);
 			_oplPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+			ConfMan.removeKey("opl_driver", _domain);
 		}
 	}
 
@@ -965,10 +965,14 @@ void OptionsDialog::apply() {
 					break;
 				}
 
-				ConfMan.setBool("subtitles", subtitles, _domain);
+				if (subtitles != ConfMan.getBool("subtitles")) {
+					ConfMan.setBool("subtitles", subtitles, _domain);
+					_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+				}
 				ConfMan.setBool("speech_mute", speech_mute, _domain);
 			} else if (!_domain.empty()) {
 				ConfMan.removeKey("subtitles", _domain);
+				_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
 				ConfMan.removeKey("speech_mute", _domain);
 			}
 
@@ -1722,6 +1726,8 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 	
 	if (ConfMan.isKeyTemporary("talkspeed"))
 		_subSpeedDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+	if (ConfMan.isKeyTemporary("subtitles"))
+		_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
 
 	// Subtitle speed
 	_subSpeedSlider = new SliderWidget(boss, prefix + "subSubtitleSpeedSlider", Common::U32String(), kSubtitleSpeedChanged);
