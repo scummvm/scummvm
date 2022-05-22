@@ -28,7 +28,7 @@
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
-#define CURRENT_SAVE_VERSION 20
+#define CURRENT_SAVE_VERSION 21
 
 #define GF_FLOPPY  (1 <<  0)
 #define GF_TALKIE  (1 <<  1)
@@ -134,6 +134,20 @@ WARN_UNUSED_RESULT KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHea
 		header.thumbnail = nullptr;
 	}
 
+	if (header.version >= 21) {
+		header.timeDate.tm_sec = in->readSint32BE();
+		header.timeDate.tm_min = in->readSint32BE();
+		header.timeDate.tm_hour = in->readSint32BE();
+		header.timeDate.tm_mday = in->readSint32BE();
+		header.timeDate.tm_mon = in->readSint32BE();
+		header.timeDate.tm_year = in->readSint32BE();
+		header.timeDate.tm_wday = in->readSint32BE();
+		header.totalPlaySecs = in->readUint32BE();
+	} else {
+		header.totalPlaySecs = 0;
+		memset(&header.timeDate, 0, sizeof(TimeDate));
+	}
+
 	return ((in->err() || in->eos()) ? kRSHEIoError : kRSHENoError);
 }
 
@@ -227,6 +241,19 @@ Common::OutSaveFile *KyraEngine_v1::openSaveForWriting(const char *filename, con
 		genThumbnail->free();
 		delete genThumbnail;
 	}
+
+	TimeDate td;
+	_system->getTimeAndDate(td);
+
+	out->writeSint32BE(td.tm_sec);
+	out->writeSint32BE(td.tm_min);
+	out->writeSint32BE(td.tm_hour);
+	out->writeSint32BE(td.tm_mday);
+	out->writeSint32BE(td.tm_mon);
+	out->writeSint32BE(td.tm_year);		
+	out->writeSint32BE(td.tm_wday);
+
+	out->writeUint32BE(_totalPlaySecs);
 
 	return new Common::OutSaveFile(out);
 }

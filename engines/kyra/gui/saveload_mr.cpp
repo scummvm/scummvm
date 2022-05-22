@@ -303,6 +303,8 @@ Common::Error KyraEngine_MR::loadGameState(int slot) {
 	_goodConscienceShown = false;
 	_goodConsciencePosition = false;
 
+	restartPlayTimerAt(header.totalPlaySecs);
+
 	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	setHandItem(_itemInHand);
 

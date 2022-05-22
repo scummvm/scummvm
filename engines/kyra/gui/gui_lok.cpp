@@ -791,7 +791,7 @@ int GUI_LoK::saveGame(Button *button) {
 			_vm->_gameToLoad = getNextSavegameSlot();
 		if (_vm->_gameToLoad > 0) {
 			Util::convertDOSToUTF8(_savegameName, 35);
-
+			_vm->updatePlayTimer();
 			Graphics::Surface thumb;
 			createScreenThumbnail(thumb);
 			_vm->saveGameStateIntern(_vm->_gameToLoad, _savegameName, &thumb);

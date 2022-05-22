@@ -613,6 +613,7 @@ void KyraEngine_MR::startup() {
 	assert(_invWsa);
 	_invWsa->open("MOODOMTR.WSA", 1, nullptr);
 	_invWsaFrame = 6;
+	restartPlayTimerAt(0);
 	saveGameStateIntern(0, "New Game", nullptr);
 	if (_gameToLoad == -1)
 		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
@@ -926,6 +927,7 @@ void KyraEngine_MR::runLoop() {
 
 		update();
 		_timer->update();
+		updatePlayTimer();
 
 		if (inputFlag == 198 || inputFlag == 199) {
 			_savedMouseState = _mouseState;

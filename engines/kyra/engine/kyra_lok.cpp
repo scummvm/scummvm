@@ -428,6 +428,7 @@ void KyraEngine_LoK::startup() {
 			_gui->buttonMenuCallback(nullptr);
 			_menuDirectlyToLoad = false;
 		} else if (!shouldQuit()) {
+			restartPlayTimerAt(0);
 			saveGameStateIntern(0, "New game", nullptr);
 		}
 	} else {
@@ -484,6 +485,7 @@ void KyraEngine_LoK::mainLoop() {
 		_timer->update();
 		_sound->process();
 		updateTextFade();
+		updatePlayTimer();
 
 		if (inputFlag == 198 || inputFlag == 199)
 			processInput(_mouseX, _mouseY);

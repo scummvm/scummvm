@@ -322,6 +322,8 @@ Common::Error LoLEngine::loadGameState(int slot) {
 	setHandItem(_itemInHand);
 	loadLevel(_currentLevel);
 	gui_drawPlayField();
+	restartPlayTimerAt(header.totalPlaySecs);
+
 	timerSpecialCharacterUpdate(0);
 	_flagsTable[73] |= 0x08;
 

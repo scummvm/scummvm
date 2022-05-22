@@ -304,6 +304,8 @@ Common::Error KyraEngine_HoF::loadGameState(int slot) {
 	_mainCharY = _mainCharacter.y2 = _mainCharacter.y1;
 	_mainCharacter.facing = 4;
 
+	restartPlayTimerAt(header.totalPlaySecs);
+
 	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	setHandItem(_itemInHand);
 

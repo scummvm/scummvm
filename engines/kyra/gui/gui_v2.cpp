@@ -638,6 +638,7 @@ int GUI_v2::saveMenu(Button *caller) {
 
 	Graphics::Surface thumb;
 	createScreenThumbnail(thumb);
+	_vm->updatePlayTimer();
 	Util::convertDOSToUTF8(_saveDescription, 81);
 	_vm->saveGameStateIntern(_saveSlot, _saveDescription, &thumb);
 	thumb.free();

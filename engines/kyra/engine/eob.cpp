@@ -1019,7 +1019,6 @@ void EoBEngine::displayParchment(int id) {
 	if (id < 46 || id > 50)
 		return;
 
-	uint32 startTime = _system->getMillis();
 	disableSysTimer(2);
 
 	_screen->sega_fadeToBlack(2);
@@ -1077,7 +1076,6 @@ void EoBEngine::displayParchment(int id) {
 	snd_playLevelScore();
 
 	enableSysTimer(2);
-	_totalPlaySecs += ((_system->getMillis() - startTime) / 1000);
 }
 
 const uint8 **EoBEngine::makePortalShapes() {

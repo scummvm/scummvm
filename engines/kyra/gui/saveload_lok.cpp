@@ -211,6 +211,8 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	// #4625 "KYRA1: Invisible Brandon" for an example of this.
 	_animator->_noDrawShapesFlag = 0;
 
+	restartPlayTimerAt(header.totalPlaySecs);
+
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 
 	_animator->animRefreshNPC(0);

@@ -3192,6 +3192,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 			// does not survive this conversion. And the rest of the characters in these descriptions do not require it.
 			if (!(_vm->gameFlags().platform == Common::kPlatformSegaCD && _vm->gameFlags().lang == Common::JA_JPN && Common::String(temp).contains('\r')))
 				Util::convertDOSToUTF8(temp, 26);
+			_vm->updatePlayTimer();
 			Common::Error err = _vm->saveGameStateIntern(_savegameOffset + slot, temp, &thumb);
 			thumb.free();
 

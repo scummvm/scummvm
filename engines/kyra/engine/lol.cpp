@@ -904,6 +904,8 @@ void LoLEngine::runLoop() {
 
 		update();
 
+		updatePlayTimer();
+
 		if (_sceneUpdateRequired)
 			gui_drawScene(0);
 		else

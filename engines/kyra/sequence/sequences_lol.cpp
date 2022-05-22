@@ -124,6 +124,7 @@ int LoLEngine::processPrologue() {
 	}
 
 	if (processSelection == 0) {
+		restartPlayTimerAt(0);
 		if (_flags.isDemo) {
 			_charSelection = 0;
 			_screen->loadBitmap("ITEMICN.SHP", 3, 3, 0);

@@ -578,7 +578,7 @@ void EoBCoreEngine::drawScene(int refresh) {
 		int diff = _flashShapeTimer - ct;
 		while ((diff > 0) && !shouldQuit()) {
 			updateInput();
-			updateAnimTimers();
+			updateAnimations();
 			uint32 step = MIN<uint32>(diff, _tickLength / 5);
 			_system->delayMillis(step);
 			diff -= step;
