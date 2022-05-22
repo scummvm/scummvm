@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "graphics/screen.h"
 #include "mm/mm1/events.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
@@ -64,6 +65,34 @@ void Events::processEvent(Common::Event &ev) {
 	}
 }
 
+void Events::replaceView(UIElement *ui) {
+	if (!_views.empty()) {
+		focusedView()->msgUnfocus(UnfocusMessage());
+		_views.clear();
+	}
+
+	_views.push(ui);
+	ui->msgFocus(FocusMessage());
+}
+
+void Events::replaceView(const Common::String &name) {
+	replaceView(findView(name));
+}
+
+void Events::addView(UIElement *ui) {
+	if (!_views.empty())
+		focusedView()->msgUnfocus(UnfocusMessage());
+
+	_views.push(ui);
+	ui->msgFocus(FocusMessage());
+}
+
+void Events::addView(const Common::String &name) {
+	addView(findView(name));
+}
+
+/*-------------------------------------------------------------------*/
+
 UIElement::UIElement(const Common::String &name, UIElement *uiParent) :
 		_name(name), _parent(uiParent) {
 	if (_parent)
@@ -87,6 +116,10 @@ void UIElement::drawElements() {
 	}
 }
 
+void UIElement::focus() {
+	g_engine->replaceView(this);
+}
+
 bool UIElement::tick() {
 	for (size_t i = 0; i < _children.size(); ++i) {
 		if (_children[i]->tick())
@@ -96,13 +129,13 @@ bool UIElement::tick() {
 	return false;
 }
 
-UIElement *UIElement::findElement(const Common::String &name) {
+UIElement *UIElement::findView(const Common::String &name) {
 	if (_name.equalsIgnoreCase(name))
 		return this;
 
 	UIElement *result;
 	for (size_t i = 0; i < _children.size(); ++i) {
-		if ((result = _children[i]->findElement(name)) != nullptr)
+		if ((result = _children[i]->findView(name)) != nullptr)
 			return result;
 	}
 
