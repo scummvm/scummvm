@@ -406,6 +406,8 @@ void BoyzEngine::loadAssets() {
 
 	loadLib("", "misc/fonts.lib", true);
 	loadFonts();
+	_defaultCursor = "crosshair";
+	_defaultCursorIdx = uint32(-1);
 
 	_nextLevel = "<start>";
 }

@@ -83,8 +83,8 @@ static const byte crosshairCursor[] = {
 	0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
 	0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
 	0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
-	0, 0, 0, 2, 2, 0, 0, 2, 0, 0, 2, 2, 0, 1, 0,
-	0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 1, 0, 0,
+	0, 0, 0, 2, 2, 0, 0, 2, 0, 0, 2, 2, 0, 0, 0,
+	0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0};
 
 static const byte cursorPalette[] = {
@@ -115,9 +115,12 @@ void HypnoEngine::disableCursor() {
 }
 
 void HypnoEngine::defaultCursor() {
-	if (!_defaultCursor.empty())
-		changeCursor(_defaultCursor, _defaultCursorIdx);
-	else
+	if (!_defaultCursor.empty()) {
+		if (_defaultCursorIdx == uint32(-1))
+			changeCursor(_defaultCursor);
+		else
+			changeCursor(_defaultCursor, _defaultCursorIdx);
+	} else
 		changeCursor("default");
 }
 
