@@ -27,6 +27,8 @@ namespace Views {
 
 void MainMenu::draw() {
 	// TODO
+	drawTextBorder();
+	writeString(10, 10, "Main menu");
 }
 
 } // namespace Views

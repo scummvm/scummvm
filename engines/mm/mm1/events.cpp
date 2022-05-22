@@ -64,7 +64,8 @@ void Events::processEvent(Common::Event &ev) {
 	}
 }
 
-UIElement::UIElement(UIElement *uiParent) : _parent(uiParent) {
+UIElement::UIElement(const Common::String &name, UIElement *uiParent) :
+		_name(name), _parent(uiParent) {
 	if (_parent)
 		_parent->_children.push_back(this);
 }
@@ -94,6 +95,20 @@ bool UIElement::tick() {
 
 	return false;
 }
+
+UIElement *UIElement::findElement(const Common::String &name) {
+	if (_name.equalsIgnoreCase(name))
+		return this;
+
+	UIElement *result;
+	for (size_t i = 0; i < _children.size(); ++i) {
+		if ((result = _children[i]->findElement(name)) != nullptr)
+			return result;
+	}
+
+	return nullptr;
+}
+
 
 } // namespace MM1
 } // namespace MM

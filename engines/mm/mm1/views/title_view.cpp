@@ -26,7 +26,7 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
-TitleView::TitleView(UIElement *uiParent) : UIElement(uiParent) {
+TitleView::TitleView(UIElement *uiParent) : UIElement("Title", uiParent) {
 	Gfx::ScreenDecoder decoder;
 	if (decoder.loadFile("screen0")) {
 		_surface.copyFrom(decoder.getSurface());
