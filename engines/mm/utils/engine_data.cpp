@@ -210,7 +210,7 @@ Common::SeekableReadStream *DataArchive::createReadStreamForMember(const Common:
 	return nullptr;
 }
 
-/*-------------------------------------------------------------------*/
+/*------------------------------------------------------------------------*/
 
 #ifndef RELEASE_BUILD
 
@@ -251,7 +251,7 @@ Common::FSNode DataArchiveProxy::getNode(const Common::String &name) const {
 
 #endif
 
-/*-------------------------------------------------------------------*/
+/*------------------------------------------------------------------------*/
 
 bool load_engine_data(const Common::String &subfolder, int reqMajorVersion,
 		int reqMinorVersion, Common::U32String &errorMsg, bool useDataPrefix) {

@@ -34,6 +34,7 @@ public:
 	StringsData _strings;
 	Roster _roster;
 	const Graphics::Font *_font = nullptr;
+	RosterEntry *_rosterEntry = nullptr;
 public:
 	Globals();
 	virtual ~Globals();

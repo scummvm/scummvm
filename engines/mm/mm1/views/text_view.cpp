@@ -32,14 +32,46 @@ TextView::TextView(const Common::String &name) :
 		UIElement(name, g_engine) {
 }
 
-void TextView::writeChar(int x, int y, char c) {
+void TextView::writeChar(char c) {
 	g_globals->_font->drawChar(getScreen(), c,
-		x * FONT_SIZE, y * FONT_SIZE, 0xff);
+		_textPos.x * FONT_SIZE, _textPos.y * FONT_SIZE, 0xff);
+
+	if (++_textPos.x == TEXT_W) {
+		_textPos.x = 0;
+		++_textPos.y;
+	}
+}
+
+void TextView::writeChar(int x, int y, char c) {
+	_textPos.x = x;
+	_textPos.y = y;
+	writeChar(c);
+}
+
+void TextView::writeString(const Common::String &str) {
+	for (const char *s = str.c_str(); *s; ++s)
+		writeChar(*s);
 }
 
 void TextView::writeString(int x, int y, const Common::String &str) {
-	for (const char *s = str.c_str(); *s; ++s, ++x)
-		writeChar(x, y, *s);
+	_textPos.x = x;
+	_textPos.y = y;
+	writeString(str);
+}
+
+void TextView::writeNumber(int val) {
+	writeString(Common::String::format("%d", val));
+}
+
+void TextView::writeNumber(int x, int y, int val) {
+	_textPos.x = x;
+	_textPos.y = y;
+	writeNumber(val);
+}
+
+void TextView::newLine() {
+	_textPos.x = 0;
+	_textPos.y++;
 }
 
 void TextView::drawTextBorder() {

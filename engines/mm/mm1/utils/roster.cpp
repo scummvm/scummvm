@@ -24,6 +24,20 @@
 namespace MM {
 namespace MM1 {
 
+void RosterEntry::synchronize(Common::Serializer &s) {
+	s.syncBytes((byte *)_name, 16);
+	s.skip(5);
+	s.syncAsByte(_class);
+
+}
+
+void Roster::synchronize(Common::Serializer &s) {
+	for (int i = 0; i < CHARACTERS_COUNT; ++i)
+		_items[i].synchronize(s);
+
+	for (int i = 0; i < CHARACTERS_COUNT; ++i)
+		s.syncAsByte(_nums[i]);
+}
 
 } // namespace MM1
 } // namespace MM

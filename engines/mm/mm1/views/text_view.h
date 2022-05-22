@@ -28,8 +28,14 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
+#define FONT_SIZE 8
+#define TEXT_W 40
+#define TEXT_H 25
+
 class TextView : public UIElement {
 protected:
+	Common::Point _textPos;
+
 	/**
 	 * Draws a text border
 	 */
@@ -38,12 +44,25 @@ protected:
 	/**
 	 * Write a character
 	 */
+	void writeChar(char c);
 	void writeChar(int x, int y, char c);
 
 	/**
 	 * Write some text
 	 */
+	void writeString(const Common::String &str);
 	void writeString(int x, int y, const Common::String &str);
+
+	/**
+	 * Write a number
+	 */
+	void writeNumber(int val);
+	void writeNumber(int x, int y, int val);
+
+	/**
+	 * Move the text position to the next line
+	 */
+	void newLine();
 public:
 	TextView(const Common::String &name);
 	virtual ~TextView() {}

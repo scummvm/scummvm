@@ -46,10 +46,34 @@ enum Sex {
 	MALE = 1, FEMALE = 2, YES_PLEASE = 3
 };
 
+enum Condition {
+	FINE = 0, BAD_CONDITION = 0x80, ERADICATED = 0xff,
+	DEAD = 0x40, STONE = 0x20,
+	UNCONSCIOUS = 0x40, PARALYZED = 0x20, POISONED = 0x10,
+	DISEASED = 8,  SILENCED = 4, BLINDED = 2, ASLEEP = 1
+};
+
 struct RosterEntry {
-	char _name[15] = { 0 };
-	uint8 _level = 0;
+	char _name[16] = { 0 };
+	Sex _sex = MALE;
+	Alignment _alignment = GOOD;
+	Race _race = HUMAN;
 	CharacterClass _class = NONE;
+	uint8 _int = 0, _mgt = 0, _per = 0, _end = 0;
+	uint8 _spd = 0, _acy = 0, _luc = 0;
+	uint8 _level = 0;
+	uint8 _age = 0;
+	uint32 _exp = 0;
+	uint16 _sp = 0, _spMax = 0;
+	uint8 _sp1 = 0;
+	uint16 _gems = 0;
+	uint16 _hp = 0, _hpMax = 0;
+	uint16 _gold = 0;
+	byte _ac = 0;
+	uint8 _food = 0;
+	uint8 _condition = 0;
+
+	void synchronize(Common::Serializer &s);
 };
 
 struct Roster {
@@ -60,6 +84,8 @@ struct Roster {
 		assert(idx < CHARACTERS_COUNT);
 		return _items[idx];
 	}
+
+	void synchronize(Common::Serializer &s);
 };
 
 } // namespace MM1

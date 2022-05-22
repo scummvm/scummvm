@@ -28,9 +28,6 @@ namespace MM {
 namespace MM1 {
 namespace Gfx {
 
-#define FONT_SIZE 8
-#define TEXT_W 40
-#define TEXT_H 25
 #define SCREEN_W 320
 #define SCREEN_H 200
 
