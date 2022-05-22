@@ -332,6 +332,8 @@ class ResourceManager;
 #define PIT_V7_SUBTIMER_INC            3977.0
 #define PIT_V7_SUBTIMER_THRESH         4971.0
 
+#define LOOM_STEAM_CDDA_RATE           240.0
+
 /**
  * Amiga timing constants.
  *

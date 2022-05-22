@@ -1407,8 +1407,14 @@ void Sound::startCDTimer() {
 	// frequency rate is for the particular game and engine version being ran).
 	//
 	// Again as per the interpreters, VAR_MUSIC_TIMER is then updated inside the SCUMM main loop.
+	int32 interval = 1000000 / _vm->getTimerFrequency();
+
+	// LOOM Steam uses a fixed 240Hz rate
+	if (_isLoomSteam)
+		interval = 1000000 / LOOM_STEAM_CDDA_RATE;
+
 	_vm->getTimerManager()->removeTimerProc(&cdTimerHandler);
-	_vm->getTimerManager()->installTimerProc(&cdTimerHandler, 1000000 / _vm->getTimerFrequency(), this, "scummCDtimer");
+	_vm->getTimerManager()->installTimerProc(&cdTimerHandler, interval, this, "scummCDtimer");
 }
 
 void Sound::stopCDTimer() {

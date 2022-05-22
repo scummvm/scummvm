@@ -2223,7 +2223,7 @@ uint32 ScummEngine::getIntegralTime(double fMsecs) {
 void ScummEngine::setTimerAndShakeFrequency() {
 	_shakeTimerRate = _timerFrequency = 240.0;
 
-	if (_game.platform == Common::kPlatformDOS || _game.platform == Common::kPlatformUnknown) {
+	if (_game.platform == Common::kPlatformDOS || _game.platform == Common::kPlatformWindows || _game.platform == Common::kPlatformUnknown) {
 		switch (_game.version) {
 		case 1:
 			if (_game.id == GID_MANIAC) {
