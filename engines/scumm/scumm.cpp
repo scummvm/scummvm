@@ -2322,8 +2322,12 @@ void ScummEngine::scummLoop(int delta) {
 		VAR(VAR_MUSIC_TIMER) = _sound->getCDMusicTimer();
 	} else if (VAR_MUSIC_TIMER != 0xFF) {
 		if (_sound->useReplacementAudioTracks() && _sound->getCurrentCDSound()) {
+			// The replacement music timer operates on real time, adjusted to
+			// the expected length of the Loom Overture (since there are so
+			// many different recordings of it). It's completely independent of
+			// the SCUMM engine's timer frequency.
 			_sound->updateMusicTimer();
-			VAR(VAR_MUSIC_TIMER) = _sound->getMusicTimer() * _timerFrequency / 240.0;
+			VAR(VAR_MUSIC_TIMER) = _sound->getMusicTimer();
 		} else if (_musicEngine) {
 			// The music engine generates the timer data for us.
 			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer() * _timerFrequency / 240.0;
