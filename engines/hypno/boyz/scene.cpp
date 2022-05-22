@@ -25,6 +25,71 @@
 
 namespace Hypno {
 
+const char *sceneVariablesBoyz[] = {
+	"GS_NONE",
+	"GS_SCTEXT",
+	"GS_AMBIENT",
+	"GS_MUSIC",
+	"GS_VOLUME",
+	"GS_LEVELCOMPLETE",
+	"GS_LEVELWON",
+	"GS_HOLDMOUSE",
+	"GS_DIFFICULTY",
+	"GS_TERRITORY",
+	"GS_SECTOR",
+	"GS_HITPOINTS",
+	"GS_TERRITORY1_RAND",
+	"GS_C5MAP",
+	"GS_WONSHELLGAME",
+	"GS_C36_READY",
+	"GS_MINEMAP",
+	"GS_MINEMAP_VIEWED",
+	"GS_HOTELDONE",
+	"GS_SEQ_11",
+	"GS_SEQ_12",
+	"GS_SEQ_13",
+	"GS_SEQ_14",
+	"GS_SEQ_15",
+	"GS_SEQ_16",
+	"GS_SEQ_17",
+	"GS_SEQ_18",
+	"GS_SEQ_19",
+	"GS_SEQ_21",
+	"GS_SEQ_22",
+	"GS_SEQ_31",
+	"GS_SEQ_32",
+	"GS_SEQ_33",
+	"GS_SEQ_34",
+	"GS_SEQ_35",
+	"GS_SEQ_351",
+	"GS_SEQ_352",
+	"GS_SEQ_353",
+	"GS_SEQ_354",
+	"GS_SEQ_355",
+	"GS_SEQ_36",
+	"GS_SEQ_41",
+	"GS_SEQ_42",
+	"GS_SEQ_51",
+	"GS_SEQ_52",
+	"GS_SEQ_53",
+	"GS_SEQ_54",
+	"GS_SEQ_55",
+	"GS_SEQ_56",
+	"GS_SEQ_57",
+	"GS_SEQ_58",
+	"GS_SEQ_59",
+	nullptr
+};
+
+void BoyzEngine::resetSceneState() {
+	uint32 i = 0;
+	while (sceneVariablesBoyz[i]) {
+		_sceneState[sceneVariablesBoyz[i]] = 0;
+		i++;
+	}
+	_intros.clear();
+}
+
 void BoyzEngine::runMenu(Hotspots *hs, bool only_menu) {
 	Hotspot *h = hs->begin();
 	assert(h->type == MakeMenu);
@@ -52,6 +117,7 @@ void BoyzEngine::renderHighlights(Hotspots *hs) {
 			switch (action->type) {
 			case HighlightAction:
 				hl = (Highlight *)action;
+				assert(_sceneState.contains(hl->condition));
 				if (_sceneState[hl->condition]) {
 					Graphics::Surface sub = menu->backgroundFrames[0]->getSubArea(it->rect);
 					drawImage(sub, it->rect.left, it->rect.top, false);

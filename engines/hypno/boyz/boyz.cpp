@@ -133,16 +133,16 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c18.mi_", "c21.mi_", "<retry_menu>", "");
 
 	loadArcadeLevel("c21.mi_", "c22.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c22.mi_", "c31.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c31.mi_", "c32.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c32.mi_", "c33.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c33.mi_", "c34.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c34.mi_", "c35.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c35.mi_", "c352.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c352.mi_", "c353.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c353.mi_", "c354.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c354.mi_", "c355.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c355.mi_", "c36.mi_", "<retry_menu>", "");
+	loadArcadeLevel("c22.mi_", "<select_c3>", "<retry_menu>", "");
+	loadArcadeLevel("c31.mi_", "<select_c3>", "<retry_menu>", "");
+	loadArcadeLevel("c32.mi_", "<select_c3>", "<retry_menu>", "");
+	loadArcadeLevel("c33.mi_", "<select_c3>", "<retry_menu>", "");
+	loadArcadeLevel("c34.mi_", "<select_c3>", "<retry_menu>", "");
+	loadArcadeLevel("c35.mi_", "???", "<retry_menu>", "");
+	loadArcadeLevel("c352.mi_", "???", "<retry_menu>", "");
+	loadArcadeLevel("c353.mi_", "???", "<retry_menu>", "");
+	loadArcadeLevel("c354.mi_", "???", "<retry_menu>", "");
+	loadArcadeLevel("c355.mi_", "???", "<retry_menu>", "");
 	loadArcadeLevel("c36.mi_", "c41.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c41.mi_", "c42.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c42.mi_", "c51.mi_", "<retry_menu>", "");
@@ -214,6 +214,41 @@ void BoyzEngine::loadAssets() {
 	loadSceneLevel(selectC3, "<select_c3>", "", "");
 	sc = (Scene *) _levels["<select_c3>"];
 	sc->resolution = "320x200";
+
+	hl = new Highlight("GS_SEQ_31");
+	sc->hots[1].actions.push_back(hl);
+	gl = new Global("GS_SEQ_31", "NCHECK");
+	sc->hots[1].actions.push_back(gl);
+	cl = new ChangeLevel("c31.mi_");
+	sc->hots[1].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_32");
+	sc->hots[2].actions.push_back(hl);
+	gl = new Global("GS_SEQ_32", "NCHECK");
+	sc->hots[2].actions.push_back(gl);
+	cl = new ChangeLevel("c32.mi_");
+	sc->hots[2].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_33");
+	sc->hots[3].actions.push_back(hl);
+	gl = new Global("GS_SEQ_33", "NCHECK");
+	sc->hots[3].actions.push_back(gl);
+	cl = new ChangeLevel("c33.mi_");
+	sc->hots[3].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_34");
+	sc->hots[4].actions.push_back(hl);
+	gl = new Global("GS_SEQ_34", "NCHECK");
+	sc->hots[4].actions.push_back(gl);
+	cl = new ChangeLevel("c34.mi_");
+	sc->hots[4].actions.push_back(cl);
+
+	hl = new Highlight("GS_WONSHELLGAME");
+	sc->hots[5].actions.push_back(hl);
+	gl = new Global("GS_WONSHELLGAME", "NCHECK");
+	sc->hots[5].actions.push_back(gl);
+	cl = new ChangeLevel("c35.mi_");
+	sc->hots[5].actions.push_back(cl);
 
 	loadLib("sound/", "misc/sound.lib", true);
 
@@ -408,7 +443,7 @@ void BoyzEngine::loadAssets() {
 	loadFonts();
 	_defaultCursor = "crosshair";
 	_defaultCursorIdx = uint32(-1);
-
+	resetSceneState();
 	_nextLevel = "<start>";
 }
 

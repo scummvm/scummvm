@@ -73,9 +73,11 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		MVideo video(_deathDay[_currentActor], Common::Point(0, 0), false, true, false);
 		disableCursor();
 		runIntro(video);
-	} else
-		_previousHealth = _health;
+		return;
+	}
 
+	_previousHealth = _health;
+	_sceneState[Common::String::format("GS_SEQ_%d", _levelId)] = 1;
 }
 
 void BoyzEngine::pressedKey(const int keycode) {

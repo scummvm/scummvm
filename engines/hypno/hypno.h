@@ -109,7 +109,7 @@ public:
 	Common::Error run() override;
 	Levels _levels;
 	Common::HashMap<Common::String, int> _sceneState;
-	void resetSceneState();
+	virtual void resetSceneState();
 	bool checkSceneCompleted();
 	bool checkLevelWon();
 	void runLevel(Common::String &name);
@@ -544,6 +544,7 @@ public:
 	Common::String findNextLevel(const Transition *trans) override;
 
 	// Scenes
+	void resetSceneState() override;
 	void runMenu(Hotspots *hs, bool only_menu = false) override;
 	bool hoverHotspot(Common::Point) override;
 
