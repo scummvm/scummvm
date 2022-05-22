@@ -19,26 +19,27 @@
  *
  */
 
-#include "mm/mm1/views/title_view.h"
-#include "mm/mm1/gfx/screen_decoder.h"
+#ifndef MM1_VIEWS_TITLE_H
+#define MM1_VIEWS_TITLE_H
+
+#include "mm/mm1/events.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
-TitleView::TitleView(UIElement *uiParent) : UIElement("Title", uiParent) {
-	Gfx::ScreenDecoder decoder;
-	if (decoder.loadFile("screen0")) {
-		_surface.copyFrom(decoder.getSurface());
-	} else {
-		error("Could not load screen0");
-	}
-}
+class Title : public UIElement {
+private:
+	Graphics::ManagedSurface _surface;
+public:
+	Title();
+	virtual ~Title() {}
 
-void TitleView::draw() {
-	getScreen()->blitFrom(_surface);
-}
+	void draw() override;
+};
 
 } // namespace Views
 } // namespace MM1
 } // namespace MM
+
+#endif

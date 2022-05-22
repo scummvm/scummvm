@@ -30,9 +30,7 @@ namespace Views {
 
 class MainMenu : public TextView {
 public:
-	MainMenu(UIElement *uiParent = nullptr) :
-		TextView("MainMenu", uiParent) {
-	}
+	MainMenu() : TextView("MainMenu") {}
 	virtual ~MainMenu() {
 	}
 

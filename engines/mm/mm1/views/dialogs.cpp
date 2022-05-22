@@ -26,12 +26,6 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
-Dialogs::Dialogs() :
-	_titleView(g_engine),
-	_areYouReady(g_engine),
-	_mainMenu(g_engine) {
-}
-
 } // namespace Views
 } // namespace MM1
 } // namespace MM
