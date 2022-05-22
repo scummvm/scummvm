@@ -9,10 +9,13 @@ MODULE_OBJS := \
 	mm1/mm1.o \
 	mm1/gfx/gfx.o \
 	mm1/gfx/screen_decoder.o \
+	mm1/utils/roster.o \
+	mm1/utils/strings.o \
 	mm1/views/are_you_ready.o \
 	mm1/views/main_menu.o \
 	mm1/views/title.o \
 	mm1/views/text_view.o \
+	mm1/views/view_characters.o \
 	xeen/worldofxeen/clouds_cutscenes.o \
 	xeen/worldofxeen/darkside_cutscenes.o \
 	xeen/worldofxeen/worldofxeen_cutscenes.o \

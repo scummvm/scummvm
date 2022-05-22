@@ -12,3 +12,29 @@ dialogs:
 		option3: "'#'.......GO TO TOWN"
 		copyright1: "COPR. 1986,1987-JON VAN CANEGHEM"
 		copyright2: "ALL RIGHTS RESERVED"
+	view_characters:
+		title: "VIEW ALL CHARACTERS"
+		legend1: "'A'-'%c' TO VIEW A CHARACTER"
+		legend2: "'ESC' TO GO BACK"
+classes:
+	1: "1) KNIGHT  "
+	2: "2) PALADIN "
+	3: "3) ARCHER  "
+	4: "4) CLERIC  "
+	5: "5) SORCERER"
+	6: "6) ROBBER  "
+	none: "NONE"
+races:
+	1: "1) HUMAN    "
+	2: "2) ELF      "
+	3: "3) DWARF    "
+	4: "4) GNOME    "
+	5: "5) HALF-ORC "
+alignments:
+	1: "1) GOOD     "
+	2: "2) NEUT     "
+	3: "3) EVIL     "
+sex:
+	1: "1) MALE     "
+	2: "2) FEMALE   "
+	3: "3) YES PLEASE"

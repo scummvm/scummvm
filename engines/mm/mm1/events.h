@@ -77,6 +77,12 @@ public:
 	void focus();
 
 	/**
+	 * Closes the current view. The view must have been added
+	 * via addView, so there's a remaining view afterwards
+	 */
+	void close();
+
+	/**
 	 * Returns the game view
 	 */
 	virtual Graphics::Screen *getScreen() const {
@@ -120,13 +126,6 @@ class Events : public UIElement {
 private:
 	Graphics::Screen *_screen = nullptr;
 	Common::Stack<UIElement *> _views;
-private:
-	/**
-	 * Returns the currently focused view, if any
-	 */
-	UIElement *focusedView() const {
-		return _views.empty() ? nullptr : _views.top();
-	}
 protected:
 	/**
 	 * Process an event
@@ -152,6 +151,18 @@ public:
 	 */
 	void addView(UIElement *ui);
 	void addView(const Common::String &name);
+
+	/**
+	 * Pops a view from the view stack
+	 */
+	void popView();
+
+	/**
+	 * Returns the currently focused view, if any
+	 */
+	UIElement *focusedView() const {
+		return _views.empty() ? nullptr : _views.top();
+	}
 
 	Graphics::Screen *getScreen() const override {
 		return _screen;

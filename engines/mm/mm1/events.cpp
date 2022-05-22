@@ -99,6 +99,14 @@ void Events::addView(const Common::String &name) {
 	addView(findView(name));
 }
 
+void Events::popView() {
+	focusedView()->msgUnfocus(UnfocusMessage());
+	_views.pop();
+
+	if (!_views.empty())
+		focusedView()->msgFocus(FocusMessage());
+}
+
 /*-------------------------------------------------------------------*/
 
 UIElement::UIElement(const Common::String &name, UIElement *uiParent) :
@@ -126,6 +134,11 @@ void UIElement::drawElements() {
 
 void UIElement::focus() {
 	g_engine->replaceView(this);
+}
+
+void UIElement::close() {
+	assert(g_engine->focusedView() == this);
+	g_engine->popView();
 }
 
 bool UIElement::tick() {
