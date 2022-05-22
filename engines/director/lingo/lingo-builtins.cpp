@@ -1810,11 +1810,38 @@ void LB::b_erase(int nargs) {
 }
 
 void LB::b_findEmpty(int nargs) {
-	g_lingo->printSTUBWithArglist("b_findEmpty", nargs);
+	Datum d = g_lingo->pop();
+	uint16  c_start = g_director->getCurrentMovie()->getCast()->_castArrayStart;
+	uint16  c_end = g_director->getCurrentMovie()->getCast()->_castArrayEnd;
+	Common::HashMap<int, CastMember *> *cast = g_director->getCurrentMovie()->getCast()->_loadedCast;
 
-	g_lingo->dropStack(nargs);
+	if (d.type != CASTREF) {
+		warning("Incorrect argument type for findEmpty");
+		return;
+	}
 
-	g_lingo->push(Datum(0));
+	if (d.u.cast->member > c_end) {
+		d.type = INT;
+		g_lingo->push(d);
+		return;
+	}
+
+	if (d.u.cast->member > c_start) {
+		c_start = (uint16) d.u.cast->member;
+	}
+
+	for (uint16 i = c_start; i <= c_end; i++) {
+		if (!cast->contains((int) i) || cast->getVal((int) i)->_type == kCastTypeNull) {
+			d.u.i = i;
+			d.type = INT;
+			g_lingo->push(d);
+			return;
+		}
+	}
+
+	d.type = INT;
+	d.u.i = (int) c_end + 1;
+	g_lingo->push(d);
 }
 
 void LB::b_importFileInto(int nargs) {
