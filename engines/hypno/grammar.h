@@ -65,6 +65,7 @@ enum ActionType {
 	TimerAction,
 	PaletteAction,
 	BackgroundAction,
+	HighlightAction,
 	OverlayAction,
 	EscapeAction,
 	SaveAction,
@@ -94,6 +95,7 @@ class Hotspot;
 
 typedef Common::Array<Hotspot> Hotspots;
 typedef Common::Array<Hotspots *> HotspotsStack;
+typedef Common::Array<Graphics::Surface *> Frames;
 
 class Hotspot {
 public:
@@ -106,7 +108,8 @@ public:
 	Common::String flags[3];
 	Common::Rect rect;
 	Common::String setting;
-	Common::String background;
+	Filename background;
+	Frames backgroundFrames;
 	Actions actions;
 	Hotspots *smenu;
 };
@@ -147,6 +150,15 @@ public:
 		path = path_;
 	}
 	Filename path;
+};
+
+class Highlight : public Action {
+public:
+	Highlight(Common::String condition_) {
+		type = HighlightAction;
+		condition = condition_;
+	}
+	Common::String condition;
 };
 
 class Background : public Action {

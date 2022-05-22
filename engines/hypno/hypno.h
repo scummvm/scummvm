@@ -57,8 +57,6 @@ enum {
 	kHypnoDebugScene = 1 << 3
 };
 
-typedef Common::Array<Graphics::Surface *> Frames;
-
 // Player positions
 
 enum PlayerPosition {
@@ -141,7 +139,7 @@ public:
 
 	// User input
 	void clickedHotspot(Common::Point);
-	bool hoverHotspot(Common::Point);
+	virtual bool hoverHotspot(Common::Point);
 
 	// Cursors
 	bool cursorPauseMovie(Common::Point);
@@ -178,7 +176,7 @@ public:
 	void changeCursor(const Graphics::Surface &entry, byte *palette, bool centerCursor = false);
 
 	// Actions
-	void runMenu(Hotspots *hs, bool only_menu = false);
+	virtual void runMenu(Hotspots *hs, bool only_menu = false);
 	void runBackground(Background *a);
 	void runOverlay(Overlay *a);
 	void runMice(Mice *a);
@@ -545,6 +543,11 @@ public:
 	Common::String findNextLevel(const Common::String &level) override;
 	Common::String findNextLevel(const Transition *trans) override;
 
+	// Scenes
+	void runMenu(Hotspots *hs, bool only_menu = false) override;
+	bool hoverHotspot(Common::Point) override;
+
+	// Arcade
 	void runBeforeArcade(ArcadeShooting *arc) override;
 	void runAfterArcade(ArcadeShooting *arc) override;
 	void pressedKey(const int keycode) override;
@@ -575,6 +578,8 @@ public:
 	void saveProfile(const Common::String &name, int levelId);
 
 	private:
+	void renderHighlights(Hotspots *hs);
+
 	void runMainMenu(Code *code);
 	void runRetryMenu(Code *code);
 	void runDifficultyMenu(Code *code);

@@ -157,11 +157,58 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c58.mi_", "c59.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c59.mi_", "<credits>", "<retry_menu>", "");
 
+	Global *gl;
+	ChangeLevel *cl;
+	Cutscene *cs;
+	Highlight *hl;
+
 	loadSceneLevel(selectBoyz, "<select_boyz>", "", "");
 	Scene *sc = (Scene *) _levels["<select_boyz>"];
 	sc->resolution = "320x200";
 
-	ChangeLevel *cl = new ChangeLevel("c19.mi_");
+	hl = new Highlight("GS_SWITCH1");
+	sc->hots[1].actions.push_back(hl);
+	gl = new Global("GS_SWITCH1", "TURNON");
+	sc->hots[1].actions.push_back(gl);
+	cs = new Cutscene("intro/c0i01s.smk");
+	sc->hots[1].actions.push_back(cs);
+
+	hl = new Highlight("GS_SWITCH2");
+	sc->hots[2].actions.push_back(hl);
+	gl = new Global("GS_SWITCH2", "TURNON");
+	sc->hots[2].actions.push_back(gl);
+	cs = new Cutscene("intro/c0i02s.smk");
+	sc->hots[2].actions.push_back(cs);
+
+	hl = new Highlight("GS_SWITCH3");
+	sc->hots[3].actions.push_back(hl);
+	gl = new Global("GS_SWITCH3", "TURNON");
+	sc->hots[3].actions.push_back(gl);
+	cs = new Cutscene("intro/c0i03s.smk");
+	sc->hots[3].actions.push_back(cs);
+
+	hl = new Highlight("GS_SWITCH4");
+	sc->hots[4].actions.push_back(hl);
+	gl = new Global("GS_SWITCH4", "TURNON");
+	sc->hots[4].actions.push_back(gl);
+	cs = new Cutscene("intro/c0i04s.smk");
+	sc->hots[4].actions.push_back(cs);
+
+	hl = new Highlight("GS_SWITCH5");
+	sc->hots[5].actions.push_back(hl);
+	gl = new Global("GS_SWITCH5", "TURNON");
+	sc->hots[5].actions.push_back(gl);
+	cs = new Cutscene("intro/c0i05s.smk");
+	sc->hots[5].actions.push_back(cs);
+
+	hl = new Highlight("GS_SWITCH6");
+	sc->hots[6].actions.push_back(hl);
+	gl = new Global("GS_SWITCH6", "TURNON");
+	sc->hots[6].actions.push_back(gl);
+	cs = new Cutscene("intro/c0i06s.smk");
+	sc->hots[6].actions.push_back(cs);
+
+	cl = new ChangeLevel("c19.mi_");
 	sc->hots[7].actions.push_back(cl);
 
 	loadSceneLevel(selectC3, "<select_c3>", "", "");
