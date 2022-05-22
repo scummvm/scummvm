@@ -37,6 +37,7 @@ public:
 	}
 
 	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 

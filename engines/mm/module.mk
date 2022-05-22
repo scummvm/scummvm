@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	mm1/gfx/gfx.o \
 	mm1/gfx/screen_decoder.o \
 	mm1/views/are_you_ready.o \
+	mm1/views/dialogs.o \
 	mm1/views/main_menu.o \
 	mm1/views/title_view.o \
 	mm1/views/text_view.o \
