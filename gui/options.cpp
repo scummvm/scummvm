@@ -878,12 +878,16 @@ void OptionsDialog::apply() {
 		if (_enableAudioSettings) {
 			const OPL::Config::EmulatorDescription *ed = OPL::Config::findDriver(_oplPopUp->getSelectedTag());
 
-			if (ed)
-				ConfMan.set("opl_driver", ed->name, _domain);
-			else
-				ConfMan.removeKey("opl_driver", _domain);
+			if ((ed && ConfMan.get("opl_driver", _domain) != ed->name) || !ed) {
+				_oplPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+				if (ed) 
+					ConfMan.set("opl_driver", ed->name, _domain);
+				else
+					ConfMan.removeKey("opl_driver", _domain);
+			}
 		} else {
 			ConfMan.removeKey("opl_driver", _domain);
+			_oplPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
 		}
 	}
 
@@ -972,11 +976,14 @@ void OptionsDialog::apply() {
 			// Scale the config value accordingly (see addSubtitleControls)
 			int sliderMaxValue = _subSpeedSlider->getMaxValue();
 			int talkspeed = (_subSpeedSlider->getValue() * 255 + sliderMaxValue / 2) / sliderMaxValue;
-			ConfMan.setInt("talkspeed", talkspeed, _domain);
-
+			if (talkspeed != ConfMan.getInt("talkspeed", _domain)) {
+				ConfMan.setInt("talkspeed", talkspeed, _domain);
+				_subSpeedDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+			}
 		} else {
 			ConfMan.removeKey("subtitles", _domain);
 			ConfMan.removeKey("talkspeed", _domain);
+			_subSpeedDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
 			ConfMan.removeKey("speech_mute", _domain);
 		}
 	}
@@ -1576,6 +1583,8 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 
 	// The OPL emulator popup & a label
 	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", _("AdLib emulator:"), _("AdLib is used for music in many games"));
+	if (ConfMan.isKeyTemporary("opl_driver"))
+		_oplPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
 	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup", _("AdLib is used for music in many games"));
 
 	// Populate it
@@ -1710,6 +1719,9 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 
 		_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", _c("Subtitle speed:", "lowres"));
 	}
+	
+	if (ConfMan.isKeyTemporary("talkspeed"))
+		_subSpeedDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
 
 	// Subtitle speed
 	_subSpeedSlider = new SliderWidget(boss, prefix + "subSubtitleSpeedSlider", Common::U32String(), kSubtitleSpeedChanged);
