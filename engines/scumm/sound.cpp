@@ -1409,8 +1409,10 @@ void Sound::startCDTimer() {
 	// Again as per the interpreters, VAR_MUSIC_TIMER is then updated inside the SCUMM main loop.
 	int32 interval = 1000000 / _vm->getTimerFrequency();
 
-	// LOOM Steam uses a fixed 240Hz rate
-	if (_isLoomSteam)
+	// LOOM Steam uses a fixed 240Hz rate. This was probably done to get rid of some
+	// audio glitches which are confirmed to be in the original. So let's activate this
+	// fix for the DOS version of LOOM as well, if enhancements are enabled.
+	if (_isLoomSteam || (_vm->_game.id == GID_LOOM && _vm->_enableEnhancements))
 		interval = 1000000 / LOOM_STEAM_CDDA_RATE;
 
 	_vm->getTimerManager()->removeTimerProc(&cdTimerHandler);
