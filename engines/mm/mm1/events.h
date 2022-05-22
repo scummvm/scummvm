@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/events.h"
+#include "common/stack.h"
 #include "graphics/screen.h"
 
 namespace MM {
@@ -33,6 +34,9 @@ class Events;
 
 struct Message {
 };
+
+struct FocusMessage : public Message {};
+struct UnfocusMessage : public Message {};
 
 struct KeypressMessage : public Message, public Common::KeyState {
 	KeypressMessage() : Message() {}
@@ -68,6 +72,11 @@ public:
 	void redraw();
 
 	/**
+	 * Focuses the element as the current view
+	 */
+	void focus();
+
+	/**
 	 * Returns the game view
 	 */
 	virtual Graphics::Screen *getScreen() const {
@@ -85,9 +94,9 @@ public:
 	virtual bool tick();
 
 	/**
-	 * Find an element by name
+	 * Find a view by name
 	 */
-	virtual UIElement *findElement(const Common::String &name);
+	virtual UIElement *findView(const Common::String &name);
 
 	/**
 	 * Handles events
@@ -101,6 +110,8 @@ public:
 			return false; \
 		}
 
+	MESSAGE(Focus);
+	MESSAGE(Unfocus);
 	MESSAGE(Keypress);
 	#undef MESSAGE
 };
@@ -108,7 +119,14 @@ public:
 class Events : public UIElement {
 private:
 	Graphics::Screen *_screen = nullptr;
-	UIElement *_focusedElement;
+	Common::Stack<UIElement *> _views;
+private:
+	/**
+	 * Returns the currently focused view, if any
+	 */
+	UIElement *focusedView() const {
+		return _views.empty() ? nullptr : _views.top();
+	}
 protected:
 	/**
 	 * Process an event
@@ -126,24 +144,28 @@ public:
 	/**
 	 * Sets the focus to a new view
 	 */
-	void focusElement(UIElement *ui) {
-		_focusedElement = ui;
-	}
+	void replaceView(UIElement *ui);
+	void replaceView(const Common::String &name);
+
+	/**
+	 * Adds a focused view to the view stack without replacing current one
+	 */
+	void addView(UIElement *ui);
+	void addView(const Common::String &name);
 
 	Graphics::Screen *getScreen() const override {
 		return _screen;
 	}
 
-
 	void drawElements() {
-		if (_focusedElement)
-			_focusedElement->drawElements();
+		if (!_views.empty())
+			focusedView()->drawElements();
 	}
 
 	void draw() override {}
 
 	bool tick() override {
-		return _focusedElement ? _focusedElement->tick() : false;
+		return !_views.empty() ? focusedView()->tick() : false;
 	}
 
 	/**
@@ -151,8 +173,10 @@ public:
 	 */
 	#define MESSAGE(NAME) \
 		bool msg##NAME(const NAME##Message &e) override { \
-			return (_focusedElement) ? _focusedElement->msg##NAME(e) : false; \
+			return !_views.empty() ? focusedView()->msg##NAME(e) : false; \
 		}
+	MESSAGE(Focus);
+	MESSAGE(Unfocus);
 	MESSAGE(Keypress);
 	#undef MESSAGE
 };

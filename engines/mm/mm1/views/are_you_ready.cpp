@@ -35,7 +35,7 @@ void AreYouReady::draw() {
 
 bool AreYouReady::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_RETURN) {
-		g_engine->focusElement(g_engine->findElement("MainMenu"));
+		g_engine->replaceView("MainMenu");
 		return true;
 	}
 
