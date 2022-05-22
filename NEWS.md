@@ -102,6 +102,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      Motors entrance.
    - Fixed incorrect dark rooms colors in MM NES on strict-alignment ports such
      as Dreamcast, Apple silicon and various handheld devices.
+   - Rewrote text rendering routines for Full Throttle, The Dig and The Curse
+     of Monkey Island in accordance to the original interpreters.
+   - Rewrote timer handling routines to better approximate both the original
+     hardware behavior and the intepreters' quirks.
 
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
