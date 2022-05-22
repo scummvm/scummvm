@@ -48,7 +48,7 @@ ifdef PLUGIN
 PLUGIN-$(MODULE) := plugins/$(PLUGIN_PREFIX)$(notdir $(MODULE))$(PLUGIN_SUFFIX)
 $(PLUGIN-$(MODULE)): $(MODULE_OBJS-$(MODULE)) $(PLUGIN_EXTRA_DEPS)
 	$(QUIET)$(MKDIR) plugins
-	+$(QUIET_PLUGIN)$(LD) $(SAVED_LDFLAGS) $(filter-out $(PLUGIN_EXTRA_DEPS),$+) $(PLUGIN_LDFLAGS) -o $@
+	+$(QUIET_PLUGIN)$(LD) $(filter-out $(PLUGIN_EXTRA_DEPS),$+) $(PLUGIN_LDFLAGS) -o $@
 
 # Reset PLUGIN var
 PLUGIN:=

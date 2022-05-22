@@ -46,6 +46,7 @@ SAVED_WINDRESFLAGS=$WINDRESFLAGS
 
 # Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
+PLUGIN_LDFLAGS=$LDFLAGS
 
 # Backslashes into forward slashes:
 # The following OS/2 specific code is performed to deal with handling of backslashes by ksh.
@@ -977,7 +978,7 @@ Optional Libraries:
 
   --with-ieee1284-prefix=DIR prefix where libieee1284 is installed (optional)
   --enable-opl2lpt         enable OPL2LPT support
-  
+
   --with-retrowave-prefix=DIR prefix where libretrowave is installed (optional)
   --enable-retrowave       enable RetroWave OPL3 support
 
@@ -4207,7 +4208,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 		append_var DEFINES "-DUNCACHED_PLUGINS"
 _mak_plugins='
 LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld  -Wl,-zmax-page-size=128
-PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -Wl,-zmax-page-size=128 -lstdc++ 
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -Wl,-zmax-page-size=128 -lstdc++
 '
 		;;
 	*)
@@ -5994,6 +5995,7 @@ if test "$_enable_asan" = yes ; then
 	else
 		append_var CXXFLAGS "-fsanitize=address -fno-omit-frame-pointer"
 		append_var LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+		append_var PLUGIN_LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
 	fi
 fi
 echo "$_enable_asan"
@@ -6003,6 +6005,7 @@ echo_n "Enabling Thread Sanitizer... "
 if test "$_enable_tsan" = yes ; then
 	append_var CXXFLAGS "-fsanitize=thread"
 	append_var LDFLAGS "-fsanitize=thread"
+	append_var PLUGIN_LDFLAGS "-fsanitize=thread"
 fi
 echo "$_enable_tsan"
 
@@ -6011,6 +6014,7 @@ echo_n "Enabling Undefined Behavior Sanitizer... "
 if test "$_enable_ubsan" = yes ; then
 	append_var CXXFLAGS "-fsanitize=undefined"
 	append_var LDFLAGS "-fsanitize=undefined"
+	append_var PLUGIN_LDFLAGS "-fsanitize=undefined"
 fi
 echo "$_enable_ubsan"
 
@@ -6320,6 +6324,7 @@ OBJS += $OBJS
 DEFINES += $DEFINES
 LDFLAGS += $LDFLAGS
 
+PLUGIN_LDFLAGS += $PLUGIN_LDFLAGS
 $_mak_plugins
 
 port_mk = $_port_mk
