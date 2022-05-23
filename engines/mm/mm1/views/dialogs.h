@@ -26,6 +26,7 @@
 #include "mm/mm1/views/title.h"
 #include "mm/mm1/views/are_you_ready.h"
 #include "mm/mm1/views/main_menu.h"
+#include "mm/mm1/views/view_characters.h"
 
 namespace MM {
 namespace MM1 {
@@ -33,9 +34,11 @@ namespace Views {
 
 struct Dialogs {
 private:
-	Views::Title _title;
 	Views::AreYouReady _areYouReady;
 	Views::MainMenu _mainMenu;
+	Views::Title _title;
+	Views::ViewCharacters _characters;
+	Views::ViewCharacter _character;
 public:
 	Dialogs() {}
 };

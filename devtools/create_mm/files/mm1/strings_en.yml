@@ -19,6 +19,8 @@ dialogs:
 	view_character:
 		rename: "(CTRL)-'N' RE-NAME CHARACTER"
 		delete: "(CTRL)-'D' DELETE CHARACTER"
+	misc:
+		go_back: "'ESC' TO GO BACK"
 stats:
 	none: "NONE"
 	classes:
@@ -43,7 +45,6 @@ stats:
 		2: "2) FEMALE   "
 		3: "3) YES PLEASE"
 	conditions:
-		cond: "COND="
 		good: "GOOD"
 		eradicated: "ERADICATED"
 		dead: "DEAD,"
@@ -70,3 +71,6 @@ stats:
 		gold: "GOLD="
 		acy: "ACY="
 		luc: "LUC="
+		ac: "AC="
+		food: "FOOD="
+		cond: "COND="

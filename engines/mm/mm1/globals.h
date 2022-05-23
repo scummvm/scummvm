@@ -43,11 +43,19 @@ public:
 	 * Loads data for the globals
 	 */
 	bool load();
+
+	/**
+	 * Returns a string
+	 */
+	const Common::String &operator[](const Common::String &name) {
+		assert(_strings.contains(name));
+		return _strings[name];
+	}
 };
 
 extern Globals *g_globals;
 
-#define STRING (g_globals->_strings)
+#define STRING (*g_globals)
 
 } // namespace MM1
 } // namespace MM

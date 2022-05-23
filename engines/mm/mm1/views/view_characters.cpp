@@ -28,8 +28,10 @@ namespace MM1 {
 namespace Views {
 
 void ViewCharacters::draw() {
+	drawTextBorder();
+
 	Roster &roster = g_globals->_roster;
-	writeString(0, 11, STRING["dialogs.view_characters.title"]);
+	writeString(11, 0, STRING["dialogs.view_characters.title"]);
 	int lineNum = 0;
 	_charIndexes.clear();
 
@@ -45,7 +47,7 @@ void ViewCharacters::draw() {
 			pad_string(level, 7);
 
 			Common::String className = (re._class >= KNIGHT && re._class <= ROBBER) ?
-				STRING[Common::String::format("classes.%d", (int)re._class)] :
+				STRING[Common::String::format("stats.classes.%d", (int)re._class)].c_str() + 3 :
 				STRING["stats.none"];
 
 			// Form line like: A) charName...(1)L1  Knight
@@ -85,27 +87,27 @@ void CharacterStats::printStats() {
 	printSummary();
 
 	newLine();
-	writeString(STRING["stats.conditions.int"]);
+	writeString(STRING["stats.attributes.int"]);
 	writeNumber(re._int);
 	_textPos.x = 8;
-	writeString(STRING["stats.conditions.level"]);
+	writeString(STRING["stats.attributes.level"]);
 	writeNumber(re._level);
 	_textPos.x = 18;
-	writeString(STRING["stats.conditions.age"]);
+	writeString(STRING["stats.attributes.age"]);
 	writeNumber(re._level);
 	_textPos.x = 27;
-	writeString(STRING["stats.conditions.age"]);
+	writeString(STRING["stats.attributes.exp"]);
 	writeNumber(re._exp);
 
 	newLine();
-	writeString(STRING["stats.conditions.mgt"]);
+	writeString(STRING["stats.attributes.mgt"]);
 	writeNumber(re._mgt);
 
 	newLine();
-	writeString(STRING["stats.conditions.per"]);
+	writeString(STRING["stats.attributes.per"]);
 	writeNumber(re._per);
 	_textPos.x = 8;
-	writeString(STRING["stats.conditions.sp"]);
+	writeString(STRING["stats.attributes.sp"]);
 	writeNumber(re._sp);
 	_textPos.x = 16;
 	writeChar('/');
@@ -115,38 +117,38 @@ void CharacterStats::printStats() {
 	writeNumber(re._sp1);
 	writeChar(')');
 	_textPos.x = 26;
-	writeString(STRING["stats.conditions.gems"]);
+	writeString(STRING["stats.attributes.gems"]);
 	writeNumber(re._gems);
 
 	newLine();
-	writeString(STRING["stats.conditions.end"]);
+	writeString(STRING["stats.attributes.end"]);
 	writeNumber(re._end);
 
 	newLine();
-	writeString(STRING["stats.conditions.spd"]);
+	writeString(STRING["stats.attributes.spd"]);
 	writeNumber(re._spd);
 	_textPos.x = 8;
-	writeString(STRING["stats.conditions.hp"]);
+	writeString(STRING["stats.attributes.hp"]);
 	writeNumber(re._hp);
 	_textPos.x = 16;
 	writeChar('/');
 	writeNumber(re._hpMax);
 	_textPos.x = 26;
-	writeString(STRING["stats.conditions.gold"]);
+	writeString(STRING["stats.attributes.gold"]);
 	writeNumber(re._gold);
 
 	newLine();
-	writeString(STRING["stats.conditions.acy"]);
+	writeString(STRING["stats.attributes.acy"]);
 	writeNumber(re._acy);
 
 	newLine();
-	writeString(STRING["stats.conditions.luc"]);
+	writeString(STRING["stats.attributes.luc"]);
 	writeNumber(re._luc);
 	_textPos.x = 8;
-	writeString(STRING["stats.conditions.ac"]);
+	writeString(STRING["stats.attributes.ac"]);
 	writeNumber(re._ac);
 	_textPos.x = 26;
-	writeString(STRING["stats.conditions.food"]);
+	writeString(STRING["stats.attributes.food"]);
 	writeNumber(re._food);
 
 	newLine();
@@ -157,27 +159,33 @@ void CharacterStats::printStats() {
 void CharacterStats::printSummary() {
 	RosterEntry &re = *g_globals->_rosterEntry;
 	writeString(1, 0, re._name);
-	writeString(17, 0, Common::String::format(": %c %s",
-		(re._sex == MALE) ? 'M' : (re._sex == FEMALE ? 'F' : 'O'),
-		(re._alignment >= GOOD && re._alignment <= EVIL) ?
-		STRING[Common::String::format("alignments.%d", re._alignment)].c_str() + 3 :
-		STRING["stats.none"].c_str()
-	));
+
+	_textPos.x = 17;
+	writeString(": ");
+
+	writeChar((re._sex == MALE) ? 'M' : (re._sex == FEMALE ? 'F' : 'O'));
+
+	_textPos.x++;
+	writeString((re._alignment >= GOOD && re._alignment <= EVIL) ?
+		STRING[Common::String::format("stats.alignments.%d", re._alignment)].c_str() + 3 :
+		STRING["stats.none"]
+	);
 
 	if (re._race >= HUMAN && re._race <= HALF_ORC)
-		writeString(26, 0, STRING[Common::String::format("races.%d", re._race)].c_str() + 3);
+		writeString(26, 0, STRING[Common::String::format("stats.races.%d", re._race)].c_str() + 3);
 	else
 		writeString(26, 0, STRING["stats.none"]);
 
 	if (re._class >= KNIGHT && re._class <= ROBBER)
-		writeString(32, 0, STRING[Common::String::format("classes.%d", re._class)].c_str() + 3);
+		writeString(32, 0, STRING[Common::String::format("stats.classes.%d", re._class)].c_str() + 3);
 	else
 		writeString(32, 0, STRING["stats.none"]);
 }
 
 void CharacterStats::printCondition() {
 	RosterEntry &re = *g_globals->_rosterEntry;
-	writeString(STRING["stats.conditions.cond"]);
+	writeString(STRING["stats.attributes.cond"]);
+	_textPos.x++;
 	int cond = re._condition;
 
 	if (cond == 0) {
@@ -221,10 +229,18 @@ void ViewCharacter::draw() {
 
 	Graphics::ManagedSurface *scr = getScreen();
 	scr->clear();
+	printStats();
 
+	writeString(6, 21, STRING["dialogs.view_character.rename"]);
+	writeString(6, 22, STRING["dialogs.view_character.delete"]);
+	escToGoBack();
 }
 
 bool ViewCharacter::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+		close();
+	}
+
 	return false;
 }
 
