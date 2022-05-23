@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-22 20:08+0000\n"
+"POT-Creation-Date: 2022-05-23 21:45+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -834,7 +834,7 @@ msgstr "Redigera globala ScummVM-inställningar"
 #, fuzzy
 #| msgid "~O~ptions..."
 msgctxt "lowres"
-msgid "Global Opts..."
+msgid "Global ~O~pts..."
 msgstr "~I~nställningar..."
 
 #: gui/launcher.cpp:247
@@ -985,7 +985,7 @@ msgstr "Redigera spelinställningarna"
 #, fuzzy
 #| msgid "~O~ptions..."
 msgctxt "lowres"
-msgid "Game Opts..."
+msgid "~G~ame Opts..."
 msgstr "~I~nställningar..."
 
 #. I18N: List grouping when no engine is specified
@@ -2258,7 +2258,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "Fortsätt"
 
-#: gui/widget.cpp:422 gui/widget.cpp:424 gui/widget.cpp:430 gui/widget.cpp:432
+#: gui/widget.cpp:435 gui/widget.cpp:437 gui/widget.cpp:443 gui/widget.cpp:445
 msgid "Clear value"
 msgstr "Töm sökfältet"
 

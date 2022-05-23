@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-22 20:08+0000\n"
+"POT-Creation-Date: 2022-05-23 21:45+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -799,7 +799,7 @@ msgstr "전역 ScummVM 설정을 수정합니다"
 #| msgctxt "lowres"
 #| msgid "Global ~O~pts..."
 msgctxt "lowres"
-msgid "Global Opts..."
+msgid "Global ~O~pts..."
 msgstr "전역 옵션(~O~)..."
 
 #: gui/launcher.cpp:247
@@ -947,7 +947,7 @@ msgstr "게임 옵션을 변경합니다"
 #| msgctxt "lowres"
 #| msgid "~G~ame Opts..."
 msgctxt "lowres"
-msgid "Game Opts..."
+msgid "~G~ame Opts..."
 msgstr "게임 옵션(~G~)..."
 
 #. I18N: List grouping when no engine is specified
@@ -2198,7 +2198,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "진행"
 
-#: gui/widget.cpp:422 gui/widget.cpp:424 gui/widget.cpp:430 gui/widget.cpp:432
+#: gui/widget.cpp:435 gui/widget.cpp:437 gui/widget.cpp:443 gui/widget.cpp:445
 msgid "Clear value"
 msgstr "값 제거"
 

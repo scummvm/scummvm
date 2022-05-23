@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-22 20:08+0000\n"
+"POT-Creation-Date: 2022-05-23 21:45+0000\n"
 "PO-Revision-Date: 2022-04-30 18:19+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -800,7 +800,7 @@ msgstr "Зьмяніць глябальныя налады ScummVM"
 #| msgctxt "lowres"
 #| msgid "Global ~O~pts..."
 msgctxt "lowres"
-msgid "Global Opts..."
+msgid "Global ~O~pts..."
 msgstr "~Н~алады..."
 
 #: gui/launcher.cpp:247
@@ -948,7 +948,7 @@ msgstr "Зьмяніць налады гульні"
 #| msgctxt "lowres"
 #| msgid "~G~ame Opts..."
 msgctxt "lowres"
-msgid "Game Opts..."
+msgid "~G~ame Opts..."
 msgstr "~Н~алады гульні..."
 
 #. I18N: List grouping when no engine is specified
@@ -2204,7 +2204,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "Працягнуць"
 
-#: gui/widget.cpp:422 gui/widget.cpp:424 gui/widget.cpp:430 gui/widget.cpp:432
+#: gui/widget.cpp:435 gui/widget.cpp:437 gui/widget.cpp:443 gui/widget.cpp:445
 msgid "Clear value"
 msgstr "Ачысьціць значэньне"
 

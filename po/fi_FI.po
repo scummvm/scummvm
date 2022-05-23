@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-22 20:08+0000\n"
+"POT-Creation-Date: 2022-05-23 21:45+0000\n"
 "PO-Revision-Date: 2022-05-16 09:27+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -797,8 +797,11 @@ msgid "Change global ScummVM options"
 msgstr "Muuta globaaleja ScummVM:n asetuksia"
 
 #: gui/launcher.cpp:243
+#, fuzzy
+#| msgctxt "lowres"
+#| msgid "Global Opts..."
 msgctxt "lowres"
-msgid "Global Opts..."
+msgid "Global ~O~pts..."
 msgstr "Globaalit Asetukset..."
 
 #: gui/launcher.cpp:247
@@ -942,8 +945,11 @@ msgid "Change game options"
 msgstr "Muuta pelin asetuksia"
 
 #: gui/launcher.cpp:989
+#, fuzzy
+#| msgctxt "lowres"
+#| msgid "Game Opts..."
 msgctxt "lowres"
-msgid "Game Opts..."
+msgid "~G~ame Opts..."
 msgstr "Pelin Asetukset..."
 
 #. I18N: List grouping when no engine is specified
@@ -2213,7 +2219,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "Jatka"
 
-#: gui/widget.cpp:422 gui/widget.cpp:424 gui/widget.cpp:430 gui/widget.cpp:432
+#: gui/widget.cpp:435 gui/widget.cpp:437 gui/widget.cpp:443 gui/widget.cpp:445
 msgid "Clear value"
 msgstr "Tyhjennä arvo"
 
