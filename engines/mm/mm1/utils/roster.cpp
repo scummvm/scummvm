@@ -72,6 +72,29 @@ void RosterEntry::synchronize(Common::Serializer &s) {
 	s.skip(51);
 }
 
+void RosterEntry::clear() {
+	Common::fill(_name, _name + 16, 0);
+	_sex = (Sex)0;
+	_alignment = (Alignment)0;
+	_race = (Race)0;
+	_class = (CharacterClass)0;
+	_int = _mgt = _per = _end = 0;
+	_spd = _acy = _luc = 0;
+	_level = 0;
+	_age = 0;
+	_exp = 0;
+	_sp = _spMax = 0;
+	_sp1 = 0;
+	_gems = 0;
+	_hp = _hpMax = 0;
+	_gold = 0;
+	_ac = 0;
+	_food = 0;
+	_condition = 0;
+	Common::fill(_equipped, _equipped + INVENTORY_COUNT, 0);
+	Common::fill(_backpack, _backpack + INVENTORY_COUNT, 0);
+}
+
 void Roster::synchronize(Common::Serializer &s) {
 	for (int i = 0; i < CHARACTERS_COUNT; ++i)
 		_items[i].synchronize(s);
@@ -87,6 +110,22 @@ void Roster::loadDefaults() {
 
 	Common::Serializer s(&f, nullptr);
 	synchronize(s);
+}
+
+void Roster::remove(RosterEntry *entry) {
+	entry->clear();
+
+	size_t idx = entry - _items;
+	_nums[idx] = 0;
+}
+
+bool Roster::empty() const {
+	for (uint i = 0; i < CHARACTERS_COUNT; ++i) {
+		if (_nums[i])
+			return false;
+	}
+
+	return true;
 }
 
 } // namespace MM1

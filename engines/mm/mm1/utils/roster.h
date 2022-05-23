@@ -77,6 +77,7 @@ struct RosterEntry {
 	uint8 _backpack[INVENTORY_COUNT] = { 0 };
 
 	void synchronize(Common::Serializer &s);
+	void clear();
 };
 
 struct Roster {
@@ -88,8 +89,25 @@ struct Roster {
 		return _items[idx];
 	}
 
+	/**
+	 * Synchronizes the contents of the roster
+	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Load the roster from roster.dta
+	 */
 	void loadDefaults();
+
+	/**
+	 * Deletes a character
+	 */
+	void remove(RosterEntry *entry);
+
+	/**
+	 * Returns true if the roster is empty
+	 */
+	bool empty() const;
 };
 
 } // namespace MM1
