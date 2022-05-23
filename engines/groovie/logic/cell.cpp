@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ *
+ * This file is dual-licensed.
+ * In addition to the GPLv2 license mentioned above, MojoTouch has exclusively licensed
+ * this code on November 10th, 2021, to be use in closed-source products.
+ * Therefore, any contributions (commits) to it will also be dual-licensed.
+ *
  */
 
 #include "groovie/logic/cell.h"
