@@ -37,11 +37,6 @@ protected:
 	Common::Point _textPos;
 
 	/**
-	 * Draws a text border
-	 */
-	void drawTextBorder();
-
-	/**
 	 * Write a character
 	 */
 	void writeChar(char c);
@@ -63,6 +58,16 @@ protected:
 	 * Move the text position to the next line
 	 */
 	void newLine();
+
+	/**
+	 * Draws a text border
+	 */
+	void drawTextBorder();
+
+	/**
+	 * Prints a message 'ESC' to go back
+	 */
+	void escToGoBack();
 public:
 	TextView(const Common::String &name);
 	virtual ~TextView() {}

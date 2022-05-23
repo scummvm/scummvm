@@ -89,6 +89,7 @@ void Events::replaceView(UIElement *ui) {
 	}
 
 	_views.push(ui);
+	ui->redraw();
 	ui->msgFocus(FocusMessage());
 }
 
@@ -102,6 +103,7 @@ void Events::addView(UIElement *ui) {
 		focusedView()->msgUnfocus(UnfocusMessage());
 
 	_views.push(ui);
+	ui->redraw();
 	ui->msgFocus(FocusMessage());
 }
 
@@ -113,8 +115,10 @@ void Events::popView() {
 	focusedView()->msgUnfocus(UnfocusMessage());
 	_views.pop();
 
-	if (!_views.empty())
+	if (!_views.empty()) {
+		focusedView()->redraw();
 		focusedView()->msgFocus(FocusMessage());
+	}
 }
 
 /*------------------------------------------------------------------------*/

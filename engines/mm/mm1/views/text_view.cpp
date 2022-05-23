@@ -98,6 +98,10 @@ void TextView::drawTextBorder() {
 	}
 }
 
+void TextView::escToGoBack() {
+	writeString(12, 24, STRING["dialogs.misc.go_back"]);
+}
+
 } // namespace Views
 } // namespace MM1
 } // namespace MM

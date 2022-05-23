@@ -86,6 +86,7 @@ struct Roster {
 	}
 
 	void synchronize(Common::Serializer &s);
+	void loadDefaults();
 };
 
 } // namespace MM1
