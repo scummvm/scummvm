@@ -128,5 +128,14 @@ bool Roster::empty() const {
 	return true;
 }
 
+bool Roster::full() const {
+	for (uint i = 0; i < CHARACTERS_COUNT; ++i) {
+		if (!_nums[i])
+			return false;
+	}
+
+	return true;
+}
+
 } // namespace MM1
 } // namespace MM
