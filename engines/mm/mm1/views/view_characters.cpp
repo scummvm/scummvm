@@ -154,6 +154,7 @@ void CharacterStats::printStats() {
 	newLine();
 	newLine();
 	printCondition();
+	printInventory();
 }
 
 void CharacterStats::printSummary() {
@@ -221,12 +222,34 @@ void CharacterStats::printCondition() {
 	}
 }
 
+void CharacterStats::printInventory() {
+	RosterEntry &re = *g_globals->_rosterEntry;
+	writeString(0, 12, STRING["stats.inventory"]);
+
+	// Print the equipped and backpack items
+	for (int i = 0; i < INVENTORY_COUNT; ++i) {
+		// Equippied item
+		writeChar(0, 13 + i, '1' + i);
+		writeChar(')');
+		_textPos.x++;
+		if (re._equipped[i])
+			writeString(STRING[Common::String::format("stats.items.%d",
+				re._equipped[i])]);
+
+		// Backpack item
+		writeChar(20, 13 + i, 'A' + i);
+		writeChar(')');
+		_textPos.x++;
+		if (re._backpack[i])
+			writeString(STRING[Common::String::format("stats.items.%d",
+				re._backpack[i])]);
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 void ViewCharacter::draw() {
 	assert(g_globals->_rosterEntry);
-//	RosterEntry &re = *g_globals->_rosterEntry;
-
 	Graphics::ManagedSurface *scr = getScreen();
 	scr->clear();
 	printStats();

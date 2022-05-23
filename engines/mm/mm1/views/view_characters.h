@@ -45,6 +45,8 @@ protected:
 	void printStats();
 	void printSummary();
 	void printCondition();
+	void printInventory();
+
 public:
 	CharacterStats(const Common::String &name) : TextView(name) {}
 	~CharacterStats() {}

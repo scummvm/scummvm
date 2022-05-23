@@ -28,6 +28,7 @@ namespace MM {
 namespace MM1 {
 
 #define CHARACTERS_COUNT 18
+#define INVENTORY_COUNT 6
 
 enum CharacterClass {
 	KNIGHT = 1, PALADIN = 2, ARCHER = 3, CLERIC = 4,
@@ -72,6 +73,8 @@ struct RosterEntry {
 	byte _ac = 0;
 	uint8 _food = 0;
 	uint8 _condition = 0;
+	uint8 _equipped[INVENTORY_COUNT] = { 0 };
+	uint8 _backpack[INVENTORY_COUNT] = { 0 };
 
 	void synchronize(Common::Serializer &s);
 };

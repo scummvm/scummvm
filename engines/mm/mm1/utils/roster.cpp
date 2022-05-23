@@ -66,8 +66,10 @@ void RosterEntry::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_food);
 	s.syncAsByte(_condition);
 
-	// TODO: Inventory
-	s.skip(0x3f);
+	s.syncBytes(_equipped, INVENTORY_COUNT);
+	s.syncBytes(_backpack, INVENTORY_COUNT);
+
+	s.skip(51);
 }
 
 void Roster::synchronize(Common::Serializer &s) {
