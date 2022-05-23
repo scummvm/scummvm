@@ -440,7 +440,7 @@ void DialogResource::saveStream(Common::WriteStream* s) {
 }
 
 void BarrierResource::init(int16 room, int16 bgWidth, int16 bgHeight) {
-	assert(room < _chunkList.size());
+	assert(room < (int16)_chunkList.size());
 
 	Chunk *chunk = &_chunkList[room];
 	_stream.seek(chunk->pos, SEEK_SET);
