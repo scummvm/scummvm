@@ -750,7 +750,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheRomanLingo:
 		d.type = INT;
-		d.u.i = 0;		//Set to FALSE to support non-roman character set in Lingo
+		d.u.i = g_lingo->_romanLingo;
+		warning("BUILDBOT: the romanLingo is get, value is %d", g_lingo->_romanLingo);
 		break;
 	case kTheScummvmVersion:
 		d.type = INT;
@@ -1032,6 +1033,8 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		g_director->_rnd.setSeed(d.asInt());
 		break;
 	case kTheRomanLingo:
+		g_lingo->_romanLingo = bool(d.asInt());
+		warning("BUILDBOT: the romanLingo is set to %d", g_lingo->_romanLingo);
 		setTheEntitySTUB(kTheRomanLingo);
 		break;
 	case kTheScummvmVersion:
