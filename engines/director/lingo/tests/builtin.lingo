@@ -22,7 +22,8 @@ puppetTransition 2,4,20
 
 -- These are D4+
 move cast 1, cast 1
-move cast 1
+move cast 1, 3
+move cast 3, 1
 put findEmpty(cast 10)
 pasteClipBoardInto cast 2
 put the width of cast 1

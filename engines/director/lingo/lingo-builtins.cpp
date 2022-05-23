@@ -1965,9 +1965,50 @@ void LB::b_marker(int nargs) {
 }
 
 void LB::b_move(int nargs) {
-	g_lingo->printSTUBWithArglist("b_move", nargs);
+	Datum src, dest;
 
-	g_lingo->dropStack(nargs);
+	if (nargs == 1) {
+		Datum d;
+		d.type = CASTREF;
+		d.u.cast = new CastMemberID();
+		d.u.cast->member = (int) g_director->getCurrentMovie()->getCast()->_castArrayStart;
+		g_lingo->push(d);
+		b_findEmpty(1);
+		dest = g_lingo->pop();
+		src = g_lingo->pop();
+	} else if (nargs == 2) {
+		dest = g_lingo->pop();
+		src = g_lingo->pop();
+	}
+
+	//Convert dest datum to type CASTREF if it is INT
+	//As CastMemberID constructor changes all the values, datum_int is used to preserve int
+	if (dest.type == INT) {
+		dest.type = CASTREF;
+		int datum_int = dest.u.i;
+		dest.u.cast = new CastMemberID();
+		dest.u.cast->member = datum_int;
+	}
+
+	//No need to move if src and dest are same
+	if (src.u.cast->member == dest.u.cast->member) {
+		return;
+	}
+
+	if (!g_director->getCurrentMovie()->getCast()->_loadedCast->contains(src.u.cast->member)) {
+		warning("b_move: Source CastMember doesn't exist");
+		return;
+	}
+
+	if (src.u.cast->castLib != 0) {
+		warning("b_move: wrong castLib '%d' in src CastMemberID", src.u.cast->castLib);
+	}
+
+	CastMember *toMove = g_director->getCurrentMovie()->getCast()->_loadedCast->getVal(src.u.cast->member);
+	CastMember *toReplace = new CastMember(*toMove);
+	toReplace->_type = kCastTypeNull;
+	g_director->getCurrentMovie()->getCast()->_loadedCast->setVal(dest.u.cast->member, toMove);
+	g_director->getCurrentMovie()->getCast()->_loadedCast->setVal(src.u.cast->member, toReplace);
 }
 
 void LB::b_moveableSprite(int nargs) {
