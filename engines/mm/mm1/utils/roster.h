@@ -108,6 +108,11 @@ struct Roster {
 	 * Returns true if the roster is empty
 	 */
 	bool empty() const;
+
+	/**
+	 * Returns true if the roster is full
+	 */
+	bool full() const;
 };
 
 } // namespace MM1

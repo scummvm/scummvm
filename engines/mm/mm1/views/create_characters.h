@@ -19,30 +19,48 @@
  *
  */
 
-#ifndef MM1_VIEWS_DIALOGS_H
-#define MM1_VIEWS_DIALOGS_H
+#ifndef MM1_VIEWS_CREATE_CHARACTERS_H
+#define MM1_VIEWS_CREATE_CHARACTERS_H
 
-#include "mm/mm1/events.h"
-#include "mm/mm1/views/are_you_ready.h"
-#include "mm/mm1/views/create_characters.h"
-#include "mm/mm1/views/main_menu.h"
-#include "mm/mm1/views/title.h"
-#include "mm/mm1/views/view_characters.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
-struct Dialogs {
+class CreateCharacters : public TextView {
+	enum State {
+		SELECT_CLASS, SELECT_RACE
+	};
+	enum Attribute {
+		INTELLECT, MIGHT, PERSONALITY, ENDURANCE, SPEED,
+		ACCURACY, LUCK
+	};
+	struct NewCharacter {
+		uint8 _attribs[LUCK + 1] = { 0 };
+		bool _classesAllowed[7] = { false };
+		void clear();
+	};
+
 private:
-	Views::AreYouReady _areYouReady;
-	Views::CreateCharacters _createCharacters;
-	Views::MainMenu _mainMenu;
-	Views::Title _title;
-	Views::ViewCharacters _viewCharacters;
-	Views::ViewCharacter _viewCharacter;
+	State _state = SELECT_CLASS;
+	NewCharacter _newChar;
+
+	/**
+	 * Displays the new character attributes
+	 */
+	void printAttributes();
+
+	/**
+	 * Display the available classes
+	 */
+	void printClasses();
 public:
-	Dialogs() {}
+	CreateCharacters() : TextView("CreateCharacters") {}
+	virtual ~CreateCharacters() {}
+
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Views

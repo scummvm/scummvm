@@ -1,7 +1,13 @@
 dialogs:
-	ready:
-		1: "  ARE YOU READY? "
-		2: "THEN PRESS ENTER!"
+	create_characters:
+		title: "CREATE NEW CHARACTERS"
+		intellect: "INTELLECT...="
+		might: "MIGHT.......="
+		personality: "PERSONALITY.="
+		endurance: "ENDURANCE...="
+		speed: "SPEED.......=      SELECT A CLASS"
+		accuracy: "ACCURACY....=          (1-6)"
+		luck:  "LUCK........=     'ENT' TO RE-ROLL"
 	main_menu:
 		title1: "MIGHT AND MAGIC"
 		title2: "SECRET OF THE INNER SANCTUM"
@@ -12,6 +18,9 @@ dialogs:
 		option3: "'#'.......GO TO TOWN"
 		copyright1: "COPR. 1986,1987-JON VAN CANEGHEM"
 		copyright2: "ALL RIGHTS RESERVED"
+	ready:
+		1: "  ARE YOU READY? "
+		2: "THEN PRESS ENTER!"
 	view_characters:
 		title: "VIEW ALL CHARACTERS"
 		legend1: "'A'-'%c' TO VIEW A CHARACTER"
