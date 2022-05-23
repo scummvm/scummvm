@@ -658,7 +658,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 			// can do without it, using a LoopingAudioStream.
 
 			if (_heChannel[heChannel].timer)
-				_heChannel[heChannel].timer = size / nChan * samplesPerBlock / blockAlign * 1000 / rate;
+				_heChannel[heChannel].timer = (int)(((int64)size * samplesPerBlock * 1000) / ((int64)rate * blockAlign * nChan));
 
 			byte *sound = (byte *)malloc(size * 4);
 			/* On systems where it matters, malloc will return
