@@ -49,6 +49,8 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 		_playerFrameSep = _playerFrames.size();
 		_playerFrameIdx = -1;
 	} else {
+		uint32 r = 1 + _rnd->getRandomNumber(1);
+		arc->backgroundVideo = Common::String::format("c3/c35c0%ds.smk", r);
 		_playerFrameSep = 0;
 		_playerFrameIdx = -1;
 		if (arc->mode != "YS")
@@ -77,7 +79,11 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		delete _playerFrames[i];
 	}
 
+
 	if (_health <= 0) {
+		if (_arcadeMode == "YS")
+			return;
+
 		MVideo video(_deathDay[_currentActor], Common::Point(0, 0), false, true, false);
 		disableCursor();
 		runIntro(video);
@@ -356,6 +362,8 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 			return false;
 		} else if (_shoots[i].nonHostile && !secondary) {
 
+			if (checkCup(_shoots[i].name))
+				return false;
 			Common::String filename = _warningVideosDay[_shoots[i].warningVideoIdx];
 			_civiliansShoot++;
 
@@ -475,6 +483,37 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	}
 	if (s->interactionFrame == 0)
 		hitPlayer();
+}
+
+bool BoyzEngine::checkCup(const Common::String &name) {
+	if (name == "CUP1") {
+		if (_background->path == "c3/c35c01s.smk") {
+			MVideo video("c3/c35c07s.smk", Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+			_skipLevel = true;
+		} else {
+			MVideo video("c3/c35c06s.smk", Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+			_health = 0;
+		}
+		return true;
+	} else if (name == "CUP2") {
+		if (_background->path == "c3/c35c02s.smk") {
+			MVideo video("c3/c35c07s.smk", Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+			_skipLevel = true;
+		} else {
+			MVideo video("c3/c35c06s.smk", Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+			_health = 0;
+		}
+		return true;
+	}
+	return false;
 }
 
 bool BoyzEngine::clickedSecondaryShoot(const Common::Point &mousePos) {

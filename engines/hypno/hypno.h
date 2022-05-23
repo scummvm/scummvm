@@ -606,6 +606,7 @@ public:
 	Graphics::Surface _crosshairsTarget[8];
 
 	void updateFromScript();
+	bool checkCup(const Common::String &name);
 
 	Script _currentScript;
 	ScriptMode _currentMode;

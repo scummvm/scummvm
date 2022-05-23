@@ -152,12 +152,14 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c32.mi_", "<select_c3>", "<retry_menu>", "");
 	loadArcadeLevel("c33.mi_", "<select_c3>", "<retry_menu>", "");
 	loadArcadeLevel("c34.mi_", "<select_c3>", "<retry_menu>", "");
-	loadArcadeLevel("c35.mi_", "<select_ho>", "<retry_menu>", "");
+	loadArcadeLevel("c35.mi_", "<select_ho>", "<select_c3>", "");
+	ArcadeShooting *ar = (ArcadeShooting *) _levels["c35.mi_"];
+	ar->backgroundVideo = ""; // This will be manually populated
 
 	loadArcadeLevel("c351.mi_", "<select_ho>", "<retry_menu>", "");
 	loadArcadeLevel("c352.mi_", "<select_ho>", "<retry_menu>", "");
 	loadArcadeLevel("c353.mi_", "<select_ho>", "<retry_menu>", "");
-	ArcadeShooting *ar = (ArcadeShooting *) _levels["c353.mi_"];
+	ar = (ArcadeShooting *) _levels["c353.mi_"];
 	ar->id = 353; // This corrects a mistake in the game scripts
 	loadArcadeLevel("c354.mi_", "<select_ho>", "<retry_menu>", "");
 	loadArcadeLevel("c355.mi_", "<select_ho>", "<retry_menu>", "");
