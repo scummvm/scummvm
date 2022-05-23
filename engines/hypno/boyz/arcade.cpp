@@ -78,6 +78,13 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 
 	_previousHealth = _health;
 	_sceneState[Common::String::format("GS_SEQ_%d", _levelId)] = 1;
+
+	if (_sceneState["GS_SEQ_351"] && _sceneState["GS_SEQ_352"] &&\
+	    _sceneState["GS_SEQ_353"] && _sceneState["GS_SEQ_354"] &&\
+		_sceneState["GS_SEQ_355"]) {
+		_sceneState["GS_HOTELDONE"] = 1;
+		_nextLevel = "<select_c3>";
+	}
 }
 
 void BoyzEngine::pressedKey(const int keycode) {

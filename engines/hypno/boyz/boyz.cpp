@@ -98,6 +98,20 @@ HOTS /BBOX= 190 4 292 76\n\
 SOND tollamb1.raw  22K\n\
 END\n";
 
+static const char *selectHo = "\
+MENU preload\\slct_ho.smk\n\
+HOTS /BBOX= 19  18  85  199\n\
+SOND tien1bb.raw 22K\n\
+HOTS /BBOX= 87  36  143 199\n\
+SOND lan1.raw  22K\n\
+HOTS /BBOX= 144 36  193 199\n\
+SOND mai1.raw 22K\n\
+HOTS /BBOX= 195 55  249 199\n\
+SOND hoa1b.raw 22K\n\
+HOTS /BBOX= 250 32  301 199\n\
+SOND van2.raw 22K\n\
+END\n";
+
 void BoyzEngine::loadAssets() {
 	LibFile *missions = loadLib("", "preload/missions.lib", true);
 	Common::ArchiveMemberList files;
@@ -138,11 +152,16 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c32.mi_", "<select_c3>", "<retry_menu>", "");
 	loadArcadeLevel("c33.mi_", "<select_c3>", "<retry_menu>", "");
 	loadArcadeLevel("c34.mi_", "<select_c3>", "<retry_menu>", "");
-	loadArcadeLevel("c35.mi_", "???", "<retry_menu>", "");
-	loadArcadeLevel("c352.mi_", "???", "<retry_menu>", "");
-	loadArcadeLevel("c353.mi_", "???", "<retry_menu>", "");
-	loadArcadeLevel("c354.mi_", "???", "<retry_menu>", "");
-	loadArcadeLevel("c355.mi_", "???", "<retry_menu>", "");
+	loadArcadeLevel("c35.mi_", "<select_ho>", "<retry_menu>", "");
+
+	loadArcadeLevel("c351.mi_", "<select_ho>", "<retry_menu>", "");
+	loadArcadeLevel("c352.mi_", "<select_ho>", "<retry_menu>", "");
+	loadArcadeLevel("c353.mi_", "<select_ho>", "<retry_menu>", "");
+	ArcadeShooting *ar = (ArcadeShooting *) _levels["c353.mi_"];
+	ar->id = 353; // This corrects a mistake in the game scripts
+	loadArcadeLevel("c354.mi_", "<select_ho>", "<retry_menu>", "");
+	loadArcadeLevel("c355.mi_", "<select_ho>", "<retry_menu>", "");
+
 	loadArcadeLevel("c36.mi_", "c41.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c41.mi_", "c42.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c42.mi_", "c51.mi_", "<retry_menu>", "");
@@ -246,8 +265,48 @@ void BoyzEngine::loadAssets() {
 	hl = new Highlight("GS_WONSHELLGAME");
 	sc->hots[5].actions.push_back(hl);
 	gl = new Global("GS_WONSHELLGAME", "NCHECK");
+	gl = new Global("GS_HOTELDONE", "NCHECK");
 	sc->hots[5].actions.push_back(gl);
 	cl = new ChangeLevel("c35.mi_");
+	sc->hots[5].actions.push_back(cl);
+
+	loadSceneLevel(selectHo, "<select_ho>", "", "");
+	sc = (Scene *) _levels["<select_ho>"];
+	sc->resolution = "320x200";
+
+	hl = new Highlight("GS_SEQ_351");
+	sc->hots[1].actions.push_back(hl);
+	gl = new Global("GS_SEQ_351", "NCHECK");
+	sc->hots[1].actions.push_back(gl);
+	cl = new ChangeLevel("c351.mi_");
+	sc->hots[1].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_352");
+	sc->hots[2].actions.push_back(hl);
+	gl = new Global("GS_SEQ_352", "NCHECK");
+	sc->hots[2].actions.push_back(gl);
+	cl = new ChangeLevel("c352.mi_");
+	sc->hots[2].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_353");
+	sc->hots[3].actions.push_back(hl);
+	gl = new Global("GS_SEQ_353", "NCHECK");
+	sc->hots[3].actions.push_back(gl);
+	cl = new ChangeLevel("c353.mi_");
+	sc->hots[3].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_354");
+	sc->hots[4].actions.push_back(hl);
+	gl = new Global("GS_SEQ_354", "NCHECK");
+	sc->hots[4].actions.push_back(gl);
+	cl = new ChangeLevel("c354.mi_");
+	sc->hots[4].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_355");
+	sc->hots[5].actions.push_back(hl);
+	gl = new Global("GS_SEQ_355", "NCHECK");
+	sc->hots[5].actions.push_back(gl);
+	cl = new ChangeLevel("c355.mi_");
 	sc->hots[5].actions.push_back(cl);
 
 	loadLib("sound/", "misc/sound.lib", true);
