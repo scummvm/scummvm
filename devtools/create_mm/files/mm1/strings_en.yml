@@ -21,6 +21,7 @@ dialogs:
 		rename: "(CTRL)-'N' RE-NAME CHARACTER"
 		delete: "(CTRL)-'D' DELETE CHARACTER"
 		are_you_sure: "    ARE YOU SURE (Y/N)?          "
+		name: "NAME: "
 	misc:
 		go_back: "'ESC' TO GO BACK"
 stats:

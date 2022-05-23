@@ -65,6 +65,7 @@ public:
 class ViewCharacter : public CharacterStats {
 	enum ViewState { DISPLAY = 0, RENAME = 1, DELETE = 2 };
 	ViewState _state = DISPLAY;
+	Common::String _newName;
 public:
 	ViewCharacter() : CharacterStats("ViewCharacter") {}
 	virtual ~ViewCharacter() {}
