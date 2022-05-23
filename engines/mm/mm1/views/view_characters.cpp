@@ -35,6 +35,12 @@ void ViewCharacters::draw() {
 	int lineNum = 0;
 	_charIndexes.clear();
 
+	if (g_globals->_roster.empty()) {
+		writeString(8, 5, STRING["dialogs.view_characters.none"]);
+		escToGoBack();
+		return;
+	}
+
 	// Loop to print characters
 	for (int charNum = 0; charNum < 18; ++charNum) {
 		if (roster._nums[charNum]) {
@@ -72,8 +78,8 @@ bool ViewCharacters::msgKeypress(const KeypressMessage &msg) {
 	} else if (msg.keycode >= Common::KEYCODE_a &&
 		msg.keycode <= (Common::KEYCODE_a + (int)_charIndexes.size() - 1)) {
 		// Character selected
-		g_globals->_rosterEntry = &g_globals->_roster[
-			msg.keycode - Common::KEYCODE_a];
+		uint charIndex = _charIndexes[msg.keycode - Common::KEYCODE_a];
+		g_globals->_rosterEntry = &g_globals->_roster[charIndex];
 		addView("ViewCharacter");
 	}
 
@@ -254,14 +260,60 @@ void ViewCharacter::draw() {
 	scr->clear();
 	printStats();
 
-	writeString(6, 21, STRING["dialogs.view_character.rename"]);
-	writeString(6, 22, STRING["dialogs.view_character.delete"]);
-	escToGoBack();
+	switch (_state) {
+	case DISPLAY:
+		writeString(6, 21, STRING["dialogs.view_character.rename"]);
+		writeString(6, 22, STRING["dialogs.view_character.delete"]);
+		escToGoBack();
+		break;
+
+	case RENAME:
+		break;
+
+	case DELETE:
+		writeString(6, 21, STRING["dialogs.view_character.are_you_sure"]);
+		break;
+	}
 }
 
 bool ViewCharacter::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		close();
+		if (_state != DISPLAY) {
+			redraw();
+		} else {
+			close();
+		}
+
+		_state = DISPLAY;
+		return true;
+	}
+
+	switch (_state) {
+	case DISPLAY:
+		if ((msg.flags & Common::KBD_CTRL) && msg.keycode == Common::KEYCODE_n) {
+			_state = RENAME;
+			redraw();
+		} else if ((msg.flags & Common::KBD_CTRL) && msg.keycode == Common::KEYCODE_d) {
+			_state = DELETE;
+			redraw();
+		}
+		return true;
+
+	case RENAME:
+		break;
+
+	case DELETE:
+		if (msg.keycode == Common::KEYCODE_y) {
+			// Removes the character and returns to View All Characters
+			g_globals->_roster.remove(g_globals->_rosterEntry);
+			close();
+		} else {
+			// Any other keypress returns to display mode
+			redraw();
+		}
+
+		_state = DISPLAY;
+		return true;
 	}
 
 	return false;

@@ -29,6 +29,9 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
+/**
+ * Dialog for View All Characters
+ */
 class ViewCharacters : public TextView {
 private:
 	Common::Array<uint> _charIndexes;
@@ -40,6 +43,9 @@ public:
 	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
+/**
+ * Base class for showing character information
+ */
 class CharacterStats : public TextView {
 protected:
 	void printStats();
@@ -52,7 +58,13 @@ public:
 	~CharacterStats() {}
 };
 
+/**
+ * Dialog for showing the stats for a single character,
+ * from the View All Characters dialog
+ */
 class ViewCharacter : public CharacterStats {
+	enum ViewState { DISPLAY = 0, RENAME = 1, DELETE = 2 };
+	ViewState _state = DISPLAY;
 public:
 	ViewCharacter() : CharacterStats("ViewCharacter") {}
 	virtual ~ViewCharacter() {}
