@@ -584,6 +584,21 @@ Common::Error BoyzEngine::saveGameStream(Common::WriteStream *stream, bool isAut
 	stream->writeUint32LE(_score);
 
 	stream->writeUint32LE(_lastLevel);
+
+	stream->writeUint32LE(_sceneState["GS_C5MAP"]);
+	stream->writeUint32LE(_sceneState["GS_WONSHELLGAME"]);
+	stream->writeUint32LE(_sceneState["GS_C36_READY"]);
+	stream->writeUint32LE(_sceneState["GS_MINEMAP"]);
+	stream->writeUint32LE(_sceneState["GS_MINEMAP_VIEWED"]);
+	stream->writeUint32LE(_sceneState["GS_HOTELDONE"]);
+
+	stream->writeUint32LE(_sceneState["GS_SEQ_31"]);
+	stream->writeUint32LE(_sceneState["GS_SEQ_32"]);
+	stream->writeUint32LE(_sceneState["GS_SEQ_33"]);
+	stream->writeUint32LE(_sceneState["GS_SEQ_34"]);
+	stream->writeUint32LE(_sceneState["GS_SEQ_35"]);
+	stream->writeUint32LE(_sceneState["GS_SEQ_36"]);
+
 	return Common::kNoError;
 }
 
@@ -594,6 +609,19 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_previousHealth = stream->readUint32LE();
 	_score = stream->readUint32LE();
 	_lastLevel = stream->readUint32LE();
+
+	_sceneState["GS_C5MAP"] = stream->readUint32LE();
+	_sceneState["GS_WONSHELLGAME"] = stream->readUint32LE();
+	_sceneState["GS_C36_READY"] = stream->readUint32LE();
+	_sceneState["GS_MINEMAP"] = stream->readUint32LE();
+	_sceneState["GS_MINEMAP_VIEWED"] = stream->readUint32LE();
+	_sceneState["GS_HOTELDONE"] = stream->readUint32LE();
+
+	_sceneState["GS_SEQ_31"] = stream->readUint32LE();
+	_sceneState["GS_SEQ_32"] = stream->readUint32LE();
+	_sceneState["GS_SEQ_33"] = stream->readUint32LE();
+	_sceneState["GS_SEQ_34"] = stream->readUint32LE();
+	_sceneState["GS_SEQ_35"] = stream->readUint32LE();
 
 	_nextLevel = Common::String::format("c%d.mi_", _ids[_lastLevel]);
 	return Common::kNoError;

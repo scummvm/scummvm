@@ -41,6 +41,7 @@ void BoyzEngine::runCode(Code *code) {
 }
 
 void BoyzEngine::runMainMenu(Code *code) {
+	resetSceneState();
 	Common::Event event;
 	byte *palette;
 	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 0, &palette);
