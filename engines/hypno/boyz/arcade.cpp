@@ -30,22 +30,30 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_checkpoint = _currentLevel;
 	if (!_name.empty()) // if name is name, then we are testing some level
 		saveProfile(_name, int(arc->id));
-	assert(!arc->player.empty());
-	_playerFrames = decodeFrames(arc->player);
-	_playerFrameSep = 0;
 
-	Common::Rect healthBarBox(0, 3, 107, 18);
-	Common::Rect ammoBarBox(0, 20, 103, 34);
-	Common::Rect portraitBox(0, 40, 57, 94);
+	if (arc->mode == "YM") {
+		assert(!arc->player.empty());
+		_playerFrames = decodeFrames(arc->player);
+		_playerFrameSep = 0;
 
-	for (int i = 0; i < int(_playerFrames.size()); i++) {
-		_healthBar[i+1] = _playerFrames[i]->getSubArea(healthBarBox);
-		_ammoBar[i+1] = _playerFrames[i]->getSubArea(ammoBarBox);
-		_portrait[i+1] = _playerFrames[i]->getSubArea(portraitBox);
+		Common::Rect healthBarBox(0, 3, 107, 18);
+		Common::Rect ammoBarBox(0, 20, 103, 34);
+		Common::Rect portraitBox(0, 40, 57, 94);
+
+		for (int i = 0; i < int(_playerFrames.size()); i++) {
+			_healthBar[i+1] = _playerFrames[i]->getSubArea(healthBarBox);
+			_ammoBar[i+1] = _playerFrames[i]->getSubArea(ammoBarBox);
+			_portrait[i+1] = _playerFrames[i]->getSubArea(portraitBox);
+		}
+
+		_playerFrameSep = _playerFrames.size();
+		_playerFrameIdx = -1;
+	} else {
+		_playerFrameSep = 0;
+		_playerFrameIdx = -1;
+		if (arc->mode != "YS")
+			error("Invalid mode: %s", arc->mode.c_str());
 	}
-
-	_playerFrameSep = _playerFrames.size();
-	_playerFrameIdx = -1;
 
 	if (!arc->beforeVideo.empty()) {
 		MVideo video(arc->beforeVideo, Common::Point(0, 0), false, true, false);
@@ -140,6 +148,8 @@ void BoyzEngine::drawPlayer() {
 
 void BoyzEngine::drawHealth() {
 	updateFromScript();
+	if(_arcadeMode == "YS")
+		return;
 
 	float w = float(_health) / float(_maxHealth);
 	Common::Rect healthBarBox(0, 0, int((_healthBar[_currentActor].w - 3) * w), _healthBar[_currentActor].h / 2);
@@ -157,6 +167,8 @@ void BoyzEngine::drawHealth() {
 
 void BoyzEngine::drawAmmo() {
 	updateFromScript();
+	if(_arcadeMode == "YS")
+		return;
 
 	float w = float(_ammoBar[_currentActor].w) / float(_weaponMaxAmmo[_currentWeapon]);
 
@@ -172,6 +184,9 @@ void BoyzEngine::drawAmmo() {
 }
 
 void BoyzEngine::hitPlayer() {
+	if(_arcadeMode == "YS")
+		return; // Should never happen?
+
 	uint32 c = kHypnoColorRed; // red
 	_compositeSurface->fillRect(Common::Rect(0, 0, _screenW, _screenH), c);
 	drawScreen();
@@ -267,7 +282,7 @@ int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 
 	int i = 0;
 	for (Shoots::iterator it = _shoots.begin(); it != _shoots.end(); ++it) {
-		if (_background->decoder->getCurFrame() > int(it->bodyFrames.back().start)) {
+		if (!it->bodyFrames.empty() && _background->decoder->getCurFrame() > int(it->bodyFrames.back().start)) {
 			i++;
 			continue;  // This shoot is old!
 		}
@@ -287,7 +302,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 		return false;
 	}
 
-	if (!secondary) {
+	if (!secondary && _currentWeapon > 0) {
 		if (_ammo == 0) {
 			if (!arc->noAmmoSound.empty())
 				playSound(_soundPath + arc->noAmmoSound, 1, arc->noAmmoSoundRate);

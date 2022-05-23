@@ -361,7 +361,20 @@ void BoyzEngine::loadAssets() {
 
 	Common::Rect cursorBox;
 
-	// Pistol?
+	// No weapon, same as pistol
+	cursorBox = Common::Rect(62, 6, 83, 26);
+	_crosshairsInactive[0].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsInactive[0].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(62, 38, 83, 58);
+	_crosshairsActive[0].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsActive[0].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(62, 70, 83, 90);
+	_crosshairsTarget[0].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsTarget[0].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	// Pistol
 	cursorBox = Common::Rect(62, 6, 83, 26);
 	_crosshairsInactive[1].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsInactive[1].copyRectToSurface(*targets, 0, 0, cursorBox);
