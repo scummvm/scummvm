@@ -1678,16 +1678,6 @@ void Sound::playVoice(int index, int actor) {
 	return;
 }
 
-//void Sound::setMusicVolume(int volume) {
-//	_musicVolume = volume;
-//	if (_song1.isPlaying()) {
-//		_song1.setVolume(volume);
-//	}
-//	if (_song2.isPlaying()) {
-//		_song2.setVolume(volume);
-//	}
-//}
-
 void Sound::startMusic(SoundType song) {
 	g_hdb->_menu->saveSong(song);
 
