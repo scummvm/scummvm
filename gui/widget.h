@@ -225,6 +225,8 @@ class ButtonWidget : public StaticTextWidget, public CommandSender {
 protected:
 	uint32	_cmd;
 	uint8	_hotkey;
+	uint8	_highresHotkey;
+	uint8	_lowresHotkey;
 	Common::U32String _lowresLabel;
 public:
 	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
