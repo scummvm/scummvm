@@ -349,10 +349,16 @@ void StaticTextWidget::setFont(ThemeEngine::FontStyle font, Common::Language lan
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey, const Common::U32String &lowresLabel)
 	: StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter, tooltip), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey), _duringPress(false) {
-	_lowresLabel = lowresLabel;
+	_lowresLabel = cleanupHotkey(lowresLabel);
 
-	if (hotkey == 0)
-		_hotkey = parseHotkey(label);
+	if (hotkey == 0) {
+		_highresHotkey = parseHotkey(label);
+		_hotkey = _highresHotkey;
+		_lowresHotkey = parseHotkey(lowresLabel);
+	} else {
+		_highresHotkey = hotkey;
+		_lowresHotkey = hotkey;
+	}
 
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
@@ -361,10 +367,16 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Co
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey, const Common::U32String &lowresLabel)
 	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey), _duringPress(false) {
-	_lowresLabel = lowresLabel;
+	_lowresLabel = cleanupHotkey(lowresLabel);
 
-	if (hotkey == 0)
-		_hotkey = parseHotkey(label);
+	if (hotkey == 0) {
+		_highresHotkey = parseHotkey(label);
+		_hotkey = _highresHotkey;
+		_lowresHotkey = parseHotkey(lowresLabel);
+	} else {
+		_highresHotkey = hotkey;
+		_lowresHotkey = hotkey;
+	}
 
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
@@ -403,13 +415,14 @@ void ButtonWidget::setLabel(const Common::String &label) {
 }
 
 void ButtonWidget::setLowresLabel(const Common::U32String &label) {
-	_lowresLabel = label;
+	_lowresLabel = cleanupHotkey(label);
 }
 
 const Common::U32String &ButtonWidget::getLabel() {
 	bool useLowres = false;
 	if (!_lowresLabel.empty())
-		useLowres = g_gui.theme()->getStringWidth(_label) > _w;
+		useLowres = g_system->getOverlayWidth() <= 320;
+	_hotkey = useLowres ? _lowresHotkey : _highresHotkey;
 	return useLowres ? _lowresLabel : _label;
 }
 
