@@ -268,6 +268,9 @@ void ViewCharacter::draw() {
 		break;
 
 	case RENAME:
+		writeString(6, 21, STRING["dialogs.view_character.name"]);
+		writeString(_newName);
+		writeChar('_');
 		break;
 
 	case DELETE:
@@ -292,14 +295,28 @@ bool ViewCharacter::msgKeypress(const KeypressMessage &msg) {
 	case DISPLAY:
 		if ((msg.flags & Common::KBD_CTRL) && msg.keycode == Common::KEYCODE_n) {
 			_state = RENAME;
+			_newName = "";
 			redraw();
 		} else if ((msg.flags & Common::KBD_CTRL) && msg.keycode == Common::KEYCODE_d) {
 			_state = DELETE;
 			redraw();
 		}
-		return true;
+		break;
 
 	case RENAME:
+		if (msg.ascii >= 32 && msg.ascii <= 127) {
+			_newName += toupper(msg.ascii);
+			redraw();
+		}
+		if (msg.keycode == Common::KEYCODE_RETURN || _newName.size() == 15) {
+			strncpy(g_globals->_rosterEntry->_name, _newName.c_str(), 16);
+			_state = DISPLAY;
+			redraw();
+		} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&
+				!_newName.empty()) {
+			_newName.deleteLastChar();
+			redraw();
+		}
 		break;
 
 	case DELETE:
@@ -313,10 +330,10 @@ bool ViewCharacter::msgKeypress(const KeypressMessage &msg) {
 		}
 
 		_state = DISPLAY;
-		return true;
+		break;
 	}
 
-	return false;
+	return true;
 }
 
 } // namespace Views
