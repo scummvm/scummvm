@@ -1410,7 +1410,7 @@ static void calcMD5Mac(Common::Path &filePath, int32 length) {
 	// We need to split the path into the file name and a SearchSet
 	Common::SearchSet dir;
 	char nativeSeparator = '/';
-#if WIN32
+#ifdef WIN32
 	nativeSeparator = '\\';
 #endif
 	Common::FSNode dirNode(filePath.getParent().toString(nativeSeparator));
@@ -1755,7 +1755,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		Common::String filename = settings.getValOrDefault("md5-path", "scummvm");
 		// Assume '/' separator except on Windows if the path contain at least one `\`
 		char sep = '/';
-#if WIN32
+#ifdef WIN32
 		if (filename.contains('\\'))
 			sep = '\\';
 #endif
