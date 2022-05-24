@@ -8,6 +8,13 @@ dialogs:
 		speed: "SPEED.......=      SELECT A CLASS"
 		accuracy: "ACCURACY....=          (1-6)"
 		luck:  "LUCK........=     'ENT' TO RE-ROLL"
+		class: "CLASS.="
+		race: "RACE..="
+		select_race: "SELECT A RACE"
+		select_alignment: "SELECT ALIGNMENT"
+		select_sex: "SELECT A SEX"
+		start_over: "'ESC' START OVER"
+		name: "NAME:"
 	main_menu:
 		title1: "MIGHT AND MAGIC"
 		title2: "SECRET OF THE INNER SANCTUM"

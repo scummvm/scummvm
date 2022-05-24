@@ -54,6 +54,9 @@ public:
 	int getRandomNumber(int minNumber, int maxNumber) {
 		return _randomSource.getRandomNumber(maxNumber - minNumber + 1) + minNumber;
 	}
+	int getRandomNumber(int maxNumber) {
+		return _randomSource.getRandomNumber(maxNumber);
+	}
 };
 
 extern MM1Engine *g_engine;

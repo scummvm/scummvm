@@ -22,6 +22,7 @@
 #ifndef MM1_VIEWS_CREATE_CHARACTERS_H
 #define MM1_VIEWS_CREATE_CHARACTERS_H
 
+#include "mm/mm1/utils/roster.h"
 #include "mm/mm1/views/text_view.h"
 
 namespace MM {
@@ -30,16 +31,26 @@ namespace Views {
 
 class CreateCharacters : public TextView {
 	enum State {
-		SELECT_CLASS, SELECT_RACE
+		SELECT_CLASS, SELECT_RACE, SELECT_ALIGNMENT,
+		SELECT_SEX, SELECT_NAME, SAVE_PROMPT
 	};
 	enum Attribute {
 		INTELLECT, MIGHT, PERSONALITY, ENDURANCE, SPEED,
 		ACCURACY, LUCK
 	};
 	struct NewCharacter {
-		uint8 _attribs[LUCK + 1] = { 0 };
+		uint8 _attribs1[LUCK + 1] = { 0 };
+		uint8 _attribs2[LUCK + 1] = { 0 };
+		CharacterClass _class = KNIGHT;
+		Race _race = HUMAN;
+		Alignment _alignment = GOOD;
+		Sex _sex = MALE;
+		Common::String _name;
+
 		bool _classesAllowed[7] = { false };
+
 		void clear();
+		void reroll();
 	};
 
 private:
@@ -55,10 +66,35 @@ private:
 	 * Display the available classes
 	 */
 	void printClasses();
+
+	/**
+	 * Display the races
+	 */
+	void printRaces();
+
+	/**
+	 * Display the alignments
+	 */
+	void printAlignments();
+
+	/**
+	 * Display the sexes
+	 */
+	void printSexes();
+
+	/**
+	 * Display the selection summaries and either name entry
+	 * or prompt to save character
+	 */
+	void printSummary(bool promptToSave);
 public:
 	CreateCharacters() : TextView("CreateCharacters") {}
 	virtual ~CreateCharacters() {}
 
+	bool msgFocus(const FocusMessage &msg) {
+		_newChar.reroll();
+		return true;
+	}
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 };
