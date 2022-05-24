@@ -2202,7 +2202,7 @@ void GlobalOptionsDialog::build() {
 
 #if !defined(__DC__)
 	const auto setPath = 
-	[&](GUI::StaticTextWidget *const widget, const Common::String& pathType, const Common::U32String &defaultLabel) {
+	[&](GUI::StaticTextWidget *const widget, const Common::String &pathType, const Common::U32String &defaultLabel) {
 		Common::String path(ConfMan.get(pathType)); 
 		if (ConfMan.isKeyTemporary(pathType)) {
 			widget->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
@@ -2330,7 +2330,10 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 	Common::U32String confPath = ConfMan.getCustomConfigFileName();
 	if (confPath.empty())
 		confPath = g_system->getDefaultConfigFileName();
-	new StaticTextWidget(boss, prefix + "ConfigPath", _("ScummVM config path: ") + confPath, confPath);
+	StaticTextWidget* configPathWidget = new StaticTextWidget(boss, prefix + "ConfigPath", _("ScummVM config path: ") + confPath, confPath);
+	if (ConfMan.isKeyTemporary("config"))
+		configPathWidget->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+ 
 
 	Common::U32String browserPath = _("<default>");
 	if (ConfMan.hasKey("browser_lastpath"))
@@ -2693,7 +2696,7 @@ void GlobalOptionsDialog::apply() {
 	bool isRebuildNeeded = false;
 
 	const auto changePath = 
-	[&](GUI::StaticTextWidget *const widget, const Common::String& pathType, const Common::U32String &defaultLabel){
+	[&](GUI::StaticTextWidget *const widget, const Common::String &pathType, const Common::U32String &defaultLabel) {
 		Common::U32String label(widget->getLabel());
 		if (label != ConfMan.get(pathType)) {
 			widget->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 

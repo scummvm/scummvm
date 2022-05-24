@@ -1058,7 +1058,7 @@ void ThemeEngine::drawLineSeparator(const Common::Rect &r) {
 }
 
 void ThemeEngine::drawCheckbox(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked, 
-							   WidgetStateInfo state, bool override, bool rtl) {
+							   WidgetStateInfo state, bool overrideText, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1088,7 +1088,7 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, int spacing, const Common:
 	}
 
 	if (r2.right > r2.left) {
-		TextColor color = override ? GUI::TextColor::kTextColorOverride : getTextColor(dd); 
+		TextColor color = overrideText ? GUI::TextColor::kTextColorOverride : getTextColor(dd); 
 		drawDDText(getTextData(dd), color, r2, str, true, false, convertTextAlignH(_widgets[dd]->_textAlignH, rtl),
 		           _widgets[dd]->_textAlignV);
 	}
@@ -1359,69 +1359,72 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::U32String &str, 
 	case kFontColorNormal:
 		if (inverted) {
 			colorId = kTextColorNormalInverted;
-		} else {
-			switch (state) {
-			case kStateDisabled:
-				colorId = kTextColorNormalDisabled;
-				break;
+			break; 
+		}
 
-			case kStateHighlight:
-				colorId = kTextColorNormalHover;
-				break;
+		switch (state) {
+		case kStateDisabled:
+			colorId = kTextColorNormalDisabled;
+			break;
 
-			default:
-				// fallthrough intended
-			case kStateEnabled:
-			case kStatePressed:
-				colorId = kTextColorNormal;
-				break;
-			}
+		case kStateHighlight:
+			colorId = kTextColorNormalHover;
+			break;
+
+		default:
+			// fallthrough intended
+		case kStateEnabled:
+		case kStatePressed:
+			colorId = kTextColorNormal;
+			break;
 		}
 		break;
 
 	case kFontColorAlternate:
 		if (inverted) {
 			colorId = kTextColorAlternativeInverted;
-		} else {
-			switch (state) {
-			case kStateDisabled:
-				colorId = kTextColorAlternativeDisabled;
-				break;
+			break; 
+		}
 
-			case kStateHighlight:
-				colorId = kTextColorAlternativeHover;
-				break;
+		switch (state) {
+		case kStateDisabled:
+			colorId = kTextColorAlternativeDisabled;
+			break;
 
-			default:
-				// fallthrough intended
-			case kStateEnabled:
-			case kStatePressed:
-				colorId = kTextColorAlternative;
-				break;
-			}
+		case kStateHighlight:
+			colorId = kTextColorAlternativeHover;
+			break;
+
+		default:
+			// fallthrough intended
+		case kStateEnabled:
+		case kStatePressed:
+			colorId = kTextColorAlternative;
+			break;
 		}
 		break;
 
 	case kFontColorOverride: 
 		if (inverted) {
 			colorId = kTextColorOverrideInverted; 
-		} else {
-			switch (state) {
-			case kStateDisabled:
-				colorId = kTextColorAlternativeDisabled;
-				break;
+			break; 
+		}
+			
+		switch (state) {
+		case kStateDisabled:
+			colorId = kTextColorAlternativeDisabled;
+			break;
 
-			case kStateHighlight:
-				colorId = kTextColorOverrideHover;
-				break;
+		case kStateHighlight:
+			colorId = kTextColorOverrideHover;
+			break;
 
-			default:
-				// fallthrough intended
-			case kStateEnabled:
-			case kStatePressed:
-				colorId = kTextColorOverride;
-				break;
-			}
+		default:
+			// fallthrough intended
+		case kStateEnabled:
+		case kStatePressed:
+			colorId = kTextColorOverride;
+			break;
 		}
 		break;
 

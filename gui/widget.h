@@ -321,7 +321,7 @@ protected:
 class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
-	bool _override; 
+	bool _overrideText; 
 	int _spacing;
 public:
 	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
@@ -335,7 +335,7 @@ public:
 	void toggleState()			{ setState(!_state); }
 	bool getState() const		{ return _state; }
 
-	void setOverride(bool override); 
+	void setOverride(bool enable); 
 	
 protected:
 	void drawWidget() override;

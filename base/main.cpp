@@ -416,7 +416,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Load the config file (possibly overridden via command line):
 	if (settings.contains("config")) {
 		ConfMan.loadConfigFile(settings["config"]);
-		settings.erase("config");
 	} else {
 		ConfMan.loadDefaultConfigFile();
 	}
