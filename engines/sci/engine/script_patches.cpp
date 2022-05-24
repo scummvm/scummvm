@@ -14112,6 +14112,179 @@ static const uint16 qfg3PatchRingRopePrize[] = {
 	PATCH_END
 };
 
+// The Laibon's hut has complex script bugs that create unintentional dead ends.
+//  After the Laibon requests a dinosaur horn from fighters and paladins, the
+//  player is unable to give the horn on subsequent visits if they have the
+//  bride's price items. Upon leaving the hut, they are unable to return.
+//
+// rm450:init sets an event number based on game state. The problem events are:
+// - Event 5: Fighters/paladins give the horn to begin initiation.
+// - Event 6: The bride's price can be paid, but fighters/paladins must have
+//            given the horn in event 5 for the Laibon to accept the price.
+//
+// The main problem is that rm450:init tests for event 6 before event 5. If the
+//  preconditions for event 6 are met then event 5 is suppressed. This is a
+//  conflict because event 6 can't be completed until event 5 has been, but the
+//  horn can only be given in event 5. More inconsistencies: some code enforces
+//  an incorrect rule that these events can only occur once, despite event 6
+//  being designed to reoccur and event 5 allowing the player to leave without
+//  giving the horn in version 1.0. Finally, the hut's event logic is out of
+//  sync between the entrance (room 420) and interior (450). The entrance blocks
+//  events from recurring even if they weren't completed and is missing a flag
+//  check, but unlike room 450 it does test the events in the correct order.
+//
+// We fix this by allowing room 450 to select event 5 (giving the horn) even if
+//  the preconditions for event 6 are met. We also allow both events to reoccur.
+//  Finally, we patch the relevant entrance logic to match the interior's.
+//  Although these patches touch a lot of logic, they only affect the game when
+//  it is in a state where the player wouldn't have been allowed to proceed with
+//  events that they've met the preconditions for. Note that these changes are
+//  broken up into smaller patches to be compatible with the many different
+//  versions of these scripts, including the NRS fan patches that GOG includes,
+//  and the comprehensive QFG3 Unofficial Update fan patches. 
+//
+// Applies to: All versions
+// Responsible methods: rm450:init, rm420:init
+// Fixes bug: #11425
+static const uint16 qfg3SignatureLaibonHutEvents1[] = {
+	0x88, SIG_MAGICDWORD,               // lsg 0188 [ johari state ]
+	      SIG_UINT16(0x0188),
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq? [ Laibon said the bride price ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchLaibonHutEvents1[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x20,                               // ge? [ Laibon said the bride price OR you've tried to pay before ]
+	PATCH_END
+};
+
+static const uint16 qfg3SignatureLaibonHutEvents2[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x06,                         // ldi 06
+	0xa3, 0x0b,                         // sal 0b [ room event = 6 ]
+	0x32,                               // jmp    [ end of cond ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchLaibonHutEvents2[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x32, PATCH_UINT16(0x0000),        // jmp [ continue evaluating room events ]
+	PATCH_END
+};
+
+static const uint16 qfg3SignatureLaibonHutEvents3[] = {
+	0x31, 0x2b,                         // bnt 2b [ next room event ]
+	SIG_ADDTOOFFSET(+7),
+	0x31, 0x22,                         // bnt 22 [ next room event ]
+	SIG_ADDTOOFFSET(+10),
+	0x31, 0x16,                         // bnt 16 [ next room event ]
+	SIG_ADDTOOFFSET(+6),
+	0x2f, SIG_ADDTOOFFSET(+1),          // bt (06, but 08 in QFG3 Unofficial Update)
+	0x88, SIG_UINT16(0x016a),           // lsg 016a [ character class ]
+	0x35, 0x03,                         // ldi 03   [ impossible value ]
+	0x1a,                               // eq?
+	0x31, 0x06,                         // bnt 06 [ always false ]
+	SIG_MAGICDWORD,
+	0x35, 0x05,                         // ldi 05
+	0xa3, 0x0b,                         // sal 0b [ room event = 5 ]
+	0x33,                               // jmp [ exit cond ] 
+	SIG_END
+};
+
+static const uint16 qfg3PatchLaibonHutEvents3[] = {
+	0x31, 0x23,                         // bnt 23 [ next room event ]
+	PATCH_ADDTOOFFSET(+7),
+	0x31, 0x1a,                         // bnt 1a [ next room event ]
+	PATCH_ADDTOOFFSET(+10),
+	0x31, 0x0e,                         // bnt 0e [ next room event ]
+	PATCH_ADDTOOFFSET(+6),
+	0x31, 0x06,                         // bnt 06
+	0x35, 0x05,                         // ldi 05
+	0xa3, 0x0b,                         // sal 0b [ room event = 5 ]
+	0x33, 0x06,                         // jmp 06 [ exit cond ] 
+	0x8a, PATCH_UINT16(0x000b),         // lsl 000b
+	0x35, 0x06,                         // ldi 06
+	0x1a,                               // eq? [ is room event 6? ]
+	0x2f,                               // bt [ exit cond ]
+	PATCH_END
+};
+
+// same as above but for the NRS script due its wide branch offsets
+static const uint16 qfg3SignatureNrsLaibonHutEvents3[] = {
+	0x30, SIG_UINT16(0x0031),           // bnt 0031 [ next room event ]
+	SIG_ADDTOOFFSET(+8),
+	0x30, SIG_UINT16(0x0026),           // bnt 0026 [ next room event ]
+	SIG_ADDTOOFFSET(+10),
+	0x30, SIG_UINT16(0x0019),           // bnt 0019 [ next room event ]
+	SIG_ADDTOOFFSET(+6),
+	0x2e, SIG_UINT16(0x0006),           // bt 0006
+	0x88, SIG_UINT16(0x016a),           // lsg 016a [ character class ]
+	0x35, 0x03,                         // ldi 03   [ impossible value ]
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0007),           // bnt 0007 [ always false ]
+	SIG_MAGICDWORD,
+	0x35, 0x05,                         // ldi 05
+	0xa3, 0x0b,                         // sal 0b [ room event = 5 ]
+	0x32,                               // jmp [ exit cond ] 
+	SIG_END
+};
+
+static const uint16 qfg3PatchNrsLaibonHutEvents3[] = {
+	0x30, PATCH_UINT16(0x0028),         // bnt 0028 [ next room event ]
+	PATCH_ADDTOOFFSET(+8),
+	0x30, PATCH_UINT16(0x001d),         // bnt 001d [ next room event ]
+	PATCH_ADDTOOFFSET(+10),
+	0x30, PATCH_UINT16(0x0010),         // bnt 0010 [ next room event ]
+	PATCH_ADDTOOFFSET(+6),
+	0x30, PATCH_UINT16(0x0007),         // bnt 0007
+	0x35, 0x05,                         // ldi 05
+	0xa3, 0x0b,                         // sal 0b [ room event = 5 ]
+	0x32, PATCH_UINT16(0x0006),         // jmp 0006 [ exit cond ] 
+	0x8a, PATCH_UINT16(0x000b),         // lsl 000b
+	0x35, 0x06,                         // ldi 06
+	0x1a,                               // eq? [ is room event 6? ]
+	0x2e,                               // bt [ exit cond ]
+	PATCH_END
+};
+
+static const uint16 qfg3SignatureLaibonHutEntrance1[] = {
+	0x88, SIG_MAGICDWORD,               // lsg 016e [ entrance event ]
+	      SIG_UINT16(0x016e),
+	0x35, 0x09,                         // ldi 09
+	0x1c,                               // ne? [ global366 != 9 (haven't entered for event 5) ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchLaibonHutEntrance1[] = {
+	0x78,                               // push1
+	0x39, 0x26,                         // pushi 26 [ flag 38 ]
+	0x45, 0x06, 0x02,                   // callb proc0_6 [ is flag 38 set? (dispelled Johari) ]
+	PATCH_END
+};
+
+static const uint16 qfg3SignatureLaibonHutEntrance2[] = {
+	0x88, SIG_MAGICDWORD,               // lsg 0188 [ johari state ]
+	      SIG_UINT16(0x0188),
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq? [ Laibon said the bride price ]
+	SIG_ADDTOOFFSET(+59),
+	0x88, SIG_UINT16(0x016e),           // lsg 016e [ entrance event ]
+	0x35, 0x0d,                         // ldi 0d
+	0x1c,                               // ne? [ global366 != 13 (haven't entered for event 6) ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchLaibonHutEntrance2[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x20,                               // ge? [ Laibon said the bride price OR you've tried to pay before ]
+	PATCH_ADDTOOFFSET(+59),
+	0x88, PATCH_UINT16(0x0188),         // lsg 0188
+	0x35, 0x04,                         // ldi 04
+	PATCH_END                           // ne? [ Haven't paid Laibon the bride price ]
+};
+
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",                     1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
@@ -14124,6 +14297,12 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   285, "missing points for telling about initiation heap",   1, qfg3SignatureMissingPoints1,         qfg3PatchMissingPoints1 },
 	{  true,   285, "missing points for telling about initiation script", 1, qfg3SignatureMissingPoints2a,	      qfg3PatchMissingPoints2 },
 	{  true,   285, "missing points for telling about initiation script", 1, qfg3SignatureMissingPoints2b,        qfg3PatchMissingPoints2 },
+	{  true,   420, "laibon hut entrance (1/2)",                          1, qfg3SignatureLaibonHutEntrance1,     qfg3PatchLaibonHutEntrance1 },
+	{  true,   420, "laibon hut entrance (2/2)",                          1, qfg3SignatureLaibonHutEntrance2,     qfg3PatchLaibonHutEntrance2 },
+	{  true,   450, "laibon hut events (1/3)",                            1, qfg3SignatureLaibonHutEvents1,       qfg3PatchLaibonHutEvents1 },
+	{  true,   450, "laibon hut events (2/3)",                            1, qfg3SignatureLaibonHutEvents2,       qfg3PatchLaibonHutEvents2 },
+	{  true,   450, "laibon hut events (3/3)",                            1, qfg3SignatureLaibonHutEvents3,       qfg3PatchLaibonHutEvents3 },
+	{  true,   450, "NRS: laibon hut events (3/3)",                       1, qfg3SignatureNrsLaibonHutEvents3,    qfg3PatchNrsLaibonHutEvents3 },
 	{  true,   460, "NRS: floating spears",                               1, qfg3SignatureNrsFloatingSpears,      qfg3PatchNrsFloatingSpears },
 	{  true,   510, "ring rope prize",                                    1, qfg3SignatureRingRopePrize,          qfg3PatchRingRopePrize },
 	{  true,   550, "combat speed throttling script",                     1, qfg3SignatureCombatSpeedThrottling1, qfg3PatchCombatSpeedThrottling1 },
