@@ -20,6 +20,12 @@ dialogs:
 		reroll: "'ENT' TO RE-ROLL"
 		start_over: "'ESC' START OVER"
 		name: "NAME:"
+	inn:
+		title: "(%c) INN OF "
+		to_view: "TO VIEW"
+		ctrl: "(CTRL)-"
+		add_remove: "ADD/REMOVE"
+		exit: "'X' EXIT INN"
 	main_menu:
 		title1: "MIGHT AND MAGIC"
 		title2: "SECRET OF THE INNER SANCTUM"
@@ -37,7 +43,6 @@ dialogs:
 		title: "VIEW ALL CHARACTERS"
 		legend1: "'A'-'%c' TO VIEW A CHARACTER"
 		legend2: "'ESC' TO GO BACK"
-		none: "NO AVAILABLE CHARACTERS"
 	view_character:
 		rename: "(CTRL)-'N' RE-NAME CHARACTER"
 		delete: "(CTRL)-'D' DELETE CHARACTER"
@@ -45,6 +50,8 @@ dialogs:
 		name: "NAME: "
 	misc:
 		go_back: "'ESC' TO GO BACK"
+		no_characters: "NO AVAILABLE CHARACTERS"
+		some_characters: "AVAILABLE CHARACTERS"
 stats:
 	none: "NONE"
 	inventory: "-----<EQUIPPED>----------<BACKPACK>----".
@@ -99,6 +106,12 @@ stats:
 		ac: "AC="
 		food: "FOOD="
 		cond: "COND="
+	towns:
+		1: "SORPIGAL"
+		2: "PORTSMITH"
+		3: "ALGARY"
+		4: "DUSK"
+		5: "ERLIQUIN"
 	items:
 		1: "CLUB"
 		2: "DAGGER"

@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	mm1/utils/strings.o \
 	mm1/views/are_you_ready.o \
 	mm1/views/create_characters.o \
+	mm1/views/inn.o \
 	mm1/views/main_menu.o \
 	mm1/views/title.o \
 	mm1/views/text_view.o \

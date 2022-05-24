@@ -29,6 +29,7 @@ namespace MM1 {
 
 #define CHARACTERS_COUNT 18
 #define INVENTORY_COUNT 6
+#define PARTY_COUNT 6
 
 enum CharacterClass {
 	KNIGHT = 1, PALADIN = 2, ARCHER = 3, CLERIC = 4,
@@ -52,6 +53,11 @@ enum Condition {
 	DEAD = 0x40, STONE = 0x20,
 	UNCONSCIOUS = 0x40, PARALYZED = 0x20, POISONED = 0x10,
 	DISEASED = 8,  SILENCED = 4, BLINDED = 2, ASLEEP = 1
+};
+
+enum Town {
+	NO_TOWN = 0, SORPIGAL = 1, PORTSMITH = 2, ALGARY = 3,
+	DUSK = 4, ERLIQUIN = 5
 };
 
 struct RosterEntry {
@@ -90,7 +96,7 @@ private:
 	Common::String rosterSaveName() const;
 public:
 	RosterEntry _items[CHARACTERS_COUNT];
-	uint8 _nums[CHARACTERS_COUNT] = { 0 };
+	Town _towns[CHARACTERS_COUNT] = { NO_TOWN };
 
 	RosterEntry &operator[](uint idx) {
 		assert(idx < CHARACTERS_COUNT);

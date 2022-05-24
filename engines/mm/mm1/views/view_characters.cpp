@@ -36,20 +36,20 @@ void ViewCharacters::draw() {
 	_charIndexes.clear();
 
 	if (g_globals->_roster.empty()) {
-		writeString(8, 5, STRING["dialogs.view_characters.none"]);
+		writeString(8, 5, STRING["dialogs.misc.no_characters"]);
 		escToGoBack();
 		return;
 	}
 
 	// Loop to print characters
 	for (int charNum = 0; charNum < 18; ++charNum) {
-		if (roster._nums[charNum]) {
+		if (roster._towns[charNum]) {
 			const RosterEntry &re = roster[charNum];
 			Common::String charName = re._name;
 			pad_string(charName, 16, '.');
 
 			Common::String level = Common::String::format("(%d)L%d",
-					roster._nums[charNum], re._level);
+					roster._towns[charNum], re._level);
 			pad_string(level, 7);
 
 			Common::String className = (re._class >= KNIGHT && re._class <= ROBBER) ?

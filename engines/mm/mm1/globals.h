@@ -35,6 +35,8 @@ public:
 	Roster _roster;
 	const Graphics::Font *_font = nullptr;
 	RosterEntry *_rosterEntry = nullptr;
+	int _startingTown = 0;
+	int8 _partyChars[PARTY_COUNT] = { -1, -1, -1, -1, -1, -1 };
 public:
 	Globals();
 	virtual ~Globals();

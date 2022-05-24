@@ -19,28 +19,29 @@
  *
  */
 
-#include "mm/mm1/views/are_you_ready.h"
-#include "mm/mm1/globals.h"
+#ifndef MM1_VIEWS_INN_H
+#define MM1_VIEWS_INN_H
+
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
-void AreYouReady::draw() {
-	drawTextBorder();
-	writeString(11, 11, STRING["dialogs.ready.1"]);
-	writeString(11, 13, STRING["dialogs.ready.2"]);
-}
+class Inn : public TextView {
+private:
+	Common::Array<uint> _charNums;
+public:
+	Inn() : TextView("Inn") {}
+	virtual ~Inn() {}
 
-bool AreYouReady::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_RETURN) {
-		replaceView("MainMenu");
-		return true;
-	}
-
-	return false;
-}
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+};
 
 } // namespace Views
 } // namespace MM1
 } // namespace MM
+
+#endif

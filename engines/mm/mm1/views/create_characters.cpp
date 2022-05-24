@@ -59,10 +59,10 @@ void CreateCharacters::NewCharacter::reroll() {
 
 void CreateCharacters::NewCharacter::save() {
 	uint i = 0;
-	while (i < CHARACTERS_COUNT && g_globals->_roster._nums[i])
+	while (i < CHARACTERS_COUNT && g_globals->_roster._towns[i])
 		++i;
 
-	g_globals->_roster._nums[i] = 1;
+	g_globals->_roster._towns[i] = SORPIGAL;
 	g_globals->_rosterEntry = &g_globals->_roster[i];
 	RosterEntry &re = *g_globals->_rosterEntry;
 	re.clear();

@@ -45,17 +45,26 @@ bool MainMenu::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
 	case Common::KEYCODE_c:
 		addView("CreateCharacters");
-		return true;
+		break;
 
 	case Common::KEYCODE_v:
 		addView("ViewCharacters");
-		return true;
+		break;
+
+	case Common::KEYCODE_1:
+	case Common::KEYCODE_2:
+	case Common::KEYCODE_3:
+	case Common::KEYCODE_4:
+	case Common::KEYCODE_5:
+		g_globals->_startingTown = msg.keycode - Common::KEYCODE_0;
+		replaceView("Inn");
+		break;
 
 	default:
 		break;
 	}
 
-	return false;
+	return true;
 }
 
 } // namespace Views
