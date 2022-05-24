@@ -49,8 +49,8 @@ bool Globals::load() {
 	if (!_strings.load("strings_en.yml"))
 		return false;
 
-	// Load default roster
-	_roster.loadDefaults();
+	// Load roster
+	_roster.load();
 
 	// Load the font
 	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);

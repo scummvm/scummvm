@@ -53,7 +53,7 @@ void ViewCharacters::draw() {
 			pad_string(level, 7);
 
 			Common::String className = (re._class >= KNIGHT && re._class <= ROBBER) ?
-				STRING[Common::String::format("stats.classes.%d", (int)re._class)].c_str() + 3 :
+				STRING[Common::String::format("stats.classes.%d", (int)re._class)] :
 				STRING["stats.none"];
 
 			// Form line like: A) charName...(1)L1  Knight
@@ -174,17 +174,17 @@ void CharacterStats::printSummary() {
 
 	_textPos.x++;
 	writeString((re._alignment >= GOOD && re._alignment <= EVIL) ?
-		STRING[Common::String::format("stats.alignments.%d", re._alignment)].c_str() + 3 :
+		STRING[Common::String::format("stats.alignments.%d", re._alignment)] :
 		STRING["stats.none"]
 	);
 
 	if (re._race >= HUMAN && re._race <= HALF_ORC)
-		writeString(26, 0, STRING[Common::String::format("stats.races.%d", re._race)].c_str() + 3);
+		writeString(26, 0, STRING[Common::String::format("stats.races.%d", re._race)]);
 	else
 		writeString(26, 0, STRING["stats.none"]);
 
 	if (re._class >= KNIGHT && re._class <= ROBBER)
-		writeString(32, 0, STRING[Common::String::format("stats.classes.%d", re._class)].c_str() + 3);
+		writeString(32, 0, STRING[Common::String::format("stats.classes.%d", re._class)]);
 	else
 		writeString(32, 0, STRING["stats.none"]);
 }

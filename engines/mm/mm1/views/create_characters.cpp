@@ -57,6 +57,127 @@ void CreateCharacters::NewCharacter::reroll() {
 	_classesAllowed[ROBBER] = true;
 }
 
+void CreateCharacters::NewCharacter::save() {
+	uint i = 0;
+	while (i < CHARACTERS_COUNT && g_globals->_roster._nums[i])
+		++i;
+
+	g_globals->_roster._nums[i] = 1;
+	g_globals->_rosterEntry = &g_globals->_roster[i];
+	RosterEntry &re = *g_globals->_rosterEntry;
+	re.clear();
+
+	Common::strcpy_s(re._name, _name.c_str());
+	re._sex = _sex;
+	re._alignment = _alignment;
+	re._race = _race;
+	re._class = _class;
+	re._int = _attribs1[INTELLECT];
+	re._mgt = _attribs1[MIGHT];
+	re._per = _attribs1[PERSONALITY];
+	re._end = _attribs1[ENDURANCE];
+	re._spd = _attribs1[SPEED];
+	re._acy = _attribs1[ACCURACY];
+	re._luc = _attribs1[LUCK];
+
+	switch (_class) {
+	case KNIGHT:
+		setHP(12);
+		break;
+	case PALADIN:
+	case ARCHER:
+		setHP(10);
+		break;
+	case CLERIC:
+		setHP(8);
+		setSP(_attribs1[PERSONALITY]);
+		break;
+	case SORCERER:
+		setHP(6);
+		setSP(_attribs1[INTELLECT]);
+		break;
+	case ROBBER:
+		setHP(8);
+		re._v6c = 50;
+		break;
+	}
+
+	switch (_race) {
+	case HUMAN:
+		re._v62 = re._v63 = 70;
+		re._v66 = re._v67 = 25;
+		break;
+	case ELF:
+		re._v62 = re._v63 = 70;
+		break;
+	case DWARF:
+		re._v64 = re._v65 = 25;
+		break;
+	case GNOME:
+		re._v58 = re._v59 = 20;
+		break;
+	case HALF_ORC:
+		re._v66 = re._v67 = 50;
+		break;
+	}
+
+	re._food = 10;
+	re._backpack[0] = 1;
+	re._v6f = re._field11 ? 0x10 : 0;
+
+	g_globals->_roster.save();
+}
+
+void CreateCharacters::NewCharacter::setHP(int hp) {
+	RosterEntry &re = *g_globals->_rosterEntry;
+
+	if (_attribs1[ENDURANCE] >= 19)
+		hp += 4;
+	else if (_attribs1[ENDURANCE] >= 17)
+		hp += 3;
+	else if (_attribs1[ENDURANCE] >= 15)
+		hp += 2;
+	else if (_attribs1[ENDURANCE] >= 13)
+		hp += 1;
+	else if (_attribs1[ENDURANCE] < 5)
+		hp -= 2;
+	else if (_attribs1[ENDURANCE] < 8)
+		hp -= 1;
+
+	re._hp = re._hp2 = re._hpMax = hp;
+
+	int ac = 0;
+	if (_attribs1[SPEED] >= 19)
+		ac = 4;
+	else if (_attribs1[SPEED] >= 17)
+		ac = 3;
+	else if (_attribs1[SPEED] >= 15)
+		ac = 2;
+	if (_attribs1[SPEED] >= 13)
+		ac = 1;
+
+	re._ac = ac;
+}
+
+void CreateCharacters::NewCharacter::setSP(int amount) {
+	RosterEntry &re = *g_globals->_rosterEntry;
+
+	int level = 0;
+	if (amount >= 19)
+		level = 4;
+	else if (amount >= 17)
+		level = 3;
+	else if (amount >= 15)
+		level = 2;
+	else if (amount >= 13)
+		level = 1;
+
+	re._sp = re._spMax = level + 3;
+	re._sp1 = re._sp2 = 1;
+}
+
+/*------------------------------------------------------------------------*/
+
 void CreateCharacters::draw() {
 	drawTextBorder();
 
@@ -104,7 +225,7 @@ void CreateCharacters::printAttributes() {
 	_textPos.y = 5;
 
 	for (int i = 0; i < 7; ++i, _textPos.y += 2) {
-		_textPos.x = 18;
+		_textPos.x = 17;
 		if (_newChar._attribs1[i] < 10)
 			writeChar(' ');
 		writeNumber(_newChar._attribs1[i]);
@@ -112,32 +233,51 @@ void CreateCharacters::printAttributes() {
 }
 
 void CreateCharacters::printClasses() {
-	if (_newChar._classesAllowed[KNIGHT])
-		writeString(23, 5, STRING["stats.classes.1"]);
-	if (_newChar._classesAllowed[PALADIN])
-		writeString(23, 6, STRING["stats.classes.2"]);
-	if (_newChar._classesAllowed[ARCHER])
-		writeString(23, 7, STRING["stats.classes.3"]);
-	if (_newChar._classesAllowed[CLERIC])
-		writeString(23, 8, STRING["stats.classes.4"]);
-	if (_newChar._classesAllowed[SORCERER])
-		writeString(23, 9, STRING["stats.classes.5"]);
+	if (_newChar._classesAllowed[KNIGHT]) {
+		writeString(23, 5, "1) ");
+		writeString(STRING["stats.classes.1"]);
+	}
+	if (_newChar._classesAllowed[PALADIN]) {
+		writeString(23, 6, "2) ");
+		writeString(STRING["stats.classes.2"]);
+	}
+	if (_newChar._classesAllowed[ARCHER]) {
+		writeString(23, 7, "3) ");
+		writeString(STRING["stats.classes.3"]);
+	}
+	if (_newChar._classesAllowed[CLERIC]) {
+		writeString(23, 8, "4) ");
+		writeString(STRING["stats.classes.4"]);
+	}
+	if (_newChar._classesAllowed[SORCERER]) {
+		writeString(23, 9, "5) ");
+		writeString(STRING["stats.classes.5"]);
+	}
+	writeString(23, 10, "6) ");
+	writeString(STRING["stats.classes.6"]);
 
-	writeString(23, 10, STRING["stats.classes.6"]);
+	writeString(22, 13, STRING["dialogs.create_characters.select_class"]);
+	writeString(26, 15, "(1-6)");
+	writeString(21, 17, STRING["dialogs.create_characters.reroll"]);
 }
 
 void CreateCharacters::printRaces() {
 	writeString(22, 5, STRING["dialogs.create_characters.class"]);
 	writeString(STRING[Common::String::format("stats.classes.%d", _newChar._class)]);
 
-	writeString(23, 7, STRING["stats.races.1"]);
-	writeString(23, 8, STRING["stats.races.2"]);
-	writeString(23, 9, STRING["stats.races.3"]);
-	writeString(23, 10, STRING["stats.races.4"]);
-	writeString(23, 11, STRING["stats.races.5"]);
+	writeString(23, 7, "1) ");
+	writeString(STRING["stats.races.1"]);
+	writeString(23, 8, "2) ");
+	writeString(STRING["stats.races.2"]);
+	writeString(23, 9, "3) ");
+	writeString(STRING["stats.races.3"]);
+	writeString(23, 10, "4) ");
+	writeString(STRING["stats.races.4"]);
+	writeString(23, 11, "5) ");
+	writeString(STRING["stats.races.5"]);
 
 	writeString(22, 13, STRING["dialogs.create_characters.select_race"]);
-	writeChar(29, 14, '5');
+	writeString(26, 15, "(1-5)");
 	writeString(21, 17, STRING["dialogs.create_characters.start_over"]);
 }
 
@@ -147,12 +287,15 @@ void CreateCharacters::printAlignments() {
 	writeString(22, 6, STRING["dialogs.create_characters.race"]);
 	writeString(STRING[Common::String::format("stats.races.%d", _newChar._race)]);
 
-	writeString(23, 7, STRING["stats.alignments.1"]);
-	writeString(23, 8, STRING["stats.alignments.2"]);
-	writeString(23, 9, STRING["stats.alignments.3"]);
+	writeString(23, 8, "1) ");
+	writeString(STRING["stats.alignments.1"]);
+	writeString(23, 9, "2) ");
+	writeString(STRING["stats.alignments.2"]);
+	writeString(23, 10, "3) ");
+	writeString(STRING["stats.alignments.3"]);
 
-	writeString(22, 13, STRING["dialogs.create_characters.select_alignment"]);
-	writeChar(29, 14, '3');
+	writeString(21, 13, STRING["dialogs.create_characters.select_alignment"]);
+	writeString(26, 15, "(1-3)");
 	writeString(21, 17, STRING["dialogs.create_characters.start_over"]);
 }
 
@@ -164,11 +307,13 @@ void CreateCharacters::printSexes() {
 	writeString(22, 7, STRING["dialogs.create_characters.alignment"]);
 	writeString(STRING[Common::String::format("stats.alignments.%d", _newChar._alignment)]);
 
-	writeString(23, 9, STRING["stats.sex.1"]);
-	writeString(23, 10, STRING["stats.sex.2"]);
+	writeString(23, 9, "1) ");
+	writeString(STRING["stats.sex.1"]);
+	writeString(23, 10, "2) ");
+	writeString(STRING["stats.sex.2"]);
 
-	writeString(22, 12, STRING["dialogs.create_characters.select_sex"]);
-	writeChar(29, 14, '2');
+	writeString(23, 13, STRING["dialogs.create_characters.select_sex"]);
+	writeString(26, 15, "(1-2)");
 	writeString(21, 17, STRING["dialogs.create_characters.start_over"]);
 }
 
@@ -186,8 +331,8 @@ void CreateCharacters::printSummary(bool promptToSave) {
 	writeString(22, 13, _newChar._name);
 
 	if (promptToSave) {
-		writeString(22, 11, STRING["dialogs.create_characters.save_character"]);
-		writeString(26, 13, "(Y/N)?");
+		writeString(22, 15, STRING["dialogs.create_characters.save_character"]);
+		writeString(26, 17, "(Y/N)?");
 	} else {
 		writeChar('_');
 		writeString(21, 17, STRING["dialogs.create_characters.start_over"]);
@@ -200,6 +345,7 @@ bool CreateCharacters::msgKeypress(const KeypressMessage &msg) {
 			close();
 		} else {
 			_state = SELECT_CLASS;
+			_newChar.reroll();
 			redraw();
 		}
 		return true;
@@ -226,8 +372,38 @@ bool CreateCharacters::msgKeypress(const KeypressMessage &msg) {
 	case SELECT_RACE:
 		if (msg.keycode >= Common::KEYCODE_1 &&
 				msg.keycode <= Common::KEYCODE_5) {
-			// Selected a valid race
+			// Selected a race
 			_newChar._race = (Race)(msg.keycode - Common::KEYCODE_0);
+
+			switch (_newChar._race) {
+			case ELF:
+				_newChar._attribs1[INTELLECT]++;
+				_newChar._attribs1[ACCURACY]++;
+				_newChar._attribs1[MIGHT]--;
+				_newChar._attribs1[ENDURANCE]--;
+				break;
+			case DWARF:
+				_newChar._attribs1[ENDURANCE]++;
+				_newChar._attribs1[LUCK]++;
+				_newChar._attribs1[INTELLECT]--;
+				_newChar._attribs1[SPEED]--;
+				break;
+			case GNOME:
+				_newChar._attribs1[LUCK] += 2;
+				_newChar._attribs1[SPEED]--;
+				_newChar._attribs1[ACCURACY]--;
+				break;
+			case HALF_ORC:
+				_newChar._attribs1[MIGHT]++;
+				_newChar._attribs1[ENDURANCE]++;
+				_newChar._attribs1[INTELLECT]--;
+				_newChar._attribs1[PERSONALITY]--;
+				_newChar._attribs1[LUCK]--;
+				break;
+			default:
+				break;
+			}
+
 			_state = SELECT_ALIGNMENT;
 			redraw();
 		}
@@ -259,7 +435,6 @@ bool CreateCharacters::msgKeypress(const KeypressMessage &msg) {
 			redraw();
 		}
 		if (msg.keycode == Common::KEYCODE_RETURN || _newChar._name.size() == 15) {
-			strncpy(g_globals->_rosterEntry->_name, _newChar._name.c_str(), 16);
 			_state = SAVE_PROMPT;
 			redraw();
 		} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&
@@ -267,6 +442,15 @@ bool CreateCharacters::msgKeypress(const KeypressMessage &msg) {
 			_newChar._name.deleteLastChar();
 			redraw();
 		}
+		break;
+
+	case SAVE_PROMPT:
+		if (msg.keycode == Common::KEYCODE_y)
+			_newChar.save();
+
+		_state = SELECT_CLASS;
+		_newChar.reroll();
+		redraw();
 		break;
 	}
 
