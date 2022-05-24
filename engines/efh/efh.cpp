@@ -6909,6 +6909,9 @@ uint16 EfhEngine::getStringWidth(const char *buffer) {
 		retVal += _fontDescr._widthArray[curChar - 0x20] + 1;
 	}
 
+	if (retVal)
+		retVal--;
+	
 	return retVal;
 }
 
