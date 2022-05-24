@@ -36,6 +36,10 @@ void BoyzEngine::runCode(Code *code) {
 		runDifficultyMenu(code);
 	else if (code->name == "<retry_menu>")
 		runRetryMenu(code);
+	else if (code->name == "<check_c3>")
+		runCheckC3(code);
+	else if (code->name == "<check_ho>")
+		runCheckHo(code);
 	else
 		error("invalid hardcoded level: %s", code->name.c_str());
 }
@@ -253,6 +257,37 @@ void BoyzEngine::runRetryMenu(Code *code) {
 
 	menu->free();
 	delete menu;
+}
+
+void BoyzEngine::runCheckC3(Code *code) {
+	Common::String nextLevel;
+	if (_sceneState["GS_SEQ_31"] && _sceneState["GS_SEQ_32"] &&\
+		_sceneState["GS_SEQ_33"] && _sceneState["GS_SEQ_34"] &&\
+		_sceneState["GS_HOTELDONE"]) {
+		nextLevel = "c36.mi_";
+	}
+
+	if (nextLevel.empty())
+		nextLevel = "<select_c3>";
+
+	_nextLevel = nextLevel;
+	saveProfile(_name, 3591);
+}
+
+void BoyzEngine::runCheckHo(Code *code) {
+	Common::String nextLevel;
+	if (_sceneState["GS_SEQ_351"] && _sceneState["GS_SEQ_352"] &&\
+		_sceneState["GS_SEQ_353"] && _sceneState["GS_SEQ_354"] &&\
+		_sceneState["GS_SEQ_355"]) {
+		_sceneState["GS_HOTELDONE"] = 1;
+		nextLevel = "<check_c3>";
+	}
+
+	if (nextLevel.empty())
+		nextLevel = "<select_ho>";
+
+	_nextLevel = nextLevel;
+	saveProfile(_name, 3592);
 }
 
 void BoyzEngine::endCredits(Code *code) {

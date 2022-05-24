@@ -583,6 +583,8 @@ public:
 
 	void runMainMenu(Code *code);
 	void runRetryMenu(Code *code);
+	void runCheckC3(Code *code);
+	void runCheckHo(Code *code);
 	void runDifficultyMenu(Code *code);
 	void endCredits(Code *code);
 	Common::String firstLevelTerritory(const Common::String &level);

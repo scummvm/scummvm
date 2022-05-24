@@ -42,6 +42,10 @@ static const chapterEntry rawChapterTable[] = {
 	{32, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
 	{33, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
 	{34, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{3591, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{3592, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{36, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{41, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
 	{0,  {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor}
 };
 
@@ -148,21 +152,21 @@ void BoyzEngine::loadAssets() {
 
 	loadArcadeLevel("c21.mi_", "c22.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c22.mi_", "<select_c3>", "<retry_menu>", "");
-	loadArcadeLevel("c31.mi_", "<select_c3>", "<retry_menu>", "");
-	loadArcadeLevel("c32.mi_", "<select_c3>", "<retry_menu>", "");
-	loadArcadeLevel("c33.mi_", "<select_c3>", "<retry_menu>", "");
-	loadArcadeLevel("c34.mi_", "<select_c3>", "<retry_menu>", "");
-	loadArcadeLevel("c35.mi_", "<select_ho>", "<select_c3>", "");
+	loadArcadeLevel("c31.mi_", "<check_c3>", "<retry_menu>", "");
+	loadArcadeLevel("c32.mi_", "<check_c3>", "<retry_menu>", "");
+	loadArcadeLevel("c33.mi_", "<check_c3>", "<retry_menu>", "");
+	loadArcadeLevel("c34.mi_", "<check_c3>", "<retry_menu>", "");
+	loadArcadeLevel("c35.mi_", "<check_ho>", "<select_c3>", "");
 	ArcadeShooting *ar = (ArcadeShooting *) _levels["c35.mi_"];
 	ar->backgroundVideo = ""; // This will be manually populated
 
-	loadArcadeLevel("c351.mi_", "<select_ho>", "<retry_menu>", "");
-	loadArcadeLevel("c352.mi_", "<select_ho>", "<retry_menu>", "");
-	loadArcadeLevel("c353.mi_", "<select_ho>", "<retry_menu>", "");
+	loadArcadeLevel("c351.mi_", "<check_ho>", "<retry_menu>", "");
+	loadArcadeLevel("c352.mi_", "<check_ho>", "<retry_menu>", "");
+	loadArcadeLevel("c353.mi_", "<check_ho>", "<retry_menu>", "");
 	ar = (ArcadeShooting *) _levels["c353.mi_"];
 	ar->id = 353; // This corrects a mistake in the game scripts
-	loadArcadeLevel("c354.mi_", "<select_ho>", "<retry_menu>", "");
-	loadArcadeLevel("c355.mi_", "<select_ho>", "<retry_menu>", "");
+	loadArcadeLevel("c354.mi_", "<check_ho>", "<retry_menu>", "");
+	loadArcadeLevel("c355.mi_", "<check_ho>", "<retry_menu>", "");
 
 	loadArcadeLevel("c36.mi_", "c41.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c41.mi_", "c42.mi_", "<retry_menu>", "");
@@ -310,6 +314,12 @@ void BoyzEngine::loadAssets() {
 	sc->hots[5].actions.push_back(gl);
 	cl = new ChangeLevel("c355.mi_");
 	sc->hots[5].actions.push_back(cl);
+
+	Code *check_c3 = new Code("<check_c3>");
+	_levels["<check_c3>"] = check_c3;
+
+	Code *check_ho = new Code("<check_ho>");
+	_levels["<check_ho>"] = check_ho;
 
 	loadLib("sound/", "misc/sound.lib", true);
 
@@ -697,7 +707,13 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_sceneState["GS_SEQ_34"] = stream->readUint32LE();
 	_sceneState["GS_SEQ_35"] = stream->readUint32LE();
 
-	_nextLevel = Common::String::format("c%d.mi_", _ids[_lastLevel]);
+
+	if (_ids[_lastLevel] == 3591)
+		_nextLevel = "<select_c3>";
+	else if (_ids[_lastLevel] == 3592)
+		_nextLevel = "<select_ho>";
+	else
+		_nextLevel = Common::String::format("c%d.mi_", _ids[_lastLevel]);
 	return Common::kNoError;
 }
 
