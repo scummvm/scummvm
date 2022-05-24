@@ -296,6 +296,33 @@ int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 	error("Invalid mask state (%d)!", m);
 }
 
+void BoyzEngine::waitForUserClick(uint32 timeout) {
+	Common::Event event;
+	bool cont = true;
+	Common::Rect button(252, 158, 315, 195);
+	while (!shouldQuit() && cont) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Point mousePos = g_system->getEventManager()->getMousePos();
+			switch (event.type) {
+				case Common::EVENT_QUIT:
+				case Common::EVENT_RETURN_TO_LAUNCHER:
+					cont = false;
+					break;
+
+				case Common::EVENT_LBUTTONDOWN:
+					if (button.contains(mousePos))
+						cont = false;
+					break;
+
+				default:
+					break;
+			}
+		}
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+}
+
 bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool secondary) {
 	if (_currentMode == NonInteractive) {
 		return false;
@@ -329,9 +356,14 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				MVideo video(_shoots[i].additionalVideo, Common::Point(0, 0), false, true, false);
 				disableCursor();
 				runIntro(video);
+				defaultCursor();
+
+				if (_shoots[i].waitForClickAfterInteraction > 0) {
+					waitForUserClick(_shoots[i].waitForClickAfterInteraction);
+				}
+
 				loadPalette(_currentPalette);
 				_background->decoder->pauseVideo(false);
-
 				// Skip the rest of the interaction
 				_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start + 3);
 				_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start + 3);

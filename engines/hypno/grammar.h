@@ -445,6 +445,7 @@ public:
 		animalSound = "";
 		jumpToTimeAfterKilled = 0;
 		warningVideoIdx = 0;
+		waitForClickAfterInteraction = 0;
 	}
 	Common::String name;
 	Filename animation;
@@ -492,6 +493,7 @@ public:
 	bool isAnimal;
 	Common::String checkIfDestroyed;
 	int jumpToTimeAfterKilled;
+	uint32 waitForClickAfterInteraction;
 	uint32 warningVideoIdx;
 };
 
