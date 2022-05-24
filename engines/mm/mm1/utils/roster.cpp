@@ -108,7 +108,7 @@ void Roster::synchronize(Common::Serializer &s) {
 		_items[i].synchronize(s);
 
 	for (int i = 0; i < CHARACTERS_COUNT; ++i)
-		s.syncAsByte(_nums[i]);
+		s.syncAsByte(_towns[i]);
 }
 
 void Roster::load() {
@@ -145,12 +145,12 @@ void Roster::remove(RosterEntry *entry) {
 	entry->clear();
 
 	size_t idx = entry - _items;
-	_nums[idx] = 0;
+	_towns[idx] = NO_TOWN;
 }
 
 bool Roster::empty() const {
 	for (uint i = 0; i < CHARACTERS_COUNT; ++i) {
-		if (_nums[i])
+		if (_towns[i])
 			return false;
 	}
 
@@ -159,7 +159,7 @@ bool Roster::empty() const {
 
 bool Roster::full() const {
 	for (uint i = 0; i < CHARACTERS_COUNT; ++i) {
-		if (!_nums[i])
+		if (!_towns[i])
 			return false;
 	}
 
