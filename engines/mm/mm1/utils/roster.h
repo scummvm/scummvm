@@ -57,6 +57,7 @@ enum Condition {
 struct RosterEntry {
 	char _name[16] = { 0 };
 	Sex _sex = MALE;
+	int _field11 = 0;
 	Alignment _alignment = GOOD;
 	Race _race = HUMAN;
 	CharacterClass _class = NONE;
@@ -66,9 +67,9 @@ struct RosterEntry {
 	uint8 _age = 0;
 	uint32 _exp = 0;
 	uint16 _sp = 0, _spMax = 0;
-	uint8 _sp1 = 0;
+	uint8 _sp1 = 0, _sp2 = 0;
 	uint16 _gems = 0;
-	uint16 _hp = 0, _hpMax = 0;
+	uint16 _hp = 0, _hp2 = 0, _hpMax = 0;
 	uint16 _gold = 0;
 	byte _ac = 0;
 	uint8 _food = 0;
@@ -76,11 +77,18 @@ struct RosterEntry {
 	uint8 _equipped[INVENTORY_COUNT] = { 0 };
 	uint8 _backpack[INVENTORY_COUNT] = { 0 };
 
+	// TODO: Figure out what these are
+	int _v58, _v59, _v62, _v63, _v64, _v65;
+	int _v66, _v67, _v6c, _v6f;
+
 	void synchronize(Common::Serializer &s);
 	void clear();
 };
 
 struct Roster {
+private:
+	Common::String rosterSaveName() const;
+public:
 	RosterEntry _items[CHARACTERS_COUNT];
 	uint8 _nums[CHARACTERS_COUNT] = { 0 };
 
@@ -95,9 +103,14 @@ struct Roster {
 	void synchronize(Common::Serializer &s);
 
 	/**
-	 * Load the roster from roster.dta
+	 * Load the roster
 	 */
-	void loadDefaults();
+	void load();
+
+	/**
+	 * Save the roster
+	 */
+	void save();
 
 	/**
 	 * Deletes a character

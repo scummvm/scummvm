@@ -57,6 +57,9 @@ public:
 	int getRandomNumber(int maxNumber) {
 		return _randomSource.getRandomNumber(maxNumber);
 	}
+	Common::String getTargetName() const {
+		return _targetName;
+	}
 };
 
 extern MM1Engine *g_engine;

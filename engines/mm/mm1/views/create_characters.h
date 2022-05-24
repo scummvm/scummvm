@@ -39,6 +39,10 @@ class CreateCharacters : public TextView {
 		ACCURACY, LUCK
 	};
 	struct NewCharacter {
+	private:
+		void setHP(int hp);
+		void setSP(int sp);
+	public:
 		uint8 _attribs1[LUCK + 1] = { 0 };
 		uint8 _attribs2[LUCK + 1] = { 0 };
 		CharacterClass _class = KNIGHT;
@@ -51,6 +55,7 @@ class CreateCharacters : public TextView {
 
 		void clear();
 		void reroll();
+		void save();
 	};
 
 private:

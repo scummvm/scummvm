@@ -20,7 +20,10 @@
  */
 
 #include "common/file.h"
+#include "common/savefile.h"
+#include "common/system.h"
 #include "mm/mm1/utils/roster.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
@@ -28,7 +31,7 @@ namespace MM1 {
 void RosterEntry::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, 16);
 	s.syncAsByte(_sex);
-	s.skip(1);
+	s.syncAsByte(_field11);
 	s.syncAsByte(_alignment);
 	s.syncAsByte(_race);
 	s.syncAsByte(_class);
@@ -54,11 +57,11 @@ void RosterEntry::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_exp);
 	s.syncAsUint16LE(_sp);
 	s.syncAsUint16LE(_spMax);
-	s.skip(1);
+	s.syncAsByte(_sp2);
 	s.syncAsByte(_sp1);
 	s.syncAsUint16LE(_gems);
 	s.syncAsUint16LE(_hp);
-	s.skip(2);
+	s.syncAsUint16LE(_hp2);
 	s.syncAsUint16LE(_hpMax);
 	s.syncAsUint16LE(_gold);
 	s.skip(2);
@@ -69,6 +72,7 @@ void RosterEntry::synchronize(Common::Serializer &s) {
 	s.syncBytes(_equipped, INVENTORY_COUNT);
 	s.syncBytes(_backpack, INVENTORY_COUNT);
 
+	// TODO: Figure purpose of remaining unknown fields
 	s.skip(51);
 }
 
@@ -84,15 +88,19 @@ void RosterEntry::clear() {
 	_age = 0;
 	_exp = 0;
 	_sp = _spMax = 0;
-	_sp1 = 0;
+	_sp1 = _sp2 = 0;
 	_gems = 0;
-	_hp = _hpMax = 0;
+	_hp = _hp2 = _hpMax = 0;
 	_gold = 0;
 	_ac = 0;
 	_food = 0;
 	_condition = 0;
 	Common::fill(_equipped, _equipped + INVENTORY_COUNT, 0);
 	Common::fill(_backpack, _backpack + INVENTORY_COUNT, 0);
+
+	_field11 = 0;
+	_v58 = _v59 = _v62 = _v63 = _v64 = _v65 = 0;
+	_v66 = _v67 = _v6c = _v6f = 0;
 }
 
 void Roster::synchronize(Common::Serializer &s) {
@@ -103,13 +111,34 @@ void Roster::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_nums[i]);
 }
 
-void Roster::loadDefaults() {
-	Common::File f;
-	if (!f.open("roster.dta"))
-		error("Could not open roster.dta");
+void Roster::load() {
+	Common::InSaveFile *sf = g_system->getSavefileManager()->openForLoading(
+		rosterSaveName());
 
-	Common::Serializer s(&f, nullptr);
+	if (sf) {
+		Common::Serializer s(sf, nullptr);
+		synchronize(s);
+	} else {
+		Common::File f;
+		if (!f.open("roster.dta"))
+			error("Could not open roster.dta");
+
+		Common::Serializer s(&f, nullptr);
+		synchronize(s);
+	}
+}
+
+void Roster::save() {
+	Common::OutSaveFile *sf = g_system->getSavefileManager()->openForSaving(
+		rosterSaveName());
+	Common::Serializer s(nullptr, sf);
 	synchronize(s);
+	delete sf;
+}
+
+Common::String Roster::rosterSaveName() const {
+	return Common::String::format("%s-roster.dta",
+		g_engine->getTargetName().c_str());
 }
 
 void Roster::remove(RosterEntry *entry) {
