@@ -1668,6 +1668,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 #endif // DISABLE_COMMAND_LINE
 
+void storeSessionSetting(const Common::String &command, const Common::String &settingName, const Common::StringMap &settings) {
+	if (settings.contains(command))
+		ConfMan.set(settingName, settings[command], Common::ConfigManager::kSessionDomain); 
+}
 
 bool processSettings(Common::String &command, Common::StringMap &settings, Common::Error &err) {
 	err = Common::kNoError;
@@ -1830,72 +1834,29 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	}
 
 	// store all session related settings
-	if (settings.contains("savepath")) {
-		ConfMan.set("savepath", settings["savepath"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("themepath")) {
-		ConfMan.set("themepath", settings["themepath"], Common::ConfigManager::kSessionDomain); 
-	}	
-	if (settings.contains("extrapath")) {
-		ConfMan.set("extrapath", settings["extrapath"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("gui-theme")) {
-		ConfMan.set("gui_theme", settings["gui-theme"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("gfx-mode")) {
-		ConfMan.set("gfx_mode", settings["gfx-mode"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("stretch-mode")) {
-		ConfMan.set("stretch_mode", settings["stretch-mode"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("render-mode")) {
-		ConfMan.set("render_mode", settings["render-mode"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("music-volume")) {
-		ConfMan.set("music_volume", settings["music-volume"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("sfx-volume")) {
-		ConfMan.set("sfx_volume", settings["sfx-volume"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("speech-volume")) {
-		ConfMan.set("speech_volume", settings["speech-volume"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("fullscreen")) {
-		ConfMan.set("fullscreen", settings["fullscreen"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("enable-gs")) {
-		ConfMan.set("enable_gs", settings["enable-gs"], Common::ConfigManager::kSessionDomain); 
-	} 
-	if (settings.contains("native-mt32")) {
-		ConfMan.set("native_mt32", settings["native-mt32"], Common::ConfigManager::kSessionDomain); 
-	} 
-	if (settings.contains("filtering")) {
-		ConfMan.set("filtering", settings["filtering"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("multi-midi")) {
-		ConfMan.set("multi_midi", settings["multi-midi"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("midi-gain")) {
-		ConfMan.set("midi_gain", settings["midi-gain"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("soundfont")) {
-		ConfMan.set("soundfont", settings["soundfont"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("scaler")) {
-		ConfMan.set("scaler", settings["scaler"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("scale-factor")) {
-		ConfMan.set("scale_factor", settings["scale-factor"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("opl-driver")) {
-		ConfMan.set("opl_driver", settings["opl-driver"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("talkspeed")) {
-		ConfMan.set("talkspeed", settings["talkspeed"], Common::ConfigManager::kSessionDomain); 
-	}
-	if (settings.contains("subtitles")) {
-		ConfMan.set("subtitles", settings["subtitles"], Common::ConfigManager::kSessionDomain);
-	}
+	storeSessionSetting("config", "config", settings); 
+	storeSessionSetting("fullscreen", "fullscreen", settings); 
+	storeSessionSetting("gfx-mode", "gfx_mode", settings); 
+	storeSessionSetting("stretch-mode", "stretch_mode", settings); 
+	storeSessionSetting("scaler", "scaler", settings); 
+	storeSessionSetting("scale-factor", "scale_factor", settings); 
+	storeSessionSetting("filtering", "filtering", settings); 
+	storeSessionSetting("gui-theme", "gui_theme", settings); 
+	storeSessionSetting("themepath", "themepath", settings); 
+	storeSessionSetting("music-volume", "music_volume", settings); 
+	storeSessionSetting("sfx-volume", "sfx_volume", settings); 
+	storeSessionSetting("speech-volume", "speech_volume", settings); 
+	storeSessionSetting("midi-gain", "midi_gain", settings); 
+	storeSessionSetting("subtitles", "subtitles", settings); 
+	storeSessionSetting("savepath", "savepath", settings); 
+	storeSessionSetting("extrapath", "extrapath", settings); 
+	storeSessionSetting("soundfont", "soundfont", settings); 
+	storeSessionSetting("multi-midi", "multi_midi", settings); 
+	storeSessionSetting("native-mt32", "native-mt32", settings); 
+	storeSessionSetting("enable-gs", "enable_gs", settings); 
+	storeSessionSetting("opl-driver", "opl_driver", settings); 
+	storeSessionSetting("talkspeed", "talkspeed", settings); 
+	storeSessionSetting("render-mode", "render_mode", settings); 
 
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
