@@ -2329,6 +2329,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// English translation by Skye Sonomura (HomeStarRunnerTron)
 	MACGAME1_l("the7colors", "", "LEGEND OF PSYS CITY", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 384001, Common::JA_JPN, 300),
 	MACGAME1("the7colors", "", "T7C-R!", "d84feae6ba35340857f46c9cbd6bd1a6", 398981, 300),
+	MACGAME1("the7colors", "dumper", "T7C-R!", "d84feae6ba35340857f46c9cbd6bd1a6", 398725, 300),
 	MACGAME1_l("the7colors", "No CD Yo! 6/21/15 hack", "xn--~LEGEND OF PSYS CITY~-u558i", "a6e50f2b8f294640a1d0cbe91a73e81c", 392267, Common::JA_JPN, 300),
 
 	MACGAME1_l("timegal", "", "TimeGal", "f5277c53bacd27936158dd3867e587e2", 392230, Common::JA_JPN, 311),
