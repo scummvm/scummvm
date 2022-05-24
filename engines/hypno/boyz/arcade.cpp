@@ -485,6 +485,7 @@ bool BoyzEngine::checkCup(const Common::String &name) {
 			disableCursor();
 			runIntro(video);
 			_skipLevel = true;
+			_sceneState["GS_WONSHELLGAME"] = 1;
 		} else {
 			MVideo video("c3/c35c06s.smk", Common::Point(0, 0), false, true, false);
 			disableCursor();
@@ -498,6 +499,7 @@ bool BoyzEngine::checkCup(const Common::String &name) {
 			disableCursor();
 			runIntro(video);
 			_skipLevel = true;
+			_sceneState["GS_WONSHELLGAME"] = 1;
 		} else {
 			MVideo video("c3/c35c06s.smk", Common::Point(0, 0), false, true, false);
 			disableCursor();
