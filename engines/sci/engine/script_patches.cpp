@@ -14060,6 +14060,58 @@ static const uint16 qfg3PatchBarterEvents[] = {
 	PATCH_END
 };
 
+// After getting the ring from the rope, the script awardPrize stores the winner
+//  in a temp variable during its first state and expects it to be there during
+//  a later state. We patch the script to use its register property instead.
+//
+// Applies to: All versions
+// Responsible method: awardPrize:changeState
+// Fixes bug: #5277
+static const uint16 qfg3SignatureRingRopePrize[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+43),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+39),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+39),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+33),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+40),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+48),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+10),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+49),
+	0x85, 0x00,                         // lat 00
+	SIG_END
+};
+
+static const uint16 qfg3PatchRingRopePrize[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+43),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+39),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+39),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+33),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+40),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+48),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+10),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+49),
+	0x63, 0x24,                         // pToa register
+	PATCH_END
+};
+
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",                     1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
@@ -14073,6 +14125,7 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   285, "missing points for telling about initiation script", 1, qfg3SignatureMissingPoints2a,	      qfg3PatchMissingPoints2 },
 	{  true,   285, "missing points for telling about initiation script", 1, qfg3SignatureMissingPoints2b,        qfg3PatchMissingPoints2 },
 	{  true,   460, "NRS: floating spears",                               1, qfg3SignatureNrsFloatingSpears,      qfg3PatchNrsFloatingSpears },
+	{  true,   510, "ring rope prize",                                    1, qfg3SignatureRingRopePrize,          qfg3PatchRingRopePrize },
 	{  true,   550, "combat speed throttling script",                     1, qfg3SignatureCombatSpeedThrottling1, qfg3PatchCombatSpeedThrottling1 },
 	{  true,   550, "combat speed throttling heap",                       1, qfg3SignatureCombatSpeedThrottling2, qfg3PatchCombatSpeedThrottling2 },
 	{  true,   750, "hero goes out of bounds in room 750",                2, qfg3SignatureRoom750Bounds1,         qfg3PatchRoom750Bounds1 },
