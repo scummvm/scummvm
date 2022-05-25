@@ -615,7 +615,6 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "farm", "farm", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "farm", "The Farm", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "farm", "farm", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "farm", "farmdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "farm", "Farm Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
