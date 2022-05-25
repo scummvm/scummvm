@@ -369,14 +369,18 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				loadPalette(_currentPalette);
 				_background->decoder->pauseVideo(false);
 				// Skip the rest of the interaction
-				_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start + 3);
-				_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start + 3);
-				_shoots[i].destroyed = true;
-				_shootsDestroyed[_shoots[i].name] = true;
-				updateScreen(*_background);
-				drawScreen();
-				if (!_music.empty())
-					playSound(_music, 0, arc->musicRate); // restore music
+				if (_shoots[i].explosionFrames[0].start == uint32(-1))
+					_skipLevel = true;
+				else {
+					_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start + 3);
+					_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start + 3);
+					_shoots[i].destroyed = true;
+					_shootsDestroyed[_shoots[i].name] = true;
+					updateScreen(*_background);
+					drawScreen();
+					if (!_music.empty())
+						playSound(_music, 0, arc->musicRate); // restore music
+				}
 			} else if (_shoots[i].interactionFrame > 0) {
 				_background->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
 				_masks->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
