@@ -156,6 +156,12 @@ void UIElement::close() {
 	g_engine->popView();
 }
 
+void UIElement::draw() {
+	for (size_t i = 0; i < _children.size(); ++i) {
+		_children[i]->draw();
+	}
+}
+
 bool UIElement::tick() {
 	for (size_t i = 0; i < _children.size(); ++i) {
 		if (_children[i]->tick())

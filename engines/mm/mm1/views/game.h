@@ -19,48 +19,32 @@
  *
  */
 
-#ifndef MM1_GLOBALS_H
-#define MM1_GLOBALS_H
+#ifndef MM1_VIEWS_GAME_H
+#define MM1_VIEWS_GAME_H
 
-#include "graphics/font.h"
-#include "mm/utils/strings_data.h"
-#include "mm/mm1/utils/party_array.h"
-#include "mm/mm1/utils/roster.h"
+#include "mm/mm1/events.h"
+#include "mm/mm1/views/game_commands.h"
+#include "mm/mm1/views/game_messages.h"
+#include "mm/mm1/views/game_party.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 
-class Globals {
+class Game : public TextView {
+private:
+	GameCommands _commands;
+	GameMessages _messages;
+	GameParty _party;
 public:
-	StringsData _strings;
-	Roster _roster;
-	const Graphics::Font *_font = nullptr;
-	RosterEntry *_rosterEntry = nullptr;
-	int _startingTown = 0;
-	PartyArray _partyChars;
-	RosterEntry _party[PARTY_COUNT];
-public:
-	Globals();
-	virtual ~Globals();
+	Game();
+	virtual ~Game() {}
 
-	/**
-	 * Loads data for the globals
-	 */
-	bool load();
-
-	/**
-	 * Returns a string
-	 */
-	const Common::String &operator[](const Common::String &name) {
-		assert(_strings.contains(name));
-		return _strings[name];
-	}
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
-extern Globals *g_globals;
-
-#define STRING (*g_globals)
-
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 

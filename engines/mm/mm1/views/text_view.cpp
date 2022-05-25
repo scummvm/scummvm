@@ -32,6 +32,10 @@ TextView::TextView(const Common::String &name) :
 		UIElement(name, g_engine) {
 }
 
+TextView::TextView(const Common::String &name, UIElement *owner) :
+		UIElement(name, owner) {
+}
+
 void TextView::writeChar(char c) {
 	g_globals->_font->drawChar(getScreen(), c,
 		_textPos.x * FONT_SIZE, _textPos.y * FONT_SIZE, 0xff);

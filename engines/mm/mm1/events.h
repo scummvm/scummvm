@@ -102,7 +102,7 @@ public:
 	/**
 	 * Draws the element
 	 */
-	virtual void draw() = 0;
+	virtual void draw();
 
 	/**
 	 * Called for game frame ticks
