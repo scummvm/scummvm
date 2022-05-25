@@ -174,7 +174,7 @@ Menu::Menu() {
 	_titleActive = false;
 	_menuActive = false;
 	_optionsActive = false;
-	_optionsScreenId = 0;
+	_optionsScreenId = kOptionsScreenMain;
 	_gamefilesActive = false;
 	_newgameActive = false;
 	_warpActive = false;
@@ -185,7 +185,7 @@ Menu::Menu() {
 	_sayHDB = false;
 	_menuKey = 0;
 
-	_nextScreen = 0;
+	_nextScreen = kMenuOptions;
 
 	_nebulaY = 0;		// Used as a flag
 	_fStars[0].y = 0;	// Used as a flag
@@ -541,14 +541,14 @@ void Menu::drawMenu() {
 			_optionsXV += 3;
 			if (_optionsScrollX > g_hdb->_screenWidth + 10) {
 				switch (_nextScreen) {
-				case 0:
+				case kMenuOptions:
 					_optionsActive = true;
-					_optionsScreenId = 1;
+					_optionsScreenId = kOptionsScreenMain;
 					break;
-				case 1:
+				case kMenuLoadGame:
 					_gamefilesActive = true;
 					break;
-				case 2:
+				case kMenuNewGame:
 					_newgameActive = true;
 					break;
 				default:
@@ -674,12 +674,11 @@ void Menu::drawMenu() {
 				_oBannerY = -48;
 				_optionsScrolling = false;
 				_optionsActive = false;
-				_optionsScreenId = 0;
 				_menuActive = true;
 			}
 
 			drawRocketAndSelections();
-		} else if (_optionsScreenId == 1) {
+		} else if (_optionsScreenId == kOptionsScreenMain) {
 			//
 			// Options menu content
 			//
@@ -721,8 +720,8 @@ void Menu::drawMenu() {
 			_menuBackoutGfx->drawMasked(_backoutX, _backoutY);
 
 			// Ignore Controls Screen Button
-			//_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), _mControlsY);
-		} else if (_optionsScreenId == 2) {
+			_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), _mControlsY);
+		} else if (_optionsScreenId == kOptionsScreenModifyControls) {
 			//
 			// Draw CONTROLS screen
 			//
@@ -1306,14 +1305,14 @@ void Menu::processInput(int x, int y) {
 			_optionsXV = 5;
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
 			g_hdb->_sound->freeSound(SND_HDB);
-			_nextScreen = 2;
+			_nextScreen = kMenuNewGame;
 		} else if (x >= _menuX && x < _menuX + _menuItemWidth &&
 			y >= _menuY + _mLoadY && y < _menuY + _mLoadY + _menuItemHeight) {
 			// game files?
-				_optionsScrolling = true;
-				_optionsXV = 5;
-				g_hdb->_sound->playSound(SND_MENU_ACCEPT);
-				_nextScreen = 1;
+			_optionsScrolling = true;
+			_optionsXV = 5;
+			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+			_nextScreen = kMenuLoadGame;
 		} else if (x >= _menuX && x < _menuX + _menuItemWidth &&
 			y >= _menuY + _mOptionsY && y < _menuY + _mOptionsY + _menuItemHeight) {
 			// options?
@@ -1323,7 +1322,7 @@ void Menu::processInput(int x, int y) {
 				_resumeSong = temp;
 			_optionsScrolling = true;
 			_optionsXV = 5;
-			_nextScreen = 0;
+			_nextScreen = kMenuOptions;
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
 		} else if (((x >= _menuX && x < _menuX + _menuItemWidth &&
 			y >= _menuY + _mResumeY && y < _menuY + _mResumeY + _menuItemHeight) || resume) &&
@@ -1347,7 +1346,6 @@ void Menu::processInput(int x, int y) {
 				y >= kStarRedY && y <= kStarRedY + _starRedGfx[0]->_height &&
 				g_hdb->getStarsMonkeystone7() == STARS_MONKEYSTONE_7) {
 				_optionsActive = false;
-				_optionsScreenId = 0;
 				g_hdb->setGameState(GAME_PLAY);
 				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))	// don't save if we're already on 30!
 					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
@@ -1358,7 +1356,6 @@ void Menu::processInput(int x, int y) {
 				y >= kStarGreenY && y <= kStarGreenY + _starGreenGfx[0]->_height &&
 				g_hdb->getStarsMonkeystone14() == STARS_MONKEYSTONE_14) {
 				_optionsActive = false;
-				_optionsScreenId = 0;
 				g_hdb->setGameState(GAME_PLAY);
 				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))	// don't save if we're already on 30!
 					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
@@ -1370,7 +1367,6 @@ void Menu::processInput(int x, int y) {
 				y >= kStarBlueY && y <= kStarBlueY + _starBlueGfx[0]->_height &&
 				g_hdb->getStarsMonkeystone21() == STARS_MONKEYSTONE_21) {
 				_optionsActive = false;
-				_optionsScreenId = 0;
 				g_hdb->setGameState(GAME_PLAY);
 				if (scumm_strnicmp(g_hdb->currentMapName(), "map30", 5))	// don't save if we're already on 30!
 					g_hdb->saveGameState(kAutoSaveSlot, "FIXME"); // Add here date/level name // TODO
@@ -1430,7 +1426,7 @@ void Menu::processInput(int x, int y) {
 		//
 		// Controls screen
 		//
-		if (_optionsScreenId == 2) {
+		if (_optionsScreenId == kOptionsScreenModifyControls) {
 			controlsInput(x, y);
 			return;
 		}
@@ -1483,7 +1479,7 @@ void Menu::processInput(int x, int y) {
 			// CONTROLS BUTTON!
 
 			// Ignore Controls Button
-			//_optionsScreenId = 2;
+			//_optionsScreenId = kOptionsScreenModifyControls;
 			//_clickDelay = 20;
 			//g_hdb->_sound->playSound(SND_POP);
 		}
@@ -1675,13 +1671,13 @@ void Menu::drawRocketAndSelections() {
 
 	// top-down/up scrolling stuff
 	switch (_nextScreen) {
-	case 0:
+	case kMenuOptions:
 		_optionsGfx->drawMasked(centerPic(_optionsGfx), _oBannerY);
 		break;
-	case 1:
+	case kMenuLoadGame:
 		_modeLoadGfx->drawMasked(centerPic(_modeLoadGfx), _oBannerY);
 		break;
-	case 2:
+	case kMenuNewGame:
 		_newGfx->drawMasked(centerPic(_newGfx), _oBannerY);
 		break;
 	default:
