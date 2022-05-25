@@ -236,6 +236,9 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 					_health = 0;
 					// Not sure how to handle this
 				}
+			} else if (_levelId == 352) {
+				// Objectives are never checked here, for some reason
+				_skipLevel = true;
 			} else if (_levelId == 51) {
 				waitForUserClick(1);
 			}
@@ -487,7 +490,7 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 			_skipLevel = true;
 		return;
 	} else if (s->name.hasPrefix("ALARM")) {
-		if (_background->decoder->getCurFrame() > int(s->missedAnimation))
+		if (s->missedAnimation != uint32(-1) && uint32(_background->decoder->getCurFrame()) > s->missedAnimation)
 			return;
 		_background->decoder->pauseVideo(true);
 		MVideo video(_warningAlarmVideos.front(), Common::Point(0, 0), false, true, false);
