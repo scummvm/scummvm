@@ -26,6 +26,7 @@ dialogs:
 		ctrl: "(CTRL)-"
 		add_remove: "ADD/REMOVE"
 		exit: "'X' EXIT INN"
+		full: "*** PARTY IS FULL ***"
 	main_menu:
 		title1: "MIGHT AND MAGIC"
 		title2: "SECRET OF THE INNER SANCTUM"
