@@ -449,6 +449,7 @@ public:
 		lastFrame = 1024;
 		interactionFrame = 0;
 		noEnemySound = false;
+		enemySoundRate = 22050;
 		isAnimal = false;
 		nonHostile = false;
 		playInteractionAudio = false;
@@ -481,6 +482,7 @@ public:
 
 	// Sounds
 	Filename enemySound;
+	uint32 enemySoundRate;
 	Filename deathSound;
 	Filename hitSound;
 	Filename animalSound;

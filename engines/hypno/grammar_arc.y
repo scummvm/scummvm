@@ -536,9 +536,13 @@ bline: FNTOK FILENAME {
 		shoot->explosionFrames.push_back(fi);
 	}
 	| SNTOK FILENAME enc {
-		if (Common::String("S0") == $1)
+		if (Common::String("S0") == $1) {
 			shoot->enemySound = $2;
-		else if (Common::String("S1") == $1)
+			if (Common::String($3) == "11K")
+				shoot->enemySoundRate = 11025;
+			else
+				shoot->enemySoundRate = 22050;
+		} else if (Common::String("S1") == $1)
 			shoot->deathSound = $2;
 		else if (Common::String("S2") == $1)
 			shoot->hitSound = $2;

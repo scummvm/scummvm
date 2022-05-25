@@ -631,8 +631,8 @@ static const yytype_int16 yyrline[] =
      403,   407,   411,   415,   419,   423,   427,   431,   435,   439,
      443,   447,   451,   455,   458,   462,   467,   472,   475,   480,
      485,   489,   495,   499,   502,   503,   504,   507,   511,   514,
-     519,   522,   523,   527,   534,   538,   549,   553,   554,   560,
-     564,   568,   571,   574,   576
+     519,   522,   523,   527,   534,   538,   553,   557,   558,   564,
+     568,   572,   575,   578,   580
 };
 #endif
 
@@ -2213,9 +2213,13 @@ yyreduce:
   case 105: /* bline: SNTOK FILENAME enc  */
 #line 538 "engines/hypno/grammar_arc.y"
                              {
-		if (Common::String("S0") == (yyvsp[-2].s))
+		if (Common::String("S0") == (yyvsp[-2].s)) {
 			shoot->enemySound = (yyvsp[-1].s);
-		else if (Common::String("S1") == (yyvsp[-2].s))
+			if (Common::String((yyvsp[0].s)) == "11K")
+				shoot->enemySoundRate = 11025;
+			else
+				shoot->enemySoundRate = 22050;
+		} else if (Common::String("S1") == (yyvsp[-2].s))
 			shoot->deathSound = (yyvsp[-1].s);
 		else if (Common::String("S2") == (yyvsp[-2].s))
 			shoot->hitSound = (yyvsp[-1].s);
@@ -2223,88 +2227,88 @@ yyreduce:
 			shoot->animalSound = (yyvsp[-1].s);
 
 		debugC(1, kHypnoDebugParser, "SN %s", (yyvsp[-1].s)); }
-#line 2227 "engines/hypno/grammar_arc.cpp"
+#line 2231 "engines/hypno/grammar_arc.cpp"
     break;
 
   case 106: /* bline: SNTOK  */
-#line 549 "engines/hypno/grammar_arc.y"
+#line 553 "engines/hypno/grammar_arc.y"
                 {
 		debugC(1, kHypnoDebugParser, "SN");
 	}
-#line 2235 "engines/hypno/grammar_arc.cpp"
+#line 2239 "engines/hypno/grammar_arc.cpp"
     break;
 
   case 107: /* bline: GTOK  */
-#line 553 "engines/hypno/grammar_arc.y"
+#line 557 "engines/hypno/grammar_arc.y"
                { debugC(1, kHypnoDebugParser, "G"); }
-#line 2241 "engines/hypno/grammar_arc.cpp"
+#line 2245 "engines/hypno/grammar_arc.cpp"
     break;
 
   case 108: /* bline: TTOK NUM NUM NUM  */
-#line 554 "engines/hypno/grammar_arc.y"
+#line 558 "engines/hypno/grammar_arc.y"
                            {
 		shoot->interactionFrame = (yyvsp[-2].i);
 		assert((yyvsp[-1].i) == 0);
 		shoot->waitForClickAfterInteraction = (yyvsp[0].i);
 		debugC(1, kHypnoDebugParser, "T %d %d %d", (yyvsp[-2].i), (yyvsp[-1].i), (yyvsp[0].i));
 	}
-#line 2252 "engines/hypno/grammar_arc.cpp"
+#line 2256 "engines/hypno/grammar_arc.cpp"
     break;
 
   case 109: /* bline: TTOK NUM  */
-#line 560 "engines/hypno/grammar_arc.y"
+#line 564 "engines/hypno/grammar_arc.y"
                    {
 		shoot->interactionFrame = (yyvsp[0].i);
 		debugC(1, kHypnoDebugParser, "T %d", (yyvsp[0].i));
 	}
-#line 2261 "engines/hypno/grammar_arc.cpp"
+#line 2265 "engines/hypno/grammar_arc.cpp"
     break;
 
   case 110: /* bline: TTOK  */
-#line 564 "engines/hypno/grammar_arc.y"
+#line 568 "engines/hypno/grammar_arc.y"
                {
 		shoot->isAnimal = true;
 		debugC(1, kHypnoDebugParser, "T");
 	}
-#line 2270 "engines/hypno/grammar_arc.cpp"
+#line 2274 "engines/hypno/grammar_arc.cpp"
     break;
 
   case 111: /* bline: MTOK  */
-#line 568 "engines/hypno/grammar_arc.y"
+#line 572 "engines/hypno/grammar_arc.y"
                {
 		debugC(1, kHypnoDebugParser, "M");
 	}
-#line 2278 "engines/hypno/grammar_arc.cpp"
+#line 2282 "engines/hypno/grammar_arc.cpp"
     break;
 
   case 112: /* bline: NTOK  */
-#line 571 "engines/hypno/grammar_arc.y"
+#line 575 "engines/hypno/grammar_arc.y"
                {
 		shoot->noEnemySound = true;
 		debugC(1, kHypnoDebugParser, "N"); }
-#line 2286 "engines/hypno/grammar_arc.cpp"
+#line 2290 "engines/hypno/grammar_arc.cpp"
     break;
 
   case 113: /* bline: NRTOK  */
-#line 574 "engines/hypno/grammar_arc.y"
+#line 578 "engines/hypno/grammar_arc.y"
                 {
 		debugC(1, kHypnoDebugParser, "NR"); }
-#line 2293 "engines/hypno/grammar_arc.cpp"
+#line 2297 "engines/hypno/grammar_arc.cpp"
     break;
 
   case 114: /* bline: ZTOK  */
-#line 576 "engines/hypno/grammar_arc.y"
+#line 580 "engines/hypno/grammar_arc.y"
                {
 		g_parsedArc->shoots.push_back(*shoot);
 		//delete shoot;
 		//shoot = nullptr;
 		debugC(1, kHypnoDebugParser, "Z");
 	}
-#line 2304 "engines/hypno/grammar_arc.cpp"
+#line 2308 "engines/hypno/grammar_arc.cpp"
     break;
 
 
-#line 2308 "engines/hypno/grammar_arc.cpp"
+#line 2312 "engines/hypno/grammar_arc.cpp"
 
       default: break;
     }

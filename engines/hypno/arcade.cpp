@@ -469,9 +469,9 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 						}
 						if (!s.noEnemySound) {
 							if (!s.enemySound.empty())
-								playSound(_soundPath + s.enemySound, 1);
+								playSound(_soundPath + s.enemySound, 1, s.enemySoundRate);
 							else if (!arc->enemySound.empty())
-								playSound(_soundPath + arc->enemySound, 1);
+								playSound(_soundPath + arc->enemySound, 1, arc->enemySoundRate);
 						}
 					}
 				}
