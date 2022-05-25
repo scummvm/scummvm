@@ -1698,20 +1698,20 @@ void Menu::drawRocketAndSelections() {
 
 	// exhaust
 	if (_rocketEx < 5) {
-		_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
+		_rocketEx1->drawMasked(_rocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
 		if (!g_hdb->isPPC()) {
-			_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+			_rocketEx2->drawMasked(_rocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 		}
 	} else if (_rocketEx >= 5 && _rocketEx < 10) {
-		_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
+		_rocketEx2->drawMasked(_rocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
 		if (!g_hdb->isPPC()) {
-			_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+			_rocketEx1->drawMasked(_rocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 		}
 	} else {
 		_rocketEx = 0;
-		_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
+		_rocketEx1->drawMasked(_rocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
 		if (!g_hdb->isPPC()) {
-			_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+			_rocketEx2->drawMasked(_rocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 		}
 	}
 	_rocketEx++;
