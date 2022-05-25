@@ -1289,7 +1289,11 @@ void Dialogs::InventoryIconCursor(bool bNewItem) {
  * Returns true if the inventory is active.
  */
 bool Dialogs::InventoryActive() {
-	return (_inventoryState == ACTIVE_INV);
+	return _inventoryState == ACTIVE_INV;
+}
+
+bool Dialogs::InventoryOrNotebookActive() {
+	return InventoryActive() || ((TinselVersion == 3) && _vm->_notebook->IsOpen());
 }
 
 int Dialogs::WhichInventoryOpen() {
