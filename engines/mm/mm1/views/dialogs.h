@@ -25,6 +25,7 @@
 #include "mm/mm1/events.h"
 #include "mm/mm1/views/are_you_ready.h"
 #include "mm/mm1/views/create_characters.h"
+#include "mm/mm1/views/game.h"
 #include "mm/mm1/views/inn.h"
 #include "mm/mm1/views/main_menu.h"
 #include "mm/mm1/views/title.h"
@@ -38,6 +39,7 @@ struct Dialogs {
 private:
 	Views::AreYouReady _areYouReady;
 	Views::CreateCharacters _createCharacters;
+	Views::Game _game;
 	Views::Inn _inn;
 	Views::MainMenu _mainMenu;
 	Views::Title _title;

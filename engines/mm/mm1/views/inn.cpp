@@ -103,6 +103,16 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 			g_globals->_rosterEntry = &g_globals->_roster[charNum];
 			addView("ViewCharacter");
 		}
+	} else if (msg.keycode == Common::KEYCODE_x) {
+		// Load party from selected characters
+		for (uint i = 0; i < g_globals->_partyChars.size(); ++i)
+			g_globals->_party[i] = g_globals->_roster[g_globals->_partyChars[i]];
+		for (uint i = g_globals->_partyChars.size(); i < PARTY_COUNT; ++i)
+			g_globals->_party[i].clear();
+
+		// TODO: town setup
+		// Switch to game view
+		replaceView("Game");
 	}
 
 	return false;

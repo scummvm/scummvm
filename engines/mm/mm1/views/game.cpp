@@ -19,49 +19,28 @@
  *
  */
 
-#ifndef MM1_GLOBALS_H
-#define MM1_GLOBALS_H
-
-#include "graphics/font.h"
-#include "mm/utils/strings_data.h"
-#include "mm/mm1/utils/party_array.h"
-#include "mm/mm1/utils/roster.h"
+#include "mm/mm1/views/game.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 
-class Globals {
-public:
-	StringsData _strings;
-	Roster _roster;
-	const Graphics::Font *_font = nullptr;
-	RosterEntry *_rosterEntry = nullptr;
-	int _startingTown = 0;
-	PartyArray _partyChars;
-	RosterEntry _party[PARTY_COUNT];
-public:
-	Globals();
-	virtual ~Globals();
+Game::Game() : TextView("Game"),
+		_commands(this), _messages(this), _party(this) {
+}
 
-	/**
-	 * Loads data for the globals
-	 */
-	bool load();
+void Game::draw() {
+	// Clear the screen, and then call superclass
+	// to render the subviews within the view
+	getScreen()->clear();
+	UIElement::draw();
+}
 
-	/**
-	 * Returns a string
-	 */
-	const Common::String &operator[](const Common::String &name) {
-		assert(_strings.contains(name));
-		return _strings[name];
-	}
-};
+bool Game::msgKeypress(const KeypressMessage &msg) {
+	return true;
+}
 
-extern Globals *g_globals;
-
-#define STRING (*g_globals)
-
+} // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif

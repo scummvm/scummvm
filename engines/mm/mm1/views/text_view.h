@@ -70,6 +70,7 @@ protected:
 	void escToGoBack();
 public:
 	TextView(const Common::String &name);
+	TextView(const Common::String &name, UIElement *owner);
 	virtual ~TextView() {}
 };
 
