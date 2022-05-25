@@ -116,6 +116,20 @@ HOTS /BBOX= 250 32  301 199\n\
 SOND van2.raw 22K\n\
 END\n";
 
+static const char *selectC5 = "\
+MENU preload\\slct_c5.smk\n\
+HOTS /BBOX= 212 108 306 192\n\
+SOND tolvexp1.raw 22K\n\
+HOTS /BBOX= 212 5 302 82\n\
+SOND tollcom2.raw 22K\n\
+HOTS /BBOX= 110 70 198 148\n\
+SOND tolbwhr1.raw 22K\n\
+HOTS /BBOX= 4 14 91 92\n\
+SOND tolbwhr1.raw 22K\n\
+HOTS /BBOX= 8 105 96 194\n\
+SOND tolbwhr1.raw 22K\n\
+END\n";
+
 void BoyzEngine::loadAssets() {
 	LibFile *missions = loadLib("", "preload/missions.lib", true);
 	Common::ArchiveMemberList files;
@@ -320,6 +334,10 @@ void BoyzEngine::loadAssets() {
 
 	Code *check_ho = new Code("<check_ho>");
 	_levels["<check_ho>"] = check_ho;
+
+	loadSceneLevel(selectC5, "<select_c5>", "", "");
+	sc = (Scene *) _levels["<select_c5>"];
+	sc->resolution = "320x200";
 
 	loadLib("sound/", "misc/sound.lib", true);
 
