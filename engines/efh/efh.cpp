@@ -1621,24 +1621,23 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 	int16 var_F2 = -1;
 	int16 var_F0 = 0xFF;
 	int16 var_EE = 0xFF;
-	const char *stringToDisplay = " ";
-	uint16 curLine = 0;
+	uint16 curLineNb = 0;
 	int16 numbLines = (1 + maxY - posY) / 9;
 	int16 width = maxX - posX;
-	int16 var_114 = getStringWidth(stringToDisplay);
+	int16 spaceWidth = getStringWidth(" ");
 	uint8 *buffer = stringBuffer;
-	char var_EC[80];
-	char dest[150];
-	memset(var_EC, 0, sizeof(var_EC));
-	memset(dest, 0, sizeof(dest));
-	int16 var_116 = 0;
-	setTextPos(posX, curLine * 9 + posY);
+	char nextWord[80];
+	char curLine[150];
+	memset(nextWord, 0, sizeof(nextWord));
+	memset(curLine, 0, sizeof(curLine));
+	int16 curWordPos = 0;
+	setTextPos(posX, curLineNb * 9 + posY);
 
 	while (!doneFlag) {
 		uint8 curChar = *buffer;
 		if (curChar != 0x5E && curChar != 0x20 && curChar != 0 && curChar != 0x7C) {
 			var_F2 = 0;
-			var_EC[var_116++] = curChar;
+			nextWord[curWordPos++] = curChar;
 			++buffer;
 			continue;
 		}
@@ -1649,28 +1648,28 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 			else if (curChar == 0x7C)
 				var_F2 = 0;
 
-			var_EC[var_116] = 0;
-			int16 var_11A = getStringWidth(var_EC);
-			int16 var_118 = var_114 + getStringWidth(dest);
+			nextWord[curWordPos] = 0;
+			int16 widthNextWord = getStringWidth(nextWord);
+			int16 widthCurrentLine = spaceWidth + getStringWidth(curLine);
 
-			if (var_118 + var_11A > width || curChar == 0x7C) {
-				if (curLine >= numbLines) {
+			if (widthCurrentLine + widthNextWord > width || curChar == 0x7C) {
+				if (curLineNb >= numbLines) {
 					doneFlag = true;
 				} else {
 					if (var_F2 == 0)
-						displayStringAtTextPos(dest);
+						displayStringAtTextPos(curLine);
 
-					*dest = 0;
-					strcpy(dest, var_EC);
-					strcat(dest, " ");
-					++curLine;
-					setTextPos(posX, posY + curLine * 9);
-					var_116 = 0;
+					*curLine = 0;
+					strcpy(curLine, nextWord);
+					strcat(curLine, " ");
+					++curLineNb;
+					setTextPos(posX, posY + curLineNb * 9);
+					curWordPos = 0;
 				}
 			} else {
-				strcat(dest, var_EC);
-				strcat(dest, " ");
-				var_116 = 0;
+				strcat(curLine, nextWord);
+				strcat(curLine, " ");
+				curWordPos = 0;
 			}
 			++buffer;
 			continue;
@@ -1955,11 +1954,11 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 				} else {
 					copyString(_npcBuf[_teamCharId[counter]]._name, _enemyNamePt2);
 					copyString(_items[var110]._name, _nameBuffer);
-					sprintf(dest, "%s finds a %s!", _enemyNamePt2, _nameBuffer);
+					sprintf(curLine, "%s finds a %s!", _enemyNamePt2, _nameBuffer);
 					drawMapWindow();
 					displayFctFullScreen();
 					drawMapWindow();
-					var110 = sub1C219((uint8 *)dest, 1, 2, true);
+					var110 = sub1C219((uint8 *)curLine, 1, 2, true);
 					displayFctFullScreen();
 				}
 
@@ -2037,8 +2036,8 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 		}
 	}
 
-	if (*dest != 0 && curLine < numbLines && var_F2 == 0)
-		displayStringAtTextPos(dest);
+	if (*curLine != 0 && curLineNb < numbLines && var_F2 == 0)
+		displayStringAtTextPos(curLine);
 
 	if (var_EE != 0xFF) {
 		displayLowStatusScreen(true);
@@ -2441,8 +2440,7 @@ bool EfhEngine::handleDeathMenu() {
 			displayFctFullScreen();
 	}
 
-	bool found;
-	for (found = false; !found;) {
+	for (bool found = false; !found;) {
 		Common::KeyCode input = waitForKey();
 		switch (input) {
 		case Common::KEYCODE_l:
@@ -6892,7 +6890,7 @@ void EfhEngine::writeTechAndMapFiles() {
 }
 
 uint16 EfhEngine::getStringWidth(const char *buffer) {
-	debug("getStringWidth %s", buffer);
+	debugC(6, kDebugEngine, "getStringWidth %s", buffer);
 
 	uint16 retVal = 0;
 
