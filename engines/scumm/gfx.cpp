@@ -1963,6 +1963,21 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 			_roomPalette = _vm->_roomPalette;
 	}
 
+	// WORKAROUND: 256-color versions of Indy3 feature unusual pink and cyan
+	// horizontal lines when Indy meets Elsa in Berlin. This has only been fixed
+	// in the official FM-TOWNS release (with a few other subtle adjustments),
+	// but a simpler fix here is to override the pink and cyan colors in the local
+	// palette so that it matches the way these lines have been redrawn in the
+	// FM-TOWNS release.  We take care not to apply this palette change to the
+	// text or inventory, as they still require the original colors.
+	if (_vm->_game.id == GID_INDY3 && (_vm->_game.features & GF_OLD256) && _vm->_game.platform != Common::kPlatformFMTowns
+		&& _vm->_roomResource == 46 && smapLen == 43159 && vs->number == kMainVirtScreen && _vm->_enableEnhancements) {
+		if (_roomPalette[11] == 11 && _roomPalette[86] == 86)
+			_roomPalette[11] = 86;
+		if (_roomPalette[13] == 13 && _roomPalette[80] == 80)
+			_roomPalette[13] = 80;
+	}
+
 	return decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
 }
 
