@@ -400,8 +400,8 @@ void GroupedListWidget::drawWidget() {
 		} else {
 			buffer = _list[pos];
 		}
-		g_gui.theme()->drawText(r1, buffer, _state,
-								_drawAlign, inverted, pad, true, bold, color);
+
+		drawFormattedText(r1, buffer, _state, _drawAlign, inverted, pad, true);
 
 		// If in numbering mode & using RTL layout in GUI, we print a number suffix after drawing the text
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL()) {

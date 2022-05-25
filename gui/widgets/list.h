@@ -143,6 +143,11 @@ public:
 
 	bool wantsFocus() override { return true; }
 
+	static Common::U32String getThemeColor(byte r, byte g, byte b);
+	static Common::U32String getThemeColor(ThemeEngine::FontColor color);
+	static ThemeEngine::FontColor getThemeColor(Common::U32String color);
+	static Common::U32String stripGUIformatting(const Common::U32String &str);
+
 protected:
 	void drawWidget() override;
 
@@ -158,6 +163,10 @@ protected:
 	void lostFocusWidget() override;
 	void checkBounds();
 	void scrollToCurrent();
+
+	void drawFormattedText(const Common::Rect &r, const Common::U32String &str, ThemeEngine::WidgetStateInfo state = ThemeEngine::kStateEnabled,
+					Graphics::TextAlign align = Graphics::kTextAlignCenter,
+					ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone, int deltax = 0, bool useEllipsis = true);
 };
 
 } // End of namespace GUI

@@ -600,8 +600,8 @@ void ListWidget::drawWidget() {
 		} else {
 			buffer = _list[pos];
 		}
-		g_gui.theme()->drawText(r1, buffer, _state,
-								_drawAlign, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
+
+		drawFormattedText(r1, buffer, _state, _drawAlign, inverted, pad, true);
 
 		// If in numbering mode & using RTL layout in GUI, we print a number suffix after drawing the text
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL()) {
@@ -812,6 +812,124 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 		// (I am borrowing these "ideas" from the NSBox class in Cocoa :).
 		g_gui.scheduleTopDialogRedraw();
 	}
+}
+
+Common::U32String ListWidget::getThemeColor(byte r, byte g, byte b) {
+	return Common::U32String::format("\001c%02x%02x%02x", r, g, b);
+}
+
+Common::U32String ListWidget::getThemeColor(ThemeEngine::FontColor color) {
+	switch (color) {
+	case ThemeEngine::kFontColorNormal:
+		return Common::U32String("\001C{normal}");
+	case ThemeEngine::kFontColorAlternate:
+		return Common::U32String("\001C{alternate}");
+	default:
+		return Common::U32String("\001C{unknown}");
+	}
+}
+
+ThemeEngine::FontColor ListWidget::getThemeColor(Common::U32String color) {
+	if (color == "normal")
+		return ThemeEngine::kFontColorNormal;
+
+	if (color == "alternate")
+		return ThemeEngine::kFontColorAlternate;
+
+	warning("ListWidget::getThemeColor(): Malformed color (\"%s\")", color.encode().c_str());
+
+	return ThemeEngine::kFontColorNormal;
+}
+
+Common::U32String ListWidget::stripGUIformatting(const Common::U32String &str) {
+	Common::U32String stripped;
+	const uint32 *s = str.u32_str();
+
+	while (*s) {
+		if (*s != '\001') { // normal symbol
+			stripped += *s++;
+			continue;
+		}
+
+		s++; // skip \001
+		switch (*s) {
+		case '\001':  // \001\001 -> \001
+			stripped += *s++;
+			break;
+
+		case 'c': // \001cRRGGBB
+			s += 7; // check length?
+			break;
+
+		case 'C': // \001C{color-name}
+			while (*s && *s++ != '}')
+				;
+			break;
+
+		default:
+			error("Wrong string format (%c)", *s);
+		}
+	}
+
+	return stripped;
+}
+
+void ListWidget::drawFormattedText(const Common::Rect &r, const Common::U32String &str, ThemeEngine::WidgetStateInfo state,
+				Graphics::TextAlign align, ThemeEngine::TextInversionState inverted, int deltax, bool useEllipsis) {
+	Common::U32String chunk;
+	const uint32 *s = str.u32_str();
+	ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold;
+	ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal;
+	Common::U32String tmp;
+
+	while (*s) {
+		if (*s != '\001') { // normal symbol
+			chunk += *s++;
+			continue;
+		}
+
+		if (chunk.size()) {
+			g_gui.theme()->drawText(r, chunk, state, align, inverted, deltax, true, font, color);
+
+			deltax += g_gui.theme()->getStringWidth(chunk, font);
+			chunk.clear();
+		}
+
+		s++; // skip \001
+		switch (*s) {
+		case '\001':  // \001\001 -> \001
+			chunk += *s++;
+			break;
+
+		case 'c': // \001cRRGGBB
+			s += 7; // check length?
+			break;
+
+		case 'C': // \001C{color-name}
+			tmp.clear();
+			s++;
+			if (*s == '{')
+				s++;
+			else
+				error("ListWidget::drawFormattedText(): Malformatted \\001C color (%c)", *s);
+
+			while (*s && *s != '}')
+				tmp += *s++;
+
+			if (*s == '}')	// skip the closing bracket
+				s++;
+
+			color = getThemeColor(tmp);
+
+			break;
+
+		default:
+			error("ListWidget::drawFormattedText(): Wrong string format (\\001%c)", *s);
+		}
+	}
+
+	if (chunk.size())
+		g_gui.theme()->drawText(r, chunk, state, align, inverted, deltax, true, font, color);
 }
 
 } // End of namespace GUI

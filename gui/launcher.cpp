@@ -1064,7 +1064,9 @@ void LauncherSimple::updateListing() {
 				// description += Common::String::format(" (%s)", _("Not found"));
 			}
 		}
-		l.push_back(iter->description);
+		Common::U32String gameDesc = GUI::ListWidget::getThemeColor(color) + Common::U32String(iter->description);
+
+		l.push_back(gameDesc);
 		colors.push_back(color);
 		attrs.push_back(iter->domain);
 		_domains.push_back(iter->key);
