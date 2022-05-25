@@ -19,46 +19,51 @@
  *
  */
 
-#ifndef MM1_GLOBALS_H
-#define MM1_GLOBALS_H
+#ifndef MM1_UTILS_PARTY_ARRAY_H
+#define MM1_UTILS_PARTY_ARRAY_H
 
-#include "graphics/font.h"
-#include "mm/utils/strings_data.h"
-#include "mm/mm1/utils/party_array.h"
-#include "mm/mm1/utils/roster.h"
+#include "common/array.h"
 
 namespace MM {
 namespace MM1 {
 
-class Globals {
+class PartyArray : public Common::Array<uint> {
 public:
-	StringsData _strings;
-	Roster _roster;
-	const Graphics::Font *_font = nullptr;
-	RosterEntry *_rosterEntry = nullptr;
-	int _startingTown = 0;
-	PartyArray _partyChars;
-public:
-	Globals();
-	virtual ~Globals();
+	PartyArray() : Common::Array<uint>() {}
+
+	int indexOf(uint val) const {
+		for (uint i = 0; i < size(); ++i) {
+			if ((*this)[i] == val)
+				return i;
+		}
+
+		return -1;
+	}
 
 	/**
-	 * Loads data for the globals
+	 * Returns true if the array contains the value
 	 */
-	bool load();
+	bool contains(uint val) {
+		return indexOf(val) != -1;
+	}
 
 	/**
-	 * Returns a string
+	 * Removes a given item from the array
 	 */
-	const Common::String &operator[](const Common::String &name) {
-		assert(_strings.contains(name));
-		return _strings[name];
+	void remove(uint val) {
+		int idx = indexOf(val);
+		if (idx != -1)
+			remove_at(idx);
+	}
+
+	/**
+	 * Adds an item to the array
+	 */
+	void push_back(uint val) {
+		assert(!contains(val));
+		Common::Array<uint>::push_back(val);
 	}
 };
-
-extern Globals *g_globals;
-
-#define STRING (*g_globals)
 
 } // namespace MM1
 } // namespace MM

@@ -56,16 +56,11 @@ void Inn::draw() {
 			uint charNum = _charNums[idx];
 			RosterEntry &re = g_globals->_roster[charNum];
 
-			// Check if character in party
-			bool inParty = false;
-			for (uint i = 0; i < PARTY_COUNT && !inParty; ++i)
-				inParty = g_globals->_partyChars[i] = (int)charNum;
-
 			_textPos = (idx < 9) ? Common::Point(2, 6 + idx) :
 				Common::Point(20, 6 + idx - 9);
 
 			// Write character
-			writeChar(inParty ? '@' : ' ');
+			writeChar(g_globals->_partyChars.contains(charNum) ? '@' : ' ');
 			writeChar('A' + idx);
 			writeChar(')');
 			writeString(re._name);
@@ -78,14 +73,36 @@ void Inn::draw() {
 		writeString(6, 20, STRING["dialogs.inn.ctrl"]);
 		writeString(range);
 		writeString(STRING["dialogs.inn.add_remove"]);
-		writeString(13, 22, STRING["dialogs.inn.exit"]);
+
+		if (!g_globals->_partyChars.empty())
+			writeString(13, 22, STRING["dialogs.inn.exit"]);
+		if (g_globals->_partyChars.size() == PARTY_COUNT)
+			writeString(10, 16, STRING["dialogs.inn.full"]);
 	}
 }
 
 bool Inn::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_RETURN) {
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
 		replaceView("MainMenu");
 		return true;
+	} else if (msg.keycode >= Common::KEYCODE_a &&
+			msg.keycode < (Common::KeyCode)(Common::KEYCODE_a + _charNums.size())) {
+		int charNum = _charNums[msg.keycode - Common::KEYCODE_a];
+
+		if (msg.flags & Common::KBD_CTRL) {
+			// Toggle in party
+			if (g_globals->_partyChars.contains(charNum))
+				g_globals->_partyChars.remove(charNum);
+			else
+				g_globals->_partyChars.push_back(charNum);
+
+			redraw();
+
+		} else if (msg.flags == 0) {
+			// View character
+			g_globals->_rosterEntry = &g_globals->_roster[charNum];
+			addView("ViewCharacter");
+		}
 	}
 
 	return false;
