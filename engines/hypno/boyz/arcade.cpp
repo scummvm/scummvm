@@ -218,7 +218,9 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 	ArcadeTransition at = *transitions.begin();
 	int ttime = at.time;
 	if (_background->decoder->getCurFrame() > ttime) {
-		if (at.video == "NONE") {
+		if (_background->decoder->getCurFrame() > ttime + 3) {
+			debugC(1, kHypnoDebugArcade, "Skipped transition of %d at %d", ttime, _background->decoder->getCurFrame());
+		} else if (at.video == "NONE") {
 			if (!at.palette.empty()) {
 				_background->decoder->pauseVideo(true);
 				_currentPalette = at.palette;
@@ -234,6 +236,8 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 					_health = 0;
 					// Not sure how to handle this
 				}
+			} else if (_levelId == 51) {
+				waitForUserClick(1);
 			}
 		} else if (!at.video.empty()) {
 			_background->decoder->pauseVideo(true);
@@ -389,7 +393,9 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 
 			if (checkCup(_shoots[i].name))
 				return false;
-			Common::String filename = _warningVideosDay[_shoots[i].warningVideoIdx];
+			uint32 idx = _shoots[i].warningVideoIdx;
+			idx = idx == 0 ? 2 : idx;
+			Common::String filename = _warningVideosDay[idx];
 			_civiliansShoot++;
 
 			_background->decoder->pauseVideo(true);
@@ -495,8 +501,8 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 	} else if (s->missedAnimation == uint32(-1000)) {
 		_health = 0;
 	} else {
-		int missedAnimation = s->missedAnimation + 3;
-		if (missedAnimation > int(_background->decoder->getFrameCount()) - 1) {
+		int missedAnimation = s->missedAnimation;
+		if (missedAnimation + 3 > int(_background->decoder->getFrameCount()) - 1) {
 			_skipLevel = true;
 			return;
 		}
@@ -506,7 +512,7 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		_background->decoder->forceSeekToFrame(missedAnimation);
 		_masks->decoder->forceSeekToFrame(missedAnimation);
 	}
-	if (s->interactionFrame == 0)
+	if (!s->nonHostile)
 		hitPlayer();
 }
 
