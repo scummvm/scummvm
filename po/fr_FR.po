@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-23 21:45+0000\n"
-"PO-Revision-Date: 2022-05-17 23:27+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2022-05-26 01:27+0000\n"
+"Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -4286,7 +4286,7 @@ msgstr ""
 
 #: engines/agos/detection.cpp:86
 msgid "Use DOS version music tempos"
-msgstr "Utiliser le tempo des musique de la version DOS"
+msgstr "Utiliser le tempo des musiques de la version DOS"
 
 #: engines/agos/detection.cpp:87
 msgid ""
