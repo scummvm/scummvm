@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-23 21:45+0000\n"
-"PO-Revision-Date: 2022-05-10 21:19+0000\n"
+"PO-Revision-Date: 2022-05-25 17:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -803,9 +803,6 @@ msgid "Change global ScummVM options"
 msgstr "Змінити глобальні налаштування ScummVM"
 
 #: gui/launcher.cpp:243
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "Global ~O~pts..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "~Н~алашт..."
@@ -951,9 +948,6 @@ msgid "Change game options"
 msgstr "Змінити налаштування гри"
 
 #: gui/launcher.cpp:989
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "~G~ame Opts..."
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "Нал. ~г~ри..."
