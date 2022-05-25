@@ -50,6 +50,17 @@ enum {
 	kMaxStars = 10
 };
 
+enum OptionsScreens {
+	kOptionsScreenMain = 1,          // The main Options screen; Sound Settings and Modify Controls button
+	kOptionsScreenModifyControls = 2 // The controls screen, for viewing and remapping controls (currently not implemented)
+};
+
+enum MenuScreens {
+	kMenuOptions  = 0,
+	kMenuLoadGame = 1,
+	kMenuNewGame  = 2
+};
+
 struct Star {
 	int x, y, speed, anim, delay;
 
