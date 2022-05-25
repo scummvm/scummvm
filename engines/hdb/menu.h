@@ -86,7 +86,7 @@ public:
 	void freeMenu();
 
 	void processInput(int x, int y);	// this is where the items are clicked!
-	void controlsInput(int x, int y);	// take mouse input and pass through to menu
+	void controlsInput(int x, int y, int xit); // take mouse input and pass through to menu
 	void controlsDraw();
 	void drawNebula();
 	void drawRocketAndSelections();		// draw the background stuff

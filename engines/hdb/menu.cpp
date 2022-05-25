@@ -720,7 +720,7 @@ void Menu::drawMenu() {
 			_menuBackoutGfx->drawMasked(_backoutX, _backoutY);
 
 			// Ignore Controls Screen Button
-			_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), _mControlsY);
+			//_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), _mControlsY);
 		} else if (_optionsScreenId == kOptionsScreenModifyControls) {
 			//
 			// Draw CONTROLS screen
@@ -1427,7 +1427,7 @@ void Menu::processInput(int x, int y) {
 		// Controls screen
 		//
 		if (_optionsScreenId == kOptionsScreenModifyControls) {
-			controlsInput(x, y);
+			controlsInput(x, y, xit);
 			return;
 		}
 
@@ -1628,10 +1628,17 @@ void Menu::processInput(int x, int y) {
 	}
 }
 
-void Menu::controlsInput(int x, int y) {
+void Menu::controlsInput(int x, int y, int xit) {
+	if (y >= _menuExitY || y < _menuExitYTop || xit) {
+		_optionsScreenId = kOptionsScreenMain;
+		_clickDelay = 20;
+		g_hdb->_sound->playSound(SND_MENU_BACKOUT);
+	}
 }
 
 void Menu::controlsDraw() {
+	_controlsGfx->drawMasked(centerPic(_controlsGfx), _oBannerY);
+	_menuBackoutGfx->drawMasked(_backoutX, _backoutY);
 }
 
 void Menu::drawNebula() {
