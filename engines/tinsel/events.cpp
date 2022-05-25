@@ -160,7 +160,7 @@ void ControlOn() {
 		_vm->_cursor->UnHideCursor();
 
 		// Turn tags back on
-		if (!_vm->_dialogs->InventoryActive())
+		if (!_vm->_dialogs->InventoryOrNotebookActive())
 			EnableTags();
 	}
 }
@@ -433,7 +433,7 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 	if (!ControlIsOn() && (pEvent != PLR_DRAG1_END))
 		return;
 
-	if ((TinselVersion >= 2) && _vm->_dialogs->InventoryActive()) {
+	if ((TinselVersion >= 2) && _vm->_dialogs->InventoryOrNotebookActive()) {
 		int x, y;
 		_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &x, &y);
 		_vm->_dialogs->EventToInventory(pEvent, Common::Point(coOrds.x - x, coOrds.y - y));

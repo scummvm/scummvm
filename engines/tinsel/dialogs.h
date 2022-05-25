@@ -298,6 +298,7 @@ public:
 	void idec_invMain(SCNHANDLE text, int MaxContents);
 
 	bool InventoryActive();
+	bool InventoryOrNotebookActive();
 
 	void PermaConvIcon(int icon, bool bEnd = false);
 
