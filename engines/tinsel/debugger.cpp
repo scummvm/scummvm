@@ -64,7 +64,9 @@ int strToInt(const char *s) {
 Console::Console() : GUI::Debugger() {
 	if (TinselVersion == 3) {
 		registerCmd("add_clue",		WRAP_METHOD(Console, cmd_add_clue));
+		registerCmd("add_all_clues",	WRAP_METHOD(Console, cmd_add_all_clues));
 		registerCmd("cross_clue",		WRAP_METHOD(Console, cmd_cross_clue));
+		registerCmd("list_clues",		WRAP_METHOD(Console, cmd_list_clues));
 	}
 	registerCmd("item",		WRAP_METHOD(Console, cmd_item));
 	registerCmd("scene",		WRAP_METHOD(Console, cmd_scene));
@@ -177,6 +179,14 @@ bool Console::cmd_add_clue(int argc, const char **argv) {
 	return false;
 }
 
+bool Console::cmd_add_all_clues(int argc, const char **argv) {
+	auto clues = _vm->_dialogs->GetAllNotebookClues();
+	for (auto clue : clues) {
+		_vm->_notebook->AddClue(clue);
+	}
+	return false;
+}
+
 bool Console::cmd_cross_clue(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("%s clue_id\n", argv[0]);
@@ -186,6 +196,14 @@ bool Console::cmd_cross_clue(int argc, const char **argv) {
 
 	_vm->_notebook->CrossClue(strToInt(argv[1]));
 	return false;
+}
+
+bool Console::cmd_list_clues(int argc, const char **argv) {
+	auto clues = _vm->_dialogs->GetAllNotebookClues();
+	for (auto clue : clues) {
+		debugPrintf("%d\n", clue);
+	}
+	return true;
 }
 
 } // End of namespace Tinsel

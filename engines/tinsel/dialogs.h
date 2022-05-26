@@ -295,6 +295,7 @@ public:
 	               int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
 
 	// Noir
+	Common::Array<int> GetAllNotebookClues() const;
 	void idec_invMain(SCNHANDLE text, int MaxContents);
 
 	bool InventoryActive();
