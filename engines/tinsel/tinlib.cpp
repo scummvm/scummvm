@@ -5395,7 +5395,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case ADDNOTEBOOK:
 		// Noir Only
-		warning("TODO: Implement ADDNOTEBOOK");
+		_vm->_notebook->AddClue(pp[0]);
 		return -1;
 
 	case ADDOPENINV:

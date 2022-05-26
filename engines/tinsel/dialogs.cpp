@@ -1208,7 +1208,7 @@ bool Dialogs::GetIsInvObject(int id) {
 /**
  * Convert item ID number to index.
  */
-int Dialogs::GetObjectIndex(int id) {
+int Dialogs::GetObjectIndex(int id) const {
 	int index = _invObjects->GetObjectIndexIfExists(id);
 	if (index == -1) {
 		error("GetObjectIndex(%d): Trying to manipulate undefined inventory icon", id);
@@ -5142,12 +5142,20 @@ void Dialogs::EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 /************************* Odds and Ends **********************************/
 /**************************************************************************/
 
+const FILM *Dialogs::GetObjectFilm(int object) const {
+	return (const FILM*)_vm->_handle->LockMem(_invFilms[GetObjectIndex(object)]);
+}
+
 /**
  * Called from Glitter function invdepict()
  * Changes (permanently) the animation film for that object.
  */
 void Dialogs::SetObjectFilm(int object, SCNHANDLE hFilm) {
 	_invObjects->SetObjectFilm(object, hFilm);
+
+	if (TinselVersion == 3) {
+		_invFilms[GetObjectIndex(object)] = hFilm;
+	}
 
 	if (_heldItem != object)
 		_ItemsChanged = true;
@@ -5569,6 +5577,9 @@ void Dialogs::Redraw() {
 				SlideMSlider(0, (cd.selBox & IS_RIGHT) ? S_TIMEUP : S_TIMEDN);
 			}
 		}
+	}
+	if (TinselVersion == 3) {
+		_vm->_notebook->StepAnimScripts();
 	}
 }
 
