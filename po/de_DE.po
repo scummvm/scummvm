@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-23 21:45+0000\n"
+"POT-Creation-Date: 2022-05-26 08:52+0000\n"
 "PO-Revision-Date: 2022-05-24 16:37+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -960,35 +960,35 @@ msgstr "~S~piel-Opts..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1110 gui/launcher.cpp:1305
+#: gui/launcher.cpp:1112 gui/launcher.cpp:1307
 msgid "Unknown Engine"
 msgstr "Unbekannte Engine"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1128 gui/launcher.cpp:1337
+#: gui/launcher.cpp:1130 gui/launcher.cpp:1339
 msgid "Unknown Publisher"
 msgstr "Unbekannter Publisher"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1146 gui/launcher.cpp:1323
+#: gui/launcher.cpp:1148 gui/launcher.cpp:1325
 msgid "No Series"
 msgstr "Keine Serie"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1161 gui/launcher.cpp:1356
+#: gui/launcher.cpp:1163 gui/launcher.cpp:1358
 msgid "Language not detected"
 msgstr "Sprache nicht erkannt"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1176 gui/launcher.cpp:1371
+#: gui/launcher.cpp:1178 gui/launcher.cpp:1373
 msgid "Platform not detected"
 msgstr "Plattform nicht erkannt"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1382 gui/widgets/groupedlist.cpp:122
+#: gui/launcher.cpp:1384 gui/widgets/groupedlist.cpp:122
 msgid "All"
 msgstr "Alle"
 
