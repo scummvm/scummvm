@@ -161,6 +161,14 @@ Color Blind Mode
 
 .. _CINE:
 
+CHEWY
+*********
+
+Use original save/load screen
+	Uses the original save/load screens instead of the ScummVM screens.
+
+	*original_menus*
+
 CINE
 *********
 
@@ -641,4 +649,3 @@ More durable armor
 	Armor won't break until character is at -80HP, instead of the default -10HP.
 
 	*DurableArmor*
-
