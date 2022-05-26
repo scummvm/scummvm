@@ -29,12 +29,56 @@ namespace Views {
 void QuickRef::draw() {
 	clearScreen();
 	writeString(STRING["dialogs.quick_ref.title"]);
-	_textPos.x = 0;
-	_textPos.y = 2;
 
+	// Print list of characters, hit pts, spell pts, and ac
 	for (uint idx = 0; idx < g_globals->_party.size(); ++idx) {
-		
+		Character &c = g_globals->_party[idx];
+
+		// Number and name
+		writeNumber(0, 2 + idx, '1' + idx);
+		_textPos.x++;
+		writeString(c._name);
+
+		// Hit points
+		_textPos.x = 18;
+		writeNumber(c._hp);
+		_textPos.x = 22;
+		writeChar('/');
+		writeNumber(c._hpMax);
+
+		// Spell points
+		_textPos.x = 28;
+		writeNumber(c._sp);
+		_textPos.x = 32;
+		writeChar('/');
+		writeNumber(c._spMax);
+
+		// AC
+		_textPos.x = 38;
+		writeNumber(c._ac);
 	}
+
+	// Print food and conditions of each character
+	for (uint idx = 0; idx < g_globals->_party.size(); ++idx) {
+		Character &c = g_globals->_party[idx];
+		writeNumber(0, 9 + idx, '1' + idx);
+
+		_textPos.x++;
+		writeString(STRING["dialogs.quick_ref.food"]);
+		writeNumber(c._food);
+
+		_textPos.x = 12;
+		writeString(STRING["dialogs.quick_ref.cond"]);
+		_textPos.x++;
+		printCondition();
+	}
+
+	writeString(12, 21, "'1'-'");
+	writeNumber(g_globals->_party.size());
+	writeString("' ");
+	writeString(STRING["dialogs.quick_ref.to_view"]);
+
+	escToGoBack();
 }
 
 bool QuickRef::msgKeypress(const KeypressMessage &msg) {

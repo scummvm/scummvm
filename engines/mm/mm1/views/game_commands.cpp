@@ -33,6 +33,10 @@ void GameCommands::draw() {
 }
 
 bool GameCommands::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_q) {
+		addView("QuickRef");
+		return true;
+	}
 	return false;
 }
 
