@@ -169,7 +169,7 @@ void Background::StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 
 	if (TinselVersion != 3) {
 		const MULTI_INIT *pmi = pfr->GetMultiInit();
-		const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
+		const FRAME *pFrame = pmi->GetFrame();
 		const IMAGE *pim = _vm->_handle->GetImage(READ_32(pFrame));
 		SetBackPal(pim->hImgPal);
 		delete pim;
