@@ -22,7 +22,7 @@
 #ifndef MM1_VIEWS_CREATE_CHARACTERS_H
 #define MM1_VIEWS_CREATE_CHARACTERS_H
 
-#include "mm/mm1/utils/roster.h"
+#include "mm/mm1/data/roster.h"
 #include "mm/mm1/views/text_view.h"
 
 namespace MM {

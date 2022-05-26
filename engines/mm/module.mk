@@ -7,9 +7,10 @@ MODULE_OBJS := \
 	mm1/events.o \
 	mm1/globals.o \
 	mm1/mm1.o \
+	mm1/data/char.o \
+	mm1/data/roster.o \
 	mm1/gfx/gfx.o \
 	mm1/gfx/screen_decoder.o \
-	mm1/utils/roster.o \
 	mm1/utils/strings.o \
 	mm1/views/are_you_ready.o \
 	mm1/views/create_characters.o \

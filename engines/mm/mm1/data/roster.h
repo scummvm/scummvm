@@ -19,47 +19,60 @@
  *
  */
 
-#ifndef MM1_GLOBALS_H
-#define MM1_GLOBALS_H
+#ifndef MM1_UTILS_ROSTER_H
+#define MM1_UTILS_ROSTER_H
 
-#include "graphics/font.h"
-#include "mm/utils/strings_data.h"
-#include "mm/mm1/data/int_array.h"
-#include "mm/mm1/data/roster.h"
+#include "common/serializer.h"
+#include "mm/mm1/data/char.h"
 
 namespace MM {
 namespace MM1 {
 
-class Globals {
-public:
-	StringsData _strings;
-	Roster _roster;
-	const Graphics::Font *_font = nullptr;
-	Character *_currCharacter = nullptr;
-	int _startingTown = 0;
-	IntArray _partyChars;
-	Character _party[PARTY_COUNT];
-public:
-	Globals();
-	virtual ~Globals();
+#define ROSTER_COUNT 18
+#define PARTY_COUNT 6
 
-	/**
-	 * Loads data for the globals
-	 */
-	bool load();
+struct Roster {
+private:
+	Common::String rosterSaveName() const;
+public:
+	Character _items[ROSTER_COUNT];
+	Town _towns[ROSTER_COUNT] = { NO_TOWN };
 
-	/**
-	 * Returns a string
-	 */
-	const Common::String &operator[](const Common::String &name) {
-		assert(_strings.contains(name));
-		return _strings[name];
+	Character &operator[](uint idx) {
+		assert(idx < ROSTER_COUNT);
+		return _items[idx];
 	}
+
+	/**
+	 * Synchronizes the contents of the roster
+	 */
+	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Load the roster
+	 */
+	void load();
+
+	/**
+	 * Save the roster
+	 */
+	void save();
+
+	/**
+	 * Deletes a character
+	 */
+	void remove(Character *entry);
+
+	/**
+	 * Returns true if the roster is empty
+	 */
+	bool empty() const;
+
+	/**
+	 * Returns true if the roster is full
+	 */
+	bool full() const;
 };
-
-extern Globals *g_globals;
-
-#define STRING (*g_globals)
 
 } // namespace MM1
 } // namespace MM

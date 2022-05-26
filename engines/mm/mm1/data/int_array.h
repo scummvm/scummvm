@@ -19,17 +19,17 @@
  *
  */
 
-#ifndef MM1_UTILS_PARTY_ARRAY_H
-#define MM1_UTILS_PARTY_ARRAY_H
+#ifndef MM1_UTILS_INT_ARRAY_H
+#define MM1_UTILS_INT_ARRAY_H
 
 #include "common/array.h"
 
 namespace MM {
 namespace MM1 {
 
-class PartyArray : public Common::Array<uint> {
+class IntArray : public Common::Array<uint> {
 public:
-	PartyArray() : Common::Array<uint>() {}
+	IntArray() : Common::Array<uint>() {}
 
 	int indexOf(uint val) const {
 		for (uint i = 0; i < size(); ++i) {
