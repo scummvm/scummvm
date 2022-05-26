@@ -19,42 +19,52 @@
  *
  */
 
-#ifndef MM1_VIEWS_DIALOGS_H
-#define MM1_VIEWS_DIALOGS_H
-
-#include "mm/mm1/events.h"
-#include "mm/mm1/views/are_you_ready.h"
-#include "mm/mm1/views/create_characters.h"
-#include "mm/mm1/views/game.h"
-#include "mm/mm1/views/inn.h"
-#include "mm/mm1/views/main_menu.h"
 #include "mm/mm1/views/protect.h"
-#include "mm/mm1/views/quick_ref.h"
-#include "mm/mm1/views/title.h"
-#include "mm/mm1/views/view_characters.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
-struct Dialogs {
-private:
-	Views::AreYouReady _areYouReady;
-	Views::CreateCharacters _createCharacters;
-	Views::Game _game;
-	Views::Inn _inn;
-	Views::MainMenu _mainMenu;
-	Views::Protect _protect;
-	Views::QuickRef _quickRef;
-	Views::Title _title;
-	Views::ViewCharacters _viewCharacters;
-	Views::ViewCharacter _viewCharacter;
-public:
-	Dialogs() {}
-};
+void Protect::draw() {
+	clearScreen();
+	writeString(STRING["dialogs.protect.title"]);
+	escToGoBack();
+
+
+}
+
+void Protect::printProtectionFrom() {
+	if (_textPos.y == 2)
+		writeString(STRING["dialogs.protect.protection"]);
+}
+
+void Protect::printProtectionLevel(uint protectIndex) {
+	_textPos.x = 24;
+	writeChar('+');
+	_textPos.x++;
+	writeNumber(g_globals->_activeSpells[protectIndex]);
+}
+
+bool Protect::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+		close();
+		return true;
+	}
+
+	return false;
+}
+
+bool Protect::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_PROTECT) {
+		addView();
+		return true;
+	}
+
+	return false;
+}
+
 
 } // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif
