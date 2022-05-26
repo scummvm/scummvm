@@ -19,21 +19,26 @@
  *
  */
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
+#include "base/plugins.h"
+#include "engines/advancedDetector.h"
+#include "common/savefile.h"
+#include "common/system.h"
+#include "common/translation.h"
+
+#include "mm/detection.h"
 #include "mm/mm1/mm1.h"
 #include "mm/xeen/xeen.h"
 #include "mm/xeen/worldofxeen/worldofxeen.h"
 #include "mm/xeen/swordsofxeen/swordsofxeen.h"
 
-#include "base/plugins.h"
-#include "common/savefile.h"
-#include "engines/advancedDetector.h"
-#include "common/system.h"
-#include "common/translation.h"
-#include "mm/detection.h"
-
 #define MAX_SAVES 99
 
 class MMMetaEngine : public AdvancedMetaEngine {
+private:
+	Common::KeymapArray mm1InitKeymaps(const char *target) const;
 public:
 	const char *getName() const override {
 		return "mm";
@@ -45,6 +50,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool MMMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -151,6 +157,104 @@ SaveStateDescriptor MMMetaEngine::querySaveMetaInfos(const char *target, int slo
 	}
 
 	return SaveStateDescriptor();
+}
+
+Common::KeymapArray MMMetaEngine::initKeymaps(const char *target) const {
+	return mm1InitKeymaps(target);
+}
+
+Common::KeymapArray MMMetaEngine::mm1InitKeymaps(const char *target) const {
+	using namespace Common;
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "griffon", "The Griffon Legend");
+	Action *act;
+
+	act = new Action(kStandardActionMoveUp, _("Up"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_FORWARDS);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Down"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_BACKWARDS);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Turn Left"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_TURN_LEFT);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Turn Right"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_TURN_RIGHT);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("STRAFE_LEFT", _("Strafe Left"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_STRAFE_LEFT);
+	act->addDefaultInputMapping("C+LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("STRAFE_RIGHT", _("Strafe Right"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_STRAFE_RIGHT);
+	act->addDefaultInputMapping("C+RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("ORDER", _("Order Party"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_ORDER);
+	act->addDefaultInputMapping("o");
+	engineKeyMap->addAction(act);
+
+	act = new Action("PROTECT", _("Protect"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_PROTECT);
+	act->addDefaultInputMapping("p");
+	engineKeyMap->addAction(act);
+
+	act = new Action("REST", _("Rest"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_REST);
+	act->addDefaultInputMapping("r");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SEARCH", _("Search"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_SEARCH);
+	act->addDefaultInputMapping("s");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BASH", _("Bash"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_BASH);
+	act->addDefaultInputMapping("b");
+	engineKeyMap->addAction(act);
+
+	act = new Action("UNLOCK", _("Unlock"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_UNLOCK);
+	act->addDefaultInputMapping("u");
+	engineKeyMap->addAction(act);
+
+	act = new Action("QUICKREF", _("Quick Reference"));
+	act->setCustomEngineActionEvent(MM::MM1::ACTION_QUICKREF);
+	act->addDefaultInputMapping("x");
+	engineKeyMap->addAction(act);
+
+	const char *const PARTY_STRINGS[] = {
+		"PARTY1", "Party Member 1",
+		"PARTY2", "Party Member 2",
+		"PARTY3", "Party Member 3",
+		"PARTY4", "Party Member 4",
+		"PARTY5", "Party Member 5",
+		"PARTY6", "Party Member 6",
+	};
+	char key[2] = "1";
+	for (int i = 0; i < 6; ++i) {
+		key[0] = '1' + i;
+		act = new Action(PARTY_STRINGS[i * 2], _(PARTY_STRINGS[i * 2 + 1]));
+		act->setCustomEngineActionEvent(MM::MM1::ACTION_QUICKREF);
+		act->addDefaultInputMapping(key);
+		engineKeyMap->addAction(act);
+	}
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MM)
