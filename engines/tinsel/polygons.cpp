@@ -109,6 +109,7 @@ struct POLYGON {
 	 */
 	POLYGON *adjpaths[MAXADJ];
 
+	bool containsPoint(const Common::Point &point) const;
 };
 
 #define MAXONROUTE 40
@@ -404,13 +405,8 @@ static HPOLYGON PolygonIndex(const POLYGON *pp) {
  * have two polygon corners above it and two corners to the left of it.
  */
 bool IsInPolygon(int xt, int yt, HPOLYGON hp) {
-	const POLYGON *pp;
-	int	i;
-	bool BeenTested = false;
-	int	pl = 0, pa = 0;
-
 	CHECK_HP_OR(hp, "Out of range polygon handle (1)");
-	pp = Polys[hp];
+	const POLYGON *pp = Polys[hp];
 	assert(pp != NULL); // Testing whether in a NULL polygon
 
 	// Shift cursor for relative polygons
@@ -419,18 +415,26 @@ bool IsInPolygon(int xt, int yt, HPOLYGON hp) {
 		yt -= volatileStuff[hp].yoff;
 	}
 
+	return pp->containsPoint(Common::Point(xt, yt));
+}
+
+bool POLYGON::containsPoint(const Common::Point &point) const {
+	int xt = point.x;
+	int yt = point.y;
 	/* Is point within the external rectangle? */
-	if (xt < pp->pleft || xt > pp->pright || yt < pp->ptop || yt > pp->pbottom)
+	if (point.x < this->pleft || point.x > this->pright || yt < this->ptop || yt > this->pbottom)
 		return false;
 
+	bool BeenTested = false;
+
 	// For each corner/side
-	for (i = 0; i < 4; i++)	{
+	for (int i = 0; i < 4; i++)	{
 		// If within this side's 'testable' area
 		// i.e. within the width of the line in y direction of end of line
 		// or within the height of the line in x direction of end of line
-		if ((xt >= pp->lleft[i] && xt <= pp->lright[i]  && ((yt > pp->cy[i]) == (pp->cy[(i+1)%4] > pp->cy[i])))
-		 || (yt >= pp->ltop[i]  && yt <= pp->lbottom[i] && ((xt > pp->cx[i]) == (pp->cx[(i+1)%4] > pp->cx[i])))) {
-			if (((long)xt*pp->a[i] + (long)yt*pp->b[i]) < pp->c[i])
+		if ((xt >= this->lleft[i] && xt <= this->lright[i]  && ((yt > this->cy[i]) == (this->cy[(i+1)%4] > this->cy[i])))
+		 || (yt >= this->ltop[i]  && yt <= this->lbottom[i] && ((xt > this->cx[i]) == (this->cx[(i+1)%4] > this->cx[i])))) {
+			if (((long)xt*this->a[i] + (long)yt*this->b[i]) < this->c[i])
 				return false;
 			else
 				BeenTested = true;
@@ -439,21 +443,23 @@ bool IsInPolygon(int xt, int yt, HPOLYGON hp) {
 
 	if (BeenTested) {
 		// New dodgy code 29/12/94
-		if (pp->polyType == BLOCK) {
+		if (this->polyType == BLOCK) {
 			// For each corner/side
-			for (i = 0; i < 4; i++) {
+			for (int i = 0; i < 4; i++) {
 				// Pretend the corners of blocking polys are not in the poly.
-				if (xt == pp->cx[i] && yt == pp->cy[i])
+				if (xt == this->cx[i] && yt == this->cy[i])
 					return false;
 			}
 		}
 		return true;
 	} else {
+		int	pl = 0, pa = 0;
+
 		// Is point within the internal rectangle?
-		for (i = 0; i < 4; i++) {
-			if (pp->cx[i] < xt)
+		for (int i = 0; i < 4; i++) {
+			if (this->cx[i] < xt)
 				pl++;
-			if (pp->cy[i] < yt)
+			if (this->cy[i] < yt)
 				pa++;
 		}
 
