@@ -856,7 +856,7 @@ void EfhEngine::readImpFile(int16 id, bool techMapFl) {
 }
 
 void EfhEngine::playIntro() {
-	debug("playIntro");
+	debugC(6, "playIntro");
 	
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 0);
 	displayFctFullScreen();
@@ -921,9 +921,11 @@ void EfhEngine::playIntro() {
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
 
+	displayRawDataAtPos(_circleImageSubFileArray[3], 110, 16);
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	drawText(_imp2PtrArray[5], 6, 150, 268, 186, false);
 	displayFctFullScreen();
+	displayRawDataAtPos(_circleImageSubFileArray[3], 110, 16);
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	drawText(_imp2PtrArray[5], 6, 150, 268, 186, false);
 	getLastCharAfterAnimCount(80);
@@ -2524,12 +2526,12 @@ void EfhEngine::computeMapAnimation() {
 }
 
 void EfhEngine::unkFct_anim() {
-	debug("unkFct_anim");
-
 	setNumLock();
 
 	if (_engineInitPending)
 		return;
+
+	debug("unkFct_anim");
 
 	if (_animImageSetId != 0xFF) {
 		displayNextAnimFrame();
