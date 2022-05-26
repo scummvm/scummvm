@@ -48,7 +48,7 @@ int32 luaO_equalObj(TObject *t1, TObject *t2) {
 	case LUA_T_USERDATA:
 		return (t1->value.ud.id == t2->value.ud.id && t1->value.ud.tag == t2->value.ud.tag);
 	case LUA_T_STRING:
-		return svalue(t1) == svalue(t2);
+		return tsvalue(t1) == tsvalue(t2);
 	case LUA_T_ARRAY:
 		return avalue(t1) == avalue(t2);
 	case LUA_T_PROTO:
