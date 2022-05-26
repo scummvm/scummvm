@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	mm1/views/game_party.o \
 	mm1/views/inn.o \
 	mm1/views/main_menu.o \
+	mm1/views/protect.o \
 	mm1/views/quick_ref.o \
 	mm1/views/title.o \
 	mm1/views/text_view.o \
