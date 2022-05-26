@@ -135,11 +135,11 @@ void MultiForceRedraw(
 	OBJECT *pMultiObj);	// multi-part object to be forced
 
 struct FREEL;
-OBJECT* InsertReelObj(const FREEL *reels);
+OBJECT *InsertReelObj(const FREEL *reels);
 struct FILM;
 enum class SysReel;
-const FILM* GetSystemReelFilm(SysReel reelIndex);
-OBJECT* InsertSystemReelObj(SysReel reelIndex);
+const FILM *GetSystemReelFilm(SysReel reelIndex);
+OBJECT *InsertSystemReelObj(SysReel reelIndex);
 
 } // End of namespace Tinsel
 
