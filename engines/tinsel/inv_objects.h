@@ -40,7 +40,7 @@ enum class InvObjAttr {
 
 	// Noir only
 	V3ATTR_X80 = 0x80,
-	V3ATTR_X200 = 0x200,
+	NOTEBOOK_CLUE = 0x200,
 	V3ATTR_X400 = 0x400,
 	NOTEBOOK_TITLE = 0x800, // is a notebook title
 	V3ATTR_X1000 = 0x1000,

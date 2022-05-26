@@ -1268,7 +1268,7 @@ void Dialogs::InventoryIconCursor(bool bNewItem) {
 				if (TinselVersion == 3) {
 					auto invObj = GetInvObject(_heldItem);
 
-					if (invObj->hasAttribute(InvObjAttr::V3ATTR_X200)) {
+					if (invObj->hasAttribute(InvObjAttr::NOTEBOOK_CLUE)) {
 						_heldFilm = _vm->_systemReel->Get((SysReel)objIndex);
 					} else {
 						_heldFilm = _invFilms[objIndex];
@@ -1720,7 +1720,7 @@ void Dialogs::HoldItem(int item, bool bKeepFilm) {
 				else if (invObj->hasAttribute(InvObjAttr::DEFINV2))
 					AddToInventory(INV_2, _heldItem);
 				else {
-					if ((TinselVersion < 3) || (!(invObj->hasAttribute(InvObjAttr::V3ATTR_X200)) && !(invObj->hasAttribute(InvObjAttr::V3ATTR_X400)))) {
+					if ((TinselVersion < 3) || (!(invObj->hasAttribute(InvObjAttr::NOTEBOOK_CLUE)) && !(invObj->hasAttribute(InvObjAttr::V3ATTR_X400)))) {
 						// Hook for definable default inventory
 						AddToInventory(INV_1, _heldItem);
 					}
@@ -5215,6 +5215,18 @@ void Dialogs::syncInvInfo(Common::Serializer &s) {
 			s.syncAsUint32LE(_invFilms[i]);
 		s.syncAsUint32LE(_heldFilm);
 	}
+}
+
+// Let the debugger know all the available clues.
+Common::Array<int> Dialogs::GetAllNotebookClues() const {
+	Common::Array<int> clues;
+	for (int i = 0; i < _invObjects->numObjects(); i++) {
+		auto obj = _invObjects->GetObjectByIndex(i);
+		if (obj->hasAttribute(InvObjAttr::NOTEBOOK_CLUE)) {
+			clues.push_back(obj->getId());
+		}
+	}
+	return clues;
 }
 
 /**************************************************************************/
