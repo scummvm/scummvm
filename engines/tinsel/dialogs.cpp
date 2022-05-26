@@ -2398,7 +2398,7 @@ void Dialogs::AddTitle(OBJECT **title, const Common::Rect &bounds) {
  */
 OBJECT *Dialogs::AddObject(const FREEL *pfreel, int num) {
 	const MULTI_INIT *pmi = pfreel->GetMultiInit();
-	const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
+	const FRAME *pFrame = pmi->GetFrame();
 	const IMAGE *pim;
 	OBJECT *pPlayObj;
 
