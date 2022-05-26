@@ -342,6 +342,7 @@ public:
 	bool MenuActive();
 	bool IsConvWindow();
 
+	const FILM *GetObjectFilm(int object) const;
 	void SetObjectFilm(int object, SCNHANDLE hFilm);
 	void CallFunction(BFUNC boxFunc);
 
@@ -393,7 +394,7 @@ private:
 	void DumpObjArray();
 	void FirstScene(int first);
 	void FirstFile(int first);
-	int GetObjectIndex(int id);
+	int GetObjectIndex(int id) const;
 	void InvSaveGame();
 	void InvLoadGame();
 	int InvArea(int x, int y);

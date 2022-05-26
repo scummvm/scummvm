@@ -21,7 +21,14 @@
 
 #include "tinsel/noir/notebook.h"
 
+#include "tinsel/background.h"
 #include "tinsel/dialogs.h"
+#include "tinsel/film.h"
+#include "tinsel/handle.h"
+#include "tinsel/multiobj.h"
+#include "tinsel/noir/sysreel.h"
+#include "tinsel/pdisplay.h"
+#include "tinsel/timers.h"
 
 namespace Tinsel {
 
@@ -61,13 +68,114 @@ void Notebook::AddHyperlink(int32 id1, int32 id2) {
 	error("Too many hyperlinks");
 }
 
+void Notebook::ClearNotebookPage() {
+	if (_prevPage != -1) {
+		_pages[_prevPage].Clear();
+	}
+	_prevPage = -1;
+	_pages[_currentPage].Clear();
+}
+
+void Notebook::Refresh() {
+	auto reel = (_currentPage == 0 ? SysReel::NOTEPAD_CLOSED : SysReel::NOTEPAD_OPEN);
+	auto film = GetSystemReelFilm(reel);
+	InitStepAnimScript(&_anim, _object, film->reels->script, ONE_SECOND / film->frate);
+	ClearNotebookPage();
+	if (_currentPage != 0) {
+		_pages[_currentPage].FillIn();
+	}
+}
+
+int Notebook::AddTitle(const InventoryObjectT3 &invObject) {
+	int id = invObject.getId();
+	assert(invObject.isNotebookTitle());
+	for (int i = 0; i < _numPages; i++) {
+		if (_pages[i].GetTitle() == id) {
+			return i;
+		}
+	}
+	int linkedFromPage = invObject.getUnknown();
+
+	// 0 page is the closed notebook, has no entries.
+	if (linkedFromPage != 0) {
+		// Allocate a line on the linked from page.
+		assert(_pages[linkedFromPage].GetTitle() != 0);
+		_pages[linkedFromPage].AddLine(id);
+	}
+	int pageIndex = _numPages++;
+	_pages[pageIndex].SetTitle(id);
+	return pageIndex;
+}
+
+void Notebook::AddClue(const InventoryObjectT3 &invObject) {
+	// Add title if missing, otherwise just get the page it's on.
+	auto titleObject = _vm->_dialogs->GetInvObjectT3(invObject.getUnknown());
+	int pageIndex = AddTitle(*titleObject);
+	_pages[pageIndex].AddLine(invObject.getId());
+	if (invObject.getTitle() != 0) {
+		auto secondTitleObject = _vm->_dialogs->GetInvObjectT3(invObject.getTitle());
+		pageIndex = AddTitle(*secondTitleObject);
+	 	_pages[pageIndex].AddLine(invObject.getId());
+	}
+}
+
+void Notebook::AddClue(int id) {
+	auto invObject = _vm->_dialogs->GetInvObjectT3(id);
+	if (invObject->isNotebookTitle()) {
+		AddTitle(*invObject);
+	} else {
+		AddClue(*invObject);
+	}
+}
+
+void InitNotebookAnim(OBJECT **obj, ANIM &anim, SysReel reel, int zPosition) {
+	auto film = GetSystemReelFilm(reel);
+	MultiDeleteObjectIfExists(FIELD_STATUS, obj);
+	*obj = InsertReelObj(film->reels);
+	MultiSetZPosition(*obj, zPosition);
+	InitStepAnimScript(&anim, *obj, film->reels->script, ONE_SECOND / film->frate);
+}
+
+void Notebook::SetNextPage(int pageIndex) {
+	assert(_prevPage == -1 || _prevPage == _currentPage); // Check that we've cleaned any outstanding page.
+	_prevPage = _currentPage;
+	_currentPage = pageIndex;
+}
 
 void Notebook::Show(bool isOpen) {
-	error("TODO: Implement Notebook::Show()");
+	auto reel = (isOpen ? SysReel::NOTEPAD_OPEN : SysReel::NOTEPAD_OPENING);
+	InitNotebookAnim(&_object, _anim, reel, Z_INV_MFRAME);
+
+	_state = (isOpen ? BOOKSTATE::OPENED : BOOKSTATE::OPEN_ANIMATING);
+	SetNextPage(1);
+	Refresh();
+	DisableTags(); // Tags disabled in Notebook
+	DisablePointing(); // Pointing disabled in Notebook
 }
 
 bool Notebook::IsOpen() const {
 	return _state != BOOKSTATE::CLOSED;
+}
+
+void Notebook::Close() {
+	ClearNotebookPage();
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_object);
+	MultiDeleteObjectIfExists(FIELD_STATUS, &_pageObject);
+	_state = BOOKSTATE::CLOSED;
+	if (_vm->_dialogs->InventoryOrNotebookActive()) {
+		EnablePointing();
+		EnableTags();
+	}
+}
+
+void Notebook::StepAnimScripts() {
+	if (_state == BOOKSTATE::OPEN_ANIMATING) {
+		auto state = StepAnimScript(&_anim);
+		if (state == ScriptFinished) {
+			_state = BOOKSTATE::OPENED;
+			Refresh();
+		}
+	}
 }
 
 } // End of namespace Tinsel

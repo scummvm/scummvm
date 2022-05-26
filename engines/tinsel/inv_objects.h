@@ -84,6 +84,9 @@ public:
 		_title = stream.readUint32();
 	}
 	// Noir:
+	bool isNotebookTitle() const {
+		return (getAttribute() & (int)InvObjAttr::NOTEBOOK_TITLE) != 0;
+	}
 	int32 getUnknown() const {
 		return _unknown;
 	}
