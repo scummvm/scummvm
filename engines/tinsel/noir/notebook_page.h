@@ -46,12 +46,14 @@ private:
 class NotebookPage {
 public:
 	bool ContainsClue(int id);
+	void CrossClue(int id);
 	void AddLine(int id);
 	void SetTitle(int id);
 	int32 GetTitle() const;
 	void FillIn();
 	void Clear();
 private:
+	int IndexOfClue(int id) const;
 	const static uint32 MAX_ENTRIES_PER_PAGE = 8;
 	NotebookLine _lines[MAX_ENTRIES_PER_PAGE] = {};
 	uint32 _numLines = 0;

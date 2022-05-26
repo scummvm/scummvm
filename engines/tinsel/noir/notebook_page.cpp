@@ -93,14 +93,25 @@ void NotebookLine::CrossOut() {
 	_crossedOut = true;
 }
 
-bool NotebookPage::ContainsClue(int id) {
+int NotebookPage::IndexOfClue(int id) const {
 	for (int i = 0; i < _numLines; i++) {
 		if (_lines[i]._id == id) {
-			return true;
+			return i;
 		}
 	}
-	return false;
+	return -1;
 }
+
+bool NotebookPage::ContainsClue(int id) {
+	return IndexOfClue(id) != -1;
+}
+
+void NotebookPage::CrossClue(int id) {
+	int index = IndexOfClue(id);
+	assert(index != -1);
+	_lines[index].CrossOut();
+}
+
 void NotebookPage::AddLine(int id) {
 	if (ContainsClue(id)) {
 		return;

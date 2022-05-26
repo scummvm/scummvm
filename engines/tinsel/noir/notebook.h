@@ -62,6 +62,7 @@ public:
 	// Adds a connection between a clue/title
 	void AddHyperlink(int32 id1, int32 id2);
 	void AddClue(int id);
+	void CrossClue(int id);
 	// Called within InventoryProcess loop
 	void Redraw();
 
@@ -75,6 +76,7 @@ public:
 private:
 	int AddTitle(const InventoryObjectT3 &invObject);
 	void AddClue(const InventoryObjectT3 &invObject);
+	int GetPageWithTitle(int id);
 
 	void ClearNotebookPage();
 
