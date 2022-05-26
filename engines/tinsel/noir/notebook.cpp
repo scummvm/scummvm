@@ -243,11 +243,23 @@ void Notebook::StepAnimScripts() {
 	}
 }
 
+int Notebook::GetPointedClue(const Common::Point &point) const {
+	if (_currentPage == 0 || _currentPage > _numPages) {
+		return 0;
+	}
+	return _pages[_currentPage].GetClueForLine(_polygons->lineHit(point));
+}
+
 bool Notebook::HandlePointer(const Common::Point &point) {
 	if (!IsOpen()) {
 		return 0;
 	}
-	warning("TODO: Implement pointer handling");
+	auto inside  = _polygons->isInsideNotebook(point);
+	if (inside) {
+		auto hit = _polygons->lineHit(point);
+		_pages[_currentPage].HandlePointAtLine(hit);
+		return true; // We handled the pointer
+	}
 	return false;
 }
 
@@ -255,7 +267,36 @@ bool Notebook::HandleEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 	if (!IsOpen()) { // TODO: Clicking outside should close the notebook
 		return false;
 	}
+	auto inside  = _polygons->isInsideNotebook(coOrds);
 	switch(pEvent) {
+	case PLR_ACTION:
+		if (inside) {
+			return true;
+		}
+		return false;
+	case PLR_LOOK:
+		if (inside) {
+			return true;
+		}
+		return false;
+	case PLR_WALKTO: {
+		// Handle clue-clicks
+		auto poly = _polygons->mostSpecificHit(coOrds);
+		switch (poly) {
+		case NoteBookPoly::NEXT:
+			HandleEvent(PLR_PGUP, coOrds);
+			return true;
+		case NoteBookPoly::PREV:
+			HandleEvent(PLR_PGDN, coOrds);
+			return true;
+		case NoteBookPoly::NONE:
+			HandleEvent(PLR_ESCAPE, coOrds);
+			return true;
+		default:
+			return true;
+		}
+	}
+
 	case PLR_ESCAPE:
 		Close();
 		return true;

@@ -87,6 +87,8 @@ private:
 
 	void PageFlip(bool up);
 
+	int32 GetPointedClue(const Common::Point &point) const;
+
 	void ClearNotebookPage();
 
 	void SetNextPage(int pageIndex);

@@ -52,8 +52,13 @@ public:
 	int32 GetTitle() const;
 	void FillIn();
 	void Clear();
+	int GetPointedClue(const Common::Point &point) const;
+	int GetClueForLine(int line) const;
+	void HandlePointAtLine(int line);
 private:
 	int IndexOfClue(int id) const;
+
+	int _pointedClue = -1;
 	const static uint32 MAX_ENTRIES_PER_PAGE = 8;
 	NotebookLine _lines[MAX_ENTRIES_PER_PAGE] = {};
 	uint32 _numLines = 0;

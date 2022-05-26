@@ -93,6 +93,15 @@ void NotebookLine::CrossOut() {
 	_crossedOut = true;
 }
 
+void NotebookPage::HandlePointAtLine(int line) {
+	auto objId = GetClueForLine(line);
+	if (objId != 0 && objId != _pointedClue) {
+		auto obj = _vm->_dialogs->GetInvObject(objId);
+		_vm->_dialogs->InvPointEvent(obj, -1);
+		_pointedClue = objId;
+	}
+}
+
 int NotebookPage::IndexOfClue(int id) const {
 	for (int i = 0; i < _numLines; i++) {
 		if (_lines[i]._id == id) {
@@ -140,6 +149,14 @@ void NotebookPage::Clear() {
 	for (int i = 0; i < _numLines; i++) {
 		_lines[i].Clear();
 	}
+	_pointedClue = -1;
+}
+
+int NotebookPage::GetClueForLine(int line) const {
+	if (line >= _numLines) {
+		return 0;
+	}
+	return _lines[line]._id;
 }
 
 } // End of namespace Tinsel

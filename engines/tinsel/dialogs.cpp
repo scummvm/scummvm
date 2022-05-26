@@ -2202,6 +2202,10 @@ void Dialogs::InvLabels(bool InBody, int aniX, int aniY) {
 	}
 }
 
+void Dialogs::InvPointEvent(const InventoryObject *invObj, int index) {
+	InvTinselEvent(invObj, POINTED, PLR_NOEVENT, index);
+}
+
 /**************************************************************************/
 /***/
 /**************************************************************************/
