@@ -335,6 +335,18 @@ bool ViewCharacter::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
+bool ViewCharacter::msgAction(const ActionMessage &msg) {
+	if (msg._action >= KEYBIND_VIEW_PARTY1 &&
+			msg._action <= KEYBIND_VIEW_PARTY6) {
+		g_globals->_currCharacter = &g_globals->_party[
+			msg._action - KEYBIND_VIEW_PARTY1];
+		addView();
+		return true;
+	}
+
+	return false;
+}
+
 } // namespace Views
 } // namespace MM1
 } // namespace MM
