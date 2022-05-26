@@ -77,6 +77,9 @@ void Events::processEvent(Common::Event &ev) {
 		if (ev.kbd.keycode < Common::KEYCODE_NUMLOCK)
 			msgKeypress(KeypressMessage(ev.kbd));
 		break;
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		msgAction(ActionMessage((KeybindingAction)ev.customType));
+		break;
 	default:
 		break;
 	}

@@ -35,7 +35,7 @@ void QuickRef::draw() {
 		Character &c = g_globals->_party[idx];
 
 		// Number and name
-		writeNumber(0, 2 + idx, '1' + idx);
+		writeNumber(0, 2 + idx, idx + 1);
 		_textPos.x++;
 		writeString(c._name);
 
@@ -61,15 +61,14 @@ void QuickRef::draw() {
 	// Print food and conditions of each character
 	for (uint idx = 0; idx < g_globals->_party.size(); ++idx) {
 		Character &c = g_globals->_party[idx];
-		writeNumber(0, 9 + idx, '1' + idx);
+		g_globals->_currCharacter = &c;
+		writeNumber(0, 9 + idx, idx + 1);
 
 		_textPos.x++;
 		writeString(STRING["dialogs.quick_ref.food"]);
 		writeNumber(c._food);
 
 		_textPos.x = 12;
-		writeString(STRING["dialogs.quick_ref.cond"]);
-		_textPos.x++;
 		printCondition();
 	}
 
