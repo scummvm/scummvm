@@ -8290,6 +8290,57 @@ static const uint16 larry6HiresWhaleOilLampPatch[] = {
 	PATCH_END
 };
 
+// When attempting to take the guard's weapons, missleDeathScr calculates an
+//  excessively long delay in game cycles based on the initial speed test. The
+//  script attempts to use this delay as a backup if the user quickly dismisses
+//  the "Without thinking twice..." message so that it doesn't get stuck. We
+//  patch the speed test to use the best value so that all details are enabled,
+//  but we also throttle game cycles, and this results in a 30+ second delay.
+//
+// We fix this incompatibility by patching the delay down to 60 cycles, but this
+//  exposes a real script bug. The backup delay is always active and interrupts
+//  the message audio if the delay lasts less than six seconds. The script
+//  attempts to prevent this by polling the message's audio position, but it
+//  passes the wrong audio tuple. We also fix the tuple and now the delay works.
+//
+// Applies to: All versions
+// Responsible method: missleDeathScr:changeState(3), missleDeathScr:doit
+// Fixes bug: #13501
+static const uint16 larry6HiresGuardDelaySignature1[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x57,                         // lsg 57 [ how-fast ]
+	0x35, 0x4b,                         // ldi 4b
+	0x06,                               // mul
+	0x65, 0x26,                         // aTop register [ register = how-fast * 75 ]
+	SIG_END
+};
+
+static const uint16 larry6HiresGuardDelayPatch1[] = {
+	0x35, 0x3c,                         // ldi 1e [ 60 cycles ]
+	0x32, PATCH_UINT16(0x0000),         // jmp 0000
+	PATCH_END
+};
+
+static const uint16 larry6HiresGuardDelaySignature2[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x06,                         // pushi 06
+	0x3c,                               // dup [ kDoAudioPosition ]
+	0x38, SIG_UINT16(0x0352),           // pushi 0352
+	0x39, 0x03,                         // pushi 03 [ noun ]
+	0x39, 0x05,                         // pushi 05 [ verb ]
+	0x76,                               // push0    [ cond ]
+	0x76,                               // push0    [ seq  ]
+	SIG_END
+};
+
+static const uint16 larry6HiresGuardDelayPatch2[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x39, 0x04,                         // pushi 04 [ correct noun ]
+	PATCH_ADDTOOFFSET(+3),
+	0x78,                               // push1    [ correct seq  ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,     0, "disable mac volume restore",                  1, larry6HiresMacVolumeRestoreSignature, larry6HiresMacVolumeRestorePatch },
@@ -8298,6 +8349,8 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,               sci2BenchmarkPatch },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
 	{  true,   330, "fix whale oil lamp lockup",                   1, larry6HiresWhaleOilLampSignature,     larry6HiresWhaleOilLampPatch },
+	{  true,   850, "guard delay (1/2)",                           1, larry6HiresGuardDelaySignature1,      larry6HiresGuardDelayPatch1 },
+	{  true,   850, "guard delay (2/2)",                           1, larry6HiresGuardDelaySignature2,      larry6HiresGuardDelayPatch2 },
 	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,               sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,               sci2NumSavesPatch2 },
