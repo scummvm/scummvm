@@ -184,11 +184,11 @@ void BoyzEngine::loadAssets() {
 
 	loadArcadeLevel("c36.mi_", "c41.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c41.mi_", "c42.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c42.mi_", "c51.mi_", "<retry_menu>", "");
+	loadArcadeLevel("c42.mi_", "<select_c5>", "<retry_menu>", "");
 
-	loadArcadeLevel("c51.mi_", "c52.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c52.mi_", "c53.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c53.mi_", "c54.mi_", "<retry_menu>", "");
+	loadArcadeLevel("c51.mi_", "<select_c5>", "<retry_menu>", "");
+	loadArcadeLevel("c52.mi_", "<select_c5>", "<retry_menu>", "");
+	loadArcadeLevel("c53.mi_", "<select_c5>", "<retry_menu>", "");
 	loadArcadeLevel("c54.mi_", "c55.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c55.mi_", "c56.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c56.mi_", "c57.mi_", "<retry_menu>", "");
@@ -338,6 +338,27 @@ void BoyzEngine::loadAssets() {
 	loadSceneLevel(selectC5, "<select_c5>", "", "");
 	sc = (Scene *) _levels["<select_c5>"];
 	sc->resolution = "320x200";
+
+	hl = new Highlight("GS_SEQ_51");
+	sc->hots[1].actions.push_back(hl);
+	gl = new Global("GS_SEQ_51", "NCHECK");
+	sc->hots[1].actions.push_back(gl);
+	cl = new ChangeLevel("c51.mi_");
+	sc->hots[1].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_52");
+	sc->hots[2].actions.push_back(hl);
+	gl = new Global("GS_SEQ_52", "NCHECK");
+	sc->hots[2].actions.push_back(gl);
+	cl = new ChangeLevel("c52.mi_");
+	sc->hots[2].actions.push_back(cl);
+
+	hl = new Highlight("GS_SEQ_53");
+	sc->hots[3].actions.push_back(hl);
+	gl = new Global("GS_SEQ_53", "NCHECK");
+	sc->hots[3].actions.push_back(gl);
+	cl = new ChangeLevel("c53.mi_");
+	sc->hots[3].actions.push_back(cl);
 
 	loadLib("sound/", "misc/sound.lib", true);
 
