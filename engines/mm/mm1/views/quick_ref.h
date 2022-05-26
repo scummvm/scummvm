@@ -22,15 +22,15 @@
 #ifndef MM1_VIEWS_QUICK_REF_H
 #define MM1_VIEWS_QUICK_REF_H
 
-#include "mm/mm1/views/text_view.h"
+#include "mm/mm1/views/view_characters.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
-class QuickRef : public TextView {
+class QuickRef : public CharacterStats {
 public:
-	QuickRef() : TextView("QuickRef") {}
+	QuickRef() : CharacterStats("QuickRef") {}
 	virtual ~QuickRef() {}
 
 	void draw() override;
