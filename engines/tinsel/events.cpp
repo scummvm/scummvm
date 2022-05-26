@@ -399,6 +399,18 @@ void ProcessKeyEvent(PLR_EVENT ke) {
 	lastRealAction = DwGetCurrentTime(); \
 }
 
+void CloseOpenInventories() {
+	if (_vm->_notebook->IsOpen()) {
+		_vm->_notebook->Close();
+	} else {
+		if (_vm->_dialogs->InventoryActive()) {
+			if (_vm->_dialogs->WhichInventoryOpen() != INV_3) {
+				_vm->_dialogs->KillInventory();
+			}
+		}
+	}
+}
+
 /**
  * Main interface point for specifying player atcions
  */
@@ -446,17 +458,22 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		break;
 
 	case PLR_MENU:
+		if (TinselVersion == 3) {
+			CloseOpenInventories();
+		}
 		_vm->_dialogs->OpenMenu(MAIN_MENU);
 		break;
 
 	case PLR_INVENTORY:
 		if (TinselVersion == 3) {
+			CloseOpenInventories();
 			_vm->_dialogs->PopUpInventory(INV_1);
 		}
 		break;
 
 	case PLR_NOTEBOOK:
 		if (TinselVersion == 3) {
+			CloseOpenInventories();
 			_vm->_notebook->Show(false);
 		}
 		break;
@@ -466,10 +483,16 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		break;
 
 	case PLR_SAVE:
+		if (TinselVersion == 3) {
+			CloseOpenInventories();
+		}
 		_vm->_dialogs->OpenMenu(SAVE_MENU);
 		break;
 
 	case PLR_LOAD:
+		if (TinselVersion == 3) {
+			CloseOpenInventories();
+		}
 		_vm->_dialogs->OpenMenu(LOAD_MENU);
 		break;
 
