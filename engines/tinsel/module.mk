@@ -50,6 +50,7 @@ MODULE_OBJS := \
 	tinsel.o \
 	token.o \
 	noir/notebook.o \
+	noir/notebook_page.o \
 	noir/sysreel.o \
 
 # This module can be built as a plugin

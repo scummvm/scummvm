@@ -24,13 +24,16 @@
 
 #include "common/scummsys.h"
 
+#include "notebook_page.h"
+#include "tinsel/anim.h"
 #include "tinsel/events.h"
+#include "tinsel/object.h"
 
 namespace Tinsel {
 // links two clue/title objects together
 struct HYPERLINK {
-	int32 id1;
-	int32 id2;
+	int32 id1 = 0;
+	int32 id2 = 0;
 };
 
 // 6 bytes large
@@ -50,34 +53,51 @@ enum class BOOKSTATE {
 	OPENED = 3
 };
 
+class InventoryObjectT3;
+
 class Notebook {
 public:
 	Notebook() = default;
 
-	// Can be a title or clue
-	void AddEntry(int32 entryIdx, int32 page1, int32 page2);
 	// Adds a connection between a clue/title
 	void AddHyperlink(int32 id1, int32 id2);
+	void AddClue(int id);
 	// Called within InventoryProcess loop
 	void Redraw();
-	// Called by EventToInventory
-	void EventToNotebook(PLR_EVENT event, bool p2, bool p3);
+
 	// Called from OPENNOTEBOOK
 	void Show(bool isOpen);
 	bool IsOpen() const;
+	void Close();
+
+	void StepAnimScripts();
+	void Refresh();
 private:
-	const static uint32 MAX_ENTRIES = 100;
+	int AddTitle(const InventoryObjectT3 &invObject);
+	void AddClue(const InventoryObjectT3 &invObject);
+
+	void ClearNotebookPage();
+
+	void SetNextPage(int pageIndex);
+
 	const static uint32 MAX_PAGES = 0x15;
 	const static uint32 MAX_HYPERS = 0xf;
-	const static uint32 MAX_ENTRIES_PER_PAGE = 8;
 
 	HYPERLINK _hyperlinks[MAX_HYPERS];
 
-	const static uint32 _numEntries = 0;
+	uint32 _numPages = 1;
+	uint32 _prevPage = -1;
+	uint32 _currentPage = 1;
 
-	ENTRY _entries[MAX_ENTRIES];
+	NotebookPage _pages[MAX_PAGES] = {};
 
-	BOOKSTATE _state;
+	ANIM _anim = {};
+	OBJECT *_object = nullptr;
+
+	ANIM _pageAnim = {};
+	OBJECT *_pageObject = nullptr;
+
+	BOOKSTATE _state = BOOKSTATE::CLOSED;
 };
 
 } // End of namespace Tinsel
