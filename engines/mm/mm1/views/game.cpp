@@ -33,7 +33,7 @@ Game::Game() : TextView("Game"),
 void Game::draw() {
 	// Clear the screen, and then call superclass
 	// to render the subviews within the view
-	getScreen()->clear();
+	clearScreen();
 	UIElement::draw();
 }
 

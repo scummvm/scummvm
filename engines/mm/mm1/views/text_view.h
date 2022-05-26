@@ -60,6 +60,11 @@ protected:
 	void newLine();
 
 	/**
+	 * Clear the screen
+	 */
+	void clearScreen();
+
+	/**
 	 * Draws a text border
 	 */
 	void drawTextBorder();

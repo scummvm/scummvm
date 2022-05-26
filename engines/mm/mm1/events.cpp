@@ -45,7 +45,7 @@ void Events::runGame() {
 	Views::Dialogs dialogsContainer;	// Load up all the dialogs
 
 	// Run the game
-	addView("MainMenu");
+	addView("QuickRef");
 
 	uint currTime, nextFrameTime = 0;
 	_screen = new Graphics::Screen();
