@@ -35,7 +35,9 @@ public:
 
 private:
 	bool cmd_add_clue(int argc, const char **argv);
+	bool cmd_add_all_clues(int argc, const char **argv);
 	bool cmd_cross_clue(int argc, const char **argv);
+	bool cmd_list_clues(int argc, const char **argv);
 	bool cmd_item(int argc, const char **argv);
 	bool cmd_scene(int argc, const char **argv);
 	bool cmd_music(int argc, const char **argv);

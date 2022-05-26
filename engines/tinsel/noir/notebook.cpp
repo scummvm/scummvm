@@ -117,6 +117,11 @@ int Notebook::AddTitle(const InventoryObjectT3 &invObject) {
 }
 
 void Notebook::AddClue(const InventoryObjectT3 &invObject) {
+	if (invObject.getUnknown() == 0) {
+		// This affects two clues, that should get special treatment.
+		warning("TODO: Handle clues with no parent page");
+		return;
+	}
 	// Add title if missing, otherwise just get the page it's on.
 	auto titleObject = _vm->_dialogs->GetInvObjectT3(invObject.getUnknown());
 	int pageIndex = AddTitle(*titleObject);
