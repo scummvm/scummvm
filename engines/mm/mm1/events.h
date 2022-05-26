@@ -98,6 +98,7 @@ public:
 	 */
 	void addView(UIElement *ui);
 	void addView(const Common::String &name);
+	void addView();
 
 	/**
 	 * Returns the game view
@@ -207,7 +208,6 @@ public:
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
 	MESSAGE(Keypress);
-	MESSAGE(Action);
 	#undef MESSAGE
 };
 

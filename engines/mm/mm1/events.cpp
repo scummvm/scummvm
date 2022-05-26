@@ -203,5 +203,9 @@ void UIElement::addView(const Common::String &name) {
 	g_events->addView(name);
 }
 
+void UIElement::addView() {
+	g_events->addView(this);
+}
+
 } // namespace MM1
 } // namespace MM

@@ -32,14 +32,6 @@ void GameCommands::draw() {
 			"dialogs.game.commands.%d", i)]);
 }
 
-bool GameCommands::msgAction(const ActionMessage &msg) {
-	switch (msg._action) {
-	case KEYBIND_QUICKREF:
-		addView("QuickRef");
-		return true;
-	}
-}
-
 } // namespace Views
 } // namespace MM1
 } // namespace MM
