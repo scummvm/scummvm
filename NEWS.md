@@ -11,7 +11,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Clandestiny.
    - Added support for Tender Loving Care (CD-ROM Editions).
    - Added support for Uncle Henry's Playhouse.
-   - Added support for Wetlands
+   - Added support for Wetlands.
+   - Added support for Chewy: Esc from F5.
 
  General:
    - The project license has been upgraded to GPLv3+.
