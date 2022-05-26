@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	effect.o \
 	events.o \
 	faders.o \
+	film.o \
 	font.o \
 	graphics.o \
 	handle.o \

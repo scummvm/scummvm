@@ -2266,7 +2266,7 @@ OBJECT *Dialogs::AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm)
 	auto invObj = GetInvObject(num);
 	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(invObj->getIconFilm());
 	const FREEL *pfr = (const FREEL *)&pFilm->reels[0];
-	const MULTI_INIT *pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
+	const MULTI_INIT *pmi = pfr->GetMultiInit();
 	OBJECT *pPlayObj; // The object we insert
 
 	*pfreel = pfr;
@@ -2397,7 +2397,7 @@ void Dialogs::AddTitle(OBJECT **title, const Common::Rect &bounds) {
  * Insert a part of the inventory window frame onto the display list.
  */
 OBJECT *Dialogs::AddObject(const FREEL *pfreel, int num) {
-	const MULTI_INIT *pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfreel->mobj));
+	const MULTI_INIT *pmi = pfreel->GetMultiInit();
 	const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
 	const IMAGE *pim;
 	OBJECT *pPlayObj;
@@ -3144,7 +3144,7 @@ bool Dialogs::RePosition() {
 void Dialogs::AlterCursor(int num) {
 	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(_hWinParts);
 	const FREEL *pfr = (const FREEL *)&pFilm->reels[num];
-	const MULTI_INIT *pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
+	const MULTI_INIT *pmi = pfr->GetMultiInit();
 
 	PokeInPalette(pmi);
 
