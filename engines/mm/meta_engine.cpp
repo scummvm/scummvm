@@ -38,7 +38,10 @@
 
 class MMMetaEngine : public AdvancedMetaEngine {
 private:
-	Common::KeymapArray mm1InitKeymaps(const char *target) const;
+	/**
+	 * Gets the game Id given a target string
+	 */
+	static Common::String getGameId(const Common::String &target);
 public:
 	const char *getName() const override {
 		return "mm";
@@ -160,101 +163,24 @@ SaveStateDescriptor MMMetaEngine::querySaveMetaInfos(const char *target, int slo
 }
 
 Common::KeymapArray MMMetaEngine::initKeymaps(const char *target) const {
-	return mm1InitKeymaps(target);
+	const Common::String gameId = getGameId(target);
+	if (gameId == "mm1" || gameId == "mm1_enh")
+		return MM::MM1::MetaEngine::initKeymaps();
+
+	return Common::KeymapArray();
 }
 
-Common::KeymapArray MMMetaEngine::mm1InitKeymaps(const char *target) const {
-	using namespace Common;
-	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "griffon", "The Griffon Legend");
-	Action *act;
+Common::String MMMetaEngine::getGameId(const Common::String &target) {
+	// Store a copy of the active domain
+	Common::String currDomain = ConfMan.getActiveDomainName();
 
-	act = new Action(kStandardActionMoveUp, _("Up"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_FORWARDS);
-	act->addDefaultInputMapping("UP");
-	act->addDefaultInputMapping("JOY_UP");
-	engineKeyMap->addAction(act);
+	// Switch to the given target domain and get it's game Id
+	ConfMan.setActiveDomain(target);
+	Common::String gameId = ConfMan.get("gameid");
 
-	act = new Action(kStandardActionMoveDown, _("Down"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_BACKWARDS);
-	act->addDefaultInputMapping("DOWN");
-	act->addDefaultInputMapping("JOY_DOWN");
-	engineKeyMap->addAction(act);
-
-	act = new Action(kStandardActionMoveLeft, _("Turn Left"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_TURN_LEFT);
-	act->addDefaultInputMapping("LEFT");
-	act->addDefaultInputMapping("JOY_LEFT");
-	engineKeyMap->addAction(act);
-
-	act = new Action(kStandardActionMoveRight, _("Turn Right"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_TURN_RIGHT);
-	act->addDefaultInputMapping("RIGHT");
-	act->addDefaultInputMapping("JOY_RIGHT");
-	engineKeyMap->addAction(act);
-
-	act = new Action("STRAFE_LEFT", _("Strafe Left"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_STRAFE_LEFT);
-	act->addDefaultInputMapping("C+LEFT");
-	engineKeyMap->addAction(act);
-
-	act = new Action("STRAFE_RIGHT", _("Strafe Right"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_STRAFE_RIGHT);
-	act->addDefaultInputMapping("C+RIGHT");
-	engineKeyMap->addAction(act);
-
-	act = new Action("ORDER", _("Order Party"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_ORDER);
-	act->addDefaultInputMapping("o");
-	engineKeyMap->addAction(act);
-
-	act = new Action("PROTECT", _("Protect"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_PROTECT);
-	act->addDefaultInputMapping("p");
-	engineKeyMap->addAction(act);
-
-	act = new Action("REST", _("Rest"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_REST);
-	act->addDefaultInputMapping("r");
-	engineKeyMap->addAction(act);
-
-	act = new Action("SEARCH", _("Search"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_SEARCH);
-	act->addDefaultInputMapping("s");
-	engineKeyMap->addAction(act);
-
-	act = new Action("BASH", _("Bash"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_BASH);
-	act->addDefaultInputMapping("b");
-	engineKeyMap->addAction(act);
-
-	act = new Action("UNLOCK", _("Unlock"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_UNLOCK);
-	act->addDefaultInputMapping("u");
-	engineKeyMap->addAction(act);
-
-	act = new Action("QUICKREF", _("Quick Reference"));
-	act->setCustomEngineActionEvent(MM::MM1::ACTION_QUICKREF);
-	act->addDefaultInputMapping("q");
-	engineKeyMap->addAction(act);
-
-	const char *const PARTY_STRINGS[] = {
-		"PARTY1", "Party Member 1",
-		"PARTY2", "Party Member 2",
-		"PARTY3", "Party Member 3",
-		"PARTY4", "Party Member 4",
-		"PARTY5", "Party Member 5",
-		"PARTY6", "Party Member 6",
-	};
-	char key[2] = "1";
-	for (int i = 0; i < 6; ++i) {
-		key[0] = '1' + i;
-		act = new Action(PARTY_STRINGS[i * 2], _(PARTY_STRINGS[i * 2 + 1]));
-		act->setCustomEngineActionEvent(MM::MM1::ACTION_QUICKREF);
-		act->addDefaultInputMapping(key);
-		engineKeyMap->addAction(act);
-	}
-
-	return Keymap::arrayOf(engineKeyMap);
+	// Switch back to the original domain and return the game Id
+	ConfMan.setActiveDomain(currDomain);
+	return gameId;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MM)
