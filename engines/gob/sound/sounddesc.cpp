@@ -71,20 +71,6 @@ void SoundDesc::set(SoundType type, byte *data, uint32 dSize) {
 	_size = dSize;
 }
 
-void SoundDesc::set(SoundType type, Resource *resource) {
-	byte *data = nullptr;
-	uint32 dSize = 0;
-
-	if (resource && (resource->getSize() > 0)) {
-		data = resource->getData();
-		dSize = resource->getSize();
-	}
-
-	set(type, data, dSize);
-
-	_resource = resource;
-}
-
 bool SoundDesc::load(SoundType type, byte *data, uint32 dSize) {
 	free();
 
