@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MM1_UTILS_INT_ARRAY_H
-#define MM1_UTILS_INT_ARRAY_H
+#ifndef MM1_DATA_INT_ARRAY_H
+#define MM1_DATA_INT_ARRAY_H
 
 #include "common/array.h"
 

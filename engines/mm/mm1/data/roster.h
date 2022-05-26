@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MM1_UTILS_ROSTER_H
-#define MM1_UTILS_ROSTER_H
+#ifndef MM1_DATA_ROSTER_H
+#define MM1_DATA_ROSTER_H
 
 #include "common/serializer.h"
 #include "mm/mm1/data/char.h"
@@ -29,7 +29,6 @@ namespace MM {
 namespace MM1 {
 
 #define ROSTER_COUNT 18
-#define PARTY_COUNT 6
 
 struct Roster {
 private:

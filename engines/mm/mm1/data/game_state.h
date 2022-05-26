@@ -19,33 +19,27 @@
  *
  */
 
-#include "mm/mm1/views/quick_ref.h"
-#include "mm/mm1/globals.h"
+#ifndef MM1_DATA_GAME_STATE_H
+#define MM1_DATA_GAME_STATE_H
+
+#include "common/array.h"
+#include "common/serializer.h"
+#include "mm/mm1/data/char.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
 
-void QuickRef::draw() {
-	clearScreen();
-	writeString(STRING["dialogs.quick_ref.title"]);
-	_textPos.x = 0;
-	_textPos.y = 2;
+/**
+ * This acts as a container for everything in the game
+ * that is persisted to savegames
+ */
+struct GameState {
+	Common::Array<Character> _party;
+	Common::Point _mapPos;
+	int _direction = 0;
+};
 
-	for (uint idx = 0; idx < g_globals->_party.size(); ++idx) {
-		
-	}
-}
-
-bool QuickRef::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		close();
-		return true;
-	}
-
-	return false;
-}
-
-} // namespace Views
 } // namespace MM1
 } // namespace MM
+
+#endif

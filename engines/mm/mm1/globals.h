@@ -24,13 +24,14 @@
 
 #include "graphics/font.h"
 #include "mm/utils/strings_data.h"
+#include "mm/mm1/data/game_state.h"
 #include "mm/mm1/data/int_array.h"
 #include "mm/mm1/data/roster.h"
 
 namespace MM {
 namespace MM1 {
 
-class Globals {
+class Globals : public GameState {
 public:
 	StringsData _strings;
 	Roster _roster;
@@ -38,7 +39,6 @@ public:
 	Character *_currCharacter = nullptr;
 	int _startingTown = 0;
 	IntArray _partyChars;
-	Character _party[PARTY_COUNT];
 public:
 	Globals();
 	virtual ~Globals();
