@@ -29,7 +29,7 @@ namespace Views {
 bool Inn::msgFocus(const FocusMessage &msg) {
 	// Get a list of characters in the town
 	_charNums.clear();
-	for (uint i = 0; i < CHARACTERS_COUNT; ++i) {
+	for (uint i = 0; i < ROSTER_COUNT; ++i) {
 		if (g_globals->_roster._towns[i] == g_globals->_startingTown)
 			_charNums.push_back(i);
 	}
@@ -54,7 +54,7 @@ void Inn::draw() {
 
 		for (uint idx = 0; idx < _charNums.size(); ++idx) {
 			uint charNum = _charNums[idx];
-			RosterEntry &re = g_globals->_roster[charNum];
+			Character &re = g_globals->_roster[charNum];
 
 			_textPos = (idx < 9) ? Common::Point(2, 6 + idx) :
 				Common::Point(20, 6 + idx - 9);
@@ -100,7 +100,7 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 
 		} else if (msg.flags == 0) {
 			// View character
-			g_globals->_rosterEntry = &g_globals->_roster[charNum];
+			g_globals->_currCharacter = &g_globals->_roster[charNum];
 			addView("ViewCharacter");
 		}
 	} else if (msg.keycode == Common::KEYCODE_x) {

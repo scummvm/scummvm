@@ -19,17 +19,15 @@
  *
  */
 
-#ifndef MM1_UTILS_ROSTER_H
-#define MM1_UTILS_ROSTER_H
+#ifndef MM1_UTILS_CHAR_H
+#define MM1_UTILS_CHAR_H
 
 #include "common/serializer.h"
 
 namespace MM {
 namespace MM1 {
 
-#define CHARACTERS_COUNT 18
 #define INVENTORY_COUNT 6
-#define PARTY_COUNT 6
 
 enum CharacterClass {
 	KNIGHT = 1, PALADIN = 2, ARCHER = 3, CLERIC = 4,
@@ -60,7 +58,7 @@ enum Town {
 	DUSK = 4, ERLIQUIN = 5
 };
 
-struct RosterEntry {
+struct Character {
 	char _name[16] = { 0 };
 	Sex _sex = MALE;
 	int _field11 = 0;
@@ -89,49 +87,6 @@ struct RosterEntry {
 
 	void synchronize(Common::Serializer &s);
 	void clear();
-};
-
-struct Roster {
-private:
-	Common::String rosterSaveName() const;
-public:
-	RosterEntry _items[CHARACTERS_COUNT];
-	Town _towns[CHARACTERS_COUNT] = { NO_TOWN };
-
-	RosterEntry &operator[](uint idx) {
-		assert(idx < CHARACTERS_COUNT);
-		return _items[idx];
-	}
-
-	/**
-	 * Synchronizes the contents of the roster
-	 */
-	void synchronize(Common::Serializer &s);
-
-	/**
-	 * Load the roster
-	 */
-	void load();
-
-	/**
-	 * Save the roster
-	 */
-	void save();
-
-	/**
-	 * Deletes a character
-	 */
-	void remove(RosterEntry *entry);
-
-	/**
-	 * Returns true if the roster is empty
-	 */
-	bool empty() const;
-
-	/**
-	 * Returns true if the roster is full
-	 */
-	bool full() const;
 };
 
 } // namespace MM1

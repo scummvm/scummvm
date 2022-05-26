@@ -44,7 +44,7 @@ void ViewCharacters::draw() {
 	// Loop to print characters
 	for (int charNum = 0; charNum < 18; ++charNum) {
 		if (roster._towns[charNum]) {
-			const RosterEntry &re = roster[charNum];
+			const Character &re = roster[charNum];
 			Common::String charName = re._name;
 			pad_string(charName, 16, '.');
 
@@ -79,7 +79,7 @@ bool ViewCharacters::msgKeypress(const KeypressMessage &msg) {
 		msg.keycode <= (Common::KEYCODE_a + (int)_charIndexes.size() - 1)) {
 		// Character selected
 		uint charIndex = _charIndexes[msg.keycode - Common::KEYCODE_a];
-		g_globals->_rosterEntry = &g_globals->_roster[charIndex];
+		g_globals->_currCharacter = &g_globals->_roster[charIndex];
 		addView("ViewCharacter");
 	}
 
@@ -89,7 +89,7 @@ bool ViewCharacters::msgKeypress(const KeypressMessage &msg) {
 /*------------------------------------------------------------------------*/
 
 void CharacterStats::printStats() {
-	RosterEntry &re = *g_globals->_rosterEntry;
+	Character &re = *g_globals->_currCharacter;
 	printSummary();
 
 	newLine();
@@ -164,7 +164,7 @@ void CharacterStats::printStats() {
 }
 
 void CharacterStats::printSummary() {
-	RosterEntry &re = *g_globals->_rosterEntry;
+	Character &re = *g_globals->_currCharacter;
 	writeString(1, 0, re._name);
 
 	_textPos.x = 17;
@@ -190,7 +190,7 @@ void CharacterStats::printSummary() {
 }
 
 void CharacterStats::printCondition() {
-	RosterEntry &re = *g_globals->_rosterEntry;
+	Character &re = *g_globals->_currCharacter;
 	writeString(STRING["stats.attributes.cond"]);
 	_textPos.x++;
 	int cond = re._condition;
@@ -229,7 +229,7 @@ void CharacterStats::printCondition() {
 }
 
 void CharacterStats::printInventory() {
-	RosterEntry &re = *g_globals->_rosterEntry;
+	Character &re = *g_globals->_currCharacter;
 	writeString(0, 12, STRING["stats.inventory"]);
 
 	// Print the equipped and backpack items
@@ -255,7 +255,7 @@ void CharacterStats::printInventory() {
 /*------------------------------------------------------------------------*/
 
 void ViewCharacter::draw() {
-	assert(g_globals->_rosterEntry);
+	assert(g_globals->_currCharacter);
 	clearScreen();
 	printStats();
 
@@ -308,7 +308,7 @@ bool ViewCharacter::msgKeypress(const KeypressMessage &msg) {
 			redraw();
 		}
 		if (msg.keycode == Common::KEYCODE_RETURN || _newName.size() == 15) {
-			strncpy(g_globals->_rosterEntry->_name, _newName.c_str(), 16);
+			strncpy(g_globals->_currCharacter->_name, _newName.c_str(), 16);
 			_state = DISPLAY;
 			redraw();
 		} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&
@@ -321,7 +321,7 @@ bool ViewCharacter::msgKeypress(const KeypressMessage &msg) {
 	case DELETE:
 		if (msg.keycode == Common::KEYCODE_y) {
 			// Removes the character and returns to View All Characters
-			g_globals->_roster.remove(g_globals->_rosterEntry);
+			g_globals->_roster.remove(g_globals->_currCharacter);
 			close();
 		} else {
 			// Any other keypress returns to display mode

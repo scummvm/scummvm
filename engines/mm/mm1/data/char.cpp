@@ -19,16 +19,13 @@
  *
  */
 
-#include "common/file.h"
-#include "common/savefile.h"
-#include "common/system.h"
-#include "mm/mm1/utils/roster.h"
-#include "mm/mm1/mm1.h"
+#include "common/algorithm.h"
+#include "mm/mm1/data/char.h"
 
 namespace MM {
 namespace MM1 {
 
-void RosterEntry::synchronize(Common::Serializer &s) {
+void Character::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, 16);
 	s.syncAsByte(_sex);
 	s.syncAsByte(_field11);
@@ -76,7 +73,7 @@ void RosterEntry::synchronize(Common::Serializer &s) {
 	s.skip(51);
 }
 
-void RosterEntry::clear() {
+void Character::clear() {
 	Common::fill(_name, _name + 16, 0);
 	_sex = (Sex)0;
 	_alignment = (Alignment)0;
@@ -101,69 +98,6 @@ void RosterEntry::clear() {
 	_field11 = 0;
 	_v58 = _v59 = _v62 = _v63 = _v64 = _v65 = 0;
 	_v66 = _v67 = _v6c = _v6f = 0;
-}
-
-void Roster::synchronize(Common::Serializer &s) {
-	for (int i = 0; i < CHARACTERS_COUNT; ++i)
-		_items[i].synchronize(s);
-
-	for (int i = 0; i < CHARACTERS_COUNT; ++i)
-		s.syncAsByte(_towns[i]);
-}
-
-void Roster::load() {
-	Common::InSaveFile *sf = g_system->getSavefileManager()->openForLoading(
-		rosterSaveName());
-
-	if (sf) {
-		Common::Serializer s(sf, nullptr);
-		synchronize(s);
-	} else {
-		Common::File f;
-		if (!f.open("roster.dta"))
-			error("Could not open roster.dta");
-
-		Common::Serializer s(&f, nullptr);
-		synchronize(s);
-	}
-}
-
-void Roster::save() {
-	Common::OutSaveFile *sf = g_system->getSavefileManager()->openForSaving(
-		rosterSaveName());
-	Common::Serializer s(nullptr, sf);
-	synchronize(s);
-	delete sf;
-}
-
-Common::String Roster::rosterSaveName() const {
-	return Common::String::format("%s-roster.dta",
-		g_engine->getTargetName().c_str());
-}
-
-void Roster::remove(RosterEntry *entry) {
-	entry->clear();
-
-	size_t idx = entry - _items;
-	_towns[idx] = NO_TOWN;
-}
-
-bool Roster::empty() const {
-	for (uint i = 0; i < CHARACTERS_COUNT; ++i) {
-		if (_towns[i])
-			return false;
-	}
-
-	return true;
-}
-
-bool Roster::full() const {
-	for (uint i = 0; i < CHARACTERS_COUNT; ++i) {
-		if (!_towns[i])
-			return false;
-	}
-
-	return true;
 }
 
 } // namespace MM1

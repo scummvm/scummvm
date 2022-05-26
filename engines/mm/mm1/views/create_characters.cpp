@@ -59,12 +59,12 @@ void CreateCharacters::NewCharacter::reroll() {
 
 void CreateCharacters::NewCharacter::save() {
 	uint i = 0;
-	while (i < CHARACTERS_COUNT && g_globals->_roster._towns[i])
+	while (i < ROSTER_COUNT && g_globals->_roster._towns[i])
 		++i;
 
 	g_globals->_roster._towns[i] = SORPIGAL;
-	g_globals->_rosterEntry = &g_globals->_roster[i];
-	RosterEntry &re = *g_globals->_rosterEntry;
+	g_globals->_currCharacter = &g_globals->_roster[i];
+	Character &re = *g_globals->_currCharacter;
 	re.clear();
 
 	Common::strcpy_s(re._name, _name.c_str());
@@ -129,7 +129,7 @@ void CreateCharacters::NewCharacter::save() {
 }
 
 void CreateCharacters::NewCharacter::setHP(int hp) {
-	RosterEntry &re = *g_globals->_rosterEntry;
+	Character &re = *g_globals->_currCharacter;
 
 	if (_attribs1[ENDURANCE] >= 19)
 		hp += 4;
@@ -160,7 +160,7 @@ void CreateCharacters::NewCharacter::setHP(int hp) {
 }
 
 void CreateCharacters::NewCharacter::setSP(int amount) {
-	RosterEntry &re = *g_globals->_rosterEntry;
+	Character &re = *g_globals->_currCharacter;
 
 	int level = 0;
 	if (amount >= 19)
