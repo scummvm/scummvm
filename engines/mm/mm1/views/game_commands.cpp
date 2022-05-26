@@ -32,12 +32,12 @@ void GameCommands::draw() {
 			"dialogs.game.commands.%d", i)]);
 }
 
-bool GameCommands::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_q) {
+bool GameCommands::msgAction(const ActionMessage &msg) {
+	switch (msg._action) {
+	case KEYBIND_QUICKREF:
 		addView("QuickRef");
 		return true;
 	}
-	return false;
 }
 
 } // namespace Views

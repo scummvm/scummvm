@@ -21,6 +21,7 @@
 
 #include "mm/mm1/views/game.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/meta_engine.h"
 
 namespace MM {
 namespace MM1 {
@@ -28,6 +29,16 @@ namespace Views {
 
 Game::Game() : TextView("Game"),
 		_commands(this), _messages(this), _party(this) {
+}
+
+bool Game::msgFocus(const FocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_NORMAL);
+	return true;
+}
+
+bool Game::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	return true;
 }
 
 void Game::draw() {

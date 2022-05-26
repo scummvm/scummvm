@@ -39,8 +39,7 @@ dialogs:
 		copyright2: "ALL RIGHTS RESERVED"
 	quick_ref:
 		title: "#     NAME        HIT PTS   SPELL PTS AC"
-		food: "FOOD="
-		cond: "COND="
+		food: "FOOD= "
 		to_view: "TO VIEW"
 	ready:
 		1: "  ARE YOU READY? "
