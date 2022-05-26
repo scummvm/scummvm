@@ -37,6 +37,8 @@ dialogs:
 		option3: "'#'.......GO TO TOWN"
 		copyright1: "COPR. 1986,1987-JON VAN CANEGHEM"
 		copyright2: "ALL RIGHTS RESERVED"
+	quick_ref:
+		title: "#     NAME        HIT PTS   SPELL PTS AC"
 	ready:
 		1: "  ARE YOU READY? "
 		2: "THEN PRESS ENTER!"

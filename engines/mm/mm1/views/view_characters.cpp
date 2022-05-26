@@ -256,8 +256,7 @@ void CharacterStats::printInventory() {
 
 void ViewCharacter::draw() {
 	assert(g_globals->_rosterEntry);
-	Graphics::ManagedSurface *scr = getScreen();
-	scr->clear();
+	clearScreen();
 	printStats();
 
 	switch (_state) {

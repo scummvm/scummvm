@@ -234,7 +234,7 @@ Common::KeymapArray MMMetaEngine::mm1InitKeymaps(const char *target) const {
 
 	act = new Action("QUICKREF", _("Quick Reference"));
 	act->setCustomEngineActionEvent(MM::MM1::ACTION_QUICKREF);
-	act->addDefaultInputMapping("x");
+	act->addDefaultInputMapping("q");
 	engineKeyMap->addAction(act);
 
 	const char *const PARTY_STRINGS[] = {

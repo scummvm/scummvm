@@ -19,40 +19,33 @@
  *
  */
 
-#ifndef MM1_VIEWS_DIALOGS_H
-#define MM1_VIEWS_DIALOGS_H
-
-#include "mm/mm1/events.h"
-#include "mm/mm1/views/are_you_ready.h"
-#include "mm/mm1/views/create_characters.h"
-#include "mm/mm1/views/game.h"
-#include "mm/mm1/views/inn.h"
-#include "mm/mm1/views/main_menu.h"
 #include "mm/mm1/views/quick_ref.h"
-#include "mm/mm1/views/title.h"
-#include "mm/mm1/views/view_characters.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
-struct Dialogs {
-private:
-	Views::AreYouReady _areYouReady;
-	Views::CreateCharacters _createCharacters;
-	Views::Game _game;
-	Views::Inn _inn;
-	Views::MainMenu _mainMenu;
-	Views::QuickRef _quickRef;
-	Views::Title _title;
-	Views::ViewCharacters _viewCharacters;
-	Views::ViewCharacter _viewCharacter;
-public:
-	Dialogs() {}
-};
+void QuickRef::draw() {
+	clearScreen();
+	writeString(STRING["dialogs.quick_ref.title"]);
+	_textPos.x = 0;
+	_textPos.y = 2;
+
+	for (uint idx = 0; idx < PARTY_COUNT; ++idx) {
+		
+	}
+}
+
+bool QuickRef::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+		close();
+		return true;
+	}
+
+	return false;
+}
 
 } // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif

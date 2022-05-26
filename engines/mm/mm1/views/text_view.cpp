@@ -78,9 +78,14 @@ void TextView::newLine() {
 	_textPos.y++;
 }
 
+void TextView::clearScreen() {
+	getScreen()->clear();
+	_textPos.x = _textPos.y = 0;
+}
+
 void TextView::drawTextBorder() {
 	Graphics::ManagedSurface *scr = getScreen();
-	scr->clear();
+	clearScreen();
 
 	// Draw boxes in the four corners
 	scr->fillRect(Common::Rect(0, 0, FONT_SIZE * 3, FONT_SIZE * 3), 255);
