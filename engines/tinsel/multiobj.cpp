@@ -86,7 +86,7 @@ OBJECT *MultiInitObject(const MULTI_INIT *pInitTbl) {
 }
 
 OBJECT *InsertReelObj(const FREEL *reels) {
-	const MULTI_INIT *pmi = (const MULTI_INIT*)_vm->_handle->LockMem(reels->mobj);
+	const MULTI_INIT *pmi = reels->GetMultiInit();
 	// Verify that there is an image defined
 	const FRAME *frame = (const FRAME*)_vm->_handle->LockMem(pmi->hMulFrame);
 	const IMAGE *image = (const IMAGE*)_vm->_handle->LockMem(*frame);

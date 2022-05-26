@@ -718,7 +718,7 @@ static void InitialPathChecks(MOVER *pMover, int xpos, int ypos) {
 
 static void MoverProcessHelper(int X, int Y, int id, MOVER *pMover) {
 	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(pMover->walkReels[0][FORWARD]);
-	const MULTI_INIT *pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfilm->reels[0].mobj));
+	const MULTI_INIT *pmi = pfilm->reels[0].GetMultiInit();
 
 	assert(_vm->_bg->BgPal()); // Can't start actor without a background palette
 	assert(pMover->walkReels[0][FORWARD]); // Starting actor process without walk reels
@@ -812,7 +812,7 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	MOVER *pMover = rpos->pMover;
 	int i;
 	FILM *pFilm;
-	MULTI_INIT *pmi;
+	const MULTI_INIT *pmi;
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -826,7 +826,7 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	InitialPathChecks(pMover, rpos->X, rpos->Y);
 
 	pFilm = (FILM *)_vm->_handle->LockMem(pMover->walkReels[i][FORWARD]); // Any old reel
-	pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pFilm->reels[0].mobj));
+	pmi = pFilm->reels[0].GetMultiInit();
 
 	// Poke in the background palette
 	PokeInPalette(pmi);
