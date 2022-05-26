@@ -58,6 +58,7 @@ BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine
 	_currentMode = NonInteractive;
 	_crosshairsPalette = nullptr;
 	_lastLevel = 0;
+	_flashbackMode = false;
 
     const chapterEntry *entry = rawChapterTable;
     while (entry->id) {
@@ -128,6 +129,43 @@ HOTS /BBOX= 4 14 91 92\n\
 SOND tolbwhr1.raw 22K\n\
 HOTS /BBOX= 8 105 96 194\n\
 SOND tolbwhr1.raw 22K\n\
+END\n";
+
+static const char *fterr = "\
+MENU preload\\fterr%d.smk\n\
+HOTS /BBOX=  13 151 68 164\n\
+HOTS /BBOX=  19  48 146  59\n\
+HOTS /BBOX=  19  64 146  75\n\
+HOTS /BBOX=  19  80 146  91\n\
+HOTS /BBOX=  19  96 146 107\n\
+HOTS /BBOX=  19 112 146 123\n\
+HOTS /BBOX= 170  48 305  59\n\
+HOTS /BBOX= 170  64 305  75\n\
+HOTS /BBOX= 170  80 305  91\n\
+HOTS /BBOX= 170  96 305 107\n\
+HOTS /BBOX= 170 112 305 123\n\
+HOTS /BBOX= 170 128 305 139\n\
+HOTS /BBOX= 170 144 305 155\n\
+HOTS /BBOX= 170 160 305 171\n\
+HOTS /BBOX= 170 176 305 187\n\
+HOTS /BBOX= 170  48 305  59\n\
+HOTS /BBOX= 170  64 305  75\n\
+HOTS /BBOX= 170  48 305  59\n\
+HOTS /BBOX= 170  64 305  75\n\
+HOTS /BBOX= 170  80 305  91\n\
+HOTS /BBOX= 170  96 305 107\n\
+HOTS /BBOX= 170 112 305 123\n\
+HOTS /BBOX= 170 128 305 139\n\
+HOTS /BBOX= 170  48 305  59\n\
+HOTS /BBOX= 170  64 305  75\n\
+HOTS /BBOX= 170  48 305  59\n\
+HOTS /BBOX= 170  64 305  75\n\
+HOTS /BBOX= 170  80 305  91\n\
+HOTS /BBOX= 170  96 305 107\n\
+HOTS /BBOX= 170 112 305 123\n\
+HOTS /BBOX= 170 128 305 139\n\
+HOTS /BBOX= 170 144 305 155\n\
+HOTS /BBOX= 170 160 305 171\n\
 END\n";
 
 void BoyzEngine::loadAssets() {
@@ -359,6 +397,113 @@ void BoyzEngine::loadAssets() {
 	sc->hots[3].actions.push_back(gl);
 	cl = new ChangeLevel("c53.mi_");
 	sc->hots[3].actions.push_back(cl);
+
+	for (int t = 1; t <= 5; t++) {
+		Common::String fterrMis = Common::String::format(fterr, t);
+		Common::String fterrName = Common::String::format("<select_t%d>", t);
+		loadSceneLevel(fterrMis.c_str(), fterrName.c_str(), "", "");
+		sc = (Scene *) _levels[fterrName.c_str()];
+		sc->resolution = "320x200";
+
+		cl = new ChangeLevel("<main_menu>");
+		sc->hots[1].actions.push_back(cl);
+		cl = new ChangeLevel("<select_t1>");
+		sc->hots[2].actions.push_back(cl);
+		cl = new ChangeLevel("<select_t2>");
+		sc->hots[3].actions.push_back(cl);
+		cl = new ChangeLevel("<select_t3>");
+		sc->hots[4].actions.push_back(cl);
+		cl = new ChangeLevel("<select_t4>");
+		sc->hots[5].actions.push_back(cl);
+		cl = new ChangeLevel("<select_t5>");
+		sc->hots[6].actions.push_back(cl);
+	}
+
+	sc = (Scene *) _levels["<select_t1>"];
+	cl = new ChangeLevel("c19.mi_");
+	sc->hots[7].actions.push_back(cl);
+
+	cl = new ChangeLevel("c11.mi_");
+	sc->hots[8].actions.push_back(cl);
+
+	cl = new ChangeLevel("c12.mi_");
+	sc->hots[9].actions.push_back(cl);
+
+	cl = new ChangeLevel("c13.mi_");
+	sc->hots[10].actions.push_back(cl);
+
+	cl = new ChangeLevel("c14.mi_");
+	sc->hots[11].actions.push_back(cl);
+
+	cl = new ChangeLevel("c15.mi_");
+	sc->hots[12].actions.push_back(cl);
+
+	cl = new ChangeLevel("c16.mi_");
+	sc->hots[13].actions.push_back(cl);
+
+	cl = new ChangeLevel("c17.mi_");
+	sc->hots[14].actions.push_back(cl);
+
+	cl = new ChangeLevel("c18.mi_");
+	sc->hots[15].actions.push_back(cl);
+
+	sc = (Scene *) _levels["<select_t2>"];
+	cl = new ChangeLevel("c21.mi_");
+	sc->hots[7].actions.push_back(cl);
+
+	cl = new ChangeLevel("c22.mi_");
+	sc->hots[8].actions.push_back(cl);
+
+	sc = (Scene *) _levels["<select_t3>"];
+	cl = new ChangeLevel("c31.mi_");
+	sc->hots[7].actions.push_back(cl);
+
+	cl = new ChangeLevel("c32.mi_");
+	sc->hots[8].actions.push_back(cl);
+
+	cl = new ChangeLevel("c33.mi_");
+	sc->hots[9].actions.push_back(cl);
+
+	cl = new ChangeLevel("c34.mi_");
+	sc->hots[10].actions.push_back(cl);
+
+	cl = new ChangeLevel("c35.mi_");
+	sc->hots[11].actions.push_back(cl);
+
+	cl = new ChangeLevel("c36.mi_");
+	sc->hots[12].actions.push_back(cl);
+
+	sc = (Scene *) _levels["<select_t4>"];
+	cl = new ChangeLevel("c41.mi_");
+	sc->hots[7].actions.push_back(cl);
+
+	cl = new ChangeLevel("c42.mi_");
+	sc->hots[8].actions.push_back(cl);
+
+	sc = (Scene *) _levels["<select_t5>"];
+	cl = new ChangeLevel("c51.mi_");
+	sc->hots[7].actions.push_back(cl);
+
+	cl = new ChangeLevel("c52.mi_");
+	sc->hots[8].actions.push_back(cl);
+
+	cl = new ChangeLevel("c53.mi_");
+	sc->hots[9].actions.push_back(cl);
+
+	cl = new ChangeLevel("c54.mi_");
+	sc->hots[10].actions.push_back(cl);
+
+	cl = new ChangeLevel("c55.mi_");
+	sc->hots[11].actions.push_back(cl);
+
+	cl = new ChangeLevel("c56.mi_");
+	sc->hots[12].actions.push_back(cl);
+
+	cl = new ChangeLevel("c57.mi_");
+	sc->hots[13].actions.push_back(cl);
+
+	cl = new ChangeLevel("c58.mi_");
+	sc->hots[14].actions.push_back(cl);
 
 	loadLib("sound/", "misc/sound.lib", true);
 

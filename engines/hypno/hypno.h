@@ -547,6 +547,7 @@ public:
 	Common::String _name;
 	Common::Array<int> _ids;
 	int _lastLevel;
+	bool _flashbackMode;
 	void loadAssets() override;
 	void runCode(Code *code) override;
 	Common::String findNextLevel(const Common::String &level) override;
