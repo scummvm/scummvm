@@ -89,6 +89,18 @@ bool QuickRef::msgKeypress(const KeypressMessage &msg) {
 	return false;
 }
 
+bool QuickRef::msgAction(const ActionMessage &msg) {
+	switch (msg._action) {
+	case KEYBIND_QUICKREF:
+		addView();
+		return true;
+	}
+
+	return false;
+}
+
+
+
 } // namespace Views
 } // namespace MM1
 } // namespace MM

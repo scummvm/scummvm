@@ -34,7 +34,6 @@ public:
 	virtual ~GameCommands() {}
 
 	void draw() override;
-	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Views
