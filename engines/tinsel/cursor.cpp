@@ -89,7 +89,7 @@ void Cursor::InitCurTrailObj(int i, int x, int y) {
 
 	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(_cursorFilm);
 	const FREEL *pfr = (const FREEL *)&pFilm->reels[i + 1];
-	const MULTI_INIT *pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
+	const MULTI_INIT *pmi = pfr->GetMultiInit();
 
 	PokeInPalette(pmi);
 
@@ -303,7 +303,7 @@ void Cursor::DelAuxCursor() {
 void Cursor::SetAuxCursor(SCNHANDLE hFilm) {
 	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(hFilm);
 	const FREEL *pfr = &pfilm->reels[0];
-	const MULTI_INIT *pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
+	const MULTI_INIT *pmi = pfr->GetMultiInit();
 	const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
 	const IMAGE *pim;
 	int	x, y;		// Cursor position
@@ -418,7 +418,7 @@ void Cursor::DoCursorMove() {
 void Cursor::InitCurObj() {
 	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(_cursorFilm);
 	const FREEL *pfr = (const FREEL *)&pFilm->reels[0];
-	const MULTI_INIT *pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
+	const MULTI_INIT *pmi = pfr->GetMultiInit();
 
 	if (TinselVersion != 3) {
 		PokeInPalette(pmi);
