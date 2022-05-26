@@ -33,44 +33,6 @@
 
 #define MAX_SAVES 99
 
-namespace MM {
-namespace Xeen {
-
-uint32 XeenEngine::getGameID() const {
-	return _gameDescription->gameID;
-}
-
-uint32 XeenEngine::getSpecificGameId() const {
-	uint gameId = g_vm->getGameID();
-	if (gameId == GType_WorldOfXeen)
-		gameId = _files->_ccNum ? GType_DarkSide : GType_Clouds;
-
-	return gameId;
-}
-
-uint32 XeenEngine::getGameFeatures() const {
-	return _gameDescription->features;
-}
-
-uint32 XeenEngine::getFeatures() const {
-	return _gameDescription->desc.flags;
-}
-
-Common::Language XeenEngine::getLanguage() const {
-	return _gameDescription->desc.language;
-}
-
-Common::Platform XeenEngine::getPlatform() const {
-	return _gameDescription->desc.platform;
-}
-
-bool XeenEngine::getIsCD() const {
-	return getFeatures() & ADGF_CD;
-}
-
-} // End of namespace Xeen
-} // End of namespace MM
-
 class MMMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
