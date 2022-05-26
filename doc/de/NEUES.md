@@ -12,6 +12,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Tender Loving Care (CD-ROM-Versionen) hinzugefügt.
    - Unterstützung für Uncle Henry's Playhouse hinzugefügt.
    - Unterstützung für Wetlands hinzugefügt.
+   - Unterstützung für Chewy: ESC von F5 hinzugefügt.
 
  Allgemein:
    - Die Lizenz des Projektes wurde auf GPLv3+ aktualisiert.
