@@ -304,7 +304,7 @@ void Cursor::SetAuxCursor(SCNHANDLE hFilm) {
 	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(hFilm);
 	const FREEL *pfr = &pfilm->reels[0];
 	const MULTI_INIT *pmi = pfr->GetMultiInit();
-	const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
+	const FRAME *pFrame = pmi->GetFrame();
 	const IMAGE *pim;
 	int	x, y;		// Cursor position
 

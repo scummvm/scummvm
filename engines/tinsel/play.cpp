@@ -101,7 +101,7 @@ static void PokeInPalette(SCNHANDLE hMulFrame) {
 void PokeInPalette(const MULTI_INIT *pmi) {
 	// Could be an empty column
 	if (pmi->hMulFrame) {
-		const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
+		const FRAME *pFrame = pmi->GetFrame();
 		_vm->_handle->SetImagePalette(READ_32(pFrame), _vm->_bg->BgPal());
 	}
 }
