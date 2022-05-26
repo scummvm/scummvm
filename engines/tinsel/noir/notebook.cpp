@@ -171,6 +171,25 @@ void Notebook::SetNextPage(int pageIndex) {
 	_currentPage = pageIndex;
 }
 
+void Notebook::PageFlip(bool up) {
+	int nextPage = _currentPage + (up ? -1 : 1);
+	if (nextPage <= 0) {
+		SetNextPage(0);
+		Refresh();
+		return;
+	} else if (nextPage == 1) {
+		// TODO: Should possibly just call whatever function we use to open.
+		InitNotebookAnim(&_object, _anim, SysReel::NOTEPAD_OPENING, Z_INV_RFRAME);
+		_state = BOOKSTATE::OPEN_ANIMATING;
+		SetNextPage(nextPage);
+		return;
+	}
+	SetNextPage(nextPage);
+	SysReel reel = (up ? SysReel::NOTEPAD_FLIPUP : SysReel::NOTEPAD_FLIPDOWN);
+	InitNotebookAnim(&_pageObject, _pageAnim, reel, 19);
+	_state = BOOKSTATE::PAGEFLIP;
+}
+
 void Notebook::Show(bool isOpen) {
 	auto reel = (isOpen ? SysReel::NOTEPAD_OPEN : SysReel::NOTEPAD_OPENING);
 	InitNotebookAnim(&_object, _anim, reel, Z_INV_MFRAME);
@@ -205,6 +224,44 @@ void Notebook::StepAnimScripts() {
 			Refresh();
 		}
 	}
+	if (_state == BOOKSTATE::PAGEFLIP) {
+		auto state = StepAnimScript(&_pageAnim);
+		if (state == ScriptFinished) {
+			MultiDeleteObjectIfExists(FIELD_STATUS, &_pageObject);
+			_state = BOOKSTATE::OPENED;
+			Refresh();
+		}
+	}
+}
+
+bool Notebook::HandlePointer(const Common::Point &point) {
+	if (!IsOpen()) {
+		return 0;
+	}
+	warning("TODO: Implement pointer handling");
+	return false;
+}
+
+bool Notebook::HandleEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
+	if (!IsOpen()) { // TODO: Clicking outside should close the notebook
+		return false;
+	}
+	switch(pEvent) {
+	case PLR_ESCAPE:
+		Close();
+		return true;
+	case PLR_PGUP:
+		PageFlip(true);
+		return true;
+	case PLR_PGDN:
+		PageFlip(false);
+		return true;
+	case PLR_HOME:
+	case PLR_END:
+	default:
+		return false;
+	}
+	return false;
 }
 
 } // End of namespace Tinsel

@@ -1797,6 +1797,14 @@ enum { I_NOTIN,
  * to rework all this.
  */
 int Dialogs::InvArea(int x, int y) {
+	if (TinselVersion == 3) {
+		if (_vm->_notebook->IsOpen()) {
+			if (_vm->_notebook->HandlePointer(Common::Point(x, y)) != 0) {
+				return I_ENDCHANGE;
+			}
+			return I_NOTIN;
+		}
+	}
 	if (TinselVersion >= 2) {
 		int RightX = MultiRightmost(_rectObject) - NM_BG_SIZ_X - NM_BG_POS_X - NM_RS_R_INSET;
 		int BottomY = MultiLowest(_rectObject) - NM_BG_SIZ_Y - NM_BG_POS_Y - NM_RS_B_INSET;
@@ -5005,6 +5013,13 @@ void Dialogs::EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 	if (_InventoryHidden)
 		return;
 
+	if (TinselVersion == 3) {
+		// If the Notebook handles the event, it has been consumed.
+		if (_vm->_notebook->HandleEvent(pEvent, coOrds)) {
+			return;
+		}
+	}
+
 	switch (pEvent) {
 	case PLR_PROV_WALKTO:
 		if (MenuActive()) {
@@ -5031,7 +5046,8 @@ void Dialogs::EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		break;
 
 	case PLR_DRAG1_START: // Left drag start
-		InvDragStart();
+		if (TinselVersion < 3 || _inventoryState == ACTIVE_INV) // InventoryActive, but not Notebook
+			InvDragStart();
 		break;
 
 	case PLR_DRAG1_END: // Left drag end

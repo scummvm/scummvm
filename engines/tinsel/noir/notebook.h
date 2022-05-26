@@ -50,7 +50,8 @@ enum class BOOKSTATE {
 	CLOSED = 0,
 	OPEN_UNKNOWN = 1,
 	OPEN_ANIMATING = 2,
-	OPENED = 3
+	OPENED = 3,
+	PAGEFLIP = 4
 };
 
 class InventoryObjectT3;
@@ -70,13 +71,17 @@ public:
 	void Show(bool isOpen);
 	bool IsOpen() const;
 	void Close();
-
+	
+	bool HandlePointer(const Common::Point &point);
+	bool HandleEvent(PLR_EVENT pEvent, const Common::Point &coOrds);
 	void StepAnimScripts();
 	void Refresh();
 private:
 	int AddTitle(const InventoryObjectT3 &invObject);
 	void AddClue(const InventoryObjectT3 &invObject);
 	int GetPageWithTitle(int id);
+
+	void PageFlip(bool up);
 
 	void ClearNotebookPage();
 
