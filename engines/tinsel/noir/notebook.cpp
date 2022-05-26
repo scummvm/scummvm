@@ -128,6 +128,35 @@ void Notebook::AddClue(int id) {
 	}
 }
 
+int Notebook::GetPageWithTitle(int id) {
+	for (int i = 0; i < _numPages; i++) {
+		if (_pages[i].GetTitle() == id) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+void Notebook::CrossClue(int id) {
+	auto invObject = _vm->_dialogs->GetInvObjectT3(id);
+	if (invObject->isNotebookTitle()) {
+		return;
+	}
+	int titles[2] = {
+		invObject->getUnknown(),
+		invObject->getTitle()
+	};
+	for (int i = 0; i < 2; i++) {
+		if (titles[i] == 0) {
+			continue;
+		}
+		int page = GetPageWithTitle(titles[i]);
+		if (page != -1) {
+			_pages[page].CrossClue(id);
+		}
+	}
+}
+
 void InitNotebookAnim(OBJECT **obj, ANIM &anim, SysReel reel, int zPosition) {
 	auto film = GetSystemReelFilm(reel);
 	MultiDeleteObjectIfExists(FIELD_STATUS, obj);

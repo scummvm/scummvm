@@ -28,6 +28,7 @@
 #include "tinsel/music.h"
 #include "tinsel/font.h"
 #include "tinsel/strres.h"
+#include "tinsel/noir/notebook.h"
 
 namespace Tinsel {
 
@@ -61,6 +62,10 @@ int strToInt(const char *s) {
 //----------------- CONSOLE CLASS  ---------------------
 
 Console::Console() : GUI::Debugger() {
+	if (TinselVersion == 3) {
+		registerCmd("add_clue",		WRAP_METHOD(Console, cmd_add_clue));
+		registerCmd("cross_clue",		WRAP_METHOD(Console, cmd_cross_clue));
+	}
 	registerCmd("item",		WRAP_METHOD(Console, cmd_item));
 	registerCmd("scene",		WRAP_METHOD(Console, cmd_scene));
 	registerCmd("music",		WRAP_METHOD(Console, cmd_music));
@@ -158,6 +163,29 @@ bool Console::cmd_string(int argc, const char **argv) {
 	debugPrintf("%s\n", tmp);
 
 	return true;
+}
+
+// Noir:
+bool Console::cmd_add_clue(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("%s clue_id\n", argv[0]);
+		debugPrintf("Adds a clue to the notebook\n");
+		return true;
+	}
+
+	_vm->_notebook->AddClue(strToInt(argv[1]));
+	return false;
+}
+
+bool Console::cmd_cross_clue(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("%s clue_id\n", argv[0]);
+		debugPrintf("Crosses out a clue in the notebook\n");
+		return true;
+	}
+
+	_vm->_notebook->CrossClue(strToInt(argv[1]));
+	return false;
 }
 
 } // End of namespace Tinsel

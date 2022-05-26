@@ -34,6 +34,8 @@ public:
 	~Console() override;
 
 private:
+	bool cmd_add_clue(int argc, const char **argv);
+	bool cmd_cross_clue(int argc, const char **argv);
 	bool cmd_item(int argc, const char **argv);
 	bool cmd_scene(int argc, const char **argv);
 	bool cmd_music(int argc, const char **argv);
