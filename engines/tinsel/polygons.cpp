@@ -25,6 +25,7 @@
 #include "tinsel/pid.h"
 #include "tinsel/polygons.h"
 #include "tinsel/movers.h"
+#include "tinsel/noir/notebook.h"
 #include "tinsel/sched.h"
 #include "common/serializer.h"
 #include "tinsel/tinsel.h"
@@ -109,6 +110,10 @@ struct POLYGON {
 	 */
 	POLYGON *adjpaths[MAXADJ];
 
+	void setPoint(int index, const Common::Point &point) {
+		cx[index] = point.x;
+		cy[index] = point.y;
+	}
 	bool containsPoint(const Common::Point &point) const;
 };
 
@@ -2483,17 +2488,95 @@ void UpdateGroundPlane() {
 	//...
 }
 
+class NoteBookPolygonsImpl : public NoteBookPolygons {
+public:
+	NoteBookPolygonsImpl() {
+		setPolygon(NoteBookPoly::MAIN,
+				   Common::Point(220, 0),
+				   Common::Point(446, 0),
+				   Common::Point(553, 425),
+				   Common::Point(164, 410));
+	}
+
+	void setPolygon(NoteBookPoly polyKind, const Common::Point &c0, const Common::Point &c1, const Common::Point &c2, const Common::Point &c3) override {
+		POLYGON *poly = nullptr;
+		switch(polyKind) {
+		case NoteBookPoly::MAIN:
+			poly = &_main;
+			break;
+		case NoteBookPoly::NEXT:
+			poly = &_next;
+			break;
+		case NoteBookPoly::PREV:
+			poly = &_prev;
+			break;
+		default:
+			poly = _cluePoly + static_cast<int>(polyKind);
+			break;
+		}
+		poly->polyType = SHAPE;
+		poly->setPoint(0, c0);
+		poly->setPoint(1, c1);
+		poly->setPoint(2, c2);
+		poly->setPoint(3, c3);
+		FiddlyBit(poly);
+	}
+
+	void pushPolygon(const Common::Point &c0, const Common::Point &c1, const Common::Point &c2, const Common::Point &c3) override {
+		assert(_polyIndex < MAX_CLUE_POLYS);
+		setPolygon(static_cast<NoteBookPoly>(_polyIndex), c0, c1, c2, c3);
+		_polyIndex++;
+	}
+
+	bool isInsideNotebook(const Common::Point &point) const override {
+		return _main.containsPoint(point);
+	}
+
+	int lineHit(const Common::Point &point) const override {
+		for (int i = 0; i < MAX_CLUE_POLYS; i++) {
+			if (_cluePoly[i].containsPoint(point)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	NoteBookPoly mostSpecificHit(const Common::Point &point) const override {
+		auto line = lineHit(point);
+		if (line != -1) {
+			return static_cast<NoteBookPoly>(line);
+		}
+		if (_next.containsPoint(point)) {
+			return NoteBookPoly::NEXT;
+		} else if (_prev.containsPoint(point)) {
+			return NoteBookPoly::PREV;
+		} else if (_main.containsPoint(point)) {
+			return NoteBookPoly::MAIN;
+		}
+		return NoteBookPoly::NONE;
+	}
+private:
+	static const int MAX_CLUE_POLYS = 8;
+	int _polyIndex = 0;
+	POLYGON _main, _prev, _next;
+	POLYGON _cluePoly[MAX_CLUE_POLYS];
+};
+
+NoteBookPolygons *instantiateNoteBookPolygons() {
+	return new NoteBookPolygonsImpl;
+}
+
 // Notebook (Tinsel)
 void NotebookPolyEntry(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3) {
-	warning("TODO: Finish implementation of NotebookPolyEntry(%d, %d, %d, %d, %d, %d, %d, %d)", c0.x, c0.y, c1.x, c1.y, c2.x, c2.y, c3.x, c3.y);
+	_vm->_notebook->_polygons->pushPolygon(c0, c1, c2, c3);
 }
 
 void NotebookPolyNextPage(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3) {
-	warning("TODO: Finish implementation of NotebookPolyNextPage(%d, %d, %d, %d, %d, %d, %d, %d)", c0.x, c0.y, c1.x, c1.y, c2.x, c2.y, c3.x, c3.y);
+	_vm->_notebook->_polygons->setPolygon(NoteBookPoly::NEXT, c0, c1, c2, c3);
 }
 
 void NotebookPolyPrevPage(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3) {
-	warning("TODO: Finish implementation of NotebookPolyPrevPage(%d, %d, %d, %d, %d, %d, %d, %d)", c0.x, c0.y, c1.x, c1.y, c2.x, c2.y, c3.x, c3.y);
+	_vm->_notebook->_polygons->setPolygon(NoteBookPoly::PREV, c0, c1, c2, c3);
 }
 
 } // End of namespace Tinsel

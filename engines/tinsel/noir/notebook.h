@@ -54,11 +54,13 @@ enum class BOOKSTATE {
 	PAGEFLIP = 4
 };
 
+class NoteBookPolygons;
 class InventoryObjectT3;
 
 class Notebook {
 public:
-	Notebook() = default;
+	Notebook();
+	~Notebook();
 
 	// Adds a connection between a clue/title
 	void AddHyperlink(int32 id1, int32 id2);
@@ -76,6 +78,8 @@ public:
 	bool HandleEvent(PLR_EVENT pEvent, const Common::Point &coOrds);
 	void StepAnimScripts();
 	void Refresh();
+
+	NoteBookPolygons *_polygons = nullptr;
 private:
 	int AddTitle(const InventoryObjectT3 &invObject);
 	void AddClue(const InventoryObjectT3 &invObject);

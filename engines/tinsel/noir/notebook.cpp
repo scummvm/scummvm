@@ -28,9 +28,18 @@
 #include "tinsel/multiobj.h"
 #include "tinsel/noir/sysreel.h"
 #include "tinsel/pdisplay.h"
+#include "tinsel/polygons.h"
 #include "tinsel/timers.h"
 
 namespace Tinsel {
+
+Notebook::Notebook() {
+	_polygons = instantiateNoteBookPolygons();
+}
+
+Notebook::~Notebook() {
+	delete _polygons;
+}
 
 void Notebook::AddHyperlink(int32 id1, int32 id2) {
 	auto *invObject = _vm->_dialogs->GetInvObjectT3(id1);
