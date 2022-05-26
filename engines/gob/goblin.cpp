@@ -107,10 +107,8 @@ Goblin::~Goblin() {
 		if (_goblins[i]) {
 			if (_goblins[i]->realStateMach) {
 				for (state = 0; state < (i == 3 ? 70 : 40); state++)
-					if (_goblins[i]->realStateMach[state])
-						for (col = 0; col < 6; col++)
-							if (_goblins[i]->realStateMach[state][col])
-								delete _goblins[i]->realStateMach[state][col];
+					for (col = 0; col < 6; col++)
+						delete _goblins[i]->realStateMach[state][col];
 				delete[] _goblins[i]->realStateMach;
 			}
 			delete _goblins[i];
