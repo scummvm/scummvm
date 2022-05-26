@@ -76,7 +76,7 @@ void Inn::draw() {
 
 		if (!g_globals->_partyChars.empty())
 			writeString(13, 22, STRING["dialogs.inn.exit"]);
-		if (g_globals->_partyChars.size() == PARTY_COUNT)
+		if (g_globals->_partyChars.size() == 6)
 			writeString(10, 16, STRING["dialogs.inn.full"]);
 	}
 }
@@ -105,10 +105,10 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 		}
 	} else if (msg.keycode == Common::KEYCODE_x) {
 		// Load party from selected characters
+		g_globals->_party.clear();
 		for (uint i = 0; i < g_globals->_partyChars.size(); ++i)
-			g_globals->_party[i] = g_globals->_roster[g_globals->_partyChars[i]];
-		for (uint i = g_globals->_partyChars.size(); i < PARTY_COUNT; ++i)
-			g_globals->_party[i].clear();
+			g_globals->_party.push_back(
+				g_globals->_roster[g_globals->_partyChars[i]]);
 
 		// TODO: town setup
 		// Switch to game view

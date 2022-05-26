@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MM1_UTILS_CHAR_H
-#define MM1_UTILS_CHAR_H
+#ifndef MM1_DATA_CHAR_H
+#define MM1_DATA_CHAR_H
 
 #include "common/serializer.h"
 
