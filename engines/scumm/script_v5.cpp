@@ -2401,6 +2401,14 @@ void ScummEngine_v5::o5_stopSound() {
 		return;
 	}
 
+	// WORKAROUND: In MM NES, Wendy's CD player script forgets to update the
+	// music status variable when you stop it. Wendy's music would then
+	// resume when leaving some rooms (such as room 3 with the chandelier),
+	// even though her CD player was off.
+	if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformNES && sound == 75 && vm.slot[_currentScript].number == 50 && VAR(VAR_EGO) == 6 && VAR(224) == sound && _enableEnhancements) {
+		VAR(224) = 0;
+	}
+
 	_sound->stopSound(sound);
 }
 
