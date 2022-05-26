@@ -59,8 +59,7 @@ public:
 };
 
 /**
- * Dialog for showing the stats for a single character,
- * from the View All Characters dialog
+ * Dialog for showing the stats for a single character.
  */
 class ViewCharacter : public CharacterStats {
 	enum ViewState { DISPLAY = 0, RENAME = 1, DELETE = 2 };
@@ -72,6 +71,7 @@ public:
 
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 
