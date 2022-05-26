@@ -1,11 +1,12 @@
 MODULE := engines/mm
 
 MODULE_OBJS := \
-	metaengine.o \
+	meta_engine.o \
 	utils/engine_data.o \
 	utils/strings_data.o \
 	mm1/events.o \
 	mm1/globals.o \
+	mm1/meta_engine.o \
 	mm1/mm1.o \
 	mm1/data/char.o \
 	mm1/data/roster.o \

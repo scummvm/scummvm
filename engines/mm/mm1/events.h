@@ -26,38 +26,22 @@
 #include "common/events.h"
 #include "common/stack.h"
 #include "graphics/screen.h"
+#include "mm/mm1/meta_engine.h"
 
 namespace MM {
 namespace MM1 {
-
-// engine actions
-enum CustomAction {
-	ACTION_FORWARDS,
-	ACTION_BACKWARDS,
-	ACTION_TURN_LEFT,
-	ACTION_TURN_RIGHT,
-	ACTION_STRAFE_LEFT,
-	ACTION_STRAFE_RIGHT,
-	ACTION_ORDER,
-	ACTION_PROTECT,
-	ACTION_REST,
-	ACTION_SEARCH,
-	ACTION_BASH,
-	ACTION_UNLOCK,
-	ACTION_QUICKREF,
-	ACTION_VIEW_PARTY1,
-	ACTION_VIEW_PARTY2,
-	ACTION_VIEW_PARTY3,
-	ACTION_VIEW_PARTY4,
-	ACTION_VIEW_PARTY5,
-	ACTION_VIEW_PARTY6
-};
 
 class Events;
 
 struct Message {};
 struct FocusMessage : public Message {};
 struct UnfocusMessage : public Message {};
+struct ActionMessage : public Message {
+	KeybindingAction _action;
+	ActionMessage() : Message(), _action(KEYBIND_NONE) {}
+	ActionMessage(KeybindingAction action) : Message(),
+		_action(action) {}
+};
 
 struct KeypressMessage : public Message, public Common::KeyState {
 	KeypressMessage() : Message() {}
@@ -152,6 +136,7 @@ public:
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
 	MESSAGE(Keypress);
+	MESSAGE(Action);
 	#undef MESSAGE
 };
 
@@ -222,6 +207,7 @@ public:
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
 	MESSAGE(Keypress);
+	MESSAGE(Action);
 	#undef MESSAGE
 };
 
