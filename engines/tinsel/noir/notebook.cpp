@@ -248,7 +248,7 @@ void Notebook::stepAnimScripts() {
 	}
 }
 
-int Notebook::GetPointedClue(const Common::Point &point) const {
+int32 Notebook::GetPointedClue(const Common::Point &point) const {
 	if (_currentPage == 0 || _currentPage > _numPages) {
 		return 0;
 	}
