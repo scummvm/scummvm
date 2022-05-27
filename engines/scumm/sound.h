@@ -101,7 +101,6 @@ protected:
 	int _musicTimer;
 	int _loomOvertureTransition;
 	uint32 _replacementTrackStartTime;
-	uint32 _replacementTrackPauseTime;
 
 public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on

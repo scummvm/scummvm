@@ -60,7 +60,6 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer, bool useReplacementAudioT
 	_mixer(mixer),
 	_useReplacementAudioTracks(useReplacementAudioTracks),
 	_replacementTrackStartTime(0),
-	_replacementTrackPauseTime(0),
 	_musicTimer(0),
 	_cdMusicTimerMod(0),
 	_cdMusicTimer(0),
@@ -134,6 +133,9 @@ bool Sound::isRolandLoom() const {
 		(_vm->VAR(_vm->VAR_SOUNDCARD) == 4);
 }
 
+#define JIFFIES_TO_TICKS(x) (40 * ((double)(x)) / _vm->getTimerFrequency())
+#define TICKS_TO_JIFFIES(x) ((double)(x) * (_vm->getTimerFrequency() / 40))
+
 #define TICKS_TO_TIMER(x) ((((x) * 204) / _loomOvertureTransition) + 1)
 #define TIMER_TO_TICKS(x) ((((x) - 1) * _loomOvertureTransition) / 204)
 
@@ -152,7 +154,6 @@ void Sound::updateMusicTimer() {
 		_currentCDSound = 0;
 		_musicTimer = 0;
 		_replacementTrackStartTime = 0;
-		_replacementTrackPauseTime = 0;
 		return;
 	}
 
@@ -173,17 +174,21 @@ void Sound::updateMusicTimer() {
 	// 204 - Show the LucasFilm logo
 	// 278 - End the Overture
 
-	uint32 now = g_system->getMillis();
-	uint32 ticks = (now - _replacementTrackStartTime) / 100;
+	// VAR_TOTAL_TIMER measures time in "jiffies", or frames. This will
+	// eventually overflow, but I don't expect that to ever be a problem.
+
+	int32 now = _vm->VAR(_vm->VAR_TIMER_TOTAL);
+
+	int32 ticks = JIFFIES_TO_TICKS(now - _replacementTrackStartTime);
 
 	// If the track ends before the timer reaches 198, skip ahead. (If the
 	// timer didn't even reach 4 you weren't really trying, and must be
 	// punished for that!)
 
 	if (isLoomOverture && !pollCD()) {
-		uint32 fadeDownTick = TIMER_TO_TICKS(198);
+		int32 fadeDownTick = TIMER_TO_TICKS(198);
 		if (ticks < fadeDownTick) {
-			_replacementTrackStartTime = now - 100 * fadeDownTick;
+			_replacementTrackStartTime = now - TICKS_TO_JIFFIES(fadeDownTick);
 			ticks = fadeDownTick;
 		}
 	}
@@ -341,8 +346,7 @@ void Sound::playSound(int soundID) {
 		int trackNr = getReplacementAudioTrack(soundID);
 		if (trackNr != -1) {
 			_currentCDSound = soundID;
-			_replacementTrackStartTime = g_system->getMillis();
-			_replacementTrackPauseTime = 0;
+			_replacementTrackStartTime = _vm->VAR(_vm->VAR_TIMER_TOTAL);
 			_musicTimer = 0;
 			g_system->getAudioCDManager()->play(trackNr, 1, 0, 0, true);
 			return;
@@ -1087,7 +1091,6 @@ void Sound::stopSound(int sound) {
 		_currentCDSound = 0;
 		_musicTimer = 0;
 		_replacementTrackStartTime = 0;
-		_replacementTrackPauseTime = 0;
 		stopCD();
 		stopCDTimer();
 	}
@@ -1116,7 +1119,6 @@ void Sound::stopAllSounds() {
 		_currentCDSound = 0;
 		_musicTimer = 0;
 		_replacementTrackStartTime = 0;
-		_replacementTrackPauseTime = 0;
 		stopCD();
 		stopCDTimer();
 	}
@@ -1205,14 +1207,6 @@ void Sound::pauseSounds(bool pause) {
 			stopCDTimer();
 		else
 			startCDTimer();
-	}
-
-	if (pause) {
-		if (!_replacementTrackPauseTime)
-			_replacementTrackPauseTime = g_system->getMillis();
-	} else {
-		_replacementTrackStartTime += (g_system->getMillis() - _replacementTrackPauseTime);
-		_replacementTrackPauseTime = 0;
 	}
 }
 
@@ -1505,24 +1499,28 @@ void Sound::saveLoadWithSerializer(Common::Serializer &s) {
 void Sound::restoreAfterLoad() {
 	_musicTimer = 0;
 	_replacementTrackStartTime = 0;
-	_replacementTrackPauseTime = 0;
 
 	if (_useReplacementAudioTracks && _currentCDSound) {
 		int trackNr = getReplacementAudioTrack(_currentCDSound);
 		if (trackNr != -1) {
-			uint32 now = g_system->getMillis();
+			int32 now = _vm->VAR(_vm->VAR_TIMER_TOTAL);
 			uint32 frame;
 
 			_musicTimer = _vm->VAR(_vm->VAR_MUSIC_TIMER);
-			_replacementTrackPauseTime = 0;
 
 			// We try to resume the audio track from where it was
 			// saved. The timer isn't very accurate, but it should
 			// be good enough.
+			//
+			// NOTE: This does not seem to work at the moment, since
+			// the track immediately gets restarted in the cases I
+			// tried.
 
 			if (_musicTimer > 0) {
-				_replacementTrackStartTime = now - 100 * TIMER_TO_TICKS(_musicTimer);
-				frame = (75 * TIMER_TO_TICKS(_musicTimer)) / 10;
+				int32 ticks = TIMER_TO_TICKS(_musicTimer);
+
+				_replacementTrackStartTime = now - TICKS_TO_JIFFIES(ticks);
+				frame = (75 * ticks) / 10;
 			} else {
 				_replacementTrackStartTime = now;
 				frame = 0;
