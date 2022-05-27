@@ -443,7 +443,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("text.hqr", "a374c93450dd2bb874b7167a63974e8d", 377224),
 		Common::EN_ANY,
 		Common::kPlatformAndroid,
-		ADGF_UNSTABLE | TwinE::TF_DOTEMU_ENHANCED,
+		TwinE::TF_DOTEMU_ENHANCED,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -452,7 +452,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("text.hqr", "a374c93450dd2bb874b7167a63974e8d", 377224),
 		Common::FR_FRA,
 		Common::kPlatformAndroid,
-		ADGF_UNSTABLE | TwinE::TF_DOTEMU_ENHANCED,
+		TwinE::TF_DOTEMU_ENHANCED,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -461,7 +461,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("text.hqr", "a374c93450dd2bb874b7167a63974e8d", 377224),
 		Common::DE_DEU,
 		Common::kPlatformAndroid,
-		ADGF_UNSTABLE | TwinE::TF_DOTEMU_ENHANCED,
+		TwinE::TF_DOTEMU_ENHANCED,
 		GUIO1(GUIO_NONE)
 	},
 
