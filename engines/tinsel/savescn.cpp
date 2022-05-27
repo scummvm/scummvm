@@ -387,7 +387,7 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 				return n;
 
 			if (sd == &g_sgData)
-				_vm->_dialogs->HoldItem(g_thingHeld, true);
+				_vm->_dialogs->holdItem(g_thingHeld, true);
 			if (sd->bTinselDim)
 				_vm->_pcmMusic->dim(true);
 			_vm->_pcmMusic->restoreThatTune(sd->SavedTune);
@@ -413,7 +413,7 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
  * @param num			num
  */
 void RestoreGame(int num) {
-	_vm->_dialogs->KillInventory();
+	_vm->_dialogs->killInventory();
 
 	RequestRestoreGame(num, &g_sgData, &g_savedSceneCount, g_ssData);
 

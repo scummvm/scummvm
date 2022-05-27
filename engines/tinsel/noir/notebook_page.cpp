@@ -67,7 +67,7 @@ int FindReelIndexForEntry(const FILM *pFilm, int pageLine) {
 }
 
 void NotebookLine::FillIn(int pageLine) {
-	const FILM *pFilm = _vm->_dialogs->GetObjectFilm(_id);
+	const FILM *pFilm = _vm->_dialogs->getObjectFilm(_id);
 	if (!pFilm)
 		return;
 
@@ -96,8 +96,8 @@ void NotebookLine::CrossOut() {
 void NotebookPage::HandlePointAtLine(int line) {
 	auto objId = GetClueForLine(line);
 	if (objId != 0 && objId != _pointedClue) {
-		auto obj = _vm->_dialogs->GetInvObject(objId);
-		_vm->_dialogs->InvPointEvent(obj, -1);
+		auto obj = _vm->_dialogs->getInvObject(objId);
+		_vm->_dialogs->invPointEvent(obj, -1);
 		_pointedClue = objId;
 	}
 }
