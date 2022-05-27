@@ -31,7 +31,7 @@
 #include "graphics/opengl/system_headers.h"
 
 namespace OpenGL {
-class ShaderGL;
+class Shader;
 }
 
 namespace Stark {
@@ -57,10 +57,10 @@ public:
 	SurfaceRenderer *createSurfaceRenderer() override;
 	FadeRenderer *createFadeRenderer() override;
 
-	OpenGL::ShaderGL *createActorShaderInstance();
-	OpenGL::ShaderGL *createSurfaceShaderInstance();
-	OpenGL::ShaderGL *createFadeShaderInstance();
-	OpenGL::ShaderGL *createShadowShaderInstance();
+	OpenGL::Shader *createActorShaderInstance();
+	OpenGL::Shader *createSurfaceShaderInstance();
+	OpenGL::Shader *createFadeShaderInstance();
+	OpenGL::Shader *createShadowShaderInstance();
 
 	void start2DMode();
 	void end2DMode();
@@ -76,10 +76,10 @@ private:
 	Common::Rect _viewport;
 	Common::Rect _unscaledViewport;
 
-	OpenGL::ShaderGL *_surfaceShader;
-	OpenGL::ShaderGL *_actorShader;
-	OpenGL::ShaderGL *_fadeShader;
-	OpenGL::ShaderGL *_shadowShader;
+	OpenGL::Shader *_surfaceShader;
+	OpenGL::Shader *_actorShader;
+	OpenGL::Shader *_fadeShader;
+	OpenGL::Shader *_shadowShader;
 	GLuint _surfaceVBO;
 	GLuint _fadeVBO;
 };

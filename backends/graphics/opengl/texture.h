@@ -34,8 +34,6 @@ class Scaler;
 
 namespace OpenGL {
 
-class Shader;
-
 /**
  * A simple GL texture object abstraction.
  *

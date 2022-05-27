@@ -58,9 +58,9 @@ public:
 	void enableFog(const Math::Vector4d &fogColor) override;
 
 private:
-	OpenGL::ShaderGL *_cubeShader;
-	OpenGL::ShaderGL *_fadeShader;
-	OpenGL::ShaderGL *_bitmapShader;
+	OpenGL::Shader *_cubeShader;
+	OpenGL::Shader *_fadeShader;
+	OpenGL::Shader *_bitmapShader;
 
 	GLuint _cubeVBO;
 	GLuint _fadeVBO;

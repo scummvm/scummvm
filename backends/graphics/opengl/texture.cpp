@@ -614,6 +614,8 @@ void TextureCLUT8GPU::destroy() {
 	_clut8Texture.destroy();
 	_paletteTexture.destroy();
 	_target->destroy();
+	delete _clut8Pipeline;
+	_clut8Pipeline = nullptr;
 }
 
 void TextureCLUT8GPU::recreate() {
@@ -626,6 +628,14 @@ void TextureCLUT8GPU::recreate() {
 	if (_clut8Data.getPixels()) {
 		flagDirty();
 		_paletteDirty = true;
+	}
+
+	if (_clut8Pipeline == nullptr) {
+		_clut8Pipeline = new CLUT8LookUpPipeline();
+		// Setup pipeline.
+		_clut8Pipeline->setFramebuffer(_target);
+		_clut8Pipeline->setPaletteTexture(&_paletteTexture);
+		_clut8Pipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 }
 

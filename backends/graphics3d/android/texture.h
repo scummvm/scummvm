@@ -32,7 +32,7 @@
 #include "common/array.h"
 
 namespace OpenGL {
-class ShaderGL;
+class Shader;
 }
 
 class GLESBaseTexture {
@@ -194,7 +194,7 @@ protected:
 	bool _is_game_texture;
 
 	static bool _npot_supported;
-	static OpenGL::ShaderGL *_box_shader;
+	static OpenGL::Shader *_box_shader;
 	static GLuint _verticesVBO;
 
 };

@@ -1070,6 +1070,7 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 	const Graphics::PixelFormat &defaultFormat,
 	const Graphics::PixelFormat &defaultFormatAlpha) {
 	// Initialize pipeline.
+	Pipeline::setPipeline(nullptr);
 	delete _pipeline;
 	_pipeline = nullptr;
 
@@ -1088,21 +1089,19 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 	}
 #endif
 
-	Pipeline::setPipeline(_pipeline);
-
 	// Disable 3D properties.
 	GL_CALL(glDisable(GL_CULL_FACE));
 	GL_CALL(glDisable(GL_DEPTH_TEST));
 	GL_CALL(glDisable(GL_DITHER));
 
-	Pipeline::getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_pipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// Setup backbuffer state.
 
 	// Default to black as clear color.
 	_backBuffer.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-	Pipeline::getActivePipeline()->setFramebuffer(&_backBuffer);
+	_pipeline->setFramebuffer(&_backBuffer);
 
 	// We use a "pack" alignment (when reading from textures) to 4 here,
 	// since the only place where we really use it is the BMP screenshot
@@ -1141,6 +1140,10 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 		_osdIconSurface->recreate();
 	}
 #endif
+
+	// Everything is ready: activate the pipeline
+	Pipeline::setPipeline(_pipeline);
+
 }
 
 void OpenGLGraphicsManager::notifyContextDestroy() {

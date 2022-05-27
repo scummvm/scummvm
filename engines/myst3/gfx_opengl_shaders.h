@@ -61,10 +61,10 @@ private:
 	void setupQuadEBO();
 	Math::Vector2d scaled(float x, float y) const;
 
-	OpenGL::ShaderGL *_boxShader;
-	OpenGL::ShaderGL *_cubeShader;
-	OpenGL::ShaderGL *_rect3dShader;
-	OpenGL::ShaderGL *_textShader;
+	OpenGL::Shader *_boxShader;
+	OpenGL::Shader *_cubeShader;
+	OpenGL::Shader *_rect3dShader;
+	OpenGL::Shader *_textShader;
 
 	GLuint _boxVBO;
 	GLuint _cubeVBO;

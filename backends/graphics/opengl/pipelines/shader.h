@@ -32,6 +32,7 @@ class Shader;
 class ShaderPipeline : public Pipeline {
 public:
 	ShaderPipeline(Shader *shader);
+	~ShaderPipeline();
 
 	virtual void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
@@ -43,9 +44,9 @@ protected:
 	virtual void activateInternal();
 	virtual void deactivateInternal();
 
-	GLint _vertexAttribLocation;
-	GLint _texCoordAttribLocation;
-	GLint _colorAttribLocation;
+	GLuint _coordsVBO;
+	GLuint _texcoordsVBO;
+	GLuint _colorVBO;
 
 	GLfloat _colorAttributes[4*4];
 

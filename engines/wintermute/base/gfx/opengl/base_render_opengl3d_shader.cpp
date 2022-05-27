@@ -232,7 +232,7 @@ bool BaseRenderOpenGL3DShader::enableShadows() {
 		glBufferData(GL_ARRAY_BUFFER, 4 * 12, flatShadowMaskVertices, GL_STATIC_DRAW);
 
 		static const char *flatShadowMaskAttributes[] = { "position", nullptr };
-		_flatShadowMaskShader = OpenGL::ShaderGL::fromFiles("wme_flat_shadow_mask", flatShadowMaskAttributes);
+		_flatShadowMaskShader = OpenGL::Shader::fromFiles("wme_flat_shadow_mask", flatShadowMaskAttributes);
 		_flatShadowMaskShader->enableVertexAttribute("position", _flatShadowMaskVBO, 3, GL_FLOAT, false, 12, 0);
 
 		_flatShadowMaskShader->use();
@@ -490,26 +490,26 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *spriteAttributes[] = {"position", "texcoord", "color", nullptr};
-	_spriteShader = OpenGL::ShaderGL::fromFiles("wme_sprite", spriteAttributes);
+	_spriteShader = OpenGL::Shader::fromFiles("wme_sprite", spriteAttributes);
 
 	_spriteShader->enableVertexAttribute("position", _spriteVBO, 2, GL_FLOAT, false, sizeof(SpriteVertexShader), 0);
 	_spriteShader->enableVertexAttribute("texcoord", _spriteVBO, 2, GL_FLOAT, false, sizeof(SpriteVertexShader), 8);
 	_spriteShader->enableVertexAttribute("color", _spriteVBO, 4, GL_FLOAT, false, sizeof(SpriteVertexShader), 16);
 
 	static const char *geometryAttributes[] = { "position", nullptr };
-	_geometryShader = OpenGL::ShaderGL::fromFiles("wme_geometry", geometryAttributes);
+	_geometryShader = OpenGL::Shader::fromFiles("wme_geometry", geometryAttributes);
 
 	static const char *shadowVolumeAttributes[] = { "position", nullptr };
-	_shadowVolumeShader = OpenGL::ShaderGL::fromFiles("wme_shadow_volume", shadowVolumeAttributes);
+	_shadowVolumeShader = OpenGL::Shader::fromFiles("wme_shadow_volume", shadowVolumeAttributes);
 
 	static const char *shadowMaskAttributes[] = { "position", nullptr };
-	_shadowMaskShader = OpenGL::ShaderGL::fromFiles("wme_shadow_mask", shadowMaskAttributes);
+	_shadowMaskShader = OpenGL::Shader::fromFiles("wme_shadow_mask", shadowMaskAttributes);
 
 	_transformStack.push_back(Math::Matrix4());
 	_transformStack.back().setToIdentity();
 
 	static const char *modelXAttributes[] = {"position", "texcoord", "normal", nullptr};
-	_modelXShader = OpenGL::ShaderGL::fromFiles("wme_modelx", modelXAttributes);
+	_modelXShader = OpenGL::Shader::fromFiles("wme_modelx", modelXAttributes);
 
 	setDefaultAmbientLightColor();
 
@@ -544,7 +544,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *fadeAttributes[] = { "position", nullptr };
-	_fadeShader = OpenGL::ShaderGL::fromFiles("wme_fade", fadeAttributes);
+	_fadeShader = OpenGL::Shader::fromFiles("wme_fade", fadeAttributes);
 
 	_fadeShader->enableVertexAttribute("position", _fadeVBO, 2, GL_FLOAT, false, 8, 0);
 
@@ -554,11 +554,11 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	static const char *lineAttributes[] = { "position", nullptr };
-	_lineShader = OpenGL::ShaderGL::fromFiles("wme_line", lineAttributes);
+	_lineShader = OpenGL::Shader::fromFiles("wme_line", lineAttributes);
 	_lineShader->enableVertexAttribute("position", _lineVBO, 2, GL_FLOAT, false, 8, 0);
 
 	static const char *flatShadowModelXAttributes[] = { "position", nullptr };
-	_flatShadowModelXShader = OpenGL::ShaderGL::fromFiles("wme_flat_shadow_modelx", flatShadowModelXAttributes);
+	_flatShadowModelXShader = OpenGL::Shader::fromFiles("wme_flat_shadow_modelx", flatShadowModelXAttributes);
 
 	_active = true;
 	// setup a proper state

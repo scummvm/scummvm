@@ -148,15 +148,15 @@ private:
 	GLuint _flatShadowFrameBuffer;
 	GLuint _flatShadowRenderTexture;
 	GLuint _flatShadowDepthBuffer;
-	OpenGL::ShaderGL *_spriteShader;
-	OpenGL::ShaderGL *_fadeShader;
-	OpenGL::ShaderGL *_modelXShader;
-	OpenGL::ShaderGL *_geometryShader;
-	OpenGL::ShaderGL *_shadowVolumeShader;
-	OpenGL::ShaderGL *_shadowMaskShader;
-	OpenGL::ShaderGL *_lineShader;
-	OpenGL::ShaderGL *_flatShadowModelXShader;
-	OpenGL::ShaderGL *_flatShadowMaskShader;
+	OpenGL::Shader *_spriteShader;
+	OpenGL::Shader *_fadeShader;
+	OpenGL::Shader *_modelXShader;
+	OpenGL::Shader *_geometryShader;
+	OpenGL::Shader *_shadowVolumeShader;
+	OpenGL::Shader *_shadowMaskShader;
+	OpenGL::Shader *_lineShader;
+	OpenGL::Shader *_flatShadowModelXShader;
+	OpenGL::Shader *_flatShadowMaskShader;
 };
 
 } // namespace Wintermute

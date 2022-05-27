@@ -70,9 +70,9 @@ ShaderRenderer::ShaderRenderer(OSystem *system) :
 }
 
 ShaderRenderer::~ShaderRenderer() {
-	OpenGL::ShaderGL::freeBuffer(_cubeVBO);
-	OpenGL::ShaderGL::freeBuffer(_fadeVBO);
-	OpenGL::ShaderGL::freeBuffer(_bitmapVBO);
+	OpenGL::Shader::freeBuffer(_cubeVBO);
+	OpenGL::Shader::freeBuffer(_fadeVBO);
+	OpenGL::Shader::freeBuffer(_bitmapVBO);
 
 	delete _cubeShader;
 	delete _fadeShader;
@@ -87,21 +87,21 @@ void ShaderRenderer::init() {
 	glEnable(GL_DEPTH_TEST);
 
 	static const char *cubeAttributes[] = { "position", "normal", "color", "texcoord", nullptr };
-	_cubeShader = OpenGL::ShaderGL::fromFiles("playground3d_cube", cubeAttributes);
-	_cubeVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices);
+	_cubeShader = OpenGL::Shader::fromFiles("playground3d_cube", cubeAttributes);
+	_cubeVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices);
 	_cubeShader->enableVertexAttribute("texcoord", _cubeVBO, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 0);
 	_cubeShader->enableVertexAttribute("position", _cubeVBO, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 8);
 	_cubeShader->enableVertexAttribute("normal", _cubeVBO, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 20);
 	_cubeShader->enableVertexAttribute("color", _cubeVBO, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), 32);
 
 	static const char *fadeAttributes[] = { "position", nullptr };
-	_fadeShader = OpenGL::ShaderGL::fromFiles("playground3d_fade", fadeAttributes);
-	_fadeVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(dimRegionVertices), dimRegionVertices);
+	_fadeShader = OpenGL::Shader::fromFiles("playground3d_fade", fadeAttributes);
+	_fadeVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(dimRegionVertices), dimRegionVertices);
 	_fadeShader->enableVertexAttribute("position", _fadeVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 
 	static const char *bitmapAttributes[] = { "position", "texcoord", nullptr };
-	_bitmapShader = OpenGL::ShaderGL::fromFiles("playground3d_bitmap", bitmapAttributes);
-	_bitmapVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(bitmapVertices), bitmapVertices);
+	_bitmapShader = OpenGL::Shader::fromFiles("playground3d_bitmap", bitmapAttributes);
+	_bitmapVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(bitmapVertices), bitmapVertices);
 	_bitmapShader->enableVertexAttribute("position", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(float), 0);
 	_bitmapShader->enableVertexAttribute("texcoord", _bitmapVBO, 2, GL_FLOAT, GL_TRUE, 4 * sizeof(float), 8);
 
