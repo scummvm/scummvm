@@ -19,33 +19,15 @@
  *
  */
 
-#ifndef MM1_DATA_GAME_STATE_H
-#define MM1_DATA_GAME_STATE_H
-
-#include "common/array.h"
-#include "common/rect.h"
-#include "common/serializer.h"
-#include "mm/mm1/data/char.h"
+#include "common/algorithm.h"
+#include "mm/mm1/data/game_state.h"
 
 namespace MM {
 namespace MM1 {
 
-#define ACTIVE_SPELLS_COUNT 18
-
-/**
- * This acts as a container for everything in the game
- * that is persisted to savegames
- */
-struct GameState {
-	Common::Array<Character> _party;
-	uint _activeSpells[ACTIVE_SPELLS_COUNT];
-	Common::Point _mapPos;
-	int _direction = 0;
-
-	GameState();
-};
+GameState::GameState() {
+	Common::fill(&_activeSpells[0], &_activeSpells[ACTIVE_SPELLS_COUNT], 0);
+}
 
 } // namespace MM1
 } // namespace MM
-
-#endif

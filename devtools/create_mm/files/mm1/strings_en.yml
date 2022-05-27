@@ -40,7 +40,8 @@ dialogs:
 	protect:
 		title: "PROTECT:  SPELLS CURRENTLY ACTIVE"
 		protection: "PROTECTION FROM"
-		1: 'FEAR"
+		to_attacks: "TO ATTACKS"
+		1: "FEAR"
 		2: "COLD"
 		3: "FIRE"
 		4: "POISON"
