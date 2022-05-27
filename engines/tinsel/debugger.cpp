@@ -175,14 +175,14 @@ bool Console::cmd_add_clue(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_notebook->AddClue(strToInt(argv[1]));
+	_vm->_notebook->addClue(strToInt(argv[1]));
 	return false;
 }
 
 bool Console::cmd_add_all_clues(int argc, const char **argv) {
 	auto clues = _vm->_dialogs->getAllNotebookClues();
 	for (auto clue : clues) {
-		_vm->_notebook->AddClue(clue);
+		_vm->_notebook->addClue(clue);
 	}
 	return false;
 }
@@ -194,7 +194,7 @@ bool Console::cmd_cross_clue(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_notebook->CrossClue(strToInt(argv[1]));
+	_vm->_notebook->crossClue(strToInt(argv[1]));
 	return false;
 }
 

@@ -1269,7 +1269,7 @@ void Dialogs::inventoryIconCursor(bool bNewItem) {
 					auto invObj = getInvObject(_heldItem);
 
 					if (invObj->hasAttribute(InvObjAttr::NOTEBOOK_CLUE)) {
-						_heldFilm = _vm->_systemReel->Get((SysReel)objIndex);
+						_heldFilm = _vm->_systemReel->get((SysReel)objIndex);
 					} else {
 						_heldFilm = _invFilms[objIndex];
 					}
@@ -1293,11 +1293,11 @@ bool Dialogs::inventoryActive() {
 }
 
 bool Dialogs::inventoryOrNotebookActive() {
-	return inventoryActive() || ((TinselVersion == 3) && _vm->_notebook->IsOpen());
+	return inventoryActive() || ((TinselVersion == 3) && _vm->_notebook->isOpen());
 }
 
 int Dialogs::whichInventoryOpen() {
-	if (TinselVersion == 3 && _vm->_notebook->IsOpen()) {
+	if (TinselVersion == 3 && _vm->_notebook->isOpen()) {
 		return INV_NOTEBOOK;
 	}
 	if (_inventoryState != ACTIVE_INV)
@@ -1798,8 +1798,8 @@ enum { I_NOTIN,
  */
 int Dialogs::invArea(int x, int y) {
 	if (TinselVersion == 3) {
-		if (_vm->_notebook->IsOpen()) {
-			if (_vm->_notebook->HandlePointer(Common::Point(x, y)) != 0) {
+		if (_vm->_notebook->isOpen()) {
+			if (_vm->_notebook->handlePointer(Common::Point(x, y)) != 0) {
 				return I_ENDCHANGE;
 			}
 			return I_NOTIN;
@@ -2867,7 +2867,7 @@ void Dialogs::constructOtherInventory(int menuId) {
 
 	if (cd.bExtraWin) {
 		warning("TODO: Complete scrollbar implementation");
-		SCNHANDLE sliderReel = _vm->_systemReel->Get(SysReel::SLIDER);
+		SCNHANDLE sliderReel = _vm->_systemReel->get(SysReel::SLIDER);
 		const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(sliderReel);
 		_objArray[3] = _slideObject = InsertReelObj(pfilm->reels);
 		MultiSetAniXYZ(_slideObject,
@@ -5019,7 +5019,7 @@ void Dialogs::eventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 
 	if (TinselVersion == 3) {
 		// If the Notebook handles the event, it has been consumed.
-		if (_vm->_notebook->HandleEvent(pEvent, coOrds)) {
+		if (_vm->_notebook->handleEvent(pEvent, coOrds)) {
 			return;
 		}
 	}
@@ -5611,7 +5611,7 @@ void Dialogs::redraw() {
 		}
 	}
 	if (TinselVersion == 3) {
-		_vm->_notebook->StepAnimScripts();
+		_vm->_notebook->stepAnimScripts();
 	}
 }
 

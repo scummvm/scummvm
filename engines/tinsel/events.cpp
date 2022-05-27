@@ -400,8 +400,8 @@ void ProcessKeyEvent(PLR_EVENT ke) {
 }
 
 void CloseOpenInventories() {
-	if (_vm->_notebook->IsOpen()) {
-		_vm->_notebook->Close();
+	if (_vm->_notebook->isOpen()) {
+		_vm->_notebook->close();
 	} else {
 		if (_vm->_dialogs->inventoryActive()) {
 			if (_vm->_dialogs->whichInventoryOpen() != INV_3) {
@@ -474,7 +474,7 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 	case PLR_NOTEBOOK:
 		if (TinselVersion == 3) {
 			CloseOpenInventories();
-			_vm->_notebook->Show(false);
+			_vm->_notebook->show(false);
 		}
 		break;
 

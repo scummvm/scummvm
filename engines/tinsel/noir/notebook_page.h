@@ -32,9 +32,9 @@ namespace Tinsel {
 class NotebookLine {
 public:
 	int _id = 0;
-	void CrossOut();
-	void Clear();
-	void FillIn(int pageLine);
+	void crossOut();
+	void clear();
+	void fillIn(int pageLine);
 private:
 	bool _crossedOut = false;
 	ANIM _anim = {};
@@ -45,18 +45,18 @@ private:
 
 class NotebookPage {
 public:
-	bool ContainsClue(int id);
-	void CrossClue(int id);
-	void AddLine(int id);
-	void SetTitle(int id);
-	int32 GetTitle() const;
-	void FillIn();
-	void Clear();
-	int GetPointedClue(const Common::Point &point) const;
-	int GetClueForLine(int line) const;
-	void HandlePointAtLine(int line);
+	bool containsClue(int id);
+	void crossClue(int id);
+	void addLine(int id);
+	void setTitle(int id);
+	int32 getTitle() const;
+	void fillIn();
+	void clear();
+	int getPointedClue(const Common::Point &point) const;
+	int getClueForLine(int line) const;
+	void handlePointAtLine(int line);
 private:
-	int IndexOfClue(int id) const;
+	int indexOfClue(int id) const;
 
 	int _pointedClue = -1;
 	const static uint32 MAX_ENTRIES_PER_PAGE = 8;
