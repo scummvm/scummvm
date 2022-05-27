@@ -43,30 +43,8 @@ GroupedListWidget::GroupedListWidget(Dialog *boss, const Common::String &name, c
 }
 
 void GroupedListWidget::setList(const Common::U32StringArray &list, const ColorList *colors) {
-	if (_editMode && _caretVisible)
-		drawCaret(true);
+	ListWidget::setList(list, colors);
 
-	// Copy everything
-	copyListData(list);
-	_list = list;
-
-	_filter.clear();
-	_listIndex.clear();
-	_listColors.clear();
-
-	if (colors) {
-		_listColors = *colors;
-		assert(_listColors.size() == _dataList.size());
-	}
-
-	int size = list.size();
-	if (_currentPos >= size)
-		_currentPos = size - 1;
-	if (_currentPos < 0)
-		_currentPos = 0;
-	_selectedItem = -1;
-	_editMode = false;
-	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	groupByAttribute();
 	scrollBarRecalc();
 }
@@ -272,41 +250,6 @@ void GroupedListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	}
 }
 
-void GroupedListWidget::reflowLayout() {
-	Widget::reflowLayout();
-
-	_leftPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Left", 0);
-	_rightPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Right", 0);
-	_topPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Top", 0);
-	_bottomPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.Padding.Bottom", 0);
-	_hlLeftPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.hlLeftPadding", 0);
-	_hlRightPadding = g_gui.xmlEval()->getVar("Globals.ListWidget.hlRightPadding", 0);
-
-	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
-
-	// HACK: Once we take padding into account, there are times where
-	// integer rounding leaves a big chunk of white space in the bottom
-	// of the list.
-	// We do a rough rounding on the decimal places of Entries Per Page,
-	// to add another entry even if it goes a tad over the padding.
-	frac_t entriesPerPage = intToFrac(_h - _topPadding - _bottomPadding) / kLineHeight;
-
-	// Our threshold before we add another entry is 0.9375 (0xF000 with FRAC_BITS being 16).
-	const frac_t threshold = intToFrac(15) / 16;
-
-	if ((frac_t)(entriesPerPage & FRAC_LO_MASK) >= threshold)
-		entriesPerPage += FRAC_ONE;
-
-	_entriesPerPage = fracToInt(entriesPerPage);
-	assert(_entriesPerPage > 0);
-
-	if (_scrollBar) {
-		_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h, false);
-		scrollBarRecalc();
-		scrollToCurrent();
-	}
-}
-
 void GroupedListWidget::toggleGroup(int groupID) {
 	_groupExpanded[groupID] = !_groupExpanded[groupID];
 	sortGroups();
@@ -394,21 +337,6 @@ void GroupedListWidget::drawWidget() {
 			g_gui.theme()->drawText(r2, buffer, _state, _drawAlign, inverted, _leftPadding, true);
 		}
 	}
-}
-
-void GroupedListWidget::scrollToCurrent() {
-	// Only do something if the current item is not in our view port
-	if (_selectedItem != -1 && _selectedItem < _currentPos) {
-		// it's above our view
-		_currentPos = _selectedItem;
-	} else if (_selectedItem >= _currentPos + _entriesPerPage ) {
-		// it's below our view
-		_currentPos = _selectedItem - _entriesPerPage + 1;
-	}
-
-	checkBounds();
-	_scrollBar->_currentPos = _currentPos;
-	_scrollBar->recalc();
 }
 
 void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) {

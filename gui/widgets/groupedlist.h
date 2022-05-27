@@ -50,7 +50,6 @@ public:
 	void setAttributeValues(const Common::U32StringArray &attrValues);
 	void setMetadataNames(const Common::StringMap &metadata);
 
-	void append(const Common::String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
 	void setGroupHeaderFormat(const Common::U32String &prefix, const Common::U32String &suffix);
 	void groupByAttribute();
 
@@ -64,8 +63,6 @@ public:
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	void reflowLayout() override;
-
 	void setGroupsVisibility(bool val) { _groupsVisible = val; }
 
 	void startEditMode() override { error("Edit mode is not supported for Grouped Lists"); }
@@ -74,8 +71,6 @@ protected:
 	void sortGroups();
 	void toggleGroup(int groupID);
 	void drawWidget() override;
-
-	void scrollToCurrent();
 };
 
 } // End of namespace GUI
