@@ -1,5 +1,5 @@
 ifndef .FEATURES
-	$(error GNU Make 3.81 or higher is required)
+$(error GNU Make 3.81 or higher is required)
 endif
 
 #######################################################################
