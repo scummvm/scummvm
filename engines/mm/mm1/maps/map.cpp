@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/file.h"
 #include "mm/mm1/maps/map.h"
 #include "mm/mm1/maps/maps.h"
 
@@ -27,7 +28,43 @@ namespace MM1 {
 namespace Maps {
 
 Map::Map(Maps *owner, const Common::String &name) : _name(name) {
-	owner->_maps.push_back(this);
+	_mapId = owner->addMap(this);
+	Common::fill(&_mapData[0], &_mapData[512], 0);
+}
+
+void Map::load() {
+	loadMazeData();
+	loadOverlay();
+}
+
+void Map::loadMazeData() {
+	Common::File f;
+	if (!f.open("mazedata.dta"))
+		error("Could not open mazedata.dta");
+
+	f.seek(512 * _mapId);
+	f.read(_mapData, 512);
+	f.close();
+}
+
+void Map::loadOverlay() {
+	Common::File f;
+	if (!f.open(Common::String::format("%s.ovr", _name.c_str())))
+		error("Could not open %s.ovr overlay", _name.c_str());
+	if (f.readUint16LE() != 0xF2)
+		error("Invalid overlay header");
+
+	int globalsOffset = f.readUint16LE();
+	int globalsSize = f.readUint16LE();
+	if (globalsOffset != 0xF48F)
+		error("Invalid globals offset");
+	_globals.resize(globalsSize);
+	f.read(&_globals[0], globalsSize);
+
+	int codeOffset = f.readUint16LE();
+	int codeSize = f.readUint16LE();
+	if (codeOffset != 0xc940)
+		error("Invalid code offset");
 }
 
 } // namespace Maps

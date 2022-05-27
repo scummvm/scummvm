@@ -29,6 +29,11 @@ Maps::Maps() :
 		_map0(this) {
 }
 
+void Maps::load(uint mapId) {
+	_mapId = mapId;
+	_currentMap = _maps[mapId];
+	_currentMap->load();
+}
 
 } // namespace Maps
 } // namespace MM1

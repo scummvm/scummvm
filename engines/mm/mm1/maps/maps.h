@@ -36,9 +36,25 @@ class Maps {
 	friend class Map;
 private:
 	Common::Array<Map *> _maps;
+	uint _mapId = (uint)-1;
+	Map *_currentMap = nullptr;
+private:
 	Map0 _map0;
+private:
+	/**
+	 * Adds map class
+	 */
+	uint addMap(Map *map) {
+		_maps.push_back(map);
+		return _maps.size() - 1;
+	}
 public:
 	Maps();
+
+	/**
+	 * Load a map
+	 */
+	void load(uint mapId);
 };
 
 } // namespace Maps
