@@ -34,7 +34,7 @@ namespace Tinsel {
  *
  * @param index reel to get the handle to
  */
-SCNHANDLE SystemReel::Get(SysReel index) {
+SCNHANDLE SystemReel::get(SysReel index) {
 	assert((int)index >= 0 && (int)index < MAX_SYSREELS);
 
 	return _reels[(int)index];
@@ -46,7 +46,7 @@ SCNHANDLE SystemReel::Get(SysReel index) {
  * @param index where to store the reel
  * @param reel handle to the reel
  */
-void SystemReel::Set(int32 index, SCNHANDLE reel) {
+void SystemReel::set(int32 index, SCNHANDLE reel) {
 	assert(index >= 0 && index < MAX_SYSREELS);
 
 	if (index == (int)SysReel::LOADSCREEN) {

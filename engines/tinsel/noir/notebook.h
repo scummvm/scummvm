@@ -63,35 +63,35 @@ public:
 	~Notebook();
 
 	// Adds a connection between a clue/title
-	void AddHyperlink(int32 id1, int32 id2);
-	void AddClue(int id);
-	void CrossClue(int id);
+	void addHyperlink(int32 id1, int32 id2);
+	void addClue(int id);
+	void crossClue(int id);
 	// Called within InventoryProcess loop
-	void Redraw();
+	void redraw();
 
 	// Called from OPENNOTEBOOK
-	void Show(bool isOpen);
-	bool IsOpen() const;
-	void Close();
+	void show(bool isOpen);
+	bool isOpen() const;
+	void close();
 	
-	bool HandlePointer(const Common::Point &point);
-	bool HandleEvent(PLR_EVENT pEvent, const Common::Point &coOrds);
-	void StepAnimScripts();
-	void Refresh();
+	bool handlePointer(const Common::Point &point);
+	bool handleEvent(PLR_EVENT pEvent, const Common::Point &coOrds);
+	void stepAnimScripts();
+	void refresh();
 
 	NoteBookPolygons *_polygons = nullptr;
 private:
-	int AddTitle(const InventoryObjectT3 &invObject);
-	void AddClue(const InventoryObjectT3 &invObject);
-	int GetPageWithTitle(int id);
+	int addTitle(const InventoryObjectT3 &invObject);
+	void addClue(const InventoryObjectT3 &invObject);
+	int getPageWithTitle(int id);
 
-	void PageFlip(bool up);
+	void pageFlip(bool up);
 
 	int32 GetPointedClue(const Common::Point &point) const;
 
-	void ClearNotebookPage();
+	void clearNotebookPage();
 
-	void SetNextPage(int pageIndex);
+	void setNextPage(int pageIndex);
 
 	const static uint32 MAX_PAGES = 0x15;
 	const static uint32 MAX_HYPERS = 0xf;

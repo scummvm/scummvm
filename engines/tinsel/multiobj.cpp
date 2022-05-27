@@ -102,7 +102,7 @@ OBJECT *InsertReelObj(const FREEL *reels) {
 }
 
 const FILM *GetSystemReelFilm(SysReel reelIndex) {
-	SCNHANDLE hFilm = _vm->_systemReel->Get(reelIndex);
+	SCNHANDLE hFilm = _vm->_systemReel->get(reelIndex);
 	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(hFilm);
 	return pfilm;
 }

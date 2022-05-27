@@ -52,8 +52,8 @@ class SystemReel {
 public:
 	SystemReel() = default;
 
-	SCNHANDLE Get(SysReel index);
-	void Set(int32 index, SCNHANDLE reel);
+	SCNHANDLE get(SysReel index);
+	void set(int32 index, SCNHANDLE reel);
 
 private:
 	const static int32 MAX_SYSREELS = 0x28;

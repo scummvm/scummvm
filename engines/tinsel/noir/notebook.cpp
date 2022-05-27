@@ -41,7 +41,7 @@ Notebook::~Notebook() {
 	delete _polygons;
 }
 
-void Notebook::AddHyperlink(int32 id1, int32 id2) {
+void Notebook::addHyperlink(int32 id1, int32 id2) {
 	auto *invObject = _vm->_dialogs->getInvObjectT3(id1);
 
 	if (invObject->getTitle() != 0) {
@@ -77,29 +77,29 @@ void Notebook::AddHyperlink(int32 id1, int32 id2) {
 	error("Too many hyperlinks");
 }
 
-void Notebook::ClearNotebookPage() {
+void Notebook::clearNotebookPage() {
 	if (_prevPage != -1) {
-		_pages[_prevPage].Clear();
+		_pages[_prevPage].clear();
 	}
 	_prevPage = -1;
-	_pages[_currentPage].Clear();
+	_pages[_currentPage].clear();
 }
 
-void Notebook::Refresh() {
+void Notebook::refresh() {
 	auto reel = (_currentPage == 0 ? SysReel::NOTEPAD_CLOSED : SysReel::NOTEPAD_OPEN);
 	auto film = GetSystemReelFilm(reel);
 	InitStepAnimScript(&_anim, _object, film->reels->script, ONE_SECOND / film->frate);
-	ClearNotebookPage();
+	clearNotebookPage();
 	if (_currentPage != 0) {
-		_pages[_currentPage].FillIn();
+		_pages[_currentPage].fillIn();
 	}
 }
 
-int Notebook::AddTitle(const InventoryObjectT3 &invObject) {
+int Notebook::addTitle(const InventoryObjectT3 &invObject) {
 	int id = invObject.getId();
 	assert(invObject.isNotebookTitle());
 	for (int i = 0; i < _numPages; i++) {
-		if (_pages[i].GetTitle() == id) {
+		if (_pages[i].getTitle() == id) {
 			return i;
 		}
 	}
@@ -108,15 +108,15 @@ int Notebook::AddTitle(const InventoryObjectT3 &invObject) {
 	// 0 page is the closed notebook, has no entries.
 	if (linkedFromPage != 0) {
 		// Allocate a line on the linked from page.
-		assert(_pages[linkedFromPage].GetTitle() != 0);
-		_pages[linkedFromPage].AddLine(id);
+		assert(_pages[linkedFromPage].getTitle() != 0);
+		_pages[linkedFromPage].addLine(id);
 	}
 	int pageIndex = _numPages++;
-	_pages[pageIndex].SetTitle(id);
+	_pages[pageIndex].setTitle(id);
 	return pageIndex;
 }
 
-void Notebook::AddClue(const InventoryObjectT3 &invObject) {
+void Notebook::addClue(const InventoryObjectT3 &invObject) {
 	if (invObject.getUnknown() == 0) {
 		// This affects two clues, that should get special treatment.
 		warning("TODO: Handle clues with no parent page");
@@ -124,34 +124,34 @@ void Notebook::AddClue(const InventoryObjectT3 &invObject) {
 	}
 	// Add title if missing, otherwise just get the page it's on.
 	auto titleObject = _vm->_dialogs->getInvObjectT3(invObject.getUnknown());
-	int pageIndex = AddTitle(*titleObject);
-	_pages[pageIndex].AddLine(invObject.getId());
+	int pageIndex = addTitle(*titleObject);
+	_pages[pageIndex].addLine(invObject.getId());
 	if (invObject.getTitle() != 0) {
 		auto secondTitleObject = _vm->_dialogs->getInvObjectT3(invObject.getTitle());
-		pageIndex = AddTitle(*secondTitleObject);
-	 	_pages[pageIndex].AddLine(invObject.getId());
+		pageIndex = addTitle(*secondTitleObject);
+		_pages[pageIndex].addLine(invObject.getId());
 	}
 }
 
-void Notebook::AddClue(int id) {
+void Notebook::addClue(int id) {
 	auto invObject = _vm->_dialogs->getInvObjectT3(id);
 	if (invObject->isNotebookTitle()) {
-		AddTitle(*invObject);
+		addTitle(*invObject);
 	} else {
-		AddClue(*invObject);
+		addClue(*invObject);
 	}
 }
 
-int Notebook::GetPageWithTitle(int id) {
+int Notebook::getPageWithTitle(int id) {
 	for (int i = 0; i < _numPages; i++) {
-		if (_pages[i].GetTitle() == id) {
+		if (_pages[i].getTitle() == id) {
 			return i;
 		}
 	}
 	return -1;
 }
 
-void Notebook::CrossClue(int id) {
+void Notebook::crossClue(int id) {
 	auto invObject = _vm->_dialogs->getInvObjectT3(id);
 	if (invObject->isNotebookTitle()) {
 		return;
@@ -164,9 +164,9 @@ void Notebook::CrossClue(int id) {
 		if (titles[i] == 0) {
 			continue;
 		}
-		int page = GetPageWithTitle(titles[i]);
+		int page = getPageWithTitle(titles[i]);
 		if (page != -1) {
-			_pages[page].CrossClue(id);
+			_pages[page].crossClue(id);
 		}
 	}
 }
@@ -179,48 +179,48 @@ void InitNotebookAnim(OBJECT **obj, ANIM &anim, SysReel reel, int zPosition) {
 	InitStepAnimScript(&anim, *obj, film->reels->script, ONE_SECOND / film->frate);
 }
 
-void Notebook::SetNextPage(int pageIndex) {
+void Notebook::setNextPage(int pageIndex) {
 	assert(_prevPage == -1 || _prevPage == _currentPage); // Check that we've cleaned any outstanding page.
 	_prevPage = _currentPage;
 	_currentPage = pageIndex;
 }
 
-void Notebook::PageFlip(bool up) {
+void Notebook::pageFlip(bool up) {
 	int nextPage = _currentPage + (up ? -1 : 1);
 	if (nextPage <= 0) {
-		SetNextPage(0);
-		Refresh();
+		setNextPage(0);
+		refresh();
 		return;
 	} else if (nextPage == 1) {
 		// TODO: Should possibly just call whatever function we use to open.
 		InitNotebookAnim(&_object, _anim, SysReel::NOTEPAD_OPENING, Z_INV_RFRAME);
 		_state = BOOKSTATE::OPEN_ANIMATING;
-		SetNextPage(nextPage);
+		setNextPage(nextPage);
 		return;
 	}
-	SetNextPage(nextPage);
+	setNextPage(nextPage);
 	SysReel reel = (up ? SysReel::NOTEPAD_FLIPUP : SysReel::NOTEPAD_FLIPDOWN);
 	InitNotebookAnim(&_pageObject, _pageAnim, reel, 19);
 	_state = BOOKSTATE::PAGEFLIP;
 }
 
-void Notebook::Show(bool isOpen) {
+void Notebook::show(bool isOpen) {
 	auto reel = (isOpen ? SysReel::NOTEPAD_OPEN : SysReel::NOTEPAD_OPENING);
 	InitNotebookAnim(&_object, _anim, reel, Z_INV_MFRAME);
 
 	_state = (isOpen ? BOOKSTATE::OPENED : BOOKSTATE::OPEN_ANIMATING);
-	SetNextPage(1);
-	Refresh();
+	setNextPage(1);
+	refresh();
 	DisableTags(); // Tags disabled in Notebook
 	DisablePointing(); // Pointing disabled in Notebook
 }
 
-bool Notebook::IsOpen() const {
+bool Notebook::isOpen() const {
 	return _state != BOOKSTATE::CLOSED;
 }
 
-void Notebook::Close() {
-	ClearNotebookPage();
+void Notebook::close() {
+	clearNotebookPage();
 	MultiDeleteObjectIfExists(FIELD_STATUS, &_object);
 	MultiDeleteObjectIfExists(FIELD_STATUS, &_pageObject);
 	_state = BOOKSTATE::CLOSED;
@@ -230,12 +230,12 @@ void Notebook::Close() {
 	}
 }
 
-void Notebook::StepAnimScripts() {
+void Notebook::stepAnimScripts() {
 	if (_state == BOOKSTATE::OPEN_ANIMATING) {
 		auto state = StepAnimScript(&_anim);
 		if (state == ScriptFinished) {
 			_state = BOOKSTATE::OPENED;
-			Refresh();
+			refresh();
 		}
 	}
 	if (_state == BOOKSTATE::PAGEFLIP) {
@@ -243,7 +243,7 @@ void Notebook::StepAnimScripts() {
 		if (state == ScriptFinished) {
 			MultiDeleteObjectIfExists(FIELD_STATUS, &_pageObject);
 			_state = BOOKSTATE::OPENED;
-			Refresh();
+			refresh();
 		}
 	}
 }
@@ -252,24 +252,24 @@ int Notebook::GetPointedClue(const Common::Point &point) const {
 	if (_currentPage == 0 || _currentPage > _numPages) {
 		return 0;
 	}
-	return _pages[_currentPage].GetClueForLine(_polygons->lineHit(point));
+	return _pages[_currentPage].getClueForLine(_polygons->lineHit(point));
 }
 
-bool Notebook::HandlePointer(const Common::Point &point) {
-	if (!IsOpen()) {
+bool Notebook::handlePointer(const Common::Point &point) {
+	if (!isOpen()) {
 		return 0;
 	}
 	auto inside  = _polygons->isInsideNotebook(point);
 	if (inside) {
 		auto hit = _polygons->lineHit(point);
-		_pages[_currentPage].HandlePointAtLine(hit);
+		_pages[_currentPage].handlePointAtLine(hit);
 		return true; // We handled the pointer
 	}
 	return false;
 }
 
-bool Notebook::HandleEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
-	if (!IsOpen()) { // TODO: Clicking outside should close the notebook
+bool Notebook::handleEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
+	if (!isOpen()) { // TODO: Clicking outside should close the notebook
 		return false;
 	}
 	auto inside  = _polygons->isInsideNotebook(coOrds);
@@ -289,13 +289,13 @@ bool Notebook::HandleEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		auto poly = _polygons->mostSpecificHit(coOrds);
 		switch (poly) {
 		case NoteBookPoly::NEXT:
-			HandleEvent(PLR_PGUP, coOrds);
+			handleEvent(PLR_PGUP, coOrds);
 			return true;
 		case NoteBookPoly::PREV:
-			HandleEvent(PLR_PGDN, coOrds);
+			handleEvent(PLR_PGDN, coOrds);
 			return true;
 		case NoteBookPoly::NONE:
-			HandleEvent(PLR_ESCAPE, coOrds);
+			handleEvent(PLR_ESCAPE, coOrds);
 			return true;
 		default:
 			return true;
@@ -303,13 +303,13 @@ bool Notebook::HandleEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 	}
 
 	case PLR_ESCAPE:
-		Close();
+		close();
 		return true;
 	case PLR_PGUP:
-		PageFlip(true);
+		pageFlip(true);
 		return true;
 	case PLR_PGDN:
-		PageFlip(false);
+		pageFlip(false);
 		return true;
 	case PLR_HOME:
 	case PLR_END:
