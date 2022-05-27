@@ -5616,7 +5616,7 @@ void Dialogs::redraw() {
 }
 
 // Noir
-bool Dialogs::IsConvAndNotMove() {
+bool Dialogs::isConvAndNotMove() {
 	// TODO: Ensure that the used global is correct
 	// If this is the right mapping, the variable is reversed in Noir
 	return isConvWindow() && !_bMoveOnUnHide;
