@@ -31,12 +31,52 @@ void Protect::draw() {
 	writeString(STRING["dialogs.protect.title"]);
 	escToGoBack();
 
+	// Protection spells
+	_textPos.x = 0;
+	_textPos.y = 2;
+	for (int i = 0; i < 7; ++i) {
+		if (g_globals->_activeSpells[i]) {
+			printProtectionFrom();
+			writeString(STRING[Common::String::format(
+				"dialogs.protect.%d", i + 1)]);
+			printProtectionLevel(i);
+		}
+	}
 
+	// Light spell
+	if (g_globals->_activeSpells[7]) {
+		writeString(STRING["dialogs.protect.8"]);
+		writeNumber(g_globals->_activeSpells[7]);
+		writeChar(')');
+		newLine();
+	}
+
+	// The rest
+	for (int i = 8; i < 18; ++i) {
+		if (i == 13)
+			newLine();
+
+		if (g_globals->_activeSpells[i]) {
+			writeString(STRING[Common::String::format(
+				"dialogs.protect.%d", i + 1)]);
+			newLine();
+		}
+	}
+
+	--_textPos.y;
+	_textPos.x = 13;
+
+	if (g_globals->_activeSpells[17]) {
+		writeNumber(g_globals->_activeSpells[17]);
+		_textPos.x++;
+		writeString(STRING["dialogs.protect.to_attacks"]);
+	}
 }
 
 void Protect::printProtectionFrom() {
 	if (_textPos.y == 2)
 		writeString(STRING["dialogs.protect.protection"]);
+	_textPos.x = 17;
 }
 
 void Protect::printProtectionLevel(uint protectIndex) {
@@ -44,6 +84,8 @@ void Protect::printProtectionLevel(uint protectIndex) {
 	writeChar('+');
 	_textPos.x++;
 	writeNumber(g_globals->_activeSpells[protectIndex]);
+	writeChar('%');
+	newLine();
 }
 
 bool Protect::msgKeypress(const KeypressMessage &msg) {
@@ -63,7 +105,6 @@ bool Protect::msgAction(const ActionMessage &msg) {
 
 	return false;
 }
-
 
 } // namespace Views
 } // namespace MM1
