@@ -1024,6 +1024,12 @@ bool MToonElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 	} else if (attrib == "range") {
 		result.setIntRange(_playRange);
 		return true;
+	} else if (attrib == "celcount") {
+		if (_cachedMToon)
+			result.setInt(_cachedMToon->getMetadata()->frames.size());
+		else
+			result.setInt(0);
+		return true;
 	}
 
 	return VisualElement::readAttribute(thread, result, attrib);
