@@ -177,7 +177,296 @@ bool GraphicElement::load(ElementLoaderContext &context, const Data::GraphicElem
 }
 
 void GraphicElement::render(Window *window) {
-	// todo
+	if (_renderProps.getInkMode() == VisualElementRenderProperties::kInkModeDefault || _renderProps.getInkMode() == VisualElementRenderProperties::kInkModeInvisible || !_rect.isValid()) {
+		// Not rendered at all
+		_mask.reset();
+		return;
+	}
+
+	if (!_visible)
+		return;
+
+	const bool needsMask = (_renderProps.getShape() != VisualElementRenderProperties::kShapeRect);
+	bool needsMaskRedraw = _renderProps.isDirty();
+
+	uint16 width = _rect.getWidth();
+	uint16 height = _rect.getHeight();
+
+	if (needsMask) {
+		if (!_mask || _mask->w != width || _mask->h != height) {
+			_mask.reset();
+			_mask.reset(new Graphics::ManagedSurface());
+			_mask->create(_rect.getWidth(), _rect.getHeight(), Graphics::PixelFormat::createFormatCLUT8());
+
+			needsMaskRedraw = true;
+		}
+	} else {
+		_mask.reset();
+	}
+
+	if (needsMaskRedraw) {
+		Common::Array<Point16> starPoints;
+		const Common::Array<Point16> *polyPoints = nullptr;
+
+		VisualElementRenderProperties::Shape shape = _renderProps.getShape();
+		if (shape == VisualElementRenderProperties::kShapeStar) {
+			starPoints.resize(10);
+			starPoints[0] = Point16::create(width / 2, 0);
+			starPoints[1] = Point16::create(width * 2 / 3, height / 3);
+			starPoints[2] = Point16::create(width, height / 3);
+			starPoints[3] = Point16::create(width * 3 / 4, height / 2);
+			starPoints[4] = Point16::create(width, height);
+			starPoints[5] = Point16::create(width / 2, height * 2 / 3);
+			starPoints[6] = Point16::create(0, height);
+			starPoints[7] = Point16::create(width / 4, height / 2);
+			starPoints[8] = Point16::create(0, height / 3);
+			starPoints[9] = Point16::create(width / 3, height / 3);
+			polyPoints = &starPoints;
+
+			shape = VisualElementRenderProperties::kShapePolygon;
+		} else if (shape == VisualElementRenderProperties::kShapePolygon) {
+			polyPoints = &_renderProps.getPolyPoints();
+		}
+
+		// Notes for future:
+		// Rounded rect corner arc size is fixed at 13x13 unless the graphic is smaller.
+
+		if (shape == VisualElementRenderProperties::kShapePolygon && polyPoints->size() >= 3) {
+			_mask->clear(0);
+
+			Point16 firstPoint = (*polyPoints)[0];
+			for (uint polyStart = 1; polyStart < polyPoints->size() - 1; polyStart++) {
+				Point16 points[3];
+				points[0] = firstPoint;
+				points[1] = (*polyPoints)[polyStart];
+				points[2] = (*polyPoints)[polyStart + 1];
+
+				// Sort poly points into height ascending order
+				for (int sortStart = 0; sortStart < 2; sortStart++) {
+					Point16 *thisPoint = &points[sortStart];
+					Point16 *lowestY = thisPoint;
+					for (int candidateIndex = sortStart + 1; candidateIndex < 3; candidateIndex++) {
+						Point16 *candidate = &points[candidateIndex];
+						if (candidate->y < lowestY->y)
+							lowestY = candidate;
+					}
+
+					if (lowestY != thisPoint) {
+						Point16 temp = *thisPoint;
+						*thisPoint = *lowestY;
+						*lowestY = temp;
+					}
+				}
+
+				if (points[0].y == points[2].y)
+					continue; // Degenerate triangle
+
+				// Bin into 2 sets
+				Point16 *triPoints[2][3] = {{&points[0], &points[1], &points[2]},
+											{&points[2], &points[1], &points[0]}};
+
+				int32 yRanges[2][2] = {{points[0].y, points[1].y},
+									   {points[1].y, points[2].y}};
+
+				for (int half = 0; half < 2; half++) {
+					Point16 *commonPoint = triPoints[half][0];
+					Point16 *leftVert = triPoints[half][1];
+					Point16 *rightVert = triPoints[half][2];
+
+					if (leftVert->x == rightVert->x || commonPoint->y == points[1].y)
+						continue; // Degenerate tri
+
+					if (leftVert->x > rightVert->x) {
+						Point16 *temp = leftVert;
+						leftVert = rightVert;
+						rightVert = temp;
+					}
+
+					int32 minY = yRanges[half][0];
+					if (minY < 0)
+						minY = 0;
+					int32 maxY = yRanges[half][1];
+					if (maxY > static_cast<int32>(height))
+						maxY = height;
+
+					// Compute scanline rays
+					// In theory we'd want rays that are x=y*scale+const
+					// But since we're operating on pixel center space, what we actually want is
+					// x=(y+0.5)*scale+const-0.5
+					int32 rayScaleNum[2];
+					int32 rayConstNum[2];
+					int32 rayDenom[2];
+
+					int32 verts[2][2] = {{leftVert->x, leftVert->y},
+										 {rightVert->x, rightVert->y}};
+
+					for (int ray = 0; ray < 2; ray++) {
+						int32 x0 = verts[ray][0];
+						int32 y0 = verts[ray][1];
+						int32 x1 = commonPoint->x;
+						int32 y1 = commonPoint->y;
+
+						// Compute the base function for:
+						// x0=y0*scale+const
+						// x1=y1*scale+const
+						// Where a=x0, b=y0, c=x1, d=y1, x=scale, y=const
+						rayScaleNum[ray] = x0 - x1;
+						rayConstNum[ray] = y0 * x1 - x0 * y1;
+						rayDenom[ray] = y0 - y1;
+
+						// Half-pixel nudge y: x=(y+1/2)*scale+const-1/2
+						// x = (y*scale + 1/2*scale + const)/denom - 1/2
+						// x = (y*2*scale + scale + 2*const - denom)/2*denom
+						rayConstNum[ray] = 2 * rayConstNum[ray] + rayScaleNum[ray] - rayDenom[ray];
+						rayScaleNum[ray] *= 2;
+						rayDenom[ray] *= 2;
+
+						// Ensure the denominator is positive
+						if (rayDenom[ray] < 0) {
+							rayDenom[ray] = -rayDenom[ray];
+							rayScaleNum[ray] = -rayScaleNum[ray];
+							rayConstNum[ray] = -rayConstNum[ray];
+						}
+					}
+
+					for (int32 y = minY; y < maxY; y++) {
+						int32 xSpan[2];
+						for (int32 ray = 0; ray < 2; ray++) {
+							int32 xNum = y * rayScaleNum[ray] + rayConstNum[ray];
+							// Round up.  If x < 0 then the divide will be towards zero (up)
+							if (xNum >= 0)
+								xNum += rayDenom[ray] - 1;
+
+							int32 resolved = xNum / rayDenom[ray];
+							if (resolved < 0)
+								resolved = 0;
+							else if (resolved > width)
+								resolved = width;
+
+							xSpan[ray] = resolved;
+						}
+
+						int32 spanWidth = xSpan[1] - xSpan[0];
+						uint8 *bits = static_cast<uint8 *>(_mask->getBasePtr(xSpan[0], y));
+						for (int32 i = 0; i < spanWidth; i++)
+							bits[i] ^= 0xff;
+					}
+				}
+			}
+		} else if (shape == VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri1) {
+			// Upper-left right angle tri
+			_mask->clear(0);
+			for (int32 y = 0; y < height; y++) {
+				uint8 *scanline = static_cast<uint8 *>(_mask->getBasePtr(0, y));
+				int32 lineStart = 0;
+				int32 lineEnd = 64 - y;
+				for (int32 x = lineStart; x < lineEnd; x++)
+					scanline[x] = 0xff;
+			}
+		} else if (shape == VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri2) {
+			// Lower-left right-angle tri
+			_mask->clear(0);
+			for (int32 y = 0; y < height; y++) {
+				uint8 *scanline = static_cast<uint8 *>(_mask->getBasePtr(0, y));
+				int32 lineStart = 0;
+				int32 lineEnd = y;
+				for (int32 x = lineStart; x < lineEnd; x++)
+					scanline[x] = 0xff;
+			}
+		} else if (shape == VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri3) {
+			// Upper-right right-angle tri
+			_mask->clear(0);
+			for (int32 y = 0; y < height; y++) {
+				uint8 *scanline = static_cast<uint8 *>(_mask->getBasePtr(0, y));
+				int32 lineStart = y;
+				int32 lineEnd = 64;
+				for (int32 x = lineStart; x < lineEnd; x++)
+					scanline[x] = 0xff;
+			}
+		} else if (shape == VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri4) {
+			// Lower-right right-angle tri
+			_mask->clear(0);
+			for (int32 y = 0; y < height; y++) {
+				uint8 *scanline = static_cast<uint8 *>(_mask->getBasePtr(0, y));
+				int32 lineStart = 64 - y;
+				int32 lineEnd = 64;
+				for (int32 x = lineStart; x < lineEnd; x++)
+					scanline[x] = 0xff;
+			}
+		} else if (shape != VisualElementRenderProperties::kShapeRect) {
+			warning("Unimplemented graphic shape");
+			return;
+		}
+	}
+
+	Rect16 srcRect = Rect16::create(0, 0, _rect.getWidth(), _rect.getHeight());
+	Rect16 drawRect = srcRect.translate(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y);
+
+	Rect16 windowRect = Rect16::create(0, 0, window->getWidth(), window->getHeight());
+	Rect16 clippedDrawRect = drawRect.intersect(windowRect);
+
+	Rect16 clippedSrcRect = srcRect;
+	clippedSrcRect.left += clippedDrawRect.left - drawRect.left;
+	clippedSrcRect.top += clippedDrawRect.top - drawRect.top;
+	clippedSrcRect.right += clippedDrawRect.right - drawRect.right;
+	clippedSrcRect.bottom += clippedDrawRect.bottom - drawRect.bottom;
+
+	if (!clippedSrcRect.isValid())
+		return;
+
+	int32 srcToDestX = drawRect.left - clippedSrcRect.left;
+	int32 srcToDestY = drawRect.top - clippedSrcRect.top;
+
+	switch (_renderProps.getInkMode()) {
+	case VisualElementRenderProperties::kInkModeCopy:
+		break;
+	case VisualElementRenderProperties::kInkModeXor: {
+			const Graphics::PixelFormat &pixFmt = window->getPixelFormat();
+			uint32 colorMask = 0xff;
+
+			if (pixFmt.bytesPerPixel > 1)
+				colorMask = pixFmt.ARGBToColor(0, 255, 255, 255);
+
+			for (int32 srcY = clippedSrcRect.top; srcY < clippedSrcRect.bottom; srcY++) {
+				int32 destY = srcY + srcToDestY;
+				int32 spanWidth = clippedDrawRect.getWidth();
+				void *destPixels = window->getSurface()->getBasePtr(clippedDrawRect.left, srcY + srcToDestY);
+				if (_mask) {
+					const uint8 *maskBytes = static_cast<const uint8 *>(_mask->getBasePtr(clippedSrcRect.left, srcY));
+					if (pixFmt.bytesPerPixel == 1) {
+						for (int32 x = 0; x < spanWidth; x++) {
+							if (maskBytes[x])
+								static_cast<uint8 *>(destPixels)[x] ^= 0xff;
+						}
+					} else if (pixFmt.bytesPerPixel == 2) {
+						for (int32 x = 0; x < spanWidth; x++) {
+							if (maskBytes[x])
+								static_cast<uint16 *>(destPixels)[x] ^= colorMask;
+						}
+					} else if (pixFmt.bytesPerPixel == 4) {
+						for (int32 x = 0; x < spanWidth; x++) {
+							if (maskBytes[x])
+								static_cast<uint32 *>(destPixels)[x] ^= colorMask;
+						}
+					}
+				} else {
+					if (pixFmt.bytesPerPixel == 1) {
+						for (int32 x = 0; x < spanWidth; x++)
+							static_cast<uint8 *>(destPixels)[x] ^= 0xff;
+					} else if (pixFmt.bytesPerPixel == 2) {
+						for (int32 x = 0; x < spanWidth; x++)
+							static_cast<uint16 *>(destPixels)[x] ^= colorMask;
+					} else if (pixFmt.bytesPerPixel == 4) {
+						for (int32 x = 0; x < spanWidth; x++)
+							static_cast<uint32 *>(destPixels)[x] ^= colorMask;
+					}
+				}
+			}
+		} break;
+	default:
+		warning("Unimplemented graphic ink mode");
+		return;
+	}
 }
 
 MovieElement::MovieElement()
@@ -393,6 +682,7 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 			// tries decoding past the end, so we're assuming that the decoded frame memory stays valid until we
 			// actually have a new frame and continuing to use it.
 			if (decodedFrame) {
+				_contentsDirty = true;
 				framesDecodedThisFrame++;
 				_displayFrame = decodedFrame;
 				if (_playEveryFrame)
@@ -614,6 +904,7 @@ VThreadState MovieElement::seekToTimeTask(const SeekToTimeTaskData &taskData) {
 		_currentPlayState = kMediaStateStopped;
 	}
 	_needsReset = true;
+	_contentsDirty = true;
 
 	if (_currentTimestamp == minTS) {
 		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
@@ -842,6 +1133,8 @@ VThreadState MToonElement::startPlayingTask(const StartPlayingTaskData &taskData
 	_paused = false;
 	_isPlaying = false;	// Reset play state, it starts for real in playMedia
 
+	_contentsDirty = true;
+
 	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
 	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 	taskData.runtime->sendMessageOnVThread(dispatch);
@@ -856,6 +1149,8 @@ VThreadState MToonElement::changeFrameTask(const ChangeFrameTaskData &taskData) 
 	uint32 minFrame = _playRange.min;
 	uint32 maxFrame = _playRange.max;
 	_frame = taskData.frame;
+
+	_contentsDirty = true;
 
 	if (_frame == minFrame) {
 		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
@@ -919,6 +1214,8 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 
 		if (_frame != targetFrame) {
 			_frame = targetFrame;
+
+			_contentsDirty = true;
 
 			if (_frame == maxFrame) {
 				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(isReversed ? EventIDs::kAtFirstCel : EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));

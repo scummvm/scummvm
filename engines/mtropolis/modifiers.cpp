@@ -1321,26 +1321,59 @@ Common::SharedPtr<Modifier> TextStyleModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new TextStyleModifier(*this));
 }
 
-bool GraphicModifier::load(ModifierLoaderContext& context, const Data::GraphicModifier& data) {
+bool GraphicModifier::load(ModifierLoaderContext &context, const Data::GraphicModifier &data) {
+	ColorRGB8 foreColor;
+	ColorRGB8 backColor;
+	ColorRGB8 borderColor;
+	ColorRGB8 shadowColor;
+
 	if (!loadTypicalHeader(data.modHeader) || !_applyWhen.load(data.applyWhen) || !_removeWhen.load(data.removeWhen)
-		|| !_foreColor.load(data.foreColor) || !_backColor.load(data.backColor)
-		|| !_borderColor.load(data.borderColor) || !_shadowColor.load(data.shadowColor))
+		|| !foreColor.load(data.foreColor) || !backColor.load(data.backColor)
+		|| !borderColor.load(data.borderColor) || !shadowColor.load(data.shadowColor))
 		return false;
 
 	// We need the poly points even if this isn't a poly shape since I think it's possible to change the shape type at runtime
-	_polyPoints.resize(data.polyPoints.size());
+	Common::Array<Point16> &polyPoints = _renderProps.modifyPolyPoints();
+	polyPoints.resize(data.polyPoints.size());
 	for (size_t i = 0; i < data.polyPoints.size(); i++) {
-		_polyPoints[i].x = data.polyPoints[i].x;
-		_polyPoints[i].y = data.polyPoints[i].y;
+		polyPoints[i].x = data.polyPoints[i].x;
+		polyPoints[i].y = data.polyPoints[i].y;
 	}
 
-	_inkMode = static_cast<InkMode>(data.inkMode);
-	_shape = static_cast<Shape>(data.shape);
-
-	_borderSize = data.borderSize;
-	_shadowSize = data.shadowSize;
+	_renderProps.setInkMode(static_cast<VisualElementRenderProperties::InkMode>(data.inkMode));
+	_renderProps.setShape(static_cast<VisualElementRenderProperties::Shape>(data.shape));
+	_renderProps.setBorderSize(data.borderSize);
+	_renderProps.setShadowSize(data.shadowSize);
+	_renderProps.setForeColor(foreColor);
+	_renderProps.setBackColor(backColor);
+	_renderProps.setBorderColor(borderColor);
+	_renderProps.setShadowColor(shadowColor);
 
 	return true;
+}
+
+bool GraphicModifier::respondsToEvent(const Event &evt) const {
+	return _applyWhen.respondsTo(evt) || _removeWhen.respondsTo(evt);
+}
+
+VThreadState GraphicModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	Structural *owner = findStructuralOwner();
+	if (!owner)
+		return kVThreadError;
+
+	if (!owner->isElement())
+		return kVThreadReturn;
+
+	Element *element = static_cast<Element *>(owner);
+	if (!element->isVisual())
+		return kVThreadReturn;
+
+	if (_applyWhen.respondsTo(msg->getEvent()))
+		static_cast<VisualElement *>(element)->setRenderProperties(_renderProps);
+	if (_removeWhen.respondsTo(msg->getEvent()))
+		static_cast<VisualElement *>(element)->setRenderProperties(VisualElementRenderProperties());
+
+	return kVThreadReturn;
 }
 
 Common::SharedPtr<Modifier> GraphicModifier::shallowClone() const {
@@ -1377,7 +1410,7 @@ const Common::Array<Common::SharedPtr<Modifier> > &CompoundVariableModifier::get
 	return _children;
 }
 
-void CompoundVariableModifier::appendModifier(const Common::SharedPtr<Modifier>& modifier) {
+void CompoundVariableModifier::appendModifier(const Common::SharedPtr<Modifier> &modifier) {
 	_children.push_back(modifier);
 	modifier->setParent(getSelfReference());
 }

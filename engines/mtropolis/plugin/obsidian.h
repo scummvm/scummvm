@@ -151,6 +151,53 @@ private:
 	const ObsidianPlugIn *_plugIn;
 };
 
+class XorModModifier : public Modifier {
+public:
+	XorModModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::XorModModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Xor Mod Modifier"; }
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
+	Event _enableWhen;
+	Event _disableWhen;
+
+	int32 _shapeID;
+};
+
+class XorCheckModifier : public Modifier {
+public:
+	XorCheckModifier();
+
+	bool load(const PlugInModifierLoaderContext &context, const Data::Obsidian::XorCheckModifier &data);
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib);
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Xor Check Modifier"; }
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+
+	MiniscriptInstructionOutcome scriptSetCheckNow(MiniscriptThread *thread, const DynamicValue &value);
+
+	static void recursiveFindXorElements(Structural *structural, Common::Array<VisualElement *> &elements);
+	static bool sliceRectX(const Rect16 &rect, int32 x, Common::Array<Rect16> &outSlices);
+	static bool sliceRectY(const Rect16 &rect, int32 y, Common::Array<Rect16> &outSlices);
+
+	bool _allClear;
+};
+
 class ObsidianPlugIn : public MTropolis::PlugIn {
 public:
 	ObsidianPlugIn(const Common::SharedPtr<WordGameData> &wgData);
@@ -165,6 +212,8 @@ private:
 	PlugInModifierFactory<TextWorkModifier, Data::Obsidian::TextWorkModifier> _textWorkModifierFactory;
 	PlugInModifierFactory<WordMixerModifier, Data::Obsidian::WordMixerModifier> _wordMixerModifierFactory;
 	PlugInModifierFactory<DictionaryModifier, Data::Obsidian::DictionaryModifier> _dictionaryModifierFactory;
+	PlugInModifierFactory<XorModModifier, Data::Obsidian::XorModModifier> _xorModModifierFactory;
+	PlugInModifierFactory<XorCheckModifier, Data::Obsidian::XorCheckModifier> _xorCheckModifierFactory;
 
 	Common::SharedPtr<WordGameData> _wgData;
 };

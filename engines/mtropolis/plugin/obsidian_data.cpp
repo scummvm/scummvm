@@ -86,6 +86,27 @@ DataReadErrorCode DictionaryModifier::load(PlugIn &plugIn, const PlugInModifier 
 	return kDataReadErrorNone;
 }
 
+
+DataReadErrorCode XorModModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 1)
+		return kDataReadErrorUnsupportedRevision;
+	
+	if (!enableWhen.load(reader) || !disableWhen.load(reader) || !shapeID.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+DataReadErrorCode XorCheckModifier::load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) {
+	if (prefix.plugInRevision != 1)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!unknown1Event.load(reader) || !unknown2Event.load(reader))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 } // End of namespace Obsidian
 
 } // End of namespace Data

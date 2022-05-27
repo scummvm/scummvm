@@ -315,6 +315,10 @@ bool Rect16::loadUnchecked(const Data::Rect &rect) {
 	return true;
 }
 
+Common::Rect Rect16::toScummvmRect() const {
+	return Common::Rect(left, top, right, bottom);
+}
+
 bool IntRange::load(const Data::IntRange &range) {
 	max = range.max;
 	min = range.min;
@@ -355,6 +359,15 @@ bool ColorRGB8::load(const Data::ColorRGB16 &color) {
 
 	return true;
 }
+
+ColorRGB8 ColorRGB8::create(uint8 r, uint8 g, uint8 b) {
+	ColorRGB8 result;
+	result.r = r;
+	result.g = g;
+	result.b = b;
+	return result;
+}
+
 
 MessageFlags::MessageFlags() : relay(true), cascade(true), immediate(true) {
 }
@@ -3436,7 +3449,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
 	_lastFrameCursor(nullptr), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
 	_cachedMousePosition(Point16::create(0, 0)), _realMousePosition(Point16::create(0, 0)), _trackedMouseOutside(false),
-	_forceCursorRefreshOnce(true), _haveModifierOverrideCursor(false) {
+	  _forceCursorRefreshOnce(true), _haveModifierOverrideCursor(false), _sceneGraphChanged(false) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -3600,6 +3613,7 @@ bool Runtime::runFrame() {
 				executeTeardown(*it);
 			}
 			_pendingTeardowns.clear();
+			_sceneGraphChanged = true;
 			continue;
 		}
 
@@ -3616,6 +3630,7 @@ bool Runtime::runFrame() {
 			_pendingSceneTransitions.remove_at(0);
 
 			executeHighLevelSceneTransition(transition);
+			_sceneGraphChanged = true;
 			continue;
 		}
 
@@ -3858,7 +3873,7 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 		if (stackedScene == targetScene) {
 			sceneAlreadyInStack = true;
 		} else {
-			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), false, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), true, true);
 			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
 			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
 
@@ -3871,14 +3886,14 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 
 	if (targetSharedScene != _activeSharedScene) {
 		if (_activeSharedScene) {
-			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), false, true);
+			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), true, true);
 			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true);
 			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeSharedScene, LowLevelSceneStateTransitionAction::kUnload));
 		}
 
 		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kLoad));
 		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true);
-		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), false, true);
+		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), true, true);
 
 		SceneStackEntry sharedSceneEntry;
 		sharedSceneEntry.scene = targetSharedScene;
@@ -3889,7 +3904,7 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 	if (!sceneAlreadyInStack) {
 		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetScene, LowLevelSceneStateTransitionAction::kLoad));
 		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetScene.get(), true, true);
-		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), false, true);
+		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), true, true);
 
 		SceneStackEntry sceneEntry;
 		sceneEntry.scene = targetScene;
@@ -3933,11 +3948,11 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 
 				if (sceneReturn.isAddToDestinationSceneTransition) {
 					// In this case we unload the active main scene and reactivate the old main
-					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), false, true);
+					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), true, true);
 					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
 					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
 
-					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneReactivated, 0), sceneReturn.scene.get(), false, true);
+					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneReactivated, 0), sceneReturn.scene.get(), true, true);
 
 					_activeMainScene = sceneReturn.scene;
 
@@ -3967,18 +3982,18 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 					if (_activeMainScene == targetSharedScene)
 						error("Transitioned into scene currently being used as a target scene, this is not supported");
 
-					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneDeactivated, 0), _activeMainScene.get(), false, true);
+					queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneDeactivated, 0), _activeMainScene.get(), true, true);
 
 					if (targetSharedScene != _activeSharedScene) {
 						if (_activeSharedScene) {
-							queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), false, true);
+							queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), true, true);
 							queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true);
 							_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeSharedScene, LowLevelSceneStateTransitionAction::kUnload));
 						}
 
 						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kLoad));
 						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true);
-						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), false, true);
+						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetSharedScene.get(), true, true);
 
 						SceneStackEntry sharedSceneEntry;
 						sharedSceneEntry.scene = targetScene;
@@ -4000,7 +4015,7 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 					if (!sceneAlreadyInStack) {
 						_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetScene, LowLevelSceneStateTransitionAction::kLoad));
 						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetScene.get(), true, true);
-						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), false, true);
+						queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), true, true);
 
 						SceneStackEntry sceneEntry;
 						sceneEntry.scene = targetScene;
@@ -4301,7 +4316,7 @@ void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dis
 			break;
 
 		case EventIDs::kSceneStarted:
-			extType = "Mouse Up Outside";
+			extType = "Scene Started";
 			break;
 		case EventIDs::kSceneEnded:
 			extType = "Scene Ended";
@@ -4906,6 +4921,17 @@ const Hacks &Runtime::getHacks() const {
 	return _hacks;
 }
 
+void Runtime::setSceneGraphDirty() {
+	_sceneGraphChanged = true;
+}
+
+void Runtime::clearSceneGraphDirty() {
+	_sceneGraphChanged = false;
+}
+
+bool Runtime::isSceneGraphDirty() const {
+	return _sceneGraphChanged;
+}
 
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
@@ -6136,7 +6162,121 @@ bool Element::resolveMediaMarkerLabel(const Label& label, int32 &outResolution) 
 	return false;
 }
 
-VisualElement::VisualElement() : _rect(Rect16::create(0, 0, 0, 0)), _cachedAbsoluteOrigin(Point16::create(0, 0)) {
+
+VisualElementRenderProperties::VisualElementRenderProperties()
+	: _inkMode(kInkModeDefault), _shape(kShapeRect), _foreColor(ColorRGB8::create(0, 0, 0)), _backColor(ColorRGB8::create(255, 255, 255)),
+	  _borderColor(ColorRGB8::create(0, 0, 0)), _shadowColor(ColorRGB8::create(0, 0, 0)), _borderSize(0), _shadowSize(0), _isDirty(true) {
+}
+
+VisualElementRenderProperties::InkMode VisualElementRenderProperties::getInkMode() const {
+	return _inkMode;
+}
+
+void VisualElementRenderProperties::setInkMode(InkMode inkMode) {
+	_isDirty = true;
+	_inkMode = inkMode;
+}
+
+void VisualElementRenderProperties::setShape(Shape shape) {
+	_isDirty = true;
+	_shape = shape;
+}
+
+VisualElementRenderProperties::Shape VisualElementRenderProperties::getShape() const {
+	return _shape;
+}
+
+const ColorRGB8 &VisualElementRenderProperties::getForeColor() const {
+	return _foreColor;
+}
+
+void VisualElementRenderProperties::setForeColor(const ColorRGB8 &color) {
+	_isDirty = true;
+	_foreColor = color;
+}
+
+const ColorRGB8 &VisualElementRenderProperties::getBackColor() const {
+	return _backColor;
+}
+
+void VisualElementRenderProperties::setBackColor(const ColorRGB8 &color) {
+	_isDirty = true;
+	_backColor = color;
+}
+
+const ColorRGB8 &VisualElementRenderProperties::getBorderColor() const {
+	return _borderColor;
+}
+
+void VisualElementRenderProperties::setBorderColor(const ColorRGB8 &color) {
+	_isDirty = true;
+	_borderColor = color;
+}
+
+const ColorRGB8 &VisualElementRenderProperties::getShadowColor() const {
+	return _shadowColor;
+}
+
+void VisualElementRenderProperties::setShadowColor(const ColorRGB8 &color) {
+	_isDirty = true;
+	_shadowColor = color;
+}
+
+uint16 VisualElementRenderProperties::getBorderSize() const {
+	return _borderSize;
+}
+
+void VisualElementRenderProperties::setBorderSize(uint16 size) {
+	_isDirty = true;
+	_borderSize = size;
+}
+
+uint16 VisualElementRenderProperties::getShadowSize() const {
+	return _shadowSize;
+}
+
+void VisualElementRenderProperties::setShadowSize(uint16 size) {
+	_isDirty = true;
+	_shadowSize = size;
+}
+
+const Common::Array<Point16> &VisualElementRenderProperties::getPolyPoints() const {
+	return _polyPoints;
+}
+
+Common::Array<Point16> &VisualElementRenderProperties::modifyPolyPoints() {
+	_isDirty = true;
+	return _polyPoints;
+}
+
+bool VisualElementRenderProperties::isDirty() const {
+	return _isDirty;
+}
+
+void VisualElementRenderProperties::clearDirty() {
+	_isDirty = false;
+}
+
+VisualElementRenderProperties &VisualElementRenderProperties::operator=(const VisualElementRenderProperties &other) {
+	_inkMode = other._inkMode;
+	_shape = other._shape;
+	_foreColor = other._foreColor;
+	_backColor = other._backColor;
+	_borderSize = other._borderSize;
+	_borderColor = other._borderColor;
+	_shadowSize = other._shadowSize;
+	_shadowColor = other._shadowColor;
+
+	_polyPoints = other._polyPoints;
+
+	_isDirty = true;
+
+	return *this;
+}
+
+VisualElement::VisualElement()
+	: _rect(Rect16::create(0, 0, 0, 0)), _cachedAbsoluteOrigin(Point16::create(0, 0))
+	, _contentsDirty(true) {
 }
 
 bool VisualElement::isVisual() const {
@@ -6257,7 +6397,7 @@ void VisualElement::setCachedAbsoluteOrigin(const Point16 &absOrigin) {
 	_cachedAbsoluteOrigin = absOrigin;
 }
 
-void VisualElement::setDragMotionProperties(const Common::SharedPtr<DragMotionProperties>& dragProps) {
+void VisualElement::setDragMotionProperties(const Common::SharedPtr<DragMotionProperties> &dragProps) {
 	_dragProps = dragProps;
 }
 
@@ -6305,9 +6445,30 @@ void VisualElement::handleDragMotion(Runtime *runtime, const Point16 &initialPoi
 	}
 }
 
-VThreadState VisualElement::offsetTranslateTask(const OffsetTranslateTaskData& data) {
+VThreadState VisualElement::offsetTranslateTask(const OffsetTranslateTaskData &data) {
 	offsetTranslate(data.dx, data.dy, false);
 	return kVThreadReturn;
+}
+
+void VisualElement::setRenderProperties(const VisualElementRenderProperties &props) {
+	_renderProps = props;
+}
+
+const VisualElementRenderProperties &VisualElement::getRenderProperties() const {
+	return _renderProps;
+}
+
+bool VisualElement::needsRender() const {
+	if (_renderProps.isDirty() || _prevRect != _rect || _contentsDirty)
+		return true;
+
+	return false;
+}
+
+void VisualElement::finalizeRender() {
+	_renderProps.clearDirty();
+	_prevRect = _rect;
+	_contentsDirty = false;
 }
 
 MiniscriptInstructionOutcome VisualElement::scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result) {
@@ -6436,6 +6597,8 @@ MiniscriptInstructionOutcome VisualElement::scriptSetLayer(MiniscriptThread *thr
 				collision->_layer = _layer;
 		}
 		_layer = asInteger;
+
+		thread->getRuntime()->setSceneGraphDirty();
 	}
 
 	return kMiniscriptInstructionOutcomeContinue;
