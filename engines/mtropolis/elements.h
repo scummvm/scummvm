@@ -66,6 +66,8 @@ public:
 
 private:
 	bool _cacheBitmap;
+
+	Common::SharedPtr<Graphics::ManagedSurface> _mask;
 };
 
 class MovieElement : public VisualElement, public ISegmentUnloadSignalReceiver, public IPlayMediaSignalReceiver {

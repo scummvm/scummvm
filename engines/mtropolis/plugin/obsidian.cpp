@@ -198,14 +198,13 @@ MiniscriptInstructionOutcome TextWorkModifier::scriptSetFirstWord(MiniscriptThre
 			}
 		}
 		lastWasWhitespace = isWhitespace;
-
 	}
 
 	thread->error("Invalid index for 'firstword'");
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-MiniscriptInstructionOutcome TextWorkModifier::scriptSetLastWord(MiniscriptThread* thread, const DynamicValue& value) {
+MiniscriptInstructionOutcome TextWorkModifier::scriptSetLastWord(MiniscriptThread *thread, const DynamicValue &value) {
 	int32 asInteger = 0;
 	if (!value.roundToInt(asInteger))
 		return kMiniscriptInstructionOutcomeFailed;
@@ -243,8 +242,6 @@ MiniscriptInstructionOutcome TextWorkModifier::scriptSetLastWord(MiniscriptThrea
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-
-
 DictionaryModifier::DictionaryModifier() : _plugIn(nullptr) {
 }
 
@@ -263,7 +260,6 @@ bool DictionaryModifier::load(const PlugInModifierLoaderContext &context, const 
 
 	return true;
 }
-
 
 bool DictionaryModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
 	if (attrib == "index") {
@@ -535,9 +531,243 @@ Common::SharedPtr<Modifier> WordMixerModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new WordMixerModifier(*this));
 }
 
+XorModModifier::XorModModifier() {
+}
+
+bool XorModModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::XorModModifier &data) {
+	if (data.enableWhen.type != Data::PlugInTypeTaggedValue::kEvent)
+		return false;
+
+	if (!_enableWhen.load(data.enableWhen.value.asEvent))
+		return false;
+
+	if (data.disableWhen.type != Data::PlugInTypeTaggedValue::kEvent)
+		return false;
+
+	if (!_disableWhen.load(data.disableWhen.value.asEvent))
+		return false;
+
+	if (data.shapeID.type != Data::PlugInTypeTaggedValue::kInteger)
+		return false;
+
+	_shapeID = data.shapeID.value.asInt;
+
+	return true;
+}
+
+bool XorModModifier::respondsToEvent(const Event &evt) const {
+	return _enableWhen.respondsTo(evt) || _disableWhen.respondsTo(evt);
+}
+
+VThreadState XorModModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	Structural *owner = findStructuralOwner();
+	if (!owner)
+		return kVThreadError;
+
+	if (!owner->isElement())
+		return kVThreadReturn;
+
+	Element *element = static_cast<Element *>(owner);
+	if (!element->isVisual())
+		return kVThreadReturn;
+
+	VisualElement *visual = static_cast<VisualElement *>(element);
+
+	VisualElementRenderProperties renderProps = visual->getRenderProperties();
+	renderProps.setInkMode(VisualElementRenderProperties::kInkModeXor);
+
+	if (_shapeID == 0)
+		renderProps.setShape(VisualElementRenderProperties::kShapeRect);
+	else
+		renderProps.setShape(static_cast<VisualElementRenderProperties::Shape>(VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri1 + _shapeID - 1));
+
+	visual->setRenderProperties(renderProps);
+
+	return kVThreadReturn;
+}
+
+Common::SharedPtr<Modifier> XorModModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new XorModModifier(*this));
+}
+
+XorCheckModifier::XorCheckModifier() : _allClear(false) {
+}
+
+bool XorCheckModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::XorCheckModifier &data) {
+	return true;
+}
+
+bool XorCheckModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "allclear") {
+		result.setBool(_allClear);
+		return true;
+	}
+
+	return Modifier::readAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome XorCheckModifier::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "checknow") {
+		DynamicValueWriteFuncHelper<XorCheckModifier, &XorCheckModifier::scriptSetCheckNow>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return Modifier::writeRefAttribute(thread, result, attrib);
+}
+
+Common::SharedPtr<Modifier> XorCheckModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new XorCheckModifier(*this));
+}
+
+MiniscriptInstructionOutcome XorCheckModifier::scriptSetCheckNow(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kBoolean)
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (!value.getBool())
+		return kMiniscriptInstructionOutcomeContinue;
+
+	Structural *scene = findStructuralOwner();
+	while (!scene->getParent()->isSubsection())
+		scene = scene->getParent();
+
+	Common::Array<VisualElement *> xorElements;
+	recursiveFindXorElements(scene, xorElements);
+
+	Rect16 triRects[4];
+	for (int i = 0; i < 4; i++)
+		triRects[i] = Rect16::create(0, 0, 0, 0);
+
+	Common::Array<Rect16> pendingRects;
+
+	for (VisualElement *element : xorElements) {
+		VisualElementRenderProperties::Shape shape = element->getRenderProperties().getShape();
+		Rect16 rect = element->getRelativeRect();
+		Point16 absOrigin = element->getCachedAbsoluteOrigin();
+		Rect16 absRect = rect.translate(absOrigin.x - rect.left, absOrigin.y - rect.top);
+
+		if (shape >= VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri1 && shape <= VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri4)
+			triRects[shape - VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri1] = absRect;
+		else
+			pendingRects.push_back(absRect);
+	}
+
+	// The canvas puzzle has 4 triangles, right-angled in each corner, pairs 1-4 and 2-3 form rects.
+	// It isn't possible to solve the puzzle unless both rects are formed.  So, we do this by forming the rects and
+	// then eliminating overlaps.  If the rects can't be formed, the puzzle fails.
+	if (triRects[0] == triRects[3])
+		pendingRects.push_back(triRects[0]);
+	else {
+		_allClear = false;
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (triRects[1] == triRects[2])
+		pendingRects.push_back(triRects[1]);
+	else {
+		_allClear = false;
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	Common::Array<Rect16> maskedRects;
+	while (pendingRects.size() > 0) {
+		const Rect16 pendingRect = pendingRects.back();
+		pendingRects.pop_back();
+
+		bool hasIntersection = false;
+		size_t intersectionIndex = 0;
+		for (size_t j = 0; j < maskedRects.size(); j++) {
+			if (maskedRects[j].intersect(pendingRect).isValid()) {
+				hasIntersection = true;
+				intersectionIndex = j;
+			}
+		}
+
+		if (!hasIntersection) {
+			maskedRects.push_back(pendingRect);
+			continue;
+		}
+
+		if (pendingRect == maskedRects[intersectionIndex]) {
+			// Total overlap
+			maskedRects.remove_at(intersectionIndex);
+			continue;
+		}
+
+		const Rect16 intersectingRect = maskedRects[intersectionIndex];
+
+		// Try to subdivide the intersecting rect using one of the axes of the incoming rect.
+		// If this succeeds, requeue the intersecting rect fragments and add the pending rect
+		// to the workspace.  Since that amounts to replacement, just replace the rect.
+		if (sliceRectX(intersectingRect, pendingRect.left, pendingRects)
+			|| sliceRectX(intersectingRect, pendingRect.right, pendingRects)
+			|| sliceRectY(intersectingRect, pendingRect.top, pendingRects)
+			|| sliceRectY(intersectingRect, pendingRect.bottom, pendingRects)) {
+			maskedRects[intersectionIndex] = pendingRect;
+			continue;
+		}
+
+		// Try to subdivide the pending rect using one of the axes of the intersecting rect.
+		// If this succeeds, the fragments will be requeued and no further action is needed.
+		if (sliceRectX(pendingRect, intersectingRect.left, pendingRects)
+			|| sliceRectX(pendingRect, intersectingRect.right, pendingRects)
+			|| sliceRectY(pendingRect, intersectingRect.top, pendingRects)
+			|| sliceRectY(pendingRect, intersectingRect.bottom, pendingRects)) {
+			continue;
+		}
+
+		// This should never happen
+		assert(false);
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	_allClear = (maskedRects.size() == 0);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+void XorCheckModifier::recursiveFindXorElements(Structural *structural, Common::Array<VisualElement *> &elements) {
+	for (const Common::SharedPtr<Structural> &child : structural->getChildren())
+		recursiveFindXorElements(child.get(), elements);
+
+	if (!structural->isElement())
+		return;
+
+	Element *element = static_cast<Element *>(structural);
+	if (!element->isVisual())
+		return;
+
+	VisualElement *visual = static_cast<VisualElement *>(element);
+	if (visual->getRenderProperties().getInkMode() == VisualElementRenderProperties::kInkModeXor)
+		elements.push_back(visual);
+}
+
+bool XorCheckModifier::sliceRectX(const Rect16 &rect, int32 x, Common::Array<Rect16> &outSlices) {
+	if (x > rect.left && x < rect.right) {
+		Rect16 leftSlice = Rect16::create(rect.left, rect.top, x, rect.bottom);
+		Rect16 rightSlice = Rect16::create(x, rect.top, rect.right, rect.bottom);
+		outSlices.push_back(leftSlice);
+		outSlices.push_back(rightSlice);
+		return true;
+	}
+
+	return false;
+}
+
+bool XorCheckModifier::sliceRectY(const Rect16 &rect, int32 y, Common::Array<Rect16> &outSlices) {
+	if (y > rect.top && y < rect.bottom) {
+		Rect16 topSlice = Rect16::create(rect.left, rect.top, rect.right, y);
+		Rect16 bottomSlice = Rect16::create(rect.left, y, rect.right, rect.bottom);
+		outSlices.push_back(topSlice);
+		outSlices.push_back(bottomSlice);
+		return true;
+	}
+
+	return false;
+}
+
 ObsidianPlugIn::ObsidianPlugIn(const Common::SharedPtr<WordGameData> &wgData)
 	: _movementModifierFactory(this), _rectShiftModifierFactory(this), _textWorkModifierFactory(this),
-	  _dictionaryModifierFactory(this), _wordMixerModifierFactory(this), _wgData(wgData) {
+	  _dictionaryModifierFactory(this), _wordMixerModifierFactory(this), _xorModModifierFactory(this),
+	  _xorCheckModifierFactory(this), _wgData(wgData) {
 }
 
 void ObsidianPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) const {
@@ -546,6 +776,8 @@ void ObsidianPlugIn::registerModifiers(IPlugInModifierRegistrar *registrar) cons
 	registrar->registerPlugInModifier("TextWork", &_textWorkModifierFactory);
 	registrar->registerPlugInModifier("Dictionary", &_dictionaryModifierFactory);
 	registrar->registerPlugInModifier("WordMixer", &_wordMixerModifierFactory);
+	registrar->registerPlugInModifier("xorMod", &_xorModModifierFactory);
+	registrar->registerPlugInModifier("xorCheck", &_xorCheckModifierFactory);
 }
 
 const Common::SharedPtr<WordGameData>& ObsidianPlugIn::getWordGameData() const {

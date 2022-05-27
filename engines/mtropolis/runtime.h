@@ -58,6 +58,7 @@ namespace Graphics {
 struct WinCursorGroup;
 class MacCursor;
 class MacFontManager;
+class ManagedSurface;
 class Cursor;
 struct PixelFormat;
 struct Surface;
@@ -336,6 +337,35 @@ struct Rect16 {
 		result.bottom = bottom;
 		return result;
 	}
+
+	inline bool isValid() const {
+		return right > left && bottom > top;
+	}
+
+	inline Rect16 intersect(const Rect16 &other) const {
+		Rect16 result = *this;
+		if (result.left < other.left)
+			result.left = other.left;
+		if (result.top < other.top)
+			result.top = other.top;
+		if (result.right > other.right)
+			result.right = other.right;
+		if (result.bottom > other.bottom)
+			result.bottom = other.bottom;
+
+		return result;
+	}
+
+	inline Rect16 translate(int32 dx, int32 dy) const {
+		Rect16 result = *this;
+		result.left += dx;
+		result.right += dx;
+		result.top += dy;
+		result.bottom += dy;
+		return result;
+	}
+
+	Common::Rect toScummvmRect() const;
 };
 
 struct IntRange {
@@ -478,6 +508,15 @@ struct ColorRGB8 {
 	uint8 b;
 
 	bool load(const Data::ColorRGB16 &color);
+	static ColorRGB8 create(uint8 r, uint8 g, uint8 b);
+
+	inline bool operator==(const ColorRGB8 &other) const {
+		return r == other.r && g == other.g && b == other.b;
+	}
+
+	inline bool operator!=(const ColorRGB8 &other) const {
+		return !((*this) == other);
+	}
 };
 
 struct MessageFlags {
@@ -1559,6 +1598,10 @@ public:
 	Hacks &getHacks();
 	const Hacks &getHacks() const;
 
+	void setSceneGraphDirty();
+	void clearSceneGraphDirty();
+	bool isSceneGraphDirty() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
@@ -1733,6 +1776,9 @@ private:
 
 	uint32 _modifierOverrideCursorID;
 	bool _haveModifierOverrideCursor;
+
+	// True if any elements were added to the scene, removed from the scene, or reparented since last draw
+	bool _sceneGraphChanged;
 
 	Hacks _hacks;
 
@@ -2265,6 +2311,89 @@ protected:
 	Common::Array<MediaCueState *> _mediaCues;
 };
 
+class VisualElementRenderProperties {
+public:
+	VisualElementRenderProperties();
+
+	enum InkMode {
+		kInkModeCopy = 0x0,
+		kInkModeTransparent = 0x1,				// src*dest
+		kInkModeGhost = 0x3,					// (1-src)+dest
+		kInkModeReverseCopy = 0x4,				// 1-src
+		kInkModeReverseGhost = 0x7,				// src+dest
+		kInkModeReverseTransparent = 0x9,		// (1-src)*dest
+		kInkModeBlend = 0x20,					// (src*bgcolor)+(dest*(1-bgcolor)
+		kInkModeBackgroundTransparent = 0x24,	// BG color is transparent
+		kInkModeChameleonDark = 0x25,			// src+dest
+		kInkModeChameleonLight = 0x27,			// src*dest
+		kInkModeBackgroundMatte = 0x224,		// BG color is transparent and non-interactive
+		kInkModeInvisible = 0xffff,				// Not drawn, but interactive
+
+		kInkModeXor = 0x7ffffff0,				// Fake ink mode for Obsidian canvas puzzle, not a valid value from data
+		kInkModeDefault = 0x7fffffff,			// Not a valid value from data
+	};
+
+	enum Shape {
+		kShapeRect = 0x1,
+		kShapeRoundedRect = 0x2,
+		kShapeOval = 0x3,
+		kShapePolygon = 0x9,
+		kShapeStar = 0xb, // 5-point star, horizontal arms are at (top+bottom*2)/3
+
+		// Fake shapes for Obsidian canvas puzzle, not a valid from data
+		kShapeObsidianCanvasPuzzleTri1 = 0x7ffffff1,
+		kShapeObsidianCanvasPuzzleTri2 = 0x7ffffff2,
+		kShapeObsidianCanvasPuzzleTri3 = 0x7ffffff3,
+		kShapeObsidianCanvasPuzzleTri4 = 0x7ffffff4,
+	};
+
+	InkMode getInkMode() const;
+	void setInkMode(InkMode inkMode);
+
+	Shape getShape() const;
+	void setShape(Shape shape);
+
+	const ColorRGB8 &getForeColor() const;
+	void setForeColor(const ColorRGB8 &color);
+
+	const ColorRGB8 &getBackColor() const;
+	void setBackColor(const ColorRGB8 &color);
+
+	const ColorRGB8 &getBorderColor() const;
+	void setBorderColor(const ColorRGB8 &color);
+
+	const ColorRGB8 &getShadowColor() const;
+	void setShadowColor(const ColorRGB8 &color);
+
+	uint16 getBorderSize() const;
+	void setBorderSize(uint16 size);
+
+	uint16 getShadowSize() const;
+	void setShadowSize(uint16 size);
+
+	const Common::Array<Point16> &getPolyPoints() const;
+	Common::Array<Point16> &modifyPolyPoints();
+
+	bool isDirty() const;
+	void clearDirty();
+
+	VisualElementRenderProperties &operator=(const VisualElementRenderProperties &other);
+
+private:
+	InkMode _inkMode;
+	Shape _shape;
+	ColorRGB8 _foreColor;
+	ColorRGB8 _backColor;
+	uint16 _borderSize;
+	ColorRGB8 _borderColor;
+	uint16 _shadowSize;
+	ColorRGB8 _shadowColor;
+
+	Common::Array<Point16> _polyPoints;
+
+	bool _isDirty;
+};
+
 class VisualElement : public Element {
 public:
 	VisualElement();
@@ -2305,7 +2434,12 @@ public:
 
 	VThreadState offsetTranslateTask(const OffsetTranslateTaskData &data);
 
+	void setRenderProperties(const VisualElementRenderProperties &props);
+	const VisualElementRenderProperties &getRenderProperties() const;
+
+	bool needsRender() const;
 	virtual void render(Window *window) = 0;
+	void finalizeRender();
 
 protected:
 	bool loadCommon(const Common::String &name, uint32 guid, const Data::Rect &rect, uint32 elementFlags, uint16 layer, uint32 streamLocator, uint16 sectionID);
@@ -2342,6 +2476,10 @@ protected:
 	uint16 _layer;
 
 	Common::SharedPtr<DragMotionProperties> _dragProps;
+
+	VisualElementRenderProperties _renderProps;
+	Rect16 _prevRect;
+	bool _contentsDirty;
 };
 
 class NonVisualElement : public Element {

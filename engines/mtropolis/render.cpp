@@ -241,6 +241,7 @@ static bool renderItemLess(const RenderItem &a, const RenderItem &b) {
 
 static void renderNormalElement(const RenderItem &item, Window *mainWindow) {
 	item.element->render(mainWindow);
+	item.element->finalizeRender();
 }
 
 static void renderDirectElement(const RenderItem &item, Window *mainWindow) {
@@ -248,6 +249,8 @@ static void renderDirectElement(const RenderItem &item, Window *mainWindow) {
 }
 
 void renderProject(Runtime *runtime, Window *mainWindow) {
+	bool sceneChanged = runtime->isSceneGraphDirty();
+
 	Common::Array<Structural *> scenes;
 	runtime->getScenesInRenderOrder(scenes);
 
@@ -269,11 +272,29 @@ void renderProject(Runtime *runtime, Window *mainWindow) {
 			Common::sort(directBucket.begin() + directStart, directBucket.end(), renderItemLess);
 	}
 
-	for (Common::Array<RenderItem>::const_iterator it = normalBucket.begin(), itEnd = normalBucket.end(); it != itEnd; ++it)
-		renderNormalElement(*it, mainWindow);
+	if (!sceneChanged) {
+		for (Common::Array<RenderItem>::const_iterator it = normalBucket.begin(), itEnd = normalBucket.end(); it != itEnd; ++it) {
+			if (it->element->needsRender())
+				sceneChanged = true;
+		}
+	}
 
-	for (Common::Array<RenderItem>::const_iterator it = directBucket.begin(), itEnd = directBucket.end(); it != itEnd; ++it)
-		renderDirectElement(*it, mainWindow);
+	if (!sceneChanged) {
+		for (Common::Array<RenderItem>::const_iterator it = directBucket.begin(), itEnd = directBucket.end(); it != itEnd; ++it) {
+			if (it->element->needsRender())
+				sceneChanged = true;
+		}
+	}
+
+	if (sceneChanged) {
+		for (Common::Array<RenderItem>::const_iterator it = normalBucket.begin(), itEnd = normalBucket.end(); it != itEnd; ++it)
+			renderNormalElement(*it, mainWindow);
+
+		for (Common::Array<RenderItem>::const_iterator it = directBucket.begin(), itEnd = directBucket.end(); it != itEnd; ++it)
+			renderDirectElement(*it, mainWindow);
+	}
+
+	runtime->clearSceneGraphDirty();
 }
 
 void convert32To16(Graphics::Surface &destSurface, const Graphics::Surface &srcSurface) {
@@ -292,7 +313,6 @@ void convert32To16(Graphics::Surface &destSurface, const Graphics::Surface &srcS
 		for (int y = 0; y < 16; y++)
 			ditherPattern[y][x] <<= 3;
 	}
-
 
 	size_t w = srcSurface.w;
 	size_t h = srcSurface.h;

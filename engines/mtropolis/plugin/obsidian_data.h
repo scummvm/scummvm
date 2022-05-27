@@ -84,6 +84,23 @@ protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
 };
 
+struct XorModModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue enableWhen; // Probably "enable when"
+	PlugInTypeTaggedValue disableWhen; // Probably "disable when"
+	PlugInTypeTaggedValue shapeID;
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
+struct XorCheckModifier : public PlugInModifierData {
+	PlugInTypeTaggedValue unknown1Event; // Probably "enable when"
+	PlugInTypeTaggedValue unknown2Event; // Probably "disable when"
+
+protected:
+	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;
+};
+
 } // End of namespace Obsidian
 
 } // End of namespace Data

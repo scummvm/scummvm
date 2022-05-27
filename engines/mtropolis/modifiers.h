@@ -599,31 +599,12 @@ class GraphicModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::GraphicModifier &data);
 
-	enum InkMode {
-		kInkModeCopy = 0x0,
-		kInkModeTransparent = 0x1,				// src*dest
-		kInkModeGhost = 0x3,					// (1-src)+dest
-		kInkModeReverseCopy = 0x4,				// 1-src
-		kInkModeReverseGhost = 0x7,				// src+dest
-		kInkModeReverseTransparent = 0x9,		// (1-src)*dest
-		kInkModeBlend = 0x20,					// (src*bgcolor)+(dest*(1-bgcolor)
-		kInkModeBackgroundTransparent = 0x24,	// BG color is transparent
-		kInkModeChameleonDark = 0x25,			// src+dest
-		kInkModeChameleonLight = 0x27,			// src*dest
-		kInkModeBackgroundMatte = 0x224,		// BG color is transparent and non-interactive
-		kInkModeInvisible = 0xffff,				// Not drawn, but interactive
-	};
-
-	enum Shape {
-		kShapeRect = 0x1,
-		kShapeRoundedRect = 0x2,
-		kShapeOval = 0x3,
-		kShapePolygon = 0x9,
-		kShapeStar = 0xb,	// 5-point star, horizontal arms are at (top+bottom*2)/3
-	};
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Graphic Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
 #endif
 
 private:
@@ -631,17 +612,8 @@ private:
 
 	Event _applyWhen;
 	Event _removeWhen;
-	InkMode _inkMode;
-	Shape _shape;
 
-	ColorRGB8 _foreColor;
-	ColorRGB8 _backColor;
-	uint16 _borderSize;
-	ColorRGB8 _borderColor;
-	uint16 _shadowSize;
-	ColorRGB8 _shadowColor;
-
-	Common::Array<Point16> _polyPoints;
+	VisualElementRenderProperties _renderProps;
 };
 
 // Compound variable modifiers are not true variable modifiers.
