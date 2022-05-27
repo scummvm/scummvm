@@ -157,6 +157,11 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 using namespace Agi;
 
+static const char *directoryGlobs[] = {
+	"OBJ",
+	nullptr
+};
+
 class AgiMetaEngineDetection : public AdvancedMetaEngineDetection {
 	mutable Common::String _gameid;
 	mutable Common::String _extra;
@@ -164,6 +169,8 @@ class AgiMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	AgiMetaEngineDetection() : AdvancedMetaEngineDetection(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
 		_guiOptions = GUIO1(GUIO_NOSPEECH);
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	const char *getEngineId() const override {
