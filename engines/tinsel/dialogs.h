@@ -369,7 +369,7 @@ public:
 	void redraw();
 
 	// Noir
-	bool IsConvAndNotMove();
+	bool isConvAndNotMove();
 
 	bool _noLanguage;
 	int _glitterIndex;

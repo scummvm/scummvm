@@ -5830,7 +5830,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case HELDOBJECTORTOPIC:
 		// Noir
-		if (_vm->_dialogs->IsConvAndNotMove()) {
+		if (_vm->_dialogs->isConvAndNotMove()) {
 			pp[0] = HeldObject();
 		} else {
 			pp[0] = Topic();
