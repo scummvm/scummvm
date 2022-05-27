@@ -223,8 +223,8 @@ ShaderSurfaceRenderer::ShaderSurfaceRenderer() {
 
 	// Setup the box shader used to render the overlay
 	const char *attributes[] = { "position", "texcoord", nullptr };
-	_boxShader = ShaderGL::fromStrings("box", boxVertex, boxFragment, attributes);
-	_boxVerticesVBO = ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
+	_boxShader = Shader::fromStrings("box", boxVertex, boxFragment, attributes);
+	_boxVerticesVBO = Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
 	_boxShader->enableVertexAttribute("position", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	_boxShader->enableVertexAttribute("texcoord", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 }
@@ -270,7 +270,7 @@ void ShaderSurfaceRenderer::restorePreviousState() {
 }
 
 ShaderSurfaceRenderer::~ShaderSurfaceRenderer() {
-	ShaderGL::freeBuffer(_boxVerticesVBO);
+	Shader::freeBuffer(_boxVerticesVBO);
 
 	delete _boxShader;
 }

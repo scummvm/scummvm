@@ -52,58 +52,72 @@ struct VertexAttrib {
 	float _const[4];
 };
 
-class ShaderGL {
+class Shader {
 	typedef Common::HashMap<Common::String, GLint> UniformsMap;
 
 public:
-	~ShaderGL();
-	ShaderGL* clone() {
-		return new ShaderGL(*this);
+	~Shader();
+	Shader* clone() {
+		return new Shader(*this);
 	}
 
 	void use(bool forceReload = false);
 
 	void setUniform(const char *uniform, const Math::Matrix4 &m) {
 		GLint pos = getUniformLocation(uniform);
-		if (pos != -1)
+		if (pos != -1) {
+			use();
 			glUniformMatrix4fv(pos, 1, GL_FALSE, m.getData());
+		}
 	}
 
 	void setUniform(const char* uniform, const Math::Matrix3 &m) {
 		GLint pos = getUniformLocation(uniform);
-		if (pos != -1)
+		if (pos != -1) {
+			use();
 			glUniformMatrix3fv(pos, 1, GL_FALSE, m.getData());
+		}
 	}
 
 	void setUniform(const char *uniform, const Math::Vector4d &v) {
 		GLint pos = getUniformLocation(uniform);
-		if (pos != -1)
+		if (pos != -1) {
+			use();
 			glUniform4fv(pos, 1, v.getData());
+		}
 	}
 
 	void setUniform(const char *uniform, const Math::Vector3d &v) {
 		GLint pos = getUniformLocation(uniform);
-		if (pos != -1)
+		if (pos != -1) {
+			use();
 			glUniform3fv(pos, 1, v.getData());
+		}
 	}
 
 	void setUniform(const char *uniform, const Math::Vector2d &v) {
 		GLint pos = getUniformLocation(uniform);
-		if (pos != -1)
+		if (pos != -1) {
+			use();
 			glUniform2fv(pos, 1, v.getData());
+		}
 	}
 
 	void setUniform(const char *uniform, unsigned int x) {
 		GLint pos = getUniformLocation(uniform);
-		if (pos != -1)
+		if (pos != -1) {
+			use();
 			glUniform1i(pos, x);
+		}
 	}
 
 	// Different name to avoid overload ambiguity
 	void setUniform1f(const char *uniform, float f) {
 		GLint pos = getUniformLocation(uniform);
-		if (pos != -1)
+		if (pos != -1) {
+			use();
 			glUniform1f(pos, f);
+		}
 	}
 
 	GLint getUniformLocation(const char *uniform) const {
@@ -129,17 +143,45 @@ public:
 	static GLuint createBuffer(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage = GL_STATIC_DRAW);
 	static void freeBuffer(GLuint vbo);
 
-	static ShaderGL *fromFiles(const char *vertex, const char *fragment, const char **attributes);
-	static ShaderGL *fromFiles(const char *shared, const char **attributes) {
-		return fromFiles(shared, shared, attributes);
+	/**
+	 * Creates a shader object from strings
+	 *
+	 * For shader files (used by games), we used to require GLSL 1.20, this is the default for compatGLSLVersion.
+	 * The GLSL version is converted to GLSL ES version if needed.
+	 *
+	 * @param name The name of the shader for errors messages
+	 * @param vertex The vertex shader code
+	 * @param fragment The fragment shader code
+	 * @param attributes The vertex attributes names for indexing
+	 * @param compatGLSLVersion The GLSL version required: 0 for no preprocessing, 100 for GLSL 1.00 and so on
+	 *
+	 * @return the shader object created
+	 */
+	static Shader *fromFiles(const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion = 120);
+	static Shader *fromFiles(const char *shared, const char *const *attributes, int compatGLSLVersion = 120) {
+		return fromFiles(shared, shared, attributes, compatGLSLVersion);
 	}
 
-	static ShaderGL *fromStrings(const Common::String &name, const char *vertex, const char *fragment, const char **attributes);
+	/**
+	 * Creates a shader object from strings
+	 *
+	 * Shader strings are usually included in backends and don't need preprocessing, this is the default for compatGLSLVersion.
+	 * The GLSL version is converted to GLSL ES version if needed.
+	 *
+	 * @param name The name of the shader for errors messages
+	 * @param vertex The vertex shader code
+	 * @param fragment The fragment shader code
+	 * @param attributes The vertex attributes names for indexing
+	 * @param compatGLSLVersion The GLSL version required: 0 for no preprocessing, 100 for GLSL 1.00 and so on
+	 *
+	 * @return the shader object created
+	 */
+	static Shader *fromStrings(const Common::String &name, const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion = 0);
 
 	void unbind();
 
 private:
-	ShaderGL(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char **attributes);
+	Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char *const *attributes);
 
 	// Since this class is cloned using the implicit copy constructor,
 	// a reference counting pointer is used to ensure deletion of the OpenGL
@@ -151,7 +193,8 @@ private:
 	Common::Array<VertexAttrib> _attributes;
 	Common::SharedPtr<UniformsMap> _uniforms;
 
-	static ShaderGL *_previousShader;
+	static Shader *_previousShader;
+	static uint32 previousNumAttributes;
 };
 
 } // End of namespace OpenGL

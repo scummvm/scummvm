@@ -40,7 +40,7 @@ namespace Wintermute {
 
 class ShadowVolumeOpenGLShader : public ShadowVolume {
 public:
-	ShadowVolumeOpenGLShader(BaseGame *inGame, OpenGL::ShaderGL *volumeShader, OpenGL::ShaderGL *maskShader);
+	ShadowVolumeOpenGLShader(BaseGame *inGame, OpenGL::Shader *volumeShader, OpenGL::Shader *maskShader);
 	virtual ~ShadowVolumeOpenGLShader();
 
 	bool renderToStencilBuffer() override;
@@ -52,8 +52,8 @@ private:
 	bool initMask() override;
 	GLuint _shadowVolumeVertexBuffer;
 	GLuint _shadowMaskVertexBuffer;
-	OpenGL::ShaderGL *_volumeShader;
-	OpenGL::ShaderGL *_maskShader;
+	OpenGL::Shader *_volumeShader;
+	OpenGL::Shader *_maskShader;
 };
 
 } // namespace Wintermute

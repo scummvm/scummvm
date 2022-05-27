@@ -28,7 +28,7 @@
 
 namespace OpenGL {
 
-class ShaderGL;
+class Shader;
 class TextureGL;
 
 /**
@@ -103,7 +103,7 @@ public:
 	void restorePreviousState() override;
 
 private:
-	ShaderGL *_boxShader;
+	Shader *_boxShader;
 	GLuint _boxVerticesVBO;
 	GLboolean _prevStateDepthTest;
 	GLboolean _prevStateDepthWriteMask;

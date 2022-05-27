@@ -44,9 +44,6 @@ namespace OpenGL {
 
 class Surface;
 class Pipeline;
-#if !USE_FORCED_GLES
-class Shader;
-#endif
 
 enum {
 	GFX_OPENGL = 0

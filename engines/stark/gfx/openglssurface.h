@@ -29,7 +29,7 @@
 #if defined(USE_OPENGL_SHADERS)
 
 namespace OpenGL {
-class ShaderGL;
+class Shader;
 }
 
 namespace Stark {
@@ -55,7 +55,7 @@ private:
 	Math::Vector2d normalizeCurrentCoordinates(int x, int y) const;
 
 	OpenGLSDriver *_gfx;
-	OpenGL::ShaderGL *_shader;
+	OpenGL::Shader *_shader;
 };
 
 } // End of namespace Gfx
