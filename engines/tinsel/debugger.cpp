@@ -28,7 +28,6 @@
 #include "tinsel/music.h"
 #include "tinsel/font.h"
 #include "tinsel/strres.h"
-#include "tinsel/noir/notebook.h"
 
 namespace Tinsel {
 
@@ -62,12 +61,6 @@ int strToInt(const char *s) {
 //----------------- CONSOLE CLASS  ---------------------
 
 Console::Console() : GUI::Debugger() {
-	if (TinselVersion == 3) {
-		registerCmd("add_clue",		WRAP_METHOD(Console, cmd_add_clue));
-		registerCmd("add_all_clues",	WRAP_METHOD(Console, cmd_add_all_clues));
-		registerCmd("cross_clue",		WRAP_METHOD(Console, cmd_cross_clue));
-		registerCmd("list_clues",		WRAP_METHOD(Console, cmd_list_clues));
-	}
 	registerCmd("item",		WRAP_METHOD(Console, cmd_item));
 	registerCmd("scene",		WRAP_METHOD(Console, cmd_scene));
 	registerCmd("music",		WRAP_METHOD(Console, cmd_music));
@@ -85,8 +78,8 @@ bool Console::cmd_item(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_dialogs->holdItem(INV_NOICON);
-	_vm->_dialogs->holdItem(strToInt(argv[1]));
+	_vm->_dialogs->HoldItem(INV_NOICON);
+	_vm->_dialogs->HoldItem(strToInt(argv[1]));
 	return false;
 }
 
@@ -164,45 +157,6 @@ bool Console::cmd_string(int argc, const char **argv) {
 	LoadStringRes(id, tmp, TBUFSZ);
 	debugPrintf("%s\n", tmp);
 
-	return true;
-}
-
-// Noir:
-bool Console::cmd_add_clue(int argc, const char **argv) {
-	if (argc < 2) {
-		debugPrintf("%s clue_id\n", argv[0]);
-		debugPrintf("Adds a clue to the notebook\n");
-		return true;
-	}
-
-	_vm->_notebook->addClue(strToInt(argv[1]));
-	return false;
-}
-
-bool Console::cmd_add_all_clues(int argc, const char **argv) {
-	auto clues = _vm->_dialogs->getAllNotebookClues();
-	for (auto clue : clues) {
-		_vm->_notebook->addClue(clue);
-	}
-	return false;
-}
-
-bool Console::cmd_cross_clue(int argc, const char **argv) {
-	if (argc < 2) {
-		debugPrintf("%s clue_id\n", argv[0]);
-		debugPrintf("Crosses out a clue in the notebook\n");
-		return true;
-	}
-
-	_vm->_notebook->crossClue(strToInt(argv[1]));
-	return false;
-}
-
-bool Console::cmd_list_clues(int argc, const char **argv) {
-	auto clues = _vm->_dialogs->getAllNotebookClues();
-	for (auto clue : clues) {
-		debugPrintf("%d\n", clue);
-	}
 	return true;
 }
 

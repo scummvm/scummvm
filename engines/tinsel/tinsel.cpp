@@ -545,8 +545,8 @@ void SetNewScene(SCNHANDLE scene, int entrance, int transition) {
 	// right items: player must have Mambo the swamp dragon, and mustn't have fireworks (used on
 	// the swamp dragon previously to "load it up").
 	if (TinselV1PSX && g_NextScene.scene == 0x1800000 && g_NextScene.entry == 2) {
-		if ((_vm->_dialogs->isInInventory(261, INV_1) || _vm->_dialogs->isInInventory(261, INV_2)) &&
-		    (!_vm->_dialogs->isInInventory(232, INV_1) && !_vm->_dialogs->isInInventory(232, INV_2)))
+		if ((_vm->_dialogs->IsInInventory(261, INV_1) || _vm->_dialogs->IsInInventory(261, INV_2)) &&
+		    (!_vm->_dialogs->IsInInventory(232, INV_1) && !_vm->_dialogs->IsInInventory(232, INV_2)))
 			g_NextScene.entry = 1;
 	}
 }
@@ -809,7 +809,7 @@ void LoadBasicChunks() {
 	RegisterGlobals(game.numGlobals);
 
 	cptr = FindChunk(INV_OBJ_SCNHANDLE, CHUNK_OBJECTS);
-	_vm->_dialogs->registerIcons(cptr, game.numObjects);
+	_vm->_dialogs->RegisterIcons(cptr, game.numObjects);
 
 	// Max polygons are 0 in the original DW1 V0 demo and in DW1 Mac (both in the demo and the full version)
 	if (game.numPolygons != 0)
@@ -1238,7 +1238,7 @@ void TinselEngine::CreateConstProcesses() {
  * Restart the game
  */
 void TinselEngine::RestartGame() {
-	_vm->_dialogs->holdItem(INV_NOICON); // Holding nothing
+	_vm->_dialogs->HoldItem(INV_NOICON); // Holding nothing
 
 	_bg->DropBackground();	// No background
 

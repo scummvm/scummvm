@@ -29,19 +29,55 @@ InventoryObject::InventoryObject(Common::MemoryReadStreamEndian &stream) {
 	_id = stream.readUint32();
 	_hIconFilm = stream.readUint32();
 	_hScript = stream.readUint32();
-	if (TinselVersion == 0) {
-		_attribute = 0;
-	} else {
+}
+
+int32 InventoryObject::getUnknown() const {
+	error("Querying Noir-value from non-Noir game");
+}
+
+int32 InventoryObject::getTitle() const {
+	error("Querying Noir-value from non-Noir game");
+}
+
+class InventoryObjectT1 : public InventoryObject {
+public:
+	InventoryObjectT1(Common::MemoryReadStreamEndian &stream) : InventoryObject(stream) {
 		_attribute = stream.readUint32();
 	}
-}
+	// Tinsel1+
+	virtual int32 getAttribute() const {
+		return _attribute;
+	};
+	static const int SIZE = InventoryObject::SIZE + 4;
+private:
+	int32 _attribute;
+};
+
+class InventoryObjectT3 : public InventoryObjectT1 {
+public:
+	InventoryObjectT3(Common::MemoryReadStreamEndian &stream) : InventoryObjectT1(stream) {
+		_unknown = stream.readUint32();
+		_title = stream.readUint32();
+	}
+	// Noir:
+	virtual int32 getUnknown() const {
+		return _unknown;
+	}
+	virtual int32 getTitle() const {
+		return _title;
+	}
+	static const int SIZE = InventoryObjectT1::SIZE + 8;
+private:
+	int32 _unknown;
+	int32 _title;
+};
 
 template<typename T>
 class InventoryObjectsImpl : public InventoryObjects {
 public:
 	InventoryObjectsImpl(const byte *objects, int numObjects) {
 		bool bigEndian = (TinselV1Mac || TinselV1Saturn);
-		auto stream = new Common::MemoryReadStreamEndian(objects, T::SIZE() * numObjects, bigEndian, DisposeAfterUse::NO);
+		auto stream = new Common::MemoryReadStreamEndian(objects, T::SIZE * numObjects, bigEndian, DisposeAfterUse::NO);
 		for (int i = 0; i < numObjects; i++) {
 			_objects.push_back(T(*stream));
 		}
@@ -49,24 +85,22 @@ public:
 		delete stream;
 	}
 	~InventoryObjectsImpl(){};
-	const InventoryObject *GetInvObject(int id) override {
+	const InventoryObject *GetInvObject(int id) {
 		auto index = GetObjectIndexIfExists(id);
 		if (index != -1) {
 			return _objects.data() + index;
 		}
 		return nullptr;
 	}
-	const InventoryObjectT3 *GetInvObjectT3(int id) override;
-
-	const InventoryObject *GetObjectByIndex(int index) const override {
+	const InventoryObject *GetObjectByIndex(int index) const {
 		assert(index >= 0 && index < numObjects());
 		return _objects.data() + index;
 	}
-	void SetObjectFilm(int id, SCNHANDLE hFilm) override {
+	void SetObjectFilm(int id, SCNHANDLE hFilm) {
 		int index = GetObjectIndexIfExists(id);
 		_objects[index].setIconFilm(hFilm);
 	}
-	int GetObjectIndexIfExists(int id) const override {
+	int GetObjectIndexIfExists(int id) const {
 		for (uint i = 0; i < _objects.size(); i++) {
 			if (_objects[i].getId() == id) {
 				return i;
@@ -74,33 +108,21 @@ public:
 		}
 		return -1;
 	};
-	int numObjects() const override {
+	int numObjects() const {
 		return _objects.size();
 	}
 private:
 	Common::Array<T> _objects;
 };
 
-template<>
-const InventoryObjectT3 *InventoryObjectsImpl<InventoryObjectT3>::GetInvObjectT3(int id) {
-	auto index = GetObjectIndexIfExists(id);
-	if (index != -1) {
-		return _objects.data() + index;
-	}
-	return nullptr;
-}
-
-template<>
-const InventoryObjectT3 *InventoryObjectsImpl<InventoryObject>::GetInvObjectT3(int id) {
-	error("Can't query Noir inventory objects from non Noir-game");
-}
-
 InventoryObjects *InstantiateInventoryObjects(const byte *invObjects, int numObjects) {
 	switch (TinselVersion) {
+	case 0:
+		return new InventoryObjectsImpl<InventoryObject>(invObjects, numObjects);
 	case 3:
 		return new InventoryObjectsImpl<InventoryObjectT3>(invObjects, numObjects);
 	default:
-		return new InventoryObjectsImpl<InventoryObject>(invObjects, numObjects);
+		return new InventoryObjectsImpl<InventoryObjectT1>(invObjects, numObjects);
 	}
 }
 

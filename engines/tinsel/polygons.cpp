@@ -25,7 +25,6 @@
 #include "tinsel/pid.h"
 #include "tinsel/polygons.h"
 #include "tinsel/movers.h"
-#include "tinsel/noir/notebook.h"
 #include "tinsel/sched.h"
 #include "common/serializer.h"
 #include "tinsel/tinsel.h"
@@ -110,11 +109,6 @@ struct POLYGON {
 	 */
 	POLYGON *adjpaths[MAXADJ];
 
-	void setPoint(int index, const Common::Point &point) {
-		cx[index] = point.x;
-		cy[index] = point.y;
-	}
-	bool containsPoint(const Common::Point &point) const;
 };
 
 #define MAXONROUTE 40
@@ -410,8 +404,13 @@ static HPOLYGON PolygonIndex(const POLYGON *pp) {
  * have two polygon corners above it and two corners to the left of it.
  */
 bool IsInPolygon(int xt, int yt, HPOLYGON hp) {
+	const POLYGON *pp;
+	int	i;
+	bool BeenTested = false;
+	int	pl = 0, pa = 0;
+
 	CHECK_HP_OR(hp, "Out of range polygon handle (1)");
-	const POLYGON *pp = Polys[hp];
+	pp = Polys[hp];
 	assert(pp != NULL); // Testing whether in a NULL polygon
 
 	// Shift cursor for relative polygons
@@ -420,26 +419,18 @@ bool IsInPolygon(int xt, int yt, HPOLYGON hp) {
 		yt -= volatileStuff[hp].yoff;
 	}
 
-	return pp->containsPoint(Common::Point(xt, yt));
-}
-
-bool POLYGON::containsPoint(const Common::Point &point) const {
-	int xt = point.x;
-	int yt = point.y;
 	/* Is point within the external rectangle? */
-	if (point.x < this->pleft || point.x > this->pright || yt < this->ptop || yt > this->pbottom)
+	if (xt < pp->pleft || xt > pp->pright || yt < pp->ptop || yt > pp->pbottom)
 		return false;
 
-	bool BeenTested = false;
-
 	// For each corner/side
-	for (int i = 0; i < 4; i++)	{
+	for (i = 0; i < 4; i++)	{
 		// If within this side's 'testable' area
 		// i.e. within the width of the line in y direction of end of line
 		// or within the height of the line in x direction of end of line
-		if ((xt >= this->lleft[i] && xt <= this->lright[i]  && ((yt > this->cy[i]) == (this->cy[(i+1)%4] > this->cy[i])))
-		 || (yt >= this->ltop[i]  && yt <= this->lbottom[i] && ((xt > this->cx[i]) == (this->cx[(i+1)%4] > this->cx[i])))) {
-			if (((long)xt*this->a[i] + (long)yt*this->b[i]) < this->c[i])
+		if ((xt >= pp->lleft[i] && xt <= pp->lright[i]  && ((yt > pp->cy[i]) == (pp->cy[(i+1)%4] > pp->cy[i])))
+		 || (yt >= pp->ltop[i]  && yt <= pp->lbottom[i] && ((xt > pp->cx[i]) == (pp->cx[(i+1)%4] > pp->cx[i])))) {
+			if (((long)xt*pp->a[i] + (long)yt*pp->b[i]) < pp->c[i])
 				return false;
 			else
 				BeenTested = true;
@@ -448,23 +439,21 @@ bool POLYGON::containsPoint(const Common::Point &point) const {
 
 	if (BeenTested) {
 		// New dodgy code 29/12/94
-		if (this->polyType == BLOCK) {
+		if (pp->polyType == BLOCK) {
 			// For each corner/side
-			for (int i = 0; i < 4; i++) {
+			for (i = 0; i < 4; i++) {
 				// Pretend the corners of blocking polys are not in the poly.
-				if (xt == this->cx[i] && yt == this->cy[i])
+				if (xt == pp->cx[i] && yt == pp->cy[i])
 					return false;
 			}
 		}
 		return true;
 	} else {
-		int	pl = 0, pa = 0;
-
 		// Is point within the internal rectangle?
-		for (int i = 0; i < 4; i++) {
-			if (this->cx[i] < xt)
+		for (i = 0; i < 4; i++) {
+			if (pp->cx[i] < xt)
 				pl++;
-			if (this->cy[i] < yt)
+			if (pp->cy[i] < yt)
 				pa++;
 		}
 
@@ -2488,95 +2477,17 @@ void UpdateGroundPlane() {
 	//...
 }
 
-class NoteBookPolygonsImpl : public NoteBookPolygons {
-public:
-	NoteBookPolygonsImpl() {
-		setPolygon(NoteBookPoly::MAIN,
-				   Common::Point(220, 0),
-				   Common::Point(446, 0),
-				   Common::Point(553, 425),
-				   Common::Point(164, 410));
-	}
-
-	void setPolygon(NoteBookPoly polyKind, const Common::Point &c0, const Common::Point &c1, const Common::Point &c2, const Common::Point &c3) override {
-		POLYGON *poly = nullptr;
-		switch(polyKind) {
-		case NoteBookPoly::MAIN:
-			poly = &_main;
-			break;
-		case NoteBookPoly::NEXT:
-			poly = &_next;
-			break;
-		case NoteBookPoly::PREV:
-			poly = &_prev;
-			break;
-		default:
-			poly = _cluePoly + static_cast<int>(polyKind);
-			break;
-		}
-		poly->polyType = SHAPE;
-		poly->setPoint(0, c0);
-		poly->setPoint(1, c1);
-		poly->setPoint(2, c2);
-		poly->setPoint(3, c3);
-		FiddlyBit(poly);
-	}
-
-	void pushPolygon(const Common::Point &c0, const Common::Point &c1, const Common::Point &c2, const Common::Point &c3) override {
-		assert(_polyIndex < MAX_CLUE_POLYS);
-		setPolygon(static_cast<NoteBookPoly>(_polyIndex), c0, c1, c2, c3);
-		_polyIndex++;
-	}
-
-	bool isInsideNotebook(const Common::Point &point) const override {
-		return _main.containsPoint(point);
-	}
-
-	int lineHit(const Common::Point &point) const override {
-		for (int i = 0; i < MAX_CLUE_POLYS; i++) {
-			if (_cluePoly[i].containsPoint(point)) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	NoteBookPoly mostSpecificHit(const Common::Point &point) const override {
-		auto line = lineHit(point);
-		if (line != -1) {
-			return static_cast<NoteBookPoly>(line);
-		}
-		if (_next.containsPoint(point)) {
-			return NoteBookPoly::NEXT;
-		} else if (_prev.containsPoint(point)) {
-			return NoteBookPoly::PREV;
-		} else if (_main.containsPoint(point)) {
-			return NoteBookPoly::MAIN;
-		}
-		return NoteBookPoly::NONE;
-	}
-private:
-	static const int MAX_CLUE_POLYS = 8;
-	int _polyIndex = 0;
-	POLYGON _main, _prev, _next;
-	POLYGON _cluePoly[MAX_CLUE_POLYS];
-};
-
-NoteBookPolygons *instantiateNoteBookPolygons() {
-	return new NoteBookPolygonsImpl;
-}
-
 // Notebook (Tinsel)
 void NotebookPolyEntry(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3) {
-	_vm->_notebook->_polygons->pushPolygon(c0, c1, c2, c3);
+	warning("TODO: Finish implementation of NotebookPolyEntry(%d, %d, %d, %d, %d, %d, %d, %d)", c0.x, c0.y, c1.x, c1.y, c2.x, c2.y, c3.x, c3.y);
 }
 
 void NotebookPolyNextPage(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3) {
-	_vm->_notebook->_polygons->setPolygon(NoteBookPoly::NEXT, c0, c1, c2, c3);
+	warning("TODO: Finish implementation of NotebookPolyNextPage(%d, %d, %d, %d, %d, %d, %d, %d)", c0.x, c0.y, c1.x, c1.y, c2.x, c2.y, c3.x, c3.y);
 }
 
 void NotebookPolyPrevPage(Common::Point c0, Common::Point c1, Common::Point c2, Common::Point c3) {
-	_vm->_notebook->_polygons->setPolygon(NoteBookPoly::PREV, c0, c1, c2, c3);
+	warning("TODO: Finish implementation of NotebookPolyPrevPage(%d, %d, %d, %d, %d, %d, %d, %d)", c0.x, c0.y, c1.x, c1.y, c2.x, c2.y, c3.x, c3.y);
 }
 
 } // End of namespace Tinsel

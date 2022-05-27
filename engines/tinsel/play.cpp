@@ -101,7 +101,7 @@ static void PokeInPalette(SCNHANDLE hMulFrame) {
 void PokeInPalette(const MULTI_INIT *pmi) {
 	// Could be an empty column
 	if (pmi->hMulFrame) {
-		const FRAME *pFrame = pmi->GetFrame();
+		const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
 		_vm->_handle->SetImagePalette(READ_32(pFrame), _vm->_bg->BgPal());
 	}
 }
@@ -235,8 +235,10 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 	CORO_BEGIN_CODE(_ctx);
 
 	if (actorCol) {
+		MULTI_INIT *pmi;		// MULTI_INIT structure
+
 		pReel = GetReel(hFilm, actorCol - 1);
-		const MULTI_INIT *pmi = pReel->GetMultiInit();
+		pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pReel->mobj));
 		_ctx->reelActor = (int32)FROM_32(pmi->mulID);
 	} else
 		_ctx->reelActor = 0;
@@ -449,7 +451,7 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 	_ctx->pfreel = &pfilm->reels[ppi->column];
 
 	// Get the MULTI_INIT structure
-	pmi = _ctx->pfreel->GetMultiInit();
+	pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(_ctx->pfreel->mobj));
 
 	// Save actor's ID
 	_ctx->reelActor = (int32)FROM_32(pmi->mulID);
@@ -703,7 +705,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 	// Get the reel and MULTI_INIT structure
 	_ctx->pFreel = GetReel(hFilm, column);
-	_ctx->pmi = _ctx->pFreel->GetMultiInit();
+	_ctx->pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(_ctx->pFreel->mobj));
 
 	if ((int32)FROM_32(_ctx->pmi->mulID) == -2) {
 		CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, hFilm, column, speed, myescEvent,
@@ -956,7 +958,7 @@ void NewestFilm(SCNHANDLE film, const FREEL *reel) {
 	const MULTI_INIT *pmi;		// MULTI_INIT structure
 
 	// Get the MULTI_INIT structure
-	pmi = reel->GetMultiInit();
+	pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(reel->mobj));
 
 	if ((TinselVersion <= 1) || ((int32)FROM_32(pmi->mulID) != -2))
 		_vm->_actor->SetActorLatestFilm((int32)FROM_32(pmi->mulID), film);
@@ -1160,7 +1162,7 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
 	// Search backwards for now as later column will be the one
 	for (i = (int)FROM_32(pFilm->numreels) - 1; i >= 0; i--) {
 		pFreel = &pFilm->reels[i];
-		pmi = pFreel->GetMultiInit();
+		pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pFreel->mobj));
 		if ((int32)FROM_32(pmi->mulID) == actor) {
 			ppi.column = (short)i;
 			NewestFilm(hFilm, &pFilm->reels[i]);
@@ -1179,7 +1181,7 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
 int ExtractActor(SCNHANDLE hFilm) {
 	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(hFilm);
 	const FREEL *pReel = &pFilm->reels[0];
-	const MULTI_INIT *pmi = pReel->GetMultiInit();
+	const MULTI_INIT *pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pReel->mobj));
 	return (int)FROM_32(pmi->mulID);
 }
 

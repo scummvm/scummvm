@@ -390,7 +390,7 @@ void EndScene() {
 		g_SceneHandle = 0;
 	}
 
-	_vm->_dialogs->killInventory(); // Close down any open inventory
+	_vm->_dialogs->KillInventory(); // Close down any open inventory
 
 	DropPolygons();		// No polygons
 	_vm->_scroll->DropScroll(); // No no-scrolls

@@ -38,7 +38,7 @@ enum PTYPE {
 	// Extra polygon types from Tinsel v1
 	EXIT, EX_EXIT,
 	// Extra polygon types from Tinsel v3
-	SCALE, EX_SCALE, SHAPE
+	SCALE, EX_SCALE
 };
 
 // subtype
@@ -159,34 +159,6 @@ void NotebookPolyPrevPage(Common::Point c0, Common::Point c1, Common::Point c2, 
 /*-------------------------------------------------------------------------*/
 
 void UpdateGroundPlane();
-
-enum class NoteBookPoly {
-	CLUE_0 = 0,
-	CLUE_1 = 1,
-	CLUE_2 = 2,
-	CLUE_3 = 3,
-	CLUE_4 = 4,
-	CLUE_5 = 5,
-	CLUE_6 = 6,
-	CLUE_7 = 7,
-	MAIN,
-	NEXT,
-	PREV,
-	NONE
-};
-
-class NoteBookPolygons {
-public:
-	virtual ~NoteBookPolygons() {}
-	virtual void setPolygon(NoteBookPoly polyKind, const Common::Point &c0, const Common::Point &c1, const Common::Point &c2, const Common::Point &c3) = 0;
-	virtual void pushPolygon(const Common::Point &c0, const Common::Point &c1, const Common::Point &c2, const Common::Point &c3) = 0;
-
-	virtual NoteBookPoly mostSpecificHit(const Common::Point &point) const = 0;
-	virtual int lineHit(const Common::Point &point) const = 0;
-	virtual bool isInsideNotebook(const Common::Point &point) const = 0;
-};
-
-NoteBookPolygons *instantiateNoteBookPolygons();
 
 } // End of namespace Tinsel
 

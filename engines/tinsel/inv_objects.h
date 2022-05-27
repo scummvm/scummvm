@@ -23,7 +23,6 @@
 #define TINSEL_INV_OBJECT_H
 
 #include "common/memstream.h"
-#include "tinsel/tinsel.h"
 #include "tinsel/dw.h"
 
 namespace Tinsel {
@@ -40,7 +39,7 @@ enum class InvObjAttr {
 
 	// Noir only
 	V3ATTR_X80 = 0x80,
-	NOTEBOOK_CLUE = 0x200,
+	V3ATTR_X200 = 0x200,
 	V3ATTR_X400 = 0x400,
 	NOTEBOOK_TITLE = 0x800, // is a notebook title
 	V3ATTR_X1000 = 0x1000,
@@ -50,6 +49,7 @@ enum class InvObjAttr {
 class InventoryObject {
 public:
 	InventoryObject(Common::MemoryReadStreamEndian &stream);
+	virtual ~InventoryObject() {}
 	int32 getId() const { return _id; }
 	SCNHANDLE getIconFilm() const { return _hIconFilm; };
 	void setIconFilm(SCNHANDLE hIconFilm) { _hIconFilm = hIconFilm; }
@@ -58,55 +58,25 @@ public:
 	bool hasAttribute(InvObjAttr attribute) const {
 		return getAttribute() & (int32)attribute;
 	}
-
-	// Data size consumed by constructor
-	static int SIZE() {
-		return (TinselVersion == 0 ? T0_SIZE : T1_SIZE);
-	}
+	// Noir:
+	virtual int32 getUnknown() const;
+	virtual int32 getTitle() const;
+	static const int SIZE = 12;
 protected:
-	static const int T0_SIZE = 3 * 4;
-	static const int T1_SIZE = T0_SIZE + 4; // Versions above 0 have attributes
 	// Tinsel 1+
-	int32 getAttribute() const {
-		return _attribute;
+	virtual int32 getAttribute() const {
+		return 0;
 	};
 private:
 	int32 _id;            // inventory objects id
 	SCNHANDLE _hIconFilm; // inventory objects animation film
 	SCNHANDLE _hScript;   // inventory objects event handling script
-	int32 _attribute = 0;
-};
-
-class InventoryObjectT3 : public InventoryObject {
-public:
-	InventoryObjectT3(Common::MemoryReadStreamEndian &stream) : InventoryObject(stream) {
-		_unknown = stream.readUint32();
-		_title = stream.readUint32();
-	}
-	// Noir:
-	bool isNotebookTitle() const {
-		return (getAttribute() & (int)InvObjAttr::NOTEBOOK_TITLE) != 0;
-	}
-	int32 getUnknown() const {
-		return _unknown;
-	}
-	int32 getTitle() const {
-		return _title;
-	}
-	// Data size consumed by constructor
-	static int SIZE() {
-		return InventoryObject::SIZE() + 8;
-	}
-private:
-	int32 _unknown;
-	int32 _title;
 };
 
 class InventoryObjects {
 public:
 	virtual ~InventoryObjects() {};
 	virtual const InventoryObject *GetInvObject(int id) = 0;
-	virtual const InventoryObjectT3 *GetInvObjectT3(int id) = 0;
 	virtual const InventoryObject *GetObjectByIndex(int index) const = 0;
 	virtual void SetObjectFilm(int id, SCNHANDLE hFilm) = 0;
 	virtual int GetObjectIndexIfExists(int id) const = 0;

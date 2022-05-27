@@ -89,7 +89,7 @@ void Cursor::InitCurTrailObj(int i, int x, int y) {
 
 	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(_cursorFilm);
 	const FREEL *pfr = (const FREEL *)&pFilm->reels[i + 1];
-	const MULTI_INIT *pmi = pfr->GetMultiInit();
+	const MULTI_INIT *pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
 
 	PokeInPalette(pmi);
 
@@ -303,8 +303,8 @@ void Cursor::DelAuxCursor() {
 void Cursor::SetAuxCursor(SCNHANDLE hFilm) {
 	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(hFilm);
 	const FREEL *pfr = &pfilm->reels[0];
-	const MULTI_INIT *pmi = pfr->GetMultiInit();
-	const FRAME *pFrame = pmi->GetFrame();
+	const MULTI_INIT *pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
+	const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(FROM_32(pmi->hMulFrame));
 	const IMAGE *pim;
 	int	x, y;		// Cursor position
 
@@ -402,10 +402,10 @@ void Cursor::DoCursorMove() {
 	if (_auxCursor != NULL)
 		MultiSetAniXY(_auxCursor, ptMouse.x - _auxCursorOffsetX, ptMouse.y - _auxCursorOffsetY);
 
-	if (_vm->_dialogs->inventoryActive() && _mainCursor) {
+	if (_vm->_dialogs->InventoryActive() && _mainCursor) {
 		// Notify the inventory
-		_vm->_dialogs->xMovement(ptMouse.x - startX);
-		_vm->_dialogs->yMovement(ptMouse.y - startY);
+		_vm->_dialogs->Xmovement(ptMouse.x - startX);
+		_vm->_dialogs->Ymovement(ptMouse.y - startY);
 	}
 
 	_lastCursorX = ptMouse.x;
@@ -418,7 +418,7 @@ void Cursor::DoCursorMove() {
 void Cursor::InitCurObj() {
 	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(_cursorFilm);
 	const FREEL *pfr = (const FREEL *)&pFilm->reels[0];
-	const MULTI_INIT *pmi = pfr->GetMultiInit();
+	const MULTI_INIT *pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfr->mobj));
 
 	if (TinselVersion != 3) {
 		PokeInPalette(pmi);
@@ -519,7 +519,7 @@ void Cursor::StartCursorFollowed() {
 }
 
 void Cursor::EndCursorFollowed() {
-	_vm->_dialogs->inventoryIconCursor(false); // May be holding something
+	_vm->_dialogs->InventoryIconCursor(false); // May be holding something
 	_tempHiddenCursor = false;
 }
 
@@ -564,7 +564,7 @@ void CursorStoppedCheck(CORO_PARAM) {
 		// Re-initialize
 		_vm->_cursor->InitCurObj();
 		_vm->_cursor->InitCurPos();
-		_vm->_dialogs->inventoryIconCursor(false); // May be holding something
+		_vm->_dialogs->InventoryIconCursor(false); // May be holding something
 
 		// Re-start the cursor trails
 		_vm->_cursor->_cursorProcessesRestarted = true;
@@ -597,7 +597,7 @@ void CursorProcess(CORO_PARAM, const void *) {
 
 	_vm->_cursor->InitCurObj();
 	_vm->_cursor->InitCurPos();
-	_vm->_dialogs->inventoryIconCursor(false); // May be holding something
+	_vm->_dialogs->InventoryIconCursor(false); // May be holding something
 
 	_vm->_cursor->_cursorProcessesStopped = false;
 	_vm->_cursor->_cursorProcessesRestarted = false;
