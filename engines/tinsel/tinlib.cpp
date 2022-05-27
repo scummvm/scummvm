@@ -616,7 +616,7 @@ static void ActorsOn() {
  * Adds an icon to the conversation window.
  */
 static void AddTopic(int icon) {
-	_vm->_dialogs->AddToInventory(INV_CONV, icon, false);
+	_vm->_dialogs->addToInventory(INV_CONV, icon, false);
 }
 
 /**
@@ -626,7 +626,7 @@ static void AddInv(int invno, int object) {
 	// illegal inventory number
 	assert(invno == INV_1 || invno == INV_2 || invno == INV_3 || invno == INV_OPEN || invno == INV_DEFAULT);
 
-	_vm->_dialogs->AddToInventory(invno, object, false);
+	_vm->_dialogs->addToInventory(invno, object, false);
 }
 
 /**
@@ -738,7 +738,7 @@ static void ClearHookScene() {
  * Guess what.
  */
 static void CloseInventory() {
-	_vm->_dialogs->KillInventory();
+	_vm->_dialogs->killInventory();
 }
 
 /**
@@ -752,11 +752,11 @@ void Control(int param) {
 		else {
 			ControlOff();
 
-			switch (_vm->_dialogs->WhichInventoryOpen()) {
+			switch (_vm->_dialogs->whichInventoryOpen()) {
 			case INV_1:
 			case INV_2:
 			case INV_MENU:
-				_vm->_dialogs->KillInventory();
+				_vm->_dialogs->killInventory();
 				break;
 			default:
 				break;
@@ -812,7 +812,7 @@ void Control(int param) {
 
 		FreeControlToken();	// Release control
 
-		if (!_vm->_dialogs->InventoryActive())
+		if (!_vm->_dialogs->inventoryActive())
 			EnableTags();		// Tags back on
 
 		_vm->_cursor->RestoreMainCursor(); // Re-instate cursor...
@@ -835,7 +835,7 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
 
 	if (fn == CONV_END) {
 		// Close down conversation
-		_vm->_dialogs->CloseDownConv();
+		_vm->_dialogs->closeDownConv();
 	} else if ((fn == CONV_TOP) || (fn == CONV_DEF) || (fn == CONV_BOTTOM)) {
 		// TOP of screen, Default (i.e. TOP of screen), or BOTTOM of screen
 
@@ -848,10 +848,10 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
 			return;
 
 		// Don't do it if already in a conversation
-		if (_vm->_dialogs->IsConvWindow())
+		if (_vm->_dialogs->isConvWindow())
 			return;
 
-		_vm->_dialogs->KillInventory();
+		_vm->_dialogs->killInventory();
 
 		if (TinselVersion >= 2) {
 			// If this is from a tag polygon, get the associated
@@ -865,14 +865,14 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
 			}
 
 			// Top or bottom; tag polygon or tagged actor
-			_vm->_dialogs->SetConvDetails((CONV_PARAM)fn, hp, actor);
+			_vm->_dialogs->setConvDetails((CONV_PARAM)fn, hp, actor);
 		} else {
 			_vm->_dialogs->convPos(fn);
-			_vm->_dialogs->ConvPoly(hp);
+			_vm->_dialogs->convPoly(hp);
 		}
 
-		_vm->_dialogs->PopUpInventory(INV_CONV); // Conversation window
-		_vm->_dialogs->ConvAction(INV_OPENICON); // CONVERSATION event
+		_vm->_dialogs->popUpInventory(INV_CONV); // Conversation window
+		_vm->_dialogs->convAction(INV_OPENICON); // CONVERSATION event
 	}
 
 	CORO_END_CODE;
@@ -882,7 +882,7 @@ static void Conversation(CORO_PARAM, int fn, HPOLYGON hp, int actor, bool escOn,
  * Add icon to conversation window's permanent default list.
  */
 static void ConvTopic(int icon) {
-	_vm->_dialogs->PermaConvIcon(icon);
+	_vm->_dialogs->permaConvIcon(icon);
 }
 
 /**
@@ -1071,24 +1071,24 @@ static void DecScale(int actor, int scale,
  * Remove an icon from the conversation window.
  */
 static void DelIcon(int icon) {
-	_vm->_dialogs->RemFromInventory(INV_CONV, icon);
+	_vm->_dialogs->remFromInventory(INV_CONV, icon);
 }
 
 /**
  * Delete the object from inventory 1 or 2.
  */
 static void DelInv(int object) {
-	if (!_vm->_dialogs->RemFromInventory(INV_1, object)) // Remove from inventory 1...
-		_vm->_dialogs->RemFromInventory(INV_2, object);  // ...or 2 (whichever)
+	if (!_vm->_dialogs->remFromInventory(INV_1, object)) // Remove from inventory 1...
+		_vm->_dialogs->remFromInventory(INV_2, object);  // ...or 2 (whichever)
 
-	_vm->_dialogs->DropItem(object); // Stop holding it
+	_vm->_dialogs->dropItem(object); // Stop holding it
 }
 
 /**
  * DelTopic
  */
 static void DelTopic(int icon) {
-	_vm->_dialogs->RemFromInventory(INV_CONV, icon);
+	_vm->_dialogs->remFromInventory(INV_CONV, icon);
 }
 
 /**
@@ -1098,20 +1098,20 @@ static void Drop(int object) {
 	if (object == -1)
 		object = HeldObject();
 
-	if (!_vm->_dialogs->RemFromInventory(INV_1, object)) // Remove from inventory 1...
-		_vm->_dialogs->RemFromInventory(INV_2, object);  // ...or 2 (whichever)
+	if (!_vm->_dialogs->remFromInventory(INV_1, object)) // Remove from inventory 1...
+		_vm->_dialogs->remFromInventory(INV_2, object);  // ...or 2 (whichever)
 
-	_vm->_dialogs->DropItem(object); // Stop holding it
+	_vm->_dialogs->dropItem(object); // Stop holding it
 }
 
 /**
  * Delete all objects from inventory 1 and 2.
  */
 static void DropEverything() {
-	_vm->_dialogs->HoldItem(INV_NOICON, false);
+	_vm->_dialogs->holdItem(INV_NOICON, false);
 
-	_vm->_dialogs->ClearInventory(INV_1);
-	_vm->_dialogs->ClearInventory(INV_2);
+	_vm->_dialogs->clearInventory(INV_1);
+	_vm->_dialogs->clearInventory(INV_2);
 }
 
 /**
@@ -1200,7 +1200,7 @@ static void FreezeCursor(bool bFreeze) {
  * Guess what.
  */
 static int GetInvLimit(int invno) {
-	return _vm->_dialogs->InvGetLimit(invno);
+	return _vm->_dialogs->invGetLimit(invno);
 }
 
 /**
@@ -1230,14 +1230,14 @@ static bool HasRestarted() {
  * See if an object is in the inventory.
  */
 int Have(int object) {
-	return (_vm->_dialogs->InventoryPos(object) != INV_NOICON);
+	return (_vm->_dialogs->inventoryPos(object) != INV_NOICON);
 }
 
 /**
  * Returns which object is currently held.
  */
 static int HeldObject() {
-	return _vm->_dialogs->WhichItemHeld();
+	return _vm->_dialogs->whichItemHeld();
 }
 
 /**
@@ -1287,7 +1287,7 @@ static void HideTag(CORO_PARAM, int tag, HPOLYGON hp) {
  * Hold the specified object.
  */
 static void Hold(int object) {
-	_vm->_dialogs->HoldItem(object, false);
+	_vm->_dialogs->holdItem(object, false);
 }
 
 /**
@@ -1326,14 +1326,14 @@ void InstantScroll(int onoff) {
  * invdepict
  */
 static void InvDepict(int object, SCNHANDLE hFilm) {
-	_vm->_dialogs->SetObjectFilm(object, hFilm);
+	_vm->_dialogs->setObjectFilm(object, hFilm);
 }
 
 /**
  * See if an object is in the inventory.
  */
 int InInventory(int object) {
-	return (_vm->_dialogs->InventoryPos(object) != INV_NOICON);
+	return (_vm->_dialogs->inventoryPos(object) != INV_NOICON);
 }
 
 /**
@@ -1346,27 +1346,27 @@ static void Inventory(int invno, bool escOn, int myEscape) {
 
 	assert((invno == INV_1 || invno == INV_2)); // Trying to open illegal inventory
 
-	_vm->_dialogs->PopUpInventory(invno);
+	_vm->_dialogs->popUpInventory(invno);
 }
 
 /**
  * Alter inventory object's icon.
  */
 static void InvPlay(int object, SCNHANDLE hFilm) {
-	_vm->_dialogs->SetObjectFilm(object, hFilm);
+	_vm->_dialogs->setObjectFilm(object, hFilm);
 }
 
 /**
  * See if an object is in the inventory.
  */
 static int InWhichInv(int object) {
-	if (_vm->_dialogs->WhichItemHeld() == object)
+	if (_vm->_dialogs->whichItemHeld() == object)
 		return 0;
 
-	if (_vm->_dialogs->IsInInventory(object, INV_1))
+	if (_vm->_dialogs->isInInventory(object, INV_1))
 		return 1;
 
-	if (_vm->_dialogs->IsInInventory(object, INV_2))
+	if (_vm->_dialogs->isInInventory(object, INV_2))
 		return 2;
 
 	return -1;
@@ -1502,7 +1502,7 @@ static void NoScroll(int x1, int y1, int x2, int y2) {
  * Hold the specified object.
  */
 static void ObjectHeld(int object) {
-	_vm->_dialogs->HoldItem(object);
+	_vm->_dialogs->holdItem(object);
 }
 
 /**
@@ -1526,15 +1526,15 @@ int OtherObject(const InventoryObject *pinvo) {
 	// return held object or object clicked on - whichever is not the calling object
 
 	// pinvo->id is the calling object
-	// WhichItemHeld() gives the held object
-	// GetIcon() gives the object clicked on
+	// whichItemHeld() gives the held object
+	// getIcon() gives the object clicked on
 
-	assert(_vm->_dialogs->GetIcon() == pinvo->getId() || _vm->_dialogs->WhichItemHeld() == pinvo->getId());
+	assert(_vm->_dialogs->getIcon() == pinvo->getId() || _vm->_dialogs->whichItemHeld() == pinvo->getId());
 
-	if (_vm->_dialogs->GetIcon() == pinvo->getId())
-		return _vm->_dialogs->WhichItemHeld();
+	if (_vm->_dialogs->getIcon() == pinvo->getId())
+		return _vm->_dialogs->whichItemHeld();
 	else
-		return _vm->_dialogs->GetIcon();
+		return _vm->_dialogs->getIcon();
 }
 
 /**
@@ -2013,7 +2013,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 
 		// Adjust x, y, or z if necessary
 		KeepOnScreen(_ctx->pText, &x, &y);
-		if (_vm->_dialogs->IsTopWindow())
+		if (_vm->_dialogs->isTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
 	} else if (bJapDoPrintText || (!_vm->_config->isJapanMode() && (_vm->_config->_useSubtitles || !_ctx->bSample))) {
@@ -2025,7 +2025,7 @@ static void Print(CORO_PARAM, int x, int y, SCNHANDLE text, int time, bool bSust
 					0, x - Loffset, y - Toffset,
 					fontHandle, TXT_CENTER);
 		assert(_ctx->pText); // string produced NULL text
-		if (_vm->_dialogs->IsTopWindow())
+		if (_vm->_dialogs->isTopWindow())
 			MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
 		/*
@@ -2144,7 +2144,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const InventoryObject *p
 	* Find out which icon the cursor is over, and where to put the text.
 	*/
 	_vm->_cursor->GetCursorXY(&_ctx->textx, &_ctx->texty, false); // Cursor position..
-	_ctx->item = _vm->_dialogs->InvItem(&_ctx->textx, &_ctx->texty, true); // ..to text position
+	_ctx->item = _vm->_dialogs->invItem(&_ctx->textx, &_ctx->texty, true); // ..to text position
 	if (_ctx->item == INV_NOICON)
 		return;
 
@@ -2219,7 +2219,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const InventoryObject *p
 				int x, y;
 				do {
 					// Give up if this item gets picked up
-					if (_vm->_dialogs->WhichItemHeld() == pinvo->getId())
+					if (_vm->_dialogs->whichItemHeld() == pinvo->getId())
 						break;
 
 					// Give way to non-POINTED-generated text
@@ -2231,7 +2231,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const InventoryObject *p
 							CORO_SLEEP(1);
 
 						_vm->_cursor->GetCursorXY(&x, &y, false);
-						if (_vm->_dialogs->InvItem(&x, &y, false) != _ctx->item)
+						if (_vm->_dialogs->invItem(&x, &y, false) != _ctx->item)
 							break;
 
 						// Re-display in the same place
@@ -2250,7 +2250,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const InventoryObject *p
 					// Carry on until the cursor leaves this icon
 					_vm->_cursor->GetCursorXY(&x, &y, false);
 
-				} while (_vm->_dialogs->InvItemId(x, y) == pinvo->getId());
+				} while (_vm->_dialogs->invItemId(x, y) == pinvo->getId());
 			} else {
 				/*
 				 * PrintObj() called from other event
@@ -2270,7 +2270,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const InventoryObject *p
 					// Abort if sample times out
 					// Abort if conversation hidden
 					if (LeftEventChange(_ctx->myLeftEvent)
-							|| --_ctx->timeout <= 0 || _vm->_dialogs->ConvIsHidden())
+							|| --_ctx->timeout <= 0 || _vm->_dialogs->convIsHidden())
 						break;
 
 					if (_ctx->bSample) {
@@ -2334,7 +2334,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const InventoryObj
 		int	x, y;
 		do {
 			// Give up if this item gets picked up
-		    if (_vm->_dialogs->WhichItemHeld() == pinvo->getId())
+		    if (_vm->_dialogs->whichItemHeld() == pinvo->getId())
 				break;
 
 			// Give way to non-POINTED-generated text
@@ -2345,7 +2345,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const InventoryObj
 					CORO_SLEEP(1);
 
 				_vm->_cursor->GetCursorXY(&x, &y, false);
-			    if (_vm->_dialogs->InvItem(&x, &y, false) != item)
+			    if (_vm->_dialogs->invItem(&x, &y, false) != item)
 					break;
 
 				// Re-display in the same place
@@ -2360,7 +2360,7 @@ static void PrintObjPointed(CORO_PARAM, const SCNHANDLE text, const InventoryObj
 
 			// Carry on until the cursor leaves this icon
 		    _vm->_cursor->GetCursorXY(&x, &y, false);
-	    } while (_vm->_dialogs->InvItemId(x, y) == pinvo->getId());
+	    } while (_vm->_dialogs->invItemId(x, y) == pinvo->getId());
 
 	CORO_END_CODE;
 }
@@ -2403,7 +2403,7 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
 			// Abort if left click - hardwired feature for talky-print!
 			// Abort if sample times out
 			// Abort if conversation hidden
-		    if (_ctx->myleftEvent != GetLeftEvents() || _ctx->timeout <= 0 || _vm->_dialogs->ConvIsHidden())
+		    if (_ctx->myleftEvent != GetLeftEvents() || _ctx->timeout <= 0 || _vm->_dialogs->convIsHidden())
 				break;
 
 			if (_ctx->bSample) {
@@ -2596,7 +2596,7 @@ static void ScalingReels(int actor, int scale, int direction,
  * Return the icon that caused the CONVERSE event.
  */
 static int ScanIcon() {
-	return _vm->_dialogs->GetIcon();
+	return _vm->_dialogs->getIcon();
 }
 
 /**
@@ -2749,7 +2749,7 @@ static void SetExit(int exitno) {
  * Guess what.
  */
 static void SetInvLimit(int invno, int n) {
-	_vm->_dialogs->InvSetLimit(invno, n);
+	_vm->_dialogs->invSetLimit(invno, n);
 }
 
 /**
@@ -2757,7 +2757,7 @@ static void SetInvLimit(int invno, int n) {
  */
 static void SetInvSize(int invno, int MinWidth, int MinHeight,
 		int StartWidth, int StartHeight, int MaxWidth, int MaxHeight) {
-	_vm->_dialogs->InvSetSize(invno, MinWidth, MinHeight, StartWidth, StartHeight, MaxWidth, MaxHeight);
+	_vm->_dialogs->invSetSize(invno, MinWidth, MinHeight, StartWidth, StartHeight, MaxWidth, MaxHeight);
 }
 
 /**
@@ -2867,7 +2867,7 @@ static void showstring() {
  * Shows the main menu
  */
 static void ShowMenu() {
-	_vm->_dialogs->OpenMenu(MAIN_MENU);
+	_vm->_dialogs->openMenu(MAIN_MENU);
 }
 
 /**
@@ -3437,7 +3437,7 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 					_vm->_font->GetTalkFontHandle(), TXT_CENTER);
 			assert(_ctx->pText); // talk() string produced NULL text;
 
-			if (_vm->_dialogs->IsTopWindow())
+			if (_vm->_dialogs->isTopWindow())
 				MultiSetZPosition(_ctx->pText, Z_TOPW_TEXT);
 
 			if ((_ctx->whatSort == IS_SAY) || (_ctx->whatSort == IS_TALK)) {
@@ -3710,7 +3710,7 @@ static int TimerFn(int timerno) {
  * Return the icon that caused the CONVERSE event.
  */
 int Topic() {
-	return _vm->_dialogs->GetIcon();
+	return _vm->_dialogs->getIcon();
 }
 
 /**
@@ -3729,10 +3729,10 @@ static void TopPlay(CORO_PARAM, SCNHANDLE hFilm, int x, int y, bool bComplete, i
 static void TopWindow(int bpos) {
 	bool isStart = ((TinselVersion >= 2) && (bpos != 0)) || ((TinselVersion <= 1) && (bpos == TW_START));
 
-	_vm->_dialogs->KillInventory();
+	_vm->_dialogs->killInventory();
 
 	if (isStart)
-		_vm->_dialogs->OpenMenu(TOP_WINDOW);
+		_vm->_dialogs->openMenu(TOP_WINDOW);
 }
 
 /**
@@ -3830,16 +3830,16 @@ static void WaitKey(CORO_PARAM, bool escOn, int myEscape) {
 					break;
 			}
 
-			if (_vm->_dialogs->MenuActive())
+			if (_vm->_dialogs->menuActive())
 				break;
 		}
 
-		if (!_vm->_dialogs->MenuActive())
+		if (!_vm->_dialogs->menuActive())
 			return;
 
 		do {
 			CORO_SLEEP(1);
-		} while (_vm->_dialogs->MenuActive());
+		} while (_vm->_dialogs->menuActive());
 
 		CORO_SLEEP(ONE_SECOND / 2);		// Let it die down
 	}
@@ -4261,7 +4261,7 @@ int WhichCd() {
  * whichinventory
  */
 int WhichInventory() {
-	return _vm->_dialogs->WhichInventoryOpen();
+	return _vm->_dialogs->whichInventoryOpen();
 }
 
 
@@ -4498,7 +4498,7 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(0x%08X)", mapping.name, pp[0]);
 		break;
-	case 50: // 1 parameter, calls RemFromInventory variant of TinselV1
+	case 50: // 1 parameter, calls remFromInventory variant of TinselV1
 		error("Unsupported libCode %d del_inv3_item", libCode);
 	case 51: // 1 parameter
 		error("Unsupported libCode %d DELTOPIC variant", libCode);
