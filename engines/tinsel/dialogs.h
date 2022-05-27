@@ -231,7 +231,7 @@ enum TM { TM_POINTER,
 	      TM_UNK4,
 	      TM_NONE };
 
-// For SlideSlider() and similar
+// For slideSlider() and similar
 enum SSFN {
 	S_START,
 	S_SLIDE,
@@ -381,67 +381,67 @@ public:
 	BUTTONEFFECT _buttonEffect;
 
 private:
-	int WhichMenuBox(int curX, int curY, bool bSlides);
-	void ConfActionSpecial(int i);
-	bool RePosition();
-	bool LanguageChange();
-	void PrimeSceneHopper();
-	void FreeSceneHopper();
-	void RememberChosenScene();
-	void SetChosenScene();
-	void FirstEntry(int first);
-	void HopAction();
-	void DumpIconArray();
-	void DumpDobjArray();
-	void DumpObjArray();
-	void FirstScene(int first);
-	void FirstFile(int first);
-	int GetObjectIndex(int id) const;
-	void InvSaveGame();
-	void InvLoadGame();
-	int InvArea(int x, int y);
-	void InvBoxes(bool InBody, int curX, int curY);
-	void InvLabels(bool InBody, int aniX, int aniY);
-	void AdjustTop();
-	OBJECT *AddInvObject(int num, const FREEL **pfreel, const FILM **pfilm);
-	void AddBackground(OBJECT **rect, const Common::Rect &bounds, OBJECT **title = nullptr, int textFrom = 0);
-	void AddTitle(OBJECT **title, const Common::Rect &rect);
-	void AddSlider(OBJECT **slide, const FILM *pfilm);
-	void AddBox(int *pi, const int i);
-	void AddEWSlider(OBJECT **slide, const FILM *pfilm);
-	void PositionInventory(OBJECT *pMultiObj, int xOffset, int yOffset, int zPosition);
-	int AddExtraWindow(int x, int y, OBJECT **retObj);
-	void ConstructInventoryCommon(SysReel reel, bool hasTitle);
-	void ConstructConversationInventory();
-	void ConstructInventory(InventoryType filling);
-	void ConstructOtherInventory(int menuId);
-	void ConstructMainInventory();
-	void AlterCursor(int num);
-	void SetMenuGlobals(CONFINIT *ci);
-	void CloseInventory();
-	int NearestSlideY(int fity);
-	void SlideSlider(int y, SSFN fn);
-	void SlideCSlider(int y, SSFN fn);
-	void GettingTaller();
-	void GettingShorter();
-	void GettingWider();
-	void GettingNarrower();
-	void ChangeingSize();
-	void InvDragStart();
-	void InvDragEnd();
-	bool MenuDown(int lines);
-	bool MenuUp(int lines);
-	void MenuRollDown();
-	void MenuRollUp();
-	void MenuPageDown();
-	void MenuPageUp();
-	void InventoryDown();
-	void InventoryUp();
-	void MenuAction(int i, bool dbl);
-	void InvPickup(int index);
-	void InvWalkTo(const Common::Point &coOrds);
-	void InvAction();
-	void InvLook(const Common::Point &coOrds);
+	int whichMenuBox(int curX, int curY, bool bSlides);
+	void confActionSpecial(int i);
+	bool rePosition();
+	bool languageChange();
+	void primeSceneHopper();
+	void freeSceneHopper();
+	void rememberChosenScene();
+	void setChosenScene();
+	void firstEntry(int first);
+	void hopAction();
+	void dumpIconArray();
+	void dumpDobjArray();
+	void dumpObjArray();
+	void firstScene(int first);
+	void firstFile(int first);
+	int getObjectIndex(int id) const;
+	void invSaveGame();
+	void invLoadGame();
+	int invArea(int x, int y);
+	void invBoxes(bool InBody, int curX, int curY);
+	void invLabels(bool InBody, int aniX, int aniY);
+	void adjustTop();
+	OBJECT *addInvObject(int num, const FREEL **pfreel, const FILM **pfilm);
+	void addBackground(OBJECT **rect, const Common::Rect &bounds, OBJECT **title = nullptr, int textFrom = 0);
+	void addTitle(OBJECT **title, const Common::Rect &rect);
+	void addSlider(OBJECT **slide, const FILM *pfilm);
+	void addBox(int *pi, const int i);
+	void addEWSlider(OBJECT **slide, const FILM *pfilm);
+	void positionInventory(OBJECT *pMultiObj, int xOffset, int yOffset, int zPosition);
+	int addExtraWindow(int x, int y, OBJECT **retObj);
+	void constructInventoryCommon(SysReel reel, bool hasTitle);
+	void constructConversationInventory();
+	void constructInventory(InventoryType filling);
+	void constructOtherInventory(int menuId);
+	void constructMainInventory();
+	void alterCursor(int num);
+	void setMenuGlobals(CONFINIT *ci);
+	void closeInventory();
+	int nearestSlideY(int fity);
+	void slideSlider(int y, SSFN fn);
+	void slideCSlider(int y, SSFN fn);
+	void gettingTaller();
+	void gettingShorter();
+	void gettingWider();
+	void gettingNarrower();
+	void changeingSize();
+	void invDragStart();
+	void invDragEnd();
+	bool menuDown(int lines);
+	bool menuUp(int lines);
+	void menuRollDown();
+	void menuRollUp();
+	void menuPageDown();
+	void menuPageUp();
+	void inventoryDown();
+	void inventoryUp();
+	void menuAction(int i, bool dbl);
+	void invPickup(int index);
+	void invWalkTo(const Common::Point &coOrds);
+	void invAction();
+	void invLook(const Common::Point &coOrds);
 	void idec_inv(int num, SCNHANDLE text, int MaxContents,
 	              int MinWidth, int MinHeight,
 	              int StartWidth, int StartHeight,
@@ -524,7 +524,7 @@ private:
 	CONV_PARAM _thisConvFn;             // Top, 'Middle' or Bottom
 	HPOLYGON _thisConvPoly;         // Conversation code is in a polygon code block
 	int _thisConvActor;                 // ...or an actor's code block.
-	int _pointedIcon;      // used by InvLabels - icon pointed to on last call
+	int _pointedIcon;      // used by invLabels - icon pointed to on last call
 	int _sX;                        // used by SlideMSlider() - current x-coordinate
 	int _lX;                        // used by SlideMSlider() - last x-coordinate
 
