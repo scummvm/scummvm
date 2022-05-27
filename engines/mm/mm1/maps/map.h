@@ -22,6 +22,7 @@
 #ifndef MM1_MAPS_MAP_H
 #define MM1_MAPS_MAP_H
 
+#include "common/array.h"
 #include "common/str.h"
 
 namespace MM {
@@ -33,8 +34,26 @@ class Maps;
 class Map {
 private:
 	Common::String _name;
+	uint _mapId;
+	byte _mapData[512];
+	Common::Array<byte> _globals;
+private:
+	/**
+	 * Loads the map's maze data
+	 */
+	void loadMazeData();
+
+	/**
+	 * Load the map's overlay file
+	 */
+	void loadOverlay();
 public:
 	Map(Maps *owner, const Common::String &name);
+
+	/**
+	 * Loads the map
+	 */
+	virtual void load();
 };
 
 } // namespace Maps
