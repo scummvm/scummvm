@@ -7954,8 +7954,8 @@ static const uint16 larry2PatchWearParachutePoints[] = {
 //  game cycles. The result is a single message box that appears to not respond
 //  to Enter or clicks until the third one dismisses it.
 //
-// We fix this by adding a brief delay in the "Procesing..." loop with a call to
-//  kScummVMSleep so that the screen is redrawn between message boxes and the
+// We fix this by adding a brief delay in the "Processing..." loop with a call
+//  to kScummVMSleep so that the screen is redrawn between message boxes and the
 //  intended effect occurs as in the original. This patch is broken up into two
 //  parts because different versions have different instructions in the loop.
 //
@@ -8316,7 +8316,7 @@ static const uint16 larry6HiresGuardDelaySignature1[] = {
 };
 
 static const uint16 larry6HiresGuardDelayPatch1[] = {
-	0x35, 0x3c,                         // ldi 1e [ 60 cycles ]
+	0x35, 0x3c,                         // ldi 3c [ 60 cycles ]
 	0x32, PATCH_UINT16(0x0000),         // jmp 0000
 	PATCH_END
 };
@@ -22286,7 +22286,7 @@ static const uint16 sq6SaveDialogMessagePatch[] = {
 // Outside the arcade and club, room 330 adjusts the current music and volume
 //  based on which entrance ego is nearest and the distance. All Polysorbate LX
 //  music plays through gSound1. rm330:init records gSound1:vol when ego enters,
-/// rm330:doit uses this value in volume calculations, and then sExitToArcade or
+//  rm330:doit uses this value in volume calculations, and then sExitToArcade or
 //  sExitToClub restores gSound1:vol to its original value. The other two street
 //  rooms (320 and 340) slowly fade gSound1:vol in from 0 to the normal value of
 //  127 whenever entering from another room.
