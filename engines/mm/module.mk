@@ -27,6 +27,9 @@ MODULE_OBJS := \
 	mm1/views/title.o \
 	mm1/views/text_view.o \
 	mm1/views/view_characters.o \
+	mm1/maps/maps.o \
+	mm1/maps/map.o \
+	mm1/maps/map0.o \
 	xeen/worldofxeen/clouds_cutscenes.o \
 	xeen/worldofxeen/darkside_cutscenes.o \
 	xeen/worldofxeen/worldofxeen_cutscenes.o \
