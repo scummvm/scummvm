@@ -1504,6 +1504,19 @@ void ScummEngine_v6::o6_getVerbFromXY() {
 }
 
 void ScummEngine_v6::o6_beginOverride() {
+	// WORKAROUND (bug in the original):
+	// When Guybrush gets on the Sea Cucumber for the first time and the monkeys show up on deck,
+	// if the ESC key is pressed before the "Any last words, Threepwood?" dialogue, the music will
+	// continue playing indefinitely throughout the game (or until another "sequence" music is played).
+	//
+	// To amend this, we intercept this exact script override and we force the playback of sound 2277,
+	// which is the iMUSE sequence which would have been played after the dialogue.
+	if (_enableEnhancements && _game.id == GID_CMI && _currentRoom == 37 && vm.slot[_currentScript].number == 251 &&
+		_sound->isSoundRunning(2275) != 0 && (_scriptPointer - _scriptOrgPointer) == 0x1A) {
+		int list[16] = {0x1001, 2277, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		_sound->soundKludge(list, 2);
+	}
+
 	beginOverride();
 	_skipVideo = 0;
 }
