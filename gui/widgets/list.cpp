@@ -116,6 +116,21 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U
 	_scrollBarWidth = 0;
 }
 
+void ListWidget::copyListData(const Common::U32StringArray &list) {
+	Common::U32String stripped;
+
+	_dataList.clear();
+	_cleanedList.clear();
+
+	for (uint i = 0; i < list.size(); ++i) {
+		stripped = stripGUIformatting(list[i]);
+
+		_dataList.push_back(ListData(list[i], stripped));
+		_cleanedList.push_back(stripped);
+	}
+}
+
+
 bool ListWidget::containsWidget(Widget *w) const {
 	if (w == _scrollBar || _scrollBar->containsWidget(w))
 		return true;
@@ -179,7 +194,7 @@ void ListWidget::setList(const Common::U32StringArray &list, const ColorList *co
 		drawCaret(true);
 
 	// Copy everything
-	_dataList = list;
+	copyListData(list);
 	_list = list;
 	_filter.clear();
 	_listIndex.clear();
@@ -214,7 +229,9 @@ void ListWidget::append(const Common::String &s, ThemeEngine::FontColor color) {
 		_listColors.push_back(color);
 	}
 
-	_dataList.push_back(s);
+	Common::U32String stripped = stripGUIformatting(s);
+	_dataList.push_back(ListData(s, stripped));
+	_cleanedList.push_back(stripped);
 	_list.push_back(s);
 
 	setFilter(_filter, false);
@@ -763,7 +780,12 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 
 	if (_filter.empty()) {
 		// No filter -> display everything
-		_list = _dataList;
+
+		_list.clear();
+
+		for (uint i = 0; i < _dataList.size(); ++i)
+			_list.push_back(_dataList[i].orig);
+
 		_listIndex.clear();
 	} else {
 		// Restrict the list to everything which matches all tokens in _filter, ignoring case.
@@ -775,8 +797,8 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 		_list.clear();
 		_listIndex.clear();
 
-		for (Common::U32StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
-			tmp = *i;
+		for (auto i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
+			tmp = i->clean;
 			tmp.toLowercase();
 			bool matches = true;
 			tok.reset();
@@ -788,7 +810,7 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 			}
 
 			if (matches) {
-				_list.push_back(*i);
+				_list.push_back(i->orig);
 				_listIndex.push_back(n);
 			}
 		}

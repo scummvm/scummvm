@@ -51,9 +51,20 @@ public:
 	typedef Common::Array<ThemeEngine::FontColor> ColorList;
 
 	typedef bool (*FilterMatcher)(void *arg, int idx, const Common::U32String &item, Common::U32String token);
+
+	struct ListData {
+		Common::U32String orig;
+		Common::U32String clean;
+
+		ListData(Common::U32String o, Common::U32String c) { orig = o; clean = c; }
+	};
+
+	typedef Common::Array<ListData> ListDataArray;
+
 protected:
 	Common::U32StringArray	_list;
-	Common::U32StringArray	_dataList;
+	Common::U32StringArray	_cleanedList;
+	ListDataArray	_dataList;
 	ColorList		_listColors;
 	Common::Array<int>	_listIndex;
 	bool			_editable;
@@ -97,7 +108,7 @@ public:
 	Widget *findWidget(int x, int y) override;
 
 	void setList(const Common::U32StringArray &list, const ColorList *colors = nullptr);
-	const Common::U32StringArray &getList()	const			{ return _dataList; }
+	const Common::U32StringArray &getList()	const			{ return _cleanedList; }
 
 	void append(const Common::String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
 
@@ -158,6 +169,8 @@ protected:
 	void abortEditMode() override;
 
 	Common::Rect getEditRect() const override;
+
+	void copyListData(const Common::U32StringArray &list);
 
 	void receivedFocusWidget() override;
 	void lostFocusWidget() override;

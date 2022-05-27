@@ -47,7 +47,7 @@ void GroupedListWidget::setList(const Common::U32StringArray &list, const ColorL
 		drawCaret(true);
 
 	// Copy everything
-	_dataList = list;
+	copyListData(list);
 	_list = list;
 
 	_filter.clear();
@@ -82,27 +82,6 @@ void GroupedListWidget::setAttributeValues(const Common::U32StringArray &attrVal
 
 void GroupedListWidget::setMetadataNames(const Common::StringMap &metadata) {
 	_metadataNames = metadata;
-}
-
-void GroupedListWidget::append(const Common::String &s, ThemeEngine::FontColor color) {
-	if (_dataList.size() == _listColors.size()) {
-		// If the color list has the size of the data list, we append the color.
-		_listColors.push_back(color);
-	} else if (_listColors.empty() && color != ThemeEngine::kFontColorNormal) {
-		// If it's the first entry to use a non default color, we will fill
-		// up all other entries of the color list with the default color and
-		// add the requested color for the new entry.
-		for (uint i = 0; i < _dataList.size(); ++i)
-			_listColors.push_back(ThemeEngine::kFontColorNormal);
-		_listColors.push_back(color);
-	}
-
-	_dataList.push_back(s);
-	_list.push_back(s);
-
-	setFilter(_filter, false);
-
-	scrollBarRecalc();
 }
 
 void GroupedListWidget::setGroupHeaderFormat(const Common::U32String &prefix, const Common::U32String &suffix) {
@@ -174,7 +153,7 @@ void GroupedListWidget::sortGroups() {
 
 		if (_groupExpanded[groupID]) {
 			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
-				_list.push_back(Common::U32String(_groupsVisible ? "    " : "") + _dataList[*k]);
+				_list.push_back(Common::U32String(_groupsVisible ? "    " : "") + _dataList[*k].orig);
 				_listIndex.push_back(*k);
 				++curListSize;
 			}
@@ -459,8 +438,8 @@ void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) 
 		_list.clear();
 		_listIndex.clear();
 
-		for (Common::U32StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
-			tmp = *i;
+		for (auto i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
+			tmp = i->clean;
 			tmp.toLowercase();
 			bool matches = true;
 			tok.reset();
@@ -472,7 +451,7 @@ void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) 
 			}
 
 			if (matches) {
-				_list.push_back(*i);
+				_list.push_back(i->orig);
 				_listIndex.push_back(n);
 			}
 		}

@@ -49,7 +49,6 @@ public:
 	void setList(const Common::U32StringArray &list, const ColorList *colors = nullptr);
 	void setAttributeValues(const Common::U32StringArray &attrValues);
 	void setMetadataNames(const Common::StringMap &metadata);
-	const Common::U32StringArray &getList() const { return _dataList; }
 
 	void append(const Common::String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
 	void setGroupHeaderFormat(const Common::U32String &prefix, const Common::U32String &suffix);
