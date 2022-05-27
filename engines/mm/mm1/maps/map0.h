@@ -19,50 +19,21 @@
  *
  */
 
-#ifndef MM1_GLOBALS_H
-#define MM1_GLOBALS_H
+#ifndef MM1_MAPS_MAP0_H
+#define MM1_MAPS_MAP0_H
 
-#include "graphics/font.h"
-#include "mm/utils/strings_data.h"
-#include "mm/mm1/data/game_state.h"
-#include "mm/mm1/data/int_array.h"
-#include "mm/mm1/data/roster.h"
-#include "mm/mm1/maps/maps.h"
+#include "mm/mm1/maps/map.h"
 
 namespace MM {
 namespace MM1 {
+namespace Maps {
 
-class Globals : public GameState {
+class Map0 : public Map {
 public:
-	StringsData _strings;
-	Roster _roster;
-	const Graphics::Font *_font = nullptr;
-	Character *_currCharacter = nullptr;
-	int _startingTown = 0;
-	IntArray _partyChars;
-	Maps::Maps _maps;
-public:
-	Globals();
-	virtual ~Globals();
-
-	/**
-	 * Loads data for the globals
-	 */
-	bool load();
-
-	/**
-	 * Returns a string
-	 */
-	const Common::String &operator[](const Common::String &name) {
-		assert(_strings.contains(name));
-		return _strings[name];
-	}
+	Map0(Maps *owner) : Map(owner, "sorpigal") {}
 };
 
-extern Globals *g_globals;
-
-#define STRING (*g_globals)
-
+} // namespace Maps
 } // namespace MM1
 } // namespace MM
 
