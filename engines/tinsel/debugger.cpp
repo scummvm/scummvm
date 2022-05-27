@@ -85,8 +85,8 @@ bool Console::cmd_item(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_dialogs->HoldItem(INV_NOICON);
-	_vm->_dialogs->HoldItem(strToInt(argv[1]));
+	_vm->_dialogs->holdItem(INV_NOICON);
+	_vm->_dialogs->holdItem(strToInt(argv[1]));
 	return false;
 }
 
@@ -180,7 +180,7 @@ bool Console::cmd_add_clue(int argc, const char **argv) {
 }
 
 bool Console::cmd_add_all_clues(int argc, const char **argv) {
-	auto clues = _vm->_dialogs->GetAllNotebookClues();
+	auto clues = _vm->_dialogs->getAllNotebookClues();
 	for (auto clue : clues) {
 		_vm->_notebook->AddClue(clue);
 	}
@@ -199,7 +199,7 @@ bool Console::cmd_cross_clue(int argc, const char **argv) {
 }
 
 bool Console::cmd_list_clues(int argc, const char **argv) {
-	auto clues = _vm->_dialogs->GetAllNotebookClues();
+	auto clues = _vm->_dialogs->getAllNotebookClues();
 	for (auto clue : clues) {
 		debugPrintf("%d\n", clue);
 	}

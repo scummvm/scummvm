@@ -980,7 +980,7 @@ bool Dialogs::languageChange() {
 	}
 
 	if (nLang != _vm->_config->_language) {
-		KillInventory();
+		killInventory();
 		ChangeLanguage(nLang);
 		_vm->_config->_language = nLang;
 		return true;
@@ -1177,10 +1177,10 @@ void Dialogs::dumpObjArray() {
  * Convert item ID number to pointer to item's compiled data
  * i.e. Image data and Glitter code.
  */
-const InventoryObject *Dialogs::GetInvObject(int id) {
+const InventoryObject *Dialogs::getInvObject(int id) {
 	auto object = _invObjects->GetInvObject(id);
 	if (!object) {
-		error("GetInvObject(%d): Trying to manipulate undefined inventory icon", id);
+		error("getInvObject(%d): Trying to manipulate undefined inventory icon", id);
 	}
 	return object;
 }
@@ -1189,10 +1189,10 @@ const InventoryObject *Dialogs::GetInvObject(int id) {
  * Convert item ID number to pointer to item's compiled data
  * i.e. Image data and Glitter code.
  */
-const InventoryObjectT3 *Dialogs::GetInvObjectT3(int id) {
+const InventoryObjectT3 *Dialogs::getInvObjectT3(int id) {
 	auto object = _invObjects->GetInvObjectT3(id);
 	if (!object) {
-		error("GetInvObjectT3(%d): Trying to manipulate undefined inventory icon", id);
+		error("getInvObjectT3(%d): Trying to manipulate undefined inventory icon", id);
 	}
 	return object;
 }
@@ -1200,7 +1200,7 @@ const InventoryObjectT3 *Dialogs::GetInvObjectT3(int id) {
 /**
  * Returns true if the given id represents a valid inventory object
  */
-bool Dialogs::GetIsInvObject(int id) {
+bool Dialogs::getIsInvObject(int id) {
 	int index = _invObjects->GetObjectIndexIfExists(id);
 	return index != -1;
 }
@@ -1220,7 +1220,7 @@ int Dialogs::getObjectIndex(int id) const {
  * Returns position of an item in one of the inventories.
  * The actual position is not important for the uses that this is put to.
  */
-int Dialogs::InventoryPos(int num) {
+int Dialogs::inventoryPos(int num) {
 	int i;
 
 	for (i = 0; i < _invD[INV_1].NoofItems; i++) // First inventory
@@ -1237,7 +1237,7 @@ int Dialogs::InventoryPos(int num) {
 	return INV_NOICON; // Not held, not in either inventory
 }
 
-bool Dialogs::IsInInventory(int object, int invnum) {
+bool Dialogs::isInInventory(int object, int invnum) {
 	assert(invnum == INV_1 || invnum == INV_2);
 
 	for (int i = 0; i < _invD[invnum].NoofItems; i++) // First inventory
@@ -1250,7 +1250,7 @@ bool Dialogs::IsInInventory(int object, int invnum) {
 /**
  * Returns which item is held (INV_NOICON (-1) if none)
  */
-int Dialogs::WhichItemHeld() {
+int Dialogs::whichItemHeld() {
 	return _heldItem;
 }
 
@@ -1258,7 +1258,7 @@ int Dialogs::WhichItemHeld() {
  * Called from the cursor module when it re-initializes (at the start of
  * a new scene). For if we are holding something at scene-change time.
  */
-void Dialogs::InventoryIconCursor(bool bNewItem) {
+void Dialogs::inventoryIconCursor(bool bNewItem) {
 
 	if (_heldItem != INV_NOICON) {
 		if (TinselVersion >= 2) {
@@ -1266,7 +1266,7 @@ void Dialogs::InventoryIconCursor(bool bNewItem) {
 				int objIndex = getObjectIndex(_heldItem);
 
 				if (TinselVersion == 3) {
-					auto invObj = GetInvObject(_heldItem);
+					auto invObj = getInvObject(_heldItem);
 
 					if (invObj->hasAttribute(InvObjAttr::NOTEBOOK_CLUE)) {
 						_heldFilm = _vm->_systemReel->Get((SysReel)objIndex);
@@ -1279,7 +1279,7 @@ void Dialogs::InventoryIconCursor(bool bNewItem) {
 			}
 			_vm->_cursor->SetAuxCursor(_heldFilm);
 		} else {
-			auto invObj = GetInvObject(_heldItem);
+			auto invObj = getInvObject(_heldItem);
 			_vm->_cursor->SetAuxCursor(invObj->getIconFilm());
 		}
 	}
@@ -1288,15 +1288,15 @@ void Dialogs::InventoryIconCursor(bool bNewItem) {
 /**
  * Returns true if the inventory is active.
  */
-bool Dialogs::InventoryActive() {
+bool Dialogs::inventoryActive() {
 	return _inventoryState == ACTIVE_INV;
 }
 
-bool Dialogs::InventoryOrNotebookActive() {
-	return InventoryActive() || ((TinselVersion == 3) && _vm->_notebook->IsOpen());
+bool Dialogs::inventoryOrNotebookActive() {
+	return inventoryActive() || ((TinselVersion == 3) && _vm->_notebook->IsOpen());
 }
 
-int Dialogs::WhichInventoryOpen() {
+int Dialogs::whichInventoryOpen() {
 	if (TinselVersion == 3 && _vm->_notebook->IsOpen()) {
 		return INV_NOTEBOOK;
 	}
@@ -1376,7 +1376,7 @@ void Dialogs::invLoadGame() {
  * Returns true if the string was altered.
  */
 #ifndef JAPAN
-bool Dialogs::UpdateString(const Common::KeyState &kbd) {
+bool Dialogs::updateString(const Common::KeyState &kbd) {
 	int cpos;
 
 	if (!cd.editableRgroup)
@@ -1426,7 +1426,7 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
 		return true; // Key needs processing
 	} else {
 #ifndef JAPAN
-		if (_vm->_dialogs->UpdateString(kbd)) {
+		if (_vm->_dialogs->updateString(kbd)) {
 			/*
 			* Delete display of text currently being edited,
 			* and replace it with freshly edited text.
@@ -1434,16 +1434,16 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
 			MultiDeleteObjectIfExists(FIELD_STATUS, &_vm->_dialogs->_iconArray[HL3]);
 			_vm->_dialogs->_iconArray[HL3] = ObjectTextOut(
 			    _vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_saveGameDesc, 0,
-			    _vm->_dialogs->CurrentInventoryX() + cd.box[cd.selBox].xpos + 2,
-			    _vm->_dialogs->CurrentInventoryY() + cd.box[cd.selBox].ypos + TYOFF,
+				_vm->_dialogs->currentInventoryX() + cd.box[cd.selBox].xpos + 2,
+				_vm->_dialogs->currentInventoryY() + cd.box[cd.selBox].ypos + TYOFF,
 			    _vm->_font->GetTagFontHandle(), 0);
 			if (MultiRightmost(_vm->_dialogs->_iconArray[HL3]) > MAX_NAME_RIGHT) {
 				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_iconArray[HL3]);
-				_vm->_dialogs->UpdateString(Common::KeyState(Common::KEYCODE_BACKSPACE));
+				_vm->_dialogs->updateString(Common::KeyState(Common::KEYCODE_BACKSPACE));
 				_vm->_dialogs->_iconArray[HL3] = ObjectTextOut(
 				    _vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_saveGameDesc, 0,
-				    _vm->_dialogs->CurrentInventoryX() + cd.box[cd.selBox].xpos + 2,
-				    _vm->_dialogs->CurrentInventoryY() + cd.box[cd.selBox].ypos + TYOFF,
+					_vm->_dialogs->currentInventoryX() + cd.box[cd.selBox].xpos + 2,
+					_vm->_dialogs->currentInventoryY() + cd.box[cd.selBox].ypos + TYOFF,
 				    _vm->_font->GetTagFontHandle(), 0);
 			}
 			MultiSetZPosition(_vm->_dialogs->_iconArray[HL3], Z_INV_ITEXT + 2);
@@ -1457,7 +1457,7 @@ static bool InvKeyIn(const Common::KeyState &kbd) {
  * Highlights selected box.
  * If it's editable (save game), copy existing description and add a cursor.
  */
-void Dialogs::Select(int i, bool force) {
+void Dialogs::select(int i, bool force) {
 #ifdef JAPAN
 	time_t secs_now;
 	struct tm *time_now;
@@ -1548,7 +1548,7 @@ void Dialogs::Select(int i, bool force) {
 /**
  * Stop holding an item.
  */
-void Dialogs::DropItem(int item) {
+void Dialogs::dropItem(int item) {
 	if (_heldItem == item) {
 		_heldItem = INV_NOICON;      // Item not held
 		_vm->_cursor->DelAuxCursor(); // no longer aux cursor
@@ -1561,7 +1561,7 @@ void Dialogs::DropItem(int item) {
 /**
  * Clears the specified inventory
  */
-void Dialogs::ClearInventory(int invno) {
+void Dialogs::clearInventory(int invno) {
 	assert(invno == INV_1 || invno == INV_2);
 
 	_invD[invno].NoofItems = 0;
@@ -1572,7 +1572,7 @@ void Dialogs::ClearInventory(int invno) {
  * Stick the item into an inventory list (contents[]), and hold the
  * item if requested.
  */
-void Dialogs::AddToInventory(int invno, int icon, bool hold) {
+void Dialogs::addToInventory(int invno, int icon, bool hold) {
 	int i;
 	bool bOpen;
 
@@ -1585,12 +1585,12 @@ void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 		bOpen = true;
 
 		// Make sure it doesn't get in both!
-		RemFromInventory(_activeInv == INV_1 ? INV_2 : INV_1, icon);
+		remFromInventory(_activeInv == INV_1 ? INV_2 : INV_1, icon);
 	} else {
 		bOpen = false;
 
 		if ((TinselVersion >= 2) && invno == INV_DEFAULT) {
-			auto invObj = GetInvObject(icon);
+			auto invObj = getInvObject(icon);
 			if (invObj->hasAttribute(InvObjAttr::DEFINV2))
 				invno = INV_2;
 			else if (invObj->hasAttribute(InvObjAttr::DEFINV1))
@@ -1601,9 +1601,9 @@ void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 	}
 
 	if (invno == INV_1)
-		RemFromInventory(INV_2, icon);
+		remFromInventory(INV_2, icon);
 	else if (invno == INV_2)
-		RemFromInventory(INV_1, icon);
+		remFromInventory(INV_1, icon);
 
 	// See if it's already there
 	for (i = 0; i < _invD[invno].NoofItems; i++) {
@@ -1620,7 +1620,7 @@ void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 
 					// Count how many current contents have end attribute
 					for (i = 0, nei = 0; i < _invD[INV_CONV].NoofItems; i++) {
-						auto invObj = GetInvObject(_invD[INV_CONV].contents[i]);
+						auto invObj = getInvObject(_invD[INV_CONV].contents[i]);
 						if (invObj->hasAttribute(InvObjAttr::CONVENDITEM))
 							nei++;
 					}
@@ -1665,14 +1665,14 @@ void Dialogs::AddToInventory(int invno, int icon, bool hold) {
 
 	// Hold it if requested
 	if (hold)
-		HoldItem(icon);
+		holdItem(icon);
 }
 
 /**
  * Take the item from the inventory list (contents[]).
  * Return FALSE if item wasn't present, true if it was.
  */
-bool Dialogs::RemFromInventory(int invno, int icon) {
+bool Dialogs::remFromInventory(int invno, int icon) {
 	int i;
 
 	assert(invno == INV_1 || invno == INV_2 || invno == INV_CONV); // Trying to delete from illegal inventory
@@ -1704,7 +1704,7 @@ bool Dialogs::RemFromInventory(int invno, int icon) {
 /**
  * If the item is not already held, hold it.
  */
-void Dialogs::HoldItem(int item, bool bKeepFilm) {
+void Dialogs::holdItem(int item, bool bKeepFilm) {
 	if (_heldItem != item) {
 		if ((TinselVersion >= 2) && (_heldItem != INV_NOICON)) {
 			// No longer holding previous item
@@ -1712,17 +1712,17 @@ void Dialogs::HoldItem(int item, bool bKeepFilm) {
 
 			// If old held object is not in an inventory, and
 			// has a default, stick it in its default inventory.
-			if (!IsInInventory(_heldItem, INV_1) && !IsInInventory(_heldItem, INV_2)) {
-				auto invObj = GetInvObject(_heldItem);
+			if (!isInInventory(_heldItem, INV_1) && !isInInventory(_heldItem, INV_2)) {
+				auto invObj = getInvObject(_heldItem);
 
 				if (invObj->hasAttribute(InvObjAttr::DEFINV1))
-					AddToInventory(INV_1, _heldItem);
+					addToInventory(INV_1, _heldItem);
 				else if (invObj->hasAttribute(InvObjAttr::DEFINV2))
-					AddToInventory(INV_2, _heldItem);
+					addToInventory(INV_2, _heldItem);
 				else {
 					if ((TinselVersion < 3) || (!(invObj->hasAttribute(InvObjAttr::NOTEBOOK_CLUE)) && !(invObj->hasAttribute(InvObjAttr::V3ATTR_X400)))) {
 						// Hook for definable default inventory
-						AddToInventory(INV_1, _heldItem);
+						addToInventory(INV_1, _heldItem);
 					}
 				}
 			}
@@ -1732,20 +1732,20 @@ void Dialogs::HoldItem(int item, bool bKeepFilm) {
 				_vm->_cursor->DelAuxCursor(); // no longer aux cursor
 
 			if (item != INV_NOICON) {
-				auto invObj = GetInvObject(item);
+				auto invObj = getInvObject(item);
 				_vm->_cursor->SetAuxCursor(invObj->getIconFilm()); // and is aux. cursor
 			}
 
 			// WORKAROUND: If a held item is being removed that's not in either inventory (i.e. it was picked up
 			// but never put in them), then when removing it from being held, drop it in the luggage
-			if (_heldItem != INV_NOICON && InventoryPos(_heldItem) == INV_HELDNOTIN)
-				AddToInventory(INV_1, _heldItem);
+			if (_heldItem != INV_NOICON && inventoryPos(_heldItem) == INV_HELDNOTIN)
+				addToInventory(INV_1, _heldItem);
 		}
 
 		_heldItem = item; // Item held
 
 		if (TinselVersion >= 2) {
-			InventoryIconCursor(!bKeepFilm);
+			inventoryIconCursor(!bKeepFilm);
 
 			// Redraw contents - held item not displayed as a content.
 			_ItemsChanged = true;
@@ -1936,7 +1936,7 @@ int Dialogs::invArea(int x, int y) {
  * Returns the id of the icon displayed under the given position.
  * Also return co-ordinates of items tag display position, if requested.
  */
-int Dialogs::InvItem(int *x, int *y, bool update) {
+int Dialogs::invItem(int *x, int *y, bool update) {
 	int itop, ileft;
 	int row, col;
 	int item;
@@ -1966,10 +1966,10 @@ int Dialogs::InvItem(int *x, int *y, bool update) {
 	return INV_NOICON;
 }
 
-int Dialogs::InvItem(Common::Point &coOrds, bool update) {
+int Dialogs::invItem(Common::Point &coOrds, bool update) {
 	int x = coOrds.x;
 	int y = coOrds.y;
-	return InvItem(&x, &y, update);
+	return invItem(&x, &y, update);
 	//coOrds.x = x;
 	//coOrds.y = y;
 }
@@ -1977,7 +1977,7 @@ int Dialogs::InvItem(Common::Point &coOrds, bool update) {
 /**
  * Returns the id of the icon displayed under the given position.
  */
-int Dialogs::InvItemId(int x, int y) {
+int Dialogs::invItemId(int x, int y) {
 	int itop, ileft;
 	int row, col;
 	int item;
@@ -2141,7 +2141,7 @@ void Dialogs::invBoxes(bool InBody, int curX, int curY) {
 		           cd.box[cd.pointBox].boxType == TOGGLE2) {
 			pfilm = (const FILM *)_vm->_handle->LockMem(_hWinParts);
 
-			_iconArray[HL1] = AddObject(&pfilm->reels[cd.box[cd.pointBox].bi + HIGRAPH], -1);
+			_iconArray[HL1] = addObject(&pfilm->reels[cd.box[cd.pointBox].bi + HIGRAPH], -1);
 			MultiSetAniXYZ(_iconArray[HL1],
 			               _invD[_activeInv].inventoryX + cd.box[cd.pointBox].xpos,
 			               _invD[_activeInv].inventoryY + cd.box[cd.pointBox].ypos,
@@ -2154,13 +2154,13 @@ void Dialogs::invBoxes(bool InBody, int curX, int curY) {
 
 			rotateIndex = cd.box[cd.pointBox].bi;
 			if (rotateIndex == IX2_LEFT1) {
-				_iconArray[HL1] = AddObject(&pfilm->reels[IX2_LEFT2], -1);
+				_iconArray[HL1] = addObject(&pfilm->reels[IX2_LEFT2], -1);
 				MultiSetAniXYZ(_iconArray[HL1],
 				               _invD[_activeInv].inventoryX + cd.box[cd.pointBox].xpos - ROTX1,
 				               _invD[_activeInv].inventoryY + cd.box[cd.pointBox].ypos,
 				               Z_INV_ICONS + 1);
 			} else if (rotateIndex == IX2_RIGHT1) {
-				_iconArray[HL1] = AddObject(&pfilm->reels[IX2_RIGHT2], -1);
+				_iconArray[HL1] = addObject(&pfilm->reels[IX2_RIGHT2], -1);
 				MultiSetAniXYZ(_iconArray[HL1],
 				               _invD[_activeInv].inventoryX + cd.box[cd.pointBox].xpos + ROTX1,
 				               _invD[_activeInv].inventoryY + cd.box[cd.pointBox].ypos,
@@ -2180,7 +2180,7 @@ void Dialogs::invLabels(bool InBody, int aniX, int aniY) {
 	if (!InBody)
 		index = INV_NOICON;
 	else {
-		index = InvItem(&aniX, &aniY, false);
+		index = invItem(&aniX, &aniY, false);
 		if (index != INV_NOICON) {
 			if (index >= _invD[_activeInv].NoofItems)
 				index = INV_NOICON;
@@ -2195,14 +2195,14 @@ void Dialogs::invLabels(bool InBody, int aniX, int aniY) {
 		_pointedIcon = INV_NOICON;
 	} else if (index != _pointedIcon) {
 		// A new icon is pointed to - run its script with POINTED event
-		auto invObj = GetInvObject(index);
+		auto invObj = getInvObject(index);
 		if (invObj->getScript())
 			InvTinselEvent(invObj, POINTED, PLR_NOEVENT, index);
 		_pointedIcon = index;
 	}
 }
 
-void Dialogs::InvPointEvent(const InventoryObject *invObj, int index) {
+void Dialogs::invPointEvent(const InventoryObject *invObj, int index) {
 	InvTinselEvent(invObj, POINTED, PLR_NOEVENT, index);
 }
 
@@ -2279,7 +2279,7 @@ void Dialogs::adjustTop() {
  * Insert an inventory icon object onto the display list.
  */
 OBJECT *Dialogs::addInvObject(int num, const FREEL **pfreel, const FILM **pfilm) {
-	auto invObj = GetInvObject(num);
+	auto invObj = getInvObject(num);
 	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(invObj->getIconFilm());
 	const FREEL *pfr = (const FREEL *)&pFilm->reels[0];
 	const MULTI_INIT *pmi = pfr->GetMultiInit();
@@ -2298,7 +2298,7 @@ OBJECT *Dialogs::addInvObject(int num, const FREEL **pfreel, const FILM **pfilm)
 /**
  * Create display objects for the displayed icons in an inventory window.
  */
-void Dialogs::FillInInventory() {
+void Dialogs::fillInInventory() {
 	int Index; // Index into contents[]
 	int n = 0; // index into iconArray[]
 	int xpos, ypos;
@@ -2412,7 +2412,7 @@ void Dialogs::addTitle(OBJECT **title, const Common::Rect &rect) {
 /**
  * Insert a part of the inventory window frame onto the display list.
  */
-OBJECT *Dialogs::AddObject(const FREEL *pfreel, int num) {
+OBJECT *Dialogs::addObject(const FREEL *pfreel, int num) {
 	const MULTI_INIT *pmi = pfreel->GetMultiInit();
 	const FRAME *pFrame = pmi->GetFrame();
 	const IMAGE *pim;
@@ -2447,7 +2447,7 @@ OBJECT *Dialogs::AddObject(const FREEL *pfreel, int num) {
  */
 
 void Dialogs::addSlider(OBJECT **slide, const FILM *pfilm) {
-	_slideObject = *slide = AddObject(&pfilm->reels[IX_SLIDE], -1);
+	_slideObject = *slide = addObject(&pfilm->reels[IX_SLIDE], -1);
 	MultiSetAniXYZ(*slide, MultiRightmost(_rectObject) + ((TinselVersion >= 2) ? NM_SLX : -M_SXOFF + 2),
 	               _invD[_activeInv].inventoryY + _sliderYpos,
 	               Z_INV_MFRAME);
@@ -2533,7 +2533,7 @@ void Dialogs::addBox(int *pi, const int i) {
 	case ARSGBUT:
 		pFilm = (const FILM *)_vm->_handle->LockMem(_hWinParts);
 
-		_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi + NORMGRAPH], -1);
+		_iconArray[*pi] = addObject(&pFilm->reels[cd.box[i].bi + NORMGRAPH], -1);
 		MultiSetAniXYZ(_iconArray[*pi], x, y, Z_INV_BRECT + 1);
 		*pi += 1;
 
@@ -2547,7 +2547,7 @@ void Dialogs::addBox(int *pi, const int i) {
 		if (_vm->_config->_isAmericanEnglishVersion && cd.box[i].bi == FIX_UK)
 			cd.box[i].bi = FIX_USA;
 
-		_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi], -1);
+		_iconArray[*pi] = addObject(&pFilm->reels[cd.box[i].bi], -1);
 		MultiSetAniXYZ(_iconArray[*pi], x, y, Z_INV_BRECT + 2);
 		*pi += 1;
 
@@ -2557,9 +2557,9 @@ void Dialogs::addBox(int *pi, const int i) {
 		pFilm = (const FILM *)_vm->_handle->LockMem(_hWinParts);
 
 		if (*pival)
-			_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi], -1);
+			_iconArray[*pi] = addObject(&pFilm->reels[cd.box[i].bi], -1);
 		else
-			_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi + 1], -1);
+			_iconArray[*pi] = addObject(&pFilm->reels[cd.box[i].bi + 1], -1);
 		MultiSetAniXYZ(_iconArray[*pi], x, y, Z_INV_BRECT + 1);
 		*pi += 1;
 
@@ -2583,7 +2583,7 @@ void Dialogs::addBox(int *pi, const int i) {
 		pFilm = (const FILM *)_vm->_handle->LockMem(_hWinParts);
 
 		cd.box[i].bi = *pival ? IX_TICK1 : IX_CROSS1;
-		_iconArray[*pi] = AddObject(&pFilm->reels[cd.box[i].bi + NORMGRAPH], -1);
+		_iconArray[*pi] = addObject(&pFilm->reels[cd.box[i].bi + NORMGRAPH], -1);
 		MultiSetAniXYZ(_iconArray[*pi], x, y, Z_INV_BRECT + 1);
 		*pi += 1;
 
@@ -2614,10 +2614,10 @@ void Dialogs::addBox(int *pi, const int i) {
 		pFilm = (const FILM *)_vm->_handle->LockMem(_hWinParts);
 		xdisp = SLIDE_RANGE * (*pival) / cd.box[i].w;
 
-		_iconArray[*pi] = AddObject(&pFilm->reels[IX_MDGROOVE], -1);
+		_iconArray[*pi] = addObject(&pFilm->reels[IX_MDGROOVE], -1);
 		MultiSetAniXYZ(_iconArray[*pi], x, y, Z_MDGROOVE);
 		*pi += 1;
-		_iconArray[*pi] = AddObject(&pFilm->reels[IX_MDSLIDER], -1);
+		_iconArray[*pi] = addObject(&pFilm->reels[IX_MDSLIDER], -1);
 		MultiSetAniXYZ(_iconArray[*pi], x + SLIDE_MINX + xdisp, y, Z_MDSLIDER);
 		assert(_numMdSlides < MAXSLIDES);
 		_mdSlides[_numMdSlides].num = i;
@@ -2645,12 +2645,12 @@ void Dialogs::addBox(int *pi, const int i) {
 
 		// Left one
 		if (!_noLanguage) {
-			_iconArray[*pi] = AddObject(&pFilm->reels[IX2_LEFT1], -1);
+			_iconArray[*pi] = addObject(&pFilm->reels[IX2_LEFT1], -1);
 			MultiSetAniXYZ(_iconArray[*pi], x - ROTX1, y, Z_INV_BRECT + 1);
 			*pi += 1;
 
 			// Right one
-			_iconArray[*pi] = AddObject(&pFilm->reels[IX2_RIGHT1], -1);
+			_iconArray[*pi] = addObject(&pFilm->reels[IX2_RIGHT1], -1);
 			MultiSetAniXYZ(_iconArray[*pi], x + ROTX1, y, Z_INV_BRECT + 1);
 			*pi += 1;
 
@@ -2676,7 +2676,7 @@ void Dialogs::addBox(int *pi, const int i) {
 
 		// Current language's flag
 		pFilm = (const FILM *)_vm->_handle->LockMem(LanguageFlag(_displayedLanguage));
-		_iconArray[*pi] = AddObject(&pFilm->reels[0], -1);
+		_iconArray[*pi] = addObject(&pFilm->reels[0], -1);
 		MultiSetAniXYZ(_iconArray[*pi], x + FLAGX, y + FLAGY, Z_INV_BRECT + 1);
 		*pi += 1;
 		break;
@@ -2686,7 +2686,7 @@ void Dialogs::addBox(int *pi, const int i) {
 /**
  * Display some boxes.
  */
-void Dialogs::AddBoxes(bool bPosnSlide) {
+void Dialogs::addBoxes(bool bPosnSlide) {
 	int objCount = NUMHL; // Object count - allow for HL1, HL2 etc.
 
 	dumpIconArray();
@@ -2733,7 +2733,7 @@ void Dialogs::AddBoxes(bool bPosnSlide) {
  * Display the scroll bar slider.
  */
 void Dialogs::addEWSlider(OBJECT **slide, const FILM *pfilm) {
-	_slideObject = *slide = AddObject(&pfilm->reels[IX_SLIDE], -1);
+	_slideObject = *slide = addObject(&pfilm->reels[IX_SLIDE], -1);
 	MultiSetAniXYZ(*slide, _invD[_activeInv].inventoryX + 24 + 127, _sliderYpos, Z_INV_MFRAME);
 }
 
@@ -2751,31 +2751,31 @@ int Dialogs::addExtraWindow(int x, int y, OBJECT **retObj) {
 	y += (TinselVersion >= 2) ? 38 : 24;
 
 	// Draw the four corners
-	retObj[n] = AddObject(&pfilm->reels[IX_RTL], -1); // Top left
+	retObj[n] = addObject(&pfilm->reels[IX_RTL], -1); // Top left
 	MultiSetAniXYZ(retObj[n++], x, y, Z_INV_MFRAME);
-	retObj[n] = AddObject(&pfilm->reels[IX_NTR], -1); // Top right
+	retObj[n] = addObject(&pfilm->reels[IX_NTR], -1); // Top right
 	MultiSetAniXYZ(retObj[n++], x + ((TinselVersion >= 2) ? _TLwidth + 312 : 152), y, Z_INV_MFRAME);
-	retObj[n] = AddObject(&pfilm->reels[IX_BL], -1); // Bottom left
+	retObj[n] = addObject(&pfilm->reels[IX_BL], -1); // Bottom left
 	MultiSetAniXYZ(retObj[n++], x, y + ((TinselVersion >= 2) ? _TLheight + 208 : 124), Z_INV_MFRAME);
-	retObj[n] = AddObject(&pfilm->reels[IX_BR], -1); // Bottom right
+	retObj[n] = addObject(&pfilm->reels[IX_BR], -1); // Bottom right
 	MultiSetAniXYZ(retObj[n++], x + ((TinselVersion >= 2) ? _TLwidth + 312 : 152),
 	               y + ((TinselVersion >= 2) ? _TLheight + 208 : 124),
 	               Z_INV_MFRAME);
 
 	// Draw the edges
-	retObj[n] = AddObject(&pfilm->reels[IX_H156], -1); // Top
+	retObj[n] = addObject(&pfilm->reels[IX_H156], -1); // Top
 	MultiSetAniXYZ(retObj[n++], x + ((TinselVersion >= 2) ? _TLwidth : 6), y + NM_TBT, Z_INV_MFRAME);
-	retObj[n] = AddObject(&pfilm->reels[IX_H156], -1); // Bottom
+	retObj[n] = addObject(&pfilm->reels[IX_H156], -1); // Bottom
 	MultiSetAniXYZ(retObj[n++], x + ((TinselVersion >= 2) ? _TLwidth : 6),
 	               y + ((TinselVersion >= 2) ? _TLheight + 208 + _BLheight + NM_BSY : 143),
 	               Z_INV_MFRAME);
-	retObj[n] = AddObject(&pfilm->reels[IX_V104], -1); // Left
+	retObj[n] = addObject(&pfilm->reels[IX_V104], -1); // Left
 	MultiSetAniXYZ(retObj[n++], x + NM_LSX, y + ((TinselVersion >= 2) ? _TLheight : 20), Z_INV_MFRAME);
-	retObj[n] = AddObject(&pfilm->reels[IX_V104], -1); // Right 1
+	retObj[n] = addObject(&pfilm->reels[IX_V104], -1); // Right 1
 	MultiSetAniXYZ(retObj[n++], x + ((TinselVersion >= 2) ? _TLwidth + 312 + _TRwidth + NM_RSX : 179),
 	               y + ((TinselVersion >= 2) ? _TLheight : 20),
 	               Z_INV_MFRAME);
-	retObj[n] = AddObject(&pfilm->reels[IX_V104], -1); // Right 2
+	retObj[n] = addObject(&pfilm->reels[IX_V104], -1); // Right 2
 	MultiSetAniXYZ(retObj[n++], x + ((TinselVersion >= 2) ? _TLwidth + 312 + _TRwidth + NM_SBL : 188),
 	               y + ((TinselVersion >= 2) ? _TLheight : 20),
 	               Z_INV_MFRAME);
@@ -2784,7 +2784,7 @@ int Dialogs::addExtraWindow(int x, int y, OBJECT **retObj) {
 		_sliderYpos = _sliderYmin = y + 27;
 		_sliderYmax = y + 273;
 
-		retObj[n++] = _slideObject = AddObject(&pfilm->reels[IX_SLIDE], -1);
+		retObj[n++] = _slideObject = addObject(&pfilm->reels[IX_SLIDE], -1);
 		MultiSetAniXYZ(_slideObject,
 		               x + _TLwidth + 320 + _TRwidth - NM_BG_POS_X + NM_BG_SIZ_X - 2,
 		               _sliderYpos,
@@ -2828,7 +2828,7 @@ void Dialogs::constructMainInventory() {
 
 	// TODO: Slider, Scrolling
 
-	FillInInventory();
+	fillInInventory();
 }
 
 void Dialogs::positionInventory(OBJECT *pMultiObj, int xOffset, int yOffset, int zPosition) {
@@ -2875,7 +2875,7 @@ void Dialogs::constructOtherInventory(int menuId) {
 					   _sliderYpos,
 					   Z_INV_MFRAME - 1);
 	}
-	AddBoxes(true);
+	addBoxes(true);
 
 }
 
@@ -2942,44 +2942,44 @@ void Dialogs::constructInventory(InventoryType filling) {
 	}
 
 	// Draw the four corners
-	retObj[n] = AddObject(&pfilm->reels[_TL], _TL);
+	retObj[n] = addObject(&pfilm->reels[_TL], _TL);
 	MultiSetAniXYZ(retObj[n], invX, invY, zpos);
 	n++;
-	retObj[n] = AddObject(&pfilm->reels[_TR], _TR);
+	retObj[n] = addObject(&pfilm->reels[_TR], _TR);
 	MultiSetAniXYZ(retObj[n], invX + _TLwidth + eH, invY, zpos);
 	n++;
-	retObj[n] = AddObject(&pfilm->reels[_BL], _BL);
+	retObj[n] = addObject(&pfilm->reels[_BL], _BL);
 	MultiSetAniXYZ(retObj[n], invX, invY + _TLheight + eV, zpos);
 	n++;
-	retObj[n] = AddObject(&pfilm->reels[_BR], _BR);
+	retObj[n] = addObject(&pfilm->reels[_BR], _BR);
 	MultiSetAniXYZ(retObj[n], invX + _TLwidth + eH, invY + _TLheight + eV, zpos);
 	n++;
 
 	// Draw extra Top and bottom parts
 	if (_invD[_activeInv].NoofHicons > 1) {
 		// Top side
-		retObj[n] = AddObject(&pfilm->reels[hFillers[_invD[_activeInv].NoofHicons - 2]], -1);
+		retObj[n] = addObject(&pfilm->reels[hFillers[_invD[_activeInv].NoofHicons - 2]], -1);
 		MultiSetAniXYZ(retObj[n], invX + _TLwidth, invY + NM_TBT, zpos);
 		n++;
 
 		// Bottom of header box
 		if (filling == FULL) {
 			if (TinselVersion >= 2) {
-				retObj[n] = AddObject(&pfilm->reels[hFillers[_invD[_activeInv].NoofHicons - 2]], -1);
+				retObj[n] = addObject(&pfilm->reels[hFillers[_invD[_activeInv].NoofHicons - 2]], -1);
 				MultiSetAniXYZ(retObj[n], invX + _TLwidth, invY + NM_TBB, zpos);
 				n++;
 			} else {
-				retObj[n] = AddObject(&pfilm->reels[hFillers[_invD[_activeInv].NoofHicons - 2]], -1);
+				retObj[n] = addObject(&pfilm->reels[hFillers[_invD[_activeInv].NoofHicons - 2]], -1);
 				MultiSetAniXYZ(retObj[n], invX + _TLwidth, invY + M_TBB + 1, zpos);
 				n++;
 
 				// Extra bits for conversation - hopefully temporary
 				if (_activeInv == INV_CONV) {
-					retObj[n] = AddObject(&pfilm->reels[IX_H26], -1);
+					retObj[n] = addObject(&pfilm->reels[IX_H26], -1);
 					MultiSetAniXYZ(retObj[n], invX + _TLwidth - 2, invY + M_TBB + 1, zpos);
 					n++;
 
-					retObj[n] = AddObject(&pfilm->reels[IX_H52], -1);
+					retObj[n] = addObject(&pfilm->reels[IX_H52], -1);
 					MultiSetAniXYZ(retObj[n], invX + eH - 10, invY + M_TBB + 1, zpos);
 					n++;
 				}
@@ -2987,7 +2987,7 @@ void Dialogs::constructInventory(InventoryType filling) {
 		}
 
 		// Bottom side
-		retObj[n] = AddObject(&pfilm->reels[hFillers[_invD[_activeInv].NoofHicons - 2]], -1);
+		retObj[n] = addObject(&pfilm->reels[hFillers[_invD[_activeInv].NoofHicons - 2]], -1);
 		MultiSetAniXYZ(retObj[n], invX + _TLwidth, invY + _TLheight + eV + _BLheight + NM_BSY, zpos);
 		n++;
 	}
@@ -2997,12 +2997,12 @@ void Dialogs::constructInventory(InventoryType filling) {
 			offx = _TLwidth;
 
 		// Top side extra
-		retObj[n] = AddObject(&pfilm->reels[IX_H26], -1);
+		retObj[n] = addObject(&pfilm->reels[IX_H26], -1);
 		MultiSetAniXYZ(retObj[n], invX + offx, invY + NM_TBT, zpos);
 		n++;
 
 		// Bottom side extra
-		retObj[n] = AddObject(&pfilm->reels[IX_H26], -1);
+		retObj[n] = addObject(&pfilm->reels[IX_H26], -1);
 		MultiSetAniXYZ(retObj[n], invX + offx, invY + _TLheight + eV + _BLheight + NM_BSY, zpos);
 		n++;
 	}
@@ -3010,13 +3010,13 @@ void Dialogs::constructInventory(InventoryType filling) {
 	// Draw extra side parts
 	if (_invD[_activeInv].NoofVicons > 1) {
 		// Left side
-		retObj[n] = AddObject(&pfilm->reels[vFillers[_invD[_activeInv].NoofVicons - 2]], -1);
+		retObj[n] = addObject(&pfilm->reels[vFillers[_invD[_activeInv].NoofVicons - 2]], -1);
 		MultiSetAniXYZ(retObj[n], invX + NM_LSX, invY + _TLheight, zpos);
 		n++;
 
 		// Left side of scroll bar
 		if (filling == FULL && _activeInv != INV_CONV) {
-			retObj[n] = AddObject(&pfilm->reels[vFillers[_invD[_activeInv].NoofVicons - 2]], -1);
+			retObj[n] = addObject(&pfilm->reels[vFillers[_invD[_activeInv].NoofVicons - 2]], -1);
 			if (TinselVersion >= 2)
 				MultiSetAniXY(retObj[n], invX + _TLwidth + eH + _TRwidth + NM_SBL, invY + _TLheight);
 			else
@@ -3026,7 +3026,7 @@ void Dialogs::constructInventory(InventoryType filling) {
 		}
 
 		// Right side
-		retObj[n] = AddObject(&pfilm->reels[vFillers[_invD[_activeInv].NoofVicons - 2]], -1);
+		retObj[n] = addObject(&pfilm->reels[vFillers[_invD[_activeInv].NoofVicons - 2]], -1);
 		MultiSetAniXYZ(retObj[n], invX + _TLwidth + eH + _TRwidth + NM_RSX, invY + _TLheight, zpos);
 		n++;
 	}
@@ -3037,12 +3037,12 @@ void Dialogs::constructInventory(InventoryType filling) {
 			offy = minAmount;
 
 		// Left side extra
-		retObj[n] = AddObject(&pfilm->reels[IX_V26], -1);
+		retObj[n] = addObject(&pfilm->reels[IX_V26], -1);
 		MultiSetAniXYZ(retObj[n], invX + NM_LSX, invY + offy, zpos);
 		n++;
 
 		// Right side extra
-		retObj[n] = AddObject(&pfilm->reels[IX_V26], -1);
+		retObj[n] = addObject(&pfilm->reels[IX_V26], -1);
 		MultiSetAniXYZ(retObj[n], invX + _TLwidth + eH + _TRwidth + NM_RSX, invY + offy, zpos);
 		n++;
 	}
@@ -3083,7 +3083,7 @@ void Dialogs::constructInventory(InventoryType filling) {
 			addSlider(&retObj[n++], pfilm);
 		}
 
-		FillInInventory();
+		fillInInventory();
 	} else if (filling == CONF) {
 		if (TinselVersion <= 1) {
 			rect = &retObj[n++];
@@ -3097,7 +3097,7 @@ void Dialogs::constructInventory(InventoryType filling) {
 				addExtraWindow(invX, invY, &retObj[n]);
 		}
 
-		AddBoxes(true);
+		addBoxes(true);
 	}
 
 	assert(n < MAX_WCOMP); // added more parts than we can handle!
@@ -3168,9 +3168,9 @@ void Dialogs::alterCursor(int num) {
 }
 
 /**
- * InvCursor
+ * invCursor
  */
-void Dialogs::InvCursor(InvCursorFN fn, int CurX, int CurY) {
+void Dialogs::invCursor(InvCursorFN fn, int CurX, int CurY) {
 	int area; // The part of the window the cursor is over
 	bool restoreMain = false;
 
@@ -3181,7 +3181,7 @@ void Dialogs::InvCursor(InvCursorFN fn, int CurX, int CurY) {
 	switch (fn) {
 	case IC_DROP:
 		_invCursor = IC_NORMAL;
-		InvCursor(IC_AREA, CurX, CurY);
+		invCursor(IC_AREA, CurX, CurY);
 		break;
 
 	case IC_AREA:
@@ -3277,7 +3277,7 @@ void Dialogs::InvCursor(InvCursorFN fn, int CurX, int CurY) {
 /******************** Conversation specific functions *********************/
 /**************************************************************************/
 
-void Dialogs::ConvAction(int index) {
+void Dialogs::convAction(int index) {
 	assert(_activeInv == INV_CONV); // not conv. window!
 	MOVER *pMover = (TinselVersion >= 2) ? GetMover(_vm->_actor->GetLeadId()) : NULL;
 
@@ -3326,7 +3326,7 @@ void Dialogs::ConvAction(int index) {
  *
  * Note: ano may (will probably) be set when it's a polygon.
  */
-void Dialogs::SetConvDetails(CONV_PARAM fn, HPOLYGON hPoly, int ano) {
+void Dialogs::setConvDetails(CONV_PARAM fn, HPOLYGON hPoly, int ano) {
 	_thisConvFn = fn;
 	_thisConvPoly = hPoly;
 	_thisConvActor = ano;
@@ -3347,7 +3347,7 @@ void Dialogs::SetConvDetails(CONV_PARAM fn, HPOLYGON hPoly, int ano) {
 /**
  * Add an icon to the permanent conversation list.
  */
-void Dialogs::PermaConvIcon(int icon, bool bEnd) {
+void Dialogs::permaConvIcon(int icon, bool bEnd) {
 	int i;
 
 	// See if it's already there
@@ -3385,21 +3385,21 @@ void Dialogs::convPos(int fn) {
 		_invD[INV_CONV].inventoryY = 150;
 }
 
-void Dialogs::ConvPoly(HPOLYGON hPoly) {
+void Dialogs::convPoly(HPOLYGON hPoly) {
 	_thisConvPoly = hPoly;
 }
 
-int Dialogs::GetIcon() {
+int Dialogs::getIcon() {
 	return _thisIcon;
 }
 
-void Dialogs::CloseDownConv() {
+void Dialogs::closeDownConv() {
 	if (_inventoryState == ACTIVE_INV && _activeInv == INV_CONV) {
-		KillInventory();
+		killInventory();
 	}
 }
 
-void Dialogs::HideConversation(bool bHide) {
+void Dialogs::hideConversation(bool bHide) {
 	int aniX, aniY;
 	int i;
 
@@ -3551,7 +3551,7 @@ void Dialogs::HideConversation(bool bHide) {
 	}
 }
 
-bool Dialogs::ConvIsHidden() {
+bool Dialogs::convIsHidden() {
 	return _InventoryHidden;
 }
 
@@ -3562,7 +3562,7 @@ bool Dialogs::ConvIsHidden() {
 /**
  * Start up an inventory window.
  */
-void Dialogs::PopUpInventory(int invno, int menuId) {
+void Dialogs::popUpInventory(int invno, int menuId) {
 	assert(invno == INV_1 || invno == INV_2 || invno == INV_CONV || invno == INV_CONF || invno == INV_MENU); // Trying to open illegal inventory
 
 	if (_inventoryState == IDLE_INV) {
@@ -3645,7 +3645,7 @@ void Dialogs::setMenuGlobals(CONFINIT *ci) {
 /**
  * PopupConf
  */
-void Dialogs::OpenMenu(CONFTYPE menuType) {
+void Dialogs::openMenu(CONFTYPE menuType) {
 	int curX, curY;
 
 	// In the DW 1 demo, don't allow any menu to be opened
@@ -3796,35 +3796,35 @@ void Dialogs::OpenMenu(CONFTYPE menuType) {
 	if (_heldItem != INV_NOICON)
 		_vm->_cursor->DelAuxCursor(); // no longer aux cursor
 
-	PopUpInventory(INV_CONF, menuType);
+	popUpInventory(INV_CONF, menuType);
 
 	// Make initial box selections if appropriate
 	if (menuType == SAVE_MENU || menuType == LOAD_MENU || menuType == HOPPER_MENU1 || menuType == HOPPER_MENU2)
-		Select(0, false);
+		select(0, false);
 	else if (menuType == SUBTITLES_MENU) {
 		if (_vm->getFeatures() & GF_USE_3FLAGS) {
 			// VERY quick dirty bodges
 			if (_vm->_config->_language == TXT_FRENCH)
-				Select(0, false);
+				select(0, false);
 			else if (_vm->_config->_language == TXT_GERMAN)
-				Select(1, false);
+				select(1, false);
 			else
-				Select(2, false);
+				select(2, false);
 		} else if (_vm->getFeatures() & GF_USE_4FLAGS) {
-			Select(_vm->_config->_language - 1, false);
+			select(_vm->_config->_language - 1, false);
 		} else if (_vm->getFeatures() & GF_USE_5FLAGS) {
-			Select(_vm->_config->_language, false);
+			select(_vm->_config->_language, false);
 		}
 	}
 
 	_vm->_cursor->GetCursorXY(&curX, &curY, false);
-	InvCursor(IC_AREA, curX, curY);
+	invCursor(IC_AREA, curX, curY);
 }
 
 /**
  * Close down an inventory window.
  */
-void Dialogs::KillInventory() {
+void Dialogs::killInventory() {
 	if (_objArray[0] != NULL) {
 		dumpObjArray();
 		dumpDobjArray();
@@ -3846,13 +3846,13 @@ void Dialogs::KillInventory() {
 
 	if (_reOpenMenu) {
 		_reOpenMenu = false;
-		OpenMenu(MAIN_MENU);
+		openMenu(MAIN_MENU);
 
 		// Write config changes
 		_vm->_config->writeToDisk();
 
 	} else if (_activeInv == INV_CONF)
-		InventoryIconCursor(false);
+		inventoryIconCursor(false);
 
 	if (TinselVersion >= 2)
 		// Pump up the volume
@@ -3873,9 +3873,9 @@ void Dialogs::closeInventory() {
 
 	// If conversation, this is a closeing event
 	if (_activeInv == INV_CONV)
-		ConvAction(INV_CLOSEICON);
+		convAction(INV_CLOSEICON);
 
-	KillInventory();
+	killInventory();
 
 	_vm->_cursor->RestoreMainCursor();
 }
@@ -4003,7 +4003,7 @@ void Dialogs::slideCSlider(int y, SSFN fn) {
 
 		// If extraBase has changed...
 		if (fc != cd.extraBase) {
-			AddBoxes(false);
+			addBoxes(false);
 			fc -= cd.extraBase;
 			cd.selBox += fc;
 
@@ -4013,7 +4013,7 @@ void Dialogs::slideCSlider(int y, SSFN fn) {
 			else if (cd.selBox >= NUM_RGROUP_BOXES)
 				cd.selBox = NUM_RGROUP_BOXES - 1;
 
-			Select(cd.selBox, true);
+			select(cd.selBox, true);
 		}
 		break;
 
@@ -4029,7 +4029,7 @@ void Dialogs::slideCSlider(int y, SSFN fn) {
  * Gets called at the start and end of a drag on a mixing desk slider,
  * and upon x-movement during such a drag.
  */
-void Dialogs::SlideMSlider(int x, SSFN fn) {
+void Dialogs::slideMSlider(int x, SSFN fn) {
 	static int newX = 0; // FIXME: Avoid non-const global vars
 	int gotoX;
 	int index, i;
@@ -4102,9 +4102,9 @@ void Dialogs::SlideMSlider(int x, SSFN fn) {
 		break;
 
 	case S_END:          // End of a drag on the slider
-		AddBoxes(false); // Might change position slightly
+		addBoxes(false); // Might change position slightly
 		if (_activeInv == INV_CONF && cd.box == subtitlesBox)
-			Select(_vm->_config->_language, false);
+			select(_vm->_config->_language, false);
 		break;
 
 	default:
@@ -4210,7 +4210,7 @@ void Dialogs::gettingNarrower() {
 }
 
 /**
- * Called from Xmovement()/Ymovement() during re-sizing.
+ * Called from xMovement()/yMovement() during re-sizing.
  */
 void Dialogs::changeingSize() {
 	/* Make it taller or shorter if necessary. */
@@ -4231,7 +4231,7 @@ void Dialogs::changeingSize() {
 /**
  * Called from cursor module when cursor moves while inventory is up.
  */
-void Dialogs::Xmovement(int x) {
+void Dialogs::xMovement(int x) {
 	int aniX, aniY;
 	int i;
 
@@ -4263,11 +4263,11 @@ void Dialogs::Xmovement(int x) {
 
 		case ID_NONE:
 			_vm->_cursor->GetCursorXY(&aniX, &aniY, false);
-			InvCursor(IC_AREA, aniX, aniY);
+			invCursor(IC_AREA, aniX, aniY);
 			break;
 
 		case ID_MDCONT:
-			SlideMSlider(x, S_SLIDE);
+			slideMSlider(x, S_SLIDE);
 			break;
 
 		default:
@@ -4279,7 +4279,7 @@ void Dialogs::Xmovement(int x) {
 /**
  * Called from cursor module when cursor moves while inventory is up.
  */
-void Dialogs::Ymovement(int y) {
+void Dialogs::yMovement(int y) {
 	int aniX, aniY;
 	int i;
 
@@ -4319,7 +4319,7 @@ void Dialogs::Ymovement(int y) {
 
 		case ID_NONE:
 			_vm->_cursor->GetCursorXY(&aniX, &aniY, false);
-			InvCursor(IC_AREA, aniX, aniY);
+			invCursor(IC_AREA, aniX, aniY);
 			break;
 
 		default:
@@ -4350,7 +4350,7 @@ void Dialogs::invDragStart() {
 		} else if (whichbox > 0 && (whichbox & IS_MASK)) {
 			_invDragging = ID_MDCONT; // Mixing desk control
 			cd.selBox = whichbox;
-			SlideMSlider(0, S_START);
+			slideMSlider(0, S_START);
 		}
 		return;
 	}
@@ -4461,7 +4461,7 @@ void Dialogs::invDragEnd() {
 		} else if (_invDragging == ID_CSLIDE) {
 			; // No action
 		} else if (_invDragging == ID_MDCONT) {
-			SlideMSlider(0, S_END);
+			slideMSlider(0, S_END);
 		} else if (_invDragging == ID_MOVE) {
 			; // No action
 		} else {
@@ -4483,7 +4483,7 @@ void Dialogs::invDragEnd() {
 	}
 
 	// Cursor could well now be inappropriate
-	InvCursor(IC_AREA, curX, curY);
+	invCursor(IC_AREA, curX, curY);
 
 	_xChange = _yChange = 0; // Probably no need, but does no harm!
 }
@@ -4492,19 +4492,19 @@ bool Dialogs::menuDown(int lines) {
 	if (cd.box == loadBox || cd.box == saveBox) {
 		if (cd.extraBase < MAX_SAVED_FILES - NUM_RGROUP_BOXES) {
 			firstFile(cd.extraBase + lines);
-			AddBoxes(true);
+			addBoxes(true);
 			return true;
 		}
 	} else if (cd.box == hopperBox1) {
 		if (cd.extraBase < _numScenes - NUM_RGROUP_BOXES) {
 			firstScene(cd.extraBase + lines);
-			AddBoxes(true);
+			addBoxes(true);
 			return true;
 		}
 	} else if (cd.box == hopperBox2) {
 		if (cd.extraBase < _numEntries - NUM_RGROUP_BOXES) {
 			firstEntry(cd.extraBase + lines);
-			AddBoxes(true);
+			addBoxes(true);
 			return true;
 		}
 	}
@@ -4522,7 +4522,7 @@ bool Dialogs::menuUp(int lines) {
 		else
 			return false;
 
-		AddBoxes(true);
+		addBoxes(true);
 		return true;
 	}
 	return false;
@@ -4532,7 +4532,7 @@ void Dialogs::menuRollDown() {
 	if (menuDown(1)) {
 		if (cd.selBox > 0)
 			cd.selBox--;
-		Select(cd.selBox, true);
+		select(cd.selBox, true);
 	}
 }
 
@@ -4540,21 +4540,21 @@ void Dialogs::menuRollUp() {
 	if (menuUp(1)) {
 		if (cd.selBox < NUM_RGROUP_BOXES - 1)
 			cd.selBox++;
-		Select(cd.selBox, true);
+		select(cd.selBox, true);
 	}
 }
 
 void Dialogs::menuPageDown() {
 	if (menuDown(NUM_RGROUP_BOXES - 1)) {
 		cd.selBox = NUM_RGROUP_BOXES - 1;
-		Select(cd.selBox, true);
+		select(cd.selBox, true);
 	}
 }
 
 void Dialogs::menuPageUp() {
 	if (menuUp(NUM_RGROUP_BOXES - 1)) {
 		cd.selBox = 0;
-		Select(cd.selBox, true);
+		select(cd.selBox, true);
 	}
 }
 
@@ -4597,7 +4597,7 @@ void Dialogs::menuAction(int i, bool dbl) {
 		case FLIP:
 			if (dbl) {
 				*(cd.box[i].ival) ^= 1; // XOR with true
-				AddBoxes(false);
+				addBoxes(false);
 			}
 			break;
 
@@ -4616,19 +4616,19 @@ void Dialogs::menuAction(int i, bool dbl) {
 				// Already highlighted
 				switch (cd.box[i].boxFunc) {
 				case SAVEGAME:
-					KillInventory();
+					killInventory();
 					invSaveGame();
 					break;
 				case LOADGAME:
-					KillInventory();
+					killInventory();
 					invLoadGame();
 					break;
 				case HOPPER2:
-					KillInventory();
-					OpenMenu(HOPPER_MENU2);
+					killInventory();
+					openMenu(HOPPER_MENU2);
 					break;
 				case BF_CHANGESCENE:
-					KillInventory();
+					killInventory();
 					hopAction();
 					freeSceneHopper();
 					break;
@@ -4636,16 +4636,16 @@ void Dialogs::menuAction(int i, bool dbl) {
 					break;
 				}
 			} else {
-				Select(i, false);
+				select(i, false);
 			}
 			break;
 
 		case FRGROUP:
 			if (dbl) {
-				Select(i, false);
+				select(i, false);
 				languageChange();
 			} else {
-				Select(i, false);
+				select(i, false);
 			}
 			break;
 
@@ -4683,36 +4683,36 @@ void Dialogs::confActionSpecial(int i) {
 			else if (cd.box == hopperBox2)
 				firstEntry(cd.extraBase - 1);
 
-			AddBoxes(true);
+			addBoxes(true);
 			if (cd.selBox < NUM_RGROUP_BOXES - 1)
 				cd.selBox += 1;
-			Select(cd.selBox, true);
+			select(cd.selBox, true);
 		}
 		break;
 	case IB_DOWN: // Scroll down
 		if ((cd.box == loadBox) || (cd.box == saveBox)) {
 			if (cd.extraBase < MAX_SAVED_FILES - NUM_RGROUP_BOXES) {
 				firstFile(cd.extraBase + 1);
-				AddBoxes(true);
+				addBoxes(true);
 				if (cd.selBox)
 					cd.selBox -= 1;
-				Select(cd.selBox, true);
+				select(cd.selBox, true);
 			}
 		} else if (cd.box == hopperBox1) {
 			if (cd.extraBase < _numScenes - NUM_RGROUP_BOXES) {
 				firstScene(cd.extraBase + 1);
-				AddBoxes(true);
+				addBoxes(true);
 				if (cd.selBox)
 					cd.selBox -= 1;
-				Select(cd.selBox, true);
+				select(cd.selBox, true);
 			}
 		} else if (cd.box == hopperBox2) {
 			if (cd.extraBase < _numEntries - NUM_RGROUP_BOXES) {
 				firstEntry(cd.extraBase + 1);
-				AddBoxes(true);
+				addBoxes(true);
 				if (cd.selBox)
 					cd.selBox -= 1;
-				Select(cd.selBox, true);
+				select(cd.selBox, true);
 			}
 		}
 		break;
@@ -4728,7 +4728,7 @@ void Dialogs::confActionSpecial(int i) {
 }
 // SLIDE_UP and SLIDE_DOWN on d click??????
 
-void Dialogs::InvPutDown(int index) {
+void Dialogs::invPutDown(int index) {
 	int aniX, aniY;
 	// index is the drop position
 	int hiIndex; // Current position of held item (if in)
@@ -4751,8 +4751,8 @@ void Dialogs::InvPutDown(int index) {
 			_invD[_activeInv].NoofItems++;
 
 			// Don't leave it in the other inventory!
-			if (InventoryPos(_heldItem) != INV_HELDNOTIN)
-				RemFromInventory(_activeInv == INV_1 ? INV_2 : INV_1, _heldItem);
+			if (inventoryPos(_heldItem) != INV_HELDNOTIN)
+				remFromInventory(_activeInv == INV_1 ? INV_2 : INV_1, _heldItem);
 		} else {
 			// No room at the inn!
 			return;
@@ -4775,7 +4775,7 @@ void Dialogs::InvPutDown(int index) {
 	_vm->_cursor->DelAuxCursor();
 	_vm->_cursor->RestoreMainCursor();
 	_vm->_cursor->GetCursorXY(&aniX, &aniY, false);
-	InvCursor(IC_DROP, aniX, aniY);
+	invCursor(IC_DROP, aniX, aniY);
 }
 
 void Dialogs::invPickup(int index) {
@@ -4787,7 +4787,7 @@ void Dialogs::invPickup(int index) {
 	if (_heldItem == INV_NOICON && _invD[_activeInv].contents[index] &&
 	    ((TinselVersion <= 1) || _invD[_activeInv].contents[index] != _heldItem)) {
 		// Pick-up
-		auto invObj = GetInvObject(_invD[_activeInv].contents[index]);
+		auto invObj = getInvObject(_invD[_activeInv].contents[index]);
 		_thisIcon = _invD[_activeInv].contents[index];
 		if (TinselVersion >= 2)
 			InvTinselEvent(invObj, PICKUP, INV_PICKUP, index);
@@ -4796,7 +4796,7 @@ void Dialogs::invPickup(int index) {
 
 	} else if (_heldItem != INV_NOICON) {
 		// Put-down
-		auto invObj = GetInvObject(_heldItem);
+		auto invObj = getInvObject(_heldItem);
 
 		// If DROPCODE set, send event, otherwise it's a putdown
 		if (invObj->hasAttribute(InvObjAttr::IO_DROPCODE) && invObj->getScript())
@@ -4804,7 +4804,7 @@ void Dialogs::invPickup(int index) {
 
 		else if (!(invObj->hasAttribute(InvObjAttr::IO_ONLYINV1) && _activeInv != INV_1) && !(invObj->hasAttribute(InvObjAttr::IO_ONLYINV2) && _activeInv != INV_2)) {
 			if (TinselVersion >= 2)
-				InvPutDown(index);
+				invPutDown(index);
 			else
 				CoroScheduler.createProcess(PID_TCODE, InvPdProcess, &index, sizeof(index));
 		}
@@ -4820,10 +4820,10 @@ void Dialogs::invWalkTo(const Common::Point &coOrds) {
 	switch (invArea(coOrds.x, coOrds.y)) {
 	case I_NOTIN:
 		if (_activeInv == INV_CONV)
-			ConvAction(INV_CLOSEICON);
+			convAction(INV_CLOSEICON);
 		if ((cd.box == hopperBox1) || (cd.box == hopperBox2))
 			freeSceneHopper();
-		KillInventory();
+		killInventory();
 		break;
 
 	case I_SLIDE_UP:
@@ -4867,27 +4867,27 @@ void Dialogs::invWalkTo(const Common::Point &coOrds) {
 				menuAction(whichMenuBox(coOrds.x, coOrds.y, false), false);
 		} else {
 			Common::Point pt = coOrds;
-			i = InvItem(pt, false);
+			i = invItem(pt, false);
 
 			// To cater for drop in dead space between icons,
 			// look 1 pixel right, then 1 down, then 1 right and down.
 			if (i == INV_NOICON && _heldItem != INV_NOICON &&
 			    (_activeInv == INV_1 || _activeInv == INV_2)) {
 				pt.x += 1; // 1 to the right
-				i = InvItem(pt, false);
+				i = invItem(pt, false);
 				if (i == INV_NOICON) {
 					pt.x -= 1; // 1 down
 					pt.y += 1;
-					i = InvItem(pt, false);
+					i = invItem(pt, false);
 					if (i == INV_NOICON) {
 						pt.x += 1; // 1 down-right
-						i = InvItem(pt, false);
+						i = invItem(pt, false);
 					}
 				}
 			}
 
 			if (_activeInv == INV_CONV) {
-				ConvAction(i);
+				convAction(i);
 			} else
 				invPickup(i);
 		}
@@ -4912,13 +4912,13 @@ void Dialogs::invAction() {
 			if (!_InventoryHidden)
 				menuAction(whichMenuBox(aniX, aniY, false), true);
 		} else if (_activeInv == INV_CONV) {
-			index = InvItem(&aniX, &aniY, false);
-			ConvAction(index);
+			index = invItem(&aniX, &aniY, false);
+			convAction(index);
 		} else {
-			index = InvItem(&aniX, &aniY, false);
+			index = invItem(&aniX, &aniY, false);
 			if (index != INV_NOICON) {
 				if (_invD[_activeInv].contents[index] && _invD[_activeInv].contents[index] != _heldItem) {
-					invObj = GetInvObject(_invD[_activeInv].contents[index]);
+					invObj = getInvObject(_invD[_activeInv].contents[index]);
 					if (TinselVersion >= 2)
 						_thisIcon = _invD[_activeInv].contents[index];
 					if ((TinselVersion >= 2) || (invObj->getScript()))
@@ -4988,10 +4988,10 @@ void Dialogs::invLook(const Common::Point &coOrds) {
 
 	switch (invArea(pt.x, pt.y)) {
 	case I_BODY:
-		index = InvItem(pt, false);
+		index = invItem(pt, false);
 		if (index != INV_NOICON) {
 			if (_invD[_activeInv].contents[index] && _invD[_activeInv].contents[index] != _heldItem) {
-				auto invObj = GetInvObject(_invD[_activeInv].contents[index]);
+				auto invObj = getInvObject(_invD[_activeInv].contents[index]);
 				if (invObj->getScript())
 					InvTinselEvent(invObj, LOOK, INV_LOOK, index);
 			}
@@ -5000,8 +5000,8 @@ void Dialogs::invLook(const Common::Point &coOrds) {
 
 	case I_NOTIN:
 		if (_activeInv == INV_CONV)
-			ConvAction(INV_CLOSEICON);
-		KillInventory();
+			convAction(INV_CLOSEICON);
+		killInventory();
 		break;
 
 	default:
@@ -5013,7 +5013,7 @@ void Dialogs::invLook(const Common::Point &coOrds) {
 /********************* Incoming events ************************************/
 /**************************************************************************/
 
-void Dialogs::EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
+void Dialogs::eventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 	if (_InventoryHidden)
 		return;
 
@@ -5026,7 +5026,7 @@ void Dialogs::EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 
 	switch (pEvent) {
 	case PLR_PROV_WALKTO:
-		if (MenuActive()) {
+		if (menuActive()) {
 			ProcessedProvisional();
 			invWalkTo(coOrds);
 		}
@@ -5037,7 +5037,7 @@ void Dialogs::EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		break;
 
 	case INV_LOOK: // PLR_SRIGHT
-		if (MenuActive())
+		if (menuActive())
 			invWalkTo(coOrds);
 		else
 			invLook(coOrds);
@@ -5050,7 +5050,7 @@ void Dialogs::EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		break;
 
 	case PLR_DRAG1_START: // Left drag start
-		if (TinselVersion < 3 || _inventoryState == ACTIVE_INV) // InventoryActive, but not Notebook
+		if (TinselVersion < 3 || _inventoryState == ACTIVE_INV) // inventoryActive, but not Notebook
 			invDragStart();
 		break;
 
@@ -5059,7 +5059,7 @@ void Dialogs::EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		break;
 
 	case PLR_ESCAPE:
-		if (MenuActive()) {
+		if (menuActive()) {
 			if (cd.box != optionBox && cd.box != hopperBox1 && cd.box != hopperBox2)
 				_reOpenMenu = true;
 			if ((cd.box == hopperBox1) || (cd.box == hopperBox2))
@@ -5120,9 +5120,9 @@ void Dialogs::EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 			else
 				break;
 
-			AddBoxes(true);
+			addBoxes(true);
 			cd.selBox = 0;
-			Select(cd.selBox, true);
+			select(cd.selBox, true);
 		} else {
 			// Inventory window
 			_invD[_activeInv].FirstDisp = 0;
@@ -5142,9 +5142,9 @@ void Dialogs::EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 			else
 				break;
 
-			AddBoxes(true);
+			addBoxes(true);
 			cd.selBox = 0;
-			Select(cd.selBox, true);
+			select(cd.selBox, true);
 		} else {
 			// Inventory window
 			_invD[_activeInv].FirstDisp = _invD[_activeInv].NoofItems - _invD[_activeInv].NoofHicons * _invD[_activeInv].NoofVicons;
@@ -5162,7 +5162,7 @@ void Dialogs::EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds) {
 /************************* Odds and Ends **********************************/
 /**************************************************************************/
 
-const FILM *Dialogs::GetObjectFilm(int object) const {
+const FILM *Dialogs::getObjectFilm(int object) const {
 	return (const FILM*)_vm->_handle->LockMem(_invFilms[getObjectIndex(object)]);
 }
 
@@ -5170,7 +5170,7 @@ const FILM *Dialogs::GetObjectFilm(int object) const {
  * Called from Glitter function invdepict()
  * Changes (permanently) the animation film for that object.
  */
-void Dialogs::SetObjectFilm(int object, SCNHANDLE hFilm) {
+void Dialogs::setObjectFilm(int object, SCNHANDLE hFilm) {
 	_invObjects->SetObjectFilm(object, hFilm);
 
 	if (TinselVersion == 3) {
@@ -5218,7 +5218,7 @@ void Dialogs::syncInvInfo(Common::Serializer &s) {
 }
 
 // Let the debugger know all the available clues.
-Common::Array<int> Dialogs::GetAllNotebookClues() const {
+Common::Array<int> Dialogs::getAllNotebookClues() const {
 	Common::Array<int> clues;
 	for (int i = 0; i < _invObjects->numObjects(); i++) {
 		auto obj = _invObjects->GetObjectByIndex(i);
@@ -5238,7 +5238,7 @@ Common::Array<int> Dialogs::GetAllNotebookClues() const {
  * its id, animation film and Glitter script.
  */
 // Note: the SCHANDLE type here has been changed to a void*
-void Dialogs::RegisterIcons(void *cptr, int num) {
+void Dialogs::registerIcons(void *cptr, int num) {
 	int numObjects = num;
 	_invObjects = InstantiateInventoryObjects((const byte*)cptr, numObjects);
 	if (TinselVersion >= 2) {
@@ -5257,7 +5257,7 @@ void Dialogs::RegisterIcons(void *cptr, int num) {
 		for (int i = 0; i < numObjects; i++) {
 			auto pio = _invObjects->GetObjectByIndex(i);
 			if (pio->hasAttribute(InvObjAttr::PERMACONV))
-				PermaConvIcon(pio->getId(), pio->hasAttribute(InvObjAttr::CONVENDITEM));
+				permaConvIcon(pio->getId(), pio->hasAttribute(InvObjAttr::CONVENDITEM));
 
 			_invFilms[i] = pio->getIconFilm();
 		}
@@ -5431,7 +5431,7 @@ void Dialogs::idec_invMain(SCNHANDLE text, int MaxContents) {
 /**
  * Called from Glitter function 'GetInvLimit()'
  */
-int Dialogs::InvGetLimit(int invno) {
+int Dialogs::invGetLimit(int invno) {
 	assert(invno == INV_1 || invno == INV_2); // only INV_1 and INV_2 supported
 
 	return _invD[invno].MaxInvObj;
@@ -5440,7 +5440,7 @@ int Dialogs::InvGetLimit(int invno) {
 /**
  * Called from Glitter function 'SetInvLimit()'
  */
-void Dialogs::InvSetLimit(int invno, int MaxContents) {
+void Dialogs::invSetLimit(int invno, int MaxContents) {
 	assert(invno == INV_1 || invno == INV_2);       // only INV_1 and INV_2 supported
 	assert(MaxContents >= _invD[invno].NoofItems); // can't reduce maximum contents below current contents
 
@@ -5453,7 +5453,7 @@ void Dialogs::InvSetLimit(int invno, int MaxContents) {
 /**
  * Called from Glitter function 'SetInvSize()'
  */
-void Dialogs::InvSetSize(int invno, int MinWidth, int MinHeight,
+void Dialogs::invSetSize(int invno, int MinWidth, int MinHeight,
 						 int StartWidth, int StartHeight, int MaxWidth, int MaxHeight) {
 	assert(invno == INV_1 || invno == INV_2); // only INV_1 and INV_2 supported
 
@@ -5480,83 +5480,83 @@ void Dialogs::InvSetSize(int invno, int MinWidth, int MinHeight,
 
 /**************************************************************************/
 
-bool Dialogs::IsTopWindow() {
+bool Dialogs::isTopWindow() {
 	return (_inventoryState == BOGUS_INV);
 }
 
-bool Dialogs::MenuActive() {
+bool Dialogs::menuActive() {
 	return (_inventoryState == ACTIVE_INV && _activeInv == INV_CONF);
 }
 
-bool Dialogs::IsConvWindow() {
+bool Dialogs::isConvWindow() {
 	return (_inventoryState == ACTIVE_INV && _activeInv == INV_CONV);
 }
 
-void Dialogs::CallFunction(BFUNC boxFunc) {
+void Dialogs::callFunction(BFUNC boxFunc) {
 	switch (boxFunc) {
 	case SAVEGAME:
-		KillInventory();
+		killInventory();
 		invSaveGame();
 		break;
 	case LOADGAME:
-		KillInventory();
+		killInventory();
 		invLoadGame();
 		break;
 	case IQUITGAME:
 		_vm->quitGame();
 		break;
 	case CLOSEWIN:
-		KillInventory();
+		killInventory();
 		if ((cd.box == hopperBox1) || (cd.box == hopperBox2))
 			freeSceneHopper();
 		break;
 	case OPENLOAD:
-		KillInventory();
-		OpenMenu(LOAD_MENU);
+		killInventory();
+		openMenu(LOAD_MENU);
 		break;
 	case OPENSAVE:
-		KillInventory();
-		OpenMenu(SAVE_MENU);
+		killInventory();
+		openMenu(SAVE_MENU);
 		break;
 	case OPENREST:
-		KillInventory();
-		OpenMenu(RESTART_MENU);
+		killInventory();
+		openMenu(RESTART_MENU);
 		break;
 	case OPENSOUND:
-		KillInventory();
-		OpenMenu(SOUND_MENU);
+		killInventory();
+		openMenu(SOUND_MENU);
 		break;
 	case OPENCONT:
-		KillInventory();
-		OpenMenu(CONTROLS_MENU);
+		killInventory();
+		openMenu(CONTROLS_MENU);
 		break;
 #ifndef JAPAN
 	case OPENSUBT:
-		KillInventory();
-		OpenMenu(SUBTITLES_MENU);
+		killInventory();
+		openMenu(SUBTITLES_MENU);
 		break;
 #endif
 	case OPENQUIT:
-		KillInventory();
-		OpenMenu(QUIT_MENU);
+		killInventory();
+		openMenu(QUIT_MENU);
 		break;
 	case INITGAME:
-		KillInventory();
+		killInventory();
 		FnRestartGame();
 		break;
 	case CLANG:
 		if (!languageChange())
-			KillInventory();
+			killInventory();
 		break;
 	case RLANG:
-		KillInventory();
+		killInventory();
 		break;
 	case HOPPER2:
-		_vm->_dialogs->KillInventory();
-		_vm->_dialogs->OpenMenu(HOPPER_MENU2);
+		_vm->_dialogs->killInventory();
+		_vm->_dialogs->openMenu(HOPPER_MENU2);
 		break;
 	case BF_CHANGESCENE:
-		_vm->_dialogs->KillInventory();
+		_vm->_dialogs->killInventory();
 		_vm->_dialogs->hopAction();
 		_vm->_dialogs->freeSceneHopper();
 		break;
@@ -5565,29 +5565,29 @@ void Dialogs::CallFunction(BFUNC boxFunc) {
 	}
 }
 
-const FILM *Dialogs::GetWindowData() {
+const FILM *Dialogs::getWindowData() {
 	return (const FILM *)_vm->_handle->LockMem(_hWinParts);
 }
 
-void Dialogs::Redraw() {
-	if (DisplayObjectsActive()) {
-		if (_ItemsChanged && !ConfigurationIsActive() && !InventoryIsHidden()) {
-			FillInInventory();
+void Dialogs::redraw() {
+	if (displayObjectsActive()) {
+		if (_ItemsChanged && !configurationIsActive() && !inventoryIsHidden()) {
+			fillInInventory();
 
 			// Needed when clicking on scroll bar.
 			int curX, curY;
 			_vm->_cursor->GetCursorXY(&curX, &curY, false);
-			InvCursor(IC_AREA, curX, curY);
+			invCursor(IC_AREA, curX, curY);
 
 			_ItemsChanged = false;
 		}
-		if (!ConfigurationIsActive()) {
+		if (!configurationIsActive()) {
 			for (int i = 0; i < MAX_ICONS; i++) {
 				if (_iconArray[i] != NULL)
 					StepAnimScript(&_iconAnims[i]);
 			}
 		}
-		if (IsMixingDeskControl()) {
+		if (isMixingDeskControl()) {
 			// Mixing desk control
 			int sval, index, *pival;
 
@@ -5606,7 +5606,7 @@ void Dialogs::Redraw() {
 			}
 
 			if (sval != *pival) {
-				SlideMSlider(0, (cd.selBox & IS_RIGHT) ? S_TIMEUP : S_TIMEDN);
+				slideMSlider(0, (cd.selBox & IS_RIGHT) ? S_TIMEUP : S_TIMEDN);
 			}
 		}
 	}
@@ -5619,7 +5619,7 @@ void Dialogs::Redraw() {
 bool Dialogs::IsConvAndNotMove() {
 	// TODO: Ensure that the used global is correct
 	// If this is the right mapping, the variable is reversed in Noir
-	return IsConvWindow() && !_bMoveOnUnHide;
+	return isConvWindow() && !_bMoveOnUnHide;
 }
 
 /**************************************************************************/
@@ -5640,7 +5640,7 @@ static void InvPdProcess(CORO_PARAM, const void *param) {
 	// get the stuff copied to process when it was created
 	const int *pindex = (const int *)param;
 
-	_vm->_dialogs->InvPutDown(*pindex);
+	_vm->_dialogs->invPutDown(*pindex);
 
 	CORO_END_CODE;
 }
@@ -5656,12 +5656,12 @@ static void ButtonPress(CORO_PARAM, CONFBOX *box) {
 	assert(box->boxType == AAGBUT || box->boxType == ARSGBUT);
 
 	// Replace highlight image with normal image
-	pfilm = _vm->_dialogs->GetWindowData();
+	pfilm = _vm->_dialogs->getWindowData();
 	MultiDeleteObjectIfExists(FIELD_STATUS, &_vm->_dialogs->_iconArray[HL1]);
-	pfilm = _vm->_dialogs->GetWindowData();
-	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->AddObject(&pfilm->reels[box->bi + NORMGRAPH], -1);
-	MultiSetAniXYZ(_vm->_dialogs->_iconArray[HL1], _vm->_dialogs->CurrentInventoryX() + box->xpos,
-	               _vm->_dialogs->CurrentInventoryY() + box->ypos,
+	pfilm = _vm->_dialogs->getWindowData();
+	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->addObject(&pfilm->reels[box->bi + NORMGRAPH], -1);
+	MultiSetAniXYZ(_vm->_dialogs->_iconArray[HL1], _vm->_dialogs->currentInventoryX() + box->xpos,
+				   _vm->_dialogs->currentInventoryY() + box->ypos,
 	               Z_INV_ICONS + 1);
 
 	// Hold normal image for 1 frame
@@ -5670,11 +5670,11 @@ static void ButtonPress(CORO_PARAM, CONFBOX *box) {
 		return;
 
 	// Replace normal image with depresses image
-	pfilm = _vm->_dialogs->GetWindowData();
+	pfilm = _vm->_dialogs->getWindowData();
 	MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_iconArray[HL1]);
-	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->AddObject(&pfilm->reels[box->bi + DOWNGRAPH], -1);
-	MultiSetAniXYZ(_vm->_dialogs->_iconArray[HL1], _vm->_dialogs->CurrentInventoryX() + box->xpos,
-	               _vm->_dialogs->CurrentInventoryY() + box->ypos,
+	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->addObject(&pfilm->reels[box->bi + DOWNGRAPH], -1);
+	MultiSetAniXYZ(_vm->_dialogs->_iconArray[HL1], _vm->_dialogs->currentInventoryX() + box->xpos,
+				   _vm->_dialogs->currentInventoryY() + box->ypos,
 	               Z_INV_ICONS + 1);
 
 	// Hold depressed image for 2 frames
@@ -5683,11 +5683,11 @@ static void ButtonPress(CORO_PARAM, CONFBOX *box) {
 		return;
 
 	// Replace depressed image with normal image
-	pfilm = _vm->_dialogs->GetWindowData();
+	pfilm = _vm->_dialogs->getWindowData();
 	MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _vm->_dialogs->_iconArray[HL1]);
-	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->AddObject(&pfilm->reels[box->bi + NORMGRAPH], -1);
-	MultiSetAniXYZ(_vm->_dialogs->_iconArray[HL1], _vm->_dialogs->CurrentInventoryX() + box->xpos,
-	               _vm->_dialogs->CurrentInventoryY() + box->ypos,
+	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->addObject(&pfilm->reels[box->bi + NORMGRAPH], -1);
+	MultiSetAniXYZ(_vm->_dialogs->_iconArray[HL1], _vm->_dialogs->currentInventoryX() + box->xpos,
+				   _vm->_dialogs->currentInventoryY() + box->ypos,
 	               Z_INV_ICONS + 1);
 
 	CORO_SLEEP(1);
@@ -5710,15 +5710,15 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 
 	// Hold normal image for 1 frame
 	CORO_SLEEP(1);
-	if (!_vm->_dialogs->InventoryIsActive())
+	if (!_vm->_dialogs->inventoryIsActive())
 		return;
 
 	// Add depressed image
-	pfilm = _vm->_dialogs->GetWindowData();
-	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->AddObject(&pfilm->reels[box->bi + DOWNGRAPH], -1);
+	pfilm = _vm->_dialogs->getWindowData();
+	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->addObject(&pfilm->reels[box->bi + DOWNGRAPH], -1);
 	MultiSetAniXYZ(_vm->_dialogs->_iconArray[HL1],
-	               _vm->_dialogs->CurrentInventoryX() + box->xpos,
-	               _vm->_dialogs->CurrentInventoryY() + box->ypos,
+				   _vm->_dialogs->currentInventoryX() + box->xpos,
+				   _vm->_dialogs->currentInventoryY() + box->ypos,
 	               Z_INV_ICONS + 1);
 
 	// Hold depressed image for 1 frame
@@ -5729,18 +5729,18 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 	// Toggle state
 	(*box->ival) = *(box->ival) ^ 1; // XOR with true
 	box->bi = *(box->ival) ? IX_TICK1 : IX_CROSS1;
-	_vm->_dialogs->AddBoxes(false);
+	_vm->_dialogs->addBoxes(false);
 	// Keep highlight (e.g. flag)
 	if (cd.selBox != NOBOX)
-		_vm->_dialogs->Select(cd.selBox, true);
+		_vm->_dialogs->select(cd.selBox, true);
 
 	// New state, depressed image
-	pfilm = _vm->_dialogs->GetWindowData();
+	pfilm = _vm->_dialogs->getWindowData();
 	MultiDeleteObjectIfExists(FIELD_STATUS, &_vm->_dialogs->_iconArray[HL1]);
-	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->AddObject(&pfilm->reels[box->bi + DOWNGRAPH], -1);
+	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->addObject(&pfilm->reels[box->bi + DOWNGRAPH], -1);
 	MultiSetAniXYZ(_vm->_dialogs->_iconArray[HL1],
-	               _vm->_dialogs->CurrentInventoryX() + box->xpos,
-	               _vm->_dialogs->CurrentInventoryY() + box->ypos,
+				   _vm->_dialogs->currentInventoryX() + box->xpos,
+				   _vm->_dialogs->currentInventoryY() + box->ypos,
 	               Z_INV_ICONS + 1);
 
 	// Hold new depressed image for 1 frame
@@ -5753,16 +5753,16 @@ static void ButtonToggle(CORO_PARAM, CONFBOX *box) {
 
 	// Hold normal image for 1 frame
 	CORO_SLEEP(1);
-	if (!_vm->_dialogs->InventoryIsActive())
+	if (!_vm->_dialogs->inventoryIsActive())
 		return;
 
 	// New state, highlighted
-	pfilm = _vm->_dialogs->GetWindowData();
+	pfilm = _vm->_dialogs->getWindowData();
 	MultiDeleteObjectIfExists(FIELD_STATUS, &_vm->_dialogs->_iconArray[HL1]);
-	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->AddObject(&pfilm->reels[box->bi + HIGRAPH], -1);
+	_vm->_dialogs->_iconArray[HL1] = _vm->_dialogs->addObject(&pfilm->reels[box->bi + HIGRAPH], -1);
 	MultiSetAniXYZ(_vm->_dialogs->_iconArray[HL1],
-	               _vm->_dialogs->CurrentInventoryX() + box->xpos,
-	               _vm->_dialogs->CurrentInventoryY() + box->ypos,
+				   _vm->_dialogs->currentInventoryX() + box->xpos,
+				   _vm->_dialogs->currentInventoryY() + box->ypos,
 	               Z_INV_ICONS + 1);
 
 	CORO_END_CODE;
@@ -5784,14 +5784,14 @@ extern void InventoryProcess(CORO_PARAM, const void *) {
 	while (1) {
 		CORO_SLEEP(1); // allow scheduling
 
-		_vm->_dialogs->Redraw();
+		_vm->_dialogs->redraw();
 
 		if (_vm->_dialogs->_buttonEffect.bButAnim) {
 			assert(_vm->_dialogs->_buttonEffect.box);
 			if (_vm->_dialogs->_buttonEffect.press) {
 				if (_vm->_dialogs->_buttonEffect.box->boxType == AAGBUT || _vm->_dialogs->_buttonEffect.box->boxType == ARSGBUT)
 					CORO_INVOKE_1(ButtonPress, _vm->_dialogs->_buttonEffect.box);
-				_vm->_dialogs->CallFunction(_vm->_dialogs->_buttonEffect.box->boxFunc);
+				_vm->_dialogs->callFunction(_vm->_dialogs->_buttonEffect.box->boxFunc);
 			} else
 				CORO_INVOKE_1(ButtonToggle, _vm->_dialogs->_buttonEffect.box);
 
@@ -5840,7 +5840,7 @@ static void ObjectProcess(CORO_PARAM, const void *param) {
 			CORO_SLEEP(1);
 			int x, y;
 			_vm->_cursor->GetCursorXY(&x, &y, false);
-			if (_vm->_dialogs->InvItemId(x, y) != to->pinvo->getId())
+			if (_vm->_dialogs->invItemId(x, y) != to->pinvo->getId())
 				break;
 
 			// Fix the 'repeated pressing bug'
@@ -5861,7 +5861,7 @@ static void ObjectProcess(CORO_PARAM, const void *param) {
 static void InvTinselEvent(const InventoryObject *pinvo, TINSEL_EVENT event, PLR_EVENT be, int index) {
 	OP_INIT to = {pinvo, event, be, 0};
 
-	if (_vm->_dialogs->InventoryIsHidden() || ((TinselVersion >= 2) && !pinvo->getScript()))
+	if (_vm->_dialogs->inventoryIsHidden() || ((TinselVersion >= 2) && !pinvo->getScript()))
 		return;
 
 	_vm->_dialogs->_glitterIndex = index;
@@ -5880,7 +5880,7 @@ extern void ObjectEvent(CORO_PARAM, int objId, TINSEL_EVENT event, bool bWait, i
 
 	if (result)
 		*result = false;
-	_ctx->pInvo = _vm->_dialogs->GetInvObject(objId);
+	_ctx->pInvo = _vm->_dialogs->getInvObject(objId);
 	if (!_ctx->pInvo->getScript())
 		return;
 

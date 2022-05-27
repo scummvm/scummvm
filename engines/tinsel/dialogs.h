@@ -269,23 +269,23 @@ public:
 	Dialogs();
 	virtual ~Dialogs();
 
-	void PopUpInventory(int invno, int menuId = -1);
-	void OpenMenu(CONFTYPE type);
+	void popUpInventory(int invno, int menuId = -1);
+	void openMenu(CONFTYPE menuType);
 
-	void Xmovement(int x);
-	void Ymovement(int y);
+	void xMovement(int x);
+	void yMovement(int y);
 
-	void EventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds);
+	void eventToInventory(PLR_EVENT pEvent, const Common::Point &coOrds);
 
-	int WhichItemHeld();
+	int whichItemHeld();
 
-	void HoldItem(int item, bool bKeepFilm = false);
-	void DropItem(int item);
-	void ClearInventory(int invno);
-	void AddToInventory(int invno, int icon, bool hold = false);
-	bool RemFromInventory(int invno, int icon);
+	void holdItem(int item, bool bKeepFilm = false);
+	void dropItem(int item);
+	void clearInventory(int invno);
+	void addToInventory(int invno, int icon, bool hold = false);
+	bool remFromInventory(int invno, int icon);
 
-	void RegisterIcons(void *cptr, int num);
+	void registerIcons(void *cptr, int num);
 
 	void idec_convw(SCNHANDLE text, int MaxContents, int MinWidth, int MinHeight,
 	                int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
@@ -295,78 +295,78 @@ public:
 	               int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
 
 	// Noir
-	Common::Array<int> GetAllNotebookClues() const;
+	Common::Array<int> getAllNotebookClues() const;
 	void idec_invMain(SCNHANDLE text, int MaxContents);
 
-	bool InventoryActive();
-	bool InventoryOrNotebookActive();
+	bool inventoryActive();
+	bool inventoryOrNotebookActive();
 
-	void PermaConvIcon(int icon, bool bEnd = false);
+	void permaConvIcon(int icon, bool bEnd = false);
 
 	void convPos(int bpos);
-	void ConvPoly(HPOLYGON hp);
-	int GetIcon();
-	void CloseDownConv();
-	void HideConversation(bool hide);
-	bool ConvIsHidden();
+	void convPoly(HPOLYGON hPoly);
+	int getIcon();
+	void closeDownConv();
+	void hideConversation(bool hide);
+	bool convIsHidden();
 
-	void ConvAction(int index);
-	void SetConvDetails(CONV_PARAM fn, HPOLYGON hPoly, int ano);
-	void InventoryIconCursor(bool bNewItem);
+	void convAction(int index);
+	void setConvDetails(CONV_PARAM fn, HPOLYGON hPoly, int ano);
+	void inventoryIconCursor(bool bNewItem);
 
 	void setInvWinParts(SCNHANDLE hf);
 	void setFlagFilms(SCNHANDLE hf);
 	void setConfigStrings(SCNHANDLE *tp);
 
-	int InvItem(Common::Point &coOrds, bool update);
-	int InvItem(int *x, int *y, bool update);
-	int InvItemId(int x, int y);
+	int invItem(Common::Point &coOrds, bool update);
+	int invItem(int *x, int *y, bool update);
+	int invItemId(int x, int y);
 
-	int InventoryPos(int num);
+	int inventoryPos(int num);
 
-	bool IsInInventory(int object, int invnum);
+	bool isInInventory(int object, int invnum);
 
-	void KillInventory();
+	void killInventory();
 
 	void syncInvInfo(Common::Serializer &s);
 
-	int InvGetLimit(int invno);
-	void InvSetLimit(int invno, int n);
-	void InvSetSize(int invno, int MinWidth, int MinHeight,
+	int invGetLimit(int invno);
+	void invSetLimit(int invno, int MaxContents);
+	void invSetSize(int invno, int MinWidth, int MinHeight,
 	                int StartWidth, int StartHeight, int MaxWidth, int MaxHeight);
 
-	bool GetIsInvObject(int id);
+	bool getIsInvObject(int id);
 
-	int WhichInventoryOpen();
+	int whichInventoryOpen();
 
-	bool IsTopWindow();
-	bool MenuActive();
-	bool IsConvWindow();
+	bool isTopWindow();
+	bool menuActive();
+	bool isConvWindow();
 
-	const FILM *GetObjectFilm(int object) const;
-	void SetObjectFilm(int object, SCNHANDLE hFilm);
-	void CallFunction(BFUNC boxFunc);
+	const FILM *getObjectFilm(int object) const;
+	void setObjectFilm(int object, SCNHANDLE hFilm);
+	void callFunction(BFUNC boxFunc);
 
-	OBJECT *AddObject(const FREEL *pfreel, int num);
-	void InvPutDown(int index);
-	void SlideMSlider(int x, SSFN fn);
-	void AddBoxes(bool posnSlide);
-	void Select(int i, bool force);
-	void FillInInventory();
-	void InvCursor(InvCursorFN fn, int CurX, int CurY);
-	const InventoryObject *GetInvObject(int id);
-	const InventoryObjectT3 *GetInvObjectT3(int id);
-	void InvPointEvent(const InventoryObject *invObj, int index);
-	bool UpdateString(const Common::KeyState &kbd);
-	bool InventoryIsActive() { return _inventoryState == ACTIVE_INV; }
-	bool IsMixingDeskControl() { return _invDragging == ID_MDCONT; }
-	int CurrentInventoryX() { return _invD[_activeInv].inventoryX; }
-	int CurrentInventoryY() { return _invD[_activeInv].inventoryY; }
-	bool ConfigurationIsActive() { return _activeInv == INV_CONF; }
-	bool DisplayObjectsActive() { return _objArray[0] != NULL; }
-	bool InventoryIsHidden() { return _InventoryHidden; }
-	const FILM *GetWindowData();
-	void Redraw();
+	OBJECT *addObject(const FREEL *pfreel, int num);
+	void invPutDown(int index);
+	void slideMSlider(int x, SSFN fn);
+	void addBoxes(bool posnSlide);
+	void select(int i, bool force);
+	void fillInInventory();
+	void invCursor(InvCursorFN fn, int CurX, int CurY);
+	const InventoryObject *getInvObject(int id);
+	const InventoryObjectT3 *getInvObjectT3(int id);
+	void invPointEvent(const InventoryObject *invObj, int index);
+	bool updateString(const Common::KeyState &kbd);
+	bool inventoryIsActive() { return _inventoryState == ACTIVE_INV; }
+	bool isMixingDeskControl() { return _invDragging == ID_MDCONT; }
+	int currentInventoryX() { return _invD[_activeInv].inventoryX; }
+	int currentInventoryY() { return _invD[_activeInv].inventoryY; }
+	bool configurationIsActive() { return _activeInv == INV_CONF; }
+	bool displayObjectsActive() { return _objArray[0] != NULL; }
+	bool inventoryIsHidden() { return _InventoryHidden; }
+	const FILM *getWindowData();
+	void redraw();
 
 	// Noir
 	bool IsConvAndNotMove();
@@ -525,8 +525,8 @@ private:
 	HPOLYGON _thisConvPoly;         // Conversation code is in a polygon code block
 	int _thisConvActor;                 // ...or an actor's code block.
 	int _pointedIcon;      // used by invLabels - icon pointed to on last call
-	int _sX;                        // used by SlideMSlider() - current x-coordinate
-	int _lX;                        // used by SlideMSlider() - last x-coordinate
+	int _sX;                        // used by slideMSlider() - current x-coordinate
+	int _lX;                        // used by slideMSlider() - last x-coordinate
 
 	bool _bMoveOnUnHide; // Set before start of conversation
 	    // - causes conversation to be started in a sensible place

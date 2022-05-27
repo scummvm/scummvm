@@ -42,14 +42,14 @@ Notebook::~Notebook() {
 }
 
 void Notebook::AddHyperlink(int32 id1, int32 id2) {
-	auto *invObject = _vm->_dialogs->GetInvObjectT3(id1);
+	auto *invObject = _vm->_dialogs->getInvObjectT3(id1);
 
 	if (invObject->getTitle() != 0) {
 		error("A clue can only be hyperlinked if it only has one title!");
 		return;
 	}
 
-	invObject = _vm->_dialogs->GetInvObjectT3(id2);
+	invObject = _vm->_dialogs->getInvObjectT3(id2);
 
 	if (invObject->getTitle() != 0) {
 		error("A clue can only be hyperlinked if it only has one title!");
@@ -123,18 +123,18 @@ void Notebook::AddClue(const InventoryObjectT3 &invObject) {
 		return;
 	}
 	// Add title if missing, otherwise just get the page it's on.
-	auto titleObject = _vm->_dialogs->GetInvObjectT3(invObject.getUnknown());
+	auto titleObject = _vm->_dialogs->getInvObjectT3(invObject.getUnknown());
 	int pageIndex = AddTitle(*titleObject);
 	_pages[pageIndex].AddLine(invObject.getId());
 	if (invObject.getTitle() != 0) {
-		auto secondTitleObject = _vm->_dialogs->GetInvObjectT3(invObject.getTitle());
+		auto secondTitleObject = _vm->_dialogs->getInvObjectT3(invObject.getTitle());
 		pageIndex = AddTitle(*secondTitleObject);
 	 	_pages[pageIndex].AddLine(invObject.getId());
 	}
 }
 
 void Notebook::AddClue(int id) {
-	auto invObject = _vm->_dialogs->GetInvObjectT3(id);
+	auto invObject = _vm->_dialogs->getInvObjectT3(id);
 	if (invObject->isNotebookTitle()) {
 		AddTitle(*invObject);
 	} else {
@@ -152,7 +152,7 @@ int Notebook::GetPageWithTitle(int id) {
 }
 
 void Notebook::CrossClue(int id) {
-	auto invObject = _vm->_dialogs->GetInvObjectT3(id);
+	auto invObject = _vm->_dialogs->getInvObjectT3(id);
 	if (invObject->isNotebookTitle()) {
 		return;
 	}
@@ -224,7 +224,7 @@ void Notebook::Close() {
 	MultiDeleteObjectIfExists(FIELD_STATUS, &_object);
 	MultiDeleteObjectIfExists(FIELD_STATUS, &_pageObject);
 	_state = BOOKSTATE::CLOSED;
-	if (_vm->_dialogs->InventoryOrNotebookActive()) {
+	if (_vm->_dialogs->inventoryOrNotebookActive()) {
 		EnablePointing();
 		EnableTags();
 	}

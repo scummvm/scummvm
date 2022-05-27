@@ -456,7 +456,7 @@ static bool DoSync(Common::Serializer &s, int numInterp) {
 		s.syncAsSint16LE(g_restoreCD);
 
 		if (s.isLoading())
-			_vm->_dialogs->HoldItem(INV_NOICON);
+			_vm->_dialogs->holdItem(INV_NOICON);
 	}
 
 
@@ -466,17 +466,17 @@ static bool DoSync(Common::Serializer &s, int numInterp) {
 
 	// Held object
 	if (s.isSaving())
-		sg = _vm->_dialogs->WhichItemHeld();
+		sg = _vm->_dialogs->whichItemHeld();
 	s.syncAsSint32LE(sg);
 	if (s.isLoading()) {
-		if (sg != -1 && !_vm->_dialogs->GetIsInvObject(sg))
+		if (sg != -1 && !_vm->_dialogs->getIsInvObject(sg))
 			// Not a valid inventory object, so return false
 			return false;
 
 		if (TinselVersion >= 2)
 			g_thingHeld = sg;
 		else
-			_vm->_dialogs->HoldItem(sg);
+			_vm->_dialogs->holdItem(sg);
 	}
 
 	syncTimerInfo(s);		// Timer data
