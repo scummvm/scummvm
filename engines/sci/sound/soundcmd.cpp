@@ -35,6 +35,11 @@
 
 namespace Sci {
 
+enum SoundFlags {
+	kSoundFlagFixedPriority = 2,
+	kSoundFlagPreload = 4
+};
+
 SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion) :
 	_resMan(resMan), _segMan(segMan), _kernel(kernel), _audio(audio), _soundVersion(soundVersion) {
 
@@ -251,6 +256,16 @@ void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restorin
 	// SSCI calls kDoAudio(Play) which did this. See kDoAudio(13).
 	if (_audio != nullptr && musicSlot->isSample) {
 		_audio->incrementPlayCounter();
+	}
+
+	if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
+		// When playing a sample without the preload flag, set the
+		// handle to -1 instead of the object. LSL6HIRES depends on
+		// this to play certain death messages. Fixes bug #13500
+		uint16 flags = readSelectorValue(_segMan, obj, SELECTOR(flags));
+		if (!(flags & kSoundFlagPreload)) {
+			writeSelectorValue(_segMan, obj, SELECTOR(handle), -1);
+		}
 	}
 
 	// Reset any left-over signals
@@ -805,12 +820,12 @@ reg_t SoundCommandParser::kDoSoundSetPriority(EngineState *s, int argc, reg_t *a
 
 		// NB: It seems SSCI doesn't actually reset the priority here.
 
-		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) & 0xFD);
+		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) & ~kSoundFlagFixedPriority);
 	} else {
 		// Scripted priority
 		musicSlot->overridePriority = true;
 
-		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) | 2);
+		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) | kSoundFlagFixedPriority);
 
 		_music->soundSetPriority(musicSlot, value);
 	}
