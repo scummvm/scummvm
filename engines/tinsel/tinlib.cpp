@@ -2786,7 +2786,7 @@ static void SetPalette(SCNHANDLE hPal, bool escOn, int myEscape) {
  * Set system reel
  */
 static void SetSystemReel(int index, SCNHANDLE reel) {
-	_vm->_systemReel->Set(index, reel);
+	_vm->_systemReel->set(index, reel);
 }
 
 /**
@@ -5398,7 +5398,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case ADDNOTEBOOK:
 		// Noir Only
-		_vm->_notebook->AddClue(pp[0]);
+		_vm->_notebook->addClue(pp[0]);
 		return -1;
 
 	case ADDOPENINV:
@@ -5425,7 +5425,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	case BOOKADDHYPERLINK:
 		// Noir
 		pp -= 1; // 2 parameters
-		_vm->_notebook->AddHyperlink(pp[0], pp[1]);
+		_vm->_notebook->addHyperlink(pp[0], pp[1]);
 		return -2;
 
 	case BLOCKING:
@@ -5575,7 +5575,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case CROSSCLUE:
 		// Noir only
-		_vm->_notebook->CrossClue(pp[0]);
+		_vm->_notebook->crossClue(pp[0]);
 		return -1;
 
 	case CURSOR:
@@ -6067,7 +6067,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 
 	case OPENNOTEBOOK:
 		// Noir only
-		_vm->_notebook->Show(0);
+		_vm->_notebook->show(0);
 		return 0;
 
 	case PAUSE:

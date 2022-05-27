@@ -32,7 +32,7 @@
 
 namespace Tinsel {
 
-void NotebookLine::Clear() {
+void NotebookLine::clear() {
 	MultiDeleteObjectIfExists(FIELD_STATUS, &_obj);
 }
 
@@ -66,7 +66,7 @@ int FindReelIndexForEntry(const FILM *pFilm, int pageLine) {
 	return -1;
 }
 
-void NotebookLine::FillIn(int pageLine) {
+void NotebookLine::fillIn(int pageLine) {
 	const FILM *pFilm = _vm->_dialogs->getObjectFilm(_id);
 	if (!pFilm)
 		return;
@@ -89,12 +89,12 @@ void NotebookLine::FillIn(int pageLine) {
 	}
 }
 
-void NotebookLine::CrossOut() {
+void NotebookLine::crossOut() {
 	_crossedOut = true;
 }
 
-void NotebookPage::HandlePointAtLine(int line) {
-	auto objId = GetClueForLine(line);
+void NotebookPage::handlePointAtLine(int line) {
+	auto objId = getClueForLine(line);
 	if (objId != 0 && objId != _pointedClue) {
 		auto obj = _vm->_dialogs->getInvObject(objId);
 		_vm->_dialogs->invPointEvent(obj, -1);
@@ -102,7 +102,7 @@ void NotebookPage::HandlePointAtLine(int line) {
 	}
 }
 
-int NotebookPage::IndexOfClue(int id) const {
+int NotebookPage::indexOfClue(int id) const {
 	for (int i = 0; i < _numLines; i++) {
 		if (_lines[i]._id == id) {
 			return i;
@@ -111,48 +111,48 @@ int NotebookPage::IndexOfClue(int id) const {
 	return -1;
 }
 
-bool NotebookPage::ContainsClue(int id) {
-	return IndexOfClue(id) != -1;
+bool NotebookPage::containsClue(int id) {
+	return indexOfClue(id) != -1;
 }
 
-void NotebookPage::CrossClue(int id) {
-	int index = IndexOfClue(id);
+void NotebookPage::crossClue(int id) {
+	int index = indexOfClue(id);
 	assert(index != -1);
-	_lines[index].CrossOut();
+	_lines[index].crossOut();
 }
 
-void NotebookPage::AddLine(int id) {
-	if (ContainsClue(id)) {
+void NotebookPage::addLine(int id) {
+	if (containsClue(id)) {
 		return;
 	}
 	assert(_numLines < MAX_ENTRIES_PER_PAGE);
 	_lines[_numLines++]._id = id;
 }
 
-void NotebookPage::SetTitle(int id) {
+void NotebookPage::setTitle(int id) {
 	_lines[0]._id = id;
 	if (_numLines == 0) {
 		_numLines++;
 	}
 }
-int32 NotebookPage::GetTitle() const {
+int32 NotebookPage::getTitle() const {
 	return _lines[0]._id;
 }
 
-void NotebookPage::FillIn() {
+void NotebookPage::fillIn() {
 	for (int i = 0; i < _numLines; i++) {
-		_lines[i].FillIn(i);
+		_lines[i].fillIn(i);
 	}
 }
 
-void NotebookPage::Clear() {
+void NotebookPage::clear() {
 	for (int i = 0; i < _numLines; i++) {
-		_lines[i].Clear();
+		_lines[i].clear();
 	}
 	_pointedClue = -1;
 }
 
-int NotebookPage::GetClueForLine(int line) const {
+int NotebookPage::getClueForLine(int line) const {
 	if (line >= _numLines) {
 		return 0;
 	}
