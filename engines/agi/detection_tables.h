@@ -672,7 +672,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Mickey's Space Adventure
 	// Preagi game
 	GAMEpre_P("mickey", "", "1.pic", "b6ec04c91a05df374792872c4d4ce66d", 2489,
-							"FLASHLIT.OOO", "d60a7b6ff96720037f7e88863f48c5d4", 97, 0x0000, GID_MICKEY, Common::kPlatformDOS),
+							"OBJ/FLASHLIT.OOO", "d60a7b6ff96720037f7e88863f48c5d4", 97, 0x0000, GID_MICKEY, Common::kPlatformDOS),
 
 	// Mixed-Up Mother Goose (Amiga) 1.1
 	// Problematic: crashes
