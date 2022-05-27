@@ -106,14 +106,6 @@ void Sound::playSample(int32 index, int32 repeat, int32 x, int32 y, int32 z, int
 		samplesPlayingActors[channelIdx] = actorIdx;
 	}
 
-	if (_engine->isAndroid()) {
-		const Common::String &basename = Common::String::format("%s%i", _engine->_text->_currentOggBaseFile.c_str(), index);
-		Audio::SeekableAudioStream *audioStream = Audio::SeekableAudioStream::openStreamFile(basename);
-		if (audioStream != nullptr) {
-			playSample(index, repeat, audioStream, repeat, Resources::HQR_SAMPLES_FILE, Audio::Mixer::kSFXSoundType);
-			return;
-		}
-	}
 	uint8 *sampPtr = _engine->_resources->_samplesTable[index];
 	uint32 sampSize = _engine->_resources->_samplesSizeTable[index];
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(sampPtr, sampSize, DisposeAfterUse::NO);
@@ -124,6 +116,20 @@ void Sound::playSample(int32 index, int32 repeat, int32 x, int32 y, int32 z, int
 bool Sound::playVoxSample(const TextEntry *text) {
 	if (!_engine->_cfgfile.Sound || text == nullptr) {
 		return false;
+	}
+
+	int channelIdx = getFreeSampleChannelIndex();
+	if (channelIdx == -1) {
+		warning("Failed to play vox sample for index: %i - no free channel", text->index);
+		return false;
+	}
+
+	if (_engine->isAndroid()) {
+		const Common::String &basename = Common::String::format("%s%03i", _engine->_text->_currentOggBaseFile.c_str(), text->index);
+		Audio::SeekableAudioStream *audioStream = Audio::SeekableAudioStream::openStreamFile(basename);
+		if (audioStream != nullptr) {
+			return playSample(channelIdx, text->index, audioStream, 1, _engine->_text->_currentOggBaseFile.c_str(), Audio::Mixer::kSpeechSoundType);
+		}
 	}
 
 	uint8 *sampPtr = nullptr;
@@ -139,12 +145,6 @@ bool Sound::playVoxSample(const TextEntry *text) {
 			debug(4, "TTS disabled");
 		}
 		warning("Failed to get vox sample for index: %i", text->index);
-		return false;
-	}
-
-	int channelIdx = getFreeSampleChannelIndex();
-	if (channelIdx == -1) {
-		warning("Failed to play vox sample for index: %i - no free channel", text->index);
 		return false;
 	}
 

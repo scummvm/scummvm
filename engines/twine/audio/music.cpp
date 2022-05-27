@@ -266,7 +266,7 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 }
 
 void Music::stopMidiMusic() {
-	if (_engine->_gameFlags & TF_DOTEMU_ENHANCED) {
+	if (_engine->isDotEmuEnhanced()) {
 		_engine->_system->getMixer()->stopHandle(_midiHandle);
 	}
 
