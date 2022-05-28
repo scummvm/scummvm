@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-28 09:52+0000\n"
+"POT-Creation-Date: 2022-05-28 10:56+0000\n"
 "PO-Revision-Date: 2022-03-29 10:46+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4453,7 +4453,7 @@ msgstr "De vertaler wil niet dat zijn vertaling geïntegreerd wordt in ScummVM."
 #: engines/mohawk/detection_tables.h:1109 engines/myst3/detection.cpp:142
 #: engines/neverhood/detection.cpp:120 engines/saga/detection_tables.h:186
 #: engines/saga/detection_tables.h:1241 engines/saga/detection_tables.h:1300
-#: engines/sci/detection_tables.h:5068 engines/sci/detection_tables.h:5076
+#: engines/sci/detection_tables.h:5088 engines/sci/detection_tables.h:5096
 #: engines/sherlock/detection_tables.h:223 engines/stark/detection.cpp:319
 #: engines/teenagent/detection.cpp:117 engines/trecision/detection.cpp:199
 #: engines/zvision/detection_tables.h:200
@@ -6472,7 +6472,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/detection_tables.h:4397
+#: engines/sci/detection_tables.h:4417
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Onvolledig spel gevonden. U dient de data te kopiëren van alle CDs."
 
