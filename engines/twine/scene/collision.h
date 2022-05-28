@@ -68,6 +68,7 @@ public:
 	 */
 	int32 checkObjCol(int32 actorIdx);
 
+	void setCollisionPos(const IVec3 &pos);
 	/**
 	 * Check Hero collision with bricks
 	 * @param x Hero X coordinate

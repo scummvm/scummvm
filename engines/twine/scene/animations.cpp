@@ -671,6 +671,7 @@ void Animations::doAnim(int32 actorIdx) {
 		collision->_causeActorDamage = 0;
 
 		const IVec3 processActorSave = processActor;
+		collision->setCollisionPos(processActor);
 
 		if (IS_HERO(actorIdx) && !actor->_staticFlags.bComputeLowCollision) {
 			// check hero collisions with bricks

@@ -293,6 +293,10 @@ int32 Collision::checkObjCol(int32 actorIdx) {
 	return actor->_collision;
 }
 
+void Collision::setCollisionPos(const IVec3 &pos) {
+	_processCollision = pos;
+}
+
 void Collision::doCornerReajustTwinkel(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
 	IVec3 &processActor = actor->_processActor;
 	IVec3 &previousActor = actor->_previousActor;
