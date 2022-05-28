@@ -33,6 +33,7 @@
 #include "twine/scene/actor.h"
 #include "twine/scene/collision.h"
 #include "twine/scene/scene.h"
+#include "twine/shared.h"
 #include "twine/twine.h"
 
 #define CELLING_GRIDS_START_INDEX 120
@@ -41,11 +42,11 @@ namespace TwinE {
 
 Grid::Grid(TwinEEngine *engine) : _engine(engine) {
 	_blockBufferSize = SIZE_CUBE_X * SIZE_CUBE_Z * SIZE_CUBE_Y * sizeof(BlockEntry);
-	_blockBuffer = (uint8 *)malloc(_blockBufferSize);
+	_bufCube = (uint8 *)malloc(_blockBufferSize);
 }
 
 Grid::~Grid() {
-	free(_blockBuffer);
+	free(_bufCube);
 	for (int32 i = 0; i < ARRAYSIZE(_brickMaskTable); i++) {
 		free(_brickMaskTable[i]);
 	}
@@ -400,7 +401,7 @@ void Grid::createGridMap() {
 
 		for (int32 x = 0; x < SIZE_CUBE_X; x++) {
 			const int32 gridOffset = READ_LE_UINT16(_currentGrid + 2 * (x + gridIdx));
-			createGridColumn(_currentGrid + gridOffset, _currentGridSize - gridOffset, _blockBuffer + blockOffset, _blockBufferSize - blockOffset);
+			createGridColumn(_currentGrid + gridOffset, _currentGridSize - gridOffset, _bufCube + blockOffset, _blockBufferSize - blockOffset);
 			blockOffset += 2 * SIZE_CUBE_Y;
 		}
 	}
@@ -416,7 +417,7 @@ void Grid::createCellingGridMap(const uint8 *gridPtr, int32 gridPtrSize) {
 		for (int32 x = 0; x < SIZE_CUBE_X; x++) {
 			const int gridOffset = READ_LE_UINT16(tempGridPtr);
 			tempGridPtr += 2;
-			createCellingGridColumn(gridPtr + gridOffset, gridPtrSize - gridOffset, _blockBuffer + blockOffset, _blockBufferSize - blockOffset);
+			createCellingGridColumn(gridPtr + gridOffset, gridPtrSize - gridOffset, _bufCube + blockOffset, _blockBufferSize - blockOffset);
 			blockOffset += 2 * SIZE_CUBE_Y;
 		}
 		currGridOffset += SIZE_CUBE_X + SIZE_CUBE_Z;
@@ -583,7 +584,7 @@ bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 
 const uint8 *Grid::getBlockBufferGround(const IVec3 &pos, int32 &ground) {
 	const IVec3 &collision = updateCollisionCoordinates(pos.x, pos.y, pos.z);
-	const uint8 *ptr = _blockBuffer
+	const uint8 *ptr = _bufCube
 					   + collision.y * 2
 					   + collision.x * SIZE_CUBE_Y * 2
 					   + collision.z * SIZE_CUBE_X * SIZE_CUBE_Y * 2;
@@ -691,15 +692,15 @@ void Grid::redrawGrid() { // AffGrille
 	}
 }
 
-BlockEntry Grid::getBlockEntry(int32 x, int32 y, int32 z) const {
-	const uint8 *blockBufferPtr = _blockBuffer;
-	blockBufferPtr += x * SIZE_CUBE_Y * 2;
-	blockBufferPtr += y * 2;
-	blockBufferPtr += (z * SIZE_CUBE_X * 2) * SIZE_CUBE_Y;
+BlockEntry Grid::getBlockEntry(int32 xmap, int32 ymap, int32 zmap) const {
+	const uint8 *pCube = _bufCube;
+	pCube += xmap * SIZE_CUBE_Y * 2;
+	pCube += ymap * 2;
+	pCube += (zmap * SIZE_CUBE_X * 2) * SIZE_CUBE_Y;
 
 	BlockEntry entry;
-	entry.blockIdx = *blockBufferPtr;
-	entry.brickBlockIdx = *(blockBufferPtr + 1);
+	entry.blockIdx = *pCube;
+	entry.brickBlockIdx = *(pCube + 1);
 	return entry;
 }
 
@@ -737,7 +738,22 @@ const IVec3 &Grid::updateCollisionCoordinates(int32 x, int32 y, int32 z) {
 	return _engine->_collision->_collision;
 }
 
-ShapeType Grid::fullWorldColBrick(int32 x, int32 y, int32 z, int32 y2) {
+bool Grid::shouldCheckWaterCol(int32 actorIdx) const {
+	if (actorIdx == OWN_ACTOR_SCENE_INDEX) {
+		ActorStruct *ptrobj = _engine->_scene->getActor(actorIdx);
+		if (_engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack
+		 && ptrobj->_staticFlags.bComputeCollisionWithFloor
+		 && !ptrobj->_staticFlags.bIsHidden
+		 && !ptrobj->_dynamicFlags.bIsFalling
+		 && ptrobj->_carryBy == -1) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+ShapeType Grid::worldColBrickFull(int32 x, int32 y, int32 z, int32 y2, int32 actorIdx) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
 	if (collision.y <= -1) {
@@ -748,7 +764,8 @@ ShapeType Grid::fullWorldColBrick(int32 x, int32 y, int32 z, int32 y2) {
 		return ShapeType::kNone;
 	}
 
-	uint8 *pCube = _blockBuffer;
+	bool checkWater = shouldCheckWaterCol(actorIdx);
+	uint8 *pCube = _bufCube;
 	pCube += collision.x * SIZE_CUBE_Y * 2;
 	pCube += collision.y * 2;
 	pCube += collision.z * (SIZE_CUBE_X * SIZE_CUBE_Y * 2);
@@ -756,12 +773,34 @@ ShapeType Grid::fullWorldColBrick(int32 x, int32 y, int32 z, int32 y2) {
 	uint8 block = *pCube;
 
 	ShapeType brickShape;
+	const uint8 tmpBrickIdx = *(pCube + 1);
 	if (block) {
-		const uint8 tmpBrickIdx = *(pCube + 1);
 		const BlockDataEntry *blockPtr = getBlockPointer(block, tmpBrickIdx);
-		brickShape = (ShapeType)blockPtr->brickShape;
+		if (checkWater && blockPtr->brickType == WATER_BRICK) {
+			brickShape = ShapeType::kSolid; // full collision
+		} else {
+			brickShape = (ShapeType)blockPtr->brickShape;
+		}
 	} else {
-		brickShape = (ShapeType) * (pCube + 1);
+		brickShape = (ShapeType)tmpBrickIdx; // maybe transparency
+		if (checkWater) {
+			uint8 *pCode = pCube;
+			for (y = collision.y - 1; y >= 0; y--) {
+				pCode -= 2;
+				uint8 code = *pCode;
+				if (code) {
+					const BlockDataEntry *blockPtr = getBlockPointer(block, 0);
+					if (blockPtr->brickType == WATER_BRICK) {
+						// Special check mount funfrock
+						if (_engine->_scene->_currentSceneIdx != LBA1SceneId::Polar_Island_on_the_rocky_peak) {
+							// full collision
+							return brickShape = ShapeType::kSolid;
+						}
+					}
+					break; // stop parsing at first encountered brick
+				}
+			}
+		}
 	}
 
 	int32 ymax = (y2 + (SIZE_BRICK_Y - 1)) / SIZE_BRICK_Y;
@@ -777,27 +816,18 @@ ShapeType Grid::fullWorldColBrick(int32 x, int32 y, int32 z, int32 y2) {
 }
 
 uint8 Grid::worldCodeBrick(int32 x, int32 y, int32 z) {
-	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
+	uint8 code = 0xF0U;
+	if (y > -1) {
+		const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
-	if (collision.x < 0 || collision.x >= SIZE_CUBE_X) {
-		return 0; // none
+		const BlockEntry entry = getBlockEntry(collision.x, collision.y, collision.z);
+		if (entry.blockIdx) {
+			const BlockDataEntry *blockPtr = getBlockPointer(entry.blockIdx, entry.brickBlockIdx);
+			code = blockPtr->brickType;
+		}
 	}
 
-	if (collision.y <= -1) {
-		return 1; // solid
-	}
-
-	if (collision.y < 0 || collision.y >= SIZE_CUBE_Y || collision.z < 0 || collision.z >= SIZE_CUBE_Z) {
-		return 0; // none
-	}
-
-	const BlockEntry entry = getBlockEntry(collision.x, collision.y, collision.z);
-	if (entry.blockIdx) {
-		const BlockDataEntry *blockPtr = getBlockPointer(entry.blockIdx, entry.brickBlockIdx);
-		return blockPtr->brickType;
-	}
-
-	return 0xF0U;
+	return code;
 }
 
 void Grid::centerOnActor(const ActorStruct* actor) {

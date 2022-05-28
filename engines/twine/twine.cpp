@@ -712,7 +712,7 @@ void TwinEEngine::processInventoryAction() {
 
 		penguin->_angle = _scene->_sceneHero->_angle;
 
-		if (!_collision->checkObjCol(_scene->_mecaPenguinIdx)) {
+		if (!_collision->checkValidObjPos(_scene->_mecaPenguinIdx)) {
 			penguin->setLife(kActorMaxLife);
 			penguin->_genBody = BodyType::btNone;
 			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPenguinIdx);

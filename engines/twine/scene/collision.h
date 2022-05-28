@@ -67,6 +67,7 @@ public:
 	 * @param actorIx Current process actor index
 	 */
 	int32 checkObjCol(int32 actorIdx);
+	bool checkValidObjPos(int32 actorIdx);
 
 	void setCollisionPos(const IVec3 &pos);
 	/**

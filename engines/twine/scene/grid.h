@@ -173,13 +173,15 @@ private:
 
 	/** Celling grid brick block buffer */
 	int32 _blockBufferSize = 0;
-	uint8 *_blockBuffer = nullptr;
+	uint8 *_bufCube = nullptr;
 
 	const BrickEntry* getBrickEntry(int32 j, int32 i) const;
 
 	const IVec3 &updateCollisionCoordinates(int32 x, int32 y, int32 z);
 
-	BlockEntry getBlockEntry(int32 x, int32 y, int32 z) const;
+	BlockEntry getBlockEntry(int32 xmap, int32 ymap, int32 zmap) const;
+
+	bool shouldCheckWaterCol(int32 actorIdx) const;
 public:
 	Grid(TwinEEngine *engine);
 	~Grid();
@@ -287,7 +289,7 @@ public:
 
 	ShapeType worldColBrick(int32 x, int32 y, int32 z);
 
-	ShapeType fullWorldColBrick(int32 x, int32 y, int32 z, int32 y2);
+	ShapeType worldColBrickFull(int32 x, int32 y, int32 z, int32 y2, int32 actorIdx);
 
 	uint8 worldCodeBrick(int32 x, int32 y, int32 z);
 
@@ -295,8 +297,8 @@ public:
 		return worldColBrick(pos.x, pos.y, pos.z);
 	}
 
-	inline ShapeType fullWorldColBrick(const IVec3 &pos, int32 y2) {
-		return fullWorldColBrick(pos.x, pos.y, pos.z, y2);
+	inline ShapeType worldColBrickFull(const IVec3 &pos, int32 y2, int32 actorIdx) {
+		return worldColBrickFull(pos.x, pos.y, pos.z, y2, actorIdx);
 	}
 };
 
