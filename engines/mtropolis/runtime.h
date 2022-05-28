@@ -2131,6 +2131,7 @@ public:
 
 	bool isProject() const override;
 
+	Common::String getAssetNameByID(uint32 assetID) const;
 	Common::WeakPtr<Asset> getAssetByID(uint32 assetID) const;
 	size_t getSegmentForStreamIndex(size_t streamIndex) const;
 	void openSegmentStream(int segmentIndex);

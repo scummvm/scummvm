@@ -5536,6 +5536,13 @@ bool Project::isProject() const {
 	return true;
 }
 
+Common::String Project::getAssetNameByID(uint32 assetID) const {
+	if (assetID >= _assetsByID.size())
+		return Common::String();
+
+	return _assetsByID[assetID]->name;
+}
+
 Common::WeakPtr<Asset> Project::getAssetByID(uint32 assetID) const {
 	if (assetID >= _assetsByID.size())
 		return Common::WeakPtr<Asset>();

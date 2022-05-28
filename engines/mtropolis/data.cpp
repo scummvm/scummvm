@@ -688,7 +688,7 @@ DataReadErrorCode AssetCatalog::load(DataReader& reader) {
 		if (!reader.readU32(asset.flags1) || !reader.readU16(asset.nameLength) || !reader.readU16(asset.alwaysZero) || !reader.readU32(asset.unknown1) || !reader.readU32(asset.filePosition) || !reader.readU32(asset.assetType) || !reader.readU32(asset.flags2))
 			return kDataReadErrorReadFailed;
 
-		if (!reader.readNonTerminatedStr(asset.name, asset.nameLength))
+		if (!reader.readTerminatedStr(asset.name, asset.nameLength))
 			return kDataReadErrorReadFailed;
 	}
 

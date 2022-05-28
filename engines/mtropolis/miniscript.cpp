@@ -1181,7 +1181,9 @@ MiniscriptInstructionOutcome BuiltinFunc::executeStr2Num(MiniscriptThread *threa
 	}
 
 	const Common::String &str = inputDynamicValue.getString();
-	if (str.size() == 0 || !sscanf(str.c_str(), "%lf", &result)) {
+	if (str.empty())
+		result = 0.0;
+	else if (str.size() == 0 || !sscanf(str.c_str(), "%lf", &result)) {
 		thread->error("Couldn't parse number");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
@@ -1960,11 +1962,6 @@ VThreadState MiniscriptThread::resume(const ResumeTaskData &taskData) {
 
 	if (instrsArray.size() == 0)
 		return kVThreadReturn;
-
-	if (_modifier->getStaticGUID() == 0x009725aa || _modifier->getStaticGUID() == 0x00972a68)
-	{
-		int n = 0;
-	}
 
 	MiniscriptInstruction *const *instrs = &instrsArray[0];
 	size_t numInstrs = instrsArray.size();
