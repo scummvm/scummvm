@@ -1125,8 +1125,9 @@ struct MessengerSendSpec {
 	};
 
 	LinkType _linkType;
-	Common::WeakPtr<Structural> resolvedStructuralDest;
-	Common::WeakPtr<Modifier> resolvedModifierDest;
+	Common::WeakPtr<Structural> _resolvedStructuralDest;
+	Common::WeakPtr<Modifier> _resolvedModifierDest;
+	Common::WeakPtr<Modifier> _resolvedVarSource;
 
 private:
 	void resolveHierarchyStructuralDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest, bool (*compareFunc)(Structural *structural)) const;

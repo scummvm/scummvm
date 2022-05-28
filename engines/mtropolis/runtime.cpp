@@ -1802,10 +1802,10 @@ void MessengerSendSpec::linkInternalReferences(ObjectLinkingScope *outerScope) {
 			Common::SharedPtr<RuntimeObject> resolution = outerScope->resolve(destination).lock();
 			if (resolution) {
 				if (resolution->isModifier()) {
-					resolvedModifierDest = resolution.staticCast<Modifier>();
+					_resolvedModifierDest = resolution.staticCast<Modifier>();
 					_linkType = kLinkTypeModifier;
 				} else if (resolution->isStructural()) {
-					resolvedStructuralDest = resolution.staticCast<Structural>();
+					_resolvedStructuralDest = resolution.staticCast<Structural>();
 					_linkType = kLinkTypeStructural;
 				} else {
 					_linkType = kLinkTypeUnresolved;
@@ -1815,11 +1815,26 @@ void MessengerSendSpec::linkInternalReferences(ObjectLinkingScope *outerScope) {
 			}
 		} break;
 	}
+
+	if (this->with.getType() == DynamicValueTypes::kVariableReference) {
+		const VarReference &varRef = this->with.getVarReference();
+
+		Common::WeakPtr<RuntimeObject> resolution = outerScope->resolve(varRef.guid, *varRef.source, false);
+		if (!resolution.expired()) {
+			Common::SharedPtr<RuntimeObject> obj = resolution.lock();
+			if (obj->isModifier())
+				_resolvedVarSource = obj.staticCast<Modifier>();
+			else {
+				warning("Messenger variable source wasn't a variable");
+			}
+		}
+	}
 }
 
 void MessengerSendSpec::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
-	visitor->visitWeakModifierRef(resolvedModifierDest);
-	visitor->visitWeakStructuralRef(resolvedStructuralDest);
+	visitor->visitWeakModifierRef(_resolvedModifierDest);
+	visitor->visitWeakStructuralRef(_resolvedStructuralDest);
+	visitor->visitWeakModifierRef(_resolvedVarSource);
 }
 
 void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest) const {
@@ -1827,9 +1842,9 @@ void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, C
 	outModifierDest.reset();
 
 	if (_linkType == kLinkTypeModifier) {
-		outModifierDest = resolvedModifierDest;
+		outModifierDest = _resolvedModifierDest;
 	} else if (_linkType == kLinkTypeStructural) {
-		outStructuralDest = resolvedStructuralDest;
+		outStructuralDest = _resolvedStructuralDest;
 	} else if (_linkType == kLinkTypeCoded) {
 		switch (destination) {
 		case kMessageDestNone:
@@ -1922,9 +1937,17 @@ void MessengerSendSpec::resolveVariableObjectType(RuntimeObject *obj, Common::We
 }
 
 void MessengerSendSpec::sendFromMessenger(Runtime *runtime, Modifier *sender, const DynamicValue &incomingData) const {
-	if (this->with.getType() == DynamicValueTypes::kIncomingData)
+	const DynamicValueTypes::DynamicValueType withType = with.getType();
+	if (withType == DynamicValueTypes::kIncomingData)
 		sendFromMessengerWithCustomData(runtime, sender, incomingData);
-	else
+	else if (withType == DynamicValueTypes::kVariableReference) {
+		DynamicValue payload;
+		Modifier *modifier = _resolvedVarSource.lock().get();
+		if (modifier && modifier->isVariable())
+			static_cast<VariableModifier *>(modifier)->varGetValue(nullptr, payload);
+
+		sendFromMessengerWithCustomData(runtime, sender, payload);
+	} else
 		sendFromMessengerWithCustomData(runtime, sender, this->with);
 }
 
