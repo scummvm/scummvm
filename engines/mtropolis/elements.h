@@ -85,6 +85,8 @@ public:
 	void activate() override;
 	void deactivate() override;
 
+	bool canAutoPlay() const override;
+
 	void render(Window *window) override;
 	void playMedia(Runtime *runtime, Project *project) override;
 
@@ -188,6 +190,8 @@ public:
 
 	void activate() override;
 	void deactivate() override;
+
+	bool canAutoPlay() const override;
 
 	void render(Window *window) override;
 
@@ -317,6 +321,8 @@ public:
 
 	void activate() override;
 	void deactivate() override;
+
+	bool canAutoPlay() const override;
 
 	void playMedia(Runtime *runtime, Project *project) override;
 

@@ -1670,6 +1670,7 @@ private:
 	void executeCompleteTransitionToScene(const Common::SharedPtr<Structural> &scene);
 	void executeSharedScenePostSceneChangeActions();
 
+	void recursiveAutoPlayMedia(Structural *structural);
 	void recursiveDeactivateStructural(Structural *structural);
 	void recursiveActivateStructural(Structural *structural);
 
@@ -2301,13 +2302,18 @@ private:
 
 class Element : public Structural {
 public:
+	Element();
+
 	virtual bool isVisual() const = 0;
+	virtual bool canAutoPlay() const;
 	bool isElement() const override;
 
 	uint32 getStreamLocator() const;
 
 	void addMediaCue(MediaCueState *mediaCue);
 	void removeMediaCue(const MediaCueState *mediaCue);
+
+	void triggerAutoPlay(Runtime *runtime);
 
 	virtual bool resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const;
 
@@ -2316,6 +2322,8 @@ protected:
 	uint16 _sectionID;
 
 	Common::Array<MediaCueState *> _mediaCues;
+
+	bool _haveCheckedAutoPlay;
 };
 
 class VisualElementRenderProperties {

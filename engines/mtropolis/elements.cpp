@@ -635,11 +635,6 @@ void MovieElement::activate() {
 	_playRange = IntRange::create(0, _maxTimestamp);
 	_currentTimestamp = 0;
 
-	if (!_paused && _visible) {
-		StartPlayingTaskData *startPlayingTaskData = _runtime->getVThread().pushTask("MovieElement::startPlayingTask", this, &MovieElement::startPlayingTask);
-		startPlayingTaskData->runtime = _runtime;
-	}
-
 	if (_name.empty())
 		_name = project->getAssetNameByID(_assetID);
 }
@@ -655,6 +650,10 @@ void MovieElement::deactivate() {
 	}
 
 	_videoDecoder.reset();
+}
+
+bool MovieElement::canAutoPlay() const {
+	return _visible && !_paused;
 }
 
 void MovieElement::render(Window *window) {
@@ -1153,6 +1152,10 @@ void MToonElement::deactivate() {
 	}
 
 	_renderSurface.reset();
+}
+
+bool MToonElement::canAutoPlay() const {
+	return _visible && !_paused;
 }
 
 void MToonElement::render(Window *window) {
@@ -1762,6 +1765,10 @@ bool SoundElement::load(ElementLoaderContext &context, const Data::SoundElement 
 	if (!NonVisualElement::loadCommon(data.name, data.guid, data.elementFlags))
 		return false;
 
+	if (getStaticGUID() == 0x69b65) {
+		int n = 0;
+	}
+
 	_paused = ((data.soundFlags & Data::SoundElement::kPaused) != 0);
 	_loop = ((data.soundFlags & Data::SoundElement::kLoop) != 0);
 	_leftVolume = data.leftVolume;
@@ -1830,11 +1837,6 @@ void SoundElement::activate() {
 
 	_playMediaSignaller = project->notifyOnPlayMedia(this);
 
-	if (!_paused) {
-		StartPlayingTaskData *startPlayingTaskData = _runtime->getVThread().pushTask("SoundElement::startPlayingTask", this, &SoundElement::startPlayingTask);
-		startPlayingTaskData->runtime = _runtime;
-	}
-
 	if (_name.empty())
 		_name = project->getAssetNameByID(_assetID);
 }
@@ -1849,6 +1851,10 @@ void SoundElement::deactivate() {
 	_metadata.reset();
 	_cachedAudio.reset();
 	_player.reset();
+}
+
+bool SoundElement::canAutoPlay() const {
+	return !_paused;
 }
 
 void SoundElement::playMedia(Runtime *runtime, Project *project) {

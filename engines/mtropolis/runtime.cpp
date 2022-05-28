@@ -3684,6 +3684,10 @@ bool Runtime::runFrame() {
 
 		if (_sceneTransitionState == kSceneTransitionStateTransitioning && _playTime >= _sceneTransitionEndTime) {
 			_sceneTransitionState = kSceneTransitionStateNotTransitioning;
+
+			for (const SceneStackEntry &sceneStackEntry : _sceneStack)
+				recursiveAutoPlayMedia(sceneStackEntry.scene.get());
+
 			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneTransitionEnded, 0), _activeMainScene.get(), true, true);
 			continue;
 		}
@@ -4097,6 +4101,15 @@ void Runtime::recursiveDeactivateStructural(Structural *structural) {
 	}
 
 	structural->deactivate();
+}
+
+void Runtime::recursiveAutoPlayMedia(Structural *structural) {
+	if (structural->isElement())
+		static_cast<Element *>(structural)->triggerAutoPlay(this);
+
+	for (const Common::SharedPtr<Structural> &child : structural->getChildren()) {
+		recursiveAutoPlayMedia(child.get());
+	}
 }
 
 void Runtime::recursiveActivateStructural(Structural *structural) {
@@ -6200,6 +6213,13 @@ ObjectLinkingScope *Subsection::getPersistentModifierScope() {
 	return &_modifierScope;
 }
 
+Element::Element() : _streamLocator(0), _sectionID(0), _haveCheckedAutoPlay(false) {
+}
+
+bool Element::canAutoPlay() const {
+	return false;
+}
+
 bool Element::isElement() const {
 	return true;
 }
@@ -6218,6 +6238,19 @@ void Element::removeMediaCue(const MediaCueState *mediaCue) {
 			_mediaCues.remove_at(i);
 			break;
 		}
+	}
+}
+
+void Element::triggerAutoPlay(Runtime *runtime) {
+	if (_haveCheckedAutoPlay)
+		return;
+
+	_haveCheckedAutoPlay = true;
+
+	if (canAutoPlay()) {
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, false, true));
+		runtime->queueMessage(dispatch);
 	}
 }
 
