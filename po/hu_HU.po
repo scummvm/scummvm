@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-26 08:52+0000\n"
+"POT-Creation-Date: 2022-05-28 09:52+0000\n"
 "PO-Revision-Date: 2022-05-24 09:27+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -977,7 +977,7 @@ msgid "Platform not detected"
 msgstr "Platform nincs észlelve"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1384 gui/widgets/groupedlist.cpp:122
+#: gui/launcher.cpp:1384 gui/widgets/groupedlist.cpp:79
 msgid "All"
 msgstr "Mind"
 
