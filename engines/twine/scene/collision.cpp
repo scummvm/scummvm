@@ -94,7 +94,6 @@ int32 Collision::getAverageValue(int32 start, int32 end, int32 maxDelay, int32 d
 	return (((end - start) * delay) / maxDelay) + start;
 }
 
-// ReajustPos
 void Collision::reajustActorPosition(IVec3 &processActor, ShapeType brickShape) const {
 	if (brickShape == ShapeType::kNone) {
 		return;
@@ -186,10 +185,10 @@ void Collision::reajustActorPosition(IVec3 &processActor, ShapeType brickShape) 
 
 void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *actor, ActorStruct *actorTest) {
 	IVec3 &processActor = actor->_processActor;
-	const IVec3 &previousActor = actor->_previousActor;
 
 	const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(processActor, actorTest->pos());
 
+	// protect against chain reactions
 	if (actorTest->_staticFlags.bCanBePushed && !actor->_staticFlags.bCanBePushed) {
 		actorTest->_animStep.y = 0;
 
@@ -207,8 +206,8 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, Acto
 				actorTest->_animStep.z = BRICK_SIZE / 4 + BRICK_SIZE / 8;
 			}
 		} else {
-			actorTest->_animStep.x = processActor.x - actor->_collisionPos.x;
-			actorTest->_animStep.z = processActor.z - actor->_collisionPos.z;
+			actorTest->_animStep.x = processActor.x - actor->_oldPos.x;
+			actorTest->_animStep.z = processActor.z - actor->_oldPos.z;
 		}
 	}
 
@@ -227,6 +226,7 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, Acto
 			processActor.z = minsTest.z - actor->_boundingBox.maxs.z;
 		}
 	} else if (!actor->_dynamicFlags.bIsFalling) {
+		const IVec3 &previousActor = actor->_previousActor;
 		processActor = previousActor;
 	}
 }
@@ -248,7 +248,9 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 			const IVec3 &minsTest = actorTest->pos() + actorTest->_boundingBox.mins;
 			const IVec3 &maxsTest = actorTest->pos() + actorTest->_boundingBox.maxs;
 
-			if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
+			if (mins.x < maxsTest.x && maxs.x > minsTest.x
+			 && mins.y < maxsTest.y && maxs.y > minsTest.y
+			 && mins.z < maxsTest.z && maxs.z > minsTest.z) {
 				actor->_collision = a; // mark as collision with actor a
 
 				if (actorTest->_staticFlags.bIsCarrierActor) {
@@ -293,7 +295,10 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 	return actor->_collision;
 }
 
-// DoCornerReajustTwinkel
+void Collision::setCollisionPos(const IVec3 &pos) {
+	_processCollision = pos;
+}
+
 bool Collision::checkHeroCollisionWithBricks(IVec3 &pos, const IVec3 &previousPos, int32 x, int32 y, int32 z) {
 	ShapeType brickShape = _engine->_grid->getBrickShape(pos);
 
@@ -327,7 +332,6 @@ bool Collision::checkHeroCollisionWithBricks(IVec3 &pos, const IVec3 &previousPo
 	return causeActorDamage;
 }
 
-// DoCornerReajust
 bool Collision::checkActorCollisionWithBricks(IVec3 &pos, const IVec3 &previousPos, int32 x, int32 y, int32 z) {
 	ShapeType brickShape = _engine->_grid->getBrickShape(pos);
 

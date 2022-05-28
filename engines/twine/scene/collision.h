@@ -38,7 +38,7 @@ private:
 	void handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *actor, ActorStruct *actorTest);
 
 	/** Actor collision coordinate */
-	IVec3 _processCollision;
+	IVec3 _processCollision; // SaveNxw, SaveNyw, SaveNzw
 public:
 	Collision(TwinEEngine *engine);
 	/** Actor collision coordinate */
@@ -57,7 +57,7 @@ public:
 	 * Reajust actor position in scene according with brick shape bellow actor
 	 * @param brickShape Shape of brick bellow the actor
 	 */
-	void reajustActorPosition(IVec3 &processActor, ShapeType brickShape) const;
+	void reajustActorPosition(IVec3 &processActor, ShapeType brickShape) const; // ReajustPos
 
 	/**
 	 * Check collision with actors
@@ -65,13 +65,14 @@ public:
 	 */
 	int32 checkCollisionWithActors(int32 actorIdx);
 
+	void setCollisionPos(const IVec3 &pos);
 	/**
 	 * Check Hero collision with bricks
 	 * @param x Hero X coordinate
 	 * @param y Hero Y coordinate
 	 * @param z Hero Z coordinate
 	 */
-	bool checkHeroCollisionWithBricks(IVec3 &processActor, const IVec3 &previousActor, int32 x, int32 y, int32 z);
+	bool checkHeroCollisionWithBricks(IVec3 &processActor, const IVec3 &previousActor, int32 x, int32 y, int32 z); // DoCornerReajustTwinkel
 
 	/**
 	 * Check other actor collision with bricks
@@ -79,7 +80,7 @@ public:
 	 * @param y Actor Y coordinate
 	 * @param z Actor Z coordinate
 	 */
-	bool checkActorCollisionWithBricks(IVec3 &processActor, const IVec3 &previousActor, int32 x, int32 y, int32 z);
+	bool checkActorCollisionWithBricks(IVec3 &processActor, const IVec3 &previousActor, int32 x, int32 y, int32 z); // DoCornerReajust
 
 	/** Make actor to stop falling */
 	void stopFalling();

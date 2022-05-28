@@ -174,7 +174,7 @@ public:
 	ScenePositionType _heroPositionType = ScenePositionType::kNoPosition; // twinsenPositionModeInNewCube
 
 	// ACTORS
-	int32 _sceneNumActors = 0;
+	int32 _sceneNumActors = 0; // NbObjets
 	ActorStruct *_sceneHero = nullptr;
 
 	/** Meca penguin actor index */
@@ -221,7 +221,7 @@ public:
 	 * Process actor zones
 	 * @param actorIdx Process actor index
 	 */
-	void processActorZones(int32 actorIdx);
+	void processActorZones(int32 actorIdx); // CheckZoneSce
 };
 
 inline bool Scene::isGameRunning() const {

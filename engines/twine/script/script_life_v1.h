@@ -42,7 +42,7 @@ public:
 	 * Process actor life script
 	 * @param actorIdx Current processed actor index
 	 */
-	void processLifeScript(int32 actorIdx);
+	void processLifeScript(int32 actorIdx); // DoLife
 };
 
 } // namespace TwinE

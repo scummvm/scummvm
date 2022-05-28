@@ -189,7 +189,7 @@ public:
 	 */
 	void moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) const;
 
-	void processActorMovements(int32 actorIdx);
+	void processActorMovements(int32 actorIdx); // DoTrack
 };
 
 inline bool Movements::shouldTriggerZoneAction() const {

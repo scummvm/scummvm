@@ -201,7 +201,7 @@ bool Scene::loadSceneLBA2() {
 		act->_pos.x = (int16)stream.readUint16LE();
 		act->_pos.y = (int16)stream.readUint16LE();
 		act->_pos.z = (int16)stream.readUint16LE();
-		act->_collisionPos = act->pos();
+		act->_oldPos = act->pos();
 		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->_angle = (int16)stream.readUint16LE();
@@ -333,7 +333,7 @@ bool Scene::loadSceneLBA1() {
 		act->_pos.x = (int16)stream.readUint16LE();
 		act->_pos.y = (int16)stream.readUint16LE();
 		act->_pos.z = (int16)stream.readUint16LE();
-		act->_collisionPos = act->pos();
+		act->_oldPos = act->pos();
 		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
 		act->_bonusParameter.givenNothing = 0;
@@ -396,11 +396,11 @@ bool Scene::loadSceneLBA1() {
 	if (_enableEnhancements) {
 		switch (_currentSceneIdx) {
 		case LBA1SceneId::Hamalayi_Mountains_landing_place:
-			_sceneActors[21]._pos.x = _sceneActors[21]._collisionPos.x = 6656 + 256;
-			_sceneActors[21]._pos.z = _sceneActors[21]._collisionPos.z = 768;
+			_sceneActors[21]._pos.x = _sceneActors[21]._oldPos.x = 6656 + 256;
+			_sceneActors[21]._pos.z = _sceneActors[21]._oldPos.z = 768;
 			break;
 		case LBA1SceneId::Principal_Island_outside_the_fortress:
-			_sceneActors[29]._pos.z = _sceneActors[29]._collisionPos.z = 1795;
+			_sceneActors[29]._pos.z = _sceneActors[29]._oldPos.z = 1795;
 #if 0
 			_sceneZones[15].mins.x = 1104;
 			_sceneZones[15].mins.z = 8448;

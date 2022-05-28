@@ -943,7 +943,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		_movements->processActorMovements(a);
 
-		actor->_collisionPos = actor->pos();
+		actor->_oldPos = actor->pos();
 
 		if (actor->_positionInMoveScript != -1) {
 			_scriptMove->processMoveScript(a);

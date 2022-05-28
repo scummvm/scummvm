@@ -286,13 +286,14 @@ public:
 	/** Redraw grid background */
 	void redrawGrid();
 
-	ShapeType getBrickShape(int32 x, int32 y, int32 z);
+	ShapeType getBrickShape(int32 x, int32 y, int32 z); // WorldColBrick
 
+	// FullWorldColBrick
 	ShapeType getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2);
 
-	uint8 getBrickSoundType(int32 x, int32 y, int32 z);
+	uint8 getBrickSoundType(int32 x, int32 y, int32 z); // WorldCodeBrick
 
-	inline ShapeType getBrickShape(const IVec3 &pos) {
+	inline ShapeType getBrickShape(const IVec3 &pos) { // WorldColBrick
 		return getBrickShape(pos.x, pos.y, pos.z);
 	}
 

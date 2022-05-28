@@ -467,7 +467,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 	}
 
 	IVec3 &previousActor = actor->_previousActor;
-	previousActor = actor->_collisionPos;
+	previousActor = actor->_oldPos;
 
 	IVec3 &processActor = actor->_processActor;
 	if (actor->_staticFlags.bIsSpriteActor) {
@@ -632,7 +632,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 	// actor standing on another actor
 	if (actor->_carryBy != -1) {
 		const ActorStruct *standOnActor = _engine->_scene->getActor(actor->_carryBy);
-		processActor -= standOnActor->_collisionPos;
+		processActor -= standOnActor->_oldPos;
 		processActor += standOnActor->pos();
 
 		if (!collision->standingOnActor(actorIdx, actor->_carryBy)) {
@@ -670,22 +670,22 @@ void Animations::processActorAnimations(int32 actorIdx) {
 			collision->stopFalling();
 		}
 
+		collision->setCollisionPos(processActor);
+
 		if (IS_HERO(actorIdx) && !actor->_staticFlags.bComputeLowCollision) {
 			// check hero collisions with bricks
 			const BoundingBox &aabb = actor->_boundingBox;
-			IVec3 collisionPos = actor->_processActor;
-			causeActorDamage |= collision->checkHeroCollisionWithBricks(collisionPos, actor->_previousActor, aabb.mins.x, aabb.mins.y, aabb.mins.z);
-			causeActorDamage |= collision->checkHeroCollisionWithBricks(collisionPos, actor->_previousActor, aabb.maxs.x, aabb.mins.y, aabb.mins.z);
-			causeActorDamage |= collision->checkHeroCollisionWithBricks(collisionPos, actor->_previousActor, aabb.maxs.x, aabb.mins.y, aabb.maxs.z);
-			causeActorDamage |= collision->checkHeroCollisionWithBricks(collisionPos, actor->_previousActor, aabb.mins.x, aabb.mins.y, aabb.maxs.z);
+			causeActorDamage |= collision->checkHeroCollisionWithBricks(processActor, actor->_previousActor, aabb.mins.x, aabb.mins.y, aabb.mins.z);
+			causeActorDamage |= collision->checkHeroCollisionWithBricks(processActor, actor->_previousActor, aabb.maxs.x, aabb.mins.y, aabb.mins.z);
+			causeActorDamage |= collision->checkHeroCollisionWithBricks(processActor, actor->_previousActor, aabb.maxs.x, aabb.mins.y, aabb.maxs.z);
+			causeActorDamage |= collision->checkHeroCollisionWithBricks(processActor, actor->_previousActor, aabb.mins.x, aabb.mins.y, aabb.maxs.z);
 		} else {
 			// check other actors collisions with bricks
 			const BoundingBox &aabb = actor->_boundingBox;
-			IVec3 collisionPos = actor->_processActor;
-			causeActorDamage |= collision->checkActorCollisionWithBricks(collisionPos, actor->_previousActor, aabb.mins.x, aabb.mins.y, aabb.mins.z);
-			causeActorDamage |= collision->checkActorCollisionWithBricks(collisionPos, actor->_previousActor, aabb.maxs.x, aabb.mins.y, aabb.mins.z);
-			causeActorDamage |= collision->checkActorCollisionWithBricks(collisionPos, actor->_previousActor, aabb.maxs.x, aabb.mins.y, aabb.maxs.z);
-			causeActorDamage |= collision->checkActorCollisionWithBricks(collisionPos, actor->_previousActor, aabb.mins.x, aabb.mins.y, aabb.maxs.z);
+			causeActorDamage |= collision->checkActorCollisionWithBricks(processActor, actor->_previousActor, aabb.mins.x, aabb.mins.y, aabb.mins.z);
+			causeActorDamage |= collision->checkActorCollisionWithBricks(processActor, actor->_previousActor, aabb.maxs.x, aabb.mins.y, aabb.mins.z);
+			causeActorDamage |= collision->checkActorCollisionWithBricks(processActor, actor->_previousActor, aabb.maxs.x, aabb.mins.y, aabb.maxs.z);
+			causeActorDamage |= collision->checkActorCollisionWithBricks(processActor, actor->_previousActor, aabb.mins.x, aabb.mins.y, aabb.maxs.z);
 		}
 
 		// process wall hit while running
