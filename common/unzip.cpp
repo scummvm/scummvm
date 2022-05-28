@@ -71,13 +71,7 @@
 #include "common/scummsys.h"
 
 #ifdef USE_ZLIB
-
-#ifdef __SYMBIAN32__
-#include <zlib\zlib.h>
-#else
 #include <zlib.h>
-#endif
-
 #else  // !USE_ZLIB
 
 // Even when zlib is not linked in, we can still open ZIP archives and read

@@ -89,11 +89,7 @@ public:
 	}
 protected:
 	Singleton<T>()		{ }
-#ifdef __SYMBIAN32__
-	virtual ~Singleton()	{ }
-#else
 	virtual ~Singleton<T>()	{ }
-#endif
 
 	typedef T	SingletonBaseType;
 

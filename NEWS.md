@@ -21,6 +21,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      the search box" in the documentation for details.
    - Implemented Icon view in GUI (GSoC task).
    - Added support for the RetroWave OPL3 sound card.
+   - Removed Symbian port.
 
  AGI:
    - Added support for Macintosh versions of Manhunter 1-2.

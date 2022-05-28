@@ -135,10 +135,7 @@
 	// write a simple placement new on our own. It might be noteworthy we can't
 	// easily do that for systems which do have a <new>, since it might clash with
 	// the default definition otherwise!
-	// Symbian does not have <new> but the new operator
-	#if !defined(__SYMBIAN32__)
 	#include <new>
-	#endif
 #endif
 
 #ifndef STATIC_ASSERT
@@ -268,8 +265,7 @@
 		  defined(__DS__) || \
 		  defined(__3DS__) || \
 		  defined(IPHONE) || \
-		  defined(__PSP__) || \
-		  defined(__SYMBIAN32__)
+		  defined(__PSP__)
 
 		#define SCUMM_LITTLE_ENDIAN
 		#define SCUMM_NEED_ALIGNMENT
@@ -425,7 +421,7 @@
 		#define scumm_va_copy va_copy
 	#elif defined(__va_copy)
 		#define scumm_va_copy __va_copy
-	#elif defined(_MSC_VER) || defined(__SYMBIAN32__)
+	#elif defined(_MSC_VER)
 		#define scumm_va_copy(dst, src)       ((dst) = (src))
 	#else
 		#error scumm_va_copy undefined for this port

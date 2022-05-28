@@ -83,11 +83,6 @@ lib*.a
 
 /backends/platform/maemo/scummvm
 
-/backends/platform/symbian/mmp/*.mmp
-/backends/platform/symbian/*/ScummVM_*.mmp
-!/backends/platform/symbian/*/ScummVM_*_App.mmp
-/backends/platform/symbian/*/BLD.INF
-
 /dists/rpl.exe
 
 /dists/codeblocks/*.cbp

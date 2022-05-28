@@ -36,7 +36,6 @@ class SkyCompact;
 class Debugger : public GUI::Debugger {
 public:
 	Debugger(Logic *logic, Mouse *mouse, Screen *screen, SkyCompact *skyCompact);
-	~Debugger() override; // we need this here for __SYMBIAN32__ archaic gcc/UIQ
 	bool showGrid()	{	return _showGrid; }
 
 private:

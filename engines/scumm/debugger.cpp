@@ -104,10 +104,6 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	registerCmd("resetcursors",    WRAP_METHOD(ScummDebugger, Cmd_ResetCursors));
 }
 
-ScummDebugger::~ScummDebugger() {
-	 // we need this destructor, even if it is empty, for __SYMBIAN32__
-}
-
 void ScummDebugger::preEnter() {
 }
 

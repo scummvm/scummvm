@@ -103,12 +103,8 @@ void SdlMixerManager::init() {
 	if (_obtained.samples != desired.samples)
 		warning("SDL mixer output buffer size: %d differs from desired: %d", _obtained.samples, desired.samples);
 
-#ifndef __SYMBIAN32__
-	// The SymbianSdlMixerManager does stereo->mono downmixing,
-	// but otherwise we require stereo output.
 	if (_obtained.channels != 2)
 		error("SDL mixer output requires stereo output device");
-#endif
 
 	_mixer = new Audio::MixerImpl(_obtained.freq, desired.samples);
 	assert(_mixer);

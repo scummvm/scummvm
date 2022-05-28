@@ -31,7 +31,6 @@ class ScummEngine;
 class ScummDebugger : public GUI::Debugger {
 public:
 	ScummDebugger(ScummEngine *s);
-	~ScummDebugger() override; // we need this here for __SYMBIAN32__
 
 private:
 	ScummEngine *_vm;

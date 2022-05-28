@@ -29,7 +29,6 @@ namespace Lure {
 class Debugger : public GUI::Debugger {
 public:
 	Debugger();
-	~Debugger() override {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 private:
 	bool cmd_enterRoom(int argc, const char **argv);

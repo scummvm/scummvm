@@ -23,7 +23,7 @@
 #define BACKEND_SDL_SYS_H
 
 // The purpose of this header is to include the SDL headers in a uniform
-// fashion, even on the Symbian port.
+// fashion.
 // Moreover, it contains a workaround for the fact that SDL_rwops.h uses
 // a FILE pointer in one place, which conflicts with common/forbidden.h.
 // The SDL 1.3 headers also include strings.h
@@ -168,11 +168,7 @@
 
 #endif
 
-#if defined(__SYMBIAN32__)
-#include <esdl\SDL.h>
-#else
 #include <SDL.h>
-#endif
 
 // Ignore warnings from system headers pulled by SDL
 #pragma warning(push)
