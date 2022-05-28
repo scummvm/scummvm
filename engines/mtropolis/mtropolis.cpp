@@ -362,6 +362,7 @@ Common::Error MTropolisEngine::run() {
 	int preferredWidth = 1024;
 	int preferredHeight = 768;
 	ColorDepthMode preferredColorDepthMode = kColorDepthMode8Bit;
+	ColorDepthMode enhancedColorDepthMode = kColorDepthMode8Bit;
 
 	_runtime.reset(new Runtime(_system, _mixer, this, this));
 
@@ -369,6 +370,7 @@ Common::Error MTropolisEngine::run() {
 		preferredWidth = 640;
 		preferredHeight = 480;
 		preferredColorDepthMode = kColorDepthMode16Bit;
+		enhancedColorDepthMode = kColorDepthMode32Bit;
 
 		_runtime->getHacks().ignoreMismatchedProjectNameInObjectLookups = true;
 
@@ -416,6 +418,7 @@ Common::Error MTropolisEngine::run() {
 		preferredWidth = 640;
 		preferredHeight = 480;
 		preferredColorDepthMode = kColorDepthMode16Bit;
+		enhancedColorDepthMode = kColorDepthMode32Bit;
 
 		_runtime->getHacks().ignoreMismatchedProjectNameInObjectLookups = true;
 
@@ -496,12 +499,23 @@ Common::Error MTropolisEngine::run() {
 		}
 	}
 
-	// Figure out a pixel format.  First try to find one that's at least as good or better.
+	// Figure out a pixel format.  First try to find one that's at least as good or better than the enhanced mode
 	ColorDepthMode selectedMode = kColorDepthModeInvalid;
-	for (int i = preferredColorDepthMode; i < kColorDepthModeCount; i++) {
+
+	for (int i = enhancedColorDepthMode; i < kColorDepthModeCount; i++) {
 		if (haveExactMode[i] || haveCloseMode[i]) {
 			selectedMode = static_cast<ColorDepthMode>(i);
 			break;
+		}
+	}
+
+	// If that fails, find one that's at least as good as the preferred mode
+	if (selectedMode == kColorDepthModeInvalid) {
+		for (int i = preferredColorDepthMode; i < kColorDepthModeCount; i++) {
+			if (haveExactMode[i] || haveCloseMode[i]) {
+				selectedMode = static_cast<ColorDepthMode>(i);
+				break;
+			}
 		}
 	}
 
@@ -524,8 +538,12 @@ Common::Error MTropolisEngine::run() {
 			_runtime->setupDisplayMode(static_cast<ColorDepthMode>(i), modePixelFormats[i]);
 	}
 
+	ColorDepthMode fakeMode = selectedMode;
+	if (selectedMode == enhancedColorDepthMode)
+		fakeMode = preferredColorDepthMode;
+
 	// Set active mode
-	_runtime->switchDisplayMode(selectedMode, selectedMode);
+	_runtime->switchDisplayMode(selectedMode, fakeMode);
 	_runtime->setDisplayResolution(preferredWidth, preferredHeight);
 
 	initGraphics(preferredWidth, preferredHeight, &modePixelFormats[selectedMode]);
