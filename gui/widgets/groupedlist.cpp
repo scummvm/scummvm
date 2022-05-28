@@ -268,7 +268,9 @@ void GroupedListWidget::drawWidget() {
 		const int y = _y + _topPadding + kLineHeight * i;
 		const int fontHeight = g_gui.getFontHeight();
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
+#if 0
 		ThemeEngine::FontStyle bold = ThemeEngine::kFontStyleBold;
+#endif
 
 		// Draw the selected item inverted, on a highlighted background.
 		if (_selectedItem == pos)
@@ -280,7 +282,9 @@ void GroupedListWidget::drawWidget() {
 
 		if (isGroupHeader(_listIndex[pos])) {
 			int groupID = indexToGroupID(_listIndex[pos]);
+#if 0
 			bold = ThemeEngine::kFontStyleBold;
+#endif
 			r.left += fontHeight + _leftPadding;
 			g_gui.theme()->drawFoldIndicator(Common::Rect(_x + _hlLeftPadding + _leftPadding, y, _x + fontHeight + _leftPadding, y + fontHeight), _groupExpanded[groupID]);
 			pad = 0;
@@ -294,6 +298,7 @@ void GroupedListWidget::drawWidget() {
 			pad = 0;
 		}
 
+#if 0
 		ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal;
 
 		if (!_listColors.empty()) {
@@ -302,6 +307,7 @@ void GroupedListWidget::drawWidget() {
 			else
 				color = _listColors[_listIndex[pos]];
 		}
+#endif
 
 		Common::Rect r1(_x + r.left, y, _x + r.right, y + fontHeight);
 
@@ -317,7 +323,9 @@ void GroupedListWidget::drawWidget() {
 
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
+#if 0
 			color = _editColor;
+#endif
 			adjustOffset();
 		} else {
 			buffer = _list[pos];

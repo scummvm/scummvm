@@ -589,6 +589,7 @@ void ListWidget::drawWidget() {
 			pad = 0;
 		}
 
+#if 0
 		ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal;
 
 		if (!_listColors.empty()) {
@@ -597,6 +598,7 @@ void ListWidget::drawWidget() {
 			else
 				color = _listColors[_listIndex[pos]];
 		}
+#endif
 
 		Common::Rect r1(_x + r.left, y, _x + r.right, y + fontHeight);
 
@@ -612,7 +614,9 @@ void ListWidget::drawWidget() {
 
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
+#if 0
 			color = _editColor;
+#endif
 			adjustOffset();
 		} else {
 			buffer = _list[pos];
