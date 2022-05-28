@@ -112,7 +112,7 @@ public:
 	bool getEnabled(MacMenuItem *menuItem);
 
 	void setName(MacMenuItem *menuItem, const Common::String &name);
-	Common::String *getName(MacMenuItem *menuItem);
+	Common::String getName(MacMenuItem *menuItem);
 
 	void setAction(MacMenuItem *menuItem, int actionId);
 	int getAction(MacMenuItem *menuItem);

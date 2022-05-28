@@ -494,7 +494,7 @@ bool MacWindowManager::getMenuItemEnabled(MacMenuItem *menuItem) {
 
 Common::String MacWindowManager::getMenuItemName(MacMenuItem *menuItem) {
 	if (_menu) {
-		return *_menu->getName(menuItem);
+		return _menu->getName(menuItem);
 	} else {
 		warning("MacWindowManager::getMenuItemName: wm doesn't have menu");
 		return Common::String();
