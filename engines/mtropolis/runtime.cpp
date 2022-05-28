@@ -2870,6 +2870,16 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 }
 
 VThreadState Structural::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (Event::create(EventIDs::kUnpause, 0).respondsTo(msg->getEvent())) {
+		_paused = false;
+
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		runtime->sendMessageOnVThread(dispatch);
+
+		return kVThreadReturn;
+	}
+
 	warning("Command type %i was ignored", msg->getEvent().eventType);
 	return kVThreadReturn;
 }
@@ -3476,7 +3486,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
 	_lastFrameCursor(nullptr), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
 	_cachedMousePosition(Point16::create(0, 0)), _realMousePosition(Point16::create(0, 0)), _trackedMouseOutside(false),
-	  _forceCursorRefreshOnce(true), _haveModifierOverrideCursor(false), _sceneGraphChanged(false) {
+	  _forceCursorRefreshOnce(true), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -3687,6 +3697,9 @@ bool Runtime::runFrame() {
 				continue;
 			}
 		}
+
+		if (_isQuitting)
+			return false;
 
 		// Ran out of actions
 		break;
@@ -5008,6 +5021,13 @@ void Runtime::queueProject(const Common::SharedPtr<ProjectDescription> &desc) {
 	_queuedProjectDesc = desc;
 }
 
+void Runtime::closeProject() {
+	// TODO: There are actually some elaborate cases here involving opening projects, project return list,
+	// Project Ended message, etc. and Obsidian actually attempts to stop MIDI playback on project end.
+	// For now we just quit.
+	_isQuitting = true;
+}
+
 void Runtime::addVolume(int volumeID, const char *name, bool isMounted) {
 	VolumeState volume;
 	volume.name = name;
@@ -5352,6 +5372,15 @@ Project::Project(Runtime *runtime)
 Project::~Project() {
 	for (size_t i = 0; i < _segments.size(); i++)
 		closeSegmentStream(i);
+}
+
+VThreadState Project::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (Event::create(EventIDs::kCloseProject, 0).respondsTo(msg->getEvent())) {
+		runtime->closeProject();
+		return kVThreadReturn;
+	}
+
+	return Structural::consumeCommand(runtime, msg);
 }
 
 void Project::loadFromDescription(const ProjectDescription& desc) {
@@ -6382,7 +6411,7 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 		DynamicValueWriteOrRefAttribFuncHelper<VisualElement, &VisualElement::scriptSetPosition, &VisualElement::scriptWriteRefPositionAttribute>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "centerposition") {
-		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetCenterPosition>::create(this, writeProxy);
+		DynamicValueWriteOrRefAttribFuncHelper<VisualElement, &VisualElement::scriptSetCenterPosition, &VisualElement::scriptWriteRefCenterPositionAttribute>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "width") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetWidth>::create(this, writeProxy);
@@ -6596,6 +6625,32 @@ MiniscriptInstructionOutcome VisualElement::scriptSetCenterPosition(MiniscriptTh
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
+MiniscriptInstructionOutcome VisualElement::scriptSetCenterPositionX(MiniscriptThread *thread, const DynamicValue &dest) {
+	int32 asInteger = 0;
+	if (!dest.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	int32 xDelta = asInteger - getCenterPosition().x;
+
+	if (xDelta != 0)
+		offsetTranslate(xDelta, 0, false);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome VisualElement::scriptSetCenterPositionY(MiniscriptThread *thread, const DynamicValue &dest) {
+	int32 asInteger = 0;
+	if (!dest.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	int32 yDelta = asInteger - getCenterPosition().y;
+
+	if (yDelta != 0)
+		offsetTranslate(0, yDelta, false);
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
 MiniscriptInstructionOutcome VisualElement::scriptSetWidth(MiniscriptThread *thread, const DynamicValue &value) {
 	int32 asInteger = 0;
 	if (!value.roundToInt(asInteger))
@@ -6644,6 +6699,18 @@ MiniscriptInstructionOutcome VisualElement::scriptWriteRefPositionAttribute(Mini
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "y") {
 		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetPositionY>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome VisualElement::scriptWriteRefCenterPositionAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) {
+	if (attrib == "x") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetCenterPositionX>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "y") {
+		DynamicValueWriteFuncHelper<VisualElement, &VisualElement::scriptSetCenterPositionY>::create(this, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 

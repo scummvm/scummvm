@@ -1508,7 +1508,9 @@ public:
 
 	bool runFrame();
 	void drawFrame();
+
 	void queueProject(const Common::SharedPtr<ProjectDescription> &desc);
+	void closeProject();
 
 	void addVolume(int volumeID, const char *name, bool isMounted);
 	bool getVolumeState(const Common::String &name, int &outVolumeID, bool &outIsMounted) const;
@@ -1779,6 +1781,8 @@ private:
 
 	// True if any elements were added to the scene, removed from the scene, or reparented since last draw
 	bool _sceneGraphChanged;
+
+	bool _isQuitting;
 
 	Hacks _hacks;
 
@@ -2121,6 +2125,8 @@ public:
 	explicit Project(Runtime *runtime);
 	~Project();
 
+	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg);
+
 	void loadFromDescription(const ProjectDescription &desc);
 	void loadSceneFromStream(const Common::SharedPtr<Structural> &structural, uint32 streamID);
 
@@ -2450,12 +2456,15 @@ protected:
 	MiniscriptInstructionOutcome scriptSetPositionX(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetPositionY(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetCenterPosition(MiniscriptThread *thread, const DynamicValue &dest);
+	MiniscriptInstructionOutcome scriptSetCenterPositionX(MiniscriptThread *thread, const DynamicValue &dest);
+	MiniscriptInstructionOutcome scriptSetCenterPositionY(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result);
 	MiniscriptInstructionOutcome scriptSetWidth(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetHeight(MiniscriptThread *thread, const DynamicValue &dest);
 	MiniscriptInstructionOutcome scriptSetLayer(MiniscriptThread *thread, const DynamicValue &dest);
 
 	MiniscriptInstructionOutcome scriptWriteRefPositionAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
+	MiniscriptInstructionOutcome scriptWriteRefCenterPositionAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib);
 
 	void offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOriginOnly);
 

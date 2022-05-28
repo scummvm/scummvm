@@ -569,7 +569,9 @@ Common::Error MTropolisEngine::run() {
 			paused = _runtime->debugGetDebugger()->isPaused();
 #endif
 
-		_runtime->runFrame();
+		if (!_runtime->runFrame())
+			break;
+
 		_runtime->drawFrame();
 	}
 

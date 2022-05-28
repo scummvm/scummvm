@@ -418,8 +418,47 @@ void GraphicElement::render(Window *window) {
 	int32 srcToDestY = drawRect.top - clippedSrcRect.top;
 
 	switch (_renderProps.getInkMode()) {
-	case VisualElementRenderProperties::kInkModeCopy:
-		break;
+	case VisualElementRenderProperties::kInkModeCopy: {
+			const Graphics::PixelFormat &pixFmt = window->getPixelFormat();
+			const ColorRGB8 fillColorRGB8 = _renderProps.getForeColor();
+			uint32 fillColor = pixFmt.ARGBToColor(255, fillColorRGB8.r, fillColorRGB8.g, fillColorRGB8.b);
+
+			for (int32 srcY = clippedSrcRect.top; srcY < clippedSrcRect.bottom; srcY++) {
+				int32 destY = srcY + srcToDestY;
+				int32 spanWidth = clippedDrawRect.getWidth();
+				void *destPixels = window->getSurface()->getBasePtr(clippedDrawRect.left, srcY + srcToDestY);
+				if (_mask) {
+					const uint8 *maskBytes = static_cast<const uint8 *>(_mask->getBasePtr(clippedSrcRect.left, srcY));
+					if (pixFmt.bytesPerPixel == 1) {
+						for (int32 x = 0; x < spanWidth; x++) {
+							if (maskBytes[x])
+								static_cast<uint8 *>(destPixels)[x] = fillColor;
+						}
+					} else if (pixFmt.bytesPerPixel == 2) {
+						for (int32 x = 0; x < spanWidth; x++) {
+							if (maskBytes[x])
+								static_cast<uint16 *>(destPixels)[x] = fillColor;
+						}
+					} else if (pixFmt.bytesPerPixel == 4) {
+						for (int32 x = 0; x < spanWidth; x++) {
+							if (maskBytes[x])
+								static_cast<uint32 *>(destPixels)[x] = fillColor;
+						}
+					}
+				} else {
+					if (pixFmt.bytesPerPixel == 1) {
+						for (int32 x = 0; x < spanWidth; x++)
+							static_cast<uint8 *>(destPixels)[x] = fillColor;
+					} else if (pixFmt.bytesPerPixel == 2) {
+						for (int32 x = 0; x < spanWidth; x++)
+							static_cast<uint16 *>(destPixels)[x] = fillColor;
+					} else if (pixFmt.bytesPerPixel == 4) {
+						for (int32 x = 0; x < spanWidth; x++)
+							static_cast<uint32 *>(destPixels)[x] = fillColor;
+					}
+				}
+			}
+		} break;
 	case VisualElementRenderProperties::kInkModeXor: {
 			const Graphics::PixelFormat &pixFmt = window->getPixelFormat();
 			uint32 colorMask = 0xff;
@@ -1613,6 +1652,7 @@ void TextLabelElement::render(Window *window) {
 
 void TextLabelElement::setTextStyle(uint16 macFontID, const Common::String &fontFamilyName, uint size, TextAlignment alignment, const TextStyleFlags &styleFlags) {
 	_needsRender = true;
+	_contentsDirty = true;
 
 	_macFontID = macFontID;
 	_fontFamilyName = fontFamilyName;
@@ -1629,6 +1669,7 @@ MiniscriptInstructionOutcome TextLabelElement::scriptSetText(MiniscriptThread *t
 
 	_text = value.getString();
 	_needsRender = true;
+	_contentsDirty = true;
 	_macFormattingSpans.clear();
 
 	return kMiniscriptInstructionOutcomeContinue;
@@ -1655,6 +1696,7 @@ MiniscriptInstructionOutcome TextLabelElement::scriptSetLine(MiniscriptThread *t
 	}
 
 	_needsRender = true;
+	_contentsDirty = true;
 	_macFormattingSpans.clear();
 	
 	return kMiniscriptInstructionOutcomeContinue;
