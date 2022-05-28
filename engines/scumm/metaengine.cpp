@@ -530,22 +530,36 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 }
 
 GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
-	if (ConfMan.get("gameid", target) != "loom")
-		return nullptr;
-
-	// These Loom settings are only relevant for the EGA version, since
-	// that is the only one that has an overture.
-
-	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
-	if (platform != Common::kPlatformUnknown && platform != Common::kPlatformDOS)
-		return nullptr;
-
+	Common::String gameid = ConfMan.get("gameid", target);
 	Common::String extra = ConfMan.get("extra", target);
 
-	if (extra == "Steam" || extra == "VGA")
-		return nullptr;
+	if (gameid == "loom") {
+		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+		if (platform != Common::kPlatformUnknown && platform != Common::kPlatformDOS)
+			return nullptr;
 
-	return new Scumm::LoomEgaGameOptionsWidget(boss, name, target);
+		// The VGA Loom settings are only relevant for the DOS CD
+		// version, not the Steam version (which is assumed to be well
+		// timed already).
+
+		if (extra == "VGA")
+			return new Scumm::LoomVgaGameOptionsWidget(boss, name, target);
+
+		if (extra == "Steam")
+			return nullptr;
+
+		// These EGA Loom settings are only relevant for the EGA
+		// version, since that is the only one that has an overture.
+
+		return new Scumm::LoomEgaGameOptionsWidget(boss, name, target);
+	} else if (gameid == "monkey") {
+		if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA" && !extra.contains("SE Talkie"))
+			return nullptr;
+
+		return new Scumm::MI1CdGameOptionsWidget(boss, name, target);
+	}
+
+	return nullptr;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCUMM)
