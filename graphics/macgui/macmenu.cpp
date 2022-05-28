@@ -604,8 +604,8 @@ bool MacMenu::getEnabled(MacMenuItem *menuItem) {
 	return menuItem ? menuItem->enabled : false;
 }
 
-Common::String *MacMenu::getName(MacMenuItem *menuItem) {
-	return menuItem ? &menuItem->text : nullptr;
+Common::String MacMenu::getName(MacMenuItem *menuItem) {
+	return menuItem ? menuItem->text : Common::String();
 }
 
 int MacMenu::getAction(MacMenuItem *menuItem) {

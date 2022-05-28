@@ -609,7 +609,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		} else {
 			menuRef = g_director->_wm->getMenu()->getMenuItem(id.u.menu->menuIdNum - 1);
 		}
-		d.u.s = g_director->_wm->getMenu()->getName(menuRef);
+		d.u.s = new Common::String();
+		*d.u.s = g_director->_wm->getMenu()->getName(menuRef);
 		break;
 	case kTheMenuItem:
 		Graphics::MacMenuItem *menu, *menuItem;
