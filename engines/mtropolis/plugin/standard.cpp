@@ -1000,6 +1000,9 @@ MiniscriptInstructionOutcome MidiModifier::writeRefAttribute(MiniscriptThread *t
 	} else if (attrib == "notevelocity") {
 		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteVelocity>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "notenum") {
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteNum>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return Modifier::writeRefAttribute(thread, result, attrib);
@@ -1047,6 +1050,24 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetNoteVelocity(MiniscriptThrea
 	if (_mode == kModeSingleNote) {
 		debug(2, "MIDI (%x '%s'): Changing note velocity to %i", getStaticGUID(), getName().c_str(), asInteger);
 		_modeSpecific.singleNote.velocity = asInteger;
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome MidiModifier::scriptSetNoteNum(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger))
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (asInteger < 0)
+		asInteger = 0;
+	else if (asInteger > 255)
+		asInteger = 255;
+
+	if (_mode == kModeSingleNote) {
+		debug(2, "MIDI (%x '%s'): Changing note number to %i", getStaticGUID(), getName().c_str(), asInteger);
+		_modeSpecific.singleNote.note = asInteger;
 	}
 
 	return kMiniscriptInstructionOutcomeContinue;
