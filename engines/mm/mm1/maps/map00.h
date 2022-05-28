@@ -19,22 +19,22 @@
  *
  */
 
-#include "mm/mm1/maps/maps.h"
+#ifndef MM1_MAPS_MAP0_H
+#define MM1_MAPS_MAP0_H
+
+#include "mm/mm1/maps/map.h"
 
 namespace MM {
 namespace MM1 {
 namespace Maps {
 
-Maps::Maps() :
-		_map00(this) {
-}
-
-void Maps::load(uint mapId) {
-	_mapId = mapId;
-	_currentMap = _maps[mapId];
-	_currentMap->load();
-}
+class Map00 : public Map {
+public:
+	Map00(Maps *owner) : Map(owner, "sorpigal") {}
+};
 
 } // namespace Maps
 } // namespace MM1
 } // namespace MM
+
+#endif

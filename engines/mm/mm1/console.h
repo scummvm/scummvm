@@ -19,14 +19,24 @@
  *
  */
 
-#include "mm/mm1/maps/map0.h"
+#ifndef MM_MM1_CONSOLE_H
+#define MM_MM1_CONSOLE_H
+
+#include "gui/debugger.h"
 
 namespace MM {
 namespace MM1 {
-namespace Maps {
 
+class Console : public GUI::Debugger {
+protected:
+	bool Cmd_DumpMap(int argc, const char **argv);
 
+public:
+	Console();
+	~Console() override {}
+};
 
-} // namespace Maps
 } // namespace MM1
 } // namespace MM
+
+#endif

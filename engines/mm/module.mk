@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	meta_engine.o \
 	utils/engine_data.o \
 	utils/strings_data.o \
+	mm1/console.o \
 	mm1/events.o \
 	mm1/globals.o \
 	mm1/meta_engine.o \
@@ -29,7 +30,7 @@ MODULE_OBJS := \
 	mm1/views/view_characters.o \
 	mm1/maps/maps.o \
 	mm1/maps/map.o \
-	mm1/maps/map0.o \
+	mm1/maps/map00.o \
 	xeen/worldofxeen/clouds_cutscenes.o \
 	xeen/worldofxeen/darkside_cutscenes.o \
 	xeen/worldofxeen/worldofxeen_cutscenes.o \

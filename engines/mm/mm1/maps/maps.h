@@ -23,7 +23,7 @@
 #define MM1_MAPS_MAPS_H
 
 #include "common/array.h"
-#include "mm/mm1/maps/map0.h"
+#include "mm/mm1/maps/map00.h"
 
 namespace MM {
 namespace MM1 {
@@ -39,7 +39,7 @@ private:
 	uint _mapId = (uint)-1;
 	Map *_currentMap = nullptr;
 private:
-	Map0 _map0;
+	Map00 _map00;
 private:
 	/**
 	 * Adds map class
@@ -55,6 +55,11 @@ public:
 	 * Load a map
 	 */
 	void load(uint mapId);
+
+	/**
+	 * Get a given map
+	 */
+	Map *getMap(uint mapId) const { return _maps[mapId]; }
 };
 
 } // namespace Maps
