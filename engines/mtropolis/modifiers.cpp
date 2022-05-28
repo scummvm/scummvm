@@ -615,8 +615,8 @@ bool DragMotionModifier::load(ModifierLoaderContext &context, const Data::DragMo
 	bool constrainHorizontal = false;
 	if (data.haveMacPart) {
 		_dragProps->constrainToParent = ((data.platform.mac.flags & Data::DragMotionModifier::MacPart::kConstrainToParent) != 0);
-		constrainVertical = ((data.platform.mac.flags & Data::DragMotionModifier::MacPart::kConstrainHorizontal) != 0);
-		constrainHorizontal = ((data.platform.mac.flags & Data::DragMotionModifier::MacPart::kConstrainVertical) != 0);
+		constrainHorizontal = ((data.platform.mac.flags & Data::DragMotionModifier::MacPart::kConstrainHorizontal) != 0);
+		constrainVertical = ((data.platform.mac.flags & Data::DragMotionModifier::MacPart::kConstrainVertical) != 0);
 	} else if (data.haveWinPart) {
 		_dragProps->constrainToParent = (data.platform.win.constrainToParent != 0);
 		constrainVertical = (data.platform.win.constrainVertical != 0);
