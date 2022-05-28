@@ -1921,7 +1921,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-	// King's Quest 5 DOS Spanish Floppy 0.000.062 VGA (5 x 3.5" disks)
+	// King's Quest 5 DOS Spanish Floppy VGA (3.5" disks)
+	// Game version 0.000.162 from about box, 1.000 from VERSION file
+	// SCI interpreter version 1.000.784
 	// Supplied by dianiu in bug report #6121
 	{"kq5", "", {
 		{"resource.map", 0, "c09896a2a30c9b002c5cbbc62f5a5c3a", 8169},
@@ -1933,6 +1935,24 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "4aaa2e9a69089b9afbaaccbbf2c4e647", 1202936},
 		{"resource.006", 0, "65b520e60c4217e6a6572d9edf77193b", 1141985},
 		{"resource.007", 0, "f42b0100f0a1c30806814f8648b6bc28", 1145583},
+		// MISSING: resource.008 wasn't included in the generated entries
+		// but was included in a directory listing
+		AD_LISTEND},
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
+
+	// King's Quest 5 DOS Spanish Floppy VGA (3.5" disks)
+	// Game version 0.000.162 from about box, 1.000 from VERSION file
+	// SCI interpreter version 1.000.784
+	{"kq5", "", {
+		{"resource.map", 0, "3e196254d84b228e735a605ca2fc3fc0", 8283},
+		{"resource.000", 0, "1f1d03aead44da46362ff40c0074a3ec", 335871},
+		{"resource.001", 0, "37770b6ed38fa45286388988752d2881", 1136316},
+		{"resource.002", 0, "66d46bdd8f017ff11db855e796c89921", 1339480},
+		{"resource.003", 0, "e5c88ef1d6cb02005a1676e1020e0786", 1323620},
+		{"resource.004", 0, "829c8caeff793f3cfcea2cb01aaa4150", 1331675},
+		{"resource.005", 0, "7c8476ebf77fd7fc9090ae01f4010095", 1266871},
+		{"resource.006", 0, "65b520e60c4217e6a6572d9edf77193b", 1208819},
+		{"resource.007", 0, "f719a33d9b3d2ee6d5fae4d182119af4", 1337045},
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
