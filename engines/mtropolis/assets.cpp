@@ -123,22 +123,25 @@ bool CachedMToon::loadFromStream(const Common::SharedPtr<MToonMetadata> &metadat
 
 	if (metadata->codecID == kMToonRLECodecID) {
 		loadRLEFrames(data);
+
+		uint16 fullWidth = metadata->rect.getWidth();
+		uint16 fullHeight = metadata->rect.getHeight();
+
 		uint16 firstFrameWidth = 0;
 		uint16 firstFrameHeight = 0;
 
 		bool haveAnyTemporalFrames = false;
 		bool haveDifferentDimensions = false;
-		_isRLETemporalCompressed = true;
+		_isRLETemporalCompressed = false;
+
 		for (size_t i = 0; i < metadata->frames.size(); i++) {
 			const MToonMetadata::FrameDef &frame = metadata->frames[i];
-			if (_rleData[i].isKeyframe)
+			if (!_rleData[i].isKeyframe)
 				haveAnyTemporalFrames = true;
 
-			if (i > 0) {
-				if (_rleData[i].width != _rleData[0].width || _rleData[i].height != _rleData[0].height) {
-					haveDifferentDimensions = true;
-					break;
-				}
+			if (_rleData[i].width != fullWidth || _rleData[i].height != fullHeight) {
+				haveDifferentDimensions = true;
+				break;
 			}
 		}
 
