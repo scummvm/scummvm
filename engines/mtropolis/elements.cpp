@@ -414,8 +414,8 @@ void GraphicElement::render(Window *window) {
 	if (!clippedSrcRect.isValid())
 		return;
 
-	int32 srcToDestX = drawRect.left - clippedSrcRect.left;
-	int32 srcToDestY = drawRect.top - clippedSrcRect.top;
+	int32 srcToDestX = clippedDrawRect.left - clippedSrcRect.left;
+	int32 srcToDestY = clippedDrawRect.top - clippedSrcRect.top;
 
 	switch (_renderProps.getInkMode()) {
 	case VisualElementRenderProperties::kInkModeBackgroundTransparent:
