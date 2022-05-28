@@ -45,6 +45,7 @@ GroupedListWidget::GroupedListWidget(Dialog *boss, const Common::String &name, c
 void GroupedListWidget::setList(const Common::U32StringArray &list) {
 	ListWidget::setList(list);
 
+	_attributeValues.clear();	// Regenerate attributes for the new list
 	groupByAttribute();
 	scrollBarRecalc();
 }
