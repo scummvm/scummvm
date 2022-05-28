@@ -1138,7 +1138,17 @@ void MToonElement::render(Window *window) {
 			}
 			destRect = Common::Rect(_cachedAbsoluteOrigin.x + frameRect.left, _cachedAbsoluteOrigin.y + frameRect.top, _cachedAbsoluteOrigin.x + frameRect.right, _cachedAbsoluteOrigin.y + frameRect.bottom);
 
-			window->getSurface()->blitFrom(*_renderSurface, srcRect, destRect);
+			VisualElementRenderProperties::InkMode inkMode = _renderProps.getInkMode();
+			if (inkMode == VisualElementRenderProperties::kInkModeBackgroundMatte || inkMode == VisualElementRenderProperties::kInkModeBackgroundTransparent) {
+				ColorRGB8 transColorRGB8 = _renderProps.getBackColor();
+				uint32 transColor = _renderSurface->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
+
+				window->getSurface()->transBlitFrom(*_renderSurface, srcRect, destRect, transColor);
+			} else if (inkMode == VisualElementRenderProperties::kInkModeCopy || inkMode == VisualElementRenderProperties::kInkModeDefault) {
+				window->getSurface()->blitFrom(*_renderSurface, srcRect, destRect);
+			} else {
+				warning("Unsupported mToon ink mode");
+			}
 		}
 	}
 }
