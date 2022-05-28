@@ -648,8 +648,6 @@ void Animations::doAnim(int32 actorIdx) {
 
 	// actor collisions with bricks
 	if (actor->_staticFlags.bComputeCollisionWithBricks) {
-		collision->_collision.y = 0;
-
 		ShapeType brickShape = _engine->_grid->worldColBrick(previousActor);
 
 		if (brickShape != ShapeType::kNone) {
