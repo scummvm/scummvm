@@ -418,6 +418,10 @@ void GraphicElement::render(Window *window) {
 	int32 srcToDestY = drawRect.top - clippedSrcRect.top;
 
 	switch (_renderProps.getInkMode()) {
+	case VisualElementRenderProperties::kInkModeBackgroundTransparent:
+	case VisualElementRenderProperties::kInkModeBackgroundMatte:
+		// Background transparent and background matte seem to have no effect on simple graphics,
+		// even if the foreground and background color are the same
 	case VisualElementRenderProperties::kInkModeCopy: {
 			const Graphics::PixelFormat &pixFmt = window->getPixelFormat();
 			const ColorRGB8 fillColorRGB8 = _renderProps.getForeColor();
@@ -1028,7 +1032,18 @@ void ImageElement::render(Window *window) {
 		Common::SharedPtr<Graphics::Surface> optimized = _cachedImage->optimize(_runtime);
 		Common::Rect srcRect(optimized->w, optimized->h);
 		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.getWidth(), _cachedAbsoluteOrigin.y + _rect.getHeight());
-		window->getSurface()->blitFrom(*optimized, srcRect, destRect);
+
+		VisualElementRenderProperties::InkMode inkMode = _renderProps.getInkMode();
+
+		if (inkMode == VisualElementRenderProperties::kInkModeBackgroundMatte || inkMode == VisualElementRenderProperties::kInkModeBackgroundTransparent) {
+			const ColorRGB8 transColorRGB8 = _renderProps.getBackColor();
+			uint32 transColor = optimized->format.ARGBToColor(255, transColorRGB8.r, transColorRGB8.g, transColorRGB8.b);
+			window->getSurface()->transBlitFrom(*optimized, srcRect, destRect, transColor);
+		} else if (inkMode == VisualElementRenderProperties::kInkModeDefault || inkMode == VisualElementRenderProperties::kInkModeCopy) {
+			window->getSurface()->blitFrom(*optimized, srcRect, destRect);
+		} else {
+			warning("Unimplemented image ink mode");
+		}
 	}
 }
 
@@ -1764,10 +1779,6 @@ SoundElement::~SoundElement() {
 bool SoundElement::load(ElementLoaderContext &context, const Data::SoundElement &data) {
 	if (!NonVisualElement::loadCommon(data.name, data.guid, data.elementFlags))
 		return false;
-
-	if (getStaticGUID() == 0x69b65) {
-		int n = 0;
-	}
 
 	_paused = ((data.soundFlags & Data::SoundElement::kPaused) != 0);
 	_loop = ((data.soundFlags & Data::SoundElement::kLoop) != 0);
