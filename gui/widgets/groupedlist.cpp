@@ -42,8 +42,8 @@ GroupedListWidget::GroupedListWidget(Dialog *boss, const Common::String &name, c
 	_groupsVisible = true;
 }
 
-void GroupedListWidget::setList(const Common::U32StringArray &list, const ColorList *colors) {
-	ListWidget::setList(list, colors);
+void GroupedListWidget::setList(const Common::U32StringArray &list) {
+	ListWidget::setList(list);
 
 	groupByAttribute();
 	scrollBarRecalc();
@@ -120,7 +120,6 @@ void GroupedListWidget::sortGroups() {
 		uint groupID = _groupValueIndex[header];
 
 		if (_groupsVisible) {
-			_listColors.insert_at(curListSize, ThemeEngine::kFontColorNormal);
 			_listIndex.push_back(kGroupTag - groupID);
 
 			displayedHeader.toUppercase();
@@ -298,17 +297,6 @@ void GroupedListWidget::drawWidget() {
 			pad = 0;
 		}
 
-#if 0
-		ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal;
-
-		if (!_listColors.empty()) {
-			if (_filter.empty() || _selectedItem == -1)
-				color = _listColors[pos];
-			else
-				color = _listColors[_listIndex[pos]];
-		}
-#endif
-
 		Common::Rect r1(_x + r.left, y, _x + r.right, y + fontHeight);
 
 		if (g_gui.useRTL()) {
@@ -321,17 +309,17 @@ void GroupedListWidget::drawWidget() {
 			}
 		}
 
+		ThemeEngine::FontColor color = ThemeEngine::kFontColorFormatting;
+
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
-#if 0
 			color = _editColor;
-#endif
 			adjustOffset();
 		} else {
 			buffer = _list[pos];
 		}
 
-		drawFormattedText(r1, buffer, _state, _drawAlign, inverted, pad, true);
+		drawFormattedText(r1, buffer, _state, _drawAlign, inverted, pad, true, color);
 
 		// If in numbering mode & using RTL layout in GUI, we print a number suffix after drawing the text
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL()) {

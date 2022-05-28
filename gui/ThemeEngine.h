@@ -279,6 +279,7 @@ public:
 
 	/// Font color selector
 	enum FontColor {
+		kFontColorFormatting = -1,	///< Use color from formatting
 		kFontColorNormal = 0,       ///< The default color of the theme
 		kFontColorAlternate = 1,    ///< Alternative font color
 		kFontColorMax

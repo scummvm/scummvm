@@ -91,7 +91,7 @@ public:
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
 	int run(const Common::String &target, const MetaEngine *metaEngine);
-	virtual const Common::U32String &getResultString() const = 0;
+	virtual const Common::U32String getResultString() const = 0;
 
 protected:
 	virtual int runIntern() = 0;
@@ -138,7 +138,7 @@ public:
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	const Common::U32String &getResultString() const override;
+	const Common::U32String getResultString() const override;
 
 	void reflowLayout() override;
 
@@ -194,7 +194,7 @@ public:
 	SaveLoadChooserGrid(const Common::U32String &title, bool saveMode);
 	~SaveLoadChooserGrid() override;
 
-	const Common::U32String &getResultString() const override;
+	const Common::U32String getResultString() const override;
 
 	void open() override;
 

@@ -46,7 +46,7 @@ public:
 	GroupedListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	GroupedListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 
-	void setList(const Common::U32StringArray &list, const ColorList *colors = nullptr);
+	void setList(const Common::U32StringArray &list);
 	void setAttributeValues(const Common::U32StringArray &attrValues);
 	void setMetadataNames(const Common::StringMap &metadata);
 

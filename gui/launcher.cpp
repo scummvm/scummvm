@@ -1009,7 +1009,6 @@ void LauncherSimple::build() {
 void LauncherSimple::updateListing() {
 	Common::U32StringArray l;
 	Common::Array<const Common::ConfigManager::Domain *> attrs;
-	ListWidget::ColorList colors;
 	ThemeEngine::FontColor color;
 	int numEntries = ConfMan.getInt("gui_list_max_scan_entries");
 
@@ -1067,13 +1066,12 @@ void LauncherSimple::updateListing() {
 		Common::U32String gameDesc = GUI::ListWidget::getThemeColor(color) + Common::U32String(iter->description);
 
 		l.push_back(gameDesc);
-		colors.push_back(color);
 		attrs.push_back(iter->domain);
 		_domains.push_back(iter->key);
 	}
 
 	const int oldSel = _list->getSelected();
-	_list->setList(l, &colors);
+	_list->setList(l);
 
 	groupEntries(attrs);
 
