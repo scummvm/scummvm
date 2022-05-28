@@ -17,14 +17,21 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Allgemein:
    - Die Lizenz des Projektes wurde auf GPLv3+ aktualisiert.
    - ScummVM benötigt nun C++11, um gebaut werden zu können.
+   - Unterstützung für VS2008 entfernt, da dieses keine Unterstützung für C++11 anbietet.
    - Unterstützung für verbesserte Filter in der Such-Box hinzugefügt.
      Weitere Informationen findest Du in der Dokumentation unnter "Unterstanding the search box".
    - Icon-Ansicht zur Benutzeroberfläche hinzugefügt [GSoC-Aufgabe].
    - Unterstützung für die RetroWave OPL3-Soundkarte hinzugefügt.
+   - Portierung auf eine Beta-Version von OpenDingux hinzugefügt.
    - Die Portierung auf Symbian wurde eingestellt.
+   - create_engine-Tool hinzugefügt, um die Erstellung einer neuen Engine zu erleichtern.
+   - Die Maus-Erfassung im HiDPI-Modus wurde korrigiert.
 
  AGI:
    - Unterstützung für die Macintosh-Versionen von Manhunter 1 und 2 hinzugefügt.
+
+ AGS:
+   - Synchronisation mit dem Upstream-Code des AGS-Projektes durchgeführt.
 
  AGOS:
    - Elvira 1: Unterstützung für Casio MT-540/CT-460/CSM1 und CMS/GameBlaster hinzugefügt.
@@ -61,12 +68,20 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Dreamweb:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
+ Glk:
+   - Unterstützung für ZX Spectrum-Spiele mit Grafik in der Scott-Sub-Engine hinzugefügt.
+
  Kyra:
    - Unterstützung für die chinesischen Versionen von Legend of Kyrandia 1 - 3 hinzugefügt.
    - Unterstützung für Audio-Ausgabe in der Macintosh-Version von Legend of Kyrandia hinzugefügt.
    - Die Macintosh-Version (ohne Sprachausgabe) von Legend of Kyrandia 1 kann nun direkt von
      den Dateien auf der CD gespielt werden. Das bedeutet, dass Du nicht mehr den Installer
      ausführen musst, um die Dateien zu extrahieren.
+
+ NGI:
+   - Status der Brücke in Szene 13 korrigiert.
+   - Der Spieler bleibt nun nicht mehr stecken, wenn er sich zu dem Fuß in Szene 30 teleportiert.
+   - Inkonsistenten Status des Kaktus korrigiert.
 
  Supernova:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
@@ -78,6 +93,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      KQ1, KQ4, KQ5, KQ6, KQ7, LB1, LB2, LIGHTHOUSE, LONGBOW, LSL1, LSL2, LSL3,
      LSL5, LSL6, LSL6HIRES, LSL7, PEPPER, PHANT2, PQ1, PQ2, PQ3, PQ4, PQSWAT,
      QFG1, QFG1VGA, QFG2, QFG3, QFG4, SHIVERS, SQ1, SQ3, SQ4, SQ5, SQ6, TORIN.
+   - Korrektur zahlreicher Skript-Fehler in KQ6, KQ7, GK2, QFG3, QFG4 und Hoyle4.
+   - Automatisch gespeicherte Spielstände in Shivers und Phantasmagoria 2 werden nun korrekt geladen.
+   - Unterstützung für die koreanische Fan-Übersetzungen des scummkor-Projektes hinzugefügt:
+     EcoQuest 2 und Gabriel Knight 2.
 
  SCUMM:
    - Neue Digital iMUSE-Engine hinzugefügt.
@@ -93,7 +112,14 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehler bei der Wiedergabe von MIDI-Musik in der EGA/VGA-Diskettenversion von The Secret of Monkey Island behoben.
    - Fehlerhafte Grafik-Darstellung in Full Throttle korrigiert, die auftritt, wenn Ben am Eingang von Corley Motors vorbeiläuft.
    - Fehlerhafte Farben in der NES-Version von Maniac Mansion auf Plattformen mit striktem Aligment wie Dreamcast,
-     Apple silicon und diversen Handheld-Geräten korrigiert.
+     Apple Silicon und diversen Handheld-Geräten korrigiert.
+   - Die Text-Rendering-Routinen für Full Throttle, The Dig und The Curse of Monkey Island wurden entsprechend
+     der originalen Interpreter angepasst.
+   - Die Timing-Routinen wurden angepasst, um das ursprüngliche Hardware-Verhalten und die Eigenheiten des originalen
+     Interpreters besser abzubilden.
+   - Lippensynchronisation in Backyard Baseball 2003 korrigiert.
+   - Spiele-Fehler in Day of the Tentacle, Loom, Monkey Island 1, Monkey Island 2 Amiga,
+     Sam&Max und Zak McKracken FM-TOWNS korrigiert. Diese Fehler sind auch in den Original-Spielen enthalten.
 
  Sherlock:
    - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
@@ -110,6 +136,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehler in der Polygon-Darstellung in einigen Szenen korrigiert.
    - Falsche Schussrichtung einiger Charaktere korrigiert.
    - Tür-Bewegungen in einigen Situationen korrigiert.
+
+ Android-Portierung:
+   - Hardwareunterstützunge Beschleunigung für 3D-Grafik hinzugefügt.
+   - Verbesserung der Touch-Eingabe.
 
  macOS-Port:
    - Unterstützung für die Anzeige von OSD-Nachrichten in der Touch Bar hinzugefügt.
