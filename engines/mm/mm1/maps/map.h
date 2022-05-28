@@ -51,6 +51,11 @@ public:
 	Map(Maps *owner, const Common::String &name);
 
 	/**
+	 * Gets the map name
+	 */
+	Common::String getName() const { return _name; }
+
+	/**
 	 * Loads the map
 	 */
 	virtual void load();

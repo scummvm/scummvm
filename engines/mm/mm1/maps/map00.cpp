@@ -19,22 +19,14 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP0_H
-#define MM1_MAPS_MAP0_H
-
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/maps/map00.h"
 
 namespace MM {
 namespace MM1 {
 namespace Maps {
 
-class Map0 : public Map {
-public:
-	Map0(Maps *owner) : Map(owner, "sorpigal") {}
-};
+
 
 } // namespace Maps
 } // namespace MM1
 } // namespace MM
-
-#endif

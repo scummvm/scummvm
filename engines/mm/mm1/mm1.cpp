@@ -25,6 +25,7 @@
 #include "common/events.h"
 #include "engines/util.h"
 #include "mm/mm1/mm1.h"
+#include "mm/mm1/console.h"
 #include "mm/mm1/gfx/gfx.h"
 
 namespace MM {
@@ -45,6 +46,8 @@ Common::Error MM1Engine::run() {
 	// Initialize graphics mode
 	initGraphics(320, 200);
 	Gfx::GFX::setEgaPalette(0);
+
+	setDebugger(new Console());
 
 	// Load globals
 	if (!_globals.load())
