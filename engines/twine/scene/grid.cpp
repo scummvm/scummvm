@@ -794,7 +794,7 @@ ShapeType Grid::worldColBrickFull(int32 x, int32 y, int32 z, int32 y2, int32 act
 						// Special check mount funfrock
 						if (_engine->_scene->_currentSceneIdx != LBA1SceneId::Polar_Island_on_the_rocky_peak) {
 							// full collision
-							return brickShape = ShapeType::kSolid;
+							return ShapeType::kSolid;
 						}
 					}
 					break; // stop parsing at first encountered brick
