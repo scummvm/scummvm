@@ -846,8 +846,8 @@ static const AGIGameDescription gameDescriptions[] = {
 							"obj.40",    "188636a4a340fcfd8e7fab1e8e0ac53b", 657, 0x0000, GID_WINNIE, Common::kPlatformDOS),
 
 	// Winnie the Pooh in the Hundred Acre Wood (Amiga)
-	GAMEpre_PO("winnie", "", "title",   "2e7900c1ccaa7671d65405f6d1efed30", 1334,
-							 "room.62", "d56297aa9a1714dc654034f8db9f05c9", 1319, 0x0000, GID_WINNIE, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
+	GAMEpre_PO("winnie", "", "misc/title",    "2e7900c1ccaa7671d65405f6d1efed30", 1334,
+							 "rooms/room.62", "d56297aa9a1714dc654034f8db9f05c9", 1319, 0x0000, GID_WINNIE, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Winnie the Pooh in the Hundred Acre Wood (C64)
 	GAMEpre_P("winnie", "", "title.pic", "d4eb97cffc866110f71e1ec9f84fe643", 4097,

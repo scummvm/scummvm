@@ -1066,6 +1066,8 @@ void WinnieEngine::drawPic(const char *szName) {
 
 	if (getPlatform() != Common::kPlatformAmiga)
 		fileName += ".pic";
+	else
+		fileName = "misc/" + fileName;
 
 	Common::File file;
 

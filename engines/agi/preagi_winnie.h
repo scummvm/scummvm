@@ -29,11 +29,11 @@ namespace Agi {
 
 // strings
 #define IDS_WTP_ROOM_DOS        "rooms/rm.%02d"
-#define IDS_WTP_ROOM_AMIGA      "room.%d"
+#define IDS_WTP_ROOM_AMIGA      "rooms/room.%d"
 #define IDS_WTP_ROOM_C64        "room%02d"
 #define IDS_WTP_ROOM_APPLE      "room%d.obj"
 #define IDS_WTP_OBJ_DOS         "obj.%02d"
-#define IDS_WTP_OBJ_AMIGA       "object.%d"
+#define IDS_WTP_OBJ_AMIGA       "objects/object.%d"
 #define IDS_WTP_OBJ_C64         "object%02d"
 #define IDS_WTP_OBJ_APPLE       "object%d.obj"
 #define IDS_WTP_SND_DOS         "snd.%02d"
