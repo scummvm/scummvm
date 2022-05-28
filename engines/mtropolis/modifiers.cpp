@@ -945,12 +945,16 @@ VThreadState TimerMessengerModifier::consumeMessage(Runtime *runtime, const Comm
 			realMilliseconds = 1;
 
 		debug(3, "Timer %x '%s' scheduled to execute in %i milliseconds", getStaticGUID(), getName().c_str(), realMilliseconds);
-		if (!_scheduledEvent) {
-			_scheduledEvent = runtime->getScheduler().scheduleMethod<TimerMessengerModifier, &TimerMessengerModifier::trigger>(runtime->getPlayTime() + realMilliseconds, this);
-			_incomingData = msg->getValue();
-			if (_incomingData.getType() == DynamicValueTypes::kList)
-				_incomingData.setList(_incomingData.getList()->clone());
+
+		if (_scheduledEvent) {
+			_scheduledEvent->cancel();
+			_scheduledEvent.reset();
 		}
+
+		_scheduledEvent = runtime->getScheduler().scheduleMethod<TimerMessengerModifier, &TimerMessengerModifier::trigger>(runtime->getPlayTime() + realMilliseconds, this);
+		_incomingData = msg->getValue();
+		if (_incomingData.getType() == DynamicValueTypes::kList)
+			_incomingData.setList(_incomingData.getList()->clone());
 	}
 
 	return kVThreadReturn;
