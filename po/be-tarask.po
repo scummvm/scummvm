@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-28 10:56+0000\n"
+"POT-Creation-Date: 2022-05-28 22:40+0000\n"
 "PO-Revision-Date: 2022-04-30 18:19+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -64,7 +64,7 @@ msgstr "Угару"
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:154
 #: gui/remotebrowser.cpp:59 gui/saveload-dialog.cpp:62
 #: gui/saveload-dialog.cpp:406 gui/saveload-dialog.cpp:477
-#: gui/saveload-dialog.cpp:781 gui/saveload-dialog.cpp:1174
+#: gui/saveload-dialog.cpp:779 gui/saveload-dialog.cpp:1172
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53
 #: engines/engine.cpp:714 backends/dialogs/gtk/gtk-dialogs.cpp:63
 #: backends/events/default/default-events.cpp:194
@@ -169,7 +169,7 @@ msgstr ""
 #: gui/editrecorddialog.cpp:67 gui/fluidsynth-dialog.cpp:153
 #: gui/launcher.cpp:526 gui/launcher.cpp:530 gui/massadd.cpp:88
 #: gui/options.cpp:2106 gui/predictivedialog.cpp:69
-#: gui/saveload-dialog.cpp:1175 engines/engine.cpp:525 engines/engine.cpp:549
+#: gui/saveload-dialog.cpp:1173 engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1652
@@ -953,35 +953,35 @@ msgstr "~Н~алады гульні..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1112 gui/launcher.cpp:1307
+#: gui/launcher.cpp:1110 gui/launcher.cpp:1305
 msgid "Unknown Engine"
 msgstr "Невядомы рухавік"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1130 gui/launcher.cpp:1339
+#: gui/launcher.cpp:1128 gui/launcher.cpp:1337
 msgid "Unknown Publisher"
 msgstr "Невядомае выдавецтва"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1148 gui/launcher.cpp:1325
+#: gui/launcher.cpp:1146 gui/launcher.cpp:1323
 msgid "No Series"
 msgstr "Бяз сэрыі"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1163 gui/launcher.cpp:1358
+#: gui/launcher.cpp:1161 gui/launcher.cpp:1356
 msgid "Language not detected"
 msgstr "Нявызначаная мова"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1178 gui/launcher.cpp:1373
+#: gui/launcher.cpp:1176 gui/launcher.cpp:1371
 msgid "Platform not detected"
 msgstr "Нявызначаная пляцформа"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1384 gui/widgets/groupedlist.cpp:79
+#: gui/launcher.cpp:1382 gui/widgets/groupedlist.cpp:79
 msgid "All"
 msgstr "Усе"
 
@@ -2079,43 +2079,43 @@ msgstr "Час гульні не захаваны"
 msgid "Do you really want to delete this saved game?"
 msgstr "Ці сапраўды вы хочаце выдаліць гэтую захаваную гульню?"
 
-#: gui/saveload-dialog.cpp:608 gui/saveload-dialog.cpp:1125
+#: gui/saveload-dialog.cpp:608 gui/saveload-dialog.cpp:1123
 msgid "Date: "
 msgstr "Дата: "
 
-#: gui/saveload-dialog.cpp:612 gui/saveload-dialog.cpp:1131
+#: gui/saveload-dialog.cpp:612 gui/saveload-dialog.cpp:1129
 msgid "Time: "
 msgstr "Час: "
 
-#: gui/saveload-dialog.cpp:618 gui/saveload-dialog.cpp:1139
+#: gui/saveload-dialog.cpp:618 gui/saveload-dialog.cpp:1137
 msgid "Playtime: "
 msgstr "Час гульні: "
 
-#: gui/saveload-dialog.cpp:631 gui/saveload-dialog.cpp:719
+#: gui/saveload-dialog.cpp:631 gui/saveload-dialog.cpp:717
 msgid "Untitled saved game"
 msgstr "Неназваная захаваная гульня"
 
-#: gui/saveload-dialog.cpp:782
+#: gui/saveload-dialog.cpp:780
 msgid "Next"
 msgstr "Наступны"
 
-#: gui/saveload-dialog.cpp:785
+#: gui/saveload-dialog.cpp:783
 msgid "Prev"
 msgstr "Папярэдні"
 
-#: gui/saveload-dialog.cpp:986
+#: gui/saveload-dialog.cpp:984
 msgid "New Save"
 msgstr "Новы захоў"
 
-#: gui/saveload-dialog.cpp:986
+#: gui/saveload-dialog.cpp:984
 msgid "Create a new saved game"
 msgstr "Стварыць новую захаваную гульню"
 
-#: gui/saveload-dialog.cpp:1118
+#: gui/saveload-dialog.cpp:1116
 msgid "Name: "
 msgstr "Назва: "
 
-#: gui/saveload-dialog.cpp:1194
+#: gui/saveload-dialog.cpp:1192
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Напішыце апісаньне для слоту %d:"
