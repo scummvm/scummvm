@@ -1639,8 +1639,11 @@ int IMuseDigital::dispatchSeekToNextChunk(IMuseDigiDispatch *dispatchPtr) {
 			}
 		} else {
 			soundAddrData = _filesHandler->getSoundAddrData(dispatchPtr->trackPtr->soundId);
-			if (soundAddrData) {
-				memcpy(_currentVOCHeader, &soundAddrData[dispatchPtr->currentOffset], 0x30);
+			uint32 soundAddrSize = _filesHandler->getSoundAddrDataSize(dispatchPtr->trackPtr->soundId, dispatchPtr->streamPtr != 0);
+			uint32 fetchSize = (soundAddrSize - dispatchPtr->currentOffset) >= 0x30 ? 0x30 : (soundAddrSize - dispatchPtr->currentOffset);
+
+			if (soundAddrData && soundAddrSize > 0) {
+				memcpy(_currentVOCHeader, &soundAddrData[dispatchPtr->currentOffset], fetchSize);
 			} else {
 				return -1;
 			}
