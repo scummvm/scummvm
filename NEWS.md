@@ -25,6 +25,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added OpenDingux beta port.
    - Removed Symbian port.
    - Added the create_engine tool to aid when creating new engines.
+   - Fixed mouse capture in HiDPI mode.
 
  AGI:
    - Added support for Macintosh versions of Manhunter 1-2.
@@ -83,6 +84,11 @@ For a more comprehensive changelog of the latest experimental code, see:
      of Kyrandia 1 directly from the files on the CD. This means you no longer
      have to run the installer to extract the data files.
 
+ NGI:
+   - Fixed the rolling bridge state in scene 13.
+   - Fixed getting stuck when teleporting to the foot in scene 30.
+   - Fixed inconsistent cactus state.
+ 
  Supernova:
    - Added text to speech for dialogs and object descriptions.
 
@@ -95,6 +101,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      QFG1, QFG1VGA, QFG2, QFG3, QFG4, SHIVERS, SQ1, SQ3, SQ4, SQ5, SQ6, TORIN.
    - Fixed many script bugs in KQ6, KQ7, GK2, QFG3, QFG4, Hoyle4.
    - Fixed loading autosaves in Shivers and Phantasmagoria 2.
+   - Added support for Korean fan translations from the scummkor project:
+     EcoQuest 2 and Gabriel Knight 2.
 
  SCUMM:
    - New Digital iMUSE engine.
@@ -120,6 +128,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Rewrote timer handling routines to better approximate both the original
      hardware behavior and the intepreters' quirks.
    - Fix lip syncing in Backyard Baseball 2003.
+   - Fixed original game bugs in Day of the Tentacle, Loom, Monkey Island 1,
+     Monkey Island 2 Amiga, Sam&Max and Zak McKracken FM-TOWNS.
 
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
