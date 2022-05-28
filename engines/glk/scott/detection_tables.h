@@ -59,6 +59,8 @@ const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	{ "perseus", "Mysterious Adventures 9: Perseus and Andromeda" },
 	{ "10indians", "Mysterious Adventures 10: Ten Little Indians" },
 	{ "waxworks11", "Mysterious Adventures 11: Waxworks" },
+	{ "mysadv1", "11 Mysterious Adventures - Disk 1"},
+	{ "mysadv2", "11 Mysterious Adventures - Disk 2"},
 
 	// Other Games
 	{ "desert",            "Desert Adventure" },
@@ -162,6 +164,11 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRY1("perseus", "ZXSpectrum", "84d5fbb16a37e495abf09d191fd8b1a2", 31504),
 	DT_ENTRY1("10indians", "ZXSpectrum", "afde056c152de79ea20453c42a2d08af", 31664),
 	DT_ENTRY1("waxworks11", "ZXSpectrum", "6c6fbbbb50032463a6ea71c6750ea1f5", 32662),
+
+	//C64 Games
+	//11 Mysterious Adventures
+	DT_ENTRY1("mysadv1", "C64", "ce5a68cf43b2f29d99c0135b89f4fe31", 174848),
+	DT_ENTRY1("mysadv2", "C64", "1e1ff48f80a8220f5ab9d14c975197b8", 174848),
 	DT_END_MARKER
 };
 
