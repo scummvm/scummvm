@@ -21,6 +21,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Weitere Informationen findest Du in der Dokumentation unnter "Unterstanding the search box".
    - Icon-Ansicht zur Benutzeroberfläche hinzugefügt [GSoC-Aufgabe].
    - Unterstützung für die RetroWave OPL3-Soundkarte hinzugefügt.
+   - Die Portierung auf Symbian wurde eingestellt.
 
  AGI:
    - Unterstützung für die Macintosh-Versionen von Manhunter 1 und 2 hinzugefügt.
