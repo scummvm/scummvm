@@ -17,14 +17,20 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - The project license has been upgraded to GPLv3+.
    - Now ScummVM requires C++11 for building.
+   - Removed support for VS2008, as it doesn't support C++11.
    - Implemented enhanced filtering in the Search box. See "Understanding
      the search box" in the documentation for details.
    - Implemented Icon view in GUI (GSoC task).
    - Added support for the RetroWave OPL3 sound card.
+   - Added OpenDingux beta port.
    - Removed Symbian port.
+   - Added the create_engine tool to aid when creating new engines.
 
  AGI:
    - Added support for Macintosh versions of Manhunter 1-2.
+
+ AGS:
+   - Synced changes from upstream AGS.
 
  AGOS:
    - Elvira 1: Added support for Casio MT-540/CT-460/CSM-1 and CMS/GameBlaster.
@@ -67,6 +73,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Dreamweb:
    - Added text to speech for dialogs and object descriptions.
 
+ Glk:
+   - Added support for ZX Spectrum games with graphics in the Scott sub-engine.
+
  Kyra:
    - Added support for the Traditional Chinese versions of Legend of Kyrandia 1 - 3.
    - Added sound support for the Macintosh version of Legend of Kyrandia.
@@ -84,6 +93,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      KQ1, KQ4, KQ5, KQ6, KQ7, LB1, LB2, LIGHTHOUSE, LONGBOW, LSL1, LSL2, LSL3,
      LSL5, LSL6, LSL6HIRES, LSL7, PEPPER, PHANT2, PQ1, PQ2, PQ3, PQ4, PQSWAT,
      QFG1, QFG1VGA, QFG2, QFG3, QFG4, SHIVERS, SQ1, SQ3, SQ4, SQ5, SQ6, TORIN.
+   - Fixed many script bugs in KQ6, KQ7, GK2, QFG3, QFG4, Hoyle4.
+   - Fixed loading autosaves in Shivers and Phantasmagoria 2.
 
  SCUMM:
    - New Digital iMUSE engine.
@@ -108,6 +119,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      of Monkey Island in accordance to the original interpreters.
    - Rewrote timer handling routines to better approximate both the original
      hardware behavior and the intepreters' quirks.
+   - Fix lip syncing in Backyard Baseball 2003.
 
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
@@ -125,6 +137,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed polygon rendering method for the boat windows.
    - Fixed wrong shooting direction for some actors.
    - Fixed door movement in some situations.
+
+ Android port:
+   - Added hardware acceleration for 3D graphics.
+   - Improved touch controls.
 
  macOS port:
    - Added support for displaying OSD messages on the Touch Bar.
