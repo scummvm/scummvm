@@ -73,7 +73,7 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 
 		// Scan through the Scott game list for a match
 		const GlkDetectionEntry *p = SCOTT_GAMES;
-		while (p->_md5 && p->_filesize != filesize && md5 != p->_md5)
+		while (p->_md5 && (p->_filesize != filesize || md5 != p->_md5))
 			++p;
 
 		if (!p->_gameId) {
