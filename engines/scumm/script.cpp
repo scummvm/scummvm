@@ -883,8 +883,9 @@ void ScummEngine::freezeScripts(int flag) {
 		return;
 	}
 
+	bool flagCondition = _game.version >= 7 ? flag == 2 : flag >= 0x80;
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++) {
-		if (_currentScript != i && vm.slot[i].status != ssDead && (!vm.slot[i].freezeResistant || flag >= 0x80)) {
+		if (_currentScript != i && vm.slot[i].status != ssDead && (!vm.slot[i].freezeResistant || flagCondition)) {
 			vm.slot[i].status |= 0x80;
 			vm.slot[i].freezeCount++;
 		}
