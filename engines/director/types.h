@@ -339,6 +339,7 @@ enum DatumType {
 	CASTREF,
 	CHUNKREF,
 	FIELDREF,
+	MENUREF,
 	FLOAT,
 	INT,
 	OBJECT,
