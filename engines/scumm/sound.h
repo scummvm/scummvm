@@ -152,7 +152,7 @@ public:
 	void updateCD();
 	AudioCDManager::Status getCDStatus();
 	int getCurrentCDSound() const { return _currentCDSound; }
-
+	int getCDTrackIdFromSoundId(int soundId, int &loops, int &start);
 	bool isRolandLoom() const;
 	bool useReplacementAudioTracks() const { return _useReplacementAudioTracks; }
 	void updateMusicTimer();

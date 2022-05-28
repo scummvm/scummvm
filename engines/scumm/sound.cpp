@@ -1503,42 +1503,71 @@ void Sound::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(_currentMusic, VER(35));
 }
 
+int Sound::getCDTrackIdFromSoundId(int soundId, int &loops, int &start) {
+	if (_vm->_game.id == GID_LOOM && _vm->_game.version == 4) {
+		loops = 0;
+		start = -1;
+		return 1;
+	}
+
+	if (soundId != -1 && _vm->getResourceAddress(rtSound, soundId)) {
+		uint8 *ptr = _vm->getResourceAddress(rtSound, soundId) + 0x18;
+		loops = ptr[1];
+		start = (ptr[2] * 60 + ptr[3]) * 75 + ptr[4];
+		return ptr[0];
+	}
+
+	loops = 1;
+	return -1;
+}
+
 void Sound::restoreAfterLoad() {
 	_musicTimer = 0;
 	_replacementTrackStartTime = 0;
+	int trackNr = -1;
+	int loops = 1;
+	int start = 0;
+	if (_currentCDSound) {
+		if (_useReplacementAudioTracks) {
+			trackNr = getReplacementAudioTrack(_currentCDSound);
+		} else if (_vm->_game.platform != Common::kPlatformFMTowns) {
+			trackNr = getCDTrackIdFromSoundId(_currentCDSound, loops, start);
+		}
 
-	if (_useReplacementAudioTracks && _currentCDSound) {
-		int trackNr = getReplacementAudioTrack(_currentCDSound);
 		if (trackNr != -1) {
-			int32 now = _vm->VAR(_vm->VAR_TIMER_TOTAL);
-			uint32 frame;
+			if (_useReplacementAudioTracks) {
+				int32 now = _vm->VAR(_vm->VAR_TIMER_TOTAL);
+				uint32 frame;
 
-			_musicTimer = _vm->VAR(_vm->VAR_MUSIC_TIMER);
+				_musicTimer = _vm->VAR(_vm->VAR_MUSIC_TIMER);
 
-			// We try to resume the audio track from where it was
-			// saved. The timer isn't very accurate, but it should
-			// be good enough.
-			//
-			// NOTE: This does not seem to work at the moment, since
-			// the track immediately gets restarted in the cases I
-			// tried.
+				// We try to resume the audio track from where it was
+				// saved. The timer isn't very accurate, but it should
+				// be good enough.
+				//
+				// NOTE: This does not seem to work at the moment, since
+				// the track immediately gets restarted in the cases I
+				// tried.
 
-			if (_musicTimer > 0) {
-				int32 ticks = TIMER_TO_TICKS(_musicTimer);
+				if (_musicTimer > 0) {
+					int32 ticks = TIMER_TO_TICKS(_musicTimer);
 
-				_replacementTrackStartTime = now - TICKS_TO_JIFFIES(ticks);
-				frame = (75 * ticks) / 10;
-			} else {
-				_replacementTrackStartTime = now;
-				frame = 0;
+					_replacementTrackStartTime = now - TICKS_TO_JIFFIES(ticks);
+					frame = (75 * ticks) / 10;
+				} else {
+					_replacementTrackStartTime = now;
+					frame = 0;
+				}
+
+				// If the user has fiddled with the Loom overture
+				// setting, the calculated position could be outside
+				// the track. But it seems a warning message is as bad
+				// as it gets.
+
+				g_system->getAudioCDManager()->play(trackNr, 1, frame, 0, true);
+			} else if (_vm->_game.platform != Common::kPlatformFMTowns) {
+				g_system->getAudioCDManager()->play(trackNr, loops, start + _vm->VAR(_vm->VAR_MUSIC_TIMER), 0, true);
 			}
-
-			// If the user has fiddled with the Loom overture
-			// setting, the calculated position could be outside
-			// the track. But it seems a warning message is as bad
-			// as it gets.
-
-			g_system->getAudioCDManager()->play(trackNr, 1, frame, 0, true);
 		}
 	}
 }
