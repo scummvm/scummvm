@@ -55,12 +55,14 @@ namespace Base {
 
 #ifndef DISABLE_COMMAND_LINE
 
+#if defined(__DS__)
 static const char USAGE_STRING[] =
 	"%s: %s\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
 	"\n"
 	"Try '%s --help' for more options.\n"
 ;
+#endif
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
 #if defined(ANDROID) || defined(__DS__) || defined(__3DS__)
