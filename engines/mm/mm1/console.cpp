@@ -151,11 +151,24 @@ bool Console::Cmd_MapString(int argc, const char **argv) {
 		// Read the string
 		Common::String s;
 		char c;
-		while ((c = f.readByte()) != '\0')
-			s += c;
-		f.close();
+		
+		while ((c = f.readByte()) != '\0') {
+			if (c == '\r') {
+				s += "\\n";
+				debugPrintf("%s\n", s.c_str());
+				s = "";
+			} else {
+				s += c;
 
-		debugPrintf("\"%s\"\n", s.c_str());
+				if (s.size() == 40) {
+					debugPrintf("%s\n", s.c_str());
+					s = "";
+				}
+			}
+		}
+		debugPrintf("%s\n", s.c_str());
+
+		f.close();
 	}
 
 	return true;

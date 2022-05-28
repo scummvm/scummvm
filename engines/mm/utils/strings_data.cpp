@@ -38,7 +38,7 @@ bool StringsData::load(const Common::String &filename) {
 		// Get the next line
 		Common::String line = f.readLine();
 
-		// Check for blank or commen tlines
+		// Check for blank or comment lines
 		Common::String lineTrimmed = line;
 		lineTrimmed.trim();
 		if (lineTrimmed.empty() || lineTrimmed.hasPrefix("#"))
@@ -61,10 +61,20 @@ bool StringsData::load(const Common::String &filename) {
 		key.trim();
 		value.trim();
 
-		// Handle quoted string values
+		// Strip quotes from start and end of string
 		if (value.hasPrefix("\"") && value.hasSuffix("\"")) {
 			value.deleteChar(0);
 			value.deleteLastChar();
+		}
+
+		// Replace any sequences
+		for (uint i = 0; i < value.size(); ++i) {
+			if (value[i] == '\\' && value[i + 1] == '\n') {
+				value.deleteChar(i);
+				value.setChar(i, '\n');
+			} else if (value[i] == '"' && value[i + 1] == '"') {
+				value.deleteChar(i);
+			}
 		}
 
 		// Handle the entries
