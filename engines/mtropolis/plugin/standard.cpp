@@ -28,6 +28,7 @@
 #include "audio/midiplayer.h"
 #include "audio/midiparser.h"
 
+#include "common/random.h"
 
 namespace MTropolis {
 
@@ -1162,6 +1163,12 @@ bool ListVariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue 
 	if (attrib == "count") {
 		result.setInt(_list->getSize());
 		return true;
+	} else if (attrib == "random") {
+		if (_list->getSize() == 0)
+			return false;
+
+		size_t index = thread->getRuntime()->getRandom()->getRandomNumber(_list->getSize() - 1);
+		return _list->getAtIndex(index, result);
 	}
 
 	return Modifier::readAttribute(thread, result, attrib);
