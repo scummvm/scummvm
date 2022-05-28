@@ -49,9 +49,9 @@ class RuntimeObject;
 struct IDebuggable;
 
 enum SupportStatus {
-	kSupportStatusNone,
-	kSupportStatusPartial,
-	kSupportStatusDone,
+	kSupportStatusNone,		// Only loads, not functional
+	kSupportStatusPartial,	// Partially-implemented, some use cases may silently fail
+	kSupportStatusDone,		// Not necessarily "done" but "done" enough that unsupported cases will trigger errors
 };
 
 struct IDebugInspectionReport {
