@@ -99,9 +99,9 @@ void Collision::reajustPos(IVec3 &processActor, ShapeType brickShape) const {
 		return;
 	}
 
-	const int32 xw = (_collision.x * SIZE_BRICK_XZ) - SIZE_BRICK_Y;
+	const int32 xw = (_collision.x * SIZE_BRICK_XZ) - DEMI_BRICK_XZ;
 	const int32 yw = _collision.y * SIZE_BRICK_Y;
-	const int32 zw = (_collision.z * SIZE_BRICK_XZ) - SIZE_BRICK_Y;
+	const int32 zw = (_collision.z * SIZE_BRICK_XZ) - DEMI_BRICK_XZ;
 
 	// double-side stairs
 	switch (brickShape) {
