@@ -46,6 +46,7 @@ static int strToInt(const char *s) {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("dump_map", WRAP_METHOD(Console, Cmd_DumpMap));
+	registerCmd("map_string", WRAP_METHOD(Console, Cmd_MapString));
 }
 
 bool Console::Cmd_DumpMap(int argc, const char **argv) {
@@ -117,6 +118,44 @@ bool Console::Cmd_DumpMap(int argc, const char **argv) {
 		}
 
 		debugPrintf("Done.\n");
+	}
+
+	return true;
+}
+
+bool Console::Cmd_MapString(int argc, const char **argv) {
+	Common::File f;
+
+	if (argc != 3) {
+		debugPrintf("%s <map Id> <offset>\n");
+	} else {
+		int mapId = strToInt(argv[1]);
+		Maps::Map *map = g_globals->_maps.getMap(mapId);
+		int offset = strToInt(Common::String::format(
+			"%sh", argv[2]).c_str());
+
+		if (!f.open(Common::String::format("%s.ovr", map->getName().c_str())))
+			error("Failed to open map");
+
+		f.readUint16LE();
+		f.readUint16LE();
+		int codeSize = f.readUint16LE();
+		int dataPtr = f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
+		f.readUint16LE();
+
+		f.skip(codeSize);
+		f.skip(offset - dataPtr);
+
+		// Read the string
+		Common::String s;
+		char c;
+		while ((c = f.readByte()) != '\0')
+			s += c;
+		f.close();
+
+		debugPrintf("\"%s\"\n", s.c_str());
 	}
 
 	return true;

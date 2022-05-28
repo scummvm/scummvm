@@ -29,7 +29,15 @@ namespace MM1 {
 
 class Console : public GUI::Debugger {
 protected:
+	/**
+	 * Used to dump a map's code and data
+	 */
 	bool Cmd_DumpMap(int argc, const char **argv);
+
+	/**
+	 * Prints a string from within a map's data segment
+	 */
+	bool Cmd_MapString(int argc, const char **argv);
 
 public:
 	Console();
