@@ -210,9 +210,22 @@ private:
 };
 
 /**
+ * Common options widget stuff.
+ */
+class ScummOptionsContainerWidget : public GUI::OptionsContainerWidget {
+public:
+	ScummOptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogLayout, const Common::String &domain) :
+		OptionsContainerWidget(boss, name, dialogLayout, false, domain) {
+	}
+
+	GUI::CheckboxWidget *createEnhancementsCheckbox(GuiObject *boss, const Common::String &name);
+	void updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value);
+};
+
+/**
  * Options widget for EGA Loom.
  */
-class LoomEgaGameOptionsWidget : public GUI::OptionsContainerWidget {
+class LoomEgaGameOptionsWidget : public ScummOptionsContainerWidget {
 public:
 	LoomEgaGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
 	~LoomEgaGameOptionsWidget() override {};
@@ -228,11 +241,67 @@ private:
 	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	GUI::CheckboxWidget *_enableEnhancements;
+	GUI::CheckboxWidget *_enableEnhancementsCheckbox;
 	GUI::SliderWidget *_overtureTicksSlider;
 	GUI::StaticTextWidget *_overtureTicksValue;
 
 	void updateOvertureTicksValue();
+};
+
+/**
+ * Options widget for VGA Loom (DOS CD).
+ */
+class LoomVgaGameOptionsWidget : public ScummOptionsContainerWidget {
+public:
+	LoomVgaGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+	~LoomVgaGameOptionsWidget() override {};
+
+	void load() override;
+	bool save() override;
+
+private:
+	enum {
+		kPlaybackAdjustmentChanged = 'PBAC'
+	};
+
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+
+	GUI::CheckboxWidget *_enableEnhancementsCheckbox;
+	GUI::SliderWidget *_playbackAdjustmentSlider;
+	GUI::StaticTextWidget *_playbackAdjustmentValue;
+
+	void updatePlaybackAdjustmentValue();
+};
+
+/**
+ * Options widget for CD Monkey Island 1.
+ */
+class MI1CdGameOptionsWidget : public ScummOptionsContainerWidget {
+public:
+	MI1CdGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+	~MI1CdGameOptionsWidget() override {};
+
+	void load() override;
+	bool save() override;
+
+private:
+	enum {
+		kIntroAdjustmentChanged = 'IACH',
+		kOutlookAdjustmentChanged = 'OACH'
+	};
+
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+
+	GUI::CheckboxWidget *_enableEnhancementsCheckbox;
+	GUI::SliderWidget *_introAdjustmentSlider;
+	GUI::StaticTextWidget *_introAdjustmentValue;
+	GUI::SliderWidget *_outlookAdjustmentSlider;
+	GUI::StaticTextWidget *_outlookAdjustmentValue;
+
+	void updateIntroAdjustmentValue();
+	void updateOutlookAdjustmentValue();
 };
 
 } // End of namespace Scumm

@@ -699,8 +699,34 @@ void LoomTownsDifficultyDialog::handleCommand(GUI::CommandSender *sender, uint32
 	}
 }
 
+// Game options widgets
+
+// Normally this would be added as a static game settings widget, but I see no
+// way to get both the dynamic and the static one, so we have to duplicate it
+// here.
+
+GUI::CheckboxWidget *ScummOptionsContainerWidget::createEnhancementsCheckbox(GuiObject *boss, const Common::String &name) {
+	return new GUI::CheckboxWidget(boss, name, _("Enable game-specific enhancements"), _("Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game."));
+}
+
+void ScummOptionsContainerWidget::updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value) {
+	int adjustment = slider->getValue();
+	const char *sign = "";
+
+	if (adjustment < 0) {
+		adjustment = -adjustment;
+		sign = "-";
+	} else if (adjustment > 0)
+		sign = "+";
+
+	value->setLabel(Common::String::format("%s%d.%02d", sign, adjustment / 100, adjustment % 100));
+
+}
+
+// EGA Loom Overture settings
+
 LoomEgaGameOptionsWidget::LoomEgaGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
-		OptionsContainerWidget(boss, name, "LoomEgaGameOptionsDialog", false, domain) {
+		ScummOptionsContainerWidget(boss, name, "LoomEgaGameOptionsDialog", domain) {
 	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "LoomEgaGameOptionsDialog.OvertureTicksLabel", _("Overture Timing:"));
 
 	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
@@ -723,11 +749,7 @@ LoomEgaGameOptionsWidget::LoomEgaGameOptionsWidget(GuiObject *boss, const Common
 
 	_overtureTicksValue->setFlags(GUI::WIDGET_CLEARBG);
 
-	// Normally this would be added as a static game settings widget, but
-	// I see no way to get both the dynamic and the static one, so we have
-	// to duplicate it here.
-
-	_enableEnhancements = new GUI::CheckboxWidget(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableEnhancements", _("Enable game-specific enhancements"), _("Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game."));
+	_enableEnhancementsCheckbox = createEnhancementsCheckbox(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableEnhancements");
 }
 
 void LoomEgaGameOptionsWidget::load() {
@@ -739,12 +761,12 @@ void LoomEgaGameOptionsWidget::load() {
 	_overtureTicksSlider->setValue(loomOvertureTicks);
 	updateOvertureTicksValue();
 
-	_enableEnhancements->setState(ConfMan.getBool("enable_enhancements", _domain));
+	_enableEnhancementsCheckbox->setState(ConfMan.getBool("enable_enhancements", _domain));
 }
 
 bool LoomEgaGameOptionsWidget::save() {
 	ConfMan.setInt("loom_overture_ticks", _overtureTicksSlider->getValue(), _domain);
-	ConfMan.setBool("enable_enhancements", _enableEnhancements->getState(), _domain);
+	ConfMan.setBool("enable_enhancements", _enableEnhancementsCheckbox->getState(), _domain);
 	return true;
 }
 
@@ -779,6 +801,206 @@ void LoomEgaGameOptionsWidget::updateOvertureTicksValue() {
 	int ticks = DEFAULT_LOOM_OVERTURE_TRANSITION + _overtureTicksSlider->getValue();
 
 	_overtureTicksValue->setLabel(Common::String::format("%d:%02d.%d", ticks / 600, (ticks % 600) / 10, ticks % 10));
+}
+
+// VGA Loom Playback Adjustment settings
+
+LoomVgaGameOptionsWidget::LoomVgaGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+		ScummOptionsContainerWidget(boss, name, "LoomVgaGameOptionsDialog", domain) {
+	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "LoomVgaGameOptionsDialog.PlaybackAdjustmentLabel", _("Playback Adjust:"));
+
+	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
+
+	_playbackAdjustmentSlider = new GUI::SliderWidget(widgetsBoss(), "LoomVgaGameOptionsDialog.PlaybackAdjustment", _("When playing sound from the CD audio track, adjust the start position of the sound by this much. Use this if you often hear bits of the wrong sound."), kPlaybackAdjustmentChanged);
+
+	// The first sound in the track is played from frame 22. It's not
+	// possible to move that more than about 0.3 seconds towards zero.
+	// Everything else can be moved by as much as two seconds in each
+	// direction.
+
+	_playbackAdjustmentSlider->setMinValue(-200);
+	_playbackAdjustmentSlider->setMaxValue(200);
+
+	_playbackAdjustmentValue = new GUI::StaticTextWidget(widgetsBoss(), "LoomVgaGameOptionsDialog.PlaybackAdjustmentValue", Common::U32String());
+
+	_playbackAdjustmentValue->setFlags(GUI::WIDGET_CLEARBG);
+
+	_enableEnhancementsCheckbox = createEnhancementsCheckbox(widgetsBoss(), "LoomVgaGameOptionsDialog.EnableEnhancements");
+}
+
+void LoomVgaGameOptionsWidget::load() {
+	int playbackAdjustment = 0;
+
+	if (ConfMan.hasKey("loom_playback_adjustment", _domain))
+		playbackAdjustment = ConfMan.getInt("loom_playback_adjustment", _domain);
+
+	_playbackAdjustmentSlider->setValue(playbackAdjustment);
+	updatePlaybackAdjustmentValue();
+
+	_enableEnhancementsCheckbox->setState(ConfMan.getBool("enable_enhancements", _domain));
+}
+
+bool LoomVgaGameOptionsWidget::save() {
+	ConfMan.setInt("loom_playback_adjustment", _playbackAdjustmentSlider->getValue(), _domain);
+	ConfMan.setBool("enable_enhancements", _enableEnhancementsCheckbox->getState(), _domain);
+	return true;
+}
+
+void LoomVgaGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout)
+		.addLayout(GUI::ThemeLayout::kLayoutVertical, 12)
+			.addPadding(0, 0, 0, 0)
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
+				.addPadding(0, 0, 12, 0)
+				.addWidget("PlaybackAdjustmentLabel", "OptionsLabel")
+				.addWidget("PlaybackAdjustment", "WideSlider")
+				.addWidget("PlaybackAdjustmentValue", "ShortOptionsLabel")
+			.closeLayout()
+			.addWidget("EnableEnhancements", "Checkbox")
+		.closeLayout()
+	.closeDialog();
+}
+
+void LoomVgaGameOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+
+	switch (cmd) {
+	case kPlaybackAdjustmentChanged:
+		updatePlaybackAdjustmentValue();
+		break;
+	default:
+		GUI::OptionsContainerWidget::handleCommand(sender, cmd, data);
+		break;
+	}
+}
+
+void LoomVgaGameOptionsWidget::updatePlaybackAdjustmentValue() {
+	updateAdjustmentSlider(_playbackAdjustmentSlider, _playbackAdjustmentValue);
+}
+
+// MI1 (CD) Playback Adjustment settings
+
+MI1CdGameOptionsWidget::MI1CdGameOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+		ScummOptionsContainerWidget(boss, name, "MI1CdGameOptionsDialog", domain) {
+	Common::String extra = ConfMan.get("extra", domain);
+
+	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "MI1CdGameOptionsDialog.IntroAdjustmentLabel", _("Intro Adjust:"));
+
+	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
+
+	_introAdjustmentSlider = new GUI::SliderWidget(widgetsBoss(), "MI1CdGameOptionsDialog.IntroAdjustment", _("When playing the intro track, play from this point in it. Use this if the music gets cut off prematurely, or if you are unhappy with the way the music syncs up with the intro."), kIntroAdjustmentChanged);
+
+	_introAdjustmentSlider->setMinValue(0);
+	_introAdjustmentSlider->setMaxValue(200);
+
+	_introAdjustmentValue = new GUI::StaticTextWidget(widgetsBoss(), "MI1CdGameOptionsDialog.IntroAdjustmentValue", Common::U32String());
+
+	_introAdjustmentValue->setFlags(GUI::WIDGET_CLEARBG);
+
+	// The unofficial talkie version has a separate track for the outlook
+	// music, and does its own enhancements through script patching.
+
+	if (!extra.contains("SE Talkie")) {
+		text = new GUI::StaticTextWidget(widgetsBoss(), "MI1CdGameOptionsDialog.OutlookAdjustmentLabel", _("Outlook Adjust:"));
+
+		text->setAlign(Graphics::TextAlign::kTextAlignEnd);
+
+		_outlookAdjustmentSlider = new GUI::SliderWidget(widgetsBoss(), "MI1CdGameOptionsDialog.OutlookAdjustment", _("The outlook music is part of the intro track. Adjust the position in the track at which it starts playing. Use this if the music is cut off, or if you hear part of the previous music."), kOutlookAdjustmentChanged);
+
+		_outlookAdjustmentSlider->setMinValue(-200);
+		_outlookAdjustmentSlider->setMaxValue(200);
+
+		_outlookAdjustmentValue = new GUI::StaticTextWidget(widgetsBoss(), "MI1CdGameOptionsDialog.OutlookAdjustmentValue", Common::U32String());
+
+		_outlookAdjustmentValue->setFlags(GUI::WIDGET_CLEARBG);
+
+		_enableEnhancementsCheckbox = createEnhancementsCheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableEnhancements");
+	} else {
+		_outlookAdjustmentSlider = nullptr;
+		_outlookAdjustmentValue = nullptr;
+		_enableEnhancementsCheckbox = nullptr;
+	}
+}
+
+void MI1CdGameOptionsWidget::load() {
+	int introAdjustment = 0;
+	int outlookAdjustment = 0;
+
+	if (ConfMan.hasKey("mi1_intro_adjustment", _domain))
+		introAdjustment = ConfMan.getInt("mi1_intro_adjustment", _domain);
+	_introAdjustmentSlider->setValue(introAdjustment);
+	updateIntroAdjustmentValue();
+
+	if (_outlookAdjustmentSlider) {
+		if (ConfMan.hasKey("mi1_outlook_adjustment", _domain))
+			outlookAdjustment = ConfMan.getInt("mi1_outlook_adjustment", _domain);
+
+		_outlookAdjustmentSlider->setValue(outlookAdjustment);
+		updateOutlookAdjustmentValue();
+	}
+
+	if (_enableEnhancementsCheckbox)
+		_enableEnhancementsCheckbox->setState(ConfMan.getBool("enable_enhancements", _domain));
+}
+
+bool MI1CdGameOptionsWidget::save() {
+	ConfMan.setInt("mi1_intro_adjustment", _introAdjustmentSlider->getValue(), _domain);
+
+	if (_outlookAdjustmentSlider)
+		ConfMan.setInt("mi1_outlook_adjustment", _outlookAdjustmentSlider->getValue(), _domain);
+
+	if (_enableEnhancementsCheckbox)
+		ConfMan.setBool("enable_enhancements", _enableEnhancementsCheckbox->getState(), _domain);
+
+	return true;
+}
+
+void MI1CdGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout)
+		.addLayout(GUI::ThemeLayout::kLayoutVertical, 12)
+			.addPadding(0, 0, 0, 0)
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
+				.addPadding(0, 0, 12, 0)
+				.addWidget("IntroAdjustmentLabel", "OptionsLabel")
+				.addWidget("IntroAdjustment", "WideSlider")
+				.addWidget("IntroAdjustmentValue", "ShortOptionsLabel")
+			.closeLayout();
+
+	if (_outlookAdjustmentSlider) {
+		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
+			.addPadding(0, 0, 0, 0)
+			.addWidget("OutlookAdjustmentLabel", "OptionsLabel")
+			.addWidget("OutlookAdjustment", "WideSlider")
+			.addWidget("OutlookAdjustmentValue", "ShortOptionsLabel")
+		.closeLayout();
+	}
+
+	if (_enableEnhancementsCheckbox)
+		layouts.addWidget("EnableEnhancements", "Checkbox");
+
+	layouts.closeLayout().closeDialog();
+}
+
+void MI1CdGameOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+
+	switch (cmd) {
+	case kIntroAdjustmentChanged:
+		updateIntroAdjustmentValue();
+		break;
+	case kOutlookAdjustmentChanged:
+		updateOutlookAdjustmentValue();
+		break;
+	default:
+		GUI::OptionsContainerWidget::handleCommand(sender, cmd, data);
+		break;
+	}
+}
+
+void MI1CdGameOptionsWidget::updateIntroAdjustmentValue() {
+	updateAdjustmentSlider(_introAdjustmentSlider, _introAdjustmentValue);
+}
+
+void MI1CdGameOptionsWidget::updateOutlookAdjustmentValue() {
+	updateAdjustmentSlider(_outlookAdjustmentSlider, _outlookAdjustmentValue);
 }
 
 } // End of namespace Scumm

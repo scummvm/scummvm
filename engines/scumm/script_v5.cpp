@@ -3073,11 +3073,19 @@ void ScummEngine_v5::decodeParseString() {
 						// I.e. in total 22650 frames.
 						offset = (int)(offset * 7.5 - 22500 - 2*75);
 
+						// Add the user-specified adjustment.
+						if (ConfMan.hasKey("loom_playback_adjustment")) {
+							int adjustment = ConfMan.getInt("loom_playback_adjustment");
+							offset += ((75 * adjustment) / 100);
+							if (offset < 0)
+								offset = 0;
+						}
+
 						// Slightly increase the delay (5 frames = 1/25 of a second).
 						// This noticably improves the experience in Loom CD.
 						delay = (int)(delay * 7.5 + 5);
 
-						_sound->playCDTrack(1, 0, offset, delay);
+						_sound->playCDTrack(1, 1, offset, delay);
 					}
 				} else {
 					error("ScummEngine_v5::decodeParseString: Unhandled case 8");
