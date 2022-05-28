@@ -1528,7 +1528,7 @@ void Sound::restoreAfterLoad() {
 
 			// If the user has fiddled with the Loom overture
 			// setting, the calculated position could be outside
-			// the track, but it seems a warning message is as bad
+			// the track. But it seems a warning message is as bad
 			// as it gets.
 
 			g_system->getAudioCDManager()->play(trackNr, 1, frame, 0, true);
