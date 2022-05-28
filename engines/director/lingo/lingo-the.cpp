@@ -20,6 +20,7 @@
  */
 
 #include "graphics/macgui/macbutton.h"
+#include "graphics/macgui/macmenu.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -599,13 +600,62 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = 32 * 1024 * 1024;	// Let's have 32 Mbytes
 		break;
 	case kTheMenu:
-		getTheEntitySTUB(kTheMenu);
+		d.type = STRING;
+		Graphics::MacMenuItem *menuRef;
+		menuRef = nullptr;
+
+		if (id.u.menu->menuIdNum == -1) {
+			menuRef = g_director->_wm->getMenu()->getMenuItem(*id.u.menu->menuIdStr);
+		} else {
+			menuRef = g_director->_wm->getMenu()->getMenuItem(id.u.menu->menuIdNum - 1);
+		}
+		d.u.s = g_director->_wm->getMenu()->getName(menuRef);
 		break;
 	case kTheMenuItem:
-		getTheEntitySTUB(kTheMenuItem);
+		Graphics::MacMenuItem *menu, *menuItem;
+		menu = nullptr, menuItem = nullptr;
+
+		if (id.u.menu->menuIdNum == -1) {
+			menu = g_director->_wm->getMenu()->getMenuItem(*id.u.menu->menuIdStr);
+		} else {
+			menu = g_director->_wm->getMenu()->getMenuItem(id.u.menu->menuIdNum - 1);
+		}
+		if (id.u.menu->menuItemIdNum == -1) {
+			menuItem = g_director->_wm->getMenu()->getSubMenuItem(menu, *id.u.menu->menuItemIdStr);
+		} else {
+			menuItem = g_director->_wm->getMenu()->getSubMenuItem(menu, id.u.menu->menuItemIdNum - 1);
+		}
+
+		switch(field) {
+		case kTheCheckMark:
+			d.type = INT;
+			d.u.i = g_director->_wm->getMenuItemCheckMark(menuItem);
+			break;
+		case kTheEnabled:
+			d.type = INT;
+			d.u.i = g_director->_wm->getMenuItemEnabled(menuItem);
+			break;
+		case kTheName:
+			d.type = STRING;
+			d.u.s = new Common::String;
+			*(d.u.s) = g_director->_wm->getMenuItemName(menuItem);
+			break;
+		case kTheScript:
+			d.type = INT;
+			d.u.i = g_director->_wm->getMenuItemAction(menuItem);
+			break;
+		default:
+			warning("Lingo::getTheEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+			break;
+		}
 		break;
 	case kTheMenuItems:
-		getTheEntitySTUB(kTheMenuItems);
+		d.type = INT;
+		d.u.i = getMenuItemsNum(id);
+		break;
+	case kTheMenus:
+		d.type = INT;
+		d.u.i = getMenuNum();
 		break;
 	case kTheMouseCast:
 		{
@@ -931,8 +981,6 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		debugC(3, kDebugLingoExec, "Lingo::setTheEntity(%s, %s, %s, %s)", entity2str(entity), id.asString(true).c_str(), field2str(field), d.asString(true).c_str());
 	}
 
-	Datum menuItemParam;												//Extra Datum required for setting MenuItem Parameter
-
 	Movie *movie = _vm->getCurrentMovie();
 	Score *score = movie->getScore();
 
@@ -1021,11 +1069,50 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheMenu);
 		break;
 	case kTheMenuItem:
-		//Pop the MenuItem Parameter Datum (Name, value of checkbox, ifEnabled, Script)
-		//Then pass it to setThemMenuItemEntity() to set the menuItemId (d) with parameter menuItemParam
-		//id tells the menuId, field tells which property to change (checkmark, enabled, name, script)
-		menuItemParam = g_lingo->pop();
-		g_lingo->setTheMenuItemEntity(entity, id, field, d, menuItemParam);
+		Graphics::MacMenuItem *menu, *menuItem;
+		menu = nullptr, menuItem = nullptr;
+
+		if (id.u.menu->menuIdNum == -1) {
+			menu = g_director->_wm->getMenu()->getMenuItem(*id.u.menu->menuIdStr);
+		} else {
+			menu = g_director->_wm->getMenu()->getMenuItem(id.u.menu->menuIdNum - 1);
+		}
+
+		if (id.u.menu->menuItemIdNum == -1) {
+			menuItem = g_director->_wm->getMenu()->getSubMenuItem(menu, *id.u.menu->menuItemIdStr);
+		} else {
+			menuItem = g_director->_wm->getMenu()->getSubMenuItem(menu, id.u.menu->menuItemIdNum - 1);
+		}
+
+		if (!menuItem) {
+			warning("Wrong menuItem!");
+			break;
+		}
+		switch(field) {
+		case kTheCheckMark:
+			g_director->_wm->setMenuItemCheckMark(menuItem, d.asInt());
+			break;
+		case kTheEnabled:
+			g_director->_wm->setMenuItemEnabled(menuItem, d.asInt());
+			break;
+		case kTheName:
+			g_director->_wm->setMenuItemName(menuItem, d.asString());
+			break;
+		case kTheScript:
+		{
+			LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
+			int commandId = 100;
+			while (mainArchive->getScriptContext(kEventScript, commandId))
+				commandId++;
+			mainArchive->replaceCode(d.asString(), kEventScript, commandId);
+
+			g_director->_wm->setMenuItemAction(menuItem, commandId);
+		}
+		break;
+		default:
+			warning("Lingo::setTheEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
+			break;
+		}
 		break;
 	case kTheMouseDownScript:
 		movie->setPrimaryEventHandler(kEventMouseDown, d.asString());
@@ -1164,106 +1251,24 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	}
 }
 
-Datum Lingo::getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId) {
-	Datum d;
-
-	switch(field) {
-	case kTheCheckMark:
-		if (menuId.type == STRING && menuItemId.type == STRING) {
-			d.type = INT;
-			d.u.i = g_director->_wm->getMenuItemCheckMark(menuId.asString(), menuItemId.asString());
-		} else if (menuId.type == INT && menuItemId.type == INT) {
-			d.type = INT;
-			d.u.i = g_director->_wm->getMenuItemCheckMark(menuId.asInt(), menuItemId.asInt());
-		} else
-			warning("Lingo::getTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
-		break;
-	case kTheEnabled:
-		if (menuId.type == STRING && menuItemId.type == STRING) {
-			d.type = INT;
-			d.u.i = g_director->_wm->getMenuItemEnabled(menuId.asString(), menuItemId.asString());
-		} else if (menuId.type == INT && menuItemId.type == INT) {
-			d.type = INT;
-			d.u.i = g_director->_wm->getMenuItemEnabled(menuId.asInt(), menuItemId.asInt());
-		} else
-			warning("Lingo::getTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
-		break;
-	case kTheName:
-		if (menuId.type == STRING && menuItemId.type == STRING) {
-			d.type = STRING;
-			d.u.s = new Common::String;
-			*(d.u.s) = g_director->_wm->getMenuItemName(menuId.asString(), menuItemId.asString());
-		} else if (menuId.type == INT && menuItemId.type == INT) {
-			d.type = STRING;
-			d.u.s = new Common::String;
-			*(d.u.s) = g_director->_wm->getMenuItemName(menuId.asInt(), menuItemId.asInt());
-		} else
-			warning("Lingo::getTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
-		break;
-	case kTheScript:
-		if (menuId.type == STRING && menuItemId.type == STRING) {
-			d.type = INT;
-			d.u.i = g_director->_wm->getMenuItemAction(menuId.asString(), menuItemId.asString());
-		} else if (menuId.type == INT && menuItemId.type == INT) {
-			d.type = INT;
-			d.u.i = g_director->_wm->getMenuItemAction(menuId.asInt(), menuItemId.asInt());
-		} else
-			warning("Lingo::getTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
-		break;
-	default:
-		warning("Lingo::getTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
-		break;
-	}
-
-	return d;
+int Lingo::getMenuNum() {
+	return g_director->_wm->getMenu()->numberOfMenus();
 }
 
-void Lingo::setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d) {
-	switch(field) {
-	case kTheCheckMark:
-		if (menuId.type == STRING && menuItemId.type == STRING)
-			g_director->_wm->setMenuItemCheckMark(menuId.asString(), menuItemId.asString(), d.asInt());
-		else if (menuId.type == INT && menuItemId.type == INT)
-			g_director->_wm->setMenuItemCheckMark(menuId.asInt() - 1, menuItemId.asInt() - 1, d.asInt());
-		else
-			warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
-		break;
-	case kTheEnabled:
-		if (menuId.type == STRING && menuItemId.type == STRING)
-			g_director->_wm->setMenuItemEnabled(menuId.asString(), menuItemId.asString(), d.asInt());
-		else if (menuId.type == INT && menuItemId.type == INT)
-			g_director->_wm->setMenuItemEnabled(menuId.asInt() - 1, menuItemId.asInt() - 1, d.asInt());
-		else
-			warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
-		break;
-	case kTheName:
-		if (menuId.type == STRING && menuItemId.type == STRING)
-			g_director->_wm->setMenuItemName(menuId.asString(), menuItemId.asString(), d.asString());
-		else if (menuId.type == INT && menuItemId.type == INT)
-			g_director->_wm->setMenuItemName(menuId.asInt() - 1, menuItemId.asInt() - 1, d.asString());
-		else
-			warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
-		break;
-	case kTheScript:
-		{
-			LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
-			int commandId = 100;
-			while (mainArchive->getScriptContext(kEventScript, commandId))
-				commandId++;
-			mainArchive->replaceCode(d.asString(), kEventScript, commandId);
-
-			if (menuId.type == STRING && menuItemId.type == STRING)
-				g_director->_wm->setMenuItemAction(menuId.asString(), menuItemId.asString(), commandId);
-			else if (menuId.type == INT && menuItemId.type == INT)
-				g_director->_wm->setMenuItemAction(menuId.asInt() - 1, menuItemId.asInt() - 1, commandId);
-			else
-				warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
-		}
-		break;
-	default:
-		warning("Lingo::setTheMenuItemEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
-		break;
+int Lingo::getMenuItemsNum(Datum &d) {
+	if (d.type != MENUREF) {
+		warning("Datum of wrong type: Expected MENUREF, got '%d'", d.type);
+		return 0;
 	}
+
+	Graphics::MacMenuItem *menu = nullptr;
+
+	if (d.u.menu->menuIdNum == -1) {
+		menu = g_director->_wm->getMenu()->getMenuItem(*d.u.menu->menuIdStr);
+	} else {
+		menu = g_director->_wm->getMenu()->getMenuItem(d.u.menu->menuIdNum);
+	}
+	return g_director->_wm->getMenu()->numberOfMenuItems(menu);
 }
 
 Datum Lingo::getTheSprite(Datum &id1, int field) {

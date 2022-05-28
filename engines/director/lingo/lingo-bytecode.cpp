@@ -726,6 +726,17 @@ void LC::cb_v4theentitypush() {
 			{
 				Datum id = g_lingo->pop();
 				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(%s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field));
+				if (id.type == INT) {
+					int menuId = id.u.i;
+					id.u.menu = new MenuReference();
+					id.u.menu->menuIdNum = menuId;
+				} else {
+					Common::String *menuId = id.u.s;
+					id.u.menu = new MenuReference();
+					id.u.menu->menuIdStr = menuId;
+				}
+				id.type = MENUREF;
+
 				result = g_lingo->getTheEntity(entity, id, field);
 			}
 			break;
@@ -853,6 +864,16 @@ void LC::cb_v4theentityassign() {
 	case kTEAItemId:
 		{
 			Datum id = g_lingo->pop();
+			if (id.type == INT) {
+				int menuId = id.u.i;
+				id.u.menu = new MenuReference();
+				id.u.menu->menuIdNum = menuId;
+			} else {
+				Common::String *menuId = id.u.s;
+				id.u.menu = new MenuReference();
+				id.u.menu->menuIdStr = menuId;
+			}
+			id.type = MENUREF;
 			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(%s, %s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field), value.asString(true).c_str());
 			g_lingo->setTheEntity(entity, id, field, value);
 		}
@@ -867,7 +888,20 @@ void LC::cb_v4theentityassign() {
 		{
 			Datum menuId = g_lingo->pop();
 			Datum itemId = g_lingo->pop();
-			g_lingo->setTheMenuItemEntity(entity, menuId, field, itemId, value);
+			Datum menuDatum;
+			menuDatum.type = MENUREF;
+			menuDatum.u.menu = new MenuReference();
+			if (menuId.type == INT) {
+				menuDatum.u.menu->menuIdNum = menuId.u.i;
+			} else {
+				menuDatum.u.menu->menuIdStr = menuId.u.s;
+			}
+			if (itemId.type == INT) {
+				menuDatum.u.menu->menuItemIdNum = itemId.u.i;
+			} else {
+				menuDatum.u.menu->menuItemIdStr = itemId.u.s;
+			}
+			g_lingo->setTheEntity(entity, menuDatum, field, value);
 		}
 		break;
 	case kTEAChunk:

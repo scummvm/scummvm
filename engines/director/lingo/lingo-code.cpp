@@ -583,12 +583,24 @@ void LC::c_themenuentitypush() {
 
 	Datum menuId = g_lingo->pop();
 	Datum menuItemId;
+	Datum menuRef;
+	menuRef.u.menu = new MenuReference();
+	if (menuId.type == INT) {
+		menuRef.u.menu->menuIdNum = menuId.u.i;
+	} else {
+		menuRef.u.menu->menuIdStr = menuId.u.s;
+	}
 
 	if (entity != kTheMenuItems) { // "<entity> of menuitems" has 1 parameter
 		menuItemId = g_lingo->pop();
+		if (menuItemId.type == INT) {
+			menuRef.u.menu->menuItemIdNum = menuItemId.u.i;
+		} else {
+			menuRef.u.menu->menuItemIdStr = menuItemId.u.s;
+		}
 	}
 
-	Datum d = g_lingo->getTheMenuItemEntity(entity, menuId, field, menuItemId);
+	Datum d = g_lingo->getTheEntity(entity, menuRef, field);
 	g_lingo->push(d);
 }
 

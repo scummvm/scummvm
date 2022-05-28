@@ -40,6 +40,7 @@ class SeekableReadStreamEndian;
 namespace Director {
 
 struct ChunkReference;
+struct MenuReference;
 struct TheEntity;
 struct TheEntityField;
 struct LingoArchive;
@@ -141,6 +142,7 @@ struct Datum {	/* interpreter stack type */
 		AbstractObject *obj; /* OBJECT */
 		ChunkReference *cref; /* CHUNKREF */
 		CastMemberID *cast;	/* CASTREF, FIELDREF */
+		MenuReference *menu; /* MENUREF	*/
 	} u;
 
 	int *refCount;
@@ -193,6 +195,15 @@ struct ChunkReference {
 
 	ChunkReference(const Datum &src, ChunkType t, int sc, int ec, int s, int e)
 		: source(src), type(t), startChunk(sc), endChunk(ec), start(s), end(e) {}
+};
+
+struct MenuReference {
+	int menuIdNum;
+	Common::String *menuIdStr;
+	int menuItemIdNum;
+	Common::String *menuItemIdStr;
+
+	MenuReference();
 };
 
 struct PCell {
@@ -283,6 +294,8 @@ public:
 	~Lingo();
 
 	void resetLingo();
+	int getMenuNum();
+	int getMenuItemsNum(Datum &d);
 
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, CastMemberID id);
@@ -391,8 +404,6 @@ public:
 
 	Datum getTheEntity(int entity, Datum &id, int field);
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);
-	Datum getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId);
-	void setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d);
 	Datum getTheSprite(Datum &id, int field);
 	void setTheSprite(Datum &id, int field, Datum &d);
 	Datum getTheCast(Datum &id, int field);

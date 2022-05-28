@@ -142,6 +142,13 @@ PCell::PCell(const Datum &prop, const Datum &val) {
 	v = val;
 }
 
+MenuReference::MenuReference() {
+	menuIdNum = -1;
+	menuIdStr = nullptr;
+	menuItemIdNum = -1;
+	menuItemIdStr = nullptr;
+}
+
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
@@ -948,6 +955,8 @@ Common::String Datum::asString(bool printonly) const {
 		}
 
 		s += ")";
+		break;
+	case MENUREF:
 		break;
 	default:
 		warning("Incorrect operation asString() for type: %s", type2str());
