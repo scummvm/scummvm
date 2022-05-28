@@ -7911,6 +7911,30 @@ static const SciScriptPatcherEntry larry1Signatures[] = {
 
 // ===========================================================================
 // Leisure Suit Larry 2
+
+// Disable the LSL2 speed test by always setting the machine speed to 61 so that
+//  all graphics are enabled. This is the minimum value that enables all details
+//  such as clouds on the cruise ship.
+//
+// Applies to: All versions
+// Responsible method: rm99:doit
+static const uint16 larry2SignatureSpeedTest[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x00,                      // lsl 00
+	0x76,                            // push0
+	0x43, SIG_ADDTOOFFSET(+1), 0x00, // callk GetTime 00
+	0x22,                            // lt? [ is speed test complete? ]
+	0x30,                            // bnt
+	SIG_END
+};
+
+static const uint16 larry2PatchSpeedTest[] = {
+	0x35, 0x3d,                      // ldi 3d
+	0xa1, 0x78,                      // sag 78 [ machine speed = 61 ]
+	0x33, 0x04,                      // jmp 04 [ complete speed test ]
+	PATCH_END
+};
+
 // On the plane, Larry is able to wear the parachute. This grants 4 points.
 // In early versions of LSL2, it was possible to get "unlimited" points by
 //  simply wearing it multiple times.
@@ -7999,6 +8023,7 @@ static const uint16 larry2PatchLotteryTicketMessages2[] = {
 //          script, description,                                      signature                              patch
 static const SciScriptPatcherEntry larry2Signatures[] = {
 	{  true,    63, "plane: no points for wearing parachute",      1, larry2SignatureWearParachutePoints,    larry2PatchWearParachutePoints },
+	{  true,    99, "disable speed test",                          1, larry2SignatureSpeedTest,              larry2PatchSpeedTest },
 	{  true,   114, "lottery ticket messages (1/2)",               1, larry2SignatureLotteryTicketMessages1, larry2PatchLotteryTicketMessages1 },
 	{  true,   114, "lottery ticket messages (2/2)",               1, larry2SignatureLotteryTicketMessages2, larry2PatchLotteryTicketMessages2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
