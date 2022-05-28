@@ -600,6 +600,9 @@ void MovieElement::activate() {
 		StartPlayingTaskData *startPlayingTaskData = _runtime->getVThread().pushTask("MovieElement::startPlayingTask", this, &MovieElement::startPlayingTask);
 		startPlayingTaskData->runtime = _runtime;
 	}
+
+	if (_name.empty())
+		_name = project->getAssetNameByID(_assetID);
 }
 
 void MovieElement::deactivate() {
@@ -973,6 +976,9 @@ void ImageElement::activate() {
 	}
 
 	_cachedImage = static_cast<ImageAsset *>(asset.get())->loadAndCacheImage(_runtime);
+
+	if (_name.empty())
+		_name = project->getAssetNameByID(_assetID);
 }
 
 void ImageElement::deactivate() {
@@ -1096,6 +1102,9 @@ void MToonElement::activate() {
 
 	_playMediaSignaller = project->notifyOnPlayMedia(this);
 	_playRange = IntRange::create(1, _metadata->frames.size());
+
+	if (_name.empty())
+		_name = project->getAssetNameByID(_assetID);
 }
 
 void MToonElement::deactivate() {
@@ -1773,6 +1782,9 @@ void SoundElement::activate() {
 		StartPlayingTaskData *startPlayingTaskData = _runtime->getVThread().pushTask("SoundElement::startPlayingTask", this, &SoundElement::startPlayingTask);
 		startPlayingTaskData->runtime = _runtime;
 	}
+
+	if (_name.empty())
+		_name = project->getAssetNameByID(_assetID);
 }
 
 
