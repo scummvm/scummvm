@@ -1712,6 +1712,17 @@ void DynamicValueWriteBoolHelper::create(bool *boolValue, DynamicValueWriteProxy
 DynamicValueWriteBoolHelper DynamicValueWriteBoolHelper::_instance;
 
 MiniscriptInstructionOutcome DynamicValueWriteObjectHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+	RuntimeObject *obj = static_cast<RuntimeObject *>(objectRef);
+	if (obj->isModifier() && static_cast<Modifier *>(obj)->isVariable()) {
+		VariableModifier *var = static_cast<VariableModifier *>(obj);
+		if (var->varSetValue(thread, value))
+			return kMiniscriptInstructionOutcomeContinue;
+		else {
+			thread->error("Failed to assign value to variable");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+	}
+
 	thread->error("Can't write to read-only object value");
 	return kMiniscriptInstructionOutcomeFailed;
 }
@@ -2665,6 +2676,22 @@ MiniscriptInstructionOutcome Structural::writeRefAttribute(MiniscriptThread *thr
 	} else if (attrib == "loop") {
 		DynamicValueWriteFuncHelper<Structural, &Structural::scriptSetLoop>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	// Attempt to resolve as a child object
+	// Modifiers are first, then structural
+	for (const Common::SharedPtr<Modifier> &modifier : _modifiers) {
+		if (caseInsensitiveEqual(modifier->getName(), attrib)) {
+			DynamicValueWriteObjectHelper::create(modifier.get(), result);
+			return kMiniscriptInstructionOutcomeContinue;
+		}
+	}
+
+	for (const Common::SharedPtr<Structural> &child : _children) {
+		if (caseInsensitiveEqual(child->getName(), attrib)) {
+			DynamicValueWriteObjectHelper::create(child.get(), result);
+			return kMiniscriptInstructionOutcomeContinue;
+		}
 	}
 
 	return RuntimeObject::writeRefAttribute(thread, result, attrib);
