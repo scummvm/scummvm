@@ -33,9 +33,6 @@ namespace Quest {
 void report_error(const String &s);
 
 // FIXME: This requires global constructor
-reserved_words obj_tag_property("look", "examine", "speak", "take", "alias", "prefix", "suffix", "detail", "displaytype", "gender", "article", "hidden", "invisible", (char *) nullptr);
-
-// FIXME: This requires global constructor
 //reserved_words room_tag_property("look", "alias", "prefix", "indescription", "description", "north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) NULL);
 
 void GeasFile::debug_print(String s) const {
@@ -96,18 +93,19 @@ bool GeasFile::obj_has_property(String objname, String propname) const {
 //Set<String, CI_LESS> GeasFile::get_obj_keys (String obj) const
 Set<String> GeasFile::get_obj_keys(String obj) const {
 	//Set<String, CI_LESS> rv;
+	reserved_words obj_tag_property("look", "examine", "speak", "take", "alias", "prefix", "suffix", "detail", "displaytype", "gender", "article", "hidden", "invisible", (char *) nullptr);
 	Set<String> rv;
-	get_obj_keys(obj, rv);
+	get_obj_keys(obj, rv, obj_tag_property);
 	return rv;
 }
 
-void GeasFile::get_obj_keys(String obj, Set<String> &rv) const {
+void GeasFile::get_obj_keys(String obj, Set<String> &rv, const reserved_words &obj_tag_property) const {
 	cerr << "get_obj_keys (gf, <" << obj << ">)\n";
 	//Set<String> rv;
 
 	uint c1, c2;
 	String tok, line;
-	reserved_words *rw = nullptr;
+	const reserved_words *rw = nullptr;
 
 	const GeasBlock *gb = find_by_name("object", obj);
 	rw = &obj_tag_property;
