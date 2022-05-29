@@ -36,9 +36,9 @@ namespace Shared {
 inline static bool IsAssetLibDir(const AssetLibInfo *lib) {
 	return lib->BaseFileName.IsEmpty();
 }
-inline static bool IsAssetLibFile(const AssetLibInfo *lib) {
-	return !lib->BaseFileName.IsEmpty();
-}
+//inline static bool IsAssetLibFile(const AssetLibInfo *lib) {
+//	return !lib->BaseFileName.IsEmpty();
+//}
 
 bool AssetManager::AssetLibEx::TestFilter(const String &filter) const {
 	return filter == "*" ||
