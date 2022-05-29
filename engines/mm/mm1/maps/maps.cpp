@@ -68,7 +68,7 @@ void Maps::select(byte section, byte id1, byte id2) {
 
 void Maps::display(byte id1, byte id2, byte section) {
 	select(section, id1, id2);
-	_currentMap->getData();
+	loadTiles();
 	g_events->msgGame(GameMessage("DISPLAY"));
 }
 
@@ -83,6 +83,10 @@ uint Maps::getIndex(byte section, byte id1, byte id2) {
 
 	_colorOffset = COLOR_OFFSET[idx];
 	return idx;
+}
+
+void Maps::loadTiles() {
+	// TODO
 }
 
 } // namespace Maps

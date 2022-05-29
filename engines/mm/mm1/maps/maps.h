@@ -169,6 +169,11 @@ private:
 	 * Gets the index of a map given the id values
 	 */
 	uint getIndex(byte section, byte v1, byte v2);
+
+	/**
+	 * Loads tile graphics needed for rendering the 3d view
+	 */
+	void loadTiles();
 public:
 	uint _mapId = (uint)-1;
 	Common::Point _mapPos;
