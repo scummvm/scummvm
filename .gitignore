@@ -144,6 +144,7 @@ project.xcworkspace
 /devtools/make-scumm-fontdata
 /devtools/make-scumm-fontdata.dSYM
 /devtools/create_access/create_access
+/devtools/create_engine/create_engine
 /devtools/create_cryo/create_cryo_dat
 /devtools/create_cryomni3d/create_cryomni3d_dat
 /devtools/create_drascula/create_drascula
