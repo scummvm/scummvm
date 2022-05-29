@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-28 22:40+0000\n"
+"POT-Creation-Date: 2022-05-28 23:12+0000\n"
 "PO-Revision-Date: 2022-05-16 09:27+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -982,7 +982,7 @@ msgid "Platform not detected"
 msgstr "Alusta ei tiedossa"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1382 gui/widgets/groupedlist.cpp:79
+#: gui/launcher.cpp:1382 gui/widgets/groupedlist.cpp:80
 msgid "All"
 msgstr "Kaikki"
 
