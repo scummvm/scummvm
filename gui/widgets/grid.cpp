@@ -823,15 +823,16 @@ void GridWidget::reflowLayout() {
 	int oldThumbnailWidth = _thumbnailWidth;
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
-	if ((oldThumbnailHeight != _thumbnailHeight) || (oldThumbnailWidth != _thumbnailWidth)) {
-		unloadSurfaces(_loadedSurfaces);
-		reloadThumbnails();
-		loadFlagIcons();
-	}
 	_flagIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height");
 	_flagIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width");
 	_platformIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height");
 	_platformIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width");
+	if ((oldThumbnailHeight != _thumbnailHeight) || (oldThumbnailWidth != _thumbnailWidth)) {
+		unloadSurfaces(_loadedSurfaces);
+		reloadThumbnails();
+		loadFlagIcons();
+		loadPlatformIcons();
+	}
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_minGridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
 	_scrollWindowPaddingX = _minGridXSpacing;
