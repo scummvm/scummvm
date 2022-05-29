@@ -101,9 +101,10 @@ void Cinema::execute() {
 			case 2:
 			{
 				int selIndex = (g_events->_mousePos.y - 68) / 10 + topIndex;
-				if (selIndex < (int)cutscenes.size())
+				if (selIndex < (int)cutscenes.size()) {
 					selected = selIndex;
-				g_events->_kbInfo._scanCode = Common::KEYCODE_RETURN;
+					g_events->_kbInfo._scanCode = Common::KEYCODE_RETURN;
+				}
 				break;
 			}
 
