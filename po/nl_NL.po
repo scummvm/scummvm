@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-29 14:37+0000\n"
 "PO-Revision-Date: 2022-05-29 15:21+0000\n"
-"Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -23,10 +23,9 @@ msgstr ""
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:104
-#, fuzzy, c-format
-#| msgid "(built on %s)"
+#, c-format
 msgid "(built on %s with %s)"
-msgstr "(gebouwd op %s)"
+msgstr "(gebouwd op %s met %s)"
 
 #: gui/about.cpp:111
 msgid "Features compiled in:"
@@ -800,9 +799,6 @@ msgid "Change global ScummVM options"
 msgstr "Algemene ScummVM opties"
 
 #: gui/launcher.cpp:243
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "Global ~O~pts..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "Alg. ~O~pties..."
@@ -950,9 +946,6 @@ msgid "Change game options"
 msgstr "Verander spel opties"
 
 #: gui/launcher.cpp:989
-#, fuzzy
-#| msgctxt "lowres"
-#| msgid "~G~ame Opts..."
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "~S~pel Opties..."
@@ -4473,10 +4466,8 @@ msgstr ""
 
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:109
-#, fuzzy
-#| msgid "Main game controls:"
 msgid "main game shortcuts"
-msgstr "Hoofd spel besturing:"
+msgstr "Hoofd spel snelkoppelingen"
 
 #. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:111
@@ -4486,10 +4477,8 @@ msgstr ""
 #. I18N: This keymap is the main way for the user interact with the game.
 #. It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
 #: engines/bladerunner/metaengine.cpp:118
-#, fuzzy
-#| msgid "Walk / Look / Talk"
 msgid "Walk / Look / Talk / Select / Shoot"
-msgstr "Loop / Kijk / Praat"
+msgstr "Loop / Kijk / Praat / Schiet"
 
 #. I18N: This keymap toggles McCoy's status between combat mode (drawing his gun) and normal mode (holstering his gun)
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4520,10 +4509,8 @@ msgstr "Sla dialoogregels over"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:161
-#, fuzzy
-#| msgid "~G~ame Options..."
 msgid "Game Options"
-msgstr "~S~pel Opties..."
+msgstr "Spel Opties"
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
