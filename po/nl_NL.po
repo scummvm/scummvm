@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-29 14:37+0000\n"
-"PO-Revision-Date: 2022-05-29 15:21+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"PO-Revision-Date: 2022-05-29 15:32+0000\n"
+"Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -4462,23 +4462,23 @@ msgstr "Ontbrekende spel code"
 #. I18N: These are keymaps that work in the main gameplay and also when KIA (Knowledge Integration Assistant) is open.
 #: engines/bladerunner/metaengine.cpp:107
 msgid "common shortcuts"
-msgstr ""
+msgstr "veelgebruikte sneltoetsen"
 
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:109
 msgid "main game shortcuts"
-msgstr "Hoofd spel snelkoppelingen"
+msgstr "Hoofdspel sneltoetsen"
 
 #. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:111
 msgid "KIA only shortcuts"
-msgstr ""
+msgstr "KIA-snelkoppelingen"
 
 #. I18N: This keymap is the main way for the user interact with the game.
 #. It is used with the game's cursor to select, walk-to, run-to, look-at, talk-to, pick up, use, shoot (combat mode), open KIA (when clicking on McCoy).
 #: engines/bladerunner/metaengine.cpp:118
 msgid "Walk / Look / Talk / Select / Shoot"
-msgstr "Loop / Kijk / Praat / Schiet"
+msgstr "Loop / Kijk / Praat / Selecteer / Schiet"
 
 #. I18N: This keymap toggles McCoy's status between combat mode (drawing his gun) and normal mode (holstering his gun)
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4499,10 +4499,8 @@ msgstr "Cutscene overslaan"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SKIP PAST CURRENT LINE OF DIALOGUE
 #: engines/bladerunner/metaengine.cpp:150
-#, fuzzy
-#| msgid "Skip dialog lines"
 msgid "Skip dialogue"
-msgstr "Sla dialoogregels over"
+msgstr "Sla dialoog over"
 
 #. I18N: This keymap toggles between opening the KIA in the Game Options tab, and closing the KIA.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4519,7 +4517,7 @@ msgstr "Spel Opties"
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
 #: engines/bladerunner/metaengine.cpp:172
 msgid "Open KIA Database"
-msgstr ""
+msgstr "KIA-database openen"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
@@ -4529,17 +4527,13 @@ msgstr ""
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:204
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll Up"
-msgstr "Scroll omhoog"
+msgstr "Scroll Omhoog"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
 #: engines/bladerunner/metaengine.cpp:211
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll Down"
-msgstr "Scroll omlaag"
+msgstr "Scroll Omlaag"
 
 #. I18N: This keymap opens KIA's SAVE GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4562,10 +4556,8 @@ msgstr "Laad Spel"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CRIME SCENE DATABASE
 #: engines/bladerunner/metaengine.cpp:248
-#, fuzzy
-#| msgid "Scene Data"
 msgid "Crime Scene Database"
-msgstr "Scene Data"
+msgstr "Misdaadscène Data"
 
 #. I18N: This keymap opens KIA's SUSPECT DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
