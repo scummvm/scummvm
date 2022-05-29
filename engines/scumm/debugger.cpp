@@ -576,8 +576,10 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 			debugPrintf("Actor[%d].costume = %d\n", actnum, a->_costume);
 		}
 	} else if (!strcmp(argv[2], "name")) {
-		debugPrintf("Name of actor %d: %s\n", actnum,
-			_vm->getObjOrActorName(_vm->actorToObj(actnum)));
+		const byte *name = _vm->getObjOrActorName(_vm->actorToObj(actnum));
+		if (!name)
+			name = (const byte *)"(null)";
+		debugPrintf("Name of actor %d: %s\n", actnum, name);
 	} else if (!strcmp(argv[2], "condmask")) {
 		if (argc > 3) {
 			a->_heCondMask = value;
@@ -600,6 +602,8 @@ bool ScummDebugger::Cmd_PrintActor(int argc, const char **argv) {
 	for (i = 1; i < _vm->_numActors; i++) {
 		a = _vm->_actors[i];
 		const byte *name = _vm->getObjOrActorName(_vm->actorToObj(a->_number));
+		if (!name)
+			name = (const byte *)"(null)";
 		if (a->_visible)
 			debugPrintf("|%2d|%-12.12s|%4d|%4d|%3d|%3d|%4d|%3d|%3d|%3d|%3d|%3d|%3d|%3d|$%08x|\n",
 						 a->_number, name, a->getRealPos().x, a->getRealPos().y, a->_width,  a->_bottom - a->_top,
@@ -625,6 +629,8 @@ bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 			continue;
 		int classData = (_vm->_game.version != 0 ? _vm->_classData[o->obj_nr] : 0);
 		const byte *name = _vm->getObjOrActorName(o->obj_nr);
+		if (!name)
+			name = (const byte *)"(null)";
 		debugPrintf("|%4d|%-12.12s|%4d|%4d|%5d|%6d|%5d|%2d|$%08x|\n",
 				o->obj_nr, name, o->x_pos, o->y_pos, o->width, o->height, o->state,
 				o->fl_object_index, classData);
@@ -678,7 +684,10 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 			debugPrintf("State of object %d: %d\n", obj, _vm->getState(obj));
 		}
 	} else if (!strcmp(argv[2], "name")) {
-		debugPrintf("Name of object %d: %s\n", obj, _vm->getObjOrActorName(obj));
+		const byte *name = _vm->getObjOrActorName(obj);
+		if (!name)
+			name = (const byte *)"(null)";
+		debugPrintf("Name of object %d: %s\n", obj, name);
 	} else {
 		debugPrintf("Unknown object command '%s'\nUse <pickup | state | name> as command\n", argv[2]);
 	}
