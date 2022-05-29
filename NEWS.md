@@ -105,7 +105,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      EcoQuest 2 and Gabriel Knight 2.
 
  SCUMM:
-   - New Digital iMUSE engine.
+   - New Digital iMUSE engine. Support for re-compressed audio files dropped in
+     Full Throttle, The Dig and The Curse of Monkey Island.
    - Rewrote music player for Amiga versions of Indy3 and Loom in accordance
      to the original code.
    - Fix missing cursor in the 16-color Macintosh versions of Loom and Indiana
