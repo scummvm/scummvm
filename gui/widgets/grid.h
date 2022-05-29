@@ -209,6 +209,7 @@ public:
 	void openTrayAtSelected();
 	void scrollBarRecalc();
 
+	void setSelected(int id);
 	void setFilter(const Common::U32String &filter);
 };
 
