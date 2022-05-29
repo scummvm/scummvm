@@ -51,7 +51,9 @@ public:
 		Unload();
 
 		_library = Plugins::pluginOpen(libraryName.GetCStr());
-		AGS::Shared::Debug::Printf("pluginOpen returned: %s", Plugins::pluginError());
+		const char *error = Plugins::pluginError();
+		if (error)
+			AGS::Shared::Debug::Printf("pluginOpen returned: %s", error);
 
 		return (_library != nullptr);
 	}
