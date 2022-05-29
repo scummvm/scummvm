@@ -1509,8 +1509,18 @@ void LauncherGrid::updateListing() {
 		gridList.push_back(GridItemInfo(k++, engineid, gameid, iter->title, iter->description, Common::parseLanguage(language), Common::parsePlatform(platform)));
 	}
 
+	const int oldSel = _grid->getSelected();
+
 	_grid->setEntryList(&gridList);
 	groupEntries(attrs);
+
+	if (oldSel < (int)gridList.size() && oldSel >= 0)
+		_grid->setSelected(oldSel);	// Restore the old selection
+	else if (oldSel != -1)
+		// Select the last entry if the list has been reduced
+		_grid->setSelected(gridList.size() - 1);
+	updateButtons();
+
 	// And fill out our structures
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
 		_domains.push_back(iter->key);
@@ -1525,7 +1535,19 @@ void LauncherGrid::updateButtons() {
 	}
 }
 
-void LauncherGrid::selectTarget(const Common::String &target) {}
+void LauncherGrid::selectTarget(const Common::String &target) {
+	if (!target.empty()) {
+		int itemToSelect = 0;
+		Common::StringArray::const_iterator iter;
+		for (iter = _domains.begin(); iter != _domains.end(); ++iter, ++itemToSelect) {
+			if (target == *iter) {
+				_grid->setSelected(itemToSelect);
+				break;
+			}
+		}
+	}
+}
+
 int LauncherGrid::getSelected() { return _grid->getSelected(); }
 
 void LauncherGrid::build() {

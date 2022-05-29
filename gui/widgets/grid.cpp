@@ -947,4 +947,14 @@ void GridWidget::setFilter(const Common::U32String &filter) {
 	sortGroups();
 }
 
+void GridWidget::setSelected(int id) {
+	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
+		if ((!_sortedEntryList[i]->isHeader) && (_sortedEntryList[i]->entryID == id)) {
+			_selectedEntry = _sortedEntryList[i];
+			scrollToEntry(id, false);
+			break;
+		}
+	}
+}
+
 } // End of namespace GUI
