@@ -103,7 +103,8 @@ protected:
 	Common::HashMap<Common::String, const Graphics::ManagedSurface *> _loadedSurfaces;
 
 	Common::Array<GridItemInfo>			_dataEntryList;
-	Common::Array<GridItemInfo>			_sortedEntryList;
+	Common::Array<GridItemInfo>			_headerEntryList;
+	Common::Array<GridItemInfo *>		_sortedEntryList;
 	Common::Array<GridItemInfo *>		_visibleEntryList;
 
 	Common::String							_groupingAttribute;
