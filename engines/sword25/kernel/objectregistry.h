@@ -134,7 +134,7 @@ protected:
 	};
 	struct ClassPointer_Hash {
 		uint operator()(const T *x) const {
-			return (uint)(x - (const T *)0);
+			return *(uint *)&x;
 		}
 	};
 
