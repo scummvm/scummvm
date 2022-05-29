@@ -99,7 +99,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      EcoQuest 2 und Gabriel Knight 2.
 
  SCUMM:
-   - Neue Digital iMUSE-Engine hinzugefügt.
+   - Neue Digital iMUSE-Engine hinzugefügt. Die Unterstützung für re-komprimierte Audio-Dateien in
+     Full Throttle, The Dig und The Curse of Monkey Island ist entfallen.
    - Der Musik-Player der Amiga-Versionen von Indy3 und Loom wurde neu entworfen, um dem Original-Code genauer zu entsprechen.
    - Fehlender Cursor nach dem Laden eines gespeicherten Spielstands in der 16-Farben-Version (Macintosh)
      in Loom und Indiana Jones and the Last Crusade behoben.
