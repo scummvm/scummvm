@@ -29,13 +29,34 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define MAP_W 16
+#define MAP_H 16
+#define MAP_SIZE (MAP_W * MAP_H)
+
 class Maps;
+
+enum WallType {
+	WALL_NONE = 0, WALL_NORMAL = 1, WALL_DOOR = 2,
+	WALL_TORCH = 3
+};
+
+/**
+ * The byte structure representing the wall types
+ * for the four cardinal directions
+ */
+struct MapWalls {
+	WallType _n : 2;
+	WallType _e : 2;
+	WallType _s : 2;
+	WallType _w : 2;
+};
 
 class Map {
 private:
 	Common::String _name;
 	uint _mapId;
-	byte _mapData[512];
+	MapWalls _walls[MAP_SIZE];
+	byte _states[MAP_SIZE];
 	Common::Array<byte> _globals;
 private:
 	/**

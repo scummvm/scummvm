@@ -29,7 +29,8 @@ namespace Maps {
 
 Map::Map(Maps *owner, const Common::String &name) : _name(name) {
 	_mapId = owner->addMap(this);
-	Common::fill(&_mapData[0], &_mapData[512], 0);
+	Common::fill((byte *)&_walls[0], (byte *)&_walls[MAP_SIZE], 0);
+	Common::fill(&_states[0], (byte *)&_states[MAP_SIZE], 0);
 }
 
 void Map::load() {
@@ -43,7 +44,8 @@ void Map::loadMazeData() {
 		error("Could not open mazedata.dta");
 
 	f.seek(512 * _mapId);
-	f.read(_mapData, 512);
+	f.read((byte *)_walls, MAP_SIZE);
+	f.read(_states, MAP_SIZE);
 	f.close();
 }
 
