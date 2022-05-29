@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-29 14:37+0000\n"
+"POT-Creation-Date: 2022-05-29 20:05+0000\n"
 "PO-Revision-Date: 2022-05-29 19:03+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -658,7 +658,7 @@ msgstr "Grafische Benutzeroberfläche"
 msgid "Interact"
 msgstr "Interagieren"
 
-#: gui/gui-manager.cpp:227 engines/metaengine.cpp:109
+#: gui/gui-manager.cpp:227 engines/metaengine.cpp:115
 #: engines/dragons/metaengine.cpp:160 engines/griffon/metaengine.cpp:95
 #: engines/grim/grim.cpp:455 engines/grim/grim.cpp:536
 #: engines/twine/metaengine.cpp:329 engines/twine/metaengine.cpp:396
@@ -669,7 +669,7 @@ msgstr "Interagieren"
 msgid "Up"
 msgstr "Hoch"
 
-#: gui/gui-manager.cpp:232 engines/metaengine.cpp:114
+#: gui/gui-manager.cpp:232 engines/metaengine.cpp:121
 #: engines/dragons/metaengine.cpp:166 engines/griffon/metaengine.cpp:101
 #: engines/grim/grim.cpp:460 engines/grim/grim.cpp:541
 #: engines/twine/metaengine.cpp:336 engines/twine/metaengine.cpp:404
@@ -680,7 +680,7 @@ msgstr "Hoch"
 msgid "Down"
 msgstr "Runter"
 
-#: gui/gui-manager.cpp:237 engines/metaengine.cpp:119
+#: gui/gui-manager.cpp:237 engines/metaengine.cpp:127
 #: engines/dragons/metaengine.cpp:172 engines/griffon/metaengine.cpp:107
 #: engines/grim/grim.cpp:465 engines/grim/grim.cpp:546
 #: engines/twine/metaengine.cpp:351 engines/twine/metaengine.cpp:419
@@ -692,7 +692,7 @@ msgstr "Runter"
 msgid "Left"
 msgstr "Links"
 
-#: gui/gui-manager.cpp:242 engines/metaengine.cpp:124
+#: gui/gui-manager.cpp:242 engines/metaengine.cpp:133
 #: engines/dragons/metaengine.cpp:178 engines/griffon/metaengine.cpp:113
 #: engines/grim/grim.cpp:470 engines/grim/grim.cpp:551
 #: engines/twine/metaengine.cpp:343 engines/twine/metaengine.cpp:412
@@ -2645,7 +2645,7 @@ msgstr ""
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "FEHLER: Der Spielstand konnte nicht in einen neuen Slot kopiert werden"
 
-#: engines/engine.cpp:609 engines/metaengine.cpp:370 engines/savestate.cpp:98
+#: engines/engine.cpp:609 engines/metaengine.cpp:380 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:249 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 msgid "Autosave"
@@ -2756,11 +2756,11 @@ msgstr "Rechtsklick"
 msgid "Pause"
 msgstr "Pause"
 
-#: engines/metaengine.cpp:82 engines/parallaction/metaengine.cpp:139
+#: engines/metaengine.cpp:83 engines/parallaction/metaengine.cpp:139
 msgid "Game menu"
 msgstr "Spielmenü"
 
-#: engines/metaengine.cpp:88 engines/grim/grim.cpp:506
+#: engines/metaengine.cpp:90 engines/grim/grim.cpp:506
 #: engines/grim/grim.cpp:602 engines/mohawk/myst.cpp:567
 #: engines/mohawk/riven.cpp:831 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
@@ -2771,18 +2771,18 @@ msgstr "Spielmenü"
 msgid "Skip"
 msgstr "Überspringen"
 
-#: engines/metaengine.cpp:94 engines/sky/metaengine.cpp:117
+#: engines/metaengine.cpp:97 engines/sky/metaengine.cpp:117
 msgid "Skip line"
 msgstr "Zeile überspringen"
 
-#: engines/metaengine.cpp:100
+#: engines/metaengine.cpp:104
 msgid "Predictive input dialog"
 msgstr "Vorausschauender Eingabe-Dialog"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows confirming popup dialogue prompts (eg. for save game deletion or overwriting)
 #. and also submitting a new save game name, or choosing an existing save game for overwriting.
-#: engines/metaengine.cpp:104 engines/bladerunner/metaengine.cpp:181
+#: engines/metaengine.cpp:109 engines/bladerunner/metaengine.cpp:181
 #: engines/griffon/metaengine.cpp:89 engines/grim/grim.cpp:512
 #: engines/grim/grim.cpp:608 engines/sky/metaengine.cpp:97
 #: engines/wintermute/keymapper_tables.h:54
