@@ -26,6 +26,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Die Portierung auf Symbian wurde eingestellt.
    - create_engine-Tool hinzugefügt, um die Erstellung einer neuen Engine zu erleichtern.
    - Die Maus-Erfassung im HiDPI-Modus wurde korrigiert.
+   - Der Optionen-Dialog markiert Einstellungen, die über die Kommandozeile überschrieben wurden, in Rot.
+   - Im Launcher können Spiele nun nach bestimmten Kategorien gruppiert werden.
+   - Für den Launcher wurde eine neue Ansicht hinzugefügt, die Spiele als Icons darstellt.
 
  AGI:
    - Unterstützung für die Macintosh-Versionen von Manhunter 1 und 2 hinzugefügt.
