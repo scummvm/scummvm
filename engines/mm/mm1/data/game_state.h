@@ -39,8 +39,6 @@ namespace MM1 {
 struct GameState {
 	Common::Array<Character> _party;
 	uint _activeSpells[ACTIVE_SPELLS_COUNT];
-	Common::Point _mapPos;
-	int _direction = 0;
 
 	GameState();
 };
