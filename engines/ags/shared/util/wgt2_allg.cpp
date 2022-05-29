@@ -21,6 +21,7 @@
 
 #include "ags/shared/util/wgt2_allg.h"
 #include "ags/shared/gfx/bitmap.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -79,13 +80,12 @@ void wputblock(Bitmap *ds, int xx, int yy, Bitmap *bll, int xray) {
 		ds->Blit(bll, 0, 0, xx, yy, bll->GetWidth(), bll->GetHeight());
 }
 
-Bitmap wputblock_wrapper; // [IKM] argh! :[
 void wputblock_raw(Bitmap *ds, int xx, int yy, BITMAP *bll, int xray) {
-	wputblock_wrapper.WrapAllegroBitmap(bll, true);
+	_G(wputblock_wrapper).WrapAllegroBitmap(bll, true);
 	if (xray)
-		ds->Blit(&wputblock_wrapper, xx, yy, kBitmap_Transparency);
+		ds->Blit(&_G(wputblock_wrapper), xx, yy, kBitmap_Transparency);
 	else
-		ds->Blit(&wputblock_wrapper, 0, 0, xx, yy, wputblock_wrapper.GetWidth(), wputblock_wrapper.GetHeight());
+		ds->Blit(&_G(wputblock_wrapper), 0, 0, xx, yy, _G(wputblock_wrapper).GetWidth(), _G(wputblock_wrapper).GetHeight());
 }
 
 const int col_lookups[32] = {

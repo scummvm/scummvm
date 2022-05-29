@@ -248,12 +248,6 @@ int get_text_lines_surf_height(size_t fontNumber, size_t numlines) {
 			2 * _GP(fonts)[fontNumber].Info.AutoOutlineThickness);
 }
 
-namespace AGS {
-namespace Shared {
-SplitLines Lines;
-} // namespace Shared
-} // namespace AGS
-
 // Replaces AGS-specific linebreak tags with common '\n'
 void unescape_script_string(const char *cstr, std::vector<char> &out) {
 	out.clear();
