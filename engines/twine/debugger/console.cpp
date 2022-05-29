@@ -61,6 +61,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("toggle_freecamera", WRAP_METHOD(TwinEConsole, doToggleFreeCamera));
 	registerCmd("toggle_scenechanges", WRAP_METHOD(TwinEConsole, doToggleSceneChanges));
 	registerCmd("toggle_scenerendering", WRAP_METHOD(TwinEConsole, doToggleSceneRendering));
+	registerCmd("set_track_obj", WRAP_METHOD(TwinEConsole, doSetTrackObject));
 	registerCmd("scene_actor", WRAP_METHOD(TwinEConsole, doSkipSceneActorsBut));
 	registerCmd("hero_pos", WRAP_METHOD(TwinEConsole, doSetHeroPosition));
 	registerCmd("set_life", WRAP_METHOD(TwinEConsole, doSetLife));
@@ -158,6 +159,18 @@ bool TwinEConsole::doToggleFreeCamera(int argc, const char **argv) {
 
 bool TwinEConsole::doToggleSceneChanges(int argc, const char **argv) {
 	TOGGLE_DEBUG(_engine->_debugGrid->_canChangeScenes, "scene switching via keybinding\n")
+	return true;
+}
+
+bool TwinEConsole::doSetTrackObject(int argc, const char **argv) {
+	if (argc <= 2) {
+		debugPrintf("Expected to get a the scene actor number and the track\n");
+		return true;
+	}
+
+	const int32 otherActorIdx = atoi(argv[1]);
+	const int32 offset = atoi(argv[2]);
+	_engine->_scene->getActor(otherActorIdx)->_positionInMoveScript = offset;
 	return true;
 }
 
