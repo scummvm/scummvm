@@ -166,9 +166,9 @@ enum TextColor {
 	kTextColorAlternativeHover,
 	kTextColorAlternativeDisabled,
 	kTextColorOverride,
-	kTextColorOverrideInverted, 
-	kTextColorOverrideHover, 
-	kTextColorOverrideDisabled,  
+	kTextColorOverrideInverted,
+	kTextColorOverrideHover,
+	kTextColorOverrideDisabled,
 	kTextColorButton,
 	kTextColorButtonHover,
 	kTextColorButtonDisabled,
@@ -286,7 +286,7 @@ public:
 		kFontColorFormatting = -1,	///< Use color from formatting
 		kFontColorNormal = 0,       ///< The default color of the theme
 		kFontColorAlternate = 1,    ///< Alternative font color
-		kFontColorOverride = 2,     ///< Color of overwritten text 
+		kFontColorOverride = 2,     ///< Color of overwritten text
 		kFontColorMax
 	};
 
