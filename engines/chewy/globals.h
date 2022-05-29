@@ -23,6 +23,7 @@
 #define CHEWY_GLOBALS_H
 
 #include "common/array.h"
+#include "common/rect.h"
 #include "chewy/chewy.h"
 #include "chewy/types.h"
 #include "chewy/atds.h"
@@ -263,6 +264,48 @@ public:
 	bool _timer_int = false;
 	int _timer_count = 0;
 	bool _timer_suspend = false;
+
+	// Hotspot rect arrays
+	const Common::Rect _cinematicsHotspots[4] = {
+		{ 10,  80,  32, 105 },
+		{ 10, 150,  32, 175 },
+		{ 36,  64, 310, 188 },
+		{ -1,  -1,  -1,  -1 }
+	};
+	const Common::Rect _fileHotspots[9] = {
+		{  14,  73,  32,  94 },
+		{  14,  96,  32, 118 },
+		{  36,  64, 310, 128 },
+		{  16, 143,  76, 193 },
+		{  78, 143, 130, 193 },
+		{ 132, 143, 178, 193 },
+		{ 180, 143, 228, 193 },
+		{ 232, 143, 310, 193 },
+		{  -1,  -1,  -1,  -1 }
+	};
+	const Common::Rect _inventoryHotspots[9] = {
+		{  21,  25,  51,  39 },
+		{  53,  25,  83,  39 },
+		{  -2,  -2,  -2,  -2 },
+		{ 213,  25, 243,  39 },
+		{ 253,  25, 283,  39 },
+		{  21,  45, 283, 135 },
+		{ 257, 151, 307, 165 },
+		{ 257, 171, 307, 185 },
+		{  -1,  -1,  -1,  -1 }
+	};
+	const Common::Rect _optionHotspots[10] = {
+		{  18,   61,   40,   76 },
+		{ 112,   61,  130,   76 },
+		{  82,  104,  144,  139 },
+		{ 164,   93,  194,  115 },
+		{ 198,   80,  206,  115 },
+		{ 210,   55,  302,  138 },
+		{ 126,  146,  210,  198 },
+		{  22,   92,   44,  136 },
+		{  50,   92,   72,  136 },
+		{  -1,   -1,   -1,   -1 }
+	};
 };
 
 extern Globals *g_globals;

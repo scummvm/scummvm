@@ -32,18 +32,6 @@
 namespace Chewy {
 namespace Dialogs {
 
-static const Common::Rect inventoryHotspots[] = {
-	{  21,  25,  51,  39 },
-	{  53,  25,  83,  39 },
-	{  -2,  -2,  -2,  -2 },
-	{ 213,  25, 243,  39 },
-	{ 253,  25, 283,  39 },
-	{  21,  45, 283, 135 },
-	{ 257, 151, 307, 165 },
-	{ 257, 171, 307, 185 },
-	{  -1,  -1,  -1,  -1 }
-};
-
 static const int16 ANI_INVENT_END[3] = { 7, 16, 24 };
 
 
@@ -63,11 +51,11 @@ void Inventory::plot_menu() {
 	}
 
 	int16 y;
-	int16 k = _G(in)->findHotspot(inventoryHotspots);
+	int16 k = _G(in)->findHotspot(_G(inventoryHotspots));
 	if (k != -1) {
 		if (k < 5)
-			_G(out)->boxFill(inventoryHotspots[k].left, inventoryHotspots[k].top,
-	  						 inventoryHotspots[k].right + 1, inventoryHotspots[k].bottom + 5, 41);
+			_G(out)->boxFill(_G(inventoryHotspots)[k].left, _G(inventoryHotspots)[k].top,
+	  						 _G(inventoryHotspots)[k].right + 1, _G(inventoryHotspots)[k].bottom + 5, 41);
 		else {
 			int16 x = (g_events->_mousePos.x - (WIN_INF_X)) / 54;
 			y = (g_events->_mousePos.y - (WIN_INF_Y + 4 + 30)) / 30;
@@ -170,7 +158,7 @@ void Inventory::menu() {
 				mouseFl = true;
 				g_events->_kbInfo._keyCode = '\0';
 
-				int16 k = _G(in)->findHotspot(inventoryHotspots);
+				int16 k = _G(in)->findHotspot(_G(inventoryHotspots));
 				if (keyVal == Common::KEYCODE_F1)
 					k = 0;
 				else if (keyVal == Common::KEYCODE_F2)
@@ -422,7 +410,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	}
 
 	while (!endLoop) {
-		int16 rect = _G(in)->findHotspot(inventoryHotspots);
+		int16 rect = _G(in)->findHotspot(_G(inventoryHotspots));
 
 		if (_G(minfo).button) {
 			if (_G(minfo).button == 2) {
