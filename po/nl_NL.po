@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-29 14:37+0000\n"
 "PO-Revision-Date: 2022-05-29 15:32+0000\n"
-"Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -4486,7 +4486,7 @@ msgstr "Loop / Kijk / Praat / Selecteer / Schiet"
 #. TOGGLE MCCOY'S COMBAT MODE
 #: engines/bladerunner/metaengine.cpp:128
 msgid "Toggle Combat"
-msgstr "Schakel de Vechtenmodus in/uit"
+msgstr "Schakel Vechtmodus in/uit"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:137 engines/scumm/help.cpp:76
@@ -5207,10 +5207,8 @@ msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
 #: engines/hypno/detection.cpp:262
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Enable infinite ammo cheat"
-msgstr "Zet valsspelen aan"
+msgstr "Gebruik oneindige munitie cheat"
 
 #: engines/hypno/detection.cpp:263
 msgid "Player ammo will never decrease."
