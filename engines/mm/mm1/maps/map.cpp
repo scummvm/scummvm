@@ -75,6 +75,10 @@ void Map::loadOverlay() {
 	f.read(&_data[0], dataSize);
 }
 
+void Map::getData() {
+	// TODO
+}
+
 } // namespace Maps
 } // namespace MM1
 } // namespace MM

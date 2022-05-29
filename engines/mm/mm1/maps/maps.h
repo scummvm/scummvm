@@ -187,7 +187,12 @@ public:
 	/**
 	 * Selects a map
 	 */
-	void select(byte section, byte v1, byte v2);
+	void select(byte section, byte id1, byte id2);
+
+	/**
+	 * Selects a map, and switches to in-game display
+	 */
+	void display(byte id1, byte id2, byte section = 1);
 
 	/**
 	 * Get a given map

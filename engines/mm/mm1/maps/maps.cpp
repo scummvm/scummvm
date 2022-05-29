@@ -21,6 +21,7 @@
 
 #include "common/endian.h"
 #include "mm/mm1/maps/maps.h"
+#include "mm/mm1/events.h"
 
 namespace MM {
 namespace MM1 {
@@ -60,13 +61,19 @@ void Maps::load(uint mapId) {
 	Common::fill(&_data1[0], &_data1[32], 0);
 }
 
-void Maps::select(byte section, byte v1, byte v2) {
-	uint mapId = getIndex(section, v1, v2);
+void Maps::select(byte section, byte id1, byte id2) {
+	uint mapId = getIndex(section, id1, id2);
 	load(mapId);
 }
 
-uint Maps::getIndex(byte section, byte v1, byte v2) {
-	uint16 id = MKTAG16(v2, v1);
+void Maps::display(byte id1, byte id2, byte section) {
+	select(section, id1, id2);
+	_currentMap->getData();
+	g_events->msgGame(GameMessage("DISPLAY"));
+}
+
+uint Maps::getIndex(byte section, byte id1, byte id2) {
+	uint16 id = MKTAG16(id2, id1);
 	uint idx = LOOKUPS_START[section / 2];
 
 	// Find map by Id

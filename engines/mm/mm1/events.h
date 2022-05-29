@@ -49,6 +49,13 @@ struct KeypressMessage : public Message, public Common::KeyState {
 		Message(), Common::KeyState(ks) {}
 };
 
+struct GameMessage : public Message {
+	Common::String _name;
+	GameMessage() : Message() {}
+	GameMessage(const Common::String &name) : Message(),
+		_name(name) {}
+};
+
 class UIElement {
 	friend class Events;
 protected:
@@ -138,6 +145,7 @@ public:
 	MESSAGE(Unfocus);
 	MESSAGE(Keypress);
 	MESSAGE(Action);
+	MESSAGE(Game);
 	#undef MESSAGE
 };
 
@@ -208,6 +216,7 @@ public:
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
 	MESSAGE(Keypress);
+	MESSAGE(Game);
 	#undef MESSAGE
 };
 

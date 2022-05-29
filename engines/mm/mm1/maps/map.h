@@ -97,6 +97,12 @@ public:
 	byte &operator[](uint ofs) {
 		return _data[ofs];
 	}
+
+	/**
+	 * Loads some common data values from the map's
+	 * data segment into fields
+	 */
+	void getData();
 };
 
 } // namespace Maps
