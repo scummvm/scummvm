@@ -461,23 +461,53 @@ void GridWidget::sortGroups() {
 	uint oldHeight = _innerHeight;
 	_sortedEntryList.clear();
 
-	Common::sort(_groupHeaders.begin(), _groupHeaders.end());
+	if (_filter.empty()) {
+		// No filter -> display everything with group headers
+		Common::sort(_groupHeaders.begin(), _groupHeaders.end());
 
-	for (uint i = 0; i != _groupHeaders.size(); ++i) {
-		Common::U32String header = _groupHeaders[i];
-		Common::U32String displayedHeader;
-		if (_metadataNames.contains(header)) {
-			displayedHeader = _metadataNames[header];
-		} else {
-			displayedHeader = header;
+		for (uint i = 0; i != _groupHeaders.size(); ++i) {
+			Common::U32String header = _groupHeaders[i];
+			Common::U32String displayedHeader;
+			if (_metadataNames.contains(header)) {
+				displayedHeader = _metadataNames[header];
+			} else {
+				displayedHeader = header;
+			}
+			uint groupID = _groupValueIndex[header];
+
+			_sortedEntryList.push_back(GridItemInfo(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix, groupID));
+
+			if (_groupExpanded[groupID]) {
+				for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
+					_sortedEntryList.push_back(_dataEntryList[*k]);
+				}
+			}
 		}
-		uint groupID = _groupValueIndex[header];
+	} else {
+		// With filter don't display any group header
+		// Restrict the list to everything which contains all words in _filter
+		// as substrings, ignoring case.
 
-		_sortedEntryList.push_back(GridItemInfo(_groupHeaderPrefix + displayedHeader + _groupHeaderSuffix, groupID));
+		Common::U32StringTokenizer tok(_filter);
+		Common::U32String tmp;
+		int n = 0;
 
-		if (_groupExpanded[groupID]) {
-			for (int *k = _itemsInGroup[groupID].begin(); k != _itemsInGroup[groupID].end(); ++k) {
-				_sortedEntryList.push_back(_dataEntryList[*k]);
+		_sortedEntryList.clear();
+
+		for (GridItemInfo *i = _dataEntryList.begin(); i != _dataEntryList.end(); ++i, ++n) {
+			tmp = i->title;
+			tmp.toLowercase();
+			bool matches = true;
+			tok.reset();
+			while (!tok.empty()) {
+				if (!tmp.contains(tok.nextToken())) {
+					matches = false;
+					break;
+				}
+			}
+
+			if (matches) {
+				_sortedEntryList.push_back(*i);
 			}
 		}
 	}
@@ -904,45 +934,11 @@ void GridWidget::setFilter(const Common::U32String &filter) {
 
 	_filter = filt;
 
-	if (_filter.empty()) {
-		// No filter -> display everything
-		sortGroups();
-	} else {
-		// Restrict the list to everything which contains all words in _filter
-		// as substrings, ignoring case.
-
-		Common::U32StringTokenizer tok(_filter);
-		Common::U32String tmp;
-		int n = 0;
-
-		_sortedEntryList.clear();
-
-		for (GridItemInfo *i = _dataEntryList.begin(); i != _dataEntryList.end(); ++i, ++n) {
-			tmp = i->title;
-			tmp.toLowercase();
-			bool matches = true;
-			tok.reset();
-			while (!tok.empty()) {
-				if (!tmp.contains(tok.nextToken())) {
-					matches = false;
-					break;
-				}
-			}
-
-			if (matches) {
-				_sortedEntryList.push_back(*i);
-			}
-		}
-	}
-
+	// Reset the scrollbar and deselect everything if filter has changed
 	_scrollPos = 0;
 	_selectedEntry = nullptr;
 
-	markGridAsInvalid();
-	reflowLayout();
-
-	scrollBarRecalc();
-	g_gui.scheduleTopDialogRedraw();
+	sortGroups();
 }
 
 } // End of namespace GUI
