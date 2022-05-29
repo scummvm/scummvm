@@ -54,7 +54,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"plumbers",
 		nullptr,
-		AD_ENTRY1s("launchme", nullptr, 143300), // FIXME: Add MD5sum to entry
+		AD_ENTRY1s("launchme", "d3ab77d1a8a2289422a0f51e7aa91821", 143300),
 		Common::EN_ANY,
 		Common::kPlatform3DO,
 		ADGF_UNSTABLE,
