@@ -69,15 +69,25 @@
 		<def var = 'Radiobutton.Spacing' value = '15' scalable = 'yes'/>
 
 		<def var = 'GridSupported' value = '1'/>
-		<def var = 'GridItemThumbnail.Width' value = '192' scalable = 'no'/>
-		<def var = 'GridItemThumbnail.Height' value = '192' scalable = 'no'/>
-		<def var = 'Grid.FlagIcon.Width' value = '50' scalable = 'no'/>
-		<def var = 'Grid.FlagIcon.Height' value = '25' scalable = 'no'/>
-		<def var = 'Grid.PlatformIcon.Width' value = '32' scalable = 'no'/>
-		<def var = 'Grid.PlatformIcon.Height' value = '32' scalable = 'no'/>
-		<def var = 'Grid.XSpacing' value = '40' scalable = 'no'/>
-		<def var = 'Grid.YSpacing' value = '30' scalable = 'no'/>
-		<def var = 'Grid.ShowTitles' value = '1' scalable = 'no'/>
+		<def var = 'GridItemThumbnail.Width' value = '192' scalable = 'no' resolution = 'x>640' />
+		<def var = 'GridItemThumbnail.Height' value = '192' scalable = 'no' resolution = 'x>640' />
+		<def var = 'Grid.FlagIcon.Width' value = '50' scalable = 'no' resolution = 'x>640' />
+		<def var = 'Grid.FlagIcon.Height' value = '25' scalable = 'no' resolution = 'x>640' />
+		<def var = 'Grid.PlatformIcon.Width' value = '32' scalable = 'no' resolution = 'x>640' />
+		<def var = 'Grid.PlatformIcon.Height' value = '32' scalable = 'no' resolution = 'x>640' />
+		<def var = 'Grid.XSpacing' value = '40' scalable = 'no' resolution = 'x>640' />
+		<def var = 'Grid.YSpacing' value = '30' scalable = 'no' resolution = 'x>640' />
+		<def var = 'Grid.ShowTitles' value = '1' scalable = 'no' resolution = 'x>640' />
+
+		<def var = 'GridItemThumbnail.Width' value = '96' scalable = 'no' resolution = 'x<641' />
+		<def var = 'GridItemThumbnail.Height' value = '96' scalable = 'no' resolution = 'x<641' />
+		<def var = 'Grid.FlagIcon.Width' value = '25' scalable = 'no' resolution = 'x<641' />
+		<def var = 'Grid.FlagIcon.Height' value = '12' scalable = 'no' resolution = 'x<641' />
+		<def var = 'Grid.PlatformIcon.Width' value = '16' scalable = 'no' resolution = 'x<641' />
+		<def var = 'Grid.PlatformIcon.Height' value = '16' scalable = 'no' resolution = 'x<641' />
+		<def var = 'Grid.XSpacing' value = '20' scalable = 'no' resolution = 'x<641' />
+		<def var = 'Grid.YSpacing' value = '15' scalable = 'no' resolution = 'x<641' />
+		<def var = 'Grid.ShowTitles' value = '1' scalable = 'no' resolution = 'x<641' />
 
 		<widget name = 'OptionsLabel'
 				size = '115, Globals.Line.Height'
