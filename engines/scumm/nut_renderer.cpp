@@ -368,7 +368,7 @@ void NutRenderer::drawFrame(byte *dst, int c, int x, int y) {
 	}
 }
 
-int NutRenderer::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr, bool hardcodedColors, bool smushColorMode) {
+int NutRenderer::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr, bool hardcodedColors, bool smushColorMode) {
 	if (_direction < 0)
 		x -= _chars[chr].width;
 

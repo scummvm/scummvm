@@ -1985,7 +1985,7 @@ int CharsetRendererV7::draw2byte(byte *buffer, Common::Rect &clipRect, int x, in
 	return _origWidth + _spacing;
 }
 
-int CharsetRendererV7::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) {
+int CharsetRendererV7::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) {
 	if (!prepareDraw(chr))
 		return 0;
 
@@ -2095,9 +2095,9 @@ int CharsetRendererNut::draw2byte(byte *buffer, Common::Rect &clipRect, int x, i
 	return _current->draw2byte(buffer, clipRect, x, y, pitch, col, chr);
 }
 
-int CharsetRendererNut::drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) {
+int CharsetRendererNut::drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) {
 	assert(_current);
-	return _current->drawChar(buffer, clipRect, x, y, pitch, col, flags, chr);
+	return _current->drawCharV7(buffer, clipRect, x, y, pitch, col, flags, chr);
 }
 #endif
 

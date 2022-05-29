@@ -41,7 +41,7 @@ public:
 	virtual ~GlyphRenderer_v7() {};
 
 	virtual int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) = 0;
-	virtual int drawChar(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) = 0;
+	virtual int drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) = 0;
 	virtual int getCharWidth(uint16 chr) const = 0;
 	virtual int getCharHeight(uint16 chr) const = 0;
 	virtual int getFontHeight() const = 0;
