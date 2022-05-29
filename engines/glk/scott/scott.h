@@ -135,7 +135,7 @@ private:
 	Globals _globals;
 	char _nounText[16];
 	int _options = 0;   ///< Option flags set
-	int _width = 0;     ///< Terminal width
+	//int _width = 0;     ///< Terminal width
 	int _topHeight = 0; ///< Height of top window
 	int _topWidth = 0;
 
