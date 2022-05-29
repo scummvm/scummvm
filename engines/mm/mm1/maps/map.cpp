@@ -27,7 +27,8 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-Map::Map(Maps *owner, const Common::String &name) : _name(name) {
+Map::Map(Maps *owner, const Common::String &name, uint16 id) :
+		_name(name), _id(id) {
 	_mapId = owner->addMap(this);
 	Common::fill((byte *)&_walls[0], (byte *)&_walls[MAP_SIZE], 0);
 	Common::fill(&_states[0], (byte *)&_states[MAP_SIZE], 0);
@@ -53,20 +54,25 @@ void Map::loadOverlay() {
 	Common::File f;
 	if (!f.open(Common::String::format("%s.ovr", _name.c_str())))
 		error("Could not open %s.ovr overlay", _name.c_str());
-	if (f.readUint16LE() != 0xF2)
-		error("Invalid overlay header");
 
-	int globalsOffset = f.readUint16LE();
-	int globalsSize = f.readUint16LE();
-	if (globalsOffset != 0xF48F)
-		error("Invalid globals offset");
-	_globals.resize(globalsSize);
-	f.read(&_globals[0], globalsSize);
-
-	int codeOffset = f.readUint16LE();
+	int magicId = f.readUint16LE();
+	int codePtr = f.readUint16LE();
 	int codeSize = f.readUint16LE();
-	if (codeOffset != 0xc940)
-		error("Invalid code offset");
+	f.readUint16LE();	// dataPtr
+	int dataSize = f.readUint16LE();
+	f.readUint16LE();	// extras size
+	f.readUint16LE();	// code entry-point
+
+	if (magicId != 0xF2 || codePtr != 0xF48F)
+		error("Invalid map overlay header");
+
+	// Skip over code segment, since each map's
+	// code is going to be reimplemented in C++
+	f.skip(codeSize);
+
+	// Read in the data segment
+	_data.resize(dataSize);
+	f.read(&_data[0], dataSize);
 }
 
 } // namespace Maps

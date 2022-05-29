@@ -23,6 +23,7 @@
 #define MM1_MAPS_MAPS_H
 
 #include "common/array.h"
+#include "common/rect.h"
 #include "mm/mm1/maps/map00.h"
 
 namespace MM {
@@ -30,66 +31,66 @@ namespace MM1 {
 namespace Maps {
 
 /** PLACEHOLDER MAPS **/
-#define PLACEHOLDER(ID, NAME) \
-	class Map##ID : public Map { \
+#define PLACEHOLDER(INDEX, NAME, ID) \
+	class Map##INDEX : public Map { \
 	public: \
-		Map##ID(Maps *owner) : Map(owner, NAME) {} \
+		Map##INDEX(Maps *owner) : Map(owner, NAME, ID) {} \
 	}
 
-PLACEHOLDER(01, "portsmit");
-PLACEHOLDER(02, "algary");
-PLACEHOLDER(03, "dusk");
-PLACEHOLDER(04, "erliquin");
-PLACEHOLDER(05, "cave1");
-PLACEHOLDER(06, "cave2");
-PLACEHOLDER(07, "cave3");
-PLACEHOLDER(08, "cave4");
-PLACEHOLDER(09, "cave5");
-PLACEHOLDER(10, "cave6");
-PLACEHOLDER(11, "cave7");
-PLACEHOLDER(12, "cave8");
-PLACEHOLDER(13, "cave9");
-PLACEHOLDER(14, "areaa1");
-PLACEHOLDER(15, "areaa2");
-PLACEHOLDER(16, "areaa3");
-PLACEHOLDER(17, "areaa4");
-PLACEHOLDER(18, "areab1");
-PLACEHOLDER(19, "areab2");
-PLACEHOLDER(20, "areab3");
-PLACEHOLDER(21, "areab4");
-PLACEHOLDER(22, "areac1");
-PLACEHOLDER(23, "areac2");
-PLACEHOLDER(24, "areac3");
-PLACEHOLDER(25, "areac4");
-PLACEHOLDER(26, "aread1");
-PLACEHOLDER(27, "aread2");
-PLACEHOLDER(28, "aread3");
-PLACEHOLDER(29, "aread4");
-PLACEHOLDER(30, "areae1");
-PLACEHOLDER(31, "areae2");
-PLACEHOLDER(32, "areae3");
-PLACEHOLDER(33, "areae4");
-PLACEHOLDER(34, "doom");
-PLACEHOLDER(35, "blackrn");
-PLACEHOLDER(36, "blackrs");
-PLACEHOLDER(37, "qvl1");
-PLACEHOLDER(38, "qvl2");
-PLACEHOLDER(39, "rwl1");
-PLACEHOLDER(40, "rwl2");
-PLACEHOLDER(41, "enf1");
-PLACEHOLDER(42, "enf2");
-PLACEHOLDER(43, "whitew");
-PLACEHOLDER(44, "dragad");
-PLACEHOLDER(45, "udrag1");
-PLACEHOLDER(46, "udrag2");
-PLACEHOLDER(47, "udrag3");
-PLACEHOLDER(48, "demon");
-PLACEHOLDER(49, "alamar");
-PLACEHOLDER(50, "pp1");
-PLACEHOLDER(51, "pp2");
-PLACEHOLDER(52, "pp3");
-PLACEHOLDER(53, "pp4");
-PLACEHOLDER(54, "astral");
+PLACEHOLDER(01, "portsmit", 0xC03);
+PLACEHOLDER(02, "algary", 0x203);
+PLACEHOLDER(03, "dusk", 0x802);
+PLACEHOLDER(04, "erliquin", 0x0B1A);
+PLACEHOLDER(05, "cave1", 0x0A11);
+PLACEHOLDER(06, "cave2", 0x1);
+PLACEHOLDER(07, "cave3", 0xC01);
+PLACEHOLDER(08, "cave4", 0x202);
+PLACEHOLDER(09, "cave5", 0x5);
+PLACEHOLDER(10, "cave6", 0x51B);
+PLACEHOLDER(11, "cave7", 0x212);
+PLACEHOLDER(12, "cave8", 0x601);
+PLACEHOLDER(13, "cave9", 0xA00);
+PLACEHOLDER(14, "areaa1", 0xF01);
+PLACEHOLDER(15, "areaa2", 0x502);
+PLACEHOLDER(16, "areaa3", 0xB02);
+PLACEHOLDER(17, "areaa4", 0x103);
+PLACEHOLDER(18, "areab1", 0xA00);
+PLACEHOLDER(19, "areab2", 0x703);
+PLACEHOLDER(20, "areab3", 0x101);
+PLACEHOLDER(21, "areab4", 0xD03);
+PLACEHOLDER(22, "areac1", 0x304);
+PLACEHOLDER(23, "areac2", 0xA11);
+PLACEHOLDER(24, "areac3", 0x904);
+PLACEHOLDER(25, "areac4", 0xF04);
+PLACEHOLDER(26, "aread1", 0x505);
+PLACEHOLDER(27, "aread2", 0xB05);
+PLACEHOLDER(28, "aread3", 0x106);
+PLACEHOLDER(29, "aread4", 0x801);
+PLACEHOLDER(30, "areae1", 0x112);
+PLACEHOLDER(31, "areae2", 0x706);
+PLACEHOLDER(32, "areae3", 0xB1A);
+PLACEHOLDER(33, "areae4", 0x11B);
+PLACEHOLDER(34, "doom", 0x706);
+PLACEHOLDER(35, "blackrn", 0xF08);
+PLACEHOLDER(36, "blackrs", 0x508);
+PLACEHOLDER(37, "qvl1", 0xF03);
+PLACEHOLDER(38, "qvl2", 0x703);
+PLACEHOLDER(39, "rwl1", 0xF02);
+PLACEHOLDER(40, "rwl2", 0x702);
+PLACEHOLDER(41, "enf1", 0xF04);
+PLACEHOLDER(42, "enf2", 0x704);
+PLACEHOLDER(43, "whitew", 0xA11);
+PLACEHOLDER(44, "dragad", 0x107);
+PLACEHOLDER(45, "udrag1", 0xF05);
+PLACEHOLDER(46, "udrag2", 0xA00);
+PLACEHOLDER(47, "udrag3", 0x705);
+PLACEHOLDER(48, "demon", 0x412);
+PLACEHOLDER(49, "alamar", 0xB07);
+PLACEHOLDER(50, "pp1", 0xF01);
+PLACEHOLDER(51, "pp2", 0x701);
+PLACEHOLDER(52, "pp3", 0xE00);
+PLACEHOLDER(53, "pp4", 0x201);
+PLACEHOLDER(54, "astral", 0xB1A);
 #undef PLACEHOLDER
 
 /**
@@ -99,8 +100,6 @@ class Maps {
 	friend class Map;
 private:
 	Common::Array<Map *> _maps;
-	uint _mapId = (uint)-1;
-	Map *_currentMap = nullptr;
 private:
 	Map00 _map00;
 	Map01 _map01;
@@ -165,6 +164,18 @@ private:
 		_maps.push_back(map);
 		return _maps.size() - 1;
 	}
+
+	/**
+	 * Gets the index of a map given the id values
+	 */
+	uint getIndex(byte section, byte v1, byte v2);
+public:
+	uint _mapId = (uint)-1;
+	Common::Point _mapPos;
+	byte _mapDirectionMask = 0;
+	Map *_currentMap = nullptr;
+	byte _data1[32];
+	int _colorOffset = 0;
 public:
 	Maps();
 
@@ -172,6 +183,11 @@ public:
 	 * Load a map
 	 */
 	void load(uint mapId);
+
+	/**
+	 * Selects a map
+	 */
+	void select(byte section, byte v1, byte v2);
 
 	/**
 	 * Get a given map

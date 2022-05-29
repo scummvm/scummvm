@@ -54,10 +54,11 @@ struct MapWalls {
 class Map {
 private:
 	Common::String _name;
+	uint16 _id;
 	uint _mapId;
 	MapWalls _walls[MAP_SIZE];
 	byte _states[MAP_SIZE];
-	Common::Array<byte> _globals;
+	Common::Array<byte> _data;
 private:
 	/**
 	 * Loads the map's maze data
@@ -69,7 +70,13 @@ private:
 	 */
 	void loadOverlay();
 public:
-	Map(Maps *owner, const Common::String &name);
+	Map(Maps *owner, const Common::String &name, uint16 id);
+	virtual ~Map() {}
+
+	/**
+	 * Loads the map
+	 */
+	virtual void load();
 
 	/**
 	 * Gets the map name
@@ -77,9 +84,19 @@ public:
 	Common::String getName() const { return _name; }
 
 	/**
-	 * Loads the map
+	 * Returns the map Id
 	 */
-	virtual void load();
+	uint16 getId() const { return _id; }
+
+	/**
+	 * Accesses the map data
+	 */
+	const byte &operator[](uint ofs) const {
+		return _data[ofs];
+	}
+	byte &operator[](uint ofs) {
+		return _data[ofs];
+	}
 };
 
 } // namespace Maps

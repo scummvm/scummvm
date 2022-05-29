@@ -30,7 +30,7 @@ namespace Maps {
 
 class Map00 : public Map {
 public:
-	Map00(Maps *owner) : Map(owner, "sorpigal") {}
+	Map00(Maps *owner) : Map(owner, "sorpigal", 0x604) {}
 };
 
 } // namespace Maps
