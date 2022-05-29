@@ -2594,13 +2594,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::ES_ESP, Common::kPlatformDOS, 0, GUIO_STD16	},
 
 	// Laura Bow 2 - Spanish DOS CD (from jvprat)
+	// This is the floppy version (text-only) distributed on a CD.
 	// Executable scanning reports "2.000.274", VERSION file reports "1.000.000, May 10, 1994"
-	{"laurabow2", "CD", {
+	{"laurabow2", "", {
 		{"resource.map", 0, "3b6dfbcda210bbc3f23fd1927113bf98", 6483},
 		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5028766},
 		{"resource.msg", 0, "71f1f0cd9f082da2e750c793a8ed9d84", 286141},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
+		Common::ES_ESP, Common::kPlatformDOS, 0, GUIO_STD16_SPEECH	},
 
 #define GUIO_LIGHTHOUSE_DEMO GUIO6(GUIO_NOSPEECH, \
 								   GUIO_NOMUSIC, \
