@@ -26,7 +26,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Removed Symbian port.
    - Added the create_engine tool to aid when creating new engines.
    - Fixed mouse capture in HiDPI mode.
-   - GUI Options dialog now marks with red settings overridden via command line.
+   - The GUI Options dialog now marks settings overridden via command lines in red.
    - In GUI launcher it is now possible to group games by different categories.
    - GUI launcher has new game icons grid look.
 
