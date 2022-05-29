@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-29 14:37+0000\n"
 "PO-Revision-Date: 2022-05-29 15:52+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -4530,7 +4530,7 @@ msgstr "KIA Database Openen"
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:190
 msgid "Delete Selected Saved Game"
-msgstr ""
+msgstr "Verwijder Geselecteerde Opgeslagen Spel"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:204
@@ -4572,7 +4572,7 @@ msgstr "Misdaadscène Data"
 #. SUSPECT DATABASE
 #: engines/bladerunner/metaengine.cpp:257
 msgid "Suspect Database"
-msgstr ""
+msgstr "Verdachte Data"
 
 #. I18N: This keymap opens KIA's CLUE DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4580,7 +4580,7 @@ msgstr ""
 #. CLUE DATABASE
 #: engines/bladerunner/metaengine.cpp:266
 msgid "Clue Database"
-msgstr ""
+msgstr "Idee Data"
 
 #. I18N: This keymap opens KIA's QUIT GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
