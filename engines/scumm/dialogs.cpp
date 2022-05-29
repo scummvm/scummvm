@@ -896,29 +896,20 @@ MI1CdGameOptionsWidget::MI1CdGameOptionsWidget(GuiObject *boss, const Common::St
 
 	_introAdjustmentValue->setFlags(GUI::WIDGET_CLEARBG);
 
-	// The unofficial talkie version has a separate track for the outlook
-	// music, and does its own enhancements through script patching.
+	text = new GUI::StaticTextWidget(widgetsBoss(), "MI1CdGameOptionsDialog.OutlookAdjustmentLabel", _("Outlook Adjust:"));
 
-	if (!extra.contains("SE Talkie")) {
-		text = new GUI::StaticTextWidget(widgetsBoss(), "MI1CdGameOptionsDialog.OutlookAdjustmentLabel", _("Outlook Adjust:"));
+	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
 
-		text->setAlign(Graphics::TextAlign::kTextAlignEnd);
+	_outlookAdjustmentSlider = new GUI::SliderWidget(widgetsBoss(), "MI1CdGameOptionsDialog.OutlookAdjustment", _("The outlook music is part of the intro track. Adjust the position in the track at which it starts playing. Use this if the music is cut off, or if you hear part of the previous music."), kOutlookAdjustmentChanged);
 
-		_outlookAdjustmentSlider = new GUI::SliderWidget(widgetsBoss(), "MI1CdGameOptionsDialog.OutlookAdjustment", _("The outlook music is part of the intro track. Adjust the position in the track at which it starts playing. Use this if the music is cut off, or if you hear part of the previous music."), kOutlookAdjustmentChanged);
+	_outlookAdjustmentSlider->setMinValue(-200);
+	_outlookAdjustmentSlider->setMaxValue(200);
 
-		_outlookAdjustmentSlider->setMinValue(-200);
-		_outlookAdjustmentSlider->setMaxValue(200);
+	_outlookAdjustmentValue = new GUI::StaticTextWidget(widgetsBoss(), "MI1CdGameOptionsDialog.OutlookAdjustmentValue", Common::U32String());
 
-		_outlookAdjustmentValue = new GUI::StaticTextWidget(widgetsBoss(), "MI1CdGameOptionsDialog.OutlookAdjustmentValue", Common::U32String());
+	_outlookAdjustmentValue->setFlags(GUI::WIDGET_CLEARBG);
 
-		_outlookAdjustmentValue->setFlags(GUI::WIDGET_CLEARBG);
-
-		_enableEnhancementsCheckbox = createEnhancementsCheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableEnhancements");
-	} else {
-		_outlookAdjustmentSlider = nullptr;
-		_outlookAdjustmentValue = nullptr;
-		_enableEnhancementsCheckbox = nullptr;
-	}
+	_enableEnhancementsCheckbox = createEnhancementsCheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableEnhancements");
 }
 
 void MI1CdGameOptionsWidget::load() {
@@ -930,27 +921,19 @@ void MI1CdGameOptionsWidget::load() {
 	_introAdjustmentSlider->setValue(introAdjustment);
 	updateIntroAdjustmentValue();
 
-	if (_outlookAdjustmentSlider) {
-		if (ConfMan.hasKey("mi1_outlook_adjustment", _domain))
-			outlookAdjustment = ConfMan.getInt("mi1_outlook_adjustment", _domain);
+	if (ConfMan.hasKey("mi1_outlook_adjustment", _domain))
+		outlookAdjustment = ConfMan.getInt("mi1_outlook_adjustment", _domain);
 
-		_outlookAdjustmentSlider->setValue(outlookAdjustment);
-		updateOutlookAdjustmentValue();
-	}
+	_outlookAdjustmentSlider->setValue(outlookAdjustment);
+	updateOutlookAdjustmentValue();
 
-	if (_enableEnhancementsCheckbox)
-		_enableEnhancementsCheckbox->setState(ConfMan.getBool("enable_enhancements", _domain));
+	_enableEnhancementsCheckbox->setState(ConfMan.getBool("enable_enhancements", _domain));
 }
 
 bool MI1CdGameOptionsWidget::save() {
 	ConfMan.setInt("mi1_intro_adjustment", _introAdjustmentSlider->getValue(), _domain);
-
-	if (_outlookAdjustmentSlider)
-		ConfMan.setInt("mi1_outlook_adjustment", _outlookAdjustmentSlider->getValue(), _domain);
-
-	if (_enableEnhancementsCheckbox)
-		ConfMan.setBool("enable_enhancements", _enableEnhancementsCheckbox->getState(), _domain);
-
+	ConfMan.setInt("mi1_outlook_adjustment", _outlookAdjustmentSlider->getValue(), _domain);
+	ConfMan.setBool("enable_enhancements", _enableEnhancementsCheckbox->getState(), _domain);
 	return true;
 }
 
@@ -963,21 +946,16 @@ void MI1CdGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common:
 				.addWidget("IntroAdjustmentLabel", "OptionsLabel")
 				.addWidget("IntroAdjustment", "WideSlider")
 				.addWidget("IntroAdjustmentValue", "ShortOptionsLabel")
-			.closeLayout();
-
-	if (_outlookAdjustmentSlider) {
-		layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
-			.addPadding(0, 0, 0, 0)
-			.addWidget("OutlookAdjustmentLabel", "OptionsLabel")
-			.addWidget("OutlookAdjustment", "WideSlider")
-			.addWidget("OutlookAdjustmentValue", "ShortOptionsLabel")
-		.closeLayout();
-	}
-
-	if (_enableEnhancementsCheckbox)
-		layouts.addWidget("EnableEnhancements", "Checkbox");
-
-	layouts.closeLayout().closeDialog();
+			.closeLayout()
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
+				.addPadding(0, 0, 0, 0)
+				.addWidget("OutlookAdjustmentLabel", "OptionsLabel")
+				.addWidget("OutlookAdjustment", "WideSlider")
+				.addWidget("OutlookAdjustmentValue", "ShortOptionsLabel")
+			.closeLayout()
+			.addWidget("EnableEnhancements", "Checkbox")
+		.closeLayout()
+	.closeDialog();
 }
 
 void MI1CdGameOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {

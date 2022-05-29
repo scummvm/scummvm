@@ -553,7 +553,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidgetDynamic(GU
 
 		return new Scumm::LoomEgaGameOptionsWidget(boss, name, target);
 	} else if (gameid == "monkey") {
-		if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA" && !extra.contains("SE Talkie"))
+		if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA")
 			return nullptr;
 
 		return new Scumm::MI1CdGameOptionsWidget(boss, name, target);
