@@ -76,10 +76,14 @@ Common::SharedPtr<Modifier> PlugInModifierFactory<TModifier, TModifierData>::cre
 
 	PlugInModifierLoaderContext plugInContext(context, plugInModifierData, &_plugIn);
 
-	if (!static_cast<Modifier *>(modifier.get())->loadPlugInHeader(plugInContext) || !modifier->load(plugInContext, static_cast<const TModifierData &>(*plugInModifierData.plugInData.get())))
+	Modifier *downcastMod = static_cast<Modifier *>(modifier.get());
+	if (!downcastMod->loadPlugInHeader(plugInContext) || !modifier->load(plugInContext, static_cast<const TModifierData &>(*plugInModifierData.plugInData.get())))
 		modifier.reset();
-	else
-		modifier->setSelfReference(modifier);
+	else {
+		if (downcastMod->getName().empty())
+			downcastMod->setName(downcastMod->getDefaultName());
+		downcastMod->setSelfReference(modifier);
+	}
 
 	return Common::SharedPtr<Modifier>(modifier);
 }

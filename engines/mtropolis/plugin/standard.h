@@ -55,6 +55,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Event _applyWhen;
 	Event _removeWhen;
@@ -79,6 +80,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	MiniscriptInstructionOutcome scriptSetRate(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetSteps(MiniscriptThread *thread, const DynamicValue &value);
@@ -122,6 +124,7 @@ private:
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
@@ -181,6 +184,7 @@ private:
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	MiniscriptInstructionOutcome scriptSetPath(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetObject(MiniscriptThread *thread, const DynamicValue &value);
@@ -221,6 +225,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	MiniscriptInstructionOutcome scriptSetVolume(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetNoteVelocity(MiniscriptThread *thread, const DynamicValue &value);
@@ -312,6 +317,7 @@ private:
 	MiniscriptInstructionOutcome scriptSetCount(MiniscriptThread *thread, const DynamicValue &value);
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Common::SharedPtr<DynamicList> _list;
 	DynamicValueTypes::DynamicValueType _preferredContentType;
@@ -329,6 +335,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 };
 
 struct StandardPlugInHacks {

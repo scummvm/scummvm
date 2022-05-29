@@ -72,6 +72,7 @@ private:
 	VThreadState propagateTask(const PropagateTaskData &taskData);
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
@@ -97,6 +98,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
@@ -120,6 +122,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Event _saveWhen;
 	Event _restoreWhen;
@@ -147,6 +150,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Event _when;
 	MessengerSendSpec _sendSpec;
@@ -162,6 +166,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Event _executeWhen;
 	DynamicValue _source;
@@ -182,6 +187,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	uint32 _aliasID;
 };
@@ -200,6 +206,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	enum SceneSelectionType {
 		kSceneSelectionTypeNext,
@@ -227,6 +234,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	enum SoundType {
 		kSoundTypeBeep,
@@ -262,6 +270,7 @@ private:
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Event _executeWhen;
 	Event _terminateWhen;
@@ -291,6 +300,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Event _enableWhen;
 	Event _disableWhen;
@@ -313,6 +323,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
@@ -342,6 +353,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Event _enableWhen;
 	Event _disableWhen;
@@ -374,6 +386,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Event _enableWhen;
 	Event _disableWhen;
@@ -404,6 +417,7 @@ private:
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
@@ -435,6 +449,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	void trigger(Runtime *runtime);
 
@@ -458,6 +473,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	enum ExitTriggerMode {
 		kExitTriggerExiting,
@@ -490,6 +506,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	enum DetectionMode {
 		kDetectionModeFirstContact,
@@ -531,6 +548,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 	void linkInternalReferences(ObjectLinkingScope *scope) override;
@@ -583,6 +601,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	uint16 _macFontID;
 	uint16 _size;
@@ -609,6 +628,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Event _applyWhen;
 	Event _removeWhen;
@@ -657,6 +677,7 @@ private:
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const override;
 	void appendModifier(const Common::SharedPtr<Modifier> &modifier) override;
@@ -702,6 +723,7 @@ private:
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	bool _value;
 };
@@ -736,6 +758,7 @@ private:
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	int32 _value;
 };
@@ -773,6 +796,7 @@ private:
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	IntRange _range;
 };
@@ -810,6 +834,7 @@ private:
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	AngleMagVector _vector;
 };
@@ -847,6 +872,7 @@ private:
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Point16 _value;
 };
@@ -881,6 +907,7 @@ private:
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	double _value;
 };
@@ -915,6 +942,7 @@ private:
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Common::String _value;
 };

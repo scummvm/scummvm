@@ -46,6 +46,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Point16 _dest;
 	bool _type;
@@ -65,6 +66,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	int32 _rate;
 	int32 _direction;
@@ -85,6 +87,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	MiniscriptInstructionOutcome scriptSetFirstWord(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetLastWord(MiniscriptThread *thread, const DynamicValue &value);
@@ -116,6 +119,7 @@ private:
 	MiniscriptInstructionOutcome scriptSetIndex(MiniscriptThread *thread, const DynamicValue &value);
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Common::String _str;
 
@@ -139,6 +143,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	MiniscriptInstructionOutcome scriptSetInput(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetSearch(MiniscriptThread *thread, const DynamicValue &value);
@@ -166,6 +171,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	Event _enableWhen;
 	Event _disableWhen;
@@ -188,6 +194,7 @@ public:
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
 
 	MiniscriptInstructionOutcome scriptSetCheckNow(MiniscriptThread *thread, const DynamicValue &value);
 

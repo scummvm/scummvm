@@ -197,6 +197,10 @@ Common::SharedPtr<Modifier> BehaviorModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new BehaviorModifier(*this));
 }
 
+const char *BehaviorModifier::getDefaultName() const {
+	return "Behavior";
+}
+
 void BehaviorModifier::linkInternalReferences(ObjectLinkingScope *scope) {
 	Modifier::linkInternalReferences(scope);
 }
@@ -239,6 +243,10 @@ Common::SharedPtr<Modifier> MiniscriptModifier::shallowClone() const {
 	clonePtr->_references.reset(new MiniscriptReferences(*_references));
 
 	return clone;
+}
+
+const char *MiniscriptModifier::getDefaultName() const {
+	return "Miniscript Modifier";
 }
 
 void MiniscriptModifier::linkInternalReferences(ObjectLinkingScope* scope) {
@@ -307,6 +315,10 @@ Common::SharedPtr<Modifier> SaveAndRestoreModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new SaveAndRestoreModifier(*this));
 }
 
+const char *SaveAndRestoreModifier::getDefaultName() const {
+	return "Save And Restore Modifier";
+}
+
 bool MessengerModifier::load(ModifierLoaderContext &context, const Data::MessengerModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -341,6 +353,10 @@ Common::SharedPtr<Modifier> MessengerModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new MessengerModifier(*this));
 }
 
+const char *MessengerModifier::getDefaultName() const {
+	return "Messenger";
+}
+
 bool SetModifier::load(ModifierLoaderContext &context, const Data::SetModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -353,6 +369,10 @@ bool SetModifier::load(ModifierLoaderContext &context, const Data::SetModifier &
 
 Common::SharedPtr<Modifier> SetModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new SetModifier(*this));
+}
+
+const char *SetModifier::getDefaultName() const {
+	return "Set Modifier";
 }
 
 bool AliasModifier::load(ModifierLoaderContext &context, const Data::AliasModifier &data) {
@@ -368,6 +388,10 @@ bool AliasModifier::load(ModifierLoaderContext &context, const Data::AliasModifi
 
 Common::SharedPtr<Modifier> AliasModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new AliasModifier(*this));
+}
+
+const char *AliasModifier::getDefaultName() const {
+	return "";
 }
 
 uint32 AliasModifier::getAliasID() const {
@@ -519,6 +543,10 @@ Common::SharedPtr<Modifier> ChangeSceneModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new ChangeSceneModifier(*this));
 }
 
+const char *ChangeSceneModifier::getDefaultName() const {
+	return "Change Scene Modifier";
+}
+
 bool SoundEffectModifier::load(ModifierLoaderContext &context, const Data::SoundEffectModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -539,6 +567,10 @@ bool SoundEffectModifier::load(ModifierLoaderContext &context, const Data::Sound
 
 Common::SharedPtr<Modifier> SoundEffectModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new SoundEffectModifier(*this));
+}
+
+const char *SoundEffectModifier::getDefaultName() const {
+	return "Sound Effect Modifier";
 }
 
 bool PathMotionModifierV2::load(ModifierLoaderContext &context, const Data::PathMotionModifierV2 &data) {
@@ -602,6 +634,10 @@ Common::SharedPtr<Modifier> PathMotionModifierV2::shallowClone() const {
 	return clone;
 }
 
+const char *PathMotionModifierV2::getDefaultName() const {
+	return "Path Motion Modifier";
+}
+
 bool DragMotionModifier::load(ModifierLoaderContext &context, const Data::DragMotionModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -644,6 +680,10 @@ Common::SharedPtr<Modifier> DragMotionModifier::shallowClone() const {
 	Common::SharedPtr<DragMotionModifier> clone = Common::SharedPtr<DragMotionModifier>(new DragMotionModifier(*this));
 	clone->_dragProps.reset(new DragMotionProperties(*_dragProps));
 	return clone;
+}
+
+const char *DragMotionModifier::getDefaultName() const {
+	return "Drag Motion Modifier";
 }
 
 bool DragMotionModifier::respondsToEvent(const Event &evt) const {
@@ -785,6 +825,10 @@ Common::SharedPtr<Modifier> VectorMotionModifier::shallowClone() const {
 	return clone;
 }
 
+const char *VectorMotionModifier::getDefaultName() const {
+	return "Vector Motion Modifier";
+}
+
 void VectorMotionModifier::linkInternalReferences(ObjectLinkingScope *scope) {
 	if (_vec.getType() == DynamicValueTypes::kVariableReference) {
 		const VarReference &varRef = _vec.getVarReference();
@@ -822,6 +866,10 @@ Common::SharedPtr<Modifier> SceneTransitionModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new SceneTransitionModifier(*this));
 }
 
+const char *SceneTransitionModifier::getDefaultName() const {
+	return "Scene Transition Modifier";
+}
+
 bool ElementTransitionModifier::load(ModifierLoaderContext &context, const Data::ElementTransitionModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -839,6 +887,10 @@ bool ElementTransitionModifier::load(ModifierLoaderContext &context, const Data:
 
 Common::SharedPtr<Modifier> ElementTransitionModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new ElementTransitionModifier(*this));
+}
+
+const char *ElementTransitionModifier::getDefaultName() const {
+	return "Element Transition Modifier";
 }
 
 bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data) {
@@ -882,6 +934,11 @@ Common::SharedPtr<Modifier> IfMessengerModifier::shallowClone() const {
 
 	return clone;
 }
+
+const char *IfMessengerModifier::getDefaultName() const {
+	return "If Messenger";
+}
+
 void IfMessengerModifier::linkInternalReferences(ObjectLinkingScope *scope) {
 	_sendSpec.linkInternalReferences(scope);
 	_references->linkInternalReferences(scope);
@@ -975,6 +1032,10 @@ Common::SharedPtr<Modifier> TimerMessengerModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(clone);
 }
 
+const char *TimerMessengerModifier::getDefaultName() const {
+	return "Timer Messenger";
+}
+
 void TimerMessengerModifier::trigger(Runtime *runtime) {
 	debug(3, "Timer %x '%s' triggered", getStaticGUID(), getName().c_str());
 	if (_looping) {
@@ -1013,6 +1074,10 @@ Common::SharedPtr<Modifier> BoundaryDetectionMessengerModifier::shallowClone() c
 	return Common::SharedPtr<Modifier>(new BoundaryDetectionMessengerModifier(*this));
 }
 
+const char *BoundaryDetectionMessengerModifier::getDefaultName() const {
+	return "Boundary Detection Messenger";
+}
+
 bool CollisionDetectionMessengerModifier::load(ModifierLoaderContext &context, const Data::CollisionDetectionMessengerModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -1048,6 +1113,10 @@ bool CollisionDetectionMessengerModifier::load(ModifierLoaderContext &context, c
 
 Common::SharedPtr<Modifier> CollisionDetectionMessengerModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new CollisionDetectionMessengerModifier(*this));
+}
+
+const char *CollisionDetectionMessengerModifier::getDefaultName() const {
+	return "Collision Messenger";
 }
 
 KeyboardMessengerModifier::~KeyboardMessengerModifier() {
@@ -1124,6 +1193,10 @@ Common::SharedPtr<Modifier> KeyboardMessengerModifier::shallowClone() const {
 	Common::SharedPtr<KeyboardMessengerModifier> cloned(new KeyboardMessengerModifier(*this));
 	cloned->_isEnabled = false;
 	return cloned;
+}
+
+const char *KeyboardMessengerModifier::getDefaultName() const {
+	return "Keyboard Messenger";
 }
 
 bool KeyboardMessengerModifier::checkKeyEventTrigger(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt, Common::String &outCharStr) const {
@@ -1325,6 +1398,10 @@ Common::SharedPtr<Modifier> TextStyleModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new TextStyleModifier(*this));
 }
 
+const char *TextStyleModifier::getDefaultName() const {
+	return "Text Style Messenger";
+}
+
 bool GraphicModifier::load(ModifierLoaderContext &context, const Data::GraphicModifier &data) {
 	ColorRGB8 foreColor;
 	ColorRGB8 backColor;
@@ -1382,6 +1459,10 @@ VThreadState GraphicModifier::consumeMessage(Runtime *runtime, const Common::Sha
 
 Common::SharedPtr<Modifier> GraphicModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new GraphicModifier(*this));
+}
+
+const char *GraphicModifier::getDefaultName() const {
+	return "Graphic Modifier";
 }
 
 bool CompoundVariableModifier::load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data) {
@@ -1519,6 +1600,10 @@ Common::SharedPtr<Modifier> CompoundVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new CompoundVariableModifier(*this));
 }
 
+const char *CompoundVariableModifier::getDefaultName() const {
+	return "Compound Variable";
+}
+
 bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -1564,6 +1649,10 @@ void BooleanVariableModifier::debugInspect(IDebugInspectionReport *report) const
 
 Common::SharedPtr<Modifier> BooleanVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new BooleanVariableModifier(*this));
+}
+
+const char *BooleanVariableModifier::getDefaultName() const {
+	return "Boolean Variable";
 }
 
 BooleanVariableModifier::SaveLoad::SaveLoad(BooleanVariableModifier *modifier) : _modifier(modifier) {
@@ -1631,6 +1720,10 @@ void IntegerVariableModifier::debugInspect(IDebugInspectionReport *report) const
 
 Common::SharedPtr<Modifier> IntegerVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new IntegerVariableModifier(*this));
+}
+
+const char *IntegerVariableModifier::getDefaultName() const {
+	return "Integer Variable";
 }
 
 IntegerVariableModifier::SaveLoad::SaveLoad(IntegerVariableModifier *modifier) : _modifier(modifier) {
@@ -1717,6 +1810,10 @@ Common::SharedPtr<Modifier> IntegerRangeVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new IntegerRangeVariableModifier(*this));
 }
 
+const char *IntegerRangeVariableModifier::getDefaultName() const {
+	return "Integer Range Variable";
+}
+
 IntegerRangeVariableModifier::SaveLoad::SaveLoad(IntegerRangeVariableModifier *modifier) : _modifier(modifier) {
 	_range = _modifier->_range;
 }
@@ -1801,6 +1898,10 @@ void VectorVariableModifier::debugInspect(IDebugInspectionReport *report) const 
 
 Common::SharedPtr<Modifier> VectorVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new VectorVariableModifier(*this));
+}
+
+const char *VectorVariableModifier::getDefaultName() const {
+	return "Vector Variable";
 }
 
 VectorVariableModifier::SaveLoad::SaveLoad(VectorVariableModifier *modifier) : _modifier(modifier) {
@@ -1891,6 +1992,10 @@ Common::SharedPtr<Modifier> PointVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new PointVariableModifier(*this));
 }
 
+const char *PointVariableModifier::getDefaultName() const {
+	return "Point Variable";
+}
+
 PointVariableModifier::SaveLoad::SaveLoad(PointVariableModifier *modifier) : _modifier(modifier) {
 	_value = _modifier->_value;
 }
@@ -1954,6 +2059,10 @@ Common::SharedPtr<Modifier> FloatingPointVariableModifier::shallowClone() const 
 	return Common::SharedPtr<Modifier>(new FloatingPointVariableModifier(*this));
 }
 
+const char *FloatingPointVariableModifier::getDefaultName() const {
+	return "Floating Point Variable";
+}
+
 FloatingPointVariableModifier::SaveLoad::SaveLoad(FloatingPointVariableModifier *modifier) : _modifier(modifier) {
 	_value = _modifier->_value;
 }
@@ -2011,6 +2120,10 @@ void StringVariableModifier::debugInspect(IDebugInspectionReport *report) const 
 
 Common::SharedPtr<Modifier> StringVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new StringVariableModifier(*this));
+}
+
+const char *StringVariableModifier::getDefaultName() const {
+	return "String Variable";
 }
 
 StringVariableModifier::SaveLoad::SaveLoad(StringVariableModifier *modifier) : _modifier(modifier) {

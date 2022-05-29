@@ -63,6 +63,10 @@ Common::SharedPtr<Modifier> MovementModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new MovementModifier(*this));
 }
 
+const char *MovementModifier::getDefaultName() const {
+	return "Movement";
+}
+
 bool RectShiftModifier::load(const PlugInModifierLoaderContext &context, const Data::Obsidian::RectShiftModifier &data) {
 	if (data.rate.type != Data::PlugInTypeTaggedValue::kInteger)
 		return false;
@@ -88,6 +92,10 @@ MiniscriptInstructionOutcome RectShiftModifier::writeRefAttribute(MiniscriptThre
 
 Common::SharedPtr<Modifier> RectShiftModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new RectShiftModifier(*this));
+}
+
+const char *RectShiftModifier::getDefaultName() const {
+	return "RectShift";
 }
 
 TextWorkModifier::TextWorkModifier() : _firstChar(0), _lastChar(0) {
@@ -174,6 +182,10 @@ MiniscriptInstructionOutcome TextWorkModifier::writeRefAttribute(MiniscriptThrea
 
 Common::SharedPtr<Modifier> TextWorkModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new TextWorkModifier(*this));
+}
+
+const char *TextWorkModifier::getDefaultName() const {
+	return "TextWork";
 }
 
 MiniscriptInstructionOutcome TextWorkModifier::scriptSetFirstWord(MiniscriptThread *thread, const DynamicValue &value) {
@@ -378,6 +390,10 @@ Common::SharedPtr<Modifier> DictionaryModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new DictionaryModifier(*this));
 }
 
+const char *DictionaryModifier::getDefaultName() const {
+	return "Dictionary";
+}
+
 WordMixerModifier::WordMixerModifier() : _matches(0), _result(0) {
 }
 
@@ -531,6 +547,10 @@ Common::SharedPtr<Modifier> WordMixerModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new WordMixerModifier(*this));
 }
 
+const char *WordMixerModifier::getDefaultName() const {
+	return "WordMixer";
+}
+
 XorModModifier::XorModModifier() {
 }
 
@@ -590,6 +610,10 @@ Common::SharedPtr<Modifier> XorModModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new XorModModifier(*this));
 }
 
+const char *XorModModifier::getDefaultName() const {
+	return "XorMod";
+}
+
 XorCheckModifier::XorCheckModifier() : _allClear(false) {
 }
 
@@ -617,6 +641,10 @@ MiniscriptInstructionOutcome XorCheckModifier::writeRefAttribute(MiniscriptThrea
 
 Common::SharedPtr<Modifier> XorCheckModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new XorCheckModifier(*this));
+}
+
+const char *XorCheckModifier::getDefaultName() const {
+	return "XorCheck";
 }
 
 MiniscriptInstructionOutcome XorCheckModifier::scriptSetCheckNow(MiniscriptThread *thread, const DynamicValue &value) {
