@@ -62,7 +62,6 @@ public:
 	Common::Array<Action> _actions;
 	Common::StringArray _sys;
 	Common::StringArray _systemMessages;
-	GameInfo *_game = nullptr;
 	winid_t _graphics = nullptr;
 	uint8_t *_entireFile = nullptr;
 	size_t _fileLength = 0;
@@ -147,6 +146,10 @@ public:
 	SavedState *_oldestUndo = nullptr;
 	int _numberOfUndos = 0;
 
+	const GameInfo *_game;
+	GameInfo _fallbackGame;
+	// Include game list
+	#include "glk/scott/games.h"
 public:
 	Globals();
 	~Globals();
