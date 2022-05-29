@@ -90,7 +90,7 @@ extern Boolean fail;
 extern Boolean anyOutput;
 extern Boolean needsp;
 
-#define endOfTable(x) eot((Aword *) x)
+#define endOfTable(x) eot((const void *)x)
 
 extern void *allocate(unsigned long len);
 extern void terminate(CONTEXT, int code);
@@ -109,7 +109,7 @@ extern Boolean exitto(int to, int from);
 extern void action(CONTEXT, ParamElem *plst);
 extern void go(CONTEXT, int dir);
 
-extern Boolean eot(Aword *adr);
+extern Boolean eot(const void *adr);
 extern Boolean isObj(Aword x);
 extern Boolean isCnt(Aword x);
 extern Boolean isAct(Aword x);

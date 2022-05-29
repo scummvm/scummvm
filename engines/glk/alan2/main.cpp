@@ -477,8 +477,10 @@ void prmsg(MsgKind msg /* IN - message number */) {
 \*----------------------------------------------------------------------*/
 
 /* How to know we are at end of a table */
-Boolean eot(Aword *adr) {
-	return *adr == EOD;
+Boolean eot(const void *adr) {
+	const byte *v = (const byte *)adr;
+	return v[0] == 0xff && v[1] == 0xff &&
+		v[2] == 0xff && v[3] == 0xff;
 }
 
 Boolean isObj(Aword x) {

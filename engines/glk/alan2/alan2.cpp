@@ -118,9 +118,11 @@ Common::Error Alan2::writeGameData(Common::WriteStream *ws) {
 }
 
 // This works around gcc errors for passing packed structure fields
-void syncVal(Common::Serializer &s, uint32 *fld) {
-	uint32 &v = *fld;
+void syncVal(Common::Serializer &s, void *fld) {
+	uint32 v = READ_UINT32(fld);
 	s.syncAsUint32LE(v);
+	if (s.isLoading())
+		WRITE_UINT32(fld, v);
 }
 
 static void syncActors(Common::Serializer &s) {
