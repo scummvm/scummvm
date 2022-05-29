@@ -2570,6 +2570,10 @@ public:
 	// Shallow clones only need to copy the object.  Descendent copies are done using visitInternalReferences.
 	virtual Common::SharedPtr<Modifier> shallowClone() const = 0;
 
+	// Returns the default name of the modifier.  This isn't optional: It can cause behavioral changes, e.g.
+	// Obsidian depends on this working properly to resolve the TextWork modifier in the Piazza.
+	virtual const char *getDefaultName() const = 0;
+
 	// Visits any internal references in the object.
 	// Any references to other elements owned by the object MUST be SharedPtr, any references to non-owned objects
 	// MUST be WeakPtr, in order for the cloning and materialization logic to work correctly.

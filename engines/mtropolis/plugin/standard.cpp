@@ -291,6 +291,10 @@ Common::SharedPtr<Modifier> CursorModifier::shallowClone() const {
 	return clone;
 }
 
+const char *CursorModifier::getDefaultName() const {
+	return "Cursor Modifier";
+}
+
 bool STransCtModifier::load(const PlugInModifierLoaderContext &context, const Data::Standard::STransCtModifier &data) {
 	if (data.enableWhen.type != Data::PlugInTypeTaggedValue::kEvent ||
 		data.disableWhen.type != Data::PlugInTypeTaggedValue::kEvent ||
@@ -346,6 +350,10 @@ MiniscriptInstructionOutcome STransCtModifier::writeRefAttribute(MiniscriptThrea
 
 Common::SharedPtr<Modifier> STransCtModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new STransCtModifier(*this));
+}
+
+const char *STransCtModifier::getDefaultName() const {
+	return "STransCt";	// Probably wrong
 }
 
 MiniscriptInstructionOutcome STransCtModifier::scriptSetRate(MiniscriptThread *thread, const DynamicValue &value) {
@@ -524,6 +532,10 @@ Common::SharedPtr<Modifier> MediaCueMessengerModifier::shallowClone() const {
 	return clone;
 }
 
+const char *MediaCueMessengerModifier::getDefaultName() const {
+	return "Media Cue Messenger";
+}
+
 void MediaCueMessengerModifier::linkInternalReferences(ObjectLinkingScope *scope) {
 	if (_cueSourceType == kCueSourceVariableReference) {
 		Common::WeakPtr<RuntimeObject> obj = scope->resolve(_cueSource.asVarRefGUID);
@@ -629,6 +641,10 @@ void ObjectReferenceVariableModifier::debugInspect(IDebugInspectionReport *repor
 
 Common::SharedPtr<Modifier> ObjectReferenceVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new ObjectReferenceVariableModifier(*this));
+}
+
+const char *ObjectReferenceVariableModifier::getDefaultName() const {
+	return "Object Reference Variable";
 }
 
 MiniscriptInstructionOutcome ObjectReferenceVariableModifier::scriptSetPath(MiniscriptThread *thread, const DynamicValue &value) {
@@ -1017,6 +1033,10 @@ Common::SharedPtr<Modifier> MidiModifier::shallowClone() const {
 	return clone;
 }
 
+const char *MidiModifier::getDefaultName() const {
+	return "MIDI Modifier";
+}
+
 MiniscriptInstructionOutcome MidiModifier::scriptSetVolume(MiniscriptThread *thread, const DynamicValue &value) {
 	int32 asInteger = 0;
 	if (!value.roundToInt(asInteger))
@@ -1296,6 +1316,10 @@ Common::SharedPtr<Modifier> ListVariableModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new ListVariableModifier(*this));
 }
 
+const char *ListVariableModifier::getDefaultName() const {
+	return "List Variable";
+}
+
 ListVariableModifier::SaveLoad::SaveLoad(ListVariableModifier *modifier) : _modifier(modifier), _list(_modifier->_list) {
 }
 
@@ -1487,6 +1511,10 @@ bool SysInfoModifier::readAttribute(MiniscriptThread *thread, DynamicValue &resu
 
 Common::SharedPtr<Modifier> SysInfoModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new SysInfoModifier(*this));
+}
+
+const char *SysInfoModifier::getDefaultName() const {
+	return "SysInfo Modifier";
 }
 
 StandardPlugInHacks::StandardPlugInHacks() : allowGarbledListModData(false) {
