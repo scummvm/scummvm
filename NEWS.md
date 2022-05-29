@@ -26,6 +26,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Removed Symbian port.
    - Added the create_engine tool to aid when creating new engines.
    - Fixed mouse capture in HiDPI mode.
+   - GUI Options dialog now marks with red settings overridden via command line.
+   - In GUI launcher it is now possible to group games by different categories.
+   - GUI launcher has new game icons grid look.
 
  AGI:
    - Added support for Macintosh versions of Manhunter 1-2.
@@ -88,7 +91,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed the rolling bridge state in scene 13.
    - Fixed getting stuck when teleporting to the foot in scene 30.
    - Fixed inconsistent cactus state.
- 
+
  Supernova:
    - Added text to speech for dialogs and object descriptions.
 
