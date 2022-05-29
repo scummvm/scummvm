@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-05-29 14:37+0000\n"
-"PO-Revision-Date: 2022-05-29 15:32+0000\n"
+"PO-Revision-Date: 2022-05-29 15:52+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -1488,6 +1488,8 @@ msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
 msgstr ""
+"Specificeer waar uw opgelagen spellen bewaard worden. Een rode kleur geeft "
+"aan dat waarde tijdelijk is en wordt niet opgeslagen"
 
 #: gui/options.cpp:2296
 msgid "Theme Path:"
@@ -4253,7 +4255,7 @@ msgstr ""
 
 #: engines/agos/detection.cpp:77
 msgid "AdLib OPL3 mode"
-msgstr ""
+msgstr "AdLib OPL3 modus"
 
 #: engines/agos/detection.cpp:78
 msgid ""
@@ -4261,10 +4263,13 @@ msgid ""
 "this will prevent cut-off notes, add extra notes or instruments and/or add "
 "stereo."
 msgstr ""
+"Als AdLib is geselecteerd zullen OPL3 functies gebruikt worden. Afhankelijk "
+"van het spel zal dit afgekapte noten voorkomen, extra noten of instrumen "
+"toevoegen en/of stereo toevoegen."
 
 #: engines/agos/detection.cpp:86
 msgid "Use DOS version music tempos"
-msgstr ""
+msgstr "Gebruik DOS versie muziek tempo"
 
 #: engines/agos/detection.cpp:87
 msgid ""
@@ -4272,6 +4277,8 @@ msgid ""
 "version of the game. Otherwise, the faster tempos of the Windows version "
 "will be used."
 msgstr ""
+"Met deze optie zal de muziek het tempo van de DOS versie gebruiken. Anders "
+"zal het snellere tempo van de Windows versie gebruikt worden."
 
 #: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
@@ -4517,7 +4524,7 @@ msgstr "Spel Opties"
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
 #: engines/bladerunner/metaengine.cpp:172
 msgid "Open KIA Database"
-msgstr "KIA-database openen"
+msgstr "KIA Database Openen"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
@@ -5187,24 +5194,21 @@ msgid "Enable Gore Mode when available"
 msgstr "Gore modus inschakelen waar mogelijk"
 
 #: engines/hypno/detection.cpp:244
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Enable original cheats"
-msgstr "Zet valsspelen aan"
+msgstr "Gebruik originele cheats"
 
 #: engines/hypno/detection.cpp:245
 msgid "Allow cheats using the C key."
 msgstr "Sta cheaten toe met de C toets."
 
 #: engines/hypno/detection.cpp:253
-#, fuzzy
-#| msgid "Enable font replacement"
 msgid "Enable infinite health cheat"
-msgstr "Lettertypes vervangen"
+msgstr "Gebruik eindeloze gezondheid cheat"
 
 #: engines/hypno/detection.cpp:254
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
+"Gezondheid van speler zal niet verminderen (behalve bij einde spel scènes)."
 
 #: engines/hypno/detection.cpp:262
 msgid "Enable infinite ammo cheat"
@@ -5212,7 +5216,7 @@ msgstr "Gebruik oneindige munitie cheat"
 
 #: engines/hypno/detection.cpp:263
 msgid "Player ammo will never decrease."
-msgstr ""
+msgstr "Munitie van speler zal niet verminderen."
 
 #: engines/hypno/detection.cpp:271
 msgid "Enable restored content"
@@ -6698,16 +6702,14 @@ msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(in plaats van de gebruikelijke stappen van 8 pixels scrollen)"
 
 #: engines/scumm/detection.cpp:220
-#, fuzzy
-#| msgid "Enable smooth scrolling"
 msgid "Allow semi-smooth scrolling"
-msgstr "Zet vloeiend scrollen aan"
+msgstr "Zet semi-vloeiend scrollen aan"
 
 #: engines/scumm/detection.cpp:221
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
-msgstr ""
+msgstr "Scroll minder vloeiend tijdens snelle camerabewegingen in de intro."
 
 #: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:730
 msgid "Enable game-specific enhancements"
