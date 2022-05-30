@@ -1381,6 +1381,8 @@ public:
 	int _walkBehindsCachedForBgNum = 0;
 	WalkBehindMethodEnum _walkBehindMethod = DrawOverCharSprite;
 	int _walk_behind_baselines_changed = 0;
+	Rect _walkBehindAABB[MAX_WALK_BEHINDS]; // WB bounding box
+	std::vector<WalkBehindColumn> _walkBehindCols; // precalculated WB positions
 
 	/**@}*/
 

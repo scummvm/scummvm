@@ -34,21 +34,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
-// An info on vertical column of walk-behind mask, which may contain WB area
-struct WalkBehindColumn {
-	bool Exists = false; // whether any WB area is in this column
-	int Y1 = 0, Y2 = 0; // WB top and bottom Y coords
-};
-
-WalkBehindMethodEnum walkBehindMethod = DrawOverCharSprite;
-std::vector<WalkBehindColumn> walkBehindCols; // precalculated WB positions
-Rect walkBehindAABB[MAX_WALK_BEHINDS]; // WB bounding box
-int walkBehindsCachedForBgNum = 0; // WB textures are for this background
-bool noWalkBehindsAtAll = false; // quick report that no WBs in this room
-bool walk_behind_baselines_changed = false;
-
-
 // Generates walk-behinds as separate sprites
 void walkbehinds_generate_sprites() {
 	const Bitmap *mask = _GP(thisroom).WalkBehindMask.get();
@@ -58,7 +43,7 @@ void walkbehinds_generate_sprites() {
 	Bitmap wbbmp; // temp buffer
 	// Iterate through walk-behinds and generate a texture for each of them
 	for (int wb = 1 /* 0 is "no area" */; wb < MAX_WALK_BEHINDS; ++wb) {
-		const Rect pos = walkBehindAABB[wb];
+		const Rect pos = _G(walkBehindAABB)[wb];
 		if (pos.Right > 0) {
 			wbbmp.CreateTransparent(pos.GetWidth(), pos.GetHeight(), coldepth);
 			// Copy over all solid pixels belonging to this WB area
@@ -90,13 +75,13 @@ void walkbehinds_generate_sprites() {
 		}
 	}
 
-	walkBehindsCachedForBgNum = _GP(play).bg_frame;
+	_G(walkBehindsCachedForBgNum) = _GP(play).bg_frame;
 }
 
 // Edits the given game object's sprite, cutting out pixels covered by walk-behinds;
 // returns whether any pixels were updated;
 bool walkbehinds_cropout(Bitmap *sprit, int sprx, int spry, int basel, int zoom) {
-	if (noWalkBehindsAtAll)
+	if (_G(noWalkBehindsAtAll))
 		return false;
 
 	const int maskcol = sprit->GetMaskColor();
@@ -107,7 +92,7 @@ bool walkbehinds_cropout(Bitmap *sprit, int sprx, int spry, int basel, int zoom)
 	for (int x = MAX(0, 0 - sprx);
 		(x < sprit->GetWidth()) && (x + sprx < _GP(thisroom).WalkBehindMask->GetWidth()); ++x) {
 		// select the WB column at this x
-		const auto &wbcol = walkBehindCols[x + sprx];
+		const auto &wbcol = _G(walkBehindCols)[x + sprx];
 		// skip if no area, or sprite lies outside of all areas in this column
 		if ((!wbcol.Exists) ||
 			(wbcol.Y2 <= spry) ||
@@ -145,17 +130,17 @@ bool walkbehinds_cropout(Bitmap *sprit, int sprx, int spry, int basel, int zoom)
 
 void walkbehinds_recalc() {
 	// Reset all data
-	walkBehindCols.clear();
+	_G(walkBehindCols).clear();
 	for (int wb = 0; wb < MAX_WALK_BEHINDS; ++wb) {
-		walkBehindAABB[wb] = Rect(INT32_MAX, INT32_MAX, INT32_MIN, INT32_MIN);
+		_G(walkBehindAABB)[wb] = Rect(INT32_MAX, INT32_MAX, INT32_MIN, INT32_MIN);
 	}
-	noWalkBehindsAtAll = true;
+	_G(noWalkBehindsAtAll) = true;
 
 	// Recalculate everything; note that mask is always 8-bit
 	const Bitmap *mask = _GP(thisroom).WalkBehindMask.get();
-	walkBehindCols.resize(mask->GetWidth());
+	_G(walkBehindCols).resize(mask->GetWidth());
 	for (int col = 0; col < mask->GetWidth(); ++col) {
-		auto &wbcol = walkBehindCols[col];
+		auto &wbcol = _G(walkBehindCols)[col];
 		for (int y = 0; y < mask->GetHeight(); ++y) {
 			int wb = mask->GetScanLine(y)[col];
 			// Valid areas start with index 1, 0 = no area
@@ -163,19 +148,19 @@ void walkbehinds_recalc() {
 				if (!wbcol.Exists) {
 					wbcol.Y1 = y;
 					wbcol.Exists = true;
-					noWalkBehindsAtAll = false;
+					_G(noWalkBehindsAtAll) = false;
 				}
 				wbcol.Y2 = y + 1; // +1 to allow bottom line of screen to work (CHECKME??)
 				// resize the bounding rect
-				walkBehindAABB[wb].Left = MIN(col, walkBehindAABB[wb].Left);
-				walkBehindAABB[wb].Top = MIN(y, walkBehindAABB[wb].Top);
-				walkBehindAABB[wb].Right = MAX(col, walkBehindAABB[wb].Right);
-				walkBehindAABB[wb].Bottom = MAX(y, walkBehindAABB[wb].Bottom);
+				_G(walkBehindAABB)[wb].Left = MIN(col, _G(walkBehindAABB)[wb].Left);
+				_G(walkBehindAABB)[wb].Top = MIN(y, _G(walkBehindAABB)[wb].Top);
+				_G(walkBehindAABB)[wb].Right = MAX(col, _G(walkBehindAABB)[wb].Right);
+				_G(walkBehindAABB)[wb].Bottom = MAX(y, _G(walkBehindAABB)[wb].Bottom);
 			}
 		}
 	}
 
-	if (walkBehindMethod == DrawAsSeparateSprite) {
+	if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
 		walkbehinds_generate_sprites();
 	}
 }

@@ -40,6 +40,12 @@ enum WalkBehindMethodEnum {
 	DrawAsSeparateSprite
 };
 
+// An info on vertical column of walk-behind mask, which may contain WB area
+struct WalkBehindColumn {
+	bool Exists = false; // whether any WB area is in this column
+	int Y1 = 0, Y2 = 0; // WB top and bottom Y coords
+};
+
 namespace AGS { namespace Shared { class Bitmap; } }
 using namespace AGS; // FIXME later
 
