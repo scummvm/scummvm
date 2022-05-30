@@ -39,7 +39,11 @@ void ScreenDecoder::destroy() {
 bool ScreenDecoder::loadFile(const Common::String &fname,
 		int16 w, int16 h) {
 	Common::File f;
-	return f.open(fname) && loadStream(f, w, h);
+	if (!f.open(fname))
+		return false;
+
+	f.skip(2);		// Skip size word
+	return loadStream(f, w, h);
 }
 
 bool ScreenDecoder::loadStream(Common::SeekableReadStream &stream,
@@ -52,21 +56,15 @@ bool ScreenDecoder::loadStream(Common::SeekableReadStream &stream,
 	int index = 0;
 	int imgSize = w * h / 4;
 
-	if (_size == -1)
-		_size = stream.readUint16LE();
-	assert(_size < IMAGE_SIZE);
-
 	// Decompress the image bytes
 	int x = 0;
 	while (x < (w / 4) && !stream.eos()) {
 		v = stream.readByte();
 		if (v != 0x7B) {
 			len = 1;
-			--_size;
 		} else {
 			len = stream.readByte() + 1;
 			v = stream.readByte();
-			_size -= 3;
 		}
 
 		for (; len > 0; --len) {

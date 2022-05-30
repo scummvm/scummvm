@@ -31,7 +31,6 @@ namespace Gfx {
 
 class ScreenDecoder : public Image::ImageDecoder {
 private:
-	int _size = -1;
 	Graphics::Surface _surface;
 public:
 	ScreenDecoder() {}
@@ -51,10 +50,6 @@ public:
 	const byte *getPalette() const override { return nullptr; }
 	uint16 getPaletteColorCount() const override { return 0; }
 	void clear() { _surface.free(); }
-
-	bool finished() const {
-		return _size == 0;
-	}
 };
 
 } // namespace Gfx
