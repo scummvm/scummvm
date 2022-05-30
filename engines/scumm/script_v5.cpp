@@ -951,6 +951,18 @@ void ScummEngine_v5::o5_drawObject() {
 		}
 	}
 
+	// WORKAROUND: Captain Dread's head will glitch if you have already talked to him,
+	// give him an object and then immediately talk to him again ("It's me again.").
+	// This is because the original script forgot to check Bit[129] (= already facing
+	// Guybrush) in that particular case, and so Dread would always try to turn and
+	// face Guybrush even if he's already looking at him.  drawObject() should never
+	// be called if Bit[129] is set in that script, so if it does happen, it means
+	// the check was missing, and so we ignore the next 32 bytes of Dread's reaction.
+	if (_game.id == GID_MONKEY2 && _currentRoom == 22 && vm.slot[_currentScript].number == 201 && obj == 237 && state == 1 && readVar(0x8000 + 129) == 1 && _enableEnhancements) {
+		_scriptPointer += 32;
+		return;
+	}
+
 	idx = getObjectIndex(obj);
 	if (idx == -1)
 		return;
