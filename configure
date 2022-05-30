@@ -2337,6 +2337,9 @@ fi
 #
 echo_n "Checking endianness... "
 cat > tmp_endianness_check.cpp << EOF
+#ifndef __GNUC__
+#define __attribute__(x)
+#endif
 __attribute__ ((used)) unsigned short ascii_mm[] = { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
 __attribute__ ((used)) unsigned short ascii_ii[] = { 0x694C, 0x5454, 0x656C, 0x6E45, 0x6944, 0x6E61, 0 };
 const char * _ascii() { char* s = (char*) ascii_mm; s = (char*) ascii_ii; return s; }
@@ -4357,7 +4360,7 @@ EOF
 			cc_check -lspeechd && _tts=yes
 			;;
 		darwin*)
-			# Check the API is available. The most recent API we need is for the NSSpeechSynthesizerDelegate protocole
+			# Check the API is available. The most recent API we need is for the NSSpeechSynthesizerDelegate protocol
 			cat > $TMPC << EOF
 #include <AppKit/NSSpeechSynthesizer.h>
 @interface SpeechDelegate : NSObject<NSSpeechSynthesizerDelegate> {
