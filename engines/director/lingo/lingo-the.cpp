@@ -826,7 +826,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = _vm->getCurrentWindow()->getSurface()->h;
 		break;
 	case kTheStageColor:
-		getTheEntitySTUB(kTheStageColor);
+		d.type = INT;
+		d.u.i = g_director->getCurrentWindow()->getStageColor();
 		break;
 	case kTheStageLeft:
 		d.type = INT;
