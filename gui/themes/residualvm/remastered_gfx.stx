@@ -138,7 +138,8 @@
 	</bitmaps>
 
 	<fonts>
-		<font	id = 'text_default'
+		<font	resolution = 'y>399'
+				id = 'text_default'
 				file = 'helvb12.bdf'>
 				<!-- Add these in order of priority. First match is used -->
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Bold.otf'/>
@@ -147,8 +148,7 @@
 				<language id = 'hi'  scalable_file = 'NotoSans-Bold.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSansBold.ttf'/>
 		</font>
-		<font	resolution = 'y<400'
-				id = 'text_default'
+		<font	id = 'text_default'
 				file = 'clR6x12.bdf'
 				point_size = '11'>
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
@@ -157,7 +157,8 @@
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
-		<font	id = 'text_button'
+		<font	resolution = 'y>399'
+				id = 'text_button'
 				file = 'helvb12.bdf'>
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Bold.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Bold.otf'/>
@@ -165,8 +166,7 @@
 				<language id = 'hi'  scalable_file = 'NotoSans-Bold.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSansBold.ttf'/>
 		</font>
-		<font	resolution = 'y<400'
-				id = 'text_button'
+		<font	id = 'text_button'
 				file = 'clR6x12.bdf'
 				point_size = '11'>
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
@@ -175,7 +175,8 @@
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
-		<font	id = 'text_normal'
+		<font	resolution = 'y>399'
+				id = 'text_normal'
 				file = 'helvb12.bdf'>
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
 				<language id = 'ko'  scalable_file = 'NotoSansKR-Regular.otf'/>
@@ -183,8 +184,7 @@
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
-		<font	resolution = 'y<400'
-				id = 'text_normal'
+		<font	id = 'text_normal'
 				file = 'clR6x12.bdf'
 				point_size = '11'>
 				<language id = 'ja'  scalable_file = 'NotoSansJP-Regular.otf'/>
@@ -202,19 +202,19 @@
 				<language id = 'hi'  scalable_file = 'NotoSans-Regular.ttf'/>
 				<language id = '*'   scalable_file = 'FreeSans.ttf'/>
 		</font>
-		<font	id = 'console'
+		<font	resolution = 'y>799'
+				id = 'console'
 				file = 'builtinConsole'
 				point_size = '12'>
 				<language id = '*'   scalable_file = 'SourceCodeVariable-Roman.ttf'/>
 		</font>
-		<font	resolution = 'y<800'
+		<font	resolution = 'y>399'
 				id = 'console'
 				file = 'builtinConsole'
 				point_size = '10'>
 				<language id = '*'   scalable_file = 'SourceCodeVariable-Roman.ttf'/>
 		</font>
-		<font	resolution = 'y<400'
-				id = 'console'
+		<font	id = 'console'
 				file = 'builtinConsole'
 				point_size = '8'>
 				<language id = '*'   scalable_file = 'SourceCodeVariable-Roman.ttf'/>
