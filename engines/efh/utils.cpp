@@ -289,6 +289,8 @@ Common::KeyCode EfhEngine::getInputBlocking() {
 
 	uint32 lastMs = _system->getMillis();
 	while (retVal == Common::KEYCODE_INVALID) {
+		_system->getEventManager()->pollEvent(event);
+
 		if (event.type == Common::EVENT_KEYUP) {
 			retVal = event.kbd.keycode;
 		}
