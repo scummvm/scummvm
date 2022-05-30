@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/rect.h"
+#include "graphics/managed_surface.h"
 #include "mm/mm1/maps/map00.h"
 
 namespace MM {
@@ -203,6 +204,7 @@ private:
 	void town4setup();
 
 public:
+	Common::Array<Graphics::ManagedSurface> _tiles[3];
 	uint _mapId = (uint)-1;
 	Common::Point _mapPos;
 	DirMask _mapDirectionMask = DIRMASK_NONE;

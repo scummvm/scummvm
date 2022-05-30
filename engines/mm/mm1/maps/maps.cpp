@@ -53,10 +53,11 @@ static const uint16 TILE_AREA3[] = {
 static const uint16 *TILE_AREAS[3] = { TILE_AREA1, TILE_AREA2, TILE_AREA3 };
 static const byte TILE_OFFSET[3] = { 1,  7, 15 };
 
-static const uint16 TILE_WIDTHS[] = {
+#define RESOURCE_TILES_COUNT 12
+static const uint16 TILE_WIDTHS[RESOURCE_TILES_COUNT] = {
 	32, 40, 24, 16, 32, 40, 24, 16, 176, 96, 48, 16
 };
-static const uint16 TILE_HEIGHTS[] = {
+static const uint16 TILE_HEIGHTS[RESOURCE_TILES_COUNT] = {
 	128, 96, 64, 32, 128, 96, 64, 32, 96, 64, 32, 16
 };
 
@@ -213,20 +214,29 @@ void Maps::loadTile() {
 	entryIndex = ctr - 1;
 	Gfx::DTA dta(WALLPIX_DTA);
 	Common::SeekableReadStream *entry = dta.load(entryIndex);
+	entry->skip(2);
 
-	// ***DEBUG*** - Display the first tile of stream
+	// Decode the tiles
+	Common::Array<Graphics::ManagedSurface> &tiles =
+		_tiles[_loadSection - 1];
+	tiles.clear();
+	tiles.resize(RESOURCE_TILES_COUNT);
+
 	Gfx::ScreenDecoder decoder;
+	for (int i = 0; i < RESOURCE_TILES_COUNT; ++i) {
+		if (!decoder.loadStream(*entry,
+			TILE_WIDTHS[i], TILE_HEIGHTS[i]))
+			error("Failed decoding tile");
 
-	if (decoder.loadStream(*entry, 32, 128)) {
-		Graphics::Screen &scr = *g_events->getScreen();
-		scr.blitFrom(decoder.getSurface());
-
-		scr.update();
-		Common::Event e;
-		g_system->getEventManager()->pollEvent(e);
+		tiles[i].copyFrom(decoder.getSurface());
 	}
 
-	delete entry;
+	// ***DEBUG*** - Display the first tile of stream
+	Graphics::Screen &scr = *g_events->getScreen();
+	scr.blitFrom(_tiles[_loadSection - 1].front());
+	scr.update();
+	Common::Event e;
+	g_system->getEventManager()->pollEvent(e);
 }
 
 } // namespace Maps
