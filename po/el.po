@@ -1501,9 +1501,9 @@ msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
 msgstr ""
-"Προσδιορίζει πού θα τοποθετηθούν τα αποθηκευμένα παιχνίδια σας (saved games)"
-". Ο κόκκινος χρωματισμός υποδεικνύει ότι η τιμή αυτή είναι προσωρινή και δεν "
-"θα αποθηκευτεί"
+"Προσδιορίζει πού θα τοποθετηθούν τα αποθηκευμένα παιχνίδια σας (saved "
+"games). Ο κόκκινος χρωματισμός υποδεικνύει ότι η τιμή αυτή είναι προσωρινή "
+"και δεν θα αποθηκευτεί"
 
 #: gui/options.cpp:2296
 msgid "Theme Path:"

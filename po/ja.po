@@ -1474,7 +1474,9 @@ msgstr "FluidSynthの設定"
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
-msgstr "ゲームのセーブ箇所を指定します。赤は、一時的な(保存されない)データである事を示します"
+msgstr ""
+"ゲームのセーブ箇所を指定します。赤は、一時的な(保存されない)データである事を"
+"示します"
 
 #: gui/options.cpp:2296
 msgid "Theme Path:"
