@@ -256,7 +256,7 @@ DynObjectRef CreateNewScriptStringObj(const char *fromText, bool reAllocate) {
 	if (reAllocate) {
 		str = new ScriptString(fromText);
 	} else { // TODO: refactor to avoid const casts!
-		str = new ScriptString((char *)fromText, true);
+		str = new ScriptString(const_cast<char *>(fromText), true);
 	}
 	void *obj_ptr = str->GetTextPtr();
 	int32_t handle = ccRegisterManagedObject(obj_ptr, str);
