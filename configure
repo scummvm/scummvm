@@ -2149,6 +2149,9 @@ if test "$have_gcc" = yes ; then
 	amigaos* | dreamcast | ds | mingw* | mint* | morphos | n64 | ps3 | psp2)
 		std_variant=gnu++
 		;;
+	openbsd*)
+		pedantic=no
+		;;
 	*)
 		;;
 	esac
