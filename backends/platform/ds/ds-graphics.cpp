@@ -163,10 +163,7 @@ void initHardware() {
 	irqSet(IRQ_VBLANK, VBlankHandler);
 	irqEnable(IRQ_VBLANK);
 
-#ifndef DISABLE_TEXT_CONSOLE
-	videoSetModeSub(MODE_0_2D);
-	consoleInit(NULL, 1, BgType_Text4bpp, BgSize_T_256x256, 30, 0, false, true);
-#else
+#ifdef DISABLE_TEXT_CONSOLE
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 #endif
 }
