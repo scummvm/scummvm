@@ -185,6 +185,7 @@ private:
 	 * Loads tile graphics needed for rendering the 3d view
 	 */
 	void loadTiles();
+	void loadTile();
 
 	/**
 	 * Town setup for SORPIGAL & ERLIQUIN
@@ -210,7 +211,10 @@ public:
 	int _colorOffset = 0;
 	int _val1 = 0, _val2 = 0, _val3 = 0, _val4 = 0;
 	int _val5 = 0, _val6 = 0, _val7 = 0;
-
+	int _loadId = 0;
+	int _loadArea = 0;
+	int _loadSection = 0;
+	byte _loadFlag = 0;
 public:
 	Maps();
 

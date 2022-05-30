@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	mm1/data/char.o \
 	mm1/data/game_state.o \
 	mm1/data/roster.o \
+	mm1/gfx/dta.o \
 	mm1/gfx/gfx.o \
 	mm1/gfx/screen_decoder.o \
 	mm1/utils/strings.o \

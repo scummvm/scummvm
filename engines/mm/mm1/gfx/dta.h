@@ -19,42 +19,29 @@
  *
  */
 
-#ifndef MM1_GFX_SCREEN_DECODER_H
-#define MM1_GFX_SCREEN_DECODER_H
+#ifndef MM1_GFX_DTA_H
+#define MM1_GFX_DTA_H
 
-#include "image/image_decoder.h"
 #include "graphics/managed_surface.h"
 
 namespace MM {
 namespace MM1 {
 namespace Gfx {
 
-class ScreenDecoder : public Image::ImageDecoder {
-private:
-	int _size = -1;
-	Graphics::Surface _surface;
+#define WALLPIX_DTA "wallpix.dta"
+#define MONPIX_DTA "monpix.dta"
+
+class DTA {
 public:
-	ScreenDecoder() {}
-	~ScreenDecoder() override;
-
-	void destroy() override;
-	bool loadFile(const Common::String &fname,
-		int16 w = 320, int16 h = 200);
-	bool loadStream(Common::SeekableReadStream &stream, int16 w, int16 h);
-	bool loadStream(Common::SeekableReadStream &stream) {
-		return loadStream(stream, 320, 200);
+	Common::String _fname;
+public:
+	DTA(const Common::String &fname) : _fname(fname) {
 	}
 
-	const Graphics::Surface *getSurface() const override {
-		return &_surface;
-	}
-	const byte *getPalette() const override { return nullptr; }
-	uint16 getPaletteColorCount() const override { return 0; }
-	void clear() { _surface.free(); }
-
-	bool finished() const {
-		return _size == 0;
-	}
+	/**
+	 * Returns a read stream for an entry
+	 */
+	Common::SeekableReadStream *load(uint entryIndex);
 };
 
 } // namespace Gfx

@@ -20,21 +20,46 @@
  */
 
 #include "common/endian.h"
+#include "common/stream.h"
 #include "mm/mm1/maps/maps.h"
+#include "mm/mm1/gfx/dta.h"
+#include "mm/mm1/gfx/screen_decoder.h"
 #include "mm/mm1/events.h"
+#include "common/system.h"
 
 namespace MM {
 namespace MM1 {
 namespace Maps {
 
-static byte LOOKUPS_START[4] = { 0, 0, 14, 34 };
-static byte COLOR_OFFSET[55] = {
+static const byte LOOKUPS_START[4] = { 0, 0, 14, 34 };
+static const byte COLOR_OFFSET[55] = {
 	1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 	1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
 	1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1
 };
+
+static const uint16 TILE_AREA1[] = {
+	0x10D, 0x0B0B, 0x50A, 0x11A, 0x0B18, 0x517
+};
+static const uint16 TILE_AREA2[] = {
+	0xB0B, 0x50A, 0x10D, 0x0F08, 0x907, 0x11A, 0x0B18, 0x517
+};
+static const uint16 TILE_AREA3[] = {
+	0xB0B, 0x10D, 0x517, 0x0B18, 0x11A, 0x50A
+};
+
+static const uint16 *TILE_AREAS[3] = { TILE_AREA1, TILE_AREA2, TILE_AREA3 };
+static const byte TILE_OFFSET[3] = { 1,  7, 15 };
+
+static const uint16 TILE_WIDTHS[] = {
+	32, 40, 24, 16, 32, 40, 24, 16, 176, 96, 48, 16
+};
+static const uint16 TILE_HEIGHTS[] = {
+	128, 96, 64, 32, 128, 96, 64, 32, 96, 64, 32, 16
+};
+
 
 Maps::Maps() :
 		_map00(this), _map01(this), _map02(this), _map03(this),
@@ -152,7 +177,56 @@ uint Maps::getIndex(uint16 id, byte section) {
 }
 
 void Maps::loadTiles() {
-	// TODO
+	_loadArea = _currentMap->dataByte(1);
+	_loadId = _currentMap->dataWord(2);
+	_loadSection = 1;
+	loadTile();
+
+	_loadArea = _currentMap->dataByte(1);
+	_loadId = _currentMap->dataWord(4);
+	_loadSection = 2;
+	loadTile();
+
+	_loadArea = _currentMap->dataByte(1);
+	_loadId = _currentMap->dataWord(6);
+	_loadSection = 3;
+	loadTile();
+}
+
+void Maps::loadTile() {
+	assert(_loadArea >= 1 && _loadArea <= 3);
+	const uint16 *arr = TILE_AREAS[_loadArea - 1];
+	int ctr = TILE_OFFSET[_loadArea - 1];
+	int entryIndex;
+
+	for (; *arr != _loadId; ++arr, ++ctr) {
+	}
+
+	_loadFlag = 0xff;
+	if (ctr >= 19) {
+		if (ctr != 19)
+			_loadFlag = 0xaa;
+		ctr = 1;
+	}
+
+	// Get the entry from the wallpix.dta file
+	entryIndex = ctr - 1;
+	Gfx::DTA dta(WALLPIX_DTA);
+	Common::SeekableReadStream *entry = dta.load(entryIndex);
+
+	// ***DEBUG*** - Display the first tile of stream
+	Gfx::ScreenDecoder decoder;
+
+	if (decoder.loadStream(*entry, 32, 128)) {
+		Graphics::Screen &scr = *g_events->getScreen();
+		scr.blitFrom(decoder.getSurface());
+
+		scr.update();
+		Common::Event e;
+		g_system->getEventManager()->pollEvent(e);
+	}
+
+	delete entry;
 }
 
 } // namespace Maps

@@ -97,6 +97,12 @@ public:
 	byte &operator[](uint ofs) {
 		return _data[ofs];
 	}
+	byte dataByte(uint ofs) const {
+		return _data[ofs];
+	}
+	uint16 dataWord(uint16 ofs) const {
+		return (uint16)_data[ofs] | ((uint16)_data[ofs + 1] << 8);
+	}
 };
 
 } // namespace Maps
