@@ -62,8 +62,6 @@ public:
 	virtual void GetItems(std::vector<const char *> &buf) const = 0;
 
 protected:
-	// Calculate and return required space for serialization, in bytes
-	virtual size_t CalcSerializeSize() = 0;
 	// Write object data into the provided stream
 	void Serialize(const char *address, AGS::Shared::Stream *out) override;
 
