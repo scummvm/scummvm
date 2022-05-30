@@ -191,7 +191,7 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 
 			}
 		}
-		if (!a->background.empty()) {
+		if (_refreshConversation && !a->background.empty()) {
 			loadImage(a->background, a->backgroundPos.x, a->backgroundPos.y, false);
 		}
 	}
