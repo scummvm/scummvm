@@ -77,7 +77,15 @@ void SpiderEngine::loadAssetsFullGame() {
 	ChangeLevel *cl;
 	Global *gl;
 
+	Sound *snd = new Sound("mouse.raw");
 	loadSceneLevel("mainmenu.mi_", "", prefix);
+	sc = (Scene *) _levels["mainmenu.mi_"];
+	sc->hots[1].actions.push_back(snd);
+	sc->hots[2].actions.push_back(snd);
+	sc->hots[3].actions.push_back(snd);
+	sc->hots[4].actions.push_back(snd);
+	sc->hots[5].actions.push_back(snd);
+	sc->hots[6].actions.push_back(snd);
 	loadSceneLevel("tryagain.mi_", "", prefix);
 
 	cl = new ChangeLevel("<give_up>");
@@ -89,7 +97,6 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("options.mi_", "", prefix);
 	loadSceneLevel("levels.mi_", "mv0t.mi_", prefix);
-	Sound *snd = new Sound("mouse.raw");
 	sc = (Scene *) _levels["levels.mi_"];
 	sc->hots[1].actions.push_back(snd);
 	sc->hots[2].actions.push_back(snd);
