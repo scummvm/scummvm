@@ -1021,7 +1021,7 @@ struct ComponentHandler {
 };
 
 // Array of supported components
-ComponentHandler ComponentHandlers[] = {
+static const ComponentHandler ComponentHandlers[] = {
 	{
 		"Game State",
 		kGSSvgVersion_350_10,
@@ -1245,7 +1245,7 @@ HSaveError ReadAll(Stream *in, SavegameVersion svg_version, const PreservedParam
 	return new SavegameError(kSvgErr_ComponentListClosingTagMissing);
 }
 
-HSaveError WriteComponent(Stream *out, ComponentHandler &hdlr) {
+HSaveError WriteComponent(Stream *out, const ComponentHandler &hdlr) {
 	WriteFormatTag(out, hdlr.Name, true);
 	out->WriteInt32(hdlr.Version);
 	soff_t ref_pos = out->GetPosition();
