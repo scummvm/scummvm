@@ -42,25 +42,25 @@
 	</palette>
 
 	<fonts>
-		<font	id = 'text_default'>
+		<font	resolution = 'y>399'
+				id = 'text_default'>
 				<language id = '*' file = 'helvb12.bdf'/>
 		</font>
-		<font	resolution = 'y<400'
-				id = 'text_default'>
+		<font	id = 'text_default'>
 				<language id = '*' file = 'clR6x12.bdf'/>
+		</font>
+		<font	resolution = 'y>399'
+				id = 'text_button'>
+				<language id = '*' file = 'helvb12.bdf'/>
 		</font>
 		<font	id = 'text_button'>
-				<language id = '*' file = 'helvb12.bdf'/>
-		</font>
-		<font	resolution = 'y<400'
-				id = 'text_button'>
 				<language id = '*' file = 'clR6x12.bdf'/>
 		</font>
-		<font	id = 'text_normal'>
+		<font	resolution = 'y>399'
+				id = 'text_normal'>
 				<language id = '*' file = 'helvb12.bdf'/>
 		</font>
-		<font	resolution = 'y<400'
-				id = 'text_normal'>
+		<font	id = 'text_normal'>
 				<language id = '*' file = 'clR6x12.bdf'/>
 		</font>
 		<font	id = 'tooltip_normal'
