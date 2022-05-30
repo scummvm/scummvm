@@ -68,8 +68,6 @@ namespace Engine {
 
 namespace SavegameComponents {
 
-const String ComponentListTag = "Components";
-
 void WriteFormatTag(Stream *out, const String &tag, bool open = true) {
 	String full_tag = String::FromFormat(open ? "<%s>" : "</%s>", tag.GetCStr());
 	out->Write(full_tag.GetCStr(), full_tag.GetLength());
@@ -1221,6 +1219,7 @@ HSaveError ReadAll(Stream *in, SavegameVersion svg_version, const PreservedParam
 	GenerateHandlersMap(hlp.Handlers);
 
 	size_t idx = 0;
+	const String ComponentListTag = "Components";
 	if (!AssertFormatTag(in, ComponentListTag, true))
 		return new SavegameError(kSvgErr_ComponentListOpeningTagFormat);
 	do {
@@ -1262,6 +1261,7 @@ HSaveError WriteComponent(Stream *out, ComponentHandler &hdlr) {
 }
 
 HSaveError WriteAllCommon(Stream *out) {
+	const String ComponentListTag = "Components";
 	WriteFormatTag(out, ComponentListTag, true);
 	for (int type = 0; !ComponentHandlers[type].Name.IsEmpty(); ++type) {
 		HSaveError err = WriteComponent(out, ComponentHandlers[type]);
