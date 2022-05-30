@@ -311,6 +311,9 @@ int MacMenu::numberOfMenus() {
 
 MacMenuItem *MacMenu::getMenuItem(const Common::String &menuId) {
 	MacMenuItem *menu = nullptr;
+	if (!this) {
+		return menu;
+	}
 	for (uint i = 0; i < _items.size(); i++) {
 		// TODO: support unicode text menu
 		// didn't support unicode item finding yet
@@ -335,7 +338,7 @@ MacMenuItem *MacMenu::getMenuItem(int menuId) {
 
 MacMenuItem *MacMenu::getSubMenuItem(MacMenuItem *menu, const Common::String &itemId) {
 	if (!menu) {
-		warning("MacMenu::getSubMenuItem: can not find menu with id %s", menu->text.c_str());
+		warning("MacMenu::getSubMenuItem: can not find given menu");
 		return nullptr;
 	}
 
