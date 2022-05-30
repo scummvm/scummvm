@@ -36,52 +36,58 @@ void ScreenDecoder::destroy() {
 	_surface.free();
 }
 
-bool ScreenDecoder::loadFile(const Common::String &fname) {
+bool ScreenDecoder::loadFile(const Common::String &fname,
+		int16 w, int16 h) {
 	Common::File f;
-	return f.open(fname) && loadStream(f);
+	return f.open(fname) && loadStream(f, w, h);
 }
 
-bool ScreenDecoder::loadStream(Common::SeekableReadStream &stream) {
+bool ScreenDecoder::loadStream(Common::SeekableReadStream &stream,
+		int16 w, int16 h) {
 	byte bytes[IMAGE_SIZE];
 	byte v;
 	int len;
 	const byte *srcP;
 	byte *destP = &bytes[0];
 	int index = 0;
+	int imgSize = w * h / 4;
 
-	int size = stream.readUint16LE();
-	if (size < 0 || size > stream.size())
-		return false;
+	if (_size == -1)
+		_size = stream.readUint16LE();
+	assert(_size < IMAGE_SIZE);
 
 	// Decompress the image bytes
-	while (size > 0) {
+	int x = 0;
+	while (x < (w / 4) && !stream.eos()) {
 		v = stream.readByte();
 		if (v != 0x7B) {
 			len = 1;
-			--size;
+			--_size;
 		} else {
 			len = stream.readByte() + 1;
 			v = stream.readByte();
-			size -= 3;
+			_size -= 3;
 		}
 
 		for (; len > 0; --len) {
 			destP[index] = v;
 
-			index += 80;
-			if (index >= IMAGE_SIZE) {
+			index += (w / 4);
+			if (index >= imgSize) {
 				index = 0;
 				++destP;
+				++x;
 			}
 		}
 	}
 
-	// Create surface from splitting up the nibbles
-	_surface.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	// Create surface from splitting up the pairs of bits
+	_surface.free();
+	_surface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 	srcP = &bytes[0];
 	destP = (byte *)_surface.getPixels();
 
-	for (size_t i = 0; i < IMAGE_SIZE; ++i, ++srcP) {
+	for (int i = 0; i < w * h / 4; ++i, ++srcP) {
 		v = *srcP;
 		for (int j = 0; j < 4; ++j, v <<= 2)
 			*destP++ = v >> 6;

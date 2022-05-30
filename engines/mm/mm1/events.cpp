@@ -44,11 +44,12 @@ Events::~Events() {
 void Events::runGame() {
 	Views::Dialogs dialogsContainer;	// Load up all the dialogs
 
-	// Run the game
-	addView("MainMenu");
-
 	uint currTime, nextFrameTime = 0;
 	_screen = new Graphics::Screen();
+
+	// Run the game
+	g_globals->_maps.loadTown(Maps::SORPIGAL);
+	//addView("Title");
 
 	Common::Event e;
 	for (;;) {

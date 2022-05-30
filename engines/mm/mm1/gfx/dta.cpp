@@ -19,46 +19,31 @@
  *
  */
 
-#ifndef MM1_GFX_SCREEN_DECODER_H
-#define MM1_GFX_SCREEN_DECODER_H
-
-#include "image/image_decoder.h"
-#include "graphics/managed_surface.h"
+#include "common/file.h"
+#include "mm/mm1/gfx/dta.h"
+#include "mm/mm1/gfx/screen_decoder.h"
 
 namespace MM {
 namespace MM1 {
 namespace Gfx {
 
-class ScreenDecoder : public Image::ImageDecoder {
-private:
-	int _size = -1;
-	Graphics::Surface _surface;
-public:
-	ScreenDecoder() {}
-	~ScreenDecoder() override;
+Common::SeekableReadStream *DTA::load(uint entryIndex) {
+	Common::File f;
 
-	void destroy() override;
-	bool loadFile(const Common::String &fname,
-		int16 w = 320, int16 h = 200);
-	bool loadStream(Common::SeekableReadStream &stream, int16 w, int16 h);
-	bool loadStream(Common::SeekableReadStream &stream) {
-		return loadStream(stream, 320, 200);
-	}
+	if (!f.open(_fname))
+		error("Could not open - %s", _fname.c_str());
 
-	const Graphics::Surface *getSurface() const override {
-		return &_surface;
-	}
-	const byte *getPalette() const override { return nullptr; }
-	uint16 getPaletteColorCount() const override { return 0; }
-	void clear() { _surface.free(); }
+	uint indexSize = f.readUint16LE();
+	assert(entryIndex < (indexSize / 4));
+	f.seek(entryIndex * 4, SEEK_CUR);
+	size_t entryOffset = f.readUint32LE();
+	size_t nextOffset = (entryIndex == (indexSize / 4 - 1)) ?
+		f.size() : f.readUint32LE();
 
-	bool finished() const {
-		return _size == 0;
-	}
-};
+	f.seek(2 + indexSize + entryOffset);
+	return f.readStream(nextOffset - entryOffset);
+}
 
 } // namespace Gfx
 } // namespace MM1
 } // namespace MM
-
-#endif
