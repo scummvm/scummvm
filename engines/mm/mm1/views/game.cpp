@@ -52,6 +52,15 @@ bool Game::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
+bool Game::msgGame(const GameMessage &msg) {
+	if (msg._name == "DISPLAY") {
+		replaceView(this);
+		return true;
+	}
+
+	return TextView::msgGame(msg);
+}
+
 } // namespace Views
 } // namespace MM1
 } // namespace MM

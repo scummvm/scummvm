@@ -216,7 +216,6 @@ public:
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
 	MESSAGE(Keypress);
-	MESSAGE(Game);
 	#undef MESSAGE
 };
 

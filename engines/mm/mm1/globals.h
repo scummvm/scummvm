@@ -38,7 +38,7 @@ public:
 	Roster _roster;
 	const Graphics::Font *_font = nullptr;
 	Character *_currCharacter = nullptr;
-	int _startingTown = 0;
+	Maps::TownId _startingTown = Maps::SORPIGAL;
 	IntArray _partyChars;
 	Maps::Maps _maps;
 public:
