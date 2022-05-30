@@ -3788,7 +3788,7 @@ int alfont_ugetx(ALFONT_FONT * f, char **s) {
 #endif
 
 		for (lIndex = 0; lIndex < sLen - aLen; lIndex++) {
-			(*(*s)++);
+			(*s)++;
 		}
 
 		if (lpszWA) {
@@ -4095,7 +4095,7 @@ int alfont_ugetxc(ALFONT_FONT * f, const char **s) {
 #endif
 
 		for (lIndex = 0; lIndex < sLen - aLen; lIndex++) {
-			(*(*s)++);
+			(*s)++;
 		}
 
 		if (lpszWA) {
