@@ -98,11 +98,11 @@ AboutDialog::AboutDialog()
 
 	Common::String version("C0""ScummVM ");
 	version += gScummVMVersion;
-	_lines.push_back(version);
+	addLine(version);
 
 	// I18N: built on <build date> with <compiler>
 	Common::U32String date = Common::U32String::format(_("(built on %s with %s)"), gScummVMBuildDate, gScummVMCompiler);
-	_lines.push_back(Common::U32String("C2") + date);
+	addLine(Common::U32String("C2") + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
 		addLine(Common::U32String(copyright_text[i]));
