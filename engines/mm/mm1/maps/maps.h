@@ -30,6 +30,17 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+enum TownId {
+	SORPIGAL = 1, PORTSMITH = 2, ALGARY = 3,
+	DUSK = 4, ERLIQUIN = 5
+};
+
+enum DirMask {
+	DIRMASK_NONE = 0,
+	DIRMASK_N = 0xC0, DIRMASK_E = 0x30,
+	DIRMASK_S = 0xC, DIRMASK_W = 3
+};
+
 /** PLACEHOLDER MAPS **/
 #define PLACEHOLDER(INDEX, NAME, ID) \
 	class Map##INDEX : public Map { \
@@ -168,19 +179,38 @@ private:
 	/**
 	 * Gets the index of a map given the id values
 	 */
-	uint getIndex(byte section, byte v1, byte v2);
+	uint getIndex(uint16 id, byte section);
 
 	/**
 	 * Loads tile graphics needed for rendering the 3d view
 	 */
 	void loadTiles();
+
+	/**
+	 * Town setup for SORPIGAL & ERLIQUIN
+	 */
+	void town15setup();
+
+	/**
+	 * Town setup for PORTSMITH and ALGARY
+	 */
+	void town23setup();
+
+	/**
+	 * Town setup for DUSK
+	 */
+	void town4setup();
+
 public:
 	uint _mapId = (uint)-1;
 	Common::Point _mapPos;
-	byte _mapDirectionMask = 0;
+	DirMask _mapDirectionMask = DIRMASK_NONE;
 	Map *_currentMap = nullptr;
 	byte _data1[32];
 	int _colorOffset = 0;
+	int _val1 = 0, _val2 = 0, _val3 = 0, _val4 = 0;
+	int _val5 = 0, _val6 = 0, _val7 = 0;
+
 public:
 	Maps();
 
@@ -192,12 +222,17 @@ public:
 	/**
 	 * Selects a map
 	 */
-	void select(byte section, byte id1, byte id2);
+	void select(uint16 id, byte section);
 
 	/**
 	 * Selects a map, and switches to in-game display
 	 */
-	void display(byte id1, byte id2, byte section = 1);
+	void display(uint16 id, byte section = 1);
+
+	/**
+	 * Loads a town
+	 */
+	void loadTown(TownId townId);
 
 	/**
 	 * Get a given map

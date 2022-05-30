@@ -110,9 +110,8 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 			g_globals->_party.push_back(
 				g_globals->_roster[g_globals->_partyChars[i]]);
 
-		// TODO: town setup
-		// Switch to game view
-		replaceView("Game");
+		// Load the given town
+		g_globals->_maps.loadTown(g_globals->_startingTown);
 	}
 
 	return false;

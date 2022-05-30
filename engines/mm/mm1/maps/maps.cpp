@@ -61,19 +61,85 @@ void Maps::load(uint mapId) {
 	Common::fill(&_data1[0], &_data1[32], 0);
 }
 
-void Maps::select(byte section, byte id1, byte id2) {
-	uint mapId = getIndex(section, id1, id2);
+void Maps::select(uint16 id, byte section) {
+	uint mapId = getIndex(id, section);
 	load(mapId);
 }
 
-void Maps::display(byte id1, byte id2, byte section) {
-	select(section, id1, id2);
+void Maps::display(uint16 id, byte section) {
+	select(id, section);
 	loadTiles();
 	g_events->msgGame(GameMessage("DISPLAY"));
 }
 
-uint Maps::getIndex(byte section, byte id1, byte id2) {
-	uint16 id = MKTAG16(id2, id1);
+void Maps::loadTown(TownId townId) {
+	switch (townId) {
+	case SORPIGAL:
+		town15setup();
+		_mapPos = Common::Point(8, 3);
+		display(0x604);
+		break;
+
+	case PORTSMITH:
+		town23setup();
+		_mapPos = Common::Point(3, 12);
+		display(0xc03);
+		break;
+
+	case ALGARY:
+		town23setup();
+		_mapPos = Common::Point(14, 8);
+		display(0x302);
+		break;
+
+	case DUSK:
+		town4setup();
+		_mapPos = Common::Point(11, 8);
+		display(0x802);
+		break;
+
+	case ERLIQUIN:
+		town15setup();
+		_mapPos = Common::Point(4, 4);
+		display(0xB1A);
+		break;
+	}
+}
+
+void Maps::town15setup() {
+	_mapDirectionMask = DIRMASK_N;
+	_val1 = 3;
+	_val2 = 0x30;
+	_val3 = 0xC;
+	_val4 = 0x10;
+	_val5 = 0xff;
+	_val6 = 1;
+	_val7 = 0xf0;
+}
+
+void Maps::town23setup() {
+	_mapDirectionMask = DIRMASK_W;
+	_val1 = 0xC;
+	_val2 = 0xC0;
+	_val3 = 0x30;
+	_val4 = 0xff;
+	_val5 = 0xf0;
+	_val6 = 0x10;
+	_val7 = 1;
+}
+
+void Maps::town4setup() {
+	_mapDirectionMask = DIRMASK_E;
+	_val1 = 0xc0;
+	_val2 = 0xC;
+	_val3 = 3;
+	_val4 = 1;
+	_val5 = 0x10;
+	_val6 = 0xf0;
+	_val7 = 0xff;
+}
+
+uint Maps::getIndex(uint16 id, byte section) {
 	uint idx = LOOKUPS_START[section / 2];
 
 	// Find map by Id

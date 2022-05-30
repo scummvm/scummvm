@@ -56,7 +56,8 @@ bool MainMenu::msgKeypress(const KeypressMessage &msg) {
 	case Common::KEYCODE_3:
 	case Common::KEYCODE_4:
 	case Common::KEYCODE_5:
-		g_globals->_startingTown = msg.keycode - Common::KEYCODE_0;
+		g_globals->_startingTown = (Maps::TownId)(
+			msg.keycode - Common::KEYCODE_0);
 		replaceView("Inn");
 		break;
 
