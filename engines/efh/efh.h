@@ -86,9 +86,9 @@ struct InvObject {
 };
 
 struct UnkMapStruct {
-	uint8 _field0;
-	uint8 _field1;
-	uint8 _field2;
+	uint8 _placeId;
+	uint8 _posX;
+	uint8 _posY;
 	uint8 _field3;
 	uint8 _field4;
 	uint16 _field5;
@@ -353,7 +353,7 @@ private:
 	bool checkWeaponRange(int16 monsterId, int16 weaponId);
 	bool unkFct_checkMonsterField8(int16 id, bool teamFlag);
 	bool checkTeamWeaponRange(int16 monsterId);
-	bool checkIfMonsterOnSameLargelMapPlace(int16 monsterId);
+	bool checkIfMonsterOnSameLargeMapPlace(int16 monsterId);
 	bool checkMonsterWeaponRange(int16 monsterId);
 	void sub174A0();
 	bool checkPictureRefAvailability(int16 monsterId);
@@ -379,7 +379,7 @@ private:
 	bool sub1CB27();
 	void sub1BE9A(int16 monsterId);
 	int16 getTeamMonsterAnimId();
-	int16 sub1BAF9(int16 monsterGroup);
+	int16 countMonsterGroupMembers(int16 monsterGroup);
 	void sub1C4CA(bool WhiteFl);
 	void displayCombatMenu(int16 charId);
 	void drawCombatScreen(int16 charId, bool whiteFl, bool forceDrawFl);
@@ -572,7 +572,7 @@ private:
 	bool _dbgForceDisplayUpperRightBorder; // Original debug flag? Always false.
 	bool _dbgForceMonsterBlock; // Original debug flag? Always false.
 	bool _word2C8D7; // Original debug flag? Always true.
-	bool _word2D0BC;
+	bool _ongoingFightFl;
 	bool _statusMenuActive;
 	int16 _menuDepth;
 	int16 _word2D0BA;
