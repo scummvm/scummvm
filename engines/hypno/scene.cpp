@@ -172,6 +172,10 @@ void HypnoEngine::clickedHotspot(Common::Point mousePos) {
 			runPlay((Play *)action);
 			break;
 
+		case SoundAction:
+			runSound((Sound *)action);
+			break;
+
 		case WalNAction:
 			runWalN((WalN *)action);
 			break;

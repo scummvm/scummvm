@@ -80,6 +80,7 @@ enum ActionType {
 	GlobalAction,
 	TalkAction,
 	SwapPointerAction,
+	SoundAction,
 	ChangeLevelAction
 };
 
@@ -230,6 +231,15 @@ class Cutscene : public Action {
 public:
 	Cutscene(Filename path_) {
 		type = CutsceneAction;
+		path = path_;
+	}
+	Filename path;
+};
+
+class Sound : public Action {
+public:
+	Sound(Filename path_) {
+		type = SoundAction;
 		path = path_;
 	}
 	Filename path;

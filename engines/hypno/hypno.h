@@ -189,6 +189,7 @@ public:
 	void runCutscene(Cutscene *a);
 	void runIntro(Intro *a);
 	void runPlay(Play *a);
+	void runSound(Sound *a);
 	void runPalette(Palette *a);
 	void runAmbient(Ambient *a);
 	void runWalN(WalN *a);

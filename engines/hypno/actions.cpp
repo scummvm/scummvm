@@ -174,6 +174,10 @@ void HypnoEngine::runPlay(Play *a) {
 	}
 }
 
+void HypnoEngine::runSound(Sound *a) {
+	playSound(a->path, 1);
+}
+
 void HypnoEngine::runAmbient(Ambient *a) {
 	if (a->flag == "/BITMAP") {
 		Graphics::Surface *frame = decodeFrame(a->path, a->frameNumber);
