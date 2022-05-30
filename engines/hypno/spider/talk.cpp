@@ -208,6 +208,7 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 }
 
 void SpiderEngine::rightClickedConversation(const Common::Point &mousePos) {
+	defaultCursor();
 	Videos videos;
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;
