@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-29 20:05+0000\n"
+"POT-Creation-Date: 2022-05-30 12:52+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -2416,7 +2416,7 @@ msgstr "<Valor incorreto>"
 
 #. I18N: Abbreviation for 'bytes' as data size
 #: common/util.cpp:183 backends/platform/3ds/osystem-events.cpp:48
-#: backends/platform/ds/osystem_ds.cpp:145
+#: backends/platform/ds/osystem_ds.cpp:166
 #: backends/platform/sdl/switch/switch.cpp:37
 msgid "B"
 msgstr "B"
@@ -3301,7 +3301,7 @@ msgstr "Botão Superior Direito"
 
 #: backends/keymapper/hardware-input.cpp:266
 #: backends/platform/3ds/osystem-events.cpp:57
-#: backends/platform/ds/osystem_ds.cpp:152 backends/platform/sdl/ps3/ps3.cpp:51
+#: backends/platform/ds/osystem_ds.cpp:173 backends/platform/sdl/ps3/ps3.cpp:51
 #: backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "D-pad Up"
@@ -3309,7 +3309,7 @@ msgstr "D-pad Cima"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
-#: backends/platform/ds/osystem_ds.cpp:153 backends/platform/sdl/ps3/ps3.cpp:52
+#: backends/platform/ds/osystem_ds.cpp:174 backends/platform/sdl/ps3/ps3.cpp:52
 #: backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Down"
@@ -3317,7 +3317,7 @@ msgstr "D-pad Baixo"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
-#: backends/platform/ds/osystem_ds.cpp:154 backends/platform/sdl/ps3/ps3.cpp:53
+#: backends/platform/ds/osystem_ds.cpp:175 backends/platform/sdl/ps3/ps3.cpp:53
 #: backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad Left"
@@ -3325,7 +3325,7 @@ msgstr "D-pad Esquerda"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
-#: backends/platform/ds/osystem_ds.cpp:155 backends/platform/sdl/ps3/ps3.cpp:54
+#: backends/platform/ds/osystem_ds.cpp:176 backends/platform/sdl/ps3/ps3.cpp:54
 #: backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad Right"
@@ -3599,31 +3599,31 @@ msgid "Both"
 msgstr "Ambos"
 
 #: backends/platform/3ds/osystem-events.cpp:47
-#: backends/platform/ds/osystem_ds.cpp:144
+#: backends/platform/ds/osystem_ds.cpp:165
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "A"
 msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:49
-#: backends/platform/ds/osystem_ds.cpp:146
+#: backends/platform/ds/osystem_ds.cpp:167
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "X"
 msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:50
-#: backends/platform/ds/osystem_ds.cpp:147
+#: backends/platform/ds/osystem_ds.cpp:168
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "Y"
 msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:51
-#: backends/platform/ds/osystem_ds.cpp:148 backends/platform/sdl/ps3/ps3.cpp:44
+#: backends/platform/ds/osystem_ds.cpp:169 backends/platform/sdl/ps3/ps3.cpp:44
 #: backends/platform/sdl/psp2/psp2.cpp:47
 msgid "Select"
 msgstr "Selecionar"
 
 #: backends/platform/3ds/osystem-events.cpp:52
-#: backends/platform/ds/osystem_ds.cpp:149 backends/platform/sdl/ps3/ps3.cpp:46
+#: backends/platform/ds/osystem_ds.cpp:170 backends/platform/sdl/ps3/ps3.cpp:46
 #: backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Start"
 msgstr "Iniciar"
@@ -3639,14 +3639,14 @@ msgid "ZR"
 msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:55
-#: backends/platform/ds/osystem_ds.cpp:150
+#: backends/platform/ds/osystem_ds.cpp:171
 #: backends/platform/sdl/psp2/psp2.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:46
 msgid "L"
 msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:56
-#: backends/platform/ds/osystem_ds.cpp:151
+#: backends/platform/ds/osystem_ds.cpp:172
 #: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "R"
@@ -3661,7 +3661,7 @@ msgid "C-Pad Y"
 msgstr "C-Pad Y"
 
 #: backends/platform/3ds/osystem-events.cpp:71
-#: backends/platform/ds/osystem_ds.cpp:164
+#: backends/platform/ds/osystem_ds.cpp:185
 msgid "Touch"
 msgstr "Toque"
 
@@ -3740,15 +3740,15 @@ msgstr "Mostrar controlo no ecrã"
 msgid "Show SAF revoke permissions overlay button"
 msgstr ""
 
-#: backends/platform/ds/ds-graphics.cpp:256
+#: backends/platform/ds/ds-graphics.cpp:253
 msgid "Unscaled"
 msgstr ""
 
-#: backends/platform/ds/ds-graphics.cpp:257
+#: backends/platform/ds/ds-graphics.cpp:254
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Escalar por hardware (rápido, mas de baixa qualidade)"
 
-#: backends/platform/ds/ds-graphics.cpp:258
+#: backends/platform/ds/ds-graphics.cpp:255
 msgid "Software scale (good quality, but slower)"
 msgstr "Escalar por software (boa qualidade, mas mais lento)"
 
