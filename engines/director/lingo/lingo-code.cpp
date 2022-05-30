@@ -610,8 +610,28 @@ void LC::c_theentityassign() {
 	int entity = g_lingo->readInt();
 	int field  = g_lingo->readInt();
 
-	Datum d = g_lingo->pop();
-	g_lingo->setTheEntity(entity, id, field, d);
+	if (entity == kTheMenuItem) {
+		Datum itemRef = g_lingo->pop();
+		Datum menuRef;
+		menuRef.u.menu = new MenuReference();
+		menuRef.type = MENUREF;
+		if (id.type != INT) {
+			menuRef.u.menu->menuIdStr = id.u.s;
+		} else {
+			menuRef.u.menu->menuIdNum = id.u.i;
+		}
+		if (itemRef.type != INT) {
+			menuRef.u.menu->menuItemIdStr = itemRef.u.s;
+		} else {
+			menuRef.u.menu->menuItemIdNum = itemRef.u.i;
+		}
+
+		Datum d = g_lingo->pop();
+		g_lingo->setTheEntity(entity, menuRef, field, d);
+	} else {
+		Datum d = g_lingo->pop();
+		g_lingo->setTheEntity(entity, id, field, d);
+	}
 }
 
 void LC::c_objectproppush() {
