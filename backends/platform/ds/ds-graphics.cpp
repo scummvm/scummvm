@@ -218,7 +218,7 @@ void OSystem_DS::setFeatureState(Feature f, bool enable) {
 			}
 #endif
 			_keyboard->show();
-		} else {
+		} else if (_keyboard->isVisible()) {
 			_keyboard->hide();
 #ifdef DISABLE_TEXT_CONSOLE
 			_subScreen.reset();
