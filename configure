@@ -2898,7 +2898,7 @@ EOF
 			_optimization_level=-O2
 		fi
 	;;
-	freebsd* | openbsd*)
+	freebsd*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
 		;;
@@ -2993,6 +2993,11 @@ EOF
 		add_line_to_config_mk 'N64 = 1'
 		_detection_features_full=no
 		_nuked_opl=no
+		;;
+	openbsd*)
+		append_var LDFLAGS "-L/usr/local/lib"
+		append_var CXXFLAGS "-I/usr/local/include"
+		_seq_midi=no
 		;;
 	ps3)
 		# Force use of SDL and freetype from the ps3 toolchain
