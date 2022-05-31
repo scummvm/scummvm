@@ -368,6 +368,9 @@ class ElementTransitionModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::ElementTransitionModifier &data);
 
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
 	enum TransitionType {
 		kTransitionTypeRectangularIris = 0x03e8,
 		kTransitionTypeOvalIris = 0x03f2,
@@ -382,11 +385,15 @@ public:
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Element Transition Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusPartial; }
 #endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
+
+	void continueTransition(Runtime *runtime);
+	void completeTransition(Runtime *runtime);
 
 	Event _enableWhen;
 	Event _disableWhen;
@@ -395,6 +402,8 @@ private:
 	uint16 _steps;
 	TransitionType _transitionType;
 	RevealType _revealType;
+
+	Common::SharedPtr<ScheduledEvent> _scheduledEvent;
 };
 
 class IfMessengerModifier : public Modifier {

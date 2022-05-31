@@ -2417,6 +2417,8 @@ public:
 	bool isVisual() const override;
 	virtual bool isTextLabel() const;
 
+	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg);
+
 	bool isVisible() const;
 	bool isDirectToScreen() const;
 	uint16 getLayer() const;

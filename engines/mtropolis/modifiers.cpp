@@ -885,12 +885,91 @@ bool ElementTransitionModifier::load(ModifierLoaderContext &context, const Data:
 	return true;
 }
 
+bool ElementTransitionModifier::respondsToEvent(const Event &evt) const {
+	return _enableWhen.respondsTo(evt) || _disableWhen.respondsTo(evt);
+}
+
+VThreadState ElementTransitionModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	// How element transition modifiers work:
+	// - When activated, if Reveal, then Show is sent (regardless of whether element is visible or not).
+	// - Then, for both reveal and conceal, Transition Started is sent by the modifier.
+	// - When a conceal transition completes, Hide is sent to the element.
+	// - Then, for both reveal and conceal, Transition Ended is sent by the modifier.
+	// - If a transition is active and the Disable signal is called, then the transition completes immediately.
+	//
+	// Q. Does that mean if an element has a Revealer followed by a Concealer and they take opposing messages,
+	//    that the element will be hidden if a reveal interrupts the concealer due to its hide message happening
+	//    second, but that won't happen if they're in Concealer-Revealer order?
+	// A. Yes.
+	if (_enableWhen.respondsTo(msg->getEvent())) {
+		if (_scheduledEvent) {
+			_scheduledEvent->cancel();
+			_scheduledEvent.reset();
+		}
+
+		_scheduledEvent = runtime->getScheduler().scheduleMethod<ElementTransitionModifier, &ElementTransitionModifier::continueTransition>(runtime->getPlayTime() + 1, this);
+
+		// Pushed tasks, so these are executed in reverse order (Show -> Transition Started)
+		{
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kTransitionStarted, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, true, false));
+			runtime->sendMessageOnVThread(dispatch);
+		}
+
+		if (_revealType == kRevealTypeReveal)
+		{
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, false, true));
+			runtime->sendMessageOnVThread(dispatch);
+		}
+
+		return kVThreadReturn;
+	}
+
+	if (_disableWhen.respondsTo(msg->getEvent())) {
+		if (_scheduledEvent) {
+			_scheduledEvent->cancel();
+
+			completeTransition(runtime);
+		}
+
+		return kVThreadReturn;
+	}
+
+	return Modifier::consumeMessage(runtime, msg);
+}
+
 Common::SharedPtr<Modifier> ElementTransitionModifier::shallowClone() const {
-	return Common::SharedPtr<Modifier>(new ElementTransitionModifier(*this));
+	Common::SharedPtr<ElementTransitionModifier> clone(new ElementTransitionModifier(*this));
+	clone->_scheduledEvent.reset();
+
+	return clone;
 }
 
 const char *ElementTransitionModifier::getDefaultName() const {
 	return "Element Transition Modifier";
+}
+
+void ElementTransitionModifier::continueTransition(Runtime *runtime) {
+	// TODO: Make this functional
+	completeTransition(runtime);
+}
+
+void ElementTransitionModifier::completeTransition(Runtime *runtime) {
+	_scheduledEvent.reset();
+
+	// Pushed tasks, so these are executed in reverse order (Hide -> Transition Ended)
+	{
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kTransitionEnded, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, true, false));
+		runtime->sendMessageOnVThread(dispatch);
+	}
+
+	if (_revealType == kRevealTypeConceal) {
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kElementHide, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, findStructuralOwner(), false, false, true));
+		runtime->sendMessageOnVThread(dispatch);
+	}
 }
 
 bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data) {
