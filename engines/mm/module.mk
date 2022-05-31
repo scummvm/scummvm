@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	mm1/views/game_commands.o \
 	mm1/views/game_messages.o \
 	mm1/views/game_party.o \
+	mm1/views/game_view.o \
 	mm1/views/inn.o \
 	mm1/views/main_menu.o \
 	mm1/views/protect.o \
