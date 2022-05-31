@@ -25,24 +25,27 @@ namespace Glk {
 namespace Alan2 {
 
 // This works around gcc errors for passing packed structure fields
-static void syncVal(Common::Serializer &s, int &fld) {
-	s.syncAsSint32LE(fld);
+static void syncVal(Common::Serializer &s, void *fld) {
+	uint32 v = READ_UINT32(fld);
+	s.syncAsSint32LE(v);
+	if (s.isLoading())
+		WRITE_UINT32(fld, v);
 }
 
 void CurVars::synchronize(Common::Serializer &s) {
-	syncVal(s, vrb);
-	syncVal(s, obj);
-	syncVal(s, loc);
-	syncVal(s, act);
-	syncVal(s, tick);
-	syncVal(s, score);
-	syncVal(s, visits);
+	syncVal(s, &vrb);
+	syncVal(s, &obj);
+	syncVal(s, &loc);
+	syncVal(s, &act);
+	syncVal(s, &tick);
+	syncVal(s, &score);
+	syncVal(s, &visits);
 }
 
 void EvtqElem::synchronize(Common::Serializer &s) {
-	syncVal(s, time);
-	syncVal(s, event);
-	syncVal(s, where);
+	syncVal(s, &time);
+	syncVal(s, &event);
+	syncVal(s, &where);
 }
 
 } // End of namespace Alan2
