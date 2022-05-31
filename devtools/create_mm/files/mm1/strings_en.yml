@@ -439,3 +439,13 @@ maps:
 		cdb9: "JAIL. KEEP OUT!"
 		cdf3: "TRAP DOOR!"
 		cdfe: ", LEVITATION SAVES YOU!"
+movement:
+	obstructed:
+		0: "   SOLID!   "
+		1: "   LOCKED!  "
+		2: " TOO DENSE! "
+		3: " IMPASSABLE "
+		4: " ROUGH SEAS "
+		5: " TOO WINDY! "
+view:
+	darkness: "  DARKNESS"

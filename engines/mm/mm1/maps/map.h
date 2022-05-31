@@ -40,6 +40,10 @@ enum WallType {
 	WALL_TORCH = 3
 };
 
+enum CellState {
+	CELL_SPECIAL = 0x80, CELL_DARK = 0x20
+};
+
 /**
  * The byte structure representing the wall types
  * for the four cardinal directions
@@ -56,8 +60,6 @@ private:
 	Common::String _name;
 	uint16 _id;
 	uint _mapId;
-	MapWalls _walls[MAP_SIZE];
-	byte _states[MAP_SIZE];
 	Common::Array<byte> _data;
 private:
 	/**
@@ -69,6 +71,9 @@ private:
 	 * Load the map's overlay file
 	 */
 	void loadOverlay();
+public:
+	MapWalls _walls[MAP_SIZE];
+	byte _states[MAP_SIZE];
 public:
 	Map(Maps *owner, const Common::String &name, uint16 id);
 	virtual ~Map() {}
