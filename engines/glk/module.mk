@@ -234,6 +234,7 @@ MODULE_OBJS := \
 	quest/read_file.o \
 	quest/string.o \
 	quest/streams.o \
+	scott/C64_checksums.o \
 	scott/command_parser.o \
 	scott/decompress_text.o \
 	scott/decompress_z80.o \
