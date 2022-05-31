@@ -210,12 +210,12 @@ public:
 	byte _data1[32];
 	int _colorOffset = 0;
 
-	DirMask _forwardsMask = DIRMASK_N,
+	DirMask _forwardMask = DIRMASK_N,
 		_leftMask = DIRMASK_W,
 		_rightMask = DIRMASK_E,
 		_backwardsMask = DIRMASK_S;
 	int8 _forwardOffset = 0, _leftOffset = 0;
-	int8 _rightOffset = 0, _backOffset = 0;
+	int8 _rightOffset = 0, _backwardsOffset = 0;
 	int _loadId = 0;
 	int _loadArea = 0;
 	int _loadSection = 0;
@@ -247,6 +247,26 @@ public:
 	 * Get a given map
 	 */
 	Map *getMap(uint mapId) const { return _maps[mapId]; }
+
+	/**
+	 * Turn left
+	 */
+	void turnLeft();
+
+	/**
+	 * Turn right
+	 */
+	void turnRight();
+
+	/**
+	 * Move forward
+	 */
+	void forward();
+
+	/**
+	 * Move backwards
+	 */
+	void backwards();
 };
 
 } // namespace Maps

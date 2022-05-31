@@ -133,7 +133,7 @@ void Maps::loadTown(TownId townId) {
 }
 
 void Maps::town15setup() {
-	_forwardsMask = DIRMASK_N;
+	_forwardMask = DIRMASK_N;
 	_leftMask = DIRMASK_W;
 	_rightMask = DIRMASK_E;
 	_backwardsMask = DIRMASK_S;
@@ -141,11 +141,11 @@ void Maps::town15setup() {
 	_forwardOffset = MAP_W;
 	_leftOffset = -1;
 	_rightOffset = 1;
-	_backOffset = -MAP_W;
+	_backwardsOffset = -MAP_W;
 }
 
 void Maps::town23setup() {
-	_forwardsMask = DIRMASK_W;
+	_forwardMask = DIRMASK_W;
 	_leftMask = DIRMASK_S;
 	_rightMask = DIRMASK_N;
 	_backwardsMask = DIRMASK_E;
@@ -153,11 +153,11 @@ void Maps::town23setup() {
 	_forwardOffset = -1;
 	_leftOffset = -MAP_W;
 	_rightOffset = MAP_W;
-	_backOffset = 1;
+	_backwardsOffset = 1;
 }
 
 void Maps::town4setup() {
-	_forwardsMask = DIRMASK_E;
+	_forwardMask = DIRMASK_E;
 	_leftMask = DIRMASK_N;
 	_rightMask = DIRMASK_S;
 	_backwardsMask = DIRMASK_W;
@@ -165,7 +165,7 @@ void Maps::town4setup() {
 	_forwardOffset = 1;
 	_leftOffset = MAP_W;
 	_rightOffset = -MAP_W;
-	_backOffset = -1;
+	_backwardsOffset = -1;
 }
 
 uint Maps::getIndex(uint16 id, byte section) {
@@ -233,6 +233,42 @@ void Maps::loadTile() {
 
 		tiles[i].copyFrom(decoder.getSurface());
 	}
+}
+
+void Maps::turnLeft() {
+	DirMask tempMask = _rightMask;
+	_rightMask = _forwardMask;
+	_forwardMask = _leftMask;
+	_leftMask = _backwardsMask;
+	_backwardsMask = tempMask;
+
+	int8 tempOffset = _rightOffset;
+	_rightOffset = _forwardOffset;
+	_forwardOffset = _leftOffset;
+	_leftOffset = _backwardsOffset;
+	_backwardsOffset = tempOffset;
+}
+
+void Maps::turnRight() {
+	DirMask tempMask = _leftMask;
+	_leftMask = _forwardMask;
+	_forwardMask = _rightMask;
+	_rightMask = _backwardsMask;
+	_backwardsMask = tempMask;
+
+	int8 tempOffset = _leftOffset;
+	_leftOffset = _forwardOffset;
+	_forwardOffset = _rightOffset;
+	_rightOffset = _backwardsOffset;
+	_backwardsOffset = tempOffset;
+}
+
+void Maps::forward() {
+
+}
+
+void Maps::backwards() {
+
 }
 
 } // namespace Maps

@@ -19,38 +19,68 @@
  *
  */
 
-#ifndef MM1_VIEWS_GAME_H
-#define MM1_VIEWS_GAME_H
-
-#include "mm/mm1/events.h"
-#include "mm/mm1/views/game_commands.h"
-#include "mm/mm1/views/game_messages.h"
-#include "mm/mm1/views/game_party.h"
 #include "mm/mm1/views/game_view.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
-class Game : public TextView {
-private:
-	GameCommands _commands;
-	GameMessages _messages;
-	GameParty _party;
-	GameView _view;
-public:
-	Game();
-	virtual ~Game() {}
+GameView::GameView() : TextView("View") {
+}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-};
+void GameView::draw() {
+
+}
+
+bool GameView::msgAction(const ActionMessage &msg) {
+	switch (msg._action) {
+	case KEYBIND_FORWARDS:
+		forward();
+		break;
+	case KEYBIND_BACKWARDS:
+		backwards();
+		break;
+	case KEYBIND_TURN_LEFT:
+		turnLeft();
+		break;
+	case KEYBIND_TURN_RIGHT:
+		turnRight();
+		break;
+	default:
+		return TextView::msgAction(msg);
+	}
+
+	return true;
+}
+
+bool GameView::msgGame(const GameMessage &msg) {
+	/*
+	if (msg._name == "DISPLAY") {
+		replaceView(this);
+		return true;
+	}
+	*/
+
+	return TextView::msgGame(msg);
+}
+
+void GameView::turnLeft() {
+	g_globals->_maps.turnLeft();
+}
+
+void GameView::turnRight() {
+	g_globals->_maps.turnRight();
+}
+
+void GameView::forward() {
+	g_globals->_maps.forward();
+}
+
+void GameView::backwards() {
+	g_globals->_maps.backwards();
+}
 
 } // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif
