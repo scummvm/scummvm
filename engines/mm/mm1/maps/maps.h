@@ -37,7 +37,6 @@ enum TownId {
 };
 
 enum DirMask {
-	DIRMASK_NONE = 0,
 	DIRMASK_N = 0xC0, DIRMASK_E = 0x30,
 	DIRMASK_S = 0xC, DIRMASK_W = 3
 };
@@ -207,12 +206,16 @@ public:
 	Common::Array<Graphics::ManagedSurface> _tiles[3];
 	uint _mapId = (uint)-1;
 	Common::Point _mapPos;
-	DirMask _mapDirectionMask = DIRMASK_NONE;
 	Map *_currentMap = nullptr;
 	byte _data1[32];
 	int _colorOffset = 0;
-	int _val1 = 0, _val2 = 0, _val3 = 0, _val4 = 0;
-	int _val5 = 0, _val6 = 0, _val7 = 0;
+
+	DirMask _forwardsMask = DIRMASK_N,
+		_leftMask = DIRMASK_W,
+		_rightMask = DIRMASK_E,
+		_backwardsMask = DIRMASK_S;
+	int8 _forwardOffset = 0, _leftOffset = 0;
+	int8 _rightOffset = 0, _backOffset = 0;
 	int _loadId = 0;
 	int _loadArea = 0;
 	int _loadSection = 0;

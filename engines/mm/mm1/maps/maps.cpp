@@ -133,36 +133,39 @@ void Maps::loadTown(TownId townId) {
 }
 
 void Maps::town15setup() {
-	_mapDirectionMask = DIRMASK_N;
-	_val1 = 3;
-	_val2 = 0x30;
-	_val3 = 0xC;
-	_val4 = 0x10;
-	_val5 = 0xff;
-	_val6 = 1;
-	_val7 = 0xf0;
+	_forwardsMask = DIRMASK_N;
+	_leftMask = DIRMASK_W;
+	_rightMask = DIRMASK_E;
+	_backwardsMask = DIRMASK_S;
+
+	_forwardOffset = MAP_W;
+	_leftOffset = -1;
+	_rightOffset = 1;
+	_backOffset = -MAP_W;
 }
 
 void Maps::town23setup() {
-	_mapDirectionMask = DIRMASK_W;
-	_val1 = 0xC;
-	_val2 = 0xC0;
-	_val3 = 0x30;
-	_val4 = 0xff;
-	_val5 = 0xf0;
-	_val6 = 0x10;
-	_val7 = 1;
+	_forwardsMask = DIRMASK_W;
+	_leftMask = DIRMASK_S;
+	_rightMask = DIRMASK_N;
+	_backwardsMask = DIRMASK_E;
+
+	_forwardOffset = -1;
+	_leftOffset = -MAP_W;
+	_rightOffset = MAP_W;
+	_backOffset = 1;
 }
 
 void Maps::town4setup() {
-	_mapDirectionMask = DIRMASK_E;
-	_val1 = 0xc0;
-	_val2 = 0xC;
-	_val3 = 3;
-	_val4 = 1;
-	_val5 = 0x10;
-	_val6 = 0xf0;
-	_val7 = 0xff;
+	_forwardsMask = DIRMASK_E;
+	_leftMask = DIRMASK_N;
+	_rightMask = DIRMASK_S;
+	_backwardsMask = DIRMASK_W;
+
+	_forwardOffset = 1;
+	_leftOffset = MAP_W;
+	_rightOffset = -MAP_W;
+	_backOffset = -1;
 }
 
 uint Maps::getIndex(uint16 id, byte section) {
@@ -230,13 +233,6 @@ void Maps::loadTile() {
 
 		tiles[i].copyFrom(decoder.getSurface());
 	}
-
-	// ***DEBUG*** - Display the first tile of stream
-	Graphics::Screen &scr = *g_events->getScreen();
-	scr.blitFrom(_tiles[_loadSection - 1].front());
-	scr.update();
-	Common::Event e;
-	g_system->getEventManager()->pollEvent(e);
 }
 
 } // namespace Maps
