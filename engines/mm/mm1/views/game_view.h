@@ -29,6 +29,14 @@ namespace MM1 {
 namespace Views {
 
 class GameView : public TextView {
+	enum ViewState { VIEW_NORMAL, VIEW_DARKNESS };
+private:
+	int _mapOffset1 = 0, _mapOffset2 = 0;
+	ViewState _state = VIEW_NORMAL;
+	int _val1 = 0, _val2 = 0, _val3 = 0;
+	int _val4 = 0, _val5 = 0, _val6 = 0;
+	byte _mask = 0;
+	byte _arr1[11];
 private:
 	/**
 	 * Turn left
@@ -50,6 +58,15 @@ private:
 	 */
 	void backwards();
 
+	/**
+	 * Forward movement is obstructed
+	 */
+	void obstructed();
+
+	/**
+	 * Draws a tile
+	 */
+	void drawTile();
 public:
 	GameView();
 	virtual ~GameView() {}
@@ -57,6 +74,11 @@ public:
 	void draw() override;
 	bool msgGame(const GameMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
+
+	/**
+	 * Updates game state
+	 */
+	void update();
 };
 
 } // namespace Views
