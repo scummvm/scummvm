@@ -41,6 +41,7 @@ struct OrderedDitherGenerator<TNumber, 1> {
 
 struct RenderItem {
 	VisualElement *element;
+	size_t sceneStackDepth;
 };
 
 template<class TNumber, int TResolution>
@@ -205,7 +206,7 @@ uint32 resolveRGB(uint8 r, uint8 g, uint8 b, const Graphics::PixelFormat &fmt) {
 	return rPlaced | gPlaced | bPlaced | aPlaced;
 }
 
-static void recursiveCollectDrawElementsAndUpdateOrigins(const Point16 &parentOrigin, Structural *structural, Common::Array<RenderItem> &normalBucket, Common::Array<RenderItem> &directBucket) {
+static void recursiveCollectDrawElementsAndUpdateOrigins(const Point16 &parentOrigin, Structural *structural, size_t sceneStackDepth, Common::Array<RenderItem> &normalBucket, Common::Array<RenderItem> &directBucket) {
 	Point16 elementOrigin = parentOrigin;
 	if (structural->isElement()) {
 		Element *element = static_cast<Element *>(structural);
@@ -220,6 +221,7 @@ static void recursiveCollectDrawElementsAndUpdateOrigins(const Point16 &parentOr
 
 			RenderItem item;
 			item.element = visualElement;
+			item.sceneStackDepth = sceneStackDepth;
 
 			if (visualElement->isVisible()) {
 				if (visualElement->isDirectToScreen())
@@ -231,12 +233,18 @@ static void recursiveCollectDrawElementsAndUpdateOrigins(const Point16 &parentOr
 	}
 
 	for (Common::Array<Common::SharedPtr<Structural> >::const_iterator it = structural->getChildren().begin(), itEnd = structural->getChildren().end(); it != itEnd; ++it) {
-		recursiveCollectDrawElementsAndUpdateOrigins(elementOrigin, it->get(), normalBucket, directBucket);
+		recursiveCollectDrawElementsAndUpdateOrigins(elementOrigin, it->get(), sceneStackDepth, normalBucket, directBucket);
 	}
 }
 
 static bool renderItemLess(const RenderItem &a, const RenderItem &b) {
-	return a.element->getLayer() < b.element->getLayer();
+	const uint16 aLayer = a.element->getLayer();
+	const uint16 bLayer = b.element->getLayer();
+
+	if (aLayer != bLayer)
+		return aLayer < bLayer;
+
+	return a.sceneStackDepth < b.sceneStackDepth;
 }
 
 static void renderNormalElement(const RenderItem &item, Window *mainWindow) {
@@ -257,20 +265,14 @@ void renderProject(Runtime *runtime, Window *mainWindow) {
 	Common::Array<RenderItem> normalBucket;
 	Common::Array<RenderItem> directBucket;
 
+	size_t sceneStackDepth = 0;
 	for (Common::Array<Structural *>::const_iterator it = scenes.begin(), itEnd = scenes.end(); it != itEnd; ++it) {
-		size_t normalStart = normalBucket.size();
-		size_t directStart = directBucket.size();
-
-		recursiveCollectDrawElementsAndUpdateOrigins(Point16::create(0, 0), *it, normalBucket, directBucket);
-
-		size_t normalEnd = normalBucket.size();
-		size_t directEnd = directBucket.size();
-
-		if (normalEnd - normalStart > 1)
-			Common::sort(normalBucket.begin() + normalStart, normalBucket.end(), renderItemLess);
-		if (directEnd - directStart > 1)
-			Common::sort(directBucket.begin() + directStart, directBucket.end(), renderItemLess);
+		recursiveCollectDrawElementsAndUpdateOrigins(Point16::create(0, 0), *it, sceneStackDepth, normalBucket, directBucket);
+		sceneStackDepth++;
 	}
+
+	Common::sort(normalBucket.begin(), normalBucket.end(), renderItemLess);
+	Common::sort(directBucket.begin(), directBucket.end(), renderItemLess);
 
 	if (!sceneChanged) {
 		for (Common::Array<RenderItem>::const_iterator it = normalBucket.begin(), itEnd = normalBucket.end(); it != itEnd; ++it) {
