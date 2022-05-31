@@ -32,13 +32,39 @@ namespace MM1 {
 
 #define ACTIVE_SPELLS_COUNT 18
 
+struct ActiveSpellsStruct {
+	byte fear;
+	byte cold;
+	byte fire;
+	byte poison;
+	byte acid;
+	byte elec;
+	byte magic;
+	byte light;
+	byte leather_skin;
+	byte levitate;
+	byte walk_on_water;
+	byte guard_dog;
+	byte psychic_protecti;
+	byte bless;
+	byte invisbility;
+	byte shield;
+	byte power_shield;
+	byte cursed;
+};
+
+union ActiveSpells {
+	ActiveSpellsStruct _s;
+	byte _arr[ACTIVE_SPELLS_COUNT];
+};
+
 /**
  * This acts as a container for everything in the game
  * that is persisted to savegames
  */
 struct GameState {
 	Common::Array<Character> _party;
-	uint _activeSpells[ACTIVE_SPELLS_COUNT];
+	ActiveSpells _spells;
 
 	GameState();
 };
