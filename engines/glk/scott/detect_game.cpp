@@ -31,6 +31,8 @@
 #include "glk/scott/line_drawing.h"
 #include "glk/scott/saga_draw.h"
 #include "glk/scott/scott.h"
+#include "glk/scott/C64_checksums.h"
+#include "glk/scott/game_specific.h"
 #include "common/str.h"
 
 namespace Glk {
@@ -414,13 +416,17 @@ GameIDType detectGame(Common::SeekableReadStream *f) {
 						}
 					}
 				}
+			} else if (!scumm_stricmp(p->_extra, "C64")) {
+				_G(_entireFile) = new uint8_t[_G(_fileLength)];
+				size_t result = f->read(_G(_entireFile), _G(_fileLength));
+				if (result != _G(_fileLength))
+					g_scott->fatal("File empty or read error!");
+
+				CURRENT_GAME = static_cast<GameIDType>(detectC64(&_G(_entireFile), &_G(_fileLength)));
 			}
 		}
 		// TODO
 		// TI99/4A Detection
-
-		// TODO
-		// C64 Detection
 
 		++p;
 	}
@@ -524,6 +530,10 @@ GameIDType detectGame(Common::SeekableReadStream *f) {
 		break;
 	default:
 		break;
+	}
+
+	if (!(_G(_game)->_subType & (C64 | MYSTERIOUS))) {
+		mysterious64Sysmess();
 	}
 
 	/* If it is a C64 or a Mysterious Adventures game, we have setup the graphics already */
