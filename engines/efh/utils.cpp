@@ -56,7 +56,7 @@ void EfhEngine::decryptImpFile(bool techMapFl) {
 		_imp2PtrArray[counter++] = curPtr = _imp2;
 		target = 431;
 	} else {
-		_imp2PtrArray[counter++] = curPtr = _imp1;
+		_imp1PtrArray[counter++] = curPtr = _imp1;
 		target = 99;
 	}
 
