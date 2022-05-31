@@ -6418,6 +6418,36 @@ uint16 VisualElement::getLayer() const {
 	return _layer;
 }
 
+VThreadState VisualElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (Event::create(EventIDs::kElementShow, 0).respondsTo(msg->getEvent())) {
+		if (!_visible) {
+			_visible = true;
+			runtime->setSceneGraphDirty();
+		}
+
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		runtime->sendMessageOnVThread(dispatch);
+
+		return kVThreadReturn;
+	}
+
+	if (Event::create(EventIDs::kElementHide, 0).respondsTo(msg->getEvent())) {
+		if (_visible) {
+			_visible = false;
+			runtime->setSceneGraphDirty();
+		}
+
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kElementHide, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		runtime->sendMessageOnVThread(dispatch);
+
+		return kVThreadReturn;
+	}
+
+	return Element::consumeCommand(runtime, msg);
+}
+
 bool VisualElement::isMouseInsideBox(int32 relativeX, int32 relativeY) const {
 	return relativeX >= _rect.left && relativeX < _rect.right && relativeY >= _rect.top && relativeY < _rect.bottom;
 }
@@ -6593,7 +6623,11 @@ void VisualElement::finalizeRender() {
 MiniscriptInstructionOutcome VisualElement::scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result) {
 	// FIXME: Need to make this fire Show/Hide events!
 	if (result.getType() == DynamicValueTypes::kBoolean) {
-		_visible = result.getBool();
+		const bool targetValue = result.getBool();
+		if (_visible != targetValue) {
+			_visible = targetValue;
+			thread->getRuntime()->setSceneGraphDirty();
+		}
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
