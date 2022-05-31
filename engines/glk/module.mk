@@ -241,6 +241,7 @@ MODULE_OBJS := \
 	scott/definitions.o \
 	scott/detect_game.o \
 	scott/game_info.o \
+	scott/game_specific.o \
 	scott/globals.o \
 	scott/hulk.o \
 	scott/layout_text.o \
