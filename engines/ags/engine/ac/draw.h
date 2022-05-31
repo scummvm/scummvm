@@ -77,7 +77,6 @@ struct ObjTexture {
 	ObjTexture(Shared::Bitmap *bmp, Engine::IDriverDependantBitmap *ddb, int x, int y, int xoff = 0, int yoff = 0)
 		: Bmp(bmp), Ddb(ddb), Pos(x, y), Off(xoff, yoff) {
 	}
-	ObjTexture(const ObjTexture &) = default;
 	ObjTexture(ObjTexture &&o);
 	~ObjTexture();
 
