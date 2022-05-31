@@ -504,6 +504,20 @@ void ScummEngine_v5::o5_actorOps() {
 			j = getVarOrDirectByte(PARAM_2);
 			assertRange(0, i, 31, "o5_actorOps: palette slot");
 
+			// WORKAROUND: In the corridors of Castle Brunwald,
+			// there is a 'continuity error' with the Nazi guards
+			// in the FM-TOWNS version. They still have their
+			// palette override from the EGA version, making them
+			// appear in gray there, although their uniforms are
+			// green when you fight them or meet them again in
+			// the zeppelin. The PC VGA version fixed this.
+
+			if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns &&
+				(a->_costume == 23 || a->_costume == 28 || a->_costume == 29) &&
+				(_currentRoom == 20 || _currentRoom == 28 || _currentRoom == 32) && _enableEnhancements) {
+				break;
+			}
+
 			// WORKAROUND: The smoke animation is the same as
 			// what's used for the voodoo lady's cauldron. But
 			// for some reason, the colors changed between the
