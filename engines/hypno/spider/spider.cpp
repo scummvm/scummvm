@@ -333,69 +333,81 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[2].actions.push_back(cl);
 
 	cl = new ChangeLevel("<add_ingredient>");
+	sc->hots[3].actions.push_back(snd);
 	sc->hots[3].actions.push_back(cl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[4].actions.push_back(snd);
 	sc->hots[4].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH1", "TURNON"); // hairspray
 	sc->hots[4].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[5].actions.push_back(snd);
 	sc->hots[5].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH2", "TURNON"); // spot remover
 	sc->hots[5].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[6].actions.push_back(snd);
 	sc->hots[6].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH3", "TURNON"); // rubbing alcohol
 	sc->hots[6].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[7].actions.push_back(snd);
 	sc->hots[7].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH4", "TURNON"); // turpentine
 	sc->hots[7].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[8].actions.push_back(snd);
 	sc->hots[8].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH5", "TURNON"); // spray paint
 	sc->hots[8].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[9].actions.push_back(snd);
 	sc->hots[9].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH0", "TURNON"); // other
 	sc->hots[9].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[10].actions.push_back(snd);
 	sc->hots[10].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH0", "TURNON"); // other
 	sc->hots[10].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[11].actions.push_back(snd);
 	sc->hots[11].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH0", "TURNON"); // other
 	sc->hots[11].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[12].actions.push_back(snd);
 	sc->hots[12].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH6", "TURNON"); // fingernail polish
 	sc->hots[12].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[13].actions.push_back(snd);
 	sc->hots[13].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH0", "TURNON"); // other
 	sc->hots[13].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[14].actions.push_back(snd);
 	sc->hots[14].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH0", "TURNON"); // other
