@@ -39,7 +39,7 @@
 namespace Sci {
 
 SciMusic::SciMusic(SciVersion soundVersion, bool useDigitalSFX)
-	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(15), _globalReverb(0), _useDigitalSFX(useDigitalSFX), _needsResume(soundVersion > SCI_VERSION_0_LATE), _globalPause(0) {
+	: _mutex(g_system->getMixer()->mutex()), _soundVersion(soundVersion), _soundOn(true), _masterVolume(15), _globalReverb(0), _useDigitalSFX(useDigitalSFX), _needsResume(soundVersion > SCI_VERSION_0_LATE), _globalPause(0) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations

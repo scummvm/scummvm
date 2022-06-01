@@ -261,7 +261,7 @@ public:
 	// MIDI parser and to the MIDI driver/player. Note that guarded code must NOT
 	// include references to the mixer, otherwise there will probably be situations
 	// where a deadlock can occur
-	Common::Mutex _mutex;
+	Common::Mutex &_mutex;
 
 protected:
 	void sortPlayList();
