@@ -668,7 +668,7 @@ void Scene::processEnvironmentSound() {
 	}
 
 	// compute next ambiance timer
-	_sampleAmbienceTime = _engine->_lbaTime + (_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay) * 50;
+	_sampleAmbienceTime = _engine->_lbaTime + TO_SECONDS(_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay);
 }
 
 void Scene::processZoneExtraBonus(ZoneStruct *zone) {

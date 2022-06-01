@@ -720,7 +720,7 @@ void TwinEEngine::processInventoryAction() {
 			penguin->setBrickShape(ShapeType::kNone);
 			_movements->moveActor(penguin->_angle, penguin->_angle, penguin->_speed, &penguin->_move);
 			_gameState->removeItem(InventoryItems::kiPenguin);
-			penguin->_delayInMillis = _lbaTime + 1500;
+			penguin->_delayInMillis = _lbaTime + TO_SECONDS(30);
 		}
 		break;
 	}

@@ -166,7 +166,7 @@ void Redraw::addOverlay(OverlayType type, int16 info0, int16 x, int16 y, int16 i
 			overlay->y = y;
 			overlay->info1 = info1;
 			overlay->posType = posType;
-			overlay->lifeTime = _engine->_lbaTime + lifeTime * 50;
+			overlay->lifeTime = _engine->_lbaTime + TO_SECONDS(lifeTime);
 			break;
 		}
 	}

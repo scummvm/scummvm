@@ -503,7 +503,7 @@ void GameState::processGameoverAnimation() {
 	_engine->_interface->setClip(rect);
 
 	Common::Rect dummy;
-	while (!_engine->_input->toggleAbortAction() && (_engine->_lbaTime - startLbaTime) <= 500) {
+	while (!_engine->_input->toggleAbortAction() && (_engine->_lbaTime - startLbaTime) <= TO_SECONDS(10)) {
 		FrameMarker frame(_engine, 66);
 		_engine->readKeys();
 		if (_engine->shouldQuit()) {
