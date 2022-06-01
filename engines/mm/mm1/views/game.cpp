@@ -28,7 +28,8 @@ namespace MM1 {
 namespace Views {
 
 Game::Game() : TextView("Game"),
-		_commands(this), _messages(this), _party(this) {
+		_view(this), _commands(this),
+		_messages(this), _party(this) {
 }
 
 bool Game::msgFocus(const FocusMessage &msg) {

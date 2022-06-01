@@ -44,17 +44,6 @@ enum CellState {
 	CELL_SPECIAL = 0x80, CELL_DARK = 0x20
 };
 
-/**
- * The byte structure representing the wall types
- * for the four cardinal directions
- */
-struct MapWalls {
-	WallType _n : 2;
-	WallType _e : 2;
-	WallType _s : 2;
-	WallType _w : 2;
-};
-
 class Map {
 private:
 	Common::String _name;
@@ -72,7 +61,7 @@ private:
 	 */
 	void loadOverlay();
 public:
-	MapWalls _walls[MAP_SIZE];
+	byte _walls[MAP_SIZE];
 	byte _states[MAP_SIZE];
 public:
 	Map(Maps *owner, const Common::String &name, uint16 id);

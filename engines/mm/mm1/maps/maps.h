@@ -207,7 +207,7 @@ public:
 	uint _mapId = (uint)-1;
 	Common::Point _mapPos;
 	Map *_currentMap = nullptr;
-	MapWalls _currentWalls;
+	byte _currentWalls = 0;
 	byte _currentState = 0;
 	byte _data1[32];
 	int _colorOffset = 0;
