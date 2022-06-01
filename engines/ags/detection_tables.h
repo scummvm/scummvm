@@ -2125,15 +2125,15 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "reddwarf", "Red Dwarf" },
 	{ "redflaggredux", "Red Flagg in: Don't Call me Blue! REDUX" },
 	{ "redhotoverdrive", "Red Hot Overdrive" },
-	{ "redpantsmeetsrobinsonclauseau", "Redpants meets Robinson Clauseau" },
-	{ "redpantstheprincessandthebeanstalk", "Redpants: The Princess and the Beanstalk" },
+	{ "redpantsep1", "The Adventures of Redpants: The Princess and the Beanstalk" },
+	{ "redpantsep2", "Redpants Meets Robinson Clauseau" },
 	{ "reefriversquestforekoban", "Reef Rivers: Quest for Ekoban" },
 	{ "rein", "rein" },
 	{ "rend", "The Tapestry - Chapter 2: Rend" },
 	{ "renuncio", "Renuncio!" },
 	{ "renuncio2", "Renuncio: Parte 2 - El Escape" },
-	{ "reonquestep1", "Reon Quest Ep. 1: The Mysterious Aluminatti Society" },
-	{ "reonquestep2", "Reon Quest Ep. 2: Escape From Bully Island" },
+	{ "reonquestep1", "Reon Quest Ep. I: The Mysterious Aluminatti Society" },
+	{ "reonquestep2", "Reon Quest Ep. II: Escape From Bully Island" },
 	{ "repossessor", "The Repossessor" },
 	{ "requiem", "Requiem" },
 	{ "retaliation", "Reality-on-the-Norm 13:13 Retaliation" },
@@ -2181,7 +2181,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "ronsixteen", "Sixteen" },
 	{ "rontimeouttrailer", "Time Out Trailer" },
 	{ "rootofallevil", "Root of All Evil" },
-	{ "rosauradocelestialrescuefromdespair", "Rosaura Docelestial: Rescue from Despair" },
+	{ "rosauradocelestial", "Rosaura Docelestial: Rescue from Despair" },
 	{ "rosellahelm", "Rosella Wilson Meets Helm" },
 	{ "rowengoestowork", "Rowen Goes To Work" },
 	{ "rudeawakening", "Rude Awakening" },
@@ -3765,21 +3765,21 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("quantumnauts", "qndemo.exe", "aeb2dd29e5ff839cb3ee86cf3e87e3ca", 134237367),  // Eng-Ita
 	DEMO_ENTRY_EN("qfi", "qfi_demo2.exe", "9e7eb04bb1652e188e6f2633eed89408", 82314927),
 	DEMO_ENTRY_EN("qfi", "QFI_DEMO.exe", "5913a8caa5969f9d781eca41f2b876fc", 47150193),
-	DEMO_ENTRY("rainblood", "Rain of Blood.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 45617879),
+	DEMO_ENTRY_EN("rainblood", "Rain of Blood.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 45617879),
 	DEMO_ENTRY_EN("ratpackcastle", "The Rat Pack Do Cheesy Castle.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 336087676),
-	DEMO_ENTRY("realitycheck4", "Reality Check 4.exe", "82da2565c456dcfb265ded6fe3189c0b", 16426064),
-	DEMO_ENTRY("recollection", "RECOLLECTION.exe", "06a03fe35791b0578068ab1873455463", 5806558),
-	DEMO_ENTRY("recollection", "MAGS0907.exe", "06a03fe35791b0578068ab1873455463", 5806558),
-	DEMO_ENTRY("redbow", "Red Bow.exe", "2971fd82315ce4df9d8287def34b4713", 21338542), // itch.io
-	DEMO_ENTRY("reddwarf", "Red Dwarf.exe", "06a03fe35791b0578068ab1873455463", 2812268),
-	DEMO_ENTRY("resonance", "resonance_demo.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 473386791),
-	DEMO_ENTRY("retaliation", "Ron Retaliation.exe", "0500aacb6c176d47ac0f8158f055db83", 3135809),
-	DEMO_ENTRY("retroron", "retroron.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 3762985),
-	DEMO_ENTRY("revenants", "Horror.exe", "88cf59aad15ca331ab0f854e16c84df3", 8887972),
-	DEMO_ENTRY("richardalice", "richardandalicedemo.exe", "1a88ec06b59a6b56ef6d7c489bd71008", 86273262),
+	DEMO_ENTRY_EN("realitycheck4", "Reality Check 4.exe", "82da2565c456dcfb265ded6fe3189c0b", 16426064),
+	DEMO_ENTRY_EN("recollection", "RECOLLECTION.exe", "06a03fe35791b0578068ab1873455463", 5806558),
+	DEMO_ENTRY_EN("recollection", "MAGS0907.exe", "06a03fe35791b0578068ab1873455463", 5806558),
+	DEMO_ENTRY_EN("redbow", "Red Bow.exe", "2971fd82315ce4df9d8287def34b4713", 21338542), // itch.io
+	DEMO_ENTRY_EN("reddwarf", "Red Dwarf.exe", "06a03fe35791b0578068ab1873455463", 2812268),
+	DEMO_ENTRY_EN("resonance", "resonance_demo.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 473386791),
+	DEMO_ENTRY_EN("retaliation", "Ron Retaliation.exe", "0500aacb6c176d47ac0f8158f055db83", 3135809),
+	DEMO_ENTRY_EN("retroron", "retroron.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 3762985),
+	DEMO_ENTRY_EN("revenants", "Horror.exe", "88cf59aad15ca331ab0f854e16c84df3", 8887972),
+	DEMO_ENTRY_EN("richardalice", "richardandalicedemo.exe", "1a88ec06b59a6b56ef6d7c489bd71008", 86273262),
 	DEMO_ENTRY_EN("rontimeouttrailer", "ronTOintro.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 2804752),
 	DEMO_ENTRY_EN("rontimeouttrailer", "ronTOintro.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 2804573),
-	DEMO_ENTRY("ron5thanniversary", "5thpromo.exe", "f120690b506dd63cd7d1112ea6af2f77", 1620446),
+	DEMO_ENTRY_EN("ron5thanniversary", "5thpromo.exe", "f120690b506dd63cd7d1112ea6af2f77", 1620446),
 	DEMO_ENTRY("screamingsouls", "Scremn.exe", "d3bc2cf3a0f72f0fbe37d9edbd5ebec3", 1800422),
 	DEMO_ENTRY("searchforsanity", "sfs.exe", "308d35bc34e9df29d8acce615593e3e7", 9097147),  // Win (AGS 2.5)
 	DEMO_ENTRY("shadowsoftheempire", "sote_td.exe", "b8cd640b45c5a79c33c7a8a8fe32ebe2", 63246884),  //v1.0
@@ -5823,121 +5823,123 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("quimbyquestanewdope", "QQuest.exe", "615e806856b7730afadf1fea9a756b70", 8801878),
 	GAME_ENTRY_EN("quiteannoying", "Super Annoying League.exe", "615e73fc1874e92d60a1996c2330ea36", 22513046),  // Windows
 	GAME_ENTRY_EN("quiteannoying", "Super Annoying League.ags", "72d55dd28b18091ebc793b653e94f9c2", 20722806),  // Linux
-	GAME_ENTRY_PLATFORM("rabbiteyemotel", "asylumjam2015.exe", "2ca80bd50763378b72cd1e1cf25afac3", 38579543, "GameJam Build"),
-	GAME_ENTRY("rabbiteyemotel", "asylumjam2015.exe", "2ca80bd50763378b72cd1e1cf25afac3", 40528966),  // v0.4.2
-	GAME_ENTRY("rabbithill", "Rabbit Hill.exe", "7ce746c19cf3080a9fac568979b2bf9b", 54728125),
-	GAME_ENTRY("race", "R.ACE.exe", "06a03fe35791b0578068ab1873455463", 3842314),
-	GAME_ENTRY("racingmanager", "raceman.exe", "465f972675db2da6040518221af5b0ba", 15971689),
-	GAME_ENTRY("racist", "arcade01.exe", "2bf7a3a5f0a22a140350e29bb1ac7cfb", 142097978), // Windows
-	GAME_ENTRY("racist", "arcade01.ags", "5c29a54b60c140190693c664bd21eae2", 139654698), // Linux
-	GAME_ENTRY("rackham", "Rackham.exe", "36f44e064eab15e502caeb60fd09f52d", 3672597),
-	GAME_ENTRY("rainbowskunk", "PrismMAGS.exe", "3c5bd1713959ff469cb46ebe5542cfcf", 10046750),
-	GAME_ENTRY("rainbowtube", "Tube Rainbow.exe", "03c8c45bd00daca1a9d75d1133df5640", 5669127),
-	GAME_ENTRY("rainsnow", "Rain and Snow The Bouncer.exe", "0564de07d3fd5c16e6947a647061913c", 20576318),
-	GAME_ENTRY("ralphtheraven", "RalphTheRaven.exe", "0500aacb6c176d47ac0f8158f055db83", 1655198),
-	GAME_ENTRY("ramghost", "RAM_Ghost.exe", "f87f3e71d13b5fea0970ef95f1c87abe", 14830699),
-	GAME_ENTRY("ramsesporter", "Ramses Porter and the Relay for Love.exe", "a524cbb1c51589903c4043b98917f1d9", 55490676),
-	DETECTION_ENTRY("rango", "Rango.exe", "618d7dce9631229b4579340b964c6810", 21059129, Common::UNK_LANG, nullptr, nullptr, GAMEFLAG_FORCE_AA),
-	GAME_ENTRY("rapsqlud", "RapSqLud.exe", "615e73fc1874e92d60a1996c2330ea36", 2989387),
-	GAME_ENTRY("rapstar15", "rs15.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 13638597),
-	GAME_ENTRY("ratchannel", "Rat Channel.exe", "c5d2c54c20cb606519b86d3890ee7fc0", 303946606),
-	GAME_ENTRY_PLATFORM("ratplaying", "Rat Playing Game.exe", "6b1702aec6d0a44bda59ef8f229956c5", 16414235, "Beta"),
-	GAME_ENTRY_PLATFORM("ratplaying", "Rat Playing Game.ags", "600bdacdcb296799312bece57f6a5625", 13928459, "Beta"),
-	GAME_ENTRY("ravench1", "Raven.exe", "620b3d82af532d9550c30b7c69d61600", 2287413),
-	GAME_ENTRY("rayandtheguitar", "The Band.exe", "465f972675db2da6040518221af5b0ba", 1518249),
-	GAME_ENTRY("raybexter", "Ray Bexter.exe", "3e8667bab45f2e5d7237db53ab376400", 5930752),  //v1.3
-	GAME_ENTRY("raybexter", "Ray Bexter.exe", "d3bc2cf3a0f72f0fbe37d9edbd5ebec3", 5680319),  //v1.0
-	GAME_ENTRY("raysrods", "Rays Rods.exe", "06a03fe35791b0578068ab1873455463", 7507467),
-	GAME_ENTRY("razorsinthenight", "Razors.exe", "0500aacb6c176d47ac0f8158f055db83", 25439808),  //v1.0
-	GAME_ENTRY("razorsinthenight", "Razors.exe", "0500aacb6c176d47ac0f8158f055db83", 25442827),  //v2.0
-	GAME_ENTRY("rcpd", "RCPD.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 3278756),
-	GAME_ENTRY("reactor09", "reactor09.run", "b216ee957dd677023e02d900281a02d6", 13764141),
-	GAME_ENTRY("reactor09", "reactor09.exe", "06a03fe35791b0578068ab1873455463", 14591606),  // updated
-	GAME_ENTRY("readyeddie", "ready.exe", "070a2b9bd7f54b1b6bc44f30c547d325", 9963495),
-	GAME_ENTRY("reagentorange", "Lab.exe", "83d96faa4efefcc9c03c01b9517f23bb", 13377038),
-	GAME_ENTRY("realitycheck1", "Reality Check.exe", "82da2565c456dcfb265ded6fe3189c0b", 9184815),  //v1.0
-	GAME_ENTRY("realitycheck1", "Reality Check.exe", "82da2565c456dcfb265ded6fe3189c0b", 9208605),  //v1.2
-	GAME_ENTRY("realitycheck2", "Reality on the Norm Reality Check 2.exe", "82da2565c456dcfb265ded6fe3189c0b", 9499643),
-	GAME_ENTRY("realitycheck3", "RoN Reality Check 3.exe", "82da2565c456dcfb265ded6fe3189c0b", 8386704),
+	GAME_ENTRY_EN_PLATFORM("rabbiteyemotel", "asylumjam2015.exe", "2ca80bd50763378b72cd1e1cf25afac3", 38579543, "GameJam Build"),
+	GAME_ENTRY_EN("rabbiteyemotel", "asylumjam2015.exe", "2ca80bd50763378b72cd1e1cf25afac3", 40528966),  // v0.4.2
+	GAME_ENTRY_EN("rabbithill", "Rabbit Hill.exe", "7ce746c19cf3080a9fac568979b2bf9b", 54728125),
+	GAME_ENTRY_EN("race", "R.ACE.exe", "06a03fe35791b0578068ab1873455463", 3842314),
+	GAME_ENTRY_EN("racingmanager", "raceman.exe", "465f972675db2da6040518221af5b0ba", 15971689),
+	GAME_ENTRY_EN("racist", "arcade01.exe", "2bf7a3a5f0a22a140350e29bb1ac7cfb", 142097978), // Windows
+	GAME_ENTRY_EN("racist", "arcade01.ags", "5c29a54b60c140190693c664bd21eae2", 139654698), // Linux
+	GAME_ENTRY_EN("rackham", "Rackham.exe", "36f44e064eab15e502caeb60fd09f52d", 3672597),
+	GAME_ENTRY_EN("rainbowskunk", "PrismMAGS.exe", "3c5bd1713959ff469cb46ebe5542cfcf", 10046750),
+	GAME_ENTRY_EN("rainbowtube", "Tube Rainbow.exe", "03c8c45bd00daca1a9d75d1133df5640", 5669127),
+	GAME_ENTRY_EN("rainsnow", "Rain and Snow The Bouncer.exe", "0564de07d3fd5c16e6947a647061913c", 20576318),
+	GAME_ENTRY_EN("ralphtheraven", "RalphTheRaven.exe", "0500aacb6c176d47ac0f8158f055db83", 1655198),
+	GAME_ENTRY_EN("ramghost", "RAM_Ghost.exe", "f87f3e71d13b5fea0970ef95f1c87abe", 14830699),
+	GAME_ENTRY_EN("ramsesporter", "Ramses Porter and the Relay for Love.exe", "a524cbb1c51589903c4043b98917f1d9", 55490676),
+	GAME_ENTRY_EN("rango", "Rango.exe", "618d7dce9631229b4579340b964c6810", 21059129),
+	GAME_ENTRY_EN("rapsqlud", "RapSqLud.exe", "615e73fc1874e92d60a1996c2330ea36", 2989387),
+	GAME_ENTRY_EN("rapstar15", "rs15.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 13638597),
+	GAME_ENTRY("ratchannel", "Rat Channel.exe", "c5d2c54c20cb606519b86d3890ee7fc0", 303946606),  // Eng-Deu
+	GAME_ENTRY_EN_PLATFORM("ratplaying", "Rat Playing Game.exe", "6b1702aec6d0a44bda59ef8f229956c5", 16414235, "Beta"),
+	GAME_ENTRY_EN_PLATFORM("ratplaying", "Rat Playing Game.ags", "600bdacdcb296799312bece57f6a5625", 13928459, "Beta"),
+	GAME_ENTRY_EN("ravench1", "Raven.exe", "620b3d82af532d9550c30b7c69d61600", 2287413),
+	GAME_ENTRY_EN("rayandtheguitar", "The Band.exe", "465f972675db2da6040518221af5b0ba", 1518249),
+	GAME_ENTRY_EN("raybexter", "Ray Bexter.exe", "d3bc2cf3a0f72f0fbe37d9edbd5ebec3", 5680319),  //v1.0
+	GAME_ENTRY_EN("raybexter", "Ray Bexter.exe", "3e8667bab45f2e5d7237db53ab376400", 5930752),  //v1.3
+	GAME_ENTRY_EN("raysrods", "Rays Rods.exe", "06a03fe35791b0578068ab1873455463", 7507467),
+	GAME_ENTRY_EN("razorsinthenight", "Razors.exe", "0500aacb6c176d47ac0f8158f055db83", 25439808),  //v1.0
+	GAME_ENTRY_EN("razorsinthenight", "Razors.exe", "0500aacb6c176d47ac0f8158f055db83", 25442827),  //v2.0
+	GAME_ENTRY_EN("rcpd", "RCPD.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 3278756),
+	GAME_ENTRY_EN("reactor09", "reactor09.run", "b216ee957dd677023e02d900281a02d6", 13764141),
+	GAME_ENTRY_EN("reactor09", "reactor09.exe", "06a03fe35791b0578068ab1873455463", 14591606),  // updated
+	GAME_ENTRY_EN("readyeddie", "ready.exe", "070a2b9bd7f54b1b6bc44f30c547d325", 9963495),
+	GAME_ENTRY("reagentorange", "Lab.exe", "83d96faa4efefcc9c03c01b9517f23bb", 13377038),  // En-De-Cz
+	GAME_ENTRY_EN("realitycheck1", "Reality Check.exe", "82da2565c456dcfb265ded6fe3189c0b", 9184815),  //v1.0
+	GAME_ENTRY_EN("realitycheck1", "Reality Check.exe", "82da2565c456dcfb265ded6fe3189c0b", 9208605),  //v1.2
+	GAME_ENTRY_EN("realitycheck2", "Reality on the Norm Reality Check 2.exe", "82da2565c456dcfb265ded6fe3189c0b", 9499643),
+	GAME_ENTRY_EN("realitycheck3", "RoN Reality Check 3.exe", "82da2565c456dcfb265ded6fe3189c0b", 8386704),
 	GAME_ENTRY_EN("realityinthenorm", "Reality-in-the-Norm.ags", "546f5a7467d711f725eb48d0bbaec12e", 4204865),  // Linux
 	GAME_ENTRY_EN("realityinthenorm", "Reality-in-the-Norm.exe", "21d7482c8e968857e2653debeaa8a384", 6686033),  // Windows
 	GAME_ENTRY("realityinthenorm", "Reality-in-the-Norm V2.ags", "d4dd771b58e8892dbf55001cacd88b71", 4210046),  // Linux v2.0 En-Fr-De-It
 	GAME_ENTRY("realityinthenorm", "Reality-in-the-Norm V2.exe", "21d7482c8e968857e2653debeaa8a384", 6691214),  // Windows v2.0 En-Fr-De-It
-	GAME_ENTRY("recess", "Recess.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 1941530),
-	GAME_ENTRY_PLATFORM("recess", "Recess.exe", "bcfd97b39418162cf628390894902ec8", 2560538, "MAGS"),
-	GAME_ENTRY("recess2", "Recess2.exe", "45ab4f29031b50c8d01d10a269f77ff5", 2805921),
-	GAME_ENTRY("redbeardsavesron", "rbg.exe", "06a03fe35791b0578068ab1873455463", 15285217),
-	GAME_ENTRY("redflaggredux", "Red Flagg.exe", "5901879fafae3812f71b3a2d73bee40e", 79414802),
-	GAME_ENTRY("redhotoverdrive", "RHO.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 11718460),
-	GAME_ENTRY("redpantsmeetsrobinsonclauseau", "DBL.exe", "c0aab3e02bbaf8468770480079436f61", 15658119),
-	GAME_ENTRY("redpantstheprincessandthebeanstalk", "Redpants - The Princess and the Beanstalk.exe", "c0aab3e02bbaf8468770480079436f61", 28517345),
-	GAME_ENTRY("reefriversquestforekoban", "Quest for Ekoban.exe", "338fa79960d40689063af31c671b8729", 179342350),
-	GAME_ENTRY("rein", "rein.exe", "798691640b168556245d5fc261772fde", 17483005),
+	GAME_ENTRY_EN("recess", "Recess.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 1941530),
+	GAME_ENTRY_EN_PLATFORM("recess", "Recess.exe", "bcfd97b39418162cf628390894902ec8", 2560538, "MAGS"),
+	GAME_ENTRY_EN("recess2", "Recess2.exe", "45ab4f29031b50c8d01d10a269f77ff5", 2805921),
+	GAME_ENTRY_EN("redbeardsavesron", "rbg.exe", "06a03fe35791b0578068ab1873455463", 15285217),
+	GAME_ENTRY_EN("redflaggredux", "Red Flagg.exe", "5901879fafae3812f71b3a2d73bee40e", 79414802),
+	GAME_ENTRY_EN("redhotoverdrive", "RHO.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 11718460),
+	GAME_ENTRY_EN("redpantsep1", "Redpants - The Princess and the Beanstalk.exe", "c0aab3e02bbaf8468770480079436f61", 28517345),
+	GAME_ENTRY_EN("redpantsep2", "DBL.exe", "c0aab3e02bbaf8468770480079436f61", 15658119),
+	GAME_ENTRY_EN("reefriversquestforekoban", "Quest for Ekoban.exe", "338fa79960d40689063af31c671b8729", 179342350),
+	GAME_ENTRY_EN("rein", "rein.exe", "798691640b168556245d5fc261772fde", 17483005),
 	GAME_ENTRY_EN("rend", "rend.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 6156428),
-	GAME_ENTRY("renuncio", "renuncio.exe", "4d4b6d6e560cf32f440c39f8d3896da5", 3477434),  // v1.1
-	GAME_ENTRY("renuncio2", "Renuncio2.exe", "bb628c1fdcfdc091ea57430e6c4af2ac", 8533739),  //v1.1
-	GAME_ENTRY("reonquestep1", "Draco'sQuest.exe", "615e73fc1874e92d60a1996c2330ea36", 51243744),
-	GAME_ENTRY("reonquestep2", "Bully Island.exe", "615e73fc1874e92d60a1996c2330ea36", 58122181),
-	GAME_ENTRY("returnjourney", "return.exe", "0564de07d3fd5c16e6947a647061913c", 72875118),
+	GAME_ENTRY("renuncio", "renuncio.exe", "4d4b6d6e560cf32f440c39f8d3896da5", 3477434),  // v1.1  Eng-Esp
+	GAME_ENTRY("renuncio2", "Renuncio2.exe", "bb628c1fdcfdc091ea57430e6c4af2ac", 8533739),  //v1.1  Eng-Esp
+	GAME_ENTRY_EN("reonquestep1", "Draco'sQuest.exe", "615e73fc1874e92d60a1996c2330ea36", 51243744),
+	GAME_ENTRY_EN("reonquestep2", "Bully Island.exe", "615e73fc1874e92d60a1996c2330ea36", 58122181),
 	GAME_ENTRY_EN_PLATFORM("repossessor", "repossesor.exe", "06a03fe35791b0578068ab1873455463", 3331695,"2007 release"),  // 2007 version
 	GAME_ENTRY_EN_PLATFORM("repossessor", "repossessor.exe", "f8e8f781a4a95c2bfea5f54b085df550", 4037461,"2014 release"),  // 2014 version
-	GAME_ENTRY("requiem", "Requiem.exe", "615e73fc1874e92d60a1996c2330ea36", 3497044),
-	GAME_ENTRY("returntocivilization", "ReturnTo.exe", "0710e2ec71042617f565c01824f0cf3c", 3280888),
-	GAME_ENTRY("revelation", "Revelation.exe", "06a03fe35791b0578068ab1873455463", 14512328),
-	GAME_ENTRY("rickyquest", "black.exe", "06a03fe35791b0578068ab1873455463", 3250100),
-	GAME_ENTRY("righteouscityp1", "RC PI - 3.00.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 19786840),
-	GAME_ENTRY("righteouscityp2", "RCII.exe", "06a03fe35791b0578068ab1873455463", 39085407),
-	GAME_ENTRY("ripperjack", "ripper_jack_v0.1.exe", "c3b72132686c4a102b3365d380c8ae3a", 2580361),
+	GAME_ENTRY_EN("requiem", "Requiem.exe", "615e73fc1874e92d60a1996c2330ea36", 3497044),
+	GAME_ENTRY_EN("returnjourney", "return.exe", "0564de07d3fd5c16e6947a647061913c", 72875118),
+	GAME_ENTRY_EN("returntocivilization", "ReturnTo.exe", "0710e2ec71042617f565c01824f0cf3c", 3280888),
+	GAME_ENTRY_EN("revelation", "Revelation.exe", "06a03fe35791b0578068ab1873455463", 14512328),
+	GAME_ENTRY_EN("rickyquest", "black.exe", "06a03fe35791b0578068ab1873455463", 3250100),
+	GAME_ENTRY("righteouscityp1", "RC PI - 3.00.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 19786840),  // Eng-Ita
+	GAME_ENTRY("righteouscityp2", "RCII.exe", "06a03fe35791b0578068ab1873455463", 39085407),  // Eng-Ita
+	GAME_ENTRY_EN("ripperjack", "ripper_jack_v0.1.exe", "c3b72132686c4a102b3365d380c8ae3a", 2580361),
 	GAME_ENTRY_LANG("rnbquest", "R`n`B Quest.exe", "465f972675db2da6040518221af5b0ba", 119895894, Common::RU_RUS),
-	GAME_ENTRY("roadbrollywood", "brollywood.exe", "615e73fc1874e92d60a1996c2330ea36", 3118294),
-	GAME_ENTRY("roadofdestiny", "ROD.exe", "618d7dce9631229b4579340b964c6810", 30127308),
-	GAME_ENTRY("roadracer", "TR_Bryvis.exe", "cebb3ac5c3d2df939e7f0ec8f2975b64", 25080647),
-	GAME_ENTRY("roastmothergoose", "RMG.exe", "00328f4f1e7729144483107b96b11df8", 46474982),
-	GAME_ENTRY_PLATFORM("roastmothergoose", "RMG.exe", "00328f4f1e7729144483107b96b11df8", 46474953, "MAGS"),
-	GAME_ENTRY("robbingtheprincess", "Princess.exe", "ac461eb75959761fe159917607c246b4", 5793384),
-	GAME_ENTRY("robertredford1", "GAME.exe", "02635a77ab660023f59519c91329f7f5", 6537985),
-	GAME_ENTRY("robertredford2", "ROBERT2.exe", "02635a77ab660023f59519c91329f7f5", 13075066),
-	GAME_ENTRY("robertredford3", "game.exe", "71ca0d6c1c699595f28a2125948d4a84", 10846423),
-	GAME_ENTRY_PLATFORM("robertredford3", "dreamseq.ags", "97d700529f5cc826f230c27acf81adfd", 4724470,"Dream Sequence"),
-	GAME_ENTRY("robmassacreofchainsawness", "Chainsaw.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 1153384),
-	GAME_ENTRY("robolution", "Robolution.exe", "e299aa402e6d0f16a4e2dbb8c395b52e", 130836838),
-	GAME_ENTRY("roboquest", "RoboQuest 1.2.exe", "338fa79960d40689063af31c671b8729", 22776964),
+	GAME_ENTRY_EN("roadbrollywood", "brollywood.exe", "615e73fc1874e92d60a1996c2330ea36", 3118294),
+	GAME_ENTRY_EN("roadofdestiny", "ROD.exe", "618d7dce9631229b4579340b964c6810", 30127308),
+	GAME_ENTRY_EN("roadracer", "TR_Bryvis.exe", "cebb3ac5c3d2df939e7f0ec8f2975b64", 25080647),
+	GAME_ENTRY_EN("roastmothergoose", "RMG.exe", "00328f4f1e7729144483107b96b11df8", 46474982),
+	GAME_ENTRY_EN_PLATFORM("roastmothergoose", "RMG.exe", "00328f4f1e7729144483107b96b11df8", 46474953, "MAGS"),
+	GAME_ENTRY_EN("robbingtheprincess", "Princess.exe", "ac461eb75959761fe159917607c246b4", 5793384),
+	GAME_ENTRY_EN("robertredford1", "GAME.exe", "02635a77ab660023f59519c91329f7f5", 6537985),
+	GAME_ENTRY_EN("robertredford2", "ROBERT2.exe", "02635a77ab660023f59519c91329f7f5", 13075066),
+	GAME_ENTRY_EN("robertredford3", "game.exe", "71ca0d6c1c699595f28a2125948d4a84", 10846423),
+	GAME_ENTRY_EN_PLATFORM("robertredford3", "dreamseq.ags", "97d700529f5cc826f230c27acf81adfd", 4724470,"Dream Sequence"),
+	GAME_ENTRY_EN("robmassacreofchainsawness", "Chainsaw.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 1153384),
+	GAME_ENTRY_EN("robolution", "Robolution.exe", "e299aa402e6d0f16a4e2dbb8c395b52e", 130836838),
+	GAME_ENTRY("roboquest", "RoboQuest 1.2.exe", "338fa79960d40689063af31c671b8729", 22776964),  // En-De-Es-Ru
 	GAME_ENTRY_LANG("roboquest2009", "ROBO.exe", "465f972675db2da6040518221af5b0ba", 16227790, Common::RU_RUS),
-	GAME_ENTRY("robotragedy", "Robotragedy.exe", "465f972675db2da6040518221af5b0ba", 130585260),
-	GAME_ENTRY("robotragedy2", "Robotragedy 2.exe", "465f972675db2da6040518221af5b0ba", 256955387),
+	GAME_ENTRY("robotragedy", "Robotragedy.exe", "465f972675db2da6040518221af5b0ba", 130585260),  // Eng-Esp
+	GAME_ENTRY_EN("robotragedy2", "Robotragedy 2.exe", "465f972675db2da6040518221af5b0ba", 256955387),
 	GAME_ENTRY_EN("robotsdream", "Robot.exe", "36f44e064eab15e502caeb60fd09f52d", 139573270),
-	GAME_ENTRY("roccioquest", "RoccioQuest.exe", "7727bf5360b00bfc1947455218137803", 5797284),
-	GAME_ENTRY("rockabillykid", "Rockabilly Kid.exe", "ff3358d8f2726d544aadfde4f1ec8407", 2650305),
-	GAME_ENTRY("rockatruestory", "RON-Rock.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 3917056),
-	GAME_ENTRY("rockburgerstreehouses", "RBTH.exe", "88cf59aad15ca331ab0f854e16c84df3", 1876674),
-	GAME_ENTRY("rockpaperscissors2", "Rock, Paper, Scissors 2.exe", "89a94326c8afd9e0234e269bd7330130", 2926218),
-	GAME_ENTRY("rockrockrock", "rrr.exe", "7dd36aa863ed40ede1b09ae505e478cc", 9362761),
-	GAME_ENTRY("rockyroams", "Rocky.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 16978200),
-	GAME_ENTRY("rodequest2", "RQ2.exe", "12c03a3c782237821acd590fd91af4c5", 4192097),
-	GAME_ENTRY("rodequest2", "RQ2b.exe", "12c03a3c782237821acd590fd91af4c5", 4192097),
-	GAME_ENTRY("rodequest2", "RQ2c.exe", "12c03a3c782237821acd590fd91af4c5", 4192097),
-	GAME_ENTRY("rodequest2", "RQ2d.exe", "12c03a3c782237821acd590fd91af4c5", 4192097),
-	GAME_ENTRY("rodequest2", "RQ2e.exe", "12c03a3c782237821acd590fd91af4c5", 4192097),
-	GAME_ENTRY("rogered", "Uncontrollable.exe", "82da2565c456dcfb265ded6fe3189c0b", 32857801),
-	GAME_ENTRY("rogeroddsp1", "Roger Against the Odds_1.0.0.3.exe", "7825fa980fcd058caadaf6d3377b1f78", 727867851),
-	GAME_ENTRY("rogerquest", "Bandymas backup.exe", "e79a70b7e24f92b1ea5ff5d1b40e81f9", 86423076),
-	GAME_ENTRY("rogue", "Rogue.exe", "4309e1468cdde96ad97f6988e9d5bc65", 31745808),  // Windows
-	GAME_ENTRY("rogue", "Rogue.ags", "0813cb3228cc108239c4583e66ca9137", 28647676),  // Linux
-	GAME_ENTRY("rogue", "ac2game.dat", "0813cb3228cc108239c4583e66ca9137", 28647676),  // Mac
-	GAME_ENTRY("ronbeforethelegacy", "RONlegacy.exe", "0b7529a76f38283d6e850b8d56526fc1", 4792872),
-	GAME_ENTRY("ronoutbreak", "RoN-DayOfComet.exe", "465f972675db2da6040518221af5b0ba", 10497989),
-	GAME_ENTRY("ronsixteen", "16c.exe", "06a03fe35791b0578068ab1873455463", 2467851),
-	GAME_ENTRY("rootofallevil", "RootOfAllEvil.exe", "c4f5b7b29be90ba0f8128298afb917de", 3699067), // v1.0
-	GAME_ENTRY("rootofallevil", "RootOfAllEvil.exe", "c4f5b7b29be90ba0f8128298afb917de", 3957834), // v1.1
-	GAME_ENTRY("rosauradocelestialrescuefromdespair", "RosauraMAGS.exe", "3c5bd1713959ff469cb46ebe5542cfcf", 13190949),
-	GAME_ENTRY("rosellahelm", "orow.exe", "21fd0f65dfa48de2b39cb8ec23b30889", 2507570),
-	GAME_ENTRY("rowengoestowork", "Rowen.exe", "a1cef60926235b85bd0e1866b19e0dc7", 3791058),
-	GAME_ENTRY("rudeawakening", "RudeAwakening.exe", "0710e2ec71042617f565c01824f0cf3c", 8038257),
-	GAME_ENTRY("rufusstory", "BlueAngel_4.exe", "615e73fc1874e92d60a1996c2330ea36", 93715328),
-	GAME_ENTRY("runaway", "RunAway.exe", "82da2565c456dcfb265ded6fe3189c0b", 7685040),
-	GAME_ENTRY("runestones", "Project Forsetti.exe", "c0d48dcc2003d4de0410cb8612d1c3e6", 37111243),
+	GAME_ENTRY("roccioquest", "RoccioQuest.exe", "7727bf5360b00bfc1947455218137803", 5797284),  // Multi
+	GAME_ENTRY_EN("rockabillykid", "Rockabilly Kid.exe", "ff3358d8f2726d544aadfde4f1ec8407", 2650305),
+	GAME_ENTRY_EN("rockatruestory", "RON-Rock.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 3917056),
+	GAME_ENTRY_EN("rockburgerstreehouses", "RBTH.exe", "88cf59aad15ca331ab0f854e16c84df3", 1876674),
+	GAME_ENTRY_EN("rockpaperscissors2", "Rock, Paper, Scissors 2.exe", "89a94326c8afd9e0234e269bd7330130", 2926218),
+	GAME_ENTRY_EN("rockrockrock", "rrr.exe", "7dd36aa863ed40ede1b09ae505e478cc", 9362761),
+	GAME_ENTRY_EN("rockyroams", "Rocky.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 16978200),
+	GAME_ENTRY_EN("rodequest2", "RQ2.exe", "12c03a3c782237821acd590fd91af4c5", 4192097),
+	GAME_ENTRY_EN("rodequest2", "RQ2b.exe", "12c03a3c782237821acd590fd91af4c5", 4192097),
+	GAME_ENTRY_EN("rodequest2", "RQ2c.exe", "12c03a3c782237821acd590fd91af4c5", 4192097),
+	GAME_ENTRY_EN("rodequest2", "RQ2d.exe", "12c03a3c782237821acd590fd91af4c5", 4192097),
+	GAME_ENTRY_EN("rodequest2", "RQ2e.exe", "12c03a3c782237821acd590fd91af4c5", 4192097),
+	GAME_ENTRY_EN("rogered", "Uncontrollable.exe", "82da2565c456dcfb265ded6fe3189c0b", 32857801),
+	GAME_ENTRY_EN("rogeroddsp1", "Roger Against the Odds_1.0.0.3.exe", "7825fa980fcd058caadaf6d3377b1f78", 727867851),
+	GAME_ENTRY_EN("rogerquest", "Bandymas backup.exe", "e79a70b7e24f92b1ea5ff5d1b40e81f9", 86423076),
+	GAME_ENTRY_EN("rogue", "Rogue.exe", "4309e1468cdde96ad97f6988e9d5bc65", 31745808),  // Windows
+	GAME_ENTRY_EN("rogue", "Rogue.ags", "0813cb3228cc108239c4583e66ca9137", 28647676),  // Linux
+	GAME_ENTRY_EN("rogue", "ac2game.dat", "0813cb3228cc108239c4583e66ca9137", 28647676),  // Mac
+	GAME_ENTRY_EN("ronbeforethelegacy", "RONlegacy.exe", "0b7529a76f38283d6e850b8d56526fc1", 4792872),
+	GAME_ENTRY_EN("ronoutbreak", "RoN-DayOfComet.exe", "465f972675db2da6040518221af5b0ba", 10497989),
+	GAME_ENTRY_EN("ronsixteen", "16c.exe", "06a03fe35791b0578068ab1873455463", 2467851),
+	GAME_ENTRY_EN("rootofallevil", "RootOfAllEvil.exe", "c4f5b7b29be90ba0f8128298afb917de", 3698912),
+	GAME_ENTRY_EN("rootofallevil", "RootOfAllEvil.exe", "c4f5b7b29be90ba0f8128298afb917de", 3699067), // v1.0
+	GAME_ENTRY_EN("rootofallevil", "RootOfAllEvil.exe", "c4f5b7b29be90ba0f8128298afb917de", 3957834), // v1.1
+	GAME_ENTRY_EN("rootofallevil", "RootOfAllEvil.ags", "c4f5b7b29be90ba0f8128298afb917de", 3957834), // v1.1 Crystal Shard
+	GAME_ENTRY_EN("rosauradocelestial", "RosauraMAGS.exe", "3c5bd1713959ff469cb46ebe5542cfcf", 13190949),
+	GAME_ENTRY_EN("rosellahelm", "orow.exe", "21fd0f65dfa48de2b39cb8ec23b30889", 2507570),
+	GAME_ENTRY_EN("rowengoestowork", "Rowen.exe", "a1cef60926235b85bd0e1866b19e0dc7", 3791058),
+	GAME_ENTRY_EN("rudeawakening", "RudeAwakening.exe", "0710e2ec71042617f565c01824f0cf3c", 8038257),
+	GAME_ENTRY_EN("rufusstory", "BlueAngel_4.exe", "615e73fc1874e92d60a1996c2330ea36", 93715328),
+	GAME_ENTRY_EN("runaway", "RunAway.exe", "82da2565c456dcfb265ded6fe3189c0b", 7685040),
+	GAME_ENTRY_EN("runestones", "Project Forsetti.exe", "c0d48dcc2003d4de0410cb8612d1c3e6", 37111243),
 	GAME_ENTRY_LANG("ruptquest", "Rupt.exe", "465f972675db2da6040518221af5b0ba", 20229552, Common::RU_RUS),
-	GAME_ENTRY("ryansdayout", "Ryan's Day out.exe", "06a03fe35791b0578068ab1873455463", 2573584),
+	GAME_ENTRY_EN("ryansdayout", "Ryan's Day out.exe", "06a03fe35791b0578068ab1873455463", 2573584),
 	GAME_ENTRY("sabotagenb", "Sabotage.exe", "c8cd4b980360837c6df720da9a57944c", 472090611),  // Windows v1.1
 	GAME_ENTRY("sabotagenb", "Sabotage.ags", "afd7630312d1acb8920885d0b3fd7396", 468278241),  // Linux v1.1
 	GAME_ENTRY("saddsonissein", "Issein.exe", "3e8667bab45f2e5d7237db53ab376400", 4070795),
