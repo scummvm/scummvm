@@ -78,8 +78,6 @@ Maps::Maps() :
 		_map48(this), _map49(this), _map50(this), _map51(this),
 		_map52(this), _map53(this), _map54(this) {
 	Common::fill(&_data1[0], &_data1[32], 0);
-	_currentWalls._n = _currentWalls._s = WALL_NONE;
-	_currentWalls._e = _currentWalls._w = WALL_NONE;
 }
 
 void Maps::load(uint mapId) {

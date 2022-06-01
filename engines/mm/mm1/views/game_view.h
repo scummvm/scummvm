@@ -31,7 +31,7 @@ namespace Views {
 class GameView : public TextView {
 	enum ViewState { VIEW_NORMAL, VIEW_DARKNESS };
 private:
-	int _mapOffset1 = 0, _mapOffset2 = 0;
+	int _mapOffset = 0;
 	ViewState _state = VIEW_NORMAL;
 	int _val1 = 0, _val2 = 0, _val3 = 0;
 	int _val4 = 0, _val5 = 0, _val6 = 0;
@@ -68,7 +68,7 @@ private:
 	 */
 	void drawTile();
 public:
-	GameView();
+	GameView(UIElement *owner);
 	virtual ~GameView() {}
 
 	void draw() override;

@@ -44,26 +44,32 @@ static byte ARR13[] = { 44, 24, 12, 4 };
 static byte ARR14[] = { 0, 0, 0, 0 };
 static byte ARR15[] = { 36, 4, 0, 0 };
 static byte ARR16[] = { 36, 14, 6, 0 };
-static uint16 ARR17[] = { 0, 0x400, 0x7C0, 0x940 };
-static uint16 ARR18[] = { 0x9C0, 0xDC0, 0x1180, 0x1300 };
-static uint16 ARR19[] = { 0x1380, 0x2400, 0x2A00, 0x2B80 };
+//static uint16 ARR17[] = { 0, 0x400, 0x7C0, 0x940 };
+//static uint16 ARR18[] = { 0x9C0, 0xDC0, 0x1180, 0x1300 };
+//static uint16 ARR19[] = { 0x1380, 0x2400, 0x2A00, 0x2B80 };
+static uint16 ARR17[] = { 0, 1, 2, 3 };
+static uint16 ARR18[] = { 4, 5, 6, 7 };
+static uint16 ARR19[] = { 8, 9, 10, 11 };
 
-GameView::GameView() : TextView("View") {
+GameView::GameView(UIElement *owner) : TextView("View", owner) {
 	Common::fill(&_arr1[0], &_arr1[11], 0);
 }
 
 void GameView::draw() {
+	update(); // TODO: not calling here
+
 	Maps::Maps &maps = g_globals->_maps;
 	Maps::Map &map = *maps._currentMap;
+	int mapOffset = _mapOffset;
 
 	byte arr1[7];
 	Common::fill(&arr1[0], &arr1[7], 0);
 
 	for (int dist = 0; dist < 4; ++dist,
-			_mapOffset2 += maps._forwardOffset) {
-		byte walls = *((const byte *)&map._walls[_mapOffset2]);
-		byte wallsLeft = *((const byte *)&map._walls[_mapOffset2 + maps._leftOffset]);
-		byte wallsRight = *((const byte *)&map._walls[_mapOffset2 + maps._rightOffset]);
+			mapOffset += maps._forwardOffset) {
+		byte walls = map._walls[mapOffset];
+		byte wallsLeft = map._walls[mapOffset + maps._leftOffset];
+		byte wallsRight = map._walls[mapOffset + maps._rightOffset];
 
 		_mask = walls & maps._leftMask;
 		if (_mask) {
@@ -136,7 +142,8 @@ void GameView::draw() {
 			}
 		}
 
-		if (walls & maps._forwardMask) {
+		_mask = walls & maps._forwardMask;
+		if (_mask) {
 			// Drawing forward blocked by wall
 			_val1 = ARR19[dist];
 			_val2 = ARR6[dist];
@@ -147,21 +154,48 @@ void GameView::draw() {
 			drawTile();
 			break;
 		}
+//		break; // ****DEBUG*****
 	}
 }
 
 void GameView::drawTile() {
+	Maps::Maps &maps = g_globals->_maps;
 
+	// Determine graphics section to use
+	int section = 0;
+	if ((_mask & 0x55) != _mask) {
+		++section;
+		if ((_mask & 0xaa) != _mask)
+			++section;
+	}
+
+	// val1 = src ptr (index in ScummVM)
+	// val6 = src left
+	// val2 = src w
+	// val5 = src h
+	// val3 = src pitch 
+	// val4 = dest l?
+
+	Graphics::Screen &scr = *getScreen();
+	const Common::Array<Graphics::ManagedSurface> &tiles =
+		maps._tiles[section];
+	const Graphics::ManagedSurface &tile = tiles[_val1];
+//warning("%x x %x", tile.w, tile.h);
+//warning("%x 0 w: %x, h: %x", _val6, _val2, _val5);
+
+	Common::Point pos(_val4 * 4, (8 - _val5) * 8);
+	Common::Rect r(_val6 * 4, 0, _val6 * 4 + _val2 * 8, tile.h);
+
+	scr.blitFrom(tile, r, pos);
 }
 
 void GameView::update() {
 	Maps::Maps &maps = g_globals->_maps;
 	Maps::Map &map = *maps._currentMap;
 
-	_mapOffset1 = _mapOffset2 = maps._mapPos.y * MAP_W +
-		maps._mapPos.x;
-	maps._currentWalls = map._walls[_mapOffset1];
-	maps._currentState = map._states[_mapOffset1];
+	_mapOffset = maps._mapPos.y * MAP_W + maps._mapPos.x;
+	maps._currentWalls = map._walls[_mapOffset];
+	maps._currentState = map._states[_mapOffset];
 
 	if (maps._currentState & Maps::CELL_DARK) {
 		if (g_globals->_spells._s.light) {
