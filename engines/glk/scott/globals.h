@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_GLOBALS
-#define GLK_SCOTT_GLOBALS
+#ifndef GLK_SCOTT_GLOBALS_H
+#define GLK_SCOTT_GLOBALS_H
 
 #include "glk/glk_types.h"
 #include "glk/windows.h"

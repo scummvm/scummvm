@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_TYPES
-#define GLK_SCOTT_TYPES
+#ifndef GLK_SCOTT_TYPES_H
+#define GLK_SCOTT_TYPES_H
 
 #include "common/scummsys.h"
 

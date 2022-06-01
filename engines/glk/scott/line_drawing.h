@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_LINEDRAWING
-#define GLK_SCOTT_LINEDRAWING
+#ifndef GLK_SCOTT_LINEDRAWING_H
+#define GLK_SCOTT_LINEDRAWING_H
 
 #include "glk/scott/types.h"
 

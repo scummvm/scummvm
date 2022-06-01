@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_PARSER
-#define GLK_SCOTT_PARSER
+#ifndef GLK_SCOTT_PARSER_H
+#define GLK_SCOTT_PARSER_H
 
 #include "common/str-array.h"
 #include "glk/glk_types.h"

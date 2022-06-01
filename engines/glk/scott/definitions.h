@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_DEFINITIONS
-#define GLK_SCOTT_DEFINITIONS
+#ifndef GLK_SCOTT_DEFINITIONS_H
+#define GLK_SCOTT_DEFINITIONS_H
 
 #include "common/str.h"
 

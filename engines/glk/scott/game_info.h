@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_GAMEINFO
-#define GLK_SCOTT_GAMEINFO
+#ifndef GLK_SCOTT_GAMEINFO_H
+#define GLK_SCOTT_GAMEINFO_H
 
 #include "glk/scott/definitions.h"
 #include "common/array.h"

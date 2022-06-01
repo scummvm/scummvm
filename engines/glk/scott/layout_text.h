@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_LAYOUTTEXT
-#define GLK_SCOTT_LAYOUTTEXT
+#ifndef GLK_SCOTT_LAYOUTTEXT_H
+#define GLK_SCOTT_LAYOUTTEXT_H
 
 namespace Glk {
 namespace Scott {

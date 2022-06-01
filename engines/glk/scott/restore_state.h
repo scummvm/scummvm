@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_RESTORESTATE
-#define GLK_SCOTT_RESTORESTATE
+#ifndef GLK_SCOTT_RESTORESTATE_H
+#define GLK_SCOTT_RESTORESTATE_H
 
 #include "glk/scott/types.h"
 

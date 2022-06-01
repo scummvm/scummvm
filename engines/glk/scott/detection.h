@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_DETECTION
-#define GLK_SCOTT_DETECTION
+#ifndef GLK_SCOTT_DETECTION_H
+#define GLK_SCOTT_DETECTION_H
 
 #include "common/fs.h"
 #include "common/hash-str.h"

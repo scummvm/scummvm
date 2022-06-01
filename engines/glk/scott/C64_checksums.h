@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_C64CHECKSUMS
-#define GLK_SCOTT_C64CHECKSUMS
+#ifndef GLK_SCOTT_C64CHECKSUMS_H
+#define GLK_SCOTT_C64CHECKSUMS_H
 
 #include "glk/scott/types.h"
 
