@@ -36,6 +36,7 @@ void ViewBase::update() {
 	_mapOffset = maps._mapPos.y * MAP_W + maps._mapPos.x;
 	maps._currentWalls = map._walls[_mapOffset];
 	maps._currentState = map._states[_mapOffset];
+	_isDark = false;
 
 	if (maps._currentState & Maps::CELL_DARK) {
 		if (g_globals->_spells._s.light) {
@@ -48,8 +49,11 @@ void ViewBase::update() {
 	if ((map[46] & 1) && !g_globals->_spells._s.light) {
 darkness:
 		// TODO
-		return;
+		_isDark = true;
 	}
+
+	// Redraw the screen
+	redraw();
 }
 
 bool ViewBase::msgAction(const ActionMessage &msg) {
@@ -73,6 +77,11 @@ bool ViewBase::msgAction(const ActionMessage &msg) {
 	return true;
 }
 
+bool ViewBase::msgFocus(const FocusMessage &msg) {
+	update();
+	return false;
+}
+
 bool ViewBase::msgGame(const GameMessage &msg) {
 	/*
 	if (msg._name == "DISPLAY") {
@@ -86,18 +95,22 @@ bool ViewBase::msgGame(const GameMessage &msg) {
 
 void ViewBase::turnLeft() {
 	g_globals->_maps.turnLeft();
+	update();
 }
 
 void ViewBase::turnRight() {
 	g_globals->_maps.turnRight();
+	update();
 }
 
 void ViewBase::forward() {
 	g_globals->_maps.forward();
+	update();
 }
 
 void ViewBase::backwards() {
 	g_globals->_maps.backwards();
+	update();
 }
 
 void ViewBase::obstructed() {

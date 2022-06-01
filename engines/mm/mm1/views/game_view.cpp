@@ -26,8 +26,6 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
-// TODO: The initial graphics init for EGA divides
-// a bunch of these values by 2
 static byte ARR1[] = { 8, 6, 4, 2 };
 static byte ARR2[] = { 6, 4, 2, 1 };
 static byte ARR3[] = { 4, 5, 3, 2 };
@@ -53,14 +51,14 @@ GameView::GameView(UIElement *owner) : Game::ViewBase(owner) {
 }
 
 void GameView::draw() {
-	update(); // TODO: not calling here
-
 	Maps::Maps &maps = g_globals->_maps;
 	Maps::Map &map = *maps._currentMap;
 	int mapOffset = _mapOffset;
 
 	byte arr1[7];
 	Common::fill(&arr1[0], &arr1[7], 0);
+
+	getScreen()->fillRect(Common::Rect(0, 0, 245, 128), 0);
 
 	// Loop through four regions in front of the party
 	for (int dist = 0; dist < 4; ++dist,
@@ -72,33 +70,33 @@ void GameView::draw() {
 		// Draw left-hand side
 		_mask = walls & maps._leftMask;
 		if (_mask) {
-			_val1 = ARR17[dist];
-			_val2 = ARR3[dist];
-			_val3 = ARR12[dist];
-			_val4 = ARR7[dist];
-			_val5 = ARR1[dist];
-			_val6 = ARR14[dist];
+			_tileIndex = ARR17[dist];
+			_srcWidth = ARR3[dist];
+			_srcPitch = ARR12[dist];
+			_destLeft = ARR7[dist];
+			_destTop = ARR1[dist];
+			_srcLeft = ARR14[dist];
 			arr1[dist * 2 + 1]++;
 			drawTile();
 
 		} else {
 			_mask = wallsLeft & maps._forwardMask;
 			if (_mask) {
-				_val1 = ARR19[dist];
+				_tileIndex = ARR19[dist];
 				arr1[dist * 2 + 1]++;
 
 				if (arr1[dist * 2]) {
-					_val2 = ARR5[dist];
-					_val3 = ARR13[dist];
-					_val4 = ARR7[dist];
-					_val5 = ARR2[dist];
-					_val6 = ARR16[dist];
+					_srcWidth = ARR5[dist];
+					_srcPitch = ARR13[dist];
+					_destLeft = ARR7[dist];
+					_destTop = ARR2[dist];
+					_srcLeft = ARR16[dist];
 				} else {
-					_val2 = ARR4[dist];
-					_val3 = ARR13[dist];
-					_val4 = ARR8[dist];
-					_val5 = ARR2[dist];
-					_val6 = ARR15[dist];
+					_srcWidth = ARR4[dist];
+					_srcPitch = ARR13[dist];
+					_destLeft = ARR8[dist];
+					_destTop = ARR2[dist];
+					_srcLeft = ARR15[dist];
 				}
 
 				drawTile();
@@ -108,12 +106,12 @@ void GameView::draw() {
 		// Draw right-hand side
 		_mask = walls & maps._rightMask;
 		if (_mask) {
-			_val1 = ARR18[dist];
-			_val2 = ARR3[dist];
-			_val3 = ARR12[dist];
-			_val4 = ARR9[dist];
-			_val5 = ARR1[dist];
-			_val6 = ARR14[dist];
+			_tileIndex = ARR18[dist];
+			_srcWidth = ARR3[dist];
+			_srcPitch = ARR12[dist];
+			_destLeft = ARR9[dist];
+			_destTop = ARR1[dist];
+			_srcLeft = ARR14[dist];
 			assert(6 + dist * 2 < 11);
 			_arr1[6 + dist * 2]++;
 			drawTile();
@@ -121,21 +119,21 @@ void GameView::draw() {
 		} else {
 			_mask = wallsRight & maps._forwardMask;
 			if (_mask) {
-				_val1 = ARR19[dist];
+				_tileIndex = ARR19[dist];
 				_arr1[6 + dist]++;
 
 				if (_arr1[5 + dist]) {
-					_val2 = ARR5[dist];
-					_val3 = ARR13[dist];
-					_val4 = ARR10[dist];
-					_val5 = ARR2[dist];
-					_val6 = ARR14[dist];
+					_srcWidth = ARR5[dist];
+					_srcPitch = ARR13[dist];
+					_destLeft = ARR10[dist];
+					_destTop = ARR2[dist];
+					_srcLeft = ARR14[dist];
 				} else {
-					_val2 = ARR4[dist];
-					_val3 = ARR13[dist];
-					_val4 = ARR10[dist];
-					_val5 = ARR2[dist];
-					_val6 = ARR14[dist];
+					_srcWidth = ARR4[dist];
+					_srcPitch = ARR13[dist];
+					_destLeft = ARR10[dist];
+					_destTop = ARR2[dist];
+					_srcLeft = ARR14[dist];
 				}
 
 				drawTile();
@@ -145,12 +143,12 @@ void GameView::draw() {
 		// Handle drawing any wall directly in front
 		_mask = walls & maps._forwardMask;
 		if (_mask) {
-			_val1 = ARR19[dist];
-			_val2 = ARR6[dist];
-			_val3 = ARR13[dist];
-			_val4 = ARR11[dist];
-			_val5 = ARR2[dist];
-			_val6 = ARR14[dist];
+			_tileIndex = ARR19[dist];
+			_srcWidth = ARR6[dist];
+			_srcPitch = ARR13[dist];
+			_destLeft = ARR11[dist];
+			_destTop = ARR2[dist];
+			_srcLeft = ARR14[dist];
 			drawTile();
 			break;
 		}
@@ -171,10 +169,10 @@ void GameView::drawTile() {
 	Graphics::Screen &scr = *getScreen();
 	const Common::Array<Graphics::ManagedSurface> &tiles =
 		maps._tiles[section];
-	const Graphics::ManagedSurface &tile = tiles[_val1];
+	const Graphics::ManagedSurface &tile = tiles[_tileIndex];
 
-	Common::Point pos(_val4 * 4, (8 - _val5) * 8);
-	Common::Rect r(_val6 * 4, 0, _val6 * 4 + _val2 * 8, tile.h);
+	Common::Point pos(_destLeft * 4, (8 - _destTop) * 8);
+	Common::Rect r(_srcLeft * 4, 0, _srcLeft * 4 + _srcWidth * 8, tile.h);
 
 	scr.blitFrom(tile, r, pos);
 }

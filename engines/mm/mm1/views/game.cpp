@@ -34,7 +34,7 @@ Game::Game() : TextView("Game"),
 
 bool Game::msgFocus(const FocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_NORMAL);
-	return true;
+	return TextView::msgFocus(msg);
 }
 
 bool Game::msgUnfocus(const UnfocusMessage &msg) {
@@ -43,9 +43,8 @@ bool Game::msgUnfocus(const UnfocusMessage &msg) {
 }
 
 void Game::draw() {
-	// Clear the screen, and then call superclass
-	// to render the subviews within the view
-	clearScreen();
+	if (_needsRedraw)
+		clearScreen();
 	UIElement::draw();
 }
 
