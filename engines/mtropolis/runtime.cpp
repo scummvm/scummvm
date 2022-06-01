@@ -5120,6 +5120,7 @@ void Runtime::checkCollisions() {
 								isParent = true;
 								break;
 							}
+							parentSearch = parentSearch->getParent();
 						}
 
 						if (isParent)
