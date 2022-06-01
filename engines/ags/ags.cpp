@@ -47,6 +47,7 @@
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/game/savegame.h"
+#include "ags/engine/game/savegame_components.h"
 #include "ags/engine/main/config.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/main/main.h"
@@ -77,6 +78,7 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 	g_vm = this;
 
 	AGS3::script_commands_init();
+	AGS3::Engine::SavegameComponents::component_handlers_init();
 	_events = new EventsManager();
 	_globals = new ::AGS3::Globals();
 
@@ -101,6 +103,7 @@ AGSEngine::~AGSEngine() {
 	delete _events;
 	delete _music;
 	delete _globals;
+	AGS3::Engine::SavegameComponents::component_handlers_free();
 	AGS3::script_commands_free();
 }
 
