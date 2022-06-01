@@ -3160,6 +3160,20 @@ void ScummEngine_v5::decodeParseString() {
 					// speech line is missing its color parameter.
 					_string[textSlot].color = 0x0A;
 					printString(textSlot, _scriptPointer);
+				} else if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns && _roomResource == 80 &&
+						vm.slot[_currentScript].number == 201 && _enableEnhancements) {
+					// WORKAROUND: When Indy and his father escape the zeppelin
+					// with the biplane in the FM-TOWNS version, they share the
+					// same text color. Indeed, they're not given any explicit
+					// color, but for some reason this is only a problem on the
+					// FM-TOWNS. In order to determine who's who, we look for a
+					// `\xFF\x03` wait instruction or the `Junior` word, since
+					// only Henry Sr. uses them in this script.
+					if (strstr((const char *)_scriptPointer, "\xFF\x03") || strstr((const char *)_scriptPointer, "Junior"))
+						_string[textSlot].color = 0x0A;
+					else
+						_string[textSlot].color = 0x0E;
+					printString(textSlot, _scriptPointer);
 				} else if (_game.id == GID_INDY4 && _roomResource == 23 && vm.slot[_currentScript].number == 167 &&
 						len == 24 && 0==memcmp(_scriptPointer+16, "pregod", 6)) {
 					// WORKAROUND for bug #2961.
