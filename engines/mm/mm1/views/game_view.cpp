@@ -44,14 +44,11 @@ static byte ARR13[] = { 44, 24, 12, 4 };
 static byte ARR14[] = { 0, 0, 0, 0 };
 static byte ARR15[] = { 36, 4, 0, 0 };
 static byte ARR16[] = { 36, 14, 6, 0 };
-//static uint16 ARR17[] = { 0, 0x400, 0x7C0, 0x940 };
-//static uint16 ARR18[] = { 0x9C0, 0xDC0, 0x1180, 0x1300 };
-//static uint16 ARR19[] = { 0x1380, 0x2400, 0x2A00, 0x2B80 };
 static uint16 ARR17[] = { 0, 1, 2, 3 };
 static uint16 ARR18[] = { 4, 5, 6, 7 };
 static uint16 ARR19[] = { 8, 9, 10, 11 };
 
-GameView::GameView(UIElement *owner) : TextView("View", owner) {
+GameView::GameView(UIElement *owner) : Game::ViewBase(owner) {
 	Common::fill(&_arr1[0], &_arr1[11], 0);
 }
 
@@ -65,12 +62,14 @@ void GameView::draw() {
 	byte arr1[7];
 	Common::fill(&arr1[0], &arr1[7], 0);
 
+	// Loop through four regions in front of the party
 	for (int dist = 0; dist < 4; ++dist,
 			mapOffset += maps._forwardOffset) {
 		byte walls = map._walls[mapOffset];
 		byte wallsLeft = map._walls[mapOffset + maps._leftOffset];
 		byte wallsRight = map._walls[mapOffset + maps._rightOffset];
 
+		// Draw left-hand side
 		_mask = walls & maps._leftMask;
 		if (_mask) {
 			_val1 = ARR17[dist];
@@ -106,6 +105,7 @@ void GameView::draw() {
 			}
 		}
 
+		// Draw right-hand side
 		_mask = walls & maps._rightMask;
 		if (_mask) {
 			_val1 = ARR18[dist];
@@ -142,9 +142,9 @@ void GameView::draw() {
 			}
 		}
 
+		// Handle drawing any wall directly in front
 		_mask = walls & maps._forwardMask;
 		if (_mask) {
-			// Drawing forward blocked by wall
 			_val1 = ARR19[dist];
 			_val2 = ARR6[dist];
 			_val3 = ARR13[dist];
@@ -154,7 +154,6 @@ void GameView::draw() {
 			drawTile();
 			break;
 		}
-//		break; // ****DEBUG*****
 	}
 }
 
@@ -169,99 +168,15 @@ void GameView::drawTile() {
 			++section;
 	}
 
-	// val1 = src ptr (index in ScummVM)
-	// val6 = src left
-	// val2 = src w
-	// val5 = src h
-	// val3 = src pitch 
-	// val4 = dest l?
-
 	Graphics::Screen &scr = *getScreen();
 	const Common::Array<Graphics::ManagedSurface> &tiles =
 		maps._tiles[section];
 	const Graphics::ManagedSurface &tile = tiles[_val1];
-//warning("%x x %x", tile.w, tile.h);
-//warning("%x 0 w: %x, h: %x", _val6, _val2, _val5);
 
 	Common::Point pos(_val4 * 4, (8 - _val5) * 8);
 	Common::Rect r(_val6 * 4, 0, _val6 * 4 + _val2 * 8, tile.h);
 
 	scr.blitFrom(tile, r, pos);
-}
-
-void GameView::update() {
-	Maps::Maps &maps = g_globals->_maps;
-	Maps::Map &map = *maps._currentMap;
-
-	_mapOffset = maps._mapPos.y * MAP_W + maps._mapPos.x;
-	maps._currentWalls = map._walls[_mapOffset];
-	maps._currentState = map._states[_mapOffset];
-
-	if (maps._currentState & Maps::CELL_DARK) {
-		if (g_globals->_spells._s.light) {
-			g_globals->_spells._s.light--;
-		} else {
-			goto darkness;
-		}
-	}
-
-	if ((map[46] & 1) && !g_globals->_spells._s.light) {
-darkness:
-		// TODO
-		return;
-	}
-}
-
-bool GameView::msgAction(const ActionMessage &msg) {
-	switch (msg._action) {
-	case KEYBIND_FORWARDS:
-		forward();
-		break;
-	case KEYBIND_BACKWARDS:
-		backwards();
-		break;
-	case KEYBIND_TURN_LEFT:
-		turnLeft();
-		break;
-	case KEYBIND_TURN_RIGHT:
-		turnRight();
-		break;
-	default:
-		return TextView::msgAction(msg);
-	}
-
-	return true;
-}
-
-bool GameView::msgGame(const GameMessage &msg) {
-	/*
-	if (msg._name == "DISPLAY") {
-		replaceView(this);
-		return true;
-	}
-	*/
-
-	return TextView::msgGame(msg);
-}
-
-void GameView::turnLeft() {
-	g_globals->_maps.turnLeft();
-}
-
-void GameView::turnRight() {
-	g_globals->_maps.turnRight();
-}
-
-void GameView::forward() {
-	g_globals->_maps.forward();
-}
-
-void GameView::backwards() {
-	g_globals->_maps.backwards();
-}
-
-void GameView::obstructed() {
-	// TODO
 }
 
 } // namespace Views
