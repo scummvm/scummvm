@@ -96,7 +96,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Refactored code to allow rendering using the original 256 color palette.
    - Fixed endianess issues.
    - Added support for the Korean release.
-   - Added support for the Korean release.
 
  Supernova:
    - Added text to speech for dialogs and object descriptions.
