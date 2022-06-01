@@ -195,7 +195,7 @@ bool Scene::loadSceneLBA2() {
 
 		act->loadModel((int16)stream.readUint16LE(), false);
 
-		act->_body = (BodyType)stream.readSint16LE();
+		act->_genBody = (BodyType)stream.readSint16LE();
 		act->_anim = (AnimationTypes)stream.readByte();
 		act->_sprite = (int16)stream.readUint16LE();
 		act->_pos.x = (int16)stream.readUint16LE();
@@ -326,7 +326,7 @@ bool Scene::loadSceneLBA1() {
 
 		act->loadModel(stream.readUint16LE(), true);
 
-		act->_body = (BodyType)stream.readByte();
+		act->_genBody = (BodyType)stream.readByte();
 		act->_anim = (AnimationTypes)stream.readByte();
 		act->_sprite = (int16)stream.readUint16LE();
 		act->_pos.x = (int16)stream.readUint16LE();

@@ -118,10 +118,10 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 		break;
 	};
 
-	const BodyType bodyIdx = sceneHero->_body;
+	const BodyType bodyIdx = sceneHero->_genBody;
 
 	sceneHero->_entity = -1;
-	sceneHero->_body = BodyType::btNone;
+	sceneHero->_genBody = BodyType::btNone;
 
 	initModelActor(bodyIdx, OWN_ACTOR_SCENE_INDEX);
 
@@ -178,7 +178,7 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	ActorBoundingBox actorBoundingBox;
 	const int32 newBody = initBody(bodyIdx, actorIdx, actorBoundingBox);
 	if (newBody == -1) {
-		localActor->_body = BodyType::btNone;
+		localActor->_genBody = BodyType::btNone;
 		localActor->_entity = -1;
 		localActor->_boundingBox = BoundingBox();
 		debug("Failed to initialize body %i for actor %i", (int)bodyIdx, actorIdx);
@@ -190,7 +190,7 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	}
 
 	localActor->_entity = newBody;
-	localActor->_body = bodyIdx;
+	localActor->_genBody = bodyIdx;
 
 	if (actorBoundingBox.hasBoundingBox) {
 		localActor->_boundingBox = actorBoundingBox.bbox;
@@ -239,8 +239,8 @@ void Actor::initActor(int16 actorIdx) {
 	} else {
 		actor->_entity = -1;
 
-		debug(1, "Init actor %i with model %i", actorIdx, (int)actor->_body);
-		initModelActor(actor->_body, actorIdx);
+		debug(1, "Init actor %i with model %i", actorIdx, (int)actor->_genBody);
+		initModelActor(actor->_genBody, actorIdx);
 
 		actor->_previousAnimIdx = -1;
 		actor->_animType = AnimType::kAnimationTypeLoop;
@@ -261,7 +261,7 @@ void Actor::resetActor(int16 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	actor->_actorIdx = actorIdx;
-	actor->_body = BodyType::btNormal;
+	actor->_genBody = BodyType::btNormal;
 	actor->_anim = AnimationTypes::kStanding;
 	actor->_pos = IVec3(0, -1, 0);
 	actor->_spriteActorRotation = 0;

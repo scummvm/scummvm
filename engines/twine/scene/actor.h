@@ -168,7 +168,7 @@ public:
 	const IVec3 &pos() const;
 
 	int32 _entity = 0; // costumeIndex - index into bodyTable
-	BodyType _body = BodyType::btNormal;
+	BodyType _genBody = BodyType::btNormal;
 	AnimationTypes _anim = AnimationTypes::kAnimNone;
 	AnimationTypes _animExtra = AnimationTypes::kStanding;
 	AnimationTypes _animExtraPtr = AnimationTypes::kAnimNone;

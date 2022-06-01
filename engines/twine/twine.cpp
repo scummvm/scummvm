@@ -674,7 +674,7 @@ void TwinEEngine::processInventoryAction() {
 		_gameState->_usingSabre = false;
 		break;
 	case kiUseSabre:
-		if (_scene->_sceneHero->_body != BodyType::btSabre) {
+		if (_scene->_sceneHero->_genBody != BodyType::btSabre) {
 			if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
 				_actor->setBehaviour(HeroBehaviourType::kNormal);
 			}
@@ -690,9 +690,9 @@ void TwinEEngine::processInventoryAction() {
 	}
 	case kiProtoPack:
 		if (_gameState->hasItem(InventoryItems::kiBookOfBu)) {
-			_scene->_sceneHero->_body = BodyType::btNormal;
+			_scene->_sceneHero->_genBody = BodyType::btNormal;
 		} else {
-			_scene->_sceneHero->_body = BodyType::btTunic;
+			_scene->_sceneHero->_genBody = BodyType::btTunic;
 		}
 
 		if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {
@@ -714,7 +714,7 @@ void TwinEEngine::processInventoryAction() {
 
 		if (!_collision->checkCollisionWithActors(_scene->_mecaPenguinIdx)) {
 			penguin->setLife(kActorMaxLife);
-			penguin->_body = BodyType::btNone;
+			penguin->_genBody = BodyType::btNone;
 			_actor->initModelActor(BodyType::btNormal, _scene->_mecaPenguinIdx);
 			penguin->_dynamicFlags.bIsDead = 0;
 			penguin->setBrickShape(ShapeType::kNone);
@@ -850,9 +850,9 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		// use Proto-Pack
 		if (_input->toggleActionIfActive(TwinEActionType::UseProtoPack) && _gameState->hasItem(InventoryItems::kiProtoPack)) {
 			if (_gameState->hasItem(InventoryItems::kiBookOfBu)) {
-				_scene->_sceneHero->_body = BodyType::btNormal;
+				_scene->_sceneHero->_genBody = BodyType::btNormal;
 			} else {
-				_scene->_sceneHero->_body = BodyType::btTunic;
+				_scene->_sceneHero->_genBody = BodyType::btTunic;
 			}
 
 			if (_actor->_heroBehaviour == HeroBehaviourType::kProtoPack) {

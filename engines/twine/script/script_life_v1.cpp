@@ -189,12 +189,12 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 	}
 	case kcBODY:
 		debugCN(3, kDebugLevels::kDebugScripts, "body(");
-		engine->_scene->_currentScriptValue = (int16)ctx.actor->_body;
+		engine->_scene->_currentScriptValue = (int16)ctx.actor->_genBody;
 		break;
 	case kcBODY_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScripts, "body_obj(%i, ", actorIdx);
-		engine->_scene->_currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->_body;
+		engine->_scene->_currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->_genBody;
 		break;
 	}
 	case kcANIM:
