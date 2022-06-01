@@ -1371,7 +1371,7 @@ uint8 *EfhEngine::script_readNumberArray(uint8 *srcBuffer, int16 destArraySize, 
 	debug("script_readNumberArray");
 	
 	uint8 *buffer = srcBuffer;
-
+	buffer++;
 	for (int16 i = 0; i < destArraySize; ++i) {
 		buffer = script_getNumber(buffer, &destArray[i]);
 	}
@@ -1391,6 +1391,7 @@ uint8 *EfhEngine::script_getNumber(uint8 *srcBuffer, int16 *retval) {
 			return buffer;
 		}
 		var2 = var2 * 10 + curChar - 0x30;
+		buffer++;
 	}
 }
 
@@ -1682,7 +1683,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 		int16 var_108 = 0;
 		buffer = script_getNumber(buffer, &var_108);
 		int16 scriptNumberArray[10];
-		memset(scriptNumberArray, 0, ARRAYSIZE(scriptNumberArray));
+		memset(scriptNumberArray, 0, sizeof(scriptNumberArray));
 
 		switch (var_108) {
 		case 0x00:
@@ -1813,7 +1814,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 		case 0x0C:
 			buffer = script_readNumberArray(buffer, 2, scriptNumberArray);
 			if (flag) {
-				int16 var110 = _teamCharId[scriptNumberArray[0]];
+				int16 var110 = scriptNumberArray[0];
 				bool found = false;
 				for (int16 counter = 0; counter < _teamSize && !found; ++counter) {
 					for (int16 objectId = 0; objectId < 10; ++objectId) {
@@ -1829,7 +1830,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 		case 0x0D:
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (flag) {
-				int16 var110 = _teamCharId[scriptNumberArray[0]];
+				int16 var110 = scriptNumberArray[0];
 				for (int16 counter = 0; counter < _teamSize; ++counter) {
 					if (giveItemTo(_teamCharId[counter], var110, 0xFF))
 						break;
@@ -2156,7 +2157,7 @@ void EfhEngine::sub2455E(int16 arg0, int16 arg2, int16 arg4) {
 }
 
 int16 EfhEngine::sub1C219(uint8 *str, int16 menuType, int16 arg4, bool displayTeamWindowFl) {
-	debug("sub1C219 %s %c %c %s", (char *)str, menuType, arg4, displayTeamWindowFl ? "True" : "False");
+	debug("sub1C219 %s %d %d %s", (char *)str, menuType, arg4, displayTeamWindowFl ? "True" : "False");
 
 	int16 varA = 0xFF;
 	int16 minX, maxX, minY, maxY;
