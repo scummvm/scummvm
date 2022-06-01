@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_DETECTGAME
-#define GLK_SCOTT_DETECTGAME
+#ifndef GLK_SCOTT_DETECTGAME_H
+#define GLK_SCOTT_DETECTGAME_H
 
 #include "common/stream.h"
 #include "glk/scott/definitions.h"

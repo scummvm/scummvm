@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_GAMESPECIFIC
-#define GLK_SCOTT_GAMESPECIFIC
+#ifndef GLK_SCOTT_GAMESPECIFIC_H
+#define GLK_SCOTT_GAMESPECIFIC_H
 
 namespace Glk {
 namespace Scott {

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_DECOMPRESSTEXT
-#define GLK_SCOTT_DECOMPRESSTEXT
+#ifndef GLK_SCOTT_DECOMPRESSTEXT_H
+#define GLK_SCOTT_DECOMPRESSTEXT_H
 
 #include "glk/scott/types.h"
 

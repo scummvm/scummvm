@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_SAGADRAW
-#define GLK_SCOTT_SAGADRAW
+#ifndef GLK_SCOTT_SAGADRAW_H
+#define GLK_SCOTT_SAGADRAW_H
 
 #include "glk/glk_types.h"
 #include "glk/scott/types.h"

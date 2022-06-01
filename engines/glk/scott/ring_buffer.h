@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_RINGBUFFER
-#define GLK_SCOTT_RINGBUFFER
+#ifndef GLK_SCOTT_RINGBUFFER_H
+#define GLK_SCOTT_RINGBUFFER_H
 
 #include "glk/scott/types.h"
 

@@ -21,8 +21,8 @@
 
 /* Based on ScottFree interpreter version 1.14 */
 
-#ifndef GLK_SCOTT
-#define GLK_SCOTT
+#ifndef GLK_SCOTT_H
+#define GLK_SCOTT_H
 
 /*
  *  Controlling block

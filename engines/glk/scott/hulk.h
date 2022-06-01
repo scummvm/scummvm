@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLK_SCOTT_HULK
-#define GLK_SCOTT_HULK
+#ifndef GLK_SCOTT_HULK_H
+#define GLK_SCOTT_HULK_H
 
 struct GameInfo;
 
