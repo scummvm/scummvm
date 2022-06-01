@@ -204,10 +204,15 @@ void SpiderEngine::addIngredient(Code *code) {
 		ingredients[6] = true;
 	}
 	resetSceneState();
+	_defaultCursorIdx = 0;
+	defaultCursor();
 	_nextLevel = "bushard2.mi_";
 }
 
 void SpiderEngine::checkMixture(Code *code) {
+	_defaultCursorIdx = 0;
+	defaultCursor();
+
 	_nextLevel = "bushard2.mi_";
 	if (ingredients[0]) {
 		MVideo video("cine/blcs005s.smk", Common::Point(0, 0), false, true, false);

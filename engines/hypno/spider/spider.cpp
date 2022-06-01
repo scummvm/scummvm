@@ -337,6 +337,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[3].actions.push_back(cl);
 
 	gl = new Global("", "CLEAR");
+	SwapPointer *swpt = new SwapPointer(20);
+	sc->hots[4].actions.push_back(swpt);
 	sc->hots[4].actions.push_back(snd);
 	sc->hots[4].actions.push_back(gl);
 
@@ -348,6 +350,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[5].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH2", "TURNON"); // spot remover
+	swpt = new SwapPointer(21);
+	sc->hots[5].actions.push_back(swpt);
 	sc->hots[5].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
@@ -355,6 +359,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[6].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH3", "TURNON"); // rubbing alcohol
+	swpt = new SwapPointer(22);
+	sc->hots[6].actions.push_back(swpt);
 	sc->hots[6].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
@@ -362,6 +368,8 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[7].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH4", "TURNON"); // turpentine
+	swpt = new SwapPointer(23);
+	sc->hots[7].actions.push_back(swpt);
 	sc->hots[7].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
@@ -369,13 +377,18 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[8].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH5", "TURNON"); // spray paint
+	swpt = new SwapPointer(24);
+	sc->hots[8].actions.push_back(swpt);
+	sc->hots[8].actions.push_back(swpt);
 	sc->hots[8].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	swpt = new SwapPointer(26);
+	sc->hots[9].actions.push_back(swpt);
 	sc->hots[9].actions.push_back(snd);
 	sc->hots[9].actions.push_back(gl);
 
-	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	gl = new Global("GS_SWITCH0", "TURNON"); // glass cleaner
 	sc->hots[9].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
@@ -383,13 +396,17 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[10].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	swpt = new SwapPointer(18);
+	sc->hots[10].actions.push_back(swpt);
 	sc->hots[10].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
 	sc->hots[11].actions.push_back(snd);
 	sc->hots[11].actions.push_back(gl);
 
-	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	gl = new Global("GS_SWITCH0", "TURNON"); // cleanser
+	swpt = new SwapPointer(28);
+	sc->hots[11].actions.push_back(swpt);
 	sc->hots[11].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
@@ -397,9 +414,13 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[12].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH6", "TURNON"); // fingernail polish
+	swpt = new SwapPointer(29);
+	sc->hots[12].actions.push_back(swpt);
 	sc->hots[12].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	swpt = new SwapPointer(30);
+	sc->hots[13].actions.push_back(swpt);
 	sc->hots[13].actions.push_back(snd);
 	sc->hots[13].actions.push_back(gl);
 
@@ -407,10 +428,12 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc->hots[13].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	swpt = new SwapPointer(31);
+	sc->hots[14].actions.push_back(swpt);
 	sc->hots[14].actions.push_back(snd);
 	sc->hots[14].actions.push_back(gl);
 
-	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	gl = new Global("GS_SWITCH0", "TURNON"); // aspirine
 	sc->hots[14].actions.push_back(gl);
 
 	loadSceneLevel("buspuz.mi_", "<after_bus_easy>", prefix);
@@ -501,7 +524,7 @@ void SpiderEngine::loadAssetsFullGame() {
 	sc = (Scene *) _levels["boilhard.mi_"];
 	Hotspots *hots = sc->hots[1].smenu;
 
-	SwapPointer *swpt = (SwapPointer *) (*hots)[1].actions[4];
+	swpt = (SwapPointer *) (*hots)[1].actions[4];
 	swpt->index--;
 
 	swpt = (SwapPointer *) (*hots)[2].actions[4];
