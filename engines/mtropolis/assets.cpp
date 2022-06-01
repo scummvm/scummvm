@@ -739,7 +739,7 @@ const Common::SharedPtr<Graphics::Surface> &CachedImage::optimize(Runtime *runti
 
 		const byte *palette = nullptr;
 
-		if (_colorDepth == kColorDepthMode16Bit)
+		if (_colorDepth == kColorDepthMode16Bit || _colorDepth == kColorDepthMode32Bit)
 			palette = bwPalette;
 
 		_surface->convertToInPlace(renderFmt, palette);
