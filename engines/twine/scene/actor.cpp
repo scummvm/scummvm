@@ -197,26 +197,24 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 		const BodyData &bd = _engine->_resources->_bodyData[localActor->_entity];
 		localActor->_boudingBox = bd.bbox;
 
-		int32 result = 0;
+		int32 size = 0;
 		const int32 distX = localActor->_boudingBox.maxs.x - localActor->_boudingBox.mins.x;
 		const int32 distZ = localActor->_boudingBox.maxs.z - localActor->_boudingBox.mins.z;
 		if (localActor->_staticFlags.bUseMiniZv) {
 			// take smaller for bound
-			result = MIN(distX, distZ);
-
-			result = ABS(result);
-			result >>= 1;
+			if (distX < distZ)
+				size = distX / 2;
+			else
+				size = distZ / 2;
 		} else {
 			// take average for bound
-			result = distZ + distX;
-			result = ABS(result);
-			result >>= 2;
+			size = (distZ + distX) / 4;
 		}
 
-		localActor->_boudingBox.mins.x = -result;
-		localActor->_boudingBox.maxs.x = result;
-		localActor->_boudingBox.mins.z = -result;
-		localActor->_boudingBox.maxs.z = result;
+		localActor->_boudingBox.mins.x = -size;
+		localActor->_boudingBox.maxs.x = size;
+		localActor->_boudingBox.mins.z = -size;
+		localActor->_boudingBox.maxs.z = size;
 	}
 }
 
