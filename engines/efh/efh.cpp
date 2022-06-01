@@ -1371,8 +1371,8 @@ uint8 *EfhEngine::script_readNumberArray(uint8 *srcBuffer, int16 destArraySize, 
 	debug("script_readNumberArray");
 	
 	uint8 *buffer = srcBuffer;
-	buffer++;
 	for (int16 i = 0; i < destArraySize; ++i) {
+		buffer++;
 		buffer = script_getNumber(buffer, &destArray[i]);
 	}
 
