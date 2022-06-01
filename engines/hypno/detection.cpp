@@ -81,6 +81,16 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"sinistersix", // IT release
+		nullptr,
+		AD_ENTRY2s("DATA.Z", "8e1aa1ab39e38c4f1bf67c0b330b3991", 8740866,
+				"MISSIONS.LIB", "585704e26094cbaf14fbee90798e8d5d", 119945),
+		Common::IT_ITA,
+		Common::kPlatformDOS,
+		ADGF_TESTING,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"sinistersix", // HE release
 		nullptr,
 		AD_ENTRY2s("SPIDER.EXE", "dbd912d6f6724c6d44775fc19cfa8ca0", 483359,
