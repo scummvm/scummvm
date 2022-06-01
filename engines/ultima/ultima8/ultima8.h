@@ -29,6 +29,7 @@
 #include "ultima/ultima8/usecode/intrinsics.h"
 #include "ultima/ultima8/misc/common_types.h"
 #include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/detection.h"
 
 namespace Ultima {
@@ -378,6 +379,8 @@ public:
 	bool isInterpolationEnabled() const {
 		return _interpolate;
 	}
+public:
+	U8PixelFormat _renderFormat;
 };
 
 } // End of namespace Ultima8
