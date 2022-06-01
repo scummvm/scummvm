@@ -133,6 +133,24 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 		SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 	}
+
+	if (isLba1Classic()) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "common");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "common/fla");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "common/vox");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "common/music");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "common/midi");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/images");
+		if (_gameLang == Common::Language::DE_DEU) {
+			SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/voices/de_voice");
+		} else if (_gameLang == Common::Language::EN_ANY || _gameLang == Common::Language::EN_GRB || _gameLang == Common::Language::EN_USA) {
+			SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/voices/en_voice");
+		} else if (_gameLang == Common::Language::FR_FRA) {
+			SearchMan.addSubDirectoryMatching(gameDataDir, "commonclassic/voices/fr_voice");
+		}
+	}
+
 	if (isDotEmuEnhanced()) {
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/hqr");
 		SearchMan.addSubDirectoryMatching(gameDataDir, "resources/lba_files/fla");
