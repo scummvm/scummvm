@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-30 12:52+0000\n"
+"POT-Creation-Date: 2022-06-01 01:49+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4250,14 +4250,14 @@ msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "게임이 요청하지 않더라도 텍스트를 그리기 위해 안티앨리어싱을 사용합니다"
 
-#: engines/ags/ags.cpp:125
+#: engines/ags/ags.cpp:131
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
 msgstr ""
 "이 게임은 ScummVM에서 지원되지 않는, v2.5 이전의 AGS 엔진을 사용합니다."
 
-#: engines/ags/ags.cpp:133
+#: engines/ags/ags.cpp:139
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."

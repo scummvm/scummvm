@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-30 12:52+0000\n"
+"POT-Creation-Date: 2022-06-01 01:49+0000\n"
 "PO-Revision-Date: 2022-05-29 21:35+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4313,7 +4313,7 @@ msgstr ""
 "Muestra los textos con bordes suavizados aunque el juego no utilice este "
 "efecto"
 
-#: engines/ags/ags.cpp:125
+#: engines/ags/ags.cpp:131
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
 "supported."
@@ -4321,7 +4321,7 @@ msgstr ""
 "El juego seleccionado utiliza una versión del motor AGS anterior a la 2.5, "
 "que no es compatible."
 
-#: engines/ags/ags.cpp:133
+#: engines/ags/ags.cpp:139
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."

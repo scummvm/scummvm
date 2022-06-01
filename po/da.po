@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-05-30 12:52+0000\n"
+"POT-Creation-Date: 2022-06-01 01:49+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -4358,7 +4358,7 @@ msgstr "Antialias"
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 
-#: engines/ags/ags.cpp:125
+#: engines/ags/ags.cpp:131
 #, fuzzy
 msgid ""
 "The selected game uses a pre-2.5 version of the AGS engine, which is not "
@@ -4367,7 +4367,7 @@ msgstr ""
 "Spillet kræver understøttelse af 3D-karakterer, hvilket er udenfor ScummVMs "
 "område."
 
-#: engines/ags/ags.cpp:133
+#: engines/ags/ags.cpp:139
 msgid ""
 "The selected game has a data file greater than 2Gb, which isn't supported by "
 "your version of ScummVM yet."
