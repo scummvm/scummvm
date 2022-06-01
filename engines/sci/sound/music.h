@@ -65,7 +65,7 @@ struct MusicEntryChannel {
 	int8 _voices;
 	bool _dontRemap;
 	bool _dontMap;
-	bool _mute;
+	uint8 _mute;
 };
 
 
