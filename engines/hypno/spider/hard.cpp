@@ -735,6 +735,8 @@ void SpiderEngine::runFileCabinet(Code *code) {
 					}
 
 					_nextLevel = code->levelIfWin;
+					_defaultCursorIdx = 36;
+					defaultCursor();
 					return;
 				}
 
