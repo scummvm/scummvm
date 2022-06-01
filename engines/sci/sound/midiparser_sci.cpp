@@ -87,7 +87,6 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 
 	for (int i = 0; i < 16; i++) {
 		_channelUsed[i] = false;
-		_channelMuted[i] = false;
 		_channelVolume[i] = 127;
 
 		if (_soundVersion <= SCI_VERSION_0_LATE)
@@ -433,7 +432,6 @@ void MidiParser_SCI::sendInitCommands() {
 			sendToDriver(0xB0 | i, 0x07, 127);	// Reset volume to maximum
 			sendToDriver(0xB0 | i, 0x0A, 64);	// Reset panning to center
 			sendToDriver(0xB0 | i, 0x40, 0);	// Reset hold pedal to none
-			sendToDriver(0xB0 | i, 0x4E, 0);	// Reset velocity to none
 			sendToDriver(0xE0 | i,    0, 64);	// Reset pitch wheel to center
 		}
 	}
@@ -462,9 +460,31 @@ void MidiParser_SCI::sendFromScriptToDriver(uint32 midi) {
 
 	if (!_channelUsed[midiChannel]) {
 		// trying to send to an unused channel
-		//  this happens for cmdSendMidi at least in sq1vga right at the start, it's a script issue
+		// this happens for cmdSendMidi at least in sq1vga right at the start, it's a script issue
 		return;
 	}
+
+	if ((midi & 0xFFF0) == 0x4EB0 && _soundVersion > SCI_VERSION_1_EARLY) {
+		// This can't be sent into our trackState() method, since that method would handle
+		// the _mute setting differently than what we do here...
+		byte channel = midi & 0xf;
+		bool op = (midi >> 16) & 0x7f;
+		uint8 m = _pSnd->_chan[channel]._mute;
+
+		if (op && _pSnd->_chan[channel]._mute < 0xF0)
+			_pSnd->_chan[channel]._mute += 0x10;
+		else if (!op && _pSnd->_chan[channel]._mute >= 0x10)
+			_pSnd->_chan[channel]._mute -= 0x10;
+
+		if (_pSnd->_chan[channel]._mute != m) {
+			// CHECKME: Should we directly call remapChannels() if _mainThreadCalled?
+			_music->needsRemap();
+			debugC(2, kDebugLevelSound, "Dynamic mute change (arg = %d, mainThread = %d)", m, _mainThreadCalled);
+		}
+
+		return;
+	}
+
 	sendToDriver(midi);
 }
 
@@ -558,7 +578,7 @@ void MidiParser_SCI::trackState(uint32 b) {
 			// (It's velocity control for sci0, but we don't need state in sci0)
 			if (_soundVersion > SCI_VERSION_1_EARLY) {
 				// FIXME: mute is a level, not a bool, in some SCI versions
-				bool m = op2;
+				uint8 m = (_pSnd->_chan[channel]._mute & 0xf0) | (op2 & 1);
 				if (_pSnd->_chan[channel]._mute != m) {
 					_pSnd->_chan[channel]._mute = m;
 					// CHECKME: Should we directly call remapChannels() if _mainThreadCalled?

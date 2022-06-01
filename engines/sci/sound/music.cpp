@@ -504,6 +504,7 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				pSnd->_chan[chan.number]._dontRemap = (chan.flags & 2);
 				pSnd->_chan[chan.number]._prio = chan.prio;
 				pSnd->_chan[chan.number]._voices = chan.poly;
+				pSnd->_chan[chan.number]._mute = (chan.flags & 4) ? 1 : 0;
 
 				// CHECKME: Some SCI versions use chan.flags & 1 for this:
 				pSnd->_chan[chan.number]._dontMap = false;
