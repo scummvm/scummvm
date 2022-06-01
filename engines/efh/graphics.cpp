@@ -39,7 +39,7 @@ void EfhEngine::initPalette() {
 		170, 170, 170,
 		85, 85, 85,
 		85, 85, 255,
-		1, 1, 1,
+		1, 1, 1, // Color 0xA is for transparency
 		85, 255, 255,
 		255, 85, 85,
 		255, 85, 255,
@@ -128,8 +128,10 @@ void EfhEngine::displayBufferBmAtPos(BufferBM *bufferBM, int16 posX, int16 posY)
 	int counter = 0;
 	for (int line = 0; line < bufferBM->_height; ++line) {
 		for (int col = 0; col < bufferBM->_lineDataSize; ++col) { // _lineDataSize = _width / 2
-			destPtr[320 * line + 2 * col] = bufferBM->_dataPtr[counter] >> 4;
-			destPtr[320 * line + 2 * col + 1] = bufferBM->_dataPtr[counter] & 0xF;
+			if (bufferBM->_dataPtr[counter] >> 4 != 0xA)
+				destPtr[320 * line + 2 * col] = bufferBM->_dataPtr[counter] >> 4;
+			if ((bufferBM->_dataPtr[counter] & 0xF) != 0xA)
+				destPtr[320 * line + 2 * col + 1] = bufferBM->_dataPtr[counter] & 0xF;
 			++counter;
 		}
 	}
