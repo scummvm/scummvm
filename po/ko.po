@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-01 01:49+0000\n"
+"POT-Creation-Date: 2022-06-01 16:16+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4711,7 +4711,7 @@ msgstr "물체, 옵션 및 성경 인용문에 대해 TTS를 활성화"
 #: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
-#: engines/twine/detection.cpp:775
+#: engines/twine/detection.cpp:824
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "TTS를 사용하여 설명 읽기 (TTS를 사용할 수있는 경우)"
 
@@ -5514,7 +5514,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "게임 평가판에서는 현재 퍼즐을 이용할 수 없습니다"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
-#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:774
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:823
 msgid "TTS Narrator"
 msgstr "TTS 나레이터"
 
@@ -7681,94 +7681,94 @@ msgstr "'%s' 데이터 파일을 찾을 수 없습니다."
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr "이 버전은 ScummVM에 컴파일되어 포함되지 않은 Giflib을 필요로 합니다"
 
-#: engines/twine/detection.cpp:673
+#: engines/twine/detection.cpp:722
 msgid "Enable wall collisions"
 msgstr "벽 충돌 활성화"
 
-#: engines/twine/detection.cpp:674
+#: engines/twine/detection.cpp:723
 msgid "Enable the original wall collision damage"
 msgstr "벽 충돌시 받는 피해를 활성화합니다"
 
-#: engines/twine/detection.cpp:683
+#: engines/twine/detection.cpp:732
 msgid "Disable save menu"
 msgstr "저장 메뉴 비활성화"
 
-#: engines/twine/detection.cpp:684
+#: engines/twine/detection.cpp:733
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 "원본 게임에는 자동 저장만 존재했습니다. 이 옵션은 언제든 저장할 수 있게 해 줍"
 "니다."
 
-#: engines/twine/detection.cpp:692
+#: engines/twine/detection.cpp:741
 msgid "Enable debug mode"
 msgstr "디버그 모드 사용"
 
-#: engines/twine/detection.cpp:693
+#: engines/twine/detection.cpp:742
 msgid "Enable the debug mode"
 msgstr "디버그 모드를 활성화합니다"
 
-#: engines/twine/detection.cpp:701
+#: engines/twine/detection.cpp:750
 msgid "Enable audio CD"
 msgstr "오디오 CD 사용"
 
-#: engines/twine/detection.cpp:702
+#: engines/twine/detection.cpp:751
 msgid "Enable the original audio cd track"
 msgstr "원본 오디오 CD 트랙을 활성화합니다"
 
-#: engines/twine/detection.cpp:710
+#: engines/twine/detection.cpp:759
 msgid "Enable sound"
 msgstr "사운드 활성화"
 
-#: engines/twine/detection.cpp:711
+#: engines/twine/detection.cpp:760
 msgid "Enable the sound for the game"
 msgstr "게임의 사운드를 활성화합니다"
 
-#: engines/twine/detection.cpp:719
+#: engines/twine/detection.cpp:768
 msgid "Enable voices"
 msgstr "음성 활성화"
 
-#: engines/twine/detection.cpp:720
+#: engines/twine/detection.cpp:769
 msgid "Enable the voices for the game"
 msgstr "게임의 음성을 활성화합니다"
 
-#: engines/twine/detection.cpp:728
+#: engines/twine/detection.cpp:777
 msgid "Enable text"
 msgstr "텍스트 활성화"
 
-#: engines/twine/detection.cpp:729
+#: engines/twine/detection.cpp:778
 msgid "Enable the text for the game"
 msgstr "게임의 텍스트를 활성화합니다"
 
-#: engines/twine/detection.cpp:737
+#: engines/twine/detection.cpp:786
 msgid "Enable movies"
 msgstr "영상 활성화"
 
-#: engines/twine/detection.cpp:738
+#: engines/twine/detection.cpp:787
 msgid "Enable the cutscenes for the game"
 msgstr "게임의 컷씬을 활성화합니다"
 
-#: engines/twine/detection.cpp:746
+#: engines/twine/detection.cpp:795
 msgid "Enable mouse"
 msgstr "마우스 활성화"
 
-#: engines/twine/detection.cpp:747
+#: engines/twine/detection.cpp:796
 msgid "Enable the mouse for the UI"
 msgstr "UI에 마우스를 활성화합니다"
 
-#: engines/twine/detection.cpp:755
+#: engines/twine/detection.cpp:804
 msgid "Use the USA version"
 msgstr "USA 버전 사용"
 
-#: engines/twine/detection.cpp:756
+#: engines/twine/detection.cpp:805
 msgid "Enable the USA specific version flags"
 msgstr "USA 버전 플래그를 활성화합니다"
 
-#: engines/twine/detection.cpp:764 engines/ultima/detection.cpp:92
+#: engines/twine/detection.cpp:813 engines/ultima/detection.cpp:92
 msgid "Enable high resolution"
 msgstr "고해상도 사용"
 
-#: engines/twine/detection.cpp:765 engines/ultima/detection.cpp:93
+#: engines/twine/detection.cpp:814 engines/ultima/detection.cpp:93
 msgid "Enable a higher resolution for the game"
 msgstr "게임의 고해상도 지원을 활성화합니다"
 

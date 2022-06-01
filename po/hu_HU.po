@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-01 01:49+0000\n"
+"POT-Creation-Date: 2022-06-01 16:16+0000\n"
 "PO-Revision-Date: 2022-05-30 09:27+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4744,7 +4744,7 @@ msgstr ""
 #: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
-#: engines/twine/detection.cpp:775
+#: engines/twine/detection.cpp:824
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Használja a TTS-t a leírás olvasásához (ha a TTS elérhetõ)"
 
@@ -5555,7 +5555,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Ez a puzzle nem érhetõ el a játék próbaverziójában"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
-#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:774
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:823
 msgid "TTS Narrator"
 msgstr "TTS Narrátor"
 
@@ -7754,94 +7754,94 @@ msgstr "Nem található a '%s' adatfájl."
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr "Ehhez a verzióhoz Giflib szükséges, ami nincs befordítva a ScummVM-be"
 
-#: engines/twine/detection.cpp:673
+#: engines/twine/detection.cpp:722
 msgid "Enable wall collisions"
 msgstr "Fali ütközések engedélyezése"
 
-#: engines/twine/detection.cpp:674
+#: engines/twine/detection.cpp:723
 msgid "Enable the original wall collision damage"
 msgstr "Engedélyezi az eredeti falütközési sérülést"
 
-#: engines/twine/detection.cpp:683
+#: engines/twine/detection.cpp:732
 msgid "Disable save menu"
 msgstr "Mentés menü letiltás"
 
-#: engines/twine/detection.cpp:684
+#: engines/twine/detection.cpp:733
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 "Az eredetiben csak automatikus mentés van. Ez lehetővé teszi, hogy mentsen "
 "amikor akar."
 
-#: engines/twine/detection.cpp:692
+#: engines/twine/detection.cpp:741
 msgid "Enable debug mode"
 msgstr "Debug mód engedélyezve"
 
-#: engines/twine/detection.cpp:693
+#: engines/twine/detection.cpp:742
 msgid "Enable the debug mode"
 msgstr "Debug mód engedélyezve"
 
-#: engines/twine/detection.cpp:701
+#: engines/twine/detection.cpp:750
 msgid "Enable audio CD"
 msgstr "Audio CD engedélyezve"
 
-#: engines/twine/detection.cpp:702
+#: engines/twine/detection.cpp:751
 msgid "Enable the original audio cd track"
 msgstr "Engedélyezi az eredeti audio CD-sávot"
 
-#: engines/twine/detection.cpp:710
+#: engines/twine/detection.cpp:759
 msgid "Enable sound"
 msgstr "Hang engedélyezve"
 
-#: engines/twine/detection.cpp:711
+#: engines/twine/detection.cpp:760
 msgid "Enable the sound for the game"
 msgstr "Engedélyezi a játék hangját"
 
-#: engines/twine/detection.cpp:719
+#: engines/twine/detection.cpp:768
 msgid "Enable voices"
 msgstr "Hangok engedélyezése"
 
-#: engines/twine/detection.cpp:720
+#: engines/twine/detection.cpp:769
 msgid "Enable the voices for the game"
 msgstr "Engedélyezi a játék hangjait"
 
-#: engines/twine/detection.cpp:728
+#: engines/twine/detection.cpp:777
 msgid "Enable text"
 msgstr "Szöveg engedélyezése"
 
-#: engines/twine/detection.cpp:729
+#: engines/twine/detection.cpp:778
 msgid "Enable the text for the game"
 msgstr "Engedélyezi a játék feliratait"
 
-#: engines/twine/detection.cpp:737
+#: engines/twine/detection.cpp:786
 msgid "Enable movies"
 msgstr "Filmek engedélyezve"
 
-#: engines/twine/detection.cpp:738
+#: engines/twine/detection.cpp:787
 msgid "Enable the cutscenes for the game"
 msgstr "Engedélyezi a játék átvezető jeleneteit"
 
-#: engines/twine/detection.cpp:746
+#: engines/twine/detection.cpp:795
 msgid "Enable mouse"
 msgstr "Egér engedélyezve"
 
-#: engines/twine/detection.cpp:747
+#: engines/twine/detection.cpp:796
 msgid "Enable the mouse for the UI"
 msgstr "Engedélyezi az egeret az UI számára"
 
-#: engines/twine/detection.cpp:755
+#: engines/twine/detection.cpp:804
 msgid "Use the USA version"
 msgstr "USA verzió használata"
 
-#: engines/twine/detection.cpp:756
+#: engines/twine/detection.cpp:805
 msgid "Enable the USA specific version flags"
 msgstr "Engedélyezi az USA-specifikus verziójelzőket"
 
-#: engines/twine/detection.cpp:764 engines/ultima/detection.cpp:92
+#: engines/twine/detection.cpp:813 engines/ultima/detection.cpp:92
 msgid "Enable high resolution"
 msgstr "Nagy felbontás engedélyezése"
 
-#: engines/twine/detection.cpp:765 engines/ultima/detection.cpp:93
+#: engines/twine/detection.cpp:814 engines/ultima/detection.cpp:93
 msgid "Enable a higher resolution for the game"
 msgstr "Nagyobb felbontás engedélyezése a játékhoz"
 
