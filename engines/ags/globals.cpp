@@ -368,7 +368,7 @@ Globals::Globals() {
 
 	// translation.cpp globals
 	_trans = new AGS::Shared::Translation();
-	_transtree = new StringMap();
+	_transtree = new AGS::Shared::StringMap();
 
 	// walk_behind.cpp globals
 	Common::fill(_walkBehindLeft, _walkBehindLeft + MAX_WALK_BEHINDS, 0);

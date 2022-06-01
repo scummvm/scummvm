@@ -61,7 +61,6 @@ namespace AGS3 {
 
 using String = AGS::Shared::String;
 using Version = AGS::Shared::Version;
-using StringMap = AGS::Shared::StringMap;
 
 namespace AGS {
 namespace Shared {
@@ -1347,7 +1346,7 @@ public:
 	 */
 
 	AGS::Shared::Translation *_trans;
-	StringMap *_transtree = nullptr;
+	AGS::Shared::StringMap *_transtree = nullptr;
 	String _trans_name, _trans_filename;
 	long _lang_offs_start = 0;
 	char _transFileName[MAX_PATH_SZ] = { 0 };
