@@ -20,16 +20,15 @@
  */
 
 #include "ags/engine/gfx/gfxfilter_scummvm_renderer.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
 namespace ALSW {
 
-const GfxFilterInfo ScummVMRendererGfxFilter::FilterInfo = GfxFilterInfo("StdScale", "Nearest-neighbour");
-
 const GfxFilterInfo &ScummVMRendererGfxFilter::GetInfo() const {
-	return FilterInfo;
+	return _GP(scummvmGfxFilter);
 }
 
 } // namespace ALSW

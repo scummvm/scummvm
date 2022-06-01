@@ -740,14 +740,14 @@ size_t ScummVMRendererGraphicsFactory::GetFilterCount() const {
 const GfxFilterInfo *ScummVMRendererGraphicsFactory::GetFilterInfo(size_t index) const {
 	switch (index) {
 	case 0:
-		return &ScummVMRendererGfxFilter::FilterInfo;
+		return _G(scummvmGfxFilter);
 	default:
 		return nullptr;
 	}
 }
 
 String ScummVMRendererGraphicsFactory::GetDefaultFilterID() const {
-	return ScummVMRendererGfxFilter::FilterInfo.Id;
+	return _GP(scummvmGfxFilter).Id;
 }
 
 /* static */ ScummVMRendererGraphicsFactory *ScummVMRendererGraphicsFactory::GetFactory() {
@@ -763,7 +763,7 @@ ScummVMRendererGraphicsDriver *ScummVMRendererGraphicsFactory::EnsureDriverCreat
 }
 
 ScummVMRendererGfxFilter *ScummVMRendererGraphicsFactory::CreateFilter(const String &id) {
-	if (ScummVMRendererGfxFilter::FilterInfo.Id.CompareNoCase(id) == 0)
+	if (_GP(scummvmGfxFilter).Id.CompareNoCase(id) == 0)
 		return new ScummVMRendererGfxFilter();
 	return nullptr;
 }

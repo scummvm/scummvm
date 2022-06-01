@@ -859,6 +859,7 @@ public:
 	 */
 
 	const AGS::Engine::GfxFilterInfo *_allegroFilterInfo;
+	AGS::Engine::GfxFilterInfo *_scummvmGfxFilter;
 
 	/**@}*/
 
