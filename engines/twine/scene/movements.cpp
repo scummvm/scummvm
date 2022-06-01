@@ -429,7 +429,7 @@ void Movements::processSameXZAction(int actorIdx) {
 
 void Movements::processActorMovements(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (actor->_entity == -1) {
+	if (actor->_body == -1) {
 		return;
 	}
 

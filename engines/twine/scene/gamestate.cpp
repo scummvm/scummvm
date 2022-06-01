@@ -320,7 +320,7 @@ void GameState::processFoundItem(InventoryItems item) {
 	itemCamera.y = _engine->_grid->_newCamera.y * BRICK_HEIGHT;
 	itemCamera.z = _engine->_grid->_newCamera.z * BRICK_SIZE;
 
-	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->_sceneHero->_entity];
+	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->_sceneHero->_body];
 	const IVec3 bodyPos = _engine->_scene->_sceneHero->_pos - itemCamera;
 	Common::Rect modelRect;
 	_engine->_renderer->renderIsoModel(bodyPos, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);

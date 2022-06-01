@@ -244,7 +244,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 		ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 		// avoid current processed actor
-		if (a != actorIdx && actorTest->_entity != -1 && !actor->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
+		if (a != actorIdx && actorTest->_body != -1 && !actor->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
 			const IVec3 &minsTest = actorTest->pos() + actorTest->_boundingBox.mins;
 			const IVec3 &maxsTest = actorTest->pos() + actorTest->_boundingBox.maxs;
 
@@ -279,7 +279,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 			const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 			// avoid current processed actor
-			if (a != actorIdx && actorTest->_entity != -1 && !actorTest->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
+			if (a != actorIdx && actorTest->_body != -1 && !actorTest->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
 				const IVec3 minsTest = actorTest->pos() + actorTest->_boundingBox.mins;
 				const IVec3 maxsTest = actorTest->pos() + actorTest->_boundingBox.maxs;
 				if (mins.x < maxsTest.x && maxs.x > minsTest.x && mins.y < maxsTest.y && maxs.y > minsTest.y && mins.z < maxsTest.z && maxs.z > minsTest.z) {
@@ -400,7 +400,7 @@ int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 act
 	for (int32 a = 0; a < _engine->_scene->_sceneNumActors; a++) {
 		const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
-		if (a != actorIdx && actorTest->_entity != -1) {
+		if (a != actorIdx && actorTest->_body != -1) {
 			const IVec3 minsTest = actorTest->pos() + actorTest->_boundingBox.mins;
 			const IVec3 maxsTest = actorTest->pos() + actorTest->_boundingBox.maxs;
 

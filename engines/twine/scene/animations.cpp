@@ -389,7 +389,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 
 bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTypes animExtra, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (actor->_entity == -1) {
+	if (actor->_body == -1) {
 		return false;
 	}
 
@@ -432,10 +432,10 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTy
 
 	if (actor->_previousAnimIdx == -1) {
 		// if no previous animation
-		setAnimAtKeyframe(0, _engine->_resources->_animData[animIndex], _engine->_resources->_bodyData[actor->_entity], &actor->_animTimerData);
+		setAnimAtKeyframe(0, _engine->_resources->_animData[animIndex], _engine->_resources->_bodyData[actor->_body], &actor->_animTimerData);
 	} else {
 		// interpolation between animations
-		stockAnimation(_engine->_resources->_bodyData[actor->_entity], &actor->_animTimerData);
+		stockAnimation(_engine->_resources->_bodyData[actor->_body], &actor->_animTimerData);
 	}
 
 	actor->_previousAnimIdx = animIndex;
@@ -462,7 +462,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 	_currentlyProcessedActorIdx = actorIdx;
 	_engine->_actor->_processActorPtr = actor;
 
-	if (actor->_entity == -1) {
+	if (actor->_body == -1) {
 		return;
 	}
 
@@ -562,7 +562,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 			const AnimData &animData = _engine->_resources->_animData[actor->_previousAnimIdx];
 
 			bool keyFramePassed = false;
-			if (_engine->_resources->_bodyData[actor->_entity].isAnimated()) {
+			if (_engine->_resources->_bodyData[actor->_body].isAnimated()) {
 				keyFramePassed = verifyAnimAtKeyframe(actor->_animPosition, animData, &actor->_animTimerData);
 			}
 

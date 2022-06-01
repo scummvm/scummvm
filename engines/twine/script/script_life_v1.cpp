@@ -901,7 +901,7 @@ static int32 lKILL_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_actor->processActorCarrier(otherActorIdx);
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 	otherActor->_dynamicFlags.bIsDead = 1;
-	otherActor->_entity = -1;
+	otherActor->_body = -1;
 	otherActor->_zone = -1;
 	otherActor->setLife(0);
 
@@ -916,7 +916,7 @@ static int32 lSUICIDE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SUICIDE()");
 	engine->_actor->processActorCarrier(ctx.actorIdx);
 	ctx.actor->_dynamicFlags.bIsDead = 1;
-	ctx.actor->_entity = -1;
+	ctx.actor->_body = -1;
 	ctx.actor->_zone = -1;
 	ctx.actor->setLife(0);
 
@@ -1436,7 +1436,7 @@ static int32 lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->_mecaPenguinIdx = penguinActor;
 	ActorStruct *penguin = engine->_scene->getActor(penguinActor);
 	penguin->_dynamicFlags.bIsDead = 1;
-	penguin->_entity = -1;
+	penguin->_body = -1;
 	penguin->_zone = -1;
 	return 0;
 }

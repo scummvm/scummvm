@@ -791,7 +791,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	} else {
 		// Process give up menu - Press ESC
-		if (_input->toggleAbortAction() && _scene->_sceneHero->_life > 0 && _scene->_sceneHero->_entity != -1 && !_scene->_sceneHero->_staticFlags.bIsHidden) {
+		if (_input->toggleAbortAction() && _scene->_sceneHero->_life > 0 && _scene->_sceneHero->_body != -1 && !_scene->_sceneHero->_staticFlags.bIsHidden) {
 			ScopedEngineFreeze scopedFreeze(this);
 			exitSceneryView();
 			const int giveUp = _menu->giveupMenu();
@@ -812,7 +812,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// inventory menu
 		_loopInventoryItem = -1;
-		if (_input->isActionActive(TwinEActionType::InventoryMenu) && _scene->_sceneHero->_entity != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
+		if (_input->isActionActive(TwinEActionType::InventoryMenu) && _scene->_sceneHero->_body != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
 			processInventoryAction();
 		}
 
@@ -832,7 +832,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		     _input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false) ||
 		     _input->isActionActive(TwinEActionType::QuickBehaviourAggressive, false) ||
 		     _input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) &&
-		    _scene->_sceneHero->_entity != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
+		    _scene->_sceneHero->_body != -1 && _scene->_sceneHero->_controlMode == ControlMode::kManual) {
 			if (_input->isActionActive(TwinEActionType::QuickBehaviourNormal, false)) {
 				_actor->_heroBehaviour = HeroBehaviourType::kNormal;
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false)) {
@@ -1037,7 +1037,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			} else {
 				_actor->processActorCarrier(a);
 				actor->_dynamicFlags.bIsDead = 1;
-				actor->_entity = -1;
+				actor->_body = -1;
 				actor->_zone = -1;
 			}
 		}

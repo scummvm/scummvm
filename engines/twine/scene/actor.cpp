@@ -120,7 +120,7 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 
 	const BodyType bodyIdx = sceneHero->_genBody;
 
-	sceneHero->_entity = -1;
+	sceneHero->_body = -1;
 	sceneHero->_genBody = BodyType::btNone;
 
 	initModelActor(bodyIdx, OWN_ACTOR_SCENE_INDEX);
@@ -134,9 +134,9 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 void Actor::initSpriteActor(int32 actorIdx) {
 	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 
-	if (localActor->_staticFlags.bIsSpriteActor && localActor->_sprite != -1 && localActor->_entity != localActor->_sprite) {
+	if (localActor->_staticFlags.bIsSpriteActor && localActor->_sprite != -1 && localActor->_body != localActor->_sprite) {
 		const BoundingBox *spritebbox = _engine->_resources->_spriteBoundingBox.bbox(localActor->_sprite);
-		localActor->_entity = localActor->_sprite;
+		localActor->_body = localActor->_sprite;
 		localActor->_boundingBox = *spritebbox;
 	}
 }
@@ -179,23 +179,23 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	const int32 newBody = initBody(bodyIdx, actorIdx, actorBoundingBox);
 	if (newBody == -1) {
 		localActor->_genBody = BodyType::btNone;
-		localActor->_entity = -1;
+		localActor->_body = -1;
 		localActor->_boundingBox = BoundingBox();
 		debug("Failed to initialize body %i for actor %i", (int)bodyIdx, actorIdx);
 		return;
 	}
 
-	if (localActor->_entity == newBody) {
+	if (localActor->_body == newBody) {
 		return;
 	}
 
-	localActor->_entity = newBody;
+	localActor->_body = newBody;
 	localActor->_genBody = bodyIdx;
 
 	if (actorBoundingBox.hasBoundingBox) {
 		localActor->_boundingBox = actorBoundingBox.bbox;
 	} else {
-		const BodyData &bd = _engine->_resources->_bodyData[localActor->_entity];
+		const BodyData &bd = _engine->_resources->_bodyData[localActor->_body];
 		localActor->_boundingBox = bd.bbox;
 
 		int32 size = 0;
@@ -227,7 +227,7 @@ void Actor::initActor(int16 actorIdx) {
 			actor->_dynamicFlags.bIsHitting = 1;
 		}
 
-		actor->_entity = -1;
+		actor->_body = -1;
 
 		initSpriteActor(actorIdx);
 
@@ -237,7 +237,7 @@ void Actor::initActor(int16 actorIdx) {
 			actor->_animStep = actor->pos();
 		}
 	} else {
-		actor->_entity = -1;
+		actor->_body = -1;
 
 		debug(1, "Init actor %i with model %i", actorIdx, (int)actor->_genBody);
 		initModelActor(actor->_genBody, actorIdx);
@@ -245,7 +245,7 @@ void Actor::initActor(int16 actorIdx) {
 		actor->_previousAnimIdx = -1;
 		actor->_animType = AnimType::kAnimationTypeLoop;
 
-		if (actor->_entity != -1) {
+		if (actor->_body != -1) {
 			_engine->_animations->initAnim(actor->_anim, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 		}
 
@@ -291,7 +291,7 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->_hitBy = -1;
 	actor->_lastRotationAngle = ANGLE_0;
 	actor->_animStep = IVec3();
-	actor->_entity = -1;
+	actor->_body = -1;
 	actor->_previousAnimIdx = -1;
 	actor->_animType = AnimType::kAnimationTypeLoop;
 	actor->_animPosition = 0;
@@ -381,7 +381,7 @@ void Actor::processActorExtraBonus(int32 actorIdx) {
 }
 
 void ActorStruct::loadModel(int32 modelIndex, bool lba1) {
-	_entity = modelIndex;
+	_body = modelIndex;
 	if (!_staticFlags.bIsSpriteActor) {
 		debug(1, "Init actor with model %i", modelIndex);
 		if (!_entityData.loadFromHQR(Resources::HQR_FILE3D_FILE, modelIndex, lba1)) {

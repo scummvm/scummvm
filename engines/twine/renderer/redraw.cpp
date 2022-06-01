@@ -206,7 +206,7 @@ int32 Redraw::fillActorDrawingList(DrawListStruct *drawList, bool bgRedraw) {
 			continue;
 		}
 		// if the actor isn't set as hidden
-		if (actor->_entity == -1 || actor->_staticFlags.bIsHidden) {
+		if (actor->_body == -1 || actor->_staticFlags.bIsHidden) {
 			continue;
 		}
 		// get actor position on screen
@@ -343,7 +343,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->_previousAnimIdx >= 0) {
 		const AnimData &animData = _engine->_resources->_animData[actor->_previousAnimIdx];
-		_engine->_animations->setModelAnimation(actor->_animPosition, animData, _engine->_resources->_bodyData[actor->_entity], &actor->_animTimerData);
+		_engine->_animations->setModelAnimation(actor->_animPosition, animData, _engine->_resources->_bodyData[actor->_body], &actor->_animTimerData);
 	}
 
 	const IVec3 &delta = actor->pos() - _engine->_grid->_camera;
@@ -355,7 +355,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 		}
 	}
 
-	if (!_engine->_renderer->renderIsoModel(delta.x, delta.y, delta.z, ANGLE_0, actor->_angle, ANGLE_0, _engine->_resources->_bodyData[actor->_entity], renderRect)) {
+	if (!_engine->_renderer->renderIsoModel(delta.x, delta.y, delta.z, ANGLE_0, actor->_angle, ANGLE_0, _engine->_resources->_bodyData[actor->_body], renderRect)) {
 		_engine->_interface->resetClip();
 		return;
 	}
@@ -386,9 +386,9 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgRedraw) {
 	int32 actorIdx = drawCmd.actorIdx;
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	const SpriteData &spriteData = _engine->_resources->_spriteData[actor->_entity];
+	const SpriteData &spriteData = _engine->_resources->_spriteData[actor->_body];
 	// TODO: using the raw pointer and not the SpriteData surface here is a workaround for issue https://bugs.scummvm.org/ticket/12024
-	const uint8 *spritePtr = _engine->_resources->_spriteTable[actor->_entity];
+	const uint8 *spritePtr = _engine->_resources->_spriteTable[actor->_body];
 
 	// get actor position on screen
 	const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->pos() - _engine->_grid->_camera);
@@ -397,7 +397,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	const int32 spriteHeight = spriteData.surface().h;
 
 	// calculate sprite position on screen
-	const SpriteDim *dim = _engine->_resources->_spriteBoundingBox.dim(actor->_entity);
+	const SpriteDim *dim = _engine->_resources->_spriteBoundingBox.dim(actor->_body);
 	Common::Rect renderRect;
 	renderRect.left = projPos.x + dim->x;
 	renderRect.top = projPos.y + dim->y;
