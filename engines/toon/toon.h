@@ -111,6 +111,7 @@ public:
 	Common::Error run() override;
 	bool showMainmenu(bool &loadedGame);
 	bool showOptions();
+	bool showQuitConfirmationDialogue();
 	void init();
 	bool loadToonDat();
 	char **loadTextsVariants(Common::File &in);
