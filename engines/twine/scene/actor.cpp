@@ -160,7 +160,7 @@ int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorB
 		return -1;
 	}
 	actorBoundingBox = body->actorBoundingBox;
-	return body->bodyIndex;
+	return body->hqrBodyIndex;
 }
 
 void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
@@ -176,8 +176,8 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	}
 
 	ActorBoundingBox actorBoundingBox;
-	const int32 entityIdx = initBody(bodyIdx, actorIdx, actorBoundingBox);
-	if (entityIdx == -1) {
+	const int32 newBody = initBody(bodyIdx, actorIdx, actorBoundingBox);
+	if (newBody == -1) {
 		localActor->_body = BodyType::btNone;
 		localActor->_entity = -1;
 		localActor->_boundingBox = BoundingBox();
@@ -185,11 +185,11 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 		return;
 	}
 
-	if (localActor->_entity == entityIdx) {
+	if (localActor->_entity == newBody) {
 		return;
 	}
 
-	localActor->_entity = entityIdx;
+	localActor->_entity = newBody;
 	localActor->_body = bodyIdx;
 
 	if (actorBoundingBox.hasBoundingBox) {

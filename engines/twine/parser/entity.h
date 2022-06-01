@@ -33,7 +33,7 @@ namespace TwinE {
 struct EntityBody {
 	int index; /**< index in file3d.hqr */
 	ActorBoundingBox actorBoundingBox;
-	int bodyIndex; /**< index in body.hqr */
+	int hqrBodyIndex; /**< index in body.hqr */
 };
 
 struct EntityAnim {

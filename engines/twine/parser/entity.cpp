@@ -29,7 +29,7 @@ bool EntityData::loadBody(Common::SeekableReadStream &stream) {
 	body.index = stream.readByte();
 	const int32 pos = stream.pos();
 	uint8 size = stream.readByte();
-	body.bodyIndex = (int16)stream.readUint16LE();
+	body.hqrBodyIndex = (int16)stream.readUint16LE();
 	const uint8 numActions = stream.readByte();
 	for (uint8 i = 0U; i < numActions; ++i) {
 		if ((ActionType)stream.readByte() == ActionType::ACTION_ZV) {
