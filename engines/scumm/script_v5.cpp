@@ -845,6 +845,15 @@ void ScummEngine_v5::o5_cursorCommand() {
 void ScummEngine_v5::o5_cutscene() {
 	int args[NUM_SCRIPT_LOCAL];
 	getWordVararg(args);
+
+	// WORKAROUND: In Indy 3, the cutscene where Indy and his father escape
+	// from the zeppelin with the biplane is missing the `[1]` parameter
+	// which disables the verb interface. For some reason, this only causes
+	// a problem on the FM-TOWNS version, though... also happens under UNZ.
+	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns && _currentRoom == 80 && vm.slot[_currentScript].number == 201 && args[0] == 0 && _enableEnhancements) {
+		args[0] = 1;
+	}
+
 	beginCutscene(args);
 }
 
