@@ -1108,7 +1108,7 @@ void SpiderEngine::showCredits() {
 	changeScreenMode("640x480");
 	MVideo video("cine/credits.smk", Common::Point(0, 0), false, true, false);
 	runIntro(video);
-	if (_restoredContentEnabled) {
+	if (_restoredContentEnabled && !_checkpoint.empty()) {
 		showScore("Spider-Man saved the day!");
 	}
 	_score = 0;
