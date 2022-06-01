@@ -193,6 +193,7 @@ private:
 public:
 	void clearPlayList();
 	void pauseAll(bool pause);
+	bool isAllPaused() const { return (_globalPause > 0); }
 	void resetGlobalPauseCounter();
 	void stopAll();
 	void stopAllSamples();
