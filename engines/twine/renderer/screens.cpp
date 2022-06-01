@@ -20,9 +20,11 @@
  */
 
 #include "twine/renderer/screens.h"
+#include "common/file.h"
 #include "common/system.h"
 #include "graphics/managed_surface.h"
 #include "graphics/surface.h"
+#include "image/bmp.h"
 #include "twine/audio/music.h"
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
@@ -94,6 +96,33 @@ bool Screens::loadImageDelay(TwineImage image, int32 seconds) {
 		return true;
 	}
 	fadeOut(_paletteRGBACustom);
+	return false;
+}
+
+bool Screens::loadBitmapDelay(const char *image, int32 seconds) {
+	Common::File fileHandle;
+	if (!fileHandle.open(image)) {
+		warning("Failed to open %s", image);
+		return false;
+	}
+
+	Image::BitmapDecoder bitmap;
+	if (!bitmap.loadStream(fileHandle)) {
+		warning("Failed to load %s", image);
+		return false;
+	}
+	const Graphics::Surface *src = bitmap.getSurface();
+	if (src == nullptr) {
+		warning("Failed to decode %s", image);
+		return false;
+	}
+	Graphics::ManagedSurface &target = _engine->_frontVideoBuffer;
+	Common::Rect rect(src->w, src->h);
+	_engine->setPalette(bitmap.getPaletteStartIndex(), bitmap.getPaletteColorCount(), bitmap.getPalette());
+	target.transBlitFrom(*src, rect, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
+	if (_engine->delaySkip(1000 * seconds)) {
+		return true;
+	}
 	return false;
 }
 
