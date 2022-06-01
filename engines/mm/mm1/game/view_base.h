@@ -19,34 +19,64 @@
  *
  */
 
-#ifndef MM1_VIEWS_GAME_VIEW_H
-#define MM1_VIEWS_GAME_VIEW_H
+#ifndef MM1_GAME_VIEW_BASE_H
+#define MM1_GAME_VIEW_BASE_H
 
-#include "mm/mm1/game/view_base.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace Game {
 
-class GameView : public Game::ViewBase {
-private:
-	int _val1 = 0, _val2 = 0, _val3 = 0;
-	int _val4 = 0, _val5 = 0, _val6 = 0;
-	byte _mask = 0;
-	byte _arr1[11];
+/**
+ * This acts as the base class for the 3d view
+ * of the surroundings. It contains the all
+ * the gameplay logic except for actual drawing.
+ */
+class ViewBase : public Views::TextView {
+protected:
+	bool _isDark = false;
+	Common::String _message;
+	int _mapOffset = 0;
 private:
 	/**
-	 * Draws a tile
+	 * Turn left
 	 */
-	void drawTile();
-public:
-	GameView(UIElement *owner);
-	virtual ~GameView() {}
+	void turnLeft();
 
-	void draw() override;
+	/**
+	 * Turn right
+	 */
+	void turnRight();
+
+	/**
+	 * Move forwards
+	 */
+	void forward();
+
+	/**
+	 * Move backwards
+	 */
+	void backwards();
+
+	/**
+	 * Forward movement is obstructed
+	 */
+	void obstructed();
+public:
+	ViewBase(UIElement *owner);
+	virtual ~ViewBase() {}
+
+	bool msgGame(const GameMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
+
+	/**
+	 * Updates game state
+	 */
+	void update();
 };
 
-} // namespace Views
+} // namespace Game
 } // namespace MM1
 } // namespace MM
 
