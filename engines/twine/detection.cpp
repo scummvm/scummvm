@@ -511,8 +511,8 @@ static const ADGameDescription twineGameDescriptions[] = {
 	},
 
 	// Little Big Adventure - GOG Version
-	// LBA.GOG
-	// 11 October 2011 at 17:30
+	// TLBA1C.exe
+	// 1st June 2022 02:18
 	{
 		"lba",
 		"GOG Classic Version",
