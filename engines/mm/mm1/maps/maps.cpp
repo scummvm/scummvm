@@ -264,11 +264,45 @@ void Maps::turnRight() {
 }
 
 void Maps::forward() {
-
+	// TODO: Properly implement this for
+	// checking for obstructions and map changes
+	switch (_forwardMask) {
+	case DIRMASK_N:
+		_mapPos.y++;
+		break;
+	case DIRMASK_S:
+		_mapPos.y--;
+		break;
+	case DIRMASK_E:
+		_mapPos.x++;
+		break;
+	case DIRMASK_W:
+		_mapPos.x--;
+		break;
+	default:
+		break;
+	}
 }
 
 void Maps::backwards() {
-
+	// TODO: Properly implement this for
+	// checking for obstructions and map changes
+	switch (_forwardMask) {
+	case DIRMASK_N:
+		_mapPos.y--;
+		break;
+	case DIRMASK_S:
+		_mapPos.y++;
+		break;
+	case DIRMASK_E:
+		_mapPos.x--;
+		break;
+	case DIRMASK_W:
+		_mapPos.x++;
+		break;
+	default:
+		break;
+	}
 }
 
 } // namespace Maps
