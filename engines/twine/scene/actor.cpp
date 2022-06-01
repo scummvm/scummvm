@@ -170,7 +170,7 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 
 	debug(1, "Load body %i for actor %i", (int)bodyIdx, actorIdx);
 
-	if (IS_HERO(actorIdx) && _heroBehaviour == HeroBehaviourType::kProtoPack && localActor->_armor != 0 && localActor->_armor != 1) {
+	if (IS_HERO(actorIdx) && _heroBehaviour == HeroBehaviourType::kProtoPack && localActor->_body != BodyType::btTunic && localActor->_body != BodyType::btNormal) {
 		setBehaviour(HeroBehaviourType::kNormal);
 	}
 
