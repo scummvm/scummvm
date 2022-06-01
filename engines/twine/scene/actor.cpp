@@ -171,7 +171,7 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 
 	debug(1, "Load body %i for actor %i", (int)bodyIdx, actorIdx);
 
-	if (IS_HERO(actorIdx) && _heroBehaviour == HeroBehaviourType::kProtoPack && localActor->_body != BodyType::btTunic && localActor->_body != BodyType::btNormal) {
+	if (IS_HERO(actorIdx) && _heroBehaviour == HeroBehaviourType::kProtoPack && localActor->_genBody != BodyType::btTunic && localActor->_genBody != BodyType::btNormal) {
 		setBehaviour(HeroBehaviourType::kNormal);
 	}
 
@@ -199,8 +199,8 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 		localActor->_boundingBox = bd.bbox;
 
 		int32 size = 0;
-		const int32 distX = localActor->_boundingBox.maxs.x - localActor->_boundingBox.mins.x;
-		const int32 distZ = localActor->_boundingBox.maxs.z - localActor->_boundingBox.mins.z;
+		const int32 distX = bd.bbox.maxs.x - bd.bbox.mins.x;
+		const int32 distZ = bd.bbox.maxs.z - bd.bbox.mins.z;
 		if (localActor->_staticFlags.bUseMiniZv) {
 			// take smaller for bound
 			if (distX < distZ)
