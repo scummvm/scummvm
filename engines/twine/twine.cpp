@@ -528,27 +528,34 @@ void TwinEEngine::playIntro() {
 		abort |= _screens->loadImageDelay(_resources->eaLogo(), 7);
 	}
 
-	abort |= _screens->adelineLogo();
+	if (isLba1Classic()) {
+		abort |= _screens->loadBitmapDelay("Logo2Point21_640_480_256.bmp", 3);
+		if (!abort) {
+			abort |= _screens->loadBitmapDelay("TLBA1C_640_480_256.bmp", 3);
+		}
+	} else {
+		abort |= _screens->adelineLogo();
 
-	if (isLBA1()) {
-		// verify game version screens
-		if (!abort && _cfgfile.Version == EUROPE_VERSION) {
-			// Little Big Adventure screen
-			abort |= _screens->loadImageDelay(_resources->lbaLogo(), 3);
-			if (!abort) {
-				// Electronic Arts Logo
-				abort |= _screens->loadImageDelay(_resources->eaLogo(), 2);
+		if (isLBA1()) {
+			// verify game version screens
+			if (!abort && _cfgfile.Version == EUROPE_VERSION) {
+				// Little Big Adventure screen
+				abort |= _screens->loadImageDelay(_resources->lbaLogo(), 3);
+				if (!abort) {
+					// Electronic Arts Logo
+					abort |= _screens->loadImageDelay(_resources->eaLogo(), 2);
+				}
+			} else if (!abort && _cfgfile.Version == USA_VERSION) {
+				// Relentless screen
+				abort |= _screens->loadImageDelay(_resources->relentLogo(), 3);
+				if (!abort) {
+					// Electronic Arts Logo
+					abort |= _screens->loadImageDelay(_resources->eaLogo(), 2);
+				}
+			} else if (!abort && _cfgfile.Version == MODIFICATION_VERSION) {
+				// Modification screen
+				abort |= _screens->loadImageDelay(_resources->relentLogo(), 2);
 			}
-		} else if (!abort && _cfgfile.Version == USA_VERSION) {
-			// Relentless screen
-			abort |= _screens->loadImageDelay(_resources->relentLogo(), 3);
-			if (!abort) {
-				// Electronic Arts Logo
-				abort |= _screens->loadImageDelay(_resources->eaLogo(), 2);
-			}
-		} else if (!abort && _cfgfile.Version == MODIFICATION_VERSION) {
-			// Modification screen
-			abort |= _screens->loadImageDelay(_resources->relentLogo(), 2);
 		}
 	}
 
