@@ -30,8 +30,8 @@ namespace Views {
 
 class GameView : public Game::ViewBase {
 private:
-	int _val1 = 0, _val2 = 0, _val3 = 0;
-	int _val4 = 0, _val5 = 0, _val6 = 0;
+	int _tileIndex = 0, _srcWidth = 0, _srcPitch = 0;
+	int _destLeft = 0, _destTop = 0, _srcLeft = 0;
 	byte _mask = 0;
 	byte _arr1[11];
 private:

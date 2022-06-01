@@ -145,10 +145,10 @@ void UIElement::drawElements() {
 	if (_needsRedraw) {
 		draw();
 		_needsRedraw = false;
-
-		for (size_t i = 0; i < _children.size(); ++i)
-			_children[i]->drawElements();
 	}
+
+	for (size_t i = 0; i < _children.size(); ++i)
+		_children[i]->drawElements();
 }
 
 void UIElement::focus() {
