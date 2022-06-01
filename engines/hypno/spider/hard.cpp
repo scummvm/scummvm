@@ -879,6 +879,7 @@ void SpiderEngine::runLock(Code *code) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
 				drawImage(*menu, 0, 0, false);
+				playSound("mouse.raw", 1);
 				break;
 
 			default:
