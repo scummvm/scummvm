@@ -55,8 +55,7 @@ void GameView::draw() {
 	Maps::Map &map = *maps._currentMap;
 	int mapOffset = _mapOffset;
 
-	byte arr1[7];
-	Common::fill(&arr1[0], &arr1[7], 0);
+	Common::fill(&_arr1[0], &_arr1[11], 0);
 
 	getScreen()->fillRect(Common::Rect(0, 0, 245, 128), 0);
 
@@ -76,16 +75,16 @@ void GameView::draw() {
 			_destLeft = ARR7[dist];
 			_destTop = ARR1[dist];
 			_srcLeft = ARR14[dist];
-			arr1[dist * 2 + 1]++;
+			_arr1[dist + 1]++;
 			drawTile();
 
 		} else {
 			_mask = wallsLeft & maps._forwardMask;
 			if (_mask) {
 				_tileIndex = ARR19[dist];
-				arr1[dist * 2 + 1]++;
+				_arr1[dist + 1]++;
 
-				if (arr1[dist * 2]) {
+				if (_arr1[dist]) {
 					_srcWidth = ARR5[dist];
 					_srcPitch = ARR13[dist];
 					_destLeft = ARR7[dist];
@@ -112,8 +111,7 @@ void GameView::draw() {
 			_destLeft = ARR9[dist];
 			_destTop = ARR1[dist];
 			_srcLeft = ARR14[dist];
-			assert(6 + dist * 2 < 11);
-			_arr1[6 + dist * 2]++;
+			_arr1[dist + 1]++;
 			drawTile();
 
 		} else {
