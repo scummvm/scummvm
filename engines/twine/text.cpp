@@ -39,6 +39,7 @@
 #include "twine/resources/resources.h"
 #include "twine/scene/gamestate.h"
 #include "twine/scene/scene.h"
+#include "twine/shared.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -225,7 +226,7 @@ void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, C
 	}
 }
 
-void Text::drawText(int32 x, int32 y, const char *dialogue) {
+void Text::drawText(int32 x, int32 y, const char *dialogue, bool shadow) {
 	// if the font is not defined
 	if (_engine->_resources->_fontPtr == nullptr) {
 		return;
@@ -241,7 +242,12 @@ void Text::drawText(int32 x, int32 y, const char *dialogue) {
 			x += _dialCharSpace;
 		} else {
 			const int32 dialTextSize = getCharWidth(currChar);
-			drawCharacter(x, y, currChar); // draw the character on screen
+			if (shadow) {
+				Common::Rect dirtyRect;
+				drawCharacterShadow(x, y, currChar, COLOR_BLACK, dirtyRect);
+			} else {
+				drawCharacter(x, y, currChar); // draw the character on screen
+			}
 			// add the length of the space between 2 characters
 			x += _dialSpaceBetween;
 			// add the length of the current character

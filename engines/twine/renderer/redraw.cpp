@@ -642,6 +642,35 @@ void Redraw::renderOverlays() {
 	}
 }
 
+void Redraw::setRenderText(const Common::String &text) {
+	_text = text;
+	if (_text.empty()) {
+		_textDisappearTime = -1;
+	} else {
+		_textDisappearTime = _engine->_lbaTime + TO_SECONDS(1);
+	}
+}
+
+void Redraw::renderText() {
+	if (_textDisappearTime <= _engine->_lbaTime) {
+		return;
+	}
+	if (_text.empty()) {
+		return;
+	}
+	_engine->_text->setFontColor(COLOR_WHITE);
+
+	const int padding = 10;
+	const int x = padding;
+	const int height = _engine->_text->lineHeight;
+	const int y = _engine->height() - height - padding;
+	const int width = _engine->_text->getTextSize(_text.c_str());
+	_engine->_text->drawText(x, y, _text.c_str());
+	_engine->copyBlockPhys(x, y, x + width, y + height);
+	const Common::Rect redraw(x, y, x + width, y + height);
+	addRedrawArea(redraw);
+}
+
 void Redraw::redrawEngineActions(bool bgRedraw) {
 	int32 tmp_projPosX = _projPosScreen.x;
 	int32 tmp_projPosY = _projPosScreen.y;
@@ -683,6 +712,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 	}
 
 	renderOverlays();
+	renderText();
 
 	_engine->_interface->resetClip();
 

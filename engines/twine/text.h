@@ -172,7 +172,7 @@ public:
 	 * @param y Y coordinate in screen
 	 * @param dialogue ascii text to display
 	 */
-	void drawText(int32 x, int32 y, const char *dialogue);
+	void drawText(int32 x, int32 y, const char *dialogue, bool shadow = false);
 
 	bool drawTextProgressive(TextId index, bool playVox = true, bool loop = true);
 

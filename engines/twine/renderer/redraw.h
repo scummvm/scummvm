@@ -109,6 +109,10 @@ private:
 
 	IVec3 _projPosScreen;
 
+	// big font shadow text in the lower left corner
+	Common::String _text;
+	int32 _textDisappearTime = -1;
+
 	/**
 	 * Add a certain region to the current redraw list array
 	 * @param redrawArea redraw the region
@@ -130,6 +134,7 @@ private:
 	int32 fillExtraDrawingList(DrawListStruct *drawList, int32 drawListPos);
 	void processDrawList(DrawListStruct *drawList, int32 drawListPos, bool bgRedraw);
 	void renderOverlays();
+	void renderText();
 
 public:
 	Redraw(TwinEEngine *engine);
@@ -148,6 +153,8 @@ public:
 	int _sceneryViewY = 0;
 
 	OverlayListStruct overlayList[OVERLAY_MAX_ENTRIES];
+
+	void setRenderText(const Common::String &text);
 
 	// InitIncrustDisp
 	void addOverlay(OverlayType type, int16 info0, int16 x, int16 y, int16 info1, OverlayPosType posType, int16 lifeTime);

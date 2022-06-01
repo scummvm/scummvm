@@ -842,9 +842,17 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) {
 				_actor->_heroBehaviour = HeroBehaviourType::kDiscrete;
 			}
-			ScopedEngineFreeze scopedFreeze(this);
-			_menu->processBehaviourMenu();
-			_redraw->redrawEngineActions(true);
+			if (isLba1Classic()) {
+				_text->initTextBank(TextBankId::Options_and_menus);
+				char text[256];
+				_text->getMenuText(_actor->getTextIdForBehaviour(), text, sizeof(text));
+				_redraw->setRenderText(text);
+				_text->initSceneTextBank();
+			} else {
+				ScopedEngineFreeze scopedFreeze(this);
+				_menu->processBehaviourMenu();
+				_redraw->redrawEngineActions(true);
+			}
 		}
 
 		// use Proto-Pack
