@@ -505,17 +505,30 @@ private:
 	MessengerSendSpec _send;
 };
 
-class CollisionDetectionMessengerModifier : public Modifier {
+class CollisionDetectionMessengerModifier : public Modifier, public ICollider {
 public:
+	CollisionDetectionMessengerModifier();
+	~CollisionDetectionMessengerModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::CollisionDetectionMessengerModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void linkInternalReferences(ObjectLinkingScope *scope) override;
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Collision Detection Messenger Modifier"; }
+	SupportStatus debugGetSupportStatus() const { return kSupportStatusPartial; }
 #endif
 
 private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
+
+	void getCollisionProperties(Modifier *&modifier, bool &collideInFront, bool &collideBehind, bool &excludeParents) const override;
+	void triggerCollision(Runtime *runtime, Structural *collidingElement, bool wasInContact, bool isInContact, bool &outShouldStop) override;
 
 	enum DetectionMode {
 		kDetectionModeFirstContact,
@@ -533,6 +546,11 @@ private:
 	bool _ignoreParent;
 	bool _sendToCollidingElement; // ... instead of to send spec destination, but send spec with/flags still apply!
 	bool _sendToOnlyFirstCollidingElement;
+
+	Runtime *_runtime;
+	bool _isActive;
+
+	DynamicValue _incomingData;
 };
 
 class KeyboardMessengerModifier : public Modifier {

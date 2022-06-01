@@ -90,6 +90,7 @@ class WorldManagerInterface;
 struct DynamicValue;
 struct DynamicValueReadProxy;
 struct DynamicValueWriteProxy;
+struct ICollider;
 struct ILoadUIProvider;
 struct IMessageConsumer;
 struct IModifierContainer;
@@ -1104,12 +1105,12 @@ struct MessengerSendSpec {
 
 	void linkInternalReferences(ObjectLinkingScope *outerScope);
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor);
-	void resolveDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest) const;
+	void resolveDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest, RuntimeObject *customDestination) const;
 
 	static void resolveVariableObjectType(RuntimeObject *obj, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest);
 
-	void sendFromMessenger(Runtime *runtime, Modifier *sender, const DynamicValue &incomingData) const;
-	void sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data) const;
+	void sendFromMessenger(Runtime *runtime, Modifier *sender, const DynamicValue &incomingData, RuntimeObject *customDestination) const;
+	void sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data, RuntimeObject *customDestination) const;
 
 	Event send;
 	MessageFlags messageFlags;
@@ -1605,6 +1606,10 @@ public:
 	void clearSceneGraphDirty();
 	bool isSceneGraphDirty() const;
 
+	void addCollider(ICollider *collider);
+	void removeCollider(ICollider *collider);
+	void checkCollisions();
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugSetEnabled(bool enabled);
 	void debugBreak();
@@ -1664,6 +1669,18 @@ private:
 		int32 y;
 	};
 
+	struct CollisionCheckState {
+		Common::Array<Common::WeakPtr<VisualElement> > activeElements;
+		ICollider *collider;
+	};
+
+	struct ColliderInfo {
+		size_t sceneStackDepth;
+		uint16 layer;
+		VisualElement *element;
+		Rect16 absRect;
+	};
+
 	static Common::SharedPtr<Structural> findDefaultSharedSceneForScene(Structural *scene);
 	void executeTeardown(const Teardown &teardown);
 	void executeLowLevelSceneStateTransition(const LowLevelSceneStateTransitionAction &transitionAction);
@@ -1696,6 +1713,9 @@ private:
 	VThreadState updateMousePositionTask(const UpdateMousePositionTaskData &data);
 
 	void updateMainWindowCursor();
+
+	static void recursiveFindColliders(Structural *structural, size_t sceneStackDepth, Common::Array<ColliderInfo> &colliders, int32 parentOriginX, int32 parentOriginY, bool isRoot);
+	static bool sortColliderPredicate(const ColliderInfo &a, const ColliderInfo &b);
 
 	Common::Array<VolumeState> _volumes;
 	Common::SharedPtr<ProjectDescription> _queuedProjectDesc;
@@ -1785,6 +1805,9 @@ private:
 	bool _sceneGraphChanged;
 
 	bool _isQuitting;
+
+	Common::Array<Common::SharedPtr<CollisionCheckState> > _colliders;
+	uint32 _collisionCheckTime;
 
 	Hacks _hacks;
 
@@ -2102,6 +2125,11 @@ public:
 private:
 	Common::Array<IKeyboardEventReceiver *> _receivers;
 	Common::SharedPtr<KeyboardEventSignaller> _signaller;
+};
+
+struct ICollider {
+	virtual void getCollisionProperties(Modifier *&modifier, bool &collideInFront, bool &collideBehind, bool &excludeParents) const = 0;
+	virtual void triggerCollision(Runtime *runtime, Structural *collidingElement, bool wasInContact, bool isInContact, bool &outShouldStop) = 0;
 };
 
 struct MediaCueState {
@@ -2585,6 +2613,8 @@ public:
 
 	void recursiveCollectObjectsMatchingCriteria(Common::Array<Common::WeakPtr<RuntimeObject> > &results, bool (*evalFunc)(void *userData, RuntimeObject *object), void *userData, bool onlyEnabled);
 
+	Structural *findStructuralOwner() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	SupportStatus debugGetSupportStatus() const override;
 	const Common::String &debugGetName() const override;
@@ -2597,8 +2627,6 @@ protected:
 	// Links any references contained in the object, resolving static GUIDs to runtime object references.
 	// If you override this, you should override visitInternalReferences too
 	virtual void linkInternalReferences(ObjectLinkingScope *scope);
-
-	Structural *findStructuralOwner() const;
 
 	Common::String _name;
 	ModifierFlags _modifierFlags;
