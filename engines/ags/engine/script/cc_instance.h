@@ -215,6 +215,9 @@ protected:
 	void    PopFromFuncCallStack(FunctionCallStack &func_callstack, int32_t num_entries);
 };
 
+extern void script_commands_init();
+extern void script_commands_free();
+
 } // namespace AGS3
 
 #endif

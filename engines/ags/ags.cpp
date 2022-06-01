@@ -52,6 +52,7 @@
 #include "ags/engine/main/main.h"
 #include "ags/engine/main/quit.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/engine/script/cc_instance.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/ac/route_finder.h"
 #include "ags/shared/core/asset_manager.h"
@@ -75,6 +76,7 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 	_gfxDriver(nullptr), _globals(nullptr), _forceTextAA(false) {
 	g_vm = this;
 
+	AGS3::script_commands_init();
 	_events = new EventsManager();
 	_globals = new ::AGS3::Globals();
 
@@ -99,6 +101,7 @@ AGSEngine::~AGSEngine() {
 	delete _events;
 	delete _music;
 	delete _globals;
+	AGS3::script_commands_free();
 }
 
 uint32 AGSEngine::getFeatures() const {
