@@ -170,7 +170,7 @@ bool Music::playTrackMusicCd(int32 track) {
 	}
 
 	AudioCDManager *cdrom = g_system->getAudioCDManager();
-	if (_engine->isDotEmuEnhanced()) {
+	if (_engine->isDotEmuEnhanced() || _engine->isLba1Classic()) {
 		track += 1;
 	}
 	return cdrom->play(track, 1, 0, 0);
@@ -244,7 +244,7 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 		stopMidiMusic();
 	}
 
-	if (_engine->isDotEmuEnhanced()) {
+	if (_engine->isDotEmuEnhanced() || _engine->isLba1Classic()) {
 		const Common::String &trackName = Common::String::format("lba1-%02i", midiIdx + 1);
 		Audio::SeekableAudioStream *stream = Audio::SeekableAudioStream::openStreamFile(trackName);
 		if (stream != nullptr) {

@@ -510,6 +510,55 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Little Big Adventure - GOG Version
+	// LBA.GOG
+	// 11 October 2011 at 17:30
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+
 	// FAN Translations - http://lba.fishos.net/bit/index.html
 
 	// Portuguese by xesf (alexfont)
