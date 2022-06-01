@@ -1837,9 +1837,20 @@ void MessengerSendSpec::visitInternalReferences(IStructuralReferenceVisitor *vis
 	visitor->visitWeakModifierRef(_resolvedVarSource);
 }
 
-void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest) const {
+void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest, RuntimeObject *customDestination) const {
 	outStructuralDest.reset();
 	outModifierDest.reset();
+
+	if (customDestination) {
+		if (customDestination->isStructural())
+			outStructuralDest = customDestination->getSelfReference().staticCast<Structural>();
+		else if (customDestination->isModifier())
+			outModifierDest = customDestination->getSelfReference().staticCast<Modifier>();
+		else
+			error("Custom destination was invalid");
+
+		return;
+	}
 
 	if (_linkType == kLinkTypeModifier) {
 		outModifierDest = _resolvedModifierDest;
@@ -1936,28 +1947,28 @@ void MessengerSendSpec::resolveVariableObjectType(RuntimeObject *obj, Common::We
 	}
 }
 
-void MessengerSendSpec::sendFromMessenger(Runtime *runtime, Modifier *sender, const DynamicValue &incomingData) const {
+void MessengerSendSpec::sendFromMessenger(Runtime *runtime, Modifier *sender, const DynamicValue &incomingData, RuntimeObject *customDestination) const {
 	const DynamicValueTypes::DynamicValueType withType = with.getType();
 	if (withType == DynamicValueTypes::kIncomingData)
-		sendFromMessengerWithCustomData(runtime, sender, incomingData);
+		sendFromMessengerWithCustomData(runtime, sender, incomingData, customDestination);
 	else if (withType == DynamicValueTypes::kVariableReference) {
 		DynamicValue payload;
 		Modifier *modifier = _resolvedVarSource.lock().get();
 		if (modifier && modifier->isVariable())
 			static_cast<VariableModifier *>(modifier)->varGetValue(nullptr, payload);
 
-		sendFromMessengerWithCustomData(runtime, sender, payload);
+		sendFromMessengerWithCustomData(runtime, sender, payload, customDestination);
 	} else
-		sendFromMessengerWithCustomData(runtime, sender, this->with);
+		sendFromMessengerWithCustomData(runtime, sender, this->with, customDestination);
 }
 
-void MessengerSendSpec::sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data) const {
+void MessengerSendSpec::sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data, RuntimeObject *customDestination) const {
 	Common::SharedPtr<MessageProperties> props(new MessageProperties(this->send, data, sender->getSelfReference()));
 
 	Common::WeakPtr<Modifier> modifierDestRef;
 	Common::WeakPtr<Structural> structuralDestRef;
 
-	resolveDestination(runtime, sender, structuralDestRef, modifierDestRef);
+	resolveDestination(runtime, sender, structuralDestRef, modifierDestRef, customDestination);
 
 	Common::SharedPtr<Modifier> modifierDest = modifierDestRef.lock();
 	Common::SharedPtr<Structural> structuralDest = structuralDestRef.lock();
@@ -3509,7 +3520,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
 	_lastFrameCursor(nullptr), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
 	_cachedMousePosition(Point16::create(0, 0)), _realMousePosition(Point16::create(0, 0)), _trackedMouseOutside(false),
-	  _forceCursorRefreshOnce(true), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false) {
+	_forceCursorRefreshOnce(true), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false), _collisionCheckTime(0) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
 	_vthread.reset(new VThread());
@@ -3725,6 +3736,12 @@ bool Runtime::runFrame() {
 			}
 		}
 
+		if (_collisionCheckTime < _playTime) {
+			_collisionCheckTime = _playTime;
+
+			checkCollisions();
+		}
+
 		if (_isQuitting)
 			return false;
 
@@ -3735,7 +3752,6 @@ bool Runtime::runFrame() {
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	if (_debugger)
 		_debugger->runFrame(realMSec);
-
 #endif
 
 	// Frame completed
@@ -5009,6 +5025,188 @@ bool Runtime::isSceneGraphDirty() const {
 	return _sceneGraphChanged;
 }
 
+void Runtime::addCollider(ICollider *collider) {
+	Common::SharedPtr<CollisionCheckState> state(new CollisionCheckState());
+	state->collider = collider;
+
+	_colliders.push_back(state);
+}
+
+void Runtime::removeCollider(ICollider *collider) {
+	size_t numColliders = _colliders.size();
+	for (size_t i = 0; i < numColliders; i++) {
+		if (_colliders[i]->collider == collider) {
+			_colliders.remove_at(i);
+			return;
+		}
+	}
+}
+
+void Runtime::checkCollisions() {
+	if (!_colliders.size())
+		return;
+
+	Common::Array<ColliderInfo> collisionObjects;
+	for (size_t i = 0; i < _sceneStack.size(); i++)
+		recursiveFindColliders(_sceneStack[i].scene.get(), i, collisionObjects, 0, 0, true);
+
+	Common::sort(collisionObjects.begin(), collisionObjects.end(), sortColliderPredicate);
+
+	for (const Common::SharedPtr<CollisionCheckState> &collisionCheckPtr : _colliders) {
+		CollisionCheckState &colCheck = *collisionCheckPtr.get();
+
+		Modifier *modifier = nullptr;
+		bool collideInFront;
+		bool collideBehind;
+		bool excludeParents;
+		colCheck.collider->getCollisionProperties(modifier, collideInFront, collideBehind, excludeParents);
+
+		Structural *owner = modifier->findStructuralOwner();
+		if (!owner)
+			continue;
+
+		if (!owner->isElement())
+			continue;
+
+		Element *element = static_cast<Element *>(owner);
+		if (!element->isVisual())
+			continue;
+
+		Common::Array<Common::WeakPtr<VisualElement> > collidingElements;
+
+		VisualElement *visual = static_cast<VisualElement *>(element);
+		if (visual->isVisible()) {
+			bool foundSelf = false;
+			size_t selfIndex = 0;
+			Rect16 selfRect = Rect16::create(0, 0, 0, 0);
+
+			for (size_t i = 0; i < collisionObjects.size(); i++) {
+				if (collisionObjects[i].element == visual) {
+					selfIndex = i;
+					selfRect = collisionObjects[i].absRect;
+					foundSelf = true;
+					break;
+				}
+			}
+
+			// This should always be true
+			if (foundSelf) {
+				size_t minIndex = 0;
+				size_t maxIndex = collisionObjects.size();
+				if (!collideBehind)
+					minIndex = selfIndex + 1;
+				if (!collideInFront)
+					maxIndex = selfIndex;
+
+				for (size_t i = minIndex; i < maxIndex; i++) {
+					if (i == selfIndex)
+						continue;
+
+					const ColliderInfo &collisionObject = collisionObjects[i];
+					VisualElement *collisionObjectElement = collisionObject.element;
+
+					assert(collisionObjectElement != visual);
+
+					// Potential collision
+					if (!collisionObject.absRect.intersect(selfRect).isValid())
+						continue;
+
+					if (excludeParents) {
+						bool isParent = false;
+
+						Structural *parentSearch = visual->getParent();
+						while (parentSearch != nullptr) {
+							if (parentSearch == collisionObjectElement) {
+								isParent = true;
+								break;
+							}
+						}
+
+						if (isParent)
+							continue;
+					}
+
+					collidingElements.push_back(collisionObjectElement->getSelfReference().staticCast<VisualElement>());
+				}
+			}
+		}
+
+		Common::Array<Common::WeakPtr<VisualElement> > &oldCollidingElements = colCheck.activeElements;
+
+		bool shouldStop = false;
+
+		for (size_t oldIndex = 0; oldIndex < oldCollidingElements.size();) {
+			Common::SharedPtr<VisualElement> oldColElement = oldCollidingElements[oldIndex].lock();
+			if (oldColElement.get() == nullptr) {
+				collidingElements.remove_at(oldIndex);
+				continue;
+			}
+
+			bool isStillColliding = false;
+			for (size_t newIndex = 0; newIndex < collidingElements.size(); newIndex++) {
+				Common::SharedPtr<VisualElement> newColElement = collidingElements[newIndex].lock();
+				if (newColElement == oldColElement) {
+					isStillColliding = true;
+					collidingElements.remove_at(newIndex);
+					break;
+				}
+			}
+
+			if (!isStillColliding)
+				oldCollidingElements.remove_at(oldIndex);
+			else
+				oldIndex++;
+
+			if (!shouldStop)
+				colCheck.collider->triggerCollision(this, oldColElement.get(), true, isStillColliding, shouldStop);
+		}
+
+		for (size_t newIndex = 0; newIndex < collidingElements.size(); newIndex++) {
+			Common::SharedPtr<VisualElement> colElement = collidingElements[newIndex].lock();
+
+			if (!shouldStop)
+				colCheck.collider->triggerCollision(this, colElement.get(), false, true, shouldStop);
+
+			oldCollidingElements.push_back(colElement);
+		}
+	}
+}
+
+void Runtime::recursiveFindColliders(Structural *structural, size_t sceneStackDepth, Common::Array<ColliderInfo> &colliders, int32 parentOriginX, int32 parentOriginY, bool isRoot) {
+	int32 childOffsetX = parentOriginX;
+	int32 childOffsetY = parentOriginY;
+	if (structural->isElement()) {
+		Element *element = static_cast<Element *>(structural);
+		if (element->isVisual()) {
+			VisualElement *visual = static_cast<VisualElement *>(element);
+			const Rect16 &rect = visual->getRelativeRect();
+
+			childOffsetX += rect.left;
+			childOffsetY += rect.top;
+
+			// isRoot = Is a scene, and colliding with scenes is not allowed
+			if (!isRoot && visual->isVisible()) {
+				ColliderInfo colliderInfo;
+				colliderInfo.absRect = rect.translate(parentOriginX, parentOriginY);
+				colliderInfo.element = visual;
+				colliderInfo.layer = visual->getLayer();
+				colliderInfo.sceneStackDepth = sceneStackDepth;
+
+				colliders.push_back(colliderInfo);
+			}
+		}
+	}
+
+	for (const Common::SharedPtr<Structural> &child : structural->getChildren())
+		recursiveFindColliders(child.get(), sceneStackDepth, colliders, childOffsetX, childOffsetY, false);
+}
+
+bool Runtime::sortColliderPredicate(const ColliderInfo &a, const ColliderInfo &b) {
+	if (a.layer != b.layer)
+		return a.layer < b.layer;
+	return a.sceneStackDepth < b.sceneStackDepth;
+}
+
 void Runtime::ensureMainWindowExists() {
 	// Maybe there's a better spot for this
 	if (_mainWindow.expired() && _project) {
@@ -5393,7 +5591,7 @@ void MediaCueState::checkTimestampChange(Runtime *runtime, uint32 oldTS, uint32 
 
 	// Given the positioning of this, there's not really a way for the immediate flag to have any effect?
 	if (shouldTrigger)
-		send.sendFromMessenger(runtime, sourceModifier, incomingData);
+		send.sendFromMessenger(runtime, sourceModifier, incomingData, nullptr);
 }
 
 Project::Segment::Segment() : weakStream(nullptr) {

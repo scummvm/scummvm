@@ -108,3 +108,23 @@ read the attribute from the element.
 
 Also, "this" is not reserved - if you look up the "this" attribute from ANYTHING
 then it will resolve to the modifier executing the script.
+
+
+Collision messengers:
+
+Collision messengers behave strangely and their exact logic hasn't been determined.
+
+If there are 2 collision detection modifiers on an object and the first one triggers
+on exit, and the second triggers while in contact, then the second will fire twice.
+
+The "First element only" option behaves kind of nonsensically and contrary to its
+description.  It only prevents multiple collisions from being sent THAT FRAME, but
+continuously moving the object will cause multiple detections to trigger if they
+occur on separate frames.
+
+Moving an object from the shared scene will trigger collision with collision
+messenger modifiers in the main scene, but moving a main scene object will not
+collide with the same object?  Needs more research.
+
+Collisions only occur with visible objects.  It seems they are also not capable
+of colliding with scenes.

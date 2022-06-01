@@ -335,7 +335,7 @@ bool MessengerModifier::respondsToEvent(const Event &evt) const {
 
 VThreadState MessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_when.respondsTo(msg->getEvent())) {
-		_sendSpec.sendFromMessenger(runtime, this, msg->getValue());
+		_sendSpec.sendFromMessenger(runtime, this, msg->getValue(), nullptr);
 	}
 
 	return kVThreadReturn;
@@ -1037,7 +1037,7 @@ VThreadState IfMessengerModifier::evaluateAndSendTask(const EvaluateAndSendTaskD
 		return kVThreadError;
 
 	if (isTrue)
-		_sendSpec.sendFromMessenger(taskData.runtime, this, taskData.incomingData);
+		_sendSpec.sendFromMessenger(taskData.runtime, this, taskData.incomingData, nullptr);
 
 	return kVThreadReturn;
 }
@@ -1125,7 +1125,7 @@ void TimerMessengerModifier::trigger(Runtime *runtime) {
 	} else
 		_scheduledEvent.reset();
 
-	_sendSpec.sendFromMessenger(runtime, this, _incomingData);
+	_sendSpec.sendFromMessenger(runtime, this, _incomingData, nullptr);
 }
 
 bool BoundaryDetectionMessengerModifier::load(ModifierLoaderContext &context, const Data::BoundaryDetectionMessengerModifier &data) {
@@ -1157,11 +1157,19 @@ const char *BoundaryDetectionMessengerModifier::getDefaultName() const {
 	return "Boundary Detection Messenger";
 }
 
+CollisionDetectionMessengerModifier::CollisionDetectionMessengerModifier() : _runtime(nullptr), _isActive(false) {
+}
+
+CollisionDetectionMessengerModifier::~CollisionDetectionMessengerModifier() {
+	if (_isActive)
+		_runtime->removeCollider(this);
+}
+
 bool CollisionDetectionMessengerModifier::load(ModifierLoaderContext &context, const Data::CollisionDetectionMessengerModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
-	if (!_enableWhen.load(data.enableWhen) || !this->_disableWhen.load(data.disableWhen))
+	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen))
 		return false;
 
 	if (!_sendSpec.load(data.send, data.messageAndModifierFlags, data.with, data.withSource, data.withString, data.destination))
@@ -1190,12 +1198,87 @@ bool CollisionDetectionMessengerModifier::load(ModifierLoaderContext &context, c
 	return true;
 }
 
+bool CollisionDetectionMessengerModifier::respondsToEvent(const Event &evt) const {
+	return _enableWhen.respondsTo(evt) || _disableWhen.respondsTo(evt);
+}
+
+VThreadState CollisionDetectionMessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_enableWhen.respondsTo(msg->getEvent())) {
+		if (!_isActive) {
+			_isActive = true;
+			_runtime = runtime;
+			_incomingData = msg->getValue();
+			if (_incomingData.getType() == DynamicValueTypes::kList)
+				_incomingData.setList(_incomingData.getList()->clone());
+
+			runtime->addCollider(this);
+		}
+	}
+	if (_disableWhen.respondsTo(msg->getEvent())) {
+		if (_isActive) {
+			_isActive = false;
+			_runtime->removeCollider(this);
+			_incomingData = DynamicValue();
+		}
+	}
+
+	return kVThreadReturn;
+}
+
+void CollisionDetectionMessengerModifier::linkInternalReferences(ObjectLinkingScope *scope) {
+	_sendSpec.linkInternalReferences(scope);
+}
+
+void CollisionDetectionMessengerModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	_sendSpec.visitInternalReferences(visitor);
+}
+
 Common::SharedPtr<Modifier> CollisionDetectionMessengerModifier::shallowClone() const {
-	return Common::SharedPtr<Modifier>(new CollisionDetectionMessengerModifier(*this));
+	Common::SharedPtr<CollisionDetectionMessengerModifier> clone(new CollisionDetectionMessengerModifier(*this));
+	clone->_isActive = false;
+	clone->_incomingData = DynamicValue();
+	return clone;
 }
 
 const char *CollisionDetectionMessengerModifier::getDefaultName() const {
 	return "Collision Messenger";
+}
+
+void CollisionDetectionMessengerModifier::getCollisionProperties(Modifier *&modifier, bool &collideInFront, bool &collideBehind, bool &excludeParents) const {
+	collideBehind = _detectBehind;
+	collideInFront = _detectInFront;
+	excludeParents = _ignoreParent;
+	modifier = const_cast<CollisionDetectionMessengerModifier *>(this);
+}
+
+void CollisionDetectionMessengerModifier::triggerCollision(Runtime *runtime, Structural *collidingElement, bool wasInContact, bool isInContact, bool &shouldStop) {
+	switch (_detectionMode) {
+	case kDetectionModeExiting:
+		if (isInContact || !wasInContact)
+			return;
+		break;
+	case kDetectionModeFirstContact:
+		if (!isInContact || wasInContact)
+			return;
+		break;
+	case kDetectionModeWhileInContact:
+		if (!isInContact)
+			return;
+		break;
+	default:
+		error("Unknown collision detection mode");
+		return;
+	}
+
+	RuntimeObject *customDestination = nullptr;
+	if (_sendToCollidingElement) {
+		if (_sendToOnlyFirstCollidingElement)
+			shouldStop = true;
+
+		customDestination = collidingElement;
+	}
+
+	_sendSpec.sendFromMessenger(runtime, this, _incomingData, customDestination);
 }
 
 KeyboardMessengerModifier::~KeyboardMessengerModifier() {
@@ -1400,7 +1483,7 @@ void KeyboardMessengerModifier::dispatchMessage(Runtime *runtime, const Common::
 
 	DynamicValue charStrValue;
 	charStrValue.setString(charStr);
-	_sendSpec.sendFromMessenger(runtime, this, charStrValue);
+	_sendSpec.sendFromMessenger(runtime, this, charStrValue, nullptr);
 }
 
 void KeyboardMessengerModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
