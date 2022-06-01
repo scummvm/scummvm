@@ -551,6 +551,27 @@ void GameState::addGas(int16 value) {
 	setGas(_inventoryNumGas + value);
 }
 
+// late game items from lba1 classic new game +
+void GameState::handleLateGameItems() {
+	if (!_endGameItems) {
+		return;
+	}
+	debug("Give end game items");
+	_endGameItems = false;
+	_magicLevelIdx = 4;
+	setMaxMagicPoints();
+	giveItem(InventoryItems::kiUseSabre);
+	giveItem(InventoryItems::kiProtoPack);
+	giveItem(InventoryItems::kiHolomap);
+	giveItem(InventoryItems::kiTunic);
+	giveItem(InventoryItems::kiMagicBall);
+	giveItem(InventoryItems::kSendellsMedallion);
+	giveItem(InventoryItems::kiPenguin);
+	giveItem(InventoryItems::kGasItem);
+	giveItem(InventoryItems::kiCloverLeaf);
+	addGas(10);
+}
+
 int16 GameState::setKashes(int16 value) {
 	_inventoryNumKashes = CLIP<int16>(value, 0, 999);
 	if (_engine->_gameState->_inventoryNumKashes >= 500) {

@@ -119,6 +119,7 @@ public:
 
 	/** Its using FunFrock Sabre */
 	bool _usingSabre = false;
+	bool _endGameItems = false;
 
 	/**
 	 * Inventory used flags
@@ -172,6 +173,8 @@ public:
 	int16 setMagicPoints(int16 val);
 	int16 setMaxMagicPoints();
 	int16 setLeafBoxes(int16 val);
+
+	void handleLateGameItems();
 
 	void addGas(int16 value);
 	void addKeys(int16 val);

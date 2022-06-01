@@ -601,6 +601,7 @@ void Scene::changeScene() {
 		debug(2, "Scene %i music track id: %i", _currentSceneIdx, _sceneMusic);
 		_engine->_music->playTrackMusic(_sceneMusic);
 	}
+	_engine->_gameState->handleLateGameItems();
 }
 
 ActorStruct *Scene::getActor(int32 actorIdx) {

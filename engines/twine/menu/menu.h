@@ -153,6 +153,7 @@ private:
 	MenuSettings _saveManageMenuState;
 	MenuSettings _giveUpMenuState;
 	MenuSettings _mainMenuState;
+	MenuSettings _newGameMenuState;
 	MenuSettings _advOptionsMenuState;
 	MenuSettings _optionsMenuState;
 
@@ -239,6 +240,8 @@ public:
 
 	/** Process hero behaviour menu */
 	void processBehaviourMenu();
+
+	int32 newGameClassicMenu();
 
 	/** Process in-game inventory menu */
 	void processInventoryMenu();

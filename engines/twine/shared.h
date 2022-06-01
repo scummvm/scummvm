@@ -492,6 +492,7 @@ enum class TextId : int16 {
 	kReturnGame = 15,
 	kSaveSettings = 16,
 	kNewGame = 20,
+	kNewGamePlus = 255,
 	kContinueGame = 21,
 	kQuit = 22,
 	kOptions = 23,

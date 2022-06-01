@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/scummsys.h"
+#include "common/str.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
@@ -97,6 +98,14 @@ static MenuSettings createMainMenu(bool lba1) {
 	return settings;
 }
 
+static MenuSettings createLba1ClassicNewGame() {
+	MenuSettings settings;
+	settings.addButton(TextId::kReturnMenu);
+	settings.addButton(TextId::kNewGame);
+	settings.addButton(TextId::kNewGamePlus);
+	return settings;
+}
+
 static MenuSettings createGiveUpMenu() {
 	MenuSettings settings;
 	settings.setButtonsBoxHeight(240);
@@ -157,9 +166,14 @@ static MenuSettings createVolumeMenu() {
 
 const char *MenuSettings::getButtonText(Text *text, int buttonIndex) {
 	if (_buttonTexts[buttonIndex].empty()) {
-		const TextId textId = getButtonTextId(buttonIndex);
+		TextId textId = getButtonTextId(buttonIndex);
 		char dialText[256] = "";
-		text->getMenuText(textId, dialText, sizeof(dialText));
+		if (textId == TextId::kNewGamePlus) {
+			text->getMenuText(TextId::kNewGame, dialText, sizeof(dialText));
+			Common::strlcat(dialText, "+", sizeof(dialText));
+		} else {
+			text->getMenuText(textId, dialText, sizeof(dialText));
+		}
 		_buttonTexts[buttonIndex] = dialText;
 	}
 	return _buttonTexts[buttonIndex].c_str();
@@ -174,6 +188,7 @@ Menu::Menu(TwinEEngine *engine) {
 	_saveManageMenuState = _priv::createSaveManageMenu();
 	_giveUpMenuState = _priv::createGiveUpMenu();
 	_mainMenuState = _priv::createMainMenu(engine->isLBA1());
+	_newGameMenuState = _priv::createLba1ClassicNewGame();
 	_advOptionsMenuState = _priv::createAdvancedOptionsMenu();
 
 	Common::fill(&_behaviourAnimState[0], &_behaviourAnimState[4], 0);
@@ -740,6 +755,34 @@ int32 Menu::optionsMenu() {
 	return 0;
 }
 
+int32 Menu::newGameClassicMenu() {
+	_engine->restoreFrontBuffer();
+
+	ScopedCursor scoped(_engine);
+	for (;;) {
+		switch (processMenu(&_newGameMenuState)) {
+		case (int32)TextId::kReturnGame:
+		case (int32)TextId::kReturnMenu: {
+			return 0;
+		}
+		case (int32)TextId::kNewGamePlus:
+		case (int32)TextId::kNewGame: {
+			_engine->_gameState->_endGameItems = true;
+			if (_engine->_menuOptions->newGameMenu()) {
+				return 1;
+			}
+			break;
+		}
+		case kQuitEngine:
+			return kQuitEngine;
+		default:
+			break;
+		}
+	}
+
+	return 0;
+}
+
 static const byte cursorArrow[] = {
 	1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 	1, 0, 1, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -789,6 +832,12 @@ EngineState Menu::run() {
 	switch (processMenu(&_mainMenuState)) {
 	case (int32)TextId::toNewGame:
 	case (int32)TextId::kNewGame: {
+		if (_engine->isLba1Classic()) {
+			if (newGameClassicMenu()) {
+				return EngineState::GameLoop;
+			}
+			break;
+		}
 		if (_engine->_menuOptions->newGameMenu()) {
 			return EngineState::GameLoop;
 		}
