@@ -83,20 +83,25 @@ void AudioManager::removeInstance(AudioStreamInstance *inst) {
 	}
 }
 
-void AudioManager::playMusic(const Common::String &dir, const Common::String &music) {
+int AudioManager::playMusic(const Common::String &dir, const Common::String &music) {
 	debugC(1, kDebugAudio, "playMusic(%s, %s)", dir.c_str(), music.c_str());
 
 	// two musics can be played at same time
-	Common::String path = Common::String::format("ACT%d/%s/%s.MUS", _vm->state()->_currentChapter, dir.c_str(), music.c_str());
+	Common::String path;
+	if (dir == "") {
+		path = Common::String::format("%s.MUS", music.c_str());
+	} else {
+		path = Common::String::format("ACT%d/%s/%s.MUS", _vm->state()->_currentChapter, dir.c_str(), music.c_str());
+	}
 
 	if (_currentMusicName == music)
-		return;
+		return -1;
 
 	_currentMusicName = music;
 
 	Common::SeekableReadStream *srs = _vm->resources()->openFile(path);
 	if (!srs)
-		return;
+		return -1;
 
 	// see what channel to take
 	// if the current channel didn't really start. reuse this one
@@ -118,10 +123,11 @@ void AudioManager::playMusic(const Common::String &dir, const Common::String &mu
 		_channels[_currentMusicChannel]->stop(false);
 	}
 
-	// no need to delete instance here it will automatically deleted by the mixer is done with it
+	// no need to delete instance here; it will automatically be deleted by the mixer when it is done with it
 	_channels[_currentMusicChannel] = new AudioStreamInstance(this, _mixer, srs, true, true);
 	_channels[_currentMusicChannel]->setVolume(_musicMuted ? 0 : 255);
 	_channels[_currentMusicChannel]->play(true, Audio::Mixer::kMusicSoundType);
+	return _currentMusicChannel;
 }
 
 bool AudioManager::voiceStillPlaying() {
@@ -215,13 +221,20 @@ void AudioManager::setMusicVolume(int32 volume) {
 		_channels[1]->setVolume(volume);
 }
 
-void AudioManager::stopMusic() {
+void AudioManager::stopMusicChannel(int channelId, bool fade) {
+	if (_channels[channelId])
+		_channels[channelId]->stop(fade);
+
+	if (_currentMusicChannel == channelId)
+		// clean _currentMusicName too
+		_currentMusicName = "";
+}
+
+void AudioManager::stopMusic(bool fade) {
 	debugC(1, kDebugAudio, "stopMusic()");
 
-	if (_channels[0])
-		_channels[0]->stop(true);
-	if (_channels[1])
-		_channels[1]->stop(true);
+	stopMusicChannel(0, fade);
+	stopMusicChannel(1, fade);
 }
 
 AudioStreamInstance::AudioStreamInstance(AudioManager *man, Audio::Mixer *mixer, Common::SeekableReadStream *stream , bool looping, bool deleteFileStreamAtEnd) {

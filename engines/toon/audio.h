@@ -130,13 +130,14 @@ public:
 
 	bool voiceStillPlaying();
 
-	void playMusic(const Common::String &dir, const Common::String &music);
+	int playMusic(const Common::String &dir, const Common::String &music);
 	void playVoice(int32 id, bool genericVoice);
 	int32 playSFX(int32 id, int volume, bool genericSFX);
 	void stopCurrentVoice();
 	void stopAllSfxs();
 	void setMusicVolume(int32 volume);
-	void stopMusic();
+	void stopMusicChannel(int channelId, bool fade);
+	void stopMusic(bool fade = true);
 	void muteVoice(bool mute);
 	void muteMusic(bool mute);
 	void muteSfx(bool mute);
@@ -154,14 +155,15 @@ public:
 	bool loadAudioPack(int32 id, const Common::String &indexFile, const Common::String &packFile);
 
 	AudioStreamInstance *_channels[16];  // 0-1 : music
-	// 2 : voice
-	// 3-16 : SFX
+	                                     // 2 : voice
+	                                     // 3-16 : SFX
 
 	AudioStreamPackage *_audioPacks[4];  // 0 : generic streams
-	// 1 : local streams
-	// 2 : generic SFX
-	// 3 : local SFX
-	uint32 _currentMusicChannel;
+	                                     // 1 : local streams
+	                                     // 2 : generic SFX
+	                                     // 3 : local SFX
+
+	int _currentMusicChannel;
 	Common::String _currentMusicName;
 	ToonEngine *_vm;
 	Audio::Mixer *_mixer;
