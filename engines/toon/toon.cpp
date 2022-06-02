@@ -1290,9 +1290,8 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 	bool doExitMenu = false;
 	bool exitGame = false;
 	int menuMask = MAINMENUMASK_BASE;
-	Common::SeekableReadStream *mainmenuMusicFile = NULL;
-	AudioStreamInstance *mainmenuMusic = NULL;
 	bool musicPlaying = false;
+	int musicPlayingChannel = -1;
 	int32 oldMouseButton = _mouseButton;
 
 	_gameState->_inMenu = true;
@@ -1305,14 +1304,8 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 
 		while (!clickRelease) {
 			if (!musicPlaying) {
-				mainmenuMusicFile = resources()->openFile("BR091013.MUS");
-				if (mainmenuMusicFile) {
-					mainmenuMusic = new AudioStreamInstance(_audioManager, _mixer, mainmenuMusicFile, true);
-					mainmenuMusic->play(false);
-					musicPlaying = true;
-				} else {
-					musicPlaying = false;
-				}
+				musicPlayingChannel = _audioManager->playMusic("", "BR091013");
+				musicPlaying = musicPlayingChannel >= 0;
 			}
 
 			if (_dirtyAll) {
@@ -1422,6 +1415,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 							break;
 
 						case MAINMENUHOTSPOT_LOADGAME:
+
 							doExitMenu = loadGame(-1);
 							loadedGame = doExitMenu;
 							if (loadedGame) {
@@ -1438,8 +1432,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 						case MAINMENUHOTSPOT_CREDITS:
 							if (musicPlaying) {
 								//stop music
-								mainmenuMusic->stop(false);
-								delete mainmenuMusicFile;
+								_audioManager->stopMusicChannel(musicPlayingChannel, false);
 								musicPlaying = false;
 							}
 							if (clickingOn == MAINMENUHOTSPOT_INTRO) {
@@ -1475,8 +1468,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 
 		if (musicPlaying && doExitMenu) {
 			//stop music
-			mainmenuMusic->stop(false);
-			delete mainmenuMusicFile;
+			_audioManager->stopMusicChannel(musicPlayingChannel, false);
 			musicPlaying = false;
 		}
 	}
