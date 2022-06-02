@@ -2308,6 +2308,8 @@ set_flag_if_supported -Wno-undefined-var-template
 # macros.
 set_flag_if_supported -Wno-pragma-pack
 
+set_flag_if_supported -Wno-address-of-packed-member
+
 if test -n "$STRINGS"; then
 	_strings=$STRINGS
 else
