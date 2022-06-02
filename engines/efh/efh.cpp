@@ -1177,12 +1177,12 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 	int16 minY = mapPosY - 4;
 
 	if (minX < 0) {
-		unkPosX -= minX;
+		unkPosX += minX;
 		minX = 0;
 	}
 
 	if (minY < 0) {
-		unkPosY -= minY;
+		unkPosY += minY;
 		minY = 0;
 	}
 
