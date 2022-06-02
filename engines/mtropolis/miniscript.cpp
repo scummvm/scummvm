@@ -1924,6 +1924,8 @@ bool MiniscriptThread::evaluateTruthOfResult(bool &isTrue) {
 		return false;
 	}
 
+	dereferenceRValue(0, false);
+
 	isTrue = miniscriptEvaluateTruth(_stack[0].value);
 	return true;
 }
