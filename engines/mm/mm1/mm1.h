@@ -51,6 +51,8 @@ public:
 	MM1Engine(OSystem *syst, const MightAndMagicGameDescription *gameDesc);
 	~MM1Engine() override;
 
+	bool hasFeature(EngineFeature f) const override;
+
 	/**
 	 * Returns a random number
 	 */

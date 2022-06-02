@@ -20,6 +20,9 @@
  */
 
 #include "common/file.h"
+#include "common/system.h"
+#include "graphics/palette.h"
+#include "graphics/screen.h"
 #include "mm/mm1/gfx/screen_decoder.h"
 
 namespace MM {
@@ -56,6 +59,9 @@ bool ScreenDecoder::loadStream(Common::SeekableReadStream &stream,
 	int index = 0;
 	int imgSize = w * h / 4;
 
+	byte indexes[4];
+	getPaletteIndexes(indexes);
+
 	// Decompress the image bytes
 	int x = 0;
 	while (x < (w / 4) && !stream.eos()) {
@@ -88,11 +94,39 @@ bool ScreenDecoder::loadStream(Common::SeekableReadStream &stream,
 	for (int i = 0; i < w * h / 4; ++i, ++srcP) {
 		v = *srcP;
 		for (int j = 0; j < 4; ++j, v <<= 2)
-			*destP++ = v >> 6;
+			*destP++ = indexes[v >> 6];
 	}
 
 	return true;
 }
+
+void ScreenDecoder::getPaletteIndexes(byte indexes[4]) {
+	byte pal[PALETTE_SIZE];
+	g_system->getPaletteManager()->grabPalette(pal, 0, PALETTE_COUNT);
+
+	indexes[0] = 0;
+	indexes[1] = findPalette(pal, 168, 84, 0);
+	indexes[2] = findPalette(pal, 252, 252, 84);
+	indexes[3] = findPalette(pal, 0xff, 0xff, 0xff);
+}
+
+byte ScreenDecoder::findPalette(const byte *pal, byte r, byte g, byte b) {
+	int closestDiff = 0x7fffffff;
+	byte closest = 0;
+
+	for (int i = 0; i < PALETTE_COUNT; ++i, pal += 3) {
+		int diff = ABS((int)r - (int)pal[0]) +
+			ABS((int)g - (int)pal[1]) +
+			ABS((int)b - (int)pal[2]);
+		if (diff < closestDiff) {
+			closestDiff = diff;
+			closest = i;
+		}
+	}
+
+	return closest;
+}
+
 
 } // namespace Gfx
 } // End of namespace Xeen
