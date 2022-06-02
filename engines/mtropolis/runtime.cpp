@@ -2917,7 +2917,7 @@ VThreadState Structural::consumeCommand(Runtime *runtime, const Common::SharedPt
 		return kVThreadReturn;
 	}
 	if (Event::create(EventIDs::kPause, 0).respondsTo(msg->getEvent())) {
-		if (_paused) {
+		if (!_paused) {
 			_paused = true;
 			onPauseStateChanged();
 		}
