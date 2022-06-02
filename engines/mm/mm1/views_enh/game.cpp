@@ -49,7 +49,7 @@ void Game::draw() {
 		if (!f.open("back.raw"))
 			error("Could not load background");
 
-		Graphics::Surface s = getSurface();
+		Graphics::ManagedSurface s = getSurface();
 		f.read((byte *)s.getPixels(), s.w * s.h);
 	}
 
