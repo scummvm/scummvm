@@ -32,8 +32,6 @@ namespace Common {
 /** Helper null context instance */
 CoroContext nullContext = nullptr;
 
-DECLARE_SINGLETON(CoroutineScheduler);
-
 #ifdef COROUTINE_DEBUG
 namespace {
 /** Count of active coroutines */

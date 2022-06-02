@@ -43,10 +43,6 @@
 
 #include <unistd.h>
 
-namespace Common {
-DECLARE_SINGLETON(PSPFilesystemFactory);
-}
-
 AbstractFSNode *PSPFilesystemFactory::makeRootFileNode() const {
 	return new PSPFilesystemNode();
 }

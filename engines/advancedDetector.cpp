@@ -498,12 +498,6 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 	}
 }
 
-/* Singleton Cache Storage for MD5 */
-
-namespace Common {
-	DECLARE_SINGLETON(MD5CacheManager);
-}
-
 // Sync with engines/game.cpp
 static char flagsToMD5Prefix(uint32 flags) {
 	if (flags & ADGF_MACRESFORK) {

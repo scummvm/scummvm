@@ -287,6 +287,4 @@ void SearchManager::clear() {
 #endif
 }
 
-DECLARE_SINGLETON(SearchManager);
-
 } // namespace Common

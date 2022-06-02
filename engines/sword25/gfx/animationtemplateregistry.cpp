@@ -33,10 +33,6 @@
 #include "sword25/gfx/animationtemplateregistry.h"
 #include "sword25/gfx/animationtemplate.h"
 
-namespace Common {
-DECLARE_SINGLETON(Sword25::AnimationTemplateRegistry);
-}
-
 namespace Sword25 {
 
 bool AnimationTemplateRegistry::persist(OutputPersistenceBlock &writer) {

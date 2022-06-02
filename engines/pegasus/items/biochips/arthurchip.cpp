@@ -26,10 +26,6 @@
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/arthurchip.h"
 
-namespace Common {
-DECLARE_SINGLETON(Pegasus::ArthurManager);
-}
-
 namespace Pegasus {
 
 static const char *kArthurWisdomMovies[] = {

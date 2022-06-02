@@ -31,10 +31,6 @@
 
 #include "engines/nancy/ui/button.h"
 
-namespace Common {
-DECLARE_SINGLETON(Nancy::State::Map);
-}
-
 namespace Nancy {
 namespace State {
 

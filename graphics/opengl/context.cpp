@@ -39,10 +39,6 @@ static GLADapiproc loadFunc(const char *name) {
 }
 #endif
 
-namespace Common {
-DECLARE_SINGLETON(OpenGL::Context);
-}
-
 namespace OpenGL {
 
 Context::Context() {

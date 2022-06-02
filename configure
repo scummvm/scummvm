@@ -2292,14 +2292,6 @@ EOF
 
 set_flag_if_supported -Wglobal-constructors
 
-# If the compiler supports the -Wundefined-var-template flag, silence that warning.
-# We get this warning a lot with regard to the Singleton class as we explicitly
-# instantiate each specialisation. An alternate way to deal with it would be to
-# change the way we instantiate the singleton classes as done in PR #967.
-# Note: we check the -Wundefined-var-template as gcc does not error out on unknown
-# -Wno-xxx flags.
-set_flag_if_supported -Wno-undefined-var-template
-
 # Vanilla clang 6 enables the new -Wpragma-pack which warns when leaving an
 # included file which changes the current alignment.
 # As our common/pack-{start,end}.h trigger this we disable this warning.

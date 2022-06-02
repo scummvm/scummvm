@@ -29,12 +29,6 @@
 #include "common/system.h"
 #include "common/timer.h"
 
-namespace Common {
-
-DECLARE_SINGLETON(Networking::ConnectionManager);
-
-}
-
 namespace Networking {
 
 ConnectionManager::ConnectionManager(): _multi(nullptr), _timerStarted(false), _frame(0) {

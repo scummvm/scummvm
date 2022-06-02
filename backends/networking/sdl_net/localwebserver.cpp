@@ -58,9 +58,6 @@
 
 namespace Common {
 class MemoryReadWriteStream;
-
-DECLARE_SINGLETON(Networking::LocalWebserver);
-
 }
 
 namespace Networking {

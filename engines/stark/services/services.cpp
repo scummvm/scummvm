@@ -21,10 +21,6 @@
 
 #include "engines/stark/services/services.h"
 
-namespace Common {
-DECLARE_SINGLETON(Stark::StarkServices);
-}
-
 namespace Stark {
 
 } // End of namespace Stark

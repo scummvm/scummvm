@@ -24,10 +24,6 @@
 
 #include "testbed/config-params.h"
 
-namespace Common {
-DECLARE_SINGLETON(Testbed::ConfigParams);
-}
-
 namespace Testbed {
 
 ConfigParams::ConfigParams() {

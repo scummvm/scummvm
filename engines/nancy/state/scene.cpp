@@ -35,9 +35,7 @@
 
 #include "engines/nancy/ui/button.h"
 
-namespace Common {
-DECLARE_SINGLETON(Nancy::State::Scene);
-}
+DEFINE_SINGLETON(Nancy::State::Scene);
 
 namespace Nancy {
 namespace State {

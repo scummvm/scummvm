@@ -51,7 +51,7 @@ class SeekableReadStream;
  *       which sends out notifications to interested parties whenever the value
  *       of some specific (or any) configuration key changes.
  */
-class ConfigManager : public Singleton<ConfigManager> {
+class ConfigManager : public OptionalSingleton<ConfigManager> {
 
 public:
 
@@ -219,7 +219,7 @@ public:
 	void                     copyFrom(ConfigManager &source); /*!< Copy from a ConfigManager instance. */
 	/** @} */
 private:
-	friend class Singleton<SingletonBaseType>;
+	friend class OptionalSingleton<SingletonBaseType>;
 	ConfigManager();
 
 	void			loadFromStream(SeekableReadStream &stream);
@@ -250,6 +250,8 @@ private:
 };
 
 /** @} */
+
+DECLARE_SINGLETON(ConfigManager);
 
 } // End of namespace Common
 

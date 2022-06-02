@@ -23,10 +23,6 @@
 
 #include "asylum/system/sound.h"
 
-namespace Common {
-DECLARE_SINGLETON(Asylum::ConfigurationManager);
-}
-
 namespace Asylum {
 
 static bool g_config_initialized = false;

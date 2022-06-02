@@ -29,9 +29,6 @@
 
 namespace Common {
 
-DECLARE_SINGLETON(AchievementsManager);
-
-
 AchievementsManager::AchievementsManager() {
 	_iniFile = nullptr;
 	unsetActiveDomain();

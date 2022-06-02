@@ -1083,7 +1083,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(scummvm_Debug, "GCC_WARN_UNUSED_FUNCTION", "YES");
 	ValueList scummvm_WarningCFlags;
 	scummvm_WarningCFlags.push_back("-Wno-multichar");
-	scummvm_WarningCFlags.push_back("-Wno-undefined-var-template");
 	scummvm_WarningCFlags.push_back("-Wno-pragma-pack");
 	scummvm_WarningCFlags.push_back("-Wc++11-extensions");
 	ADD_SETTING_LIST(scummvm_Debug, "WARNING_CFLAGS", scummvm_WarningCFlags, kSettingsQuoteVariable | kSettingsAsList, 5);

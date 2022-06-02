@@ -38,8 +38,6 @@ const DebugChannelDef gDebugChannels[] = {
 };
 namespace Common {
 
-DECLARE_SINGLETON(DebugManager);
-
 namespace {
 
 struct DebugLevelComperator {

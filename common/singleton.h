@@ -23,6 +23,7 @@
 #define COMMON_SINGLETON_H
 
 #include "common/noncopyable.h"
+#include "common/ptr.h"
 
 namespace Common {
 
@@ -40,38 +41,48 @@ namespace Common {
  */
 template<class T>
 class Singleton : NonCopyable {
-private:
-	Singleton<T>(const Singleton<T> &);
-	Singleton<T> &operator=(const Singleton<T> &);
-
-	/**
-	 * The default object factory used by the template class Singleton.
-	 * By specialising this template function, one can make a singleton use a
-	 * custom object factory. For example, to support encapsulation, your
-	 * singleton class might be pure virtual (or "abstract" in Java terminology),
-	 * and you specialise makeInstance to return an instance of a subclass.
-	 */
-	//template<class T>
-#if defined(__WINS__)
-//FIXME verify if __WINS__ needs this still
 public:
-#endif
-	static T *makeInstance() {
-		return new T();
+	static T &instance() {
+		return *internalInstance();
 	}
 
-	static void destroyInstance() {
-		delete _singleton;
-		_singleton = 0;
+	static void destroy() {
+		internalInstance().reset();
 	}
+protected:
+	Singleton<T>()		{ }
+	virtual ~Singleton<T>()	{ }
 
+	typedef T SingletonBaseType;
 
+private:
+	struct Deleter {
+		inline void operator()(T *object) {
+			delete object;
+		}
+	};
+
+	static DisposablePtr<T, Deleter> &internalInstance() {
+		// TODO: We don't leak, but the destruction order is nevertheless
+		// semi-random. If we use multiple singletons, the destruction
+		// order might become an issue. There are various approaches
+		// to solve that problem, but for now this is sufficient
+		static DisposablePtr<T, Deleter> _singleton(new T(), DisposeAfterUse::NO);
+		// In case destroy was called, instantiate again. This is no thread-safe.
+		if (!_singleton)
+			_singleton.reset(new T(), DisposeAfterUse::NO);
+		return _singleton;
+	}
+};
+
+template<class T>
+class OptionalSingleton : NonCopyable {
 public:
 	static bool hasInstance() {
-		return _singleton != 0;
+		return _singleton != nullptr;
 	}
 
-	static T& instance() {
+	static T &instance() {
 		// TODO: We aren't thread safe. For now we ignore it since the
 		// only thing using this singleton template is the config manager,
 		// and that is first instantiated long before any threads.
@@ -80,30 +91,31 @@ public:
 		// order might become an issue. There are various approaches
 		// to solve that problem, but for now this is sufficient
 		if (!_singleton)
-			_singleton = T::makeInstance();
+			_singleton = new T();
 		return *_singleton;
 	}
 
 	static void destroy() {
-		T::destroyInstance();
+		delete _singleton;
+		_singleton = nullptr;
 	}
 protected:
-	Singleton<T>()		{ }
-	virtual ~Singleton<T>()	{ }
+	OptionalSingleton<T>()		{ }
+	virtual ~OptionalSingleton<T>()	{ }
 
-	typedef T	SingletonBaseType;
-
+	typedef T SingletonBaseType;
 	static T *_singleton;
 };
 
-/**
- * Note that you need to use this macro from the Common namespace.
- *
- * This is because C++ requires initial explicit specialization
- * to be placed in the same namespace as the template.
- */
+#ifdef _MSC_VER
+#define DECLARE_SINGLETON(T)
+#else
 #define DECLARE_SINGLETON(T) \
-	template<> T *Singleton<T>::_singleton = 0
+	template<> T *::Common::OptionalSingleton<T>::_singleton
+#endif
+
+#define DEFINE_SINGLETON(T) \
+	template<> T *::Common::OptionalSingleton<T>::_singleton = nullptr
 
 /** @} */
 

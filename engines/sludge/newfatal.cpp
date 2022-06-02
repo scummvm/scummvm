@@ -27,10 +27,6 @@
 #include "sludge/sludge.h"
 #include "sludge/sound.h"
 
-namespace Common {
-DECLARE_SINGLETON(Sludge::FatalMsgManager);
-}
-
 namespace Sludge {
 
 int inFatal(const Common::String &str) {

@@ -29,10 +29,6 @@
 
 #include "engines/nancy/ui/button.h"
 
-namespace Common {
-DECLARE_SINGLETON(Nancy::State::Help);
-}
-
 namespace Nancy {
 namespace State {
 

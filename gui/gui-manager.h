@@ -69,9 +69,9 @@ typedef Common::FixedStack<Dialog *> DialogStack;
 /**
  * GUI manager singleton.
  */
-class GuiManager : public Common::Singleton<GuiManager>, public CommandSender {
+class GuiManager : public Common::OptionalSingleton<GuiManager>, public CommandSender {
 	friend class Dialog;
-	friend class Common::Singleton<SingletonBaseType>;
+	friend class Common::OptionalSingleton<SingletonBaseType>;
 	GuiManager();
 	~GuiManager() override;
 public:
@@ -227,5 +227,7 @@ protected:
 };
 
 } // End of namespace GUI
+
+DECLARE_SINGLETON(GUI::GuiManager);
 
 #endif

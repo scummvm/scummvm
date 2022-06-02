@@ -33,10 +33,6 @@
 #include "sword25/math/regionregistry.h"
 #include "sword25/math/region.h"
 
-namespace Common {
-DECLARE_SINGLETON(Sword25::RegionRegistry);
-}
-
 namespace Sword25 {
 
 bool RegionRegistry::persist(OutputPersistenceBlock &writer) {

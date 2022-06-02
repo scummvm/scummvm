@@ -38,8 +38,6 @@
 
 namespace Common {
 
-DECLARE_SINGLETON(MainTranslationManager);
-
 bool operator<(const TLanguage &l, const TLanguage &r) {
 	return l.name < r.name;
 }

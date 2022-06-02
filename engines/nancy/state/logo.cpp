@@ -28,10 +28,6 @@
 
 #include "engines/nancy/state/logo.h"
 
-namespace Common {
-DECLARE_SINGLETON(Nancy::State::Logo);
-}
-
 namespace Nancy {
 namespace State {
 

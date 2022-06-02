@@ -32,10 +32,6 @@ extern char __plugin_hole_start;	// Indicates start of hole in program file for 
 extern char __plugin_hole_end;		// Indicates end of hole in program file
 extern char _gp[];					// Value of gp register
 
-namespace Common {
-DECLARE_SINGLETON(ShortSegmentManager);	// For singleton
-}
-
 ShortSegmentManager::ShortSegmentManager() {
 	_shortsStart = &__plugin_hole_start ;	//shorts segment begins at the plugin hole we made when linking
 	_shortsEnd = &__plugin_hole_end;		//and ends at the end of that hole.

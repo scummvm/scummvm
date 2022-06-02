@@ -29,10 +29,6 @@
 #include "pegasus/gamestate.h"
 #include "pegasus/scoring.h"
 
-namespace Common {
-DECLARE_SINGLETON(Pegasus::GameStateManager);
-}
-
 namespace Pegasus {
 
 Common::Error GameStateManager::writeGameState(Common::WriteStream *stream) {

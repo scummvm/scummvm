@@ -66,7 +66,7 @@ struct SceneInfo {
 };
 
 // The game state that handles all of the gameplay
-class Scene : public State, public Common::Singleton<Scene> {
+class Scene : public State, public Common::OptionalSingleton<Scene> {
 	friend class Nancy::Action::ActionRecord;
 	friend class Nancy::Action::ActionManager;
 	friend class Nancy::Action::SliderPuzzle;
@@ -265,5 +265,7 @@ private:
 
 } // End of namespace State
 } // End of namespace Nancy
+
+DECLARE_SINGLETON(Nancy::State::Scene);
 
 #endif // NANCY_STATE_SCENE_H

@@ -654,10 +654,6 @@ void PluginManager::addToPluginsInMemList(Plugin *plugin) {
 
 #include "engines/metaengine.h"
 
-namespace Common {
-DECLARE_SINGLETON(EngineManager);
-}
-
 /**
  * This function works for both cached and uncached PluginManagers.
  * For the cached version, most of the logic here will short circuit.
@@ -987,10 +983,6 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 
 #include "audio/musicplugin.h"
 
-namespace Common {
-DECLARE_SINGLETON(MusicManager);
-}
-
 const PluginList &MusicManager::getPlugins() const {
 	return PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
 }
@@ -998,10 +990,6 @@ const PluginList &MusicManager::getPlugins() const {
 // Scaler plugins
 
 #include "graphics/scalerplugin.h"
-
-namespace Common {
-DECLARE_SINGLETON(ScalerManager);
-}
 
 const PluginList &ScalerManager::getPlugins() const {
 	return PluginManager::instance().getPlugins(PLUGIN_TYPE_SCALER);
