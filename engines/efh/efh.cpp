@@ -1168,21 +1168,18 @@ void EfhEngine::drawGameScreenAndTempText(bool flag) {
 void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 mapSize, bool drawHeroFl, bool drawMonstersFl) {
 	debugC(6, kDebugEngine, "drawMap %s %d-%d %d %s %s", largeMapFl ? "True" : "False", mapPosX, mapPosY, mapSize, drawHeroFl ? "True" : "False", drawMonstersFl ? "True" : "False");
 	
-	int16 unkPosX = 5;
-	int16 unkPosY = 4;
-	int16 posX = 0;
-	int16 posY = 0;
-	int16 var6 = 0;
+	int16 shiftPosX = 5;
+	int16 shiftPosY = 4;
 	int16 minX = mapPosX - 5;
 	int16 minY = mapPosY - 4;
 
 	if (minX < 0) {
-		unkPosX += minX;
+		shiftPosX += minX;
 		minX = 0;
 	}
 
 	if (minY < 0) {
-		unkPosY += minY;
+		shiftPosY += minY;
 		minY = 0;
 	}
 
@@ -1190,45 +1187,46 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 	int16 maxY = minY + 7;
 
 	if (maxX > mapSize) {
-		unkPosX += (maxX - mapSize);
+		shiftPosX += (maxX - mapSize);
 		maxX = mapSize;
 		minX = mapSize - 10;
 	}
 
 	if (maxY > mapSize) {
-		unkPosY += (maxY - mapSize);
+		shiftPosY += (maxY - mapSize);
 		maxY = mapSize;
 		minY = mapSize - 7;
 	}
 
-	int16 var10 = 8;
+	int16 drawPosY = 8;
 	for (int16 counterY = minY; counterY <= maxY; ++counterY) {
-		int16 var12 = 128;
-		for (int16 var16 = minX; var16 <= maxX; ++var16) {
+		int16 drawPosX = 128;
+		for (int16 counterX = minX; counterX <= maxX; ++counterX) {
 			if (largeMapFl) {
-				int16 idx = _mapGameMap[var16][counterY];
-				displayRawDataAtPos(_imageSetSubFilesArray[idx], var12, var10);
+				int16 idx = _mapGameMap[counterX][counterY];
+				displayRawDataAtPos(_imageSetSubFilesArray[idx], drawPosX, drawPosY);
 			} else {
-				int16 idx = _curPlace[var16][counterY];
-				displayRawDataAtPos(_imageSetSubFilesArray[idx], var12, var10);
+				int16 idx = _curPlace[counterX][counterY];
+				displayRawDataAtPos(_imageSetSubFilesArray[idx], drawPosX, drawPosY);
 			}
-			var12 += 16;
+			drawPosX += 16;
 		}
-		var10 += 16;
+		drawPosY += 16;
 	}
 
 	if (drawHeroFl) {
-		int16 var12 = 128 + unkPosX * 16;
-		var10 = 8 + unkPosY * 16;
-		displayRawDataAtPos(_imageSetSubFilesArray[_imageSetSubFilesIdx], var12, var10);
+		// Draw hero
+		int16 drawPosX = 128 + shiftPosX * 16;
+		drawPosY = 8 + shiftPosY * 16;
+		displayRawDataAtPos(_imageSetSubFilesArray[_imageSetSubFilesIdx], drawPosX, drawPosY);
 	}
 
 	if (drawMonstersFl) {
 		for (int16 var16 = 0; var16 < 64; ++var16) {
 			if ((_largeMapFlag && _mapMonsters[var16]._guess_fullPlaceId == 0xFE) || (!_largeMapFlag && _mapMonsters[var16]._guess_fullPlaceId == _fullPlaceId)){
 				bool var4 = false;
-				posX = _mapMonsters[var16]._posX;
-				posY = _mapMonsters[var16]._posY;
+				int16 posX = _mapMonsters[var16]._posX;
+				int16 posY = _mapMonsters[var16]._posY;
 
 				if (posX < minX || posX > maxX || posY < minY || posY > maxY)
 					continue;
@@ -1241,15 +1239,15 @@ void EfhEngine::drawMap(bool largeMapFl, int16 mapPosX, int16 mapPosY, int16 map
 				if (!var4)
 					continue;
 
-				var6 = 148 + kEncounters[_mapMonsters[var16]._monsterRef]._animId;
+				int16 var6 = 148 + kEncounters[_mapMonsters[var16]._monsterRef]._animId;
 				int16 var1 = _mapMonsters[var16]._possessivePronounSHL6 & 0x3F;
 
 				if (var1 == 0x3F && isCharacterATeamMember(_mapMonsters[var16]._field_1))
 					continue;
 
-				int16 var12 = 128 + (posX - minX) * 16;
-				var10 = 8 + (posY - minY) * 16;
-				displayRawDataAtPos(_imageSetSubFilesArray[var6], var12, var10);
+				int16 drawPosX = 128 + (posX - minX) * 16;
+				drawPosY = 8 + (posY - minY) * 16;
+				displayRawDataAtPos(_imageSetSubFilesArray[var6], drawPosX, drawPosY);
 			}
 		}
 	}
