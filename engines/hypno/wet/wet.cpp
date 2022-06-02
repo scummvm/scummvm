@@ -123,7 +123,7 @@ void WetEngine::loadAssetsDemoDisc() {
 	hs.push_back(h);
 
 	h.type = MakeHotspot;
-	h.rect = Common::Rect(0, 424, 233, 462);
+	h.rect = Common::Rect(0, 177, 116, 192);
 	h.actions.clear();
 	h.smenu = nullptr;
 	ChangeLevel *cl = new ChangeLevel("<intro>");
@@ -131,14 +131,14 @@ void WetEngine::loadAssetsDemoDisc() {
 
 	hs.push_back(h);
 
-	h.rect = Common::Rect(242, 424, 500, 480);
+	h.rect = Common::Rect(121, 177, 250, 200);
 	cl = new ChangeLevel("<movies>");
 	h.actions.clear();
 	h.actions.push_back(cl);
 
 	hs.push_back(h);
 
-	h.rect = Common::Rect(504, 424, 637, 480);
+	h.rect = Common::Rect(252, 177, 318, 200);
 	Quit *q = new Quit();
 	h.actions.clear();
 	h.actions.push_back(q);
@@ -146,6 +146,7 @@ void WetEngine::loadAssetsDemoDisc() {
 	hs.push_back(h);
 
 	Scene *start = new Scene();
+	start->resolution = "320x200";
 	start->hots = hs;
 	_levels["<start>"] = start;
 
