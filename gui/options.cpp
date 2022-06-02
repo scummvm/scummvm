@@ -908,8 +908,8 @@ void OptionsDialog::apply() {
 			Common::U32String soundFont(_soundFont->getLabel());
 			if (soundFont != ConfMan.get("soundfont", _domain)) {
 				_soundFont->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
-				if (soundFont.empty() || (soundFont != _c("None", "soundfont")))
-					ConfMan.removeKey("soundpath", _domain); 
+				if (soundFont.empty() || (soundFont == _c("None", "soundfont")))
+					ConfMan.removeKey("soundfont", _domain);
 				else 
 					ConfMan.set("soundfont", soundFont.encode(), _domain); 
 			} 
