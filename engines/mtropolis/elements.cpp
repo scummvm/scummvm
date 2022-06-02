@@ -1055,7 +1055,7 @@ MiniscriptInstructionOutcome ImageElement::scriptSetFlushPriority(MiniscriptThre
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
-MToonElement::MToonElement() : _frame(0), _renderedFrame(0), _flushPriority(0), _celStartTimeMSec(0), _isPlaying(false), _playRange(IntRange::create(1, 1)) {
+MToonElement::MToonElement() : _cel(1), _renderedFrame(0), _flushPriority(0), _celStartTimeMSec(0), _isPlaying(false), _playRange(IntRange::create(1, 1)) {
 }
 
 MToonElement::~MToonElement() {
@@ -1080,7 +1080,7 @@ bool MToonElement::load(ElementLoaderContext &context, const Data::MToonElement 
 
 bool MToonElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
 	if (attrib == "cel") {
-		result.setInt(_frame + 1);
+		result.setInt(_cel);
 		return true;
 	} else if (attrib == "flushpriority") {
 		result.setInt(_flushPriority);
@@ -1104,7 +1104,6 @@ bool MToonElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 
 MiniscriptInstructionOutcome MToonElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
 	if (attrib == "cel") {
-		// TODO proper support
 		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetCel>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "flushpriority") {
@@ -1117,7 +1116,7 @@ MiniscriptInstructionOutcome MToonElement::writeRefAttribute(MiniscriptThread *t
 		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetRate>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "range") {
-		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetRange>::create(this, result);
+		DynamicValueWriteOrRefAttribFuncHelper<MToonElement, &MToonElement::scriptSetRange, &MToonElement::scriptRangeWriteRefAttribute>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -1141,7 +1140,7 @@ VThreadState MToonElement::consumeCommand(Runtime *runtime, const Common::Shared
 		return kVThreadReturn;
 	}
 
-	return kVThreadReturn;
+	return VisualElement::consumeCommand(runtime, msg);
 }
 
 void MToonElement::activate() {
@@ -1185,10 +1184,14 @@ void MToonElement::render(Window *window) {
 	if (_cachedMToon) {
 		_cachedMToon->optimize(_runtime);
 
-		_cachedMToon->getOrRenderFrame(_renderedFrame, _frame, _renderSurface);
-		_renderedFrame = _frame;
+		uint32 frame = _cel - 1;
+		assert(frame < _metadata->frames.size());
 
-		Rect16 frameRect = _metadata->frames[_frame].rect;
+		_cachedMToon->getOrRenderFrame(_renderedFrame, frame, _renderSurface);
+
+		_renderedFrame = frame;
+
+		Rect16 frameRect = _metadata->frames[frame].rect;
 
 		if (_renderSurface) {
 			Common::Rect srcRect;
@@ -1219,37 +1222,21 @@ void MToonElement::render(Window *window) {
 }
 
 VThreadState MToonElement::startPlayingTask(const StartPlayingTaskData &taskData) {
-	_frame = _playRange.min;
+	_cel = _playRange.min;
 	_paused = false;
 	_isPlaying = false;	// Reset play state, it starts for real in playMedia
 
 	_contentsDirty = true;
 
-	Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
-	Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-	taskData.runtime->sendMessageOnVThread(dispatch);
-
-	return kVThreadReturn;
-}
-
-VThreadState MToonElement::changeFrameTask(const ChangeFrameTaskData &taskData) {
-	if (taskData.frame == _frame)
-		return kVThreadReturn;
-
-	uint32 minFrame = _playRange.min;
-	uint32 maxFrame = _playRange.max;
-	_frame = taskData.frame;
-
-	_contentsDirty = true;
-
-	if (_frame == minFrame) {
+	// These send in reverse order
+	{
 		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		taskData.runtime->sendMessageOnVThread(dispatch);
 	}
 
-	if (_frame == maxFrame) {
-		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));
+	{
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPlay, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		taskData.runtime->sendMessageOnVThread(dispatch);
 	}
@@ -1258,13 +1245,13 @@ VThreadState MToonElement::changeFrameTask(const ChangeFrameTaskData &taskData) 
 }
 
 void MToonElement::playMedia(Runtime *runtime, Project *project) {
-	uint32 targetFrame = _frame;
-
 	if (_paused)
 		return;
 
-	uint32 minFrame = _playRange.min - 1;
-	uint32 maxFrame = _playRange.max - 1;
+	int32 minCel = _playRange.min;
+	int32 maxCel = _playRange.max;
+	int32 sanitizeMaxCel = _metadata->frames.size();
+	int32 targetCel = _cel;
 
 	uint64 playTime = runtime->getPlayTime();
 	if (!_isPlaying) {
@@ -1292,32 +1279,38 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 		// depend on this, since they reset the cel when reaching the last cel but do not unpause.
 		bool ranPastEnd = false;
 
-		size_t framesRemainingToOnePastEnd = isReversed ? (_frame - minFrame + 1) : (maxFrame + 1 - _frame);
+		size_t framesRemainingToOnePastEnd = isReversed ? (_cel - minCel + 1) : (maxCel + 1 - _cel);
 		if (framesRemainingToOnePastEnd <= framesAdvanced) {
 			ranPastEnd = true;
 			if (_loop)
-				targetFrame = isReversed ? maxFrame : minFrame;
+				targetCel = isReversed ? maxCel : minCel;
 			else
-				targetFrame = isReversed ? minFrame : maxFrame;
+				targetCel = isReversed ? minCel : maxCel;
 		} else
-			targetFrame = isReversed ? (_frame - framesAdvanced) : (_frame + framesAdvanced);
+			targetCel = isReversed ? (_cel - framesAdvanced) : (_cel + framesAdvanced);
 
-		if (_frame != targetFrame) {
-			_frame = targetFrame;
+		if (targetCel < 1)
+			targetCel = 1;
+		if (targetCel > sanitizeMaxCel)
+			targetCel = sanitizeMaxCel;
 
+		if (_cel != targetCel) {
+			_cel = targetCel;
 			_contentsDirty = true;
+		}
 
-			if (_frame == maxFrame) {
-				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(isReversed ? EventIDs::kAtFirstCel : EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));
-				Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-				runtime->queueMessage(dispatch);
-			}
+		// Events play control events even if no cel advance occurs
+		const bool atFirstCel = (_cel == (isReversed ? maxCel : minCel));
+		const bool atLastCel = (_cel == (isReversed ? minCel : maxCel));
 
-			if (_frame == minFrame) {
-				Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(isReversed ? EventIDs::kAtLastCel : EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
-				Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
-				runtime->queueMessage(dispatch);
-			}
+		if (atFirstCel) {
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+			runtime->queueMessage(dispatch);
+		} else if (atLastCel) {		// These can not fire from the same frame transition (see notes)
+			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtLastCel, 0), DynamicValue(), getSelfReference()));
+			Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+			runtime->queueMessage(dispatch);
 		}
 
 		if (ranPastEnd && !_loop) {
@@ -1336,26 +1329,27 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 }
 
 MiniscriptInstructionOutcome MToonElement::scriptSetCel(MiniscriptThread *thread, const DynamicValue &value) {
-	int32 asInteger = 0;
-	if (!value.roundToInt(asInteger)) {
+	int32 newCel = 0;
+	if (!value.roundToInt(newCel)) {
 		thread->error("Attempted to set mToon cel to an invalid value");
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	if (asInteger < _playRange.min)
-		asInteger = _playRange.min;
-	else if (asInteger > _playRange.max)
-		asInteger = _playRange.max;
+	int32 maxCel = _metadata->frames.size();
 
-	uint32 frame = asInteger - 1;
-	_celStartTimeMSec = thread->getRuntime()->getPlayTime();
+	// Intentially ignore play range.  The cel may be set to an out-of-range cel here and will
+	// in fact play from that cel even if it's out of range.  The mariachi hint room near the
+	// Bureau booths in Obsidian depends on this behavior, since it sets the mToon cel and then
+	// sets the range based on the cel value.
 
-	if (frame != _frame) {
-		ChangeFrameTaskData *taskData = thread->getRuntime()->getVThread().pushTask("MToonElement::changeFrameTask", this, &MToonElement::changeFrameTask);
-		taskData->runtime = _runtime;
-		taskData->frame = frame;
+	if (newCel < 1)
+		newCel = 1;
+	if (newCel > maxCel)
+		newCel = maxCel;
 
-		return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
+	if (newCel != _cel) {
+		_cel = newCel;
+		_contentsDirty = true;
 	}
 
 	return kMiniscriptInstructionOutcomeContinue;
@@ -1367,34 +1361,78 @@ MiniscriptInstructionOutcome MToonElement::scriptSetRange(MiniscriptThread *thre
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	IntRange intRange = value.getIntRange();
-	size_t numFrames = _metadata->frames.size();
+	return scriptSetRangeTyped(thread, value.getIntRange());
+}
+
+MiniscriptInstructionOutcome MToonElement::scriptSetRangeStart(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger)) {
+		thread->error("Invalid type for mToon range start");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	IntRange range = _playRange;
+	range.min = asInteger;
+	return scriptSetRangeTyped(thread, range);
+}
+
+MiniscriptInstructionOutcome MToonElement::scriptSetRangeEnd(MiniscriptThread *thread, const DynamicValue &value) {
+	int32 asInteger = 0;
+	if (!value.roundToInt(asInteger)) {
+		thread->error("Invalid type for mToon range start");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	IntRange range = _playRange;
+	range.max = asInteger;
+	return scriptSetRangeTyped(thread, range);
+}
+
+MiniscriptInstructionOutcome MToonElement::scriptRangeWriteRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "start") {
+		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetRangeStart>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "end") {
+		DynamicValueWriteFuncHelper<MToonElement, &MToonElement::scriptSetRangeEnd>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome MToonElement::scriptSetRangeTyped(MiniscriptThread *thread, const IntRange &intRangeRef) {
+	IntRange intRange = intRangeRef;
+
+	int32 maxFrame = _metadata->frames.size() - 1;
+
+	// Intentionally buggy sanitization, see notes.
+	const bool isInvertedRange = (intRange.min > intRange.max);
+
 	if (intRange.min < 1)
 		intRange.min = 1;
-	else if (intRange.min > numFrames)
-		intRange.min = numFrames;
+	if (intRange.max > maxFrame)
+		intRange.max = maxFrame;
 
-	if (intRange.max > numFrames)
-		intRange.max = numFrames;
+	if (isInvertedRange) {
+		_playRange = IntRange::create(intRange.max, intRange.min);
+		if (_rateTimes100000 > 0)
+			_rateTimes100000 = -_rateTimes100000;
+	} else {
+		_playRange = intRange;
+		if (_rateTimes100000 < 0)
+			_rateTimes100000 = -_rateTimes100000;
+	}
 
-	if (intRange.max < intRange.min)
-		intRange.min = intRange.max;
+	int32 newCel = _cel;
+	if (newCel < intRange.min || newCel > intRange.max)
+		newCel = intRange.min;
 
-	_playRange = intRange;
+	if (newCel < 1 || newCel > maxFrame)
+		newCel = maxFrame;
 
-	uint32 targetFrame = _frame;
-	uint32 minFrame = intRange.min - 1;
-	uint32 maxFrame = intRange.max - 1;
-	if (targetFrame < minFrame)
-		targetFrame = minFrame;
-	else if (targetFrame > maxFrame)
-		targetFrame = maxFrame;
-
-	if (targetFrame != _frame) {
-		ChangeFrameTaskData *taskData = thread->getRuntime()->getVThread().pushTask("MToonElement::changeFrameTask", this, &MToonElement::changeFrameTask);
-		taskData->frame = targetFrame;
-		taskData->runtime = _runtime;
-		return kMiniscriptInstructionOutcomeYieldToVThreadNoRetry;
+	if (newCel != _cel) {
+		_cel = newCel;
+		_contentsDirty = true;
 	}
 
 	return kMiniscriptInstructionOutcomeContinue;
@@ -1834,7 +1872,7 @@ VThreadState SoundElement::consumeCommand(Runtime *runtime, const Common::Shared
 		return kVThreadReturn;
 	}
 
-	return Structural::consumeCommand(runtime, msg);
+	return NonVisualElement::consumeCommand(runtime, msg);
 }
 
 void SoundElement::activate() {

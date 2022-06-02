@@ -2905,9 +2905,24 @@ void Structural::materializeDescendents(Runtime *runtime, ObjectLinkingScope *ou
 
 VThreadState Structural::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (Event::create(EventIDs::kUnpause, 0).respondsTo(msg->getEvent())) {
-		_paused = false;
+		if (_paused) {
+			_paused = false;
+			onPauseStateChanged();
+		}
 
 		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
+		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
+		runtime->sendMessageOnVThread(dispatch);
+
+		return kVThreadReturn;
+	}
+	if (Event::create(EventIDs::kPause, 0).respondsTo(msg->getEvent())) {
+		if (_paused) {
+			_paused = true;
+			onPauseStateChanged();
+		}
+
+		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kPause, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));
 		runtime->sendMessageOnVThread(dispatch);
 
@@ -2983,6 +2998,9 @@ MiniscriptInstructionOutcome Structural::scriptSetPaused(MiniscriptThread *threa
 	// This is necessary in Obsidian to prevent the rotator lever from triggering when leaving the menu
 	// while at the Bureau light carousel, since the lever isn't flagged as paused but is set paused
 	// via an init script, and the lever trigger is detected via the pause event.
+	//
+	// (It's possible that this is actually yet another case of the event simply not being sent when the
+	// property is set from script... need to verify and update this comment.)
 	if (!thread->getRuntime()->isAwaitingSceneTransition()) {
 		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(targetValue ? EventIDs::kPause : EventIDs::kUnpause, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));

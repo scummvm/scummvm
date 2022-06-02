@@ -213,12 +213,16 @@ private:
 	};
 
 	VThreadState startPlayingTask(const StartPlayingTaskData &taskData);
-	VThreadState changeFrameTask(const ChangeFrameTaskData &taskData);
 
 	void playMedia(Runtime *runtime, Project *project) override;
 	MiniscriptInstructionOutcome scriptSetRate(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetCel(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome scriptSetRange(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetRangeStart(MiniscriptThread *thread, const DynamicValue &value);
+	MiniscriptInstructionOutcome scriptSetRangeEnd(MiniscriptThread *thread, const DynamicValue &value);
+
+	MiniscriptInstructionOutcome scriptRangeWriteRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib);
+	MiniscriptInstructionOutcome scriptSetRangeTyped(MiniscriptThread *thread, const IntRange &value);
 
 	void onPauseStateChanged();
 
@@ -229,7 +233,6 @@ private:
 
 	uint32 _assetID;
 	int32 _rateTimes100000;
-	uint32 _frame;
 	int32 _flushPriority;
 	uint32 _celStartTimeMSec;
 	bool _isPlaying;	// Is actually rolling media, this is only set by playMedia because it needs to start after scene transition
@@ -242,7 +245,9 @@ private:
 	Common::SharedPtr<CachedMToon> _cachedMToon;
 	Common::SharedPtr<PlayMediaSignaller> _playMediaSignaller;
 
+	// NOTE: To produce proper behavior, these are not sanitized until playMedia.  render must tolerate invalid values without changing them.
 	IntRange _playRange;
+	int32 _cel;
 };
 
 class TextLabelElement : public VisualElement {
