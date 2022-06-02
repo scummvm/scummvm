@@ -156,7 +156,7 @@ public:
 
 	AudioStreamInstance *_channels[16];  // 0-1 : music
 	                                     // 2 : voice
-	                                     // 3-16 : SFX
+	                                     // 3-15 : SFX
 
 	AudioStreamPackage *_audioPacks[4];  // 0 : generic streams
 	                                     // 1 : local streams
