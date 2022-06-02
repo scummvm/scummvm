@@ -128,3 +128,43 @@ collide with the same object?  Needs more research.
 
 Collisions only occur with visible objects.  It seems they are also not capable
 of colliding with scenes.
+
+
+
+mToon event and cel behavior:
+
+Setting individual values of mToons has extremely quirky behavior with a lot of
+unexpected or broken behavior in edge cases.  In theory, you can reverse an mToon
+by setting its range, but what actually happens is that whenever you set a range,
+the range is sanitized (incorrectly) and the rate is set negative if the
+unsanitized range was backwards.
+
+Setting the range to a forward or backward range causes the rate to be set
+negative or positive.  In theory this is supposed to ensure that the range is
+forward and the rate controls play direction, but it actually has some broken
+cases.
+
+Some sample situations, assuming an mToon with 7 valid frames:
+set mtoon.range to (20 thru 10)
+... will result in a negative rate and range of 10 thru 7.
+
+set mtoon.range.start to 2
+set mtoon.range.end to 4
+set mtoon.range.start to 5
+set mtoon.range.end to 6
+
+... will result in a positive rate and a range of 4 thru 6, because the range
+becomes "5 thru 4" on the third line, which inverts to 5 thru 4.
+
+The cel is always set to a valid value, but this is subject to some quirks
+as well: The cel can be set to an out-of-range value and will go to that cel.
+(The Obsidian booth hint room depends on this behavior.)
+
+Cel changes from scripts and clamping do not fire events.  "At first cel" is
+only fired from play control looping or starting the animation.  "At last cel"
+is only fired from play control.  If the animation is 1 frame, only "at first
+cel" is fired.
+
+"At first cel" is also fired on auto-play even if the animation is paused.
+
+The inter-frame timer is not changed by changing the cel from scripts.
