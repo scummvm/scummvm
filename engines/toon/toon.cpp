@@ -196,13 +196,23 @@ void ToonEngine::parseInput() {
 					loadGame(-1);
 			}
 			if (event.kbd.keycode == Common::KEYCODE_t && !hasModifier) {
-				_showConversationText = !_showConversationText;
+				if (_showConversationText) {
+					turnOnText(false);
+					if (_audioManager->isVoiceMuted()) {
+						turnOnText(true, false);
+					}
+				} else {
+					turnOnText(true, false);
+				}
 			}
 			if (event.kbd.keycode == Common::KEYCODE_m && !hasModifier) {
 				_audioManager->muteMusic(!_audioManager->isMusicMuted());
 			}
 			if (event.kbd.keycode == Common::KEYCODE_d && !hasModifier) {
 				_audioManager->muteVoice(!_audioManager->isVoiceMuted());
+				if (!_showConversationText && _audioManager->isVoiceMuted()) {
+					turnOnText(true, false);
+				}
 			}
 			if (event.kbd.keycode == Common::KEYCODE_s && !hasModifier) {
 				_audioManager->muteSfx(!_audioManager->isSfxMuted());
@@ -980,6 +990,22 @@ bool ToonEngine::showOptions() {
 					}
 				}
 
+
+				// This visualizes that the text dial cannot be set to Text Off,
+				// if the voice is also muted or voice volume is set to 0.
+				if (!_showConversationText
+				    && (_audioManager->isVoiceMuted() || _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) == 0)
+				    && (entries[4].activeFrame != textOnFrameFont1
+				        && (_isEnglishDemo || (!_isEnglishDemo && entries[4].activeFrame != textOnFrameFont2)))
+				    && entries[4].animateOnFrame == 0) {
+					entries[4].targetFrame = textOnFrameFont1;
+					entries[4].animateOnFrame = 1;
+					entries[4].playOnce = true;
+					if (!_isEnglishDemo) {
+						playSFX(-9, 128);
+					}
+				}
+
 				// Avoid unnecessary checks and actions if mouse has not moved or changed status
 				if (oldMouseButton != _mouseButton
 				    || ((_mouseButton & 1)
@@ -1030,6 +1056,11 @@ bool ToonEngine::showOptions() {
 						else
 							chosenSoundType = Audio::Mixer::kSFXSoundType;
 						_mixer->setVolumeForSoundType(chosenSoundType, targetVol);
+
+						if (_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) == 0
+						    && !_showConversationText) {
+								turnOnText(true, false);
+						}
 						break;
 
 					case OPTIONMENUHOTSPOT_TEXTSPEED:
@@ -1081,11 +1112,14 @@ bool ToonEngine::showOptions() {
 								entries[clickingOnSprite].targetFrame = 0;
 								entries[clickingOnSprite].animateOnFrame = 1;
 								entries[clickingOnSprite].playOnce = true;
-								if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEMUSIC)
+								if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEMUSIC) {
 									_audioManager->muteMusic(true);
-								else if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEVOICE)
+								} else if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEVOICE) {
 									_audioManager->muteVoice(true);
-								else
+									if (!_showConversationText) {
+										turnOnText(true, false);
+									}
+								} else
 									_audioManager->muteSfx(true);
 							}
 							if (!_isEnglishDemo)
@@ -1124,19 +1158,21 @@ bool ToonEngine::showOptions() {
 							if (!_isEnglishDemo) {
 								if ((ratioY <= 151 && ratioX >= 88 && ratioX <= 169)
 								    || (ratioY > 151 && ratioX >= 122 && ratioX <= 145) ) {
-									_showConversationText = false;
+									turnOnText(false);
+									if (_audioManager->isVoiceMuted()
+									    || _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) == 0) {
+										turnOnText(true, false);
+									}
 									entries[clickingOnSprite].targetFrame = 4;
 									entries[clickingOnSprite].animateOnFrame = 1;
 									entries[clickingOnSprite].playOnce = true;
 								} else if (ratioY > 151 && ratioX > 145) {
-									_showConversationText = true;
-									setFont(true);
+									turnOnText(true, true);
 									entries[clickingOnSprite].targetFrame = 8;
 									entries[clickingOnSprite].animateOnFrame = 1;
 									entries[clickingOnSprite].playOnce = true;
 								} else if (ratioY > 151 && ratioX < 122) {
-									_showConversationText = true;
-									setFont(false);
+									turnOnText(true, false);
 									entries[clickingOnSprite].targetFrame = 0;
 									entries[clickingOnSprite].animateOnFrame = 1;
 									entries[clickingOnSprite].playOnce = true;
@@ -1149,14 +1185,18 @@ bool ToonEngine::showOptions() {
 								// toggles between "Text Off" and "Text On"
 								switch (entries[clickingOnSprite].activeFrame) {
 								case 0:
-									_showConversationText = true;
+									turnOnText(true, false);
 									entries[clickingOnSprite].targetFrame = 8;
 									entries[clickingOnSprite].animateOnFrame = 1;
 									entries[clickingOnSprite].playOnce = true;
 									break;
 
 								case 8:
-									_showConversationText = false;
+									turnOnText(false);
+									if (_audioManager->isVoiceMuted()
+									    || _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) == 0) {
+										turnOnText(true, false);
+									}
 									entries[clickingOnSprite].targetFrame = 0;
 									entries[clickingOnSprite].animateOnFrame = 1;
 									entries[clickingOnSprite].playOnce = true;
@@ -2548,6 +2588,12 @@ void ToonEngine::setFont(bool alternative) {
 		_currentFont = _fontToon;
 	}
 	_useAlternativeFont = alternative;
+}
+
+void ToonEngine::turnOnText(bool enable, bool useAlternativeFont) {
+	_showConversationText = enable;
+	if (_showConversationText && !_isEnglishDemo)
+		setFont(useAlternativeFont);
 }
 
 void ToonEngine::drawInfoLine() {
