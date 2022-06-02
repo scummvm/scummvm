@@ -184,11 +184,15 @@ void ToonEngine::parseInput() {
 				_audioManager->stopCurrentVoice();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_F5 && !hasModifier) {
-				if (canSaveGameStateCurrently())
+				if (_gameState->_inMenu) {
+					playSoundWrong();
+				} else if (canSaveGameStateCurrently())
 					saveGame(-1, "");
 			}
 			if (event.kbd.keycode == Common::KEYCODE_F6 && !hasModifier) {
-				if (canLoadGameStateCurrently())
+				if (_gameState->_inMenu) {
+					playSoundWrong();
+				} else if (canLoadGameStateCurrently())
 					loadGame(-1);
 			}
 			if (event.kbd.keycode == Common::KEYCODE_t && !hasModifier) {
@@ -203,8 +207,11 @@ void ToonEngine::parseInput() {
 			if (event.kbd.keycode == Common::KEYCODE_s && !hasModifier) {
 				_audioManager->muteSfx(!_audioManager->isSfxMuted());
 			}
-			if (event.kbd.keycode == Common::KEYCODE_F1 && !hasModifier && !_gameState->_inMenu) {
-				showOptions();
+			if (event.kbd.keycode == Common::KEYCODE_F1 && !hasModifier) {
+				if (_gameState->_inMenu) {
+					playSoundWrong();
+				} else
+					showOptions();
 			}
 
 			if (event.kbd.flags & Common::KBD_ALT) {
@@ -743,12 +750,16 @@ bool ToonEngine::showOptions() {
 
 	entries[2].activeFrame = entries[2].animation->_numFrames - 1;
 
+	const int textOffFrame = _isEnglishDemo ? 0 : 4;
+	const int textOnFrameFont1 = _isEnglishDemo ? 8 : 0;
+	const int textOnFrameFont2 = 8;
+
 	if (!_showConversationText) {
-		entries[4].activeFrame = 4;
+		entries[4].activeFrame = textOffFrame;
 	} else if (_useAlternativeFont) {
-		entries[4].activeFrame = 8;
+		entries[4].activeFrame = textOnFrameFont2;
 	} else {
-		entries[4].activeFrame = 0;
+		entries[4].activeFrame = textOnFrameFont1;
 	}
 
 	// Variables for the English demo sparkle animation.
@@ -764,6 +775,7 @@ bool ToonEngine::showOptions() {
 	bool doExitMenu = false;
 	bool exitGame = false;
 	bool targetFrameExceeded = false;
+
 	_gameState->_inMenu = true;
 	dirtyAllScreen();
 	_firstFrame = true;
@@ -886,7 +898,7 @@ bool ToonEngine::showOptions() {
 			oldMouseY = _mouseY;
 			oldMouseButton = _mouseButton;
 
-			// update mouse clicking state
+			// update mouse clicking state and handle hotkeys
 			parseInput();
 
 			// NOTE Placing the code here seems to mitigate the issue
@@ -904,6 +916,69 @@ bool ToonEngine::showOptions() {
 					fadeIn(5);
 				}
 				_system->delayMillis(17);
+
+				// animations related with handling hotkey commands
+				if (entries[4].animateOnFrame == 0) {
+					if (!_showConversationText && entries[4].activeFrame != textOffFrame) {
+						entries[4].targetFrame = textOffFrame;
+						entries[4].animateOnFrame = 1;
+						entries[4].playOnce = true;
+					} else if (_showConversationText
+					           && (entries[4].activeFrame != textOnFrameFont1
+							       && (_isEnglishDemo || (!_isEnglishDemo && entries[4].activeFrame != textOnFrameFont2)))) {
+						entries[4].targetFrame = textOnFrameFont1;
+						entries[4].animateOnFrame = 1;
+						entries[4].playOnce = true;
+					}
+					if (!_isEnglishDemo && entries[4].animateOnFrame == 1) {
+						playSFX(-9, 128);
+					}
+				}
+
+				if (entries[9].animateOnFrame == 0) {
+					if (!_audioManager->isMusicMuted() && entries[9].activeFrame != entries[9].animation->_numFrames - 1) {
+						entries[9].targetFrame = entries[9].animation->_numFrames - 1;
+						entries[9].animateOnFrame = 1;
+						entries[9].playOnce = true;
+					} else if (_audioManager->isMusicMuted() && entries[9].activeFrame != 0) {
+						entries[9].targetFrame = 0;
+						entries[9].animateOnFrame = 1;
+						entries[9].playOnce = true;
+					}
+					if (!_isEnglishDemo && entries[9].animateOnFrame == 1) {
+						playSFX(-7, 128);
+					}
+				}
+
+				if (entries[7].animateOnFrame == 0) {
+					if (!_audioManager->isVoiceMuted() && entries[7].activeFrame != entries[7].animation->_numFrames - 1) {
+						entries[7].targetFrame = entries[7].animation->_numFrames - 1;
+						entries[7].animateOnFrame = 1;
+						entries[7].playOnce = true;
+					} else if (_audioManager->isVoiceMuted() && entries[7].activeFrame != 0) {
+						entries[7].targetFrame = 0;
+						entries[7].animateOnFrame = 1;
+						entries[7].playOnce = true;
+					}
+					if (!_isEnglishDemo && entries[7].animateOnFrame == 1) {
+						playSFX(-7, 128);
+					}
+				}
+
+				if (entries[5].animateOnFrame == 0) {
+					if (!_audioManager->isSfxMuted() && entries[5].activeFrame != entries[5].animation->_numFrames - 1) {
+						entries[5].targetFrame = entries[5].animation->_numFrames - 1;
+						entries[5].animateOnFrame = 1;
+						entries[5].playOnce = true;
+					} else if (_audioManager->isSfxMuted() && entries[5].activeFrame != 0) {
+						entries[5].targetFrame = 0;
+						entries[5].animateOnFrame = 1;
+						entries[5].playOnce = true;
+					}
+					if (!_isEnglishDemo && entries[5].animateOnFrame == 1) {
+						playSFX(-7, 128);
+					}
+				}
 
 				// Avoid unnecessary checks and actions if mouse has not moved or changed status
 				if (oldMouseButton != _mouseButton
@@ -992,7 +1067,7 @@ bool ToonEngine::showOptions() {
 							// fall through
 						case OPTIONMENUHOTSPOT_VOLUMESFX:
 							entries[clickingOnSprite].handled = true;
-							if (entries[clickingOnSprite].activeFrame == 0) {
+							if (entries[clickingOnSprite].activeFrame != entries[clickingOnSprite].animation->_numFrames - 1) {
 								entries[clickingOnSprite].targetFrame = entries[clickingOnSprite].animation->_numFrames - 1;
 								entries[clickingOnSprite].animateOnFrame = 1;
 								entries[clickingOnSprite].playOnce = true;
@@ -1066,7 +1141,8 @@ bool ToonEngine::showOptions() {
 									entries[clickingOnSprite].animateOnFrame = 1;
 									entries[clickingOnSprite].playOnce = true;
 								}
-								playSFX(-9, 128);
+								if (entries[clickingOnSprite].animateOnFrame == 1)
+									playSFX(-9, 128);
 							} else {
 								// In the demo, the behavior is different:
 								// Clicking anywhere in the Text Dial hotspot
