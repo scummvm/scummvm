@@ -61,8 +61,6 @@ public:
 	}
 
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
-
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
 };
 
 const ExtraGuiOptions MTropolisMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
@@ -85,20 +83,6 @@ const ExtraGuiOptions MTropolisMetaEngineDetection::getExtraGuiOptions(const Com
 	options.push_back(launchBreakOption);
 
 	return options;
-}
-
-ADDetectedGame MTropolisMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
-	// Set the default values for the fallback descriptor's ADGameDescription part.
-	MTropolis::g_fallbackDesc.desc.language = Common::UNK_LANG;
-	MTropolis::g_fallbackDesc.desc.platform = Common::kPlatformDOS;
-	MTropolis::g_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
-
-	// Set default values for the fallback descriptor's MTropolisGameDescription part.
-	MTropolis::g_fallbackDesc.gameID = 0;
-	MTropolis::g_fallbackDesc.version = 0;
-
-	//return (const ADGameDescription *)&MTropolis::g_fallbackDesc;
-	return ADDetectedGame();
 }
 
 REGISTER_PLUGIN_STATIC(MTROPOLIS_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, MTropolisMetaEngineDetection);

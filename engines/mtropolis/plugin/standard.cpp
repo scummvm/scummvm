@@ -182,7 +182,7 @@ void MidiFilePlayerImpl::send(uint32 b) {
 }
 
 MultiMidiPlayer::MultiMidiPlayer() {
-	createDriver(MDT_MIDI | MDT_PREFER_GM);
+	createDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 
 	if (_driver->open() != 0) {
 		_driver->close();
@@ -1656,7 +1656,7 @@ const StandardPlugInHacks &StandardPlugIn::getHacks() const {
 	return _hacks;
 }
 
-StandardPlugInHacks& StandardPlugIn::getHacks() {
+StandardPlugInHacks &StandardPlugIn::getHacks() {
 	return _hacks;
 }
 

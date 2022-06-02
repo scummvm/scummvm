@@ -3,7 +3,6 @@ MODULE := engines/mtropolis
 MODULE_OBJS = \
 	asset_factory.o \
 	assets.o \
-	console.o \
 	data.o \
 	debug.o \
 	detection.o \
