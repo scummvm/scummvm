@@ -334,14 +334,14 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 
 GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	: ContainerWidget(boss, name), CommandSender(boss) {
-	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
-	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
-	_flagIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height");
-	_flagIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width");
-	_platformIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height");
-	_platformIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width");
-	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
-	_minGridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
+	_thumbnailHeight = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height") * g_gui.getScaleFactor() + .5f);
+	_thumbnailWidth = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width") * g_gui.getScaleFactor() + .5f);
+	_flagIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height") * g_gui.getScaleFactor() + .5f);
+	_flagIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width") * g_gui.getScaleFactor() + .5f);
+	_platformIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height") * g_gui.getScaleFactor() + .5f);
+	_platformIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width") * g_gui.getScaleFactor() + .5f);
+	_minGridXSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.XSpacing") * g_gui.getScaleFactor() + .5f);
+	_minGridYSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.YSpacing") * g_gui.getScaleFactor() + .5f);
 	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
 	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 
@@ -823,20 +823,20 @@ void GridWidget::reflowLayout() {
 
 	int oldThumbnailHeight = _thumbnailHeight;
 	int oldThumbnailWidth = _thumbnailWidth;
-	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
-	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
-	_flagIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height");
-	_flagIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width");
-	_platformIconHeight = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height");
-	_platformIconWidth = g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width");
+	_thumbnailHeight = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height") * g_gui.getScaleFactor() + .5f);
+	_thumbnailWidth = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width") * g_gui.getScaleFactor() + .5f);
+	_flagIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height") * g_gui.getScaleFactor() + .5f);
+	_flagIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width") * g_gui.getScaleFactor() + .5f);
+	_platformIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height") * g_gui.getScaleFactor() + .5f);
+	_platformIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width") * g_gui.getScaleFactor() + .5f);
 	if ((oldThumbnailHeight != _thumbnailHeight) || (oldThumbnailWidth != _thumbnailWidth)) {
 		unloadSurfaces(_loadedSurfaces);
 		reloadThumbnails();
 		loadFlagIcons();
 		loadPlatformIcons();
 	}
-	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
-	_minGridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
+	_minGridXSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.XSpacing") * g_gui.getScaleFactor() + .5f);
+	_minGridYSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.YSpacing") * g_gui.getScaleFactor() + .5f);
 	_scrollWindowPaddingX = _minGridXSpacing;
 	_scrollWindowPaddingY = _minGridYSpacing;
 	_gridYSpacing = _minGridYSpacing;
