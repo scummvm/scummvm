@@ -73,7 +73,14 @@ bool MM1Engine::isEnhanced() const {
 }
 
 void MM1Engine::setupNormal() {
-	Gfx::GFX::setEgaPalette(0);
+	byte pal[12];
+	pal[0] = pal[1] = pal[2] = 0;
+	pal[3] = 168; pal[4] = 84; pal[5] = 0;
+	pal[6] = 252; pal[7] = 252; pal[8] = 84;
+	pal[9] = pal[10] = pal[11] = 255;
+
+	g_system->getPaletteManager()->setPalette(pal, 0, 3);
+	g_system->getPaletteManager()->setPalette(&pal[9], 255, 1);
 }
 
 bool MM1Engine::setupEnhanced() {
@@ -105,5 +112,12 @@ bool MM1Engine::setupEnhanced() {
 	return true;
 }
 
-} // End of namespace Xeen
-} // End of namespace MM
+bool MM1Engine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsReturnToLauncher) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
+} // namespace MM1
+} // namespace MM

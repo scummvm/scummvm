@@ -32,6 +32,9 @@ namespace Gfx {
 class ScreenDecoder : public Image::ImageDecoder {
 private:
 	Graphics::Surface _surface;
+
+	void getPaletteIndexes(byte indexes[4]);
+	byte findPalette(const byte *pal, byte r, byte g, byte b);
 public:
 	ScreenDecoder() {}
 	~ScreenDecoder() override;
