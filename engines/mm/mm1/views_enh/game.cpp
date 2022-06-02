@@ -30,7 +30,7 @@ namespace ViewsEnh {
 
 Game::Game() : TextView("Game"),
 		_view(this) {
-	_view.setBounds(Common::Rect(8, 8, 224, 140));
+	_view.setBounds(Common::Rect(8, 15, 224, 130));
 }
 
 bool Game::msgFocus(const FocusMessage &msg) {

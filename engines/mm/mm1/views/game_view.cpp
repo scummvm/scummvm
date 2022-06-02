@@ -169,8 +169,12 @@ void GameView::drawTile() {
 		maps._tiles[section];
 	const Graphics::ManagedSurface &tile = tiles[_tileIndex];
 
-	Common::Point pos(_destLeft * 4, (8 - _destTop) * 8);
 	Common::Rect r(_srcLeft * 4, 0, _srcLeft * 4 + _srcWidth * 8, tile.h);
+	Common::Point pos(_destLeft * 4, (8 - _destTop) * 8);
+	pos.x -= _bounds.left;
+	pos.y -= _bounds.top;
+	if (_bounds.top != 0)
+		pos.y += 12;
 
 	surf.blitFrom(tile, r, pos);
 }
