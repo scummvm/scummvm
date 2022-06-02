@@ -109,6 +109,13 @@ public:
 	void addView();
 
 	/**
+	 * Sets the element's bounds
+	 */
+	void setBounds(const Common::Rect &r) {
+		_bounds = r;
+	}
+
+	/**
 	 * Returns a surface for drawing the element
 	 */
 	Graphics::ManagedSurface getSurface() const;

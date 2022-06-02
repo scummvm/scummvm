@@ -47,7 +47,6 @@ static uint16 ARR18[] = { 4, 5, 6, 7 };
 static uint16 ARR19[] = { 8, 9, 10, 11 };
 
 GameView::GameView(UIElement *owner) : Game::ViewBase(owner) {
-	_bounds = Common::Rect(0, 0, 245, 128);
 	Common::fill(&_arr1[0], &_arr1[11], 0);
 }
 
@@ -173,7 +172,7 @@ void GameView::drawTile() {
 	Common::Point pos(_destLeft * 4, (8 - _destTop) * 8);
 	Common::Rect r(_srcLeft * 4, 0, _srcLeft * 4 + _srcWidth * 8, tile.h);
 
-	surf.copyRectToSurface(tile, pos.x, pos.y, r);
+	surf.blitFrom(tile, r, pos);
 }
 
 } // namespace Views

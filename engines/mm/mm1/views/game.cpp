@@ -30,6 +30,7 @@ namespace Views {
 Game::Game() : TextView("Game"),
 		_view(this), _commands(this),
 		_messages(this), _party(this) {
+	_view.setBounds(Common::Rect(0, 0, 245, 128));
 }
 
 bool Game::msgFocus(const FocusMessage &msg) {
