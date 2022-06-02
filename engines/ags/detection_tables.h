@@ -3435,6 +3435,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("samaritan", "samaritan.exe", "6a3b669b7d34ec9356a665afe0c2c003", 78438375),
 	GAME_ENTRY_EN_STEAM("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876),  // v1.1
 	GAME_ENTRY_EN_STEAM("shardlight", "shardlight.exe", "cc447656f408ac32e8443274c3f70c67", 643459667),  // v2.0
+	GAME_ENTRY_EN_STEAM("shardlight", "shardlight.exe", "cc447656f408ac32e8443274c3f70c67", 643461648),  // v2.1
 	GAME_ENTRY_EN_GOG("shardlight", "ac2game.dat", "df94d3c1cec961c89894c676b000e7bc", 640346706), // Mac v2.3a
 	GAME_ENTRY_EN("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642151325),
 	GAME_ENTRY_EN("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642142591),
