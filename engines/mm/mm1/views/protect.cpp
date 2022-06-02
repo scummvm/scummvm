@@ -27,7 +27,7 @@ namespace MM1 {
 namespace Views {
 
 void Protect::draw() {
-	clearScreen();
+	clearSurface();
 	writeString(STRING["dialogs.protect.title"]);
 	escToGoBack();
 

@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/title.h"
+#include "mm/mm1/gfx/gfx.h"
 #include "mm/mm1/gfx/screen_decoder.h"
 #include "mm/mm1/mm1.h"
 
@@ -37,7 +38,7 @@ Title::Title() : UIElement("Title", g_engine) {
 }
 
 void Title::draw() {
-	getScreen()->blitFrom(_surface);
+	getSurface().copyFrom(_surface);
 }
 
 } // namespace Views

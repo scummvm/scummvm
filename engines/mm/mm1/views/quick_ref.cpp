@@ -27,7 +27,7 @@ namespace MM1 {
 namespace Views {
 
 void QuickRef::draw() {
-	clearScreen();
+	clearSurface();
 	writeString(STRING["dialogs.quick_ref.title"]);
 
 	// Print list of characters, hit pts, spell pts, and ac

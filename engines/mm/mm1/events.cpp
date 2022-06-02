@@ -23,6 +23,7 @@
 #include "graphics/screen.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/mm1.h"
+#include "mm/mm1/gfx/gfx.h"
 #include "mm/mm1/views/dialogs.h"
 
 namespace MM {
@@ -129,7 +130,8 @@ void Events::popView() {
 /*------------------------------------------------------------------------*/
 
 UIElement::UIElement(const Common::String &name, UIElement *uiParent) :
-		_name(name), _parent(uiParent) {
+		_name(name), _parent(uiParent),
+		_bounds(0, 0, SCREEN_W, SCREEN_H) {
 	if (_parent)
 		_parent->_children.push_back(this);
 }
@@ -206,6 +208,14 @@ void UIElement::addView(const Common::String &name) {
 
 void UIElement::addView() {
 	g_events->addView(this);
+}
+
+Graphics::Surface UIElement::getSurface() const {
+	if (_bounds.width() == SCREEN_W &&
+		_bounds.height() == SCREEN_H)
+		return *g_events->getScreen();
+	else
+		return g_events->getScreen()->getSubArea(_bounds);
 }
 
 } // namespace MM1

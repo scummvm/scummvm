@@ -47,6 +47,7 @@ static uint16 ARR18[] = { 4, 5, 6, 7 };
 static uint16 ARR19[] = { 8, 9, 10, 11 };
 
 GameView::GameView(UIElement *owner) : Game::ViewBase(owner) {
+	_bounds = Common::Rect(0, 0, 245, 128);
 	Common::fill(&_arr1[0], &_arr1[11], 0);
 }
 
@@ -57,7 +58,7 @@ void GameView::draw() {
 
 	Common::fill(&_arr1[0], &_arr1[11], 0);
 
-	getScreen()->fillRect(Common::Rect(0, 0, 245, 128), 0);
+	clearSurface();
 
 	// Loop through four regions in front of the party
 	for (int dist = 0; dist < 4; ++dist,
@@ -164,7 +165,7 @@ void GameView::drawTile() {
 			++section;
 	}
 
-	Graphics::Screen &scr = *getScreen();
+	Graphics::Surface surf = getSurface();
 	const Common::Array<Graphics::ManagedSurface> &tiles =
 		maps._tiles[section];
 	const Graphics::ManagedSurface &tile = tiles[_tileIndex];
@@ -172,7 +173,7 @@ void GameView::drawTile() {
 	Common::Point pos(_destLeft * 4, (8 - _destTop) * 8);
 	Common::Rect r(_srcLeft * 4, 0, _srcLeft * 4 + _srcWidth * 8, tile.h);
 
-	scr.blitFrom(tile, r, pos);
+	surf.copyRectToSurface(tile, pos.x, pos.y, r);
 }
 
 } // namespace Views

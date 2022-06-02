@@ -60,9 +60,9 @@ protected:
 	void newLine();
 
 	/**
-	 * Clear the screen
+	 * Clear the surface
 	 */
-	void clearScreen();
+	void clearSurface();
 
 	/**
 	 * Draws a text border

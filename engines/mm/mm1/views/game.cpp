@@ -44,7 +44,7 @@ bool Game::msgUnfocus(const UnfocusMessage &msg) {
 
 void Game::draw() {
 	if (_needsRedraw)
-		clearScreen();
+		clearSurface();
 	UIElement::draw();
 }
 
