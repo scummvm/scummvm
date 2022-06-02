@@ -1403,7 +1403,7 @@ MiniscriptInstructionOutcome MToonElement::scriptRangeWriteRefAttribute(Miniscri
 MiniscriptInstructionOutcome MToonElement::scriptSetRangeTyped(MiniscriptThread *thread, const IntRange &intRangeRef) {
 	IntRange intRange = intRangeRef;
 
-	int32 maxFrame = _metadata->frames.size() - 1;
+	int32 maxFrame = _metadata->frames.size();
 
 	// Intentionally buggy sanitization, see notes.
 	const bool isInvertedRange = (intRange.min > intRange.max);
