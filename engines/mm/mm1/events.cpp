@@ -214,12 +214,8 @@ void UIElement::addView() {
 	g_events->addView(this);
 }
 
-Graphics::Surface UIElement::getSurface() const {
-	if (_bounds.width() == SCREEN_W &&
-		_bounds.height() == SCREEN_H)
-		return *g_events->getScreen();
-	else
-		return g_events->getScreen()->getSubArea(_bounds);
+Graphics::ManagedSurface UIElement::getSurface() const {
+	return Graphics::ManagedSurface(*g_events->getScreen(), _bounds);
 }
 
 } // namespace MM1

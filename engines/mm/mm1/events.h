@@ -111,7 +111,7 @@ public:
 	/**
 	 * Returns a surface for drawing the element
 	 */
-	Graphics::Surface getSurface() const;
+	Graphics::ManagedSurface getSurface() const;
 
 	/**
 	 * Draws the element

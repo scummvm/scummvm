@@ -37,7 +37,7 @@ TextView::TextView(const Common::String &name, UIElement *owner) :
 }
 
 void TextView::writeChar(char c) {
-	Graphics::Surface s = getSurface();
+	Graphics::ManagedSurface s = getSurface();
 	g_globals->_font->drawChar(&s, c,
 		_textPos.x * FONT_SIZE, _textPos.y * FONT_SIZE, 0xff);
 
@@ -80,13 +80,13 @@ void TextView::newLine() {
 }
 
 void TextView::clearSurface() {
-	Graphics::Surface s = getSurface();
+	Graphics::ManagedSurface s = getSurface();
 	s.fillRect(Common::Rect(s.w, s.h), 0);
 	_textPos.x = _textPos.y = 0;
 }
 
 void TextView::drawTextBorder() {
-	Graphics::Surface surf = getSurface();
+	Graphics::ManagedSurface surf = getSurface();
 	clearSurface();
 
 	// Draw boxes in the four corners

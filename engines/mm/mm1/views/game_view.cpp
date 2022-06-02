@@ -165,7 +165,7 @@ void GameView::drawTile() {
 			++section;
 	}
 
-	Graphics::Surface surf = getSurface();
+	Graphics::ManagedSurface surf = getSurface();
 	const Common::Array<Graphics::ManagedSurface> &tiles =
 		maps._tiles[section];
 	const Graphics::ManagedSurface &tile = tiles[_tileIndex];
