@@ -1694,7 +1694,7 @@ private:
 
 	static bool isStructuralMouseInteractive(Structural *structural, MouseInteractivityTestType testType);
 	static bool isModifierMouseInteractive(Modifier *modifier, MouseInteractivityTestType testType);
-	static void recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, int &bestStackHeight, Structural *candidate, int stackHeight, int32 relativeX, int32 relativeY, MouseInteractivityTestType testType);
+	static void recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, int &bestStackHeight, bool &bestDirect, Structural *candidate, int stackHeight, int32 relativeX, int32 relativeY, MouseInteractivityTestType testType);
 
 	void queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay);
 
@@ -2486,6 +2486,10 @@ public:
 	bool needsRender() const;
 	virtual void render(Window *window) = 0;
 	void finalizeRender();
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	void debugInspect(IDebugInspectionReport *report) const override;
+#endif
 
 protected:
 	bool loadCommon(const Common::String &name, uint32 guid, const Data::Rect &rect, uint32 elementFlags, uint16 layer, uint32 streamLocator, uint16 sectionID);
