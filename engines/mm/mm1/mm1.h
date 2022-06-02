@@ -42,6 +42,9 @@ private:
 	// Engine APIs
 	Common::Error run() override;
 
+	bool isEnhanced() const;
+	void setupNormal();
+	bool setupEnhanced();
 public:
 	Globals _globals;
 public:
@@ -57,6 +60,7 @@ public:
 	int getRandomNumber(int maxNumber) {
 		return _randomSource.getRandomNumber(maxNumber);
 	}
+
 	Common::String getTargetName() const {
 		return _targetName;
 	}
