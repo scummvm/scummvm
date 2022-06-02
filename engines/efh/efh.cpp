@@ -718,7 +718,7 @@ void EfhEngine::loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl) {
 		readFileToBuffer(fileName, _hiResImageBuf);
 		uncompressBuffer(_hiResImageBuf, _places);
 	}
-	copyCurrentPlaceToBuffer(_fullPlaceId / 20);
+	copyCurrentPlaceToBuffer(_fullPlaceId % 20);
 }
 
 void EfhEngine::readTileFact() {
@@ -1684,6 +1684,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 
 		switch (opCode) {
 		case 0x00:
+			// Enter room { full Place Id, posX, posY }
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (flag) {
 				if (_largeMapFlag) {
@@ -1699,6 +1700,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 			}
 			break;
 		case 0x01:
+			// Exit room { }
 			if (flag) {
 				_largeMapFlag = true;
 				_oldMapPosX = _mapPosX = _techDataId_MapPosX;
@@ -1708,6 +1710,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 			}
 			break;
 		case 0x02:
+			// Change map. { map number, posX, posY }
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (flag) {
 				if (_word2C8D7)
@@ -1825,6 +1828,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 			}
 			break;
 		case 0x0D:
+			// Put item in inventory { objectId }
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (flag) {
 				int16 var110 = scriptNumberArray[0];
@@ -1875,6 +1879,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 				_unkArray2C8AA[0] = 0;
 			break;
 		case 0x12:
+			// Guess : disable special tile { }
 			if (flag) {
 				int16 var110 = sub151FD(_mapPosX, _mapPosY);
 				if (var110 != -1)
@@ -2012,6 +2017,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 			}
 			break;
 		case 0x1E:
+			// Dialog with condition { historyId, dialogId1, dialogId2 }
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (flag) {
 				if (_history[scriptNumberArray[0]] == 0)
@@ -3266,6 +3272,10 @@ void EfhEngine::sub22AA8(int16 arg0) {
 				}
 				
 			} while (varA == 0 && var4 != -1);
+
+			varA = 0;
+			if (var4 == 0xFF || var4 == -1)
+				break;
 		}
 	}
 
