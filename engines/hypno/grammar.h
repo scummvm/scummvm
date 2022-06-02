@@ -40,6 +40,9 @@ typedef Common::List<Filename> Filenames;
 class HypnoSmackerDecoder : public Video::SmackerDecoder {
 public:
 	bool loadStream(Common::SeekableReadStream *stream) override;
+
+protected:
+	uint32 getSignatureVersion(uint32 signature) const override;
 };
 
 class MVideo {
