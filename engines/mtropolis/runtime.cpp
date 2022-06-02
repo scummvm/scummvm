@@ -4274,6 +4274,7 @@ void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLaye
 				bestResult = candidate;
 				bestLayer = layer;
 				bestStackHeight = stackHeight;
+				bestDirect = isDirect;
 			}
 
 			childRelativeX -= visual->getRelativeRect().left;
