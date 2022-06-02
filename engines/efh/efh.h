@@ -438,7 +438,7 @@ private:
 	void drawColoredRect(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color);
 	void clearScreen(int16 color);
 	void displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY);
-	void drawString(const char *str, int16 startX, int16 startY, uint16 unkFl);
+	void drawString(const char *str, int16 startX, int16 startY, uint16 textColor);
 	void displayCenteredString(const char *str, int16 minX, int16 maxX, int16 posY);
 	void displayMenuAnswerString(const char *str, int16 minX, int16 maxX, int16 posY);
 	void drawMapWindow();
@@ -557,7 +557,6 @@ private:
 	bool _drawHeroOnMapFl;
 	bool _drawMonstersOnMapFl;
 	bool _word2C87A;
-	int16 _unk_sub26437_flag;
 
 	int16 _imageSetSubFilesIdx;
 	int16 _oldImageSetSubFilesIdx;

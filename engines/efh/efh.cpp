@@ -296,7 +296,6 @@ EfhEngine::EfhEngine(OSystem *syst, const EfhGameDescription *gd) : Engine(syst)
 	_drawHeroOnMapFl = true;
 	_drawMonstersOnMapFl = true;
 	_word2C87A = false;
-	_unk_sub26437_flag = 0;
 	_dbgForceDisplayUpperRightBorder = false;
 	_dbgForceMonsterBlock = false;
 	_ongoingFightFl = false;
@@ -1680,12 +1679,12 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 
 		// At this point, curChar == 0x5E
 		++buffer;
-		int16 var_108 = 0;
-		buffer = script_getNumber(buffer, &var_108);
+		int16 opCode = 0;
+		buffer = script_getNumber(buffer, &opCode);
 		int16 scriptNumberArray[10];
 		memset(scriptNumberArray, 0, sizeof(scriptNumberArray));
 
-		switch (var_108) {
+		switch (opCode) {
 		case 0x00:
 			buffer = script_readNumberArray(buffer, 3, scriptNumberArray);
 			if (flag) {
@@ -2203,8 +2202,8 @@ int16 EfhEngine::sub1C219(uint8 *str, int16 menuType, int16 arg4, bool displayTe
 
 	if (arg4 != 0) {
 		displayFctFullScreen();
-		if (_word2C87A != 0)
-			_word2C87A = 0;
+		if (_word2C87A)
+			_word2C87A = false;
 		else {
 			drawColoredRect(minX, minY, maxX, maxY, 0);
 			if (str)
@@ -3900,7 +3899,7 @@ void EfhEngine::sub1C4CA(bool whiteFl) {
 			_textColor = 0xE;
 			displayStringAtTextPos("Hostile");
 		} else {
-			_textColor = 2;
+			_textColor = 0x2;
 			displayStringAtTextPos("Friendly");
 		}
 

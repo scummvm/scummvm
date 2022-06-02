@@ -200,17 +200,16 @@ void EfhEngine::displayRawDataAtPos(uint8 *imagePtr, int16 posX, int16 posY) {
 	displayBufferBmAtPos(&_imageDataPtr, posX, posY);
 }
 
-void EfhEngine::drawString(const char *str, int16 startX, int16 startY, uint16 unkFl) {
-	debugC(1, kDebugGraphics, "drawString %s %d %d %d", str, startX, startY, unkFl);
+void EfhEngine::drawString(const char *str, int16 startX, int16 startY, uint16 textColor) {
+	debugC(1, kDebugGraphics, "drawString %s %d %d %d", str, startX, startY, textColor);
 	uint8 *curPtr = (uint8 *)str;
 	uint16 lineHeight = _fontDescr._charHeight + _fontDescr._extraVerticalSpace;
-	_unk_sub26437_flag = unkFl & 0x3FFF;
 	int16 minX = startX;
-	int16 minY = startY;                                 // Used in case 0x8000
-	int16 var6 = _fontDescr._extraLines[0] + startY - 1; // Used in case 0x8000
 
-	if (unkFl & 0x8000) {
+	if (textColor & 0x8000) {
 		warning("STUB - drawString - 0x8000");
+		// int16 minY = startY;                                 // Used in case 0x8000
+		// int16 var6 = _fontDescr._extraLines[0] + startY - 1; // Used in case 0x8000
 	}
 
 	for (uint8 curChar = *curPtr++; curChar != 0; curChar = *curPtr++) {
@@ -291,6 +290,11 @@ void EfhEngine::drawChar(uint8 curChar, int16 posX, int16 posY) {
 	debugC(1, kDebugGraphics, "drawChar %c %d %d", curChar, posX, posY);
 
 	// CHECKME: Quick hacked display, may require rework
+
+	// Note: The original is making of a variable which is set to _textColor & 0x3FFF
+	// It seems _textColor is always set to a small value and thus this variable
+	// has been removed.
+
 	uint8 *destPtr = (uint8 *)_mainSurface->getBasePtr(posX, posY);
 
 	int16 charId = curChar - 0x20;
