@@ -152,13 +152,14 @@ class Events : public UIElement {
 private:
 	Graphics::Screen *_screen = nullptr;
 	Common::Stack<UIElement *> _views;
+	bool _enhancedMode;
 protected:
 	/**
 	 * Process an event
 	 */
 	void processEvent(Common::Event &ev);
 public:
-	Events();
+	Events(bool enhancedMode);
 	virtual ~Events();
 
 	/**

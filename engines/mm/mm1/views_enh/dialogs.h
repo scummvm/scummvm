@@ -19,44 +19,44 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "mm/mm1/mm1.h"
-#include "mm/mm1/console.h"
-#include "mm/mm1/gfx/gfx.h"
+#ifndef MM1_VIEWS_ENH_DIALOGS_H
+#define MM1_VIEWS_ENH_DIALOGS_H
+
+#include "mm/mm1/events.h"
+#include "mm/mm1/views/are_you_ready.h"
+#include "mm/mm1/views/create_characters.h"
+#include "mm/mm1/views/inn.h"
+#include "mm/mm1/views/main_menu.h"
+#include "mm/mm1/views/protect.h"
+#include "mm/mm1/views/quick_ref.h"
+#include "mm/mm1/views/title.h"
+#include "mm/mm1/views/view_characters.h"
+#include "mm/mm1/views_enh/game.h"
 
 namespace MM {
 namespace MM1 {
+namespace ViewsEnh {
 
-MM1Engine *g_engine = nullptr;
+struct Dialogs {
+private:
+	ViewsEnh::Game _game;
 
-MM1Engine::MM1Engine(OSystem *syst, const MightAndMagicGameDescription *gameDesc)
-		: Engine(syst), Events(gameDesc->features & GF_ENHANCED),
-		_gameDescription(gameDesc), _randomSource("MM1") {
-	g_engine = this;
-}
+	// Unenhanced views
+	Views::AreYouReady _areYouReady;
+	Views::CreateCharacters _createCharacters;
+	Views::Inn _inn;
+	Views::MainMenu _mainMenu;
+	Views::Protect _protect;
+	Views::QuickRef _quickRef;
+	Views::Title _title;
+	Views::ViewCharacters _viewCharacters;
+	Views::ViewCharacter _viewCharacter;
+public:
+	Dialogs() {}
+};
 
-MM1Engine::~MM1Engine() {
-	g_engine = nullptr;
-}
+} // namespace ViewsEnh
+} // namespace MM1
+} // namespace MM
 
-Common::Error MM1Engine::run() {
-	// Initialize graphics mode
-	initGraphics(320, 200);
-	Gfx::GFX::setEgaPalette(0);
-
-	setDebugger(new Console());
-
-	// Load globals
-	if (!_globals.load())
-		return Common::kNoError;
-
-	runGame();
-	return Common::kNoError;
-}
-
-} // End of namespace Xeen
-} // End of namespace MM
+#endif

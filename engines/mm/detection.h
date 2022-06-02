@@ -34,6 +34,11 @@ enum {
 	GType_Swords
 };
 
+enum GameFeature {
+	GF_NONE = 0,
+	GF_ENHANCED = 1
+};
+
 struct MightAndMagicGameDescription {
 	ADGameDescription desc;
 

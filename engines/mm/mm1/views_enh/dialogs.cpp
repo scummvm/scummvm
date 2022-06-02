@@ -19,44 +19,13 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "engines/util.h"
+#include "mm/mm1/views/dialogs.h"
 #include "mm/mm1/mm1.h"
-#include "mm/mm1/console.h"
-#include "mm/mm1/gfx/gfx.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 
-MM1Engine *g_engine = nullptr;
-
-MM1Engine::MM1Engine(OSystem *syst, const MightAndMagicGameDescription *gameDesc)
-		: Engine(syst), Events(gameDesc->features & GF_ENHANCED),
-		_gameDescription(gameDesc), _randomSource("MM1") {
-	g_engine = this;
-}
-
-MM1Engine::~MM1Engine() {
-	g_engine = nullptr;
-}
-
-Common::Error MM1Engine::run() {
-	// Initialize graphics mode
-	initGraphics(320, 200);
-	Gfx::GFX::setEgaPalette(0);
-
-	setDebugger(new Console());
-
-	// Load globals
-	if (!_globals.load())
-		return Common::kNoError;
-
-	runGame();
-	return Common::kNoError;
-}
-
-} // End of namespace Xeen
-} // End of namespace MM
+} // namespace Views
+} // namespace MM1
+} // namespace MM

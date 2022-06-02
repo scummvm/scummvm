@@ -19,44 +19,32 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "mm/mm1/mm1.h"
-#include "mm/mm1/console.h"
-#include "mm/mm1/gfx/gfx.h"
+#ifndef MM1_VIEWS_ENH_GAME_H
+#define MM1_VIEWS_ENH_GAME_H
+
+#include "mm/mm1/events.h"
+#include "mm/mm1/views/game_view.h"
 
 namespace MM {
 namespace MM1 {
+namespace ViewsEnh {
 
-MM1Engine *g_engine = nullptr;
+class Game : public Views::TextView {
+private:
+	Views::GameView _view;
+public:
+	Game();
+	virtual ~Game() {}
 
-MM1Engine::MM1Engine(OSystem *syst, const MightAndMagicGameDescription *gameDesc)
-		: Engine(syst), Events(gameDesc->features & GF_ENHANCED),
-		_gameDescription(gameDesc), _randomSource("MM1") {
-	g_engine = this;
-}
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
+};
 
-MM1Engine::~MM1Engine() {
-	g_engine = nullptr;
-}
+} // namespace Views
+} // namespace MM1
+} // namespace MM
 
-Common::Error MM1Engine::run() {
-	// Initialize graphics mode
-	initGraphics(320, 200);
-	Gfx::GFX::setEgaPalette(0);
-
-	setDebugger(new Console());
-
-	// Load globals
-	if (!_globals.load())
-		return Common::kNoError;
-
-	runGame();
-	return Common::kNoError;
-}
-
-} // End of namespace Xeen
-} // End of namespace MM
+#endif

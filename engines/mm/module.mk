@@ -31,6 +31,8 @@ MODULE_OBJS := \
 	mm1/views/title.o \
 	mm1/views/text_view.o \
 	mm1/views/view_characters.o \
+	mm1/views_enh/dialogs.o \
+	mm1/views_enh/game.o \
 	mm1/maps/maps.o \
 	mm1/maps/map.o \
 	mm1/maps/map00.o \
