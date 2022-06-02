@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-01 16:16+0000\n"
+"POT-Creation-Date: 2022-06-01 20:15+0000\n"
 "PO-Revision-Date: 2022-05-01 15:27+0000\n"
 "Last-Translator: Zbyněk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -5249,39 +5249,39 @@ msgstr "Povolit násilné scény"
 msgid "Enable Gore Mode when available"
 msgstr "Povolit násilné scény, jsou-li dostupné"
 
-#: engines/hypno/detection.cpp:244
+#: engines/hypno/detection.cpp:254
 #, fuzzy
 msgid "Enable original cheats"
 msgstr "Zapnout héliový režim"
 
-#: engines/hypno/detection.cpp:245
+#: engines/hypno/detection.cpp:255
 msgid "Allow cheats using the C key."
 msgstr ""
 
-#: engines/hypno/detection.cpp:253
+#: engines/hypno/detection.cpp:263
 #, fuzzy
 msgid "Enable infinite health cheat"
 msgstr "Povolit cenzuru obsahu"
 
-#: engines/hypno/detection.cpp:254
+#: engines/hypno/detection.cpp:264
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
-#: engines/hypno/detection.cpp:262
+#: engines/hypno/detection.cpp:272
 #, fuzzy
 msgid "Enable infinite ammo cheat"
 msgstr "Zapnout héliový režim"
 
-#: engines/hypno/detection.cpp:263
+#: engines/hypno/detection.cpp:273
 msgid "Player ammo will never decrease."
 msgstr ""
 
-#: engines/hypno/detection.cpp:271
+#: engines/hypno/detection.cpp:281
 #, fuzzy
 msgid "Enable restored content"
 msgstr "Povolit cenzuru obsahu"
 
-#: engines/hypno/detection.cpp:272
+#: engines/hypno/detection.cpp:282
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-01 16:16+0000\n"
+"POT-Creation-Date: 2022-06-01 20:15+0000\n"
 "PO-Revision-Date: 2022-04-24 20:27+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -5085,40 +5085,40 @@ msgstr ""
 msgid "Enable Gore Mode when available"
 msgstr ""
 
-#: engines/hypno/detection.cpp:244
+#: engines/hypno/detection.cpp:254
 #, fuzzy
 #| msgid "Enable cheats"
 msgid "Enable original cheats"
 msgstr "Habilita els trucs (cheats)"
 
-#: engines/hypno/detection.cpp:245
+#: engines/hypno/detection.cpp:255
 msgid "Allow cheats using the C key."
 msgstr ""
 
-#: engines/hypno/detection.cpp:253
+#: engines/hypno/detection.cpp:263
 #, fuzzy
 msgid "Enable infinite health cheat"
 msgstr "Activa els cursors flotants"
 
-#: engines/hypno/detection.cpp:254
+#: engines/hypno/detection.cpp:264
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
-#: engines/hypno/detection.cpp:262
+#: engines/hypno/detection.cpp:272
 #, fuzzy
 #| msgid "Enable cheats"
 msgid "Enable infinite ammo cheat"
 msgstr "Habilita els trucs (cheats)"
 
-#: engines/hypno/detection.cpp:263
+#: engines/hypno/detection.cpp:273
 msgid "Player ammo will never decrease."
 msgstr ""
 
-#: engines/hypno/detection.cpp:271
+#: engines/hypno/detection.cpp:281
 msgid "Enable restored content"
 msgstr "Habilita el contingut restaurat"
 
-#: engines/hypno/detection.cpp:272
+#: engines/hypno/detection.cpp:282
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 

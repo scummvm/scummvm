@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-01 16:16+0000\n"
+"POT-Creation-Date: 2022-06-01 20:15+0000\n"
 "PO-Revision-Date: 2022-05-16 09:27+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -5165,35 +5165,35 @@ msgstr "Hurmemoodi"
 msgid "Enable Gore Mode when available"
 msgstr "Aktivoi hurmemoodi jos saatavilla"
 
-#: engines/hypno/detection.cpp:244
+#: engines/hypno/detection.cpp:254
 msgid "Enable original cheats"
 msgstr "Salli alkuperäiset huijaukset"
 
-#: engines/hypno/detection.cpp:245
+#: engines/hypno/detection.cpp:255
 msgid "Allow cheats using the C key."
 msgstr "Salli huijaukset käyttämällä C-näppäintä."
 
-#: engines/hypno/detection.cpp:253
+#: engines/hypno/detection.cpp:263
 msgid "Enable infinite health cheat"
 msgstr "Salli loppumattoman elinvoiman huijaus"
 
-#: engines/hypno/detection.cpp:254
+#: engines/hypno/detection.cpp:264
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr "Pelaajan elinvoima ei vähene (paitsi pelin päättymiskohtauksissa)."
 
-#: engines/hypno/detection.cpp:262
+#: engines/hypno/detection.cpp:272
 msgid "Enable infinite ammo cheat"
 msgstr "Salli loppumattomien ammusten huijaus"
 
-#: engines/hypno/detection.cpp:263
+#: engines/hypno/detection.cpp:273
 msgid "Player ammo will never decrease."
 msgstr "Pelaajan ammukset eivät vähene."
 
-#: engines/hypno/detection.cpp:271
+#: engines/hypno/detection.cpp:281
 msgid "Enable restored content"
 msgstr "Käytä palautettua sisältöä"
 
-#: engines/hypno/detection.cpp:272
+#: engines/hypno/detection.cpp:282
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "Lisää sisältöä joka ei ole nähtävissä alkuperäisessä toteutuksessa."
 

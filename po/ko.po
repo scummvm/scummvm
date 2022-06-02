@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-01 16:16+0000\n"
+"POT-Creation-Date: 2022-06-01 20:15+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -5118,41 +5118,41 @@ msgstr "고어 모드"
 msgid "Enable Gore Mode when available"
 msgstr "가능한 경우 고어 모드를 활성화합니다"
 
-#: engines/hypno/detection.cpp:244
+#: engines/hypno/detection.cpp:254
 #, fuzzy
 #| msgid "Enable cheats"
 msgid "Enable original cheats"
 msgstr "치트 활성화"
 
-#: engines/hypno/detection.cpp:245
+#: engines/hypno/detection.cpp:255
 msgid "Allow cheats using the C key."
 msgstr "C 키를 사용하여 치트를 허용합니다."
 
-#: engines/hypno/detection.cpp:253
+#: engines/hypno/detection.cpp:263
 #, fuzzy
 #| msgid "Enable font replacement"
 msgid "Enable infinite health cheat"
 msgstr "대체 폰트 사용"
 
-#: engines/hypno/detection.cpp:254
+#: engines/hypno/detection.cpp:264
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
-#: engines/hypno/detection.cpp:262
+#: engines/hypno/detection.cpp:272
 #, fuzzy
 #| msgid "Enable cheats"
 msgid "Enable infinite ammo cheat"
 msgstr "치트 활성화"
 
-#: engines/hypno/detection.cpp:263
+#: engines/hypno/detection.cpp:273
 msgid "Player ammo will never decrease."
 msgstr ""
 
-#: engines/hypno/detection.cpp:271
+#: engines/hypno/detection.cpp:281
 msgid "Enable restored content"
 msgstr "복원된 컨텐츠 활성화"
 
-#: engines/hypno/detection.cpp:272
+#: engines/hypno/detection.cpp:282
 msgid "Add additional content that is not enabled the original implementation."
 msgstr "원본 구현에서 활성화되지 않았던 컨텐츠를 추가합니다."
 
