@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/file.h"
 #include "mm/mm1/views_enh/game.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/meta_engine.h"
@@ -42,8 +43,16 @@ bool Game::msgUnfocus(const UnfocusMessage &msg) {
 }
 
 void Game::draw() {
-	if (_needsRedraw)
-		clearSurface();
+	if (_needsRedraw) {
+		// Load the Xeen background
+		Common::File f;
+		if (!f.open("back.raw"))
+			error("Could not load background");
+
+		Graphics::Surface s = getSurface();
+		f.read((byte *)s.getPixels(), s.w * s.h);
+	}
+
 	UIElement::draw();
 }
 

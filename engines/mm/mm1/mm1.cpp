@@ -22,11 +22,14 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/events.h"
+#include "common/file.h"
+#include "common/system.h"
 #include "engines/util.h"
+#include "graphics/palette.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/console.h"
 #include "mm/mm1/gfx/gfx.h"
+#include "mm/xeen/files.h"
 
 namespace MM {
 namespace MM1 {
@@ -46,8 +49,15 @@ MM1Engine::~MM1Engine() {
 Common::Error MM1Engine::run() {
 	// Initialize graphics mode
 	initGraphics(320, 200);
-	Gfx::GFX::setEgaPalette(0);
 
+	if (isEnhanced()) {
+		if (!setupEnhanced())
+			return Common::kNoError;
+	} else {
+		setupNormal();
+	}
+
+	// Setup console
 	setDebugger(new Console());
 
 	// Load globals
@@ -56,6 +66,43 @@ Common::Error MM1Engine::run() {
 
 	runGame();
 	return Common::kNoError;
+}
+
+bool MM1Engine::isEnhanced() const {
+	return (_gameDescription->features & GF_ENHANCED) != 0;
+}
+
+void MM1Engine::setupNormal() {
+	Gfx::GFX::setEgaPalette(0);
+}
+
+bool MM1Engine::setupEnhanced() {
+	if (!Common::File::exists("dark.cc")) {
+		GUIErrorMessage(
+			"In order to run in Enhanced mode,  please copy dark.cc "
+			"from a copy of World of Xeen\n"
+			"or Dark Side of Xeen to your Might and Magic 1 game folder"
+		);
+
+		return false;
+	}
+
+	// Add the Dark Side dark.cc archive
+	::MM::Xeen::CCArchive *darkCC = new ::MM::Xeen::CCArchive(
+		"dark.cc", "dark", true);
+	SearchMan.add("dark", darkCC);
+
+	// Load the palette
+	Common::File f;
+	if (!f.open("dark.pal"))
+		error("Could not load palette");
+
+	byte pal[PALETTE_SIZE];
+	for (int i = 0; i < PALETTE_SIZE; ++i)
+		pal[i] = f.readByte() << 2;
+	g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
+
+	return true;
 }
 
 } // End of namespace Xeen
