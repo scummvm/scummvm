@@ -441,6 +441,7 @@ protected:
 	bool _isDemo;
 	bool _isEnglishDemo;
 	bool _showConversationText;
+	int  _textSpeed;
 	bool _useAlternativeFont;
 	bool _needPaletteFlush;
 };

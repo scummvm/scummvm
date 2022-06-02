@@ -751,12 +751,11 @@ bool ToonEngine::showOptions() {
 	entries[8].activeFrame = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) * (entries[8].animation->_numFrames - 1) / Audio::Mixer::kMaxMixerVolume;
 	entries[6].activeFrame = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) * (entries[6].animation->_numFrames - 1) / Audio::Mixer::kMaxMixerVolume;
 
-	entries[9].activeFrame = _audioManager->isMusicMuted() ? 0 : 3;
-	entries[7].activeFrame = _audioManager->isVoiceMuted() ? 0 : 3;
-	entries[5].activeFrame = _audioManager->isSfxMuted() ? 0 : 3;
+	entries[9].activeFrame = _audioManager->isMusicMuted() ? 0 : entries[9].animation->_numFrames - 1;
+	entries[7].activeFrame = _audioManager->isVoiceMuted() ? 0 : entries[7].animation->_numFrames - 1;
+	entries[5].activeFrame = _audioManager->isSfxMuted() ? 0 : entries[5].animation->_numFrames - 1;
 
-	// TODO retrieve stored textSpeed value and set the needle indicator accordingly
-	entries[3].activeFrame = 0;
+	entries[3].activeFrame = _textSpeed * (entries[3].animation->_numFrames - 1) / 255;
 
 	entries[2].activeFrame = entries[2].animation->_numFrames - 1;
 
@@ -1049,12 +1048,18 @@ bool ToonEngine::showOptions() {
 						entries[clickingOnSprite].playOnce = true;
 
 						targetVol = entries[clickingOnSprite].targetFrame * Audio::Mixer::kMaxMixerVolume / (entries[clickingOnSprite].animation->_numFrames - 1);
-						if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER)
+						// Since we use integer division, find a value for targetVol that will produce the same targetFrame we have calculated
+						// We need this value for setting the proper frame for the slider needle indicator, when resuming the Options menu.
+						while (entries[clickingOnSprite].targetFrame > targetVol * (entries[clickingOnSprite].animation->_numFrames - 1) / Audio::Mixer::kMaxMixerVolume)
+							++targetVol;
+
+						if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER) {
 							chosenSoundType = Audio::Mixer::kMusicSoundType;
-						else if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER)
+						} else if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER) {
 							chosenSoundType = Audio::Mixer::kSpeechSoundType;
-						else
+						} else {
 							chosenSoundType = Audio::Mixer::kSFXSoundType;
+						}
 						_mixer->setVolumeForSoundType(chosenSoundType, targetVol);
 
 						if (_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) == 0
@@ -1067,6 +1072,12 @@ bool ToonEngine::showOptions() {
 						entries[clickingOnSprite].targetFrame = ratioX * (entries[clickingOnSprite].animation->_numFrames) / 256;
 						entries[clickingOnSprite].animateOnFrame = 1;
 						entries[clickingOnSprite].playOnce = true;
+
+						_textSpeed = entries[clickingOnSprite].targetFrame * 255 / (entries[clickingOnSprite].animation->_numFrames - 1);
+						// Since we use integer division, find a value for _textSpeed that will produce the same targetFrame we have calculated
+						// We need this value for setting the proper frame for the slider needle indicator, when resuming the Options menu.
+						while (entries[clickingOnSprite].targetFrame > _textSpeed * (entries[clickingOnSprite].animation->_numFrames - 1) / 255)
+							++_textSpeed;
 						// TODO store textSpeed
 						break;
 
@@ -1544,6 +1555,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_inventoryPicture = NULL;
 	_currentMask = NULL;
 	_showConversationText = true;
+	_textSpeed = 60;
 	_useAlternativeFont = false;
 	_isDemo = _gameDescription->flags & ADGF_DEMO;
 	_isEnglishDemo = _isDemo && _gameDescription->language == Common::EN_ANY;
