@@ -157,7 +157,6 @@ public:
 	void playVideo(MVideo &video);
 	void skipVideo(MVideo &video);
 
-	Common::File *fixSmackerHeader(Common::File *file);
 	Graphics::Surface *decodeFrame(const Common::String &name, int frame, byte **palette = nullptr);
 	Frames decodeFrames(const Common::String &name);
 	void loadImage(const Common::String &file, int x, int y, bool transparent, bool palette = false, int frameNumber = 0);

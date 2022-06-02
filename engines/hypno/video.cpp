@@ -49,4 +49,12 @@ bool HypnoSmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
+uint32 HypnoSmackerDecoder::getSignatureVersion(uint32 signature) const {
+	if (signature == MKTAG('H', 'Y', 'P', '2')) {
+		return 2;
+	} else {
+		return SmackerDecoder::getSignatureVersion(signature);
+	}
+}
+
 }
