@@ -30,6 +30,8 @@
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 
+#include "common/translation.h"
+
 namespace MTropolis {
 
 uint32 MTropolisEngine::getGameID() const {
@@ -93,7 +95,7 @@ Common::Array<Common::Keymap *> MTropolisMetaEngine::initKeymaps(const char *tar
 	Common::Keymap *keymap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "mtropolis", "mTropolis");
 
 	Common::Action *act;
-	act = new Common::Action("DEBUG_TOGGLE_OVERLAY", Common::convertUtf8ToUtf32("Toggle debug overlay"));
+	act = new Common::Action("DEBUG_TOGGLE_OVERLAY", _("Toggle debug overlay"));
 	act->setCustomEngineActionEvent(MTropolis::Actions::kDebugToggleOverlay);
 	act->addDefaultInputMapping("F10");
 	keymap->addAction(act);

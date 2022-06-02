@@ -3776,8 +3776,7 @@ bool Runtime::runFrame() {
 	return true;
 }
 
-struct WindowSortingBucket
-{
+struct WindowSortingBucket {
 	size_t originalIndex;
 	Window *window;
 
@@ -3932,8 +3931,7 @@ void Runtime::executeTeardown(const Teardown &teardown) {
 }
 
 void Runtime::executeLowLevelSceneStateTransition(const LowLevelSceneStateTransitionAction &action) {
-	switch (action.getActionType())
-	{
+	switch (action.getActionType()) {
 	case LowLevelSceneStateTransitionAction::kSendMessage:
 		sendMessageOnVThread(action.getMessage());
 		break;

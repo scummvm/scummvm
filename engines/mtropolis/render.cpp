@@ -276,15 +276,19 @@ void renderProject(Runtime *runtime, Window *mainWindow) {
 
 	if (!sceneChanged) {
 		for (Common::Array<RenderItem>::const_iterator it = normalBucket.begin(), itEnd = normalBucket.end(); it != itEnd; ++it) {
-			if (it->element->needsRender())
+			if (it->element->needsRender()) {
 				sceneChanged = true;
+				break;
+			}
 		}
 	}
 
 	if (!sceneChanged) {
 		for (Common::Array<RenderItem>::const_iterator it = directBucket.begin(), itEnd = directBucket.end(); it != itEnd; ++it) {
-			if (it->element->needsRender())
+			if (it->element->needsRender()) {
 				sceneChanged = true;
+				break;
+			}
 		}
 	}
 

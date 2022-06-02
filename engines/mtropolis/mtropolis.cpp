@@ -22,7 +22,6 @@
 #include "mtropolis/mtropolis.h"
 
 #include "mtropolis/actions.h"
-#include "mtropolis/console.h"
 #include "mtropolis/debug.h"
 #include "mtropolis/runtime.h"
 
@@ -547,7 +546,6 @@ Common::Error MTropolisEngine::run() {
 	_runtime->setDisplayResolution(preferredWidth, preferredHeight);
 
 	initGraphics(preferredWidth, preferredHeight, &modePixelFormats[selectedMode]);
-	setDebugger(new Console(this));
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	if (ConfMan.getBool("mtropolis_debug_at_start")) {
@@ -573,6 +571,7 @@ Common::Error MTropolisEngine::run() {
 			break;
 
 		_runtime->drawFrame();
+		_system->delayMillis(10);
 	}
 
 	_runtime.release();
