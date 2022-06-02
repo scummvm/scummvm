@@ -2194,7 +2194,7 @@ int16 EfhEngine::sub1C219(uint8 *str, int16 menuType, int16 arg4, bool displayTe
 		break;
 	}
 
-	drawColoredRect(minX, maxX, minY, maxY, 0);
+	drawColoredRect(minX, minY, maxX, maxY, 0);
 	if (str)
 		varA = script_parse(str, minX, minY, maxX, maxY, true);
 
@@ -2206,7 +2206,7 @@ int16 EfhEngine::sub1C219(uint8 *str, int16 menuType, int16 arg4, bool displayTe
 		if (_word2C87A != 0)
 			_word2C87A = 0;
 		else {
-			drawColoredRect(minX, maxX, minY, maxY, 0);
+			drawColoredRect(minX, minY, maxX, maxY, 0);
 			if (str)
 				int16 varC = script_parse(str, minX, minY, maxX, maxY, true);
 		}
@@ -2218,7 +2218,7 @@ int16 EfhEngine::sub1C219(uint8 *str, int16 menuType, int16 arg4, bool displayTe
 			int16 varC = getLastCharAfterAnimCount(_guessAnimationAmount);
 
 		if (arg4 == 3)
-			drawColoredRect(minX, maxX, minY, maxY, 0);
+			drawColoredRect(minX, minY, maxX, maxY, 0);
 	}
 
 	return varA;
@@ -3229,7 +3229,7 @@ void EfhEngine::sub22AA8(int16 arg0) {
 				break;
 				}
 				var12 += 1;
-				int16 var2;
+				int16 var2 = 0xFF ;
 				if (var8 != 0 || varA != 0) {
 					var8 = 0;
 					_messageToBePrinted[varE] = 0;
