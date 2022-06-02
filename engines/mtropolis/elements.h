@@ -166,6 +166,8 @@ public:
 #endif
 
 private:
+	MiniscriptInstructionOutcome scriptSetFlushPriority(MiniscriptThread *thread, const DynamicValue &value);
+
 	bool _cacheBitmap;
 	uint32 _assetID;
 

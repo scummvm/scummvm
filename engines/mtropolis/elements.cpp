@@ -998,6 +998,9 @@ MiniscriptInstructionOutcome ImageElement::writeRefAttribute(MiniscriptThread *t
 	if (attrib == "text") {
 		DynamicValueWriteStringHelper::create(&_text, writeProxy);
 		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "flushpriority") {
+		DynamicValueWriteFuncHelper<ImageElement, &ImageElement::scriptSetFlushPriority>::create(this, writeProxy);
+		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return VisualElement::writeRefAttribute(thread, writeProxy, attrib);
@@ -1045,6 +1048,11 @@ void ImageElement::render(Window *window) {
 			warning("Unimplemented image ink mode");
 		}
 	}
+}
+
+MiniscriptInstructionOutcome ImageElement::scriptSetFlushPriority(MiniscriptThread *thread, const DynamicValue &value) {
+	// We don't support flushing media, and this value isn't readable, so just discard it
+	return kMiniscriptInstructionOutcomeContinue;
 }
 
 MToonElement::MToonElement() : _frame(0), _renderedFrame(0), _flushPriority(0), _celStartTimeMSec(0), _isPlaying(false), _playRange(IntRange::create(1, 1)) {
@@ -1887,7 +1895,7 @@ void SoundElement::playMedia(Runtime *runtime, Project *project) {
 
 				_player.reset();
 
-				int normalizedVolume = (_leftVolume + _rightVolume) * 255 / 2;
+				int normalizedVolume = (_leftVolume + _rightVolume) * 255 / 200;
 				int normalizedBalance = _balance * 127 / 100;
 
 				// TODO: Support ranges
