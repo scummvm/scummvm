@@ -214,6 +214,7 @@ public:
 	bool canSaveGameStateCurrently() override;
 	bool canLoadGameStateCurrently() override;
 	void pauseEngineIntern(bool pause) override;
+	void turnOnText(bool enable, bool useAlternativeFont = false);
 
 	Resources *resources() {
 		return _resources;
