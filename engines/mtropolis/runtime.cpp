@@ -7130,8 +7130,7 @@ bool Modifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, con
 	if (attrib == "parent") {
 		result.setObject(_parent);
 		return true;
-	}
-	if (attrib == "subsection") {
+	} else if (attrib == "subsection") {
 		RuntimeObject *scan = _parent.lock().get();
 		while (scan) {
 			if (scan->isSubsection()) {
@@ -7148,9 +7147,12 @@ bool Modifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, con
 		}
 
 		return false;
-	}
-	if (attrib == "name") {
+	} else if (attrib == "name") {
 		result.setString(_name);
+		return true;
+	} else if (attrib == "element") {
+		Structural *owner = findStructuralOwner();
+		result.setObject(owner ? owner->getSelfReference() : Common::WeakPtr<RuntimeObject>());
 		return true;
 	}
 
