@@ -4247,7 +4247,7 @@ bool Runtime::isModifierMouseInteractive(Modifier *modifier, MouseInteractivityT
 	return false;
 }
 
-void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, int &bestStackHeight, Structural *candidate, int stackHeight, int32 relativeX, int32 relativeY, MouseInteractivityTestType testType) {
+void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, int &bestStackHeight, bool &bestDirect, Structural *candidate, int stackHeight, int32 relativeX, int32 relativeY, MouseInteractivityTestType testType) {
 	int32 childRelativeX = relativeX;
 	int32 childRelativeY = relativeY;
 	if (candidate->isElement()) {
@@ -4255,10 +4255,20 @@ void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLaye
 		if (element->isVisual()) {
 			VisualElement *visual = static_cast<VisualElement *>(candidate);
 			int layer = visual->getLayer();
+			bool isDirect = visual->isDirectToScreen();
 
-			// Weird layering behavior:
-			// Objects in a higher layer in lower scenes still have higher render order, so they're on top
-			const bool isInFront = (layer > bestLayer) || (layer == bestLayer && stackHeight > bestStackHeight);
+			// Layering priority:
+			bool isInFront = false;
+			if (isDirect && !bestDirect)
+				isInFront = true;
+			else if (isDirect == bestDirect) {
+				if (layer > bestLayer)
+					isInFront = true;
+				else if (layer == bestLayer) {
+					if (stackHeight > bestStackHeight)
+						isInFront = true;
+				}
+			}
 
 			if (isInFront && visual->isMouseInsideBox(relativeX, relativeY) && isStructuralMouseInteractive(visual, testType) && visual->isMouseCollisionAtPoint(relativeX, relativeY)) {
 				bestResult = candidate;
@@ -4273,7 +4283,7 @@ void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLaye
 
 
 	for (const Common::SharedPtr<Structural> &child : candidate->getChildren()) {
-		recursiveFindMouseCollision(bestResult, bestLayer, bestStackHeight, child.get(), stackHeight, childRelativeX, childRelativeY, testType);
+		recursiveFindMouseCollision(bestResult, bestLayer, bestStackHeight, bestDirect, child.get(), stackHeight, childRelativeX, childRelativeY, testType);
 	}
 }
 
@@ -4641,10 +4651,11 @@ VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data)
 		Structural *tracked = nullptr;
 		int bestSceneStack = INT_MIN;
 		int bestLayer = INT_MIN;
+		bool bestDirect = false;
 
 		for (size_t ri = 0; ri < _sceneStack.size(); ri++) {
 			const SceneStackEntry &sceneStackEntry = _sceneStack[_sceneStack.size() - 1 - ri];
-			recursiveFindMouseCollision(tracked, bestSceneStack, bestLayer, sceneStackEntry.scene.get(), _sceneStack.size() - 1 - ri, _cachedMousePosition.x, _cachedMousePosition.y, kMouseInteractivityTestMouseClick);
+			recursiveFindMouseCollision(tracked, bestSceneStack, bestLayer, bestDirect, sceneStackEntry.scene.get(), _sceneStack.size() - 1 - ri, _cachedMousePosition.x, _cachedMousePosition.y, kMouseInteractivityTestMouseClick);
 		}
 
 		if (tracked) {
@@ -4715,10 +4726,11 @@ VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData 
 	Structural *collisionItem = nullptr;
 	int bestSceneStack = INT_MIN;
 	int bestLayer = INT_MIN;
+	bool bestDirect = false;
 
 	for (size_t ri = 0; ri < _sceneStack.size(); ri++) {
 		const SceneStackEntry &sceneStackEntry = _sceneStack[_sceneStack.size() - 1 - ri];
-		recursiveFindMouseCollision(collisionItem, bestSceneStack, bestLayer, sceneStackEntry.scene.get(), _sceneStack.size() - 1 - ri, data.x, data.y, kMouseInteractivityTestAnything);
+		recursiveFindMouseCollision(collisionItem, bestSceneStack, bestLayer, bestDirect, sceneStackEntry.scene.get(), _sceneStack.size() - 1 - ri, data.x, data.y, kMouseInteractivityTestAnything);
 	}
 
 	Common::SharedPtr<Structural> newMouseOver;
@@ -6836,6 +6848,15 @@ void VisualElement::finalizeRender() {
 	_prevRect = _rect;
 	_contentsDirty = false;
 }
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void VisualElement::debugInspect(IDebugInspectionReport *report) const {
+	report->declareDynamic("layer", Common::String::format("%i", static_cast<int>(_layer)));
+	report->declareDynamic("relRect", Common::String::format("(%i,%i)-(%i,%i)", static_cast<int>(_rect.left), static_cast<int>(_rect.top), static_cast<int>(_rect.right), static_cast<int>(_rect.bottom)));
+
+	Element::debugInspect(report);
+}
+#endif
 
 MiniscriptInstructionOutcome VisualElement::scriptSetVisibility(MiniscriptThread *thread, const DynamicValue &result) {
 	// FIXME: Need to make this fire Show/Hide events!
