@@ -61,6 +61,7 @@ class UIElement {
 protected:
 	UIElement *_parent;
 	Common::Array<UIElement *> _children;
+	Common::Rect _bounds;
 	bool _needsRedraw = true;
 	Common::String _name;
 private:
@@ -108,11 +109,9 @@ public:
 	void addView();
 
 	/**
-	 * Returns the game view
+	 * Returns a surface for drawing the element
 	 */
-	virtual Graphics::Screen *getScreen() const {
-		return _parent ? _parent->getScreen() : nullptr;
-	}
+	Graphics::Surface getSurface() const;
 
 	/**
 	 * Draws the element
@@ -191,7 +190,7 @@ public:
 		return _views.empty() ? nullptr : _views.top();
 	}
 
-	Graphics::Screen *getScreen() const override {
+	Graphics::Screen *getScreen() const {
 		return _screen;
 	}
 

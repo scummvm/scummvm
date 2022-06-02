@@ -256,7 +256,7 @@ void CharacterStats::printInventory() {
 
 void ViewCharacter::draw() {
 	assert(g_globals->_currCharacter);
-	clearScreen();
+	clearSurface();
 	printStats();
 
 	switch (_state) {
