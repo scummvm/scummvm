@@ -191,9 +191,6 @@ _enable_prof=no
 _enable_asan=no
 _enable_tsan=no
 _enable_ubsan=no
-_global_constructors=no
-_no_undefined_var_template=no
-_no_pragma_pack=no
 _bink=yes
 _cloud=auto
 _pandoc=no
@@ -2279,18 +2276,22 @@ if test "$_release_build" = yes; then
 	append_var DEFINES "-DRELEASE_BUILD"
 fi
 
-# If possible, we want to use -Wglobal-constructors
-# However, not all compilers support that, so check whether the active one does.
-echocheck "whether C++ compiler accepts -Wglobal-constructors"
-cat > $TMPC << EOF
-int main() { return 0; }
+set_flag_if_supported() {
+	echocheck "whether C++ compiler accepts $1"
+	cat > $TMPC << EOF
+	int main() { return 0; }
 EOF
-cc_check -Wglobal-constructors -Werror && _global_constructors=yes
+	# Note: we check for -Wxxx instead of -Wno-xxx as not all compilers error
+	# out on unknown -Wno-xxx flags.
+	if cc_check $(echo $1 | sed 's/-Wno-/-W/') -Werror; then
+		append_var CXXFLAGS "$1"
+		echo yes
+	else
+		echo no
+	fi
+}
 
-if test "$_global_constructors" = yes; then
-	append_var CXXFLAGS "-Wglobal-constructors"
-fi
-echo $_global_constructors
+set_flag_if_supported -Wglobal-constructors
 
 # If the compiler supports the -Wundefined-var-template flag, silence that warning.
 # We get this warning a lot with regard to the Singleton class as we explicitly
@@ -2298,16 +2299,7 @@ echo $_global_constructors
 # change the way we instantiate the singleton classes as done in PR #967.
 # Note: we check the -Wundefined-var-template as gcc does not error out on unknown
 # -Wno-xxx flags.
-echocheck "whether C++ compiler accepts -Wno-undefined-var-template"
-cat > $TMPC << EOF
-int main() { return 0; }
-EOF
-cc_check -Wundefined-var-template -Werror && _no_undefined_var_template=yes
-
-if test "$_no_undefined_var_template" = yes; then
-	append_var CXXFLAGS "-Wno-undefined-var-template"
-fi
-echo $_no_undefined_var_template
+set_flag_if_supported -Wno-undefined-var-template
 
 # Vanilla clang 6 enables the new -Wpragma-pack which warns when leaving an
 # included file which changes the current alignment.
@@ -2315,13 +2307,7 @@ echo $_no_undefined_var_template
 # Because there is no correlation between the version reported by Apple Xcode
 # clang and vanilla clang we cannot rely on the __clang_major__/clang_minor__
 # macros.
-# Note: as above, we check for -Wpragma-pack as not all compilers error out on
-# unknown -Wno-xxx flags.
-echocheck "whether C++ compiler accepts -Wno-pragma-pack"
-echo "int main() { return 0; }" >$TMPC
-cc_check -Wpragma-pack -Werror && _no_pragma_pack=yes
-test "$_no_pragma_pack" = yes && append_var CXXFLAGS "-Wno-pragma-pack"
-echo $_no_pragma_pack
+set_flag_if_supported -Wno-pragma-pack
 
 if test -n "$STRINGS"; then
 	_strings=$STRINGS
