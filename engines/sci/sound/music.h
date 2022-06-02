@@ -258,9 +258,9 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 	// Mutex for music code. Used to guard access to the song playlist, to the
-	// MIDI parser and to the MIDI driver/player. Note that guarded code must NOT
-	// include references to the mixer, otherwise there will probably be situations
-	// where a deadlock can occur
+	// MIDI parser and to the MIDI driver/player. We use a reference to
+	// the mixer's internal mutex to avoid deadlocks which sometimes occur when
+	// different threads lock each other up in different mutexes.
 	Common::Mutex &_mutex;
 
 protected:
