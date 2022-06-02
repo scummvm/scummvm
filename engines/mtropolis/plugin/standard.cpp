@@ -54,7 +54,7 @@ public:
 // separately for each input.
 class MidiFilePlayerImpl : public MidiFilePlayer, public MidiDriver_BASE {
 public:
-	explicit MidiFilePlayerImpl(MidiDriver_BASE *outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume);
+	explicit MidiFilePlayerImpl(MidiDriver_BASE *outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume, bool loop);
 	~MidiFilePlayerImpl();
 
 	// Do not call any of these directly since they're not thread-safe, expose them via MultiMidiPlayer
@@ -63,6 +63,7 @@ public:
 	void pause();
 	void resume();
 	void setVolume(uint8 volume);
+	void setLoop(bool loop);
 	void detach();
 	void onTimer();
 
@@ -73,6 +74,7 @@ private:
 	Common::SharedPtr<MidiParser> _parser;
 	MidiDriver_BASE *_outputDriver;
 	uint8 _volume;
+	bool _loop;
 };
 
 class MultiMidiPlayer : public Audio::MidiPlayer {
@@ -80,10 +82,11 @@ public:
 	MultiMidiPlayer();
 	~MultiMidiPlayer();
 
-	MidiFilePlayer *createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint8 volume);
+	MidiFilePlayer *createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint8 volume, bool loop);
 	void deleteFilePlayer(MidiFilePlayer *player);
 
 	void setPlayerVolume(MidiFilePlayer *player, uint8 volume);
+	void setPlayerLoop(MidiFilePlayer *player, bool loop);
 	void stopPlayer(MidiFilePlayer *player);
 	void playPlayer(MidiFilePlayer *player);
 	void pausePlayer(MidiFilePlayer *player);
@@ -105,8 +108,8 @@ private:
 MidiFilePlayer::~MidiFilePlayer() {
 }
 
-MidiFilePlayerImpl::MidiFilePlayerImpl(MidiDriver_BASE *outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume)
-	: _file(file), _outputDriver(outputDriver), _parser(nullptr), _volume(255) {
+MidiFilePlayerImpl::MidiFilePlayerImpl(MidiDriver_BASE *outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume, bool loop)
+	: _file(file), _outputDriver(outputDriver), _parser(nullptr), _volume(255), _loop(loop) {
 	Common::SharedPtr<MidiParser> parser(MidiParser::createParser_SMF());
 
 	if (file->contents.size() != 0 && parser->loadMusic(&file->contents[0], file->contents.size())) {
@@ -141,6 +144,10 @@ void MidiFilePlayerImpl::resume() {
 
 void MidiFilePlayerImpl::setVolume(uint8 volume) {
 	_volume = volume;
+}
+
+void MidiFilePlayerImpl::setLoop(bool loop) {
+	_loop = loop;
 }
 
 void MidiFilePlayerImpl::detach() {
@@ -197,8 +204,8 @@ void MultiMidiPlayer::onTimer() {
 }
 
 
-MidiFilePlayer *MultiMidiPlayer::createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint8 volume) {
-	Common::SharedPtr<MidiFilePlayerImpl> filePlayer(new MidiFilePlayerImpl(this, file, getBaseTempo(), volume));
+MidiFilePlayer *MultiMidiPlayer::createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint8 volume, bool loop) {
+	Common::SharedPtr<MidiFilePlayerImpl> filePlayer(new MidiFilePlayerImpl(this, file, getBaseTempo(), volume, loop));
 
 	{
 		Common::StackLock lock(_mutex);
@@ -230,6 +237,11 @@ void MultiMidiPlayer::deleteFilePlayer(MidiFilePlayer *player) {
 void MultiMidiPlayer::setPlayerVolume(MidiFilePlayer *player, uint8 volume) {
 	Common::StackLock lock(_mutex);
 	static_cast<MidiFilePlayerImpl *>(player)->setVolume(volume);
+}
+
+void MultiMidiPlayer::setPlayerLoop(MidiFilePlayer *player, bool loop) {
+	Common::StackLock lock(_mutex);
+	static_cast<MidiFilePlayerImpl *>(player)->setLoop(loop);
 }
 
 void MultiMidiPlayer::stopPlayer(MidiFilePlayer *player) {
@@ -984,7 +996,7 @@ VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::Shared
 			if (_embeddedFile) {
 				debug(2, "MIDI (%x '%s'): Playing embedded file", getStaticGUID(), getName().c_str());
 				if (!_filePlayer)
-					_filePlayer = _plugIn->getMidi()->createFilePlayer(_embeddedFile, _volume * 255 / 100);
+					_filePlayer = _plugIn->getMidi()->createFilePlayer(_embeddedFile, _volume * 255 / 100, _modeSpecific.file.loop);
 				_plugIn->getMidi()->playPlayer(_filePlayer);
 			} else {
 				debug(2, "MIDI (%x '%s'): Digested execute event but don't have anything to play", getStaticGUID(), getName().c_str());
@@ -1019,6 +1031,9 @@ MiniscriptInstructionOutcome MidiModifier::writeRefAttribute(MiniscriptThread *t
 		return kMiniscriptInstructionOutcomeContinue;
 	} else if (attrib == "notenum") {
 		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetNoteNum>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	} else if (attrib == "loop") {
+		DynamicValueWriteFuncHelper<MidiModifier, &MidiModifier::scriptSetLoop>::create(this, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -1089,6 +1104,25 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetNoteNum(MiniscriptThread *th
 	if (_mode == kModeSingleNote) {
 		debug(2, "MIDI (%x '%s'): Changing note number to %i", getStaticGUID(), getName().c_str(), asInteger);
 		_modeSpecific.singleNote.note = asInteger;
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome MidiModifier::scriptSetLoop(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() != DynamicValueTypes::kBoolean)
+		return kMiniscriptInstructionOutcomeFailed;
+
+	if (_mode == kModeFile) {
+		const bool loop = value.getBool();
+
+		debug(2, "MIDI (%x '%s'): Changing loop state to %s", getStaticGUID(), getName().c_str(), loop ? "true" : "false");
+		if (_modeSpecific.file.loop != loop) {
+			_modeSpecific.file.loop = loop;
+
+			if (_filePlayer)
+				_plugIn->getMidi()->setPlayerLoop(_filePlayer, loop);
+		}
 	}
 
 	return kMiniscriptInstructionOutcomeContinue;
