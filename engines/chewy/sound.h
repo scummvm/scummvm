@@ -33,6 +33,12 @@ class SoundResource;
 #define MAX_SOUND_EFFECTS 14
 
 class Sound {
+private:
+	static const int TMF_NUM_INSTRUMENTS = 31;
+	static const uint8 TMF_MOD_SONG_NAME[20];
+	static const uint8 TMF_MOD_INSTRUMENT_NAME[22];
+	static const uint16 TMF_MOD_PERIODS[36];
+
 public:
 	Sound(Audio::Mixer *mixer);
 	virtual ~Sound();
@@ -91,7 +97,7 @@ private:
 	SoundResource *_speechRes;
 	SoundResource *_soundRes;
 
-	void convertTMFToMod(uint8 *tmfData, uint32 tmfSize, uint8 *modData, uint32 &modSize);
+	void convertTMFToMod(uint8 *tmfData, uint32 tmfSize, uint8 *&modData, uint32 &modSize);
 };
 
 } // End of namespace Chewy
