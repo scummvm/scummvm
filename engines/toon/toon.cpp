@@ -152,6 +152,8 @@ void ToonEngine::init() {
 	_audioManager->loadAudioPack(0, "GENERIC.SVI", "GENERIC.SVL");
 	_audioManager->loadAudioPack(2, "GENERIC.SEI", "GENERIC.SEL");
 
+	adjustMovieVolume();
+
 	_lastMouseButton = 0;
 	_mouseButton = 0;
 	_lastRenderTime = _system->getMillis();
@@ -207,15 +209,18 @@ void ToonEngine::parseInput() {
 			}
 			if (event.kbd.keycode == Common::KEYCODE_m && !hasModifier) {
 				_audioManager->muteMusic(!_audioManager->isMusicMuted());
+				adjustMovieVolume();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_d && !hasModifier) {
 				_audioManager->muteVoice(!_audioManager->isVoiceMuted());
+				adjustMovieVolume();
 				if (!_showConversationText && _audioManager->isVoiceMuted()) {
 					turnOnText(true, false);
 				}
 			}
 			if (event.kbd.keycode == Common::KEYCODE_s && !hasModifier) {
 				_audioManager->muteSfx(!_audioManager->isSfxMuted());
+				adjustMovieVolume();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_F1 && !hasModifier) {
 				if (_gameState->_inMenu) {
@@ -1061,6 +1066,7 @@ bool ToonEngine::showOptions() {
 							chosenSoundType = Audio::Mixer::kSFXSoundType;
 						}
 						_mixer->setVolumeForSoundType(chosenSoundType, targetVol);
+						adjustMovieVolume();
 
 						if (_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) == 0
 						    && !_showConversationText) {
@@ -1133,6 +1139,7 @@ bool ToonEngine::showOptions() {
 								} else
 									_audioManager->muteSfx(true);
 							}
+							adjustMovieVolume();
 							if (!_isEnglishDemo)
 								playSFX(-7, 128);
 							break;
@@ -1498,6 +1505,13 @@ bool ToonEngine::showQuitConfirmationDialogue() {
 	// text variant of the yes/no option).
 	GUI::MessageDialog dialog(_("Are you sure you want to exit?"), _("Yes"), _("No"));
 	return (dialog.runModal() == GUI::kMessageOK);
+}
+
+void ToonEngine::adjustMovieVolume() {
+	int movieVol = MAX<int>((_audioManager->isMusicMuted() ? 0 : _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType)),
+	                        (_audioManager->isVoiceMuted() ? 0 : _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType)));
+	movieVol = MAX<int>(movieVol,(_audioManager->isSfxMuted() ? 0 : _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType)));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, movieVol);
 }
 
 Common::Error ToonEngine::run() {
