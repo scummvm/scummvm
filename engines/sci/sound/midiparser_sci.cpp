@@ -465,8 +465,11 @@ void MidiParser_SCI::sendFromScriptToDriver(uint32 midi) {
 	}
 
 	if ((midi & 0xFFF0) == 0x4EB0 && _soundVersion > SCI_VERSION_1_EARLY) {
-		// This can't be sent into our trackState() method, since that method would handle
-		// the _mute setting differently than what we do here...
+		// We have to handle this here instead of inside the trackState() method (which handles the input from
+		// the actual midi data). The mute command when sent from the script is independent from the mute
+		// command sent by the actual midi data. The script mute is stacked on the high nibble, while the midi
+		// data mute is stored on the low nibble. So the script cannot undo a mute set by the midi data and vice
+		// versa.
 		byte channel = midi & 0xf;
 		bool op = (midi >> 16) & 0x7f;
 		uint8 m = _pSnd->_chan[channel]._mute;
@@ -493,8 +496,7 @@ void MidiParser_SCI::sendToDriver(uint32 midi) {
 	trackState(midi);
 
 	if ((midi & 0xFFF0) == 0x4EB0 && _soundVersion >= SCI_VERSION_1_EARLY) {
-		// Mute. Handled in trackState().
-		// CHECKME: Should we send this on to the driver?
+		// Mute. Handled in trackState()/sendFromScriptToDriver().
 		return;
 	}
 
@@ -577,7 +579,9 @@ void MidiParser_SCI::trackState(uint32 b) {
 			// This is channel mute only for sci1.
 			// (It's velocity control for sci0, but we don't need state in sci0)
 			if (_soundVersion > SCI_VERSION_1_EARLY) {
-				// FIXME: mute is a level, not a bool, in some SCI versions
+				// This is handled slightly differently than what we do in sendFromScriptToDriver(). The script mute is stacked
+				// on the high nibble, while the midi data mute (this one here) is stored on the low nibble. So the script cannot
+				// undo a mute set by the midi data and vice versa.
 				uint8 m = (_pSnd->_chan[channel]._mute & 0xf0) | (op2 & 1);
 				if (_pSnd->_chan[channel]._mute != m) {
 					_pSnd->_chan[channel]._mute = m;
