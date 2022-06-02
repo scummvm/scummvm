@@ -59,7 +59,7 @@ struct GridItemInfo {
 	Common::Language	language;
 	Common::Platform 	platform;
 
-	Common::Rect		rect;
+	int32				x, y, w, h;
 
 	GridItemInfo(int id, const Common::String &eid, const Common::String &gid, const Common::String &t,
 		const Common::String &d, Common::Language l, Common::Platform p)

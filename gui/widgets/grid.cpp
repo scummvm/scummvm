@@ -516,7 +516,7 @@ int lastItemBeforeY(const Common::Array<GridItemInfo> &arr, int yPos) {
 	int ans = -1;
 	while (start <= end) {
 		mid = start + (end - start) / 2;
-		if (arr[mid].rect.top >= yPos) {
+		if (arr[mid].y >= yPos) {
 			end = mid - 1;
 		} else {
 			ans = mid;
@@ -534,7 +534,7 @@ bool GridWidget::calcVisibleEntries() {
 	nFirstVisibleItem = temp;
 	// We want the leftmost item from the topmost visible row, so we traverse backwards
 	while ((nFirstVisibleItem >= 0) &&
-		   (_sortedEntryList[nFirstVisibleItem].rect.top == _sortedEntryList[temp].rect.top)) {
+		   (_sortedEntryList[nFirstVisibleItem].y == _sortedEntryList[temp].y)) {
 			nFirstVisibleItem--;
 	}
 	nFirstVisibleItem++;
@@ -650,14 +650,14 @@ void GridWidget::scrollToEntry(int id, bool forceToTop) {
 	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
 		if ((!_sortedEntryList[i].isHeader) && (_sortedEntryList[i].entryID == id)) {
 			if (forceToTop) {
-				newScrollPos = _sortedEntryList[i].rect.top + _scrollWindowPaddingY + _gridYSpacing;
+				newScrollPos = _sortedEntryList[i].y + _scrollWindowPaddingY + _gridYSpacing;
 			} else {
-				if (_sortedEntryList[i].rect.top < _scrollPos) {
+				if (_sortedEntryList[i].y < _scrollPos) {
 					// Item is above the visible view
-					newScrollPos = _sortedEntryList[i].rect.top - _scrollWindowPaddingY - _gridYSpacing;
-				} else if (_sortedEntryList[i].rect.top > _scrollPos + _scrollWindowHeight - _gridItemHeight - _trayHeight) {
+					newScrollPos = _sortedEntryList[i].y - _scrollWindowPaddingY - _gridYSpacing;
+				} else if (_sortedEntryList[i].y > _scrollPos + _scrollWindowHeight - _gridItemHeight - _trayHeight) {
 					// Item is below the visible view
-					newScrollPos = _sortedEntryList[i].rect.top - _scrollWindowHeight + _gridItemHeight + _trayHeight;
+					newScrollPos = _sortedEntryList[i].y - _scrollWindowHeight + _gridItemHeight + _trayHeight;
 				} else {
 					// Item already in view, do nothing
 					newScrollPos = _scrollPos;
@@ -703,8 +703,8 @@ void GridWidget::assignEntriesToItems() {
 			item->setVisible(true);
 			GridItemInfo *entry = _visibleEntryList[k];
 			item->setActiveEntry(*entry);
-			item->setPos(entry->rect.left, entry->rect.top - _scrollPos);
-			item->setSize(entry->rect.width(), entry->rect.height());
+			item->setPos(entry->x, entry->y - _scrollPos);
+			item->setSize(entry->w, entry->h);
 			item->update();
 		}
 	}
@@ -749,7 +749,7 @@ void GridWidget::calcInnerHeight() {
 	int row = 0;
 	int col = 0;
 	int lastRowHeight = 0;
-	Common::Point p(_scrollWindowPaddingX + _gridXSpacing, _scrollWindowPaddingY);
+	int x = _scrollWindowPaddingX + _gridXSpacing, y = _scrollWindowPaddingY;
 
 	for (int k = 0; k < (int)_sortedEntryList.size(); ++k) {
 		if (_sortedEntryList[k].isHeader) {
@@ -757,34 +757,36 @@ void GridWidget::calcInnerHeight() {
 				if (++col >= _itemsPerRow) {
 					col = 0;
 					++row;
-					p.y += lastRowHeight;
+					y += lastRowHeight;
 					lastRowHeight = 0;
 				}
 			}
-			p.x = _scrollWindowPaddingX;
-			_sortedEntryList[k].rect.moveTo(p);
-			p.x = _scrollWindowPaddingX + _gridXSpacing;
+			x = _scrollWindowPaddingX;
+			_sortedEntryList[k].x = x;;
+			_sortedEntryList[k].y = y;;
+			x = _scrollWindowPaddingX + _gridXSpacing;
 			++row;
-			p.y += _sortedEntryList[k].rect.height() + _gridYSpacing;
+			y += _sortedEntryList[k].h + _gridYSpacing;
 			lastRowHeight = 0;
 		} else {
-			_sortedEntryList[k].rect.moveTo(p);
-			lastRowHeight = MAX(lastRowHeight, _sortedEntryList[k].rect.height() + _gridYSpacing);
+			_sortedEntryList[k].x = x;
+			_sortedEntryList[k].y = y;
+			lastRowHeight = MAX(lastRowHeight, _sortedEntryList[k].h + _gridYSpacing);
 			if (++col >= _itemsPerRow) {
 				++row;
-				p.y += lastRowHeight;
+				y += lastRowHeight;
 				lastRowHeight = 0;
 				col = 0;
-				p.x = _scrollWindowPaddingX + _gridXSpacing;
+				x = _scrollWindowPaddingX + _gridXSpacing;
 			} else {
-				p.x += _sortedEntryList[k].rect.width() + _gridXSpacing;
+				x += _sortedEntryList[k].w + _gridXSpacing;
 			}
 		}
 	}
 
 	_rows = row;
 
-	_innerHeight = p.y + _gridItemHeight + _scrollWindowPaddingY + _trayHeight;
+	_innerHeight = y + _gridItemHeight + _scrollWindowPaddingY + _trayHeight;
 	_innerWidth = 2 * _scrollWindowPaddingX + (_itemsPerRow * (_gridItemWidth + _gridXSpacing) - _gridXSpacing);
 }
 
@@ -795,8 +797,8 @@ void GridWidget::calcEntrySizes() {
 	for (uint i = 0; i != _sortedEntryList.size(); ++i) {
 		GridItemInfo *entry = &_sortedEntryList[i];
 		if (entry->isHeader) {
-			entry->rect.setHeight(_gridHeaderHeight);
-			entry->rect.setWidth(_gridHeaderWidth);
+			entry->h = _gridHeaderHeight;
+			entry->w = _gridHeaderWidth;
 		} else {
 			int titleRows;
 			if (_isTitlesVisible) {
@@ -806,8 +808,8 @@ void GridWidget::calcEntrySizes() {
 			} else {
 				titleRows = 0;
 			}
-			entry->rect.setHeight(_thumbnailHeight + titleRows * kLineHeight);
-			entry->rect.setWidth(_gridItemWidth);
+			entry->h = _thumbnailHeight + titleRows * kLineHeight;
+			entry->w = _gridItemWidth;
 		}
 	}
 }
@@ -875,7 +877,7 @@ void GridWidget::openTray(int x, int y, int entryId) {
 
 void GridWidget::openTrayAtSelected() {
 	if (_selectedEntry) {
-		GridItemTray *tray = new GridItemTray(this, _x + _selectedEntry->rect.left - _gridXSpacing / 3, _y + _selectedEntry->rect.bottom - _scrollPos,
+		GridItemTray *tray = new GridItemTray(this, _x + _selectedEntry->x - _gridXSpacing / 3, _y + _selectedEntry->x + _selectedEntry->h - _scrollPos,
 								_gridItemWidth + 2 * (_gridXSpacing / 3), _trayHeight, _selectedEntry->entryID, this);
 		tray->runModal();
 		delete tray;
