@@ -57,6 +57,9 @@ public:
 
 	bool load(ElementLoaderContext &context, const Data::GraphicElement &data);
 
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
+
 	void render(Window *window) override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE

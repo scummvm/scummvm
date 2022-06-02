@@ -176,6 +176,25 @@ bool GraphicElement::load(ElementLoaderContext &context, const Data::GraphicElem
 	return true;
 }
 
+bool GraphicElement::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "cache") {
+		result.setBool(_cacheBitmap);
+		return true;
+	}
+
+	return VisualElement::readAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome GraphicElement::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "cache") {
+		DynamicValueWriteBoolHelper::create(&_cacheBitmap, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return VisualElement::writeRefAttribute(thread, result, attrib);
+}
+
+
 void GraphicElement::render(Window *window) {
 	if (_renderProps.getInkMode() == VisualElementRenderProperties::kInkModeDefault || _renderProps.getInkMode() == VisualElementRenderProperties::kInkModeInvisible || !_rect.isValid()) {
 		// Not rendered at all
@@ -1277,9 +1296,15 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 		// This needs to be handled correctly: Reaching the last frame triggers At Last Cel or At First Cel,
 		// but going PAST the end frame triggers automatic stop and pause. The Obsidian bureau filing cabinets
 		// depend on this, since they reset the cel when reaching the last cel but do not unpause.
+
+		// There's actually some weird stuff we don't handle here where the play control range is invalid, in
+		// which case the timing of "at last cel"/"at first cel" triggers based on where the timer would be
+		// in the invalid range, so mTropolis Player apparently keeps a play cel independent of the actual
+		// cel?
 		bool ranPastEnd = false;
 
 		size_t framesRemainingToOnePastEnd = isReversed ? (_cel - minCel + 1) : (maxCel + 1 - _cel);
+		bool alreadyAtLastCel = (framesRemainingToOnePastEnd == 1);
 		if (framesRemainingToOnePastEnd <= framesAdvanced) {
 			ranPastEnd = true;
 			if (_loop)
@@ -1289,6 +1314,7 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 		} else
 			targetCel = isReversed ? (_cel - framesAdvanced) : (_cel + framesAdvanced);
 
+		int32 playControlTargetCel = targetCel;
 		if (targetCel < 1)
 			targetCel = 1;
 		if (targetCel > sanitizeMaxCel)
@@ -1300,8 +1326,8 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 		}
 
 		// Events play control events even if no cel advance occurs
-		const bool atFirstCel = (_cel == (isReversed ? maxCel : minCel));
-		const bool atLastCel = (_cel == (isReversed ? minCel : maxCel));
+		bool atFirstCel = (targetCel == (isReversed ? maxCel : minCel));
+		bool atLastCel = (targetCel == (isReversed ? minCel : maxCel)) && !(ranPastEnd && alreadyAtLastCel);
 
 		if (atFirstCel) {
 			Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event::create(EventIDs::kAtFirstCel, 0), DynamicValue(), getSelfReference()));
