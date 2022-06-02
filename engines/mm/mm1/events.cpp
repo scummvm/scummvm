@@ -25,6 +25,7 @@
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/gfx/gfx.h"
 #include "mm/mm1/views/dialogs.h"
+#include "mm/mm1/views_enh/dialogs.h"
 
 namespace MM {
 namespace MM1 {
@@ -34,7 +35,8 @@ namespace MM1 {
 
 Events *g_events;
 
-Events::Events() : UIElement("", nullptr) {
+Events::Events(bool enhancedMode) : UIElement("", nullptr),
+		_enhancedMode(enhancedMode) {
 	g_events = this;
 }
 
@@ -43,8 +45,9 @@ Events::~Events() {
 }
 
 void Events::runGame() {
-	Views::Dialogs dialogsContainer;	// Load up all the dialogs
-
+	UIElement *allViews = _enhancedMode ?
+		(UIElement *)new ViewsEnh::Dialogs() :
+		(UIElement *)new Views::Dialogs();
 	uint currTime, nextFrameTime = 0;
 	_screen = new Graphics::Screen();
 
@@ -71,6 +74,7 @@ void Events::runGame() {
 	}
 
 	delete _screen;
+	delete allViews;
 }
 
 void Events::processEvent(Common::Event &ev) {

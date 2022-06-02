@@ -19,44 +19,47 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "mm/mm1/mm1.h"
-#include "mm/mm1/console.h"
-#include "mm/mm1/gfx/gfx.h"
+#include "mm/mm1/views_enh/game.h"
+#include "mm/mm1/globals.h"
+#include "mm/mm1/meta_engine.h"
 
 namespace MM {
 namespace MM1 {
+namespace ViewsEnh {
 
-MM1Engine *g_engine = nullptr;
-
-MM1Engine::MM1Engine(OSystem *syst, const MightAndMagicGameDescription *gameDesc)
-		: Engine(syst), Events(gameDesc->features & GF_ENHANCED),
-		_gameDescription(gameDesc), _randomSource("MM1") {
-	g_engine = this;
+Game::Game() : TextView("Game"),
+		_view(this) {
 }
 
-MM1Engine::~MM1Engine() {
-	g_engine = nullptr;
+bool Game::msgFocus(const FocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_NORMAL);
+	return TextView::msgFocus(msg);
 }
 
-Common::Error MM1Engine::run() {
-	// Initialize graphics mode
-	initGraphics(320, 200);
-	Gfx::GFX::setEgaPalette(0);
-
-	setDebugger(new Console());
-
-	// Load globals
-	if (!_globals.load())
-		return Common::kNoError;
-
-	runGame();
-	return Common::kNoError;
+bool Game::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	return true;
 }
 
-} // End of namespace Xeen
-} // End of namespace MM
+void Game::draw() {
+	if (_needsRedraw)
+		clearSurface();
+	UIElement::draw();
+}
+
+bool Game::msgKeypress(const KeypressMessage &msg) {
+	return true;
+}
+
+bool Game::msgGame(const GameMessage &msg) {
+	if (msg._name == "DISPLAY") {
+		replaceView(this);
+		return true;
+	}
+
+	return TextView::msgGame(msg);
+}
+
+} // namespace Views
+} // namespace MM1
+} // namespace MM
