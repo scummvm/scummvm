@@ -726,7 +726,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 		const int poseSize = 14;
 
 		debugC(1, kDebugLoading, "Pose List: bytes: %ld numAnimations: %d  poseOffset: %d calculated offset: %d numPoses: %d",
-			poseStream->size(), as->numAnimations, as->poseOffset, 8 + as->numAnimations * 32, poseBytes / poseSize);
+			long(poseStream->size()), as->numAnimations, as->poseOffset, 8 + as->numAnimations * 32, poseBytes / poseSize);
 
 		if (poseBytes % poseSize != 0)
 			warning("Incorrect number of poses, %d bytes more", poseBytes % poseSize);
