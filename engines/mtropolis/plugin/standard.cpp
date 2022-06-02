@@ -54,7 +54,7 @@ public:
 // separately for each input.
 class MidiFilePlayerImpl : public MidiFilePlayer, public MidiDriver_BASE {
 public:
-	explicit MidiFilePlayerImpl(MidiDriver_BASE *outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume, bool loop);
+	explicit MidiFilePlayerImpl(MidiDriver_BASE *outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume, bool loop, uint16 mutedTracks);
 	~MidiFilePlayerImpl();
 
 	// Do not call any of these directly since they're not thread-safe, expose them via MultiMidiPlayer
@@ -64,6 +64,7 @@ public:
 	void resume();
 	void setVolume(uint8 volume);
 	void setLoop(bool loop);
+	void setMutedTracks(uint16 mutedTracks);
 	void detach();
 	void onTimer();
 
@@ -73,6 +74,7 @@ private:
 	Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> _file;
 	Common::SharedPtr<MidiParser> _parser;
 	MidiDriver_BASE *_outputDriver;
+	uint16 _mutedTracks;
 	uint8 _volume;
 	bool _loop;
 };
@@ -82,11 +84,12 @@ public:
 	MultiMidiPlayer();
 	~MultiMidiPlayer();
 
-	MidiFilePlayer *createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint8 volume, bool loop);
+	MidiFilePlayer *createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint8 volume, bool loop, uint16 mutedTracks);
 	void deleteFilePlayer(MidiFilePlayer *player);
 
 	void setPlayerVolume(MidiFilePlayer *player, uint8 volume);
 	void setPlayerLoop(MidiFilePlayer *player, bool loop);
+	void setPlayerMutedTracks(MidiFilePlayer *player, uint16 mutedTracks);
 	void stopPlayer(MidiFilePlayer *player);
 	void playPlayer(MidiFilePlayer *player);
 	void pausePlayer(MidiFilePlayer *player);
@@ -108,8 +111,8 @@ private:
 MidiFilePlayer::~MidiFilePlayer() {
 }
 
-MidiFilePlayerImpl::MidiFilePlayerImpl(MidiDriver_BASE *outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume, bool loop)
-	: _file(file), _outputDriver(outputDriver), _parser(nullptr), _volume(255), _loop(loop) {
+MidiFilePlayerImpl::MidiFilePlayerImpl(MidiDriver_BASE *outputDriver, const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint32 baseTempo, uint8 volume, bool loop, uint16 mutedTracks)
+	: _file(file), _outputDriver(outputDriver), _parser(nullptr), _volume(255), _loop(loop), _mutedTracks(mutedTracks) {
 	Common::SharedPtr<MidiParser> parser(MidiParser::createParser_SMF());
 
 	if (file->contents.size() != 0 && parser->loadMusic(&file->contents[0], file->contents.size())) {
@@ -144,6 +147,10 @@ void MidiFilePlayerImpl::resume() {
 
 void MidiFilePlayerImpl::setVolume(uint8 volume) {
 	_volume = volume;
+}
+
+void MidiFilePlayerImpl::setMutedTracks(uint16 mutedTracks) {
+	_mutedTracks = mutedTracks;
 }
 
 void MidiFilePlayerImpl::setLoop(bool loop) {
@@ -204,8 +211,8 @@ void MultiMidiPlayer::onTimer() {
 }
 
 
-MidiFilePlayer *MultiMidiPlayer::createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint8 volume, bool loop) {
-	Common::SharedPtr<MidiFilePlayerImpl> filePlayer(new MidiFilePlayerImpl(this, file, getBaseTempo(), volume, loop));
+MidiFilePlayer *MultiMidiPlayer::createFilePlayer(const Common::SharedPtr<Data::Standard::MidiModifier::EmbeddedFile> &file, uint8 volume, bool loop, uint16 mutedTracks) {
+	Common::SharedPtr<MidiFilePlayerImpl> filePlayer(new MidiFilePlayerImpl(this, file, getBaseTempo(), volume, loop, mutedTracks));
 
 	{
 		Common::StackLock lock(_mutex);
@@ -242,6 +249,11 @@ void MultiMidiPlayer::setPlayerVolume(MidiFilePlayer *player, uint8 volume) {
 void MultiMidiPlayer::setPlayerLoop(MidiFilePlayer *player, bool loop) {
 	Common::StackLock lock(_mutex);
 	static_cast<MidiFilePlayerImpl *>(player)->setLoop(loop);
+}
+
+void MultiMidiPlayer::setPlayerMutedTracks(MidiFilePlayer *player, uint16 mutedTracks) {
+	Common::StackLock lock(_mutex);
+	static_cast<MidiFilePlayerImpl *>(player)->setMutedTracks(mutedTracks);
 }
 
 void MultiMidiPlayer::stopPlayer(MidiFilePlayer *player) {
@@ -932,7 +944,7 @@ bool ObjectReferenceVariableModifier::SaveLoad::loadInternal(Common::ReadStream 
 	return true;
 }
 
-MidiModifier::MidiModifier() : _plugIn(nullptr), _filePlayer(nullptr) {
+MidiModifier::MidiModifier() : _plugIn(nullptr), _filePlayer(nullptr), _mutedTracks(0) {
 }
 
 MidiModifier::~MidiModifier() {
@@ -996,7 +1008,7 @@ VThreadState MidiModifier::consumeMessage(Runtime *runtime, const Common::Shared
 			if (_embeddedFile) {
 				debug(2, "MIDI (%x '%s'): Playing embedded file", getStaticGUID(), getName().c_str());
 				if (!_filePlayer)
-					_filePlayer = _plugIn->getMidi()->createFilePlayer(_embeddedFile, _volume * 255 / 100, _modeSpecific.file.loop);
+					_filePlayer = _plugIn->getMidi()->createFilePlayer(_embeddedFile, _volume * 255 / 100, _modeSpecific.file.loop, _mutedTracks);
 				_plugIn->getMidi()->playPlayer(_filePlayer);
 			} else {
 				debug(2, "MIDI (%x '%s'): Digested execute event but don't have anything to play", getStaticGUID(), getName().c_str());
@@ -1038,6 +1050,24 @@ MiniscriptInstructionOutcome MidiModifier::writeRefAttribute(MiniscriptThread *t
 	}
 
 	return Modifier::writeRefAttribute(thread, result, attrib);
+}
+
+MiniscriptInstructionOutcome MidiModifier::writeRefAttributeIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib, const DynamicValue &index) {
+	if (attrib == "mutetrack") {
+		int32 asInteger = 0;
+		if (!index.roundToInt(asInteger) || asInteger < 1) {
+			thread->error("Invalid index for mutetrack");
+			return kMiniscriptInstructionOutcomeFailed;
+		}
+
+		result.pod.objectRef = this;
+		result.pod.ptrOrOffset = asInteger - 1;
+		result.pod.ifc = &MuteTrackProxyInterface::_instance;
+
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return Modifier::writeRefAttributeIndexed(thread, result, attrib, index);
 }
 
 Common::SharedPtr<Modifier> MidiModifier::shallowClone() const {
@@ -1127,6 +1157,49 @@ MiniscriptInstructionOutcome MidiModifier::scriptSetLoop(MiniscriptThread *threa
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
+
+MiniscriptInstructionOutcome MidiModifier::scriptSetMuteTrack(MiniscriptThread *thread, size_t trackIndex, bool muted) {
+	if (trackIndex >= 16) {
+		thread->error("Invalid track index for mutetrack");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	uint16 mutedTracks = _mutedTracks;
+	uint16 trackMask = 1 << trackIndex;
+
+	if (muted)
+		mutedTracks |= trackMask;
+	else
+		mutedTracks -= (mutedTracks & trackMask);
+
+	if (mutedTracks != _mutedTracks) {
+		_mutedTracks = mutedTracks;
+
+		if (_filePlayer)
+			_plugIn->getMidi()->setPlayerMutedTracks(_filePlayer, mutedTracks);
+	}
+
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) const {
+	if (value.getType() != DynamicValueTypes::kBoolean) {
+		thread->error("Invalid type for mutetrack");
+		return kMiniscriptInstructionOutcomeFailed;
+	}
+
+	return static_cast<MidiModifier *>(objectRef)->scriptSetMuteTrack(thread, ptrOrOffset, value.getBool());
+}
+
+MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome MidiModifier::MuteTrackProxyInterface::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const {
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MidiModifier::MuteTrackProxyInterface MidiModifier::MuteTrackProxyInterface::_instance;
 
 ListVariableModifier::ListVariableModifier() : _list(new DynamicList()), _preferredContentType(DynamicValueTypes::kInteger) {
 }
