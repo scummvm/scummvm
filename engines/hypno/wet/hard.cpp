@@ -283,7 +283,7 @@ void WetEngine::runMainMenu(Code *code) {
 }
 
 void WetEngine::showDemoScore() {
-	Common::String fmessage = "You finished the demo with an accuracy of %d%% and a score of %d points";
+	Common::String fmessage = "You finished this demo level with an accuracy of %d%% and a score of %d points";
 	Common::String message = Common::String::format(fmessage.c_str(), accuracyRatio(), _score);
 	GUI::MessageDialog dialog(message);
 	dialog.runModal();
