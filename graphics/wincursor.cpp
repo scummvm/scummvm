@@ -263,13 +263,8 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::WinResources *exe, con
 	for (uint32 i = 0; i < cursorCount; i++) {
 		stream->readUint16LE(); // width
 		stream->readUint16LE(); // height
-
-		// Plane count
-		if (stream->readUint16LE() != 1) {
-			warning("PlaneCount is not 1.");
-		}
-
-		stream->readUint16LE(); // bits per pixel
+		stream->readUint16LE(); // x hotspot
+		stream->readUint16LE(); // y hotspot
 		stream->readUint32LE(); // data size
 		uint32 cursorId = stream->readUint16LE();
 
