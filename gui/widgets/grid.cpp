@@ -748,8 +748,8 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 void GridWidget::calcInnerHeight() {
 	int row = 0;
 	int col = 0;
-	int lastRowHeight = 0;
-	int x = _scrollWindowPaddingX + _gridXSpacing, y = _scrollWindowPaddingY;
+	int32 lastRowHeight = 0;
+	int32 x = _scrollWindowPaddingX + _gridXSpacing, y = _scrollWindowPaddingY;
 
 	for (int k = 0; k < (int)_sortedEntryList.size(); ++k) {
 		if (_sortedEntryList[k].isHeader) {
