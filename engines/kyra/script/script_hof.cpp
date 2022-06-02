@@ -872,8 +872,7 @@ int KyraEngine_HoF::o2_defineSceneAnim(EMCState *script) {
 	anim.height = stackPos(7);
 	anim.specialSize = stackPos(9);
 	anim.shapeIndex = stackPos(11);
-	if (stackPosString(12) != nullptr)
-		strcpy(anim.filename, stackPosString(12));
+	strcpy(anim.filename, stackPosString(12));
 
 	if (anim.flags & 0x40) {
 		if (!_sceneAnimMovie[animId]->open(anim.filename, 1, nullptr))
