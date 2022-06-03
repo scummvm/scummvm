@@ -1567,7 +1567,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheMovieRate:
 		channel->_movieRate = d.asFloat();
-		if (sprite->_cast->_type == kCastDigitalVideo)
+		if (sprite->_cast && sprite->_cast->_type == kCastDigitalVideo)
 			((DigitalVideoCastMember *)sprite->_cast)->setMovieRate(channel->_movieRate);
 		else
 			warning("Setting movieTime for non-digital video");
