@@ -722,13 +722,7 @@ void GfxAnimate::throttleSpeed() {
 
 		// One entry drawn -> check if that entry was a speed benchmark view, if not enable speed throttler
 		AnimateEntry *onlyCast = &_lastCastData[0];
-		if ((onlyCast->viewId == 0) && (onlyCast->loopNo == 13) && (onlyCast->celNo == 0)) {
-			// this one is used by jones talkie
-			if ((onlyCast->celRect.height() == 8) && (onlyCast->celRect.width() == 8)) {
-				_s->_gameIsBenchmarking = true;
-				return;
-			}
-		}
+
 		// first loop and first cel used?
 		if ((onlyCast->loopNo == 0) && (onlyCast->celNo == 0)) {
 			// and that cel has a known speed benchmark resolution

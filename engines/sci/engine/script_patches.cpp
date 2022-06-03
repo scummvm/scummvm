@@ -4692,6 +4692,39 @@ static const SciScriptPatcherEntry islandBrainSignatures[] = {
 };
 
 // ===========================================================================
+// Jones In The Fast Lane
+
+// Disable the CD version's speed test so that all views are drawn. Originally
+//  we detected this benchmark and disabled speed throttling during it, but on
+//  very fast computers the counter can overflow and fail the test.
+//
+// Applies to: PC CD
+// Responsible method: noticeRoom:doit
+// Fixes bug: #13529
+static const uint16 jonesSignatureSpeedTest[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x00,                         // lsl 00
+	0x76,                               // push0
+	0x43, 0x42, 0x00,                   // callk GetTime 00
+	0x2a,                               // ult? [ is speed test complete? ]
+	0x30,                               // bnt
+	SIG_END
+};
+
+static const uint16 jonesPatchSpeedTest[] = {
+	0x83, 0x02,                         // lal 02 [ best result ]
+	0xa3, 0x01,                         // sal 01 [ local1 = local2 ]
+	0x33, 0x04,                         // jmp 04 [ complete speed test ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry jonesSignatures[] = {
+	{  true,   764, "CD: disable speed test",                      1, jonesSignatureSpeedTest,          jonesPatchSpeedTest },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // King's Quest 1
 
 // In the demo, the leprechaun dance runs awkwardly fast on modern computers.
@@ -23249,6 +23282,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		break;
 	case GID_ISLANDBRAIN:
 		signatureTable = islandBrainSignatures;
+		break;
+	case GID_JONES:
+		signatureTable = jonesSignatures;
 		break;
 	case GID_KQ1:
 		signatureTable = kq1Signatures;
