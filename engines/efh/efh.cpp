@@ -2211,7 +2211,7 @@ int16 EfhEngine::sub1C219(uint8 *str, int16 menuType, int16 arg4, bool displayTe
 		else {
 			drawColoredRect(minX, minY, maxX, maxY, 0);
 			if (str)
-				int16 varC = script_parse(str, minX, minY, maxX, maxY, true);
+				int16 varC = script_parse(str, minX, minY, maxX, maxY, false);
 		}
 
 		if (displayTeamWindowFl)
@@ -3002,7 +3002,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 	char buffer[80];
 	memset(buffer, 0, 80);
 
-	int8 var51 = _mapMonsters[monsterId]._possessivePronounSHL6;
+	uint8 var51 = _mapMonsters[monsterId]._possessivePronounSHL6 & 0x3F;
 	if (_mapMonsters[monsterId]._guess_fullPlaceId == 0xFF)
 		return false;
 
@@ -5617,7 +5617,7 @@ int16 EfhEngine::displayString_3(const char *str, bool animFl, int16 charId, int
 		displayWindow(_windowWithBorderBuf, 19, 113, _hiResImageBuf);
 
 		if (counter == 0) {
-			script_parse((uint8 *)str, 28, 122, 105, 166, 0);
+			script_parse((uint8 *)str, 28, 122, 105, 166, false);
 			displayFctFullScreen();
 		} else {
 			retVal = script_parse((uint8 *)str, 28, 122, 105, 166, true);
