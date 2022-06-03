@@ -43,7 +43,7 @@ struct XPFloat {
 
 	XPFloat();
 	XPFloat(uint16 signAndExponent, uint64 mantissa);
-	const XPFloat(const XPFloat &other);
+	XPFloat(const XPFloat &other);
 
 	static XPFloat fromDouble(double value, Semantics semantics = kSemanticsMC68881);
 	static XPFloat fromDoubleBits(uint64 value, Semantics semantics = kSemanticsMC68881);
