@@ -56,7 +56,7 @@ struct XPFloat {
 };
 
 inline XPFloat::XPFloat() : signAndExponent(0), mantissa(0) {}
-inline XPFloat::XPFloat(uint16 signAndExponent, uint64 mantissa) : signAndExponent(signAndExponent), mantissa(mantissa) {}
+inline XPFloat::XPFloat(uint16 fSignAndExponent, uint64 fMantissa) : signAndExponent(fSignAndExponent), mantissa(fMantissa) {}
 inline XPFloat::XPFloat(const XPFloat &other) : signAndExponent(other.signAndExponent), mantissa(other.mantissa) {}
 
 }
