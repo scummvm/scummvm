@@ -256,6 +256,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "maze",				"The Riddle of the Maze" },
 	{ "mckenzie",			"McKenzie & Co." },
 	{ "mckenziemf",			"McKenzie & Co.: More Friends" }, // Expansion for McKenzie & Co.
+	{ "mcluhan",			"Understanding McLuhan" },
 	{ "mcmillennium",		"Mission Code: Millennium" },
 	{ "mediaband",			"Meet MediaBand" },
 	{ "melements",			"Masters of the Elements" },
@@ -3571,6 +3572,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("mckenzie", "30 Megs", "MCKDEMO.EXE", "089bcc7d82376ee11c433ecd58c16c29", 7212177, 404),
 
 	WINGAME1("mckenziemf", "", "MCKFRAME.EXE", "49c04e880f314a4965d21273df4f2dee", 4038355, 404),
+
+	WINGAME2t("mcluhan", "", "mcluhan/mcluhan.exe", "317d00bfea3c27688462f01bdd6ac2aa", 3587645,
+							 "fg/sunmorn.mov", "baee2df57be48984fabb721ce996b224", 1331857, 404),
+	MACGAME1("mcluhan", "", "McLuhan.dxr", "ce91eb31b2fcebc26451e0cc1632a964", 44371496, 404),
 
 	WINDEMO1("mcmillennium", "Demo", "MILLDEMO.EXE", "b6027f900ae90ed59de3d22e68d2bfed", 3630918, 404),
 
