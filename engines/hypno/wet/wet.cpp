@@ -492,6 +492,7 @@ void WetEngine::loadAssetsFullGame() {
 	loadLib("", "c_misc/fonts.lib", true);
 	loadFonts();
 	loadLib("sound/", "c_misc/sound.lib", true);
+	restoreScoreMilestones(0);
 	_nextLevel = "<start>";
 }
 
@@ -642,6 +643,7 @@ Common::Error WetEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	else
 		_nextLevel = "<level_menu>";
 
+	restoreScoreMilestones(_score);
 	return Common::kNoError;
 }
 

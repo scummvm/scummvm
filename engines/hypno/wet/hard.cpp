@@ -53,6 +53,7 @@ void WetEngine::runCheckLives(Code *code) {
 		_nextLevel = "<game_over>";
 		_score = 0;
 		_lives = 2;
+		restoreScoreMilestones(_score);
 		saveProfile(_name, _lastLevel);
 	} else
 		_nextLevel = _checkpoint;

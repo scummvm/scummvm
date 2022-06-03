@@ -397,6 +397,7 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 		uint32 c = kHypnoColorGreen; // green
 		int bonusCounter = 0;
 		int scoreCounter = _score - _bonus;
+		bool extraLife = false;
 		assert(scoreCounter >= 0);
 		bool skip = false;
 		Common::Event event;
@@ -438,6 +439,11 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 				drawString("scifi08.fgx", Common::String::format("%-20s = %3d pts", "SCORE", scoreCounter), 60, 126, 0, c);
 			}
 
+			extraLife |= checkScoreMilestones(scoreCounter); // This increase the number of lives, if necessary
+			if (extraLife) {
+				drawString("scifi08.fgx", "EXTRA LIFE", 164, 140, 0, kHypnoColorRed);
+			}
+
 			drawScreen();
 			g_system->delayMillis(25);
 		}
@@ -450,6 +456,33 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 		disableCursor();
 		runIntro(video);
 	}
+}
+void WetEngine::restoreScoreMilestones(int score) {
+	if (score == 0) {
+		_scoreMilestones.clear();
+		_scoreMilestones.push_back(10000);
+		_scoreMilestones.push_back(25000);
+		_scoreMilestones.push_back(50000);
+		_scoreMilestones.push_back(100000);
+	} else {
+		while (true) {
+			if (_scoreMilestones.empty() || score < *_scoreMilestones.begin())
+				break;
+			_scoreMilestones.pop_front();
+		}
+	}
+}
+
+bool WetEngine::checkScoreMilestones(int score) {
+	bool extraLife = false;
+	while (true) {
+		if (_scoreMilestones.empty() || score < *_scoreMilestones.begin())
+			break;
+		_scoreMilestones.pop_front();
+		_lives = _lives + 1;
+		extraLife = true;
+	}
+	return extraLife;
 }
 
 uint32 WetEngine::findPaletteIndexZones(uint32 id) {

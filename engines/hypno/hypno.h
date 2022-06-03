@@ -438,6 +438,11 @@ private:
 	void showDemoScore();
 	uint32 findPaletteIndexZones(uint32 id);
 
+	Common::List<int> _scoreMilestones;
+	void restoreScoreMilestones(int score);
+	bool checkScoreMilestones(int score);
+
+
 	Frames _c33PlayerCursor;
 	Common::Point _c33PlayerPosition;
 	Common::List<PlayerPosition> _c33PlayerDirection;
