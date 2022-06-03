@@ -22,6 +22,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/substream.h"
+#include "common/xpfloat.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -1140,29 +1141,10 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 					error("Constant float expected to be 10 bytes");
 					break;
 				}
-				uint16 exponent = READ_BE_UINT16(&constsStore[pointer]);
-				uint64 f64sign = (uint64)(exponent & 0x8000) << 48;
-				exponent &= 0x7fff;
-				uint64 fraction = READ_BE_UINT64(&constsStore[pointer+2]);
-				fraction &= 0x7fffffffffffffffULL;
-				uint64 f64exp = 0;
-				if (exponent == 0) {
-					f64exp = 0;
-				} else if (exponent == 0x7fff) {
-					f64exp = 0x7ff;
-				} else {
-					int32 normexp = (int32)exponent - 0x3fff;
-					if ((-0x3fe > normexp) || (normexp >= 0x3ff)) {
-						error("Constant float exponent too big for a double");
-						break;
-					}
-					f64exp = (uint64)(normexp + 0x3ff);
-				}
-				f64exp <<= 52;
-				uint64 f64fract = fraction >> 11;
-				uint64 f64bin = f64sign | f64exp | f64fract;
+				uint16 signAndExponent = READ_BE_UINT16(&constsStore[pointer]);
+				uint64 mantissa = READ_BE_UINT64(&constsStore[pointer+2]);
 
-				constant.u.f = *(double *)(&f64bin);
+				constant.u.f = Common::XPFloat(signAndExponent, mantissa).toDouble(Common::XPFloat::kSemanticsSANE);
 			}
 			break;
 		default:
