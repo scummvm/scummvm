@@ -86,6 +86,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Der Spieler bleibt nun nicht mehr stecken, wenn er sich zu dem Fuß in Szene 30 teleportiert.
    - Inkonsistenten Status des Kaktus korrigiert.
 
+ Private:
+   - Code überarbeitet, sodass die Darstellunbg nun mit der ursprünglichen, aus 256 Farben bestehenden
+     Farbpalette erfolgt.
+   - Endianness-Probleme behoben.
+   - Unterstützung für die koreanische Version hinzugefügt.
+
  Supernova:
    - Unterstützung für Sprachausgabe in Dialogen und für Objektbeschreibungen hinzugefügt.
 
