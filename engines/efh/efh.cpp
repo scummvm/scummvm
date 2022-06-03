@@ -3028,7 +3028,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 	if (isCharacterATeamMember(_mapMonsters[monsterId]._field_1))
 		return false;
 
-	int16 var58 = isCharacterATeamMember(_mapMonsters[monsterId]._field_1);
+	int16 var58 = _mapMonsters[monsterId]._field_1;
 	switch (_npcBuf[var58].field_10 - 0xEE) {
 	case 0:
 		if (arg2 == 4 && _npcBuf[var58].field_11 == itemId) {
@@ -3149,6 +3149,7 @@ bool EfhEngine::sub21820(int16 monsterId, int16 arg2, int16 itemId) {
 		displayAnimFrames(0xFE, true);
 		return true;
 	default:
+		
 		break;
 	}
 
