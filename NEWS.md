@@ -94,7 +94,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Private:
    - Refactored code to allow rendering using the original 256 color palette.
-   - Fixed endianess issues.
+   - Fixed endianness issues.
    - Added support for the Korean release.
 
  Supernova:
