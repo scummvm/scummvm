@@ -199,8 +199,8 @@ private:
 	MiniscriptInstructionOutcome scriptSetCheckNow(MiniscriptThread *thread, const DynamicValue &value);
 
 	static void recursiveFindXorElements(Structural *structural, Common::Array<VisualElement *> &elements);
-	static bool sliceRectX(const Rect16 &rect, int32 x, Common::Array<Rect16> &outSlices);
-	static bool sliceRectY(const Rect16 &rect, int32 y, Common::Array<Rect16> &outSlices);
+	static bool sliceRectX(const Common::Rect &rect, int32 x, Common::Array<Common::Rect> &outSlices);
+	static bool sliceRectY(const Common::Rect &rect, int32 y, Common::Array<Common::Rect> &outSlices);
 
 	bool _allClear;
 };

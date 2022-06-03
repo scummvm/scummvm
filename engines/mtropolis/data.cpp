@@ -301,6 +301,21 @@ bool Rect::load(DataReader &reader) {
 		return false;
 }
 
+bool Rect::toScummVMRect(Common::Rect &outRect) const {
+	if (left > right || top > bottom)
+		return false;
+	outRect = Common::Rect(left, top, right, bottom);
+	return true;
+}
+
+bool Rect::toScummVMRectUnchecked(Common::Rect &outRect) const {
+	outRect.top = top;
+	outRect.left = left;
+	outRect.bottom = bottom;
+	outRect.right = right;
+	return true;
+}
+
 bool Point::load(DataReader &reader) {
 	if (reader.getProjectFormat() == kProjectFormatMacintosh)
 		return reader.readS16(y) && reader.readS16(x);
