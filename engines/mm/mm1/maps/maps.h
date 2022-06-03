@@ -261,14 +261,9 @@ public:
 	void turnRight();
 
 	/**
-	 * Move forward
+	 * Move a step
 	 */
-	void forward();
-
-	/**
-	 * Move backwards
-	 */
-	void backwards();
+	void step(const Common::Point &delta);
 };
 
 } // namespace Maps
