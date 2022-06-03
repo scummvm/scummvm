@@ -512,22 +512,24 @@ int MacFontManager::parseFontSlant(Common::String slant) {
 int MacFontManager::parseSlantFromName(const Common::String &name) {
 	int slantVal = 0;
 
-	if (name.contains(" Bold"))
+	if (name.contains(" Bold") || name.equalsIgnoreCase("Bold"))
 		slantVal |= kMacFontBold;
-	if (name.contains(" Italic"))
+	if (name.contains(" Italic") || name.equalsIgnoreCase("Italic"))
 		slantVal |= kMacFontItalic;
-	if (name.contains(" Regular"))
+	if (name.contains(" Regular") || name.equalsIgnoreCase("Regular"))
 		slantVal |= kMacFontRegular;
-	if (name.contains(" Underline"))
+	if (name.contains(" Underline") || name.equalsIgnoreCase("Underline"))
 		slantVal |= kMacFontUnderline;
-	if (name.contains(" Shadow"))
+	if (name.contains(" Shadow") || name.equalsIgnoreCase("Shadow"))
 		slantVal |= kMacFontShadow;
-	if (name.contains(" Outline"))
+	if (name.contains(" Outline") || name.equalsIgnoreCase("Outline"))
 		slantVal |= kMacFontOutline;
-	if (name.contains(" Condense"))
+	if (name.contains(" Condense") || name.equalsIgnoreCase("Condense"))
 		slantVal |= kMacFontCondense;
-	if (name.contains(" Extend"))
+	if (name.contains(" Extend") || name.equalsIgnoreCase("Extend"))
 		slantVal |= kMacFontExtend;
+	if (name.contains(" Plain") || name.equalsIgnoreCase("Plain"))
+		slantVal = kMacFontRegular;
 
 	return slantVal;
 }
@@ -591,6 +593,11 @@ int MacFontManager::getFontIdByName(Common::String name) {
 	if (_fontIds.contains(name))
 		return _fontIds[name];
 
+	for (auto it = _fontIds.begin(); it != _fontIds.end(); it++) {
+		if (it->_key.equalsIgnoreCase(name)) {
+			return it->_value;
+		}
+	}
 	return 1;
 }
 
