@@ -88,8 +88,15 @@ static const byte crosshairCursor[] = {
 	0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0};
 
 static const byte cursorPalette[] = {
-	0x00, 0x00, 0x00, // Black / Transparent
+	0x00, 0x00, 0x00, // Transparent
 	0x00, 0x00, 0xff, // Blue
+	0xff, 0x00, 0x00, // Red
+	0xff, 0xff, 0xff  // White
+};
+
+static const byte sciCursorPalette[] = {
+	0x00, 0x00, 0x00, // Transparent
+	0xff, 0xff, 0xff, // Black
 	0xff, 0x00, 0x00, // Red
 	0xff, 0xff, 0xff  // White
 };
@@ -133,7 +140,10 @@ void HypnoEngine::changeCursor(const Common::String &cursor) {
 	}
 	assert(entry->name);
 
-	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
+	if (cursor == "default")
+		CursorMan.replaceCursorPalette(sciCursorPalette, 0, 3);
+	else
+		CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
 	CursorMan.replaceCursor(entry->buf, entry->w, entry->h, entry->hotspotX, entry->hotspotY, 0);
 	CursorMan.showMouse(true);
 }
