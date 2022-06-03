@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-03 19:05+0000\n"
-"PO-Revision-Date: 2022-05-30 11:25+0000\n"
+"PO-Revision-Date: 2022-06-03 20:27+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -6986,16 +6986,17 @@ msgstr ""
 "σκηνή με τα λογότυπα της Lucasfilm και του Loom."
 
 #: engines/scumm/dialogs.cpp:810
-#, fuzzy
-#| msgid "Playback"
 msgid "Playback Adjust:"
-msgstr "Αναπαραγωγή"
+msgstr "Ρύθμιση Αναπαραγωγής:"
 
 #: engines/scumm/dialogs.cpp:814
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
 msgstr ""
+"Όταν γίνεται αναπαραγωγή ήχου από το CD, να αναπροσαρμόζεται η χρονική "
+"στιγμή έναρξης του ήχου κατά αυτή την τιμή. Χρησιμοποιήστε αυτή τη ρύθμιση "
+"αν ακούτε συχνά αποσπάσματα από τον λάθος ήχο."
 
 #: engines/scumm/dialogs.cpp:886
 msgid "Intro Adjust:"
