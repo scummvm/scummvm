@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-03 19:05+0000\n"
-"PO-Revision-Date: 2020-09-26 21:13+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2022-06-03 20:16+0000\n"
+"Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nn/>\n"
 "Language: nn_NO\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.0.4\n"
+"X-Generator: Weblate 4.4\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Norsk (nynorsk)\n"
 
@@ -957,10 +957,8 @@ msgid "Record..."
 msgstr ""
 
 #: gui/launcher.cpp:989
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "~G~ame Options..."
-msgstr "~V~al..."
+msgstr "Spel~v~al..."
 
 #: gui/launcher.cpp:989
 msgid "Change game options"
@@ -4589,10 +4587,8 @@ msgstr "Hopp over linje"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:161
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Game Options"
-msgstr "~V~al..."
+msgstr "Spelval"
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
