@@ -203,6 +203,21 @@ bool DataReader::readF64(double &value) {
 	return checkErrorAndReset();
 }
 
+bool DataReader::readPlatformFloat(Common::XPFloat &value) {
+	if (_projectFormat == kProjectFormatMacintosh) {
+		return readU16(value.signAndExponent) && readU64(value.mantissa);
+	} else if (_projectFormat == kProjectFormatWindows) {
+		uint64 bits;
+		if (!readU64(bits))
+			return false;
+		value = Common::XPFloat::fromDoubleBits(bits);
+
+		return true;
+	}
+
+	return false;
+}
+
 bool DataReader::read(void *dest, size_t size) {
 	while (size > 0) {
 		uint32 thisChunkSize = 0xffffffffu;
@@ -358,78 +373,24 @@ bool IntRange::load(DataReader& reader) {
 	return reader.readS32(min) && reader.readS32(max);
 }
 
-bool XPFloat::load(DataReader &reader) {
-	if (reader.getProjectFormat() == kProjectFormatMacintosh)
-		return reader.readU16(signAndExponent) && reader.readU64(mantissa);
-	else if (reader.getProjectFormat() == kProjectFormatWindows) {
-		uint64 doublePrecFloatBits;
-		if (!reader.readU64(doublePrecFloatBits))
-			return false;
-
-		uint8 sign = ((doublePrecFloatBits >> 63) & 1);
-		int16 exponent = ((doublePrecFloatBits >> 52) & ((1 << 11) - 1));
-		uint64 workMantissa = (doublePrecFloatBits & ((static_cast<uint64>(1) << 52) - 1));
-
-		if (exponent == 0) {
-			// Subnormal number or zero
-			if (workMantissa != 0) {
-				while (((workMantissa >> 52) & 1) == 0) {
-					exponent--;
-					workMantissa <<= 1;
-				}
-			}
-		} else {
-			workMantissa |= (static_cast<uint64>(1) << 52);
-		}
-
-		exponent += 15360;
-
-		signAndExponent = static_cast<uint16>((sign << 15) | exponent);
-		mantissa = workMantissa << 11;
-
-		return true;
-	} else
-		return false;
-}
-
-double XPFloat::toDouble() const {
-	uint8 sign = (signAndExponent >> 15) & 1;
-	int16 exponent = signAndExponent & 0x7fff;
-
-	// Eliminate implicit 1 and truncate from 63 to 52 bits
-	uint64 workMantissa = this->mantissa & (((static_cast<uint64>(1) << 52) - 1u) << 11);
-	workMantissa >>= 11;
-
-	if (workMantissa != 0 || exponent != 0) {
-		// Adjust exponent
-		exponent -= 15360;
-		if (exponent > 2046) {
-			// Too big, set to largest finite magnitude
-			exponent = 2046;
-			workMantissa = (static_cast<uint64>(1) << 52) - 1u;
-		} else if (exponent < 0) {
-			// Subnormal number
-			workMantissa |= (static_cast<uint64>(1) << 52);
-			if (exponent < -52) {
-				workMantissa = 0;
-				exponent = 0;
-			} else {
-				workMantissa >>= (-exponent);
-				exponent = 0;
-			}
-		}
-	}
-
-	uint64 recombined = (static_cast<uint64>(sign) << 63) | (static_cast<uint64>(exponent) << 52) | static_cast<uint64>(workMantissa);
-
-	double d;
-	memcpy(&d, &recombined, 8);
-
-	return d;
-}
-
 bool XPFloatVector::load(DataReader& reader) {
-	return angleRadians.load(reader) && magnitude.load(reader);
+	return reader.readPlatformFloat(angleRadians) && reader.readPlatformFloat(magnitude);
+}
+
+bool XPFloatPOD::load(DataReader &reader) {
+	Common::XPFloat xpFloat;
+
+	if (!reader.readPlatformFloat(xpFloat))
+		return false;
+
+	signAndExponent = xpFloat.signAndExponent;
+	mantissa = xpFloat.mantissa;
+
+	return true;
+}
+
+Common::XPFloat XPFloatPOD::toXPFloat() const {
+	return Common::XPFloat(signAndExponent, mantissa);
 }
 
 bool Label::load(DataReader &reader) {
@@ -1464,7 +1425,7 @@ DataReadErrorCode FloatingPointVariableModifier::load(DataReader &reader) {
 	if (_revision != 0x3e8)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !value.load(reader))
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readPlatformFloat(value))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;

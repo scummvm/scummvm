@@ -29,6 +29,7 @@
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/rect.h"
+#include "common/xpfloat.h"
 
 // This contains defs related to parsing of mTropolis stored data into structured data objects.
 // This is separated from asset construction for a number of reasons, mainly that data parsing has
@@ -178,6 +179,7 @@ public:
 	bool readS64(int64 &value);
 	bool readF32(float &value);
 	bool readF64(double &value);
+	bool readPlatformFloat(Common::XPFloat &value);
 
 	bool read(void *dest, size_t size);
 
@@ -251,19 +253,19 @@ struct IntRange {
 	int32 max;
 };
 
-struct XPFloat {
-	bool load(DataReader &reader);
-	double toDouble() const;
-
-	uint64 mantissa;
-	uint16 signAndExponent;
-};
-
 struct XPFloatVector {
 	bool load(DataReader &reader);
 
-	XPFloat angleRadians;
-	XPFloat magnitude;
+	Common::XPFloat angleRadians;
+	Common::XPFloat magnitude;
+};
+
+struct XPFloatPOD {
+	uint16 signAndExponent;
+	uint64 mantissa;
+
+	bool load(DataReader &reader);
+	Common::XPFloat toXPFloat() const;
 };
 
 struct Label {
@@ -303,7 +305,7 @@ struct InternalTypeTaggedValue {
 
 	union ValueUnion {
 		uint8 asBool;
-		XPFloat asFloat;
+		XPFloatPOD asFloat;
 		int32 asInteger;
 		IntRange asIntegerRange;
 		VariableReference asVariableReference;
@@ -336,7 +338,7 @@ struct PlugInTypeTaggedValue : public Common::NonCopyable {
 		int32 asInt;
 		Point asPoint;
 		IntRange asIntRange;
-		XPFloat asFloat;
+		XPFloatPOD asFloat;
 		uint16 asBoolean;
 		Event asEvent;
 		Label asLabel;
@@ -1404,7 +1406,7 @@ protected:
 struct FloatingPointVariableModifier : public DataObject {
 	TypicalModifierHeader modHeader;
 	uint8 unknown1[4];
-	XPFloat value;
+	Common::XPFloat value;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
