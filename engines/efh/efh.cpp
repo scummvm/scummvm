@@ -6719,7 +6719,8 @@ bool EfhEngine::checkMonsterCollision() {
 				} else if (var1 == 0x3E) {
 					strcpy(buffer, "(NOT DEFINED)");
 				} else if (var1 == 0x3F) { // Useless check, it's the last possible value
-					copyString(_npcBuf[_mapMonsters[monsterId]._monsterRef]._name, dest);
+					// Special character name
+					copyString(_npcBuf[_mapMonsters[monsterId]._field_1]._name, dest);
 					sprintf(buffer, "with %s", dest);
 				}
 
