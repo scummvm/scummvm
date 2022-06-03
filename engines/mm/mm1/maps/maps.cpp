@@ -292,6 +292,11 @@ void Maps::step(const Common::Point &delta) {
 	loadTiles();
 }
 
+void Maps::clearSpecial() {
+	_currentState &= ~CELL_SPECIAL;
+	_currentMap->_states[_mapOffset] &= ~CELL_SPECIAL;
+}
+
 } // namespace Maps
 } // namespace MM1
 } // namespace MM

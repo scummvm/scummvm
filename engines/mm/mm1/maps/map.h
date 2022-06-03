@@ -45,7 +45,7 @@ enum CellState {
 };
 
 class Map {
-private:
+protected:
 	Common::String _name;
 	uint16 _id;
 	uint _mapId;

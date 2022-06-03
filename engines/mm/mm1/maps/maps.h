@@ -207,6 +207,7 @@ public:
 	Common::Array<Graphics::ManagedSurface> _tiles[3];
 	uint _mapId = (uint)-1;
 	Common::Point _mapPos;
+	uint _mapOffset = 0;
 	Map *_currentMap = nullptr;
 	byte _currentWalls = 0;
 	byte _currentState = 0;
@@ -265,6 +266,13 @@ public:
 	 * Move a step
 	 */
 	void step(const Common::Point &delta);
+
+	/**
+	 * Disables the special state of the current cell
+	 * This is primiarily used for disabling cells
+	 * that trigger combat after the first time
+	 */
+	void clearSpecial();
 };
 
 } // namespace Maps

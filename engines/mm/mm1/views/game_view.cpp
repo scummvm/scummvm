@@ -53,7 +53,7 @@ GameView::GameView(UIElement *owner) : Game::ViewBase(owner) {
 void GameView::draw() {
 	Maps::Maps &maps = g_globals->_maps;
 	Maps::Map &map = *maps._currentMap;
-	int mapOffset = _mapOffset;
+	int mapOffset = maps._mapOffset;
 
 	Common::fill(&_arr1[0], &_arr1[11], 0);
 

@@ -35,9 +35,9 @@ void ViewBase::update() {
 	Maps::Maps &maps = g_globals->_maps;
 	Maps::Map &map = *maps._currentMap;
 
-	_mapOffset = maps._mapPos.y * MAP_W + maps._mapPos.x;
-	maps._currentWalls = map._walls[_mapOffset];
-	maps._currentState = map._states[_mapOffset];
+	maps._mapOffset = maps._mapPos.y * MAP_W + maps._mapPos.x;
+	maps._currentWalls = map._walls[maps._mapOffset];
+	maps._currentState = map._states[maps._mapOffset];
 	_isDark = false;
 
 	if (maps._currentState & Maps::CELL_DARK) {
