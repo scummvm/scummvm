@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-03 19:05+0000\n"
 "PO-Revision-Date: 2022-06-03 20:27+0000\n"
-"Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
+"Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
 "Language: el\n"
@@ -7000,7 +7000,7 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:886
 msgid "Intro Adjust:"
-msgstr ""
+msgstr "Προσαρμογή Εισαγωγής:"
 
 #: engines/scumm/dialogs.cpp:890
 msgid ""
