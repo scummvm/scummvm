@@ -977,9 +977,9 @@ bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::
 			|| data.embeddedTempo.type != Data::PlugInTypeTaggedValue::kFloat)
 			return false;
 
-		_modeSpecific.file.fadeIn = data.embeddedFadeIn.value.asFloat.toDouble();
-		_modeSpecific.file.fadeOut = data.embeddedFadeOut.value.asFloat.toDouble();
-		_modeSpecific.file.tempo = data.embeddedTempo.value.asFloat.toDouble();
+		_modeSpecific.file.fadeIn = data.embeddedFadeIn.value.asFloat.toXPFloat().toDouble();
+		_modeSpecific.file.fadeOut = data.embeddedFadeOut.value.asFloat.toXPFloat().toDouble();
+		_modeSpecific.file.tempo = data.embeddedTempo.value.asFloat.toXPFloat().toDouble();
 	} else {
 		_mode = kModeSingleNote;
 
@@ -990,7 +990,7 @@ bool MidiModifier::load(const PlugInModifierLoaderContext &context, const Data::
 		_modeSpecific.singleNote.note = data.modeSpecific.singleNote.note;
 		_modeSpecific.singleNote.velocity = data.modeSpecific.singleNote.velocity;
 		_modeSpecific.singleNote.program = data.modeSpecific.singleNote.program;
-		_modeSpecific.singleNote.duration = data.singleNoteDuration.value.asFloat.toDouble();
+		_modeSpecific.singleNote.duration = data.singleNoteDuration.value.asFloat.toXPFloat().toDouble();
 
 		_volume = 100;
 	}

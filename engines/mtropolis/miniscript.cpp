@@ -187,8 +187,8 @@ bool MiniscriptInstructionLoader<MiniscriptInstructions::PushValue>::loadInstruc
 	if (dataType == 0)
 		new (dest) MiniscriptInstructions::PushValue(MiniscriptInstructions::PushValue::kDataTypeNull, nullptr, false);
 	else if (dataType == 0x15) {
-		Data::XPFloat f;
-		if (!f.load(instrDataReader))
+		Common::XPFloat f;
+		if (!instrDataReader.readPlatformFloat(f))
 			return false;
 
 		double d = f.toDouble();

@@ -1089,7 +1089,7 @@ bool DynamicValue::load(const Data::InternalTypeTaggedValue &data, const Common:
 		break;
 	case Data::InternalTypeTaggedValue::kFloat:
 		_type = DynamicValueTypes::kFloat;
-		_value.asFloat = data.value.asFloat.toDouble();
+		_value.asFloat = data.value.asFloat.toXPFloat().toDouble();
 		break;
 	case Data::InternalTypeTaggedValue::kBool:
 		_type = DynamicValueTypes::kBoolean;
@@ -1133,7 +1133,7 @@ bool DynamicValue::load(const Data::PlugInTypeTaggedValue &data) {
 		break;
 	case Data::PlugInTypeTaggedValue::kFloat:
 		_type = DynamicValueTypes::kFloat;
-		_value.asFloat = data.value.asFloat.toDouble();
+		_value.asFloat = data.value.asFloat.toXPFloat().toDouble();
 		break;
 	case Data::PlugInTypeTaggedValue::kBoolean:
 		_type = DynamicValueTypes::kBoolean;
