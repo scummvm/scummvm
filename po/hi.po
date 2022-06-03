@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-01 20:15+0000\n"
+"POT-Creation-Date: 2022-06-03 19:04+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -6362,11 +6362,11 @@ msgid ""
 "intro."
 msgstr ""
 
-#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:730
+#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:709
 msgid "Enable game-specific enhancements"
 msgstr ""
 
-#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:730
+#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:709
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -6494,14 +6494,46 @@ msgstr ""
 msgid "Expert"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:704
+#: engines/scumm/dialogs.cpp:730
 msgid "Overture Timing:"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:708
+#: engines/scumm/dialogs.cpp:734
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:810
+msgid "Playback Adjust:"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:814
+msgid ""
+"When playing sound from the CD audio track, adjust the start position of the "
+"sound by this much. Use this if you often hear bits of the wrong sound."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:886
+msgid "Intro Adjust:"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:890
+msgid ""
+"When playing the intro track, play from this point in it. Use this if the "
+"music gets cut off prematurely, or if you are unhappy with the way the music "
+"syncs up with the intro."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:899
+msgid "Outlook Adjust:"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:903
+msgid ""
+"The outlook music is part of the intro track. Adjust the position in the "
+"track at which it starts playing. Use this if the music is cut off, or if "
+"you hear part of the previous music."
 msgstr ""
 
 #: engines/scumm/help.cpp:72

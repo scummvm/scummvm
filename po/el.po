@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-01 20:15+0000\n"
+"POT-Creation-Date: 2022-06-03 19:04+0000\n"
 "PO-Revision-Date: 2022-05-30 11:25+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -6831,11 +6831,11 @@ msgstr ""
 "Επιτρέπει την χρήση λιγότερο ομαλής κύλισης κατά τη διάρκεια της γρήγορης "
 "κάμερας στην εισαγωγή."
 
-#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:730
+#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:709
 msgid "Enable game-specific enhancements"
 msgstr "Εφαρμογή βελτιώσεων για το παιχνίδι"
 
-#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:730
+#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:709
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -6972,11 +6972,11 @@ msgstr "Εξάσκηση"
 msgid "Expert"
 msgstr "Ειδικός"
 
-#: engines/scumm/dialogs.cpp:704
+#: engines/scumm/dialogs.cpp:730
 msgid "Overture Timing:"
 msgstr "Διάρκεια Ουβερτούρας:"
 
-#: engines/scumm/dialogs.cpp:708
+#: engines/scumm/dialogs.cpp:734
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -6984,6 +6984,40 @@ msgstr ""
 "Όταν χρησιμοποιείτε μουσική που αντικαθιστά αυτή του παιχνιδιού, η ρύθμιση "
 "αυτή καθορίζει τη χρονική στιγμή που η Οβερτούρα (Overture) αλλάζει στη "
 "σκηνή με τα λογότυπα της Lucasfilm και του Loom."
+
+#: engines/scumm/dialogs.cpp:810
+#, fuzzy
+#| msgid "Playback"
+msgid "Playback Adjust:"
+msgstr "Αναπαραγωγή"
+
+#: engines/scumm/dialogs.cpp:814
+msgid ""
+"When playing sound from the CD audio track, adjust the start position of the "
+"sound by this much. Use this if you often hear bits of the wrong sound."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:886
+msgid "Intro Adjust:"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:890
+msgid ""
+"When playing the intro track, play from this point in it. Use this if the "
+"music gets cut off prematurely, or if you are unhappy with the way the music "
+"syncs up with the intro."
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:899
+msgid "Outlook Adjust:"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:903
+msgid ""
+"The outlook music is part of the intro track. Adjust the position in the "
+"track at which it starts playing. Use this if the music is cut off, or if "
+"you hear part of the previous music."
+msgstr ""
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
