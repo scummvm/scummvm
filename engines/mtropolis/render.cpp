@@ -206,8 +206,8 @@ uint32 resolveRGB(uint8 r, uint8 g, uint8 b, const Graphics::PixelFormat &fmt) {
 	return rPlaced | gPlaced | bPlaced | aPlaced;
 }
 
-static void recursiveCollectDrawElementsAndUpdateOrigins(const Point16 &parentOrigin, Structural *structural, size_t sceneStackDepth, Common::Array<RenderItem> &normalBucket, Common::Array<RenderItem> &directBucket) {
-	Point16 elementOrigin = parentOrigin;
+static void recursiveCollectDrawElementsAndUpdateOrigins(const Common::Point &parentOrigin, Structural *structural, size_t sceneStackDepth, Common::Array<RenderItem> &normalBucket, Common::Array<RenderItem> &directBucket) {
+	Common::Point elementOrigin = parentOrigin;
 	if (structural->isElement()) {
 		Element *element = static_cast<Element *>(structural);
 		if (element->isVisual()) {
@@ -217,7 +217,7 @@ static void recursiveCollectDrawElementsAndUpdateOrigins(const Point16 &parentOr
 			elementOrigin.x += elementRect.left;
 			elementOrigin.y += elementRect.top;
 
-			visualElement->setCachedAbsoluteOrigin(Point16::create(elementOrigin.x, elementOrigin.y));
+			visualElement->setCachedAbsoluteOrigin(Common::Point(elementOrigin.x, elementOrigin.y));
 
 			RenderItem item;
 			item.element = visualElement;
@@ -267,7 +267,7 @@ void renderProject(Runtime *runtime, Window *mainWindow) {
 
 	size_t sceneStackDepth = 0;
 	for (Common::Array<Structural *>::const_iterator it = scenes.begin(), itEnd = scenes.end(); it != itEnd; ++it) {
-		recursiveCollectDrawElementsAndUpdateOrigins(Point16::create(0, 0), *it, sceneStackDepth, normalBucket, directBucket);
+		recursiveCollectDrawElementsAndUpdateOrigins(Common::Point(0, 0), *it, sceneStackDepth, normalBucket, directBucket);
 		sceneStackDepth++;
 	}
 

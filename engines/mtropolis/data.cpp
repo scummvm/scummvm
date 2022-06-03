@@ -325,6 +325,11 @@ bool Point::load(DataReader &reader) {
 		return false;
 }
 
+bool Point::toScummVMPoint(Common::Point &outPoint) const {
+	outPoint = Common::Point(x, y);
+	return true;
+}
+
 bool Event::load(DataReader& reader) {
 	return reader.readU32(eventID) && reader.readU32(eventInfo);
 }

@@ -1347,7 +1347,7 @@ void ListVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 			report->declareLoose(Common::String::format("[%i] = %g", cardinal, _list->getFloat()[i]));
 			break;
 		case DynamicValueTypes::kPoint:
-			report->declareLoose(Common::String::format("[%i] = ", cardinal) + _list->getPoint()[i].toString());
+			report->declareLoose(Common::String::format("[%i] = ", cardinal) + pointToString(_list->getPoint()[i]));
 			break;
 		case DynamicValueTypes::kIntegerRange:
 			report->declareLoose(Common::String::format("[%i] = ", cardinal) + _list->getIntRange()[i].toString());
@@ -1459,7 +1459,7 @@ void ListVariableModifier::SaveLoad::recursiveWriteList(DynamicList *list, Commo
 			stream->writeSint32BE(list->getInt()[i]);
 			break;
 		case DynamicValueTypes::kPoint: {
-				const Point16 &pt = list->getPoint()[i];
+				const Common::Point &pt = list->getPoint()[i];
 				stream->writeSint16BE(pt.x);
 				stream->writeSint16BE(pt.y);
 			}
@@ -1514,7 +1514,7 @@ Common::SharedPtr<DynamicList> ListVariableModifier::SaveLoad::recursiveReadList
 				val.setInt(i32);
 			} break;
 		case DynamicValueTypes::kPoint: {
-				Point16 pt;
+				Common::Point pt;
 				pt.x = stream->readSint16BE();
 				pt.y = stream->readSint16BE();
 				val.setPoint(pt);
@@ -1608,7 +1608,7 @@ bool SysInfoModifier::readAttribute(MiniscriptThread *thread, DynamicValue &resu
 	} else if (attrib == "screensize") {
 		uint16 width, height;
 		thread->getRuntime()->getDisplayResolution(width, height);
-		result.setPoint(Point16::create(width, height));
+		result.setPoint(Common::Point(width, height));
 		return true;
 	}
 

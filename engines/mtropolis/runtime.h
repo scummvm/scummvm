@@ -285,30 +285,8 @@ bool isCommand(EventID eventID);
 
 } // End of namespace EventIDs
 
-struct Point16 {
-	int16 x;
-	int16 y;
-
-	bool load(const Data::Point &point);
-
-	inline bool operator==(const Point16 &other) const {
-		return x == other.x && y == other.y;
-	}
-
-	inline bool operator!=(const Point16 &other) const {
-		return !((*this) == other);
-	}
-
-	inline static Point16 create(int16 x, int16 y) {
-		Point16 result;
-		result.x = x;
-		result.y = y;
-		return result;
-	}
-
-	MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
-	Common::String toString() const;
-};
+MiniscriptInstructionOutcome pointWriteRefAttrib(Common::Point &point, MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib);
+Common::String pointToString(const Common::Point &point);
 
 struct IntRange {
 	int32 min;
@@ -506,6 +484,13 @@ struct DynamicValueWriteProxy {
 	Common::SharedPtr<DynamicList> containerList;
 };
 
+struct Point16POD {
+	int16 x;
+	int16 y;
+
+	Common::Point toScummVMPoint() const;
+};
+
 
 class DynamicListContainerBase {
 public:
@@ -525,7 +510,7 @@ public:
 struct DynamicListDefaultSetter {
 	static void defaultSet(int32 &value);
 	static void defaultSet(double &value);
-	static void defaultSet(Point16 &value);
+	static void defaultSet(Common::Point &value);
 	static void defaultSet(IntRange &value);
 	static void defaultSet(bool &value);
 	static void defaultSet(AngleMagVector &value);
@@ -536,10 +521,24 @@ struct DynamicListDefaultSetter {
 	static void defaultSet(ObjectReference &value);
 };
 
+template<class T>
+struct DynamicListValueConverter {
+	typedef T DynamicValuePODType_t;
+
+	static const T &dereference(const T *source) { return *source; }
+};
+
+template<>
+struct DynamicListValueConverter<Common::Point> {
+	typedef Point16POD DynamicValuePODType_t;
+
+	static Common::Point dereference(const Point16POD *source);
+};
+
 struct DynamicListValueImporter {
 	static bool importValue(const DynamicValue &dynValue, const int32 *&outPtr);
 	static bool importValue(const DynamicValue &dynValue, const double *&outPtr);
-	static bool importValue(const DynamicValue &dynValue, const Point16 *&outPtr);
+	static bool importValue(const DynamicValue &dynValue, const Point16POD *&outPtr);
 	static bool importValue(const DynamicValue &dynValue, const IntRange *&outPtr);
 	static bool importValue(const DynamicValue &dynValue, const bool *&outPtr);
 	static bool importValue(const DynamicValue &dynValue, const AngleMagVector *&outPtr);
@@ -553,7 +552,7 @@ struct DynamicListValueImporter {
 struct DynamicListValueExporter {
 	static void exportValue(DynamicValue &dynValue, const int32 &value);
 	static void exportValue(DynamicValue &dynValue, const double &value);
-	static void exportValue(DynamicValue &dynValue, const Point16 &value);
+	static void exportValue(DynamicValue &dynValue, const Common::Point &value);
 	static void exportValue(DynamicValue &dynValue, const IntRange &value);
 	static void exportValue(DynamicValue &dynValue, const bool &value);
 	static void exportValue(DynamicValue &dynValue, const AngleMagVector &value);
@@ -625,7 +624,7 @@ private:
 
 template<class T>
 bool DynamicListContainer<T>::setAtIndex(size_t index, const DynamicValue &dynValue) {
-	const T *valuePtr = nullptr;
+	const typename DynamicListValueConverter<T>::DynamicValuePODType_t *valuePtr = nullptr;
 	if (!DynamicListValueImporter::importValue(dynValue, valuePtr))
 		return false;
 
@@ -638,9 +637,9 @@ bool DynamicListContainer<T>::setAtIndex(size_t index, const DynamicValue &dynVa
 				_array.push_back(defaultValue);
 			}
 		}
-		_array.push_back(*valuePtr);
+		_array.push_back(DynamicListValueConverter<T>::dereference(valuePtr));
 	} else {
-		_array[index] = *valuePtr;
+		_array[index] = DynamicListValueConverter<T>::dereference(valuePtr);
 	}
 
 	return true;
@@ -715,7 +714,7 @@ struct DynamicList {
 
 	const Common::Array<int32> &getInt() const;
 	const Common::Array<double> &getFloat() const;
-	const Common::Array<Point16> &getPoint() const;
+	const Common::Array<Common::Point> &getPoint() const;
 	const Common::Array<IntRange> &getIntRange() const;
 	const Common::Array<AngleMagVector> &getVector() const;
 	const Common::Array<Label> &getLabel() const;
@@ -728,7 +727,7 @@ struct DynamicList {
 
 	Common::Array<int32> &getInt();
 	Common::Array<double> &getFloat();
-	Common::Array<Point16> &getPoint();
+	Common::Array<Common::Point> &getPoint();
 	Common::Array<IntRange> &getIntRange();
 	Common::Array<AngleMagVector> &getVector();
 	Common::Array<Label> &getLabel();
@@ -791,7 +790,7 @@ struct DynamicValue {
 
 	const int32 &getInt() const;
 	const double &getFloat() const;
-	const Point16 &getPoint() const;
+	const Point16POD &getPoint() const;
 	const IntRange &getIntRange() const;
 	const AngleMagVector &getVector() const;
 	const Label &getLabel() const;
@@ -812,7 +811,7 @@ struct DynamicValue {
 
 	void setInt(int32 value);
 	void setFloat(double value);
-	void setPoint(const Point16 &value);
+	void setPoint(const Common::Point &value);
 	void setIntRange(const IntRange &value);
 	void setVector(const AngleMagVector &value);
 	void setLabel(const Label &value);
@@ -848,7 +847,7 @@ private:
 		Label asLabel;
 		VarReference asVarReference;
 		Event asEvent;
-		Point16 asPoint;
+		Point16POD asPoint;
 		bool asBool;
 		DynamicValueReadProxyPOD asReadProxy;
 		DynamicValueWriteProxyPOD asWriteProxy;
@@ -949,7 +948,7 @@ struct DynamicValueWritePointHelper : public IDynamicValueWriteInterface {
 	MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const override;
 	MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const override;
 
-	static void create(Point16 *pointValue, DynamicValueWriteProxy &proxy);
+	static void create(Common::Point *pointValue, DynamicValueWriteProxy &proxy);
 
 private:
 	static DynamicValueWritePointHelper _instance;
@@ -1523,7 +1522,7 @@ public:
 	void onMouseUp(int32 x, int32 y, Actions::MouseButton mButton);
 	void onKeyboardEvent(const Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt);
 
-	const Point16 &getCachedMousePosition() const;
+	const Common::Point &getCachedMousePosition() const;
 	void setModifierCursorOverride(uint32 cursorID);
 	void clearModifierCursorOverride();
 	void forceCursorRefreshOnce();
@@ -1721,10 +1720,10 @@ private:
 	Common::SharedPtr<AssetManagerInterface> _assetManagerInterface;
 
 	// The cached mouse position is updated at frame end
-	Point16 _cachedMousePosition;
+	Common::Point _cachedMousePosition;
 
 	// The real mouse position is updated all the time (even when suspended)
-	Point16 _realMousePosition;
+	Common::Point _realMousePosition;
 
 	// Mouse control is tracked in two ways: Mouse over is detected with mouse movement AND when
 	// "refreshCursor" is set on the world manager, it indicates the frontmost object that
@@ -1734,8 +1733,8 @@ private:
 	// Note that mouseOverObject is also NOT necessarily what will receive mouse down events.
 	Common::WeakPtr<Structural> _mouseOverObject;
 	Common::WeakPtr<Structural> _mouseTrackingObject;
-	Point16 _mouseTrackingDragStart;
-	Point16 _mouseTrackingObjectInitialOrigin;
+	Common::Point _mouseTrackingDragStart;
+	Common::Point _mouseTrackingObjectInitialOrigin;
 	bool _trackedMouseOutside;
 	bool _forceCursorRefreshOnce;
 
@@ -2356,8 +2355,8 @@ public:
 	uint16 getShadowSize() const;
 	void setShadowSize(uint16 size);
 
-	const Common::Array<Point16> &getPolyPoints() const;
-	Common::Array<Point16> &modifyPolyPoints();
+	const Common::Array<Common::Point> &getPolyPoints() const;
+	Common::Array<Common::Point> &modifyPolyPoints();
 
 	bool isDirty() const;
 	void clearDirty();
@@ -2374,7 +2373,7 @@ private:
 	uint16 _shadowSize;
 	ColorRGB8 _shadowColor;
 
-	Common::Array<Point16> _polyPoints;
+	Common::Array<Common::Point> _polyPoints;
 
 	bool _isDirty;
 };
@@ -2400,19 +2399,19 @@ public:
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
 
-	Point16 getParentOrigin() const;
-	Point16 getGlobalPosition() const;
+	Common::Point getParentOrigin() const;
+	Common::Point getGlobalPosition() const;
 	const Common::Rect &getRelativeRect() const;
 
 	// The cached absolute origin is from the last time the element was rendered.
 	// Do not rely on it mid-frame.
-	const Point16 &getCachedAbsoluteOrigin() const;
-	void setCachedAbsoluteOrigin(const Point16 &absOrigin);
+	const Common::Point &getCachedAbsoluteOrigin() const;
+	void setCachedAbsoluteOrigin(const Common::Point &absOrigin);
 
 	void setDragMotionProperties(const Common::SharedPtr<DragMotionProperties> &dragProps);
 	const Common::SharedPtr<DragMotionProperties> &getDragMotionProperties() const;
 
-	void handleDragMotion(Runtime *runtime, const Point16 &initialOrigin, const Point16 &targetOrigin);
+	void handleDragMotion(Runtime *runtime, const Common::Point &initialOrigin, const Common::Point &targetOrigin);
 
 	struct OffsetTranslateTaskData {
 		int32 dx;
@@ -2452,7 +2451,7 @@ protected:
 
 	void offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOriginOnly);
 
-	Point16 getCenterPosition() const;
+	Common::Point getCenterPosition() const;
 
 	struct ChangeFlagTaskData {
 		bool desiredFlag;
@@ -2466,7 +2465,7 @@ protected:
 	bool _directToScreen;
 	bool _visible;
 	Common::Rect _rect;
-	Point16 _cachedAbsoluteOrigin;
+	Common::Point _cachedAbsoluteOrigin;
 	uint16 _layer;
 
 	Common::SharedPtr<DragMotionProperties> _dragProps;

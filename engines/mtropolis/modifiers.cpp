@@ -595,7 +595,7 @@ bool PathMotionModifierV2::load(ModifierLoaderContext &context, const Data::Path
 
 		outPoint.frame = inPoint.frame;
 		outPoint.useFrame = ((inPoint.frameFlags & Data::PathMotionModifierV2::PointDef::kFrameFlagPlaySequentially) != 0);
-		if (!outPoint.point.load(inPoint.point) || !outPoint.sendSpec.load(inPoint.send, inPoint.messageFlags, inPoint.with, inPoint.withSource, inPoint.withString, inPoint.destination))
+		if (!inPoint.point.toScummVMPoint(outPoint.point) || !outPoint.sendSpec.load(inPoint.send, inPoint.messageFlags, inPoint.with, inPoint.withSource, inPoint.withString, inPoint.destination))
 			return false;
 	}
 
@@ -1577,7 +1577,7 @@ bool GraphicModifier::load(ModifierLoaderContext &context, const Data::GraphicMo
 		return false;
 
 	// We need the poly points even if this isn't a poly shape since I think it's possible to change the shape type at runtime
-	Common::Array<Point16> &polyPoints = _renderProps.modifyPolyPoints();
+	Common::Array<Common::Point> &polyPoints = _renderProps.modifyPolyPoints();
 	polyPoints.resize(data.polyPoints.size());
 	for (size_t i = 0; i < data.polyPoints.size(); i++) {
 		polyPoints[i].x = data.polyPoints[i].x;
@@ -2106,7 +2106,7 @@ Common::SharedPtr<ModifierSaveLoad> PointVariableModifier::getSaveLoad() {
 
 bool PointVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kPoint)
-		_value = value.getPoint();
+		_value = value.getPoint().toScummVMPoint();
 	else
 		return false;
 
@@ -2147,7 +2147,7 @@ MiniscriptInstructionOutcome PointVariableModifier::writeRefAttribute(Miniscript
 void PointVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 	VariableModifier::debugInspect(report);
 
-	report->declareDynamic("value", _value.toString());
+	report->declareDynamic("value", pointToString(_value));
 }
 #endif
 
