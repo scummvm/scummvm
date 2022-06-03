@@ -544,6 +544,13 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	sb = _screenB;
 	sh = _screenH;
 
+#ifdef ENABLE_SCUMM_7_8
+	// Remove any blast text leftovers
+	if (_game.version >= 7) {
+		((ScummEngine_v7 *)this)->removeBlastTexts();
+	}
+#endif
+
 	// Restore the virtual screens and force a fade to black.
 	initScreens(0, _screenHeight);
 
