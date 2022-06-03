@@ -964,7 +964,8 @@ Datum TextCastMember::getField(int field) {
 		}
 		break;
 	case kTheTextFont:
-		d.u.i = _fontId;
+		d.type = STRING;
+		d.u.s = new Common::String(g_director->_wm->_fontMan->getFontName(_fontId));
 		break;
 	case kTheTextHeight:
 		d.u.i = getTextHeight();
@@ -1028,6 +1029,8 @@ bool TextCastMember::setField(int field, const Datum &d) {
 	}
 		return true;
 	case kTheTextFont:
+		warning("STUB: set textFont");
+		// d is STRING here
 		_fontId = d.asInt();
 		_modified = true;
 		return false;
@@ -1077,12 +1080,17 @@ Datum TextCastMember::getChunkField(int field, int start, int end) {
 		else
 			d.u.i = getForeColor();
 		break;
-	case kTheTextFont:
+	case kTheTextFont: {
+		int fontId;
 		if (_widget)
-			d.u.i = macText->getTextFont(start, end);
+			fontId = macText->getTextFont(start, end);
 		else
-			d.u.i = _fontId;
+			fontId = _fontId;
+
+		d.type = STRING;
+		d.u.s = new Common::String(g_director->_wm->_fontMan->getFontName(fontId));
 		break;
+		}
 	case kTheTextHeight:
 		warning("TextCastMember::getChunkField getting text height(line spacing) is not implemented yet, returning the default one");
 		d.u.i = _lineSpacing;
