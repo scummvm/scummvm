@@ -81,6 +81,7 @@ WetEngine::WetEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(s
 	_scoreString = getLocalizedString("score");
 	_objString = getLocalizedString("objectives");
 	_targetString = getLocalizedString("target");
+	_directionString = getLocalizedString("direction");
 }
 
 void WetEngine::loadAssets() {

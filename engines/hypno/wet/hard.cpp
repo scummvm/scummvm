@@ -325,6 +325,15 @@ Common::String WetEngine::getLocalizedString(const Common::String name) {
 		default:
 			return "TARGET ACQUIRED";
 		}
+	} else if (name == "direction") {
+		switch (_language) {
+		case Common::FR_FRA:
+			return "DIRECTION ?";
+		case Common::ES_ESP:
+			return "ELIGE DIRECCION";
+		default:
+			return "CHOOSE DIRECTION";
+		}
 	} else
 		error("Invalid string name to localize: %s", name.c_str());
 }

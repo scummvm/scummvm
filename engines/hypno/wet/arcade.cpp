@@ -957,7 +957,7 @@ void WetEngine::drawPlayer() {
 	uint8 segmentType = _segments[_segmentIdx].type;
 	if (segmentType == 0xc5 || segmentType == 0xc2 || segmentType == 0xcc)
 		if (_background->decoder->getCurFrame() % 3 > 0) // Avoid flashing too much
-			drawString("block05.fgx", "CHOOSE DIRECTION", 113, 13, 80, kHypnoColorCyan);
+			drawString("block05.fgx", _directionString, 113, 13, 80, kHypnoColorCyan);
 
 	// TARGET ACQUIRED frame
 	uint32 c = kHypnoColorGreen; // green

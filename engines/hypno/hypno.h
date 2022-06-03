@@ -323,6 +323,7 @@ public:
 	Common::String _scoreString;
 	Common::String _objString;
 	Common::String _targetString;
+	Common::String _directionString;
 
 	Filename _shootSound;
 	Filename _hitSound;
