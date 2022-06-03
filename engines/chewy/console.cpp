@@ -23,6 +23,7 @@
 #include "chewy/console.h"
 #include "chewy/globals.h"
 #include "chewy/chewy.h"
+#include "chewy/sound.h"
 #include "chewy/video/video_player.h"
 
 namespace Chewy {
@@ -46,7 +47,10 @@ static int strToInt(const char *s) {
 Console::Console() : GUI::Debugger() {
 	registerCmd("room", WRAP_METHOD(Console, Cmd_GotoRoom));
 	registerCmd("item", WRAP_METHOD(Console, Cmd_Item));
-	registerCmd("video", WRAP_METHOD(Console, Cmd_PlayVideo));
+	registerCmd("play_sound", WRAP_METHOD(Console, Cmd_PlaySound));
+	registerCmd("play_speech", WRAP_METHOD(Console, Cmd_PlaySpeech));
+	registerCmd("play_music", WRAP_METHOD(Console, Cmd_PlayMusic));
+	registerCmd("play_video", WRAP_METHOD(Console, Cmd_PlayVideo));
 	registerCmd("walk", WRAP_METHOD(Console, Cmd_WalkAreas));
 	registerCmd("text", WRAP_METHOD(Console, Cmd_Text));
 }
@@ -78,6 +82,43 @@ bool Console::Cmd_Item(int argc, const char **argv) {
 		invent_2_slot(itemNum);
 		debugPrintf("Done.\n");
 	}
+
+	return true;
+}
+
+bool Console::Cmd_PlaySound(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: play_sound <number>\n");
+		return true;
+	}
+
+	int resNum = atoi(argv[1]);
+	g_engine->_sound->playSound(resNum);
+
+	return true;
+}
+
+bool Console::Cmd_PlaySpeech(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: play_speech <number>\n");
+		return true;
+	}
+
+	int resNum = atoi(argv[1]);
+	g_engine->_sound->playSpeech(resNum, false);
+
+	return true;
+}
+
+bool Console::Cmd_PlayMusic(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: play_music <number>\n");
+		return true;
+	}
+
+	int resNum = atoi(argv[1]);
+	g_engine->_sound->stopMusic();
+	g_engine->_sound->playMusic(resNum);
 
 	return true;
 }

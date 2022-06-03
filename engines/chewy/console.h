@@ -30,6 +30,9 @@ class Console : public GUI::Debugger {
 protected:
 	bool Cmd_GotoRoom(int argc, const char **argv);
 	bool Cmd_Item(int argc, const char **argv);
+	bool Cmd_PlaySound(int argc, const char **argv);
+	bool Cmd_PlaySpeech(int argc, const char **argv);
+	bool Cmd_PlayMusic(int argc, const char **argv);
 	bool Cmd_PlayVideo(int argc, const char **argv);
 	bool Cmd_WalkAreas(int argc, const char **argv);
 	bool Cmd_Text(int argc, const char **argv);
