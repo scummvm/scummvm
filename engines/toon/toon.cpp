@@ -28,6 +28,7 @@
 #include "common/memstream.h"
 #include "common/translation.h"
 
+#include "audio/mididrv.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
@@ -47,6 +48,20 @@
 namespace Toon {
 
 void ToonEngine::init() {
+	// Assign default values to the ScummVM configuration manager, in case settings are missing
+	ConfMan.registerDefault("music_volume", 192);
+	ConfMan.registerDefault("speech_volume", 192);
+	ConfMan.registerDefault("sfx_volume", 192);
+	ConfMan.registerDefault("music_mute", "false");
+	ConfMan.registerDefault("speech_mute", "false");
+	ConfMan.registerDefault("sfx_mute", "false");
+	ConfMan.registerDefault("mute", "false");
+	ConfMan.registerDefault("subtitles", "true");
+	ConfMan.registerDefault("talkspeed", 60); // Can go up to 255
+	if (!_isEnglishDemo) {
+		ConfMan.registerDefault("alternative_font", "false");
+	}
+
 	_currentScriptRegion = 0;
 	_resources = new Resources(this);
 	_animationManager = new AnimationManager(this);
@@ -88,8 +103,6 @@ void ToonEngine::init() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "ACT1");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "ACT2");
 
-	syncSoundSettings();
-
 	_pathFinding = new PathFinding();
 
 	resources()->openPackage("LOCAL.PAK");
@@ -106,8 +119,6 @@ void ToonEngine::init() {
 	_characters[1] = new CharacterFlux(this);
 	_drew = _characters[0];
 	_flux = _characters[1];
-
-
 
 	// preload walk anim for flux and drew
 	_drew->loadWalkAnimation("STNDWALK.CAF");
@@ -152,7 +163,12 @@ void ToonEngine::init() {
 	_audioManager->loadAudioPack(0, "GENERIC.SVI", "GENERIC.SVL");
 	_audioManager->loadAudioPack(2, "GENERIC.SEI", "GENERIC.SEL");
 
-	adjustMovieVolume();
+
+	// Query the selected music device (defaults to MT_AUTO device).
+	MidiDriver::DeviceHandle dev = MidiDriver::getDeviceHandle(ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto"));
+	_noMusicDriver = (MidiDriver::getMusicType(dev) == MT_NULL || MidiDriver::getMusicType(dev) == MT_INVALID);
+
+	syncSoundSettings();
 
 	_lastMouseButton = 0;
 	_mouseButton = 0;
@@ -198,29 +214,20 @@ void ToonEngine::parseInput() {
 					loadGame(-1);
 			}
 			if (event.kbd.keycode == Common::KEYCODE_t && !hasModifier) {
-				if (_showConversationText) {
-					turnOnText(false);
-					if (_audioManager->isVoiceMuted()) {
-						turnOnText(true, false);
-					}
-				} else {
-					turnOnText(true, false);
-				}
+				ConfMan.setBool("subtitles", !ConfMan.getBool("subtitles"));
+				syncSoundSettings();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_m && !hasModifier) {
-				_audioManager->muteMusic(!_audioManager->isMusicMuted());
-				adjustMovieVolume();
+				ConfMan.setBool("music_mute", !ConfMan.getBool("music_mute"));
+				syncSoundSettings();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_d && !hasModifier) {
-				_audioManager->muteVoice(!_audioManager->isVoiceMuted());
-				adjustMovieVolume();
-				if (!_showConversationText && _audioManager->isVoiceMuted()) {
-					turnOnText(true, false);
-				}
+				ConfMan.setBool("speech_mute", !ConfMan.getBool("speech_mute"));
+				syncSoundSettings();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_s && !hasModifier) {
-				_audioManager->muteSfx(!_audioManager->isSfxMuted());
-				adjustMovieVolume();
+				ConfMan.setBool("sfx_mute", !ConfMan.getBool("sfx_mute"));
+				syncSoundSettings();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_F1 && !hasModifier) {
 				if (_gameState->_inMenu) {
@@ -611,7 +618,6 @@ enum OptionMenuMasks {
 	OPTIONMENUMASK_EVERYWHERE = 1
 };
 
-
 struct MenuFile {
 	int menuMask;
 	int id;
@@ -752,9 +758,9 @@ bool ToonEngine::showOptions() {
 	}
 
 	// Setting dial / option value in the game options menu
-	entries[10].activeFrame = _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) * (entries[10].animation->_numFrames - 1) / Audio::Mixer::kMaxMixerVolume;
-	entries[8].activeFrame = _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) * (entries[8].animation->_numFrames - 1) / Audio::Mixer::kMaxMixerVolume;
-	entries[6].activeFrame = _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) * (entries[6].animation->_numFrames - 1) / Audio::Mixer::kMaxMixerVolume;
+	entries[10].activeFrame = ConfMan.getInt("music_volume")  * (entries[10].animation->_numFrames - 1) / Audio::Mixer::kMaxMixerVolume;
+	entries[8].activeFrame = ConfMan.getInt("speech_volume") * (entries[8].animation->_numFrames - 1) / Audio::Mixer::kMaxMixerVolume;
+	entries[6].activeFrame = ConfMan.getInt("sfx_volume") * (entries[6].animation->_numFrames - 1) / Audio::Mixer::kMaxMixerVolume;
 
 	entries[9].activeFrame = _audioManager->isMusicMuted() ? 0 : entries[9].animation->_numFrames - 1;
 	entries[7].activeFrame = _audioManager->isVoiceMuted() ? 0 : entries[7].animation->_numFrames - 1;
@@ -797,8 +803,8 @@ bool ToonEngine::showOptions() {
 	int32 oldMouseX = _mouseX;
 	int32 oldMouseY = _mouseY;
 	int32 oldMouseButton = _mouseButton;
-	int targetVol;
-	Audio::Mixer::SoundType chosenSoundType;
+	int targetVol, targetTextSpeed;
+	Common::String chosenConfVolumeSoundKey;
 
 	while (!doExitMenu) {
 
@@ -940,7 +946,10 @@ bool ToonEngine::showOptions() {
 					} else if (_showConversationText
 					           && (entries[4].activeFrame != textOnFrameFont1
 							       && (_isEnglishDemo || (!_isEnglishDemo && entries[4].activeFrame != textOnFrameFont2)))) {
-						entries[4].targetFrame = textOnFrameFont1;
+						if (!_isEnglishDemo) {
+							entries[4].targetFrame = ConfMan.getBool("alternative_font") ? textOnFrameFont2 : textOnFrameFont1;
+						} else
+							entries[4].targetFrame = textOnFrameFont1;
 						entries[4].animateOnFrame = 1;
 						entries[4].playOnce = true;
 					}
@@ -994,22 +1003,6 @@ bool ToonEngine::showOptions() {
 					}
 				}
 
-
-				// This visualizes that the text dial cannot be set to Text Off,
-				// if the voice is also muted or voice volume is set to 0.
-				if (!_showConversationText
-				    && (_audioManager->isVoiceMuted() || _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) == 0)
-				    && (entries[4].activeFrame != textOnFrameFont1
-				        && (_isEnglishDemo || (!_isEnglishDemo && entries[4].activeFrame != textOnFrameFont2)))
-				    && entries[4].animateOnFrame == 0) {
-					entries[4].targetFrame = textOnFrameFont1;
-					entries[4].animateOnFrame = 1;
-					entries[4].playOnce = true;
-					if (!_isEnglishDemo) {
-						playSFX(-9, 128);
-					}
-				}
-
 				// Avoid unnecessary checks and actions if mouse has not moved or changed status
 				if (oldMouseButton != _mouseButton
 				    || ((_mouseButton & 1)
@@ -1059,18 +1052,15 @@ bool ToonEngine::showOptions() {
 							++targetVol;
 
 						if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER) {
-							chosenSoundType = Audio::Mixer::kMusicSoundType;
+							chosenConfVolumeSoundKey = "music_volume";
 						} else if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER) {
-							chosenSoundType = Audio::Mixer::kSpeechSoundType;
+							chosenConfVolumeSoundKey = "speech_volume";
 						} else {
-							chosenSoundType = Audio::Mixer::kSFXSoundType;
+							chosenConfVolumeSoundKey = "sfx_volume";
 						}
-						_mixer->setVolumeForSoundType(chosenSoundType, targetVol);
-						adjustMovieVolume();
-
-						if (_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) == 0
-						    && !_showConversationText) {
-								turnOnText(true, false);
+						if (ConfMan.getInt(chosenConfVolumeSoundKey) != targetVol) {
+							ConfMan.setInt(chosenConfVolumeSoundKey, targetVol);
+							syncSoundSettings();
 						}
 						break;
 
@@ -1079,12 +1069,17 @@ bool ToonEngine::showOptions() {
 						entries[clickingOnSprite].animateOnFrame = 1;
 						entries[clickingOnSprite].playOnce = true;
 
-						_textSpeed = entries[clickingOnSprite].targetFrame * 255 / (entries[clickingOnSprite].animation->_numFrames - 1);
+						targetTextSpeed = 0;
+						targetTextSpeed = entries[clickingOnSprite].targetFrame * 255 / (entries[clickingOnSprite].animation->_numFrames - 1);
 						// Since we use integer division, find a value for _textSpeed that will produce the same targetFrame we have calculated
 						// We need this value for setting the proper frame for the slider needle indicator, when resuming the Options menu.
-						while (entries[clickingOnSprite].targetFrame > _textSpeed * (entries[clickingOnSprite].animation->_numFrames - 1) / 255)
-							++_textSpeed;
-						// TODO store textSpeed
+						while (entries[clickingOnSprite].targetFrame > targetTextSpeed * (entries[clickingOnSprite].animation->_numFrames - 1) / 255)
+							++targetTextSpeed;
+
+						if (ConfMan.getInt("talkspeed") != targetTextSpeed) {
+							ConfMan.setInt("talkspeed", targetTextSpeed);
+							syncSoundSettings();
+						}
 						break;
 
 					default:
@@ -1120,26 +1115,25 @@ bool ToonEngine::showOptions() {
 								entries[clickingOnSprite].animateOnFrame = 1;
 								entries[clickingOnSprite].playOnce = true;
 								if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEMUSIC)
-									_audioManager->muteMusic(false);
+									ConfMan.setBool("music_mute", false);
 								else if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEVOICE)
-									_audioManager->muteVoice(false);
+									ConfMan.setBool("speech_mute", false);
 								else
-									_audioManager->muteSfx(false);
+									ConfMan.setBool("sfx_mute", false);
+								syncSoundSettings();
 							} else {
 								entries[clickingOnSprite].targetFrame = 0;
 								entries[clickingOnSprite].animateOnFrame = 1;
 								entries[clickingOnSprite].playOnce = true;
 								if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEMUSIC) {
-									_audioManager->muteMusic(true);
+									ConfMan.setBool("music_mute", true);
 								} else if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEVOICE) {
-									_audioManager->muteVoice(true);
-									if (!_showConversationText) {
-										turnOnText(true, false);
-									}
+									ConfMan.setBool("speech_mute", true);
 								} else
-									_audioManager->muteSfx(true);
+									ConfMan.setBool("sfx_mute", true);
+								syncSoundSettings();
 							}
-							adjustMovieVolume();
+
 							if (!_isEnglishDemo)
 								playSFX(-7, 128);
 							break;
@@ -1176,21 +1170,22 @@ bool ToonEngine::showOptions() {
 							if (!_isEnglishDemo) {
 								if ((ratioY <= 151 && ratioX >= 88 && ratioX <= 169)
 								    || (ratioY > 151 && ratioX >= 122 && ratioX <= 145) ) {
-									turnOnText(false);
-									if (_audioManager->isVoiceMuted()
-									    || _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) == 0) {
-										turnOnText(true, false);
-									}
+									ConfMan.setBool("subtitles", false);
+									syncSoundSettings();
 									entries[clickingOnSprite].targetFrame = 4;
 									entries[clickingOnSprite].animateOnFrame = 1;
 									entries[clickingOnSprite].playOnce = true;
 								} else if (ratioY > 151 && ratioX > 145) {
-									turnOnText(true, true);
+									ConfMan.setBool("subtitles", true);
+									ConfMan.setBool("alternative_font", true);
+									syncSoundSettings();
 									entries[clickingOnSprite].targetFrame = 8;
 									entries[clickingOnSprite].animateOnFrame = 1;
 									entries[clickingOnSprite].playOnce = true;
 								} else if (ratioY > 151 && ratioX < 122) {
-									turnOnText(true, false);
+									ConfMan.setBool("subtitles", true);
+									ConfMan.setBool("alternative_font", false);
+									syncSoundSettings();
 									entries[clickingOnSprite].targetFrame = 0;
 									entries[clickingOnSprite].animateOnFrame = 1;
 									entries[clickingOnSprite].playOnce = true;
@@ -1203,18 +1198,16 @@ bool ToonEngine::showOptions() {
 								// toggles between "Text Off" and "Text On"
 								switch (entries[clickingOnSprite].activeFrame) {
 								case 0:
-									turnOnText(true, false);
+									ConfMan.setBool("subtitles", true);
+									syncSoundSettings();
 									entries[clickingOnSprite].targetFrame = 8;
 									entries[clickingOnSprite].animateOnFrame = 1;
 									entries[clickingOnSprite].playOnce = true;
 									break;
 
 								case 8:
-									turnOnText(false);
-									if (_audioManager->isVoiceMuted()
-									    || _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) == 0) {
-										turnOnText(true, false);
-									}
+									ConfMan.setBool("subtitles", false);
+									syncSoundSettings();
 									entries[clickingOnSprite].targetFrame = 0;
 									entries[clickingOnSprite].animateOnFrame = 1;
 									entries[clickingOnSprite].playOnce = true;
@@ -1505,13 +1498,6 @@ bool ToonEngine::showQuitConfirmationDialogue() {
 	// text variant of the yes/no option).
 	GUI::MessageDialog dialog(_("Are you sure you want to exit?"), _("Yes"), _("No"));
 	return (dialog.runModal() == GUI::kMessageOK);
-}
-
-void ToonEngine::adjustMovieVolume() {
-	int movieVol = MAX<int>((_audioManager->isMusicMuted() ? 0 : _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType)),
-	                        (_audioManager->isVoiceMuted() ? 0 : _mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType)));
-	movieVol = MAX<int>(movieVol,(_audioManager->isSfxMuted() ? 0 : _mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType)));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, movieVol);
 }
 
 Common::Error ToonEngine::run() {
@@ -2606,12 +2592,6 @@ void ToonEngine::setFont(bool alternative) {
 		_currentFont = _fontToon;
 	}
 	_useAlternativeFont = alternative;
-}
-
-void ToonEngine::turnOnText(bool enable, bool useAlternativeFont) {
-	_showConversationText = enable;
-	if (_showConversationText && !_isEnglishDemo)
-		setFont(useAlternativeFont);
 }
 
 void ToonEngine::drawInfoLine() {
@@ -3760,6 +3740,16 @@ Common::String ToonEngine::getSavegameName(int nr) {
 bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 	int16 savegameId;
 	Common::String savegameDescription;
+
+
+	// NOTE The original game engine additionally saved in EACH saved game file:
+	//      - volume levels for music, speech and SFX
+	//      - muted state for music, speech and SFX
+	//      - text speed
+	//      - disabled subtitles (text off) -- but not font selection.
+	//      ScummVM skips saving (and restoring) this per saved game file.
+	//      Instead it keeps these settings persisted and synced with
+	//      ScummVM's ConfMan volume levels, text speed, and subtitles settings.
 
 	if (slot == -1) {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
@@ -5508,6 +5498,78 @@ void ToonEngine::clearDirtyRects() {
 	_dirtyRects.clear();
 	_dirtyAll = false;
 }
+
+
+void ToonEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_mixer->setVolumeForSoundType(_mixer->kMusicSoundType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(_mixer->kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	_mixer->setVolumeForSoundType(_mixer->kSFXSoundType, ConfMan.getInt("sfx_volume"));
+
+	if (_noMusicDriver) {
+		// This affects *only* the music muting.
+		_mixer->muteSoundType(_mixer->kMusicSoundType, true);
+		_audioManager->muteMusic(true);
+	}
+
+	bool allSoundIsMuted = false;
+	if (ConfMan.hasKey("mute")) {
+		allSoundIsMuted = ConfMan.getBool("mute");
+		if (!_noMusicDriver) {
+			_mixer->muteSoundType(_mixer->kMusicSoundType, allSoundIsMuted);
+			_audioManager->muteMusic(true);
+		}
+		_mixer->muteSoundType(_mixer->kSpeechSoundType, allSoundIsMuted);
+		_audioManager->muteVoice(true);
+		_mixer->muteSoundType(_mixer->kSFXSoundType, allSoundIsMuted);
+		_audioManager->muteSfx(true);
+		// movie sound type
+		_mixer->muteSoundType(_mixer->kPlainSoundType, allSoundIsMuted);
+	}
+
+	if (ConfMan.hasKey("music_mute") && !allSoundIsMuted) {
+		if (!_noMusicDriver) {
+			_mixer->muteSoundType(_mixer->kMusicSoundType, ConfMan.getBool("music_mute"));
+			_audioManager->muteMusic(ConfMan.getBool("music_mute"));
+		}
+	}
+
+	if (ConfMan.hasKey("speech_mute") && !allSoundIsMuted) {
+		_mixer->muteSoundType(_mixer->kSpeechSoundType, ConfMan.getBool("speech_mute"));
+		_audioManager->muteVoice(ConfMan.getBool("speech_mute"));
+	}
+
+	if (ConfMan.hasKey("sfx_mute") && !allSoundIsMuted) {
+		_mixer->muteSoundType(_mixer->kSFXSoundType, ConfMan.getBool("sfx_mute"));
+		_audioManager->muteSfx(ConfMan.getBool("sfx_mute"));
+	}
+
+	// Adjust movie volume
+	if (!allSoundIsMuted) {
+		int movieVol = MAX<int>((_audioManager->isMusicMuted() ? 0 : ConfMan.getInt("music_volume")),
+		                        (_audioManager->isVoiceMuted() ? 0 : ConfMan.getInt("speech_volume")));
+		movieVol = MAX<int>(movieVol,(_audioManager->isSfxMuted() ? 0 : ConfMan.getInt("sfx_volume")));
+		_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, movieVol);
+	}
+
+	_showConversationText = ConfMan.getBool("subtitles");
+	if (_showConversationText && !_isEnglishDemo) {
+		setFont(ConfMan.getBool("alternative_font"));
+	}
+
+	if ((ConfMan.getInt("speech_volume") == 0 || ConfMan.getBool("speech_mute") || allSoundIsMuted)
+	     && !_showConversationText) {
+		ConfMan.setBool("subtitles", true);
+		_showConversationText = true;
+	}
+
+	_textSpeed = ConfMan.getInt("talkspeed");
+
+	// write-back to ini file for persistence
+	ConfMan.flushToDisk();
+}
+
 void SceneAnimation::save(ToonEngine *vm, Common::WriteStream *stream) {
 	stream->writeByte(_active);
 	stream->writeSint32BE(_id);

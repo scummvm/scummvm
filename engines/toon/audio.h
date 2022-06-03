@@ -135,15 +135,15 @@ public:
 	int32 playSFX(int32 id, int volume, bool genericSFX);
 	void stopCurrentVoice();
 	void stopAllSfxs();
-	void setMusicVolume(int32 volume);
+	void setMusicVolume(uint8 volume);
 	void stopMusicChannel(int channelId, bool fade);
 	void stopMusic(bool fade = true);
 	void muteVoice(bool mute);
 	void muteMusic(bool mute);
 	void muteSfx(bool mute);
-	bool isVoiceMuted() { return _voiceMuted; }
-	bool isMusicMuted() { return _musicMuted; }
-	bool isSfxMuted() { return _sfxMuted; }
+	bool isVoiceMuted() const { return _voiceMuted; }
+	bool isMusicMuted() const { return _musicMuted; }
+	bool isSfxMuted() const { return _sfxMuted; }
 
 	void startAmbientSFX(int32 id, int32 delay, int32 mode, int32 volume);
 	void killAmbientSFX(int32 id);

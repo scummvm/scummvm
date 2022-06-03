@@ -112,7 +112,6 @@ public:
 	bool showMainmenu(bool &loadedGame);
 	bool showOptions();
 	bool showQuitConfirmationDialogue();
-	void adjustMovieVolume();
 	void init();
 	bool loadToonDat();
 	char **loadTextsVariants(Common::File &in);
@@ -215,7 +214,7 @@ public:
 	bool canSaveGameStateCurrently() override;
 	bool canLoadGameStateCurrently() override;
 	void pauseEngineIntern(bool pause) override;
-	void turnOnText(bool enable, bool useAlternativeFont = false);
+	void syncSoundSettings() override;
 
 	Resources *resources() {
 		return _resources;
@@ -333,6 +332,7 @@ public:
 
 	bool hasFeature(EngineFeature f) const override {
 		return
+			(f == kSupportsSubtitleOptions) ||
 			(f == kSupportsReturnToLauncher) ||
 			(f == kSupportsLoadingDuringRuntime) ||
 			(f == kSupportsSavingDuringRuntime);
@@ -445,6 +445,7 @@ protected:
 	int  _textSpeed;
 	bool _useAlternativeFont;
 	bool _needPaletteFlush;
+	bool _noMusicDriver; // If "Music Device" is set to "No Music" from Audio tab
 };
 
 } // End of namespace Toon
