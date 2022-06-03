@@ -73,6 +73,11 @@ public:
 	virtual void load();
 
 	/**
+	 * Handles all special stuff that happens on the map
+	 */
+	virtual void special() = 0;
+
+	/**
 	 * Gets the map name
 	 */
 	Common::String getName() const { return _name; }
@@ -97,6 +102,12 @@ public:
 	uint16 dataWord(uint16 ofs) const {
 		return (uint16)_data[ofs] | ((uint16)_data[ofs + 1] << 8);
 	}
+
+	/**
+	 * Checks whether the party is dead or out of action,
+	 * and if so, switches to the death screen
+	 */
+	void checkPartyDead();
 };
 
 } // namespace Maps

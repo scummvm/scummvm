@@ -46,6 +46,7 @@ enum DirMask {
 	class Map##INDEX : public Map { \
 	public: \
 		Map##INDEX(Maps *owner) : Map(owner, NAME, ID) {} \
+		void special() override {} \
 	}
 
 PLACEHOLDER(01, "portsmit", 0xC03);
