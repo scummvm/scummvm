@@ -127,6 +127,7 @@ int AudioManager::playMusic(const Common::String &dir, const Common::String &mus
 	_channels[_currentMusicChannel] = new AudioStreamInstance(this, _mixer, srs, true, true);
 	_channels[_currentMusicChannel]->setVolume(_musicMuted ? 0 : 255);
 	_channels[_currentMusicChannel]->play(true, Audio::Mixer::kMusicSoundType);
+
 	return _currentMusicChannel;
 }
 
@@ -212,7 +213,7 @@ bool AudioManager::loadAudioPack(int32 id, const Common::String &indexFile, cons
 	return _audioPacks[id]->loadAudioPackage(indexFile, packFile);
 }
 
-void AudioManager::setMusicVolume(int32 volume) {
+void AudioManager::setMusicVolume(uint8 volume) {
 	debugC(1, kDebugAudio, "setMusicVolume(%d)", volume);
 	if (_channels[0])
 		_channels[0]->setVolume(volume);
