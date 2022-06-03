@@ -943,6 +943,7 @@ public:
 	int _screenHeight = 0, _screenWidth = 0;
 	VirtScreen _virtscr[4];		// Virtual screen areas
 	CameraData camera;			// 'Camera' - viewport
+	bool _cameraIsFrozen = false;
 
 	int _screenStartStrip = 0, _screenEndStrip = 0;
 	int _screenTop = 0;

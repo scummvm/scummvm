@@ -269,6 +269,11 @@ void ScummEngine_v7::moveCamera() {
 	Common::Point old = camera._cur;
 	Actor *a = NULL;
 
+	if (_game.version == 8 && _cameraIsFrozen) {
+		cameraMoved();
+		return;
+	}
+
 	if (camera._follows) {
 		a = derefActor(camera._follows, "moveCamera");
 		if (ABS(camera._cur.x - a->getPos().x) > VAR(VAR_CAMERA_THRESHOLD_X) ||
