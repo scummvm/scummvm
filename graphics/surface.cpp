@@ -188,6 +188,26 @@ void Surface::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, 
 	copyRectToSurface(srcSurface.getBasePtr(subRect.left, subRect.top), srcSurface.pitch, destX, destY, subRect.width(), subRect.height());
 }
 
+void Surface::copyRectToSurfaceWithKey(const void *buffer, int srcPitch, int destX, int destY, int width, int height, uint32 key) {
+	assert(buffer);
+
+	assert(destX >= 0 && destX < w);
+	assert(destY >= 0 && destY < h);
+	assert(height > 0 && destY + height <= h);
+	assert(width > 0 && destX + width <= w);
+
+	// Copy buffer data to internal buffer
+	const byte *src = (const byte *)buffer;
+	byte *dst = (byte *)getBasePtr(destX, destY);
+	Graphics::keyBlit(dst, src, pitch, srcPitch, width, height, format.bytesPerPixel, key);
+}
+
+void Surface::copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect, uint32 key) {
+	assert(srcSurface.format == format);
+
+	copyRectToSurfaceWithKey(srcSurface.getBasePtr(subRect.left, subRect.top), srcSurface.pitch, destX, destY, subRect.width(), subRect.height(), key);
+}
+
 void Surface::hLine(int x, int y, int x2, uint32 color) {
 	// Clipping
 	if (y < 0 || y >= h)

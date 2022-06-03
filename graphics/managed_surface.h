@@ -534,6 +534,24 @@ public:
 	}
 
 	/**
+	 * Copy a bitmap to the internal buffer of the surface.
+	 *
+	 * The pixel format of the buffer must match the pixel format of the surface.
+	 */
+	void copyRectToSurfaceWithKey(const void *buffer, int srcPitch, int destX, int destY, int width, int height, uint32 key) {
+		_innerSurface.copyRectToSurfaceWithKey(buffer, srcPitch, destX, destY, width, height, key);
+	}
+
+	/**
+	 * Copy a bitmap to the internal buffer of the surface.
+	 *
+	 * The pixel format of the buffer must match the pixel format of the surface.
+	 */
+	void copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect, uint32 key) {
+		_innerSurface.copyRectToSurfaceWithKey(srcSurface, destX, destY, subRect, key);
+	}
+
+	/**
 	 * Copy the data from another surface, reinitializing the
 	 * surface to match the dimensions of the passed surface.
 	 */

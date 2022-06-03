@@ -26,7 +26,6 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/util.h"
-#include "graphics/conversion.h"
 #include "graphics/surface.h"
 #include "graphics/fonts/amigafont.h"
 #include "gui/about.h"
@@ -1099,7 +1098,7 @@ void EE::draw(int sn, int x1, int y1) {
 	int x = x1 * _scale;
 	int y = y1 * _scale;
 
-	Graphics::keyBlit((byte *)_back.getBasePtr(x, y), (const byte *)_sp[sn].getPixels(), _back.pitch, _sp[sn].pitch, _sp[sn].w, _sp[sn].h, _back.format.bytesPerPixel, _colorKey);
+	_back.copyRectToSurfaceWithKey(_sp[sn].getPixels(), _sp[sn].pitch, x, y, _sp[sn].w, _sp[sn].h, _colorKey);
 	g_system->copyRectToOverlay(_back.getBasePtr(x, y), _back.pitch, _windowX + x, _windowY + y, _sp[sn].w, _sp[sn].h);
 }
 
