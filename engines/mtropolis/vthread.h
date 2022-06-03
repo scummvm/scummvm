@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MTROPOLIS_TASKSTACK_H
-#define MTROPOLIS_TASKSTACK_H
+#ifndef MTROPOLIS_VTHREAD_H
+#define MTROPOLIS_VTHREAD_H
 
 #include "mtropolis/debug.h"
 

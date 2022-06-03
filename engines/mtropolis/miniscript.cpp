@@ -599,8 +599,8 @@ MiniscriptInstructionOutcome BinaryArithInstruction::execute(MiniscriptThread *t
 	DynamicValue &lsDest = thread->getStackValueFromTop(1).value;
 
 	if (lsDest.getType() == DynamicValueTypes::kPoint && rs.getType() == DynamicValueTypes::kPoint) {
-		Point16 lsPoint = lsDest.getPoint();
-		Point16 rsPoint = rs.getPoint();
+		Common::Point lsPoint = lsDest.getPoint().toScummVMPoint();
+		Common::Point rsPoint = rs.getPoint().toScummVMPoint();
 
 		double resultX = 0.0;
 		double resultY = 0.0;
@@ -612,7 +612,7 @@ MiniscriptInstructionOutcome BinaryArithInstruction::execute(MiniscriptThread *t
 		if (outcome != kMiniscriptInstructionOutcomeContinue)
 			return outcome;
 
-		lsDest.setPoint(Point16::create(static_cast<int16>(round(resultX)), static_cast<int16>(round(resultY))));
+		lsDest.setPoint(Common::Point(static_cast<int16>(round(resultX)), static_cast<int16>(round(resultY))));
 	} else {
 		double leftVal = 0.0;
 		switch (lsDest.getType()) {
@@ -1122,7 +1122,7 @@ MiniscriptInstructionOutcome BuiltinFunc::executeRectToPolar(MiniscriptThread *t
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	const Point16 &pt = inputDynamicValue.getPoint();
+	const Point16POD &pt = inputDynamicValue.getPoint();
 
 	double angle = atan2(pt.x, pt.y);
 	double magnitude = sqrt(pt.x * pt.x + pt.y * pt.y);
@@ -1145,7 +1145,7 @@ MiniscriptInstructionOutcome BuiltinFunc::executePolarToRect(MiniscriptThread *t
 	double x = cos(vec.angleDegrees * (M_PI / 180.0)) * vec.magnitude;
 	double y = sin(vec.angleDegrees * (M_PI / 180.0)) * vec.magnitude;
 
-	returnValue->setPoint(Point16::create(static_cast<int16>(round(x)), static_cast<int16>(round(y))));
+	returnValue->setPoint(Common::Point(static_cast<int16>(round(x)), static_cast<int16>(round(y))));
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
@@ -1277,7 +1277,7 @@ MiniscriptInstructionOutcome PointCreate::execute(MiniscriptThread *thread) cons
 		}
 	}
 
-	xValDest.setPoint(Point16::create(coords[0], coords[1]));
+	xValDest.setPoint(Common::Point(coords[0], coords[1]));
 
 	thread->popValues(1);
 

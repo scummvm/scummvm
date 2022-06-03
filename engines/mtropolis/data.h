@@ -223,6 +223,7 @@ struct Rect {
 
 struct Point {
 	bool load(DataReader &reader);
+	bool toScummVMPoint(Common::Point &outPoint) const;
 
 	int16 x;
 	int16 y;

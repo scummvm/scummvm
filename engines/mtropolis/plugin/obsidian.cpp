@@ -33,7 +33,7 @@ bool MovementModifier::load(const PlugInModifierLoaderContext &context, const Da
 	_rate = 0;
 	_frequency = 0;
 	_type = false;
-	_dest = Point16::create(0, 0);
+	_dest = Common::Point(0, 0);
 
 	return true;
 }
@@ -670,7 +670,7 @@ MiniscriptInstructionOutcome XorCheckModifier::scriptSetCheckNow(MiniscriptThrea
 	for (VisualElement *element : xorElements) {
 		VisualElementRenderProperties::Shape shape = element->getRenderProperties().getShape();
 		Common::Rect rect = element->getRelativeRect();
-		Point16 absOrigin = element->getCachedAbsoluteOrigin();
+		Common::Point absOrigin = element->getCachedAbsoluteOrigin();
 		Common::Rect absRect = rect;
 		absRect.translate(absOrigin.x - rect.left, absOrigin.y - rect.top);
 

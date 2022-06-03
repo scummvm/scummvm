@@ -48,7 +48,7 @@ private:
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
 
-	Point16 _dest;
+	Common::Point _dest;
 	bool _type;
 	int32 _rate;
 	int32 _frequency;

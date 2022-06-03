@@ -262,7 +262,7 @@ public:
 
 private:
 	struct PointDef {
-		Point16 point;
+		Common::Point point;
 		uint32 frame;
 		bool useFrame;
 
@@ -896,13 +896,13 @@ private:
 		bool loadInternal(Common::ReadStream *stream) override;
 
 		PointVariableModifier *_modifier;
-		Point16 _value;
+		Common::Point _value;
 	};
 
 	Common::SharedPtr<Modifier> shallowClone() const override;
 	const char *getDefaultName() const override;
 
-	Point16 _value;
+	Common::Point _value;
 };
 
 class FloatingPointVariableModifier : public VariableModifier {

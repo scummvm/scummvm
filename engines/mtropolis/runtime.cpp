@@ -270,28 +270,21 @@ bool EventIDs::isCommand(EventID eventID) {
 }
 
 
-bool Point16::load(const Data::Point &point) {
-	x = point.x;
-	y = point.y;
-
-	return true;
-}
-
-MiniscriptInstructionOutcome Point16::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
+MiniscriptInstructionOutcome pointWriteRefAttrib(Common::Point &point, MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib) {
 	if (attrib == "x") {
-		DynamicValueWriteIntegerHelper<int16>::create(&x, proxy);
+		DynamicValueWriteIntegerHelper<int16>::create(&point.x, proxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "y") {
-		DynamicValueWriteIntegerHelper<int16>::create(&y, proxy);
+		DynamicValueWriteIntegerHelper<int16>::create(&point.y, proxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-Common::String Point16::toString() const {
-	return Common::String::format("(%i,%i)", x, y);
+Common::String pointToString(const Common::Point &point) {
+	return Common::String::format("(%i,%i)", point.x, point.y);
 }
 
 bool IntRange::load(const Data::IntRange &range) {
@@ -347,6 +340,10 @@ ColorRGB8 ColorRGB8::create(uint8 r, uint8 g, uint8 b) {
 MessageFlags::MessageFlags() : relay(true), cascade(true), immediate(true) {
 }
 
+Common::Point Point16POD::toScummVMPoint() const {
+	return Common::Point(x, y);
+}
+
 DynamicListContainerBase::~DynamicListContainerBase() {
 }
 
@@ -358,7 +355,7 @@ void DynamicListDefaultSetter::defaultSet(double &value) {
 	value = 0.0;
 }
 
-void DynamicListDefaultSetter::defaultSet(Point16 &value) {
+void DynamicListDefaultSetter::defaultSet(Common::Point &value) {
 	value.x = 0;
 	value.y = 0;
 }
@@ -396,6 +393,10 @@ void DynamicListDefaultSetter::defaultSet(Common::SharedPtr<DynamicList> &value)
 void DynamicListDefaultSetter::defaultSet(ObjectReference &value) {
 }
 
+Common::Point DynamicListValueConverter<Common::Point>::dereference(const Point16POD *source) {
+	return source->toScummVMPoint();
+}
+
 bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const int32 *&outPtr) {
 	if (dynValue.getType() != DynamicValueTypes::kInteger)
 		return false;
@@ -410,7 +411,7 @@ bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const d
 	return true;
 }
 
-bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const Point16 *&outPtr) {
+bool DynamicListValueImporter::importValue(const DynamicValue &dynValue, const Point16POD *&outPtr) {
 	if (dynValue.getType() != DynamicValueTypes::kPoint)
 		return false;
 	outPtr = &dynValue.getPoint();
@@ -482,7 +483,7 @@ void DynamicListValueExporter::exportValue(DynamicValue &dynValue, const double 
 	dynValue.setFloat(value);
 }
 
-void DynamicListValueExporter::exportValue(DynamicValue &dynValue, const Point16 &value) {
+void DynamicListValueExporter::exportValue(DynamicValue &dynValue, const Common::Point &value) {
 	dynValue.setPoint(value);
 }
 
@@ -682,9 +683,9 @@ const Common::Array<double> &DynamicList::getFloat() const {
 	return *static_cast<const Common::Array<double> *>(_container->getConstArrayPtr());
 }
 
-const Common::Array<Point16> &DynamicList::getPoint() const {
+const Common::Array<Common::Point> &DynamicList::getPoint() const {
 	assert(_type == DynamicValueTypes::kPoint);
-	return *static_cast<const Common::Array<Point16> *>(_container->getConstArrayPtr());
+	return *static_cast<const Common::Array<Common::Point> *>(_container->getConstArrayPtr());
 }
 
 const Common::Array<IntRange> &DynamicList::getIntRange() const {
@@ -742,9 +743,9 @@ Common::Array<double> &DynamicList::getFloat() {
 	return *static_cast<Common::Array<double> *>(_container->getArrayPtr());
 }
 
-Common::Array<Point16> &DynamicList::getPoint() {
+Common::Array<Common::Point> &DynamicList::getPoint() {
 	assert(_type == DynamicValueTypes::kPoint);
-	return *static_cast<Common::Array<Point16> *>(_container->getArrayPtr());
+	return *static_cast<Common::Array<Common::Point> *>(_container->getArrayPtr());
 }
 
 Common::Array<IntRange> &DynamicList::getIntRange() {
@@ -917,7 +918,7 @@ bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
 		_container = new DynamicListContainer<double>();
 		break;
 	case DynamicValueTypes::kPoint:
-		_container = new DynamicListContainer<Point16>();
+		_container = new DynamicListContainer<Common::Point>();
 		break;
 	case DynamicValueTypes::kIntegerRange:
 		_container = new DynamicListContainer<IntRange>();
@@ -985,7 +986,7 @@ MiniscriptInstructionOutcome DynamicList::WriteProxyInterface::refAttrib(Miniscr
 	switch (list->getType()) {
 	case DynamicValueTypes::kPoint:
 		list->expandToMinimumSize(ptrOrOffset + 1);
-		return list->getPoint()[ptrOrOffset].refAttrib(thread, proxy, attrib);
+		return pointWriteRefAttrib(list->getPoint()[ptrOrOffset], thread, proxy, attrib);
 	case DynamicValueTypes::kIntegerRange:
 		list->expandToMinimumSize(ptrOrOffset + 1);
 		return list->getIntRange()[ptrOrOffset].refAttrib(thread, proxy, attrib);
@@ -1078,8 +1079,8 @@ bool DynamicValue::load(const Data::InternalTypeTaggedValue &data, const Common:
 		break;
 	case Data::InternalTypeTaggedValue::kPoint:
 		_type = DynamicValueTypes::kPoint;
-		if (!_value.asPoint.load(data.value.asPoint))
-			return false;
+		_value.asPoint.x = data.value.asPoint.x;
+		_value.asPoint.y = data.value.asPoint.y;
 		break;
 	case Data::InternalTypeTaggedValue::kIntegerRange:
 		_type = DynamicValueTypes::kIntegerRange;
@@ -1160,8 +1161,8 @@ bool DynamicValue::load(const Data::PlugInTypeTaggedValue &data) {
 		break;
 	case Data::PlugInTypeTaggedValue::kPoint:
 		_type = DynamicValueTypes::kPoint;
-		if (!_value.asPoint.load(data.value.asPoint))
-			return false;
+		_value.asPoint.x = data.value.asPoint.x;
+		_value.asPoint.y = data.value.asPoint.y;
 		break;
 	default:
 		assert(false);
@@ -1185,7 +1186,7 @@ const double &DynamicValue::getFloat() const {
 	return _value.asFloat;
 }
 
-const Point16 &DynamicValue::getPoint() const {
+const Point16POD &DynamicValue::getPoint() const {
 	assert(_type == DynamicValueTypes::kPoint);
 	return _value.asPoint;
 }
@@ -1288,11 +1289,12 @@ void DynamicValue::setFloat(double value) {
 	_value.asFloat = value;
 }
 
-void DynamicValue::setPoint(const Point16 &value) {
+void DynamicValue::setPoint(const Common::Point &value) {
 	if (_type != DynamicValueTypes::kPoint)
 		clear();
 	_type = DynamicValueTypes::kPoint;
-	_value.asPoint = value;
+	_value.asPoint.x = value.x;
+	_value.asPoint.y = value.y;
 }
 
 void DynamicValue::setIntRange(const IntRange &value) {
@@ -1449,7 +1451,7 @@ bool DynamicValue::operator==(const DynamicValue &other) const {
 	case DynamicValueTypes::kFloat:
 		return _value.asFloat == other._value.asFloat;
 	case DynamicValueTypes::kPoint:
-		return _value.asPoint == other._value.asPoint;
+		return _value.asPoint.x == other._value.asPoint.x && _value.asPoint.y == other._value.asPoint.y;
 	case DynamicValueTypes::kIntegerRange:
 		return _value.asIntRange == other._value.asIntRange;
 	case DynamicValueTypes::kVector:
@@ -1628,18 +1630,18 @@ MiniscriptInstructionOutcome DynamicValueWritePointHelper::write(MiniscriptThrea
 		return kMiniscriptInstructionOutcomeFailed;
 	}
 
-	*static_cast<Point16 *>(objectRef) = value.getPoint();
+	*static_cast<Common::Point *>(objectRef) = value.getPoint().toScummVMPoint();
 
 	return kMiniscriptInstructionOutcomeContinue;
 }
 
 MiniscriptInstructionOutcome DynamicValueWritePointHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const {
 	if (attrib == "x") {
-		DynamicValueWriteIntegerHelper<int16>::create(&static_cast<Point16 *>(objectRef)->x, proxy);
+		DynamicValueWriteIntegerHelper<int16>::create(&static_cast<Common::Point *>(objectRef)->x, proxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	if (attrib == "y") {
-		DynamicValueWriteIntegerHelper<int16>::create(&static_cast<Point16 *>(objectRef)->y, proxy);
+		DynamicValueWriteIntegerHelper<int16>::create(&static_cast<Common::Point *>(objectRef)->y, proxy);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
@@ -1651,7 +1653,7 @@ MiniscriptInstructionOutcome DynamicValueWritePointHelper::refAttribIndexed(Mini
 	return kMiniscriptInstructionOutcomeFailed;
 }
 
-void DynamicValueWritePointHelper::create(Point16 *pointValue, DynamicValueWriteProxy &proxy) {
+void DynamicValueWritePointHelper::create(Common::Point *pointValue, DynamicValueWriteProxy &proxy) {
 	proxy.pod.ptrOrOffset = 0;
 	proxy.pod.objectRef = pointValue;
 	proxy.pod.ifc = &_instance;
@@ -3512,7 +3514,7 @@ Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProv
 	_nextRuntimeGUID(1), _realDisplayMode(kColorDepthModeInvalid), _fakeDisplayMode(kColorDepthModeInvalid),
 	_displayWidth(1024), _displayHeight(768), _realTimeBase(0), _playTimeBase(0), _sceneTransitionState(kSceneTransitionStateNotTransitioning),
 	_lastFrameCursor(nullptr), _defaultCursor(new DefaultCursorGraphic()), _platform(kProjectPlatformUnknown),
-	_cachedMousePosition(Point16::create(0, 0)), _realMousePosition(Point16::create(0, 0)), _trackedMouseOutside(false),
+	_cachedMousePosition(Common::Point(0, 0)), _realMousePosition(Common::Point(0, 0)), _trackedMouseOutside(false),
 	_forceCursorRefreshOnce(true), _haveModifierOverrideCursor(false), _sceneGraphChanged(false), _isQuitting(false), _collisionCheckTime(0) {
 	_random.reset(new Common::RandomSource("mtropolis"));
 
@@ -4637,9 +4639,9 @@ VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data)
 			_mouseTrackingDragStart = _cachedMousePosition;
 			if (tracked->isElement() && static_cast<Element *>(tracked)->isVisual()) {
 				Common::Rect initialRect = static_cast<VisualElement *>(tracked)->getRelativeRect();
-				_mouseTrackingObjectInitialOrigin = Point16::create(initialRect.left, initialRect.top);
+				_mouseTrackingObjectInitialOrigin = Common::Point(initialRect.left, initialRect.top);
 			} else
-				_mouseTrackingObjectInitialOrigin = Point16::create(0, 0);
+				_mouseTrackingObjectInitialOrigin = Common::Point(0, 0);
 			_trackedMouseOutside = false;
 
 			MessageToSend msg;
@@ -4671,7 +4673,7 @@ VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data)
 	}
 
 	DynamicValue mousePtValue;
-	mousePtValue.setPoint(Point16::create(_cachedMousePosition.x, _cachedMousePosition.y));
+	mousePtValue.setPoint(Common::Point(_cachedMousePosition.x, _cachedMousePosition.y));
 
 	for (size_t ri = 0; ri < messagesToSend.size(); ri++) {
 		const MessageToSend &msg = messagesToSend[messagesToSend.size() - 1 - ri];
@@ -4751,7 +4753,7 @@ VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData 
 		Element *element = static_cast<Element *>(tracked.get());
 		assert(element->isVisual());
 		VisualElement *visual = static_cast<VisualElement *>(element);
-		Point16 parentOrigin = visual->getParentOrigin();
+		Common::Point parentOrigin = visual->getParentOrigin();
 		int32 relativeX = data.x - parentOrigin.x;
 		int32 relativeY = data.y - parentOrigin.y;
 		bool mouseOutside = !visual->isMouseInsideBox(relativeX, relativeY) || !visual->isMouseCollisionAtPoint(relativeX, relativeY);
@@ -4774,13 +4776,13 @@ VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData 
 
 		// TODO: Figure out the right location for this
 		if (element->isVisual()) {
-			Point16 targetPoint = Point16::create(data.x - _mouseTrackingDragStart.x + _mouseTrackingObjectInitialOrigin.x, data.y - _mouseTrackingDragStart.y + _mouseTrackingObjectInitialOrigin.y);
+			Common::Point targetPoint = Common::Point(data.x - _mouseTrackingDragStart.x + _mouseTrackingObjectInitialOrigin.x, data.y - _mouseTrackingDragStart.y + _mouseTrackingObjectInitialOrigin.y);
 			static_cast<VisualElement *>(element)->handleDragMotion(this, _mouseTrackingObjectInitialOrigin, targetPoint);
 		}
 	}
 
 	DynamicValue mousePtValue;
-	mousePtValue.setPoint(Point16::create(data.x, data.y));
+	mousePtValue.setPoint(Common::Point(data.x, data.y));
 
 	for (size_t ri = 0; ri < messagesToSend.size(); ri++) {
 		const MessageToSend &msg = messagesToSend[messagesToSend.size() - 1 - ri];
@@ -4953,7 +4955,7 @@ void Runtime::onKeyboardEvent(const Common::EventType evtType, bool repeat, cons
 		focusWindow->onKeyboardEvent(evtType, repeat, keyEvt);
 }
 
-const Point16 &Runtime::getCachedMousePosition() const {
+const Common::Point &Runtime::getCachedMousePosition() const {
 	return _cachedMousePosition;
 }
 
@@ -6563,11 +6565,11 @@ void VisualElementRenderProperties::setShadowSize(uint16 size) {
 	_shadowSize = size;
 }
 
-const Common::Array<Point16> &VisualElementRenderProperties::getPolyPoints() const {
+const Common::Array<Common::Point> &VisualElementRenderProperties::getPolyPoints() const {
 	return _polyPoints;
 }
 
-Common::Array<Point16> &VisualElementRenderProperties::modifyPolyPoints() {
+Common::Array<Common::Point> &VisualElementRenderProperties::modifyPolyPoints() {
 	_isDirty = true;
 	return _polyPoints;
 }
@@ -6598,7 +6600,7 @@ VisualElementRenderProperties &VisualElementRenderProperties::operator=(const Vi
 }
 
 VisualElement::VisualElement()
-	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Point16::create(0, 0))
+	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Common::Point(0, 0))
 	, _contentsDirty(true) {
 }
 
@@ -6668,7 +6670,7 @@ bool VisualElement::readAttribute(MiniscriptThread *thread, DynamicValue &result
 		result.setBool(_directToScreen);
 		return true;
 	} else if (attrib == "position") {
-		result.setPoint(Point16::create(_rect.left, _rect.top));
+		result.setPoint(Common::Point(_rect.left, _rect.top));
 		return true;
 	} else if (attrib == "centerposition") {
 		result.setPoint(getCenterPosition());
@@ -6721,8 +6723,8 @@ const Common::Rect &VisualElement::getRelativeRect() const {
 	return _rect;
 }
 
-Point16 VisualElement::getParentOrigin() const {
-	Point16 pos = Point16::create(0, 0);
+Common::Point VisualElement::getParentOrigin() const {
+	Common::Point pos = Common::Point(0, 0);
 	if (_parent && _parent->isElement()) {
 		Element *element = static_cast<Element *>(_parent);
 		if (element->isVisual()) {
@@ -6733,8 +6735,8 @@ Point16 VisualElement::getParentOrigin() const {
 	return pos;
 }
 
-Point16 VisualElement::getGlobalPosition() const {
-	Point16 pos = getParentOrigin();
+Common::Point VisualElement::getGlobalPosition() const {
+	Common::Point pos = getParentOrigin();
 
 	pos.x += _rect.left;
 	pos.y += _rect.top;
@@ -6742,11 +6744,11 @@ Point16 VisualElement::getGlobalPosition() const {
 	return pos;
 }
 
-const Point16 &VisualElement::getCachedAbsoluteOrigin() const {
+const Common::Point &VisualElement::getCachedAbsoluteOrigin() const {
 	return _cachedAbsoluteOrigin;
 }
 
-void VisualElement::setCachedAbsoluteOrigin(const Point16 &absOrigin) {
+void VisualElement::setCachedAbsoluteOrigin(const Common::Point &absOrigin) {
 	_cachedAbsoluteOrigin = absOrigin;
 }
 
@@ -6758,11 +6760,11 @@ const Common::SharedPtr<DragMotionProperties> &VisualElement::getDragMotionPrope
 	return _dragProps;
 }
 
-void VisualElement::handleDragMotion(Runtime *runtime, const Point16 &initialPoint, const Point16 &targetPointRef) {
+void VisualElement::handleDragMotion(Runtime *runtime, const Common::Point &initialPoint, const Common::Point &targetPointRef) {
 	if (!_dragProps)
 		return;
 
-	Point16 targetPoint = targetPointRef;
+	Common::Point targetPoint = targetPointRef;
 
 	// NOTE: Constraints do not override insets if the object is out of bounds
 	if (_dragProps->constraintDirection == kConstraintDirectionHorizontal)
@@ -6872,7 +6874,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetDirect(MiniscriptThread *th
 
 MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kPoint) {
-		const Point16 &destPoint = value.getPoint();
+		Common::Point destPoint = value.getPoint().toScummVMPoint();
 		int32 xDelta = destPoint.x - _rect.left;
 		int32 yDelta = destPoint.y - _rect.top;
 
@@ -6915,8 +6917,8 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPositionY(MiniscriptThread 
 
 MiniscriptInstructionOutcome VisualElement::scriptSetCenterPosition(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() == DynamicValueTypes::kPoint) {
-		const Point16 &destPoint = value.getPoint();
-		const Point16 &srcPoint = getCenterPosition();
+		const Common::Point destPoint = value.getPoint().toScummVMPoint();
+		const Common::Point &srcPoint = getCenterPosition();
 		int32 xDelta = destPoint.x - srcPoint.x;
 		int32 yDelta = destPoint.y - srcPoint.y;
 
@@ -7040,8 +7042,8 @@ void VisualElement::offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOrigi
 	}
 }
 
-Point16 VisualElement::getCenterPosition() const {
-	return Point16::create((_rect.left + _rect.right) / 2, (_rect.top + _rect.bottom) / 2);
+Common::Point VisualElement::getCenterPosition() const {
+	return Common::Point((_rect.left + _rect.right) / 2, (_rect.top + _rect.bottom) / 2);
 }
 
 VThreadState VisualElement::changeVisibilityTask(const ChangeFlagTaskData &taskData) {

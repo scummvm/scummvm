@@ -224,22 +224,22 @@ void GraphicElement::render(Window *window) {
 	}
 
 	if (needsMaskRedraw) {
-		Common::Array<Point16> starPoints;
-		const Common::Array<Point16> *polyPoints = nullptr;
+		Common::Array<Common::Point> starPoints;
+		const Common::Array<Common::Point> *polyPoints = nullptr;
 
 		VisualElementRenderProperties::Shape shape = _renderProps.getShape();
 		if (shape == VisualElementRenderProperties::kShapeStar) {
 			starPoints.resize(10);
-			starPoints[0] = Point16::create(width / 2, 0);
-			starPoints[1] = Point16::create(width * 2 / 3, height / 3);
-			starPoints[2] = Point16::create(width, height / 3);
-			starPoints[3] = Point16::create(width * 3 / 4, height / 2);
-			starPoints[4] = Point16::create(width, height);
-			starPoints[5] = Point16::create(width / 2, height * 2 / 3);
-			starPoints[6] = Point16::create(0, height);
-			starPoints[7] = Point16::create(width / 4, height / 2);
-			starPoints[8] = Point16::create(0, height / 3);
-			starPoints[9] = Point16::create(width / 3, height / 3);
+			starPoints[0] = Common::Point(width / 2, 0);
+			starPoints[1] = Common::Point(width * 2 / 3, height / 3);
+			starPoints[2] = Common::Point(width, height / 3);
+			starPoints[3] = Common::Point(width * 3 / 4, height / 2);
+			starPoints[4] = Common::Point(width, height);
+			starPoints[5] = Common::Point(width / 2, height * 2 / 3);
+			starPoints[6] = Common::Point(0, height);
+			starPoints[7] = Common::Point(width / 4, height / 2);
+			starPoints[8] = Common::Point(0, height / 3);
+			starPoints[9] = Common::Point(width / 3, height / 3);
 			polyPoints = &starPoints;
 
 			shape = VisualElementRenderProperties::kShapePolygon;
@@ -266,25 +266,25 @@ void GraphicElement::render(Window *window) {
 		if (shape == VisualElementRenderProperties::kShapePolygon && polyPoints->size() >= 3) {
 			_mask->clear(0);
 
-			Point16 firstPoint = (*polyPoints)[0];
+			Common::Point firstPoint = (*polyPoints)[0];
 			for (uint polyStart = 1; polyStart < polyPoints->size() - 1; polyStart++) {
-				Point16 points[3];
+				Common::Point points[3];
 				points[0] = firstPoint;
 				points[1] = (*polyPoints)[polyStart];
 				points[2] = (*polyPoints)[polyStart + 1];
 
 				// Sort poly points into height ascending order
 				for (int sortStart = 0; sortStart < 2; sortStart++) {
-					Point16 *thisPoint = &points[sortStart];
-					Point16 *lowestY = thisPoint;
+					Common::Point *thisPoint = &points[sortStart];
+					Common::Point *lowestY = thisPoint;
 					for (int candidateIndex = sortStart + 1; candidateIndex < 3; candidateIndex++) {
-						Point16 *candidate = &points[candidateIndex];
+						Common::Point *candidate = &points[candidateIndex];
 						if (candidate->y < lowestY->y)
 							lowestY = candidate;
 					}
 
 					if (lowestY != thisPoint) {
-						Point16 temp = *thisPoint;
+						Common::Point temp = *thisPoint;
 						*thisPoint = *lowestY;
 						*lowestY = temp;
 					}
@@ -294,22 +294,22 @@ void GraphicElement::render(Window *window) {
 					continue; // Degenerate triangle
 
 				// Bin into 2 sets
-				Point16 *triPoints[2][3] = {{&points[0], &points[1], &points[2]},
+				Common::Point *triPoints[2][3] = {{&points[0], &points[1], &points[2]},
 											{&points[2], &points[1], &points[0]}};
 
 				int32 yRanges[2][2] = {{points[0].y, points[1].y},
 									   {points[1].y, points[2].y}};
 
 				for (int half = 0; half < 2; half++) {
-					Point16 *commonPoint = triPoints[half][0];
-					Point16 *leftVert = triPoints[half][1];
-					Point16 *rightVert = triPoints[half][2];
+					Common::Point *commonPoint = triPoints[half][0];
+					Common::Point *leftVert = triPoints[half][1];
+					Common::Point *rightVert = triPoints[half][2];
 
 					if (leftVert->x == rightVert->x || commonPoint->y == points[1].y)
 						continue; // Degenerate tri
 
 					if (leftVert->x > rightVert->x) {
-						Point16 *temp = leftVert;
+						Common::Point *temp = leftVert;
 						leftVert = rightVert;
 						rightVert = temp;
 					}
@@ -1328,7 +1328,6 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 		} else
 			targetCel = isReversed ? (_cel - framesAdvanced) : (_cel + framesAdvanced);
 
-		int32 playControlTargetCel = targetCel;
 		if (targetCel < 1)
 			targetCel = 1;
 		if (targetCel > sanitizeMaxCel)
