@@ -95,7 +95,7 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 
 	_malcolmFrame = 0;
 	_malcolmTimer1 = _malcolmTimer2 = 0;
-	_defaultFont = (_flags.lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_flags.lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	_defaultFont = (_flags.lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_flags.lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : ((_flags.lang == Common::KO_KOR) ? Screen::FID_KOREAN_FNT : Screen::FID_8_FNT));
 	_defaultLineSpacing = (_flags.lang == Common::ZH_TWN) ? 2 : 0;
 }
 
@@ -308,6 +308,9 @@ Common::Error KyraEngine_LoK::go() {
 		_screen->loadFont(Screen::FID_CHINESE_FNT, "KYRANDIA.FNT");
 		_screen->setTextMarginRight(312);
 	}
+
+	if (_flags.lang == Common::KO_KOR)
+		_screen->loadFont(Screen::FID_KOREAN_FNT, "MK15.BIT");
 
 	_screen->setFont(_defaultFont);
 	_screen->_lineSpacing = _defaultLineSpacing;
