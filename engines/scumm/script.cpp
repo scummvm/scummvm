@@ -561,7 +561,7 @@ int ScummEngine::readVar(uint var) {
 
 		assertRange(0, var, _numVariables - 1, "variable (reading)");
 #ifdef USE_BYONLINE
-		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && vm.slot[_currentScript].number == 2208 && var == 586) {
+		if (_game.id == GID_BASEBALL2001 && _currentRoom == 4 && var == 586 && (vm.slot[_currentScript].number == 2150 || vm.slot[_currentScript].number == 2208 || vm.slot[_currentScript].number == 2210)) {
 			return 61;
 		}
 #endif
