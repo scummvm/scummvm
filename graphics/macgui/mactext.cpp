@@ -1620,6 +1620,17 @@ Common::U32String MacText::getEditedString() {
 	return getTextChunk(_editableRow, 0, -1, -1);
 }
 
+Common::U32String MacText::getPlainText() {
+	Common::U32String res("");
+	for (uint i = 0; i < _textLines.size(); i++) {
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			res += _textLines[i].chunks[j].text;
+		}
+	}
+
+	return res;
+}
+
 Common::U32String MacText::cutSelection() {
 	if (!isCutAllowed())
 		return Common::U32String();

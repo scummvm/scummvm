@@ -272,6 +272,7 @@ public:
 
 	Common::U32String getEditedString();
 	Common::U32String getText() { return _str; }
+	Common::U32String getPlainText();
 
 	void setSelRange(int selStart, int selEnd);
 
