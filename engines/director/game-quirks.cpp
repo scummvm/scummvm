@@ -32,6 +32,11 @@ static void quirkMediaband() {
 	SearchMan.addDirectory(g_director->_gameDataDir.getPath(), g_director->_gameDataDir, 0, 5);
 }
 
+static void quirkWarlock() {
+	// Meet Mediaband could have up to 5 levels of directories
+	SearchMan.addDirectory(g_director->_gameDataDir.getPath(), g_director->_gameDataDir, 0, 5);
+}
+
 struct Quirk {
 	const char *target;
 	Common::Platform platform;
@@ -39,6 +44,7 @@ struct Quirk {
 } quirks[] = {
 	{ "lzone", Common::kPlatformWindows, &quirkLzone },
 	{ "mediaband", Common::kPlatformUnknown, &quirkMediaband },
+	{ "warlock", Common::kPlatformUnknown, &quirkWarlock },
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
 
