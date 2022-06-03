@@ -22,6 +22,8 @@
 #include "common/file.h"
 #include "mm/mm1/maps/map.h"
 #include "mm/mm1/maps/maps.h"
+#include "mm/mm1/globals.h"
+#include "mm/mm1/events.h"
 
 namespace MM {
 namespace MM1 {
@@ -73,6 +75,18 @@ void Map::loadOverlay() {
 	// Read in the data segment
 	_data.resize(dataSize);
 	f.read(&_data[0], dataSize);
+}
+
+void Map::checkPartyDead() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if ((c._condition & (ASLEEP | STONE | DEAD | BAD_CONDITION)) == 0)
+			return;
+	}
+
+	// At this point, there's no good characters.
+	// So redirect to the death screen
+	g_events->replaceView("Dead");
 }
 
 } // namespace Maps

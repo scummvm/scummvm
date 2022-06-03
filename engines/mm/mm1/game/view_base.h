@@ -39,7 +39,8 @@ protected:
 	Common::String _message;
 	int _mapOffset = 0;
 	byte _arr2[8];
-	int _val1 = 0;
+	bool _stepRandom = false;
+	bool _encounterFlag = false;
 private:
 	/**
 	 * Turn left
@@ -74,10 +75,6 @@ private:
 	void dialogVal(int num);
 	void dialogMessage(const Common::String &msg);
 
-	/**
-	 * Checks whether the party is dead
-	 */
-	void checkPartyDead();
 public:
 	ViewBase(UIElement *owner);
 	virtual ~ViewBase() {}

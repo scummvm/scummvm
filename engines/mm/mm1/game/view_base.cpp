@@ -54,7 +54,20 @@ darkness:
 		_isDark = true;
 	}
 
-	// Redraw the screen
+	// Encounter checks
+	_encounterFlag = false;
+	if (maps._currentState & 0x80) {
+		map.special();
+
+	} else if (_stepRandom) {
+		_encounterFlag = true;
+		_stepRandom = false;
+		addView("Encounter");
+	} else {
+		map.checkPartyDead();
+	}
+
+	// Flag to redraw the screen
 	redraw();
 }
 
@@ -167,7 +180,7 @@ void ViewBase::forward(KeybindingAction action) {
 
 	int maxVal = map.dataByte(29);
 	if (g_engine->getRandomNumber(maxVal) == maxVal)
-		_val1 = 1;
+		_stepRandom = true;
 
 	g_globals->_maps.step(delta);
 	update();
@@ -195,12 +208,12 @@ void ViewBase::backwards() {
 
 	if (maps._currentWalls & maps._backwardsMask) {
 		dialogVal(1);
-		checkPartyDead();
+		map.checkPartyDead();
 		return;
 	}
 	if (maps._currentState & 0x55 & maps._backwardsMask) {
 		dialogVal(1);
-		checkPartyDead();
+		map.checkPartyDead();
 		return;
 	}
 
@@ -208,7 +221,7 @@ void ViewBase::backwards() {
 
 	int maxVal = map.dataByte(29);
 	if (g_engine->getRandomNumber(maxVal) == maxVal)
-		_val1 = 1;
+		_stepRandom = true;
 
 	g_globals->_maps.step(delta);
 	update();
@@ -228,18 +241,6 @@ void ViewBase::dialogVal(int num) {
 
 void ViewBase::dialogMessage(const Common::String &msg) {
 	// TODO
-}
-
-void ViewBase::checkPartyDead() {
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
-		if ((c._condition & (ASLEEP | STONE | DEAD | BAD_CONDITION)) == 0)
-			return;
-	}
-
-	// At this point, there's no good characters.
-	// So redirect to the death screen
-	replaceView("Dead");
 }
 
 } // namespace Game

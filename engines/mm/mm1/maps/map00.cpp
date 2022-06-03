@@ -25,7 +25,9 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+void Map00::special() {
 
+}
 
 } // namespace Maps
 } // namespace MM1

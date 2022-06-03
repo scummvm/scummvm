@@ -31,6 +31,11 @@ namespace Maps {
 class Map00 : public Map {
 public:
 	Map00(Maps *owner) : Map(owner, "sorpigal", 0x604) {}
+
+	/**
+	 * Handles all special stuff that happens on the map
+	 */
+	virtual void special();
 };
 
 } // namespace Maps
