@@ -1121,7 +1121,6 @@ void Menu::processBehaviourMenu() {
 		char text[256];
 		_engine->_text->getMenuText(_engine->_actor->getTextIdForBehaviour(), text, sizeof(text));
 		_engine->_redraw->setRenderText(text);
-		_engine->_text->initSceneTextBank();
 	} else {
 		const int32 left = _engine->width() / 2 - 220;
 		const int32 top = _engine->height() / 2 - 140;
