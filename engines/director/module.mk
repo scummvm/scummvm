@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	events.o \
 	fonts.o \
 	frame.o \
+	game-quirks.o \
 	graphics.o \
 	images.o \
 	metaengine.o \

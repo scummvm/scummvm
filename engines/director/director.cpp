@@ -60,7 +60,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	g_director = this;
 	g_debugger = new Debugger();
 	setDebugger(g_debugger);
-	
+
 	_dirSeparator = ':';
 
 	parseOptions();
@@ -92,15 +92,12 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_gameDataDir = Common::FSNode(ConfMan.get("path"));
 
-	// Meet Mediaband could have up to 5 levels of directories
-	SearchMan.addDirectory(_gameDataDir.getPath(), _gameDataDir, 0, 5);
-
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "win_data", 0, 2);
-
 	for (uint i = 0; Director::directoryGlobs[i]; i++) {
 		Common::String directoryGlob = directoryGlobs[i];
 		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob);
 	}
+
+	gameQuirks(_gameDescription->desc.gameId, _gameDescription->desc.platform);
 
 	if (debugChannelSet(-1, kDebug32bpp))
 		_colorDepth = 32;
