@@ -244,7 +244,7 @@ void Text::drawText(int32 x, int32 y, const char *dialogue, bool shadow) {
 			const int32 dialTextSize = getCharWidth(currChar);
 			if (shadow) {
 				Common::Rect dirtyRect;
-				drawCharacterShadow(x, y, currChar, COLOR_BLACK, dirtyRect);
+				drawCharacterShadow(x, y, currChar, COLOR_WHITE, dirtyRect);
 			} else {
 				drawCharacter(x, y, currChar); // draw the character on screen
 			}

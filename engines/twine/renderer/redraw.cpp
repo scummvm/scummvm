@@ -665,7 +665,7 @@ void Redraw::renderText() {
 	const int height = _engine->_text->lineHeight;
 	const int y = _engine->height() - height - padding;
 	const int width = _engine->_text->getTextSize(_text.c_str());
-	_engine->_text->drawText(x, y, _text.c_str());
+	_engine->_text->drawText(x, y, _text.c_str(), true);
 	_engine->copyBlockPhys(x, y, x + width, y + height);
 	const Common::Rect redraw(x, y, x + width, y + height);
 	addRedrawArea(redraw);
