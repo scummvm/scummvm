@@ -450,6 +450,7 @@ void HypnoEngine::updateVideo(MVideo &video) {
 void HypnoEngine::updateScreen(MVideo &video) {
 	const Graphics::Surface *frame = video.decoder->decodeNextFrame();
 	bool dirtyPalette = video.decoder->hasDirtyPalette();
+	bool isFullscreen = (frame->w == _screenW && frame->h == _screenH);
 
 	if (frame->h == 0 || frame->w == 0 || video.decoder->getPalette() == nullptr)
 		return;
@@ -461,7 +462,7 @@ void HypnoEngine::updateScreen(MVideo &video) {
 		g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
 	}
 
-	if (video.scaled) {
+	if (video.scaled && !isFullscreen) {
 		Graphics::Surface *sframe = frame->scale(_screenW, _screenH);
 		Common::Rect srcRect(sframe->w, sframe->h);
 		Common::Rect dstRect = srcRect;
