@@ -168,18 +168,26 @@ bool XMLParser::parseActiveKey(bool closed) {
 	if (layout->children.contains(key->name)) {
 		key->layout = layout->children[key->name];
 
-		const StringMap &localMap = key->values;
+		StringMap localMap = key->values;
 		int keyCount = localMap.size();
 
 		for (List<XMLKeyLayout::XMLKeyProperty>::const_iterator i = key->layout->properties.begin(); i != key->layout->properties.end(); ++i) {
 			if (i->required && !localMap.contains(i->name))
 				return parserError("Missing required property '" + i->name + "' inside key '" + key->name + "'");
-			else if (localMap.contains(i->name))
+			else if (localMap.contains(i->name)) {
 				keyCount--;
+				localMap.erase(i->name);
+			}
 		}
 
-		if (keyCount > 0)
-			return parserError("Unhandled property inside key '" + key->name + "'.");
+		if (keyCount > 0) {
+			Common::String missingKeys;
+
+			for (auto i = localMap.begin(); i != localMap.end(); ++i)
+				missingKeys += i->_key + ' ';
+
+			return parserError(Common::String::format("Unhandled property inside key '%s' (%s, %d items).", key->name.c_str(), missingKeys.c_str(), keyCount));
+		}
 
 	} else {
 		return parserError("Unexpected key in the active scope ('" + key->name + "').");
