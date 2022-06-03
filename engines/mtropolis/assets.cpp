@@ -124,8 +124,8 @@ bool CachedMToon::loadFromStream(const Common::SharedPtr<MToonMetadata> &metadat
 	if (metadata->codecID == kMToonRLECodecID) {
 		loadRLEFrames(data);
 
-		uint16 fullWidth = metadata->rect.getWidth();
-		uint16 fullHeight = metadata->rect.getHeight();
+		uint16 fullWidth = metadata->rect.width();
+		uint16 fullHeight = metadata->rect.height();
 
 		uint16 firstFrameWidth = 0;
 		uint16 firstFrameHeight = 0;
@@ -387,8 +387,8 @@ void CachedMToon::loadUncompressedFrame(const Common::Array<uint8> &data, size_t
 	else
 		error("Unknown mToon encoding");
 
-	size_t w = frameDef.rect.getWidth();
-	size_t h = frameDef.rect.getHeight();
+	size_t w = frameDef.rect.width();
+	size_t h = frameDef.rect.height();
 
 	surface->create(w, h, pixFmt);
 
@@ -568,7 +568,7 @@ void CachedMToon::getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common:
 
 		if (!surface || surface->format != _rleOptimizedFormat) {
 			surface.reset(new Graphics::Surface());
-			surface->create(_metadata->rect.getWidth(), _metadata->rect.getHeight(), _rleOptimizedFormat);
+			surface->create(_metadata->rect.width(), _metadata->rect.height(), _rleOptimizedFormat);
 		}
 
 		bool isBottomUp = (_metadata->imageFormat == MToonMetadata::kImageFormatWindows);
@@ -757,7 +757,7 @@ ImageAsset::~ImageAsset() {
 
 bool ImageAsset::load(AssetLoaderContext &context, const Data::ImageAsset &data) {
 	_assetID = data.assetID;
-	if (!_rect.load(data.rect1))
+	if (!data.rect1.toScummVMRect(_rect))
 		return false;
 	_filePosition = data.filePosition;
 	_size = data.size;
@@ -800,7 +800,7 @@ AssetType ImageAsset::getAssetType() const {
 	return kAssetTypeImage;
 }
 
-const Rect16& ImageAsset::getRect() const {
+const Common::Rect &ImageAsset::getRect() const {
 	return _rect;
 }
 
@@ -842,7 +842,7 @@ const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *run
 
 	size_t bytesPerRow = 0;
 
-	Rect16 imageRect = getRect();
+	Common::Rect imageRect = getRect();
 	int width = imageRect.right - imageRect.left;
 	int height = imageRect.bottom - imageRect.top;
 
@@ -992,7 +992,7 @@ bool MToonAsset::load(AssetLoaderContext &context, const Data::MToonAsset &data)
 	_frameDataPosition = data.frameDataPosition;
 	_sizeOfFrameData = data.sizeOfFrameData;
 
-	if (!_metadata->rect.load(data.rect))
+	if (!data.rect.toScummVMRect(_metadata->rect))
 		return false;
 
 	_metadata->bitsPerPixel = data.bitsPerPixel;
@@ -1052,7 +1052,7 @@ bool MToonMetadata::FrameDef::load(AssetLoaderContext &context, const Data::MToo
 	decompressedBytesPerRow = data.decompressedBytesPerRow;
 	decompressedSize = data.decompressedSize;
 	isKeyFrame = (data.keyframeFlag != 0);
-	if (!rect.load(data.rect1))
+	if (!data.rect1.toScummVMRect(rect))
 		return false;
 
 	return true;
@@ -1086,13 +1086,13 @@ bool TextAsset::load(AssetLoaderContext &context, const Data::TextAsset &data) {
 	_isBitmap = ((data.isBitmap & 1) != 0);
 
 	if (_isBitmap) {
-		if (!_bitmapRect.load(data.bitmapRect))
+		if (!data.bitmapRect.toScummVMRect(_bitmapRect))
 			return false;
 
 		_bitmapData.reset(new Graphics::ManagedSurface());
 
-		uint16 width = _bitmapRect.getWidth();
-		uint16 height = _bitmapRect.getHeight();
+		uint16 width = _bitmapRect.width();
+		uint16 height = _bitmapRect.height();
 
 		uint16 pitch = (data.pitchBigEndian[0] << 8) + data.pitchBigEndian[1];
 
@@ -1118,7 +1118,7 @@ bool TextAsset::load(AssetLoaderContext &context, const Data::TextAsset &data) {
 			}
 		}
 	} else {
-		_bitmapRect = Rect16::create(0, 0, 0, 0);
+		_bitmapRect = Common::Rect(0, 0, 0, 0);
 
 		_stringData = data.text;
 

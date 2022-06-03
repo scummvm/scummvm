@@ -67,7 +67,7 @@ struct MToonMetadata {
 	};
 
 	struct FrameDef {
-		Rect16 rect;
+		Common::Rect rect;
 		uint32 dataOffset;
 		uint32 compressedSize;
 		uint32 decompressedSize;
@@ -88,7 +88,7 @@ struct MToonMetadata {
 
 	ImageFormat imageFormat;
 
-	Rect16 rect;
+	Common::Rect rect;
 	uint16 bitsPerPixel;
 	uint32 codecID;
 	uint32 encodingFlags;
@@ -240,7 +240,7 @@ public:
 		kImageFormatWindows,
 	};
 
-	const Rect16 &getRect() const;
+	const Common::Rect &getRect() const;
 	ColorDepthMode getColorDepth() const;
 	uint32 getFilePosition() const;
 	uint32 getSize() const;
@@ -250,7 +250,7 @@ public:
 	const Common::SharedPtr<CachedImage> &loadAndCacheImage(Runtime *runtime);
 
 private:
-	Rect16 _rect;
+	Common::Rect _rect;
 	ColorDepthMode _colorDepth;
 	uint32 _filePosition;
 	uint32 _size;
@@ -288,7 +288,7 @@ public:
 	const Common::Array<MacFormattingSpan> &getMacFormattingSpans() const;
 
 private:
-	Rect16 _bitmapRect;
+	Common::Rect _bitmapRect;
 	TextAlignment _alignment;
 	bool _isBitmap;
 

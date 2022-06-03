@@ -644,7 +644,8 @@ bool DragMotionModifier::load(ModifierLoaderContext &context, const Data::DragMo
 
 	_dragProps.reset(new DragMotionProperties());
 
-	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen) || !_dragProps->constraintMargin.loadUnchecked(data.constraintMargin))
+	// constraint margin is unchecked here because it's a margin, not a real rectangle, but it's stored as if it's a rect
+	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen) || !data.constraintMargin.toScummVMRectUnchecked(_dragProps->constraintMargin))
 		return false;
 
 	bool constrainVertical = false;

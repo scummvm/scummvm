@@ -294,31 +294,6 @@ Common::String Point16::toString() const {
 	return Common::String::format("(%i,%i)", x, y);
 }
 
-bool Rect16::load(const Data::Rect &rect) {
-	top = rect.top;
-	left = rect.left;
-	bottom = rect.bottom;
-	right = rect.right;
-
-	if (bottom < top || right < left)
-		return false;
-
-	return true;
-}
-
-bool Rect16::loadUnchecked(const Data::Rect &rect) {
-	top = rect.top;
-	left = rect.left;
-	bottom = rect.bottom;
-	right = rect.right;
-
-	return true;
-}
-
-Common::Rect Rect16::toScummvmRect() const {
-	return Common::Rect(left, top, right, bottom);
-}
-
 bool IntRange::load(const Data::IntRange &range) {
 	max = range.max;
 	min = range.min;
@@ -4661,7 +4636,7 @@ VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data)
 			_mouseTrackingObject = tracked->getSelfReference().staticCast<Structural>();
 			_mouseTrackingDragStart = _cachedMousePosition;
 			if (tracked->isElement() && static_cast<Element *>(tracked)->isVisual()) {
-				Rect16 initialRect = static_cast<VisualElement *>(tracked)->getRelativeRect();
+				Common::Rect initialRect = static_cast<VisualElement *>(tracked)->getRelativeRect();
 				_mouseTrackingObjectInitialOrigin = Point16::create(initialRect.left, initialRect.top);
 			} else
 				_mouseTrackingObjectInitialOrigin = Point16::create(0, 0);
@@ -5107,7 +5082,7 @@ void Runtime::checkCollisions() {
 		if (visual->isVisible()) {
 			bool foundSelf = false;
 			size_t selfIndex = 0;
-			Rect16 selfRect = Rect16::create(0, 0, 0, 0);
+			Common::Rect selfRect = Common::Rect(0, 0, 0, 0);
 
 			for (size_t i = 0; i < collisionObjects.size(); i++) {
 				if (collisionObjects[i].element == visual) {
@@ -5137,7 +5112,7 @@ void Runtime::checkCollisions() {
 					assert(collisionObjectElement != visual);
 
 					// Potential collision
-					if (!collisionObject.absRect.intersect(selfRect).isValid())
+					if (!collisionObject.absRect.intersects(selfRect))
 						continue;
 
 					if (excludeParents) {
@@ -5209,7 +5184,7 @@ void Runtime::recursiveFindColliders(Structural *structural, size_t sceneStackDe
 		Element *element = static_cast<Element *>(structural);
 		if (element->isVisual()) {
 			VisualElement *visual = static_cast<VisualElement *>(element);
-			const Rect16 &rect = visual->getRelativeRect();
+			const Common::Rect &rect = visual->getRelativeRect();
 
 			childOffsetX += rect.left;
 			childOffsetY += rect.top;
@@ -5217,7 +5192,8 @@ void Runtime::recursiveFindColliders(Structural *structural, size_t sceneStackDe
 			// isRoot = Is a scene, and colliding with scenes is not allowed
 			if (!isRoot && visual->isVisible()) {
 				ColliderInfo colliderInfo;
-				colliderInfo.absRect = rect.translate(parentOriginX, parentOriginY);
+				colliderInfo.absRect = rect;
+				colliderInfo.absRect.translate(parentOriginX, parentOriginY);
 				colliderInfo.element = visual;
 				colliderInfo.layer = visual->getLayer();
 				colliderInfo.sceneStackDepth = sceneStackDepth;
@@ -6622,7 +6598,7 @@ VisualElementRenderProperties &VisualElementRenderProperties::operator=(const Vi
 }
 
 VisualElement::VisualElement()
-	: _rect(Rect16::create(0, 0, 0, 0)), _cachedAbsoluteOrigin(Point16::create(0, 0))
+	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Point16::create(0, 0))
 	, _contentsDirty(true) {
 }
 
@@ -6741,7 +6717,7 @@ MiniscriptInstructionOutcome VisualElement::writeRefAttribute(MiniscriptThread *
 	return Element::writeRefAttribute(thread, writeProxy, attrib);
 }
 
-const Rect16 &VisualElement::getRelativeRect() const {
+const Common::Rect &VisualElement::getRelativeRect() const {
 	return _rect;
 }
 
@@ -6795,15 +6771,15 @@ void VisualElement::handleDragMotion(Runtime *runtime, const Point16 &initialPoi
 		targetPoint.x = initialPoint.x;
 
 	if (_dragProps->constrainToParent && _parent && _parent->isElement() && static_cast<Element *>(_parent)->isVisual()) {
-		Rect16 constrainInset = _dragProps->constraintMargin;
+		Common::Rect constrainInset = _dragProps->constraintMargin;
 
-		Rect16 parentRect = static_cast<VisualElement *>(_parent)->getRelativeRect();
+		Common::Rect parentRect = static_cast<VisualElement *>(_parent)->getRelativeRect();
 
 		// rect.width - inset.right
 		int32 minX = constrainInset.left;
 		int32 minY = constrainInset.top;
-		int32 maxX = parentRect.getWidth() - constrainInset.right - _rect.getWidth();
-		int32 maxY = parentRect.getHeight() - constrainInset.bottom - _rect.getHeight();
+		int32 maxX = parentRect.width() - constrainInset.right - _rect.width();
+		int32 maxY = parentRect.height() - constrainInset.bottom - _rect.height();
 
 		// TODO: Handle "squished" case where max < min, it does work but it's weird
 		if (targetPoint.x < minX)
@@ -6872,7 +6848,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetVisibility(MiniscriptThread
 }
 
 bool VisualElement::loadCommon(const Common::String &name, uint32 guid, const Data::Rect &rect, uint32 elementFlags, uint16 layer, uint32 streamLocator, uint16 sectionID) {
-	if (!_rect.load(rect))
+	if (!rect.toScummVMRect(_rect))
 		return false;
 
 	_name = name;

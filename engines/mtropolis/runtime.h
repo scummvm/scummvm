@@ -310,65 +310,6 @@ struct Point16 {
 	Common::String toString() const;
 };
 
-struct Rect16 {
-	int16 top;
-	int16 left;
-	int16 bottom;
-	int16 right;
-
-	bool load(const Data::Rect &rect);
-	bool loadUnchecked(const Data::Rect &rect);
-
-	inline bool operator==(const Rect16 &other) const {
-		return top == other.top && left == other.left && bottom == other.bottom && right == other.right;
-	}
-
-	inline bool operator!=(const Rect16 &other) const {
-		return !((*this) == other);
-	}
-
-	inline uint16 getWidth() const { return static_cast<uint16>(right - left); }
-	inline uint16 getHeight() const { return static_cast<uint16>(bottom - top); }
-
-	inline static Rect16 create(int16 left, int16 top, int16 right, int16 bottom) {
-		Rect16 result;
-		result.left = left;
-		result.top = top;
-		result.right = right;
-		result.bottom = bottom;
-		return result;
-	}
-
-	inline bool isValid() const {
-		return right > left && bottom > top;
-	}
-
-	inline Rect16 intersect(const Rect16 &other) const {
-		Rect16 result = *this;
-		if (result.left < other.left)
-			result.left = other.left;
-		if (result.top < other.top)
-			result.top = other.top;
-		if (result.right > other.right)
-			result.right = other.right;
-		if (result.bottom > other.bottom)
-			result.bottom = other.bottom;
-
-		return result;
-	}
-
-	inline Rect16 translate(int32 dx, int32 dy) const {
-		Rect16 result = *this;
-		result.left += dx;
-		result.right += dx;
-		result.top += dy;
-		result.bottom += dy;
-		return result;
-	}
-
-	Common::Rect toScummvmRect() const;
-};
-
 struct IntRange {
 	int32 min;
 	int32 max;
@@ -1500,7 +1441,7 @@ private:
 
 struct DragMotionProperties {
 	ConstraintDirection constraintDirection;
-	Rect16 constraintMargin;
+	Common::Rect constraintMargin;
 	bool constrainToParent;
 };
 
@@ -1678,7 +1619,7 @@ private:
 		size_t sceneStackDepth;
 		uint16 layer;
 		VisualElement *element;
-		Rect16 absRect;
+		Common::Rect absRect;
 	};
 
 	static Common::SharedPtr<Structural> findDefaultSharedSceneForScene(Structural *scene);
@@ -2461,7 +2402,7 @@ public:
 
 	Point16 getParentOrigin() const;
 	Point16 getGlobalPosition() const;
-	const Rect16 &getRelativeRect() const;
+	const Common::Rect &getRelativeRect() const;
 
 	// The cached absolute origin is from the last time the element was rendered.
 	// Do not rely on it mid-frame.
@@ -2524,14 +2465,14 @@ protected:
 
 	bool _directToScreen;
 	bool _visible;
-	Rect16 _rect;
+	Common::Rect _rect;
 	Point16 _cachedAbsoluteOrigin;
 	uint16 _layer;
 
 	Common::SharedPtr<DragMotionProperties> _dragProps;
 
 	VisualElementRenderProperties _renderProps;
-	Rect16 _prevRect;
+	Common::Rect _prevRect;
 	bool _contentsDirty;
 };
 

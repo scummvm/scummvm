@@ -196,7 +196,7 @@ MiniscriptInstructionOutcome GraphicElement::writeRefAttribute(MiniscriptThread 
 
 
 void GraphicElement::render(Window *window) {
-	if (_renderProps.getInkMode() == VisualElementRenderProperties::kInkModeDefault || _renderProps.getInkMode() == VisualElementRenderProperties::kInkModeInvisible || !_rect.isValid()) {
+	if (_renderProps.getInkMode() == VisualElementRenderProperties::kInkModeDefault || _renderProps.getInkMode() == VisualElementRenderProperties::kInkModeInvisible || _rect.isEmpty()) {
 		// Not rendered at all
 		_mask.reset();
 		return;
@@ -208,14 +208,14 @@ void GraphicElement::render(Window *window) {
 	const bool needsMask = (_renderProps.getShape() != VisualElementRenderProperties::kShapeRect);
 	bool needsMaskRedraw = _renderProps.isDirty();
 
-	uint16 width = _rect.getWidth();
-	uint16 height = _rect.getHeight();
+	uint16 width = _rect.width();
+	uint16 height = _rect.height();
 
 	if (needsMask) {
 		if (!_mask || _mask->w != width || _mask->h != height) {
 			_mask.reset();
 			_mask.reset(new Graphics::ManagedSurface());
-			_mask->create(_rect.getWidth(), _rect.getHeight(), Graphics::PixelFormat::createFormatCLUT8());
+			_mask->create(_rect.width(), _rect.height(), Graphics::PixelFormat::createFormatCLUT8());
 
 			needsMaskRedraw = true;
 		}
@@ -249,6 +249,19 @@ void GraphicElement::render(Window *window) {
 
 		// Notes for future:
 		// Rounded rect corner arc size is fixed at 13x13 unless the graphic is smaller.
+
+		// TODO: Overhaul this again to be more accurate, it was designed to work "OpenGL-style"
+		// where a point exactly on an edge would be excluded on a right/bottom edge to ensure
+		// that the canvas puzzle in Obsidian worked correctly, but it turns out that the canvas
+		// puzzle only uses polys for the mouse collision and uses a special shape ID for the
+		// triangles.  This most likely is supposed to work "QuickDraw style" where the pixel
+		// coordinates of the poly points are always included.
+		//
+		// Maybe it doesn't matter, but if we find a game in the future with polygons, and
+		// there are 1-pixel gaps or something.... that's why.  And that's what needs to be fixed.
+		//
+		// In fact, because of that, we should probably just use ScummVM's draw routines instead
+		// of this code here.  Sigh.
 
 		if (shape == VisualElementRenderProperties::kShapePolygon && polyPoints->size() >= 3) {
 			_mask->clear(0);
@@ -418,19 +431,20 @@ void GraphicElement::render(Window *window) {
 		}
 	}
 
-	Rect16 srcRect = Rect16::create(0, 0, _rect.getWidth(), _rect.getHeight());
-	Rect16 drawRect = srcRect.translate(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y);
+	Common::Rect srcRect = Common::Rect(0, 0, _rect.width(), _rect.height());
+	Common::Rect drawRect = srcRect;
+	drawRect.translate(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y);
 
-	Rect16 windowRect = Rect16::create(0, 0, window->getWidth(), window->getHeight());
-	Rect16 clippedDrawRect = drawRect.intersect(windowRect);
+	Common::Rect windowRect = Common::Rect(0, 0, window->getWidth(), window->getHeight());
+	Common::Rect clippedDrawRect = drawRect.findIntersectingRect(windowRect);
 
-	Rect16 clippedSrcRect = srcRect;
+	Common::Rect clippedSrcRect = srcRect;
 	clippedSrcRect.left += clippedDrawRect.left - drawRect.left;
 	clippedSrcRect.top += clippedDrawRect.top - drawRect.top;
 	clippedSrcRect.right += clippedDrawRect.right - drawRect.right;
 	clippedSrcRect.bottom += clippedDrawRect.bottom - drawRect.bottom;
 
-	if (!clippedSrcRect.isValid())
+	if (clippedSrcRect.isEmpty())
 		return;
 
 	int32 srcToDestX = clippedDrawRect.left - clippedSrcRect.left;
@@ -448,7 +462,7 @@ void GraphicElement::render(Window *window) {
 
 			for (int32 srcY = clippedSrcRect.top; srcY < clippedSrcRect.bottom; srcY++) {
 				int32 destY = srcY + srcToDestY;
-				int32 spanWidth = clippedDrawRect.getWidth();
+				int32 spanWidth = clippedDrawRect.width();
 				void *destPixels = window->getSurface()->getBasePtr(clippedDrawRect.left, srcY + srcToDestY);
 				if (_mask) {
 					const uint8 *maskBytes = static_cast<const uint8 *>(_mask->getBasePtr(clippedSrcRect.left, srcY));
@@ -491,7 +505,7 @@ void GraphicElement::render(Window *window) {
 
 			for (int32 srcY = clippedSrcRect.top; srcY < clippedSrcRect.bottom; srcY++) {
 				int32 destY = srcY + srcToDestY;
-				int32 spanWidth = clippedDrawRect.getWidth();
+				int32 spanWidth = clippedDrawRect.width();
 				void *destPixels = window->getSurface()->getBasePtr(clippedDrawRect.left, srcY + srcToDestY);
 				if (_mask) {
 					const uint8 *maskBytes = static_cast<const uint8 *>(_mask->getBasePtr(clippedSrcRect.left, srcY));
@@ -694,7 +708,7 @@ void MovieElement::render(Window *window) {
 	if (_displayFrame) {
 		Graphics::ManagedSurface *target = window->getSurface().get();
 		Common::Rect srcRect(0, 0, _displayFrame->w, _displayFrame->h);
-		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.getWidth(), _cachedAbsoluteOrigin.y + _rect.getHeight());
+		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.width(), _cachedAbsoluteOrigin.y + _rect.height());
 		target->blitFrom(*_displayFrame, srcRect, destRect);
 	}
 }
@@ -1053,7 +1067,7 @@ void ImageElement::render(Window *window) {
 	if (_cachedImage) {
 		Common::SharedPtr<Graphics::Surface> optimized = _cachedImage->optimize(_runtime);
 		Common::Rect srcRect(optimized->w, optimized->h);
-		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.getWidth(), _cachedAbsoluteOrigin.y + _rect.getHeight());
+		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.width(), _cachedAbsoluteOrigin.y + _rect.height());
 
 		VisualElementRenderProperties::InkMode inkMode = _renderProps.getInkMode();
 
@@ -1210,15 +1224,15 @@ void MToonElement::render(Window *window) {
 
 		_renderedFrame = frame;
 
-		Rect16 frameRect = _metadata->frames[frame].rect;
+		Common::Rect frameRect = _metadata->frames[frame].rect;
 
 		if (_renderSurface) {
 			Common::Rect srcRect;
 			Common::Rect destRect;
 
-			if (frameRect.getWidth() == _renderSurface->w && frameRect.getHeight() == _renderSurface->h) {
+			if (frameRect.width() == _renderSurface->w && frameRect.height() == _renderSurface->h) {
 				// Frame rect is the size of the render surface, meaning the frame rect is an offset
-				srcRect = Common::Rect(0, 0, frameRect.getWidth(), frameRect.getHeight());
+				srcRect = Common::Rect(0, 0, frameRect.width(), frameRect.height());
 			} else {
 				// Frame rect is a sub-area of the rendered rect
 				srcRect = Common::Rect(frameRect.left, frameRect.top, frameRect.right, frameRect.bottom);
@@ -1597,8 +1611,8 @@ void TextLabelElement::render(Window *window) {
 	if (!_visible)
 		return;
 
-	int renderWidth = _rect.getWidth();
-	int renderHeight = _rect.getHeight();
+	int renderWidth = _rect.width();
+	int renderHeight = _rect.height();
 	if (_renderedText) {
 		if (renderWidth != _renderedText->w || renderHeight != _renderedText->h)
 			_needsRender = true;
@@ -1729,7 +1743,7 @@ void TextLabelElement::render(Window *window) {
 
 	Graphics::ManagedSurface *target = window->getSurface().get();
 	Common::Rect srcRect(0, 0, renderWidth, renderHeight);
-	Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.getWidth(), _cachedAbsoluteOrigin.y + _rect.getHeight());
+	Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.width(), _cachedAbsoluteOrigin.y + _rect.height());
 
 	const uint32 opaqueColor = 0xff000000;
 	const uint32 drawPalette[2] = {0, opaqueColor};

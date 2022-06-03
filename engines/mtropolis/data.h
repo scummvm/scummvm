@@ -28,6 +28,7 @@
 #include "common/hash-str.h"
 #include "common/ptr.h"
 #include "common/stream.h"
+#include "common/rect.h"
 
 // This contains defs related to parsing of mTropolis stored data into structured data objects.
 // This is separated from asset construction for a number of reasons, mainly that data parsing has
@@ -210,6 +211,9 @@ private:
 
 struct Rect {
 	bool load(DataReader &reader);
+
+	bool toScummVMRect(Common::Rect &outRect) const;
+	bool toScummVMRectUnchecked(Common::Rect &outRect) const;
 
 	int16 top;
 	int16 left;

@@ -212,7 +212,7 @@ static void recursiveCollectDrawElementsAndUpdateOrigins(const Point16 &parentOr
 		Element *element = static_cast<Element *>(structural);
 		if (element->isVisual()) {
 			VisualElement *visualElement = static_cast<VisualElement *>(element);
-			const Rect16 &elementRect = visualElement->getRelativeRect();
+			const Common::Rect &elementRect = visualElement->getRelativeRect();
 
 			elementOrigin.x += elementRect.left;
 			elementOrigin.y += elementRect.top;

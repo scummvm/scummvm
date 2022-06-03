@@ -661,17 +661,18 @@ MiniscriptInstructionOutcome XorCheckModifier::scriptSetCheckNow(MiniscriptThrea
 	Common::Array<VisualElement *> xorElements;
 	recursiveFindXorElements(scene, xorElements);
 
-	Rect16 triRects[4];
+	Common::Rect triRects[4];
 	for (int i = 0; i < 4; i++)
-		triRects[i] = Rect16::create(0, 0, 0, 0);
+		triRects[i] = Common::Rect(0, 0, 0, 0);
 
-	Common::Array<Rect16> pendingRects;
+	Common::Array<Common::Rect> pendingRects;
 
 	for (VisualElement *element : xorElements) {
 		VisualElementRenderProperties::Shape shape = element->getRenderProperties().getShape();
-		Rect16 rect = element->getRelativeRect();
+		Common::Rect rect = element->getRelativeRect();
 		Point16 absOrigin = element->getCachedAbsoluteOrigin();
-		Rect16 absRect = rect.translate(absOrigin.x - rect.left, absOrigin.y - rect.top);
+		Common::Rect absRect = rect;
+		absRect.translate(absOrigin.x - rect.left, absOrigin.y - rect.top);
 
 		if (shape >= VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri1 && shape <= VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri4)
 			triRects[shape - VisualElementRenderProperties::kShapeObsidianCanvasPuzzleTri1] = absRect;
@@ -695,15 +696,15 @@ MiniscriptInstructionOutcome XorCheckModifier::scriptSetCheckNow(MiniscriptThrea
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 
-	Common::Array<Rect16> maskedRects;
+	Common::Array<Common::Rect> maskedRects;
 	while (pendingRects.size() > 0) {
-		const Rect16 pendingRect = pendingRects.back();
+		const Common::Rect pendingRect = pendingRects.back();
 		pendingRects.pop_back();
 
 		bool hasIntersection = false;
 		size_t intersectionIndex = 0;
 		for (size_t j = 0; j < maskedRects.size(); j++) {
-			if (maskedRects[j].intersect(pendingRect).isValid()) {
+			if (maskedRects[j].intersects(pendingRect)) {
 				hasIntersection = true;
 				intersectionIndex = j;
 			}
@@ -720,7 +721,7 @@ MiniscriptInstructionOutcome XorCheckModifier::scriptSetCheckNow(MiniscriptThrea
 			continue;
 		}
 
-		const Rect16 intersectingRect = maskedRects[intersectionIndex];
+		const Common::Rect intersectingRect = maskedRects[intersectionIndex];
 
 		// Try to subdivide the intersecting rect using one of the axes of the incoming rect.
 		// If this succeeds, requeue the intersecting rect fragments and add the pending rect
@@ -768,10 +769,10 @@ void XorCheckModifier::recursiveFindXorElements(Structural *structural, Common::
 		elements.push_back(visual);
 }
 
-bool XorCheckModifier::sliceRectX(const Rect16 &rect, int32 x, Common::Array<Rect16> &outSlices) {
+bool XorCheckModifier::sliceRectX(const Common::Rect &rect, int32 x, Common::Array<Common::Rect> &outSlices) {
 	if (x > rect.left && x < rect.right) {
-		Rect16 leftSlice = Rect16::create(rect.left, rect.top, x, rect.bottom);
-		Rect16 rightSlice = Rect16::create(x, rect.top, rect.right, rect.bottom);
+		Common::Rect leftSlice = Common::Rect(rect.left, rect.top, x, rect.bottom);
+		Common::Rect rightSlice = Common::Rect(x, rect.top, rect.right, rect.bottom);
 		outSlices.push_back(leftSlice);
 		outSlices.push_back(rightSlice);
 		return true;
@@ -780,10 +781,10 @@ bool XorCheckModifier::sliceRectX(const Rect16 &rect, int32 x, Common::Array<Rec
 	return false;
 }
 
-bool XorCheckModifier::sliceRectY(const Rect16 &rect, int32 y, Common::Array<Rect16> &outSlices) {
+bool XorCheckModifier::sliceRectY(const Common::Rect &rect, int32 y, Common::Array<Common::Rect> &outSlices) {
 	if (y > rect.top && y < rect.bottom) {
-		Rect16 topSlice = Rect16::create(rect.left, rect.top, rect.right, y);
-		Rect16 bottomSlice = Rect16::create(rect.left, y, rect.right, rect.bottom);
+		Common::Rect topSlice = Common::Rect(rect.left, rect.top, rect.right, y);
+		Common::Rect bottomSlice = Common::Rect(rect.left, y, rect.right, rect.bottom);
 		outSlices.push_back(topSlice);
 		outSlices.push_back(bottomSlice);
 		return true;
