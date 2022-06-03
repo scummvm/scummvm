@@ -1029,22 +1029,27 @@ bool TextCastMember::setField(int field, const Datum &d) {
 	}
 		return true;
 	case kTheTextFont:
-		warning("STUB: set textFont");
-		// d is STRING here
-		_fontId = d.asInt();
+		_fontId = g_director->_wm->_fontMan->getFontIdByName(d.asString());
+		setText(this->_ptext);
 		_modified = true;
 		return false;
 	case kTheTextHeight:
 		_lineSpacing = d.asInt();
+		setText(this->_ptext);
 		_modified = true;
 		return false;
 	case kTheTextSize:
-		setTextSize(d.asInt());
+		_fontSize = d.asInt();
+		setText(this->_ptext);
 		return false;
 	case kTheTextStyle:
-		_textSlant = d.asInt();
+	{
+		int slant = g_director->_wm->_fontMan->parseSlantFromName(d.asString());
+		slant ? _textSlant |= slant : _textSlant = slant;
+		setText(this->_ptext);
 		_modified = true;
 		return false;
+	}
 	default:
 		break;
 	}
