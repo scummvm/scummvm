@@ -37,7 +37,6 @@ class ViewBase : public Views::TextView {
 protected:
 	bool _isDark = false;
 	Common::String _message;
-	int _mapOffset = 0;
 	byte _arr2[8];
 	bool _stepRandom = false;
 	bool _encounterFlag = false;
