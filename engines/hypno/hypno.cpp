@@ -136,7 +136,7 @@ Common::Error HypnoEngine::run() {
 	_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(_screenW, _screenH, &_pixelFormat);
 
-	_compositeSurface = new Graphics::ManagedSurface();
+	_compositeSurface = new Graphics::Surface();
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 
 	// Main event loop
@@ -318,10 +318,16 @@ void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool trans
 }
 
 void HypnoEngine::drawImage(Graphics::Surface &surf, int x, int y, bool transparent) {
+	Common::Rect srcRect(surf.w, surf.h);
+	Common::Rect dstRect = srcRect;
+
+	dstRect.moveTo(x, y);
+	_compositeSurface->clip(srcRect, dstRect);
+
 	if (transparent) {
-		_compositeSurface->transBlitFrom(surf, Common::Point(x, y), _transparentColor);
+		_compositeSurface->copyRectToSurfaceWithKey(surf, dstRect.left, dstRect.top, srcRect, _transparentColor);
 	} else
-		_compositeSurface->blitFrom(surf, Common::Point(x, y));
+		_compositeSurface->copyRectToSurface(surf, dstRect.left, dstRect.top, srcRect);
 }
 
 Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, byte **palette) {
@@ -390,11 +396,8 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 		_compositeSurface->free();
 		delete _compositeSurface;
 
-		_compositeSurface = new Graphics::ManagedSurface();
+		_compositeSurface = new Graphics::Surface();
 		_compositeSurface->create(_screenW, _screenH, _pixelFormat);
-
-		_compositeSurface->setTransparentColor(_transparentColor);
-
 	} else if (mode == "320x200") {
 		if (_screenW == 320 && _screenH == 200)
 			return;
@@ -407,10 +410,8 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 		_compositeSurface->free();
 		delete _compositeSurface;
 
-		_compositeSurface = new Graphics::ManagedSurface();
+		_compositeSurface = new Graphics::Surface();
 		_compositeSurface->create(_screenW, _screenH, _pixelFormat);
-
-		_compositeSurface->setTransparentColor(_transparentColor);
 	} else
 		error("Unknown screen mode %s", mode.c_str());
 }
@@ -462,20 +463,31 @@ void HypnoEngine::updateScreen(MVideo &video) {
 
 	if (video.scaled) {
 		Graphics::Surface *sframe = frame->scale(_screenW, _screenH);
+		Common::Rect srcRect(sframe->w, sframe->h);
+		Common::Rect dstRect = srcRect;
+
+		dstRect.moveTo(video.position);
+		_compositeSurface->clip(srcRect, dstRect);
 
 		if (video.transparent) {
-			_compositeSurface->transBlitFrom(*sframe, video.position, _transparentColor);
+			_compositeSurface->copyRectToSurfaceWithKey(*sframe, dstRect.left, dstRect.top, srcRect, _transparentColor);
 		} else {
-			_compositeSurface->blitFrom(*sframe, video.position);
+			_compositeSurface->copyRectToSurface(*sframe, dstRect.left, dstRect.top, srcRect);
 		}
 
 		sframe->free();
 		delete sframe;
 	} else {
+		Common::Rect srcRect(frame->w, frame->h);
+		Common::Rect dstRect = srcRect;
+
+		dstRect.moveTo(video.position);
+		_compositeSurface->clip(srcRect, dstRect);
+
 		if (video.transparent) {
-			_compositeSurface->transBlitFrom(*frame, video.position, _transparentColor);
+			_compositeSurface->copyRectToSurfaceWithKey(*frame, dstRect.left, dstRect.top, srcRect, _transparentColor);
 		} else {
-			_compositeSurface->blitFrom(*frame, video.position);
+			_compositeSurface->copyRectToSurface(*frame, dstRect.left, dstRect.top, srcRect);
 		}
 	}
 }
