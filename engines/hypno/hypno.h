@@ -31,7 +31,7 @@
 #include "engines/engine.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
-#include "graphics/managed_surface.h"
+#include "graphics/surface.h"
 #include "graphics/palette.h"
 
 #include "hypno/grammar.h"
@@ -39,10 +39,6 @@
 
 namespace Image {
 class ImageDecoder;
-}
-
-namespace Graphics {
-class ManagedSurface;
 }
 
 struct ADGameDescription;
@@ -202,7 +198,7 @@ public:
 	int _screenW, _screenH;
 	Graphics::PixelFormat _pixelFormat;
 	void changeScreenMode(const Common::String &mode);
-	Graphics::ManagedSurface *_compositeSurface;
+	Graphics::Surface *_compositeSurface;
 	uint32 _transparentColor;
 	Common::Rect screenRect;
 	void updateScreen(MVideo &video);
