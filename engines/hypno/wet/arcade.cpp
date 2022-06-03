@@ -1054,8 +1054,8 @@ void WetEngine::drawHealth() {
 			r = Common::Rect(op.x - 2, op.y - 2, op.x + 74, op.y + 7);
 			_compositeSurface->frameRect(r, kHypnoColorGreen);
 
-			scoreFormat = _scoreString + "   %04d";
-			moFormat = _objString + "    %d/%d";
+			scoreFormat = _scoreString + " %04d";
+			moFormat = _objString + "   %d/%d";
 		}
 
 		drawString("block05.fgx", Common::String::format(scoreFormat.c_str(), s), sp.x, sp.y, 72, c);
