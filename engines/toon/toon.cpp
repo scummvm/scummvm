@@ -918,18 +918,17 @@ bool ToonEngine::showOptions() {
 			oldMouseY = _mouseY;
 			oldMouseButton = _mouseButton;
 
-			// update mouse clicking state and handle hotkeys
-			parseInput();
-
-			// NOTE Placing the code here seems to mitigate the issue
-			//      of clicking Play to resume playing and Drew moving to
-			//      that spot in-game.
-			//      It still happens if mouse button is held down.
 			if (_shouldQuit || doExitMenu) {
 				clickingOn = OPTIONMENUHOTSPOT_NONE;
 				clickRelease = true;
 				doExitMenu = true;
+				// Prevent holding left mouse button down to be detected
+				// as a new click when returning from menu
+				_lastMouseButton = _mouseButton;
 			} else {
+				// update mouse clicking state and handle hotkeys
+				parseInput();
+
 				copyToVirtualScreen(true);
 				if (_firstFrame) {
 					_firstFrame = false;
@@ -1340,13 +1339,17 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 
 			oldMouseButton = _mouseButton;
 
-			parseInput();
-
 			if (_shouldQuit || doExitMenu) {
 				clickingOn = MAINMENUHOTSPOT_NONE;
 				clickRelease = true;
 				doExitMenu = true;
+				// Prevent holding left mouse button down to be detected
+				// as a new click when returning from menu
+				_lastMouseButton = _mouseButton;
 			} else {
+				// update mouse clicking state and handle hotkeys
+				parseInput();
+
 				copyToVirtualScreen(true);
 				_system->delayMillis(17);
 
@@ -2255,6 +2258,7 @@ void ToonEngine::clickEvent() {
 
 		if (_pathFinding->findClosestWalkingPoint(_mouseX + _gameState->_currentScrollValue , _mouseY, &xx, &yy))
 			_drew->walkTo(xx, yy);
+
 		return;
 	}
 
