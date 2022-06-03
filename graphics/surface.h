@@ -260,6 +260,11 @@ public:
 	const Surface getSubArea(const Common::Rect &area) const;
 
 	/**
+	 * Clip the given source bounds so the passed destBounds will be entirely on-screen.
+	 */
+	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds) const;
+
+	/**
 	 * Copy a bitmap to the internal buffer of the surface.
 	 *
 	 * The pixel format of the buffer must match the pixel format of the surface.

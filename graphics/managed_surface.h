@@ -96,7 +96,10 @@ public:
 	/**
 	 * Clip the given source bounds so the passed destBounds will be entirely on-screen.
 	 */
-	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds);
+	bool clip(Common::Rect& srcBounds, Common::Rect& destBounds) const {
+		return _innerSurface.clip(srcBounds, destBounds);
+	}
+
 public:
 	int16 &w;           /*!< Width of the surface rectangle. */
 	int16 &h;           /*!< Height of the surface rectangle. */

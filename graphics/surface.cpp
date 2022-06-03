@@ -135,6 +135,35 @@ const Surface Surface::getSubArea(const Common::Rect &area) const {
 	return subSurface;
 }
 
+bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) const {
+	if (destBounds.left >= this->w || destBounds.top >= this->h ||
+		destBounds.right <= 0 || destBounds.bottom <= 0)
+		return false;
+
+	// Clip the bounds if necessary to fit on-screen
+	if (destBounds.right > this->w) {
+		srcBounds.right -= destBounds.right - this->w;
+		destBounds.right = this->w;
+	}
+
+	if (destBounds.bottom > this->h) {
+		srcBounds.bottom -= destBounds.bottom - this->h;
+		destBounds.bottom = this->h;
+	}
+
+	if (destBounds.top < 0) {
+		srcBounds.top += -destBounds.top;
+		destBounds.top = 0;
+	}
+
+	if (destBounds.left < 0) {
+		srcBounds.left += -destBounds.left;
+		destBounds.left = 0;
+	}
+
+	return true;
+}
+
 void Surface::copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height) {
 	assert(buffer);
 

@@ -226,35 +226,6 @@ void ManagedSurface::copyFrom(const Surface &surf) {
 	Common::fill(&_palette[0], &_palette[256], 0);
 }
 
-bool ManagedSurface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
-	if (destBounds.left >= this->w || destBounds.top >= this->h ||
-			destBounds.right <= 0 || destBounds.bottom <= 0)
-		return false;
-
-	// Clip the bounds if necessary to fit on-screen
-	if (destBounds.right > this->w) {
-		srcBounds.right -= destBounds.right - this->w;
-		destBounds.right = this->w;
-	}
-
-	if (destBounds.bottom > this->h) {
-		srcBounds.bottom -= destBounds.bottom - this->h;
-		destBounds.bottom = this->h;
-	}
-
-	if (destBounds.top < 0) {
-		srcBounds.top += -destBounds.top;
-		destBounds.top = 0;
-	}
-
-	if (destBounds.left < 0) {
-		srcBounds.left += -destBounds.left;
-		destBounds.left = 0;
-	}
-
-	return true;
-}
-
 void ManagedSurface::blitFrom(const Surface &src) {
 	blitFrom(src, Common::Rect(0, 0, src.w, src.h), Common::Point(0, 0));
 }
