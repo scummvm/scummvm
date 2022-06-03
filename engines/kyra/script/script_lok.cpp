@@ -1036,7 +1036,10 @@ int KyraEngine_LoK::o1_specialEventDisplayBrynnsNote(EMCState *script) {
 		else if (_flags.lang == Common::RU_RUS)
 			_screen->loadBitmap("NOTEENG.CPS", 3, 3, nullptr);
 	} else {
-		_screen->loadBitmap("NOTE.CPS", 3, 3, nullptr);
+		if (_flags.lang == Common::KO_KOR)
+			_screen->loadBitmap("HAN_NOTE.CPS", 3, 3, nullptr);
+		else
+			_screen->loadBitmap("NOTE.CPS", 3, 3, nullptr);
 	}
 	_screen->copyRegion(63, 8, 63, 8, 194, 128, 2, 0);
 	_screen->updateScreen();

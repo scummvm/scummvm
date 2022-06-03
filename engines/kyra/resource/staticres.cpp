@@ -38,7 +38,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 116
+#define RESFILE_VERSION 117
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -96,6 +96,7 @@ const IndexTable iLanguageTable[] = {
 	{ Common::HE_ISR,  8 },
 	{ Common::ZH_CHN,  9 },
 	{ Common::ZH_TWN, 10 },
+	{ Common::KO_KOR, 11 },
 	{ -1, -1 }
 };
 
@@ -987,7 +988,7 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 	_screen->clearPage(page);
 
 	bool success = false;
-	static const char *pattern[] = { "15", "_ENG", "_FRE", "_GER", "_SPA", "_ITA", "_HEB", "" };
+	static const char *pattern[] = { "15", "_ENG", "_FRE", "_GER", "_SPA", "_ITA", "_HEB", "_HAN", "" };
 	for (int i = 0; i < ARRAYSIZE(pattern) && !success; ++i) {
 		Common::String tryFile = Common::String::format("MAIN%s.CPS", pattern[i]);
 		if ((success = _res->exists(tryFile.c_str())))

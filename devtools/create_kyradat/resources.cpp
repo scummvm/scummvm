@@ -38,6 +38,7 @@
 #include "resources/lok_dos_oldfloppy.h"
 #include "resources/lok_dos_oldfloppy_russian.h"
 #include "resources/lok_dos_spanish.h"
+#include "resources/lok_dos_korean.h"
 #include "resources/lok_dos_chinese_trad.h"
 
 #include "resources/lok_dos_cd.h"
@@ -438,6 +439,30 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1ConfigStrings, kKyra1, kPlatformDOS, kNoSpecial, ES_ESP, &k1ConfigStringsDOSSpanishProvider },
 	{ k1TwoByteFontLookupTable, kKyra1, kPlatformDOS, kNoSpecial, ES_ESP, &k1TwoByteFontLookupTableDOSProvider },
 	{ k1CreditsStrings, kKyra1, kPlatformDOS, kNoSpecial, ES_ESP, &k1k1CreditsStringsDummyDOSProvider },
+	{ k1IntroStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1IntroStringsDOSKoreanProvider },
+	{ k1ItemNames, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1ItemNamesDOSKoreanProvider },
+	{ k1TakenStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1TakenStringsDOSKoreanProvider },
+	{ k1PlacedStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1PlacedStringsDOSKoreanProvider },
+	{ k1DroppedStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1DroppedStringsDOSKoreanProvider },
+	{ k1NoDropStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1NoDropStringsDOSKoreanProvider },
+	{ k1PutDownString, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1PutDownStringDOSKoreanProvider },
+	{ k1WaitAmuletString, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1WaitAmuletStringDOSKoreanProvider },
+	{ k1BlackJewelString, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1BlackJewelStringDOSKoreanProvider },
+	{ k1HealingTipString, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1HealingTipStringDOSKoreanProvider },
+	{ k1PoisonGoneString, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1PoisonGoneStringDOSKoreanProvider },
+	{ k1ThePoisonStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1ThePoisonStringsDOSKoreanProvider },
+	{ k1FluteStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1FluteStringsDOSKoreanProvider },
+	{ k1WispJewelStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1WispJewelStringsDOSKoreanProvider },
+	{ k1MagicJewelStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1MagicJewelStringsDOSKoreanProvider },
+	{ k1FlaskFullString, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1FlaskFullStringDOSKoreanProvider },
+	{ k1FullFlaskString, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1FullFlaskStringDOSKoreanProvider },
+	{ k1OutroHomeString, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1OutroHomeStringDOSKoreanProvider },
+	{ k1VeryCleverString, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1VeryCleverStringDOSKoreanProvider },
+	{ k1GUIStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1GUIStringsDOSKoreanProvider },
+	{ k1NewGameString, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1NewGameStringDOSKoreanProvider },
+	{ k1ConfigStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1ConfigStringsDOSKoreanProvider },
+	{ k1TwoByteFontLookupTable, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1TwoByteFontLookupTableDOSProvider },
+	{ k1CreditsStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1k1CreditsStringsDummyDOSProvider },
 	{ k1IntroStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1IntroStringsDOSChineseTradProvider },
 	{ k1ItemNames, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1ItemNamesDOSChineseTradProvider },
 	{ k1TakenStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1TakenStringsDOSChineseTradProvider },
