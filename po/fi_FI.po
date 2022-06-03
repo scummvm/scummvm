@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-03 19:04+0000\n"
+"POT-Creation-Date: 2022-06-03 19:05+0000\n"
 "PO-Revision-Date: 2022-05-16 09:27+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4753,7 +4753,7 @@ msgstr ""
 #: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
-#: engines/twine/detection.cpp:824
+#: engines/twine/detection.cpp:873
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Käytä TTS:ää kuvauksien lukemiseen (jos TTS on saatavilla)"
 
@@ -5560,7 +5560,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Tutkiminen tätä pidemmälle on mahdollista vain pelin täysversiossa"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
-#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:823
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:872
 msgid "TTS Narrator"
 msgstr "TTS-kertoja"
 
@@ -7798,94 +7798,94 @@ msgstr ""
 "Tämä versio vaatii toimiakseen Giflib-kirjaston, jota ei ole käännetty tähän "
 "ScummVM:ään"
 
-#: engines/twine/detection.cpp:722
+#: engines/twine/detection.cpp:771
 msgid "Enable wall collisions"
 msgstr "Seinien törmäystarkistus päälle"
 
-#: engines/twine/detection.cpp:723
+#: engines/twine/detection.cpp:772
 msgid "Enable the original wall collision damage"
 msgstr "Pelin alkuperäinen seiniintörmäyksen vahinkomalli päälle"
 
-#: engines/twine/detection.cpp:732
+#: engines/twine/detection.cpp:781
 msgid "Disable save menu"
 msgstr "Tallennusvalikko pois päältä"
 
-#: engines/twine/detection.cpp:733
+#: engines/twine/detection.cpp:782
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 "Alkuperäisessä pelissä oli vain automaattitallennus. Tämä mahdollistaa pelin "
 "tallentamisen milloin tahansa."
 
-#: engines/twine/detection.cpp:741
+#: engines/twine/detection.cpp:790
 msgid "Enable debug mode"
 msgstr "Käytä debugtilaa"
 
-#: engines/twine/detection.cpp:742
+#: engines/twine/detection.cpp:791
 msgid "Enable the debug mode"
 msgstr "Debug-tila päälle"
 
-#: engines/twine/detection.cpp:750
+#: engines/twine/detection.cpp:799
 msgid "Enable audio CD"
 msgstr "Käytä Audio CD:tä"
 
-#: engines/twine/detection.cpp:751
+#: engines/twine/detection.cpp:800
 msgid "Enable the original audio cd track"
 msgstr "Käytä alkuperäistä audio CD-raitaa"
 
-#: engines/twine/detection.cpp:759
+#: engines/twine/detection.cpp:808
 msgid "Enable sound"
 msgstr "Äänet päälle"
 
-#: engines/twine/detection.cpp:760
+#: engines/twine/detection.cpp:809
 msgid "Enable the sound for the game"
 msgstr "Laita pelin äänet päälle"
 
-#: engines/twine/detection.cpp:768
+#: engines/twine/detection.cpp:817
 msgid "Enable voices"
 msgstr "Puhe päälle"
 
-#: engines/twine/detection.cpp:769
+#: engines/twine/detection.cpp:818
 msgid "Enable the voices for the game"
 msgstr "Laita puhe päälle pelissä"
 
-#: engines/twine/detection.cpp:777
+#: engines/twine/detection.cpp:826
 msgid "Enable text"
 msgstr "Tekstit päälle"
 
-#: engines/twine/detection.cpp:778
+#: engines/twine/detection.cpp:827
 msgid "Enable the text for the game"
 msgstr "Laita tekstit päälle pelissä"
 
-#: engines/twine/detection.cpp:786
+#: engines/twine/detection.cpp:835
 msgid "Enable movies"
 msgstr "Videot päälle"
 
-#: engines/twine/detection.cpp:787
+#: engines/twine/detection.cpp:836
 msgid "Enable the cutscenes for the game"
 msgstr "Laita videot päälle pelissä"
 
-#: engines/twine/detection.cpp:795
+#: engines/twine/detection.cpp:844
 msgid "Enable mouse"
 msgstr "Käytä hiirtä"
 
-#: engines/twine/detection.cpp:796
+#: engines/twine/detection.cpp:845
 msgid "Enable the mouse for the UI"
 msgstr "Käytä hiirtä käyttöliittymässä"
 
-#: engines/twine/detection.cpp:804
+#: engines/twine/detection.cpp:853
 msgid "Use the USA version"
 msgstr "Käytä USA-versiota"
 
-#: engines/twine/detection.cpp:805
+#: engines/twine/detection.cpp:854
 msgid "Enable the USA specific version flags"
 msgstr "Käytä USA-versiota pelistä"
 
-#: engines/twine/detection.cpp:813 engines/ultima/detection.cpp:92
+#: engines/twine/detection.cpp:862 engines/ultima/detection.cpp:92
 msgid "Enable high resolution"
 msgstr "Käytä korkeaa resoluutiota"
 
-#: engines/twine/detection.cpp:814 engines/ultima/detection.cpp:93
+#: engines/twine/detection.cpp:863 engines/ultima/detection.cpp:93
 msgid "Enable a higher resolution for the game"
 msgstr "Käytä korkeampaa resoluutiota pelissä"
 
