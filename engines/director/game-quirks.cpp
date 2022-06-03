@@ -37,6 +37,11 @@ static void quirkWarlock() {
 	SearchMan.addDirectory(g_director->_gameDataDir.getPath(), g_director->_gameDataDir, 0, 5);
 }
 
+static void quirkMcLuhan() {
+	// TODO. Read fonts from MCLUHAN/SYSTEM directory
+	g_director->_extraSearchPath.push_back("mcluhan\\");
+}
+
 struct Quirk {
 	const char *target;
 	Common::Platform platform;
@@ -45,6 +50,7 @@ struct Quirk {
 	{ "lzone", Common::kPlatformWindows, &quirkLzone },
 	{ "mediaband", Common::kPlatformUnknown, &quirkMediaband },
 	{ "warlock", Common::kPlatformUnknown, &quirkWarlock },
+	{ "mcluhan", Common::kPlatformWindows, &quirkMcLuhan },
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
 

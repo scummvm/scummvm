@@ -270,6 +270,7 @@ public:
 	bool _skipFrameAdvance;
 	bool _centerStage;
 	char _dirSeparator;
+	Common::List<Common::String> _extraSearchPath;
 
 	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
 	Common::Array<Graphics::WinCursorGroup *> _winCursor;

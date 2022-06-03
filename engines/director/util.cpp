@@ -458,6 +458,14 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 		}
 	}
 
+	for (auto i = g_director->_extraSearchPath.begin(); i != g_director->_extraSearchPath.end(); ++i) {
+		debug(9, "pathMakeRelative(): extraSearchPath: %s", i->c_str());
+
+		foundPath = wrappedPathMakeRelative(*i + path, recursive, addexts, directory);
+		if (testPath(foundPath))
+			return foundPath;
+	}
+
 	return wrappedPathMakeRelative(path, recursive, addexts, directory);
 }
 
