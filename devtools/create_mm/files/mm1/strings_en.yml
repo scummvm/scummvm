@@ -447,5 +447,6 @@ movement:
 		3: " IMPASSABLE "
 		4: " ROUGH SEAS "
 		5: " TOO WINDY! "
+		cant_swim: " CAN'T SWIM"
 view:
 	darkness: "  DARKNESS"

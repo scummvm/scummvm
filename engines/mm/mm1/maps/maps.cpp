@@ -263,46 +263,33 @@ void Maps::turnRight() {
 	_backwardsOffset = tempOffset;
 }
 
-void Maps::forward() {
-	// TODO: Properly implement this for
-	// checking for obstructions and map changes
-	switch (_forwardMask) {
-	case DIRMASK_N:
-		_mapPos.y++;
-		break;
-	case DIRMASK_S:
-		_mapPos.y--;
-		break;
-	case DIRMASK_E:
-		_mapPos.x++;
-		break;
-	case DIRMASK_W:
-		_mapPos.x--;
-		break;
-	default:
-		break;
-	}
-}
+void Maps::step(const Common::Point &delta) {
+	_mapPos += delta;
+	int section = 0, id = 0;
 
-void Maps::backwards() {
-	// TODO: Properly implement this for
-	// checking for obstructions and map changes
-	switch (_forwardMask) {
-	case DIRMASK_N:
-		_mapPos.y--;
-		break;
-	case DIRMASK_S:
-		_mapPos.y++;
-		break;
-	case DIRMASK_E:
-		_mapPos.x--;
-		break;
-	case DIRMASK_W:
-		_mapPos.x++;
-		break;
-	default:
-		break;
+	if (_mapPos.x < 0) {
+		_mapPos.x = MAP_W - 1;
+		id = _currentMap->dataWord(16);
+		section = _currentMap->dataByte(14);
+	} else if (_mapPos.x >= MAP_W) {
+		_mapPos.x = 0;
+		id = _currentMap->dataWord(11);
+		section = _currentMap->dataByte(13);
+	} else if (_mapPos.y < 0) {
+		_mapPos.y = MAP_H - 1;
+		id = _currentMap->dataWord(17);
+		section = _currentMap->dataByte(19);
+	} else if (_mapPos.y >= MAP_H) {
+		_mapPos.y = 0;
+		id = _currentMap->dataWord(8);
+		section = _currentMap->dataByte(10);
+	} else {
+		return;
 	}
+
+	// At this point, a new map is being entered
+	select(id, section);
+	loadTiles();
 }
 
 } // namespace Maps

@@ -38,6 +38,8 @@ protected:
 	bool _isDark = false;
 	Common::String _message;
 	int _mapOffset = 0;
+	byte _arr2[8];
+	int _val1 = 0;
 private:
 	/**
 	 * Turn left
@@ -52,7 +54,7 @@ private:
 	/**
 	 * Move forwards
 	 */
-	void forward();
+	void forward(KeybindingAction action);
 
 	/**
 	 * Move backwards
@@ -63,6 +65,19 @@ private:
 	 * Forward movement is obstructed
 	 */
 	void obstructed();
+
+	/**
+	 * Barrier blocking forward movement
+	 */
+	void barrier();
+
+	void dialogVal(int num);
+	void dialogMessage(const Common::String &msg);
+
+	/**
+	 * Checks whether the party is dead
+	 */
+	void checkPartyDead();
 public:
 	ViewBase(UIElement *owner);
 	virtual ~ViewBase() {}
