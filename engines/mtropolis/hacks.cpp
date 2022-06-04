@@ -19,9 +19,9 @@
  *
  */
 
-#include "mtropolis/hacks.h"
-
 #include "common/system.h"
+
+#include "mtropolis/hacks.h"
 
 namespace MTropolis {
 

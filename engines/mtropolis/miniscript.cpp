@@ -19,11 +19,12 @@
  *
  */
 
-#include "mtropolis/miniscript.h"
 #include "common/config-manager.h"
 
 #include "common/random.h"
 #include "common/memstream.h"
+
+#include "mtropolis/miniscript.h"
 
 namespace MTropolis {
 

@@ -19,16 +19,16 @@
  *
  */
 
-#include "mtropolis/plugin/standard.h"
-#include "mtropolis/plugins.h"
-
-#include "mtropolis/miniscript.h"
-
 #include "audio/mididrv.h"
 #include "audio/midiplayer.h"
 #include "audio/midiparser.h"
 
 #include "common/random.h"
+
+#include "mtropolis/plugin/standard.h"
+#include "mtropolis/plugins.h"
+
+#include "mtropolis/miniscript.h"
 
 namespace MTropolis {
 

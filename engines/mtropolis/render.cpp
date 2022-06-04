@@ -19,13 +19,13 @@
  *
  */
 
-#include "mtropolis/render.h"
-#include "mtropolis/runtime.h"
-
 #include "graphics/surface.h"
 #include "graphics/managed_surface.h"
 
 #include "graphics/cursorman.h"
+
+#include "mtropolis/render.h"
+#include "mtropolis/runtime.h"
 
 namespace MTropolis {
 

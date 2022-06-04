@@ -22,11 +22,11 @@
 #ifndef MTROPOLIS_MODIFIERS_H
 #define MTROPOLIS_MODIFIERS_H
 
+#include "common/events.h"
+
 #include "mtropolis/render.h"
 #include "mtropolis/runtime.h"
 #include "mtropolis/data.h"
-
-#include "common/events.h"
 
 namespace MTropolis {
 

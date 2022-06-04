@@ -19,16 +19,15 @@
  *
  */
 
-#include "mtropolis/debug.h"
-#include "mtropolis/render.h"
-#include "mtropolis/runtime.h"
-
 #include "gui/dialog.h"
 
 #include "graphics/fontman.h"
 
 #include "common/hash-ptr.h"
 
+#include "mtropolis/debug.h"
+#include "mtropolis/render.h"
+#include "mtropolis/runtime.h"
 
 
 namespace MTropolis {
@@ -840,10 +839,10 @@ void DebugSceneTreeWindow::toolOnMouseDown(int32 x, int32 y, int mouseButton) {
 	if (mouseButton != Actions::kMouseButtonLeft)
 		return;
 
-	for (int i = 0; i < _sceneStack.size(); i++) {
+	for (uint i = 0; i < _sceneStack.size(); i++) {
 		int buttonLeft = kSceneStackGoToButtonX;
 		int buttonRight = buttonLeft + kSceneStackGoToButtonWidth;
-		int buttonTop = kSceneStackGoToButtonFirstY + i * kSceneStackRowHeight;
+		int buttonTop = kSceneStackGoToButtonFirstY + static_cast<int>(i) * kSceneStackRowHeight;
 		int buttonBottom = buttonTop + kSceneStackGoToButtonHeight;
 
 		if (x >= buttonLeft && x < buttonRight && y >= buttonTop && y < buttonBottom) {
@@ -858,7 +857,7 @@ void DebugSceneTreeWindow::toolOnMouseDown(int32 x, int32 y, int mouseButton) {
 
 	int32 row = (y - _treeYOffset) / kRowHeight;
 
-	if (row >= _renderEntries.size())
+	if (static_cast<uint32>(row) >= _renderEntries.size())
 		return;
 
 	const RenderEntry &renderEntry = _renderEntries[row];
@@ -995,7 +994,6 @@ void DebugInspectorWindow::update() {
 
 		_labeledRow.clear();
 	} else {
-		size_t oldNumLabeled = _unlabeledRow.size();
 		inspector->getDebuggable()->debugInspect(this);
 
 		_unlabeledRow.resize(_declUnlabeledRow);
@@ -1148,7 +1146,6 @@ void DebugStepThroughWindow::update() {
 void DebugStepThroughWindow::toolRenderSurface(int32 subAreaWidth, int32 subAreaHeight) {
 	const Graphics::PixelFormat fmt = _debugger->getRuntime()->getRenderPixelFormat();
 
-	uint32 whiteColor = fmt.RGBToColor(255, 255, 255);
 	uint32 blackColor = fmt.RGBToColor(0, 0, 0);
 
 	int32 renderHeight = subAreaHeight;

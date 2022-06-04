@@ -22,10 +22,10 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-#include "mtropolis/detection.h"
-
 #include "common/config-manager.h"
 #include "common/translation.h"
+
+#include "mtropolis/detection.h"
 
 static const PlainGameDescriptor mTropolisGames[] = {
 	{"obsidian", "Obsidian"},

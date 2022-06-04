@@ -22,9 +22,9 @@
 #include "common/savefile.h"
 #include "common/translation.h"
 
-#include "mtropolis/mtropolis.h"
-
 #include "gui/saveload.h"
+
+#include "mtropolis/mtropolis.h"
 
 namespace MTropolis {
 
