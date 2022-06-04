@@ -905,7 +905,8 @@ protected:
 	int getSelected() override;
 	void build() override;
 private:
-	GridWidget		*_grid;
+	GridWidget    *_grid;
+	SliderWidget  *_gridItemSizeSlider;
 };
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
@@ -1279,7 +1280,7 @@ void LauncherSimple::updateButtons() {
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 LauncherGrid::LauncherGrid(const Common::String &title)
 	: LauncherDialog(title),
-	_grid(nullptr) {
+	_grid(nullptr), _gridItemSizeSlider(nullptr) {
 	build();
 }
 
@@ -1444,6 +1445,11 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		}
 		break;
 	}
+	case kItemSizeCmd:
+		ConfMan.setInt("grid_item_size", _gridItemSizeSlider->getValue());
+		ConfMan.flushToDisk();
+		reflowLayout();
+		break;
 	default:
 		LauncherDialog::handleCommand(sender, cmd, data);
 	}
@@ -1530,6 +1536,12 @@ int LauncherGrid::getSelected() { return _grid->getSelected(); }
 
 void LauncherGrid::build() {
 	LauncherDialog::build();
+
+	new StaticTextWidget(this, "LauncherGrid.GridItemSizeDesc", _("Icon size:"));
+	_gridItemSizeSlider = new SliderWidget(this, "LauncherGrid.GridItemSize", Common::U32String(), kItemSizeCmd);
+	_gridItemSizeSlider->setMinValue(1);
+	_gridItemSizeSlider->setMaxValue(5);
+	_gridItemSizeSlider->setValue(ConfMan.getInt("grid_item_size"));
 
 	// Add list with game titles
 	_grid = new GridWidget(this, "LauncherGrid.IconArea");

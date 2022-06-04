@@ -42,7 +42,8 @@ enum {
 	kLoadButtonCmd = 'LOAD',
 	kOpenTrayCmd = 'OPTR',
 	kItemClicked = 'LBX1',
-	kItemDoubleClickedCmd = 'LBX2'
+	kItemDoubleClickedCmd = 'LBX2',
+	kItemSizeCmd = 'SIZE'
 };
 
 /* GridItemInfo */

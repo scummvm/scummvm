@@ -321,6 +321,13 @@
 						height = 'Globals.Button.Height'
 						width = 'Globals.Button.Height'
 				/>
+				<widget name = 'GridItemSizeDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'GridItemSize'
+						type = 'Slider'
+						rtl = 'no'
+				/>
 				<space />
 			</layout>
 		</layout>

@@ -334,12 +334,15 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 
 GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	: ContainerWidget(boss, name), CommandSender(boss) {
-	_thumbnailHeight = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height") * g_gui.getScaleFactor() + .5f);
-	_thumbnailWidth = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width") * g_gui.getScaleFactor() + .5f);
-	_flagIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height") * g_gui.getScaleFactor() + .5f);
-	_flagIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width") * g_gui.getScaleFactor() + .5f);
-	_platformIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height") * g_gui.getScaleFactor() + .5f);
-	_platformIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width") * g_gui.getScaleFactor() + .5f);
+	// Scale by HiDPI factor and grid_item_size config
+	// The grid_item_size is between 1 (0.6) and 5 (1.4)
+	float scaleFactor = g_gui.getScaleFactor() * (1.f + 0.2f * (ConfMan.getInt("grid_item_size") - 3));
+	_thumbnailHeight = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height") * scaleFactor + .5f);
+	_thumbnailWidth = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width") * scaleFactor + .5f);
+	_flagIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height") * scaleFactor + .5f);
+	_flagIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width") * scaleFactor + .5f);
+	_platformIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height") * scaleFactor + .5f);
+	_platformIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width") * scaleFactor + .5f);
 	_minGridXSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.XSpacing") * g_gui.getScaleFactor() + .5f);
 	_minGridYSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.YSpacing") * g_gui.getScaleFactor() + .5f);
 	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
@@ -823,12 +826,13 @@ void GridWidget::reflowLayout() {
 
 	int oldThumbnailHeight = _thumbnailHeight;
 	int oldThumbnailWidth = _thumbnailWidth;
-	_thumbnailHeight = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height") * g_gui.getScaleFactor() + .5f);
-	_thumbnailWidth = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width") * g_gui.getScaleFactor() + .5f);
-	_flagIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height") * g_gui.getScaleFactor() + .5f);
-	_flagIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width") * g_gui.getScaleFactor() + .5f);
-	_platformIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height") * g_gui.getScaleFactor() + .5f);
-	_platformIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width") * g_gui.getScaleFactor() + .5f);
+	float scaleFactor = g_gui.getScaleFactor() * (1.f + 0.2f * (ConfMan.getInt("grid_item_size") - 3));
+	_thumbnailHeight = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height") * scaleFactor + .5f);
+	_thumbnailWidth = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width") * scaleFactor + .5f);
+	_flagIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height") * scaleFactor + .5f);
+	_flagIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width") * scaleFactor + .5f);
+	_platformIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height") * scaleFactor + .5f);
+	_platformIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width") * scaleFactor + .5f);
 	if ((oldThumbnailHeight != _thumbnailHeight) || (oldThumbnailWidth != _thumbnailWidth)) {
 		unloadSurfaces(_loadedSurfaces);
 		reloadThumbnails();
