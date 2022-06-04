@@ -1137,7 +1137,7 @@ bool LingoCompiler::visitFuncNode(FuncNode *node) {
 /* VarNode */
 
 bool LingoCompiler::visitVarNode(VarNode *node) {
-	if (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo) {
+	if (g_director->getVersion() < 400 || (g_director->getCurrentMovie() && g_director->getCurrentMovie()->_allowOutdatedLingo)) {
 		int val = castNumToNum(node->name->c_str());
 		if (val != -1) {
 			code1(LC::c_intpush);
