@@ -198,6 +198,14 @@ void WetEngine::runMainMenu(Code *code) {
 		playSound("sound/extra.raw", 1);
 	}
 
+	if ((_name == "FRASCAS" && _language == Common::ES_ESP) || \
+		(_name == "RITCHY" && _language == Common::FR_FRA)) {
+		_infiniteAmmoCheat = true;
+		_infiniteHealthCheat = true;
+		_lastLevel = 19;
+		playSound("sound/extra.raw", 1);
+	}
+
 	_name.toLowercase();
 	bool found = loadProfile(_name);
 
