@@ -139,7 +139,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fix lip syncing in Backyard Baseball 2003.
    - Fixed original game bugs in Day of the Tentacle, Loom, Monkey Island 1,
      Monkey Island 2 Amiga, Sam&Max and Zak McKracken FM-TOWNS.
-   - Added settings for tweaking the CD audio playback in the MI1 CD intro, as
+   - Added sliders for tweaking the CD audio playback in the MI1 CD intro, as
      well as VGA CD Loom in general. Loom is particularly sensitive to the
      amount of silence at the start of the track, and the CD version of MI1
      never synced the music as well to the intro as previous versions. See the
