@@ -181,12 +181,25 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 		} else if (_segments[_segmentIdx].type == 0xcc) {
 			if (mousePos.x <= 160)
 				_segmentIdx = _segmentIdx + 1;
-			else
+			else {
 				_segmentIdx = _segmentIdx + 2;
+				if (_arcadeMode == "Y3") {
+					ShootInfo si;
+					si.name = "SP_WALKER_U";
+					si.timestamp = 25;
+					_shootSequence.push_back(si);
+				}
+			}
 		} else if (_segments[_segmentIdx].type == 'Y') {
-			if (mousePos.x <= 160)
+			if (mousePos.x <= 160) {
 				_segmentIdx = _segmentIdx + 2;
-			else
+				if (_arcadeMode == "Y3") {
+					ShootInfo si;
+					si.name = "SP_WALKER_D";
+					si.timestamp = 25;
+					_shootSequence.push_back(si);
+				}
+			} else
 				_segmentIdx = _segmentIdx + 1;
 
 		/*} else if (_segments[_segmentIdx].type == 'a') {
