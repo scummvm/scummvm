@@ -641,26 +641,52 @@ void LC::c_swap() {
 	g_lingo->push(d1);
 }
 
+static bool isArray(Datum &d1) {
+	if (d1.type == ARRAY || d1.type == POINT || d1.type == RECT)
+		return true;
+
+	return false;
+}
+
+static DatumType getArrayAlignedType(Datum &d1, Datum &d2) {
+	if (d1.type == POINT && d2.type == ARRAY && d2.u.farr->arr.size() < 2)
+		return ARRAY;
+
+	if (d1.type == POINT)
+		return POINT;
+
+	if (d1.type == RECT && (d2.type == POINT || (d2.type == ARRAY && d2.u.farr->arr.size() < 4)))
+		return ARRAY;
+
+	if (d1.type == RECT)
+		return RECT;
+
+	if (!isArray(d1))
+		return d2.type;
+
+	return ARRAY;
+}
+
 Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum &, Datum &), Datum &d1, Datum &d2) {
 	// At least one of d1 and d2 must be an array
 	uint arraySize;
-	if (d1.type == ARRAY && d2.type == ARRAY) {
+	if (isArray(d1) && isArray(d2)) {
 		arraySize = MIN(d1.u.farr->arr.size(), d2.u.farr->arr.size());
-	} else if (d1.type == ARRAY) {
+	} else if (isArray(d1)) {
 		arraySize = d1.u.farr->arr.size();
 	} else {
 		arraySize = d2.u.farr->arr.size();
 	}
 	Datum res;
-	res.type = ARRAY;
+	res.type = getArrayAlignedType(d1, d2);
 	res.u.farr = new FArray(arraySize);
 	Datum a = d1;
 	Datum b = d2;
 	for (uint i = 0; i < arraySize; i++) {
-		if (d1.type == ARRAY) {
+		if (isArray(d1)) {
 			a = d1.u.farr->arr[i];
 		}
-		if (d2.type == ARRAY) {
+		if (isArray(d2)) {
 			b = d2.u.farr->arr[i];
 		}
 		res.u.farr->arr[i] = mapFunc(a, b);
@@ -669,7 +695,7 @@ Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum &, Datum &), Datum &d1, Datum &d2) 
 }
 
 Datum LC::addData(Datum &d1, Datum &d2) {
-	if (d1.type == ARRAY || d2.type == ARRAY) {
+	if (isArray(d1) || isArray(d2)) {
 		return LC::mapBinaryOp(LC::addData, d1, d2);
 	}
 
@@ -693,7 +719,7 @@ void LC::c_add() {
 }
 
 Datum LC::subData(Datum &d1, Datum &d2) {
-	if (d1.type == ARRAY || d2.type == ARRAY) {
+	if (isArray(d1) || isArray(d2)) {
 		return LC::mapBinaryOp(LC::subData, d1, d2);
 	}
 
@@ -717,7 +743,7 @@ void LC::c_sub() {
 }
 
 Datum LC::mulData(Datum &d1, Datum &d2) {
-	if (d1.type == ARRAY || d2.type == ARRAY) {
+	if (isArray(d1) || isArray(d2)) {
 		return LC::mapBinaryOp(LC::mulData, d1, d2);
 	}
 
@@ -741,7 +767,7 @@ void LC::c_mul() {
 }
 
 Datum LC::divData(Datum &d1, Datum &d2) {
-	if (d1.type == ARRAY || d2.type == ARRAY) {
+	if (isArray(d1) || isArray(d2)) {
 		return LC::mapBinaryOp(LC::divData, d1, d2);
 	}
 
@@ -775,7 +801,7 @@ void LC::c_div() {
 }
 
 Datum LC::modData(Datum &d1, Datum &d2) {
-	if (d1.type == ARRAY || d2.type == ARRAY) {
+	if (isArray(d1) || isArray(d2)) {
 		return LC::mapBinaryOp(LC::modData, d1, d2);
 	}
 
@@ -797,10 +823,10 @@ void LC::c_mod() {
 }
 
 Datum LC::negateData(Datum &d) {
-	if (d.type == ARRAY) {
+	if (isArray(d)) {
 		uint arraySize = d.u.farr->arr.size();
 		Datum res;
-		res.type = ARRAY;
+		res.type = d.type;
 		res.u.farr = new FArray(arraySize);
 		for (uint i = 0; i < arraySize; i++) {
 			res.u.farr->arr[i] = LC::negateData(d.u.farr->arr[i]);
