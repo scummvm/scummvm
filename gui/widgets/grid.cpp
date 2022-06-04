@@ -891,9 +891,6 @@ void GridWidget::reflowLayout() {
 	calcEntrySizes();
 	calcInnerHeight();
 
-	_scrollBar->checkBounds(_scrollBar->_currentPos);
-	_scrollPos = _scrollBar->_currentPos;
-
 	_scrollBar->resize(_scrollWindowWidth - _scrollBarWidth, 0, _scrollBarWidth, _scrollWindowHeight, false);
 
 	if (calcVisibleEntries()) {
@@ -901,6 +898,9 @@ void GridWidget::reflowLayout() {
 	}
 
 	assignEntriesToItems();
+	if (_selectedEntry) {
+		scrollToEntry(_selectedEntry->entryID, false);
+	}
 	scrollBarRecalc();
 	markAsDirty();
 }
