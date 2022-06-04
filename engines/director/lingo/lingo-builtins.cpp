@@ -1079,7 +1079,7 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	// for directory, we either return the correct path, which we can access recursively.
 	// or we get a wrong path, which will lead us to a non-exist file node
 
-	Common::StringTokenizer directory_list(path, "/");
+	Common::StringTokenizer directory_list(path, Common::String(g_director->_dirSeparator));
 	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
 	while (d.exists() && !directory_list.empty()) {
 		d = d.getChild(directory_list.nextToken());
