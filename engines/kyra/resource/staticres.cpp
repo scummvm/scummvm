@@ -1156,16 +1156,29 @@ void GUI_LoK::initStaticResource() {
 	Button::Callback loadGameMenuFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::loadGameMenu);
 	Button::Callback cancelSubMenuFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::cancelSubMenu);
 
-	int menuItemYStart = _vm->gameFlags().lang == Common::ZH_TWN ? 27 : 30;
-	int menuItemYInc = _vm->gameFlags().lang == Common::ZH_TWN ? 20 : 17;
-	int menuItemHeight = _vm->gameFlags().lang == Common::ZH_TWN ? 19 : 15;
+	int menuItemYStart = 30;
+	int menuItemYEnd = 110;
+	int menuItemYInc = 17;
+	int menuItemHeight = 15;
+	int menuHeight = 139;
 
-	GUI_V1_MENU(_menu[0], -1, -1, 0x100, 0x8B, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1);
+	if (_vm->gameFlags().lang == Common::ZH_TWN) {
+		menuItemYStart = 27;
+		menuItemYInc = 20;
+		menuItemHeight = 19;
+	} else if (_vm->gameFlags().lang == Common::KO_KOR) {
+		menuItemYInc = 23;
+		menuItemHeight = 21;
+		menuHeight = 160;
+		menuItemYEnd = menuItemYStart + menuItemYInc * 4;
+	}
+
+	GUI_V1_MENU(_menu[0], -1, -1, 0x100, menuHeight, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[0].item[0], 1, 0, 0, 0, -1, -1, menuItemYStart, 0xDC, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[0].item[1], 1, 0, 0, 0, -1, -1, menuItemYStart + menuItemYInc, 0xDC, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[0].item[2], 1, 0, 0, 0, -1, -1, menuItemYStart + menuItemYInc * 2, 0xDC, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[0].item[3], 1, 0, 0, 0, -1, -1, menuItemYStart + menuItemYInc * 3, 0xDC, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[0].item[4], 1, 0, 0, 0, -1,  0, 0x6E, 0xDC, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[4], 1, 0, 0, 0, -1,  0, menuItemYEnd, 0xDC, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[0].item[0].callback = loadGameMenuFunctor;
 	_menu[0].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::saveGameMenu);
 	_menu[0].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::gameControlsMenu);
@@ -1178,8 +1191,16 @@ void GUI_LoK::initStaticResource() {
 	_menu[1].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitConfirmYes);
 	_menu[1].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitConfirmNo);
 
-	menuItemYStart = _vm->gameFlags().lang == Common::ZH_TWN ? 40 : 39;
-	int labelYStart = _vm->gameFlags().lang == Common::ZH_TWN ? 5 : 8;
+	menuItemYStart = 39;
+	int labelYStart = 8;
+
+	if (_vm->gameFlags().lang == Common::ZH_TWN) {
+		menuItemYStart = 40;
+		labelYStart = 5;
+	} else if (_vm->gameFlags().lang == Common::KO_KOR) {
+		menuItemYStart = 40;
+		labelYStart = 5;
+	}
 
 	GUI_V1_MENU(_menu[2], -1, -1, 0x120, 0xA0, 248, 249, 250, 0, 251, -1, labelYStart, 0, 6, 132, 22, 132, 124);
 	GUI_V1_MENU_ITEM(_menu[2].item[0], 1, 0, 0, 0, -1, 255, menuItemYStart, 0x100, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
@@ -1190,11 +1211,19 @@ void GUI_LoK::initStaticResource() {
 	GUI_V1_MENU_ITEM(_menu[2].item[5], 1, 0, 0, 0, 0xB8, 0, 0x86, 0x58, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[2].item[5].callback = cancelSubMenuFunctor;
 
-	if (_vm->gameFlags().lang == Common::ZH_TWN)
+	if (_vm->gameFlags().lang == Common::ZH_TWN || _vm->gameFlags().lang == Common::KO_KOR)
 		_menu[2].item[4].enabled = false;
 
-	int menuHeight = _vm->gameFlags().lang == Common::ZH_TWN ? 80 : 67;
-	labelYStart = _vm->gameFlags().lang == Common::ZH_TWN ? 50 : 44;
+	menuHeight = 67;
+	labelYStart = 44;
+
+	if (_vm->gameFlags().lang == Common::ZH_TWN) {
+		menuHeight = 80;
+		labelYStart = 50;
+	} else if (_vm->gameFlags().lang == Common::KO_KOR) {
+		menuHeight = 80;
+		labelYStart = 50;
+	}
 
 	GUI_V1_MENU(_menu[3], -1, -1, 288, menuHeight, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[3].item[0], 1, 0, 0, 0, 22, 0, labelYStart, 88, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
@@ -1202,7 +1231,11 @@ void GUI_LoK::initStaticResource() {
 	_menu[3].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::savegameConfirm);
 	_menu[3].item[1].callback = cancelSubMenuFunctor;
 
-	menuItemYInc = _vm->gameFlags().lang == Common::ZH_TWN ? 21 : 17;
+	menuItemYInc = 17;
+	if (_vm->gameFlags().lang == Common::ZH_TWN)
+		menuItemYInc = 21;
+	else if (_vm->gameFlags().lang == Common::KO_KOR)
+		menuItemYInc = 21;
 
 	GUI_V1_MENU(_menu[4], -1, -1, 0xD0, 0x4C, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[4].item[0], 1, 0, 0, 0, -1, -1, 0x1E, 0xB4, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
@@ -1210,9 +1243,19 @@ void GUI_LoK::initStaticResource() {
 	_menu[4].item[0].callback = loadGameMenuFunctor;
 	_menu[4].item[1].callback = quitPlayingFunctor;
 
-	menuItemYStart = _vm->gameFlags().lang == Common::ZH_TWN ? 27 : 30;
-	menuItemYInc = _vm->gameFlags().lang == Common::ZH_TWN ? 20 : 17;
-	labelYStart = _vm->gameFlags().lang == Common::ZH_TWN ? 29 : 32;
+	menuItemYStart = 30;
+	menuItemYInc = 17;
+	labelYStart = 32;
+
+	if (_vm->gameFlags().lang == Common::ZH_TWN) {
+		menuItemYStart = 27;
+		menuItemYInc = 20;
+		labelYStart = 29;
+	} else if (_vm->gameFlags().lang == Common::KO_KOR) {
+		menuItemYStart = 27;
+		menuItemYInc = 20;
+		labelYStart = 29;
+	}
 
 	GUI_V1_MENU(_menu[5], -1, -1, 0x130, 0x99, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[5].item[0], 1, 0, 0, 0, 0xA5, 0, menuItemYStart, 0x80, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, labelYStart, 0, 0);

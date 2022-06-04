@@ -139,6 +139,8 @@ protected:
 
 	uint32 _lastScreenUpdate;
 	void checkTextfieldInput();
+
+	int _menuLabelYOffset;
 };
 
 class Movie;

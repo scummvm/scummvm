@@ -59,7 +59,7 @@ int TextDisplayer::getCharLength(const char *str, int len) {
 		while (i <= len && *str) {
 			uint c = *str++;
 			c &= 0xFF;
-			if (c >= 0x7F && _vm->gameFlags().lang == Common::JA_JPN) {
+			if (c >= 0x7F && (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::KO_KOR)) {
 				c = READ_LE_UINT16(str - 1);
 				++str;
 			}
@@ -103,12 +103,16 @@ char *TextDisplayer::preprocessString(const char *str) {
 	}
 	p = _talkBuffer;
 
-	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
+	static const uint16 limDef[2] = { 176, 352 };
+	static const uint16 limKor[2] = { 240, 480 };
+	const uint16 *lim = (_vm->gameFlags().lang == Common::KO_KOR) ? limKor : limDef;
+
+	Screen::FontId curFont = _screen->setFont(_vm->gameFlags().lang == Common::KO_KOR ? Screen::FID_KOREAN_FNT : Screen::FID_8_FNT);
 	_screen->_charSpacing = -2;
 	int textWidth = _screen->getTextWidth(p);
 	_screen->_charSpacing = 0;
-	if (textWidth > 176) {
-		if (textWidth > 352) {
+	if (textWidth > lim[0]) {
+		if (textWidth > lim[1]) {
 			int count = getCharLength(p, textWidth / 3);
 			int offs = dropCRIntoString(p, count);
 			p += count + offs;

@@ -533,4 +533,140 @@ void ChineseTwoByteFontLoK::processColorMap() {
 	_textColor[1] = _colorMap[0] | (_colorMap[0] << 8);
 }
 
+KoreanFontLoK::KoreanFontLoK(Font *font8fnt, const uint16 *lookupTable, uint32 lookupTableSize) : _font8(font8fnt), _height(16), _width(16), _fileData(0), _colorMap(0), _glyphTemp(0) {
+	assert(_font8);
+	assert(lookupTable);
+	assert(lookupTableSize == 224);
+	for (int i = 0; i < 7; ++i)
+		_2byteTables[i] = &lookupTable[i << 5];
+	memset(_glyphData, 0, sizeof(_glyphData));
+	_glyphTemp = new uint8[30];
+}
+
+KoreanFontLoK::~KoreanFontLoK() {
+	delete[] _fileData;
+	delete[] _glyphTemp;
+}
+
+bool KoreanFontLoK::load(Common::SeekableReadStream &data) {
+	if (_fileData)
+		return false;
+
+	if (!data.size())
+		return false;
+
+	uint32 fileSize = data.size();
+
+	if (fileSize != 5730 + 2550 + 3270) {
+		warning("KoreanFontLoK::load(): Invalid font file size '%d' (expected: '%d').", fileSize, 5730 + 2550 + 3270);
+		return false;
+	}
+
+	uint8 *dst = new uint8[fileSize];
+	if (!dst)
+		return false;
+
+	data.read(dst, fileSize);
+	_fileData = dst;
+
+	_glyphData[0] = _fileData;
+	_glyphData[1] = _glyphData[0] + 5730;
+	_glyphData[2] = _glyphData[1] + 2550;
+
+	return true;
+}
+
+int KoreanFontLoK::getCharWidth(uint16 c) const {
+	return (c >= 0x80) ? 16 : _font8->getCharWidth(c);
+}
+
+int KoreanFontLoK::getCharHeight(uint16 c) const {
+	return (_colorMap && _colorMap[3]) ? _height + 2 : _height;
+}
+
+void KoreanFontLoK::setColorMap(const uint8 *src) {
+	_colorMap = src;
+	_font8->setColorMap(src);
+}
+
+void KoreanFontLoK::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	if (c < 0x80) {
+		_font8->drawChar(c, dst + (c == '\"' ? 0 : 5) * pitch, pitch, 0);
+		return;
+	}
+
+	const uint8 *glyph = createGlyph(c);
+	dst += (pitch + 1);
+
+	if (_colorMap[3]) {
+		renderGlyph(dst - 1, glyph, _colorMap[3], pitch);
+		renderGlyph(dst + 1, glyph, _colorMap[3], pitch);
+		renderGlyph(dst - pitch, glyph, _colorMap[3], pitch);
+		renderGlyph(dst + pitch, glyph, _colorMap[3], pitch);
+	}
+
+	renderGlyph(dst, glyph, _colorMap[1], pitch);
+};
+
+const uint8 *KoreanFontLoK::createGlyph(uint16 chr) const {
+	memset(_glyphTemp, 0, 30);
+
+	uint16 t[3];
+	memset(t, 0, sizeof(t));
+
+	chr = (chr << 8) | (chr >> 8);
+	uint8 i1 = chr & 0x1f;
+	uint8 i2 = (chr >> 5) & 0x1f;
+	uint8 i3 = (chr >> 10) & 0x1f;
+
+	uint16 r1 = _2byteTables[1][i2];
+	if ((int16)r1 > 0)
+		r1 += (_2byteTables[3][i3] + _2byteTables[6][i1] - 3);
+
+	uint16 r2 = _2byteTables[0][i3];
+	if ((int16)r2 > 0)
+		r2 += (_2byteTables[4][i2] + _2byteTables[6][i1]);
+
+	uint16 r3 = _2byteTables[2][i1];
+	if ((int16)r3 > 0)
+		r3 += (_2byteTables[5][i2] - 3);
+
+	t[0] = r2 >> 5;
+	t[1] = (r1 >> 5) - 2;
+	t[2] = (r3 >> 5) - 2;
+
+	static const uint8 lim[3] = { 0xBF, 0x55, 0x6D };
+
+	for (int l = 0; l < 3; ++l) {
+		if (t[l] <= lim[l]) {
+			const uint8 *src = &_glyphData[l][t[l] * 30];
+			for (int i = 0; i < 30; ++i)
+				_glyphTemp[i] |= *src++;
+		}
+	}
+
+	return _glyphTemp;
+}
+
+void KoreanFontLoK::renderGlyph(byte *dst, const uint8 *glyph, uint8 col, int pitch) const {
+	const uint8 *src = glyph;
+	pitch -= 15;
+
+	for (int y = 0; y < 15; ++y) {
+		uint8 m = 0;
+		uint8 in = 0;
+		for (int x = 0; x < 15; ++x) {
+			if (m == 0) {
+				in = *src++;
+				m = 0x80;
+			}
+			if (in & m)
+				*dst = col;
+			dst++;
+			m >>= 1;
+		}
+		dst += pitch;
+	}
+}
+
 } // End of namespace Kyra
