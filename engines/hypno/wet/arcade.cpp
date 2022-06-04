@@ -357,7 +357,7 @@ bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *
 			drawScreen();
 			drawCursorArcade(g_system->getEventManager()->getMousePos());
 			if (!_music.empty())
-				playSound(_music, 0, arc->musicRate); // restore music
+				playSound(_music, 0, _musicRate); // restore music
 		} else
 			error ("Invalid transition at %d", ttime);
 
@@ -677,6 +677,8 @@ void WetEngine::pressedKey(const int keycode) {
 		_background->decoder->pauseVideo(false);
 		updateScreen(*_background);
 		drawScreen();
+		if (!_music.empty())
+			playSound(_music, 0, _musicRate); // restore music
 	} else if (keycode == Common::KEYCODE_s) { // Added for testing
 		if (_cheatsEnabled) {
 			_skipLevel = true;
@@ -842,7 +844,7 @@ void WetEngine::missNoTarget(ArcadeShooting *arc) {
 			updateScreen(*_background);
 			drawScreen();
 			if (!_music.empty())
-				playSound(_music, 0, arc->musicRate); // restore music
+				playSound(_music, 0, _musicRate); // restore music
 			break;
 		} else if (it->name == "SP_BOSS2" && !arc->missBoss2Video.empty()) {
 			_background->decoder->pauseVideo(true);
@@ -855,7 +857,7 @@ void WetEngine::missNoTarget(ArcadeShooting *arc) {
 			updateScreen(*_background);
 			drawScreen();
 			if (!_music.empty())
-				playSound(_music, 0, arc->musicRate); // restore music
+				playSound(_music, 0, _musicRate); // restore music
 			break;
 		}
 	}
