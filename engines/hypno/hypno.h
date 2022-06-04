@@ -324,6 +324,7 @@ public:
 	Common::String _objString;
 	Common::String _targetString;
 	Common::String _directionString;
+	Common::String _enterNameString;
 
 	Filename _shootSound;
 	Filename _hitSound;

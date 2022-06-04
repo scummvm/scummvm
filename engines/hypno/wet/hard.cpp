@@ -142,7 +142,7 @@ void WetEngine::runMainMenu(Code *code) {
 	drawImage(*menu, 0, 0, false);
 	Graphics::Surface surName = overlay->getSubArea(subName);
 	drawImage(surName, subName.left, subName.top, false);
-	drawString("scifi08.fgx", "ENTER NAME :", 48, 50, 100, c);
+	drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
 	_name.clear();
 	bool cont = true;
 	while (!shouldQuit() && cont) {
@@ -168,7 +168,7 @@ void WetEngine::runMainMenu(Code *code) {
 
 				drawImage(*menu, 0, 0, false);
 				drawImage(surName, subName.left, subName.top, false);
-				drawString("scifi08.fgx", "ENTER NAME :", 48, 50, 100, c);
+				drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
 				drawString("scifi08.fgx", _name, 140, 50, 170, c);
 				break;
 
@@ -291,7 +291,16 @@ void WetEngine::showDemoScore() {
 }
 
 Common::String WetEngine::getLocalizedString(const Common::String name) {
-	if (name == "health") {
+	if (name == "name") {
+		switch (_language) {
+		case Common::FR_FRA:
+			return "NOM :";
+		case Common::ES_ESP:
+			return "NOMBRE :";
+		default:
+			return "ENTER NAME :";
+		}
+	} else if (name == "health") {
 		switch (_language) {
 		case Common::FR_FRA:
 			return "ENERGIE";
