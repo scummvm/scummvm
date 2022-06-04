@@ -130,6 +130,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Lippensynchronisation in Backyard Baseball 2003 korrigiert.
    - Spiele-Fehler in Day of the Tentacle, Loom, Monkey Island 1, Monkey Island 2 Amiga,
      Sam&Max und Zak McKracken FM-TOWNS korrigiert. Diese Fehler sind auch in den Original-Spielen enthalten.
+   - Die Wiedergabe der CD-Audiospuren im Intro von Monkey Island 1 sowie in der CD-Version von Loom im Allgemeinen
+     kann nun über einen Schieberegler angepasst werden. Loom ist auf eine korrekte Wiedergabe der "stillen" Sequenzen
+     am Beginn einer Audiospur angewiesen, während die CD-Version von Monkey Island 1 die Intro-Musik
+     nicht so genau synchronisiert, wie frühere Versionen. Weitere Details findest Du in unserem Wiki.
 
  Sherlock:
    - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
