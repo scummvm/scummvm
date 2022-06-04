@@ -67,7 +67,7 @@ bool Indeo5Decoder::isIndeo5(Common::SeekableReadStream &stream) {
 
 	// Validate the first 5-bit word has the correct identifier
 	Indeo::GetBits gb(buffer, 16 * 8);
-	bool isIndeo5 = gb.getBits(5) == 0x1F;
+	bool isIndeo5 = gb.getBits<5>() == 0x1F;
 
 	return isIndeo5;
 }
@@ -103,19 +103,19 @@ int Indeo5Decoder::decodePictureHeader() {
 	IVIPicConfig picConf;
 	int ret;
 
-	if (_ctx._gb->getBits(5) != 0x1F) {
+	if (_ctx._gb->getBits<5>() != 0x1F) {
 		warning("Invalid picture start code!");
 		return -1;
 	}
 
 	_ctx._prevFrameType = _ctx._frameType;
-	_ctx._frameType = _ctx._gb->getBits(3);
+	_ctx._frameType = _ctx._gb->getBits<3>();
 	if (_ctx._frameType >= 5) {
 		warning("Invalid frame type: %d", _ctx._frameType);
 		return -1;
 	}
 
-	_ctx._frameNum = _ctx._gb->getBits(8);
+	_ctx._frameNum = _ctx._gb->getBits<8>();
 
 	if (_ctx._frameType == FRAMETYPE_INTRA) {
 		if ((ret = decode_gop_header()) < 0) {
@@ -133,11 +133,11 @@ int Indeo5Decoder::decodePictureHeader() {
 	}
 
 	if (_ctx._frameType != FRAMETYPE_NULL) {
-		_ctx._frameFlags = _ctx._gb->getBits(8);
+		_ctx._frameFlags = _ctx._gb->getBits<8>();
 
-		_ctx._picHdrSize = (_ctx._frameFlags & 1) ? _ctx._gb->getBits(24) : 0;
+		_ctx._picHdrSize = (_ctx._frameFlags & 1) ? _ctx._gb->getBits<24>() : 0;
 
-		_ctx._checksum = (_ctx._frameFlags & 0x10) ? _ctx._gb->getBits(16) : 0;
+		_ctx._checksum = (_ctx._frameFlags & 0x10) ? _ctx._gb->getBits<16>() : 0;
 
 		// skip unknown extension if any
 		if (_ctx._frameFlags & 0x20)
@@ -205,14 +205,14 @@ int Indeo5Decoder::decodeBandHeader(IVIBandDesc *band) {
 	int i, ret;
 	uint8 bandFlags;
 
-	bandFlags = _ctx._gb->getBits(8);
+	bandFlags = _ctx._gb->getBits<8>();
 
 	if (bandFlags & 1) {
 		band->_isEmpty = true;
 		return 0;
 	}
 
-	band->_dataSize = (_ctx._frameFlags & 0x80) ? _ctx._gb->getBits(24) : 0;
+	band->_dataSize = (_ctx._frameFlags & 0x80) ? _ctx._gb->getBits<24>() : 0;
 
 	band->_inheritMv = (bandFlags & 2) != 0;
 	band->_inheritQDelta = (bandFlags & 8) != 0;
@@ -223,7 +223,7 @@ int Indeo5Decoder::decodeBandHeader(IVIBandDesc *band) {
 	// decode rvmap probability corrections if any
 	band->_numCorr = 0; // there are no corrections
 	if (bandFlags & 0x10) {
-		band->_numCorr = _ctx._gb->getBits(8); // get number of correction pairs
+		band->_numCorr = _ctx._gb->getBits<8>(); // get number of correction pairs
 		if (band->_numCorr > 61) {
 			warning("Too many corrections: %d", band->_numCorr);
 			return -1;
@@ -231,11 +231,11 @@ int Indeo5Decoder::decodeBandHeader(IVIBandDesc *band) {
 
 		// read correction pairs
 		for (i = 0; i < band->_numCorr * 2; i++)
-			band->_corr[i] = _ctx._gb->getBits(8);
+			band->_corr[i] = _ctx._gb->getBits<8>();
 	}
 
 	// select appropriate rvmap table for this band
-	band->_rvmapSel = (bandFlags & 0x40) ? _ctx._gb->getBits(3) : 8;
+	band->_rvmapSel = (bandFlags & 0x40) ? _ctx._gb->getBits<3>() : 8;
 
 	// decode block huffman codebook
 	ret = band->_blkVlc.decodeHuffDesc(&_ctx, bandFlags & 0x80, IVI_BLK_HUFF);
@@ -244,9 +244,9 @@ int Indeo5Decoder::decodeBandHeader(IVIBandDesc *band) {
 
 	band->_checksumPresent = _ctx._gb->getBit();
 	if (band->_checksumPresent)
-		band->_checksum = _ctx._gb->getBits(16);
+		band->_checksum = _ctx._gb->getBits<16>();
 
-	band->_globQuant = _ctx._gb->getBits(5);
+	band->_globQuant = _ctx._gb->getBits<5>();
 
 	// skip unknown extension if any
 	if (bandFlags & 0x20) { // XXX: untested
@@ -260,7 +260,7 @@ int Indeo5Decoder::decodeBandHeader(IVIBandDesc *band) {
 }
 
 int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
-	int x, y, mvX, mvY, mvDelta, offs, mbOffset, mvScale, blksPerMb, s;
+	int x, y, mvX, mvY, mvDelta, offs, mbOffset, mvScale, s;
 	IVIMbInfo *mb, *refMb;
 	int rowOffset = band->_mbSize * band->_pitch;
 
@@ -300,7 +300,7 @@ int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 
 				mb->_qDelta = 0;
 				if (!band->_plane && !band->_bandNum && (_ctx._frameFlags & 8)) {
-					mb->_qDelta = _ctx._gb->getVLC2<1>(_ctx._mbVlc._tab->_table, IVI_VLC_BITS);
+					mb->_qDelta = _ctx._gb->getVLC2<1, IVI_VLC_BITS>(_ctx._mbVlc._tab->_table);
 					mb->_qDelta = IVI_TOSIGNED(mb->_qDelta);
 				}
 
@@ -324,8 +324,11 @@ int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 					mb->_type = _ctx._gb->getBit();
 				}
 
-				blksPerMb = band->_mbSize != band->_blkSize ? 4 : 1;
-				mb->_cbp = _ctx._gb->getBits(blksPerMb);
+				if (band->_mbSize != band->_blkSize) {
+					mb->_cbp = _ctx._gb->getBits<4>();
+				} else {
+					mb->_cbp = _ctx._gb->getBit();
+				}
 
 				mb->_qDelta = 0;
 				if (band->_qdeltaPresent) {
@@ -333,7 +336,7 @@ int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 						if (refMb) mb->_qDelta = refMb->_qDelta;
 					} else if (mb->_cbp || (!band->_plane && !band->_bandNum &&
 						(_ctx._frameFlags & 8))) {
-						mb->_qDelta = _ctx._gb->getVLC2<1>(_ctx._mbVlc._tab->_table, IVI_VLC_BITS);
+						mb->_qDelta = _ctx._gb->getVLC2<1, IVI_VLC_BITS>(_ctx._mbVlc._tab->_table);
 						mb->_qDelta = IVI_TOSIGNED(mb->_qDelta);
 					}
 				}
@@ -352,9 +355,9 @@ int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 						}
 					} else {
 						// decode motion vector deltas
-						mvDelta = _ctx._gb->getVLC2<1>(_ctx._mbVlc._tab->_table, IVI_VLC_BITS);
+						mvDelta = _ctx._gb->getVLC2<1, IVI_VLC_BITS>(_ctx._mbVlc._tab->_table);
 						mvY += IVI_TOSIGNED(mvDelta);
-						mvDelta = _ctx._gb->getVLC2<1>(_ctx._mbVlc._tab->_table, IVI_VLC_BITS);
+						mvDelta = _ctx._gb->getVLC2<1, IVI_VLC_BITS>(_ctx._mbVlc._tab->_table);
 						mvX += IVI_TOSIGNED(mvDelta);
 						mb->_mvX = mvX;
 						mb->_mvY = mvY;
@@ -392,14 +395,14 @@ int Indeo5Decoder::decode_gop_header() {
 	IVIBandDesc *band, *band1, *band2;
 	IVIPicConfig picConf;
 
-	_ctx._gopFlags = _ctx._gb->getBits(8);
+	_ctx._gopFlags = _ctx._gb->getBits<8>();
 
-	_ctx._gopHdrSize = (_ctx._gopFlags & 1) ? _ctx._gb->getBits(16) : 0;
+	_ctx._gopHdrSize = (_ctx._gopFlags & 1) ? _ctx._gb->getBits<16>() : 0;
 
 	if (_ctx._gopFlags & IVI5_IS_PROTECTED)
-		_ctx._lockWord = _ctx._gb->getBits(32);
+		_ctx._lockWord = _ctx._gb->getBits<32>();
 
-	tileSize = (_ctx._gopFlags & 0x40) ? 64 << _ctx._gb->getBits(2) : 0;
+	tileSize = (_ctx._gopFlags & 0x40) ? 64 << _ctx._gb->getBits<2>() : 0;
 	if (tileSize > 256) {
 		warning("Invalid tile size: %d", tileSize);
 		return -1;
@@ -407,7 +410,7 @@ int Indeo5Decoder::decode_gop_header() {
 
 	// decode number of wavelet bands
 	// num_levels * 3 + 1
-	picConf._lumaBands = _ctx._gb->getBits(2) * 3 + 1;
+	picConf._lumaBands = _ctx._gb->getBits<2>() * 3 + 1;
 	picConf._chromaBands = _ctx._gb->getBit() * 3 + 1;
 	isScalable = picConf._lumaBands != 1 || picConf._chromaBands != 1;
 	if (isScalable && (picConf._lumaBands != 4 || picConf._chromaBands != 1)) {
@@ -416,10 +419,10 @@ int Indeo5Decoder::decode_gop_header() {
 		return -1;
 	}
 
-	picSizeIndx = _ctx._gb->getBits(4);
+	picSizeIndx = _ctx._gb->getBits<4>();
 	if (picSizeIndx == IVI5_PIC_SIZE_ESC) {
-		picConf._picHeight = _ctx._gb->getBits(13);
-		picConf._picWidth = _ctx._gb->getBits(13);
+		picConf._picHeight = _ctx._gb->getBits<13>();
+		picConf._picWidth = _ctx._gb->getBits<13>();
 	} else {
 		picConf._picHeight = _commonPicSizes[picSizeIndx * 2 + 1] << 2;
 		picConf._picWidth = _commonPicSizes[picSizeIndx * 2] << 2;
@@ -550,7 +553,7 @@ int Indeo5Decoder::decode_gop_header() {
 				band->_interScale = _scaleQuant4x4Inter;
 			}
 
-			if (_ctx._gb->getBits(2)) {
+			if (_ctx._gb->getBits<2>()) {
 				warning("End marker missing!");
 				return -1;
 			}
@@ -589,7 +592,7 @@ int Indeo5Decoder::decode_gop_header() {
 	}
 
 	if (_ctx._gopFlags & 8) {
-		if (_ctx._gb->getBits(3)) {
+		if (_ctx._gb->getBits<3>()) {
 			warning("Alignment bits are not zero!");
 			return -1;
 		}
@@ -605,7 +608,7 @@ int Indeo5Decoder::decode_gop_header() {
 	// skip GOP extension if any
 	if (_ctx._gb->getBit()) {
 		do {
-			i = _ctx._gb->getBits(16);
+			i = _ctx._gb->getBits<16>();
 		} while (i & 0x8000);
 	}
 
@@ -618,7 +621,7 @@ int Indeo5Decoder::skip_hdr_extension() {
 	int i, len;
 
 	do {
-		len = _ctx._gb->getBits(8);
+		len = _ctx._gb->getBits<8>();
 		if (_ctx._gb->eos())
 			return -1;
 		for (i = 0; i < len; i++)

@@ -63,7 +63,7 @@ private:
 	uint32 _pos;                            //!< Current bit stream position (in bits).
 
 	/** Read a data value. */
-	inline uint32 readData() {
+	FORCEINLINE uint32 readData() {
 		if (isLE) {
 			if (valueBits ==  8)
 				return _stream->readByte();
@@ -85,7 +85,7 @@ private:
 	}
 
 	/** Fill the container with at least @p min bits. */
-	inline void fillContainer(size_t min) {
+	FORCEINLINE void fillContainer(size_t min) {
 		while (_bitsLeft < min) {
 
 			uint64 data;
@@ -111,7 +111,7 @@ private:
 }
 
 	/** Get @p n bits from the bit container. */
-	inline static uint32 getNBits(uint64 value, size_t n) {
+	FORCEINLINE static uint32 getNBits(uint64 value, size_t n) {
 		if (n == 0)
 			return 0;
 
@@ -124,7 +124,7 @@ private:
 	}
 
 	/** Skip already read bits. */
-	inline void skipBits(size_t n) {
+	FORCEINLINE void skipBits(size_t n) {
 		assert(n <= _bitsLeft);
 
 		// Shift to the next bit
@@ -175,6 +175,42 @@ public:
 		const uint b = peekBit();
 
 		skipBits(1);
+
+		return b;
+	}
+
+	/**
+	 * Read a multi-bit value from the bit stream, without changing the stream's position.
+	 *
+	 * The bit order is the same as in @ref getBits().
+	 */
+	template<int n>
+	uint32 peekBits() {
+		if (n > 32)
+			error("BitStreamImpl::peekBits(): Too many bits requested to be peeked");
+
+		fillContainer(n);
+		return getNBits(_bitContainer, n);
+	}
+
+	/**
+	 * Read a multi-bit value from the bit stream.
+	 *
+	 * The value is read as if just taken as a whole from the bit stream.
+	 *
+	 * For example:
+	 * Reading a 4-bit value from an 8-bit bit stream with the contents 01010011:
+	 * If the bit stream is MSB2LSB, the 4-bit value would be 0101.
+	 * If the bit stream is LSB2MSB, the 4-bit value would be 0011.
+	 */
+	template<int n>
+	uint32 getBits() {
+		if (n > 32)
+			error("BitStreamImpl::getBits(): Too many bits requested to be read");
+
+		const uint32 b = peekBits<n>();
+
+		skipBits(n);
 
 		return b;
 	}

@@ -320,7 +320,8 @@ private:
 		void readBlockTypes  (VideoFrame &video, Bundle &bundle);
 		void readPatterns    (VideoFrame &video, Bundle &bundle);
 		void readColors      (VideoFrame &video, Bundle &bundle);
-		void readDCS         (VideoFrame &video, Bundle &bundle, int startBits, bool hasSign);
+		template<int startBits, bool hasSign>
+		void readDCS         (VideoFrame &video, Bundle &bundle);
 		void readDCTCoeffs   (VideoFrame &video, int32 *block, bool isIntra);
 		void readResidue     (VideoFrame &video, int16 *block, int masksCount);
 

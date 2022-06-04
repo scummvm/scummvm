@@ -140,17 +140,17 @@ int IVIHuffTab::decodeHuffDesc(IVI45DecContext *ctx, int descCoded, int whichTab
 		return 0;
 	}
 
-	_tabSel = ctx->_gb->getBits(3);
+	_tabSel = ctx->_gb->getBits<3>();
 	if (_tabSel == 7) {
 		// custom huffman table (explicitly encoded)
-		newHuff._numRows = ctx->_gb->getBits(4);
+		newHuff._numRows = ctx->_gb->getBits<4>();
 		if (!newHuff._numRows) {
 			warning("Empty custom Huffman table!");
 			return -1;
 		}
 
 		for (int i = 0; i < newHuff._numRows; i++)
-			newHuff._xBits[i] = ctx->_gb->getBits(4);
+			newHuff._xBits[i] = ctx->_gb->getBits<4>();
 
 		// Have we got the same custom table? Rebuild if not.
 		if (newHuff.huffDescCompare(&_custDesc) || !_custTab._table) {
@@ -601,14 +601,14 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 		int left;
 
 		// skip version string
-		while (_ctx._gb->getBits(8)) {
+		while (_ctx._gb->getBits<8>()) {
 			if (_ctx._gb->getBitsLeft() < 8)
 				return -1;
 		}
 		left = _ctx._gb->pos() & 0x18;
 		_ctx._gb->skip(64 - left);
 		if (_ctx._gb->getBitsLeft() > 18 &&
-			_ctx._gb->peekBits(21) == 0xBFFF8) { // syncheader + inter _type
+			_ctx._gb->peekBits<21>() == 0xBFFF8) { // syncheader + inter _type
 			error("Indeo decoder: Mode not currently implemented in ScummVM");
 		}
 	}
@@ -1048,9 +1048,9 @@ int IndeoDecoderBase::decodeTileDataSize(GetBits *gb) {
 	int len = 0;
 
 	if (gb->getBit()) {
-		len = gb->getBits(8);
+		len = gb->getBits<8>();
 		if (len == 255)
-			len = gb->getBits(24);
+			len = gb->getBits<24>();
 	}
 
 	// align the bitstream reader on the byte boundary
@@ -1266,15 +1266,15 @@ int IndeoDecoderBase::decodeCodedBlocks(GetBits *gb, IVIBandDesc *band,
 	// zero column flags
 	memset(colFlags, 0, sizeof(colFlags));
 	while (scanPos <= numCoeffs) {
-		sym = gb->getVLC2<1>(band->_blkVlc._tab->_table, IVI_VLC_BITS);
+		sym = gb->getVLC2<1, IVI_VLC_BITS>(band->_blkVlc._tab->_table);
 		if (sym == rvmap->_eobSym)
 			break; // End of block
 
 		// Escape - run/val explicitly coded using 3 vlc codes
 		if (sym == rvmap->_escSym) {
-			run = gb->getVLC2<1>(band->_blkVlc._tab->_table, IVI_VLC_BITS) + 1;
-			lo = gb->getVLC2<1>(band->_blkVlc._tab->_table, IVI_VLC_BITS);
-			hi = gb->getVLC2<1>(band->_blkVlc._tab->_table, IVI_VLC_BITS);
+			run = gb->getVLC2<1, IVI_VLC_BITS>(band->_blkVlc._tab->_table) + 1;
+			lo = gb->getVLC2<1, IVI_VLC_BITS>(band->_blkVlc._tab->_table);
+			hi = gb->getVLC2<1, IVI_VLC_BITS>(band->_blkVlc._tab->_table);
 			// merge them and convert into signed val
 			val = IVI_TOSIGNED((hi << 6) | lo);
 		} else {

@@ -313,13 +313,13 @@ struct SIT14Data {
 void StuffItArchive::readTree14(Common::BitStream8LSB *bits, SIT14Data *dat, uint16 codesize, uint16 *result) const {
 	uint32 i, l, n;
 	uint32 k = bits->getBit();
-	uint32 j = bits->getBits(2) + 2;
-	uint32 o = bits->getBits(3) + 1;
+	uint32 j = bits->getBits<2>() + 2;
+	uint32 o = bits->getBits<3>() + 1;
 	uint32 size = 1 << j;
 	uint32 m = size - 1;
 	k = k ? (m - 1) : 0xFFFFFFFF;
 
-	if (bits->getBits(2) & 1) { // skip 1 bit!
+	if (bits->getBits<2>() & 1) { // skip 1 bit!
 		// requirements for this call: dat->buff[32], dat->code[32], dat->freq[32*2]
 		readTree14(bits, dat, size, dat->freq);
 
@@ -471,14 +471,14 @@ Common::SeekableReadStream *StuffItArchive::decompress14(Common::SeekableReadStr
 			for (j = 0; j < m; ++j)
 				dat->var6[i++] = l;
 
-	m = bits->getBits(16); // number of blocks
+	m = bits->getBits<16>(); // number of blocks
 	j = 0; // window position
 
 	while (m-- && !bits->eos()) {
-		bits->getBits(16); // skip crunched block size
-		bits->getBits(16);
-		n = bits->getBits(16); // number of uncrunched bytes
-		n |= bits->getBits(16) << 16;
+		bits->getBits<16>(); // skip crunched block size
+		bits->getBits<16>();
+		n = bits->getBits<16>(); // number of uncrunched bytes
+		n |= bits->getBits<16>() << 16;
 		readTree14(bits, dat, 308, dat->var7);
 		readTree14(bits, dat, 75, dat->var3);
 

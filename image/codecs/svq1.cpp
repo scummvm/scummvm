@@ -95,7 +95,7 @@ const Graphics::Surface *SVQ1Decoder::decodeFrame(Common::SeekableReadStream &st
 
 	Common::BitStream32BEMSB frameData(stream);
 
-	uint32 frameCode = frameData.getBits(22);
+	uint32 frameCode = frameData.getBits<22>();
 	debug(1, " frameCode: %d", frameCode);
 
 	if ((frameCode & ~0x70) || !(frameCode & 0x60)) { // Invalid
@@ -103,23 +103,23 @@ const Graphics::Surface *SVQ1Decoder::decodeFrame(Common::SeekableReadStream &st
 		return _surface;
 	}
 
-	byte temporalReference = frameData.getBits(8);
+	byte temporalReference = frameData.getBits<8>();
 	debug(1, " temporalReference: %d", temporalReference);
 	static const char *const types[4] = { "I (Key)", "P (Delta from Previous)", "B (Delta from Next)", "Invalid" };
-	byte frameType = frameData.getBits(2);
+	byte frameType = frameData.getBits<2>();
 	debug(1, " frameType: %d = %s Frame", frameType, types[frameType]);
 
 	if (frameType == 0) { // I Frame
 		// TODO: Validate checksum if present
 		if (frameCode == 0x50 || frameCode == 0x60) {
-			uint32 checksum = frameData.getBits(16);
+			uint32 checksum = frameData.getBits<16>();
 			debug(1, " checksum:0x%02x", checksum);
 			// We're currently just ignoring the checksum
 		}
 
 		if ((frameCode ^ 0x10) >= 0x50) {
 			// Skip embedded string
-			byte stringLen = frameData.getBits(8);
+			byte stringLen = frameData.getBits<8>();
 			for (uint16 i = 0; i < stringLen-1; i++)
 				frameData.skip(8);
 		}
@@ -136,12 +136,12 @@ const Graphics::Surface *SVQ1Decoder::decodeFrame(Common::SeekableReadStream &st
 			{ 320, 240 }  // 6
 		};
 
-		byte frameSizeCode = frameData.getBits(3);
+		byte frameSizeCode = frameData.getBits<3>();
 		debug(1, " frameSizeCode: %d", frameSizeCode);
 
 		if (frameSizeCode == 7) {
-			_frameWidth = frameData.getBits(12);
-			_frameHeight = frameData.getBits(12);
+			_frameWidth = frameData.getBits<12>();
+			_frameHeight = frameData.getBits<12>();
 		} else {
 			_frameWidth = standardFrameSizes[frameSizeCode].w;
 			_frameHeight = standardFrameSizes[frameSizeCode].h;
@@ -164,7 +164,7 @@ const Graphics::Surface *SVQ1Decoder::decodeFrame(Common::SeekableReadStream &st
 		debug(1, " usePacketChecksum: %d", usePacketChecksum);
 		bool componentChecksumsAfterImageData = frameData.getBit() != 0;
 		debug(1, " componentChecksumsAfterImageData: %d", componentChecksumsAfterImageData);
-		byte unk4 = frameData.getBits(2);
+		byte unk4 = frameData.getBits<2>();
 		debug(1, " unk4: %d", unk4);
 		if (unk4 != 0)
 			warning("Invalid Frame Header in SVQ1 Frame Decode");

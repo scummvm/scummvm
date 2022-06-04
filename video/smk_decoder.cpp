@@ -93,7 +93,7 @@ uint16 SmallHuffmanTree::decodeTree(uint32 prefix, int length) {
 		return 0;
 
 	if (!_bs.getBit()) { // Leaf
-		_tree[_treeSize] = _bs.getBits(8);
+		_tree[_treeSize] = _bs.getBits<8>();
 
 		if (length <= 8) {
 			for (int i = 0; i < 256; i += (1 << length)) {
@@ -126,7 +126,10 @@ uint16 SmallHuffmanTree::getCode(Common::BitStreamMemory8LSB &bs) {
 	if (_empty)
 		return 0;
 
-	byte peek = bs.peekBits(MIN<uint32>(bs.size() - bs.pos(), 8));
+	// Peeking data out of bounds is well-defined and returns 0 bits.
+	// This is for convenience when using speed-up techniques reading
+	// more bits than actually available.
+	byte peek = bs.peekBits<8>();
 	uint16 *p = &_tree[_prefixtree[peek]];
 	bs.skip(_prefixlength[peek]);
 
@@ -188,9 +191,9 @@ BigHuffmanTree::BigHuffmanTree(Common::BitStreamMemory8LSB &bs, int allocSize)
 	_loBytes = new SmallHuffmanTree(_bs);
 	_hiBytes = new SmallHuffmanTree(_bs);
 
-	_markers[0] = _bs.getBits(16);
-	_markers[1] = _bs.getBits(16);
-	_markers[2] = _bs.getBits(16);
+	_markers[0] = _bs.getBits<16>();
+	_markers[1] = _bs.getBits<16>();
+	_markers[2] = _bs.getBits<16>();
 
 	_last[0] = _last[1] = _last[2] = 0xffffffff;
 
@@ -263,7 +266,10 @@ uint32 BigHuffmanTree::decodeTree(uint32 prefix, int length) {
 }
 
 uint32 BigHuffmanTree::getCode(Common::BitStreamMemory8LSB &bs) {
-	byte peek = bs.peekBits(MIN<uint32>(bs.size() - bs.pos(), 8));
+	// Peeking data out of bounds is well-defined and returns 0 bits.
+	// This is for convenience when using speed-up techniques reading
+	// more bits than actually available.
+	byte peek = bs.peekBits<8>();
 	uint32 *p = &_tree[_prefixtree[peek]];
 	bs.skip(_prefixlength[peek]);
 
@@ -874,16 +880,16 @@ void SmackerDecoder::SmackerAudioTrack::queueCompressedBuffer(byte *buffer, uint
 
 	if (isStereo) {
 		if (is16Bits) {
-			bases[1] = SWAP_BYTES_16(audioBS.getBits(16));
+			bases[1] = SWAP_BYTES_16(audioBS.getBits<16>());
 		} else {
-			bases[1] = audioBS.getBits(8);
+			bases[1] = audioBS.getBits<8>();
 		}
 	}
 
 	if (is16Bits) {
-		bases[0] = SWAP_BYTES_16(audioBS.getBits(16));
+		bases[0] = SWAP_BYTES_16(audioBS.getBits<16>());
 	} else {
-		bases[0] = audioBS.getBits(8);
+		bases[0] = audioBS.getBits<8>();
 	}
 
 	// The bases are the first samples, too
