@@ -77,8 +77,8 @@ public:
 	static void showVirtualKeyboard(bool enable);
 	static void showKeyboardControl(bool enable);
 	static Graphics::Surface *getBitmapResource(BitmapResources resource);
-	static void setTouch3DMode(bool touch3DMode);
-	static bool getTouch3DMode();
+	static void setTouchMode(int touchMode);
+	static int getTouchMode();
 	static void showSAFRevokePermsControl(bool enable);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 
@@ -126,8 +126,8 @@ private:
 	static jmethodID _MID_showVirtualKeyboard;
 	static jmethodID _MID_showKeyboardControl;
 	static jmethodID _MID_getBitmapResource;
-	static jmethodID _MID_setTouch3DMode;
-	static jmethodID _MID_getTouch3DMode;
+	static jmethodID _MID_setTouchMode;
+	static jmethodID _MID_getTouchMode;
 	static jmethodID _MID_showSAFRevokePermsControl;
 	static jmethodID _MID_getSysArchives;
 	static jmethodID _MID_getAllStorageLocations;
@@ -164,6 +164,7 @@ private:
 	static void pushEvent(JNIEnv *env, jobject self, int type, int arg1,
 							int arg2, int arg3, int arg4, int arg5, int arg6);
 	static void updateTouch(JNIEnv *env, jobject self, int action, int ptr, int x, int y);
+	static void setupTouchMode(JNIEnv *env, jobject self, jint oldValue, jint newValue);
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
 
 	static jstring getNativeVersionInfo(JNIEnv *env, jobject self);

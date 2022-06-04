@@ -88,8 +88,8 @@ jmethodID JNI::_MID_setWindowCaption = 0;
 jmethodID JNI::_MID_showVirtualKeyboard = 0;
 jmethodID JNI::_MID_showKeyboardControl = 0;
 jmethodID JNI::_MID_getBitmapResource = 0;
-jmethodID JNI::_MID_setTouch3DMode = 0;
-jmethodID JNI::_MID_getTouch3DMode = 0;
+jmethodID JNI::_MID_setTouchMode = 0;
+jmethodID JNI::_MID_getTouchMode = 0;
 jmethodID JNI::_MID_showSAFRevokePermsControl = 0;
 jmethodID JNI::_MID_getSysArchives = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
@@ -126,6 +126,8 @@ const JNINativeMethod JNI::_natives[] = {
 		(void *)JNI::pushEvent },
 	{ "updateTouch", "(IIII)V",
 		(void *)JNI::updateTouch },
+	{ "setupTouchMode", "(II)V",
+		(void *)JNI::setupTouchMode },
 	{ "setPause", "(Z)V",
 		(void *)JNI::setPause },
 	{ "getNativeVersionInfo", "()Ljava/lang/String;",
@@ -455,10 +457,10 @@ Graphics::Surface *JNI::getBitmapResource(BitmapResources resource) {
 	return ret;
 }
 
-void JNI::setTouch3DMode(bool touch3DMode) {
+void JNI::setTouchMode(int touchMode) {
 	JNIEnv *env = JNI::getEnv();
 
-	env->CallVoidMethod(_jobj, _MID_setTouch3DMode, touch3DMode);
+	env->CallVoidMethod(_jobj, _MID_setTouchMode, touchMode);
 
 	if (env->ExceptionCheck()) {
 		LOGE("Error trying to set touch controls mode");
@@ -468,10 +470,10 @@ void JNI::setTouch3DMode(bool touch3DMode) {
 	}
 }
 
-bool JNI::getTouch3DMode() {
+int JNI::getTouchMode() {
 	JNIEnv *env = JNI::getEnv();
 
-	bool enabled = env->CallBooleanMethod(_jobj, _MID_getTouch3DMode);
+	int mode = env->CallIntMethod(_jobj, _MID_getTouchMode);
 
 	if (env->ExceptionCheck()) {
 		LOGE("Error trying to get touch controls status");
@@ -480,7 +482,7 @@ bool JNI::getTouch3DMode() {
 		env->ExceptionClear();
 	}
 
-	return enabled;
+	return mode;
 }
 
 void JNI::showSAFRevokePermsControl(bool enable) {
@@ -667,8 +669,8 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, showVirtualKeyboard, "(Z)V");
 	FIND_METHOD(, showKeyboardControl, "(Z)V");
 	FIND_METHOD(, getBitmapResource, "(I)Landroid/graphics/Bitmap;");
-	FIND_METHOD(, setTouch3DMode, "(Z)V");
-	FIND_METHOD(, getTouch3DMode, "()Z");
+	FIND_METHOD(, setTouchMode, "(I)V");
+	FIND_METHOD(, getTouchMode, "()I");
 	FIND_METHOD(, getSysArchives, "()[Ljava/lang/String;");
 	FIND_METHOD(, getAllStorageLocations, "()[Ljava/lang/String;");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
@@ -820,6 +822,13 @@ void JNI::updateTouch(JNIEnv *env, jobject self, int action, int ptr, int x, int
 	assert(_system);
 
 	_system->getTouchControls().update((TouchControls::Action) action, ptr, x, y);
+}
+
+void JNI::setupTouchMode(JNIEnv *env, jobject self, jint oldValue, jint newValue) {
+	if (!_system)
+		return;
+
+	_system->setupTouchMode(oldValue, newValue);
 }
 
 void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
