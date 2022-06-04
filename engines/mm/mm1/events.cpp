@@ -52,6 +52,9 @@ void Events::runGame() {
 	_screen = new Graphics::Screen();
 
 	// Run the game
+	// ***DEBUG*** start directly in-game
+	for (uint i = 0; i < 6; ++i)
+		g_globals->_party.push_back(g_globals->_roster[i]);
 	g_globals->_maps.loadTown(Maps::SORPIGAL);
 	//addView("Title");
 
