@@ -670,10 +670,6 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 
 void WetEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_c) {
-		if (_cheatsEnabled) {
-			_skipLevel = true;
-			return;
-		}
 		_background->decoder->pauseVideo(true);
 		showCredits();
 		loadPalette(_currentPalette);
@@ -681,6 +677,10 @@ void WetEngine::pressedKey(const int keycode) {
 		_background->decoder->pauseVideo(false);
 		updateScreen(*_background);
 		drawScreen();
+	} else if (keycode == Common::KEYCODE_s) { // Added for testing
+		if (_cheatsEnabled) {
+			_skipLevel = true;
+		}
 	} else if (keycode == Common::KEYCODE_k) { // Added for testing
 		_health = 0;
 	} else if (keycode == Common::KEYCODE_ESCAPE) {
