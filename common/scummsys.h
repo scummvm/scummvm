@@ -309,7 +309,7 @@
 	// Very BAD hack following, used to avoid triggering an assert in uClibc dingux library
 	// "toupper" when pressing keyboard function keys.
 	#undef toupper
-	#define toupper(c) (((c & 0xFF) >= 97) && ((c & 0xFF) <= 122) ? ((c & 0xFF) - 32) : (c & 0xFF))
+	#define toupper(c) __extension__ ({ auto _x = ((c) & 0xFF); (_x >= 97 && _x <= 122) ? (_x - 32) : _x; })
 
 #elif defined(__PSP__)
 
