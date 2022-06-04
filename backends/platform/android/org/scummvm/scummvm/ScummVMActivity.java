@@ -118,7 +118,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	FrameLayout _videoLayout = null;
 
 	private EditableSurfaceView _main_surface = null;
-	private ImageView _toggleGamepadBtnIcon = null;
+	private ImageView _toggleTouchModeBtnIcon = null;
 	private ImageView _toggleKeyboardBtnIcon = null;
 	private ImageView _openMenuBtnIcon = null;
 	private ImageView _revokeSafPermissionsBtnIcon = null;
@@ -570,14 +570,33 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// ---------------------------------------------------------------------------------------------------------------------------
 	//
 
-	public final View.OnClickListener gamepadBtnOnClickListener = new View.OnClickListener() {
+	protected void setupTouchModeBtn(final int touchMode) {
+		int resId;
+
+		switch(touchMode) {
+		case ScummVMEventsBase.TOUCH_MODE_TOUCHPAD:
+			resId = R.drawable.ic_action_touchpad;
+			break;
+		case ScummVMEventsBase.TOUCH_MODE_MOUSE:
+			resId = R.drawable.ic_action_mouse;
+			break;
+		case ScummVMEventsBase.TOUCH_MODE_GAMEPAD:
+			resId = R.drawable.ic_action_gamepad;
+			break;
+		default:
+			throw new IllegalArgumentException("Invalid touchMode");
+		}
+
+		_toggleTouchModeBtnIcon.setImageResource(resId);
+	}
+
+	public final View.OnClickListener touchModeBtnOnClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			runOnUiThread(new Runnable() {
 				public void run() {
-					boolean touch3DMode = !_events.getTouch3DMode();
-					_events.setTouch3DMode(touch3DMode);
-					_toggleGamepadBtnIcon.setImageResource(touch3DMode ? R.drawable.ic_action_mouse : R.drawable.ic_action_gamepad);
+					int newTouchMode = _events.nextTouchMode();
+					setupTouchModeBtn(newTouchMode);
 				}
 			});
 		}
@@ -739,21 +758,21 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
-		protected void setTouch3DMode(final boolean touch3DMode) {
-			if (_events.getTouch3DMode() == touch3DMode) {
+		protected void setTouchMode(final int touchMode) {
+			if (_events.getTouchMode() == touchMode) {
 				return;
 			}
 			runOnUiThread(new Runnable() {
 				public void run() {
-					_events.setTouch3DMode(touch3DMode);
-					_toggleGamepadBtnIcon.setImageResource(touch3DMode ? R.drawable.ic_action_mouse : R.drawable.ic_action_gamepad);
+					_events.setTouchMode(touchMode);
+					setupTouchModeBtn(touchMode);
 				}
 			});
 		}
 
 		@Override
-		protected boolean getTouch3DMode() {
-			return _events.getTouch3DMode();
+		protected int getTouchMode() {
+			return _events.getTouchMode();
 		}
 
 		@Override
@@ -1009,10 +1028,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		_videoLayout.addView(buttonLayout, buttonLayoutParams);
 		_videoLayout.bringChildToFront(buttonLayout);
 
-		_toggleGamepadBtnIcon = new ImageView(this);
-		_toggleGamepadBtnIcon.setImageResource(R.drawable.ic_action_gamepad);
-		buttonLayout.addView(_toggleGamepadBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-		buttonLayout.bringChildToFront(_toggleGamepadBtnIcon);
+		_toggleTouchModeBtnIcon = new ImageView(this);
+		buttonLayout.addView(_toggleTouchModeBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+		buttonLayout.bringChildToFront(_toggleTouchModeBtnIcon);
 
 		_toggleKeyboardBtnIcon = new ImageView(this);
 		_toggleKeyboardBtnIcon.setImageResource(R.drawable.ic_action_keyboard);
@@ -1121,9 +1139,11 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				_events = new ScummVMEventsBase(this, _scummvm, _mouseHelper);
 			}
 
+			setupTouchModeBtn(_events.getTouchMode());
+
 			// On screen button listener
 			//findViewById(R.id.show_keyboard).setOnClickListener(keyboardBtnOnClickListener);
-			_toggleGamepadBtnIcon.setOnClickListener(gamepadBtnOnClickListener);
+			_toggleTouchModeBtnIcon.setOnClickListener(touchModeBtnOnClickListener);
 			_toggleKeyboardBtnIcon.setOnClickListener(keyboardBtnOnClickListener);
 			_openMenuBtnIcon.setOnClickListener(menuBtnOnClickListener);
 			_revokeSafPermissionsBtnIcon.setOnClickListener(revokeSafPermissionsBtnOnClickListener);
@@ -1391,8 +1411,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 			_openMenuBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
 		}
 
-		if (_toggleGamepadBtnIcon != null ) {
-			_toggleGamepadBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
+		if (_toggleTouchModeBtnIcon != null ) {
+			_toggleTouchModeBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
 		}
 	}
 

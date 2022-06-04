@@ -55,6 +55,11 @@ public class ScummVMEventsBase implements
 	public static final int JACTION_UP = 2;
 	public static final int JACTION_CANCEL = 3;
 
+	public static final int TOUCH_MODE_TOUCHPAD = 0;
+	public static final int TOUCH_MODE_MOUSE = 1;
+	public static final int TOUCH_MODE_GAMEPAD = 2;
+	public static final int TOUCH_MODE_MAX = 3;
+
 	final protected Context _context;
 	final protected ScummVM _scummvm;
 	final protected GestureDetector _gd;
@@ -62,7 +67,7 @@ public class ScummVMEventsBase implements
 	final protected MouseHelper _mouseHelper;
 	final protected MultitouchHelper _multitouchHelper;
 
-	protected boolean _touch3DMode;
+	protected int _touchMode;
 
 	// Custom handler code (to avoid mem leaks, see warning "This Handler Class Should Be Static Or Leaks Might Occur”) based on:
 	// https://stackoverflow.com/a/27826094
@@ -142,15 +147,36 @@ public class ScummVMEventsBase implements
 		}
 	}
 
-	final public boolean getTouch3DMode() {
-		return _touch3DMode;
+	final public int getTouchMode() {
+		return _touchMode;
 	}
 
-	final public void setTouch3DMode(boolean touch3DMode) {
-		if (_touch3DMode != touch3DMode && !touch3DMode) {
+	final public void setTouchMode(int touchMode) {
+		assert (touchMode >= 0) && (touchMode < TOUCH_MODE_MAX);
+
+		if (_touchMode == touchMode) {
+			return;
+		}
+
+		if (_touchMode == TOUCH_MODE_GAMEPAD) {
+			// We were in gamepad mode and we leave it
 			_scummvm.updateTouch(JACTION_CANCEL, 0, 0, 0);
 		}
-		_touch3DMode = touch3DMode;
+		int oldTouchMode = _touchMode;
+		_touchMode = touchMode;
+		_scummvm.setupTouchMode(oldTouchMode, _touchMode);
+	}
+
+	final public int nextTouchMode() {
+		if (_touchMode == TOUCH_MODE_GAMEPAD) {
+			// We leave gamepad mode
+			_scummvm.updateTouch(JACTION_CANCEL, 0, 0, 0);
+		}
+		int oldTouchMode = _touchMode;
+		_touchMode = (_touchMode + 1) % TOUCH_MODE_MAX;
+		_scummvm.setupTouchMode(oldTouchMode, _touchMode);
+
+		return _touchMode;
 	}
 
 	public void clearEventHandler() {
@@ -477,7 +503,7 @@ public class ScummVMEventsBase implements
 			}
 		}
 
-		if (_touch3DMode) {
+		if (_touchMode == TOUCH_MODE_GAMEPAD) {
 			switch (event.getActionMasked()) {
 				case MotionEvent.ACTION_DOWN:
 				case MotionEvent.ACTION_POINTER_DOWN: {
@@ -528,7 +554,7 @@ public class ScummVMEventsBase implements
 	@Override
 	final public boolean onDown(MotionEvent e) {
 //		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onDOWN MotionEvent");
-		if (!_touch3DMode) {
+		if (_touchMode != TOUCH_MODE_GAMEPAD) {
 			_scummvm.pushEvent(JE_DOWN, (int)e.getX(), (int)e.getY(), 0, 0, 0, 0);
 		}
 		return true;
@@ -553,7 +579,7 @@ public class ScummVMEventsBase implements
 	final public boolean onScroll(MotionEvent e1, MotionEvent e2,
 									float distanceX, float distanceY) {
 //		Log.d(ScummVM.LOG_TAG, "onScroll");
-		if (!_touch3DMode) {
+		if (_touchMode != TOUCH_MODE_GAMEPAD) {
 			// typical use:
 			// - move mouse cursor around (most traditional point and click games)
 			// - mouse look (eg. Myst 3)
@@ -570,7 +596,7 @@ public class ScummVMEventsBase implements
 	@Override
 	final public boolean onSingleTapUp(MotionEvent e) {
 //		Log.d(ScummVM.LOG_TAG, "onSingleTapUp");
-		if (!_touch3DMode) {
+		if (_touchMode != TOUCH_MODE_GAMEPAD) {
 			_scummvm.pushEvent(JE_TAP, (int)e.getX(), (int)e.getY(),
 							(int)(e.getEventTime() - e.getDownTime()), 0, 0, 0);
 		}
@@ -598,7 +624,7 @@ public class ScummVMEventsBase implements
 //		} else {
 //			Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent UNKNOWN!!!!");
 //		}
-		if (!_touch3DMode) {
+		if (_touchMode != TOUCH_MODE_GAMEPAD) {
 			_scummvm.pushEvent(JE_DOUBLE_TAP, (int)e.getX(), (int)e.getY(), e.getAction(), 0, 0, 0);
 		}
 		return true;
