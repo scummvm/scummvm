@@ -377,18 +377,18 @@ void LingoCompiler::registerFactory(Common::String &name) {
 void LingoCompiler::updateLoopJumps(uint nextTargetPos, uint exitTargetPos) {
 	if (!_currentLoop)
 		return;
-	
+
 	for (uint i = 0; i < _currentLoop->nextRepeats.size(); i++) {
 		uint nextRepeatPos = _currentLoop->nextRepeats[i];
 		inst jmpOffset = nullptr;
 		WRITE_UINT32(&jmpOffset, nextTargetPos - nextRepeatPos);
-		(*_currentAssembly)[nextRepeatPos + 1] = jmpOffset; 
+		(*_currentAssembly)[nextRepeatPos + 1] = jmpOffset;
 	}
 	for (uint i = 0; i < _currentLoop->exitRepeats.size(); i++) {
 		uint exitRepeatPos = _currentLoop->exitRepeats[i];
 		inst jmpOffset = nullptr;
 		WRITE_UINT32(&jmpOffset, exitTargetPos - exitRepeatPos);
-		(*_currentAssembly)[exitRepeatPos + 1] = jmpOffset; 
+		(*_currentAssembly)[exitRepeatPos + 1] = jmpOffset;
 	}
 }
 
@@ -559,7 +559,7 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 
 bool LingoCompiler::visitPutIntoNode(PutIntoNode *node) {
 	if (node->var->type == kVarNode) {
-		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
+		registerMethodVar(*static_cast<VarNode *>(node->var)->name);
 	}
 	COMPILE(node->val);
 	COMPILE_REF(node->var);
@@ -571,7 +571,7 @@ bool LingoCompiler::visitPutIntoNode(PutIntoNode *node) {
 
 bool LingoCompiler::visitPutAfterNode(PutAfterNode *node) {
 	if (node->var->type == kVarNode) {
-		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
+		registerMethodVar(*static_cast<VarNode *>(node->var)->name);
 	}
 	COMPILE(node->val);
 	COMPILE_REF(node->var);
@@ -583,7 +583,7 @@ bool LingoCompiler::visitPutAfterNode(PutAfterNode *node) {
 
 bool LingoCompiler::visitPutBeforeNode(PutBeforeNode *node) {
 	if (node->var->type == kVarNode) {
-		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
+		registerMethodVar(*static_cast<VarNode *>(node->var)->name);
 	}
 	COMPILE(node->val);
 	COMPILE_REF(node->var);
@@ -756,7 +756,7 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 	}
 
 	if (node->var->type == kVarNode) {
-		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
+		registerMethodVar(*static_cast<VarNode *>(node->var)->name);
 	}
 	COMPILE(node->val);
 	COMPILE_REF(node->var);
@@ -937,7 +937,7 @@ bool LingoCompiler::visitRepeatWithInNode(RepeatWithInNode *node) {
 	codeInt(0);
 	code1(LC::c_stackpeek);	// get array size
 	codeInt(2);
-	code1(LC::c_le); 
+	code1(LC::c_le);
 	uint jzPos = _currentAssembly->size();
 	code2(LC::c_jumpifz, nullptr);
 
