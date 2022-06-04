@@ -334,22 +334,20 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 
 GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	: ContainerWidget(boss, name), CommandSender(boss) {
-	_thumbnailHeight = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height") * g_gui.getScaleFactor() + .5f);
-	_thumbnailWidth = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width") * g_gui.getScaleFactor() + .5f);
-	_flagIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height") * g_gui.getScaleFactor() + .5f);
-	_flagIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width") * g_gui.getScaleFactor() + .5f);
-	_platformIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height") * g_gui.getScaleFactor() + .5f);
-	_platformIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width") * g_gui.getScaleFactor() + .5f);
-	_minGridXSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.XSpacing") * g_gui.getScaleFactor() + .5f);
-	_minGridYSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.YSpacing") * g_gui.getScaleFactor() + .5f);
-	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
-	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 
-	_scrollWindowPaddingX = _minGridXSpacing;
-	_scrollWindowPaddingY = _minGridYSpacing;
+	_thumbnailHeight = 0;
+	_thumbnailWidth = 0;
+	_flagIconHeight = 0;
+	_flagIconWidth = 0;
+	_platformIconHeight = 0;
+	_platformIconWidth = 0;
+	_minGridXSpacing = 0;
+	_minGridYSpacing = 0;
+	_isTitlesVisible = 0;
+	_scrollBarWidth = 0;
 
-	loadPlatformIcons();
-	loadFlagIcons();
+	_scrollWindowPaddingX = 0;
+	_scrollWindowPaddingY = 0;
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, _y, _scrollBarWidth, _y + _h);
 	_scrollBar->setTarget(this);
@@ -368,8 +366,8 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_gridXSpacing = 0;
 	_gridHeaderHeight = kLineHeight;
 	_gridHeaderWidth = 0;
-	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight * _isTitlesVisible);
-	_gridItemWidth = _thumbnailWidth;
+	_gridItemHeight = 0;
+	_gridItemWidth = 0;
 	_trayHeight = kLineHeight * 3;
 
 	_selectedEntry = nullptr;
@@ -623,7 +621,7 @@ void GridWidget::reloadThumbnails() {
 			}
 
 			if (surf) {
-				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, 512, true));
+				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, _thumbnailWidth, _thumbnailHeight, true));
 				_loadedSurfaces[entry->thumbPath] = scSurf;
 				if (surf != scSurf) {
 					surf->free();
@@ -860,35 +858,45 @@ void GridWidget::reflowLayout() {
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
 
+	_itemsPerRow = ConfMan.getInt("grid_items_per_row");
+
+	_minGridXSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.XSpacing") * g_gui.getScaleFactor() + .5f);
+	_minGridYSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.YSpacing") * g_gui.getScaleFactor() + .5f);
+	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
+	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
+
+	_scrollWindowPaddingX = _minGridXSpacing;
+	_scrollWindowPaddingY = _minGridYSpacing;
+	_gridYSpacing = _minGridYSpacing;
+
+	// Recompute thumbnail size
 	int oldThumbnailHeight = _thumbnailHeight;
 	int oldThumbnailWidth = _thumbnailWidth;
-	_thumbnailHeight = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height") * g_gui.getScaleFactor() + .5f);
-	_thumbnailWidth = int(g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width") * g_gui.getScaleFactor() + .5f);
-	_flagIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Height") * g_gui.getScaleFactor() + .5f);
-	_flagIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.FlagIcon.Width") * g_gui.getScaleFactor() + .5f);
-	_platformIconHeight = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Height") * g_gui.getScaleFactor() + .5f);
-	_platformIconWidth = int(g_gui.xmlEval()->getVar("Globals.Grid.PlatformIcon.Width") * g_gui.getScaleFactor() + .5f);
+
+	int availableWidth = _scrollWindowWidth - (2 * _scrollWindowPaddingX) - _scrollBarWidth;
+	_thumbnailWidth = availableWidth / _itemsPerRow - _minGridXSpacing;
+	const int minimumthumbnailWidth = int(36 * g_gui.getScaleFactor() + .5f);
+	if (_thumbnailWidth < minimumthumbnailWidth) {
+		_thumbnailWidth = minimumthumbnailWidth;
+		_itemsPerRow = MAX((availableWidth / (_thumbnailWidth + _minGridXSpacing)), 1);
+	}
+
+	_thumbnailHeight = _thumbnailWidth;
+	_flagIconWidth = _thumbnailWidth / 4;
+	_flagIconHeight = _flagIconWidth / 2;
+	_platformIconHeight = _platformIconWidth = _thumbnailWidth / 6;
+
 	if ((oldThumbnailHeight != _thumbnailHeight) || (oldThumbnailWidth != _thumbnailWidth)) {
 		unloadSurfaces(_loadedSurfaces);
 		reloadThumbnails();
 		loadFlagIcons();
 		loadPlatformIcons();
 	}
-	_minGridXSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.XSpacing") * g_gui.getScaleFactor() + .5f);
-	_minGridYSpacing = int(g_gui.xmlEval()->getVar("Globals.Grid.YSpacing") * g_gui.getScaleFactor() + .5f);
-	_scrollWindowPaddingX = _minGridXSpacing;
-	_scrollWindowPaddingY = _minGridYSpacing;
-	_gridYSpacing = _minGridYSpacing;
-
-	_isTitlesVisible = g_gui.xmlEval()->getVar("Globals.Grid.ShowTitles");
-
-	_scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 
 	_trayHeight = kLineHeight * 3;
 	_gridItemHeight = _thumbnailHeight + (2 * kLineHeight * _isTitlesVisible);
 	_gridItemWidth = _thumbnailWidth;
 
-	_itemsPerRow = MAX(((_scrollWindowWidth - (2 * _scrollWindowPaddingX) - _scrollBarWidth) / (_gridItemWidth + _minGridXSpacing)), 1);
 	_gridXSpacing = MAX(((_scrollWindowWidth - _scrollBarWidth - (2 * _scrollWindowPaddingX)) - (_itemsPerRow * _gridItemWidth)) / (_itemsPerRow + 1), _minGridXSpacing);
 
 	calcEntrySizes();

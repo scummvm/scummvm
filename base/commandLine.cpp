@@ -350,6 +350,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("gui_browser_native", true);
 	ConfMan.registerDefault("gui_return_to_launcher_at_exit", false);
 	ConfMan.registerDefault("gui_launcher_chooser", "list");
+	ConfMan.registerDefault("grid_items_per_row", 4);
 	// Specify threshold for scanning directories in the launcher
 	// If number of game entries in scummvm.ini exceeds the specified
 	// number, then skip scanning. -1 = scan always
