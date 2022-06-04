@@ -19,14 +19,14 @@
  *
  */
 
+#include "common/memstream.h"
+
 #include "mtropolis/miniscript.h"
 #include "mtropolis/modifiers.h"
 #include "mtropolis/modifier_factory.h"
 #include "mtropolis/saveload.h"
 
 #include "mtropolis/elements.h"
-
-#include "common/memstream.h"
 
 namespace MTropolis {
 

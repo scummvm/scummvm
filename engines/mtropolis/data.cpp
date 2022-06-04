@@ -19,9 +19,10 @@
  *
  */
 
-#include "mtropolis/data.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+
+#include "mtropolis/data.h"
 
 namespace MTropolis {
 

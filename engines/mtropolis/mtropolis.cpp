@@ -557,7 +557,6 @@ Common::Error MTropolisEngine::run() {
 #endif
 
 	bool paused = false;
-	int frameCounter = 0;
 
 	while (!shouldQuit()) {
 		handleEvents();

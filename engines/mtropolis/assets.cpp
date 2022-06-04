@@ -19,15 +19,15 @@
  *
  */
 
-#include "mtropolis/assets.h"
-#include "mtropolis/asset_factory.h"
-
 #include "graphics/managed_surface.h"
 #include "graphics/surface.h"
 
 #include "audio/audiostream.h"
 
 #include "common/endian.h"
+
+#include "mtropolis/assets.h"
+#include "mtropolis/asset_factory.h"
 
 namespace MTropolis {
 
@@ -127,15 +127,11 @@ bool CachedMToon::loadFromStream(const Common::SharedPtr<MToonMetadata> &metadat
 		uint16 fullWidth = metadata->rect.width();
 		uint16 fullHeight = metadata->rect.height();
 
-		uint16 firstFrameWidth = 0;
-		uint16 firstFrameHeight = 0;
-
 		bool haveAnyTemporalFrames = false;
 		bool haveDifferentDimensions = false;
 		_isRLETemporalCompressed = false;
 
 		for (size_t i = 0; i < metadata->frames.size(); i++) {
-			const MToonMetadata::FrameDef &frame = metadata->frames[i];
 			if (!_rleData[i].isKeyframe)
 				haveAnyTemporalFrames = true;
 
@@ -264,11 +260,6 @@ static bool decompressMToonRLE(const CachedMToon::RleFrame &frame, const Common:
 
 void CachedMToon::decompressRLEFrameToImage(size_t frameIndex, Graphics::Surface &surface) {
 	assert(surface.format == _rleOptimizedFormat);
-
-	const MToonMetadata::FrameDef &frameDef = _metadata->frames[frameIndex];
-
-	int32 originX = frameDef.rect.left;
-	int32 originY = frameDef.rect.top;
 
 	bool isBottomUp = (_metadata->imageFormat == MToonMetadata::kImageFormatWindows);
 

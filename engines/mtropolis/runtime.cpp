@@ -19,16 +19,6 @@
  *
  */
 
-#include "mtropolis/runtime.h"
-#include "mtropolis/data.h"
-#include "mtropolis/vthread.h"
-#include "mtropolis/asset_factory.h"
-#include "mtropolis/element_factory.h"
-#include "mtropolis/miniscript.h"
-#include "mtropolis/modifier_factory.h"
-#include "mtropolis/modifiers.h"
-#include "mtropolis/render.h"
-
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/random.h"
@@ -43,6 +33,16 @@
 #include "graphics/macgui/macfontmanager.h"
 
 #include "audio/mixer.h"
+
+#include "mtropolis/runtime.h"
+#include "mtropolis/data.h"
+#include "mtropolis/vthread.h"
+#include "mtropolis/asset_factory.h"
+#include "mtropolis/element_factory.h"
+#include "mtropolis/miniscript.h"
+#include "mtropolis/modifier_factory.h"
+#include "mtropolis/modifiers.h"
+#include "mtropolis/render.h"
 
 namespace MTropolis {
 
@@ -3546,7 +3546,6 @@ bool Runtime::runFrame() {
 	uint32 timeMillis = _system->getMillis();
 
 	uint32 realMSec = timeMillis - _realTimeBase - _realTime;
-	uint32 playMSec = timeMillis - _playTimeBase - _playTime;
 
 	_realTime = timeMillis - _realTimeBase;
 	_playTime = timeMillis - _playTimeBase;
@@ -5577,9 +5576,9 @@ void KeyboardEventSignaller::removeReceiver(IKeyboardEventReceiver *receiver) {
 }
 
 void MediaCueState::checkTimestampChange(Runtime *runtime, uint32 oldTS, uint32 newTS, bool continuousTimestamps, bool canTriggerDuring) {
-	bool entersRange = (oldTS < minTime && newTS >= minTime);
-	bool exitsRange = (oldTS <= maxTime && newTS > maxTime);
-	bool endsInRange = (newTS >= minTime && newTS <= maxTime);
+	bool entersRange = (static_cast<int32>(oldTS) < minTime && static_cast<int32>(newTS) >= minTime);
+	bool exitsRange = (static_cast<int32>(oldTS) <= maxTime && static_cast<int32>(newTS) > maxTime);
+	bool endsInRange = (static_cast<int32>(newTS) >= minTime && static_cast<int32>(newTS) <= maxTime);
 
 	bool shouldTrigger = false;
 	switch (triggerTiming)
@@ -7132,6 +7131,9 @@ bool ModifierSaveLoad::load(Modifier *modifier, Common::ReadStream *stream) {
 		if (stream->err() || memcmp(&checkName[0], name.c_str(), nameLen))
 			return false;
 	}
+
+	if (modifier->getStaticGUID() != checkGUID)
+		return false;
 
 	return loadInternal(stream);
 }

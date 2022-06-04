@@ -21,16 +21,16 @@
 
 #include "engines/advancedDetector.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+
+#include "common/translation.h"
+
 #include "mtropolis/actions.h"
 #include "mtropolis/debug.h"
 #include "mtropolis/detection.h"
 
 #include "mtropolis/mtropolis.h"
-
-#include "backends/keymapper/action.h"
-#include "backends/keymapper/keymap.h"
-
-#include "common/translation.h"
 
 namespace MTropolis {
 

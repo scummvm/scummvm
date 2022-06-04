@@ -22,12 +22,12 @@
 #ifndef MTROPOLIS_MTROPOLIS_H
 #define MTROPOLIS_MTROPOLIS_H
 
-#include "mtropolis/detection.h"
-#include "mtropolis/saveload.h"
-
 #include "engines/engine.h"
 
 #include "common/random.h"
+
+#include "mtropolis/detection.h"
+#include "mtropolis/saveload.h"
 
 /**
  * This is the namespace of the mTropolis engine.

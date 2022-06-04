@@ -19,12 +19,6 @@
  *
  */
 
-#include "mtropolis/elements.h"
-#include "mtropolis/assets.h"
-#include "mtropolis/element_factory.h"
-#include "mtropolis/miniscript.h"
-#include "mtropolis/render.h"
-
 #include "video/video_decoder.h"
 #include "video/qt_decoder.h"
 
@@ -34,6 +28,12 @@
 #include "graphics/fontman.h"
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
+
+#include "mtropolis/elements.h"
+#include "mtropolis/assets.h"
+#include "mtropolis/element_factory.h"
+#include "mtropolis/miniscript.h"
+#include "mtropolis/render.h"
 
 namespace MTropolis {
 
@@ -447,7 +447,6 @@ void GraphicElement::render(Window *window) {
 	if (clippedSrcRect.isEmpty())
 		return;
 
-	int32 srcToDestX = clippedDrawRect.left - clippedSrcRect.left;
 	int32 srcToDestY = clippedDrawRect.top - clippedSrcRect.top;
 
 	switch (_renderProps.getInkMode()) {
@@ -461,7 +460,6 @@ void GraphicElement::render(Window *window) {
 			uint32 fillColor = pixFmt.ARGBToColor(255, fillColorRGB8.r, fillColorRGB8.g, fillColorRGB8.b);
 
 			for (int32 srcY = clippedSrcRect.top; srcY < clippedSrcRect.bottom; srcY++) {
-				int32 destY = srcY + srcToDestY;
 				int32 spanWidth = clippedDrawRect.width();
 				void *destPixels = window->getSurface()->getBasePtr(clippedDrawRect.left, srcY + srcToDestY);
 				if (_mask) {
@@ -504,7 +502,6 @@ void GraphicElement::render(Window *window) {
 				colorMask = pixFmt.ARGBToColor(0, 255, 255, 255);
 
 			for (int32 srcY = clippedSrcRect.top; srcY < clippedSrcRect.bottom; srcY++) {
-				int32 destY = srcY + srcToDestY;
 				int32 spanWidth = clippedDrawRect.width();
 				void *destPixels = window->getSurface()->getBasePtr(clippedDrawRect.left, srcY + srcToDestY);
 				if (_mask) {

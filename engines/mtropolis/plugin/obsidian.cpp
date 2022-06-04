@@ -521,7 +521,6 @@ MiniscriptInstructionOutcome WordMixerModifier::scriptSetSearch(MiniscriptThread
 	if (searchLength < buckets.size()) {
 		const WordGameData::WordBucket &bucket = buckets[searchLength];
 
-		bool found = false;
 		for (size_t wi = 0; wi < bucket.wordIndexes.size(); wi++) {
 			const char *wordChars = &bucket.chars[wi * bucket.spacing];
 
