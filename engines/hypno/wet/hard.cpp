@@ -211,6 +211,7 @@ void WetEngine::runMainMenu(Code *code) {
 
 
 	saveProfile(_name, _ids[_lastLevel]);
+	_name.toUppercase();  // We do this in order to show it again
 
 	Common::Rect subDifficulty(20, 104, 233, 119);
 	Graphics::Surface surDifficulty = overlay->getSubArea(subDifficulty);
@@ -233,6 +234,9 @@ void WetEngine::runMainMenu(Code *code) {
 	difficulties.push_back("1");
 	difficulties.push_back("2");
 	uint32 idx = 1;
+
+	drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
+	drawString("scifi08.fgx", _name, 140, 50, 170, c);
 
 	cont = true;
 	while (!shouldQuit() && cont) {
@@ -266,6 +270,9 @@ void WetEngine::runMainMenu(Code *code) {
 				else
 					error("Invalid difficulty: %s", difficulties[idx].c_str());
 
+				drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
+				drawString("scifi08.fgx", _name, 140, 50, 170, c);
+
 				break;
 			default:
 				break;
@@ -274,7 +281,7 @@ void WetEngine::runMainMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
-
+	_name.toLowercase(); // make sure it is lowercase when we finish
 	_difficulty = difficulties[idx];
 	_nextLevel = code->levelIfWin;
 	menu->free();
