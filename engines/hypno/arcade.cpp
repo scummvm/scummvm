@@ -348,7 +348,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 		if (needsUpdate) {
 			getPlayerPosition(true);
-			drawScreen();
+			if (_background->decoder->getCurFrame() > 0)
+				drawScreen();
 			updateScreen(*_background);
 			if (!arc->maskVideo.empty() && _masks->decoder->needsUpdate())
 				_mask = _masks->decoder->decodeNextFrame();

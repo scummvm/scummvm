@@ -265,8 +265,8 @@ void HypnoEngine::runIntros(Videos &videos) {
 				} else {
 					playing = true;
 					if (it->decoder->needsUpdate()) {
-						drawScreen();
 						updateScreen(*it);
+						drawScreen();
 					}
 				}
 			}
