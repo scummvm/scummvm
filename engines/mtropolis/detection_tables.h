@@ -24,6 +24,8 @@
 
 #include "engines/advancedDetector.h"
 
+#include "mtropolis/detection.h"
+
 namespace MTropolis {
 
 static const MTropolisGameDescription gameDescriptions[] = {
