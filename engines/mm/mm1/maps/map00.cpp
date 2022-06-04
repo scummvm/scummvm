@@ -32,10 +32,15 @@ void Map00::special() {
 
 	// Scan for special actions on the map cell
 	for (uint i = 0; i < _data[50]; ++i) {
-		if (maps._mapOffset == _data[51 + i] &&
-				(maps._forwardMask & _data[75 + i]) != 0) {
-			// TODO: Some extra message code
-			(this->*SPECIAL_FN[i])();
+		if (maps._mapOffset == _data[51 + i]) {
+			// Found a specially handled cell, but it
+			// only triggers in designated direction(s)
+			if (maps._forwardMask & _data[75 + i]) {
+				// TODO: Some extra message code
+				(this->*SPECIAL_FN[i])();
+			} else {
+				checkPartyDead();
+			}
 			return;
 		}
 	}
@@ -45,30 +50,30 @@ void Map00::special() {
 	g_events->addView("Encounter");
 }
 
-void Map00::special00() {}
-void Map00::special01() {}
-void Map00::special02() {}
-void Map00::special03() {}
-void Map00::special04() {}
-void Map00::special05() {}
-void Map00::special06() {}
-void Map00::special07() {}
-void Map00::special08() {}
-void Map00::special09() {}
-void Map00::special10() {}
-void Map00::special11() {}
-void Map00::special12() {}
-void Map00::special13() {}
-void Map00::special14() {}
-void Map00::special15() {}
-void Map00::special16() {}
-void Map00::special17() {}
-void Map00::special18() {}
-void Map00::special19() {}
-void Map00::special20() {}
-void Map00::special21() {}
-void Map00::special22() {}
-void Map00::special23() {}
+void Map00::special00() { warning("special00"); }
+void Map00::special01() { warning("special01"); }
+void Map00::special02() { warning("special02"); }
+void Map00::special03() { warning("special03"); }
+void Map00::special04() { warning("special04"); }
+void Map00::special05() { warning("special05"); }
+void Map00::special06() { warning("special06"); }
+void Map00::special07() { warning("special07"); }
+void Map00::special08() { warning("special08"); }
+void Map00::special09() { warning("special09"); }
+void Map00::special10() { warning("special10"); }
+void Map00::special11() { warning("special11"); }
+void Map00::special12() { warning("special12"); }
+void Map00::special13() { warning("special13"); }
+void Map00::special14() { warning("special14"); }
+void Map00::special15() { warning("special15"); }
+void Map00::special16() { warning("special16"); }
+void Map00::special17() { warning("special17"); }
+void Map00::special18() { warning("special18"); }
+void Map00::special19() { warning("special19"); }
+void Map00::special20() { warning("special20"); }
+void Map00::special21() { warning("special21"); }
+void Map00::special22() { warning("special22"); }
+void Map00::special23() { warning("special23"); }
 
 } // namespace Maps
 } // namespace MM1
