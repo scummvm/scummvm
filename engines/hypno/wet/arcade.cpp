@@ -810,7 +810,7 @@ void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		_background->decoder->pauseVideo(false);
 		updateScreen(*_background);
 		drawScreen();
-	} else if (s->name == "DOOR1" || s->name == "DOOR2") {
+	} else if (s->name.hasPrefix("DOOR")) {
 		_health = 0;
 		_background->decoder->pauseVideo(true);
 		// In some levels, the hit boss video is used to store this ending
