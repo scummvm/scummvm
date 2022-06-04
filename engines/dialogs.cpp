@@ -272,7 +272,7 @@ ConfigDialog::ConfigDialog() :
 	// The game specific options tab
 	//
 
-	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine", false);
+	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine");
 
 	if (g_engine->hasFeature(Engine::kSupportsChangingOptionsDuringRuntime)) {
 		_engineOptions = metaEngine->buildEngineOptionsWidgetDynamic(tab, "GlobalConfig_Engine.Container", gameDomain);
@@ -428,7 +428,7 @@ Common::String ExtraGuiOptionsWidget::dialogLayout(const Common::String &domain)
 	if (ConfMan.getActiveDomainName().equals(domain)) {
 		return "GlobalConfig_Engine_Container";
 	} else {
-		return "GameOptions_Engine_Container";
+		return "GameOptions_Game_Container";
 	}
 }
 

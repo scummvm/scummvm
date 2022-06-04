@@ -1444,7 +1444,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalConfig_Engine' overlays = 'Dialog.GlobalConfig.TabWidget'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Container'/>
 		</layout>
 	</dialog>
