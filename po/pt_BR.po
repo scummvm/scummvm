@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-03 19:05+0000\n"
-"PO-Revision-Date: 2022-05-31 02:27+0000\n"
+"PO-Revision-Date: 2022-06-04 11:28+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -6861,20 +6861,20 @@ msgstr ""
 "muda para a cena com os logotipos Lucasfilm e Loom."
 
 #: engines/scumm/dialogs.cpp:810
-#, fuzzy
-#| msgid "Playback"
 msgid "Playback Adjust:"
-msgstr "Reproduzir"
+msgstr "Ajustar Reprodução:"
 
 #: engines/scumm/dialogs.cpp:814
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
 msgstr ""
+"Ao reproduzir o som da faixa de áudio do CD, ajusta a posição inicial do som "
+"neste ponto. Use isso se você costuma ouvir trechos do som errado."
 
 #: engines/scumm/dialogs.cpp:886
 msgid "Intro Adjust:"
-msgstr ""
+msgstr "Ajustar Introdução:"
 
 #: engines/scumm/dialogs.cpp:890
 msgid ""
@@ -6882,10 +6882,13 @@ msgid ""
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
 msgstr ""
+"Ao reproduzir a faixa de introdução, toca a partir deste ponto. Use isso se "
+"a música for cortada prematuramente ou se você não estiver satisfeito com a "
+"forma como a música é sincronizada com a introdução."
 
 #: engines/scumm/dialogs.cpp:899
 msgid "Outlook Adjust:"
-msgstr ""
+msgstr "Ajuste Panorâmico:"
 
 #: engines/scumm/dialogs.cpp:903
 msgid ""
@@ -6893,6 +6896,9 @@ msgid ""
 "track at which it starts playing. Use this if the music is cut off, or if "
 "you hear part of the previous music."
 msgstr ""
+"A música panorâmica faz parte da faixa de introdução. Ajuste a posição na "
+"faixa onde deve começar a tocar. Use isso se a música estiver cortada ou se "
+"você ouvir parte da música anterior."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
