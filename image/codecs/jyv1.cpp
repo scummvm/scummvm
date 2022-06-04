@@ -91,7 +91,7 @@ const Graphics::Surface *JYV1Decoder::decodeFrame(Common::SeekableReadStream &st
 		Common::BitStreamMemory8MSB cmdBitStream(cmdMemStream);
 		int total = 0;
 		while (!cmdBitStream.eos()) {
-			uint32 idx = cmdBitStream.getBits(4);
+			uint32 idx = cmdBitStream.getBits<4>();
 			total += BASE_LEN[idx];
 			if (idx != 0 && idx != 8) {
 			   total += cmdBitStream.getBits(FINE_LEN_BITS[idx]);
@@ -117,7 +117,7 @@ const Graphics::Surface *JYV1Decoder::decodeFrame(Common::SeekableReadStream &st
 		Common::BitStreamMemory8MSB cmdBitStream(cmdMemStream);
 		bool skipping = true;
 		while (cmdBitStream.size() - cmdBitStream.pos() >= 4 && y < _height) {
-			uint32 idx = cmdBitStream.getBits(4);
+			uint32 idx = cmdBitStream.getBits<4>();
 			uint32 blocksize = BASE_LEN[idx];
 			if (idx != 0 && idx != 8) {
 			   blocksize += cmdBitStream.getBits(FINE_LEN_BITS[idx]);
