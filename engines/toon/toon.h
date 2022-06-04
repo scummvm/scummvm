@@ -211,6 +211,7 @@ public:
 	void waitForScriptStep();
 	void doMagnifierEffect();
 	void drawCustomText(int16 x, int16 y, const char *line, Graphics::Surface *frame, byte color);
+	bool showConversationText() const;
 	bool canSaveGameStateCurrently() override;
 	bool canLoadGameStateCurrently() override;
 	void pauseEngineIntern(bool pause) override;
