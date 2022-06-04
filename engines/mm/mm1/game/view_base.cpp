@@ -100,12 +100,14 @@ bool ViewBase::msgFocus(const FocusMessage &msg) {
 }
 
 bool ViewBase::msgGame(const GameMessage &msg) {
-	/*
 	if (msg._name == "DISPLAY") {
-		replaceView(this);
+		replaceView("Game");
+		return true;
+	} else if (msg._name == "UPDATE") {
+		replaceView("Game");
+		update();
 		return true;
 	}
-	*/
 
 	return TextView::msgGame(msg);
 }
@@ -149,30 +151,32 @@ void ViewBase::forward(KeybindingAction action) {
 	}
 
 	// Check for obstructions
-	if (maps._currentWalls & mask) {
-		if (maps._currentState & 0x55 & mask) {
-			barrier();
-			return;
-		}
-	} else {
-		if (maps._currentState & 0x55 & mask) {
-			obstructed();
-			return;
-		}
+	if (!g_globals->_intangible) {
+		if (maps._currentWalls & mask) {
+			if (maps._currentState & 0x55 & mask) {
+				barrier();
+				return;
+			}
+		} else {
+			if (maps._currentState & 0x55 & mask) {
+				obstructed();
+				return;
+			}
 
-		int offset;
-		if (!(maps._currentWalls & mask & 0x55))
-			offset = 1;
-		else if (maps._currentWalls & mask & 0xaa)
-			offset = 2;
-		else
-			offset = 0;
+			int offset;
+			if (!(maps._currentWalls & mask & 0x55))
+				offset = 1;
+			else if (maps._currentWalls & mask & 0xaa)
+				offset = 2;
+			else
+				offset = 0;
 
-		if (map.dataByte(30 + offset) == 4 &&
-				!g_globals->_spells._s.walk_on_water) {
-			dialogVal(1);
-			dialogMessage(STRING["movement.obstructed.cant_swim"]);
-			return;
+			if (map.dataByte(30 + offset) == 4 &&
+					!g_globals->_spells._s.walk_on_water) {
+				dialogVal(1);
+				dialogMessage(STRING["movement.obstructed.cant_swim"]);
+				return;
+			}
 		}
 	}
 
@@ -190,7 +194,7 @@ void ViewBase::backwards() {
 	Maps::Maps &maps = g_globals->_maps;
 	Maps::Map &map = *g_globals->_maps._currentMap;
 
-// Get the delta X/Y from the direction
+	// Get the delta X/Y from the direction
 	Common::Point delta(0, -1);
 	switch (maps._backwardsMask) {
 	case Maps::DIRMASK_E:
@@ -206,15 +210,17 @@ void ViewBase::backwards() {
 		break;
 	}
 
-	if (maps._currentWalls & maps._backwardsMask) {
-		dialogVal(1);
-		map.checkPartyDead();
-		return;
-	}
-	if (maps._currentState & 0x55 & maps._backwardsMask) {
-		dialogVal(1);
-		map.checkPartyDead();
-		return;
+	if (!g_globals->_intangible) {
+		if (maps._currentWalls & maps._backwardsMask) {
+			dialogVal(1);
+			map.checkPartyDead();
+			return;
+		}
+		if (maps._currentState & 0x55 & maps._backwardsMask) {
+			dialogVal(1);
+			map.checkPartyDead();
+			return;
+		}
 	}
 
 	Common::fill(&_arr2[0], &_arr2[8], 0);

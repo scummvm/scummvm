@@ -24,6 +24,7 @@
 #include "common/system.h"
 #include "mm/mm1/console.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/events.h"
 
 namespace MM {
 namespace MM1 {
@@ -45,11 +46,14 @@ static int strToInt(const char *s) {
 }
 
 Console::Console() : GUI::Debugger() {
-	registerCmd("dump_map", WRAP_METHOD(Console, Cmd_DumpMap));
-	registerCmd("map_string", WRAP_METHOD(Console, Cmd_MapString));
+	registerCmd("dump_map", WRAP_METHOD(Console, cmdDumpMap));
+	registerCmd("map_string", WRAP_METHOD(Console, cmdMapString));
+	registerCmd("map", WRAP_METHOD(Console, cmdMap));
+	registerCmd("pos", WRAP_METHOD(Console, cmdPos));
+	registerCmd("intangible", WRAP_METHOD(Console, cmdIntangible));
 }
 
-bool Console::Cmd_DumpMap(int argc, const char **argv) {
+bool Console::cmdDumpMap(int argc, const char **argv) {
 	Common::File f;
 	Common::OutSaveFile *dest;
 
@@ -123,7 +127,7 @@ bool Console::Cmd_DumpMap(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_MapString(int argc, const char **argv) {
+bool Console::cmdMapString(int argc, const char **argv) {
 	Common::File f;
 
 	if (argc != 3) {
@@ -171,6 +175,46 @@ bool Console::Cmd_MapString(int argc, const char **argv) {
 		f.close();
 	}
 
+	return true;
+}
+
+bool Console::cmdMap(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("map mapId [ xp, yp ]\n");
+		return true;
+	} else {
+		Maps::Maps &maps = g_globals->_maps;
+
+		int mapId = strToInt(argv[1]);
+		int x = argc < 3 ? 8 : strToInt(argv[2]);
+		int y = argc < 4 ? 8 : strToInt(argv[3]);
+
+		maps.select(maps.getMap(mapId)->getId(), 0);
+		maps._mapPos.x = x;
+		maps._mapPos.y = y;
+		g_events->msgGame(GameMessage("UPDATE"));
+
+		return false;
+	}
+}
+
+bool Console::cmdPos(int argc, const char **argv) {
+	if (argc < 3) {
+		debugPrintf("pos xp, yp\n");
+		return true;
+	} else {
+		Maps::Maps &maps = g_globals->_maps;
+		maps._mapPos.x = strToInt(argv[1]);
+		maps._mapPos.y = strToInt(argv[2]);
+		g_events->msgGame(GameMessage("UPDATE"));
+
+		return false;
+	}
+}
+
+bool Console::cmdIntangible(int argc, const char **argv) {
+	g_globals->_intangible = (argc < 2) || strcmp(argv[1], "off");
+	debugPrintf("Intangibility is %s\n", g_globals->_intangible ? "on" : "off");
 	return true;
 }
 
