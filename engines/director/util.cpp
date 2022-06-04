@@ -417,7 +417,7 @@ bool testPath(Common::String &path, bool directory) {
 		fslist.clear();
 		Common::FSNode::ListMode mode = Common::FSNode::kListDirectoriesOnly;
 		if (directory_list.empty() && !directory) {
-			mode = Common::FSNode::kListFilesOnly;
+			mode = Common::FSNode::kListAll;
 		}
 		d.getChildren(fslist, mode);
 
