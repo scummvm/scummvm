@@ -501,20 +501,26 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 
 				assert(chan.number < ARRAYSIZE(pSnd->_chan));
 				pSnd->_usedChannels[i] = chan.number;
+				// Flag 1 is exclusive towards the other flags. When it is
+				// set the others won't even get evaluated. And it wouldn't
+				// matter, since channels flagged with 1 operate completely
+				// independent of the channel mapping.
+				// For more info on the flags see the comment in
+				// SoundResource::SoundResource().
+				pSnd->_chan[chan.number]._dontMap = (chan.flags & 1);
 				pSnd->_chan[chan.number]._dontRemap = (chan.flags & 2);
 				pSnd->_chan[chan.number]._prio = chan.prio;
 				pSnd->_chan[chan.number]._voices = chan.poly;
 				pSnd->_chan[chan.number]._mute = (chan.flags & 4) ? 1 : 0;
-
-				// CHECKME: Some SCI versions use chan.flags & 1 for this:
-				pSnd->_chan[chan.number]._dontMap = false;
-
 				// FIXME: Most MIDI tracks use the first 10 bytes for
 				// fixed MIDI commands. SSCI skips those the first iteration,
 				// but _does_ update channel state (including volume) with
 				// them. Specifically, prio/voices, patch, volume, pan.
-				// This should probably be implemented in
-				// MidiParser_SCI::loadMusic.
+				// This should probably be implemented in MidiParser_SCI::loadMusic.
+				// 
+				// UPDATE: While we could change how we handle it, we DO
+				// read the commands into the channel data arrays when we call
+				// trackState(). So, I think what we do has the same result...
 			}
 
 			pSnd->pMidiParser->mainThreadBegin();
@@ -1531,6 +1537,10 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 	}
 
 	return map;
+}
+
+bool SciMusic::isDeviceChannelMapped(int devChannel) const {
+	return _channelMap[devChannel]._song;
 }
 
 void SciMusic::resetDeviceChannel(int devChannel, bool mainThread) {
