@@ -927,18 +927,33 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 					} else {
 						channel->flags = channel->number >> 4;
 						channel->number = channel->number & 0x0F;
-
-						// 0x20 is set on rhythm channels to prevent remapping
-						// CHECKME: Which SCI versions need that set manually?
-						if (channel->number == 9)
-							channel->flags |= 2;
-						// Note: flag 1: channel start offset is 0 instead of 10
-						//               (currently: everything 0)
-						//               also: don't map the channel to device
-						//       flag 2: don't remap
-						//       flag 4: start muted
-						// QfG2 lacks flags 2 and 4, and uses (flags >= 1) as
-						// the condition for starting offset 0, without the "don't map"
+						// Flag 1:	Channel start offset is 0 instead of 10 (currently: everything 0)
+						//			Also: Don't map the channel to the device at all, but still play it.
+						//			It doesn't stop other sounds playing sounds on that channel, it even
+						//			allows other sounds to map to this channel (in that case the dontmap
+						//			channel has limited access, it can't send control change, program
+						//			change and pitch wheel messages.
+						//			This is basically a marker for the channel as a "real" channel
+						//			(used mostly for rhythm channels on devices that have one). These
+						//			channels will also consequently start the parsing at offset 0 instead
+						//			of 10: Normal channels would read the parameters of the first couple of
+						//			events into the channel structs, but the "real" channels have to
+						//			send these to the device right away, since they don't use the stored
+						//			data.
+						//			Very early games like KQ5 (but including the DOS CD version) and SQ2
+						//			have support for this flag, only. It isn't even a flag there, since
+						//			all these games do is check for a channel number below 0x10.
+						// 
+						// Flag 2:	Don't remap the channel. It is placed in the map, but only in the
+						//			exact matching slot of the channel number. All the other games except
+						//			the very early ones use this flag to mark the rhythm channels. I
+						//			haven't seen any usage of flag 1 in any of these games. They all use
+						//			flag 2 instead, but still have full support of flag 1 in the code.
+						//			Using this flag is really preferable, since there can't be conflicts
+						//			with different sounds playing on the channel.
+						// 
+						// Flag 4:	Start up muted. The channel won't be mapped (and thus, not have any
+						//			output), until the mute gets removed.
 					}
 					_tracks[trackNr].channelCount++;
 					channelNr++;

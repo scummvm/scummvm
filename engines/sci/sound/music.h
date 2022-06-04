@@ -280,6 +280,10 @@ protected:
 	ChannelRemapping *determineChannelMap();
 	void resetDeviceChannel(int devChannel, bool mainThread);
 
+public:
+	// The parsers need to know this for the dontMap channels...
+	bool isDeviceChannelMapped(int devChannel) const;
+
 private:
 	MusicList _playList;
 	bool _soundOn;

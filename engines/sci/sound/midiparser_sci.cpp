@@ -492,8 +492,11 @@ void MidiParser_SCI::sendFromScriptToDriver(uint32 midi) {
 }
 
 void MidiParser_SCI::sendToDriver(uint32 midi) {
+	byte midiChannel = midi & 0xf;
+
 	// State tracking
-	trackState(midi);
+	if (!_pSnd->_chan[midiChannel]._dontMap)
+		trackState(midi);
 
 	if ((midi & 0xFFF0) == 0x4EB0 && _soundVersion >= SCI_VERSION_1_EARLY) {
 		// Mute. Handled in trackState()/sendFromScriptToDriver().
@@ -508,10 +511,16 @@ void MidiParser_SCI::sendToDriver(uint32 midi) {
 		midi = (midi & 0xFFFF) | ((channelVolume & 0xFF) << 16);
 	}
 
-
 	// Channel remapping
-	byte midiChannel = midi & 0xf;
+	uint8 msg = (midi & 0xF0);
 	int16 realChannel = _channelRemap[midiChannel];
+	if (_pSnd->_chan[midiChannel]._dontMap) {
+		// The dontMap channel is supposed to have limited access, if the device channel is already in use.
+		// It probably won't happen, but the original does these checks...
+		if (!_music->isDeviceChannelMapped(midiChannel) || (msg != 0xB0 && msg != 0xC0 && msg != 0xE0))
+			realChannel = midiChannel;
+	}
+
 	if (realChannel == -1)
 		return;
 
