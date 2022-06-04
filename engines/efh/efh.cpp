@@ -481,7 +481,7 @@ Common::Error EfhEngine::run() {
 					displayFctFullScreen();
 			}
 			Common::KeyCode input = waitForKey();
-			if (input = Common::KEYCODE_y) {
+			if (input == Common::KEYCODE_y) {
 				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
 				getInput(2);
 				saveEfhGame();
@@ -496,7 +496,7 @@ Common::Error EfhEngine::run() {
 			
 			}			
 			break;
-		case Common::KEYCODE_F7: { // Original is using CTRL-S
+		case Common::KEYCODE_F7: { // Original is using CTRL-L
 			for (int16 counter = 0; counter < 2; ++counter) {
 				clearBottomTextZone(0);
 				displayCenteredString("Are You Sure You Want To Load?", 24, 296, 160);
@@ -504,7 +504,7 @@ Common::Error EfhEngine::run() {
 					displayFctFullScreen();
 			}
 			Common::KeyCode input = waitForKey();
-			if (input = Common::KEYCODE_y) {
+			if (input == Common::KEYCODE_y) {
 				displayMenuAnswerString("-> Yes <-", 24, 296, 169);
 				getInput(2);
 				loadEfhGame();
@@ -621,7 +621,7 @@ void EfhEngine::readAnimInfo() {
 }
 
 void EfhEngine::findMapFile(int16 mapId) {
-	debug("findMapFile %d", mapId);
+	debugC(7, kDebugEngine, "findMapFile %d", mapId);
 	
 	if (!_word31E9E)
 		return;
@@ -636,7 +636,7 @@ void EfhEngine::findMapFile(int16 mapId) {
 }
 
 void EfhEngine::loadNewPortrait() {
-	debug("loadNewPortrait");
+	debugC(7, kDebugEngine, "loadNewPortrait");
 	
 	static int16 const unkConstRelatedToAnimImageSetId[19] = {0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2};
 	_unkRelatedToAnimImageSetId = unkConstRelatedToAnimImageSetId[_techId];
@@ -722,7 +722,7 @@ void EfhEngine::loadPlacesFile(uint16 fullPlaceId, bool forceReloadFl) {
 }
 
 void EfhEngine::readTileFact() {
-	debug("readTileFact");
+	debugC(7, kDebugEngine, "readTileFact");
 	
 	Common::String fileName = "tilefact";
 	uint8 tileFactBuff[864];
@@ -735,7 +735,7 @@ void EfhEngine::readTileFact() {
 }
 
 void EfhEngine::readItems() {
-	debug("readItems");
+	debugC(7, kDebugEngine, "readItems");
 	
 	Common::String fileName = "items";
 	uint8 itemBuff[8100];
@@ -760,12 +760,12 @@ void EfhEngine::readItems() {
 		_items[i].field_19 = *curPtr++;
 		_items[i].field_1A = *curPtr++;
 
-//		warning("%s\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x", _items[i]._name, _items[i]._damage, _items[i]._defense, _items[i]._attacks, _items[i]._uses, _items[i].field_13, _items[i]._range, _items[i]._attackType, _items[i].field_16, _items[i].field17_attackTypeDefense, _items[i].field_18, _items[i].field_19, _items[i].field_1A);
+		debugC(7, kDebugEngine, "%s\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x\t%x", _items[i]._name, _items[i]._damage, _items[i]._defense, _items[i]._attacks, _items[i]._uses, _items[i].field_13, _items[i]._range, _items[i]._attackType, _items[i].field_16, _items[i].field17_attackTypeDefense, _items[i].field_18, _items[i].field_19, _items[i].field_1A);
 	}
 }
 
 void EfhEngine::loadNPCS() {
-	debug("loadNPCS");
+	debugC(7, kDebugEngine, "loadNPCS");
 	
 	Common::String fileName = "npcs";
 	uint8 npcLoading[13400];
@@ -874,6 +874,7 @@ void EfhEngine::playIntro() {
 	displayFctFullScreen();
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	drawText(_imp2PtrArray[0], 6, 150, 268, 186, false);
+	
 	lastInput = getLastCharAfterAnimCount(80);
 	if (lastInput == Common::KEYCODE_ESCAPE)
 		return;
@@ -1897,6 +1898,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 			}
 			break;
 		case 0x14:
+			// Add character to team { charId }
 			buffer = script_readNumberArray(buffer, 1, scriptNumberArray);
 			if (flag) {
 				int16 var110 = scriptNumberArray[0];
@@ -2058,7 +2060,7 @@ int16 EfhEngine::script_parse(uint8 *stringBuffer, int16 posX, int16 posY, int16
 }
 
 void EfhEngine::drawText(uint8 *srcPtr, int16 posX, int16 posY, int16 maxX, int16 maxY, bool flag) {
-	debug("drawText %d-%d %d-%d %s", posX, posY, maxX, maxY, flag ? "True" : "False");
+	debugC(7, kDebugEngine, "drawText %d-%d %d-%d %s", posX, posY, maxX, maxY, flag ? "True" : "False");
 
 	uint16 stringIdx = 0;
 	uint8 *impPtr = srcPtr;
