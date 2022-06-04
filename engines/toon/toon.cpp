@@ -3699,6 +3699,10 @@ void ToonEngine::drawCustomText(int16 x, int16 y, const char *line, Graphics::Su
 	}
 }
 
+bool ToonEngine::showConversationText() const {
+	return _showConversationText;
+}
+
 void ToonEngine::pauseEngineIntern(bool pause) {
 
 	Engine::pauseEngineIntern(pause);
