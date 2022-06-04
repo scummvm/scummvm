@@ -31,6 +31,7 @@ namespace Kyra {
 
 GUI_v1::GUI_v1(KyraEngine_v1 *kyra) : GUI(kyra), _text(kyra->text()) {
 	_menuButtonList = nullptr;
+	_menuLabelYOffset = (kyra->game() == GI_LOL) ? 3 : 2;
 
 	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawButtonCallback);
 	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawShadedButtonCallback);
@@ -128,9 +129,8 @@ void GUI_v1::initMenu(Menu &menu) {
 			else
 				textX = getMenuCenterStringX(getMenuItemTitle(menu.item[i]), x1, x2);
 
-			textY = y1 + 2;
+			textY = y1 + _menuLabelYOffset;
 			if (_vm->game() == GI_LOL) {
-				textY++;
 				if (i == menu.highlightedItem)
 					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 8);
 				else
@@ -138,7 +138,7 @@ void GUI_v1::initMenu(Menu &menu) {
 			} else {
 				Screen::FontId of = _screen->_currentFont;
 				if (menu.item[i].saveSlot > 0)
-					_screen->setFont((_vm->gameFlags().lang == Common::ZH_CHN || _vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
+					_screen->setFont((_vm->gameFlags().lang == Common::ZH_CHN || _vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : (_vm->gameFlags().lang == Common::KO_KOR ? Screen::FID_KOREAN_FNT : Screen::FID_8_FNT));
 
 				if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 					printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
@@ -251,14 +251,13 @@ void GUI_v1::redrawText(const Menu &menu) {
 	else
 		textX = getMenuCenterStringX(getMenuItemTitle(menu.item[i]), x1, x2);
 
-	int textY = y1 + 2;
+	int textY = y1 + _menuLabelYOffset;
 	if (_vm->game() == GI_LOL) {
-		textY++;
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 8);
 	} else {
 		Screen::FontId of = _screen->_currentFont;
 		if (menu.item[i].saveSlot > 0)
-			_screen->setFont((_vm->gameFlags().lang == Common::ZH_CHN || _vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
+			_screen->setFont((_vm->gameFlags().lang == Common::ZH_CHN || _vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : (_vm->gameFlags().lang == Common::KO_KOR ? Screen::FID_KOREAN_FNT : Screen::FID_8_FNT));
 		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 			printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
@@ -280,15 +279,14 @@ void GUI_v1::redrawHighlight(const Menu &menu) {
 	else
 		textX = getMenuCenterStringX(getMenuItemTitle(menu.item[i]), x1, x2);
 
-	int textY = y1 + 2;
+	int textY = y1 + _menuLabelYOffset;
 
 	if (_vm->game() == GI_LOL) {
-		textY++;
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 8);
 	} else {
 		Screen::FontId of = _screen->_currentFont;
 		if (menu.item[i].saveSlot > 0)
-			_screen->setFont((_vm->gameFlags().lang == Common::ZH_CHN || _vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
+			_screen->setFont((_vm->gameFlags().lang == Common::ZH_CHN || _vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : (_vm->gameFlags().lang == Common::KO_KOR ? Screen::FID_KOREAN_FNT : Screen::FID_8_FNT));
 		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 			printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);

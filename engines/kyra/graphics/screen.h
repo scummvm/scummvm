@@ -67,7 +67,8 @@ public:
 	enum Type {
 		kASCII = 0,
 		kSJIS,
-		kBIG5
+		kBIG5,
+		kKOR
 	};
 
 public:
@@ -287,6 +288,35 @@ private:
 	const uint8 *_glyphData;
 	uint32 _glyphDataSize;
 	const uint16 _pitch;
+};
+
+class KoreanFontLoK final : public Font {
+public:
+	KoreanFontLoK(Font *font8fnt, const uint16 *lookupTable, uint32 lookupTableSize);
+	~KoreanFontLoK() override;
+
+	bool load(Common::SeekableReadStream &data) override;
+	Type getType() const override { return kKOR; }
+	int getHeight() const override { return _height; }
+	int getWidth() const override { return _width; }
+	int getCharWidth(uint16 c) const override;
+	int getCharHeight(uint16 c) const override;
+	void setColorMap(const uint8 *src) override;
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
+
+private:
+	const uint8 *createGlyph(uint16 chr) const;
+	void processColorMap();
+	void renderGlyph(byte *dst, const uint8 *glyph, uint8 col, int pitch) const;
+
+	int _width, _height;
+	const uint8 *_colorMap;
+
+	Font *_font8;
+	const uint8 *_fileData;
+	const uint8 *_glyphData[3];
+	const uint16 *_2byteTables[7];
+	uint8 *_glyphTemp;
 };
 
 class ChineseOneByteFontLoK final : public ChineseFont {

@@ -1395,6 +1395,10 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 				Common::MemoryReadStream str(oneByteData, temp);
 				fnt->load(str);
 			}
+		} else if (fontId == FID_KOREAN_FNT) {
+			const uint16 *lookupTable = _vm->staticres()->loadRawDataBe16(k1TwoByteFontLookupTable, temp);
+			// The FID_8_FNT must be loaded before this.
+			fnt = new KoreanFontLoK(_fonts[FID_8_FNT], lookupTable, temp);
 		} else {
 			fnt = new DOSFont();
 		}
@@ -1543,8 +1547,9 @@ uint16 Screen::fetchChar(const char *&s) const {
 
 	uint16 ch = (uint8)*s++;
 
-	if ((_fonts[_currentFont]->getType() == Font::kSJIS && (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))) || (_fonts[_currentFont]->getType() == Font::kBIG5 && ch < 0x7F))
-		return ch;
+	if ((_fonts[_currentFont]->getType() == Font::kSJIS && (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))) ||
+		(_fonts[_currentFont]->getType() == Font::kBIG5 && ch < 0x7F) || (_fonts[_currentFont]->getType() == Font::kKOR && ch < 0x80))
+			return ch;
 
 	ch |= (uint8)(*s++) << 8;
 	return ch;
