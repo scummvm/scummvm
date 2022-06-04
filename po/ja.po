@@ -6734,7 +6734,9 @@ msgstr "再生アジャスト："
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
-msgstr "CDオーディオトラックを再生する際、開始位置を調整します。サウンドに問題がある場合に使用して下さい。"
+msgstr ""
+"CDオーディオトラックを再生する際、開始位置を調整します。サウンドに問題がある"
+"場合に使用して下さい。"
 
 #: engines/scumm/dialogs.cpp:886
 msgid "Intro Adjust:"
@@ -6745,7 +6747,9 @@ msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
-msgstr "イントロトラックを、この位置から再生します。曲が途中で切れたり、同期が正しくない場合に使用して下さい。"
+msgstr ""
+"イントロトラックを、この位置から再生します。曲が途中で切れたり、同期が正しく"
+"ない場合に使用して下さい。"
 
 #: engines/scumm/dialogs.cpp:899
 msgid "Outlook Adjust:"
@@ -6756,7 +6760,9 @@ msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
 "you hear part of the previous music."
-msgstr "アウトルックミュージックはイントロの一部です。トラック内での再生開始位置を調整します。曲が途切れたり、前の曲が聞こえる場合に使用して下さい。"
+msgstr ""
+"アウトルックミュージックはイントロの一部です。トラック内での再生開始位置を調"
+"整します。曲が途切れたり、前の曲が聞こえる場合に使用して下さい。"
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
