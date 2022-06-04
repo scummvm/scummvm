@@ -106,6 +106,20 @@
 			return result;
 		}
 	}
+
+// Test for GCC-compatible
+#elif GCC_ATLEAST(4, 8) || defined(__clang__)
+
+	FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
+		return __builtin_bswap16(a);
+	}
+
+#elif defined(_MSC_VER)
+
+	FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
+		return _byteswap_ushort(a);
+	}
+
 #else
 
 	inline uint16 SWAP_BYTES_16(const uint16 a) {
