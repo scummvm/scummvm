@@ -905,8 +905,9 @@ protected:
 	int getSelected() override;
 	void build() override;
 private:
-	GridWidget    *_grid;
-	SliderWidget  *_gridItemSizeSlider;
+	GridWidget       *_grid;
+	SliderWidget     *_gridItemSizeSlider;
+	StaticTextWidget *_gridItemSizeLabel;
 };
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
 
@@ -1280,7 +1281,7 @@ void LauncherSimple::updateButtons() {
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 LauncherGrid::LauncherGrid(const Common::String &title)
 	: LauncherDialog(title),
-	_grid(nullptr), _gridItemSizeSlider(nullptr) {
+	_grid(nullptr), _gridItemSizeSlider(nullptr), _gridItemSizeLabel(nullptr) {
 	build();
 }
 
@@ -1446,7 +1447,9 @@ void LauncherGrid::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 		break;
 	}
 	case kItemSizeCmd:
-		ConfMan.setInt("grid_item_size", _gridItemSizeSlider->getValue());
+		_gridItemSizeLabel->setValue(_gridItemSizeSlider->getValue());
+		_gridItemSizeLabel->markAsDirty();
+		ConfMan.setInt("grid_items_per_row", _gridItemSizeSlider->getValue());
 		ConfMan.flushToDisk();
 		reflowLayout();
 		break;
@@ -1537,11 +1540,13 @@ int LauncherGrid::getSelected() { return _grid->getSelected(); }
 void LauncherGrid::build() {
 	LauncherDialog::build();
 
-	new StaticTextWidget(this, "LauncherGrid.GridItemSizeDesc", _("Icon size:"));
-	_gridItemSizeSlider = new SliderWidget(this, "LauncherGrid.GridItemSize", Common::U32String(), kItemSizeCmd);
+	new StaticTextWidget(this, "LauncherGrid.GridItemsPerRowDesc", _("Icons per row:"));
+	_gridItemSizeSlider = new SliderWidget(this, "LauncherGrid.GridItemsPerRow", Common::U32String(), kItemSizeCmd);
 	_gridItemSizeSlider->setMinValue(1);
-	_gridItemSizeSlider->setMaxValue(5);
-	_gridItemSizeSlider->setValue(ConfMan.getInt("grid_item_size"));
+	_gridItemSizeSlider->setMaxValue(12);
+	_gridItemSizeSlider->setValue(ConfMan.getInt("grid_items_per_row"));
+	_gridItemSizeLabel = new StaticTextWidget(this, "LauncherGrid.GridItemsPerRowLabel", Common::U32String("  "), Common::U32String(), ThemeEngine::kFontStyleBold, Common::UNK_LANG, false);
+	_gridItemSizeLabel->setValue(ConfMan.getInt("grid_items_per_row"));
 
 	// Add list with game titles
 	_grid = new GridWidget(this, "LauncherGrid.IconArea");
