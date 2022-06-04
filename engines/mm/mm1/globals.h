@@ -41,6 +41,7 @@ public:
 	Maps::TownId _startingTown = Maps::SORPIGAL;
 	IntArray _partyChars;
 	Maps::Maps _maps;
+	bool _intangible = false; // Console flag
 public:
 	Globals();
 	virtual ~Globals();

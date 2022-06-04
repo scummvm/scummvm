@@ -32,12 +32,27 @@ protected:
 	/**
 	 * Used to dump a map's code and data
 	 */
-	bool Cmd_DumpMap(int argc, const char **argv);
+	bool cmdDumpMap(int argc, const char **argv);
 
 	/**
 	 * Prints a string from within a map's data segment
 	 */
-	bool Cmd_MapString(int argc, const char **argv);
+	bool cmdMapString(int argc, const char **argv);
+
+	/**
+	 * Toggles intangible mode, allowing walking through walls
+	 */
+	bool cmdIntangible(int argc, const char **argv);
+
+	/**
+	 * Jumps to a given map, and optionally a given position
+	 */
+	bool cmdMap(int argc, const char **argv);
+
+	/**
+	 * Changes the party's position in the current map
+	 */
+	bool cmdPos(int argc, const char **argv);
 
 public:
 	Console();
