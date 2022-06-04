@@ -137,11 +137,11 @@ void WetEngine::runMainMenu(Code *code) {
 	Graphics::Surface *menu = decodeFrame("c_misc/menus.smk", 16, &palette);
 	Graphics::Surface *overlay = decodeFrame("c_misc/menus.smk", 18, nullptr);
 	loadPalette(palette, 0, 256);
-	Common::Rect subName(21, 10, 159, 24);
+	Common::Rect subName(21, 10, 169, 24);
 
 	drawImage(*menu, 0, 0, false);
 	Graphics::Surface surName = overlay->getSubArea(subName);
-	drawImage(surName, subName.left, subName.top, false);
+	drawImage(surName, subName.left, subName.top, true);
 	drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
 	_name.clear();
 	bool cont = true;
@@ -167,7 +167,7 @@ void WetEngine::runMainMenu(Code *code) {
 				}
 
 				drawImage(*menu, 0, 0, false);
-				drawImage(surName, subName.left, subName.top, false);
+				drawImage(surName, subName.left, subName.top, true);
 				drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
 				drawString("scifi08.fgx", _name, 140, 50, 170, c);
 				break;
@@ -215,17 +215,17 @@ void WetEngine::runMainMenu(Code *code) {
 	Common::Rect subDifficulty(20, 104, 233, 119);
 	Graphics::Surface surDifficulty = overlay->getSubArea(subDifficulty);
 	drawImage(*menu, 0, 0, false);
-	drawImage(surDifficulty, subDifficulty.left, subDifficulty.top, false);
+	drawImage(surDifficulty, subDifficulty.left, subDifficulty.top, true);
 
-	Common::Rect subWet(145, 149, 179, 159);
+	Common::Rect subWet(129, 149, 195, 159);
 	Graphics::Surface surWet = overlay->getSubArea(subWet);
-	drawImage(surWet, subWet.left, subWet.top, false);
+	drawImage(surWet, subWet.left, subWet.top, true);
 	playSound("sound/no_rapid.raw", 1, 11025);
 
-	Common::Rect subDamp(62, 149, 110, 159);
+	Common::Rect subDamp(52, 149, 115, 159);
 	Graphics::Surface surDamp = overlay->getSubArea(subDamp);
 
-	Common::Rect subSoaked(204, 149, 272, 159);
+	Common::Rect subSoaked(202, 149, 272, 159);
 	Graphics::Surface surSoaked = overlay->getSubArea(subSoaked);
 
 	Common::Array<Common::String> difficulties;
@@ -255,14 +255,14 @@ void WetEngine::runMainMenu(Code *code) {
 					cont = false;
 
 				drawImage(*menu, 0, 0, false);
-				drawImage(surDifficulty, subDifficulty.left, subDifficulty.top, false);
+				drawImage(surDifficulty, subDifficulty.left, subDifficulty.top, true);
 
 				if (difficulties[idx] == "0")
-					drawImage(surDamp, subDamp.left, subDamp.top, false);
+					drawImage(surDamp, subDamp.left, subDamp.top, true);
 				else if (difficulties[idx] == "1")
-					drawImage(surWet, subWet.left, subWet.top, false);
+					drawImage(surWet, subWet.left, subWet.top, true);
 				else if (difficulties[idx] == "2")
-					drawImage(surSoaked, subSoaked.left, subSoaked.top, false);
+					drawImage(surSoaked, subSoaked.left, subSoaked.top, true);
 				else
 					error("Invalid difficulty: %s", difficulties[idx].c_str());
 
