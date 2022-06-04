@@ -1261,7 +1261,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	uint8 *buffer = nullptr;
 	uint32 size = 0;
 
-	buffer = _res->fileData("CREDITS.TXT", &size);
+	buffer = _res->fileData(Common::String::format("CREDITS.%s", _flags.lang == Common::KO_KOR ? "HAN" : "TXT").c_str(), &size);
 	if (!buffer) {
 		int sizeTmp = 0;
 		const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, sizeTmp);
