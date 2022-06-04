@@ -201,7 +201,7 @@ void WetEngine::runMainMenu(Code *code) {
 	_name.toLowercase();
 	bool found = loadProfile(_name);
 
-	if (found) {
+	if (found || _name.empty()) {
 		menu->free();
 		delete menu;
 		overlay->free();
