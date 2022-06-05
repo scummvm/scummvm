@@ -135,7 +135,6 @@ protected:
 	DECLARE_LUA_OPCODE(ImPause) override;
 	DECLARE_LUA_OPCODE(ImResume) override;
 	DECLARE_LUA_OPCODE(GetSectorName);
-	DECLARE_LUA_OPCODE(GetCameraPosition);
 	DECLARE_LUA_OPCODE(GetCameraYaw);
 	DECLARE_LUA_OPCODE(YawCamera);
 	DECLARE_LUA_OPCODE(GetCameraPitch);
