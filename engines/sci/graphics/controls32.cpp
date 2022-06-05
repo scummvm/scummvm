@@ -508,6 +508,8 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &gameRect, con
 	_textRect.right = bitmapRect.width() - 2;
 	_textRect.bottom = bitmapRect.height() - 2;
 
+	computeLineIndices();
+
 	uint8 skipColor = 0;
 	while (skipColor == _foreColor || skipColor == _backColor) {
 		skipColor++;
