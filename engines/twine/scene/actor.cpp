@@ -156,6 +156,7 @@ int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorB
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	const EntityBody *body = actor->_entityDataPtr->getBody((int)bodyIdx);
 	if (body == nullptr) {
+		warning("Failed to get entity body for body idx %i", (int)bodyIdx);
 		return -1;
 	}
 	actorBoundingBox = body->actorBoundingBox;
