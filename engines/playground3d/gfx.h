@@ -69,6 +69,8 @@ public:
 	virtual void drawInViewport() = 0;
 	virtual void drawRgbaTexture() = 0;
 
+	virtual void enableFog(const Math::Vector4d &fogColor) = 0;
+
 protected:
 	OSystem *_system;
 

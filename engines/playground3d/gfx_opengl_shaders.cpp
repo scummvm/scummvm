@@ -168,6 +168,9 @@ void ShaderRenderer::setupViewport(int x, int y, int width, int height) {
 	glViewport(x, y, width, height);
 }
 
+void ShaderRenderer::enableFog(const Math::Vector4d &fogColor) {
+}
+
 void ShaderRenderer::drawCube(const Math::Vector3d &pos, const Math::Vector3d &roll) {
 	auto rotateMatrix = (Math::Quaternion::fromEuler(roll.x(), roll.y(), roll.z(), Math::EO_XYZ)).inverse().toMatrix();
 	_cubeShader->use();
