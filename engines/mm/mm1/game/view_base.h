@@ -62,6 +62,11 @@ private:
 	void backwards();
 
 	/**
+	 * Gets the moveement delta given a direction mask
+	 */
+	Common::Point getMoveDelta(byte mask) const;
+
+	/**
 	 * Forward movement is obstructed
 	 */
 	void obstructed(byte mask);
