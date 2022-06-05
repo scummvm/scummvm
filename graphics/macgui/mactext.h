@@ -211,6 +211,7 @@ public:
 
 	int getTextSlant(int start, int end);
 	void setTextSlant(int textSlant, int start, int end);
+	void enforceTextSlant(int textSlant);
 
 	// director text related-functions
 	int getMouseChar(int x, int y);

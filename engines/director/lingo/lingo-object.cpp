@@ -1045,6 +1045,7 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
 		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
 		_modified = true;
+		toEdit->_widget->removeWidget(_widget);
 		return false;
 	case kTheTextHeight:
 		_lineSpacing = d.asInt();
@@ -1060,9 +1061,11 @@ bool TextCastMember::setField(int field, const Datum &d) {
 	case kTheTextStyle:
 	{
 		int slant = g_director->_wm->_fontMan->parseSlantFromName(d.asString());
-		slant ? _textSlant |= slant : _textSlant = slant;
-		setText(this->_ptext);
+		((Graphics::MacText *)toEdit->_widget)->enforceTextSlant(slant);
+		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
+		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
 		_modified = true;
+		toEdit->_widget->removeWidget(_widget);
 		return false;
 	}
 	default:
