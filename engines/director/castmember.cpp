@@ -1036,6 +1036,11 @@ void TextCastMember::importRTE(byte *text) {
 }
 
 void TextCastMember::setText(const Common::U32String &text) {
+	//Do nothing if text did not change
+	if (_ptext.equals(text))
+		return;
+
+	// If text has changed, use the cached formatting from first STXT in this castmember.
 	Common::U32String formatting = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _fontId, _textSlant, _fontSize, _fgpalinfo1, _fgpalinfo2, _fgpalinfo3);
 	_ptext = text;
 	_ftext = formatting + text;
