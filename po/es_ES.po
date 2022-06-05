@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-05 13:15+0000\n"
-"PO-Revision-Date: 2022-05-29 21:35+0000\n"
+"PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -6896,20 +6896,21 @@ msgstr ""
 "Loom."
 
 #: engines/scumm/dialogs.cpp:810
-#, fuzzy
-#| msgid "Playback"
 msgid "Playback Adjust:"
-msgstr "Reproducción"
+msgstr "Ajuste de reproducción:"
 
 #: engines/scumm/dialogs.cpp:814
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
 msgstr ""
+"Al reproducir sonidos de las pistas de audio del CD se ajustará la posición "
+"de inicio de cada sonido según esta cantidad. Utiliza esta opción si oyes "
+"fragmentos de otro sonido que no corresponda."
 
 #: engines/scumm/dialogs.cpp:886
 msgid "Intro Adjust:"
-msgstr ""
+msgstr "Ajuste de la introducción:"
 
 #: engines/scumm/dialogs.cpp:890
 msgid ""
@@ -6917,10 +6918,13 @@ msgid ""
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
 msgstr ""
+"Al reproducir la pista de la introducción, esta comenzará a partir de este "
+"punto. Utiliza esta opción en caso de que la música se corte antes de tiempo "
+"o si no te gusta cómo está sincronizada con la introducción."
 
 #: engines/scumm/dialogs.cpp:899
 msgid "Outlook Adjust:"
-msgstr ""
+msgstr "Ajuste del mirador:"
 
 #: engines/scumm/dialogs.cpp:903
 msgid ""
@@ -6928,6 +6932,10 @@ msgid ""
 "track at which it starts playing. Use this if the music is cut off, or if "
 "you hear part of the previous music."
 msgstr ""
+"La música de la escena del mirador forma parte de la pista de la "
+"introducción. Esta opción ajusta el punto de inicio de la canción dentro de "
+"la pista. Utilízala si la música se corta o si oyes parte de la canción "
+"anterior."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
