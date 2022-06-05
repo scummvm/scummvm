@@ -33,7 +33,7 @@ The first step is to download the repository containing the code required to bui
 
 .. code-block:: bash
 
-    git clone https://github.com/scummvm/scummvm.git
+    git clone --depth 1 -b branch-2-6 https://github.com/scummvm/scummvm.git
 
 .. tip::
 
