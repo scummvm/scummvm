@@ -22,6 +22,7 @@
 #include "mm/mm1/game/view_base.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
@@ -169,7 +170,7 @@ void ViewBase::forward(KeybindingAction action) {
 
 			if (map.dataByte(30 + offset) == 4 &&
 				!g_globals->_spells._s.walk_on_water) {
-				dialogVal(1);
+				Sound::sound(SOUND_OBSTRUCTED);
 				_dialogMessage = STRING["movement.obstructed.cant_swim"];
 				redraw();
 				return;
@@ -215,12 +216,12 @@ void ViewBase::backwards() {
 
 	if (!g_globals->_intangible) {
 		if (maps._currentWalls & maps._backwardsMask) {
-			dialogVal(1);
+			Sound::sound(SOUND_OBSTRUCTED);
 			map.checkPartyDead();
 			return;
 		}
 		if (maps._currentState & 0x55 & maps._backwardsMask) {
-			dialogVal(1);
+			Sound::sound(SOUND_OBSTRUCTED);
 			map.checkPartyDead();
 			return;
 		}
@@ -239,7 +240,7 @@ void ViewBase::backwards() {
 void ViewBase::obstructed(byte mask) {
 	Maps::Maps &maps = g_globals->_maps;
 	Maps::Map &map = *maps._currentMap;
-	dialogVal(1);
+	Sound::sound(SOUND_OBSTRUCTED);
 
 	int index = 32;
 	if (!(maps._currentWalls & mask & 0x55))
@@ -254,11 +255,7 @@ void ViewBase::obstructed(byte mask) {
 
 void ViewBase::barrier() {
 	_dialogMessage = STRING["movement.obstructed.barrier"];
-	dialogVal(1);
-}
-
-void ViewBase::dialogVal(int num) {
-	// TODO
+	Sound::sound(SOUND_OBSTRUCTED);
 }
 
 } // namespace Game

@@ -71,8 +71,6 @@ private:
 	 */
 	void barrier();
 
-	void dialogVal(int num);
-
 public:
 	ViewBase(UIElement *owner);
 	virtual ~ViewBase() {}
