@@ -1224,7 +1224,8 @@ void KyraEngine_LoK::seq_playCredits() {
 	_screen->disableDualPaletteMode();
 	_screen->hideMouse();
 
-	Screen::FontId font1, font2;
+	Common::String creditsFile = "CREDITS.TXT";
+	Screen::FontId font1, font2, font3;
 	int alignX3 = 157;
 	int alignX4 = 161;
 	int alignXOffs = 0;
@@ -1232,7 +1233,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	int fin = 175;
 
 	if (_flags.lang == Common::ZH_TWN) {
-		font1 = font2 = Screen::FID_CHINESE_FNT;
+		font1 = font2 = font3 = Screen::FID_CHINESE_FNT;
 		alignX3 = alignX4 = 150;
 		alignXOffs = 10;
 		lineHeight = 16;
@@ -1241,12 +1242,17 @@ void KyraEngine_LoK::seq_playCredits() {
 		_screen->loadFont(Screen::FID_CRED6_FNT, "CREDIT6.FNT");
 		_screen->loadFont(Screen::FID_CRED8_FNT, "CREDIT8.FNT");
 		font1 = Screen::FID_CRED6_FNT;
-		font2 = Screen::FID_CRED8_FNT;
+		font2 = font3 = Screen::FID_CRED8_FNT;
+		if (_flags.lang == Common::KO_KOR) {
+			if (_res->exists("CREDITS.HAN"))
+				creditsFile = "CREDITS.HAN";
+			font3 = Screen::FID_KOREAN_FNT;
+		}
 	} else {
-		font1 = font2 = Screen::FID_8_FNT;
+		font1 = font2 = font3 = Screen::FID_8_FNT;
 	}
 
-	_screen->setFont(font2);
+	_screen->setFont(font3);
 	_screen->loadBitmap("CHALET.CPS", 4, 4, &_screen->getPalette(0));
 
 	_screen->setCurPage(0);
@@ -1261,7 +1267,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	uint8 *buffer = nullptr;
 	uint32 size = 0;
 
-	buffer = _res->fileData(Common::String::format("CREDITS.%s", _flags.lang == Common::KO_KOR ? "HAN" : "TXT").c_str(), &size);
+	buffer = _res->fileData(creditsFile.c_str(), &size);
 	if (!buffer) {
 		int sizeTmp = 0;
 		const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, sizeTmp);
@@ -1292,6 +1298,7 @@ void KyraEngine_LoK::seq_playCredits() {
 		if (lineEndCode != 0)
 			nextString++;
 
+		int lhAdjust = 0;
 		int alignment = 0;
 		if (*currentString == 3 || *currentString == 4) {
 			alignment = *currentString;
@@ -1306,8 +1313,19 @@ void KyraEngine_LoK::seq_playCredits() {
 			_screen->setFont(font2);
 		}
 
-		line.font = _screen->_currentFont;
+		if (font2 != font3 && _screen->_currentFont != font1) {
+			// Hack for proper display of the data from the CREDITS.HAN file
+			// which the original does not even support...
+			if ((currentString[0] == '\"' && (currentString[1] & 0x80)) || (*currentString & 0x80)) {
+				lhAdjust = 5;
+				_screen->setFont(font3);
+			} else {
+				_screen->setFont(font2);
+			}
+		}
 
+		line.font = _screen->_currentFont;
+		
 		if (alignment == 3)
 			line.x = alignX3 - _screen->getTextWidth((const char *)currentString);
 		else if (alignment == 4)
@@ -1317,7 +1335,7 @@ void KyraEngine_LoK::seq_playCredits() {
 
 		line.y = currentY;
 		if (lineEndCode != 5)
-			currentY += lineHeight;
+			currentY += (lineHeight + lhAdjust);
 
 		line.str = currentString;
 
