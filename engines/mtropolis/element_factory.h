@@ -34,7 +34,7 @@ struct ElementLoaderContext {
 	size_t streamIndex;
 };
 
-struct IElementFactory {
+struct IElementFactory : public IInterfaceBase {
 	virtual Common::SharedPtr<Element> createElement(ElementLoaderContext &context, const Data::DataObject &dataObject) const = 0;
 };
 

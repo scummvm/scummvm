@@ -169,7 +169,7 @@ void CachedMToon::decompressFrames(const Common::Array<uint8> &data) {
 }
 
 template<class TNumber, uint32 TLiteralMask, uint32 TTransparentRowSkipMask>
-static bool decompressMToonRLE(const CachedMToon::RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::Surface &surface, bool isBottomUp) {
+bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::Surface &surface, bool isBottomUp) {
 	assert(sizeof(TNumber) == surface.format.bytesPerPixel);
 
 	size_t size = coefsArray.size();
