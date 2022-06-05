@@ -723,6 +723,10 @@ void GfxAnimate::throttleSpeed() {
 		// One entry drawn -> check if that entry was a speed benchmark view, if not enable speed throttler
 		AnimateEntry *onlyCast = &_lastCastData[0];
 
+		// Note that we now use script patches disable speed tests and avoid their overflow errors.
+		// This heuristic is still useful for any games or versions that haven't been patched yet
+		// and it does make some of the patched tests complete faster and reduce startup delay.
+
 		// first loop and first cel used?
 		if ((onlyCast->loopNo == 0) && (onlyCast->celNo == 0)) {
 			// and that cel has a known speed benchmark resolution
