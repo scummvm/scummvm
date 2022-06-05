@@ -790,10 +790,6 @@ void Lua_V1::GetCameraLookVector() {
 	warning("Stub function: GetCameraLookVector");
 }
 
-void Lua_V1::GetCameraPosition() {
-	warning("Stub function: GetCameraPosition");
-}
-
 #define STUB_FUNC(name) void name() {}
 
 // Stub functions not used in games

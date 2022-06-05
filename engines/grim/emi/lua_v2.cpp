@@ -301,13 +301,6 @@ void Lua_V2::Display() {
 	// dummy
 }
 
-void Lua_V2::GetCameraPosition() {
-	Set::Setup *setup = g_grim->getCurrSet()->getCurrSetup();
-	lua_pushnumber(setup->_pos.x());
-	lua_pushnumber(setup->_pos.y());
-	lua_pushnumber(setup->_pos.z());
-}
-
 void Lua_V2::GetCameraPitch() {
 	Set *set = g_grim->getCurrSet();
 	if (set == nullptr) {

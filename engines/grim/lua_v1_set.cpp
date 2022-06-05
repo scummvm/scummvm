@@ -471,4 +471,11 @@ void Lua_V1::TurnLightOn() {
 	}
 }
 
+void Lua_V1::GetCameraPosition() {
+	Set::Setup *setup = g_grim->getCurrSet()->getCurrSetup();
+	lua_pushnumber(setup->_pos.x());
+	lua_pushnumber(setup->_pos.y());
+	lua_pushnumber(setup->_pos.z());
+}
+
 } // end of namespace Grim
