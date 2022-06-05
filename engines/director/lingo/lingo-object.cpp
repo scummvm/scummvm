@@ -1041,8 +1041,9 @@ bool TextCastMember::setField(int field, const Datum &d) {
 	}
 		return true;
 	case kTheTextFont:
-		_fontId = g_director->_wm->_fontMan->getFontIdByName(d.asString());
-		setText(this->_ptext);
+		((Graphics::MacText *)toEdit->_widget)->enforceTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(d.asString()));
+		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
+		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
 		_modified = true;
 		return false;
 	case kTheTextHeight:

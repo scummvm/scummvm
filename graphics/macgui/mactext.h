@@ -194,6 +194,7 @@ public:
 	void appendText(const Common::U32String &str, const Font *font, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
 
 	int getTextFont() { return _defaultFormatting.fontId; }
+	void enforceTextFont(uint16 fontId);
 
 	// because currently, we are counting linespacing as font height
 	int getTextSize() { return _defaultFormatting.fontSize; }

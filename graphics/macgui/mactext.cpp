@@ -337,6 +337,18 @@ void MacText::setColors(uint32 fg, uint32 bg) {
 	_contentIsDirty = true;
 }
 
+void MacText::enforceTextFont(uint16 fontId) {
+	for (uint i = 0; i < _textLines.size(); i++) {
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			_textLines[i].chunks[j].fontId = fontId;
+		}
+	}
+
+	_fullRefresh = true;
+	render();
+	_contentIsDirty = true;
+}
+
 void MacText::setTextSize(int textSize) {
 	for (uint i = 0; i < _textLines.size(); i++) {
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {

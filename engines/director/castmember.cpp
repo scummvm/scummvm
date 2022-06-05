@@ -1036,7 +1036,7 @@ void TextCastMember::importRTE(byte *text) {
 }
 
 void TextCastMember::setText(const Common::U32String &text) {
-	//Do nothing if text did not change
+	// Do nothing if text did not change
 	if (_ptext.equals(text))
 		return;
 
