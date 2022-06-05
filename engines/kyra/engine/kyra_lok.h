@@ -480,6 +480,7 @@ protected:
 	uint8 _configTextspeed;
 
 	Screen::FontId _defaultFont;
+	Screen::FontId _noteFont;
 	int _defaultLineSpacing;
 
 	Animator_LoK *_animator;

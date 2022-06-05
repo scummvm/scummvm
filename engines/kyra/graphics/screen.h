@@ -68,7 +68,7 @@ public:
 		kASCII = 0,
 		kSJIS,
 		kBIG5,
-		kKOR
+		kHANGUL
 	};
 
 public:
@@ -290,13 +290,13 @@ private:
 	const uint16 _pitch;
 };
 
-class KoreanFontLoK final : public Font {
+class HangulFontLoK final : public Font {
 public:
-	KoreanFontLoK(Font *font8fnt, const uint16 *lookupTable, uint32 lookupTableSize);
-	~KoreanFontLoK() override;
+	HangulFontLoK(Font *&font8fat, const uint16 *lookupTable, uint32 lookupTableSize);
+	~HangulFontLoK() override;
 
 	bool load(Common::SeekableReadStream &data) override;
-	Type getType() const override { return kKOR; }
+	Type getType() const override { return kHANGUL; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
 	int getCharWidth(uint16 c) const override;
@@ -305,14 +305,14 @@ public:
 	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 private:
-	const uint8 *createGlyph(uint16 chr) const;
+	const uint8 *composeGlyph(uint16 chr) const;
 	void processColorMap();
 	void renderGlyph(byte *dst, const uint8 *glyph, uint8 col, int pitch) const;
 
 	int _width, _height;
 	const uint8 *_colorMap;
 
-	Font *_font8;
+	Font *&_font8fat;
 	const uint8 *_fileData;
 	const uint8 *_glyphData[3];
 	const uint16 *_2byteTables[7];

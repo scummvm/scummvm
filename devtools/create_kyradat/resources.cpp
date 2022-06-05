@@ -462,7 +462,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1NewGameString, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1NewGameStringDOSKoreanProvider },
 	{ k1ConfigStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1ConfigStringsDOSKoreanProvider },
 	{ k1TwoByteFontLookupTable, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1TwoByteFontLookupTableDOSKoreanProvider },
-	{ k1CreditsStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1k1CreditsStringsDOSKoreanProvider },
+	{ k1CreditsStrings, kKyra1, kPlatformDOS, kNoSpecial, KO_KOR, &k1CreditsStringsDOSKoreanProvider },
 	{ k1IntroStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1IntroStringsDOSChineseTradProvider },
 	{ k1ItemNames, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1ItemNamesDOSChineseTradProvider },
 	{ k1TakenStrings, kKyra1, kPlatformDOS, kNoSpecial, ZH_TWN, &k1TakenStringsDOSChineseTradProvider },

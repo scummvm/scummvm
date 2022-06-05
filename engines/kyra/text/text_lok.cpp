@@ -329,9 +329,9 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 	int boxY2 = 152;
 	int col2 = _flags.platform == Common::kPlatformAmiga ? 19 : 12;
 
-	if (_flags.lang == Common::ZH_TWN) {
+	if (_flags.lang == Common::ZH_TWN || _flags.lang == Common::KO_KOR) {
 		boxY1 = 140;
-		boxY2 = 153;
+		boxY2 = _flags.lang == Common::KO_KOR ? 155 : 153;
 		col2 = 0;
 	}
 

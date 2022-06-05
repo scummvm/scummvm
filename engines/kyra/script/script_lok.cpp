@@ -1041,12 +1041,17 @@ int KyraEngine_LoK::o1_specialEventDisplayBrynnsNote(EMCState *script) {
 		else
 			_screen->loadBitmap("NOTE.CPS", 3, 3, nullptr);
 	}
-	_screen->copyRegion(63, 8, 63, 8, 194, 128, 2, 0);
+
+	if (_flags.lang == Common::KO_KOR)
+		_screen->copyRegion(13, 1, 13, 1, 296, 156, 2, 0);
+	else
+		_screen->copyRegion(63, 8, 63, 8, 194, 128, 2, 0);
 	_screen->updateScreen();
 	_screen->showMouse();
 
-	if (_flags.platform != Common::kPlatformAmiga && !_flags.isTalkie && _flags.lang != Common::JA_JPN && _flags.lang != Common::ZH_TWN)
-		_screen->setFont(Screen::FID_6_FNT);
+	// For Amiga and DOS CD this is actually an irrelevant call, since the note text is part of the
+	// bitmap and the script function for printing the text on it will not be called in these versions.
+	_screen->setFont(_noteFont);
 	return 0;
 }
 
@@ -1058,8 +1063,7 @@ int KyraEngine_LoK::o1_specialEventRemoveBrynnsNote(EMCState *script) {
 	_screen->updateScreen();
 	_screen->showMouse();
 
-	if (_flags.platform != Common::kPlatformAmiga && !_flags.isTalkie && _flags.lang != Common::JA_JPN && _flags.lang != Common::ZH_TWN)
-		_screen->setFont(Screen::FID_8_FNT);
+	_screen->setFont(_defaultFont);
 	return 0;
 }
 
