@@ -28,6 +28,28 @@ namespace Common {
 	template <typename T> struct RemoveConst { typedef T type; };
 	template <typename T> struct RemoveConst<const T> { typedef T type; };
 	template <typename T> struct AddConst { typedef const T type; };
+	template <typename T> struct IsUnsigned { static const bool value = ((T(0) < T(-1))); };
+
+	template <typename T> struct IsIntegral { static const bool value = false; };
+	template<> struct IsIntegral<bool> { static const bool value = true; };
+	template<> struct IsIntegral<char> { static const bool value = true; };
+	template<> struct IsIntegral<signed char> { static const bool value = true; };
+	template<> struct IsIntegral<unsigned char> { static const bool value = true; };
+	template<> struct IsIntegral<wchar_t> { static const bool value = true; };
+	template<> struct IsIntegral<short> { static const bool value = true; };
+	template<> struct IsIntegral<unsigned short> { static const bool value = true; };
+	template<> struct IsIntegral<int> { static const bool value = true; };
+	template<> struct IsIntegral<unsigned int> { static const bool value = true; };
+	template<> struct IsIntegral<long> { static const bool value = true; };
+	template<> struct IsIntegral<unsigned long> { static const bool value = true; };
+	template<> struct IsIntegral<long long> { static const bool value = true; };
+	template<> struct IsIntegral<unsigned long long> { static const bool value = true; };
+	
+	template <typename T> struct IsFloatingPoint { static const bool value = false; };
+	template<> struct IsFloatingPoint<float> { static const bool value = true; };
+	template<> struct IsFloatingPoint<double> { static const bool value = true; };
+	
+	template <typename T> struct IsArithmetic { static const bool value = IsIntegral<T>::value || IsFloatingPoint<T>::value; };
 } // End of namespace Common
 
 #endif
