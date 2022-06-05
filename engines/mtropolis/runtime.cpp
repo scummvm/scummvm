@@ -4221,7 +4221,7 @@ bool Runtime::isModifierMouseInteractive(Modifier *modifier, MouseInteractivityT
 	return false;
 }
 
-void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, int &bestStackHeight, bool &bestDirect, Structural *candidate, int stackHeight, int32 relativeX, int32 relativeY, MouseInteractivityTestType testType) {
+void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int32 &bestLayer, int32 &bestStackHeight, bool &bestDirect, Structural *candidate, int32 stackHeight, int32 relativeX, int32 relativeY, MouseInteractivityTestType testType) {
 	int32 childRelativeX = relativeX;
 	int32 childRelativeY = relativeY;
 	if (candidate->isElement()) {
@@ -4624,8 +4624,8 @@ VThreadState Runtime::updateMouseStateTask(const UpdateMouseStateTaskData &data)
 	if (data.mouseDown) {
 		// Mouse down
 		Structural *tracked = nullptr;
-		int bestSceneStack = INT_MIN;
-		int bestLayer = INT_MIN;
+		int32 bestSceneStack = INT32_MIN;
+		int32 bestLayer = INT32_MIN;
 		bool bestDirect = false;
 
 		for (size_t ri = 0; ri < _sceneStack.size(); ri++) {
@@ -4699,8 +4699,8 @@ VThreadState Runtime::updateMousePositionTask(const UpdateMousePositionTaskData 
 	// a Mouse Up Inside event is sent when the button is released.
 
 	Structural *collisionItem = nullptr;
-	int bestSceneStack = INT_MIN;
-	int bestLayer = INT_MIN;
+	int32 bestSceneStack = INT32_MIN;
+	int32 bestLayer = INT32_MIN;
 	bool bestDirect = false;
 
 	for (size_t ri = 0; ri < _sceneStack.size(); ri++) {

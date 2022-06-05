@@ -22,6 +22,8 @@
 #ifndef MTROPOLIS_SAVELOAD_H
 #define MTROPOLIS_SAVELOAD_H
 
+#include "mtropolis/core.h"
+
 namespace Common {
 
 class ReadStream;
@@ -33,19 +35,19 @@ namespace MTropolis {
 
 class RuntimeObject;
 
-struct ISaveWriter {
+struct ISaveWriter : public IInterfaceBase {
 	virtual bool writeSave(Common::WriteStream *stream) = 0;
 };
 
-struct ISaveReader {
+struct ISaveReader : public IInterfaceBase {
 	virtual bool readSave(Common::ReadStream *stream) = 0;
 };
 
-struct ISaveUIProvider {
+struct ISaveUIProvider : public IInterfaceBase {
 	virtual bool promptSave(ISaveWriter *writer) = 0;
 };
 
-struct ILoadUIProvider {
+struct ILoadUIProvider : public IInterfaceBase {
 	virtual bool promptLoad(ISaveReader *reader) = 0;
 };
 

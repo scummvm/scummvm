@@ -31,6 +31,8 @@
 #include "common/rect.h"
 #include "common/xpfloat.h"
 
+#include "mtropolis/core.h"
+
 // This contains defs related to parsing of mTropolis stored data into structured data objects.
 // This is separated from asset construction for a number of reasons, mainly that data parsing has
 // several quirky parses, and there are a lot of fields where, due to platform-specific byte
@@ -1773,7 +1775,7 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
-struct IPlugInModifierDataFactory {
+struct IPlugInModifierDataFactory : public IInterfaceBase {
 	virtual Common::SharedPtr<Data::PlugInModifierData> createModifierData() const = 0;
 	virtual PlugIn &getPlugIn() const = 0;
 };

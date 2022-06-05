@@ -1635,7 +1635,7 @@ private:
 
 	static bool isStructuralMouseInteractive(Structural *structural, MouseInteractivityTestType testType);
 	static bool isModifierMouseInteractive(Modifier *modifier, MouseInteractivityTestType testType);
-	static void recursiveFindMouseCollision(Structural *&bestResult, int &bestLayer, int &bestStackHeight, bool &bestDirect, Structural *candidate, int stackHeight, int32 relativeX, int32 relativeY, MouseInteractivityTestType testType);
+	static void recursiveFindMouseCollision(Structural *&bestResult, int32 &bestLayer, int32 &bestStackHeight, bool &bestDirect, Structural *candidate, int32 stackHeight, int32 relativeX, int32 relativeY, MouseInteractivityTestType testType);
 
 	void queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay);
 

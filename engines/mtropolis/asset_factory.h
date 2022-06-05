@@ -22,6 +22,7 @@
 #ifndef MTROPOLIS_ASSET_FACTORY_H
 #define MTROPOLIS_ASSET_FACTORY_H
 
+#include "mtropolis/core.h"
 #include "mtropolis/data.h"
 #include "mtropolis/runtime.h"
 
@@ -33,7 +34,7 @@ struct AssetLoaderContext {
 	size_t streamIndex;
 };
 
-struct IAssetFactory {
+struct IAssetFactory : public IInterfaceBase {
 	virtual Common::SharedPtr<Asset> createAsset(AssetLoaderContext &context, const Data::DataObject &dataObject) const = 0;
 };
 
