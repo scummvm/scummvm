@@ -348,6 +348,18 @@ void WetEngine::loadAssetsPCG() {
 	_levels["<start>"] = intro;
 
 	loadArcadeLevel("c31.mis", "<quit>", "<quit>", "");
+	ArcadeShooting *arc;
+	if (_restoredContentEnabled) {
+		arc = (ArcadeShooting*) _levels["c31.mis"];
+		arc->segments[0].size = 1354;
+		arc->objKillsRequired[0] = 2;
+		// These videos were not included in the demo, so we replace or remove them
+		arc->hitBoss1Video = "";
+		arc->hitBoss2Video = "";
+		arc->missBoss1Video = "";
+		arc->missBoss2Video = "";
+		arc->defeatMissBossVideo = "c31\\c31d1s.smk";
+	}
 
 	Transition *over = new Transition("<quit>");
 	over->intros.push_back("g.s");
