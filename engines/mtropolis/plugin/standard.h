@@ -374,9 +374,6 @@ public:
 
 	MultiMidiPlayer *getMidi() const;
 
-	int8 allocateMidiSource();
-	void deallocateMidiSource(int8 source);
-
 private:
 	PlugInModifierFactory<CursorModifier, Data::Standard::CursorModifier> _cursorModifierFactory;
 	PlugInModifierFactory<STransCtModifier, Data::Standard::STransCtModifier> _sTransCtModifierFactory;
@@ -388,9 +385,6 @@ private:
 
 	Common::SharedPtr<MultiMidiPlayer> _midi;
 	StandardPlugInHacks _hacks;
-
-	Common::Array<int8> _deallocatedSources;
-	int8 _lastAllocatedSourceID;
 };
 
 } // End of namespace Standard
