@@ -38,7 +38,7 @@ const int SNAPSHOT_RAM_PAGES = 16;
 
 void *libspectrumReallocN(void *ptr, size_t nmemb, size_t size) {
 	if (nmemb > SIZE_MAX / size)
-		error("Can't reallocate to required size");
+		error("libspectrumReallocN: Can't reallocate to required size");
 
 	return realloc(ptr, nmemb * size);
 }

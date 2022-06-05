@@ -585,7 +585,7 @@ void Scott::look(void) {
 	while (ct <= _G(_gameHeader)->_numItems) {
 		if (_G(_items)[ct]._location == MY_LOC) {
 			if (_G(_items)[ct]._text[0] == 0) {
-				error("Invisible item in room: %d\n", ct);
+				error("Scott::look(): Invisible item in room: %d", ct);
 				ct++;
 				continue;
 			}
@@ -1528,7 +1528,7 @@ void Scott::listInventoryInUpperWindow() {
 	while (i <= _G(_gameHeader)->_numItems) {
 		if (_G(_items)[i]._location == CARRIED) {
 			if (_G(_items)[i]._text[0] == 0) {
-				error("Invisible item in inventory: %d\n", i);
+				error("Scott::listInventoryInUpperWindow(): Invisible item in inventory: %d", i);
 				i++;
 				continue;
 			}
@@ -1683,7 +1683,7 @@ void Scott::drawImage(int image) {
 		return;
 	openGraphicsWindow();
 	if (_G(_graphics) == nullptr) {
-		error("DrawImage: Graphic window nullptr?\n");
+		error("drawImage: Graphic window nullptr?");
 		return;
 	}
 	if (_G(_game)->_pictureFormatVersion == 99)
@@ -2074,7 +2074,7 @@ void Scott::swapCounters(int index) {
 		  index);
 #endif
 	if (index > 15) {
-		error("ERROR! parameter out of range. Max 15, got %d\n", index);
+		error("Scott::swapCounters(int index): ERROR! parameter out of range. Max 15, got %d", index);
 		index = 15;
 	}
 	int temp = _G(_currentCounter);
