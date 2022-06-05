@@ -96,18 +96,19 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 	_malcolmFrame = 0;
 	_malcolmTimer1 = _malcolmTimer2 = 0;
 	_defaultFont = Screen::FID_8_FNT;
+	_noteFont = Screen::FID_6_FNT;
 	_defaultLineSpacing = 0;
 
 	switch (_flags.lang) {
 	case Common::JA_JPN:
-		_defaultFont = Screen::FID_SJIS_FNT;
+		_defaultFont = _noteFont = Screen::FID_SJIS_FNT;
 		break;
 	case Common::ZH_TWN:
-		_defaultFont = Screen::FID_CHINESE_FNT;
+		_defaultFont = _noteFont = Screen::FID_CHINESE_FNT;
 		_defaultLineSpacing = 2;
 		break;
 	case Common::KO_KOR:
-		_defaultFont = Screen::FID_KOREAN_FNT;
+		_defaultFont = _noteFont = Screen::FID_KOREAN_FNT;
 		_defaultLineSpacing = 2;
 		break;
 	default:
@@ -325,7 +326,6 @@ Common::Error KyraEngine_LoK::go() {
 		_screen->setTextMarginRight(312);
 	} else if (_flags.lang == Common::KO_KOR) {
 		_screen->loadFont(Screen::FID_KOREAN_FNT, "MK15.BIT");
-		_screen->setTextMarginRight(312);
 	}
 
 	_screen->setFont(_defaultFont);

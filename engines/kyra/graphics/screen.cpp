@@ -1397,8 +1397,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 			}
 		} else if (fontId == FID_KOREAN_FNT) {
 			const uint16 *lookupTable = _vm->staticres()->loadRawDataBe16(k1TwoByteFontLookupTable, temp);
-			// The FID_8_FNT must be loaded before this.
-			fnt = new KoreanFontLoK(_fonts[FID_8_FNT], lookupTable, temp);
+			fnt = new HangulFontLoK(_fonts[FID_8_FNT], lookupTable, temp);
 		} else {
 			fnt = new DOSFont();
 		}
@@ -1433,8 +1432,10 @@ int Screen::getFontWidth() const {
 }
 
 int Screen::getCharWidth(uint16 c) const {
-	const int width = _fonts[_currentFont]->getCharWidth(c);
-	return width + (_isSegaCD || _fonts[_currentFont]->getType() == Font::kASCII ? _charSpacing : 0);
+	int width = _fonts[_currentFont]->getCharWidth(c);
+	if (_isSegaCD || _fonts[_currentFont]->getType() == Font::kASCII || (_fonts[_currentFont]->getType() == Font::kHANGUL && c < 0x80))
+		width += _charSpacing;
+	return width;
 }
 
 int Screen::getCharHeight(uint16 c) const {
@@ -1548,8 +1549,11 @@ uint16 Screen::fetchChar(const char *&s) const {
 	uint16 ch = (uint8)*s++;
 
 	if ((_fonts[_currentFont]->getType() == Font::kSJIS && (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))) ||
-		(_fonts[_currentFont]->getType() == Font::kBIG5 && ch < 0x7F) || (_fonts[_currentFont]->getType() == Font::kKOR && ch < 0x80))
+		(_fonts[_currentFont]->getType() == Font::kBIG5 && ch < 0x7F) || (_fonts[_currentFont]->getType() == Font::kHANGUL && ch < 0x80)) {
+			//if (_fonts[_currentFont]->getType() == Font::kHANGUL && ch == ' ' && *s == ' ')
+			//	++s;
 			return ch;
+	}
 
 	ch |= (uint8)(*s++) << 8;
 	return ch;

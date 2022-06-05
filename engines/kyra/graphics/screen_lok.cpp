@@ -533,8 +533,7 @@ void ChineseTwoByteFontLoK::processColorMap() {
 	_textColor[1] = _colorMap[0] | (_colorMap[0] << 8);
 }
 
-KoreanFontLoK::KoreanFontLoK(Font *font8fnt, const uint16 *lookupTable, uint32 lookupTableSize) : _font8(font8fnt), _height(16), _width(16), _fileData(0), _colorMap(0), _glyphTemp(0) {
-	assert(_font8);
+HangulFontLoK::HangulFontLoK(Font *&font8fat, const uint16 *lookupTable, uint32 lookupTableSize) : _font8fat(font8fat), _height(16), _width(16), _fileData(0), _colorMap(0), _glyphTemp(0) {
 	assert(lookupTable);
 	assert(lookupTableSize == 224);
 	for (int i = 0; i < 7; ++i)
@@ -543,12 +542,12 @@ KoreanFontLoK::KoreanFontLoK(Font *font8fnt, const uint16 *lookupTable, uint32 l
 	_glyphTemp = new uint8[30];
 }
 
-KoreanFontLoK::~KoreanFontLoK() {
+HangulFontLoK::~HangulFontLoK() {
 	delete[] _fileData;
 	delete[] _glyphTemp;
 }
 
-bool KoreanFontLoK::load(Common::SeekableReadStream &data) {
+bool HangulFontLoK::load(Common::SeekableReadStream &data) {
 	if (_fileData)
 		return false;
 
@@ -576,26 +575,29 @@ bool KoreanFontLoK::load(Common::SeekableReadStream &data) {
 	return true;
 }
 
-int KoreanFontLoK::getCharWidth(uint16 c) const {
-	return (c >= 0x80) ? 16 : _font8->getCharWidth(c);
+int HangulFontLoK::getCharWidth(uint16 c) const {
+	assert(_font8fat);
+	return (c >= 0x80) ? 16 : _font8fat->getCharWidth(c);
 }
 
-int KoreanFontLoK::getCharHeight(uint16 c) const {
-	return (_colorMap && _colorMap[3]) ? _height + 2 : _height;
+int HangulFontLoK::getCharHeight(uint16 c) const {
+	return /*(_colorMap && _colorMap[3]) ? _height + 2 :*/ _height;
 }
 
-void KoreanFontLoK::setColorMap(const uint8 *src) {
+void HangulFontLoK::setColorMap(const uint8 *src) {
 	_colorMap = src;
-	_font8->setColorMap(src);
+	assert(_font8fat);
+	_font8fat->setColorMap(src);
 }
 
-void KoreanFontLoK::drawChar(uint16 c, byte *dst, int pitch, int) const {
+void HangulFontLoK::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	if (c < 0x80) {
-		_font8->drawChar(c, dst + (c == '\"' ? 0 : 5) * pitch, pitch, 0);
+		assert(_font8fat);
+		_font8fat->drawChar(c, dst + (c == '\"' ? 0 : 5) * pitch, pitch, 0);
 		return;
 	}
 
-	const uint8 *glyph = createGlyph(c);
+	const uint8 *glyph = composeGlyph(c);
 	dst += (pitch + 1);
 
 	if (_colorMap[3]) {
@@ -608,7 +610,7 @@ void KoreanFontLoK::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	renderGlyph(dst, glyph, _colorMap[1], pitch);
 };
 
-const uint8 *KoreanFontLoK::createGlyph(uint16 chr) const {
+const uint8 *HangulFontLoK::composeGlyph(uint16 chr) const {
 	memset(_glyphTemp, 0, 30);
 
 	uint16 t[3];
@@ -648,7 +650,7 @@ const uint8 *KoreanFontLoK::createGlyph(uint16 chr) const {
 	return _glyphTemp;
 }
 
-void KoreanFontLoK::renderGlyph(byte *dst, const uint8 *glyph, uint8 col, int pitch) const {
+void HangulFontLoK::renderGlyph(byte *dst, const uint8 *glyph, uint8 col, int pitch) const {
 	const uint8 *src = glyph;
 	pitch -= 15;
 
