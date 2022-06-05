@@ -19,10 +19,10 @@
  *
  */
 
-#include "glk/scott/definitions.h"
 #include "common/array.h"
 #include "common/str.h"
 #include "common/str-array.h"
+#include "glk/scott/definitions.h"
 
 namespace Glk {
 namespace Scott {

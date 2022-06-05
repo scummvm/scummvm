@@ -19,12 +19,12 @@
  *
  */
 
-#include "glk/scott/detection.h"
-#include "glk/scott/detection_tables.h"
-#include "glk/blorb.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
+#include "glk/blorb.h"
+#include "glk/scott/detection.h"
+#include "glk/scott/detection_tables.h"
 
 namespace Glk {
 namespace Scott {

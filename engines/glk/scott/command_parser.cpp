@@ -19,10 +19,10 @@
  *
  */
 
-#include "glk/scott/command_parser.h"
-#include "glk/scott/globals.h"
-#include "glk/scott/scott.h"
 #include "common/str.h"
+#include "glk/scott/scott.h"
+#include "glk/scott/globals.h"
+#include "glk/scott/command_parser.h"
 
 namespace Glk {
 namespace Scott {

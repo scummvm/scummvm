@@ -19,10 +19,10 @@
  *
  */
 
-#include "glk/scott/decompress_z80.h"
 #include "common/algorithm.h"
 #include "common/array.h"
 #include "common/textconsole.h"
+#include "glk/scott/decompress_z80.h"
 
 namespace Glk {
 namespace Scott {

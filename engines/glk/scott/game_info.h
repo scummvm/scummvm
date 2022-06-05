@@ -22,8 +22,8 @@
 #ifndef GLK_SCOTT_GAMEINFO_H
 #define GLK_SCOTT_GAMEINFO_H
 
-#include "glk/scott/definitions.h"
 #include "common/array.h"
+#include "glk/scott/definitions.h"
 
 namespace Glk {
 namespace Scott {

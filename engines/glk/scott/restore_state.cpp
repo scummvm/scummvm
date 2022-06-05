@@ -19,10 +19,10 @@
  *
  */
 
-#include "glk/scott/restore_state.h"
+#include "glk/scott/scott.h"
 #include "glk/scott/globals.h"
 #include "glk/scott/definitions.h"
-#include "glk/scott/scott.h"
+#include "glk/scott/restore_state.h"
 
 namespace Glk {
 namespace Scott {

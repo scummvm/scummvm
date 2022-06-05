@@ -19,21 +19,21 @@
  *
  */
 
+#include "common/str.h"
+#include "glk/scott/scott.h"
+#include "glk/scott/globals.h"
 #include "glk/scott/command_parser.h"
-#include "glk/scott/detect_game.h"
 #include "glk/scott/decompress_text.h"
 #include "glk/scott/decompress_z80.h"
 #include "glk/scott/detection.h"
 #include "glk/scott/detection_tables.h"
 #include "glk/scott/game_info.h"
-#include "glk/scott/globals.h"
 #include "glk/scott/hulk.h"
 #include "glk/scott/line_drawing.h"
 #include "glk/scott/saga_draw.h"
-#include "glk/scott/scott.h"
 #include "glk/scott/c64_checksums.h"
 #include "glk/scott/game_specific.h"
-#include "common/str.h"
+#include "glk/scott/detect_game.h"
 
 namespace Glk {
 namespace Scott {
