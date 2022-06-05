@@ -114,7 +114,7 @@ FORCEINLINE void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *t
 			c_g = (c_g * l_g) >> (ZB_POINT_GREEN_BITS - 8);
 			c_b = (c_b * l_b) >> (ZB_POINT_BLUE_BITS - 8);
 		}
-		writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite, kFogMode>(fbOffset + _a, c_a, c_r, c_g, c_b, z, fog >> ZB_FOG_BITS, fog_r, fog_g, fog_b);
+		writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite, kFogMode>(fbOffset + _a, c_a, c_r, c_g, c_b, z, fog, fog_r, fog_g, fog_b);
 	}
 	z += dzdx;
 	s += dsdx;
