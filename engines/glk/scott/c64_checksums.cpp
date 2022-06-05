@@ -19,7 +19,7 @@
  *
  */
 
-#include "glk/scott/C64_checksums.h"
+#include "glk/scott/c64_checksums.h"
 #include "glk/scott/definitions.h"
 #include "glk/scott/scott.h"
 
