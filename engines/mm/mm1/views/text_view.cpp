@@ -38,7 +38,7 @@ TextView::TextView(const Common::String &name, UIElement *owner) :
 
 void TextView::writeChar(char c) {
 	Graphics::ManagedSurface s = getSurface();
-	g_globals->_font->drawChar(&s, c,
+	g_globals->_font.drawChar(&s, c,
 		_textPos.x * FONT_SIZE, _textPos.y * FONT_SIZE, 0xff);
 
 	if (++_textPos.x == TEXT_W) {
@@ -104,8 +104,8 @@ void TextView::drawTextBorder() {
 		writeChar(x, TEXT_H - 2, '-');
 	}
 	for (int y = 3; y < TEXT_H - 3; ++y) {
-		writeChar(1, y, '|');
-		writeChar(TEXT_W - 2, y, '|');
+		writeChar(1, y, '!');
+		writeChar(TEXT_W - 2, y, '!');
 	}
 }
 

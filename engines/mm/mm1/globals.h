@@ -23,6 +23,7 @@
 #define MM1_GLOBALS_H
 
 #include "graphics/font.h"
+#include "mm/utils/bitmap_font.h"
 #include "mm/utils/strings_data.h"
 #include "mm/mm1/data/game_state.h"
 #include "mm/mm1/data/int_array.h"
@@ -36,12 +37,12 @@ class Globals : public GameState {
 public:
 	StringsData _strings;
 	Roster _roster;
-	const Graphics::Font *_font = nullptr;
 	Character *_currCharacter = nullptr;
 	Maps::TownId _startingTown = Maps::SORPIGAL;
 	IntArray _partyChars;
 	Maps::Maps _maps;
 	bool _intangible = false; // Console flag
+	BitmapFont _font;
 public:
 	Globals();
 	virtual ~Globals();

@@ -49,11 +49,11 @@ bool Globals::load() {
 	if (!_strings.load("strings_en.yml"))
 		return false;
 
+	if (!_font.load("font.bmp"))
+		return false;
+
 	// Load roster
 	_roster.load();
-
-	// Load the font
-	_font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
 
 	return true;
 }
