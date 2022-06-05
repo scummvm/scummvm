@@ -86,6 +86,16 @@ ifdef USE_DOCKTILEPLUGIN
 # The NsDockTilePlugIn needs to be compiled in both 32 and 64 bits irrespective of how ScummVM itself is compiled.
 # Therefore do not use $(CXXFLAGS) and $(LDFLAGS).
 
+ifdef MACOSX_ARM64
+
+ScummVMDockTilePlugin.o:
+	$(CXX) -mmacosx-version-min=11.0 -arch arm64 -O2 -c $(srcdir)/backends/taskbar/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin.o
+
+ScummVMDockTilePlugin: ScummVMDockTilePlugin.o
+	$(CXX) -mmacosx-version-min=11.0 -arch arm64 -bundle -framework Foundation -framework AppKit -fobjc-link-runtime ScummVMDockTilePlugin.o -o ScummVMDockTilePlugin
+
+else  # MACOSX_ARM64
+
 ScummVMDockTilePlugin32.o:
 	$(CXX) -mmacosx-version-min=10.6 -arch i386 -O2 -c $(srcdir)/backends/taskbar/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin32.o
 
@@ -101,10 +111,12 @@ ScummVMDockTilePlugin64: ScummVMDockTilePlugin64.o
 ifdef MACOSX_64_BITS_ONLY
 ScummVMDockTilePlugin: ScummVMDockTilePlugin64
 	cp ScummVMDockTilePlugin64 ScummVMDockTilePlugin
-else
+else  # MACOSX_64_BITS_ONLY
 ScummVMDockTilePlugin: ScummVMDockTilePlugin32 ScummVMDockTilePlugin64
 	lipo -create ScummVMDockTilePlugin32 ScummVMDockTilePlugin64 -output ScummVMDockTilePlugin
-endif
+endif # MACOSX_64_BITS_ONLY
+
+endif # MACOSX_ARM64
 
 scummvm.docktileplugin: ScummVMDockTilePlugin
 	mkdir -p scummvm.docktileplugin/Contents
