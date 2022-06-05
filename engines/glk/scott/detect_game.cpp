@@ -31,7 +31,7 @@
 #include "glk/scott/line_drawing.h"
 #include "glk/scott/saga_draw.h"
 #include "glk/scott/scott.h"
-#include "glk/scott/C64_checksums.h"
+#include "glk/scott/c64_checksums.h"
 #include "glk/scott/game_specific.h"
 #include "common/str.h"
 
