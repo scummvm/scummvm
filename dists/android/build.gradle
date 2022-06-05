@@ -35,11 +35,15 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
 
-        versionName "2.6.0"
-        versionCode 73
+        versionName "2.7.0"
+        versionCode 89
         // versioncode must be incremented for each market upload
-        // ScummVM 2.6.0: 73-76 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.7.0: 89-93 (arm-v7a, arm64-v8a, x86, x86_64 respectively)		
+        // ScummVM 2.6.x: 85-88 (reserved for potential beta or 2.6.x bugfix builds)
+        // ScummVM 2.6.x: 81-84 (reserved for potential beta or 2.6.x bugfix builds)
+        // ScummVM 2.6.x: 77-80 (reserved for potential beta or 2.6.x bugfix builds)
         // Historical version codes:
+        // ScummVM 2.6.0: 73-76 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
         // ScummVM 2.5.1: 69-72 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
         // ScummVM 2.5.0: 65-68 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
         // ScummVM 2.2.1: 61-64 Play Store release version for 2.2.1 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
