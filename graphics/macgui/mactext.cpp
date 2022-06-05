@@ -484,6 +484,22 @@ void MacText::setTextSlant(int textSlant, int start, int end) {
 	setTextChunks(start, end, textSlant, setTextSlantCallback);
 }
 
+void MacText::enforceTextSlant(int textSlant) {
+	for (uint i = 0; i < _textLines.size(); i++) {
+		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
+			if (textSlant) {
+				_textLines[i].chunks[j].textSlant |= textSlant;
+			} else {
+				_textLines[i].chunks[j].textSlant = textSlant;
+			}
+		}
+	}
+
+	_fullRefresh = true;
+	render();
+	_contentIsDirty = true;
+}
+
 // this maybe need to amend
 // currently, we just return the text size of first character.
 int MacText::getTextSize(int start, int end) {
