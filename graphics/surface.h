@@ -303,6 +303,7 @@ public:
 	 * @param key
 	 */
 	void copyRectToSurfaceWithKey(const void *buffer, int srcPitch, int destX, int destY, int width, int height, uint32 key);
+
 	/**
 	 * Copy a bitmap to the internal buffer of the surface.
 	 *
