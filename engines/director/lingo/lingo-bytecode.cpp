@@ -72,6 +72,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x1d, LC::c_telldone,		"" },
 	{ 0x1e, LC::cb_list,		"" },
 	{ 0x1f, LC::cb_proplist,	"" },
+
 	{ 0x41, LC::c_intpush,		"B" },
 	{ 0x42, LC::c_argcnoretpush,"b" },
 	{ 0x43, LC::c_argcpush,		"b" },
@@ -107,6 +108,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x64, LC::c_stackpeek, 	"b" },
 	{ 0x65, LC::c_stackdrop, 	"b" },
 	{ 0x66, LC::cb_v4theentitynamepush, "bN" },
+
 	{ 0x81, LC::c_intpush,		"W" },
 	{ 0x82, LC::c_argcnoretpush,"w" },
 	{ 0x83, LC::c_argcpush,		"w" },
@@ -137,6 +139,9 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0xa0, LC::cb_theassign2, "wN" },
 	{ 0xa1, LC::cb_objectfieldpush, "wN" },
 	{ 0xa2, LC::cb_objectfieldassign, "wN" },
+	{ 0xa3, LC::cb_call,		"wN" }, // tellcall
+	{ 0xa4, LC::c_stackpeek, 	"w" },
+	{ 0xa5, LC::c_stackdrop, 	"w" },
 	{ 0xa6, LC::cb_v4theentitynamepush, "wN" },
 	{ 0, nullptr, nullptr }
 };
