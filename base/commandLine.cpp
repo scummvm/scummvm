@@ -1669,11 +1669,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 #endif // DISABLE_COMMAND_LINE
 
-void storeSessionSetting(const Common::String &command, const Common::String &settingName, const Common::StringMap &settings) {
-	if (settings.contains(command))
-		ConfMan.set(settingName, settings[command], Common::ConfigManager::kSessionDomain); 
-}
-
 bool processSettings(Common::String &command, Common::StringMap &settings, Common::Error &err) {
 	err = Common::kNoError;
 
@@ -1834,33 +1829,35 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		}
 	}
 
-	// store all session related settings
-	storeSessionSetting("config", "config", settings); 
-	storeSessionSetting("fullscreen", "fullscreen", settings); 
-	storeSessionSetting("gfx-mode", "gfx_mode", settings); 
-	storeSessionSetting("stretch-mode", "stretch_mode", settings); 
-	storeSessionSetting("scaler", "scaler", settings); 
-	storeSessionSetting("scale-factor", "scale_factor", settings); 
-	storeSessionSetting("filtering", "filtering", settings); 
-	storeSessionSetting("gui-theme", "gui_theme", settings); 
-	storeSessionSetting("themepath", "themepath", settings); 
-	storeSessionSetting("music-volume", "music_volume", settings); 
-	storeSessionSetting("sfx-volume", "sfx_volume", settings); 
-	storeSessionSetting("speech-volume", "speech_volume", settings); 
-	storeSessionSetting("midi-gain", "midi_gain", settings); 
-	storeSessionSetting("subtitles", "subtitles", settings); 
-	storeSessionSetting("savepath", "savepath", settings); 
-	storeSessionSetting("extrapath", "extrapath", settings); 
-	storeSessionSetting("soundfont", "soundfont", settings); 
-	storeSessionSetting("multi-midi", "multi_midi", settings); 
-	storeSessionSetting("native-mt32", "native-mt32", settings); 
-	storeSessionSetting("enable-gs", "enable_gs", settings); 
-	storeSessionSetting("opl-driver", "opl_driver", settings); 
-	storeSessionSetting("talkspeed", "talkspeed", settings); 
-	storeSessionSetting("render-mode", "render_mode", settings);
-	storeSessionSetting("screenshotpath", "screenshotpath", settings);
-
 	// Finally, store the command line settings into the config manager.
+	static const char * const sessionSettings[] = {
+		"config",
+		"fullscreen",
+		"gfx-mode",
+		"stretch-mode",
+		"scaler",
+		"scale-factor",
+		"filtering",
+		"gui-theme",
+		"themepath",
+		"music-volume",
+		"sfx-volume",
+		"speech-volume",
+		"midi-gain",
+		"subtitles",
+		"savepath",
+		"extrapath",
+		"screenshotpath",
+		"soundfont",
+		"multi-midi",
+		"native-mt32",
+		"enable-gs",
+		"opl-driver",
+		"talkspeed",
+		"render-mode",
+		nullptr
+	};
+
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
 		Common::String key(x->_key);
 		Common::String value(x->_value);
@@ -1871,7 +1868,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 				*c = '_';
 
 		// Store it into ConfMan.
-		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
+		bool useSessionDomain = false;
+		for (auto sessionKey = sessionSettings; *sessionKey && !useSessionDomain; ++sessionKey)
+			useSessionDomain = (x->_key == *sessionKey);
+		ConfMan.set(key, value, useSessionDomain ? Common::ConfigManager::kSessionDomain : Common::ConfigManager::kTransientDomain);
 	}
 
 	return false;
