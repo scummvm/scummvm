@@ -39,6 +39,16 @@ private:
 	 * Draws a tile
 	 */
 	void drawTile();
+
+	/**
+	 * Draws the scene
+	 */
+	void drawScene();
+
+	/**
+	 * Draws the dialog message
+	 */
+	void drawDialogMessage();
 public:
 	GameView(UIElement *owner);
 	virtual ~GameView() {}

@@ -36,7 +36,7 @@ namespace Game {
 class ViewBase : public Views::TextView {
 protected:
 	bool _isDark = false;
-	Common::String _message;
+	Common::String _dialogMessage;
 	byte _arr2[8];
 	bool _stepRandom = false;
 	bool _encounterFlag = false;
@@ -64,7 +64,7 @@ private:
 	/**
 	 * Forward movement is obstructed
 	 */
-	void obstructed();
+	void obstructed(byte mask);
 
 	/**
 	 * Barrier blocking forward movement
@@ -72,7 +72,6 @@ private:
 	void barrier();
 
 	void dialogVal(int num);
-	void dialogMessage(const Common::String &msg);
 
 public:
 	ViewBase(UIElement *owner);

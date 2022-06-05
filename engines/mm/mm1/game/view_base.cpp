@@ -154,12 +154,8 @@ void ViewBase::forward(KeybindingAction action) {
 	if (!g_globals->_intangible) {
 		if (maps._currentWalls & mask) {
 			if (maps._currentState & 0x55 & mask) {
-				barrier();
-				return;
-			}
-		} else {
-			if (maps._currentState & 0x55 & mask) {
-				obstructed();
+				obstructed(mask);
+				redraw();
 				return;
 			}
 
@@ -172,9 +168,16 @@ void ViewBase::forward(KeybindingAction action) {
 				offset = 0;
 
 			if (map.dataByte(30 + offset) == 4 &&
-					!g_globals->_spells._s.walk_on_water) {
+				!g_globals->_spells._s.walk_on_water) {
 				dialogVal(1);
-				dialogMessage(STRING["movement.obstructed.cant_swim"]);
+				_dialogMessage = STRING["movement.obstructed.cant_swim"];
+				redraw();
+				return;
+			}
+		} else {
+			if (maps._currentState & 0x55 & mask) {
+				barrier();
+				redraw();
 				return;
 			}
 		}
@@ -233,19 +236,28 @@ void ViewBase::backwards() {
 	update();
 }
 
-void ViewBase::obstructed() {
-	// TODO
+void ViewBase::obstructed(byte mask) {
+	Maps::Maps &maps = g_globals->_maps;
+	Maps::Map &map = *maps._currentMap;
+	dialogVal(1);
+
+	int index = 32;
+	if (!(maps._currentWalls & mask & 0x55))
+		index = 31;
+	else if (!(maps._currentWalls & mask & 0xaa))
+		index = 30;
+
+	_dialogMessage = STRING[Common::String::format(
+		"movement.obstructed.%d", map.dataByte(index))];
+
 }
 
 void ViewBase::barrier() {
-	// TODO
+	_dialogMessage = STRING["movement.obstructed.barrier"];
+	dialogVal(1);
 }
 
 void ViewBase::dialogVal(int num) {
-	// TODO
-}
-
-void ViewBase::dialogMessage(const Common::String &msg) {
 	// TODO
 }
 
