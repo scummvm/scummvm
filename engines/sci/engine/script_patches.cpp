@@ -20784,6 +20784,158 @@ static const uint16 sq4CdPatchLaserBeamSpeedThrottle[] = {
 	PATCH_END
 };
 
+// The Skate-O-Rama is well known for timer bugs in the CD version. Originally,
+//  the speed setting in SCI games controlled the speed of the entire game.
+//  In between the floppy and CD versions of SQ4 this was changed to control
+//  just ego's speed along with any specific actors that were programmed to use
+//  the speed value. This changed the fundamental nature of time from what SQ4
+//  had been developed against, but the Skate-O-Rama scripts weren't adjusted.
+//  As a result, most delays are instantaneous at high CPU speeds. But even at
+//  slow CPU speeds, the chase can't be completed unless the game speed is
+//  increased so that ego can move fast enough to escape the Sequel Police.
+//
+// The first problem is solved by the speed throttling we apply to all SCI games
+//  in kGameIsRestarting. The second problem is that Skate-O-Rama delays are in
+//  game cycles, which were originally relative to ego's speed, but now take a
+//  constant amount of time. New Rising Sun solved both problems by changing all
+//  all the cycle delays to tick delays (1/60th of a second) and multiplying
+//  them by the game speed global. (Speed is 1 to 15 with 1 being the fastest.)
+//  This makes the delays relative to ego as they were in the floppy version.
+//
+// We fix this by using NRS' solution of converting Skate-O-Rama cycle delays
+//  to tick delays relative to the game speed global. There are a *lot* of these
+//  delays and they're not all relevant so to keep things manageable only the
+//  practical chase delays are patched. This requires quite a few signatures
+//  even though most only differ by a constant. The code pattern we're targeting
+//  is just too short to have four common consecutive bytes for SIG_MAGICDWORD.
+//
+// Applies to: English PC CD
+// Responsible methods: enterScript:changeState, enterAndShootEgo:changeState,
+//                      shootEgo:changeState, swimAfterEgo:changeState,
+//                      landScript:changeState, swimAndShoot:changeState,
+//                      and egoFollowed:changeState in rooms 405, 406, 410, 411
+// Fixes bug: #11038
+static const uint16 sq4CdSignatureSkateORamaChaseDelays1[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x1a,                         // aTop cycles [ cycles = 1 ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchSkateORamaChaseDelays1[] = {
+	0x89, 0xc7,                         // lsg c7 [ game speed ]
+	0x69, 0x20,                         // sTop ticks [ ticks = 1 * game speed ]
+	PATCH_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays2[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x10,                         // ldi 10
+	0x65, 0x1a,                         // aTop cycles [ cycles = 16 ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays3[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x0e,                         // ldi 0e
+	0x65, 0x1a,                         // aTop cycles [ cycles = 14 ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays4[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x14,                         // ldi 14
+	0x65, 0x1a,                         // aTop cycles [ cycles = 20 ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays5[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x78,                         // ldi 78
+	0x65, 0x1a,                         // aTop cycles [ cycles = 120 ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchSkateORamaChaseDelays2_5[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x89, 0xc7,                         // lsg c7 [ game speed ]
+	0x06,                               // mul
+	0x65, 0x20,                         // aTop ticks [ ticks = acc * game speed ]
+	PATCH_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays6[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x14,                         // aTop state [ state = 0]
+	0x7a,                               // push2
+	0x39, 0x10,                         // pushi 10
+	0x39, 0x18,                         // pushi 18
+	0x43, 0x3c, 0x04,                   // callk Random 04
+	0x65, 0x1a,                         // aTop cycles [ cycles = Random(16, 24) ]
+	SIG_END                             // jmp [ toss / ret. room 405: 33 0e room 410: 32 0f 00 ]
+};
+
+static const uint16 sq4CdPatchSkateORamaChaseDelays6[] = {
+	0x76,                               // push0
+	0x69, 0x14,                         // sTop state [ state = 0 ]
+	0x7a,                               // push2
+	0x39, 0x10,                         // pushi 10
+	0x39, 0x18,                         // pushi 18
+	0x43, 0x3c, 0x04,                   // callk Random 04
+	0x89, 0xc7,                         // lsg c7 [ game speed ]
+	0x06,                               // mul
+	0x65, 0x20,                         // aTop ticks [ ticks = Random(16, 24) * game speed ]
+	PATCH_END
+};
+
+// During the Skate-O-Rama chase, leaving via the west exit (room 405) is almost
+//  impossible when the game speed is turned up in the CD version. When entering
+//  from the north (room 406) the Sequel Police appear almost instantly at which
+//  point ego can't escape. Although this scene is known for timer bugs, this is
+//  also caused by an inconsistent y coordinate between room 405 and the more
+//  commonly used east exit (room 410) which does not have this problem.
+//
+// In 410 the police aren't eligible to arrive until ego is below 70 but in 405
+//  the script sets that limit to only 30. Both rooms initialize ego to swim to
+//  50 and their exits are symmetrical to each other. At high speeds, the timer
+//  in swimAfterEgo state 0 expires as the player gains control. In 405 this
+//  instantly kills the player because they're already below the threshold.
+//
+// We fix this by patching room 405's swimAfterEgo y coordinate to match the one
+//  in room 410. This isn't the only bug due to inconsistencies between these
+//  two rooms scripts. It appears that the east exit received more testing.
+//
+// This bug was originally reported as a crash due to ego being shot as they
+//  used the exit. It was addressed with extra speed throttling for the entire
+//  Skate-O-Rama, but I think that just made the conflict less likely. Now we
+//  patch the CD delays to be relative to game speed so that Skate-O-Rama can be
+//  completed at all speeds. There may still be a rare crash to reproduce and
+//  fix, although there have been many mall fixes since then.
+//
+// Applies to: All versions
+// Responsible method: swimAfterEgo:changeState(1)
+// Fixes bug: #5514
+static const uint16 sq4SignatureSkateORamaChaseWestExit[] = {
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04 [ ego y? ]
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x1e,                         // ldi 1e [ 30 ]
+	0x1e,                               // gt?    [ ego:y > 30 ]
+	SIG_END
+};
+
+static const uint16 sq4PatchSkateORamaChaseWestExit[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x35, 0x46,                         // ldi 46 [ 70 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
@@ -20816,6 +20968,21 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
 	{  true,   397, "Floppy: software clerk message fix",             1, sq4FloppySignatureSoftwareClerkMessage,        sq4FloppyPatchSoftwareClerkMessage },
 	{  true,   397, "Floppy: software store easter eggs fix",         1, sq4FloppySignatureSoftwareStoreEasterEggs,     sq4FloppyPatchSoftwareStoreEasterEggs },
+	{  true,   405, "skate-o-rama chase west exit",                   1, sq4SignatureSkateORamaChaseWestExit,           sq4PatchSkateORamaChaseWestExit },
+	{  true,   405, "CD: skate-o-rama chase delays",                  7, sq4CdSignatureSkateORamaChaseDelays1,          sq4CdPatchSkateORamaChaseDelays1 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays2,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays3,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays4,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays5,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays6,          sq4CdPatchSkateORamaChaseDelays6 },
+	{  true,   406, "CD: skate-o-rama chase delays",                  3, sq4CdSignatureSkateORamaChaseDelays1,          sq4CdPatchSkateORamaChaseDelays1 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  7, sq4CdSignatureSkateORamaChaseDelays1,          sq4CdPatchSkateORamaChaseDelays1 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays2,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays3,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays4,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays5,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays6,          sq4CdPatchSkateORamaChaseDelays6 },
+	{  true,   411, "CD: skate-o-rama chase delays",                  3, sq4CdSignatureSkateORamaChaseDelays1,          sq4CdPatchSkateORamaChaseDelays1 },
 	{  true,   405, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   406, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   410, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
