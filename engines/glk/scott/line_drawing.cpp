@@ -19,11 +19,11 @@
  *
  */
 
-#include "glk/scott/line_drawing.h"
+#include "glk/scott/scott.h"
 #include "glk/scott/globals.h"
 #include "glk/scott/ring_buffer.h"
 #include "glk/scott/saga_draw.h"
-#include "glk/scott/scott.h"
+#include "glk/scott/line_drawing.h"
 
 namespace Glk {
 namespace Scott {

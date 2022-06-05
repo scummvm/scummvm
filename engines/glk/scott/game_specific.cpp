@@ -19,10 +19,10 @@
  *
  */
 
-#include "glk/scott/game_specific.h"
+#include "common/str.h"
 #include "glk/scott/scott.h"
 #include "glk/scott/globals.h"
-#include "common/str.h"
+#include "glk/scott/game_specific.h"
 
 namespace Glk {
 namespace Scott {

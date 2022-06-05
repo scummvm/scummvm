@@ -19,12 +19,12 @@
  *
  */
 
-#include "glk/scott/hulk.h"
+#include "glk/scott/scott.h"
 #include "glk/scott/definitions.h"
 #include "glk/scott/detect_game.h"
 #include "glk/scott/globals.h"
-#include "glk/scott/scott.h"
 #include "glk/scott/types.h"
+#include "glk/scott/hulk.h"
 
 namespace Glk {
 namespace Scott {

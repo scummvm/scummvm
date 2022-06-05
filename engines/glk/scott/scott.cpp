@@ -19,11 +19,11 @@
  *
  */
 
-#include "glk/scott/scott.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/ustr.h"
 #include "glk/quetzal.h"
+#include "glk/scott/scott.h"
 #include "glk/scott/command_parser.h"
 #include "glk/scott/definitions.h"
 #include "glk/scott/detect_game.h"

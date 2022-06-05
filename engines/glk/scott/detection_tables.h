@@ -19,9 +19,9 @@
  *
  */
 
-#include "engines/game.h"
 #include "common/gui_options.h"
 #include "common/language.h"
+#include "engines/game.h"
 
 namespace Glk {
 namespace Scott {

@@ -19,12 +19,12 @@
  *
  */
 
-#include "glk/scott/globals.h"
+#include "common/algorithm.h"
 #include "glk/scott/scott.h"
 #include "glk/scott/command_parser.h"
 #include "glk/scott/line_drawing.h"
 #include "glk/scott/saga_draw.h"
-#include "common/algorithm.h"
+#include "glk/scott/globals.h"
 
 namespace Glk {
 namespace Scott {

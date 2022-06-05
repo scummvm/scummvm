@@ -19,9 +19,9 @@
  *
  */
 
+#include "glk/scott/scott.h"
 #include "glk/scott/c64_checksums.h"
 #include "glk/scott/definitions.h"
-#include "glk/scott/scott.h"
 
 namespace Glk {
 namespace Scott {

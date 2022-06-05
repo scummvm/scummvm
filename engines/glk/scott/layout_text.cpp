@@ -19,8 +19,8 @@
  *
  */
 
-#include "glk/scott/layout_text.h"
 #include "common/util.h"
+#include "glk/scott/layout_text.h"
 
 namespace Glk {
 namespace Scott {

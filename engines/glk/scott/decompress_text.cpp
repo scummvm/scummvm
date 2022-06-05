@@ -19,8 +19,8 @@
  *
  */
 
-#include "glk/scott/decompress_text.h"
 #include "common/str.h"
+#include "glk/scott/decompress_text.h"
 
 namespace Glk {
 namespace Scott {
