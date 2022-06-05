@@ -786,10 +786,6 @@ void Lua_V1::SetCameraInterest() {
 	// it's referenced once in Grim dead lua code
 }
 
-void Lua_V1::GetCameraLookVector() {
-	warning("Stub function: GetCameraLookVector");
-}
-
 #define STUB_FUNC(name) void name() {}
 
 // Stub functions not used in games

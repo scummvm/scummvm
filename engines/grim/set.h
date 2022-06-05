@@ -46,6 +46,8 @@ public:
 	Set();
 	~Set();
 
+	struct Setup;
+
 	static int32 getStaticTag() { return MKTAG('S', 'E', 'T', ' '); }
 
 	void loadText(TextSplitter &ts);
@@ -143,6 +145,7 @@ public:
 	};
 
 	Setup *getCurrSetup() { return _currSetup; }
+	Setup *getSetup(int num) const { return _setups + num; }
 	const Common::List<Light *> &getLights(bool inOverworld) { return (inOverworld ? _overworldLightsList : _lightsList); }
 	const Math::Frustum &getFrustum() { return _frustum; }
 

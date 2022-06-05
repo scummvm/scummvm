@@ -301,6 +301,39 @@ void Lua_V1::NextSetup() {
 	g_grim->makeCurrentSetup(num);
 }
 
+void Lua_V1::GetCameraLookVector() {
+	Set *scene = g_grim->getCurrSet();
+	if (!scene) {
+		lua_pushnil();
+		return;
+	}
+
+	Set::Setup *setup;
+	lua_Object setupObj = lua_getparam(1);
+	if (lua_isnumber(setupObj)) {
+		setup = scene->getSetup((int)lua_getnumber(setupObj));
+	} else {
+		setup = scene->getCurrSetup();
+	}
+
+	Math::Vector3d lookVector = setup->_pos - setup->_interest;
+	lookVector.normalize();
+	lua_Object result = lua_createtable();
+	lua_pushobject(result);
+	lua_pushstring("x");
+	lua_pushnumber(lookVector.x());
+	lua_settable();
+	lua_pushobject(result);
+	lua_pushstring("y");
+	lua_pushnumber(lookVector.y());
+	lua_settable();
+	lua_pushobject(result);
+	lua_pushstring("z");
+	lua_pushnumber(lookVector.z());
+	lua_settable();
+	lua_pushobject(result);
+}
+
 /* This function makes the walkplane sectors smaller by the
  * given size. This is used when manny is holding some big
  * thing, like his scythe, that is likely to clip with the
