@@ -47,7 +47,7 @@ static uint16 ARR18[] = { 4, 5, 6, 7 };
 static uint16 ARR19[] = { 8, 9, 10, 11 };
 
 GameView::GameView(UIElement *owner) : Game::ViewBase(owner) {
-	Common::fill(&_arr1[0], &_arr1[11], 0);
+	Common::fill(&_drawFlags[0], &_drawFlags[10], 0);
 }
 
 void GameView::draw() {
@@ -69,7 +69,7 @@ void GameView::drawScene() {
 	Maps::Map &map = *maps._currentMap;
 	byte mapOffset = maps._mapOffset;
 
-	Common::fill(&_arr1[0], &_arr1[11], 0);
+	Common::fill(&_drawFlags[0], &_drawFlags[10], 0);
 
 	// Loop through four regions in front of the party
 	for (int dist = 0; dist < 4; ++dist,
@@ -87,16 +87,16 @@ void GameView::drawScene() {
 			_destLeft = ARR7[dist];
 			_destTop = ARR1[dist];
 			_srcLeft = ARR14[dist];
-			_arr1[dist + 1]++;
+			_drawFlags[dist + 1]++;
 			drawTile();
 
 		} else {
 			_mask = wallsLeft & maps._forwardMask;
 			if (_mask) {
 				_tileIndex = ARR19[dist];
-				_arr1[dist + 1]++;
+				_drawFlags[dist + 1]++;
 
-				if (_arr1[dist]) {
+				if (_drawFlags[dist]) {
 					_srcWidth = ARR5[dist];
 					_srcPitch = ARR13[dist];
 					_destLeft = ARR7[dist];
@@ -123,16 +123,16 @@ void GameView::drawScene() {
 			_destLeft = ARR9[dist];
 			_destTop = ARR1[dist];
 			_srcLeft = ARR14[dist];
-			_arr1[dist + 1]++;
+			_drawFlags[dist + 6]++;
 			drawTile();
 
 		} else {
 			_mask = wallsRight & maps._forwardMask;
 			if (_mask) {
 				_tileIndex = ARR19[dist];
-				_arr1[6 + dist]++;
+				_drawFlags[6 + dist]++;
 
-				if (_arr1[5 + dist]) {
+				if (_drawFlags[5 + dist]) {
 					_srcWidth = ARR5[dist];
 					_srcPitch = ARR13[dist];
 					_destLeft = ARR10[dist];

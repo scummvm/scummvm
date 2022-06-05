@@ -33,7 +33,7 @@ private:
 	int _tileIndex = 0, _srcWidth = 0, _srcPitch = 0;
 	int _destLeft = 0, _destTop = 0, _srcLeft = 0;
 	byte _mask = 0;
-	byte _arr1[11];
+	byte _drawFlags[10];
 private:
 	/**
 	 * Draws a tile
