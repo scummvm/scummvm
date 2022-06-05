@@ -34,6 +34,7 @@
 #include "graphics/pixelformat.h"
 
 #include "mtropolis/actions.h"
+#include "mtropolis/core.h"
 #include "mtropolis/data.h"
 #include "mtropolis/debug.h"
 #include "mtropolis/hacks.h"
@@ -376,7 +377,7 @@ struct ObjectReference {
 	inline ObjectReference() {
 	}
 
-	inline explicit ObjectReference(const Common::WeakPtr<RuntimeObject> object) : object(object) {
+	inline explicit ObjectReference(const Common::WeakPtr<RuntimeObject> objectPtr) : object(objectPtr) {
 	}
 
 	inline bool operator==(const ObjectReference &other) const {
@@ -450,13 +451,13 @@ struct MessageFlags {
 struct DynamicValue;
 struct DynamicList;
 
-struct IDynamicValueReadInterface {
+struct IDynamicValueReadInterface : public IInterfaceBase {
 	virtual MiniscriptInstructionOutcome read(MiniscriptThread *thread, DynamicValue &dest, const void *objectRef, uintptr ptrOrOffset) const = 0;
 	virtual MiniscriptInstructionOutcome readAttrib(MiniscriptThread *thread, DynamicValue &dest, const void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const = 0;
 	virtual MiniscriptInstructionOutcome readAttribIndexed(MiniscriptThread *thread, DynamicValue &dest, const void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const = 0;
 };
 
-struct IDynamicValueWriteInterface {
+struct IDynamicValueWriteInterface : public IInterfaceBase {
 	virtual MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) const = 0;
 	virtual MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) const = 0;
 	virtual MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) const = 0;
@@ -1113,7 +1114,7 @@ struct SegmentDescription {
 	Common::SeekableReadStream *stream;
 };
 
-struct IPlugInModifierRegistrar {
+struct IPlugInModifierRegistrar : public IInterfaceBase {
 	virtual void registerPlugInModifier(const char *name, const Data::IPlugInModifierDataFactory *loader, const IPlugInModifierFactory *factory) = 0;
 	void registerPlugInModifier(const char *name, const IPlugInModifierFactoryAndDataFactory *loaderFactory);
 };
@@ -1756,7 +1757,7 @@ private:
 #endif
 };
 
-struct IModifierContainer {
+struct IModifierContainer : public IInterfaceBase {
 	virtual const Common::Array<Common::SharedPtr<Modifier> > &getModifiers() const = 0;
 	virtual void appendModifier(const Common::SharedPtr<Modifier> &modifier) = 0;
 };
@@ -1823,14 +1824,14 @@ private:
 	Common::WeakPtr<RuntimeObject> _source;
 };
 
-struct IStructuralReferenceVisitor {
+struct IStructuralReferenceVisitor : public IInterfaceBase {
 	virtual void visitChildStructuralRef(Common::SharedPtr<Structural> &structural) = 0;
 	virtual void visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) = 0;
 	virtual void visitWeakStructuralRef(Common::WeakPtr<Structural> &structural) = 0;
 	virtual void visitWeakModifierRef(Common::WeakPtr<Modifier> &modifier) = 0;
 };
 
-struct IMessageConsumer {
+struct IMessageConsumer : public IInterfaceBase {
 	// These should only be implemented as direct responses - child traversal is handled by the message propagation process
 	virtual bool respondsToEvent(const Event &evt) const = 0;
 	virtual VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) = 0;
@@ -2013,7 +2014,7 @@ private:
 	Common::HashMap<Common::String, const IPlugInModifierFactory *> _factoryRegistry;
 };
 
-struct IPlayMediaSignalReceiver {
+struct IPlayMediaSignalReceiver : public IInterfaceBase {
 	virtual void playMedia(Runtime *runtime, Project *project) = 0;
 };
 
@@ -2030,7 +2031,7 @@ private:
 	Common::Array<IPlayMediaSignalReceiver *> _receivers;
 };
 
-struct ISegmentUnloadSignalReceiver {
+struct ISegmentUnloadSignalReceiver : public IInterfaceBase {
 	virtual void onSegmentUnloaded(int segmentIndex) = 0;
 };
 
@@ -2049,7 +2050,7 @@ private:
 	Common::Array<ISegmentUnloadSignalReceiver *> _receivers;
 };
 
-struct IKeyboardEventReceiver {
+struct IKeyboardEventReceiver : public IInterfaceBase {
 	virtual void onKeyboardEvent(Runtime *runtime, Common::EventType evtType, bool repeat, const Common::KeyState &keyEvt) = 0;
 };
 
@@ -2067,7 +2068,7 @@ private:
 	Common::SharedPtr<KeyboardEventSignaller> _signaller;
 };
 
-struct ICollider {
+struct ICollider : public IInterfaceBase {
 	virtual void getCollisionProperties(Modifier *&modifier, bool &collideInFront, bool &collideBehind, bool &excludeParents) const = 0;
 	virtual void triggerCollision(Runtime *runtime, Structural *collidingElement, bool wasInContact, bool isInContact, bool &outShouldStop) = 0;
 };

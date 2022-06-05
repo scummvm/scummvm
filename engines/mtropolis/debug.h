@@ -26,6 +26,8 @@
 #include "common/ptr.h"
 #include "common/hashmap.h"
 
+#include "mtropolis/core.h"
+
 #define MTROPOLIS_DEBUG_VTHREAD_STACKS
 
 #define MTROPOLIS_DEBUG_ENABLE
@@ -68,7 +70,7 @@ struct IDebugInspectionReport {
 	virtual void declareLoose(const Common::String &data) = 0;
 };
 
-struct IDebuggable {
+struct IDebuggable : public IInterfaceBase {
 	virtual SupportStatus debugGetSupportStatus() const = 0;
 	virtual const char *debugGetTypeName() const = 0;
 	virtual const Common::String &debugGetName() const = 0;
