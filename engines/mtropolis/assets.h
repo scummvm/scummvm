@@ -136,6 +136,9 @@ private:
 	template<class TSrcNumber, uint32 TSrcLiteralMask, uint32 TSrcTransparentSkipMask, class TDestNumber, uint32 TDestLiteralMask, uint32 TDestTransparentSkipMask>
 	void rleReformat(RleFrame &frame, const Common::Array<TSrcNumber> &srcData, const Graphics::PixelFormat &srcFormatRef, Common::Array<TDestNumber> &destData, const Graphics::PixelFormat &destFormatRef);
 
+	template<class TNumber, uint32 TLiteralMask, uint32 TTransparentRowSkipMask>
+	static bool decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::Surface &surface, bool isBottomUp);
+
 	Common::Array<RleFrame> _rleData;
 	bool _isRLETemporalCompressed;
 
