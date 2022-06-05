@@ -29,9 +29,6 @@
 
 namespace TinyGL {
 
-// fill triangle profile
-// #define TINYGL_PROFILE
-
 #define CLIP_XMIN   (1 << 0)
 #define CLIP_XMAX   (1 << 1)
 #define CLIP_YMIN   (1 << 2)
@@ -378,34 +375,30 @@ void GLContext::gl_draw_triangle_select(GLContext *c, GLVertex *p0, GLVertex *p1
 	c->gl_add_select1(p0->zp.z, p1->zp.z, p2->zp.z);
 }
 
-#ifdef TINYGL_PROFILE
 int count_triangles, count_triangles_textured, count_pixels;
-#endif
 
 void GLContext::gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
-#ifdef TINYGL_PROFILE
-	{
+	if (c->_profilingEnabled) {
 		int norm;
-		assert(p0->zp.x >= 0 && p0->zp.x < c->fb->xsize);
-		assert(p0->zp.y >= 0 && p0->zp.y < c->fb->ysize);
-		assert(p1->zp.x >= 0 && p1->zp.x < c->fb->xsize);
-		assert(p1->zp.y >= 0 && p1->zp.y < c->fb->ysize);
-		assert(p2->zp.x >= 0 && p2->zp.x < c->fb->xsize);
-		assert(p2->zp.y >= 0 && p2->zp.y < c->fb->ysize);
+		assert(p0->zp.x >= 0 && p0->zp.x < c->fb->getPixelBufferWidth());
+		assert(p0->zp.y >= 0 && p0->zp.y < c->fb->getPixelBufferHeight());
+		assert(p1->zp.x >= 0 && p1->zp.x < c->fb->getPixelBufferWidth());
+		assert(p1->zp.y >= 0 && p1->zp.y < c->fb->getPixelBufferHeight());
+		assert(p2->zp.x >= 0 && p2->zp.x < c->fb->getPixelBufferWidth());
+		assert(p2->zp.y >= 0 && p2->zp.y < c->fb->getPixelBufferHeight());
 
 		norm = (p1->zp.x - p0->zp.x) * (p2->zp.y - p0->zp.y) -
 				(p2->zp.x - p0->zp.x) * (p1->zp.y - p0->zp.y);
 		count_pixels += abs(norm) / 2;
 		count_triangles++;
 	}
-#endif
 
 	if (!c->color_mask_red && !c->color_mask_green && !c->color_mask_blue && !c->color_mask_alpha) {
 		c->fb->fillTriangleDepthOnly(&p0->zp, &p1->zp, &p2->zp);
 	} else if (c->texture_2d_enabled && c->current_texture->images[0].pixmap) {
-#ifdef TINYGL_PROFILE
-		count_triangles_textured++;
-#endif
+		if (c->_profilingEnabled) {
+			count_triangles_textured++;
+		}
 		c->fb->setTexture(c->current_texture->images[0].pixmap, c->texture_wrap_s, c->texture_wrap_t);
 		if (c->current_shade_model == TGL_SMOOTH) {
 			c->fb->fillTriangleTextureMappingPerspectiveSmooth(&p0->zp, &p1->zp, &p2->zp);

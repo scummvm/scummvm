@@ -441,6 +441,7 @@ struct GLContext {
 	int _currentAllocatorIndex;
 	LinearAllocator _drawCallAllocator[2];
 	bool _debugRectsEnabled;
+	bool _profilingEnabled;
 
 	void gl_vertex_transform(GLVertex *v);
 	void gl_calc_fog_factor(GLVertex *v);
