@@ -83,7 +83,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Kyra:
    - Added support for the Traditional Chinese versions of Legend of Kyrandia 1 - 3.
    - Added sound support for the Macintosh version of Legend of Kyrandia.
-   - Added support for playing the the Macintosh non-talkie version of Legend
+   - Added support for playing the Macintosh non-talkie version of Legend
      of Kyrandia 1 directly from the files on the CD. This means you no longer
      have to run the installer to extract the data files.
 
@@ -128,8 +128,12 @@ For a more comprehensive changelog of the latest experimental code, see:
      in this setting instead.
    - Fixed some MIDI music looping when it shouldn't in EGA/VGA floppy versions
      of The Secret of Monkey Island.
+   - Fixed the lava flowing in the wrong direction in the VGA floppy version
+     of The Secret of Monkey Island.
    - Fixed Full Throttle distorted graphics when Ben runs past the Corley
      Motors entrance.
+   - Fixed the dissolve effect, and Bobbin's palette when leaving the darkened
+     tent in the TurboGrafx-16 version of Loom, to match the original behavior.
    - Fixed incorrect dark rooms colors in MM NES on strict-alignment ports such
      as Dreamcast, Apple silicon and various handheld devices.
    - Rewrote text rendering routines for Full Throttle, The Dig and The Curse
@@ -137,13 +141,18 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Rewrote timer handling routines to better approximate both the original
      hardware behavior and the intepreters' quirks.
    - Fix lip syncing in Backyard Baseball 2003.
-   - Fixed original game bugs in Day of the Tentacle, Loom, Monkey Island 1,
-     Monkey Island 2 Amiga, Sam&Max and Zak McKracken FM-TOWNS.
+   - Fixed original game bugs in Day of the Tentacle, Indy 3, Loom, Maniac
+     Mansion, Monkey Island 1, Monkey Island 2 Amiga, Sam&Max and Zak
+     McKracken FM-TOWNS.
    - Added sliders for tweaking the CD audio playback in the MI1 CD intro, as
      well as VGA CD Loom in general. Loom is particularly sensitive to the
      amount of silence at the start of the track, and the CD version of MI1
      never synced the music as well to the intro as previous versions. See the
      Wiki for more details.
+   - Detect and reject the EGA floppy version of Monkey Island 1 that Limited
+     Run Games sold in their Monkey Island 30th Anniversary Anthology, if using
+     the default DISK4 image, which is corrupted. It's possible to recover a
+     working image from the KryoFlux dumps they also provided.
 
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
