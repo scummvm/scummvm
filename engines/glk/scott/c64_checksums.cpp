@@ -132,7 +132,7 @@ static C64Rec g_C64Registry[] = {
 	{ UNKNOWN_GAME, 0, 0, UNKNOWN_FILE_TYPE, 0, nullptr, nullptr, 0, 0, 0, 0 }
 };
 
-static uint16_t checksum(unsigned char *sf, uint32_t extent) {
+static uint16_t checksum(byte *sf, uint32_t extent) {
 	return 0;
 }
 
