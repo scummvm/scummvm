@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-05 13:15+0000\n"
+"POT-Creation-Date: 2022-06-05 14:28+0000\n"
 "PO-Revision-Date: 2022-05-18 11:18+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -22,16 +22,16 @@ msgstr ""
 "X-Language-name: Norsk (bokmål)\n"
 
 #. I18N: built on <build date> with <compiler>
-#: gui/about.cpp:104
+#: gui/about.cpp:103
 #, c-format
 msgid "(built on %s with %s)"
 msgstr "(bygd %s med %s)"
 
-#: gui/about.cpp:111
+#: gui/about.cpp:110
 msgid "Features compiled in:"
 msgstr "Funksjoner innkompilert:"
 
-#: gui/about.cpp:120
+#: gui/about.cpp:119
 msgid "Available engines:"
 msgstr "Tilgjengelige motorer:"
 

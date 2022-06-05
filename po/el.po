@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-05 13:15+0000\n"
+"POT-Creation-Date: 2022-06-05 14:28+0000\n"
 "PO-Revision-Date: 2022-06-03 20:38+0000\n"
 "Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -20,16 +20,16 @@ msgstr ""
 "X-Language-name: Ελληνικά\n"
 
 #. I18N: built on <build date> with <compiler>
-#: gui/about.cpp:104
+#: gui/about.cpp:103
 #, c-format
 msgid "(built on %s with %s)"
 msgstr "(δημιουργήθηκε την %s με %s)"
 
-#: gui/about.cpp:111
+#: gui/about.cpp:110
 msgid "Features compiled in:"
 msgstr "Χαρακτηριστικά που περιλαμβάνονται:"
 
-#: gui/about.cpp:120
+#: gui/about.cpp:119
 msgid "Available engines:"
 msgstr "Διαθέσιμες μηχανές:"
 
