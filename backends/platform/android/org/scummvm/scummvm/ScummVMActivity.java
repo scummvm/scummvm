@@ -118,8 +118,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	FrameLayout _videoLayout = null;
 
 	private EditableSurfaceView _main_surface = null;
-	private ImageView _toggleTouchModeBtnIcon = null;
-	private ImageView _toggleKeyboardBtnIcon = null;
+	private ImageView _toggleTouchModeKeyboardBtnIcon = null;
 	private ImageView _openMenuBtnIcon = null;
 	private ImageView _revokeSafPermissionsBtnIcon = null;
 
@@ -142,7 +141,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		super.onConfigurationChanged(newConfig);
 
 		final boolean hwKeyboard = isHWKeyboardConnected();
-		_toggleKeyboardBtnIcon.setVisibility(hwKeyboard ? View.GONE : View.VISIBLE);
 		if (hwKeyboard) {
 			hideScreenKeyboard();
 		}
@@ -520,6 +518,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				//Log.d(ScummVM.LOG_TAG, "showScreenKeyboard - captureMouse(false)");
 				_main_surface.captureMouse(false);
 				//_main_surface.showSystemMouseCursor(true);
+				setupTouchModeBtn(_events.getTouchMode());
 				return;
 			}
 			//Log.d(ScummVM.LOG_TAG, "showScreenKeyboard: YOU SHOULD NOT SEE ME!!!");
@@ -541,6 +540,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				//Log.d(ScummVM.LOG_TAG, "hideScreenKeyboard - captureMouse(true)");
 				_main_surface.captureMouse(true);
 				//_main_surface.showSystemMouseCursor(false);
+				setupTouchModeBtn(_events.getTouchMode());
 			}
 		}
 	}
@@ -573,43 +573,55 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	protected void setupTouchModeBtn(final int touchMode) {
 		int resId;
 
-		switch(touchMode) {
-		case ScummVMEventsBase.TOUCH_MODE_TOUCHPAD:
-			resId = R.drawable.ic_action_touchpad;
-			break;
-		case ScummVMEventsBase.TOUCH_MODE_MOUSE:
-			resId = R.drawable.ic_action_mouse;
-			break;
-		case ScummVMEventsBase.TOUCH_MODE_GAMEPAD:
-			resId = R.drawable.ic_action_gamepad;
-			break;
-		default:
-			throw new IllegalArgumentException("Invalid touchMode");
+		if (isScreenKeyboardShown()) {
+			resId = R.drawable.ic_action_keyboard;
+		} else {
+			switch(touchMode) {
+			case ScummVMEventsBase.TOUCH_MODE_TOUCHPAD:
+				resId = R.drawable.ic_action_touchpad;
+				break;
+			case ScummVMEventsBase.TOUCH_MODE_MOUSE:
+				resId = R.drawable.ic_action_mouse;
+				break;
+			case ScummVMEventsBase.TOUCH_MODE_GAMEPAD:
+				resId = R.drawable.ic_action_gamepad;
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid touchMode");
+			}
 		}
 
-		_toggleTouchModeBtnIcon.setImageResource(resId);
+		_toggleTouchModeKeyboardBtnIcon.setImageResource(resId);
 	}
 
-	public final View.OnClickListener touchModeBtnOnClickListener = new View.OnClickListener() {
+	public final View.OnClickListener touchModeKeyboardBtnOnClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			runOnUiThread(new Runnable() {
 				public void run() {
-					int newTouchMode = _events.nextTouchMode();
-					setupTouchModeBtn(newTouchMode);
+					// On normal click, hide keyboard if it is shown
+					// Else, change touch mode
+					if (isScreenKeyboardShown()) {
+						hideScreenKeyboard();
+					} else {
+						int newTouchMode = _events.nextTouchMode();
+						setupTouchModeBtn(newTouchMode);
+					}
 				}
 			});
 		}
 	};
 
-	public final View.OnClickListener keyboardBtnOnClickListener = new View.OnClickListener() {
+	public final View.OnLongClickListener touchModeKeyboardBtnOnLongClickListener = new View.OnLongClickListener() {
 		@Override
-		public void onClick(View v) {
+		public boolean onLongClick(View v) {
 			runOnUiThread(new Runnable() {
 				public void run() {
+					// On long click, toggle screen keyboard (if there isn't any HW)
 					toggleScreenKeyboard();
 				}
 			});
+			return true;
 		}
 	};
 
@@ -1028,14 +1040,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		_videoLayout.addView(buttonLayout, buttonLayoutParams);
 		_videoLayout.bringChildToFront(buttonLayout);
 
-		_toggleTouchModeBtnIcon = new ImageView(this);
-		buttonLayout.addView(_toggleTouchModeBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-		buttonLayout.bringChildToFront(_toggleTouchModeBtnIcon);
-
-		_toggleKeyboardBtnIcon = new ImageView(this);
-		_toggleKeyboardBtnIcon.setImageResource(R.drawable.ic_action_keyboard);
-		buttonLayout.addView(_toggleKeyboardBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-		buttonLayout.bringChildToFront(_toggleKeyboardBtnIcon);
+		_toggleTouchModeKeyboardBtnIcon = new ImageView(this);
+		buttonLayout.addView(_toggleTouchModeKeyboardBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+		buttonLayout.bringChildToFront(_toggleTouchModeKeyboardBtnIcon);
 
 		_openMenuBtnIcon = new ImageView(this);
 		_openMenuBtnIcon.setImageResource(R.drawable.ic_action_menu);
@@ -1143,8 +1150,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 			// On screen button listener
 			//findViewById(R.id.show_keyboard).setOnClickListener(keyboardBtnOnClickListener);
-			_toggleTouchModeBtnIcon.setOnClickListener(touchModeBtnOnClickListener);
-			_toggleKeyboardBtnIcon.setOnClickListener(keyboardBtnOnClickListener);
+			_toggleTouchModeKeyboardBtnIcon.setOnClickListener(touchModeKeyboardBtnOnClickListener);
+			_toggleTouchModeKeyboardBtnIcon.setOnLongClickListener(touchModeKeyboardBtnOnLongClickListener);
 			_openMenuBtnIcon.setOnClickListener(menuBtnOnClickListener);
 			_revokeSafPermissionsBtnIcon.setOnClickListener(revokeSafPermissionsBtnOnClickListener);
 
@@ -1398,21 +1405,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// Show or hide the semi-transparent onscreen controls
 	// Called by the override of showKeyboardControl()
 	private void showToggleKeyboardBtnIcon(boolean show) {
-		//ImageView keyboardBtn = findViewById(R.id.show_keyboard);
-		if (_toggleKeyboardBtnIcon != null ) {
-			if (show && !isHWKeyboardConnected()) {
-				_toggleKeyboardBtnIcon.setVisibility(View.VISIBLE);
-			} else {
-				_toggleKeyboardBtnIcon.setVisibility(View.GONE);
-			}
-		}
-
 		if (_openMenuBtnIcon != null ) {
 			_openMenuBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
 		}
 
-		if (_toggleTouchModeBtnIcon != null ) {
-			_toggleTouchModeBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
+		if (_toggleTouchModeKeyboardBtnIcon != null ) {
+			_toggleTouchModeKeyboardBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
 		}
 	}
 
