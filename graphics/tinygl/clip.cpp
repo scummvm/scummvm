@@ -47,6 +47,7 @@ void GLContext::gl_transform_to_viewport(GLVertex *v) {
 	v->zp.x = (int)(v->pc.X * winv * viewport.scale.X + viewport.trans.X);
 	v->zp.y = (int)(v->pc.Y * winv * viewport.scale.Y + viewport.trans.Y);
 	v->zp.z = (int)(v->pc.Z * winv * viewport.scale.Z + viewport.trans.Z);
+
 	// color
 	v->zp.r = (int)(v->color.X * ZB_POINT_RED_MAX);
 	v->zp.g = (int)(v->color.Y * ZB_POINT_GREEN_MAX);
@@ -57,6 +58,11 @@ void GLContext::gl_transform_to_viewport(GLVertex *v) {
 	if (texture_2d_enabled) {
 		v->zp.s = (int)(v->tex_coord.X * ZB_POINT_ST_MAX);
 		v->zp.t = (int)(v->tex_coord.Y * ZB_POINT_ST_MAX);
+	}
+
+	// fog
+	if (fog_enabled) {
+		v->zp.f = (int)(v->fog_factor * ZB_FOG_MAX);
 	}
 }
 

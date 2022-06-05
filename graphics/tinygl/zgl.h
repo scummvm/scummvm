@@ -149,6 +149,7 @@ struct GLVertex {
 	Vector4 coord;
 	Vector4 tex_coord;
 	Vector4 color;
+	float fog_factor;
 
 	// computed values
 	Vector4 ec;           // eye coordinates
@@ -420,6 +421,13 @@ struct GLContext {
 	bool color_mask_blue;
 	bool color_mask_alpha;
 
+	bool fog_enabled;
+	int fog_mode;
+	Vector4 fog_color;
+	float fog_density;
+	float fog_start;
+	float fog_end;
+
 	Common::Rect _scissorRect;
 
 	bool _enableDirtyRectangles;
@@ -435,6 +443,7 @@ struct GLContext {
 	bool _debugRectsEnabled;
 
 	void gl_vertex_transform(GLVertex *v);
+	void gl_calc_fog_factor(GLVertex *v);
 
 public:
 	// The glob* functions exposed to public, however they are only for internal use.
