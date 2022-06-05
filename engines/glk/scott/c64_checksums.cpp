@@ -200,10 +200,10 @@ int detectC64(uint8_t **sf, size_t *extent) {
 
 			} else if (g_C64Registry[i]._type == TYPE_T64) {
 				uint8_t *file_records = *sf + 64;
-				int number_of_records = (*sf)[36] + (*sf)[37] * 0x100;
-				int offset = file_records[8] + file_records[9] * 0x100;
-				int start_addr = file_records[2] + file_records[3] * 0x100;
-				int end_addr = file_records[4] + file_records[5] * 0x100;
+				int number_of_records = READ_LE_UINT16(&(*sf)[36]);
+				int offset = READ_LE_UINT16(&file_records[8]);
+				int start_addr = READ_LE_UINT16(&file_records[2]);
+				int end_addr = READ_LE_UINT16(&file_records[4]);
 				int size;
 				if (number_of_records == 1)
 					size = *extent - offset;
