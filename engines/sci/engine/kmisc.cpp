@@ -100,17 +100,6 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 			neededSleep = 60;
 		}
 		break;
-	case GID_SQ4:
-		// In SQ4 (floppy and CD) the sequel police appear way too quickly in
-		// the Skate-o-rama rooms, resulting in all sorts of timer issues, like
-		// #5514 (which occurs because a police officer instantly teleports
-		// just before Roger exits and shoots him). We throttle these scenes a
-		// bit more, in order to prevent timer bugs related to the sequel police.
-		if (s->currentRoomNumber() == 405 || s->currentRoomNumber() == 406 ||
-			s->currentRoomNumber() == 410 || s->currentRoomNumber() == 411) {
-			s->_throttleTrigger = true;
-			neededSleep = 60;
-		}
 	default:
 		break;
 	}
