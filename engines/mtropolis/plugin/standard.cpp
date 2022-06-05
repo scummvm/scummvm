@@ -1634,8 +1634,7 @@ StandardPlugIn::StandardPlugIn()
 	, _objRefVarModifierFactory(this)
 	, _midiModifierFactory(this)
 	, _listVarModifierFactory(this)
-	, _sysInfoModifierFactory(this)
-	, _lastAllocatedSourceID(0) {
+	, _sysInfoModifierFactory(this) {
 	_midi.reset(new MultiMidiPlayer());
 }
 
@@ -1662,24 +1661,6 @@ StandardPlugInHacks &StandardPlugIn::getHacks() {
 
 MultiMidiPlayer *StandardPlugIn::getMidi() const {
 	return _midi.get();
-}
-
-int8 StandardPlugIn::allocateMidiSource() {
-	if (_deallocatedSources.size() > 0) {
-		int8 src = _deallocatedSources.back();
-		_deallocatedSources.pop_back();
-		return src;
-	}
-
-	if (_lastAllocatedSourceID == INT8_MAX)
-		error("Ran out of MIDI sources");
-
-	_lastAllocatedSourceID++;
-	return _lastAllocatedSourceID;
-}
-
-void StandardPlugIn::deallocateMidiSource(int8 source) {
-	_deallocatedSources.push_back(source);
 }
 
 } // End of namespace Standard
