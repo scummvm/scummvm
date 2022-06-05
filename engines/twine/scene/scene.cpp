@@ -770,7 +770,7 @@ void Scene::processActorZones(int32 actorIdx) {
 				break;
 			case ZoneType::kLadder:
 				if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack && (actor->_anim == AnimationTypes::kForward || actor->_anim == AnimationTypes::kTopLadder || actor->_anim == AnimationTypes::kClimbLadder)) {
-					IVec3 destPos = _engine->_movements->rotateActor(actor->_boudingBox.mins.x, actor->_boudingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
+					IVec3 destPos = _engine->_movements->rotateActor(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
 					destPos.x += _engine->_movements->_processActor.x;
 					destPos.z += _engine->_movements->_processActor.z;
 

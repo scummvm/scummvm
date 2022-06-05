@@ -137,7 +137,7 @@ void Actor::initSpriteActor(int32 actorIdx) {
 	if (localActor->_staticFlags.bIsSpriteActor && localActor->_sprite != -1 && localActor->_entity != localActor->_sprite) {
 		const BoundingBox *spritebbox = _engine->_resources->_spriteBoundingBox.bbox(localActor->_sprite);
 		localActor->_entity = localActor->_sprite;
-		localActor->_boudingBox = *spritebbox;
+		localActor->_boundingBox = *spritebbox;
 	}
 }
 
@@ -180,7 +180,7 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	if (entityIdx == -1) {
 		localActor->_body = BodyType::btNone;
 		localActor->_entity = -1;
-		localActor->_boudingBox = BoundingBox();
+		localActor->_boundingBox = BoundingBox();
 		debug("Failed to initialize body %i for actor %i", (int)bodyIdx, actorIdx);
 		return;
 	}
@@ -193,14 +193,14 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	localActor->_body = bodyIdx;
 
 	if (actorBoundingBox.hasBoundingBox) {
-		localActor->_boudingBox = actorBoundingBox.bbox;
+		localActor->_boundingBox = actorBoundingBox.bbox;
 	} else {
 		const BodyData &bd = _engine->_resources->_bodyData[localActor->_entity];
-		localActor->_boudingBox = bd.bbox;
+		localActor->_boundingBox = bd.bbox;
 
 		int32 size = 0;
-		const int32 distX = localActor->_boudingBox.maxs.x - localActor->_boudingBox.mins.x;
-		const int32 distZ = localActor->_boudingBox.maxs.z - localActor->_boudingBox.mins.z;
+		const int32 distX = localActor->_boundingBox.maxs.x - localActor->_boundingBox.mins.x;
+		const int32 distZ = localActor->_boundingBox.maxs.z - localActor->_boundingBox.mins.z;
 		if (localActor->_staticFlags.bUseMiniZv) {
 			// take smaller for bound
 			if (distX < distZ)
@@ -212,10 +212,10 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 			size = (distZ + distX) / 4;
 		}
 
-		localActor->_boudingBox.mins.x = -size;
-		localActor->_boudingBox.maxs.x = size;
-		localActor->_boudingBox.mins.z = -size;
-		localActor->_boudingBox.maxs.z = size;
+		localActor->_boundingBox.mins.x = -size;
+		localActor->_boundingBox.maxs.x = size;
+		localActor->_boundingBox.mins.z = -size;
+		localActor->_boundingBox.maxs.z = size;
 	}
 }
 
@@ -266,7 +266,7 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->_pos = IVec3(0, -1, 0);
 	actor->_spriteActorRotation = 0;
 
-	actor->_boudingBox = BoundingBox();
+	actor->_boundingBox = BoundingBox();
 
 	actor->_angle = 0;
 	actor->_speed = 40;
@@ -374,7 +374,7 @@ void Actor::processActorExtraBonus(int32 actorIdx) {
 	} else {
 		const ActorStruct *sceneHero = _engine->_scene->_sceneHero;
 		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->pos(), sceneHero->pos());
-		const IVec3 pos(actor->_pos.x, actor->_pos.y + actor->_boudingBox.maxs.y, actor->_pos.z);
+		const IVec3 pos(actor->_pos.x, actor->_pos.y + actor->_boundingBox.maxs.y, actor->_pos.z);
 		_engine->_extra->addExtraBonus(pos, ANGLE_70, angle, bonusSprite, actor->_bonusAmount);
 		_engine->_sound->playSample(Samples::ItemPopup, 1, pos, actorIdx);
 	}

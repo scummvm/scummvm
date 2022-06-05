@@ -674,22 +674,22 @@ void Animations::processActorAnimations(int32 actorIdx) {
 
 		if (IS_HERO(actorIdx) && !actor->_staticFlags.bComputeLowCollision) {
 			// check hero collisions with bricks
-			_engine->_collision->checkHeroCollisionWithBricks(actor->_boudingBox.mins.x, actor->_boudingBox.mins.y, actor->_boudingBox.mins.z, 1);
-			_engine->_collision->checkHeroCollisionWithBricks(actor->_boudingBox.maxs.x, actor->_boudingBox.mins.y, actor->_boudingBox.mins.z, 2);
-			_engine->_collision->checkHeroCollisionWithBricks(actor->_boudingBox.maxs.x, actor->_boudingBox.mins.y, actor->_boudingBox.maxs.z, 4);
-			_engine->_collision->checkHeroCollisionWithBricks(actor->_boudingBox.mins.x, actor->_boudingBox.mins.y, actor->_boudingBox.maxs.z, 8);
+			_engine->_collision->checkHeroCollisionWithBricks(actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
+			_engine->_collision->checkHeroCollisionWithBricks(actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
+			_engine->_collision->checkHeroCollisionWithBricks(actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
+			_engine->_collision->checkHeroCollisionWithBricks(actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
 		} else {
 			// check other actors collisions with bricks
-			_engine->_collision->checkActorCollisionWithBricks(actor->_boudingBox.mins.x, actor->_boudingBox.mins.y, actor->_boudingBox.mins.z, 1);
-			_engine->_collision->checkActorCollisionWithBricks(actor->_boudingBox.maxs.x, actor->_boudingBox.mins.y, actor->_boudingBox.mins.z, 2);
-			_engine->_collision->checkActorCollisionWithBricks(actor->_boudingBox.maxs.x, actor->_boudingBox.mins.y, actor->_boudingBox.maxs.z, 4);
-			_engine->_collision->checkActorCollisionWithBricks(actor->_boudingBox.mins.x, actor->_boudingBox.mins.y, actor->_boudingBox.maxs.z, 8);
+			_engine->_collision->checkActorCollisionWithBricks(actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 1);
+			_engine->_collision->checkActorCollisionWithBricks(actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.mins.z, 2);
+			_engine->_collision->checkActorCollisionWithBricks(actor->_boundingBox.maxs.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 4);
+			_engine->_collision->checkActorCollisionWithBricks(actor->_boundingBox.mins.x, actor->_boundingBox.mins.y, actor->_boundingBox.maxs.z, 8);
 		}
 		processActor = processActorSave;
 
 		// process wall hit while running
 		if (_engine->_collision->_causeActorDamage && !actor->_dynamicFlags.bIsFalling && IS_HERO(_currentlyProcessedActorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward) {
-			IVec3 destPos = _engine->_movements->rotateActor(actor->_boudingBox.mins.x, actor->_boudingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
+			IVec3 destPos = _engine->_movements->rotateActor(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
 
 			destPos.x += processActor.x;
 			destPos.z += processActor.z;

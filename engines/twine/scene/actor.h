@@ -227,7 +227,7 @@ public:
 	int32 _spriteActorRotation = 0;
 	uint8 _brickSound = 0U;
 
-	BoundingBox _boudingBox;
+	BoundingBox _boundingBox;
 	ActorMoveStruct _move;
 	AnimTimerDataStruct _animTimerData;
 };

@@ -423,9 +423,9 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 			const int32 tmpZ = (actor->_lastPos.z + BRICK_HEIGHT) / BRICK_SIZE;
 			_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 		} else {
-			const int32 tmpX = (actor->_pos.x + actor->_boudingBox.maxs.x + BRICK_HEIGHT) / BRICK_SIZE;
+			const int32 tmpX = (actor->_pos.x + actor->_boundingBox.maxs.x + BRICK_HEIGHT) / BRICK_SIZE;
 			int32 tmpY = actor->_pos.y / BRICK_HEIGHT;
-			const int32 tmpZ = (actor->_pos.z + actor->_boudingBox.maxs.z + BRICK_HEIGHT) / BRICK_SIZE;
+			const int32 tmpZ = (actor->_pos.z + actor->_boundingBox.maxs.z + BRICK_HEIGHT) / BRICK_SIZE;
 			if (actor->brickShape() != ShapeType::kNone) {
 				tmpY++;
 			}
@@ -515,7 +515,7 @@ void Redraw::renderOverlays() {
 			case OverlayPosType::koFollowActor: {
 				ActorStruct *actor2 = _engine->_scene->getActor(overlay->info1);
 
-				const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor2->_pos.x - _engine->_grid->_camera.x, actor2->_pos.y + actor2->_boudingBox.maxs.y - _engine->_grid->_camera.y, actor2->_pos.z - _engine->_grid->_camera.z);
+				const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor2->_pos.x - _engine->_grid->_camera.x, actor2->_pos.y + actor2->_boundingBox.maxs.y - _engine->_grid->_camera.y, actor2->_pos.z - _engine->_grid->_camera.z);
 
 				overlay->x = projPos.x;
 				overlay->y = projPos.y;
@@ -746,7 +746,7 @@ void Redraw::drawBubble(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	// get actor position on screen
-	const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->_pos.x - _engine->_grid->_camera.x, actor->_pos.y + actor->_boudingBox.maxs.y - _engine->_grid->_camera.y, actor->_pos.z - _engine->_grid->_camera.z);
+	const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(actor->_pos.x - _engine->_grid->_camera.x, actor->_pos.y + actor->_boundingBox.maxs.y - _engine->_grid->_camera.y, actor->_pos.z - _engine->_grid->_camera.z);
 
 	if (actorIdx != _bubbleActor) {
 		_bubbleSpriteIndex = _bubbleSpriteIndex ^ 1;
