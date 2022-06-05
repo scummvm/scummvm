@@ -838,7 +838,7 @@ void WetEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		// In some levels, the hit boss video is used to store this ending
 		MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
 		runIntro(video);
-		loadPalette(arc->backgroundPalette);
+		loadPalette(_currentPalette);
 		_background->decoder->pauseVideo(false);
 		updateScreen(*_background);
 		drawScreen();

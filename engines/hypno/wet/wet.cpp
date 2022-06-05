@@ -205,7 +205,18 @@ void WetEngine::loadAssetsDemoDisc() {
 		}
 	} else if (_variant == "DemoHebrew") {
 		loadArcadeLevel("c31.mis", "c52.mis", "c52.mis", "wetlands");
+		if (_restoredContentEnabled) {
+			arc = (ArcadeShooting*) _levels["c31.mis"];
+			arc->segments[0].size = 1354;
+			arc->objKillsRequired[0] = 2;
+		}
 		loadArcadeLevel("c52.mis", "<game_over>", "<quit>", "wetlands");
+		if (_restoredContentEnabled) {
+			arc = (ArcadeShooting*) _levels["c52.mis"];
+			arc->segments[0].size = 2383;
+			arc->objKillsRequired[0] = 2;
+			arc->objKillsRequired[1] = 13;
+		}
 	} else {
 		error("Unsupported variant");
 	}
