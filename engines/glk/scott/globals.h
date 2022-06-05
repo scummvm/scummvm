@@ -22,12 +22,12 @@
 #ifndef GLK_SCOTT_GLOBALS_H
 #define GLK_SCOTT_GLOBALS_H
 
-#include "glk/glk_types.h"
-#include "glk/windows.h"
-#include "glk/scott/definitions.h"
-#include "glk/scott/types.h"
 #include "common/array.h"
 #include "common/str-array.h"
+#include "glk/glk_types.h"
+#include "glk/scott/definitions.h"
+#include "glk/scott/types.h"
+#include "glk/windows.h"
 
 namespace Glk {
 namespace Scott {
@@ -78,7 +78,7 @@ public:
 	int _counters[16]; ///< Range unknown
 	int _currentCounter = 0;
 	int _savedRoom = 0;
-	int _roomSaved[16]; ///< Range unknown
+	int _roomSaved[16];   ///< Range unknown
 	uint32 _bitFlags = 0; ///< Might be >32 flags - I haven't seen >32 yet
 	int _autoInventory = 0;
 
@@ -138,7 +138,7 @@ public:
 	Common::StringArray _abbreviations;
 	Common::StringArray _abbreviationsKey;
 
-	//restore state
+	// restore state
 	int _justUndid = 0;
 	SavedState *_initialState = nullptr;
 	SavedState *_ramSave = nullptr;
