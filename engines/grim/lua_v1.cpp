@@ -399,6 +399,28 @@ void Lua_V1::RotateVector() {
 	lua_pushobject(resObj);
 }
 
+void Lua_V1::WorldToScreen() {
+	lua_Object worldX = lua_getparam(1);
+	lua_Object worldY = lua_getparam(2);
+	lua_Object worldZ = lua_getparam(3);
+	if (!lua_isnumber(worldX) || !lua_isnumber(worldY) || !lua_isnumber(worldZ)) {
+		return;
+	}
+	Math::Vector4d worldVec(lua_getnumber(worldX), lua_getnumber(worldY), lua_getnumber(worldZ), 1.0f);
+	Math::Matrix4 projModelView = g_driver->getProjection() * g_driver->getModelView();
+	Math::Vector4d screenPos = projModelView * worldVec;
+	screenPos /= screenPos.w();
+	float winX = (1 + screenPos.x()) / 2.0f * g_driver->getScreenWidth();
+	float winY = g_driver->getScreenHeight() - (1 + screenPos.y()) / 2.0f * g_driver->getScreenHeight();
+	if (winX >= 0 && winX < g_driver->getScreenWidth() && winY >= 0 && winY < g_driver->getScreenHeight()) {
+		lua_pushnumber(winX);
+		lua_pushnumber(winY);
+	} else {
+		lua_pushnil();
+		lua_pushnil();
+	}
+}
+
 void Lua_V1::FileFindDispose() {
 	g_grim->_listFiles.clear();
 	g_grim->_listFilesIter = nullptr;
@@ -770,10 +792,6 @@ void Lua_V1::GetCameraLookVector() {
 
 void Lua_V1::GetCameraPosition() {
 	warning("Stub function: GetCameraPosition");
-}
-
-void Lua_V1::WorldToScreen() {
-	warning("Stub function: WorldToScreen");
 }
 
 #define STUB_FUNC(name) void name() {}
