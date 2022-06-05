@@ -113,7 +113,8 @@ void drawHulkImage(int p) {
 		image = 42;
 		break;
 	default:
-		error("Unhandled image number %d!\n", p);
+
+		error("drawHulkImage: Unhandled image number %d", p);
 		break;
 	}
 

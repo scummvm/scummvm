@@ -343,12 +343,12 @@ void loadVectorData(GameInfo info, uint8_t *ptr) {
 			lp->_bgColour = *(ptr++);
 			lp->_data = ptr;
 		} else {
-			error("Error! Image data does not start with 0xff!\n");
+			error("loadVectorData: Error! Image data does not start with 0xff");
 		}
 		do {
 			byte = *(ptr++);
 			if (ptr > _G(_entireFile) && static_cast<size_t>(ptr - _G(_entireFile)) >= _G(_fileLength)) {
-				error("Error! Image data for image %d cut off!\n", ct);
+				error("loadVectorData: Error! Image data for image %d cut off", ct);
 				if (_G(_gameHeader)->_numRooms - ct > 1)
 					g_scott->display(_G(_bottomWindow), "[This copy has %d broken or missing pictures. These have been patched out.]\n\n", _G(_gameHeader)->_numRooms - ct);
 				if (lp->_data >= ptr)
@@ -953,12 +953,12 @@ int tryLoading(GameInfo info, int dictStart, int loud) {
 			value = *(ptr++); /* count of actions/conditions */
 			cond = value & 0x1f;
 			if (cond > 5) {
-				debug("Condition error at action %d!\n", ct);
+				debug("Condition error at action %d!", ct);
 				cond = 5;
 			}
 			comm = (value & 0xe0) >> 5;
 			if (comm > 2) {
-				debug("Command error at action %d!\n", ct);
+				debug("Command error at action %d!", ct);
 				comm = 2;
 			}
 		} else {

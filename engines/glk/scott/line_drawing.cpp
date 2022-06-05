@@ -173,7 +173,7 @@ void drawVectorPicture(int image) {
 	uint8_t opcode = 0;
 	while (((p < _G(_lineImages)[image]._data) || static_cast<size_t>(p - _G(_lineImages)[image]._data) < _G(_lineImages)[image]._size) && opcode != 0xff) {
 		if (p > _G(_entireFile) + _G(_fileLength)) {
-			error("Out of range! Opcode: %x. Image: %d. LineImages[%d].size: %llu\n", opcode, image, image, _G(_lineImages)[image]._size);
+			error("drawVectorPicture: Out of range! Opcode: %x. Image: %d. LineImages[%d].size: %llu", opcode, image, image, _G(_lineImages)[image]._size);
 			break;
 		}
 		opcode = *(p++);

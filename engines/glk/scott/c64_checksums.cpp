@@ -182,7 +182,7 @@ int detectC64(uint8_t **sf, size_t *extent) {
 				if (g_C64Registry[i]._appendFile != nullptr) {
 					appendix = getFileNamed(*sf, *extent, &appendixlen, g_C64Registry[i]._appendFile);
 					if (appendix == nullptr)
-						error("Appending file failed!\n");
+						error("detectC64(): Appending file failed");
 					appendixlen -= 2;
 				}
 

@@ -95,7 +95,7 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 void ScottMetaEngine::detectClashes(Common::StringMap &map) {
 	for (const PlainGameDescriptor *pd = SCOTT_GAME_LIST; pd->gameId; ++pd) {
 		if (map.contains(pd->gameId))
-			error("Duplicate game Id found - %s", pd->gameId);
+			error("ScottMetaEngine::detectClashes: Duplicate game Id found - %s", pd->gameId);
 		map[pd->gameId] = "";
 	}
 }

@@ -314,7 +314,8 @@ uint8_t *drawSagaPictureFromData(uint8_t *dataptr, int xSize, int ySize, int xOf
 void drawSagaPictureNumber(int pictureNumber) {
 	int numgraphics = _G(_game)->_numberOfPictures;
 	if (pictureNumber >= numgraphics) {
-		error("Invalid image number % d !Last image: % d\n ", pictureNumber, numgraphics - 1);
+
+		error("drawSagaPictureNumber: Invalid image number % d !Last image: % d", pictureNumber, numgraphics - 1);
 		return;
 	}
 
@@ -336,7 +337,7 @@ void sagaSetup(size_t imgOffset) {
 	}
 
 	if (_G(_palChosen) == NO_PALETTE) {
-		error("unknown palette\n");
+		error("sagaSetup: unknown palette");
 	}
 
 	definePalette();
