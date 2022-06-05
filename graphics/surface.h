@@ -290,6 +290,34 @@ public:
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect);
 
 	/**
+	 * Copy a bitmap to the internal buffer of the surface.
+	 *
+	 * The pixel format of the buffer must match the pixel format of the surface.
+	 *
+	 * @param buffer    Buffer containing the graphics data source.
+	 * @param srcPitch  Pitch of the buffer (number of bytes in a scanline).
+	 * @param destX     The x coordinate of the destination rectangle.
+	 * @param destY     The y coordinate of the destination rectangle.
+	 * @param width     Width of the destination rectangle.
+	 * @param height    Height of the destination rectangle.
+	 * @param key
+	 */
+	void copyRectToSurfaceWithKey(const void *buffer, int srcPitch, int destX, int destY, int width, int height, uint32 key);
+
+	/**
+	 * Copy a bitmap to the internal buffer of the surface.
+	 *
+	 * The pixel format of the buffer must match the pixel format of the surface.
+	 *
+	 * @param srcSurface  Source of the bitmap data.
+	 * @param destX       The x coordinate of the destination rectangle.
+	 * @param destY       The y coordinate of the destination rectangle.
+	 * @param subRect     The subRect of the surface to be blitted.
+	 * @param key
+	 */
+	void copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect, uint32 key);
+
+	/**
 	 * Convert the data to another pixel format.
 	 *
 	 * This works in-place. This means it does not create an additional buffer
