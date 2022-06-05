@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-05 16:22+0000\n"
+"POT-Creation-Date: 2022-06-05 17:57+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -153,7 +153,7 @@ msgstr "כן"
 msgid "No"
 msgstr "לא"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:567
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:572
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM לא הצליח לפתוח את התיקייה שנבחרה!"
 
@@ -861,7 +861,7 @@ msgstr "הוספה המונית..."
 msgid "Search in game list"
 msgstr "חיפוש ברשימת המשחקים"
 
-#: gui/launcher.cpp:266 gui/launcher.cpp:774
+#: gui/launcher.cpp:266 gui/launcher.cpp:779
 msgid "Search:"
 msgstr "חיפוש:"
 
@@ -907,62 +907,62 @@ msgstr "המשחק שנבחר אינו תומך בטעינת משחקים מתו
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM לא הצליח למצוא מנוע שמסוגל להריץ את המשחק שנבחר!"
 
-#: gui/launcher.cpp:586
+#: gui/launcher.cpp:591
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM לא מצא שום משחק בתיקייה שנבחרה!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:602
+#: gui/launcher.cpp:607
 msgid "Unknown variant"
 msgstr "גרסה לא ידועה"
 
-#: gui/launcher.cpp:608
+#: gui/launcher.cpp:613
 msgid "Pick the game:"
 msgstr "בחר משחק:"
 
-#: gui/launcher.cpp:783
+#: gui/launcher.cpp:788
 msgid "Group by:"
 msgstr ""
 
-#: gui/launcher.cpp:823 gui/saveload-dialog.cpp:355
+#: gui/launcher.cpp:828 gui/saveload-dialog.cpp:355
 msgid "List view"
 msgstr "תצוגת רשימה"
 
-#: gui/launcher.cpp:824 gui/saveload-dialog.cpp:356
+#: gui/launcher.cpp:829 gui/saveload-dialog.cpp:356
 msgid "Grid view"
 msgstr "נוף רשת"
 
-#: gui/launcher.cpp:978
+#: gui/launcher.cpp:983
 msgid "~S~tart"
 msgstr "~ה~תחל"
 
-#: gui/launcher.cpp:978
+#: gui/launcher.cpp:983
 msgid "Start selected game"
 msgstr "התחל משחק שנבחר"
 
-#: gui/launcher.cpp:981
+#: gui/launcher.cpp:986
 msgid "~L~oad..."
 msgstr "~ט~עינה..."
 
-#: gui/launcher.cpp:981
+#: gui/launcher.cpp:986
 msgid "Load saved game for selected game"
 msgstr "טען משחק שמור עבור המשחק שנבחר"
 
-#: gui/launcher.cpp:983
+#: gui/launcher.cpp:988
 msgid "Record..."
 msgstr "הקלטה..."
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:994
 #, fuzzy
 #| msgid "~O~ptions..."
 msgid "~G~ame Options..."
 msgstr "א~פ~שרויות..."
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:994
 msgid "Change game options"
 msgstr "שינוי הגדרות משחק"
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:994
 #, fuzzy
 #| msgid "~O~ptions..."
 msgctxt "lowres"
@@ -971,7 +971,7 @@ msgstr "א~פ~שרויות..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1110 gui/launcher.cpp:1305
+#: gui/launcher.cpp:1115 gui/launcher.cpp:1310
 #, fuzzy
 #| msgid "Unknown variant"
 msgid "Unknown Engine"
@@ -979,7 +979,7 @@ msgstr "גרסה לא ידועה"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1128 gui/launcher.cpp:1337
+#: gui/launcher.cpp:1133 gui/launcher.cpp:1342
 #, fuzzy
 #| msgid "Unknown Author"
 msgid "Unknown Publisher"
@@ -987,23 +987,23 @@ msgstr "סופר לא ידוע"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1146 gui/launcher.cpp:1323
+#: gui/launcher.cpp:1151 gui/launcher.cpp:1328
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1161 gui/launcher.cpp:1356
+#: gui/launcher.cpp:1166 gui/launcher.cpp:1361
 msgid "Language not detected"
 msgstr ""
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1176 gui/launcher.cpp:1371
+#: gui/launcher.cpp:1181 gui/launcher.cpp:1376
 msgid "Platform not detected"
 msgstr ""
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1382 gui/widgets/groupedlist.cpp:80
+#: gui/launcher.cpp:1387 gui/widgets/groupedlist.cpp:80
 #, fuzzy
 #| msgid "Alt"
 msgid "All"

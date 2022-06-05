@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-05 16:22+0000\n"
+"POT-Creation-Date: 2022-06-05 17:57+0000\n"
 "PO-Revision-Date: 2022-06-04 20:01+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -153,7 +153,7 @@ msgstr "Sì"
 msgid "No"
 msgstr "No"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:567
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:572
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM non ha potuto aprire la cartella specificata!"
 
@@ -843,7 +843,7 @@ msgstr "In massa..."
 msgid "Search in game list"
 msgstr "Cerca nella lista dei giochi"
 
-#: gui/launcher.cpp:266 gui/launcher.cpp:774
+#: gui/launcher.cpp:266 gui/launcher.cpp:779
 msgid "Search:"
 msgstr "Cerca:"
 
@@ -896,95 +896,95 @@ msgstr ""
 "ScummVM non ha potuto trovare un motore in grado di eseguire il gioco "
 "selezionato!"
 
-#: gui/launcher.cpp:586
+#: gui/launcher.cpp:591
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM non ha potuto trovare nessun gioco nella cartella specificata!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:602
+#: gui/launcher.cpp:607
 msgid "Unknown variant"
 msgstr "Variante del gioco sconosciuta"
 
-#: gui/launcher.cpp:608
+#: gui/launcher.cpp:613
 msgid "Pick the game:"
 msgstr "Scegli il gioco:"
 
-#: gui/launcher.cpp:783
+#: gui/launcher.cpp:788
 msgid "Group by:"
 msgstr "Raggruppa:"
 
-#: gui/launcher.cpp:823 gui/saveload-dialog.cpp:355
+#: gui/launcher.cpp:828 gui/saveload-dialog.cpp:355
 msgid "List view"
 msgstr "Elenco"
 
-#: gui/launcher.cpp:824 gui/saveload-dialog.cpp:356
+#: gui/launcher.cpp:829 gui/saveload-dialog.cpp:356
 msgid "Grid view"
 msgstr "Griglia"
 
-#: gui/launcher.cpp:978
+#: gui/launcher.cpp:983
 msgid "~S~tart"
 msgstr "~G~ioca"
 
-#: gui/launcher.cpp:978
+#: gui/launcher.cpp:983
 msgid "Start selected game"
 msgstr "Esegue il gioco selezionato"
 
-#: gui/launcher.cpp:981
+#: gui/launcher.cpp:986
 msgid "~L~oad..."
 msgstr "~C~arica..."
 
-#: gui/launcher.cpp:981
+#: gui/launcher.cpp:986
 msgid "Load saved game for selected game"
 msgstr "Carica un salvataggio del gioco selezionato"
 
-#: gui/launcher.cpp:983
+#: gui/launcher.cpp:988
 msgid "Record..."
 msgstr "Registra..."
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:994
 msgid "~G~ame Options..."
 msgstr "Op~z~ioni gioco..."
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:994
 msgid "Change game options"
 msgstr "Modifica le opzioni del gioco selezionato"
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:994
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "Op~z~. gioco..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1110 gui/launcher.cpp:1305
+#: gui/launcher.cpp:1115 gui/launcher.cpp:1310
 msgid "Unknown Engine"
 msgstr "Motore Sconosciuto"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1128 gui/launcher.cpp:1337
+#: gui/launcher.cpp:1133 gui/launcher.cpp:1342
 msgid "Unknown Publisher"
 msgstr "Editore Sconosciuto"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1146 gui/launcher.cpp:1323
+#: gui/launcher.cpp:1151 gui/launcher.cpp:1328
 msgid "No Series"
 msgstr "Nessuna Serie"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1161 gui/launcher.cpp:1356
+#: gui/launcher.cpp:1166 gui/launcher.cpp:1361
 msgid "Language not detected"
 msgstr "Lingua non rilevata"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1176 gui/launcher.cpp:1371
+#: gui/launcher.cpp:1181 gui/launcher.cpp:1376
 msgid "Platform not detected"
 msgstr "Piattaforma non rilevata"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1382 gui/widgets/groupedlist.cpp:80
+#: gui/launcher.cpp:1387 gui/widgets/groupedlist.cpp:80
 msgid "All"
 msgstr "Tutti"
 

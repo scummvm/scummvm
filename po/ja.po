@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-05 16:22+0000\n"
+"POT-Creation-Date: 2022-06-05 17:57+0000\n"
 "PO-Revision-Date: 2022-06-04 11:28+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -151,7 +151,7 @@ msgstr "はい"
 msgid "No"
 msgstr "いいえ"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:567
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:572
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "指定されたディレクトリーが開けませんでした!"
 
@@ -836,7 +836,7 @@ msgstr "一括に追加..."
 msgid "Search in game list"
 msgstr "ゲームリストを検索する"
 
-#: gui/launcher.cpp:266 gui/launcher.cpp:774
+#: gui/launcher.cpp:266 gui/launcher.cpp:779
 msgid "Search:"
 msgstr "検索："
 
@@ -882,95 +882,95 @@ msgstr "このゲームはランチャーからロードができません。"
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "選択されたゲームを実行できるエンジンは見つかりませんでした！"
 
-#: gui/launcher.cpp:586
+#: gui/launcher.cpp:591
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "選択されたフォルダー内ゲームが認識できませんでした！"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:602
+#: gui/launcher.cpp:607
 msgid "Unknown variant"
 msgstr "未認識バージョン"
 
-#: gui/launcher.cpp:608
+#: gui/launcher.cpp:613
 msgid "Pick the game:"
 msgstr "ゲームを選択してください："
 
-#: gui/launcher.cpp:783
+#: gui/launcher.cpp:788
 msgid "Group by:"
 msgstr "グループ化:"
 
-#: gui/launcher.cpp:823 gui/saveload-dialog.cpp:355
+#: gui/launcher.cpp:828 gui/saveload-dialog.cpp:355
 msgid "List view"
 msgstr "リストで表示"
 
-#: gui/launcher.cpp:824 gui/saveload-dialog.cpp:356
+#: gui/launcher.cpp:829 gui/saveload-dialog.cpp:356
 msgid "Grid view"
 msgstr "グリッドで表示"
 
-#: gui/launcher.cpp:978
+#: gui/launcher.cpp:983
 msgid "~S~tart"
 msgstr "開始(~S~)"
 
-#: gui/launcher.cpp:978
+#: gui/launcher.cpp:983
 msgid "Start selected game"
 msgstr "選択したゲームを開始する"
 
-#: gui/launcher.cpp:981
+#: gui/launcher.cpp:986
 msgid "~L~oad..."
 msgstr "ロード(~L~)..."
 
-#: gui/launcher.cpp:981
+#: gui/launcher.cpp:986
 msgid "Load saved game for selected game"
 msgstr "選択されたゲームのセーブデータをロードする"
 
-#: gui/launcher.cpp:983
+#: gui/launcher.cpp:988
 msgid "Record..."
 msgstr "記録..."
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:994
 msgid "~G~ame Options..."
 msgstr "ゲーム設定(~G~)..."
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:994
 msgid "Change game options"
 msgstr "ゲームの設定を変える"
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:994
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "ゲーム設定(~G~)..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1110 gui/launcher.cpp:1305
+#: gui/launcher.cpp:1115 gui/launcher.cpp:1310
 msgid "Unknown Engine"
 msgstr "不明なエンジン"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1128 gui/launcher.cpp:1337
+#: gui/launcher.cpp:1133 gui/launcher.cpp:1342
 msgid "Unknown Publisher"
 msgstr "不明な販売元"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1146 gui/launcher.cpp:1323
+#: gui/launcher.cpp:1151 gui/launcher.cpp:1328
 msgid "No Series"
 msgstr "シリーズなし"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1161 gui/launcher.cpp:1356
+#: gui/launcher.cpp:1166 gui/launcher.cpp:1361
 msgid "Language not detected"
 msgstr "検出されない言語"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1176 gui/launcher.cpp:1371
+#: gui/launcher.cpp:1181 gui/launcher.cpp:1376
 msgid "Platform not detected"
 msgstr "検出されない機種"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1382 gui/widgets/groupedlist.cpp:80
+#: gui/launcher.cpp:1387 gui/widgets/groupedlist.cpp:80
 msgid "All"
 msgstr "すべて"
 
