@@ -352,8 +352,15 @@ bool WetEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting *
 				return true;
 			}
 		}
-
-		if (!at.video.empty()) {
+		if (at.video.empty() && !at.palette.empty()) {
+			_background->decoder->pauseVideo(true);
+			_currentPalette = at.palette;
+			loadPalette(_currentPalette);
+			_background->decoder->pauseVideo(false);
+			drawPlayer();
+			updateScreen(*_background);
+			drawScreen();
+		} else if (!at.video.empty()) {
 			_background->decoder->pauseVideo(true);
 			debugC(1, kHypnoDebugArcade, "Playing transition %s", at.video.c_str());
 			MVideo video(at.video, Common::Point(0, 0), false, true, false);

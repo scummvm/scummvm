@@ -312,6 +312,16 @@ void WetEngine::loadAssetsPCW() {
 	_levels["<start>"] = intro;
 
 	loadArcadeLevel("c11.mis", "<quit>", "<quit>", "");
+	ArcadeShooting *arc;
+	if (_restoredContentEnabled) {
+		arc = (ArcadeShooting*) _levels["c11.mis"];
+		arc->segments[0].size = 2002;
+		arc->objKillsRequired[0] = 1;
+		arc->transitions.push_back(ArcadeTransition("", "c11/c11p2.col", "", 0, 1501));
+		// These videos were not included in the demo, so we replace them
+		arc->defeatMissBossVideo = "c11\\c11d1.smk";
+		arc->defeatNoEnergySecondVideo = "c11\\c11d1.smk";
+	}
 
 	Transition *over = new Transition("<quit>");
 	_levels["<game_over>"] = over;
