@@ -63,8 +63,8 @@ void BitmapFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint
 		const byte *srcP = (const byte *)c.getBasePtr(0, yCtr);
 
 		for (int xCtr = 0; xCtr < c.w; ++xCtr, ++srcP) {
-			if (!*srcP)
-				dst->hLine(x + xCtr, y + yCtr, x + xCtr, color);
+			dst->hLine(x + xCtr, y + yCtr, x + xCtr,
+				*srcP ? 0 : color);
 		}
 	}
 }

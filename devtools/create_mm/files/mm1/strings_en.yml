@@ -448,5 +448,6 @@ movement:
 		4: " ROUGH SEAS "
 		5: " TOO WINDY! "
 		cant_swim: " CAN'T SWIM"
+		barrier: "  BARRIER!  "
 view:
 	darkness: "  DARKNESS"

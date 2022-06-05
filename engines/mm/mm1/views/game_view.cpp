@@ -51,13 +51,25 @@ GameView::GameView(UIElement *owner) : Game::ViewBase(owner) {
 }
 
 void GameView::draw() {
+	clearSurface();
+
+	if (!_isDark)
+		drawScene();
+
+	if (!_dialogMessage.empty()) {
+		drawDialogMessage();
+		_dialogMessage.clear();
+	} else if (_isDark) {
+		writeString(9, 7, STRING["view.darkness"]);
+	}
+}
+
+void GameView::drawScene() {
 	Maps::Maps &maps = g_globals->_maps;
 	Maps::Map &map = *maps._currentMap;
 	byte mapOffset = maps._mapOffset;
 
 	Common::fill(&_arr1[0], &_arr1[11], 0);
-
-	clearSurface();
 
 	// Loop through four regions in front of the party
 	for (int dist = 0; dist < 4; ++dist,
@@ -177,6 +189,12 @@ void GameView::drawTile() {
 		pos.y += 12;
 
 	surf.blitFrom(tile, r, pos);
+}
+
+void GameView::drawDialogMessage() {
+	writeString(9, 6, "            ");
+	writeString(9, 7, _dialogMessage);
+	writeString(9, 8, "            ");
 }
 
 } // namespace Views
