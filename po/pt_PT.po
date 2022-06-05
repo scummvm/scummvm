@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-05 13:15+0000\n"
-"PO-Revision-Date: 2022-06-03 14:27+0000\n"
+"PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_PT/>\n"
@@ -1571,7 +1571,7 @@ msgstr "Pede confirmação antes de fechar o ScummVM ou sair dum jogo."
 
 #: gui/options.cpp:2399
 msgid "Enable Discord integration"
-msgstr "Activar integração Discord"
+msgstr "Ativar integração Discord"
 
 #: gui/options.cpp:2400
 msgid ""
@@ -4057,13 +4057,13 @@ msgstr ""
 
 #: engines/agi/detection.cpp:122
 msgid "Use Hercules hires font"
-msgstr "Usar fonte de alta resolução Hercules"
+msgstr "Usar tipo de letra Hercules de alta resolução"
 
 #: engines/agi/detection.cpp:123
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
-"Usar fonte de alta resolução Hercules, quando o ficheiro desta estiver "
-"disponível."
+"Usar o tipo de letra de alta resolução para Hercules, se o ficheiro deste "
+"estiver disponível."
 
 #: engines/agi/detection.cpp:134
 msgid "Pause when entering commands"
@@ -4132,20 +4132,26 @@ msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
 #: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2563
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game from file:\n"
 "\n"
 "%s"
-msgstr "Não foi possível carregar o jogo guardado."
+msgstr ""
+"Não foi possível carregar o jogo do ficheiro:\n"
+"\n"
+"%s"
 
 #: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2553
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game to file:\n"
 "\n"
 "%s"
-msgstr "Não foi possível guardar o jogo."
+msgstr ""
+"Não foi possível guardar o jogo no ficheiro:\n"
+"\n"
+"%s"
 
 #: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2576
 #, c-format
@@ -4164,9 +4170,8 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Ficheiro de vídeo '%s' não encontrado!"
 
 #: engines/agos/metaengine.cpp:103
-#, fuzzy
 msgid "AGOS 2 support is not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para AGOS 2 não está disponível"
 
 #: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:75
 msgid ""
@@ -4205,32 +4210,24 @@ msgid ""
 msgstr ""
 
 #: engines/agos/detection.cpp:95 engines/sci/detection_options.h:93
-#, fuzzy
 msgid "Prefer digital sound effects"
-msgstr "Volume dos efeitos sonoros especiais"
+msgstr "Preferir efeitos sonoros digitais"
 
 #: engines/agos/detection.cpp:96 engines/sci/detection_options.h:94
-#, fuzzy
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "Usar ecrãs originais de Salvar/Carregar ao invés dos do ScummVM"
+msgstr "Usa efeitos sonoros digitais em vez de sintetizados"
 
 #: engines/ags/dialogs.cpp:58
-#, fuzzy
-#| msgid "GUI language:"
 msgid "Game language:"
-msgstr "Idioma da interface:"
+msgstr "Idioma do jogo:"
 
 #: engines/ags/dialogs.cpp:58
-#, fuzzy
-#| msgid "AdLib is used for music in many games"
 msgid "Language to use for multilingual games"
-msgstr "AdLib é usado para música em vários jogos"
+msgstr "Idioma preferido em jogos multilíngua"
 
 #: engines/ags/dialogs.cpp:78
-#, fuzzy
-#| msgid "Antialiased"
 msgid "Force antialiased text"
-msgstr "Suavizada"
+msgstr "Forçar texto suavizado"
 
 #: engines/ags/dialogs.cpp:78
 msgid "Use antialiasing to draw text even if the game does not ask for it"
@@ -4249,9 +4246,8 @@ msgid ""
 msgstr ""
 
 #: engines/asylum/metaengine.cpp:114
-#, fuzzy
 msgid "Show version"
-msgstr "Mostrar modelo"
+msgstr "Mostrar versão"
 
 #: engines/asylum/metaengine.cpp:119 engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
@@ -4398,9 +4394,8 @@ msgstr ""
 
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:109
-#, fuzzy
 msgid "main game shortcuts"
-msgstr "Alterar opções do jogo"
+msgstr "atalhos do jogo principal"
 
 #. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:111
@@ -4418,36 +4413,30 @@ msgstr ""
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. TOGGLE MCCOY'S COMBAT MODE
 #: engines/bladerunner/metaengine.cpp:128
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle Combat"
-msgstr "Ativar/desativar som"
+msgstr "Ativar/desativar combate"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:137 engines/scumm/help.cpp:76
 #: engines/zvision/metaengine.cpp:215
-#, fuzzy
 msgid "Skip cutscene"
-msgstr "Ignorar cenas"
+msgstr "Ignorar filme"
 
 #. I18N: This keymap allows skipping the current line of dialogue.
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SKIP PAST CURRENT LINE OF DIALOGUE
 #: engines/bladerunner/metaengine.cpp:150
-#, fuzzy
 msgid "Skip dialogue"
-msgstr "Ignorar linha"
+msgstr "Ignorar frase"
 
 #. I18N: This keymap toggles between opening the KIA in the Game Options tab, and closing the KIA.
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:161
-#, fuzzy
-#| msgid "~O~ptions..."
 msgid "Game Options"
-msgstr "~O~pções..."
+msgstr "Opções do Jogo"
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
@@ -4466,15 +4455,11 @@ msgstr ""
 
 #. I18N: This keymap allows scrolling texts and lists upwards
 #: engines/bladerunner/metaengine.cpp:204
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll Up"
 msgstr "Deslizar para cima"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
 #: engines/bladerunner/metaengine.cpp:211
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll Down"
 msgstr "Deslizar para baixo"
 
@@ -4527,25 +4512,14 @@ msgid "Quit Game"
 msgstr "Sair do Jogo"
 
 #: engines/buried/buried.cpp:580
-#, fuzzy
 msgid "Are you sure you want to quit?"
-msgstr "   Deseja mesmo sair?   "
+msgstr "Deseja mesmo sair?"
 
 #: engines/buried/buried.cpp:590
-#, fuzzy
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr "Jogo em Pausa. Carregue em qualquer tecla para continuar."
+msgstr "Jogo em Pausa.  Carregue em OK continuar."
 
 #: engines/buried/saveload.cpp:66
-#, fuzzy
-#| msgid ""
-#| "ScummVM found that you have old saved games for Drascula that should be "
-#| "converted.\n"
-#| "The old saved game format is no longer supported, so you will not be able "
-#| "to load your games if you don't convert them.\n"
-#| "\n"
-#| "Press OK to convert them now, otherwise you will be asked again the next "
-#| "time you start the game.\n"
 msgid ""
 "ScummVM found that you have saved games that should be converted from the "
 "original saved game format.\n"
@@ -4555,9 +4529,8 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"O ScummVM detectou jogos guardados antigos do Drascula que devem ser "
-"convertidos.\n"
-"O formato antigo dos jogos guardados já não é suportado, portanto os jogos "
+"O ScummVM detectou jogos guardados originais que devem ser convertidos.\n"
+"O formato original dos jogos guardados já não é suportado, portanto os jogos "
 "não podem ser carregados sem conversão.\n"
 "\n"
 "Clique OK para converter agora, caso contrário verá esta mensagem da próxima "
@@ -4615,9 +4588,8 @@ msgid ""
 msgstr ""
 
 #: engines/cryomni3d/metaengine.cpp:145
-#, fuzzy
 msgid "Versailles 1685 support is not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para Versailles 1685 não está disponível"
 
 #: engines/director/events.cpp:90
 msgid ""
@@ -4711,14 +4683,12 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
 #: engines/dreamweb/detection.cpp:91
-#, fuzzy
 msgid "Enable Text to Speech for Subtitles"
-msgstr "Ativar Texto para Voz"
+msgstr "Ativar Legendas para Voz"
 
 #: engines/dreamweb/detection.cpp:92
-#, fuzzy
 msgid "Use TTS to read the subtitles (if TTS is available)"
-msgstr "Usar áudio CD em vez de som do jogo, se disponível"
+msgstr "Usar Narrador para ler as legendas (se disponível)"
 
 #: engines/glk/detection.cpp:239
 msgid "Use TTS to read the text"
@@ -4958,9 +4928,8 @@ msgid ""
 msgstr ""
 
 #: engines/grim/metaengine.cpp:61
-#, fuzzy
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para Escape from Monkey Island não está disponível"
 
 #: engines/grim/resource.cpp:100
 msgid ""
@@ -5017,9 +4986,8 @@ msgid ""
 msgstr ""
 
 #: engines/groovie/metaengine.cpp:52
-#, fuzzy
 msgid "GroovieV2 support is not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para GroovieV2 não está disponível"
 
 #: engines/groovie/script.cpp:652
 msgid "Failed to save game"
@@ -5233,9 +5201,8 @@ msgid ""
 msgstr ""
 
 #: engines/kyra/metaengine.cpp:118
-#, fuzzy
 msgid "Lands of Lore support is not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para Lands of Lore não está disponível"
 
 #: engines/kyra/metaengine.cpp:128
 msgid ""
@@ -5244,9 +5211,8 @@ msgid ""
 msgstr ""
 
 #: engines/kyra/metaengine.cpp:134
-#, fuzzy
 msgid "Eye of Beholder support is not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para Eye of Beholder não está disponível"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:458
 #: engines/ultima/ultima4/meta_engine.cpp:224
@@ -5394,18 +5360,6 @@ msgid ""
 msgstr ""
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:279
-#, fuzzy
-#| msgid ""
-#| "This AMIGA version requires the following font files:\n"
-#| "\n"
-#| "EOBF6.FONT\n"
-#| "EOBF6/6\n"
-#| "EOBF8.FONT\n"
-#| "EOBF8/8\n"
-#| "\n"
-#| "If you used the orginal installer for the installation these files\n"
-#| "should be located in the AmigaDOS system 'Fonts/' folder.\n"
-#| "Please copy them into the EOB game data directory.\n"
 msgid ""
 "This AMIGA version requires the following font files:\n"
 "\n"
@@ -5418,16 +5372,16 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
-"Esta versão AMIGA requer as seguintes fontes :\n"
+"Esta versão AMIGA requer os seguintes tipos de letra:\n"
 "\n"
 "EOBF6.FONT\n"
 "EOBF6/6\n"
 "EOBF8.FONT\n"
 "EOBF8/8\n"
 "\n"
-"Se usou um instalador original, estes ficheiros\n"
-"deverão estar localizados no directório 'Fonts\" dentro da pasta AmigaDOS.\n"
-"Por favor copie-os para dentro do directório EOB do jogo.\n"
+"Se usou o instalador original, estes ficheiros deverão\n"
+"estar dentro da pasta 'Fonts' do sistema AmigaDOS.\n"
+"Por favor copie-os para dentro da pasta do jogo EOB.\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:287
 msgid ""
@@ -5470,7 +5424,7 @@ msgstr "Este puzzle não está disponível na demonstração do jogo"
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
 #: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:872
 msgid "TTS Narrator"
-msgstr ""
+msgstr "Narrador TPV"
 
 #: engines/made/detection.cpp:62
 msgid "Play a digital soundtrack during the opening movie"
@@ -5615,24 +5569,20 @@ msgid "Best"
 msgstr "Melhor"
 
 #: engines/mohawk/metaengine.cpp:292
-#, fuzzy
 msgid "Myst ME support not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para Myst ME não está disponível"
 
 #: engines/mohawk/metaengine.cpp:297
-#, fuzzy
 msgid "Myst support not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para Myst não está disponível"
 
 #: engines/mohawk/metaengine.cpp:304
-#, fuzzy
 msgid "Riven support not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para Riven não está disponível"
 
 #: engines/mohawk/metaengine.cpp:318
-#, fuzzy
 msgid "CSTime support not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para CSTime não está disponível"
 
 #: engines/mohawk/mohawk.cpp:51
 msgid "The game is paused. Press any key to continue."
@@ -5652,9 +5602,8 @@ msgid "Save game state"
 msgstr "Guardar estado do jogo"
 
 #: engines/mohawk/myst.cpp:589 engines/mohawk/riven.cpp:853
-#, fuzzy
 msgid "Show options menu"
-msgstr "Menu de Opções da DS"
+msgstr "Mostrar menu de Opções"
 
 #: engines/mohawk/myst.cpp:601
 #, fuzzy
@@ -5940,14 +5889,12 @@ msgid ""
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:47
-#, fuzzy
 msgid "Speech Options"
-msgstr "Diálogo"
+msgstr "Opções de Diálogo"
 
 #: engines/nancy/dialogs.cpp:48
-#, fuzzy
 msgid "Engine Options"
-msgstr "Opções"
+msgstr "Opções do Motor"
 
 #: engines/nancy/dialogs.cpp:103
 msgid "General"
@@ -6177,9 +6124,8 @@ msgid "Pocket PC Trial version is not supported"
 msgstr "ID de jogo não suportado"
 
 #: engines/saga/metaengine.cpp:112
-#, fuzzy
 msgid "I Have No Mouth support not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para I Have No Mouth não está disponível"
 
 #: engines/saga/music.cpp:95
 #, c-format
@@ -6203,7 +6149,7 @@ msgstr ""
 
 #: engines/sci/detection_options.h:43
 msgid "Enable high resolution graphics"
-msgstr "Activar gráficos em alta resolução"
+msgstr "Ativar gráficos em alta resolução"
 
 #: engines/sci/detection_options.h:44
 #, fuzzy
@@ -6264,7 +6210,7 @@ msgstr "Usar ecrãs originais de Salvar/Carregar ao invés dos do ScummVM"
 
 #: engines/sci/detection_options.h:156
 msgid "Enable content censoring"
-msgstr "Activar censura de conteúdo"
+msgstr "Ativar censura do conteúdo"
 
 #: engines/sci/detection_options.h:157
 #, fuzzy
@@ -6368,9 +6314,8 @@ msgid ""
 msgstr ""
 
 #: engines/sci/metaengine.cpp:298
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para SCI32 não está disponível"
 
 #: engines/sci/resource/resource.cpp:863
 msgid ""
@@ -6519,9 +6464,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:709
-#, fuzzy
 msgid "Enable game-specific enhancements"
-msgstr "Activar censura de conteúdo"
+msgstr "Ativar jogo melhorado"
 
 #: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:709
 msgid ""
@@ -6555,23 +6499,20 @@ msgid "Error reading disk %c, (%c%d) Press Button."
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:166
-#, fuzzy
 msgid "Game Paused.  Press SPACE to Continue."
-msgstr "Jogo em Pausa. Carregue em qualquer tecla para continuar."
+msgstr "Jogo em Pausa.  Carregue no ESPAÇO para continuar."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:170
-#, fuzzy
 msgid "Are you sure you want to restart?  (Y/N)Y"
-msgstr "   Deseja mesmo sair?   "
+msgstr "Deseja mesmo reiniciar?  (S/N)S"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:172
-#, fuzzy
 msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr "   Deseja mesmo sair?   "
+msgstr "Deseja mesmo sair?  (S/N)S"
 
 #: engines/scumm/dialogs.cpp:181
 #, fuzzy
@@ -6587,9 +6528,8 @@ msgid "The game was NOT saved (disk full?)"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:184
-#, fuzzy
 msgid "The game was NOT loaded"
-msgstr "Não foi possível carregar o tema!"
+msgstr "O jogo NÃO foi carregado"
 
 #: engines/scumm/dialogs.cpp:185
 #, c-format
@@ -6597,23 +6537,21 @@ msgid "Saving '%s'"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:186
-#, fuzzy, c-format
+#, c-format
 msgid "Loading '%s'"
-msgstr "Jogo a carregar..."
+msgstr "A carregar '%s'"
 
 #: engines/scumm/dialogs.cpp:187
 msgid "Name your SAVE game"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:188
-#, fuzzy
 msgid "Select a game to LOAD"
-msgstr "Selecione um tema"
+msgstr "Selecione um jogo para CARREGAR"
 
 #: engines/scumm/dialogs.cpp:189
-#, fuzzy
 msgid "Game title)"
-msgstr "Menu do jogo"
+msgstr "Título)"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:275
@@ -6626,25 +6564,21 @@ msgid "~N~ext"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:614
-#, fuzzy
 msgid "Speech Only"
-msgstr "Diálogo"
+msgstr "Só Diálogo"
 
 #: engines/scumm/dialogs.cpp:615
-#, fuzzy
 msgid "Speech and Subtitles"
-msgstr "Legendas"
+msgstr "Diálogo e Legendas"
 
 #: engines/scumm/dialogs.cpp:616
-#, fuzzy
 msgid "Subtitles Only"
-msgstr "Legendas"
+msgstr "Só Legendas"
 
 #: engines/scumm/dialogs.cpp:624
-#, fuzzy
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "Diálogo"
+msgstr "Diálogo & Legs."
 
 #: engines/scumm/dialogs.cpp:670
 msgid "Select a Proficiency Level."
@@ -6673,10 +6607,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:810
-#, fuzzy
-#| msgid "Playback"
 msgid "Playback Adjust:"
-msgstr "Reproduzir"
+msgstr "Ajustar Reprodução:"
 
 #: engines/scumm/dialogs.cpp:814
 msgid ""
@@ -6715,23 +6647,20 @@ msgid "Save / Load dialog"
 msgstr ""
 
 #: engines/scumm/help.cpp:75
-#, fuzzy
 msgid "Skip line of text"
-msgstr "Ignorar linha"
+msgstr "Ignorar linha de texto"
 
 #: engines/scumm/help.cpp:76
-#, fuzzy
 msgid "Esc"
-msgstr "Cancelar"
+msgstr "Esc"
 
 #: engines/scumm/help.cpp:77 engines/wintermute/keymapper_tables.h:2059
 msgid "Space"
 msgstr ""
 
 #: engines/scumm/help.cpp:77
-#, fuzzy
 msgid "Pause game"
-msgstr "Guardar jogo"
+msgstr "Pausar jogo"
 
 #: engines/scumm/help.cpp:78 engines/scumm/help.cpp:83
 #: engines/scumm/help.cpp:94 engines/scumm/help.cpp:95
@@ -6742,9 +6671,8 @@ msgid "Ctrl"
 msgstr ""
 
 #: engines/scumm/help.cpp:78
-#, fuzzy
 msgid "Load saved game 1-10"
-msgstr "Carregar jogo"
+msgstr "Carregar jogo 1-10"
 
 #: engines/scumm/help.cpp:79 engines/scumm/help.cpp:83
 #: engines/scumm/help.cpp:85 engines/scumm/help.cpp:99
@@ -6753,46 +6681,40 @@ msgid "Alt"
 msgstr ""
 
 #: engines/scumm/help.cpp:79
-#, fuzzy
 msgid "Save game 1-10"
-msgstr "Guardar jogo"
+msgstr "Guardar jogo 1-10"
 
 #: engines/scumm/help.cpp:86
-#, fuzzy
 msgid "Music volume up / down"
-msgstr "Música:"
+msgstr "Aumentar / diminuir volume da música"
 
 #: engines/scumm/help.cpp:87
 msgid "Text speed slower / faster"
 msgstr ""
 
 #: engines/scumm/help.cpp:88
-#, fuzzy
 msgid "Simulate left mouse button"
-msgstr "Botão esquerdo do rato"
+msgstr "Simular botão esquerdo do rato"
 
 #: engines/scumm/help.cpp:89 engines/wintermute/keymapper_tables.h:2114
 msgid "Tab"
 msgstr ""
 
 #: engines/scumm/help.cpp:89
-#, fuzzy
 msgid "Simulate right mouse button"
-msgstr "Botão direito do rato"
+msgstr "Simular botão direito do rato"
 
 #: engines/scumm/help.cpp:92
 msgid "Special keyboard commands:"
 msgstr ""
 
 #: engines/scumm/help.cpp:93
-#, fuzzy
 msgid "Show / Hide console"
-msgstr "Mostrar/ocultar consola de depuração"
+msgstr "Mostrar / ocultar consola"
 
 #: engines/scumm/help.cpp:94
-#, fuzzy
 msgid "Start the debugger"
-msgstr "Ativa vozes com hélio"
+msgstr "Iniciar o depurador"
 
 #: engines/scumm/help.cpp:95
 msgid "Show memory consumption"
@@ -6808,9 +6730,8 @@ msgid "Run in really fast mode (*)"
 msgstr "Alternar modo muito rápido"
 
 #: engines/scumm/help.cpp:99
-#, fuzzy
 msgid "Switch between graphics filters"
-msgstr "Filtro gráfico ativo:"
+msgstr "Alternar entre filtros gráficos"
 
 #: engines/scumm/help.cpp:100
 #, fuzzy
@@ -7073,7 +6994,7 @@ msgstr ""
 
 #: engines/scumm/help.cpp:245
 msgid "Save / Load / Options"
-msgstr ""
+msgstr "Guardar / Carregar / Opções"
 
 #: engines/scumm/help.cpp:256
 #, fuzzy
@@ -7279,14 +7200,12 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/metaengine.cpp:427
-#, fuzzy
 msgid "HE v71+ support is not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para HE v71+ não está disponível"
 
 #: engines/scumm/metaengine.cpp:451
-#, fuzzy
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para SCUMM v7-8 não está disponível"
 
 #: engines/scumm/scumm.cpp:236
 msgid ""
@@ -7449,9 +7368,8 @@ msgid ""
 msgstr ""
 
 #: engines/stark/detection.cpp:397 engines/ultima/detection.cpp:136
-#, fuzzy
 msgid "Enable font anti-aliasing"
-msgstr "Activar censura de conteúdo"
+msgstr "Ativar suavização do tipo de letra"
 
 #: engines/stark/detection.cpp:398 engines/ultima/detection.cpp:137
 msgid "When font anti-aliasing is enabled, the text is smoother."
@@ -7653,7 +7571,7 @@ msgstr "Falha a carregar o ficheiro!"
 
 #: engines/twine/detection.cpp:259
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr ""
+msgstr "Esta versão requer Giflib que não está disponível neste ScummVM"
 
 #: engines/twine/detection.cpp:771
 msgid "Enable wall collisions"
@@ -7751,9 +7669,8 @@ msgid "Enable the USA specific version flags"
 msgstr ""
 
 #: engines/twine/detection.cpp:862 engines/ultima/detection.cpp:92
-#, fuzzy
 msgid "Enable high resolution"
-msgstr "Activar gráficos em alta resolução"
+msgstr "Ativar alta resolução"
 
 #: engines/twine/detection.cpp:863 engines/ultima/detection.cpp:93
 #, fuzzy
@@ -7836,9 +7753,8 @@ msgid "Change Behaviour"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:223
-#, fuzzy
 msgid "Options Menu"
-msgstr "Menu de Opções da DS"
+msgstr "Menu de Opções"
 
 #: engines/twine/metaengine.cpp:235
 msgid "Use Selected Object"
@@ -7895,27 +7811,24 @@ msgid "Next location"
 msgstr "Ação seguinte"
 
 #: engines/twine/parser/text.cpp:33
-#, fuzzy
 msgctxt "Options menu"
 msgid "High resolution on"
-msgstr "Activar gráficos em alta resolução"
+msgstr "Alta resolução ativada"
 
 #: engines/twine/parser/text.cpp:34
-#, fuzzy
 msgctxt "Options menu"
 msgid "High resolution off"
-msgstr "Activar gráficos em alta resolução"
+msgstr "Alta resolução desativada"
 
 #: engines/twine/parser/text.cpp:35
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr ""
+msgstr "Colisão com paredes ativada"
 
 #: engines/twine/parser/text.cpp:36
-#, fuzzy
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr "Deslizar para baixo"
+msgstr "Colisão com paredes desativada"
 
 #: engines/ultima/detection.cpp:68
 msgid "Enable frame skipping"
@@ -7962,9 +7875,8 @@ msgid ""
 msgstr ""
 
 #: engines/ultima/detection.cpp:128
-#, fuzzy
 msgid "Enable font replacement"
-msgstr "Activar censura de conteúdo"
+msgstr "Ativar tipo de letra substituto"
 
 #: engines/ultima/detection.cpp:129
 msgid "Replaces game fonts with rendered fonts"
@@ -8065,19 +7977,16 @@ msgid "Apply bilinear filtering to individual sprites"
 msgstr "Aplica uma filtragem bilinear aos sprites individuais"
 
 #: engines/wintermute/metaengine.cpp:64
-#, fuzzy
 msgid "FoxTail support is not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para FoxTail não está disponível"
 
 #: engines/wintermute/metaengine.cpp:70
-#, fuzzy
 msgid "Hero Craft support is not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para Hero Craft não está disponível"
 
 #: engines/wintermute/metaengine.cpp:76
-#, fuzzy
 msgid "Wintermute3D support is not compiled in"
-msgstr "Recursos compilados em:"
+msgstr "Suporte para Wintermute3D não está disponível"
 
 #: engines/wintermute/wintermute.cpp:148
 #, fuzzy
@@ -8086,17 +7995,19 @@ msgstr "ID de jogo não suportado"
 
 #: engines/wintermute/wintermute.cpp:159
 msgid "This game requires the FoxTail subengine, which is not compiled in."
-msgstr ""
+msgstr "Este jogo requer o submotor FoxTail, que não está disponível."
 
 #: engines/wintermute/wintermute.cpp:170
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr ""
+msgstr "Este jogo requer o submotor HeroCraft, que não está disponível."
 
 #: engines/wintermute/wintermute.cpp:181
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
+"Este jogo requer suporte para 3D, que não está disponível. Desta forma, pode "
+"ser impossível de jogar corretamente."
 
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
@@ -8426,7 +8337,7 @@ msgstr "Volume desligado"
 
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
-msgstr ""
+msgstr "Mudar tamanho do texto"
 
 #: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
