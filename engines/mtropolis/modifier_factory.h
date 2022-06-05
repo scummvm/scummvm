@@ -33,11 +33,11 @@ struct ModifierLoaderContext {
 	ChildLoaderStack *childLoaderStack;
 };
 
-struct IModifierFactory {
+struct IModifierFactory : public IInterfaceBase {
 	virtual Common::SharedPtr<Modifier> createModifier(ModifierLoaderContext &context, const Data::DataObject &dataObject) const = 0;
 };
 
-struct IPlugInModifierFactory {
+struct IPlugInModifierFactory : public IInterfaceBase {
 	virtual Common::SharedPtr<Modifier> createModifier(ModifierLoaderContext &context, const Data::PlugInModifier &plugInModifierData) const = 0;
 };
 

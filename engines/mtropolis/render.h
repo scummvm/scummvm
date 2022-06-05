@@ -88,7 +88,7 @@ struct WindowParameters {
 class Window {
 public:
 	explicit Window(const WindowParameters &windowParams);
-	~Window();
+	virtual ~Window();
 
 	int32 getX() const;
 	int32 getY() const;

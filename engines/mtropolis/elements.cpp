@@ -120,7 +120,7 @@ int AudioPlayer::readBuffer(int16 *buffer, const int numSamplesTimesChannelCount
 		// TODO: Support more formats
 		if (_metadata->bitsPerSample == 8 && _metadata->encoding == AudioMetadata::kEncodingUncompressed) {
 			const uint8 *inSamples = static_cast<const uint8 *>(_audio->getData()) + _currentPos * numChannels;
-			for (int i = 0; i < numSampleValues; i++)
+			for (size_t i = 0; i < numSampleValues; i++)
 				buffer[i] = (inSamples[i] - 0x80) * 256;
 		} else if (_metadata->bitsPerSample == 16 && _metadata->encoding == AudioMetadata::kEncodingUncompressed) {
 			const int16 *inSamples = static_cast<const int16 *>(_audio->getData()) + _currentPos * numChannels;

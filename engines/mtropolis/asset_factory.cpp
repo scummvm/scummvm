@@ -24,7 +24,7 @@
 
 namespace MTropolis {
 
-AssetLoaderContext::AssetLoaderContext(size_t streamIndex) : streamIndex(streamIndex) {
+AssetLoaderContext::AssetLoaderContext(size_t pStreamIndex) : streamIndex(pStreamIndex) {
 }
 
 template<typename TAsset, typename TAssetData>

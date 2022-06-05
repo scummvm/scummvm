@@ -22,6 +22,12 @@
 #ifndef MTROPOLIS_CORE_H
 #define MTROPOLIS_CORE_H
 
+#include "common/scummsys.h"
+
+#ifndef INT32_MIN
+#define INT32_MIN (-((int32)(0x7fffffff)) - 1)
+#endif
+
 namespace MTropolis {
 
 struct IInterfaceBase {

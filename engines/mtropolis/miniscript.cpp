@@ -241,7 +241,7 @@ bool MiniscriptInstructionLoader<MiniscriptInstructions::PushString>::loadInstru
 	return true;
 }
 
-struct IMiniscriptInstructionFactory {
+struct IMiniscriptInstructionFactory : public IInterfaceBase {
 	virtual bool create(void *dest, uint32 instrFlags, Data::DataReader &instrDataReader, MiniscriptInstruction *&outMiniscriptInstructionPtr) const = 0;
 	virtual void getSizeAndAlignment(size_t &outSize, size_t &outAlignment) const = 0;
 };
@@ -768,6 +768,9 @@ MiniscriptInstructionOutcome UnorderedCompareInstruction::execute(MiniscriptThre
 				case DynamicValueTypes::kBoolean:
 					isEqual = ((rs.getBool() ? 1.0 : 0.0) == lsDest.getFloat());
 					break;
+				default:
+					isEqual = false;
+					break;
 				}
 			}
 		} break;
@@ -784,6 +787,9 @@ MiniscriptInstructionOutcome UnorderedCompareInstruction::execute(MiniscriptThre
 				break;
 			case DynamicValueTypes::kBoolean:
 				isEqual = ((rs.getBool() ? 1 : 0) == lsDest.getInt());
+				break;
+			default:
+				isEqual = false;
 				break;
 			}
 		} break;

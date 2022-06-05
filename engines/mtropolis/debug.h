@@ -56,7 +56,7 @@ enum SupportStatus {
 	kSupportStatusDone,		// Not necessarily "done" but "done" enough that unsupported cases will trigger errors
 };
 
-struct IDebugInspectionReport {
+struct IDebugInspectionReport : public IInterfaceBase {
 	// Attempts to declare a row with static contents.  If this returns true, then declareStaticContents must be called.
 	virtual bool declareStatic(const char *name) = 0;
 
