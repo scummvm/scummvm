@@ -120,12 +120,6 @@ protected:
 	Common::String _logFilePath;
 
 	/**
-	 * A path specified by the user where screenshots are created.
-	 * This may be empty, in which case a OS-dependent default path is used.
-	 */
-	Common::String _userScreenshotPath;
-
-	/**
 	 * The event source we use for obtaining SDL events.
 	 */
 	SdlEventSource *_eventSource;

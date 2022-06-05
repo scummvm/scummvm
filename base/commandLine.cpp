@@ -1856,7 +1856,8 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	storeSessionSetting("enable-gs", "enable_gs", settings); 
 	storeSessionSetting("opl-driver", "opl_driver", settings); 
 	storeSessionSetting("talkspeed", "talkspeed", settings); 
-	storeSessionSetting("render-mode", "render_mode", settings); 
+	storeSessionSetting("render-mode", "render_mode", settings);
+	storeSessionSetting("screenshotpath", "screenshotpath", settings);
 
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
