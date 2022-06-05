@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-03 19:05+0000\n"
+"POT-Creation-Date: 2022-06-05 13:15+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -67,7 +67,7 @@ msgstr "Uppåt"
 #: gui/saveload-dialog.cpp:406 gui/saveload-dialog.cpp:477
 #: gui/saveload-dialog.cpp:779 gui/saveload-dialog.cpp:1172
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53
-#: engines/engine.cpp:714 backends/dialogs/gtk/gtk-dialogs.cpp:63
+#: engines/engine.cpp:720 backends/dialogs/gtk/gtk-dialogs.cpp:63
 #: backends/events/default/default-events.cpp:194
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
@@ -879,14 +879,14 @@ msgstr "Sök i spellistan"
 msgid "Search:"
 msgstr "Sök:"
 
-#: gui/launcher.cpp:277 engines/dialogs.cpp:97 engines/engine.cpp:864
+#: gui/launcher.cpp:277 engines/dialogs.cpp:97 engines/engine.cpp:884
 #: engines/pegasus/pegasus.cpp:383 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load game:"
 msgstr "Ladda spel:"
 
-#: gui/launcher.cpp:277 engines/dialogs.cpp:97 engines/engine.cpp:864
+#: gui/launcher.cpp:277 engines/dialogs.cpp:97 engines/engine.cpp:884
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
 #: engines/scumm/dialogs.cpp:176 engines/trecision/saveload.cpp:253
@@ -2501,7 +2501,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Åte~r~vänd till launcher"
 
-#: engines/dialogs.cpp:98 engines/engine.cpp:893 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:98 engines/engine.cpp:913 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2521,7 +2521,7 @@ msgstr "Åte~r~vänd till launcher"
 msgid "Save game:"
 msgstr "Spara spelet:"
 
-#: engines/dialogs.cpp:98 engines/engine.cpp:893 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:98 engines/engine.cpp:913 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2678,16 +2678,16 @@ msgstr ""
 "Kunde inte ladda spardata (%s)! Hänvisa till README-filen för mer "
 "information och instruktioner för hur du får mer hjälp."
 
-#: engines/engine.cpp:710
+#: engines/engine.cpp:716
 msgid "WARNING: "
 msgstr "Varning: "
 
-#: engines/engine.cpp:710
+#: engines/engine.cpp:716
 #, fuzzy
 msgid " Shall we still run the game?"
 msgstr "Spelets fullständiga titel"
 
-#: engines/engine.cpp:711
+#: engines/engine.cpp:717
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2697,16 +2697,16 @@ msgstr ""
 "ScummVM. Därför är det troligtvis instabilt och om du skapar spardata kan de "
 "möjligtvis vara inkompatibla med framtida versioner av ScummVM."
 
-#: engines/engine.cpp:714 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:720 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
 msgstr "Starta ändå"
 
-#: engines/engine.cpp:721
+#: engines/engine.cpp:738
 #, fuzzy
 msgid "This game is not supported."
 msgstr "Spel-ID stöds inte"
 
-#: engines/engine.cpp:721
+#: engines/engine.cpp:738
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -2714,11 +2714,11 @@ msgstr ""
 "Det här spelet stöder inte laddning av spardata från launchern.\n"
 "\n"
 
-#: engines/engine.cpp:860
+#: engines/engine.cpp:880
 msgid "Loading game is currently unavailable"
 msgstr "Laddning av sparfil går inte just nu"
 
-#: engines/engine.cpp:889
+#: engines/engine.cpp:909
 msgid "Saving game is currently unavailable"
 msgstr "Det går inte att spara just nu"
 

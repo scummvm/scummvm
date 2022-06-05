@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-03 19:05+0000\n"
+"POT-Creation-Date: 2022-06-05 13:15+0000\n"
 "PO-Revision-Date: 2022-06-03 20:38+0000\n"
 "Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -64,7 +64,7 @@ msgstr "Μετάβαση πάνω"
 #: gui/saveload-dialog.cpp:406 gui/saveload-dialog.cpp:477
 #: gui/saveload-dialog.cpp:779 gui/saveload-dialog.cpp:1172
 #: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53
-#: engines/engine.cpp:714 backends/dialogs/gtk/gtk-dialogs.cpp:63
+#: engines/engine.cpp:720 backends/dialogs/gtk/gtk-dialogs.cpp:63
 #: backends/events/default/default-events.cpp:194
 #: backends/events/default/default-events.cpp:218
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:201
@@ -855,14 +855,14 @@ msgstr "Αναζήτηση στη λίστα παιχνιδιών"
 msgid "Search:"
 msgstr "Αναζήτηση:"
 
-#: gui/launcher.cpp:277 engines/dialogs.cpp:97 engines/engine.cpp:864
+#: gui/launcher.cpp:277 engines/dialogs.cpp:97 engines/engine.cpp:884
 #: engines/pegasus/pegasus.cpp:383 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load game:"
 msgstr "Φόρτωση παιχνιδιού:"
 
-#: gui/launcher.cpp:277 engines/dialogs.cpp:97 engines/engine.cpp:864
+#: gui/launcher.cpp:277 engines/dialogs.cpp:97 engines/engine.cpp:884
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
 #: engines/scumm/dialogs.cpp:176 engines/trecision/saveload.cpp:253
@@ -2525,7 +2525,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Επισ~τ~ρ. σε Launcher"
 
-#: engines/dialogs.cpp:98 engines/engine.cpp:893 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:98 engines/engine.cpp:913 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2545,7 +2545,7 @@ msgstr "Επισ~τ~ρ. σε Launcher"
 msgid "Save game:"
 msgstr "Αποθήκευση παιχνιδιού:"
 
-#: engines/dialogs.cpp:98 engines/engine.cpp:893 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:98 engines/engine.cpp:913 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -2704,15 +2704,15 @@ msgstr ""
 "το αρχείο README για βασικές πληροφορίες, καθώς και για οδηγίες σχετικά με "
 "το πώς να λάβετε περαιτέρω βοήθεια."
 
-#: engines/engine.cpp:710
+#: engines/engine.cpp:716
 msgid "WARNING: "
 msgstr "ΠΡΟΣΟΧΗ: "
 
-#: engines/engine.cpp:710
+#: engines/engine.cpp:716
 msgid " Shall we still run the game?"
 msgstr " Θέλετε ακόμα να ξεκινήσετε το παιχνίδι;"
 
-#: engines/engine.cpp:711
+#: engines/engine.cpp:717
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2723,15 +2723,15 @@ msgstr ""
 "παιχνίδι που κάνετε μπορεί να μη λειτουργεί σε μελλοντικές εκδόσεις του "
 "ScummVM."
 
-#: engines/engine.cpp:714 engines/wintermute/wintermute.cpp:182
+#: engines/engine.cpp:720 engines/wintermute/wintermute.cpp:182
 msgid "Start anyway"
 msgstr "Εκκίνηση παρά ταύτα"
 
-#: engines/engine.cpp:721
+#: engines/engine.cpp:738
 msgid "This game is not supported."
 msgstr "Αυτό το παιχνίδι δεν υποστηρίζεται."
 
-#: engines/engine.cpp:721
+#: engines/engine.cpp:738
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -2739,11 +2739,11 @@ msgstr ""
 "Αυτό το παιχνίδι δεν υποστηρίζεται για τον εξής λόγο:\n"
 "\n"
 
-#: engines/engine.cpp:860
+#: engines/engine.cpp:880
 msgid "Loading game is currently unavailable"
 msgstr "Η φόρτωση παιχνιδιού είναι προσωρινά μη διαθέσιμη"
 
-#: engines/engine.cpp:889
+#: engines/engine.cpp:909
 msgid "Saving game is currently unavailable"
 msgstr "Η αποθήκευση παιχνιδιού είναι προσωρινά μη διαθέσιμη"
 
