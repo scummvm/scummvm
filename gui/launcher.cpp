@@ -544,7 +544,12 @@ void LauncherDialog::handleKeyUp(Common::KeyState state) {
 void LauncherDialog::handleOtherEvent(const Common::Event &evt) {
 	Dialog::handleOtherEvent(evt);
 	if (evt.type == Common::EVENT_DROP_FILE) {
-		doGameDetection(evt.path);
+		// If the path is a file, take the parent directory for the detection
+		Common::String path = evt.path;
+		Common::FSNode node(path);
+		if (!node.isDirectory())
+			path = node.getParent().getPath();
+		doGameDetection(path);
 	}
 }
 
