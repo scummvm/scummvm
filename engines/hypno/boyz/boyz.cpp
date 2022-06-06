@@ -595,7 +595,7 @@ void BoyzEngine::loadAssets() {
 	_crosshairsActive[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsActive[2].copyRectToSurface(*targets, 0, 0, cursorBox);
 
-	cursorBox = Common::Rect(104, 71, 136, 83);
+	cursorBox = Common::Rect(104, 71, 136, 89);
 	_crosshairsTarget[2].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[2].copyRectToSurface(*targets, 0, 0, cursorBox);
 
@@ -675,6 +675,19 @@ void BoyzEngine::loadAssets() {
 	cursorBox = Common::Rect(57, 162, 88, 189);
 	_crosshairsTarget[7].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[7].copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	// Additional pointers
+	cursorBox = Common::Rect(4, 100, 33, 123);
+	_leftArrowPointer.create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_leftArrowPointer.copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(10, 134, 32, 155);
+	_crossPointer.create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crossPointer.copyRectToSurface(*targets, 0, 0, cursorBox);
+
+	cursorBox = Common::Rect(8, 166, 38, 188);
+	_rightArrowPointer.create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_rightArrowPointer.copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	_weaponMaxAmmo[0] = 0;
 	_weaponMaxAmmo[1] = 10;

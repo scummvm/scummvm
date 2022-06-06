@@ -614,6 +614,9 @@ public:
 	Graphics::Surface _crosshairsInactive[8];
 	Graphics::Surface _crosshairsActive[8];
 	Graphics::Surface _crosshairsTarget[8];
+	Graphics::Surface _leftArrowPointer;
+	Graphics::Surface _rightArrowPointer;
+	Graphics::Surface _crossPointer;
 
 	void updateFromScript();
 	bool checkCup(const Common::String &name);

@@ -310,6 +310,17 @@ char BoyzEngine::selectDirection() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Point mousePos = g_system->getEventManager()->getMousePos();
 			switch (event.type) {
+				case Common::EVENT_MOUSEMOVE:
+					if (button.contains(mousePos))
+						defaultCursor();
+					else if (mousePos.x <= _screenW / 3)
+						changeCursor(_leftArrowPointer, _crosshairsPalette, true);
+					else if (mousePos.x >= 2 * _screenW / 3)
+						changeCursor(_rightArrowPointer, _crosshairsPalette, true);
+					else
+						changeCursor(_crossPointer, _crosshairsPalette, true);
+					break;
+
 				case Common::EVENT_LBUTTONDOWN:
 					if (button.contains(mousePos)) {
 						// TODO: show map, if available
@@ -317,7 +328,6 @@ char BoyzEngine::selectDirection() {
 						return 'L';
 					} else
 						return 'R';
-
 					break;
 
 				default:
@@ -539,6 +549,7 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		return;
 	} else if (s->direction > 0) {
 		char selected = selectDirection();
+		defaultCursor();
 
 		if (selected == s->direction) {
 			int missedAnimation = s->missedAnimation;
