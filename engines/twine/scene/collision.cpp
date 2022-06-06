@@ -99,96 +99,88 @@ void Collision::reajustActorPosition(ShapeType brickShape) {
 		return;
 	}
 
-	const int32 brkX = (_collision.x * BRICK_SIZE) - BRICK_HEIGHT;
-	const int32 brkY = _collision.y * BRICK_HEIGHT;
-	const int32 brkZ = (_collision.z * BRICK_SIZE) - BRICK_HEIGHT;
+	const int32 xw = (_collision.x * BRICK_SIZE) - BRICK_HEIGHT;
+	const int32 yw = _collision.y * BRICK_HEIGHT;
+	const int32 zw = (_collision.z * BRICK_SIZE) - BRICK_HEIGHT;
 
 	IVec3 &processActor = _engine->_movements->_processActor;
 
-	// double-side stairs
-	if (brickShape >= ShapeType::kDoubleSideStairsTop1 && brickShape <= ShapeType::kDoubleSideStairsRight2) {
-		switch (brickShape) {
-		case ShapeType::kDoubleSideStairsTop1:
-			if (processActor.z - _collision.z <= processActor.x - _collision.x) {
-				brickShape = ShapeType::kStairsTopLeft;
-			} else {
-				brickShape = ShapeType::kStairsTopRight;
-			}
-			break;
-		case ShapeType::kDoubleSideStairsBottom1:
-			if (processActor.z - _collision.z <= processActor.x - _collision.x) {
-				brickShape = ShapeType::kStairsBottomLeft;
-			} else {
-				brickShape = ShapeType::kStairsBottomRight;
-			}
-			break;
-		case ShapeType::kDoubleSideStairsLeft1:
-			if (BRICK_SIZE - processActor.x - _collision.x <= processActor.z - _collision.z) {
-				brickShape = ShapeType::kStairsTopLeft;
-			} else {
-				brickShape = ShapeType::kStairsBottomLeft;
-			}
-			break;
-		case ShapeType::kDoubleSideStairsRight1:
-			if (BRICK_SIZE - processActor.x - _collision.x <= processActor.z - _collision.z) {
-				brickShape = ShapeType::kStairsTopRight;
-			} else {
-				brickShape = ShapeType::kStairsBottomRight;
-			}
-			break;
-		case ShapeType::kDoubleSideStairsTop2:
-			if (processActor.x - _collision.x >= processActor.z - _collision.z) {
-				brickShape = ShapeType::kStairsTopRight;
-			} else {
-				brickShape = ShapeType::kStairsTopLeft;
-			}
-			break;
-		case ShapeType::kDoubleSideStairsBottom2:
-			if (processActor.z - _collision.z <= processActor.x - _collision.x) {
-				brickShape = ShapeType::kStairsBottomRight;
-			} else {
-				brickShape = ShapeType::kStairsBottomLeft;
-			}
-			break;
-		case ShapeType::kDoubleSideStairsLeft2:
-			if (BRICK_SIZE - processActor.x - _collision.x <= processActor.z - _collision.z) {
-				brickShape = ShapeType::kStairsBottomLeft;
-			} else {
-				brickShape = ShapeType::kStairsTopLeft;
-			}
-			break;
-		case ShapeType::kDoubleSideStairsRight2:
-			if (BRICK_SIZE - processActor.x - _collision.x <= processActor.z - _collision.z) {
-				brickShape = ShapeType::kStairsBottomRight;
-			} else {
-				brickShape = ShapeType::kStairsTopRight;
-			}
-			break;
-		default:
-			if (_engine->_cfgfile.Debug) {
-				debug("Brick Shape %d unsupported", (int)brickShape);
-			}
-			break;
+	switch (brickShape) {
+	case ShapeType::kDoubleSideStairsTop1:
+		if (processActor.x - xw < processActor.z - zw) {
+			brickShape = ShapeType::kStairsTopRight;
+		} else {
+			brickShape = ShapeType::kStairsTopLeft;
 		}
+		break;
+	case ShapeType::kDoubleSideStairsBottom1:
+		if (processActor.x - xw < processActor.z - zw) {
+			brickShape = ShapeType::kStairsBottomRight;
+		} else {
+			brickShape = ShapeType::kStairsBottomLeft;
+		}
+		break;
+	case ShapeType::kDoubleSideStairsTop2:
+		if (processActor.x - xw < processActor.z - zw) {
+			brickShape = ShapeType::kStairsTopLeft;
+		} else {
+			brickShape = ShapeType::kStairsTopRight;
+		}
+		break;
+	case ShapeType::kDoubleSideStairsBottom2:
+		if (processActor.x - xw < processActor.z - zw) {
+			brickShape = ShapeType::kStairsBottomLeft;
+		} else {
+			brickShape = ShapeType::kStairsBottomRight;
+		}
+		break;
+	case ShapeType::kDoubleSideStairsLeft1:
+		if (BRICK_SIZE - (processActor.x - xw) > processActor.z - zw) {
+			brickShape = ShapeType::kStairsBottomLeft;
+		} else {
+			brickShape = ShapeType::kStairsTopLeft;
+		}
+		break;
+	case ShapeType::kDoubleSideStairsRight1:
+		if (BRICK_SIZE - (processActor.x - xw) > processActor.z - zw) {
+			brickShape = ShapeType::kStairsBottomRight;
+		} else {
+			brickShape = ShapeType::kStairsTopRight;
+		}
+		break;
+	case ShapeType::kDoubleSideStairsLeft2:
+		if (BRICK_SIZE - (processActor.x - xw) > processActor.z - zw) {
+			brickShape = ShapeType::kStairsTopLeft;
+		} else {
+			brickShape = ShapeType::kStairsBottomLeft;
+		}
+		break;
+	case ShapeType::kDoubleSideStairsRight2:
+		if (BRICK_SIZE - (processActor.x - xw) > processActor.z - zw) {
+			brickShape = ShapeType::kStairsTopRight;
+		} else {
+			brickShape = ShapeType::kStairsBottomRight;
+		}
+		break;
+	default:
+		break;
 	}
 
-	if (brickShape >= ShapeType::kStairsTopLeft && brickShape <= ShapeType::kStairsBottomRight) {
-		switch (brickShape) {
-		case ShapeType::kStairsTopLeft:
-			processActor.y = brkY + getAverageValue(0, BRICK_HEIGHT, BRICK_SIZE, processActor.x - brkX);
-			break;
-		case ShapeType::kStairsTopRight:
-			processActor.y = brkY + getAverageValue(0, BRICK_HEIGHT, BRICK_SIZE, processActor.z - brkZ);
-			break;
-		case ShapeType::kStairsBottomLeft:
-			processActor.y = brkY + getAverageValue(BRICK_HEIGHT, 0, BRICK_SIZE, processActor.z - brkZ);
-			break;
-		case ShapeType::kStairsBottomRight:
-			processActor.y = brkY + getAverageValue(BRICK_HEIGHT, 0, BRICK_SIZE, processActor.x - brkX);
-			break;
-		default:
-			break;
-		}
+	switch (brickShape) {
+	case ShapeType::kStairsTopLeft:
+		processActor.y = yw + getAverageValue(0, BRICK_HEIGHT, BRICK_SIZE, processActor.x - xw);
+		break;
+	case ShapeType::kStairsTopRight:
+		processActor.y = yw + getAverageValue(0, BRICK_HEIGHT, BRICK_SIZE, processActor.z - zw);
+		break;
+	case ShapeType::kStairsBottomLeft:
+		processActor.y = yw + getAverageValue(BRICK_HEIGHT, 0, BRICK_SIZE, processActor.z - zw);
+		break;
+	case ShapeType::kStairsBottomRight:
+		processActor.y = yw + getAverageValue(BRICK_HEIGHT, 0, BRICK_SIZE, processActor.x - xw);
+		break;
+	default:
+		break;
 	}
 }
 
