@@ -460,6 +460,7 @@ public:
 		jumpToTimeAfterKilled = 0;
 		warningVideoIdx = 0;
 		waitForClickAfterInteraction = 0;
+		direction = 0;
 	}
 	Common::String name;
 	Filename animation;
@@ -508,6 +509,7 @@ public:
 	bool isAnimal;
 	Common::String checkIfDestroyed;
 	int jumpToTimeAfterKilled;
+	char direction;
 	uint32 waitForClickAfterInteraction;
 	uint32 warningVideoIdx;
 };
@@ -570,6 +572,7 @@ public:
 		sound = sound_;
 		soundRate = soundRate_;
 		loseLevel = false;
+		selection = false;
 		jumpToTime = 0;
 		time = time_;
 	}
@@ -579,6 +582,7 @@ public:
 	Filename sound;
 	uint32 soundRate;
 	bool loseLevel;
+	bool selection;
 	uint32 jumpToTime;
 	uint32 time;
 };

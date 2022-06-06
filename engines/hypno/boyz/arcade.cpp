@@ -303,6 +303,34 @@ int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 	error("Invalid mask state (%d)!", m);
 }
 
+char BoyzEngine::selectDirection() {
+	Common::Event event;
+	Common::Rect button(252, 158, 315, 195);
+	while (!shouldQuit()) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Point mousePos = g_system->getEventManager()->getMousePos();
+			switch (event.type) {
+				case Common::EVENT_LBUTTONDOWN:
+					if (button.contains(mousePos)) {
+						// TODO: show map, if available
+					} else if (mousePos.x <= _screenH / 2) {
+						return 'L';
+					} else
+						return 'R';
+
+					break;
+
+				default:
+					break;
+			}
+		}
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+	return 0;
+}
+
+
 void BoyzEngine::waitForUserClick(uint32 timeout) {
 	Common::Event event;
 	bool cont = true;
@@ -508,6 +536,25 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		disableCursor();
 		runIntro(video);
 		_health = 0;
+		return;
+	} else if (s->direction > 0) {
+		char selected = selectDirection();
+
+		if (selected == s->direction) {
+			int missedAnimation = s->missedAnimation;
+			debugC(1, kHypnoDebugArcade, "Jumping to: %d", missedAnimation);
+			_background->decoder->forceSeekToFrame(missedAnimation);
+			_masks->decoder->forceSeekToFrame(missedAnimation);
+		} else {
+			_background->decoder->forceSeekToFrame(s->explosionFrames[0].start - 3);
+			_masks->decoder->forceSeekToFrame(s->explosionFrames[0].start - 3);
+
+			if (s->jumpToTimeAfterKilled == -1000) {
+				ArcadeTransition at("", 0, "", 0, s->explosionFrames[0].lastFrame() - 1);
+				at.loseLevel = true;
+				_transitions.push_front(at);
+			}
+		}
 		return;
 	}
 

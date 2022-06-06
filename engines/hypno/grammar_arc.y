@@ -177,6 +177,9 @@ hline: 	CTOK NUM {
 		debugC(1, kHypnoDebugParser, "Tp %s %d %s", "NONE", $3, $4);
 	}
 	| TSTOK FILENAME NUM NUM {
+		ArcadeTransition at($2, "", "", 0, $3);
+		at.selection = true;
+		g_parsedArc->transitions.push_back(at);
 		debugC(1, kHypnoDebugParser, "Ts %s %d %d", $2, $3, $4);
 	}
 	| TPTOK FILENAME NUM FILENAME {
@@ -347,8 +350,12 @@ bline: FNTOK FILENAME {
 		shoot->playInteractionAudio = true;
 		debugC(1, kHypnoDebugParser, "AB %d", $2);
 	}
-	| DTOK LTOK  { debugC(1, kHypnoDebugParser, "D L"); }
-	| DTOK RTOK  { debugC(1, kHypnoDebugParser, "D R"); }
+	| DTOK LTOK  {
+		shoot->direction = 'L';
+		debugC(1, kHypnoDebugParser, "D L"); }
+	| DTOK RTOK  {
+		shoot->direction = 'R';
+		debugC(1, kHypnoDebugParser, "D R"); }
 	| J0TOK NUM {
 		assert($2 > 0);
 		shoot->warningVideoIdx = $2;

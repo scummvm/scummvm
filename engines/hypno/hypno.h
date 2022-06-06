@@ -587,6 +587,7 @@ public:
 	private:
 	void renderHighlights(Hotspots *hs);
 	void waitForUserClick(uint32 timeout);
+	char selectDirection();
 
 	void runMainMenu(Code *code);
 	void runRetryMenu(Code *code);
