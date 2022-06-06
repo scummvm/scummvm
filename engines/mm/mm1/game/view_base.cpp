@@ -19,8 +19,10 @@
  *
  */
 
+#include "common/util.h"
 #include "mm/mm1/game/view_base.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
 
@@ -87,6 +89,9 @@ bool ViewBase::msgAction(const ActionMessage &msg) {
 		break;
 	case KEYBIND_TURN_RIGHT:
 		turnRight();
+		break;
+	case KEYBIND_BASH:
+		bash();
 		break;
 	default:
 		return TextView::msgAction(msg);
@@ -241,6 +246,50 @@ void ViewBase::obstructed(byte mask) {
 void ViewBase::barrier() {
 	_dialogMessage = STRING["movement.obstructed.barrier"];
 	Sound::sound(SOUND_OBSTRUCTED);
+}
+
+void ViewBase::bash() {
+	Maps::Maps &maps = g_globals->_maps;
+	Maps::Map &map = *maps._currentMap;
+
+	if (!(maps._currentState & 0x55 & maps._forwardMask) ||
+		!(maps._currentWalls & maps._forwardMask)) {
+		// No forward obstruction, so simply move forward
+		forward(KEYBIND_FORWARDS);
+	} else {
+		int index = 32;
+		if (!(maps._currentWalls & maps._forwardMask & 0x55))
+			index = 31;
+		else if (!(maps._currentWalls & maps._forwardMask & 0x55))
+			index = 30;
+
+		if (map.dataByte(index) != 1) {
+			forward(KEYBIND_FORWARDS);
+		} else {
+			Sound::sound(SOUND_OBSTRUCTED);
+
+			uint might = g_engine->getRandomNumber(100);
+			for (uint i = 0; i < g_globals->_party.size(); ++i)
+				might += g_globals->_party[i]._mgt;
+			might = MIN(might, 255U);
+
+			// Check for busting
+			uint threshold = map.dataByte(45);
+			if (threshold && might >= threshold) {
+				map._states[maps._mapOffset + maps._forwardMask] ^=
+					(maps._forwardMask & 0x55);
+				maps._currentState = map._states[maps._mapOffset + maps._forwardMask];
+			}
+
+			// Check for trap being triggered
+			if (g_engine->getRandomNumber(100) >= map.dataByte(48)) {
+				warning("TODO: trigger trap");
+
+			} else {
+				forward(KEYBIND_FORWARDS);
+			}
+		}
+	}
 }
 
 } // namespace Game

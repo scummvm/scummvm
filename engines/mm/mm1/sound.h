@@ -25,7 +25,7 @@
 namespace MM {
 namespace MM1 {
 
-enum SoundId { SOUND_OBSTRUCTED = 1 };
+enum SoundId { SOUND_OBSTRUCTED = 1, SOUND_BASH = 2 };
 
 class Sound {
 public:

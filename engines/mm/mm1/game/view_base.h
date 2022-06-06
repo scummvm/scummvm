@@ -76,6 +76,10 @@ private:
 	 */
 	void barrier();
 
+	/**
+	 * Bash
+	 */
+	void bash();
 public:
 	ViewBase(UIElement *owner);
 	virtual ~ViewBase() {}
