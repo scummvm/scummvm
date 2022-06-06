@@ -173,7 +173,7 @@ uint32 EfhEngine::uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf) {
 
 int16 EfhEngine::getRandom(int16 maxVal) {
 	debugC(1, kDebugUtils, "getRandom %d", maxVal);
-	if (maxVal == 0)
+	if (maxVal <= 0)
 		return 0;
 
 	return 1 + _rnd->getRandomNumber(maxVal - 1);
