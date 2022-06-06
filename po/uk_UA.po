@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-05 21:17+0000\n"
+"POT-Creation-Date: 2022-06-06 21:38+0000\n"
 "PO-Revision-Date: 2022-06-03 20:16+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -140,7 +140,7 @@ msgstr ""
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:927
+#: engines/sci/graphics/controls32.cpp:929
 msgid "Yes"
 msgstr "Так"
 
@@ -151,7 +151,7 @@ msgstr "Так"
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:927
+#: engines/sci/graphics/controls32.cpp:929
 msgid "No"
 msgstr "Ні"
 
@@ -178,7 +178,7 @@ msgstr ""
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:652 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
-#: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:924
+#: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
 #: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1057
 #: engines/scumm/scumm.cpp:1083 engines/scumm/scumm.cpp:1105
 #: engines/scumm/scumm.cpp:1384 engines/scumm/scumm.cpp:1855
@@ -6438,7 +6438,7 @@ msgstr ""
 "Будь-ласка, використовуйте іншу програму для переглядання файлу допомоги "
 "ігри: %s"
 
-#: engines/sci/engine/kmisc.cpp:857
+#: engines/sci/engine/kmisc.cpp:846
 msgid ""
 "The Poker logic is hardcoded in an external DLL, and is not implemented yet. "
 "There exists some dummy logic for now, where opponent actions are chosen "
@@ -6447,16 +6447,16 @@ msgstr ""
 "Логіка гри у покер зберігається у окремій DLL, яку ще не реалізовано. Зараз "
 "зроблено заглушку, в якій дії суперників обираються випадково"
 
-#: engines/sci/engine/savegame.cpp:1453
+#: engines/sci/engine/savegame.cpp:1458
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr "Формат цього файлу збереженої гри застарілий, не можу його прочитати"
 
-#: engines/sci/engine/savegame.cpp:1455
+#: engines/sci/engine/savegame.cpp:1460
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "Версія файлу збереження %d, але максимально підртимується %0d"
 
-#: engines/sci/engine/savegame.cpp:1466
+#: engines/sci/engine/savegame.cpp:1471
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
