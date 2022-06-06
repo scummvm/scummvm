@@ -28,8 +28,7 @@ namespace MM1 {
 namespace Views {
 
 Game::Game() : TextView("Game"),
-		_view(this), _commands(this),
-		_messages(this), _party(this) {
+		_view(this), _commands(this), _party(this) {
 	_view.setBounds(Common::Rect(0, 0, 245, 128));
 }
 
@@ -40,17 +39,22 @@ bool Game::msgFocus(const FocusMessage &msg) {
 
 bool Game::msgUnfocus(const UnfocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
-	return true;
+	return TextView::msgUnfocus(msg);
 }
 
 void Game::draw() {
 	if (_needsRedraw)
 		clearSurface();
-	UIElement::draw();
+	TextView::draw();
 }
 
-bool Game::msgKeypress(const KeypressMessage &msg) {
-	return true;
+bool Game::msgAction(const ActionMessage &msg) {
+	if (msg._action == KEYBIND_ORDER) {
+		g_events->msgGame(GameMessage("ORDER"));
+		return true;
+	}
+
+	return TextView::msgAction(msg);
 }
 
 bool Game::msgGame(const GameMessage &msg) {

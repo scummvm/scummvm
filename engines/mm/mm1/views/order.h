@@ -19,32 +19,23 @@
  *
  */
 
-#ifndef MM1_VIEWS_GAME_H
-#define MM1_VIEWS_GAME_H
+#ifndef MM1_VIEWS_ORDER_H
+#define MM1_VIEWS_ORDER_H
 
-#include "mm/mm1/events.h"
-#include "mm/mm1/views/game_commands.h"
-#include "mm/mm1/views/game_party.h"
-#include "mm/mm1/views/game_view.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
-class Game : public TextView {
-private:
-	GameCommands _commands;
-	GameParty _party;
-	GameView _view;
+class Order : public TextView {
 public:
-	Game();
-	virtual ~Game() {}
+	Order();
+	virtual ~Order() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	void draw() override;
-	bool msgAction(const ActionMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	void draw() override;
 };
 
 } // namespace Views

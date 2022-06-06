@@ -19,36 +19,45 @@
  *
  */
 
-#ifndef MM1_VIEWS_GAME_H
-#define MM1_VIEWS_GAME_H
-
-#include "mm/mm1/events.h"
-#include "mm/mm1/views/game_commands.h"
-#include "mm/mm1/views/game_party.h"
-#include "mm/mm1/views/game_view.h"
+#include "mm/mm1/views/order.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
-class Game : public TextView {
-private:
-	GameCommands _commands;
-	GameParty _party;
-	GameView _view;
-public:
-	Game();
-	virtual ~Game() {}
+Order::Order() : TextView("Order") {
+	_bounds = getLineBounds(21, 24);
+}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	void draw() override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
-};
+bool Order::msgGame(const GameMessage &msg) {
+	if (msg._name == "ORDER" && g_globals->_party.size() > 1) {
+		// Show the dialog
+		addView(this);
+		return true;
+	}
+
+	return false;
+}
+
+bool Order::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+		close();
+		return true;
+	}
+
+	return true;
+}
+
+void Order::draw() {
+	clearSurface();
+	writeString(0, 0, STRING["dialogs.order.title"]);
+	writeString(17, 1, STRING["dialogs.order.old"]);
+	writeString(0, 2, STRING["dialogs.misc.go_back"]);
+
+	// TODO
+}
 
 } // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif

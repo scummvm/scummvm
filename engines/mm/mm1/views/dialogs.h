@@ -28,6 +28,7 @@
 #include "mm/mm1/views/game.h"
 #include "mm/mm1/views/inn.h"
 #include "mm/mm1/views/main_menu.h"
+#include "mm/mm1/views/order.h"
 #include "mm/mm1/views/protect.h"
 #include "mm/mm1/views/quick_ref.h"
 #include "mm/mm1/views/title.h"
@@ -44,6 +45,7 @@ private:
 	Views::Game _game;
 	Views::Inn _inn;
 	Views::MainMenu _mainMenu;
+	Views::Order _order;
 	Views::Protect _protect;
 	Views::QuickRef _quickRef;
 	Views::Title _title;
