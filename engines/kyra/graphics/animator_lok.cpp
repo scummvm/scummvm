@@ -591,6 +591,7 @@ void Animator_LoK::animRefreshNPC(int character) {
 			if (_vm->_brandonStatusBit0x02Flag) {
 				++_brandonDrawFrame;
 				// TODO: check this
+				// UPDATE: From DOS floppy disasm: _brandonDrawFrame > 122 --> Test where this actually occurs
 				if (_brandonDrawFrame >= 122) {
 					_brandonDrawFrame = 113;
 					_vm->_brandonStatusBit0x02Flag = 0;

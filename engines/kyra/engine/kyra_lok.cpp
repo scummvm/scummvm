@@ -108,8 +108,7 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 		_defaultLineSpacing = 2;
 		break;
 	case Common::KO_KOR:
-		_defaultFont = _noteFont = Screen::FID_KOREAN_FNT;
-		_defaultLineSpacing = 2;
+		_defaultFont = _noteFont = Screen::FID_KOREAN_FNT;;
 		break;
 	default:
 		break;

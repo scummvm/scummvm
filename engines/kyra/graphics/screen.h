@@ -295,6 +295,12 @@ public:
 	HangulFontLoK(Font *&font8fat, const uint16 *lookupTable, uint32 lookupTableSize);
 	~HangulFontLoK() override;
 
+	enum {
+		kNumJongseong = 191,
+		kNumJungseong = 85,
+		kNumChoseong = 109
+	};
+
 	bool load(Common::SeekableReadStream &data) override;
 	Type getType() const override { return kHANGUL; }
 	int getHeight() const override { return _height; }
@@ -305,7 +311,7 @@ public:
 	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 private:
-	const uint8 *composeGlyph(uint16 chr) const;
+	const uint8 *createGlyph(uint16 chr) const;
 	void processColorMap();
 	void renderGlyph(byte *dst, const uint8 *glyph, uint8 col, int pitch) const;
 

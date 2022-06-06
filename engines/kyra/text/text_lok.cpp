@@ -29,7 +29,7 @@
 
 namespace Kyra {
 
-void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const char *chatStr, uint8 charNum, const bool printText) {
+void KyraEngine_LoK::waitForChatToFinish(int vocFile, int chatDuration, const char *chatStr, uint8 charNum, const bool printText) {
 	bool hasUpdatedNPCs = false;
 	bool runLoop = true;
 	uint8 currPage;
@@ -100,7 +100,7 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 		_animator->copyChangedObjectsForward(0);
 		updateTextFade();
 
-		if (((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && printText) || (!printText && !snd_voiceIsPlaying()))
+		if (((chatDuration < (int)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && printText) || (!printText && !snd_voiceIsPlaying()))
 			break;
 
 		uint32 nextTime = loopStart + _tickLength;
@@ -249,7 +249,7 @@ int KyraEngine_LoK::initCharacterChat(int8 charNum) {
 	return returnValue;
 }
 
-void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration) {
+void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int16 charNum, int16 chatDuration) {
 	uint8 startAnimFrames[] =  { 0x10, 0x32, 0x56, 0x0, 0x0, 0x0 };
 
 	uint16 chatTicks;
@@ -284,7 +284,7 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 	yPos -= 8;
 	yPos -= lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
 
-	_text->_talkMessageY = (_flags.lang == Common::ZH_TWN) ? CLIP<int>(yPos, 10, 80) : CLIP<int>(yPos, 11, 100);;
+	_text->_talkMessageY = (_flags.lang == Common::ZH_TWN) ? CLIP<int>(yPos, 10, 80) : CLIP<int>(yPos, 11, 100);
 	_text->_talkMessageH = lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
 
 	const bool printText = textEnabled();
@@ -297,10 +297,16 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 		_text->printCharacterText(processedString, charNum, _characterList[charNum].x1);
 	}
 
+	// This happens right at the beginning, when talking to the treeand can be seen in DOSBox, too.
+	// It will make the sentence stay basically forever. We just set it to
+	// the value from the other versions (probably some typo from the translators).
+	if (_flags.lang == Common::KO_KOR && chatDuration == -20)
+		chatDuration = -2;
+
 	if (chatDuration == -2)
 		chatTicks = strlen(processedString) * 9;
 	else
-		chatTicks = chatDuration;
+		chatTicks = (uint16)chatDuration;
 
 	if (!speechEnabled())
 		vocFile = -1;
