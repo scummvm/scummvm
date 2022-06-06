@@ -655,9 +655,9 @@ void Animations::processActorAnimations(int32 actorIdx) {
 		if (brickShape != ShapeType::kNone) {
 			if (brickShape != ShapeType::kSolid) {
 				_engine->_collision->reajustActorPosition(brickShape);
-			} /*else { // this shouldn't happen (collision should avoid it)
-				actor->y = processActor.y = (processActor.y / BRICK_HEIGHT) * BRICK_HEIGHT + BRICK_HEIGHT; // go upper
-			}*/
+			} else { // this shouldn't happen (collision should avoid it)
+				actor->_pos.y = processActor.y = (processActor.y / BRICK_HEIGHT) * BRICK_HEIGHT + BRICK_HEIGHT; // go upper
+			}
 		}
 
 		if (actor->_staticFlags.bComputeCollisionWithObj) {
