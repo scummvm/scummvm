@@ -318,7 +318,11 @@ void apply_config(const ConfigTree &cfg) {
 		_GP(usetup).shared_data_dir = CfgReadString(cfg, "misc", "shared_data_dir");
 		_GP(usetup).show_fps = CfgReadBoolInt(cfg, "misc", "show_fps");
 
-		_GP(usetup).translation = CfgReadString(cfg, "language", "translation");
+		Common::String translation;
+		if (ConfMan.getActiveDomain()->tryGetVal("translation", translation) && !translation.empty())
+			_GP(usetup).translation = translation;
+		else
+			_GP(usetup).translation = CfgReadString(cfg, "language", "translation");
 
 		int cache_size_kb = CfgReadInt(cfg, "misc", "cachemax", DEFAULTCACHESIZE_KB);
 		if (cache_size_kb > 0)
