@@ -1162,8 +1162,23 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 
 	// When loading, move the mouse to the saved mouse position.
 	if (s.isLoading() && s.getVersion() >= VER(20)) {
+		int x = _mouse.x;
+		int y = _mouse.y;
+
+		// Convert the mouse position, which uses game coordinates, to
+		// screen coordinates for the rendering modes that need it.
+
+		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+			x *= 2;
+			x += (kHercWidth - _screenWidth * 2) / 2;
+			y = y * 7 / 4;
+		} else if (_macScreen || (_useCJKMode && _textSurfaceMultiplier == 2)) {
+			x *= 2;
+			y *= 2;
+		}
+
 		updateCursor();
-		_system->warpMouse(_mouse.x, _mouse.y);
+		_system->warpMouse(x, y);
 	}
 
 	// Before V61, we re-used the _haveMsg flag to handle "alternative" speech
