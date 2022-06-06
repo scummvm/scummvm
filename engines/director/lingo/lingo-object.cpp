@@ -987,16 +987,19 @@ Datum TextCastMember::getField(int field) {
 
 bool TextCastMember::setField(int field, const Datum &d) {
 	Channel *toEdit = nullptr;
-	Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
-	for (uint i = 0; i < channels.size(); i++) {
-		if (channels[i]->_sprite->_cast == this) {
-			toEdit = channels[i];
-			break;
+
+	if (field == kTheTextFont || field == kTheTextSize || field == kTheTextStyle) {
+		Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
+		for (uint i = 0; i < channels.size(); i++) {
+			if (channels[i]->_sprite->_cast == this) {
+				toEdit = channels[i];
+				break;
+			}
 		}
-	}
-	if (toEdit) {
-		Common::Rect bbox = toEdit->getBbox();
-		toEdit->_widget = createWidget(bbox, toEdit, toEdit->_sprite->_spriteType);
+		if (toEdit) {
+			Common::Rect bbox = toEdit->getBbox();
+			toEdit->_widget = createWidget(bbox, toEdit, toEdit->_sprite->_spriteType);
+		}
 	}
 
 	switch (field) {
@@ -1070,19 +1073,19 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		toEdit->_widget->removeWidget(_widget);
 		return true;
 	case kTheTextStyle:
-	{
 		if (!toEdit) {
 			warning("Channel containing this CastMember %d doesn't exist", (int) _castId);
 			return false;
 		}
-		int slant = g_director->_wm->_fontMan->parseSlantFromName(d.asString());
-		((Graphics::MacText *)toEdit->_widget)->enforceTextSlant(slant);
+		{
+			int slant = g_director->_wm->_fontMan->parseSlantFromName(d.asString());
+			((Graphics::MacText *)toEdit->_widget)->enforceTextSlant(slant);
+		}
 		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
 		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
 		_modified = true;
 		toEdit->_widget->removeWidget(_widget);
 		return true;
-	}
 	default:
 		break;
 	}
