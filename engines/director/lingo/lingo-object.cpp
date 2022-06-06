@@ -994,8 +994,11 @@ bool TextCastMember::setField(int field, const Datum &d) {
 			break;
 		}
 	}
-	Common::Rect bbox = toEdit->getBbox();
-	toEdit->_widget = createWidget(bbox, toEdit, toEdit->_sprite->_spriteType);
+	if (toEdit) {
+		Common::Rect bbox = toEdit->getBbox();
+		toEdit->_widget = createWidget(bbox, toEdit, toEdit->_sprite->_spriteType);
+	}
+
 	switch (field) {
 	case kTheBackColor:
 		{
@@ -1041,32 +1044,44 @@ bool TextCastMember::setField(int field, const Datum &d) {
 	}
 		return true;
 	case kTheTextFont:
+		if (!toEdit) {
+			warning("Channel containing this CastMember %d doesn't exist", (int) _castId);
+			return false;
+		}
 		((Graphics::MacText *)toEdit->_widget)->enforceTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(d.asString()));
 		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
 		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
 		_modified = true;
 		toEdit->_widget->removeWidget(_widget);
-		return false;
+		return true;
 	case kTheTextHeight:
 		_lineSpacing = d.asInt();
 		_modified = true;
 		return false;
 	case kTheTextSize:
+		if (!toEdit) {
+			warning("Channel containing this CastMember %d doesn't exist", (int) _castId);
+			return false;
+		}
 		((Graphics::MacText *)toEdit->_widget)->setTextSize(d.asInt());
 		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
 		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
 		_modified = true;
 		toEdit->_widget->removeWidget(_widget);
-		return false;
+		return true;
 	case kTheTextStyle:
 	{
+		if (!toEdit) {
+			warning("Channel containing this CastMember %d doesn't exist", (int) _castId);
+			return false;
+		}
 		int slant = g_director->_wm->_fontMan->parseSlantFromName(d.asString());
 		((Graphics::MacText *)toEdit->_widget)->enforceTextSlant(slant);
 		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
 		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
 		_modified = true;
 		toEdit->_widget->removeWidget(_widget);
-		return false;
+		return true;
 	}
 	default:
 		break;
