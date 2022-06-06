@@ -252,7 +252,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 		ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 		// avoid current processed actor
-		if (a != actorIdx && actorTest->_entity != -1 && !actor->_staticFlags.bComputeLowCollision && actorTest->_carryBy != actorIdx) {
+		if (a != actorIdx && actorTest->_entity != -1 && !actor->_staticFlags.bIsHidden && actorTest->_carryBy != actorIdx) {
 			const IVec3 &minsTest = actorTest->pos() + actorTest->_boundingBox.mins;
 			const IVec3 &maxsTest = actorTest->pos() + actorTest->_boundingBox.maxs;
 
