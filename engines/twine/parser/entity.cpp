@@ -30,9 +30,10 @@ bool EntityData::loadBody(Common::SeekableReadStream &stream) {
 	const int32 pos = stream.pos();
 	uint8 size = stream.readByte();
 	body.bodyIndex = (int16)stream.readUint16LE();
-	body.actorBoundingBox.hasBoundingBox = stream.readByte();
-	if (body.actorBoundingBox.hasBoundingBox) {
+	const uint8 numActions = stream.readByte();
+	for (uint8 i = 0U; i < numActions; ++i) {
 		if ((ActionType)stream.readByte() == ActionType::ACTION_ZV) {
+			body.actorBoundingBox.hasBoundingBox = true;
 			body.actorBoundingBox.bbox.mins.x = stream.readSint16LE();
 			body.actorBoundingBox.bbox.mins.y = stream.readSint16LE();
 			body.actorBoundingBox.bbox.mins.z = stream.readSint16LE();
