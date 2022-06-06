@@ -789,7 +789,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 #ifdef ENABLE_SCI32
 	{ "RemapColors", kRemapColors32, SIG_SCI32, SIGFOR_ALL,  "i(i)(i)(i)(i)(i)",      kRemapColors_subops, NULL },
 #endif
-	{ MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            kResCheck_workarounds },
+	{ MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            NULL },
 	{ MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
 	{ "RestartGame", kRestartGame16, SIG_SCI16, SIGFOR_ALL,  "",                      NULL,            NULL },
 #ifdef ENABLE_SCI32

@@ -1059,24 +1059,6 @@ const SciWorkaroundEntry kReadNumber_workarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
-//                Game: Leisure Suit Larry 6 hires
-//      Calling method: myCreditText::changeState
-//   Subroutine offset: 0x8c (script 740)
-// Applies to at least: English PC CD
-static const uint16 sig_kResCheck_lsl6hires_1[] = {
-	0x3f, 0x01, // link 01
-	0x81, 0x13, // lag global[$13]
-	0xa5, 0x00, // sat 00
-	0x7a,       // push2
-	SIG_END
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,       local-call-signature, index-range,   workaround
-const SciWorkaroundEntry kResCheck_workarounds[] = {
-	{ GID_LSL6HIRES,     740,   740, -1,       "myCreditText", "handleEvent", sig_kResCheck_lsl6hires_1,    0,     0, { WORKAROUND_IGNORE, 0 } }, // when clicking quit during the final credits
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
 //    gameID,           room,script,lvl,          object-name, method-name,  local-call-signature, index-range,   workaround
 const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[] = {
 	{ GID_QFG4DEMO,      100,   100,  0,            "doMovie", "changeState",             nullptr,     0,     0, { WORKAROUND_IGNORE,    0 } }, // after the Sierra logo, no flags are passed, thus the call is meaningless - bug #4947
