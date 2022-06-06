@@ -586,7 +586,7 @@ reg_t kMacKq7SaveGame(EngineState *s) {
 		error("kMacKq7SaveGame: save game hasn't been initialized");
 	}
 
-	const reg_t version = s->variables[VAR_GLOBAL][kGlobalVarVersion];
+	const reg_t version = s->variables[VAR_GLOBAL][kGlobalVarVersionNew];
 	const Common::String versionString = s->_segMan->getString(version);
 	if (gamestate_save(s, s->_kq7MacSaveGameId, s->_kq7MacSaveGameDescription, versionString)) {
 		return TRUE_REG;
@@ -627,7 +627,7 @@ reg_t kMacSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 	const int saveId = shiftSciToScummVMSaveId(argv[1].toUint16());
 	const Common::String description = s->_segMan->getString(argv[2]);
-	const reg_t version = s->variables[VAR_GLOBAL][kGlobalVarVersion];
+	const reg_t version = s->variables[VAR_GLOBAL][kGlobalVarVersionNew];
 	const Common::String versionString = s->_segMan->getString(version);
 	if (gamestate_save(s, saveId, description, versionString)) {
 		return TRUE_REG;
