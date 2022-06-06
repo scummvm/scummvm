@@ -9,8 +9,7 @@ uniform vec2 texScale;
 
 out vec2 Texcoord;
 
-void main()
-{
+void main() {
 	vec2 tex = texcoord;
 	tex.y = 1.0 - tex.y;
 	tex *= texScale;

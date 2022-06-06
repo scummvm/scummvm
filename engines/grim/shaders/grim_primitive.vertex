@@ -2,8 +2,7 @@ in vec2 position;
 
 uniform vec2 scaleWH;
 
-void main()
-{
+void main() {
 	// Coordinates are [0.0;1.0], transform to [-1.0; 1.0]
 	vec2 pos = position * scaleWH;
 	pos.x = pos.x * 2.0 - 1.0;

@@ -7,8 +7,7 @@ uniform vec2 texcrop;
 
 out vec2 Texcoord;
 
-void main()
-{
+void main() {
 	Texcoord = texcoord * texcrop;
 
 	vec2 pos = scale * position + offset;

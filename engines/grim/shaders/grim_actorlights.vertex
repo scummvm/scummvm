@@ -34,8 +34,7 @@ uniform shadow_info shadow;
 out vec2 Texcoord;
 out vec4 Color;
 
-void main()
-{
+void main() {
 	vec4 pos = modelMatrix * extraMatrix * vec4(position, 1.0);
 
 	// See http://en.wikipedia.org/wiki/Line-plane_intersection
