@@ -558,7 +558,7 @@ static const uint16 sci0EarlySpeedTestSignature[] = {
 	0x35, 0x01,                         // ldi 01
 	0x1a,                               // eq?
 	0x30,                               // bnt [ skip initialization ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 sci0EarlySpeedTestPatch[] = {
@@ -575,7 +575,7 @@ static const uint16 sci01SpeedTestGlobalSignature[] = {
 	0x36,                               // push
 	0x35, 0x01,                         // ldi 01
 	0x1a,                               // eq?
-	SIG_END,                            // bnt [ skip initialization ]
+	SIG_END                            // bnt [ skip initialization ]
 };
 
 static const uint16 sci01SpeedTestGlobalPatch[] = {
@@ -592,7 +592,7 @@ static const uint16 sci01SpeedTestLocalSignature[] = {
 	0x36,                               // push
 	0x35, 0x01,                         // ldi 01
 	0x1a,                               // eq?
-	SIG_END,                            // bnt [ skip initialization ]
+	SIG_END                            // bnt [ skip initialization ]
 };
 
 static const uint16 sci01SpeedTestLocalPatch[] = {
@@ -612,7 +612,7 @@ static const uint16 sci11SpeedTestSignature[] = {
 	0x83, 0x01,                         // lal 01
 	0x04,                               // sub    [ GetTime() - start-time ]
 	0xa3, 0x00,                         // sal 00 [ local0 = test-duration ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 sci11SpeedTestPatch[] = {
