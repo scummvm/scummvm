@@ -59,8 +59,9 @@ int TextDisplayer::getCharLength(const char *str, int len) {
 		while (i <= len && *str) {
 			uint c = *str++;
 			c &= 0xFF;
-			if (c >= 0x7F && (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::KO_KOR)) {
+			if (c > 0x7F && (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::KO_KOR)) {
 				c = READ_LE_UINT16(str - 1);
+				++charsCount;
 				++str;
 			}
 			i += _screen->getCharWidth(c);

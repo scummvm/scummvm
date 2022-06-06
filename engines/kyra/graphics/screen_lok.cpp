@@ -556,8 +556,8 @@ bool HangulFontLoK::load(Common::SeekableReadStream &data) {
 
 	uint32 fileSize = data.size();
 
-	if (fileSize != 5730 + 2550 + 3270) {
-		warning("KoreanFontLoK::load(): Invalid font file size '%d' (expected: '%d').", fileSize, 5730 + 2550 + 3270);
+	if (fileSize != (kNumJongseong + kNumJungseong + kNumChoseong) * 30) {
+		warning("KoreanFontLoK::load(): Invalid font file size '%d' (expected: '%d').", fileSize, (kNumJongseong + kNumJungseong + kNumChoseong) * 30);
 		return false;
 	}
 
@@ -569,8 +569,8 @@ bool HangulFontLoK::load(Common::SeekableReadStream &data) {
 	_fileData = dst;
 
 	_glyphData[0] = _fileData;
-	_glyphData[1] = _glyphData[0] + 5730;
-	_glyphData[2] = _glyphData[1] + 2550;
+	_glyphData[1] = _glyphData[0] + (kNumJongseong * 30);
+	_glyphData[2] = _glyphData[1] + (kNumJungseong * 30);
 
 	return true;
 }
@@ -597,7 +597,7 @@ void HangulFontLoK::drawChar(uint16 c, byte *dst, int pitch, int) const {
 		return;
 	}
 
-	const uint8 *glyph = composeGlyph(c);
+	const uint8 *glyph = createGlyph(c);
 	dst += (pitch + 1);
 
 	if (_colorMap[3]) {
@@ -610,7 +610,7 @@ void HangulFontLoK::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	renderGlyph(dst, glyph, _colorMap[1], pitch);
 };
 
-const uint8 *HangulFontLoK::composeGlyph(uint16 chr) const {
+const uint8 *HangulFontLoK::createGlyph(uint16 chr) const {
 	memset(_glyphTemp, 0, 30);
 
 	uint16 t[3];
@@ -621,14 +621,17 @@ const uint8 *HangulFontLoK::composeGlyph(uint16 chr) const {
 	uint8 i2 = (chr >> 5) & 0x1f;
 	uint8 i3 = (chr >> 10) & 0x1f;
 
+	// determine jungseong glyph part
 	uint16 r1 = _2byteTables[1][i2];
 	if ((int16)r1 > 0)
 		r1 += (_2byteTables[3][i3] + _2byteTables[6][i1] - 3);
 
+	// determine jongseong glyph part
 	uint16 r2 = _2byteTables[0][i3];
 	if ((int16)r2 > 0)
 		r2 += (_2byteTables[4][i2] + _2byteTables[6][i1]);
 
+	// determine choseong glyph part
 	uint16 r3 = _2byteTables[2][i1];
 	if ((int16)r3 > 0)
 		r3 += (_2byteTables[5][i2] - 3);
@@ -637,7 +640,7 @@ const uint8 *HangulFontLoK::composeGlyph(uint16 chr) const {
 	t[1] = (r1 >> 5) - 2;
 	t[2] = (r3 >> 5) - 2;
 
-	static const uint8 lim[3] = { 0xBF, 0x55, 0x6D };
+	const uint8 lim[3] = { kNumJongseong, kNumJungseong, kNumChoseong };
 
 	for (int l = 0; l < 3; ++l) {
 		if (t[l] <= lim[l]) {
