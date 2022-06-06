@@ -1167,8 +1167,8 @@ void GUI_LoK::initStaticResource() {
 		menuItemYInc = 20;
 		menuItemHeight = 19;
 	} else if (_vm->gameFlags().lang == Common::KO_KOR) {
-		menuItemYInc = 23;
-		menuItemHeight = 21;
+		menuItemYInc = 24;
+		menuItemHeight = 22;
 		menuHeight = 160;
 		menuItemYEnd = menuItemYStart + menuItemYInc * 4;
 	}
@@ -1193,25 +1193,33 @@ void GUI_LoK::initStaticResource() {
 
 	menuItemYStart = 39;
 	int labelYStart = 8;
+	menuHeight = 160;
+	menuItemYEnd = 134;
+	int scrollUpY = 22;
+	int scrollDownY = 124;
 
 	if (_vm->gameFlags().lang == Common::ZH_TWN) {
 		menuItemYStart = 40;
 		labelYStart = 5;
 	} else if (_vm->gameFlags().lang == Common::KO_KOR) {
-		menuItemYStart = 40;
-		labelYStart = 5;
+		menuItemYStart = 44;
+		labelYStart = 4;
+		menuHeight = 190;
+		scrollUpY = 27;
+		scrollDownY = 164;
+		menuItemYEnd = menuItemYStart + menuItemYInc * 5;
 	}
 
-	GUI_V1_MENU(_menu[2], -1, -1, 0x120, 0xA0, 248, 249, 250, 0, 251, -1, labelYStart, 0, 6, 132, 22, 132, 124);
+	GUI_V1_MENU(_menu[2], -1, -1, 0x120, menuHeight, 248, 249, 250, 0, 251, -1, labelYStart, 0, 6, 132, scrollUpY, 132, scrollDownY);
 	GUI_V1_MENU_ITEM(_menu[2].item[0], 1, 0, 0, 0, -1, 255, menuItemYStart, 0x100, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[2].item[1], 1, 0, 0, 0, -1, 255, menuItemYStart + menuItemYInc, 0x100, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[2].item[2], 1, 0, 0, 0, -1, 255, menuItemYStart + menuItemYInc * 2, 0x100, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[2].item[3], 1, 0, 0, 0, -1, 255, menuItemYStart + menuItemYInc * 3, 0x100, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[2].item[4], 1, 0, 0, 0, -1, 255, menuItemYStart + menuItemYInc * 4, 0x100, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[2].item[5], 1, 0, 0, 0, 0xB8, 0, 0x86, 0x58, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[2].item[5], 1, 0, 0, 0, 0xB8, 0, menuItemYEnd, 0x58, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[2].item[5].callback = cancelSubMenuFunctor;
 
-	if (_vm->gameFlags().lang == Common::ZH_TWN || _vm->gameFlags().lang == Common::KO_KOR)
+	if (_vm->gameFlags().lang == Common::ZH_TWN)
 		_menu[2].item[4].enabled = false;
 
 	menuHeight = 67;
@@ -1235,7 +1243,7 @@ void GUI_LoK::initStaticResource() {
 	if (_vm->gameFlags().lang == Common::ZH_TWN)
 		menuItemYInc = 21;
 	else if (_vm->gameFlags().lang == Common::KO_KOR)
-		menuItemYInc = 21;
+		menuItemYInc = 24;
 
 	GUI_V1_MENU(_menu[4], -1, -1, 0xD0, 0x4C, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[4].item[0], 1, 0, 0, 0, -1, -1, 0x1E, 0xB4, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
@@ -1252,9 +1260,7 @@ void GUI_LoK::initStaticResource() {
 		menuItemYInc = 20;
 		labelYStart = 29;
 	} else if (_vm->gameFlags().lang == Common::KO_KOR) {
-		menuItemYStart = 27;
-		menuItemYInc = 20;
-		labelYStart = 29;
+		menuItemYInc = 24;
 	}
 
 	GUI_V1_MENU(_menu[5], -1, -1, 0x130, 0x99, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1);

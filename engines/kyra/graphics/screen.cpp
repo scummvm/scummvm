@@ -1549,11 +1549,8 @@ uint16 Screen::fetchChar(const char *&s) const {
 	uint16 ch = (uint8)*s++;
 
 	if ((_fonts[_currentFont]->getType() == Font::kSJIS && (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))) ||
-		(_fonts[_currentFont]->getType() == Font::kBIG5 && ch < 0x7F) || (_fonts[_currentFont]->getType() == Font::kHANGUL && ch < 0x80)) {
-			//if (_fonts[_currentFont]->getType() == Font::kHANGUL && ch == ' ' && *s == ' ')
-			//	++s;
+		(_fonts[_currentFont]->getType() == Font::kBIG5 && ch < 0x7F) || (_fonts[_currentFont]->getType() == Font::kHANGUL && ch < 0x80))
 			return ch;
-	}
 
 	ch |= (uint8)(*s++) << 8;
 	return ch;

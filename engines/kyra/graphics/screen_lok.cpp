@@ -581,7 +581,7 @@ int HangulFontLoK::getCharWidth(uint16 c) const {
 }
 
 int HangulFontLoK::getCharHeight(uint16 c) const {
-	return /*(_colorMap && _colorMap[3]) ? _height + 2 :*/ _height;
+	return _height;
 }
 
 void HangulFontLoK::setColorMap(const uint8 *src) {

@@ -185,7 +185,7 @@ GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI_v1(vm), _vm(vm), 
 	initStaticResource();
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollUp);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollDown);
-	_saveLoadNumSlots = (vm->gameFlags().lang == Common::ZH_TWN || vm->gameFlags().lang == Common::KO_KOR) ? 4 : 5;
+	_saveLoadNumSlots = (vm->gameFlags().lang == Common::ZH_TWN) ? 4 : 5;
 	_confMusicMenuMod = (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformMacintosh) ? 3 : 2;
 }
 
@@ -699,12 +699,22 @@ int GUI_LoK::loadGameMenu(Button *button) {
 }
 
 void GUI_LoK::redrawTextfield() {
-	_screen->fillRect(38, 91, 287, _vm->gameFlags().lang == Common::ZH_TWN ? 107 : 102, _vm->gameFlags().platform == Common::kPlatformAmiga ? 18 : 250);
-	_text->printText(_savegameName, 38, 92, 253, 0, 0);
+	Common::Rect textField(38, 91, 287, 102);
+	int yOffs = 1;
+
+	if (_vm->gameFlags().lang == Common::KO_KOR) {
+		textField = Common::Rect(23, 88, 295, 105);
+		yOffs = 0;
+	} else if (_vm->gameFlags().lang == Common::ZH_TWN) {
+		textField.bottom = 107;
+	}
+
+	_screen->fillRect(textField.left, textField.top, textField.right, textField.bottom, _vm->gameFlags().platform == Common::kPlatformAmiga ? 18 : 250);
+	_text->printText(_savegameName, textField.left, textField.top + yOffs, 253, 0, 0);
 
 	_screen->_charSpacing = -2;
 	int width = _screen->getTextWidth(_savegameName);
-	_screen->fillRect(39 + width, 93, 45 + width, _vm->gameFlags().lang == Common::ZH_TWN ? 105 : 100, _vm->gameFlags().platform == Common::kPlatformAmiga ? 31 : 254);
+	_screen->fillRect(textField.left + 1 + width, textField.top + 2, textField.left + 7 + width, textField.bottom - 2, _vm->gameFlags().platform == Common::kPlatformAmiga ? 31 : 254);
 	_screen->_charSpacing = 0;
 
 	_screen->updateScreen();
