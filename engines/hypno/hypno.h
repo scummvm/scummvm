@@ -304,6 +304,7 @@ public:
 	bool _skipLevel;
 	bool _loseLevel;
 	bool _skipDefeatVideo;
+	bool _skipNextVideo;
 
 	virtual void drawCursorArcade(const Common::Point &mousePos);
 	virtual void drawPlayer();

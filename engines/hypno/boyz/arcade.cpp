@@ -460,6 +460,17 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 		_shoots[i].destroyed = true;
 		_objKillsCount[_objIdx] = _objKillsCount[_objIdx] + _shoots[i].objKillsCount;
 		_shootsDestroyed[_shoots[i].name] = true;
+
+		if (_shoots[i].name == "HELICOPTER") {
+			_background->decoder->pauseVideo(true);
+			MVideo video(arc->hitBoss2Video, Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+			_skipLevel = true;
+			_skipNextVideo = true;
+			return false;
+		}
+
 		_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 		changeCursor(_crosshairsActive[_currentWeapon], _crosshairsPalette, true);

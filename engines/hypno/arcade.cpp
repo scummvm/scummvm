@@ -224,6 +224,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	_skipLevel = false;
 	_loseLevel = false;
 	_skipDefeatVideo = false;
+	_skipNextVideo = false;
 	_mask = nullptr;
 	_masks = nullptr;
 
@@ -420,7 +421,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				break;
 			}
 
-			if (!arc->nextLevelVideo.empty()) {
+			if (!arc->nextLevelVideo.empty() && !_skipNextVideo) {
 				MVideo video(arc->nextLevelVideo, Common::Point(0, 0), false, true, false);
 				disableCursor();
 				runIntro(video);
