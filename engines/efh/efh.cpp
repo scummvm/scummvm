@@ -1088,7 +1088,8 @@ void EfhEngine::saveAnimImageSetId() {
 }
 
 int16 EfhEngine::getEquipmentDefense(int16 charId, bool flag) {
-	debug("getEquipmentDefense %d %s", charId, flag ? "True" : "False");
+	debugC(2, kDebugGraphics, "getEquipmentDefense %d %s", charId, flag ? "True" : "False");
+	// TODO: flag is always false, remove it when refactoring
 
 	int16 altDef = 0;
 	int16 totalDef = 0;
@@ -1117,7 +1118,7 @@ int16 EfhEngine::getEquipmentDefense(int16 charId, bool flag) {
 }
 
 uint16 EfhEngine::sub1C80A(int16 charId, int16 field18, bool flag) {
-	debug("sub1C80A %d %d %s", charId, field18, flag ? "True" : "False");
+	debugC(2, kDebugEngine, "sub1C80A %d %d %s", charId, field18, flag ? "True" : "False");
 
 	for (int i = 0; i < 10; ++i) {
 		if ((_npcBuf[charId]._inventory[i]._stat1 & 0x80) == 0)
@@ -1270,7 +1271,7 @@ void EfhEngine::displayLargeMap(int16 posX, int16 posY) {
 }
 
 void EfhEngine::drawScreen() {
-	debug("drawScreen");
+	debugC(2, kDebugEngine, "drawScreen");
 	
 	for (int16 counter = 0; counter < 2; ++counter) {
 		_redrawNeededFl = false;
@@ -1278,12 +1279,14 @@ void EfhEngine::drawScreen() {
 			if (_fullPlaceId != 0xFF)
 				displaySmallMap(_mapPosX, _mapPosY);
 
+			// TODO: When refactoring : Always false, to be removed
 			if (_dbgForceDisplayUpperRightBorder)
 				drawUpperRightBorders();
 		} else {
 			if (_techId != 0xFF)
 				displayLargeMap(_mapPosX, _mapPosY);
-			
+
+			// TODO: When refactoring : Always false, to be removed
 			if (_dbgForceDisplayUpperRightBorder)
 				drawUpperRightBorders();
 		}
@@ -2465,7 +2468,7 @@ bool EfhEngine::handleDeathMenu() {
 			_oldMapPosX = _mapPosX = 31;
 			_oldMapPosY = _mapPosY = 31;
 			_unkRelatedToAnimImageSetId = 0;
-			*_unkArray2C8AA = 0;
+			_unkArray2C8AA[0] = 0;
 			found = true;
 			break;
 		case Common::KEYCODE_x:
@@ -2681,7 +2684,7 @@ bool EfhEngine::moveMonsterGroupOther(int16 monsterId, int16 direction) {
 }
 
 bool EfhEngine::moveMonsterGroup(int16 monsterId) {
-	debug("moveMonsterGroup %d", monsterId);
+	debugC(2, kDebugEngine, "moveMonsterGroup %d", monsterId);
 
 	int16 rand100 = getRandom(100);
 
@@ -2696,7 +2699,7 @@ bool EfhEngine::moveMonsterGroup(int16 monsterId) {
 }
 
 int16 EfhEngine::computeMonsterGroupDistance(int16 monsterId) {
-	debug("computeMonsterGroupDistance %d", monsterId);
+	debugC(2, kDebugEngine, "computeMonsterGroupDistance %d", monsterId);
 	
 	int16 monsterPosX = _mapMonsters[monsterId]._posX;
 	int16 monsterPosY = _mapMonsters[monsterId]._posY;
@@ -4669,7 +4672,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 					int16 var5C;
 					if (unkFct_checkMonsterField8(groupId, true)) {
 						sub1E028(groupId, 9, true);
-						*_unkArray2C8AA += 500;
+						_unkArray2C8AA[0] += 500;
 						var5C = -1;
 					} else
 						var5C = 0;
