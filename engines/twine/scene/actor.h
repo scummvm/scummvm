@@ -219,7 +219,7 @@ public:
 	int32 _zone = 0;
 
 	int32 _lastRotationAngle = ANGLE_0;
-	IVec3 _lastPos;
+	IVec3 _animStep;
 	int32 _previousAnimIdx = 0;
 	int32 _doorStatus = 0;
 	int32 _animPosition = 0;

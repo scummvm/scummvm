@@ -199,24 +199,24 @@ void Collision::handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, cons
 	const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(processActor, actorTest->pos());
 
 	if (actorTest->_staticFlags.bCanBePushed && !actor->_staticFlags.bCanBePushed) {
-		actorTest->_lastPos.y = 0;
+		actorTest->_animStep.y = 0;
 
 		if (actorTest->_staticFlags.bUseMiniZv) {
 			if (newAngle >= ANGLE_45 && newAngle < ANGLE_135 && actor->_angle >= ANGLE_45 && actor->_angle < ANGLE_135) {
-				actorTest->_lastPos.x = BRICK_SIZE / 4 + BRICK_SIZE / 8;
+				actorTest->_animStep.x = BRICK_SIZE / 4 + BRICK_SIZE / 8;
 			}
 			if (newAngle >= ANGLE_135 && newAngle < ANGLE_225 && actor->_angle >= ANGLE_135 && actor->_angle < ANGLE_225) {
-				actorTest->_lastPos.z = -BRICK_SIZE / 4 + BRICK_SIZE / 8;
+				actorTest->_animStep.z = -BRICK_SIZE / 4 + BRICK_SIZE / 8;
 			}
 			if (newAngle >= ANGLE_225 && newAngle < ANGLE_315 && actor->_angle >= ANGLE_225 && actor->_angle < ANGLE_315) {
-				actorTest->_lastPos.x = -BRICK_SIZE / 4 + BRICK_SIZE / 8;
+				actorTest->_animStep.x = -BRICK_SIZE / 4 + BRICK_SIZE / 8;
 			}
 			if ((newAngle >= ANGLE_315 || newAngle < ANGLE_45) && (actor->_angle >= ANGLE_315 || actor->_angle < ANGLE_45)) {
-				actorTest->_lastPos.z = BRICK_SIZE / 4 + BRICK_SIZE / 8;
+				actorTest->_animStep.z = BRICK_SIZE / 4 + BRICK_SIZE / 8;
 			}
 		} else {
-			actorTest->_lastPos.x = processActor.x - actor->_collisionPos.x;
-			actorTest->_lastPos.z = processActor.z - actor->_collisionPos.z;
+			actorTest->_animStep.x = processActor.x - actor->_collisionPos.x;
+			actorTest->_animStep.z = processActor.z - actor->_collisionPos.z;
 		}
 	}
 

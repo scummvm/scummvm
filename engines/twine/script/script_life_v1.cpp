@@ -1052,7 +1052,7 @@ static int32 lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_LEFT(%i)", (int)distance);
 
 	ctx.actor->_angle = ANGLE_270;
-	ctx.actor->_pos.x = ctx.actor->_lastPos.x - distance;
+	ctx.actor->_pos.x = ctx.actor->_animStep.x - distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
@@ -1068,7 +1068,7 @@ static int32 lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_RIGHT(%i)", (int)distance);
 
 	ctx.actor->_angle = ANGLE_90;
-	ctx.actor->_pos.x = ctx.actor->_lastPos.x + distance;
+	ctx.actor->_pos.x = ctx.actor->_animStep.x + distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
@@ -1084,7 +1084,7 @@ static int32 lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_UP(%i)", (int)distance);
 
 	ctx.actor->_angle = ANGLE_180;
-	ctx.actor->_pos.z = ctx.actor->_lastPos.z - distance;
+	ctx.actor->_pos.z = ctx.actor->_animStep.z - distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 
@@ -1100,7 +1100,7 @@ static int32 lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::SET_DOOR_DOWN(%i)", (int)distance);
 
 	ctx.actor->_angle = ANGLE_0;
-	ctx.actor->_pos.z = ctx.actor->_lastPos.z + distance;
+	ctx.actor->_pos.z = ctx.actor->_animStep.z + distance;
 	ctx.actor->_dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->_speed = 0;
 

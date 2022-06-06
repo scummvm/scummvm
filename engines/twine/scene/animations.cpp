@@ -451,7 +451,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTy
 	processAnimActions(actorIdx);
 
 	actor->_lastRotationAngle = ANGLE_0;
-	actor->_lastPos = IVec3();
+	actor->_animStep = IVec3();
 
 	return true;
 }
@@ -502,15 +502,15 @@ void Animations::processActorAnimations(int32 actorIdx) {
 				// AUTO_STOP_DOOR
 				if (actor->_dynamicFlags.bIsSpriteMoving) {
 					if (actor->_doorStatus) { // open door
-						if (getDistance2D(processActor.x, processActor.z, actor->_lastPos.x, actor->_lastPos.z) >= actor->_doorStatus) {
+						if (getDistance2D(processActor.x, processActor.z, actor->_animStep.x, actor->_animStep.z) >= actor->_doorStatus) {
 							if (actor->_angle == ANGLE_0) { // down
-								processActor.z = actor->_lastPos.z + actor->_doorStatus;
+								processActor.z = actor->_animStep.z + actor->_doorStatus;
 							} else if (actor->_angle == ANGLE_90) { // right
-								processActor.x = actor->_lastPos.x + actor->_doorStatus;
+								processActor.x = actor->_animStep.x + actor->_doorStatus;
 							} else if (actor->_angle == ANGLE_180) { // up
-								processActor.z = actor->_lastPos.z - actor->_doorStatus;
+								processActor.z = actor->_animStep.z - actor->_doorStatus;
 							} else if (actor->_angle == ANGLE_270) { // left
-								processActor.x = actor->_lastPos.x - actor->_doorStatus;
+								processActor.x = actor->_animStep.x - actor->_doorStatus;
 							}
 
 							actor->_dynamicFlags.bIsSpriteMoving = 0;
@@ -520,25 +520,25 @@ void Animations::processActorAnimations(int32 actorIdx) {
 						bool updatePos = false;
 
 						if (actor->_angle == ANGLE_0) { // down
-							if (processActor.z <= actor->_lastPos.z) {
+							if (processActor.z <= actor->_animStep.z) {
 								updatePos = true;
 							}
 						} else if (actor->_angle == ANGLE_90) { // right
-							if (processActor.x <= actor->_lastPos.x) {
+							if (processActor.x <= actor->_animStep.x) {
 								updatePos = true;
 							}
 						} else if (actor->_angle == ANGLE_180) { // up
-							if (processActor.z >= actor->_lastPos.z) {
+							if (processActor.z >= actor->_animStep.z) {
 								updatePos = true;
 							}
 						} else if (actor->_angle == ANGLE_270) { // left
-							if (processActor.x >= actor->_lastPos.x) {
+							if (processActor.x >= actor->_animStep.x) {
 								updatePos = true;
 							}
 						}
 
 						if (updatePos) {
-							processActor = actor->_lastPos;
+							processActor = actor->_animStep;
 
 							actor->_dynamicFlags.bIsSpriteMoving = 0;
 							actor->_speed = 0;
@@ -548,14 +548,14 @@ void Animations::processActorAnimations(int32 actorIdx) {
 			}
 
 			if (actor->_staticFlags.bCanBePushed) {
-				processActor += actor->_lastPos;
+				processActor += actor->_animStep;
 
 				if (actor->_staticFlags.bUseMiniZv) {
 					processActor.x = ((processActor.x / (BRICK_SIZE / 4)) * (BRICK_SIZE / 4));
 					processActor.z = ((processActor.z / (BRICK_SIZE / 4)) * (BRICK_SIZE / 4));
 				}
 
-				actor->_lastPos = IVec3();
+				actor->_animStep = IVec3();
 			}
 		}
 	} else { // 3D actor
@@ -581,9 +581,9 @@ void Animations::processActorAnimations(int32 actorIdx) {
 			_currentStep.x = destPos.x;
 			_currentStep.z = destPos.z;
 
-			processActor = actor->pos() + _currentStep - actor->_lastPos;
+			processActor = actor->pos() + _currentStep - actor->_animStep;
 
-			actor->_lastPos = _currentStep;
+			actor->_animStep = _currentStep;
 
 			actor->_dynamicFlags.bAnimEnded = 0;
 			actor->_dynamicFlags.bAnimFrameReached = 0;
@@ -624,7 +624,7 @@ void Animations::processActorAnimations(int32 actorIdx) {
 
 				actor->_lastRotationAngle = ANGLE_0;
 
-				actor->_lastPos = IVec3();
+				actor->_animStep = IVec3();
 			}
 		}
 	}
