@@ -649,23 +649,21 @@ void BoyzEngine::loadAssets() {
 	cursorBox = Common::Rect(203, 75, 229, 85);
 	_crosshairsTarget[4].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsTarget[4].copyRectToSurface(*targets, 0, 0, cursorBox);
-
+	*/
 	// Granade
-
 	cursorBox = Common::Rect(256, 2, 273, 29);
-	_crosshairsInactive[5].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsInactive[5].copyRectToSurface(*targets, 0, 0, cursorBox);
+	_crosshairsInactive[6].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsInactive[6].copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	cursorBox = Common::Rect(256, 34, 273, 61);
-	_crosshairsActive[5].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsActive[5].copyRectToSurface(*targets, 0, 0, cursorBox);
+	_crosshairsActive[6].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsActive[6].copyRectToSurface(*targets, 0, 0, cursorBox);
 
 	cursorBox = Common::Rect(256, 66, 273, 93);
-	_crosshairsTarget[5].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
-	_crosshairsTarget[5].copyRectToSurface(*targets, 0, 0, cursorBox);
-    */
-	// Large crossair
+	_crosshairsTarget[6].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
+	_crosshairsTarget[6].copyRectToSurface(*targets, 0, 0, cursorBox);
 
+	// Large crossair
 	cursorBox = Common::Rect(56, 98, 88, 125);
 	_crosshairsInactive[7].create(cursorBox.width(), cursorBox.height(), _pixelFormat);
 	_crosshairsInactive[7].copyRectToSurface(*targets, 0, 0, cursorBox);
