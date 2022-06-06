@@ -40,6 +40,8 @@ void BoyzEngine::runCode(Code *code) {
 		runCheckC3(code);
 	else if (code->name == "<check_ho>")
 		runCheckHo(code);
+	else if (code->name == "<credits>")
+		endCredits(code);
 	else
 		error("invalid hardcoded level: %s", code->name.c_str());
 }

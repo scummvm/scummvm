@@ -234,6 +234,9 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c58.mi_", "c59.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c59.mi_", "<credits>", "<retry_menu>", "");
 
+	Code *credits = new Code("<credits>");
+	_levels["<credits>"] = credits;
+
 	Global *gl;
 	ChangeLevel *cl;
 	Cutscene *cs;
