@@ -28,6 +28,7 @@ MODULE_OBJS := \
 	mm1/views/game_view.o \
 	mm1/views/inn.o \
 	mm1/views/main_menu.o \
+	mm1/views/order.o \
 	mm1/views/protect.o \
 	mm1/views/quick_ref.o \
 	mm1/views/title.o \

@@ -69,7 +69,7 @@ void ViewCharacters::draw() {
 	writeString(6, 22, Common::String::format(
 		STRING["dialogs.view_characters.legend1"].c_str(),
 		'A' + (int)_charIndexes.size() - 1));
-	writeString(12, 24, STRING["dialogs.view_characters.legend2"]);
+	writeString(12, 24, STRING["dialogs.misc.go_back"]);
 }
 
 bool ViewCharacters::msgKeypress(const KeypressMessage &msg) {

@@ -26,7 +26,20 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
+GameParty::GameParty(UIElement *owner) : TextView("GameParty", owner) {
+	_bounds = getLineBounds(17, 19);
+}
+
 void GameParty::draw() {
+	clearSurface();
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		writeChar((i % 2) * 21, i / 2,
+			c._condition ? '*' : ' ');
+		writeString(Common::String::format("%d) %s",
+			i + 1, c._name));
+	}
 }
 
 bool GameParty::msgKeypress(const KeypressMessage &msg) {

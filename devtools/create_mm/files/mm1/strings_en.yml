@@ -37,6 +37,9 @@ dialogs:
 		option3: "'#'.......GO TO TOWN"
 		copyright1: "COPR. 1986,1987-JON VAN CANEGHEM"
 		copyright2: "ALL RIGHTS RESERVED"
+	order:
+		title: " RE-ORDER PARTY  NEW  1  2  3  4  5  6"
+		old: "OLD ^"
 	protect:
 		title: "PROTECT:  SPELLS CURRENTLY ACTIVE"
 		protection: "PROTECTION FROM"
@@ -69,7 +72,6 @@ dialogs:
 	view_characters:
 		title: "VIEW ALL CHARACTERS"
 		legend1: "'A'-'%c' TO VIEW A CHARACTER"
-		legend2: "'ESC' TO GO BACK"
 	view_character:
 		rename: "(CTRL)-'N' RE-NAME CHARACTER"
 		delete: "(CTRL)-'D' DELETE CHARACTER"

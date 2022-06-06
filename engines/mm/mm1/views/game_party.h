@@ -30,7 +30,7 @@ namespace Views {
 
 class GameParty : public TextView {
 public:
-	GameParty(UIElement *owner) : TextView("GameParty", owner) {}
+	GameParty(UIElement *owner);
 	virtual ~GameParty() {}
 
 	void draw() override;

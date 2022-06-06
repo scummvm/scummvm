@@ -64,6 +64,10 @@ protected:
 	Common::Rect _bounds;
 	bool _needsRedraw = true;
 	Common::String _name;
+protected:
+	Common::Rect getLineBounds(int line1, int line2) const {
+		return Common::Rect(0, line1 * 8, 320, (line2 + 1) * 8);
+	}
 private:
 	/**
 	 * Outer method for doing drawing
