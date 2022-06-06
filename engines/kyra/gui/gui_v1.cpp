@@ -31,7 +31,7 @@ namespace Kyra {
 
 GUI_v1::GUI_v1(KyraEngine_v1 *kyra) : GUI(kyra), _text(kyra->text()) {
 	_menuButtonList = nullptr;
-	_menuLabelYOffset = (kyra->game() == GI_LOL) ? 3 : 2;
+	_menuLabelYOffset = (kyra->game() == GI_LOL || kyra->gameFlags().lang == Common::KO_KOR) ? 3 : 2;
 
 	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawButtonCallback);
 	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawShadedButtonCallback);
