@@ -125,7 +125,7 @@ SystemUI::SystemUI(AgiEngine *vm, GfxMgr *gfx, TextMgr *text) {
 		_textStatusScore = "Score : %v3 sur %v7";
 		_textStatusSoundOn = "Son : Oui";
 		_textStatusSoundOff = "Son : Non";
-		_textEnterCommand = "Entrer une donn\x82\x65\ :\n\n";
+		_textEnterCommand = "Entrer une donn\x82\x65 :\n\n";
 		_textPause = "       Pause.\n\n\"Entr\x82\x65\" pour jouer.";
 		_textRestart = "\"Entr\x82\x65\" pour rejouer.\n\"Esc\" pour annuler.";
 		_textQuit = "\"Entr\x82\x65\" pour quitter.\n\"Esc\" pour annuler.";
