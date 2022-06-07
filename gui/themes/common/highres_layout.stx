@@ -378,7 +378,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GlobalOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
+	<dialog name = 'GlobalOptions' overlays = 'screen' inset = '32' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
@@ -1209,7 +1209,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
+	<dialog name = 'GameOptions' overlays = 'screen' inset = '32' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
