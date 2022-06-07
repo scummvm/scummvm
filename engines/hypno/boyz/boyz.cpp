@@ -423,12 +423,18 @@ void BoyzEngine::loadAssets() {
 	}
 
 	sc = (Scene *) _levels["<select_t1>"];
+	gl = new Global("GS_SEQ_19", "CHECK");
+	sc->hots[7].actions.push_back(cl);
 	cl = new ChangeLevel("c19.mi_");
 	sc->hots[7].actions.push_back(cl);
 
+	gl = new Global("GS_SEQ_11", "CHECK");
+	sc->hots[8].actions.push_back(cl);
 	cl = new ChangeLevel("c11.mi_");
 	sc->hots[8].actions.push_back(cl);
 
+	gl = new Global("GS_SEQ_12", "CHECK");
+	sc->hots[9].actions.push_back(cl);
 	cl = new ChangeLevel("c12.mi_");
 	sc->hots[9].actions.push_back(cl);
 
@@ -458,6 +464,10 @@ void BoyzEngine::loadAssets() {
 	sc->hots[8].actions.push_back(cl);
 
 	sc = (Scene *) _levels["<select_t3>"];
+	hl = new Highlight("GS_SEQ_31");
+	sc->hots[7].actions.push_back(hl);
+	gl = new Global("GS_SEQ_31", "CHECK");
+	sc->hots[7].actions.push_back(gl);
 	cl = new ChangeLevel("c31.mi_");
 	sc->hots[7].actions.push_back(cl);
 
@@ -905,8 +915,9 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_sceneState["GS_SEQ_34"] = stream->readUint32LE();
 	_sceneState["GS_SEQ_35"] = stream->readUint32LE();
 
-
-	if (_ids[_lastLevel] == 3591)
+	if (_unlockAllLevels)
+		_nextLevel = "<select_t1>";
+	else if (_ids[_lastLevel] == 3591)
 		_nextLevel = "<select_c3>";
 	else if (_ids[_lastLevel] == 3592)
 		_nextLevel = "<select_ho>";

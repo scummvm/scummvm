@@ -110,6 +110,11 @@ void BoyzEngine::runMainMenu(Code *code) {
 	if (!found) {
 		_nextLevel = code->levelIfWin;
 	}
+
+	if (_unlockAllLevels) {
+		_nextLevel = "<select_t1>";
+	}
+
 	assert(!_nextLevel.empty());
 
 }
