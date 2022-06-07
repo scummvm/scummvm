@@ -487,9 +487,17 @@ void BoyzEngine::loadAssets() {
 	sc->hots[15].actions.push_back(cl);
 
 	sc = (Scene *) _levels["<select_t2>"];
+	hl = new Highlight("GS_SEQ_21");
+	sc->hots[7].actions.push_back(hl);
+	gl = new Global("GS_SEQ_21", "CHECK");
+	sc->hots[7].actions.push_back(gl);
 	cl = new ChangeLevel("c21.mi_");
 	sc->hots[7].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_22");
+	sc->hots[8].actions.push_back(hl);
+	gl = new Global("GS_SEQ_22", "CHECK");
+	sc->hots[8].actions.push_back(gl);
 	cl = new ChangeLevel("c22.mi_");
 	sc->hots[8].actions.push_back(cl);
 
@@ -501,50 +509,110 @@ void BoyzEngine::loadAssets() {
 	cl = new ChangeLevel("c31.mi_");
 	sc->hots[7].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_32");
+	sc->hots[8].actions.push_back(hl);
+	gl = new Global("GS_SEQ_32", "CHECK");
+	sc->hots[8].actions.push_back(gl);
 	cl = new ChangeLevel("c32.mi_");
 	sc->hots[8].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_33");
+	sc->hots[9].actions.push_back(hl);
+	gl = new Global("GS_SEQ_33", "CHECK");
+	sc->hots[9].actions.push_back(gl);
 	cl = new ChangeLevel("c33.mi_");
 	sc->hots[9].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_34");
+	sc->hots[10].actions.push_back(hl);
+	gl = new Global("GS_SEQ_34", "CHECK");
+	sc->hots[10].actions.push_back(gl);
 	cl = new ChangeLevel("c34.mi_");
 	sc->hots[10].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_35");
+	sc->hots[11].actions.push_back(hl);
+	gl = new Global("GS_SEQ_35", "CHECK");
+	sc->hots[11].actions.push_back(gl);
 	cl = new ChangeLevel("c35.mi_");
 	sc->hots[11].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_36");
+	sc->hots[12].actions.push_back(hl);
+	gl = new Global("GS_SEQ_36", "CHECK");
+	sc->hots[12].actions.push_back(gl);
 	cl = new ChangeLevel("c36.mi_");
 	sc->hots[12].actions.push_back(cl);
 
 	sc = (Scene *) _levels["<select_t4>"];
+	hl = new Highlight("GS_SEQ_41");
+	sc->hots[7].actions.push_back(hl);
+	gl = new Global("GS_SEQ_41", "CHECK");
+	sc->hots[7].actions.push_back(gl);
 	cl = new ChangeLevel("c41.mi_");
 	sc->hots[7].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_42");
+	sc->hots[8].actions.push_back(hl);
+	gl = new Global("GS_SEQ_42", "CHECK");
+	sc->hots[8].actions.push_back(gl);
 	cl = new ChangeLevel("c42.mi_");
 	sc->hots[8].actions.push_back(cl);
 
 	sc = (Scene *) _levels["<select_t5>"];
+	hl = new Highlight("GS_SEQ_51");
+	sc->hots[7].actions.push_back(hl);
+	gl = new Global("GS_SEQ_51", "CHECK");
+	sc->hots[7].actions.push_back(gl);
 	cl = new ChangeLevel("c51.mi_");
 	sc->hots[7].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_52");
+	sc->hots[8].actions.push_back(hl);
+	gl = new Global("GS_SEQ_52", "CHECK");
+	sc->hots[8].actions.push_back(gl);
 	cl = new ChangeLevel("c52.mi_");
 	sc->hots[8].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_53");
+	sc->hots[9].actions.push_back(hl);
+	gl = new Global("GS_SEQ_53", "CHECK");
+	sc->hots[9].actions.push_back(gl);
 	cl = new ChangeLevel("c53.mi_");
 	sc->hots[9].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_54");
+	sc->hots[10].actions.push_back(hl);
+	gl = new Global("GS_SEQ_54", "CHECK");
+	sc->hots[10].actions.push_back(gl);
 	cl = new ChangeLevel("c54.mi_");
 	sc->hots[10].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_55");
+	sc->hots[11].actions.push_back(hl);
+	gl = new Global("GS_SEQ_55", "CHECK");
+	sc->hots[11].actions.push_back(gl);
 	cl = new ChangeLevel("c55.mi_");
 	sc->hots[11].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_56");
+	sc->hots[12].actions.push_back(hl);
+	gl = new Global("GS_SEQ_56", "CHECK");
+	sc->hots[12].actions.push_back(gl);
 	cl = new ChangeLevel("c56.mi_");
 	sc->hots[12].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_57");
+	sc->hots[13].actions.push_back(hl);
+	gl = new Global("GS_SEQ_57", "CHECK");
+	sc->hots[13].actions.push_back(gl);
 	cl = new ChangeLevel("c57.mi_");
 	sc->hots[13].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_58");
+	sc->hots[14].actions.push_back(hl);
+	gl = new Global("GS_SEQ_58", "CHECK");
+	sc->hots[14].actions.push_back(gl);
 	cl = new ChangeLevel("c58.mi_");
 	sc->hots[14].actions.push_back(cl);
 
