@@ -77,6 +77,9 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	if (!Common::parseBool(ConfMan.get("infiniteAmmo"), _infiniteAmmoCheat))
 		error("Failed to parse bool from cheats options");
 
+	if (!Common::parseBool(ConfMan.get("unlockAllLevels"), _unlockAllLevels))
+		error("Failed to parse bool from cheats options");
+
 	if (!Common::parseBool(ConfMan.get("restored"), _restoredContentEnabled))
 		error("Failed to parse bool from restored options");
 	// Add quit level

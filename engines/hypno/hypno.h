@@ -96,6 +96,7 @@ public:
 	bool _cheatsEnabled;
 	bool _infiniteHealthCheat;
 	bool _infiniteAmmoCheat;
+	bool _unlockAllLevels;
 	bool _restoredContentEnabled;
 
 	Audio::SoundHandle _soundHandle;
