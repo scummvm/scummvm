@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-06 21:38+0000\n"
+"POT-Creation-Date: 2022-06-07 21:43+0000\n"
 "PO-Revision-Date: 2022-06-03 20:08+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -5009,7 +5009,7 @@ msgstr "Raum schnell verlassen"
 msgid "Examine/Look"
 msgstr "Untersuche/Betrachte"
 
-#: engines/grim/grim.cpp:1350
+#: engines/grim/grim.cpp:1351
 msgid "Error: the game could not be saved."
 msgstr "Fehler: Das Spiel konnte nicht gespeichert werden."
 

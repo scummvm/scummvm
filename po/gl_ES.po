@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-06 21:38+0000\n"
+"POT-Creation-Date: 2022-06-07 21:43+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -5120,7 +5120,7 @@ msgstr ""
 msgid "Examine/Look"
 msgstr "Examinar"
 
-#: engines/grim/grim.cpp:1350
+#: engines/grim/grim.cpp:1351
 #, fuzzy
 msgid "Error: the game could not be saved."
 msgstr "non se puido cambiar o modo de vídeo."

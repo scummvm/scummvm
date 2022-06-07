@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-06 21:38+0000\n"
+"POT-Creation-Date: 2022-06-07 21:43+0000\n"
 "PO-Revision-Date: 2022-06-04 18:27+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4962,7 +4962,7 @@ msgstr "Pikapoistuminen huoneesta"
 msgid "Examine/Look"
 msgstr "Tutki/Katso"
 
-#: engines/grim/grim.cpp:1350
+#: engines/grim/grim.cpp:1351
 msgid "Error: the game could not be saved."
 msgstr "Virhe: peliä ei pystytty tallentamaan."
 

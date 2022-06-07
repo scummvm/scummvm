@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-06 21:38+0000\n"
+"POT-Creation-Date: 2022-06-07 21:43+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -4889,7 +4889,7 @@ msgstr ""
 msgid "Examine/Look"
 msgstr ""
 
-#: engines/grim/grim.cpp:1350
+#: engines/grim/grim.cpp:1351
 #, fuzzy
 msgid "Error: the game could not be saved."
 msgstr "Desculpe, não foi possível criar o ficheiro para gravar o jogo"

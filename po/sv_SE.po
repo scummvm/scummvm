@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-06 21:38+0000\n"
+"POT-Creation-Date: 2022-06-07 21:43+0000\n"
 "PO-Revision-Date: 2022-02-18 18:47+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -5047,7 +5047,7 @@ msgstr ""
 msgid "Examine/Look"
 msgstr "Undersök"
 
-#: engines/grim/grim.cpp:1350
+#: engines/grim/grim.cpp:1351
 #, fuzzy
 msgid "Error: the game could not be saved."
 msgstr "videoläget kunde inte ändras"
