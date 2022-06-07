@@ -285,7 +285,7 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int16 charN
 	yPos -= lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
 
 	_text->_talkMessageY = (_flags.lang == Common::ZH_TWN) ? CLIP<int>(yPos, 10, 80) : CLIP<int>(yPos, 11, 100);
-	_text->_talkMessageH = lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
+	_text->_talkMessageH = lineNum * (_screen->getFontHeight() + _screen->_lineSpacing) + _text->_langExtraSpacing;;
 
 	const bool printText = textEnabled();
 
@@ -297,7 +297,7 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int16 charN
 		_text->printCharacterText(processedString, charNum, _characterList[charNum].x1);
 	}
 
-	// This happens right at the beginning, when talking to the treeand can be seen in DOSBox, too.
+	// This happens right at the beginning, when talking to the tree and can be seen in DOSBox, too.
 	// It will make the sentence stay basically forever. We just set it to
 	// the value from the other versions (probably some typo from the translators).
 	if (_flags.lang == Common::KO_KOR && chatDuration == -20)
@@ -310,7 +310,7 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int16 charN
 
 	if (!speechEnabled())
 		vocFile = -1;
-	waitForChatToFinish(vocFile, chatTicks, chatStr, charNum, printText);
+	waitForChatToFinish(vocFile, (chatDuration == -1) ? -1 : chatTicks, chatStr, charNum, printText);
 
 	if (printText) {
 		_animator->restoreAllObjectBackgrounds();

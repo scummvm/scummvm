@@ -533,7 +533,7 @@ void ChineseTwoByteFontLoK::processColorMap() {
 	_textColor[1] = _colorMap[0] | (_colorMap[0] << 8);
 }
 
-HangulFontLoK::HangulFontLoK(Font *&font8fat, const uint16 *lookupTable, uint32 lookupTableSize) : _font8fat(font8fat), _height(16), _width(16), _fileData(0), _colorMap(0), _glyphTemp(0) {
+HangulFontLoK::HangulFontLoK(Font *&font8fat, const uint16 *lookupTable, uint32 lookupTableSize) : _font8fat(font8fat), _height(15), _width(15), _fileData(0), _colorMap(0), _glyphTemp(0) {
 	assert(lookupTable);
 	assert(lookupTableSize == 224);
 	for (int i = 0; i < 7; ++i)
@@ -577,11 +577,11 @@ bool HangulFontLoK::load(Common::SeekableReadStream &data) {
 
 int HangulFontLoK::getCharWidth(uint16 c) const {
 	assert(_font8fat);
-	return (c >= 0x80) ? 16 : _font8fat->getCharWidth(c);
+	return (c >= 0x80) ? _width + 1 : _font8fat->getCharWidth(c);
 }
 
 int HangulFontLoK::getCharHeight(uint16 c) const {
-	return _height;
+	return _colorMap[3] ? _height + 2 : _height;
 }
 
 void HangulFontLoK::setColorMap(const uint8 *src) {
@@ -657,10 +657,10 @@ void HangulFontLoK::renderGlyph(byte *dst, const uint8 *glyph, uint8 col, int pi
 	const uint8 *src = glyph;
 	pitch -= 15;
 
-	for (int y = 0; y < 15; ++y) {
+	for (int y = 0; y < _height; ++y) {
 		uint8 m = 0;
 		uint8 in = 0;
-		for (int x = 0; x < 15; ++x) {
+		for (int x = 0; x < _width; ++x) {
 			if (m == 0) {
 				in = *src++;
 				m = 0x80;
