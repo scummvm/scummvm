@@ -77,76 +77,76 @@ enum TextAlignmentCode {
 namespace DataObjectTypes {
 
 enum DataObjectType {
-	kUnknown                             = 0,
+	kUnknown								= 0,
 
-	kProjectLabelMap                     = 0x22,
-	kProjectCatalog                      = 0x3e8,
-	kStreamHeader                        = 0x3e9,
-	kProjectHeader                       = 0x3ea,
-	kPresentationSettings                = 0x3ec,
+	kProjectLabelMap						= 0x22,
+	kProjectCatalog							= 0x3e8,
+	kStreamHeader							= 0x3e9,
+	kProjectHeader							= 0x3ea,
+	kPresentationSettings					= 0x3ec,
 
-	kAssetCatalog                        = 0xd,
-    kGlobalObjectInfo                    = 0x17,
-	kUnknown19                           = 0x19,
+	kAssetCatalog							= 0xd,
+	kGlobalObjectInfo						= 0x17,
+	kUnknown19								= 0x19,
 
-	kProjectStructuralDef                = 0x2,
-	kSectionStructuralDef                = 0x3,
-	kSubsectionStructuralDef             = 0x21,
+	kProjectStructuralDef					= 0x2,
+	kSectionStructuralDef					= 0x3,
+	kSubsectionStructuralDef				= 0x21,
 
-	kGraphicElement                      = 0x8,
-	kMovieElement                        = 0x5,
-	kMToonElement                        = 0x6,		// NYI
-	kImageElement                        = 0x7,
-	kSoundElement                        = 0xa,
-	kTextLabelElement                    = 0x15,
+	kGraphicElement							= 0x8,
+	kMovieElement							= 0x5,
+	kMToonElement							= 0x6,		// NYI
+	kImageElement							= 0x7,
+	kSoundElement							= 0xa,
+	kTextLabelElement						= 0x15,
 
-	kAliasModifier                       = 0x27,
-	kChangeSceneModifier                 = 0x136,
-	kReturnModifier                      = 0x140,	// NYI
-	kSoundEffectModifier                 = 0x1a4,
-	kDragMotionModifier                  = 0x208,
-	kPathMotionModifierV1                = 0x21c,	// NYI - Obsolete version
-	kPathMotionModifierV2                = 0x21b,
-	kVectorMotionModifier                = 0x226,
-	kSceneTransitionModifier             = 0x26c,
-	kElementTransitionModifier           = 0x276,
-	kSharedSceneModifier                 = 0x29a,	// NYI
-	kIfMessengerModifier                 = 0x2bc,
-	kBehaviorModifier                    = 0x2c6,
-	kMessengerModifier                   = 0x2da,
-	kSetModifier                         = 0x2df,
-	kTimerMessengerModifier              = 0x2e4,
-	kCollisionDetectionMessengerModifier = 0x2ee,
-	kBoundaryDetectionMessengerModifier  = 0x2f8,
-	kKeyboardMessengerModifier           = 0x302,
-	kTextStyleModifier                   = 0x32a,
-	kGraphicModifier                     = 0x334,
-	kImageEffectModifier                 = 0x384,	// NYI
-	kMiniscriptModifier                  = 0x3c0,
-	kCursorModifierV1                    = 0x3ca,	// NYI - Obsolete version
-	kGradientModifier                    = 0x4b0,	// NYI
-	kColorTableModifier                  = 0x4c4,	// NYI
-	kSaveAndRestoreModifier              = 0x4d8,
+	kAliasModifier							= 0x27,
+	kChangeSceneModifier					= 0x136,
+	kReturnModifier							= 0x140,	// NYI
+	kSoundEffectModifier					= 0x1a4,
+	kDragMotionModifier						= 0x208,
+	kPathMotionModifierV1					= 0x21c,	// NYI - Obsolete version
+	kPathMotionModifierV2					= 0x21b,
+	kVectorMotionModifier					= 0x226,
+	kSceneTransitionModifier				= 0x26c,
+	kElementTransitionModifier				= 0x276,
+	kSharedSceneModifier					= 0x29a,	// NYI
+	kIfMessengerModifier					= 0x2bc,
+	kBehaviorModifier						= 0x2c6,
+	kMessengerModifier						= 0x2da,
+	kSetModifier							= 0x2df,
+	kTimerMessengerModifier					= 0x2e4,
+	kCollisionDetectionMessengerModifier	= 0x2ee,
+	kBoundaryDetectionMessengerModifier		= 0x2f8,
+	kKeyboardMessengerModifier				= 0x302,
+	kTextStyleModifier						= 0x32a,
+	kGraphicModifier						= 0x334,
+	kImageEffectModifier					= 0x384,	// NYI
+	kMiniscriptModifier						= 0x3c0,
+	kCursorModifierV1						= 0x3ca,	// NYI - Obsolete version
+	kGradientModifier						= 0x4b0,	// NYI
+	kColorTableModifier						= 0x4c4,	// NYI
+	kSaveAndRestoreModifier					= 0x4d8,
 
-	kCompoundVariableModifier            = 0x2c7,
-	kBooleanVariableModifier             = 0x321,
-	kIntegerVariableModifier             = 0x322,
-	kIntegerRangeVariableModifier        = 0x324,
-	kVectorVariableModifier              = 0x327,
-	kPointVariableModifier               = 0x326,
-	kFloatingPointVariableModifier       = 0x328,
-	kStringVariableModifier              = 0x329,
-	kDebris                              = 0xfffffffe,	// Deleted modifier in alias list
-	kPlugInModifier                      = 0xffffffff,
+	kCompoundVariableModifier				= 0x2c7,
+	kBooleanVariableModifier				= 0x321,
+	kIntegerVariableModifier				= 0x322,
+	kIntegerRangeVariableModifier			= 0x324,
+	kVectorVariableModifier					= 0x327,
+	kPointVariableModifier					= 0x326,
+	kFloatingPointVariableModifier			= 0x328,
+	kStringVariableModifier					= 0x329,
+	kDebris									= 0xfffffffe,	// Deleted modifier in alias list
+	kPlugInModifier							= 0xffffffff,
 
-	kMovieAsset                          = 0x10,	// NYI
-	kAudioAsset                          = 0x11,
-	kColorTableAsset                     = 0x1e,
-	kImageAsset                          = 0xe,		// NYI
-	kMToonAsset                          = 0xf,		// NYI
-	kTextAsset                           = 0x1f,	// NYI
+	kMovieAsset								= 0x10,
+	kAudioAsset								= 0x11,
+	kColorTableAsset						= 0x1e,
+	kImageAsset								= 0xe,
+	kMToonAsset								= 0xf,
+	kTextAsset								= 0x1f,
 
-	kAssetDataChunk                      = 0xffff,
+	kAssetDataChunk							= 0xffff,
 };
 
 bool isValidSceneRootElement(DataObjectType type);
@@ -456,7 +456,7 @@ struct AssetCatalog : public DataObject {
 		uint32 flags1;
 		uint16 nameLength;
 		uint16 alwaysZero;
-		uint32 unknown1;     // Possibly scene ID
+		uint32 unknown1;	 // Possibly scene ID
 		uint32 filePosition; // Contains a static value in Obsidian
 		uint32 assetType;
 		uint32 flags2;
@@ -541,9 +541,9 @@ namespace ElementFlags {
 
 namespace AnimationFlags {
 	enum AnimationFlags {
-		kAlternate      = 0x10000000,
-		kLoop           = 0x08000000,
-		kPlayEveryFrame = 0x02000000,
+		kAlternate			= 0x10000000,
+		kLoop				= 0x08000000,
+		kPlayEveryFrame		= 0x02000000,
 	};
 }
 
@@ -926,12 +926,12 @@ protected:
 
 struct ChangeSceneModifier : public DataObject {
 	enum ChangeSceneFlags {
-		kChangeSceneFlagNextScene       = 0x80000000,
-		kChangeSceneFlagPrevScene       = 0x40000000,
-		kChangeSceneFlagSpecificScene   = 0x20000000,
-		kChangeSceneFlagAddToReturnList = 0x10000000,
-		kChangeSceneFlagAddToDestList   = 0x08000000,
-		kChangeSceneFlagWrapAround      = 0x04000000,
+		kChangeSceneFlagNextScene			= 0x80000000,
+		kChangeSceneFlagPrevScene			= 0x40000000,
+		kChangeSceneFlagSpecificScene		= 0x20000000,
+		kChangeSceneFlagAddToReturnList		= 0x10000000,
+		kChangeSceneFlagAddToDestList		= 0x08000000,
+		kChangeSceneFlagWrapAround			= 0x04000000,
 	};
 
 	TypicalModifierHeader modHeader;

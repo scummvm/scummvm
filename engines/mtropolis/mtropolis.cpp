@@ -19,16 +19,6 @@
  *
  */
 
-#include "mtropolis/mtropolis.h"
-
-#include "mtropolis/actions.h"
-#include "mtropolis/debug.h"
-#include "mtropolis/runtime.h"
-
-#include "mtropolis/plugins.h"
-#include "mtropolis/plugin/standard.h"
-#include "mtropolis/plugin/obsidian.h"
-
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
@@ -46,6 +36,16 @@
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/wincursor.h"
+
+#include "mtropolis/mtropolis.h"
+
+#include "mtropolis/actions.h"
+#include "mtropolis/debug.h"
+#include "mtropolis/runtime.h"
+
+#include "mtropolis/plugins.h"
+#include "mtropolis/plugin/standard.h"
+#include "mtropolis/plugin/obsidian.h"
 
 namespace MTropolis {
 
@@ -465,8 +465,7 @@ Common::Error MTropolisEngine::run() {
 
 		Graphics::PixelFormat clut8Format = Graphics::PixelFormat::createFormatCLUT8();
 
-		for (Common::List<Graphics::PixelFormat>::const_iterator it = pixelFormats.begin(), itEnd = pixelFormats.end(); it != itEnd; ++it) {
-			const Graphics::PixelFormat &candidateFormat = *it;
+		for (const Graphics::PixelFormat &candidateFormat : pixelFormats) {
 			ColorDepthMode thisFormatMode = kColorDepthModeInvalid;
 			bool isExactMatch = false;
 			if (candidateFormat.rBits() == 8 && candidateFormat.gBits() == 8 && candidateFormat.bBits() == 8) {
