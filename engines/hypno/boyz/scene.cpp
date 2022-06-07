@@ -196,8 +196,8 @@ bool BoyzEngine::hoverHotspot(Common::Point mousePos) {
 		if (menu->type == MakeMenu && !menu->background.empty()) { // Hihghlight
 			Graphics::Surface sub = menu->backgroundFrames[2]->getSubArea(selected.rect);
 			drawImage(*menu->backgroundFrames[1], 0, 0, false);
-            drawImage(sub, selected.rect.left, selected.rect.top, false);
 			renderHighlights(hots);
+			drawImage(sub, selected.rect.left, selected.rect.top, false);
 			drawScreen();
 		}
 		return true;
