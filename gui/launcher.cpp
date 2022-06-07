@@ -162,10 +162,11 @@ bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, C
 	return invert ? !result : result;
 }
 
-LauncherDialog::LauncherDialog(const Common::String &dialogName)
+LauncherDialog::LauncherDialog(const Common::String &dialogName, LauncherChooser *chooser)
 	: Dialog(dialogName), _title(dialogName), _browser(nullptr),
 	_loadDialog(nullptr), _searchClearButton(nullptr), _searchDesc(nullptr),
-	_grpChooserDesc(nullptr), _grpChooserPopup(nullptr), _groupBy(kGroupByNone)
+	_grpChooserDesc(nullptr), _grpChooserPopup(nullptr), _groupBy(kGroupByNone),
+	_launcherChooser(chooser)
 #ifndef DISABLE_FANCY_THEMES
 	, _logo(nullptr), _searchPic(nullptr), _groupPic(nullptr)
 #endif // !DISABLE_FANCY_THEMES
@@ -852,11 +853,29 @@ bool LauncherDialog::checkModifier(int checkedModifier) {
 
 #pragma mark -
 
-LauncherChooser::LauncherChooser() : _impl(nullptr) {}
+LauncherChooser::LauncherChooser() : _impl(nullptr) {
+	genGameList();
+}
 
 LauncherChooser::~LauncherChooser() {
 	delete _impl;
 	_impl = nullptr;
+}
+
+static Common::String buildQualifiedGameName(const Common::String &engineId, const Common::String &gameId) {
+	return Common::String::format("%s:%s", engineId.c_str(), gameId.c_str());
+}
+
+void LauncherChooser::genGameList() {
+	const PluginList &plugins = EngineMan.getPlugins();
+	for (auto iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
+
+		PlainGameList list = metaEngine.getSupportedGames();
+		for (auto v = list.begin(); v != list.end(); ++v) {
+			_games[buildQualifiedGameName(metaEngine.getEngineId(), v->gameId)] = v->description;
+		}
+	}
 }
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
@@ -874,7 +893,7 @@ LauncherDisplayType getRequestedLauncherType() {
 
 class LauncherSimple : public LauncherDialog {
 public:
-	LauncherSimple(const Common::String &title);
+	LauncherSimple(const Common::String &title, LauncherChooser *chooser);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
@@ -895,7 +914,7 @@ private:
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 class LauncherGrid : public LauncherDialog {
 public:
-	LauncherGrid(const Common::String &title);
+	LauncherGrid(const Common::String &title, LauncherChooser *chooser);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void handleKeyDown(Common::KeyState state) override;
@@ -924,14 +943,14 @@ void LauncherChooser::selectLauncher() {
 
 		switch (requestedType) {
 		case kLauncherDisplayGrid:
-			_impl = new LauncherGrid("LauncherGrid");
+			_impl = new LauncherGrid("LauncherGrid", this);
 			break;
 
 		default:
 			// fallthrough intended
 		case kLauncherDisplayList:
 #endif // !DISABLE_LAUNCHERDISPLAY_GRID
-			_impl = new LauncherSimple("Launcher");
+			_impl = new LauncherSimple("Launcher", this);
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 			break;
 		}
@@ -955,8 +974,8 @@ int LauncherChooser::runModal() {
 
 #pragma mark -
 
-LauncherSimple::LauncherSimple(const Common::String &title)
-	: LauncherDialog(title),
+LauncherSimple::LauncherSimple(const Common::String &title, LauncherChooser *chooser)
+	: LauncherDialog(title, chooser),
 	_list(nullptr) {
 	build();
 }
@@ -1282,8 +1301,8 @@ void LauncherSimple::updateButtons() {
 #pragma mark -
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
-LauncherGrid::LauncherGrid(const Common::String &title)
-	: LauncherDialog(title),
+LauncherGrid::LauncherGrid(const Common::String &title, LauncherChooser *chooser)
+	: LauncherDialog(title, chooser),
 	_grid(nullptr) {
 	build();
 }
@@ -1476,19 +1495,21 @@ void LauncherGrid::updateListing() {
 				description = g.description;
 		}
 
+		Common::String gameid;
+		if (!iter->_value.tryGetVal("gameid", gameid))
+			gameid = iter->_key;
+
+		Common::String engineid;
+		engineid = iter->_value.getValOrDefault("engineid");
+
 		// Strip platform language from the title.
-		size_t extraPos = description.findLastOf("(");
-		if (extraPos != Common::String::npos)
-			title = Common::String(description.c_str(), extraPos);
+		Common::String key = buildQualifiedGameName(engineid, gameid);
 
-		if (description.empty()) {
-			Common::String gameid;
-			if (!iter->_value.tryGetVal("gameid", gameid)) {
-				gameid = iter->_key;
-			}
+		if (_launcherChooser->getGameList()->contains(key))
+			title = _launcherChooser->getGameList()->getVal(key);
 
+		if (description.empty())
 			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
-		}
 
 		if (title.empty())
 			title = description;
