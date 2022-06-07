@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-07 21:43+0000\n"
+"POT-Creation-Date: 2022-06-07 21:49+0000\n"
 "PO-Revision-Date: 2022-06-05 19:03+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -4985,7 +4985,7 @@ msgstr "Hurtigforlating av rom"
 msgid "Examine/Look"
 msgstr "Undersøk/Se"
 
-#: engines/grim/grim.cpp:1351
+#: engines/grim/grim.cpp:1349
 msgid "Error: the game could not be saved."
 msgstr "Feil: Spillet kunne ikke bli lagret."
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-07 21:43+0000\n"
+"POT-Creation-Date: 2022-06-07 21:49+0000\n"
 "PO-Revision-Date: 2022-05-29 15:52+0000\n"
 "Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4994,7 +4994,7 @@ msgstr "Snel Kamer Verlaten"
 msgid "Examine/Look"
 msgstr "Onderzoeken/Kijken"
 
-#: engines/grim/grim.cpp:1351
+#: engines/grim/grim.cpp:1349
 msgid "Error: the game could not be saved."
 msgstr "Fout: het spel kon niet worden opgeslagen."
 

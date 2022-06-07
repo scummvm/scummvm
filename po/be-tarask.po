@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-07 21:43+0000\n"
+"POT-Creation-Date: 2022-06-07 21:49+0000\n"
 "PO-Revision-Date: 2022-04-30 18:19+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -4946,7 +4946,7 @@ msgstr "Хуткае выйсьце з пакою"
 msgid "Examine/Look"
 msgstr "Праверыць/Глядзець"
 
-#: engines/grim/grim.cpp:1351
+#: engines/grim/grim.cpp:1349
 msgid "Error: the game could not be saved."
 msgstr "Памылка: ня выйшла захаваць гульню."
 
