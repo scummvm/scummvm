@@ -29,6 +29,8 @@ namespace MM1 {
 namespace Views {
 
 class Order : public TextView {
+private:
+	Common::Array<uint> _indexes;
 public:
 	Order();
 	virtual ~Order() {}
