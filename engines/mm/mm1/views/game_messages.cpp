@@ -36,7 +36,7 @@ void GameMessages::draw() {
 	clearSurface();
 
 	if (!_lines.empty()) {
-		if (_lines[0].y == 0) {
+		if (_lines[0].y == -1) {
 			// No co-ordinates provided, just display
 			for (uint i = 0; i < MIN(_lines.size(), 4U); ++i)
 				writeString(0, i, _lines[i]._text);

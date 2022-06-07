@@ -44,9 +44,7 @@ bool Game::msgUnfocus(const UnfocusMessage &msg) {
 }
 
 void Game::draw() {
-	if (_needsRedraw)
-		clearSurface();
-	TextView::draw();
+	clearSurface();
 }
 
 bool Game::msgAction(const ActionMessage &msg) {
