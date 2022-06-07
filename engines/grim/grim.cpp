@@ -1131,8 +1131,6 @@ void GrimEngine::mainLoop() {
 		if (startTime > endTime)
 			continue;
 		uint32 diffTime = endTime - startTime;
-		if (_speedLimitMs == 0)
-			continue;
 		if (diffTime < _speedLimitMs) {
 			uint32 delayTime = _speedLimitMs - diffTime;
 			g_system->delayMillis(delayTime);
