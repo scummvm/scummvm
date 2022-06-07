@@ -71,7 +71,7 @@ darkness:
 	}
 
 	// Flag to redraw the screen
-	redraw();
+	g_events->redraw();
 }
 
 bool ViewBase::msgAction(const ActionMessage &msg) {

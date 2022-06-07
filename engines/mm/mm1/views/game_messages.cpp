@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/util.h"
 #include "mm/mm1/views/game_messages.h"
 #include "mm/mm1/globals.h"
 
@@ -26,11 +27,23 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
-void GameMessages::draw() {
+GameMessages::GameMessages(UIElement *owner) :
+		TextView("GameMessages", owner) {
+	_bounds = getLineBounds(20, 24);
 }
 
-bool GameMessages::msgKeypress(const KeypressMessage &msg) {
-	return false;
+void GameMessages::draw() {
+	clearSurface();
+	for (uint i = 0; i < MIN(_lines.size(), 4U); ++i)
+		writeString(0, i, _lines[i]);
+
+	_lines.clear();
+}
+
+bool GameMessages::msgInfo(const InfoMessage &msg) {
+	_lines = msg._lines;
+	redraw();
+	return true;
 }
 
 } // namespace Views

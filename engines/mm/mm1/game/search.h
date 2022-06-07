@@ -19,37 +19,18 @@
  *
  */
 
-#ifndef MM1_VIEWS_GAME_H
-#define MM1_VIEWS_GAME_H
-
-#include "mm/mm1/events.h"
-#include "mm/mm1/views/game_commands.h"
-#include "mm/mm1/views/game_messages.h"
-#include "mm/mm1/views/game_party.h"
-#include "mm/mm1/views/game_view.h"
+#ifndef MM1_GAME_SEARCH_H
+#define MM1_GAME_SEARCH_H
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace Game {
 
-class Game : public TextView {
-private:
-	GameCommands _commands;
-	GameMessages _messages;
-	GameParty _party;
-	GameView _view;
-public:
-	Game();
-	virtual ~Game() {}
-
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	void draw() override;
-	bool msgAction(const ActionMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
+struct Search {
+	static void execute();
 };
 
-} // namespace Views
+} // namespace Game
 } // namespace MM1
 } // namespace MM
 
