@@ -1278,6 +1278,18 @@ void Lua_V1::SetActorPitch() {
 	actor->setRot(pitch, actor->getYaw(), actor->getRoll());
 }
 
+void Lua_V1::SetActorRoll() {
+	lua_Object actorObj = lua_getparam(1);
+	lua_Object rollObj = lua_getparam(2);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	float roll = lua_getnumber(rollObj);
+	actor->setRot(actor->getPitch(), actor->getYaw(), roll);
+}
+
 void Lua_V1::SetActorLookRate() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object rateObj = lua_getparam(2);
@@ -1570,10 +1582,6 @@ void Lua_V1::SetActorClipPlane() {
 
 void Lua_V1::SetActorClipActive() {
 	warning("Stub function: SetActorClipActive");
-}
-
-void Lua_V1::SetActorRoll() {
-	warning("Stub function: SetActorRoll");
 }
 
 void Lua_V1::SetActorFrustrumCull() {
