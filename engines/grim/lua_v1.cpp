@@ -740,6 +740,7 @@ void Lua_V1::JustLoaded() {
 }
 
 void Lua_V1::EnableDebugKeys() {
+	// nothing to implement
 }
 
 void Lua_V1::FlushControls() {
@@ -1088,7 +1089,6 @@ void Lua_V1::boot() {
 }
 
 void Lua_V1::postRestoreHandle() {
-
 	if (g_grim->getGameType() == GType_GRIM) {
 		lua_beginblock();
 		// Set the developerMode, since the save contains the value of
