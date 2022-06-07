@@ -109,9 +109,7 @@ void BoyzEngine::runMainMenu(Code *code) {
 	bool found = loadProfile(_name);
 	if (!found) {
 		_nextLevel = code->levelIfWin;
-	}
-
-	if (_unlockAllLevels) {
+	} else if (_unlockAllLevels) {
 		_nextLevel = "<select_t1>";
 	}
 
@@ -188,7 +186,11 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 		_nextLevel = "<main_menu>";
 	else {
 		saveProfile(_name, 0);
-		_nextLevel = code->levelIfWin;
+		if (_unlockAllLevels) {
+			_nextLevel = "<select_t1>";
+			unlockAllLevels();
+		} else
+			_nextLevel = code->levelIfWin;
 	}
 
 	menu->free();

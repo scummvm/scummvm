@@ -598,6 +598,9 @@ public:
 	void endCredits(Code *code);
 	Common::String firstLevelTerritory(const Common::String &level);
 
+	void loadSceneState(Common::SeekableReadStream *stream);
+	void saveSceneState(Common::WriteStream *stream);
+	void unlockAllLevels();
 
 	int _previousHealth;
 	Graphics::Surface _healthBar[7];

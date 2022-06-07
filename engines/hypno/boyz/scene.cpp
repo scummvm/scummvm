@@ -103,6 +103,32 @@ void BoyzEngine::resetSceneState() {
 	_intros.clear();
 }
 
+void BoyzEngine::loadSceneState(Common::SeekableReadStream *stream) {
+	uint32 i = 0;
+	while (sceneVariablesBoyz[i]) {
+		_sceneState[sceneVariablesBoyz[i]] = stream->readUint32LE();
+		i++;
+	}
+}
+
+void BoyzEngine::saveSceneState(Common::WriteStream *stream) {
+	uint32 i = 0;
+	while (sceneVariablesBoyz[i]) {
+		stream->writeUint32LE(_sceneState[sceneVariablesBoyz[i]]);
+		i++;
+	}
+}
+
+void BoyzEngine::unlockAllLevels() {
+	uint32 i = 0;
+	while (sceneVariablesBoyz[i]) {
+		if (Common::String(sceneVariablesBoyz[i]).hasPrefix("GS_SEQ_"))
+			_sceneState[sceneVariablesBoyz[i]] = true;
+		i++;
+	}
+}
+
+
 void BoyzEngine::runMenu(Hotspots *hs, bool only_menu) {
 	Hotspot *h = hs->begin();
 	assert(h->type == MakeMenu);

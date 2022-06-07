@@ -423,36 +423,66 @@ void BoyzEngine::loadAssets() {
 	}
 
 	sc = (Scene *) _levels["<select_t1>"];
+	hl = new Highlight("GS_SEQ_19");
+	sc->hots[7].actions.push_back(hl);
 	gl = new Global("GS_SEQ_19", "CHECK");
-	sc->hots[7].actions.push_back(cl);
+	sc->hots[7].actions.push_back(gl);
 	cl = new ChangeLevel("c19.mi_");
 	sc->hots[7].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_11");
+	sc->hots[8].actions.push_back(hl);
 	gl = new Global("GS_SEQ_11", "CHECK");
-	sc->hots[8].actions.push_back(cl);
+	sc->hots[8].actions.push_back(gl);
 	cl = new ChangeLevel("c11.mi_");
 	sc->hots[8].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_12");
+	sc->hots[9].actions.push_back(hl);
 	gl = new Global("GS_SEQ_12", "CHECK");
-	sc->hots[9].actions.push_back(cl);
+	sc->hots[9].actions.push_back(gl);
 	cl = new ChangeLevel("c12.mi_");
 	sc->hots[9].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_13");
+	sc->hots[10].actions.push_back(hl);
+	gl = new Global("GS_SEQ_13", "CHECK");
+	sc->hots[10].actions.push_back(gl);
 	cl = new ChangeLevel("c13.mi_");
 	sc->hots[10].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_14");
+	sc->hots[11].actions.push_back(hl);
+	gl = new Global("GS_SEQ_14", "CHECK");
+	sc->hots[11].actions.push_back(gl);
 	cl = new ChangeLevel("c14.mi_");
 	sc->hots[11].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_15");
+	sc->hots[12].actions.push_back(hl);
+	gl = new Global("GS_SEQ_15", "CHECK");
+	sc->hots[12].actions.push_back(gl);
 	cl = new ChangeLevel("c15.mi_");
 	sc->hots[12].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_16");
+	sc->hots[13].actions.push_back(hl);
+	gl = new Global("GS_SEQ_16", "CHECK");
+	sc->hots[13].actions.push_back(gl);
 	cl = new ChangeLevel("c16.mi_");
 	sc->hots[13].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_17");
+	sc->hots[14].actions.push_back(hl);
+	gl = new Global("GS_SEQ_17", "CHECK");
+	sc->hots[14].actions.push_back(gl);
 	cl = new ChangeLevel("c17.mi_");
 	sc->hots[14].actions.push_back(cl);
 
+	hl = new Highlight("GS_SEQ_18");
+	sc->hots[15].actions.push_back(hl);
+	gl = new Global("GS_SEQ_18", "CHECK");
+	sc->hots[15].actions.push_back(gl);
 	cl = new ChangeLevel("c18.mi_");
 	sc->hots[15].actions.push_back(cl);
 
@@ -877,20 +907,7 @@ Common::Error BoyzEngine::saveGameStream(Common::WriteStream *stream, bool isAut
 
 	stream->writeUint32LE(_lastLevel);
 
-	stream->writeUint32LE(_sceneState["GS_C5MAP"]);
-	stream->writeUint32LE(_sceneState["GS_WONSHELLGAME"]);
-	stream->writeUint32LE(_sceneState["GS_C36_READY"]);
-	stream->writeUint32LE(_sceneState["GS_MINEMAP"]);
-	stream->writeUint32LE(_sceneState["GS_MINEMAP_VIEWED"]);
-	stream->writeUint32LE(_sceneState["GS_HOTELDONE"]);
-
-	stream->writeUint32LE(_sceneState["GS_SEQ_31"]);
-	stream->writeUint32LE(_sceneState["GS_SEQ_32"]);
-	stream->writeUint32LE(_sceneState["GS_SEQ_33"]);
-	stream->writeUint32LE(_sceneState["GS_SEQ_34"]);
-	stream->writeUint32LE(_sceneState["GS_SEQ_35"]);
-	stream->writeUint32LE(_sceneState["GS_SEQ_36"]);
-
+	saveSceneState(stream);
 	return Common::kNoError;
 }
 
@@ -902,22 +919,11 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_score = stream->readUint32LE();
 	_lastLevel = stream->readUint32LE();
 
-	_sceneState["GS_C5MAP"] = stream->readUint32LE();
-	_sceneState["GS_WONSHELLGAME"] = stream->readUint32LE();
-	_sceneState["GS_C36_READY"] = stream->readUint32LE();
-	_sceneState["GS_MINEMAP"] = stream->readUint32LE();
-	_sceneState["GS_MINEMAP_VIEWED"] = stream->readUint32LE();
-	_sceneState["GS_HOTELDONE"] = stream->readUint32LE();
-
-	_sceneState["GS_SEQ_31"] = stream->readUint32LE();
-	_sceneState["GS_SEQ_32"] = stream->readUint32LE();
-	_sceneState["GS_SEQ_33"] = stream->readUint32LE();
-	_sceneState["GS_SEQ_34"] = stream->readUint32LE();
-	_sceneState["GS_SEQ_35"] = stream->readUint32LE();
-
-	if (_unlockAllLevels)
+	loadSceneState(stream);
+	if (_unlockAllLevels) {
 		_nextLevel = "<select_t1>";
-	else if (_ids[_lastLevel] == 3591)
+		unlockAllLevels();
+	} else if (_ids[_lastLevel] == 3591)
 		_nextLevel = "<select_c3>";
 	else if (_ids[_lastLevel] == 3592)
 		_nextLevel = "<select_ho>";
