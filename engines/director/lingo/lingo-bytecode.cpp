@@ -169,8 +169,8 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x01, 0x03, kTheItems,			kTheNumber,			false, kTEAString },
 	{ 0x01, 0x04, kTheLines,			kTheNumber,			false, kTEAString },
 
-	{ 0x02, 0x01, kTheMenu,				kTheName,			false, kTEAItemId },
-	{ 0x02, 0x02, kTheMenuItems,		kTheNumber,			false, kTEAItemId },
+	{ 0x02, 0x01, kTheMenu,				kTheName,			false, kTEAMenuId },
+	{ 0x02, 0x02, kTheMenuItems,		kTheNumber,			false, kTEAMenuId },
 
 	{ 0x03, 0x01, kTheMenuItem,			kTheName,			true, kTEAMenuIdItemId },
 	{ 0x03, 0x02, kTheMenuItem,			kTheCheckMark,		true, kTEAMenuIdItemId },
@@ -726,6 +726,13 @@ void LC::cb_v4theentitypush() {
 			{
 				Datum id = g_lingo->pop();
 				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(%s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field));
+				result = g_lingo->getTheEntity(entity, id, field);
+			}
+			break;
+		case kTEAMenuId:
+			{
+				Datum id = g_lingo->pop();
+				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(%s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field));
 				if (id.type == INT) {
 					int menuId = id.u.i;
 					id.u.menu = new MenuReference();
@@ -862,6 +869,13 @@ void LC::cb_v4theentityassign() {
 		}
 		break;
 	case kTEAItemId:
+		{
+			Datum id = g_lingo->pop();
+			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(%s, %s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field), value.asString(true).c_str());
+			g_lingo->setTheEntity(entity, id, field, value);
+		}
+		break;
+	case kTEAMenuId:
 		{
 			Datum id = g_lingo->pop();
 			if (id.type == INT) {
