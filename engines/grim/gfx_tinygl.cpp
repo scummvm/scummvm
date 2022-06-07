@@ -105,7 +105,7 @@ void GfxTinyGL::setupScreen(int screenW, int screenH) {
 }
 
 const char *GfxTinyGL::getVideoDeviceName() {
-	return "TinyGL Software Renderer";
+	return "Software Renderer";
 }
 
 void GfxTinyGL::setupCameraFrustum(float fov, float nclip, float fclip) {
