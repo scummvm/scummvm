@@ -1162,7 +1162,7 @@ void GrimEngine::loadGame(const Common::String &file) {
 }
 
 void GrimEngine::savegameRestore() {
-	debug("GrimEngine::savegameRestore() started.");
+	debug(2, "GrimEngine::savegameRestore() started.");
 	_savegameLoadRequest = false;
 	Common::String filename;
 	if (_savegameFileName.size() == 0) {
@@ -1249,7 +1249,7 @@ void GrimEngine::savegameRestore() {
 	if (g_imuse)
 		g_imuse->pause(false);
 	g_movie->pause(false);
-	debug("GrimEngine::savegameRestore() finished.");
+	debug(2, "GrimEngine::savegameRestore() finished.");
 
 	_shortFrame = true;
 	clearEventQueue();
@@ -1312,7 +1312,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	int width = 250, height = 188;
 	Bitmap *screenshot;
 
-	debug("GrimEngine::StoreSaveGameImage() started.");
+	debug(2, "GrimEngine::StoreSaveGameImage() started.");
 
 	screenshot = g_driver->getScreenshot(width, height, true);
 	state->beginSection('SIMG');
@@ -1329,11 +1329,11 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	}
 	state->endSection();
 	delete screenshot;
-	debug("GrimEngine::StoreSaveGameImage() finished.");
+	debug(2, "GrimEngine::StoreSaveGameImage() finished.");
 }
 
 void GrimEngine::savegameSave() {
-	debug("GrimEngine::savegameSave() started.");
+	debug(2, "GrimEngine::savegameSave() started.");
 	_savegameSaveRequest = false;
 	Common::String filename;
 	if (_savegameFileName.size() == 0) {
@@ -1411,7 +1411,7 @@ void GrimEngine::savegameSave() {
 	if (g_imuse)
 		g_imuse->pause(false);
 	g_movie->pause(false);
-	debug("GrimEngine::savegameSave() finished.");
+	debug(2, "GrimEngine::savegameSave() finished.");
 
 	_shortFrame = true;
 	clearEventQueue();
