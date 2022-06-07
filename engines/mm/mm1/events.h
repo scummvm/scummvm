@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/events.h"
 #include "common/stack.h"
+#include "common/str-array.h"
 #include "graphics/screen.h"
 #include "mm/mm1/meta_engine.h"
 
@@ -54,6 +55,17 @@ struct GameMessage : public Message {
 	GameMessage() : Message() {}
 	GameMessage(const Common::String &name) : Message(),
 		_name(name) {}
+};
+
+struct InfoMessage : public Message {
+	Common::StringArray _lines;
+	InfoMessage() : Message() {}
+	InfoMessage(const Common::String &str) : Message() {
+		_lines.push_back("");
+		_lines.push_back(str);
+	}
+	InfoMessage(const Common::StringArray &lines) :
+		Message(), _lines(lines) {}
 };
 
 class UIElement {
@@ -156,6 +168,7 @@ public:
 	MESSAGE(Keypress);
 	MESSAGE(Action);
 	MESSAGE(Game);
+	MESSAGE(Info);
 	#undef MESSAGE
 };
 

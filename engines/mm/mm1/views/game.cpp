@@ -22,13 +22,14 @@
 #include "mm/mm1/views/game.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/meta_engine.h"
+#include "mm/mm1/game/search.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
 Game::Game() : TextView("Game"),
-		_view(this), _commands(this), _party(this) {
+		_view(this), _commands(this), _messages(this), _party(this) {
 	_view.setBounds(Common::Rect(0, 0, 245, 128));
 }
 
@@ -49,9 +50,13 @@ void Game::draw() {
 }
 
 bool Game::msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_ORDER) {
+	switch (msg._action) {
+	case KEYBIND_ORDER:
 		g_events->msgGame(GameMessage("ORDER"));
 		return true;
+	case KEYBIND_SEARCH:
+		MM1::Game::Search::execute();
+		break;
 	}
 
 	return TextView::msgAction(msg);

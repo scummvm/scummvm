@@ -22,6 +22,7 @@
 #ifndef MM1_VIEWS_GAME_MESSAGES_H
 #define MM1_VIEWS_GAME_MESSAGES_H
 
+#include "common/str-array.h"
 #include "mm/mm1/views/text_view.h"
 
 namespace MM {
@@ -29,12 +30,14 @@ namespace MM1 {
 namespace Views {
 
 class GameMessages : public TextView {
+private:
+	Common::StringArray _lines;
 public:
-	GameMessages(UIElement *owner) : TextView("GameMessages", owner) {}
+	GameMessages(UIElement *owner);
 	virtual ~GameMessages() {}
 
 	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgInfo(const InfoMessage &msg) override;
 };
 
 } // namespace Views
