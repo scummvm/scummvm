@@ -43,7 +43,34 @@ bool Order::msgGame(const GameMessage &msg) {
 bool Order::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_ESCAPE) {
 		close();
-		return true;
+
+	} else if (msg.keycode == Common::KEYCODE_BACKSPACE &&
+			!_indexes.empty()) {
+		_indexes.remove_at(_indexes.size() - 1);
+		redraw();
+
+	} else if (msg.ascii >= '1' && msg.ascii <= '6') {
+		// Check for the index already existing
+		for (uint i = 0; i < _indexes.size(); ++i) {
+			if (_indexes[i] == (uint)(msg.ascii - '0'))
+				return true;
+		}
+
+		_indexes.push_back(msg.ascii - '0');
+
+		if (_indexes.size() < g_globals->_party.size()) {
+			// Redraw with the new entry added
+			redraw();
+		} else {
+			// Reached the party size
+			Common::Array<Character> oldParty = g_globals->_party;
+			g_globals->_party.clear();
+
+			for (uint i = 0; i < _indexes.size(); ++i)
+				g_globals->_party.push_back(oldParty[_indexes[i] - 1]);
+
+			close();
+		}
 	}
 
 	return true;
@@ -52,10 +79,14 @@ bool Order::msgKeypress(const KeypressMessage &msg) {
 void Order::draw() {
 	clearSurface();
 	writeString(0, 0, STRING["dialogs.order.title"]);
-	writeString(17, 1, STRING["dialogs.order.old"]);
 	writeString(0, 2, STRING["dialogs.misc.go_back"]);
+	writeString(17, 1, STRING["dialogs.order.old"]);
 
-	// TODO
+	_textPos.x = 21;
+	for (uint i = 0; i < _indexes.size(); ++i)
+		writeString(Common::String::format(
+			" %d ", _indexes[i]));
+	writeChar('^');
 }
 
 } // namespace Views
