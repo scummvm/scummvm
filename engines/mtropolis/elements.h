@@ -22,8 +22,6 @@
 #ifndef MTROPOLIS_ELEMENTS_H
 #define MTROPOLIS_ELEMENTS_H
 
-#include "audio/mixer.h"
-
 #include "mtropolis/data.h"
 #include "mtropolis/runtime.h"
 #include "mtropolis/render.h"

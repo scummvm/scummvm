@@ -365,8 +365,7 @@ bool ColorRGB16::load(DataReader& reader) {
 		blue = bgra[0] * 0x101;
 
 		return true;
-	}
-	else
+	} else
 		return false;
 }
 
@@ -998,7 +997,7 @@ bool TypicalModifierHeader::load(DataReader& reader) {
 }
 
 DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
-	if (_revision != 0x3eb)
+	if (_revision != 1003)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !enableWhen.load(reader) || !reader.readBytes(unknown6) || !reader.readU8(unknown7) || !program.load(reader))
@@ -1008,7 +1007,7 @@ DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode SaveAndRestoreModifier::load(DataReader &reader) {
-	if (_revision != 0x3e9)
+	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !saveWhen.load(reader) || !restoreWhen.load(reader)
@@ -1022,7 +1021,7 @@ DataReadErrorCode SaveAndRestoreModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode MessengerModifier::load(DataReader &reader) {
-	if (_revision != 0x3ea)
+	if (_revision != 1002)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader))
@@ -1040,7 +1039,7 @@ DataReadErrorCode MessengerModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode SetModifier::load(DataReader &reader) {
-	if (_revision != 0x3e8)
+	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !executeWhen.load(reader)
@@ -1073,7 +1072,7 @@ DataReadErrorCode AliasModifier::load(DataReader& reader) {
 }
 
 DataReadErrorCode ChangeSceneModifier::load(DataReader &reader) {
-	if (_revision != 0x3e9)
+	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readU32(changeSceneFlags) || !executeWhen.load(reader)
@@ -1084,7 +1083,7 @@ DataReadErrorCode ChangeSceneModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode SoundEffectModifier::load(DataReader &reader) {
-	if (_revision != 0x3e8)
+	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !executeWhen.load(reader)
@@ -1095,8 +1094,7 @@ DataReadErrorCode SoundEffectModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-bool PathMotionModifierV2::PointDef::load(DataReader &reader)
-{
+bool PathMotionModifierV2::PointDef::load(DataReader &reader) {
 	if (!point.load(reader)
 		|| !reader.readU32(frame)
 		|| !reader.readU32(frameFlags)
@@ -1116,7 +1114,7 @@ bool PathMotionModifierV2::PointDef::load(DataReader &reader)
 }
 
 DataReadErrorCode PathMotionModifierV2::load(DataReader &reader) {
-	if (_revision != 0x3e9)
+	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader)
@@ -1142,7 +1140,7 @@ DataReadErrorCode PathMotionModifierV2::load(DataReader &reader) {
 }
 
 DataReadErrorCode DragMotionModifier::load(DataReader &reader) {
-	if (_revision != 0x3e8)
+	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader))
@@ -1175,7 +1173,7 @@ DataReadErrorCode DragMotionModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode VectorMotionModifier::load(DataReader &reader) {
-	if (_revision != 0x3e9)
+	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader))
@@ -1191,7 +1189,7 @@ DataReadErrorCode VectorMotionModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode SceneTransitionModifier::load(DataReader &reader) {
-	if (_revision != 0x3e9)
+	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader))
@@ -1206,7 +1204,7 @@ DataReadErrorCode SceneTransitionModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode ElementTransitionModifier::load(DataReader &reader) {
-	if (_revision != 0x3e9)
+	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader))
@@ -1221,7 +1219,7 @@ DataReadErrorCode ElementTransitionModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
-	if (_revision != 0x3ea)
+	if (_revision != 1002)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readU32(messageFlags) || !when.load(reader) || !send.load(reader)
@@ -1239,7 +1237,7 @@ DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode TimerMessengerModifier::load(DataReader &reader) {
-	if (_revision != 0x3ea)
+	if (_revision != 1002)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader))
@@ -1258,7 +1256,7 @@ DataReadErrorCode TimerMessengerModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode BoundaryDetectionMessengerModifier::load(DataReader &reader) {
-	if (_revision != 0x3ea)
+	if (_revision != 1002)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader))
@@ -1274,7 +1272,7 @@ DataReadErrorCode BoundaryDetectionMessengerModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode CollisionDetectionMessengerModifier::load(DataReader &reader) {
-	if (_revision != 0x3ea)
+	if (_revision != 1002)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader))
@@ -1290,7 +1288,7 @@ DataReadErrorCode CollisionDetectionMessengerModifier::load(DataReader &reader) 
 }
 
 DataReadErrorCode KeyboardMessengerModifier::load(DataReader &reader) {
-	if (_revision != 0x3eb)
+	if (_revision != 1003)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readU32(messageFlagsAndKeyStates) || !reader.readU16(unknown2)
@@ -1307,7 +1305,7 @@ DataReadErrorCode KeyboardMessengerModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode TextStyleModifier::load(DataReader &reader) {
-	if (_revision != 0x3e8)
+	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 	
 	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readU16(macFontID)
@@ -1321,7 +1319,7 @@ DataReadErrorCode TextStyleModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode GraphicModifier::load(DataReader &reader) {
-	if (_revision != 0x3e9)
+	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readU16(unknown1) || !applyWhen.load(reader)
@@ -1373,7 +1371,7 @@ DataReadErrorCode CompoundVariableModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode BooleanVariableModifier::load(DataReader &reader) {
-	if (_revision != 0x3e8)
+	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readU8(value) || !reader.readU8(unknown5))
@@ -1383,7 +1381,7 @@ DataReadErrorCode BooleanVariableModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode IntegerVariableModifier::load(DataReader &reader) {
-	if (_revision != 0x3e8)
+	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readS32(value))
@@ -1393,7 +1391,7 @@ DataReadErrorCode IntegerVariableModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode IntegerRangeVariableModifier::load(DataReader &reader) {
-	if (_revision != 0x3e8)
+	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !range.load(reader))
@@ -1403,7 +1401,7 @@ DataReadErrorCode IntegerRangeVariableModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode VectorVariableModifier::load(DataReader &reader) {
-	if (_revision != 0x3e8)
+	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !this->vector.load(reader))
@@ -1413,7 +1411,7 @@ DataReadErrorCode VectorVariableModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode PointVariableModifier::load(DataReader &reader) {
-	if (_revision != 0x3e8)
+	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readBytes(unknown5) || !value.load(reader))
@@ -1423,7 +1421,7 @@ DataReadErrorCode PointVariableModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode FloatingPointVariableModifier::load(DataReader &reader) {
-	if (_revision != 0x3e8)
+	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readBytes(unknown1) || !reader.readPlatformFloat(value))
@@ -1433,7 +1431,7 @@ DataReadErrorCode FloatingPointVariableModifier::load(DataReader &reader) {
 }
 
 DataReadErrorCode StringVariableModifier::load(DataReader &reader) {
-	if (_revision != 0x3e8)
+	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readU32(lengthOfString) || !reader.readBytes(unknown1) || !reader.readTerminatedStr(value, lengthOfString))
@@ -1446,7 +1444,7 @@ PlugInModifierData::~PlugInModifierData() {
 }
 
 DataReadErrorCode PlugInModifier::load(DataReader &reader) {
-	if (_revision != 0x03e9)
+	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!reader.readU32(modifierFlags) || !reader.readU32(codedSize) || !reader.read(modifierName, 16)
@@ -1613,8 +1611,7 @@ DataReadErrorCode AudioAsset::load(DataReader &reader) {
 			|| !reader.readU8(encoding1) || !reader.readU8(channels) || !reader.readBytes(codedDuration)
 			|| !reader.readBytes(platform.win.unknown11) || !reader.readU16(sampleRate2) || !reader.readBytes(platform.win.unknown12_1))
 			return kDataReadErrorReadFailed;
-	}
-	else
+	} else
 		return kDataReadErrorUnrecognized;
 
 	if (!reader.readU32(cuePointDataSize) || !reader.readU16(numCuePoints) || !reader.readBytes(unknown14)
@@ -1625,8 +1622,7 @@ DataReadErrorCode AudioAsset::load(DataReader &reader) {
 		return kDataReadErrorUnrecognized;
 
 	cuePoints.resize(numCuePoints);
-	for (size_t i = 0; i < numCuePoints; i++)
-	{
+	for (size_t i = 0; i < numCuePoints; i++) {
 		CuePoint& cuePoint = cuePoints[i];
 		if (!reader.readBytes(cuePoint.unknown13) || !reader.readU32(cuePoint.unknown14) || !reader.readU32(cuePoint.position)
 			|| !reader.readU32(cuePoint.cuePointID))

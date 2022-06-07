@@ -321,9 +321,9 @@ bool Label::load(const Data::Label &label) {
 }
 
 bool ColorRGB8::load(const Data::ColorRGB16 &color) {
-	this->r = (color.red * 510 + 1) / 131070;
-	this->g = (color.green * 510 + 1) / 131070;
-	this->b = (color.blue * 510 + 1) / 131070;
+	this->r = (color.red * 0xff * 2 + 1) / (0xffff * 2);
+	this->g = (color.green * 0xff * 2 + 1) / (0xffff * 2);
+	this->b = (color.blue * 0xff * 2 + 1) / (0xffff * 2);
 
 	return true;
 }
@@ -3156,8 +3156,7 @@ VThreadState MessageDispatch::continuePropagating(Runtime *runtime) {
 	while (_propagationStack.size() > 0) {
 		PropagationStack &stackTop = _propagationStack.back();
 
-		switch (stackTop.propagationStage)
-		{
+		switch (stackTop.propagationStage) {
 		case PropagationStack::kStageSendToModifier: {
 				Modifier *modifier = stackTop.ptr.modifier;
 				_propagationStack.pop_back();
@@ -3367,9 +3366,8 @@ Scheduler::Scheduler() {
 }
 
 Scheduler::~Scheduler() {
-	for (Common::Array<Common::SharedPtr<ScheduledEvent>>::iterator it = _events.begin(), itEnd = _events.end(); it != itEnd; ++it) {
-		it->get()->_scheduler = nullptr;
-	}
+	for (const Common::SharedPtr<ScheduledEvent> &evt : _events)
+		evt->_scheduler = nullptr;
 
 	_events.clear();
 }
@@ -3567,8 +3565,7 @@ bool Runtime::runFrame() {
 			_osEventQueue.remove_at(0);
 
 			OSEventType evtType = evt->getEventType();
-			switch (evtType)
-			{
+			switch (evtType) {
 			case kOSEventTypeKeyboard:
 				if (_project) {
 					Common::SharedPtr<KeyEventDispatch> dispatch(new KeyEventDispatch(evt.staticCast<KeyboardInputEvent>()));
@@ -4526,8 +4523,7 @@ void Runtime::sendMessageOnVThread(const Common::SharedPtr<MessageDispatch> &dis
 	const DynamicValue &payload = dispatch->getMsg()->getValue();
 
 	if (payload.getType() != DynamicValueTypes::kNull) {
-		switch (payload.getType())
-		{
+		switch (payload.getType()) {
 		case DynamicValueTypes::kBoolean:
 			valueStr = (payload.getBool() ? "true" : "false");
 			break;
