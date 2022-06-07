@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	mm1/console.o \
 	mm1/events.o \
 	mm1/globals.o \
+	mm1/messages.o \
 	mm1/meta_engine.o \
 	mm1/mm1.o \
 	mm1/sound.o \

@@ -19,29 +19,31 @@
  *
  */
 
-#ifndef MM1_VIEWS_GAME_MESSAGES_H
-#define MM1_VIEWS_GAME_MESSAGES_H
-
 #include "mm/mm1/messages.h"
-#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
 
-class GameMessages : public TextView {
-private:
-	Common::Array<InfoMessage::Line> _lines;
-public:
-	GameMessages(UIElement *owner);
-	virtual ~GameMessages() {}
+InfoMessage::InfoMessage() : Message(), _callbackFn(nullptr) {}
 
-	void draw() override;
-	bool msgInfo(const InfoMessage &msg) override;
-};
+InfoMessage::InfoMessage(const Common::String &str) :
+		Message(), _callbackFn(nullptr) {
+	_lines.push_back(str);
+}
 
-} // namespace Views
+InfoMessage::InfoMessage(int x, int y, const Common::String &str,
+		InfoKeyCallback callbackFn) :
+		Message(), _callbackFn(callbackFn) {
+	_lines.push_back(Line(x, y, str));
+}
+
+InfoMessage::InfoMessage(int x1, int y1, const Common::String &str1,
+		int x2, int y2, const Common::String &str2,
+		InfoKeyCallback callbackFn) :
+		Message(), _callbackFn(callbackFn) {
+	_lines.push_back(Line(x1, y1, str1));
+	_lines.push_back(Line(x2, y2, str2));
+}
+
 } // namespace MM1
 } // namespace MM
-
-#endif
