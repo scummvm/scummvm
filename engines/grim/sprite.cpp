@@ -27,14 +27,12 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/emi/costumeemi.h"
 
-
 namespace Grim {
 
 Sprite::Sprite() :
 		_width(0), _height(0), _visible(false), _material(nullptr), _next(nullptr),
 		_flags1(0), _flags2(0) {
 }
-
 
 void Sprite::draw() const {
 	if (!_visible)

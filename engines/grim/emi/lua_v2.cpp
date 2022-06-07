@@ -112,7 +112,7 @@ void Lua_V2::MakeScreenTextures() {
 	lua_Object indexObj = lua_getparam(1);
 
 	if (!lua_isnil(indexObj) && lua_isnumber(indexObj)) {
-		/*int index = (int)lua_getnumber(indexObj);*/
+		//int index = (int)lua_getnumber(indexObj);
 		// The index does not seem to matter
 
 		g_driver->makeScreenTextures();
@@ -123,8 +123,8 @@ void Lua_V2::MakeScreenTextures() {
 }
 
 void Lua_V2::ClearSpecialtyTexture() {
-	//This seems to be used in the save/load menu
-	//Not sure why the specialty textures need to be cleared.
+	// This seems to be used in the save/load menu
+	// Not sure why the specialty textures need to be cleared.
 	warning("Lua_V2::ClearSpecialtyTexture: stub");
 }
 
@@ -622,7 +622,7 @@ void Lua_V2::NewLayer() {
 		til = lua_getstring(param1);
 		sortorder = (int)lua_getnumber(param2);
 
-		//This one is always specified, but also always 0...
+		// This one is always specified, but also always 0...
 		//zero = (int)lua_getnumber(param3);
 
 		Layer *layer = new Layer(til, sortorder);

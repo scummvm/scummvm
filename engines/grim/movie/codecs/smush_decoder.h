@@ -71,7 +71,7 @@ protected:
 		Graphics::PixelFormat getPixelFormat() const override { return _format; }
 		int getCurFrame() const override { return _curFrame; }
 		void setCurFrame(int frame) { _curFrame = frame; }
-		int getFrameCount() const override {	return _nbframes; }
+		int getFrameCount() const override { return _nbframes; }
 		Common::Rational getFrameRate() const override { return _frameRate; }
 		void setMsPerFrame(int ms);
 

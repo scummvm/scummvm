@@ -26,7 +26,6 @@
 #include "engines/grim/actor.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/set.h"
-
 #include "engines/grim/lua/lauxlib.h"
 
 namespace Grim {

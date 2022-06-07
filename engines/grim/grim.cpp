@@ -78,10 +78,8 @@
 #include "engines/grim/remastered/overlay.h"
 #include "engines/grim/remastered/lua_remastered.h"
 #include "engines/grim/remastered/commentary.h"
-
 #include "engines/grim/imuse/imuse.h"
 #include "engines/grim/emi/sound/emisound.h"
-
 #include "engines/grim/lua/lua.h"
 
 namespace Grim {
@@ -110,7 +108,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	g_movie = nullptr;
 	g_imuse = nullptr;
 
-	//Set default settings
+	// Set default settings
 	ConfMan.registerDefault("use_arb_shaders", true);
 
 	_showFps = ConfMan.getBool("show_fps");
@@ -186,7 +184,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	SearchMan.addSubDirectoryMatching(gameDataDir, "widescreen");
 
 
-	//Remastered:
+	// Remastered:
 	if (isRemastered()) {
 		for (uint32 i = 0; i < kNumCutscenes; i++) {
 			_cutsceneEnabled[i] = false;
@@ -349,11 +347,11 @@ Common::Error GrimEngine::run() {
 		MD5CheckDialog d;
 		if (!d.runModal()) {
 			Common::U32String confirmString = Common::U32String::format(_(
-				"ScummVM found some problems with your game data files.\n"
-				"Running ScummVM nevertheless may cause game bugs or even crashes.\n"
-				"Do you still want to run %s?"),
-			GType_MONKEY4 == getGameType() ? "Escape From Monkey Island" : "Grim Fandango"
-			 );
+			        "ScummVM found some problems with your game data files.\n"
+			        "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
+			        "Do you still want to run %s?"),
+			        GType_MONKEY4 == getGameType() ? "Escape From Monkey Island" : "Grim Fandango"
+			        );
 			GUI::MessageDialog msg(confirmString, _("Yes"), _("No"));
 			if (msg.runModal() != GUI::kMessageOK) {
 				return Common::kUserCanceled;
@@ -1181,7 +1179,7 @@ void GrimEngine::savegameRestore() {
 		g_imuse->pause(true);
 	g_movie->pause(true);
 	if (g_registry)
-	    g_registry->save();
+		g_registry->save();
 
 	_selectedActor = nullptr;
 	delete _currSet;
@@ -1572,8 +1570,7 @@ void GrimEngine::buildActiveActorsList() {
 
 	_activeActors.clear();
 	foreach (Actor *a, Actor::getPool()) {
-		if (((_mode == NormalMode || _mode == DrawMode) && a->isDrawableInSet(_currSet->getName())) ||
-		    a->isInOverworld()) {
+		if (((_mode == NormalMode || _mode == DrawMode) && a->isDrawableInSet(_currSet->getName())) || a->isInOverworld()) {
 			_activeActors.push_back(a);
 		}
 	}

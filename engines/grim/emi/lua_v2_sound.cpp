@@ -21,14 +21,14 @@
 
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
-#include "common/system.h"
-#include "engines/grim/set.h"
 
+#include "common/system.h"
+
+#include "engines/grim/set.h"
 #include "engines/grim/emi/sound/emisound.h"
 #include "engines/grim/emi/lua_v2.h"
 #include "engines/grim/emi/poolsound.h"
 #include "engines/grim/lua/lua.h"
-
 #include "engines/grim/debug.h"
 #include "engines/grim/sound.h"
 #include "engines/grim/grim.h"
@@ -245,7 +245,6 @@ static Common::String addSoundSuffix(const char *fname) {
 	return filename;
 }
 
-
 void Lua_V2::LoadSound() {
 	lua_Object strObj = lua_getparam(1);
 
@@ -272,7 +271,7 @@ void Lua_V2::PlayLoadedSound() {
 	lua_Object idObj = lua_getparam(1);
 	lua_Object loopingObj = lua_getparam(2);
 	lua_Object volumeObj = lua_getparam(3);
-	/* FIXME: unknown parameter */
+	// FIXME: unknown parameter
 	/*lua_Object bool2Obj =*/ lua_getparam(4);
 
 	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F')) {
@@ -332,7 +331,7 @@ void Lua_V2::PlayLoadedSoundFrom() {
 
 	if (lua_isnumber(volumeOrLoopingObj)) {
 		volume = (int)lua_getnumber(volumeOrLoopingObj);
-		/* special handling if 5th parameter is a boolean */
+		// special handling if 5th parameter is a boolean
 		if (volume <= 1) {
 			looping = volume;
 			volume = (int)lua_getnumber(volumeObj);
@@ -419,7 +418,7 @@ void Lua_V2::PlaySoundFrom() {
 	lua_Object xObj = lua_getparam(2);
 	lua_Object yObj = lua_getparam(3);
 	lua_Object zObj = lua_getparam(4);
-	/* FIXME: unknown parameter */
+	// FIXME: unknown parameter
 	lua_Object volumeOrUnknownObj = lua_getparam(5);
 	lua_Object volumeObj = lua_getparam(6);
 

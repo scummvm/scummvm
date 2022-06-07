@@ -27,6 +27,7 @@
 #include "engines/grim/color.h"
 #include "engines/grim/sector.h"
 #include "engines/grim/objectstate.h"
+
 #include "math/quat.h"
 #include "math/frustum.h"
 

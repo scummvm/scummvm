@@ -39,14 +39,14 @@ PackFile::PackFile(Common::SeekableReadStream *data):
 
 		_orgStream->seek(_knownOffsets[i]);
 
-		//Check for content signature
+		// Check for content signature
 		magicContainer = _orgStream->readUint32BE();
 		if (!err() && magicContainer == MKTAG('1','C','N','T')) {
 			key = _orgStream->readUint32LE();
 			createCodeTable(key);
 			_offset = _orgStream->pos();
 
-			//Check for cabinet signature
+			// Check for cabinet signature
 			magicCabinet = readUint32BE();
 			if (!err() && magicCabinet == MKTAG('M','S','C','F'))
 				break;
@@ -63,10 +63,8 @@ PackFile::PackFile(Common::SeekableReadStream *data):
 	_orgStream->seek(_offset);
 }
 
-
 PackFile::~PackFile() {
 	delete[] _codeTable;
-
 	delete _orgStream;
 }
 

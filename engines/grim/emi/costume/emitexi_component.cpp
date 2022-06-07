@@ -23,7 +23,6 @@
 #include "engines/grim/debug.h"
 #include "engines/grim/material.h"
 #include "engines/grim/savegame.h"
-
 #include "engines/grim/emi/costumeemi.h"
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/emi/costume/emimesh_component.h"

@@ -330,7 +330,7 @@ void Lua_V1::Enumerate3DDevices() {
 	lua_Object numObj = lua_getparam(1);
 	if (!lua_isnumber(numObj))
 		return;
-/*	int num = (int)lua_getnumber(numObj);*/
+	//int num = (int)lua_getnumber(numObj);
 	lua_pushobject(result);
 	lua_pushnumber(-1.0);
 	if (g_driver->isHardwareAccelerated()) {
@@ -513,7 +513,7 @@ void Lua_V1::GetControlState() {
 		lua_pushnumber(g_grim->getControlAxis(num));
 	else {
 		pushbool(g_grim->getControlState(num)); // key down, originaly it push number if key down
-		//pushnil or number, what is is ?
+		// pushnil or number, what is is ?
 	}
 }
 
@@ -532,8 +532,8 @@ void Lua_V1::GetSpeechMode() {
 }
 
 void Lua_V1::GetDiskFreeSpace() {
-	//the ps2 version of emi wants more than 600 KB
-	//grim: amount of free space in MB, used for creating saves
+	// The ps2 version of emi wants more than 600 KB
+	// Grim: amount of free space in MB, used for creating saves
 	lua_pushnumber(700);
 }
 
@@ -610,7 +610,7 @@ void Lua_V1::SubmitSaveGameData() {
 	}
 	savedState->endSection();
 
-	//give ps2 saves a human-readable name
+	// Give ps2 saves a human-readable name
 	if (g_grim->getGameType() == GType_MONKEY4 &&
 		g_grim->getGamePlatform() == Common::kPlatformPS2) {
 		savedState->beginSection('PS2S');

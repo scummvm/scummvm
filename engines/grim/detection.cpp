@@ -19,10 +19,10 @@
  *
  */
 
+#include "common/translation.h"
+
 #include "engines/advancedDetector.h"
 #include "engines/grim/detection.h"
-
-#include "common/translation.h"
 #include "engines/grim/debug.h"
 
 static const DebugChannelDef debugFlagList[] = {

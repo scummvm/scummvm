@@ -46,15 +46,15 @@ private:
 	Common::SeekableReadStream *_data;
 
 	struct FolderEntry {
-		uint16 comp_type;           //The compression type
-		uint16 num_blocks;          //The total number of data blocks used by this folder
-		uint32 offset;              //The cabinet offset of first datablock
+		uint16 comp_type;           // The compression type
+		uint16 num_blocks;          // The total number of data blocks used by this folder
+		uint32 offset;              // The cabinet offset of first datablock
 	};
 
 	struct FileEntry {
-		uint32 length;              //Uncompressed size of the file in bytes
-		FolderEntry *folder;        //Folder holding this file
-		uint32 folderOffset;        //Uncompressed offset in the folder
+		uint32 length;              // Uncompressed size of the file in bytes
+		FolderEntry *folder;        // Folder holding this file
+		uint32 folderOffset;        // Uncompressed offset in the folder
 	};
 
 	typedef Common::HashMap<Common::String, FileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
@@ -65,7 +65,7 @@ private:
 
 	Common::String readString(Common::ReadStream *stream);
 
-	//Decompressor
+	// Decompressor
 	class Decompressor {
 	public:
 		Decompressor(const FolderEntry *folder, Common::SeekableReadStream *_data);
@@ -93,7 +93,7 @@ private:
 
 	mutable Decompressor *_decompressor;
 
-	//Cache
+	// Cache
 	typedef Common::HashMap<Common::String, byte *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> CacheMap;
 	mutable CacheMap _cache;
 };

@@ -27,9 +27,7 @@
 #include "engines/grim/actor.h"
 #include "engines/grim/savegame.h"
 #include "engines/grim/set.h"
-
 #include "engines/grim/imuse/imuse.h"
-
 #include "engines/grim/lua/lauxlib.h"
 
 namespace Grim {

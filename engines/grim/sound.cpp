@@ -98,7 +98,6 @@ void SoundPlayer::restoreState(SaveGame *savedState) {
 	}
 }
 
-
 void SoundPlayer::saveState(SaveGame *savedState) {
 	if (g_grim->getGameType() == GType_GRIM) {
 		g_imuse->saveState(savedState);

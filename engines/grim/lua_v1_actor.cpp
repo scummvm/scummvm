@@ -28,7 +28,6 @@
 #include "engines/grim/set.h"
 #include "engines/grim/model.h"
 #include "engines/grim/gfx_base.h"
-
 #include "engines/grim/lua/lauxlib.h"
 
 namespace Grim {
@@ -767,7 +766,7 @@ void Lua_V1::GetActorCostume() {
 	if (lua_isnil(costumeObj)) {
 		// dummy
 	} else if (lua_isnumber(costumeObj)) {
-/*		int num = (int)lua_getnumber(costumeObj);*/
+		//int num = (int)lua_getnumber(costumeObj);
 		error("GetActorCostume: implement number Id");
 	} else
 		return;
@@ -1220,16 +1219,15 @@ void Lua_V1::PointActorAt() {
 void Lua_V1::WalkActorVector() {
 	lua_Object actorObj = lua_getparam(1);
 	lua_Object actor2Obj = lua_getparam(2);
-//	lua_Object xObj = lua_getparam(3);
-//	lua_Object yObj = lua_getparam(4);
-//	lua_Object zObj = lua_getparam(5);
-//	lua_Object param6Obj = lua_getparam(6);
+	//lua_Object xObj = lua_getparam(3);
+	//lua_Object yObj = lua_getparam(4);
+	//lua_Object zObj = lua_getparam(5);
+	//lua_Object param6Obj = lua_getparam(6);
 
-	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') ||
-			!lua_isuserdata(actor2Obj) || lua_tag(actor2Obj) != MKTAG('A','C','T','R'))
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R') || !lua_isuserdata(actor2Obj) || lua_tag(actor2Obj) != MKTAG('A','C','T','R'))
 		return;
 
-//	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	//Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
 	Actor *actor2 = getactor(actor2Obj);
 
 	// TODO whole below part need rewrote to much original
@@ -1392,17 +1390,17 @@ void Lua_V1::SetActorFollowBoxes() {
 
 void Lua_V1::SetActorConstrain() {
 	lua_Object actorObj = lua_getparam(1);
-//	lua_Object constrainObj = lua_getparam(2);
+	//lua_Object constrainObj = lua_getparam(2);
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
 
-//	Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
-//	bool constrain = !lua_isnil(constrainObj);
+	//Actor *actor = static_cast<Actor *>(lua_getuserdata(actorObj));
+	//bool constrain = !lua_isnil(constrainObj);
 
 	// FIXME that below should be enabled, but for now it's disabled realated to
 	// above func SetActorFollowBoxes.
-//	actor->setConstrain(constrain);
+	//actor->setConstrain(constrain);
 }
 
 void Lua_V1::GetVisibleThings() {

@@ -471,7 +471,7 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		tglEnable(TGL_POLYGON_OFFSET_FILL);
 		tglDisable(TGL_LIGHTING);
 		tglDisable(TGL_TEXTURE_2D);
-		// tglColor3f(0.0f, 1.0f, 0.0f); // debug draw color
+		//tglColor3f(0.0f, 1.0f, 0.0f); // debug draw color
 		if (g_grim->getGameType() == GType_GRIM) {
 			tglColor3ub(_shadowColorR, _shadowColorG, _shadowColorB);
 		} else {
@@ -1323,7 +1323,7 @@ void GfxTinyGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 
 	tglColor3f(0.0f, 0.0f, 0.0f);
 
-	//Explicitly cast to avoid problems with C++11
+	// Explicitly cast to avoid problems with C++11
 	float fx1 = x1;
 	float fx2 = x2;
 	float fy1 = y1;
@@ -1381,7 +1381,7 @@ void GfxTinyGL::drawRectangle(const PrimitiveObject *primitive) {
 		tglVertex2f(x1, y2 + 1);
 		tglEnd();
 	} else {
-		// tglLineWidth(_scaleW); // Not implemented in TinyGL
+		//tglLineWidth(_scaleW); // Not implemented in TinyGL
 		tglBegin(TGL_LINE_LOOP);
 		tglVertex2f(x1, y1);
 		tglVertex2f(x2 + 1, y1);
@@ -1417,7 +1417,7 @@ void GfxTinyGL::drawLine(const PrimitiveObject *primitive) {
 
 	tglColor3ub(color.getRed(), color.getGreen(), color.getBlue());
 
-//	tglLineWidth(_scaleW); // Not implemented in TinyGL
+	//tglLineWidth(_scaleW); // Not implemented in TinyGL
 
 	tglBegin(TGL_LINES);
 	tglVertex2f(x1, y1);

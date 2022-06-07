@@ -23,11 +23,9 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/set.h"
-
 #include "engines/grim/costume/anim_component.h"
 
 namespace Grim {
-
 
 AnimComponent::AnimComponent(Component *p, int parentID, const char *filename, tag32 t) :
 		Component(p, parentID, filename, t) {
@@ -46,7 +44,7 @@ void AnimComponent::setKey(int val) {
 	if (!state) {
 		Set *set = g_grim->getCurrSet();
 		state = set->addObjectState(set->getSetup(), (_overlay ? ObjectState::OBJSTATE_OVERLAY : ObjectState::OBJSTATE_UNDERLAY),
-									_name.c_str(), nullptr, false);
+		                                              _name.c_str(), nullptr, false);
 	}
 	_created = true;
 

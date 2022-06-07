@@ -21,8 +21,8 @@
 
 #include "common/debug.h"
 #include "common/textconsole.h"
-#include "engines/grim/debug.h"
 
+#include "engines/grim/debug.h"
 #include "engines/grim/emi/costume/emiluavar_component.h"
 
 namespace Grim {

@@ -24,6 +24,7 @@
 
 #include "engines/grim/object.h"
 #include "engines/grim/actor.h"
+
 #include "math/matrix4.h"
 #include "math/vector2d.h"
 #include "math/vector3d.h"
