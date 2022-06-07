@@ -2528,8 +2528,8 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 				fC = _screen->getTextWidth(s);
 			}
 
-			if (_vm->gameFlags().lang == Common::JA_JPN) {
-				// Strip special characters from GMM save dialog which might get misinterpreted as SJIS
+			if (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::ZH_TWN) {
+				// Strip special characters from GMM save dialog which might get misinterpreted as 2-byte character
 				for (uint ii = 0; ii < strlen(s); ++ii) {
 					if (s[ii] < 32) // due to the signed char type this will also clean up everything >= 0x80
 						s[ii] = ' ';
