@@ -20,8 +20,10 @@
  */
 
 #include "mm/mm1/maps/map00.h"
+#include "mm/mm1/maps/maps.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
@@ -51,7 +53,33 @@ void Map00::special() {
 }
 
 void Map00::special00() { warning("special00"); }
-void Map00::special01() { warning("special01"); }
+
+void Map00::special01() {
+	Maps &maps = g_globals->_maps;
+	Sound::sound(SOUND_2);
+
+	Common::String line2;
+	int x = 5;
+
+	switch (maps._forwardMask) {
+	case DIRMASK_E:
+		line2 = STRING["maps.map00.eulards"];
+		x = 6;
+		break;
+	case DIRMASK_W:
+		line2 = STRING["maps.map00.blacksmith"];
+		break;
+	default:
+		line2 = STRING["maps.map00.inn"];
+		break;
+	}
+
+	g_events->msgInfo(InfoMessage(
+		2, 0, STRING["maps.map00.sign"],
+		x, 1, line2
+	));
+}
+
 void Map00::special02() { warning("special02"); }
 void Map00::special03() { warning("special03"); }
 void Map00::special04() { warning("special04"); }

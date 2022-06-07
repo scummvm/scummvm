@@ -162,7 +162,7 @@ void ViewBase::forward(KeybindingAction action) {
 
 			if (map.dataByte(30 + offset) == 4 &&
 				!g_globals->_spells._s.walk_on_water) {
-				Sound::sound(SOUND_OBSTRUCTED);
+				Sound::sound(SOUND_1);
 				_dialogMessage = STRING["movement.obstructed.cant_swim"];
 				redraw();
 				return;
@@ -193,12 +193,12 @@ void ViewBase::backwards() {
 
 	if (!g_globals->_intangible) {
 		if (maps._currentWalls & maps._backwardsMask) {
-			Sound::sound(SOUND_OBSTRUCTED);
+			Sound::sound(SOUND_1);
 			map.checkPartyDead();
 			return;
 		}
 		if (maps._currentState & 0x55 & maps._backwardsMask) {
-			Sound::sound(SOUND_OBSTRUCTED);
+			Sound::sound(SOUND_1);
 			map.checkPartyDead();
 			return;
 		}
@@ -230,7 +230,7 @@ Common::Point ViewBase::getMoveDelta(byte mask) const {
 void ViewBase::obstructed(byte mask) {
 	Maps::Maps &maps = g_globals->_maps;
 	Maps::Map &map = *maps._currentMap;
-	Sound::sound(SOUND_OBSTRUCTED);
+	Sound::sound(SOUND_1);
 
 	int index = 32;
 	if (!(maps._currentWalls & mask & 0x55))
@@ -245,7 +245,7 @@ void ViewBase::obstructed(byte mask) {
 
 void ViewBase::barrier() {
 	_dialogMessage = STRING["movement.obstructed.barrier"];
-	Sound::sound(SOUND_OBSTRUCTED);
+	Sound::sound(SOUND_1);
 }
 
 void ViewBase::bash() {
@@ -266,7 +266,7 @@ void ViewBase::bash() {
 		if (map.dataByte(index) != 1) {
 			forward(KEYBIND_FORWARDS);
 		} else {
-			Sound::sound(SOUND_OBSTRUCTED);
+			Sound::sound(SOUND_1);
 
 			uint might = g_engine->getRandomNumber(100);
 			for (uint i = 0; i < g_globals->_party.size(); ++i)
