@@ -5577,8 +5577,7 @@ void MediaCueState::checkTimestampChange(Runtime *runtime, uint32 oldTS, uint32 
 	bool endsInRange = (static_cast<int32>(newTS) >= minTime && static_cast<int32>(newTS) <= maxTime);
 
 	bool shouldTrigger = false;
-	switch (triggerTiming)
-	{
+	switch (triggerTiming) {
 	case kTriggerTimingStart:
 		shouldTrigger = continuousTimestamps ? entersRange : endsInRange;
 		break;
