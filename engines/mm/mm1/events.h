@@ -23,50 +23,14 @@
 #define MM1_EVENTS_H
 
 #include "common/array.h"
-#include "common/events.h"
 #include "common/stack.h"
-#include "common/str-array.h"
 #include "graphics/screen.h"
-#include "mm/mm1/meta_engine.h"
+#include "mm/mm1/messages.h"
 
 namespace MM {
 namespace MM1 {
 
 class Events;
-
-struct Message {};
-struct FocusMessage : public Message {};
-struct UnfocusMessage : public Message {};
-struct ActionMessage : public Message {
-	KeybindingAction _action;
-	ActionMessage() : Message(), _action(KEYBIND_NONE) {}
-	ActionMessage(KeybindingAction action) : Message(),
-		_action(action) {}
-};
-
-struct KeypressMessage : public Message, public Common::KeyState {
-	KeypressMessage() : Message() {}
-	KeypressMessage(const Common::KeyState &ks) :
-		Message(), Common::KeyState(ks) {}
-};
-
-struct GameMessage : public Message {
-	Common::String _name;
-	GameMessage() : Message() {}
-	GameMessage(const Common::String &name) : Message(),
-		_name(name) {}
-};
-
-struct InfoMessage : public Message {
-	Common::StringArray _lines;
-	InfoMessage() : Message() {}
-	InfoMessage(const Common::String &str) : Message() {
-		_lines.push_back("");
-		_lines.push_back(str);
-	}
-	InfoMessage(const Common::StringArray &lines) :
-		Message(), _lines(lines) {}
-};
 
 class UIElement {
 	friend class Events;

@@ -29,15 +29,25 @@ namespace Views {
 
 GameMessages::GameMessages(UIElement *owner) :
 		TextView("GameMessages", owner) {
-	_bounds = getLineBounds(20, 24);
+	_bounds = getLineBounds(21, 24);
 }
 
 void GameMessages::draw() {
 	clearSurface();
-	for (uint i = 0; i < MIN(_lines.size(), 4U); ++i)
-		writeString(0, i, _lines[i]);
 
-	_lines.clear();
+	if (!_lines.empty()) {
+		if (_lines[0].y == 0) {
+			// No co-ordinates provided, just display
+			for (uint i = 0; i < MIN(_lines.size(), 4U); ++i)
+				writeString(0, i, _lines[i]._text);
+		} else {
+			// Write text at suggested co-ordinates
+			for (uint i = 0; i < MIN(_lines.size(), 4U); ++i)
+				writeString(_lines[i].x, _lines[i].y, _lines[i]._text);
+		}
+
+		_lines.clear();
+	}
 }
 
 bool GameMessages::msgInfo(const InfoMessage &msg) {
