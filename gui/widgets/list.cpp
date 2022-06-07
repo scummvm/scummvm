@@ -624,6 +624,12 @@ Common::Rect ListWidget::getEditRect() const {
 	return r;
 }
 
+int ListWidget::getCaretOffset() const {
+	Common::U32String substr(_editString.begin(), _editString.begin() + _caretPos);
+	Common::U32String stripped = stripGUIformatting(substr);
+	return g_gui.getStringWidth(stripped, _font) - _editScrollOffset;
+}
+
 void ListWidget::checkBounds() {
 	if (_currentPos < 0 || _entriesPerPage > (int)_list.size())
 		_currentPos = 0;

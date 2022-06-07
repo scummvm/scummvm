@@ -165,6 +165,7 @@ protected:
 	void abortEditMode() override;
 
 	Common::Rect getEditRect() const override;
+	int getCaretOffset() const override;
 
 	void copyListData(const Common::U32StringArray &list);
 
