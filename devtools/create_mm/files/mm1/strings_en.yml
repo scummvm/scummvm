@@ -74,6 +74,10 @@ dialogs:
 	ready:
 		1: "  ARE YOU READY? "
 		2: "THEN PRESS ENTER!"
+	tavern:
+		drink: "A) HAVE A DRINK\r"
+		tip: "B) TIP BARTENDER\r"
+		listen: "C) LISTEN FOR RUMORS"
 	view_characters:
 		title: "VIEW ALL CHARACTERS"
 		legend1: "'A'-'%c' TO VIEW A CHARACTER"

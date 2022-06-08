@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/businesses/business.h"
+#include "mm/mm1/maps/maps.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -47,6 +48,16 @@ void Business::newLine() {
 	_textPos.x = 0;
 	if (++_textPos.y >= 24)
 		_textPos.y = 0;
+}
+
+void Business::leave() {
+	SWAP(g_maps->_forwardMask, g_maps->_backwardsMask);
+	SWAP(g_maps->_leftMask, g_maps->_rightMask);
+	SWAP(g_maps->_forwardOffset, g_maps->_backwardsOffset);
+	SWAP(g_maps->_leftOffset, g_maps->_rightOffset);
+
+	close();
+	g_events->redraw();
 }
 
 } // namespace Businesses

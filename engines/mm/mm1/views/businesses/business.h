@@ -43,6 +43,11 @@ protected:
 	 */
 	void newLine();
 
+	/**
+	 * Leave the business
+	 */
+	void leave();
+
 public:
 	Business(const Common::String &name);
 	virtual ~Business() {}

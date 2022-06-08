@@ -30,9 +30,10 @@
 
 namespace MM {
 namespace MM1 {
-namespace Maps {
 
-Maps *g_maps;
+Maps::Maps *g_maps;
+
+namespace Maps {
 
 /** PLACEHOLDER MAPS **/
 #define PLACEHOLDER(SUFFIX, INDEX, NAME, ID) \
