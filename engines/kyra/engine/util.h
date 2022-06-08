@@ -40,6 +40,8 @@ public:
 	static Common::String convertISOToUTF8(Common::String &str);
 	static void convertISOToDOS(char &c);
 
+	static uint8 convertKeyDOSToHAN(char &c, uint16 &dest);
+
 	static Common::String findMacResourceFile(const char *baseName);
 };
 

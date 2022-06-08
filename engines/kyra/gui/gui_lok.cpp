@@ -729,33 +729,31 @@ void GUI_LoK::updateSavegameString() {
 		_screen->_charSpacing = -2;
 		int width = _screen->getTextWidth(_savegameName) + 7;
 		_screen->_charSpacing = 0;
-		char inputKey = 0;
+		char oneByteInput = _keyPressed.ascii;
+		Util::convertISOToDOS(oneByteInput);
+		uint16 twoByteInput = 0;
+		uint8 flags = 0;
 
-		if (inputType == Font::kHANGUL) {
-			if (_keyPressed.ascii < 128)
-				inputKey = (_keyPressed.ascii & 0x7f) | 0x80;
-		} else {
-			inputKey = _keyPressed.ascii;
-			Util::convertISOToDOS(inputKey);
-		}
+		if (inputType == Font::kHANGUL)
+			flags = Util::convertKeyDOSToHAN(oneByteInput, twoByteInput);
 
-		/*if (inputType == Font::kHANGUL && (uint8)inputKey > 31) {
+		if (twoByteInput) {
 			if ((length < ARRAYSIZE(_savegameName) - 2) && (width <= 240)) {
-				_savegameName[length] = inputKey - 101;
-				_savegameName[length + 1] = _savegameName[length + 2] = 0;
-				if (length & 1)
-					_savegameName[length - 1] |= 0x80;
+				WRITE_BE_UINT16(&_savegameName[length], twoByteInput | 0x8000);
+				_savegameName[length + 2] = 0;
 				redrawTextfield();
 			}
-		} else*/ if ((uint8)inputKey > 31 && (uint8)inputKey < (_vm->gameFlags().lang == Common::JA_JPN ? 128 : 226)) {
+		} else if ((uint8)oneByteInput > 31 && (uint8)oneByteInput < (_vm->gameFlags().lang == Common::JA_JPN ? 128 : 226)) {
 			if ((length < ARRAYSIZE(_savegameName) - 1) && (width <= 240)) {
-				_savegameName[length] = inputKey;
+				_savegameName[length] = oneByteInput;
 				_savegameName[length + 1] = 0;
 				redrawTextfield();
 			}
-		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE ||
-		           _keyPressed.keycode == Common::KEYCODE_DELETE) {
-			if (length > 0) {
+		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE || _keyPressed.keycode == Common::KEYCODE_DELETE) {
+			if (inputType == Font::kHANGUL && length > 1 && (_savegameName[length - 2] & 0x80)) {
+				_savegameName[length - 2] = _savegameName[length - 1] = 0;
+				redrawTextfield();
+			} else if (length > 0) {
 				_savegameName[length - 1] = 0;
 				redrawTextfield();
 			}
