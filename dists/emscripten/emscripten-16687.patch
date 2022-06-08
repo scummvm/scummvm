@@ -1,0 +1,22 @@
+From 5ed10829c6d806d630d98943432c222cf8f02017 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Christian=20K=C3=BCndig?= <christian@kuendig.info>
+Date: Sat, 9 Apr 2022 16:12:40 +0200
+Subject: [PATCH] SDL2: Fix SDL_OpenURL
+
+---
+ tools/ports/sdl2.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/ports/sdl2.py b/tools/ports/sdl2.py
+index 7c0a30cbd71..fb6ea398bfd 100644
+--- a/tools/ports/sdl2.py
++++ b/tools/ports/sdl2.py
+@@ -58,7 +58,7 @@ def create(final):
+     power/emscripten/SDL_syspower.c joystick/emscripten/SDL_sysjoystick.c
+     filesystem/emscripten/SDL_sysfilesystem.c timer/unix/SDL_systimer.c haptic/dummy/SDL_syshaptic.c
+     main/dummy/SDL_dummy_main.c locale/SDL_locale.c locale/emscripten/SDL_syslocale.c misc/SDL_url.c
+-    misc/dummy/SDL_sysurl.c'''.split()
++    misc/emscripten/SDL_sysurl.c'''.split()
+     thread_srcs = ['SDL_syscond.c', 'SDL_sysmutex.c', 'SDL_syssem.c', 'SDL_systhread.c', 'SDL_systls.c']
+     thread_backend = 'generic' if not settings.USE_PTHREADS else 'pthread'
+     srcs += ['thread/%s/%s' % (thread_backend, s) for s in thread_srcs]

@@ -1,0 +1,386 @@
+From 33d2935283bdf734dff5f5a2560571480f47b6b7 Mon Sep 17 00:00:00 2001
+From: kamenokonokotan <kamenokonokotan@gmail.com>
+Date: Thu, 6 Jan 2022 14:55:48 +0900
+Subject: [PATCH 01/10] import mutable globals used in Asyncify pass
+
+---
+ emcc.py        | 9 +++++++++
+ emscripten.py  | 1 +
+ src/library.js | 6 ++++++
+ 3 files changed, 16 insertions(+)
+
+diff --git a/emcc.py b/emcc.py
+index 34df446434c..e5a425d1f31 100755
+--- a/emcc.py
++++ b/emcc.py
+@@ -554,6 +554,8 @@ def get_binaryen_passes():
+     passes += ['--fpcast-emu']
+   if settings.ASYNCIFY:
+     passes += ['--asyncify']
++    if settings.MAIN_MODULE or settings.SIDE_MODULE:
++      passes += ['--pass-arg=asyncify-side-module']
+     if settings.ASSERTIONS:
+       passes += ['--pass-arg=asyncify-asserts']
+     if settings.ASYNCIFY_ADVISE:
+@@ -1854,6 +1856,13 @@ def phase_linker_setup(options, state, newargs, user_settings):
+         '__heap_base',
+         '__stack_pointer',
+     ]
++
++    if settings.ASYNCIFY:
++      settings.DEFAULT_LIBRARY_FUNCS_TO_INCLUDE += [
++        '__asyncify_state',
++        '__asyncify_data'
++      ]
++    
+     # Unconditional dependency in library_dylink.js
+     settings.REQUIRED_EXPORTS += ['setThrew']
+ 
+diff --git a/emscripten.py b/emscripten.py
+index cd0c27dc2f3..b7d1bff3994 100644
+--- a/emscripten.py
++++ b/emscripten.py
+@@ -344,6 +344,7 @@ def emscript(in_wasm, out_wasm, outfile_js, memfile):
+ 
+   if settings.ASYNCIFY:
+     exports += ['asyncify_start_unwind', 'asyncify_stop_unwind', 'asyncify_start_rewind', 'asyncify_stop_rewind']
++    metadata['globalImports'] += ['__asyncify_state', '__asyncify_data']
+ 
+   report_missing_symbols(forwarded_json['libraryFunctions'])
+ 
+diff --git a/src/library.js b/src/library.js
+index 401e17d086a..2c4d375d52e 100644
+--- a/src/library.js
++++ b/src/library.js
+@@ -3521,6 +3521,12 @@ LibraryManager.library = {
+   __c_longjmp: "new WebAssembly.Tag({'parameters': ['{{{ POINTER_TYPE }}}']})",
+   __c_longjmp_import: true,
+ #endif
++#if ASYNCIFY
++  __asyncify_state: "new WebAssembly.Global({'value': 'i32', 'mutable': true}, 0)",
++  __asyncify_state__import: true,
++  __asyncify_data: "new WebAssembly.Global({'value': 'i32', 'mutable': true}, 0)",
++  __asyncify_data__import: true,
++#endif
+ #endif
+ };
+ 
+
+From 065cb3c3aef101b8b8e249e32a44843830e5fa73 Mon Sep 17 00:00:00 2001
+From: nokotan <kamenokonokotan@gmail.com>
+Date: Sun, 23 Jan 2022 21:54:03 +0900
+Subject: [PATCH 02/10] move globals metadata modification
+
+---
+ emscripten.py | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/emscripten.py b/emscripten.py
+index b7d1bff3994..810eeb93dda 100644
+--- a/emscripten.py
++++ b/emscripten.py
+@@ -324,6 +324,9 @@ def emscript(in_wasm, out_wasm, outfile_js, memfile):
+     if settings.INITIAL_TABLE == -1:
+       settings.INITIAL_TABLE = dylink_sec.table_size + 1
+ 
++    if settings.ASYNCIFY:
++      metadata['globalImports'] += ['__asyncify_state', '__asyncify_data']
++
+   glue, forwarded_data = compile_settings()
+   if DEBUG:
+     logger.debug('  emscript: glue took %s seconds' % (time.time() - t))
+@@ -344,7 +347,6 @@ def emscript(in_wasm, out_wasm, outfile_js, memfile):
+ 
+   if settings.ASYNCIFY:
+     exports += ['asyncify_start_unwind', 'asyncify_stop_unwind', 'asyncify_start_rewind', 'asyncify_stop_rewind']
+-    metadata['globalImports'] += ['__asyncify_state', '__asyncify_data']
+ 
+   report_missing_symbols(forwarded_json['libraryFunctions'])
+ 
+
+From fc1edebd9df7e1c84e0fd7d700dd80dbf5a6e83b Mon Sep 17 00:00:00 2001
+From: kamenokonokotan <kamenokonokotan@gmail.com>
+Date: Tue, 25 Jan 2022 22:00:21 +0900
+Subject: [PATCH 03/10] Remove redundant spaces
+
+---
+ emcc.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/emcc.py b/emcc.py
+index e5a425d1f31..2c51a6d4264 100755
+--- a/emcc.py
++++ b/emcc.py
+@@ -1862,7 +1862,7 @@ def phase_linker_setup(options, state, newargs, user_settings):
+         '__asyncify_state',
+         '__asyncify_data'
+       ]
+-    
++
+     # Unconditional dependency in library_dylink.js
+     settings.REQUIRED_EXPORTS += ['setThrew']
+ 
+
+From 163609c529d31d9c6a07866ffb6f0d6a2901d8c9 Mon Sep 17 00:00:00 2001
+From: kamenokonokotan <kamenokonokotan@gmail.com>
+Date: Tue, 25 Jan 2022 22:10:36 +0900
+Subject: [PATCH 04/10] Add test_asyncify_side_module
+
+---
+ tests/test_core.py | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/tests/test_core.py b/tests/test_core.py
+index 6eeee235e5b..e004def18e6 100644
+--- a/tests/test_core.py
++++ b/tests/test_core.py
+@@ -7903,6 +7903,34 @@ def test_asyncify_indirect_lists(self, args, should_pass):
+       if should_pass:
+         raise
+ 
++  @needs_dylink
++  @no_memory64('TODO: asyncify for wasm64')
++  def test_asyncify_side_module(self):
++    self.set_setting('ASYNCIFY')
++    self.emcc_args += ['-sASYNCIFY_IMPORTS=["_Z8my_sleepi"]']
++    self.dylink_test(r'''
++      #include <stdio.h>
++      #include "header.h"
++
++      int main() {
++        my_sleep(1);     
++        return 0;
++      }
++    ''', r'''
++      #include <emscripten.h>
++      #include <stdio.h>
++      #include "header.h"
++
++      void my_sleep(int milli_seconds) {
++        // put variable onto stack
++        volatile int value = 42;
++        printf("%d ", value);
++        emscripten_sleep(milli_seconds);
++        // variable on stack in side module function should be restored.
++        printf("%d\n", value);
++      }
++    ''', '42 42', header='void my_sleep(int);')
++
+   @no_asan('asyncify stack operations confuse asan')
+   @no_memory64('TODO: asyncify for wasm64')
+   def test_emscripten_scan_registers(self):
+
+From 8066f18bf46c2d694bba624e00cb6f38c11499a5 Mon Sep 17 00:00:00 2001
+From: kamenokonokotan <kamenokonokotan@gmail.com>
+Date: Wed, 26 Jan 2022 01:29:14 +0900
+Subject: [PATCH 05/10] flake8, add EXIT_RUNTIME
+
+---
+ tests/test_core.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tests/test_core.py b/tests/test_core.py
+index e004def18e6..b30806192ab 100644
+--- a/tests/test_core.py
++++ b/tests/test_core.py
+@@ -7907,13 +7907,14 @@ def test_asyncify_indirect_lists(self, args, should_pass):
+   @no_memory64('TODO: asyncify for wasm64')
+   def test_asyncify_side_module(self):
+     self.set_setting('ASYNCIFY')
++    self.set_setting('EXIT_RUNTIME', 1)
+     self.emcc_args += ['-sASYNCIFY_IMPORTS=["_Z8my_sleepi"]']
+     self.dylink_test(r'''
+       #include <stdio.h>
+       #include "header.h"
+ 
+       int main() {
+-        my_sleep(1);     
++        my_sleep(1);
+         return 0;
+       }
+     ''', r'''
+
+From 2f451abf5fa81f6bc08a9a671d7251f630c5ea67 Mon Sep 17 00:00:00 2001
+From: kamenokonokotan <kamenokonokotan@gmail.com>
+Date: Sun, 30 Jan 2022 02:39:01 +0900
+Subject: [PATCH 06/10] add instrumentWasmExports
+
+---
+ src/library_dylink.js | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/library_dylink.js b/src/library_dylink.js
+index e71ceb1b65b..8a0a3df9469 100644
+--- a/src/library_dylink.js
++++ b/src/library_dylink.js
+@@ -583,6 +583,9 @@ var LibraryDylink = {
+         // add new entries to functionsInTableMap
+         updateTableMap(tableBase, metadata.tableSize);
+         moduleExports = relocateExports(instance.exports, memoryBase);
++#if ASYNCIFY
++        moduleExports = Asyncify.instrumentWasmExports(moduleExports);
++#endif
+         if (!flags.allowUndefined) {
+           reportUndefinedSymbols();
+         }
+
+From d09570de2e65ead70ab31f4a843ecde29512436c Mon Sep 17 00:00:00 2001
+From: kamenokonokotan <kamenokonokotan@gmail.com>
+Date: Sun, 30 Jan 2022 02:39:56 +0900
+Subject: [PATCH 07/10] add searched symbols in getDataRewindFunc
+
+---
+ src/library_async.js | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/library_async.js b/src/library_async.js
+index da09a1ae2d8..0ceb072dd37 100644
+--- a/src/library_async.js
++++ b/src/library_async.js
+@@ -205,6 +205,11 @@ mergeInto(LibraryManager.library, {
+       var id = {{{ makeGetValue('ptr', C_STRUCTS.asyncify_data_s.rewind_id, 'i32') }}};
+       var name = Asyncify.callStackIdToName[id];
+       var func = Module['asm'][name];
++#if RELOCATABLE
++      if (!func) {
++        func = Module[asmjsMangle(name)];
++      }
++#endif
+       return func;
+     },
+ 
+
+From 3a71ca6d2d93f1d933dc43b9aa34e56086a30534 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Christian=20K=C3=BCndig?= <christian@kuendig.info>
+Date: Fri, 18 Feb 2022 18:15:53 +0100
+Subject: [PATCH 08/10] Fixing dlsym for emscripten-core/emscripten#15893
+
+---
+ src/library_dylink.js | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/library_dylink.js b/src/library_dylink.js
+index 8a0a3df9469..9fca8adf488 100644
+--- a/src/library_dylink.js
++++ b/src/library_dylink.js
+@@ -965,6 +965,12 @@ var LibraryDylink = {
+ #if DYLINK_DEBUG
+       err('dlsym: ' + symbol + ' getting table slot for: ' + result);
+ #endif
++
++#if ASYNCIFY
++      if(symbol in GOT && GOT[symbol].value != 0) {
++        return GOT[symbol].value 
++      }
++#endif
+       // Insert the function into the wasm table.  If its a direct wasm function
+       // the second argument will not be needed.  If its a JS function we rely
+       // on the `sig` attribute being set based on the `<func>__sig` specified
+
+From 7e451a8df7144c6293a57c8563538d409b904fe0 Mon Sep 17 00:00:00 2001
+From: kamenokonokotan <kamenokonokotan@gmail.com>
+Date: Sun, 6 Mar 2022 00:05:00 +0900
+Subject: [PATCH 09/10] Add test case test_asyncify_dlfcn
+
+---
+ tests/test_core.py | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/tests/test_core.py b/tests/test_core.py
+index b30806192ab..0c978f39343 100644
+--- a/tests/test_core.py
++++ b/tests/test_core.py
+@@ -7932,6 +7932,39 @@ def test_asyncify_side_module(self):
+       }
+     ''', '42 42', header='void my_sleep(int);')
+ 
++  @needs_dylink
++  @no_memory64('TODO: asyncify for wasm64')
++  def test_asyncify_dlfcn(self):
++    self.set_setting('ASYNCIFY')
++    self.set_setting('EXIT_RUNTIME', 1)
++    self.emcc_args += ['-sASYNCIFY_IGNORE_INDIRECT=0']
++    self.dylink_test(r'''
++      #include <iostream>
++      #include <dlfcn.h>
++
++      typedef int (*func_t)();
++
++      int main(int argc, char **argv)
++      {
++        void *_dlHandle = dlopen("liblib.so", RTLD_NOW | RTLD_LOCAL);
++        func_t my_func = (func_t)dlsym(_dlHandle, "side_module_run");
++        printf("%d\n", my_func());
++        return 0;
++      }
++    ''', r'''
++      #include <iostream>
++      #include <emscripten/emscripten.h>
++
++      extern "C"
++      {
++        int side_module_run()
++        {
++          emscripten_sleep(1000);
++          return 42;
++        }
++      }
++    ''', '42', need_reverse=False)
++
+   @no_asan('asyncify stack operations confuse asan')
+   @no_memory64('TODO: asyncify for wasm64')
+   def test_emscripten_scan_registers(self):
+
+From 1b85abaab0186939a36207f2480cf836b096840f Mon Sep 17 00:00:00 2001
+From: kamenokonokotan <kamenokonokotan@gmail.com>
+Date: Wed, 6 Apr 2022 01:40:08 +0900
+Subject: [PATCH 10/10] Update test case
+
+---
+ tests/test_core.py | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/tests/test_core.py b/tests/test_core.py
+index 0c978f39343..7009c539f12 100644
+--- a/tests/test_core.py
++++ b/tests/test_core.py
+@@ -7914,7 +7914,9 @@ def test_asyncify_side_module(self):
+       #include "header.h"
+ 
+       int main() {
++        printf("before sleep\n");
+         my_sleep(1);
++        printf("after sleep\n");
+         return 0;
+       }
+     ''', r'''
+@@ -7925,12 +7927,12 @@ def test_asyncify_side_module(self):
+       void my_sleep(int milli_seconds) {
+         // put variable onto stack
+         volatile int value = 42;
+-        printf("%d ", value);
++        printf("%d\n", value);
+         emscripten_sleep(milli_seconds);
+         // variable on stack in side module function should be restored.
+         printf("%d\n", value);
+       }
+-    ''', '42 42', header='void my_sleep(int);')
++    ''', 'before sleep\n42\n42\nafter sleep\n', header='void my_sleep(int);')
+ 
+   @needs_dylink
+   @no_memory64('TODO: asyncify for wasm64')
+@@ -7959,11 +7961,13 @@ def test_asyncify_dlfcn(self):
+       {
+         int side_module_run()
+         {
++          printf("before sleep\n");
+           emscripten_sleep(1000);
++          printf("after sleep\n");
+           return 42;
+         }
+       }
+-    ''', '42', need_reverse=False)
++    ''', 'before sleep\nafter sleep\n42', need_reverse=False)
+ 
+   @no_asan('asyncify stack operations confuse asan')
+   @no_memory64('TODO: asyncify for wasm64')
