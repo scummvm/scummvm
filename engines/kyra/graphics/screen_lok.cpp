@@ -557,7 +557,7 @@ bool HangulFontLoK::load(Common::SeekableReadStream &data) {
 	uint32 fileSize = data.size();
 
 	if (fileSize != (kNumJongseong + kNumJungseong + kNumChoseong) * 30) {
-		warning("KoreanFontLoK::load(): Invalid font file size '%d' (expected: '%d').", fileSize, (kNumJongseong + kNumJungseong + kNumChoseong) * 30);
+		warning("HangulFontLoK::load(): Invalid font file size '%d' (expected: '%d').", fileSize, (kNumJongseong + kNumJungseong + kNumChoseong) * 30);
 		return false;
 	}
 

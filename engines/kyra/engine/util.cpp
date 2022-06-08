@@ -104,6 +104,57 @@ void Util::convertISOToDOS(char &c) {
 		c = Common::U32String(Common::String::format("%c", c), Common::kISO8859_1).encode(Common::kDos850).firstChar();
 }
 
+uint8 Util::convertKeyDOSToHAN(char &c, uint16 &dest) {
+	struct DOS2HanEntry {
+		char key;
+		uint16 hanChar;
+		uint8 flags;
+	};
+
+	static const DOS2HanEntry hanConvTable[] = {
+		{ 'A', 0x2041, 0x11 }, { 'B', 0x0741, 0x04 }, { 'C', 0x4041, 0x11 }, { 'D', 0x3441, 0x11 },
+		{ 'E', 0x1841, 0x01 }, { 'F', 0x1c41, 0x11 }, { 'G', 0x5041, 0x11 }, { 'H', 0x05a1, 0x04 },
+		{ 'I', 0x04a1, 0x02 }, { 'J', 0x04e1, 0x02 }, { 'K', 0x0461, 0x02 }, { 'L', 0x07a1, 0x02 },
+		{ 'M', 0x0761, 0x04 }, { 'N', 0x0681, 0x04 }, { 'O', 0x04c1, 0x02 }, { 'P', 0x0581, 0x02 },
+		{ 'Q', 0x2841, 0x01 }, { 'R', 0x0c41, 0x11 }, { 'S', 0x1041, 0x11 }, { 'T', 0x3041, 0x11 },
+		{ 'U', 0x0561, 0x02 }, { 'V', 0x4c41, 0x01 }, { 'W', 0x3c41, 0x01 }, { 'X', 0x4841, 0x11 },
+		{ 'Y', 0x0661, 0x04 }, { 'Z', 0x4441, 0x11 }, { 'a', 0x2041, 0x11 }, { 'b', 0x0741, 0x04 },
+		{ 'c', 0x4041, 0x11 }, { 'd', 0x3441, 0x11 }, { 'e', 0x1441, 0x11 }, { 'f', 0x1c41, 0x11 },
+		{ 'g', 0x5041, 0x11 }, { 'h', 0x05a1, 0x04 }, { 'i', 0x04a1, 0x02 }, { 'j', 0x04e1, 0x02 },
+		{ 'k', 0x0461, 0x02 }, { 'l', 0x07a1, 0x02 }, { 'm', 0x0761, 0x04 }, { 'n', 0x0681, 0x04 },
+		{ 'o', 0x0481, 0x02 }, { 'p', 0x0541, 0x02 }, { 'q', 0x2441, 0x11 }, { 'r', 0x0841, 0x11 },
+		{ 's', 0x1041, 0x11 }, { 't', 0x2c41, 0x11 }, { 'u', 0x0561, 0x02 }, { 'v', 0x4c41, 0x11 },
+		{ 'w', 0x3841, 0x11 }, { 'x', 0x4841, 0x11 }, { 'y', 0x0661, 0x04 }, { 'z', 0x4441, 0x11 }
+	};
+
+	dest = 0;
+	if (!((c >= (uint8)'A' && c <= (uint8)'Z') || (c >= (uint8)'a' && c <= (uint8)'z')))
+		return 0;
+
+	uint16 res = 0;
+	for (uint16 lml = 0, lmu = 51;lml <= lmu; ) {
+		int16 a = (lml + lmu);
+		if (a < 0)
+			++a;
+		res = a >> 1;
+		if (hanConvTable[res].key > c)
+			lmu = res - 1;
+		else
+			lml = res + 1;
+		if (hanConvTable[res].key == c)
+			break;
+	}
+
+	uint8 flags = 0;
+	if (hanConvTable[res].key == c) {
+		dest = hanConvTable[res].hanChar;
+		flags = hanConvTable[res].flags;
+	}
+
+	return flags;
+}
+
+
 Common::String Util::decodeString1(const Common::String &src) {
 	char *tmp = new char[src.size() * 2 + 2];
 	Util::decodeString1(src.c_str(), tmp);
