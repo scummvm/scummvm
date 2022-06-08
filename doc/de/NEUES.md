@@ -141,6 +141,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      EGA-Diskettenversion von Monkey Island 1 wird nun korrekt erkannt und zurückgewiesen, da
      das enthaltene Abbild von DISK4 defekt ist. Es ist möglich, ein funktionierendes Image
      anhand der bereitgestellten KryoFlux-Dumps zu erzeugen.
+   - Fehlerhafter Zufallsgenerator in Backyard Baseball korrigiert.
 
  Sherlock:
    - Fehler in der Wiedergabegeschwindigkeit im Intro von Serrated Scalpel behoben, der auftritt,
