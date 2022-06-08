@@ -451,7 +451,7 @@ void KyraEngine_LoK::startup() {
 			saveGameStateIntern(0, "New game", nullptr);
 		}
 	} else {
-		_screen->setFont(_defaultFont);;
+		_screen->setFont(_defaultFont);
 		_screen->_lineSpacing = _defaultLineSpacing;
 		loadGameStateCheck(_gameToLoad);
 		_gameToLoad = -1;

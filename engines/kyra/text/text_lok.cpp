@@ -285,7 +285,7 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int16 charN
 	yPos -= lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
 
 	_text->_talkMessageY = (_flags.lang == Common::ZH_TWN) ? CLIP<int>(yPos, 10, 80) : CLIP<int>(yPos, 11, 100);
-	_text->_talkMessageH = lineNum * (_screen->getFontHeight() + _screen->_lineSpacing) + _text->_langExtraSpacing;;
+	_text->_talkMessageH = lineNum * (_screen->getFontHeight() + _screen->_lineSpacing) + _text->_langExtraSpacing;
 
 	const bool printText = textEnabled();
 

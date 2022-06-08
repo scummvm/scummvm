@@ -203,12 +203,12 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 		w = MIN<int>(w, 302);
 	}
 
-	int top = y - lineCount * (_screen->getFontHeight() + _screen->_lineSpacing) - _langExtraSpacing;;
+	int top = y - lineCount * (_screen->getFontHeight() + _screen->_lineSpacing) - _langExtraSpacing;
 	if (top < marginTop)
 		top = marginTop;
 
 	_talkMessageY = top;
-	_talkMessageH = lineCount * (_screen->getFontHeight() + _screen->_lineSpacing) + _langExtraSpacing;;
+	_talkMessageH = lineCount * (_screen->getFontHeight() + _screen->_lineSpacing) + _langExtraSpacing;
 	
 	int x1 = 12;
 	int x2 = Screen::SCREEN_W - 12;
