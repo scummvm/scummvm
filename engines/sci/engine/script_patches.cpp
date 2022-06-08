@@ -184,6 +184,8 @@ static const char *const selectorNameTable[] = {
 	"setHeading",   // KQ7
 	"setScale",     // LSL6hires, QFG4
 	"setScaler",    // LSL6hires, QFG4
+	"showTitle",    // LSL6hires
+	"name",         // LSL6hires
 	"oSpecialSync", // LSL7
 	"readWord",     // LSL7, Phant1, Torin
 	"points",       // PQ4
@@ -319,6 +321,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setHeading,
 	SELECTOR_setScale,
 	SELECTOR_setScaler,
+	SELECTOR_showTitle,
+	SELECTOR_name,
 	SELECTOR_oSpecialSync,
 	SELECTOR_readWord,
 	SELECTOR_points,
@@ -575,7 +579,7 @@ static const uint16 sci01SpeedTestGlobalSignature[] = {
 	0x36,                               // push
 	0x35, 0x01,                         // ldi 01
 	0x1a,                               // eq?
-	SIG_END                            // bnt [ skip initialization ]
+	SIG_END                             // bnt [ skip initialization ]
 };
 
 static const uint16 sci01SpeedTestGlobalPatch[] = {
@@ -592,7 +596,7 @@ static const uint16 sci01SpeedTestLocalSignature[] = {
 	0x36,                               // push
 	0x35, 0x01,                         // ldi 01
 	0x1a,                               // eq?
-	SIG_END                            // bnt [ skip initialization ]
+	SIG_END                             // bnt [ skip initialization ]
 };
 
 static const uint16 sci01SpeedTestLocalPatch[] = {
@@ -8453,6 +8457,53 @@ static const uint16 larry6HiresGuardDelayPatch2[] = {
 	PATCH_END
 };
 
+// When using the phone with text enabled, dialing certain combinations crashes.
+//  This is due to a bug introduced when script 610 was altered for the hi-res
+//  version. The showTitle property of the phone's talker is only supposed to be
+//  set when talking to someone with a name, but now showTitle is never cleared.
+//  The operator is the one voice without a name, so talking to someone else
+//  first leaves these properties out of sync. Talking to the operator in this
+//  state causes Print:addTitle to attempt to duplicate the null name string.
+//
+// We fix this by clearing the phone talker's showTitle property when the name
+//  property is cleared. This keeps both properties in sync as before.
+//
+// Applies to: All versions
+// Responsible method: Export 2 of script 610
+// Fixes bug: #13554
+static const uint16 larry6HiresPhoneOperatorSignature[] = {
+	0x39, SIG_SELECTOR8(name),          // pushi name
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa talker
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ talker name? ]
+	0x31, SIG_MAGICDWORD, 0x1a,         // bnt 1a  [ skip if no name ]
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x39, SIG_SELECTOR8(name),          // pushi name
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa talker
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ talker name? ]
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ name dispose: ]
+	0x39, SIG_SELECTOR8(name),          // pushi name
+	0x78,                               // push1
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa talker
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ talker name: 0 ]
+	SIG_END
+};
+
+static const uint16 larry6HiresPhoneOperatorPatch[] = {
+	PATCH_ADDTOOFFSET(+15),
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ name dispose: ]
+	0x38, PATCH_SELECTOR16(showTitle),  // pushi showTitle
+	0x78,                               // push1
+	0x76,                               // push0
+	0x33, 0x02,                         // jmp 02
+	PATCH_ADDTOOFFSET(+9),
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ talker showTitle: 0 name: 0 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,     0, "disable mac volume restore",                  1, larry6HiresMacVolumeRestoreSignature, larry6HiresMacVolumeRestorePatch },
@@ -8461,6 +8512,7 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,               sci2BenchmarkPatch },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
 	{  true,   330, "fix whale oil lamp lockup",                   1, larry6HiresWhaleOilLampSignature,     larry6HiresWhaleOilLampPatch },
+	{  true,   610, "phone operator crash",                        1, larry6HiresPhoneOperatorSignature,    larry6HiresPhoneOperatorPatch },
 	{  true,   850, "guard delay (1/2)",                           1, larry6HiresGuardDelaySignature1,      larry6HiresGuardDelayPatch1 },
 	{  true,   850, "guard delay (2/2)",                           1, larry6HiresGuardDelaySignature2,      larry6HiresGuardDelayPatch2 },
 	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
