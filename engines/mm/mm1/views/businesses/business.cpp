@@ -31,6 +31,24 @@ Business::Business(const Common::String &name) : TextView(name) {
 	_bounds = getLineBounds(17, 24);
 }
 
+void Business::drawInitial() {
+	clearSurface();
+	writeString(0, 0, g_globals->_currCharacter->_name);
+	newLine();
+	writeString(STRING["dialogs.business.gold"]);
+	writeNumber(g_globals->_currCharacter->_gold);
+	newLine();
+	newLine();
+	writeString(_modeString);
+	writeString(0, 6, STRING["dialogs.misc.go_back"]);
+}
+
+void Business::newLine() {
+	_textPos.x = 0;
+	if (++_textPos.y >= 24)
+		_textPos.y = 0;
+}
+
 } // namespace Businesses
 } // namespace Views
 } // namespace MM1

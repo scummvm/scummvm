@@ -30,6 +30,19 @@ namespace Views {
 namespace Businesses {
 
 class Business : public TextView {
+protected:
+	Common::String _modeString;
+protected:
+	/**
+	 * Draws the initial display for the business
+	 */
+	void drawInitial();
+
+	/**
+	 * Move text position to the next line
+	 */
+	void newLine();
+
 public:
 	Business(const Common::String &name);
 	virtual ~Business() {}

@@ -37,13 +37,18 @@ TextView::TextView(const Common::String &name, UIElement *owner) :
 }
 
 void TextView::writeChar(char c) {
-	Graphics::ManagedSurface s = getSurface();
-	g_globals->_font.drawChar(&s, c,
-		_textPos.x * FONT_SIZE, _textPos.y * FONT_SIZE, 0xff);
-
-	if (++_textPos.x == TEXT_W) {
+	if (c == '\r' || c == '\n') {
 		_textPos.x = 0;
-		++_textPos.y;
+		_textPos.y++;
+	} else {
+		Graphics::ManagedSurface s = getSurface();
+		g_globals->_font.drawChar(&s, c,
+			_textPos.x * FONT_SIZE, _textPos.y * FONT_SIZE, 0xff);
+
+		if (++_textPos.x == TEXT_W) {
+			_textPos.x = 0;
+			++_textPos.y;
+		}
 	}
 }
 

@@ -1,4 +1,9 @@
 dialogs:
+	business:
+		gold: "GOLD= "
+		buy: "'A'-'F' TO BUY\r(- = CANT USE)"
+		sell: "'A'-'F' TO SELL"
+		gather: "'G' GATHER GOLD\r'#' OTHER CHAR"
 	create_characters:
 		title: "CREATE NEW CHARACTERS"
 		intellect: "INTELLECT...="
