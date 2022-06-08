@@ -21,15 +21,82 @@
 
 #include "common/endian.h"
 #include "common/stream.h"
-#include "mm/mm1/maps/maps.h"
+#include "common/system.h"
+#include "mm/mm1/events.h"
 #include "mm/mm1/gfx/dta.h"
 #include "mm/mm1/gfx/screen_decoder.h"
-#include "mm/mm1/events.h"
-#include "common/system.h"
+#include "mm/mm1/maps/maps.h"
+#include "mm/mm1/maps/map00.h"
 
 namespace MM {
 namespace MM1 {
 namespace Maps {
+
+Maps *g_maps;
+
+/** PLACEHOLDER MAPS **/
+#define PLACEHOLDER(SUFFIX, INDEX, NAME, ID) \
+	class Map##SUFFIX : public Map { \
+	public: \
+		Map##SUFFIX() : Map(INDEX, NAME, ID) {} \
+		void special() override {} \
+	}
+
+PLACEHOLDER(01, 1, "portsmit", 0xC03);
+PLACEHOLDER(02, 2, "algary", 0x203);
+PLACEHOLDER(03, 3, "dusk", 0x802);
+PLACEHOLDER(04, 4, "erliquin", 0x0B1A);
+PLACEHOLDER(05, 5, "cave1", 0x0A11);
+PLACEHOLDER(06, 6, "cave2", 0x1);
+PLACEHOLDER(07, 7, "cave3", 0xC01);
+PLACEHOLDER(08, 8, "cave4", 0x202);
+PLACEHOLDER(09, 9, "cave5", 0x5);
+PLACEHOLDER(10, 10, "cave6", 0x51B);
+PLACEHOLDER(11, 11, "cave7", 0x212);
+PLACEHOLDER(12, 12, "cave8", 0x601);
+PLACEHOLDER(13, 13, "cave9", 0xA00);
+PLACEHOLDER(14, 14, "areaa1", 0xF01);
+PLACEHOLDER(15, 15, "areaa2", 0x502);
+PLACEHOLDER(16, 16, "areaa3", 0xB02);
+PLACEHOLDER(17, 17, "areaa4", 0x103);
+PLACEHOLDER(18, 18, "areab1", 0xA00);
+PLACEHOLDER(19, 19, "areab2", 0x703);
+PLACEHOLDER(20, 20, "areab3", 0x101);
+PLACEHOLDER(21, 21, "areab4", 0xD03);
+PLACEHOLDER(22, 22, "areac1", 0x304);
+PLACEHOLDER(23, 23, "areac2", 0xA11);
+PLACEHOLDER(24, 24, "areac3", 0x904);
+PLACEHOLDER(25, 25, "areac4", 0xF04);
+PLACEHOLDER(26, 26, "aread1", 0x505);
+PLACEHOLDER(27, 27, "aread2", 0xB05);
+PLACEHOLDER(28, 28, "aread3", 0x106);
+PLACEHOLDER(29, 29, "aread4", 0x801);
+PLACEHOLDER(30, 30, "areae1", 0x112);
+PLACEHOLDER(31, 31, "areae2", 0x706);
+PLACEHOLDER(32, 32, "areae3", 0xB1A);
+PLACEHOLDER(33, 33, "areae4", 0x11B);
+PLACEHOLDER(34, 34, "doom", 0x706);
+PLACEHOLDER(35, 35, "blackrn", 0xF08);
+PLACEHOLDER(36, 36, "blackrs", 0x508);
+PLACEHOLDER(37, 37, "qvl1", 0xF03);
+PLACEHOLDER(38, 38, "qvl2", 0x703);
+PLACEHOLDER(39, 39, "rwl1", 0xF02);
+PLACEHOLDER(40, 40, "rwl2", 0x702);
+PLACEHOLDER(41, 41, "enf1", 0xF04);
+PLACEHOLDER(42, 42, "enf2", 0x704);
+PLACEHOLDER(43, 43, "whitew", 0xA11);
+PLACEHOLDER(44, 44, "dragad", 0x107);
+PLACEHOLDER(45, 45, "udrag1", 0xF05);
+PLACEHOLDER(46, 46, "udrag2", 0xA00);
+PLACEHOLDER(47, 47, "udrag3", 0x705);
+PLACEHOLDER(48, 48, "demon", 0x412);
+PLACEHOLDER(49, 49, "alamar", 0xB07);
+PLACEHOLDER(50, 50, "pp1", 0xF01);
+PLACEHOLDER(51, 51, "pp2", 0x701);
+PLACEHOLDER(52, 52, "pp3", 0xE00);
+PLACEHOLDER(53, 53, "pp4", 0x201);
+PLACEHOLDER(54, 54, "astral", 0xB1A);
+#undef PLACEHOLDER
 
 static const byte LOOKUPS_START[4] = { 0, 0, 14, 34 };
 static const byte COLOR_OFFSET[55] = {
@@ -62,22 +129,71 @@ static const uint16 TILE_HEIGHTS[RESOURCE_TILES_COUNT] = {
 };
 
 
-Maps::Maps() :
-		_map00(this), _map01(this), _map02(this), _map03(this),
-		_map04(this), _map05(this), _map06(this), _map07(this),
-		_map08(this), _map09(this), _map10(this), _map11(this),
-		_map12(this), _map13(this), _map14(this), _map15(this),
-		_map16(this), _map17(this), _map18(this), _map19(this),
-		_map20(this), _map21(this), _map22(this), _map23(this),
-		_map24(this), _map25(this), _map26(this), _map27(this),
-		_map28(this), _map29(this), _map30(this), _map31(this),
-		_map32(this), _map33(this), _map34(this), _map35(this),
-		_map36(this), _map37(this), _map38(this), _map39(this),
-		_map40(this), _map41(this), _map42(this), _map43(this),
-		_map44(this), _map45(this), _map46(this), _map47(this),
-		_map48(this), _map49(this), _map50(this), _map51(this),
-		_map52(this), _map53(this), _map54(this) {
+Maps::Maps() {
+	g_maps = this;
 	Common::fill(&_data1[0], &_data1[32], 0);
+
+	_maps.push_back(new Map00());
+	_maps.push_back(new Map01());
+	_maps.push_back(new Map02());
+	_maps.push_back(new Map03());
+	_maps.push_back(new Map04());
+	_maps.push_back(new Map05());
+	_maps.push_back(new Map06());
+	_maps.push_back(new Map07());
+	_maps.push_back(new Map08());
+	_maps.push_back(new Map09());
+	_maps.push_back(new Map10());
+	_maps.push_back(new Map11());
+	_maps.push_back(new Map12());
+	_maps.push_back(new Map13());
+	_maps.push_back(new Map14());
+	_maps.push_back(new Map15());
+	_maps.push_back(new Map16());
+	_maps.push_back(new Map17());
+	_maps.push_back(new Map18());
+	_maps.push_back(new Map19());
+	_maps.push_back(new Map20());
+	_maps.push_back(new Map21());
+	_maps.push_back(new Map22());
+	_maps.push_back(new Map23());
+	_maps.push_back(new Map24());
+	_maps.push_back(new Map25());
+	_maps.push_back(new Map26());
+	_maps.push_back(new Map27());
+	_maps.push_back(new Map28());
+	_maps.push_back(new Map29());
+	_maps.push_back(new Map30());
+	_maps.push_back(new Map31());
+	_maps.push_back(new Map32());
+	_maps.push_back(new Map33());
+	_maps.push_back(new Map34());
+	_maps.push_back(new Map35());
+	_maps.push_back(new Map36());
+	_maps.push_back(new Map37());
+	_maps.push_back(new Map38());
+	_maps.push_back(new Map39());
+	_maps.push_back(new Map40());
+	_maps.push_back(new Map41());
+	_maps.push_back(new Map42());
+	_maps.push_back(new Map43());
+	_maps.push_back(new Map44());
+	_maps.push_back(new Map45());
+	_maps.push_back(new Map46());
+	_maps.push_back(new Map47());
+	_maps.push_back(new Map48());
+	_maps.push_back(new Map49());
+	_maps.push_back(new Map50());
+	_maps.push_back(new Map51());
+	_maps.push_back(new Map52());
+	_maps.push_back(new Map53());
+	_maps.push_back(new Map54());
+}
+
+Maps::~Maps() {
+	for (uint i = 0; i < _maps.size(); ++i)
+		delete _maps[i];
+	g_maps = nullptr;
 }
 
 void Maps::load(uint mapId) {

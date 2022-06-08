@@ -30,14 +30,12 @@ namespace MM1 {
 namespace Maps {
 
 void Map00::special() {
-	Maps &maps = g_globals->_maps;
-
 	// Scan for special actions on the map cell
 	for (uint i = 0; i < _data[50]; ++i) {
-		if (maps._mapOffset == _data[51 + i]) {
+		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (maps._forwardMask & _data[75 + i]) {
+			if (g_maps->_forwardMask & _data[75 + i]) {
 				// TODO: Some extra message code
 				(this->*SPECIAL_FN[i])();
 			} else {
@@ -48,20 +46,19 @@ void Map00::special() {
 	}
 
 	// All other cells on the map are encounters
-	maps.clearSpecial();
+	g_maps->clearSpecial();
 	g_events->addView("Encounter");
 }
 
 void Map00::special00() { warning("special00"); }
 
 void Map00::special01() {
-	Maps &maps = g_globals->_maps;
 	Sound::sound(SOUND_2);
 
 	Common::String line2;
 	int x = 5;
 
-	switch (maps._forwardMask) {
+	switch (g_maps->_forwardMask) {
 	case DIRMASK_E:
 		line2 = STRING["maps.map00.eulards"];
 		x = 6;

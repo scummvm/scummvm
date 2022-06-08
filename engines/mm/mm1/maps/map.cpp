@@ -29,9 +29,8 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-Map::Map(Maps *owner, const Common::String &name, uint16 id) :
-		_name(name), _id(id) {
-	_mapId = owner->addMap(this);
+Map::Map(uint index, const Common::String &name, uint16 id) :
+		_mapIndex(index), _name(name), _id(id) {
 	Common::fill((byte *)&_walls[0], (byte *)&_walls[MAP_SIZE], 0);
 	Common::fill(&_states[0], (byte *)&_states[MAP_SIZE], 0);
 }
@@ -46,7 +45,7 @@ void Map::loadMazeData() {
 	if (!f.open("mazedata.dta"))
 		error("Could not open mazedata.dta");
 
-	f.seek(512 * _mapId);
+	f.seek(512 * _mapIndex);
 	f.read((byte *)_walls, MAP_SIZE);
 	f.read(_states, MAP_SIZE);
 	f.close();
