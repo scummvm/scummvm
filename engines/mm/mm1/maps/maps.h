@@ -141,6 +141,12 @@ public:
 	void step(const Common::Point &delta);
 
 	/**
+	 * Called when a map is left to load a new one
+	 * and trigger the 3d view to update
+	 */
+	void changeMap(uint16 id, byte section);
+
+	/**
 	 * Disables the special state of the current cell
 	 * This is primiarily used for disabling cells
 	 * that trigger combat after the first time

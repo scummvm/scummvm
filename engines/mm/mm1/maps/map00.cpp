@@ -95,7 +95,10 @@ void Map00::special04() {
 	Sound::sound(SOUND_2);
 	g_events->msgInfo(InfoMessage(
 		STRING["maps.map00.passage_outside"],
-		[]() { g_maps->select(0xa11, 2); }
+		[]() {
+			g_maps->_mapPos = Common::Point(10, 10);
+			g_maps->changeMap(0xa11, 2);
+		}
 	));
 }
 

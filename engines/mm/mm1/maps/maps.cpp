@@ -289,7 +289,7 @@ void Maps::town4setup() {
 }
 
 uint Maps::getIndex(uint16 id, byte section) {
-	uint idx = LOOKUPS_START[section / 2];
+	uint idx = LOOKUPS_START[section];
 
 	// Find map by Id
 	for (; id != _maps[idx]->getId(); ++idx) {
@@ -407,9 +407,15 @@ void Maps::step(const Common::Point &delta) {
 		return;
 	}
 
+	changeMap(id, section);
+}
+
+void Maps::changeMap(uint16 id, byte section) {
 	// At this point, a new map is being entered
 	select(id, section);
 	loadTiles();
+
+	g_events->msgGame(GameMessage("UPDATE"));
 }
 
 void Maps::clearSpecial() {
