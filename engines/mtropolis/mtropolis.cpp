@@ -555,15 +555,8 @@ Common::Error MTropolisEngine::run() {
 	}
 #endif
 
-	bool paused = false;
-
 	while (!shouldQuit()) {
 		handleEvents();
-
-#ifdef MTROPOLIS_DEBUG_ENABLE
-		if (_runtime->debugGetDebugger())
-			paused = _runtime->debugGetDebugger()->isPaused();
-#endif
 
 		if (!_runtime->runFrame())
 			break;

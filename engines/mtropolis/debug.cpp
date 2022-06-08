@@ -974,14 +974,12 @@ DebugInspectorWindow::DebugInspectorWindow(Debugger *debugger, const WindowParam
 void DebugInspectorWindow::update() {
 	const Common::SharedPtr<DebugInspector> inspector = _debugger->getInspector();
 
-	bool inspectorChanged = false;
 	if (inspector != _inspector) {
 		_maxLabelWidth = 0;
 		_labeledRow.clear();
 		_unlabeledRow.clear();
 
 		_inspector = inspector;
-		inspectorChanged = true;
 		setDirty();
 	}
 
