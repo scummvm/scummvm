@@ -37,6 +37,7 @@ class ViewBase : public Views::TextView {
 protected:
 	bool _isDark = false;
 	Common::String _dialogMessage;
+	int _businessDisplay = -1;
 	byte _arr2[8];
 	bool _stepRandom = false;
 	bool _encounterFlag = false;
@@ -87,6 +88,7 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
+	bool msgBusiness(const BusinessMessage &msg) override;
 
 	/**
 	 * Updates game state

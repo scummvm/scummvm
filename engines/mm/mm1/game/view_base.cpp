@@ -100,6 +100,12 @@ bool ViewBase::msgAction(const ActionMessage &msg) {
 	return true;
 }
 
+bool ViewBase::msgBusiness(const BusinessMessage &msg) {
+	_businessDisplay = msg._value;
+	draw();
+	return true;
+}
+
 bool ViewBase::msgFocus(const FocusMessage &msg) {
 	return false;
 }

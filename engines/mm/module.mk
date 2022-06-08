@@ -33,6 +33,7 @@ MODULE_OBJS := \
 	mm1/views/order.o \
 	mm1/views/protect.o \
 	mm1/views/quick_ref.o \
+	mm1/views/tavern.o \
 	mm1/views/title.o \
 	mm1/views/text_view.o \
 	mm1/views/view_characters.o \
