@@ -78,6 +78,7 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		_playerFrames[i]->free();
 		delete _playerFrames[i];
 	}
+	_playerFrames.clear();
 
 
 	if (_health <= 0) {
@@ -142,7 +143,8 @@ void BoyzEngine::drawCursorArcade(const Common::Point &mousePos) {
 
 void BoyzEngine::drawPlayer() {
 	updateFromScript();
-	drawImage(_portrait[_currentActor], 0, 200 - _portrait[_currentActor].h, true);
+	if (_arcadeMode != "YS")
+		drawImage(_portrait[_currentActor], 0, 200 - _portrait[_currentActor].h, true);
 }
 
 void BoyzEngine::drawHealth() {
