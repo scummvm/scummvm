@@ -2362,7 +2362,7 @@ public:
 	bool isDirty() const;
 	void clearDirty();
 
-	VisualElementRenderProperties &operator=(const VisualElementRenderProperties &other);
+	//VisualElementRenderProperties &operator=(const VisualElementRenderProperties &other);
 
 private:
 	InkMode _inkMode;

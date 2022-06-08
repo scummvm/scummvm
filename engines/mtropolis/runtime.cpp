@@ -6588,6 +6588,7 @@ void VisualElementRenderProperties::clearDirty() {
 	_isDirty = false;
 }
 
+/*
 VisualElementRenderProperties &VisualElementRenderProperties::operator=(const VisualElementRenderProperties &other) {
 	_inkMode = other._inkMode;
 	_shape = other._shape;
@@ -6604,6 +6605,7 @@ VisualElementRenderProperties &VisualElementRenderProperties::operator=(const Vi
 
 	return *this;
 }
+*/
 
 VisualElement::VisualElement()
 	: _rect(0, 0, 0, 0), _cachedAbsoluteOrigin(Common::Point(0, 0))
