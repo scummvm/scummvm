@@ -19,25 +19,23 @@
  *
  */
 
-#ifndef MM1_VIEWS_TAVERN_H
-#define MM1_VIEWS_TAVERN_H
+#ifndef MM1_VIEWS_BUSINESSES_BUSINESS_H
+#define MM1_VIEWS_BUSINESSES_BUSINESS_H
 
 #include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
+namespace Businesses {
 
-class Tavern : public TextView {
+class Business : public TextView {
 public:
-	Tavern();
-	virtual ~Tavern() {}
-
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	void draw() override;
+	Business(const Common::String &name);
+	virtual ~Business() {}
 };
 
+} // namespace Businesses
 } // namespace Views
 } // namespace MM1
 } // namespace MM

@@ -19,47 +19,32 @@
  *
  */
 
-#ifndef MM1_VIEWS_DIALOGS_H
-#define MM1_VIEWS_DIALOGS_H
-
-#include "mm/mm1/events.h"
-#include "mm/mm1/views/are_you_ready.h"
-#include "mm/mm1/views/create_characters.h"
-#include "mm/mm1/views/game.h"
-#include "mm/mm1/views/inn.h"
-#include "mm/mm1/views/main_menu.h"
-#include "mm/mm1/views/order.h"
-#include "mm/mm1/views/protect.h"
-#include "mm/mm1/views/quick_ref.h"
-#include "mm/mm1/views/title.h"
-#include "mm/mm1/views/view_characters.h"
 #include "mm/mm1/views/businesses/tavern.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
+namespace Businesses {
 
-struct Dialogs {
-private:
-	Views::AreYouReady _areYouReady;
-	Views::CreateCharacters _createCharacters;
-	Views::Game _game;
-	Views::Inn _inn;
-	Views::MainMenu _mainMenu;
-	Views::Order _order;
-	Views::Protect _protect;
-	Views::QuickRef _quickRef;
-	Views::Title _title;
-	Views::ViewCharacters _viewCharacters;
-	Views::ViewCharacter _viewCharacter;
-	Views::Businesses::Tavern _tavern;
+Tavern::Tavern() : Business("Tavern") {
+}
 
-public:
-	Dialogs() {}
-};
+bool Tavern::msgFocus(const FocusMessage &msg) {
+	g_events->msgBusiness(BusinessMessage(4));
+	g_globals->_currCharacter = &g_globals->_party[0];
+	return true;
+}
 
+bool Tavern::msgKeypress(const KeypressMessage &msg) {
+	return true;
+}
+
+void Tavern::draw() {
+
+}
+
+} // namespace Businesses
 } // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif
