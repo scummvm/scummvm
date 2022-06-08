@@ -28,7 +28,7 @@
 namespace MTropolis {
 
 struct ModifierLoaderContext {
-	explicit ModifierLoaderContext(ChildLoaderStack *childLoaderStack);
+	explicit ModifierLoaderContext(ChildLoaderStack *mlc_childLoaderStack);
 
 	ChildLoaderStack *childLoaderStack;
 };
@@ -46,7 +46,7 @@ struct IPlugInModifierFactoryAndDataFactory : public IPlugInModifierFactory, pub
 
 // Helper classes for plug-in modifier loaders
 struct PlugInModifierLoaderContext {
-	PlugInModifierLoaderContext(ModifierLoaderContext &modifierLoaderContext, const Data::PlugInModifier &plugInModifierData, PlugIn *plugIn);
+	PlugInModifierLoaderContext(ModifierLoaderContext &pmlc_modifierLoaderContext, const Data::PlugInModifier &pmlc_plugInModifierData, PlugIn *pmlc_plugIn);
 
 	ModifierLoaderContext &modifierLoaderContext;
 	const Data::PlugInModifier &plugInModifierData;

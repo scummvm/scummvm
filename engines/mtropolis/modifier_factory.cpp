@@ -24,10 +24,10 @@
 
 namespace MTropolis {
 
-ModifierLoaderContext::ModifierLoaderContext(ChildLoaderStack *childLoaderStack) : childLoaderStack(childLoaderStack) {}
+ModifierLoaderContext::ModifierLoaderContext(ChildLoaderStack *mlc_childLoaderStack) : childLoaderStack(mlc_childLoaderStack) {}
 
-PlugInModifierLoaderContext::PlugInModifierLoaderContext(ModifierLoaderContext &modifierLoaderContext, const Data::PlugInModifier &plugInModifierData, PlugIn *plugIn)
-	: modifierLoaderContext(modifierLoaderContext), plugInModifierData(plugInModifierData), plugIn(plugIn) {
+PlugInModifierLoaderContext::PlugInModifierLoaderContext(ModifierLoaderContext &pmlc_modifierLoaderContext, const Data::PlugInModifier &pmlc_plugInModifierData, PlugIn *pmlc_plugIn)
+	: modifierLoaderContext(pmlc_modifierLoaderContext), plugInModifierData(pmlc_plugInModifierData), plugIn(pmlc_plugIn) {
 }
 
 template<typename TModifier, typename TModifierData>
