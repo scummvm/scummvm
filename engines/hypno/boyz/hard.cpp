@@ -40,6 +40,8 @@ void BoyzEngine::runCode(Code *code) {
 		runCheckC3(code);
 	else if (code->name == "<check_ho>")
 		runCheckHo(code);
+	else if (code->name == "<check_c5>")
+		runCheckC5(code);
 	else if (code->name == "<credits>")
 		endCredits(code);
 	else
@@ -267,6 +269,22 @@ void BoyzEngine::runRetryMenu(Code *code) {
 	menu->free();
 	delete menu;
 }
+
+void BoyzEngine::runCheckC5(Code *code) {
+	Common::String nextLevel;
+	if (_sceneState["GS_SEQ_51"] &&
+		_sceneState["GS_SEQ_52"] &&\
+		_sceneState["GS_SEQ_53"]) {
+		nextLevel = "c54.mi_";
+	}
+
+	if (nextLevel.empty())
+		nextLevel = "<select_c5>";
+
+	_nextLevel = nextLevel;
+	saveProfile(_name, 531);
+}
+
 
 void BoyzEngine::runCheckC3(Code *code) {
 	Common::String nextLevel;

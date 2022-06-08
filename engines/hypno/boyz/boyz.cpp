@@ -46,6 +46,17 @@ static const chapterEntry rawChapterTable[] = {
 	{3592, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
 	{36, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
 	{41, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{42, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{51, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{52, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{53, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{531, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{54, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{55, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{56, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{57, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{58, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
+	{59, {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor},
 	{0,  {0, 0}, {0, 0}, {0, 0}, {0, 0}, 0, kHypnoNoColor}
 };
 
@@ -225,9 +236,9 @@ void BoyzEngine::loadAssets() {
 	loadArcadeLevel("c41.mi_", "c42.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c42.mi_", "<select_c5>", "<retry_menu>", "");
 
-	loadArcadeLevel("c51.mi_", "<select_c5>", "<retry_menu>", "");
-	loadArcadeLevel("c52.mi_", "<select_c5>", "<retry_menu>", "");
-	loadArcadeLevel("c53.mi_", "<select_c5>", "<retry_menu>", "");
+	loadArcadeLevel("c51.mi_", "<check_c5>", "<retry_menu>", "");
+	loadArcadeLevel("c52.mi_", "<check_c5>", "<retry_menu>", "");
+	loadArcadeLevel("c53.mi_", "<check_c5>", "<retry_menu>", "");
 	loadArcadeLevel("c54.mi_", "c55.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c55.mi_", "c56.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c56.mi_", "c57.mi_", "<retry_menu>", "");
@@ -376,6 +387,9 @@ void BoyzEngine::loadAssets() {
 
 	Code *check_ho = new Code("<check_ho>");
 	_levels["<check_ho>"] = check_ho;
+
+	Code *check_c5 = new Code("<check_c5>");
+	_levels["<check_c5>"] = check_c5;
 
 	loadSceneLevel(selectC5, "<select_c5>", "", "");
 	sc = (Scene *) _levels["<select_c5>"];
@@ -961,7 +975,7 @@ Common::Error BoyzEngine::saveGameStream(Common::WriteStream *stream, bool isAut
 	if (isAutosave)
 		return Common::kNoError;
 
-	if (_lastLevel < 0 || _lastLevel >= 20)
+	if (_lastLevel < 0 || _lastLevel >= 30)
 		error("Invalid last level!");
 
 	stream->writeString(_name);
@@ -996,6 +1010,8 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		_nextLevel = "<select_c3>";
 	else if (_ids[_lastLevel] == 3592)
 		_nextLevel = "<select_ho>";
+	else if (_ids[_lastLevel] == 531)
+		_nextLevel = "<select_c5>";
 	else
 		_nextLevel = Common::String::format("c%d.mi_", _ids[_lastLevel]);
 	return Common::kNoError;
