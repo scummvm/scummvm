@@ -40,6 +40,10 @@ Maps *g_maps;
 	public: \
 		Map##SUFFIX() : Map(INDEX, NAME, ID) {} \
 		void special() override {} \
+		void load() override { \
+			Map::load(); \
+			warning("TODO: Map not implemented yet"); \
+		} \
 	}
 
 PLACEHOLDER(01, 1, "portsmit", 0xC03);

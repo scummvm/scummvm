@@ -78,8 +78,27 @@ void Map00::special01() {
 }
 
 void Map00::special02() { warning("special02"); }
-void Map00::special03() { warning("special03"); }
-void Map00::special04() { warning("special04"); }
+
+void Map00::special03() {
+	/*
+	Sound::sound(SOUND_2);
+	g_events->msgInfo(InfoMessage(
+		STRING["maps.map00.food"],
+		[]() {
+
+		}
+	));
+	*/
+}
+
+void Map00::special04() {
+	Sound::sound(SOUND_2);
+	g_events->msgInfo(InfoMessage(
+		STRING["maps.map00.passage_outside"],
+		[]() { g_maps->select(0xa11, 2); }
+	));
+}
+
 void Map00::special05() { warning("special05"); }
 void Map00::special06() { warning("special06"); }
 void Map00::special07() { warning("special07"); }

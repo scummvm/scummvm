@@ -32,12 +32,14 @@ namespace Views {
 class GameMessages : public TextView {
 private:
 	Common::Array<InfoMessage::Line> _lines;
+	YNCallback _ynCallback = nullptr;
 public:
 	GameMessages(UIElement *owner);
 	virtual ~GameMessages() {}
 
 	void draw() override;
 	bool msgInfo(const InfoMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Views

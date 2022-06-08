@@ -101,7 +101,6 @@ bool ViewBase::msgAction(const ActionMessage &msg) {
 }
 
 bool ViewBase::msgFocus(const FocusMessage &msg) {
-	update();
 	return false;
 }
 

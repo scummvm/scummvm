@@ -51,9 +51,34 @@ void GameMessages::draw() {
 }
 
 bool GameMessages::msgInfo(const InfoMessage &msg) {
+	if (msg._ynCallback) {
+		// Do a first draw to show 3d view at new position
+		g_events->redraw();
+		g_events->drawElements();
+
+		addView(this);
+	}
+
 	_lines = msg._lines;
+	_ynCallback = msg._ynCallback;
+
 	redraw();
 	return true;
+}
+
+bool GameMessages::msgKeypress(const KeypressMessage &msg) {
+	if (g_events->focusedView() == this) {
+		if (msg.keycode == Common::KEYCODE_n) {
+			close();
+		} else if (msg.keycode == Common::KEYCODE_y) {
+			close();
+			_ynCallback();
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 } // namespace Views

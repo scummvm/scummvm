@@ -53,7 +53,7 @@ struct GameMessage : public Message {
 		_name(name) {}
 };
 
-typedef bool (*InfoKeyCallback)(const Common::KeyState &keyState);
+typedef void (*YNCallback)();
 struct InfoMessage : public Message {
 	struct Line : public Common::Point {
 		Common::String _text;
@@ -65,15 +65,16 @@ struct InfoMessage : public Message {
 			Common::Point(x, y), _text(text) {}
 	};
 	Common::Array<Line> _lines;
-	InfoKeyCallback _callbackFn;
+	YNCallback _ynCallback;
 
 	InfoMessage();
-	InfoMessage(const Common::String &str);
+	InfoMessage(const Common::String &str,
+		YNCallback ynCallback = nullptr);
 	InfoMessage(int x, int y, const Common::String &str,
-		InfoKeyCallback callbackFn = nullptr);
+		YNCallback ynCallback = nullptr);
 	InfoMessage(int x1, int y1, const Common::String &str1,
 		int x2, int y2, const Common::String &str2,
-		InfoKeyCallback callbackFn = nullptr);
+		YNCallback ynCallback = nullptr);
 };
 
 } // namespace MM1

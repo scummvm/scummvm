@@ -56,6 +56,7 @@ void Events::runGame() {
 	for (uint i = 0; i < 6; ++i)
 		g_globals->_party.push_back(g_globals->_roster[i]);
 	g_globals->_maps.loadTown(Maps::SORPIGAL);
+	msgGame(GameMessage("UPDATE"));
 	//addView("Title");
 
 	Common::Event e;
