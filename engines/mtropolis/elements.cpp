@@ -775,10 +775,10 @@ void MovieElement::playMedia(Runtime *runtime, Project *project) {
 		if (framesDecodedThisFrame > 1)
 			debug(1, "Perf warning: %i video frames decoded in one frame", framesDecodedThisFrame);
 
-		if (targetTS < _playRange.min)
-			targetTS = _playRange.min;
-		if (targetTS > _playRange.max)
-			targetTS = _playRange.max;
+		if (targetTS < minTS)
+			targetTS = minTS;
+		if (targetTS > maxTS)
+			targetTS = maxTS;
 
 		// Sync TS to the end of video if we hit the end
 
@@ -868,7 +868,7 @@ MiniscriptInstructionOutcome MovieElement::scriptSetTimestamp(MiniscriptThread *
 	else if (asInteger > _playRange.max)
 		asInteger = _playRange.max;
 
-	if (asInteger != _currentTimestamp) {
+	if (asInteger != (int32)_currentTimestamp) {
 		SeekToTimeTaskData *taskData = thread->getRuntime()->getVThread().pushTask("MovieElement::seekToTimeTask", this, &MovieElement::seekToTimeTask);
 		taskData->runtime = _runtime;
 		taskData->timestamp = asInteger;
@@ -917,10 +917,10 @@ MiniscriptInstructionOutcome MovieElement::scriptSetRangeTyped(MiniscriptThread 
 
 	if (_playRange.min < 0)
 		_playRange.min = 0;
-	else if (_playRange.min > _maxTimestamp)
+	else if (_playRange.min > (int32)_maxTimestamp)
 		_playRange.min = _maxTimestamp;
 
-	if (_playRange.max > _maxTimestamp)
+	if (_playRange.max > (int32)_maxTimestamp)
 		_playRange.max = _maxTimestamp;
 
 	if (_playRange.max < _playRange.min)
