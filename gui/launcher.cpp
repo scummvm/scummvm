@@ -1505,8 +1505,13 @@ void LauncherGrid::updateListing() {
 		// Strip platform language from the title.
 		Common::String key = buildQualifiedGameName(engineid, gameid);
 
-		if (_launcherChooser->getGameList()->contains(key))
+		if (_launcherChooser->getGameList()->contains(key)) {
 			title = _launcherChooser->getGameList()->getVal(key);
+
+			// This is not reliable
+			if (gameid.contains("-demo"))
+				title += " (Demo)";
+		}
 
 		if (description.empty())
 			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
