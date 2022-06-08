@@ -908,6 +908,9 @@ void DynamicList::createWriteProxyForIndex(size_t index, DynamicValueWriteProxy 
 
 bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
 	switch (type) {
+	case DynamicValueTypes::kInvalid:
+		// FIXME: Set _container as per kNull case?
+		break;
 	case DynamicValueTypes::kNull:
 		_container = new DynamicListContainer<void>();
 		break;
@@ -949,6 +952,15 @@ bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
 		break;
 	case DynamicValueTypes::kObject:
 		_container = new DynamicListContainer<ObjectReference>();
+		break;
+	case DynamicValueTypes::kReadProxy:
+		// FIXME
+		break;
+	case DynamicValueTypes::kWriteProxy:
+		// FIXME
+		break;
+	case DynamicValueTypes::kEmpty:
+		// FIXME: Set _container as per kNull case?
 		break;
 	}
 
