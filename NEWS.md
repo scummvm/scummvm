@@ -153,6 +153,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Run Games sold in their Monkey Island 30th Anniversary Anthology, if using
      the default DISK4 image, which is corrupted. It's possible to recover a
      working image from the KryoFlux dumps they also provided.
+   - Fixed random number generation which fixes throwing in Backyard Baseball.
 
  Sherlock:
    - Fixed slowdown in Serrated Scalpel intro when playing the game from a small
