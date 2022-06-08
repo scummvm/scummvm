@@ -96,11 +96,11 @@ bool TextStyleFlags::load(uint8 dataStyleFlags) {
 MacFontFormatting::MacFontFormatting() : fontID(0), fontFlags(0), size(12) {
 }
 
-MacFontFormatting::MacFontFormatting(uint16 fontID, uint8 fontFlags, uint16 size) : fontID(fontID), fontFlags(fontFlags), size(size) {
+MacFontFormatting::MacFontFormatting(uint16 mff_fontID, uint8 mff_fontFlags, uint16 mff_size) : fontID(mff_fontID), fontFlags(mff_fontFlags), size(mff_size) {
 }
 
-WindowParameters::WindowParameters(Runtime *runtime, int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format)
-	: runtime(runtime), x(x), y(y), width(width), height(height), format(format) {
+WindowParameters::WindowParameters(Runtime *wp_runtime, int32 wp_x, int32 wp_y, int16 wp_width, int16 wp_height, const Graphics::PixelFormat &wp_format)
+	: runtime(wp_runtime), x(wp_x), y(wp_y), width(wp_width), height(wp_height), format(wp_format) {
 }
 
 Window::Window(const WindowParameters &windowParams)

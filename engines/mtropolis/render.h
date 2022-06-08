@@ -62,7 +62,7 @@ struct TextStyleFlags {
 
 struct MacFontFormatting {
 	MacFontFormatting();
-	MacFontFormatting(uint16 fontID, uint8 fontFlags, uint16 size);
+	MacFontFormatting(uint16 mff_fontID, uint8 mff_fontFlags, uint16 mff_size);
 
 	uint16 fontID;
 	uint8 fontFlags;
@@ -82,7 +82,7 @@ struct WindowParameters {
 	int16 height;
 	const Graphics::PixelFormat format;
 
-	WindowParameters(Runtime *runtime, int32 x, int32 y, int16 width, int16 height, const Graphics::PixelFormat &format);
+	WindowParameters(Runtime *wp_runtime, int32 wp_x, int32 wp_y, int16 wp_width, int16 wp_height, const Graphics::PixelFormat &wp_format);
 };
 
 class Window {

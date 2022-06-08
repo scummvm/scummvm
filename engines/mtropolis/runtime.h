@@ -1266,7 +1266,7 @@ struct HighLevelSceneTransition {
 		kTypeChangeToScene,
 	};
 
-	HighLevelSceneTransition(const Common::SharedPtr<Structural> &scene, Type type, bool addToDestinationScene, bool addToReturnList);
+	HighLevelSceneTransition(const Common::SharedPtr<Structural> &hlst_scene, Type hlst_type, bool hlst_addToDestinationScene, bool hlst_addToReturnList);
 
 	Common::SharedPtr<Structural> scene;
 	Type type;
