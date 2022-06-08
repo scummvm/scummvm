@@ -374,7 +374,7 @@ private:
 	void sub1CDFA();
 	void redrawScreenForced();
 	int16 selectMonsterGroup();
-	int16 sub1C956(int16 charId, int16 unkFied18Val, int16 arg4);
+	int16 sub1C956(int16 charId, int16 unkFied18Val, bool arg4);
 	void sub1CAB6(int16 charId);
 	bool sub1CB27();
 	void sub1BE9A(int16 monsterId);
