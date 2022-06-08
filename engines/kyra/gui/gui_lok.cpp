@@ -732,10 +732,10 @@ void GUI_LoK::updateSavegameString() {
 		char oneByteInput = _keyPressed.ascii;
 		Util::convertISOToDOS(oneByteInput);
 		uint16 twoByteInput = 0;
-		uint8 flags = 0;
+		//uint8 flags = 0;
 
 		if (inputType == Font::kHANGUL)
-			flags = Util::convertKeyDOSToHAN(oneByteInput, twoByteInput);
+			/*flags = */Util::convertKeyDOSToHAN(oneByteInput, twoByteInput);
 
 		if (twoByteInput) {
 			if ((length < ARRAYSIZE(_savegameName) - 2) && (width <= 240)) {

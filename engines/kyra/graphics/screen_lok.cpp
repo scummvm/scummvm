@@ -608,7 +608,7 @@ void HangulFontLoK::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	}
 
 	renderGlyph(dst, glyph, _colorMap[1], pitch);
-};
+}
 
 const uint8 *HangulFontLoK::createGlyph(uint16 chr) const {
 	memset(_glyphTemp, 0, 30);
