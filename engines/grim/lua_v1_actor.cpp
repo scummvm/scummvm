@@ -555,9 +555,10 @@ void Lua_V1::WalkActorTo() {
 	lua_Object yObj = lua_getparam(3);
 	lua_Object zObj = lua_getparam(4);
 
-	lua_Object txObj = lua_getparam(5);
+	// Not used in scripts
+/*	lua_Object txObj = lua_getparam(5);
 	lua_Object tyObj = lua_getparam(6);
-	lua_Object tzObj = lua_getparam(7);
+	lua_Object tzObj = lua_getparam(7);*/
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
@@ -576,11 +577,11 @@ void Lua_V1::WalkActorTo() {
 		destVec.set(x, y, z);
 	}
 
-	// TODO figure out purpose this
-	float tx = lua_getnumber(txObj);
+	// Not used in scripts
+/*	float tx = lua_getnumber(txObj);
 	float ty = lua_getnumber(tyObj);
 	float tz = lua_getnumber(tzObj);
-	Math::Vector3d tVec(tx, ty, tz);
+	Math::Vector3d tVec(tx, ty, tz);*/
 
 	actor->walkTo(destVec);
 }
