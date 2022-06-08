@@ -31,6 +31,8 @@ namespace Businesses {
 
 class Tavern : public Business {
 private:
+	enum Mode { INITIAL };
+	Mode _mode = INITIAL;
 	int _val1 = 0;
 public:
 	Tavern();

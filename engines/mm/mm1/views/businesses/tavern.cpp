@@ -28,6 +28,7 @@ namespace Views {
 namespace Businesses {
 
 Tavern::Tavern() : Business("Tavern") {
+	_modeString = STRING["dialogs.business.gather"];
 }
 
 bool Tavern::msgFocus(const FocusMessage &msg) {
@@ -37,11 +38,22 @@ bool Tavern::msgFocus(const FocusMessage &msg) {
 }
 
 bool Tavern::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+		close();
+	}
+
 	return true;
 }
 
 void Tavern::draw() {
+	switch (_mode) {
+	case INITIAL:
+		drawInitial();
 
+		break;
+	default:
+		break;
+	}
 }
 
 } // namespace Businesses

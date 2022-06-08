@@ -74,7 +74,7 @@ struct Character {
 	uint8 _sp1 = 0, _sp2 = 0;
 	uint16 _gems = 0;
 	uint16 _hp = 0, _hp2 = 0, _hpMax = 0;
-	uint16 _gold = 0;
+	uint32 _gold = 0;
 	byte _ac = 0;
 	uint8 _food = 0;
 	uint8 _condition = 0;
