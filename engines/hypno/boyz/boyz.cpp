@@ -58,6 +58,7 @@ BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine
 	_currentMode = NonInteractive;
 	_crosshairsPalette = nullptr;
 	_lastLevel = 0;
+	_selectedCorrectBox = 0;
 	_flashbackMode = false;
 
     const chapterEntry *entry = rawChapterTable;

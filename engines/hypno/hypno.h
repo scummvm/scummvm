@@ -588,6 +588,8 @@ public:
 	private:
 	void renderHighlights(Hotspots *hs);
 	void waitForUserClick(uint32 timeout);
+	int pickABox();
+	int _selectedCorrectBox;
 	char selectDirection();
 
 	void runMainMenu(Code *code);

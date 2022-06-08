@@ -71,6 +71,7 @@ void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	updateFromScript();
 	_shootsDestroyed.clear();
 	_health = _previousHealth;
+	_selectedCorrectBox = 0;
 }
 
 void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
@@ -242,7 +243,29 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 				// Objectives are never checked here, for some reason
 				_skipLevel = true;
 			} else if (_levelId == 51) {
-				waitForUserClick(1);
+				if (_selectedCorrectBox == 0) {
+					_background->decoder->pauseVideo(true);
+					_background->decoder->forceSeekToFrame(ttime - 2);
+					_masks->decoder->forceSeekToFrame(ttime - 2);
+					const Graphics::Surface *frame = _background->decoder->decodeNextFrame();
+					Graphics::Surface *boxes = frame->convertTo(frame->format, _background->decoder->getPalette());
+					drawImage(*boxes, 0, 0, false);
+					drawScreen();
+					_selectedCorrectBox = pickABox();
+					if (_selectedCorrectBox == 1) {
+						_background->decoder->forceSeekToFrame(582);
+						_masks->decoder->forceSeekToFrame(582);
+					} else if (_selectedCorrectBox == -1) {
+						_background->decoder->forceSeekToFrame(525);
+						_masks->decoder->forceSeekToFrame(525);
+					} else
+						error("Invalid value for _selectedCorrectBox: %d", _selectedCorrectBox);
+					_background->decoder->pauseVideo(false);
+					updateScreen(*_background);
+					drawScreen();
+				} else if (_selectedCorrectBox == -1) {
+					_health = 0;
+				}
 			}
 		} else if (!at.video.empty()) {
 			_background->decoder->pauseVideo(true);
@@ -369,6 +392,55 @@ void BoyzEngine::waitForUserClick(uint32 timeout) {
 		g_system->delayMillis(10);
 	}
 }
+
+int BoyzEngine::pickABox() {
+	Common::Event event;
+
+	Common::Rect correctBox(84, 14, 135, 66);
+	Common::Rect incorrectBoxes[6];
+	incorrectBoxes[0] = Common::Rect(15, 17, 77, 66);
+	incorrectBoxes[1] = Common::Rect(2, 69, 84, 92);
+	incorrectBoxes[2] = Common::Rect(74, 108, 242, 138);
+	incorrectBoxes[3] = Common::Rect(62, 134, 245, 160);
+	incorrectBoxes[4] = Common::Rect(59, 161, 239, 190);
+	incorrectBoxes[5] = Common::Rect(135, 29, 223, 101);
+	int i;
+	while (!shouldQuit()) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Point mousePos = g_system->getEventManager()->getMousePos();
+			switch (event.type) {
+				case Common::EVENT_MOUSEMOVE:
+					if (correctBox.contains(mousePos)) {
+						changeCursor(_crosshairsTarget[_currentWeapon], _crosshairsPalette, true);
+						break;
+					}
+					for (i = 0; i < 6; i++)
+						if (incorrectBoxes[i].contains(mousePos)) {
+							changeCursor(_crosshairsTarget[_currentWeapon], _crosshairsPalette, true);
+							break;
+						}
+					if (i == 6)
+						changeCursor(_crosshairsActive[_currentWeapon], _crosshairsPalette, true);
+					break;
+
+				case Common::EVENT_LBUTTONDOWN:
+					if (correctBox.contains(mousePos))
+						return 1;
+					for (i = 0; i < 6; i++)
+						if (incorrectBoxes[i].contains(mousePos))
+							return -1;
+					break;
+
+				default:
+					break;
+			}
+		}
+		drawScreen();
+		g_system->delayMillis(10);
+	}
+	return -1;
+}
+
 
 bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool secondary) {
 	if (_currentMode == NonInteractive) {
