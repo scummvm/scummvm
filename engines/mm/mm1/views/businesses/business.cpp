@@ -19,30 +19,19 @@
  *
  */
 
-#include "mm/mm1/views/Tavern.h"
+#include "mm/mm1/views/businesses/business.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
+namespace Businesses {
 
-Tavern::Tavern() : TextView("Tavern") {
+Business::Business(const Common::String &name) : TextView(name) {
 	_bounds = getLineBounds(17, 24);
 }
 
-bool Tavern::msgFocus(const FocusMessage &msg) {
-	g_events->msgBusiness(BusinessMessage(4));
-	return true;
-}
-
-bool Tavern::msgKeypress(const KeypressMessage &msg) {
-	return true;
-}
-
-void Tavern::draw() {
-
-}
-
+} // namespace Businesses
 } // namespace Views
 } // namespace MM1
 } // namespace MM
