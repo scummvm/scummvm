@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-07 23:38+0000\n"
+"POT-Creation-Date: 2022-06-08 09:43+0000\n"
 "PO-Revision-Date: 2022-04-24 20:27+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -4710,7 +4710,7 @@ msgstr ""
 #: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
-#: engines/twine/detection.cpp:873
+#: engines/twine/detection.cpp:904
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
@@ -5436,7 +5436,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr ""
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
-#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:872
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:903
 msgid "TTS Narrator"
 msgstr ""
 
@@ -7527,92 +7527,92 @@ msgstr "No s'ha pogut localitzar el fitxer de dades '%s'."
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
 
-#: engines/twine/detection.cpp:771
+#: engines/twine/detection.cpp:802
 msgid "Enable wall collisions"
 msgstr ""
 
-#: engines/twine/detection.cpp:772
+#: engines/twine/detection.cpp:803
 msgid "Enable the original wall collision damage"
 msgstr ""
 
-#: engines/twine/detection.cpp:781
+#: engines/twine/detection.cpp:812
 msgid "Disable save menu"
 msgstr "Desactiva el menú de desar"
 
-#: engines/twine/detection.cpp:782
+#: engines/twine/detection.cpp:813
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 
-#: engines/twine/detection.cpp:790
+#: engines/twine/detection.cpp:821
 msgid "Enable debug mode"
 msgstr "Habilita el mode de depuració"
 
-#: engines/twine/detection.cpp:791
+#: engines/twine/detection.cpp:822
 msgid "Enable the debug mode"
 msgstr "Habilita el mode de depuració"
 
-#: engines/twine/detection.cpp:799
+#: engines/twine/detection.cpp:830
 msgid "Enable audio CD"
 msgstr "Habilita l'àudio de CD"
 
-#: engines/twine/detection.cpp:800
+#: engines/twine/detection.cpp:831
 msgid "Enable the original audio cd track"
 msgstr ""
 
-#: engines/twine/detection.cpp:808
+#: engines/twine/detection.cpp:839
 msgid "Enable sound"
 msgstr "Habilita el so"
 
-#: engines/twine/detection.cpp:809
+#: engines/twine/detection.cpp:840
 msgid "Enable the sound for the game"
 msgstr "Habilita el so del joc"
 
-#: engines/twine/detection.cpp:817
+#: engines/twine/detection.cpp:848
 msgid "Enable voices"
 msgstr "Habilita les veus"
 
-#: engines/twine/detection.cpp:818
+#: engines/twine/detection.cpp:849
 msgid "Enable the voices for the game"
 msgstr "Habilita les veus del joc"
 
-#: engines/twine/detection.cpp:826
+#: engines/twine/detection.cpp:857
 msgid "Enable text"
 msgstr "Habilita el text"
 
-#: engines/twine/detection.cpp:827
+#: engines/twine/detection.cpp:858
 msgid "Enable the text for the game"
 msgstr "Habilita el text del joc"
 
-#: engines/twine/detection.cpp:835
+#: engines/twine/detection.cpp:866
 msgid "Enable movies"
 msgstr "Habilita les pel·lícules"
 
-#: engines/twine/detection.cpp:836
+#: engines/twine/detection.cpp:867
 msgid "Enable the cutscenes for the game"
 msgstr "Habilita les escenes curtes del joc"
 
-#: engines/twine/detection.cpp:844
+#: engines/twine/detection.cpp:875
 msgid "Enable mouse"
 msgstr "Habilita el ratolí"
 
-#: engines/twine/detection.cpp:845
+#: engines/twine/detection.cpp:876
 msgid "Enable the mouse for the UI"
 msgstr "Habilita el ratolí a la interfície d'usuari"
 
-#: engines/twine/detection.cpp:853
+#: engines/twine/detection.cpp:884
 msgid "Use the USA version"
 msgstr ""
 
-#: engines/twine/detection.cpp:854
+#: engines/twine/detection.cpp:885
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/detection.cpp:862 engines/ultima/detection.cpp:92
+#: engines/twine/detection.cpp:893 engines/ultima/detection.cpp:92
 msgid "Enable high resolution"
 msgstr "Habilita l'alta resolució"
 
-#: engines/twine/detection.cpp:863 engines/ultima/detection.cpp:93
+#: engines/twine/detection.cpp:894 engines/ultima/detection.cpp:93
 msgid "Enable a higher resolution for the game"
 msgstr "Habilita l'alta resolució del joc"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-07 23:38+0000\n"
+"POT-Creation-Date: 2022-06-08 09:43+0000\n"
 "PO-Revision-Date: 2022-06-05 14:09+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4789,7 +4789,7 @@ msgstr ""
 #: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
-#: engines/twine/detection.cpp:873
+#: engines/twine/detection.cpp:904
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 "Utiliza un narrador TTS para leer las descripciones (si el conversor texto-"
@@ -5619,7 +5619,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Este enigma no está disponible en la versión de demostración"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
-#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:872
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:903
 msgid "TTS Narrator"
 msgstr "Narración TTS"
 
@@ -7895,94 +7895,94 @@ msgstr "No se puede localizar el archivo de datos «%s»."
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr "Esta versión requiere Gifilib, que no ha sido compilado en ScummVM."
 
-#: engines/twine/detection.cpp:771
+#: engines/twine/detection.cpp:802
 msgid "Enable wall collisions"
 msgstr "Activar colisiones con paredes"
 
-#: engines/twine/detection.cpp:772
+#: engines/twine/detection.cpp:803
 msgid "Enable the original wall collision damage"
 msgstr "Activa los daños originales por colisión contra paredes"
 
-#: engines/twine/detection.cpp:781
+#: engines/twine/detection.cpp:812
 msgid "Disable save menu"
 msgstr "Desactivar menú de guardado"
 
-#: engines/twine/detection.cpp:782
+#: engines/twine/detection.cpp:813
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 "El juego original solo permitía el uso de guardados automáticos. Esta opción "
 "te permitirá guardar donde quieras."
 
-#: engines/twine/detection.cpp:790
+#: engines/twine/detection.cpp:821
 msgid "Enable debug mode"
 msgstr "Activar modo de depuración"
 
-#: engines/twine/detection.cpp:791
+#: engines/twine/detection.cpp:822
 msgid "Enable the debug mode"
 msgstr "Activa el modo de depuración"
 
-#: engines/twine/detection.cpp:799
+#: engines/twine/detection.cpp:830
 msgid "Enable audio CD"
 msgstr "Activar audio de CD"
 
-#: engines/twine/detection.cpp:800
+#: engines/twine/detection.cpp:831
 msgid "Enable the original audio cd track"
 msgstr "Activa el uso de las pistas de audio originales en CD"
 
-#: engines/twine/detection.cpp:808
+#: engines/twine/detection.cpp:839
 msgid "Enable sound"
 msgstr "Activar sonido"
 
-#: engines/twine/detection.cpp:809
+#: engines/twine/detection.cpp:840
 msgid "Enable the sound for the game"
 msgstr "Activa el sonido del juego"
 
-#: engines/twine/detection.cpp:817
+#: engines/twine/detection.cpp:848
 msgid "Enable voices"
 msgstr "Activar voces"
 
-#: engines/twine/detection.cpp:818
+#: engines/twine/detection.cpp:849
 msgid "Enable the voices for the game"
 msgstr "Activa las voces del juego"
 
-#: engines/twine/detection.cpp:826
+#: engines/twine/detection.cpp:857
 msgid "Enable text"
 msgstr "Activar textos"
 
-#: engines/twine/detection.cpp:827
+#: engines/twine/detection.cpp:858
 msgid "Enable the text for the game"
 msgstr "Activa los textos del juego"
 
-#: engines/twine/detection.cpp:835
+#: engines/twine/detection.cpp:866
 msgid "Enable movies"
 msgstr "Activar vídeos"
 
-#: engines/twine/detection.cpp:836
+#: engines/twine/detection.cpp:867
 msgid "Enable the cutscenes for the game"
 msgstr "Activa las escenas cinemáticas del juego"
 
-#: engines/twine/detection.cpp:844
+#: engines/twine/detection.cpp:875
 msgid "Enable mouse"
 msgstr "Activar ratón"
 
-#: engines/twine/detection.cpp:845
+#: engines/twine/detection.cpp:876
 msgid "Enable the mouse for the UI"
 msgstr "Activa el ratón en la interfaz"
 
-#: engines/twine/detection.cpp:853
+#: engines/twine/detection.cpp:884
 msgid "Use the USA version"
 msgstr "Utilizar la versión estadounidense"
 
-#: engines/twine/detection.cpp:854
+#: engines/twine/detection.cpp:885
 msgid "Enable the USA specific version flags"
 msgstr "Activa los parámetros específicos de la versión estadounidense"
 
-#: engines/twine/detection.cpp:862 engines/ultima/detection.cpp:92
+#: engines/twine/detection.cpp:893 engines/ultima/detection.cpp:92
 msgid "Enable high resolution"
 msgstr "Activar alta resolución"
 
-#: engines/twine/detection.cpp:863 engines/ultima/detection.cpp:93
+#: engines/twine/detection.cpp:894 engines/ultima/detection.cpp:93
 msgid "Enable a higher resolution for the game"
 msgstr "Permite mostrar el juego a una resolución superior"
 

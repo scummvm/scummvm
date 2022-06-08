@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-07 23:38+0000\n"
+"POT-Creation-Date: 2022-06-08 09:43+0000\n"
 "PO-Revision-Date: 2022-06-03 20:38+0000\n"
 "Last-Translator: Filippos Karapetis <bluegr@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4841,7 +4841,7 @@ msgstr ""
 #: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
-#: engines/twine/detection.cpp:873
+#: engines/twine/detection.cpp:904
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 "Χρήση λειτουργίας Αφήγησης Κειμένου (TTS) για την ανάγνωση περιγραφών (αν "
@@ -5679,7 +5679,7 @@ msgstr ""
 "Αυτός ο γρίφος δεν είναι διαθέσιμος στη δοκιμαστική έκδοση του παιχνιδιού"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
-#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:872
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:903
 msgid "TTS Narrator"
 msgstr "Αφηγητής Κειμένου"
 
@@ -8001,95 +8001,95 @@ msgstr "Αδυναμία εντοπισμού του αρχείου παιχνι
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr "Αυτή η έκδοση απαιτεί τη Giflib που δεν έγινε compiled στο ScummVM"
 
-#: engines/twine/detection.cpp:771
+#: engines/twine/detection.cpp:802
 msgid "Enable wall collisions"
 msgstr "Σύγκρουση με τοίχους"
 
-#: engines/twine/detection.cpp:772
+#: engines/twine/detection.cpp:803
 msgid "Enable the original wall collision damage"
 msgstr ""
 "Ενεργοποίηση επίπτωσης από σύγκρουση με τοίχο όπως ήταν στο αρχικό παιχνίδι"
 
-#: engines/twine/detection.cpp:781
+#: engines/twine/detection.cpp:812
 msgid "Disable save menu"
 msgstr "Απενεργοποίηση μενού αποθήκευσης"
 
-#: engines/twine/detection.cpp:782
+#: engines/twine/detection.cpp:813
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 "Το αρχικό παιχνίδι έκανε μόνο αυτόματη αποθήκευση. Αυτή η νέα δυνατότητα σας "
 "επιτρέπει να αποθηκεύσετε όποτε θέλετε."
 
-#: engines/twine/detection.cpp:790
+#: engines/twine/detection.cpp:821
 msgid "Enable debug mode"
 msgstr "Χρήση λειτουργίας αποσφαλμάτωσης"
 
-#: engines/twine/detection.cpp:791
+#: engines/twine/detection.cpp:822
 msgid "Enable the debug mode"
 msgstr "Ενεργοποίηση της λειτουργίας αποσφαλμάτωσης (debug)"
 
-#: engines/twine/detection.cpp:799
+#: engines/twine/detection.cpp:830
 msgid "Enable audio CD"
 msgstr "Ενεργοποίηση ήχου από CD"
 
-#: engines/twine/detection.cpp:800
+#: engines/twine/detection.cpp:831
 msgid "Enable the original audio cd track"
 msgstr "Ενεργοποίηση χρήσης ήχου από CD που είχε το αρχικό παιχνίδι"
 
-#: engines/twine/detection.cpp:808
+#: engines/twine/detection.cpp:839
 msgid "Enable sound"
 msgstr "Ενεργοποίηση ήχου"
 
-#: engines/twine/detection.cpp:809
+#: engines/twine/detection.cpp:840
 msgid "Enable the sound for the game"
 msgstr "Ενεργοποίηση του ήχου για το παιχνίδι"
 
-#: engines/twine/detection.cpp:817
+#: engines/twine/detection.cpp:848
 msgid "Enable voices"
 msgstr "Ενεργοποίηση φωνής"
 
-#: engines/twine/detection.cpp:818
+#: engines/twine/detection.cpp:849
 msgid "Enable the voices for the game"
 msgstr "Ενεργοποίηση των φωνών στο παιχνίδι"
 
-#: engines/twine/detection.cpp:826
+#: engines/twine/detection.cpp:857
 msgid "Enable text"
 msgstr "Ενεργοποίηση κειμένου"
 
-#: engines/twine/detection.cpp:827
+#: engines/twine/detection.cpp:858
 msgid "Enable the text for the game"
 msgstr "Ενεργοποίηση του κειμένου για το παιχνίδι"
 
-#: engines/twine/detection.cpp:835
+#: engines/twine/detection.cpp:866
 msgid "Enable movies"
 msgstr "Ενεργοποίηση ταινιών"
 
-#: engines/twine/detection.cpp:836
+#: engines/twine/detection.cpp:867
 msgid "Enable the cutscenes for the game"
 msgstr "Ενεργοποίηση των ταινιών (cutscenes) για το παιχνίδι"
 
-#: engines/twine/detection.cpp:844
+#: engines/twine/detection.cpp:875
 msgid "Enable mouse"
 msgstr "Χρήση ποντικιού"
 
-#: engines/twine/detection.cpp:845
+#: engines/twine/detection.cpp:876
 msgid "Enable the mouse for the UI"
 msgstr "Ενεργοποίηση του ποντικιού για το περιβάλλον διεπαφής (UI)"
 
-#: engines/twine/detection.cpp:853
+#: engines/twine/detection.cpp:884
 msgid "Use the USA version"
 msgstr "Χρήση της έκδοσης από ΗΠΑ"
 
-#: engines/twine/detection.cpp:854
+#: engines/twine/detection.cpp:885
 msgid "Enable the USA specific version flags"
 msgstr "Ενεργοποίηση ειδικών ρυθμίσεων που είχε η έκδοση από ΗΠΑ"
 
-#: engines/twine/detection.cpp:862 engines/ultima/detection.cpp:92
+#: engines/twine/detection.cpp:893 engines/ultima/detection.cpp:92
 msgid "Enable high resolution"
 msgstr "Ενεργοποίηση υψηλής ανάλυσης"
 
-#: engines/twine/detection.cpp:863 engines/ultima/detection.cpp:93
+#: engines/twine/detection.cpp:894 engines/ultima/detection.cpp:93
 msgid "Enable a higher resolution for the game"
 msgstr "Ενεργοποίηση υψηλής ανάλυσης για το παιχνίδι"
 

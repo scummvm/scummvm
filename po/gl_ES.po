@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-07 23:38+0000\n"
+"POT-Creation-Date: 2022-06-08 09:43+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -4892,7 +4892,7 @@ msgstr ""
 #: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
-#: engines/twine/detection.cpp:873
+#: engines/twine/detection.cpp:904
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
@@ -5674,7 +5674,7 @@ msgstr ""
 "completa do xogo."
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
-#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:872
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:903
 msgid "TTS Narrator"
 msgstr ""
 
@@ -7886,107 +7886,107 @@ msgstr "Non se puido localizar o ficheiro de datos do motor %s."
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
 
-#: engines/twine/detection.cpp:771
+#: engines/twine/detection.cpp:802
 msgid "Enable wall collisions"
 msgstr ""
 
-#: engines/twine/detection.cpp:772
+#: engines/twine/detection.cpp:803
 msgid "Enable the original wall collision damage"
 msgstr ""
 
-#: engines/twine/detection.cpp:781
+#: engines/twine/detection.cpp:812
 #, fuzzy
 msgid "Disable save menu"
 msgstr "Erro ao gardar a partida"
 
-#: engines/twine/detection.cpp:782
+#: engines/twine/detection.cpp:813
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 
-#: engines/twine/detection.cpp:790
+#: engines/twine/detection.cpp:821
 #, fuzzy
 msgid "Enable debug mode"
 msgstr "Activa o modo Helio."
 
-#: engines/twine/detection.cpp:791
+#: engines/twine/detection.cpp:822
 #, fuzzy
 msgid "Enable the debug mode"
 msgstr "Activa o modo Helio."
 
-#: engines/twine/detection.cpp:799
+#: engines/twine/detection.cpp:830
 #, fuzzy
 msgid "Enable audio CD"
 msgstr "Activa o público do estudio."
 
-#: engines/twine/detection.cpp:800
+#: engines/twine/detection.cpp:831
 msgid "Enable the original audio cd track"
 msgstr ""
 
-#: engines/twine/detection.cpp:808
+#: engines/twine/detection.cpp:839
 #, fuzzy
 msgid "Enable sound"
 msgstr "Activa o público do estudio."
 
-#: engines/twine/detection.cpp:809
+#: engines/twine/detection.cpp:840
 #, fuzzy
 msgid "Enable the sound for the game"
 msgstr "Título completo do xogo"
 
-#: engines/twine/detection.cpp:817
+#: engines/twine/detection.cpp:848
 #, fuzzy
 msgid "Enable voices"
 msgstr "Activar Venus"
 
-#: engines/twine/detection.cpp:818
+#: engines/twine/detection.cpp:849
 #, fuzzy
 msgid "Enable the voices for the game"
 msgstr "Activa o sistema de axuda Venus."
 
-#: engines/twine/detection.cpp:826
+#: engines/twine/detection.cpp:857
 #, fuzzy
 msgid "Enable text"
 msgstr "Activa o público do estudio."
 
-#: engines/twine/detection.cpp:827
+#: engines/twine/detection.cpp:858
 #, fuzzy
 msgid "Enable the text for the game"
 msgstr "Título completo do xogo"
 
-#: engines/twine/detection.cpp:835
+#: engines/twine/detection.cpp:866
 #, fuzzy
 msgid "Enable movies"
 msgstr "Activar Venus"
 
-#: engines/twine/detection.cpp:836
+#: engines/twine/detection.cpp:867
 #, fuzzy
 msgid "Enable the cutscenes for the game"
 msgstr "Activa o sistema de axuda Venus."
 
-#: engines/twine/detection.cpp:844
+#: engines/twine/detection.cpp:875
 #, fuzzy
 msgid "Enable mouse"
 msgstr "Activar Venus"
 
-#: engines/twine/detection.cpp:845
+#: engines/twine/detection.cpp:876
 #, fuzzy
 msgid "Enable the mouse for the UI"
 msgstr "Título completo do xogo"
 
-#: engines/twine/detection.cpp:853
+#: engines/twine/detection.cpp:884
 msgid "Use the USA version"
 msgstr ""
 
-#: engines/twine/detection.cpp:854
+#: engines/twine/detection.cpp:885
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/detection.cpp:862 engines/ultima/detection.cpp:92
+#: engines/twine/detection.cpp:893 engines/ultima/detection.cpp:92
 #, fuzzy
 msgid "Enable high resolution"
 msgstr "Activar gráficos de alta resolución"
 
-#: engines/twine/detection.cpp:863 engines/ultima/detection.cpp:93
+#: engines/twine/detection.cpp:894 engines/ultima/detection.cpp:93
 #, fuzzy
 msgid "Enable a higher resolution for the game"
 msgstr "Título completo do xogo"
