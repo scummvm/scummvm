@@ -155,12 +155,12 @@ protected:
 	 * @return  The icon path (or "" if no icon was found)
 	 */
 	Common::String getIconPath(const Common::String &target, const Common::String &extension) {
-		// We first try to look for a iconspath configuration variable then
+		// We first try to look for a iconpath configuration variable then
 		// fallback to the extra path
 		//
 		// Icons can be either in a subfolder named "icons" or directly in the path
 
-		Common::String iconsPath = ConfMan.get("iconspath");
+		Common::String iconsPath = ConfMan.get("iconpath");
 		Common::String extraPath = ConfMan.get("extrapath");
 
 		Common::String targetIcon = target + extension;
