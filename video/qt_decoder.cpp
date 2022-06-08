@@ -563,7 +563,7 @@ Audio::Timestamp QuickTimeDecoder::VideoTrackHandler::getFrameTime(uint frame) c
 	int cumulativeDuration = 0;
 	for (int ttsIndex = 0; ttsIndex < _parent->timeToSampleCount; ttsIndex++) {
 		const TimeToSampleEntry &tts = _parent->timeToSample[ttsIndex];
-		if (frame < tts.count)
+		if ((int)frame < tts.count)
 			return Audio::Timestamp(0, _parent->timeScale).addFrames(cumulativeDuration + frame * tts.duration);
 		else {
 			frame -= tts.count;
