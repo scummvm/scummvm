@@ -70,13 +70,17 @@ const ExtraGuiOptions MTropolisMetaEngineDetection::getExtraGuiOptions(const Com
 		_s("Start with debugger"),
 		_s("Starts with the debugger dashboard active"),
 		"mtropolis_debug_at_start",
-		false
+		false,
+		0,
+		0
 	};
 	static const ExtraGuiOption launchBreakOption = {
 		_s("Start debugging immediately"),
 		_s("Halts progress and stops at the debugger immediately"),
 		"mtropolis_pause_at_start",
-		false
+		false,
+		0,
+		0
 	};
 
 	options.push_back(launchDebugOption);
