@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-08 09:43+0000\n"
+"POT-Creation-Date: 2022-06-08 19:09+0000\n"
 "PO-Revision-Date: 2022-06-05 19:03+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -5209,10 +5209,18 @@ msgid "Player ammo will never decrease."
 msgstr "Spillerens ammunisjon minsker aldri."
 
 #: engines/hypno/detection.cpp:281
+msgid "Unlock all levels"
+msgstr ""
+
+#: engines/hypno/detection.cpp:282
+msgid "All levels will be available to play."
+msgstr ""
+
+#: engines/hypno/detection.cpp:290
 msgid "Enable restored content"
 msgstr "Bruk restaurert innhold"
 
-#: engines/hypno/detection.cpp:282
+#: engines/hypno/detection.cpp:291
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
 "Legg til ekstra innhold som ikke var en del av den utgitte opplevelsen."
