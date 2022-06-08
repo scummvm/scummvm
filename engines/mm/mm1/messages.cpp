@@ -24,23 +24,24 @@
 namespace MM {
 namespace MM1 {
 
-InfoMessage::InfoMessage() : Message(), _callbackFn(nullptr) {}
+InfoMessage::InfoMessage() : Message(), _ynCallback(nullptr) {}
 
-InfoMessage::InfoMessage(const Common::String &str) :
-		Message(), _callbackFn(nullptr) {
+InfoMessage::InfoMessage(const Common::String &str,
+		YNCallback ynCallback) :
+		Message(), _ynCallback(ynCallback) {
 	_lines.push_back(str);
 }
 
 InfoMessage::InfoMessage(int x, int y, const Common::String &str,
-		InfoKeyCallback callbackFn) :
-		Message(), _callbackFn(callbackFn) {
+		YNCallback ynCallback) :
+		Message(), _ynCallback(ynCallback) {
 	_lines.push_back(Line(x, y, str));
 }
 
 InfoMessage::InfoMessage(int x1, int y1, const Common::String &str1,
 		int x2, int y2, const Common::String &str2,
-		InfoKeyCallback callbackFn) :
-		Message(), _callbackFn(callbackFn) {
+		YNCallback ynCallback) :
+		Message(), _ynCallback(ynCallback) {
 	_lines.push_back(Line(x1, y1, str1));
 	_lines.push_back(Line(x2, y2, str2));
 }

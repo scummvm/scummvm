@@ -44,6 +44,8 @@ enum CellState {
 	CELL_SPECIAL = 0x80, CELL_DARK = 0x20
 };
 
+class Maps;
+
 class Map {
 protected:
 	Common::String _name;
