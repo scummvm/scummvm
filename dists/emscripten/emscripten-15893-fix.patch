@@ -1,0 +1,44 @@
+From 2ea11b4734de5656aaf3285145831e2bb9ad53ae Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Christian=20Ku=CC=88ndig?= <kuendig@scandit.com>
+Date: Sun, 24 Apr 2022 18:55:51 +0200
+Subject: [PATCH] Keeping a reference to the original function in
+ instrumentWasmExports and using that in _dlsym_js to pass the right method to
+ addFunction.
+
+---
+ src/library_async.js  | 3 +++
+ src/library_dylink.js | 4 ++--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/src/library_async.js b/src/library_async.js
+index 14511ba05..32ce7abd3 100644
+--- a/src/library_async.js
++++ b/src/library_async.js
+@@ -130,6 +130,9 @@ mergeInto(LibraryManager.library, {
+                 }
+               }
+             };
++#if MAIN_MODULE
++            ret[x].orig = original;
++#endif
+           } else {
+             ret[x] = original;
+           }
+diff --git a/src/library_dylink.js b/src/library_dylink.js
+index 291c50ef2..3c70cfca7 100644
+--- a/src/library_dylink.js
++++ b/src/library_dylink.js
+@@ -964,8 +967,8 @@ var LibraryDylink = {
+ #endif
+ 
+ #if ASYNCIFY
+-      if(symbol in GOT && GOT[symbol].value != 0) {
+-        return GOT[symbol].value 
++      if ('orig' in result) {
++        result = result.orig;
+       }
+ #endif
+       // Insert the function into the wasm table.  If its a direct wasm function
+-- 
+2.31.0
+
