@@ -34,6 +34,12 @@ private:
 	enum Mode { INITIAL };
 	Mode _mode = INITIAL;
 	int _val1 = 0;
+private:
+	/**
+	 * Draw the right hand side options in the
+	 * initial tavern display
+	 */
+	void drawInitialRight();
 public:
 	Tavern();
 	virtual ~Tavern() {}

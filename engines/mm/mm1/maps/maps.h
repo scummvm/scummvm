@@ -154,9 +154,10 @@ public:
 	void clearSpecial();
 };
 
-extern Maps *g_maps;
-
 } // namespace Maps
+
+extern Maps::Maps *g_maps;
+
 } // namespace MM1
 } // namespace MM
 

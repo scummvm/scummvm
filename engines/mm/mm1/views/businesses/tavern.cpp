@@ -39,7 +39,7 @@ bool Tavern::msgFocus(const FocusMessage &msg) {
 
 bool Tavern::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_ESCAPE) {
-		close();
+		leave();
 	}
 
 	return true;
@@ -49,11 +49,17 @@ void Tavern::draw() {
 	switch (_mode) {
 	case INITIAL:
 		drawInitial();
-
+		drawInitialRight();
 		break;
 	default:
 		break;
 	}
+}
+
+void Tavern::drawInitialRight() {
+	writeString(20, 1, STRING["dialogs.tavern.drink"]);
+	writeString(20, 2, STRING["dialogs.tavern.tip"]);
+	writeString(20, 3, STRING["dialogs.tavern.listen"]);
 }
 
 } // namespace Businesses
