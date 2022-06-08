@@ -1,66 +1,93 @@
+
 # Building ScummVM for Webassembly
 The [Emscripten](https://emscripten.org/) target provides a script to build ScummVM as a single page browser app.
-> Emscripten is an LLVM/Clang-based compiler that compiles C and C++ source code to WebAssembly for execution in web browsers. 
 
-## Current State
-*   All engines compile (though I didn't test all of them), including ResidualVM with WebGL acceleration and shaders.
-*   Audio works and 3rd-party libraries for sound and video decoding are integrated.
-*   Proof of concept integration with [BrowserFS](https://github.com/jvilk/browserfs) to download game data lazily when required and to support local savegames.
+## Goals
+This port of ScummVM has two primary use cases as its goals:
+
+- **Demo App**: The goal of this use case is to provide an easy way for people to discover ScummVM and old adventure games. Game preservation is not just about archival but also accessibility. The primary goal is to make it as easy as possible to play any game which can legally be made available, and there's probably nothing easier than opening a webpage to do so.
+
+- **ScummVM as a PWA** (progressive web app): There are platforms where native ScummVM is not readily available (primarily iOS/iPadOS). A PWA can work around these limitations. To really make this work, a few more features beyond what's in a Demo App would be required: 
+  * Offline Support: PWAs can run offline. This means we have to find a way to cache some data which is downloaded on demand (engine plugins, game data etc.) 
+  * Cloud Storage Integration: Users will have to have a way to bring their own games and export savegame data. This is best possible through cloud storage integration. This already exists in ScummVM, but a few adjustments will be necessary to make this work in a PWA.
+  
+See [chkuendig/scummvm-demo](http://github.com/chkuendig/scummvm-demo/) on how a ScummVM demo app can be built (incl. playable demo).
+  
+## About Webassembly and Emscripten
+Emscripten is an LLVM/Clang-based compiler that compiles C and C++ source code to WebAssembly for execution in web browsers. 
+
+**Note:** In general most code can be crosscompiled to webassembly just fine. There's a few minor things which are different, but the mayor difference comnes down to how instructions are processed: Javascript and webassembly do support asynchronous/non-blocking code, but in general everything is running in the same [event loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop). This means also that webassembly code has to pause for the browser to do it's operations - render the page, process inputs, run I/O and so on. One consequence of this is that the page is not re-drawn until the webassembly code "yields" to the browser. Emscripten provides as much tooling as possible for this, but there's sometimes still a need to manually add a call to sleep into some engines.
 
 ## How to build for Webassembly
 This folder contains a script to help build scummvm with Emscripten, it automatically downloads the correct emsdk version and also takes care of bundling the data and setting up a few demo games.
 
-### Running `emscripten/build.sh`
+### Running build.sh
 
-`emscripten/build.sh` needs to be run from the root of the project. 
+`build.sh` needs to be run from the root of the project. 
 ```Shell
-./dists/emscripten/build.sh libs|configure|make|data|dist|all|clean
+./dists/emscripten/build.sh [Tasks] [Options]
 ```
-It accepts a single parameter with 7 valid commands:
-*   `libs`: Download and compile the required 3rd-party libraries required to build certain engines (libmad, a52dec etc)
-*   `configure`: Run the configure script with emconfigure with the recommended settings for a simple demo page 
-*   `make`: Run the make scripts with emmake
-*   `data`: Download some demos and set up all data require for the demo page 
-*   `dist`: Copy all files into a single build-emscripten folder to bring it all together
-*   `all`: Run all of the above commands
-*   `clean`: Remove all object files, built libs, bundled data etc
+
+**Tasks:** space separated list of tasks to run. These can be:  
+* `build`: Run all tasks to build the complete app. These tasks are:
+  *  `setup`: Download + install EMSDK and emscripten
+  *  `libs`: Download and compile the required 3rd-party libraries required to build certain engines (libmad, a52dec etc)
+  *   `configure`: Run the configure script with emconfigure with the recommended settings for a simple demo page 
+  *   `make`: Run the make scripts with emmake
+  *   `games`: Download some demos and set up all data require for the demo page. See `--bundle-games=` below.
+  *   `dist`: Copy all files into a single build-emscripten folder to bring it all together
+  *   `add-games`: Runs ScummVM once to add all bundled games to the default `scummvm.ini`
+* `clean`: Cleanup build artifacts (keeps libs + emsdk in place)
+* `run`: Start webserver and launch ScummVM in Chrome  
+  
+**Options:**
+*  `-h`, `--help`: print a short help text
+*  `--bundle-games=<games>`: comma-separated list of demos and freeware games to bundle. Either specify a target (e.g. `comi` or a target and a specific file after a `/` , e.g. `comi/comi-win-large-demo-en.zip`)
+*  `-v`, `--verbose`: print all commands run by the script
+*  `--*`: all other options are passed on to the scummvm configure script
 
 Independent of the command executed, the script sets up a pre-defined emsdk environment in the subfolder `./dists/emscripten/build.sh`
 
+**Example:**
+
+See e.g. [chkuendig/scummvm-demo/.github/workflows/main.yml](https://github.com/chkuendig/scummvm-demo/blob/main/.github/workflows/main.yml) for an example:
+```
+./dists/emscripten/build.sh build --verbose --disable-all-engines --enable-plugins --default-dynamic  --enable-engine=adl,testbed,scumm,scumm_7_8,grim,monkey4,mohawk,myst,riven,sci32,agos2,sword2,drascula,sky,lure,queen,testbed,director,stark --bundle-games=testbed,comi/comi-win-large-demo-en.zip,warlock,sky/BASS-Floppy-1.3.zip,drascula/drascula-audio-mp3-2.0.zip,monkey4,feeble,queen/FOTAQ_Floppy.zip,ft,grim/grim-win-demo2-en.zip,lsl7,lure,myst,phantasmagoria,riven,hires1,tlj,sword2
+```
+
+## Current Status of Port
+In general, ScummVM runs in the browser sufficiently to run all demos and freeware games.
+
+* All engines compile (though I didn't test all of them), including ResidualVM with WebGL acceleration and shaders work as plugins (which means the initial page load is somewhat limited)
+* Audio works and 3rd-party libraries for sound and video decoding are integrated.
+* All data can be downloaded on demand (or in the case of the testbed generated as part of the build script)
+
 ## Known Issues + Possible Improvements
-Some ideas for possible improvements:
 
 ### Emscripten Optimizations
-*   Optimize asyncify behaviour (we only have SDL functions calling wait currently), e.g with [SDL_HINT_EMSCRIPTEN_ASYNCIFY](https://wiki.libsdl.org/SDL_HINT_EMSCRIPTEN_ASYNCIFY).
-*   Specify a `ASYNCIFY_ONLY` list to to make asyncify only instrument functions in the call path as described in [emscripten.org: Asyncify](https://emscripten.org/docs/porting/asyncify.html)
+*   Optimize asyncify behaviour (we only have SDL functions calling wait currently), e.g with [SDL_HINT_EMSCRIPTEN_ASYNCIFY](https://wiki.libsdl.org/SDL_HINT_EMSCRIPTEN_ASYNCIFY)
+*   Specify a `ASYNCIFY_ONLY` list in `configure` to  make asyncify only instrument functions in the call path as described in [emscripten.org: Asyncify](https://emscripten.org/docs/porting/asyncify.html)
+*   Limit asyncify overhead by having a more specific setting for `ASYNCIFY_IMPORTS` in `configure`.
 *   Don't use asyncify but rewrite main loop to improve performance
-*   Shrink code size or execution speed with `-Os` or `-Oz` [emcc arguments](https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options).
 
 ### Storage Integration
-*   BrowserFS seems abandoned and never did a stable 2.0.0 release. Maybe there's a better way to handle storage?
-
-*   File loading improvements:
-    *   Load assets with HTTP Range request headers.
-    *   Load assets asynchronously (not blocking) via a worker.
+*   BrowserFS seems abandoned and never did a stable 2.0.0 release. It's worth replacing it.  
+    * `scummvm_fs.js` is an early prototype for a custom FS which can be adopted for ScummVM specific needs, i.e.
+      * Download all game assets in background once the game has started
+      * Presist last game and last plugin for offline use
+      * Implement support for range requests (currently not supported with `emrun` so another development server would have to be included as well)
+      * Pre-load assets asynchronously (not blocking) - i.e. rest of the data of a game which has been launched
+      * Loading indicators
 
 *   Add support for save games (and game data?) on personal cloud storage (Dropbox, Google Drive).
 
 ### UI Integration
-*   Responsiveness: Adjust the canvas size when resizing the browser. 
-
-*   Bug: Fullscreen mode doesn't work.
-
 *   Build a nice webpage around the canvas.
-    *   Allow hiding of console, replace buttons/checkboxes from default emscripten template.
+    *   Allow showing/hiding of console, replace buttons/checkboxes from default emscripten template.
     *   Bonus: Adapt page padding/background color to theme (black when in game)
 
-*   ScummVM shouldn't be able to "close" (there's no concept for that:
-    *   Remove "exit" buttons from all menus.
-    *   Change any programmatic "exits" to cause a restart of Scummvm (or refresh of the page).
+*   Automatically show console in case of exceptions
 
-*   Pass CLI parameters for ScummVM via URL parameters to allow for "deep-linking" to a specific game.
-
-### Other Bugs + Tasks
-*   Bug: Vorbis support is broken - parts seems to have been patched out so  `-lvorbisfile` triggers an error during configure (and [emscripten-core/emscripten#9849](https://github.com/emscripten-core/emscripten/pull/9849) doesn't seem to fix this).
-*   Bug: Going back to main menu from Grim (and other Residual Games?) messes up the render context and the UI is unusable.
-*   Check all disabled features (e.g. TiMidity++) and see if they could be enabled (some might never make sense, e.g. anything requiring MIDI Hardware, Update Checking etc).
+* Aspect Ratio is broken when starting a game until the window is resized once. Good starting points might be  https://github.com/emscripten-ports/SDL2/issues/47 or https://github.com/emscripten-core/emscripten/issues/10285
+    * doesn't seem to affect 3d engines in opengl mode
+    * definitely affects testbed in opengl or other modes
