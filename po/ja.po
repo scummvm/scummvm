@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-08 19:09+0000\n"
-"PO-Revision-Date: 2022-06-04 11:28+0000\n"
+"PO-Revision-Date: 2022-06-09 09:36+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5137,11 +5137,11 @@ msgstr "プレイヤーの弾薬が減りません。"
 
 #: engines/hypno/detection.cpp:281
 msgid "Unlock all levels"
-msgstr ""
+msgstr "全レベル解放"
 
 #: engines/hypno/detection.cpp:282
 msgid "All levels will be available to play."
-msgstr ""
+msgstr "全レベルをプレイ可能にします。"
 
 #: engines/hypno/detection.cpp:290
 msgid "Enable restored content"
