@@ -5465,7 +5465,7 @@ void Runtime::debugGetPrimaryTaskList(Common::Array<Common::SharedPtr<DebugPrima
 
 const Common::Array<Common::SharedPtr<Modifier> > &IModifierContainer::getModifiers() const {
 	return const_cast<IModifierContainer &>(*this).getModifiers();
-};
+}
 
 ChildLoaderContext::ChildLoaderContext() : remainingCount(0), type(kTypeUnknown) {
 }
