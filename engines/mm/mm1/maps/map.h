@@ -48,7 +48,7 @@ class Map {
 protected:
 	Common::String _name;
 	uint16 _id;
-	uint _mapId;
+	uint _mapIndex;
 	Common::Array<byte> _data;
 private:
 	/**
@@ -64,7 +64,7 @@ public:
 	byte _walls[MAP_SIZE];
 	byte _states[MAP_SIZE];
 public:
-	Map(Maps *owner, const Common::String &name, uint16 id);
+	Map(uint index, const Common::String &name, uint16 id);
 	virtual ~Map() {}
 
 	/**

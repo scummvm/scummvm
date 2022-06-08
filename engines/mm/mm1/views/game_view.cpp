@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/game_view.h"
+#include "mm/mm1/maps/maps.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {

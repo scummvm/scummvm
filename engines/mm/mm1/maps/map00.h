@@ -83,7 +83,7 @@ private:
 		&Map00::special23
 	};
 public:
-	Map00(Maps *owner) : Map(owner, "sorpigal", 0x604) {}
+	Map00() : Map(0, "sorpigal", 0x604) {}
 
 	/**
 	 * Handles all special stuff that happens on the map
