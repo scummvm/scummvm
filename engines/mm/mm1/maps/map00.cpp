@@ -102,7 +102,16 @@ void Map00::special04() {
 	));
 }
 
-void Map00::special05() { warning("special05"); }
+void Map00::special05() {
+	Sound::sound(SOUND_2);
+	g_events->msgInfo(InfoMessage(
+		STRING["maps.map00.tavern"],
+		[]() {
+			g_events->addView("TAVERN");
+		}
+	));
+}
+
 void Map00::special06() { warning("special06"); }
 void Map00::special07() { warning("special07"); }
 void Map00::special08() { warning("special08"); }

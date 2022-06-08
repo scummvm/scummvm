@@ -63,6 +63,9 @@ void GameView::draw() {
 	} else if (_isDark) {
 		writeString(9, 7, STRING["view.darkness"]);
 	}
+
+	if (_businessDisplay != -1)
+		drawBusinessName();
 }
 
 void GameView::drawScene() {
@@ -196,6 +199,12 @@ void GameView::drawDialogMessage() {
 	writeString(9, 6, "            ");
 	writeString(9, 7, _dialogMessage);
 	writeString(9, 8, "            ");
+}
+
+void GameView::drawBusinessName() {
+	writeString(10, 15, STRING[Common::String::format(
+		"maps.businesses.%d", _businessDisplay)]);
+	_businessDisplay = -1;
 }
 
 } // namespace Views

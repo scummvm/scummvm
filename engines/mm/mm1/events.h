@@ -131,6 +131,7 @@ public:
 	MESSAGE(Unfocus);
 	MESSAGE(Keypress);
 	MESSAGE(Action);
+	MESSAGE(Business);
 	MESSAGE(Game);
 	MESSAGE(Info);
 	#undef MESSAGE
@@ -195,7 +196,7 @@ public:
 	}
 
 	/**
-	 * Handles events
+	 * Overrides events we want to only go to the focused view
 	 */
 	#define MESSAGE(NAME) \
 		bool msg##NAME(const NAME##Message &e) override { \

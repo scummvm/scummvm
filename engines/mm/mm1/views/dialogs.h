@@ -31,6 +31,7 @@
 #include "mm/mm1/views/order.h"
 #include "mm/mm1/views/protect.h"
 #include "mm/mm1/views/quick_ref.h"
+#include "mm/mm1/views/tavern.h"
 #include "mm/mm1/views/title.h"
 #include "mm/mm1/views/view_characters.h"
 
@@ -48,6 +49,7 @@ private:
 	Views::Order _order;
 	Views::Protect _protect;
 	Views::QuickRef _quickRef;
+	Views::Tavern _tavern;
 	Views::Title _title;
 	Views::ViewCharacters _viewCharacters;
 	Views::ViewCharacter _viewCharacter;

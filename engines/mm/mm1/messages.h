@@ -77,6 +77,15 @@ struct InfoMessage : public Message {
 		YNCallback ynCallback = nullptr);
 };
 
+struct ValueMessage : public Message {
+	int _value;
+
+	ValueMessage() : Message(), _value(0) {}
+	ValueMessage(int value) : Message(),
+		_value(value) {}
+};
+typedef ValueMessage BusinessMessage;
+
 } // namespace MM1
 } // namespace MM
 

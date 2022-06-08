@@ -19,45 +19,22 @@
  *
  */
 
-#ifndef MM1_VIEWS_GAME_VIEW_H
-#define MM1_VIEWS_GAME_VIEW_H
+#ifndef MM1_VIEWS_TAVERN_H
+#define MM1_VIEWS_TAVERN_H
 
-#include "mm/mm1/game/view_base.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 
-class GameView : public Game::ViewBase {
-private:
-	int _tileIndex = 0, _srcWidth = 0, _srcPitch = 0;
-	int _destLeft = 0, _destTop = 0, _srcLeft = 0;
-	byte _mask = 0;
-	byte _drawFlags[10];
-private:
-	/**
-	 * Draws a tile
-	 */
-	void drawTile();
-
-	/**
-	 * Draws the scene
-	 */
-	void drawScene();
-
-	/**
-	 * Draws the dialog message
-	 */
-	void drawDialogMessage();
-
-	/**
-	 * Draws the business name line
-	 */
-	void drawBusinessName();
+class Tavern : public TextView {
 public:
-	GameView(UIElement *owner);
-	virtual ~GameView() {}
+	Tavern();
+	virtual ~Tavern() {}
 
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 };
 
