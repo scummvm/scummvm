@@ -3566,7 +3566,7 @@ int16 EfhEngine::selectMonsterGroup() {
 	return retVal;
 }
 
-int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, int16 arg4) {
+int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, bool arg4) {
 	debug("sub1C956 %d %d %d", charId, unkFied18Val, arg4);
 	
 	int16 varE = -1;
@@ -3606,8 +3606,8 @@ int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, int16 arg4) {
 		else
 			varE = selectMonsterGroup();
 
-		if (arg4 == 0) {
-			if (varE == 27)
+		if (!arg4) {
+			if (varE == 27) // Esc
 				varE = 0;
 		} else if (varE != 27) {
 			int16 monsterGroupDistance = computeMonsterGroupDistance(_teamMonsterIdArray[varE]);
@@ -3615,7 +3615,7 @@ int16 EfhEngine::sub1C956(int16 charId, int16 unkFied18Val, int16 arg4) {
 				varE = 27;
 			}
 		}
-	} while (varE != -1);
+	} while (varE == -1);
 
 	if (varE == 27)
 		varE = -1;
@@ -6941,7 +6941,7 @@ void EfhEngine::setTextPos(int16 textPosX, int16 textPosY) {
 }
 
 void EfhEngine::copyCurrentPlaceToBuffer(int16 id) {
-	debug("copyCurrentPlaceToBuffer %d", id);
+	debugC(2, kDebugEngine, "copyCurrentPlaceToBuffer %d", id);
 
 	// Note that 576 = 24 * 24
 	uint8 *placesPtr = &_places[576 * id];
