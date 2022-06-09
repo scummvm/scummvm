@@ -76,11 +76,11 @@ public:
 	Module();
 	~Module();
 
-	bool load(Common::SeekableReadStream &stream, int offs);
+	virtual bool load(Common::SeekableReadStream &stream, int offs);
 	static byte periodToNote(int16 period, byte finetune = 0);
 	static int16 noteToPeriod(byte note, byte finetune = 0);
 
-private:
+protected:
 	static const int16 periods[16][60];
 	static const uint32 signatures[];
 };
