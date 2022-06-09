@@ -30,13 +30,16 @@ namespace Views {
 namespace Businesses {
 
 class Business : public TextView {
+private:
+	int _timeoutCtr;
 protected:
 	Common::String _modeString;
 protected:
 	/**
-	 * Draws the initial display for the business
+	 * Clears the bottom part of the window and
+	 * displays a message
 	 */
-	void drawInitial();
+	void displayMessage(const Common::String &msg);
 
 	/**
 	 * Move text position to the next line
@@ -48,9 +51,19 @@ protected:
 	 */
 	void leave();
 
+	/**
+	 * Subtract gold
+	 */
 public:
 	Business(const Common::String &name);
 	virtual ~Business() {}
+
+	/**
+	 * Draws the initial display for the business
+	 */
+	void draw() override;
+
+	bool tick() override;
 };
 
 } // namespace Businesses
