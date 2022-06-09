@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-08 19:09+0000\n"
-"PO-Revision-Date: 2022-05-29 15:52+0000\n"
-"Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
+"PO-Revision-Date: 2022-06-09 06:42+0000\n"
+"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -2614,8 +2614,8 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
-"Dit spel heeft audio sporen op zijn CD. Deze\n"
-"dienen eerst geripped te worden met een audio\n"
+"Dit spel heeft geluidssporen op zijn CD. Deze\n"
+"dienen eerst geript te worden met een audio\n"
 "CD rip programma om te kunnen luisteren naar\n"
 "het spelmuziek. Zie de documentatie (CD audio)\n"
 "voor details."
@@ -4251,7 +4251,7 @@ msgstr ""
 "maar het spel ondersteunt alleen Roland MT32 MIDI.\n"
 "We zullen proberen te Roland MT32 instrumenten te\n"
 "vertalen naar General MIDI instrumenten. Het is mogelijk\n"
-"dat sommige tracks niet goed klinken."
+"dat sommige geluidssporen niet goed klinken."
 
 #: engines/agos/detection.cpp:77
 msgid "AdLib OPL3 mode"
@@ -5083,7 +5083,7 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
-"FOUT: Niet genoeg muziekbestanden gevonden!\n"
+"FOUT: Niet genoeg geluidssporen gevonden!\n"
 "Escape from Monkey Island heeft twee versies van FullMonkeyMap.imt,\n"
 "u moet allebei deze bestanden van beide CDs kopiëren naar Textures/,\n"
 "en ze als volgt hernoemen om muziek in het spel te hebben:\n"
@@ -5220,11 +5220,11 @@ msgstr "Munitie van speler zal niet verminderen."
 
 #: engines/hypno/detection.cpp:281
 msgid "Unlock all levels"
-msgstr ""
+msgstr "Geef alle levels vrij"
 
 #: engines/hypno/detection.cpp:282
 msgid "All levels will be available to play."
-msgstr ""
+msgstr "Alle levels kunnen dan gespeeld worden."
 
 #: engines/hypno/detection.cpp:290
 msgid "Enable restored content"
@@ -5608,14 +5608,14 @@ msgstr "TTS Verteller"
 
 #: engines/made/detection.cpp:62
 msgid "Play a digital soundtrack during the opening movie"
-msgstr "Speel een digitale soundtrack gedurende de openingsfilm"
+msgstr "Speel een digitale geluidsspoor gedurende de openingsfilm"
 
 #: engines/made/detection.cpp:63
 msgid ""
 "If selected, the game will use a digital soundtrack during the introduction. "
 "Otherwise, it will play MIDI music."
 msgstr ""
-"Indien geselecteerd, zal de game de digitale soundtrack gedurende de "
+"Indien geselecteerd, zal de game de digitale geluidsspoor gedurende de "
 "introductie afspelen. Anders zal het de MIDI muziek afspelen."
 
 #: engines/made/detection_tables.h:441 engines/made/detection_tables.h:458
@@ -6872,20 +6872,21 @@ msgstr ""
 "Ouverture verandert naar de scene met de Lucasfilm en Loom logotypes."
 
 #: engines/scumm/dialogs.cpp:810
-#, fuzzy
-#| msgid "Playback"
 msgid "Playback Adjust:"
-msgstr "Opnieuw afspelen"
+msgstr "Opnieuw afspelen aanpassen:"
 
 #: engines/scumm/dialogs.cpp:814
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
 msgstr ""
+"Bij het spelen van geluid vanaf de CD geluidsspoor, pas de startpositie aan "
+"met deze setting. Gebruik dit als je vaak stukjes van een verkeerd geluid "
+"hoort."
 
 #: engines/scumm/dialogs.cpp:886
 msgid "Intro Adjust:"
-msgstr ""
+msgstr "Intro Aanpassing:"
 
 #: engines/scumm/dialogs.cpp:890
 msgid ""
@@ -6893,10 +6894,13 @@ msgid ""
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
 msgstr ""
+"Als de intro geluidsspoor gebruikt word, speel vanaf dit punt. Gebruikt dit "
+"als de muziek te vroeg wordt afgekapt, of wanneer de muziek niet synchroon "
+"loopt met de intro."
 
 #: engines/scumm/dialogs.cpp:899
 msgid "Outlook Adjust:"
-msgstr ""
+msgstr "Vooruitzicht Aanpassing:"
 
 #: engines/scumm/dialogs.cpp:903
 msgid ""
@@ -6904,6 +6908,9 @@ msgid ""
 "track at which it starts playing. Use this if the music is cut off, or if "
 "you hear part of the previous music."
 msgstr ""
+"De vooruitzicht muziek is onderdeel van de intro geluidsspoor. Pas de "
+"positie in de geluidsspoor aan wanneer het begint te spelen. Gebruik dit als "
+"de muziek wordt afgekapt, of als je een deel van de vorige muziek hoort."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
@@ -7891,7 +7898,7 @@ msgstr "Zet audio CD aan"
 
 #: engines/twine/detection.cpp:831
 msgid "Enable the original audio cd track"
-msgstr "Gebruik de originele audio CD spoor"
+msgstr "Gebruik de originele audio CD geluidsspoor"
 
 #: engines/twine/detection.cpp:839
 msgid "Enable sound"
@@ -8156,7 +8163,7 @@ msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
 "Camera volgt de bewegingen van de speler in plaats van springen naar "
-"voorgedefenieerde posities."
+"voorgedefinieerde posities."
 
 #: engines/ultima/detection.cpp:164
 msgid "Always enable Christmas easter-egg"
