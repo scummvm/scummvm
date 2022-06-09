@@ -331,6 +331,10 @@ int BoyzEngine::detectTarget(const Common::Point &mousePos) {
 char BoyzEngine::selectDirection() {
 	Common::Event event;
 	Common::Rect button(252, 158, 315, 195);
+	Graphics::Surface *screen = _compositeSurface->convertTo(_compositeSurface->format, _background->decoder->getPalette());
+	Frames mapFrames = decodeFrames("c4/minemap.smk");
+	drawImage(*mapFrames[0], 0, 0, true);
+	bool viewingMap = false;
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Point mousePos = g_system->getEventManager()->getMousePos();
@@ -338,20 +342,26 @@ char BoyzEngine::selectDirection() {
 				case Common::EVENT_MOUSEMOVE:
 					if (button.contains(mousePos))
 						defaultCursor();
-					else if (mousePos.x <= _screenW / 3)
+					else if (!viewingMap && mousePos.x <= _screenW / 3)
 						changeCursor(_leftArrowPointer, _crosshairsPalette, true);
-					else if (mousePos.x >= 2 * _screenW / 3)
+					else if (!viewingMap && mousePos.x >= 2 * _screenW / 3)
 						changeCursor(_rightArrowPointer, _crosshairsPalette, true);
-					else
+					else if (!viewingMap)
 						changeCursor(_crossPointer, _crosshairsPalette, true);
 					break;
 
 				case Common::EVENT_LBUTTONDOWN:
 					if (button.contains(mousePos)) {
-						// TODO: show map, if available
-					} else if (mousePos.x <= _screenH / 2) {
+						if (viewingMap) {
+							drawImage(*screen, 0, 0, false);
+							drawImage(*mapFrames[0], 0, 0, true);
+						} else {
+							drawImage(*mapFrames[1], 0, 0, true);
+						}
+						viewingMap = !viewingMap;
+					} else if (!viewingMap && mousePos.x <= _screenH / 2) {
 						return 'L';
-					} else
+					} else if (!viewingMap)
 						return 'R';
 					break;
 
