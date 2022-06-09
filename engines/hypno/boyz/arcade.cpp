@@ -333,14 +333,17 @@ char BoyzEngine::selectDirection() {
 	Common::Rect button(252, 158, 315, 195);
 	Graphics::Surface *screen = _compositeSurface->convertTo(_compositeSurface->format, _background->decoder->getPalette());
 	Frames mapFrames = decodeFrames("c4/minemap.smk");
-	drawImage(*mapFrames[0], 0, 0, true);
+	bool showMap = _sceneState["GS_MINEMAP"];
 	bool viewingMap = false;
+	if (showMap)
+		drawImage(*mapFrames[0], 0, 0, true);
+
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Point mousePos = g_system->getEventManager()->getMousePos();
 			switch (event.type) {
 				case Common::EVENT_MOUSEMOVE:
-					if (button.contains(mousePos))
+					if (showMap && button.contains(mousePos))
 						defaultCursor();
 					else if (!viewingMap && mousePos.x <= _screenW / 3)
 						changeCursor(_leftArrowPointer, _crosshairsPalette, true);
@@ -351,7 +354,7 @@ char BoyzEngine::selectDirection() {
 					break;
 
 				case Common::EVENT_LBUTTONDOWN:
-					if (button.contains(mousePos)) {
+					if (showMap && button.contains(mousePos)) {
 						if (viewingMap) {
 							drawImage(*screen, 0, 0, false);
 							drawImage(*mapFrames[0], 0, 0, true);
