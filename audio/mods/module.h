@@ -74,7 +74,7 @@ public:
 	pattern_t *pattern;
 
 	Module();
-	~Module();
+	virtual ~Module();
 
 	virtual bool load(Common::SeekableReadStream &stream, int offs);
 	static byte periodToNote(int16 period, byte finetune = 0);
