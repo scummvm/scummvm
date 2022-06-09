@@ -96,8 +96,6 @@ private:
 
 	SoundResource *_speechRes;
 	SoundResource *_soundRes;
-
-	void convertTMFToMod(uint8 *tmfData, uint32 tmfSize, uint8 *&modData, uint32 &modSize);
 };
 
 } // End of namespace Chewy
