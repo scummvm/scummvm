@@ -22,13 +22,14 @@
 #include "mm/mm1/views/businesses/business.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Businesses {
 
-#define DISPLAY_TIMEOUT (3 * FRAME_RATE)
+#define DISPLAY_TIMEOUT (5 * FRAME_RATE)
 
 Business::Business(const Common::String &name) : TextView(name) {
 	_bounds = getLineBounds(17, 24);
@@ -46,9 +47,9 @@ void Business::draw() {
 	writeString(0, 6, STRING["dialogs.misc.go_back"]);
 }
 
-void Business::displayMessage(const Common::String &msg) {
+void Business::displayMessage(int x, const Common::String &msg) {
 	clearLines(3, 7);
-	writeString(0, 5, msg);
+	writeString(x, 5, msg);
 	_timeoutCtr = DISPLAY_TIMEOUT;
 }
 
@@ -56,6 +57,21 @@ void Business::newLine() {
 	_textPos.x = 0;
 	if (++_textPos.y >= 24)
 		_textPos.y = 0;
+}
+
+bool Business::subtractGold(uint amount) {
+	if (g_globals->_currCharacter->_gold < amount) {
+		notEnoughGold();
+		return false;
+	} else {
+		g_globals->_currCharacter->_gold -= amount;
+		return true;
+	}
+}
+
+void Business::notEnoughGold() {
+	Sound::sound(SOUND_2);
+	displayMessage(STRING["dialogs.misc.not_enough_gold"]);
 }
 
 void Business::leave() {

@@ -39,7 +39,10 @@ protected:
 	 * Clears the bottom part of the window and
 	 * displays a message
 	 */
-	void displayMessage(const Common::String &msg);
+	void displayMessage(int x, const Common::String &msg);
+	void displayMessage(const Common::String &msg) {
+		displayMessage(0, msg);
+	}
 
 	/**
 	 * Move text position to the next line
@@ -52,8 +55,14 @@ protected:
 	void leave();
 
 	/**
-	 * Subtract gold
+	 * Subtract gold from current character
 	 */
+	bool subtractGold(uint amount);
+
+	/**
+	 * Displays not enough gold
+	 */
+	void notEnoughGold();
 public:
 	Business(const Common::String &name);
 	virtual ~Business() {}
