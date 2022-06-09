@@ -105,14 +105,23 @@ void Map00::special04() {
 void Map00::special05() {
 	Sound::sound(SOUND_2);
 	g_events->msgInfo(InfoMessage(
-		STRING["maps.map00.tavern"],
+		STRING["maps.map00.tavern_inside"],
 		[]() {
 			g_events->addView("TAVERN");
 		}
 	));
 }
 
-void Map00::special06() { warning("special06"); }
+void Map00::special06() {
+	Sound::sound(SOUND_2);
+	g_events->msgInfo(InfoMessage(
+		STRING["maps.map00.temple_inside"],
+		[]() {
+			g_events->addView("TEMPLE");
+		}
+	));
+}
+
 void Map00::special07() { warning("special07"); }
 void Map00::special08() { warning("special08"); }
 void Map00::special09() { warning("special09"); }
@@ -124,12 +133,48 @@ void Map00::special14() { warning("special14"); }
 void Map00::special15() { warning("special15"); }
 void Map00::special16() { warning("special16"); }
 void Map00::special17() { warning("special17"); }
-void Map00::special18() { warning("special18"); }
-void Map00::special19() { warning("special19"); }
-void Map00::special20() { warning("special20"); }
-void Map00::special21() { warning("special21"); }
-void Map00::special22() { warning("special22"); }
-void Map00::special23() { warning("special23"); }
+
+void Map00::special18() {
+	Sound::sound(SOUND_2);
+	g_events->msgInfo(InfoMessage(
+		2, 0, STRING["maps.map00.sign"],
+		6, 1, STRING["maps.map00.temple"]
+	));
+}
+
+void Map00::special19() {
+	Sound::sound(SOUND_2);
+	g_events->msgInfo(InfoMessage(
+		2, 0, STRING["maps.map00.sign"],
+		6, 1, STRING["maps.map00.jail"]
+	));
+}
+
+void Map00::special20() {
+	Sound::sound(SOUND_2);
+	g_events->msgInfo(InfoMessage(
+		2, 0, STRING["maps.map00.sign"],
+		6, 1, STRING["maps.map00.tavern"]
+	));
+}
+void Map00::special21() {
+	Sound::sound(SOUND_2);
+	g_events->msgInfo(InfoMessage(
+		2, 0, STRING["maps.map00.sign"],
+		6, 1, STRING["maps.map00.training"]
+	));
+}
+
+void Map00::special22() {
+	Map &map = *g_maps->_currentMap;
+	map[0x2f] = 3;
+	map[0x21] = 6;
+	g_maps->clearSpecial();
+}
+
+void Map00::special23() {
+	warning("special23");
+}
 
 } // namespace Maps
 } // namespace MM1

@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	mm1/utils/strings.o \
 	mm1/views/businesses/business.o \
 	mm1/views/businesses/tavern.o \
+	mm1/views/businesses/temple.o \
 	mm1/views/are_you_ready.o \
 	mm1/views/create_characters.o \
 	mm1/views/game.o \
