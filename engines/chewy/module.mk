@@ -36,6 +36,8 @@ MODULE_OBJS = \
 	dialogs/inventory.o \
 	dialogs/main_menu.o \
 	dialogs/options.o \
+	music/module_tmf.o \
+	music/tmf_stream.o \
 	video/cfo_decoder.o \
 	video/video_player.o \
 	rooms/room00.o \
