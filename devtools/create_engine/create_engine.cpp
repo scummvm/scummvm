@@ -31,11 +31,13 @@
 #include <unistd.h>
 #endif
 
-// Specified engine name with different cases
 #define MAX_LINE_LENGTH 256
-char engineUppercase[MAX_LINE_LENGTH];
-char engineCamelcase[MAX_LINE_LENGTH];
-char engineLowercase[MAX_LINE_LENGTH];
+
+// Specified engine name with different cases
+#define MAX_ENGINE_NAME_LENGTH 64
+char engineUppercase[MAX_ENGINE_NAME_LENGTH];
+char engineCamelcase[MAX_ENGINE_NAME_LENGTH];
+char engineLowercase[MAX_ENGINE_NAME_LENGTH];
 
 // List of files to be copied to create engine
 static const char *const FILENAMES[] = {
@@ -107,7 +109,7 @@ void process_file(FILE *in, FILE *out) {
 
 // Copies and processes the specified file
 void process_file(const char *filename, const char *prefix, const char *prefix2) {
-	char srcFilename[128], destFilename[128];
+	char srcFilename[MAX_LINE_LENGTH], destFilename[MAX_LINE_LENGTH];
 	sprintf(srcFilename, "%s/files/%s", prefix2, filename);
 	if (!strncmp(filename, "xyzzy.", 6))
 		sprintf(destFilename, "%s/engines/%s/%s.%s",
