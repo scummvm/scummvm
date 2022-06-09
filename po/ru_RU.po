@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-08 19:09+0000\n"
-"PO-Revision-Date: 2022-06-03 20:16+0000\n"
+"PO-Revision-Date: 2022-06-09 17:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -5199,11 +5199,11 @@ msgstr "Боеприпасы игрока никогда не уменьшают
 
 #: engines/hypno/detection.cpp:281
 msgid "Unlock all levels"
-msgstr ""
+msgstr "Разблокировать все уровни"
 
 #: engines/hypno/detection.cpp:282
 msgid "All levels will be available to play."
-msgstr ""
+msgstr "Все уровни будут доступны для игры."
 
 #: engines/hypno/detection.cpp:290
 msgid "Enable restored content"
