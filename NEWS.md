@@ -1,7 +1,10 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.6.0 (XXXX-XX-XX)
+#### 2.7.0 (XXXX-XX-XX)
+
+
+#### 2.6.0 (2022-XX-XX)
 
  New games:
    - Added support for Sanitarium.
