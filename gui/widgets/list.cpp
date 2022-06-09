@@ -667,7 +667,7 @@ void ListWidget::scrollToEnd() {
 void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
-		setEditString(_list[_selectedItem]);
+		setEditString(stripGUIformatting(_list[_selectedItem]));
 		_caretPos = _editString.size();	// Force caret to the *end* of the selection.
 		_editColor = ThemeEngine::kFontColorNormal;
 		markAsDirty();
@@ -918,7 +918,7 @@ void ListWidget::drawFormattedText(const Common::Rect &r, const Common::U32Strin
 		}
 	}
 
-	if (chunk.size())
+	if (chunk.size() || str.empty())
 		g_gui.theme()->drawText(r, chunk, state, align, inverted, deltax, true, curfont, curcolor);
 }
 
