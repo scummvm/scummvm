@@ -87,12 +87,40 @@ void Tavern::draw() {
 }
 
 void Tavern::haveADrink() {
-	Sound::sound(SOUND_2);
-	displayMessage(STRING["dialogs.tavern.terrible"]);
+	if (g_globals->_currCharacter->_condition) {
+		Sound::sound(SOUND_2);
+		displayMessage(STRING["dialogs.tavern.terrible"]);
+	} else if (subtractGold(1)) {
+		if (++g_globals->_currCharacter->_numDrinks < 3 ||
+				g_engine->getRandomNumber(10) <
+				g_globals->_currCharacter->_end) {
+			displayMessage(STRING["dialogs.tavern.great_stuff"]);
+		} else {
+			if (!(g_globals->_currCharacter->_condition & BAD_CONDITION))
+				g_globals->_currCharacter->_condition |= POISONED;
+
+			Sound::sound(SOUND_2);
+			displayMessage(13, STRING["dialogs.tavern.you_feel_sick"]);
+		}
+	}
 }
 
 void Tavern::tipBartender() {
-
+	if (g_globals->_currCharacter->_condition) {
+		displayMessage(STRING["dialogs.tavern.go_see_clerics"]);
+	} else if (subtractGold(1)) {
+		if (g_globals->_currCharacter->_numDrinks == 0) {
+			displayMessage(STRING["dialogs.tavern.have_a_drink"]);
+		} else if (g_engine->getRandomNumber(3) != 3) {
+			displayMessage(STRING["dialogs.tavern.have_another_drink"]);
+		} else {
+			int townNum = g_maps->_currentMap->dataByte(0);
+			displayMessage(STRING[Common::String::format(
+				"dialogs.tavern.tips.%d_%d",
+				townNum, g_globals->_currCharacter->_numDrinks
+			)]);
+		}
+	}
 }
 
 void Tavern::listenForRumors() {
