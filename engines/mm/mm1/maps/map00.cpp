@@ -60,7 +60,7 @@ void Map00::special01() {
 
 	switch (g_maps->_forwardMask) {
 	case DIRMASK_E:
-		line2 = STRING["maps.map00.eulards"];
+		line2 = STRING["maps.map00.market"];
 		x = 6;
 		break;
 	case DIRMASK_W:
