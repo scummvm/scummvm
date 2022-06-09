@@ -211,6 +211,7 @@ void BoyzEngine::runRetryMenu(Code *code) {
 
 	Common::Rect retryMissionBox(73, 62, 245, 77);
 	Common::Rect restartTerritoryBox(73, 81, 245, 96);
+	Common::Rect restartMissionBox(73, 100, 245, 114);
 	Common::Rect quitBox(73, 119, 245, 133);
 
 	Common::Event event;
@@ -240,6 +241,9 @@ void BoyzEngine::runRetryMenu(Code *code) {
 					_health = _maxHealth;
 					_nextLevel = firstLevelTerritory(_checkpoint);
 					cont = false;
+				} else if (restartMissionBox.contains(mousePos)) {
+					_nextLevel = "<main_menu>";
+					cont = false;
 				} else if (quitBox.contains(mousePos))
 					quitGame();
 				break;
@@ -247,6 +251,9 @@ void BoyzEngine::runRetryMenu(Code *code) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_s) {
 					_nextLevel = _checkpoint;
+					cont = false;
+				} else if (event.kbd.keycode == Common::KEYCODE_n) {
+					_nextLevel = "<main_menu>";
 					cont = false;
 				} else if (event.kbd.keycode == Common::KEYCODE_t) {
 					// Restore initial health for the team
