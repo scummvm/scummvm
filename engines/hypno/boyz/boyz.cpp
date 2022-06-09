@@ -204,18 +204,34 @@ void BoyzEngine::loadAssets() {
 	Code *retry = new Code("<retry_menu>");
 	_levels["<retry_menu>"] = retry;
 
+	Transition *warning_1 = new Transition("c14.mi_");
+	warning_1->intros.push_back("warnings/w12s.smk");
+	_levels["<warning_1>"] = warning_1;
+
 	loadArcadeLevel("c19.mi_", "c11.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c11.mi_", "c12.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c12.mi_", "c14.mi_", "<retry_menu>", "");
+	loadArcadeLevel("c12.mi_", "<warning_1>", "<retry_menu>", "");
+
 	loadArcadeLevel("c14.mi_", "c13.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c13.mi_", "c15.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c15.mi_", "c16.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c16.mi_", "c17.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c17.mi_", "c18.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c18.mi_", "c21.mi_", "<retry_menu>", "");
+	loadArcadeLevel("c18.mi_", "<territory_2>", "<retry_menu>", "");
+
+	Transition *territory_2 = new Transition("c21.mi_");
+	territory_2->intros.push_back("warnings/w13s.smk");
+	territory_2->intros.push_back("c2/c2t01.smk");
+	_levels["<territory_2>"] = territory_2;
 
 	loadArcadeLevel("c21.mi_", "c22.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c22.mi_", "<select_c3>", "<retry_menu>", "");
+	loadArcadeLevel("c22.mi_", "<territory_3>", "<retry_menu>", "");
+
+	Transition *territory_3 = new Transition("<select_c3>");
+	territory_3->intros.push_back("warnings/w14s.smk");
+	territory_3->intros.push_back("c3/c3t01.smk");
+	_levels["<territory_3>"] = territory_3;
+
 	loadArcadeLevel("c31.mi_", "<check_c3>", "<retry_menu>", "");
 	loadArcadeLevel("c32.mi_", "<check_c3>", "<retry_menu>", "");
 	loadArcadeLevel("c33.mi_", "<check_c3>", "<retry_menu>", "");
@@ -231,10 +247,20 @@ void BoyzEngine::loadAssets() {
 	ar->id = 353; // This corrects a mistake in the game scripts
 	loadArcadeLevel("c354.mi_", "<check_ho>", "<retry_menu>", "");
 	loadArcadeLevel("c355.mi_", "<check_ho>", "<retry_menu>", "");
+	loadArcadeLevel("c36.mi_", "<territory_4>", "<retry_menu>", "");
 
-	loadArcadeLevel("c36.mi_", "c41.mi_", "<retry_menu>", "");
+	Transition *territory_4 = new Transition("c41.mi_");
+	territory_4->intros.push_back("warnings/w15s.smk");
+	territory_4->intros.push_back("c4/c4t01.smk");
+	_levels["<territory_4>"] = territory_4;
+
 	loadArcadeLevel("c41.mi_", "c42.mi_", "<retry_menu>", "");
-	loadArcadeLevel("c42.mi_", "<select_c5>", "<retry_menu>", "");
+	loadArcadeLevel("c42.mi_", "<territory_5>", "<retry_menu>", "");
+
+	Transition *territory_5 = new Transition("<check_c5>");
+	territory_5->intros.push_back("warnings/w16s.smk");
+	territory_5->intros.push_back("c5/c5t01.smk");
+	_levels["<territory_5>"] = territory_5;
 
 	loadArcadeLevel("c51.mi_", "<check_c5>", "<retry_menu>", "");
 	loadArcadeLevel("c52.mi_", "<check_c5>", "<retry_menu>", "");
@@ -256,6 +282,9 @@ void BoyzEngine::loadAssets() {
 
 	loadSceneLevel(selectBoyz, "<select_boyz>", "", "");
 	Scene *sc = (Scene *) _levels["<select_boyz>"];
+	sc->intros.push_back("warnings/w17s.smk");
+	sc->intros.push_back("c1/c1t01.smk");
+	sc->intros.push_back("intro/c0o01s.smk");
 	sc->resolution = "320x200";
 
 	hl = new Highlight("GS_SWITCH1");
