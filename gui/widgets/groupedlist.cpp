@@ -174,11 +174,15 @@ void GroupedListWidget::setSelected(int item) {
 		if (_editMode)
 			abortEditMode();
 
-		_selectedItem = -1;
-		for (uint i = 0; i < _listIndex.size(); ++i) {
-			if (_listIndex[i] == item) {
-				_selectedItem = i;
-				break;
+		if (!_filter.empty()) {
+			_selectedItem = item;
+		} else {
+			_selectedItem = -1;
+			for (uint i = 0; i < _listIndex.size(); ++i) {
+				if (_listIndex[i] == item) {
+					_selectedItem = i;
+					break;
+				}
 			}
 		}
 
