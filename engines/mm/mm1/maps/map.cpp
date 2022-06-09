@@ -38,6 +38,8 @@ Map::Map(uint index, const Common::String &name, uint16 id) :
 void Map::load() {
 	loadMazeData();
 	loadOverlay();
+
+	g_globals->_heardRumor = false;
 }
 
 void Map::loadMazeData() {

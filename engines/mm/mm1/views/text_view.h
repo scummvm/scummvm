@@ -65,6 +65,11 @@ protected:
 	void clearSurface();
 
 	/**
+	 * Clear area covered by the given text lines
+	 */
+	void clearLines(int y1, int y2);
+
+	/**
 	 * Draws a text border
 	 */
 	void drawTextBorder();

@@ -85,6 +85,9 @@ struct Character {
 	int _v58, _v59, _v62, _v63, _v64, _v65;
 	int _v66, _v67, _v6c, _v6f;
 
+	// Non persistent fields
+	byte _numDrinks = 0;
+
 	void synchronize(Common::Serializer &s);
 	void clear();
 };

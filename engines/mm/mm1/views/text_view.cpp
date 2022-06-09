@@ -90,6 +90,11 @@ void TextView::clearSurface() {
 	_textPos.x = _textPos.y = 0;
 }
 
+void TextView::clearLines(int y1, int y2) {
+	Graphics::ManagedSurface s = getSurface();
+	s.fillRect(getLineBounds(y1, y2), 0);
+}
+
 void TextView::drawTextBorder() {
 	Graphics::ManagedSurface surf = getSurface();
 	clearSurface();

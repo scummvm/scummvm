@@ -20,12 +20,17 @@
  */
 
 #include "mm/mm1/views/businesses/tavern.h"
+#include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/mm1.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Businesses {
+
+#define DISPLAY_TIMEOUT (3 * FRAME_RATE)
 
 Tavern::Tavern() : Business("Tavern") {
 	_modeString = STRING["dialogs.business.gather"];
@@ -38,28 +43,119 @@ bool Tavern::msgFocus(const FocusMessage &msg) {
 }
 
 bool Tavern::msgKeypress(const KeypressMessage &msg) {
-	if (msg.keycode == Common::KEYCODE_ESCAPE) {
+	switch (msg.keycode) {
+	case Common::KEYCODE_ESCAPE:
 		leave();
+		break;
+	case Common::KEYCODE_a:
+		haveADrink();
+		break;
+	case Common::KEYCODE_b:
+		tipBartender();
+		break;
+	case Common::KEYCODE_c:
+		listenForRumors();
+		break;
+	case Common::KEYCODE_g:
+		gatherGold();
+		redraw();
+		break;
+	case Common::KEYCODE_1:
+	case Common::KEYCODE_2:
+	case Common::KEYCODE_3:
+	case Common::KEYCODE_4:
+	case Common::KEYCODE_5:
+	case Common::KEYCODE_6: {
+		uint charIndex = msg.keycode - Common::KEYCODE_1;
+		if (charIndex < g_globals->_party.size()) {
+			g_globals->_currCharacter = &g_globals->_party[charIndex];
+			redraw();
+		}
+		break;
+	}
+	default:
+		break;
 	}
 
 	return true;
 }
 
 void Tavern::draw() {
+	drawInitial();
+	drawInitialRight();
+
 	switch (_mode) {
-	case INITIAL:
-		drawInitial();
-		drawInitialRight();
+	case DRINK:
+		drawDrink();
+		break;
+	case RUMOR:
+		drawRumor();
 		break;
 	default:
 		break;
 	}
+
+	_mode = INITIAL;
 }
 
 void Tavern::drawInitialRight() {
 	writeString(20, 1, STRING["dialogs.tavern.drink"]);
 	writeString(20, 2, STRING["dialogs.tavern.tip"]);
 	writeString(20, 3, STRING["dialogs.tavern.listen"]);
+}
+
+void Tavern::drawDrink() {
+	clearLines(3, 7);
+	writeString(0, 5, STRING["dialogs.tavern.terrible"]);
+}
+
+void Tavern::drawRumor() {
+	Common::String msg = STRING["dialogs.tavern.rumors.none"];
+	if (!g_globals->_heardRumor) {
+		g_globals->_heardRumor = true;
+		msg = STRING[Common::String::format(
+			"dialogs.tavern.rumors.%d",
+			g_engine->getRandomNumber(16))];
+	}
+
+	clearLines(3, 7);
+	writeString(0, 5, msg);
+}
+
+void Tavern::haveADrink() {
+	_mode = DRINK;
+	Sound::sound(SOUND_2);
+	_timeoutCtr = DISPLAY_TIMEOUT;
+	redraw();
+}
+
+void Tavern::tipBartender() {
+
+}
+
+void Tavern::listenForRumors() {
+	_mode = RUMOR;
+	_timeoutCtr = DISPLAY_TIMEOUT;
+	redraw();
+}
+
+void Tavern::gatherGold() {
+	uint total = 0;
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		total += g_globals->_party[i]._gold;
+		g_globals->_party[i]._gold = 0;
+	}
+
+	g_globals->_currCharacter->_gold = total;
+}
+
+bool Tavern::tick() {
+	if (_timeoutCtr && --_timeoutCtr == 0) {
+		_mode = INITIAL;
+		redraw();
+	}
+
+	return Business::tick();
 }
 
 } // namespace Businesses
