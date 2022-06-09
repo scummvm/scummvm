@@ -61,6 +61,7 @@ struct GameInfo;
 #define GAME_IS_REMORSE (Ultima8Engine::get_instance()->getGameInfo()->_type == GameInfo::GAME_REMORSE)
 #define GAME_IS_REGRET (Ultima8Engine::get_instance()->getGameInfo()->_type == GameInfo::GAME_REGRET)
 #define GAME_IS_CRUSADER (GAME_IS_REMORSE || GAME_IS_REGRET)
+#define GAME_IS_DEMO (Ultima8Engine::get_instance()->getGameInfo()->_ucOffVariant == GameInfo::GAME_UC_DEMO)
 
 class Ultima8Engine : public Shared::UltimaEngine {
 	friend class Debugger;
