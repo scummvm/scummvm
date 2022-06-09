@@ -502,7 +502,7 @@ maps:
 		temple: "TEMPLE MOONSHADOW"
 		training: "OTTO'S TRAINING"
 		jail: "JAIL. KEEP OUT!"
-		eulards: """EULARDS FINE FOODS"""
+		market: """EULARDS FINE FOODS"""
 		blacksmith: """B AND B BLACKSMITHING"""
 		inn: """THE INN OF SORPIGAL"""
 
