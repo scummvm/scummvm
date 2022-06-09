@@ -70,9 +70,14 @@ bool StringsData::load(const Common::String &filename) {
 		// Replace any sequences
 		for (uint i = 0; i < value.size(); ++i) {
 			if (value[i] == '\\' && (value[i + 1] == 'n' ||
-					value[i + 1] == 'r')) {
+				value[i + 1] == 'r')) {
 				value.deleteChar(i);
 				value.setChar('\n', i);
+			} else if (!strncmp(value.c_str() + i, "\\x8B", 4)) {
+				value.deleteChar(i);
+				value.deleteChar(i);
+				value.deleteChar(i);
+				value.setChar('\x8B', i);
 			} else if (value[i] == '"' && value[i + 1] == '"') {
 				value.deleteChar(i);
 			}
