@@ -102,19 +102,18 @@ if [[ "setup" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]];
     fi
     cd "$DIST_FOLDER/emsdk-${EMSDK_VERSION}"
     ./emsdk install ${EMSCRIPTEN_VERSION}
-    # We currently require a few patches for unreleased changes in SDL2 and Emscripten
+    # We currently require a few patches for unreleased changes Emscripten, see https://github.com/chkuendig/scummvm-demo/tree/main/patches
     if [[ "$EMSCRIPTEN_VERSION" == "3.1.8" ]]; then
       echo "Patching Emscripten"
       cd upstream/emscripten
       # until https://github.com/emscripten-core/emscripten/pull/15893 gets merged and released, we need to manually patch it
-      # as the upstream PR has been rebased against an incompatible main,  we'll actually use https://github.com/chkuendig/emscripten/pull/2
-      wget -nc https://github.com/chkuendig/emscripten/pull/2.patch  -O "$DIST_FOLDER/emscripten-15893.patch" || true 
+      wget -nc https://raw.githubusercontent.com/chkuendig/scummvm-demo/main/patches/emscripten-15893.patch  -O "$DIST_FOLDER/emscripten-15893.patch" || true 
       patch -p1 --verbose <"$DIST_FOLDER/emscripten-15893.patch"
       # until https://github.com/emscripten-core/emscripten/pull/16559 gets merged and released, we need to manually patch it
-      wget -nc https://github.com/emscripten-core/emscripten/pull/16559.patch  -O "$DIST_FOLDER/emscripten-16559.patch" || true 
+      wget -nc https://raw.githubusercontent.com/chkuendig/scummvm-demo/main/patches/emscripten-16559.patch  -O "$DIST_FOLDER/emscripten-16559.patch" || true 
       patch -p1 --verbose <"$DIST_FOLDER/emscripten-16559.patch"
       # until https://github.com/emscripten-core/emscripten/pull/16687 gets merged and released, we need to manually patch it
-      wget -nc https://github.com/emscripten-core/emscripten/pull/16559.patch  -O "$DIST_FOLDER/emscripten-16559.patch" || true 
+      wget -nc https://raw.githubusercontent.com/chkuendig/scummvm-demo/main/patches/emscripten-16687.patch  -O "$DIST_FOLDER/emscripten-16687.patch" || true 
       patch -p1 --verbose <"$DIST_FOLDER/emscripten-16687.patch"
     fi
 
@@ -205,7 +204,7 @@ if [[ "libs" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; 
     cd "$LIBS_FOLDER"
     wget -nc "https://downloads.sourceforge.net/mad/libmad-0.15.1b.tar.gz"
     # libmad needs patching: https://stackoverflow.com/questions/14015747/gccs-fforce-mem-option
-    wget -nc "http://www.linuxfromscratch.org/patches/blfs/svn/libmad-0.15.1b-fixes-1.patch" -O "$DIST_FOLDER/libmad-0.15.1b-fixes-1.patch" || true
+    wget -nc "https://raw.githubusercontent.com/chkuendig/scummvm-demo/main/patches/libmad-0.15.1b-fixes-1.patch" -O "$DIST_FOLDER/libmad-0.15.1b-fixes-1.patch" || true
     rm -rf "$LIBS_FOLDER/libmad-0.15.1b/"
     tar -xf libmad-0.15.1b.tar.gz
     cd "$LIBS_FOLDER/libmad-0.15.1b/"
