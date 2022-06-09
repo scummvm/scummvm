@@ -31,27 +31,8 @@ namespace Businesses {
 
 class Tavern : public Business {
 private:
-	enum Mode { INITIAL, DRINK, RUMOR };
-	Mode _mode = INITIAL;
 	int _val1 = 0;
-	int _timeoutCtr = 0;
 private:
-	/**
-	 * Draw the right hand side options in the
-	 * initial tavern display
-	 */
-	void drawInitialRight();
-
-	/**
-	 * Draws the drink response
-	 */
-	void drawDrink();
-
-	/**
-	 * Display a rumor
-	 */
-	void drawRumor();
-
 	/**
 	 * Have a drink
 	 */
@@ -79,7 +60,6 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
-	bool tick() override;
 };
 
 } // namespace Businesses

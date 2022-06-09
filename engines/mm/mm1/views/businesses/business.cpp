@@ -28,11 +28,13 @@ namespace MM1 {
 namespace Views {
 namespace Businesses {
 
+#define DISPLAY_TIMEOUT (3 * FRAME_RATE)
+
 Business::Business(const Common::String &name) : TextView(name) {
 	_bounds = getLineBounds(17, 24);
 }
 
-void Business::drawInitial() {
+void Business::draw() {
 	clearSurface();
 	writeString(0, 0, g_globals->_currCharacter->_name);
 	newLine();
@@ -42,6 +44,12 @@ void Business::drawInitial() {
 	newLine();
 	writeString(_modeString);
 	writeString(0, 6, STRING["dialogs.misc.go_back"]);
+}
+
+void Business::displayMessage(const Common::String &msg) {
+	clearLines(3, 7);
+	writeString(0, 5, msg);
+	_timeoutCtr = DISPLAY_TIMEOUT;
 }
 
 void Business::newLine() {
@@ -58,6 +66,14 @@ void Business::leave() {
 
 	close();
 	g_events->redraw();
+}
+
+bool Business::tick() {
+	if (_timeoutCtr && --_timeoutCtr == 0) {
+		redraw();
+	}
+
+	return TextView::tick();
 }
 
 } // namespace Businesses

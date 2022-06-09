@@ -30,8 +30,6 @@ namespace MM1 {
 namespace Views {
 namespace Businesses {
 
-#define DISPLAY_TIMEOUT (3 * FRAME_RATE)
-
 Tavern::Tavern() : Business("Tavern") {
 	_modeString = STRING["dialogs.business.gather"];
 }
@@ -81,35 +79,23 @@ bool Tavern::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Tavern::draw() {
-	drawInitial();
-	drawInitialRight();
+	Business::draw();
 
-	switch (_mode) {
-	case DRINK:
-		drawDrink();
-		break;
-	case RUMOR:
-		drawRumor();
-		break;
-	default:
-		break;
-	}
-
-	_mode = INITIAL;
-}
-
-void Tavern::drawInitialRight() {
 	writeString(20, 1, STRING["dialogs.tavern.drink"]);
 	writeString(20, 2, STRING["dialogs.tavern.tip"]);
 	writeString(20, 3, STRING["dialogs.tavern.listen"]);
 }
 
-void Tavern::drawDrink() {
-	clearLines(3, 7);
-	writeString(0, 5, STRING["dialogs.tavern.terrible"]);
+void Tavern::haveADrink() {
+	Sound::sound(SOUND_2);
+	displayMessage(STRING["dialogs.tavern.terrible"]);
 }
 
-void Tavern::drawRumor() {
+void Tavern::tipBartender() {
+
+}
+
+void Tavern::listenForRumors() {
 	Common::String msg = STRING["dialogs.tavern.rumors.none"];
 	if (!g_globals->_heardRumor) {
 		g_globals->_heardRumor = true;
@@ -118,25 +104,7 @@ void Tavern::drawRumor() {
 			g_engine->getRandomNumber(16))];
 	}
 
-	clearLines(3, 7);
-	writeString(0, 5, msg);
-}
-
-void Tavern::haveADrink() {
-	_mode = DRINK;
-	Sound::sound(SOUND_2);
-	_timeoutCtr = DISPLAY_TIMEOUT;
-	redraw();
-}
-
-void Tavern::tipBartender() {
-
-}
-
-void Tavern::listenForRumors() {
-	_mode = RUMOR;
-	_timeoutCtr = DISPLAY_TIMEOUT;
-	redraw();
+	displayMessage(msg);
 }
 
 void Tavern::gatherGold() {
@@ -147,15 +115,6 @@ void Tavern::gatherGold() {
 	}
 
 	g_globals->_currCharacter->_gold = total;
-}
-
-bool Tavern::tick() {
-	if (_timeoutCtr && --_timeoutCtr == 0) {
-		_mode = INITIAL;
-		redraw();
-	}
-
-	return Business::tick();
 }
 
 } // namespace Businesses
