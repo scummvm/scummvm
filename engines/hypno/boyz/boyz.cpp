@@ -204,6 +204,11 @@ void BoyzEngine::loadAssets() {
 	Code *retry = new Code("<retry_menu>");
 	_levels["<retry_menu>"] = retry;
 
+	Transition *territory_1 = new Transition("c19.mi_");
+	territory_1->intros.push_back("warnings/w17s.smk");
+	territory_1->intros.push_back("c1/c1t01.smk");
+	_levels["<territory_1>"] = territory_1;
+
 	Transition *warning_1 = new Transition("c14.mi_");
 	warning_1->intros.push_back("warnings/w12s.smk");
 	_levels["<warning_1>"] = warning_1;
@@ -282,8 +287,6 @@ void BoyzEngine::loadAssets() {
 
 	loadSceneLevel(selectBoyz, "<select_boyz>", "", "");
 	Scene *sc = (Scene *) _levels["<select_boyz>"];
-	sc->intros.push_back("warnings/w17s.smk");
-	sc->intros.push_back("c1/c1t01.smk");
 	sc->intros.push_back("intro/c0o01s.smk");
 	sc->resolution = "320x200";
 
@@ -329,7 +332,7 @@ void BoyzEngine::loadAssets() {
 	cs = new Cutscene("intro/c0i06s.smk");
 	sc->hots[6].actions.push_back(cs);
 
-	cl = new ChangeLevel("c19.mi_");
+	cl = new ChangeLevel("<territory_1>");
 	sc->hots[7].actions.push_back(cl);
 
 	loadSceneLevel(selectC3, "<select_c3>", "", "");
