@@ -489,6 +489,11 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 
 				if (_shoots[i].waitForClickAfterInteraction > 0) {
 					waitForUserClick(_shoots[i].waitForClickAfterInteraction);
+					if (_shoots[i].name == "LILKID")
+						_sceneState["GS_MINEMAP"] = true;
+					else if (_shoots[i].name == "HO3") {
+						_sceneState["GS_C5MAP"] = true;
+					}
 				}
 
 				loadPalette(_currentPalette);
