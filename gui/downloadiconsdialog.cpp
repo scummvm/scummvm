@@ -321,15 +321,15 @@ void DownloadIconsDialog::downloadList() {
 }
 
 void DownloadIconsDialog::calculateList() {
-	if (!ConfMan.hasKey("iconpath")) {
+	if (!ConfMan.hasKey("iconspath")) {
 		Common::U32String str(_("ERROR: No icons path set"));
 		setError(str);
 		return;
 	}
 
-	// Scan all files in iconpath and remove present ones from the
+	// Scan all files in iconspath and remove present ones from the
 	// donwloaded files list
-	Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconpath"));
+	Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconspath"));
 	Common::ArchiveMemberList iconFiles;
 
 	iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
@@ -371,7 +371,7 @@ bool DownloadIconsDialog::takeOneFile() {
 	g_state->fileHash.erase(fname);
 
 	Common::String url = Common::String::format("https://downloads.scummvm.org/frs/icons/%s", fname.c_str());
-	Common::String localFile = normalizePath(ConfMan.get("iconpath") + "/" + fname, '/');
+	Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + fname, '/');
 
 	Networking::SessionRequest *rq = g_state->session.get(url, localFile,
 		new Common::Callback<DownloadIconsDialog, Networking::DataResponse>(this, &DownloadIconsDialog::downloadFileCallback),

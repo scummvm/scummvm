@@ -118,8 +118,8 @@ void GuiManager::initIconsSet() {
 
 	_iconsSet.clear();
 
-	if (ConfMan.hasKey("iconpath")) {
-		Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconpath"));
+	if (ConfMan.hasKey("iconspath")) {
+		Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconspath"));
 		Common::ArchiveMemberList iconFiles;
 
 		iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
@@ -152,8 +152,8 @@ void GuiManager::initIconsSet() {
 
 	if (!dat) {
 		Common::File *file = new Common::File;
-		if (ConfMan.hasKey("iconpath"))
-			file->open(normalizePath(ConfMan.get("iconpath") + "/" + fname, '/'));
+		if (ConfMan.hasKey("iconspath"))
+			file->open(normalizePath(ConfMan.get("iconspath") + "/" + fname, '/'));
 
 		if (!file->isOpen())
 			file->open(fname);
