@@ -3495,7 +3495,7 @@ bool EfhEngine::isTeamMemberStatusNormal(int16 teamMemberId) {
 }
 
 void EfhEngine::sub1CDFA() {
-	debug("sub1CDFA");
+	debug("sub1CDFA"); // Initiatives
 	
 	for (int16 counter = 0; counter < 3; ++counter) {
 		if (_teamCharId[counter] != -1 && counter < _teamSize) {
@@ -3649,24 +3649,24 @@ bool EfhEngine::sub1CB27() {
 			drawCombatScreen(_teamCharId[counter1], false, true);
 			Common::KeyCode var1 = handleAndMapInput(true);
 			switch (var1) {
-			case Common::KEYCODE_a:
+			case Common::KEYCODE_a: // Attack
 				_teamLastAction[counter1] = 'A';
 				_word3267A[counter1] = sub1C956(_teamCharId[counter1], 9, true);
 				if (_word3267A[counter1] == -1)
 					_teamLastAction[counter1] = 0;
 				break;
-			case Common::KEYCODE_d:
+			case Common::KEYCODE_d: // Defend
 				_teamLastAction[counter1] = 'D';
 				break;
-			case Common::KEYCODE_h:
+			case Common::KEYCODE_h: // Hide
 				_teamLastAction[counter1] = 'H';
 				break;
-			case Common::KEYCODE_r:
+			case Common::KEYCODE_r: // Run
 				for (int16 counter2 = 0; counter2 < _teamSize; ++counter2) {
 					_teamLastAction[counter2] = 'R';
 				}
 				return true;
-			case Common::KEYCODE_s: {
+			case Common::KEYCODE_s: { // Status
 				int16 var8 = handleStatusMenu(2, _teamCharId[counter1]);
 				sub1CAB6(_teamCharId[counter1]);
 				if (var8 > 999) {
@@ -3726,7 +3726,7 @@ bool EfhEngine::sub1CB27() {
 				
 				}
 				break;
-			case Common::KEYCODE_t:
+			case Common::KEYCODE_t: // Terrain
 				redrawScreenForced();
 				getInputBlocking();
 				drawCombatScreen(_teamCharId[counter1], false, true);
@@ -4715,7 +4715,7 @@ void EfhEngine::handleFight_lastAction_A(int16 teamCharId) {
 
 					hitPoints = originalDamage + damagePointsAbsorbed;
 					
-					if (checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId))
+					if (!checkSpecialItemsOnCurrentPlace(unk_monsterField5_itemId))
 						var62 = 0;
 
 					if (var62 > 0) {
@@ -5033,7 +5033,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 			int16 monsterGroupIdOrMonsterId = _stru3244C[counter]._field0;
 			if (monsterGroupIdOrMonsterId == -1)
 				continue;
-			if (monsterGroupIdOrMonsterId > 999) {
+			if (monsterGroupIdOrMonsterId > 999) { // Team Member
 				monsterGroupIdOrMonsterId -= 1000;
 				if (!isTeamMemberStatusNormal(monsterGroupIdOrMonsterId)) {
 					handleFight_checkEndEffect(monsterGroupIdOrMonsterId);
