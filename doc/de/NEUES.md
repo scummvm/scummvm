@@ -1,6 +1,13 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
+
+#### 2.7.0 (DD.MM.YYYY)
+
+ Kyra:
+   - Unterstützung für die koreanische Version von Legend of Kyrandia 1 hinzugefügt.
+
+
 #### 2.6.0 (DD.MM.YYYY)
 
  Neue Spiele:
