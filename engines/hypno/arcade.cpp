@@ -250,11 +250,10 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	}
 	_currentPalette = arc->backgroundPalette;
 	loadPalette(_currentPalette);
-
-	if (segments[_segmentIdx].start > 1) {
-		int start = segments[_segmentIdx].start;
-		_background->decoder->forceSeekToFrame(start);
-		_masks->decoder->forceSeekToFrame(start);
+	int firstFrame = segments[_segmentIdx].start;
+	if (firstFrame > 1) {
+		_background->decoder->forceSeekToFrame(firstFrame);
+		_masks->decoder->forceSeekToFrame(firstFrame);
 		segments[_segmentIdx].start = 1;
 	}
 
@@ -349,7 +348,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 		if (needsUpdate) {
 			getPlayerPosition(true);
-			if (_background->decoder->getCurFrame() > 0)
+			if (_background->decoder->getCurFrame() > firstFrame)
 				drawScreen();
 			updateScreen(*_background);
 			if (!arc->maskVideo.empty() && _masks->decoder->needsUpdate())
