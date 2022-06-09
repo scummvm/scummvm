@@ -30,6 +30,9 @@
 namespace MM {
 namespace MM1 {
 
+#define FRAME_RATE 20
+#define FRAME_DELAY (1000 / FRAME_RATE)
+
 class Events;
 
 class UIElement {

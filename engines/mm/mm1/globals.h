@@ -43,6 +43,7 @@ public:
 	Maps::Maps _maps;
 	bool _intangible = false; // Console flag
 	BitmapFont _font;
+	bool _heardRumor = false;
 public:
 	Globals();
 	virtual ~Globals();

@@ -31,15 +31,47 @@ namespace Businesses {
 
 class Tavern : public Business {
 private:
-	enum Mode { INITIAL };
+	enum Mode { INITIAL, DRINK, RUMOR };
 	Mode _mode = INITIAL;
 	int _val1 = 0;
+	int _timeoutCtr = 0;
 private:
 	/**
 	 * Draw the right hand side options in the
 	 * initial tavern display
 	 */
 	void drawInitialRight();
+
+	/**
+	 * Draws the drink response
+	 */
+	void drawDrink();
+
+	/**
+	 * Display a rumor
+	 */
+	void drawRumor();
+
+	/**
+	 * Have a drink
+	 */
+	void haveADrink();
+
+	/**
+	 * Tip the bartender
+	 */
+	void tipBartender();
+
+	/**
+	 * Listen for rumors
+	 */
+	void listenForRumors();
+
+	/**
+	 * Gathers all the party gold to the current character
+	 */
+	void gatherGold();
+
 public:
 	Tavern();
 	virtual ~Tavern() {}
@@ -47,6 +79,7 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
+	bool tick() override;
 };
 
 } // namespace Businesses
