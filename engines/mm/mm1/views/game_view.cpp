@@ -203,7 +203,7 @@ void GameView::drawDialogMessage() {
 
 void GameView::drawBusinessName() {
 	writeString(10, 15, STRING[Common::String::format(
-		"maps.businesses.%d", _businessDisplay)]);
+		"dialogs.business.titles.%d", _businessDisplay)]);
 	_businessDisplay = -1;
 }
 

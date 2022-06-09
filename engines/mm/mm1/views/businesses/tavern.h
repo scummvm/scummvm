@@ -31,8 +31,6 @@ namespace Businesses {
 
 class Tavern : public Business {
 private:
-	int _val1 = 0;
-private:
 	/**
 	 * Have a drink
 	 */
