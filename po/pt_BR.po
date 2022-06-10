@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-10 00:01+0000\n"
-"PO-Revision-Date: 2022-06-04 11:28+0000\n"
+"PO-Revision-Date: 2022-06-10 18:28+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5210,11 +5210,11 @@ msgstr "A munição do jogador nunca diminuirá."
 
 #: engines/hypno/detection.cpp:281
 msgid "Unlock all levels"
-msgstr ""
+msgstr "Desbloquear todos os níveis"
 
 #: engines/hypno/detection.cpp:282
 msgid "All levels will be available to play."
-msgstr ""
+msgstr "Todos os níveis estarão disponíveis para jogar."
 
 #: engines/hypno/detection.cpp:290
 msgid "Enable restored content"
