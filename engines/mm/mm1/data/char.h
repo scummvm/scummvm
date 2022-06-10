@@ -62,6 +62,7 @@ struct Character {
 	char _name[16] = { 0 };
 	Sex _sex = MALE;
 	int _field11 = 0;
+	Alignment _alignmentInitial = GOOD;
 	Alignment _alignment = GOOD;
 	Race _race = HUMAN;
 	CharacterClass _class = NONE;

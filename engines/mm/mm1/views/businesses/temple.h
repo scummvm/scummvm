@@ -31,7 +31,14 @@ namespace Businesses {
 
 class Temple : public Business {
 private:
+	bool _isEradicated = false;
+	int _healCost = 0, _uncurseCost = 0;
+	int _alignmentCost = 0, _donateCost = 0;
 
+	/**
+	 * Selects a character
+	 */
+	void selectCharacter(uint charIndex);
 public:
 	Temple();
 	virtual ~Temple() {}

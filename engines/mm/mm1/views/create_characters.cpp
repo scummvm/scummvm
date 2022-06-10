@@ -69,7 +69,7 @@ void CreateCharacters::NewCharacter::save() {
 
 	Common::strcpy_s(re._name, _name.c_str());
 	re._sex = _sex;
-	re._alignment = _alignment;
+	re._alignment = re._alignmentInitial = _alignment;
 	re._race = _race;
 	re._class = _class;
 	re._int = _attribs1[INTELLECT];

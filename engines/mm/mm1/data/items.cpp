@@ -19,56 +19,28 @@
  *
  */
 
-#ifndef MM1_GLOBALS_H
-#define MM1_GLOBALS_H
-
-#include "graphics/font.h"
-#include "mm/utils/bitmap_font.h"
-#include "mm/utils/strings_data.h"
-#include "mm/mm1/data/game_state.h"
-#include "mm/mm1/data/int_array.h"
 #include "mm/mm1/data/items.h"
-#include "mm/mm1/data/roster.h"
-#include "mm/mm1/maps/maps.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
 
-class Globals : public GameState {
-public:
-	StringsData _strings;
-	Roster _roster;
-	Character *_currCharacter = nullptr;
-	Item _currItem;
-	Maps::TownId _startingTown = Maps::SORPIGAL;
-	IntArray _partyChars;
-	Maps::Maps _maps;
-	bool _intangible = false; // Console flag
-	BitmapFont _font;
-	bool _heardRumor = false;
-public:
-	Globals();
-	virtual ~Globals();
-
-	/**
-	 * Loads data for the globals
-	 */
-	bool load();
-
-	/**
-	 * Returns a string
-	 */
-	const Common::String &operator[](const Common::String &name) {
-		assert(_strings.contains(name));
-		return _strings[name];
-	}
+const Item ITEMS1[] = {
+	{ 0 }
 };
 
-extern Globals *g_globals;
+const Item ITEMS2[] = {
+	{ 0 }
+};
 
-#define STRING (*g_globals)
+Item *getItem(byte index) {
+	g_globals->_currItem = (index >= 86) ?
+		ITEMS1[index - 1] : ITEMS2[index - 86];
+	g_globals->_currItem._name = STRING[Common::String::format(
+		"stats.items.%d", (int)index)];
+
+	return &g_globals->_currItem;
+}
 
 } // namespace MM1
 } // namespace MM
-
-#endif
