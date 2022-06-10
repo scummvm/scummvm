@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-08 19:09+0000\n"
+"POT-Creation-Date: 2022-06-10 00:01+0000\n"
 "PO-Revision-Date: 2022-05-31 20:30+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -4094,8 +4094,7 @@ msgstr "Ne pas émuler les artefacts NTSC pour le texte"
 #: engines/groovie/detection.cpp:287 engines/neverhood/detection.cpp:134
 #: engines/sci/detection_options.h:105 engines/sherlock/detection.cpp:58
 #: engines/toltecs/detection.cpp:212 engines/trecision/detection.cpp:219
-#: engines/ultima/detection.cpp:55 engines/ultima/detection.cpp:120
-#: engines/zvision/detection_tables.h:50
+#: engines/ultima/detection.cpp:55 engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr "Écrans sauvegarde/chargement d'origine"
 
@@ -4104,8 +4103,7 @@ msgstr "Écrans sauvegarde/chargement d'origine"
 #: engines/groovie/detection.cpp:288 engines/neverhood/detection.cpp:135
 #: engines/sci/detection_options.h:106 engines/sherlock/detection.cpp:59
 #: engines/toltecs/detection.cpp:213 engines/trecision/detection.cpp:220
-#: engines/ultima/detection.cpp:56 engines/ultima/detection.cpp:121
-#: engines/zvision/detection_tables.h:51
+#: engines/ultima/detection.cpp:56 engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Utiliser les écrans de sauvegarde/chargement d'origine plutôt que ceux de "
@@ -7699,11 +7697,11 @@ msgstr ""
 "Lorsque le filtrage linéaire est activé, les graphismes d'arrière-plan sont "
 "plus lisses en mode plein écran, au prix de certains détails."
 
-#: engines/stark/detection.cpp:397 engines/ultima/detection.cpp:136
+#: engines/stark/detection.cpp:397 engines/ultima/detection.cpp:143
 msgid "Enable font anti-aliasing"
 msgstr "Activer l'anti-crénelage des polices"
 
-#: engines/stark/detection.cpp:398 engines/ultima/detection.cpp:137
+#: engines/stark/detection.cpp:398 engines/ultima/detection.cpp:144
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Quand l'anti-crénelage des polices est activé, les textes affichés sont plus "
@@ -8019,11 +8017,11 @@ msgstr "Jeu en version américaine"
 msgid "Enable the USA specific version flags"
 msgstr "Active les indicateurs spécifiques de la version américaine"
 
-#: engines/twine/detection.cpp:893 engines/ultima/detection.cpp:92
+#: engines/twine/detection.cpp:893 engines/ultima/detection.cpp:99
 msgid "Enable high resolution"
 msgstr "Activer la haute résolution"
 
-#: engines/twine/detection.cpp:894 engines/ultima/detection.cpp:93
+#: engines/twine/detection.cpp:894 engines/ultima/detection.cpp:100
 msgid "Enable a higher resolution for the game"
 msgstr "Active la haute résolution dans le jeu"
 
@@ -8172,79 +8170,79 @@ msgctxt "Options menu"
 msgid "Wall collision off"
 msgstr "Collisions contre les murs desactivées"
 
-#: engines/ultima/detection.cpp:68
+#: engines/ultima/detection.cpp:66
 msgid "Enable frame skipping"
 msgstr "Activer le saut de frames"
 
-#: engines/ultima/detection.cpp:69
+#: engines/ultima/detection.cpp:67
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
 "Permet au jeu de sauter des frames d'animation lorsque celui-ci tourne trop "
 "lentement."
 
-#: engines/ultima/detection.cpp:76
+#: engines/ultima/detection.cpp:77
 msgid "Enable frame limiting"
 msgstr "Activer la limitation des frames"
 
-#: engines/ultima/detection.cpp:77
+#: engines/ultima/detection.cpp:78
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 "Limite la vitesse du jeu pour éviter que celui-ci ne tourne trop rapidement."
 
-#: engines/ultima/detection.cpp:84
+#: engines/ultima/detection.cpp:88
 msgid "Enable cheats"
 msgstr "Activer les tricheries"
 
-#: engines/ultima/detection.cpp:85
+#: engines/ultima/detection.cpp:89
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
 "Autorise les tricheries via des commandes et un menu lorsque l'on clique sur "
 "le joueur."
 
-#: engines/ultima/detection.cpp:104
+#: engines/ultima/detection.cpp:110
 msgid "Play foot step sounds"
 msgstr "Jouer les bruits de pas"
 
-#: engines/ultima/detection.cpp:105
+#: engines/ultima/detection.cpp:111
 msgid "Plays sound when the player moves."
 msgstr "Le son est joué lorsque le joueur se déplace."
 
-#: engines/ultima/detection.cpp:112
+#: engines/ultima/detection.cpp:121
 msgid "Enable jump to mouse position"
 msgstr "Activer le saut sur la position de la souris"
 
-#: engines/ultima/detection.cpp:113
+#: engines/ultima/detection.cpp:122
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
 "Permet de sauter instantanément à la position du curseur de la souris sans "
 "se déplacer à l'aide des directions."
 
-#: engines/ultima/detection.cpp:128
+#: engines/ultima/detection.cpp:132
 msgid "Enable font replacement"
 msgstr "Activer le remplacement des polices"
 
-#: engines/ultima/detection.cpp:129
+#: engines/ultima/detection.cpp:133
 msgid "Replaces game fonts with rendered fonts"
 msgstr "Remplace les polices du jeu par des polices de rendu"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
-#: engines/ultima/detection.cpp:148
+#: engines/ultima/detection.cpp:155
 msgid "Camera moves with Silencer"
 msgstr "La caméra se déplace avec le Silencer"
 
-#: engines/ultima/detection.cpp:149
+#: engines/ultima/detection.cpp:156
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
 msgstr ""
 "La caméra suit le mouvement du joueur plutôt que de se placer à des "
 "positions définies."
 
-#: engines/ultima/detection.cpp:164
+#: engines/ultima/detection.cpp:166
 msgid "Always enable Christmas easter-egg"
 msgstr "Toujours activer l'easter-egg de Noël"
 
-#: engines/ultima/detection.cpp:165
+#: engines/ultima/detection.cpp:167
 msgid "Enable the Christmas music at any time of year."
 msgstr "Active la musique de Noël à tout moment de l'année."
 
