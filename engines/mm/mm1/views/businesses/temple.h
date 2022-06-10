@@ -34,11 +34,18 @@ private:
 	bool _isEradicated = false;
 	int _healCost = 0, _uncurseCost = 0;
 	int _alignmentCost = 0, _donateCost = 0;
+private:
+	void restoreHealth();
+	void uncurseItems();
+	void restoreAlignment();
+	void donate();
 
+protected:
 	/**
-	 * Selects a character
+	 * Change character
 	 */
-	void selectCharacter(uint charIndex);
+	void changeCharacter(uint index) override;
+
 public:
 	Temple();
 	virtual ~Temple() {}

@@ -36,6 +36,8 @@ static const uint16 HEAL_COST3[5] = { 25, 50, 50, 25, 100 };
 static const uint16 UNCURSE_COST[5] = { 500, 1000, 1000, 1012, 1500 };
 static const uint16 ALIGNMENT_COST[5] = { 250, 200, 200, 200, 250 };
 static const uint16 DONATE_COST[5] = { 100, 100, 100, 25, 200 };
+static const byte ALIGNMENT_VALS[3] = { 8, 0x10, 0x18 };
+static const byte DONATE_VALS[5] = { 1, 2, 4, 8, 0x10 };
 
 Temple::Temple() : Business("Temple") {
 	_modeString = STRING["dialogs.business.gather"];
@@ -43,7 +45,7 @@ Temple::Temple() : Business("Temple") {
 
 bool Temple::msgFocus(const FocusMessage &msg) {
 	g_events->msgBusiness(BusinessMessage(2));
-	selectCharacter(0);
+	changeCharacter(0);
 
 	return true;
 }
@@ -53,6 +55,30 @@ bool Temple::msgKeypress(const KeypressMessage &msg) {
 	case Common::KEYCODE_ESCAPE:
 		leave();
 		break;
+	case Common::KEYCODE_a:
+		restoreHealth();
+		break;
+	case Common::KEYCODE_b:
+		uncurseItems();
+		break;
+	case Common::KEYCODE_c:
+		restoreAlignment();
+		break;
+	case Common::KEYCODE_d:
+		donate();
+		break;
+	case Common::KEYCODE_g:
+		gatherGold();
+		redraw();
+		break;
+	case Common::KEYCODE_1:
+	case Common::KEYCODE_2:
+	case Common::KEYCODE_3:
+	case Common::KEYCODE_4:
+	case Common::KEYCODE_5:
+	case Common::KEYCODE_6:
+		changeCharacter(msg.keycode - Common::KEYCODE_1);
+		break;
 	default:
 		break;
 	}
@@ -60,22 +86,20 @@ bool Temple::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
-void Temple::selectCharacter(uint charIndex) {
+void Temple::changeCharacter(uint index) {
 	Maps::Map &map = *g_maps->_currentMap;
 	int i;
 
-	g_globals->_currCharacter = &g_globals->_party[charIndex];
+	if (index >= g_globals->_party.size())
+		return;
+	Business::changeCharacter(index);
+
 	_isEradicated = false;
 
 	int townNum = map[0];
 	if (townNum < 1 || townNum >= 6)
 		townNum = 1;
 	--townNum;
-	/*
-	_healCost = HEAL_COST[townNum];
-	_uncurseCost = UNCURSE_COST[townNum];
-	_donateCost = DONATE_COST[townNum];
-	*/
 
 	Character &c = *g_globals->_currCharacter;
 
@@ -135,6 +159,72 @@ void Temple::draw() {
 	writeString(18, 5, STRING["dialogs.temple.d"]);
 	_textPos.x = 36;
 	writeNumber(_donateCost);
+}
+
+void Temple::restoreHealth() {
+	if (subtractGold(_healCost)) {
+		Character &c = *g_globals->_currCharacter;
+		c._condition = FINE;
+		c._hp = c._hp2;
+
+		if (_isEradicated) {
+			c._age += 10;
+			if (c._end2)
+				c._end = --c._end2;
+		}
+
+		redraw();
+	}
+}
+
+void Temple::uncurseItems() {
+	if (subtractGold(_uncurseCost)) {
+		Character &c = *g_globals->_currCharacter;
+		for (int i = 0; i < INVENTORY_COUNT; ++i) {
+			if (c._equipped[i]) {
+				getItem(c._equipped[i]);
+				if (c._field11 == 0xff)
+					c._equipped[i] = 0;
+			}
+		}
+
+		redraw();
+	}
+}
+
+void Temple::restoreAlignment() {
+	if (subtractGold(_alignmentCost)) {
+		Character &c = *g_globals->_currCharacter;
+		c._alignment = c._alignmentInitial;
+		c._v6f = ALIGNMENT_VALS[c._alignment];
+
+		redraw();
+	}
+}
+
+void Temple::donate() {
+	if (subtractGold(_donateCost)) {
+		Maps::Map &map = *g_maps->_currentMap;
+		Character &c = *g_globals->_currCharacter;
+
+		int townNum = map[0];
+		if (townNum < 1 || townNum >= 6)
+			townNum = 1;
+		--townNum;
+
+		c._v6e |= DONATE_VALS[townNum];
+		draw();
+
+		if (g_engine->getRandomNumber(15) == 10) {
+			for (int i = 0; i < 13; ++i)
+				g_globals->_spells._arr[i] = 75;
+
+			Sound::sound(SOUND_3);
+			displayMessage(STRING["dialogs.temple.protected"]);
+		} else {
+			displayMessage(STRING["dialogs.temple.thankyou"]);
+		}
+	}
 }
 
 } // namespace Businesses
