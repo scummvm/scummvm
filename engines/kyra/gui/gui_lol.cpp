@@ -2843,7 +2843,7 @@ int GUI_LoL::clickedSavenameMenu(Button *button) {
 	updateMenuButton(button);
 	if (button->arg == _savenameMenu.item[0].itemId) {
 
-		Util::convertDOSToUTF8(_saveDescription, 5120 - (int)((uint8*)_saveDescription - _vm->_tempBuffer5120));
+		Util::convertString_KYRAtoGUI(_saveDescription, 5120 - (int)((uint8*)_saveDescription - _vm->_tempBuffer5120));
 
 		int slot = _menuResult == -2 ? getNextSavegameSlot() : _menuResult - 1;
 		Graphics::Surface thumb;

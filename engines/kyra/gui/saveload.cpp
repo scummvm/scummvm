@@ -65,7 +65,7 @@ WARN_UNUSED_RESULT KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHea
 			in->read(descriptionBuffer, descriptionSize[i]);
 			descriptionBuffer[descriptionSize[i]] = 0;
 
-			Util::convertDOSToUTF8(descriptionBuffer, 81);
+			Util::convertString_KYRAtoGUI(descriptionBuffer, 81);
 
 			type = in->readUint32BE();
 			header.version = in->readUint16LE();

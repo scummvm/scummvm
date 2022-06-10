@@ -165,6 +165,13 @@ private:
 	char _savegameName[35];
 	char _savegameNames[5][35];
 	const char *_specialSavegameString;
+	bool _resetHanInput;
+
+	int _inputType;
+	// The purpose of these variables is improved handling of backspace character deletion for
+	// Hangul input. The original allows "deconstruction" of the last glyph, so why shouldn't we...
+	uint8 _inputState;
+	uint16 _backupChars[4];
 
 	int _saveLoadNumSlots;
 

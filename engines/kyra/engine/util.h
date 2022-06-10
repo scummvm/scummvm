@@ -22,6 +22,7 @@
 #ifndef KYRA_UTIL_H
 #define KYRA_UTIL_H
 
+#include "common/language.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -34,15 +35,29 @@ public:
 	static Common::String decodeString1(const Common::String &src);
 	static Common::String decodeString2(const Common::String &src);
 
-	static void convertDOSToUTF8(char *str, int bufferSize);
-	static void convertUTF8ToDOS(char *str, int bufferSize);
-	static Common::String convertUTF8ToDOS(Common::String &str);
+	static void convertString_KYRAtoGUI(char *str, int bufferSize, Common::CodePage srcCP = Common::kDos850);
+	static void convertString_GUItoKYRA(char *str, int bufferSize, Common::CodePage dstCP = Common::kDos850);
+	static Common::String convertString_GUItoKYRA(Common::String &str, Common::CodePage dstCP = Common::kDos850);
 	static Common::String convertISOToUTF8(Common::String &str);
 	static void convertISOToDOS(char &c);
 
-	static uint8 convertKeyDOSToHAN(char &c, uint16 &dest);
+	static uint16 convertDOSToHAN(char c, uint8 *mergeFlags = 0);
+	// This method does not only need a ref to the new character, but also to the one before that, since
+	// both of these will be used to calculate the output and also both of these may get modfied. The
+	// reset parameter will reset the internal merge state (useful when the build-up process is broken,
+	// e. g. when typing a one-byte character, like a digit).
+	static void mergeUpdateHANChars(uint16 &prevHanChar, uint16 &newHanChar, char asciiInput, bool reset);
 
 	static Common::String findMacResourceFile(const char *baseName);
+
+private:
+	struct DOS2HanEntry {
+		char key;
+		uint16 hanChar;
+		uint8 flags;
+	};
+
+	static const DOS2HanEntry _hanConvTable[52];
 };
 
 } // End of namespace Kyra

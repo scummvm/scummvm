@@ -187,6 +187,10 @@ GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI_v1(vm), _vm(vm), 
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::scrollDown);
 	_saveLoadNumSlots = (vm->gameFlags().lang == Common::ZH_TWN) ? 4 : 5;
 	_confMusicMenuMod = (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformMacintosh) ? 3 : 2;
+	_resetHanInput = true;
+	_inputType = (_vm->gameFlags().lang == Common::KO_KOR) ? Font::kHANGUL : Font::kASCII;
+	_inputState = 0;
+	memset(_backupChars, 0, sizeof(_backupChars));
 }
 
 GUI_LoK::~GUI_LoK() {
@@ -591,8 +595,8 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 			}
 			_screen->_charSpacing = 0;
 
-			Util::convertUTF8ToDOS(_savegameNames[i], 35);
-			if (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::ZH_TWN || _vm->gameFlags().lang == Common::KO_KOR) {
+			Util::convertString_GUItoKYRA(_savegameNames[i], 35, _vm->gameFlags().lang == Common::KO_KOR ? Common::kWindows949 : Common::kDos850);
+			if (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::ZH_TWN) {
 				// Strip special characters from GMM save dialog which might get misinterpreted as SJIS
 				for (uint ii = 0; ii < strlen(_savegameNames[i]); ++ii) {
 					if (_savegameNames[i][ii] < 32) // due to the signed char type this will also clean up everything >= 0x80
@@ -720,10 +724,22 @@ void GUI_LoK::redrawTextfield() {
 	_screen->updateScreen();
 }
 
+int checkHanInputState(const char *str, uint32 len) {
+	int res = 0;
+	while (*str && len--) {
+		if ((len > 0) && (*str & 0x80)) {
+			str += 2;
+			res = 1;
+		} else {
+			str++;
+			res = 0;
+		}
+	}
+	return res;
+}
+
 void GUI_LoK::updateSavegameString() {
 	int length = 0;
-	int inputType = Font::kASCII;
-
 	if (_keyPressed.keycode) {
 		length = strlen(_savegameName);
 		_screen->_charSpacing = -2;
@@ -731,34 +747,59 @@ void GUI_LoK::updateSavegameString() {
 		_screen->_charSpacing = 0;
 		char oneByteInput = _keyPressed.ascii;
 		Util::convertISOToDOS(oneByteInput);
-		uint16 twoByteInput = 0;
-		//uint8 flags = 0;
+		uint16 newTwoByteChar = 0;
 
-		if (inputType == Font::kHANGUL)
-			/*flags = */Util::convertKeyDOSToHAN(oneByteInput, twoByteInput);
+		if (_inputType == Font::kHANGUL)
+			newTwoByteChar = Util::convertDOSToHAN(oneByteInput);
 
-		if (twoByteInput) {
-			if ((length < ARRAYSIZE(_savegameName) - 2) && (width <= 240)) {
-				WRITE_BE_UINT16(&_savegameName[length], twoByteInput | 0x8000);
-				_savegameName[length + 2] = 0;
+		if (newTwoByteChar) {
+			width += 9;
+			// Even if there is no space left we may still try to modify the last character.
+			if ((length < ARRAYSIZE(_savegameName)) && (width <= 272)) {
+				uint16 prevTwoByteChar = (length > 1 && (_savegameName[length - 2] & 0x80)) ? READ_BE_UINT16(&_savegameName[length - 2]) : 0;
+				Util::mergeUpdateHANChars(prevTwoByteChar, newTwoByteChar, oneByteInput, _resetHanInput);
+				if (prevTwoByteChar) {
+					WRITE_BE_UINT16(&_savegameName[length - 2], prevTwoByteChar);
+					_savegameName[length] = _savegameName[length + 1] = 0;
+					_backupChars[_inputState++] = prevTwoByteChar;
+				}
+				// A new character will only be added if there is still space left.
+				if (newTwoByteChar && (length < ARRAYSIZE(_savegameName) - 2) && (width <= 256)) {
+					WRITE_BE_UINT16(&_savegameName[length], newTwoByteChar);
+					_savegameName[length + 2] = 0;
+					_backupChars[0] = newTwoByteChar;
+					_inputState = 1;
+				}
+				assert(_inputState <= ARRAYSIZE(_backupChars));
+				_resetHanInput = false;
 				redrawTextfield();
 			}
 		} else if ((uint8)oneByteInput > 31 && (uint8)oneByteInput < (_vm->gameFlags().lang == Common::JA_JPN ? 128 : 226)) {
 			if ((length < ARRAYSIZE(_savegameName) - 1) && (width <= 240)) {
 				_savegameName[length] = oneByteInput;
 				_savegameName[length + 1] = 0;
+				_resetHanInput = true;
+				_inputState = 0;
 				redrawTextfield();
 			}
 		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE || _keyPressed.keycode == Common::KEYCODE_DELETE) {
-			if (inputType == Font::kHANGUL && length > 1 && (_savegameName[length - 2] & 0x80)) {
-				_savegameName[length - 2] = _savegameName[length - 1] = 0;
+			_resetHanInput = true;
+			if (_inputType == Font::kHANGUL && length > 1 && _inputState > 0) {
+				if (_inputState > 1) {
+					// We allow step-by-step "deconstruction" of the last glyph, just like the original.
+					WRITE_BE_UINT16(&_savegameName[length - 2], _backupChars[(--_inputState) - 1]);
+				} else {
+					_savegameName[length - 2] = _savegameName[length - 1] = 0;
+					_inputState = checkHanInputState(_savegameName, length - 2);
+				}
 				redrawTextfield();
 			} else if (length > 0) {
 				_savegameName[length - 1] = 0;
+				if (_inputType == Font::kHANGUL)
+					_inputState = checkHanInputState(_savegameName, length - 1);
 				redrawTextfield();
 			}
-		} else if (_keyPressed.keycode == Common::KEYCODE_RETURN ||
-		           _keyPressed.keycode == Common::KEYCODE_KP_ENTER) {
+		} else if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER) {
 			_displaySubMenu = false;
 		}
 	}
@@ -779,6 +820,7 @@ int GUI_LoK::saveGame(Button *button) {
 
 	_displaySubMenu = true;
 	_cancelSubMenu = false;
+	_resetHanInput = true;
 
 	Screen::FontId cf = _screen->setFont(_vm->gameFlags().lang == Common::ZH_TWN ? Screen::FID_CHINESE_FNT : (_vm->gameFlags().lang == Common::KO_KOR ? Screen::FID_KOREAN_FNT : Screen::FID_8_FNT));
 
@@ -793,6 +835,9 @@ int GUI_LoK::saveGame(Button *button) {
 		}
 	}
 	redrawTextfield();
+
+	if (_inputType == Font::kHANGUL)
+		_inputState = checkHanInputState(_savegameName, strlen(_savegameName));
 
 	_screen->setFont(cf);
 
@@ -813,7 +858,7 @@ int GUI_LoK::saveGame(Button *button) {
 		if (_savegameOffset == 0 && _vm->_gameToLoad == 0)
 			_vm->_gameToLoad = getNextSavegameSlot();
 		if (_vm->_gameToLoad > 0) {
-			Util::convertDOSToUTF8(_savegameName, 35);
+			Util::convertString_KYRAtoGUI(_savegameName, 35, _vm->gameFlags().lang == Common::KO_KOR ? Common::kWindows949 : Common::kDos850);
 			_vm->updatePlayTimer();
 			Graphics::Surface thumb;
 			createScreenThumbnail(thumb);
