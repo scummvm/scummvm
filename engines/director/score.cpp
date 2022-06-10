@@ -256,7 +256,7 @@ void Score::startPlay() {
 	_playState = kPlayStarted;
 	_nextFrameTime = 0;
 
-	_lastPalette = _movie->getCast()->_defaultPalette;
+	_lastPalette = _frames[_currentFrame]->_palette.paletteId;
 	_vm->setPalette(resolvePaletteId(_lastPalette));
 
 	if (_frames.size() <= 1) {	// We added one empty sprite
