@@ -470,6 +470,9 @@ void GridWidget::sortGroups() {
 		// No filter -> display everything with group headers
 		Common::sort(_groupHeaders.begin(), _groupHeaders.end());
 
+		// Avoid reallocation during iteration: that would invalidate our _sortedEntryList items
+		_headerEntryList.reserve(_groupHeaders.size());
+
 		for (uint i = 0; i != _groupHeaders.size(); ++i) {
 			Common::U32String header = _groupHeaders[i];
 			Common::U32String displayedHeader;
