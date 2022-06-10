@@ -30,13 +30,21 @@ namespace MM1 {
 namespace Views {
 namespace Businesses {
 
+static const uint16 HEAL_COST1[5] = { 2000, 5000, 5000, 2000, 8000 };
+static const uint16 HEAL_COST2[5] = { 200, 500, 500, 200, 1000 };
+static const uint16 HEAL_COST3[5] = { 25, 50, 50, 25, 100 };
+static const uint16 UNCURSE_COST[5] = { 500, 1000, 1000, 1012, 1500 };
+static const uint16 ALIGNMENT_COST[5] = { 250, 200, 200, 200, 250 };
+static const uint16 DONATE_COST[5] = { 100, 100, 100, 25, 200 };
+
 Temple::Temple() : Business("Temple") {
 	_modeString = STRING["dialogs.business.gather"];
 }
 
 bool Temple::msgFocus(const FocusMessage &msg) {
 	g_events->msgBusiness(BusinessMessage(2));
-	g_globals->_currCharacter = &g_globals->_party[0];
+	selectCharacter(0);
+
 	return true;
 }
 
@@ -52,8 +60,81 @@ bool Temple::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
+void Temple::selectCharacter(uint charIndex) {
+	Maps::Map &map = *g_maps->_currentMap;
+	int i;
+
+	g_globals->_currCharacter = &g_globals->_party[charIndex];
+	_isEradicated = false;
+
+	int townNum = map[0];
+	if (townNum < 1 || townNum >= 6)
+		townNum = 1;
+	--townNum;
+	/*
+	_healCost = HEAL_COST[townNum];
+	_uncurseCost = UNCURSE_COST[townNum];
+	_donateCost = DONATE_COST[townNum];
+	*/
+
+	Character &c = *g_globals->_currCharacter;
+
+	_healCost = 0;
+	if (c._condition == ERADICATED) {
+		_healCost = HEAL_COST1[townNum];
+		_isEradicated = true;
+	} else if (c._condition & BAD_CONDITION) {
+		_healCost = HEAL_COST2[townNum];
+	} else if (c._condition || c._hp < c._hpMax) {
+		_healCost = HEAL_COST3[townNum];
+	}
+
+	_uncurseCost = UNCURSE_COST[townNum];
+	for (i = 0;  i < INVENTORY_COUNT; ++i) {
+		if (c._equipped[i]) {
+			if (getItem(c._equipped[i])->_field10 == 0xff)
+				break;
+		}
+	}
+	if (i == INVENTORY_COUNT)
+		_uncurseCost = 0;
+
+	_alignmentCost = ALIGNMENT_COST[townNum];
+	if (c._alignment == c._alignmentInitial)
+		_alignmentCost = 0;
+
+	_donateCost = DONATE_COST[townNum];
+}
+
 void Temple::draw() {
 	Business::draw();
+
+	writeString(21, 0, STRING["dialogs.temple.service_cost"]);
+
+	writeString(18, 2, STRING["dialogs.temple.a"]);
+	_textPos.x = 36;
+	if (_healCost)
+		writeNumber(_healCost);
+	else
+		writeString("----");
+
+	writeString(18, 3, STRING["dialogs.temple.b"]);
+	_textPos.x = 36;
+	if (_uncurseCost)
+		writeNumber(_uncurseCost);
+	else
+		writeString("----");
+
+	writeString(18, 4, STRING["dialogs.temple.c"]);
+	_textPos.x = 36;
+	if (_alignmentCost)
+		writeNumber(_alignmentCost);
+	else
+		writeString("----");
+
+	writeString(18, 5, STRING["dialogs.temple.d"]);
+	_textPos.x = 36;
+	writeNumber(_donateCost);
 }
 
 } // namespace Businesses

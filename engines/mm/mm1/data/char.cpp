@@ -28,7 +28,7 @@ namespace MM1 {
 void Character::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, 16);
 	s.syncAsByte(_sex);
-	s.syncAsByte(_field11);
+	s.syncAsByte(_alignmentInitial);
 	s.syncAsByte(_alignment);
 	s.syncAsByte(_race);
 	s.syncAsByte(_class);
@@ -76,6 +76,7 @@ void Character::synchronize(Common::Serializer &s) {
 void Character::clear() {
 	Common::fill(_name, _name + 16, 0);
 	_sex = (Sex)0;
+	_alignmentInitial = (Alignment)0;
 	_alignment = (Alignment)0;
 	_race = (Race)0;
 	_class = (CharacterClass)0;
