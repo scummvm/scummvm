@@ -507,11 +507,14 @@ void ScummEngine_v6::o6_byteArrayRead() {
 void ScummEngine_v6::o6_wordArrayRead() {
 	int base = pop();
 	int num = fetchScriptWord();
+#ifdef USE_BYONLINE
 	// If we're pulling from the randomly selected teams for online play
 	// at Prince Rupert, read from variables 748 and 749 instead
-	// TODO: Check something else to make sure we want to do all this custom teams stuff
-	if (_game.id == GID_BASEBALL2001 && _currentRoom == 6
-		&& vm.slot[_currentScript].number == 2071) {
+	if (
+		_game.id == GID_BASEBALL2001 && _currentRoom == 6 && vm.slot[_currentScript].number == 2071 &&
+		readVar(399) == 1 &&  // We're online and in the team name select screen
+		readVar(747) == 1  // We successfully got team arrays the host and opponent
+	) {
 		switch (num) {
 			case 264: case 321:
 				num = 748;
@@ -521,6 +524,7 @@ void ScummEngine_v6::o6_wordArrayRead() {
 				break;
 		}
 	}
+#endif
 	int val = readArray(num, 0, base);
 	push(val);
 }
@@ -1412,8 +1416,7 @@ void ScummEngine_v6::o6_getRandomNumberRange() {
 
 	// For using predefined teams in Prince Rupert, instead of choosing player IDs randomly
 	// let's pull from the variables that contain the teams
-	// TODO: Also check whether our user wants to use predefined teams here. Probably also wanna check that arrays 748 and 749 exist
-	if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 298) {
+	if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 298 && readVar(399) == 1 && readVar(747) == 1) {
 		int offset = _scriptPointer - _scriptOrgPointer;
 		if (offset == 117) {
 			// Host's team
