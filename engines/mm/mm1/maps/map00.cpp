@@ -80,15 +80,13 @@ void Map00::special01() {
 void Map00::special02() { warning("special02"); }
 
 void Map00::special03() {
-	/*
 	Sound::sound(SOUND_2);
 	g_events->msgInfo(InfoMessage(
-		STRING["maps.map00.food"],
+		STRING["maps.map00.market_inside"],
 		[]() {
-
+			g_events->addView("MARKET");
 		}
 	));
-	*/
 }
 
 void Map00::special04() {
