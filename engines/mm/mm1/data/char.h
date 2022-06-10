@@ -68,6 +68,7 @@ struct Character {
 	CharacterClass _class = NONE;
 	uint8 _int = 0, _mgt = 0, _per = 0, _end = 0;
 	uint8 _spd = 0, _acy = 0, _luc = 0;
+	uint8 _end2 = 0;
 	uint8 _level = 0;
 	uint8 _age = 0;
 	uint32 _exp = 0;
@@ -84,7 +85,7 @@ struct Character {
 
 	// TODO: Figure out what these are
 	int _v58, _v59, _v62, _v63, _v64, _v65;
-	int _v66, _v67, _v6c, _v6f;
+	int _v66, _v67, _v6c, _v6e, _v6f;
 
 	// Non persistent fields
 	byte _numDrinks = 0;

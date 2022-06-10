@@ -63,14 +63,9 @@ bool Tavern::msgKeypress(const KeypressMessage &msg) {
 	case Common::KEYCODE_3:
 	case Common::KEYCODE_4:
 	case Common::KEYCODE_5:
-	case Common::KEYCODE_6: {
-		uint charIndex = msg.keycode - Common::KEYCODE_1;
-		if (charIndex < g_globals->_party.size()) {
-			g_globals->_currCharacter = &g_globals->_party[charIndex];
-			redraw();
-		}
+	case Common::KEYCODE_6:
+		changeCharacter(msg.keycode - Common::KEYCODE_1);
 		break;
-	}
 	default:
 		break;
 	}
@@ -133,16 +128,6 @@ void Tavern::listenForRumors() {
 	}
 
 	displayMessage(msg);
-}
-
-void Tavern::gatherGold() {
-	uint total = 0;
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		total += g_globals->_party[i]._gold;
-		g_globals->_party[i]._gold = 0;
-	}
-
-	g_globals->_currCharacter->_gold = total;
 }
 
 } // namespace Businesses

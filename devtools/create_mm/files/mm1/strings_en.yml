@@ -144,6 +144,8 @@ dialogs:
 		b: "B) UNCURSE ITEMS"
 		c: "C) RESTORE ALIGN"
 		d: "D) MAKE DONATION"
+		thankyou: "THANK YOU!"
+		protected: "*** TODAY YOU SHALL BE PROTECTED!"
 	view_characters:
 		title: "VIEW ALL CHARACTERS"
 		legend1: "'A'-'%c' TO VIEW A CHARACTER"

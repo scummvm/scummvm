@@ -59,6 +59,16 @@ void Business::newLine() {
 		_textPos.y = 0;
 }
 
+void Business::gatherGold() {
+	uint total = 0;
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		total += g_globals->_party[i]._gold;
+		g_globals->_party[i]._gold = 0;
+	}
+
+	g_globals->_currCharacter->_gold = total;
+}
+
 bool Business::subtractGold(uint amount) {
 	if (g_globals->_currCharacter->_gold < amount) {
 		notEnoughGold();
@@ -72,6 +82,14 @@ bool Business::subtractGold(uint amount) {
 void Business::notEnoughGold() {
 	Sound::sound(SOUND_2);
 	displayMessage(STRING["dialogs.misc.not_enough_gold"]);
+}
+
+void Business::changeCharacter(uint index) {
+	if (index >= g_globals->_party.size())
+		return;
+
+	g_globals->_currCharacter = &g_globals->_party[index];
+	redraw();
 }
 
 void Business::leave() {

@@ -46,11 +46,6 @@ private:
 	 */
 	void listenForRumors();
 
-	/**
-	 * Gathers all the party gold to the current character
-	 */
-	void gatherGold();
-
 public:
 	Tavern();
 	virtual ~Tavern() {}

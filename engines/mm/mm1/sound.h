@@ -25,7 +25,7 @@
 namespace MM {
 namespace MM1 {
 
-enum SoundId { SOUND_1 = 1, SOUND_2 = 2 };
+enum SoundId { SOUND_1 = 1, SOUND_2 = 2, SOUND_3 = 3 };
 
 class Sound {
 public:

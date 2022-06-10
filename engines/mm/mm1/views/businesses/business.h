@@ -55,6 +55,11 @@ protected:
 	void leave();
 
 	/**
+	 * Gathers all the party gold to the current character
+	 */
+	void gatherGold();
+
+	/**
 	 * Subtract gold from current character
 	 */
 	bool subtractGold(uint amount);
@@ -63,6 +68,11 @@ protected:
 	 * Displays not enough gold
 	 */
 	void notEnoughGold();
+
+	/**
+	 * Change character
+	 */
+	virtual void changeCharacter(uint index);
 public:
 	Business(const Common::String &name);
 	virtual ~Business() {}
