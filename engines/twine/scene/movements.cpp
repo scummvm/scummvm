@@ -52,7 +52,7 @@ IVec3 Movements::getShadowPosition(const IVec3 &pos) {
 	} else {
 		shadowCollisionType = ShapeType::kNone;
 	}
-	_engine->_collision->reajustActorPosition(shadowCoord, shadowCollisionType);
+	_engine->_collision->reajustPos(shadowCoord, shadowCollisionType);
 	return shadowCoord;
 }
 

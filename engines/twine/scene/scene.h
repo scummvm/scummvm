@@ -221,7 +221,7 @@ public:
 	 * Process actor zones
 	 * @param actorIdx Process actor index
 	 */
-	void processActorZones(int32 actorIdx);
+	void checkZoneSce(int32 actorIdx);
 };
 
 inline bool Scene::isGameRunning() const {

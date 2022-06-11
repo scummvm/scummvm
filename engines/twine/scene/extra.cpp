@@ -499,13 +499,13 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y, Common::Rect &ren
 }
 
 void Extra::processMagicballBounce(ExtraListStruct *extra, int32 x, int32 y, int32 z) {
-	if (_engine->_grid->getBrickShape(x, extra->pos.y, z) != ShapeType::kNone) {
+	if (_engine->_grid->worldColBrick(x, extra->pos.y, z) != ShapeType::kNone) {
 		extra->destPos.y = -extra->destPos.y;
 	}
-	if (_engine->_grid->getBrickShape(extra->pos.x, y, z) != ShapeType::kNone) {
+	if (_engine->_grid->worldColBrick(extra->pos.x, y, z) != ShapeType::kNone) {
 		extra->destPos.x = -extra->destPos.x;
 	}
-	if (_engine->_grid->getBrickShape(x, y, extra->pos.z) != ShapeType::kNone) {
+	if (_engine->_grid->worldColBrick(x, y, extra->pos.z) != ShapeType::kNone) {
 		extra->destPos.z = -extra->destPos.z;
 	}
 

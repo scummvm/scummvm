@@ -331,7 +331,7 @@ void Actor::processActorCarrier(int32 actorIdx) {
 	}
 }
 
-void Actor::processActorExtraBonus(int32 actorIdx) {
+void Actor::giveExtraBonus(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	const int bonusSprite = _engine->_extra->getBonusSprite(actor->_bonusParameter);

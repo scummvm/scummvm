@@ -118,7 +118,7 @@ public:
 	 * Process main loop actor animations
 	 * @param actorIdx Actor index
 	 */
-	void processActorAnimations(int32 actorIdx);
+	void doAnim(int32 actorIdx);
 };
 
 } // namespace TwinE

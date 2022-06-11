@@ -695,7 +695,7 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	}
 }
 
-void Scene::processActorZones(int32 actorIdx) {
+void Scene::checkZoneSce(int32 actorIdx) {
 	ActorStruct *actor = &_sceneActors[actorIdx];
 
 	int32 currentX = actor->_pos.x;
@@ -778,7 +778,7 @@ void Scene::processActorZones(int32 actorIdx) {
 					destPos.z += actor->_processActor.z;
 
 					if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= SCENE_SIZE_MAX && destPos.z <= SCENE_SIZE_MAX) {
-						if (_engine->_grid->getBrickShape(destPos.x, actor->_pos.y + BRICK_HEIGHT, destPos.z) != ShapeType::kNone) {
+						if (_engine->_grid->worldColBrick(destPos.x, actor->_pos.y + BRICK_HEIGHT, destPos.z) != ShapeType::kNone) {
 							_currentActorInZone = true;
 							if (actor->_pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx); // reached end of ladder

@@ -1116,7 +1116,7 @@ static int32 lGIVE_BONUS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::GIVE_BONUS(%i)", (int)flag);
 
 	if (ctx.actor->_bonusParameter.cloverleaf || ctx.actor->_bonusParameter.kashes || ctx.actor->_bonusParameter.key || ctx.actor->_bonusParameter.lifepoints || ctx.actor->_bonusParameter.magicpoints) {
-		engine->_actor->processActorExtraBonus(ctx.actorIdx);
+		engine->_actor->giveExtraBonus(ctx.actorIdx);
 	}
 
 	if (flag != 0) {

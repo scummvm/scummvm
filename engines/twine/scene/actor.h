@@ -180,7 +180,7 @@ public:
 	int32 _strengthOfHit = 0;
 	int32 _hitBy = -1;
 	BonusParameter _bonusParameter;
-	int32 _angle = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise
+	int32 _angle = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise (BETA in original sources)
 	int32 _speed = 40; // speed of movement
 	ControlMode _controlMode = ControlMode::kNoMove;
 	int32 _delayInMillis = 0;
@@ -194,7 +194,7 @@ public:
 	int32 _armor = 1;
 	int32 _life = kActorMaxLife;
 
-	/** Process actor coordinate */
+	/** Process actor coordinate Nxw, Nyw, Nzw */
 	IVec3 _processActor;
 	/** Previous process actor coordinate */
 	IVec3 _previousActor;
@@ -215,7 +215,7 @@ public:
 	/**
 	 * colliding actor id
 	 */
-	int32 _collision = -1;
+	int32 _collision = -1; // ObjCol
 	/**
 	 * actor id we are standing on
 	 */
@@ -229,7 +229,7 @@ public:
 	int32 _animPosition = 0;
 	AnimType _animType = AnimType::kAnimationTypeLoop;
 	int32 _spriteActorRotation = 0;
-	uint8 _brickSound = 0U;
+	uint8 _brickSound = 0U; // CodeJeu
 
 	BoundingBox _boundingBox;
 	ActorMoveStruct _move;
@@ -284,7 +284,7 @@ public:
 
 	ActorStruct *_processActorPtr = nullptr;
 
-	HeroBehaviourType _heroBehaviour = HeroBehaviourType::kNormal;
+	HeroBehaviourType _heroBehaviour = HeroBehaviourType::kNormal; // Comportement
 	/** Hero auto aggressive mode */
 	bool _autoAggressive = true;
 	/** Previous Hero behaviour */
@@ -354,7 +354,7 @@ public:
 	void processActorCarrier(int32 actorIdx);
 
 	/** Process actor extra bonus */
-	void processActorExtraBonus(int32 actorIdx);
+	void giveExtraBonus(int32 actorIdx);
 };
 
 } // namespace TwinE

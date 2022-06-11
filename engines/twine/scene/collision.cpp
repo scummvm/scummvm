@@ -94,8 +94,7 @@ int32 Collision::getAverageValue(int32 start, int32 end, int32 maxDelay, int32 d
 	return (((end - start) * delay) / maxDelay) + start;
 }
 
-// ReajustPos
-void Collision::reajustActorPosition(IVec3 &processActor, ShapeType brickShape) const {
+void Collision::reajustPos(IVec3 &processActor, ShapeType brickShape) const {
 	if (brickShape == ShapeType::kNone) {
 		return;
 	}
@@ -293,11 +292,10 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 	return actor->_collision;
 }
 
-// DoCornerReajustTwinkel
-void Collision::checkHeroCollisionWithBricks(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
+void Collision::doCornerReajustTwinkel(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
 	IVec3 &processActor = actor->_processActor;
 	IVec3 &previousActor = actor->_previousActor;
-	ShapeType brickShape = _engine->_grid->getBrickShape(processActor);
+	ShapeType brickShape = _engine->_grid->worldColBrick(processActor);
 
 	processActor.x += x;
 	processActor.y += y;
@@ -305,15 +303,15 @@ void Collision::checkHeroCollisionWithBricks(ActorStruct *actor, int32 x, int32 
 
 	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= SCENE_SIZE_MAX && processActor.z <= SCENE_SIZE_MAX) {
 		const BoundingBox &bbox = _engine->_actor->_processActorPtr->_boundingBox;
-		reajustActorPosition(processActor, brickShape);
-		brickShape = _engine->_grid->getBrickShapeFull(processActor, bbox.maxs.y);
+		reajustPos(processActor, brickShape);
+		brickShape = _engine->_grid->fullWorldColBrick(processActor, bbox.maxs.y);
 
 		if (brickShape == ShapeType::kSolid) {
 			_causeActorDamage |= damageMask;
-			brickShape = _engine->_grid->getBrickShapeFull(processActor.x, processActor.y, previousActor.z + z, bbox.maxs.y);
+			brickShape = _engine->_grid->fullWorldColBrick(processActor.x, processActor.y, previousActor.z + z, bbox.maxs.y);
 
 			if (brickShape == ShapeType::kSolid) {
-				brickShape = _engine->_grid->getBrickShapeFull(x + previousActor.x, processActor.y, processActor.z, bbox.maxs.y);
+				brickShape = _engine->_grid->fullWorldColBrick(x + previousActor.x, processActor.y, processActor.z, bbox.maxs.y);
 
 				if (brickShape != ShapeType::kSolid) {
 					_processCollision.x = previousActor.x;
@@ -327,26 +325,25 @@ void Collision::checkHeroCollisionWithBricks(ActorStruct *actor, int32 x, int32 
 	processActor = _processCollision;
 }
 
-// DoCornerReajust
-void Collision::checkActorCollisionWithBricks(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
+void Collision::doCornerReajust(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask) {
 	IVec3 &processActor = actor->_processActor;
 	IVec3 &previousActor = actor->_previousActor;
-	ShapeType brickShape = _engine->_grid->getBrickShape(processActor);
+	ShapeType brickShape = _engine->_grid->worldColBrick(processActor);
 
 	processActor.x += x;
 	processActor.y += y;
 	processActor.z += z;
 
 	if (processActor.x >= 0 && processActor.z >= 0 && processActor.x <= SCENE_SIZE_MAX && processActor.z <= SCENE_SIZE_MAX) {
-		reajustActorPosition(processActor, brickShape);
-		brickShape = _engine->_grid->getBrickShape(processActor);
+		reajustPos(processActor, brickShape);
+		brickShape = _engine->_grid->worldColBrick(processActor);
 
 		if (brickShape == ShapeType::kSolid) {
 			_causeActorDamage |= damageMask;
-			brickShape = _engine->_grid->getBrickShape(processActor.x, processActor.y, previousActor.z + z);
+			brickShape = _engine->_grid->worldColBrick(processActor.x, processActor.y, previousActor.z + z);
 
 			if (brickShape == ShapeType::kSolid) {
-				brickShape = _engine->_grid->getBrickShape(x + previousActor.x, processActor.y, processActor.z);
+				brickShape = _engine->_grid->worldColBrick(x + previousActor.x, processActor.y, processActor.z);
 
 				if (brickShape != ShapeType::kSolid) {
 					_processCollision.x = previousActor.x;
@@ -360,7 +357,7 @@ void Collision::checkActorCollisionWithBricks(ActorStruct *actor, int32 x, int32
 	processActor = _processCollision;
 }
 
-void Collision::stopFalling() { // ReceptionObj()
+void Collision::receptionObj() {
 	if (IS_HERO(_engine->_animations->_currentlyProcessedActorIdx)) {
 		const IVec3 &processActor = _engine->_actor->_processActorPtr->_processActor;
 		const int32 fall = _engine->_scene->_startYFalling - processActor.y;
@@ -420,7 +417,7 @@ int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 act
 }
 
 bool Collision::checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, const IVec3 &oldPos) {
-	if (_engine->_grid->getBrickShape(oldPos) != ShapeType::kNone) {
+	if (_engine->_grid->worldColBrick(oldPos) != ShapeType::kNone) {
 		return true;
 	}
 
@@ -428,15 +425,15 @@ bool Collision::checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, const I
 	const int32 averageY = ABS(y + oldPos.y) / 2;
 	const int32 averageZ = ABS(z + oldPos.z) / 2;
 
-	if (_engine->_grid->getBrickShape(averageX, averageY, averageZ) != ShapeType::kNone) {
+	if (_engine->_grid->worldColBrick(averageX, averageY, averageZ) != ShapeType::kNone) {
 		return true;
 	}
 
-	if (_engine->_grid->getBrickShape(ABS(oldPos.x + averageX) / 2, ABS(oldPos.y + averageY) / 2, ABS(oldPos.z + averageZ) / 2) != ShapeType::kNone) {
+	if (_engine->_grid->worldColBrick(ABS(oldPos.x + averageX) / 2, ABS(oldPos.y + averageY) / 2, ABS(oldPos.z + averageZ) / 2) != ShapeType::kNone) {
 		return true;
 	}
 
-	if (_engine->_grid->getBrickShape(ABS(x + averageX) / 2, ABS(y + averageY) / 2, ABS(z + averageZ) / 2) != ShapeType::kNone) {
+	if (_engine->_grid->worldColBrick(ABS(x + averageX) / 2, ABS(y + averageY) / 2, ABS(z + averageZ) / 2) != ShapeType::kNone) {
 		return true;
 	}
 

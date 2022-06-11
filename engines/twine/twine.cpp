@@ -937,7 +937,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			}
 
 			if (!actor->_bonusParameter.givenNothing && (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints)) {
-				_actor->processActorExtraBonus(a);
+				_actor->giveExtraBonus(a);
 			}
 		}
 
@@ -949,10 +949,10 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			_scriptMove->processMoveScript(a);
 		}
 
-		_animations->processActorAnimations(a);
+		_animations->doAnim(a);
 
 		if (actor->_staticFlags.bIsZonable) {
-			_scene->processActorZones(a);
+			_scene->checkZoneSce(a);
 		}
 
 		if (actor->_positionInLifeScript != -1) {
@@ -966,7 +966,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		if (actor->_staticFlags.bCanDrown) {
-			const uint8 brickSound = _grid->getBrickSoundType(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
+			const uint8 brickSound = _grid->worldCodeBrick(actor->_pos.x, actor->_pos.y - 1, actor->_pos.z);
 			actor->_brickSound = brickSound;
 
 			if (brickSound == WATER_BRICK) {
@@ -986,7 +986,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 					_sound->playSample(Samples::Explode, 1, actor->pos(), a);
 					if (actor->_bonusParameter.cloverleaf || actor->_bonusParameter.kashes || actor->_bonusParameter.key || actor->_bonusParameter.lifepoints || actor->_bonusParameter.magicpoints) {
 						if (!actor->_bonusParameter.givenNothing) {
-							_actor->processActorExtraBonus(a);
+							_actor->giveExtraBonus(a);
 						}
 						actor->setLife(0);
 					}

@@ -703,7 +703,7 @@ BlockEntry Grid::getBlockEntry(int32 x, int32 y, int32 z) const {
 	return entry;
 }
 
-ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
+ShapeType Grid::worldColBrick(int32 x, int32 y, int32 z) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
 	if (collision.x < 0 || collision.x >= GRID_SIZE_X) {
@@ -733,7 +733,7 @@ const IVec3 &Grid::updateCollisionCoordinates(int32 x, int32 y, int32 z) {
 	return _engine->_collision->_collision;
 }
 
-ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
+ShapeType Grid::fullWorldColBrick(int32 x, int32 y, int32 z, int32 y2) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
 	if (collision.y <= -1) {
@@ -772,7 +772,7 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	return brickShape;
 }
 
-uint8 Grid::getBrickSoundType(int32 x, int32 y, int32 z) {
+uint8 Grid::worldCodeBrick(int32 x, int32 y, int32 z) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
 	if (collision.x < 0 || collision.x >= GRID_SIZE_X) {
