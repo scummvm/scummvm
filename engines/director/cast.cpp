@@ -1374,9 +1374,9 @@ void Cast::loadVWTL(Common::SeekableReadStreamEndian &stream) {
 		stream.readUint32(); // unused
 
 		if (_version >= kFileVer500)
-			castLibId = stream.readUint16LE();
+			castLibId = stream.readUint16();
 
-		memberId = stream.readUint16LE();
+		memberId = stream.readUint16();
 
 		r = Movie::readRect(stream);
 
