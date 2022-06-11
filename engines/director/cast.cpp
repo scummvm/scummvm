@@ -390,7 +390,8 @@ void Cast::loadCast() {
 
 	// Pattern Tiles
 	if (_castArchive->hasResource(MKTAG('V', 'W', 'T', 'L'), -1)) {
-		debug("STUB: Unhandled VWTL resource.");
+		loadVWTL(*(r = _castArchive->getFirstResource(MKTAG('V', 'W', 'T', 'L'))));
+		delete r;
 	}
 
 	// Time code
@@ -1357,6 +1358,36 @@ void Cast::loadSord(Common::SeekableReadStreamEndian &stream) {
 	}
 
 	debugC(1, kDebugLoading, "Cast::loadSord(): number of entries: %d", numEntries);
+}
+
+// Pattern tiles
+//
+// Basically, a reference to Bitmap cast accompanied with rectrangle
+void Cast::loadVWTL(Common::SeekableReadStreamEndian &stream) {
+	debugC(1, kDebugLoading, "****** Loading CastMember petterns VWTL");
+
+	Common::Rect r;
+	uint16 castLibId = 0; // default for pre-D5
+	uint16 memberId;
+
+	for (int i = 0; i < NUMTILEPATTERNS; i++) {
+		stream.readUint32(); // unused
+
+		if (_version >= kFileVer500)
+			castLibId = stream.readUint16LE();
+
+		memberId = stream.readUint16LE();
+
+		r = Movie::readRect(stream);
+
+		_patterns[i].bitmapId.castLib = castLibId;
+		_patterns[i].bitmapId.member = memberId;
+		_patterns[i].rect = r;
+
+		debugC(2, kDebugLoading, "Cast::loadCastDataVWCR(): entry %d - %u:%u [%d, %d, %d, %d]", i, castLibId, memberId,
+				r.left, r.top, r.right, r.bottom);
+	}
+
 }
 
 } // End of namespace Director

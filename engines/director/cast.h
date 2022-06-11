@@ -50,7 +50,7 @@ typedef Common::HashMap<byte, byte> CharMap;
 typedef Common::HashMap<uint16, uint16> FontSizeMap;
 struct FontXPlatformInfo {
 	Common::String toFont;
-		bool remapChars;
+	bool remapChars;
 	FontSizeMap sizeMap;
 
 	FontXPlatformInfo() : remapChars(false) {}
@@ -65,6 +65,12 @@ struct FontMapEntry {
 	FontMapEntry() : toFont(0), remapChars(false) {}
 };
 typedef Common::HashMap<uint16, FontMapEntry *> FontMap;
+
+#define NUMTILEPATTERNS 8
+struct TilePatternEntry {
+	CastMemberID bitmapId;
+	Common::Rect rect;
+};
 
 class Cast {
 public:
@@ -114,6 +120,7 @@ private:
 	void loadFontMapV4(Common::SeekableReadStreamEndian &stream);
 	void loadFXmp(Common::SeekableReadStreamEndian &stream);
 	bool readFXmpLine(Common::SeekableReadStreamEndian &stream);
+	void loadVWTL(Common::SeekableReadStreamEndian &stream);
 
 public:
 	Archive *_castArchive;
@@ -150,6 +157,8 @@ private:
 	Common::HashMap<uint16, CastMemberInfo *> _castsInfo;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _castsNames;
 	Common::HashMap<uint16, int> _castsScriptIds;
+
+	TilePatternEntry _patterns[NUMTILEPATTERNS];
 };
 
 } // End of namespace Director
