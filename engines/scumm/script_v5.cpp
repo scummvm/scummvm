@@ -1323,13 +1323,13 @@ void ScummEngine_v5::o5_isScriptRunning() {
 	getResultPos();
 	setResult(isScriptRunning(getVarOrDirectByte(PARAM_1)));
 
-    // WORKAROUND bug #346 (also occurs in original): Object stopped with active cutscene
-    // In script 204 room 25 (Cannibal Village) a crash can occur when you are
-    // expected to give something to the cannibals, but instead look at certain
-    // items like the compass or kidnap note. Those inventory items contain little
-    // cutscenes and are abrubtly stopped by the endcutscene in script 204 at 0x0060.
-    // This patch changes the the result of isScriptRunning(164) to also wait for
-    // any inventory scripts that are in a cutscene state, preventing the crash.
+	// WORKAROUND bug #346 (also occurs in original): Object stopped with active cutscene
+	// In script 204 room 25 (Cannibal Village) a crash can occur when you are
+	// expected to give something to the cannibals, but instead look at certain
+	// items like the compass or kidnap note. Those inventory items contain little
+	// cutscenes and are abrubtly stopped by the endcutscene in script 204 at 0x0060.
+	// This patch changes the the result of isScriptRunning(164) to also wait for
+	// any inventory scripts that are in a cutscene state, preventing the crash.
 	if (_game.id == GID_MONKEY && vm.slot[_currentScript].number == 204 && _currentRoom == 25) {
 		ScriptSlot *ss = vm.slot;
 		for (int i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
@@ -3170,6 +3170,24 @@ void ScummEngine_v5::decodeParseString() {
 					else
 						strcpy((char *)tmpBuf+16, "^19^");
 					printString(textSlot, tmpBuf);
+				} else if (_game.id == GID_INDY4 && _language == Common::EN_ANY && _roomResource == 10 &&
+						vm.slot[_currentScript].number == 209 && _actorToPrintStrFor == 4 && len == 81 &&
+						strcmp(_game.variant, "Floppy") != 0 && _enableEnhancements) {
+					// WORKAROUND: The English Talkie version of Indy4 changed Kerner's
+					// lines when he uses the phone booth in New York, but the text doesn't
+					// match the voice and it mentions the wrong person, in most releases.
+					// The fixed string is taken from the 1994 Macintosh release.
+					const char origText[] = "Fritz^ Fantastic\x10news!\xFF\x03I think we've found the treasure we\x10seek.";
+					const char newText[] = "Dr. Ubermann^ Fantastic\x10news!\xFF\x03We've found the treasure we\x10seek.";
+					if (strcmp((const char *)_scriptPointer + 16, origText) == 0) {
+						byte *tmpBuf = new byte[sizeof(newText) + 16];
+						memcpy(tmpBuf, _scriptPointer, 16);
+						memcpy(tmpBuf + 16, newText, sizeof(newText));
+						printString(textSlot, tmpBuf);
+						delete[] tmpBuf;
+					} else {
+						printString(textSlot, _scriptPointer);
+					}
 				} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && vm.slot[_currentScript].number == 411 &&
 							strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT")) {
 					// WORKAROUND for bug #4886 (MI1EGA German: Credit text incorrect)
