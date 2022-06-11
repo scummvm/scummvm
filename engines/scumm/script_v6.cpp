@@ -1414,6 +1414,8 @@ void ScummEngine_v6::o6_getRandomNumberRange() {
 	int min = pop();
 	uint rnd;
 
+	rnd = _rnd.getRandomNumberRng(min, max);
+#ifdef USE_BYONLINE
 	// For using predefined teams in Prince Rupert, instead of choosing player IDs randomly
 	// let's pull from the variables that contain the teams
 	if (_game.id == GID_BASEBALL2001 && vm.slot[_currentScript].number == 298 && readVar(399) == 1 && readVar(747) == 1) {
@@ -1424,12 +1426,9 @@ void ScummEngine_v6::o6_getRandomNumberRange() {
 		} else if (offset == 210) {
 			// Opponent's team
 			rnd = readArray(749, 0, vm.localvar[_currentScript][1]);
-		} else {
-			rnd = _rnd.getRandomNumberRng(min, max);
 		}
-	} else {
-		rnd = _rnd.getRandomNumberRng(min, max);
 	}
+#endif
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);

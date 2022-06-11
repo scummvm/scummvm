@@ -994,7 +994,7 @@ void BYOnline::connectedToSession() {
 }
 
 void BYOnline::gameStarted(int hoster, int player, int playerNameArray) {
-	if (_vm->_game.id == GID_BASEBALL2001) {  // TODO: Also check something else to make sure we want to do all this custom team stuff
+	if (_vm->_game.id == GID_BASEBALL2001 && _vm->readVar(399) == 1 && _vm->readVar(686) == 1) {  // Only if we're online and in Prince Rupert
 		// Request teams for this client and opponent
 		Common::JSONObject getTeamsRequest;
 		getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
