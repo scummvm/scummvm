@@ -94,14 +94,15 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 
 	if (_currentLevel == lastLevelTerritory(_currentLevel)) {
 		byte *palette;
-		int territory = getTerritory(_currentLevel) + 1;
+		int territory = getTerritory(_currentLevel) - 1;
 		Graphics::Surface *stats = decodeFrame("preload/stats.smk", territory, &palette);
 		loadPalette(palette, 0, 256);
 		drawImage(*stats, 0, 0, true);
-		drawString("scifi08.fgx", Common::String::format("%d", _targetsDestroyed + _targetsMissed), 240, 40, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d", _targetsDestroyed), 240, 54, 0, kHypnoColorWhiteOrBlue);
+		uint32 enemyAvailable = _targetsDestroyed + _targetsMissed;
+		drawString("scifi08.fgx", Common::String::format("%d", enemyAvailable), 240, 40, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d%%", 100 * _targetsDestroyed / enemyAvailable), 240, 54, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d", _shootsFired), 240, 77, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d", accuracyRatio()), 240, 92, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d%%", accuracyRatio()), 240, 92, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d", -uint32(-1) - _lives), 240, 117, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d", _friendliesEncountered), 240, 142, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d", _infoReceived), 240, 158, 0, kHypnoColorWhiteOrBlue);
@@ -618,6 +619,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 			playSound(_soundPath + _shoots[i].deathSound, 1);
 
 		if (_shoots[i].playInteractionAudio) {
+			incInfoReceived();
 			_additionalVideo = new MVideo(arc->missBoss2Video, Common::Point(0, 0), true, false, false);
 			playVideo(*_additionalVideo);
 		}
@@ -659,8 +661,10 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 			return;  // Precondition was destroyed, so we ignore the missed shoot
 	}
 
-	if (s->nonHostile)
+	if (s->nonHostile) {
+		incFriendliesEncountered();
 		_targetsMissed--; // If the target was not hostile, it should *not* count as missed
+	}
 
 	if (s->name == "CAPTOR") {
 		_background->decoder->pauseVideo(true);
