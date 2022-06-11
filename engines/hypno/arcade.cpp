@@ -733,44 +733,47 @@ void HypnoEngine::incScore(int inc) {
 }
 
 void HypnoEngine::incShotsFired() {
-	_shootsFired++;
+	_stats.shootsFired++;
 }
 
 void HypnoEngine::incEnemyHits() {
-	_enemyHits++;
+	_stats.enemyHits++;
 }
 
 void HypnoEngine::incEnemyTargets() {
-	_enemyTargets++;
+	_stats.enemyTargets++;
 }
 
 void HypnoEngine::incTargetsDestroyed() {
-	_targetsDestroyed++;
+	_stats.targetsDestroyed++;
 }
 
 void HypnoEngine::incTargetsMissed() {
-	_targetsMissed++;
+	_stats.targetsMissed++;
 }
 
 uint32 HypnoEngine::killRatio() {
-	if (_enemyTargets == 0)
+	if (_stats.enemyTargets == 0)
 		return 0;
-	return 100 * _targetsDestroyed / _enemyTargets;
+	return 100 * _stats.targetsDestroyed / _stats.enemyTargets;
 }
 
 uint32 HypnoEngine::accuracyRatio() {
-	if (_shootsFired == 0)
+	if (_stats.shootsFired == 0)
 		return 0;
-	return 100 * _enemyHits / _shootsFired;
+	return 100 * _stats.enemyHits / _stats.shootsFired;
+}
+
+void HypnoEngine::incFriendliesEncountered() {
+	_stats.friendliesEncountered++;
+}
+
+void HypnoEngine::incInfoReceived() {
+	_stats.infoReceived++;
 }
 
 void HypnoEngine::resetStatistics() {
-	_shootsFired = 0;
-	_enemyHits = 0;
-	_enemyTargets = 0;
-	_targetsDestroyed = 0;
-	_targetsMissed = 0;
-	_bonus = 0;
+	_stats = ArcadeStats();
 }
 
 bool HypnoEngine::clickedSecondaryShoot(const Common::Point &mousePos) {

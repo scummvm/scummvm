@@ -71,8 +71,6 @@ BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine
 	_lastLevel = 0;
 	_selectedCorrectBox = 0;
 	_flashbackMode = false;
-	_friendliesEncountered = 0;
-	_infoReceived = 0;
 
     const chapterEntry *entry = rawChapterTable;
     while (entry->id) {
@@ -1025,13 +1023,13 @@ Common::Error BoyzEngine::saveGameStream(Common::WriteStream *stream, bool isAut
 	stream->writeUint32LE(_lastLevel);
 
 	// Save current stats
-	stream->writeUint32LE(_shootsFired);
-	stream->writeUint32LE(_enemyHits);
-	stream->writeUint32LE(_enemyTargets);
-	stream->writeUint32LE(_targetsDestroyed);
-	stream->writeUint32LE(_targetsMissed);
-	stream->writeUint32LE(_friendliesEncountered);
-	stream->writeUint32LE(_infoReceived);
+	stream->writeUint32LE(_stats.shootsFired);
+	stream->writeUint32LE(_stats.enemyHits);
+	stream->writeUint32LE(_stats.enemyTargets);
+	stream->writeUint32LE(_stats.targetsDestroyed);
+	stream->writeUint32LE(_stats.targetsMissed);
+	stream->writeUint32LE(_stats.friendliesEncountered);
+	stream->writeUint32LE(_stats.infoReceived);
 
 	saveSceneState(stream);
 	return Common::kNoError;
@@ -1046,13 +1044,13 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_lastLevel = stream->readUint32LE();
 
 	// Load stats
-	_shootsFired = stream->readUint32LE();
-	_enemyHits = stream->readUint32LE();
-	_enemyTargets = stream->readUint32LE();
-	_targetsDestroyed = stream->readUint32LE();
-	_targetsMissed = stream->readUint32LE();
-	_friendliesEncountered = stream->readUint32LE();
-	_infoReceived = stream->readUint32LE();
+	_stats.shootsFired = stream->readUint32LE();
+	_stats.enemyHits = stream->readUint32LE();
+	_stats.enemyTargets = stream->readUint32LE();
+	_stats.targetsDestroyed = stream->readUint32LE();
+	_stats.targetsMissed = stream->readUint32LE();
+	_stats.friendliesEncountered = stream->readUint32LE();
+	_stats.infoReceived = stream->readUint32LE();
 
 	loadSceneState(stream);
 	if (_unlockAllLevels) {

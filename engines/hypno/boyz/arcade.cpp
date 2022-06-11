@@ -98,14 +98,14 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		Graphics::Surface *stats = decodeFrame("preload/stats.smk", territory, &palette);
 		loadPalette(palette, 0, 256);
 		drawImage(*stats, 0, 0, true);
-		uint32 enemyAvailable = _targetsDestroyed + _targetsMissed;
+		uint32 enemyAvailable = _stats.targetsDestroyed + _stats.targetsMissed;
 		drawString("scifi08.fgx", Common::String::format("%d", enemyAvailable), 240, 40, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d%%", 100 * _targetsDestroyed / enemyAvailable), 240, 54, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d", _shootsFired), 240, 77, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d%%", 100 * _stats.targetsDestroyed / enemyAvailable), 240, 54, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d", _stats.shootsFired), 240, 77, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d%%", accuracyRatio()), 240, 92, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d", -uint32(-1) - _lives), 240, 117, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d", _friendliesEncountered), 240, 142, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d", _infoReceived), 240, 158, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d", _stats.friendliesEncountered), 240, 142, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d", _stats.infoReceived), 240, 158, 0, kHypnoColorWhiteOrBlue);
 
 		bool cont = true;
 		while (!shouldQuit() && cont) {
@@ -663,7 +663,7 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 
 	if (s->nonHostile) {
 		incFriendliesEncountered();
-		_targetsMissed--; // If the target was not hostile, it should *not* count as missed
+		_stats.targetsMissed--; // If the target was not hostile, it should *not* count as missed
 	}
 
 	if (s->name == "CAPTOR") {
@@ -774,20 +774,6 @@ bool BoyzEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 		return false;
 	}
 	return true;
-}
-
-void BoyzEngine::resetStatistics() {
-	HypnoEngine::resetStatistics();
-	_friendliesEncountered = 0;
-	_infoReceived = 0;
-}
-
-void BoyzEngine::incFriendliesEncountered() {
-	_friendliesEncountered++;
-}
-
-void BoyzEngine::incInfoReceived() {
-	_infoReceived++;
 }
 
 } // namespace Hypno

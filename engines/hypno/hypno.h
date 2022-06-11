@@ -274,22 +274,15 @@ public:
 	virtual void findNextSegment(ArcadeShooting *arc);
 	virtual void initSegment(ArcadeShooting *arc);
 
-	virtual void resetStatistics();
-
+	ArcadeStats _stats;
+	void resetStatistics();
 	void incShotsFired();
-	uint32 _shootsFired;
-
 	void incEnemyHits();
-	uint32 _enemyHits;
-
 	void incEnemyTargets();
-	uint32 _enemyTargets;
-
 	void incTargetsDestroyed();
-	uint32 _targetsDestroyed;
-
 	void incTargetsMissed();
-	uint32 _targetsMissed;
+	void incFriendliesEncountered();
+	void incInfoReceived();
 
 	void incScore(int inc);
 	void incBonus(int inc);
@@ -577,14 +570,6 @@ public:
 
 	void loadFonts() override;
 	void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) override;
-
-	// Stats
-	void resetStatistics() override;
-	void incFriendliesEncountered();
-	uint32 _friendliesEncountered;
-
-	void incInfoReceived();
-	uint32 _infoReceived;
 
 	// Saves
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;

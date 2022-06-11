@@ -425,10 +425,10 @@ void WetEngine::runAfterArcade(ArcadeShooting *arc) {
 
 			drawImage(*frame, 0, 0, false);
 			drawString("scifi08.fgx", Common::String::format("Lives : %d", _lives), 36, 2, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "SHOTS FIRED", _shootsFired), 60, 46, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "ENEMY TARGETS", _enemyTargets), 60, 56, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS DESTROYED", _targetsDestroyed), 60, 66, 0, c);
-			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS MISSED", _targetsMissed), 60, 76, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "SHOTS FIRED", _stats.shootsFired), 60, 46, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "ENEMY TARGETS", _stats.enemyTargets), 60, 56, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS DESTROYED", _stats.targetsDestroyed), 60, 66, 0, c);
+			drawString("scifi08.fgx", Common::String::format("%-20s = %7d", "TARGETS MISSED", _stats.targetsMissed), 60, 76, 0, c);
 			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "KILL RATIO", killRatio()), 60, 86, 0, c);
 			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "ACCURACY", accuracyRatio()), 60, 96, 0, c);
 			drawString("scifi08.fgx", Common::String::format("%-20s = %5d %%", "ENERGY", _health), 60, 106, 0, c);
