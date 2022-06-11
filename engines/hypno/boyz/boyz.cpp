@@ -1024,6 +1024,15 @@ Common::Error BoyzEngine::saveGameStream(Common::WriteStream *stream, bool isAut
 
 	stream->writeUint32LE(_lastLevel);
 
+	// Save current stats
+	stream->writeUint32LE(_shootsFired);
+	stream->writeUint32LE(_enemyHits);
+	stream->writeUint32LE(_enemyTargets);
+	stream->writeUint32LE(_targetsDestroyed);
+	stream->writeUint32LE(_targetsMissed);
+	stream->writeUint32LE(_friendliesEncountered);
+	stream->writeUint32LE(_infoReceived);
+
 	saveSceneState(stream);
 	return Common::kNoError;
 }
@@ -1035,6 +1044,15 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_previousHealth = stream->readUint32LE();
 	_score = stream->readUint32LE();
 	_lastLevel = stream->readUint32LE();
+
+	// Load stats
+	_shootsFired = stream->readUint32LE();
+	_enemyHits = stream->readUint32LE();
+	_enemyTargets = stream->readUint32LE();
+	_targetsDestroyed = stream->readUint32LE();
+	_targetsMissed = stream->readUint32LE();
+	_friendliesEncountered = stream->readUint32LE();
+	_infoReceived = stream->readUint32LE();
 
 	loadSceneState(stream);
 	if (_unlockAllLevels) {
