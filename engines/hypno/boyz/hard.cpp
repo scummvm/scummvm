@@ -336,6 +336,21 @@ void BoyzEngine::showCredits() {
 	runIntro(c2);
 }
 
+int BoyzEngine::getTerritory(const Common::String &level) {
+	if (Common::matchString(level.c_str(), "c1#.mi_"))
+		return 1;
+	else if (Common::matchString(level.c_str(), "c2#.mi_"))
+		return 2;
+	else if (Common::matchString(level.c_str(), "c3#.mi_"))
+		return 3;
+	else if (Common::matchString(level.c_str(), "c4#.mi_"))
+		return 4;
+	else if (Common::matchString(level.c_str(), "c5#.mi_"))
+		return 5;
+	else
+		error("Invalid territory for level %s", level.c_str());
+}
+
 Common::String BoyzEngine::firstLevelTerritory(const Common::String &level) {
 	if (Common::matchString(level.c_str(), "c1#.mi_"))
 		return "c19.mi_";
@@ -347,6 +362,21 @@ Common::String BoyzEngine::firstLevelTerritory(const Common::String &level) {
 		return "c41.mi_";
 	else if (Common::matchString(level.c_str(), "c5#.mi_"))
 		return "c51.mi_";
+	else
+		error("Invalid territory for level %s", level.c_str());
+}
+
+Common::String BoyzEngine::lastLevelTerritory(const Common::String &level) {
+	if (Common::matchString(level.c_str(), "c1#.mi_"))
+		return "c18.mi_";
+	else if (Common::matchString(level.c_str(), "c2#.mi_"))
+		return "c22.mi_";
+	else if (Common::matchString(level.c_str(), "c3#.mi_"))
+		return "c38.mi_";
+	else if (Common::matchString(level.c_str(), "c4#.mi_"))
+		return "c42.mi_";
+	else if (Common::matchString(level.c_str(), "c5#.mi_"))
+		return "c59.mi_";
 	else
 		error("Invalid territory for level %s", level.c_str());
 }

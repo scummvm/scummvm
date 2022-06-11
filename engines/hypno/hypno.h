@@ -599,6 +599,8 @@ public:
 	void runCheckC5(Code *code);
 	void runDifficultyMenu(Code *code);
 	void endCredits(Code *code);
+	int getTerritory(const Common::String &level);
+	Common::String lastLevelTerritory(const Common::String &level);
 	Common::String firstLevelTerritory(const Common::String &level);
 
 	void loadSceneState(Common::SeekableReadStream *stream);

@@ -92,6 +92,35 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		return;
 	}
 
+	if (_currentLevel == lastLevelTerritory(_currentLevel)) {
+		byte *palette;
+		int territory = getTerritory(_currentLevel) + 1;
+		Graphics::Surface *stats = decodeFrame("preload/stats.smk", territory, &palette);
+		loadPalette(palette, 0, 256);
+		drawImage(*stats, 0, 0, true);
+		drawString("scifi08.fgx", Common::String::format("%d", _targetsDestroyed + _targetsMissed), 240, 40, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d", _targetsDestroyed), 240, 54, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d", _shootsFired), 240, 77, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d", accuracyRatio()), 240, 92, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d", -uint32(-1) - _lives), 240, 117, 0, kHypnoColorWhiteOrBlue);
+
+		bool cont = true;
+		while (!shouldQuit() && cont) {
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				switch (event.type) {
+					case Common::EVENT_KEYDOWN:
+					cont = false;
+					break;
+					default:
+					break;
+				}
+			}
+			drawScreen();
+			g_system->delayMillis(10);
+		}
+	}
+
 	_previousHealth = _health;
 	_sceneState[Common::String::format("GS_SEQ_%d", _levelId)] = 1;
 }
