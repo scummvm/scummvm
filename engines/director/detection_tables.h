@@ -1180,6 +1180,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "macweekvideo",		"MacWEEK Guide to Desktop Video" },
 	{ "mieuxmieux",			"Le CD-ROM Mac Mieux-Mieux" },
 	{ "mindvirus",			"Mindvirus" },
+	{ "mobiclic",			"Mobiclic" },
 	{ "pcformat",			"PC Format" },
 	{ "pcwuk",				"Personal Computer World" },
 	{ "stream",				"Digital Culture Stream Magazine" },
@@ -4846,6 +4847,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("mmmath3", "", "Mission Masters Math 3", "ec6fba1c2d0fd9dbe987f4336cb08e2b", 718381, 501),
 	WINGAME1("mmmath3", "", "INTRO323.EXE", "d82e8bf2e13128be8b1c2a6afe536308", 1415493, 501),
+
+	WINGAME1t("mobiclic", "Windows 3.1", "CLICK31.EXE", "10771f3a2f953a520de24746c1031f68", 927410, 501),
+	WINGAME1t("mobiclic", "Windows 95", "CLICK95.EXE", "b540921a864caea4868e7e0261b59f3d", 1405572, 501),
 
 	WINGAME1("msn", "Preview", "MSNPREV8.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 5215403, 501),
 
