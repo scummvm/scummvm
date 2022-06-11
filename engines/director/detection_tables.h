@@ -301,7 +301,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "noddyschool",		"Noddy: Let's Get Ready For School" },
 	{ "noddytoytown",		"Noddy: The Magic of ToyTown on a CD-ROM" },
 	{ "noir",				"Noir: A Shadowy Thriller" },
-	{ "norgesjakten",		"Norgesjakten" },
 	{ "nurseryrhymes",		"Multimedia Nursery Rhymes" },
 	{ "okay2000",			"O!Kay! Best of 2000" },
 	{ "okaydemo",			"O!Kay! Probier\' mal! Try out!" },
@@ -1077,6 +1076,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "wonderomcw", 		"WONDEROM クラリスワークス" },					// WONDEROM ClarisWorks ver.2
 	{ "voyagerkids",		"ボイジャーのキッズ CD-ROM" },
 
+	// Norwegian titles
+	{ "norgesjakten",		"Norgesjakten" },
+
 	// Polish titles
 	{ "kontyngent99",		"Katalog Samochodów Kontyngent '99" },
 
@@ -1130,6 +1132,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "polis1",				"Polis" },
 	{ "polis2",				"Polis 2: Någon ljuger" },
 	{ "polis3",				"Polis 3: Vargspår" },
+	{ "rymdjakten",			"Rymdjakten" },
 
 	// Titles containing Director extras
 	{ "amgpremiere",		"The American Girls Premiere" },
@@ -5742,6 +5745,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	//Edison: Bio-Mania
 	WINGAME2_l("robidoc", "", "start.exe", "518a98696fe1122e08410b0f157f21bf", 1518949,
 			"Bio.exe", "55180c6a904d1b35c6ae60cab1f84949", 188408, Common::NL_NLD, 600),
+
+	WINGAME1t_l("rymdjakten", "Romjakten", "ROMJAKT.EXE", "c4259b2ecfd421bd28f29b8a6ddf42f3", 1522656, Common::NB_NOR, 602),
+	MACGAME1t_l("rymdjakten", "Romjakten", "Romjakten", "960f8041921e1ca6c0781cb0f17abc25", 1032378, Common::NB_NOR, 602),
 
 	// Found on Let's Play with "Sakura"
 	// This directly runs the screen savers available on the CD
