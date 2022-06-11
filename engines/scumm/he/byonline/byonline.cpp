@@ -212,6 +212,7 @@ void BYOnline::processLine(Common::String line) {
 			int type = root["type"]->asIntegerNumber();
 			Common::String message = root["message"]->asString();
 			systemAlert(type, message);
+			_vm->writeVar(747, 0);
 			disconnect(true);
 		} else if (command == "login_resp") {
 			long long int errorCode = root["error_code"]->asIntegerNumber();
@@ -999,7 +1000,6 @@ void BYOnline::gameStarted(int hoster, int player, int playerNameArray) {
 		Common::JSONObject getTeamsRequest;
 		getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
 		getTeamsRequest.setVal("opponent_id", new Common::JSONValue((long long int)player));
-		getTeamsRequest.setVal("key", new Common::JSONValue("S1"));  // TODO: Don't hardcode this, allow the user to configure it somehow
 		send(getTeamsRequest);
 	}
 
