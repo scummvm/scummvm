@@ -5855,8 +5855,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("worldnet", "", "EGUIDE95.EXE", "518a98696fe1122e08410b0f157f21bf", 2876414, 602),
 
 	WINDEMO2t("xfiles", "CD Demo", "X-Files.exe", "44a15040c26429c13411859d6fd03bbf", 1527961,
-								   "INTRO.DXR",   "0612ac5cc28df16a5def0fe93c56d2f6", 1844200, 600),
-	WINDEMO2t("xfiles", "CD Demo", "X-Files.exe", "44a15040c26429c13411859d6fd03bbf", 1527961,
 								   "INTRO.DXR",   "8de2b376be89ec9611d489a8a90bb2c9", 1844200, 600),
 
 	// Mac version requires installation, Install The X-Fools, Vise 3.5 installer
