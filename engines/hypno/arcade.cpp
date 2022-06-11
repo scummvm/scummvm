@@ -205,8 +205,6 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 	Common::Point mousePos;
 	Common::List<uint32> shootsToRemove;
 
-	// statistics
-	resetStatistics();
 
 	// segment/shoots
 	Segments segments = arc->segments;
@@ -496,8 +494,8 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 
 				uint32 bodyLastFrame = it->bodyFrames[it->bodyFrames.size() - 1].lastFrame();
 				if (frame > 0 && frame >= (int)(bodyLastFrame - 3) && !it->destroyed) {
-					missedTarget(it, arc);
 					incTargetsMissed();
+					missedTarget(it, arc);
 					// No need to pop attackFrames or explosionFrames
 					skipVideo(*it->video);
 					shootsToRemove.push_back(i);
@@ -512,6 +510,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				uint32 bodyLastFrame = it->bodyFrames[it->bodyFrames.size() - 1].lastFrame();
 				if (frame > it->startFrame && frame - it->startFrame >= bodyLastFrame - 3)
 					if (!it->destroyed) {
+						incTargetsMissed();
 						missedTarget(it, arc);
 						shootsToRemove.push_back(i);
 					}
