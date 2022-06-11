@@ -40,6 +40,8 @@
 
 namespace GUI {
 
+#define SCALEVALUE(val) ((val) * g_gui.getScaleFactor())
+
 enum {
 	kRecordCmd = 'RCRD',
 	kPlaybackCmd = 'PBCK',
@@ -55,6 +57,10 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(nullptr), _cu
 	_currentScreenshotText = nullptr;
 	_authorText = nullptr;
 	_notesText = nullptr;
+	_container = nullptr;
+	_gfxWidget = nullptr;
+	_nextScreenshotBtn = nullptr;
+	_prevScreenshotBtn = nullptr;
 
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
@@ -75,20 +81,15 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(nullptr), _cu
 	_playbackButton->setEnabled(false);
 
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
-	_container = new GUI::ContainerWidget(this, "RecorderDialog.Thumbnail");
-	if (g_gui.xmlEval()->getVar("Globals.RecorderDialog.ExtInfo.Visible") == 1) {
-		new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", Common::U32String("<"), Common::U32String(), kPrevScreenshotCmd);
-		new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", Common::U32String(">"), Common::U32String(), kNextScreenshotCmd);
-		_currentScreenshotText = new StaticTextWidget(this, "RecorderDialog.currentScreenshot", Common::U32String("0/0"));
-		_authorText = new StaticTextWidget(this, "RecorderDialog.Author", _("Author: "));
-		_notesText = new StaticTextWidget(this, "RecorderDialog.Notes", _("Notes: "));
-	}
-	if (_gfxWidget)
-		_gfxWidget->setGfx((Graphics::Surface *)nullptr);
+	_gfxWidget->useThemeTransparency(false);
+
+	addThumbnailContainerButtonsAndText();
 }
 
 
 void RecorderDialog::reflowLayout() {
+	addThumbnailContainerButtonsAndText();
+
 	Dialog::reflowLayout();
 
 	if (g_gui.xmlEval()->getVar("Globals.RecorderDialog.ExtInfo.Visible") == 1) {
@@ -99,24 +100,82 @@ void RecorderDialog::reflowLayout() {
 			error("Error when loading position data for Recorder Thumbnails");
 		}
 
-		int thumbW = kThumbnailWidth;
-		int thumbH = kThumbnailHeight2;
+		int thumbW = SCALEVALUE(kThumbnailWidth);
+		int thumbH = SCALEVALUE(kThumbnailHeight2);
 		int thumbX = x + (w >> 1) - (thumbW >> 1);
 		int thumbY = y + kLineHeight;
 
-		_container->resize(x, y, w, h);
-		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH);
-
-		_container->setVisible(true);
+		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH, false);
 		_gfxWidget->setVisible(true);
+
+		_container->resize(x, y, w, h, false);
+		_container->setVisible(true);
+
+		_notesText->setVisible(true);
+		_authorText->setVisible(true);
+
+		_nextScreenshotBtn->setVisible(true);
+		_prevScreenshotBtn->setVisible(true);
+
 		updateSelection(false);
 	} else {
-		_container->setVisible(false);
+		if (_container) _container->setVisible(false);
 		_gfxWidget->setVisible(false);
+		if (_notesText) _notesText->setVisible(false);
+		if (_authorText) _authorText->setVisible(false);
+		if (_nextScreenshotBtn) _nextScreenshotBtn->setVisible(false);
+		if (_prevScreenshotBtn) _prevScreenshotBtn->setVisible(false);
 	}
 }
 
-
+void RecorderDialog::addThumbnailContainerButtonsAndText() {
+	// When switching layouts, create / remove the thumbnail container as needed
+	if (g_gui.xmlEval()->getVar("Globals.RecorderDialog.ExtInfo.Visible") == 1) {
+		if (!_container)
+			_container = new ContainerWidget(this, "RecorderDialog.Thumbnail");
+		if (!_nextScreenshotBtn)
+			_nextScreenshotBtn = new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", Common::U32String("<"), Common::U32String(), kPrevScreenshotCmd);
+		if (!_prevScreenshotBtn)
+			_prevScreenshotBtn = new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", Common::U32String(">"), Common::U32String(), kNextScreenshotCmd);
+		if (!_currentScreenshotText)
+			_currentScreenshotText = new StaticTextWidget(this, "RecorderDialog.currentScreenshot", Common::U32String("0/0"));
+		if (!_authorText)
+			_authorText = new StaticTextWidget(this, "RecorderDialog.Author", _("Author: "));
+		if (!_notesText)
+			_notesText = new StaticTextWidget(this, "RecorderDialog.Notes", _("Notes: "));
+	} else if (g_gui.xmlEval()->getVar("Globals.RecorderDialog.ExtInfo.Visible") == 0) {
+		if (_container) {
+			removeWidget(_container);
+			delete _container;
+			_container = nullptr;
+		}
+		if (_nextScreenshotBtn) {
+			removeWidget(_nextScreenshotBtn);
+			delete _nextScreenshotBtn;
+			_nextScreenshotBtn = nullptr;
+		}
+		if (_prevScreenshotBtn) {
+			removeWidget(_prevScreenshotBtn);
+			delete _prevScreenshotBtn;
+			_prevScreenshotBtn = nullptr;
+		}
+		if (_currentScreenshotText) {
+			removeWidget(_currentScreenshotText);
+			delete _currentScreenshotText;
+			_currentScreenshotText = nullptr;
+		}
+		if (_authorText) {
+			removeWidget(_authorText);
+			delete _authorText;
+			_authorText = nullptr;
+		}
+		if (_notesText) {
+			removeWidget(_notesText);
+			delete _notesText;
+			_notesText = nullptr;
+		}
+	}
+}
 
 void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
@@ -215,6 +274,10 @@ void RecorderDialog::updateList() {
 
 int RecorderDialog::runModal(Common::String &target) {
 	_target = target;
+	if (_gfxWidget)
+		_gfxWidget->setGfx((Graphics::ManagedSurface *)nullptr);
+
+	reflowLayout();
 	updateList();
 	return Dialog::runModal();
 }
@@ -235,17 +298,13 @@ void RecorderDialog::updateSelection(bool redraw) {
 	_gfxWidget->setGfx(-1, -1, 0, 0, 0);
 	_screenShotsCount = 0;
 	_currentScreenshot = 0;
-	updateScreenShotsText();
 	if (_list->getSelected() >= 0) {
 		_authorText->setLabel(_("Author: ") + Common::U32String(_fileHeaders[_list->getSelected()].author));
 		_notesText->setLabel(_("Notes: ") + Common::U32String(_fileHeaders[_list->getSelected()].notes));
 
 		_firstScreenshotUpdate = true;
 		updateScreenshot();
-		if ((_screenShotsCount) > 0) {
-			_currentScreenshot = 1;
-		}
-		updateScreenshot();
+		updateScreenShotsText();
 	} else {
 		_authorText->setLabel(_("Author: "));
 		_notesText->setLabel(_("Notes: "));
@@ -255,33 +314,51 @@ void RecorderDialog::updateSelection(bool redraw) {
 		_gfxWidget->markAsDirty();
 		updateScreenShotsText();
 	}
+
+	if (redraw) {
+		_gfxWidget->markAsDirty();
+		_authorText->markAsDirty();
+		_notesText->markAsDirty();
+		updateScreenShotsText();
+
+		g_gui.scheduleTopDialogRedraw();
+	}
 }
 
 void RecorderDialog::updateScreenshot() {
 	if (_list->getSelected() == -1) {
 		return;
 	}
+	if (_firstScreenshotUpdate) {
+		_playbackFile.openRead(_fileHeaders[_list->getSelected()].fileName);
+		_screenShotsCount = _playbackFile.getScreensCount();
+		_currentScreenshot = _screenShotsCount > 0 ? 1 : 0;
+		_firstScreenshotUpdate = false;
+	}
+
+	if (_screenShotsCount == 0) {
+		return;
+	}
+
 	if (_currentScreenshot < 1) {
 		_currentScreenshot = _screenShotsCount;
 	}
 	if (_currentScreenshot > _screenShotsCount) {
 		_currentScreenshot = 1;
 	}
-	if (_firstScreenshotUpdate) {
-		_playbackFile.openRead(_fileHeaders[_list->getSelected()].fileName);
-		_screenShotsCount = _playbackFile.getScreensCount();
-		_firstScreenshotUpdate = false;
-	}
+
 	Graphics::Surface *srcsf = _playbackFile.getScreenShot(_currentScreenshot);
-	if (srcsf != nullptr) {
-		Graphics::Surface *destsf = Graphics::scale(*srcsf, _gfxWidget->getWidth(), _gfxWidget->getHeight());
-		_gfxWidget->setGfx(destsf);
-		updateScreenShotsText();
-		delete destsf;
-		delete srcsf;
+	Common::SharedPtr<Graphics::Surface> srcsfSptr = Common::SharedPtr<Graphics::Surface>(srcsf, Graphics::SurfaceDeleter());
+	if (srcsfSptr) {
+		Graphics::Surface *destsf = Graphics::scale(*srcsfSptr, _gfxWidget->getWidth(), _gfxWidget->getHeight());
+		Common::SharedPtr<Graphics::Surface> destsfSptr = Common::SharedPtr<Graphics::Surface>(destsf, Graphics::SurfaceDeleter());
+		if (destsfSptr && _gfxWidget->isVisible())
+			_gfxWidget->setGfx(destsf, false);
 	} else {
 		_gfxWidget->setGfx(-1, -1, 0, 0, 0);
 	}
+
+	updateScreenShotsText();
 	_gfxWidget->markAsDirty();
 }
 
@@ -291,6 +368,7 @@ void RecorderDialog::updateScreenShotsText() {
 	} else {
 		_currentScreenshotText->setLabel(Common::String::format("%d / %d", _currentScreenshot, _screenShotsCount));
 	}
+	_currentScreenshotText->markAsDirty();
 }
 
 } // End of namespace GUI
