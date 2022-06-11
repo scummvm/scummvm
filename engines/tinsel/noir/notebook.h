@@ -99,7 +99,7 @@ private:
 	HYPERLINK _hyperlinks[MAX_HYPERS];
 
 	uint32 _numPages = 1;
-	uint32 _prevPage = -1;
+	int32 _prevPage = -1;
 	uint32 _currentPage = 1;
 
 	NotebookPage _pages[MAX_PAGES] = {};

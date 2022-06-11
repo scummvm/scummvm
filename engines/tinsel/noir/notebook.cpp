@@ -98,7 +98,7 @@ void Notebook::refresh() {
 int Notebook::addTitle(const InventoryObjectT3 &invObject) {
 	int id = invObject.getId();
 	assert(invObject.isNotebookTitle());
-	for (int i = 0; i < _numPages; i++) {
+	for (uint32 i = 0; i < _numPages; i++) {
 		if (_pages[i].getTitle() == id) {
 			return i;
 		}
@@ -143,7 +143,7 @@ void Notebook::addClue(int id) {
 }
 
 int Notebook::getPageWithTitle(int id) {
-	for (int i = 0; i < _numPages; i++) {
+	for (uint32 i = 0; i < _numPages; i++) {
 		if (_pages[i].getTitle() == id) {
 			return i;
 		}
@@ -180,7 +180,7 @@ void InitNotebookAnim(OBJECT **obj, ANIM &anim, SysReel reel, int zPosition) {
 }
 
 void Notebook::setNextPage(int pageIndex) {
-	assert(_prevPage == -1 || _prevPage == _currentPage); // Check that we've cleaned any outstanding page.
+	assert(_prevPage == -1 || _prevPage == (int32)_currentPage); // Check that we've cleaned any outstanding page.
 	_prevPage = _currentPage;
 	_currentPage = pageIndex;
 }

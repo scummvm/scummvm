@@ -103,7 +103,7 @@ void NotebookPage::handlePointAtLine(int line) {
 }
 
 int NotebookPage::indexOfClue(int id) const {
-	for (int i = 0; i < _numLines; i++) {
+	for (uint32 i = 0; i < _numLines; i++) {
 		if (_lines[i]._id == id) {
 			return i;
 		}
@@ -140,20 +140,20 @@ int32 NotebookPage::getTitle() const {
 }
 
 void NotebookPage::fillIn() {
-	for (int i = 0; i < _numLines; i++) {
+	for (uint32 i = 0; i < _numLines; i++) {
 		_lines[i].fillIn(i);
 	}
 }
 
 void NotebookPage::clear() {
-	for (int i = 0; i < _numLines; i++) {
+	for (uint32 i = 0; i < _numLines; i++) {
 		_lines[i].clear();
 	}
 	_pointedClue = -1;
 }
 
 int NotebookPage::getClueForLine(int line) const {
-	if (line >= _numLines) {
+	if (line >= (int)_numLines) {
 		return 0;
 	}
 	return _lines[line]._id;
