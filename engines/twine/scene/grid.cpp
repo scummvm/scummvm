@@ -744,27 +744,27 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 		return ShapeType::kNone;
 	}
 
-	uint8 *blockBufferPtr = _blockBuffer;
-	blockBufferPtr += collision.x * GRID_SIZE_Y * 2;
-	blockBufferPtr += collision.y * 2;
-	blockBufferPtr += collision.z * (GRID_SIZE_X * GRID_SIZE_Y * 2);
+	uint8 *pCube = _blockBuffer;
+	pCube += collision.x * GRID_SIZE_Y * 2;
+	pCube += collision.y * 2;
+	pCube += collision.z * (GRID_SIZE_X * GRID_SIZE_Y * 2);
 
-	uint8 blockIdx = *blockBufferPtr;
+	uint8 block = *pCube;
 
 	ShapeType brickShape;
-	if (blockIdx) {
-		const uint8 tmpBrickIdx = *(blockBufferPtr + 1);
-		const BlockDataEntry *blockPtr = getBlockPointer(blockIdx, tmpBrickIdx);
+	if (block) {
+		const uint8 tmpBrickIdx = *(pCube + 1);
+		const BlockDataEntry *blockPtr = getBlockPointer(block, tmpBrickIdx);
 		brickShape = (ShapeType)blockPtr->brickShape;
 	} else {
-		brickShape = (ShapeType) * (blockBufferPtr + 1);
+		brickShape = (ShapeType) * (pCube + 1);
 	}
 
 	int32 ymax = (y2 + (BRICK_HEIGHT - 1)) / BRICK_HEIGHT;
 	// check full height
 	for (y = collision.y; ymax > 0 && y < (GRID_SIZE_Y - 1); --ymax, y++) {
-		blockBufferPtr += 2;
-		if (READ_LE_INT16(blockBufferPtr)) {
+		pCube += 2;
+		if (READ_LE_INT16(pCube)) {
 			return ShapeType::kSolid;
 		}
 	}
