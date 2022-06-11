@@ -274,7 +274,7 @@ public:
 	virtual void findNextSegment(ArcadeShooting *arc);
 	virtual void initSegment(ArcadeShooting *arc);
 
-	void resetStatistics();
+	virtual void resetStatistics();
 
 	void incShotsFired();
 	uint32 _shootsFired;
@@ -577,6 +577,14 @@ public:
 
 	void loadFonts() override;
 	void drawString(const Filename &name, const Common::String &str, int x, int y, int w, uint32 c) override;
+
+	// Stats
+	void resetStatistics() override;
+	void incFriendliesEncountered();
+	uint32 _friendliesEncountered;
+
+	void incInfoReceived();
+	uint32 _infoReceived;
 
 	// Saves
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;

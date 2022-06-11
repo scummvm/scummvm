@@ -103,6 +103,8 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		drawString("scifi08.fgx", Common::String::format("%d", _shootsFired), 240, 77, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d", accuracyRatio()), 240, 92, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d", -uint32(-1) - _lives), 240, 117, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d", _friendliesEncountered), 240, 142, 0, kHypnoColorWhiteOrBlue);
+		drawString("scifi08.fgx", Common::String::format("%d", _infoReceived), 240, 158, 0, kHypnoColorWhiteOrBlue);
 
 		bool cont = true;
 		while (!shouldQuit() && cont) {
@@ -119,6 +121,7 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 			drawScreen();
 			g_system->delayMillis(10);
 		}
+		resetStatistics();
 	}
 
 	_previousHealth = _health;
@@ -512,7 +515,10 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 				playSound(_soundPath + _shoots[i].animalSound, 1);
 				return false;
 			}
+			incFriendliesEncountered();
+
 			if (!_shoots[i].additionalVideo.empty()) {
+				incInfoReceived();
 				_background->decoder->pauseVideo(true);
 				MVideo video(_shoots[i].additionalVideo, Common::Point(0, 0), false, true, false);
 				disableCursor();
@@ -544,6 +550,7 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 						playSound(_music, 0, arc->musicRate); // restore music
 				}
 			} else if (_shoots[i].interactionFrame > 0) {
+				incInfoReceived();
 				_background->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
 				_masks->decoder->forceSeekToFrame(_shoots[i].interactionFrame);
 				_additionalVideo = new MVideo(arc->missBoss2Video, Common::Point(0, 0), true, false, false);
@@ -559,6 +566,8 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 
 			if (checkCup(_shoots[i].name))
 				return false;
+
+			incFriendliesEncountered();
 			uint32 idx = _shoots[i].warningVideoIdx;
 			idx = idx == 0 ? 2 : idx;
 			Common::String filename = _warningVideosDay[idx];
@@ -649,6 +658,9 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		if (_shootsDestroyed.contains(s->checkIfDestroyed))
 			return;  // Precondition was destroyed, so we ignore the missed shoot
 	}
+
+	if (s->nonHostile)
+		_targetsMissed--; // If the target was not hostile, it should *not* count as missed
 
 	if (s->name == "CAPTOR") {
 		_background->decoder->pauseVideo(true);
@@ -758,6 +770,20 @@ bool BoyzEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
 		return false;
 	}
 	return true;
+}
+
+void BoyzEngine::resetStatistics() {
+	HypnoEngine::resetStatistics();
+	_friendliesEncountered = 0;
+	_infoReceived = 0;
+}
+
+void BoyzEngine::incFriendliesEncountered() {
+	_friendliesEncountered++;
+}
+
+void BoyzEngine::incInfoReceived() {
+	_infoReceived++;
 }
 
 } // namespace Hypno

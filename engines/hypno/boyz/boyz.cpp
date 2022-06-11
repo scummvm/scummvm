@@ -71,6 +71,8 @@ BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine
 	_lastLevel = 0;
 	_selectedCorrectBox = 0;
 	_flashbackMode = false;
+	_friendliesEncountered = 0;
+	_infoReceived = 0;
 
     const chapterEntry *entry = rawChapterTable;
     while (entry->id) {
