@@ -5687,6 +5687,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t_l("pantosstory", "", "START.EXE", "0aabeac068ad6048f8c7ed19ac7458ea", 1861862,
 								  "PANTOS/A00.DXR", "cadb6e5b4dd143c7754b31026f4c2676", 1367720, Common::JA_JPN, 602),
 
+	WINGAME1t_l("pettson1", "", "GUBBEN.EXE", "9ee9a4d1112db68a3a64f26d043518a3", 1341473, Common::NB_NOR, 600),
+
 	WINGAME2_l("pettson2", "", "START32.EXE", "518a98696fe1122e08410b0f157f21bf", 1723219,
 							   "START.DXR",	  "18d333b1b9b02d76b35a07252046d295", 37384, Common::SE_SWE, 602),
 	WINGAME2t_l("pettson2", "", "START32.EXE", "28eec06adcc3671e6bc67c27c58976d1", 2986791,
