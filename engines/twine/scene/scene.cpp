@@ -778,7 +778,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 					destPos.z += actor->_processActor.z;
 
 					if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= SCENE_SIZE_MAX && destPos.z <= SCENE_SIZE_MAX) {
-						if (_engine->_grid->worldColBrick(destPos.x, actor->_pos.y + BRICK_HEIGHT, destPos.z) != ShapeType::kNone) {
+						if (_engine->_grid->worldColBrick(destPos.x, actor->_pos.y + SIZE_BRICK_Y, destPos.z) != ShapeType::kNone) {
 							_currentActorInZone = true;
 							if (actor->_pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx); // reached end of ladder

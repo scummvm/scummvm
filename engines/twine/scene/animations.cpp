@@ -550,8 +550,8 @@ void Animations::doAnim(int32 actorIdx) {
 				processActor += actor->_animStep;
 
 				if (actor->_staticFlags.bUseMiniZv) {
-					processActor.x = ((processActor.x / (BRICK_SIZE / 4)) * (BRICK_SIZE / 4));
-					processActor.z = ((processActor.z / (BRICK_SIZE / 4)) * (BRICK_SIZE / 4));
+					processActor.x = ((processActor.x / (SIZE_BRICK_XZ / 4)) * (SIZE_BRICK_XZ / 4));
+					processActor.z = ((processActor.z / (SIZE_BRICK_XZ / 4)) * (SIZE_BRICK_XZ / 4));
 				}
 
 				actor->_animStep = IVec3();
@@ -652,15 +652,15 @@ void Animations::doAnim(int32 actorIdx) {
 		ShapeType brickShape = _engine->_grid->worldColBrick(previousActor);
 
 		if (brickShape != ShapeType::kNone) {
-			if (brickShape != ShapeType::kSolid) {
+			if (brickShape == ShapeType::kSolid) {
+				actor->_pos.y = processActor.y = (processActor.y / SIZE_BRICK_Y) * SIZE_BRICK_Y + SIZE_BRICK_Y; // go upper
+			} else {
 				_engine->_collision->reajustPos(processActor, brickShape);
-			} else { // this shouldn't happen (collision should avoid it)
-				actor->_pos.y = processActor.y = (processActor.y / BRICK_HEIGHT) * BRICK_HEIGHT + BRICK_HEIGHT; // go upper
 			}
 		}
 
 		if (actor->_staticFlags.bComputeCollisionWithObj) {
-			_engine->_collision->checkCollisionWithActors(actorIdx);
+			_engine->_collision->checkObjCol(actorIdx);
 		}
 
 		if (actor->_carryBy != -1 && actor->_dynamicFlags.bIsFalling) {
@@ -694,8 +694,8 @@ void Animations::doAnim(int32 actorIdx) {
 			destPos.z += processActor.z;
 
 			if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= SCENE_SIZE_MAX && destPos.z <= SCENE_SIZE_MAX) {
-				if (_engine->_grid->worldColBrick(destPos.x, processActor.y + BRICK_HEIGHT, destPos.z) != ShapeType::kNone && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
-					_engine->_extra->addExtraSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
+				if (_engine->_grid->worldColBrick(destPos.x, processActor.y + SIZE_BRICK_Y, destPos.z) != ShapeType::kNone && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
+					_engine->_extra->initSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
 					initAnim(AnimationTypes::kBigHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _currentlyProcessedActorIdx);
 
 					if (IS_HERO(_currentlyProcessedActorIdx)) {
@@ -714,10 +714,10 @@ void Animations::doAnim(int32 actorIdx) {
 			if (brickShape == ShapeType::kSolid) {
 				if (actor->_dynamicFlags.bIsFalling) {
 					_engine->_collision->receptionObj();
-					processActor.y = (_engine->_collision->_collision.y * BRICK_HEIGHT) + BRICK_HEIGHT;
+					processActor.y = (_engine->_collision->_collision.y * SIZE_BRICK_Y) + SIZE_BRICK_Y;
 				} else {
 					if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
-						_engine->_extra->addExtraSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
+						_engine->_extra->initSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
 						initAnim(AnimationTypes::kBigHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _currentlyProcessedActorIdx);
 						_engine->_movements->_lastJoyFlag = true;
 						actor->addLife(-1);
@@ -759,15 +759,15 @@ void Animations::doAnim(int32 actorIdx) {
 
 						if (IS_HERO(actorIdx) && _engine->_scene->_startYFalling == 0) {
 							_engine->_scene->_startYFalling = processActor.y;
-							int32 y = processActor.y - 1 - BRICK_HEIGHT;
+							int32 y = processActor.y - 1 - SIZE_BRICK_Y;
 							while (y > 0 && ShapeType::kNone == _engine->_grid->worldColBrick(processActor.x, y, processActor.z)) {
-								y -= BRICK_HEIGHT;
+								y -= SIZE_BRICK_Y;
 							}
 
-							y = (y + BRICK_HEIGHT) & ~(BRICK_HEIGHT - 1);
+							y = (y + SIZE_BRICK_Y) & ~(SIZE_BRICK_Y - 1);
 							int32 fallHeight = processActor.y - y;
 
-							if (fallHeight <= (2 * BRICK_HEIGHT) && actor->_anim == AnimationTypes::kForward) {
+							if (fallHeight <= (2 * SIZE_BRICK_Y) && actor->_anim == AnimationTypes::kForward) {
 								actor->_dynamicFlags.bWasWalkingBeforeFalling = 1;
 							} else {
 								initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
@@ -786,7 +786,7 @@ void Animations::doAnim(int32 actorIdx) {
 		}
 	} else {
 		if (actor->_staticFlags.bComputeCollisionWithObj) {
-			_engine->_collision->checkCollisionWithActors(actorIdx);
+			_engine->_collision->checkObjCol(actorIdx);
 		}
 	}
 

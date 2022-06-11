@@ -62,7 +62,7 @@ void Renderer::init(int32 w, int32 h) {
 	_holomap_polytab_2_3 = &_polyTab[_engine->height() * 5];
 }
 
-IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
+IVec3 &Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) { // ProjettePoint
 	if (_isUsingOrthoProjection) {
 		_projPos.x = ((cX - cZ) * 24) / ISO_SCALE + _orthoProjPos.x;
 		_projPos.y = (((cX + cZ) * 12) - cY * 30) / ISO_SCALE + _orthoProjPos.y;

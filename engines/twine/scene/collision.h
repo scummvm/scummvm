@@ -66,7 +66,7 @@ public:
 	 * Check collision with actors
 	 * @param actorIx Current process actor index
 	 */
-	int32 checkCollisionWithActors(int32 actorIdx);
+	int32 checkObjCol(int32 actorIdx);
 
 	/**
 	 * Check Hero collision with bricks
@@ -94,17 +94,17 @@ public:
 	 * @param extra to process
 	 * @param actorIdx actor to check collision
 	 */
-	int32 checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx);
+	int32 extraCheckObjCol(ExtraListStruct *extra, int32 actorIdx);
 
 	/** Check extra collision with bricks */
-	bool checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, const IVec3 &oldPos);
+	bool fullWorldColBrick(int32 x, int32 y, int32 z, const IVec3 &oldPos);
 
 	/**
 	 * Check extra collision with another extra
 	 * @param extra to process
 	 * @param extraIdx extra index to check collision
 	 */
-	int32 checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx) const;
+	int32 extraCheckExtraCol(ExtraListStruct *extra, int32 extraIdx) const;
 };
 
 } // namespace TwinE

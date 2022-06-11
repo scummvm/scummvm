@@ -272,7 +272,7 @@ void Actor::resetActor(int16 actorIdx) {
 	_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, ANGLE_0, &actor->_move);
 }
 
-void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, int32 angle) {
+void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, int32 angle) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdxAttacked);
 	if (actor->_life <= 0) {
 		return;
@@ -304,7 +304,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 			}
 		}
 
-		_engine->_extra->addExtraSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
+		_engine->_extra->initSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
 
 		if (!actorIdxAttacked) {
 			_engine->_movements->_lastJoyFlag = true;

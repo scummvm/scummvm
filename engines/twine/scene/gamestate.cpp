@@ -110,9 +110,9 @@ void GameState::initEngineVars() {
 	initGameStateVars();
 	initHeroVars();
 
-	_engine->_scene->_newHeroPos.x = 16 * BRICK_SIZE;
-	_engine->_scene->_newHeroPos.y = 24 * BRICK_HEIGHT;
-	_engine->_scene->_newHeroPos.z = 16 * BRICK_SIZE;
+	_engine->_scene->_newHeroPos.x = 16 * SIZE_BRICK_XZ;
+	_engine->_scene->_newHeroPos.y = 24 * SIZE_BRICK_Y;
+	_engine->_scene->_newHeroPos.z = 16 * SIZE_BRICK_XZ;
 
 	_engine->_scene->_currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
 	_engine->_scene->_needChangeScene = LBA1SceneId::Citadel_Island_Prison;
@@ -316,9 +316,9 @@ void GameState::processFoundItem(InventoryItems item) {
 	_engine->saveFrontBuffer();
 
 	IVec3 itemCamera;
-	itemCamera.x = _engine->_grid->_newCamera.x * BRICK_SIZE;
-	itemCamera.y = _engine->_grid->_newCamera.y * BRICK_HEIGHT;
-	itemCamera.z = _engine->_grid->_newCamera.z * BRICK_SIZE;
+	itemCamera.x = _engine->_grid->_newCamera.x * SIZE_BRICK_XZ;
+	itemCamera.y = _engine->_grid->_newCamera.y * SIZE_BRICK_Y;
+	itemCamera.z = _engine->_grid->_newCamera.z * SIZE_BRICK_XZ;
 
 	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->_sceneHero->_body];
 	const IVec3 bodyPos = _engine->_scene->_sceneHero->_pos - itemCamera;
@@ -326,12 +326,12 @@ void GameState::processFoundItem(InventoryItems item) {
 	_engine->_renderer->renderIsoModel(bodyPos, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);
 	_engine->_interface->setClip(modelRect);
 
-	const int32 itemX = (_engine->_scene->_sceneHero->_pos.x + BRICK_HEIGHT) / BRICK_SIZE;
-	int32 itemY = _engine->_scene->_sceneHero->_pos.y / BRICK_HEIGHT;
+	const int32 itemX = (_engine->_scene->_sceneHero->_pos.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+	int32 itemY = _engine->_scene->_sceneHero->_pos.y / SIZE_BRICK_Y;
 	if (_engine->_scene->_sceneHero->brickShape() != ShapeType::kNone) {
 		itemY++;
 	}
-	const int32 itemZ = (_engine->_scene->_sceneHero->_pos.z + BRICK_HEIGHT) / BRICK_SIZE;
+	const int32 itemZ = (_engine->_scene->_sceneHero->_pos.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
 
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 

@@ -67,27 +67,26 @@ struct BrickEntry {
 /** Total number of bricks allowed in the game */
 #define NUM_BRICKS 9000
 
-/** Grip X size */
-#define GRID_SIZE_X 64
-/** Grip Y size */
-#define GRID_SIZE_Y 25
-/** Grip Z size */
-#define GRID_SIZE_Z GRID_SIZE_X
+/** Grid X size */
+#define SIZE_CUBE_X 64
+/** Grid Y size */
+#define SIZE_CUBE_Y 25
+/** Grid Z size */
+#define SIZE_CUBE_Z SIZE_CUBE_X
 
 #define ISO_SCALE 512
-// xz
-#define BRICK_SIZE 512
-// y
-#define BRICK_HEIGHT 256
-
+#define SIZE_BRICK_XZ 512
+#define SIZE_BRICK_Y 256
+#define DEMI_BRICK_XZ 256
+#define DEMI_BRICK_Y 128
 // short max 32767 0x7FFF
 //           32256 0x7E00
 //           32000 0x7D00
-#define SCENE_SIZE_MAX (BRICK_SIZE * (GRID_SIZE_X - 1))
+#define SCENE_SIZE_MAX (SIZE_BRICK_XZ * (SIZE_CUBE_X - 1))
 // short min -32768
-#define SCENE_SIZE_MIN (-BRICK_SIZE * GRID_SIZE_X)
-#define SCENE_SIZE_HALF (BRICK_SIZE * GRID_SIZE_X / 2)
-#define SCENE_SIZE_HALFF (BRICK_SIZE * GRID_SIZE_X / 2.0f)
+#define SCENE_SIZE_MIN (-SIZE_BRICK_XZ * SIZE_CUBE_X)
+#define SCENE_SIZE_HALF (SIZE_BRICK_XZ * SIZE_CUBE_X / 2)
+#define SCENE_SIZE_HALFF (SIZE_BRICK_XZ * SIZE_CUBE_X / 2.0f)
 
 #define MAXBRICKS 150
 
@@ -196,7 +195,7 @@ public:
 	IVec3 _newCamera;
 
 	/** Current grid camera x, y and z coordinates */
-	IVec3 _camera;
+	IVec3 _camera; // WorldXCube WorldYCube
 
 	/** Flag to know if the engine is using celling grids */
 	int16 _useCellingGrid = 0;

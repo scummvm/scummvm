@@ -37,7 +37,7 @@ namespace TwinE {
 
 Movements::Movements(TwinEEngine *engine) : _engine(engine) {}
 
-IVec3 Movements::getShadowPosition(const IVec3 &pos) {
+IVec3 Movements::getShadowPosition(const IVec3 &pos) { // GetShadow
 	IVec3 shadowCoord;
 	const uint8 *ptr = _engine->_grid->getBlockBufferGround(pos, shadowCoord.y);
 	shadowCoord.x = pos.x;

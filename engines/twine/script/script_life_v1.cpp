@@ -1308,7 +1308,7 @@ static int32 lHIT_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
 	const int32 strengthOfHit = ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::HIT_OBJ(%i, %i)", (int)otherActorIdx, (int)strengthOfHit);
-	engine->_actor->hitActor(ctx.actorIdx, otherActorIdx, strengthOfHit, engine->_scene->getActor(otherActorIdx)->_angle);
+	engine->_actor->hitObj(ctx.actorIdx, otherActorIdx, strengthOfHit, engine->_scene->getActor(otherActorIdx)->_angle);
 	return 0;
 }
 
