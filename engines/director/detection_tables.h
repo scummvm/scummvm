@@ -5452,6 +5452,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 								  "StartCD.dxr",             "07c672f1c05c4c12ac6abbb371a0ee1f", 24053, Common::NL_NLD, 600),
 	WINGAME1_l("garygadget2", "", "Willy2.exe",				 "d62438566e44826960fc16c5c23dbe43", 1507905, Common::DE_DEU, 650),
 
+	WINGAME1t_l("garygadget2", "", "Mullebat.exe", "1bb8255461245bc03a78c6c5079efd6e", 1522688, Common::NB_NOR, 602),
+
 	// Content from the first disc, 'Side 1'
 	MACGAME1_l("gasbook5", "Antirom", "fruitpencer", "2bcd01161eb741dcf9506dc7432d1d7c", 1035204, Common::JA_JPN, 602),
 	WINGAME1t_l("gasbook5", "Antirom", "fruitpencer.exe", "7ac2da9ff1093d6a8c9c926c6f831c17", 1910435, Common::JA_JPN, 602),
@@ -6351,6 +6353,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Flugzeuge bauen mit Willy Werkel localized by Terzio Verlag, Munich (2001)
 	WINGAME1_l("garygadget3", "", "WillyFlug.exe", "70a7b053c1a60617d3baace061fcba54", 9158814, Common::DE_DEU, 800),
+
+	WINGAME1t_l("garygadget3", "", "Start_Mulle.exe", "f0f897006aa8930c52a7aa329a7a2344", 5133106, Common::NB_NOR, 800),
 
 	// Mac installers also use Director
 	MACGAME2_l("garygadget4", "", "MulleHus",	  "a44511b8ff0e46b4f9c85dd1cb58d458", 157051,
