@@ -6672,6 +6672,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("operafatal", "OS X", "Opera OSX", "3ab7133c17cd4f175e5cb14c6750766e", 222001, Common::DE_DEU, 900),
 	WINGAME1_l("operafatal", "", "Opera.exe", "05e89a3d53d270cac3b53e0a6f9352f5", 2747652, Common::DE_DEU, 900),
 
+	WINGAME1t_l("pettson2", "", "Gubben2.exe", "b50358ea0422c4b903ed261fa995b71f", 2187128, Common::NB_NOR, 900),
+	MACGAME1t_l("pettson2", "MacOS", "Gubben2", "1768526c25ae041638f02312852dbe2b", 215165, Common::NB_NOR, 900),
+	MACGAME1t_l("pettson2", "MacOSX", "Gubben2 (OS X)", "1768526c25ae041638f02312852dbe2b", 287790, Common::NB_NOR, 900),
+
 	// Original filenames are Spökmaskinen (OS X) and Spökmaskinen.exe
 	MACGAME1_l("pettson4", "", "Spokmaskinen (OS X)", "d483e955df901222145267d2ad729ea2", 284153, Common::SE_SWE, 900),
 	WINGAME1_l("pettson4", "", "Spokmaskinen.exe", "627d23c658a36a3b6d0053a6dcda1a37", 2330628, Common::SE_SWE, 900),
