@@ -301,6 +301,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "noddyschool",		"Noddy: Let's Get Ready For School" },
 	{ "noddytoytown",		"Noddy: The Magic of ToyTown on a CD-ROM" },
 	{ "noir",				"Noir: A Shadowy Thriller" },
+	{ "norgesjakten",		"Norgesjakten" },
 	{ "nurseryrhymes",		"Multimedia Nursery Rhymes" },
 	{ "okay2000",			"O!Kay! Best of 2000" },
 	{ "okaydemo",			"O!Kay! Probier\' mal! Try out!" },
@@ -4897,6 +4898,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Both versions require installation to extract executable
 	MACGAME1("nine", "", "The Last Resort", "957d819f99e30d54f68824ebe3d5d4ae", 730760, 500),
 	WINGAME1("nine", "", "nine_95.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1555823, 501),
+
+	WINGAME1t_l("norgesjakten", "Windows 3", "STARTW3.EXE", "de6712e37479f952a52d3e64f172cd24", 1324086, Common::NB_NOR, 501),
+	WINGAME1t_l("norgesjakten", "Windows 95", "STARTW95.EXE", "5f330f89a31a02dd9ce8c1c62828e73d", 1412717, Common::NB_NOR, 501),
 
 	WINGAME1("noir", "", "NOIR.EXE", "2e62abdad839e42068afdcd0644d7dcf", 1020879, 500),
 
