@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-10 00:01+0000\n"
+"POT-Creation-Date: 2022-06-11 11:19+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -4824,7 +4824,7 @@ msgstr ""
 #: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
-#: engines/twine/detection.cpp:904
+#: engines/twine/detection.cpp:953
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Ужываць TTS для чытання апісанняў услых (калі TTS даступна)"
 
@@ -5632,7 +5632,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Гэта галаваломка недаступна ў пробнай версіі гульні"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
-#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:903
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:952
 msgid "TTS Narrator"
 msgstr "Дыктар TTS"
 
@@ -7853,107 +7853,107 @@ msgstr "Не магчыма знайсці файл дадзеных '%s'."
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr "Гэта гульня патрабуе рухавічок FoxTail, якога няма ў зборцы."
 
-#: engines/twine/detection.cpp:802
+#: engines/twine/detection.cpp:851
 msgid "Enable wall collisions"
 msgstr ""
 
-#: engines/twine/detection.cpp:803
+#: engines/twine/detection.cpp:852
 msgid "Enable the original wall collision damage"
 msgstr ""
 
-#: engines/twine/detection.cpp:812
+#: engines/twine/detection.cpp:861
 #, fuzzy
 msgid "Disable save menu"
 msgstr "Не атрымалася захаваць гульню"
 
-#: engines/twine/detection.cpp:813
+#: engines/twine/detection.cpp:862
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 
-#: engines/twine/detection.cpp:821
+#: engines/twine/detection.cpp:870
 #, fuzzy
 msgid "Enable debug mode"
 msgstr "Уключыць рэжым гелія"
 
-#: engines/twine/detection.cpp:822
+#: engines/twine/detection.cpp:871
 #, fuzzy
 msgid "Enable the debug mode"
 msgstr "Уключыць рэжым гелія"
 
-#: engines/twine/detection.cpp:830
+#: engines/twine/detection.cpp:879
 #, fuzzy
 msgid "Enable audio CD"
 msgstr "Уключыць гукі аўдыторыі ў студыі"
 
-#: engines/twine/detection.cpp:831
+#: engines/twine/detection.cpp:880
 msgid "Enable the original audio cd track"
 msgstr ""
 
-#: engines/twine/detection.cpp:839
+#: engines/twine/detection.cpp:888
 #, fuzzy
 msgid "Enable sound"
 msgstr "Уключыць сховішча"
 
-#: engines/twine/detection.cpp:840
+#: engines/twine/detection.cpp:889
 #, fuzzy
 msgid "Enable the sound for the game"
 msgstr "Поўная назва гульні"
 
-#: engines/twine/detection.cpp:848
+#: engines/twine/detection.cpp:897
 #, fuzzy
 msgid "Enable voices"
 msgstr "Уключыць Venus"
 
-#: engines/twine/detection.cpp:849
+#: engines/twine/detection.cpp:898
 #, fuzzy
 msgid "Enable the voices for the game"
 msgstr "Уключыць сістэму дапамогі Venus"
 
-#: engines/twine/detection.cpp:857
+#: engines/twine/detection.cpp:906
 #, fuzzy
 msgid "Enable text"
 msgstr "Уключыць сховішча"
 
-#: engines/twine/detection.cpp:858
+#: engines/twine/detection.cpp:907
 #, fuzzy
 msgid "Enable the text for the game"
 msgstr "Поўная назва гульні"
 
-#: engines/twine/detection.cpp:866
+#: engines/twine/detection.cpp:915
 #, fuzzy
 msgid "Enable movies"
 msgstr "Уключыць Venus"
 
-#: engines/twine/detection.cpp:867
+#: engines/twine/detection.cpp:916
 #, fuzzy
 msgid "Enable the cutscenes for the game"
 msgstr "Уключыць сістэму дапамогі Venus"
 
-#: engines/twine/detection.cpp:875
+#: engines/twine/detection.cpp:924
 #, fuzzy
 msgid "Enable mouse"
 msgstr "Уключыць Venus"
 
-#: engines/twine/detection.cpp:876
+#: engines/twine/detection.cpp:925
 #, fuzzy
 msgid "Enable the mouse for the UI"
 msgstr "Поўная назва гульні"
 
-#: engines/twine/detection.cpp:884
+#: engines/twine/detection.cpp:933
 msgid "Use the USA version"
 msgstr ""
 
-#: engines/twine/detection.cpp:885
+#: engines/twine/detection.cpp:934
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/detection.cpp:893 engines/ultima/detection.cpp:99
+#: engines/twine/detection.cpp:942 engines/ultima/detection.cpp:99
 #, fuzzy
 msgid "Enable high resolution"
 msgstr "Уключыць адлюстраванне графікі высокага адрознення"
 
-#: engines/twine/detection.cpp:894 engines/ultima/detection.cpp:100
+#: engines/twine/detection.cpp:943 engines/ultima/detection.cpp:100
 #, fuzzy
 msgid "Enable a higher resolution for the game"
 msgstr "Поўная назва гульні"
