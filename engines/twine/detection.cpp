@@ -590,6 +590,55 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Little Big Adventure - Steam Version
+	// TLBA1C.exe
+	// 10 Jun 2022 14:51
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "e4bab4647eabb998f627ac7628d94790", 4418048),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "e4bab4647eabb998f627ac7628d94790", 4418048),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "e4bab4647eabb998f627ac7628d94790", 4418048),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "e4bab4647eabb998f627ac7628d94790", 4418048),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "e4bab4647eabb998f627ac7628d94790", 4418048),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Little Big Adventure - GOG Version
 	// TLBA1C.exe
 	// 1st June 2022 02:18
