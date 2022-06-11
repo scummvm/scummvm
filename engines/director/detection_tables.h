@@ -1120,6 +1120,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "garygadget3",		"Bygg flygplan med Mulle Meck" },
 	{ "garygadget4",		"Bygg hus med Mulle Meck" },
 	{ "garygadget5",		"Upptäck rymden med Mulle Meck" },
+	{ "historia",			"Svensk historia: från asatro till frihetskrig år 800-1500" },
 	{ "jonssonligan1",		"Jönssonligan: Jakten på Mjölner" },
 	{ "jonssonligan2",		"Jönssonligan går på djupet" },
 	{ "mumin1",				"Kurragömma med Mumintrollen" },
@@ -5530,6 +5531,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("griezelbus1", "", "BUS95.EXE", "518a98696fe1122e08410b0f157f21bf", 1748606, Common::NL_NLD, 602),
 
 	WINGAME1("hamletmurder", "", "PMHamlet.exe", "a593079aecf5bd938ce75264cac24b2d", 1873557, 600),
+
+	WINGAME1t_l("historia", "", "HISTORIA.EXE", "1c213a176ea0441a145ebf6f1f5b9f66", 1508366, Common::SE_SWE, 600),
 
 	// Based on the original I Spy CD-ROM, now with dozens of new challenges
 	// Flemish Edition (c) 2000, Standaard Uitgeverij, Antwerp
