@@ -766,22 +766,27 @@ void draw_sprite_slot_support_alpha(Bitmap *ds, bool ds_has_alpha, int xpos, int
 	                          blend_mode, alpha);
 }
 
-IDriverDependantBitmap *recycle_ddb_bitmap(IDriverDependantBitmap *ddb, Bitmap *source, bool has_alpha, bool opaque) {
-	if (ddb) {
-		// same colour depth, width and height -> reuse
-		if ((ddb->GetColorDepth() == source->GetColorDepth()) &&
-			(ddb->GetWidth() == source->GetWidth()) && (ddb->GetHeight() == source->GetHeight())) {
-			_G(gfxDriver)->UpdateDDBFromBitmap(ddb, source, has_alpha);
-			return ddb;
-		}
-
-		_G(gfxDriver)->DestroyDDB(ddb);
+Engine::IDriverDependantBitmap* recycle_ddb_sprite(Engine::IDriverDependantBitmap *ddb, int sprite_id, Shared::Bitmap *source, bool has_alpha, bool opaque) {
+	// no ddb, - get or create shared object
+	if (!ddb)
+		return _G(gfxDriver)->GetSharedDDB(sprite_id, source, has_alpha, opaque);
+	// same sprite id, - use existing
+	if ((sprite_id != UINT32_MAX) && (ddb->GetRefID() == sprite_id))
+		return ddb;
+	// not related to a sprite ID, but has same resolution, -
+	// repaint directly from the given bitmap
+	if ((sprite_id == UINT32_MAX) && (ddb->GetColorDepth() == source->GetColorDepth()) &&
+		(ddb->GetWidth() == source->GetWidth()) && (ddb->GetHeight() == source->GetHeight())) {
+		_G(gfxDriver)->UpdateDDBFromBitmap(ddb, source, has_alpha);
+		return ddb;
 	}
-	return _G(gfxDriver)->CreateDDBFromBitmap(source, has_alpha, opaque);
+	// have to recreate ddb
+	_G(gfxDriver)->DestroyDDB(ddb);
+	return _G(gfxDriver)->GetSharedDDB(sprite_id, source, has_alpha, opaque);
 }
 
 void sync_object_texture(ObjTexture &obj, bool has_alpha = false, bool opaque = false) {
-	obj.Ddb = recycle_ddb_bitmap(obj.Ddb, obj.Bmp.get(), has_alpha, opaque);
+	obj.Ddb = recycle_ddb_sprite(obj.Ddb, obj.SpriteID, obj.Bmp.get(), has_alpha, opaque);
 }
 
 //------------------------------------------------------------------------
@@ -1211,6 +1216,7 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 	}
 
 	auto &actsp = _GP(actsps)[useindx];
+	actsp.SpriteID = _G(objs)[aa].num; // for texture sharing
 	if ((hardwareAccelerated) &&
 			(_G(walkBehindMethod) != DrawOverCharSprite) &&
 			(_G(objcache)[aa].image != nullptr) &&
@@ -1507,6 +1513,7 @@ void prepare_characters_for_drawing() {
 		_G(our_eip) = 3331;
 
 		auto &actsp = _GP(actsps)[useindx];
+		actsp.SpriteID = sppic; // for texture sharing
 
 		// if the character was the same sprite and scaling last time,
 		// just use the cached image
@@ -2127,7 +2134,7 @@ static void construct_overlays() {
 				use_bmp = _GP(overlaybmp)[i].get();
 			}
 
-			over.ddb = recycle_ddb_bitmap(over.ddb, use_bmp, over.HasAlphaChannel());
+			over.ddb = recycle_ddb_sprite(over.ddb, over.GetSpriteNum(), use_bmp, over.HasAlphaChannel());
 			over.ClearChanged();
 		}
 
