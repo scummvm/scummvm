@@ -187,7 +187,7 @@ void Puzzles::leversBall(int16 var) {
 		NewPosition p[2];
 	};
 
-	static const Move moves[] =	{
+	static const Move moves[] = {
 		{   0,   1,   2, { { 1,   1,   2, 127, 147,   0,   0 }, { 0,   0,   0, 703, 735,   0,   0 } } },
 		{   0,   0,   4, { { 1,   0,   4,  43,  63,   0,   0 }, { 0,   1,   4,  64,  84,   0,   0 } } },
 		{   0,   0,   1, { { 1,   0,   1,  85, 105,   0,   0 }, { 0,   1,   1,  22,  42,   0,   0 } } },
@@ -218,9 +218,7 @@ void Puzzles::leversBall(int16 var) {
 
 	const Move *move = nullptr;
 	for (uint i = _vm->_state->getBallDoorOpen() ? 0 : 1; i < ARRAYSIZE(moves); i++)
-		if (moves[i].oldBallPosition == oldPosition
-				&& moves[i].oldLeft == oldLeverLeft
-				&& moves[i].oldRight == oldLeverRight) {
+		if (moves[i].oldBallPosition == oldPosition && moves[i].oldLeft == oldLeverLeft && moves[i].oldRight == oldLeverRight) {
 			move = &moves[i];
 			break;
 		}
@@ -230,8 +228,7 @@ void Puzzles::leversBall(int16 var) {
 
 	const NewPosition *position = nullptr;
 	for (uint i = 0; i < ARRAYSIZE(move->p); i++)
-		if (move->p[i].newLeft == newLeverLeft
-				&& move->p[i].newRight == newLeverRight) {
+		if (move->p[i].newLeft == newLeverLeft && move->p[i].newRight == newLeverRight) {
 			position = &move->p[i];
 			break;
 		}
@@ -332,8 +329,8 @@ void Puzzles::tesla(int16 movie, int16 var, int16 move) {
 	_vm->_state->setVar(var, absPosition);
 
 	bool puzzleSolved = _vm->_state->getTeslaTopAligned() == 1
-			&& _vm->_state->getTeslaMiddleAligned() == 1
-			&& _vm->_state->getTeslaBottomAligned() == 1;
+	                 && _vm->_state->getTeslaMiddleAligned() == 1
+	                 && _vm->_state->getTeslaBottomAligned() == 1;
 
 	_vm->_state->setTeslaAllAligned(puzzleSolved);
 }
@@ -1151,9 +1148,7 @@ void Puzzles::journalSaavedro(int16 move) {
 			leftBitmap->create(bitmap->w / 2, bitmap->h, Texture::getRGBAPixelFormat());
 
 			for (int i = 0; i < bitmap->h; i++) {
-				memcpy(leftBitmap->getBasePtr(0, i),
-						bitmap->getBasePtr(0, i),
-						leftBitmap->w * 4);
+				memcpy(leftBitmap->getBasePtr(0, i), bitmap->getBasePtr(0, i), leftBitmap->w * 4);
 			}
 
 			bitmap->free();

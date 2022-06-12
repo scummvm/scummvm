@@ -201,8 +201,7 @@ void ShaderRenderer::drawRect2D(const Common::Rect &rect,  uint8 a, uint8 r, uin
 }
 
 void ShaderRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect,
-		Texture *texture, float transparency, bool additiveBlending) {
-
+	                                Texture *texture, float transparency, bool additiveBlending) {
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
 
 	const float tLeft = textureRect.left / (float)glTexture->internalWidth;
@@ -338,7 +337,7 @@ void ShaderRenderer::drawCube(Texture **textures) {
 }
 
 void ShaderRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
-		const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture) {
+	                                const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture) {
 	OpenGLTexture *glTexture = static_cast<OpenGLTexture *>(texture);
 
 	const float w = glTexture->width / (float)glTexture->internalWidth;
@@ -351,7 +350,7 @@ void ShaderRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Mat
 	glBindTexture(GL_TEXTURE_2D, glTexture->id);
 
 	const GLfloat vertices[] = {
-		// S   T         X                 Y                 Z
+		// S   T   X                  Y                 Z
 		   0,  0,  -topLeft.x(),      topLeft.y(),      topLeft.z(),
 		   0,  h,  -bottomLeft.x(),   bottomLeft.y(),   bottomLeft.z(),
 		   w,  0,  -topRight.x(),     topRight.y(),     topRight.z(),

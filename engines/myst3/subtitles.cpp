@@ -248,10 +248,10 @@ static Common::CodePage getEncodingFromCharsetCode(uint32 gdiCharset) {
 		uint32 charset;
 		Common::CodePage encoding;
 	} codepages[] = {
-			{ 128, Common::kWindows932            }, // SHIFTJIS_CHARSET
-			{ 177, Common::kWindows1255           }, // HEBREW_CHARSET
-			{ 204, Common::kWindows1251           }, // RUSSIAN_CHARSET
-			{ 238, Common::kMacCentralEurope }  // EASTEUROPE_CHARSET
+		{ 128, Common::kWindows932       }, // SHIFTJIS_CHARSET
+		{ 177, Common::kWindows1255      }, // HEBREW_CHARSET
+		{ 204, Common::kWindows1251      }, // RUSSIAN_CHARSET
+		{ 238, Common::kMacCentralEurope }  // EASTEUROPE_CHARSET
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(codepages); i++) {
@@ -474,7 +474,8 @@ void Subtitles::setFrame(int32 frame) {
 }
 
 void Subtitles::drawOverlay() {
-	if (!_texture) return;
+	if (!_texture)
+		return;
 
 	Common::Rect screen = _vm->_gfx->viewport();
 	Common::Rect bottomBorder = Common::Rect(Renderer::kOriginalWidth, _surfaceHeight);
