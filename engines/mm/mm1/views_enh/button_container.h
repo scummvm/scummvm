@@ -86,6 +86,7 @@ public:
 class ButtonContainer : public Views::TextView {
 private:
 	Common::Stack< Common::Array<UIButton> > _savedButtons;
+	KeybindingAction _selectedAction = KEYBIND_NONE;
 protected:
 	Common::Array<UIButton> _buttons;
 
@@ -108,7 +109,8 @@ public:
 		int frameNum, Xeen::SpriteResource *sprites = nullptr);
 
 	void draw() override;
-	bool msgMouseClick(const MouseClickMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 };
 
 } // namespace ViewsEnh

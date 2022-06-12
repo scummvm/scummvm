@@ -134,7 +134,8 @@ public:
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
 	MESSAGE(Keypress);
-	MESSAGE(MouseClick);
+	MESSAGE(MouseDown);
+	MESSAGE(MouseUp);
 	MESSAGE(Action);
 	MESSAGE(Business);
 	MESSAGE(Game);
@@ -210,7 +211,8 @@ public:
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
 	MESSAGE(Keypress);
-	MESSAGE(MouseClick);
+	MESSAGE(MouseDown);
+	MESSAGE(MouseUp);
 	#undef MESSAGE
 };
 

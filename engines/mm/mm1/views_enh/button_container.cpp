@@ -60,25 +60,38 @@ void ButtonContainer::addButton(const Common::Rect &bounds, KeybindingAction act
 	_buttons.push_back(UIButton(this, bounds, action, frameNum, sprites, sprites != nullptr));
 }
 
-bool ButtonContainer::msgMouseClick(const MouseClickMessage &msg) {
-	if (msg._button == MouseClickMessage::MB_LEFT) {
-		const Common::Point pt = msg._pos;
+bool ButtonContainer::msgMouseDown(const MouseDownMessage &msg) {
+	_selectedAction = KEYBIND_NONE;
 
+	if (msg._button == MouseMessage::MB_LEFT) {
 		// Check whether any button is selected
 		for (uint i = 0; i < _buttons.size(); ++i) {
-			if (_buttons[i]._bounds.contains(pt) && _buttons[i]._action != KEYBIND_NONE) {
-				// Show the button briefly depressed
-				_buttons[i].draw(true);
-				g_engine->getScreen()->update();
-				g_system->delayMillis(500);
+			if (_buttons[i]._bounds.contains(msg._pos) &&
+					_buttons[i]._action != KEYBIND_NONE) {
+				_selectedAction = _buttons[i]._action;
 
-				_buttons[i].draw(false);
-				g_engine->getScreen()->update();
+				g_events->redraw();
+				g_events->drawElements();
+				return true;
+			}
+		}
+	}
 
-				// Trigger the button action
-				KeybindingAction action = _buttons[i]._action;
-				g_events->msgAction(ActionMessage(action));
+	return false;
+}
 
+bool ButtonContainer::msgMouseUp(const MouseUpMessage &msg) {
+	KeybindingAction action = _selectedAction;
+	_selectedAction = KEYBIND_NONE;
+
+	if (msg._button == MouseMessage::MB_LEFT && action != KEYBIND_NONE) {
+		for (uint i = 0; i < _buttons.size(); ++i) {
+			if (_buttons[i]._action == action) {
+				if (_buttons[i]._action == action)
+					g_events->msgAction(ActionMessage(action));
+
+				g_events->redraw();
+				g_events->drawElements();
 				return true;
 			}
 		}
@@ -93,7 +106,8 @@ void ButtonContainer::draw() {
 	for (uint btnIndex = 0; btnIndex < _buttons.size(); ++btnIndex) {
 		UIButton &btn = _buttons[btnIndex];
 		if (btn._draw)
-			btn.draw();
+			btn.draw(btn._action != KEYBIND_NONE &&
+				btn._action == _selectedAction);
 	}
 }
 

@@ -31,6 +31,13 @@ namespace ViewsEnh {
 Game::Game() : TextView("Game"),
 		_view(this), _commands(this) {
 	_view.setBounds(Common::Rect(8, 15, 224, 130));
+
+	// Load the Xeen background
+	Common::File f;
+	if (!f.open("back.raw"))
+		error("Could not load background");
+	_bg.create(320, 200);
+	f.read(_bg.getPixels(), 320 * 200);
 }
 
 bool Game::msgFocus(const FocusMessage &msg) {
@@ -45,13 +52,8 @@ bool Game::msgUnfocus(const UnfocusMessage &msg) {
 
 void Game::draw() {
 	if (_needsRedraw) {
-		// Load the Xeen background
-		Common::File f;
-		if (!f.open("back.raw"))
-			error("Could not load background");
-
 		Graphics::ManagedSurface s = getSurface();
-		f.read((byte *)s.getPixels(), s.w * s.h);
+		s.blitFrom(_bg);
 	}
 
 	UIElement::draw();

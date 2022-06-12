@@ -46,16 +46,18 @@ struct KeypressMessage : public Message, public Common::KeyState {
 		Message(), Common::KeyState(ks) {}
 };
 
-struct MouseClickMessage : public Message {
+struct MouseMessage : public Message {
 	enum Button { MB_LEFT, MB_RIGHT, MB_MIDDLE };
 	Button _button;
 	Common::Point _pos;
 
-	MouseClickMessage() : Message(), _button(MB_LEFT) {}
-	MouseClickMessage(Button btn, const Common::Point &pos) :
+	MouseMessage() : Message(), _button(MB_LEFT) {}
+	MouseMessage(Button btn, const Common::Point &pos) :
 		Message(), _button(btn), _pos(pos) {}
-	MouseClickMessage(Common::EventType type, const Common::Point &pos);
+	MouseMessage(Common::EventType type, const Common::Point &pos);
 };
+typedef MouseMessage MouseDownMessage;
+typedef MouseMessage MouseUpMessage;
 
 struct GameMessage : public Message {
 	Common::String _name;

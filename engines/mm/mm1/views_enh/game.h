@@ -22,6 +22,7 @@
 #ifndef MM1_VIEWS_ENH_GAME_H
 #define MM1_VIEWS_ENH_GAME_H
 
+#include "graphics/managed_surface.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/views/game_view.h"
 #include "mm/mm1/views_enh/game_commands.h"
@@ -32,6 +33,7 @@ namespace ViewsEnh {
 
 class Game : public Views::TextView {
 private:
+	Graphics::ManagedSurface _bg;
 	Views::GameView _view;
 	GameCommands _commands;
 public:
