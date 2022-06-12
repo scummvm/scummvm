@@ -324,6 +324,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "pecosbill",			"Pecos Bill" },
 	{ "perdido",			"Lost in the Amazon" },
 	{ "peterrabbit",		"The Adventures of Peter Rabbit and Benjamin Bunny" },
+	{ "pennyhorse",			"Penny Horse" },
 	{ "physicus",			"Physicus: Save the World with Science!" },
 	{ "phonicsquest",		"Disney Phonics Quest" },
 	{ "pingu1",				"Pingu: A Barrel of Fun!" },
@@ -6497,6 +6498,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("janoschverkehr", "", "verkehr.exe", "fa749c7798f69f4aa615d35b2b991348", 2294886, Common::DE_DEU, 851),
 
 	WINGAME1("pcformat", "PCF132 CD 02/02", "PCF132.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 4722596, 800),
+
+	WINGAME1t("pennyhorse", "", "PennyHorse.exe", "3aa62f6efd4616c3cc6b935411c1f8a7", 4780197, 851),
 
 	// Mac OS X installer runs the game in Classic environment
 	MACGAME1_l("pettson1", "v3.0", "Spelen",	   "a44511b8ff0e46b4f9c85dd1cb58d458", 158043, Common::NL_NLD, 851),
