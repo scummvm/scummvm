@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-12 13:16+0000\n"
-"PO-Revision-Date: 2022-06-09 09:36+0000\n"
+"PO-Revision-Date: 2022-06-12 18:37+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -7792,10 +7792,8 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Nem történt meg a #%d mentett játék gyors betöltése"
 
 #: engines/toon/toon.cpp:1502
-#, fuzzy
-#| msgid "Are you sure you want to quit?"
 msgid "Are you sure you want to exit?"
-msgstr "Biztosan ki szeretnél lépni?"
+msgstr "Biztos ki akarsz lépni?"
 
 #: engines/toon/toon.cpp:1906
 #, c-format
