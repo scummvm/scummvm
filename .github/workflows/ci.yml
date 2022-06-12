@@ -179,14 +179,3 @@ jobs:
       - name: Build devtools
         run: |
           make devtools
-      - name: Build emscripten
-        if: ${{ env.SDL_CONFIG == 'sdl2-config' }}
-        run: |
-          make clean
-          ./dists/emscripten/build.sh build --verbose  --enable-plugins --disable-tinygl --default-dynamic --enable-all-engines --bundle-games=testbed,twine,warlock,sky/BASS-Floppy-1.3.zip,feeble,queen/FOTAQ_Floppy.zip,ft,grim/grim-win-demo2-en.zip,lsl7,lure,myst,phantasmagoria,hires1,tlj,sword2,sinistersix,"https://downloads.scummvm.org/frs/demos/hypno/wetlands-dos-demo1-en.zip","https://downloads.scummvm.org/frs/demos/private/private-eye-win-demo-us.zip",jman,wrath,chuckaduck
-      - name: Deploy emscripten port
-        uses: JamesIves/github-pages-deploy-action@v4.2.5
-        if: ${{ env.SDL_CONFIG == 'sdl2-config' }}
-        with:
-          branch: gh-pages # The branch the action should deploy to.
-          folder: build-emscripten # The folder the action should deploy.

@@ -1,0 +1,33 @@
+name: CI
+on:
+  schedule:
+    - cron: '0 0 * * *' // at the end of every day
+jobs:
+  ubuntu:
+    name: Ubuntu
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu-latest
+            sdlConfig: sdl2-config
+            aptPackages: 'libsdl2-dev libsdl2-net-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
+    env:
+      SDL_CONFIG: ${{ matrix.sdlConfig }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install ${{ matrix.aptPackages }}
+      - name: Build emscripten port
+        run: |
+          make clean
+          ./dists/emscripten/build.sh build --verbose  --enable-plugins --disable-tinygl --default-dynamic --enable-all-engines --bundle-games=testbed,warlock,sky/BASS-Floppy-1.3.zip,feeble,queen/FOTAQ_Floppy.zip,ft,grim/grim-win-demo2-en.zip,lsl7,lure,myst,phantasmagoria,hires1,tlj,sword2,sinistersix,"https://downloads.scummvm.org/frs/demos/hypno/wetlands-dos-demo1-en.zip","https://downloads.scummvm.org/frs/demos/private/private-eye-win-demo-us.zip",jman,wrath,chuckaduck
+      - name: Deploy artifacts
+        uses: JamesIves/github-pages-deploy-action@v4.2.5
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: build-emscripten # The folder the action should deploy.
