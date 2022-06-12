@@ -41,23 +41,23 @@ public:
 	static Common::String convertISOToUTF8(Common::String &str);
 	static void convertISOToDOS(char &c);
 
-	static uint16 convertDOSToHAN(char c, uint8 *mergeFlags = 0);
+	static uint16 convertDOSToJohab(char c, uint8 *mergeFlags = 0);
 	// This method does not only need a ref to the new character, but also to the one before that, since
 	// both of these will be used to calculate the output and also both of these may get modfied. The
 	// reset parameter will reset the internal merge state (useful when the build-up process is broken,
 	// e. g. when typing a one-byte character, like a digit).
-	static void mergeUpdateHANChars(uint16 &prevHanChar, uint16 &newHanChar, char asciiInput, bool reset);
+	static void mergeUpdateJohabChars(uint16 &destJohabChar0, uint16 &destJohabChar1, char asciiInput, bool reset);
 
 	static Common::String findMacResourceFile(const char *baseName);
 
 private:
-	struct DOS2HanEntry {
+	struct DOS2JOHABEntry {
 		char key;
-		uint16 hanChar;
+		uint16 johabChar;
 		uint8 flags;
 	};
 
-	static const DOS2HanEntry _hanConvTable[52];
+	static const DOS2JOHABEntry _johabConvTable[52];
 };
 
 } // End of namespace Kyra

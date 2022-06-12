@@ -162,8 +162,8 @@ private:
 	bool _menuRestoreScreen;
 	uint8 _toplevelMenu;
 	int _savegameOffset;
-	char _savegameName[35];
-	char _savegameNames[5][35];
+	char _savegameName[35 * 4]; // allow extra space, since the string can be UTF-8, temporarily
+	char _savegameNames[5][35 * 4];
 	const char *_specialSavegameString;
 	bool _resetHanInput;
 

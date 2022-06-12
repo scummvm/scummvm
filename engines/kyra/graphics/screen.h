@@ -68,7 +68,7 @@ public:
 		kASCII = 0,
 		kSJIS,
 		kBIG5,
-		kHANGUL
+		kJohab
 	};
 
 public:
@@ -290,10 +290,10 @@ private:
 	const uint16 _pitch;
 };
 
-class HangulFontLoK final : public Font {
+class JohabFontLoK final : public Font {
 public:
-	HangulFontLoK(Font *&font8fat, const uint16 *lookupTable, uint32 lookupTableSize);
-	~HangulFontLoK() override;
+	JohabFontLoK(Font *&font8fat, const uint16 *lookupTable, uint32 lookupTableSize);
+	~JohabFontLoK() override;
 
 	enum {
 		kNumJongseong = 191,
@@ -302,7 +302,7 @@ public:
 	};
 
 	bool load(Common::SeekableReadStream &data) override;
-	Type getType() const override { return kHANGUL; }
+	Type getType() const override { return kJohab; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
 	int getCharWidth(uint16 c) const override;

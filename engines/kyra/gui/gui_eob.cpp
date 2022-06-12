@@ -1508,7 +1508,7 @@ GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen), _n
 
 	_saveSlotStringsTemp = new char*[6];
 	for (int i = 0; i < 6; i++) {
-		_saveSlotStringsTemp[i] = new char[26]();
+		_saveSlotStringsTemp[i] = new char[52]();
 	}
 	_saveSlotIdTemp = new int16[7];
 	memset(_saveSlotIdTemp, 0xFF, sizeof(int16) * 7);
@@ -3186,12 +3186,12 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 
 			Graphics::Surface thumb;
 			createScreenThumbnail(thumb);
-			char temp[26];
-			Common::strlcpy(temp, _saveSlotStringsTemp[slot], 26);
+			char temp[52];
+			Common::strlcpy(temp, _saveSlotStringsTemp[slot], 52);
 			// Ingame auto-generated Japanese EOB SegaCD savegame descriptions have a special 1-byte encoding that
 			// does not survive this conversion. And the rest of the characters in these descriptions do not require it.
 			if (!(_vm->gameFlags().platform == Common::kPlatformSegaCD && _vm->gameFlags().lang == Common::JA_JPN && Common::String(temp).contains('\r')))
-				Util::convertString_KYRAtoGUI(temp, 26);
+				Util::convertString_KYRAtoGUI(temp, 52);
 			_vm->updatePlayTimer();
 			Common::Error err = _vm->saveGameStateIntern(_savegameOffset + slot, temp, &thumb);
 			thumb.free();

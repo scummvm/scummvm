@@ -161,6 +161,10 @@ void releaseCJKTables() {
 	windows950ConversionTable = 0;
 	delete[] windows950ReverseConversionTable;
 	windows950ReverseConversionTable = 0;
+	delete[] johabConversionTable;
+	johabConversionTable = 0;
+	delete[] johabReverseConversionTable;
+	johabReverseConversionTable = 0;
 }
 
 void U32String::decodeWindows932(const char *src, uint32 len) {

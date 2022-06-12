@@ -533,7 +533,7 @@ void ChineseTwoByteFontLoK::processColorMap() {
 	_textColor[1] = _colorMap[0] | (_colorMap[0] << 8);
 }
 
-HangulFontLoK::HangulFontLoK(Font *&font8fat, const uint16 *lookupTable, uint32 lookupTableSize) : _font8fat(font8fat), _height(15), _width(15), _fileData(0), _colorMap(0), _glyphTemp(0) {
+JohabFontLoK::JohabFontLoK(Font *&font8fat, const uint16 *lookupTable, uint32 lookupTableSize) : _font8fat(font8fat), _height(15), _width(15), _fileData(0), _colorMap(0), _glyphTemp(0) {
 	assert(lookupTable);
 	assert(lookupTableSize == 224);
 	for (int i = 0; i < 7; ++i)
@@ -542,12 +542,12 @@ HangulFontLoK::HangulFontLoK(Font *&font8fat, const uint16 *lookupTable, uint32 
 	_glyphTemp = new uint8[30];
 }
 
-HangulFontLoK::~HangulFontLoK() {
+JohabFontLoK::~JohabFontLoK() {
 	delete[] _fileData;
 	delete[] _glyphTemp;
 }
 
-bool HangulFontLoK::load(Common::SeekableReadStream &data) {
+bool JohabFontLoK::load(Common::SeekableReadStream &data) {
 	if (_fileData)
 		return false;
 
@@ -575,22 +575,22 @@ bool HangulFontLoK::load(Common::SeekableReadStream &data) {
 	return true;
 }
 
-int HangulFontLoK::getCharWidth(uint16 c) const {
+int JohabFontLoK::getCharWidth(uint16 c) const {
 	assert(_font8fat);
 	return (c >= 0x80) ? _width + 1 : _font8fat->getCharWidth(c);
 }
 
-int HangulFontLoK::getCharHeight(uint16 c) const {
+int JohabFontLoK::getCharHeight(uint16 c) const {
 	return _colorMap[3] ? _height + 2 : _height;
 }
 
-void HangulFontLoK::setColorMap(const uint8 *src) {
+void JohabFontLoK::setColorMap(const uint8 *src) {
 	_colorMap = src;
 	assert(_font8fat);
 	_font8fat->setColorMap(src);
 }
 
-void HangulFontLoK::drawChar(uint16 c, byte *dst, int pitch, int) const {
+void JohabFontLoK::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	if (c < 0x80) {
 		assert(_font8fat);
 		_font8fat->drawChar(c, dst + (c == '\"' ? 0 : 5) * pitch, pitch, 0);
@@ -610,7 +610,7 @@ void HangulFontLoK::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	renderGlyph(dst, glyph, _colorMap[1], pitch);
 }
 
-const uint8 *HangulFontLoK::createGlyph(uint16 chr) const {
+const uint8 *JohabFontLoK::createGlyph(uint16 chr) const {
 	memset(_glyphTemp, 0, 30);
 
 	uint16 t[3];
@@ -653,7 +653,7 @@ const uint8 *HangulFontLoK::createGlyph(uint16 chr) const {
 	return _glyphTemp;
 }
 
-void HangulFontLoK::renderGlyph(byte *dst, const uint8 *glyph, uint8 col, int pitch) const {
+void JohabFontLoK::renderGlyph(byte *dst, const uint8 *glyph, uint8 col, int pitch) const {
 	const uint8 *src = glyph;
 	pitch -= 15;
 
