@@ -1132,6 +1132,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "jonssonligan1",		"Jönssonligan: Jakten på Mjölner" },
 	{ "jonssonligan2",		"Jönssonligan går på djupet" },
 	{ "mumin1",				"Kurragömma med Mumintrollen" },
+	{ "onsalakorv",			"Onsalakorv" },
 	{ "pettson1",			"Pettson o Findus i snickarbon" },
 	{ "pettsonjk",			"Pettson o Findus julkalender" },
 	{ "pettson2",			"Pettson & Findus i trädgården" },
@@ -5703,6 +5704,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2_l("okaytruehero", "",	"Start",		"136e1ab1d4d13168964afb699bda13aa", 1034240,
 									"Titel.dxr",   	"e8b13e9e34dcfbdd4481f7f0b8209903", 1134260, Common::DE_DEU, 650),
 	WINGAME1_l("okaytruehero", "",	"ok39932.exe", 	"1b8d78ddca650041b8997cac7af3184b", 1883584, Common::DE_DEU, 650),
+
+	WINGAME1t_l("onsalakorv", "", "onsala.EXE", "41d87422d7c0f48886a99a7fe05ba1c0", 1713409, Common::SE_SWE, 650),
 
 	MACGAME2_l("pantosstory", "", "START", "7d0c7ae431938c53e64d443b05bf19fd", 1035232,
 								  "PANTOS/A00.Dxr", "a36c3a6044d0dbcfa30b147cbdfc4f5f", 1367720, Common::JA_JPN, 602),
