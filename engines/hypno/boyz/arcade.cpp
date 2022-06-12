@@ -28,6 +28,7 @@ namespace Hypno {
 
 void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_checkpoint = _currentLevel;
+	_lastStats = _stats;
 	if (!_name.empty()) // if name is name, then we are testing some level
 		saveProfile(_name, int(arc->id));
 
@@ -85,7 +86,7 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 	if (_health <= 0) {
 		if (_arcadeMode == "YS")
 			return;
-
+		_stats = _lastStats;
 		MVideo video(_deathDay[_currentActor], Common::Point(0, 0), false, true, false);
 		disableCursor();
 		runIntro(video);
@@ -122,6 +123,16 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 			drawScreen();
 			g_system->delayMillis(10);
 		}
+
+		// Merge current stats with the global ones
+		_globalStats.shootsFired = _stats.shootsFired + _globalStats.shootsFired;
+		_globalStats.enemyHits = _stats.enemyHits + _globalStats.enemyHits;
+		_globalStats.enemyTargets = _stats.enemyTargets + _globalStats.enemyTargets;
+		_globalStats.targetsDestroyed = _stats.targetsDestroyed + _globalStats.targetsDestroyed;
+		_globalStats.targetsMissed = _stats.targetsMissed + _globalStats.targetsMissed;
+		_globalStats.friendliesEncountered = _stats.friendliesEncountered + _globalStats.friendliesEncountered;
+		_globalStats.infoReceived = _stats.infoReceived + _globalStats.infoReceived;
+		// After that, we can reset the current stats
 		resetStatistics();
 	}
 

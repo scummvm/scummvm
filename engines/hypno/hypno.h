@@ -557,6 +557,8 @@ public:
 	bool shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool secondary) override;
 	bool clickedSecondaryShoot(const Common::Point &mousePos) override;
 	void showCredits() override;
+	ArcadeStats _lastStats;
+	ArcadeStats _globalStats;
 
 	void missedTarget(Shoot *s, ArcadeShooting *arc) override;
 	void drawHealth() override;

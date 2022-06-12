@@ -50,6 +50,9 @@ void BoyzEngine::runCode(Code *code) {
 
 void BoyzEngine::runMainMenu(Code *code) {
 	resetSceneState();
+	resetStatistics();
+	_globalStats = ArcadeStats();
+
 	Common::Event event;
 	byte *palette;
 	Graphics::Surface *menu = decodeFrame("preload/mainmenu.smk", 0, &palette);
@@ -239,6 +242,7 @@ void BoyzEngine::runRetryMenu(Code *code) {
 				} else if (restartTerritoryBox.contains(mousePos)) {
 					// Restore initial health for the team
 					_health = _maxHealth;
+					_stats = _globalStats;
 					_nextLevel = firstLevelTerritory(_checkpoint);
 					cont = false;
 				} else if (restartMissionBox.contains(mousePos)) {
@@ -258,6 +262,7 @@ void BoyzEngine::runRetryMenu(Code *code) {
 				} else if (event.kbd.keycode == Common::KEYCODE_t) {
 					// Restore initial health for the team
 					_health = _maxHealth;
+					_stats = _globalStats;
 					_nextLevel = firstLevelTerritory(_checkpoint);
 					cont = false;
 				} else if (event.kbd.keycode == Common::KEYCODE_q)

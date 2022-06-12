@@ -1031,6 +1031,14 @@ Common::Error BoyzEngine::saveGameStream(Common::WriteStream *stream, bool isAut
 	stream->writeUint32LE(_stats.friendliesEncountered);
 	stream->writeUint32LE(_stats.infoReceived);
 
+	stream->writeUint32LE(_globalStats.shootsFired);
+	stream->writeUint32LE(_globalStats.enemyHits);
+	stream->writeUint32LE(_globalStats.enemyTargets);
+	stream->writeUint32LE(_globalStats.targetsDestroyed);
+	stream->writeUint32LE(_globalStats.targetsMissed);
+	stream->writeUint32LE(_globalStats.friendliesEncountered);
+	stream->writeUint32LE(_globalStats.infoReceived);
+
 	saveSceneState(stream);
 	return Common::kNoError;
 }
@@ -1051,6 +1059,14 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_stats.targetsMissed = stream->readUint32LE();
 	_stats.friendliesEncountered = stream->readUint32LE();
 	_stats.infoReceived = stream->readUint32LE();
+
+	_globalStats.shootsFired = stream->readUint32LE();
+	_globalStats.enemyHits = stream->readUint32LE();
+	_globalStats.enemyTargets = stream->readUint32LE();
+	_globalStats.targetsDestroyed = stream->readUint32LE();
+	_globalStats.targetsMissed = stream->readUint32LE();
+	_globalStats.friendliesEncountered = stream->readUint32LE();
+	_globalStats.infoReceived = stream->readUint32LE();
 
 	loadSceneState(stream);
 	if (_unlockAllLevels) {
