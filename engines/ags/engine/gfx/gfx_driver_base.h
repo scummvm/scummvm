@@ -28,6 +28,7 @@
 #ifndef AGS_ENGINE_GFX_GFX_DRIVER_BASE_H
 #define AGS_ENGINE_GFX_GFX_DRIVER_BASE_H
 
+#include "ags/lib/std/memory.h"
 #include "ags/lib/std/vector.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/engine/gfx/graphics_driver.h"
@@ -169,11 +170,6 @@ protected:
 
 
 
-// Generic TextureTile base
-struct TextureTile {
-	int x, y;
-	int width, height;
-};
 
 // Parent class for the video memory DDBs
 class BaseDDB : public IDriverDependantBitmap {
@@ -198,6 +194,22 @@ protected:
 	virtual ~BaseDDB() {}
 };
 
+// A base parent for the otherwise opaque texture data object;
+// TextureData refers to the pixel data itself, with no additional
+// properties. It may be shared between multiple sprites if necessary.
+struct TextureData {
+	virtual ~TextureData() = default;
+protected:
+	TextureData() = default;
+};
+
+// Generic TextureTile base
+struct TextureTile {
+	int x = 0, y = 0;
+	int width = 0, height = 0;
+};
+
+
 // VideoMemoryGraphicsDriver - is the parent class for the graphic drivers
 // which drawing method is based on passing the sprite stack into GPU,
 // rather than blitting to flat screen bitmap.
@@ -211,9 +223,20 @@ public:
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer(bool mark_dirty) override;
 	bool GetStageMatrixes(RenderMatrixes &rm) override;
+	IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque) = 0;
 	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque = false) override;
 
 protected:
+	// Create texture data with the given parameters
+	virtual TextureData *CreateTextureData(int width, int height, bool opaque) = 0;
+	// Update texture data from the given bitmap
+	virtual void UpdateTextureData(TextureData *txdata, Bitmap *bmp, bool opaque, bool hasAlpha) = 0;
+	// Create DDB using preexisting texture data
+	virtual IDriverDependantBitmap *CreateDDB(std::shared_ptr<TextureData> txdata,
+		  int width, int height, int color_depth, bool opaque) = 0;
+	// Retrieve shared texture data object from the given DDB
+	virtual std::shared_ptr<TextureData> GetTextureData(IDriverDependantBitmap *ddb) = 0;
+
 	// Stage screens are raw bitmap buffers meant to be sent to plugins on demand
 	// at certain drawing stages. If used at least once these buffers are then
 	// rendered as additional sprites in their respected order.
