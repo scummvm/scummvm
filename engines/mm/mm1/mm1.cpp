@@ -98,20 +98,22 @@ bool MM1Engine::setupEnhanced() {
 	::MM::Xeen::CCArchive *xeenCC = new ::MM::Xeen::CCArchive(
 		"xeen.cc", "xeen", true);
 	SearchMan.add("xeen", xeenCC);
-	/*
-	::MM::Xeen::CCArchive *darkCC = new ::MM::Xeen::CCArchive(
-		"dark.cc", "dark", true);
-	SearchMan.add("dark", darkCC);
-	*/
+
 	// Load the palette
 	Common::File f;
 	if (!f.open("mm4.pal"))
 		error("Could not load palette");
 
+	// Load the Xeen palette
 	byte pal[PALETTE_SIZE];
 	for (int i = 0; i < PALETTE_SIZE; ++i)
 		pal[i] = f.readByte() << 2;
 	g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
+
+	// Show the mouse cursor
+	g_events->loadCursors();
+	g_events->setCursor(0);
+	g_events->showCursor();
 
 	return true;
 }
