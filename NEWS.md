@@ -9,6 +9,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Kyra:
    - Added support for the Korean version of Legend of Kyrandia 1.
 
+ Toon:
+   - Made game menus behave like in the original.
+
 
 #### 2.6.0 (2022-XX-XX)
 
