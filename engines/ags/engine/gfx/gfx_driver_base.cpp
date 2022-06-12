@@ -173,6 +173,35 @@ IDriverDependantBitmap *VideoMemoryGraphicsDriver::CreateDDBFromBitmap(Bitmap *b
 	return ddb;
 }
 
+IDriverDependantBitmap *VideoMemoryGraphicsDriver::GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) {
+	const auto found = _txRefs.find(sprite_id);
+	if (found != _txRefs.end()) {
+		const auto &item = found->_value;
+		if (!item.Data.expired())
+			return CreateDDB(item.Data.lock(), item.Res.Width, item.Res.Height, item.Res.ColorDepth, opaque);
+	}
+
+	// Create and add a new element
+	std::shared_ptr<TextureData> txdata(CreateTextureData(bitmap->GetWidth(), bitmap->GetHeight(), opaque));
+	txdata->ID = sprite_id;
+	UpdateTextureData(txdata.get(), bitmap, opaque, hasAlpha);
+	// only add into the map when has valid sprite ID
+	if (sprite_id != UINT32_MAX) {
+		_txRefs[sprite_id] = TextureCacheItem(txdata,
+			GraphicResolution(bitmap->GetWidth(), bitmap->GetHeight(), bitmap->GetColorDepth()));
+	}
+	return CreateDDB(txdata, bitmap->GetWidth(), bitmap->GetHeight(), bitmap->GetColorDepth(), opaque);
+}
+
+ void VideoMemoryGraphicsDriver::DestroyDDB(IDriverDependantBitmap* ddb) {
+	uint32_t sprite_id = ddb->GetRefID();
+	DestroyDDBImpl(ddb);
+	// Remove shared object from ref list if no more active refs left
+	const auto found = _txRefs.find(sprite_id);
+	if (found != _txRefs.end() && found->_value.Data.expired())
+		_txRefs.erase(found);
+}
+
 PBitmap VideoMemoryGraphicsDriver::CreateStageScreen(size_t index, const Size &sz) {
 	if (_stageScreens.size() <= index)
 		_stageScreens.resize(index + 1);

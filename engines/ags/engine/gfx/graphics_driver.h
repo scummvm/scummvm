@@ -139,6 +139,10 @@ public:
 	virtual void UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Shared::Bitmap *bitmap, bool hasAlpha) = 0;
 	virtual void DestroyDDB(IDriverDependantBitmap *bitmap) = 0;
 
+	// Get shared texture from cache, or create from bitmap and assign ID
+	virtual IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id,
+		Shared::Bitmap *bitmap = nullptr, bool hasAlpha = true, bool opaque = false) = 0;
+
 	// Prepares next sprite batch, a list of sprites with defined viewport and optional
 	// global model transformation; all subsequent calls to DrawSprite will be adding
 	// sprites to this batch's list.

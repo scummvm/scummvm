@@ -38,6 +38,9 @@ namespace Engine {
 
 class IDriverDependantBitmap {
 public:
+	// Get an arbitrary sprite ID, returns UINT32_MAX if does not have one
+	virtual uint32_t GetRefID() const = 0;
+
 	virtual int  GetAlpha() const = 0;
 	virtual void SetAlpha(int alpha) = 0;  // 0-255
 	virtual void SetFlippedLeftRight(bool isFlipped) = 0;
