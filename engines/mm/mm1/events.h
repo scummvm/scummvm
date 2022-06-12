@@ -100,9 +100,21 @@ public:
 	}
 
 	/**
+	 * Gets the element's bounds
+	 */
+	Common::Rect getBounds() const {
+		return _bounds;
+	}
+
+	/**
 	 * Returns a surface for drawing the element
 	 */
 	Graphics::ManagedSurface getSurface() const;
+
+	/**
+	 * Clear the surface
+	 */
+	virtual void clearSurface();
 
 	/**
 	 * Draws the element

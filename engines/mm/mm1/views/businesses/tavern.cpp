@@ -31,11 +31,10 @@ namespace Views {
 namespace Businesses {
 
 Tavern::Tavern() : Business("Tavern") {
-	_modeString = STRING["dialogs.business.gather"];
 }
 
 bool Tavern::msgFocus(const FocusMessage &msg) {
-	g_events->msgBusiness(BusinessMessage(4));
+	g_events->msgBusiness(BusinessMessage(LOC_TAVERN));
 	g_globals->_currCharacter = &g_globals->_party[0];
 	return true;
 }

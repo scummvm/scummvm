@@ -152,6 +152,9 @@ dialogs:
 		d: "D) MAKE DONATION"
 		thankyou: "THANK YOU!"
 		protected: "*** TODAY YOU SHALL BE PROTECTED!"
+	training:
+		for_level: "TRAINING FOR LEVEL "
+		no_way: "NO WAY!"
 	view_characters:
 		title: "VIEW ALL CHARACTERS"
 		legend1: "'A'-'%c' TO VIEW A CHARACTER"

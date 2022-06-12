@@ -40,7 +40,7 @@ Market::Market() : Business("Market") {
 }
 
 bool Market::msgFocus(const FocusMessage &msg) {
-	g_events->msgBusiness(BusinessMessage(1));
+	g_events->msgBusiness(BusinessMessage(LOC_MARKET));
 
 	Maps::Map &map = *g_maps->_currentMap;
 	_foodCost = FOOD_COST[map[0] - 1];

@@ -178,6 +178,11 @@ void UIElement::close() {
 	g_engine->popView();
 }
 
+void UIElement::clearSurface() {
+	Graphics::ManagedSurface s = getSurface();
+	s.fillRect(Common::Rect(s.w, s.h), 0);
+}
+
 void UIElement::draw() {
 	for (size_t i = 0; i < _children.size(); ++i) {
 		_children[i]->draw();

@@ -49,6 +49,7 @@ static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_STRAFE_LEFT, "STRAFE_LEFT", "Strafe Left", "C+LEFT", nullptr },
 	{ KEYBIND_STRAFE_RIGHT, "STRAFE_RIGHT", "Strafe Right", "C+RIGHT", nullptr },
 
+	{ KEYBIND_MINIMAP, "MINIMAP", "Toggle Minimap", "=", nullptr },
 	{ KEYBIND_ORDER, "ORDER", "Reorder Party", "o", nullptr },
 	{ KEYBIND_PROTECT, "PROTECT", "Protect", "p", nullptr },
 	{ KEYBIND_REST, "REST", "Rest", "r", nullptr },

@@ -23,15 +23,37 @@
 #define MM1_VIEWS_ENH_GAME_COMMANDS_H
 
 #include "mm/mm1/views_enh/button_container.h"
+#include "mm/mm1/views_enh/map.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
 class GameCommands : public ButtonContainer {
+	class Minimap : public Map {
+	public:
+		bool _minimapOn = false;
+		Minimap(UIElement *owner) : Map(owner) {
+			_bounds = Common::Rect(236, 11, 308, 69);
+		}
+
+		void toggleMinimap() {
+			_minimapOn = !_minimapOn;
+			g_events->redraw();
+		}
+		void draw() override {
+			if (_minimapOn)
+				Map::draw();
+		}
+	};
+
+private:
+	Minimap _minimap;
 public:
 	GameCommands(UIElement *owner);
 	virtual ~GameCommands() {}
+
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace ViewsEnh
