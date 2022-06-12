@@ -774,6 +774,7 @@ void HypnoEngine::incInfoReceived() {
 
 void HypnoEngine::resetStatistics() {
 	_stats = ArcadeStats();
+	_bonus = 0;
 }
 
 bool HypnoEngine::clickedSecondaryShoot(const Common::Point &mousePos) {
