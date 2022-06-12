@@ -689,7 +689,7 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	}
 	case kiProtoPack:
-		if (_gameState->hasItem(InventoryItems::kiBookOfBu)) {
+		if (_gameState->hasItem(InventoryItems::kSendellsMedallion)) {
 			_scene->_sceneHero->_genBody = BodyType::btNormal;
 		} else {
 			_scene->_sceneHero->_genBody = BodyType::btTunic;

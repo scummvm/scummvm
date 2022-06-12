@@ -362,9 +362,9 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	if (_engine->_interface->setClip(renderRect)) {
 		actor->_dynamicFlags.bIsDrawn = 1;
 
-		const int32 tempX = (actor->_pos.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+		const int32 tempX = (actor->_pos.x + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
 		int32 tempY = actor->_pos.y / SIZE_BRICK_Y;
-		const int32 tempZ = (actor->_pos.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+		const int32 tempZ = (actor->_pos.z + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
 		if (actor->brickShape() != ShapeType::kNone) {
 			tempY++;
 		}
@@ -417,14 +417,14 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 		actor->_dynamicFlags.bIsDrawn = 1;
 
 		if (actor->_staticFlags.bUsesClipping) {
-			const int32 tmpX = (actor->_animStep.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+			const int32 tmpX = (actor->_animStep.x + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
 			const int32 tmpY = actor->_animStep.y / SIZE_BRICK_Y;
-			const int32 tmpZ = (actor->_animStep.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+			const int32 tmpZ = (actor->_animStep.z + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
 			_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 		} else {
-			const int32 tmpX = (actor->_pos.x + actor->_boundingBox.maxs.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+			const int32 tmpX = (actor->_pos.x + actor->_boundingBox.maxs.x + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
 			int32 tmpY = actor->_pos.y / SIZE_BRICK_Y;
-			const int32 tmpZ = (actor->_pos.z + actor->_boundingBox.maxs.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+			const int32 tmpZ = (actor->_pos.z + actor->_boundingBox.maxs.z + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
 			if (actor->brickShape() != ShapeType::kNone) {
 				tmpY++;
 			}
@@ -468,9 +468,9 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 	}
 
 	if (_engine->_interface->setClip(renderRect)) {
-		const int32 tmpX = (extra->pos.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+		const int32 tmpX = (extra->pos.x + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
 		const int32 tmpY = extra->pos.y / SIZE_BRICK_Y;
-		const int32 tmpZ = (extra->pos.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+		const int32 tmpZ = (extra->pos.z + DEMI_BRICK_XZ) / SIZE_BRICK_XZ;
 
 		_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
 		addRedrawArea(_engine->_interface->_clip);

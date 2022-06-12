@@ -65,7 +65,7 @@ void Grid::init(int32 w, int32 h) {
 	_brickInfoBuffer = (int16 *)malloc(_brickInfoBufferSize);
 }
 
-void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface &buffer) {
+void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface &buffer) { // CopyMask
 	if (_engine->_debugGrid->_disableGridRendering) {
 		return;
 	}
@@ -182,7 +182,7 @@ void Grid::drawOverModelActor(int32 x, int32 y, int32 z) {
 	}
 }
 
-void Grid::drawOverSpriteActor(int32 x, int32 y, int32 z) {
+void Grid::drawOverSpriteActor(int32 x, int32 y, int32 z) { // DrawOverBrick3
 	const int32 copyBlockPhysLeft = ((_engine->_interface->_clip.left + 24) / 24) - 1;
 	const int32 copyBlockPhysRight = (_engine->_interface->_clip.right + 24) / 24;
 
