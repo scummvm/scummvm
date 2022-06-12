@@ -29,6 +29,7 @@
 #include "common/taskbar.h"
 #include "common/updates.h"
 #include "common/dialogs.h"
+#include "common/str-enc.h"
 #include "common/textconsole.h"
 #include "common/text-to-speech.h"
 
@@ -115,6 +116,7 @@ void OSystem::initBackend() {
 void OSystem::destroy() {
 	_backendInitialized = false;
 	Common::String::releaseMemoryPoolMutex();
+	Common::releaseCJKTables();
 	delete this;
 }
 
