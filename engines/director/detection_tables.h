@@ -258,6 +258,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mask",				"The Mask: The Origin" },
 	{ "mastermansion",		"Masterpiece Mansion" },
 	{ "mastermansionex",	"Masterpiece Mansion: Art Explorer" },
+	{ "mathmystery",		"Math Blaster Mystery: The Great Brain Robbery" },
 	{ "martian",			"Ray Bradbury's The Martian Chronicles Adventure Game" },
 	{ "maze",				"The Riddle of the Maze" },
 	{ "mckenzie",			"McKenzie & Co." },
@@ -3565,6 +3566,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("mastermansion", "Demo", "MANSION.EXE", "be88c599759d0c8d6bdc1d2719ca769a", 17866669, 404),
 	MACGAME1("mastermansionex", "", "Art Explorer", "9e9696433d18629b88714089034c086b", 285509, 404),
 	WINGAME1("mastermansionex", "", "EXPLORER.EXE", "7a335c6571e359b56453edb78e6fdc53", 36685767, 404),
+
+	WINDEMO1t_l("mathmystery", "Demo", "LB_DEMO.EXE", "32f5a6d9ad00ece84526e1fe23965524", 698539, Common::NB_NOR, 404),
 
 	MACGAME1("martian", "", "The Martian Chronicles PPC CD", "db9b7f11aea52a294d2986a94a184000", 60328, 400),
 	WINGAME1("martian", "", "MC.EXE", "ee6267d276a18e8bfd6f0e4ecd07ba36", 1764151, 400),
