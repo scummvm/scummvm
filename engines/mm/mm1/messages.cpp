@@ -25,7 +25,7 @@ namespace MM {
 namespace MM1 {
 
 MouseClickMessage::MouseClickMessage(Common::EventType type,
-		const Common::Point &pos) : Message() {
+		const Common::Point &pos) : Message(), _pos(pos) {
 	switch (type) {
 	case Common::EVENT_RBUTTONUP:
 		_button = MB_RIGHT;

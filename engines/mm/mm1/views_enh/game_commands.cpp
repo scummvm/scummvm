@@ -29,23 +29,26 @@ namespace ViewsEnh {
 GameCommands::GameCommands(UIElement *owner) :
 		ButtonContainer("GameCommands", owner) {
 	Xeen::SpriteResource *spr = &g_globals->_mainIcons;
-	addButton(Common::Rect(235, 75, 259, 95), Common::KEYCODE_s, spr);
-	addButton(Common::Rect(260, 75, 284, 95), Common::KEYCODE_c, spr);
-	addButton(Common::Rect(286, 75, 310, 95), Common::KEYCODE_r, spr);
-	addButton(Common::Rect(235, 96, 259, 116), Common::KEYCODE_b, spr);
-	addButton(Common::Rect(260, 96, 284, 116), Common::KEYCODE_d, spr);
-	addButton(Common::Rect(286, 96, 310, 116), Common::KEYCODE_v, spr);
-	addButton(Common::Rect(235, 117, 259, 137), Common::KEYCODE_m, spr);
-	addButton(Common::Rect(260, 117, 284, 137), Common::KEYCODE_i, spr);
-	addButton(Common::Rect(286, 117, 310, 137), Common::KEYCODE_q, spr);
-	addButton(Common::Rect(109, 137, 122, 147), Common::KEYCODE_TAB, spr);
-	addButton(Common::Rect(235, 148, 259, 168), Common::KEYCODE_LEFT, spr);
-	addButton(Common::Rect(260, 148, 284, 168), Common::KEYCODE_UP, spr);
-	addButton(Common::Rect(286, 148, 310, 168), Common::KEYCODE_RIGHT, spr);
-	addButton(Common::Rect(235, 169, 259, 189), (Common::KBD_CTRL << 16) | Common::KEYCODE_LEFT, spr);
-	addButton(Common::Rect(260, 169, 284, 189), Common::KEYCODE_DOWN, spr);
-	addButton(Common::Rect(286, 169, 310, 189), (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT, spr);
-	addButton(Common::Rect(236, 11, 308, 69), Common::KEYCODE_EQUALS);
+	addButton(Common::Rect(286, 75, 310, 95), KEYBIND_NONE, spr);       // Unlock
+	addButton(Common::Rect(235, 75, 259, 95), KEYBIND_PROTECT, spr);    // Protect
+	addButton(Common::Rect(260, 75, 284, 95), KEYBIND_REST, spr);       // Rest
+
+	addButton(Common::Rect(235, 96, 259, 116), KEYBIND_BASH, spr);      // Bash
+	addButton(Common::Rect(260, 96, 284, 116), KEYBIND_ORDER, spr);     // Order
+	addButton(Common::Rect(286, 96, 310, 116), KEYBIND_SEARCH, spr);    // Quest items
+
+	addButton(Common::Rect(235, 117, 259, 137), KEYBIND_MAP, spr);      // Large map
+	addButton(Common::Rect(260, 117, 284, 137), KEYBIND_VERSION, spr);  // Info
+	addButton(Common::Rect(286, 117, 310, 137), KEYBIND_QUICKREF, spr); // quickref 
+	addButton(Common::Rect(109, 137, 122, 147), KEYBIND_MENU, spr);     // menu
+
+	addButton(Common::Rect(235, 148, 259, 168), KEYBIND_TURN_LEFT, spr);
+	addButton(Common::Rect(260, 148, 284, 168), KEYBIND_FORWARDS, spr);
+	addButton(Common::Rect(286, 148, 310, 168), KEYBIND_TURN_RIGHT, spr);
+	addButton(Common::Rect(235, 169, 259, 189), KEYBIND_STRAFE_LEFT, spr);
+	addButton(Common::Rect(260, 169, 284, 189), KEYBIND_BACKWARDS, spr);
+	addButton(Common::Rect(286, 169, 310, 189), KEYBIND_STRAFE_RIGHT, spr);
+	//addButton(Common::Rect(236, 11, 308, 69), KEYBIND_NONE);
 }
 
 } // namespace ViewsEnh
