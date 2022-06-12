@@ -229,6 +229,10 @@ public:
 	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque = false) override;
 	// Get shared texture from cache, or create from bitmap and assign ID
 	IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	// Removes the shared texture reference, will force the texture to recreate next time
+	 void ClearSharedDDB(uint32_t sprite_id) override;
+	 // Updates shared texture data, but only if it is present in the cache
+	 void UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
 	void DestroyDDB(IDriverDependantBitmap* ddb) override;
 
 protected:

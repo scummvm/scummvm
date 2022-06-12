@@ -142,6 +142,9 @@ public:
 	// Get shared texture from cache, or create from bitmap and assign ID
 	virtual IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id,
 		Shared::Bitmap *bitmap = nullptr, bool hasAlpha = true, bool opaque = false) = 0;
+	virtual void UpdateSharedDDB(uint32_t sprite_id, Shared::Bitmap *bitmap = nullptr, bool hasAlpha = true, bool opaque = false) = 0;
+	// Removes the shared texture reference, will force the texture to recreate next time
+	virtual void ClearSharedDDB(uint32_t sprite_id) = 0;
 
 	// Prepares next sprite batch, a list of sprites with defined viewport and optional
 	// global model transformation; all subsequent calls to DrawSprite will be adding

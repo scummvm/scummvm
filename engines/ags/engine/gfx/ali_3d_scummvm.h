@@ -185,6 +185,13 @@ public:
 		return CreateDDBFromBitmap(bitmap, hasAlpha, opaque);
 	}
 
+	void UpdateSharedDDB(uint32_t /*sprite_id*/, Bitmap */*bitmap*/, bool /*hasAlpha*/, bool /*opaque*/) override {
+		/* do nothing */
+	}
+	void ClearSharedDDB(uint32_t /*sprite_id*/) override {
+		/* do nothing */
+	}
+
 	void DrawSprite(int x, int y, IDriverDependantBitmap *ddb) override;
 	void SetScreenFade(int red, int green, int blue) override;
 	void SetScreenTint(int red, int green, int blue) override;

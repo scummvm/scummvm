@@ -193,6 +193,21 @@ IDriverDependantBitmap *VideoMemoryGraphicsDriver::GetSharedDDB(uint32_t sprite_
 	return CreateDDB(txdata, bitmap->GetWidth(), bitmap->GetHeight(), bitmap->GetColorDepth(), opaque);
 }
 
+void VideoMemoryGraphicsDriver::UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) {
+	const auto found = _txRefs.find(sprite_id);
+	if (found != _txRefs.end()) {
+		auto txdata = found->_value.Data.lock();
+		if (txdata)
+			UpdateTextureData(txdata.get(), bitmap, opaque, hasAlpha);
+	}
+ }
+
+ void VideoMemoryGraphicsDriver::ClearSharedDDB(uint32_t sprite_id) {
+	const auto found = _txRefs.find(sprite_id);
+	if (found != _txRefs.end())
+		_txRefs.erase(found);
+ }
+
  void VideoMemoryGraphicsDriver::DestroyDDB(IDriverDependantBitmap* ddb) {
 	uint32_t sprite_id = ddb->GetRefID();
 	DestroyDDBImpl(ddb);
