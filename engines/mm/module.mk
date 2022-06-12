@@ -27,6 +27,7 @@ MODULE_OBJS := \
 	mm1/views/businesses/market.o \
 	mm1/views/businesses/tavern.o \
 	mm1/views/businesses/temple.o \
+	mm1/views/businesses/training.o \
 	mm1/views/are_you_ready.o \
 	mm1/views/create_characters.o \
 	mm1/views/game.o \
@@ -45,6 +46,7 @@ MODULE_OBJS := \
 	mm1/views_enh/button_container.o \
 	mm1/views_enh/dialogs.o \
 	mm1/views_enh/game.o \
+	mm1/views_enh/map.o \
 	mm1/maps/maps.o \
 	mm1/maps/map.o \
 	mm1/maps/map00.o \

@@ -105,7 +105,7 @@ void ButtonContainer::draw() {
 
 	for (uint btnIndex = 0; btnIndex < _buttons.size(); ++btnIndex) {
 		UIButton &btn = _buttons[btnIndex];
-		if (btn._draw)
+		if (btn._draw && btn._sprites)
 			btn.draw(btn._action != KEYBIND_NONE &&
 				btn._action == _selectedAction);
 	}

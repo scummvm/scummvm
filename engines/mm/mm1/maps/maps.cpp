@@ -251,6 +251,8 @@ void Maps::loadTown(TownId townId) {
 		display(0xB1A);
 		break;
 	}
+
+	_currentMap->_visited[_mapPos.y * MAP_W + _mapPos.x] = true;
 }
 
 void Maps::town15setup() {
@@ -386,8 +388,9 @@ void Maps::turnRight() {
 
 void Maps::step(const Common::Point &delta) {
 	_mapPos += delta;
-	int section = 0, id = 0;
+	_currentMap->_visited[_mapPos.y * MAP_W + _mapPos.x] = true;
 
+	int section = 0, id = 0;
 	if (_mapPos.x < 0) {
 		_mapPos.x = MAP_W - 1;
 		id = _currentMap->dataWord(16);

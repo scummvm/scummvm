@@ -90,6 +90,11 @@ struct InfoMessage : public Message {
 		YNCallback ynCallback = nullptr);
 };
 
+enum LocationType {
+	LOC_TRAINING = 0, LOC_MARKET = 1, LOC_TEMPLE = 2,
+	LOC_BLACKSMITH = 3, LOC_TAVERN = 4
+};
+
 struct ValueMessage : public Message {
 	int _value;
 

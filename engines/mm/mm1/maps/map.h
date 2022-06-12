@@ -65,6 +65,7 @@ private:
 public:
 	byte _walls[MAP_SIZE];
 	byte _states[MAP_SIZE];
+	bool _visited[MAP_SIZE];
 public:
 	Map(uint index, const Common::String &name, uint16 id);
 	virtual ~Map() {}

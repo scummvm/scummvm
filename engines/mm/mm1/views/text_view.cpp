@@ -90,8 +90,7 @@ void TextView::newLine() {
 }
 
 void TextView::clearSurface() {
-	Graphics::ManagedSurface s = getSurface();
-	s.fillRect(Common::Rect(s.w, s.h), 0);
+	UIElement::clearSurface();
 	_textPos.x = _textPos.y = 0;
 }
 

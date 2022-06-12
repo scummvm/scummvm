@@ -36,6 +36,7 @@
 #include "mm/mm1/views/businesses/market.h"
 #include "mm/mm1/views/businesses/tavern.h"
 #include "mm/mm1/views/businesses/temple.h"
+#include "mm/mm1/views/businesses/training.h"
 
 namespace MM {
 namespace MM1 {

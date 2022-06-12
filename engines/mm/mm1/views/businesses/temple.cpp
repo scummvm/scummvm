@@ -40,11 +40,10 @@ static const byte ALIGNMENT_VALS[3] = { 8, 0x10, 0x18 };
 static const byte DONATE_VALS[5] = { 1, 2, 4, 8, 0x10 };
 
 Temple::Temple() : Business("Temple") {
-	_modeString = STRING["dialogs.business.gather"];
 }
 
 bool Temple::msgFocus(const FocusMessage &msg) {
-	g_events->msgBusiness(BusinessMessage(2));
+	g_events->msgBusiness(BusinessMessage(LOC_TEMPLE));
 	changeCharacter(0);
 
 	return true;

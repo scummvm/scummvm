@@ -62,7 +62,7 @@ protected:
 	/**
 	 * Clear the surface
 	 */
-	void clearSurface();
+	void clearSurface() override;
 
 	/**
 	 * Clear area covered by the given text lines

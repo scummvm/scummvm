@@ -33,6 +33,7 @@ namespace Businesses {
 
 Business::Business(const Common::String &name) : TextView(name) {
 	_bounds = getLineBounds(17, 24);
+	_modeString = STRING["dialogs.business.gather"];
 }
 
 void Business::draw() {

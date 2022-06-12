@@ -19,50 +19,25 @@
  *
  */
 
-#include "engines/engine.h"
-#include "graphics/fonts/ttf.h"
-#include "mm/mm1/globals.h"
-#include "mm/utils/engine_data.h"
-#include "graphics/fontman.h"
+#ifndef MM1_VIEWS_ENH_MAP_H
+#define MM1_VIEWS_ENH_MAP_H
+
+#include "mm/mm1/events.h"
 
 namespace MM {
 namespace MM1 {
+namespace ViewsEnh {
 
-Globals *g_globals;
+class Map : public UIElement {
+public:
+	Map(UIElement *owner);
+	virtual ~Map() {}
 
-Globals::Globals() {
-	g_globals = this;
-}
+	void draw() override;
+};
 
-Globals::~Globals() {
-	g_globals = nullptr;
-}
-
-bool Globals::load(bool isEnhanced) {
-	// Initialise engine data for the game
-	Common::U32String errMsg;
-	if (!load_engine_data("mm1", 1, 0, errMsg)) {
-		GUIErrorMessage(errMsg);
-		return false;
-	}
-
-	if (!_strings.load("strings_en.yml"))
-		return false;
-
-	if (!_font.load("font.bmp"))
-		return false;
-
-	// Load roster
-	_roster.load();
-
-	if (isEnhanced) {
-		_mainIcons.load("main.icn");
-		_globalSprites.load("global.icn");
-		_tileSprites.load("town.til");
-	}
-
-	return true;
-}
-
+} // namespace Views
 } // namespace MM1
 } // namespace MM
+
+#endif

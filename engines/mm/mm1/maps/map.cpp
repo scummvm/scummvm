@@ -33,6 +33,7 @@ Map::Map(uint index, const Common::String &name, uint16 id) :
 		_mapIndex(index), _name(name), _id(id) {
 	Common::fill((byte *)&_walls[0], (byte *)&_walls[MAP_SIZE], 0);
 	Common::fill(&_states[0], (byte *)&_states[MAP_SIZE], 0);
+	Common::fill(&_visited[0], &_visited[MAP_SIZE], false);
 }
 
 void Map::load() {

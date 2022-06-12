@@ -69,6 +69,7 @@ struct Character {
 	uint8 _int = 0, _mgt = 0, _per = 0, _end = 0;
 	uint8 _spd = 0, _acy = 0, _luc = 0;
 	uint8 _end2 = 0;
+	uint8 _nextLevel = 0;
 	uint8 _level = 0;
 	uint8 _age = 0;
 	uint32 _exp = 0;

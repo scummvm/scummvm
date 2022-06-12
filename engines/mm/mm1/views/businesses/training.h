@@ -19,50 +19,35 @@
  *
  */
 
-#include "engines/engine.h"
-#include "graphics/fonts/ttf.h"
-#include "mm/mm1/globals.h"
-#include "mm/utils/engine_data.h"
-#include "graphics/fontman.h"
+#ifndef MM1_VIEWS_BUSINESSES_TRAINING_H
+#define MM1_VIEWS_BUSINESSES_TRAINING_H
+
+#include "mm/mm1/views/businesses/business.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
+namespace Businesses {
 
-Globals *g_globals;
+class Training : public Business {
+protected:
+	/**
+	 * Change character
+	 */
+	void changeCharacter(uint index) override;
 
-Globals::Globals() {
-	g_globals = this;
-}
+public:
+	Training();
+	virtual ~Training() {}
 
-Globals::~Globals() {
-	g_globals = nullptr;
-}
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	void draw() override;
+};
 
-bool Globals::load(bool isEnhanced) {
-	// Initialise engine data for the game
-	Common::U32String errMsg;
-	if (!load_engine_data("mm1", 1, 0, errMsg)) {
-		GUIErrorMessage(errMsg);
-		return false;
-	}
-
-	if (!_strings.load("strings_en.yml"))
-		return false;
-
-	if (!_font.load("font.bmp"))
-		return false;
-
-	// Load roster
-	_roster.load();
-
-	if (isEnhanced) {
-		_mainIcons.load("main.icn");
-		_globalSprites.load("global.icn");
-		_tileSprites.load("town.til");
-	}
-
-	return true;
-}
-
+} // namespace Businesses
+} // namespace Views
 } // namespace MM1
 } // namespace MM
+
+#endif
