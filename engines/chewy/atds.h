@@ -25,6 +25,7 @@
 #include "common/str.h"
 #include "common/str-array.h"
 #include "chewy/resource.h"
+#include "chewy/text.h"
 
 namespace Chewy {
 
@@ -274,6 +275,7 @@ public:
 
 	Common::StringArray getTextArray(uint dialogNum, uint entryNum, int type, int subEntry = -1);
 	Common::String getTextEntry(uint dialogNum, uint entryNum, int type, int subEntry = -1);
+	int16 getLastSpeechId() { return _text->getLastSpeechId(); }
 
 private:
 	void init();

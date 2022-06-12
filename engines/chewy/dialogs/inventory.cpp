@@ -28,6 +28,7 @@
 #include "chewy/main.h"
 #include "chewy/menus.h"
 #include "chewy/mouse.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 namespace Dialogs {
@@ -383,6 +384,7 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	bool endLoop = false;
 	int16 startLine = 0;
 	bool mouseFl = true;
+	bool firstTime = true;
 
 	if (mode == INV_ATS_MODE) {
 		itemName = _G(atds)->getTextEntry(invent_nr, TXT_MARK_NAME, INV_ATS_DATA);
@@ -408,6 +410,8 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 	} else {
 		endLoop = true;
 	}
+
+	const int16 speechId = _G(atds)->getLastSpeechId();
 
 	while (!endLoop) {
 		int16 rect = _G(in)->findHotspot(_G(inventoryHotspots));
@@ -517,6 +521,11 @@ int16 Inventory::look(int16 invent_nr, int16 mode, int16 ats_nr) {
 				_G(out)->printxy(WIN_LOOK_X, WIN_LOOK_Y + yoff + k * 10, 14, 300,
 								 _G(scr_width), itemDesc[i].c_str());
 				++k;
+			}
+
+			if (g_engine->_sound->speechEnabled() && speechId >= 0 && firstTime) {
+				g_engine->_sound->playSpeech(speechId, false);
+				firstTime = false;
 			}
 		}
 
