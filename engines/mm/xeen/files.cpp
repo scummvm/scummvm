@@ -319,7 +319,7 @@ File::File(const Common::String &filename, int ccMode) {
 
 bool File::open(const Common::Path &filename) {
 	if (!_currentSave || !Common::File::open(filename, *_currentSave)) {
-		if (!Common::File::open(filename, *_currentArchive)) {
+		if (!_currentArchive || !Common::File::open(filename, *_currentArchive)) {
 			// Could not find in current archive, so try intro.cc or in folder
 			if (!Common::File::open(filename))
 				error("Could not open file - %s", filename.toString().c_str());

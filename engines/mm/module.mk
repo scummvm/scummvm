@@ -21,6 +21,7 @@ MODULE_OBJS := \
 	mm1/gfx/dta.o \
 	mm1/gfx/gfx.o \
 	mm1/gfx/screen_decoder.o \
+	mm1/utils/mouse.o \
 	mm1/utils/strings.o \
 	mm1/views/businesses/business.o \
 	mm1/views/businesses/market.o \

@@ -26,6 +26,7 @@
 #include "common/stack.h"
 #include "graphics/screen.h"
 #include "mm/mm1/messages.h"
+#include "mm/mm1/utils/mouse.h"
 
 namespace MM {
 namespace MM1 {
@@ -141,7 +142,7 @@ public:
 	#undef MESSAGE
 };
 
-class Events : public UIElement {
+class Events : public UIElement, public Mouse {
 private:
 	Graphics::Screen *_screen = nullptr;
 	Common::Stack<UIElement *> _views;
