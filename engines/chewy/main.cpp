@@ -246,6 +246,7 @@ bool mainLoop(int16 mode) {
 			_G(maus_old_y) = g_events->_mousePos.y;
 			_G(menu_item) = CUR_USE;
 			menuEntry();
+			_G(cur)->show_cur();
 			Dialogs::Inventory::menu();
 			menuExit();
 			_G(menu_flag) = MENU_HIDE;
@@ -288,6 +289,7 @@ bool mainLoop(int16 mode) {
 		case Common::KEYCODE_ESCAPE:
 			if (_G(menu_display) == 0) {
 				menuEntry();
+				_G(cur)->hide_cur();
 				_G(tmp_menu_item) = _G(menu_item);
 				_G(maus_old_x) = g_events->_mousePos.x;
 				_G(maus_old_y) = g_events->_mousePos.y;
@@ -296,6 +298,7 @@ bool mainLoop(int16 mode) {
 				_G(cur)->move((MOUSE_MENU_MAX_X / 5) * (_G(menu_item)), 100);
 			} else {
 				menuExit();
+				_G(cur)->show_cur();
 				_G(menu_item) = _G(tmp_menu_item);
 				_G(menu_display) = MENU_HIDE;
 				if (_G(gameState).inv_cur && _G(gameState).AkInvent != -1 && _G(menu_item) == CUR_USE) {
@@ -311,6 +314,7 @@ bool mainLoop(int16 mode) {
 
 				_G(menu_item) = CUR_USE;
 				menuEntry();
+				_G(cur)->show_cur();
 				Dialogs::Inventory::menu();
 				menuExit();
 				_G(menu_flag) = MENU_HIDE;
