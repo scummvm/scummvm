@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-12 21:14+0000\n"
+"POT-Creation-Date: 2022-06-12 22:44+0000\n"
 "PO-Revision-Date: 2022-06-12 18:37+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -6052,7 +6052,7 @@ msgstr "Λειτουργία ευρείας οθόνης"
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Εικόνα ευρείας οθόνης κατά τη λειτουργία πλήρους οθόνης."
 
-#: engines/myst3/myst3.cpp:365
+#: engines/myst3/myst3.cpp:363
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
@@ -6067,7 +6067,7 @@ msgstr ""
 "Οι ενημερώσεις μπορούν να ληφθούν από εδώ:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 
-#: engines/myst3/myst3.cpp:1579 engines/pegasus/pegasus.cpp:744
+#: engines/myst3/myst3.cpp:1577 engines/pegasus/pegasus.cpp:744
 msgid "Invalid file name for saving"
 msgstr "Εσφαλμένο όνομα αρχείου για αποθήκευση"
 

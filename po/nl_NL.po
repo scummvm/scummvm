@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-12 21:14+0000\n"
+"POT-Creation-Date: 2022-06-12 22:44+0000\n"
 "PO-Revision-Date: 2022-06-09 06:42+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -5956,7 +5956,7 @@ msgstr "Breedbeeld aanpassing"
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Zet breedbeeld rendering in volscherm modus aan."
 
-#: engines/myst3/myst3.cpp:365
+#: engines/myst3/myst3.cpp:363
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
@@ -5971,7 +5971,7 @@ msgstr ""
 "De update kan gevonden worden op:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 
-#: engines/myst3/myst3.cpp:1579 engines/pegasus/pegasus.cpp:744
+#: engines/myst3/myst3.cpp:1577 engines/pegasus/pegasus.cpp:744
 msgid "Invalid file name for saving"
 msgstr "Geef bestandsnaam voor bewaren"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-12 21:14+0000\n"
+"POT-Creation-Date: 2022-06-12 22:44+0000\n"
 "PO-Revision-Date: 2022-06-12 22:31+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -5986,7 +5986,7 @@ msgstr ""
 "Permite renderizar la imagen a pantalla completa con una relación de aspecto "
 "panorámica."
 
-#: engines/myst3/myst3.cpp:365
+#: engines/myst3/myst3.cpp:363
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
@@ -5999,7 +5999,7 @@ msgstr ""
 "de tu copia del juego. Puedes descargar las actualizaciones aquí:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 
-#: engines/myst3/myst3.cpp:1579 engines/pegasus/pegasus.cpp:744
+#: engines/myst3/myst3.cpp:1577 engines/pegasus/pegasus.cpp:744
 msgid "Invalid file name for saving"
 msgstr "Nombre del archivo de partida inválido"
 

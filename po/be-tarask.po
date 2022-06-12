@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-12 21:14+0000\n"
+"POT-Creation-Date: 2022-06-12 22:44+0000\n"
 "PO-Revision-Date: 2022-04-30 18:19+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -5899,7 +5899,7 @@ msgstr "Мод на шырокі экран"
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Далучыць рэндэраваньне шырокага экрану ў рэжыме поўнага экрану."
 
-#: engines/myst3/myst3.cpp:365
+#: engines/myst3/myst3.cpp:363
 msgid ""
 "This version of Myst III has not been updated with the latest official "
 "patch.\n"
@@ -5912,7 +5912,7 @@ msgstr ""
 "Абновы можна заладаваць з:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 
-#: engines/myst3/myst3.cpp:1579 engines/pegasus/pegasus.cpp:744
+#: engines/myst3/myst3.cpp:1577 engines/pegasus/pegasus.cpp:744
 msgid "Invalid file name for saving"
 msgstr "Няпэўная назва файлу для захаваньня"
 
