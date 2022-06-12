@@ -157,6 +157,11 @@ public:
 	void draw(int windowIndex, int frame);
 
 	/**
+	 * Draw the sprite onto a given surface
+	 */
+	void draw(Graphics::ManagedSurface *dest, int frame, const Common::Point &destPos);
+
+	/**
 	 * Gets the size of a sprite
 	 */
 	Common::Point getFrameSize(int frame) const;

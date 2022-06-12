@@ -81,7 +81,10 @@ SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
 
 void SpriteResource::load(const Common::String &filename) {
 	_filename = filename;
-	File f(filename);
+	Common::File f;
+	if (!f.open(filename))
+		error("Could not open - %s", filename.c_str());
+
 	load(f);
 }
 
@@ -179,6 +182,18 @@ void SpriteResource::draw(XSurface &dest, int frame) {
 void SpriteResource::draw(int windowIndex, int frame) {
 	draw((*g_vm->_windows)[windowIndex], frame, Common::Point());
 }
+
+void SpriteResource::draw(Graphics::ManagedSurface *dest, int frame, const Common::Point &destPos) {
+	XSurface tmp;
+	tmp.w = dest->w;
+	tmp.h = dest->h;
+	tmp.pitch = dest->pitch;
+	tmp.format = dest->format;
+	tmp.setPixels(dest->getPixels());
+
+	draw(tmp, frame, destPos);
+}
+
 
 Common::Point SpriteResource::getFrameSize(int frame) const {
 	Common::MemoryReadStream f(_data, _filesize);

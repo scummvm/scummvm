@@ -88,6 +88,11 @@ void Events::processEvent(Common::Event &ev) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		msgAction(ActionMessage((KeybindingAction)ev.customType));
 		break;
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONUP:
+	//case Common::EVENT_MBUTTONUP:
+		msgMouseClick(MouseClickMessage(ev.type, ev.mouse));
+		break;
 	default:
 		break;
 	}

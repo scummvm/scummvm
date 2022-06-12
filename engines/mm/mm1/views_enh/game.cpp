@@ -29,7 +29,7 @@ namespace MM1 {
 namespace ViewsEnh {
 
 Game::Game() : TextView("Game"),
-		_view(this) {
+		_view(this), _commands(this) {
 	_view.setBounds(Common::Rect(8, 15, 224, 130));
 }
 

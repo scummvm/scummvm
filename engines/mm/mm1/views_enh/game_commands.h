@@ -19,33 +19,22 @@
  *
  */
 
-#ifndef MM1_VIEWS_ENH_GAME_H
-#define MM1_VIEWS_ENH_GAME_H
+#ifndef MM1_VIEWS_ENH_GAME_COMMANDS_H
+#define MM1_VIEWS_ENH_GAME_COMMANDS_H
 
-#include "mm/mm1/events.h"
-#include "mm/mm1/views/game_view.h"
-#include "mm/mm1/views_enh/game_commands.h"
+#include "mm/mm1/views_enh/button_container.h"
 
 namespace MM {
 namespace MM1 {
 namespace ViewsEnh {
 
-class Game : public Views::TextView {
-private:
-	Views::GameView _view;
-	GameCommands _commands;
+class GameCommands : public ButtonContainer {
 public:
-	Game();
-	virtual ~Game() {}
-
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	bool msgGame(const GameMessage &msg) override;
+	GameCommands(UIElement *owner);
+	virtual ~GameCommands() {}
 };
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 
