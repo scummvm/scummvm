@@ -212,6 +212,7 @@ void BYOnline::processLine(Common::String line) {
 			int type = root["type"]->asIntegerNumber();
 			Common::String message = root["message"]->asString();
 			systemAlert(type, message);
+			_vm->writeVar(747, 0);
 			disconnect(true);
 		} else if (command == "login_resp") {
 			long long int errorCode = root["error_code"]->asIntegerNumber();
@@ -551,6 +552,9 @@ void BYOnline::handleTeams(Common::JSONArray userTeam, Common::JSONArray opponen
 			warning("BYOnline: Value for opponent team index %d is not an integer!", i);
 		}
 	}
+
+	// Write a one to var747 to indicate that Prince Rupert teams should be pulled from arrays 748 and 749
+	_vm->writeVar(747, 1);
 }
 
 void BYOnline::setProfile(Common::String field, int32 value) {
@@ -647,14 +651,6 @@ void BYOnline::enterArea(int32 areaId) {
 		return;
 	}
 
-	// TODO: Also check whether our user wants to use generics and/or predefined teams here
-	if (_vm->_game.id == GID_BASEBALL2001 && areaId == 19) {
-		// var586 controls the max player ID used for a few things, including the selection of teams for Prince Rupert
-		// and as the size for initializing some arrays that we need to have length 263 to support generic players
-		// If we're in Prince Rupert and our user wants to use generic players, set it to 263
-		_vm->writeVar(586, 263);
-	}
-
 	debugC(DEBUG_BYONLINE, "BYOnline: Entering area %d", int(areaId));
 
 	Common::JSONObject enterAreaRequest;
@@ -675,14 +671,6 @@ void BYOnline::leaveArea() {
 		send(leaveAreaRequest);
 
 		_inArea = false;
-	}
-
-	// TODO: Also check whether our user wants to use generics and/or predefined teams here
-	if (_vm->_game.id == GID_BASEBALL2001) {
-		// var586 controls the max player ID used for a few things, including the selection of teams for Prince Rupert
-		// and as the size for initializing some arrays that we need to have length 263 if we want to support generic players
-		// We may have set it to 263 in Prince Rupert, let's set it back to 61 here
-		_vm->writeVar(586, 61);
 	}
 }
 
@@ -1007,12 +995,11 @@ void BYOnline::connectedToSession() {
 }
 
 void BYOnline::gameStarted(int hoster, int player, int playerNameArray) {
-	if (_vm->_game.id == GID_BASEBALL2001) {  // TODO: Also check something else to make sure we want to do all this custom team stuff
+	if (_vm->_game.id == GID_BASEBALL2001 && _vm->readVar(399) == 1 && _vm->readVar(686) == 1) {  // Only if we're online and in Prince Rupert
 		// Request teams for this client and opponent
 		Common::JSONObject getTeamsRequest;
 		getTeamsRequest.setVal("cmd", new Common::JSONValue("get_teams"));
 		getTeamsRequest.setVal("opponent_id", new Common::JSONValue((long long int)player));
-		getTeamsRequest.setVal("key", new Common::JSONValue("S1"));  // TODO: Don't hardcode this, allow the user to configure it somehow
 		send(getTeamsRequest);
 	}
 
