@@ -78,14 +78,14 @@ public:
 	bool    Seek(soff_t offset, StreamSeek origin) override;
 
 protected:
-	const uint8_t *_cbuf;
-	size_t                   _buf_sz; // hard buffer limit
-	size_t                   _len; // calculated length of stream
+	const uint8_t           *_cbuf = nullptr; // readonly buffer ptr
+	size_t                   _buf_sz = 0u; // hard buffer limit
+	size_t                   _len = 0u; // calculated length of stream
 	const StreamWorkMode     _mode;
-	size_t                   _pos; // current stream pos
+	size_t                   _pos = 0u; // current stream pos
 
 private:
-	uint8_t *_buf;
+	uint8_t                 *_buf = nullptr; // writeable buffer ptr
 };
 
 
@@ -101,11 +101,14 @@ public:
 
 	void    Close() override;
 
+	bool    CanRead() const override;
+	bool    CanWrite() const override;
+
 	size_t  Write(const void *buffer, size_t size) override;
 	int32_t WriteByte(uint8_t b) override;
 
 private:
-	std::vector<uint8_t> *_vec; // writeable vector (may be null)
+	std::vector<uint8_t> *_vec = nullptr; // writeable vector (may be null)
 };
 
 } // namespace Shared

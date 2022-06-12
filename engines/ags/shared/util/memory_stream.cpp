@@ -31,19 +31,25 @@ MemoryStream::MemoryStream(const uint8_t *cbuf, size_t buf_sz, DataEndianess str
 	, _cbuf(cbuf)
 	, _buf_sz(buf_sz)
 	, _len(buf_sz)
-	, _buf(nullptr)
 	, _mode(kStream_Read)
-	, _pos(0) {
+	, _pos(0)
+	, _buf(nullptr) {
 }
 
 MemoryStream::MemoryStream(uint8_t *buf, size_t buf_sz, StreamWorkMode mode, DataEndianess stream_endianess)
 	: DataStream(stream_endianess)
-	, _buf(buf)
+	, _cbuf(nullptr)
 	, _buf_sz(buf_sz)
 	, _len(0)
-	, _cbuf(nullptr)
 	, _mode(mode)
-	, _pos(0) {
+	, _pos(0)
+	, _buf(nullptr) {
+	if (mode == kStream_Read) {
+		_cbuf = buf;
+		_len = buf_sz;
+	} else {
+		_buf = buf;
+	}
 }
 
 void MemoryStream::Close() {
@@ -83,7 +89,7 @@ bool MemoryStream::CanWrite() const {
 }
 
 bool MemoryStream::CanSeek() const {
-	return CanRead(); // TODO: support seeking in writable stream?
+	return true;
 }
 
 size_t MemoryStream::Read(void *buffer, size_t size) {
@@ -123,20 +129,25 @@ bool MemoryStream::Seek(soff_t offset, StreamSeek origin) {
 }
 
 size_t MemoryStream::Write(const void *buffer, size_t size) {
-	if (_pos >= _buf_sz) {
+	if (!_buf || (_pos >= _buf_sz)) {
 		return 0;
 	}
 	size = MIN(size, _buf_sz - _pos);
 	memcpy(_buf + _pos, buffer, size);
 	_pos += size;
-	_len += size;
+	// will increase len if writing after eos, otherwise = overwrite at pos
+	_len = MAX(_len, _pos);
 	return size;
 }
 
 int32_t MemoryStream::WriteByte(uint8_t val) {
-	if (_pos >= _buf_sz) { return -1; }
+	if (!_buf || (_pos >= _buf_sz)) {
+		return -1;
+	}
 	*(_buf + _pos) = val;
-	_pos++; _len++;
+	_pos++;
+	// will increase len if writing after eos, otherwise = overwrite at pos
+	_len = MAX(_len, _pos);
 	return val;
 }
 
@@ -147,7 +158,7 @@ VectorStream::VectorStream(const std::vector<uint8_t> &cbuf, DataEndianess strea
 }
 
 VectorStream::VectorStream(std::vector<uint8_t> &buf, StreamWorkMode mode, DataEndianess stream_endianess)
-	: MemoryStream((mode == kStream_Read) ? &buf.front() : nullptr, buf.size(), mode, stream_endianess)
+	: MemoryStream(((mode == kStream_Read) && (buf.size() > 0)) ? &buf.front() : nullptr, buf.size(), mode, stream_endianess)
 	, _vec(&buf) {
 }
 
@@ -156,17 +167,32 @@ void VectorStream::Close() {
 	MemoryStream::Close();
 }
 
+bool VectorStream::CanRead() const {
+	return _mode == kStream_Read;
+}
+
+bool VectorStream::CanWrite() const {
+	return _mode == kStream_Write;
+}
+
 size_t VectorStream::Write(const void *buffer, size_t size) {
-	_vec->resize(_vec->size() + size);
+	if (_pos + size > _len) {
+		_vec->resize(_pos + size);
+		_len = _pos + size;
+	}
 	memcpy(_vec->data() + _pos, buffer, size);
 	_pos += size;
-	_len += size;
 	return size;
 }
 
 int32_t VectorStream::WriteByte(uint8_t val) {
-	_vec->push_back(val);
-	_pos++; _len++;
+	if (_pos == _len) {
+		_vec->push_back(val);
+		_len++;
+	} else {
+		(*_vec)[_pos] = val;
+	}
+	_pos++;
 	return val;
 }
 
