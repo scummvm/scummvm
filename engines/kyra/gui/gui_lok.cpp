@@ -188,7 +188,7 @@ GUI_LoK::GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen) : GUI_v1(vm), _vm(vm), 
 	_saveLoadNumSlots = (vm->gameFlags().lang == Common::ZH_TWN) ? 4 : 5;
 	_confMusicMenuMod = (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformMacintosh) ? 3 : 2;
 	_resetHanInput = true;
-	_inputType = (_vm->gameFlags().lang == Common::KO_KOR) ? Font::kHANGUL : Font::kASCII;
+	_inputType = (_vm->gameFlags().lang == Common::KO_KOR) ? Font::kJohab : Font::kASCII;
 	_inputState = 0;
 	memset(_backupChars, 0, sizeof(_backupChars));
 }
@@ -586,16 +586,7 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header))) {
 			Common::strlcpy(_savegameNames[i], header.description.c_str(), ARRAYSIZE(_savegameNames[0]));
 
-			// Trim long GMM save descriptions to fit our save slots
-			_screen->_charSpacing = -2;
-			int fC = _screen->getTextWidth(_savegameNames[i]);
-			while (_savegameNames[i][0] && (fC > 240)) {
-				_savegameNames[i][strlen(_savegameNames[i]) - 1] = 0;
-				fC = _screen->getTextWidth(_savegameNames[i]);
-			}
-			_screen->_charSpacing = 0;
-
-			Util::convertString_GUItoKYRA(_savegameNames[i], 35, _vm->gameFlags().lang == Common::KO_KOR ? Common::kWindows949 : Common::kDos850);
+			Util::convertString_GUItoKYRA(_savegameNames[i], ARRAYSIZE(_savegameName), _vm->gameFlags().lang == Common::KO_KOR ? Common::kJohab : Common::kDos850);
 			if (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::ZH_TWN) {
 				// Strip special characters from GMM save dialog which might get misinterpreted as SJIS
 				for (uint ii = 0; ii < strlen(_savegameNames[i]); ++ii) {
@@ -603,6 +594,15 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 						_savegameNames[i][ii] = ' ';
 				}
 			}
+
+			// Trim long GMM save descriptions to fit our save slots
+			_screen->_charSpacing = -2;
+			int fC = _screen->getTextWidth(_savegameNames[i]);
+			while (_savegameNames[i][0] && (fC > (_vm->gameFlags().lang == Common::KO_KOR ? 250 : 240))) {
+				_savegameNames[i][strlen(_savegameNames[i]) - 1] = 0;
+				fC = _screen->getTextWidth(_savegameNames[i]);
+			}
+			_screen->_charSpacing = 0;
 
 			menu.item[i].itemString = _savegameNames[i];
 			menu.item[i].enabled = true;
@@ -749,22 +749,22 @@ void GUI_LoK::updateSavegameString() {
 		Util::convertISOToDOS(oneByteInput);
 		uint16 newTwoByteChar = 0;
 
-		if (_inputType == Font::kHANGUL)
-			newTwoByteChar = Util::convertDOSToHAN(oneByteInput);
+		if (_inputType == Font::kJohab)
+			newTwoByteChar = Util::convertDOSToJohab(oneByteInput);
 
 		if (newTwoByteChar) {
 			width += 9;
 			// Even if there is no space left we may still try to modify the last character.
-			if ((length < ARRAYSIZE(_savegameName)) && (width <= 272)) {
+			if ((length < ARRAYSIZE(_savegameName)) && (width <= 266)) {
 				uint16 prevTwoByteChar = (length > 1 && (_savegameName[length - 2] & 0x80)) ? READ_BE_UINT16(&_savegameName[length - 2]) : 0;
-				Util::mergeUpdateHANChars(prevTwoByteChar, newTwoByteChar, oneByteInput, _resetHanInput);
+				Util::mergeUpdateJohabChars(prevTwoByteChar, newTwoByteChar, oneByteInput, _resetHanInput);
 				if (prevTwoByteChar) {
 					WRITE_BE_UINT16(&_savegameName[length - 2], prevTwoByteChar);
 					_savegameName[length] = _savegameName[length + 1] = 0;
 					_backupChars[_inputState++] = prevTwoByteChar;
 				}
 				// A new character will only be added if there is still space left.
-				if (newTwoByteChar && (length < ARRAYSIZE(_savegameName) - 2) && (width <= 256)) {
+				if (newTwoByteChar && (length < ARRAYSIZE(_savegameName) - 2) && (width <= 250)) {
 					WRITE_BE_UINT16(&_savegameName[length], newTwoByteChar);
 					_savegameName[length + 2] = 0;
 					_backupChars[0] = newTwoByteChar;
@@ -784,7 +784,7 @@ void GUI_LoK::updateSavegameString() {
 			}
 		} else if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE || _keyPressed.keycode == Common::KEYCODE_DELETE) {
 			_resetHanInput = true;
-			if (_inputType == Font::kHANGUL && length > 1 && _inputState > 0) {
+			if (_inputType == Font::kJohab && length > 1 && _inputState > 0) {
 				if (_inputState > 1) {
 					// We allow step-by-step "deconstruction" of the last glyph, just like the original.
 					WRITE_BE_UINT16(&_savegameName[length - 2], _backupChars[(--_inputState) - 1]);
@@ -795,7 +795,7 @@ void GUI_LoK::updateSavegameString() {
 				redrawTextfield();
 			} else if (length > 0) {
 				_savegameName[length - 1] = 0;
-				if (_inputType == Font::kHANGUL)
+				if (_inputType == Font::kJohab)
 					_inputState = checkHanInputState(_savegameName, length - 1);
 				redrawTextfield();
 			}
@@ -836,7 +836,7 @@ int GUI_LoK::saveGame(Button *button) {
 	}
 	redrawTextfield();
 
-	if (_inputType == Font::kHANGUL)
+	if (_inputType == Font::kJohab)
 		_inputState = checkHanInputState(_savegameName, strlen(_savegameName));
 
 	_screen->setFont(cf);
@@ -848,7 +848,7 @@ int GUI_LoK::saveGame(Button *button) {
 		_screen->setFont(cf);
 		processHighlights(_menu[3]);
 	}
-
+	
 	if (_cancelSubMenu) {
 		_displaySubMenu = true;
 		_cancelSubMenu = false;
@@ -858,7 +858,7 @@ int GUI_LoK::saveGame(Button *button) {
 		if (_savegameOffset == 0 && _vm->_gameToLoad == 0)
 			_vm->_gameToLoad = getNextSavegameSlot();
 		if (_vm->_gameToLoad > 0) {
-			Util::convertString_KYRAtoGUI(_savegameName, 35, _vm->gameFlags().lang == Common::KO_KOR ? Common::kWindows949 : Common::kDos850);
+			Util::convertString_KYRAtoGUI(_savegameName, ARRAYSIZE(_savegameName), _vm->gameFlags().lang == Common::KO_KOR ? Common::kJohab : Common::kDos850);
 			_vm->updatePlayTimer();
 			Graphics::Surface thumb;
 			createScreenThumbnail(thumb);

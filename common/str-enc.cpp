@@ -98,6 +98,8 @@ static const uint16 *windows949ConversionTable = 0;
 static const uint16 *windows949ReverseConversionTable = 0;
 static const uint16 *windows950ConversionTable = 0;
 static uint16 *windows950ReverseConversionTable = 0;
+static const uint16 *johabConversionTable = 0;
+static const uint16 *johabReverseConversionTable = 0;
 
 static const uint16 *loadCJKTable(File &f, int idx, size_t sz) {
 	f.seek(16 + idx * 4);
@@ -142,6 +144,7 @@ static void loadCJKTables() {
 	windows932ConversionTable = loadCJKTable(f, 0, 47 * 192);
 	windows949ConversionTable = loadCJKTable(f, 1, 0x7e * 0xb2);
 	windows950ConversionTable = loadCJKTable(f, 2, 89 * 157);
+	johabConversionTable = loadCJKTable(f, 3, 80 * 188);
 }
 
 void releaseCJKTables() {
@@ -329,6 +332,58 @@ void U32String::decodeWindows950(const char *src, uint32 len) {
 	}
 }
 
+static uint16 convertJohabToUCSReal(uint8 high, uint8 low) {
+	if (high >= 0x84 && high < 0xD4)
+		high -= 0x84;
+	else
+		return 0;
+
+	if (low >= 0x41 && low < 0x7F)
+		low -= 0x41;
+	else if (low >= 0x81 && low < 0xFF)
+		low -= (0x81 - (0x7F - 0x41));
+	else
+		return 0;
+
+	if (!johabConversionTable)
+		return 0;
+
+	uint16 idx = high * 188 + low;
+	return johabConversionTable[idx];
+}
+
+void U32String::decodeJohab(const char *src, uint32 len) {
+	ensureCapacity(len, false);
+
+	if (!cjk_tables_loaded)
+		loadCJKTables();
+
+	for (uint i = 0; i < len;) {
+		uint8 high = src[i++];
+
+		if ((high & 0x80) == 0x00) {
+			operator+=(high);
+			continue;
+		}
+
+		if (high == 0x80 || high == 0xff) {
+			operator+=(invalidCode);
+			continue;
+		}
+
+		if (i >= len) {
+			operator+=(invalidCode);
+			continue;
+		}
+
+		uint8 low = src[i++];
+		uint16 val = convertJohabToUCSReal(high, low);
+
+		operator+=(val ? val : invalidCode);
+	}
+}
+
+
 void String::encodeWindows932(const U32String &src) {
 	ensureCapacity(src.size() * 2, false);
 
@@ -492,16 +547,18 @@ void String::encodeWindows950(const U32String &src, bool transliterate) {
 	if (!windows950ReverseConversionTable && windows950ConversionTable) {
 		uint16 *rt = new uint16[0x10000]();
 
-		for (uint lowidx = 0; lowidx < 157; lowidx++) {
+		for (uint lowidx = 0; lowidx < 0xb2; lowidx++) {
 			uint8 low = 0;
-			if (lowidx < 0x3f)
-				low = 0x40 + lowidx;
+			if (lowidx < 0x1a)
+				low = 0x41 + lowidx;
+			else if (lowidx < 0x1a * 2)
+				low = 0x61 + lowidx - 0x1a;
 			else
-				low = 0xa1 + lowidx - 0x3f;
+				low = 0x81 + lowidx - 0x1a * 2;
 
-			for (uint highidx = 0; highidx < 89; highidx++) {
-				uint8 high = highidx + 0xa1;
-				uint16 unicode = windows950ConversionTable[highidx * 157 + lowidx];
+			for (uint highidx = 0; highidx < 0x7e; highidx++) {
+				uint8 high = highidx + 0x81;
+				uint16 unicode = windows949ConversionTable[highidx * 0xb2 + lowidx];
 
 				rt[unicode] = (high << 8) | low;
 			}
@@ -576,6 +633,54 @@ void String::encodeWindows950(const U32String &src, bool transliterate) {
 
 		operator+=('?');
 		continue;
+	}
+}
+
+void String::encodeJohab(const U32String &src) {
+	ensureCapacity(src.size() * 2, false);
+
+	if (!cjk_tables_loaded)
+		loadCJKTables();
+
+	if (!johabReverseConversionTable && johabConversionTable) {
+		uint16 *rt = new uint16[0x10000]();
+		for (uint lowidx = 0; lowidx < 188; lowidx++) {
+			uint8 low = 0;
+			if (lowidx < (0x7F - 0x41))
+				low = 0x41 + lowidx;
+			else
+				low = 0x81 + lowidx - (0x7F - 0x41);
+
+			for (uint highidx = 0; highidx < 80; highidx++) {
+				uint8 high = highidx + 0x84;
+				uint16 unicode = johabConversionTable[highidx * 188 + lowidx];
+				rt[unicode] = (high << 8) | low;
+			}
+		}
+		johabReverseConversionTable = rt;
+	}
+
+	for (uint i = 0; i < src.size();) {
+		uint32 point = src[i++];
+
+		if (point < 0x80) {
+			operator+=(point);
+			continue;
+		}
+
+		if (point > 0x10000 || !johabReverseConversionTable) {
+			operator+=('?');
+			continue;
+		}
+
+		uint16 rev = johabReverseConversionTable[point];
+		if (rev == 0) {
+			operator+=('?');
+			continue;
+		}
+
+		operator+=(rev >> 8);
+		operator+=(rev & 0xff);
 	}
 }
 
@@ -702,7 +807,6 @@ encodeUTF16Template(Native, WRITE_UINT16)
 // Upper bound on unicode codepoint in any single-byte encoding. Must be divisible by 0x100 and be strictly above large codepoint
 static const int kMaxCharSingleByte = 0x3000;
 
-
 static const uint16 *
 getConversionTable(CodePage page) {
 	switch (page) {
@@ -747,6 +851,7 @@ getConversionTable(CodePage page) {
 	case kWindows932:
 	case kWindows949:
 	case kWindows950:
+	case kJohab:
 		return nullptr;
 	}
 	return nullptr;
@@ -868,6 +973,9 @@ void String::encodeInternal(const U32String &src, CodePage page) {
 	case kWindows950:
 		encodeWindows950(src);
 		break;
+	case kJohab:
+		encodeJohab(src);
+		break;
 	default:
 		encodeOneByte(src, page);
 		break;
@@ -908,6 +1016,9 @@ void U32String::decodeInternal(const char *str, uint32 len, CodePage page) {
 		break;
 	case kWindows950:
 		decodeWindows950(str, len);
+		break;
+	case kJohab:
+		decodeJohab(str, len);
 		break;
 	default:
 		decodeOneByte(str, len, page);

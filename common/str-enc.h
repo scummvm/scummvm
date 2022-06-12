@@ -49,6 +49,7 @@ enum CodePage {
 	kDos850,
 	kDos862,
 	kDos866,
+	kJohab,
 	kASCII,
 
 	kLatin1 = kISO8859_1,
