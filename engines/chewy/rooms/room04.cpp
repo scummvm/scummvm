@@ -43,10 +43,11 @@ int16 Room4::comp_probe() {
 		{ 188, 101 }
 	};
 
-	static const Common::Rect consoleHotspots[] = {
-		{  99, 165, 160, 206 },
-		{ 167, 166, 211, 200 },
-		{ 218, 161, 279, 200 }
+	// This can't be static because it makes them global objects
+	const Common::Rect CONSOLE_HOTSPOTS[] = {
+		{  80, 140, 120, 175 },
+		{ 140, 140, 170, 175 },
+		{ 195, 140, 235, 175 }
 	};
 
 	cur_2_inventory();
@@ -64,7 +65,7 @@ int16 Room4::comp_probe() {
 	while (!endLoop) {
 		mouseAction();
 		if (_G(mouseLeftClick)) {
-			switch (_G(in)->findHotspot(consoleHotspots)) {
+			switch (_G(in)->findHotspot(CONSOLE_HOTSPOTS)) {
 			case 0:
 				if (curX > 0)
 					--curX;
