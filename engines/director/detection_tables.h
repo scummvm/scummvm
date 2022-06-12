@@ -685,6 +685,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "bamse2",				"Bamse: Min egen spille-rom" },
 	{ "billetrille1",		"Bille & Trille: Da fantasien slap løs" },
 	{ "billetrille2",		"Bille & Trille: Helt ude i skoven" },
+	{ "brspel",			"BR spel" },
 
 	// Dutch titles
 	{ "beestenboel",		"Beestenboel Zoölogic" },
@@ -5334,6 +5335,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Japanese release, "Zlurp", is part of the Digitalogue Future Artist Series
 	MACGAME1_l("boitearire", "", "Zlurp", "e402b347a9cf682d2154c70cfefdbf26", 115776, Common::JA_JPN, 601),
 	WINGAME1t_l("boitearire", "", "ZLURP.EXE", "cf81c34b261e9bc9e4af4dffa9298b5f", 1710871, Common::JA_JPN, 601),
+
+	WINGAME1t_l("brspel", "", "START.EXE", "8d1bfc4ea72c1892412f2ecabb96c990", 3465523, Common::DA_DNK, 650),
 
 	MACGAME1("casperact", "", "Casper Activity Center", "904cb6465321d8e1d12d2a5a29612050", 1029165, 600),
 	WINGAME1("casperact", "", "CASPER32.EXE", "a593079aecf5bd938ce75264cac24b2d", 1819279, 600),
