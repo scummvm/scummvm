@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-12 13:16+0000\n"
-"PO-Revision-Date: 2022-06-09 17:51+0000\n"
+"PO-Revision-Date: 2022-06-12 18:31+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -7920,8 +7920,6 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Schnellladen des Spielstandes #%d nicht möglich"
 
 #: engines/toon/toon.cpp:1502
-#, fuzzy
-#| msgid "Are you sure you want to quit?"
 msgid "Are you sure you want to exit?"
 msgstr "Bist du sicher, dass du das Spiel verlassen möchtest?"
 
