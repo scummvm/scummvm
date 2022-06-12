@@ -161,9 +161,9 @@ Intrinsic RegretIntrinsics[] = {
 	Item::I_unequip, // Intrinsic078()
 	Item::I_andStatus, // Intrinsic079()
 	Item::I_move, // Intrinsic07A()
-	Ultima8Engine::I_getUnkCrusaderFlag, // Intrinsic07B()
-	Ultima8Engine::I_setUnkCrusaderFlag, // Intrinsic07C()
-	Ultima8Engine::I_clrUnkCrusaderFlag, // Intrinsic07D()
+	Ultima8Engine::I_getCrusaderTeleporting, // Intrinsic07B()
+	Ultima8Engine::I_setCrusaderTeleporting, // Intrinsic07C()
+	Ultima8Engine::I_clrCrusaderTeleporting, // Intrinsic07D()
 	Actor::I_turnToward, // Intrinsic07E()
 	PaletteFaderProcess::I_fadeToBlack, // Intrinsic07F()
 	// 0080
@@ -549,9 +549,9 @@ Intrinsic RegretDemoIntrinsics[] = {
 	// 0x080
 	Item::I_andStatus,              // Intrinsic080 10b0:25cf
 	Item::I_move,                   // Intrinsic081 10b0:1575
-	Ultima8Engine::I_getUnkCrusaderFlag, // Intrinsic082 1008:0f1c
-	Ultima8Engine::I_setUnkCrusaderFlag, // Intrinsic083 1008:0f20
-	Ultima8Engine::I_clrUnkCrusaderFlag, // Intrinsic084 1008:0f16
+	Ultima8Engine::I_getCrusaderTeleporting, // Intrinsic082 1008:0f1c
+	Ultima8Engine::I_setCrusaderTeleporting, // Intrinsic083 1008:0f20
+	Ultima8Engine::I_clrCrusaderTeleporting, // Intrinsic084 1008:0f16
 	PaletteFaderProcess::I_fadeToBlack, // Intrinsic085 1418:071b
 	MainActor::I_clrKeycards,       // Intrinsic086 10f8:4443
 	MusicProcess::I_pauseMusic,     // Intrinsic087 1210:02b0
@@ -915,9 +915,9 @@ Intrinsic RegretDeIntrinsics[] = {
 	Item::I_unequip,                // Intrinsic078 10b0:2a51
 	Item::I_andStatus,              // Intrinsic079 10b0:25cf
 	Item::I_move,                   // Intrinsic07A 10b0:1575
-	Ultima8Engine::I_getUnkCrusaderFlag, // Intrinsic07B 1008:0f1c
-	Ultima8Engine::I_setUnkCrusaderFlag, // Intrinsic07C 1008:0f20
-	Ultima8Engine::I_clrUnkCrusaderFlag, // Intrinsic07D 1008:0f16
+	Ultima8Engine::I_getCrusaderTeleporting, // Intrinsic07B 1008:0f1c
+	Ultima8Engine::I_setCrusaderTeleporting, // Intrinsic07C 1008:0f20
+	Ultima8Engine::I_clrCrusaderTeleporting, // Intrinsic07D 1008:0f16
 	Actor::I_turnToward,            // Intrinsic07E 10f8:3961
 	PaletteFaderProcess::I_fadeToBlack, // Intrinsic07F 1418:071b
 	// 0x080

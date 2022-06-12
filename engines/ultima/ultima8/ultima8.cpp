@@ -131,7 +131,7 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_avatarInStasis(false), _cruStasis(false), _paintEditorItems(false), _inversion(0),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
 		_fontOverride(false), _fontAntialiasing(false), _audioMixer(0), _inverterGump(nullptr),
-	    _lerpFactor(256), _inBetweenFrame(false), _unkCrusaderFlag(false), _moveKeyFrame(0),
+	    _lerpFactor(256), _inBetweenFrame(false), _crusaderTeleporting(false), _moveKeyFrame(0),
 		_highRes(false) {
 	_instance = this;
 }
@@ -1484,7 +1484,7 @@ void Ultima8Engine::save(Common::WriteStream *ws) {
 	ws->writeByte(s);
 
 	if (GAME_IS_CRUSADER) {
-		uint8 f = (_unkCrusaderFlag ? 1 : 0);
+		uint8 f = (_crusaderTeleporting ? 1 : 0);
 		ws->writeByte(f);
 	}
 
@@ -1508,7 +1508,7 @@ bool Ultima8Engine::load(Common::ReadStream *rs, uint32 version) {
 	_avatarInStasis = (rs->readByte() != 0);
 
 	if (GAME_IS_CRUSADER) {
-		_unkCrusaderFlag  = (rs->readByte() != 0);
+		_crusaderTeleporting  = (rs->readByte() != 0);
 		_cruStasis = false;
 	}
 
@@ -1603,20 +1603,20 @@ uint32 Ultima8Engine::I_getTimeInGameHours(const uint8 * /*args*/,
 	return get_instance()->getGameTimeInSeconds() / 900;
 }
 
-uint32 Ultima8Engine::I_getUnkCrusaderFlag(const uint8 * /*args*/,
+uint32 Ultima8Engine::I_getCrusaderTeleporting(const uint8 * /*args*/,
 	unsigned int /*argsize*/) {
-	return get_instance()->isUnkCrusaderFlag() ? 1 : 0;
+	return get_instance()->isCrusaderTeleporting() ? 1 : 0;
 }
 
-uint32 Ultima8Engine::I_setUnkCrusaderFlag(const uint8 * /*args*/,
+uint32 Ultima8Engine::I_setCrusaderTeleporting(const uint8 * /*args*/,
 	unsigned int /*argsize*/) {
-	get_instance()->setUnkCrusaderFlag(true);
+	get_instance()->setCrusaderTeleporting(true);
 	return 0;
 }
 
-uint32 Ultima8Engine::I_clrUnkCrusaderFlag(const uint8 * /*args*/,
+uint32 Ultima8Engine::I_clrCrusaderTeleporting(const uint8 * /*args*/,
 	unsigned int /*argsize*/) {
-	get_instance()->setUnkCrusaderFlag(false);
+	get_instance()->setCrusaderTeleporting(false);
 	return 0;
 }
 
