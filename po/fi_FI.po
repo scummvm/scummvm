@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-12 13:16+0000\n"
-"PO-Revision-Date: 2022-06-04 18:27+0000\n"
+"PO-Revision-Date: 2022-06-12 18:37+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -5185,11 +5185,11 @@ msgstr "Pelaajan ammukset eivät vähene."
 
 #: engines/hypno/detection.cpp:281
 msgid "Unlock all levels"
-msgstr ""
+msgstr "Avaa kaikki tasot"
 
 #: engines/hypno/detection.cpp:282
 msgid "All levels will be available to play."
-msgstr ""
+msgstr "Kaikki tasot ovat pelattavissa."
 
 #: engines/hypno/detection.cpp:290
 msgid "Enable restored content"
@@ -7796,10 +7796,8 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Tallennuksen #%d pikalataus epäonnistui"
 
 #: engines/toon/toon.cpp:1502
-#, fuzzy
-#| msgid "Are you sure you want to quit?"
 msgid "Are you sure you want to exit?"
-msgstr "Haluatko varmasti lopettaa?"
+msgstr "Haluatko varmasti poistua?"
 
 #: engines/toon/toon.cpp:1906
 #, c-format
