@@ -1121,6 +1121,7 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Swedish titles
 	{ "alfons",				"Alfons Åberg ”Bara Överallt!”" },
+	{ "acneattack",			"Acne-Attack!" },
 	{ "backpacker2",		"Backpacker 2" },							// Other games listed under English
 	{ "backpackerjrdiy",	"BackPacker Junior - Do-It-Yourself" },
 	{ "ernie",				"Ernie: Broke in Bayonne" },
@@ -4413,6 +4414,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// GT Publishing, New York, ABCD-ROM series (1997)
 	WINGAME1("abclunch", "", "ABC95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1421779, 501),
+
+	WINGAME1t_l("acneattack", "", "Acne.exe", "9ec3d648c42e41cc2263d3c643d7ad1e", 1905311, Common::SE_SWE, 501),
 
 	// Installers for both platforms also use Director
 	MACGAME1("alcohol101", "", "Let\'s Party", "2d2ac01320f4c2dce8e156cda5c73fe8", 719289, 501),
