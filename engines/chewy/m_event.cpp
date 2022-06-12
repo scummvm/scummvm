@@ -30,164 +30,226 @@ namespace Chewy {
 #define PATTERN_PLAY 2
 
 void load_room_music(int16 room_nr) {
-	int16 ttp_index = -1;
-	int16 volume = _G(gameState).MusicVol;
-	if (g_engine->_sound->musicEnabled()) {
-		switch (room_nr) {
-		case 0:
-			ttp_index = 0;
-			break;
+	int16 musicIndex = -1;
+	if (!g_engine->_sound->musicEnabled())
+		return;
 
-		case 1:
-			ttp_index = 0;
-			volume -= 4;
-			break;
+	switch (room_nr) {
+	case 0:
+		musicIndex = 13;
+		break;
+	case 1:
+	case 18:
+	case 90:
+		musicIndex = 17;
+		break;
+	case 2:
+	case 88:
+		musicIndex = 43;
+		break;
+	case 3:
+	case 4:
+		musicIndex = 0;
+		break;
+	case 5:
+	case 8:
+	case 12:
+	case 86:
+		musicIndex = 14;
+		break;
+	case 6:
+		musicIndex = 1;
+		break;
+	case 7:
+	case 97:
+		musicIndex = 18;
+		break;
+	case 9:
+	case 10:
+	case 47:
+	case 87:
+		musicIndex = 20;
+		break;
+	case 11:
+		musicIndex = 19;
+		break;
+	case 13:
+		musicIndex = -1;
+		break;
+	case 14:
+		musicIndex = 19;
+		break;
+	case 15:
+	case 16:
+	case 19:
+	case 96:
+		musicIndex = 16;
+		break;
+	case 21:
+		musicIndex = 2;
+		break;
+	case 22:
+		musicIndex = 48;
+		break;
+	case 25:
+	case 26:
+		musicIndex = 11;
+		break;
+	case 27:
+	case 30:
+	case 54:
+	case 63:
+		musicIndex = 33;
+		break;
+	case 28:
+	case 29:
+		musicIndex = 47;
+		break;
+	case 31:
+	case 35:
+		musicIndex = 9;
+		break;
+	case 32:
+	case 40:
+	case 71:
+	case 89:
+	case 92:
+		musicIndex = 38;
+		break;
+	case 33:
+		musicIndex = 35;
+		break;
+	case 37:
+		musicIndex = 8;
+		break;
+	case 39:
+		musicIndex = 9;
+		break;
+	case 41:
+	case 77:
+	case 78:
+	case 83:
+	case 93:
+		musicIndex = -1;
+		break;
+	case 42:
+		musicIndex = 41;
+		break;
+	case 45:
+		musicIndex = 44;
+		break;
+	case 46:
+	case 50:
+	case 73:
+	case 74:
+		musicIndex = 21;
+		break;
+	case 48:
+		musicIndex = 22;
+		break;
+	case 49:
+		musicIndex = 3;
+		break;
+	case 51:
+	case 52:
+		musicIndex = 27;
+		break;
+	case 53:
+		musicIndex = 26;
+		break;
+	case 55:
+	case 57:
+		musicIndex = 23;
+		break;
+	case 56:
+		// TODO: Extra checks for two flags
+		//if ( (spieler.flags32 & SpielerFlags32_10) != 0 && spieler.flags33 >= 0 ) {
+		musicIndex = 52;
+		//} else {
+		//  musicIndex = 7;
+		//}
+		break;
+	case 62:
+		musicIndex = 25;
+		break;
+	case 64:
+		musicIndex = 51;
+		break;
+	case 66:
+	case 68:
+		musicIndex = 34;
+		break;
+	case 67:
+	case 69:
+	case 70:
+	case 75:
+		musicIndex = 28;
+		break;
+	case 72:
+		musicIndex = 31;
+		break;
+	case 76:
+		musicIndex = 46;
+		break;
+	case 79:
+		musicIndex = 6;
+		break;
+	case 80:
+		musicIndex = 29;
+		break;
+	case 81:
+		musicIndex = 45;
+		break;
+	case 82:
+		musicIndex = 50;
+		break;
+	case 84:
+		musicIndex = 24;
+		break;
+	case 85:
+		musicIndex = 32;
+		break;
+	case 91:
+		musicIndex = 36;
+		break;
+	case 94:
+	case 95:
+		musicIndex = 40;
+		break;
+	case 98:
+		musicIndex = 4;
+		break;
+	case 255:
+		musicIndex = 5;
+		break;
+	case 256:
+		musicIndex = 10;
+		break;
+	case 257:
+		musicIndex = 52;
+		break;
+	case 258:
+		musicIndex = 53;
+		break;
+	case 259:
+		musicIndex = 54;
+		break;
+	case 260:
+		musicIndex = 24;
+		break;
+	default:
+		musicIndex = -1;
+		_G(currentSong) = -1;
+		g_engine->_sound->stopMusic();
+		break;
+	}
 
-		case 2:
-			ttp_index = 0;
-			volume -= 3;
-			break;
-
-		case 3:
-			ttp_index = 0;
-			volume -= 6;
-			break;
-
-		case 4:
-			ttp_index = 0;
-			volume -= 7;
-			break;
-
-		case 5:
-			ttp_index = 0;
-			volume -= 2;
-			break;
-
-		case 6:
-			ttp_index = 1;
-			volume -= 5;
-			break;
-
-		case 7:
-			ttp_index = 0;
-			volume -= 1;
-			break;
-
-		case 8:
-			ttp_index = 0;
-			break;
-
-		case 9:
-			ttp_index = 0;
-			break;
-
-		case 10:
-			ttp_index = 0;
-			break;
-
-		case 11:
-			ttp_index = 1;
-			break;
-
-		case 12:
-			ttp_index = 0;
-			break;
-
-		case 13:
-			ttp_index = 0;
-			break;
-
-		case 14:
-			ttp_index = 0;
-			break;
-
-		case 15:
-			ttp_index = 0;
-			break;
-
-		case 16:
-			ttp_index = 1;
-			break;
-		case 18:
-			ttp_index = 3;
-			break;
-
-		case 21:
-			ttp_index = 2;
-			break;
-
-		case 22:
-			ttp_index = 0;
-			break;
-
-		case 25:
-		case 26:
-			ttp_index = 13;
-			break;
-
-		case 32:
-			ttp_index = 8;
-			volume -= 20;
-			break;
-
-		case 27:
-		case 28:
-		case 29:
-		case 30:
-		case 31:
-		case 33:
-		case 35:
-		case 39:
-			ttp_index = 11;
-			volume -= 10;
-			break;
-
-		case 37:
-			ttp_index = 10;
-			volume -= 10;
-			break;
-
-		case 40:
-			ttp_index = 14;
-			volume -= 10;
-			break;
-
-		case 41:
-			ttp_index = 9;
-			volume -= 10;
-			break;
-
-		case 42:
-			ttp_index = 8;
-			volume -= 10;
-			break;
-
-		case 255:
-			ttp_index = 7;
-			break;
-
-		case 256:
-			ttp_index = 12;
-			break;
-
-		default:
-			ttp_index = -1;
-			_G(currentSong) = -1;
-			g_engine->_sound->stopMusic();
-			break;
-		}
-		if (ttp_index != -1) {
-			if (volume < 0)
-				volume = 0;
-			else if (volume > _G(gameState).MusicVol)
-				volume = _G(gameState).MusicVol;
-			g_engine->_sound->setMusicVolume(volume * Audio::Mixer::kMaxChannelVolume / 120);
-			if (ttp_index != _G(currentSong)) {
-				g_engine->_sound->stopMusic();
-				_G(currentSong) = ttp_index;
-				g_engine->_sound->playMusic(ttp_index, true);
-			}
-		}
+	// The original changed the volume here,
+	// but we try to maintain a stable volume
+	if (musicIndex != _G(currentSong)) {
+		g_engine->_sound->stopMusic();
+		_G(currentSong) = musicIndex;
+		g_engine->_sound->playMusic(musicIndex, true);
 	}
 }
 
