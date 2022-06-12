@@ -34,8 +34,7 @@ void UIButton::draw(bool pressed) {
 }
 
 ButtonContainer::ButtonContainer(const Common::String &name,
-		UIElement *owner) : Views::TextView(name, owner),
-		_buttonValue(0) {
+		UIElement *owner) : Views::TextView(name, owner) {
 }
 
 void ButtonContainer::saveButtons() {
@@ -51,37 +50,34 @@ void ButtonContainer::restoreButtons() {
 	_buttons = _savedButtons.pop();
 }
 
-void ButtonContainer::addButton(const Common::Rect &bounds, int val,
+void ButtonContainer::addButton(const Common::Rect &bounds, KeybindingAction action,
 	Xeen::SpriteResource *sprites) {
-	_buttons.push_back(UIButton(this, bounds, val, _buttons.size() * 2, sprites, sprites != nullptr));
+	_buttons.push_back(UIButton(this, bounds, action, _buttons.size() * 2, sprites, sprites != nullptr));
 }
 
-void ButtonContainer::addButton(const Common::Rect &bounds, int val,
+void ButtonContainer::addButton(const Common::Rect &bounds, KeybindingAction action,
 	int frameNum, Xeen::SpriteResource *sprites) {
-	_buttons.push_back(UIButton(this, bounds, val, frameNum, sprites, sprites != nullptr));
+	_buttons.push_back(UIButton(this, bounds, action, frameNum, sprites, sprites != nullptr));
 }
 
 bool ButtonContainer::msgMouseClick(const MouseClickMessage &msg) {
-	_buttonValue = 0;
-
 	if (msg._button == MouseClickMessage::MB_LEFT) {
 		const Common::Point pt = msg._pos;
 
 		// Check whether any button is selected
 		for (uint i = 0; i < _buttons.size(); ++i) {
-			if (_buttons[i]._bounds.contains(pt) && _buttons[i]._value) {
-				_buttonValue = _buttons[i]._value;
-
+			if (_buttons[i]._bounds.contains(pt) && _buttons[i]._action != KEYBIND_NONE) {
 				// Show the button briefly depressed
 				_buttons[i].draw(true);
 				g_engine->getScreen()->update();
-				g_system->delayMillis(50);
+				g_system->delayMillis(500);
 
 				_buttons[i].draw(false);
 				g_engine->getScreen()->update();
 
 				// Trigger the button action
-				// TODO
+				KeybindingAction action = _buttons[i]._action;
+				g_events->msgAction(ActionMessage(action));
 
 				return true;
 			}

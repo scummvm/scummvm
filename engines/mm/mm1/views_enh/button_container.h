@@ -28,6 +28,7 @@
 #include "mm/xeen/sprites.h"
 #include "mm/mm1/views/text_view.h"
 #include "mm/mm1/events.h"
+#include "mm/mm1/meta_engine.h"
 
 namespace MM {
 namespace MM1 {
@@ -39,7 +40,7 @@ class UIButton {
 public:
 	Common::Rect _bounds;
 	Xeen::SpriteResource *_sprites;
-	int _value;
+	KeybindingAction _action;
 	uint _frameNum, _selectedFrame;
 	bool _draw;
 
@@ -47,16 +48,17 @@ public:
 	 * Constructor
 	 */
 	UIButton(ButtonContainer *owner, const Common::Rect &bounds,
-			int value, uint frameNum, Xeen::SpriteResource *sprites,
+			KeybindingAction action, uint frameNum, Xeen::SpriteResource *sprites,
 			bool draw) :
-			_bounds(bounds), _value(value), _frameNum(frameNum),
+			_bounds(bounds), _action(action), _frameNum(frameNum),
 			_selectedFrame(frameNum | 1), _sprites(sprites), _draw(draw) {
 	}
 
 	/**
 	 * Constructor
 	 */
-	UIButton() : _value(0), _frameNum(0), _selectedFrame(0), _sprites(nullptr), _draw(false) {
+	UIButton() : _action(KEYBIND_NONE), _frameNum(0), _selectedFrame(0),
+		_sprites(nullptr), _draw(false) {
 	}
 
 	/**
@@ -86,7 +88,6 @@ private:
 	Common::Stack< Common::Array<UIButton> > _savedButtons;
 protected:
 	Common::Array<UIButton> _buttons;
-	int _buttonValue;
 
 	bool doScroll(bool fadeIn);
 public:
@@ -101,19 +102,10 @@ public:
 
 	void restoreButtons();
 
-	void addButton(const Common::Rect &bounds, int val,
+	void addButton(const Common::Rect &bounds, KeybindingAction action,
 		Xeen::SpriteResource *sprites = nullptr);
-	void addButton(const Common::Rect &bounds, int val,
+	void addButton(const Common::Rect &bounds, KeybindingAction action,
 		int frameNum, Xeen::SpriteResource *sprites = nullptr);
-
-//	void addPartyButtons(XeenEngine *vm);
-
-	/**
-	 * Clears any currently set button value
-	 */
-	void clearEvents() {
-		_buttonValue = 0;
-	}
 
 	void draw() override;
 	bool msgMouseClick(const MouseClickMessage &msg) override;
