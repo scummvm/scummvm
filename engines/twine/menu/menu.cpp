@@ -766,8 +766,13 @@ int32 Menu::newGameClassicMenu() {
 			return 0;
 		}
 		case (int32)TextId::kNewGamePlus:
-		case (int32)TextId::kNewGame: {
 			_engine->_gameState->_endGameItems = true;
+			if (_engine->_menuOptions->newGameMenu()) {
+				return 1;
+			}
+			break;
+		case (int32)TextId::kNewGame: {
+			_engine->_gameState->_endGameItems = false;
 			if (_engine->_menuOptions->newGameMenu()) {
 				return 1;
 			}
