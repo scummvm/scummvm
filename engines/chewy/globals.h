@@ -227,7 +227,6 @@ public:
 	};
 
 	// main.cpp
-	int16 _menu_flag = 0;
 	bool _inv_disp_ok = 0;
 	int16 _txt_aus_click = 0;
 	int16 _txt_nummer = 0;

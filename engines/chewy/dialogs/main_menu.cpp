@@ -162,7 +162,6 @@ void MainMenu::animate() {
 	calcMouseText(g_events->_mousePos.x, g_events->_mousePos.y, 1);
 	_G(cur)->plot_cur();
 	_G(mouseLeftClick) = false;
-	_G(menu_flag) = 0;
 	_G(out)->setPointer(nullptr);
 	_G(out)->copyToScreen();
 

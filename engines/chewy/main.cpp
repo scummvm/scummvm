@@ -249,7 +249,6 @@ bool mainLoop(int16 mode) {
 			_G(cur)->show_cur();
 			Dialogs::Inventory::menu();
 			menuExit();
-			_G(menu_flag) = MENU_HIDE;
 			_G(menu_display) = 0;
 			_G(cur_display) = true;
 			if (_G(gameState).AkInvent == -1) {
@@ -317,7 +316,6 @@ bool mainLoop(int16 mode) {
 				_G(cur)->show_cur();
 				Dialogs::Inventory::menu();
 				menuExit();
-				_G(menu_flag) = MENU_HIDE;
 				_G(menu_display) = 0;
 				_G(cur_display) = true;
 				if (_G(gameState).AkInvent == -1) {
@@ -366,7 +364,6 @@ bool mainLoop(int16 mode) {
 				if (_G(menu_display) != 0) {
 					menuExit();
 					_G(cur)->show_cur();
-					_G(menu_flag) = MENU_HIDE;
 					_G(menu_display) = 0;
 					_G(cur_display) = true;
 					_G(cur)->move(_G(maus_old_x), _G(maus_old_y));
@@ -405,7 +402,6 @@ bool mainLoop(int16 mode) {
 
 		if (_G(menu_display) == MENU_HIDE) {
 			menuExit();
-			_G(menu_flag) = MENU_HIDE;
 			_G(menu_display) = 0;
 			_G(cur_display) = true;
 			_G(cur)->move(_G(maus_old_x), _G(maus_old_y));
@@ -577,7 +573,6 @@ void setupScreen(SetupScreenMode mode) {
 	_G(atds)->print_ats(_G(spieler_vector)[P_CHEWY].Xypos[0] + CH_HOT_X,
 	                _G(spieler_vector)[P_CHEWY].Xypos[1], _G(gameState).scrollx, _G(gameState).scrolly);
 	_G(mouseLeftClick) = false;
-	_G(menu_flag) = false;
 	if (mode == DO_SETUP) {
 		_G(out)->setPointer(nullptr);
 		switch (_G(fx_blend)) {
@@ -1579,7 +1574,6 @@ void get_user_key(int16 mode) {
 			_G(tmp_menu_item) = _G(menu_item);
 			_G(menu_item) = CUR_USE;
 			Dialogs::Inventory::menu();
-			_G(menu_flag) = MENU_HIDE;
 			_G(menu_display) = 0;
 			_G(cur_display) = true;
 			if (_G(gameState).AkInvent == -1) {
