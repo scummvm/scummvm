@@ -239,13 +239,14 @@ MODULE_OBJS := \
 	scott/decompress_text.o \
 	scott/decompress_z80.o \
 	scott/definitions.o \
-	scott/detect_game.o \
+	scott/load_game.o \
 	scott/game_info.o \
 	scott/game_specific.o \
 	scott/globals.o \
 	scott/hulk.o \
 	scott/layout_text.o \
 	scott/line_drawing.o \
+	scott/resource.o \
 	scott/restore_state.o \
 	scott/ring_buffer.o \
 	scott/saga_draw.o \
