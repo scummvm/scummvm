@@ -486,6 +486,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "edh",				"Executive Diet Helper" },
 	{ "egypt",				"Egypt: Voyage to the Land of the Pharaohs" },
 	{ "einstein",			"The Ultimate Einstein" },
+	{ "elfascd",			"ELFAs CD - 1 september 1999" },
 	{ "espanatomy",			"Anatomy & Physiology: The Unity of Form and Function" },
 	{ "explorers",			"Explorers of the New World" },
 	{ "flw",				"The Ultimate Frank Lloyd Wright: America's Architect" },
@@ -6014,6 +6015,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2("easports2000", "", "PC.EXE", 	  "c1a2e8b7e41fa204009324a9c7db1030", 2212134,
 								 "INTRO.DXR", "209cd844f714140413eb58c3a69db454", 5179191, 700),
+
+	WINGAME1t("elfascd", "", "Inledning.exe", "f8b837454677411e751f7a774f1bec14", 2427558, 700),
 
 	// Shockwave movie found on the CD Especial from Pc Pro magazine Nº1 (2000) published by Larpress, Madrid
 	SHKGAME1_l("encartaatlas2000", "Demo", "PT_EWIA.dcr", "659daa595626c56635519af2c18e2ad1", 2612035, Common::ES_ESP, 700),
