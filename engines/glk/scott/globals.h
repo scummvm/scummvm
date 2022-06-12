@@ -23,7 +23,9 @@
 #define GLK_SCOTT_GLOBALS_H
 
 #include "common/array.h"
+#include "common/str.h"
 #include "common/str-array.h"
+#include "common/hashmap.h"
 #include "glk/glk_types.h"
 #include "glk/windows.h"
 #include "glk/scott/definitions.h"
@@ -150,6 +152,10 @@ public:
 	GameInfo _fallbackGame;
 	// Include game list
 	#include "glk/scott/games.h"
+
+	// detect game
+	Common::HashMap<Common::String, int> _md5Index;
+
 public:
 	Globals();
 	~Globals();

@@ -26,7 +26,7 @@
 #include "glk/scott/scott.h"
 #include "glk/scott/command_parser.h"
 #include "glk/scott/definitions.h"
-#include "glk/scott/detect_game.h"
+#include "glk/scott/load_game.h"
 #include "glk/scott/game_info.h"
 #include "glk/scott/globals.h"
 #include "glk/scott/hulk.h"
@@ -74,19 +74,19 @@ void Scott::runGame() {
 		_G(_sys)[i] = dictpointer[i];
 	}
 
-	GameIDType gameType = detectGame(&_gameFile);
+	loadGameFile(&_gameFile);
 
-	if (gameType == SCOTTFREE)
+	if (CURRENT_GAME == SCOTTFREE)
 		loadDatabase(&_gameFile, (_options & DEBUGGING) ? 1 : 0);
 
-	if (!gameType)
+	if (!CURRENT_GAME)
 		fatal("Unsupported game!");
 
-	if (gameType != SCOTTFREE && gameType != TI994A) {
+	if (CURRENT_GAME != SCOTTFREE && CURRENT_GAME != TI994A) {
 		_options |= SPECTRUM_STYLE;
 		_splitScreen = 1;
 	} else {
-		if (gameType != TI994A)
+		if (CURRENT_GAME != TI994A)
 			_options |= TRS80_STYLE;
 		_splitScreen = 1;
 	}
@@ -118,7 +118,7 @@ void Scott::runGame() {
 
 	openTopWindow();
 
-	if (gameType == SCOTTFREE)
+	if (CURRENT_GAME == SCOTTFREE)
 		output("ScummVM support adapted from Scott Free, A Scott Adams game driver in C.\n\n");
 
 	// Check for savegame

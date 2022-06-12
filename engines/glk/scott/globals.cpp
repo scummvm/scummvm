@@ -64,6 +64,19 @@ Globals::Globals() : _sys(MAX_SYSMESS), _directions(NUMBER_OF_DIRECTIONS), _extr
 
 	Common::fill(&_counters[0], &_counters[16], 0);
 	Common::fill(&_roomSaved[0], &_roomSaved[16], 0);
+
+	_md5Index.setVal("cb7dadc9d5f8bce453b9139265e4dd7d",  0); // goldenbaton
+	_md5Index.setVal("b22d1f4d46c99ff4443d541d3fe424c1",  2); // timemachine
+	_md5Index.setVal("3a5c3f4079c1c0347f03420db8ad4596",  4); // arrowofdeath1
+	_md5Index.setVal("d3f8943c4f5f71ce00139065055a72ee",  6); // arrowofdeath2
+	_md5Index.setVal("441edd90fc7f9ff39a5eebe035a974e9",  8); // pulsar7
+	_md5Index.setVal("ed99306a2fb23bf6579068a4d74034ee", 10); // circus
+	_md5Index.setVal("5e381e83f15d77e3542be4a4cffc8e25", 12); // feasibility
+	_md5Index.setVal("b0f8676817475753f1edd7f1eeea31fb", 14); // akyrz
+	_md5Index.setVal("84d5fbb16a37e495abf09d191fd8b1a2", 16); // perseus
+	_md5Index.setVal("afde056c152de79ea20453c42a2d08af", 18); // 10indians
+	_md5Index.setVal("6c6fbbbb50032463a6ea71c6750ea1f5", 20); // waxworks11
+	_md5Index.setVal("0eec511d3cde815c73e5464ab0cdbef9" ,22); // marveladventure
 }
 
 Globals::~Globals() {
