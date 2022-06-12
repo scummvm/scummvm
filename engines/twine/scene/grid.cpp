@@ -706,15 +706,19 @@ BlockEntry Grid::getBlockEntry(int32 x, int32 y, int32 z) const {
 ShapeType Grid::worldColBrick(int32 x, int32 y, int32 z) {
 	const IVec3 &collision = updateCollisionCoordinates(x, y, z);
 
-	if (collision.x < 0 || collision.x >= SIZE_CUBE_X) {
-		return ShapeType::kNone;
-	}
-
 	if (collision.y <= -1) {
 		return ShapeType::kSolid;
 	}
 
-	if (collision.y < 0 || collision.y >= SIZE_CUBE_Y || collision.z < 0 || collision.z >= SIZE_CUBE_Z) {
+	if (collision.x < 0 || collision.x >= SIZE_CUBE_X) {
+		return ShapeType::kNone;
+	}
+
+	if (collision.y < 0 || collision.y >= SIZE_CUBE_Y) {
+		return ShapeType::kNone;
+	}
+
+	if (collision.z < 0 || collision.z >= SIZE_CUBE_Z) {
 		return ShapeType::kNone;
 	}
 
