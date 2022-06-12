@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-12 13:16+0000\n"
-"PO-Revision-Date: 2022-06-09 09:36+0000\n"
+"PO-Revision-Date: 2022-06-12 19:21+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7893,8 +7893,6 @@ msgid "Could not quick load the saved game #%d"
 msgstr "No se pudo cargar rápidamente la partida %d"
 
 #: engines/toon/toon.cpp:1502
-#, fuzzy
-#| msgid "Are you sure you want to quit?"
 msgid "Are you sure you want to exit?"
 msgstr "¿Seguro que quieres salir?"
 
