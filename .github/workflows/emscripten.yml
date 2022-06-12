@@ -1,7 +1,7 @@
-name: CI
+name: Emscripten deployment
 on:
   schedule:
-    - cron: '0 0 * * *' // at the end of every day
+    - cron: '0 0 * * *'
 jobs:
   ubuntu:
     name: Ubuntu
