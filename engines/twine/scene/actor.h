@@ -141,7 +141,7 @@ struct BonusParameter {
 class ActorStruct {
 private:
 	ShapeType _brickShape = ShapeType::kNone; // field_3
-	bool _brickCausesDamage = false;
+	bool _brickCausesDamage = false; // TODO: this is a bitmask with multiple values in the original source
 
 	EntityData _entityData;
 public:
@@ -169,7 +169,7 @@ public:
 
 	int32 _body = -1; // costumeIndex - index into bodyTable
 	BodyType _genBody = BodyType::btNormal;
-	AnimationTypes _anim = AnimationTypes::kAnimNone;
+	AnimationTypes _genAnim = AnimationTypes::kAnimNone;
 	AnimationTypes _animExtra = AnimationTypes::kStanding;
 	AnimationTypes _animExtraPtr = AnimationTypes::kAnimNone;
 	int32 _sprite = 0;

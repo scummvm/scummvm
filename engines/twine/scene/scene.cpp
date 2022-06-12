@@ -196,7 +196,7 @@ bool Scene::loadSceneLBA2() {
 		act->loadModel((int16)stream.readUint16LE(), false);
 
 		act->_genBody = (BodyType)stream.readSint16LE();
-		act->_anim = (AnimationTypes)stream.readByte();
+		act->_genAnim = (AnimationTypes)stream.readByte();
 		act->_sprite = (int16)stream.readUint16LE();
 		act->_pos.x = (int16)stream.readUint16LE();
 		act->_pos.y = (int16)stream.readUint16LE();
@@ -328,7 +328,7 @@ bool Scene::loadSceneLBA1() {
 		act->loadModel(stream.readUint16LE(), true);
 
 		act->_genBody = (BodyType)stream.readByte();
-		act->_anim = (AnimationTypes)stream.readByte();
+		act->_genAnim = (AnimationTypes)stream.readByte();
 		act->_sprite = (int16)stream.readUint16LE();
 		act->_pos.x = (int16)stream.readUint16LE();
 		act->_pos.y = (int16)stream.readUint16LE();
@@ -772,7 +772,7 @@ void Scene::checkZoneSce(int32 actorIdx) {
 				}
 				break;
 			case ZoneType::kLadder:
-				if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack && (actor->_anim == AnimationTypes::kForward || actor->_anim == AnimationTypes::kTopLadder || actor->_anim == AnimationTypes::kClimbLadder)) {
+				if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack && (actor->_genAnim == AnimationTypes::kForward || actor->_genAnim == AnimationTypes::kTopLadder || actor->_genAnim == AnimationTypes::kClimbLadder)) {
 					IVec3 destPos = _engine->_movements->rotateActor(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
 					destPos.x += actor->_processActor.x;
 					destPos.z += actor->_processActor.z;

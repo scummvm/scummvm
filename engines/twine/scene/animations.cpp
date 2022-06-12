@@ -397,12 +397,12 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTy
 		return false;
 	}
 
-	if (newAnim == actor->_anim && actor->_previousAnimIdx != -1) {
+	if (newAnim == actor->_genAnim && actor->_previousAnimIdx != -1) {
 		return true;
 	}
 
 	if (animExtra == AnimationTypes::kAnimInvalid && actor->_animType != AnimType::kAnimationAllThen) {
-		animExtra = actor->_anim;
+		animExtra = actor->_genAnim;
 	}
 
 	int32 animIndex = getBodyAnimIndex(newAnim, actorIdx);
@@ -419,7 +419,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTy
 	if (animType == AnimType::kAnimationInsert) {
 		animType = AnimType::kAnimationAllThen;
 
-		animExtra = actor->_anim;
+		animExtra = actor->_genAnim;
 
 		if (animExtra == AnimationTypes::kThrowBall || animExtra == AnimationTypes::kFall || animExtra == AnimationTypes::kLanding || animExtra == AnimationTypes::kLandingHit) {
 			animExtra = AnimationTypes::kStanding;
@@ -439,7 +439,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTy
 	}
 
 	actor->_previousAnimIdx = animIndex;
-	actor->_anim = newAnim;
+	actor->_genAnim = newAnim;
 	actor->_animExtra = animExtra;
 	actor->_animExtraPtr = _currentActorAnimExtraPtr;
 	actor->_animType = animType;
@@ -601,12 +601,12 @@ void Animations::doAnim(int32 actorIdx) {
 					if (actor->_animType == AnimType::kAnimationTypeLoop) {
 						actor->_animPosition = animData.getLoopFrame();
 					} else {
-						actor->_anim = actor->_animExtra;
-						actor->_previousAnimIdx = getBodyAnimIndex(actor->_anim, actorIdx);
+						actor->_genAnim = actor->_animExtra;
+						actor->_previousAnimIdx = getBodyAnimIndex(actor->_genAnim, actorIdx);
 
 						if (actor->_previousAnimIdx == -1) {
 							actor->_previousAnimIdx = getBodyAnimIndex(AnimationTypes::kStanding, actorIdx);
-							actor->_anim = AnimationTypes::kStanding;
+							actor->_genAnim = AnimationTypes::kStanding;
 						}
 
 						actor->_animExtraPtr = _currentActorAnimExtraPtr;
@@ -687,7 +687,7 @@ void Animations::doAnim(int32 actorIdx) {
 		processActor = processActorSave;
 
 		// process wall hit while running
-		if (_engine->_collision->_causeActorDamage && !actor->_dynamicFlags.bIsFalling && IS_HERO(_currentlyProcessedActorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward) {
+		if (_engine->_collision->_causeActorDamage && !actor->_dynamicFlags.bIsFalling && IS_HERO(_currentlyProcessedActorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_genAnim == AnimationTypes::kForward) {
 			IVec3 destPos = _engine->_movements->rotateActor(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
 
 			destPos.x += processActor.x;
@@ -716,7 +716,7 @@ void Animations::doAnim(int32 actorIdx) {
 					_engine->_collision->receptionObj();
 					processActor.y = (_engine->_collision->_collision.y * SIZE_BRICK_Y) + SIZE_BRICK_Y;
 				} else {
-					if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_anim == AnimationTypes::kForward && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
+					if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour == HeroBehaviourType::kAthletic && actor->_genAnim == AnimationTypes::kForward && _engine->_cfgfile.WallCollision) { // avoid wall hit damage
 						_engine->_extra->initSpecial(actor->_pos.x, actor->_pos.y + 1000, actor->_pos.z, ExtraSpecialType::kHitStars);
 						initAnim(AnimationTypes::kBigHit, AnimType::kAnimationAllThen, AnimationTypes::kStanding, _currentlyProcessedActorIdx);
 						_engine->_movements->_lastJoyFlag = true;
@@ -767,7 +767,7 @@ void Animations::doAnim(int32 actorIdx) {
 							y = (y + SIZE_BRICK_Y) & ~(SIZE_BRICK_Y - 1);
 							int32 fallHeight = processActor.y - y;
 
-							if (fallHeight <= (2 * SIZE_BRICK_Y) && actor->_anim == AnimationTypes::kForward) {
+							if (fallHeight <= (2 * SIZE_BRICK_Y) && actor->_genAnim == AnimationTypes::kForward) {
 								actor->_dynamicFlags.bWasWalkingBeforeFalling = 1;
 							} else {
 								initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);

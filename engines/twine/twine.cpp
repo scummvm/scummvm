@@ -972,7 +972,7 @@ bool TwinEEngine::runGameEngine() { // mainLoopInteration
 			if (brickSound == WATER_BRICK) {
 				if (IS_HERO(a)) {
 					// we are dying if we aren't using the protopack to fly over water
-					if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_anim != AnimationTypes::kForward) {
+					if (_actor->_heroBehaviour != HeroBehaviourType::kProtoPack || actor->_genAnim != AnimationTypes::kForward) {
 						if (!_actor->_cropBottomScreen) {
 							_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationSet, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 						}

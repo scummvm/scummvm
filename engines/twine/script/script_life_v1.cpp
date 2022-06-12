@@ -199,12 +199,12 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 	}
 	case kcANIM:
 		debugCN(3, kDebugLevels::kDebugScripts, "anim(");
-		engine->_scene->_currentScriptValue = (int16)ctx.actor->_anim;
+		engine->_scene->_currentScriptValue = (int16)ctx.actor->_genAnim;
 		break;
 	case kcANIM_OBJ: {
 		int32 actorIdx = ctx.stream.readByte();
 		debugCN(3, kDebugLevels::kDebugScripts, "anim_obj(%i, ", actorIdx);
-		engine->_scene->_currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->_anim;
+		engine->_scene->_currentScriptValue = (int16)engine->_scene->getActor(actorIdx)->_genAnim;
 		break;
 	}
 	case kcL_TRACK:
@@ -1759,7 +1759,7 @@ static int32 lANIM_SET(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
 	debugC(3, kDebugLevels::kDebugScripts, "LIFE::ANIM_SET(%i)", (int)animIdx);
 
-	ctx.actor->_anim = AnimationTypes::kAnimNone;
+	ctx.actor->_genAnim = AnimationTypes::kAnimNone;
 	ctx.actor->_previousAnimIdx = -1;
 	engine->_animations->initAnim(animIdx, AnimType::kAnimationTypeLoop, AnimationTypes::kStanding, ctx.actorIdx);
 

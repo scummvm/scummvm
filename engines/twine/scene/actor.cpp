@@ -125,7 +125,7 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 
 	initModelActor(bodyIdx, OWN_ACTOR_SCENE_INDEX);
 
-	sceneHero->_anim = AnimationTypes::kAnimNone;
+	sceneHero->_genAnim = AnimationTypes::kAnimNone;
 	sceneHero->_animType = AnimType::kAnimationTypeLoop;
 
 	_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, OWN_ACTOR_SCENE_INDEX);
@@ -246,7 +246,7 @@ void Actor::initActor(int16 actorIdx) {
 		actor->_animType = AnimType::kAnimationTypeLoop;
 
 		if (actor->_body != -1) {
-			_engine->_animations->initAnim(actor->_anim, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
+			_engine->_animations->initAnim(actor->_genAnim, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 		}
 
 		_engine->_movements->setActorAngleSafe(actor->_angle, actor->_angle, ANGLE_0, &actor->_move);
@@ -285,7 +285,7 @@ void Actor::hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, 
 	actor->_hitBy = actorIdx;
 
 	if (actor->_armor <= strengthOfHit) {
-		if (actor->_anim == AnimationTypes::kBigHit || actor->_anim == AnimationTypes::kHit2) {
+		if (actor->_genAnim == AnimationTypes::kBigHit || actor->_genAnim == AnimationTypes::kHit2) {
 			const int32 tmpAnimPos = actor->_animPosition;
 			if (actor->_animExtra != AnimationTypes::kStanding) {
 				_engine->_animations->processAnimActions(actorIdxAttacked);
@@ -401,15 +401,15 @@ int32 ActorMoveStruct::getRealValue(int32 time) {
 }
 
 bool ActorStruct::isAttackAnimationActive() const {
-	return _anim == AnimationTypes::kRightPunch || _anim == AnimationTypes::kLeftPunch || _anim == AnimationTypes::kKick;
+	return _genAnim == AnimationTypes::kRightPunch || _genAnim == AnimationTypes::kLeftPunch || _genAnim == AnimationTypes::kKick;
 }
 
 bool ActorStruct::isAttackWeaponAnimationActive() const {
-	return _anim == AnimationTypes::kSabreAttack || _anim == AnimationTypes::kThrowBall || _anim == AnimationTypes::kSabreUnknown;
+	return _genAnim == AnimationTypes::kSabreAttack || _genAnim == AnimationTypes::kThrowBall || _genAnim == AnimationTypes::kSabreUnknown;
 }
 
 bool ActorStruct::isJumpAnimationActive() const {
-	return _anim == AnimationTypes::kJump;
+	return _genAnim == AnimationTypes::kJump;
 }
 
 } // namespace TwinE

@@ -225,7 +225,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 			_lastJoyFlag = true;
 			actor->_angle = actor->_move.getRealAngle(_engine->_lbaTime);
 			// TODO: previousLoopActionKey must be handled properly
-			if (!_previousLoopActionKey || actor->_anim == AnimationTypes::kStanding) {
+			if (!_previousLoopActionKey || actor->_genAnim == AnimationTypes::kStanding) {
 				const int32 aggresiveMode = _engine->getRandomNumber(3);
 
 				switch (aggresiveMode) {
@@ -319,7 +319,7 @@ void Movements::processManualMovementExecution(int actorIdx) {
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-			if (actor->_anim == AnimationTypes::kStanding) {
+			if (actor->_genAnim == AnimationTypes::kStanding) {
 				_engine->_animations->initAnim(AnimationTypes::kTurnLeft, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
 				if (!actor->_dynamicFlags.bIsRotationByAnim) {
@@ -328,7 +328,7 @@ void Movements::processManualMovementExecution(int actorIdx) {
 			}
 			_lastJoyFlag = true;
 		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-			if (actor->_anim == AnimationTypes::kStanding) {
+			if (actor->_genAnim == AnimationTypes::kStanding) {
 				_engine->_animations->initAnim(AnimationTypes::kTurnRight, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
 				if (!actor->_dynamicFlags.bIsRotationByAnim) {
