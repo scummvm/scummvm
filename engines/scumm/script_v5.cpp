@@ -977,6 +977,21 @@ void ScummEngine_v5::o5_drawObject() {
 		return;
 	}
 
+	// WORKAROUND: In Indy3, the first close-up frame of Indy's reaction after drinking
+	// from the Grail is never shown; it always starts at the second step, with Indy
+	// already appearing a bit older. This is a bit unfortunate, especially if you
+	// picked up the real Grail. This was probably done as a way to unconditionally
+	// reset the animation if it's already been played, but we can just do an
+	// unconditional reset of all previous frames instead, restoring the first one.
+	if (_game.id == GID_INDY3 && _roomResource == 87 && vm.slot[_currentScript].number == 200 && obj == 899 && state == 1 && VAR(VAR_TIMER_NEXT) != 12 && _enableEnhancements) {
+		i = _numLocalObjects - 1;
+		do {
+			if (_objs[i].obj_nr)
+				putState(_objs[i].obj_nr, 0);
+		} while (--i);
+		return;
+	}
+
 	idx = getObjectIndex(obj);
 	if (idx == -1)
 		return;
