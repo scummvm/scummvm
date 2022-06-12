@@ -396,7 +396,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GlobalOptions' overlays = 'screen_center' size='750,550' shading = 'dim' resolution='x>799'>
+	<dialog name = 'GlobalOptions' overlays = 'screen_center' inset = '32' size='750,550' shading = 'dim' resolution='x>799'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
@@ -1242,7 +1242,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions' overlays = 'screen_center' size='750,550' shading = 'dim' resolution='x>799'>
+	<dialog name = 'GameOptions' overlays = 'screen_center' inset = '32' size='750,550' shading = 'dim' resolution='x>799'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
