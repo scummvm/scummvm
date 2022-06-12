@@ -776,6 +776,11 @@ void flic_cut(int16 nr) {
 		playIntroSequence();
 		break;
 
+	case FCUT_155:
+	case FCUT_160:
+		g_engine->_video->playVideo(nr, false);
+		break;
+
 	default:
 		g_engine->_video->playVideo(nr);
 		break;
