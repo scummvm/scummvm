@@ -38,7 +38,7 @@ Globals::~Globals() {
 	g_globals = nullptr;
 }
 
-bool Globals::load() {
+bool Globals::load(bool isEnhanced) {
 	// Initialise engine data for the game
 	Common::U32String errMsg;
 	if (!load_engine_data("mm1", 1, 0, errMsg)) {
@@ -54,6 +54,10 @@ bool Globals::load() {
 
 	// Load roster
 	_roster.load();
+
+	if (isEnhanced) {
+		_mainIcons.load("main.icn");
+	}
 
 	return true;
 }

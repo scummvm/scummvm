@@ -25,6 +25,7 @@
 #include "graphics/font.h"
 #include "mm/utils/bitmap_font.h"
 #include "mm/utils/strings_data.h"
+#include "mm/xeen/sprites.h"
 #include "mm/mm1/data/game_state.h"
 #include "mm/mm1/data/int_array.h"
 #include "mm/mm1/data/items.h"
@@ -47,13 +48,16 @@ public:
 	BitmapFont _font;
 	bool _heardRumor = false;
 public:
+	// Enhanced mode globals
+	Xeen::SpriteResource _mainIcons;
+public:
 	Globals();
 	virtual ~Globals();
 
 	/**
 	 * Loads data for the globals
 	 */
-	bool load();
+	bool load(bool isEnhanced);
 
 	/**
 	 * Returns a string

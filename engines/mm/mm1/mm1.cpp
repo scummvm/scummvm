@@ -61,7 +61,7 @@ Common::Error MM1Engine::run() {
 	setDebugger(new Console());
 
 	// Load globals
-	if (!_globals.load())
+	if (!_globals.load(isEnhanced()))
 		return Common::kNoError;
 
 	runGame();
@@ -84,24 +84,28 @@ void MM1Engine::setupNormal() {
 }
 
 bool MM1Engine::setupEnhanced() {
-	if (!Common::File::exists("dark.cc")) {
+	if (!Common::File::exists("xeen.cc")) {// || !Common::File::exists("dark.cc")) {
 		GUIErrorMessage(
-			"In order to run in Enhanced mode,  please copy dark.cc "
-			"from a copy of World of Xeen\n"
+			"In order to run in Enhanced mode,  please copy xeen.cc "
+			"and dark.cc from a copy of World of Xeen\n"
 			"or Dark Side of Xeen to your Might and Magic 1 game folder"
 		);
 
 		return false;
 	}
 
-	// Add the Dark Side dark.cc archive
+	// Add the Xeen cc archives
+	::MM::Xeen::CCArchive *xeenCC = new ::MM::Xeen::CCArchive(
+		"xeen.cc", "xeen", true);
+	SearchMan.add("xeen", xeenCC);
+	/*
 	::MM::Xeen::CCArchive *darkCC = new ::MM::Xeen::CCArchive(
 		"dark.cc", "dark", true);
 	SearchMan.add("dark", darkCC);
-
+	*/
 	// Load the palette
 	Common::File f;
-	if (!f.open("dark.pal"))
+	if (!f.open("mm4.pal"))
 		error("Could not load palette");
 
 	byte pal[PALETTE_SIZE];

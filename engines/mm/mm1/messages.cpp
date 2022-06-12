@@ -24,6 +24,21 @@
 namespace MM {
 namespace MM1 {
 
+MouseClickMessage::MouseClickMessage(Common::EventType type,
+		const Common::Point &pos) : Message() {
+	switch (type) {
+	case Common::EVENT_RBUTTONUP:
+		_button = MB_RIGHT;
+		break;
+	case Common::EVENT_MBUTTONUP:
+		_button = MB_MIDDLE;
+		break;
+	default:
+		_button = MB_LEFT;
+		break;
+	}
+}
+
 InfoMessage::InfoMessage() : Message(), _ynCallback(nullptr) {}
 
 InfoMessage::InfoMessage(const Common::String &str,
