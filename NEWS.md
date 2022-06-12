@@ -3,6 +3,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.7.0 (XXXX-XX-XX)
 
+ General:
+   - Reduced amount of false positives in Mass Add.
+
  Kyra:
    - Added support for the Korean version of Legend of Kyrandia 1.
 
