@@ -365,6 +365,7 @@ bool mainLoop(int16 mode) {
 			default:
 				if (_G(menu_display) != 0) {
 					menuExit();
+					_G(cur)->show_cur();
 					_G(menu_flag) = MENU_HIDE;
 					_G(menu_display) = 0;
 					_G(cur_display) = true;
