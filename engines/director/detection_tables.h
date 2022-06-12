@@ -193,6 +193,12 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "hhouse",				"Gahan Wilson's The Ultimate Haunted House" },
 	{ "hkbigfun",			"Hello Kitty Big Fun Deluxe" },
 	{ "horrortour1",		"Zeddas: Servant of Sheol" },
+	{ "hotwheelscamaro",		"Hot Wheels Computer Cars - '93 Camaro" },
+	{ "hotwheelshydro",		"Hot Wheels Computer Cars - Hydroplane" },
+	{ "hotwheelsmustang",		"Hot Wheels Computer Cars - 1996 Mustang GT" },
+	{ "hotwheelspistons",		"Hot Wheels Computer Cars - Power Pistons" },
+	{ "hotwheelsrigor",		"Hot Wheels Computer Cars - Rigor Motor" },
+	{ "hotwheelswiener",		"Hot Wheels Computer Cars - Oscar Mayer Wienermobile" },
 	{ "id4p1",     			"iD4 Mission Disk 1 - Alien Supreme Commander" },
 	{ "id4p2",      		"iD4 Mission Disk 2 - Alien Science Officer" },
 	{ "id4p3",      		"iD4 Mission Disk 3 - Warrior Alien" },
@@ -3299,6 +3305,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("horrortour2", "", "HT2.EXE", "499d8545ee2325b18d3f09fb2c0fc26e", 698029, Common::JA_JPN, 400),
 
 	WINDEMO1("hyperblade", "Demo", "HYPER.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400), // full game is not Director
+
+	WINGAME1t("hotwheelscamaro", "", "CAMARO.EXE", "564b1fa630690b74eb1e2b940df4a8c6", 1435537, 404),
+	WINGAME1t("hotwheelshydro", "", "HYDRO.EXE", "74a10424115e3f5e47b0422f31998e53", 1437147, 404),
+	WINGAME1t("hotwheelsmustang", "", "MUSTANG.EXE", "b3eb31d3d5006cbb61116a36d1fa5ada", 1434270, 404),
+	WINGAME1t("hotwheelspistons", "", "PISTONS.EXE", "357e222858329db60762765b982771b4", 1434560, 404),
+	WINGAME1t("hotwheelsrigor", "", "RIGOR.EXE", "db508eeafce0c568a6fab9254e3cfbe4", 1443043, 404),
+	WINGAME1t("hotwheelswiener", "", "WIENER.EXE", "6d0228018fb293aa6e48b2a51e273e4d", 1391592, 404),
 
 	WINGAME1("id4p1", "iD4 Mission Disk 1 - Alien Supreme Commander", "SUPREME.EXE", "629eb9a5d991a2dbe380804e8c37043a", 1664965, 400),
 	WINGAME1("id4p2", "iD4 Mission Disk 2 - Alien Science Officer", "SCIENCE.EXE", "812a4b81b70e61e547c14dbbd507b402", 1766499, 400),
