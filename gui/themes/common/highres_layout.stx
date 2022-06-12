@@ -378,7 +378,25 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GlobalOptions' overlays = 'screen' inset = '32' shading = 'dim'>
+	<dialog name = 'GlobalOptions' overlays = 'screen' inset = '32' shading = 'dim' resolution='x<800'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'TabWidget' type = 'TabWidget'/>
+			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
+				<space/>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'Apply'
+						type = 'Button'
+				/>
+				<widget name = 'Ok'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalOptions' overlays = 'screen_center' inset = '32' size='750,550' shading = 'dim' resolution='x>799'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
@@ -1209,7 +1227,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions' overlays = 'screen' inset = '32' shading = 'dim'>
+	<dialog name = 'GameOptions' overlays = 'screen' inset = '32' shading = 'dim' resolution='x<800'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
@@ -1222,6 +1240,21 @@
 				/>
 			</layout>
 		</layout>
+	</dialog>
+
+	<dialog name = 'GameOptions' overlays = 'screen_center' inset = '32' size='750,550' shading = 'dim' resolution='x>799'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'TabWidget' type = 'TabWidget'/>
+			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
+				<space/>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'Ok'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>	
 	</dialog>
 
 	<dialog name = 'GameOptions_KeyMapper' overlays = 'Dialog.GameOptions.TabWidget'>
