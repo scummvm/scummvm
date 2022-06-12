@@ -52,7 +52,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _nextHotsToAdd(nullptr), _nextHotsToRemove(nullptr),
 	  _levelId(0), _skipLevel(false), _health(0), _maxHealth(0),
 	  _playerFrameIdx(0), _playerFrameSep(0), _refreshConversation(false),
-	  _countdown(0), _timerStarted(false), _score(0), _lives(0),
+	  _countdown(0), _timerStarted(false), _score(0), _bonus(0), _lives(0),
 	  _defaultCursor(""), _defaultCursorIdx(0),  _skipDefeatVideo(false),
 	  _background(nullptr), _masks(nullptr), _musicRate(0), _skipNextVideo(false),
 	  _additionalVideo(nullptr), _ammo(0), _maxAmmo(0),
