@@ -49,6 +49,8 @@ bool Files::execute(bool isInGame) {
 
 	if (!ConfMan.getBool("original_menus")) {
 		g_engine->showGmm(isInGame);
+		_G(flags).mainMouseFlag = false;
+		_G(minfo).button = 0;
 		return 0;
 	}
 
