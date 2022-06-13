@@ -1039,6 +1039,7 @@ Common::Error BoyzEngine::saveGameStream(Common::WriteStream *stream, bool isAut
 	stream->writeUint32LE(_globalStats.friendliesEncountered);
 	stream->writeUint32LE(_globalStats.infoReceived);
 
+	stream->writeUint32LE(_flashbackMode);
 	saveSceneState(stream);
 	return Common::kNoError;
 }
@@ -1068,6 +1069,7 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_globalStats.friendliesEncountered = stream->readUint32LE();
 	_globalStats.infoReceived = stream->readUint32LE();
 
+	_flashbackMode = stream->readUint32LE();
 	loadSceneState(stream);
 	if (_unlockAllLevels) {
 		_nextLevel = "<select_t1>";

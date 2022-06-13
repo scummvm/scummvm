@@ -29,8 +29,11 @@ namespace Hypno {
 void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_checkpoint = _currentLevel;
 	_lastStats = _stats;
-	if (!_name.empty()) // if name is name, then we are testing some level
+	if (!_name.empty() && !_flashbackMode) {
+		// if name is empty or we are flashback mode,
+		// then we are testing some level
 		saveProfile(_name, int(arc->id));
+	}
 
 	if (arc->mode == "YM") {
 		assert(!arc->player.empty());
@@ -82,6 +85,11 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 	}
 	_playerFrames.clear();
 
+	if (_flashbackMode) {
+		resetStatistics();
+		_nextLevel = "<select_t1>";
+		return;
+	}
 
 	if (_health <= 0) {
 		if (_arcadeMode == "YS")

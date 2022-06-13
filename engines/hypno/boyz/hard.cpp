@@ -52,6 +52,7 @@ void BoyzEngine::runMainMenu(Code *code) {
 	resetSceneState();
 	resetStatistics();
 	_globalStats = ArcadeStats();
+	_flashbackMode = false;
 
 	Common::Event event;
 	byte *palette;
@@ -116,6 +117,8 @@ void BoyzEngine::runMainMenu(Code *code) {
 		_nextLevel = code->levelIfWin;
 	} else if (_unlockAllLevels) {
 		_nextLevel = "<select_t1>";
+		unlockAllLevels();
+		_flashbackMode = true;
 	}
 
 	assert(!_nextLevel.empty());
@@ -194,6 +197,7 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 		if (_unlockAllLevels) {
 			_nextLevel = "<select_t1>";
 			unlockAllLevels();
+			_flashbackMode = true;
 		} else
 			_nextLevel = code->levelIfWin;
 	}
@@ -330,8 +334,10 @@ void BoyzEngine::runCheckHo(Code *code) {
 }
 
 void BoyzEngine::endCredits(Code *code) {
+	_flashbackMode = true;
+	saveProfile(_name, 59);
 	showCredits();
-	_nextLevel = "<main_menu>";
+	_nextLevel = "<select_t1>";
 }
 
 void BoyzEngine::showCredits() {
