@@ -551,18 +551,16 @@ void String::encodeWindows950(const U32String &src, bool transliterate) {
 	if (!windows950ReverseConversionTable && windows950ConversionTable) {
 		uint16 *rt = new uint16[0x10000]();
 
-		for (uint lowidx = 0; lowidx < 0xb2; lowidx++) {
+		for (uint lowidx = 0; lowidx < 157; lowidx++) {
 			uint8 low = 0;
-			if (lowidx < 0x1a)
-				low = 0x41 + lowidx;
-			else if (lowidx < 0x1a * 2)
-				low = 0x61 + lowidx - 0x1a;
+			if (lowidx < 0x3f)
+				low = 0x40 + lowidx;
 			else
-				low = 0x81 + lowidx - 0x1a * 2;
+				low = 0xa1 + lowidx - 0x3f;
 
-			for (uint highidx = 0; highidx < 0x7e; highidx++) {
-				uint8 high = highidx + 0x81;
-				uint16 unicode = windows949ConversionTable[highidx * 0xb2 + lowidx];
+			for (uint highidx = 0; highidx < 89; highidx++) {
+				uint8 high = highidx + 0xa1;
+				uint16 unicode = windows950ConversionTable[highidx * 157 + lowidx];
 
 				rt[unicode] = (high << 8) | low;
 			}
