@@ -371,19 +371,11 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 
 				// Different format or partially transparent
 				if (srcFormat.bytesPerPixel == 1) {
-					assert(srcPalette != nullptr); // Catch the cases when palette is missing
-					// Get the palette color
-					col = srcPalette[*srcVal];
 					rSrc = col & 0xff;
 					gSrc = (col >> 8) & 0xff;
 					bSrc = (col >> 16) & 0xff;
 					aSrc = (col >> 24) & 0xff;
 				} else {
-					if (srcFormat.bytesPerPixel == 2)
-						col = *reinterpret_cast<const uint16 *>(srcVal);
-					else
-						col = *reinterpret_cast<const uint32 *>(srcVal);
-
 					srcFormat.colorToARGB(col, aSrc, rSrc, gSrc, bSrc);
 				}
 
