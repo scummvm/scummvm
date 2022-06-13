@@ -288,7 +288,7 @@ enum PaletteType {
 };
 
 enum {
-	kNumBuilitinTiles = 8
+	kNumBuiltinTiles = 8
 };
 
 enum DirectorCursor {

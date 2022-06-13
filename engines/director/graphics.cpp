@@ -81,7 +81,7 @@ void DirectorEngine::loadPatterns() {
 
 		for (uint y = 0; y < _builtinTiles[i]->h; y++) {
 			for (uint x = 0; x < _builtinTiles[i]->w; x++) {
-				*((byte *)_builtinTiles[i]->getBasePtr(x, y)) = pixels[y * _builtinTiles[i]->w + x];
+				*((byte *)_builtinTiles[i]->getBasePtr(x, y)) = 255 - pixels[y * _builtinTiles[i]->w + x];
 			}
 		}
 	}
