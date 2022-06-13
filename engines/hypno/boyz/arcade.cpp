@@ -429,6 +429,8 @@ char BoyzEngine::selectDirection() {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+	screen->free();
+	delete screen;
 	return 0;
 }
 
