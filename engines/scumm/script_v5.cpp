@@ -425,7 +425,7 @@ void ScummEngine_v5::o5_actorOps() {
 	// the code below just skips the extra script code.
 	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformFMTowns &&
 		vm.slot[_currentScript].number == 45 && _currentRoom == 45 &&
-		(_scriptPointer - _scriptOrgPointer == 0xA9)) {
+		(_scriptPointer - _scriptOrgPointer == 0xA9) && _enableEnhancements) {
 		_scriptPointer += 0xCF - 0xA1;
 		writeVar(32811, 0); // clear bit 43
 		return;
