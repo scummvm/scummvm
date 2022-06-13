@@ -184,7 +184,7 @@ void Room51::setup_func() {
 		}
 	} else if (_G(gameState)._personRoomNr[P_HOWARD] == 51) {
 		calc_person_look();
-		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		const int16 ch_y = _G(moveState)[P_CHEWY].Xypos[1];
 
 		int16 x, y;
 		if (ch_y < 129) {

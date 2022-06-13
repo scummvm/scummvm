@@ -37,14 +37,14 @@ void Room65::entry() {
 	_G(r65tmp_scrolly) = _G(gameState).scrolly;
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
-	_G(r65tmp_ch_x) = _G(spieler_vector)[P_CHEWY].Xypos[0];
-	_G(r65tmp_ch_y) = _G(spieler_vector)[P_CHEWY].Xypos[1];
-	_G(r65tmp_ho_x) = _G(spieler_vector)[P_HOWARD].Xypos[0];
-	_G(r65tmp_ho_y) = _G(spieler_vector)[P_HOWARD].Xypos[1];
-	_G(spieler_vector)[P_CHEWY].Xypos[0] = 10;
-	_G(spieler_vector)[P_CHEWY].Xypos[1] = 80;
-	_G(spieler_vector)[P_HOWARD].Xypos[0] = 150;
-	_G(spieler_vector)[P_HOWARD].Xypos[1] = 10;
+	_G(r65tmp_ch_x) = _G(moveState)[P_CHEWY].Xypos[0];
+	_G(r65tmp_ch_y) = _G(moveState)[P_CHEWY].Xypos[1];
+	_G(r65tmp_ho_x) = _G(moveState)[P_HOWARD].Xypos[0];
+	_G(r65tmp_ho_y) = _G(moveState)[P_HOWARD].Xypos[1];
+	_G(moveState)[P_CHEWY].Xypos[0] = 10;
+	_G(moveState)[P_CHEWY].Xypos[1] = 80;
+	_G(moveState)[P_HOWARD].Xypos[0] = 150;
+	_G(moveState)[P_HOWARD].Xypos[1] = 10;
 	if (_G(gameState).PersonDia[P_HOWARD] < 10000) {
 		_G(cur_hide_flag) = false;
 		hideCur();

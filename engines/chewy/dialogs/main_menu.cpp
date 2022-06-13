@@ -142,7 +142,7 @@ void MainMenu::animate() {
 	if (_G(ani_timer)->_timeFlag) {
 		_G(uhr)->resetTimer(0, 0);
 		_G(gameState).DelaySpeed = _G(FrameSpeed) / _G(gameState).FramesPerSecond;
-		_G(spieler_vector)->Delay = _G(gameState).DelaySpeed + _G(spz_delay)[0];
+		_G(moveState)->Delay = _G(gameState).DelaySpeed + _G(spz_delay)[0];
 		_G(FrameSpeed) = 0;
 		_G(det)->set_global_delay(_G(gameState).DelaySpeed);
 	}
@@ -189,8 +189,8 @@ void MainMenu::startGame() {
 	_G(gameState)._personRoomNr[P_CHEWY] = 0;
 	_G(room)->loadRoom(&_G(room_blk), 0, &_G(gameState));
 
-	_G(spieler_vector)[P_CHEWY].Phase = 6;
-	_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_nr)[6];
+	_G(moveState)[P_CHEWY].Phase = 6;
+	_G(moveState)[P_CHEWY].PhAnz = _G(chewy_ph_nr)[6];
 	setPersonPos(160, 80, P_CHEWY, P_RIGHT);
 	_G(fx_blend) = BLEND3;
 	_G(gameState)._personHide[P_CHEWY] = false;
@@ -238,7 +238,7 @@ void MainMenu::playGame() {
 	_G(flags).MainInput = true;
 	_G(flags).ShowAtsInvTxt = true;
 	_G(cur)->show_cur();
-	_G(spieler_vector)[P_CHEWY].Count = 0;
+	_G(moveState)[P_CHEWY].Count = 0;
 	_G(uhr)->resetTimer(0, 0);
 
 	while (!SHOULD_QUIT && !mainLoop(1)) {

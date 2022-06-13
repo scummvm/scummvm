@@ -82,7 +82,7 @@ void Room41::xit() {
 void Room41::setup_func() {
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 41) {
 		calc_person_look();
-		if (_G(spieler_vector)->Xypos[P_HOWARD] == 160) {
+		if (_G(moveState)->Xypos[P_HOWARD] == 160) {
 			goAutoXy(258, 75, P_HOWARD, ANI_GO);
 		} else {
 			goAutoXy(246, 120, P_HOWARD, ANI_GO);

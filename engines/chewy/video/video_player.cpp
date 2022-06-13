@@ -255,12 +255,12 @@ bool VideoPlayer::handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder) {
 		break;
 	case FCUT_078: {
 		// Room64::cut_sev
-		const int16 spr_nr = _G(chewy_ph)[_G(spieler_vector)[P_CHEWY].Phase * 8 + _G(spieler_vector)[P_CHEWY].PhNr];
+		const int16 spr_nr = _G(chewy_ph)[_G(moveState)[P_CHEWY].Phase * 8 + _G(moveState)[P_CHEWY].PhNr];
 		const int16 x = _G(spieler_mi)[P_CHEWY].XyzStart[0] + _G(chewy_kor)[spr_nr * 2] - scrollx;
 		const int16 y = _G(spieler_mi)[P_CHEWY].XyzStart[1] + _G(chewy_kor)[spr_nr * 2 + 1] - scrolly;
 
-		calc_zoom(_G(spieler_mi)[P_CHEWY].XyzStart[1], (int16)_G(room)->_roomInfo->_zoomFactor, (int16)_G(room)->_roomInfo->_zoomFactor, &_G(spieler_vector)[P_CHEWY]);
-		_G(out)->scale_set(_G(chewy)->image[spr_nr], x, y, _G(spieler_vector)[P_CHEWY].Xzoom, _G(spieler_vector)[P_CHEWY].Yzoom, _G(scr_width));
+		calc_zoom(_G(spieler_mi)[P_CHEWY].XyzStart[1], (int16)_G(room)->_roomInfo->_zoomFactor, (int16)_G(room)->_roomInfo->_zoomFactor, &_G(moveState)[P_CHEWY]);
+		_G(out)->scale_set(_G(chewy)->image[spr_nr], x, y, _G(moveState)[P_CHEWY].Xzoom, _G(moveState)[P_CHEWY].Yzoom, _G(scr_width));
 		}
 		break;
 	case FCUT_083:

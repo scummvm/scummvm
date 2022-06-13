@@ -126,7 +126,7 @@ int16 Room4::comp_probe() {
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(_G(menu_item));
 
-	_G(spieler_vector)[P_CHEWY]._delayCount = 0;
+	_G(moveState)[P_CHEWY]._delayCount = 0;
 	_G(mouseLeftClick) = false;
 	_G(minfo).button = 0;
 	_G(gameState)._personRoomNr[P_CHEWY] = 3;

@@ -96,7 +96,7 @@ void Room54::setup_func() {
 		calc_person_look();
 
 		if (_G(gameState).R54HowardVorne != 255) {
-			const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+			const int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
 			int16 x, y;
 			if (_G(gameState).R54HowardVorne) {
 				if (ch_x < 218) {

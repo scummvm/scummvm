@@ -162,7 +162,7 @@ void Room90::setup_func() {
 		return;
 
 	calc_person_look();
-	int xyPos = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	int xyPos = _G(moveState)[P_CHEWY].Xypos[0];
 	int destX;
 
 	if (xyPos > 400)
@@ -244,7 +244,7 @@ int Room90::getHubcaps() {
 	start_spz_wait(43, 1, false, P_CHEWY);
 	load_chewy_taf(CHEWY_ANI7);
 
-	while (_G(spieler_vector)[P_HOWARD].Xypos[0] != 176) {
+	while (_G(moveState)[P_HOWARD].Xypos[0] != 176) {
 		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}

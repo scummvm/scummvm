@@ -66,7 +66,7 @@ void Room95::xit(int16 eib_nr) {
 
 void Room95::setup_func() {
 	calc_person_look();
-	int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	int posX = _G(moveState)[P_CHEWY].Xypos[0];
 	int destX;
 	int destY = 120;
 	

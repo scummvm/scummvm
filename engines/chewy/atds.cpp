@@ -133,7 +133,7 @@ void Atdsys::init() {
 	set_handle(ATDS_TXT, INV_USE_DATA, USE_TAP_OFF, USE_TAP_MAX);
 	_G(gameState).AadSilent = 10;
 	_G(gameState).DelaySpeed = 5;
-	_G(spieler_vector)[P_CHEWY].Delay = _G(gameState).DelaySpeed;
+	_G(moveState)[P_CHEWY].Delay = _G(gameState).DelaySpeed;
 	set_delay(&_G(gameState).DelaySpeed, _G(gameState).AadSilent);
 	set_string_end_func(&atdsStringStart);
 }
@@ -673,7 +673,7 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 				if (_atdsv._vocNr != _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) {
 					_atdsv._vocNr = _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET;
 					g_engine->_sound->playSpeech(_atdsv._vocNr, false);
-					int16 vocx = _G(spieler_vector)[personId].Xypos[0] -
+					int16 vocx = _G(moveState)[personId].Xypos[0] -
 								 _G(gameState).scrollx + _G(spieler_mi)[personId].HotX;
 					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
 

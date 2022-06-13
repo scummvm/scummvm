@@ -217,7 +217,7 @@ void Room40::setup_func() {
 		calc_person_look();
 
 		int16 x, y;
-		const int16 sp_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+		const int16 sp_x = _G(moveState)[P_CHEWY].Xypos[0];
 		if (sp_x > 170 && sp_x < 255) {
 			x = 248;
 			y = 97;
@@ -231,8 +231,8 @@ void Room40::setup_func() {
 			x = 166;
 			y = 99;
 		} else {
-			x = _G(spieler_vector)[P_HOWARD].Xypos[0];
-			y = _G(spieler_vector)[P_HOWARD].Xypos[1];
+			x = _G(moveState)[P_HOWARD].Xypos[0];
+			y = _G(moveState)[P_HOWARD].Xypos[1];
 		}
 
 		goAutoXy(x, y, P_HOWARD, ANI_GO);

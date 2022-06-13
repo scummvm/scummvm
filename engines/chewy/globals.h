@@ -194,7 +194,7 @@ public:
 	Atdsys *_atds = nullptr;
 	MovClass *_mov = nullptr;
 
-	ObjMov _spieler_vector[MAX_PERSON];
+	ObjMov _moveState[MAX_PERSON];
 	SprInfo _spr_info[MAX_PROG_ANI];
 	MovInfo _spieler_mi[MAX_PERSON];
 	ObjMov _auto_mov_vector[MAX_OBJ_MOV];

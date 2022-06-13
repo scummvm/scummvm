@@ -133,7 +133,7 @@ void Room68::setup_func() {
 	calc_person_look();
 	int16 ho_y = 75;
 	int16 ni_y = 75;
-	int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
 	int16 ho_x, ni_x;
 
 	if (ch_x < 130) {
@@ -227,8 +227,8 @@ void Room68::talk_keeper() {
 	startSetAILWait(15, 1, ANI_FRONT);
 	_G(det)->set_static_ani(16, -1);
 	showCur();
-	int16 x = _G(spieler_vector)[P_CHEWY].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
-	int16 y = _G(spieler_vector)[P_CHEWY].Xypos[1] - _G(gameState).scrolly;
+	int16 x = _G(moveState)[P_CHEWY].Xypos[0] - _G(gameState).scrollx + _G(spieler_mi)[P_CHEWY].HotX;
+	int16 y = _G(moveState)[P_CHEWY].Xypos[1] - _G(gameState).scrolly;
 	_G(atds)->set_split_win(3, x, y);
 	startAdsWait(20);
 	_G(cur_hide_flag) = false;
