@@ -350,8 +350,14 @@ TrackSector diGetDirTs(DiskImage *di) {
 	return newTs;
 }
 
+/* convert to rawname */
 int diRawnameFromName(byte *rawname, const char *name) {
-	return 0;
+	int i;
+
+	memset(rawname, 0xa0, 16);
+	for (i = 0; i < 16 && name[i]; ++i)
+		rawname[i] = name[i];
+	return i;
 }
 
 DiskImage *diCreateFromData(uint8_t *data, int length) {
