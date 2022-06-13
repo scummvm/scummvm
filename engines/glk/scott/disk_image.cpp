@@ -21,6 +21,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/textconsole.h"
 #include "glk/scott/disk_image.h"
 
 namespace Glk {
@@ -287,6 +288,48 @@ int diGetTsErr(DiskImage *di, TrackSector ts) {
 }
 
 int diGetBlockNum(ImageType type, TrackSector ts) {
+	int block;
+
+	/* assertion, should never happen (indicates bad error handling elsewhere) */
+	if (!diTsIsValid(type, ts)) {
+		error("diGetBlockNum: internal error, track/sector out of range");
+	}
+
+	switch (type) {
+	case D64:
+		if (ts._track < 18) {
+			block = (ts._track - 1) * 21;
+		} else if (ts._track < 25) {
+			block = (ts._track - 18) * 19 + 17 * 21;
+		} else if (ts._track < 31) {
+			block = (ts._track - 25) * 18 + 17 * 21 + 7 * 19;
+		} else {
+			block = (ts._track - 31) * 17 + 17 * 21 + 7 * 19 + 6 * 18;
+		}
+		return block + ts._sector;
+		break;
+	case D71:
+		if (ts._track > 35) {
+			block = 683;
+			ts._track -= 35;
+		} else {
+			block = 0;
+		}
+		if (ts._track < 18) {
+			block += (ts._track - 1) * 21;
+		} else if (ts._track < 25) {
+			block += (ts._track - 18) * 19 + 17 * 21;
+		} else if (ts._track < 31) {
+			block += (ts._track - 25) * 18 + 17 * 21 + 7 * 19;
+		} else {
+			block += (ts._track - 31) * 17 + 17 * 21 + 7 * 19 + 6 * 18;
+		}
+		return block + ts._sector;
+		break;
+	case D81:
+		return (ts._track - 1) * 40 + ts._sector;
+		break;
+	}
 	return 0;
 }
 
