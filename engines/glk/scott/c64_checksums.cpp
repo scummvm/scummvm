@@ -72,12 +72,140 @@ static C64Rec g_C64Registry[] = {
 
 int decrunchC64(uint8_t **sf, size_t *extent, C64Rec entry);
 
+uint8_t *getFileNamed(uint8_t* data, int length, int* newLength, const char* name) {
+	return nullptr;
+}
+
 int mysteriousMenu(uint8_t **sf, size_t *extent, int recindex) {
-	return 0;
+	recindex = 0;
+
+	g_scott->output("This disk image contains six games. Select one.\n\n"
+					"1. The Golden Baton\n"
+					"2. The Time Machine\n"
+					"3. Arrow of Death part 1\n"
+					"4. Arrow of Death part 2\n"
+					"5. Escape from Pulsar 7\n"
+					"6. Circus");
+
+	g_scott->glk_request_char_event(_G(_bottomWindow));
+
+	event_t ev;
+	int result = 0;
+	do {
+		g_scott->glk_select(&ev);
+		if (ev.type == evtype_CharInput) {
+			if (ev.val1 >= '1' && ev.val1 <= '6') {
+				result = ev.val1 - '0';
+			} else {
+				g_scott->glk_request_char_event(_G(_bottomWindow));
+			}
+		}
+	} while (result == 0);
+
+	g_scott->glk_window_clear(_G(_bottomWindow));
+
+	const char *filename = nullptr;
+	switch (result) {
+	case 1:
+		filename = "BATON";
+		break;
+	case 2:
+		filename = "TIME MACHINE";
+		break;
+	case 3:
+		filename = "ARROW I";
+		break;
+	case 4:
+		filename = "ARROW II";
+		break;
+	case 5:
+		filename = "PULSAR 7";
+		break;
+	case 6:
+		filename = "CIRCUS";
+		break;
+	default:
+		error("mysteriousMenu: Unknown Game");
+		break;
+	}
+
+	int length;
+	uint8_t *file = getFileNamed(*sf, *extent, &length, filename);
+
+	if (file != nullptr) {
+		delete[] * sf;
+		*sf = file;
+		*extent = length;
+		C64Rec rec = g_C64Registry[recindex - 1 + result];
+		return decrunchC64(sf, extent, rec);
+	} else {
+		error("mysteriousMenu: Failed loading file %s", filename);
+		return 0;
+	}
 }
 
 int mysteriousMenu2(uint8_t **sf, size_t *extent, int recindex) {
-	return 0;
+	recindex = 6;
+
+	g_scott->output("This disk image contains five games. Select one.\n\n"
+					"1. Feasibility Experiment\n"
+					"2. The Wizard of Akyrz\n"
+					"3. Perseus and Andromeda\n"
+					"4. Ten Little Indians\n"
+					"5. Waxworks");
+
+	g_scott->glk_request_char_event(_G(_bottomWindow));
+
+	event_t ev;
+	int result = 0;
+	do {
+		g_scott->glk_select(&ev);
+		if (ev.type == evtype_CharInput) {
+			if (ev.val1 >= '1' && ev.val1 <= '5') {
+				result = ev.val1 - '0';
+			} else {
+				g_scott->glk_request_char_event(_G(_bottomWindow));
+			}
+		}
+	} while (result == 0);
+
+	g_scott->glk_window_clear(_G(_bottomWindow));
+
+	const char *filename = nullptr;
+	switch (result) {
+	case 1:
+		filename = "EXPERIMENT";
+		break;
+	case 2:
+		filename = "WIZARD OF AKYRZ";
+		break;
+	case 3:
+		filename = "PERSEUS";
+		break;
+	case 4:
+		filename = "INDIANS";
+		break;
+	case 5:
+		filename = "WAXWORKS";
+		break;
+	default:
+		error("mysteriousMenu2: Unknown Game");
+		break;
+	}
+
+	int length;
+	uint8_t *file = getFileNamed(*sf, *extent, &length, filename);
+
+	if (file != nullptr) {
+		delete[] * sf;
+		*sf = file;
+		*extent = length;
+		C64Rec rec = g_C64Registry[recindex - 1 + result];
+		return decrunchC64(sf, extent, rec);
+	} else {
+		error("mysteriousMenu2: Failed loading file %s", filename);
+		return 0;
+	}
 }
 
 int detectC64(uint8_t **sf, size_t *extent) {
