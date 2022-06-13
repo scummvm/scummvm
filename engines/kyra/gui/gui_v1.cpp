@@ -304,7 +304,6 @@ void GUI_v1::updateMenuButton(Button *button) {
 		return;
 
 	updateButton(button);
-	_screen->updateScreen();
 }
 
 void GUI_v1::updateButton(Button *button) {

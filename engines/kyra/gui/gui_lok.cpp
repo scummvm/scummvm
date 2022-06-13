@@ -848,7 +848,7 @@ int GUI_LoK::saveGame(Button *button) {
 		_screen->setFont(cf);
 		processHighlights(_menu[3]);
 	}
-	
+
 	if (_cancelSubMenu) {
 		_displaySubMenu = true;
 		_cancelSubMenu = false;

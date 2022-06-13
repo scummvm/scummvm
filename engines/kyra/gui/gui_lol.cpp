@@ -1939,8 +1939,6 @@ void GUI_LoL::processButton(Button *button) {
 	default:
 		break;
 	}
-
-	_screen->updateScreen();
 }
 
 int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWheel) {
