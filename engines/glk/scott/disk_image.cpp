@@ -333,8 +333,21 @@ int diGetBlockNum(ImageType type, TrackSector ts) {
 	return 0;
 }
 
+/* return t/s of first directory sector */
 TrackSector diGetDirTs(DiskImage *di) {
-	return TrackSector();
+	TrackSector newTs;
+	byte *p;
+
+	p = diGetTsAddr(di, di->_dir);
+	if ((di->_type == D64) || (di->_type == D71)) {
+		newTs._track = 18; /* 1541/71 ignores bam t/s link */
+		newTs._sector = 1;
+	} else {
+		newTs._track = p[0];
+		newTs._sector = p[1];
+	}
+
+	return newTs;
 }
 
 int diRawnameFromName(byte *rawname, const char *name) {
