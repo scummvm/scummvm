@@ -287,6 +287,10 @@ enum PaletteType {
 	kClutSystemWin = -101
 };
 
+enum {
+	kNumBuilitinTiles = 8
+};
+
 enum DirectorCursor {
 	kCursorMouseDown,
 	kCursorMouseUp
@@ -370,7 +374,7 @@ struct CastMemberID {
 	CastMemberID() : member(0), castLib(0) {}
 	CastMemberID(int memberID, int castLibID)
 		: member(memberID), castLib(castLibID) {}
-	
+
 	bool operator==(const CastMemberID &c) {
 		return member == c.member && castLib == c.castLib;
 	}

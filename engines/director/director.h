@@ -236,6 +236,7 @@ private:
 
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;
+	Graphics::Surface *_builtinTiles[kNumBuilitinTiles];
 
 	Common::HashMap<int, PaletteV4> _loadedPalettes;
 

@@ -947,7 +947,7 @@ struct TileStruct {
 	int w, h;
 	const byte *ptr;
 	uint size;
-} static const builtinTiles[8] = {
+} static const builtinTiles[kNumBuilitinTiles] = {
 	{ 64, 32, tile1, ARRAYSIZE(tile1) },
 	{ 16, 16, tile2, ARRAYSIZE(tile2) },
 	{ 16, 16, tile3, ARRAYSIZE(tile3) },
