@@ -74,6 +74,8 @@ void ChewyEngine::initialize() {
 	_video = new VideoPlayer();
 
 	setDebugger(new Console());
+
+	syncSoundSettings();
 }
 
 Common::Error ChewyEngine::run() {
