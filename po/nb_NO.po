@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-13 21:08+0000\n"
+"POT-Creation-Date: 2022-06-13 22:45+0000\n"
 "PO-Revision-Date: 2022-06-05 19:03+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -6496,7 +6496,7 @@ msgstr ""
 "Ufullstendig spill oppdaget. Du må kopiere spilldata fra alle CD-ene til "
 "spillet."
 
-#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:366
+#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:368
 msgid "(Autosave)"
 msgstr "(Autolagring)"
 
@@ -6542,7 +6542,7 @@ msgstr ""
 "Kan ikke avspille video i %dbpp på et system med en maksimal fargedybde på "
 "8bpp"
 
-#: engines/sci/metaengine.cpp:298
+#: engines/sci/metaengine.cpp:300
 msgid "SCI32 support not compiled in"
 msgstr "SCI32-støtte er ikke innkompilert"
 

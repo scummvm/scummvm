@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-13 21:08+0000\n"
+"POT-Creation-Date: 2022-06-13 22:45+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -6588,7 +6588,7 @@ msgstr ""
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 
-#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:366
+#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:368
 msgid "(Autosave)"
 msgstr "(Autogem)"
 
@@ -6628,7 +6628,7 @@ msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr ""
 
-#: engines/sci/metaengine.cpp:298
+#: engines/sci/metaengine.cpp:300
 #, fuzzy
 msgid "SCI32 support not compiled in"
 msgstr "Funktionaliteter som er kompileret ind:"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-13 21:08+0000\n"
+"POT-Creation-Date: 2022-06-13 22:45+0000\n"
 "PO-Revision-Date: 2022-06-10 18:28+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -6511,7 +6511,7 @@ msgstr ""
 "Jogo incompleto detectado. Você precisa copiar os arquivos de dados de todos "
 "os CDs."
 
-#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:366
+#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:368
 msgid "(Autosave)"
 msgstr "(Salvamento Automático)"
 
@@ -6557,7 +6557,7 @@ msgstr ""
 "Não é possível reproduzir vídeo de %dbpp em um sistema com profundidade de "
 "cor máxima de 8bpp"
 
-#: engines/sci/metaengine.cpp:298
+#: engines/sci/metaengine.cpp:300
 msgid "SCI32 support not compiled in"
 msgstr "O suporte a SCI32 não está compilado"
 

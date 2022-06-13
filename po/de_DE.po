@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-13 21:08+0000\n"
+"POT-Creation-Date: 2022-06-13 22:45+0000\n"
 "PO-Revision-Date: 2022-06-13 16:54+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -6557,7 +6557,7 @@ msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Unvollständiges Spiel erkannt. Du musst die Dateien aller CDs kopieren."
 
-#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:366
+#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:368
 msgid "(Autosave)"
 msgstr "(Automatisch speichern)"
 
@@ -6603,7 +6603,7 @@ msgstr ""
 "Das %d bpp-Video kann nicht auf einem System mit einer maximalen Farbtiefe "
 "von 8bpp abgespielt werden"
 
-#: engines/sci/metaengine.cpp:298
+#: engines/sci/metaengine.cpp:300
 msgid "SCI32 support not compiled in"
 msgstr "Unterstützung für SCI32 ist nicht eingebaut"
 
