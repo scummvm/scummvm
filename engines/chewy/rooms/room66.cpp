@@ -116,7 +116,7 @@ void Room66::xit(int16 eib_nr) {
 
 void Room66::setup_func() {
 	calc_person_look();
-	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int posX = _G(moveState)[P_CHEWY].Xypos[0];
 
 	int edx, esi;
 	if (posX < 30) {

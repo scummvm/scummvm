@@ -243,7 +243,7 @@ int16 Room18::calc_surimy() {
 		_G(auto_mov_vector)[SURIMY_OBJ].Delay = _G(gameState).DelaySpeed;
 		_G(auto_mov_obj)[SURIMY_OBJ].Mode = true;
 
-		if (_G(spieler_vector)[P_CHEWY].Xypos[1] < 150) {
+		if (_G(moveState)[P_CHEWY].Xypos[1] < 150) {
 			startDetailFrame(18, 1, ANI_FRONT, 8);
 
 			init_auto_obj(SURIMY_OBJ, &SURIMY_PHASEN[0][0], _G(mov_phasen)[SURIMY_OBJ].Lines, (const MovLine *)SURIMY_MPKT3);

@@ -392,7 +392,7 @@ int16 Room55::use_kammeraus() {
 void Room55::setup_func() {
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 55) {
 		calc_person_look();
-		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+		const int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
 
 		int16 x, y;
 		if (ch_x < 100) {

@@ -138,7 +138,7 @@ void Room52::kaker_platt() {
 void Room52::setup_func() {
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 52) {
 		calc_person_look();
-		const int16 y = (_G(spieler_vector)[P_CHEWY].Xypos[1] < 97) ? 44 : 87;
+		const int16 y = (_G(moveState)[P_CHEWY].Xypos[1] < 97) ? 44 : 87;
 		goAutoXy(1, y, P_HOWARD, ANI_GO);
 	}
 }

@@ -116,7 +116,7 @@ void Room71::setup_func() {
 		}
 
 	} else {
-		const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+		const int posX = _G(moveState)[P_CHEWY].Xypos[0];
 
 		int howDestX, howDestY, nicDestX, nicDestY;
 		if (posX < 40) {

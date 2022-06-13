@@ -143,7 +143,7 @@ void Room45::setup_func() {
 
 		if (_G(gameState)._personRoomNr[P_HOWARD] == 45 && _G(HowardMov) != 2) {
 			calc_person_look();
-			const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+			const int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
 
 			if (ch_x < 95) {
 				x = 18;

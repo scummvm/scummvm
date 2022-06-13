@@ -125,7 +125,7 @@ void JungleRoom::rightEntry() {
 void JungleRoom::setup_func() {
 	calc_person_look();
 
-	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int posX = _G(moveState)[P_CHEWY].Xypos[0];
 
 	int howDestX, nicDestX;
 	if (posX < 40) {
@@ -523,7 +523,7 @@ void calc_person_look() {
 	for (int16 i = 1; i < MAX_PERSON; i++) {
 		if (_G(spieler_mi)[i].Id != NO_MOV_OBJ) {
 
-			if (_G(spieler_vector)[i].Xypos[0] > _G(spieler_vector)[P_CHEWY].Xypos[0])
+			if (_G(moveState)[i].Xypos[0] > _G(moveState)[P_CHEWY].Xypos[0])
 				_G(person_end_phase)[i] = P_LEFT;
 			else
 				_G(person_end_phase)[i] = P_RIGHT;

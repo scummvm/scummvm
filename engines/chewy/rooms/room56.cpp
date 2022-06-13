@@ -410,8 +410,8 @@ void Room56::setup_func() {
 
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 56) {
 		calc_person_look();
-		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
-		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		const int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
+		const int16 ch_y = _G(moveState)[P_CHEWY].Xypos[1];
 		int16 x, y;
 		if (ch_x < 196) {
 			x = 23;

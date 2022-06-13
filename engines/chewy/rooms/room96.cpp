@@ -60,7 +60,7 @@ void Room96::setup_func() {
 	calc_person_look();
 	int destX, destY = 62;
 	
-	if (_G(spieler_vector)[P_CHEWY].Xypos[0] >= 120)
+	if (_G(moveState)[P_CHEWY].Xypos[0] >= 120)
 		destX = 121;
 	else
 		destX = 93;

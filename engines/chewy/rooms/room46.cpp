@@ -81,7 +81,7 @@ void Room46::xit() {
 void Room46::setup_func() {
 	calc_person_look();
 	int16 y = 64;
-	const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
 
 	int16 x;
 	if (ch_x > 160) {
