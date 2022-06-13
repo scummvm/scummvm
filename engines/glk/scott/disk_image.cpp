@@ -145,12 +145,103 @@ ImageFile *diOpen(DiskImage *di, byte *rawname, byte type, const char *mode) {
 	return imgFile;
 }
 
+TrackSector nextTsInChain(DiskImage* di, TrackSector ts) {
+	return TrackSector();
+}
+
 int diRead(ImageFile *imgFile, byte *buffer, int len) {
-	return 0;
+	byte *p;
+	int bytesLeft;
+	int counter = 0;
+	int err;
+
+	while (len) {
+		bytesLeft = imgFile->_buflen - imgFile->_bufptr;
+
+		err = diGetTsErr(imgFile->_diskimage, imgFile->_ts);
+		if (err) {
+			setStatus(imgFile->_diskimage, err, imgFile->_ts._track, imgFile->_ts._sector);
+			return counter;
+		}
+
+		if (bytesLeft == 0) {
+			if (imgFile->_nextts._track == 0) {
+				return counter;
+			}
+			if (((imgFile->_diskimage->_type == D64) || (imgFile->_diskimage->_type == D71)) && imgFile->_ts._track == 18 && imgFile->_ts._sector == 0) {
+				imgFile->_ts._track = 18;
+				imgFile->_ts._sector = 1;
+			} else {
+				imgFile->_ts = nextTsInChain(imgFile->_diskimage, imgFile->_ts);
+			}
+			if (imgFile->_ts._track == 0) {
+				return counter;
+			}
+
+			/* check for cyclic files */
+			if (imgFile->_visited[imgFile->_ts._track][imgFile->_ts._sector]) {
+				/* return 52, file too long error */
+				setStatus(imgFile->_diskimage, 52, imgFile->_ts._track, imgFile->_ts._sector);
+			} else {
+				imgFile->_visited[imgFile->_ts._track][imgFile->_ts._sector] = 1;
+			}
+
+			err = diGetTsErr(imgFile->_diskimage, imgFile->_ts);
+			if (err) {
+				setStatus(imgFile->_diskimage, err, imgFile->_ts._track, imgFile->_ts._sector);
+				return counter;
+			}
+
+			p = diGetTsAddr(imgFile->_diskimage, imgFile->_ts);
+			imgFile->_buffer = p + 2;
+			imgFile->_nextts._track = p[0];
+			imgFile->_nextts._sector = p[1];
+
+			if (imgFile->_nextts._track == 0) {
+				if (imgFile->_nextts._sector == 0) {
+					/* fixme, something is wrong if this happens, should be a proper error */
+					imgFile->_buflen = 0;
+					setStatus(imgFile->_diskimage, -1, imgFile->_ts._track, imgFile->_ts._sector);
+				} else {
+					imgFile->_buflen = imgFile->_nextts._sector - 1;
+				}
+			} else {
+				if (!diTsIsValid(imgFile->_diskimage->_type, imgFile->_nextts)) {
+					setStatus(imgFile->_diskimage, 66, imgFile->_nextts._track, imgFile->_nextts._sector);
+					return counter;
+				}
+				imgFile->_buflen = 254;
+			}
+			imgFile->_bufptr = 0;
+		} else {
+			if (len >= bytesLeft) {
+				while (bytesLeft) {
+					*buffer++ = imgFile->_buffer[imgFile->_bufptr++];
+					--len;
+					--bytesLeft;
+					++counter;
+					++(imgFile->_position);
+				}
+			} else {
+				while (len) {
+					*buffer++ = imgFile->_buffer[imgFile->_bufptr++];
+					--len;
+					--bytesLeft;
+					++counter;
+					++(imgFile->_position);
+				}
+			}
+		}
+	}
+	return counter;
 }
 
 byte *diGetTsAddr(DiskImage *di, TrackSector ts) {
 	return nullptr;
+}
+
+int diGetTsErr(DiskImage *di, TrackSector ts) {
+	return 0;
 }
 
 TrackSector diGetDirTs(DiskImage *di) {
