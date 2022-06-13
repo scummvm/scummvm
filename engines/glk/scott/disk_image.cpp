@@ -128,8 +128,63 @@ RawDirEntry *findFileEntry(DiskImage *di, byte *rawPattern, int type) {
 	return nullptr;
 }
 
-RawDirEntry *allocFileEntry(DiskImage* di, byte* rawName, int type) {
-	return nullptr;
+/* allocate next available directory block */
+TrackSector allocNextDirTs(DiskImage *di) {
+	return TrackSector();
+}
+
+RawDirEntry *allocFileEntry(DiskImage *di, byte *rawName, int type) {
+	byte *buffer;
+	TrackSector ts;
+	RawDirEntry *rde;
+	int offset;
+
+	/* check if file already exists */
+	ts = nextTsInChain(di, di->_bam);
+	while (ts._track) {
+		buffer = diGetTsAddr(di, ts);
+		for (offset = 0; offset < 256; offset += 32) {
+			rde = (RawDirEntry *)(buffer + offset);
+			if (rde->_type) {
+				if (scumm_strnicmp((char *)rawName, (char *)rde->_rawname, 16) == 0) {
+					setStatus(di, 63, 0, 0);
+					return nullptr;
+				}
+			}
+		}
+		ts = nextTsInChain(di, ts);
+	}
+
+	/* allocate empty slot */
+	ts = nextTsInChain(di, di->_bam);
+	while (ts._track) {
+		buffer = diGetTsAddr(di, ts);
+		for (offset = 0; offset < 256; offset += 32) {
+			rde = (RawDirEntry *)(buffer + offset);
+			if (rde->_type == 0) {
+				memset((byte *)rde + 2, 0, 30);
+				memcpy(rde->_rawname, rawName, 16);
+				rde->_type = type;
+				di->_modified = 1;
+				return rde;
+			}
+		}
+		ts = nextTsInChain(di, ts);
+	}
+
+	/* allocate new dir block */
+	ts = allocNextDirTs(di);
+	if (ts._track) {
+		rde = (RawDirEntry *)diGetTsAddr(di, ts);
+		memset((byte *)rde + 2, 0, 30);
+		memcpy(rde->_rawname, rawName, 16);
+		rde->_type = type;
+		di->_modified = 1;
+		return rde;
+	} else {
+		setStatus(di, 72, 0, 0);
+		return nullptr;
+	}
 }
 
 ImageFile *diOpen(DiskImage *di, byte *rawname, byte type, const char *mode) {
