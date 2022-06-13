@@ -661,7 +661,7 @@ static void playIntroSequence() {
 	int16 ret = 0;
 
 	_G(atds)->load_atds(98, AAD_DATA);
-
+	setupScreen(DO_SETUP);
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
 
@@ -681,7 +681,8 @@ static void playIntroSequence() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	//if (ret == -1) {
+	// Chewy says he's in big trouble
+	if (ret != -1) {
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(out)->raster_col(254, 62, 35, 7);
@@ -693,7 +694,7 @@ static void playIntroSequence() {
 		} else {
 			delay(6000);
 		}
-	//}
+	}
 
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->cls();
