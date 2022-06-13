@@ -98,6 +98,8 @@ int diRead(ImageFile *imgfile, byte *buffer, int len);
 byte *diGetTsAddr(DiskImage *di, TrackSector ts);
 int diGetTsErr(DiskImage *di, TrackSector ts);
 
+int diGetBlockNum(ImageType type, TrackSector ts);
+
 TrackSector diGetDirTs(DiskImage *di);
 
 int diRawnameFromName(byte *rawname, const char *name);

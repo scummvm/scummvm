@@ -236,11 +236,16 @@ int diRead(ImageFile *imgFile, byte *buffer, int len) {
 	return counter;
 }
 
+// get a pointer to block data 
 byte *diGetTsAddr(DiskImage *di, TrackSector ts) {
-	return nullptr;
+	return di->_image + diGetBlockNum(di->_type, ts) * 256;
 }
 
 int diGetTsErr(DiskImage *di, TrackSector ts) {
+	return 0;
+}
+
+int diGetBlockNum(ImageType type, TrackSector ts) {
 	return 0;
 }
 
