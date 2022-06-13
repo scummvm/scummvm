@@ -280,6 +280,8 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	// Disable autosave (see mirrored method in sci.h for detailed explanation)
+	int getAutosaveSlot() const override { return -1; }
 
 	// A fallback detection method. This is not ideal as all detection lives in MetaEngine, but
 	// here fb detection has many engine dependencies.
