@@ -63,7 +63,14 @@ int16 Room4::comp_probe() {
 
 	start_aad(46);
 	while (!endLoop) {
+		// WORKAROUND: The original constrained the mouse area.
+		// We don't do that in ScummVM so the below prevents
+		// potential crashes caused by the hand sprites being
+		// unloaded if the cursor is moved up too high
+		if (g_events->_mousePos.y < 135)
+			g_events->_mousePos.y = 135;
 		mouseAction();
+
 		if (_G(mouseLeftClick)) {
 			switch (_G(in)->findHotspot(CONSOLE_HOTSPOTS)) {
 			case 0:
