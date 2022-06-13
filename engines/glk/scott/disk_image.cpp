@@ -71,7 +71,33 @@ int diTsIsValid(ImageType type, TrackSector ts) {
 	return 1;
 }
 
+int matchPattern(byte *rawPattern, byte *rawname) {
+	return 0;
+}
+
+TrackSector nextTsInChain(DiskImage *di, TrackSector ts) {
+	return TrackSector();
+}
+
 RawDirEntry *findFileEntry(DiskImage *di, byte *rawPattern, int type) {
+	byte *buffer;
+	TrackSector ts;
+	RawDirEntry *rde;
+	int offset;
+
+	ts = diGetDirTs(di);
+
+	while (ts._track) {
+		buffer = diGetTsAddr(di, ts);
+		for (offset = 0; offset < 256; offset += 32) {
+			rde = (RawDirEntry *)(buffer + offset);
+			if (matchPattern(rawPattern, rde->_rawname)) {
+				return rde;
+			}
+		}
+		/* todo: add sanity checking */
+		ts = nextTsInChain(di, ts);
+	}
 	return nullptr;
 }
 
@@ -179,10 +205,6 @@ ImageFile *diOpen(DiskImage *di, byte *rawname, byte type, const char *mode) {
 	++(di->_openfiles);
 	setStatus(di, 0, 0, 0);
 	return imgFile;
-}
-
-TrackSector nextTsInChain(DiskImage* di, TrackSector ts) {
-	return TrackSector();
 }
 
 int diRead(ImageFile *imgFile, byte *buffer, int len) {
