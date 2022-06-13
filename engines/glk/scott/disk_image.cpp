@@ -94,8 +94,16 @@ int matchPattern(byte *rawPattern, byte *rawname) {
 	return 1;
 }
 
+/* return a pointer to the next block in the chain */
 TrackSector nextTsInChain(DiskImage *di, TrackSector ts) {
-	return TrackSector();
+	byte *p;
+	TrackSector newTs;
+
+	p = diGetTsAddr(di, ts);
+	newTs._track = p[0];
+	newTs._sector = p[1];
+
+	return newTs;
 }
 
 RawDirEntry *findFileEntry(DiskImage *di, byte *rawPattern, int type) {
