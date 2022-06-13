@@ -463,10 +463,14 @@ void startAadWait(int16 diaNr) {
 		g_engine->_sound->isSpeechActive()
 		)) {
 
-		if (_G(minfo).button && _G(atds)->aadGetStatus() == -1)
+		if (_G(minfo).button && _G(atds)->aadGetStatus() == -1) {
 			g_engine->_sound->stopSpeech();
+		}
 
 		setupScreen(DO_SETUP);
+
+		if (_G(atds)->aadGetStatus() != -1 && g_engine->_sound->speechEnabled() && !g_engine->_sound->isSpeechActive())
+			_G(atds)->stopAad();
 	}
 
 	_G(mouseLeftClick) = oldMouseLeftClick;
