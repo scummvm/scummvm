@@ -26,6 +26,32 @@
 namespace Glk {
 namespace Scott {
 
+/* dos errors as used by the DOS internally (and as saves in the error info) */
+struct DosError {
+	signed int _number; /* dos error number */
+	signed int _errnum; /* reported error number */
+	const char *_string;      /* description */
+};
+
+DosError g_dosError[] = {
+	/* non-errors */
+	{0x01, 0, "ok"},
+	/* errors */
+	{0x02, 20, "Header descriptor byte not found (Seek)"},
+	/*  { 0x02, 20, "Header block not found (Seek)" }, */
+	{0x03, 21, "No SYNC sequence found (Seek)"},
+	{0x04, 22, "Data descriptor byte not found (Read)"},
+	{0x05, 23, "Checksum error in data block (Read)"},
+	{0x06, 24, "Write verify (Write)"},
+	{0x07, 25, "Write verify error (Write)"},
+	{0x08, 26, "Write protect on (Write)"},
+	{0x09, 27, "Checksum error in header block (Seek)"},
+	{0x0A, 28, "Write error (Write)"},
+	{0x0B, 29, "Disk sector ID mismatch (Seek)"},
+	{0x0F, 74, "Drive Not Ready (Read)"},
+	{-1, -1, nullptr}
+};
+
 int setStatus(DiskImage* di, int status, int track, int sector) {
 	return 0;
 }
@@ -241,8 +267,23 @@ byte *diGetTsAddr(DiskImage *di, TrackSector ts) {
 	return di->_image + diGetBlockNum(di->_type, ts) * 256;
 }
 
-int diGetTsErr(DiskImage *di, TrackSector ts) {
+/* get error info for a sector */
+int getTsDosErr(DiskImage* di, TrackSector ts) {
 	return 0;
+}
+
+int diGetTsErr(DiskImage *di, TrackSector ts) {
+	int errnum;
+	DosError *err = g_dosError;
+
+	errnum = getTsDosErr(di, ts);
+	while (err->_number >= 0) {
+		if (errnum == err->_number) {
+			return err->_errnum;
+		}
+		++err;
+	}
+	return -1; /* unknown error */
 }
 
 int diGetBlockNum(ImageType type, TrackSector ts) {
