@@ -57,6 +57,7 @@ private:
 	bool Cmd_ImportRes(int argc, const char **argv);
 
 	bool Cmd_PrintDraft(int argc, const char **argv);
+	bool Cmd_PrintGrail(int argc, const char **argv);
 	bool Cmd_Passcode(int argc, const char **argv);
 
 	bool Cmd_Debug(int argc, const char **argv);
