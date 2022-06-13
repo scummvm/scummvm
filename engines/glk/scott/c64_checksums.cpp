@@ -20,10 +20,12 @@
  */
 
 #include "common/str.h"
+#include "common/scummsys.h"
 #include "glk/scott/scott.h"
 #include "glk/scott/globals.h"
 #include "glk/scott/c64_checksums.h"
 #include "glk/scott/definitions.h"
+#include "glk/scott/disk_image.h"
 
 namespace Glk {
 namespace Scott {
@@ -73,7 +75,22 @@ static C64Rec g_C64Registry[] = {
 int decrunchC64(uint8_t **sf, size_t *extent, C64Rec entry);
 
 uint8_t *getFileNamed(uint8_t* data, int length, int* newLength, const char* name) {
-	return nullptr;
+	uint8_t *file = nullptr;
+	*newLength = 0;
+	DiskImage *d64 = diCreateFromData(data, length);
+	byte rawname[100];
+	diRawnameFromName(rawname, name);
+	if (d64) {
+		ImageFile *c64file = diOpen(d64, rawname, 0xC2, "rb");
+		if (c64file) {
+			uint8_t *buf = new uint8_t[0xffff];
+			*newLength = diRead(c64file, buf, 0xffff);
+			file = new uint8_t[*newLength];
+			memcpy(file, buf, *newLength);
+			delete[] buf;
+		}
+	}
+	return file;
 }
 
 int mysteriousMenu(uint8_t **sf, size_t *extent, int recindex) {
