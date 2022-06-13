@@ -95,9 +95,14 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		if (_arcadeMode == "YS")
 			return;
 		_stats = _lastStats;
-		MVideo video(_deathDay[_currentActor], Common::Point(0, 0), false, true, false);
 		disableCursor();
-		runIntro(video);
+		if (getTerritory(_currentLevel) <= 4) {
+			MVideo video(_deathDay[_currentActor], Common::Point(0, 0), false, true, false);
+			runIntro(video);
+		} else {
+			MVideo video(_deathNight[_currentActor], Common::Point(0, 0), false, true, false);
+			runIntro(video);
+		}
 		return;
 	}
 

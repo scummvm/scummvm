@@ -694,10 +694,10 @@ void BoyzEngine::loadAssets() {
 	_deathDay[6] = "preload/deathd6s.smk";
 
 	_deathNight[0] = "";
-	_deathNight[1] = "preload/deathn2s.smk";
-	_deathNight[2] = "preload/deathn3s.smk";
-	_deathNight[3] = "preload/deathn4s.smk";
-	_deathNight[4] = "";
+	_deathNight[1] = "";
+	_deathNight[2] = "preload/deathn2s.smk";
+	_deathNight[3] = "preload/deathn3s.smk";
+	_deathNight[4] = "preload/deathn4s.smk";
 	_deathNight[5] = "";
 	_deathNight[6] = "";
 
