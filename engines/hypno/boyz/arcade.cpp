@@ -107,6 +107,8 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		Graphics::Surface *stats = decodeFrame("preload/stats.smk", territory, &palette);
 		loadPalette(palette, 0, 256);
 		drawImage(*stats, 0, 0, true);
+		stats->free();
+		delete stats;
 		uint32 enemyAvailable = _stats.targetsDestroyed + _stats.targetsMissed;
 		drawString("scifi08.fgx", Common::String::format("%d", enemyAvailable), 240, 40, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d%%", 100 * _stats.targetsDestroyed / enemyAvailable), 240, 54, 0, kHypnoColorWhiteOrBlue);
