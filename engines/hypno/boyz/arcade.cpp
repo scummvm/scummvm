@@ -417,9 +417,14 @@ char BoyzEngine::selectDirection() {
 						}
 						viewingMap = !viewingMap;
 					} else if (!viewingMap && mousePos.x <= _screenH / 2) {
+						screen->free();
+						delete screen;
 						return 'L';
-					} else if (!viewingMap)
+					} else if (!viewingMap) {
+						screen->free();
+						delete screen;
 						return 'R';
+					}
 					break;
 
 				default:
