@@ -11,7 +11,6 @@ MODULE_OBJS = \
 	events.o \
 	globals.o \
 	inits.o \
-	m_event.o \
 	main.o \
 	mouse.o \
 	mcga_graphics.o \

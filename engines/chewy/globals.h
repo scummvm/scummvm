@@ -153,7 +153,6 @@ public:
 
 	int16 _talk_start_ani = -1;
 	int16 _talk_hide_static = -1;
-	int16 _currentSong = -1;
 	bool _savegameFlag = false;
 	int _timer_action_ctr = 0;
 
@@ -530,8 +529,6 @@ void get_lr_phase(ObjMov *om, int16 obj_mode);
 void load_person_ani(int16 ani_id, int16 p_nr);
 
 void calc_person_ani();
-
-void load_room_music(int16 room_nr);
 
 } // namespace Chewy
 

@@ -213,7 +213,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			break;
 		case kChunkPlayMusic:
 			// Used in videos 0, 18, 34, 71
-			_sound->playMusic(_musicData, _musicSize, false, DisposeAfterUse::NO);
+			_sound->playMusic(_musicData, _musicSize);
 			break;
 		case kChunkPlaySeq:
 			error("Unused chunk kChunkPlaySeq found");

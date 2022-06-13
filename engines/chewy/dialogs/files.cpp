@@ -261,7 +261,6 @@ enter:
 				const int16 slotNum = text_off + active_slot;
 				for (uint j = 0; j < saveList.size(); ++j) {
 					if (saveList[j].getSaveSlot() == slotNum) {
-						_G(currentSong) = -1;
 						_G(cur)->hide_cur();
 						g_engine->loadGameState(slotNum);
 						key = Common::KEYCODE_ESCAPE;

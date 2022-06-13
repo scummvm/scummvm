@@ -122,18 +122,20 @@ void Sound::setSoundChannelBalance(uint channel, int8 balance) {
 	_mixer->setChannelBalance(_soundHandle[channel], balance);
 }
 
-void Sound::playMusic(int num, bool loop) {
+void Sound::playMusic(int16 num, bool loop) {
 	uint32 musicNum = _soundRes->getChunkCount() - 1 - num;
 	Chunk *chunk = _soundRes->getChunk(musicNum);
 	uint8 *data = _soundRes->getChunkData(musicNum);
+	_curMusic = num;
 
-	playMusic(data, chunk->size, loop);
+	playMusic(data, chunk->size);
 
 	delete[] data;
 }
 
-void Sound::playMusic(uint8 *data, uint32 size, bool loop, DisposeAfterUse::Flag dispose) {
+void Sound::playMusic(uint8 *data, uint32 size) {
 	TMFStream *stream = new TMFStream(new Common::MemoryReadStream(data, size), 0);
+	_curMusic = -1;
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
 }
@@ -147,6 +149,7 @@ void Sound::resumeMusic() {
 }
 
 void Sound::stopMusic() {
+	_curMusic = -1;
 	_mixer->stopHandle(_musicHandle);
 }
 
@@ -249,6 +252,57 @@ bool Sound::subtitlesEnabled() const {
 
 void Sound::toggleSubtitles(bool enable) {
 	return ConfMan.setBool("subtitles", enable);
+}
+
+struct RoomMusic {
+	int16 room;
+	int16 music;
+};
+
+const RoomMusic roomMusic[] = {
+	{   0, 13 }, {   1, 17 }, {  18, 17 }, {  90, 17 }, {   2, 43 },
+	{  88, 43 }, {   3,  0 }, {   4,  0 }, {   5, 14 }, {   8, 14 },
+	{  12, 14 }, {  86, 14 }, {   6,  1 }, {   7, 18 }, {  97, 18 },
+	{   9, 20 }, {  10, 20 }, {  47, 20 }, {  87, 20 }, {  11, 19 },
+	{  14, 19 }, {  15, 16 }, {  16, 16 }, {  19, 16 }, {  96, 16 },
+	{  21,  2 }, {  22, 48 }, {  25, 11 }, {  26, 11 }, {  27, 33 },
+	{  30, 33 }, {  54, 33 }, {  63, 33 }, {  28, 47 }, {  29, 47 },
+	{  31,  9 }, {  35,  9 }, {  32, 38 }, {  40, 38 }, {  71, 38 },
+	{  89, 38 }, {  92, 38 }, {  33, 35 }, {  37,  8 }, {  39,  9 },
+	{  42, 41 }, {  45, 44 }, {  46, 21 }, {  50, 21 }, {  73, 21 },
+	{  74, 21 }, {  48, 22 }, {  49,  3 }, {  51, 27 }, {  52, 27 },
+	{  53, 26 }, {  55, 23 }, {  57, 23 }, {  56, 52 }, {  62, 25 },
+	{  64, 51 }, {  66, 34 }, {  68, 34 }, {  67, 28 }, {  69, 28 },
+	{  70, 28 }, {  75, 28 }, {  72, 31 }, {  76, 46 }, {  79,  6 },
+	{  80, 29 }, {  81, 45 }, {  82, 50 }, {  84, 24 }, {  85, 32 },
+	{  91, 36 }, {  94, 40 }, {  95, 40 }, {  98,  4 }, { 255,  5 },
+	{ 256, 10 }, { 257, 52 }, { 258, 53 }, { 259, 54 }, { 260, 24 },
+	{  -1, -1 }
+};
+
+void Sound::playRoomMusic(int16 roomNum) {
+	int16 musicIndex = -1;
+	if (!musicEnabled())
+		return;
+
+	for (const RoomMusic *cur = roomMusic; cur->room >= 0; ++cur) {
+		if (cur->room == roomNum) {
+			musicIndex = cur->music;
+			break;
+		}
+	}
+	
+	// TODO: Extra checks for two flags in room 56
+	//if ((spieler.flags32 & SpielerFlags32_10) != 0 && spieler.flags33 >= 0)
+	//  musicIndex = 52;
+	//else
+	//  musicIndex = 7;
+
+	if (musicIndex != _curMusic) {
+		stopMusic();
+		if (musicIndex >= 0)
+			playMusic(musicIndex, true);
+	}
 }
 
 } // namespace Chewy

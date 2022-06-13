@@ -1830,7 +1830,6 @@ void calc_auto_go() {
 
 void hide_person() {
 	for (int16 i = 0; i < MAX_PERSON; i++) {
-
 		if (!_G(gameState)._personHide[i]) {
 			_G(gameState)._personHide[i] = true;
 			_G(person_tmp_hide)[i] = true;

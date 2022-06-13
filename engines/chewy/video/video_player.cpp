@@ -40,7 +40,6 @@ bool VideoPlayer::playVideo(uint num, bool stopMusic) {
 
 	if (stopMusic) {
 		g_engine->_sound->stopMusic();
-		_G(currentSong) = -1;
 	}
 
 	if (!cfoDecoder->loadStream(videoStream)) {

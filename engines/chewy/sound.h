@@ -54,13 +54,14 @@ public:
 	void setSoundChannelVolume(uint channel, uint volume);
 	void setSoundChannelBalance(uint channel, int8 balance);
 
-	void playMusic(int num, bool loop = false);
-	void playMusic(uint8 *data, uint32 size, bool loop = false, DisposeAfterUse::Flag dispose = DisposeAfterUse::YES);
+	void playMusic(int16 num, bool loop = false);
+	void playMusic(uint8 *data, uint32 size);
 	void pauseMusic();
 	void resumeMusic();
 	void stopMusic();
 	bool isMusicActive();
 	void setMusicVolume(uint volume);
+	void playRoomMusic(int16 roomNum);
 
 	void playSpeech(int num, bool waitForFinish);
 	void pauseSpeech();
@@ -93,6 +94,7 @@ private:
 	Audio::SoundHandle _soundHandle[MAX_SOUND_EFFECTS];
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _speechHandle;
+	int16 _curMusic = -1;
 
 	SoundResource *_speechRes;
 	SoundResource *_soundRes;

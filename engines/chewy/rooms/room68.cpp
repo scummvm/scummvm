@@ -418,8 +418,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		setPersonPos(150, -13, P_NICHELLE, P_RIGHT);
 
 		if (g_engine->_sound->subtitlesEnabled()) {
-			_G(currentSong) = -1;
-			load_room_music(_G(gameState)._personRoomNr[0]);
+			g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[0]);
 		}
 	}
 	showCur();
