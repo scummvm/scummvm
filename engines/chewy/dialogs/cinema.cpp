@@ -55,7 +55,7 @@ void Cinema::execute() {
 
 	_G(fontMgr)->setFont(_G(font6));
 
-	_G(room)->load_tgp(4, &_G(room_blk), 1, 0, GBOOK);
+	_G(room)->load_tgp(4, &_G(room_blk), 1, false, GBOOK);
 	showCur();
 	EVENTS_CLEAR;
 	g_events->_kbInfo._scanCode = 0;

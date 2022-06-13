@@ -37,7 +37,6 @@ extern const int16 SURIMY_TAF19_PHASES[4][2];
 #define MAX_ABLAGE 4
 
 #define ABLAGE_BLOCK_SIZE 64000l
-#define GED_LOAD 1
 
 class JungleRoom {
 protected:
@@ -79,7 +78,7 @@ public:
 	~Room();
 
 	void loadRoom(RaumBlk *Rb, int16 room_nr, GameState *player);
-	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName);
+	int16 load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, bool loadBarriers, const char *fileName);
 	byte *get_ablage(int16 nr);
 	byte **get_ablage();
 	void set_timer_start(int16 timer_start);
