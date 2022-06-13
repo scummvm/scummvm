@@ -4,8 +4,14 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
 #### 2.7.0 (DD.MM.YYYY)
 
+ Allgemein:
+   - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
+
  Kyra:
    - Unterstützung für die koreanische Version von Legend of Kyrandia 1 hinzugefügt.
+
+ Toon:
+   - Die Spiel-Menüs verhalten sich nun wie das Original.
 
 
 #### 2.6.0 (DD.MM.YYYY)
