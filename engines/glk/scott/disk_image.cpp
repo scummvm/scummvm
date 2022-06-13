@@ -72,7 +72,26 @@ int diTsIsValid(ImageType type, TrackSector ts) {
 }
 
 int matchPattern(byte *rawPattern, byte *rawname) {
-	return 0;
+	int i;
+
+	for (i = 0; i < 16; ++i) {
+		if (rawPattern[i] == '*') {
+			return 1;
+		}
+		if (rawname[i] == 0xa0) {
+			if (rawPattern[i] == 0xa0) {
+				return 1;
+			} else {
+				return 0;
+			}
+		} else {
+			if (rawPattern[i] == '?' || rawPattern[i] == rawname[i]) {
+			} else {
+				return 0;
+			}
+		}
+	}
+	return 1;
 }
 
 TrackSector nextTsInChain(DiskImage *di, TrackSector ts) {
