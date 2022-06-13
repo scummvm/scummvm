@@ -95,6 +95,10 @@ struct ImageFile {
 ImageFile *diOpen(DiskImage *di, byte *rawname, byte type, const char *mode);
 int diRead(ImageFile *imgfile, byte *buffer, int len);
 
+byte *diGetTsAddr(DiskImage *di, TrackSector ts);
+
+TrackSector diGetDirTs(DiskImage *di);
+
 int diRawnameFromName(byte *rawname, const char *name);
 
 DiskImage *diCreateFromData(uint8_t *data, int length);
