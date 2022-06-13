@@ -183,6 +183,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 	for (uint32 i = 0; i < chunkCount; ++i) {
 		uint32 frameSize = _fileStream->readUint32LE();
 		uint16 frameType = _fileStream->readUint16LE();
+		uint16 musicLoops = 0;
 
 		switch (frameType) {
 		case kChunkFadeIn:
@@ -235,7 +236,9 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 				while (g_system->getEventManager()->pollEvent(event)) {}	// ignore events
 				g_system->updateScreen();
 				g_system->delayMillis(10);
-			} while (_sound->isMusicActive());
+				// Await 100 loops (about 1 sec)
+				musicLoops++;
+			} while (_sound->isMusicActive() && musicLoops < 100);
 			break;
 		case kChunkSetMusicVolume:
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
