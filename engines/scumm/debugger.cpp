@@ -82,7 +82,8 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 
 	if (_vm->_game.id == GID_LOOM)
 		registerCmd("drafts",  WRAP_METHOD(ScummDebugger, Cmd_PrintDraft));
-
+	if (_vm->_game.id == GID_INDY3)
+		registerCmd("grail",  WRAP_METHOD(ScummDebugger, Cmd_PrintGrail));
 	if (_vm->_game.id == GID_MONKEY && _vm->_game.platform == Common::kPlatformSegaCD)
 		registerCmd("passcode",  WRAP_METHOD(ScummDebugger, Cmd_Passcode));
 
@@ -1000,6 +1001,28 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 			(draft & 0x2000) ? 'K' : ' ',
 			(draft & 0x4000) ? 'U' : ' ');
 	}
+
+	return true;
+}
+
+bool ScummDebugger::Cmd_PrintGrail(int argc, const char **argv) {
+	if (_vm->_game.id != GID_INDY3) {
+		debugPrintf("Command only works with Indy3\n");
+		return true;
+	}
+
+	if (_vm->_currentRoom != 86) {
+		debugPrintf("Command only works in room 86\n");
+		return true;
+	}
+
+	const int grailNumber = _vm->_scummVars[253];
+	if (grailNumber < 1 || grailNumber > 10) {
+		debugPrintf("Couldn't find the Grail number\n");
+		return true;
+	}
+
+	debugPrintf("Real Grail is Grail #%d\n", grailNumber);
 
 	return true;
 }
