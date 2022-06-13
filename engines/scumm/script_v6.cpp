@@ -2393,7 +2393,7 @@ void ScummEngine_v6::o6_printEgo() {
 void ScummEngine_v6::o6_talkActor() {
 	int offset = _scriptPointer - _scriptOrgPointer;
 
-	// WORKAROUND for bug #1452: see below for detailed description
+	// WORKAROUND for missing waitForMessage() calls; see below
 	if (_forcedWaitForMessage) {
 		if (VAR(VAR_HAVE_MSG)) {
 			_scriptPointer--;
@@ -2421,6 +2421,20 @@ void ScummEngine_v6::o6_talkActor() {
 
 	_string[0].loadDefault();
 	actorTalk(_scriptPointer);
+
+	// WORKAROUND: Dr Fred's first reaction line about Hoagie's and Laverne's
+	// units after receiving a new diamond is unused because of missing
+	// wait.waitForMessage() calls. We always simulate this opcode when
+	// triggering Dr Fred's lines in this part of the script, since there is
+	// no stable offset for all the floppy, CD and translated versions, and
+	// no easy way to only target the impacted lines.
+	if (_game.id == GID_TENTACLE && vm.slot[_currentScript].number == 9
+		&& vm.localvar[_currentScript][0] == 216 && _actorToPrintStrFor == 4 && _enableEnhancements) {
+		_forcedWaitForMessage = true;
+		_scriptPointer--;
+
+		return;
+	}
 
 	// WORKAROUND for bug #1452: "DIG: Missing subtitles when talking to Brink"
 	// Original script does not have wait.waitForMessage() after several messages:
