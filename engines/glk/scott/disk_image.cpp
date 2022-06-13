@@ -296,7 +296,29 @@ int diGetTsErr(DiskImage *di, TrackSector ts) {
 	return -1; /* unknown error */
 }
 
+/* return disk geometry for track */
 int diSectorsPerTrack(ImageType type, int track) {
+	switch (type) {
+	case D71:
+		if (track > 35) {
+			track -= 35;
+		}
+		/* fall through */
+	case D64:
+		if (track < 18) {
+			return 21;
+		} else if (track < 25) {
+			return 19;
+		} else if (track < 31) {
+			return 18;
+		} else {
+			return 17;
+		}
+		break;
+	case D81:
+		return 40;
+		break;
+	}
 	return 0;
 }
 
