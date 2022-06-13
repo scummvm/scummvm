@@ -430,8 +430,6 @@ void Atdsys::stop_ats() {
 }
 
 void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
-	const Sound *sound = g_engine->_sound;
-
 	if (_atsv.shown) {
 		if (_atdsv._eventsEnabled) {
 			switch (_G(in)->getSwitchCode()) {
@@ -681,6 +679,9 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
 					g_engine->_sound->playSpeech(_atdsv._vocNr, false);
 				}
+
+				if (_atdsv._vocNr >= 0 && !g_engine->_sound->isSpeechActive())
+					stopAad();
 			}
 
 			if (_aadv._delayCount <= 0) {
