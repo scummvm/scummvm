@@ -137,7 +137,6 @@ void var_init() {
 	_G(gpkt).Vorschub = _G(spieler_mi)[P_CHEWY].Vorschub;
 	init_room();
 	_G(gameState).FramesPerSecond = 7;
-	_G(currentSong) = -1;
 	_G(SetUpScreenFunc) = nullptr;
 	_G(pfeil_delay) = 0;
 	_G(pfeil_ani) = 0;

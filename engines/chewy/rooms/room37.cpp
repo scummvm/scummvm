@@ -268,7 +268,7 @@ void Room37::use_hahn() {
 			_G(gameState).R37Kloppe = true;
 			hideCur();
 			autoMove(6, P_CHEWY);
-			load_room_music(256);
+			g_engine->_sound->playRoomMusic(256);
 			_G(room)->set_timer_status(7, TIMER_STOP);
 			_G(det)->stop_detail(7);
 			_G(det)->del_static_ani(7);

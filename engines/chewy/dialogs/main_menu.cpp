@@ -68,8 +68,7 @@ void MainMenu::execute() {
 		_G(gameState)._personRoomNr[P_CHEWY] = 98;
 		_G(room)->loadRoom(&_G(room_blk), 98, &_G(gameState));
 
-		_G(currentSong) = -1;
-		load_room_music(98);
+		g_engine->_sound->playRoomMusic(98);
 		_G(fx)->border(_G(workpage), 100, 0, 0);
 
 		_G(out)->setPalette(_G(pal));

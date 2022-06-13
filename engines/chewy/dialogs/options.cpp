@@ -174,8 +174,7 @@ void Options::execute(TafInfo *ti) {
 					g_engine->_sound->stopMusic();
 				} else {
 					g_engine->_sound->toggleMusic(true);
-					_G(currentSong) = -1;
-					load_room_music(_G(gameState)._personRoomNr[P_CHEWY]);
+					g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[P_CHEWY]);
 				}
 				break;
 			case 6:

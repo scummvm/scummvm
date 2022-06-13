@@ -173,7 +173,7 @@ void check_ged_action(int16 index) {
 }
 
 void enter_room(int16 eib_nr) {
-	load_room_music(_G(gameState)._personRoomNr[P_CHEWY]);
+	g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[P_CHEWY]);
 	load_chewy_taf(_G(gameState).ChewyAni);
 	_G(atds)->stopAad();
 	_G(atds)->stop_ats();
@@ -667,11 +667,11 @@ static void playIntroSequence() {
 
 	for (int i = 0; i < 29 && ret != -1; ++i) {
 		if (introVideo[i] == FCUT_135)
-			load_room_music(258);
+			g_engine->_sound->playRoomMusic(258);
 		else if (introVideo[i] == FCUT_148)
-			load_room_music(259);
+			g_engine->_sound->playRoomMusic(259);
 		else if (introVideo[i] == FCUT_143)
-			load_room_music(260);
+			g_engine->_sound->playRoomMusic(260);
 
 		if (introDialog[i] != -1)
 			start_aad(introDialog[i], -1);
@@ -729,7 +729,7 @@ void flic_cut(int16 nr) {
 		break;
 
 	case FCUT_058:
-		load_room_music(255);
+		g_engine->_sound->playRoomMusic(255);
 		g_engine->_video->playVideo(FCUT_058);
 		g_engine->_video->playVideo(FCUT_059);
 
@@ -750,10 +750,8 @@ void flic_cut(int16 nr) {
 
 	case FCUT_065:
 		g_engine->_sound->stopMusic();
-		_G(currentSong) = -1;
-		load_room_music(256);
+		g_engine->_sound->playRoomMusic(256);
 		Room46::kloppe();
-		_G(currentSong) = -1;
 		break;
 
 	case FCUT_112:
@@ -794,7 +792,7 @@ void flic_cut(int16 nr) {
 	g_engine->_sound->setMusicVolume(_G(gameState).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
 
 	if (nr != FCUT_135) {
-		load_room_music(_G(gameState)._personRoomNr[0]);
+		g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[0]);
 
 		if (g_engine->_sound->speechEnabled())
 			_G(det)->enable_room_sound();
