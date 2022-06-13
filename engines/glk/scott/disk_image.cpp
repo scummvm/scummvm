@@ -54,7 +54,10 @@ DosError g_dosError[] = {
 };
 
 int setStatus(DiskImage* di, int status, int track, int sector) {
-	return 0;
+	di->_status = status;
+	di->_statusts._track = track;
+	di->_statusts._sector = sector;
+	return status;
 }
 
 /* check if given track/sector is within valid range */
