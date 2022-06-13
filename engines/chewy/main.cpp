@@ -585,7 +585,7 @@ void setupScreen(SetupScreenMode mode) {
 			break;
 
 		case BLEND3:
-			_G(fx)->rnd_blende(_G(spblende), _G(workptr), (byte *)g_screen->getPixels(), _G(pal), 0, 10);
+			_G(fx)->rnd_blende(_G(spblende), _G(workptr), (byte *)g_screen->getPixels(), _G(pal), 0);
 			break;
 
 		case BLEND4:

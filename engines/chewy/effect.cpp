@@ -30,7 +30,7 @@ Effect::Effect() {
 Effect::~Effect() {
 }
 
-void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, byte *palette, int16 col, int16 skip_line) {
+void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, byte *palette, int16 col) {
 	byte *sp = (byte *)MALLOC(8 * 8 + 4);
 	int16 *rnd_zeiger = (int16 *)rnd_speicher;
 	if (col < 256) {
@@ -144,7 +144,7 @@ void Effect::blende1(byte *memPtr, byte *palette, uint8 mode, int16 color) {
 	free(sp);
 }
 
-void Effect::border(byte *workpage_, int16 lines, uint8 mode, int16 color) {
+void Effect::border(byte *workpage_, uint8 mode, int16 color) {
 	if (mode) {
 		for (int i = 0, x = 0; i < 20; ++i, x += 8) {
 			_G(out)->setPointer(workpage_ + 4);

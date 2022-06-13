@@ -69,7 +69,7 @@ void MainMenu::execute() {
 		_G(room)->loadRoom(&_G(room_blk), 98, &_G(gameState));
 
 		g_engine->_sound->playRoomMusic(98);
-		_G(fx)->border(_G(workpage), 100, 0, 0);
+		_G(fx)->border(_G(workpage), 0, 0);
 
 		_G(out)->setPalette(_G(pal));
 		_G(gameState)._personHide[P_CHEWY] = true;
@@ -90,7 +90,7 @@ void MainMenu::execute() {
 			break;
 
 		case MM_VIEW_INTRO:
-			_G(fx)->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 0, 0);
 			_G(out)->setPointer(_G(workptr));
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(FCUT_135);
@@ -116,10 +116,10 @@ void MainMenu::execute() {
 			break;
 
 		case MM_CREDITS:
-			_G(fx)->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 0, 0);
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(FCUT_159);
-			_G(fx)->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 0, 0);
 			Dialogs::Credits::execute();
 			break;
 
