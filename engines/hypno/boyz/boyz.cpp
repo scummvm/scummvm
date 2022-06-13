@@ -69,6 +69,8 @@ BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine
 	_currentMode = NonInteractive;
 	_crosshairsPalette = nullptr;
 	_lastLevel = 0;
+	_previousHealth = 0;
+	_civiliansShoot = 0;
 	_selectedCorrectBox = 0;
 	_flashbackMode = false;
 
@@ -854,7 +856,6 @@ void BoyzEngine::loadAssets() {
 	_weaponMaxAmmo[7] = 25; // Boat machine-gun
 
 	_maxHealth = 100;
-	_civiliansShoot = 0;
 	_warningVideosDay.push_back("");
 	_warningVideosDay.push_back("warnings/w01s.smk");
 	_warningVideosDay.push_back("warnings/w02s.smk");
