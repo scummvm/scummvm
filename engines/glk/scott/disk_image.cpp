@@ -360,8 +360,82 @@ int diRawnameFromName(byte *rawname, const char *name) {
 	return i;
 }
 
+/* count number of free blocks */
+int blocksFree(DiskImage* di) {
+	return 0;
+}
+
+/* return write interleave */
+int interleave(ImageType type) {
+	return 0;
+}
+
 DiskImage *diCreateFromData(uint8_t *data, int length) {
-	return nullptr;
+	DiskImage *di;
+
+	if ((di = new DiskImage) == nullptr) {
+		return nullptr;
+	}
+
+	di->_size = length;
+
+	/* allocate buffer for image */
+	if ((di->_image = new byte[length]) == nullptr) {
+		delete di;
+		return nullptr;
+	}
+
+	di->_image = data;
+
+	di->_errinfo = nullptr;
+
+	/* check image type */
+	switch (length) {
+	case D64ERRSIZE: /* D64 with error info */
+		// di->_errinfo = &(di->_error_);
+	case D64SIZE: /* standard D64 */
+		di->_type = D64;
+		di->_bam._track = 18;
+		di->_bam._sector = 0;
+		di->_dir = di->_bam;
+		break;
+
+	case D71ERRSIZE: /* D71 with error info */
+		di->_errinfo = &(di->_image[D71SIZE]);
+	case D71SIZE:
+		di->_type = D71;
+		di->_bam._track = 18;
+		di->_bam._sector = 0;
+		di->_bam2._track = 53;
+		di->_bam2._sector = 0;
+		di->_dir = di->_bam;
+		break;
+
+	case D81ERRSIZE: /* D81 with error info */
+		di->_errinfo = &(di->_image[D81SIZE]);
+	case D81SIZE:
+		di->_type = D81;
+		di->_bam._track = 40;
+		di->_bam._sector = 1;
+		di->_bam2._track = 40;
+		di->_bam2._sector = 2;
+		di->_dir._track = 40;
+		di->_dir._sector = 0;
+		break;
+
+	default:
+		delete[] di->_image;
+		delete di;
+		return nullptr;
+	}
+
+	di->_filename = nullptr;
+	di->_openfiles = 0;
+	di->_blocksfree = blocksFree(di);
+	di->_modified = 0;
+	di->_interleave = interleave(di->_type);
+	setStatus(di, 254, 0, 0);
+	return di;
 }
 
 } // End of namespace Scott
