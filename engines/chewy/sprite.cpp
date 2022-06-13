@@ -156,8 +156,8 @@ void spriteEngine() {
 			if (!_G(gameState)._personHide[P_CHEWY]) {
 				if (!_G(spz_ani)[P_CHEWY]) {
 					int16 sprNr = _G(chewy_ph)[_G(moveState)[P_CHEWY].Phase * 8 + _G(moveState)[P_CHEWY].PhNr];
-					x = _G(spieler_mi)[P_CHEWY].XyzStart[0] + _G(chewy_kor)[sprNr * 2] - _G(gameState).scrollx;
-					y = _G(spieler_mi)[P_CHEWY].XyzStart[1] + _G(chewy_kor)[sprNr * 2 + 1] - _G(gameState).scrolly;
+					x = _G(spieler_mi)[P_CHEWY].XyzStart[0] + _G(chewy)->correction[sprNr * 2] - _G(gameState).scrollx;
+					y = _G(spieler_mi)[P_CHEWY].XyzStart[1] + _G(chewy)->correction[sprNr * 2 + 1] - _G(gameState).scrolly;
 					calc_zoom(_G(spieler_mi)[P_CHEWY].XyzStart[1], (int16)_G(room)->_roomInfo->_zoomFactor,
 					          (int16)_G(room)->_roomInfo->_zoomFactor, &_G(moveState)[P_CHEWY]);
 

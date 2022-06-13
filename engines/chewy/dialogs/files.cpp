@@ -60,10 +60,10 @@ bool Files::execute(bool isInGame) {
 	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 	_G(room)->set_ak_pal(&_G(room_blk));
  
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 	_G(out)->setPointer(_G(workptr));
 	showCur();
 
@@ -269,7 +269,7 @@ enter:
 				}
 			} else if (mode[SAVE]) {
 				_G(out)->copyToScreen();
-				_G(out)->setPointer(_G(screen0));
+				_G(out)->setPointer((byte *)g_screen->getPixels());
 				char slotName[81];
 				slotName[0] = '\0';
 				key = _G(out)->scanxy(70, 68 + (active_slot * 10),

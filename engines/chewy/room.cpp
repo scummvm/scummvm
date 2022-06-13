@@ -505,7 +505,6 @@ void load_chewy_taf(int16 taf_nr) {
 			_G(gameState).ChewyAni = taf_nr;
 			_G(AkChewyTaf) = taf_nr;
 			_G(chewy) = _G(mem)->taf_adr(filename);
-			_G(chewy_kor) = _G(chewy)->correction;
 		}
 	}
 }

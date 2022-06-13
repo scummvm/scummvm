@@ -119,7 +119,6 @@ public:
 	const uint8 *_chewy_ph_nr;
 	const uint8 *_chewy_ph;
 	byte *_pal = nullptr;
-	byte *_screen0 = nullptr;
 	int16 _scr_width = 0;
 	BlendMode _fx_blend = BLEND_NONE;
 	void (*_SetUpScreenFunc)() = nullptr;
@@ -182,7 +181,6 @@ public:
 	TafInfo *_menutaf = nullptr;
 	TafSeqInfo *_howard_taf = nullptr;
 	TafInfo *_chewy = nullptr;
-	int16 *_chewy_kor = nullptr;
 	Barriers *_barriers = nullptr;
 	Text *_txt = nullptr;
 	Room *_room = nullptr;

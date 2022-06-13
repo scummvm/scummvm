@@ -33,7 +33,7 @@ void Room10::entry() {
 		_G(out)->setPointer(_G(workptr));
 		_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(gameState).scrollx, _G(gameState).scrolly);
 		_G(out)->setPointer(nullptr);
-		_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+		_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 		_G(gameState).R10Surimy = true;
 		_G(fx_blend) = BLEND_NONE;
 		flic_cut(FCUT_003);

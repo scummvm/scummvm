@@ -157,8 +157,8 @@ void Cinema::execute() {
 		case Common::KEYCODE_RETURN:
 			hideCur();
 			_G(out)->cls();
-			_G(out)->setPointer(_G(screen0));
-			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+			_G(out)->setPointer((byte *)g_screen->getPixels());
+			_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 
 			flic_cut(CINEMA_FLICS[topIndex + selected]);
 			_G(fontMgr)->setFont(_G(font6));
@@ -181,9 +181,9 @@ void Cinema::execute() {
 
 			if (flag) {
 				flag = false;
-				_G(out)->setPointer(_G(screen0));
+				_G(out)->setPointer((byte *)g_screen->getPixels());
 				_G(room)->set_ak_pal(&_G(room_blk));
-				_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+				_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 			} else {
 				_G(out)->copyToScreen();
 			}

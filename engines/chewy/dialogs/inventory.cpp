@@ -344,9 +344,9 @@ void Inventory::menu() {
 				_G(cur)->plot_cur();
 			_G(out)->setPointer(nullptr);
 			if (menu_flag1 == MENU_DISPLAY) {
-				_G(fx)->blende1(_G(workptr), _G(screen0), nullptr, 200, 0, 300);
+				_G(fx)->blende1(_G(workptr), nullptr, 0, 300);
 			} else if (menu_flag1 == MENU_HIDE)
-				_G(fx)->blende1(_G(workptr), _G(screen0), nullptr, 200, 1, 300);
+				_G(fx)->blende1(_G(workptr), nullptr, 1, 300);
 			menu_flag1 = false;
 			_G(out)->copyToScreen();
 		} else {
@@ -653,7 +653,7 @@ void Inventory::showDiary() {
 	_G(out)->copyToScreen();
 	_G(room)->set_ak_pal(&_G(room_blk));
 	_G(out)->setPointer(nullptr);
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 
 	while (_G(in)->getSwitchCode() != Common::KEYCODE_ESCAPE) {
 		g_events->update();
@@ -671,7 +671,7 @@ void Inventory::showDiary() {
 	plot_menu();
 	_G(out)->setPointer(nullptr);
 	_G(room)->set_ak_pal(&_G(room_blk));
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 }
 
 } // namespace Dialogs
