@@ -303,6 +303,8 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 					Graphics::Surface *boxes = frame->convertTo(frame->format, _background->decoder->getPalette());
 					drawImage(*boxes, 0, 0, false);
 					drawScreen();
+					boxes->free();
+					delete boxes;
 					_selectedCorrectBox = pickABox();
 					if (_selectedCorrectBox == 1) {
 						_background->decoder->forceSeekToFrame(582);
