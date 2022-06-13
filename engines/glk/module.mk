@@ -239,6 +239,7 @@ MODULE_OBJS := \
 	scott/decompress_text.o \
 	scott/decompress_z80.o \
 	scott/definitions.o \
+	scott/disk_image.o \
 	scott/load_game.o \
 	scott/game_info.o \
 	scott/game_specific.o \
