@@ -174,7 +174,7 @@ void Room::loadRoom(RaumBlk *Rb, int16 room_nr, GameState *player) {
 		Rb->DetKorrekt = Rb->Fti->correction;
 	}
 	_G(obj)->calc_all_static_detail();
-	load_tgp(_roomInfo->_imageNr, Rb, EPISODE1_TGP, GED_LOAD, EPISODE1);
+	load_tgp(_roomInfo->_imageNr, Rb, EPISODE1_TGP, true, EPISODE1);
 	set_pal(_ablagePal[Rb->AkAblage], Rb->LowPalMem);
 	calc_invent(Rb, player);
 
@@ -294,7 +294,7 @@ void Room::calc_invent(RaumBlk *Rb, GameState *player) {
 	delete spriteRes;
 }
 
-int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const char *fileName) {
+int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, bool loadBarriers, const char *fileName) {
 	BackgroundResource *res = new BackgroundResource(fileName);
 	TBFChunk *img = res->getImage(nr, false);
 
@@ -312,9 +312,8 @@ int16 Room::load_tgp(int16 nr, RaumBlk *Rb, int16 tgp_idx, int16 mode, const cha
 		memcpy(_ablagePal[Rb->AkAblage], img->palette, 3 * 256);
 		set_ablage_info(Rb->AkAblage, nr + (1000 * tgp_idx), img->size);
 
-		if (mode == GED_LOAD) {
+		if (loadBarriers)
 			_barriers->init(nr, img->width, img->height);
-		}
 	}
 
 	delete img;

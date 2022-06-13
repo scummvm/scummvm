@@ -647,7 +647,7 @@ void Inventory::showDiary() {
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
 
-	_G(room)->load_tgp(DIARY_START, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(DIARY_START, &_G(room_blk), GBOOK_TGP, false, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], _G(gameState).scrollx, _G(gameState).scrolly);
 	_G(out)->copyToScreen();
@@ -664,7 +664,7 @@ void Inventory::showDiary() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, true, EPISODE1);
 	_G(gameState).scrollx = scrollx;
 	_G(gameState).scrolly = scrolly;
 	setupScreen(NO_SETUP);

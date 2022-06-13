@@ -196,7 +196,7 @@ void Credits::execute() {
 	int lineScrolled = 0;
 	int fontCol;
 
-	_G(room)->load_tgp(5, &_G(room_blk), 1, 0, GBOOK);
+	_G(room)->load_tgp(5, &_G(room_blk), 1, false, GBOOK);
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
 	_G(out)->setPointer((byte *)g_screen->getPixels());
