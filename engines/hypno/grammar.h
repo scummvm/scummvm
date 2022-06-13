@@ -606,6 +606,7 @@ public:
 		enemySoundRate = 0;
 		hitSoundRate = 0;
 		additionalSoundRate = 0;
+		noAmmoSoundRate = 0;
 	}
 	void clear() {
 		nextLevelVideo.clear();
