@@ -1074,6 +1074,7 @@ Common::Error BoyzEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	loadSceneState(stream);
 	if (_unlockAllLevels) {
 		_nextLevel = "<select_t1>";
+		_flashbackMode = true;
 		unlockAllLevels();
 	} else if (_ids[_lastLevel] == 3591)
 		_nextLevel = "<select_c3>";
