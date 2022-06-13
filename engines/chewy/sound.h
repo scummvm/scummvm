@@ -49,7 +49,7 @@ public:
 	void resumeSound(uint channel);
 	void stopSound(uint channel = 0);
 	void stopAllSounds();
-	bool isSoundActive(uint channel);
+	bool isSoundActive(uint channel) const;
 	void setSoundVolume(uint volume);
 	void setSoundChannelVolume(uint channel, uint volume);
 	void setSoundChannelBalance(uint channel, int8 balance);
@@ -59,7 +59,7 @@ public:
 	void pauseMusic();
 	void resumeMusic();
 	void stopMusic();
-	bool isMusicActive();
+	bool isMusicActive() const;
 	void setMusicVolume(uint volume);
 	void playRoomMusic(int16 roomNum);
 
@@ -67,7 +67,7 @@ public:
 	void pauseSpeech();
 	void resumeSpeech();
 	void stopSpeech();
-	bool isSpeechActive();
+	bool isSpeechActive() const;
 	void setSpeechVolume(uint volume);
 
 	void stopAll();

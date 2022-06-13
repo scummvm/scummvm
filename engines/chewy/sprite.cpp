@@ -505,7 +505,7 @@ bool startAtsWait(int16 txtNr, int16 txtMode, int16 col, int16 mode) {
 
 				g_engine->_sound->setSoundChannelBalance(0, _G(atds)->getStereoPos(vocx));
 				if (vocNr >= 0) {
-					g_engine->_sound->playSpeech(vocNr, !g_engine->_sound->subtitlesEnabled());
+					g_engine->_sound->playSpeech(vocNr, false);
 				}
 
 				setupScreen(DO_SETUP);
