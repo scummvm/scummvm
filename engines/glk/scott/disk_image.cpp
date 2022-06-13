@@ -322,7 +322,19 @@ int diSectorsPerTrack(ImageType type, int track) {
 	return 0;
 }
 
+/* return number of tracks for image type */
 int diTracks(ImageType type) {
+	switch (type) {
+	case D64:
+		return 35;
+		break;
+	case D71:
+		return 70;
+		break;
+	case D81:
+		return 80;
+		break;
+	}
 	return 0;
 }
 
