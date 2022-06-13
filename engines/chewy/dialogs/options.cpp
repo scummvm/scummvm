@@ -50,10 +50,10 @@ void Options::execute(TafInfo *ti) {
 	_G(room)->load_tgp(0, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 
 	_G(room)->set_ak_pal(&_G(room_blk));
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 	_G(out)->setPointer(_G(workptr));
 	int16 key = 0;
 	int16 surimy_ani = SURIMY_START;
@@ -252,9 +252,9 @@ void Options::execute(TafInfo *ti) {
 	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 	_G(room)->set_ak_pal(&_G(room_blk));
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 	_G(out)->setPointer(_G(workptr));
 }
 

@@ -39,8 +39,8 @@ public:
 	Effect();
 	~Effect();
 
-	void blende1(byte *memPtr, byte *screen,
-		byte *palette, int16 frames, uint8 mode, int16 color);
+	void blende1(byte *memPtr,
+	             byte *palette, uint8 mode, int16 color);
 	void border(byte *screen, int16 val1, uint8 mode, int16 color);
 
 	void rnd_blende(byte *rnd_speicher, byte *sram_speicher,

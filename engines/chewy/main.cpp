@@ -78,13 +78,13 @@ void alloc_buffers() {
 void free_buffers() {
 	_G(det)->del_dptr();
 	for (int16 i = 0; i < MAX_PERSON; i++)
-		free((char *)_G(PersonTaf)[i]);
-	free((char *)_G(spz_tinfo));
+		free(_G(PersonTaf)[i]);
+	free(_G(spz_tinfo));
 	free(_G(spblende));
-	free((char *)_G(menutaf));
-	free((char *)_G(chewy));
+	free(_G(menutaf));
+	free(_G(chewy));
 
-	free((char *)_G(curtaf));
+	free(_G(curtaf));
 	free(_G(Ci).tempArea);
 	free(_G(pal));
 	free(_G(workpage));
@@ -268,7 +268,7 @@ bool mainLoop(int16 mode) {
 		case Common::KEYCODE_F6:
 			_G(flags).SaveMenu = true;
 
-			_G(out)->setPointer(_G(screen0));
+			_G(out)->setPointer((byte *)g_screen->getPixels());
 			_G(fontMgr)->setFont(_G(font6));
 			cursorChoice(CUR_SAVE);
 			if (Dialogs::Files::execute(true) == 1) {
@@ -337,7 +337,7 @@ bool mainLoop(int16 mode) {
 				g_events->_mousePos.y = 92;
 				_G(fontMgr)->setFont(_G(font6));
 
-				_G(out)->setPointer(_G(screen0));
+				_G(out)->setPointer((byte *)g_screen->getPixels());
 				cursorChoice(CUR_SAVE);
 				bool ret = Dialogs::Files::execute(true);
 				if (ret) {
@@ -577,22 +577,22 @@ void setupScreen(SetupScreenMode mode) {
 		_G(out)->setPointer(nullptr);
 		switch (_G(fx_blend)) {
 		case BLEND1:
-			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+			_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 			break;
 
 		case BLEND2:
-			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 1, 0);
+			_G(fx)->blende1(_G(workptr), _G(pal), 1, 0);
 			break;
 
 		case BLEND3:
-			_G(fx)->rnd_blende(_G(spblende), _G(workptr), _G(screen0), _G(pal), 0, 10);
+			_G(fx)->rnd_blende(_G(spblende), _G(workptr), (byte *)g_screen->getPixels(), _G(pal), 0, 10);
 			break;
 
 		case BLEND4:
 			_G(out)->setPointer(_G(workptr));
 			_G(out)->cls();
 			_G(out)->setPointer(nullptr);
-			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+			_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 			break;
 
 		default:

@@ -60,7 +60,8 @@ void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, b
 	free(sp);
 }
 
-void Effect::blende1(byte *memPtr, byte *screen, byte *palette, int16 frames, uint8 mode, int16 color) {
+void Effect::blende1(byte *memPtr, byte *palette, uint8 mode, int16 color) {
+	byte *screen = (byte *)g_screen->getPixels();
 	byte *sp = (byte *)MALLOC(8 * 8 + 4);
 	if (color < 256) {
 		for (int16 i = 0; i < 13; i++) {

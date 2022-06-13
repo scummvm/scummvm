@@ -202,7 +202,7 @@ void MainMenu::startGame() {
 bool MainMenu::loadGame() {
 	_G(flags).SaveMenu = true;
 	savePersonAni();
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 	_G(fontMgr)->setFont(_G(font6));
 	cursorChoice(CUR_SAVE);
 	_G(cur)->move(152, 92);
