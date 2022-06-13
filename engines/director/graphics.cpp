@@ -24,6 +24,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
+#include "director/images.h"
 
 namespace Director {
 
@@ -50,40 +51,13 @@ void DirectorEngine::loadPatterns() {
 	for (int i = 0; i < ARRAYSIZE(director3QuickDrawPatterns); i++)
 		_director3QuickDrawPatterns.push_back(director3QuickDrawPatterns[i]);
 
+	_pixelformat = Graphics::PixelFormat::createFormatCLUT8();
+
 	for (int i = 0; i < ARRAYSIZE(builtinTiles); i++) {
 		Common::MemoryReadStream stream(builtinTiles[i].ptr, builtinTiles[i].size);
-		Common::Array<uint> pixels;
 
-		while (!stream.eos()) {
-			int data = stream.readByte();
-			int len = data + 1;
-			if ((data & 0x80) != 0) {
-				len = ((data ^ 0xFF) & 0xff) + 2;
-				data = stream.readByte();
-				for (int p = 0; p < len; p++) {
-					pixels.push_back(data);
-				}
-			} else {
-				for (int p = 0; p < len; p++) {
-					data = stream.readByte();
-					pixels.push_back(data);
-				}
-			}
-		}
-
-		warning("Tile%d, size: %d, expecting: %d", i + 1, pixels.size(), builtinTiles[i].w * builtinTiles[i].h);
-
-		for (uint s = pixels.size(); s < builtinTiles[i].w * builtinTiles[i].h; s++)
-			pixels.push_back(0);
-
-		_builtinTiles[i] = new Graphics::Surface();
-		_builtinTiles[i]->create(builtinTiles[i].w, builtinTiles[i].h, Graphics::PixelFormat::createFormatCLUT8());
-
-		for (uint y = 0; y < _builtinTiles[i]->h; y++) {
-			for (uint x = 0; x < _builtinTiles[i]->w; x++) {
-				*((byte *)_builtinTiles[i]->getBasePtr(x, y)) = 255 - pixels[y * _builtinTiles[i]->w + x];
-			}
-		}
+		_builtinTiles[i] = new BITDDecoder(builtinTiles[i].w, builtinTiles[i].h, 8, builtinTiles[i].w, macPalette, kFileVer300);
+		_builtinTiles[i]->loadStream(stream);
 	}
 }
 

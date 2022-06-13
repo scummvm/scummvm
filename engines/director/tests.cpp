@@ -101,9 +101,9 @@ void Window::testFontScaling() {
 
 	x = 10;
 	for (int i = 0; i < kNumBuiltinTiles; i++) {
-		surface.blitFrom(*g_director->_builtinTiles[i], Common::Point(x, 250));
+		surface.blitFrom(g_director->_builtinTiles[i]->getSurface(), Common::Point(x, 250));
 
-		x += g_director->_builtinTiles[i]->w + 10;
+		x += g_director->_builtinTiles[i]->getSurface()->w + 10;
 	}
 
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h); // testing fonts
