@@ -347,10 +347,6 @@ void Room68::kostuem_aad(int16 aad_nr) {
 	else if (!_G(gameState).R67LiedOk)
 		startAadWait(389);
 	else {
-		// TODO: Reimplement
-		//if (!g_engine->_sound->subtitlesEnabled())
-		//	_G(sndPlayer)->fadeOut(5);
-		
 		_G(SetUpScreenFunc) = nullptr;
 		delInventory(_G(gameState).AkInvent);
 		goAutoXy(150, -13, P_NICHELLE, ANI_WAIT);
@@ -374,19 +370,11 @@ void Room68::kostuem_aad(int16 aad_nr) {
 			_G(det)->stop_detail(23);
 		}
 
-		if (g_engine->_sound->subtitlesEnabled()) {
-			g_engine->_sound->playSound(108, 1, false);
-		}
+		g_engine->_sound->playSound(108, 1, false);
 		
 		_G(det)->startDetail(24, 255, ANI_FRONT);
 		setPersonPos(26, 40, P_NICHELLE, P_RIGHT);
-		if (g_engine->_sound->subtitlesEnabled()) {
-			startAadWait(391);
-		} else {
-			waitShowScreen(100);
-			startAadWait(602);
-			waitShowScreen(100);
-		}
+		startAadWait(391);
 
 		_G(room)->set_timer_status(8, TIMER_STOP);
 		_G(det)->del_static_ani(8);
@@ -417,9 +405,7 @@ void Room68::kostuem_aad(int16 aad_nr) {
 		_G(gameState)._personHide[P_NICHELLE] = false;
 		setPersonPos(150, -13, P_NICHELLE, P_RIGHT);
 
-		if (g_engine->_sound->subtitlesEnabled()) {
-			g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[0]);
-		}
+		g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[0]);
 	}
 	showCur();
 }

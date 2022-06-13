@@ -414,7 +414,7 @@ bool Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int1
 
 	if (_atsv.text.size() > 0) {
 		*vocNr = txtMode != TXT_MARK_NAME ? _text->getLastSpeechId() : -1;
-		_atsv.shown = g_engine->_sound->subtitlesEnabled();
+		_atsv.shown = true;
 		_atsv._txtMode = txtMode;
 		_atsv._delayCount = get_delay(_atsv.text.size());
 		_atsv._color = color;
@@ -430,6 +430,8 @@ void Atdsys::stop_ats() {
 }
 
 void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
+	const Sound *sound = g_engine->_sound;
+
 	if (_atsv.shown) {
 		if (_atdsv._eventsEnabled) {
 			switch (_G(in)->getSwitchCode()) {
@@ -470,22 +472,24 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 			split_string(atsSsi, &splitString);
 
 			for (int16 i = 0; i < splitString._nr; i++) {
-				_G(out)->printxy(splitString._x[i],
-								 splitString._y + (i * h) + 1,
-								 0, 300, 0, splitString._strPtr[i]);
-				_G(out)->printxy(splitString._x[i],
-								 splitString._y + (i * h) - 1,
-								 0, 300, 0, splitString._strPtr[i]);
-				_G(out)->printxy(splitString._x[i] + 1,
-				              splitString._y + (i * h),
-				              0, 300, 0, splitString._strPtr[i]);
-				_G(out)->printxy(splitString._x[i] - 1,
-				              splitString._y + (i * h),
-				              0, 300, 0, splitString._strPtr[i]);
-				_G(out)->printxy(splitString._x[i],
-				              splitString._y + (i * h),
-				              _atsv._color,
-				              300, 0, splitString._strPtr[i]);
+				if (g_engine->_sound->subtitlesEnabled()) {
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h) + 1,
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h) - 1,
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i] + 1,
+									 splitString._y + (i * h),
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i] - 1,
+									 splitString._y + (i * h),
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h),
+									 _atsv._color,
+									 300, 0, splitString._strPtr[i]);
+				}
 
 				shownLen += strlen(splitString._strPtr[i]) + 1;
 			}
@@ -672,14 +676,10 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 					_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET != -1) {
 				if (_atdsv._vocNr != _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) {
 					_atdsv._vocNr = _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET;
-					g_engine->_sound->playSpeech(_atdsv._vocNr, false);
-					int16 vocx = _G(moveState)[personId].Xypos[0] -
+					const int16 vocx = _G(moveState)[personId].Xypos[0] -
 								 _G(gameState).scrollx + _G(spieler_mi)[personId].HotX;
 					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
-
-					if (!g_engine->_sound->subtitlesEnabled()) {
-						_aadv._strNr = -1;
-					}
+					g_engine->_sound->playSpeech(_atdsv._vocNr, false);
 				}
 			}
 

@@ -103,7 +103,7 @@ void Sound::stopAllSounds() {
 		stopSound(i);
 }
 
-bool Sound::isSoundActive(uint channel) {
+bool Sound::isSoundActive(uint channel) const {
 	assert(channel < MAX_SOUND_EFFECTS);
 	return _mixer->isSoundHandleActive(_soundHandle[channel]);
 }
@@ -153,7 +153,7 @@ void Sound::stopMusic() {
 	_mixer->stopHandle(_musicHandle);
 }
 
-bool Sound::isMusicActive() {
+bool Sound::isMusicActive() const {
 	return _mixer->isSoundHandleActive(_musicHandle);
 }
 
@@ -202,7 +202,7 @@ void Sound::stopSpeech() {
 	_mixer->stopHandle(_speechHandle);
 }
 
-bool Sound::isSpeechActive() {
+bool Sound::isSpeechActive() const {
 	return _mixer->isSoundHandleActive(_speechHandle);
 }
 

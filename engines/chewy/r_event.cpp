@@ -794,9 +794,7 @@ void flic_cut(int16 nr) {
 	if (nr != FCUT_135) {
 		g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[0]);
 
-		if (g_engine->_sound->speechEnabled())
-			_G(det)->enable_room_sound();
-
+		_G(det)->enable_room_sound();
 		_G(uhr)->resetTimer(0, 0);
 	}
 
