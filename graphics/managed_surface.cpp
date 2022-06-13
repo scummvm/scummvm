@@ -388,6 +388,7 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 					// Partially transparent, so calculate new pixel colors
 					if (destFormat.bytesPerPixel == 2) {
 						uint32 destColor = *reinterpret_cast<uint16 *>(destVal);
+						destFormat.colorToARGB(destColor, aDest, rDest, gDest, bDest);
 					} else if (format.bytesPerPixel == 4) {
 						uint32 destColor = *reinterpret_cast<uint32 *>(destVal);
 						destFormat.colorToARGB(destColor, aDest, rDest, gDest, bDest);
