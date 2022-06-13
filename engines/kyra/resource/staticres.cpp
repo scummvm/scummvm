@@ -1185,7 +1185,11 @@ void GUI_LoK::initStaticResource() {
 	_menu[0].item[3].callback = quitPlayingFunctor;
 	_menu[0].item[4].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::resumeGame);
 
-	GUI_V1_MENU(_menu[1], -1, -1, 0x140, 0x38, 248, 249, 250, 0, 254, -1, 8, 0, 2, -1, -1, -1, -1);
+	menuHeight = 56;
+	if (_vm->gameFlags().lang == Common::KO_KOR)
+		menuHeight = 60;
+
+	GUI_V1_MENU(_menu[1], -1, -1, 0x140, menuHeight, 248, 249, 250, 0, 254, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[1].item[0], 1, 0, 0, 0, 0x18, 0, 0x1E, 0x48, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[1].item[1], 1, 0, 0, 0, 0xD8, 0, 0x1E, 0x48, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[1].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitConfirmYes);
@@ -1239,21 +1243,33 @@ void GUI_LoK::initStaticResource() {
 	_menu[3].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::savegameConfirm);
 	_menu[3].item[1].callback = cancelSubMenuFunctor;
 
+	int menuWidth = 208;
+	menuHeight = 76;
+	int menuItemWidth = 180;
+	menuItemYStart = 30;
 	menuItemYInc = 17;
-	if (_vm->gameFlags().lang == Common::ZH_TWN)
-		menuItemYInc = 21;
-	else if (_vm->gameFlags().lang == Common::KO_KOR)
-		menuItemYInc = 24;
 
-	GUI_V1_MENU(_menu[4], -1, -1, 0xD0, 0x4C, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
-	GUI_V1_MENU_ITEM(_menu[4].item[0], 1, 0, 0, 0, -1, -1, 0x1E, 0xB4, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[4].item[1], 1, 0, 0, 0, -1, -1, 0x1E + menuItemYInc, 0xB4, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	if (_vm->gameFlags().lang == Common::ZH_TWN) {
+		menuItemYInc = 21;
+	} else if (_vm->gameFlags().lang == Common::KO_KOR) {
+		menuWidth = 230;
+		menuHeight = 90;
+		menuItemWidth = 210;
+		menuItemYStart = 35;
+		menuItemYInc = 25;
+	}
+
+	GUI_V1_MENU(_menu[4], -1, -1, menuWidth, menuHeight, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[4].item[0], 1, 0, 0, 0, -1, -1, menuItemYStart, menuItemWidth, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[4].item[1], 1, 0, 0, 0, -1, -1, menuItemYStart + menuItemYInc, menuItemWidth, menuItemHeight, 252, 253, -1, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[4].item[0].callback = loadGameMenuFunctor;
 	_menu[4].item[1].callback = quitPlayingFunctor;
 
+	menuHeight = 153;
 	menuItemYStart = 30;
 	menuItemYInc = 17;
 	labelYStart = 32;
+	menuItemYEnd = 127;
 
 	if (_vm->gameFlags().lang == Common::ZH_TWN) {
 		menuItemYStart = 27;
@@ -1261,15 +1277,17 @@ void GUI_LoK::initStaticResource() {
 		labelYStart = 29;
 	} else if (_vm->gameFlags().lang == Common::KO_KOR) {
 		menuItemYInc = 24;
+		menuHeight = 160;
+		menuItemYEnd = 130;
 	}
 
-	GUI_V1_MENU(_menu[5], -1, -1, 0x130, 0x99, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1);
+	GUI_V1_MENU(_menu[5], -1, -1, 0x130, menuHeight, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[5].item[0], 1, 0, 0, 0, 0xA5, 0, menuItemYStart, 0x80, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, labelYStart, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[5].item[1], 1, 0, 0, 0, 0xA5, 0, menuItemYStart + menuItemYInc, 0x80, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, labelYStart + menuItemYInc, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[5].item[2], 1, 0, 0, 0, 0xA5, 0, menuItemYStart + menuItemYInc * 2, 0x80, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, labelYStart + menuItemYInc * 2, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[5].item[3], 1, 0, 0, 0, 0xA5, 0, menuItemYStart + menuItemYInc * 3, 0x80, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, labelYStart + menuItemYInc * 3, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[5].item[4], 1, 0, 0, 0, 0xA5, 0, menuItemYStart + menuItemYInc * 4, 0x80, menuItemHeight, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0x10, 0x65, 0, 0);
-	GUI_V1_MENU_ITEM(_menu[5].item[5], 1, 0, 0, 0,   -1, 0, 0x7F, 0x6C, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[5], 1, 0, 0, 0,   -1, 0, menuItemYEnd, 0x6C, menuItemHeight, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[5].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeMusic);
 	_menu[5].item[1].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeSounds);
 	_menu[5].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeWalk);
