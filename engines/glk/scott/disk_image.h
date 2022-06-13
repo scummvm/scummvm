@@ -98,6 +98,8 @@ int diRead(ImageFile *imgfile, byte *buffer, int len);
 byte *diGetTsAddr(DiskImage *di, TrackSector ts);
 int diGetTsErr(DiskImage *di, TrackSector ts);
 
+int diSectorsPerTrack(ImageType type, int track);
+int diTracks(ImageType type);
 int diGetBlockNum(ImageType type, TrackSector ts);
 
 TrackSector diGetDirTs(DiskImage *di);

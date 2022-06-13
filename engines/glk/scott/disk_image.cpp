@@ -62,7 +62,13 @@ int setStatus(DiskImage* di, int status, int track, int sector) {
 
 /* check if given track/sector is within valid range */
 int diTsIsValid(ImageType type, TrackSector ts) {
-	return 0;
+	if ((ts._track < 1) || (ts._track > diTracks(type))) {
+		return 0; /* track out of range */
+	}
+	if (ts._sector > (diSectorsPerTrack(type, ts._track) - 1)) {
+		return 0; /* sector out of range */
+	}
+	return 1;
 }
 
 RawDirEntry *findFileEntry(DiskImage *di, byte *rawPattern, int type) {
@@ -288,6 +294,14 @@ int diGetTsErr(DiskImage *di, TrackSector ts) {
 		++err;
 	}
 	return -1; /* unknown error */
+}
+
+int diSectorsPerTrack(ImageType type, int track) {
+	return 0;
+}
+
+int diTracks(ImageType type) {
+	return 0;
 }
 
 int diGetBlockNum(ImageType type, TrackSector ts) {
