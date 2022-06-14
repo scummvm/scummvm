@@ -50,7 +50,7 @@ void Game::draw() {
 bool Game::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
 	case KEYBIND_ORDER:
-		g_events->msgGame(GameMessage("ORDER"));
+		g_events->send("Game", GameMessage("ORDER"));
 		return true;
 	case KEYBIND_SEARCH:
 		MM1::Game::Search::execute();

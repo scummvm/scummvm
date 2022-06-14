@@ -73,7 +73,7 @@ void Map00::special01() {
 		break;
 	}
 
-	g_events->msgInfo(InfoMessage(
+	send(InfoMessage(
 		2, 0, STRING["maps.map00.sign"],
 		x, 1, line2
 	));
@@ -83,7 +83,7 @@ void Map00::special02() { warning("special02"); }
 
 void Map00::special03() {
 	Sound::sound(SOUND_2);
-	g_events->msgInfo(InfoMessage(
+	send(InfoMessage(
 		STRING["maps.map00.market_inside"],
 		[]() {
 			g_events->addView("MARKET");
@@ -93,7 +93,7 @@ void Map00::special03() {
 
 void Map00::special04() {
 	Sound::sound(SOUND_2);
-	g_events->msgInfo(InfoMessage(
+	send(InfoMessage(
 		STRING["maps.map00.passage_outside"],
 		[]() {
 			g_maps->_mapPos = Common::Point(10, 10);
@@ -104,7 +104,7 @@ void Map00::special04() {
 
 void Map00::special05() {
 	Sound::sound(SOUND_2);
-	g_events->msgInfo(InfoMessage(
+	send(InfoMessage(
 		STRING["maps.map00.tavern_inside"],
 		[]() {
 			g_events->addView("TAVERN");
@@ -114,7 +114,7 @@ void Map00::special05() {
 
 void Map00::special06() {
 	Sound::sound(SOUND_2);
-	g_events->msgInfo(InfoMessage(
+	send(InfoMessage(
 		STRING["maps.map00.temple_inside"],
 		[]() {
 			g_events->addView("TEMPLE");
@@ -127,7 +127,7 @@ void Map00::special08() { warning("special08"); }
 
 void Map00::special09() {
 	Sound::sound(SOUND_2);
-	g_events->msgInfo(InfoMessage(
+	send(InfoMessage(
 		STRING["maps.map00.stairs"],
 		[]() {
 			g_maps->changeMap(0xa11, 1);
@@ -185,7 +185,7 @@ void Map00::special17() {
 
 void Map00::special18() {
 	Sound::sound(SOUND_2);
-	g_events->msgInfo(InfoMessage(
+	send(InfoMessage(
 		2, 0, STRING["maps.map00.sign"],
 		6, 1, STRING["maps.map00.temple"]
 	));
@@ -193,7 +193,7 @@ void Map00::special18() {
 
 void Map00::special19() {
 	Sound::sound(SOUND_2);
-	g_events->msgInfo(InfoMessage(
+	send(InfoMessage(
 		2, 0, STRING["maps.map00.sign"],
 		6, 1, STRING["maps.map00.jail"]
 	));
@@ -201,14 +201,14 @@ void Map00::special19() {
 
 void Map00::special20() {
 	Sound::sound(SOUND_2);
-	g_events->msgInfo(InfoMessage(
+	send(InfoMessage(
 		2, 0, STRING["maps.map00.sign"],
 		6, 1, STRING["maps.map00.tavern"]
 	));
 }
 void Map00::special21() {
 	Sound::sound(SOUND_2);
-	g_events->msgInfo(InfoMessage(
+	send(InfoMessage(
 		2, 0, STRING["maps.map00.sign"],
 		6, 1, STRING["maps.map00.training"]
 	));
@@ -227,7 +227,7 @@ void Map00::special23() {
 
 void Map00::searchStatue() {
 	Sound::sound(SOUND_2);
-	g_events->msgInfo(InfoMessage(
+	send(InfoMessage(
 		STRING["maps.map00.statue"],
 		[]() {
 			Map &map = *g_maps->_currentMap;

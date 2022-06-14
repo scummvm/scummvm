@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/str.h"
+#include "mm/mm1/events.h"
 
 namespace MM {
 namespace MM1 {
@@ -110,6 +111,19 @@ public:
 	 * and if so, switches to the death screen
 	 */
 	void checkPartyDead();
+
+	/**
+	 * Send a message to a UI element
+	 */
+	template<class T>
+	bool send(const T &msg) {
+		return g_events->send(msg);
+	}
+	template<class T>
+	bool send(const Common::String &name, const T &msg) {
+		return g_events->send(name, msg);
+	}
+
 };
 
 } // namespace Maps
