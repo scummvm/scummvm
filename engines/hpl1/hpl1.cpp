@@ -34,8 +34,8 @@ namespace Hpl1 {
 
 Hpl1Engine *g_engine;
 
-Hpl1Engine::Hpl1Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-																		   _gameDescription(gameDesc), _randomSource("Hpl1") {
+Hpl1Engine::Hpl1Engine(OSystem *syst, const ADGameDescription *gameDesc)
+	: Engine(syst), _gameDescription(gameDesc), _randomSource("Hpl1") {
 	g_engine = this;
 }
 
