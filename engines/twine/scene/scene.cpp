@@ -454,7 +454,7 @@ void Scene::resetScene() {
 		_engine->_redraw->overlayList[i].info0 = -1;
 	}
 
-	_engine->_screens->_useAlternatePalette = false;
+	_engine->_screens->setNormalPal();
 }
 
 void Scene::reloadCurrentScene() {
