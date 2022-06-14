@@ -33,6 +33,7 @@ class GameMessages : public TextView {
 private:
 	Common::Array<InfoMessage::Line> _lines;
 	YNCallback _ynCallback = nullptr;
+	KeyCallback _keyCallback = nullptr;
 public:
 	GameMessages(UIElement *owner);
 	virtual ~GameMessages() {}

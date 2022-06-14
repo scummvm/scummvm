@@ -39,24 +39,52 @@ MouseMessage::MouseMessage(Common::EventType type,
 	}
 }
 
-InfoMessage::InfoMessage() : Message(), _ynCallback(nullptr) {}
+InfoMessage::InfoMessage() : Message() {}
 
-InfoMessage::InfoMessage(const Common::String &str,
-		YNCallback ynCallback) :
+InfoMessage::InfoMessage(const Common::String &str) : Message() {
+	_lines.push_back(str);
+}
+
+InfoMessage::InfoMessage(int x, int y, const Common::String &str) {
+	_lines.push_back(Line(x, y, str));
+}
+
+InfoMessage::InfoMessage(int x1, int y1, const Common::String &str1,
+		int x2, int y2, const Common::String &str2) {
+	_lines.push_back(Line(x1, y1, str1));
+	_lines.push_back(Line(x2, y2, str2));
+}
+
+InfoMessage::InfoMessage(const Common::String &str, YNCallback ynCallback) :
 		Message(), _ynCallback(ynCallback) {
 	_lines.push_back(str);
 }
 
-InfoMessage::InfoMessage(int x, int y, const Common::String &str,
-		YNCallback ynCallback) :
+InfoMessage::InfoMessage(int x, int y, const Common::String &str, YNCallback ynCallback) :
 		Message(), _ynCallback(ynCallback) {
 	_lines.push_back(Line(x, y, str));
 }
 
 InfoMessage::InfoMessage(int x1, int y1, const Common::String &str1,
-		int x2, int y2, const Common::String &str2,
-		YNCallback ynCallback) :
+		int x2, int y2, const Common::String &str2, YNCallback ynCallback) :
 		Message(), _ynCallback(ynCallback) {
+	_lines.push_back(Line(x1, y1, str1));
+	_lines.push_back(Line(x2, y2, str2));
+}
+
+InfoMessage::InfoMessage(const Common::String &str, KeyCallback keyCallback) :
+	Message(), _keyCallback(keyCallback) {
+	_lines.push_back(str);
+}
+
+InfoMessage::InfoMessage(int x, int y, const Common::String &str, KeyCallback keyCallback) :
+		Message(), _keyCallback(keyCallback) {
+	_lines.push_back(Line(x, y, str));
+}
+
+InfoMessage::InfoMessage(int x1, int y1, const Common::String &str1,
+		int x2, int y2, const Common::String &str2, KeyCallback keyCallback) :
+		Message(), _keyCallback(keyCallback) {
 	_lines.push_back(Line(x1, y1, str1));
 	_lines.push_back(Line(x2, y2, str2));
 }
