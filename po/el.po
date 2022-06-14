@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-13 22:45+0000\n"
-"PO-Revision-Date: 2022-06-12 18:37+0000\n"
+"PO-Revision-Date: 2022-06-14 17:59+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -997,7 +997,7 @@ msgstr "Όλα"
 
 #: gui/launcher.cpp:1596
 msgid "Icons per row:"
-msgstr ""
+msgstr "Εικονίδια ανά σειρά:"
 
 #: gui/massadd.cpp:77 gui/massadd.cpp:80
 msgid "... progress ..."
@@ -3767,47 +3767,37 @@ msgstr "Προβολή στοιχείων χειρισμού στην οθόνη
 
 #: backends/platform/android/options.cpp:94
 msgid "Choose the preferred touch mode:"
-msgstr ""
+msgstr "Προτιμώμενος χειρισμός επαφής:"
 
 #: backends/platform/android/options.cpp:96
-#, fuzzy
-#| msgid "Enable Venus"
 msgid "In menus"
-msgstr "Ενεργοποίηση Αφροδίτης"
+msgstr "Στα μενού"
 
 #: backends/platform/android/options.cpp:98
 #: backends/platform/android/options.cpp:116
 #: backends/platform/android/options.cpp:117
-#, fuzzy
-#| msgid "TV emulation"
 msgid "Touchpad emulation"
-msgstr "Προσομοιωτής TV"
+msgstr "Προσομοίωση touchpad"
 
 #: backends/platform/android/options.cpp:99
 #: backends/platform/android/options.cpp:119
 #: backends/platform/android/options.cpp:120
-#, fuzzy
-#| msgid "Virtual mouse up"
 msgid "Direct mouse"
-msgstr "Εικονικό ποντίκι Πάνω"
+msgstr "Κέρσορας στο σημείο επαφής"
 
 #: backends/platform/android/options.cpp:100
 #: backends/platform/android/options.cpp:122
 #: backends/platform/android/options.cpp:123
-#, fuzzy
-#| msgid "TV emulation"
 msgid "Gamepad emulation"
-msgstr "Προσομοιωτής TV"
+msgstr "Προσομοίωση gamepad"
 
 #: backends/platform/android/options.cpp:106
 msgid "In 2D games"
-msgstr ""
+msgstr "Στα 2D παιχνίδια"
 
 #: backends/platform/android/options.cpp:108
-#, fuzzy
-#| msgid "V-Sync in 3D Games"
 msgid "In 3D games"
-msgstr "V-Sync σε 3D Παιχνίδια"
+msgstr "Στα 3D παιχνίδια"
 
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:128
