@@ -51,7 +51,7 @@ void GameMessages::draw() {
 }
 
 bool GameMessages::msgInfo(const InfoMessage &msg) {
-	if (msg._ynCallback) {
+	if (msg._ynCallback || msg._keyCallback) {
 		// Do a first draw to show 3d view at new position
 		g_events->redraw();
 		g_events->drawElements();
@@ -61,6 +61,7 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 
 	_lines = msg._lines;
 	_ynCallback = msg._ynCallback;
+	_keyCallback = msg._keyCallback;
 
 	redraw();
 	return true;
@@ -68,7 +69,9 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 
 bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 	if (g_events->focusedView() == this) {
-		if (msg.keycode == Common::KEYCODE_n) {
+		if (_keyCallback) {
+			_keyCallback(msg);
+		} else if (msg.keycode == Common::KEYCODE_n) {
 			close();
 		} else if (msg.keycode == Common::KEYCODE_y) {
 			close();

@@ -79,6 +79,7 @@ struct GameMessage : public Message {
 };
 
 typedef void (*YNCallback)();
+typedef void (*KeyCallback)(const Common::KeyState &keyState);
 struct InfoMessage : public Message {
 	struct Line : public Common::Point {
 		Common::String _text;
@@ -90,16 +91,30 @@ struct InfoMessage : public Message {
 			Common::Point(x, y), _text(text) {}
 	};
 	Common::Array<Line> _lines;
-	YNCallback _ynCallback;
+	YNCallback _ynCallback = nullptr;
+	KeyCallback _keyCallback = nullptr;
 
 	InfoMessage();
+	InfoMessage(const Common::String &str);
+	InfoMessage(int x, int y, const Common::String &str);
+	InfoMessage(int x1, int y1, const Common::String &str1,
+		int x2, int y2, const Common::String &str2);
+
 	InfoMessage(const Common::String &str,
-		YNCallback ynCallback = nullptr);
+		YNCallback ynCallback);
 	InfoMessage(int x, int y, const Common::String &str,
-		YNCallback ynCallback = nullptr);
+		YNCallback ynCallback);
 	InfoMessage(int x1, int y1, const Common::String &str1,
 		int x2, int y2, const Common::String &str2,
-		YNCallback ynCallback = nullptr);
+		YNCallback ynCallback);
+
+	InfoMessage(const Common::String &str,
+		KeyCallback keyCallback);
+	InfoMessage(int x, int y, const Common::String &str,
+		KeyCallback keyCallback);
+	InfoMessage(int x1, int y1, const Common::String &str1,
+		int x2, int y2, const Common::String &str2,
+		KeyCallback keyCallback);
 };
 
 enum LocationType {
