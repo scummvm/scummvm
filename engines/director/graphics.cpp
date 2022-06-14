@@ -202,6 +202,13 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 	dst = (T)p->dst->getBasePtr(x, y);
 
 	if (p->ms) {
+		if (p->ms->tile) {
+			int x1 = p->ms->tileRect->left + (p->ms->pd->fillOriginX + x) % p->ms->tileRect->width();
+			int y1 = p->ms->tileRect->top  + (p->ms->pd->fillOriginY + y) % p->ms->tileRect->height();
+
+			*dst = p->ms->tile->getSurface()->getPixel(x1, y1);
+			return;
+		}
 		// Get the pixel that macDrawPixel will give us, but store it to apply the
 		// ink later
 		tmpDst = *dst;

@@ -125,7 +125,7 @@ struct MacShape {
 	uint pattern;
 
 	Image::ImageDecoder *tile;
-	Common::Rect *tileRect;
+	const Common::Rect *tileRect;
 
 	Graphics::MacPlotData *pd;
 };
