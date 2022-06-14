@@ -136,11 +136,11 @@ void Screens::fadeOut(const uint32 *pal) {
 	fadeToBlack(pal);
 }
 
-int32 Screens::lerp(int32 value, int32 start, int32 end, int32 t) {
-	if (!end) {
-		return start;
+int32 Screens::lerp(int32 val1, int32 val2, int32 nbstep, int32 step) {  // RegleTrois32
+	if (nbstep < 0) {
+		return val2;
 	}
-	return (((start - value) * t) / end) + value;
+	return (((val2 - val1) * step) / nbstep) + val1;
 }
 
 void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, int32 intensity) {

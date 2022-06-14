@@ -952,7 +952,7 @@ static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
 	for (int16 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		OverlayListStruct *overlay = &engine->_redraw->overlayList[i];
 		if (overlay->info0 != -1 && overlay->type == OverlayType::koNumberRange) {
-			overlay->info0 = engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - engine->_lbaTime - TO_SECONDS(1));
+			overlay->info0 = engine->_collision->clampedLerp(overlay->info1, overlay->info0, TO_SECONDS(2), overlay->lifeTime - engine->_lbaTime - TO_SECONDS(1));
 			overlay->info1 = engine->_gameState->_inventoryNumKashes;
 			overlay->lifeTime = engine->_lbaTime + TO_SECONDS(3);
 			hideRange = true;

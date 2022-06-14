@@ -571,7 +571,7 @@ void Redraw::renderOverlays() {
 				break;
 			}
 			case OverlayType::koNumberRange: {
-				const int32 range = _engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->_lbaTime - 50);
+				const int32 range = _engine->_collision->clampedLerp(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->_lbaTime - 50);
 
 				char text[10];
 				sprintf(text, "%d", range);

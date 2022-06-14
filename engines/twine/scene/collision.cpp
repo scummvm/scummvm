@@ -82,20 +82,20 @@ bool Collision::standingOnActor(int32 actorIdx1, int32 actorIdx2) const {
 	return true;
 }
 
-int32 Collision::getAverageValue(int32 start, int32 end, int32 maxDelay, int32 delay) const { // BoundRegleTrois
-	if (delay <= 0) {
-		return start;
+int32 Collision::clampedLerp(int32 val1, int32 val2, int32 nbstep, int32 step) const { // BoundRegleTrois
+	if (step <= 0) {
+		return val1;
 	}
 
-	if (delay >= maxDelay) {
-		return end;
+	if (step >= nbstep) {
+		return val2;
 	}
 
-	return (((end - start) * delay) / maxDelay) + start;
+	return val1 + (((val2 - val1) * step) / nbstep);
 }
 
 void Collision::reajustPos(IVec3 &processActor, ShapeType brickShape) const {
-	if (brickShape == ShapeType::kNone) {
+	if (brickShape <= ShapeType::kSolid) {
 		return;
 	}
 
@@ -167,16 +167,16 @@ void Collision::reajustPos(IVec3 &processActor, ShapeType brickShape) const {
 
 	switch (brickShape) {
 	case ShapeType::kStairsTopLeft:
-		processActor.y = yw + getAverageValue(0, SIZE_BRICK_Y, SIZE_BRICK_XZ, processActor.x - xw);
+		processActor.y = yw + clampedLerp(0, SIZE_BRICK_Y, SIZE_BRICK_XZ, processActor.x - xw);
 		break;
 	case ShapeType::kStairsTopRight:
-		processActor.y = yw + getAverageValue(0, SIZE_BRICK_Y, SIZE_BRICK_XZ, processActor.z - zw);
+		processActor.y = yw + clampedLerp(0, SIZE_BRICK_Y, SIZE_BRICK_XZ, processActor.z - zw);
 		break;
 	case ShapeType::kStairsBottomLeft:
-		processActor.y = yw + getAverageValue(SIZE_BRICK_Y, 0, SIZE_BRICK_XZ, processActor.z - zw);
+		processActor.y = yw + clampedLerp(SIZE_BRICK_Y, 0, SIZE_BRICK_XZ, processActor.z - zw);
 		break;
 	case ShapeType::kStairsBottomRight:
-		processActor.y = yw + getAverageValue(SIZE_BRICK_Y, 0, SIZE_BRICK_XZ, processActor.x - xw);
+		processActor.y = yw + clampedLerp(SIZE_BRICK_Y, 0, SIZE_BRICK_XZ, processActor.x - xw);
 		break;
 	default:
 		break;
