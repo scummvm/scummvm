@@ -5996,7 +5996,7 @@ case $_host_os in
 		;;
 esac
 
-case $_backend in
+case $_host in
 	3ds)
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$datadir/plugins\\\""
 		;;
