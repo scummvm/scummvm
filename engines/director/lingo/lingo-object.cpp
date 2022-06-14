@@ -676,7 +676,7 @@ Datum CastMember::getField(int field) {
 		d = 1; // Not loaded handled in Lingo::getTheCast
 		break;
 	case kTheModified:
-		warning("STUB: CastMember::getField():: Unprocessed getting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		d = (int)_isChanged;
 		break;
 	case kTheName:
 		if (castInfo)

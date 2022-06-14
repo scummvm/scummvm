@@ -73,7 +73,7 @@ public:
 	virtual bool isEditable() { return false; }
 	virtual void setEditable(bool editable) {}
 	virtual bool isModified() { return _modified; }
-	virtual void setModified(bool modified) { _modified = modified; }
+	void setModified(bool modified);
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) { return nullptr; }
 	virtual void updateWidget(Graphics::MacWidget *widget, Channel *channel) {}
 	virtual void updateFromWidget(Graphics::MacWidget *widget) {}
@@ -112,6 +112,7 @@ protected:
 	// a link to the widget we created, we may use it later
 	Graphics::MacWidget *_widget;
 	bool _modified;
+	bool _isChanged;
 };
 
 class BitmapCastMember : public CastMember {

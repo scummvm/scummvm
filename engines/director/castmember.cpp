@@ -48,6 +48,7 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 	_flags1 = 0;
 
 	_modified = true;
+	_isChanged = false;
 
 	_objType = kCastMemberObj;
 
@@ -57,6 +58,12 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 
 CastMemberInfo *CastMember::getInfo() {
 	return _cast->getCastMemberInfo(_castId);
+}
+
+void CastMember::setModified(bool modified) {
+	_modified = modified;
+	if (modified)
+		_isChanged = true;
 }
 
 
