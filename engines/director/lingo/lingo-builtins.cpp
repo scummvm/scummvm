@@ -1745,9 +1745,8 @@ void LB::b_constrainV(int nargs) {
 }
 
 void LB::b_copyToClipBoard(int nargs) {
-	g_lingo->printSTUBWithArglist("b_copyToClipBoard", nargs);
-
-	g_lingo->dropStack(nargs);
+	Datum d = g_lingo->pop();
+	g_director->_clipBoard = new CastMemberID(d.asMemberID());
 }
 
 void LB::b_duplicate(int nargs) {
@@ -2068,9 +2067,32 @@ void LB::b_moveableSprite(int nargs) {
 }
 
 void LB::b_pasteClipBoardInto(int nargs) {
-	g_lingo->printSTUBWithArglist("b_pasteClipBoardInto", nargs);
+	Datum to = g_lingo->pop();
+	if (!g_director->_clipBoard) {
+		warning("LB::b_pasteClipBoardInto(): Nothing to paste from clipboard, skipping paste..");
+		return;
+	}
 
-	g_lingo->dropStack(nargs);
+	Movie *movie = g_director->getCurrentMovie();
+	uint16 frame = movie->getScore()->getCurrentFrame(); 
+	Frame *currentFrame = movie->getScore()->_frames[frame];
+	CastMember *castMember = movie->getCastMember(*g_director->_clipBoard);
+	auto channels = movie->getScore()->_channels;
+
+	castMember->setModified(true);
+	movie->getCast()->_loadedCast->setVal(to.u.cast->member, castMember);
+
+	for (uint16 i = 0; i < currentFrame->_sprites.size(); i++) {
+		if (currentFrame->_sprites[i]->_castId == to.asMemberID())
+			currentFrame->_sprites[i]->setCast(to.asMemberID());
+	}
+
+	for (uint i = 0; i < channels.size(); i++) {
+		if (channels[i]->_sprite->_castId == to.asMemberID()) {
+			channels[i]->_sprite->setCast(to.asMemberID());
+			channels[i]->_dirty = true;
+		}
+	}
 }
 
 void LB::b_puppetPalette(int nargs) {

@@ -232,6 +232,7 @@ protected:
 public:
 	const DirectorGameDescription *_gameDescription;
 	Common::FSNode _gameDataDir;
+	CastMemberID *_clipBoard;
 
 private:
 	byte *_currentPalette;

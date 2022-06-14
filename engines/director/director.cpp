@@ -86,6 +86,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_currentWindow = nullptr;
 	_cursorWindow = nullptr;
 	_lingo = nullptr;
+	_clipBoard = nullptr;
 	_version = getDescriptionVersion();
 
 	_wm = nullptr;
