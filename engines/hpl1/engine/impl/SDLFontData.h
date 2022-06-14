@@ -49,20 +49,18 @@
 
 namespace hpl {
 
-	class cSDLFontData : public iFontData
-	{
-	public:
-		cSDLFontData(const tString &asName, iLowLevelGraphics* apLowLevelGraphics);
-		cSDLFontData();
+class cSDLFontData : public iFontData {
+public:
+	cSDLFontData(const tString &asName, iLowLevelGraphics *apLowLevelGraphics);
+	cSDLFontData();
 
-		bool CreateFromFontFile(const tString &asFileName, int alSize,unsigned short alFirstChar,
-								unsigned short alLastChar);
-		bool CreateFromBitmapFile(const tString &asFileName);
+	bool CreateFromFontFile(const tString &asFileName, int alSize, unsigned short alFirstChar,
+							unsigned short alLastChar);
+	bool CreateFromBitmapFile(const tString &asFileName);
 
-	private:
-		cGlyph* RenderGlyph(TTF_Font* apFont,unsigned short aChar, int alFontSize);
-
-	};
-
+private:
+	cGlyph *RenderGlyph(TTF_Font *apFont, unsigned short aChar, int alFontSize);
 };
+
+};     // namespace hpl
 #endif // HPL_FONTDATA_H

@@ -41,52 +41,51 @@
 #ifndef HPL_TILESET_H
 #define HPL_TILESET_H
 
-#include <vector>
-#include "hpl1/engine/scene/TileData.h"
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/resources/ResourceBase.h"
+#include "hpl1/engine/scene/TileData.h"
+#include "hpl1/engine/system/SystemTypes.h"
+#include <vector>
 
 class TiXmlElement;
 
 namespace hpl {
 
-	#define kMaxTileFrameWidth (9)
+#define kMaxTileFrameWidth (9)
 
-	typedef std::vector<iTileData*> tTileDataVec;
-	typedef tTileDataVec::iterator tTileDataVecIt;
+typedef std::vector<iTileData *> tTileDataVec;
+typedef tTileDataVec::iterator tTileDataVecIt;
 
-	class cResources;
+class cResources;
 
-	class cTileSet : public iResourceBase
-	{
-	public:
-		cTileSet(tString asName,cGraphics *apGraphics ,cResources *apResources);
-		~cTileSet();
+class cTileSet : public iResourceBase {
+public:
+	cTileSet(tString asName, cGraphics *apGraphics, cResources *apResources);
+	~cTileSet();
 
-		//resource stuff:
-		bool Reload(){ return false;}
-		void Unload(){}
-		void Destroy(){}
+	// resource stuff:
+	bool Reload() { return false; }
+	void Unload() {}
+	void Destroy() {}
 
-		void Add(iTileData *apData);
-		iTileData* Get(int alNum);
+	void Add(iTileData *apData);
+	iTileData *Get(int alNum);
 
-		bool CreateFromFile(const tString &asFile);
+	bool CreateFromFile(const tString &asFile);
 
-	private:
-		float mfTileSize;
-		tTileDataVec mvData;
-		cResources *mpResources;
-		cGraphics *mpGraphics;
+private:
+	float mfTileSize;
+	tTileDataVec mvData;
+	cResources *mpResources;
+	cGraphics *mpGraphics;
 
-		int mlNum;
-		int mvImageHandle[eMaterialTexture_LastEnum];
-		cVector2l mvFrameSize;
+	int mlNum;
+	int mvImageHandle[eMaterialTexture_LastEnum];
+	cVector2l mvFrameSize;
 
-		bool LoadData(TiXmlElement *pElement);
-		void GetTileNum(TiXmlElement *apElement);
-	};
-
+	bool LoadData(TiXmlElement *pElement);
+	void GetTileNum(TiXmlElement *apElement);
 };
+
+};     // namespace hpl
 #endif // HPL_TILESET_H

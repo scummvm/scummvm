@@ -45,50 +45,47 @@
 
 namespace hpl {
 
-	//-----------------------------------
+//-----------------------------------
 
-	kSaveData_ChildClass(iPhysicsJoint, iPhysicsJointBall)
-	{
-		kSaveData_ClassInit(iPhysicsJointBall)
-	public:
-		float mfMaxConeAngle;
-		float mfMaxTwistAngle;
-		cVector3f mvConePin;
+kSaveData_ChildClass(iPhysicsJoint, iPhysicsJointBall) {
+	kSaveData_ClassInit(iPhysicsJointBall) public : float mfMaxConeAngle;
+	float mfMaxTwistAngle;
+	cVector3f mvConePin;
 
-		virtual iSaveObject* CreateSaveObject(cSaveObjectHandler *apSaveObjectHandler,cGame *apGame);
-		virtual int GetSaveCreatePrio();
-	};
-
-	//-----------------------------------
-
-	class iPhysicsJointBall : public iPhysicsJoint
-	{
-	typedef iPhysicsJoint super;
-	public:
-		iPhysicsJointBall(const tString &asName, iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
-			iPhysicsWorld *apWorld, const cVector3f &avPivotPoint)
-			: iPhysicsJoint(asName,apParentBody,apChildBody, apWorld,avPivotPoint){}
-		virtual ~iPhysicsJointBall(){}
-
-		virtual void SetConeLimits(const cVector3f& avPin, float afMaxConeAngle, float afMaxTwistAngle)=0;
-		virtual cVector3f GetAngles()=0;
-
-		float GetMaxConeAngle(){ return mfMaxConeAngle;}
-		float GetMaxTwistAngle(){ return mfMaxTwistAngle;}
-		cVector3f GetConePin(){ return mvConePin;}
-
-		ePhysicsJointType GetType(){ return ePhysicsJointType_Ball;}
-
-		//SaveObject implementation
-		virtual iSaveData* CreateSaveData();
-		virtual void SaveToSaveData(iSaveData *apSaveData);
-		virtual void LoadFromSaveData(iSaveData *apSaveData);
-		virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
-
-	protected:
-		float mfMaxConeAngle;
-		float mfMaxTwistAngle;
-		cVector3f mvConePin;
-	};
+	virtual iSaveObject *CreateSaveObject(cSaveObjectHandler * apSaveObjectHandler, cGame * apGame);
+	virtual int GetSaveCreatePrio();
 };
+
+//-----------------------------------
+
+class iPhysicsJointBall : public iPhysicsJoint {
+	typedef iPhysicsJoint super;
+
+public:
+	iPhysicsJointBall(const tString &asName, iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
+					  iPhysicsWorld *apWorld, const cVector3f &avPivotPoint)
+		: iPhysicsJoint(asName, apParentBody, apChildBody, apWorld, avPivotPoint) {}
+	virtual ~iPhysicsJointBall() {}
+
+	virtual void SetConeLimits(const cVector3f &avPin, float afMaxConeAngle, float afMaxTwistAngle) = 0;
+	virtual cVector3f GetAngles() = 0;
+
+	float GetMaxConeAngle() { return mfMaxConeAngle; }
+	float GetMaxTwistAngle() { return mfMaxTwistAngle; }
+	cVector3f GetConePin() { return mvConePin; }
+
+	ePhysicsJointType GetType() { return ePhysicsJointType_Ball; }
+
+	// SaveObject implementation
+	virtual iSaveData *CreateSaveData();
+	virtual void SaveToSaveData(iSaveData *apSaveData);
+	virtual void LoadFromSaveData(iSaveData *apSaveData);
+	virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
+
+protected:
+	float mfMaxConeAngle;
+	float mfMaxTwistAngle;
+	cVector3f mvConePin;
+};
+};     // namespace hpl
 #endif // HPL_PHYSICS_JOINT_BALL_H

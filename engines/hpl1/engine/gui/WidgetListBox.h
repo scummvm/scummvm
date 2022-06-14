@@ -46,68 +46,67 @@
 
 namespace hpl {
 
-	class cGuiSkinFont;
+class cGuiSkinFont;
 
-	class cWidgetSlider;
+class cWidgetSlider;
 
-	class cWidgetListBox : public iWidget, public iWidgetItemContainer
-	{
-	public:
-		cWidgetListBox(cGuiSet *apSet, cGuiSkin *apSkin);
-		virtual ~cWidgetListBox();
+class cWidgetListBox : public iWidget, public iWidgetItemContainer {
+public:
+	cWidgetListBox(cGuiSet *apSet, cGuiSkin *apSkin);
+	virtual ~cWidgetListBox();
 
-		void SetBackgroundZ(float afZ){mfBackgroundZ = afZ;}
-		float GetBackgroundZ(){ return mfBackgroundZ;}
+	void SetBackgroundZ(float afZ) { mfBackgroundZ = afZ; }
+	float GetBackgroundZ() { return mfBackgroundZ; }
 
-		void SetSelectedItem(int alX,bool abMoveList=false);
-		int GetSelectedItem(){ return mlSelectedItem;}
+	void SetSelectedItem(int alX, bool abMoveList = false);
+	int GetSelectedItem() { return mlSelectedItem; }
 
-	protected:
-		/////////////////////////
-		// Own functions
-		void UpdateProperties();
+protected:
+	/////////////////////////
+	// Own functions
+	void UpdateProperties();
 
-		bool DrawText(iWidget* apWidget,cGuiMessageData& aData);
-		kGuiCalllbackDeclarationEnd(DrawText);
+	bool DrawText(iWidget *apWidget, cGuiMessageData &aData);
+	kGuiCalllbackDeclarationEnd(DrawText);
 
-		bool MoveSlider(iWidget* apWidget,cGuiMessageData& aData);
-		kGuiCalllbackDeclarationEnd(MoveSlider);
+	bool MoveSlider(iWidget *apWidget, cGuiMessageData &aData);
+	kGuiCalllbackDeclarationEnd(MoveSlider);
 
-		/////////////////////////
-		// Implemented functions
-		void OnLoadGraphics();
-		void OnInit();
-		void OnChangeSize();
+	/////////////////////////
+	// Implemented functions
+	void OnLoadGraphics();
+	void OnInit();
+	void OnChangeSize();
 
-		void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
+	void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
 
-		bool OnMouseMove(cGuiMessageData &aData);
-		bool OnMouseDown(cGuiMessageData &aData);
-		bool OnMouseUp(cGuiMessageData &aData);
-		bool OnMouseEnter(cGuiMessageData &aData);
-		bool OnMouseLeave(cGuiMessageData &aData);
+	bool OnMouseMove(cGuiMessageData &aData);
+	bool OnMouseDown(cGuiMessageData &aData);
+	bool OnMouseUp(cGuiMessageData &aData);
+	bool OnMouseEnter(cGuiMessageData &aData);
+	bool OnMouseLeave(cGuiMessageData &aData);
 
-		bool OnKeyPress(cGuiMessageData &aData);
+	bool OnKeyPress(cGuiMessageData &aData);
 
-		/////////////////////////
-		// Data
-		float mfBackgroundZ;
-		float mfSliderWidth;
+	/////////////////////////
+	// Data
+	float mfBackgroundZ;
+	float mfSliderWidth;
 
-		int mlFirstItem;
-		int mlMaxItems;
+	int mlFirstItem;
+	int mlMaxItems;
 
-		int mlSelectedItem;
+	int mlSelectedItem;
 
-		cGuiGfxElement *mpGfxBackground;
+	cGuiGfxElement *mpGfxBackground;
 
-		cGuiGfxElement *mpGfxSelection;
+	cGuiGfxElement *mpGfxSelection;
 
-		cGuiGfxElement *mvGfxBorders[4];
-		cGuiGfxElement *mvGfxCorners[4];
+	cGuiGfxElement *mvGfxBorders[4];
+	cGuiGfxElement *mvGfxCorners[4];
 
-		cWidgetSlider *mpSlider;
-	};
-
+	cWidgetSlider *mpSlider;
 };
+
+};     // namespace hpl
 #endif // HPL_WIDGET_LIST_BOX_H

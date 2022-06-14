@@ -41,289 +41,282 @@
 #ifndef HPL_PORTAL_CONTAINER_H
 #define HPL_PORTAL_CONTAINER_H
 
+#include "hpl1/engine/graphics/Renderable.h"
+#include "hpl1/engine/math/BoundingVolume.h"
+#include "hpl1/engine/scene/RenderableContainer.h"
 #include <list>
 #include <map>
 #include <set>
-#include "hpl1/engine/scene/RenderableContainer.h"
-#include "hpl1/engine/math/BoundingVolume.h"
-#include "hpl1/engine/graphics/Renderable.h"
 
 namespace hpl {
 
-	class iLight3D;
-	class cSectorVisibilityContainer;
+class iLight3D;
+class cSectorVisibilityContainer;
 
-	typedef std::list<iRenderable*> tRenderableList;
-	typedef std::list<iRenderable*>::iterator tRenderableListIt;
+typedef std::list<iRenderable *> tRenderableList;
+typedef std::list<iRenderable *>::iterator tRenderableListIt;
 
-	typedef std::set<iRenderable*> tRenderableSet;
-	typedef std::set<iRenderable*>::iterator tRenderableSetIt;
+typedef std::set<iRenderable *> tRenderableSet;
+typedef std::set<iRenderable *>::iterator tRenderableSetIt;
 
-	typedef std::set<iEntity3D*> tEntity3DSet;
-	typedef std::set<iEntity3D*>::iterator tEntity3DSetIt;
+typedef std::set<iEntity3D *> tEntity3DSet;
+typedef std::set<iEntity3D *>::iterator tEntity3DSetIt;
 
-	//----------------------------------------------------
+//----------------------------------------------------
 
-	class cPortalContainer;
-	class cSector;
+class cPortalContainer;
+class cSector;
 
-	//----------------------------------------------------
+//----------------------------------------------------
 
-	typedef std::map<tString,cSector*> tSectorMap;
-	typedef std::map<tString,cSector*>::iterator tSectorMapIt;
+typedef std::map<tString, cSector *> tSectorMap;
+typedef std::map<tString, cSector *>::iterator tSectorMapIt;
 
-	//----------------------------------------------------
+//----------------------------------------------------
 
+class cPortalContainerEntityIterator {
+public:
+	cPortalContainerEntityIterator(cPortalContainer *apContainer,
+								   cBoundingVolume *apBV);
 
-	class cPortalContainerEntityIterator
-	{
-	public:
-		cPortalContainerEntityIterator(cPortalContainer *apContainer,
-										cBoundingVolume *apBV);
+	bool HasNext();
 
-		bool HasNext();
+	iEntity3D *Next();
 
-		iEntity3D* Next();
+private:
+	cPortalContainer *mpContainer;
+	cBoundingVolume *mpBV;
 
-	private:
-		cPortalContainer *mpContainer;
-		cBoundingVolume *mpBV;
+	tSectorMap *mpSectorMap;
+	tEntity3DSet *mpEntity3DSet;
 
-		tSectorMap *mpSectorMap;
-		tEntity3DSet *mpEntity3DSet;
+	tEntity3DSetIt mEntityIt;
+	tSectorMapIt mSectorIt;
 
-		tEntity3DSetIt mEntityIt;
-		tSectorMapIt mSectorIt;
+	tEntity3DSet mIteratedSet;
 
-		tEntity3DSet mIteratedSet;
+	int mlIteratorCount;
 
-		int mlIteratorCount;
+	bool mbGlobal;
+};
 
-		bool mbGlobal;
-	};
+//----------------------------------------------------
 
+class cPortalContainerCallback : public iEntityCallback {
+public:
+	cPortalContainerCallback(cPortalContainer *apContainer);
 
-	//----------------------------------------------------
+	void OnTransformUpdate(iEntity3D *apEntity);
 
-	class cPortalContainerCallback : public iEntityCallback
-	{
-	public:
-		cPortalContainerCallback(cPortalContainer *apContainer);
+private:
+	cPortalContainer *mpContainer;
+};
 
-		void OnTransformUpdate(iEntity3D * apEntity);
+//----------------------------------------------------
 
-	private:
-		cPortalContainer *mpContainer;
-	};
+class cPortalContainerEntityCallback : public iEntityCallback {
+public:
+	cPortalContainerEntityCallback(cPortalContainer *apContainer);
 
-	//----------------------------------------------------
+	void OnTransformUpdate(iEntity3D *apEntity);
 
-	class cPortalContainerEntityCallback : public iEntityCallback
-	{
-	public:
-		cPortalContainerEntityCallback(cPortalContainer *apContainer);
+private:
+	cPortalContainer *mpContainer;
+};
 
-		void OnTransformUpdate(iEntity3D * apEntity);
+//----------------------------------------------------
 
-	private:
-		cPortalContainer *mpContainer;
-	};
+class cSector;
+class cPortal;
 
-	//----------------------------------------------------
+typedef std::map<int, cPortal *> tPortalMap;
+typedef std::map<int, cPortal *>::iterator tPortalMapIt;
 
+typedef std::list<cPortal *> tPortalList;
+typedef std::list<cPortal *>::iterator tPortalListIt;
 
-	class cSector;
-	class cPortal;
-
-	typedef std::map<int,cPortal*> tPortalMap;
-	typedef std::map<int,cPortal*>::iterator tPortalMapIt;
-
-	typedef std::list<cPortal*> tPortalList;
-	typedef std::list<cPortal*>::iterator tPortalListIt;
-
-	class cPortal
-	{
+class cPortal {
 	friend class cSector;
-	public:
-		cPortal(int alId, cPortalContainer *apContainer);
-		~cPortal();
 
-		void SetTargetSector(tString asSectorId);
-		cSector *GetTargetSector();
+public:
+	cPortal(int alId, cPortalContainer *apContainer);
+	~cPortal();
 
-		cSector *GetSector();
+	void SetTargetSector(tString asSectorId);
+	cSector *GetTargetSector();
 
-		void AddPortalId(int alId);
-		void SetNormal(const cVector3f &avNormal);
-		void AddPoint(const cVector3f &avPoint);
-		void SetTransform(const cMatrixf &a_mtxTrans);
+	cSector *GetSector();
 
-		void Compile();
+	void AddPortalId(int alId);
+	void SetNormal(const cVector3f &avNormal);
+	void AddPoint(const cVector3f &avPoint);
+	void SetTransform(const cMatrixf &a_mtxTrans);
 
-		bool IsVisible(cFrustum * apFrustum);
+	void Compile();
 
-		tPortalList* GetPortalList();
+	bool IsVisible(cFrustum *apFrustum);
 
-		//Debug stuffs
-		cBoundingVolume* GetBV(){ return &mBV;}
-		cVector3f GetNormal(){ return mvNormal;}
-		int GetId(){ return mlId;}
-		cPlanef& GetPlane(){ return mPlane;}
+	tPortalList *GetPortalList();
 
-		bool GetActive(){ return mbActive;}
-		void SetActive(bool abX){ mbActive = abX;}
+	// Debug stuffs
+	cBoundingVolume *GetBV() { return &mBV; }
+	cVector3f GetNormal() { return mvNormal; }
+	int GetId() { return mlId; }
+	cPlanef &GetPlane() { return mPlane; }
 
-	private:
-		cPortalContainer *mpContainer;
+	bool GetActive() { return mbActive; }
+	void SetActive(bool abX) { mbActive = abX; }
 
-		int mlId;
-		tString msSectorId;
+private:
+	cPortalContainer *mpContainer;
 
-		tString msTargetSectorId;
-		cSector *mpTargetSector;
-		cSector *mpSector;
+	int mlId;
+	tString msSectorId;
 
-		tIntVec mvPortalIds;
-		tPortalList mlstPortals;
-		bool mbPortalsNeedUpdate;
+	tString msTargetSectorId;
+	cSector *mpTargetSector;
+	cSector *mpSector;
 
-		bool mbActive;
+	tIntVec mvPortalIds;
+	tPortalList mlstPortals;
+	bool mbPortalsNeedUpdate;
 
+	bool mbActive;
 
-		cVector3f mvNormal;
-		cPlanef mPlane;
-		cBoundingVolume mBV;
-		tVector3fList mlstPoints;
-	};
+	cVector3f mvNormal;
+	cPlanef mPlane;
+	cBoundingVolume mBV;
+	tVector3fList mlstPoints;
+};
 
-	//----------------------------------------------------
+//----------------------------------------------------
 
-	class cSector : public iRenderContainerData
-	{
+class cSector : public iRenderContainerData {
 	friend class cPortalContainer;
 	friend class cPortalContainerEntityIterator;
-	public:
-		cSector(tString asId, cPortalContainer *apContainer);
-		~cSector();
 
-		bool TryToAdd(iRenderable *apObject, bool abStatic);
-		bool TryToAddEntity(iEntity3D *apEntity);
+public:
+	cSector(tString asId, cPortalContainer *apContainer);
+	~cSector();
 
-		void AddPortal(cPortal* apPortal);
+	bool TryToAdd(iRenderable *apObject, bool abStatic);
+	bool TryToAddEntity(iEntity3D *apEntity);
 
-		void GetVisible(cFrustum* apFrustum,cRenderList *apRenderList, cPortal *apStartPortal);
+	void AddPortal(cPortal *apPortal);
 
-		void RemoveDynamic(iRenderable *apObject);
-		void RemoveEntity(iEntity3D *apEntity);
+	void GetVisible(cFrustum *apFrustum, cRenderList *apRenderList, cPortal *apStartPortal);
 
-		cPortal* GetPortal(int alId);
+	void RemoveDynamic(iRenderable *apObject);
+	void RemoveEntity(iEntity3D *apEntity);
 
-		void SetAmbientColor(const cColor& aAmbient) {mAmbient = aAmbient;}
-		const cColor& GetAmbientColor() { return mAmbient;}
+	cPortal *GetPortal(int alId);
 
-		//Debug stuffs
-		cBoundingVolume* GetBV(){ return &mBV;}
-		tPortalList* GetPortalList(){ return &mlstPortals;}
-		tString& GetId(){ return msId;}
+	void SetAmbientColor(const cColor &aAmbient) { mAmbient = aAmbient; }
+	const cColor &GetAmbientColor() { return mAmbient; }
 
-	private:
-		cPortalContainer *mpContainer;
+	// Debug stuffs
+	cBoundingVolume *GetBV() { return &mBV; }
+	tPortalList *GetPortalList() { return &mlstPortals; }
+	tString &GetId() { return msId; }
 
-		tString msId;
-		cBoundingVolume mBV;
+private:
+	cPortalContainer *mpContainer;
 
-		int mlVisitCount;
+	tString msId;
+	cBoundingVolume mBV;
 
-		tRenderableSet m_setStaticObjects;
-		tRenderableSet m_setDynamicObjects;
+	int mlVisitCount;
 
-		tEntity3DSet m_setEntities;
+	tRenderableSet m_setStaticObjects;
+	tRenderableSet m_setDynamicObjects;
 
-		tPortalList mlstPortals;
+	tEntity3DSet m_setEntities;
 
-		cColor mAmbient;
-	};
+	tPortalList mlstPortals;
 
-	//----------------------------------------------------
+	cColor mAmbient;
+};
 
-	class cPortalContainer : public iRenderableContainer
-	{
+//----------------------------------------------------
+
+class cPortalContainer : public iRenderableContainer {
 	friend class cPortalContainerCallback;
 	friend class cPortalContainerEntityCallback;
 	friend class cPortalContainerEntityIterator;
-	public:
-		cPortalContainer();
-		~cPortalContainer();
 
-		bool AddEntity(iEntity3D *pEntity);
-		bool RemoveEntity(iEntity3D *pEntity);
+public:
+	cPortalContainer();
+	~cPortalContainer();
 
-		bool Add(iRenderable *apRenderable, bool abStatic);
-		bool Remove(iRenderable *apRenderable);
+	bool AddEntity(iEntity3D *pEntity);
+	bool RemoveEntity(iEntity3D *pEntity);
 
-		void AddLightShadowCasters(iLight3D* apLight,cFrustum* apFrustum,cRenderList *apRenderList);
+	bool Add(iRenderable *apRenderable, bool abStatic);
+	bool Remove(iRenderable *apRenderable);
 
-		void AddToRenderList(iRenderable *apObject,cFrustum* apFrustum,cRenderList *apRenderList);
+	void AddLightShadowCasters(iLight3D *apLight, cFrustum *apFrustum, cRenderList *apRenderList);
 
-		void GetVisible(cFrustum* apFrustum,cRenderList *apRenderList);
+	void AddToRenderList(iRenderable *apObject, cFrustum *apFrustum, cRenderList *apRenderList);
 
-		void Compile();
+	void GetVisible(cFrustum *apFrustum, cRenderList *apRenderList);
 
-		//Portal Specific Stuff
-		/**
-		* Adds a new sector to the container. All sectors must be created before anything else.
-		*/
-		void AddSector(tString asSectorId);
+	void Compile();
 
-		/**
-		* Adds a new renderable to a specific sector.This also recalculates the sector's bounding volume.
-		* Object must be (and is considered) static!
-		*/
-		bool AddToSector(iRenderable *apRenderable,tString asSector);
+	// Portal Specific Stuff
+	/**
+	 * Adds a new sector to the container. All sectors must be created before anything else.
+	 */
+	void AddSector(tString asSectorId);
 
-		/*
-		* Adds a portal to a sector.
-		*/
-		bool AddPortal(cPortal *apPortal, tString asSector);
+	/**
+	 * Adds a new renderable to a specific sector.This also recalculates the sector's bounding volume.
+	 * Object must be (and is considered) static!
+	 */
+	bool AddToSector(iRenderable *apRenderable, tString asSector);
 
-		cSector* GetSector(tString asId);
+	/*
+	 * Adds a portal to a sector.
+	 */
+	bool AddPortal(cPortal *apPortal, tString asSector);
 
-		int GetSectorVisitCount() const { return mlSectorVisitCount;}
+	cSector *GetSector(tString asId);
 
-		cPortalContainerEntityIterator GetEntityIterator(cBoundingVolume *apBV);
+	int GetSectorVisitCount() const { return mlSectorVisitCount; }
 
-		//Visibility tools
-		cSectorVisibilityContainer* CreateVisibiltyFromBV(cBoundingVolume *apBV);
-		cSectorVisibilityContainer* CreateVisibiltyFromFrustum(cFrustum *apFrustum);
+	cPortalContainerEntityIterator GetEntityIterator(cBoundingVolume *apBV);
 
-		//Debug stuff
-		tSectorMap* GetSectorMap(){ return &m_mapSectors;}
-		tStringList* GetVisibleSectorsList(){ return &mlstVisibleSectors;}
+	// Visibility tools
+	cSectorVisibilityContainer *CreateVisibiltyFromBV(cBoundingVolume *apBV);
+	cSectorVisibilityContainer *CreateVisibiltyFromFrustum(cFrustum *apFrustum);
 
-		tRenderableSet* GetGlobalDynamicObjectSet(){ return &m_setGlobalDynamicObjects;}
-		tRenderableList* GetGlobalStaticObjectList(){ return &mlstGlobalStaticObjects;}
+	// Debug stuff
+	tSectorMap *GetSectorMap() { return &m_mapSectors; }
+	tStringList *GetVisibleSectorsList() { return &mlstVisibleSectors; }
 
-	private:
-		void ComputeSectorVisibilty(cSectorVisibilityContainer* apContainer);
+	tRenderableSet *GetGlobalDynamicObjectSet() { return &m_setGlobalDynamicObjects; }
+	tRenderableList *GetGlobalStaticObjectList() { return &mlstGlobalStaticObjects; }
 
-		tSectorMap m_mapSectors;
+private:
+	void ComputeSectorVisibilty(cSectorVisibilityContainer *apContainer);
 
-		int mlSectorVisitCount;
+	tSectorMap m_mapSectors;
 
-		cPortalContainerCallback *mpEntityCallback;
-		cPortalContainerEntityCallback *mpNormalEntityCallback;
+	int mlSectorVisitCount;
 
-		//List with dynamic objects that are not in any sector.
-		tRenderableSet m_setGlobalDynamicObjects;
-		//List with static objects that are not in any sector.
-		tRenderableList mlstGlobalStaticObjects;
+	cPortalContainerCallback *mpEntityCallback;
+	cPortalContainerEntityCallback *mpNormalEntityCallback;
 
-		//Global dynamic entities
-		tEntity3DSet m_setGlobalEntities;
+	// List with dynamic objects that are not in any sector.
+	tRenderableSet m_setGlobalDynamicObjects;
+	// List with static objects that are not in any sector.
+	tRenderableList mlstGlobalStaticObjects;
 
-		tStringList mlstVisibleSectors;
+	// Global dynamic entities
+	tEntity3DSet m_setGlobalEntities;
 
-		int mlEntityIterateCount;
-	};
+	tStringList mlstVisibleSectors;
+
+	int mlEntityIterateCount;
 };
+};     // namespace hpl
 #endif // HPL_PORTAL_CONTAINER_H

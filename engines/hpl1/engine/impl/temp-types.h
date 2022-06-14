@@ -16,7 +16,6 @@ using cOAL_Stream = int;
 using NewtonContact = int;
 using SDL_PixelFormat = int;
 using TTF_Font = int;
-using cPBuffer = int; 
+using cPBuffer = int;
 
 #endif
-

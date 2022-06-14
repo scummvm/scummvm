@@ -41,34 +41,32 @@
 #ifndef HPL_ACTIONKEYBOARD_H
 #define HPL_ACTIONKEYBOARD_H
 
-
-#include "hpl1/engine/input/InputTypes.h"
 #include "hpl1/engine/input/Action.h"
+#include "hpl1/engine/input/InputTypes.h"
 
 namespace hpl {
 
-	class cInput;
+class cInput;
 
-	class cActionKeyboard : public iAction
-	{
-	public:
-		cActionKeyboard(tString asName,cInput* apInput, int aKey);
+class cActionKeyboard : public iAction {
+public:
+	cActionKeyboard(tString asName, cInput *apInput, int aKey);
 
-		bool IsTriggerd();
-		float GetValue();
+	bool IsTriggerd();
+	float GetValue();
 
-		tString GetInputName();
+	tString GetInputName();
 
-		tString GetInputType(){return "Keyboard";}
+	tString GetInputType() { return "Keyboard"; }
 
-		eKey GetKey(){ return mKey;}
-		eKeyModifier GetModifier(){ return mMod;}
+	eKey GetKey() { return mKey; }
+	eKeyModifier GetModifier() { return mMod; }
 
-	private:
-		eKey mKey;
-		eKeyModifier mMod;
-		cInput *mpInput;
-	};
-
+private:
+	eKey mKey;
+	eKeyModifier mMod;
+	cInput *mpInput;
 };
+
+};     // namespace hpl
 #endif // HPL_ACTIONKEYBOARD_H

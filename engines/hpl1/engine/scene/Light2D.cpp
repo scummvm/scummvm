@@ -40,66 +40,57 @@
 
 #include "hpl1/engine/scene/Light2D.h"
 
-#include "hpl1/engine/scene/GridMap2D.h"
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
-
+#include "hpl1/engine/scene/GridMap2D.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	iLight2D::iLight2D(tString asName) : iEntity2D(asName) , iLight()
-	{
-
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	void iLight2D::SetFarAttenuation(float afX)
-	{
-		mfFarAttenuation = afX;
-		if(UpdateBoundingBox())
-			if(mpGridObject)
-				mpGridObject->Update(GetBoundingBox());
-	}
-	//-----------------------------------------------------------------------
-
-	void iLight2D::SetNearAttenuation(float afX)
-	{
-		mfNearAttenuation = afX;
-		if(mfNearAttenuation>mfFarAttenuation)
-			SetFarAttenuation(mfNearAttenuation);
-	}
-	//-----------------------------------------------------------------------
-
-	cVector3f iLight2D::GetLightPosition()
-	{
-		return GetWorldPosition();
-	}
-
-	//-----------------------------------------------------------------------
-
-	void iLight2D::UpdateLogic(float afTimeStep)
-	{
-		UpdateLight(afTimeStep);
-		if(mfFadeTime>0)
-		{
-			if(UpdateBoundingBox())
-				mpGridObject->Update(mBoundingBox);
-		}
-	}
-
-
-	//-----------------------------------------------------------------------
-
+iLight2D::iLight2D(tString asName) : iEntity2D(asName), iLight() {
 }
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+void iLight2D::SetFarAttenuation(float afX) {
+	mfFarAttenuation = afX;
+	if (UpdateBoundingBox())
+		if (mpGridObject)
+			mpGridObject->Update(GetBoundingBox());
+}
+//-----------------------------------------------------------------------
+
+void iLight2D::SetNearAttenuation(float afX) {
+	mfNearAttenuation = afX;
+	if (mfNearAttenuation > mfFarAttenuation)
+		SetFarAttenuation(mfNearAttenuation);
+}
+//-----------------------------------------------------------------------
+
+cVector3f iLight2D::GetLightPosition() {
+	return GetWorldPosition();
+}
+
+//-----------------------------------------------------------------------
+
+void iLight2D::UpdateLogic(float afTimeStep) {
+	UpdateLight(afTimeStep);
+	if (mfFadeTime > 0) {
+		if (UpdateBoundingBox())
+			mpGridObject->Update(mBoundingBox);
+	}
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

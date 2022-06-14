@@ -43,108 +43,97 @@
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	iAction::iAction(tString asName)
-	{
-		msName = asName;
+iAction::iAction(tString asName) {
+	msName = asName;
 
-		mbBecameTriggerd= false;
-		mbIsTriggerd = false;
+	mbBecameTriggerd = false;
+	mbIsTriggerd = false;
 
-		mfTimeCount = -1.0;
+	mfTimeCount = -1.0;
 
-		mbTriggerDown = false;
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	bool iAction::WasTriggerd()
-	{
-		if(mbBecameTriggerd && !IsTriggerd()){
-			mbBecameTriggerd=false;
-			return true;
-		}
-
-		return false;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool iAction::BecameTriggerd()
-	{
-		if(!mbIsTriggerd && IsTriggerd()){
-			mbIsTriggerd=true;
-			return true;
-		}
-
-		return false;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool iAction::DoubleTriggerd(float afLimit)
-	{
-		if(!mbTriggerDown && IsTriggerd())
-		{
-			mbTriggerDown=true;
-
-			if(mfTimeCount <0 || mfTimeCount > afLimit)
-			{
-				mfTimeCount =0;
-				return false;
-			}
-			else
-			{
-				mfTimeCount =0;
-				mbIsTriggerd=true;
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	//-----------------------------------------------------------------------
-
-	void iAction::Update(float afTimeStep)
-	{
-		UpdateLogic(afTimeStep);
-
-		if(!IsTriggerd()){
-			mbIsTriggerd=false;
-			mbTriggerDown = false;
-
-			if(mfTimeCount >= 0) mfTimeCount += afTimeStep;
-		}
-		else {
-			mbBecameTriggerd=true;
-		}
-	}
-
-	//-----------------------------------------------------------------------
-
-	void iAction::UpdateLogic(float afTimeStep)
-	{
-	}
-
-	//-----------------------------------------------------------------------
-
-	tString iAction::GetName()
-	{
-		return msName;
-	}
-
-	//-----------------------------------------------------------------------
-
+	mbTriggerDown = false;
 }
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+bool iAction::WasTriggerd() {
+	if (mbBecameTriggerd && !IsTriggerd()) {
+		mbBecameTriggerd = false;
+		return true;
+	}
+
+	return false;
+}
+
+//-----------------------------------------------------------------------
+
+bool iAction::BecameTriggerd() {
+	if (!mbIsTriggerd && IsTriggerd()) {
+		mbIsTriggerd = true;
+		return true;
+	}
+
+	return false;
+}
+
+//-----------------------------------------------------------------------
+
+bool iAction::DoubleTriggerd(float afLimit) {
+	if (!mbTriggerDown && IsTriggerd()) {
+		mbTriggerDown = true;
+
+		if (mfTimeCount < 0 || mfTimeCount > afLimit) {
+			mfTimeCount = 0;
+			return false;
+		} else {
+			mfTimeCount = 0;
+			mbIsTriggerd = true;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//-----------------------------------------------------------------------
+
+void iAction::Update(float afTimeStep) {
+	UpdateLogic(afTimeStep);
+
+	if (!IsTriggerd()) {
+		mbIsTriggerd = false;
+		mbTriggerDown = false;
+
+		if (mfTimeCount >= 0)
+			mfTimeCount += afTimeStep;
+	} else {
+		mbBecameTriggerd = true;
+	}
+}
+
+//-----------------------------------------------------------------------
+
+void iAction::UpdateLogic(float afTimeStep) {
+}
+
+//-----------------------------------------------------------------------
+
+tString iAction::GetName() {
+	return msName;
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

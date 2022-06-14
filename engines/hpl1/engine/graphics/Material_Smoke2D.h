@@ -43,49 +43,45 @@
 
 #include "hpl1/engine/graphics/Material.h"
 
-
 namespace hpl {
 
-	class cMaterial_Smoke2D : public iMaterial
-	{
-	public:
-		cMaterial_Smoke2D(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
-		~cMaterial_Smoke2D();
+class cMaterial_Smoke2D : public iMaterial {
+public:
+	cMaterial_Smoke2D(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+					  cImageManager *apImageManager, cTextureManager *apTextureManager,
+					  cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+					  eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
+	~cMaterial_Smoke2D();
 
-		void Compile();
-		bool StartRendering(eMaterialRenderType aType,iCamera* apCam,iLight *pLight);
-		void EndRendering(eMaterialRenderType aType);
-		tVtxBatchFlag GetBatchFlags(eMaterialRenderType aType);
-		bool NextPass(eMaterialRenderType aType);
-		bool HasMultiplePasses(eMaterialRenderType aType);
+	void Compile();
+	bool StartRendering(eMaterialRenderType aType, iCamera *apCam, iLight *pLight);
+	void EndRendering(eMaterialRenderType aType);
+	tVtxBatchFlag GetBatchFlags(eMaterialRenderType aType);
+	bool NextPass(eMaterialRenderType aType);
+	bool HasMultiplePasses(eMaterialRenderType aType);
 
-		eMaterialType GetType(eMaterialRenderType aType);
-		void EditVertexes(eMaterialRenderType aType, iCamera* apCam, iLight *pLight,
-			tVertexVec *apVtxVec,cVector3f *apTransform,unsigned int alIndexAdd);
+	eMaterialType GetType(eMaterialRenderType aType);
+	void EditVertexes(eMaterialRenderType aType, iCamera *apCam, iLight *pLight,
+					  tVertexVec *apVtxVec, cVector3f *apTransform, unsigned int alIndexAdd);
 
-	private:
-	};
-
-	class cMaterialType_Smoke2D : public iMaterialType
-	{
-	public:
-		bool IsCorrect(tString asName){
-			return cString::ToLowerCase(asName)=="smoke2d";
-		}
-
-		iMaterial* Create(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
-		{
-			return hplNew( cMaterial_Smoke2D,(asName,apLowLevelGraphics,
-				apImageManager,apTextureManager,apRenderer,
-				apProgramManager,aPicture,apRenderer3D) );
-		}
-	};
-
+private:
 };
+
+class cMaterialType_Smoke2D : public iMaterialType {
+public:
+	bool IsCorrect(tString asName) {
+		return cString::ToLowerCase(asName) == "smoke2d";
+	}
+
+	iMaterial *Create(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+					  cImageManager *apImageManager, cTextureManager *apTextureManager,
+					  cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+					  eMaterialPicture aPicture, cRenderer3D *apRenderer3D) {
+		return hplNew(cMaterial_Smoke2D, (asName, apLowLevelGraphics,
+										  apImageManager, apTextureManager, apRenderer,
+										  apProgramManager, aPicture, apRenderer3D));
+	}
+};
+
+};     // namespace hpl
 #endif // HPL_MATERIAL_SMOKE2D_H

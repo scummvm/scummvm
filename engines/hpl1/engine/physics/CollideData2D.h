@@ -41,39 +41,37 @@
 #ifndef HPL_COLLIDE_DATA_2D_H
 #define HPL_COLLIDE_DATA_2D_H
 
-#include <list>
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/physics/Body2D.h"
 #include "hpl1/engine/scene/Tile.h"
+#include "hpl1/engine/system/SystemTypes.h"
+#include <list>
 
 namespace hpl {
 
-	class cCollidedTile
-	{
-	public:
-		cCollidedTile(cTile* apTile, int alLayer) : mpTile(apTile), mlLayer(alLayer){}
-		cTile* mpTile;
-		int mlLayer;
-	};
-
-	typedef std::list<cCollidedTile> tCollidedTileList;
-	typedef tCollidedTileList::iterator tCollidedTileListIt;
-
-	class cCollideData2D
-	{
-	public:
-		tCollidedTileList mlstTiles;
-		tBody2DList mlstBodies;
-
-		cVector2f mvPushVec;
-
-		void Clear(){
-			mlstBodies.clear();
-			mlstTiles.clear();
-			mvPushVec =0;
-		}
-	};
-
+class cCollidedTile {
+public:
+	cCollidedTile(cTile *apTile, int alLayer) : mpTile(apTile), mlLayer(alLayer) {}
+	cTile *mpTile;
+	int mlLayer;
 };
+
+typedef std::list<cCollidedTile> tCollidedTileList;
+typedef tCollidedTileList::iterator tCollidedTileListIt;
+
+class cCollideData2D {
+public:
+	tCollidedTileList mlstTiles;
+	tBody2DList mlstBodies;
+
+	cVector2f mvPushVec;
+
+	void Clear() {
+		mlstBodies.clear();
+		mlstTiles.clear();
+		mvPushVec = 0;
+	}
+};
+
+};     // namespace hpl
 #endif // HPL_COLLIDE_DATA_2D_H

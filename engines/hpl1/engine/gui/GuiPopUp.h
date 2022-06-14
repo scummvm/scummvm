@@ -45,21 +45,20 @@
 
 namespace hpl {
 
-	class cGuiSet;
-	class cGuiSkin;
+class cGuiSet;
+class cGuiSkin;
 
-	class iGuiPopUp
-	{
-	public:
-		iGuiPopUp(cGuiSet *apSet);
-		virtual ~iGuiPopUp();
+class iGuiPopUp {
+public:
+	iGuiPopUp(cGuiSet *apSet);
+	virtual ~iGuiPopUp();
 
-	protected:
-		void SelfDestruct();
+protected:
+	void SelfDestruct();
 
-		cGuiSet *mpSet;
-		cGuiSkin *mpSkin;
-	};
-
+	cGuiSet *mpSet;
+	cGuiSkin *mpSkin;
 };
+
+};     // namespace hpl
 #endif // HPL_WIDGET_FRAME_H

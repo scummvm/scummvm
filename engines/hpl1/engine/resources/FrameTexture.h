@@ -45,21 +45,20 @@
 
 namespace hpl {
 
-	class iTexture;
+class iTexture;
 
-	class cFrameTexture : public iFrameBase
-	{
-	public:
-		cFrameTexture(iTexture *pTex, int alHandle);
-		~cFrameTexture();
+class cFrameTexture : public iFrameBase {
+public:
+	cFrameTexture(iTexture *pTex, int alHandle);
+	~cFrameTexture();
 
-		iTexture* GetTexture();
-		int GetHandle(){return mlHandle;}
+	iTexture *GetTexture();
+	int GetHandle() { return mlHandle; }
 
-	private:
-		iTexture *mpTexture;
-		int mlHandle;
-	};
-
+private:
+	iTexture *mpTexture;
+	int mlHandle;
 };
+
+};     // namespace hpl
 #endif // HPL_FRAMETEXTURE_H

@@ -48,49 +48,48 @@
 
 namespace hpl {
 
-	class cOpenALSoundChannel : public iSoundChannel
-	{
-	public:
-		cOpenALSoundChannel(iSoundData* apData, int alChannel, cSoundManager* apSoundManger);
-		~cOpenALSoundChannel();
+class cOpenALSoundChannel : public iSoundChannel {
+public:
+	cOpenALSoundChannel(iSoundData *apData, int alChannel, cSoundManager *apSoundManger);
+	~cOpenALSoundChannel();
 
-		void Play();
-		void Stop();
+	void Play();
+	void Stop();
 
-		void SetPaused(bool abX);
-		void SetSpeed(float afSpeed);
-		void SetVolume (float afVolume);
-		void SetLooping (bool abLoop);
-		void SetPan (float afPan);
-		void Set3D(bool ab3D);
+	void SetPaused(bool abX);
+	void SetSpeed(float afSpeed);
+	void SetVolume(float afVolume);
+	void SetLooping(bool abLoop);
+	void SetPan(float afPan);
+	void Set3D(bool ab3D);
 
-		void SetPriority(int alX);
-		int GetPriority();
+	void SetPriority(int alX);
+	int GetPriority();
 
-		void SetPositionRelative(bool abRelative);
-		void SetPosition(const cVector3f &avPos);
-		void SetVelocity(const cVector3f &avVel);
+	void SetPositionRelative(bool abRelative);
+	void SetPosition(const cVector3f &avPos);
+	void SetVelocity(const cVector3f &avVel);
 
-		void SetMinDistance(float fMin);
-		void SetMaxDistance(float fMax);
+	void SetMinDistance(float fMin);
+	void SetMaxDistance(float fMax);
 
-		bool IsPlaying();
+	bool IsPlaying();
 
-		bool IsBufferUnderrun() { return true; /*#if 0 return OAL_Source_IsBufferUnderrun(mlChannel);*/ }
-		double GetElapsedTime() { return 0.0; /*#if 0 return OAL_Source_GetElapsedTime(mlChannel);*/}
-		double GetTotalTime() { return 0.0; /*#if 0 return OAL_Source_GetTotalTime(mlChannel);*/}
+	bool IsBufferUnderrun() { return true; /*#if 0 return OAL_Source_IsBufferUnderrun(mlChannel);*/ }
+	double GetElapsedTime() { return 0.0; /*#if 0 return OAL_Source_GetElapsedTime(mlChannel);*/ }
+	double GetTotalTime() { return 0.0; /*#if 0 return OAL_Source_GetTotalTime(mlChannel);*/ }
 
-		void SetAffectedByEnv(bool abAffected);
-		void SetFiltering ( bool abEnabled, int alFlags);
-		void SetFilterGain(float afGain);
-		void SetFilterGainHF(float afGainHF);
+	void SetAffectedByEnv(bool abAffected);
+	void SetFiltering(bool abEnabled, int alFlags);
+	void SetFilterGain(float afGain);
+	void SetFilterGainHF(float afGainHF);
 
-	private:
-		int mlChannel;
-		int mlDefaultFreq;
+private:
+	int mlChannel;
+	int mlDefaultFreq;
 
-		float mfPosition[3];
-		float mfVelocity[3];
-	};
+	float mfPosition[3];
+	float mfVelocity[3];
 };
+};     // namespace hpl
 #endif // HPL_OPENAL_CHANNEL_H

@@ -41,22 +41,21 @@
 #include "hpl1/engine/impl/SDLTexture.h"
 #include "hpl1/engine/impl/SDLBitmap2D.h"
 
-#include "hpl1/engine/system/LowLevelSystem.h"
 #include "hpl1/engine/math/Math.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cSDLTexture::cSDLTexture(const tString &asName,iPixelFormat *apPxlFmt,iLowLevelGraphics* apLowLevelGraphics,
-								eTextureType aType, bool abUseMipMaps, eTextureTarget aTarget,
-								bool abCompress)
-	: iTexture(asName,"OGL",apPxlFmt,apLowLevelGraphics,aType,abUseMipMaps, aTarget, abCompress)
-	{
+cSDLTexture::cSDLTexture(const tString &asName, iPixelFormat *apPxlFmt, iLowLevelGraphics *apLowLevelGraphics,
+						 eTextureType aType, bool abUseMipMaps, eTextureTarget aTarget,
+						 bool abCompress)
+	: iTexture(asName, "OGL", apPxlFmt, apLowLevelGraphics, aType, abUseMipMaps, aTarget, abCompress) {
 #if 0
   		mbContainsData = false;
 
@@ -79,11 +78,9 @@ namespace hpl {
 
 		mlBpp = 0;
 #endif
+}
 
-	}
-
-	cSDLTexture::~cSDLTexture()
-	{
+cSDLTexture::~cSDLTexture() {
 #if 0
   		if(mpPBuffer)hplDelete(mpPBuffer);
 
@@ -92,20 +89,17 @@ namespace hpl {
 			glDeleteTextures(1,(GLuint *)&mvTextureHandles[i]);
 		}
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	bool cSDLTexture::CreateFromBitmap(iBitmap2D* pBmp)
-	{
+bool cSDLTexture::CreateFromBitmap(iBitmap2D *pBmp) {
 #if 0
   		//Generate handles
 		if(mvTextureHandles.empty())
@@ -122,14 +116,12 @@ namespace hpl {
 
 		return CreateFromBitmapToHandle(pBmp,0);
 #endif
-		return false; 
+	return false;
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	bool cSDLTexture::CreateAnimFromBitmapVec(tBitmap2DVec *avBitmaps)
-	{
+bool cSDLTexture::CreateAnimFromBitmapVec(tBitmap2DVec *avBitmaps) {
 #if 0
   		mvTextureHandles.resize(avBitmaps->size());
 
@@ -144,13 +136,12 @@ namespace hpl {
 
 		return true;
 #endif
-		return false; 
-	}
+	return false;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool cSDLTexture::CreateCubeFromBitmapVec(tBitmap2DVec *avBitmaps)
-	{
+bool cSDLTexture::CreateCubeFromBitmapVec(tBitmap2DVec *avBitmaps) {
 #if 0
   		if(mType == eTextureType_RenderTarget || mTarget != eTextureTarget_CubeMap)
 		{
@@ -211,15 +202,12 @@ namespace hpl {
 
 		return true;
 #endif
-		return false; 
+	return false;
+}
 
-	}
+//-----------------------------------------------------------------------
 
-
-	//-----------------------------------------------------------------------
-
-	bool cSDLTexture::Create(unsigned int alWidth, unsigned int alHeight, cColor aCol)
-	{
+bool cSDLTexture::Create(unsigned int alWidth, unsigned int alHeight, cColor aCol) {
 #if 0
   		//Generate handles
 		mvTextureHandles.resize(1);
@@ -268,13 +256,12 @@ namespace hpl {
 
 		return true;
 #endif
-		return false; 
-	}
+	return false;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool cSDLTexture::CreateFromArray(unsigned char *apPixelData, int alChannels, const cVector3l &avSize)
-	{
+bool cSDLTexture::CreateFromArray(unsigned char *apPixelData, int alChannels, const cVector3l &avSize) {
 #if 0
   		if(mvTextureHandles.empty())
 		{
@@ -334,149 +321,111 @@ namespace hpl {
 
 		return true;
 #endif
-		return false; 
+	return false;
+}
 
-	}
+//-----------------------------------------------------------------------
 
-
-	//-----------------------------------------------------------------------
-
-	void cSDLTexture::SetPixels2D(	int alLevel, const cVector2l& avOffset, const cVector2l& avSize,
-									eColorDataFormat aDataFormat, void *apPixelData)
-	{
+void cSDLTexture::SetPixels2D(int alLevel, const cVector2l &avOffset, const cVector2l &avSize,
+							  eColorDataFormat aDataFormat, void *apPixelData) {
 #if 0
   		if(mTarget != eTextureTarget_2D && mTarget != eTextureTarget_Rect) return;
 
 		glTexSubImage2D(TextureTargetToGL(mTarget),alLevel,avOffset.x,avOffset.y, avSize.x,avSize.y,
 						ColorFormatToGL(aDataFormat),GL_UNSIGNED_BYTE,apPixelData);
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+void cSDLTexture::Update(float afTimeStep) {
+	if (mvTextureHandles.size() > 1) {
+		float fMax = (float)(mvTextureHandles.size());
+		mfTimeCount += afTimeStep * (1.0f / mfFrameTime) * mfTimeDir;
 
-	void cSDLTexture::Update(float afTimeStep)
-	{
-		if(mvTextureHandles.size() > 1)
-		{
-			float fMax = (float)(mvTextureHandles.size());
-			mfTimeCount += afTimeStep * (1.0f/mfFrameTime) * mfTimeDir;
-
-			if(mfTimeDir > 0)
-			{
-				if(mfTimeCount >= fMax)
-				{
-					if(mAnimMode == eTextureAnimMode_Loop)
-					{
-						mfTimeCount =0;
-					}
-					else
-					{
-						mfTimeCount = fMax - 1.0f;
-						mfTimeDir = -1.0f;
-					}
-				}
-			}
-			else
-			{
-				if(mfTimeCount < 0)
-				{
-					mfTimeCount =1;
-					mfTimeDir = 1.0f;
-				}
-			}
-		}
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cSDLTexture::HasAnimation()
-	{
-		return mvTextureHandles.size() > 1;
-	}
-
-	void cSDLTexture::NextFrame()
-	{
-		mfTimeCount += mfTimeDir;
-
-		if(mfTimeDir > 0)
-		{
-			float fMax = (float)(mvTextureHandles.size());
-			if(mfTimeCount >= fMax)
-			{
-				if(mAnimMode == eTextureAnimMode_Loop)
-				{
-					mfTimeCount =0;
-				}
-				else
-				{
+		if (mfTimeDir > 0) {
+			if (mfTimeCount >= fMax) {
+				if (mAnimMode == eTextureAnimMode_Loop) {
+					mfTimeCount = 0;
+				} else {
 					mfTimeCount = fMax - 1.0f;
 					mfTimeDir = -1.0f;
 				}
 			}
-		}
-		else
-		{
-			if(mfTimeCount < 0)
-			{
-				mfTimeCount =1;
+		} else {
+			if (mfTimeCount < 0) {
+				mfTimeCount = 1;
 				mfTimeDir = 1.0f;
 			}
 		}
 	}
+}
 
-	void cSDLTexture::PrevFrame()
-	{
-		mfTimeCount -= mfTimeDir;
+//-----------------------------------------------------------------------
 
-		if(mfTimeDir < 0)
-		{
-			float fMax = (float)(mvTextureHandles.size());
-			if(mfTimeCount >= fMax)
-			{
-				if(mAnimMode == eTextureAnimMode_Loop)
-				{
-					mfTimeCount =0;
-				}
-				else
-				{
-					mfTimeCount = fMax - 1.0f;
-					mfTimeDir = -1.0f;
-				}
+bool cSDLTexture::HasAnimation() {
+	return mvTextureHandles.size() > 1;
+}
+
+void cSDLTexture::NextFrame() {
+	mfTimeCount += mfTimeDir;
+
+	if (mfTimeDir > 0) {
+		float fMax = (float)(mvTextureHandles.size());
+		if (mfTimeCount >= fMax) {
+			if (mAnimMode == eTextureAnimMode_Loop) {
+				mfTimeCount = 0;
+			} else {
+				mfTimeCount = fMax - 1.0f;
+				mfTimeDir = -1.0f;
 			}
 		}
-		else
-		{
-			if(mfTimeCount < 0)
-			{
-				mfTimeCount =1;
-				mfTimeDir = 1.0f;
-			}
+	} else {
+		if (mfTimeCount < 0) {
+			mfTimeCount = 1;
+			mfTimeDir = 1.0f;
 		}
 	}
+}
 
-	float cSDLTexture::GetT()
-	{
-		return cMath::Modulus(mfTimeCount,1.0f);
-	}
+void cSDLTexture::PrevFrame() {
+	mfTimeCount -= mfTimeDir;
 
-	float cSDLTexture::GetTimeCount()
-	{
-		return mfTimeCount;
+	if (mfTimeDir < 0) {
+		float fMax = (float)(mvTextureHandles.size());
+		if (mfTimeCount >= fMax) {
+			if (mAnimMode == eTextureAnimMode_Loop) {
+				mfTimeCount = 0;
+			} else {
+				mfTimeCount = fMax - 1.0f;
+				mfTimeDir = -1.0f;
+			}
+		}
+	} else {
+		if (mfTimeCount < 0) {
+			mfTimeCount = 1;
+			mfTimeDir = 1.0f;
+		}
 	}
-	void cSDLTexture::SetTimeCount(float afX)
-	{
-		mfTimeCount = afX;
-	}
-	int cSDLTexture::GetCurrentLowlevelHandle()
-	{
-		return GetTextureHandle();
-	}
+}
 
-	//-----------------------------------------------------------------------
+float cSDLTexture::GetT() {
+	return cMath::Modulus(mfTimeCount, 1.0f);
+}
 
-	void cSDLTexture::SetFilter(eTextureFilter aFilter)
-	{
+float cSDLTexture::GetTimeCount() {
+	return mfTimeCount;
+}
+void cSDLTexture::SetTimeCount(float afX) {
+	mfTimeCount = afX;
+}
+int cSDLTexture::GetCurrentLowlevelHandle() {
+	return GetTextureHandle();
+}
+
+//-----------------------------------------------------------------------
+
+void cSDLTexture::SetFilter(eTextureFilter aFilter) {
 #if 0
   		if(mFilter == aFilter) return;
 
@@ -504,13 +453,11 @@ namespace hpl {
 			glDisable(GLTarget);
 		}
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	void cSDLTexture::SetAnisotropyDegree(float afX)
-	{
+void cSDLTexture::SetAnisotropyDegree(float afX) {
 #if 0
   		if(!mpLowLevelGraphics->GetCaps(eGraphicCaps_AnisotropicFiltering)) return;
 		if(afX < 1.0f) return;
@@ -532,13 +479,11 @@ namespace hpl {
 
 		glDisable(GLTarget);
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	void cSDLTexture::SetWrapS(eTextureWrap aMode)
-	{
+void cSDLTexture::SetWrapS(eTextureWrap aMode) {
 #if 0
   		if(mbContainsData)
 		{
@@ -555,13 +500,11 @@ namespace hpl {
 			glDisable(GLTarget);
 		}
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	void cSDLTexture::SetWrapT(eTextureWrap aMode)
-	{
+void cSDLTexture::SetWrapT(eTextureWrap aMode) {
 #if 0
   		if(mbContainsData)
 		{
@@ -578,13 +521,11 @@ namespace hpl {
 			glDisable(GLTarget);
 		}
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	void cSDLTexture::SetWrapR(eTextureWrap aMode)
-	{
+void cSDLTexture::SetWrapR(eTextureWrap aMode) {
 #if 0
   		if(mbContainsData)
 		{
@@ -601,34 +542,28 @@ namespace hpl {
 			glDisable(GLTarget);
 		}
 #endif
+}
 
+//-----------------------------------------------------------------------
+
+unsigned int cSDLTexture::GetTextureHandle() {
+	if (mvTextureHandles.size() > 1) {
+		int lFrame = (int)mfTimeCount;
+		return mvTextureHandles[lFrame];
+	} else {
+		return mvTextureHandles[0];
 	}
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	unsigned int cSDLTexture::GetTextureHandle()
-	{
-		if(mvTextureHandles.size() > 1)
-		{
-			int lFrame = (int) mfTimeCount;
-			return mvTextureHandles[lFrame];
-		}
-		else
-		{
-			return mvTextureHandles[0];
-		}
-	}
+//////////////////////////////////////////////////////////////////////////
+// PRIVATE METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	//////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	bool cSDLTexture::CreateFromBitmapToHandle(iBitmap2D* pBmp, int alHandleIdx)
-	{
+bool cSDLTexture::CreateFromBitmapToHandle(iBitmap2D *pBmp, int alHandleIdx) {
 #if 0
   		if(mType == eTextureType_RenderTarget)
 		{
@@ -748,14 +683,12 @@ namespace hpl {
 
 		return true;
 #endif
-		return false; 
+	return false;
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	GLenum cSDLTexture::InitCreation(int alHandleIdx)
-	{
+GLenum cSDLTexture::InitCreation(int alHandleIdx) {
 #if 0
   		GLenum GLTarget = mpGfxSDL->GetGLTextureTargetEnum(mTarget);
 
@@ -764,14 +697,12 @@ namespace hpl {
 
 		return GLTarget;
 #endif
-		return 0; 
+	return 0;
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	void cSDLTexture::PostCreation(GLenum aGLTarget)
-	{
+void cSDLTexture::PostCreation(GLenum aGLTarget) {
 #if 0
   		if(mbUseMipMaps && mTarget != eTextureTarget_Rect)
 		{
@@ -792,13 +723,11 @@ namespace hpl {
 
 		mbContainsData = true;
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	void cSDLTexture::GetSettings(cSDLBitmap2D* apSrc, int &alChannels, GLenum &aFormat)
-	{
+void cSDLTexture::GetSettings(cSDLBitmap2D *apSrc, int &alChannels, GLenum &aFormat) {
 #if 0
   		SDL_Surface *pSurface =  apSrc->GetSurface();
 		alChannels = pSurface->format->BytesPerPixel;
@@ -834,13 +763,11 @@ namespace hpl {
 			aFormat = GL_ALPHA;
 		}
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	GLenum cSDLTexture::GetGLWrap(eTextureWrap aMode)
-	{
+GLenum cSDLTexture::GetGLWrap(eTextureWrap aMode) {
 #if 0
   		switch(aMode)
 		{
@@ -852,11 +779,9 @@ namespace hpl {
 
 		return GL_REPEAT;
 #endif
-		return 0; 
-
-	}
-
-
-	//-----------------------------------------------------------------------
-
+	return 0;
 }
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

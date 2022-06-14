@@ -41,113 +41,112 @@
 #ifndef HPL_IMAGE_ENTITY_H
 #define HPL_IMAGE_ENTITY_H
 
-#include <vector>
-#include "hpl1/engine/scene/Entity2D.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
+#include "hpl1/engine/scene/Entity2D.h"
+#include <vector>
 
 class TiXmlElement;
 
 namespace hpl {
 
-	class cResources;
-	class cGraphics;
-	class cImageEntityData;
-	class cImageAnimation;
+class cResources;
+class cGraphics;
+class cImageEntityData;
+class cImageAnimation;
 
-	class cImageEntity : public iEntity2D
-	{
-	public:
-		cImageEntity(tString asName,cResources* apResources, cGraphics* apGraphics, bool abAutoDeleteData=true);
-		~cImageEntity();
+class cImageEntity : public iEntity2D {
+public:
+	cImageEntity(tString asName, cResources *apResources, cGraphics *apGraphics, bool abAutoDeleteData = true);
+	~cImageEntity();
 
-		const cRect2f& GetBoundingBox();
-		bool UpdateBoundingBox();
-		tString GetEntityType(){ return "ImageEntity"; }
+	const cRect2f &GetBoundingBox();
+	bool UpdateBoundingBox();
+	tString GetEntityType() { return "ImageEntity"; }
 
-		void Render();
+	void Render();
 
-		void UpdateLogic(float afTimeStep);
+	void UpdateLogic(float afTimeStep);
 
-		bool LoadData(TiXmlElement* apRootElem);
+	bool LoadData(TiXmlElement *apRootElem);
 
-		bool LoadEntityData(tString asDataName, int alAnimNum=0);
-		bool LoadEntityData(cImageEntityData* apData, int alAnimNum=0);
+	bool LoadEntityData(tString asDataName, int alAnimNum = 0);
+	bool LoadEntityData(cImageEntityData *apData, int alAnimNum = 0);
 
-		cImageEntityData* GetEntityData(){ return mpEntityData;}
+	cImageEntityData *GetEntityData() { return mpEntityData; }
 
-		///// Animation ////////////////////////
+	///// Animation ////////////////////////
 
-		bool SetAnimation(const tString& asName, bool abLoop = true);
-		const tString& GetCurrentAnimation() const;
-		bool AnimationIsLooped(){ return mbLoopAnimation; }
-		bool AnimationIsPlaying();
-		void StopAnimation();
+	bool SetAnimation(const tString &asName, bool abLoop = true);
+	const tString &GetCurrentAnimation() const;
+	bool AnimationIsLooped() { return mbLoopAnimation; }
+	bool AnimationIsPlaying();
+	void StopAnimation();
 
-		void SetAnimationSpeed(float afSpeed){ mfAnimSpeed = afSpeed; }
-		float GetAnimationSpeed(){ return mfAnimSpeed; }
+	void SetAnimationSpeed(float afSpeed) { mfAnimSpeed = afSpeed; }
+	float GetAnimationSpeed() { return mfAnimSpeed; }
 
-		void SetFrameNum(float afFrame){ mfFrameNum = afFrame;}
-		float GetFrameNum(){ return mfFrameNum;}
-		int GetMaxFrameNum();
+	void SetFrameNum(float afFrame) { mfFrameNum = afFrame; }
+	float GetFrameNum() { return mfFrameNum; }
+	int GetMaxFrameNum();
 
-		void SetAnimationPaused(bool abX){ mbAnimationPaused = abX;}
-		bool GetAnimationPaused(){ return mbAnimationPaused;}
+	void SetAnimationPaused(bool abX) { mbAnimationPaused = abX; }
+	bool GetAnimationPaused() { return mbAnimationPaused; }
 
-		void SetFlipH(bool abX);
-		bool GetFlipH(){return mbFlipH;}
-		void SetFlipV(bool abX);
-		bool GetFlipV(){return mbFlipV;}
+	void SetFlipH(bool abX);
+	bool GetFlipH() { return mbFlipH; }
+	void SetFlipV(bool abX);
+	bool GetFlipV() { return mbFlipV; }
 
-		cVector2f GetSize(){ return mvSize;}
-		void SetSize(const cVector2f& avSize);
+	cVector2f GetSize() { return mvSize; }
+	void SetSize(const cVector2f &avSize);
 
-		void SetAlpha(float afX);
-		float GetAlpha(){ return mfAlpha;}
+	void SetAlpha(float afX);
+	float GetAlpha() { return mfAlpha; }
 
-		void Flash(float afAdd);
+	void Flash(float afAdd);
 
-		bool IsCollidable(){ return mbCollidable;}
+	bool IsCollidable() { return mbCollidable; }
 
-	private:
-		cResources* mpResources;
-		cGraphics* mpGraphics;
-		cImageEntityData* mpEntityData;
+private:
+	cResources *mpResources;
+	cGraphics *mpGraphics;
+	cImageEntityData *mpEntityData;
 
-		float mfAlpha;
-		float mfFlashAdd;
-		bool mbFlashing;
+	float mfAlpha;
+	float mfFlashAdd;
+	bool mbFlashing;
 
-		bool mbCollidable;
+	bool mbCollidable;
 
-		bool mbAutoDeleteData;
+	bool mbAutoDeleteData;
 
-		cVector2f mvSize;
-		bool mbFlipH;
-		bool mbFlipV;
+	cVector2f mvSize;
+	bool mbFlipH;
+	bool mbFlipV;
 
-		bool mbRotationHasChanged;
-		bool mbSizeHasChanged;
-		float mfCurrentAngle;
+	bool mbRotationHasChanged;
+	bool mbSizeHasChanged;
+	float mfCurrentAngle;
 
-		cImageAnimation* mpAnimation;
-		float mfFrameNum;
-		float mfAnimSpeed;
-		int mlFrame;
-		int mlLastFrame;
-		bool mbAnimationPaused;
-		bool mbLoopAnimation;
+	cImageAnimation *mpAnimation;
+	float mfFrameNum;
+	float mfAnimSpeed;
+	int mlFrame;
+	int mlLastFrame;
+	bool mbAnimationPaused;
+	bool mbLoopAnimation;
 
-		tVertexVec mvBaseVtx;
-		tVertexVec mvVtx;
-		tUIntVec mvIdxVec;
+	tVertexVec mvBaseVtx;
+	tVertexVec mvVtx;
+	tUIntVec mvIdxVec;
 
-		cVector3f mvTransform;
+	cVector3f mvTransform;
 
-		tString msTempString;
-	};
-
-	typedef std::vector<cImageEntity*> tImageEntityVec;
-	typedef tImageEntityVec::iterator tImageEntityVecIt;
-
+	tString msTempString;
 };
+
+typedef std::vector<cImageEntity *> tImageEntityVec;
+typedef tImageEntityVec::iterator tImageEntityVecIt;
+
+};     // namespace hpl
 #endif // HPL_IMAGE_ENTITY_H

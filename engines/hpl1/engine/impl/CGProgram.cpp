@@ -44,28 +44,28 @@
 
 #include "hpl1/engine/system/String.h"
 
-namespace hpl{
+namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	tString cCGProgram::msForceFP = "AUTO";
-	tString cCGProgram::msForceVP = "AUTO";
+tString cCGProgram::msForceFP = "AUTO";
+tString cCGProgram::msForceVP = "AUTO";
 
-	cCGProgram::cCGProgram(tString asName,CGcontext aContext,eGpuProgramType aType)
-	: iGpuProgram(asName, aType)
-	{
+cCGProgram::cCGProgram(tString asName, CGcontext aContext, eGpuProgramType aType)
+	: iGpuProgram(asName, aType) {
 #if 0
   		mContext = aContext;
 
 		mProgram = NULL;
 
-		#define CG_CHECK(type, p) else if (msForce##type == #p) { \
-			mProfile = cgGLIsProfileSupported(CG_PROFILE_##p) ? CG_PROFILE_##p : CG_PROFILE_UNKNOWN; \
-		}
+#define CG_CHECK(type, p)                                                                        \
+	else if (msForce##type == #p) {                                                              \
+		mProfile = cgGLIsProfileSupported(CG_PROFILE_##p) ? CG_PROFILE_##p : CG_PROFILE_UNKNOWN; \
+	}
 		if(mProgramType == eGpuProgramType_Vertex)
 		{
 			if (msForceVP == "AUTO") {
@@ -92,7 +92,7 @@ namespace hpl{
 				mProfile = CG_PROFILE_UNKNOWN;
 			}
 		}
-		#undef CG_CHECK
+#undef CG_CHECK
 		if(mbDebugInfo)
 		{
 			if(mProfile == CG_PROFILE_UNKNOWN)
@@ -108,46 +108,39 @@ namespace hpl{
 
 		cgGLSetOptimalOptions(mProfile);
 #endif
+}
 
-	}
-
-	cCGProgram::~cCGProgram()
-	{
+cCGProgram::~cCGProgram() {
 #if 0
   		if(mProgram) cgDestroyProgram(mProgram);
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+bool cCGProgram::Reload() {
+	return false;
+}
 
-	bool cCGProgram::Reload()
-	{
-		return false;
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+void cCGProgram::Unload() {
+}
 
-	void cCGProgram::Unload()
-	{
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+void cCGProgram::Destroy() {
+}
 
-	void cCGProgram::Destroy()
-	{
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	bool cCGProgram::CreateFromFile(const tString &asFile, const tString &asEntry)
-	{
+bool cCGProgram::CreateFromFile(const tString &asFile, const tString &asEntry) {
 #if 0
   if(mProfile == CG_PROFILE_UNKNOWN)
 		{
@@ -250,47 +243,41 @@ namespace hpl{
 		}
 #endif
 
-		return true;
-	}
+	return true;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	void cCGProgram::Bind()
-	{
+void cCGProgram::Bind() {
 #if 0
   		cgGLBindProgram(mProgram);
 		cgGLEnableProfile(mProfile);
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	void cCGProgram::UnBind()
-	{
+void cCGProgram::UnBind() {
 #if 0
   		cgGLDisableProfile(mProfile);
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	bool  cCGProgram::SetFloat(const tString& asName, float afX)
-	{
+bool cCGProgram::SetFloat(const tString &asName, float afX) {
 #if 0
   		CGparameter Param = GetParam(asName, CG_FLOAT);
 		if(Param==NULL)return false;
 
 		cgGLSetParameter1f(Param, afX);
 #endif
-		return true;
-	}
+	return true;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool  cCGProgram::SetVec2f(const tString& asName, float afX,float afY)
-	{
+bool cCGProgram::SetVec2f(const tString &asName, float afX, float afY) {
 #if 0
   		CGparameter Param = GetParam(asName, CG_FLOAT2);
 		if(Param==NULL)return false;
@@ -298,13 +285,12 @@ namespace hpl{
 		cgGLSetParameter2f(Param, afX, afY);
 #endif
 
-		return true;
-	}
+	return true;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool  cCGProgram::SetVec3f(const tString& asName, float afX,float afY,float afZ)
-	{
+bool cCGProgram::SetVec3f(const tString &asName, float afX, float afY, float afZ) {
 #if 0
   		CGparameter Param = GetParam(asName, CG_FLOAT3);
 		if(Param==NULL)return false;
@@ -312,13 +298,12 @@ namespace hpl{
 		cgGLSetParameter3f(Param, afX, afY, afZ);
 #endif
 
-		return true;
-	}
+	return true;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool  cCGProgram::SetVec4f(const tString& asName, float afX,float afY,float afZ, float afW)
-	{
+bool cCGProgram::SetVec4f(const tString &asName, float afX, float afY, float afZ, float afW) {
 #if 0
   		CGparameter Param = GetParam(asName, CG_FLOAT4);
 		if(Param==NULL)return false;
@@ -326,13 +311,12 @@ namespace hpl{
 		cgGLSetParameter4f(Param, afX, afY, afZ, afW);
 #endif
 
-		return true;
-	}
+	return true;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool cCGProgram::SetMatrixf(const tString& asName, const cMatrixf& mMtx)
-	{
+bool cCGProgram::SetMatrixf(const tString &asName, const cMatrixf &mMtx) {
 #if 0
   		CGparameter Param = GetParam(asName, CG_FLOAT4x4);
 		if(Param==NULL)return false;
@@ -340,14 +324,13 @@ namespace hpl{
 		cgGLSetMatrixParameterfr(Param,&mMtx.m[0][0]);
 #endif
 
-		return true;
-	}
+	return true;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool cCGProgram::SetMatrixf(const tString& asName, eGpuProgramMatrix mType,
-		eGpuProgramMatrixOp mOp)
-	{
+bool cCGProgram::SetMatrixf(const tString &asName, eGpuProgramMatrix mType,
+							eGpuProgramMatrixOp mOp) {
 #if 0
   		CGparameter Param = GetParam(asName, CG_FLOAT4x4);
 		if(Param==NULL)return false;
@@ -370,13 +353,12 @@ namespace hpl{
 		cgGLSetStateMatrixParameter(Param,MtxType, OpType);
 #endif
 
-		return true;
-	}
+	return true;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool cCGProgram::SetTexture(const tString& asName,iTexture* apTexture, bool abAutoDisable)
-	{
+bool cCGProgram::SetTexture(const tString &asName, iTexture *apTexture, bool abAutoDisable) {
 #if 0
   		CGtype textureType;
 
@@ -409,13 +391,12 @@ namespace hpl{
 		}
 #endif
 
-		return true;
-	}
+	return true;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool cCGProgram::SetTextureToUnit(int alUnit, iTexture* apTexture)
-	{
+bool cCGProgram::SetTextureToUnit(int alUnit, iTexture *apTexture) {
 #if 0
   		if(mvTexUnitParam[alUnit]==NULL || alUnit >= MAX_TEXTUREUNITS) return false;
 
@@ -434,20 +415,18 @@ namespace hpl{
 		}
 #endif
 
-		return true;
-	}
+	return true;
+}
 
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
+// PROTECTED METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////
-	// PROTECTED METHODS
-	//////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	CGparameter cCGProgram::GetParam(const tString& asName,CGtype aType)
-	{
+CGparameter cCGProgram::GetParam(const tString &asName, CGtype aType) {
 #if 0
   		CGparameter Param = cgGetNamedParameter(mProgram, asName.c_str());
 		if(Param==NULL)return NULL;
@@ -456,9 +435,9 @@ namespace hpl{
 		if(type!=aType)return NULL;
 
 #endif
-		return 0;
-	}
-
-	//-----------------------------------------------------------------------
-
+	return 0;
 }
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

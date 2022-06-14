@@ -39,68 +39,63 @@
  */
 
 #include "hpl1/engine/haptic/Haptic.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
 #include "hpl1/engine/haptic/LowLevelHaptic.h"
-
+#include "hpl1/engine/system/LowLevelSystem.h"
 
 namespace hpl {
 
-	bool cHaptic::mbIsUsed = false;
+bool cHaptic::mbIsUsed = false;
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cHaptic::cHaptic(iLowLevelHaptic *apLowLevelHaptic) : iUpdateable("HPL_Haptic")
-	{
-		mpLowLevelHaptic = apLowLevelHaptic;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cHaptic::~cHaptic()
-	{
-		Log("Exiting Haptic Module\n");
-		Log("--------------------------------------------------------\n");
-
-
-		Log("--------------------------------------------------------\n\n");
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	void cHaptic::Update(float afTimeStep)
-	{
-		if(mbIsUsed==false) return;
-
-		mpLowLevelHaptic->Update(afTimeStep);
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cHaptic::Init(cResources *apResources)
-	{
-		if(mbIsUsed==false) return;
-
-		Log("Initializing Haptic Module\n");
-		Log("--------------------------------------------------------\n");
-
-		if(mpLowLevelHaptic->Init(apResources)==false)
-		{
-			SetIsUsed(false);
-		}
-
-		Log("--------------------------------------------------------\n\n");
-	}
-
-	//-----------------------------------------------------------------------
-
+cHaptic::cHaptic(iLowLevelHaptic *apLowLevelHaptic) : iUpdateable("HPL_Haptic") {
+	mpLowLevelHaptic = apLowLevelHaptic;
 }
+
+//-----------------------------------------------------------------------
+
+cHaptic::~cHaptic() {
+	Log("Exiting Haptic Module\n");
+	Log("--------------------------------------------------------\n");
+
+	Log("--------------------------------------------------------\n\n");
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+void cHaptic::Update(float afTimeStep) {
+	if (mbIsUsed == false)
+		return;
+
+	mpLowLevelHaptic->Update(afTimeStep);
+}
+
+//-----------------------------------------------------------------------
+
+void cHaptic::Init(cResources *apResources) {
+	if (mbIsUsed == false)
+		return;
+
+	Log("Initializing Haptic Module\n");
+	Log("--------------------------------------------------------\n");
+
+	if (mpLowLevelHaptic->Init(apResources) == false) {
+		SetIsUsed(false);
+	}
+
+	Log("--------------------------------------------------------\n\n");
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

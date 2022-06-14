@@ -41,9 +41,9 @@
 #if 0
 #include "hpl1/engine/impl/VideoStreamTheora.h"
 
-#include "hpl1/engine/system/LowLevelSystem.h"
-#include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/graphics/Texture.h"
+#include "hpl1/engine/math/Math.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
 
 #include <stdio.h>
 #include <string.h>

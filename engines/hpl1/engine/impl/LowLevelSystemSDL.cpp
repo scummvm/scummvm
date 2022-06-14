@@ -39,37 +39,37 @@
  */
 
 //#include <vld.h>
-//Use this to check for memory leaks!
+// Use this to check for memory leaks!
 
-#if 0 //def WIN32
+#if 0 // def WIN32
 #pragma comment(lib, "angelscript.lib")
 #define UNICODE
-#include <windows.h>
 #include <shlobj.h>
+#include <windows.h>
 #endif
 
-#if 0//ndef WIN32
+#if 0 // ndef WIN32
 // Include FLTK
 #include "FL/fl_ask.H"
 #endif
 
 #define _UNICODE
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <time.h>
-#include <sys/stat.h>
 #include <fstream>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string>
+#include <sys/stat.h>
+#include <time.h>
 
 #include "hpl1/engine/impl/LowLevelSystemSDL.h"
 #include "hpl1/engine/impl/SqScript.h"
 
 //#include "SDL/SDL.h"
 
-#include "hpl1/engine/impl/stdstring.h"
 #include "hpl1/engine/impl/scriptstring.h"
+#include "hpl1/engine/impl/stdstring.h"
 
 #include "hpl1/engine/system/String.h"
 
@@ -78,24 +78,22 @@
 
 extern int hplMain(const hpl::tString &asCommandLine);
 
-#if 0//def WIN32
+#if 0 // def WIN32
 #include <windows.h>
 int WINAPI WinMain(	HINSTANCE hInstance,  HINSTANCE hPrevInstance,LPSTR	lpCmdLine, int nCmdShow)
 {
 	return hplMain(lpCmdLine);
 }
 #else
-int main(int argc, char *argv[])
-{
-	if(!std::setlocale(LC_CTYPE, "")) {
+int main(int argc, char *argv[]) {
+	if (!std::setlocale(LC_CTYPE, "")) {
 		fprintf(stderr, "Can't set the specified locale! Check LANG, LC_CTYPE, LC_ALL.\n");
 		return 1;
 	}
 
-
 	hpl::tString cmdline = "";
-	for (int i=1; i < argc; i++) {
-		if (cmdline.length()>0) {
+	for (int i = 1; i < argc; i++) {
+		if (cmdline.length() > 0) {
 			cmdline.append(" ").append(argv[i]);
 		} else {
 			cmdline.append(argv[i]);
@@ -105,66 +103,59 @@ int main(int argc, char *argv[])
 }
 #endif
 
-
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// LOG WRITER
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// LOG WRITER
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	static cLogWriter gLogWriter(_W("hpl.log"));
-	static cLogWriter gUpdateLogWriter(_W("hpl_update.log"));
+static cLogWriter gLogWriter(_W("hpl.log"));
+static cLogWriter gUpdateLogWriter(_W("hpl_update.log"));
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cLogWriter::cLogWriter(const tWString& asFileName)
-	{
-		msFileName = asFileName;
-	}
+cLogWriter::cLogWriter(const tWString &asFileName) {
+	msFileName = asFileName;
+}
 
-	cLogWriter::~cLogWriter()
-	{
-		if(mpFile) fclose(mpFile);
-	}
+cLogWriter::~cLogWriter() {
+	if (mpFile)
+		fclose(mpFile);
+}
 
-	void cLogWriter::Write(const tString& asMessage)
-	{
-		if(!mpFile) ReopenFile();
-
-		if(mpFile)
-		{
-			fprintf(mpFile, asMessage.c_str());
-			fflush(mpFile);
-		}
-	}
-
-	void cLogWriter::Clear()
-	{
+void cLogWriter::Write(const tString &asMessage) {
+	if (!mpFile)
 		ReopenFile();
-		if(mpFile) fflush(mpFile);
+
+	if (mpFile) {
+		fprintf(mpFile, asMessage.c_str());
+		fflush(mpFile);
 	}
+}
 
-	//-----------------------------------------------------------------------
+void cLogWriter::Clear() {
+	ReopenFile();
+	if (mpFile)
+		fflush(mpFile);
+}
 
+//-----------------------------------------------------------------------
 
-	void cLogWriter::SetFileName(const tWString& asFile)
-	{
-		if(msFileName == asFile) return;
+void cLogWriter::SetFileName(const tWString &asFile) {
+	if (msFileName == asFile)
+		return;
 
-		msFileName = asFile;
-		ReopenFile();
-	}
+	msFileName = asFile;
+	ReopenFile();
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-
-	void cLogWriter::ReopenFile()
-	{
+void cLogWriter::ReopenFile() {
 #if 0
   		if(mpFile) fclose(mpFile);
-
 
 #ifdef WIN32
 			mpFile = _wfopen(msFileName.c_str(),_W("w"));
@@ -172,68 +163,61 @@ namespace hpl {
 			mpFile = fopen(cString::To8Char(msFileName).c_str(),"w");
 #endif
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
+cLowLevelSystemSDL::cLowLevelSystemSDL() {
+	mpScriptEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	cLowLevelSystemSDL::cLowLevelSystemSDL()
-	{
-		mpScriptEngine = asCreateScriptEngine(ANGELSCRIPT_VERSION);
-
-		mpScriptOutput = hplNew( cScriptOutput, () );
-		mpScriptEngine->SetMessageCallback(asMETHOD(cScriptOutput,AddMessage), mpScriptOutput, asCALL_THISCALL);
+	mpScriptOutput = hplNew(cScriptOutput, ());
+	mpScriptEngine->SetMessageCallback(asMETHOD(cScriptOutput, AddMessage), mpScriptOutput, asCALL_THISCALL);
 
 #ifdef AS_MAX_PORTABILITY
-		RegisterScriptString(mpScriptEngine);
+	RegisterScriptString(mpScriptEngine);
 #else
-		RegisterStdString(mpScriptEngine);
+	RegisterStdString(mpScriptEngine);
 #endif
 
-		mlHandleCount = 0;
+	mlHandleCount = 0;
 
-		Log("-------- THE HPL ENGINE LOG ------------\n\n");
-	}
+	Log("-------- THE HPL ENGINE LOG ------------\n\n");
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cLowLevelSystemSDL::~cLowLevelSystemSDL()
-	{
-		/*Release all runnings contexts */
+cLowLevelSystemSDL::~cLowLevelSystemSDL() {
+	/*Release all runnings contexts */
 
-		mpScriptEngine->Release();
-		hplDelete(mpScriptOutput);
+	mpScriptEngine->Release();
+	hplDelete(mpScriptOutput);
 
-		//perhaps not the best thing to skip :)
-		//if(gpLogWriter)	hplDelete(gpLogWriter);
-		//gpLogWriter = NULL;
-	}
+	// perhaps not the best thing to skip :)
+	// if(gpLogWriter)	hplDelete(gpLogWriter);
+	// gpLogWriter = NULL;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	void SetLogFile(const tWString &asFile)
-	{
-		gLogWriter.SetFileName(asFile);
-	}
+void SetLogFile(const tWString &asFile) {
+	gLogWriter.SetFileName(asFile);
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	void FatalError(const char* fmt,... )
-	{
+void FatalError(const char *fmt, ...) {
 #if 0
   		char text[2048];
 		va_list ap;
@@ -253,96 +237,89 @@ namespace hpl {
 
 		exit(1);
 #endif
+}
 
-	}
+void Error(const char *fmt, ...) {
+	char text[2048];
+	va_list ap;
+	if (fmt == NULL)
+		return;
+	va_start(ap, fmt);
+	vsprintf(text, fmt, ap);
+	va_end(ap);
 
-	void Error(const char* fmt, ...)
-	{
-		char text[2048];
-		va_list ap;
-		if (fmt == NULL)
-			return;
-		va_start(ap, fmt);
-			vsprintf(text, fmt, ap);
-		va_end(ap);
+	tString sMess = "ERROR: ";
+	sMess += text;
+	gLogWriter.Write(sMess);
+}
 
-		tString sMess = "ERROR: ";
-		sMess += text;
-		gLogWriter.Write(sMess);
-	}
+void Warning(const char *fmt, ...) {
+	char text[2048];
+	va_list ap;
+	if (fmt == NULL)
+		return;
+	va_start(ap, fmt);
+	vsprintf(text, fmt, ap);
+	va_end(ap);
 
-	void Warning(const char* fmt, ...)
-	{
-		char text[2048];
-		va_list ap;
-		if (fmt == NULL)
-			return;
-		va_start(ap, fmt);
-			vsprintf(text, fmt, ap);
-		va_end(ap);
+	tString sMess = "WARNING: ";
+	sMess += text;
+	gLogWriter.Write(sMess);
+}
 
-		tString sMess = "WARNING: ";
-		sMess += text;
-		gLogWriter.Write(sMess);
-	}
+void Log(const char *fmt, ...) {
+	char text[2048];
+	va_list ap;
+	if (fmt == NULL)
+		return;
+	va_start(ap, fmt);
+	vsprintf(text, fmt, ap);
+	va_end(ap);
 
-	void Log(const char* fmt, ...)
-	{
-		char text[2048];
-		va_list ap;
-		if (fmt == NULL)
-			return;
-		va_start(ap, fmt);
-		vsprintf(text, fmt, ap);
-		va_end(ap);
+	tString sMess = "";
+	sMess += text;
+	gLogWriter.Write(sMess);
+}
 
-		tString sMess = "";
-		sMess += text;
-		gLogWriter.Write(sMess);
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+static bool gbUpdateLogIsActive;
+void SetUpdateLogFile(const tWString &asFile) {
+	gUpdateLogWriter.SetFileName(asFile);
+}
 
-	static bool gbUpdateLogIsActive;
-	void SetUpdateLogFile(const tWString &asFile)
-	{
-		gUpdateLogWriter.SetFileName(asFile);
-	}
+void ClearUpdateLogFile() {
+	if (!gbUpdateLogIsActive)
+		return;
 
-	void ClearUpdateLogFile()
-	{
-		if(!gbUpdateLogIsActive) return;
+	gUpdateLogWriter.Clear();
+}
 
-		gUpdateLogWriter.Clear();
-	}
+void SetUpdateLogActive(bool abX) {
+	gbUpdateLogIsActive = abX;
+}
 
-	void SetUpdateLogActive(bool abX)
-	{
-		gbUpdateLogIsActive =abX;
-	}
+void LogUpdate(const char *fmt, ...) {
+	if (!gbUpdateLogIsActive)
+		return;
 
-	void LogUpdate(const char* fmt, ...)
-	{
-		if(!gbUpdateLogIsActive) return;
+	char text[2048];
+	va_list ap;
+	if (fmt == NULL)
+		return;
+	va_start(ap, fmt);
+	vsprintf(text, fmt, ap);
+	va_end(ap);
 
-		char text[2048];
-		va_list ap;
-		if (fmt == NULL)
-			return;
-		va_start(ap, fmt);
-		vsprintf(text, fmt, ap);
-		va_end(ap);
+	tString sMess = "";
+	sMess += text;
+	gUpdateLogWriter.Write(sMess);
+}
 
-		tString sMess = "";
-		sMess += text;
-		gUpdateLogWriter.Write(sMess);
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	void CopyTextToClipboard(const tWString &asText)
-	{
-#if 0//def WIN32
+void CopyTextToClipboard(const tWString &asText) {
+#if 0 // def WIN32
 		OpenClipboard(NULL);
 		EmptyClipboard();
 
@@ -360,11 +337,10 @@ namespace hpl {
 
 		CloseClipboard();
 #endif
-	}
+}
 
-	tWString LoadTextFromClipboard()
-	{
-#if 0//def WIN32
+tWString LoadTextFromClipboard() {
+#if 0 // def WIN32
 		tWString sText=_W("");
 		OpenClipboard(NULL);
 
@@ -380,71 +356,66 @@ namespace hpl {
 
 		return sText;
 #else
-		return _W("");
+	return _W("");
 #endif
-	}
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+
+void CreateMessageBox(eMsgBoxType eType, const char *asCaption, const char *fmt, ...) {
+	/*char text[2048];
+	va_list ap;
+	if (fmt == NULL)
+		return;
+	va_start(ap, fmt);
+	vsprintf(text, fmt, ap);
+	va_end(ap);
+
+	tString sMess = "";
+	sMess += text;
 
 
-	void CreateMessageBox ( eMsgBoxType eType, const char* asCaption, const char *fmt, ...)
+	#ifdef WIN32
+
+	UINT lType = MB_OK;
+
+	switch (eType)
 	{
-		/*char text[2048];
-		va_list ap;
-		if (fmt == NULL)
-			return;
-		va_start(ap, fmt);
-		vsprintf(text, fmt, ap);
-		va_end(ap);
-
-		tString sMess = "";
-		sMess += text;
-
-
-		#ifdef WIN32
-
-		UINT lType = MB_OK;
-
-		switch (eType)
-		{
-		case eMsgBoxType_Info:
-			lType += MB_ICONINFORMATION;
-			break;
-		case eMsgBoxType_Error:
-			lType += MB_ICONERROR;
-			break;
-		case eMsgBoxType_Warning:
-			lType += MB_ICONWARNING;
-			break;
-		default:
-			break;
-		}
-
-
-		MessageBox( NULL, sMess.c_str(), asCaption, lType );
-
-		#endif*/
-	}
-
-	void CreateMessageBox ( const char* asCaption, const char *fmt, ...)
-	{
-		/*char text[2048];
-		va_list ap;
-		if (fmt == NULL)
-			return;
-		va_start(ap, fmt);
-		vsprintf(text, fmt, ap);
-		va_end(ap);
-
-		tString sMess = "";
-		sMess += text;
-
-		CreateMessageBox( eMsgBoxType_Default, asCaption, sMess.c_str() );*/
+	case eMsgBoxType_Info:
+		lType += MB_ICONINFORMATION;
+		break;
+	case eMsgBoxType_Error:
+		lType += MB_ICONERROR;
+		break;
+	case eMsgBoxType_Warning:
+		lType += MB_ICONWARNING;
+		break;
+	default:
+		break;
 	}
 
 
-	void CreateMessageBoxW (eMsgBoxType eType, const wchar_t* asCaption, const wchar_t* fmt, va_list ap)
-	{
+	MessageBox( NULL, sMess.c_str(), asCaption, lType );
+
+	#endif*/
+}
+
+void CreateMessageBox(const char *asCaption, const char *fmt, ...) {
+	/*char text[2048];
+	va_list ap;
+	if (fmt == NULL)
+		return;
+	va_start(ap, fmt);
+	vsprintf(text, fmt, ap);
+	va_end(ap);
+
+	tString sMess = "";
+	sMess += text;
+
+	CreateMessageBox( eMsgBoxType_Default, asCaption, sMess.c_str() );*/
+}
+
+void CreateMessageBoxW(eMsgBoxType eType, const wchar_t *asCaption, const wchar_t *fmt, va_list ap) {
 #if 0
 		wchar_t text[2048];
 
@@ -454,7 +425,7 @@ namespace hpl {
 
 		tWString sMess = _W("");
 
-		#ifdef WIN32
+#ifdef WIN32
 		sMess += text;
 
 		UINT lType = MB_OK;
@@ -475,73 +446,68 @@ namespace hpl {
 		}
 
 		MessageBox( NULL, sMess.c_str(), asCaption, lType );
-		#else
+#else
 		sMess += asCaption;
 		sMess +=_W("\n\n");
 		sMess += text;
 		fl_alert("%ls\n\n%ls",asCaption,text);
-		#endif
 #endif
-	}
+#endif
+}
 
-	void CreateMessageBoxW ( eMsgBoxType eType, const wchar_t* asCaption, const wchar_t* fmt, ...)
-	{
-		va_list ap;
+void CreateMessageBoxW(eMsgBoxType eType, const wchar_t *asCaption, const wchar_t *fmt, ...) {
+	va_list ap;
 
-		if (fmt == NULL)
-			return;
-		va_start(ap, fmt);
-		CreateMessageBoxW (eType, asCaption, fmt, ap);
-		va_end(ap);
-	}
+	if (fmt == NULL)
+		return;
+	va_start(ap, fmt);
+	CreateMessageBoxW(eType, asCaption, fmt, ap);
+	va_end(ap);
+}
 
-	void CreateMessageBoxW ( const wchar_t* asCaption, const wchar_t *fmt, ...)
-	{
-		va_list ap;
-		if (fmt == NULL)
-			return;
-		va_start(ap, fmt);
-		CreateMessageBoxW( eMsgBoxType_Default, asCaption, fmt, ap );
-		va_end(ap);
-	}
+void CreateMessageBoxW(const wchar_t *asCaption, const wchar_t *fmt, ...) {
+	va_list ap;
+	if (fmt == NULL)
+		return;
+	va_start(ap, fmt);
+	CreateMessageBoxW(eMsgBoxType_Default, asCaption, fmt, ap);
+	va_end(ap);
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	static cDate DateFromGMTIme(struct tm* apClock)
-	{
-		cDate date;
+static cDate DateFromGMTIme(struct tm *apClock) {
+	cDate date;
 
-		date.seconds = apClock->tm_sec;
-		date.minutes = apClock->tm_min;
-		date.hours = apClock->tm_hour;
-		date.month_day = apClock->tm_mday;
-		date.month = apClock->tm_mon;
-		date.year = 1900 + apClock->tm_year;
-		date.week_day = apClock->tm_wday;
-		date.year_day = apClock->tm_yday;
+	date.seconds = apClock->tm_sec;
+	date.minutes = apClock->tm_min;
+	date.hours = apClock->tm_hour;
+	date.month_day = apClock->tm_mday;
+	date.month = apClock->tm_mon;
+	date.year = 1900 + apClock->tm_year;
+	date.week_day = apClock->tm_wday;
+	date.year_day = apClock->tm_yday;
 
-		return date;
-	}
+	return date;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	void OpenBrowserWindow ( const tWString& asURL )
-	{
-		#if 0//def WIN32
+void OpenBrowserWindow(const tWString &asURL) {
+#if 0 // def WIN32
 		ShellExecute ( NULL, _W("open"), asURL.c_str(), NULL, NULL, SW_SHOWNORMAL );
-		#elif defined(__linux__)
-		tString asTemp = "./openurl.sh "+cString::To8Char(asURL);
-		system(asTemp.c_str());
-		#elif defined(__APPLE__)
-		tString asTemp = "open "+cString::To8Char(asURL);
-		system(asTemp.c_str());
-		#endif
-	}
+#elif defined(__linux__)
+	tString asTemp = "./openurl.sh " + cString::To8Char(asURL);
+	system(asTemp.c_str());
+#elif defined(__APPLE__)
+	tString asTemp = "open " + cString::To8Char(asURL);
+	system(asTemp.c_str());
+#endif
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	tWString GetSystemSpecialPath(eSystemPath aPathType)
-	{
+tWString GetSystemSpecialPath(eSystemPath aPathType) {
 #if 0
 #if defined(WIN32)
 		int type;
@@ -575,13 +541,12 @@ namespace hpl {
 		}
 #endif
 #endif
-		return _W("");
-	}
+	return _W("");
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool FileExists(const tWString& asFileName)
-	{
+bool FileExists(const tWString &asFileName) {
 #if 0
 #ifdef WIN32
 		FILE *f = _wfopen(asFileName.c_str(),_W("r"));
@@ -596,13 +561,12 @@ namespace hpl {
 		fclose(f);
 		return true;
 #endif
-		return false;
-	}
+	return false;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	void RemoveFile(const tWString& asFilePath)
-	{
+void RemoveFile(const tWString &asFilePath) {
 #if 0
 #ifdef WIN32
 		_wremove(asFilePath.c_str());
@@ -610,14 +574,12 @@ namespace hpl {
 		remove(cString::To8Char(asFilePath).c_str());
 #endif
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	bool CloneFile(const tWString& asSrcFileName,const tWString& asDestFileName,
-		bool abFailIfExists)
-	{
+bool CloneFile(const tWString &asSrcFileName, const tWString &asDestFileName,
+			   bool abFailIfExists) {
 #if 0
 #ifdef WIN32
 		return CopyFile(asSrcFileName.c_str(),asDestFileName.c_str(),abFailIfExists)==TRUE;
@@ -632,13 +594,12 @@ namespace hpl {
 		return true;
 #endif
 #endif
-		return false; 
-	}
+	return false;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool CreateFolder(const tWString& asPath)
-	{
+bool CreateFolder(const tWString &asPath) {
 #if 0
 #ifdef WIN32
 		return CreateDirectory(asPath.c_str(),NULL)==TRUE;
@@ -646,11 +607,10 @@ namespace hpl {
 		return mkdir(cString::To8Char(asPath).c_str(),0755)==0;
 #endif
 #endif
-		return false; 
-	}
+	return false;
+}
 
-	bool FolderExists(const tWString& asPath)
-	{
+bool FolderExists(const tWString &asPath) {
 #if 0
 #ifdef WIN32
 		return GetFileAttributes(asPath.c_str())==FILE_ATTRIBUTE_DIRECTORY;
@@ -659,11 +619,10 @@ namespace hpl {
 		return (stat(cString::To8Char(asPath).c_str(), &statbuf) != -1);
 #endif
 #endif
-		return false; 
-	}
+	return false;
+}
 
-	bool IsFileLink(const tWString& asPath)
-	{
+bool IsFileLink(const tWString &asPath) {
 #if 0
 		// Symbolic Links Not Supported under Windows
 #ifndef WIN32
@@ -677,12 +636,10 @@ namespace hpl {
 			return false;
 #endif
 #endif
-		return false; 
+	return false;
+}
 
-	}
-
-	bool LinkFile(const tWString& asPointsTo, const tWString& asLink)
-	{
+bool LinkFile(const tWString &asPointsTo, const tWString &asLink) {
 #if 0
 		// Symbolic Links Not Supported under Windows
 #ifndef WIN32
@@ -691,12 +648,10 @@ namespace hpl {
 		return false;
 #endif
 #endif
-		return false; 
+	return false;
+}
 
-	}
-
-	bool RenameFile(const tWString& asFrom, const tWString& asTo)
-	{
+bool RenameFile(const tWString &asFrom, const tWString &asTo) {
 #if 0
 #ifdef WIN32
 		return false;
@@ -704,14 +659,12 @@ namespace hpl {
 		return (rename(cString::To8Char(asFrom).c_str(), cString::To8Char(asTo).c_str()) == 0);
 #endif
 #endif
-		return false; 
+	return false;
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	cDate FileModifiedDate(const tWString& asFilePath)
-	{
+cDate FileModifiedDate(const tWString &asFilePath) {
 #if 0
   		struct tm* pClock;
 #ifdef WIN32
@@ -728,13 +681,12 @@ namespace hpl {
 
 		return date;
 #endif
-		return {}; 
-	}
+	return {};
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cDate FileCreationDate(const tWString& asFilePath)
-	{
+cDate FileCreationDate(const tWString &asFilePath) {
 #if 0
   		struct tm* pClock;
 #ifdef WIN32
@@ -752,23 +704,20 @@ namespace hpl {
 		return date;
 #endif
 
-		return {}; 
-	}
+	return {};
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	void SetWindowCaption(const tString &asName)
-	{
+void SetWindowCaption(const tString &asName) {
 #if 0
   		SDL_WM_SetCaption(asName.c_str(),"");
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	bool HasWindowFocus(const tWString &asWindowCaption)
-	{
+bool HasWindowFocus(const tWString &asWindowCaption) {
 #if 0
 #ifdef WIN32
 			HWND pWindowHandle = FindWindow(NULL, asWindowCaption.c_str());
@@ -776,131 +725,113 @@ namespace hpl {
 #endif
 #endif
 
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	unsigned long GetApplicationTime()
-	{
-#if 0
-  		return SDL_GetTicks();
-#endif
-		return 0; 
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cScriptOutput::AddMessage(const asSMessageInfo *msg)
-	{
-		char sMess[1024];
-
-		tString type = "ERR ";
-		if( msg->type == asMSGTYPE_WARNING )
-			type = "WARN";
-		else if( msg->type == asMSGTYPE_INFORMATION )
-			type = "INFO";
-
-		sprintf(sMess,"%s (%d, %d) : %s : %s\n", msg->section, msg->row, msg->col, type.c_str(), msg->message);
-
-		msMessage += sMess;
-	}
-	void cScriptOutput::Display()
-	{
-		if(msMessage.size()>500)
-		{
-			while(msMessage.size() > 500)
-			{
-				tString sSub = msMessage.substr(0,500);
-				msMessage = msMessage.substr(500);
-				Log(sSub.c_str());
-			}
-			Log(msMessage.c_str());
-		}
-		else
-		{
-			Log(msMessage.c_str());
-		}
-	}
-	void cScriptOutput::Clear()
-	{
-		msMessage = "";
-	}
-
-	//-----------------------------------------------------------------------
-
-	unsigned long cLowLevelSystemSDL::GetTime()
-	{
-#if 0
-  		return SDL_GetTicks();
-#endif
-		return 0; 
-	}
-
-	//-----------------------------------------------------------------------
-
-	cDate cLowLevelSystemSDL::GetDate()
-	{
-		return {}; 
-	}
-
-	//-----------------------------------------------------------------------
-
-	iScript* cLowLevelSystemSDL::CreateScript(const tString& asName)
-	{
-		return hplNew( cSqScript, (asName,mpScriptEngine,mpScriptOutput,mlHandleCount++) );
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cLowLevelSystemSDL::AddScriptFunc(const tString& asFuncDecl, void* pFunc, int callConv)
-	{
-		if(mpScriptEngine->RegisterGlobalFunction(asFuncDecl.c_str(),
-												asFUNCTION(pFunc),callConv)<0)
-		{
-			Error("Couldn't add func '%s'\n",asFuncDecl.c_str());
-			return false;
-		}
-
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cLowLevelSystemSDL::AddScriptVar(const tString& asVarDecl, void *pVar)
-	{
-		if(mpScriptEngine->RegisterGlobalProperty(asVarDecl.c_str(),pVar)<0)
-		{
-			Error("Couldn't add var '%s'\n",asVarDecl.c_str());
-			return false;
-		}
-
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cLowLevelSystemSDL::Sleep ( const unsigned int alMillisecs )
-	{
-
-	}
-
-	//-----------------------------------------------------------------------
-	//////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	//-----------------------------------------------------------------------
-
-
-	//////////////////////////////////////////////////////////////////////////
-	// STATIC PRIVATE METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	//-----------------------------------------------------------------------
-
+	return true;
 }
+
+//-----------------------------------------------------------------------
+
+unsigned long GetApplicationTime() {
+#if 0
+  		return SDL_GetTicks();
+#endif
+	return 0;
+}
+
+//-----------------------------------------------------------------------
+
+void cScriptOutput::AddMessage(const asSMessageInfo *msg) {
+	char sMess[1024];
+
+	tString type = "ERR ";
+	if (msg->type == asMSGTYPE_WARNING)
+		type = "WARN";
+	else if (msg->type == asMSGTYPE_INFORMATION)
+		type = "INFO";
+
+	sprintf(sMess, "%s (%d, %d) : %s : %s\n", msg->section, msg->row, msg->col, type.c_str(), msg->message);
+
+	msMessage += sMess;
+}
+void cScriptOutput::Display() {
+	if (msMessage.size() > 500) {
+		while (msMessage.size() > 500) {
+			tString sSub = msMessage.substr(0, 500);
+			msMessage = msMessage.substr(500);
+			Log(sSub.c_str());
+		}
+		Log(msMessage.c_str());
+	} else {
+		Log(msMessage.c_str());
+	}
+}
+void cScriptOutput::Clear() {
+	msMessage = "";
+}
+
+//-----------------------------------------------------------------------
+
+unsigned long cLowLevelSystemSDL::GetTime() {
+#if 0
+  		return SDL_GetTicks();
+#endif
+	return 0;
+}
+
+//-----------------------------------------------------------------------
+
+cDate cLowLevelSystemSDL::GetDate() {
+	return {};
+}
+
+//-----------------------------------------------------------------------
+
+iScript *cLowLevelSystemSDL::CreateScript(const tString &asName) {
+	return hplNew(cSqScript, (asName, mpScriptEngine, mpScriptOutput, mlHandleCount++));
+}
+
+//-----------------------------------------------------------------------
+
+bool cLowLevelSystemSDL::AddScriptFunc(const tString &asFuncDecl, void *pFunc, int callConv) {
+	if (mpScriptEngine->RegisterGlobalFunction(asFuncDecl.c_str(),
+											   asFUNCTION(pFunc), callConv) < 0) {
+		Error("Couldn't add func '%s'\n", asFuncDecl.c_str());
+		return false;
+	}
+
+	return true;
+}
+
+//-----------------------------------------------------------------------
+
+bool cLowLevelSystemSDL::AddScriptVar(const tString &asVarDecl, void *pVar) {
+	if (mpScriptEngine->RegisterGlobalProperty(asVarDecl.c_str(), pVar) < 0) {
+		Error("Couldn't add var '%s'\n", asVarDecl.c_str());
+		return false;
+	}
+
+	return true;
+}
+
+//-----------------------------------------------------------------------
+
+void cLowLevelSystemSDL::Sleep(const unsigned int alMillisecs) {
+}
+
+//-----------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
+// PRIVATE METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// STATIC PRIVATE METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

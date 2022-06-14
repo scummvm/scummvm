@@ -41,17 +41,17 @@
 #ifndef HPL_MATRIX_H
 #define HPL_MATRIX_H
 
-#include <math.h>
 #include "Vector3.h"
+#include <math.h>
 
 namespace hpl {
 
-template <class T> 	class cMatrix {
-	public:
-	//The ways to reference the matrix
-	//format is [row][col]
-	union
-	{
+template<class T>
+class cMatrix {
+public:
+	// The ways to reference the matrix
+	// format is [row][col]
+	union {
 		T m[4][4];
 		T v[16];
 	};
@@ -60,22 +60,18 @@ template <class T> 	class cMatrix {
 	// Constructors
 	/////////////////////////////////////////
 
-	inline cMatrix()
-	{
+	inline cMatrix() {
 	}
 
 	//-----------------------------------------------------------------------
 
-	inline cMatrix(T* pA)
-	{
+	inline cMatrix(T *pA) {
 		FromVec(pA);
 	}
 
 	//-----------------------------------------------------------------------
 
-
-	inline cMatrix(double* pA)
-	{
+	inline cMatrix(double *pA) {
 		m[0][0] = (T)pA[0];
 		m[0][1] = (T)pA[1];
 		m[0][2] = (T)pA[2];
@@ -96,13 +92,11 @@ template <class T> 	class cMatrix {
 
 	//-----------------------------------------------------------------------
 
-
 	inline cMatrix(
 		T a00, T a01, T a02, T a03,
 		T a10, T a11, T a12, T a13,
 		T a20, T a21, T a22, T a23,
-		T a30, T a31, T a32, T a33 )
-	{
+		T a30, T a31, T a32, T a33) {
 		m[0][0] = a00;
 		m[0][1] = a01;
 		m[0][2] = a02;
@@ -126,9 +120,8 @@ template <class T> 	class cMatrix {
 
 	//-----------------------------------------------------------------------
 
-	inline bool operator==(const cMatrix<T>& aMtx) const
-	{
-		if(	m[0][0] == aMtx.m[0][0] &&
+	inline bool operator==(const cMatrix<T> &aMtx) const {
+		if (m[0][0] == aMtx.m[0][0] &&
 			m[0][1] == aMtx.m[0][1] &&
 			m[0][2] == aMtx.m[0][2] &&
 			m[0][3] == aMtx.m[0][3] &&
@@ -143,8 +136,7 @@ template <class T> 	class cMatrix {
 			m[3][0] == aMtx.m[3][0] &&
 			m[3][1] == aMtx.m[3][1] &&
 			m[3][2] == aMtx.m[3][2] &&
-			m[3][3] == aMtx.m[3][3])
-		{
+			m[3][3] == aMtx.m[3][3]) {
 			return true;
 		}
 
@@ -153,15 +145,13 @@ template <class T> 	class cMatrix {
 
 	//-----------------------------------------------------------------------
 
-	inline bool operator!=(const cMatrix<T>& aMtx)
-	{
+	inline bool operator!=(const cMatrix<T> &aMtx) {
 		return !(*this == aMtx);
 	}
 
 	//-----------------------------------------------------------------------
 
-	inline void FromVec(const T* pA)
-	{
+	inline void FromVec(const T *pA) {
 		m[0][0] = pA[0];
 		m[0][1] = pA[1];
 		m[0][2] = pA[2];
@@ -182,8 +172,7 @@ template <class T> 	class cMatrix {
 
 	//-----------------------------------------------------------------------
 
-	inline void FromTranspose(const T* pA)
-	{
+	inline void FromTranspose(const T *pA) {
 		m[0][0] = pA[0];
 		m[1][0] = pA[1];
 		m[2][0] = pA[2];
@@ -196,7 +185,7 @@ template <class T> 	class cMatrix {
 
 		m[0][2] = pA[8];
 		m[1][2] = pA[9];
-		m[2][2]= pA[10];
+		m[2][2] = pA[10];
 		m[3][2] = pA[11];
 
 		m[0][3] = pA[12];
@@ -205,17 +194,14 @@ template <class T> 	class cMatrix {
 		m[3][3] = pA[15];
 	}
 
-
 	//-----------------------------------------------------------------------
 
-	inline cVector3<T> GetRight() const
-	{
+	inline cVector3<T> GetRight() const {
 		/* @todo ??? */
 		return cVector3<T>(m[0][0], m[0][1], m[0][2]);
 	}
 
-	inline void SetRight(const cVector3<T>&  avVec)
-	{
+	inline void SetRight(const cVector3<T> &avVec) {
 		m[0][0] = avVec.x;
 		m[0][1] = avVec.y;
 		m[0][2] = avVec.z;
@@ -223,14 +209,12 @@ template <class T> 	class cMatrix {
 
 	//-----------------------------------------------------------------------
 
-	inline cVector3<T> GetUp() const
-	{
+	inline cVector3<T> GetUp() const {
 		/* @todo ??? */
 		return cVector3<T>(m[1][0], m[1][1], m[1][2]);
 	}
 
-	inline void SetUp(const cVector3<T>&  avVec)
-	{
+	inline void SetUp(const cVector3<T> &avVec) {
 		m[1][0] = avVec.x;
 		m[1][1] = avVec.y;
 		m[1][2] = avVec.z;
@@ -238,14 +222,12 @@ template <class T> 	class cMatrix {
 
 	//-----------------------------------------------------------------------
 
-	inline cVector3<T> GetForward() const
-	{
+	inline cVector3<T> GetForward() const {
 		/* @todo ??? */
 		return cVector3<T>(m[2][0], m[2][1], m[2][2]);
 	}
 
-	inline void SetForward(const cVector3<T>&  avVec)
-	{
+	inline void SetForward(const cVector3<T> &avVec) {
 		m[2][0] = avVec.x;
 		m[2][1] = avVec.y;
 		m[2][2] = avVec.z;
@@ -253,14 +235,12 @@ template <class T> 	class cMatrix {
 
 	//-----------------------------------------------------------------------
 
-	inline cVector3<T> GetTranslation() const
-	{
+	inline cVector3<T> GetTranslation() const {
 		/* @todo ??? */
 		return cVector3<T>(m[0][3], m[1][3], m[2][3]);
 	}
 
-	inline void SetTranslation(const cVector3<T>& avTrans)
-	{
+	inline void SetTranslation(const cVector3<T> &avTrans) {
 		m[0][3] = avTrans.x;
 		m[1][3] = avTrans.y;
 		m[2][3] = avTrans.z;
@@ -268,50 +248,45 @@ template <class T> 	class cMatrix {
 
 	//-----------------------------------------------------------------------
 
-	inline cMatrix<T> GetRotation() const
-	{
-		return cMatrix<T>(  m[0][0], m[0][1], m[0][2] ,0,
-							m[1][0], m[1][1], m[1][2] ,0,
-							m[2][0], m[2][1], m[2][2] ,0,
-							0,		 0,		  0		  ,1);
-	}
-
-
-	//-----------------------------------------------------------------------
-
-	inline cMatrix<T> GetTranspose() const
-	{
-		return cMatrix<T>(m[0][0], m[1][0], m[2][0] ,m[3][0],
-						m[0][1], m[1][1], m[2][1] ,m[3][1],
-						m[0][2], m[1][2], m[2][2] ,m[3][2],
-						m[0][3], m[1][3], m[2][3] ,m[3][3]);
+	inline cMatrix<T> GetRotation() const {
+		return cMatrix<T>(m[0][0], m[0][1], m[0][2], 0,
+						  m[1][0], m[1][1], m[1][2], 0,
+						  m[2][0], m[2][1], m[2][2], 0,
+						  0, 0, 0, 1);
 	}
 
 	//-----------------------------------------------------------------------
 
-	tString ToString()
-	{
+	inline cMatrix<T> GetTranspose() const {
+		return cMatrix<T>(m[0][0], m[1][0], m[2][0], m[3][0],
+						  m[0][1], m[1][1], m[2][1], m[3][1],
+						  m[0][2], m[1][2], m[2][2], m[3][2],
+						  m[0][3], m[1][3], m[2][3], m[3][3]);
+	}
+
+	//-----------------------------------------------------------------------
+
+	tString ToString() {
 		char buf[512];
-		sprintf(buf,"[%f : %f : %f : %f] [%f : %f : %f : %f] [%f : %f : %f : %f] [%f : %f : %f : %f]",
-					m[0][0],m[0][1],m[0][2],m[0][3],
-					m[1][0],m[1][1],m[1][2],m[1][3],
-					m[2][0],m[2][1],m[2][2],m[2][3],
-					m[3][0],m[3][1],m[3][2],m[3][3]);
+		sprintf(buf, "[%f : %f : %f : %f] [%f : %f : %f : %f] [%f : %f : %f : %f] [%f : %f : %f : %f]",
+				m[0][0], m[0][1], m[0][2], m[0][3],
+				m[1][0], m[1][1], m[1][2], m[1][3],
+				m[2][0], m[2][1], m[2][2], m[2][3],
+				m[3][0], m[3][1], m[3][2], m[3][3]);
 		return buf;
 	}
 
-	tString ToFileString()
-	{
+	tString ToFileString() {
 		char buf[512];
-		sprintf(buf,"%g %g %g %g %g %g %g %g %g %g %g %g %g %g %g %g",
-			m[0][0],m[0][1],m[0][2],m[0][3],
-			m[1][0],m[1][1],m[1][2],m[1][3],
-			m[2][0],m[2][1],m[2][2],m[2][3],
-			m[3][0],m[3][1],m[3][2],m[3][3]);
+		sprintf(buf, "%g %g %g %g %g %g %g %g %g %g %g %g %g %g %g %g",
+				m[0][0], m[0][1], m[0][2], m[0][3],
+				m[1][0], m[1][1], m[1][2], m[1][3],
+				m[2][0], m[2][1], m[2][2], m[2][3],
+				m[3][0], m[3][1], m[3][2], m[3][3]);
 		return buf;
 	}
 };
 
-};
+}; // namespace hpl
 
 #endif // HPL_MATRIX_H

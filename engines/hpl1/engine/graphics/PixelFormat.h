@@ -45,14 +45,14 @@
 
 namespace hpl {
 
-	class iPixelFormat
-	{
-	public:
-		iPixelFormat(tString asType) : msType(asType){}
-		~iPixelFormat(){}
-	private:
-		tString msType;
-	};
+class iPixelFormat {
+public:
+	iPixelFormat(tString asType) : msType(asType) {}
+	~iPixelFormat() {}
 
+private:
+	tString msType;
 };
+
+};     // namespace hpl
 #endif // HPL_PIXELFORMAT_H

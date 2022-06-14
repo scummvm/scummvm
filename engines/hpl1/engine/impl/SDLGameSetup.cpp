@@ -38,20 +38,20 @@
  * along with HPL1 Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if 0//def WIN32
+#if 0 // def WIN32
 #pragma comment(lib, "SDL.lib")
 #pragma comment(lib, "SDLmain.lib")
 #endif
 
 #include "hpl1/engine/impl/SDLGameSetup.h"
 #include "hpl1/engine/impl/KeyboardSDL.h"
-#include "hpl1/engine/impl/MouseSDL.h"
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
-#include "hpl1/engine/impl/LowLevelResourcesSDL.h"
-#include "hpl1/engine/impl/LowLevelSystemSDL.h"
 #include "hpl1/engine/impl/LowLevelInputSDL.h"
-#include "hpl1/engine/impl/LowLevelSoundOpenAL.h"
 #include "hpl1/engine/impl/LowLevelPhysicsNewton.h"
+#include "hpl1/engine/impl/LowLevelResourcesSDL.h"
+#include "hpl1/engine/impl/LowLevelSoundOpenAL.h"
+#include "hpl1/engine/impl/LowLevelSystemSDL.h"
+#include "hpl1/engine/impl/MouseSDL.h"
 #ifdef INCLUDE_HAPTIC
 #include "hpl1/engine/impl/LowLevelHapticHaptX.h"
 #endif
@@ -61,14 +61,13 @@
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cSDLGameSetup::cSDLGameSetup()
-	{
+cSDLGameSetup::cSDLGameSetup() {
 #if 0
   		if (SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0) {
 			FatalError("Error Initializing Display: %s",SDL_GetError());
@@ -92,13 +91,11 @@ namespace hpl {
 		mpLowLevelHaptic = NULL;
 #endif
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	cSDLGameSetup::~cSDLGameSetup()
-	{
+cSDLGameSetup::~cSDLGameSetup() {
 #if 0
   		Log("- Deleting lowlevel stuff.\n");
 
@@ -119,94 +116,83 @@ namespace hpl {
 
 		SDL_Quit();
 #endif
-
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	cScene* cSDLGameSetup::CreateScene(cGraphics* apGraphics, cResources *apResources, cSound* apSound,
-										cPhysics *apPhysics, cSystem *apSystem,cAI *apAI,
-										cHaptic *apHaptic)
-	{
-		cScene *pScene = hplNew( cScene, (apGraphics,apResources, apSound,apPhysics, apSystem,apAI,apHaptic) );
-		return pScene;
-	}
-
-	//-----------------------------------------------------------------------
-
-
-	/**
-	 * \todo Lowlevelresource and resource both use lowlevel graphics. Can this be fixed??
-	 * \param apGraphics
-	 * \return
-	 */
-	cResources* cSDLGameSetup::CreateResources(cGraphics* apGraphics)
-	{
-		cResources *pResources = hplNew( cResources, (mpLowLevelResources,mpLowLevelGraphics) );
-		return pResources;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cInput* cSDLGameSetup::CreateInput(cGraphics* apGraphics)
-	{
-		cInput *pInput = hplNew( cInput, (mpLowLevelInput) );
-		return pInput;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cSystem* cSDLGameSetup::CreateSystem()
-	{
-		cSystem *pSystem = hplNew( cSystem, (mpLowLevelSystem) );
-		return pSystem;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cGraphics* cSDLGameSetup::CreateGraphics()
-	{
-		cGraphics *pGraphics = hplNew( cGraphics, (mpLowLevelGraphics,mpLowLevelResources) );
-		return pGraphics;
-	}
-	//-----------------------------------------------------------------------
-
-	cSound* cSDLGameSetup::CreateSound()
-	{
-		cSound *pSound = hplNew( cSound, (mpLowLevelSound) );
-		return pSound;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cPhysics* cSDLGameSetup::CreatePhysics()
-	{
-		cPhysics *pPhysics = hplNew( cPhysics, (mpLowLevelPhysics) );
-		return pPhysics;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cAI* cSDLGameSetup::CreateAI()
-	{
-		cAI *pAI = hplNew( cAI,() );
-		return pAI;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cHaptic* cSDLGameSetup::CreateHaptic()
-	{
-		cHaptic *pHaptic = hplNew( cHaptic, (mpLowLevelHaptic) );
-		return pHaptic;
-	}
-
-	//-----------------------------------------------------------------------
-
 }
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+cScene *cSDLGameSetup::CreateScene(cGraphics *apGraphics, cResources *apResources, cSound *apSound,
+								   cPhysics *apPhysics, cSystem *apSystem, cAI *apAI,
+								   cHaptic *apHaptic) {
+	cScene *pScene = hplNew(cScene, (apGraphics, apResources, apSound, apPhysics, apSystem, apAI, apHaptic));
+	return pScene;
+}
+
+//-----------------------------------------------------------------------
+
+/**
+ * \todo Lowlevelresource and resource both use lowlevel graphics. Can this be fixed??
+ * \param apGraphics
+ * \return
+ */
+cResources *cSDLGameSetup::CreateResources(cGraphics *apGraphics) {
+	cResources *pResources = hplNew(cResources, (mpLowLevelResources, mpLowLevelGraphics));
+	return pResources;
+}
+
+//-----------------------------------------------------------------------
+
+cInput *cSDLGameSetup::CreateInput(cGraphics *apGraphics) {
+	cInput *pInput = hplNew(cInput, (mpLowLevelInput));
+	return pInput;
+}
+
+//-----------------------------------------------------------------------
+
+cSystem *cSDLGameSetup::CreateSystem() {
+	cSystem *pSystem = hplNew(cSystem, (mpLowLevelSystem));
+	return pSystem;
+}
+
+//-----------------------------------------------------------------------
+
+cGraphics *cSDLGameSetup::CreateGraphics() {
+	cGraphics *pGraphics = hplNew(cGraphics, (mpLowLevelGraphics, mpLowLevelResources));
+	return pGraphics;
+}
+//-----------------------------------------------------------------------
+
+cSound *cSDLGameSetup::CreateSound() {
+	cSound *pSound = hplNew(cSound, (mpLowLevelSound));
+	return pSound;
+}
+
+//-----------------------------------------------------------------------
+
+cPhysics *cSDLGameSetup::CreatePhysics() {
+	cPhysics *pPhysics = hplNew(cPhysics, (mpLowLevelPhysics));
+	return pPhysics;
+}
+
+//-----------------------------------------------------------------------
+
+cAI *cSDLGameSetup::CreateAI() {
+	cAI *pAI = hplNew(cAI, ());
+	return pAI;
+}
+
+//-----------------------------------------------------------------------
+
+cHaptic *cSDLGameSetup::CreateHaptic() {
+	cHaptic *pHaptic = hplNew(cHaptic, (mpLowLevelHaptic));
+	return pHaptic;
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

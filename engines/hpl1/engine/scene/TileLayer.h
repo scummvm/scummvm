@@ -41,48 +41,47 @@
 #ifndef HPL_TILELAYER_H
 #define HPL_TILELAYER_H
 
-#include <vector>
-#include "hpl1/engine/scene/Tile.h"
 #include "hpl1/engine/math/MathTypes.h"
+#include "hpl1/engine/scene/Tile.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include <vector>
 
 namespace hpl {
 
-	enum eTileLayerType
-	{
-		eTileLayerType_Normal,
-		eTileLayerType_LastEnum
-	};
+enum eTileLayerType {
+	eTileLayerType_Normal,
+	eTileLayerType_LastEnum
+};
 
-	typedef std::vector<cTile*> tTileVec;
-	typedef tTileVec::iterator tTileVecIt;
+typedef std::vector<cTile *> tTileVec;
+typedef tTileVec::iterator tTileVecIt;
 
-	class cTileLayer
-	{
+class cTileLayer {
 	friend class cTileMapRectIt;
 	friend class cTileMapLineIt;
-	public:
-		cTileLayer(unsigned int alW, unsigned int alH, bool abCollision,bool abLit, eTileLayerType aType,float afZ=0);
-		~cTileLayer();
 
-		bool SetTile(unsigned int alX,unsigned int alY, cTile *aVal);
-		cTile* GetAt(int alX, int alY);
-		cTile* GetAt(int alNum);
+public:
+	cTileLayer(unsigned int alW, unsigned int alH, bool abCollision, bool abLit, eTileLayerType aType, float afZ = 0);
+	~cTileLayer();
 
-		void SetZ(float afZ){mfZ = afZ;}
-		float GetZ(){return mfZ;}
+	bool SetTile(unsigned int alX, unsigned int alY, cTile *aVal);
+	cTile *GetAt(int alX, int alY);
+	cTile *GetAt(int alNum);
 
-		bool HasCollision(){ return mbCollision;}
+	void SetZ(float afZ) { mfZ = afZ; }
+	float GetZ() { return mfZ; }
 
-	private:
-		tTileVec mvTile;
+	bool HasCollision() { return mbCollision; }
 
-		cVector2l mvSize;
-		bool mbCollision;
-		bool mbLit;
-		float mfZ;
-		eTileLayerType mType;
-	};
+private:
+	tTileVec mvTile;
 
+	cVector2l mvSize;
+	bool mbCollision;
+	bool mbLit;
+	float mfZ;
+	eTileLayerType mType;
 };
+
+};     // namespace hpl
 #endif // HPL_TILELAYER_H

@@ -46,63 +46,60 @@
 
 namespace hpl {
 
-	//-----------------------------------------
+//-----------------------------------------
 
-	class iTexture;
+class iTexture;
 
-	class iVideoStream;
+class iVideoStream;
 
-	//-----------------------------------------
+//-----------------------------------------
 
-	class iVideoStreamLoader
-	{
-	public:
-		virtual ~iVideoStreamLoader(){}
+class iVideoStreamLoader {
+public:
+	virtual ~iVideoStreamLoader() {}
 
-		virtual iVideoStream* Create(const tString& asName)=0;
+	virtual iVideoStream *Create(const tString &asName) = 0;
 
-		tStringVec& GetExtensions(){ return mvExtensions;}
-	protected:
-		tStringVec mvExtensions;
-	};
+	tStringVec &GetExtensions() { return mvExtensions; }
 
-	//-----------------------------------------
-
-	class iVideoStream : public iResourceBase
-	{
-	public:
-		iVideoStream(tString asName) : iResourceBase(asName,0){}
-		virtual ~iVideoStream(){}
-
-		virtual bool LoadFromFile(tString asFilePath)=0;
-
-		virtual void Update(float afTimeStep)=0;
-
-		virtual void Play()=0;
-		virtual void Stop()=0;
-
-		virtual void Pause(bool abX)=0;
-		virtual bool IsPaused()=0;
-
-		virtual void SetLoop(bool abX)=0;
-		virtual bool IsLooping()=0;
-
-		virtual void CopyToTexture(iTexture *apTexture)=0;
-
-
-		const tString& GetFileName(){return msFilePath;}
-		const cVector2l& GetSize(){return mvSize;}
-
-		//////////////////////////////////
-		// ResourceBase implementation
-		bool Reload(){ return false;}
-		void Unload(){}
-		void Destroy(){}
-
-
-	protected:
-		tString msFilePath;
-		cVector2l mvSize;
-	};
+protected:
+	tStringVec mvExtensions;
 };
+
+//-----------------------------------------
+
+class iVideoStream : public iResourceBase {
+public:
+	iVideoStream(tString asName) : iResourceBase(asName, 0) {}
+	virtual ~iVideoStream() {}
+
+	virtual bool LoadFromFile(tString asFilePath) = 0;
+
+	virtual void Update(float afTimeStep) = 0;
+
+	virtual void Play() = 0;
+	virtual void Stop() = 0;
+
+	virtual void Pause(bool abX) = 0;
+	virtual bool IsPaused() = 0;
+
+	virtual void SetLoop(bool abX) = 0;
+	virtual bool IsLooping() = 0;
+
+	virtual void CopyToTexture(iTexture *apTexture) = 0;
+
+	const tString &GetFileName() { return msFilePath; }
+	const cVector2l &GetSize() { return mvSize; }
+
+	//////////////////////////////////
+	// ResourceBase implementation
+	bool Reload() { return false; }
+	void Unload() {}
+	void Destroy() {}
+
+protected:
+	tString msFilePath;
+	cVector2l mvSize;
+};
+};     // namespace hpl
 #endif // HPL_VIDEO_STREAM_H

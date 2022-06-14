@@ -43,86 +43,80 @@
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cLight2DPoint::cLight2DPoint(tString asName) : iLight2D(asName)
-	{
-		UpdateBoundingBox();
-	}
-
-	//-----------------------------------------------------------------------
-
-	cLight2DPoint::~cLight2DPoint()
-	{
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	//TODO: Z might have to be some standard value...
-	//Has 100 right now, this should be in some global value..
-	int cLight2DPoint::Render(iLowLevelGraphics* apLowLevel, int alFirstIndex)
-	{
-		//make the center vetrex:
-		cVector3f vTex(0);
-		cVector3f vPos;
-		cVector3f vLightPos = GetWorldPosition();
-		vLightPos.z = 100;
-		float fRadius = GetFarAttenuation();
-
-		cColor Col = GetDiffuseColor()*mfIntensity;
-		Col.a =0;
-		cVertex Vtx = cVertex(vLightPos,vTex,Col);
-		apLowLevel->AddVertexToBatch(Vtx); //index 0!
-
-		Col = cColor(0,0);
-		int idx=alFirstIndex+1;
-		for(float fAngle=0;fAngle<=k2Pif;fAngle+=k2Pif/32)
-		{
-			vPos.x = vLightPos.x + fRadius * cos(fAngle);//*0.5;
-			vPos.y = vLightPos.y + fRadius * sin(fAngle);//*0.5;
-			vPos.z = 100;
-			Vtx = cVertex(vPos,vTex,Col);
-			apLowLevel->AddVertexToBatch(Vtx);
-			if(idx>0) {
-				apLowLevel->AddIndexToBatch(alFirstIndex);     //The center
-				apLowLevel->AddIndexToBatch(idx);   //The current point
-				apLowLevel->AddIndexToBatch(idx-1); //The previous  point
-			}
-			idx++;
-		}
-		apLowLevel->AddIndexToBatch(alFirstIndex);     //The center
-		apLowLevel->AddIndexToBatch(alFirstIndex+1);     //The current point
-		apLowLevel->AddIndexToBatch(idx-1); //The previous  point
-
-		return idx;
-	}
-
-	//-----------------------------------------------------------------------
-
-	const cRect2f& cLight2DPoint::GetBoundingBox()
-	{
-		return mBoundingBox;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cLight2DPoint::UpdateBoundingBox()
-	{
-		mBoundingBox = cRect2f(cVector2f(GetWorldPosition().x,GetWorldPosition().y)-mfFarAttenuation,
-				cVector2f(mfFarAttenuation*2));
-
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
+cLight2DPoint::cLight2DPoint(tString asName) : iLight2D(asName) {
+	UpdateBoundingBox();
 }
+
+//-----------------------------------------------------------------------
+
+cLight2DPoint::~cLight2DPoint() {
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+// TODO: Z might have to be some standard value...
+// Has 100 right now, this should be in some global value..
+int cLight2DPoint::Render(iLowLevelGraphics *apLowLevel, int alFirstIndex) {
+	// make the center vetrex:
+	cVector3f vTex(0);
+	cVector3f vPos;
+	cVector3f vLightPos = GetWorldPosition();
+	vLightPos.z = 100;
+	float fRadius = GetFarAttenuation();
+
+	cColor Col = GetDiffuseColor() * mfIntensity;
+	Col.a = 0;
+	cVertex Vtx = cVertex(vLightPos, vTex, Col);
+	apLowLevel->AddVertexToBatch(Vtx); // index 0!
+
+	Col = cColor(0, 0);
+	int idx = alFirstIndex + 1;
+	for (float fAngle = 0; fAngle <= k2Pif; fAngle += k2Pif / 32) {
+		vPos.x = vLightPos.x + fRadius * cos(fAngle); //*0.5;
+		vPos.y = vLightPos.y + fRadius * sin(fAngle); //*0.5;
+		vPos.z = 100;
+		Vtx = cVertex(vPos, vTex, Col);
+		apLowLevel->AddVertexToBatch(Vtx);
+		if (idx > 0) {
+			apLowLevel->AddIndexToBatch(alFirstIndex); // The center
+			apLowLevel->AddIndexToBatch(idx);          // The current point
+			apLowLevel->AddIndexToBatch(idx - 1);      // The previous  point
+		}
+		idx++;
+	}
+	apLowLevel->AddIndexToBatch(alFirstIndex);     // The center
+	apLowLevel->AddIndexToBatch(alFirstIndex + 1); // The current point
+	apLowLevel->AddIndexToBatch(idx - 1);          // The previous  point
+
+	return idx;
+}
+
+//-----------------------------------------------------------------------
+
+const cRect2f &cLight2DPoint::GetBoundingBox() {
+	return mBoundingBox;
+}
+
+//-----------------------------------------------------------------------
+
+bool cLight2DPoint::UpdateBoundingBox() {
+	mBoundingBox = cRect2f(cVector2f(GetWorldPosition().x, GetWorldPosition().y) - mfFarAttenuation,
+						   cVector2f(mfFarAttenuation * 2));
+
+	return true;
+}
+
+//-----------------------------------------------------------------------
+} // namespace hpl

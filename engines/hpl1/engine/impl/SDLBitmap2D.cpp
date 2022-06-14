@@ -40,29 +40,24 @@
 
 #include "hpl1/engine/impl/SDLBitmap2D.h"
 
-
-
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cSDLBitmap2D::cSDLBitmap2D(iPixelFormat *apPxlFmt) : iBitmap2D("SDL",apPxlFmt)
-	{
-		mpSurface = NULL;
-		mlHeight = 0;
-		mlWidth = 0;
+cSDLBitmap2D::cSDLBitmap2D(iPixelFormat *apPxlFmt) : iBitmap2D("SDL", apPxlFmt) {
+	mpSurface = NULL;
+	mlHeight = 0;
+	mlWidth = 0;
 
-		cSDLPixelFormat *pFmt = static_cast<cSDLPixelFormat*>(apPxlFmt);
-		mpSDLPixelFmt32 = pFmt->GetSDLPixelFormat32();
-	}
+	cSDLPixelFormat *pFmt = static_cast<cSDLPixelFormat *>(apPxlFmt);
+	mpSDLPixelFmt32 = pFmt->GetSDLPixelFormat32();
+}
 
-	cSDLBitmap2D::cSDLBitmap2D(SDL_Surface* apSurface,iPixelFormat *apPxlFmt,const tString& asType) :
-	iBitmap2D("SDL",apPxlFmt)
-	{
+cSDLBitmap2D::cSDLBitmap2D(SDL_Surface *apSurface, iPixelFormat *apPxlFmt, const tString &asType) : iBitmap2D("SDL", apPxlFmt) {
 #if 0
   		mpSurface = apSurface;
 		mlHeight = mpSurface->h;
@@ -73,32 +68,28 @@ namespace hpl {
 		cSDLPixelFormat *pFmt = static_cast<cSDLPixelFormat*>(apPxlFmt);
 		mpSDLPixelFmt32 = pFmt->GetSDLPixelFormat32();
 #endif
-
-	}
-	cSDLBitmap2D::~cSDLBitmap2D()
-	{
+}
+cSDLBitmap2D::~cSDLBitmap2D() {
 #if 0
 		SDL_FreeSurface(mpSurface);
 #endif
-	}
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool cSDLBitmap2D::SaveToFile(const tString& asFile)
-	{
-		return false;
-	}
+bool cSDLBitmap2D::SaveToFile(const tString &asFile) {
+	return false;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	void cSDLBitmap2D::DrawToBitmap(iBitmap2D *apDest, const cVector2l &avDestPos)
-	{
+void cSDLBitmap2D::DrawToBitmap(iBitmap2D *apDest, const cVector2l &avDestPos) {
 #if 0
   cSDLBitmap2D* pBmp = static_cast<cSDLBitmap2D*>(apDest);
 
@@ -129,13 +120,11 @@ namespace hpl {
 				destPix[3] = srcPix[3];
 			}
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	void cSDLBitmap2D::FillRect(const cRect2l &aRect, const cColor &aColor)
-	{
+void cSDLBitmap2D::FillRect(const cRect2l &aRect, const cColor &aColor) {
 #if 0
   		SDL_Rect rect;
 		rect.x = aRect.x;
@@ -148,20 +137,17 @@ namespace hpl {
 
 		SDL_FillRect(mpSurface, &rect,col);
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+bool cSDLBitmap2D::HasAlpha() {
+	return true;
+}
 
-	bool cSDLBitmap2D::HasAlpha()
-	{
-		return true;
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	bool cSDLBitmap2D::Create(cVector2l avSize, unsigned int alBpp)
-	{
+bool cSDLBitmap2D::Create(cVector2l avSize, unsigned int alBpp) {
 #if 0
   		mpSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, avSize.x, avSize.y, 32,
 			mpSDLPixelFmt32->Rmask, mpSDLPixelFmt32->Gmask,
@@ -174,34 +160,31 @@ namespace hpl {
 
 		return true;
 #endif
-		return false; 
-	}
+	return false;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	SDL_Surface* cSDLBitmap2D::GetSurface()
-	{
-		return mpSurface;
-	}
+SDL_Surface *cSDLBitmap2D::GetSurface() {
+	return mpSurface;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	void* cSDLBitmap2D::GetRawData()
-	{
+void *cSDLBitmap2D::GetRawData() {
 #if 0
   		return mpSurface->pixels;
 #endif
-		return 0; 
-	}
+	return 0;
+}
 
-	int cSDLBitmap2D::GetNumChannels()
-	{
+int cSDLBitmap2D::GetNumChannels() {
 #if 0
   		return mpSurface->format->BytesPerPixel;
 #endif
-		return 0; 
-	}
-
-	//-----------------------------------------------------------------------
-
+	return 0;
 }
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

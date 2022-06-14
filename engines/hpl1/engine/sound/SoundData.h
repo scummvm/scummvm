@@ -41,45 +41,43 @@
 #ifndef HPL_SOUND_DATA_H
 #define HPL_SOUND_DATA_H
 
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/resources/ResourceBase.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	class cSoundManager;
-	class iSoundChannel;
+class cSoundManager;
+class iSoundChannel;
 
-	class iSoundData : public iResourceBase
-	{
-	public:
-		iSoundData(tString asName, bool abStream) : iResourceBase(asName, 0),
-		mpSoundManger(NULL), mbStream(abStream){}
+class iSoundData : public iResourceBase {
+public:
+	iSoundData(tString asName, bool abStream) : iResourceBase(asName, 0),
+												mpSoundManger(NULL), mbStream(abStream) {}
 
-		virtual ~iSoundData(){}
+	virtual ~iSoundData() {}
 
-		virtual bool CreateFromFile(const tString &asFile)=0;
+	virtual bool CreateFromFile(const tString &asFile) = 0;
 
-		virtual iSoundChannel* CreateChannel(int alPriority)=0;
+	virtual iSoundChannel *CreateChannel(int alPriority) = 0;
 
+	virtual bool IsStereo() = 0;
 
-		virtual bool IsStereo()=0;
+	bool IsStream() { return mbStream; }
+	void SetLoopStream(bool abX) { mbLoopStream = abX; }
+	bool GetLoopStream() { return mbLoopStream; }
 
-		bool IsStream(){ return mbStream;}
-		void SetLoopStream(bool abX){mbLoopStream = abX;}
-		bool GetLoopStream(){ return mbLoopStream;}
+	bool Reload() { return false; }
+	void Unload() {}
+	void Destroy() {}
 
-		bool Reload(){ return false;}
-		void Unload(){}
-		void Destroy(){}
+	void SetSoundManager(cSoundManager *apSoundManager) {
+		mpSoundManger = apSoundManager;
+	}
 
-		void SetSoundManager(cSoundManager* apSoundManager){
-			mpSoundManger = apSoundManager;
-		}
-
-	protected:
-		bool mbStream;
-		bool mbLoopStream;
-		cSoundManager* mpSoundManger;
-	};
+protected:
+	bool mbStream;
+	bool mbLoopStream;
+	cSoundManager *mpSoundManger;
 };
+};     // namespace hpl
 #endif // HPL_SOUND_DATA_H

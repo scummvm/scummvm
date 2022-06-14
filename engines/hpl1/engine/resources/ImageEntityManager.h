@@ -45,29 +45,28 @@
 
 namespace hpl {
 
-	class cGraphics;
-	class cResources;
+class cGraphics;
+class cResources;
 
-	class cImageEntityData;
+class cImageEntityData;
 
-	class cImageEntityManager : public iResourceManager
-	{
-	public:
-		cImageEntityManager(cGraphics* apGraphics,cResources *apResources);
-		~cImageEntityManager();
+class cImageEntityManager : public iResourceManager {
+public:
+	cImageEntityManager(cGraphics *apGraphics, cResources *apResources);
+	~cImageEntityManager();
 
-		iResourceBase* Create(const tString& asName);
-		cImageEntityData* CreateData(const tString& asName);
+	iResourceBase *Create(const tString &asName);
+	cImageEntityData *CreateData(const tString &asName);
 
-		void Destroy(iResourceBase* apResource);
-		void Unload(iResourceBase* apResource);
+	void Destroy(iResourceBase *apResource);
+	void Unload(iResourceBase *apResource);
 
-	private:
-		cGraphics* mpGraphics;
-		cResources *mpResources;
+private:
+	cGraphics *mpGraphics;
+	cResources *mpResources;
 
-		tUIntVec mvImageHandle;
-	};
-
+	tUIntVec mvImageHandle;
 };
+
+};     // namespace hpl
 #endif // HPL_IMAGE_ENTITY_MANAGER_H

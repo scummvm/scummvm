@@ -41,51 +41,50 @@
 #ifndef HPL_ANIMATION_H
 #define HPL_ANIMATION_H
 
-#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
-#include "hpl1/engine/system/SystemTypes.h"
+#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/resources/ResourceBase.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	class cAnimationTrack;
+class cAnimationTrack;
 
-	typedef std::vector<cAnimationTrack*> tAnimationTrackVec;
-	typedef tAnimationTrackVec::iterator tAnimationTrackVecIt;
+typedef std::vector<cAnimationTrack *> tAnimationTrackVec;
+typedef tAnimationTrackVec::iterator tAnimationTrackVecIt;
 
-	class cAnimation : public iResourceBase
-	{
-	public:
-		cAnimation(const tString &asName, const tString &asFile);
-		~cAnimation();
+class cAnimation : public iResourceBase {
+public:
+	cAnimation(const tString &asName, const tString &asFile);
+	~cAnimation();
 
-		float GetLength();
-		void SetLength(float afTime);
+	float GetLength();
+	void SetLength(float afTime);
 
-		cAnimationTrack* CreateTrack(const tString &asName, tAnimTransformFlag aFlags);
-		cAnimationTrack* GetTrack(int alIndex);
-		cAnimationTrack* GetTrackByName(const tString &asName);
-		void ResizeTracks(int alNum);
-		int GetTrackNum();
+	cAnimationTrack *CreateTrack(const tString &asName, tAnimTransformFlag aFlags);
+	cAnimationTrack *GetTrack(int alIndex);
+	cAnimationTrack *GetTrackByName(const tString &asName);
+	void ResizeTracks(int alNum);
+	int GetTrackNum();
 
-		const char* GetAnimationName(){ return msAnimName.c_str();}
-		void SetAnimationName(const tString &asName){ msAnimName =asName;}
+	const char *GetAnimationName() { return msAnimName.c_str(); }
+	void SetAnimationName(const tString &asName) { msAnimName = asName; }
 
-		tString& GetFileName(){ return msFileName;}
+	tString &GetFileName() { return msFileName; }
 
-		//Resources implementation
-		bool Reload(){ return false;}
-		void Unload(){}
-		void Destroy(){}
+	// Resources implementation
+	bool Reload() { return false; }
+	void Unload() {}
+	void Destroy() {}
 
-	private:
-		tString msAnimName;
-		tString msFileName;
+private:
+	tString msAnimName;
+	tString msFileName;
 
-		float mfLength;
+	float mfLength;
 
-		tAnimationTrackVec mvTracks;
-	};
-
+	tAnimationTrackVec mvTracks;
 };
+
+};     // namespace hpl
 #endif // HPL_ANIMATION_H

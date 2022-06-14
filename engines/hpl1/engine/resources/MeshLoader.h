@@ -41,70 +41,70 @@
 #ifndef HPL_MESH_LOADER_H
 #define HPL_MESH_LOADER_H
 
-#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
+#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	typedef tFlag tWorldLoadFlag;
+typedef tFlag tWorldLoadFlag;
 
-	#define eWorldLoadFlag_NoLights			(0x00000001)
-	#define eWorldLoadFlag_NoEntities		(0x00000002)
-	#define eWorldLoadFlag_NoGameEntities	(0x00000004)
+#define eWorldLoadFlag_NoLights (0x00000001)
+#define eWorldLoadFlag_NoEntities (0x00000002)
+#define eWorldLoadFlag_NoGameEntities (0x00000004)
 
-	typedef tFlag tMeshLoadFlag;
+typedef tFlag tMeshLoadFlag;
 
-	#define eMeshLoadFlag_NoGeometry		(0x00000001)
+#define eMeshLoadFlag_NoGeometry (0x00000001)
 
-	class cMesh;
+class cMesh;
 
-	class cResources;
-	class cMaterialManager;
-	class cMeshManager;
-	class cAnimationManager;
-	class cMeshLoaderHandler;
-	class iLowLevelGraphics;
-	class cWorld3D;
-	class cScene;
-	class cAnimation;
-	class cSystem;
+class cResources;
+class cMaterialManager;
+class cMeshManager;
+class cAnimationManager;
+class cMeshLoaderHandler;
+class iLowLevelGraphics;
+class cWorld3D;
+class cScene;
+class cAnimation;
+class cSystem;
 
-	class iMeshLoader
-	{
+class iMeshLoader {
 	friend class cMeshLoaderHandler;
-	public:
-		iMeshLoader(iLowLevelGraphics *apLowLevelGraphics)
-					: mpLowLevelGraphics(apLowLevelGraphics){}
 
-		virtual cMesh* LoadMesh(const tString& asFile, tMeshLoadFlag aFlags)=0;
-		virtual bool SaveMesh(cMesh* apMesh,const tString& asFile)=0;
+public:
+	iMeshLoader(iLowLevelGraphics *apLowLevelGraphics)
+		: mpLowLevelGraphics(apLowLevelGraphics) {}
 
-		virtual cWorld3D* LoadWorld(const tString& asFile, cScene* apScene,tWorldLoadFlag aFlags)=0;
+	virtual cMesh *LoadMesh(const tString &asFile, tMeshLoadFlag aFlags) = 0;
+	virtual bool SaveMesh(cMesh *apMesh, const tString &asFile) = 0;
 
-		virtual cAnimation* LoadAnimation(const tString& asFile)=0;
+	virtual cWorld3D *LoadWorld(const tString &asFile, cScene *apScene, tWorldLoadFlag aFlags) = 0;
 
-		virtual bool IsSupported(const tString asFileType)=0;
+	virtual cAnimation *LoadAnimation(const tString &asFile) = 0;
 
-		virtual void AddSupportedTypes(tStringVec* avFileTypes)=0;
+	virtual bool IsSupported(const tString asFileType) = 0;
 
-		static void SetRestricStaticLightToSector(bool abX){ mbRestricStaticLightToSector = abX;}
-		static void SetUseFastMaterial(bool abX) {mbUseFastMaterial = abX;}
-		static void SetFastMaterialFile(const tString& asFile) { msFastMaterialFile = asFile;}
-		static void SetCacheDir(const tString& asDir) { msCacheDir = asDir;}
-	protected:
-		cMaterialManager *mpMaterialManager;
-		cMeshManager *mpMeshManager;
-		cAnimationManager *mpAnimationManager;
-		iLowLevelGraphics *mpLowLevelGraphics;
-		cSystem *mpSystem;
+	virtual void AddSupportedTypes(tStringVec *avFileTypes) = 0;
 
-		static bool mbRestricStaticLightToSector;
-		static bool mbUseFastMaterial;
-		static tString msFastMaterialFile;
-		static tString msCacheDir;
+	static void SetRestricStaticLightToSector(bool abX) { mbRestricStaticLightToSector = abX; }
+	static void SetUseFastMaterial(bool abX) { mbUseFastMaterial = abX; }
+	static void SetFastMaterialFile(const tString &asFile) { msFastMaterialFile = asFile; }
+	static void SetCacheDir(const tString &asDir) { msCacheDir = asDir; }
 
-	};
+protected:
+	cMaterialManager *mpMaterialManager;
+	cMeshManager *mpMeshManager;
+	cAnimationManager *mpAnimationManager;
+	iLowLevelGraphics *mpLowLevelGraphics;
+	cSystem *mpSystem;
 
+	static bool mbRestricStaticLightToSector;
+	static bool mbUseFastMaterial;
+	static tString msFastMaterialFile;
+	static tString msCacheDir;
 };
+
+};     // namespace hpl
 #endif // HPL_MESH_LOADER_H

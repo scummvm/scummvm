@@ -45,17 +45,16 @@
 
 namespace hpl {
 
-	class cLight2DPoint : public iLight2D
-	{
-	public:
-		cLight2DPoint(tString asName);
-		~cLight2DPoint();
+class cLight2DPoint : public iLight2D {
+public:
+	cLight2DPoint(tString asName);
+	~cLight2DPoint();
 
-		const cRect2f& GetBoundingBox();
-		bool UpdateBoundingBox();
+	const cRect2f &GetBoundingBox();
+	bool UpdateBoundingBox();
 
-		int Render(iLowLevelGraphics* apLowLevel, int alFirstIndex);
-	};
-
+	int Render(iLowLevelGraphics *apLowLevel, int alFirstIndex);
 };
+
+};     // namespace hpl
 #endif // HPL_LIGHTPOINT2D_H

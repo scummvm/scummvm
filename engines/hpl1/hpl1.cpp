@@ -20,22 +20,22 @@
  */
 
 #include "hpl1/hpl1.h"
-#include "hpl1/detection.h"
-#include "hpl1/console.h"
-#include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/scummsys.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
+#include "hpl1/console.h"
+#include "hpl1/detection.h"
 
 namespace Hpl1 {
 
 Hpl1Engine *g_engine;
 
 Hpl1Engine::Hpl1Engine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-	_gameDescription(gameDesc), _randomSource("Hpl1") {
+																		   _gameDescription(gameDesc), _randomSource("Hpl1") {
 	g_engine = this;
 }
 
@@ -70,7 +70,7 @@ Common::Error Hpl1Engine::run() {
 	_screen->update();
 
 	// Simple event handling loop
-	byte pal[256 * 3] = { 0 };
+	byte pal[256 * 3] = {0};
 	Common::Event e;
 	int offset = 0;
 

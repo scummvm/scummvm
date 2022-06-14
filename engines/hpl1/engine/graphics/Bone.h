@@ -43,67 +43,67 @@
 
 #include <map>
 
-#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
+#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	class cSkeleton;
-	class cBone;
+class cSkeleton;
+class cBone;
 
-	typedef std::list<cBone*> tBoneList;
-	typedef tBoneList::iterator tBoneListIt;
+typedef std::list<cBone *> tBoneList;
+typedef tBoneList::iterator tBoneListIt;
 
-	typedef cSTLIterator<cBone*,tBoneList,tBoneListIt> cBoneIterator;
+typedef cSTLIterator<cBone *, tBoneList, tBoneListIt> cBoneIterator;
 
-	class cBone
-	{
+class cBone {
 	friend class cSkeleton;
-	public:
-		cBone(const tString &asName, cSkeleton* apSkeleton);
-		~cBone();
 
-		cBone* CreateChildBone(const tString &asName);
+public:
+	cBone(const tString &asName, cSkeleton *apSkeleton);
+	~cBone();
 
-		void SetTransform(const cMatrixf &a_mtxTransform);
-		const cMatrixf& GetLocalTransform();
-		const cMatrixf& GetWorldTransform();
-		const cMatrixf& GetInvWorldTransform();
+	cBone *CreateChildBone(const tString &asName);
 
-		const tString& GetName(){ return msName;}
+	void SetTransform(const cMatrixf &a_mtxTransform);
+	const cMatrixf &GetLocalTransform();
+	const cMatrixf &GetWorldTransform();
+	const cMatrixf &GetInvWorldTransform();
 
-		cBoneIterator GetChildIterator();
+	const tString &GetName() { return msName; }
 
-		void Detach();
+	cBoneIterator GetChildIterator();
 
-		cBone* GetParent(){ return mpParent;}
+	void Detach();
 
-		//Needed for some loading stuff..
-		int GetValue(){ return mlValue;}
-		void SetValue(int alVal){ mlValue = alVal;}
+	cBone *GetParent() { return mpParent; }
 
-	private:
-		void NeedsUpdate();
+	// Needed for some loading stuff..
+	int GetValue() { return mlValue; }
+	void SetValue(int alVal) { mlValue = alVal; }
 
-		void UpdateMatrix();
+private:
+	void NeedsUpdate();
 
-		tString msName;
+	void UpdateMatrix();
 
-		cMatrixf m_mtxTransform;
+	tString msName;
 
-		cMatrixf m_mtxWorldTransform;
-		cMatrixf m_mtxInvWorldTransform;
+	cMatrixf m_mtxTransform;
 
-		cBone* mpParent;
-		tBoneList mlstChildren;
+	cMatrixf m_mtxWorldTransform;
+	cMatrixf m_mtxInvWorldTransform;
 
-		cSkeleton* mpSkeleton;
+	cBone *mpParent;
+	tBoneList mlstChildren;
 
-		bool mbNeedsUpdate;
+	cSkeleton *mpSkeleton;
 
-		int mlValue;
-	};
+	bool mbNeedsUpdate;
 
+	int mlValue;
 };
+
+};     // namespace hpl
 #endif // HPL_BONE_H

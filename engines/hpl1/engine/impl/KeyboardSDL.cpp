@@ -44,20 +44,19 @@
 
 #include "hpl1/engine/impl/LowLevelInputSDL.h"
 
-#if 0//def WIN32
+#if 0 // def WIN32
 #include <conio.h>
 #endif
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cKeyboardSDL::cKeyboardSDL(cLowLevelInputSDL *apLowLevelInputSDL) : iKeyboard("SDL Portable Keyboard")
-	{
+cKeyboardSDL::cKeyboardSDL(cLowLevelInputSDL *apLowLevelInputSDL) : iKeyboard("SDL Portable Keyboard") {
 #if 0
   		mpLowLevelInputSDL = apLowLevelInputSDL;
 
@@ -67,17 +66,15 @@ namespace hpl {
 		SDL_EnableUNICODE(1);
 		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	void cKeyboardSDL::Update()
-	{
+void cKeyboardSDL::Update() {
 #if 0
   mlstKeysPressed.clear();
 		std::list<SDL_Event>::iterator it = mpLowLevelInputSDL->mlstEvents.begin();
@@ -109,64 +106,55 @@ namespace hpl {
 			}
 		}
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+bool cKeyboardSDL::KeyIsDown(eKey aKey) {
+	return mvKeyArray[aKey];
+}
 
-	bool cKeyboardSDL::KeyIsDown(eKey aKey)
-	{
-		return mvKeyArray[aKey];
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+cKeyPress cKeyboardSDL::GetKey() {
+	cKeyPress key = mlstKeysPressed.front();
+	mlstKeysPressed.pop_front();
+	return key;
+}
 
+//-----------------------------------------------------------------------
 
-	cKeyPress cKeyboardSDL::GetKey()
-	{
-		cKeyPress key = mlstKeysPressed.front();
-		mlstKeysPressed.pop_front();
-		return key;
-	}
+bool cKeyboardSDL::KeyIsPressed() {
+	return mlstKeysPressed.empty() == false;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool cKeyboardSDL::KeyIsPressed()
-	{
-		return mlstKeysPressed.empty()==false;
-	}
+eKeyModifier cKeyboardSDL::GetModifier() {
+	return mModifier;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	eKeyModifier cKeyboardSDL::GetModifier()
-	{
-		return mModifier;
-	}
+tString cKeyboardSDL::KeyToString(eKey) {
+	return "None";
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	tString cKeyboardSDL::KeyToString(eKey)
-	{
-		return "None";
-	}
+eKey cKeyboardSDL::StringToKey(tString) {
+	return eKey_NONE;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	eKey cKeyboardSDL::StringToKey(tString)
-	{
-		return eKey_NONE;
-	}
+/////////////////////////////////////////////////////////////////////////
+// PRIVATE METHODS
+/////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	/////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	/////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	eKey cKeyboardSDL::SDLToKey(int alKey)
-	{
+eKey cKeyboardSDL::SDLToKey(int alKey) {
 #if 0
   		switch(alKey)
 		{
@@ -307,16 +295,15 @@ namespace hpl {
 	}
 #endif
 
-		return eKey_NONE;
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cKeyboardSDL::ClearKeyList()
-	{
-		mvKeyArray.assign(mvKeyArray.size(),false);
-	}
-
-	//-----------------------------------------------------------------------
-
+	return eKey_NONE;
 }
+
+//-----------------------------------------------------------------------
+
+void cKeyboardSDL::ClearKeyList() {
+	mvKeyArray.assign(mvKeyArray.size(), false);
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

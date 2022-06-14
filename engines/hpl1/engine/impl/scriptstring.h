@@ -22,8 +22,7 @@
 
 BEGIN_AS_NAMESPACE
 
-class asCScriptString
-{
+class asCScriptString {
 public:
 	asCScriptString();
 	asCScriptString(const asCScriptString &other);

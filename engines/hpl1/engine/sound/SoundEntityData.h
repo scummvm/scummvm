@@ -41,87 +41,87 @@
 #ifndef HPL_SOUND_ENTITY_DATA_H
 #define HPL_SOUND_ENTITY_DATA_H
 
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/resources/ResourceBase.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	class cSoundEntityData : public iResourceBase
-	{
+class cSoundEntityData : public iResourceBase {
 	friend class cSoundEntity;
-	public:
-		cSoundEntityData(tString asName);
-		~cSoundEntityData();
 
-		bool CreateFromFile(const tString &asFile);
+public:
+	cSoundEntityData(tString asName);
+	~cSoundEntityData();
 
-		const tString& GetMainSoundName(){ return msMainSound;}
-		void SetMainSoundName(const tString& asName){ msMainSound = asName;}
-		const tString& GetStartSoundName(){ return msStartSound;}
-		void SetStartSoundName(const tString& asName){ msStartSound = asName;}
-		const tString& GetStopSoundName(){ return msStopSound;}
-		void SetStopSoundName(const tString& asName){ msStopSound = asName;}
+	bool CreateFromFile(const tString &asFile);
 
-		void SetFadeStart(bool abX){mbFadeStart = abX;}
-		bool GetFadeStart(){return mbFadeStart;}
-		void SetFadeStop(bool abX){mbFadeStop = abX;}
-		bool GetFadeStop(){return mbFadeStop;}
+	const tString &GetMainSoundName() { return msMainSound; }
+	void SetMainSoundName(const tString &asName) { msMainSound = asName; }
+	const tString &GetStartSoundName() { return msStartSound; }
+	void SetStartSoundName(const tString &asName) { msStartSound = asName; }
+	const tString &GetStopSoundName() { return msStopSound; }
+	void SetStopSoundName(const tString &asName) { msStopSound = asName; }
 
-		void SetVolume(float afX){mfVolume = afX;}
-		float GetVolume(){return mfVolume;}
-		void SetMaxDistance(float afX){mfMaxDistance =afX;}
-		float GetMaxDistance(){return mfMaxDistance;}
-		void SetMinDistance(float afX){mfMinDistance = afX;}
-		float GetMinDistance(){return mfMinDistance;}
+	void SetFadeStart(bool abX) { mbFadeStart = abX; }
+	bool GetFadeStart() { return mbFadeStart; }
+	void SetFadeStop(bool abX) { mbFadeStop = abX; }
+	bool GetFadeStop() { return mbFadeStop; }
 
-		void SetStream(bool abX){mbStream = abX;}
-		bool GetStream(){return mbStream;}
-		void SetLoop(bool abX){mbLoop = abX;}
-		bool GetLoop(){return mbLoop;}
-		void SetUse3D(bool abX){ mbUse3D = abX;}
-		bool GetUse3D(){ return mbUse3D;}
+	void SetVolume(float afX) { mfVolume = afX; }
+	float GetVolume() { return mfVolume; }
+	void SetMaxDistance(float afX) { mfMaxDistance = afX; }
+	float GetMaxDistance() { return mfMaxDistance; }
+	void SetMinDistance(float afX) { mfMinDistance = afX; }
+	float GetMinDistance() { return mfMinDistance; }
 
-		void SetBlockable(bool abX){ mbBlockable = abX;}
-		bool GetBlockable(){ return mbBlockable;}
-		void SetBlockVolumeMul(float afX){ mfBlockVolumeMul = afX;}
-		float GetBlockVolumeMul(){ return mfBlockVolumeMul;}
+	void SetStream(bool abX) { mbStream = abX; }
+	bool GetStream() { return mbStream; }
+	void SetLoop(bool abX) { mbLoop = abX; }
+	bool GetLoop() { return mbLoop; }
+	void SetUse3D(bool abX) { mbUse3D = abX; }
+	bool GetUse3D() { return mbUse3D; }
 
-		void SetRandom(float afX){mfRandom = afX;}
-		float GetRandom(){return mfRandom;}
-		void SetInterval(float afX){mfInterval = afX;}
-		float GetInterval(){return mfInterval;}
+	void SetBlockable(bool abX) { mbBlockable = abX; }
+	bool GetBlockable() { return mbBlockable; }
+	void SetBlockVolumeMul(float afX) { mfBlockVolumeMul = afX; }
+	float GetBlockVolumeMul() { return mfBlockVolumeMul; }
 
-		void SetPriority(int alX){ mlPriority = alX;}
-		int GetPriority(){ return mlPriority;}
+	void SetRandom(float afX) { mfRandom = afX; }
+	float GetRandom() { return mfRandom; }
+	void SetInterval(float afX) { mfInterval = afX; }
+	float GetInterval() { return mfInterval; }
 
-		//Resource implementation
-		bool Reload(){ return false;}
-		void Unload(){}
-		void Destroy(){}
+	void SetPriority(int alX) { mlPriority = alX; }
+	int GetPriority() { return mlPriority; }
 
-	protected:
-		tString msMainSound;
-		tString msStartSound;
-		tString msStopSound;
+	// Resource implementation
+	bool Reload() { return false; }
+	void Unload() {}
+	void Destroy() {}
 
-		bool mbFadeStart;
-		bool mbFadeStop;
+protected:
+	tString msMainSound;
+	tString msStartSound;
+	tString msStopSound;
 
-		float mfVolume;
-		float mfMaxDistance;
-		float mfMinDistance;
+	bool mbFadeStart;
+	bool mbFadeStop;
 
-		bool mbStream;
-		bool mbLoop;
-		bool mbUse3D;
+	float mfVolume;
+	float mfMaxDistance;
+	float mfMinDistance;
 
-		bool mbBlockable;
-		float mfBlockVolumeMul;
+	bool mbStream;
+	bool mbLoop;
+	bool mbUse3D;
 
-		float mfRandom;
-		float mfInterval;
+	bool mbBlockable;
+	float mfBlockVolumeMul;
 
-		int mlPriority;
-	};
+	float mfRandom;
+	float mfInterval;
+
+	int mlPriority;
 };
+};     // namespace hpl
 #endif // HPL_SOUND_DATA_H

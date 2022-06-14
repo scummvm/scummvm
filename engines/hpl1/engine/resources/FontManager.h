@@ -45,37 +45,36 @@
 
 namespace hpl {
 
-	class cGraphics;
-	class cResources;
-	class cGui;
-	class iFontData;
+class cGraphics;
+class cResources;
+class cGui;
+class iFontData;
 
-	class cFontManager : public iResourceManager
-	{
-	public:
-		cFontManager(cGraphics* apGraphics,cGui *apGui,cResources *apResources);
-		~cFontManager();
+class cFontManager : public iResourceManager {
+public:
+	cFontManager(cGraphics *apGraphics, cGui *apGui, cResources *apResources);
+	~cFontManager();
 
-		iResourceBase* Create(const tString& asName);
-		/**
-		 * Create a new font
-		 * \param asName name of the font
-		 * \param alSize size the characters are rendered in
-		 * \param alFirstChar first ASCII character to be rendered
-		 * \param alLastChar last ASCII character to be rendered
-		 * \return
-		 */
-		iFontData* CreateFontData(const tString& asName, int alSize=16,unsigned short alFirstChar=32,
-								unsigned short alLastChar=255);
+	iResourceBase *Create(const tString &asName);
+	/**
+	 * Create a new font
+	 * \param asName name of the font
+	 * \param alSize size the characters are rendered in
+	 * \param alFirstChar first ASCII character to be rendered
+	 * \param alLastChar last ASCII character to be rendered
+	 * \return
+	 */
+	iFontData *CreateFontData(const tString &asName, int alSize = 16, unsigned short alFirstChar = 32,
+							  unsigned short alLastChar = 255);
 
-		void Destroy(iResourceBase* apResource);
-		void Unload(iResourceBase* apResource);
+	void Destroy(iResourceBase *apResource);
+	void Unload(iResourceBase *apResource);
 
-	private:
-		cGraphics* mpGraphics;
-		cResources *mpResources;
-		cGui *mpGui;
-	};
-
+private:
+	cGraphics *mpGraphics;
+	cResources *mpResources;
+	cGui *mpGui;
 };
+
+};     // namespace hpl
 #endif // HPL_FONT_MANAGER_H

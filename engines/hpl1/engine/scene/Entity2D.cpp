@@ -39,107 +39,92 @@
  */
 
 #include "hpl1/engine/scene/Entity2D.h"
-#include "hpl1/engine/scene/Node2D.h"
 #include "hpl1/engine/scene/GridMap2D.h"
+#include "hpl1/engine/scene/Node2D.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
-	iEntity2D::iEntity2D(tString asName) :	iEntity(asName), mvPosition(0), mvRotation(0), mvScale(0),
-		mvLastPosition(0), mvLastRotation(0), mvLastScale(0),
-		mpGridObject(NULL)
-	{
-
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	cVector3f iEntity2D::GetWorldPosition()
-	{
-		if(mpParentNode)
-		{
-			cNode2D* pNode2D = static_cast<cNode2D*>(mpParentNode);
-
-			return pNode2D->GetPosition() + mvPosition;
-		}
-		else
-			return mvPosition;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cVector3f iEntity2D::GetWorldRotation()
-	{
-		if(mpParentNode)
-		{
-			cNode2D* pNode2D = static_cast<cNode2D*>(mpParentNode);
-
-			return pNode2D->GetRotation() + mvRotation;
-		}
-		else
-			return mvRotation;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cVector3f iEntity2D::GetWorldScale()
-	{
-		if(mpParentNode)
-		{
-			cNode2D* pNode2D = static_cast<cNode2D*>(mpParentNode);
-
-			return pNode2D->GetScale() + mvScale;
-		}
-		else
-			return mvScale;
-	}
-
-	//-----------------------------------------------------------------------
-
-	void iEntity2D::SetPosition(const cVector3f& avPos)
-	{
-		mvLastPosition = mvPosition;
-		mvPosition = avPos;
-
-		if(UpdateBoundingBox())
-			if(mpGridObject)
-				mpGridObject->Update(GetBoundingBox());
-
-	}
-
-	//-----------------------------------------------------------------------
-
-	void iEntity2D::SetRotation(const cVector3f& avRot)
-	{
-		mvLastRotation = mvRotation;
-		mvRotation = avRot;
-
-		if(UpdateBoundingBox())
-			if(mpGridObject)
-				mpGridObject->Update(GetBoundingBox());
-	}
-
-	//-----------------------------------------------------------------------
-
-	void iEntity2D::SetScale(const cVector3f& avScale)
-	{
-		mvLastScale = mvScale;
-		mvScale = avScale;
-
-		if(UpdateBoundingBox())
-			if(mpGridObject)
-				mpGridObject->Update(GetBoundingBox());
-	}
-
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+iEntity2D::iEntity2D(tString asName) : iEntity(asName), mvPosition(0), mvRotation(0), mvScale(0),
+									   mvLastPosition(0), mvLastRotation(0), mvLastScale(0),
+									   mpGridObject(NULL) {
 }
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+cVector3f iEntity2D::GetWorldPosition() {
+	if (mpParentNode) {
+		cNode2D *pNode2D = static_cast<cNode2D *>(mpParentNode);
+
+		return pNode2D->GetPosition() + mvPosition;
+	} else
+		return mvPosition;
+}
+
+//-----------------------------------------------------------------------
+
+cVector3f iEntity2D::GetWorldRotation() {
+	if (mpParentNode) {
+		cNode2D *pNode2D = static_cast<cNode2D *>(mpParentNode);
+
+		return pNode2D->GetRotation() + mvRotation;
+	} else
+		return mvRotation;
+}
+
+//-----------------------------------------------------------------------
+
+cVector3f iEntity2D::GetWorldScale() {
+	if (mpParentNode) {
+		cNode2D *pNode2D = static_cast<cNode2D *>(mpParentNode);
+
+		return pNode2D->GetScale() + mvScale;
+	} else
+		return mvScale;
+}
+
+//-----------------------------------------------------------------------
+
+void iEntity2D::SetPosition(const cVector3f &avPos) {
+	mvLastPosition = mvPosition;
+	mvPosition = avPos;
+
+	if (UpdateBoundingBox())
+		if (mpGridObject)
+			mpGridObject->Update(GetBoundingBox());
+}
+
+//-----------------------------------------------------------------------
+
+void iEntity2D::SetRotation(const cVector3f &avRot) {
+	mvLastRotation = mvRotation;
+	mvRotation = avRot;
+
+	if (UpdateBoundingBox())
+		if (mpGridObject)
+			mpGridObject->Update(GetBoundingBox());
+}
+
+//-----------------------------------------------------------------------
+
+void iEntity2D::SetScale(const cVector3f &avScale) {
+	mvLastScale = mvScale;
+	mvScale = avScale;
+
+	if (UpdateBoundingBox())
+		if (mpGridObject)
+			mpGridObject->Update(GetBoundingBox());
+}
+
+//-----------------------------------------------------------------------
+} // namespace hpl

@@ -48,28 +48,27 @@
 
 namespace hpl {
 
-	class cOpenALSoundData : public iSoundData
-	{
-	public:
-		cOpenALSoundData(tString asName, bool abStream);
-		~cOpenALSoundData();
+class cOpenALSoundData : public iSoundData {
+public:
+	cOpenALSoundData(tString asName, bool abStream);
+	~cOpenALSoundData();
 
-		bool CreateFromFile(const tString &asFile);
+	bool CreateFromFile(const tString &asFile);
 
-		iSoundChannel* CreateChannel(int alPriority);
+	iSoundChannel *CreateChannel(int alPriority);
 
-		bool IsStream(){ return mbStream;}
+	bool IsStream() { return mbStream; }
 
-		bool IsStereo();
+	bool IsStereo();
 
-		cOAL_Sample*	GetSample(){ return ( mpSample ); } //static_cast<cOAL_Sample*> (mpSoundData));}
-		cOAL_Stream*	GetStream(){ return ( mpStream ); } //static_cast<cOAL_Stream*> (mpSoundData));}
+	cOAL_Sample *GetSample() { return (mpSample); } // static_cast<cOAL_Sample*> (mpSoundData));}
+	cOAL_Stream *GetStream() { return (mpStream); } // static_cast<cOAL_Stream*> (mpSoundData));}
 
-	private:
-		cOAL_Sample*	mpSample;
-		cOAL_Stream*	mpStream;
+private:
+	cOAL_Sample *mpSample;
+	cOAL_Stream *mpStream;
 
-//iOAL_Loadable*	mpSoundData;
-	};
+	// iOAL_Loadable*	mpSoundData;
 };
+};     // namespace hpl
 #endif // HPL_OPENAL_SOUND_DATA_H

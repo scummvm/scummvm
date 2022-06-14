@@ -39,135 +39,123 @@
  */
 
 #include "hpl1/engine/resources/MeshManager.h"
+#include "hpl1/engine/graphics/Mesh.h"
+#include "hpl1/engine/resources/FileSearcher.h"
+#include "hpl1/engine/resources/MeshLoaderHandler.h"
+#include "hpl1/engine/resources/Resources.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
 #include "hpl1/engine/system/String.h"
 #include "hpl1/engine/system/System.h"
-#include "hpl1/engine/resources/Resources.h"
-#include "hpl1/engine/graphics/Mesh.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
-#include "hpl1/engine/resources/MeshLoaderHandler.h"
-#include "hpl1/engine/resources/FileSearcher.h"
-
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cMeshManager::cMeshManager(cGraphics* apGraphic,cResources *apResources)
-		: iResourceManager(apResources->GetFileSearcher(), apResources->GetLowLevel(),
-							apResources->GetLowLevelSystem())
-	{
-		mpGraphics = apGraphic;
-		mpResources = apResources;
-	}
-
-	cMeshManager::~cMeshManager()
-	{
-		DestroyAll();
-
-		Log(" Done with meshes\n");
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	cMesh* cMeshManager::CreateMesh(const tString& asName)
-	{
-		tString sPath;
-		cMesh* pMesh;
-		tString asNewName;
-
-		BeginLoad(asName);
-
-		asNewName = asName;//cString::SetFileExt(asName,"mesh");
-
-		//If the file is missing an extension, search for an existing file.
-		if(cString::GetFileExt(asNewName) == "")
-		{
-			bool bFound = false;
-			tStringVec *pTypes = mpResources->GetMeshLoaderHandler()->GetSupportedTypes();
-			for(size_t i=0; i< pTypes->size(); i++)
-			{
-				asNewName = cString::SetFileExt(asNewName, (*pTypes)[i]);
-				tString sPath = mpResources->GetFileSearcher()->GetFilePath(asNewName);
-				if(sPath != "")
-				{
-					bFound = true;
-					break;
-				}
-			}
-
-			if(bFound == false){
-				Error("Couldn't create mesh '%s'\n",asName.c_str());
-				EndLoad();
-				return NULL;
-			}
-		}
-
-		pMesh = static_cast<cMesh*>(this->FindLoadedResource(asNewName,sPath));
-
-		if(pMesh==NULL && sPath!="")
-		{
-			pMesh = mpResources->GetMeshLoaderHandler()->LoadMesh(sPath,0);
-			if(pMesh == NULL)
-			{
-				EndLoad();
-				return NULL;
-			}
-
-			AddResource(pMesh);
-		}
-
-		if(pMesh)pMesh->IncUserCount();
-		else Error("Couldn't create mesh '%s'\n",asNewName.c_str());
-
-		EndLoad();
-		return pMesh;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iResourceBase* cMeshManager::Create(const tString& asName)
-	{
-		return CreateMesh(asName);
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cMeshManager::Unload(iResourceBase* apResource)
-	{
-
-	}
-	//-----------------------------------------------------------------------
-
-	void cMeshManager::Destroy(iResourceBase* apResource)
-	{
-		apResource->DecUserCount();
-
-		if(apResource->HasUsers()==false){
-			RemoveResource(apResource);
-			hplDelete(apResource);
-		}
-	}
-
-	//-----------------------------------------------------------------------
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-
-	//-----------------------------------------------------------------------
+cMeshManager::cMeshManager(cGraphics *apGraphic, cResources *apResources)
+	: iResourceManager(apResources->GetFileSearcher(), apResources->GetLowLevel(),
+					   apResources->GetLowLevelSystem()) {
+	mpGraphics = apGraphic;
+	mpResources = apResources;
 }
+
+cMeshManager::~cMeshManager() {
+	DestroyAll();
+
+	Log(" Done with meshes\n");
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+cMesh *cMeshManager::CreateMesh(const tString &asName) {
+	tString sPath;
+	cMesh *pMesh;
+	tString asNewName;
+
+	BeginLoad(asName);
+
+	asNewName = asName; // cString::SetFileExt(asName,"mesh");
+
+	// If the file is missing an extension, search for an existing file.
+	if (cString::GetFileExt(asNewName) == "") {
+		bool bFound = false;
+		tStringVec *pTypes = mpResources->GetMeshLoaderHandler()->GetSupportedTypes();
+		for (size_t i = 0; i < pTypes->size(); i++) {
+			asNewName = cString::SetFileExt(asNewName, (*pTypes)[i]);
+			tString sPath = mpResources->GetFileSearcher()->GetFilePath(asNewName);
+			if (sPath != "") {
+				bFound = true;
+				break;
+			}
+		}
+
+		if (bFound == false) {
+			Error("Couldn't create mesh '%s'\n", asName.c_str());
+			EndLoad();
+			return NULL;
+		}
+	}
+
+	pMesh = static_cast<cMesh *>(this->FindLoadedResource(asNewName, sPath));
+
+	if (pMesh == NULL && sPath != "") {
+		pMesh = mpResources->GetMeshLoaderHandler()->LoadMesh(sPath, 0);
+		if (pMesh == NULL) {
+			EndLoad();
+			return NULL;
+		}
+
+		AddResource(pMesh);
+	}
+
+	if (pMesh)
+		pMesh->IncUserCount();
+	else
+		Error("Couldn't create mesh '%s'\n", asNewName.c_str());
+
+	EndLoad();
+	return pMesh;
+}
+
+//-----------------------------------------------------------------------
+
+iResourceBase *cMeshManager::Create(const tString &asName) {
+	return CreateMesh(asName);
+}
+
+//-----------------------------------------------------------------------
+
+void cMeshManager::Unload(iResourceBase *apResource) {
+}
+//-----------------------------------------------------------------------
+
+void cMeshManager::Destroy(iResourceBase *apResource) {
+	apResource->DecUserCount();
+
+	if (apResource->HasUsers() == false) {
+		RemoveResource(apResource);
+		hplDelete(apResource);
+	}
+}
+
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PRIVATE METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+} // namespace hpl

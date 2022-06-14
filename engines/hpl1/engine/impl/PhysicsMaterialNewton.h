@@ -52,55 +52,54 @@
 
 namespace hpl {
 
-	class iPhysicsBody;
-	class cPhysicsContactData;
+class iPhysicsBody;
+class cPhysicsContactData;
 
-	class cPhysicsMaterialNewton : public iPhysicsMaterial
-	{
-	public:
-		cPhysicsMaterialNewton(const tString &asName, iPhysicsWorld *apWorld, int alMatId=-1);
-		~cPhysicsMaterialNewton();
+class cPhysicsMaterialNewton : public iPhysicsMaterial {
+public:
+	cPhysicsMaterialNewton(const tString &asName, iPhysicsWorld *apWorld, int alMatId = -1);
+	~cPhysicsMaterialNewton();
 
-		void SetElasticity(float afElasticity);
-		float GetElasticity() const;
-		void SetStaticFriction(float afElasticity);
-		float GetStaticFriction() const;
-		void SetKineticFriction(float afElasticity);
-		float GetKineticFriction() const;
+	void SetElasticity(float afElasticity);
+	float GetElasticity() const;
+	void SetStaticFriction(float afElasticity);
+	float GetStaticFriction() const;
+	void SetKineticFriction(float afElasticity);
+	float GetKineticFriction() const;
 
-		void SetFrictionCombMode(ePhysicsMaterialCombMode aMode);
-		ePhysicsMaterialCombMode GetFrictionCombMode() const;
-		void SetElasticityCombMode(ePhysicsMaterialCombMode aMode);
-		ePhysicsMaterialCombMode GetElasticityCombMode() const;
+	void SetFrictionCombMode(ePhysicsMaterialCombMode aMode);
+	ePhysicsMaterialCombMode GetFrictionCombMode() const;
+	void SetElasticityCombMode(ePhysicsMaterialCombMode aMode);
+	ePhysicsMaterialCombMode GetElasticityCombMode() const;
 
-		void UpdateMaterials();
+	void UpdateMaterials();
 
-		int GetId(){ return mlMaterialId;}
-	private:
-		float Combine(ePhysicsMaterialCombMode aMode, float afX, float afY);
+	int GetId() { return mlMaterialId; }
 
-		static int BeginContactCallback(const NewtonMaterial* material,
-										const NewtonBody* apBody1, const NewtonBody* apBody2);
-		static int ProcessContactCallback(const NewtonMaterial* apMaterial,
-											const NewtonContact* apContact);
-		static void EndContactCallback(const NewtonMaterial* apMaterial);
+private:
+	float Combine(ePhysicsMaterialCombMode aMode, float afX, float afY);
 
-		static iPhysicsBody *mpContactBody1;
-		static iPhysicsBody *mpContactBody2;
-		static cPhysicsContactData mContactData;
-		static int mlContactNum;
+	static int BeginContactCallback(const NewtonMaterial *material,
+									const NewtonBody *apBody1, const NewtonBody *apBody2);
+	static int ProcessContactCallback(const NewtonMaterial *apMaterial,
+									  const NewtonContact *apContact);
+	static void EndContactCallback(const NewtonMaterial *apMaterial);
 
-		NewtonWorld *mpNewtonWorld;
+	static iPhysicsBody *mpContactBody1;
+	static iPhysicsBody *mpContactBody2;
+	static cPhysicsContactData mContactData;
+	static int mlContactNum;
 
-		int mlMaterialId;
+	NewtonWorld *mpNewtonWorld;
 
-		ePhysicsMaterialCombMode mFrictionMode;
-		ePhysicsMaterialCombMode mElasticityMode;
+	int mlMaterialId;
 
-		float mfElasticity;
-		float mfStaticFriction;
-		float mfKineticFriction;
+	ePhysicsMaterialCombMode mFrictionMode;
+	ePhysicsMaterialCombMode mElasticityMode;
 
-	};
+	float mfElasticity;
+	float mfStaticFriction;
+	float mfKineticFriction;
 };
+};     // namespace hpl
 #endif // HPL_PHYSICS_MATERIAL_NEWTON_H

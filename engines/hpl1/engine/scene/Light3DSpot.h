@@ -45,91 +45,96 @@
 
 namespace hpl {
 
-	class cResources;
-	class iTexture;
-	class cFrustum;
+class cResources;
+class iTexture;
+class cFrustum;
 
-	//------------------------------------------
+//------------------------------------------
 
-	kSaveData_ChildClass(iLight3D,cLight3DSpot)
-	{
-		kSaveData_ClassInit(cLight3DSpot)
-	public:
-		tString msTexture;
+kSaveData_ChildClass(iLight3D, cLight3DSpot) {
+	kSaveData_ClassInit(cLight3DSpot) public : tString msTexture;
 
-		float mfFOV;
-		float mfAspect;
-		float mfNearClipPlane;
+	float mfFOV;
+	float mfAspect;
+	float mfNearClipPlane;
 
-		virtual iSaveObject* CreateSaveObject(cSaveObjectHandler *apSaveObjectHandler,cGame *apGame);
-		virtual int GetSaveCreatePrio();
-	};
-
-	//------------------------------------------
-
-	class cLight3DSpot : public iLight3D
-	{
-		typedef iLight3D super;
-	public:
-		cLight3DSpot(tString asName, cResources *apResources);
-		~cLight3DSpot();
-
-		const cMatrixf& GetViewMatrix();
-		const cMatrixf& GetProjectionMatrix();
-		const cMatrixf& GetViewProjMatrix();
-
-		void SetTexture(iTexture *apTexture);
-		iTexture* GetTexture();
-
-		void SetFOV(float afAngle) { mfFOV = afAngle; mbProjectionUpdated = true;}
-		float GetFOV() { return mfFOV;}
-
-		void SetAspect(float afAngle) { mfAspect = afAngle; mbProjectionUpdated = true;}
-		float GetAspect() { return mfAspect;}
-
-		void SetNearClipPlane(float afX) { mfNearClipPlane = afX; mbProjectionUpdated = true;}
-		float GetNearClipPlane() { return mfNearClipPlane;}
-
-		void SetFarAttenuation(float afX);
-		void SetNearAttenuation(float afX);
-
-		cFrustum* GetFrustum();
-
-		bool CollidesWithBV(cBoundingVolume *apBV);
-
-		//SaveObject implementation
-		virtual iSaveData* CreateSaveData();
-		virtual void SaveToSaveData(iSaveData *apSaveData);
-		virtual void LoadFromSaveData(iSaveData *apSaveData);
-		virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
-
-	private:
-		cSectorVisibilityContainer* CreateSectorVisibility();
-		void ExtraXMLProperties(TiXmlElement *apMainElem);
-		void UpdateBoundingVolume();
-		bool CreateClipRect(cRect2l &aCliprect,cRenderSettings *apRenderSettings,iLowLevelGraphics *apLowLevelGraphics);
-
-
-		cMatrixf m_mtxProjection;
-		cMatrixf m_mtxViewProj;
-		cMatrixf m_mtxView;
-
-		cFrustum *mpFrustum;
-
-		iTexture *mpTexture;
-
-		float mfFOV;
-		float mfAspect;
-		float mfNearClipPlane;
-
-		bool mbProjectionUpdated;
-		bool mbViewProjUpdated;
-		bool mbFrustumUpdated;
-
-		int mlViewProjMatrixCount;
-		int mlViewMatrixCount;
-		int mlFrustumMatrixCount;
-	};
-
+	virtual iSaveObject *CreateSaveObject(cSaveObjectHandler * apSaveObjectHandler, cGame * apGame);
+	virtual int GetSaveCreatePrio();
 };
+
+//------------------------------------------
+
+class cLight3DSpot : public iLight3D {
+	typedef iLight3D super;
+
+public:
+	cLight3DSpot(tString asName, cResources *apResources);
+	~cLight3DSpot();
+
+	const cMatrixf &GetViewMatrix();
+	const cMatrixf &GetProjectionMatrix();
+	const cMatrixf &GetViewProjMatrix();
+
+	void SetTexture(iTexture *apTexture);
+	iTexture *GetTexture();
+
+	void SetFOV(float afAngle) {
+		mfFOV = afAngle;
+		mbProjectionUpdated = true;
+	}
+	float GetFOV() { return mfFOV; }
+
+	void SetAspect(float afAngle) {
+		mfAspect = afAngle;
+		mbProjectionUpdated = true;
+	}
+	float GetAspect() { return mfAspect; }
+
+	void SetNearClipPlane(float afX) {
+		mfNearClipPlane = afX;
+		mbProjectionUpdated = true;
+	}
+	float GetNearClipPlane() { return mfNearClipPlane; }
+
+	void SetFarAttenuation(float afX);
+	void SetNearAttenuation(float afX);
+
+	cFrustum *GetFrustum();
+
+	bool CollidesWithBV(cBoundingVolume *apBV);
+
+	// SaveObject implementation
+	virtual iSaveData *CreateSaveData();
+	virtual void SaveToSaveData(iSaveData *apSaveData);
+	virtual void LoadFromSaveData(iSaveData *apSaveData);
+	virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
+
+private:
+	cSectorVisibilityContainer *CreateSectorVisibility();
+	void ExtraXMLProperties(TiXmlElement *apMainElem);
+	void UpdateBoundingVolume();
+	bool CreateClipRect(cRect2l &aCliprect, cRenderSettings *apRenderSettings, iLowLevelGraphics *apLowLevelGraphics);
+
+	cMatrixf m_mtxProjection;
+	cMatrixf m_mtxViewProj;
+	cMatrixf m_mtxView;
+
+	cFrustum *mpFrustum;
+
+	iTexture *mpTexture;
+
+	float mfFOV;
+	float mfAspect;
+	float mfNearClipPlane;
+
+	bool mbProjectionUpdated;
+	bool mbViewProjUpdated;
+	bool mbFrustumUpdated;
+
+	int mlViewProjMatrixCount;
+	int mlViewMatrixCount;
+	int mlFrustumMatrixCount;
+};
+
+};     // namespace hpl
 #endif // HPL_LIGHT3D_SPOT_H

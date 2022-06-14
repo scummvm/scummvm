@@ -47,11 +47,9 @@
 
 namespace hpl {
 
-	class cSDLPixelFormat : public iPixelFormat
-	{
-	public:
-		cSDLPixelFormat(): iPixelFormat("SDL")
-		{
+class cSDLPixelFormat : public iPixelFormat {
+public:
+	cSDLPixelFormat() : iPixelFormat("SDL") {
 #if 0
   	////// BEGIN - PIXEL FORMAT 32 bit RGBA ////////
 			mSDLPixelFmt32.palette = 0;
@@ -93,19 +91,15 @@ namespace hpl {
 			////// END - PIXEL FORMAT 32 bit RGBA ////////
 
 #endif
+	}
 
-		}
+	SDL_PixelFormat *GetSDLPixelFormat32() {
+		return &mSDLPixelFmt32;
+	}
 
-		SDL_PixelFormat* GetSDLPixelFormat32()
-		{
-			return &mSDLPixelFmt32;
-		}
-
-	private:
-		SDL_PixelFormat mSDLPixelFmt32;
-
-
-	};
-
+private:
+	SDL_PixelFormat mSDLPixelFmt32;
 };
+
+};     // namespace hpl
 #endif // HPL_SDL_PIXELFORMAT_H

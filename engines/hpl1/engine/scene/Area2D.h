@@ -46,36 +46,35 @@ class TiXmlElement;
 
 namespace hpl {
 
-	class cBody2D;
-	class cCollider2D;
+class cBody2D;
+class cCollider2D;
 
-	class cArea2D : public iEntity2D
-	{
-	public:
-		cArea2D(const tString& asName,const tString& asTypeName,cCollider2D* apCollider);
-		~cArea2D();
+class cArea2D : public iEntity2D {
+public:
+	cArea2D(const tString &asName, const tString &asTypeName, cCollider2D *apCollider);
+	~cArea2D();
 
-		tString GetEntityType(){ return "Area";}
-		const tString& GetType(){ return msType;}
-		const cVector3f& GetCustom(){ return mvCustom;}
-		const cVector2f& GetSize(){ return mvSize;}
+	tString GetEntityType() { return "Area"; }
+	const tString &GetType() { return msType; }
+	const cVector3f &GetCustom() { return mvCustom; }
+	const cVector2f &GetSize() { return mvSize; }
 
-		bool LoadData(TiXmlElement* apRootElem);
+	bool LoadData(TiXmlElement *apRootElem);
 
-		bool CheckWorldCollision(tFlag alFlags);
-		bool CheckBodyCollision(cBody2D *apBody);
+	bool CheckWorldCollision(tFlag alFlags);
+	bool CheckBodyCollision(cBody2D *apBody);
 
-		const cRect2f& GetBoundingBox();
-		bool UpdateBoundingBox();
+	const cRect2f &GetBoundingBox();
+	bool UpdateBoundingBox();
 
-	private:
-		cCollider2D* mpCollider;
+private:
+	cCollider2D *mpCollider;
 
-		tString msType;
+	tString msType;
 
-		cVector2f mvSize;
-		cVector3f mvCustom;
-	};
-
+	cVector2f mvSize;
+	cVector3f mvCustom;
 };
+
+};     // namespace hpl
 #endif // HPL_AREA2D_H

@@ -45,34 +45,33 @@
 
 namespace hpl {
 
-	class iLowLevelSound;
-	class cResources;
-	class cSoundHandler;
-	class cMusicHandler;
+class iLowLevelSound;
+class cResources;
+class cSoundHandler;
+class cMusicHandler;
 
-	class cSound : public iUpdateable
-	{
-	public:
-		cSound(iLowLevelSound *apLowLevelSound);
-		~cSound();
+class cSound : public iUpdateable {
+public:
+	cSound(iLowLevelSound *apLowLevelSound);
+	~cSound();
 
-		void Init(	cResources *apResources, bool abUseHardware, bool abForceGeneric, bool abUseEnvAudio, int alMaxChannels,
-						int alStreamUpdateFreq, bool abUseThreading, bool abUseVoiceManagement,
-						int alMaxMonoSourceHint, int alMaxStereoSourceHint,
-						int alStreamingBufferSize, int alStreamingBufferCount, bool abEnableLowLevelLog, tString asDeviceName);
+	void Init(cResources *apResources, bool abUseHardware, bool abForceGeneric, bool abUseEnvAudio, int alMaxChannels,
+			  int alStreamUpdateFreq, bool abUseThreading, bool abUseVoiceManagement,
+			  int alMaxMonoSourceHint, int alMaxStereoSourceHint,
+			  int alStreamingBufferSize, int alStreamingBufferCount, bool abEnableLowLevelLog, tString asDeviceName);
 
-		void Update(float afTimeStep);
+	void Update(float afTimeStep);
 
-		iLowLevelSound* GetLowLevel(){ return mpLowLevelSound;}
-		cSoundHandler* GetSoundHandler(){ return mpSoundHandler; }
-		cMusicHandler* GetMusicHandler(){ return mpMusicHandler; }
+	iLowLevelSound *GetLowLevel() { return mpLowLevelSound; }
+	cSoundHandler *GetSoundHandler() { return mpSoundHandler; }
+	cMusicHandler *GetMusicHandler() { return mpMusicHandler; }
 
-	private:
-		iLowLevelSound *mpLowLevelSound;
-		cResources* mpResources;
-		cSoundHandler* mpSoundHandler;
-		cMusicHandler* mpMusicHandler;
-	};
-
+private:
+	iLowLevelSound *mpLowLevelSound;
+	cResources *mpResources;
+	cSoundHandler *mpSoundHandler;
+	cMusicHandler *mpMusicHandler;
 };
+
+};     // namespace hpl
 #endif // HPL_SOUND_H

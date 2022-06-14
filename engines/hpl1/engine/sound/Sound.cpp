@@ -39,77 +39,72 @@
  */
 
 #include "hpl1/engine/sound/Sound.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
-#include "hpl1/engine/sound/LowLevelSound.h"
 #include "hpl1/engine/resources/Resources.h"
-#include "hpl1/engine/sound/SoundHandler.h"
+#include "hpl1/engine/sound/LowLevelSound.h"
 #include "hpl1/engine/sound/MusicHandler.h"
-
+#include "hpl1/engine/sound/SoundHandler.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cSound::cSound(iLowLevelSound *apLowLevelSound) : iUpdateable("HPL_Sound")
-	{
-		mpLowLevelSound = apLowLevelSound;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cSound::~cSound()
-	{
-		Log("Exiting Sound Module\n");
-		Log("--------------------------------------------------------\n");
-
-		hplDelete(mpSoundHandler);
-		hplDelete(mpMusicHandler);
-
-		Log("--------------------------------------------------------\n\n");
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	void cSound::Update(float afTimeStep)
-	{
-		mpSoundHandler->Update(afTimeStep);
-		mpMusicHandler->Update(afTimeStep);
-
-		mpLowLevelSound->UpdateSound(afTimeStep);
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cSound::Init(	cResources *apResources, bool abUseHardware, bool abForceGeneric, bool abUseEnvAudio, int alMaxChannels,
-						int alStreamUpdateFreq, bool abUseThreading, bool abUseVoiceManagement,
-						int alMaxMonoSourceHint, int alMaxStereoSourceHint,
-						int alStreamingBufferSize, int alStreamingBufferCount, bool abEnableLowLevelLog, tString asDeviceName)
-	{
-		mpResources = apResources;
-
-		Log("Initializing Sound Module\n");
-		Log("--------------------------------------------------------\n");
-
-		mpLowLevelSound->Init(	abUseHardware, abForceGeneric, abUseEnvAudio, alMaxChannels, alStreamUpdateFreq, abUseThreading,
-								abUseVoiceManagement, alMaxMonoSourceHint, alMaxStereoSourceHint,
-								alStreamingBufferSize, alStreamingBufferCount, abEnableLowLevelLog, asDeviceName);
-
-		mpSoundHandler = hplNew( cSoundHandler, (mpLowLevelSound, mpResources) );
-		mpMusicHandler = hplNew( cMusicHandler, (mpLowLevelSound, mpResources) );
-
-		Log("--------------------------------------------------------\n\n");
-	}
-
-	//-----------------------------------------------------------------------
-
+cSound::cSound(iLowLevelSound *apLowLevelSound) : iUpdateable("HPL_Sound") {
+	mpLowLevelSound = apLowLevelSound;
 }
+
+//-----------------------------------------------------------------------
+
+cSound::~cSound() {
+	Log("Exiting Sound Module\n");
+	Log("--------------------------------------------------------\n");
+
+	hplDelete(mpSoundHandler);
+	hplDelete(mpMusicHandler);
+
+	Log("--------------------------------------------------------\n\n");
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+void cSound::Update(float afTimeStep) {
+	mpSoundHandler->Update(afTimeStep);
+	mpMusicHandler->Update(afTimeStep);
+
+	mpLowLevelSound->UpdateSound(afTimeStep);
+}
+
+//-----------------------------------------------------------------------
+
+void cSound::Init(cResources *apResources, bool abUseHardware, bool abForceGeneric, bool abUseEnvAudio, int alMaxChannels,
+				  int alStreamUpdateFreq, bool abUseThreading, bool abUseVoiceManagement,
+				  int alMaxMonoSourceHint, int alMaxStereoSourceHint,
+				  int alStreamingBufferSize, int alStreamingBufferCount, bool abEnableLowLevelLog, tString asDeviceName) {
+	mpResources = apResources;
+
+	Log("Initializing Sound Module\n");
+	Log("--------------------------------------------------------\n");
+
+	mpLowLevelSound->Init(abUseHardware, abForceGeneric, abUseEnvAudio, alMaxChannels, alStreamUpdateFreq, abUseThreading,
+						  abUseVoiceManagement, alMaxMonoSourceHint, alMaxStereoSourceHint,
+						  alStreamingBufferSize, alStreamingBufferCount, abEnableLowLevelLog, asDeviceName);
+
+	mpSoundHandler = hplNew(cSoundHandler, (mpLowLevelSound, mpResources));
+	mpMusicHandler = hplNew(cMusicHandler, (mpLowLevelSound, mpResources));
+
+	Log("--------------------------------------------------------\n\n");
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

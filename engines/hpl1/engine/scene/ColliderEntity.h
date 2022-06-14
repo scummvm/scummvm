@@ -41,47 +41,45 @@
 #ifndef HPL_COLLIDER_ENTITY_H
 #define HPL_COLLIDER_ENTITY_H
 
-#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Renderable.h"
+#include "hpl1/engine/math/MathTypes.h"
 
 namespace hpl {
 
-	class iPhysicsWorld;
-	class iPhysicsBody;
+class iPhysicsWorld;
+class iPhysicsBody;
 
-	class cColliderEntity : public iRenderable
-	{
-	public:
-		cColliderEntity(const tString &asName,iPhysicsBody* apBody, iPhysicsWorld *apWorld);
-		~cColliderEntity();
+class cColliderEntity : public iRenderable {
+public:
+	cColliderEntity(const tString &asName, iPhysicsBody *apBody, iPhysicsWorld *apWorld);
+	~cColliderEntity();
 
-		iMaterial *GetMaterial(){ return NULL;}
-		void UpdateGraphics(cCamera3D *apCamera, float afFrameTime, cRenderList *apRenderList){}
-		iVertexBuffer* GetVertexBuffer(){ return NULL;}
+	iMaterial *GetMaterial() { return NULL; }
+	void UpdateGraphics(cCamera3D *apCamera, float afFrameTime, cRenderList *apRenderList) {}
+	iVertexBuffer *GetVertexBuffer() { return NULL; }
 
-		cBoundingVolume* GetBoundingVolume();
+	cBoundingVolume *GetBoundingVolume();
 
-		cMatrixf* GetModelMatrix(cCamera3D* apCamera);
-		int GetMatrixUpdateCount();
+	cMatrixf *GetModelMatrix(cCamera3D *apCamera);
+	int GetMatrixUpdateCount();
 
-		eRenderableType GetRenderType(){ return eRenderableType_Dummy;}
+	eRenderableType GetRenderType() { return eRenderableType_Dummy; }
 
-		//Entity implementation
-		tString GetEntityType(){ return "Collider";}
-		bool IsVisible(){ return false; }
+	// Entity implementation
+	tString GetEntityType() { return "Collider"; }
+	bool IsVisible() { return false; }
 
-		bool IsShadowCaster(){ return false;}
+	bool IsShadowCaster() { return false; }
 
-		void UpdateLogic(float afTimeStep){}
+	void UpdateLogic(float afTimeStep) {}
 
-	private:
-		iPhysicsWorld* mpPhysicsWorld;
-		iPhysicsBody* mpBody;
-	};
-
-	//-----------------------------------------------------------------------
-
-
+private:
+	iPhysicsWorld *mpPhysicsWorld;
+	iPhysicsBody *mpBody;
 };
+
+//-----------------------------------------------------------------------
+
+};     // namespace hpl
 #endif // HPL_COLLIDER_ENTITY_H

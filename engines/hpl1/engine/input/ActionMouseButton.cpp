@@ -42,59 +42,64 @@
 #include "hpl1/engine/input/Input.h"
 #include "hpl1/engine/input/Mouse.h"
 
-namespace hpl
-{
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+namespace hpl {
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cActionMouseButton::cActionMouseButton(tString asName,cInput *apInput, eMButton aButton) : iAction(asName)
-	{
-		mButton = aButton;
-		mpInput = apInput;
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	bool cActionMouseButton::IsTriggerd()
-	{
-		return mpInput->GetMouse()->ButtonIsDown(mButton);
-	}
-
-	//-----------------------------------------------------------------------
-
-	float cActionMouseButton::GetValue()
-	{
-		if(IsTriggerd())return 1.0;
-		else return 0.0;
-	}
-
-	//-----------------------------------------------------------------------
-
-	tString  cActionMouseButton::GetInputName()
-	{
-		switch(mButton)
-		{
-			case eMButton_Left: return "LeftMouse";
-			case eMButton_Middle: return "MiddleMouse";
-			case eMButton_Right: return "RightMouse";
-			case eMButton_WheelUp: return "WheelUp";
-			case eMButton_WheelDown: return "WheelDown";
-			case eMButton_6: return "Mouse6";
-			case eMButton_7: return "Mouse7";
-			case eMButton_8: return "Mouse8";
-			case eMButton_9: return "Mouse9";
-		}
-		return "Unknown";
-	}
-
-	//-----------------------------------------------------------------------
+cActionMouseButton::cActionMouseButton(tString asName, cInput *apInput, eMButton aButton) : iAction(asName) {
+	mButton = aButton;
+	mpInput = apInput;
 }
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+bool cActionMouseButton::IsTriggerd() {
+	return mpInput->GetMouse()->ButtonIsDown(mButton);
+}
+
+//-----------------------------------------------------------------------
+
+float cActionMouseButton::GetValue() {
+	if (IsTriggerd())
+		return 1.0;
+	else
+		return 0.0;
+}
+
+//-----------------------------------------------------------------------
+
+tString cActionMouseButton::GetInputName() {
+	switch (mButton) {
+	case eMButton_Left:
+		return "LeftMouse";
+	case eMButton_Middle:
+		return "MiddleMouse";
+	case eMButton_Right:
+		return "RightMouse";
+	case eMButton_WheelUp:
+		return "WheelUp";
+	case eMButton_WheelDown:
+		return "WheelDown";
+	case eMButton_6:
+		return "Mouse6";
+	case eMButton_7:
+		return "Mouse7";
+	case eMButton_8:
+		return "Mouse8";
+	case eMButton_9:
+		return "Mouse9";
+	}
+	return "Unknown";
+}
+
+//-----------------------------------------------------------------------
+} // namespace hpl

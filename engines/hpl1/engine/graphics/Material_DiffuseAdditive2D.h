@@ -43,52 +43,49 @@
 
 #include "hpl1/engine/graphics/Material.h"
 
-
 namespace hpl {
 
-	class cMaterial_DiffuseAdditive2D : public iMaterial
-	{
-	public:
-		cMaterial_DiffuseAdditive2D(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
-		~cMaterial_DiffuseAdditive2D();
+class cMaterial_DiffuseAdditive2D : public iMaterial {
+public:
+	cMaterial_DiffuseAdditive2D(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+								cImageManager *apImageManager, cTextureManager *apTextureManager,
+								cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+								eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
+	~cMaterial_DiffuseAdditive2D();
 
-		void Compile();
-		bool StartRendering(eMaterialRenderType mType,iCamera* apCam,iLight *pLight);
-		void EndRendering(eMaterialRenderType mType);
-		tVtxBatchFlag GetBatchFlags(eMaterialRenderType mType);
-		bool NextPass(eMaterialRenderType mType);
-		bool HasMultiplePasses(eMaterialRenderType mType);
+	void Compile();
+	bool StartRendering(eMaterialRenderType mType, iCamera *apCam, iLight *pLight);
+	void EndRendering(eMaterialRenderType mType);
+	tVtxBatchFlag GetBatchFlags(eMaterialRenderType mType);
+	bool NextPass(eMaterialRenderType mType);
+	bool HasMultiplePasses(eMaterialRenderType mType);
 
-		bool UsesType(eMaterialRenderType aType);
+	bool UsesType(eMaterialRenderType aType);
 
-		eMaterialType GetType(eMaterialRenderType mType);
-		void EditVertexes(eMaterialRenderType mType, iCamera* apCam, iLight *pLight,
-			tVertexVec *apVtxVec,cVector3f *apTransform,unsigned int alIndexAdd);
+	eMaterialType GetType(eMaterialRenderType mType);
+	void EditVertexes(eMaterialRenderType mType, iCamera *apCam, iLight *pLight,
+					  tVertexVec *apVtxVec, cVector3f *apTransform, unsigned int alIndexAdd);
 
-	private:
-	};
-
-	class cMaterialType_DiffuseAdditive2D : public iMaterialType
-	{
-	public:
-		bool IsCorrect(tString asName){
-			if(cString::ToLowerCase(asName)=="diffadditive2d")return true;
-			return false;
-		}
-
-		iMaterial* Create(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
-		{
-			return hplNew( cMaterial_DiffuseAdditive2D, (asName,apLowLevelGraphics,
-				apImageManager,apTextureManager,apRenderer,
-				apProgramManager,aPicture,apRenderer3D) );
-		}
-	};
-
+private:
 };
+
+class cMaterialType_DiffuseAdditive2D : public iMaterialType {
+public:
+	bool IsCorrect(tString asName) {
+		if (cString::ToLowerCase(asName) == "diffadditive2d")
+			return true;
+		return false;
+	}
+
+	iMaterial *Create(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+					  cImageManager *apImageManager, cTextureManager *apTextureManager,
+					  cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+					  eMaterialPicture aPicture, cRenderer3D *apRenderer3D) {
+		return hplNew(cMaterial_DiffuseAdditive2D, (asName, apLowLevelGraphics,
+													apImageManager, apTextureManager, apRenderer,
+													apProgramManager, aPicture, apRenderer3D));
+	}
+};
+
+};     // namespace hpl
 #endif // HPL_MATERIAL_DIFFUSE_ADDITIVE_H

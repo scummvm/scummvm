@@ -41,50 +41,48 @@
 #ifndef HPL_RENDEROBJECT2D_H
 #define HPL_RENDEROBJECT2D_H
 
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Material.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	class iRenderObject2DRenderer
-	{
-	public:
-		virtual void RenderToBatch(eMaterialRenderType aRenderType,
-									unsigned int &aIdxAdd)=0;
-	};
-
-	class cRenderObject2D
-	{
-	public:
-		cRenderObject2D(iMaterial* apMaterial, tVertexVec* mpVtxVec,tUIntVec* mpIdxVec,
-					ePrimitiveType aType,float afZ,cRect2f& aRect,cMatrixf *apMtx=NULL,cVector3f* apTransform=NULL);
-
-		cRenderObject2D(iMaterial* apMaterial, iRenderObject2DRenderer* apRenderer,
-			ePrimitiveType aType,float afZ);
-
-		~cRenderObject2D();
-
-		iMaterial* GetMaterial()const{ return mpMaterial;}
-		tVertexVec* GetVertexVec()const{ return mpVtxVec;}
-		tUIntVec* GetIndexVec()const{ return mpIdxVec;}
-		ePrimitiveType GetType()const{ return mType;}
-		cVector3f* GetTransform()const{ return mpTransform;	}
-		float GetZ() const { return mfZ;}
-		const cRect2f& GetRect() const { return mRect;}
-		iRenderObject2DRenderer* GetCustomRenderer()const{ return mpCustomRenderer;}
-
-	private:
-		iMaterial* mpMaterial;
-		tVertexVec* mpVtxVec;
-		tUIntVec* mpIdxVec;
-		ePrimitiveType mType;
-		cMatrixf *mpMtx;
-		cVector3f *mpTransform;
-		float mfZ;
-		cRect2f mRect;
-		iRenderObject2DRenderer *mpCustomRenderer;
-	};
-
+class iRenderObject2DRenderer {
+public:
+	virtual void RenderToBatch(eMaterialRenderType aRenderType,
+							   unsigned int &aIdxAdd) = 0;
 };
+
+class cRenderObject2D {
+public:
+	cRenderObject2D(iMaterial *apMaterial, tVertexVec *mpVtxVec, tUIntVec *mpIdxVec,
+					ePrimitiveType aType, float afZ, cRect2f &aRect, cMatrixf *apMtx = NULL, cVector3f *apTransform = NULL);
+
+	cRenderObject2D(iMaterial *apMaterial, iRenderObject2DRenderer *apRenderer,
+					ePrimitiveType aType, float afZ);
+
+	~cRenderObject2D();
+
+	iMaterial *GetMaterial() const { return mpMaterial; }
+	tVertexVec *GetVertexVec() const { return mpVtxVec; }
+	tUIntVec *GetIndexVec() const { return mpIdxVec; }
+	ePrimitiveType GetType() const { return mType; }
+	cVector3f *GetTransform() const { return mpTransform; }
+	float GetZ() const { return mfZ; }
+	const cRect2f &GetRect() const { return mRect; }
+	iRenderObject2DRenderer *GetCustomRenderer() const { return mpCustomRenderer; }
+
+private:
+	iMaterial *mpMaterial;
+	tVertexVec *mpVtxVec;
+	tUIntVec *mpIdxVec;
+	ePrimitiveType mType;
+	cMatrixf *mpMtx;
+	cVector3f *mpTransform;
+	float mfZ;
+	cRect2f mRect;
+	iRenderObject2DRenderer *mpCustomRenderer;
+};
+
+};     // namespace hpl
 #endif // HPL_RENDEROBJECT2D_H

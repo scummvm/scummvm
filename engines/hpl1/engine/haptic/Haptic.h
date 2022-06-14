@@ -46,29 +46,28 @@
 
 namespace hpl {
 
-	class iLowLevelHaptic;
-	class cResources;
+class iLowLevelHaptic;
+class cResources;
 
-	class cHaptic : public iUpdateable
-	{
-	public:
-		cHaptic(iLowLevelHaptic *apLowLevelHaptic);
-		~cHaptic();
+class cHaptic : public iUpdateable {
+public:
+	cHaptic(iLowLevelHaptic *apLowLevelHaptic);
+	~cHaptic();
 
-		static void SetIsUsed(bool abX){ cHaptic::mbIsUsed = abX;}
-		static bool GetIsUsed(){ return cHaptic::mbIsUsed;}
+	static void SetIsUsed(bool abX) { cHaptic::mbIsUsed = abX; }
+	static bool GetIsUsed() { return cHaptic::mbIsUsed; }
 
-		void Init(cResources *apResources);
+	void Init(cResources *apResources);
 
-		void Update(float afTimeStep);
+	void Update(float afTimeStep);
 
-		iLowLevelHaptic * GetLowLevel(){ return mpLowLevelHaptic;}
+	iLowLevelHaptic *GetLowLevel() { return mpLowLevelHaptic; }
 
-	private:
-		iLowLevelHaptic *mpLowLevelHaptic;
+private:
+	iLowLevelHaptic *mpLowLevelHaptic;
 
-		static bool mbIsUsed;
-	};
-
+	static bool mbIsUsed;
 };
+
+};     // namespace hpl
 #endif // HPL_HAPTIC_H

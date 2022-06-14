@@ -39,115 +39,106 @@
  */
 
 #include "hpl1/engine/resources/ImageEntityManager.h"
-#include "hpl1/engine/system/String.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
-#include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/graphics/Graphics.h"
 #include "hpl1/engine/graphics/ImageEntityData.h"
 #include "hpl1/engine/graphics/Material.h"
-
+#include "hpl1/engine/resources/Resources.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/String.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cImageEntityManager::cImageEntityManager(cGraphics* apGraphics,cResources *apResources)
-		: iResourceManager(apResources->GetFileSearcher(), apResources->GetLowLevel(),
-							apResources->GetLowLevelSystem())
-	{
-		mpGraphics = apGraphics;
-		mpResources = apResources;
+cImageEntityManager::cImageEntityManager(cGraphics *apGraphics, cResources *apResources)
+	: iResourceManager(apResources->GetFileSearcher(), apResources->GetLowLevel(),
+					   apResources->GetLowLevelSystem()) {
+	mpGraphics = apGraphics;
+	mpResources = apResources;
 
-		mvImageHandle.resize(eMaterialTexture_LastEnum);
-		mvImageHandle.assign(mvImageHandle.size(),-1);
-	}
-
-	cImageEntityManager::~cImageEntityManager()
-	{
-		DestroyAll();
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	iResourceBase* cImageEntityManager::Create(const tString& asName)
-	{
-		tString sPath;
-		cImageEntityData* pIEData;
-		tString asNewName;
-
-		BeginLoad(asName);
-
-		asNewName = cString::SetFileExt(asName,"hed");
-
-		pIEData = static_cast<cImageEntityData*>(FindLoadedResource(asNewName,sPath));
-
-		if(pIEData==NULL && sPath!="")
-		{
-			pIEData = hplNew( cImageEntityData, (asNewName,mpGraphics,mpResources) );
-
-			if(pIEData->CreateFromFile(sPath,mvImageHandle)==false){
-				EndLoad();
-				return NULL;
-			}
-
-			if(pIEData)AddResource(pIEData);
-		}
-		else
-		{
-		}
-
-		if(pIEData)pIEData->IncUserCount();
-		else Error("Couldn't load image entity data '%s'\n",asNewName.c_str());
-
-		EndLoad();
-		return pIEData;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cImageEntityData* cImageEntityManager::CreateData(const tString& asName)
-	{
-		return 	static_cast<cImageEntityData*>(Create(asName));
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cImageEntityManager::Unload(iResourceBase* apResource)
-	{
-
-	}
-	//-----------------------------------------------------------------------
-
-	void cImageEntityManager::Destroy(iResourceBase* apResource)
-	{
-		apResource->DecUserCount();
-
-		if(apResource->HasUsers()==false){
-			RemoveResource(apResource);
-			hplDelete(apResource);
-		}
-	}
-
-	//-----------------------------------------------------------------------
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-
-	//-----------------------------------------------------------------------
+	mvImageHandle.resize(eMaterialTexture_LastEnum);
+	mvImageHandle.assign(mvImageHandle.size(), -1);
 }
+
+cImageEntityManager::~cImageEntityManager() {
+	DestroyAll();
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+iResourceBase *cImageEntityManager::Create(const tString &asName) {
+	tString sPath;
+	cImageEntityData *pIEData;
+	tString asNewName;
+
+	BeginLoad(asName);
+
+	asNewName = cString::SetFileExt(asName, "hed");
+
+	pIEData = static_cast<cImageEntityData *>(FindLoadedResource(asNewName, sPath));
+
+	if (pIEData == NULL && sPath != "") {
+		pIEData = hplNew(cImageEntityData, (asNewName, mpGraphics, mpResources));
+
+		if (pIEData->CreateFromFile(sPath, mvImageHandle) == false) {
+			EndLoad();
+			return NULL;
+		}
+
+		if (pIEData)
+			AddResource(pIEData);
+	} else {
+	}
+
+	if (pIEData)
+		pIEData->IncUserCount();
+	else
+		Error("Couldn't load image entity data '%s'\n", asNewName.c_str());
+
+	EndLoad();
+	return pIEData;
+}
+
+//-----------------------------------------------------------------------
+
+cImageEntityData *cImageEntityManager::CreateData(const tString &asName) {
+	return static_cast<cImageEntityData *>(Create(asName));
+}
+
+//-----------------------------------------------------------------------
+
+void cImageEntityManager::Unload(iResourceBase *apResource) {
+}
+//-----------------------------------------------------------------------
+
+void cImageEntityManager::Destroy(iResourceBase *apResource) {
+	apResource->DecUserCount();
+
+	if (apResource->HasUsers() == false) {
+		RemoveResource(apResource);
+		hplDelete(apResource);
+	}
+}
+
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PRIVATE METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+} // namespace hpl

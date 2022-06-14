@@ -45,35 +45,34 @@
 
 namespace hpl {
 
-	class cGraphics;
-	class cResources;
+class cGraphics;
+class cResources;
 
-	class cMaterialHandler
-	{
-	public:
-		cMaterialHandler(cGraphics* apGraphics, cResources* apResources);
-		~cMaterialHandler();
+class cMaterialHandler {
+public:
+	cMaterialHandler(cGraphics *apGraphics, cResources *apResources);
+	~cMaterialHandler();
 
-		/**
-		 * Add a new type of material
-		 * \param apTypedata
-		 */
-		void Add(iMaterialType* apTypedata);
-		/**
-		 * Create a new material
-		 * \param asMatName
-		 * \param mPicType
-		 * \return
-		 */
-		iMaterial* Create(tString asMatName, eMaterialPicture mPicType);
+	/**
+	 * Add a new type of material
+	 * \param apTypedata
+	 */
+	void Add(iMaterialType *apTypedata);
+	/**
+	 * Create a new material
+	 * \param asMatName
+	 * \param mPicType
+	 * \return
+	 */
+	iMaterial *Create(tString asMatName, eMaterialPicture mPicType);
 
-		iMaterial* Create(const tString& asName,tString asMatName, eMaterialPicture mPicType);
+	iMaterial *Create(const tString &asName, tString asMatName, eMaterialPicture mPicType);
 
-	private:
-		tMaterialTypeList mlstMatTypes;
-		cResources* mpResources;
-		cGraphics* mpGraphics;
-	};
-
+private:
+	tMaterialTypeList mlstMatTypes;
+	cResources *mpResources;
+	cGraphics *mpGraphics;
 };
+
+};     // namespace hpl
 #endif // HPL_MATERIALHANDLER_H

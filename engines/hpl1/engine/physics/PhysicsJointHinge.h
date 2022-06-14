@@ -45,46 +45,43 @@
 
 namespace hpl {
 
-	//-----------------------------------
+//-----------------------------------
 
-	kSaveData_ChildClass(iPhysicsJoint, iPhysicsJointHinge)
-	{
-		kSaveData_ClassInit(iPhysicsJointHinge)
-	public:
-		float mfMaxAngle;
-		float mfMinAngle;
+kSaveData_ChildClass(iPhysicsJoint, iPhysicsJointHinge) {
+	kSaveData_ClassInit(iPhysicsJointHinge) public : float mfMaxAngle;
+	float mfMinAngle;
 
-		virtual iSaveObject* CreateSaveObject(cSaveObjectHandler *apSaveObjectHandler,cGame *apGame);
-		virtual int GetSaveCreatePrio();
-	};
-
-	//-----------------------------------
-
-	class iPhysicsJointHinge : public iPhysicsJoint
-	{
-	typedef iPhysicsJoint super;
-	public:
-		iPhysicsJointHinge(const tString &asName, iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
-			iPhysicsWorld *apWorld,const cVector3f &avPivotPoint)
-			: iPhysicsJoint(asName,apParentBody,apChildBody, apWorld,avPivotPoint){}
-		virtual ~iPhysicsJointHinge(){}
-
-		virtual void SetMaxAngle(float afAngle)=0;
-		virtual void SetMinAngle(float afAngle)=0;
-		virtual float GetMaxAngle()=0;
-		virtual float GetMinAngle()=0;
-
-		ePhysicsJointType GetType(){ return ePhysicsJointType_Hinge;}
-
-		//SaveObject implementation
-		virtual iSaveData* CreateSaveData();
-		virtual void SaveToSaveData(iSaveData *apSaveData);
-		virtual void LoadFromSaveData(iSaveData *apSaveData);
-		virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
-
-	protected:
-		float mfMaxAngle;
-		float mfMinAngle;
-	};
+	virtual iSaveObject *CreateSaveObject(cSaveObjectHandler * apSaveObjectHandler, cGame * apGame);
+	virtual int GetSaveCreatePrio();
 };
+
+//-----------------------------------
+
+class iPhysicsJointHinge : public iPhysicsJoint {
+	typedef iPhysicsJoint super;
+
+public:
+	iPhysicsJointHinge(const tString &asName, iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
+					   iPhysicsWorld *apWorld, const cVector3f &avPivotPoint)
+		: iPhysicsJoint(asName, apParentBody, apChildBody, apWorld, avPivotPoint) {}
+	virtual ~iPhysicsJointHinge() {}
+
+	virtual void SetMaxAngle(float afAngle) = 0;
+	virtual void SetMinAngle(float afAngle) = 0;
+	virtual float GetMaxAngle() = 0;
+	virtual float GetMinAngle() = 0;
+
+	ePhysicsJointType GetType() { return ePhysicsJointType_Hinge; }
+
+	// SaveObject implementation
+	virtual iSaveData *CreateSaveData();
+	virtual void SaveToSaveData(iSaveData *apSaveData);
+	virtual void LoadFromSaveData(iSaveData *apSaveData);
+	virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
+
+protected:
+	float mfMaxAngle;
+	float mfMinAngle;
+};
+};     // namespace hpl
 #endif // HPL_PHYSICS_JOINT_HINGE_H

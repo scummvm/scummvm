@@ -41,35 +41,33 @@
 #ifndef HPL_NODE2D_H
 #define HPL_NODE2D_H
 
-#include <list>
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Node.h"
+#include <list>
 
 namespace hpl {
 
-	class cNode2D : public iNode
-	{
-	public:
-		cNode2D();
-		virtual ~cNode2D();
+class cNode2D : public iNode {
+public:
+	cNode2D();
+	virtual ~cNode2D();
 
-		iNode* CreateChild();
-		cNode2D* CreateChild2D();
+	iNode *CreateChild();
+	cNode2D *CreateChild2D();
 
-		cVector3f& GetPosition() { return mvPosition; }
-		cVector3f& GetRotation(){ return mvRotation; }
-		cVector3f& GetScale(){ return mvScale; }
+	cVector3f &GetPosition() { return mvPosition; }
+	cVector3f &GetRotation() { return mvRotation; }
+	cVector3f &GetScale() { return mvScale; }
 
-		void SetPosition(cVector3f avPos);
-		void SetRotation(cVector3f avRot);
-		void SetScale(cVector3f avScale);
+	void SetPosition(cVector3f avPos);
+	void SetRotation(cVector3f avRot);
+	void SetScale(cVector3f avScale);
 
-	private:
-		cVector3f mvPosition;
-		cVector3f mvRotation;
-		cVector3f mvScale;
-
-	};
-
+private:
+	cVector3f mvPosition;
+	cVector3f mvRotation;
+	cVector3f mvScale;
 };
+
+};     // namespace hpl
 #endif // HPL_NODE2D_H

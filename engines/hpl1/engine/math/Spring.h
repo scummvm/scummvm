@@ -45,36 +45,34 @@
 
 namespace hpl {
 
-	template <class T>
-	class cSpring
-	{
-	public:
-		float k;
-		float b;
+template<class T>
+class cSpring {
+public:
+	float k;
+	float b;
 
-		//////////////////////////////////////////
-		// Constructors
-		/////////////////////////////////////////
-		cSpring(){}
+	//////////////////////////////////////////
+	// Constructors
+	/////////////////////////////////////////
+	cSpring() {}
 
-		cSpring(float afK, float afB)
-		{
-			k = afK; b = afB;
-		}
+	cSpring(float afK, float afB) {
+		k = afK;
+		b = afB;
+	}
 
-		//////////////////////////////////////////
-		// Public
-		/////////////////////////////////////////
+	//////////////////////////////////////////
+	// Public
+	/////////////////////////////////////////
 
-		T Output(T aError, T aV)
-		{
-			return aError * k - aV * b;
-		}
-	};
-
-	//---------------------------------
-
-	typedef cSpring<float> cSpringf;
-	typedef cSpring<cVector3f> cSpringVec3;
+	T Output(T aError, T aV) {
+		return aError * k - aV * b;
+	}
 };
+
+//---------------------------------
+
+typedef cSpring<float> cSpringf;
+typedef cSpring<cVector3f> cSpringVec3;
+};     // namespace hpl
 #endif // HPL_SPRING_H

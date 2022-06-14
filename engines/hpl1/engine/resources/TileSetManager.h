@@ -45,26 +45,25 @@
 
 namespace hpl {
 
-	class cGraphics;
-	class cResources;
-	class cTileSet;
+class cGraphics;
+class cResources;
+class cTileSet;
 
-	class cTileSetManager : public iResourceManager
-	{
-	public:
-		cTileSetManager(cGraphics* apGraphics,cResources *apResources);
-		~cTileSetManager();
+class cTileSetManager : public iResourceManager {
+public:
+	cTileSetManager(cGraphics *apGraphics, cResources *apResources);
+	~cTileSetManager();
 
-		iResourceBase* Create(const tString& asName);
-		cTileSet* CreateTileSet(const tString& asName);
+	iResourceBase *Create(const tString &asName);
+	cTileSet *CreateTileSet(const tString &asName);
 
-		void Destroy(iResourceBase* apResource);
-		void Unload(iResourceBase* apResource);
+	void Destroy(iResourceBase *apResource);
+	void Unload(iResourceBase *apResource);
 
-	private:
-		cGraphics* mpGraphics;
-		cResources *mpResources;
-	};
-
+private:
+	cGraphics *mpGraphics;
+	cResources *mpResources;
 };
+
+};     // namespace hpl
 #endif // HPL_TILESET_MANAGER_H

@@ -42,8 +42,8 @@
 #define HPL_SDL_TEXTURE_H
 
 #include "hpl1/engine/graphics/Texture.h"
-#include "hpl1/engine/impl/PBuffer.h"
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
+#include "hpl1/engine/impl/PBuffer.h"
 #include "hpl1/engine/impl/SDLBitmap2D.h"
 
 //#include <GL/GLee.h>
@@ -57,73 +57,71 @@
 
 namespace hpl {
 
-	class cSDLTexture : public iTexture
-	{
-	public:
-		cSDLTexture(const tString &asName,iPixelFormat *apPxlFmt,iLowLevelGraphics* apLowLevelGraphics,
-					eTextureType aType, bool abUseMipMaps, eTextureTarget aTarget,
-					bool abCompress=false);
-		~cSDLTexture();
+class cSDLTexture : public iTexture {
+public:
+	cSDLTexture(const tString &asName, iPixelFormat *apPxlFmt, iLowLevelGraphics *apLowLevelGraphics,
+				eTextureType aType, bool abUseMipMaps, eTextureTarget aTarget,
+				bool abCompress = false);
+	~cSDLTexture();
 
-		bool CreateFromBitmap(iBitmap2D* pBmp);
+	bool CreateFromBitmap(iBitmap2D *pBmp);
 
-		bool CreateAnimFromBitmapVec(tBitmap2DVec *avBitmaps);
+	bool CreateAnimFromBitmapVec(tBitmap2DVec *avBitmaps);
 
-		bool CreateCubeFromBitmapVec(tBitmap2DVec *avBitmaps);
-		bool Create(unsigned int alWidth, unsigned int alHeight, cColor aCol);
+	bool CreateCubeFromBitmapVec(tBitmap2DVec *avBitmaps);
+	bool Create(unsigned int alWidth, unsigned int alHeight, cColor aCol);
 
-		bool CreateFromArray(unsigned char *apPixelData, int alChannels, const cVector3l &avSize);
+	bool CreateFromArray(unsigned char *apPixelData, int alChannels, const cVector3l &avSize);
 
-		void SetPixels2D(	int alLevel, const cVector2l& avOffset, const cVector2l& avSize,
-							eColorDataFormat aDataFormat, void *apPixelData);
+	void SetPixels2D(int alLevel, const cVector2l &avOffset, const cVector2l &avSize,
+					 eColorDataFormat aDataFormat, void *apPixelData);
 
+	float GetGamma() { return 0; }
+	void SetGamma(float afGamma) {}
+	int GetHandle() { return (int)mvTextureHandles[0]; }
 
-		float GetGamma(){return 0;}
-		void SetGamma(float afGamma){}
-		int GetHandle(){return (int) mvTextureHandles[0];}
+	void SetFilter(eTextureFilter aFilter);
+	void SetAnisotropyDegree(float afX);
 
-		void SetFilter(eTextureFilter aFilter);
-		void SetAnisotropyDegree(float afX);
+	void SetWrapS(eTextureWrap aMode);
+	void SetWrapT(eTextureWrap aMode);
+	void SetWrapR(eTextureWrap aMode);
 
-		void SetWrapS(eTextureWrap aMode);
-		void SetWrapT(eTextureWrap aMode);
-		void SetWrapR(eTextureWrap aMode);
+	void Update(float afTimeStep);
 
-		void Update(float afTimeStep);
+	bool HasAnimation();
+	void NextFrame();
+	void PrevFrame();
+	float GetT();
+	float GetTimeCount();
+	void SetTimeCount(float afX);
+	int GetCurrentLowlevelHandle();
 
-		bool HasAnimation();
-		void NextFrame();
-		void PrevFrame();
-		float GetT();
-		float GetTimeCount();
-		void SetTimeCount(float afX);
-		int GetCurrentLowlevelHandle();
+	/// SDL / OGL Specific ///////////
 
-		/// SDL / OGL Specific ///////////
+	unsigned int GetTextureHandle();
+	cPBuffer *GetPBuffer() { return mpPBuffer; }
 
-		unsigned int GetTextureHandle();
-		cPBuffer* GetPBuffer(){ return mpPBuffer; }
+private:
+	bool CreateFromBitmapToHandle(iBitmap2D *pBmp, int alHandleIdx);
 
-	private:
-		bool CreateFromBitmapToHandle(iBitmap2D* pBmp, int alHandleIdx);
+	GLenum InitCreation(int alHandleIdx);
+	void PostCreation(GLenum aGLTarget);
 
-		GLenum InitCreation(int alHandleIdx);
-		void PostCreation(GLenum aGLTarget);
+	GLenum GetGLWrap(eTextureWrap aMode);
 
-		GLenum GetGLWrap(eTextureWrap aMode);
+	void GetSettings(cSDLBitmap2D *apSrc, int &alChannels, GLenum &aFormat);
 
-		void GetSettings(cSDLBitmap2D* apSrc, int &alChannels, GLenum &aFormat);
+	tUIntVec mvTextureHandles;
+	bool mbContainsData;
+	cLowLevelGraphicsSDL *mpGfxSDL;
 
-		tUIntVec mvTextureHandles;
-		bool mbContainsData;
-		cLowLevelGraphicsSDL* mpGfxSDL;
+	float mfTimeCount;
+	int mlTextureIndex;
+	float mfTimeDir;
 
-		float mfTimeCount;
-		int mlTextureIndex;
-		float mfTimeDir;
-
-		cPBuffer *mpPBuffer;
-	};
-
+	cPBuffer *mpPBuffer;
 };
+
+};     // namespace hpl
 #endif // HPL_SDL_TEXTURE_H

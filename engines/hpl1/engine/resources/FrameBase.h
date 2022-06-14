@@ -45,21 +45,23 @@
 
 namespace hpl {
 
-	class iFrameBase
-	{
-	public:
-		iFrameBase(){
-			mlPicCount = 0;
-		}
+class iFrameBase {
+public:
+	iFrameBase() {
+		mlPicCount = 0;
+	}
 
-		void SetPicCount(int alPicCount){mlPicCount=alPicCount;}
-		void DecPicCount(){if(mlPicCount>0)mlPicCount--;}
-		int GetPicCount(){return mlPicCount;}
-		bool IsEmpty() {return mlPicCount<=0;}
+	void SetPicCount(int alPicCount) { mlPicCount = alPicCount; }
+	void DecPicCount() {
+		if (mlPicCount > 0)
+			mlPicCount--;
+	}
+	int GetPicCount() { return mlPicCount; }
+	bool IsEmpty() { return mlPicCount <= 0; }
 
-	protected:
-		int mlPicCount;
-	};
-
+protected:
+	int mlPicCount;
 };
+
+};     // namespace hpl
 #endif // HPL_FRAMEBASE_H

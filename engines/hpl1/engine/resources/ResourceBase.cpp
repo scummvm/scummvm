@@ -42,39 +42,35 @@
 
 #include "hpl1/engine/system/LowLevelSystem.h"
 
-
 namespace hpl {
 
-	bool iResourceBase::mbLogCreateAndDelete=false;
+bool iResourceBase::mbLogCreateAndDelete = false;
 
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-	iResourceBase::iResourceBase(tString asName,unsigned long alPrio){
-		mlTime = (unsigned long)time(NULL);
-		mlPrio = alPrio;
-		mlHandle = 0;
-		mlUserCount =0;
-		msName = asName;
-		mbLogDestruction = false;
-	}
-
-	iResourceBase::~iResourceBase()
-	{
-		if(mbLogDestruction && mbLogCreateAndDelete)
-			Log("  Destroyed resource '%s'\n",msName.c_str());
-	}
-	//-----------------------------------------------------------------------
-
-	void iResourceBase::IncUserCount()
-	{
-		mlUserCount++;
-		mlTime = (unsigned long)time(NULL);
-	}
-
-	//-----------------------------------------------------------------------
-
+//-----------------------------------------------------------------------
+iResourceBase::iResourceBase(tString asName, unsigned long alPrio) {
+	mlTime = (unsigned long)time(NULL);
+	mlPrio = alPrio;
+	mlHandle = 0;
+	mlUserCount = 0;
+	msName = asName;
+	mbLogDestruction = false;
 }
+
+iResourceBase::~iResourceBase() {
+	if (mbLogDestruction && mbLogCreateAndDelete)
+		Log("  Destroyed resource '%s'\n", msName.c_str());
+}
+//-----------------------------------------------------------------------
+
+void iResourceBase::IncUserCount() {
+	mlUserCount++;
+	mlTime = (unsigned long)time(NULL);
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

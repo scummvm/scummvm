@@ -48,48 +48,46 @@
 
 namespace hpl {
 
-	class cGuiSkinFont;
+class cGuiSkinFont;
 
-	class cWidgetWindow : public iWidget
-	{
-	public:
-		cWidgetWindow(cGuiSet *apSet, cGuiSkin *apSkin);
-		virtual ~cWidgetWindow();
+class cWidgetWindow : public iWidget {
+public:
+	cWidgetWindow(cGuiSet *apSet, cGuiSkin *apSkin);
+	virtual ~cWidgetWindow();
 
-		void SetStatic(bool abX);
-		bool GetStatic(){return mbStatic;}
+	void SetStatic(bool abX);
+	bool GetStatic() { return mbStatic; }
 
+protected:
+	/////////////////////////
+	// Implemented functions
+	void OnLoadGraphics();
 
-	protected:
-		/////////////////////////
-		// Implemented functions
-		void OnLoadGraphics();
+	void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
 
-		void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
+	bool OnMouseMove(cGuiMessageData &aData);
+	bool OnMouseDown(cGuiMessageData &aData);
+	bool OnMouseUp(cGuiMessageData &aData);
+	bool OnMouseEnter(cGuiMessageData &aData);
+	bool OnMouseLeave(cGuiMessageData &aData);
 
-		bool OnMouseMove(cGuiMessageData &aData);
-		bool OnMouseDown(cGuiMessageData &aData);
-		bool OnMouseUp(cGuiMessageData &aData);
-		bool OnMouseEnter(cGuiMessageData &aData);
-		bool OnMouseLeave(cGuiMessageData &aData);
+	/////////////////////////
+	// Data
+	cGuiSkinFont *mpLabelFont;
 
-		/////////////////////////
-		// Data
-		cGuiSkinFont *mpLabelFont;
+	cGuiGfxElement *mpGfxBackground;
+	cGuiGfxElement *mpGfxLabel;
 
-		cGuiGfxElement *mpGfxBackground;
-		cGuiGfxElement *mpGfxLabel;
+	cGuiGfxElement *mvGfxBorders[4];
+	cGuiGfxElement *mvGfxCorners[4];
 
-		cGuiGfxElement *mvGfxBorders[4];
-		cGuiGfxElement *mvGfxCorners[4];
+	cVector3f mvLabelTextOffset;
 
-		cVector3f mvLabelTextOffset;
+	bool mbStatic;
 
-		bool mbStatic;
-
-		cVector3f mvRelMousePos;
-		bool mbMoving;
-	};
-
+	cVector3f mvRelMousePos;
+	bool mbMoving;
 };
+
+};     // namespace hpl
 #endif // HPL_WIDGET_H

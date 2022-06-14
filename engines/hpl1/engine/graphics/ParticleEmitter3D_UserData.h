@@ -41,273 +41,252 @@
 #ifndef HPL_PARTICLE_EMITTER_3D_USER_DATA_H
 #define HPL_PARTICLE_EMITTER_3D_USER_DATA_H
 
-#include "hpl1/engine/graphics/Renderable.h"
-#include "hpl1/engine/scene/Entity3D.h"
 #include "hpl1/engine/graphics/ParticleEmitter3D.h"
+#include "hpl1/engine/graphics/Renderable.h"
 #include "hpl1/engine/physics/PhysicsWorld.h"
+#include "hpl1/engine/scene/Entity3D.h"
 
 class TiXmlElement;
 
 namespace hpl {
 
+enum ePEStartPosType {
+	ePEStartPosType_Box,
+	ePEStartPosType_Sphere,
+	ePEStartPosType_LastEnum,
+};
 
+enum ePEDeathType {
+	ePEDeathType_Age,
+	ePEDeathType_Color,
+	ePEDeathType_LastEnum,
+};
 
-	enum ePEStartPosType
-	{
-		ePEStartPosType_Box,
-		ePEStartPosType_Sphere,
-		ePEStartPosType_LastEnum,
-	};
+enum ePEGravityType {
+	ePEGravityType_None,   // No gravity added
+	ePEGravityType_Vector, // Vector is used.
+	ePEGravityType_Center, // Y axis used. heading equals center.
+	ePEGravityType_LastEnum,
+};
 
-	enum ePEDeathType
-	{
-		ePEDeathType_Age,
-		ePEDeathType_Color,
-		ePEDeathType_LastEnum,
-	};
+enum ePESubDivType {
+	ePESubDivType_Random,
+	ePESubDivType_Animation,
+	ePESubDivType_LastEnum,
+};
 
-	enum ePEGravityType
-	{
-		ePEGravityType_None,		//No gravity added
-		ePEGravityType_Vector,		//Vector is used.
-		ePEGravityType_Center,		//Y axis used. heading equals center.
-		ePEGravityType_LastEnum,
-	};
+enum ePEPartSpinType {
+	ePEPartSpinType_Constant,
+	ePEPartSpinType_Movement,
+	ePEPartSpinType_LastEnum,
+};
 
-	enum ePESubDivType
-	{
-		ePESubDivType_Random,
-		ePESubDivType_Animation,
-		ePESubDivType_LastEnum,
-	};
+//------------------------------------
 
-	enum ePEPartSpinType
-	{
-		ePEPartSpinType_Constant,
-		ePEPartSpinType_Movement,
-		ePEPartSpinType_LastEnum,
-	};
+//------------------------------------
 
-
-
-	//------------------------------------
-
-
-
-	//------------------------------------
-
-	class cParticleEmitterData3D_UserData : public iParticleEmitterData, public iPhysicsRayCallback
-	{
+class cParticleEmitterData3D_UserData : public iParticleEmitterData, public iPhysicsRayCallback {
 	friend class cParticleEmitter3D_UserData;
-	public:
-		cParticleEmitterData3D_UserData(const tString &asName,cResources* apResources,cGraphics *apGraphics);
 
-		iParticleEmitter* Create(tString asName, cVector3f avSize);
+public:
+	cParticleEmitterData3D_UserData(const tString &asName, cResources *apResources, cGraphics *apGraphics);
 
-		void LoadFromElement(TiXmlElement *apElement);
+	iParticleEmitter *Create(tString asName, cVector3f avSize);
 
-		bool CheckCollision(const cVector3f& avStart, const cVector3f &avEnd,
-									iPhysicsWorld *apPhysicsWorld,
-									cVector3f *apNormalVec,
-									cVector3f *apPosVec);
+	void LoadFromElement(TiXmlElement *apElement);
 
-	private:
-		bool OnIntersect(iPhysicsBody *pBody,cPhysicsRayParams *apParams);
-		float mfShortestDist;
-		bool mbIntersected;
-		cVector3f *mpIntersectNormal;
-		cVector3f *mpIntersectPos;
+	bool CheckCollision(const cVector3f &avStart, const cVector3f &avEnd,
+						iPhysicsWorld *apPhysicsWorld,
+						cVector3f *apNormalVec,
+						cVector3f *apPosVec);
 
-		///////// GENERAL /////////////
+private:
+	bool OnIntersect(iPhysicsBody *pBody, cPhysicsRayParams *apParams);
+	float mfShortestDist;
+	bool mbIntersected;
+	cVector3f *mpIntersectNormal;
+	cVector3f *mpIntersectPos;
 
-		// NEW
-		ePEType	mPEType;
-		// ---
+	///////// GENERAL /////////////
 
-		int mlMaxParticleNum;
+	// NEW
+	ePEType mPEType;
+	// ---
 
-		bool mbRespawn;
+	int mlMaxParticleNum;
 
-		float mfParticlesPerSecond;
-		float mfStartTimeOffset;
+	bool mbRespawn;
 
-		float mfMinPauseLength;
-		float mfMaxPauseLength;
+	float mfParticlesPerSecond;
+	float mfStartTimeOffset;
 
-		float mfMinPauseInterval;
-		float mfMaxPauseInterval;
+	float mfMinPauseLength;
+	float mfMaxPauseLength;
 
-		cVector3f mvPosOffset;
-		cVector3f mvAngleOffset;
+	float mfMinPauseInterval;
+	float mfMaxPauseInterval;
 
-		float mfFrameStep;
-		float mfMaxFrameTime;
+	cVector3f mvPosOffset;
+	cVector3f mvAngleOffset;
 
-		///////// MATERIAL //////////
+	float mfFrameStep;
+	float mfMaxFrameTime;
 
-		cVector2l mvSubDiv;
-		ePESubDivType mSubDivType;
+	///////// MATERIAL //////////
 
-		///////// START POS //////////
-		ePEStartPosType mStartPosType;
+	cVector2l mvSubDiv;
+	ePESubDivType mSubDivType;
 
-		cVector3f mvMinStartPos;
-		cVector3f mvMaxStartPos;
+	///////// START POS //////////
+	ePEStartPosType mStartPosType;
 
-		cVector2f mvMinStartAngles;
-		cVector2f mvMaxStartAngles;
+	cVector3f mvMinStartPos;
+	cVector3f mvMaxStartPos;
 
-		float mfMinStartRadius;
-		float mfMaxStartRadius;
+	cVector2f mvMinStartAngles;
+	cVector2f mvMaxStartAngles;
 
-		/////////// MOVEMENT ////////
-		ePEStartPosType mStartVelType;
+	float mfMinStartRadius;
+	float mfMaxStartRadius;
 
-		cVector3f mvMinStartVel;
-		cVector3f mvMaxStartVel;
+	/////////// MOVEMENT ////////
+	ePEStartPosType mStartVelType;
 
-		cVector2f mvMinStartVelAngles;
-		cVector2f mvMaxStartVelAngles;
+	cVector3f mvMinStartVel;
+	cVector3f mvMaxStartVel;
 
-		float mfMinStartVelSpeed;
-		float mfMaxStartVelSpeed;
+	cVector2f mvMinStartVelAngles;
+	cVector2f mvMaxStartVelAngles;
 
-		float mfMinSpeedMultiply;
-		float mfMaxSpeedMultiply;
+	float mfMinStartVelSpeed;
+	float mfMaxStartVelSpeed;
 
-		cVector3f mvMinStartAcc;
-		cVector3f mvMaxStartAcc;
+	float mfMinSpeedMultiply;
+	float mfMaxSpeedMultiply;
 
-		float mfMinVelMaximum;
-		float mfMaxVelMaximum;
+	cVector3f mvMinStartAcc;
+	cVector3f mvMaxStartAcc;
 
-		bool mbUsesDirection;
-		ePEGravityType mGravityType;
+	float mfMinVelMaximum;
+	float mfMaxVelMaximum;
 
-		cVector3f mvGravityAcc;
+	bool mbUsesDirection;
+	ePEGravityType mGravityType;
 
-		eParticleEmitter3DCoordSystem mCoordSystem;
+	cVector3f mvGravityAcc;
 
-		// NEW
+	eParticleEmitter3DCoordSystem mCoordSystem;
 
-		bool	mbUsePartSpin;
-		ePEPartSpinType mPartSpinType;
-		float	mfMinSpinRange;
-		float	mfMaxSpinRange;
+	// NEW
 
-		bool	mbUseRevolution;
-		cVector3f	mvMinRevVel;
-		cVector3f	mvMaxRevVel;
+	bool mbUsePartSpin;
+	ePEPartSpinType mPartSpinType;
+	float mfMinSpinRange;
+	float mfMaxSpinRange;
 
-//		iVertexBuffer *mVBMeshData;
-//		float *mpfMeshVtxData;
+	bool mbUseRevolution;
+	cVector3f mvMinRevVel;
+	cVector3f mvMaxRevVel;
 
-		// ---
+	//		iVertexBuffer *mVBMeshData;
+	//		float *mpfMeshVtxData;
 
-		/////////// LIFESPAN ////////
-		float mfMinLifeSpan;
-		float mfMaxLifeSpan;
+	// ---
 
-		ePEDeathType mDeathType;
+	/////////// LIFESPAN ////////
+	float mfMinLifeSpan;
+	float mfMaxLifeSpan;
 
-		tString msDeathPS;
+	ePEDeathType mDeathType;
 
-		/////////// RENDERING ////////
-		eParticleEmitter3DType mDrawType;
+	tString msDeathPS;
 
-		cVector2f mvMinStartSize;
-		cVector2f mvMaxStartSize;
+	/////////// RENDERING ////////
+	eParticleEmitter3DType mDrawType;
 
-		float mfStartRelSize;
-		float mfMiddleRelSize;
-		float mfMiddleRelSizeTime;
-		float mfMiddleRelSizeLength;
-		float mfEndRelSize;
+	cVector2f mvMinStartSize;
+	cVector2f mvMaxStartSize;
 
-		bool mbMultiplyRGBWithAlpha;
+	float mfStartRelSize;
+	float mfMiddleRelSize;
+	float mfMiddleRelSizeTime;
+	float mfMiddleRelSizeLength;
+	float mfEndRelSize;
 
-		/////////// COLOR  ////////
+	bool mbMultiplyRGBWithAlpha;
 
-		cColor mMinStartColor;
-		cColor mMaxStartColor;
+	/////////// COLOR  ////////
 
-		cColor mStartRelColor;
-		cColor mMiddleRelColor;
-		float mfMiddleRelColorTime;
-		float mfMiddleRelColorLength;
-		cColor mEndRelColor;
+	cColor mMinStartColor;
+	cColor mMaxStartColor;
 
-		/////////// COLLISION  ////////
-		bool mbCollides;
+	cColor mStartRelColor;
+	cColor mMiddleRelColor;
+	float mfMiddleRelColorTime;
+	float mfMiddleRelColorLength;
+	cColor mEndRelColor;
 
-		float mfMinBounceAmount;
-		float mfMaxBounceAmount;
+	/////////// COLLISION  ////////
+	bool mbCollides;
 
-		int  mlMinCollisionMax;
-		int  mlMaxCollisionMax;
+	float mfMinBounceAmount;
+	float mfMaxBounceAmount;
 
-		int  mlCollisionUpdateRate;
+	int mlMinCollisionMax;
+	int mlMaxCollisionMax;
 
-		// NEW
-		/////// BEAM SPECIFIC ///////
+	int mlCollisionUpdateRate;
 
-		bool mbUseBeamNoise;
+	// NEW
+	/////// BEAM SPECIFIC ///////
 
-		int mlLowFreqPoints;
-		std::vector<unsigned int> mvLFIndices;
-		cVector3f mvMinLowFreqNoise;
-		cVector3f mvMaxLowFreqNoise;
+	bool mbUseBeamNoise;
 
-		int mlHighFreqPoints;
-		cVector3f mvMinHighFreqNoise;
-		cVector3f mvMaxHighFreqNoise;
+	int mlLowFreqPoints;
+	std::vector<unsigned int> mvLFIndices;
+	cVector3f mvMinLowFreqNoise;
+	cVector3f mvMaxLowFreqNoise;
 
-		std::vector<tBeamNoisePoint> mvBeamNoisePoints;
+	int mlHighFreqPoints;
+	cVector3f mvMinHighFreqNoise;
+	cVector3f mvMaxHighFreqNoise;
 
+	std::vector<tBeamNoisePoint> mvBeamNoisePoints;
 
-		// ---
-
-
-
-
+	// ---
 };
 
-	//----------------------------------------------------------
+//----------------------------------------------------------
 
-	class cParticleEmitter3D_UserData : public iParticleEmitter3D
-	{
-	public:
-		cParticleEmitter3D_UserData(	tString asName,tMaterialVec* avMaterials,
-										cVector3f avSize, cGraphics* apGraphics,cResources *apResources,
-										cParticleEmitterData3D_UserData *apData
-										);
-		~cParticleEmitter3D_UserData(void);
+class cParticleEmitter3D_UserData : public iParticleEmitter3D {
+public:
+	cParticleEmitter3D_UserData(tString asName, tMaterialVec *avMaterials,
+								cVector3f avSize, cGraphics *apGraphics, cResources *apResources,
+								cParticleEmitterData3D_UserData *apData);
+	~cParticleEmitter3D_UserData(void);
 
-		void Kill();
+	void Kill();
 
-		bool IsDying();
+	bool IsDying();
 
-	private:
-		void UpdateMotion(float afTimeStep);
-		void SetParticleDefaults(cParticle *apParticle);
+private:
+	void UpdateMotion(float afTimeStep);
+	void SetParticleDefaults(cParticle *apParticle);
 
+	cParticleEmitterData3D_UserData *mpData;
 
-		cParticleEmitterData3D_UserData *mpData;
+	float mfTime;
+	float mfCreateCount;
 
-		float mfTime;
-		float mfCreateCount;
+	float mfCollideCount;
 
-		float mfCollideCount;
+	float mfPauseCount;
+	float mfPauseWaitCount;
+	bool mbPaused;
 
-		float mfPauseCount;
-		float mfPauseWaitCount;
-		bool mbPaused;
-
-		bool mbRespawn;
-	};
-
-
+	bool mbRespawn;
 };
+
+}; // namespace hpl
 
 #endif // HPL_PARTICLE_EMITTER_3D_USER_DATA_H
-

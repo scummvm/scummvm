@@ -45,90 +45,88 @@
 
 namespace hpl {
 
-	class cGuiSkinFont;
+class cGuiSkinFont;
 
-	class cWidgetButton;
+class cWidgetButton;
 
-	//---------------------------------------------
+//---------------------------------------------
 
-	class cWidgetSlider : public iWidget
-	{
-	public:
-		cWidgetSlider(cGuiSet *apSet, cGuiSkin *apSkin, eWidgetSliderOrientation aOrientation);
-		virtual ~cWidgetSlider();
+class cWidgetSlider : public iWidget {
+public:
+	cWidgetSlider(cGuiSet *apSet, cGuiSkin *apSkin, eWidgetSliderOrientation aOrientation);
+	virtual ~cWidgetSlider();
 
-		int GetValue(){ return mlValue;}
-		void SetValue(int alValue);
+	int GetValue() { return mlValue; }
+	void SetValue(int alValue);
 
-		int GetMaxValue(){ return mlMaxValue;}
-		void SetMaxValue(int alMax);
+	int GetMaxValue() { return mlMaxValue; }
+	void SetMaxValue(int alMax);
 
-		int GetButtonValueAdd(){ return mlButtonValueAdd;}
-		void SetButtonValueAdd(int alAdd);
+	int GetButtonValueAdd() { return mlButtonValueAdd; }
+	void SetButtonValueAdd(int alAdd);
 
-		int GetBarValueSize(){ return mlBarValueSize;}
-		void SetBarValueSize(int alSize);
+	int GetBarValueSize() { return mlBarValueSize; }
+	void SetBarValueSize(int alSize);
 
-		float GetButtonSize() const{return mfButtonSize;}
+	float GetButtonSize() const { return mfButtonSize; }
 
-	protected:
-		/////////////////////////
-		// Own functions
-		void UpdateBarProperties();
+protected:
+	/////////////////////////
+	// Own functions
+	void UpdateBarProperties();
 
-		bool ArrowButtonDown(iWidget* apWidget,cGuiMessageData& aData);
-		kGuiCalllbackDeclarationEnd(ArrowButtonDown);
+	bool ArrowButtonDown(iWidget *apWidget, cGuiMessageData &aData);
+	kGuiCalllbackDeclarationEnd(ArrowButtonDown);
 
-		/////////////////////////
-		// Implemented functions
-		void OnInit();
-		void OnLoadGraphics();
-		void OnChangeSize();
-		void OnChangePosition();
+	/////////////////////////
+	// Implemented functions
+	void OnInit();
+	void OnLoadGraphics();
+	void OnChangeSize();
+	void OnChangePosition();
 
+	void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
 
-		void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
+	bool OnMouseMove(cGuiMessageData &aData);
+	bool OnMouseDown(cGuiMessageData &aData);
+	bool OnMouseUp(cGuiMessageData &aData);
+	bool OnMouseEnter(cGuiMessageData &aData);
+	bool OnMouseLeave(cGuiMessageData &aData);
 
-		bool OnMouseMove(cGuiMessageData &aData);
-		bool OnMouseDown(cGuiMessageData &aData);
-		bool OnMouseUp(cGuiMessageData &aData);
-		bool OnMouseEnter(cGuiMessageData &aData);
-		bool OnMouseLeave(cGuiMessageData &aData);
+	bool OnLostFocus(cGuiMessageData &aData);
 
-		bool OnLostFocus(cGuiMessageData &aData);
+	/////////////////////////
+	// Data
+	eWidgetSliderOrientation mOrientation;
 
-		/////////////////////////
-		// Data
-		eWidgetSliderOrientation mOrientation;
+	bool mbPressed;
 
-		bool mbPressed;
+	float mfButtonSize;
 
-		float mfButtonSize;
+	int mlValue;
+	int mlMaxValue;
+	int mlButtonValueAdd;
+	int mlBarValueSize; // This is how big the bar is compared to the max value of the slider
+	float mfValueStep;
 
-		int mlValue;
-		int mlMaxValue;
-		int mlButtonValueAdd;
-		int mlBarValueSize; //This is how big the bar is compared to the max value of the slider
-		float mfValueStep;
+	cVector3f mvBarPos;
+	cVector2f mvBarSize;
+	float mfSliderSize;
+	cRect2f mBarRect;
+	float mfMaxPos;
+	float mfMinPos;
 
-		cVector3f mvBarPos;
-		cVector2f mvBarSize;
-		float mfSliderSize;
-		cRect2f mBarRect;
-		float mfMaxPos;
-		float mfMinPos;
+	cVector2f mvRelMousePos;
 
-		cVector2f mvRelMousePos;
+	cWidgetButton *mvButtons[2];
 
-		cWidgetButton* mvButtons[2];
+	cGuiGfxElement *mpGfxButtonBackground;
+	cGuiGfxElement *mvGfxBorders[4];
+	cGuiGfxElement *mvGfxCorners[4];
 
-		cGuiGfxElement *mpGfxButtonBackground;
-		cGuiGfxElement *mvGfxBorders[4];
-		cGuiGfxElement *mvGfxCorners[4];
-
-		cGuiGfxElement *mvGfxArrow[2];
-		cGuiGfxElement *mpGfxBackground;
-	};
-
+	cGuiGfxElement *mvGfxArrow[2];
+	cGuiGfxElement *mpGfxBackground;
 };
+
+};     // namespace hpl
 #endif // HPL_WIDGET_SLIDER_H

@@ -41,29 +41,28 @@
 #ifndef HPL_PHYSICS_JOINT_BALL_NEWTON_H
 #define HPL_PHYSICS_JOINT_BALL_NEWTON_H
 
-#include "hpl1/engine/physics/PhysicsJointBall.h"
 #include "hpl1/engine/impl/PhysicsJointNewton.h"
+#include "hpl1/engine/physics/PhysicsJointBall.h"
 
 namespace hpl {
 
-	class cPhysicsJointBallNewton : public iPhysicsJointNewton<iPhysicsJointBall>
-	{
-	public:
-		cPhysicsJointBallNewton(const tString &asName, iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
-			iPhysicsWorld *apWorld, const cVector3f &avPivotPoint);
-		~cPhysicsJointBallNewton();
+class cPhysicsJointBallNewton : public iPhysicsJointNewton<iPhysicsJointBall> {
+public:
+	cPhysicsJointBallNewton(const tString &asName, iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
+							iPhysicsWorld *apWorld, const cVector3f &avPivotPoint);
+	~cPhysicsJointBallNewton();
 
-		void SetConeLimits(const cVector3f& avPin, float afMaxConeAngle, float afMaxTwistAngle);
-		cVector3f GetAngles();
+	void SetConeLimits(const cVector3f &avPin, float afMaxConeAngle, float afMaxTwistAngle);
+	cVector3f GetAngles();
 
-		cVector3f GetVelocity();
-		cVector3f GetAngularVelocity();
-		cVector3f GetForce();
+	cVector3f GetVelocity();
+	cVector3f GetAngularVelocity();
+	cVector3f GetForce();
 
-		float GetDistance();
-		float GetAngle();
+	float GetDistance();
+	float GetAngle();
 
-	private:
-	};
+private:
 };
+};     // namespace hpl
 #endif // HPL_PHYSICS_JOINT_BALL_NEWTON_H

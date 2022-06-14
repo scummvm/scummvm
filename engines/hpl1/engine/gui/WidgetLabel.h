@@ -45,45 +45,42 @@
 
 namespace hpl {
 
-	class cGuiSkinFont;
+class cGuiSkinFont;
 
-	class cWidgetLabel : public iWidget
-	{
-	public:
-		cWidgetLabel(cGuiSet *apSet, cGuiSkin *apSkin);
-		virtual ~cWidgetLabel();
+class cWidgetLabel : public iWidget {
+public:
+	cWidgetLabel(cGuiSet *apSet, cGuiSkin *apSkin);
+	virtual ~cWidgetLabel();
 
-		void SetTextAlign(eFontAlign aType){mTextAlign = aType;}
-		eFontAlign GetTextAlign(){ return mTextAlign;}
+	void SetTextAlign(eFontAlign aType) { mTextAlign = aType; }
+	eFontAlign GetTextAlign() { return mTextAlign; }
 
-		bool GetWordWrap(){ return mbWordWrap;}
-		void SetWordWrap(bool abX){ mbWordWrap = abX;}
+	bool GetWordWrap() { return mbWordWrap; }
+	void SetWordWrap(bool abX) { mbWordWrap = abX; }
 
-		void SetMaxTextLength(int alLength);
-		int GetMaxTextLength(){return mlMaxCharacters;}
+	void SetMaxTextLength(int alLength);
+	int GetMaxTextLength() { return mlMaxCharacters; }
 
+protected:
+	/////////////////////////
+	// Implemented functions
+	void OnLoadGraphics();
 
-	protected:
-		/////////////////////////
-		// Implemented functions
-		void OnLoadGraphics();
+	void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
 
-		void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
+	bool OnMouseMove(cGuiMessageData &aData);
+	bool OnMouseDown(cGuiMessageData &aData);
+	bool OnMouseUp(cGuiMessageData &aData);
+	bool OnMouseEnter(cGuiMessageData &aData);
+	bool OnMouseLeave(cGuiMessageData &aData);
 
-		bool OnMouseMove(cGuiMessageData &aData);
-		bool OnMouseDown(cGuiMessageData &aData);
-		bool OnMouseUp(cGuiMessageData &aData);
-		bool OnMouseEnter(cGuiMessageData &aData);
-		bool OnMouseLeave(cGuiMessageData &aData);
+	/////////////////////////
+	// Data
+	eFontAlign mTextAlign;
+	bool mbWordWrap;
 
-		/////////////////////////
-		// Data
-		eFontAlign mTextAlign;
-		bool mbWordWrap;
-
-		int mlMaxCharacters;
-
-	};
-
+	int mlMaxCharacters;
 };
+
+};     // namespace hpl
 #endif // HPL_WIDGET_LABEL_H

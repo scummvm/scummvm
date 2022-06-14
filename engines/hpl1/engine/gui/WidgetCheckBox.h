@@ -45,39 +45,37 @@
 
 namespace hpl {
 
-	class cGuiSkinFont;
+class cGuiSkinFont;
 
-	class cWidgetCheckBox : public iWidget
-	{
-	public:
-		cWidgetCheckBox(cGuiSet *apSet, cGuiSkin *apSkin);
-		virtual ~cWidgetCheckBox();
+class cWidgetCheckBox : public iWidget {
+public:
+	cWidgetCheckBox(cGuiSet *apSet, cGuiSkin *apSkin);
+	virtual ~cWidgetCheckBox();
 
-		void SetChecked(bool abX);
-		bool IsChecked(){return mbChecked;}
+	void SetChecked(bool abX);
+	bool IsChecked() { return mbChecked; }
 
-	protected:
-		/////////////////////////
-		// Implemented functions
-		void OnLoadGraphics();
-		void OnChangeSize();
+protected:
+	/////////////////////////
+	// Implemented functions
+	void OnLoadGraphics();
+	void OnChangeSize();
 
-		void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
+	void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
 
-		bool OnMouseMove(cGuiMessageData &aData);
-		bool OnMouseDown(cGuiMessageData &aData);
-		bool OnMouseUp(cGuiMessageData &aData);
-		bool OnMouseEnter(cGuiMessageData &aData);
-		bool OnMouseLeave(cGuiMessageData &aData);
+	bool OnMouseMove(cGuiMessageData &aData);
+	bool OnMouseDown(cGuiMessageData &aData);
+	bool OnMouseUp(cGuiMessageData &aData);
+	bool OnMouseEnter(cGuiMessageData &aData);
+	bool OnMouseLeave(cGuiMessageData &aData);
 
-		/////////////////////////
-		// Data
-		bool mbChecked;
-		bool mbPressed;
+	/////////////////////////
+	// Data
+	bool mbChecked;
+	bool mbPressed;
 
-		cGuiGfxElement *mvGfxBox[2][2];
-
-	};
-
+	cGuiGfxElement *mvGfxBox[2][2];
 };
+
+};     // namespace hpl
 #endif // HPL_WIDGET_CHECK_BOX_H

@@ -51,36 +51,35 @@
 
 namespace hpl {
 
-	class iVertexBuffer;
-	class iCollideShape;
+class iVertexBuffer;
+class iCollideShape;
 
-	typedef std::vector<iCollideShape*> tCollideShapeVec;
-	typedef tCollideShapeVec::iterator tCollideShapeVecIt;
+typedef std::vector<iCollideShape *> tCollideShapeVec;
+typedef tCollideShapeVec::iterator tCollideShapeVecIt;
 
-	class cCollideShapeNewton : public iCollideShape
-	{
-	public:
-		cCollideShapeNewton(eCollideShapeType aType, const cVector3f &avSize,
-							cMatrixf* apOffsetMtx,NewtonWorld* apNewtonWorld,
-							iPhysicsWorld *apWorld);
-		~cCollideShapeNewton();
+class cCollideShapeNewton : public iCollideShape {
+public:
+	cCollideShapeNewton(eCollideShapeType aType, const cVector3f &avSize,
+						cMatrixf *apOffsetMtx, NewtonWorld *apNewtonWorld,
+						iPhysicsWorld *apWorld);
+	~cCollideShapeNewton();
 
-		iCollideShape* GetSubShape(int alIdx);
-		int GetSubShapeNum();
+	iCollideShape *GetSubShape(int alIdx);
+	int GetSubShapeNum();
 
-		cVector3f GetInertia(float afMass);
+	cVector3f GetInertia(float afMass);
 
-		void CreateFromShapeVec(tCollideShapeVec &avShapes);
-		void CreateFromVertices(const unsigned int* apIndexArray, int alIndexNum,
-								const float *apVertexArray, int alVtxStride, int alVtxNum);
+	void CreateFromShapeVec(tCollideShapeVec &avShapes);
+	void CreateFromVertices(const unsigned int *apIndexArray, int alIndexNum,
+							const float *apVertexArray, int alVtxStride, int alVtxNum);
 
-		NewtonCollision* GetNewtonCollision(){ return mpNewtonCollision;}
+	NewtonCollision *GetNewtonCollision() { return mpNewtonCollision; }
 
-	private:
-		NewtonCollision* mpNewtonCollision;
-		NewtonWorld *mpNewtonWorld;
+private:
+	NewtonCollision *mpNewtonCollision;
+	NewtonWorld *mpNewtonWorld;
 
-		tCollideShapeVec mvSubShapes;
-	};
+	tCollideShapeVec mvSubShapes;
 };
+};     // namespace hpl
 #endif // HPL_COLLIDE_SHAPE_NEWTON_H

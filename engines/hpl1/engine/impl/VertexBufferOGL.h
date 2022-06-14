@@ -45,63 +45,60 @@
 
 namespace hpl {
 
-	class cVertexBufferOGL : public iVertexBuffer
-	{
-	public:
-		cVertexBufferOGL(iLowLevelGraphics* apLowLevelGraphics,tVertexFlag aFlags,
-			eVertexBufferDrawType aDrawType,eVertexBufferUsageType aUsageType,
-			int alReserveVtxSize,int alReserveIdxSize);
-		~cVertexBufferOGL();
+class cVertexBufferOGL : public iVertexBuffer {
+public:
+	cVertexBufferOGL(iLowLevelGraphics *apLowLevelGraphics, tVertexFlag aFlags,
+					 eVertexBufferDrawType aDrawType, eVertexBufferUsageType aUsageType,
+					 int alReserveVtxSize, int alReserveIdxSize);
+	~cVertexBufferOGL();
 
-		void AddVertex(tVertexFlag aType,const cVector3f& avVtx);
-		void AddColor(tVertexFlag aType,const cColor& aColor);
-		void AddIndex(unsigned int alIndex);
+	void AddVertex(tVertexFlag aType, const cVector3f &avVtx);
+	void AddColor(tVertexFlag aType, const cColor &aColor);
+	void AddIndex(unsigned int alIndex);
 
-		bool Compile(tVertexCompileFlag aFlags);
-		void UpdateData(tVertexFlag aTypes, bool abIndices);
+	bool Compile(tVertexCompileFlag aFlags);
+	void UpdateData(tVertexFlag aTypes, bool abIndices);
 
-		void CreateShadowDouble(bool abUpdateData);
+	void CreateShadowDouble(bool abUpdateData);
 
-		void Transform(const cMatrixf &mtxTransform);
+	void Transform(const cMatrixf &mtxTransform);
 
-		void Draw(eVertexBufferDrawType aDrawType);
-		void DrawIndices(unsigned int *apIndices, int alCount,
-			eVertexBufferDrawType aDrawType = eVertexBufferDrawType_LastEnum);
+	void Draw(eVertexBufferDrawType aDrawType);
+	void DrawIndices(unsigned int *apIndices, int alCount,
+					 eVertexBufferDrawType aDrawType = eVertexBufferDrawType_LastEnum);
 
+	void Bind();
+	void UnBind();
 
-		void Bind();
-		void UnBind();
+	iVertexBuffer *CreateCopy(eVertexBufferUsageType aUsageType);
 
-		iVertexBuffer* CreateCopy(eVertexBufferUsageType aUsageType);
+	cBoundingVolume CreateBoundingVolume();
 
-		cBoundingVolume CreateBoundingVolume();
+	float *GetArray(tVertexFlag aType);
+	unsigned int *GetIndices();
 
-		float* GetArray(tVertexFlag aType);
-		unsigned int* GetIndices();
+	void ResizeArray(tVertexFlag aType, int alSize);
+	void ResizeIndices(int alSize);
 
-		void ResizeArray(tVertexFlag aType, int alSize);
-		void ResizeIndices(int alSize);
+	// For debugging purposes
+	int GetVertexNum();
+	int GetIndexNum();
 
-		//For debugging purposes
-		int GetVertexNum();
-		int GetIndexNum();
+	cVector3f GetVector3(tVertexFlag aType, unsigned alIdx);
+	cVector3f GetVector4(tVertexFlag aType, unsigned alIdx);
+	cColor GetColor(tVertexFlag aType, unsigned alIdx);
+	unsigned int GetIndex(tVertexFlag aType, unsigned alIdx);
 
-		cVector3f GetVector3(tVertexFlag aType, unsigned alIdx);
-		cVector3f GetVector4(tVertexFlag aType, unsigned alIdx);
-		cColor GetColor(tVertexFlag aType, unsigned alIdx);
-		unsigned int GetIndex(tVertexFlag aType, unsigned alIdx);
+private:
+	void SetVertexStates(tVertexFlag aFlags);
 
+	tFloatVec mvVertexArray[klNumOfVertexFlags];
+	tUIntVec mvIndexArray;
 
-	private:
-		void SetVertexStates(tVertexFlag aFlags);
+	bool mbTangents;
 
-		tFloatVec mvVertexArray[klNumOfVertexFlags];
-		tUIntVec mvIndexArray;
-
-		bool mbTangents;
-
-		bool mbHasShadowDouble;
-	};
-
+	bool mbHasShadowDouble;
 };
+
+};     // namespace hpl
 #endif // HPL_RENDERER3D_OGL_H

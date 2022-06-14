@@ -41,12 +41,12 @@
 #ifndef HPL_WORLD3D_H
 #define HPL_WORLD3D_H
 
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
-#include "hpl1/engine/scene/SoundSource.h"
 #include "hpl1/engine/scene/Entity3D.h"
+#include "hpl1/engine/scene/SoundSource.h"
 
 #include "hpl1/engine/game/GameTypes.h"
 
@@ -56,346 +56,332 @@ class TiXmlElement;
 
 namespace hpl {
 
-	class cGraphics;
-	class cResources;
-	class cSound;
-	class cPhysics;
-	class cScene;
-	class cSystem;
-	class cAI;
-	class cHaptic;
-
-	class iCamera;
-	class cCamera3D;
-	class cNode3D;
-	class cLight3DSpot;
-	class cLight3DPoint;
-	class iLight3D;
-	class cImageEntity;
-	class cParticleManager;
-	class cParticleSystem3D;
-	class iScript;
-	class cPortalContainer;
-	class iRenderableContainer;
-	class cMeshEntity;
-	class cMesh;
-	class cBillboard;
-	class cBeam;
-	class iPhysicsWorld;
-	class cColliderEntity;
-	class iPhysicsBody;
-	class cSoundEntity;
-	class cAINodeContainer;
-	class cAStarHandler;
-	class cAINodeGeneratorParams;
-
-	typedef std::list<iLight3D*> tLight3DList;
-	typedef std::list<iLight3D*>::iterator tLight3DListIt;
-
-	typedef std::list<cMeshEntity*> tMeshEntityList;
-	typedef std::list<cMeshEntity*>::iterator tMeshEntityListIt;
-
-	typedef std::list<cBillboard*> tBillboardList;
-	typedef std::list<cBillboard*>::iterator tBillboardListIt;
-
-	typedef std::list<cBeam*> tBeamList;
-	typedef std::list<cBeam*>::iterator tBeamListIt;
-
-	typedef std::list<cParticleSystem3D*> tParticleSystem3DList;
-	typedef tParticleSystem3DList::iterator tParticleSystem3DListIt;
-
-	typedef std::list<cColliderEntity*> tColliderEntityList;
-	typedef std::list<cColliderEntity*>::iterator tColliderEntityListIt;
-
-	typedef std::list<cSoundEntity*> tSoundEntityList;
-	typedef std::list<cSoundEntity*>::iterator tSoundEntityListIt;
-
-	typedef std::list<cAINodeContainer*> tAINodeContainerList;
-	typedef std::list<cAINodeContainer*>::iterator tAINodeContainerListIt;
-
-	typedef std::list<cAStarHandler*> tAStarHandlerList;
-	typedef std::list<cAStarHandler*>::iterator tAStarHandlerIt;
-
-	//-------------------------------------------------------------------
-
-	typedef cSTLIterator<cMeshEntity*, tMeshEntityList, tMeshEntityListIt> cMeshEntityIterator;
-	typedef cSTLIterator<cBillboard*, tBillboardList, tBillboardListIt> cBillboardIterator;
-	typedef cSTLIterator<iLight3D*, tLight3DList, tLight3DListIt> cLight3DListIterator;
-	typedef cSTLIterator<cParticleSystem3D*, tParticleSystem3DList, tParticleSystem3DListIt> cParticleSystem3DIterator;
-	typedef cSTLIterator<cSoundEntity*, tSoundEntityList, tSoundEntityListIt> cSoundEntityIterator;
-	typedef cSTLIterator<cBeam*, tBeamList, tBeamListIt> cBeamIterator;
-
-	//-------------------------------------------------------------------
-
-	class cTempAiNode
-	{
-	public:
-		cTempAiNode(const cVector3f& avPos, const tString& asName) : mvPos(avPos),msName(asName){}
-		cVector3f mvPos;
-		tString msName;
-	};
-
-	typedef std::list<cTempAiNode> tTempAiNodeList;
-	typedef std::list<cTempAiNode>::iterator tTempAiNodeListIt;
-
-	class cTempNodeContainer
-	{
-	public:
-		tString msName;
-		tTempAiNodeList mlstNodes;
-	};
-
-	typedef std::map<tString,cTempNodeContainer*> tTempNodeContainerMap;
-	typedef std::map<tString,cTempNodeContainer*>::iterator tTempNodeContainerMapIt;
-
-	//-------------------------------------------------------------------
-
-	class cAreaEntity :public iSerializable
-	{
-		kSerializableClassInit(cAreaEntity)
-	public:
-		tString msName;
-		tString msType;
-		cMatrixf m_mtxTransform;
-		cVector3f mvSize;
-	};
+class cGraphics;
+class cResources;
+class cSound;
+class cPhysics;
+class cScene;
+class cSystem;
+class cAI;
+class cHaptic;
+
+class iCamera;
+class cCamera3D;
+class cNode3D;
+class cLight3DSpot;
+class cLight3DPoint;
+class iLight3D;
+class cImageEntity;
+class cParticleManager;
+class cParticleSystem3D;
+class iScript;
+class cPortalContainer;
+class iRenderableContainer;
+class cMeshEntity;
+class cMesh;
+class cBillboard;
+class cBeam;
+class iPhysicsWorld;
+class cColliderEntity;
+class iPhysicsBody;
+class cSoundEntity;
+class cAINodeContainer;
+class cAStarHandler;
+class cAINodeGeneratorParams;
+
+typedef std::list<iLight3D *> tLight3DList;
+typedef std::list<iLight3D *>::iterator tLight3DListIt;
+
+typedef std::list<cMeshEntity *> tMeshEntityList;
+typedef std::list<cMeshEntity *>::iterator tMeshEntityListIt;
+
+typedef std::list<cBillboard *> tBillboardList;
+typedef std::list<cBillboard *>::iterator tBillboardListIt;
+
+typedef std::list<cBeam *> tBeamList;
+typedef std::list<cBeam *>::iterator tBeamListIt;
+
+typedef std::list<cParticleSystem3D *> tParticleSystem3DList;
+typedef tParticleSystem3DList::iterator tParticleSystem3DListIt;
+
+typedef std::list<cColliderEntity *> tColliderEntityList;
+typedef std::list<cColliderEntity *>::iterator tColliderEntityListIt;
+
+typedef std::list<cSoundEntity *> tSoundEntityList;
+typedef std::list<cSoundEntity *>::iterator tSoundEntityListIt;
+
+typedef std::list<cAINodeContainer *> tAINodeContainerList;
+typedef std::list<cAINodeContainer *>::iterator tAINodeContainerListIt;
+
+typedef std::list<cAStarHandler *> tAStarHandlerList;
+typedef std::list<cAStarHandler *>::iterator tAStarHandlerIt;
+
+//-------------------------------------------------------------------
+
+typedef cSTLIterator<cMeshEntity *, tMeshEntityList, tMeshEntityListIt> cMeshEntityIterator;
+typedef cSTLIterator<cBillboard *, tBillboardList, tBillboardListIt> cBillboardIterator;
+typedef cSTLIterator<iLight3D *, tLight3DList, tLight3DListIt> cLight3DListIterator;
+typedef cSTLIterator<cParticleSystem3D *, tParticleSystem3DList, tParticleSystem3DListIt> cParticleSystem3DIterator;
+typedef cSTLIterator<cSoundEntity *, tSoundEntityList, tSoundEntityListIt> cSoundEntityIterator;
+typedef cSTLIterator<cBeam *, tBeamList, tBeamListIt> cBeamIterator;
+
+//-------------------------------------------------------------------
+
+class cTempAiNode {
+public:
+	cTempAiNode(const cVector3f &avPos, const tString &asName) : mvPos(avPos), msName(asName) {}
+	cVector3f mvPos;
+	tString msName;
+};
+
+typedef std::list<cTempAiNode> tTempAiNodeList;
+typedef std::list<cTempAiNode>::iterator tTempAiNodeListIt;
 
-	typedef std::map<tString, cAreaEntity*> tAreaEntityMap;
-	typedef tAreaEntityMap::iterator tAreaEntityMapIt;
+class cTempNodeContainer {
+public:
+	tString msName;
+	tTempAiNodeList mlstNodes;
+};
 
-	//-------------------------------------------------------------------
+typedef std::map<tString, cTempNodeContainer *> tTempNodeContainerMap;
+typedef std::map<tString, cTempNodeContainer *>::iterator tTempNodeContainerMapIt;
 
-	class cStartPosEntity : public iSerializable
-	{
-		kSerializableClassInit(cStartPosEntity)
-	public:
-		cStartPosEntity() {}
-		cStartPosEntity(const tString& asName) : msName(asName){}
+//-------------------------------------------------------------------
 
-		cMatrixf& GetWorldMatrix(){ return m_mtxTransform;}
-		cMatrixf& GetLocalMatrix(){ return m_mtxTransform;}
-		void SetMatrix(const cMatrixf& a_mtxTrans){ m_mtxTransform = a_mtxTrans;}
+class cAreaEntity : public iSerializable {
+	kSerializableClassInit(cAreaEntity) public : tString msName;
+	tString msType;
+	cMatrixf m_mtxTransform;
+	cVector3f mvSize;
+};
 
-		tString& GetName(){ return msName;}
+typedef std::map<tString, cAreaEntity *> tAreaEntityMap;
+typedef tAreaEntityMap::iterator tAreaEntityMapIt;
 
-		cMatrixf m_mtxTransform;
-		tString msName;
-	};
+//-------------------------------------------------------------------
 
-	typedef std::list<cStartPosEntity*> tStartPosEntityList;
-	typedef std::list<cStartPosEntity*>::iterator tStartPosEntityListIt;
+class cStartPosEntity : public iSerializable {
+	kSerializableClassInit(cStartPosEntity) public : cStartPosEntity() {}
+	cStartPosEntity(const tString &asName) : msName(asName) {}
 
-	//------------------------------------------
+	cMatrixf &GetWorldMatrix() { return m_mtxTransform; }
+	cMatrixf &GetLocalMatrix() { return m_mtxTransform; }
+	void SetMatrix(const cMatrixf &a_mtxTrans) { m_mtxTransform = a_mtxTrans; }
 
-	kSaveData_BaseClass(cWorld3D)
-	{
-		kSaveData_ClassInit(cWorld3D)
-	public:
-		cContainerList<cStartPosEntity> mlstStartpos;
-		cContainerList<cAreaEntity> mlstAreaEntities;
-		cContainerList<cScriptVar> mlstScriptVars;
+	tString &GetName() { return msName; }
 
-		virtual iSaveObject* CreateSaveObject(cSaveObjectHandler *apSaveObjectHandler,cGame *apGame);
-		virtual int GetSaveCreatePrio();
-	};
+	cMatrixf m_mtxTransform;
+	tString msName;
+};
 
-	//-------------------------------------------------------------------
+typedef std::list<cStartPosEntity *> tStartPosEntityList;
+typedef std::list<cStartPosEntity *>::iterator tStartPosEntityListIt;
 
-	class cWorld3D
-	{
-	public:
-		cWorld3D(tString asName,cGraphics *apGraphics,cResources *apResources,cSound* apSound,
-					cPhysics *apPhysics, cScene *apScene,cSystem *apSystem, cAI *apAI,
-					cHaptic *apHaptic);
-		~cWorld3D();
+//------------------------------------------
 
-		tString GetName(){ return msName;}
+kSaveData_BaseClass(cWorld3D) {
+	kSaveData_ClassInit(cWorld3D) public : cContainerList<cStartPosEntity> mlstStartpos;
+	cContainerList<cAreaEntity> mlstAreaEntities;
+	cContainerList<cScriptVar> mlstScriptVars;
 
-		bool CreateFromFile(tString asFile);
+	virtual iSaveObject *CreateSaveObject(cSaveObjectHandler * apSaveObjectHandler, cGame * apGame);
+	virtual int GetSaveCreatePrio();
+};
 
-		void SetFileName(const tString& asFile){ msFileName = asFile;}
-		const tString& GetFileName(){ return msFileName;}
+//-------------------------------------------------------------------
 
-		void Update(float afTimeStep);
+class cWorld3D {
+public:
+	cWorld3D(tString asName, cGraphics *apGraphics, cResources *apResources, cSound *apSound,
+			 cPhysics *apPhysics, cScene *apScene, cSystem *apSystem, cAI *apAI,
+			 cHaptic *apHaptic);
+	~cWorld3D();
 
-		void PreUpdate(float afTotalTime, float afTimeStep);
+	tString GetName() { return msName; }
 
-		cVector3f GetWorldSize(){ return mvWorldSize;}
+	bool CreateFromFile(tString asFile);
 
-		iScript* GetScript(){ return mpScript;}
-		void SetScript(iScript* apScript){ mpScript = apScript;}
+	void SetFileName(const tString &asFile) { msFileName = asFile; }
+	const tString &GetFileName() { return msFileName; }
 
-		iRenderableContainer* GetRenderContainer();
-		cPortalContainer* GetPortalContainer();
+	void Update(float afTimeStep);
 
-		cPhysics* GetPhysics(){ return mpPhysics;}
-		cResources* GetResources(){ return mpResources;}
-		cSound* GetSound(){ return mpSound;}
-		cSystem* GetSystem(){ return mpSystem;}
-		cHaptic* GetHaptic(){ return mpHaptic;}
+	void PreUpdate(float afTotalTime, float afTimeStep);
 
-		iEntity3D* CreateEntity(const tString& asName, const cMatrixf &a_mtxTransform,
-								const tString& asFile, bool abLoadReferences);
-		/**
-		 * Call this when all things have been added to set up things like physics world size.
-		 **/
-		void SetUpData();
+	cVector3f GetWorldSize() { return mvWorldSize; }
 
+	iScript *GetScript() { return mpScript; }
+	void SetScript(iScript *apScript) { mpScript = apScript; }
 
-		void AddSaveData(cSaveDataHandler* apHandler);
+	iRenderableContainer *GetRenderContainer();
+	cPortalContainer *GetPortalContainer();
 
-		///// PHYSICS ////////////////////////////////
+	cPhysics *GetPhysics() { return mpPhysics; }
+	cResources *GetResources() { return mpResources; }
+	cSound *GetSound() { return mpSound; }
+	cSystem *GetSystem() { return mpSystem; }
+	cHaptic *GetHaptic() { return mpHaptic; }
 
-		void SetPhysicsWorld(iPhysicsWorld *apWorld, bool abAutoDelete=true);
-		iPhysicsWorld* GetPhysicsWorld();
+	iEntity3D *CreateEntity(const tString &asName, const cMatrixf &a_mtxTransform,
+							const tString &asFile, bool abLoadReferences);
+	/**
+	 * Call this when all things have been added to set up things like physics world size.
+	 **/
+	void SetUpData();
 
-		///// AREA ////////////////////////////////
+	void AddSaveData(cSaveDataHandler *apHandler);
 
-		cAreaEntity* CreateAreaEntity(const tString &asName);
-		cAreaEntity* GetAreaEntity(const tString &asName);
-		tAreaEntityMap* GetAreaEntityMap(){return &m_mapAreaEntities;}
+	///// PHYSICS ////////////////////////////////
 
-		///// MESH ENTITY METHODS ////////////////////
+	void SetPhysicsWorld(iPhysicsWorld *apWorld, bool abAutoDelete = true);
+	iPhysicsWorld *GetPhysicsWorld();
 
-		cMeshEntity* CreateMeshEntity(const tString &asName,cMesh *apMesh, bool abAddToContainer=true);
-		void DestroyMeshEntity(cMeshEntity* apMesh);
-		cMeshEntity* GetMeshEntity(const tString& asName);
+	///// AREA ////////////////////////////////
 
-		cMeshEntityIterator GetMeshEntityIterator();
+	cAreaEntity *CreateAreaEntity(const tString &asName);
+	cAreaEntity *GetAreaEntity(const tString &asName);
+	tAreaEntityMap *GetAreaEntityMap() { return &m_mapAreaEntities; }
 
-		void DrawMeshBoundingBoxes(const cColor &aColor, bool abStatic);
+	///// MESH ENTITY METHODS ////////////////////
 
-		///// LIGHT METHODS ////////////////////
+	cMeshEntity *CreateMeshEntity(const tString &asName, cMesh *apMesh, bool abAddToContainer = true);
+	void DestroyMeshEntity(cMeshEntity *apMesh);
+	cMeshEntity *GetMeshEntity(const tString &asName);
 
-		cLight3DPoint* CreateLightPoint(const tString &asName="",bool abAddToContainer=true);
-		cLight3DSpot* CreateLightSpot(const tString &asName="", const tString &asGobo="",
-										bool abAddToContainer=true);
-		void DestroyLight(iLight3D* apLight);
-		iLight3D* GetLight(const tString& asName);
+	cMeshEntityIterator GetMeshEntityIterator();
 
-		tLight3DList * GetLightList(){ return &mlstLights;}
+	void DrawMeshBoundingBoxes(const cColor &aColor, bool abStatic);
 
-		cLight3DListIterator GetLightIterator(){ return cLight3DListIterator(&mlstLights);}
+	///// LIGHT METHODS ////////////////////
 
-		///// BILLBOARD METHODS ////////////////////
+	cLight3DPoint *CreateLightPoint(const tString &asName = "", bool abAddToContainer = true);
+	cLight3DSpot *CreateLightSpot(const tString &asName = "", const tString &asGobo = "",
+								  bool abAddToContainer = true);
+	void DestroyLight(iLight3D *apLight);
+	iLight3D *GetLight(const tString &asName);
 
-		cBillboard* CreateBillboard(const tString& asName, const cVector2f& avSize,
-									const tString& asMaterial="",
-									bool abAddToContainer=true,cMatrixf* apTransform=NULL);
-		void DestroyBillboard(cBillboard* apObject);
-		cBillboard* GetBillboard(const tString& asName);
-		cBillboardIterator GetBillboardIterator();
+	tLight3DList *GetLightList() { return &mlstLights; }
 
-		///// BEAM METHODS ////////////////////
+	cLight3DListIterator GetLightIterator() { return cLight3DListIterator(&mlstLights); }
 
-		cBeam* CreateBeam(const tString& asName);
-		void DestroyBeam(cBeam* apObject);
-		cBeam* GetBeam(const tString& asName);
-		cBeamIterator GetBeamIterator();
+	///// BILLBOARD METHODS ////////////////////
 
-		///// PARTICLE METHODS ////////////////////
+	cBillboard *CreateBillboard(const tString &asName, const cVector2f &avSize,
+								const tString &asMaterial = "",
+								bool abAddToContainer = true, cMatrixf *apTransform = NULL);
+	void DestroyBillboard(cBillboard *apObject);
+	cBillboard *GetBillboard(const tString &asName);
+	cBillboardIterator GetBillboardIterator();
 
-		cParticleSystem3D* CreateParticleSystem(const tString& asName,const tString& asType,
-										const cVector3f& avSize,const cMatrixf& a_mtxTransform);
-		void DestroyParticleSystem(cParticleSystem3D* apPS);
-		cParticleSystem3D* GetParticleSystem(const tString& asName);
-		bool ParticleSystemExists(cParticleSystem3D* apPS);
+	///// BEAM METHODS ////////////////////
 
-		cParticleSystem3DIterator GetParticleSystemIterator(){ return cParticleSystem3DIterator(&mlstParticleSystems);}
+	cBeam *CreateBeam(const tString &asName);
+	void DestroyBeam(cBeam *apObject);
+	cBeam *GetBeam(const tString &asName);
+	cBeamIterator GetBeamIterator();
 
-		///// COllIDER METHODS ////////////////////
+	///// PARTICLE METHODS ////////////////////
 
-		cColliderEntity* CreateColliderEntity(const tString &asName,iPhysicsBody *apBody);
-		void DestroyColliderEntity(cColliderEntity* apCollider);
-		cColliderEntity* GetColliderEntity(const tString& asName);
+	cParticleSystem3D *CreateParticleSystem(const tString &asName, const tString &asType,
+											const cVector3f &avSize, const cMatrixf &a_mtxTransform);
+	void DestroyParticleSystem(cParticleSystem3D *apPS);
+	cParticleSystem3D *GetParticleSystem(const tString &asName);
+	bool ParticleSystemExists(cParticleSystem3D *apPS);
 
-		///// SOUND ENTITY METHODS ////////////////////
+	cParticleSystem3DIterator GetParticleSystemIterator() { return cParticleSystem3DIterator(&mlstParticleSystems); }
 
-		cSoundEntity* CreateSoundEntity(const tString &asName,const tString &asSoundEntity,
-										bool abRemoveWhenOver);
-		void DestroySoundEntity(cSoundEntity* apEntity);
-		cSoundEntity* GetSoundEntity(const tString& asName);
-		void DestroyAllSoundEntities();
-		bool SoundEntityExists(cSoundEntity* apEntity);
+	///// COllIDER METHODS ////////////////////
 
-		cSoundEntityIterator GetSoundEntityIterator(){ return cSoundEntityIterator(&mlstSoundEntities);}
+	cColliderEntity *CreateColliderEntity(const tString &asName, iPhysicsBody *apBody);
+	void DestroyColliderEntity(cColliderEntity *apCollider);
+	cColliderEntity *GetColliderEntity(const tString &asName);
 
-		///// START POS ENTITY METHODS ////////////////
+	///// SOUND ENTITY METHODS ////////////////////
 
-		cStartPosEntity* CreateStartPos(const tString &asName);
-		cStartPosEntity* GetStartPosEntity(const tString &asName);
-		cStartPosEntity* GetFirstStartPosEntity();
+	cSoundEntity *CreateSoundEntity(const tString &asName, const tString &asSoundEntity,
+									bool abRemoveWhenOver);
+	void DestroySoundEntity(cSoundEntity *apEntity);
+	cSoundEntity *GetSoundEntity(const tString &asName);
+	void DestroyAllSoundEntities();
+	bool SoundEntityExists(cSoundEntity *apEntity);
 
-		///// AI NODE METHODS ////////////////
+	cSoundEntityIterator GetSoundEntityIterator() { return cSoundEntityIterator(&mlstSoundEntities); }
 
-		void GenerateAINodes(cAINodeGeneratorParams *apParams);
+	///// START POS ENTITY METHODS ////////////////
 
-		cAINodeContainer* CreateAINodeContainer(const tString &asName,
+	cStartPosEntity *CreateStartPos(const tString &asName);
+	cStartPosEntity *GetStartPosEntity(const tString &asName);
+	cStartPosEntity *GetFirstStartPosEntity();
+
+	///// AI NODE METHODS ////////////////
+
+	void GenerateAINodes(cAINodeGeneratorParams *apParams);
+
+	cAINodeContainer *CreateAINodeContainer(const tString &asName,
 											const tString &asNodeName,
 											const cVector3f &avSize,
 											bool abNodeIsAtCenter,
 											int alMinEdges, int alMaxEdges, float afMaxEdgeDistance,
 											float afMaxHeight);
 
-		cAStarHandler* CreateAStarHandler(cAINodeContainer* apContainer);
+	cAStarHandler *CreateAStarHandler(cAINodeContainer *apContainer);
 
-		void AddAINode(const tString &asName, const tString &asType, const cVector3f &avPosition);
-		tTempAiNodeList* GetAINodeList(const tString &asType);
+	void AddAINode(const tString &asName, const tString &asType, const cVector3f &avPosition);
+	tTempAiNodeList *GetAINodeList(const tString &asType);
 
+	/// NODE METHODS //////////////////////
+	// Remove this for the time being, not need it seems.
+	// cNode3D* GetRootNode(){ return mpRootNode; }
 
-		/// NODE METHODS //////////////////////
-		// Remove this for the time being, not need it seems.
-		//cNode3D* GetRootNode(){ return mpRootNode; }
+private:
+	iSaveData *CreateSaveData();
 
-	private:
-		iSaveData* CreateSaveData();
+	// Update
+	void UpdateEntities(float afTimeStep);
+	void UpdateBodies(float afTimeStep);
+	void UpdateParticles(float afTimeStep);
+	void UpdateLights(float afTimeStep);
+	void UpdateSoundEntities(float afTimeStep);
 
-		//Update
-		void UpdateEntities(float afTimeStep);
-		void UpdateBodies(float afTimeStep);
-		void UpdateParticles(float afTimeStep);
-		void UpdateLights(float afTimeStep);
-		void UpdateSoundEntities(float afTimeStep);
+	tString msName;
+	tString msFileName;
+	cGraphics *mpGraphics;
+	cSound *mpSound;
+	cResources *mpResources;
+	cPhysics *mpPhysics;
+	cScene *mpScene;
+	cSystem *mpSystem;
+	cAI *mpAI;
+	cHaptic *mpHaptic;
 
-		tString msName;
-		tString msFileName;
-		cGraphics *mpGraphics;
-		cSound* mpSound;
-		cResources *mpResources;
-		cPhysics *mpPhysics;
-		cScene *mpScene;
-		cSystem *mpSystem;
-		cAI *mpAI;
-		cHaptic *mpHaptic;
+	iPhysicsWorld *mpPhysicsWorld;
+	bool mbAutoDeletePhysicsWorld;
 
-		iPhysicsWorld *mpPhysicsWorld;
-		bool mbAutoDeletePhysicsWorld;
+	cVector3f mvWorldSize;
 
-		cVector3f mvWorldSize;
+	cPortalContainer *mpPortalContainer;
 
-		cPortalContainer* mpPortalContainer;
+	iScript *mpScript;
 
-		iScript *mpScript;
+	tLight3DList mlstLights;
+	tMeshEntityList mlstMeshEntities;
+	tBillboardList mlstBillboards;
+	tBeamList mlstBeams;
+	tParticleSystem3DList mlstParticleSystems;
+	tColliderEntityList mlstColliders;
+	tSoundEntityList mlstSoundEntities;
+	tStartPosEntityList mlstStartPosEntities;
+	tAreaEntityMap m_mapAreaEntities;
 
-		tLight3DList mlstLights;
-		tMeshEntityList mlstMeshEntities;
-		tBillboardList mlstBillboards;
-		tBeamList mlstBeams;
-		tParticleSystem3DList mlstParticleSystems;
-		tColliderEntityList mlstColliders;
-		tSoundEntityList mlstSoundEntities;
-		tStartPosEntityList mlstStartPosEntities;
-		tAreaEntityMap m_mapAreaEntities;
+	tAINodeContainerList mlstAINodeContainers;
+	tAStarHandlerList mlstAStarHandlers;
+	tTempNodeContainerMap m_mapTempNodes;
 
-		tAINodeContainerList mlstAINodeContainers;
-		tAStarHandlerList mlstAStarHandlers;
-		tTempNodeContainerMap m_mapTempNodes;
+	cNode3D *mpRootNode;
 
-		cNode3D* mpRootNode;
-
-		tString msMapName;
-		cColor mAmbientColor;
-	};
-
+	tString msMapName;
+	cColor mAmbientColor;
 };
+
+};     // namespace hpl
 #endif // HPL_WOLRD3D_H

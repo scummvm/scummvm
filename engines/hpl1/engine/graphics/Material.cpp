@@ -39,143 +39,134 @@
  */
 
 #include "hpl1/engine/graphics/Material.h"
+#include "hpl1/engine/graphics/GPUProgram.h"
 #include "hpl1/engine/graphics/Renderer2D.h"
 #include "hpl1/engine/graphics/Renderer3D.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
-#include "hpl1/engine/resources/TextureManager.h"
-#include "hpl1/engine/resources/ImageManager.h"
 #include "hpl1/engine/resources/GpuProgramManager.h"
-#include "hpl1/engine/graphics/GPUProgram.h"
+#include "hpl1/engine/resources/ImageManager.h"
+#include "hpl1/engine/resources/TextureManager.h"
 #include "hpl1/engine/scene/Camera.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
 #include "hpl1/engine/system/String.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	eMaterialQuality iMaterial::mQuality = eMaterialQuality_High;
+eMaterialQuality iMaterial::mQuality = eMaterialQuality_High;
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	iMaterial::iMaterial(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-		cImageManager* apImageManager, cTextureManager *apTextureManager,
-		cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-		eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
-		: iResourceBase(asName, 0)
-	{
-		if(aPicture==eMaterialPicture_Image){
-			mvImage.resize(eMaterialTexture_LastEnum);
-			mvImage.assign(mvImage.size(), NULL);
-		}
-		else {
-			mvTexture.resize(eMaterialTexture_LastEnum);
-			mvTexture.assign(mvTexture.size(), NULL);
-		}
-
-		mType = eMaterialType_Null;
-		mPicture = aPicture;
-
-		mpLowLevelGraphics = apLowLevelGraphics;
-		mpImageManager = apImageManager;
-		mpTextureManager = apTextureManager;
-		mpRenderer = apRenderer;
-		mpRenderer3D = apRenderer3D;
-		mpRenderSettings = mpRenderer3D->GetRenderSettings();
-		mpProgramManager = apProgramManager;
-
-		mbUsesLights = false;
-		mbIsTransperant = false;
-		mbIsGlowing = false;
-		mbHasAlpha = false;
-		mbDepthTest = true;
-		mfValue = 1;
-
-		for(int i=0;i<2;i++)
-			for(int j=0;j<kMaxProgramNum;j++) mpProgram[i][j]=NULL;
-
-		mlPassCount=0;
-
-		mlId = -1;
+iMaterial::iMaterial(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+					 cImageManager *apImageManager, cTextureManager *apTextureManager,
+					 cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+					 eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
+	: iResourceBase(asName, 0) {
+	if (aPicture == eMaterialPicture_Image) {
+		mvImage.resize(eMaterialTexture_LastEnum);
+		mvImage.assign(mvImage.size(), NULL);
+	} else {
+		mvTexture.resize(eMaterialTexture_LastEnum);
+		mvTexture.assign(mvTexture.size(), NULL);
 	}
 
-	iMaterial::~iMaterial()
-	{
-		int i;
+	mType = eMaterialType_Null;
+	mPicture = aPicture;
 
-		for(i=0;i<(int)mvImage.size();i++){
-			if(mvImage[i])
-				mpImageManager->Destroy(mvImage[i]);
-		}
-		for(i=0;i<(int)mvTexture.size();i++){
-			if(mvTexture[i])
-				mpTextureManager->Destroy(mvTexture[i]);
-		}
+	mpLowLevelGraphics = apLowLevelGraphics;
+	mpImageManager = apImageManager;
+	mpTextureManager = apTextureManager;
+	mpRenderer = apRenderer;
+	mpRenderer3D = apRenderer3D;
+	mpRenderSettings = mpRenderer3D->GetRenderSettings();
+	mpProgramManager = apProgramManager;
 
-		for(i=0;i<2;i++){
-			for(int j=0;j<kMaxProgramNum;j++)
-			{
-				if(mpProgram[i][j])
-					mpProgramManager->Destroy(mpProgram[i][j]);
-			}
-		}
-	}
+	mbUsesLights = false;
+	mbIsTransperant = false;
+	mbIsGlowing = false;
+	mbHasAlpha = false;
+	mbDepthTest = true;
+	mfValue = 1;
 
-	//-----------------------------------------------------------------------
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < kMaxProgramNum; j++)
+			mpProgram[i][j] = NULL;
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
+	mlPassCount = 0;
 
-	//-----------------------------------------------------------------------
-
-	/*void iMaterial::Destroy()
-	{
-
-	}*/
-
-	//-----------------------------------------------------------------------
-
-	iTexture* iMaterial::GetTexture(eMaterialTexture aType)
-	{
-		if(mPicture==eMaterialPicture_Image){
-			if(mvImage[aType]==NULL){
-				Log("2: %d\n", aType);return NULL;
-			}
-			return mvImage[aType]->GetTexture();
-		}
-		else
-		{
-			return mvTexture[aType];
-		}
-	}
-
-	//-----------------------------------------------------------------------
-
-	cRect2f iMaterial::GetTextureOffset(eMaterialTexture aType)
-	{
-		cRect2f SizeRect;
-
-		if(mPicture==eMaterialPicture_Image)
-		{
-			tVertexVec VtxVec = mvImage[aType]->GetVertexVecCopy(0,0);
-
-			SizeRect.x = VtxVec[0].tex.x;
-			SizeRect.y = VtxVec[0].tex.y;
-			SizeRect.w = VtxVec[2].tex.x - VtxVec[0].tex.x;
-			SizeRect.h = VtxVec[2].tex.y - VtxVec[0].tex.y;
-		}
-		else
-		{
-			SizeRect.x=0;SizeRect.y=0;
-			SizeRect.w = 1;//(float) mvTexture[aType]->GetWidth();
-			SizeRect.h = 1;//(float) mvTexture[aType]->GetHeight();
-		}
-
-		return SizeRect;
-	}
-
-
-	//-----------------------------------------------------------------------
+	mlId = -1;
 }
+
+iMaterial::~iMaterial() {
+	int i;
+
+	for (i = 0; i < (int)mvImage.size(); i++) {
+		if (mvImage[i])
+			mpImageManager->Destroy(mvImage[i]);
+	}
+	for (i = 0; i < (int)mvTexture.size(); i++) {
+		if (mvTexture[i])
+			mpTextureManager->Destroy(mvTexture[i]);
+	}
+
+	for (i = 0; i < 2; i++) {
+		for (int j = 0; j < kMaxProgramNum; j++) {
+			if (mpProgram[i][j])
+				mpProgramManager->Destroy(mpProgram[i][j]);
+		}
+	}
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+/*void iMaterial::Destroy()
+{
+
+}*/
+
+//-----------------------------------------------------------------------
+
+iTexture *iMaterial::GetTexture(eMaterialTexture aType) {
+	if (mPicture == eMaterialPicture_Image) {
+		if (mvImage[aType] == NULL) {
+			Log("2: %d\n", aType);
+			return NULL;
+		}
+		return mvImage[aType]->GetTexture();
+	} else {
+		return mvTexture[aType];
+	}
+}
+
+//-----------------------------------------------------------------------
+
+cRect2f iMaterial::GetTextureOffset(eMaterialTexture aType) {
+	cRect2f SizeRect;
+
+	if (mPicture == eMaterialPicture_Image) {
+		tVertexVec VtxVec = mvImage[aType]->GetVertexVecCopy(0, 0);
+
+		SizeRect.x = VtxVec[0].tex.x;
+		SizeRect.y = VtxVec[0].tex.y;
+		SizeRect.w = VtxVec[2].tex.x - VtxVec[0].tex.x;
+		SizeRect.h = VtxVec[2].tex.y - VtxVec[0].tex.y;
+	} else {
+		SizeRect.x = 0;
+		SizeRect.y = 0;
+		SizeRect.w = 1; //(float) mvTexture[aType]->GetWidth();
+		SizeRect.h = 1; //(float) mvTexture[aType]->GetHeight();
+	}
+
+	return SizeRect;
+}
+
+//-----------------------------------------------------------------------
+} // namespace hpl

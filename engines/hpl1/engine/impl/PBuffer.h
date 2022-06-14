@@ -45,7 +45,6 @@
 #include <GL/GLee.h>
 #include <vector>
 
-
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 namespace hpl {
 	class iLowLevelGraphics;
@@ -87,4 +86,3 @@ namespace hpl {
 };
 #endif // HPL_P_BUFFER_H
 #endif
-

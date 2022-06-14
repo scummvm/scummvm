@@ -39,27 +39,25 @@
  */
 
 #include "hpl1/engine/impl/OpenALSoundData.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
 #include "hpl1/engine/impl/OpenALSoundChannel.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cOpenALSoundData::cOpenALSoundData(tString asName, bool abStream) : iSoundData(asName,abStream)
-	{
-		mpSample = NULL;
-		mpStream = NULL;
-//		mpSoundData = NULL;
-	}
+cOpenALSoundData::cOpenALSoundData(tString asName, bool abStream) : iSoundData(asName, abStream) {
+	mpSample = NULL;
+	mpStream = NULL;
+	//		mpSoundData = NULL;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cOpenALSoundData::~cOpenALSoundData()
-	{
+cOpenALSoundData::~cOpenALSoundData() {
 #if 0
   		if (mbStream)
 		{
@@ -72,19 +70,17 @@ namespace hpl {
 				OAL_Sample_Unload ( mpSample );//static_cast<cOAL_Sample*>(mpSoundData) );
 		}
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	bool cOpenALSoundData::CreateFromFile(const tString &asFile)
-	{
+bool cOpenALSoundData::CreateFromFile(const tString &asFile) {
 #if 0
   		int lFlags=0;
 
@@ -129,14 +125,12 @@ namespace hpl {
 		}
 
 #endif
-		return true;
+	return true;
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	iSoundChannel* cOpenALSoundData::CreateChannel(int alPriority)
-	{
+iSoundChannel *cOpenALSoundData::CreateChannel(int alPriority) {
 #if 0
   		//if(mpSoundData==NULL)return NULL;
 		if ( (mpSample == NULL) && (mpStream == NULL) ) return NULL;
@@ -162,13 +156,12 @@ namespace hpl {
 
 		return pSoundChannel;
 #endif
-		return NULL; 
-	}
+	return NULL;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool cOpenALSoundData::IsStereo()
-	{
+bool cOpenALSoundData::IsStereo() {
 #if 0
   		if (mbStream)
 			return (OAL_Stream_GetChannels(mpStream)==2);
@@ -176,10 +169,9 @@ namespace hpl {
 			return (OAL_Sample_GetChannels(mpSample)==2);
 
 #endif
-		return false;
-
-	}
-
-	//-----------------------------------------------------------------------
-
+	return false;
 }
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

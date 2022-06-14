@@ -28,10 +28,10 @@ namespace Hpl1 {
 
 enum Hpl1DebugChannels {
 	kDebugGraphics = 1 << 0,
-	kDebugPath     = 1 << 1,
-	kDebugScan     = 1 << 2,
+	kDebugPath = 1 << 1,
+	kDebugScan = 1 << 2,
 	kDebugFilePath = 1 << 3,
-	kDebugScript   = 1 << 4
+	kDebugScript = 1 << 4
 };
 
 extern const PlainGameDescriptor GAME_NAMES[];
@@ -65,9 +65,9 @@ public:
 
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) override;
 
-	PlainGameList getSupportedGames() const override; 
+	PlainGameList getSupportedGames() const override;
 
-	PlainGameDescriptor findGame(const char *gameid); 
+	PlainGameDescriptor findGame(const char *gameid);
 };
 
 #endif

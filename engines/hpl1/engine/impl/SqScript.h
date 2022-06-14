@@ -41,38 +41,36 @@
 #ifndef HPL_SQ_SCRIPT_H
 #define HPL_SQ_SCRIPT_H
 
-#include "hpl1/engine/system/Script.h"
 #include "hpl1/engine/impl/LowLevelSystemSDL.h"
 #include "hpl1/engine/libraries/angelscript/angelscript.h"
-
+#include "hpl1/engine/system/Script.h"
 
 namespace hpl {
 
-	class cSqScript : public iScript
-	{
-	public:
-		cSqScript(const tString& asName, asIScriptEngine *apScriptEngine,
-					cScriptOutput *apScriptOutput, int alHandle);
-		~cSqScript();
+class cSqScript : public iScript {
+public:
+	cSqScript(const tString &asName, asIScriptEngine *apScriptEngine,
+			  cScriptOutput *apScriptOutput, int alHandle);
+	~cSqScript();
 
-		bool CreateFromFile(const tString& asFileName);
+	bool CreateFromFile(const tString &asFileName);
 
-		int GetFuncHandle(const tString& asFunc);
-		void AddArg(const tString& asArg);
+	int GetFuncHandle(const tString &asFunc);
+	void AddArg(const tString &asArg);
 
-		bool Run(const tString& asFuncLine);
-		bool Run(int alHandle);
+	bool Run(const tString &asFuncLine);
+	bool Run(int alHandle);
 
-	private:
-		asIScriptEngine *mpScriptEngine;
-		cScriptOutput *mpScriptOutput;
+private:
+	asIScriptEngine *mpScriptEngine;
+	cScriptOutput *mpScriptOutput;
 
-		asIScriptContext *mpContext;
+	asIScriptContext *mpContext;
 
-		int mlHandle;
-		tString msModuleName;
+	int mlHandle;
+	tString msModuleName;
 
-		char* LoadCharBuffer(const tString& asFileName, int& alLength);
-	};
+	char *LoadCharBuffer(const tString &asFileName, int &alLength);
 };
+};     // namespace hpl
 #endif // HPL_SCRIPT_H

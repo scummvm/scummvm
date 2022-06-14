@@ -45,36 +45,35 @@
 
 namespace hpl {
 
-	class cGuiSkinFont;
+class cGuiSkinFont;
 
-	class cWidgetImage : public iWidget
-	{
-	public:
-		cWidgetImage(cGuiSet *apSet, cGuiSkin *apSkin);
-		virtual ~cWidgetImage();
+class cWidgetImage : public iWidget {
+public:
+	cWidgetImage(cGuiSet *apSet, cGuiSkin *apSkin);
+	virtual ~cWidgetImage();
 
-		void SetImage(cGuiGfxElement *apGfx);
-		cGuiGfxElement* GetImage(){ return mpGfxImage;}
+	void SetImage(cGuiGfxElement *apGfx);
+	cGuiGfxElement *GetImage() { return mpGfxImage; }
 
-	protected:
-		/////////////////////////
-		// Implemented functions
-		void OnLoadGraphics();
-		void OnChangeSize();
+protected:
+	/////////////////////////
+	// Implemented functions
+	void OnLoadGraphics();
+	void OnChangeSize();
 
-		void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
+	void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
 
-		bool OnMouseMove(cGuiMessageData &aData);
-		bool OnMouseDown(cGuiMessageData &aData);
-		bool OnMouseUp(cGuiMessageData &aData);
-		bool OnMouseEnter(cGuiMessageData &aData);
-		bool OnMouseLeave(cGuiMessageData &aData);
+	bool OnMouseMove(cGuiMessageData &aData);
+	bool OnMouseDown(cGuiMessageData &aData);
+	bool OnMouseUp(cGuiMessageData &aData);
+	bool OnMouseEnter(cGuiMessageData &aData);
+	bool OnMouseLeave(cGuiMessageData &aData);
 
-		/////////////////////////
-		// Data
-		cGuiGfxElement *mpGfxImage;
-		cColor mColor;
-	};
-
+	/////////////////////////
+	// Data
+	cGuiGfxElement *mpGfxImage;
+	cColor mColor;
 };
+
+};     // namespace hpl
 #endif // HPL_WIDGET_IMAGE_H

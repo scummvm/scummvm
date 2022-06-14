@@ -39,9 +39,9 @@
  */
 
 #include "hpl1/engine/impl/LowLevelResourcesSDL.h"
-#include "hpl1/engine/impl/SDLBitmap2D.h"
-#include "hpl1/engine/impl/MeshLoaderMSH.h"
 #include "hpl1/engine/impl/MeshLoaderCollada.h"
+#include "hpl1/engine/impl/MeshLoaderMSH.h"
+#include "hpl1/engine/impl/SDLBitmap2D.h"
 #ifdef INCLUDE_THEORA
 #include "hpl1/engine/impl/VideoStreamTheora.h"
 #endif
@@ -55,40 +55,42 @@
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cLowLevelResourcesSDL::cLowLevelResourcesSDL(cLowLevelGraphicsSDL *apLowLevelGraphics)
-	{
-		mvImageFormats[0] = "BMP";mvImageFormats[1] = "LBM";mvImageFormats[2] = "PCX";
-		mvImageFormats[3] = "GIF";mvImageFormats[4] = "JPEG";mvImageFormats[5] = "PNG";
-		mvImageFormats[6] = "JPG";
-		mvImageFormats[7] = "TGA";mvImageFormats[8] = "TIFF";mvImageFormats[9] = "TIF";
-		mvImageFormats[10] =  "";
+cLowLevelResourcesSDL::cLowLevelResourcesSDL(cLowLevelGraphicsSDL *apLowLevelGraphics) {
+	mvImageFormats[0] = "BMP";
+	mvImageFormats[1] = "LBM";
+	mvImageFormats[2] = "PCX";
+	mvImageFormats[3] = "GIF";
+	mvImageFormats[4] = "JPEG";
+	mvImageFormats[5] = "PNG";
+	mvImageFormats[6] = "JPG";
+	mvImageFormats[7] = "TGA";
+	mvImageFormats[8] = "TIFF";
+	mvImageFormats[9] = "TIF";
+	mvImageFormats[10] = "";
 
-		mpLowLevelGraphics = apLowLevelGraphics;
-	}
+	mpLowLevelGraphics = apLowLevelGraphics;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cLowLevelResourcesSDL::~cLowLevelResourcesSDL()
-	{
+cLowLevelResourcesSDL::~cLowLevelResourcesSDL() {
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHOD
+//////////////////////////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHOD
-	//////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	iBitmap2D* cLowLevelResourcesSDL::LoadBitmap2D(tString asFilePath, tString asType)
-	{
+iBitmap2D *cLowLevelResourcesSDL::LoadBitmap2D(tString asFilePath, tString asType) {
 #if 0
   		tString tType;
 		if(asType != "")
@@ -133,47 +135,42 @@ namespace hpl {
 		pBmp->SetPath(asFilePath);
 		return pBmp;
 #endif
-		return nullptr; 
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cLowLevelResourcesSDL::GetSupportedImageFormats(tStringList &alstFormats)
-	{
-		int lPos = 0;
-
-		while(mvImageFormats[lPos]!="")
-		{
-			alstFormats.push_back(mvImageFormats[lPos]);
-			lPos++;
-		}
-	}
-	//-----------------------------------------------------------------------
-
-	void cLowLevelResourcesSDL::AddMeshLoaders(cMeshLoaderHandler* apHandler)
-	{
-		//apHandler->AddLoader(hplNew( cMeshLoaderFBX,(mpLowLevelGraphics)));
-		apHandler->AddLoader(hplNew( cMeshLoaderMSH,(mpLowLevelGraphics)));
-		apHandler->AddLoader(hplNew( cMeshLoaderCollada,(mpLowLevelGraphics)));
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cLowLevelResourcesSDL::AddVideoLoaders(cVideoManager* apManager)
-	{
-		#ifdef INCLUDE_THORA
-		apManager->AddVideoLoader(hplNew( cVideoStreamTheora_Loader,()));
-		#endif
-	}
-
-	//-----------------------------------------------------------------------
-
-	//This is a windows implementation of this...I think.
-	void cLowLevelResourcesSDL::FindFilesInDir(tWStringList &alstStrings,tWString asDir, tWString asMask)
-	{
-		Platform::FindFileInDir(alstStrings, asDir,asMask);
-	}
-
-	//-----------------------------------------------------------------------
-
+	return nullptr;
 }
+
+//-----------------------------------------------------------------------
+
+void cLowLevelResourcesSDL::GetSupportedImageFormats(tStringList &alstFormats) {
+	int lPos = 0;
+
+	while (mvImageFormats[lPos] != "") {
+		alstFormats.push_back(mvImageFormats[lPos]);
+		lPos++;
+	}
+}
+//-----------------------------------------------------------------------
+
+void cLowLevelResourcesSDL::AddMeshLoaders(cMeshLoaderHandler *apHandler) {
+	// apHandler->AddLoader(hplNew( cMeshLoaderFBX,(mpLowLevelGraphics)));
+	apHandler->AddLoader(hplNew(cMeshLoaderMSH, (mpLowLevelGraphics)));
+	apHandler->AddLoader(hplNew(cMeshLoaderCollada, (mpLowLevelGraphics)));
+}
+
+//-----------------------------------------------------------------------
+
+void cLowLevelResourcesSDL::AddVideoLoaders(cVideoManager *apManager) {
+#ifdef INCLUDE_THORA
+	apManager->AddVideoLoader(hplNew(cVideoStreamTheora_Loader, ()));
+#endif
+}
+
+//-----------------------------------------------------------------------
+
+// This is a windows implementation of this...I think.
+void cLowLevelResourcesSDL::FindFilesInDir(tWStringList &alstStrings, tWString asDir, tWString asMask) {
+	Platform::FindFileInDir(alstStrings, asDir, asMask);
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

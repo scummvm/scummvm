@@ -45,32 +45,31 @@
 
 namespace hpl {
 
-	class cWidgetWindow;
-	class cWidgetLabel;
-	class cWidgetButton;
+class cWidgetWindow;
+class cWidgetLabel;
+class cWidgetButton;
 
-	class cGuiPopUpMessageBox : public iGuiPopUp
-	{
-	public:
-		cGuiPopUpMessageBox(cGuiSet *apSet,
-			const tWString& asLabel, const tWString& asText,
-			const tWString& asButton1, const tWString& asButton2,
-			void *apCallbackObject, tGuiCallbackFunc apCallback);
-		virtual ~cGuiPopUpMessageBox();
+class cGuiPopUpMessageBox : public iGuiPopUp {
+public:
+	cGuiPopUpMessageBox(cGuiSet *apSet,
+						const tWString &asLabel, const tWString &asText,
+						const tWString &asButton1, const tWString &asButton2,
+						void *apCallbackObject, tGuiCallbackFunc apCallback);
+	virtual ~cGuiPopUpMessageBox();
 
-	protected:
-		bool ButtonPress(iWidget* apWidget,cGuiMessageData& aData);
-		kGuiCalllbackDeclarationEnd(ButtonPress);
+protected:
+	bool ButtonPress(iWidget *apWidget, cGuiMessageData &aData);
+	kGuiCalllbackDeclarationEnd(ButtonPress);
 
-		cWidgetWindow *mpWindow;
-		cWidgetButton *mvButtons[2];
-		cWidgetLabel *mpLabel;
+	cWidgetWindow *mpWindow;
+	cWidgetButton *mvButtons[2];
+	cWidgetLabel *mpLabel;
 
-		iWidget *mpPrevAttention;
+	iWidget *mpPrevAttention;
 
-		void * mpCallbackObject;
-		tGuiCallbackFunc mpCallback;
-	};
-
+	void *mpCallbackObject;
+	tGuiCallbackFunc mpCallback;
 };
+
+};     // namespace hpl
 #endif // HPL_GUI_POP_UP_MESSAGE_BOX_H

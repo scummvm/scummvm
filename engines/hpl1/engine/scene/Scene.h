@@ -43,8 +43,8 @@
 
 #include <list>
 
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/game/GameTypes.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 #include "hpl1/engine/game/Updateable.h"
 #include "hpl1/engine/scene/Camera3D.h"
@@ -53,130 +53,128 @@
 
 namespace hpl {
 
-	class cAI;
-	class cGraphics;
-	class cResources;
-	class cSystem;
-	class cSound;
-	class cPhysics;
-	class cHaptic;
-	class cCollider2D;
-	class iCamera;
-	class cCamera2D;
-	class cUpdater;
-	class cWorld3D;
-	class cWorld2D;
+class cAI;
+class cGraphics;
+class cResources;
+class cSystem;
+class cSound;
+class cPhysics;
+class cHaptic;
+class cCollider2D;
+class iCamera;
+class cCamera2D;
+class cUpdater;
+class cWorld3D;
+class cWorld2D;
 
-	typedef std::list<iCamera*> tCameraList;
-	typedef tCameraList::iterator tCameraListIt;
+typedef std::list<iCamera *> tCameraList;
+typedef tCameraList::iterator tCameraListIt;
 
-	typedef std::list<cWorld3D*> tWorld3DList;
-	typedef tWorld3DList::iterator tWorld3DListIt;
+typedef std::list<cWorld3D *> tWorld3DList;
+typedef tWorld3DList::iterator tWorld3DListIt;
 
-	class cScene : public iUpdateable
-	{
-	public:
-		cScene(cGraphics *apGraphics,cResources *apResources, cSound* apSound, cPhysics *apPhysics,
-				cSystem *apSystem, cAI *apAI, cHaptic *apHaptic);
-		~cScene();
+class cScene : public iUpdateable {
+public:
+	cScene(cGraphics *apGraphics, cResources *apResources, cSound *apSound, cPhysics *apPhysics,
+		   cSystem *apSystem, cAI *apAI, cHaptic *apHaptic);
+	~cScene();
 
-		void Reset();
+	void Reset();
 
-		/**
-		* Called by cGame
-		*/
-		void UpdateRenderList(float afFrameTime);
-		/**
-		 * Called by cGame
-		 */
-		void Render(cUpdater* apUpdater, float afFrameTime);
+	/**
+	 * Called by cGame
+	 */
+	void UpdateRenderList(float afFrameTime);
+	/**
+	 * Called by cGame
+	 */
+	void Render(cUpdater *apUpdater, float afFrameTime);
 
-		bool LoadMap2D(tString asFile);
+	bool LoadMap2D(tString asFile);
 
-		void RenderWorld2D(cCamera2D *apCam,cWorld2D* apWorld);
+	void RenderWorld2D(cCamera2D *apCam, cWorld2D *apWorld);
 
-		void Update(float afTimeStep);
+	void Update(float afTimeStep);
 
-		void ClearLoadedMaps(){m_setLoadedMaps.clear();}
-		tStringSet* GetLoadedMapsSet(){ return &m_setLoadedMaps;}
+	void ClearLoadedMaps() { m_setLoadedMaps.clear(); }
+	tStringSet *GetLoadedMapsSet() { return &m_setLoadedMaps; }
 
-		void SetDrawScene(bool abX);
-		bool GetDrawScene(){ return mbDrawScene;}
+	void SetDrawScene(bool abX);
+	bool GetDrawScene() { return mbDrawScene; }
 
-		///// SCRIPT VAR METHODS ////////////////////
+	///// SCRIPT VAR METHODS ////////////////////
 
-		cScriptVar* CreateLocalVar(const tString& asName);
-		cScriptVar* GetLocalVar(const tString& asName);
-		tScriptVarMap* GetLocalVarMap();
-		cScriptVar* CreateGlobalVar(const tString& asName);
-		cScriptVar* GetGlobalVar(const tString& asName);
-		tScriptVarMap* GetGlobalVarMap();
+	cScriptVar *CreateLocalVar(const tString &asName);
+	cScriptVar *GetLocalVar(const tString &asName);
+	tScriptVarMap *GetLocalVarMap();
+	cScriptVar *CreateGlobalVar(const tString &asName);
+	cScriptVar *GetGlobalVar(const tString &asName);
+	tScriptVarMap *GetGlobalVarMap();
 
-		///// CAMERA 2D METHODS ////////////////////
+	///// CAMERA 2D METHODS ////////////////////
 
+	cCamera2D *CreateCamera2D(unsigned int alW, unsigned int alH);
+	cCamera3D *CreateCamera3D(eCameraMoveMode aMoveMode);
 
-		cCamera2D* CreateCamera2D(unsigned int alW,unsigned int alH);
-		cCamera3D* CreateCamera3D(eCameraMoveMode aMoveMode);
+	void DestroyCamera(iCamera *apCam);
 
-		void DestroyCamera(iCamera* apCam);
+	/**
+	 * This sets the current camera, depending on this one is 2D or 3D a 2D or 3D world will be rendered.
+	 * \param pCam
+	 */
+	void SetCamera(iCamera *pCam);
+	iCamera *GetCamera() { return mpActiveCamera; }
+	void SetCameraPosition(const cVector3f &avPos);
+	cVector3f GetCameraPosition();
 
-		/**
-		 * This sets the current camera, depending on this one is 2D or 3D a 2D or 3D world will be rendered.
-		 * \param pCam
-		 */
-		void SetCamera(iCamera* pCam);
-		iCamera* GetCamera(){ return mpActiveCamera; }
-		void SetCameraPosition(const cVector3f& avPos);
-		cVector3f GetCameraPosition();
+	void SetCameraIsListener(bool abX) { mbCameraIsListener = abX; }
 
-		void SetCameraIsListener(bool abX){ mbCameraIsListener = abX; }
+	///// WORLD METHODS ////////////////////
 
-		///// WORLD METHODS ////////////////////
+	cWorld3D *LoadWorld3D(const tString &asFile, bool abLoadScript, tWorldLoadFlag aFlags);
+	cWorld3D *CreateWorld3D(const tString &asName);
+	void DestroyWorld3D(cWorld3D *apWorld);
 
-		cWorld3D* LoadWorld3D(const tString& asFile, bool abLoadScript, tWorldLoadFlag aFlags);
-		cWorld3D* CreateWorld3D(const tString& asName);
-		void DestroyWorld3D(cWorld3D* apWorld);
+	void SetWorld3D(cWorld3D *apWorld);
+	cWorld3D *GetWorld3D() { return mpCurrentWorld3D; }
 
-		void SetWorld3D(cWorld3D* apWorld);
-		cWorld3D* GetWorld3D(){ return mpCurrentWorld3D;}
+	bool HasLoadedWorld(const tString &asFile);
 
-		bool HasLoadedWorld(const tString &asFile);
+	cWorld2D *GetWorld2D() { return mpCurrentWorld2D; }
+	cCollider2D *GetCollider2D() { return mpCollider2D; }
 
-		cWorld2D* GetWorld2D(){ return mpCurrentWorld2D;}
-		cCollider2D* GetCollider2D(){return mpCollider2D;}
+	void SetUpdateMap(bool abX) { mbUpdateMap = abX; }
+	bool GetUpdateMap() { return mbUpdateMap; }
 
-		void SetUpdateMap(bool abX){ mbUpdateMap = abX;}
-		bool GetUpdateMap(){return mbUpdateMap;}
+	cSystem *GetSystem() { return mpSystem; }
 
-		cSystem* GetSystem(){ return mpSystem;}
+private:
+	cGraphics *mpGraphics;
+	cResources *mpResources;
+	cSound *mpSound;
+	cPhysics *mpPhysics;
+	cSystem *mpSystem;
+	cAI *mpAI;
+	cHaptic *mpHaptic;
 
-	private:
-		cGraphics *mpGraphics;
-		cResources *mpResources;
-		cSound *mpSound;
-		cPhysics *mpPhysics;
-		cSystem *mpSystem;
-		cAI *mpAI;
-		cHaptic *mpHaptic;
+	cCollider2D *mpCollider2D;
 
-		cCollider2D *mpCollider2D;
+	bool mbDrawScene;
+	bool mbUpdateMap;
 
-		bool mbDrawScene;
-		bool mbUpdateMap;
+	tWorld3DList mlstWorld3D;
+	cWorld3D *mpCurrentWorld3D;
 
-		tWorld3DList mlstWorld3D;
-		cWorld3D* mpCurrentWorld3D;
+	cWorld2D *mpCurrentWorld2D;
+	tCameraList mlstCamera;
+	iCamera *mpActiveCamera;
+	bool mbCameraIsListener;
 
-		cWorld2D* mpCurrentWorld2D;
-		tCameraList mlstCamera;
-		iCamera *mpActiveCamera;
-		bool mbCameraIsListener;
+	tScriptVarMap m_mapLocalVars;
+	tScriptVarMap m_mapGlobalVars;
 
-		tScriptVarMap m_mapLocalVars;
-		tScriptVarMap m_mapGlobalVars;
-
-		tStringSet m_setLoadedMaps;
-	};
-
+	tStringSet m_setLoadedMaps;
 };
+
+};     // namespace hpl
 #endif // HPL_SCENE_H

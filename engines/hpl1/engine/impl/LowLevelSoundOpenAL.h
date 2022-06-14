@@ -45,57 +45,52 @@
 
 class cOAL_Effect_Reverb;
 
+namespace hpl {
 
-namespace hpl
-{
+class cLowLevelSoundOpenAL : public iLowLevelSound {
+public:
+	cLowLevelSoundOpenAL();
+	~cLowLevelSoundOpenAL();
 
-	class cLowLevelSoundOpenAL : public iLowLevelSound
-	{
-	public:
-		cLowLevelSoundOpenAL();
-		~cLowLevelSoundOpenAL();
+	void GetSupportedFormats(tStringList &alstFormats);
 
-		void GetSupportedFormats(tStringList &alstFormats);
+	iSoundData *LoadSoundData(const tString &asName, const tString &asFilePath,
+							  const tString &asType, bool abStream, bool abLoopStream);
 
-		iSoundData* LoadSoundData(const tString& asName,const tString& asFilePath,
-									const tString& asType, bool abStream,bool abLoopStream);
+	void UpdateSound(float afTimeStep);
 
-		void UpdateSound(float afTimeStep);
+	void SetListenerAttributes(const cVector3f &avPos, const cVector3f &avVel,
+							   const cVector3f &avForward, const cVector3f &avUp);
+	void SetListenerPosition(const cVector3f &avPos);
 
-		void SetListenerAttributes (const cVector3f &avPos,const cVector3f &avVel,
-								const cVector3f &avForward,const cVector3f &avUp);
-		void SetListenerPosition(const cVector3f &avPos);
+	void SetSetRolloffFactor(float afFactor);
 
-		void SetSetRolloffFactor(float afFactor);
+	void SetListenerAttenuation(bool abEnabled);
 
-		void SetListenerAttenuation (bool abEnabled);
+	//		void LogSoundStatus();
 
-//		void LogSoundStatus();
+	void Init(bool abUseHardware, bool abForceGeneric, bool abUseEnvAudio, int alMaxChannels,
+			  int alStreamUpdateFreq, bool abUseThreading, bool abUseVoiceManagement,
+			  int alMaxMonoSourceHint, int alMaxStereoSourceHint,
+			  int alStreamingBufferSize, int alStreamingBufferCount, bool abEnableLowLevelLog,
+			  tString asDeviceName);
 
-		void Init ( bool abUseHardware, bool abForceGeneric, bool abUseEnvAudio, int alMaxChannels,
-					int alStreamUpdateFreq, bool abUseThreading, bool abUseVoiceManagement,
-					int alMaxMonoSourceHint, int alMaxStereoSourceHint,
-					int alStreamingBufferSize, int alStreamingBufferCount, bool abEnableLowLevelLog,
-					tString asDeviceName
-					);
+	void SetVolume(float afVolume);
 
-		void SetVolume(float afVolume);
+	void SetEnvVolume(float afEnvVolume);
 
-		void SetEnvVolume( float afEnvVolume );
+	iSoundEnvironment *LoadSoundEnvironment(const tString &asFilePath);
+	void SetSoundEnvironment(iSoundEnvironment *apSoundEnv);
+	void FadeSoundEnvironment(iSoundEnvironment *apSourceSoundEnv, iSoundEnvironment *apDestSoundEnv, float afT);
 
-		iSoundEnvironment* LoadSoundEnvironment (const tString& asFilePath);
-		void SetSoundEnvironment ( iSoundEnvironment* apSoundEnv );
-		void FadeSoundEnvironment( iSoundEnvironment* apSourceSoundEnv, iSoundEnvironment* apDestSoundEnv, float afT );
+private:
+	tString mvFormats[30];
+	bool mbLogSounds;
+	bool mbInitialized;
+	int mlEffectSlotId;
+	bool mbNullEffectAttached;
 
-	private:
-		tString mvFormats[30];
-		bool	mbLogSounds;
-		bool	mbInitialized;
-		int		mlEffectSlotId;
-		bool	mbNullEffectAttached;
-
-		cOAL_Effect_Reverb* mpEffect;
-	};
+	cOAL_Effect_Reverb *mpEffect;
 };
+};     // namespace hpl
 #endif // HPL_LOWLEVELSOUND_OPENAL_H
-

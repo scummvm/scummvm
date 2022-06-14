@@ -41,76 +41,73 @@
 #ifndef HPL_LOWLEVELSYSTEM_SDL_H
 #define HPL_LOWLEVELSYSTEM_SDL_H
 
-#include "hpl1/engine/system/LowLevelSystem.h"
 #include "hpl1/engine/libraries/angelscript/angelscript.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
 #include <stdio.h>
 
 namespace hpl {
 
-	//------------------------------------------------------
+//------------------------------------------------------
 
-	class cLogWriter
-	{
-	public:
-		cLogWriter(const tWString& asDefaultFile);
-		~cLogWriter();
+class cLogWriter {
+public:
+	cLogWriter(const tWString &asDefaultFile);
+	~cLogWriter();
 
-		void Write(const tString& asMessage);
-		void Clear();
+	void Write(const tString &asMessage);
+	void Clear();
 
-		void SetFileName(const tWString& asFile);
+	void SetFileName(const tWString &asFile);
 
-	private:
-		void ReopenFile();
-		//--file handeling--
-		FILE *mpFile;
-		tWString msFileName;
-	};
-
-	//------------------------------------------------------
-
-	class cScriptOutput// : public  asIOutputStream
-	{
-	public:
-		cScriptOutput() : msMessage("") {}
-		~cScriptOutput(){}
-
-		void AddMessage(const asSMessageInfo *msg);
-		void Display();
-		void Clear();
-
-	private:
-		tString msMessage;
-	};
-
-	//------------------------------------------------------
-
-
-	class cLowLevelSystemSDL : public iLowLevelSystem
-	{
-	public:
-		cLowLevelSystemSDL();
-		~cLowLevelSystemSDL();
-
-		void SetWindowCaption(const tString &asName);
-
-		unsigned long GetTime();
-		cDate GetDate();
-
-		iScript* CreateScript(const tString& asName);
-
-		bool AddScriptFunc(const tString& asFuncDecl, void* pFunc, int callConv);
-		bool AddScriptVar(const tString& asVarDecl, void *pVar);
-
-		void Sleep ( const unsigned int alMillisecs );
-
-	private:
-		asIScriptEngine *mpScriptEngine;
-		cScriptOutput *mpScriptOutput;
-		int mlHandleCount;
-	};
-
-	//------------------------------------------------------
-
+private:
+	void ReopenFile();
+	//--file handeling--
+	FILE *mpFile;
+	tWString msFileName;
 };
+
+//------------------------------------------------------
+
+class cScriptOutput // : public  asIOutputStream
+{
+public:
+	cScriptOutput() : msMessage("") {}
+	~cScriptOutput() {}
+
+	void AddMessage(const asSMessageInfo *msg);
+	void Display();
+	void Clear();
+
+private:
+	tString msMessage;
+};
+
+//------------------------------------------------------
+
+class cLowLevelSystemSDL : public iLowLevelSystem {
+public:
+	cLowLevelSystemSDL();
+	~cLowLevelSystemSDL();
+
+	void SetWindowCaption(const tString &asName);
+
+	unsigned long GetTime();
+	cDate GetDate();
+
+	iScript *CreateScript(const tString &asName);
+
+	bool AddScriptFunc(const tString &asFuncDecl, void *pFunc, int callConv);
+	bool AddScriptVar(const tString &asVarDecl, void *pVar);
+
+	void Sleep(const unsigned int alMillisecs);
+
+private:
+	asIScriptEngine *mpScriptEngine;
+	cScriptOutput *mpScriptOutput;
+	int mlHandleCount;
+};
+
+//------------------------------------------------------
+
+};     // namespace hpl
 #endif // HPL_LOWLEVELSYSTEM_SDL_H

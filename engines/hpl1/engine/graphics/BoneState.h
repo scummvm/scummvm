@@ -45,30 +45,29 @@
 
 namespace hpl {
 
-	class iPhysicsBody;
+class iPhysicsBody;
 
-	class cBoneState : public cNode3D
-	{
-	public:
-		cBoneState(const tString &asName, bool abAutoDeleteChildren);
+class cBoneState : public cNode3D {
+public:
+	cBoneState(const tString &asName, bool abAutoDeleteChildren);
 
-		void SetBody(iPhysicsBody *apBody);
-		iPhysicsBody* GetBody();
+	void SetBody(iPhysicsBody *apBody);
+	iPhysicsBody *GetBody();
 
-		void SetColliderBody(iPhysicsBody *apBody);
-		iPhysicsBody* GetColliderBody();
+	void SetColliderBody(iPhysicsBody *apBody);
+	iPhysicsBody *GetColliderBody();
 
-		void SetBodyMatrix(const cMatrixf &a_mtxBody);
-		const cMatrixf& GetBodyMatrix();
-		const cMatrixf& GetInvBodyMatrix();
+	void SetBodyMatrix(const cMatrixf &a_mtxBody);
+	const cMatrixf &GetBodyMatrix();
+	const cMatrixf &GetInvBodyMatrix();
 
-	private:
-		iPhysicsBody *mpBody;
-		cMatrixf m_mtxBody;
-		cMatrixf m_mtxInvBody;
+private:
+	iPhysicsBody *mpBody;
+	cMatrixf m_mtxBody;
+	cMatrixf m_mtxInvBody;
 
-		iPhysicsBody *mpColliderBody;
-	};
-
+	iPhysicsBody *mpColliderBody;
 };
+
+};     // namespace hpl
 #endif // HPL_BONE_STATE_H

@@ -41,13 +41,13 @@
 #ifndef HPL_MESH_H
 #define HPL_MESH_H
 
-#include <vector>
 #include <map>
+#include <vector>
 
-#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
-#include "hpl1/engine/system/SystemTypes.h"
+#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/resources/ResourceBase.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 #include "hpl1/engine/physics/CollideShape.h"
 #include "hpl1/engine/physics/PhysicsJoint.h"
@@ -56,320 +56,311 @@
 
 namespace hpl {
 
-	class cMaterialManager;
-	class cAnimationManager;
-	class cSubMesh;
-	class cMeshEntity;
-	class cSkeleton;
-	class cAnimation;
-	class cNode3D;
-	class iCollideShape;
-	class iPhysicsWorld;
-	class iPhysicsBody;
-	class iPhysicsJoint;
-	class cBillboard;
-	class cBeam;
-	class cParticleSystem3D;
-	class cSoundEntity;
-	class cWorld3D;
+class cMaterialManager;
+class cAnimationManager;
+class cSubMesh;
+class cMeshEntity;
+class cSkeleton;
+class cAnimation;
+class cNode3D;
+class iCollideShape;
+class iPhysicsWorld;
+class iPhysicsBody;
+class iPhysicsJoint;
+class cBillboard;
+class cBeam;
+class cParticleSystem3D;
+class cSoundEntity;
+class cWorld3D;
 
-	//--------------------------------------------------
+//--------------------------------------------------
 
-	typedef std::vector<cAnimation*> tAnimationVec;
-	typedef tAnimationVec::iterator tAnimationVecIt;
+typedef std::vector<cAnimation *> tAnimationVec;
+typedef tAnimationVec::iterator tAnimationVecIt;
 
-	typedef std::map<tString, int> tAnimationIndexMap;
-	typedef tAnimationIndexMap::iterator tAnimationIndexMapIt;
+typedef std::map<tString, int> tAnimationIndexMap;
+typedef tAnimationIndexMap::iterator tAnimationIndexMapIt;
 
-	typedef std::vector<cSubMesh*> tSubMeshVec;
-	typedef std::vector<cSubMesh*>::iterator tSubMeshVecIt;
+typedef std::vector<cSubMesh *> tSubMeshVec;
+typedef std::vector<cSubMesh *>::iterator tSubMeshVecIt;
 
-	typedef std::multimap<tString,cSubMesh*> tSubMeshMap;
-	typedef tSubMeshMap::iterator tSubMeshMapIt;
+typedef std::multimap<tString, cSubMesh *> tSubMeshMap;
+typedef tSubMeshMap::iterator tSubMeshMapIt;
 
-	typedef std::vector<cNode3D*> tNode3DVec;
-	typedef tNode3DVec::iterator tNode3DVecIt;
+typedef std::vector<cNode3D *> tNode3DVec;
+typedef tNode3DVec::iterator tNode3DVecIt;
 
-	//--------------------------------------------------
+//--------------------------------------------------
 
-	class cMeshCollider
-	{
-	public:
-		tString msGroup;
+class cMeshCollider {
+public:
+	tString msGroup;
 
-		eCollideShapeType mType;
-		cVector3f mvSize;
-		cMatrixf m_mtxOffset;
-	};
+	eCollideShapeType mType;
+	cVector3f mvSize;
+	cMatrixf m_mtxOffset;
+};
 
-	typedef std::vector<cMeshCollider*> tMeshColliderVec;
-	typedef tMeshColliderVec::iterator tMeshColliderVecIt;
+typedef std::vector<cMeshCollider *> tMeshColliderVec;
+typedef tMeshColliderVec::iterator tMeshColliderVecIt;
 
-	//--------------------------------------------------
+//--------------------------------------------------
 
-	class cMeshJoint
-	{
-	public:
-		ePhysicsJointType mType;
+class cMeshJoint {
+public:
+	ePhysicsJointType mType;
 
-		tString msName;
+	tString msName;
 
-		bool mbCollide;
+	bool mbCollide;
 
-		cVector3f mvPivot;
-		cVector3f mvPinDir;
+	cVector3f mvPivot;
+	cVector3f mvPinDir;
 
-		float mfMax;
-		float mfMin;
+	float mfMax;
+	float mfMin;
 
-		tString msChildBody;
-		tString msParentBody;
-	};
+	tString msChildBody;
+	tString msParentBody;
+};
 
-	typedef std::vector<cMeshJoint*> tMeshJointVec;
-	typedef tMeshJointVec::iterator tMeshJointVecIt;
+typedef std::vector<cMeshJoint *> tMeshJointVec;
+typedef tMeshJointVec::iterator tMeshJointVecIt;
 
-	//--------------------------------------------------
+//--------------------------------------------------
 
-	class cMeshLight
-	{
-	public:
-		tString msParent;
-		tString msFile;
-		tString msName;
+class cMeshLight {
+public:
+	tString msParent;
+	tString msFile;
+	tString msName;
 
-		eLight3DType mType;
-		cMatrixf m_mtxTransform;
-		cColor mColor;
-		float mfRadius;
-		float mfFOV;
-		bool mbCastShadows;
-	};
+	eLight3DType mType;
+	cMatrixf m_mtxTransform;
+	cColor mColor;
+	float mfRadius;
+	float mfFOV;
+	bool mbCastShadows;
+};
 
-	typedef std::vector<cMeshLight*> tMeshLightVec;
-	typedef tMeshLightVec::iterator tMeshLightVecIt;
+typedef std::vector<cMeshLight *> tMeshLightVec;
+typedef tMeshLightVec::iterator tMeshLightVecIt;
 
-	//--------------------------------------------------
+//--------------------------------------------------
 
+class cMeshBeam {
+public:
+	tString msFile;
+	tString msName;
 
-	class cMeshBeam
-	{
-	public:
-		tString msFile;
-		tString msName;
+	tString msStartParent;
+	cVector3f mvStartPosition;
 
-		tString msStartParent;
-		cVector3f mvStartPosition;
+	tString msEndParent;
+	cVector3f mvEndPosition;
+};
 
-		tString msEndParent;
-		cVector3f mvEndPosition;
-	};
+typedef std::vector<cMeshBeam *> tMeshBeamVec;
+typedef tMeshBeamVec::iterator tMeshBeamVecIt;
 
-	typedef std::vector<cMeshBeam*> tMeshBeamVec;
-	typedef tMeshBeamVec::iterator tMeshBeamVecIt;
+//--------------------------------------------------
 
-	//--------------------------------------------------
+class cMeshBillboard {
+public:
+	tString msParent;
+	tString msFile;
+	tString msName;
 
-	class cMeshBillboard
-	{
-	public:
-		tString msParent;
-		tString msFile;
-		tString msName;
+	cVector2f mvSize;
+	cVector3f mvPosition;
+	cVector3f mvAxis;
+	float mfOffset;
+};
 
-		cVector2f mvSize;
-		cVector3f mvPosition;
-		cVector3f mvAxis;
-		float mfOffset;
-	};
+typedef std::vector<cMeshBillboard *> tMeshBillboardVec;
+typedef tMeshBillboardVec::iterator tMeshBillboardVecIt;
 
-	typedef std::vector<cMeshBillboard*> tMeshBillboardVec;
-	typedef tMeshBillboardVec::iterator tMeshBillboardVecIt;
+//--------------------------------------------------
 
-	//--------------------------------------------------
+class cMeshParticleSystem {
+public:
+	tString msParent;
+	tString msType;
+	tString msName;
 
-	class cMeshParticleSystem
-	{
-	public:
-		tString msParent;
-		tString msType;
-		tString msName;
+	cMatrixf m_mtxTransform;
+	cVector3f mvSize;
+};
 
-		cMatrixf m_mtxTransform;
-		cVector3f mvSize;
-	};
+typedef std::vector<cMeshParticleSystem *> tMeshParticleSystemVec;
+typedef tMeshParticleSystemVec::iterator tMeshParticleSystemVecIt;
 
-	typedef std::vector<cMeshParticleSystem*> tMeshParticleSystemVec;
-	typedef tMeshParticleSystemVec::iterator tMeshParticleSystemVecIt;
+//--------------------------------------------------
 
-	//--------------------------------------------------
+class cMeshSoundEntity {
+public:
+	tString msParent;
+	tString msType;
+	tString msName;
 
-	class cMeshSoundEntity
-	{
-	public:
-		tString msParent;
-		tString msType;
-		tString msName;
+	cVector3f mvPosition;
+};
 
-		cVector3f mvPosition;
-	};
+typedef std::vector<cMeshSoundEntity *> tMeshSoundEntityVec;
+typedef tMeshSoundEntityVec::iterator tMeshSoundEntityVecIt;
 
-	typedef std::vector<cMeshSoundEntity*> tMeshSoundEntityVec;
-	typedef tMeshSoundEntityVec::iterator tMeshSoundEntityVecIt;
+//--------------------------------------------------
 
-	//--------------------------------------------------
+class cMeshReference {
+public:
+	tString msParent;
+	tString msName;
+	tString msFile;
 
-	class cMeshReference
-	{
-	public:
-		tString msParent;
-		tString msName;
-		tString msFile;
+	cMatrixf m_mtxTransform;
+};
 
-		cMatrixf m_mtxTransform;
-	};
+typedef std::vector<cMeshReference *> tMeshReferenceVec;
+typedef tMeshReferenceVec::iterator tMeshReferenceVecIt;
 
-	typedef std::vector<cMeshReference*> tMeshReferenceVec;
-	typedef tMeshReferenceVec::iterator tMeshReferenceVecIt;
+//--------------------------------------------------
 
-	//--------------------------------------------------
-
-	class cMesh : public iResourceBase
-	{
+class cMesh : public iResourceBase {
 	friend class cSubMesh;
 	friend class cMeshEntity;
-	public:
-		cMesh(const tString asName, cMaterialManager* apMaterialManager,
-				cAnimationManager * apAnimationManager);
-		~cMesh();
 
-		bool CreateFromFile(const tString asFile);
+public:
+	cMesh(const tString asName, cMaterialManager *apMaterialManager,
+		  cAnimationManager *apAnimationManager);
+	~cMesh();
 
-		cSubMesh* CreateSubMesh(const tString &asName);
+	bool CreateFromFile(const tString asFile);
 
-		cSubMesh* GetSubMesh(unsigned int alIdx);
-		cSubMesh* GetSubMeshName(const tString &asName);
-		int GetSubMeshNum();
+	cSubMesh *CreateSubMesh(const tString &asName);
 
-		void SetSkeleton(cSkeleton* apSkeleton);
-		cSkeleton* GetSkeleton();
+	cSubMesh *GetSubMesh(unsigned int alIdx);
+	cSubMesh *GetSubMeshName(const tString &asName);
+	int GetSubMeshNum();
 
-		void AddAnimation(cAnimation *apAnimation);
+	void SetSkeleton(cSkeleton *apSkeleton);
+	cSkeleton *GetSkeleton();
 
-		cAnimation* GetAnimation(int alIndex);
-		cAnimation* GetAnimationFromName(const tString& asName);
-		int GetAnimationIndex(const tString& asName);
+	void AddAnimation(cAnimation *apAnimation);
 
-		void ClearAnimations(bool abDeleteAll);
+	cAnimation *GetAnimation(int alIndex);
+	cAnimation *GetAnimationFromName(const tString &asName);
+	int GetAnimationIndex(const tString &asName);
 
-		int GetAnimationNum();
+	void ClearAnimations(bool abDeleteAll);
 
-		void SetupBones();
+	int GetAnimationNum();
 
-		//Joints
-		cMeshJoint* CreatePhysicsJoint(ePhysicsJointType);
-		cMeshJoint* GetPhysicsJoint(int alIdx);
-		int GetPhysicsJointNum();
-		iPhysicsJoint *CreateJointInWorld(const tString& sNamePrefix, cMeshJoint* apMeshJoint,
-											iPhysicsBody *apParentBody,iPhysicsBody *apChildBody,
-											const cMatrixf &a_mtxOffset,iPhysicsWorld *apWorld);
+	void SetupBones();
 
-		void CreateNodeBodies(iPhysicsBody** apRootBodyPtr,std::vector<iPhysicsBody*> *apSubBodyVec,
-								cMeshEntity *apEntity,iPhysicsWorld *apWorld,
-								const cMatrixf &a_mtxTransform);
+	// Joints
+	cMeshJoint *CreatePhysicsJoint(ePhysicsJointType);
+	cMeshJoint *GetPhysicsJoint(int alIdx);
+	int GetPhysicsJointNum();
+	iPhysicsJoint *CreateJointInWorld(const tString &sNamePrefix, cMeshJoint *apMeshJoint,
+									  iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
+									  const cMatrixf &a_mtxOffset, iPhysicsWorld *apWorld);
 
-		void CreateJointsAndBodies(std::vector<iPhysicsBody*> *apBodyVec,cMeshEntity *apEntity,
-									std::vector<iPhysicsJoint*> *apJointVec,
-									const cMatrixf &a_mtxOffset, iPhysicsWorld *apWorld);
+	void CreateNodeBodies(iPhysicsBody **apRootBodyPtr, std::vector<iPhysicsBody *> *apSubBodyVec,
+						  cMeshEntity *apEntity, iPhysicsWorld *apWorld,
+						  const cMatrixf &a_mtxTransform);
 
-		bool HasSeveralBodies();
+	void CreateJointsAndBodies(std::vector<iPhysicsBody *> *apBodyVec, cMeshEntity *apEntity,
+							   std::vector<iPhysicsJoint *> *apJointVec,
+							   const cMatrixf &a_mtxOffset, iPhysicsWorld *apWorld);
 
-		//Colliders
-		cMeshCollider* CreateCollider(eCollideShapeType aType);
-		cMeshCollider* GetCollider(int alIdx);
-		int GetColliderNum();
-		iCollideShape* CreateCollideShape(iPhysicsWorld *apWorld);
-		iCollideShape* CreateCollideShapeFromCollider(cMeshCollider *pCollider, iPhysicsWorld *apWorld);
+	bool HasSeveralBodies();
 
-		//Lights
-		cMeshLight* CreateLight(eLight3DType aType);
-		cMeshLight* GetLight(int alIdx);
-		int GetLightNum();
-		iLight3D* CreateLightInWorld(const tString& sNamePrefix, cMeshLight* apMeshLight,
-											cMeshEntity *apMeshEntity, cWorld3D *apWorld);
+	// Colliders
+	cMeshCollider *CreateCollider(eCollideShapeType aType);
+	cMeshCollider *GetCollider(int alIdx);
+	int GetColliderNum();
+	iCollideShape *CreateCollideShape(iPhysicsWorld *apWorld);
+	iCollideShape *CreateCollideShapeFromCollider(cMeshCollider *pCollider, iPhysicsWorld *apWorld);
 
-		//Billboards
-		cMeshBillboard* CreateBillboard();
-		cMeshBillboard* GetBillboard(int alIdx);
-		int GetBillboardNum();
-		cBillboard* CreateBillboardInWorld(const tString& sNamePrefix, cMeshBillboard* apMeshBillboard,
-											cMeshEntity *apMeshEntity, cWorld3D *apWorld);
+	// Lights
+	cMeshLight *CreateLight(eLight3DType aType);
+	cMeshLight *GetLight(int alIdx);
+	int GetLightNum();
+	iLight3D *CreateLightInWorld(const tString &sNamePrefix, cMeshLight *apMeshLight,
+								 cMeshEntity *apMeshEntity, cWorld3D *apWorld);
 
-		//Beams
-		cMeshBeam* CreateBeam();
-		cMeshBeam* GetBeam(int alIdx);
-		int GetBeamNum();
-		cBeam* CreateBeamInWorld(	const tString& sNamePrefix, cMeshBeam* apMeshBeam,
-									cMeshEntity *apMeshEntity, cWorld3D *apWorld);
+	// Billboards
+	cMeshBillboard *CreateBillboard();
+	cMeshBillboard *GetBillboard(int alIdx);
+	int GetBillboardNum();
+	cBillboard *CreateBillboardInWorld(const tString &sNamePrefix, cMeshBillboard *apMeshBillboard,
+									   cMeshEntity *apMeshEntity, cWorld3D *apWorld);
 
-		//Particle systems
-		cMeshParticleSystem* CreateParticleSystem();
-		cMeshParticleSystem* GetParticleSystem(int alIdx);
-		int GetParticleSystemNum();
-		cParticleSystem3D* CreateParticleSystemInWorld(const tString& sNamePrefix, cMeshParticleSystem* apMeshPS,
-											cMeshEntity *apMeshEntity, cWorld3D *apWorld);
+	// Beams
+	cMeshBeam *CreateBeam();
+	cMeshBeam *GetBeam(int alIdx);
+	int GetBeamNum();
+	cBeam *CreateBeamInWorld(const tString &sNamePrefix, cMeshBeam *apMeshBeam,
+							 cMeshEntity *apMeshEntity, cWorld3D *apWorld);
 
-		//References
-		cMeshReference* CreateReference();
-		cMeshReference* GetReference(int alIdx);
-		int GetReferenceNum();
-		iEntity3D* CreateReferenceInWorld(const tString& sNamePrefix, cMeshReference* apMeshRef,
-														cMeshEntity *apMeshEntity, cWorld3D *apWorld,
-														const cMatrixf &a_mtxOffset);
+	// Particle systems
+	cMeshParticleSystem *CreateParticleSystem();
+	cMeshParticleSystem *GetParticleSystem(int alIdx);
+	int GetParticleSystemNum();
+	cParticleSystem3D *CreateParticleSystemInWorld(const tString &sNamePrefix, cMeshParticleSystem *apMeshPS,
+												   cMeshEntity *apMeshEntity, cWorld3D *apWorld);
 
-		//Sound entities
-		cMeshSoundEntity* CreateSoundEntity();
-		cMeshSoundEntity* GetSoundEntity(int alIdx);
-		int GetSoundEntityNum();
-		cSoundEntity* CreateSoundEntityInWorld(const tString& sNamePrefix, cMeshSoundEntity* apMeshSound,
-													cMeshEntity *apMeshEntity, cWorld3D *apWorld);
+	// References
+	cMeshReference *CreateReference();
+	cMeshReference *GetReference(int alIdx);
+	int GetReferenceNum();
+	iEntity3D *CreateReferenceInWorld(const tString &sNamePrefix, cMeshReference *apMeshRef,
+									  cMeshEntity *apMeshEntity, cWorld3D *apWorld,
+									  const cMatrixf &a_mtxOffset);
 
-		//Node
-		cNode3D* GetRootNode();
-		void AddNode(cNode3D* apNode);
-		int GetNodeNum();
-		cNode3D* GetNode(int alIdx);
+	// Sound entities
+	cMeshSoundEntity *CreateSoundEntity();
+	cMeshSoundEntity *GetSoundEntity(int alIdx);
+	int GetSoundEntityNum();
+	cSoundEntity *CreateSoundEntityInWorld(const tString &sNamePrefix, cMeshSoundEntity *apMeshSound,
+										   cMeshEntity *apMeshEntity, cWorld3D *apWorld);
 
-		//Resources implementation
-		bool Reload(){ return false;}
-		void Unload(){}
-		void Destroy(){}
+	// Node
+	cNode3D *GetRootNode();
+	void AddNode(cNode3D *apNode);
+	int GetNodeNum();
+	cNode3D *GetNode(int alIdx);
 
-	private:
-		cMaterialManager* mpMaterialManager;
-		cAnimationManager * mpAnimationManager;
+	// Resources implementation
+	bool Reload() { return false; }
+	void Unload() {}
+	void Destroy() {}
 
-		tSubMeshVec mvSubMeshes;
-		tSubMeshMap m_mapSubMeshes;
+private:
+	cMaterialManager *mpMaterialManager;
+	cAnimationManager *mpAnimationManager;
 
-		cSkeleton *mpSkeleton;
+	tSubMeshVec mvSubMeshes;
+	tSubMeshMap m_mapSubMeshes;
 
-		tAnimationVec mvAnimations;
-		tAnimationIndexMap m_mapAnimIndices;
+	cSkeleton *mpSkeleton;
 
-		cNode3D *mpRootNode;
-		tNode3DVec mvNodes;
+	tAnimationVec mvAnimations;
+	tAnimationIndexMap m_mapAnimIndices;
 
-		tMeshJointVec mvPhysicJoints;
-		tMeshColliderVec mvColliders;
+	cNode3D *mpRootNode;
+	tNode3DVec mvNodes;
 
-		tMeshLightVec mvLights;
-		tMeshBillboardVec mvBillboards;
-		tMeshBeamVec mvBeams;
-		tMeshParticleSystemVec mvParticleSystems;
-		tMeshSoundEntityVec mvSoundEntities;
-		tMeshReferenceVec mvReferences;
-	};
+	tMeshJointVec mvPhysicJoints;
+	tMeshColliderVec mvColliders;
 
+	tMeshLightVec mvLights;
+	tMeshBillboardVec mvBillboards;
+	tMeshBeamVec mvBeams;
+	tMeshParticleSystemVec mvParticleSystems;
+	tMeshSoundEntityVec mvSoundEntities;
+	tMeshReferenceVec mvReferences;
 };
+
+};     // namespace hpl
 #endif // HPL_MESH_H

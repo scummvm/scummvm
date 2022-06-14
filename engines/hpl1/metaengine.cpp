@@ -33,16 +33,14 @@ Common::Error Hpl1MetaEngine::createInstance(OSystem *syst, Engine **engine, con
 }
 
 bool Hpl1MetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSavesUseExtendedFormat) ||
-		(f == kSimpleSavesNames) ||
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSupportsLoadingDuringStartup);
+	return (f == kSavesUseExtendedFormat) ||
+		   (f == kSimpleSavesNames) ||
+		   (f == kSupportsListSaves) ||
+		   (f == kSupportsDeleteSave) ||
+		   (f == kSavesSupportMetaInfo) ||
+		   (f == kSavesSupportThumbnail) ||
+		   (f == kSupportsLoadingDuringStartup);
 }
-
 
 #if PLUGIN_ENABLED_DYNAMIC(HPL1)
 REGISTER_PLUGIN_DYNAMIC(HPL1, PLUGIN_TYPE_ENGINE, Hpl1MetaEngine);

@@ -47,53 +47,52 @@
 
 namespace hpl {
 
-	class cGraphics;
-	class cResources;
-	class iParticleSystem2D;
-	class cParticleSystem3D;
-	class cParticleSystemData3D;
+class cGraphics;
+class cResources;
+class iParticleSystem2D;
+class cParticleSystem3D;
+class cParticleSystemData3D;
 
-	//----------------------------------------------------
+//----------------------------------------------------
 
-	typedef std::map<tString, cParticleSystemData3D*> tParticleSystemData3DMap;
-	typedef tParticleSystemData3DMap::iterator tParticleSystemData3DMapIt;
+typedef std::map<tString, cParticleSystemData3D *> tParticleSystemData3DMap;
+typedef tParticleSystemData3DMap::iterator tParticleSystemData3DMapIt;
 
+//----------------------------------------------------
 
-	//----------------------------------------------------
+class cParticleManager : public iResourceManager {
+public:
+	cParticleManager(cGraphics *apGraphics, cResources *apResources);
+	~cParticleManager();
 
-	class cParticleManager : public iResourceManager
-	{
-	public:
-		cParticleManager(cGraphics* apGraphics,cResources *apResources);
-		~cParticleManager();
+	/**
+	 * NOT USED! For now that is... there is no need for it since particle systems are not really
+	 * resources, yet
+	 * \param asName
+	 * \return
+	 */
+	iResourceBase *Create(const tString &asName);
 
-		/**
-		 * NOT USED! For now that is... there is no need for it since particle systems are not really
-		 * resources, yet
-		 * \param asName
-		 * \return
-		 */
-		iResourceBase* Create(const tString& asName);
+	iParticleSystem2D *CreatePS2D(const tString &asName, cVector3f avSize);
 
-		iParticleSystem2D* CreatePS2D(const tString& asName, cVector3f avSize);
+	cParticleSystem3D *CreatePS3D(const tString &asName, const tString &asType, cVector3f avSize,
+								  const cMatrixf &a_mtxTransform);
 
-		cParticleSystem3D* CreatePS3D(const tString& asName,const tString& asType, cVector3f avSize,
-										const cMatrixf& a_mtxTransform);
+	void AddData3D(cParticleSystemData3D *apData);
 
-		void AddData3D(cParticleSystemData3D *apData);
+	void Preload(const tString &asFile);
 
-		void Preload(const tString& asFile);
+	void Destroy(iResourceBase *apResource);
+	void Unload(iResourceBase *apResource);
 
-		void Destroy(iResourceBase* apResource);
-		void Unload(iResourceBase* apResource);
-	private:
-		cGraphics* mpGraphics;
-		cResources *mpResources;
+private:
+	cGraphics *mpGraphics;
+	cResources *mpResources;
 
-		std::list<cParticleSystem3D*> mlstSystems;
+	std::list<cParticleSystem3D *> mlstSystems;
 
-		//tParticleSystemData3DMap m_mapData3D;
-	};
-
+	// tParticleSystemData3DMap m_mapData3D;
 };
+
+};     // namespace hpl
 #endif // HPL_PARTICLE_SYSTEM_MANAGER_H

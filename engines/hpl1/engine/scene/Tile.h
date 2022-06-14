@@ -41,52 +41,51 @@
 #ifndef HPL_TILE_H
 #define HPL_TILE_H
 
-#include <list>
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/scene/TileData.h"
+#include "hpl1/engine/system/SystemTypes.h"
+#include <list>
 
 namespace hpl {
 
-	#define eTileFlag_Breakable (eFlagBit_0)
+#define eTileFlag_Breakable (eFlagBit_0)
 
-	class cTile
-	{
-	public:
-		cTile(iTileData* apTileData, eTileRotation aAngle,
-			const cVector3f &avPos, const cVector2f &avSize, cCollisionMesh2D* apCollMesh);
-		~cTile();
+class cTile {
+public:
+	cTile(iTileData *apTileData, eTileRotation aAngle,
+		  const cVector3f &avPos, const cVector2f &avSize, cCollisionMesh2D *apCollMesh);
+	~cTile();
 
-		iTileData* GetTileData(){ return mpTileData; }
-		void SetTileData(iTileData* apTileData){mpTileData=apTileData;}
+	iTileData *GetTileData() { return mpTileData; }
+	void SetTileData(iTileData *apTileData) { mpTileData = apTileData; }
 
-		eTileRotation GetAngle(){ return mAngle; }
+	eTileRotation GetAngle() { return mAngle; }
 
-		void SetTile(iTileData* apTileData, eTileRotation aAngle,
-			const cVector3f &avPos, const cVector2f &avSize);
-		void SetAngle(eTileRotation aAngle){ mAngle = aAngle;}
+	void SetTile(iTileData *apTileData, eTileRotation aAngle,
+				 const cVector3f &avPos, const cVector2f &avSize);
+	void SetAngle(eTileRotation aAngle) { mAngle = aAngle; }
 
-		const cVector3f& GetPosition()const{ return mvPosition;}
-		cVector3f* GetPositionPtr(){ return &mvPosition;}
+	const cVector3f &GetPosition() const { return mvPosition; }
+	cVector3f *GetPositionPtr() { return &mvPosition; }
 
-		cCollisionMesh2D* GetCollisionMesh(){ return mpCollMesh;}
-		void SetCollisionMesh(cCollisionMesh2D* apMesh){ mpCollMesh = apMesh;}
+	cCollisionMesh2D *GetCollisionMesh() { return mpCollMesh; }
+	void SetCollisionMesh(cCollisionMesh2D *apMesh) { mpCollMesh = apMesh; }
 
-		tFlag GetFlags(){return mlFlags;}
-		void SetFlags(tFlag alFlags){ mlFlags = alFlags;}
+	tFlag GetFlags() { return mlFlags; }
+	void SetFlags(tFlag alFlags) { mlFlags = alFlags; }
 
-	private:
-		cCollisionMesh2D* mpCollMesh;
+private:
+	cCollisionMesh2D *mpCollMesh;
 
-		tFlag mlFlags;
-		iTileData* mpTileData;
-		cVector3f mvPosition;
-		eTileRotation mAngle; //0:normal.  1:90 CW.  2:180. CW  3:270 CW.
-							//4: flip horisontally.  5: flip vertically.  6: flip both.
-	};
-
-	typedef std::list<cTile*> tTileList;
-	typedef tTileList::iterator tTileListIt;
+	tFlag mlFlags;
+	iTileData *mpTileData;
+	cVector3f mvPosition;
+	eTileRotation mAngle; // 0:normal.  1:90 CW.  2:180. CW  3:270 CW.
+						  // 4: flip horisontally.  5: flip vertically.  6: flip both.
 };
+
+typedef std::list<cTile *> tTileList;
+typedef tTileList::iterator tTileListIt;
+};     // namespace hpl
 #endif // HPL_TILE_H

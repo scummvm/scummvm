@@ -41,36 +41,35 @@
 #ifndef HPL_LIGHT2D_H
 #define HPL_LIGHT2D_H
 
-#include <list>
+#include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/scene/Entity2D.h"
 #include "hpl1/engine/scene/Light.h"
-#include "hpl1/engine/graphics/GraphicsTypes.h"
+#include <list>
 
 namespace hpl {
 
-	class iLowLevelGraphics;
+class iLowLevelGraphics;
 
-	class iLight2D : public iEntity2D, public iLight
-	{
-	public:
-		iLight2D(tString asName);
-		virtual ~iLight2D(){}
+class iLight2D : public iEntity2D, public iLight {
+public:
+	iLight2D(tString asName);
+	virtual ~iLight2D() {}
 
-		tString GetEntityType(){ return "iLight2D";}
+	tString GetEntityType() { return "iLight2D"; }
 
-		void UpdateLogic(float afTimeStep);
+	void UpdateLogic(float afTimeStep);
 
-		void SetFarAttenuation(float afX);
-		void SetNearAttenuation(float afX);
+	void SetFarAttenuation(float afX);
+	void SetNearAttenuation(float afX);
 
-		cVector3f GetLightPosition();
+	cVector3f GetLightPosition();
 
-		virtual int Render(iLowLevelGraphics* apLowLevel, int alFirstIndex)=0;
+	virtual int Render(iLowLevelGraphics *apLowLevel, int alFirstIndex) = 0;
 
-	protected:
-	};
-
-	typedef std::list<iLight2D*> tLightList;
-	typedef tLightList::iterator tLightListIt;
+protected:
 };
+
+typedef std::list<iLight2D *> tLightList;
+typedef tLightList::iterator tLightListIt;
+};     // namespace hpl
 #endif // HPL_LIGHT2D_H

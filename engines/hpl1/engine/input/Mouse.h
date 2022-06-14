@@ -41,49 +41,48 @@
 #ifndef HPL_MOUSE_H
 #define HPL_MOUSE_H
 
-#include "hpl1/engine/input/InputTypes.h"
 #include "hpl1/engine/input/InputDevice.h"
+#include "hpl1/engine/input/InputTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 
 namespace hpl {
 
-	class iMouse : public iInputDevice
-	{
-	public:
-		iMouse(tString asName);
-		virtual ~iMouse(){}
+class iMouse : public iInputDevice {
+public:
+	iMouse(tString asName);
+	virtual ~iMouse() {}
 
-		/**
-		 * Check if a mouse button is down
-		 * \param eMButton the button to check
-		 * \return
-		 */
-		virtual bool ButtonIsDown(eMButton)=0;
-		/**
-		 * Get the absolute pos of the mouse.
-		 * \return
-		 */
-		virtual cVector2f GetAbsPosition()=0;
-		/**
-		 * Get the relative movement.
-		 * \return
-		 */
-		virtual cVector2f GetRelPosition()=0;
+	/**
+	 * Check if a mouse button is down
+	 * \param eMButton the button to check
+	 * \return
+	 */
+	virtual bool ButtonIsDown(eMButton) = 0;
+	/**
+	 * Get the absolute pos of the mouse.
+	 * \return
+	 */
+	virtual cVector2f GetAbsPosition() = 0;
+	/**
+	 * Get the relative movement.
+	 * \return
+	 */
+	virtual cVector2f GetRelPosition() = 0;
 
-		/**
-		 * Reset smoothing and relative movement.
-		 */
-		virtual void Reset()=0;
-		/**
-		 * Set parameters for mouse smoothing
-		 * \param afMinPercent Influence of the oldest position.
-		 * \param afMaxPercent Influence of the latest position.
-		 * \param alBufferSize number of saved positions, 1 = no smoothing
-		 */
-		virtual void SetSmoothProperties(float afMinPercent,
-										float afMaxPercent,unsigned int alBufferSize)=0;
-	};
-
+	/**
+	 * Reset smoothing and relative movement.
+	 */
+	virtual void Reset() = 0;
+	/**
+	 * Set parameters for mouse smoothing
+	 * \param afMinPercent Influence of the oldest position.
+	 * \param afMaxPercent Influence of the latest position.
+	 * \param alBufferSize number of saved positions, 1 = no smoothing
+	 */
+	virtual void SetSmoothProperties(float afMinPercent,
+									 float afMaxPercent, unsigned int alBufferSize) = 0;
 };
+
+}; // namespace hpl
 
 #endif // HPL_MOUSE_H

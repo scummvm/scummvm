@@ -45,31 +45,30 @@
 
 namespace hpl {
 
-	class cSystem;
-	class cResources;
-	class iScript;
+class cSystem;
+class cResources;
+class iScript;
 
-	class cScriptManager : public iResourceManager
-	{
-	public:
-		cScriptManager(cSystem* apSystem,cResources *apResources);
-		~cScriptManager();
+class cScriptManager : public iResourceManager {
+public:
+	cScriptManager(cSystem *apSystem, cResources *apResources);
+	~cScriptManager();
 
-		iResourceBase* Create(const tString& asName);
-		/**
-		 * Create a new script.
-		 * \param asName name of the script.
-		 * \return
-		 */
-		iScript* CreateScript(const tString& asName);
+	iResourceBase *Create(const tString &asName);
+	/**
+	 * Create a new script.
+	 * \param asName name of the script.
+	 * \return
+	 */
+	iScript *CreateScript(const tString &asName);
 
-		void Destroy(iResourceBase* apResource);
-		void Unload(iResourceBase* apResource);
+	void Destroy(iResourceBase *apResource);
+	void Unload(iResourceBase *apResource);
 
-	private:
-		cSystem* mpSystem;
-		cResources *mpResources;
-	};
-
+private:
+	cSystem *mpSystem;
+	cResources *mpResources;
 };
+
+};     // namespace hpl
 #endif // HPL_SCRIPT_MANAGER_H

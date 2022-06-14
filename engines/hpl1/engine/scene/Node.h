@@ -41,65 +41,62 @@
 #ifndef HPL_NODE_H
 #define HPL_NODE_H
 
-#include <list>
-#include "hpl1/engine/scene/Entity.h"
-#include "hpl1/engine/math/MathTypes.h"
-#include "hpl1/engine/system/Container.h"
 #include "hpl1/engine/game/SaveGame.h"
+#include "hpl1/engine/math/MathTypes.h"
+#include "hpl1/engine/scene/Entity.h"
+#include "hpl1/engine/system/Container.h"
+#include <list>
 
 namespace hpl {
 
-	class iNode;
+class iNode;
 
-	typedef std::list<iNode*> tNodeList;
-	typedef tNodeList::iterator tNodeListIt;
+typedef std::list<iNode *> tNodeList;
+typedef tNodeList::iterator tNodeListIt;
 
-	typedef cSTLIterator<iNode*,tNodeList,tNodeListIt> cNodeIterator;
+typedef cSTLIterator<iNode *, tNodeList, tNodeListIt> cNodeIterator;
 
-	//------------------------------------
+//------------------------------------
 
-	kSaveData_BaseClass(iNode)
-	{
-		kSaveData_ClassInit(iNode)
-	public:
-		cContainerList<int> mlstEntities;
-		cContainerList<int> mlstNodes;
-	};
-
-	//------------------------------------
-
-	class iNode : public iSaveObject
-	{
-		typedef iSaveObject super;
-	public:
-		iNode() : mbActive(true){}
-		virtual ~iNode();
-
-		int SetVisible(bool abX, bool abCascade);
-		bool AddEntity(iEntity* apEntity);
-		bool RemoveEntity(iEntity* apEntity);
-		void ClearEntities();
-
-		void SetActive(bool abX){mbActive = abX;}
-		bool IsActive(){return mbActive;}
-
-		virtual iNode* CreateChild()=0;
-
-		cNodeIterator GetChildIterator();
-		cEntityIterator GetEntityIterator();
-
-		//SaveObject implementation
-		virtual iSaveData* CreateSaveData(){return NULL;}
-		virtual void SaveToSaveData(iSaveData *apSaveData);
-		virtual void LoadFromSaveData(iSaveData *apSaveData);
-		virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
-
-	protected:
-		tEntityList mlstEntity;
-		tNodeList mlstNode;
-
-		bool mbActive;
-	};
-
+kSaveData_BaseClass(iNode) {
+	kSaveData_ClassInit(iNode) public : cContainerList<int> mlstEntities;
+	cContainerList<int> mlstNodes;
 };
+
+//------------------------------------
+
+class iNode : public iSaveObject {
+	typedef iSaveObject super;
+
+public:
+	iNode() : mbActive(true) {}
+	virtual ~iNode();
+
+	int SetVisible(bool abX, bool abCascade);
+	bool AddEntity(iEntity *apEntity);
+	bool RemoveEntity(iEntity *apEntity);
+	void ClearEntities();
+
+	void SetActive(bool abX) { mbActive = abX; }
+	bool IsActive() { return mbActive; }
+
+	virtual iNode *CreateChild() = 0;
+
+	cNodeIterator GetChildIterator();
+	cEntityIterator GetEntityIterator();
+
+	// SaveObject implementation
+	virtual iSaveData *CreateSaveData() { return NULL; }
+	virtual void SaveToSaveData(iSaveData *apSaveData);
+	virtual void LoadFromSaveData(iSaveData *apSaveData);
+	virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
+
+protected:
+	tEntityList mlstEntity;
+	tNodeList mlstNode;
+
+	bool mbActive;
+};
+
+};     // namespace hpl
 #endif // HPL_NODE_H

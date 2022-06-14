@@ -40,51 +40,46 @@
 
 #include "hpl1/engine/impl/LowLevelInputSDL.h"
 
-#include "hpl1/engine/impl/MouseSDL.h"
 #include "hpl1/engine/impl/KeyboardSDL.h"
+#include "hpl1/engine/impl/MouseSDL.h"
 
 #include "hpl1/engine/system/LowLevelSystem.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cLowLevelInputSDL::cLowLevelInputSDL(iLowLevelGraphics *apLowLevelGraphics)
-	{
-		mpLowLevelGraphics = apLowLevelGraphics;
-		LockInput(true);
-	}
+cLowLevelInputSDL::cLowLevelInputSDL(iLowLevelGraphics *apLowLevelGraphics) {
+	mpLowLevelGraphics = apLowLevelGraphics;
+	LockInput(true);
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cLowLevelInputSDL::~cLowLevelInputSDL()
-	{
-	}
+cLowLevelInputSDL::~cLowLevelInputSDL() {
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHOD
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHOD
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	void cLowLevelInputSDL::LockInput(bool abX)
-	{
+void cLowLevelInputSDL::LockInput(bool abX) {
 #if 0
   		SDL_WM_GrabInput(abX ? SDL_GRAB_ON : SDL_GRAB_OFF);
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	void cLowLevelInputSDL::BeginInputUpdate()
-	{
+void cLowLevelInputSDL::BeginInputUpdate() {
 #if 0
   		//SDL_PumpEvents();
 
@@ -95,30 +90,26 @@ namespace hpl {
 			mlstEvents.push_back(sdlEvent);
 		}
 #endif
-
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cLowLevelInputSDL::EndInputUpdate()
-	{
-		mlstEvents.clear();
-	}
-
-	//-----------------------------------------------------------------------
-
-	iMouse* cLowLevelInputSDL::CreateMouse()
-	{
-		return hplNew( cMouseSDL,(this,mpLowLevelGraphics));
-	}
-
-	//-----------------------------------------------------------------------
-
-	iKeyboard* cLowLevelInputSDL::CreateKeyboard()
-	{
-		return hplNew( cKeyboardSDL,(this) );
-	}
-
-	//-----------------------------------------------------------------------
-
 }
+
+//-----------------------------------------------------------------------
+
+void cLowLevelInputSDL::EndInputUpdate() {
+	mlstEvents.clear();
+}
+
+//-----------------------------------------------------------------------
+
+iMouse *cLowLevelInputSDL::CreateMouse() {
+	return hplNew(cMouseSDL, (this, mpLowLevelGraphics));
+}
+
+//-----------------------------------------------------------------------
+
+iKeyboard *cLowLevelInputSDL::CreateKeyboard() {
+	return hplNew(cKeyboardSDL, (this));
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

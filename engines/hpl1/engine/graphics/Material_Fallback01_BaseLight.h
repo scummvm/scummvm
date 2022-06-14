@@ -41,202 +41,195 @@
 #ifndef HPL_MATERIAL_FALLBACK01_BASE_LIGHT_H
 #define HPL_MATERIAL_FALLBACK01_BASE_LIGHT_H
 
-#include <vector>
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/scene/Light3D.h"
+#include <vector>
 
 #include "hpl1/engine/graphics/Material_BaseLight.h"
 
 namespace hpl {
 
-	//---------------------------------------------------------------
+//---------------------------------------------------------------
 
-	class iMaterial_Fallback01_BaseLight : public iMaterial
-	{
-	public:
-		iMaterial_Fallback01_BaseLight(bool abNormalMap, bool abSpecular,
-			const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
+class iMaterial_Fallback01_BaseLight : public iMaterial {
+public:
+	iMaterial_Fallback01_BaseLight(bool abNormalMap, bool abSpecular,
+								   const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+								   cImageManager *apImageManager, cTextureManager *apTextureManager,
+								   cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+								   eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
 
-		virtual ~iMaterial_Fallback01_BaseLight();
+	virtual ~iMaterial_Fallback01_BaseLight();
 
-		tTextureTypeList GetTextureTypes();
+	tTextureTypeList GetTextureTypes();
 
-		bool UsesType(eMaterialRenderType aType);
+	bool UsesType(eMaterialRenderType aType);
 
-		iGpuProgram* GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	iGpuProgram *GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
-		iGpuProgram* GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	iGpuProgram *GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
-		eMaterialAlphaMode GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		eMaterialBlendMode GetBlendMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		eMaterialChannelMode GetChannelMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	eMaterialAlphaMode GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	eMaterialBlendMode GetBlendMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	eMaterialChannelMode GetChannelMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
-		iTexture* GetTexture(int alUnit,eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		eMaterialBlendMode GetTextureBlend(int alUnit,eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	iTexture *GetTexture(int alUnit, eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	eMaterialBlendMode GetTextureBlend(int alUnit, eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
-		int GetNumOfPasses(eMaterialRenderType aType, iLight3D *apLight);
+	int GetNumOfPasses(eMaterialRenderType aType, iLight3D *apLight);
 
-		//////////////////////////////////////////////////////////////////
-		// Old and worthless stuff, only used by 2D renderer
-		void Compile(){}
-		bool StartRendering(eMaterialRenderType aType,iCamera* apCam,iLight *pLight){return false;}
-		void EndRendering(eMaterialRenderType aType){}
-		tVtxBatchFlag GetBatchFlags(eMaterialRenderType aType){return 0;}
-		bool NextPass(eMaterialRenderType aType){return false;}
-		bool HasMultiplePasses(eMaterialRenderType aType){return false;}
-		eMaterialType GetType(eMaterialRenderType aType){ return eMaterialType_Diffuse;}
-		void EditVertexes(eMaterialRenderType aType, iCamera* apCam, iLight *pLight,
-			tVertexVec *apVtxVec,cVector3f *apTransform,unsigned int alIndexAdd){}
+	//////////////////////////////////////////////////////////////////
+	// Old and worthless stuff, only used by 2D renderer
+	void Compile() {}
+	bool StartRendering(eMaterialRenderType aType, iCamera *apCam, iLight *pLight) { return false; }
+	void EndRendering(eMaterialRenderType aType) {}
+	tVtxBatchFlag GetBatchFlags(eMaterialRenderType aType) { return 0; }
+	bool NextPass(eMaterialRenderType aType) { return false; }
+	bool HasMultiplePasses(eMaterialRenderType aType) { return false; }
+	eMaterialType GetType(eMaterialRenderType aType) { return eMaterialType_Diffuse; }
+	void EditVertexes(eMaterialRenderType aType, iCamera *apCam, iLight *pLight,
+					  tVertexVec *apVtxVec, cVector3f *apTransform, unsigned int alIndexAdd) {}
 
-	protected:
-		iTexture *mpNormalizationMap;
-		iTexture *mpSpotNegativeRejectMap;
+protected:
+	iTexture *mpNormalizationMap;
+	iTexture *mpSpotNegativeRejectMap;
 
-		//properties to set
-		bool mbUseSpecular;
-		bool mbUseNormalMap;
+	// properties to set
+	bool mbUseSpecular;
+	bool mbUseNormalMap;
 
-		bool mbUsesTwoPassSpot;
+	bool mbUsesTwoPassSpot;
 
-		iTexture *mpAttenuationMap;
+	iTexture *mpAttenuationMap;
 
-		iGpuProgram* mvVtxPrograms[eBaseLightProgram_LastEnum];
-		iGpuProgram* mvFragPrograms[eBaseLightProgram_LastEnum];
-	};
-
-	//---------------------------------------------------------------
-
-	class cGLState_Diffuse : public iGLStateProgram
-	{
-	public:
-		cGLState_Diffuse();
-
-		void Bind();
-		void UnBind();
-	private:
-		void InitData(){}
-	};
-
-	//---------------------------------------------------------------
-
-	class cGLState_ATIDiffuse : public iGLStateProgram
-	{
-	public:
-		cGLState_ATIDiffuse();
-		~cGLState_ATIDiffuse();
-
-		void Bind();
-		void UnBind();
-	private:
-		void InitData();
-
-		int mlBind;
-	};
-
-	//---------------------------------------------------------------
-
-
-	class cGLState_Bump : public iGLStateProgram
-	{
-	public:
-		cGLState_Bump();
-
-		void Bind();
-		void UnBind();
-	private:
-		void InitData(){}
-	};
-
-	//---------------------------------------------------------------
-
-	class cGLState_ATIBump : public iGLStateProgram
-	{
-	public:
-		cGLState_ATIBump();
-		~cGLState_ATIBump();
-
-		void Bind();
-		void UnBind();
-	private:
-		void InitData();
-
-		int mlBind;
-	};
-
-	//---------------------------------------------------------------
-
-	class cGLState_Spot : public iGLStateProgram
-	{
-	public:
-		cGLState_Spot();
-
-		void Bind();
-		void UnBind();
-	private:
-		void InitData(){}
-	};
-
-	//---------------------------------------------------------------
-
-	class cGLState_ATISpot : public iGLStateProgram
-	{
-	public:
-		cGLState_ATISpot();
-		~cGLState_ATISpot();
-
-		void Bind();
-		void UnBind();
-	private:
-		void InitData();
-
-		int mlBind;
-	};
-
-	//---------------------------------------------------------------
-
-	///////////////////////////////////////////
-	// Diffuse
-	///////////////////////////////////////////
-
-	class cMaterial_Fallback01_Diffuse : public iMaterial_Fallback01_BaseLight
-	{
-	public:
-		cMaterial_Fallback01_Diffuse(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
-		: iMaterial_Fallback01_BaseLight(false, false,
-				asName,apLowLevelGraphics,apImageManager,apTextureManager,apRenderer,apProgramManager,
-				aPicture,apRenderer3D)
-		{
-		}
-	};
-
-	///////////////////////////////////////////
-	// Bump
-	///////////////////////////////////////////
-
-	class cMaterial_Fallback01_Bump : public iMaterial_Fallback01_BaseLight
-	{
-	public:
-		cMaterial_Fallback01_Bump(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
-			: iMaterial_Fallback01_BaseLight(true, false,
-					asName,apLowLevelGraphics,apImageManager,apTextureManager,apRenderer,apProgramManager,
-					aPicture,apRenderer3D)
-		{
-		}
-	};
-
-
-	//---------------------------------------------------------------
-
+	iGpuProgram *mvVtxPrograms[eBaseLightProgram_LastEnum];
+	iGpuProgram *mvFragPrograms[eBaseLightProgram_LastEnum];
 };
+
+//---------------------------------------------------------------
+
+class cGLState_Diffuse : public iGLStateProgram {
+public:
+	cGLState_Diffuse();
+
+	void Bind();
+	void UnBind();
+
+private:
+	void InitData() {}
+};
+
+//---------------------------------------------------------------
+
+class cGLState_ATIDiffuse : public iGLStateProgram {
+public:
+	cGLState_ATIDiffuse();
+	~cGLState_ATIDiffuse();
+
+	void Bind();
+	void UnBind();
+
+private:
+	void InitData();
+
+	int mlBind;
+};
+
+//---------------------------------------------------------------
+
+class cGLState_Bump : public iGLStateProgram {
+public:
+	cGLState_Bump();
+
+	void Bind();
+	void UnBind();
+
+private:
+	void InitData() {}
+};
+
+//---------------------------------------------------------------
+
+class cGLState_ATIBump : public iGLStateProgram {
+public:
+	cGLState_ATIBump();
+	~cGLState_ATIBump();
+
+	void Bind();
+	void UnBind();
+
+private:
+	void InitData();
+
+	int mlBind;
+};
+
+//---------------------------------------------------------------
+
+class cGLState_Spot : public iGLStateProgram {
+public:
+	cGLState_Spot();
+
+	void Bind();
+	void UnBind();
+
+private:
+	void InitData() {}
+};
+
+//---------------------------------------------------------------
+
+class cGLState_ATISpot : public iGLStateProgram {
+public:
+	cGLState_ATISpot();
+	~cGLState_ATISpot();
+
+	void Bind();
+	void UnBind();
+
+private:
+	void InitData();
+
+	int mlBind;
+};
+
+//---------------------------------------------------------------
+
+///////////////////////////////////////////
+// Diffuse
+///////////////////////////////////////////
+
+class cMaterial_Fallback01_Diffuse : public iMaterial_Fallback01_BaseLight {
+public:
+	cMaterial_Fallback01_Diffuse(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+								 cImageManager *apImageManager, cTextureManager *apTextureManager,
+								 cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+								 eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
+		: iMaterial_Fallback01_BaseLight(false, false,
+										 asName, apLowLevelGraphics, apImageManager, apTextureManager, apRenderer, apProgramManager,
+										 aPicture, apRenderer3D) {
+	}
+};
+
+///////////////////////////////////////////
+// Bump
+///////////////////////////////////////////
+
+class cMaterial_Fallback01_Bump : public iMaterial_Fallback01_BaseLight {
+public:
+	cMaterial_Fallback01_Bump(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+							  cImageManager *apImageManager, cTextureManager *apTextureManager,
+							  cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+							  eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
+		: iMaterial_Fallback01_BaseLight(true, false,
+										 asName, apLowLevelGraphics, apImageManager, apTextureManager, apRenderer, apProgramManager,
+										 aPicture, apRenderer3D) {
+	}
+};
+
+//---------------------------------------------------------------
+
+};     // namespace hpl
 #endif // HPL_MATERIAL_FALLBACK01_BASE_LIGHT_H

@@ -39,11 +39,11 @@
  */
 
 /*#include "hpl1/engine/graphics/ParticleSystem2D.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
-#include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/graphics/Graphics.h"
 #include "hpl1/engine/graphics/Renderer2D.h"
 #include "hpl1/engine/resources/ResourceImage.h"
+#include "hpl1/engine/resources/Resources.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
 
 
 namespace hpl {

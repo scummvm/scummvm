@@ -45,37 +45,34 @@
 
 namespace hpl {
 
-	//------------------------------------------
+//------------------------------------------
 
-	kSaveData_ChildClass(iLight3D,cLight3DPoint)
-	{
-		kSaveData_ClassInit(cLight3DPoint)
-	public:
+kSaveData_ChildClass(iLight3D, cLight3DPoint) {
+	kSaveData_ClassInit(cLight3DPoint) public :
 
-		virtual iSaveObject* CreateSaveObject(cSaveObjectHandler *apSaveObjectHandler,cGame *apGame);
-		virtual int GetSaveCreatePrio();
-	};
-
-	//------------------------------------------
-
-	class cLight3DPoint : public iLight3D
-	{
-	typedef iLight3D super;
-	public:
-		cLight3DPoint(tString asName, cResources *apResources);
-
-		//SaveObject implementation
-		virtual iSaveData* CreateSaveData();
-		virtual void SaveToSaveData(iSaveData *apSaveData);
-		virtual void LoadFromSaveData(iSaveData *apSaveData);
-		virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
-
-	private:
-		cSectorVisibilityContainer* CreateSectorVisibility();
-		void UpdateBoundingVolume();
-		bool CreateClipRect(cRect2l &aCliprect,cRenderSettings *apRenderSettings,iLowLevelGraphics *apLowLevelGraphics);
-
-	};
-
+		virtual iSaveObject *CreateSaveObject(cSaveObjectHandler * apSaveObjectHandler, cGame * apGame);
+	virtual int GetSaveCreatePrio();
 };
+
+//------------------------------------------
+
+class cLight3DPoint : public iLight3D {
+	typedef iLight3D super;
+
+public:
+	cLight3DPoint(tString asName, cResources *apResources);
+
+	// SaveObject implementation
+	virtual iSaveData *CreateSaveData();
+	virtual void SaveToSaveData(iSaveData *apSaveData);
+	virtual void LoadFromSaveData(iSaveData *apSaveData);
+	virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
+
+private:
+	cSectorVisibilityContainer *CreateSectorVisibility();
+	void UpdateBoundingVolume();
+	bool CreateClipRect(cRect2l &aCliprect, cRenderSettings *apRenderSettings, iLowLevelGraphics *apLowLevelGraphics);
+};
+
+};     // namespace hpl
 #endif // HPL_LIGHT3D_POINT_H

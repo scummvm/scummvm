@@ -47,41 +47,39 @@
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cMouseSDL::cMouseSDL(cLowLevelInputSDL *apLowLevelInputSDL,iLowLevelGraphics *apLowLevelGraphics) : iMouse("SDL Portable Mouse")
-	{
-		mfMaxPercent = 0.7f;
-		mfMinPercent = 0.1f;
-		mlBufferSize = 6;
+cMouseSDL::cMouseSDL(cLowLevelInputSDL *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics) : iMouse("SDL Portable Mouse") {
+	mfMaxPercent = 0.7f;
+	mfMinPercent = 0.1f;
+	mlBufferSize = 6;
 
-		mvMButtonArray.resize(eMButton_LastEnum);
-		mvMButtonArray.assign(mvMButtonArray.size(),false);
+	mvMButtonArray.resize(eMButton_LastEnum);
+	mvMButtonArray.assign(mvMButtonArray.size(), false);
 
-		mpLowLevelInputSDL = apLowLevelInputSDL;
-		mpLowLevelGraphics = apLowLevelGraphics;
+	mpLowLevelInputSDL = apLowLevelInputSDL;
+	mpLowLevelGraphics = apLowLevelGraphics;
 
-		mvMouseRelPos = cVector2f(0,0);
-		mvMouseAbsPos = cVector2f(0,0);
+	mvMouseRelPos = cVector2f(0, 0);
+	mvMouseAbsPos = cVector2f(0, 0);
 
-		mbWheelUpMoved = false;
-		mbWheelDownMoved = false;
-	}
+	mbWheelUpMoved = false;
+	mbWheelDownMoved = false;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	void cMouseSDL::Update()
-	{
+void cMouseSDL::Update() {
 #if 0
   cVector2f vScreenSize = mpLowLevelGraphics->GetScreenSize();
 		cVector2f vVirtualSize = mpLowLevelGraphics->GetVirtualSize();
@@ -150,70 +148,65 @@ namespace hpl {
 		mvMouseRelPos = cVector2f((float)lX,(float)lY);
 		mvMouseRelPos = (mvMouseRelPos/vScreenSize)*vVirtualSize;
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+bool cMouseSDL::ButtonIsDown(eMButton mButton) {
+	return mvMButtonArray[mButton];
+}
 
-	bool cMouseSDL::ButtonIsDown(eMButton mButton)
+//-----------------------------------------------------------------------
+
+cVector2f cMouseSDL::GetAbsPosition() {
+	// Do a transform with the screen-size to the the float coordinates.
+	cVector2f vPos = mvMouseAbsPos;
+
+	return vPos;
+}
+
+//-----------------------------------------------------------------------
+
+cVector2f cMouseSDL::GetRelPosition() {
+	// Do a transform with the screen-size to the the float coordinates.
+	cVector2f vPos = mvMouseRelPos;
+	// Ok this is?
+	mvMouseRelPos = cVector2f(0, 0);
+
+	return vPos;
+	/*cVector2f vNew;
+
+	if((int)mlstMouseCoord.size() >= mlBufferSize)
+		mlstMouseCoord.erase(mlstMouseCoord.begin());
+
+	mlstMouseCoord.push_back(vPos);
+
+	int lBufferSize = (int) mlstMouseCoord.size();
+
+	cVector2f vSum(0,0);
+	float fPercent = mfMinPercent;
+	float fPercentAdd =  (mfMaxPercent - mfMinPercent)/((float)lBufferSize);
+	float fTotalPercent=0;
+
+	tVector2fListIt It = mlstMouseCoord.begin();
+	while(It != mlstMouseCoord.end())
 	{
-		return mvMButtonArray[mButton];
+		vSum.x +=It->x*fPercent;
+		vSum.y +=It->y*fPercent;
+		fTotalPercent+=fPercent;
+		fPercent+=fPercentAdd;
+
+		It++;
 	}
+	vNew.x = vSum.x/fTotalPercent;
+	vNew.y = vSum.y/fTotalPercent;
 
-	//-----------------------------------------------------------------------
+	return vNew;*/
+}
 
-	cVector2f cMouseSDL::GetAbsPosition()
-	{
-		// Do a transform with the screen-size to the the float coordinates.
-		cVector2f vPos = mvMouseAbsPos;
+//-----------------------------------------------------------------------
 
-		return vPos;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cVector2f cMouseSDL::GetRelPosition()
-	{
-		// Do a transform with the screen-size to the the float coordinates.
-		cVector2f vPos = mvMouseRelPos;
-		//Ok this is?
-		mvMouseRelPos = cVector2f(0,0);
-
-		return vPos;
-		/*cVector2f vNew;
-
-		if((int)mlstMouseCoord.size() >= mlBufferSize)
-			mlstMouseCoord.erase(mlstMouseCoord.begin());
-
-		mlstMouseCoord.push_back(vPos);
-
-		int lBufferSize = (int) mlstMouseCoord.size();
-
-		cVector2f vSum(0,0);
-		float fPercent = mfMinPercent;
-		float fPercentAdd =  (mfMaxPercent - mfMinPercent)/((float)lBufferSize);
-		float fTotalPercent=0;
-
-		tVector2fListIt It = mlstMouseCoord.begin();
-		while(It != mlstMouseCoord.end())
-		{
-			vSum.x +=It->x*fPercent;
-			vSum.y +=It->y*fPercent;
-			fTotalPercent+=fPercent;
-			fPercent+=fPercentAdd;
-
-			It++;
-		}
-		vNew.x = vSum.x/fTotalPercent;
-		vNew.y = vSum.y/fTotalPercent;
-
-		return vNew;*/
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cMouseSDL::Reset()
-	{
+void cMouseSDL::Reset() {
 #if 0
   		mlstMouseCoord.clear();
 		mvMouseRelPos = cVector2f(0,0);
@@ -223,27 +216,25 @@ namespace hpl {
 		SDL_PumpEvents();
 		SDL_GetRelativeMouseState(&lX, &lY);
 #endif
-
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cMouseSDL::SetSmoothProperties(float afMinPercent,
-		float afMaxPercent,unsigned int alBufferSize)
-	{
-		mfMaxPercent = afMaxPercent;
-		mfMinPercent = afMinPercent;
-		mlBufferSize = alBufferSize;
-	}
-
-	//-----------------------------------------------------------------------
-
-	/////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	/////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	//-----------------------------------------------------------------------
-
 }
+
+//-----------------------------------------------------------------------
+
+void cMouseSDL::SetSmoothProperties(float afMinPercent,
+									float afMaxPercent, unsigned int alBufferSize) {
+	mfMaxPercent = afMaxPercent;
+	mfMinPercent = afMinPercent;
+	mlBufferSize = alBufferSize;
+}
+
+//-----------------------------------------------------------------------
+
+/////////////////////////////////////////////////////////////////////////
+// PRIVATE METHODS
+/////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl
