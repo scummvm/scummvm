@@ -32,7 +32,7 @@ namespace MM1 {
 
 Events *g_events;
 
-Events::Events(bool enhancedMode) : UIElement("", nullptr),
+Events::Events(bool enhancedMode) : UIElement("Root", nullptr),
 		_enhancedMode(enhancedMode) {
 	g_events = this;
 }

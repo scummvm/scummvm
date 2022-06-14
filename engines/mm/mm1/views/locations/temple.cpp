@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views/businesses/temple.h"
+#include "mm/mm1/views/locations/temple.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
@@ -28,7 +28,7 @@
 namespace MM {
 namespace MM1 {
 namespace Views {
-namespace Businesses {
+namespace Locations {
 
 static const uint16 HEAL_COST1[5] = { 2000, 5000, 5000, 2000, 8000 };
 static const uint16 HEAL_COST2[5] = { 200, 500, 500, 200, 1000 };
@@ -39,11 +39,11 @@ static const uint16 DONATE_COST[5] = { 100, 100, 100, 25, 200 };
 static const byte ALIGNMENT_VALS[3] = { 8, 0x10, 0x18 };
 static const byte DONATE_VALS[5] = { 1, 2, 4, 8, 0x10 };
 
-Temple::Temple() : Business("Temple") {
+Temple::Temple() : Location("Temple") {
 }
 
 bool Temple::msgFocus(const FocusMessage &msg) {
-	g_events->msgBusiness(BusinessMessage(LOC_TEMPLE));
+	send("GameView", ValueMessage(LOC_TEMPLE));
 	changeCharacter(0);
 
 	return true;
@@ -91,7 +91,7 @@ void Temple::changeCharacter(uint index) {
 
 	if (index >= g_globals->_party.size())
 		return;
-	Business::changeCharacter(index);
+	Location::changeCharacter(index);
 
 	_isEradicated = false;
 
@@ -130,7 +130,7 @@ void Temple::changeCharacter(uint index) {
 }
 
 void Temple::draw() {
-	Business::draw();
+	Location::draw();
 
 	writeString(21, 0, STRING["dialogs.temple.service_cost"]);
 
@@ -226,7 +226,7 @@ void Temple::donate() {
 	}
 }
 
-} // namespace Businesses
+} // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM

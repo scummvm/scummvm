@@ -100,7 +100,7 @@ bool ViewBase::msgAction(const ActionMessage &msg) {
 	return true;
 }
 
-bool ViewBase::msgBusiness(const BusinessMessage &msg) {
+bool ViewBase::msgValue(const ValueMessage &msg) {
 	_businessDisplay = msg._value;
 	draw();
 	return true;

@@ -19,18 +19,18 @@
  *
  */
 
-#ifndef MM1_VIEWS_BUSINESSES_MARKET_H
-#define MM1_VIEWS_BUSINESSES_MARKET_H
+#ifndef MM1_VIEWS_LOCATIONS_MARKET_H
+#define MM1_VIEWS_LOCATIONS_MARKET_H
 
 #include "mm/mm1/data/char.h"
-#include "mm/mm1/views/businesses/business.h"
+#include "mm/mm1/views/locations/location.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
-namespace Businesses {
+namespace Locations {
 
-class Market : public Business {
+class Market : public Location {
 private:
 	int _foodCost = 0;
 	int _displayCtr = 0;
@@ -54,7 +54,7 @@ public:
 	bool tick() override;
 };
 
-} // namespace Businesses
+} // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM

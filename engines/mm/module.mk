@@ -23,11 +23,12 @@ MODULE_OBJS := \
 	mm1/gfx/screen_decoder.o \
 	mm1/utils/mouse.o \
 	mm1/utils/strings.o \
-	mm1/views/businesses/business.o \
-	mm1/views/businesses/market.o \
-	mm1/views/businesses/tavern.o \
-	mm1/views/businesses/temple.o \
-	mm1/views/businesses/training.o \
+	mm1/views/locations/location.o \
+	mm1/views/locations/market.o \
+	mm1/views/locations/statue.o \
+	mm1/views/locations/tavern.o \
+	mm1/views/locations/temple.o \
+	mm1/views/locations/training.o \
 	mm1/views/are_you_ready.o \
 	mm1/views/create_characters.o \
 	mm1/views/game.o \
@@ -40,6 +41,7 @@ MODULE_OBJS := \
 	mm1/views/order.o \
 	mm1/views/protect.o \
 	mm1/views/quick_ref.o \
+	mm1/views/statue.o \
 	mm1/views/title.o \
 	mm1/views/text_view.o \
 	mm1/views/view_characters.o \

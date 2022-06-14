@@ -19,43 +19,72 @@
  *
  */
 
-#ifndef MM1_VIEWS_BUSINESSES_TAVERN_H
-#define MM1_VIEWS_BUSINESSES_TAVERN_H
+#ifndef MM1_VIEWS_LOCATIONS_BUSINESS_H
+#define MM1_VIEWS_LOCATIONS_BUSINESS_H
 
-#include "mm/mm1/views/businesses/business.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
-namespace Businesses {
+namespace Locations {
 
-class Tavern : public Business {
-private:
+class Location : public TextView {
+protected:
+	Common::String _modeString;
+	int _timeoutCtr;
+protected:
 	/**
-	 * Have a drink
+	 * Clears the bottom part of the window and
+	 * displays a message
 	 */
-	void haveADrink();
+	void displayMessage(int x, const Common::String &msg);
+	void displayMessage(const Common::String &msg) {
+		displayMessage(0, msg);
+	}
 
 	/**
-	 * Tip the bartender
+	 * Move text position to the next line
 	 */
-	void tipBartender();
+	void newLine();
 
 	/**
-	 * Listen for rumors
+	 * Leave the business
 	 */
-	void listenForRumors();
+	void leave();
 
+	/**
+	 * Gathers all the party gold to the current character
+	 */
+	void gatherGold();
+
+	/**
+	 * Subtract gold from current character
+	 */
+	bool subtractGold(uint amount);
+
+	/**
+	 * Displays not enough gold
+	 */
+	void notEnoughGold();
+
+	/**
+	 * Change character
+	 */
+	virtual void changeCharacter(uint index);
 public:
-	Tavern();
-	virtual ~Tavern() {}
+	Location(const Common::String &name);
+	virtual ~Location() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
+	/**
+	 * Draws the initial display for the business
+	 */
 	void draw() override;
+
+	bool tick() override;
 };
 
-} // namespace Businesses
+} // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM

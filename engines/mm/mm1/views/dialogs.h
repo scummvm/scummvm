@@ -33,10 +33,11 @@
 #include "mm/mm1/views/quick_ref.h"
 #include "mm/mm1/views/title.h"
 #include "mm/mm1/views/view_characters.h"
-#include "mm/mm1/views/businesses/market.h"
-#include "mm/mm1/views/businesses/tavern.h"
-#include "mm/mm1/views/businesses/temple.h"
-#include "mm/mm1/views/businesses/training.h"
+#include "mm/mm1/views/locations/market.h"
+#include "mm/mm1/views/locations/statue.h"
+#include "mm/mm1/views/locations/tavern.h"
+#include "mm/mm1/views/locations/temple.h"
+#include "mm/mm1/views/locations/training.h"
 
 namespace MM {
 namespace MM1 {
@@ -55,9 +56,10 @@ private:
 	Views::Title _title;
 	Views::ViewCharacters _viewCharacters;
 	Views::ViewCharacter _viewCharacter;
-	Views::Businesses::Market _market;
-	Views::Businesses::Tavern _tavern;
-	Views::Businesses::Temple _temple;
+	Views::Locations::Market _market;
+	Views::Locations::Statue _statue;
+	Views::Locations::Tavern _tavern;
+	Views::Locations::Temple _temple;
 
 public:
 	Dialogs() {}

@@ -19,17 +19,27 @@
  *
  */
 
-#ifndef MM1_VIEWS_BUSINESSES_TRAINING_H
-#define MM1_VIEWS_BUSINESSES_TRAINING_H
+#ifndef MM1_VIEWS_LOCATIONS_TEMPLE_H
+#define MM1_VIEWS_LOCATIONS_TEMPLE_H
 
-#include "mm/mm1/views/businesses/business.h"
+#include "mm/mm1/views/locations/location.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
-namespace Businesses {
+namespace Locations {
 
-class Training : public Business {
+class Temple : public Location {
+private:
+	bool _isEradicated = false;
+	int _healCost = 0, _uncurseCost = 0;
+	int _alignmentCost = 0, _donateCost = 0;
+private:
+	void restoreHealth();
+	void uncurseItems();
+	void restoreAlignment();
+	void donate();
+
 protected:
 	/**
 	 * Change character
@@ -37,15 +47,15 @@ protected:
 	void changeCharacter(uint index) override;
 
 public:
-	Training();
-	virtual ~Training() {}
+	Temple();
+	virtual ~Temple() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 };
 
-} // namespace Businesses
+} // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM

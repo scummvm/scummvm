@@ -19,43 +19,43 @@
  *
  */
 
-#ifndef MM1_VIEWS_BUSINESSES_TEMPLE_H
-#define MM1_VIEWS_BUSINESSES_TEMPLE_H
+#ifndef MM1_VIEWS_LOCATIONS_TAVERN_H
+#define MM1_VIEWS_LOCATIONS_TAVERN_H
 
-#include "mm/mm1/views/businesses/business.h"
+#include "mm/mm1/views/locations/location.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
-namespace Businesses {
+namespace Locations {
 
-class Temple : public Business {
+class Tavern : public Location {
 private:
-	bool _isEradicated = false;
-	int _healCost = 0, _uncurseCost = 0;
-	int _alignmentCost = 0, _donateCost = 0;
-private:
-	void restoreHealth();
-	void uncurseItems();
-	void restoreAlignment();
-	void donate();
-
-protected:
 	/**
-	 * Change character
+	 * Have a drink
 	 */
-	void changeCharacter(uint index) override;
+	void haveADrink();
+
+	/**
+	 * Tip the bartender
+	 */
+	void tipBartender();
+
+	/**
+	 * Listen for rumors
+	 */
+	void listenForRumors();
 
 public:
-	Temple();
-	virtual ~Temple() {}
+	Tavern();
+	virtual ~Tavern() {}
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
 };
 
-} // namespace Businesses
+} // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM

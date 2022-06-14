@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views/businesses/tavern.h"
+#include "mm/mm1/views/locations/tavern.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
@@ -28,13 +28,13 @@
 namespace MM {
 namespace MM1 {
 namespace Views {
-namespace Businesses {
+namespace Locations {
 
-Tavern::Tavern() : Business("Tavern") {
+Tavern::Tavern() : Location("Tavern") {
 }
 
 bool Tavern::msgFocus(const FocusMessage &msg) {
-	g_events->msgBusiness(BusinessMessage(LOC_TAVERN));
+	send("GameView", ValueMessage(LOC_TAVERN));
 	g_globals->_currCharacter = &g_globals->_party[0];
 	return true;
 }
@@ -73,7 +73,7 @@ bool Tavern::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Tavern::draw() {
-	Business::draw();
+	Location::draw();
 
 	writeString(20, 1, STRING["dialogs.tavern.drink"]);
 	writeString(20, 2, STRING["dialogs.tavern.tip"]);
@@ -129,7 +129,7 @@ void Tavern::listenForRumors() {
 	displayMessage(msg);
 }
 
-} // namespace Businesses
+} // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM

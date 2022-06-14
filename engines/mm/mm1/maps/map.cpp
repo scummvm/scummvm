@@ -91,6 +91,14 @@ void Map::checkPartyDead() {
 	g_events->replaceView("Dead");
 }
 
+uint16 Map::dataWord(uint16 ofs) const {
+	return READ_LE_UINT16(&_data[ofs]);
+}
+
+void Map::dataWord(uint16 ofs, uint16 val) {
+	WRITE_LE_UINT16(&_data[ofs], val);
+}
+
 } // namespace Maps
 } // namespace MM1
 } // namespace MM
