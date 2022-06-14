@@ -29,13 +29,13 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess)
-	: FileStream(file_name, open_mode, work_mode, stream_endianess), _buffer(BufferStreamSize), _bufferPosition(0), _position(0) {
-	if (IsValid()) {
-		if (FileStream::Seek(0, kSeekEnd) == false)
-			error("Error determining stream end.");
+//-----------------------------------------------------------------------------
+// BufferedStream
+//-----------------------------------------------------------------------------
 
-		_end = -1;
+BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess)
+	: FileStream(file_name, open_mode, work_mode, stream_endianess) {
+	if (IsValid()) {
 		if (FileStream::Seek(0, kSeekEnd)) {
 			_start = 0;
 			_end = FileStream::GetPosition();
@@ -48,15 +48,13 @@ BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, 
 			error("Error determining stream end.");
 		}
 	}
-
-	_buffer.resize(0);
 }
 
 void BufferedStream::FillBufferFromPosition(soff_t position) {
 	FileStream::Seek(position, kSeekBegin);
 
-	_buffer.resize(BufferStreamSize);
-	auto sz = FileStream::Read(_buffer.data(), BufferStreamSize);
+	_buffer.resize(BufferSize);
+	auto sz = FileStream::Read(_buffer.data(), BufferSize);
 	_buffer.resize(sz);
 
 	_bufferPosition = position;
@@ -134,6 +132,10 @@ bool BufferedStream::Seek(soff_t offset, StreamSeek origin) {
 	_position = MIN(MAX(want_pos, (soff_t)_start), _end);
 	return _position == want_pos;
 }
+
+//-----------------------------------------------------------------------------
+// BufferedSectionStream
+//-----------------------------------------------------------------------------
 
 BufferedSectionStream::BufferedSectionStream(const String &file_name, soff_t start_pos, soff_t end_pos,
 	FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess)

@@ -19,6 +19,13 @@
  *
  */
 
+// BufferedStream represents a buffered file stream; uses memory buffer
+// during read and write operations to limit number reads and writes on disk
+// and thus improve i/o perfomance.
+//
+// BufferedSectionStream is a subclass stream that limits reading by an
+// arbitrary offset range.
+
 #ifndef AGS_SHARED_UTIL_BUFFEREDSTREAM_H
 #define AGS_SHARED_UTIL_BUFFEREDSTREAM_H
 
@@ -30,12 +37,11 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-// Needs tuning depending on the platform.
-const auto BufferStreamSize = 8 * 1024;
-
 class BufferedStream : public FileStream {
 public:
-	// Represents an open _buffered_ file object
+	// Needs tuning depending on the platform.
+	static const size_t BufferSize = 1024u * 8;
+
 	// The constructor may raise std::runtime_error if
 	// - there is an issue opening the file (does not exist, locked, permissions, etc)
 	// - the open mode could not be determined
@@ -54,15 +60,15 @@ public:
 	bool    Seek(soff_t offset, StreamSeek origin) override;
 
 protected:
-	soff_t _start;
-	soff_t _end;
+	soff_t _start = 0;
+	soff_t _end = -1;
 
 private:
 	void FillBufferFromPosition(soff_t position);
 
-	soff_t _position;
-	soff_t _bufferPosition;
-	std::vector<char> _buffer;
+	soff_t _position = 0;
+	soff_t _bufferPosition = 0;
+	std::vector<uint8_t> _buffer;
 };
 
 
