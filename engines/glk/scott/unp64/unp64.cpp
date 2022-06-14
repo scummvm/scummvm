@@ -584,8 +584,7 @@ int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t
 	} else {
 		if (strlen(name) > 248) /* dirty hack in case name is REALLY long */
 			name[248] = 0;
-		sprintf(name + strlen(name), ".%04x%s", r->_pc,
-				(_G(_unp)._wrMemF | _G(_unp)._lfMemF ? ".clean" : ""));
+		sprintf(name + strlen(name), ".%04x%s", r->_pc, ((_G(_unp)._wrMemF | _G(_unp)._lfMemF) ? ".clean" : ""));
 	}
 
 	/*  endadr is set to a ZP location? then use it as a pointer
