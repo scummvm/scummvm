@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-13 22:45+0000\n"
 "PO-Revision-Date: 2022-06-14 17:50+0000\n"
-"Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -992,7 +992,7 @@ msgstr "Tous"
 
 #: gui/launcher.cpp:1596
 msgid "Icons per row:"
-msgstr ""
+msgstr "Icônes par ligne :"
 
 #: gui/massadd.cpp:77 gui/massadd.cpp:80
 msgid "... progress ..."
@@ -3738,47 +3738,37 @@ msgstr "Afficher les contrôles sur l'écran"
 
 #: backends/platform/android/options.cpp:94
 msgid "Choose the preferred touch mode:"
-msgstr ""
+msgstr "Choix du mode tactile préféré :"
 
 #: backends/platform/android/options.cpp:96
-#, fuzzy
-#| msgid "Enable Venus"
 msgid "In menus"
-msgstr "Activer Venus"
+msgstr "Dans les menus"
 
 #: backends/platform/android/options.cpp:98
 #: backends/platform/android/options.cpp:116
 #: backends/platform/android/options.cpp:117
-#, fuzzy
-#| msgid "TV emulation"
 msgid "Touchpad emulation"
-msgstr "Émulation écran télé"
+msgstr "Emulation d'un touchpad"
 
 #: backends/platform/android/options.cpp:99
 #: backends/platform/android/options.cpp:119
 #: backends/platform/android/options.cpp:120
-#, fuzzy
-#| msgid "Virtual mouse up"
 msgid "Direct mouse"
-msgstr "Souris virtuelle Haut"
+msgstr "Souris directe"
 
 #: backends/platform/android/options.cpp:100
 #: backends/platform/android/options.cpp:122
 #: backends/platform/android/options.cpp:123
-#, fuzzy
-#| msgid "TV emulation"
 msgid "Gamepad emulation"
-msgstr "Émulation écran télé"
+msgstr "Emulation d'une manette"
 
 #: backends/platform/android/options.cpp:106
 msgid "In 2D games"
-msgstr ""
+msgstr "Dans les jeux 2D"
 
 #: backends/platform/android/options.cpp:108
-#, fuzzy
-#| msgid "V-Sync in 3D Games"
 msgid "In 3D games"
-msgstr "V-Sync dans les jeux 3D"
+msgstr "Dans les jeux 3D"
 
 #. I18N: Show a button to revoke Storage Access Framework permissions for Android
 #: backends/platform/android/options.cpp:128
@@ -5298,11 +5288,11 @@ msgstr "La quantité de munitions ne baissera jamais."
 
 #: engines/hypno/detection.cpp:281
 msgid "Unlock all levels"
-msgstr ""
+msgstr "Débloquer tous les niveaux"
 
 #: engines/hypno/detection.cpp:282
 msgid "All levels will be available to play."
-msgstr ""
+msgstr "Tous les niveaux seront disponibles."
 
 #: engines/hypno/detection.cpp:290
 msgid "Enable restored content"
@@ -6975,20 +6965,21 @@ msgstr ""
 "l'ouverture passe à la scène avec les logos Lucasfilm et Loom."
 
 #: engines/scumm/dialogs.cpp:810
-#, fuzzy
-#| msgid "Playback"
 msgid "Playback Adjust:"
-msgstr "Lecture"
+msgstr "Ajustement du son :"
 
 #: engines/scumm/dialogs.cpp:814
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
 msgstr ""
+"Lorsqu'un son est lu à partir d'une piste audio CD, ajuste la position de "
+"départ du son de cette valeur. Utilisez cette option si vous entendez "
+"souvent des parties de sons incorrects."
 
 #: engines/scumm/dialogs.cpp:886
 msgid "Intro Adjust:"
-msgstr ""
+msgstr "Ajustement de l'Intro :"
 
 #: engines/scumm/dialogs.cpp:890
 msgid ""
@@ -6996,10 +6987,14 @@ msgid ""
 "music gets cut off prematurely, or if you are unhappy with the way the music "
 "syncs up with the intro."
 msgstr ""
+"Lorsque la piste audio d'intro est jouée, joue la piste à partir de ce "
+"point. Utilisez cette fonction si la musique est coupée prématurément, ou si "
+"vous n'êtes pas satisfait de la façon dont la musique se synchronise avec "
+"l'intro."
 
 #: engines/scumm/dialogs.cpp:899
 msgid "Outlook Adjust:"
-msgstr ""
+msgstr "Ajustement de l'accompagnement :"
 
 #: engines/scumm/dialogs.cpp:903
 msgid ""
@@ -7007,6 +7002,10 @@ msgid ""
 "track at which it starts playing. Use this if the music is cut off, or if "
 "you hear part of the previous music."
 msgstr ""
+"La musique d'accompagnement fait partie de la piste d'introduction. Règle la "
+"position dans la piste à laquelle elle commence à être jouée. Utilisez cette "
+"fonction si la musique est coupée, ou si vous entendez une partie de la "
+"musique précédente."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
@@ -7974,10 +7973,8 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Erreur lors du chargement rapide depuis l'emplacement #%d"
 
 #: engines/toon/toon.cpp:1502
-#, fuzzy
-#| msgid "Are you sure you want to quit?"
 msgid "Are you sure you want to exit?"
-msgstr "Voulez-vous vraiment quitter ?"
+msgstr "Etes-vous sûr de vouloir sortir ?"
 
 #: engines/toon/toon.cpp:1906
 #, c-format
