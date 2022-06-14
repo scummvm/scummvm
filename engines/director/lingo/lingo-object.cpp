@@ -703,7 +703,7 @@ bool CastMember::setField(int field, const Datum &d) {
 		warning("STUB: CastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 		return false;
 	case kTheCastType:
-		warning("CastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
+		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
 		return false;
 	case kTheFileName:
 		if (!castInfo) {
@@ -716,7 +716,7 @@ bool CastMember::setField(int field, const Datum &d) {
 		warning("STUB: CastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 		return false;
 	case kTheHeight:
-		warning("CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 		return false;
 	case kTheName:
 		if (!castInfo) {
@@ -740,7 +740,7 @@ bool CastMember::setField(int field, const Datum &d) {
 		castInfo->script = d.asString();
 		return true;
 	case kTheWidth:
-		warning("CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 		return false;
 	default:
 		warning("CastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
