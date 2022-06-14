@@ -219,6 +219,9 @@ void BoyzEngine::drawHealth() {
 		return;
 
 	float w = float(_health) / float(_maxHealth);
+	if (w <= 0 || _healthBar[_currentActor].w - 3 <= 0 || _healthBar[_currentActor].h / 2 <= 0)
+		return;
+
 	Common::Rect healthBarBox(0, 0, int((_healthBar[_currentActor].w - 3) * w), _healthBar[_currentActor].h / 2);
 
 	uint32 c = kHypnoColorWhiteOrBlue; // white
@@ -358,6 +361,7 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 			_background->decoder->forceSeekToFrame(at.jumpToTime);
 			_masks->decoder->forceSeekToFrame(at.jumpToTime);
 		} else if (at.loseLevel) {
+			debugC(1, kHypnoDebugArcade, "Losing level in transition at %d", _background->decoder->getCurFrame());
 			_health = 0;
 		} else
 			error ("Invalid transition at %d", ttime);
@@ -611,24 +615,25 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 
 			incFriendliesEncountered();
 			uint32 idx = _shoots[i].warningVideoIdx;
-			idx = idx == 0 ? 2 : idx;
-			Common::String filename = _warningVideosDay[idx];
-			_civiliansShoot++;
+			if (idx > 0) {
+				Common::String filename = _warningVideosDay[idx];
+				_civiliansShoot++;
 
-			_background->decoder->pauseVideo(true);
-			MVideo video(filename, Common::Point(0, 0), false, true, false);
-			disableCursor();
-			runIntro(video);
-			// Should be currentPalette?
-			loadPalette(arc->backgroundPalette);
-			_background->decoder->pauseVideo(false);
-			updateScreen(*_background);
-			drawScreen();
-			if (!_music.empty())
-				playSound(_music, 0, arc->musicRate); // restore music
+				_background->decoder->pauseVideo(true);
+				MVideo video(filename, Common::Point(0, 0), false, true, false);
+				disableCursor();
+				runIntro(video);
+				// Should be currentPalette?
+				loadPalette(arc->backgroundPalette);
+				_background->decoder->pauseVideo(false);
+				updateScreen(*_background);
+				drawScreen();
+				if (!_music.empty())
+					playSound(_music, 0, arc->musicRate); // restore music
 
-			hitPlayer();
-
+				hitPlayer();
+			}
+			debugC(1, kHypnoDebugArcade, "Jumping to %d", _shoots[i].explosionFrames[0].start - 3);
 			_background->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 			_masks->decoder->forceSeekToFrame(_shoots[i].explosionFrames[0].start - 3);
 
@@ -753,6 +758,8 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		debugC(1, kHypnoDebugArcade, "Jumping to end of level");
 		_skipLevel = true;
 	} else if (s->missedAnimation == uint32(-1000)) {
+		if (_background->decoder->getCurFrame() > int(s->explosionFrames[0].start))
+			return; // Too late for this
 		_health = 0;
 	} else {
 		int missedAnimation = s->missedAnimation;
