@@ -570,7 +570,42 @@ int diTrackBlocksFree(DiskImage *di, int track) {
 	return bam[track * 4];
 }
 
+/* check if track, sector is free in BAM */
 int diIsTsFree(DiskImage *di, TrackSector ts) {
+	byte mask;
+	byte *bam;
+
+	switch (di->_type) {
+	case D64:
+		bam = diGetTsAddr(di, di->_bam);
+		if (bam[ts._track * 4]) {
+			mask = 1 << (ts._sector & 7);
+			return bam[ts._track * 4 + ts._sector / 8 + 1] & mask ? 1 : 0;
+		} else {
+			return 0;
+		}
+		break;
+	case D71:
+		mask = 1 << (ts._sector & 7);
+		if (ts._track < 36) {
+			bam = diGetTsAddr(di, di->_bam);
+			return bam[ts._track * 4 + ts._sector / 8 + 1] & mask ? 1 : 0;
+		} else {
+			bam = diGetTsAddr(di, di->_bam2);
+			return bam[(ts._track - 35) * 3 + ts._sector / 8 - 3] & mask ? 1 : 0;
+		}
+		break;
+	case D81:
+		mask = 1 << (ts._sector & 7);
+		if (ts._track < 41) {
+			bam = diGetTsAddr(di, di->_bam);
+		} else {
+			bam = diGetTsAddr(di, di->_bam2);
+			ts._track -= 40;
+		}
+		return bam[ts._track * 6 + ts._sector / 8 + 11] & mask ? 1 : 0;
+		break;
+	}
 	return 0;
 }
 
