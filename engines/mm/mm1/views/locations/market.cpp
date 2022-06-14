@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views/businesses/market.h"
+#include "mm/mm1/views/locations/market.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
@@ -28,19 +28,19 @@
 namespace MM {
 namespace MM1 {
 namespace Views {
-namespace Businesses {
+namespace Locations {
 
 #define TOTAL_FOOD 40
 #define DISPLAY_TIMEOUT (3 * FRAME_RATE)
 
 static const byte FOOD_COST[4] = { 5, 10, 20, 200 };
 
-Market::Market() : Business("Market") {
+Market::Market() : Location("Market") {
 	_bounds = getLineBounds(21, 24);
 }
 
 bool Market::msgFocus(const FocusMessage &msg) {
-	g_events->msgBusiness(BusinessMessage(LOC_MARKET));
+	send("GameView", ValueMessage(LOC_MARKET));
 
 	Maps::Map &map = *g_maps->_currentMap;
 	_foodCost = FOOD_COST[map[0] - 1];
@@ -107,7 +107,7 @@ bool Market::buyFood(Character *c) {
 	return true;
 }
 
-} // namespace Businesses
+} // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM

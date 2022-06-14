@@ -102,9 +102,8 @@ public:
 	byte dataByte(uint ofs) const {
 		return _data[ofs];
 	}
-	uint16 dataWord(uint16 ofs) const {
-		return (uint16)_data[ofs] | ((uint16)_data[ofs + 1] << 8);
-	}
+	uint16 dataWord(uint16 ofs) const;
+	void dataWord(uint16 ofs, uint16 val);
 
 	/**
 	 * Checks whether the party is dead or out of action,

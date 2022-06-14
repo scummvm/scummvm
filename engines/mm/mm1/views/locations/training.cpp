@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views/businesses/training.h"
+#include "mm/mm1/views/locations/training.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
@@ -28,15 +28,15 @@
 namespace MM {
 namespace MM1 {
 namespace Views {
-namespace Businesses {
+namespace Locations {
 
 #define MAX_LEVEL 200
 
-Training::Training() : Business("Training") {
+Training::Training() : Location("Training") {
 }
 
 bool Training::msgFocus(const FocusMessage &msg) {
-	g_events->msgBusiness(BusinessMessage(LOC_TRAINING));
+	send("GameView", ValueMessage(LOC_TRAINING));
 	changeCharacter(0);
 
 	return true;
@@ -63,17 +63,12 @@ bool Training::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Training::changeCharacter(uint index) {
-	Maps::Map &map = *g_maps->_currentMap;
-	int i;
-
-	if (index >= g_globals->_party.size())
-		return;
-	Business::changeCharacter(index);
+	Location::changeCharacter(index);
 }
 
 void Training::draw() {
 	Character &c = *g_globals->_currCharacter;
-	Business::draw();
+	Location::draw();
 
 	writeString(18, 1, STRING["dialogs.training.for_level"]);
 	writeNumber(c._nextLevel);
@@ -83,7 +78,7 @@ void Training::draw() {
 	}
 }
 
-} // namespace Businesses
+} // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM

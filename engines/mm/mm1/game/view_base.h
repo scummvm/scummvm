@@ -88,7 +88,7 @@ public:
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgGame(const GameMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
-	bool msgBusiness(const BusinessMessage &msg) override;
+	bool msgValue(const ValueMessage &msg) override;
 
 	/**
 	 * Updates game state

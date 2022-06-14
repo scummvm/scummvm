@@ -29,6 +29,8 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define STATUE_VAL 0x412
+
 void Map00::special() {
 	// Scan for special actions on the map cell
 	for (uint i = 0; i < _data[50]; ++i) {
@@ -122,15 +124,64 @@ void Map00::special06() {
 
 void Map00::special07() { warning("special07"); }
 void Map00::special08() { warning("special08"); }
-void Map00::special09() { warning("special09"); }
-void Map00::special10() { warning("special10"); }
-void Map00::special11() { warning("special11"); }
-void Map00::special12() { warning("special12"); }
-void Map00::special13() { warning("special13"); }
-void Map00::special14() { warning("special14"); }
-void Map00::special15() { warning("special15"); }
-void Map00::special16() { warning("special16"); }
-void Map00::special17() { warning("special17"); }
+
+void Map00::special09() {
+	Sound::sound(SOUND_2);
+	g_events->msgInfo(InfoMessage(
+		STRING["maps.map00.stairs"],
+		[]() {
+			g_maps->changeMap(0xa11, 1);
+		}
+	));
+}
+
+void Map00::special10() {
+	Map &map = *g_maps->_currentMap;
+	map[STATUE_VAL] = 0;
+	searchStatue();
+}
+
+void Map00::special11() {
+	Map &map = *g_maps->_currentMap;
+	map[STATUE_VAL] = 1;
+	searchStatue();
+}
+
+void Map00::special12() {
+	Map &map = *g_maps->_currentMap;
+	map[STATUE_VAL] = 2;
+	searchStatue();
+}
+
+void Map00::special13() {
+	Map &map = *g_maps->_currentMap;
+	map[STATUE_VAL] = 3;
+	searchStatue();
+}
+
+void Map00::special14() {
+	Map &map = *g_maps->_currentMap;
+	map[STATUE_VAL] = 4;
+	searchStatue();
+}
+
+void Map00::special15() {
+	Map &map = *g_maps->_currentMap;
+	map[STATUE_VAL] = 5;
+	searchStatue();
+}
+
+void Map00::special16() {
+	Map &map = *g_maps->_currentMap;
+	map[STATUE_VAL] = 6;
+	searchStatue();
+}
+
+void Map00::special17() {
+	Map &map = *g_maps->_currentMap;
+	map[STATUE_VAL] = 7;
+	searchStatue();
+}
 
 void Map00::special18() {
 	Sound::sound(SOUND_2);
@@ -172,6 +223,17 @@ void Map00::special22() {
 
 void Map00::special23() {
 	warning("special23");
+}
+
+void Map00::searchStatue() {
+	Sound::sound(SOUND_2);
+	g_events->msgInfo(InfoMessage(
+		STRING["maps.map00.statue"],
+		[]() {
+			Map &map = *g_maps->_currentMap;
+			g_events->send("Statue", ValueMessage(map[STATUE_VAL]));
+		}
+	));
 }
 
 } // namespace Maps

@@ -19,73 +19,33 @@
  *
  */
 
-#ifndef MM1_VIEWS_BUSINESSES_BUSINESS_H
-#define MM1_VIEWS_BUSINESSES_BUSINESS_H
+#ifndef MM1_VIEWS_LOCATIONS_TRAINING_H
+#define MM1_VIEWS_LOCATIONS_TRAINING_H
 
-#include "mm/mm1/views/text_view.h"
+#include "mm/mm1/views/locations/location.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
-namespace Businesses {
+namespace Locations {
 
-class Business : public TextView {
-private:
-	int _timeoutCtr;
+class Training : public Location {
 protected:
-	Common::String _modeString;
-protected:
-	/**
-	 * Clears the bottom part of the window and
-	 * displays a message
-	 */
-	void displayMessage(int x, const Common::String &msg);
-	void displayMessage(const Common::String &msg) {
-		displayMessage(0, msg);
-	}
-
-	/**
-	 * Move text position to the next line
-	 */
-	void newLine();
-
-	/**
-	 * Leave the business
-	 */
-	void leave();
-
-	/**
-	 * Gathers all the party gold to the current character
-	 */
-	void gatherGold();
-
-	/**
-	 * Subtract gold from current character
-	 */
-	bool subtractGold(uint amount);
-
-	/**
-	 * Displays not enough gold
-	 */
-	void notEnoughGold();
-
 	/**
 	 * Change character
 	 */
-	virtual void changeCharacter(uint index);
+	void changeCharacter(uint index) override;
+
 public:
-	Business(const Common::String &name);
-	virtual ~Business() {}
+	Training();
+	virtual ~Training() {}
 
-	/**
-	 * Draws the initial display for the business
-	 */
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
-
-	bool tick() override;
 };
 
-} // namespace Businesses
+} // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM

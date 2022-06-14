@@ -31,6 +31,8 @@ namespace Maps {
 class Map00 : public Map {
 	typedef void (Map00:: *SpecialFn)();
 private:
+	void searchStatue();
+
 	void special00();
 	void special01();
 	void special02();

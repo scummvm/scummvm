@@ -36,6 +36,8 @@ namespace MM1 {
 
 class Events;
 
+extern Events *g_events;
+
 class UIElement {
 	friend class Events;
 protected:
@@ -141,7 +143,15 @@ public:
 				if ((*it)->msg##NAME(e)) return true; \
 			} \
 			return false; \
-		}
+		} \
+		bool send(const Common::String &viewName, const NAME##Message &msg) { \
+			UIElement *view = findView(viewName); \
+			assert(view); \
+			return view->msg##NAME(msg); \
+		} \
+		bool send(const NAME##Message &msg) { \
+			return send("Root", msg); \
+		} \
 
 	MESSAGE(Focus);
 	MESSAGE(Unfocus);
@@ -149,9 +159,9 @@ public:
 	MESSAGE(MouseDown);
 	MESSAGE(MouseUp);
 	MESSAGE(Action);
-	MESSAGE(Business);
 	MESSAGE(Game);
 	MESSAGE(Info);
+	MESSAGE(Value);
 	#undef MESSAGE
 };
 
@@ -227,8 +237,6 @@ public:
 	MESSAGE(MouseUp);
 	#undef MESSAGE
 };
-
-extern Events *g_events;
 
 } // namespace MM1
 } // namespace MM

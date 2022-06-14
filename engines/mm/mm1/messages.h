@@ -56,8 +56,20 @@ struct MouseMessage : public Message {
 		Message(), _button(btn), _pos(pos) {}
 	MouseMessage(Common::EventType type, const Common::Point &pos);
 };
-typedef MouseMessage MouseDownMessage;
-typedef MouseMessage MouseUpMessage;
+struct MouseDownMessage : public MouseMessage {
+	MouseDownMessage() : MouseMessage() {}
+	MouseDownMessage(Button btn, const Common::Point &pos) :
+		MouseMessage(btn, pos) {}
+	MouseDownMessage(Common::EventType type, const Common::Point &pos) :
+		MouseMessage(type, pos) {}
+};
+struct MouseUpMessage : public MouseMessage {
+	MouseUpMessage() : MouseMessage() {}
+	MouseUpMessage(Button btn, const Common::Point &pos) :
+		MouseMessage(btn, pos) {}
+	MouseUpMessage(Common::EventType type, const Common::Point &pos) :
+		MouseMessage(type, pos) {}
+};
 
 struct GameMessage : public Message {
 	Common::String _name;
@@ -102,7 +114,6 @@ struct ValueMessage : public Message {
 	ValueMessage(int value) : Message(),
 		_value(value) {}
 };
-typedef ValueMessage BusinessMessage;
 
 } // namespace MM1
 } // namespace MM

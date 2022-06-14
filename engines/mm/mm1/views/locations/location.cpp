@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views/businesses/business.h"
+#include "mm/mm1/views/locations/location.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
@@ -27,20 +27,20 @@
 namespace MM {
 namespace MM1 {
 namespace Views {
-namespace Businesses {
+namespace Locations {
 
 #define DISPLAY_TIMEOUT (5 * FRAME_RATE)
 
-Business::Business(const Common::String &name) : TextView(name) {
+Location::Location(const Common::String &name) : TextView(name) {
 	_bounds = getLineBounds(17, 24);
-	_modeString = STRING["dialogs.business.gather"];
+	_modeString = STRING["dialogs.location.gather"];
 }
 
-void Business::draw() {
+void Location::draw() {
 	clearSurface();
 	writeString(0, 0, g_globals->_currCharacter->_name);
 	newLine();
-	writeString(STRING["dialogs.business.gold"]);
+	writeString(STRING["dialogs.location.gold"]);
 	writeNumber(g_globals->_currCharacter->_gold);
 	newLine();
 	newLine();
@@ -48,19 +48,19 @@ void Business::draw() {
 	writeString(0, 6, STRING["dialogs.misc.go_back"]);
 }
 
-void Business::displayMessage(int x, const Common::String &msg) {
+void Location::displayMessage(int x, const Common::String &msg) {
 	clearLines(3, 7);
 	writeString(x, 5, msg);
 	_timeoutCtr = DISPLAY_TIMEOUT;
 }
 
-void Business::newLine() {
+void Location::newLine() {
 	_textPos.x = 0;
 	if (++_textPos.y >= 24)
 		_textPos.y = 0;
 }
 
-void Business::gatherGold() {
+void Location::gatherGold() {
 	uint total = 0;
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		total += g_globals->_party[i]._gold;
@@ -70,7 +70,7 @@ void Business::gatherGold() {
 	g_globals->_currCharacter->_gold = total;
 }
 
-bool Business::subtractGold(uint amount) {
+bool Location::subtractGold(uint amount) {
 	if (g_globals->_currCharacter->_gold < amount) {
 		notEnoughGold();
 		return false;
@@ -80,12 +80,12 @@ bool Business::subtractGold(uint amount) {
 	}
 }
 
-void Business::notEnoughGold() {
+void Location::notEnoughGold() {
 	Sound::sound(SOUND_2);
 	displayMessage(STRING["dialogs.misc.not_enough_gold"]);
 }
 
-void Business::changeCharacter(uint index) {
+void Location::changeCharacter(uint index) {
 	if (index >= g_globals->_party.size())
 		return;
 
@@ -93,7 +93,7 @@ void Business::changeCharacter(uint index) {
 	redraw();
 }
 
-void Business::leave() {
+void Location::leave() {
 	SWAP(g_maps->_forwardMask, g_maps->_backwardsMask);
 	SWAP(g_maps->_leftMask, g_maps->_rightMask);
 	SWAP(g_maps->_forwardOffset, g_maps->_backwardsOffset);
@@ -103,7 +103,7 @@ void Business::leave() {
 	g_events->redraw();
 }
 
-bool Business::tick() {
+bool Location::tick() {
 	if (_timeoutCtr && --_timeoutCtr == 0) {
 		redraw();
 	}
@@ -111,7 +111,7 @@ bool Business::tick() {
 	return TextView::tick();
 }
 
-} // namespace Businesses
+} // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM
