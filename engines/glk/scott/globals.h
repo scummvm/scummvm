@@ -162,6 +162,11 @@ public:
 	int _parsePar = 1;
 	int _iter = 0;
 
+	// 6502 emu
+	int _byted011[2] = {0, 0};
+	int _retfire = 0xff;
+	int _retspace = 0xff;
+
 public:
 	Globals();
 	~Globals();
