@@ -739,6 +739,21 @@ void ScummEngine_v6::o6_startScript() {
 	script = pop();
 	flags = pop();
 
+	// WORKAROUND: In DOTT, when Jefferson builds the fire, `startScript(1,106,[91,5])`
+	// is called, which randomly changes the state of the fire object between 1 and 5,
+	// as long as Hoagie doesn't exit this room. This makes him randomly fail
+	// interacting with it, saying "I can't reach it." instead of the intended "No.
+	// Fire bad." line. It looks like the 1-5 states for the fire object are useless
+	// leftovers which can be safely ignored in order to make sure that Hoagie's
+	// comment is always available (maybe the fire was meant to be displayed
+	// differently when it's just been lit, but then the idea was dropped?).
+	// This also happens with the original interpreters and with the remaster.
+	if (_game.id == GID_TENTACLE && _roomResource == 13 &&
+		vm.slot[_currentScript].number == 21 && script == 106 &&
+		args[0] == 91 && _enableEnhancements) {
+		return;
+	}
+
 	// WORKAROUND for a bug also present in the original EXE: After greasing (or oiling?)
 	// the cannonballs in the Plunder Town Theater, during the juggling show, the game
 	// cuts from room 18 (backstage) to room 19 (stage).
