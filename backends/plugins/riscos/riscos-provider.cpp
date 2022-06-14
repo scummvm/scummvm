@@ -32,34 +32,16 @@
 #include <kernel.h>
 #include <swis.h>
 
-typedef void (*Cache_CleanInvalidateRangePtr)(void *start, void *end);
-
-// This function enters in supervisor mode, call the ARMop and leaves the supervisor mode
-static void call_Cache_CleanInvalidateRange(void *start, void *end, Cache_CleanInvalidateRangePtr f) __asm__(".call_Cache_CleanInvalidateRange");
-__asm__(
-	".call_Cache_CleanInvalidateRange:\n"
-	"PUSH	{r4, lr}\n" // Backup r4 and lr
-	"MRS	r4, cpsr\n" // Backup CPSR in R4
-	"SWI    0x16\n" // OS_EnterOS
-	"MOV	lr, pc\n" //
-	"MOV	pc, r2\n" // Call 3rd argument (function pointer)
-	"MSR	cpsr_c, r4\n" // Restore CPSR (leave SVC mode)
-	"POP	{r4, pc}\n" // Restore R4 and return
-);
-
-
 class RiscOSDLObject : public ARMDLObject {
 protected:
 	void flushDataCache(void *ptr, uint32 len) const override {
-		Cache_CleanInvalidateRangePtr Cache_CleanInvalidateRange;
+		_kernel_swi_regs regs;
 
-		if (!_swix(OS_MMUControl, _IN(0)|_OUT(0), 2 | 21 << 8, &Cache_CleanInvalidateRange)) {
-			call_Cache_CleanInvalidateRange(ptr, (char *)ptr + len, Cache_CleanInvalidateRange);
-			return;
-		}
+		regs.r[0] = 1;
+		regs.r[1] = (int)ptr;
+		regs.r[2] = (int)ptr + len;
 
-		// OS_MMUControl 2 or Cache_CleanInvalidateRange are not supported: fallback to old inefficient OS_MMUControl 1
-		_swix(OS_MMUControl, _IN(0), 1 | 1 << 28 | 1 << 30 | 1 << 31);
+		_kernel_swi(OS_SynchroniseCodeAreas, &regs, &regs);
 	}
 
 };
