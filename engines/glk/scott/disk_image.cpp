@@ -542,8 +542,32 @@ TrackSector diGetDirTs(DiskImage *di) {
 	return newTs;
 }
 
+/* return number of free blocks in track */
 int diTrackBlocksFree(DiskImage *di, int track) {
-	return 0;
+	byte *bam;
+
+	switch (di->_type) {
+	default:
+	case D64:
+		bam = diGetTsAddr(di, di->_bam);
+		break;
+	case D71:
+		bam = diGetTsAddr(di, di->_bam);
+		if (track >= 36) {
+			return bam[track + 185];
+		}
+		break;
+	case D81:
+		if (track <= 40) {
+			bam = diGetTsAddr(di, di->_bam);
+		} else {
+			bam = diGetTsAddr(di, di->_bam2);
+			track -= 40;
+		}
+		return bam[track * 6 + 10];
+		break;
+	}
+	return bam[track * 4];
 }
 
 int diIsTsFree(DiskImage *di, TrackSector ts) {
