@@ -81,7 +81,9 @@ public:
 
 	virtual void setColors(uint32 *fgcolor, uint32 *bgcolor) { return; }
 	virtual uint32 getForeColor() { return 0; }
+	virtual void setForeColor(uint32 fgCol) { return; }
 	virtual uint32 getBackColor() { return 0; }
+	virtual void setBackColor(uint32 bgCol) { return; }
 
 	bool hasProp(const Common::String &propName) override;
 	Datum getProp(const Common::String &propName) override;
@@ -231,6 +233,8 @@ public:
 	ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	uint32 getForeColor() override { return _fgCol; }
 	uint32 getBackColor() override { return _bgCol; }
+	void setBackColor(uint32 bgCol) override;
+	void setForeColor(uint32 fgCol) override;
 
 	ShapeType _shapeType;
 	uint16 _pattern;
@@ -258,7 +262,9 @@ public:
 	Graphics::TextAlign getAlignment();
 
 	uint32 getBackColor() override { return _bgcolor; }
+	void setBackColor(uint32 bgCol) override;
 	uint32 getForeColor() override { return _fgcolor; }
+	void setForeColor(uint32 fgCol) override;
 
 	bool hasField(int field) override;
 	Datum getField(int field) override;
