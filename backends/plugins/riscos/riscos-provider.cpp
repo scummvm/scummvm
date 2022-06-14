@@ -32,6 +32,30 @@
 #include <kernel.h>
 #include <swis.h>
 
+// HACK: This is needed so that standard library functions that are only
+// used in plugins can be found in the main executable.
+void pluginHack() {
+	volatile float f = 0.0f;
+	volatile double d = 0.0;
+
+	byte *b = new (std::nothrow) byte[100];
+
+	f = tanhf(f);
+	f = logf(f);
+	f = lroundf(f);
+	f = frexpf(f, NULL);
+	f = ldexpf(f, 1);
+	f = fmaxf(f, f);
+	f = fminf(f, f);
+	f = truncf(f);
+
+	d = nearbyint(d);
+
+	rename("dummyA", "dummyB");
+
+	delete[] b;
+}
+
 class RiscOSDLObject : public ARMDLObject {
 protected:
 	void flushDataCache(void *ptr, uint32 len) const override {
