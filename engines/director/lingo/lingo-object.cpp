@@ -700,8 +700,8 @@ bool CastMember::setField(int field, const Datum &d) {
 
 	switch (field) {
 	case kTheBackColor:
-		warning("STUB: CastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
-		return false;
+		_cast->getCastMember(_castId)->setBackColor(d.asInt());
+		return true;
 	case kTheCastType:
 		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
 		return false;
@@ -713,8 +713,8 @@ bool CastMember::setField(int field, const Datum &d) {
 		castInfo->fileName = d.asString();
 		return true;
 	case kTheForeColor:
-		warning("STUB: CastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
-		return false;
+		_cast->getCastMember(_castId)->setForeColor(d.asInt());
+		return true;
 	case kTheHeight:
 		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 		return false;
