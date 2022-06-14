@@ -79,7 +79,15 @@ void Map00::special01() {
 	));
 }
 
-void Map00::special02() { warning("special02"); }
+void Map00::special02() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.map00.blacksmith_inside"],
+		[]() {
+			g_events->addView("Blacksmith");
+		}
+	));
+}
 
 void Map00::special03() {
 	Sound::sound(SOUND_2);

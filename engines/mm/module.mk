@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	mm1/utils/mouse.o \
 	mm1/utils/strings.o \
 	mm1/views/locations/location.o \
+	mm1/views/locations/blacksmith.o \
 	mm1/views/locations/market.o \
 	mm1/views/locations/statue.o \
 	mm1/views/locations/tavern.o \

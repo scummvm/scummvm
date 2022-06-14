@@ -36,8 +36,6 @@ namespace MM1 {
 
 class Events;
 
-extern Events *g_events;
-
 class UIElement {
 	friend class Events;
 protected:
@@ -56,6 +54,11 @@ private:
 	 *
 	 */
 	void drawElements();
+
+	/**
+	 * Finds a view globally
+	 */
+	static UIElement *findViewGlobally(const Common::String &name);
 public:
 	UIElement(const Common::String &name, UIElement *uiParent);
 	virtual ~UIElement() {}
@@ -147,7 +150,7 @@ public:
 		} \
 	public: \
 		bool send(const Common::String &viewName, const NAME##Message &msg) { \
-			UIElement *view = findView(viewName); \
+			UIElement *view = UIElement::findViewGlobally(viewName); \
 			assert(view); \
 			return view->msg##NAME(msg); \
 		} \
@@ -239,6 +242,8 @@ public:
 		return !_views.empty() ? focusedView()->tick() : false;
 	}
 };
+
+extern Events *g_events;
 
 } // namespace MM1
 } // namespace MM
