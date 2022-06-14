@@ -216,7 +216,7 @@ void Maps::select(uint16 id, byte section) {
 void Maps::display(uint16 id, byte section) {
 	select(id, section);
 	loadTiles();
-	g_events->msgGame(GameMessage("DISPLAY"));
+	g_events->send("Game", GameMessage("DISPLAY"));
 }
 
 void Maps::loadTown(TownId townId) {
@@ -419,7 +419,7 @@ void Maps::changeMap(uint16 id, byte section) {
 	select(id, section);
 	loadTiles();
 
-	g_events->msgGame(GameMessage("UPDATE"));
+	g_events->send("Game", GameMessage("UPDATE"));
 }
 
 void Maps::clearSpecial() {

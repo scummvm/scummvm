@@ -88,7 +88,7 @@ bool ButtonContainer::msgMouseUp(const MouseUpMessage &msg) {
 		for (uint i = 0; i < _buttons.size(); ++i) {
 			if (_buttons[i]._action == action) {
 				if (_buttons[i]._action == action)
-					g_events->msgAction(ActionMessage(action));
+					g_events->send(ActionMessage(action));
 
 				g_events->redraw();
 				g_events->drawElements();

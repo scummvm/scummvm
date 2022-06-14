@@ -192,7 +192,7 @@ bool Console::cmdMap(int argc, const char **argv) {
 		maps.select(maps.getMap(mapId)->getId(), 0);
 		maps._mapPos.x = x;
 		maps._mapPos.y = y;
-		g_events->msgGame(GameMessage("UPDATE"));
+		g_events->send("Game", GameMessage("UPDATE"));
 
 		return false;
 	}
@@ -206,7 +206,7 @@ bool Console::cmdPos(int argc, const char **argv) {
 		Maps::Maps &maps = g_globals->_maps;
 		maps._mapPos.x = strToInt(argv[1]);
 		maps._mapPos.y = strToInt(argv[2]);
-		g_events->msgGame(GameMessage("UPDATE"));
+		g_events->send("Game", GameMessage("UPDATE"));
 
 		return false;
 	}

@@ -29,7 +29,7 @@ namespace Game {
 
 void Search::execute() {
 	// TODO: Handle properly
-	g_events->msgInfo(InfoMessage("YOU FOUND...  NOTHING"));
+	g_events->send(InfoMessage("YOU FOUND...  NOTHING"));
 }
 
 } // namespace Game
