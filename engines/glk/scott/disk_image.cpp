@@ -130,7 +130,44 @@ RawDirEntry *findFileEntry(DiskImage *di, byte *rawPattern, int type) {
 
 /* allocate next available directory block */
 TrackSector allocNextDirTs(DiskImage *di) {
-	return TrackSector();
+	byte *p;
+	int spt;
+	TrackSector ts, lastTs;
+
+	if (diTrackBlocksFree(di, di->_bam._track)) {
+		lastTs._track = di->_bam._track;
+		lastTs._sector = 0;
+		if ((di->_type == D64) || (di->_type == D71)) {
+			ts._track = 18;
+			ts._sector = 1;
+		} else {
+			ts = nextTsInChain(di, lastTs);
+		}
+		while (ts._track) {
+			lastTs = ts;
+			ts = nextTsInChain(di, ts);
+		}
+		ts._track = lastTs._track;
+		ts._sector = lastTs._sector + 3;
+		spt = diSectorsPerTrack(di->_type, ts._track);
+		for (;; ts._sector = (ts._sector + 1) % spt) {
+			if (diIsTsFree(di, ts)) {
+				diAllocTs(di, ts);
+				p = diGetTsAddr(di, lastTs);
+				p[0] = ts._track;
+				p[1] = ts._sector;
+				p = diGetTsAddr(di, ts);
+				memset(p, 0, 256);
+				p[1] = 0xff;
+				di->_modified = 1;
+				return ts;
+			}
+		}
+	} else {
+		ts._track = 0;
+		ts._sector = 0;
+		return ts;
+	}
 }
 
 RawDirEntry *allocFileEntry(DiskImage *di, byte *rawName, int type) {
@@ -503,6 +540,18 @@ TrackSector diGetDirTs(DiskImage *di) {
 	}
 
 	return newTs;
+}
+
+int diTrackBlocksFree(DiskImage *di, int track) {
+	return 0;
+}
+
+int diIsTsFree(DiskImage *di, TrackSector ts) {
+	return 0;
+}
+
+void diAllocTs(DiskImage *di, TrackSector ts) {
+
 }
 
 /* convert to rawname */

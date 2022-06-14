@@ -103,6 +103,9 @@ int diTracks(ImageType type);
 int diGetBlockNum(ImageType type, TrackSector ts);
 
 TrackSector diGetDirTs(DiskImage *di);
+int diTrackBlocksFree(DiskImage *di, int track);
+int diIsTsFree(DiskImage *di, TrackSector ts);
+void diAllocTs(DiskImage *di, TrackSector ts);
 
 int diRawnameFromName(byte *rawname, const char *name);
 
