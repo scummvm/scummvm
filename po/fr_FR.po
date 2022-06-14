@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-13 22:45+0000\n"
-"PO-Revision-Date: 2022-05-31 20:30+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2022-06-14 17:50+0000\n"
+"Last-Translator: Donovan Watteau <contrib@dwatteau.fr>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -4132,7 +4132,7 @@ msgstr "Noircit une ligne sur deux pour imiter l'aspect d'un tube cathodique"
 
 #: engines/adl/detection.cpp:101
 msgid "Always use sharp monochrome text"
-msgstr "Toujours utiliser du text noir et blanc net"
+msgstr "Toujours utiliser du texte noir et blanc net"
 
 #: engines/adl/detection.cpp:102
 msgid "Do not emulate NTSC artifacts for text"
