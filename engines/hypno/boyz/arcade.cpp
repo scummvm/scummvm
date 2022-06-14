@@ -96,12 +96,18 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 			return;
 		_stats = _lastStats;
 		disableCursor();
-		if (getTerritory(_currentLevel) <= 4) {
-			MVideo video(_deathDay[_currentActor], Common::Point(0, 0), false, true, false);
+
+		if (_levelId == 36 && !checkArcadeObjectives()) {
+			MVideo video("warnings/w09s.smk", Common::Point(0, 0), false, true, false);
 			runIntro(video);
 		} else {
-			MVideo video(_deathNight[_currentActor], Common::Point(0, 0), false, true, false);
-			runIntro(video);
+			if (getTerritory(_currentLevel) <= 4) {
+				MVideo video(_deathDay[_currentActor], Common::Point(0, 0), false, true, false);
+				runIntro(video);
+			} else {
+				MVideo video(_deathNight[_currentActor], Common::Point(0, 0), false, true, false);
+				runIntro(video);
+			}
 		}
 		return;
 	}
