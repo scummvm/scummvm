@@ -733,7 +733,7 @@ bool CastMember::setField(int field, const Datum &d) {
 		castInfo->name = d.asString();
 		return true;
 	case kTheRect:
-		warning("STUB: CastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		warning("CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 		return false;
 	case kThePurgePriority:
 		_purgePriority = CLIP<int>(d.asInt(), 0, 3);
