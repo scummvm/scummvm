@@ -609,8 +609,44 @@ int diIsTsFree(DiskImage *di, TrackSector ts) {
 	return 0;
 }
 
+/* allocate track, sector in BAM */
 void diAllocTs(DiskImage *di, TrackSector ts) {
+	byte mask;
+	byte *bam;
 
+	di->_modified = 1;
+	switch (di->_type) {
+	case D64:
+		bam = diGetTsAddr(di, di->_bam);
+		bam[ts._track * 4] -= 1;
+		mask = 1 << (ts._sector & 7);
+		bam[ts._track * 4 + ts._sector / 8 + 1] &= ~mask;
+		break;
+	case D71:
+		mask = 1 << (ts._sector & 7);
+		if (ts._track < 36) {
+			bam = diGetTsAddr(di, di->_bam);
+			bam[ts._track * 4] -= 1;
+			bam[ts._track * 4 + ts._sector / 8 + 1] &= ~mask;
+		} else {
+			bam = diGetTsAddr(di, di->_bam);
+			bam[ts._track + 185] -= 1;
+			bam = diGetTsAddr(di, di->_bam2);
+			bam[(ts._track - 35) * 3 + ts._sector / 8 - 3] &= ~mask;
+		}
+		break;
+	case D81:
+		if (ts._track < 41) {
+			bam = diGetTsAddr(di, di->_bam);
+		} else {
+			bam = diGetTsAddr(di, di->_bam2);
+			ts._track -= 40;
+		}
+		bam[ts._track * 6 + 10] -= 1;
+		mask = 1 << (ts._sector & 7);
+		bam[ts._track * 6 + ts._sector / 8 + 11] &= ~mask;
+		break;
+	}
 }
 
 /* convert to rawname */
