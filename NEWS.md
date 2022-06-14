@@ -12,8 +12,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCUMM:
    - Marked a workaround in Monkey Island 2 (FM-Towns version) as an
      enhancement; this workaround originally restored a section a portion
-	 of the map chasing puzzle in Booty Island which had been cut in the
-	 FM-Towns version of the game.
+     of the map chasing puzzle in Booty Island which had been cut in the
+     FM-Towns version of the game.
 
  Toon:
    - Made game menus behave like in the original.
