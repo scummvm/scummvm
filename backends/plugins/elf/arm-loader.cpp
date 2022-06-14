@@ -75,6 +75,10 @@ bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 			}
 			break;
 
+		case R_ARM_PC24:
+//			debug(8, "elfloader: R_ARM_PC24: PC-relative jump, ld takes care of necessary relocation work for us.");
+			break;
+
 		case R_ARM_THM_CALL:
 //			debug(8, "elfloader: R_ARM_THM_CALL: PC-relative jump, ld takes care of necessary relocation work for us.");
 			break;
