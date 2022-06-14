@@ -724,9 +724,21 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		if (s->missedAnimation != uint32(-1) && uint32(_background->decoder->getCurFrame()) > s->missedAnimation)
 			return;
 		_background->decoder->pauseVideo(true);
-		MVideo video(_warningAlarmVideos.front(), Common::Point(0, 0), false, true, false);
+		int territory = getTerritory(_currentLevel);
+		Filename path;
+		if (territory <= 2)
+			path = "misc/alrm_brs.smk";
+		else if (territory <= 4)
+			path = "misc/alrm_mbs.smk";
+		else
+			path = "misc/alrm_c5.smk";
+
 		disableCursor();
-		runIntro(video);
+		MVideo alarmVideo(path, Common::Point(0, 0), false, true, false);
+		runIntro(alarmVideo);
+
+		MVideo warningVideo(_warningAlarmVideos.front(), Common::Point(0, 0), false, true, false);
+		runIntro(warningVideo);
 		_health = 0;
 		return;
 	} else if (s->direction > 0) {
