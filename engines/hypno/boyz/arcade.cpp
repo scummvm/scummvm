@@ -617,7 +617,6 @@ bool BoyzEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool 
 			uint32 idx = _shoots[i].warningVideoIdx;
 			if (idx > 0) {
 				Common::String filename = _warningVideosDay[idx];
-				_civiliansShoot++;
 
 				_background->decoder->pauseVideo(true);
 				MVideo video(filename, Common::Point(0, 0), false, true, false);

@@ -629,7 +629,6 @@ public:
 	ScriptMode _currentMode;
 	uint32 _currentActor;
 	uint32 _currentWeapon;
-	uint32 _civiliansShoot;
 	Common::Array<Filename> _warningVideosDay;
 	Common::Array<Filename> _warningVideosNight;
 	Common::Array<Filename> _warningAlarmVideos;

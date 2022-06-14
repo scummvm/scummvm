@@ -70,7 +70,6 @@ BoyzEngine::BoyzEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine
 	_crosshairsPalette = nullptr;
 	_lastLevel = 0;
 	_previousHealth = 0;
-	_civiliansShoot = 0;
 	_selectedCorrectBox = 0;
 	_flashbackMode = false;
 
