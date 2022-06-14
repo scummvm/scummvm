@@ -137,7 +137,7 @@ void MetaEngine::setKeybindingMode(KeybindingMode mode) {
 }
 
 void MetaEngine::executeAction(KeybindingAction keyAction) {
-	g_engine->msgAction(ActionMessage(keyAction));
+	g_engine->send(ActionMessage(keyAction));
 }
 
 } // End of namespace MM1

@@ -137,6 +137,7 @@ public:
 	 * Handles events
 	 */
 	#define MESSAGE(NAME) \
+	protected: \
 		virtual bool msg##NAME(const NAME##Message &e) { \
 			for (Common::Array<UIElement *>::iterator it = _children.begin(); \
 					it != _children.end(); ++it) { \
@@ -144,6 +145,7 @@ public:
 			} \
 			return false; \
 		} \
+	public: \
 		bool send(const Common::String &viewName, const NAME##Message &msg) { \
 			UIElement *view = findView(viewName); \
 			assert(view); \
@@ -175,6 +177,20 @@ protected:
 	 * Process an event
 	 */
 	void processEvent(Common::Event &ev);
+
+	/**
+	 * Overrides events we want to only go to the focused view
+	 */
+	#define MESSAGE(NAME) \
+		bool msg##NAME(const NAME##Message &e) override { \
+			return !_views.empty() ? focusedView()->msg##NAME(e) : false; \
+		}
+	MESSAGE(Focus);
+	MESSAGE(Unfocus);
+	MESSAGE(Keypress);
+	MESSAGE(MouseDown);
+	MESSAGE(MouseUp);
+	#undef MESSAGE
 public:
 	Events(bool enhancedMode);
 	virtual ~Events();
@@ -222,20 +238,6 @@ public:
 	bool tick() override {
 		return !_views.empty() ? focusedView()->tick() : false;
 	}
-
-	/**
-	 * Overrides events we want to only go to the focused view
-	 */
-	#define MESSAGE(NAME) \
-		bool msg##NAME(const NAME##Message &e) override { \
-			return !_views.empty() ? focusedView()->msg##NAME(e) : false; \
-		}
-	MESSAGE(Focus);
-	MESSAGE(Unfocus);
-	MESSAGE(Keypress);
-	MESSAGE(MouseDown);
-	MESSAGE(MouseUp);
-	#undef MESSAGE
 };
 
 } // namespace MM1
