@@ -53,7 +53,7 @@ DosError g_dosError[] = {
 	{-1, -1, nullptr}
 };
 
-int setStatus(DiskImage* di, int status, int track, int sector) {
+int setStatus(DiskImage *di, int status, int track, int sector) {
 	di->_status = status;
 	di->_statusts._track = track;
 	di->_statusts._sector = sector;
@@ -419,7 +419,7 @@ byte *diGetTsAddr(DiskImage *di, TrackSector ts) {
 }
 
 /* get error info for a sector */
-int getTsDosErr(DiskImage* di, TrackSector ts) {
+int getTsDosErr(DiskImage *di, TrackSector ts) {
 	//	return 1;
 	if (di->_errinfo == nullptr) {
 		return 1; /* return OK if image has no error info */
@@ -665,7 +665,7 @@ int diRawnameFromName(byte *rawname, const char *name) {
 }
 
 /* count number of free blocks */
-int blocksFree(DiskImage* di) {
+int blocksFree(DiskImage *di) {
 	int blocks = 0;
 
 	for (int track = 1; track <= diTracks(di->_type); ++track) {
