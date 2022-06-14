@@ -516,6 +516,13 @@ Use NES Classic Palette
 
 	*mm_nes_classic_palette*
 
+.. _enhancements:
+
+Enable game-specific enhancements
+	Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game.
+
+	*enable_enhancements*
+
 ,,,,,,,,,,
 
 .. _SHERLOCK:
