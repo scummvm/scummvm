@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-13 22:45+0000\n"
+"POT-Creation-Date: 2022-06-14 20:47+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -7601,31 +7601,31 @@ msgstr "הפעל במצב מהיר ממש (*)"
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr ""
 
-#: engines/stark/detection.cpp:375
+#: engines/stark/detection.cpp:387
 #, fuzzy
 msgid "Load modded assets"
 msgstr "טוען משחק"
 
-#: engines/stark/detection.cpp:376
+#: engines/stark/detection.cpp:388
 msgid "Enable loading of external replacement assets."
 msgstr ""
 
-#: engines/stark/detection.cpp:386
+#: engines/stark/detection.cpp:398
 msgid "Enable linear filtering of the backgrounds images"
 msgstr ""
 
-#: engines/stark/detection.cpp:387
+#: engines/stark/detection.cpp:399
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
 
-#: engines/stark/detection.cpp:397 engines/ultima/detection.cpp:143
+#: engines/stark/detection.cpp:409 engines/ultima/detection.cpp:143
 #, fuzzy
 msgid "Enable font anti-aliasing"
 msgstr "אפשר צנזורה של תוכן"
 
-#: engines/stark/detection.cpp:398 engines/ultima/detection.cpp:144
+#: engines/stark/detection.cpp:410 engines/ultima/detection.cpp:144
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 

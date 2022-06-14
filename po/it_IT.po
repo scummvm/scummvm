@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-13 22:45+0000\n"
+"POT-Creation-Date: 2022-06-14 20:47+0000\n"
 "PO-Revision-Date: 2022-06-14 18:16+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -7706,19 +7706,19 @@ msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr ""
 "ATTENZIONE: Questo motore non permette di eliminare il salvataggio automatico"
 
-#: engines/stark/detection.cpp:375
+#: engines/stark/detection.cpp:387
 msgid "Load modded assets"
 msgstr "Carica assets modificati"
 
-#: engines/stark/detection.cpp:376
+#: engines/stark/detection.cpp:388
 msgid "Enable loading of external replacement assets."
 msgstr "Abilita il caricamento degli assets esterni sostitutivi."
 
-#: engines/stark/detection.cpp:386
+#: engines/stark/detection.cpp:398
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "Applica filtro bilineare agli sfondi"
 
-#: engines/stark/detection.cpp:387
+#: engines/stark/detection.cpp:399
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -7726,11 +7726,11 @@ msgstr ""
 "Quando il filtro è abilitato gli sfondi a schermo intero sono meno "
 "granulosi, a discapito di una leggera perdita di definizione."
 
-#: engines/stark/detection.cpp:397 engines/ultima/detection.cpp:143
+#: engines/stark/detection.cpp:409 engines/ultima/detection.cpp:143
 msgid "Enable font anti-aliasing"
 msgstr "Abilita anti-aliasing dei caratteri"
 
-#: engines/stark/detection.cpp:398 engines/ultima/detection.cpp:144
+#: engines/stark/detection.cpp:410 engines/ultima/detection.cpp:144
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Quando l'anti-aliasing dei font è abilitato, i testi sono esteticamente più "

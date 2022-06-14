@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-13 22:45+0000\n"
+"POT-Creation-Date: 2022-06-14 20:47+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7537,19 +7537,19 @@ msgstr "매우 빠른 모드 토글"
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr "경고: 자동 저장 슬롯 삭제는 이 엔진에서 지원되지 않음"
 
-#: engines/stark/detection.cpp:375
+#: engines/stark/detection.cpp:387
 msgid "Load modded assets"
 msgstr "모드 애셋을 불러오기"
 
-#: engines/stark/detection.cpp:376
+#: engines/stark/detection.cpp:388
 msgid "Enable loading of external replacement assets."
 msgstr "대체용 외부 애셋을 불러오는 것을 활성화합니다."
 
-#: engines/stark/detection.cpp:386
+#: engines/stark/detection.cpp:398
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "백그라운드 이미지의 선형 필터링 활성화"
 
-#: engines/stark/detection.cpp:387
+#: engines/stark/detection.cpp:399
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -7557,11 +7557,11 @@ msgstr ""
 "선형 필터링이 활성화되면 전체 화면에서 백그라운드 그래픽이 더 부드럽게 표시됩"
 "니다. 다만 디테일이 조금 낮아집니다."
 
-#: engines/stark/detection.cpp:397 engines/ultima/detection.cpp:143
+#: engines/stark/detection.cpp:409 engines/ultima/detection.cpp:143
 msgid "Enable font anti-aliasing"
 msgstr "폰트 안티 앨리어싱 활성화"
 
-#: engines/stark/detection.cpp:398 engines/ultima/detection.cpp:144
+#: engines/stark/detection.cpp:410 engines/ultima/detection.cpp:144
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "폰트 안티 앨리어싱을 활성화하면 텍스트가 부드럽게 표시됩니다."
 

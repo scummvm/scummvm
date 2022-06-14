@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-13 22:45+0000\n"
+"POT-Creation-Date: 2022-06-14 20:47+0000\n"
 "PO-Revision-Date: 2022-06-14 17:50+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -7716,19 +7716,19 @@ msgstr "Sehr schnellen Modus umschalten"
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr "WARNUNG: Diese Engine unterstützt das Löschen des Autosave-Slots nicht"
 
-#: engines/stark/detection.cpp:375
+#: engines/stark/detection.cpp:387
 msgid "Load modded assets"
 msgstr "Modifizierte Assets laden"
 
-#: engines/stark/detection.cpp:376
+#: engines/stark/detection.cpp:388
 msgid "Enable loading of external replacement assets."
 msgstr "Erlaubt das Laden externer Ersatz-Assets."
 
-#: engines/stark/detection.cpp:386
+#: engines/stark/detection.cpp:398
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "Aktiviere Bilineare Filterung von Hintergrundbildern"
 
-#: engines/stark/detection.cpp:387
+#: engines/stark/detection.cpp:399
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -7736,11 +7736,11 @@ msgstr ""
 "Wenn Bilineare Filterung für Hintergrundbilder aktiviert ist, wird die "
 "Grafik auf Kosten der Detailgenauigkeit im Vollbildmodus verbessert."
 
-#: engines/stark/detection.cpp:397 engines/ultima/detection.cpp:143
+#: engines/stark/detection.cpp:409 engines/ultima/detection.cpp:143
 msgid "Enable font anti-aliasing"
 msgstr "Anti-Aliasing für Schriften aktivieren"
 
-#: engines/stark/detection.cpp:398 engines/ultima/detection.cpp:144
+#: engines/stark/detection.cpp:410 engines/ultima/detection.cpp:144
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Wenn Anti-Aliasing aktiv ist, wird der Text weicher dargestellt."
 

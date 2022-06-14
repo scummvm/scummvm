@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-13 22:45+0000\n"
+"POT-Creation-Date: 2022-06-14 20:47+0000\n"
 "PO-Revision-Date: 2022-06-09 06:42+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -7670,19 +7670,19 @@ msgstr ""
 "WAARSHUWING: Het verwijderen van de auto opslaan slot wordt niet ondersteund "
 "door deze engine"
 
-#: engines/stark/detection.cpp:375
+#: engines/stark/detection.cpp:387
 msgid "Load modded assets"
 msgstr "Laad bewerkte bestanden"
 
-#: engines/stark/detection.cpp:376
+#: engines/stark/detection.cpp:388
 msgid "Enable loading of external replacement assets."
 msgstr "Zet het laden van externe vervangende spelbestanden aan."
 
-#: engines/stark/detection.cpp:386
+#: engines/stark/detection.cpp:398
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "Schakel lineair filteren van de achtergrond afbeeldingen in"
 
-#: engines/stark/detection.cpp:387
+#: engines/stark/detection.cpp:399
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -7690,11 +7690,11 @@ msgstr ""
 "Wanneer lineair filteren is ingeschakeld, de achtergrond afbeeldingen worden "
 "gladder in volledig scherm modus, ten koste van sommige details."
 
-#: engines/stark/detection.cpp:397 engines/ultima/detection.cpp:143
+#: engines/stark/detection.cpp:409 engines/ultima/detection.cpp:143
 msgid "Enable font anti-aliasing"
 msgstr "Schakel font anti-aliasing in"
 
-#: engines/stark/detection.cpp:398 engines/ultima/detection.cpp:144
+#: engines/stark/detection.cpp:410 engines/ultima/detection.cpp:144
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Wanneer font anti-aliasing is ingeschakeld, ziet de tekst er gladder uit."
