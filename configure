@@ -4250,6 +4250,16 @@ LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld  -Wl,-zmax-page-
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -Wl,-zmax-page-size=128 -lstdc++
 '
 		;;
+	riscos)
+		_elf_loader=yes
+		append_var DEFINES "-DELF_LOADER_CXA_ATEXIT"
+		append_var CXXFLAGS "-fuse-cxa-atexit"
+		append_var DEFINES "-DUNCACHED_PLUGINS"
+_mak_plugins='
+PLUGIN_EXTRA_DEPS	+= backends/plugins/riscos/plugin.o
+PLUGIN_LDFLAGS		+= -static -Wl,-T$(srcdir)/backends/plugins/riscos/plugin.ld backends/plugins/riscos/plugin.o -Wl,--wrap=__rt_stkovf_split_small -Wl,--wrap=__rt_stkovf_split_big
+'
+		;;
 	*)
 		_dynamic_modules=no
 		_mak_plugins=
@@ -6011,6 +6021,9 @@ case $_host in
 		# without a scummvm sub directory.
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$libdir\\\""
 		;;
+	arm-*riscos)
+		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"\${datarootdir}/plugins\\\""
+		;;
 	*)
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""
 		;;
@@ -6245,7 +6258,13 @@ case $_host_os in
 		fi
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-fdata-sections"
-		append_var LDFLAGS "-Wl,--gc-sections"
+		if test "$_dynamic_modules" = no ; then
+			append_var LDFLAGS "-Wl,--gc-sections"
+		else
+			# toolchain asks for gc-sections
+			append_var LDFLAGS "-Wl,--no-gc-sections"
+			append_var CXXFLAGS "-mlong-calls"
+		fi
 		;;
 	n64)
 		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
