@@ -420,7 +420,12 @@ byte *diGetTsAddr(DiskImage *di, TrackSector ts) {
 
 /* get error info for a sector */
 int getTsDosErr(DiskImage* di, TrackSector ts) {
-	return 0;
+	//	return 1;
+	if (di->_errinfo == nullptr) {
+		return 1; /* return OK if image has no error info */
+	}
+
+	return di->_errinfo[diGetBlockNum(di->_type, ts)];
 }
 
 int diGetTsErr(DiskImage *di, TrackSector ts) {
