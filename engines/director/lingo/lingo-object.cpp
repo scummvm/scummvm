@@ -883,7 +883,8 @@ Datum BitmapCastMember::getField(int field) {
 
 	switch (field) {
 	case kTheDepth:
-		warning("STUB: BitmapCastMember::getField(): Unprocessed getting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		d.type = INT;
+		d.u.i = _bitsPerPixel;
 		break;
 	case kTheRegPoint:
 		warning("STUB: BitmapCastMember::getField(): Unprocessed getting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
@@ -904,7 +905,7 @@ Datum BitmapCastMember::getField(int field) {
 bool BitmapCastMember::setField(int field, const Datum &d) {
 	switch (field) {
 	case kTheDepth:
-		warning("STUB: BitmapCastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		warning("BitmapCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->field2str(field), _castId);
 		return false;
 	case kTheRegPoint:
 		warning("STUB: BitmapCastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
