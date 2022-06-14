@@ -678,7 +678,17 @@ int blocksFree(DiskImage* di) {
 
 /* return write interleave */
 int interleave(ImageType type) {
-	return 0;
+	switch (type) {
+	case D64:
+		return 10;
+		break;
+	case D71:
+		return 6;
+		break;
+	default:
+		return 1;
+		break;
+	}
 }
 
 DiskImage *diCreateFromData(uint8_t *data, int length) {
