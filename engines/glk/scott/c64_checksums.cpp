@@ -26,6 +26,10 @@
 #include "glk/scott/c64_checksums.h"
 #include "glk/scott/definitions.h"
 #include "glk/scott/disk_image.h"
+#include "glk/scott/game_info.h"
+#include "glk/scott/resource.h"
+#include "glk/scott/saga_draw.h"
+#include "glk/scott/unp64/unp64_interface.h"
 
 namespace Glk {
 namespace Scott {
@@ -239,8 +243,84 @@ int detectC64(uint8_t **sf, size_t *extent) {
 	return decrunchC64(sf, extent, g_C64Registry[index]);
 }
 
-int decrunchC64(uint8_t **sf, size_t *extent, C64Rec entry) {
+size_t copyData(size_t dest, size_t source, uint8_t** data, size_t dataSize, size_t bytesToMove) {
 	return 0;
+}
+
+int decrunchC64(uint8_t **sf, size_t *extent, C64Rec record) {
+	uint8_t *uncompressed = nullptr;
+	_G(_fileLength) = *extent;
+
+	size_t decompressedLength = *extent;
+
+	uncompressed = new uint8_t[0xffff];
+
+	char *switches[3];
+	int numSwitches = 0;
+
+	if (record._switches != nullptr) {
+		char string[100];
+		strcpy(string, record._switches);
+		switches[numSwitches] = strtok(string, " ");
+
+		while (switches[numSwitches] != nullptr)
+			switches[++numSwitches] = strtok(nullptr, " ");
+	}
+
+	size_t result = 0;
+
+	for (int i = 1; i <= record._decompressIterations; i++) {
+		/* We only send switches on the iteration specified by parameter */
+		if (i == record._parameter && record._switches != nullptr) {
+			result = unp64(_G(_entireFile), _G(_fileLength), uncompressed, &decompressedLength, switches, numSwitches);
+		} else
+			result = unp64(_G(_entireFile), _G(_fileLength), uncompressed, &decompressedLength, nullptr, 0);
+		if (result) {
+			if (_G(_entireFile) != nullptr)
+				delete[] _G(_entireFile);
+			_G(_entireFile) = new uint8_t[decompressedLength];
+			memcpy(_G(_entireFile), uncompressed, decompressedLength);
+			_G(_fileLength) = decompressedLength;
+		} else {
+			delete[] uncompressed;
+			break;
+		}
+	}
+
+	for (int i = 0; i < NUMGAMES; i++) {
+		if (g_games[i]._gameID == record._id) {
+			delete _G(_game);
+			_G(_game) = &g_games[i];
+			break;
+		}
+	}
+
+	if (_G(_game)->_title == nullptr) {
+		error("decrunchC64: Game not found");
+	}
+
+	int offset;
+
+	DictionaryType dictype = getId(&offset);
+	if (dictype != _G(_game)->_dictionary) {
+		error("decrunchC64: Wrong game?");
+	}
+
+	if (!tryLoading(*_G(_game), offset, 0)) {
+		error("decrunchC64: Game could not be read");
+	}
+
+	if (record._copySource != 0) {
+		result = copyData(record._copyDest, record._copySource, sf, *extent, record._copySize);
+		if (result) {
+			*extent = result;
+		}
+	}
+
+	if (!(_G(_game)->_subType & MYSTERIOUS))
+		sagaSetup(record._imgOffset);
+
+	return CURRENT_GAME;
 }
 
 } // End of namespace Scott
