@@ -886,7 +886,10 @@ Datum BitmapCastMember::getField(int field) {
 		warning("STUB: BitmapCastMember::getField(): Unprocessed getting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 		break;
 	case kTheRegPoint:
-		warning("STUB: BitmapCastMember::getField(): Unprocessed getting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		d.type = POINT;
+		d.u.farr = new FArray;
+		d.u.farr->arr.push_back(_regX);
+		d.u.farr->arr.push_back(_regY);
 		break;
 	case kThePalette:
 		d = _clut;
@@ -907,8 +910,21 @@ bool BitmapCastMember::setField(int field, const Datum &d) {
 		warning("STUB: BitmapCastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 		return false;
 	case kTheRegPoint:
-		warning("STUB: BitmapCastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
-		return false;
+		if (d.type == POINT || (d.type == ARRAY && d.u.farr->arr.size() >= 2)) {
+			auto temp = _img;
+			_modified = true;
+			Score *score = g_director->getCurrentMovie()->getScore();
+			score->renderSprites(score->getCurrentFrame(), kRenderForceUpdate);
+			_img = nullptr;
+			_regX = d.u.farr->arr[0].asInt();
+			_regY = d.u.farr->arr[1].asInt();
+			_img = temp;
+			_modified = true;
+		} else {
+			warning("BitmapCastMember::setField(): Wrong Datum type %d for kTheRegPoint", d.type);
+			return false;
+		}
+		return true;
 	case kThePalette:
 		_clut = d.asInt();
 		return true;
