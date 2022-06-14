@@ -252,6 +252,7 @@ MODULE_OBJS := \
 	scott/ring_buffer.o \
 	scott/saga_draw.o \
 	scott/scott.o \
+	scott/unp64/unp64.o \
 	tads/os_banners.o \
 	tads/os_buffer.o \
 	tads/os_glk.o \
