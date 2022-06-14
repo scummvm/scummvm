@@ -43,10 +43,10 @@
 
 #include <map>
 
-#include "hpl1/engine/system/SystemTypes.h"
+#include "hpl1/engine/game/GameTypes.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include "hpl1/engine/game/GameTypes.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 #include "hpl1/engine/scene/SoundSource.h"
 
@@ -54,141 +54,139 @@ class TiXmlElement;
 
 namespace hpl {
 
-	class cGraphics;
-	class cResources;
-	class cSound;
+class cGraphics;
+class cResources;
+class cSound;
 
-	class iCamera;
-	class cCamera2D;
-	class cTileMap;
-	class cTile;
-	class cNode2D;
-	class cBody2D;
-	class cCollider2D;
-	class cGridMap2D;
-	class cLight2DPoint;
-	class iLight2D;
-	class cImageEntity;
-	class cParticleManager;
-	class cArea2D;
-	class iScript;
-	class cMesh2D;
-	class iParticleSystem2D;
+class iCamera;
+class cCamera2D;
+class cTileMap;
+class cTile;
+class cNode2D;
+class cBody2D;
+class cCollider2D;
+class cGridMap2D;
+class cLight2DPoint;
+class iLight2D;
+class cImageEntity;
+class cParticleManager;
+class cArea2D;
+class iScript;
+class cMesh2D;
+class iParticleSystem2D;
 
-
-	class cWorld2D
-	{
+class cWorld2D {
 	friend class cCollider2D;
-	public:
-		cWorld2D(tString asName,cGraphics *apGraphics,cResources *apResources,cSound* apSound, cCollider2D* apCollider);
-		~cWorld2D();
 
-		tString GetName(){ return msName;}
+public:
+	cWorld2D(tString asName, cGraphics *apGraphics, cResources *apResources, cSound *apSound, cCollider2D *apCollider);
+	~cWorld2D();
 
-		bool CreateFromFile(tString asFile);
+	tString GetName() { return msName; }
 
-		void Render(cCamera2D* apCamera);
+	bool CreateFromFile(tString asFile);
 
-		void Update(float afTimeStep);
+	void Render(cCamera2D *apCamera);
 
-		cVector2f GetWorldSize(){ return mvWorldSize;}
+	void Update(float afTimeStep);
 
-		iScript* GetScript(){ return mpScript;}
+	cVector2f GetWorldSize() { return mvWorldSize; }
 
-		void ResetBodyIDCount(){mlBodyIDCount =0;}
+	iScript *GetScript() { return mpScript; }
 
-		///// LIGHT METHODS ////////////////////
+	void ResetBodyIDCount() { mlBodyIDCount = 0; }
 
-		cLight2DPoint* CreateLightPoint(tString asName="");
-		void DestroyLight(iLight2D* apLight);
-		cGridMap2D* GetGridMapLights();
-		iLight2D* GetLight(const tString& asName);
+	///// LIGHT METHODS ////////////////////
 
-		///// BODY METHODS ////////////////////
+	cLight2DPoint *CreateLightPoint(tString asName = "");
+	void DestroyLight(iLight2D *apLight);
+	cGridMap2D *GetGridMapLights();
+	iLight2D *GetLight(const tString &asName);
 
-		cBody2D* CreateBody2D(const tString& asName,cMesh2D *apMesh, cVector2f avSize);
-		cGridMap2D* GetGridMapBodies(){return mpMapBodies;}
+	///// BODY METHODS ////////////////////
 
-		///// AREA METHODS ////////////////////
-		cGridMap2D* GetGridMapAreas(){return mpMapAreas;}
+	cBody2D *CreateBody2D(const tString &asName, cMesh2D *apMesh, cVector2f avSize);
+	cGridMap2D *GetGridMapBodies() { return mpMapBodies; }
 
-		/**
-		 * Gets an area on the map. This does a linear search and very fast.
-		 * \param asName The name, if "" then the first of the correct type is returned
-		 * \param asType The typem if "" then type doesn't matter.
-		 * \return
-		 */
-		cArea2D* GetArea(const tString& asName,const tString& asType);
+	///// AREA METHODS ////////////////////
+	cGridMap2D *GetGridMapAreas() { return mpMapAreas; }
 
-		///// SOUNDSOURCE METHODS ////////////////////
+	/**
+	 * Gets an area on the map. This does a linear search and very fast.
+	 * \param asName The name, if "" then the first of the correct type is returned
+	 * \param asType The typem if "" then type doesn't matter.
+	 * \return
+	 */
+	cArea2D *GetArea(const tString &asName, const tString &asType);
 
-		cSoundSource* CreateSoundSource(const tString& asName,const tString& asSoundName,bool abVolatile);
-		void DestroySoundSource(cSoundSource* apSound);
+	///// SOUNDSOURCE METHODS ////////////////////
 
-		///// ENTITY METHODS ////////////////////
+	cSoundSource *CreateSoundSource(const tString &asName, const tString &asSoundName, bool abVolatile);
+	void DestroySoundSource(cSoundSource *apSound);
 
-		cImageEntity* CreateImageEntity(tString asName,tString asDataName);
-		cGridMap2D* GetGridMapImageEntities(){return mpMapImageEntities;}
-		void DestroyImageEntity(cImageEntity* apEntity);
-		cImageEntity* GetImageEntity(const tString& asName);
+	///// ENTITY METHODS ////////////////////
 
+	cImageEntity *CreateImageEntity(tString asName, tString asDataName);
+	cGridMap2D *GetGridMapImageEntities() { return mpMapImageEntities; }
+	void DestroyImageEntity(cImageEntity *apEntity);
+	cImageEntity *GetImageEntity(const tString &asName);
 
-		///// PARTICLE METHODS ////////////////////
+	///// PARTICLE METHODS ////////////////////
 
-		iParticleSystem2D* CreateParticleSystem(const tString& asName, const cVector3f& avSize);
-		void DestroyParticleSystem(iParticleSystem2D* apPS);
+	iParticleSystem2D *CreateParticleSystem(const tString &asName, const cVector3f &avSize);
+	void DestroyParticleSystem(iParticleSystem2D *apPS);
 
-		///// TILE METHODS ////////////////////
+	///// TILE METHODS ////////////////////
 
-		cTileMap* GetTileMap() { return mpTileMap;}
-		//Test!
-		void CreateTileMap();
+	cTileMap *GetTileMap() { return mpTileMap; }
+	// Test!
+	void CreateTileMap();
 
-		/// NODE METHODS //////////////////////
-		cNode2D* GetRootNode(){ return mpRootNode; }
+	/// NODE METHODS //////////////////////
+	cNode2D *GetRootNode() { return mpRootNode; }
 
-	private:
-		tString msName;
-		cGraphics *mpGraphics;
-		cSound* mpSound;
-		cResources *mpResources;
-		cCollider2D* mpCollider;
+private:
+	tString msName;
+	cGraphics *mpGraphics;
+	cSound *mpSound;
+	cResources *mpResources;
+	cCollider2D *mpCollider;
 
-		cVector2f mvWorldSize;
+	cVector2f mvWorldSize;
 
-		iScript *mpScript;
+	iScript *mpScript;
 
-		cGridMap2D *mpMapLights;
-		cGridMap2D *mpMapImageEntities;
-		cGridMap2D *mpMapBodies;
-		cGridMap2D *mpMapParticles;
-		cGridMap2D *mpMapAreas;
+	cGridMap2D *mpMapLights;
+	cGridMap2D *mpMapImageEntities;
+	cGridMap2D *mpMapBodies;
+	cGridMap2D *mpMapParticles;
+	cGridMap2D *mpMapAreas;
 
-		tSoundSourceList mlstSoundSources;
+	tSoundSourceList mlstSoundSources;
 
-		int mlBodyIDCount;
+	int mlBodyIDCount;
 
-		cTileMap *mpTileMap;
-		cNode2D* mpRootNode;
+	cTileMap *mpTileMap;
+	cNode2D *mpRootNode;
 
-		tString msMapName;
-		float mfLightZ;
-		cColor mAmbientColor;
+	tString msMapName;
+	float mfLightZ;
+	cColor mAmbientColor;
 
-		//Update
-		void UpdateEntities();
-		void UpdateBodies();
-		void UpdateParticles();
-		void UpdateSoundSources();
-		void UpdateLights();
+	// Update
+	void UpdateEntities();
+	void UpdateBodies();
+	void UpdateParticles();
+	void UpdateSoundSources();
+	void UpdateLights();
 
-		//Render
-		void RenderImagesEntities(cCamera2D* apCamera);
-		void RenderParticles(cCamera2D* apCamera);
+	// Render
+	void RenderImagesEntities(cCamera2D *apCamera);
+	void RenderParticles(cCamera2D *apCamera);
 
-		//Load helper
-		int LoadTileData(cTile *apTile,tString* asData,int alStart);
+	// Load helper
+	int LoadTileData(cTile *apTile, tString *asData, int alStart);
 };
 
-};
+};     // namespace hpl
 #endif // HPL_WOLRD2D_H

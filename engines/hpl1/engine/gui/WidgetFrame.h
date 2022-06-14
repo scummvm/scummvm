@@ -45,52 +45,51 @@
 
 namespace hpl {
 
-	class cGuiSkinFont;
+class cGuiSkinFont;
 
-	class cWidgetFrame : public iWidget
-	{
-	public:
-		cWidgetFrame(cGuiSet *apSet, cGuiSkin *apSkin);
-		virtual ~cWidgetFrame();
+class cWidgetFrame : public iWidget {
+public:
+	cWidgetFrame(cGuiSet *apSet, cGuiSkin *apSkin);
+	virtual ~cWidgetFrame();
 
-		void SetDrawFrame(bool abX){ mbDrawFrame = abX;}
-		bool GetDrawFrame(){ return mbDrawFrame;}
+	void SetDrawFrame(bool abX) { mbDrawFrame = abX; }
+	bool GetDrawFrame() { return mbDrawFrame; }
 
-		void SetDrawBackground(bool abX){mbDrawBackground = abX;}
-		bool GetDrawBackground(){ return mbDrawBackground;}
+	void SetDrawBackground(bool abX) { mbDrawBackground = abX; }
+	bool GetDrawBackground() { return mbDrawBackground; }
 
-		void SetBackgroundZ(float afZ){mfBackgroundZ = afZ;}
-		float GetBackgroundZ(){ return mfBackgroundZ;}
+	void SetBackgroundZ(float afZ) { mfBackgroundZ = afZ; }
+	float GetBackgroundZ() { return mfBackgroundZ; }
 
-		void SetBackGroundColor(const cColor &aColor){ mBackGroundColor = aColor;}
-		const cColor& GetBackGroundColor(){ return mBackGroundColor;}
+	void SetBackGroundColor(const cColor &aColor) { mBackGroundColor = aColor; }
+	const cColor &GetBackGroundColor() { return mBackGroundColor; }
 
-	protected:
-		/////////////////////////
-		// Implemented functions
-		void OnLoadGraphics();
+protected:
+	/////////////////////////
+	// Implemented functions
+	void OnLoadGraphics();
 
-		void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
-		void OnDrawAfterClip(float afTimeStep, cGuiClipRegion *apClipRegion);
+	void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
+	void OnDrawAfterClip(float afTimeStep, cGuiClipRegion *apClipRegion);
 
-		bool OnMouseMove(cGuiMessageData &aData);
-		bool OnMouseDown(cGuiMessageData &aData);
-		bool OnMouseUp(cGuiMessageData &aData);
-		bool OnMouseEnter(cGuiMessageData &aData);
-		bool OnMouseLeave(cGuiMessageData &aData);
+	bool OnMouseMove(cGuiMessageData &aData);
+	bool OnMouseDown(cGuiMessageData &aData);
+	bool OnMouseUp(cGuiMessageData &aData);
+	bool OnMouseEnter(cGuiMessageData &aData);
+	bool OnMouseLeave(cGuiMessageData &aData);
 
-		/////////////////////////
-		// Data
-		bool mbDrawFrame;
-		bool mbDrawBackground;
-		float mfBackgroundZ;
-		cColor mBackGroundColor;
+	/////////////////////////
+	// Data
+	bool mbDrawFrame;
+	bool mbDrawBackground;
+	float mfBackgroundZ;
+	cColor mBackGroundColor;
 
-		cGuiGfxElement *mpGfxBackground;
+	cGuiGfxElement *mpGfxBackground;
 
-		cGuiGfxElement *mvGfxBorders[4];
-		cGuiGfxElement *mvGfxCorners[4];
-	};
-
+	cGuiGfxElement *mvGfxBorders[4];
+	cGuiGfxElement *mvGfxCorners[4];
 };
+
+};     // namespace hpl
 #endif // HPL_WIDGET_FRAME_H

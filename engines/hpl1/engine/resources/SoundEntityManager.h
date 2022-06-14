@@ -45,28 +45,27 @@
 
 namespace hpl {
 
-	class cSound;
-	class cResources;
-	class cSoundEntityData;
+class cSound;
+class cResources;
+class cSoundEntityData;
 
-	class cSoundEntityManager : public iResourceManager
-	{
-	public:
-		cSoundEntityManager(cSound* apSound,cResources *apResources);
-		~cSoundEntityManager();
+class cSoundEntityManager : public iResourceManager {
+public:
+	cSoundEntityManager(cSound *apSound, cResources *apResources);
+	~cSoundEntityManager();
 
-		void Preload(const tString& asFile);
+	void Preload(const tString &asFile);
 
-		iResourceBase* Create(const tString& asName);
-		cSoundEntityData* CreateSoundEntity(const tString& asName);
+	iResourceBase *Create(const tString &asName);
+	cSoundEntityData *CreateSoundEntity(const tString &asName);
 
-		void Destroy(iResourceBase* apResource);
-		void Unload(iResourceBase* apResource);
+	void Destroy(iResourceBase *apResource);
+	void Unload(iResourceBase *apResource);
 
-	private:
-		cSound* mpSound;
-		cResources* mpResources;
-	};
-
+private:
+	cSound *mpSound;
+	cResources *mpResources;
 };
+
+};     // namespace hpl
 #endif // HPL_SOUND_ENTITY_MANAGER_H

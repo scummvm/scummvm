@@ -45,45 +45,44 @@
 
 namespace hpl {
 
-	class cGuiSkinFont;
+class cGuiSkinFont;
 
-	class cWidgetButton : public iWidget
-	{
-	public:
-		cWidgetButton(cGuiSet *apSet, cGuiSkin *apSkin);
-		virtual ~cWidgetButton();
+class cWidgetButton : public iWidget {
+public:
+	cWidgetButton(cGuiSet *apSet, cGuiSkin *apSkin);
+	virtual ~cWidgetButton();
 
-		void SetImage(cGuiGfxElement *apImage, bool abDestroyImage=true);
-		cGuiGfxElement *GetImage(){return mpImage;}
+	void SetImage(cGuiGfxElement *apImage, bool abDestroyImage = true);
+	cGuiGfxElement *GetImage() { return mpImage; }
 
-	protected:
-		/////////////////////////
-		// Implemented functions
-		void OnLoadGraphics();
+protected:
+	/////////////////////////
+	// Implemented functions
+	void OnLoadGraphics();
 
-		void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
+	void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
 
-		bool OnMouseMove(cGuiMessageData &aData);
-		bool OnMouseDown(cGuiMessageData &aData);
-		bool OnMouseUp(cGuiMessageData &aData);
-		bool OnMouseEnter(cGuiMessageData &aData);
-		bool OnMouseLeave(cGuiMessageData &aData);
+	bool OnMouseMove(cGuiMessageData &aData);
+	bool OnMouseDown(cGuiMessageData &aData);
+	bool OnMouseUp(cGuiMessageData &aData);
+	bool OnMouseEnter(cGuiMessageData &aData);
+	bool OnMouseLeave(cGuiMessageData &aData);
 
-		/////////////////////////
-		// Data
-		bool mbPressed;
+	/////////////////////////
+	// Data
+	bool mbPressed;
 
-		cGuiGfxElement *mpImage;
-		bool mbDestroyImage;
+	cGuiGfxElement *mpImage;
+	bool mbDestroyImage;
 
-		cGuiGfxElement *mpGfxBackgroundUp;
-		cGuiGfxElement *mvGfxBordersUp[4];
-		cGuiGfxElement *mvGfxCornersUp[4];
+	cGuiGfxElement *mpGfxBackgroundUp;
+	cGuiGfxElement *mvGfxBordersUp[4];
+	cGuiGfxElement *mvGfxCornersUp[4];
 
-		cGuiGfxElement *mpGfxBackgroundDown;
-		cGuiGfxElement *mvGfxBordersDown[4];
-		cGuiGfxElement *mvGfxCornersDown[4];
-	};
-
+	cGuiGfxElement *mpGfxBackgroundDown;
+	cGuiGfxElement *mvGfxBordersDown[4];
+	cGuiGfxElement *mvGfxCornersDown[4];
 };
+
+};     // namespace hpl
 #endif // HPL_WIDGET_BUTTON_H

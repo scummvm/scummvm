@@ -42,19 +42,18 @@
 #define HPL_NODE_STATE_H
 
 #include "hpl1/engine/math/MathTypes.h"
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/scene/Node3D.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	class cNodeState
-	{
-	public:
-		cNodeState(const tString& asName);
-		~cNodeState();
+class cNodeState {
+public:
+	cNodeState(const tString &asName);
+	~cNodeState();
 
-	private:
-	};
-
+private:
 };
+
+};     // namespace hpl
 #endif // HPL_NODE_STATE_H

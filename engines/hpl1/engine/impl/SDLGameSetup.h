@@ -52,35 +52,34 @@
 
 namespace hpl {
 
-	class cSDLGameSetup : public iLowLevelGameSetup
-	{
-	public:
-		cSDLGameSetup();
-		~cSDLGameSetup();
+class cSDLGameSetup : public iLowLevelGameSetup {
+public:
+	cSDLGameSetup();
+	~cSDLGameSetup();
 
-		cInput* CreateInput(cGraphics* apGraphics);
-		cSystem* CreateSystem();
-		cGraphics* CreateGraphics();
-		cResources* CreateResources(cGraphics* apGraphics);
-		cScene* CreateScene(cGraphics* apGraphics, cResources* apResources, cSound* apSound,
-							cPhysics *apPhysics, cSystem *apSystem,cAI *apAI,cHaptic *apHaptic);
-		cSound* CreateSound();
-		cPhysics* CreatePhysics();
-		cAI* CreateAI();
-		cHaptic* CreateHaptic();
+	cInput *CreateInput(cGraphics *apGraphics);
+	cSystem *CreateSystem();
+	cGraphics *CreateGraphics();
+	cResources *CreateResources(cGraphics *apGraphics);
+	cScene *CreateScene(cGraphics *apGraphics, cResources *apResources, cSound *apSound,
+						cPhysics *apPhysics, cSystem *apSystem, cAI *apAI, cHaptic *apHaptic);
+	cSound *CreateSound();
+	cPhysics *CreatePhysics();
+	cAI *CreateAI();
+	cHaptic *CreateHaptic();
 
-	private:
-		iLowLevelSystem *mpLowLevelSystem;
-		iLowLevelGraphics *mpLowLevelGraphics;
-		iLowLevelInput *mpLowLevelInput;
-		iLowLevelResources *mpLowLevelResources;
-//		#ifdef WIN32
-//			iLowLevelSound* mpLowLevelSound;
-//		#else
-			iLowLevelSound*	mpLowLevelSound;
-//		#endif
-		iLowLevelPhysics* mpLowLevelPhysics;
-		iLowLevelHaptic* mpLowLevelHaptic;
-	};
+private:
+	iLowLevelSystem *mpLowLevelSystem;
+	iLowLevelGraphics *mpLowLevelGraphics;
+	iLowLevelInput *mpLowLevelInput;
+	iLowLevelResources *mpLowLevelResources;
+	//		#ifdef WIN32
+	//			iLowLevelSound* mpLowLevelSound;
+	//		#else
+	iLowLevelSound *mpLowLevelSound;
+	//		#endif
+	iLowLevelPhysics *mpLowLevelPhysics;
+	iLowLevelHaptic *mpLowLevelHaptic;
 };
+};     // namespace hpl
 #endif // HPL_LOWLEVELGAMESETUP_SDL_H

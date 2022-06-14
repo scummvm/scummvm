@@ -45,30 +45,28 @@
 
 namespace hpl {
 
-	class cMaterial_Bump : public iMaterial_BaseLight
-	{
-	public:
-		cMaterial_Bump(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
-		~cMaterial_Bump();
+class cMaterial_Bump : public iMaterial_BaseLight {
+public:
+	cMaterial_Bump(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+				   cImageManager *apImageManager, cTextureManager *apTextureManager,
+				   cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+				   eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
+	~cMaterial_Bump();
 
-	private:
-	};
-
-	class cMaterialType_Bump : public iMaterialType
-	{
-	public:
-		bool IsCorrect(tString asName){
-			return cString::ToLowerCase(asName)=="bump";
-		}
-
-		iMaterial* Create(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
-	};
-
+private:
 };
+
+class cMaterialType_Bump : public iMaterialType {
+public:
+	bool IsCorrect(tString asName) {
+		return cString::ToLowerCase(asName) == "bump";
+	}
+
+	iMaterial *Create(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+					  cImageManager *apImageManager, cTextureManager *apTextureManager,
+					  cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+					  eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
+};
+
+};     // namespace hpl
 #endif // HPL_MATERIAL_BUMPE_H

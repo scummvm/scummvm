@@ -41,32 +41,31 @@
 #ifndef HPL_ACTION_HAPTIC_H
 #define HPL_ACTION_HAPTIC_H
 
-
-#include "hpl1/engine/input/InputTypes.h"
-#include "hpl1/engine/input/Action.h"
 #include "hpl1/engine/haptic/Haptic.h"
+#include "hpl1/engine/input/Action.h"
+#include "hpl1/engine/input/InputTypes.h"
 
 namespace hpl {
 
-	class cHaptic;
+class cHaptic;
 
-	class cActionHaptic : public iAction
-	{
-	public:
-		cActionHaptic(tString asName,cHaptic *apHaptic, int mlButton);
+class cActionHaptic : public iAction {
+public:
+	cActionHaptic(tString asName, cHaptic *apHaptic, int mlButton);
 
-		bool IsTriggerd();
-		float GetValue();
+	bool IsTriggerd();
+	float GetValue();
 
-		tString GetInputName();
+	tString GetInputName();
 
-		tString GetInputType(){return "HapticDeviceButton";}
+	tString GetInputType() { return "HapticDeviceButton"; }
 
-		int GetButton(){ return mlButton;}
-	private:
-		int mlButton;
-		cHaptic *mpHaptic;
-	};
+	int GetButton() { return mlButton; }
 
+private:
+	int mlButton;
+	cHaptic *mpHaptic;
 };
+
+};     // namespace hpl
 #endif // HPL_ACTIONMOUSEBUTTON_H

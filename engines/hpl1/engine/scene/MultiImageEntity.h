@@ -41,67 +41,65 @@
 #ifndef HPL_MULTI_IMAGE_ENTITY_H
 #define HPL_MULTI_IMAGE_ENTITY_H
 
-#include <map>
 #include "hpl1/engine/scene/ImageEntity.h"
+#include <map>
 
 namespace hpl {
 
-	class cScene;
-	class cNode2D;
+class cScene;
+class cNode2D;
 
-	class cMultiImagePart
-	{
-	public:
-		tFlag mlId;
-		int mlActiveEntity;
-		tImageEntityVec mvEntity;
+class cMultiImagePart {
+public:
+	tFlag mlId;
+	int mlActiveEntity;
+	tImageEntityVec mvEntity;
 
-		unsigned int mlPrio;
-		unsigned int mlNextAnimPrio;
-		tString msNextAnim;
-		bool mbSyncFrame;
-	};
-
-	typedef std::map<unsigned int ,cMultiImagePart> tMultiImagePartMap;
-	typedef tMultiImagePartMap::iterator tMultiImagePartMapIt;
-
-	class cMultiImageEntity
-	{
-	public:
-		cMultiImageEntity(class cScene* apScene, cNode2D *apNode);
-		~cMultiImageEntity();
-
-		bool Add(tString asName, tString asFile,cVector3f avLocalPos,tFlag alPartId);
-		bool Add(tString asName, cImageEntity *apEntity,cVector3f avLocalPos,tFlag alPartId);
-
-		void SetFlipH(bool abX);
-
-		void SetAlpha(float afX);
-		void Flash(float afX);
-
-		void SetActive(bool abX);
-		bool GetActive(){ return mbActive;}
-
-		bool PlayAnim(const tString &asName,tFlag alParts, unsigned int alPrio, bool abLoop=true, bool abSyncFrame=false);
-		void UpdateAnim();
-
-		void SetAnimPaused(bool abX);
-		bool GetAnimPaused(){ return mbAnimPaused;}
-
-		cImageEntity* GetEntity(int alPartId);
-
-	private:
-		bool mbActive;
-		float mfAlpha;
-		bool mbAnimPaused;
-
-		cScene* mpScene;
-		cNode2D* mpNode;
-
-		tMultiImagePartMap m_mapEntityParts;
-
-		bool mbFlipH;
-	};
-
+	unsigned int mlPrio;
+	unsigned int mlNextAnimPrio;
+	tString msNextAnim;
+	bool mbSyncFrame;
 };
+
+typedef std::map<unsigned int, cMultiImagePart> tMultiImagePartMap;
+typedef tMultiImagePartMap::iterator tMultiImagePartMapIt;
+
+class cMultiImageEntity {
+public:
+	cMultiImageEntity(class cScene *apScene, cNode2D *apNode);
+	~cMultiImageEntity();
+
+	bool Add(tString asName, tString asFile, cVector3f avLocalPos, tFlag alPartId);
+	bool Add(tString asName, cImageEntity *apEntity, cVector3f avLocalPos, tFlag alPartId);
+
+	void SetFlipH(bool abX);
+
+	void SetAlpha(float afX);
+	void Flash(float afX);
+
+	void SetActive(bool abX);
+	bool GetActive() { return mbActive; }
+
+	bool PlayAnim(const tString &asName, tFlag alParts, unsigned int alPrio, bool abLoop = true, bool abSyncFrame = false);
+	void UpdateAnim();
+
+	void SetAnimPaused(bool abX);
+	bool GetAnimPaused() { return mbAnimPaused; }
+
+	cImageEntity *GetEntity(int alPartId);
+
+private:
+	bool mbActive;
+	float mfAlpha;
+	bool mbAnimPaused;
+
+	cScene *mpScene;
+	cNode2D *mpNode;
+
+	tMultiImagePartMap m_mapEntityParts;
+
+	bool mbFlipH;
+};
+
+};     // namespace hpl
 #endif // HPL_MULTI_IMAGE_ENTITY_H

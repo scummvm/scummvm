@@ -47,31 +47,30 @@
 
 namespace hpl {
 
-	class iLowLevelGraphics;
+class iLowLevelGraphics;
 
-	class cGpuProgramManager : public iResourceManager
-	{
-	public:
-		cGpuProgramManager(cFileSearcher *apFileSearcher, iLowLevelGraphics *apLowLevelGraphics,
-			iLowLevelResources *apLowLevelResources,iLowLevelSystem *apLowLevelSystem);
-		~cGpuProgramManager();
+class cGpuProgramManager : public iResourceManager {
+public:
+	cGpuProgramManager(cFileSearcher *apFileSearcher, iLowLevelGraphics *apLowLevelGraphics,
+					   iLowLevelResources *apLowLevelResources, iLowLevelSystem *apLowLevelSystem);
+	~cGpuProgramManager();
 
-		iResourceBase* Create(const tString& asName);
-		/**
-		 * Creates a new GPU program
-		 * \param asName name of the program
-		 * \param asEntry the entry point of the program (usually "main")
-		 * \param aType type of the program
-		 * \return
-		 */
-		iGpuProgram* CreateProgram(const tString& asName,const tString& asEntry,eGpuProgramType aType);
+	iResourceBase *Create(const tString &asName);
+	/**
+	 * Creates a new GPU program
+	 * \param asName name of the program
+	 * \param asEntry the entry point of the program (usually "main")
+	 * \param aType type of the program
+	 * \return
+	 */
+	iGpuProgram *CreateProgram(const tString &asName, const tString &asEntry, eGpuProgramType aType);
 
-		void Destroy(iResourceBase* apResource);
-		void Unload(iResourceBase* apResource);
+	void Destroy(iResourceBase *apResource);
+	void Unload(iResourceBase *apResource);
 
-	private:
-		iLowLevelGraphics *mpLowLevelGraphics;
-	};
-
+private:
+	iLowLevelGraphics *mpLowLevelGraphics;
 };
+
+};     // namespace hpl
 #endif // HPL_GPU_PROGRAM_MANAGER_H

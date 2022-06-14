@@ -50,56 +50,56 @@
 
 namespace hpl {
 
-	class cFrameTexture;
-	class cFrameBitmap;
-	class iTexture;
+class cFrameTexture;
+class cFrameBitmap;
+class iTexture;
 
-	class cResourceImage : public iResourceBase
-	{
+class cResourceImage : public iResourceBase {
 	friend class cImageManager;
-	public:
-		cResourceImage(tString asName, cFrameTexture *apFrameTex,
-						cFrameBitmap *apFrameBmp,
-						cRect2l aRect,
-						cVector2l avSrcSize, int alHandle);
 
-		bool Reload();
-		void Unload();
-		void Destroy();
+public:
+	cResourceImage(tString asName, cFrameTexture *apFrameTex,
+				   cFrameBitmap *apFrameBmp,
+				   cRect2l aRect,
+				   cVector2l avSrcSize, int alHandle);
 
-		//Image specific
-		int GetHeight()const{return mRect.h;}
-		int GetWidth()const{return mRect.w;}
-		cVector2l GetSize()const{return cVector2l(mRect.w,mRect.h);}
-		cVector2l GetPosition()const{return cVector2l(mRect.x,mRect.y);}
+	bool Reload();
+	void Unload();
+	void Destroy();
 
-		int GetSourceWidth()const{return mvSourceSize.x;}
-		int GetSourceHeight()const{return mvSourceSize.y;}
+	// Image specific
+	int GetHeight() const { return mRect.h; }
+	int GetWidth() const { return mRect.w; }
+	cVector2l GetSize() const { return cVector2l(mRect.w, mRect.h); }
+	cVector2l GetPosition() const { return cVector2l(mRect.x, mRect.y); }
 
-		iTexture *GetTexture()const;
+	int GetSourceWidth() const { return mvSourceSize.x; }
+	int GetSourceHeight() const { return mvSourceSize.y; }
 
-		cFrameTexture *GetFrameTexture()const{return mpFrameTexture;}
-		cFrameBitmap *GetFrameBitmap()const{return mpFrameBitmap;}
+	iTexture *GetTexture() const;
 
-		tVertexVec GetVertexVecCopy(const cVector2f &avPos, const cVector2f &avSize);
-		const tVertexVec& GetVertexVec(){return mvVtx;}
+	cFrameTexture *GetFrameTexture() const { return mpFrameTexture; }
+	cFrameBitmap *GetFrameBitmap() const { return mpFrameBitmap; }
 
-	private:
-		~cResourceImage();
+	tVertexVec GetVertexVecCopy(const cVector2f &avPos, const cVector2f &avSize);
+	const tVertexVec &GetVertexVec() { return mvVtx; }
 
-		cFrameTexture *mpFrameTexture;
-		cFrameBitmap *mpFrameBitmap;
+private:
+	~cResourceImage();
 
-		cVector2l mvSourceSize;
-		cRect2l mRect;
-		tVertexVec mvVtx;
+	cFrameTexture *mpFrameTexture;
+	cFrameBitmap *mpFrameBitmap;
 
-		int mlHandle;
-	};
+	cVector2l mvSourceSize;
+	cRect2l mRect;
+	tVertexVec mvVtx;
 
-	typedef std::vector<cResourceImage*> tResourceImageVec;
-	typedef tResourceImageVec::iterator tResourceImageVecIt;
-
+	int mlHandle;
 };
+
+typedef std::vector<cResourceImage *> tResourceImageVec;
+typedef tResourceImageVec::iterator tResourceImageVecIt;
+
+}; // namespace hpl
 
 #endif // HPL_RESOURCE_IMAGE_H

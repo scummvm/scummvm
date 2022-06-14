@@ -40,70 +40,63 @@
 
 #include "hpl1/engine/scene/ColliderEntity.h"
 
-#include "hpl1/engine/physics/PhysicsWorld.h"
-#include "hpl1/engine/physics/PhysicsBody.h"
 #include "hpl1/engine/physics/CollideShape.h"
+#include "hpl1/engine/physics/PhysicsBody.h"
+#include "hpl1/engine/physics/PhysicsWorld.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cColliderEntity::cColliderEntity(const tString &asName,iPhysicsBody* apBody, iPhysicsWorld *apWorld):
-	iRenderable(asName)
-	{
-		mpPhysicsWorld = apWorld;
-		mpBody = apBody;
+cColliderEntity::cColliderEntity(const tString &asName, iPhysicsBody *apBody, iPhysicsWorld *apWorld) : iRenderable(asName) {
+	mpPhysicsWorld = apWorld;
+	mpBody = apBody;
 
-		mBoundingVolume = apBody->GetShape()->GetBoundingVolume();
-	}
-
-	//-----------------------------------------------------------------------
-
-	cColliderEntity::~cColliderEntity()
-	{
-		if(mpBody && mpPhysicsWorld)
-			mpPhysicsWorld->DestroyBody(mpBody);
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	cBoundingVolume* cColliderEntity::GetBoundingVolume()
-	{
-		return &mBoundingVolume;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cMatrixf* cColliderEntity::GetModelMatrix(cCamera3D *apCamera)
-	{
-		return &GetWorldMatrix();
-	}
-
-	//-----------------------------------------------------------------------
-
-	int cColliderEntity::GetMatrixUpdateCount()
-	{
-		return GetTransformUpdateCount();
-	}
-
-	//-----------------------------------------------------------------------
-
-
-	//////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	//-----------------------------------------------------------------------
+	mBoundingVolume = apBody->GetShape()->GetBoundingVolume();
 }
+
+//-----------------------------------------------------------------------
+
+cColliderEntity::~cColliderEntity() {
+	if (mpBody && mpPhysicsWorld)
+		mpPhysicsWorld->DestroyBody(mpBody);
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+cBoundingVolume *cColliderEntity::GetBoundingVolume() {
+	return &mBoundingVolume;
+}
+
+//-----------------------------------------------------------------------
+
+cMatrixf *cColliderEntity::GetModelMatrix(cCamera3D *apCamera) {
+	return &GetWorldMatrix();
+}
+
+//-----------------------------------------------------------------------
+
+int cColliderEntity::GetMatrixUpdateCount() {
+	return GetTransformUpdateCount();
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PRIVATE METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+} // namespace hpl

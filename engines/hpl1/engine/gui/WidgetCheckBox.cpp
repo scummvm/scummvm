@@ -45,134 +45,123 @@
 #include "hpl1/engine/math/Math.h"
 
 #include "hpl1/engine/gui/Gui.h"
-#include "hpl1/engine/gui/GuiSkin.h"
-#include "hpl1/engine/gui/GuiSet.h"
 #include "hpl1/engine/gui/GuiGfxElement.h"
+#include "hpl1/engine/gui/GuiSet.h"
+#include "hpl1/engine/gui/GuiSkin.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cWidgetCheckBox::cWidgetCheckBox(cGuiSet *apSet, cGuiSkin *apSkin) : iWidget(eWidgetType_CheckBox,apSet, apSkin)
-	{
-		mbChecked = false;
-		mbPressed = false;
+cWidgetCheckBox::cWidgetCheckBox(cGuiSet *apSet, cGuiSkin *apSkin) : iWidget(eWidgetType_CheckBox, apSet, apSkin) {
+	mbChecked = false;
+	mbPressed = false;
 
-		LoadGraphics();
-	}
-
-	//-----------------------------------------------------------------------
-
-	cWidgetCheckBox::~cWidgetCheckBox()
-	{
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	void cWidgetCheckBox::SetChecked(bool abX)
-	{
-		if(mbChecked == abX) return;
-
-		mbChecked = abX;
-
-		cGuiMessageData data = cGuiMessageData(mbChecked);
-		ProcessMessage(eGuiMessage_CheckChange,data);
-	}
-
-	//-----------------------------------------------------------------------
-
-
-	//////////////////////////////////////////////////////////////////////////
-	// PROTECTED METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	void cWidgetCheckBox::OnLoadGraphics()
-	{
-		mvGfxBox[1][0] = mpSkin->GetGfx(eGuiSkinGfx_CheckBoxEnabledUnchecked);
-		mvGfxBox[1][1] = mpSkin->GetGfx(eGuiSkinGfx_CheckBoxEnabledChecked);
-		mvGfxBox[0][0] = mpSkin->GetGfx(eGuiSkinGfx_CheckBoxDisabledUnchecked);
-		mvGfxBox[0][1] = mpSkin->GetGfx(eGuiSkinGfx_CheckBoxDisabledChecked);
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cWidgetCheckBox::OnChangeSize()
-	{
-		if(mvSize.y < mvDefaultFontSize.y) mvSize.y = mvDefaultFontSize.y;
-		if(mvSize.x < mvGfxBox[0][0]->GetActiveSize().x) mvSize.x = mvGfxBox[0][0]->GetActiveSize().x;
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cWidgetCheckBox::OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion)
-	{
-		////////////////////////////////
-		// Box
-		mpSet->DrawGfx( mvGfxBox[IsEnabled()][mbChecked], GetGlobalPosition() +
-						cVector3f(0,mvSize.y/2 - mvGfxBox[0][0]->GetActiveSize().y/2,0));
-
-		////////////////////////////////
-		// Text
-		eGuiSkinFont font = IsEnabled() ? eGuiSkinFont_Default : eGuiSkinFont_Disabled;
-		DrawSkinText(			msText,font, GetGlobalPosition() +
-							cVector3f(	mvGfxBox[0][0]->GetActiveSize().x +3.0f,
-										mvSize.y/2 - mvDefaultFontSize.y/2,0),
-							eFontAlign_Left);
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetCheckBox::OnMouseMove(cGuiMessageData &aData)
-	{
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetCheckBox::OnMouseDown(cGuiMessageData &aData)
-	{
-		mbPressed = true;
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetCheckBox::OnMouseUp(cGuiMessageData &aData)
-	{
-		if(mbPressed) SetChecked(!mbChecked);
-
-		mbPressed = false;
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetCheckBox::OnMouseEnter(cGuiMessageData &aData)
-	{
-		return false;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetCheckBox::OnMouseLeave(cGuiMessageData &aData)
-	{
-		mbPressed = false;
-		return false;
-	}
-
-	//-----------------------------------------------------------------------
-
-
+	LoadGraphics();
 }
+
+//-----------------------------------------------------------------------
+
+cWidgetCheckBox::~cWidgetCheckBox() {
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+void cWidgetCheckBox::SetChecked(bool abX) {
+	if (mbChecked == abX)
+		return;
+
+	mbChecked = abX;
+
+	cGuiMessageData data = cGuiMessageData(mbChecked);
+	ProcessMessage(eGuiMessage_CheckChange, data);
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PROTECTED METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+void cWidgetCheckBox::OnLoadGraphics() {
+	mvGfxBox[1][0] = mpSkin->GetGfx(eGuiSkinGfx_CheckBoxEnabledUnchecked);
+	mvGfxBox[1][1] = mpSkin->GetGfx(eGuiSkinGfx_CheckBoxEnabledChecked);
+	mvGfxBox[0][0] = mpSkin->GetGfx(eGuiSkinGfx_CheckBoxDisabledUnchecked);
+	mvGfxBox[0][1] = mpSkin->GetGfx(eGuiSkinGfx_CheckBoxDisabledChecked);
+}
+
+//-----------------------------------------------------------------------
+
+void cWidgetCheckBox::OnChangeSize() {
+	if (mvSize.y < mvDefaultFontSize.y)
+		mvSize.y = mvDefaultFontSize.y;
+	if (mvSize.x < mvGfxBox[0][0]->GetActiveSize().x)
+		mvSize.x = mvGfxBox[0][0]->GetActiveSize().x;
+}
+
+//-----------------------------------------------------------------------
+
+void cWidgetCheckBox::OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion) {
+	////////////////////////////////
+	// Box
+	mpSet->DrawGfx(mvGfxBox[IsEnabled()][mbChecked], GetGlobalPosition() +
+														 cVector3f(0, mvSize.y / 2 - mvGfxBox[0][0]->GetActiveSize().y / 2, 0));
+
+	////////////////////////////////
+	// Text
+	eGuiSkinFont font = IsEnabled() ? eGuiSkinFont_Default : eGuiSkinFont_Disabled;
+	DrawSkinText(msText, font, GetGlobalPosition() + cVector3f(mvGfxBox[0][0]->GetActiveSize().x + 3.0f, mvSize.y / 2 - mvDefaultFontSize.y / 2, 0),
+				 eFontAlign_Left);
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetCheckBox::OnMouseMove(cGuiMessageData &aData) {
+	return true;
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetCheckBox::OnMouseDown(cGuiMessageData &aData) {
+	mbPressed = true;
+	return true;
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetCheckBox::OnMouseUp(cGuiMessageData &aData) {
+	if (mbPressed)
+		SetChecked(!mbChecked);
+
+	mbPressed = false;
+	return true;
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetCheckBox::OnMouseEnter(cGuiMessageData &aData) {
+	return false;
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetCheckBox::OnMouseLeave(cGuiMessageData &aData) {
+	mbPressed = false;
+	return false;
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

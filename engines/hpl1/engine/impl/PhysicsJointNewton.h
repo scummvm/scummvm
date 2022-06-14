@@ -44,75 +44,68 @@
 #if defined(__linux__) || defined(__APPLE__)
 #include <unistd.h>
 #endif
-#include "hpl1/engine/libraries/newton/Newton.h"
-#include "hpl1/engine/impl/PhysicsWorldNewton.h"
 #include "hpl1/engine/impl/PhysicsBodyNewton.h"
+#include "hpl1/engine/impl/PhysicsWorldNewton.h"
+#include "hpl1/engine/libraries/newton/Newton.h"
 
 #include "hpl1/engine/system/LowLevelSystem.h"
 
 namespace hpl {
 
-	template <typename T>
-	class iPhysicsJointNewton : public T
-	{
-	public:
-		iPhysicsJointNewton(const tString &asName, iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
-						iPhysicsWorld *apWorld,const cVector3f &avPivotPoint)
-		: T(asName, apParentBody, apChildBody, apWorld,avPivotPoint)
-		{
-			cPhysicsWorldNewton *pNWorld = static_cast<cPhysicsWorldNewton*>(apWorld);
+template<typename T>
+class iPhysicsJointNewton : public T {
+public:
+	iPhysicsJointNewton(const tString &asName, iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
+						iPhysicsWorld *apWorld, const cVector3f &avPivotPoint)
+		: T(asName, apParentBody, apChildBody, apWorld, avPivotPoint) {
+		cPhysicsWorldNewton *pNWorld = static_cast<cPhysicsWorldNewton *>(apWorld);
 
-			mpNewtonWorld = pNWorld->GetNewtonWorld();
+		mpNewtonWorld = pNWorld->GetNewtonWorld();
 
-			cPhysicsBodyNewton *pNParent = static_cast<cPhysicsBodyNewton*>(apParentBody);
-			cPhysicsBodyNewton *pNChild = static_cast<cPhysicsBodyNewton*>(apChildBody);
+		cPhysicsBodyNewton *pNParent = static_cast<cPhysicsBodyNewton *>(apParentBody);
+		cPhysicsBodyNewton *pNChild = static_cast<cPhysicsBodyNewton *>(apChildBody);
 
-			if(apParentBody==NULL)
-				mpNewtonParentBody = NULL;
-			else
-				mpNewtonParentBody = pNParent->GetNewtonBody();
+		if (apParentBody == NULL)
+			mpNewtonParentBody = NULL;
+		else
+			mpNewtonParentBody = pNParent->GetNewtonBody();
 
-			mpNewtonChildBody = pNChild->GetNewtonBody();
-		}
+		mpNewtonChildBody = pNChild->GetNewtonBody();
+	}
 
-		virtual ~iPhysicsJointNewton()
-		{
-			//Skip this for now and let newton handle it..
-			//Log("Destroying newton joint!\n");
-			if(this->mpChildBody || this->mpParentBody)
-				NewtonDestroyJoint(mpNewtonWorld,mpNewtonJoint);
-		}
+	virtual ~iPhysicsJointNewton() {
+		// Skip this for now and let newton handle it..
+		// Log("Destroying newton joint!\n");
+		if (this->mpChildBody || this->mpParentBody)
+			NewtonDestroyJoint(mpNewtonWorld, mpNewtonJoint);
+	}
 
-		///////////////////////
+	///////////////////////
 
-		void SetCollideBodies(bool abX)
-		{
-			NewtonJointSetCollisionState(mpNewtonJoint,abX ? 1: 0);
-		}
+	void SetCollideBodies(bool abX) {
+		NewtonJointSetCollisionState(mpNewtonJoint, abX ? 1 : 0);
+	}
 
-		bool GetCollideBodies()
-		{
-			return NewtonJointGetCollisionState(mpNewtonJoint)==0 ? false : true;
-		}
+	bool GetCollideBodies() {
+		return NewtonJointGetCollisionState(mpNewtonJoint) == 0 ? false : true;
+	}
 
-		///////////////////////
+	///////////////////////
 
-		void SetStiffness(float afX)
-		{
-			NewtonJointSetStiffness(mpNewtonJoint, afX);
-		}
-		float GetStiffness()
-		{
-			return NewtonJointGetStiffness(mpNewtonJoint);
-		}
+	void SetStiffness(float afX) {
+		NewtonJointSetStiffness(mpNewtonJoint, afX);
+	}
+	float GetStiffness() {
+		return NewtonJointGetStiffness(mpNewtonJoint);
+	}
 
-		///////////////////////
+	///////////////////////
 
-	protected:
-		NewtonJoint* mpNewtonJoint;
-		NewtonWorld* mpNewtonWorld;
-		NewtonBody* mpNewtonParentBody;
-		NewtonBody* mpNewtonChildBody;
-	};
+protected:
+	NewtonJoint *mpNewtonJoint;
+	NewtonWorld *mpNewtonWorld;
+	NewtonBody *mpNewtonParentBody;
+	NewtonBody *mpNewtonChildBody;
 };
+};     // namespace hpl
 #endif // HPL_PHYSICS_JOINT_NEWTON_H

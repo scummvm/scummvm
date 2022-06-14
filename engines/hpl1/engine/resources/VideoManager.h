@@ -45,48 +45,47 @@
 
 namespace hpl {
 
-	class cResources;
-	class cGraphics;
-	class iVideoStream;
-	class iVideoStreamLoader;
+class cResources;
+class cGraphics;
+class iVideoStream;
+class iVideoStreamLoader;
 
+//----------------------------------------------------
 
-	//----------------------------------------------------
+typedef std::list<iVideoStreamLoader *> tVideoStreamLoaderList;
+typedef tVideoStreamLoaderList::iterator tVideoStreamLoaderListIt;
 
-	typedef std::list<iVideoStreamLoader*> tVideoStreamLoaderList;
-	typedef tVideoStreamLoaderList::iterator tVideoStreamLoaderListIt;
+//----------------------------------------------------
 
-	//----------------------------------------------------
+typedef std::list<iVideoStream *> tVideoStreamList;
+typedef tVideoStreamList::iterator tVideoStreamListIt;
 
-	typedef std::list<iVideoStream*> tVideoStreamList;
-	typedef tVideoStreamList::iterator tVideoStreamListIt;
+//----------------------------------------------------
 
-	//----------------------------------------------------
+class cVideoManager : public iResourceManager {
+public:
+	cVideoManager(cGraphics *apGraphics, cResources *apResources);
+	~cVideoManager();
 
-	class cVideoManager : public iResourceManager
-	{
-	public:
-		cVideoManager(cGraphics* apGraphics,cResources *apResources);
-		~cVideoManager();
+	iResourceBase *Create(const tString &asName);
 
-		iResourceBase* Create(const tString& asName);
+	iVideoStream *CreateVideo(const tString &asName);
 
-		iVideoStream* CreateVideo(const tString& asName);
+	void AddVideoLoader(iVideoStreamLoader *apLoader);
 
-		void AddVideoLoader(iVideoStreamLoader *apLoader);
+	void Destroy(iResourceBase *apResource);
+	void Unload(iResourceBase *apResource);
 
-		void Destroy(iResourceBase* apResource);
-		void Unload(iResourceBase* apResource);
+	void Update(float afTimeStep);
 
-		void Update(float afTimeStep);
-	private:
-		iVideoStreamLoader *GetLoader(const tString& asFileName);
+private:
+	iVideoStreamLoader *GetLoader(const tString &asFileName);
 
-		cGraphics* mpGraphics;
-		cResources *mpResources;
+	cGraphics *mpGraphics;
+	cResources *mpResources;
 
-		tVideoStreamLoaderList mlstVideoLoaders;
-	};
-
+	tVideoStreamLoaderList mlstVideoLoaders;
 };
+
+};     // namespace hpl
 #endif // HPL_VIDEO_MANAGER_H

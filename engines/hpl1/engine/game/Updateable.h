@@ -45,32 +45,31 @@
 
 namespace hpl {
 
-	class iUpdateable
-	{
-	public:
-		iUpdateable(const tString& asName) : msName(asName){}
+class iUpdateable {
+public:
+	iUpdateable(const tString &asName) : msName(asName) {}
 
-		virtual void OnDraw(){}
+	virtual void OnDraw() {}
 
-		virtual void OnPostSceneDraw(){}
+	virtual void OnPostSceneDraw() {}
 
-		virtual void OnPostGUIDraw(){}
+	virtual void OnPostGUIDraw() {}
 
-		virtual void OnPostBufferSwap(){}
+	virtual void OnPostBufferSwap() {}
 
-		virtual void OnStart(){}
+	virtual void OnStart() {}
 
-		virtual void Update(float afTimeStep){}
+	virtual void Update(float afTimeStep) {}
 
-		virtual void OnExit(){}
+	virtual void OnExit() {}
 
-		virtual void Reset(){}
+	virtual void Reset() {}
 
-		const tString& GetName(){ return msName;}
+	const tString &GetName() { return msName; }
 
-	private:
-		tString msName;
-	};
+private:
+	tString msName;
 };
+}; // namespace hpl
 
 #endif // HPL_UPDATEABLE_H

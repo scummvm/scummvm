@@ -41,69 +41,67 @@
 #ifndef HPL_SOUNDSOURCE_H
 #define HPL_SOUNDSOURCE_H
 
-#include <list>
 #include "hpl1/engine/scene/Entity2D.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include <list>
 
 class TiXmlElement;
 
 namespace hpl {
 
-	class cSound;
-	class iSoundChannel;
+class cSound;
+class iSoundChannel;
 
-	class cSoundSource : public iEntity2D
-	{
-	public:
-		cSoundSource(const tString& asName,const tString& asSoundName, cSound* apSound, bool abVolatile);
-		~cSoundSource();
+class cSoundSource : public iEntity2D {
+public:
+	cSoundSource(const tString &asName, const tString &asSoundName, cSound *apSound, bool abVolatile);
+	~cSoundSource();
 
-		tString GetEntityType(){ return "SoundSource";}
+	tString GetEntityType() { return "SoundSource"; }
 
-		void UpdateLogic(float afTimeStep);
+	void UpdateLogic(float afTimeStep);
 
-		bool LoadData(TiXmlElement* apRootElem);
+	bool LoadData(TiXmlElement *apRootElem);
 
-		bool IsDead();
+	bool IsDead();
 
-		void SetInterval(int alX){mlInterval = alX;}
-		void SetLoop(bool abX){mbLoop = abX;}
-		void SetRelative(bool abX){mbRelative = abX;}
-		void SetMaxDist(float afX){mfMaxDist = afX;}
-		void SetMinDist(float afX){mfMinDist = afX;}
-		void SetRandom(int alX){mlRandom = alX;}
-		void SetVolume(float afX){mfVolume = afX;}
+	void SetInterval(int alX) { mlInterval = alX; }
+	void SetLoop(bool abX) { mbLoop = abX; }
+	void SetRelative(bool abX) { mbRelative = abX; }
+	void SetMaxDist(float afX) { mfMaxDist = afX; }
+	void SetMinDist(float afX) { mfMinDist = afX; }
+	void SetRandom(int alX) { mlRandom = alX; }
+	void SetVolume(float afX) { mfVolume = afX; }
 
-		iSoundChannel* GetSoundChannel(){ return mpSoundChannel;}
+	iSoundChannel *GetSoundChannel() { return mpSoundChannel; }
 
+	const cRect2f &GetBoundingBox();
+	bool UpdateBoundingBox();
 
-		const cRect2f& GetBoundingBox();
-		bool UpdateBoundingBox();
+	void Stop();
 
-		void Stop();
+private:
+	cSound *mpSound;
+	bool mbVolatile;
 
-	private:
-		cSound* mpSound;
-		bool mbVolatile;
+	int mlInterval;
+	bool mbLoop;
+	bool mbRelative;
+	float mfMaxDist;
+	float mfMinDist;
+	int mlRandom;
+	tString msSoundName;
+	float mfVolume;
+	int mlCounter;
 
-		int mlInterval;
-		bool mbLoop;
-		bool mbRelative;
-		float mfMaxDist;
-		float mfMinDist;
-		int mlRandom;
-		tString msSoundName;
-		float mfVolume;
-		int mlCounter;
+	bool mbPlaying;
 
-		bool mbPlaying;
+	iSoundChannel *mpSoundChannel;
 
-		iSoundChannel *mpSoundChannel;
-
-		void Play();
-	};
-
-	typedef std::list<cSoundSource*> tSoundSourceList;
-	typedef tSoundSourceList::iterator tSoundSourceListIt;
+	void Play();
 };
+
+typedef std::list<cSoundSource *> tSoundSourceList;
+typedef tSoundSourceList::iterator tSoundSourceListIt;
+};     // namespace hpl
 #endif // HPL_SOUNDSOURCE_H

@@ -46,143 +46,136 @@
 
 namespace hpl {
 
-	class cSoundHandler;
-	class cSoundEntityData;
-	class cSoundEntityManager;
-	class cWorld3D;
-	class cSoundEntry;
+class cSoundHandler;
+class cSoundEntityData;
+class cSoundEntityManager;
+class cWorld3D;
+class cSoundEntry;
 
-	enum eSoundEntityType
-	{
-		eSoundEntityType_Main,
-		eSoundEntityType_Start,
-		eSoundEntityType_Stop,
-		eSoundEntityType_LastEnum
-	};
+enum eSoundEntityType {
+	eSoundEntityType_Main,
+	eSoundEntityType_Start,
+	eSoundEntityType_Stop,
+	eSoundEntityType_LastEnum
+};
 
-	class cSoundEntity;
+class cSoundEntity;
 
-	class cSoundEntityChannelCallback : public iSoundChannelCallback
-	{
-	public:
-		void OnPriorityRelease();
+class cSoundEntityChannelCallback : public iSoundChannelCallback {
+public:
+	void OnPriorityRelease();
 
-		cSoundEntity *mpEntity;
-	};
+	cSoundEntity *mpEntity;
+};
 
-	//----------------------------------------
+//----------------------------------------
 
-	kSaveData_ChildClass(iEntity3D, cSoundEntity)
-	{
-		kSaveData_ClassInit(cSoundEntity)
-	public:
-		tString msData;
-		bool mbStopped;
-		bool mbRemoveWhenOver;
-		bool mbStarted;
-		bool mbFadingOut;
-		float mfVolume;
+kSaveData_ChildClass(iEntity3D, cSoundEntity) {
+	kSaveData_ClassInit(cSoundEntity) public : tString msData;
+	bool mbStopped;
+	bool mbRemoveWhenOver;
+	bool mbStarted;
+	bool mbFadingOut;
+	float mfVolume;
 
-		virtual iSaveObject* CreateSaveObject(cSaveObjectHandler *apSaveObjectHandler,cGame *apGame);
-		virtual int GetSaveCreatePrio();
-	};
+	virtual iSaveObject *CreateSaveObject(cSaveObjectHandler * apSaveObjectHandler, cGame * apGame);
+	virtual int GetSaveCreatePrio();
+};
 
-	//------------------------------------------
+//------------------------------------------
 
-	class iSoundEntityGlobalCallback
-	{
-	public:
-		virtual void OnStart(cSoundEntity *apSoundEntity)=0;
-	};
+class iSoundEntityGlobalCallback {
+public:
+	virtual void OnStart(cSoundEntity *apSoundEntity) = 0;
+};
 
-	typedef std::list<iSoundEntityGlobalCallback*> tSoundEntityGlobalCallbackList;
-	typedef tSoundEntityGlobalCallbackList::iterator tSoundEntityGlobalCallbackListIt;
+typedef std::list<iSoundEntityGlobalCallback *> tSoundEntityGlobalCallbackList;
+typedef tSoundEntityGlobalCallbackList::iterator tSoundEntityGlobalCallbackListIt;
 
-	//------------------------------------------
+//------------------------------------------
 
-	class cSoundEntity : public iEntity3D
-	{
+class cSoundEntity : public iEntity3D {
 	typedef iEntity3D super;
 	friend class cSoundEntityChannelCallback;
-	public:
-		cSoundEntity(const tString& asName,cSoundEntityData *apData,
-						cSoundEntityManager *apSoundEntityManager,
-						cWorld3D *apWorld,
-						cSoundHandler *apSoundHandler, bool abRemoveWhenOver);
-		~cSoundEntity();
 
-		void Play(bool abPlayStart=true);
-		void Stop(bool abPlayEnd=true);
+public:
+	cSoundEntity(const tString &asName, cSoundEntityData *apData,
+				 cSoundEntityManager *apSoundEntityManager,
+				 cWorld3D *apWorld,
+				 cSoundHandler *apSoundHandler, bool abRemoveWhenOver);
+	~cSoundEntity();
 
-		void FadeIn(float afSpeed);
-		void FadeOut(float afSpeed);
+	void Play(bool abPlayStart = true);
+	void Stop(bool abPlayEnd = true);
 
-		bool IsStopped();
-		bool IsFadingOut();
-		bool GetRemoveWhenOver();
+	void FadeIn(float afSpeed);
+	void FadeOut(float afSpeed);
 
-		void SetVolume(float afX){ mfVolume = afX;}
-		float GetVolume(){ return mfVolume;}
+	bool IsStopped();
+	bool IsFadingOut();
+	bool GetRemoveWhenOver();
 
-		iSoundChannel* GetSound(eSoundEntityType aType){ return mvSounds[aType];}
-		cSoundEntry* GetSoundEntry(eSoundEntityType aType);
+	void SetVolume(float afX) { mfVolume = afX; }
+	float GetVolume() { return mfVolume; }
 
-		//Entity implementation
-		void UpdateLogic(float afTimeStep);
+	iSoundChannel *GetSound(eSoundEntityType aType) { return mvSounds[aType]; }
+	cSoundEntry *GetSoundEntry(eSoundEntityType aType);
 
-		tString GetEntityType(){ return "SoundEntity";}
+	// Entity implementation
+	void UpdateLogic(float afTimeStep);
 
-		cSoundEntityData* GetData(){ return mpData;}
+	tString GetEntityType() { return "SoundEntity"; }
 
-		static void AddGlobalCallback(iSoundEntityGlobalCallback *apCallback);
-		static void RemoveGlobalCallback(iSoundEntityGlobalCallback *apCallback);
+	cSoundEntityData *GetData() { return mpData; }
 
+	static void AddGlobalCallback(iSoundEntityGlobalCallback *apCallback);
+	static void RemoveGlobalCallback(iSoundEntityGlobalCallback *apCallback);
 
-		//SaveObject implementation
-		virtual iSaveData* CreateSaveData();
-		virtual void SaveToSaveData(iSaveData *apSaveData);
-		virtual void LoadFromSaveData(iSaveData *apSaveData);
-		virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
+	// SaveObject implementation
+	virtual iSaveData *CreateSaveData();
+	virtual void SaveToSaveData(iSaveData *apSaveData);
+	virtual void LoadFromSaveData(iSaveData *apSaveData);
+	virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
 
-	private:
-		bool PlaySound(const tString &asName,bool abLoop,eSoundEntityType aType);
+private:
+	bool PlaySound(const tString &asName, bool abLoop, eSoundEntityType aType);
 
-		float GetListenerSqrLength();
+	float GetListenerSqrLength();
 
-		cSoundEntityManager *mpSoundEntityManager;
-		cSoundHandler *mpSoundHandler;
-		cSoundEntityData *mpData;
-		cWorld3D *mpWorld;
+	cSoundEntityManager *mpSoundEntityManager;
+	cSoundHandler *mpSoundHandler;
+	cSoundEntityData *mpData;
+	cWorld3D *mpWorld;
 
-		iSoundChannel *mvSounds[3];
-		//cSoundEntry *mvSoundEntries[3];
-		int mvSoundId[3];
+	iSoundChannel *mvSounds[3];
+	// cSoundEntry *mvSoundEntries[3];
+	int mvSoundId[3];
 
-		bool mbStopped;
-		bool mbRemoveWhenOver;
+	bool mbStopped;
+	bool mbRemoveWhenOver;
 
-		bool mbOutOfRange;
+	bool mbOutOfRange;
 
-		float mfIntervalCount;
+	float mfIntervalCount;
 
-		cSoundEntityChannelCallback *mpSoundCallback;
+	cSoundEntityChannelCallback *mpSoundCallback;
 
-		bool mbStarted;
+	bool mbStarted;
 
-		bool mbFadingOut;
+	bool mbFadingOut;
 
-		bool mbLog;
+	bool mbLog;
 
-		float mfVolume;
+	float mfVolume;
 
-		bool mbPrioRemove;
+	bool mbPrioRemove;
 
-		bool mbSkipStartEnd;
+	bool mbSkipStartEnd;
 
-		float mfSleepCount;
+	float mfSleepCount;
 
-		static tSoundEntityGlobalCallbackList mlstGobalCallbacks;
-	};
-
+	static tSoundEntityGlobalCallbackList mlstGobalCallbacks;
 };
+
+};     // namespace hpl
 #endif // HPL_SOUND_ENTITY_H

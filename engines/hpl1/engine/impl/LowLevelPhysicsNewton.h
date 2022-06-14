@@ -49,13 +49,12 @@
 
 namespace hpl {
 
-	class cLowLevelPhysicsNewton : public iLowLevelPhysics
-	{
-	public:
-		cLowLevelPhysicsNewton();
-		~cLowLevelPhysicsNewton();
+class cLowLevelPhysicsNewton : public iLowLevelPhysics {
+public:
+	cLowLevelPhysicsNewton();
+	~cLowLevelPhysicsNewton();
 
-		iPhysicsWorld* CreateWorld();
-	};
+	iPhysicsWorld *CreateWorld();
 };
+};     // namespace hpl
 #endif // HPL_LOWLEVELPHYSICS_NEWTON_H

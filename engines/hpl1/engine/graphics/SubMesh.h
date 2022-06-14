@@ -41,106 +41,106 @@
 #ifndef HPL_SUB_MESH_H
 #define HPL_SUB_MESH_H
 
-#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
-#include "hpl1/engine/system/SystemTypes.h"
+#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/math/MeshTypes.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	class iMaterial;
-	class iVertexBuffer;
+class iMaterial;
+class iVertexBuffer;
 
-	class cMesh;
+class cMesh;
 
-	class cMaterialManager;
+class cMaterialManager;
 
-	class cSubMesh
-	{
+class cSubMesh {
 	friend class cMesh;
 	friend class cSubMeshEntity;
-	public:
-		cSubMesh(const tString &asName,cMaterialManager* apMaterialManager);
-		~cSubMesh();
 
-		void SetMaterial(iMaterial* apMaterial);
-		void SetVertexBuffer(iVertexBuffer* apVtxBuffer);
+public:
+	cSubMesh(const tString &asName, cMaterialManager *apMaterialManager);
+	~cSubMesh();
 
-		//Renderable implementation.
-		iMaterial *GetMaterial();
-		iVertexBuffer* GetVertexBuffer();
+	void SetMaterial(iMaterial *apMaterial);
+	void SetVertexBuffer(iVertexBuffer *apVtxBuffer);
 
-		tString GetName(){ return msName;}
+	// Renderable implementation.
+	iMaterial *GetMaterial();
+	iVertexBuffer *GetVertexBuffer();
 
-		//Vertex-Bone pairs
-		void ResizeVertexBonePairs(int alSize);
-		int GetVertexBonePairNum();
-		cVertexBonePair& GetVertexBonePair(int alNum);
+	tString GetName() { return msName; }
 
-		void AddVertexBonePair(const cVertexBonePair &aPair);
-		void ClearVertexBonePairs();
+	// Vertex-Bone pairs
+	void ResizeVertexBonePairs(int alSize);
+	int GetVertexBonePairNum();
+	cVertexBonePair &GetVertexBonePair(int alNum);
 
-		void CompileBonePairs();
+	void AddVertexBonePair(const cVertexBonePair &aPair);
+	void ClearVertexBonePairs();
 
-		const cTriEdge& GetEdge(int alIndex) const{ return mvEdges[alIndex];}
-		int GetEdgeNum(){ return (int)mvEdges.size();}
+	void CompileBonePairs();
 
-		tTriEdgeVec* GetEdgeVecPtr(){ return &mvEdges;}
+	const cTriEdge &GetEdge(int alIndex) const { return mvEdges[alIndex]; }
+	int GetEdgeNum() { return (int)mvEdges.size(); }
 
-		tTriangleDataVec* GetTriangleVecPtr(){ return &mvTriangles;}
+	tTriEdgeVec *GetEdgeVecPtr() { return &mvEdges; }
 
-		void SetDoubleSided(bool abX){ mbDoubleSided = abX;}
-		bool GetDoubleSided(){ return mbDoubleSided;}
+	tTriangleDataVec *GetTriangleVecPtr() { return &mvTriangles; }
 
-		const tString& GetGroup(){ return msGroup;}
-		void SetGroup(const tString& asGroup){ msGroup =asGroup;}
+	void SetDoubleSided(bool abX) { mbDoubleSided = abX; }
+	bool GetDoubleSided() { return mbDoubleSided; }
 
-		const tString& GetNodeName(){ return msNodeName;}
-		void SetNodeName(const tString& asNodeName){ msNodeName = asNodeName;}
+	const tString &GetGroup() { return msGroup; }
+	void SetGroup(const tString &asGroup) { msGroup = asGroup; }
 
-		void SetModelScale(const cVector3f& avScale){ mvModelScale = avScale;}
-		cVector3f GetModelScale(){ return mvModelScale;}
+	const tString &GetNodeName() { return msNodeName; }
+	void SetNodeName(const tString &asNodeName) { msNodeName = asNodeName; }
 
-		const cMatrixf& GetLocalTransform(){ return m_mtxLocalTransform;}
-		void SetLocalTransform(const cMatrixf& a_mtxTrans){ m_mtxLocalTransform = a_mtxTrans;}
+	void SetModelScale(const cVector3f &avScale) { mvModelScale = avScale; }
+	cVector3f GetModelScale() { return mvModelScale; }
 
-		bool GetIsOneSided(){ return mbIsOneSided;}
-		const cVector3f& GetOneSidedNormal(){ return mvOneSidedNormal;}
+	const cMatrixf &GetLocalTransform() { return m_mtxLocalTransform; }
+	void SetLocalTransform(const cMatrixf &a_mtxTrans) { m_mtxLocalTransform = a_mtxTrans; }
 
-		void Compile();
-	private:
-		void CheckOneSided();
+	bool GetIsOneSided() { return mbIsOneSided; }
+	const cVector3f &GetOneSidedNormal() { return mvOneSidedNormal; }
 
+	void Compile();
 
-		iMaterial* mpMaterial;
-		iVertexBuffer* mpVtxBuffer;
+private:
+	void CheckOneSided();
 
-		cMatrixf m_mtxLocalTransform;
+	iMaterial *mpMaterial;
+	iVertexBuffer *mpVtxBuffer;
 
-		tVertexBonePairVec mvVtxBonePairs;
+	cMatrixf m_mtxLocalTransform;
 
-		tString msGroup;
-		tString msNodeName;
+	tVertexBonePairVec mvVtxBonePairs;
 
-		float *mpVertexWeights;
-		unsigned char *mpVertexBones;
+	tString msGroup;
+	tString msNodeName;
 
-		tTriEdgeVec mvEdges;
-		tTriangleDataVec mvTriangles;
+	float *mpVertexWeights;
+	unsigned char *mpVertexBones;
 
-		cVector3f mvModelScale;
+	tTriEdgeVec mvEdges;
+	tTriangleDataVec mvTriangles;
 
-		tString msName;
+	cVector3f mvModelScale;
 
-		bool mbDoubleSided;
+	tString msName;
 
-		bool mbIsOneSided;
-		cVector3f mvOneSidedNormal;
+	bool mbDoubleSided;
 
-		cMaterialManager* mpMaterialManager;
+	bool mbIsOneSided;
+	cVector3f mvOneSidedNormal;
 
-		cMesh* mpParent;
-	};
+	cMaterialManager *mpMaterialManager;
 
+	cMesh *mpParent;
 };
+
+};     // namespace hpl
 #endif // HPL_SUB_MESH_H

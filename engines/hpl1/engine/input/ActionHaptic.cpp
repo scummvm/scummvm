@@ -39,60 +39,61 @@
  */
 
 #include "hpl1/engine/input/ActionHaptic.h"
-#include "hpl1/engine/input/Input.h"
 #include "hpl1/engine/haptic/Haptic.h"
 #include "hpl1/engine/haptic/LowLevelHaptic.h"
+#include "hpl1/engine/input/Input.h"
 
-namespace hpl
-{
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+namespace hpl {
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cActionHaptic::cActionHaptic(tString asName,cHaptic *apHaptic, int alButton) : iAction(asName)
-	{
-		mlButton = alButton;
-		mpHaptic = apHaptic;
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	bool cActionHaptic::IsTriggerd()
-	{
-		if(mlButton >= mpHaptic->GetLowLevel()->GetNumberOfButtons()) return false;
-
-		return mpHaptic->GetLowLevel()->ButtonIsPressed(mlButton);
-	}
-
-	//-----------------------------------------------------------------------
-
-	float cActionHaptic::GetValue()
-	{
-		if(IsTriggerd())return 1.0;
-		else return 0.0;
-	}
-
-	//-----------------------------------------------------------------------
-
-	tString cActionHaptic::GetInputName()
-	{
-		switch(mlButton)
-		{
-		case 0: return "centre Controller button";
-		case 1: return "left Controller button";
-		case 2: return "forward Controller button";
-		case 3: return "right Controller button";
-		}
-		return "unknown Controller button";
-	}
-
-	//-----------------------------------------------------------------------
+cActionHaptic::cActionHaptic(tString asName, cHaptic *apHaptic, int alButton) : iAction(asName) {
+	mlButton = alButton;
+	mpHaptic = apHaptic;
 }
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+bool cActionHaptic::IsTriggerd() {
+	if (mlButton >= mpHaptic->GetLowLevel()->GetNumberOfButtons())
+		return false;
+
+	return mpHaptic->GetLowLevel()->ButtonIsPressed(mlButton);
+}
+
+//-----------------------------------------------------------------------
+
+float cActionHaptic::GetValue() {
+	if (IsTriggerd())
+		return 1.0;
+	else
+		return 0.0;
+}
+
+//-----------------------------------------------------------------------
+
+tString cActionHaptic::GetInputName() {
+	switch (mlButton) {
+	case 0:
+		return "centre Controller button";
+	case 1:
+		return "left Controller button";
+	case 2:
+		return "forward Controller button";
+	case 3:
+		return "right Controller button";
+	}
+	return "unknown Controller button";
+}
+
+//-----------------------------------------------------------------------
+} // namespace hpl

@@ -41,66 +41,65 @@
 #ifndef HPL_IMAGEMANAGER_H
 #define HPL_IMAGEMANAGER_H
 
-#include "hpl1/engine/resources/ResourceManager.h"
 #include "hpl1/engine/math/MathTypes.h"
+#include "hpl1/engine/resources/ResourceManager.h"
 
 namespace hpl {
 
-	class cResourceImage;
-	class cFrameTexture;
-	class cFrameBitmap;
-	class iLowLevelGraphics;
-	class iBitmap2D;
+class cResourceImage;
+class cFrameTexture;
+class cFrameBitmap;
+class iLowLevelGraphics;
+class iBitmap2D;
 
-	typedef std::list<cFrameBitmap*> tFrameBitmapList;
-	typedef tFrameBitmapList::iterator tFrameBitmapListIt;
+typedef std::list<cFrameBitmap *> tFrameBitmapList;
+typedef tFrameBitmapList::iterator tFrameBitmapListIt;
 
-	typedef std::map<int,cFrameTexture*> tFrameTextureMap;
-	typedef tFrameTextureMap::iterator tFrameTextureMapIt;
+typedef std::map<int, cFrameTexture *> tFrameTextureMap;
+typedef tFrameTextureMap::iterator tFrameTextureMapIt;
 
-	class cImageManager :public iResourceManager
-	{
-	public:
-		cImageManager(cFileSearcher *apFileSearcher, iLowLevelGraphics *apLowLevelGraphics,
-						iLowLevelResources *apLowLevelResources,iLowLevelSystem *apLowLevelSystem);
-		~cImageManager();
+class cImageManager : public iResourceManager {
+public:
+	cImageManager(cFileSearcher *apFileSearcher, iLowLevelGraphics *apLowLevelGraphics,
+				  iLowLevelResources *apLowLevelResources, iLowLevelSystem *apLowLevelSystem);
+	~cImageManager();
 
-		iResourceBase* Create(const tString& asName);
+	iResourceBase *Create(const tString &asName);
 
-		void Destroy(iResourceBase* apResource);
+	void Destroy(iResourceBase *apResource);
 
-		void Unload(iResourceBase* apResource);
+	void Unload(iResourceBase *apResource);
 
-		//Image specifc
-		iResourceBase* CreateInFrame(const tString& asName, int alFrameHandle);
-		cResourceImage* CreateImage(const tString& asName, int alFrameHandle=-1);
-		/**
-		 * Draws all updated content to textures. THis must be done before a loaded image can be used.
-		 * Use this as unoften as possible.
-		 * \return Number of bitmaps flushes
-		 */
-		int FlushAll();
-		void DeleteAllBitmapFrames();
+	// Image specifc
+	iResourceBase *CreateInFrame(const tString &asName, int alFrameHandle);
+	cResourceImage *CreateImage(const tString &asName, int alFrameHandle = -1);
+	/**
+	 * Draws all updated content to textures. THis must be done before a loaded image can be used.
+	 * Use this as unoften as possible.
+	 * \return Number of bitmaps flushes
+	 */
+	int FlushAll();
+	void DeleteAllBitmapFrames();
 
-		cResourceImage* CreateFromBitmap(const tString &asName,iBitmap2D* apBmp, int alFrameHandle=-1);
+	cResourceImage *CreateFromBitmap(const tString &asName, iBitmap2D *apBmp, int alFrameHandle = -1);
 
-		int CreateFrame(cVector2l avSize);
-		void SetFrameLocked(int alHandle, bool abLocked);
-	private:
-		iLowLevelGraphics *mpLowLevelGraphics;
+	int CreateFrame(cVector2l avSize);
+	void SetFrameLocked(int alHandle, bool abLocked);
 
-		tFrameBitmapList mlstBitmapFrames;
-		tFrameTextureMap m_mapTextureFrames;
+private:
+	iLowLevelGraphics *mpLowLevelGraphics;
 
-		tStringList mlstFileFormats;
-		cVector2l mvFrameSize;
-		int mlFrameHandle;
+	tFrameBitmapList mlstBitmapFrames;
+	tFrameTextureMap m_mapTextureFrames;
 
-		cResourceImage *FindImage(const tString &asName, tString &asFilePath);
-		cResourceImage *AddToFrame(iBitmap2D *apBmp,int alFrameHandle);
-		cFrameBitmap *CreateBitmapFrame(cVector2l avSize);
+	tStringList mlstFileFormats;
+	cVector2l mvFrameSize;
+	int mlFrameHandle;
 
-	};
-
+	cResourceImage *FindImage(const tString &asName, tString &asFilePath);
+	cResourceImage *AddToFrame(iBitmap2D *apBmp, int alFrameHandle);
+	cFrameBitmap *CreateBitmapFrame(cVector2l avSize);
 };
+
+};     // namespace hpl
 #endif // HPL_RESOURCEMANAGER_H

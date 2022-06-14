@@ -45,75 +45,74 @@
 
 namespace hpl {
 
-	class cGuiSkinFont;
+class cGuiSkinFont;
 
-	class cWidgetTextBox : public iWidget
-	{
-	public:
-		cWidgetTextBox(cGuiSet *apSet, cGuiSkin *apSkin);
-		virtual ~cWidgetTextBox();
+class cWidgetTextBox : public iWidget {
+public:
+	cWidgetTextBox(cGuiSet *apSet, cGuiSkin *apSkin);
+	virtual ~cWidgetTextBox();
 
-		void SetMaxTextLength(int alLength);
-		int GetMaxTextLength(){return mlMaxCharacters;}
+	void SetMaxTextLength(int alLength);
+	int GetMaxTextLength() { return mlMaxCharacters; }
 
-		cVector2f GetBackgroundSize();
+	cVector2f GetBackgroundSize();
 
-		void SetMaxTextSizeNeg(float afX);
+	void SetMaxTextSizeNeg(float afX);
 
-		void SetCanEdit(bool abX);
-		bool GetCanEdit(){return mbCanEdit;}
+	void SetCanEdit(bool abX);
+	bool GetCanEdit() { return mbCanEdit; }
 
-	protected:
-		/////////////////////////
-		// Own functions
-		int WorldToCharPos(const cVector2f &avWorldPos);
-		float CharToLocalPos(int alChar);
-		void SetMarkerPos(int alPos);
-		int GetLastCharInSize(int alStartPos, float afMaxSize, float afLengthAdd);
-		int GetFirstCharInSize(int alStartPos, float afMaxSize, float afLengthAdd);
+protected:
+	/////////////////////////
+	// Own functions
+	int WorldToCharPos(const cVector2f &avWorldPos);
+	float CharToLocalPos(int alChar);
+	void SetMarkerPos(int alPos);
+	int GetLastCharInSize(int alStartPos, float afMaxSize, float afLengthAdd);
+	int GetFirstCharInSize(int alStartPos, float afMaxSize, float afLengthAdd);
 
-		/////////////////////////
-		// Implemented functions
-		void OnLoadGraphics();
-		void OnChangeSize();
-		void OnChangeText();
+	/////////////////////////
+	// Implemented functions
+	void OnLoadGraphics();
+	void OnChangeSize();
+	void OnChangeText();
 
-		void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
+	void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
 
-		bool OnMouseMove(cGuiMessageData &aData);
-		bool OnMouseDown(cGuiMessageData &aData);
-		bool OnMouseDoubleClick(cGuiMessageData &aData);
-		bool OnMouseUp(cGuiMessageData &aData);
-		bool OnMouseEnter(cGuiMessageData &aData);
-		bool OnMouseLeave(cGuiMessageData &aData);
+	bool OnMouseMove(cGuiMessageData &aData);
+	bool OnMouseDown(cGuiMessageData &aData);
+	bool OnMouseDoubleClick(cGuiMessageData &aData);
+	bool OnMouseUp(cGuiMessageData &aData);
+	bool OnMouseEnter(cGuiMessageData &aData);
+	bool OnMouseLeave(cGuiMessageData &aData);
 
-		bool OnLostFocus(cGuiMessageData &aData);
+	bool OnLostFocus(cGuiMessageData &aData);
 
-		bool OnKeyPress(cGuiMessageData &aData);
+	bool OnKeyPress(cGuiMessageData &aData);
 
-		/////////////////////////
-		// Data
-		bool mbPressed;
-		int mlMarkerCharPos;
-		int mlSelectedTextEnd;
-		int mlFirstVisibleChar;
-		int mlVisibleCharSize;
-		float mfTextMaxSize;
+	/////////////////////////
+	// Data
+	bool mbPressed;
+	int mlMarkerCharPos;
+	int mlSelectedTextEnd;
+	int mlFirstVisibleChar;
+	int mlVisibleCharSize;
+	float mfTextMaxSize;
 
-		int mlMaxCharacters;
+	int mlMaxCharacters;
 
-		float mfMaxTextSizeNeg;
+	float mfMaxTextSizeNeg;
 
-		bool mbCanEdit;
+	bool mbCanEdit;
 
-		cGuiGfxElement *mpGfxMarker;
-		cGuiGfxElement *mpGfxSelectedTextBack;
+	cGuiGfxElement *mpGfxMarker;
+	cGuiGfxElement *mpGfxSelectedTextBack;
 
-		cGuiGfxElement *mpGfxBackground;
+	cGuiGfxElement *mpGfxBackground;
 
-		cGuiGfxElement *mvGfxBorders[4];
-		cGuiGfxElement *mvGfxCorners[4];
-	};
-
+	cGuiGfxElement *mvGfxBorders[4];
+	cGuiGfxElement *mvGfxCorners[4];
 };
+
+};     // namespace hpl
 #endif // HPL_WIDGET_TEXT_BOX_H

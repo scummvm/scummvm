@@ -45,51 +45,46 @@
 
 namespace hpl {
 
-	class cMaterial_BumpSpec2D : public iMaterial
-	{
-	public:
-		cMaterial_BumpSpec2D(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-							cImageManager* apImageManager, cTextureManager *apTextureManager,
-							cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-							eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
-		~cMaterial_BumpSpec2D();
+class cMaterial_BumpSpec2D : public iMaterial {
+public:
+	cMaterial_BumpSpec2D(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+						 cImageManager *apImageManager, cTextureManager *apTextureManager,
+						 cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+						 eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
+	~cMaterial_BumpSpec2D();
 
-		void Compile();
-		bool StartRendering(eMaterialRenderType aType,iCamera* apCam,iLight *apLight);
-		void EndRendering(eMaterialRenderType aType);
-		tVtxBatchFlag GetBatchFlags(eMaterialRenderType aType);
-		bool NextPass(eMaterialRenderType aType);
-		bool HasMultiplePasses(eMaterialRenderType aType);
+	void Compile();
+	bool StartRendering(eMaterialRenderType aType, iCamera *apCam, iLight *apLight);
+	void EndRendering(eMaterialRenderType aType);
+	tVtxBatchFlag GetBatchFlags(eMaterialRenderType aType);
+	bool NextPass(eMaterialRenderType aType);
+	bool HasMultiplePasses(eMaterialRenderType aType);
 
-		tTextureTypeList GetTextureTypes();
+	tTextureTypeList GetTextureTypes();
 
+	eMaterialType GetType(eMaterialRenderType aType);
+	void EditVertexes(eMaterialRenderType aType, iCamera *apCam, iLight *pLight,
+					  tVertexVec *apVtxVec, cVector3f *apTransform, unsigned int alIndexAdd);
 
-		eMaterialType GetType(eMaterialRenderType aType);
-		void EditVertexes(eMaterialRenderType aType, iCamera* apCam, iLight *pLight,
-			tVertexVec *apVtxVec,cVector3f *apTransform,unsigned int alIndexAdd);
-
-
-	private:
-		bool mbHasSpecular;
-	};
-
-	class cMaterialType_BumpSpec2D : public iMaterialType
-	{
-	public:
-		bool IsCorrect(tString asName){
-			return cString::ToLowerCase(asName)=="bumpspec2d";
-		}
-
-		iMaterial* Create(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
-		{
-			return hplNew( cMaterial_BumpSpec2D, (asName,apLowLevelGraphics,
-								apImageManager,apTextureManager,apRenderer,
-								apProgramManager,aPicture,apRenderer3D) );
-		}
-	};
-
+private:
+	bool mbHasSpecular;
 };
+
+class cMaterialType_BumpSpec2D : public iMaterialType {
+public:
+	bool IsCorrect(tString asName) {
+		return cString::ToLowerCase(asName) == "bumpspec2d";
+	}
+
+	iMaterial *Create(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+					  cImageManager *apImageManager, cTextureManager *apTextureManager,
+					  cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+					  eMaterialPicture aPicture, cRenderer3D *apRenderer3D) {
+		return hplNew(cMaterial_BumpSpec2D, (asName, apLowLevelGraphics,
+											 apImageManager, apTextureManager, apRenderer,
+											 apProgramManager, aPicture, apRenderer3D));
+	}
+};
+
+};     // namespace hpl
 #endif // HPL_MATERIAL_BUMP_SPEC2D_H

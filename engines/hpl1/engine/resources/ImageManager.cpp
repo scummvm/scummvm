@@ -39,378 +39,334 @@
  */
 
 #include "hpl1/engine/resources/ImageManager.h"
-#include "hpl1/engine/system/String.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
-#include "hpl1/engine/resources/ResourceImage.h"
+#include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/resources/FrameBitmap.h"
 #include "hpl1/engine/resources/FrameTexture.h"
-#include "hpl1/engine/graphics/LowLevelGraphics.h"
 #include "hpl1/engine/resources/LowLevelResources.h"
-
+#include "hpl1/engine/resources/ResourceImage.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/String.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cImageManager::cImageManager(cFileSearcher *apFileSearcher,iLowLevelGraphics *apLowLevelGraphics,
-								iLowLevelResources *apLowLevelResources,iLowLevelSystem *apLowLevelSystem)
-	: iResourceManager(apFileSearcher, apLowLevelResources,apLowLevelSystem)
-	{
-	   mpLowLevelGraphics = apLowLevelGraphics;
+cImageManager::cImageManager(cFileSearcher *apFileSearcher, iLowLevelGraphics *apLowLevelGraphics,
+							 iLowLevelResources *apLowLevelResources, iLowLevelSystem *apLowLevelSystem)
+	: iResourceManager(apFileSearcher, apLowLevelResources, apLowLevelSystem) {
+	mpLowLevelGraphics = apLowLevelGraphics;
 
-	   mpLowLevelResources->GetSupportedImageFormats(mlstFileFormats);
+	mpLowLevelResources->GetSupportedImageFormats(mlstFileFormats);
 
-	   mvFrameSize = cVector2l(512,512);
-	   mlFrameHandle = 0;
-	}
+	mvFrameSize = cVector2l(512, 512);
+	mlFrameHandle = 0;
+}
 
-	cImageManager::~cImageManager()
-	{
-		//DeleteAllBitmapFrames();
-		DestroyAll();
+cImageManager::~cImageManager() {
+	// DeleteAllBitmapFrames();
+	DestroyAll();
 
-		Log(" Done with images\n");
-	}
+	Log(" Done with images\n");
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	iResourceBase* cImageManager::Create(const tString& asName)
-	{
-		return CreateInFrame(asName, -1);
-	}
-	//-----------------------------------------------------------------------
+iResourceBase *cImageManager::Create(const tString &asName) {
+	return CreateInFrame(asName, -1);
+}
+//-----------------------------------------------------------------------
 
-	iResourceBase* cImageManager::CreateInFrame(const tString& asName, int alFrameHandle)
-	{
-		cResourceImage *pImage = NULL;
-		tString sPath;
+iResourceBase *cImageManager::CreateInFrame(const tString &asName, int alFrameHandle) {
+	cResourceImage *pImage = NULL;
+	tString sPath;
 
-		BeginLoad(asName);
+	BeginLoad(asName);
 
-		pImage = FindImage(asName, sPath);
-		if(!pImage)
-		{
-			if(sPath != "")
-			{
-				iBitmap2D *pBmp;
-				pBmp = mpLowLevelResources->LoadBitmap2D(sPath);
-				if(pBmp==NULL){
-					Error("Imagemanager Couldn't load bitmap '%s'\n", sPath.c_str());
-					EndLoad();
-					return NULL;
-				}
-
-				pImage = AddToFrame(pBmp, alFrameHandle);
-
-				hplDelete(pBmp);
-
-				if(pImage==NULL){
-					Error("Imagemanager couldn't create image '%s'\n", asName.c_str());
-				}
-
-				if(pImage) AddResource(pImage);
-			}
-		}
-		else
-		{
-			//Log("Found '%s' in stock!\n",asName.c_str());
-		}
-
-		if(pImage)pImage->IncUserCount();
-		else Error("Couldn't load image '%s'\n",asName.c_str());
-
-		//Log("Loaded image %s, it has %d users!\n", pImage->GetName().c_str(),pImage->GetUserCount());
-		//Log(" frame has %d pics\n", pImage->GetFrameTexture()->GetPicCount());
-
-		EndLoad();
-		return pImage;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cResourceImage* cImageManager::CreateImage(const tString& asName, int alFrameHandle)
-	{
-		iResourceBase* pRes = CreateInFrame(asName, alFrameHandle);
-		cResourceImage* pImage = static_cast<cResourceImage*>(pRes);
-
-		return pImage;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cResourceImage* cImageManager::CreateFromBitmap(const tString &asName,iBitmap2D* apBmp, int alFrameHandle)
-	{
-		if(apBmp==NULL)return NULL;
-
-		cResourceImage *pImage = AddToFrame(apBmp, alFrameHandle);
-
-		if(pImage){
-			AddResource(pImage, false);
-			pImage->IncUserCount();
-		}
-
-		return pImage;
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cImageManager::Unload(iResourceBase* apResource)
-	{
-
-	}
-
-	void cImageManager::Destroy(iResourceBase* apResource)
-	{
-		//Lower the user num for the the resource. If it is 0 then lower the
-		//user num for the TextureFrame and delete the resource. If the Texture
-		//frame reaches 0 it is deleted as well.
-		cResourceImage *pImage = static_cast<cResourceImage*>(apResource);
-		cFrameTexture *pFrame = pImage->GetFrameTexture();
-		cFrameBitmap *pBmpFrame = pImage->GetFrameBitmap();
-
-		//pImage->GetFrameBitmap()->FlushToTexture(); Not needed?
-
-
-		//Log("Users Before: %d\n",pImage->GetUserCount());
-		//Log("Framepics Before: %d\n",pFrame->GetPicCount());
-
-		pImage->DecUserCount();//dec frame count as well.. is that ok?
-
-		//Log("---\n");
-		//Log("Destroyed Image: '%s' Users: %d\n",pImage->GetName().c_str(),pImage->GetUserCount());
-		//Log("Frame %d has left Pics: %d\n",pFrame,pFrame->GetPicCount());
-
-		if(pImage->HasUsers()==false)
-		{
-			pFrame->DecPicCount(); // Doing it here now instead.
-			pBmpFrame->DecPicCount();
-			RemoveResource(apResource);
-			hplDelete(apResource);
-
-			//Log("deleting image and dec fram to %d images!\n",pFrame->GetPicCount());
-		}
-
-
-		if(pFrame->IsEmpty())
-		{
-			//Log(" Deleting frame...");
-
-			//Delete the bitmap frame that has this this frame.
-			for(tFrameBitmapListIt it=mlstBitmapFrames.begin();it!=mlstBitmapFrames.end();++it)
-			{
-				cFrameBitmap *pBmpFrame = *it;
-				if(pBmpFrame->GetFrameTexture() == pFrame)
-				{
-					//Log("and bitmap...");
-					hplDelete(pBmpFrame);
-					mlstBitmapFrames.erase(it);
-					break;
-				}
+	pImage = FindImage(asName, sPath);
+	if (!pImage) {
+		if (sPath != "") {
+			iBitmap2D *pBmp;
+			pBmp = mpLowLevelResources->LoadBitmap2D(sPath);
+			if (pBmp == NULL) {
+				Error("Imagemanager Couldn't load bitmap '%s'\n", sPath.c_str());
+				EndLoad();
+				return NULL;
 			}
 
-			//delete from list
-			m_mapTextureFrames.erase(pFrame->GetHandle());
-			hplDelete(pFrame);
-			//Log(" Deleted frame!\n");
-		}
-		//Log("---\n");
+			pImage = AddToFrame(pBmp, alFrameHandle);
 
-	}
+			hplDelete(pBmp);
 
-	//-----------------------------------------------------------------------
-
-	void cImageManager::DeleteAllBitmapFrames()
-	{
-		FlushAll();
-		for(tFrameBitmapListIt it=mlstBitmapFrames.begin();it!=mlstBitmapFrames.end();)
-		{
-			hplDelete(*it);
-			it = mlstBitmapFrames.erase(it);
-		}
-	}
-
-	//-----------------------------------------------------------------------
-
-	int cImageManager::FlushAll()
-	{
-		//Log("Flushing...");
-		int lNum =0;
-		for(tFrameBitmapListIt it=mlstBitmapFrames.begin();it!=mlstBitmapFrames.end();)
-		{
-			if((*it)->FlushToTexture()) lNum++;
-
-			if((*it)->IsFull()){
-				//Do not delete all, probably this struct needs to be here for easy access :S
-				//hplDelete(*it);
-				//it = mlstBitmapFrames.erase(it);
-				it++;
+			if (pImage == NULL) {
+				Error("Imagemanager couldn't create image '%s'\n", asName.c_str());
 			}
-			else
-			{
-				it++;
-			}
+
+			if (pImage)
+				AddResource(pImage);
 		}
-
-		//Log("Done!\n");
-
-		return lNum;
+	} else {
+		// Log("Found '%s' in stock!\n",asName.c_str());
 	}
 
-	//-----------------------------------------------------------------------
+	if (pImage)
+		pImage->IncUserCount();
+	else
+		Error("Couldn't load image '%s'\n", asName.c_str());
 
-	int cImageManager::CreateFrame(cVector2l avSize)
-	{
-		cFrameBitmap *pBFrame = CreateBitmapFrame(avSize);
+	// Log("Loaded image %s, it has %d users!\n", pImage->GetName().c_str(),pImage->GetUserCount());
+	// Log(" frame has %d pics\n", pImage->GetFrameTexture()->GetPicCount());
 
-		if(pBFrame==NULL) return -1;
+	EndLoad();
+	return pImage;
+}
 
-		return pBFrame->GetHandle();
+//-----------------------------------------------------------------------
+
+cResourceImage *cImageManager::CreateImage(const tString &asName, int alFrameHandle) {
+	iResourceBase *pRes = CreateInFrame(asName, alFrameHandle);
+	cResourceImage *pImage = static_cast<cResourceImage *>(pRes);
+
+	return pImage;
+}
+
+//-----------------------------------------------------------------------
+
+cResourceImage *cImageManager::CreateFromBitmap(const tString &asName, iBitmap2D *apBmp, int alFrameHandle) {
+	if (apBmp == NULL)
+		return NULL;
+
+	cResourceImage *pImage = AddToFrame(apBmp, alFrameHandle);
+
+	if (pImage) {
+		AddResource(pImage, false);
+		pImage->IncUserCount();
 	}
 
-	//-----------------------------------------------------------------------
+	return pImage;
+}
 
-	void cImageManager::SetFrameLocked(int alHandle, bool abLocked)
-	{
-		tFrameBitmapListIt it = mlstBitmapFrames.begin();
-		while(it != mlstBitmapFrames.end())
-		{
-			if((*it)->GetHandle() == alHandle){
-				(*it)->SetLocked(abLocked);
+//-----------------------------------------------------------------------
+
+void cImageManager::Unload(iResourceBase *apResource) {
+}
+
+void cImageManager::Destroy(iResourceBase *apResource) {
+	// Lower the user num for the the resource. If it is 0 then lower the
+	// user num for the TextureFrame and delete the resource. If the Texture
+	// frame reaches 0 it is deleted as well.
+	cResourceImage *pImage = static_cast<cResourceImage *>(apResource);
+	cFrameTexture *pFrame = pImage->GetFrameTexture();
+	cFrameBitmap *pBmpFrame = pImage->GetFrameBitmap();
+
+	// pImage->GetFrameBitmap()->FlushToTexture(); Not needed?
+
+	// Log("Users Before: %d\n",pImage->GetUserCount());
+	// Log("Framepics Before: %d\n",pFrame->GetPicCount());
+
+	pImage->DecUserCount(); // dec frame count as well.. is that ok?
+
+	// Log("---\n");
+	// Log("Destroyed Image: '%s' Users: %d\n",pImage->GetName().c_str(),pImage->GetUserCount());
+	// Log("Frame %d has left Pics: %d\n",pFrame,pFrame->GetPicCount());
+
+	if (pImage->HasUsers() == false) {
+		pFrame->DecPicCount(); // Doing it here now instead.
+		pBmpFrame->DecPicCount();
+		RemoveResource(apResource);
+		hplDelete(apResource);
+
+		// Log("deleting image and dec fram to %d images!\n",pFrame->GetPicCount());
+	}
+
+	if (pFrame->IsEmpty()) {
+		// Log(" Deleting frame...");
+
+		// Delete the bitmap frame that has this this frame.
+		for (tFrameBitmapListIt it = mlstBitmapFrames.begin(); it != mlstBitmapFrames.end(); ++it) {
+			cFrameBitmap *pBmpFrame = *it;
+			if (pBmpFrame->GetFrameTexture() == pFrame) {
+				// Log("and bitmap...");
+				hplDelete(pBmpFrame);
+				mlstBitmapFrames.erase(it);
 				break;
 			}
+		}
+
+		// delete from list
+		m_mapTextureFrames.erase(pFrame->GetHandle());
+		hplDelete(pFrame);
+		// Log(" Deleted frame!\n");
+	}
+	// Log("---\n");
+}
+
+//-----------------------------------------------------------------------
+
+void cImageManager::DeleteAllBitmapFrames() {
+	FlushAll();
+	for (tFrameBitmapListIt it = mlstBitmapFrames.begin(); it != mlstBitmapFrames.end();) {
+		hplDelete(*it);
+		it = mlstBitmapFrames.erase(it);
+	}
+}
+
+//-----------------------------------------------------------------------
+
+int cImageManager::FlushAll() {
+	// Log("Flushing...");
+	int lNum = 0;
+	for (tFrameBitmapListIt it = mlstBitmapFrames.begin(); it != mlstBitmapFrames.end();) {
+		if ((*it)->FlushToTexture())
+			lNum++;
+
+		if ((*it)->IsFull()) {
+			// Do not delete all, probably this struct needs to be here for easy access :S
+			// hplDelete(*it);
+			// it = mlstBitmapFrames.erase(it);
+			it++;
+		} else {
 			it++;
 		}
 	}
 
-	//-----------------------------------------------------------------------
+	// Log("Done!\n");
 
-	//////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	//////////////////////////////////////////////////////////////////////////
+	return lNum;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cResourceImage *cImageManager::FindImage(const tString &asName, tString &asFilePath)
-	{
-		cResourceImage *pImage=NULL;
+int cImageManager::CreateFrame(cVector2l avSize) {
+	cFrameBitmap *pBFrame = CreateBitmapFrame(avSize);
 
-		if(cString::GetFileExt(asName)=="")
-		{
-			for(tStringListIt it = mlstFileFormats.begin();it!=mlstFileFormats.end();++it)
-			{
-				tString sNewName = cString::SetFileExt(asName,*it);
-				pImage = static_cast<cResourceImage*> (FindLoadedResource(sNewName, asFilePath));
+	if (pBFrame == NULL)
+		return -1;
 
-				if((pImage==NULL && asFilePath!="") || pImage!=NULL)break;
-			}
+	return pBFrame->GetHandle();
+}
+
+//-----------------------------------------------------------------------
+
+void cImageManager::SetFrameLocked(int alHandle, bool abLocked) {
+	tFrameBitmapListIt it = mlstBitmapFrames.begin();
+	while (it != mlstBitmapFrames.end()) {
+		if ((*it)->GetHandle() == alHandle) {
+			(*it)->SetLocked(abLocked);
+			break;
 		}
-		else
-		{
-			pImage = static_cast<cResourceImage*> (FindLoadedResource(asName, asFilePath));
-		}
+		it++;
+	}
+}
 
-		return pImage;
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PRIVATE METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+cResourceImage *cImageManager::FindImage(const tString &asName, tString &asFilePath) {
+	cResourceImage *pImage = NULL;
+
+	if (cString::GetFileExt(asName) == "") {
+		for (tStringListIt it = mlstFileFormats.begin(); it != mlstFileFormats.end(); ++it) {
+			tString sNewName = cString::SetFileExt(asName, *it);
+			pImage = static_cast<cResourceImage *>(FindLoadedResource(sNewName, asFilePath));
+
+			if ((pImage == NULL && asFilePath != "") || pImage != NULL)
+				break;
+		}
+	} else {
+		pImage = static_cast<cResourceImage *>(FindLoadedResource(asName, asFilePath));
 	}
 
-	//-----------------------------------------------------------------------
+	return pImage;
+}
 
-	cResourceImage *cImageManager::AddToFrame(iBitmap2D *apBmp,int alFrameHandle)
-	{
-		bool bFound = false;
-		cResourceImage *pImage=NULL;
+//-----------------------------------------------------------------------
 
-		if(mlstBitmapFrames.size()==0){
-			CreateBitmapFrame(mvFrameSize);
-		}
+cResourceImage *cImageManager::AddToFrame(iBitmap2D *apBmp, int alFrameHandle) {
+	bool bFound = false;
+	cResourceImage *pImage = NULL;
 
-		if(alFrameHandle<0)
-		{
-			//Search the frames til one is find that fits the bitmap
-			for(tFrameBitmapListIt it=mlstBitmapFrames.begin();it!=mlstBitmapFrames.end();it++)
-			{
-				if(!(*it)->IsFull() && !(*it)->IsLocked()){
-					pImage = (*it)->AddBitmap(apBmp);
-					if(pImage!=NULL)
-					{
-						bFound = true;
-						break;
-					}
-				}
-			}
+	if (mlstBitmapFrames.size() == 0) {
+		CreateBitmapFrame(mvFrameSize);
+	}
 
-			//If it fitted in none of the frames, create a new and put it in that.
-			if(!bFound)
-			{
-				//Log("No fit!\n");
-				//not 100% it fits in this one...if so maybe the bitmap size of the frame
-				//should be changed?
-
-				//pImage = CreateBitmapFrame(mvFrameSize)->AddBitmap(apBmp);
-				cFrameBitmap * pFrame = CreateBitmapFrame(mvFrameSize);
-				if(pFrame)
-				{
-					pImage = pFrame->AddBitmap(apBmp);
-					if(pImage==NULL)
-					{
-						Log("No fit in new frame!\n");
-					}
-				}
-			}
-		}
-		else
-		{
-			tFrameBitmapListIt it = mlstBitmapFrames.begin();
-			while(it != mlstBitmapFrames.end())
-			{
-				if((*it)->GetHandle() == alFrameHandle)
-				{
-					pImage = (*it)->AddBitmap(apBmp);
+	if (alFrameHandle < 0) {
+		// Search the frames til one is find that fits the bitmap
+		for (tFrameBitmapListIt it = mlstBitmapFrames.begin(); it != mlstBitmapFrames.end(); it++) {
+			if (!(*it)->IsFull() && !(*it)->IsLocked()) {
+				pImage = (*it)->AddBitmap(apBmp);
+				if (pImage != NULL) {
+					bFound = true;
 					break;
 				}
-				it++;
 			}
-			if(pImage==NULL)
-				Error("Image didn't fit frame %d!\n", alFrameHandle);
 		}
 
-		return pImage;
+		// If it fitted in none of the frames, create a new and put it in that.
+		if (!bFound) {
+			// Log("No fit!\n");
+			// not 100% it fits in this one...if so maybe the bitmap size of the frame
+			// should be changed?
+
+			// pImage = CreateBitmapFrame(mvFrameSize)->AddBitmap(apBmp);
+			cFrameBitmap *pFrame = CreateBitmapFrame(mvFrameSize);
+			if (pFrame) {
+				pImage = pFrame->AddBitmap(apBmp);
+				if (pImage == NULL) {
+					Log("No fit in new frame!\n");
+				}
+			}
+		}
+	} else {
+		tFrameBitmapListIt it = mlstBitmapFrames.begin();
+		while (it != mlstBitmapFrames.end()) {
+			if ((*it)->GetHandle() == alFrameHandle) {
+				pImage = (*it)->AddBitmap(apBmp);
+				break;
+			}
+			it++;
+		}
+		if (pImage == NULL)
+			Error("Image didn't fit frame %d!\n", alFrameHandle);
 	}
 
-	//-----------------------------------------------------------------------
-
-	cFrameBitmap *cImageManager::CreateBitmapFrame(cVector2l avSize)
-	{
-		iTexture *pTex = mpLowLevelGraphics->CreateTexture(false,eTextureType_Normal,eTextureTarget_2D);
-		cFrameTexture *pTFrame = hplNew( cFrameTexture, (pTex,mlFrameHandle) );
-		iBitmap2D *pBmp = mpLowLevelGraphics->CreateBitmap2D(avSize, 32);
-		cFrameBitmap *pBFrame = hplNew(  cFrameBitmap, (pBmp,pTFrame,mlFrameHandle) );
-
-		mlstBitmapFrames.push_back(pBFrame);
-
-		std::pair<tFrameTextureMap::iterator, bool> ret = m_mapTextureFrames.insert(tFrameTextureMap::value_type(mlFrameHandle, pTFrame));
-		if(ret.second == false)
-		{
-			Error("Could not add texture frame %d with handle %d! Handle already exist!\n",pTFrame, mlFrameHandle);
-		}
-		else
-		{
-			//Log("Added texture frame: %d\n",pTFrame);
-		}
-
-		mlFrameHandle++;
-		return pBFrame;
-	}
-
-
-	//-----------------------------------------------------------------------
+	return pImage;
 }
+
+//-----------------------------------------------------------------------
+
+cFrameBitmap *cImageManager::CreateBitmapFrame(cVector2l avSize) {
+	iTexture *pTex = mpLowLevelGraphics->CreateTexture(false, eTextureType_Normal, eTextureTarget_2D);
+	cFrameTexture *pTFrame = hplNew(cFrameTexture, (pTex, mlFrameHandle));
+	iBitmap2D *pBmp = mpLowLevelGraphics->CreateBitmap2D(avSize, 32);
+	cFrameBitmap *pBFrame = hplNew(cFrameBitmap, (pBmp, pTFrame, mlFrameHandle));
+
+	mlstBitmapFrames.push_back(pBFrame);
+
+	std::pair<tFrameTextureMap::iterator, bool> ret = m_mapTextureFrames.insert(tFrameTextureMap::value_type(mlFrameHandle, pTFrame));
+	if (ret.second == false) {
+		Error("Could not add texture frame %d with handle %d! Handle already exist!\n", pTFrame, mlFrameHandle);
+	} else {
+		// Log("Added texture frame: %d\n",pTFrame);
+	}
+
+	mlFrameHandle++;
+	return pBFrame;
+}
+
+//-----------------------------------------------------------------------
+} // namespace hpl

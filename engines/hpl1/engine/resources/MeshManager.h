@@ -45,27 +45,25 @@
 
 namespace hpl {
 
-	class cGraphics;
-	class cResources;
-	class cMesh;
+class cGraphics;
+class cResources;
+class cMesh;
 
-	class cMeshManager : public iResourceManager
-	{
-	public:
-		cMeshManager(cGraphics* apGraphics,cResources *apResources);
-		~cMeshManager();
+class cMeshManager : public iResourceManager {
+public:
+	cMeshManager(cGraphics *apGraphics, cResources *apResources);
+	~cMeshManager();
 
-		iResourceBase* Create(const tString& asName);
-		cMesh* CreateMesh(const tString& asName);
+	iResourceBase *Create(const tString &asName);
+	cMesh *CreateMesh(const tString &asName);
 
-		void Destroy(iResourceBase* apResource);
-		void Unload(iResourceBase* apResource);
+	void Destroy(iResourceBase *apResource);
+	void Unload(iResourceBase *apResource);
 
-	private:
-		cGraphics* mpGraphics;
-		cResources* mpResources;
-
-	};
-
+private:
+	cGraphics *mpGraphics;
+	cResources *mpResources;
 };
+
+};     // namespace hpl
 #endif // HPL_MESH_MANAGER_H

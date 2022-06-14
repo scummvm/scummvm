@@ -41,40 +41,37 @@
 #include "hpl1/engine/impl/OpenALSoundEnvironment.h"
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 
-namespace hpl
+namespace hpl {
+
+cOpenALSoundEnvironment::cOpenALSoundEnvironment() /*:
+								  mfDensity(1.0f),
+								  mfDiffusion(1.0f),
+								  mfGain(0.32f),
+								  mfGainHF(0.89f),
+								  mfGainLF(0.0f),
+								  mfDecayTime(1.49f),
+								  mfDecayHFRatio(0.83f),
+								  mfDecayLFRatio(1.0f),
+								  mfReflectionsGain(0.05f),
+								  mfReflectionsDelay(0.007f),
+								  mfLateReverbGain(1.25f),
+								  mfLateReverbDelay(0.011f),
+								  mfEchoTime(0.25f),
+								  mfEchoDepth(0.0f),
+								  mfModulationTime(0.25f),
+								  mfModulationDepth(0.0f),
+								  mfAirAbsorptionGainHF(0.994f),
+								  mfHFReference(5000.0f),
+								  mfLFReference(250.0f),
+								  mfRoomRolloffFactor(0.0f),
+								  mbDecayHFLimit(true)*/
 {
+}
 
-	cOpenALSoundEnvironment::cOpenALSoundEnvironment ( ) /*:
-										mfDensity(1.0f),
-										mfDiffusion(1.0f),
-										mfGain(0.32f),
-										mfGainHF(0.89f),
-										mfGainLF(0.0f),
-										mfDecayTime(1.49f),
-										mfDecayHFRatio(0.83f),
-										mfDecayLFRatio(1.0f),
-										mfReflectionsGain(0.05f),
-										mfReflectionsDelay(0.007f),
-										mfLateReverbGain(1.25f),
-										mfLateReverbDelay(0.011f),
-										mfEchoTime(0.25f),
-										mfEchoDepth(0.0f),
-										mfModulationTime(0.25f),
-										mfModulationDepth(0.0f),
-										mfAirAbsorptionGainHF(0.994f),
-										mfHFReference(5000.0f),
-										mfLFReference(250.0f),
-										mfRoomRolloffFactor(0.0f),
-										mbDecayHFLimit(true)*/
-	{
-	}
+cOpenALSoundEnvironment::~cOpenALSoundEnvironment() {
+}
 
-	cOpenALSoundEnvironment::~cOpenALSoundEnvironment()
-	{
-	}
-
-	bool cOpenALSoundEnvironment::CreateFromFile(const tString &asFile)
-	{
+bool cOpenALSoundEnvironment::CreateFromFile(const tString &asFile) {
 #if 0
   		tString strType;
 		TiXmlDocument doc;
@@ -133,8 +130,7 @@ namespace hpl
 		pParams = NULL;
 
 #endif
-		return true;
+	return true;
+}
 
-	}
-
-};
+}; // namespace hpl

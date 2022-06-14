@@ -41,163 +41,161 @@
 #ifndef HPL_RENDERER_POST_EFFECTS_H
 #define HPL_RENDERER_POST_EFFECTS_H
 
-#include <set>
 #include <list>
 #include <math.h>
+#include <set>
 
-#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
+#include "hpl1/engine/math/MathTypes.h"
 
 namespace hpl {
 
 #define kFilterProgramNum (1)
 
-	class iLowLevelGraphics;
-	class iLowLevelResources;
-	class iGpuProgram;
-	class cResources;
-	class iTexture;
-	class cGpuProgramManager;
-	class cRenderList;
-	class cRenderer3D;
+class iLowLevelGraphics;
+class iLowLevelResources;
+class iGpuProgram;
+class cResources;
+class iTexture;
+class cGpuProgramManager;
+class cRenderList;
+class cRenderer3D;
 
-	enum ePostEffectFilter
-	{
-		ePostEffectFilter_Offset,
-		ePostEffectFilter_LastEnum
-	};
-
-	enum ePostEffectProgram
-	{
-		ePostEffectProgram_Offset,
-		ePostEffectProgram_LastEnum
-	};
-
-	class cImageTrailEffect
-	{
-	public:
-		cImageTrailEffect() : mbActive(false), mbFirstPass(false), mlCurrentBuffer(0) {}
-
-		bool mbActive;
-		bool mbFirstPass;
-		int mlCurrentBuffer;
-		float mfAmount;
-	};
-
-	class cResources;
-
-	class cRendererPostEffects
-	{
-	public:
-		cRendererPostEffects(iLowLevelGraphics *apLowLevelGraphics,cResources* apResources,
-							cRenderList *apRenderList, cRenderer3D *apRenderer3D);
-		~cRendererPostEffects();
-
-		/**
-		 * Render post effects, called by cScene
-		 */
-		void Render();
-
-		void SetImageTrailActive(bool abX){
-			if(!mImageTrailData.mbActive && abX) mImageTrailData.mbFirstPass = true;
-			mImageTrailData.mbActive = abX;}
-		bool GetImageTrailActive(){return mImageTrailData.mbActive;}
-		/**
-		 * Set the amount of blur
-		 * \param afAmount 0.0 - 1.0 are valid
-		 */
-		void SetImageTrailAmount(float afAmount){mImageTrailData.mfAmount = afAmount;}
-
-		iTexture* GetScreenBuffer(int alNum){ return mpScreenBuffer[alNum];}
-
-		void SetActive(bool abX){ mbActive = abX;}
-		bool GetActive(){ return mbActive;}
-
-		void SetBloomActive(bool abX);
-		bool GetBloomActive(){ return mbBloomActive;}
-
-		void SetBloomSpread(float afX){mfBloomSpread = afX;}
-		float GetBloomSpread(){ return mfBloomSpread;}
-
-		void SetMotionBlurActive(bool abX);
-		bool GetMotionBlurActive(){ return mbMotionBlurActive;}
-
-		void SetMotionBlurAmount(float afX){ mfMotionBlurAmount = afX;}
-		float GetMotionBlurAmount(){ return mfMotionBlurAmount;}
-
-		void SetDepthOfFieldActive(bool abX){ mbDofActive = abX;}
-		void SetDepthOfFieldMaxBlur(float afX){ mfDofMaxBlur = afX;}
-		void SetDepthOfFieldFocalPlane(float afX){ mfDofFocalPlane = afX;}
-		void SetDepthOfFieldNearPlane(float afX){ mfDofNearPlane = afX;}
-		void SetDepthOfFieldFarPlane(float afX){ mfDofFarPlane = afX;}
-
-		bool GetDepthOfFieldActive(){ return mbDofActive;}
-		float GetDepthOfFieldMaxBlur(){ return mfDofMaxBlur;}
-		float GetDepthOfFieldFocalPlane(){ return mfDofFocalPlane;}
-		float GetDepthOfFieldNearPlane(){ return mfDofNearPlane;}
-		float GetDepthOfFieldFarPlane(){ return mfDofFarPlane;}
-
-		iTexture* GetFreeScreenTexture(){ return mpScreenBuffer[mImageTrailData.mlCurrentBuffer==0?1:0];}
-
-		void RenderBlurTexture(iTexture *apDestination, iTexture *apSource,float afBlurAmount);
-
-	private:
-		void RenderImageTrail();
-
-		void RenderBloom();
-
-		void RenderMotionBlur();
-
-		void RenderDepthOfField();
-
-		iLowLevelGraphics *mpLowLevelGraphics;
-		iLowLevelResources *mpLowLevelResources;
-		cResources* mpResources;
-		cGpuProgramManager* mpGpuManager;
-		cRenderer3D *mpRenderer3D;
-
-		cRenderList *mpRenderList;
-
-		cVector2f mvScreenSize;
-
-		iTexture* mpScreenBuffer[2];
-
-		cImageTrailEffect mImageTrailData;
-
-		iGpuProgram *mpBlurVP;
-		iGpuProgram *mpBlur2dFP;
-		iGpuProgram *mpBlurRectFP;
-		bool mbBlurFallback;
-
-		iGpuProgram *mpBloomVP;
-		iGpuProgram *mpBloomFP;
-
-		iTexture *mpBloomBlurTexture;
-
-		iGpuProgram *mpMotionBlurVP;
-		iGpuProgram *mpMotionBlurFP;
-
-		iGpuProgram *mpDepthOfFieldVP;
-		iGpuProgram *mpDepthOfFieldFP;
-		iTexture *mpDofBlurTexture;
-
-		tVertexVec mvTexRectVtx;
-
-		bool mbBloomActive;
-		float mfBloomSpread;
-
-		bool mbMotionBlurActive;
-		float mfMotionBlurAmount;
-		bool mbMotionBlurFirstTime;
-
-		bool mbDofActive;
-		float mfDofMaxBlur;
-		float mfDofFocalPlane;
-		float mfDofNearPlane;
-		float mfDofFarPlane;
-
-		bool mbActive;
-	};
-
+enum ePostEffectFilter {
+	ePostEffectFilter_Offset,
+	ePostEffectFilter_LastEnum
 };
+
+enum ePostEffectProgram {
+	ePostEffectProgram_Offset,
+	ePostEffectProgram_LastEnum
+};
+
+class cImageTrailEffect {
+public:
+	cImageTrailEffect() : mbActive(false), mbFirstPass(false), mlCurrentBuffer(0) {}
+
+	bool mbActive;
+	bool mbFirstPass;
+	int mlCurrentBuffer;
+	float mfAmount;
+};
+
+class cResources;
+
+class cRendererPostEffects {
+public:
+	cRendererPostEffects(iLowLevelGraphics *apLowLevelGraphics, cResources *apResources,
+						 cRenderList *apRenderList, cRenderer3D *apRenderer3D);
+	~cRendererPostEffects();
+
+	/**
+	 * Render post effects, called by cScene
+	 */
+	void Render();
+
+	void SetImageTrailActive(bool abX) {
+		if (!mImageTrailData.mbActive && abX)
+			mImageTrailData.mbFirstPass = true;
+		mImageTrailData.mbActive = abX;
+	}
+	bool GetImageTrailActive() { return mImageTrailData.mbActive; }
+	/**
+	 * Set the amount of blur
+	 * \param afAmount 0.0 - 1.0 are valid
+	 */
+	void SetImageTrailAmount(float afAmount) { mImageTrailData.mfAmount = afAmount; }
+
+	iTexture *GetScreenBuffer(int alNum) { return mpScreenBuffer[alNum]; }
+
+	void SetActive(bool abX) { mbActive = abX; }
+	bool GetActive() { return mbActive; }
+
+	void SetBloomActive(bool abX);
+	bool GetBloomActive() { return mbBloomActive; }
+
+	void SetBloomSpread(float afX) { mfBloomSpread = afX; }
+	float GetBloomSpread() { return mfBloomSpread; }
+
+	void SetMotionBlurActive(bool abX);
+	bool GetMotionBlurActive() { return mbMotionBlurActive; }
+
+	void SetMotionBlurAmount(float afX) { mfMotionBlurAmount = afX; }
+	float GetMotionBlurAmount() { return mfMotionBlurAmount; }
+
+	void SetDepthOfFieldActive(bool abX) { mbDofActive = abX; }
+	void SetDepthOfFieldMaxBlur(float afX) { mfDofMaxBlur = afX; }
+	void SetDepthOfFieldFocalPlane(float afX) { mfDofFocalPlane = afX; }
+	void SetDepthOfFieldNearPlane(float afX) { mfDofNearPlane = afX; }
+	void SetDepthOfFieldFarPlane(float afX) { mfDofFarPlane = afX; }
+
+	bool GetDepthOfFieldActive() { return mbDofActive; }
+	float GetDepthOfFieldMaxBlur() { return mfDofMaxBlur; }
+	float GetDepthOfFieldFocalPlane() { return mfDofFocalPlane; }
+	float GetDepthOfFieldNearPlane() { return mfDofNearPlane; }
+	float GetDepthOfFieldFarPlane() { return mfDofFarPlane; }
+
+	iTexture *GetFreeScreenTexture() { return mpScreenBuffer[mImageTrailData.mlCurrentBuffer == 0 ? 1 : 0]; }
+
+	void RenderBlurTexture(iTexture *apDestination, iTexture *apSource, float afBlurAmount);
+
+private:
+	void RenderImageTrail();
+
+	void RenderBloom();
+
+	void RenderMotionBlur();
+
+	void RenderDepthOfField();
+
+	iLowLevelGraphics *mpLowLevelGraphics;
+	iLowLevelResources *mpLowLevelResources;
+	cResources *mpResources;
+	cGpuProgramManager *mpGpuManager;
+	cRenderer3D *mpRenderer3D;
+
+	cRenderList *mpRenderList;
+
+	cVector2f mvScreenSize;
+
+	iTexture *mpScreenBuffer[2];
+
+	cImageTrailEffect mImageTrailData;
+
+	iGpuProgram *mpBlurVP;
+	iGpuProgram *mpBlur2dFP;
+	iGpuProgram *mpBlurRectFP;
+	bool mbBlurFallback;
+
+	iGpuProgram *mpBloomVP;
+	iGpuProgram *mpBloomFP;
+
+	iTexture *mpBloomBlurTexture;
+
+	iGpuProgram *mpMotionBlurVP;
+	iGpuProgram *mpMotionBlurFP;
+
+	iGpuProgram *mpDepthOfFieldVP;
+	iGpuProgram *mpDepthOfFieldFP;
+	iTexture *mpDofBlurTexture;
+
+	tVertexVec mvTexRectVtx;
+
+	bool mbBloomActive;
+	float mfBloomSpread;
+
+	bool mbMotionBlurActive;
+	float mfMotionBlurAmount;
+	bool mbMotionBlurFirstTime;
+
+	bool mbDofActive;
+	float mfDofMaxBlur;
+	float mfDofFocalPlane;
+	float mfDofNearPlane;
+	float mfDofFarPlane;
+
+	bool mbActive;
+};
+
+};     // namespace hpl
 #endif // HPL_RENDERER_POST_EFFECTS_H

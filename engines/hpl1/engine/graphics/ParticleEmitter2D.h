@@ -41,9 +41,9 @@
 /*#ifndef HPL_PARTICLE_SYSTEM_2D_H
 #define HPL_PARTICLE_SYSTEM_2D_H
 
+#include "hpl1/engine/graphics/ParticleSystem.h"
 #include "hpl1/engine/graphics/RenderObject2D.h"
 #include "hpl1/engine/scene/Entity2D.h"
-#include "hpl1/engine/graphics/ParticleSystem.h"
 
 
 namespace hpl {

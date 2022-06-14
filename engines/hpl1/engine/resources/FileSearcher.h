@@ -41,48 +41,47 @@
 #ifndef HPL_FILESEARCHER_H
 #define HPL_FILESEARCHER_H
 
-#include <map>
 #include "hpl1/engine/resources/ResourcesTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include <map>
 
 namespace hpl {
 
-	class iLowLevelResources;
+class iLowLevelResources;
 
-	typedef std::multimap<tString, tString> tFilePathMap;
-	typedef tFilePathMap::iterator tFilePathMapIt;
+typedef std::multimap<tString, tString> tFilePathMap;
+typedef tFilePathMap::iterator tFilePathMapIt;
 
-	class cFileSearcher
-	{
-	public:
-		cFileSearcher(iLowLevelResources *apLowLevelResources);
-		~cFileSearcher();
+class cFileSearcher {
+public:
+	cFileSearcher(iLowLevelResources *apLowLevelResources);
+	~cFileSearcher();
 
-		/**
-		 * Adds a directory that will be searched when looking for files.
-		 * \param asMask What files that should be searched for, for example: "*.jpeg".
-		 * \param asPath The path to the directory.
-		 */
-		void AddDirectory(tString asPath, tString asMask);
+	/**
+	 * Adds a directory that will be searched when looking for files.
+	 * \param asMask What files that should be searched for, for example: "*.jpeg".
+	 * \param asPath The path to the directory.
+	 */
+	void AddDirectory(tString asPath, tString asMask);
 
-		/**
-		 * Clears all directories
-		 */
-		void ClearDirectories();
+	/**
+	 * Clears all directories
+	 */
+	void ClearDirectories();
 
-		/**
-		 * Gets a file pointer and searches through all added resources.
-		 * \param asName Name of the file.
-		 * \return Path to the file. "" if file is not found.
-		 */
-		tString GetFilePath(tString asName);
+	/**
+	 * Gets a file pointer and searches through all added resources.
+	 * \param asName Name of the file.
+	 * \return Path to the file. "" if file is not found.
+	 */
+	tString GetFilePath(tString asName);
 
-	private:
-		tFilePathMap m_mapFiles;
-		tStringSet m_setLoadedDirs;
+private:
+	tFilePathMap m_mapFiles;
+	tStringSet m_setLoadedDirs;
 
-		iLowLevelResources *mpLowLevelResources;
-	};
-
+	iLowLevelResources *mpLowLevelResources;
 };
+
+};     // namespace hpl
 #endif // HPL_FILESEARCHER_H

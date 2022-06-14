@@ -39,108 +39,101 @@
  */
 
 #include "hpl1/engine/resources/TileSetManager.h"
-#include "hpl1/engine/system/String.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
-#include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/graphics/Graphics.h"
+#include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/scene/TileSet.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
+#include "hpl1/engine/system/String.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cTileSetManager::cTileSetManager(cGraphics* apGraphics,cResources *apResources)
-		: iResourceManager(apResources->GetFileSearcher(), apResources->GetLowLevel(),
-							apResources->GetLowLevelSystem())
-	{
-		mpGraphics = apGraphics;
-		mpResources = apResources;
-	}
-
-	cTileSetManager::~cTileSetManager()
-	{
-		DestroyAll();
-		Log(" Done with tilesets\n");
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	iResourceBase* cTileSetManager::Create(const tString& asName)
-	{
-		tString sPath;
-		cTileSet* pTileSet;
-		tString asNewName;
-
-		BeginLoad(asName);
-
-		asNewName = cString::SetFileExt(asName,"tsd");
-
-		pTileSet = static_cast<cTileSet*>(this->FindLoadedResource(asNewName,sPath));
-
-		if(pTileSet==NULL && sPath!="")
-		{
-			pTileSet = hplNew( cTileSet, (asNewName,mpGraphics,mpResources) );
-
-			if(pTileSet->CreateFromFile(sPath)==false){
-				EndLoad();
-				return NULL;
-			}
-
-			AddResource(pTileSet);
-		}
-
-		if(pTileSet)pTileSet->IncUserCount();
-		else Error("Couldn't load tileset '%s'\n",asNewName.c_str());
-
-		EndLoad();
-		return pTileSet;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cTileSet* cTileSetManager::CreateTileSet(const tString& asName)
-	{
-		return 	static_cast<cTileSet*>(Create(asName));
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cTileSetManager::Unload(iResourceBase* apResource)
-	{
-
-	}
-	//-----------------------------------------------------------------------
-
-	void cTileSetManager::Destroy(iResourceBase* apResource)
-	{
-		apResource->DecUserCount();
-
-		if(apResource->HasUsers()==false){
-			RemoveResource(apResource);
-			hplDelete(apResource);
-		}
-	}
-
-	//-----------------------------------------------------------------------
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-
-	//-----------------------------------------------------------------------
+cTileSetManager::cTileSetManager(cGraphics *apGraphics, cResources *apResources)
+	: iResourceManager(apResources->GetFileSearcher(), apResources->GetLowLevel(),
+					   apResources->GetLowLevelSystem()) {
+	mpGraphics = apGraphics;
+	mpResources = apResources;
 }
+
+cTileSetManager::~cTileSetManager() {
+	DestroyAll();
+	Log(" Done with tilesets\n");
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+iResourceBase *cTileSetManager::Create(const tString &asName) {
+	tString sPath;
+	cTileSet *pTileSet;
+	tString asNewName;
+
+	BeginLoad(asName);
+
+	asNewName = cString::SetFileExt(asName, "tsd");
+
+	pTileSet = static_cast<cTileSet *>(this->FindLoadedResource(asNewName, sPath));
+
+	if (pTileSet == NULL && sPath != "") {
+		pTileSet = hplNew(cTileSet, (asNewName, mpGraphics, mpResources));
+
+		if (pTileSet->CreateFromFile(sPath) == false) {
+			EndLoad();
+			return NULL;
+		}
+
+		AddResource(pTileSet);
+	}
+
+	if (pTileSet)
+		pTileSet->IncUserCount();
+	else
+		Error("Couldn't load tileset '%s'\n", asNewName.c_str());
+
+	EndLoad();
+	return pTileSet;
+}
+
+//-----------------------------------------------------------------------
+
+cTileSet *cTileSetManager::CreateTileSet(const tString &asName) {
+	return static_cast<cTileSet *>(Create(asName));
+}
+
+//-----------------------------------------------------------------------
+
+void cTileSetManager::Unload(iResourceBase *apResource) {
+}
+//-----------------------------------------------------------------------
+
+void cTileSetManager::Destroy(iResourceBase *apResource) {
+	apResource->DecUserCount();
+
+	if (apResource->HasUsers() == false) {
+		RemoveResource(apResource);
+		hplDelete(apResource);
+	}
+}
+
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PRIVATE METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+} // namespace hpl

@@ -41,29 +41,28 @@
 #ifndef HPL_LOWLEVELRESOURCES_SDL_H
 #define HPL_LOWLEVELRESOURCES_SDL_H
 
-#include "hpl1/engine/resources/LowLevelResources.h"
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
+#include "hpl1/engine/resources/LowLevelResources.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	class cLowLevelResourcesSDL : public iLowLevelResources
-	{
-	public:
-		cLowLevelResourcesSDL(cLowLevelGraphicsSDL *apLowLevelGraphics);
-		~cLowLevelResourcesSDL();
+class cLowLevelResourcesSDL : public iLowLevelResources {
+public:
+	cLowLevelResourcesSDL(cLowLevelGraphicsSDL *apLowLevelGraphics);
+	~cLowLevelResourcesSDL();
 
-		void FindFilesInDir(tWStringList &alstStrings, tWString asDir, tWString asMask);
+	void FindFilesInDir(tWStringList &alstStrings, tWString asDir, tWString asMask);
 
-		void GetSupportedImageFormats(tStringList &alstFormats);
-		iBitmap2D* LoadBitmap2D(tString asFilePath, tString asType = "");
+	void GetSupportedImageFormats(tStringList &alstFormats);
+	iBitmap2D *LoadBitmap2D(tString asFilePath, tString asType = "");
 
-		void AddMeshLoaders(cMeshLoaderHandler* apHandler);
-		void AddVideoLoaders(cVideoManager* apManager);
+	void AddMeshLoaders(cMeshLoaderHandler *apHandler);
+	void AddVideoLoaders(cVideoManager *apManager);
 
-	private:
-		tString mvImageFormats[30];
-		cLowLevelGraphicsSDL *mpLowLevelGraphics;
-	};
+private:
+	tString mvImageFormats[30];
+	cLowLevelGraphicsSDL *mpLowLevelGraphics;
 };
+};     // namespace hpl
 #endif // HPL_LOWLEVELRESOURCES_SDL_H

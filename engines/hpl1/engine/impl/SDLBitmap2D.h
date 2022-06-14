@@ -49,39 +49,38 @@
 
 namespace hpl {
 
-	class cSDLBitmap2D : public iBitmap2D
-	{
-	public:
-		cSDLBitmap2D(iPixelFormat *apPxlFmt);
-		cSDLBitmap2D(SDL_Surface* apSurface,iPixelFormat *apPxlFmt,const tString& asType);
-		~cSDLBitmap2D();
+class cSDLBitmap2D : public iBitmap2D {
+public:
+	cSDLBitmap2D(iPixelFormat *apPxlFmt);
+	cSDLBitmap2D(SDL_Surface *apSurface, iPixelFormat *apPxlFmt, const tString &asType);
+	~cSDLBitmap2D();
 
-		bool SaveToFile(const tString& asFile);
+	bool SaveToFile(const tString &asFile);
 
+	void DrawToBitmap(iBitmap2D *apBmp, const cVector2l &avDestPos);
+	bool HasAlpha();
+	/**
+	 * \todo Support 16 bit format aswell.
+	 * \param avSize
+	 * \param alBpp
+	 * \return
+	 */
+	bool Create(cVector2l avSize, unsigned int alBpp);
 
-		void DrawToBitmap(iBitmap2D *apBmp, const cVector2l &avDestPos);
-		bool HasAlpha();
-		/**
-		 * \todo Support 16 bit format aswell.
-		 * \param avSize
-		 * \param alBpp
-		 * \return
-		 */
-		bool Create(cVector2l avSize, unsigned int alBpp);
+	void FillRect(const cRect2l &aRect, const cColor &aColor);
 
-		void FillRect(const cRect2l &aRect, const cColor &aColor);
+	void *GetRawData();
+	int GetNumChannels();
 
-		void* GetRawData();
-		int GetNumChannels();
+	// SDL Specific
+	SDL_Surface *GetSurface();
+	SDL_PixelFormat *GetPixelFmt32() { return mpSDLPixelFmt32; }
 
-		//SDL Specific
-		SDL_Surface* GetSurface();
-		SDL_PixelFormat *GetPixelFmt32(){ return mpSDLPixelFmt32;}
+	tString msType;
 
-		tString msType;
-	private:
-		SDL_Surface* mpSurface;
-		SDL_PixelFormat *mpSDLPixelFmt32;
-	};
+private:
+	SDL_Surface *mpSurface;
+	SDL_PixelFormat *mpSDLPixelFmt32;
 };
+};     // namespace hpl
 #endif // HPL_SDL_BITMAP2D_H

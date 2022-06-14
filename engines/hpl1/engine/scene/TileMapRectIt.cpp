@@ -42,169 +42,159 @@
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cTileMapRectIt::cTileMapRectIt(cVector2l avPos, cVector2l avSize, cTileMap* apTileMap, int alLayer)
-	{
-		mpTileMap = apTileMap;
-		mpTile = NULL;
+cTileMapRectIt::cTileMapRectIt(cVector2l avPos, cVector2l avSize, cTileMap *apTileMap, int alLayer) {
+	mpTileMap = apTileMap;
+	mpTile = NULL;
 
-		mvPos = avPos;
-		mvSize = avSize;
+	mvPos = avPos;
+	mvSize = avSize;
 
-		mlLayer = alLayer;
-		mlLayerCount =0;
-		mlCurrentLayer = 0;
+	mlLayer = alLayer;
+	mlLayerCount = 0;
+	mlCurrentLayer = 0;
 
-		//// Clip the pos and size //////
-		//Pos smaller then (0,0)
-		if(mvPos.x<0){mvSize.x+=mvPos.x; mvPos.x=0;}
-		if(mvPos.y<0){mvSize.y+=mvPos.y; mvPos.y=0;}
-
-		//Size large than grid map
-		if(mvPos.x + mvSize.x > mpTileMap->mvSize.x){
-			mvSize.x -= (mvPos.x + mvSize.x) - (mpTileMap->mvSize.x);
-		}
-		if(mvPos.y + mvSize.y > mpTileMap->mvSize.y){
-			mvSize.y -= (mvPos.y + mvSize.y) - (mpTileMap->mvSize.y);
-		}
-
-		mlTileNum = mvPos.x + mvPos.y*mpTileMap->mvSize.x;
-		mlTileColAdd = mpTileMap->mvSize.x-mvSize.x;
-		mlTileRowCount = mvSize.y;
-		mlTileColCount = mvSize.x;
-
-		//The rect is outside of the tilemap
-		if(mvSize.x<=0 || mvSize.y<=0 || mvPos.x>=mpTileMap->mvSize.x || mvPos.y>=mpTileMap->mvSize.y ){
-			mlTileColCount=0;
-			mlTileRowCount=0;
-			mlLayerCount = (int)mpTileMap->mvTileLayer.size();
-		}
-		else{
-		}
-
-		mbUpdated = false;
+	//// Clip the pos and size //////
+	// Pos smaller then (0,0)
+	if (mvPos.x < 0) {
+		mvSize.x += mvPos.x;
+		mvPos.x = 0;
+	}
+	if (mvPos.y < 0) {
+		mvSize.y += mvPos.y;
+		mvPos.y = 0;
 	}
 
-	//-----------------------------------------------------------------------
-
-	cTileMapRectIt::~cTileMapRectIt()
-	{
+	// Size large than grid map
+	if (mvPos.x + mvSize.x > mpTileMap->mvSize.x) {
+		mvSize.x -= (mvPos.x + mvSize.x) - (mpTileMap->mvSize.x);
+	}
+	if (mvPos.y + mvSize.y > mpTileMap->mvSize.y) {
+		mvSize.y -= (mvPos.y + mvSize.y) - (mpTileMap->mvSize.y);
 	}
 
-	//-----------------------------------------------------------------------
+	mlTileNum = mvPos.x + mvPos.y * mpTileMap->mvSize.x;
+	mlTileColAdd = mpTileMap->mvSize.x - mvSize.x;
+	mlTileRowCount = mvSize.y;
+	mlTileColCount = mvSize.x;
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	bool cTileMapRectIt::HasNext()
-	{
-		GetTile();
-
-		return mpTile!=NULL;
+	// The rect is outside of the tilemap
+	if (mvSize.x <= 0 || mvSize.y <= 0 || mvPos.x >= mpTileMap->mvSize.x || mvPos.y >= mpTileMap->mvSize.y) {
+		mlTileColCount = 0;
+		mlTileRowCount = 0;
+		mlLayerCount = (int)mpTileMap->mvTileLayer.size();
+	} else {
 	}
 
-	//-----------------------------------------------------------------------
+	mbUpdated = false;
+}
 
-	cTile* cTileMapRectIt::Next()
-	{
-		GetTile();
+//-----------------------------------------------------------------------
 
-		mbUpdated = false;
-		return mpTile;
-	}
+cTileMapRectIt::~cTileMapRectIt() {
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	cTile* cTileMapRectIt::PeekNext()
-	{
-		GetTile();
+//-----------------------------------------------------------------------
 
-		return mpTile;
-	}
+bool cTileMapRectIt::HasNext() {
+	GetTile();
 
-	//-----------------------------------------------------------------------
+	return mpTile != NULL;
+}
 
-	int cTileMapRectIt::GetNum()
-	{
-		return mlTileNum;
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+cTile *cTileMapRectIt::Next() {
+	GetTile();
 
-	int cTileMapRectIt::GetCurrentLayer()
-	{
-		return mlCurrentLayer;
-	}
+	mbUpdated = false;
+	return mpTile;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
+cTile *cTileMapRectIt::PeekNext() {
+	GetTile();
 
-	//-----------------------------------------------------------------------
+	return mpTile;
+}
 
-	void cTileMapRectIt::GetTile()
-	{
-		if(mbUpdated)return;
-		mbUpdated = true;
+//-----------------------------------------------------------------------
 
-		//We are gonna check till we find a non NULL value or the end.
-		while(true)
-		{
-			//Check if end of the this tile pos
-			if( (mlLayer>=0 && mlLayerCount>0) || (mlLayer==-1 && mlLayerCount>= (int)mpTileMap->mvTileLayer.size()) )
-			{
-				mlLayerCount=0;
+int cTileMapRectIt::GetNum() {
+	return mlTileNum;
+}
 
-				mlTileNum++;
-				mlTileColCount--;
-				if(mlTileColCount<=0)
-				{
-					//Log("New row!\n\n");
-					mlTileColCount=mvSize.x;
-					mlTileRowCount--;
-					if(mlTileRowCount<=0)
-					{
-						mpTile=NULL;
-						break;
-					}
-					mlTileNum+=mlTileColAdd;
-				}
-			}
-			else
-			{
-				if(mlLayer<0){
-					mpTile = mpTileMap->mvTileLayer[mlLayerCount]->mvTile[mlTileNum];
-					mlCurrentLayer = mlLayerCount;
-				}
-				else{
-					mpTile = mpTileMap->mvTileLayer[mlLayer]->mvTile[mlTileNum];
-					mlCurrentLayer = mlLayer;
-				}
+//-----------------------------------------------------------------------
 
-				mlLayerCount++;
+int cTileMapRectIt::GetCurrentLayer() {
+	return mlCurrentLayer;
+}
 
-				if(mpTile!=NULL){
-					iTileData* pData = mpTile->GetTileData();
-					if(pData && pData->IsSolid()){
-						mlLayerCount = (int)mpTileMap->mvTileLayer.size();
-					}
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+void cTileMapRectIt::GetTile() {
+	if (mbUpdated)
+		return;
+	mbUpdated = true;
+
+	// We are gonna check till we find a non NULL value or the end.
+	while (true) {
+		// Check if end of the this tile pos
+		if ((mlLayer >= 0 && mlLayerCount > 0) || (mlLayer == -1 && mlLayerCount >= (int)mpTileMap->mvTileLayer.size())) {
+			mlLayerCount = 0;
+
+			mlTileNum++;
+			mlTileColCount--;
+			if (mlTileColCount <= 0) {
+				// Log("New row!\n\n");
+				mlTileColCount = mvSize.x;
+				mlTileRowCount--;
+				if (mlTileRowCount <= 0) {
+					mpTile = NULL;
 					break;
 				}
+				mlTileNum += mlTileColAdd;
+			}
+		} else {
+			if (mlLayer < 0) {
+				mpTile = mpTileMap->mvTileLayer[mlLayerCount]->mvTile[mlTileNum];
+				mlCurrentLayer = mlLayerCount;
+			} else {
+				mpTile = mpTileMap->mvTileLayer[mlLayer]->mvTile[mlTileNum];
+				mlCurrentLayer = mlLayer;
+			}
+
+			mlLayerCount++;
+
+			if (mpTile != NULL) {
+				iTileData *pData = mpTile->GetTileData();
+				if (pData && pData->IsSolid()) {
+					mlLayerCount = (int)mpTileMap->mvTileLayer.size();
+				}
+				break;
 			}
 		}
 	}
-
-	//-----------------------------------------------------------------------
-
 }
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

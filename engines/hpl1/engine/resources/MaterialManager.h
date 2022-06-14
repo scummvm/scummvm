@@ -41,62 +41,61 @@
 #ifndef HPL_MATERIAL_MANAGER_H
 #define HPL_MATERIAL_MANAGER_H
 
-#include "hpl1/engine/resources/ResourceManager.h"
-#include "hpl1/engine/graphics/Texture.h"
 #include "hpl1/engine/graphics/Material.h"
+#include "hpl1/engine/graphics/Texture.h"
+#include "hpl1/engine/resources/ResourceManager.h"
 
 namespace hpl {
 
-	class cGraphics;
-	class cResources;
-	class iMaterial;
+class cGraphics;
+class cResources;
+class iMaterial;
 
-	class cMaterialManager : public iResourceManager
-	{
-	public:
-		cMaterialManager(cGraphics* apGraphics,cResources *apResources);
-		~cMaterialManager();
+class cMaterialManager : public iResourceManager {
+public:
+	cMaterialManager(cGraphics *apGraphics, cResources *apResources);
+	~cMaterialManager();
 
-		iResourceBase* Create(const tString& asName);
-		iMaterial* CreateMaterial(const tString& asName);
+	iResourceBase *Create(const tString &asName);
+	iMaterial *CreateMaterial(const tString &asName);
 
-		void Update(float afTimeStep);
+	void Update(float afTimeStep);
 
-		void Destroy(iResourceBase* apResource);
-		void Unload(iResourceBase* apResource);
+	void Destroy(iResourceBase *apResource);
+	void Unload(iResourceBase *apResource);
 
-		void SetTextureSizeLevel(unsigned int alLevel){ mlTextureSizeLevel = alLevel;}
-		int GetTextureSizeLevel(){ return mlTextureSizeLevel;}
+	void SetTextureSizeLevel(unsigned int alLevel) { mlTextureSizeLevel = alLevel; }
+	int GetTextureSizeLevel() { return mlTextureSizeLevel; }
 
-		void SetTextureFilter(eTextureFilter aFilter);
-		eTextureFilter GetTextureFilter(){ return mTextureFilter;}
+	void SetTextureFilter(eTextureFilter aFilter);
+	eTextureFilter GetTextureFilter() { return mTextureFilter; }
 
-		void SetTextureAnisotropy(float afX);
-		float GetTextureAnisotropy(){ return mfTextureAnisotropy;}
+	void SetTextureAnisotropy(float afX);
+	float GetTextureAnisotropy() { return mfTextureAnisotropy; }
 
-		tString GetPhysicsMaterialName(const tString& asName);
+	tString GetPhysicsMaterialName(const tString &asName);
 
-	private:
-		iMaterial* LoadFromFile(const tString& asName,const tString& asPath);
+private:
+	iMaterial *LoadFromFile(const tString &asName, const tString &asPath);
 
-		eTextureTarget GetTarget(const tString& asType);
-		tString GetTextureString(eMaterialTexture aType);
-		eTextureWrap GetWrap(const tString& asType);
-		eTextureAnimMode GetAnimMode(const tString& asType);
+	eTextureTarget GetTarget(const tString &asType);
+	tString GetTextureString(eMaterialTexture aType);
+	eTextureWrap GetWrap(const tString &asType);
+	eTextureAnimMode GetAnimMode(const tString &asType);
 
-		unsigned int mlTextureSizeLevel;
-		eTextureFilter mTextureFilter;
-		float mfTextureAnisotropy;
+	unsigned int mlTextureSizeLevel;
+	eTextureFilter mTextureFilter;
+	float mfTextureAnisotropy;
 
-		tStringList mlstFileFormats;
+	tStringList mlstFileFormats;
 
-		tStringVec mvCubeSideSuffixes;
+	tStringVec mvCubeSideSuffixes;
 
-		cGraphics* mpGraphics;
-		cResources* mpResources;
+	cGraphics *mpGraphics;
+	cResources *mpResources;
 
-		int mlIdCounter;
-	};
-
+	int mlIdCounter;
 };
+
+};     // namespace hpl
 #endif // HPL_MATERIAL_MANAGER_H

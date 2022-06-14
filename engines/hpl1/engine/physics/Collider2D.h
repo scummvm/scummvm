@@ -41,64 +41,61 @@
 #ifndef HPL_COLLIDER2D_H
 #define HPL_COLLIDER2D_H
 
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	class cMesh2D;
-	class cWorld2D;
-	class cBody2D;
-	class cCollideData2D;
-	class cCollisionMesh2D;
+class cMesh2D;
+class cWorld2D;
+class cBody2D;
+class cCollideData2D;
+class cCollisionMesh2D;
 
-	class cCollider2DDebug
-	{
-	public:
-		cVector2f mvPushVec;
-		cVector2f mvPushPos;
-	};
-
-
-	class cCollider2D
-	{
-	public:
-		cCollider2D();
-		~cCollider2D();
-
-		void SetWorld(cWorld2D* apWorld){ mpWorld = apWorld;}
-
-		/**
-		 * Collides a body with the world and returns a flag of what object has collided.
-		 * \param *apBody
-		 * \return 0= no collision, eFlagBit0 = Tiles, all other bits are custom.
-		 */
-		tFlag CollideBody(cBody2D *apBody, cCollideData2D* apData);
-
-
-		/**
-		 * Collides a custom rect with the world
-		 * \param aRect
-		 * \param alCollideFlags Specifies what things to check for collision with.
-		 * \return
-		 */
-		tFlag CollideRect(cRect2f& aRect,tFlag alCollideFlags, cCollideData2D* apData);
-
-		tFlag CollideLine(const cVector2f& avStart,const cVector2f& avEnd,tFlag alCollideFlags,
-							cCollideData2D* apData);
-
-		cCollider2DDebug mDebug;
-	private:
-		cWorld2D* mpWorld;
-
-		void SetCollideMesh(cCollisionMesh2D* apMesh, cRect2f& aRect);
-
-		bool Collide(cCollisionMesh2D* apMeshA,cCollisionMesh2D* apMeshB, cVector2f &avMTD);
-		bool AxisSeparateMeshes(cVector2f &avAxis,cCollisionMesh2D* apMeshA,
-								cCollisionMesh2D* apMeshB);
-		void CalculateInterval(const cVector2f &avAxis,cCollisionMesh2D* apMesh,
-								float& afMin,float& afMax);
-	};
-
+class cCollider2DDebug {
+public:
+	cVector2f mvPushVec;
+	cVector2f mvPushPos;
 };
+
+class cCollider2D {
+public:
+	cCollider2D();
+	~cCollider2D();
+
+	void SetWorld(cWorld2D *apWorld) { mpWorld = apWorld; }
+
+	/**
+	 * Collides a body with the world and returns a flag of what object has collided.
+	 * \param *apBody
+	 * \return 0= no collision, eFlagBit0 = Tiles, all other bits are custom.
+	 */
+	tFlag CollideBody(cBody2D *apBody, cCollideData2D *apData);
+
+	/**
+	 * Collides a custom rect with the world
+	 * \param aRect
+	 * \param alCollideFlags Specifies what things to check for collision with.
+	 * \return
+	 */
+	tFlag CollideRect(cRect2f &aRect, tFlag alCollideFlags, cCollideData2D *apData);
+
+	tFlag CollideLine(const cVector2f &avStart, const cVector2f &avEnd, tFlag alCollideFlags,
+					  cCollideData2D *apData);
+
+	cCollider2DDebug mDebug;
+
+private:
+	cWorld2D *mpWorld;
+
+	void SetCollideMesh(cCollisionMesh2D *apMesh, cRect2f &aRect);
+
+	bool Collide(cCollisionMesh2D *apMeshA, cCollisionMesh2D *apMeshB, cVector2f &avMTD);
+	bool AxisSeparateMeshes(cVector2f &avAxis, cCollisionMesh2D *apMeshA,
+							cCollisionMesh2D *apMeshB);
+	void CalculateInterval(const cVector2f &avAxis, cCollisionMesh2D *apMesh,
+						   float &afMin, float &afMax);
+};
+
+};     // namespace hpl
 #endif // HPL_COLLIDER2D_H

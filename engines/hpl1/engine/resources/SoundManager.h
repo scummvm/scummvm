@@ -45,32 +45,31 @@
 
 namespace hpl {
 
-	class cSound;
-	class cResources;
-	class iSoundData;
+class cSound;
+class cResources;
+class iSoundData;
 
-	class cSoundManager : public iResourceManager
-	{
-	public:
-		cSoundManager(cSound* apSound,cResources *apResources);
-		~cSoundManager();
+class cSoundManager : public iResourceManager {
+public:
+	cSoundManager(cSound *apSound, cResources *apResources);
+	~cSoundManager();
 
-		iResourceBase* Create(const tString& asName);
-		iSoundData* CreateSoundData(const tString& asName, bool abStream, bool abLoopStream=false);
+	iResourceBase *Create(const tString &asName);
+	iSoundData *CreateSoundData(const tString &asName, bool abStream, bool abLoopStream = false);
 
-		void Destroy(iResourceBase* apResource);
-		void Unload(iResourceBase* apResource);
+	void Destroy(iResourceBase *apResource);
+	void Unload(iResourceBase *apResource);
 
-		void DestroyAll();
+	void DestroyAll();
 
-	private:
-		cSound* mpSound;
-		cResources *mpResources;
+private:
+	cSound *mpSound;
+	cResources *mpResources;
 
-		tStringList mlstFileFormats;
+	tStringList mlstFileFormats;
 
-		iSoundData *FindData(const tString &asName, tString &asFilePath);
-	};
-
+	iSoundData *FindData(const tString &asName, tString &asFilePath);
 };
+
+};     // namespace hpl
 #endif // HPL_SOUND_MANAGER_H

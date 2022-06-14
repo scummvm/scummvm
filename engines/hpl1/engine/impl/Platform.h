@@ -44,12 +44,12 @@
 #include <stdio.h>
 
 namespace hpl {
-	class Platform {
-	public:
-		static long FileLength(const tWString& asFileName);
-		static long FileLength(FILE *pFile);
-		static void FindFileInDir(tWStringList &alstStrings,tWString asDir, tWString asMask);
-	};
-}
+class Platform {
+public:
+	static long FileLength(const tWString &asFileName);
+	static long FileLength(FILE *pFile);
+	static void FindFileInDir(tWStringList &alstStrings, tWString asDir, tWString asMask);
+};
+} // namespace hpl
 
 #endif /*PLATFORM_H_*/

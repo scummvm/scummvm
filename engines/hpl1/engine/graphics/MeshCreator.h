@@ -41,40 +41,37 @@
 #ifndef HPL_MESHCREATOR_H
 #define HPL_MESHCREATOR_H
 
+#include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include "hpl1/engine/graphics/GraphicsTypes.h"
 
 namespace hpl {
 
-	class cMesh2D;
-	class iVertexBuffer;
-	class iLowLevelGraphics;
-	class cResources;
-	class cMesh;
+class cMesh2D;
+class iVertexBuffer;
+class iLowLevelGraphics;
+class cResources;
+class cMesh;
 
-	class cMeshCreator
-	{
-	public:
-		cMeshCreator(iLowLevelGraphics *apLowLevelGraphics, cResources *apResources);
-		~cMeshCreator();
+class cMeshCreator {
+public:
+	cMeshCreator(iLowLevelGraphics *apLowLevelGraphics, cResources *apResources);
+	~cMeshCreator();
 
-		cMesh2D *Create2D(tString asName, cVector2f mvSize);
+	cMesh2D *Create2D(tString asName, cVector2f mvSize);
 
-		cMesh* CreateBox(const tString &asName, cVector3f avSize, const tString &asMaterial);
+	cMesh *CreateBox(const tString &asName, cVector3f avSize, const tString &asMaterial);
 
-		iVertexBuffer* CreateSkyBoxVertexBuffer(float afSize);
-		iVertexBuffer* CreateBoxVertexBuffer(cVector3f avSize);
+	iVertexBuffer *CreateSkyBoxVertexBuffer(float afSize);
+	iVertexBuffer *CreateBoxVertexBuffer(cVector3f avSize);
 
-	private:
-		cVector3f GetBoxTex(int i,int x, int y, int z, cVector3f *vAdd);
-		int GetBoxIdx(int i,int x, int y, int z);
+private:
+	cVector3f GetBoxTex(int i, int x, int y, int z, cVector3f *vAdd);
+	int GetBoxIdx(int i, int x, int y, int z);
 
-		iLowLevelGraphics *mpLowLevelGraphics;
-		cResources *mpResources;
-	};
-
+	iLowLevelGraphics *mpLowLevelGraphics;
+	cResources *mpResources;
 };
+
+};     // namespace hpl
 #endif // HPL_MESHCREATOR_H
-
-

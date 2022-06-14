@@ -41,73 +41,73 @@
 #ifndef HPL_TILEMAP_H
 #define HPL_TILEMAP_H
 
-#include <vector>
 #include "hpl1/engine/graphics/Graphics.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Camera2D.h"
-#include "hpl1/engine/scene/TileSet.h"
 #include "hpl1/engine/scene/TileLayer.h"
 #include "hpl1/engine/scene/TileMapIt.h"
+#include "hpl1/engine/scene/TileSet.h"
+#include <vector>
 
 namespace hpl {
 
-	typedef std::vector<cTileSet*> tTileSetVec;
-	typedef tTileSetVec::iterator tTileSetVecIt;
+typedef std::vector<cTileSet *> tTileSetVec;
+typedef tTileSetVec::iterator tTileSetVecIt;
 
-	typedef std::vector<cTileLayer*> tTileLayerVec;
-	typedef tTileLayerVec::iterator tTileLayerVecIt;
+typedef std::vector<cTileLayer *> tTileLayerVec;
+typedef tTileLayerVec::iterator tTileLayerVecIt;
 
-	class cTileMap
-	{
+class cTileMap {
 	friend class cTileMapRectIt;
 	friend class cTileMapLineIt;
-	public:
-		cTileMap(cVector2l avSize, float afTileSize,cGraphics* apGraphics,cResources * apResources);
-		~cTileMap();
 
-		const cVector2l& GetSize(){return mvSize;}
-		float GetTileSize(){return mfTileSize;}
+public:
+	cTileMap(cVector2l avSize, float afTileSize, cGraphics *apGraphics, cResources *apResources);
+	~cTileMap();
 
-		int GetTileNeighbours4Dir(int alTileNum,int alLayer, bool* avDir);
+	const cVector2l &GetSize() { return mvSize; }
+	float GetTileSize() { return mfTileSize; }
 
-		void AddTileSet(cTileSet *apSet){mvTileSet.push_back(apSet);}
-		cTileSet* GetTileSet(int alNum){ return mvTileSet[alNum];}
+	int GetTileNeighbours4Dir(int alTileNum, int alLayer, bool *avDir);
 
-		void AddTileLayerFront(cTileLayer *apLayer);
-		void AddTileLayerBack(cTileLayer *apLayer){mvTileLayer.push_back(apLayer);}
+	void AddTileSet(cTileSet *apSet) { mvTileSet.push_back(apSet); }
+	cTileSet *GetTileSet(int alNum) { return mvTileSet[alNum]; }
 
-		cTileLayer* GetTileLayer(int alNum){ return mvTileLayer[alNum];}
-		int GetTileLayerNum(){ return (int)mvTileLayer.size();}
+	void AddTileLayerFront(cTileLayer *apLayer);
+	void AddTileLayerBack(cTileLayer *apLayer) { mvTileLayer.push_back(apLayer); }
 
-		iTileMapIt* GetRectIterator(const cRect2f& aRect, int alLayer);
-		iTileMapIt* GetLineIterator(const cVector2f& avStart,const cVector2f& avEnd , int alLayer);
+	cTileLayer *GetTileLayer(int alNum) { return mvTileLayer[alNum]; }
+	int GetTileLayerNum() { return (int)mvTileLayer.size(); }
 
-		void Render(cCamera2D* apCam);
+	iTileMapIt *GetRectIterator(const cRect2f &aRect, int alLayer);
+	iTileMapIt *GetLineIterator(const cVector2f &avStart, const cVector2f &avEnd, int alLayer);
 
-		cTile* GetScreenTile(cVector2f avPos, int alLayer, cCamera2D* apCam);
-		void SetScreenTileData(cVector2f avPos, int alLayer,cCamera2D* apCam, int alTileSet, int alTileNum);
-		void SetScreenTileAngle(cVector2f avPos, int alLayer,cCamera2D* apCam, int alAngle);
+	void Render(cCamera2D *apCam);
 
-		cTile* GetWorldTile(cVector2f avPos, int alLayer);
-		cVector2f GetWorldPos(cVector2f avScreenPos, cCamera2D* apCam);
+	cTile *GetScreenTile(cVector2f avPos, int alLayer, cCamera2D *apCam);
+	void SetScreenTileData(cVector2f avPos, int alLayer, cCamera2D *apCam, int alTileSet, int alTileNum);
+	void SetScreenTileAngle(cVector2f avPos, int alLayer, cCamera2D *apCam, int alAngle);
 
-		void SetShadowLayer(int alShadowLayer){mlShadowLayer = alShadowLayer;}
-		int GetShadowLayer(){return mlShadowLayer;}
+	cTile *GetWorldTile(cVector2f avPos, int alLayer);
+	cVector2f GetWorldPos(cVector2f avScreenPos, cCamera2D *apCam);
 
-	private:
-		cGraphics* mpGraphics;
-		cResources * mpResources;
+	void SetShadowLayer(int alShadowLayer) { mlShadowLayer = alShadowLayer; }
+	int GetShadowLayer() { return mlShadowLayer; }
 
-		tTileSetVec mvTileSet;
-		tTileLayerVec mvTileLayer;
-		int mlShadowLayer;
+private:
+	cGraphics *mpGraphics;
+	cResources *mpResources;
 
-		cVector2l mvSize;
-		float mfTileSize;
-		int mlCurrentLayer;
+	tTileSetVec mvTileSet;
+	tTileLayerVec mvTileLayer;
+	int mlShadowLayer;
 
-		inline void RenderTileData(cTile* apTile, int alLayer);
-	};
+	cVector2l mvSize;
+	float mfTileSize;
+	int mlCurrentLayer;
 
+	inline void RenderTileData(cTile *apTile, int alLayer);
 };
+
+};     // namespace hpl
 #endif // HPL_TILEMAP_H

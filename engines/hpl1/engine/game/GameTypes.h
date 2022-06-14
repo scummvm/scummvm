@@ -47,19 +47,16 @@
 
 namespace hpl {
 
-	class cScriptVar : public iSerializable
-	{
-		kSerializableClassInit(cScriptVar)
-	public:
-		cScriptVar();
+class cScriptVar : public iSerializable {
+	kSerializableClassInit(cScriptVar) public : cScriptVar();
 
-		tString msName;
-		int mlVal;
-	};
-
-	typedef std::map<tString,cScriptVar> tScriptVarMap;
-	typedef tScriptVarMap::iterator tScriptVarMapIt;
-
+	tString msName;
+	int mlVal;
 };
+
+typedef std::map<tString, cScriptVar> tScriptVarMap;
+typedef tScriptVarMap::iterator tScriptVarMapIt;
+
+}; // namespace hpl
 
 #endif // HPL_GAME_TYPES_H

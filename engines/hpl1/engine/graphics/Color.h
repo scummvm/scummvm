@@ -48,39 +48,38 @@
 
 namespace hpl {
 
-	class cColor
-	{
-	public:
-		float r,g,b,a;
+class cColor {
+public:
+	float r, g, b, a;
 
-		cColor(float afR, float afG, float afB, float afA);
-		cColor(float afR, float afG, float afB);
-		cColor();
-		cColor(float afVal);
-		cColor(float afVal, float afA);
+	cColor(float afR, float afG, float afB, float afA);
+	cColor(float afR, float afG, float afB);
+	cColor();
+	cColor(float afVal);
+	cColor(float afVal, float afA);
 
-		cColor operator*(float afVal) const;
-		cColor operator/(float afVal) const;
+	cColor operator*(float afVal) const;
+	cColor operator/(float afVal) const;
 
-		cColor operator+(const cColor &aCol) const;
-		cColor operator-(const cColor &aCol) const;
-		cColor operator*(const cColor &aCol) const;
-		cColor operator/(const cColor &aCol) const;
+	cColor operator+(const cColor &aCol) const;
+	cColor operator-(const cColor &aCol) const;
+	cColor operator*(const cColor &aCol) const;
+	cColor operator/(const cColor &aCol) const;
 
-		bool operator==(cColor aCol) const;
+	bool operator==(cColor aCol) const;
 
-		tString ToString() const;
+	tString ToString() const;
 
-		tString ToFileString() const;
+	tString ToFileString() const;
 
-		void FromVec(float *apV);
-	};
-
-	typedef std::list<cColor> tColorList;
-	typedef tColorList::iterator tColorListIt;
-
-	typedef std::vector<cColor> tColorVec;
-	typedef tColorVec::iterator tColorVecIt;
-
+	void FromVec(float *apV);
 };
+
+typedef std::list<cColor> tColorList;
+typedef tColorList::iterator tColorListIt;
+
+typedef std::vector<cColor> tColorVec;
+typedef tColorVec::iterator tColorVecIt;
+
+};     // namespace hpl
 #endif // HPL_COLOR_H

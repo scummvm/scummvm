@@ -43,91 +43,86 @@
 
 #include "hpl1/engine/graphics/Graphics.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
-#include "hpl1/engine/resources/ResourceImage.h"
-#include "hpl1/engine/resources/ImageManager.h"
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/graphics/Mesh2d.h"
+#include "hpl1/engine/resources/ImageManager.h"
+#include "hpl1/engine/resources/ResourceImage.h"
 
 namespace hpl {
 
-	enum eTileCollisionType
-	{
-		eTileCollisionType_None,
-		eTileCollisionType_Normal,
-		eTileCollisionType_OnlyDown,
-		eTileCollisionType_LastEnum
-	};
-
-	enum eTileDataType
-	{
-		eTileDataType_Normal,
-		eTileDataType_LastEnum
-	};
-
-	/////// INTERFACE ///////////////////////
-	class iTileData
-	{
-	public:
-		virtual ~iTileData(){}
-
-		virtual void Destroy()=0;
-		virtual bool IsSolid()=0;
-		virtual eTileDataType GetType()=0;
-
-		/*virtual tVertexVec GetVertexVec(const cVector3f &avPos, const cVector2f &avSize,
-										unsigned char acAngle)=0;*/
-	};
-
-
-	/////// IMPLEMENTATIONS OF iTILEDATA ////////////
-
-	class cTileDataNormal : public iTileData
-	{
-	public:
-		cTileDataNormal(cImageManager* apImageManager,cVector2f avTileSize);
-		~cTileDataNormal();
-
-		void Destroy();
-		bool IsSolid(){return mbIsSolid;}
-		void SetIsSolid(bool abIsSolid){mbIsSolid = abIsSolid;}
-
-		eTileCollisionType GetCollisionType(){ return mCollisionType;}
-		void SetCollisionType(eTileCollisionType aCollisionType){ mCollisionType = aCollisionType;}
-
-		eTileDataType GetType(){ return eTileDataType_Normal; }
-		tVertexVec* GetVertexVec(eTileRotation aRotation);
-		tUIntVec* GetIndexVec(eTileRotation aRotation);
-
-		tVertexVec* GetCollideVertexVec(eTileRotation aRotation);
-		tUIntVec* GetCollideIndexVec(eTileRotation aRotation);
-
-		iMaterial* GetMaterial(){return mpMaterial;}
-
-		cMesh2D* GetMesh(){return mpMesh; }
-
-		void SetData(cMesh2D *apMesh, iMaterial* apMaterial);
-
-		cMesh2D* GetCollideMesh();
-		void SetCollideMesh(cMesh2D *apCollideMesh);
-
-	private:
-		cImageManager* mpImageManager;
-
-		tResourceImageVec mvImage;
-		iMaterial* mpMaterial;
-		tVertexVec *mvVtx[eTileRotation_LastEnum];
-		tVertexVec *mvCollideVtx[eTileRotation_LastEnum];
-		tUIntVec *mvIdx;
-		tUIntVec *mvCollideIdx;
-		cMesh2D *mpMesh;
-		cVector2f mvTileSize;
-		bool mbIsSolid;
-		eTileCollisionType mCollisionType;
-
-		cMesh2D *mpCollideMesh;
-
-		void SetMesh(cMesh2D *apMesh);
-		void SetMaterial(iMaterial* apMaterial);
-	};
+enum eTileCollisionType {
+	eTileCollisionType_None,
+	eTileCollisionType_Normal,
+	eTileCollisionType_OnlyDown,
+	eTileCollisionType_LastEnum
 };
+
+enum eTileDataType {
+	eTileDataType_Normal,
+	eTileDataType_LastEnum
+};
+
+/////// INTERFACE ///////////////////////
+class iTileData {
+public:
+	virtual ~iTileData() {}
+
+	virtual void Destroy() = 0;
+	virtual bool IsSolid() = 0;
+	virtual eTileDataType GetType() = 0;
+
+	/*virtual tVertexVec GetVertexVec(const cVector3f &avPos, const cVector2f &avSize,
+									unsigned char acAngle)=0;*/
+};
+
+/////// IMPLEMENTATIONS OF iTILEDATA ////////////
+
+class cTileDataNormal : public iTileData {
+public:
+	cTileDataNormal(cImageManager *apImageManager, cVector2f avTileSize);
+	~cTileDataNormal();
+
+	void Destroy();
+	bool IsSolid() { return mbIsSolid; }
+	void SetIsSolid(bool abIsSolid) { mbIsSolid = abIsSolid; }
+
+	eTileCollisionType GetCollisionType() { return mCollisionType; }
+	void SetCollisionType(eTileCollisionType aCollisionType) { mCollisionType = aCollisionType; }
+
+	eTileDataType GetType() { return eTileDataType_Normal; }
+	tVertexVec *GetVertexVec(eTileRotation aRotation);
+	tUIntVec *GetIndexVec(eTileRotation aRotation);
+
+	tVertexVec *GetCollideVertexVec(eTileRotation aRotation);
+	tUIntVec *GetCollideIndexVec(eTileRotation aRotation);
+
+	iMaterial *GetMaterial() { return mpMaterial; }
+
+	cMesh2D *GetMesh() { return mpMesh; }
+
+	void SetData(cMesh2D *apMesh, iMaterial *apMaterial);
+
+	cMesh2D *GetCollideMesh();
+	void SetCollideMesh(cMesh2D *apCollideMesh);
+
+private:
+	cImageManager *mpImageManager;
+
+	tResourceImageVec mvImage;
+	iMaterial *mpMaterial;
+	tVertexVec *mvVtx[eTileRotation_LastEnum];
+	tVertexVec *mvCollideVtx[eTileRotation_LastEnum];
+	tUIntVec *mvIdx;
+	tUIntVec *mvCollideIdx;
+	cMesh2D *mpMesh;
+	cVector2f mvTileSize;
+	bool mbIsSolid;
+	eTileCollisionType mCollisionType;
+
+	cMesh2D *mpCollideMesh;
+
+	void SetMesh(cMesh2D *apMesh);
+	void SetMaterial(iMaterial *apMaterial);
+};
+};     // namespace hpl
 #endif // HPL_TILEDATA_H

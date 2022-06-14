@@ -41,54 +41,52 @@
 #ifndef HPL_AI_NODE_GENERATOR_H
 #define HPL_AI_NODE_GENERATOR_H
 
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/game/GameTypes.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 #include "hpl1/engine/physics/PhysicsWorld.h"
 #include "hpl1/engine/scene/World3D.h"
 
 namespace hpl {
 
-	class cWorld3D;
+class cWorld3D;
 
-	//-------------------------------
+//-------------------------------
 
-	class cAINodeGeneratorParams
-	{
-	public:
-		cAINodeGeneratorParams();
+class cAINodeGeneratorParams {
+public:
+	cAINodeGeneratorParams();
 
-		tString msNodeType;
+	tString msNodeType;
 
-		float mfHeightFromGround;
-		float mfMinWallDist;
+	float mfHeightFromGround;
+	float mfMinWallDist;
 
-		cVector3f mvMinPos;
-		cVector3f mvMaxPos;
+	cVector3f mvMinPos;
+	cVector3f mvMaxPos;
 
-		float mfGridSize;
-	};
-
-	//-------------------------------
-
-	class cAINodeGenerator : public iPhysicsRayCallback
-	{
-	public:
-		cAINodeGenerator();
-		~cAINodeGenerator();
-
-		void Generate(cWorld3D* apWorld,cAINodeGeneratorParams *apParams);
-
-	private:
-		bool OnIntersect(iPhysicsBody *pBody,cPhysicsRayParams *apParams);
-
-		void SaveToFile();
-		void LoadFromFile();
-
-		cAINodeGeneratorParams *mpParams;
-		cWorld3D* mpWorld;
-		tTempAiNodeList *mpNodeList;
-	};
-
+	float mfGridSize;
 };
+
+//-------------------------------
+
+class cAINodeGenerator : public iPhysicsRayCallback {
+public:
+	cAINodeGenerator();
+	~cAINodeGenerator();
+
+	void Generate(cWorld3D *apWorld, cAINodeGeneratorParams *apParams);
+
+private:
+	bool OnIntersect(iPhysicsBody *pBody, cPhysicsRayParams *apParams);
+
+	void SaveToFile();
+	void LoadFromFile();
+
+	cAINodeGeneratorParams *mpParams;
+	cWorld3D *mpWorld;
+	tTempAiNodeList *mpNodeList;
+};
+
+};     // namespace hpl
 #endif // HPL_AI_NODE_GENERATOR_H

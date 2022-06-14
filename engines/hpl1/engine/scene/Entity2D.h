@@ -42,55 +42,53 @@
 #define HPL_ENTITY2D_H
 
 #include "hpl1/engine/math/MathTypes.h"
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/scene/Entity.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	class cGrid2DObject;
+class cGrid2DObject;
 
-	class iEntity2D : public iEntity
-	{
-	public:
-		iEntity2D(tString asName);
-		virtual ~iEntity2D(){}
+class iEntity2D : public iEntity {
+public:
+	iEntity2D(tString asName);
+	virtual ~iEntity2D() {}
 
-		virtual const cRect2f& GetBoundingBox()=0;
-		virtual bool UpdateBoundingBox()=0;
+	virtual const cRect2f &GetBoundingBox() = 0;
+	virtual bool UpdateBoundingBox() = 0;
 
-		cVector3f& GetLocalPosition(){ return mvPosition; }
-		cVector3f& GetLocalRotation(){ return mvRotation; }
-		cVector3f& GetLocalScale(){ return mvScale; }
+	cVector3f &GetLocalPosition() { return mvPosition; }
+	cVector3f &GetLocalRotation() { return mvRotation; }
+	cVector3f &GetLocalScale() { return mvScale; }
 
-		cVector3f GetWorldPosition();
-		cVector3f GetWorldRotation();
-		cVector3f GetWorldScale();
+	cVector3f GetWorldPosition();
+	cVector3f GetWorldRotation();
+	cVector3f GetWorldScale();
 
-		void SetPosition(const cVector3f& avPos);
-		void SetRotation(const cVector3f& avRot);
-		void SetScale(const cVector3f& avScale);
+	void SetPosition(const cVector3f &avPos);
+	void SetRotation(const cVector3f &avRot);
+	void SetScale(const cVector3f &avScale);
 
-		cGrid2DObject* GetGrid2DObject(){ return mpGridObject;}
-		void SetGrid2DObject(cGrid2DObject* apGrid){ mpGridObject = apGrid;}
-		bool HasGrid2DObject(){ return mpGridObject!=NULL;}
+	cGrid2DObject *GetGrid2DObject() { return mpGridObject; }
+	void SetGrid2DObject(cGrid2DObject *apGrid) { mpGridObject = apGrid; }
+	bool HasGrid2DObject() { return mpGridObject != NULL; }
 
+protected:
+	cGrid2DObject *mpGridObject;
 
-	protected:
-		cGrid2DObject* mpGridObject;
+	cVector3f mvPosition;
+	cVector3f mvRotation;
+	cVector3f mvScale;
 
-		cVector3f mvPosition;
-		cVector3f mvRotation;
-		cVector3f mvScale;
+	cVector3f mvLastPosition;
+	cVector3f mvLastRotation;
+	cVector3f mvLastScale;
 
-		cVector3f mvLastPosition;
-		cVector3f mvLastRotation;
-		cVector3f mvLastScale;
-
-		cRect2f mBoundingBox;
-	};
-
-	typedef std::list<iEntity2D*> tEntity2DList;
-	typedef tEntity2DList::iterator tEntity2DListIt;
-
+	cRect2f mBoundingBox;
 };
+
+typedef std::list<iEntity2D *> tEntity2DList;
+typedef tEntity2DList::iterator tEntity2DListIt;
+
+};     // namespace hpl
 #endif // HPL_ENTITY2D_H

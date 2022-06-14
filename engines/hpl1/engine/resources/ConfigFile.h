@@ -48,41 +48,40 @@ class cFileSearcher;
 
 namespace hpl {
 
-	class cConfigFile
-	{
-	public:
-		cConfigFile(tWString asFile);
-		~cConfigFile();
+class cConfigFile {
+public:
+	cConfigFile(tWString asFile);
+	~cConfigFile();
 
-		/**
-		 * Loads data from file
-		 * \return true if loading ws ok, else false
-		 */
-		bool Load();
-		/**
-		 * Saves the data to file
-		 * \return true if loading ws ok, else false
-		 */
-		bool Save();
+	/**
+	 * Loads data from file
+	 * \return true if loading ws ok, else false
+	 */
+	bool Load();
+	/**
+	 * Saves the data to file
+	 * \return true if loading ws ok, else false
+	 */
+	bool Save();
 
-		void SetString(tString asLevel, tString asName, tString asVal);
-		void SetInt(tString asLevel, tString asName, int alVal);
-		void SetFloat(tString asLevel, tString asName, float afVal);
-		void SetBool(tString asLevel, tString asName, bool abVal);
+	void SetString(tString asLevel, tString asName, tString asVal);
+	void SetInt(tString asLevel, tString asName, int alVal);
+	void SetFloat(tString asLevel, tString asName, float afVal);
+	void SetBool(tString asLevel, tString asName, bool abVal);
 
-		tString GetString(tString asLevel, tString asName, tString asDefault);
-		int GetInt(tString asLevel, tString asName, int alDefault);
-		float GetFloat(tString asLevel, tString asName, float afDefault);
-		bool GetBool(tString asLevel, tString asName, bool abDefault);
+	tString GetString(tString asLevel, tString asName, tString asDefault);
+	int GetInt(tString asLevel, tString asName, int alDefault);
+	float GetFloat(tString asLevel, tString asName, float afDefault);
+	bool GetBool(tString asLevel, tString asName, bool abDefault);
 
-	private:
-		tWString msFile;
-		cFileSearcher *mpFileSearcher;
+private:
+	tWString msFile;
+	cFileSearcher *mpFileSearcher;
 
-		TiXmlDocument *mpXmlDoc;
+	TiXmlDocument *mpXmlDoc;
 
-		const char* GetCharArray(tString asLevel, tString asName);
-	};
-
+	const char *GetCharArray(tString asLevel, tString asName);
 };
+
+};     // namespace hpl
 #endif // HPL_CONFIGFILE_H

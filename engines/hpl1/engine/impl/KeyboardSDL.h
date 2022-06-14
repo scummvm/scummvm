@@ -41,45 +41,44 @@
 #ifndef HPL_KEYBOARD_SDL_H
 #define HPL_KEYBOARD_SDL_H
 
-#include <vector>
-#include <list>
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/input/Keyboard.h"
+#include "hpl1/engine/system/SystemTypes.h"
+#include <list>
+#include <vector>
 
 namespace hpl {
 
 #define MAX_KEY_PRESSES (20)
 
-	class cLowLevelInputSDL;
+class cLowLevelInputSDL;
 
-	class cKeyboardSDL : public iKeyboard
-	{
-	public:
-		cKeyboardSDL(cLowLevelInputSDL *apLowLevelInputSDL);
+class cKeyboardSDL : public iKeyboard {
+public:
+	cKeyboardSDL(cLowLevelInputSDL *apLowLevelInputSDL);
 
-		void Update();
+	void Update();
 
-		//Keyboard specific
-		bool KeyIsDown(eKey aKey);
-		cKeyPress GetKey();
-		bool KeyIsPressed();
-		eKeyModifier GetModifier();
-		tString KeyToString(eKey);
-		eKey StringToKey(tString);
+	// Keyboard specific
+	bool KeyIsDown(eKey aKey);
+	cKeyPress GetKey();
+	bool KeyIsPressed();
+	eKeyModifier GetModifier();
+	tString KeyToString(eKey);
+	eKey StringToKey(tString);
 
-	private:
-		eKey SDLToKey(int alKey);
-		void ClearKeyList();
-		eKey AsciiToKey(int alChar);
-		eKeyModifier mModifier;
+private:
+	eKey SDLToKey(int alKey);
+	void ClearKeyList();
+	eKey AsciiToKey(int alChar);
+	eKeyModifier mModifier;
 
-		std::vector<bool> mvKeyArray;
+	std::vector<bool> mvKeyArray;
 
-		std::list<cKeyPress> mlstKeysPressed;
+	std::list<cKeyPress> mlstKeysPressed;
 
-		cLowLevelInputSDL *mpLowLevelInputSDL;
-	};
-
+	cLowLevelInputSDL *mpLowLevelInputSDL;
 };
+
+}; // namespace hpl
 
 #endif // HPL_KEYBOARD_SDL_H

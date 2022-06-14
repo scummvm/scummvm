@@ -43,31 +43,30 @@
 
 namespace hpl {
 
-	class iMouse;
-	class iKeyboard;
+class iMouse;
+class iKeyboard;
 
-	class iLowLevelInput
-	{
-	public:
-		virtual ~iLowLevelInput(){}
+class iLowLevelInput {
+public:
+	virtual ~iLowLevelInput() {}
 
-		/**
-		 * Lock all input to current window.
-		 * \param abX
-		 * \return
-		 */
-		virtual void LockInput(bool abX)=0;
-		/**
-		 * Called by cInput
-		 */
-		virtual void BeginInputUpdate()=0;
-		/**
-		 * called by cInput
-		 */
-		virtual void EndInputUpdate()=0;
+	/**
+	 * Lock all input to current window.
+	 * \param abX
+	 * \return
+	 */
+	virtual void LockInput(bool abX) = 0;
+	/**
+	 * Called by cInput
+	 */
+	virtual void BeginInputUpdate() = 0;
+	/**
+	 * called by cInput
+	 */
+	virtual void EndInputUpdate() = 0;
 
-		virtual iMouse* CreateMouse()=0;
-		virtual iKeyboard* CreateKeyboard()=0;
-	};
+	virtual iMouse *CreateMouse() = 0;
+	virtual iKeyboard *CreateKeyboard() = 0;
 };
+};     // namespace hpl
 #endif // HPL_LOWLEVELINPUT_H

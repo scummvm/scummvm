@@ -41,85 +41,83 @@
 #ifndef HPL_MATERIAL_BASE_LIGHT_H
 #define HPL_MATERIAL_BASE_LIGHT_H
 
-#include <vector>
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/scene/Light3D.h"
+#include <vector>
 
-enum eBaseLightProgram
-{
-	eBaseLightProgram_Point1=0,
-	eBaseLightProgram_Point2=1,
-	eBaseLightProgram_Point3=2,
-	eBaseLightProgram_Spot1=3,
-	eBaseLightProgram_Spot2=4,
-	eBaseLightProgram_Spot3=5,
+enum eBaseLightProgram {
+	eBaseLightProgram_Point1 = 0,
+	eBaseLightProgram_Point2 = 1,
+	eBaseLightProgram_Point3 = 2,
+	eBaseLightProgram_Spot1 = 3,
+	eBaseLightProgram_Spot2 = 4,
+	eBaseLightProgram_Spot3 = 5,
 	eBaseLightProgram_LastEnum = 6
 };
 
 namespace hpl {
 
-	class iMaterial_BaseLight : public iMaterial
-	{
-	public:
-		iMaterial_BaseLight(const tString& asLightVertexProgram,
-							const tString& asLightFragmentProgram,
+class iMaterial_BaseLight : public iMaterial {
+public:
+	iMaterial_BaseLight(const tString &asLightVertexProgram,
+						const tString &asLightFragmentProgram,
 
-			const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
+						const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+						cImageManager *apImageManager, cTextureManager *apTextureManager,
+						cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+						eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
 
-		virtual ~iMaterial_BaseLight();
+	virtual ~iMaterial_BaseLight();
 
-		tTextureTypeList GetTextureTypes();
+	tTextureTypeList GetTextureTypes();
 
-		bool UsesType(eMaterialRenderType aType);
+	bool UsesType(eMaterialRenderType aType);
 
-		iGpuProgram* GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	iGpuProgram *GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
-		iGpuProgram* GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		iMaterialProgramSetup * GetFragmentProgramSetup(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	iGpuProgram *GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	iMaterialProgramSetup *GetFragmentProgramSetup(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
-		eMaterialAlphaMode GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		eMaterialBlendMode GetBlendMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		eMaterialChannelMode GetChannelMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	eMaterialAlphaMode GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	eMaterialBlendMode GetBlendMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	eMaterialChannelMode GetChannelMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
-		iTexture* GetTexture(int alUnit,eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		eMaterialBlendMode GetTextureBlend(int alUnit,eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	iTexture *GetTexture(int alUnit, eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	eMaterialBlendMode GetTextureBlend(int alUnit, eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
-		int GetNumOfPasses(eMaterialRenderType aType, iLight3D *apLight);
+	int GetNumOfPasses(eMaterialRenderType aType, iLight3D *apLight);
 
-		//////////////////////////////////////////////////////////////////
-		// Old and worthless stuff, only used by 2D renderer
-		void Compile(){}
-		bool StartRendering(eMaterialRenderType aType,iCamera* apCam,iLight *pLight){return false;}
-		void EndRendering(eMaterialRenderType aType){}
-		tVtxBatchFlag GetBatchFlags(eMaterialRenderType aType){return 0;}
-		bool NextPass(eMaterialRenderType aType){return false;}
-		bool HasMultiplePasses(eMaterialRenderType aType){return false;}
-		eMaterialType GetType(eMaterialRenderType aType){ return eMaterialType_Diffuse;}
-		void EditVertexes(eMaterialRenderType aType, iCamera* apCam, iLight *pLight,
-			tVertexVec *apVtxVec,cVector3f *apTransform,unsigned int alIndexAdd){}
+	//////////////////////////////////////////////////////////////////
+	// Old and worthless stuff, only used by 2D renderer
+	void Compile() {}
+	bool StartRendering(eMaterialRenderType aType, iCamera *apCam, iLight *pLight) { return false; }
+	void EndRendering(eMaterialRenderType aType) {}
+	tVtxBatchFlag GetBatchFlags(eMaterialRenderType aType) { return 0; }
+	bool NextPass(eMaterialRenderType aType) { return false; }
+	bool HasMultiplePasses(eMaterialRenderType aType) { return false; }
+	eMaterialType GetType(eMaterialRenderType aType) { return eMaterialType_Diffuse; }
+	void EditVertexes(eMaterialRenderType aType, iCamera *apCam, iLight *pLight,
+					  tVertexVec *apVtxVec, cVector3f *apTransform, unsigned int alIndexAdd) {}
 
-	protected:
-		iTexture *mpNormalizationMap;
-		iTexture *mpSpotNegativeRejectMap;
+protected:
+	iTexture *mpNormalizationMap;
+	iTexture *mpSpotNegativeRejectMap;
 
-		bool mbUsesTwoPassSpot;
+	bool mbUsesTwoPassSpot;
 
-		//properties to set
-		bool mbUseSpecular;
-		bool mbUseNormalMap;
-		bool mbUseColorSpecular;
+	// properties to set
+	bool mbUseSpecular;
+	bool mbUseNormalMap;
+	bool mbUseColorSpecular;
 
-		iGpuProgram* mpSimpleFP;
-		iGpuProgram* mpAmbientFP;
+	iGpuProgram *mpSimpleFP;
+	iGpuProgram *mpAmbientFP;
 
-		iGpuProgram* mvVtxPrograms[eBaseLightProgram_LastEnum];
-		iGpuProgram* mvFragPrograms[eBaseLightProgram_LastEnum];
-	};
-
+	iGpuProgram *mvVtxPrograms[eBaseLightProgram_LastEnum];
+	iGpuProgram *mvFragPrograms[eBaseLightProgram_LastEnum];
 };
+
+};     // namespace hpl
 #endif // HPL_MATERIAL_BASE_LIGHT_H

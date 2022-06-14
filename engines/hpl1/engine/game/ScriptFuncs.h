@@ -45,48 +45,43 @@
 
 namespace hpl {
 
-	class cGraphics;
-	class cResources;
-	class cSystem;
-	class cSound;
-	class cScene;
-	class cInput;
-	class cGame;
+class cGraphics;
+class cResources;
+class cSystem;
+class cSound;
+class cScene;
+class cInput;
+class cGame;
 
+//---------------------------------------
 
+class cScriptJointCallback : public iPhysicsJointCallback {
+public:
+	cScriptJointCallback(cScene *apScene);
 
-	//---------------------------------------
+	void OnMinLimit(iPhysicsJoint *apJoint);
+	void OnMaxLimit(iPhysicsJoint *apJoint);
 
-	class cScriptJointCallback : public iPhysicsJointCallback
-	{
-	public:
-		cScriptJointCallback(cScene *apScene);
+	bool IsScript() { return true; }
 
-		void OnMinLimit(iPhysicsJoint *apJoint);
-		void OnMaxLimit(iPhysicsJoint *apJoint);
+	tString msMaxFunc;
+	tString msMinFunc;
 
-		bool IsScript(){ return true;}
-
-		tString msMaxFunc;
-		tString msMinFunc;
-
-		cScene *mpScene;
-	};
-
-	//---------------------------------------
-
-	class cScriptFuncs
-	{
-	public:
-		static void Init(	cGraphics* apGraphics,
-					cResources *apResources,
-					cSystem *apSystem,
-					cInput *apInput,
-					cScene *apScene,
-					cSound *apSound,
-					cGame *apGame
-					);
-	};
-
+	cScene *mpScene;
 };
+
+//---------------------------------------
+
+class cScriptFuncs {
+public:
+	static void Init(cGraphics *apGraphics,
+					 cResources *apResources,
+					 cSystem *apSystem,
+					 cInput *apInput,
+					 cScene *apScene,
+					 cSound *apSound,
+					 cGame *apGame);
+};
+
+};     // namespace hpl
 #endif // HPL_SCRIPT_FUNCS_H

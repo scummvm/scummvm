@@ -45,79 +45,77 @@
 
 namespace hpl {
 
-	class iAction
-	{
-	public:
-		iAction(tString asName);
-		virtual ~iAction(){}
+class iAction {
+public:
+	iAction(tString asName);
+	virtual ~iAction() {}
 
-		/**
-		 *
-		 * \return returns true if the action just was triggered, else false
-		 */
-		bool WasTriggerd();
+	/**
+	 *
+	 * \return returns true if the action just was triggered, else false
+	 */
+	bool WasTriggerd();
 
-		/**
-		 *
-		 * \return true if the action just became triggered, else false
-		 */
-		bool BecameTriggerd();
+	/**
+	 *
+	 * \return true if the action just became triggered, else false
+	 */
+	bool BecameTriggerd();
 
-		/**
-		*
-		* \return true if the action just was double triggered (double clicked), else false
-		*/
-		bool DoubleTriggerd(float afLimit);
+	/**
+	 *
+	 * \return true if the action just was double triggered (double clicked), else false
+	 */
+	bool DoubleTriggerd(float afLimit);
 
-		/**
-		 *Update the Action, called by cInput
-		 */
-		void Update(float afTimeStep);
+	/**
+	 *Update the Action, called by cInput
+	 */
+	void Update(float afTimeStep);
 
-		/**
-		 *
-		 * \return the name of the action.
-		 */
-		tString GetName();
+	/**
+	 *
+	 * \return the name of the action.
+	 */
+	tString GetName();
 
-		/**
-		 * Update special logic for the action. Normally empty
-		 */
-		virtual void UpdateLogic(float afTimeStep);
+	/**
+	 * Update special logic for the action. Normally empty
+	 */
+	virtual void UpdateLogic(float afTimeStep);
 
+	/**
+	 * Filled in by the class that inherits from Action.
+	 * \return true if the action is being triggered
+	 */
+	virtual bool IsTriggerd() = 0;
 
-		/**
-		 * Filled in by the class that inherits from Action.
-		 * \return true if the action is being triggered
-		 */
-		virtual bool IsTriggerd()=0;
+	/**
+	 *
+	 * \return A value from the input, ie the relative mouse x position.
+	 */
+	virtual float GetValue() = 0;
 
-		/**
-		 *
-		 * \return A value from the input, ie the relative mouse x position.
-		 */
-		virtual float GetValue()=0;
+	/**
+	 * The name of the input, ie for keyboard the name of the key is returned.
+	 */
+	virtual tString GetInputName() = 0;
 
-		/**
-		 * The name of the input, ie for keyboard the name of the key is returned.
-		 */
-		virtual tString GetInputName()=0;
+	/**
+	 * The name of the input type.
+	 */
+	virtual tString GetInputType() = 0;
 
-		/**
-		 * The name of the input type.
-		 */
-		virtual tString GetInputType()=0;
+private:
+	tString msName;
 
-	private:
-		tString msName;
+	bool mbBecameTriggerd;
+	bool mbIsTriggerd;
 
-		bool mbBecameTriggerd;
-		bool mbIsTriggerd;
+	bool mbTriggerDown;
 
-		bool mbTriggerDown;
-
-		double mfTimeCount;
-	};
-
+	double mfTimeCount;
 };
+
+};     // namespace hpl
 #endif // HPL_ACTION_H

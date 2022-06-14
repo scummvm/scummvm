@@ -46,39 +46,44 @@
 
 namespace hpl {
 
-	class iLowLevelGraphics;
+class iLowLevelGraphics;
 
-	class cCamera2D : public iCamera
-	{
-	public:
-		cCamera2D(unsigned int alW,unsigned int alH);
-		~cCamera2D();
+class cCamera2D : public iCamera {
+public:
+	cCamera2D(unsigned int alW, unsigned int alH);
+	~cCamera2D();
 
-		const cVector3f& GetPosition()const{return mvPosition;}
-		cVector3f GetEyePosition();
-		void SetPosition(cVector3f avPos){mvPosition = avPos;}
+	const cVector3f &GetPosition() const { return mvPosition; }
+	cVector3f GetEyePosition();
+	void SetPosition(cVector3f avPos) { mvPosition = avPos; }
 
-		void SetXY(cVector2f avPos){mvPosition.x=avPos.x;mvPosition.y=avPos.y;}
-		void SetZ(float afZ){mvPosition.z = afZ;}
-		void MoveXY(cVector2f avAdd){mvPosition.x+=avAdd.x;mvPosition.y+=avAdd.y;}
-		void MoveZ(float afZ){mvPosition.z += afZ;}
+	void SetXY(cVector2f avPos) {
+		mvPosition.x = avPos.x;
+		mvPosition.y = avPos.y;
+	}
+	void SetZ(float afZ) { mvPosition.z = afZ; }
+	void MoveXY(cVector2f avAdd) {
+		mvPosition.x += avAdd.x;
+		mvPosition.y += avAdd.y;
+	}
+	void MoveZ(float afZ) { mvPosition.z += afZ; }
 
-		void GetClipRect(cRect2f &aRect);
+	void GetClipRect(cRect2f &aRect);
 
-		void SetModelViewMatrix(iLowLevelGraphics* apLowLevel);
-		void SetProjectionMatrix(iLowLevelGraphics* apLowLevel);
+	void SetModelViewMatrix(iLowLevelGraphics *apLowLevel);
+	void SetProjectionMatrix(iLowLevelGraphics *apLowLevel);
 
-		eCameraType GetType(){ return eCameraType_2D;}
+	eCameraType GetType() { return eCameraType_2D; }
 
-	private:
-		cVector3f mvPosition;
-		float mfAngle;
-		float mfZMin;
-		float mfZMax;
-		float mfFOV;
+private:
+	cVector3f mvPosition;
+	float mfAngle;
+	float mfZMin;
+	float mfZMax;
+	float mfFOV;
 
-		cVector2l mvClipArea;
-	};
-
+	cVector2l mvClipArea;
 };
+
+};     // namespace hpl
 #endif // HPL_CAMERA2D_H

@@ -42,109 +42,93 @@
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cMaterial_DiffuseAlpha2D::cMaterial_DiffuseAlpha2D(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-		cImageManager* apImageManager, cTextureManager *apTextureManager,
-		cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-		eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
-	: iMaterial(asName,apLowLevelGraphics,apImageManager,apTextureManager,apRenderer,apProgramManager,
-				aPicture,apRenderer3D)
-	{
-		mbIsTransperant = true;
-		mbIsGlowing= true;//Set to false later on
-		mType = eMaterialType_DiffuseAlpha;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cMaterial_DiffuseAlpha2D::~cMaterial_DiffuseAlpha2D()
-	{
-
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	void cMaterial_DiffuseAlpha2D::Compile()
-	{
-
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cMaterial_DiffuseAlpha2D::StartRendering(eMaterialRenderType aType,iCamera* apCam,iLight *pLight)
-	{
-		if(aType == eMaterialRenderType_Diffuse)
-		{
-			mpLowLevelGraphics->SetBlendActive(true);
-			mpLowLevelGraphics->SetBlendFunc(eBlendFunc_SrcAlpha, eBlendFunc_OneMinusSrcAlpha);
-
-			mpLowLevelGraphics->SetTexture(0, GetTexture(eMaterialTexture_Diffuse));
-			//mpLowLevelGraphics->SetTextureParam(eTextureParam_ColorOp1,eTextureOp_Alpha);
-			//mpLowLevelGraphics->SetTextureParam(eTextureParam_ColorFunc, eTextureFunc_Modulate);
-
-			return true;
-		}
-		return false;
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cMaterial_DiffuseAlpha2D::EndRendering(eMaterialRenderType aType)
-	{
-		if(aType == eMaterialRenderType_Diffuse)
-		{
-			//mpLowLevelGraphics->SetTextureParam(eTextureParam_ColorOp1,eTextureOp_Color);
-			//mpLowLevelGraphics->SetTextureParam(eTextureParam_ColorFunc, eTextureFunc_Modulate);
-		}
-
-	}
-
-	//-----------------------------------------------------------------------
-
-	tVtxBatchFlag cMaterial_DiffuseAlpha2D::GetBatchFlags(eMaterialRenderType aType)
-	{
-		return eVtxBatchFlag_Position |	eVtxBatchFlag_Texture0 | eVtxBatchFlag_Color0;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cMaterial_DiffuseAlpha2D::NextPass(eMaterialRenderType aType)
-	{
-		return false;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cMaterial_DiffuseAlpha2D::HasMultiplePasses(eMaterialRenderType aType)
-	{
-		return false;
-	}
-
-	//-----------------------------------------------------------------------
-
-	eMaterialType cMaterial_DiffuseAlpha2D::GetType(eMaterialRenderType aType)
-	{
-		return mType;
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cMaterial_DiffuseAlpha2D::EditVertexes(eMaterialRenderType aType, iCamera* apCam, iLight *pLight,
-		tVertexVec *apVtxVec,cVector3f *apTransform,unsigned int alIndexAdd)
-	{
-
-	}
-
-	//-----------------------------------------------------------------------
+cMaterial_DiffuseAlpha2D::cMaterial_DiffuseAlpha2D(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+												   cImageManager *apImageManager, cTextureManager *apTextureManager,
+												   cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+												   eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
+	: iMaterial(asName, apLowLevelGraphics, apImageManager, apTextureManager, apRenderer, apProgramManager,
+				aPicture, apRenderer3D) {
+	mbIsTransperant = true;
+	mbIsGlowing = true; // Set to false later on
+	mType = eMaterialType_DiffuseAlpha;
 }
+
+//-----------------------------------------------------------------------
+
+cMaterial_DiffuseAlpha2D::~cMaterial_DiffuseAlpha2D() {
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+void cMaterial_DiffuseAlpha2D::Compile() {
+}
+
+//-----------------------------------------------------------------------
+
+bool cMaterial_DiffuseAlpha2D::StartRendering(eMaterialRenderType aType, iCamera *apCam, iLight *pLight) {
+	if (aType == eMaterialRenderType_Diffuse) {
+		mpLowLevelGraphics->SetBlendActive(true);
+		mpLowLevelGraphics->SetBlendFunc(eBlendFunc_SrcAlpha, eBlendFunc_OneMinusSrcAlpha);
+
+		mpLowLevelGraphics->SetTexture(0, GetTexture(eMaterialTexture_Diffuse));
+		// mpLowLevelGraphics->SetTextureParam(eTextureParam_ColorOp1,eTextureOp_Alpha);
+		// mpLowLevelGraphics->SetTextureParam(eTextureParam_ColorFunc, eTextureFunc_Modulate);
+
+		return true;
+	}
+	return false;
+}
+
+//-----------------------------------------------------------------------
+
+void cMaterial_DiffuseAlpha2D::EndRendering(eMaterialRenderType aType) {
+	if (aType == eMaterialRenderType_Diffuse) {
+		// mpLowLevelGraphics->SetTextureParam(eTextureParam_ColorOp1,eTextureOp_Color);
+		// mpLowLevelGraphics->SetTextureParam(eTextureParam_ColorFunc, eTextureFunc_Modulate);
+	}
+}
+
+//-----------------------------------------------------------------------
+
+tVtxBatchFlag cMaterial_DiffuseAlpha2D::GetBatchFlags(eMaterialRenderType aType) {
+	return eVtxBatchFlag_Position | eVtxBatchFlag_Texture0 | eVtxBatchFlag_Color0;
+}
+
+//-----------------------------------------------------------------------
+
+bool cMaterial_DiffuseAlpha2D::NextPass(eMaterialRenderType aType) {
+	return false;
+}
+
+//-----------------------------------------------------------------------
+
+bool cMaterial_DiffuseAlpha2D::HasMultiplePasses(eMaterialRenderType aType) {
+	return false;
+}
+
+//-----------------------------------------------------------------------
+
+eMaterialType cMaterial_DiffuseAlpha2D::GetType(eMaterialRenderType aType) {
+	return mType;
+}
+
+//-----------------------------------------------------------------------
+
+void cMaterial_DiffuseAlpha2D::EditVertexes(eMaterialRenderType aType, iCamera *apCam, iLight *pLight,
+											tVertexVec *apVtxVec, cVector3f *apTransform, unsigned int alIndexAdd) {
+}
+
+//-----------------------------------------------------------------------
+} // namespace hpl

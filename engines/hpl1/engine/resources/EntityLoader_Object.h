@@ -41,9 +41,9 @@
 #ifndef HPL_ENTITY_LOADER_OBJECT_H
 #define HPL_ENTITY_LOADER_OBJECT_H
 
-#include "hpl1/engine/system/SystemTypes.h"
-#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
+#include "hpl1/engine/math/MathTypes.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 #include "hpl1/engine/resources/Resources.h"
 
@@ -51,57 +51,56 @@ class TiXmlElement;
 
 namespace hpl {
 
-	class iPhysicsBody;
-	class iPhysicsJoint;
-	class iPhysicsWorld;
-	class cMesh;
-	class cMeshEntity;
-	class cParticleSystem3D;
-	class cBillboard;
-	class cBeam;
-	class cSoundEntity;
-	class iLight3D;
-	class iHapticShape;
+class iPhysicsBody;
+class iPhysicsJoint;
+class iPhysicsWorld;
+class cMesh;
+class cMeshEntity;
+class cParticleSystem3D;
+class cBillboard;
+class cBeam;
+class cSoundEntity;
+class iLight3D;
+class iHapticShape;
 
-	class cEntityLoader_Object : public iEntity3DLoader
-	{
-	public:
-		cEntityLoader_Object(const tString &asName) : iEntity3DLoader(asName){}
-		virtual ~cEntityLoader_Object(){}
+class cEntityLoader_Object : public iEntity3DLoader {
+public:
+	cEntityLoader_Object(const tString &asName) : iEntity3DLoader(asName) {}
+	virtual ~cEntityLoader_Object() {}
 
-		iEntity3D* Load(const tString &asName, TiXmlElement *apRootElem, const cMatrixf &a_mtxTransform,
+	iEntity3D *Load(const tString &asName, TiXmlElement *apRootElem, const cMatrixf &a_mtxTransform,
 					cWorld3D *apWorld, const tString &asFileName, bool abLoadReferences);
 
-	protected:
-		virtual void BeforeLoad(TiXmlElement *apRootElem, const cMatrixf &a_mtxTransform,cWorld3D *apWorld){};
-		virtual void AfterLoad(TiXmlElement *apRootElem, const cMatrixf &a_mtxTransform,cWorld3D *apWorld){};
+protected:
+	virtual void BeforeLoad(TiXmlElement *apRootElem, const cMatrixf &a_mtxTransform, cWorld3D *apWorld){};
+	virtual void AfterLoad(TiXmlElement *apRootElem, const cMatrixf &a_mtxTransform, cWorld3D *apWorld){};
 
-		void SetBodyProperties(iPhysicsBody *apBody, TiXmlElement *apPhysicsElem);
-		void SetJointProperties(iPhysicsJoint *apJoint, TiXmlElement *apJointElem,cWorld3D *apWorld);
+	void SetBodyProperties(iPhysicsBody *apBody, TiXmlElement *apPhysicsElem);
+	void SetJointProperties(iPhysicsJoint *apJoint, TiXmlElement *apJointElem, cWorld3D *apWorld);
 
-		void LoadController(iPhysicsJoint *apJoint,iPhysicsWorld *apPhysicsWorld, TiXmlElement *apElem);
+	void LoadController(iPhysicsJoint *apJoint, iPhysicsWorld *apPhysicsWorld, TiXmlElement *apElem);
 
-		eAnimationEventType GetAnimationEventType(const char* apString);
+	eAnimationEventType GetAnimationEventType(const char *apString);
 
-		tString msSubType;
-		tString msName;
+	tString msSubType;
+	tString msName;
 
-		tString msFileName;
+	tString msFileName;
 
-		std::vector<iPhysicsBody*> mvBodies;
-		std::vector<iPhysicsJoint*> mvJoints;
+	std::vector<iPhysicsBody *> mvBodies;
+	std::vector<iPhysicsJoint *> mvJoints;
 
-		std::vector<iHapticShape*> mvHapticShapes;
+	std::vector<iHapticShape *> mvHapticShapes;
 
-		std::vector<iLight3D*> mvLights;
-		std::vector<cParticleSystem3D*> mvParticleSystems;
-		std::vector<cBillboard*> mvBillboards;
-		std::vector<cBeam*> mvBeams;
-		std::vector<cSoundEntity*> mvSoundEntities;
+	std::vector<iLight3D *> mvLights;
+	std::vector<cParticleSystem3D *> mvParticleSystems;
+	std::vector<cBillboard *> mvBillboards;
+	std::vector<cBeam *> mvBeams;
+	std::vector<cSoundEntity *> mvSoundEntities;
 
-		cMeshEntity *mpEntity;
-		cMesh *mpMesh;
-	};
-
+	cMeshEntity *mpEntity;
+	cMesh *mpMesh;
 };
+
+};     // namespace hpl
 #endif // HPL_ENTITY_LOADER_OBJECT_H

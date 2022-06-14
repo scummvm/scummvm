@@ -43,85 +43,82 @@
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cTileLayer::cTileLayer(unsigned int alW, unsigned int alH, bool abCollision,bool abLit,
-							eTileLayerType aType,float afZ)
-	{
-		mvSize = cVector2l(alW, alH);
-		mbCollision = abCollision;
-		mbLit = abLit;
-		mType = aType;
-		mfZ = afZ;
+cTileLayer::cTileLayer(unsigned int alW, unsigned int alH, bool abCollision, bool abLit,
+					   eTileLayerType aType, float afZ) {
+	mvSize = cVector2l(alW, alH);
+	mbCollision = abCollision;
+	mbLit = abLit;
+	mType = aType;
+	mfZ = afZ;
 
-		mvTile.resize(alW*alH);
-		mvTile.assign(mvTile.size(),NULL);
-	}
-
-	//-----------------------------------------------------------------------
-
-	cTileLayer::~cTileLayer()
-	{
-		Log(" Deleting tilelayer.\n");
-
-		for(int i=0;i<(int)mvTile.size();i++)
-			if(mvTile[i])hplDelete(mvTile[i]);
-
-		mvTile.clear();
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	bool cTileLayer::SetTile(unsigned int alX,unsigned int alY,cTile *aVal)
-	{
-		int lNum = alY*mvSize.x+alX;
-		if(lNum>=(int)mvTile.size()) return false;
-
-		if(aVal == NULL)
-		{
-			if(mvTile[lNum])hplDelete(mvTile[lNum]);
-			mvTile[lNum] = NULL;
-		}
-		else
-		{
-			if(mvTile[lNum]==NULL)
-				mvTile[lNum] = aVal;
-			else
-				*mvTile[lNum] = *aVal;
-		}
-
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cTile* cTileLayer::GetAt(int alX, int alY)
-	{
-		if(alX<0 || alX>=mvSize.x || alY<0 || alY>=mvSize.y) return NULL;
-
-		int lNum = alY*mvSize.x+alX;
-		if(lNum>=(int)mvTile.size())return NULL;
-
-		return  mvTile[lNum];
-	}
-
-	//-----------------------------------------------------------------------
-
-	cTile* cTileLayer::GetAt(int alNum)
-	{
-		return  mvTile[alNum];
-	}
-
-	//-----------------------------------------------------------------------
-
+	mvTile.resize(alW * alH);
+	mvTile.assign(mvTile.size(), NULL);
 }
+
+//-----------------------------------------------------------------------
+
+cTileLayer::~cTileLayer() {
+	Log(" Deleting tilelayer.\n");
+
+	for (int i = 0; i < (int)mvTile.size(); i++)
+		if (mvTile[i])
+			hplDelete(mvTile[i]);
+
+	mvTile.clear();
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+bool cTileLayer::SetTile(unsigned int alX, unsigned int alY, cTile *aVal) {
+	int lNum = alY * mvSize.x + alX;
+	if (lNum >= (int)mvTile.size())
+		return false;
+
+	if (aVal == NULL) {
+		if (mvTile[lNum])
+			hplDelete(mvTile[lNum]);
+		mvTile[lNum] = NULL;
+	} else {
+		if (mvTile[lNum] == NULL)
+			mvTile[lNum] = aVal;
+		else
+			*mvTile[lNum] = *aVal;
+	}
+
+	return true;
+}
+
+//-----------------------------------------------------------------------
+
+cTile *cTileLayer::GetAt(int alX, int alY) {
+	if (alX < 0 || alX >= mvSize.x || alY < 0 || alY >= mvSize.y)
+		return NULL;
+
+	int lNum = alY * mvSize.x + alX;
+	if (lNum >= (int)mvTile.size())
+		return NULL;
+
+	return mvTile[lNum];
+}
+
+//-----------------------------------------------------------------------
+
+cTile *cTileLayer::GetAt(int alNum) {
+	return mvTile[alNum];
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

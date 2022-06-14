@@ -41,67 +41,65 @@
 #ifndef HPL_MOUSE_SDL_H
 #define HPL_MOUSE_SDL_H
 
-#include <vector>
 #include "hpl1/engine/input/Mouse.h"
-
+#include <vector>
 
 namespace hpl {
 
-	class iLowLevelGraphics;
-	class cLowLevelInputSDL;
+class iLowLevelGraphics;
+class cLowLevelInputSDL;
 
-	class cMouseSDL : public iMouse
-	{
-	public:
-		cMouseSDL(cLowLevelInputSDL *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics);
+class cMouseSDL : public iMouse {
+public:
+	cMouseSDL(cLowLevelInputSDL *apLowLevelInputSDL, iLowLevelGraphics *apLowLevelGraphics);
 
-		bool ButtonIsDown(eMButton);
+	bool ButtonIsDown(eMButton);
 
-		void Update();
+	void Update();
 
-		/**
-		* \todo Fix so it works and handles screen size
-		* \return
-		*/
-		cVector2f GetAbsPosition();
+	/**
+	 * \todo Fix so it works and handles screen size
+	 * \return
+	 */
+	cVector2f GetAbsPosition();
 
-		/**
-		 * \todo Fix so it works and handles screen size
-		 * \return
-		 */
-		cVector2f GetRelPosition();
+	/**
+	 * \todo Fix so it works and handles screen size
+	 * \return
+	 */
+	cVector2f GetRelPosition();
 
-		void Reset();
+	void Reset();
 
-		/**
-		 * Sets how much smoothening there will be in the RelPosition.
-		 * The percentages are just ratios, so min/max 1/10 equals 0.1/1
-		 * \param afMinPercent The influence of the oldest value
-		 * \param afMaxPercent The influence of the newest value
-		 * \param alBufferSize The number of values recorded
-		 */
-		void SetSmoothProperties(float afMinPercent,
-			float afMaxPercent,unsigned int alBufferSize);
+	/**
+	 * Sets how much smoothening there will be in the RelPosition.
+	 * The percentages are just ratios, so min/max 1/10 equals 0.1/1
+	 * \param afMinPercent The influence of the oldest value
+	 * \param afMaxPercent The influence of the newest value
+	 * \param alBufferSize The number of values recorded
+	 */
+	void SetSmoothProperties(float afMinPercent,
+							 float afMaxPercent, unsigned int alBufferSize);
 
-	private:
-		cVector2f mvMouseAbsPos;
-		cVector2f mvMouseRelPos;
+private:
+	cVector2f mvMouseAbsPos;
+	cVector2f mvMouseRelPos;
 
-		std::vector<bool> mvMButtonArray;
+	std::vector<bool> mvMButtonArray;
 
-		tVector2fList mlstMouseCoord;
+	tVector2fList mlstMouseCoord;
 
-		float mfMaxPercent;
-		float mfMinPercent;
-		int mlBufferSize;
+	float mfMaxPercent;
+	float mfMinPercent;
+	int mlBufferSize;
 
-		cLowLevelInputSDL *mpLowLevelInputSDL;
-		iLowLevelGraphics *mpLowLevelGraphics;
+	cLowLevelInputSDL *mpLowLevelInputSDL;
+	iLowLevelGraphics *mpLowLevelGraphics;
 
-		bool mbWheelUpMoved;
-		bool mbWheelDownMoved;
-	};
-
+	bool mbWheelUpMoved;
+	bool mbWheelDownMoved;
 };
+
+}; // namespace hpl
 
 #endif // HPL_MOUSE_SDL_H

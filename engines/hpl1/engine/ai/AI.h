@@ -41,31 +41,30 @@
 #ifndef HPL_AI_H
 #define HPL_AI_H
 
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/game/GameTypes.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 #include "hpl1/engine/game/Updateable.h"
 
 namespace hpl {
 
-	class cAINodeGenerator;
+class cAINodeGenerator;
 
-	class cAI : public iUpdateable
-	{
-	public:
-		cAI();
-		~cAI();
+class cAI : public iUpdateable {
+public:
+	cAI();
+	~cAI();
 
-		void Reset();
-		void Update(float afTimeStep);
+	void Reset();
+	void Update(float afTimeStep);
 
-		void Init();
+	void Init();
 
-		cAINodeGenerator *GetNodeGenerator(){ return mpAINodeGenerator;}
+	cAINodeGenerator *GetNodeGenerator() { return mpAINodeGenerator; }
 
-	private:
-		cAINodeGenerator *mpAINodeGenerator;
-	};
-
+private:
+	cAINodeGenerator *mpAINodeGenerator;
 };
+
+};     // namespace hpl
 #endif // HPL_AI_H

@@ -45,65 +45,62 @@
 
 namespace hpl {
 
-	class cMaterial_Flat : public iMaterial
-	{
-	public:
-		cMaterial_Flat(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
+class cMaterial_Flat : public iMaterial {
+public:
+	cMaterial_Flat(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+				   cImageManager *apImageManager, cTextureManager *apTextureManager,
+				   cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+				   eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
 
-		virtual ~cMaterial_Flat();
+	virtual ~cMaterial_Flat();
 
-		tTextureTypeList GetTextureTypes();
+	tTextureTypeList GetTextureTypes();
 
-		bool UsesType(eMaterialRenderType aType);
+	bool UsesType(eMaterialRenderType aType);
 
-		iGpuProgram* GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	iGpuProgram *GetVertexProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	bool VertexProgramUsesLight(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	bool VertexProgramUsesEye(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
-		iGpuProgram* GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	iGpuProgram *GetFragmentProgram(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
-		eMaterialAlphaMode GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		eMaterialBlendMode GetBlendMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		eMaterialChannelMode GetChannelMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	eMaterialAlphaMode GetAlphaMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	eMaterialBlendMode GetBlendMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	eMaterialChannelMode GetChannelMode(eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
-		iTexture* GetTexture(int alUnit,eMaterialRenderType aType, int alPass, iLight3D *apLight);
-		eMaterialBlendMode GetTextureBlend(int alUnit,eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	iTexture *GetTexture(int alUnit, eMaterialRenderType aType, int alPass, iLight3D *apLight);
+	eMaterialBlendMode GetTextureBlend(int alUnit, eMaterialRenderType aType, int alPass, iLight3D *apLight);
 
-		int GetNumOfPasses(eMaterialRenderType aType, iLight3D *apLight);
+	int GetNumOfPasses(eMaterialRenderType aType, iLight3D *apLight);
 
-		//////////////////////////////////////////////////////////////////
-		// Old and worthless stuff, only used by 2D renderer
-		void Compile(){}
-		bool StartRendering(eMaterialRenderType aType,iCamera* apCam,iLight *pLight){return false;}
-		void EndRendering(eMaterialRenderType aType){}
-		tVtxBatchFlag GetBatchFlags(eMaterialRenderType aType){return 0;}
-		bool NextPass(eMaterialRenderType aType){return false;}
-		bool HasMultiplePasses(eMaterialRenderType aType){return false;}
-		eMaterialType GetType(eMaterialRenderType aType){ return eMaterialType_Diffuse;}
-		void EditVertexes(eMaterialRenderType aType, iCamera* apCam, iLight *pLight,
-			tVertexVec *apVtxVec,cVector3f *apTransform,unsigned int alIndexAdd){}
-	};
-
-	class cMaterialType_Flat : public iMaterialType
-	{
-	public:
-		bool IsCorrect(tString asName){
-			return cString::ToLowerCase(asName)=="flat";
-		}
-
-		iMaterial* Create(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D)
-		{
-			return hplNew( cMaterial_Flat,(asName,apLowLevelGraphics,
-				apImageManager,apTextureManager,apRenderer,
-				apProgramManager,aPicture,apRenderer3D) );
-		}
-	};
-
+	//////////////////////////////////////////////////////////////////
+	// Old and worthless stuff, only used by 2D renderer
+	void Compile() {}
+	bool StartRendering(eMaterialRenderType aType, iCamera *apCam, iLight *pLight) { return false; }
+	void EndRendering(eMaterialRenderType aType) {}
+	tVtxBatchFlag GetBatchFlags(eMaterialRenderType aType) { return 0; }
+	bool NextPass(eMaterialRenderType aType) { return false; }
+	bool HasMultiplePasses(eMaterialRenderType aType) { return false; }
+	eMaterialType GetType(eMaterialRenderType aType) { return eMaterialType_Diffuse; }
+	void EditVertexes(eMaterialRenderType aType, iCamera *apCam, iLight *pLight,
+					  tVertexVec *apVtxVec, cVector3f *apTransform, unsigned int alIndexAdd) {}
 };
+
+class cMaterialType_Flat : public iMaterialType {
+public:
+	bool IsCorrect(tString asName) {
+		return cString::ToLowerCase(asName) == "flat";
+	}
+
+	iMaterial *Create(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+					  cImageManager *apImageManager, cTextureManager *apTextureManager,
+					  cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+					  eMaterialPicture aPicture, cRenderer3D *apRenderer3D) {
+		return hplNew(cMaterial_Flat, (asName, apLowLevelGraphics,
+									   apImageManager, apTextureManager, apRenderer,
+									   apProgramManager, aPicture, apRenderer3D));
+	}
+};
+
+};     // namespace hpl
 #endif // HPL_MATERIAL_FLAT_H

@@ -45,135 +45,120 @@
 #include "hpl1/engine/math/Math.h"
 
 #include "hpl1/engine/gui/Gui.h"
-#include "hpl1/engine/gui/GuiSkin.h"
-#include "hpl1/engine/gui/GuiSet.h"
 #include "hpl1/engine/gui/GuiGfxElement.h"
+#include "hpl1/engine/gui/GuiSet.h"
+#include "hpl1/engine/gui/GuiSkin.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cWidgetFrame::cWidgetFrame(cGuiSet *apSet, cGuiSkin *apSkin) : iWidget(eWidgetType_Frame,apSet, apSkin)
-	{
-		mbClipsGraphics = true;
+cWidgetFrame::cWidgetFrame(cGuiSet *apSet, cGuiSkin *apSkin) : iWidget(eWidgetType_Frame, apSet, apSkin) {
+	mbClipsGraphics = true;
 
-		mbDrawFrame = false;
+	mbDrawFrame = false;
 
-		mbDrawBackground = false;
-		mfBackgroundZ = -0.5;
-		mBackGroundColor = cColor(1,1);
-	}
-
-	//-----------------------------------------------------------------------
-
-	cWidgetFrame::~cWidgetFrame()
-	{
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-
-	//-----------------------------------------------------------------------
-
-
-	//////////////////////////////////////////////////////////////////////////
-	// PROTECTED METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	void cWidgetFrame::OnLoadGraphics()
-	{
-		mpGfxBackground = mpSkin->GetGfx(eGuiSkinGfx_FrameBackground);
-
-		mvGfxBorders[0] = mpSkin->GetGfx(eGuiSkinGfx_FrameBorderRight);
-		mvGfxBorders[1] = mpSkin->GetGfx(eGuiSkinGfx_FrameBorderLeft);
-		mvGfxBorders[2] = mpSkin->GetGfx(eGuiSkinGfx_FrameBorderUp);
-		mvGfxBorders[3] = mpSkin->GetGfx(eGuiSkinGfx_FrameBorderDown);
-
-		mvGfxCorners[0] = mpSkin->GetGfx(eGuiSkinGfx_FrameCornerLU);
-		mvGfxCorners[1] = mpSkin->GetGfx(eGuiSkinGfx_FrameCornerRU);
-		mvGfxCorners[2] = mpSkin->GetGfx(eGuiSkinGfx_FrameCornerRD);
-		mvGfxCorners[3] = mpSkin->GetGfx(eGuiSkinGfx_FrameCornerLD);
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cWidgetFrame::OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion)
-	{
-		////////////////////////////////
-		// Borders
-		if(mbDrawFrame)
-		{
-			//Background must be drawn first!
-			DrawBordersAndCorners(	NULL, mvGfxBorders, mvGfxCorners,
-									GetGlobalPosition() -
-										cVector3f(	mvGfxCorners[0]->GetActiveSize().x,
-													mvGfxCorners[0]->GetActiveSize().y,0),
-									mvSize +	mvGfxCorners[0]->GetActiveSize() +
-												mvGfxCorners[2]->GetActiveSize());
-		}
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cWidgetFrame::OnDrawAfterClip(float afTimeStep, cGuiClipRegion *apClipRegion)
-	{
-		////////////////////////////////
-		// Background
-		if(mbDrawBackground)
-		{
-			mpSet->DrawGfx(	mpGfxBackground,GetGlobalPosition() +cVector3f(0,0,mfBackgroundZ),
-				mvSize,mBackGroundColor);
-		}
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetFrame::OnMouseMove(cGuiMessageData &aData)
-	{
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetFrame::OnMouseDown(cGuiMessageData &aData)
-	{
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetFrame::OnMouseUp(cGuiMessageData &aData)
-	{
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetFrame::OnMouseEnter(cGuiMessageData &aData)
-	{
-		return false;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetFrame::OnMouseLeave(cGuiMessageData &aData)
-	{
-		return false;
-	}
-
-	//-----------------------------------------------------------------------
-
-
+	mbDrawBackground = false;
+	mfBackgroundZ = -0.5;
+	mBackGroundColor = cColor(1, 1);
 }
+
+//-----------------------------------------------------------------------
+
+cWidgetFrame::~cWidgetFrame() {
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PROTECTED METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+void cWidgetFrame::OnLoadGraphics() {
+	mpGfxBackground = mpSkin->GetGfx(eGuiSkinGfx_FrameBackground);
+
+	mvGfxBorders[0] = mpSkin->GetGfx(eGuiSkinGfx_FrameBorderRight);
+	mvGfxBorders[1] = mpSkin->GetGfx(eGuiSkinGfx_FrameBorderLeft);
+	mvGfxBorders[2] = mpSkin->GetGfx(eGuiSkinGfx_FrameBorderUp);
+	mvGfxBorders[3] = mpSkin->GetGfx(eGuiSkinGfx_FrameBorderDown);
+
+	mvGfxCorners[0] = mpSkin->GetGfx(eGuiSkinGfx_FrameCornerLU);
+	mvGfxCorners[1] = mpSkin->GetGfx(eGuiSkinGfx_FrameCornerRU);
+	mvGfxCorners[2] = mpSkin->GetGfx(eGuiSkinGfx_FrameCornerRD);
+	mvGfxCorners[3] = mpSkin->GetGfx(eGuiSkinGfx_FrameCornerLD);
+}
+
+//-----------------------------------------------------------------------
+
+void cWidgetFrame::OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion) {
+	////////////////////////////////
+	// Borders
+	if (mbDrawFrame) {
+		// Background must be drawn first!
+		DrawBordersAndCorners(NULL, mvGfxBorders, mvGfxCorners,
+							  GetGlobalPosition() -
+								  cVector3f(mvGfxCorners[0]->GetActiveSize().x,
+											mvGfxCorners[0]->GetActiveSize().y, 0),
+							  mvSize + mvGfxCorners[0]->GetActiveSize() +
+								  mvGfxCorners[2]->GetActiveSize());
+	}
+}
+
+//-----------------------------------------------------------------------
+
+void cWidgetFrame::OnDrawAfterClip(float afTimeStep, cGuiClipRegion *apClipRegion) {
+	////////////////////////////////
+	// Background
+	if (mbDrawBackground) {
+		mpSet->DrawGfx(mpGfxBackground, GetGlobalPosition() + cVector3f(0, 0, mfBackgroundZ),
+					   mvSize, mBackGroundColor);
+	}
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetFrame::OnMouseMove(cGuiMessageData &aData) {
+	return true;
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetFrame::OnMouseDown(cGuiMessageData &aData) {
+	return true;
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetFrame::OnMouseUp(cGuiMessageData &aData) {
+	return true;
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetFrame::OnMouseEnter(cGuiMessageData &aData) {
+	return false;
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetFrame::OnMouseLeave(cGuiMessageData &aData) {
+	return false;
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

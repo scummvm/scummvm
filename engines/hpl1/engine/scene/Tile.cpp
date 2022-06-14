@@ -39,54 +39,52 @@
  */
 
 #include "hpl1/engine/scene/Tile.h"
-#include "hpl1/engine/scene/TileMap.h"
 #include "hpl1/engine/scene/TileData.h"
+#include "hpl1/engine/scene/TileMap.h"
 #include "hpl1/engine/scene/TileSet.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cTile::cTile(iTileData* apTileData, eTileRotation aAngle,
-				const cVector3f &avPos, const cVector2f &avSize, cCollisionMesh2D* apCollMesh)
-	{
-		mvPosition = avPos + avSize/2;
+cTile::cTile(iTileData *apTileData, eTileRotation aAngle,
+			 const cVector3f &avPos, const cVector2f &avSize, cCollisionMesh2D *apCollMesh) {
+	mvPosition = avPos + avSize / 2;
 
-		mpTileData = NULL;
-		mAngle = aAngle;
+	mpTileData = NULL;
+	mAngle = aAngle;
 
-		mpCollMesh = apCollMesh;
+	mpCollMesh = apCollMesh;
 
-		mlFlags =0;
+	mlFlags = 0;
 
-		//SetTile(apTileData,aAngle,avPos,avSize);
-	}
-
-	//-----------------------------------------------------------------------
-
-	cTile::~cTile()
-	{
-		if(mpCollMesh) hplDelete(mpCollMesh);
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	void cTile::SetTile(iTileData* apTileData, eTileRotation aAngle,
-						const cVector3f &avPos, const cVector2f &avSize)
-	{
-		mpTileData = apTileData;
-		mAngle = aAngle;
-	}
-
-	//-----------------------------------------------------------------------
+	// SetTile(apTileData,aAngle,avPos,avSize);
 }
+
+//-----------------------------------------------------------------------
+
+cTile::~cTile() {
+	if (mpCollMesh)
+		hplDelete(mpCollMesh);
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+void cTile::SetTile(iTileData *apTileData, eTileRotation aAngle,
+					const cVector3f &avPos, const cVector2f &avSize) {
+	mpTileData = apTileData;
+	mAngle = aAngle;
+}
+
+//-----------------------------------------------------------------------
+} // namespace hpl

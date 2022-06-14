@@ -41,33 +41,32 @@
 #ifndef HPL_PHYSICS_JOINT_HINGE_NEWTON_H
 #define HPL_PHYSICS_JOINT_HINGE_NEWTON_H
 
-#include "hpl1/engine/physics/PhysicsJointHinge.h"
 #include "hpl1/engine/impl/PhysicsJointNewton.h"
+#include "hpl1/engine/physics/PhysicsJointHinge.h"
 
 namespace hpl {
 
-	class cPhysicsJointHingeNewton : public iPhysicsJointNewton<iPhysicsJointHinge>
-	{
-	public:
-		cPhysicsJointHingeNewton(const tString &asName, iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
-			iPhysicsWorld *apWorld,const cVector3f &avPivotPoint, const cVector3f avPinDir);
-		~cPhysicsJointHingeNewton();
+class cPhysicsJointHingeNewton : public iPhysicsJointNewton<iPhysicsJointHinge> {
+public:
+	cPhysicsJointHingeNewton(const tString &asName, iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
+							 iPhysicsWorld *apWorld, const cVector3f &avPivotPoint, const cVector3f avPinDir);
+	~cPhysicsJointHingeNewton();
 
-		void SetMaxAngle(float afAngle);
-		void SetMinAngle(float afAngle);
-		float GetMaxAngle();
-		float GetMinAngle();
+	void SetMaxAngle(float afAngle);
+	void SetMinAngle(float afAngle);
+	float GetMaxAngle();
+	float GetMinAngle();
 
-		cVector3f GetVelocity();
-		cVector3f GetAngularVelocity();
-		cVector3f GetForce();
+	cVector3f GetVelocity();
+	cVector3f GetAngularVelocity();
+	cVector3f GetForce();
 
-		float GetDistance();
-		float GetAngle();
+	float GetDistance();
+	float GetAngle();
 
-	private:
-		float mfPreviousAngle;
-		static unsigned LimitCallback(const NewtonJoint* pHinge, NewtonHingeSliderUpdateDesc* pDesc);
-	};
+private:
+	float mfPreviousAngle;
+	static unsigned LimitCallback(const NewtonJoint *pHinge, NewtonHingeSliderUpdateDesc *pDesc);
 };
+};     // namespace hpl
 #endif // HPL_PHYSICS_JOINT_HINGE_NEWTON_H

@@ -41,34 +41,34 @@
 #ifndef HPL_LOWLEVELINPUT_SDL_H
 #define HPL_LOWLEVELINPUT_SDL_H
 
-#include <list>
 #include "hpl1/engine/input/LowLevelInput.h"
+#include <list>
 
 //#include "SDL/SDL.h"
 #include "temp-types.h"
 
 namespace hpl {
 
-	class iLowLevelGraphics;
+class iLowLevelGraphics;
 
-	class cLowLevelInputSDL : public iLowLevelInput
-	{
-	public:
-		cLowLevelInputSDL(iLowLevelGraphics *apLowLevelGraphics);
-		~cLowLevelInputSDL();
+class cLowLevelInputSDL : public iLowLevelInput {
+public:
+	cLowLevelInputSDL(iLowLevelGraphics *apLowLevelGraphics);
+	~cLowLevelInputSDL();
 
-		void LockInput(bool abX);
+	void LockInput(bool abX);
 
-		void BeginInputUpdate();
-		void EndInputUpdate();
+	void BeginInputUpdate();
+	void EndInputUpdate();
 
-		iMouse* CreateMouse();
-		iKeyboard* CreateKeyboard();
-	public:
-		std::list<SDL_Event> mlstEvents;
+	iMouse *CreateMouse();
+	iKeyboard *CreateKeyboard();
 
-	private:
-		iLowLevelGraphics *mpLowLevelGraphics;
-	};
+public:
+	std::list<SDL_Event> mlstEvents;
+
+private:
+	iLowLevelGraphics *mpLowLevelGraphics;
 };
+};     // namespace hpl
 #endif // HPL_LOWLEVELINPUT_SDL_H

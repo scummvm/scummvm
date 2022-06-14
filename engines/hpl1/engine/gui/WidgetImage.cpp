@@ -45,112 +45,99 @@
 #include "hpl1/engine/math/Math.h"
 
 #include "hpl1/engine/gui/Gui.h"
-#include "hpl1/engine/gui/GuiSkin.h"
-#include "hpl1/engine/gui/GuiSet.h"
 #include "hpl1/engine/gui/GuiGfxElement.h"
+#include "hpl1/engine/gui/GuiSet.h"
+#include "hpl1/engine/gui/GuiSkin.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cWidgetImage::cWidgetImage(cGuiSet *apSet, cGuiSkin *apSkin) : iWidget(eWidgetType_Image,apSet, apSkin)
-	{
-		mpGfxImage = NULL;
-		mColor = cColor(1,1);
-	}
-
-	//-----------------------------------------------------------------------
-
-	cWidgetImage::~cWidgetImage()
-	{
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	void cWidgetImage::SetImage(cGuiGfxElement *apGfx)
-	{
-		if(mpGfxImage == apGfx) return;
-
-		mpGfxImage = apGfx;
-	}
-
-	//-----------------------------------------------------------------------
-
-
-	//////////////////////////////////////////////////////////////////////////
-	// PROTECTED METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	void cWidgetImage::OnLoadGraphics()
-	{
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cWidgetImage::OnChangeSize()
-	{
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cWidgetImage::OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion)
-	{
-		////////////////////////////////
-		// Background
-		if(mpGfxImage)
-		{
-			mpSet->DrawGfx(	mpGfxImage,	GetGlobalPosition(),mvSize,mColor);
-		}
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetImage::OnMouseMove(cGuiMessageData &aData)
-	{
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetImage::OnMouseDown(cGuiMessageData &aData)
-	{
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetImage::OnMouseUp(cGuiMessageData &aData)
-	{
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetImage::OnMouseEnter(cGuiMessageData &aData)
-	{
-		return false;
-	}
-
-	//-----------------------------------------------------------------------
-
-	bool cWidgetImage::OnMouseLeave(cGuiMessageData &aData)
-	{
-		return false;
-	}
-
-	//-----------------------------------------------------------------------
-
-
+cWidgetImage::cWidgetImage(cGuiSet *apSet, cGuiSkin *apSkin) : iWidget(eWidgetType_Image, apSet, apSkin) {
+	mpGfxImage = NULL;
+	mColor = cColor(1, 1);
 }
+
+//-----------------------------------------------------------------------
+
+cWidgetImage::~cWidgetImage() {
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+void cWidgetImage::SetImage(cGuiGfxElement *apGfx) {
+	if (mpGfxImage == apGfx)
+		return;
+
+	mpGfxImage = apGfx;
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PROTECTED METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+void cWidgetImage::OnLoadGraphics() {
+}
+
+//-----------------------------------------------------------------------
+
+void cWidgetImage::OnChangeSize() {
+}
+
+//-----------------------------------------------------------------------
+
+void cWidgetImage::OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion) {
+	////////////////////////////////
+	// Background
+	if (mpGfxImage) {
+		mpSet->DrawGfx(mpGfxImage, GetGlobalPosition(), mvSize, mColor);
+	}
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetImage::OnMouseMove(cGuiMessageData &aData) {
+	return true;
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetImage::OnMouseDown(cGuiMessageData &aData) {
+	return true;
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetImage::OnMouseUp(cGuiMessageData &aData) {
+	return true;
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetImage::OnMouseEnter(cGuiMessageData &aData) {
+	return false;
+}
+
+//-----------------------------------------------------------------------
+
+bool cWidgetImage::OnMouseLeave(cGuiMessageData &aData) {
+	return false;
+}
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

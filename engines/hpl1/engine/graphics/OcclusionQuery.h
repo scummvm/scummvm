@@ -43,30 +43,29 @@
 
 namespace hpl {
 
-	class iOcclusionQuery
-	{
-	public:
-		virtual ~iOcclusionQuery(){}
+class iOcclusionQuery {
+public:
+	virtual ~iOcclusionQuery() {}
 
-		/**
-		 * Starts the query. Must be followed by an End().
-		 */
-		virtual void Begin()=0;
-		/**
-		 * Ends the current query. Must have been started with a Begin()
-		 */
-		virtual void End()=0;
+	/**
+	 * Starts the query. Must be followed by an End().
+	 */
+	virtual void Begin() = 0;
+	/**
+	 * Ends the current query. Must have been started with a Begin()
+	 */
+	virtual void End() = 0;
 
-		/**
-		 * Fetches the result of he query. Should not be done until all is rendered. (Is called internally by Renderer3D)
-		 */
-		virtual bool FetchResults()=0;
+	/**
+	 * Fetches the result of he query. Should not be done until all is rendered. (Is called internally by Renderer3D)
+	 */
+	virtual bool FetchResults() = 0;
 
-		/**
-		 * Get the number of samples that passed stencil and depth test in the query begin/end.
-		 */
-		virtual unsigned int GetSampleCount()=0;
-	};
-
+	/**
+	 * Get the number of samples that passed stencil and depth test in the query begin/end.
+	 */
+	virtual unsigned int GetSampleCount() = 0;
 };
+
+};     // namespace hpl
 #endif // HPL_OCCLUSION_QUERY_H

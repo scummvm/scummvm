@@ -43,56 +43,53 @@
 #include "hpl1/engine/sound/SoundEnvironment.h"
 
 namespace hpl {
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	iLowLevelSound::iLowLevelSound()
-	{
-		mfVolume=1;
-		mfEnvVolume=0;
-		mbListenerAttenuation=true;
-		mbHardwareAcc = false;
-		mbEnvAudioEnabled = false;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iLowLevelSound::~iLowLevelSound()
-	{
-		STLDeleteAll(mlstSoundEnv);
-	}
-
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	iSoundEnvironment* iLowLevelSound::GetSoundEnvironmentFromFileName (const tString& asName)
-	{
-		tString sLowName = cString::ToLowerCase(asName);
-		for (tSoundEnvListIt SEIt = mlstSoundEnv.begin(); SEIt != mlstSoundEnv.end(); ++SEIt)
-		{
-			iSoundEnvironment* pSoundEnv = *SEIt;
-
-			if(sLowName == pSoundEnv->GetFileName()) return pSoundEnv;
-		}
-		return NULL;
-	}
-
-	//-----------------------------------------------------------------------
-
-	/*void iLowLevelSound::DestroySoundEnvironment( iSoundEnvironment* apSoundEnv)
-	{
-		Log(" Destroy %d\n",apSoundEnv);
-
-		STLFindAndDelete(mlstSoundEnv,apSoundEnv);
-	}*/
-
-	//-----------------------------------------------------------------------
+iLowLevelSound::iLowLevelSound() {
+	mfVolume = 1;
+	mfEnvVolume = 0;
+	mbListenerAttenuation = true;
+	mbHardwareAcc = false;
+	mbEnvAudioEnabled = false;
 }
+
+//-----------------------------------------------------------------------
+
+iLowLevelSound::~iLowLevelSound() {
+	STLDeleteAll(mlstSoundEnv);
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+iSoundEnvironment *iLowLevelSound::GetSoundEnvironmentFromFileName(const tString &asName) {
+	tString sLowName = cString::ToLowerCase(asName);
+	for (tSoundEnvListIt SEIt = mlstSoundEnv.begin(); SEIt != mlstSoundEnv.end(); ++SEIt) {
+		iSoundEnvironment *pSoundEnv = *SEIt;
+
+		if (sLowName == pSoundEnv->GetFileName())
+			return pSoundEnv;
+	}
+	return NULL;
+}
+
+//-----------------------------------------------------------------------
+
+/*void iLowLevelSound::DestroySoundEnvironment( iSoundEnvironment* apSoundEnv)
+{
+	Log(" Destroy %d\n",apSoundEnv);
+
+	STLFindAndDelete(mlstSoundEnv,apSoundEnv);
+}*/
+
+//-----------------------------------------------------------------------
+} // namespace hpl

@@ -41,52 +41,46 @@
 #ifndef HPL_MESH_LOADER_MSH_H
 #define HPL_MESH_LOADER_MSH_H
 
-
-
+#include "hpl1/engine/graphics/VertexBuffer.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/resources/MeshLoader.h"
-#include "hpl1/engine/graphics/VertexBuffer.h"
 
 class TiXmlElement;
 
 namespace hpl {
 
-	class cMesh;
-	class cNode3D;
-	class iVertexBuffer;
+class cMesh;
+class cNode3D;
+class iVertexBuffer;
 
-	class cMeshLoaderMSH : public iMeshLoader
-	{
-	public:
-		cMeshLoaderMSH(iLowLevelGraphics *apLowLevelGraphics);
-		~cMeshLoaderMSH();
+class cMeshLoaderMSH : public iMeshLoader {
+public:
+	cMeshLoaderMSH(iLowLevelGraphics *apLowLevelGraphics);
+	~cMeshLoaderMSH();
 
-		cMesh* LoadMesh(const tString& asFile, tMeshLoadFlag aFlags);
-		bool SaveMesh(cMesh* apMesh,const tString& asFile);
+	cMesh *LoadMesh(const tString &asFile, tMeshLoadFlag aFlags);
+	bool SaveMesh(cMesh *apMesh, const tString &asFile);
 
-		cWorld3D* LoadWorld(const tString& asFile, cScene* apScene,tWorldLoadFlag aFlags);
+	cWorld3D *LoadWorld(const tString &asFile, cScene *apScene, tWorldLoadFlag aFlags);
 
-		cAnimation* LoadAnimation(const tString& asFile){ return NULL;}
+	cAnimation *LoadAnimation(const tString &asFile) { return NULL; }
 
-		bool IsSupported(const tString asFileType);
+	bool IsSupported(const tString asFileType);
 
-		void AddSupportedTypes(tStringVec* avFileTypes);
+	void AddSupportedTypes(tStringVec *avFileTypes);
 
+private:
+	// Saving
+	void SaveFloatData(TiXmlElement *apRoot, int alSize, const char *asName, float *apData);
+	void SaveIntData(TiXmlElement *apRoot, int alSize, unsigned int *apData);
 
-	private:
-		//Saving
-		void SaveFloatData(TiXmlElement* apRoot, int alSize, const char *asName, float* apData);
-		void SaveIntData(TiXmlElement* apRoot, int alSize, unsigned int* apData);
+	// Loading
+	void FillVtxArray(float *apArray, const char *apString, int alSize);
+	void FillIdxArray(unsigned int *apArray, const char *apString, int alSize);
 
-		//Loading
-		void FillVtxArray(float *apArray, const char* apString,int alSize);
-		void FillIdxArray(unsigned int *apArray, const char* apString,int alSize);
-
-		//Common
-		const char* GetVertexName(tVertexFlag aFlag);
-
-
-	};
-
+	// Common
+	const char *GetVertexName(tVertexFlag aFlag);
 };
+
+};     // namespace hpl
 #endif // HPL_MESH_LOADER_MSH_H

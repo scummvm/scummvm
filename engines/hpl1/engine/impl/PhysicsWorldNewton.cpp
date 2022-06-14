@@ -40,10 +40,10 @@
 
 #include "hpl1/engine/impl/PhysicsWorldNewton.h"
 
+#include "hpl1/engine/impl/CharacterBodyNewton.h"
 #include "hpl1/engine/impl/CollideShapeNewton.h"
 #include "hpl1/engine/impl/PhysicsBodyNewton.h"
 #include "hpl1/engine/impl/PhysicsMaterialNewton.h"
-#include "hpl1/engine/impl/CharacterBodyNewton.h"
 
 #include "hpl1/engine/impl/PhysicsJointBallNewton.h"
 #include "hpl1/engine/impl/PhysicsJointHingeNewton.h"
@@ -52,416 +52,388 @@
 
 #include "hpl1/engine/impl/PhysicsControllerNewton.h"
 
-#include "hpl1/engine/scene/World3D.h"
 #include "hpl1/engine/scene/PortalContainer.h"
+#include "hpl1/engine/scene/World3D.h"
 
-#include "hpl1/engine/system/LowLevelSystem.h"
-#include "hpl1/engine/graphics/VertexBuffer.h"
 #include "hpl1/engine/graphics/LowLevelGraphics.h"
+#include "hpl1/engine/graphics/VertexBuffer.h"
 #include "hpl1/engine/math/Math.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
 
 namespace hpl {
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cPhysicsWorldNewton::cPhysicsWorldNewton()
-		: iPhysicsWorld()
+cPhysicsWorldNewton::cPhysicsWorldNewton()
+	: iPhysicsWorld() {
+	mpNewtonWorld = NewtonCreate();
+
+	if (mpNewtonWorld == NULL) {
+		Warning("Couldn't create newton world!\n");
+	}
+
+	/////////////////////////////////
+	// Set default values to properties
+	mvWorldSizeMin = cVector3f(0, 0, 0);
+	mvWorldSizeMax = cVector3f(0, 0, 0);
+
+	mvGravity = cVector3f(0, -9.81f, 0);
+	mfMaxTimeStep = 1.0f / 60.0f;
+
+	/////////////////////////////////
+	// Create default material.
+	int lDefaultMatId = 0; // NewtonMaterialGetDefaultGroupID(mpNewtonWorld);
+	cPhysicsMaterialNewton *pMaterial = hplNew(cPhysicsMaterialNewton, ("Default", this, lDefaultMatId));
+	tPhysicsMaterialMap::value_type Val("Default", pMaterial);
+	m_mapMaterials.insert(Val);
+	pMaterial->UpdateMaterials();
+
+	mpTempDepths = hplNewArray(float, 500);
+	mpTempNormals = hplNewArray(float, 500 * 3);
+	mpTempPoints = hplNewArray(float, 500 * 3);
+}
+
+//-----------------------------------------------------------------------
+
+cPhysicsWorldNewton::~cPhysicsWorldNewton() {
+	DestroyAll();
+	NewtonDestroy(mpNewtonWorld);
+
+	hplDeleteArray(mpTempDepths);
+	hplDeleteArray(mpTempNormals);
+	hplDeleteArray(mpTempPoints);
+}
+
+//-----------------------------------------------------------------------
+
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
+
+//-----------------------------------------------------------------------
+
+void cPhysicsWorldNewton::Simulate(float afTimeStep) {
+	// cPhysicsBodyNewton::SetUseCallback(false);
+	// static lUpdate =0;
+
+	// if(lUpdate % 30==0)
 	{
-		mpNewtonWorld = NewtonCreate();
-
-		if(mpNewtonWorld==NULL){
-			Warning("Couldn't create newton world!\n");
+		while (afTimeStep > mfMaxTimeStep) {
+			NewtonUpdate(mpNewtonWorld, mfMaxTimeStep);
+			afTimeStep -= mfMaxTimeStep;
 		}
-
-		/////////////////////////////////
-		//Set default values to properties
-		mvWorldSizeMin = cVector3f(0,0,0);
-		mvWorldSizeMax = cVector3f(0,0,0);
-
-		mvGravity = cVector3f(0,-9.81f,0);
-		mfMaxTimeStep = 1.0f/60.0f;
-
-		/////////////////////////////////
-		//Create default material.
-		int lDefaultMatId = 0;//NewtonMaterialGetDefaultGroupID(mpNewtonWorld);
-		cPhysicsMaterialNewton *pMaterial = hplNew( cPhysicsMaterialNewton, ("Default",this,lDefaultMatId) );
-		tPhysicsMaterialMap::value_type Val("Default",pMaterial);
-		m_mapMaterials.insert(Val);
-		pMaterial->UpdateMaterials();
-
-		mpTempDepths = hplNewArray( float,500);
-		mpTempNormals = hplNewArray( float,500 * 3);
-		mpTempPoints = hplNewArray( float,500 * 3);
+		NewtonUpdate(mpNewtonWorld, afTimeStep);
 	}
+	// lUpdate++;
+	// cPhysicsBodyNewton::SetUseCallback(true);
 
-	//-----------------------------------------------------------------------
-
-	cPhysicsWorldNewton::~cPhysicsWorldNewton()
-	{
-		DestroyAll();
-		NewtonDestroy(mpNewtonWorld);
-
-		hplDeleteArray(mpTempDepths);
-		hplDeleteArray(mpTempNormals);
-		hplDeleteArray(mpTempPoints);
+	tPhysicsBodyListIt it = mlstBodies.begin();
+	for (; it != mlstBodies.end(); ++it) {
+		cPhysicsBodyNewton *pBody = static_cast<cPhysicsBodyNewton *>(*it);
+		pBody->ClearForces();
 	}
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
+void cPhysicsWorldNewton::SetMaxTimeStep(float afTimeStep) {
+	mfMaxTimeStep = afTimeStep;
+}
 
-	//-----------------------------------------------------------------------
+float cPhysicsWorldNewton::GetMaxTimeStep() {
+	return mfMaxTimeStep;
+}
 
-	void cPhysicsWorldNewton::Simulate(float afTimeStep)
-	{
-		//cPhysicsBodyNewton::SetUseCallback(false);
-		//static lUpdate =0;
+//-----------------------------------------------------------------------
 
-		//if(lUpdate % 30==0)
-		{
-			while(afTimeStep>mfMaxTimeStep)
-			{
-				NewtonUpdate(mpNewtonWorld, mfMaxTimeStep);
-				afTimeStep -= mfMaxTimeStep;
-			}
-			NewtonUpdate(mpNewtonWorld, afTimeStep);
-		}
-		//lUpdate++;
-		//cPhysicsBodyNewton::SetUseCallback(true);
-
-		tPhysicsBodyListIt it = mlstBodies.begin();
-		for(;it != mlstBodies.end(); ++it)
-		{
-			cPhysicsBodyNewton* pBody = static_cast<cPhysicsBodyNewton*>(*it);
-			pBody->ClearForces();
-		}
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cPhysicsWorldNewton::SetMaxTimeStep(float afTimeStep)
-	{
-		mfMaxTimeStep = afTimeStep;
-	}
-
-	float cPhysicsWorldNewton::GetMaxTimeStep()
-	{
-		return mfMaxTimeStep;
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cPhysicsWorldNewton::SetWorldSize(const cVector3f &avMin,const cVector3f &avMax)
-	{
+void cPhysicsWorldNewton::SetWorldSize(const cVector3f &avMin, const cVector3f &avMax) {
 #if 0
   		mvWorldSizeMin = avMin;
 		mvWorldSizeMax = avMax;
 
 		NewtonSetWorldSize(mpNewtonWorld,avMin.v, avMax.v);
 #endif
+}
 
+cVector3f cPhysicsWorldNewton::GetWorldSizeMin() {
+	return mvWorldSizeMin;
+}
+
+cVector3f cPhysicsWorldNewton::GetWorldSizeMax() {
+	return mvWorldSizeMax;
+}
+
+//-----------------------------------------------------------------------
+
+void cPhysicsWorldNewton::SetGravity(const cVector3f &avGravity) {
+	mvGravity = avGravity;
+}
+
+//-----------------------------------------------------------------------
+
+cVector3f cPhysicsWorldNewton::GetGravity() {
+	return mvGravity;
+}
+
+//-----------------------------------------------------------------------
+
+void cPhysicsWorldNewton::SetAccuracyLevel(ePhysicsAccuracy aAccuracy) {
+	mAccuracy = aAccuracy;
+
+	switch (mAccuracy) {
+	case ePhysicsAccuracy_Low:
+		NewtonSetSolverModel(mpNewtonWorld, 8);
+		NewtonSetFrictionModel(mpNewtonWorld, 1);
+		Log("SETTING LOW!\n");
+		break;
+	case ePhysicsAccuracy_Medium:
+		NewtonSetSolverModel(mpNewtonWorld, 1);
+		NewtonSetFrictionModel(mpNewtonWorld, 1);
+		break;
+	case ePhysicsAccuracy_High:
+		NewtonSetSolverModel(mpNewtonWorld, 0);
+		NewtonSetFrictionModel(mpNewtonWorld, 0);
+		break;
+	}
+}
+
+//-----------------------------------------------------------------------
+
+ePhysicsAccuracy cPhysicsWorldNewton::GetAccuracyLevel() {
+	return mAccuracy;
+}
+
+//-----------------------------------------------------------------------
+
+iCollideShape *cPhysicsWorldNewton::CreateNullShape() {
+	iCollideShape *pShape = hplNew(cCollideShapeNewton, (eCollideShapeType_Null, 0, NULL,
+														 mpNewtonWorld, this));
+	mlstShapes.push_back(pShape);
+
+	return pShape;
+}
+
+//-----------------------------------------------------------------------
+
+iCollideShape *cPhysicsWorldNewton::CreateBoxShape(const cVector3f &avSize, cMatrixf *apOffsetMtx) {
+	iCollideShape *pShape = hplNew(cCollideShapeNewton, (eCollideShapeType_Box, avSize, apOffsetMtx,
+														 mpNewtonWorld, this));
+	mlstShapes.push_back(pShape);
+
+	return pShape;
+}
+
+//-----------------------------------------------------------------------
+
+iCollideShape *cPhysicsWorldNewton::CreateSphereShape(const cVector3f &avRadii, cMatrixf *apOffsetMtx) {
+	iCollideShape *pShape = hplNew(cCollideShapeNewton, (eCollideShapeType_Sphere, avRadii, apOffsetMtx,
+														 mpNewtonWorld, this));
+	mlstShapes.push_back(pShape);
+
+	return pShape;
+}
+
+//-----------------------------------------------------------------------
+
+iCollideShape *cPhysicsWorldNewton::CreateCylinderShape(float afRadius, float afHeight, cMatrixf *apOffsetMtx) {
+	iCollideShape *pShape = hplNew(cCollideShapeNewton, (eCollideShapeType_Cylinder,
+														 cVector3f(afRadius, afHeight, afRadius),
+														 apOffsetMtx,
+														 mpNewtonWorld, this));
+	mlstShapes.push_back(pShape);
+
+	return pShape;
+}
+
+//-----------------------------------------------------------------------
+
+iCollideShape *cPhysicsWorldNewton::CreateCapsuleShape(float afRadius, float afHeight, cMatrixf *apOffsetMtx) {
+	iCollideShape *pShape = hplNew(cCollideShapeNewton, (eCollideShapeType_Capsule,
+														 cVector3f(afRadius, afHeight, afRadius),
+														 apOffsetMtx,
+														 mpNewtonWorld, this));
+	mlstShapes.push_back(pShape);
+
+	return pShape;
+}
+
+//-----------------------------------------------------------------------
+
+iCollideShape *cPhysicsWorldNewton::CreateMeshShape(iVertexBuffer *apVtxBuffer) {
+	cCollideShapeNewton *pShape = hplNew(cCollideShapeNewton, (eCollideShapeType_Mesh,
+															   0, NULL, mpNewtonWorld, this));
+
+	pShape->CreateFromVertices(apVtxBuffer->GetIndices(), apVtxBuffer->GetIndexNum(),
+							   apVtxBuffer->GetArray(eVertexFlag_Position),
+							   kvVertexElements[cMath::Log2ToInt(eVertexFlag_Position)],
+							   apVtxBuffer->GetVertexNum());
+	mlstShapes.push_back(pShape);
+
+	return pShape;
+}
+
+//-----------------------------------------------------------------------
+
+iCollideShape *cPhysicsWorldNewton::CreateCompundShape(tCollideShapeVec &avShapes) {
+	cCollideShapeNewton *pShape = hplNew(cCollideShapeNewton, (eCollideShapeType_Compound,
+															   0, NULL, mpNewtonWorld, this));
+	pShape->CreateFromShapeVec(avShapes);
+	mlstShapes.push_back(pShape);
+
+	return pShape;
+}
+
+//-----------------------------------------------------------------------
+
+iPhysicsJointBall *cPhysicsWorldNewton::CreateJointBall(const tString &asName,
+														const cVector3f &avPivotPoint,
+														iPhysicsBody *apParentBody, iPhysicsBody *apChildBody) {
+	iPhysicsJointBall *pJoint = hplNew(cPhysicsJointBallNewton, (asName, apParentBody, apChildBody, this,
+																 avPivotPoint));
+	mlstJoints.push_back(pJoint);
+	return pJoint;
+}
+
+iPhysicsJointHinge *cPhysicsWorldNewton::CreateJointHinge(const tString &asName,
+														  const cVector3f &avPivotPoint, const cVector3f &avPinDir,
+														  iPhysicsBody *apParentBody, iPhysicsBody *apChildBody) {
+	iPhysicsJointHinge *pJoint = hplNew(cPhysicsJointHingeNewton, (asName, apParentBody, apChildBody, this,
+																   avPivotPoint, avPinDir));
+	mlstJoints.push_back(pJoint);
+	return pJoint;
+}
+
+iPhysicsJointSlider *cPhysicsWorldNewton::CreateJointSlider(const tString &asName,
+															const cVector3f &avPivotPoint, const cVector3f &avPinDir,
+															iPhysicsBody *apParentBody, iPhysicsBody *apChildBody) {
+	iPhysicsJointSlider *pJoint = hplNew(cPhysicsJointSliderNewton, (asName, apParentBody, apChildBody, this,
+																	 avPivotPoint, avPinDir));
+	mlstJoints.push_back(pJoint);
+	return pJoint;
+}
+
+iPhysicsJointScrew *cPhysicsWorldNewton::CreateJointScrew(const tString &asName,
+														  const cVector3f &avPivotPoint, const cVector3f &avPinDir,
+														  iPhysicsBody *apParentBody, iPhysicsBody *apChildBody) {
+	iPhysicsJointScrew *pJoint = hplNew(cPhysicsJointScrewNewton, (asName, apParentBody, apChildBody, this,
+																   avPivotPoint, avPinDir));
+	mlstJoints.push_back(pJoint);
+	return pJoint;
+}
+
+//-----------------------------------------------------------------------
+
+iPhysicsBody *cPhysicsWorldNewton::CreateBody(const tString &asName, iCollideShape *apShape) {
+	cPhysicsBodyNewton *pBody = hplNew(cPhysicsBodyNewton, (asName, this, apShape));
+
+	mlstBodies.push_back(pBody);
+
+	if (mpWorld3D)
+		mpWorld3D->GetPortalContainer()->AddEntity(pBody);
+
+	return pBody;
+}
+
+//-----------------------------------------------------------------------
+
+iCharacterBody *cPhysicsWorldNewton::CreateCharacterBody(const tString &asName, const cVector3f &avSize) {
+	cCharacterBodyNewton *pChar = hplNew(cCharacterBodyNewton, (asName, this, avSize));
+
+	mlstCharBodies.push_back(pChar);
+
+	return pChar;
+}
+
+//-----------------------------------------------------------------------
+
+iPhysicsMaterial *cPhysicsWorldNewton::CreateMaterial(const tString &asName) {
+	cPhysicsMaterialNewton *pMaterial = hplNew(cPhysicsMaterialNewton, (asName, this));
+
+	tPhysicsMaterialMap::value_type Val(asName, pMaterial);
+	m_mapMaterials.insert(Val);
+
+	pMaterial->UpdateMaterials();
+
+	return pMaterial;
+}
+
+//-----------------------------------------------------------------------
+
+iPhysicsController *cPhysicsWorldNewton::CreateController(const tString &asName) {
+	iPhysicsController *pController = hplNew(cPhysicsControllerNewton, (asName, this));
+
+	mlstControllers.push_back(pController);
+
+	return pController;
+}
+
+//-----------------------------------------------------------------------
+
+static bool gbRayCalcDist;
+static bool gbRayCalcNormal;
+static bool gbRayCalcPoint;
+static iPhysicsRayCallback *gpRayCallback;
+static cVector3f gvRayOrigin;
+static cVector3f gvRayEnd;
+static cVector3f gvRayDelta;
+static float gfRayLength;
+
+static cPhysicsRayParams gRayParams;
+
+//////////////////////////////////////
+
+static unsigned RayCastPrefilterFunc(const NewtonBody *apNewtonBody, const NewtonCollision *collision, void *userData) {
+	cPhysicsBodyNewton *pRigidBody = (cPhysicsBodyNewton *)NewtonBodyGetUserData(apNewtonBody);
+	if (pRigidBody->IsActive() == false)
+		return 0;
+
+	bool bRet = gpRayCallback->BeforeIntersect(pRigidBody);
+
+	if (bRet)
+		return 1;
+	else
+		return 0;
+}
+
+static float RayCastFilterFunc(const NewtonBody *apNewtonBody, const float *apNormalVec,
+							   int alCollisionID, void *apUserData, float afIntersetParam) {
+	cPhysicsBodyNewton *pRigidBody = (cPhysicsBodyNewton *)NewtonBodyGetUserData(apNewtonBody);
+	if (pRigidBody->IsActive() == false)
+		return 1;
+
+	gRayParams.mfT = afIntersetParam;
+
+	// Calculate stuff needed.
+	if (gbRayCalcDist) {
+		gRayParams.mfDist = gfRayLength * afIntersetParam;
+	}
+	if (gbRayCalcNormal) {
+		gRayParams.mvNormal.FromVec(apNormalVec);
+	}
+	if (gbRayCalcPoint) {
+		gRayParams.mvPoint = gvRayOrigin + gvRayDelta * afIntersetParam;
 	}
 
-	cVector3f cPhysicsWorldNewton::GetWorldSizeMin()
-	{
-		return mvWorldSizeMin;
-	}
-
-	cVector3f cPhysicsWorldNewton::GetWorldSizeMax()
-	{
-		return mvWorldSizeMax;
-	}
-
-
-	//-----------------------------------------------------------------------
-
-	void cPhysicsWorldNewton::SetGravity(const cVector3f& avGravity)
-	{
-		mvGravity = avGravity;
-	}
-
-	//-----------------------------------------------------------------------
-
-	cVector3f cPhysicsWorldNewton::GetGravity()
-	{
-		return mvGravity;
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cPhysicsWorldNewton::SetAccuracyLevel(ePhysicsAccuracy aAccuracy)
-	{
-		mAccuracy = aAccuracy;
-
-		switch(mAccuracy)
-		{
-		case ePhysicsAccuracy_Low:
-									NewtonSetSolverModel(mpNewtonWorld,8);
-									NewtonSetFrictionModel(mpNewtonWorld,1);
-									Log("SETTING LOW!\n");
-									break;
-		case ePhysicsAccuracy_Medium:
-									NewtonSetSolverModel(mpNewtonWorld,1);
-									NewtonSetFrictionModel(mpNewtonWorld,1);
-									break;
-		case ePhysicsAccuracy_High:
-									NewtonSetSolverModel(mpNewtonWorld,0);
-									NewtonSetFrictionModel(mpNewtonWorld,0);
-									break;
-		}
-	}
-
-	//-----------------------------------------------------------------------
-
-	ePhysicsAccuracy cPhysicsWorldNewton::GetAccuracyLevel()
-	{
-		return mAccuracy;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iCollideShape* cPhysicsWorldNewton::CreateNullShape()
-	{
-		iCollideShape *pShape = hplNew( cCollideShapeNewton, (eCollideShapeType_Null, 0, NULL,
-													mpNewtonWorld, this) );
-		mlstShapes.push_back(pShape);
-
-		return pShape;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iCollideShape* cPhysicsWorldNewton::CreateBoxShape(const cVector3f &avSize, cMatrixf* apOffsetMtx)
-	{
-		iCollideShape *pShape = hplNew( cCollideShapeNewton, (eCollideShapeType_Box, avSize, apOffsetMtx,
-													mpNewtonWorld, this) );
-		mlstShapes.push_back(pShape);
-
-		return pShape;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iCollideShape* cPhysicsWorldNewton::CreateSphereShape(const cVector3f &avRadii, cMatrixf* apOffsetMtx)
-	{
-		iCollideShape *pShape = hplNew( cCollideShapeNewton, (eCollideShapeType_Sphere, avRadii, apOffsetMtx,
-														mpNewtonWorld, this) );
-		mlstShapes.push_back(pShape);
-
-		return pShape;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iCollideShape* cPhysicsWorldNewton::CreateCylinderShape(float afRadius, float afHeight, cMatrixf* apOffsetMtx)
-	{
-		iCollideShape *pShape = hplNew( cCollideShapeNewton, (eCollideShapeType_Cylinder,
-													cVector3f(afRadius,afHeight,afRadius),
-													apOffsetMtx,
-													mpNewtonWorld, this) );
-		mlstShapes.push_back(pShape);
-
-		return pShape;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iCollideShape* cPhysicsWorldNewton::CreateCapsuleShape(float afRadius, float afHeight, cMatrixf* apOffsetMtx)
-	{
-		iCollideShape *pShape = hplNew( cCollideShapeNewton, (eCollideShapeType_Capsule,
-													cVector3f(afRadius,afHeight,afRadius),
-													apOffsetMtx,
-													mpNewtonWorld, this) );
-		mlstShapes.push_back(pShape);
-
-		return pShape;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iCollideShape* cPhysicsWorldNewton::CreateMeshShape(iVertexBuffer *apVtxBuffer)
-	{
-		cCollideShapeNewton *pShape = hplNew( cCollideShapeNewton, (eCollideShapeType_Mesh,
-															0, NULL, mpNewtonWorld,this) );
-
-		pShape->CreateFromVertices(apVtxBuffer->GetIndices(),apVtxBuffer->GetIndexNum(),
-									apVtxBuffer->GetArray(eVertexFlag_Position),
-									kvVertexElements[cMath::Log2ToInt(eVertexFlag_Position)],
-									apVtxBuffer->GetVertexNum());
-		mlstShapes.push_back(pShape);
-
-		return pShape;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iCollideShape* cPhysicsWorldNewton::CreateCompundShape(tCollideShapeVec &avShapes)
-	{
-		cCollideShapeNewton *pShape = hplNew( cCollideShapeNewton, (eCollideShapeType_Compound,
-															0, NULL, mpNewtonWorld,this) );
-		pShape->CreateFromShapeVec(avShapes);
-		mlstShapes.push_back(pShape);
-
-		return pShape;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iPhysicsJointBall* cPhysicsWorldNewton::CreateJointBall(const tString &asName,
-										const cVector3f& avPivotPoint,
-										iPhysicsBody* apParentBody, iPhysicsBody *apChildBody)
-	{
-		iPhysicsJointBall *pJoint = hplNew( cPhysicsJointBallNewton, (asName,apParentBody,apChildBody,this,
-														avPivotPoint) );
-		mlstJoints.push_back(pJoint);
-		return pJoint;
-	}
-
-	iPhysicsJointHinge* cPhysicsWorldNewton::CreateJointHinge(const tString &asName,
-										const cVector3f& avPivotPoint,const cVector3f& avPinDir,
-										iPhysicsBody* apParentBody, iPhysicsBody *apChildBody)
-	{
-		iPhysicsJointHinge *pJoint = hplNew( cPhysicsJointHingeNewton, (asName,apParentBody,apChildBody,this,
-										avPivotPoint,avPinDir) );
-		mlstJoints.push_back(pJoint);
-		return pJoint;
-	}
-
-	iPhysicsJointSlider* cPhysicsWorldNewton::CreateJointSlider(const tString &asName,
-										const cVector3f& avPivotPoint,const cVector3f& avPinDir,
-										iPhysicsBody* apParentBody, iPhysicsBody *apChildBody)
-	{
-		iPhysicsJointSlider *pJoint = hplNew( cPhysicsJointSliderNewton, (asName,apParentBody,apChildBody,this,
-											avPivotPoint,avPinDir) );
-		mlstJoints.push_back(pJoint);
-		return pJoint;
-	}
-
-	iPhysicsJointScrew* cPhysicsWorldNewton::CreateJointScrew(const tString &asName,
-										const cVector3f& avPivotPoint,const cVector3f& avPinDir,
-										iPhysicsBody* apParentBody, iPhysicsBody *apChildBody)
-	{
-		iPhysicsJointScrew *pJoint = hplNew( cPhysicsJointScrewNewton, (asName,apParentBody,apChildBody,this,
-											avPivotPoint,avPinDir) );
-		mlstJoints.push_back(pJoint);
-		return pJoint;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iPhysicsBody* cPhysicsWorldNewton::CreateBody(const tString &asName,iCollideShape *apShape)
-	{
-		cPhysicsBodyNewton *pBody = hplNew( cPhysicsBodyNewton, (asName,this, apShape) );
-
-		mlstBodies.push_back(pBody);
-
-		if(mpWorld3D)mpWorld3D->GetPortalContainer()->AddEntity(pBody);
-
-		return pBody;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iCharacterBody* cPhysicsWorldNewton::CreateCharacterBody(const tString &asName, const cVector3f &avSize)
-	{
-		cCharacterBodyNewton *pChar = hplNew( cCharacterBodyNewton, (asName,this,avSize) );
-
-		mlstCharBodies.push_back(pChar);
-
-		return pChar;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iPhysicsMaterial* cPhysicsWorldNewton::CreateMaterial(const tString &asName)
-	{
-		cPhysicsMaterialNewton *pMaterial = hplNew( cPhysicsMaterialNewton, (asName,this) );
-
-		tPhysicsMaterialMap::value_type Val(asName,pMaterial);
-		m_mapMaterials.insert(Val);
-
-		pMaterial->UpdateMaterials();
-
-		return pMaterial;
-	}
-
-	//-----------------------------------------------------------------------
-
-	iPhysicsController* cPhysicsWorldNewton::CreateController(const tString &asName)
-	{
-		iPhysicsController* pController = hplNew( cPhysicsControllerNewton, (asName, this) );
-
-		mlstControllers.push_back(pController);
-
-		return pController;
-	}
-
-	//-----------------------------------------------------------------------
-
-	static bool gbRayCalcDist;
-	static bool gbRayCalcNormal;
-	static bool gbRayCalcPoint;
-	static iPhysicsRayCallback *gpRayCallback;
-	static cVector3f gvRayOrigin;
-	static cVector3f gvRayEnd;
-	static cVector3f gvRayDelta;
-	static float gfRayLength;
-
-	static cPhysicsRayParams gRayParams;
-
-	//////////////////////////////////////
-
-	static unsigned RayCastPrefilterFunc (const NewtonBody* apNewtonBody,const NewtonCollision* collision, void* userData)
-	{
-		cPhysicsBodyNewton* pRigidBody = (cPhysicsBodyNewton*) NewtonBodyGetUserData(apNewtonBody);
-		if(pRigidBody->IsActive()==false) return 0;
-
-		bool bRet = gpRayCallback->BeforeIntersect(pRigidBody);
-
-		if(bRet) return 1;
-		else return 0;
-	}
-
-	static float RayCastFilterFunc (const NewtonBody* apNewtonBody, const float* apNormalVec,
-								int alCollisionID, void* apUserData, float afIntersetParam)
-	{
-		cPhysicsBodyNewton* pRigidBody = (cPhysicsBodyNewton*) NewtonBodyGetUserData(apNewtonBody);
-		if(pRigidBody->IsActive()==false) return 1;
-
-		gRayParams.mfT = afIntersetParam;
-
-		//Calculate stuff needed.
-		if(gbRayCalcDist){
-			gRayParams.mfDist = gfRayLength * afIntersetParam;
-		}
-		if(gbRayCalcNormal){
-			gRayParams.mvNormal.FromVec(apNormalVec);
-		}
-		if(gbRayCalcPoint){
-			gRayParams.mvPoint = gvRayOrigin + gvRayDelta * afIntersetParam;
-		}
-
-		//Call the call back
-		bool bRet = gpRayCallback->OnIntersect(pRigidBody,&gRayParams);
-
-		//return correct value.
-		if(bRet) return 1;//afIntersetParam;
-		else return 0;
-	}
-
-	//////////////////////////////////////
-
-	void cPhysicsWorldNewton::CastRay(iPhysicsRayCallback *apCallback,
-								const cVector3f &avOrigin, const cVector3f& avEnd,
-								bool abCalcDist, bool abCalcNormal,bool abCalcPoint,
-								bool abUsePrefilter)
-	{
+	// Call the call back
+	bool bRet = gpRayCallback->OnIntersect(pRigidBody, &gRayParams);
+
+	// return correct value.
+	if (bRet)
+		return 1; // afIntersetParam;
+	else
+		return 0;
+}
+
+//////////////////////////////////////
+
+void cPhysicsWorldNewton::CastRay(iPhysicsRayCallback *apCallback,
+								  const cVector3f &avOrigin, const cVector3f &avEnd,
+								  bool abCalcDist, bool abCalcNormal, bool abCalcPoint,
+								  bool abUsePrefilter) {
 #if 0
   		gbRayCalcPoint = abCalcPoint;
 		gbRayCalcNormal = abCalcNormal;
@@ -482,15 +454,13 @@ namespace hpl {
 		else
 			NewtonWorldRayCast(mpNewtonWorld, fOrigin, fEnd,RayCastFilterFunc, NULL, NULL);
 #endif
+}
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	bool cPhysicsWorldNewton::CheckShapeCollision(	iCollideShape* apShapeA, const cMatrixf& a_mtxA,
-										iCollideShape* apShapeB, const cMatrixf& a_mtxB,
-										cCollideData & aCollideData, int alMaxPoints)
-	{
+bool cPhysicsWorldNewton::CheckShapeCollision(iCollideShape *apShapeA, const cMatrixf &a_mtxA,
+											  iCollideShape *apShapeB, const cMatrixf &a_mtxB,
+											  cCollideData &aCollideData, int alMaxPoints) {
 #if 0
   cCollideShapeNewton *pNewtonShapeA = static_cast<cCollideShapeNewton*>(apShapeA);
 		cCollideShapeNewton *pNewtonShapeB = static_cast<cCollideShapeNewton*>(apShapeB);
@@ -593,20 +563,18 @@ namespace hpl {
 
 #endif
 
-		return true;
-	}
-
-	//-----------------------------------------------------------------------
-
-	void cPhysicsWorldNewton::RenderDebugGeometry(iLowLevelGraphics *apLowLevel,const cColor &aColor)
-	{
-		tPhysicsBodyListIt it = mlstBodies.begin();
-		for(;it != mlstBodies.end(); ++it)
-		{
-			iPhysicsBody *pBody = *it;
-			pBody->RenderDebugGeometry(apLowLevel,aColor);
-		}
-	}
-
-	//-----------------------------------------------------------------------
+	return true;
 }
+
+//-----------------------------------------------------------------------
+
+void cPhysicsWorldNewton::RenderDebugGeometry(iLowLevelGraphics *apLowLevel, const cColor &aColor) {
+	tPhysicsBodyListIt it = mlstBodies.begin();
+	for (; it != mlstBodies.end(); ++it) {
+		iPhysicsBody *pBody = *it;
+		pBody->RenderDebugGeometry(apLowLevel, aColor);
+	}
+}
+
+//-----------------------------------------------------------------------
+} // namespace hpl

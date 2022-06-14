@@ -41,37 +41,36 @@
 #ifndef HPL_BACKGROUND_IMAGE_H
 #define HPL_BACKGROUND_IMAGE_H
 
-#include <map>
 #include "hpl1/engine/graphics/GraphicsTypes.h"
-#include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/graphics/Material.h"
+#include "hpl1/engine/math/MathTypes.h"
+#include <map>
 
 namespace hpl {
 
-	class cBackgroundImage
-	{
-	public:
-		cBackgroundImage(iMaterial* apMat,const cVector3f& avPos, bool abTile,
-						const cVector2f& avSize, const cVector2f& avPosPercent, const cVector2f& avVel);
-		~cBackgroundImage();
+class cBackgroundImage {
+public:
+	cBackgroundImage(iMaterial *apMat, const cVector3f &avPos, bool abTile,
+					 const cVector2f &avSize, const cVector2f &avPosPercent, const cVector2f &avVel);
+	~cBackgroundImage();
 
-		void Draw(const cRect2f& aCollideRect, iLowLevelGraphics * apLowLevelGraphics);
+	void Draw(const cRect2f &aCollideRect, iLowLevelGraphics *apLowLevelGraphics);
 
-		void Update();
+	void Update();
 
-	private:
-		iMaterial *mpMaterial;
+private:
+	iMaterial *mpMaterial;
 
-		tVertexVec mvVtx;
+	tVertexVec mvVtx;
 
-		cVector3f mvPos;
-		bool mbTile;
-		cVector2f mvSize;
-		cVector2f mvPosPercent;
-		cVector2f mvVel;
-	};
-
-	typedef std::map<float,cBackgroundImage*> tBackgroundImageMap;
-	typedef tBackgroundImageMap::iterator tBackgroundImageMapIt;
+	cVector3f mvPos;
+	bool mbTile;
+	cVector2f mvSize;
+	cVector2f mvPosPercent;
+	cVector2f mvVel;
 };
+
+typedef std::map<float, cBackgroundImage *> tBackgroundImageMap;
+typedef tBackgroundImageMap::iterator tBackgroundImageMapIt;
+};     // namespace hpl
 #endif // HPL_BACKGROUND_IMAGE_H

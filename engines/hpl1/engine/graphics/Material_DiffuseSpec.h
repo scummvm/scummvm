@@ -45,31 +45,28 @@
 
 namespace hpl {
 
-	class cMaterial_DiffuseSpec : public iMaterial_BaseLight
-	{
-	public:
-		cMaterial_DiffuseSpec(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
-		~cMaterial_DiffuseSpec();
+class cMaterial_DiffuseSpec : public iMaterial_BaseLight {
+public:
+	cMaterial_DiffuseSpec(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+						  cImageManager *apImageManager, cTextureManager *apTextureManager,
+						  cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+						  eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
+	~cMaterial_DiffuseSpec();
 
-	private:
-	};
-
-	class cMaterialType_DiffuseSpec : public iMaterialType
-	{
-	public:
-		bool IsCorrect(tString asName){
-			return cString::ToLowerCase(asName)=="diffusespecular";
-		}
-
-		iMaterial* Create(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
-
-	};
-
+private:
 };
+
+class cMaterialType_DiffuseSpec : public iMaterialType {
+public:
+	bool IsCorrect(tString asName) {
+		return cString::ToLowerCase(asName) == "diffusespecular";
+	}
+
+	iMaterial *Create(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+					  cImageManager *apImageManager, cTextureManager *apTextureManager,
+					  cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+					  eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
+};
+
+};     // namespace hpl
 #endif // HPL_MATERIAL_DIFFUSE_SPEC_H

@@ -46,391 +46,380 @@
 
 namespace hpl {
 
-	class iPhysicsWorld;
-	class iCollideShape;
-	class iPhysicsBody;
-	class cCamera3D;
-	class iCharacterBody;
-	class iEntity3D;
+class iPhysicsWorld;
+class iCollideShape;
+class iPhysicsBody;
+class cCamera3D;
+class iCharacterBody;
+class iEntity3D;
 
-	enum eCharDir
-	{
-		eCharDir_Forward=0,
-		eCharDir_Right=1,
-		eCharDir_LastEnum=2
-	};
+enum eCharDir {
+	eCharDir_Forward = 0,
+	eCharDir_Right = 1,
+	eCharDir_LastEnum = 2
+};
 
-	class iCharacterBodyCallback
-	{
-	public:
-		virtual void OnHitGround(iCharacterBody *apCharBody,const cVector3f &avVel)=0;
-		virtual void OnGravityCollide(iCharacterBody *apCharBody,iPhysicsBody *apCollideBody,
-									cCollideData *apCollideData)=0;
-	};
+class iCharacterBodyCallback {
+public:
+	virtual void OnHitGround(iCharacterBody *apCharBody, const cVector3f &avVel) = 0;
+	virtual void OnGravityCollide(iCharacterBody *apCharBody, iPhysicsBody *apCollideBody,
+								  cCollideData *apCollideData) = 0;
+};
 
-	//------------------------------------------------
+//------------------------------------------------
 
-	class cCharacterBodyRay : public iPhysicsRayCallback
-	{
-	public:
-		cCharacterBodyRay();
+class cCharacterBodyRay : public iPhysicsRayCallback {
+public:
+	cCharacterBodyRay();
 
-		void Clear();
-		bool OnIntersect(iPhysicsBody *pBody,cPhysicsRayParams *apParams);
+	void Clear();
+	bool OnIntersect(iPhysicsBody *pBody, cPhysicsRayParams *apParams);
 
-		float mfMinDist;
-		bool mbCollide;
-	};
+	float mfMinDist;
+	bool mbCollide;
+};
 
-	//------------------------------------------------
+//------------------------------------------------
 
-	class cCharacterBodyCollideGravity : public iPhysicsWorldCollisionCallback
-	{
-	public:
-		cCharacterBodyCollideGravity();
+class cCharacterBodyCollideGravity : public iPhysicsWorldCollisionCallback {
+public:
+	cCharacterBodyCollideGravity();
 
-		void OnCollision(iPhysicsBody *apBody, cCollideData *apCollideData);
+	void OnCollision(iPhysicsBody *apBody, cCollideData *apCollideData);
 
-		iCharacterBody *mpCharBody;
-	};
+	iCharacterBody *mpCharBody;
+};
 
-	//------------------------------------------------
+//------------------------------------------------
 
-	class cCharacterBodyCollidePush : public iPhysicsWorldCollisionCallback
-	{
-	public:
-		cCharacterBodyCollidePush();
+class cCharacterBodyCollidePush : public iPhysicsWorldCollisionCallback {
+public:
+	cCharacterBodyCollidePush();
 
-		void OnCollision(iPhysicsBody *apBody, cCollideData *apCollideData);
+	void OnCollision(iPhysicsBody *apBody, cCollideData *apCollideData);
 
-		iCharacterBody *mpCharBody;
-	};
+	iCharacterBody *mpCharBody;
+};
 
-	//-----------------------------------
+//-----------------------------------
 
-	kSaveData_BaseClass(iCharacterBody)
-	{
-		kSaveData_ClassInit(iCharacterBody)
-	public:
-		tString msName;
+kSaveData_BaseClass(iCharacterBody) {
+	kSaveData_ClassInit(iCharacterBody) public : tString msName;
 
-		float mfMass;
-		bool mbGravityActive;
-		float mfMaxGravitySpeed;
+	float mfMass;
+	bool mbGravityActive;
+	float mfMaxGravitySpeed;
 
-		bool mbActive;
+	bool mbActive;
 
-		bool mbCollideCharacter;
+	bool mbCollideCharacter;
 
-		cVector3f mvPosition;
-		cVector3f mvLastPosition;
-		float mfMaxPosMoveSpeed[2];
-		float mfMaxNegMoveSpeed[2];
-		float mfMoveSpeed[2];
-		float mfMoveAcc[2];
-		float mfMoveDeacc[2];
-		bool mbMoving[2];
+	cVector3f mvPosition;
+	cVector3f mvLastPosition;
+	float mfMaxPosMoveSpeed[2];
+	float mfMaxNegMoveSpeed[2];
+	float mfMoveSpeed[2];
+	float mfMoveAcc[2];
+	float mfMoveDeacc[2];
+	bool mbMoving[2];
 
-		float mfPitch;
-		float mfYaw;
+	float mfPitch;
+	float mfYaw;
 
-		bool mbOnGround;
+	bool mbOnGround;
 
-		float mfMaxPushMass;
-		float mfPushForce;
-		bool mbPushIn2D;
+	float mfMaxPushMass;
+	float mfPushForce;
+	bool mbPushIn2D;
 
-		cVector3f mvForce;
-		cVector3f mvVelolcity;
+	cVector3f mvForce;
+	cVector3f mvVelolcity;
 
-		cVector3f mvSize;
+	cVector3f mvSize;
 
-		cMatrixf m_mtxMove;
+	cMatrixf m_mtxMove;
 
-		int mlEntityId;
-		cMatrixf m_mtxEntityOffset;
-		int mlEntitySmoothPosNum;
+	int mlEntityId;
+	cMatrixf m_mtxEntityOffset;
+	int mlEntitySmoothPosNum;
 
-		float mfMaxStepHeight;
-		float mfStepClimbSpeed;
-		float mfClimbForwardMul;
-		float mfClimbHeightAdd;
-		bool mbClimbing;
+	float mfMaxStepHeight;
+	float mfStepClimbSpeed;
+	float mfClimbForwardMul;
+	float mfClimbHeightAdd;
+	bool mbClimbing;
 
-		float mfGroundFriction;
-		float mfAirFriction;
+	float mfGroundFriction;
+	float mfAirFriction;
 
-		int mlBodyId;
+	int mlBodyId;
 
-		cContainerList<int> mvExtraBodyIds;
+	cContainerList<int> mvExtraBodyIds;
 
-		virtual iSaveObject* CreateSaveObject(cSaveObjectHandler *apSaveObjectHandler,cGame *apGame);
-		virtual int GetSaveCreatePrio();
-	};
+	virtual iSaveObject *CreateSaveObject(cSaveObjectHandler * apSaveObjectHandler, cGame * apGame);
+	virtual int GetSaveCreatePrio();
+};
 
-	//------------------------------------------------
+//------------------------------------------------
 
-	class iCharacterBody : public iSaveObject
-	{
+class iCharacterBody : public iSaveObject {
 	typedef iSaveObject super;
 	friend class cSaveData_iCharacterBody;
 	friend class cCharacterBodyCollideGravity;
-	public:
-		iCharacterBody(const tString &asName, iPhysicsWorld *apWorld, const cVector3f avSize);
-		virtual ~iCharacterBody();
 
-		const tString& GetName(){ return msName;}
+public:
+	iCharacterBody(const tString &asName, iPhysicsWorld *apWorld, const cVector3f avSize);
+	virtual ~iCharacterBody();
 
-		///////////////////////////////////////
-		//Properties
+	const tString &GetName() { return msName; }
 
-		float GetMass();
-		void SetMass(float afMass);
+	///////////////////////////////////////
+	// Properties
 
-		void SetActive(bool abX);
-		bool IsActive(){ return mbActive;}
+	float GetMass();
+	void SetMass(float afMass);
 
-		cVector3f GetSize();
+	void SetActive(bool abX);
+	bool IsActive() { return mbActive; }
 
-		void SetCollideCharacter(bool abX);
-		bool GetCollideCharacter(){ return mbCollideCharacter;}
+	cVector3f GetSize();
 
-		void SetTestCollision(bool abX){mbTestCollision = abX;}
-		bool GetTestCollision(){return mbTestCollision;}
+	void SetCollideCharacter(bool abX);
+	bool GetCollideCharacter() { return mbCollideCharacter; }
 
-		void SetMaxPositiveMoveSpeed(eCharDir aDir, float afX);
-		float GetMaxPositiveMoveSpeed(eCharDir aDir);
-		void SetMaxNegativeMoveSpeed(eCharDir aDir, float afX);
-		float GetMaxNegativeMoveSpeed(eCharDir aDir);
+	void SetTestCollision(bool abX) { mbTestCollision = abX; }
+	bool GetTestCollision() { return mbTestCollision; }
 
-		void SetMoveSpeed(eCharDir aDir, float afX);
-		float GetMoveSpeed(eCharDir aDir);
-		void SetMoveAcc(eCharDir aDir, float afX);
-		float GetMoveAcc(eCharDir aDir);
-		void SetMoveDeacc(eCharDir aDir, float afX);
-		float GetMoveDeacc(eCharDir aDir);
+	void SetMaxPositiveMoveSpeed(eCharDir aDir, float afX);
+	float GetMaxPositiveMoveSpeed(eCharDir aDir);
+	void SetMaxNegativeMoveSpeed(eCharDir aDir, float afX);
+	float GetMaxNegativeMoveSpeed(eCharDir aDir);
 
-		cVector3f GetVelocity(float afFrameTime);
+	void SetMoveSpeed(eCharDir aDir, float afX);
+	float GetMoveSpeed(eCharDir aDir);
+	void SetMoveAcc(eCharDir aDir, float afX);
+	float GetMoveAcc(eCharDir aDir);
+	void SetMoveDeacc(eCharDir aDir, float afX);
+	float GetMoveDeacc(eCharDir aDir);
 
-		void SetPosition(const cVector3f& avPos, bool abSmooth=false);
-		const cVector3f& GetPosition();
-		const cVector3f& GetLastPosition();
-		void SetFeetPosition(const cVector3f& avPos, bool abSmooth=false);
-		cVector3f GetFeetPosition();
+	cVector3f GetVelocity(float afFrameTime);
 
-		void SetYaw(float afX);
-		void AddYaw(float afX);
-		float GetYaw();
-		void SetPitch(float afX);
-		void AddPitch(float afX);
-		float GetPitch();
+	void SetPosition(const cVector3f &avPos, bool abSmooth = false);
+	const cVector3f &GetPosition();
+	const cVector3f &GetLastPosition();
+	void SetFeetPosition(const cVector3f &avPos, bool abSmooth = false);
+	cVector3f GetFeetPosition();
 
-		cVector3f GetForward();
-		cVector3f GetRight();
-		cVector3f GetUp();
+	void SetYaw(float afX);
+	void AddYaw(float afX);
+	float GetYaw();
+	void SetPitch(float afX);
+	void AddPitch(float afX);
+	float GetPitch();
 
-		cMatrixf& GetMoveMatrix();
+	cVector3f GetForward();
+	cVector3f GetRight();
+	cVector3f GetUp();
 
-		void SetGravityActive(bool abX);
-		bool GravityIsActive();
-		void SetMaxGravitySpeed(float afX);
-		float GetMaxGravitySpeed();
+	cMatrixf &GetMoveMatrix();
 
-		bool GetCustomGravityActive();
-		void SetCustomGravityActive(bool abX);
-		void SetCustomGravity(const cVector3f& avCustomGravity);
-		cVector3f GetCustomGravity();
+	void SetGravityActive(bool abX);
+	bool GravityIsActive();
+	void SetMaxGravitySpeed(float afX);
+	float GetMaxGravitySpeed();
 
+	bool GetCustomGravityActive();
+	void SetCustomGravityActive(bool abX);
+	void SetCustomGravity(const cVector3f &avCustomGravity);
+	cVector3f GetCustomGravity();
 
-		void SetMaxPushMass(float afX){ mfMaxPushMass = afX;}
-		void SetPushForce(float afX){ mfPushForce = afX;}
-		float GetMaxPushMass(){ return mfMaxPushMass;}
-		float GetPushForce(){ return mfPushForce;}
+	void SetMaxPushMass(float afX) { mfMaxPushMass = afX; }
+	void SetPushForce(float afX) { mfPushForce = afX; }
+	float GetMaxPushMass() { return mfMaxPushMass; }
+	float GetPushForce() { return mfPushForce; }
 
-		bool GetPushIn2D(){ return mbPushIn2D;}
-		void SetPushIn2D(bool abX){ mbPushIn2D = abX;}
+	bool GetPushIn2D() { return mbPushIn2D; }
+	void SetPushIn2D(bool abX) { mbPushIn2D = abX; }
 
-		void AddForceVelocity(const cVector3f& avVel){ mvVelolcity += avVel;}
-		void SetForceVelocity(const cVector3f& avVel){ mvVelolcity = avVel;}
-		cVector3f GetForceVelocity(){ return mvVelolcity;}
+	void AddForceVelocity(const cVector3f &avVel) { mvVelolcity += avVel; }
+	void SetForceVelocity(const cVector3f &avVel) { mvVelolcity = avVel; }
+	cVector3f GetForceVelocity() { return mvVelolcity; }
 
-		int AddExtraSize(const cVector3f& avSize);
-		void SetActiveSize(int alNum);
+	int AddExtraSize(const cVector3f &avSize);
+	void SetActiveSize(int alNum);
 
-		///////////////////////////////////////
-		//Actions
-		void SetForce(const cVector3f &avForce);
-		void AddForce(const cVector3f &avForce);
-		cVector3f GetForce();
+	///////////////////////////////////////
+	// Actions
+	void SetForce(const cVector3f &avForce);
+	void AddForce(const cVector3f &avForce);
+	cVector3f GetForce();
 
-		void Move(eCharDir aDir, float afMul, float afTimeStep);
+	void Move(eCharDir aDir, float afMul, float afTimeStep);
 
-		void Update(float afTimeStep);
+	void Update(float afTimeStep);
 
-		///////////////////////////////////////
-		//Other
-		void SetCamera(cCamera3D *apCam);
-		cCamera3D* GetCamera();
-		void SetCameraPosAdd(const cVector3f &avAdd);
-		cVector3f GetCameraPosAdd();
-		void SetCameraSmoothPosNum(int alNum){ mlCameraSmoothPosNum = alNum;}
-		int GetCameraSmoothPosNum(){ return mlCameraSmoothPosNum;}
+	///////////////////////////////////////
+	// Other
+	void SetCamera(cCamera3D *apCam);
+	cCamera3D *GetCamera();
+	void SetCameraPosAdd(const cVector3f &avAdd);
+	cVector3f GetCameraPosAdd();
+	void SetCameraSmoothPosNum(int alNum) { mlCameraSmoothPosNum = alNum; }
+	int GetCameraSmoothPosNum() { return mlCameraSmoothPosNum; }
 
-		void SetEntity(iEntity3D *apEntity);
-		iEntity3D* GetEntity();
+	void SetEntity(iEntity3D *apEntity);
+	iEntity3D *GetEntity();
 
-		void SetEntityOffset(const cMatrixf &a_mtxOffset);
-		const cMatrixf & GetEntityOffset();
+	void SetEntityOffset(const cMatrixf &a_mtxOffset);
+	const cMatrixf &GetEntityOffset();
 
-		void SetEntityPostOffset(const cMatrixf &a_mtxOffset);
-		const cMatrixf & GetEntityPostOffset();
+	void SetEntityPostOffset(const cMatrixf &a_mtxOffset);
+	const cMatrixf &GetEntityPostOffset();
 
-		void SetEntitySmoothPosNum(int alNum){ mlEntitySmoothPosNum = alNum;}
-		int GetEntitySmoothPosNum(){ return mlEntitySmoothPosNum;}
+	void SetEntitySmoothPosNum(int alNum) { mlEntitySmoothPosNum = alNum; }
+	int GetEntitySmoothPosNum() { return mlEntitySmoothPosNum; }
 
-		void SetUserData(void* apUserData){ mpUserData = apUserData;}
-		void* GetUserData(){ return mpUserData;}
+	void SetUserData(void *apUserData) { mpUserData = apUserData; }
+	void *GetUserData() { return mpUserData; }
 
-		void SetCallback(iCharacterBodyCallback *apCallback){ mpCallback = apCallback;}
+	void SetCallback(iCharacterBodyCallback *apCallback) { mpCallback = apCallback; }
 
-		void SetEnableNearbyBodies(bool abX){ mbEnableNearbyBodies = abX;}
-		bool GetEnableNearbyBodies(){ return mbEnableNearbyBodies;}
+	void SetEnableNearbyBodies(bool abX) { mbEnableNearbyBodies = abX; }
+	bool GetEnableNearbyBodies() { return mbEnableNearbyBodies; }
 
-		iPhysicsBody *GetBody(){ return mpBody;}
-		iCollideShape *GetShape();
+	iPhysicsBody *GetBody() { return mpBody; }
+	iCollideShape *GetShape();
 
-		iPhysicsBody *GetExtraBody(size_t alIdx){ return mvExtraBodies[alIdx];}
+	iPhysicsBody *GetExtraBody(size_t alIdx) { return mvExtraBodies[alIdx]; }
 
-		bool IsOnGround();
+	bool IsOnGround();
 
-		float GetMaxStepSize(){ return mfMaxStepHeight;}
-		void SetMaxStepSize(float afSize){ mfMaxStepHeight = afSize;}
+	float GetMaxStepSize() { return mfMaxStepHeight; }
+	void SetMaxStepSize(float afSize) { mfMaxStepHeight = afSize; }
 
-		void SetStepClimbSpeed(float afX){ mfStepClimbSpeed = afX;}
-		float GetStepClimbSpeed(){ return mfStepClimbSpeed;}
+	void SetStepClimbSpeed(float afX) { mfStepClimbSpeed = afX; }
+	float GetStepClimbSpeed() { return mfStepClimbSpeed; }
 
-		void SetAccurateClimbing(bool abX){ mbAccurateClimbing = abX;}
-		bool GetAccurateClimbing(){ return mbAccurateClimbing;}
+	void SetAccurateClimbing(bool abX) { mbAccurateClimbing = abX; }
+	bool GetAccurateClimbing() { return mbAccurateClimbing; }
 
-		void SetClimbForwardMul(float afX){ mfClimbForwardMul= afX;}
-		float GetClimbForwardMul(){ return mfClimbForwardMul;}
+	void SetClimbForwardMul(float afX) { mfClimbForwardMul = afX; }
+	float GetClimbForwardMul() { return mfClimbForwardMul; }
 
-		void SetClimbHeightAdd(float afX){ mfClimbHeightAdd = afX;}
-		float GetClimbHeightAdd(){ return mfClimbHeightAdd;}
+	void SetClimbHeightAdd(float afX) { mfClimbHeightAdd = afX; }
+	float GetClimbHeightAdd() { return mfClimbHeightAdd; }
 
-		void SetGroundFriction(float afX){ mfGroundFriction = afX;}
-		float GetGroundFriction(){ return mfGroundFriction;}
+	void SetGroundFriction(float afX) { mfGroundFriction = afX; }
+	float GetGroundFriction() { return mfGroundFriction; }
 
-		void SetAirFriction(float afX){ mfAirFriction = afX;}
-		float GetAirFriction(){ return mfAirFriction;}
+	void SetAirFriction(float afX) { mfAirFriction = afX; }
+	float GetAirFriction() { return mfAirFriction; }
 
-		bool IsClimbing(){ return mbClimbing;}
+	bool IsClimbing() { return mbClimbing; }
 
-		void SetAttachedBody(iPhysicsBody *apBody);
-		iPhysicsBody* GetAttachedBody(){ return mpAttachedBody;}
+	void SetAttachedBody(iPhysicsBody *apBody);
+	iPhysicsBody *GetAttachedBody() { return mpAttachedBody; }
 
-		//O=nly sue when you know what you are doing, Update calls these
-		void UpdateMoveMarix();
+	// O=nly sue when you know what you are doing, Update calls these
+	void UpdateMoveMarix();
 
-		void UpdateCamera();
-		void UpdateEntity();
+	void UpdateCamera();
+	void UpdateEntity();
 
-		void UpdateAttachment();
+	void UpdateAttachment();
 
+	// SaveObject implementation
+	virtual iSaveData *CreateSaveData();
+	virtual void SaveToSaveData(iSaveData *apSaveData);
+	virtual void LoadFromSaveData(iSaveData *apSaveData);
+	virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
 
-		//SaveObject implementation
-		virtual iSaveData* CreateSaveData();
-		virtual void SaveToSaveData(iSaveData *apSaveData);
-		virtual void LoadFromSaveData(iSaveData *apSaveData);
-		virtual void SaveDataSetup(cSaveObjectHandler *apSaveObjectHandler, cGame *apGame);
+protected:
+	tString msName;
 
-	protected:
+	float mfMass;
 
-		tString msName;
+	bool mbActive;
 
-		float mfMass;
+	bool mbCollideCharacter;
 
-		bool mbActive;
+	bool mbTestCollision;
 
-		bool mbCollideCharacter;
+	bool mbGravityActive;
+	float mfMaxGravitySpeed;
+	bool mbCustomGravity;
+	cVector3f mvCustomGravity;
 
-		bool mbTestCollision;
+	cVector3f mvPosition;
+	cVector3f mvLastPosition;
 
-		bool mbGravityActive;
-		float mfMaxGravitySpeed;
-		bool mbCustomGravity;
-		cVector3f mvCustomGravity;
+	float mfMaxPosMoveSpeed[2];
+	float mfMaxNegMoveSpeed[2];
 
-		cVector3f mvPosition;
-		cVector3f mvLastPosition;
+	float mfMoveSpeed[2];
+	float mfMoveAcc[2];
+	float mfMoveDeacc[2];
+	bool mbMoving[2];
 
-		float mfMaxPosMoveSpeed[2];
-		float mfMaxNegMoveSpeed[2];
+	float mfPitch;
+	float mfYaw;
 
-		float mfMoveSpeed[2];
-		float mfMoveAcc[2];
-		float mfMoveDeacc[2];
-		bool mbMoving[2];
+	bool mbOnGround;
 
-		float mfPitch;
-		float mfYaw;
+	float mfMaxPushMass;
+	float mfPushForce;
+	bool mbPushIn2D;
 
-		bool mbOnGround;
+	float mfCheckStepClimbCount;
+	float mfCheckStepClimbInterval;
 
-		float mfMaxPushMass;
-		float mfPushForce;
-		bool mbPushIn2D;
+	cVector3f mvForce;
+	cVector3f mvVelolcity;
 
-		float mfCheckStepClimbCount;
-		float mfCheckStepClimbInterval;
+	cVector3f mvSize;
 
-		cVector3f mvForce;
-		cVector3f mvVelolcity;
+	cMatrixf m_mtxMove;
 
-		cVector3f mvSize;
+	cCamera3D *mpCamera;
+	cVector3f mvCameraPosAdd;
+	int mlCameraSmoothPosNum;
+	tVector3fList mlstCameraPos;
 
-		cMatrixf m_mtxMove;
+	iEntity3D *mpEntity;
+	cMatrixf m_mtxEntityOffset;
+	cMatrixf m_mtxEntityPostOffset;
+	int mlEntitySmoothPosNum;
+	tVector3fList mlstEntityPos;
 
-		cCamera3D *mpCamera;
-		cVector3f mvCameraPosAdd;
-		int mlCameraSmoothPosNum;
-		tVector3fList mlstCameraPos;
+	float mfGroundFriction;
+	float mfAirFriction;
 
-		iEntity3D *mpEntity;
-		cMatrixf m_mtxEntityOffset;
-		cMatrixf m_mtxEntityPostOffset;
-		int mlEntitySmoothPosNum;
-		tVector3fList mlstEntityPos;
+	void *mpUserData;
 
-		float mfGroundFriction;
-		float mfAirFriction;
+	iPhysicsBody *mpAttachedBody;
+	cMatrixf m_mtxAttachedPrevMatrix;
+	bool mbAttachmentJustAdded;
 
-		void *mpUserData;
+	iCharacterBodyCallback *mpCallback;
 
-		iPhysicsBody *mpAttachedBody;
-		cMatrixf m_mtxAttachedPrevMatrix;
-		bool mbAttachmentJustAdded;
+	cCharacterBodyRay *mpRayCallback;
 
-		iCharacterBodyCallback *mpCallback;
+	cCharacterBodyCollideGravity *mpCollideCallbackGravity;
+	cCharacterBodyCollidePush *mpCollideCallbackPush;
 
-		cCharacterBodyRay *mpRayCallback;
+	float mfMaxStepHeight;
+	float mfStepClimbSpeed;
+	float mfClimbForwardMul;
+	float mfClimbHeightAdd;
+	bool mbClimbing;
+	bool mbAccurateClimbing;
 
-		cCharacterBodyCollideGravity *mpCollideCallbackGravity;
-		cCharacterBodyCollidePush *mpCollideCallbackPush;
+	bool mbEnableNearbyBodies;
 
-		float mfMaxStepHeight;
-		float mfStepClimbSpeed;
-		float mfClimbForwardMul;
-		float mfClimbHeightAdd;
-		bool mbClimbing;
-		bool mbAccurateClimbing;
+	iPhysicsBody *mpBody;
+	iPhysicsWorld *mpWorld;
 
-		bool mbEnableNearbyBodies;
-
-		iPhysicsBody* mpBody;
-		iPhysicsWorld *mpWorld;
-
-		std::vector<iPhysicsBody*> mvExtraBodies;
-	};
+	std::vector<iPhysicsBody *> mvExtraBodies;
 };
+};     // namespace hpl
 #endif // HPL_CHARACTER_BODY_H

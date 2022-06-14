@@ -45,35 +45,33 @@
 
 namespace hpl {
 
-	class cMaterial_Diffuse : public iMaterial_BaseLight
-	{
-	public:
-		cMaterial_Diffuse(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
-		~cMaterial_Diffuse();
+class cMaterial_Diffuse : public iMaterial_BaseLight {
+public:
+	cMaterial_Diffuse(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+					  cImageManager *apImageManager, cTextureManager *apTextureManager,
+					  cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+					  eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
+	~cMaterial_Diffuse();
 
-	private:
-	};
-
-	class cMaterialType_Diffuse : public iMaterialType
-	{
-	public:
-		cMaterialType_Diffuse();
-
-		bool IsCorrect(tString asName){
-			return cString::ToLowerCase(asName)=="diffuse";
-		}
-
-		iMaterial* Create(const tString& asName,iLowLevelGraphics* apLowLevelGraphics,
-			cImageManager* apImageManager, cTextureManager *apTextureManager,
-			cRenderer2D* apRenderer, cGpuProgramManager* apProgramManager,
-			eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
-
-	private:
-		int mlTechLevel;
-	};
-
+private:
 };
+
+class cMaterialType_Diffuse : public iMaterialType {
+public:
+	cMaterialType_Diffuse();
+
+	bool IsCorrect(tString asName) {
+		return cString::ToLowerCase(asName) == "diffuse";
+	}
+
+	iMaterial *Create(const tString &asName, iLowLevelGraphics *apLowLevelGraphics,
+					  cImageManager *apImageManager, cTextureManager *apTextureManager,
+					  cRenderer2D *apRenderer, cGpuProgramManager *apProgramManager,
+					  eMaterialPicture aPicture, cRenderer3D *apRenderer3D);
+
+private:
+	int mlTechLevel;
+};
+
+};     // namespace hpl
 #endif // HPL_MATERIAL_DIFFUSE_H

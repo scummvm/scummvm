@@ -1,149 +1,129 @@
+#include "hpl1/engine/impl/stdstring.h"
 #include <assert.h>
 #include <sstream>
-#include "hpl1/engine/impl/stdstring.h"
 using namespace std;
 
-static string StringFactory(asUINT length, const char *s)
-{
+static string StringFactory(asUINT length, const char *s) {
 	return string(s);
 }
 
-static void ConstructString(string *thisPointer)
-{
-	new(thisPointer) string();
+static void ConstructString(string *thisPointer) {
+	new (thisPointer) string();
 }
 
-static void DestructString(string *thisPointer)
-{
+static void DestructString(string *thisPointer) {
 	thisPointer->~string();
 }
 
-static string &AssignBitsToString(unsigned int i, string &dest)
-{
+static string &AssignBitsToString(unsigned int i, string &dest) {
 	ostringstream stream;
 	stream << hex << i;
 	dest = stream.str();
 	return dest;
 }
 
-static string &AddAssignBitsToString(unsigned int i, string &dest)
-{
+static string &AddAssignBitsToString(unsigned int i, string &dest) {
 	ostringstream stream;
 	stream << hex << i;
 	dest += stream.str();
 	return dest;
 }
 
-static string AddStringBits(string &str, unsigned int i)
-{
+static string AddStringBits(string &str, unsigned int i) {
 	ostringstream stream;
 	stream << hex << i;
 	str += stream.str();
 	return str;
 }
 
-static string AddBitsString(unsigned int i, string &str)
-{
+static string AddBitsString(unsigned int i, string &str) {
 	ostringstream stream;
 	stream << hex << i;
 	return stream.str() + str;
 }
 
-static string &AssignUIntToString(unsigned int i, string &dest)
-{
+static string &AssignUIntToString(unsigned int i, string &dest) {
 	ostringstream stream;
 	stream << i;
 	dest = stream.str();
 	return dest;
 }
 
-static string &AddAssignUIntToString(unsigned int i, string &dest)
-{
+static string &AddAssignUIntToString(unsigned int i, string &dest) {
 	ostringstream stream;
 	stream << i;
 	dest += stream.str();
 	return dest;
 }
 
-static string AddStringUInt(string &str, unsigned int i)
-{
+static string AddStringUInt(string &str, unsigned int i) {
 	ostringstream stream;
 	stream << i;
 	str += stream.str();
 	return str;
 }
 
-static string AddIntString(int i, string &str)
-{
+static string AddIntString(int i, string &str) {
 	ostringstream stream;
 	stream << i;
 	return stream.str() + str;
 }
 
-static string &AssignIntToString(int i, string &dest)
-{
+static string &AssignIntToString(int i, string &dest) {
 	ostringstream stream;
 	stream << i;
 	dest = stream.str();
 	return dest;
 }
 
-static string &AddAssignIntToString(int i, string &dest)
-{
+static string &AddAssignIntToString(int i, string &dest) {
 	ostringstream stream;
 	stream << i;
 	dest += stream.str();
 	return dest;
 }
 
-static string AddStringInt(string &str, int i)
-{
+static string AddStringInt(string &str, int i) {
 	ostringstream stream;
 	stream << i;
 	str += stream.str();
 	return str;
 }
 
-static string AddUIntString(unsigned int i, string &str)
-{
+static string AddUIntString(unsigned int i, string &str) {
 	ostringstream stream;
 	stream << i;
 	return stream.str() + str;
 }
 
-static string &AssignDoubleToString(double f, string &dest)
-{
+static string &AssignDoubleToString(double f, string &dest) {
 	ostringstream stream;
 	stream << f;
 	dest = stream.str();
 	return dest;
 }
 
-static string &AddAssignDoubleToString(double f, string &dest)
-{
+static string &AddAssignDoubleToString(double f, string &dest) {
 	ostringstream stream;
 	stream << f;
 	dest += stream.str();
 	return dest;
 }
 
-static string AddStringDouble(string &str, double f)
-{
+static string AddStringDouble(string &str, double f) {
 	ostringstream stream;
 	stream << f;
 	str += stream.str();
 	return str;
 }
 
-static string AddDoubleString(double f, string &str)
-{
+static string AddDoubleString(double f, string &str) {
 	ostringstream stream;
 	stream << f;
 	return stream.str() + str;
 }
 
-void RegisterStdString(asIScriptEngine *engine)
-{
+void RegisterStdString(asIScriptEngine *engine) {
 #if 0
   	int r;
 
@@ -192,7 +172,4 @@ void RegisterStdString(asIScriptEngine *engine)
 	r = engine->RegisterGlobalBehaviour(asBEHAVE_ADD,         "string f(string &in, bits)", asFUNCTION(AddStringBits), asCALL_CDECL); assert( r >= 0 );
 	r = engine->RegisterGlobalBehaviour(asBEHAVE_ADD,         "string f(bits, string &in)", asFUNCTION(AddBitsString), asCALL_CDECL); assert( r >= 0 );
 #endif
-
 }
-
-

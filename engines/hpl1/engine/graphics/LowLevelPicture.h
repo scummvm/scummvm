@@ -41,41 +41,40 @@
 #ifndef HPL_LOWLEVEL_PICTURE_H
 #define HPL_LOWLEVEL_PICTURE_H
 
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/system/String.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	class iLowLevelPicture
-	{
-	public:
-		iLowLevelPicture(tString asType): msType(asType) {}
-		virtual ~iLowLevelPicture(){}
+class iLowLevelPicture {
+public:
+	iLowLevelPicture(tString asType) : msType(asType) {}
+	virtual ~iLowLevelPicture() {}
 
-		tString GetType(){return msType;}
+	tString GetType() { return msType; }
 
-		unsigned int GetHeight(){return  mlHeight;}
-		unsigned int GetWidth(){return  mlWidth;}
-		unsigned int GetDepth(){return  mlDepth;}
+	unsigned int GetHeight() { return mlHeight; }
+	unsigned int GetWidth() { return mlWidth; }
+	unsigned int GetDepth() { return mlDepth; }
 
-		unsigned int GetBpp(){return  mlBpp;}
+	unsigned int GetBpp() { return mlBpp; }
 
-		virtual bool HasAlpha()=0;
+	virtual bool HasAlpha() = 0;
 
-		void SetPath(tString asPath){msPath = asPath;}
-		tString GetPath(){return msPath;}
-		tString GetFileName(){return cString::GetFileName(msPath);}
+	void SetPath(tString asPath) { msPath = asPath; }
+	tString GetPath() { return msPath; }
+	tString GetFileName() { return cString::GetFileName(msPath); }
 
-	protected:
-		unsigned int mlHeight;
-		unsigned int mlWidth;
-		unsigned int mlDepth;
-		unsigned int mlBpp;
+protected:
+	unsigned int mlHeight;
+	unsigned int mlWidth;
+	unsigned int mlDepth;
+	unsigned int mlBpp;
 
-	private:
-		tString msType;
-		tString msPath;
-	};
-
+private:
+	tString msType;
+	tString msPath;
 };
+
+};     // namespace hpl
 #endif // HPL_LOWLEVEL_PICTURE_H

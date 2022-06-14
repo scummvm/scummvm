@@ -41,38 +41,37 @@
 #ifndef HPL_INPUTDEVICE_H
 #define HPL_INPUTDEVICE_H
 
-#include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/engine/input/InputTypes.h"
+#include "hpl1/engine/system/SystemTypes.h"
 
 namespace hpl {
 
-	class iInputDevice
-	{
-	public:
-		iInputDevice(tString asName,eInputDeviceType aType);
-		virtual ~iInputDevice(){}
+class iInputDevice {
+public:
+	iInputDevice(tString asName, eInputDeviceType aType);
+	virtual ~iInputDevice() {}
 
-		/**
-		 *
-		 * \return name of the device
-		 */
-		tString GetName();
+	/**
+	 *
+	 * \return name of the device
+	 */
+	tString GetName();
 
-		/**
-		 *
-		 * \return type of device.
-		 */
-		eInputDeviceType GetType();
+	/**
+	 *
+	 * \return type of device.
+	 */
+	eInputDeviceType GetType();
 
-		/**
-		 * Update the device, called by cInput
-		 */
-		virtual void Update()=0;
+	/**
+	 * Update the device, called by cInput
+	 */
+	virtual void Update() = 0;
 
-	private:
-		tString msName;
-		eInputDeviceType mType;
-	};
-
+private:
+	tString msName;
+	eInputDeviceType mType;
 };
+
+};     // namespace hpl
 #endif // HPL_INPUTDEVICE_H

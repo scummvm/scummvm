@@ -38,7 +38,7 @@
  * along with HPL1 Engine.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if 0//ndef HPL_VIDEO_STREAM_THEORA_H
+#if 0 // ndef HPL_VIDEO_STREAM_THEORA_H
 #define HPL_VIDEO_STREAM_THEORA_H
 
 #include "hpl1/engine/graphics/VideoStream.h"

@@ -41,57 +41,55 @@
 #ifndef HPL_TILEMAP_LINE_IT_H
 #define HPL_TILEMAP_LINE_IT_H
 
-#include "hpl1/engine/scene/TileMapIt.h"
-#include "hpl1/engine/scene/TileMap.h"
 #include "hpl1/engine/math/MathTypes.h"
+#include "hpl1/engine/scene/TileMap.h"
+#include "hpl1/engine/scene/TileMapIt.h"
 
 namespace hpl {
 
-	class cTileMapLineIt : public iTileMapIt
-	{
-	public:
-		/**
-		 *
-		 * \param avPos
-		 * \param avSize
-		 * \param apTileMap
-		 * \param alLayer The layer that is to be iterated. -1 = All layers (hiding tiles behind solid ones)
-		 * \return
-		 */
-		cTileMapLineIt(cVector2f avStartPos, cVector2f avEndPos, cTileMap* apTileMap, int alLayer);
-		~cTileMapLineIt();
+class cTileMapLineIt : public iTileMapIt {
+public:
+	/**
+	 *
+	 * \param avPos
+	 * \param avSize
+	 * \param apTileMap
+	 * \param alLayer The layer that is to be iterated. -1 = All layers (hiding tiles behind solid ones)
+	 * \return
+	 */
+	cTileMapLineIt(cVector2f avStartPos, cVector2f avEndPos, cTileMap *apTileMap, int alLayer);
+	~cTileMapLineIt();
 
-		bool HasNext();
-		cTile* Next();
-		cTile* PeekNext();
-		int GetNum();
-		int GetCurrentLayer();
+	bool HasNext();
+	cTile *Next();
+	cTile *PeekNext();
+	int GetNum();
+	int GetCurrentLayer();
 
+private:
+	cVector2l mvEndPos;
 
-	private:
-		cVector2l mvEndPos;
+	cVector2f mvPos;
+	cVector2f mvPosAdd;
+	cVector2l mvTilePos;
 
-		cVector2f mvPos;
-		cVector2f mvPosAdd;
-		cVector2l mvTilePos;
+	int mlLayer;
+	int mlLayerCount;
+	int mlCurrentLayer;
+	int mlTileNum;
 
-		int mlLayer;
-		int mlLayerCount;
-		int mlCurrentLayer;
-		int mlTileNum;
+	bool mbUpdated;
 
-		bool mbUpdated;
+	bool mbAtLastTile;
+	bool mbAddNext;
 
-		bool mbAtLastTile;
-		bool mbAddNext;
+	cTileMap *mpTileMap;
+	cTile *mpTile;
 
-		cTileMap* mpTileMap;
-		cTile* mpTile;
+	void GetTile();
 
-		void GetTile();
-
-		void GetXYIntersection(const cVector2f& avPosA,cVector2f* avXIntersect,cVector2f* avYIntersect);
-	};
-
+	void GetXYIntersection(const cVector2f &avPosA, cVector2f *avXIntersect, cVector2f *avYIntersect);
 };
+
+};     // namespace hpl
 #endif // HPL_TILEMAP_LINE_IT_H

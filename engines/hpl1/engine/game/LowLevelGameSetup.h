@@ -41,33 +41,32 @@
 #ifndef HPL_LOWLEVELGAMESETUP_H
 #define HPL_LOWLEVELGAMESETUP_H
 
-#include "hpl1/engine/system/System.h"
-#include "hpl1/engine/input/Input.h"
+#include "hpl1/engine/ai/AI.h"
 #include "hpl1/engine/graphics/Graphics.h"
+#include "hpl1/engine/haptic/Haptic.h"
+#include "hpl1/engine/input/Input.h"
+#include "hpl1/engine/physics/Physics.h"
 #include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/scene/Scene.h"
 #include "hpl1/engine/sound/Sound.h"
-#include "hpl1/engine/physics/Physics.h"
-#include "hpl1/engine/ai/AI.h"
-#include "hpl1/engine/haptic/Haptic.h"
+#include "hpl1/engine/system/System.h"
 
 namespace hpl {
 
-	class iLowLevelGameSetup
-	{
-	public:
-		virtual ~iLowLevelGameSetup(){}
+class iLowLevelGameSetup {
+public:
+	virtual ~iLowLevelGameSetup() {}
 
-		virtual cInput* CreateInput(cGraphics* apGraphics)=0;
-		virtual cSystem* CreateSystem()=0;
-		virtual cGraphics* CreateGraphics()=0;
-		virtual cResources* CreateResources(cGraphics* apGraphics)=0;
-		virtual cScene* CreateScene(cGraphics* apGraphics, cResources* apResources, cSound* apSound,
-									cPhysics *apPhysics, cSystem *apSystem,cAI *apAI,cHaptic *apHaptic)=0;
-		virtual cSound* CreateSound()=0;
-		virtual cPhysics* CreatePhysics()=0;
-		virtual cAI* CreateAI()=0;
-		virtual cHaptic* CreateHaptic()=0;
-	};
+	virtual cInput *CreateInput(cGraphics *apGraphics) = 0;
+	virtual cSystem *CreateSystem() = 0;
+	virtual cGraphics *CreateGraphics() = 0;
+	virtual cResources *CreateResources(cGraphics *apGraphics) = 0;
+	virtual cScene *CreateScene(cGraphics *apGraphics, cResources *apResources, cSound *apSound,
+								cPhysics *apPhysics, cSystem *apSystem, cAI *apAI, cHaptic *apHaptic) = 0;
+	virtual cSound *CreateSound() = 0;
+	virtual cPhysics *CreatePhysics() = 0;
+	virtual cAI *CreateAI() = 0;
+	virtual cHaptic *CreateHaptic() = 0;
 };
+};     // namespace hpl
 #endif // HPL_LOWLEVELGAMESETUP_H

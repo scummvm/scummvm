@@ -46,90 +46,88 @@
 
 namespace hpl {
 
-	class cGuiSkinFont;
+class cGuiSkinFont;
 
-	class cWidgetTextBox;
-	class cWidgetButton;
-	class cWidgetSlider;
+class cWidgetTextBox;
+class cWidgetButton;
+class cWidgetSlider;
 
-	class cWidgetComboBox : public iWidget, public iWidgetItemContainer
-	{
-	public:
-		cWidgetComboBox(cGuiSet *apSet, cGuiSkin *apSkin);
-		virtual ~cWidgetComboBox();
+class cWidgetComboBox : public iWidget, public iWidgetItemContainer {
+public:
+	cWidgetComboBox(cGuiSet *apSet, cGuiSkin *apSkin);
+	virtual ~cWidgetComboBox();
 
-		void SetSelectedItem(int alX,bool abMoveList=false);
-		int GetSelectedItem(){ return mlSelectedItem;}
+	void SetSelectedItem(int alX, bool abMoveList = false);
+	int GetSelectedItem() { return mlSelectedItem; }
 
-		void SetCanEdit(bool abX);
-		bool GetCanEdit();
+	void SetCanEdit(bool abX);
+	bool GetCanEdit();
 
-		void SetMaxShownItems(int alX);
-		int GetMaxShownItems(){ return mlMaxItems;}
+	void SetMaxShownItems(int alX);
+	int GetMaxShownItems() { return mlMaxItems; }
 
-	protected:
-		/////////////////////////
-		// Own functions
-		void UpdateProperties();
+protected:
+	/////////////////////////
+	// Own functions
+	void UpdateProperties();
 
-		void OpenMenu();
-		void CloseMenu();
+	void OpenMenu();
+	void CloseMenu();
 
-		bool ButtonPress(iWidget* apWidget,cGuiMessageData& aData);
-		kGuiCalllbackDeclarationEnd(ButtonPress);
+	bool ButtonPress(iWidget *apWidget, cGuiMessageData &aData);
+	kGuiCalllbackDeclarationEnd(ButtonPress);
 
-		bool DrawText(iWidget* apWidget,cGuiMessageData& aData);
-		kGuiCalllbackDeclarationEnd(DrawText);
+	bool DrawText(iWidget *apWidget, cGuiMessageData &aData);
+	kGuiCalllbackDeclarationEnd(DrawText);
 
-		bool SliderMove(iWidget* apWidget,cGuiMessageData& aData);
-		kGuiCalllbackDeclarationEnd(SliderMove);
+	bool SliderMove(iWidget *apWidget, cGuiMessageData &aData);
+	kGuiCalllbackDeclarationEnd(SliderMove);
 
-		bool SliderLostFocus(iWidget* apWidget,cGuiMessageData& aData);
-		kGuiCalllbackDeclarationEnd(SliderLostFocus);
+	bool SliderLostFocus(iWidget *apWidget, cGuiMessageData &aData);
+	kGuiCalllbackDeclarationEnd(SliderLostFocus);
 
-		/////////////////////////
-		// Implemented functions
-		void OnLoadGraphics();
-		void OnChangeSize();
-		void OnChangeText();
-		void OnInit();
+	/////////////////////////
+	// Implemented functions
+	void OnLoadGraphics();
+	void OnChangeSize();
+	void OnChangeText();
+	void OnInit();
 
-		void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
+	void OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion);
 
-		bool OnMouseMove(cGuiMessageData &aData);
-		bool OnMouseDown(cGuiMessageData &aData);
-		bool OnMouseUp(cGuiMessageData &aData);
-		bool OnMouseEnter(cGuiMessageData &aData);
-		bool OnMouseLeave(cGuiMessageData &aData);
+	bool OnMouseMove(cGuiMessageData &aData);
+	bool OnMouseDown(cGuiMessageData &aData);
+	bool OnMouseUp(cGuiMessageData &aData);
+	bool OnMouseEnter(cGuiMessageData &aData);
+	bool OnMouseLeave(cGuiMessageData &aData);
 
-		bool OnLostFocus(cGuiMessageData &aData);
+	bool OnLostFocus(cGuiMessageData &aData);
 
+	/////////////////////////
+	// Data
+	cWidgetTextBox *mpText;
+	cWidgetButton *mpButton;
+	cWidgetSlider *mpSlider;
 
-		/////////////////////////
-		// Data
-		cWidgetTextBox *mpText;
-		cWidgetButton *mpButton;
-		cWidgetSlider *mpSlider;
+	bool mbMenuOpen;
+	float mfMenuHeight;
 
-		bool mbMenuOpen;
-		float mfMenuHeight;
+	float mfButtonWidth;
+	float mfSliderWidth;
 
-		float mfButtonWidth;
-		float mfSliderWidth;
+	int mlMouseOverSelection;
+	int mlSelectedItem;
+	int mlFirstItem;
+	int mlMaxItems;
+	int mlItemsShown;
 
-		int mlMouseOverSelection;
-		int mlSelectedItem;
-		int mlFirstItem;
-		int mlMaxItems;
-		int mlItemsShown;
+	cGuiGfxElement *mpGfxBackground;
 
-		cGuiGfxElement *mpGfxBackground;
+	cGuiGfxElement *mpGfxSelection;
 
-		cGuiGfxElement *mpGfxSelection;
-
-		cGuiGfxElement *mvGfxBorders[4];
-		cGuiGfxElement *mvGfxCorners[4];
-	};
-
+	cGuiGfxElement *mvGfxBorders[4];
+	cGuiGfxElement *mvGfxCorners[4];
 };
+
+};     // namespace hpl
 #endif // HPL_WIDGET_COMBO_BOX_H

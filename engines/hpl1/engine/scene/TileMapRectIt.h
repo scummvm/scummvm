@@ -41,51 +41,50 @@
 #ifndef HPL_TILEMAP_RECT_IT_H
 #define HPL_TILEMAP_RECT_IT_H
 
-#include "hpl1/engine/scene/TileMapIt.h"
-#include "hpl1/engine/scene/TileMap.h"
 #include "hpl1/engine/math/MathTypes.h"
+#include "hpl1/engine/scene/TileMap.h"
+#include "hpl1/engine/scene/TileMapIt.h"
 
 namespace hpl {
 
-	class cTileMapRectIt : public iTileMapIt
-	{
-	public:
-		/**
-		 *
-		 * \param avPos
-		 * \param avSize
-		 * \param apTileMap
-		 * \param alLayer The layer that is to be iterated. -1 = All layers (hiding tiles behind solid ones)
-		 * \return
-		 */
-		cTileMapRectIt(cVector2l avPos, cVector2l avSize, cTileMap* apTileMap, int alLayer);
-		~cTileMapRectIt();
+class cTileMapRectIt : public iTileMapIt {
+public:
+	/**
+	 *
+	 * \param avPos
+	 * \param avSize
+	 * \param apTileMap
+	 * \param alLayer The layer that is to be iterated. -1 = All layers (hiding tiles behind solid ones)
+	 * \return
+	 */
+	cTileMapRectIt(cVector2l avPos, cVector2l avSize, cTileMap *apTileMap, int alLayer);
+	~cTileMapRectIt();
 
-		bool HasNext();
-		cTile* Next();
-		cTile* PeekNext();
-		int GetNum();
-		int GetCurrentLayer();
+	bool HasNext();
+	cTile *Next();
+	cTile *PeekNext();
+	int GetNum();
+	int GetCurrentLayer();
 
-	private:
-		cVector2l mvPos;
-		cVector2l mvSize;
-		int mlLayer;
-		int mlLayerCount;
-		int mlTileNum;
-		int mlTileColAdd;
-		int mlTileRowCount;
-		int mlTileColCount;
+private:
+	cVector2l mvPos;
+	cVector2l mvSize;
+	int mlLayer;
+	int mlLayerCount;
+	int mlTileNum;
+	int mlTileColAdd;
+	int mlTileRowCount;
+	int mlTileColCount;
 
-		int mlCurrentLayer;
+	int mlCurrentLayer;
 
-		bool mbUpdated;
+	bool mbUpdated;
 
-		cTileMap* mpTileMap;
-		cTile* mpTile;
+	cTileMap *mpTileMap;
+	cTile *mpTile;
 
-		void GetTile();
-	};
-
+	void GetTile();
 };
+
+};     // namespace hpl
 #endif // HPL_TILEMAP_RECT_IT_H

@@ -41,31 +41,30 @@
 #ifndef HPL_ACTIONMOUSEBUTTON_H
 #define HPL_ACTIONMOUSEBUTTON_H
 
-
-#include "hpl1/engine/input/InputTypes.h"
 #include "hpl1/engine/input/Action.h"
+#include "hpl1/engine/input/InputTypes.h"
 
 namespace hpl {
 
-	class cInput;
+class cInput;
 
-	class cActionMouseButton : public iAction
-	{
-	public:
-		cActionMouseButton(tString asName,cInput* apInput, eMButton mButton);
+class cActionMouseButton : public iAction {
+public:
+	cActionMouseButton(tString asName, cInput *apInput, eMButton mButton);
 
-		bool IsTriggerd();
-		float GetValue();
+	bool IsTriggerd();
+	float GetValue();
 
-		tString GetInputName();
+	tString GetInputName();
 
-		tString GetInputType(){return "MouseButton";}
+	tString GetInputType() { return "MouseButton"; }
 
-		eMButton GetButton(){ return mButton;}
-	private:
-		eMButton mButton;
-		cInput *mpInput;
-	};
+	eMButton GetButton() { return mButton; }
 
+private:
+	eMButton mButton;
+	cInput *mpInput;
 };
+
+};     // namespace hpl
 #endif // HPL_ACTIONMOUSEBUTTON_H

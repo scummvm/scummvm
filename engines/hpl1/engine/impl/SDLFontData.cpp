@@ -40,36 +40,31 @@
 
 #include "hpl1/engine/impl/SDLFontData.h"
 #include "hpl1/engine/graphics/GraphicsDrawer.h"
-#include "hpl1/engine/system/LowLevelSystem.h"
 #include "hpl1/engine/impl/SDLBitmap2D.h"
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
+#include "hpl1/engine/system/LowLevelSystem.h"
 
 namespace hpl {
 
+//////////////////////////////////////////////////////////////////////////
+// CONSTRUCTORS
+//////////////////////////////////////////////////////////////////////////
 
-	//////////////////////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	//////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
+cSDLFontData::cSDLFontData(const tString &asName, iLowLevelGraphics *apLowLevelGraphics)
+	: iFontData(asName, apLowLevelGraphics) {
+}
 
-	cSDLFontData::cSDLFontData(const tString &asName,iLowLevelGraphics* apLowLevelGraphics)
-		: iFontData(asName,apLowLevelGraphics)
-	{
+//-----------------------------------------------------------------------
 
+//////////////////////////////////////////////////////////////////////////
+// PUBLIC METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	}
+//-----------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------
-
-	//////////////////////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	//////////////////////////////////////////////////////////////////////////
-
-	//-----------------------------------------------------------------------
-
-	bool cSDLFontData::CreateFromBitmapFile(const tString &asFileName)
-	{
+bool cSDLFontData::CreateFromBitmapFile(const tString &asFileName) {
 #if 0
   tString sPath = cString::GetFilePath(asFileName);
 
@@ -189,14 +184,13 @@ namespace hpl {
 		hplDelete(pXmlDoc);
 		return true;
 #endif
-		return false; 
-	}
+	return false;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	bool cSDLFontData::CreateFromFontFile(const tString &asFileName, int alSize, unsigned short alFirstChar,
-		unsigned short alLastChar)
-	{
+bool cSDLFontData::CreateFromFontFile(const tString &asFileName, int alSize, unsigned short alFirstChar,
+									  unsigned short alLastChar) {
 #if 0
   		cGlyph* pGlyph=NULL;
 
@@ -233,19 +227,18 @@ namespace hpl {
 
 		return true;
 #endif
-		return false; 
-	}
+	return false;
+}
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	//////////////////////////////////////////////////////////////////////////
-	// PRIVATE METHODS
-	//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// PRIVATE METHODS
+//////////////////////////////////////////////////////////////////////////
 
-	//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 
-	cGlyph* cSDLFontData::RenderGlyph(TTF_Font* apFont,unsigned short aChar, int alFontSize)
-	{
+cGlyph *cSDLFontData::RenderGlyph(TTF_Font *apFont, unsigned short aChar, int alFontSize) {
 #if 0
   		//If the font is saved to disk, then load the bitmap from disk instead.
 
@@ -297,9 +290,9 @@ namespace hpl {
 
 		return pGlyph;
 #endif
-		return {}; 
-	}
-
-	//-----------------------------------------------------------------------
-
+	return {};
 }
+
+//-----------------------------------------------------------------------
+
+} // namespace hpl

@@ -45,26 +45,25 @@
 
 namespace hpl {
 
-	class cGraphics;
-	class cResources;
-	class cAnimation;
+class cGraphics;
+class cResources;
+class cAnimation;
 
-	class cAnimationManager : public iResourceManager
-	{
-	public:
-		cAnimationManager(cGraphics* apGraphics,cResources *apResources);
-		~cAnimationManager();
+class cAnimationManager : public iResourceManager {
+public:
+	cAnimationManager(cGraphics *apGraphics, cResources *apResources);
+	~cAnimationManager();
 
-		iResourceBase* Create(const tString& asName);
-		cAnimation* CreateAnimation(const tString& asName);
+	iResourceBase *Create(const tString &asName);
+	cAnimation *CreateAnimation(const tString &asName);
 
-		void Destroy(iResourceBase* apResource);
-		void Unload(iResourceBase* apResource);
+	void Destroy(iResourceBase *apResource);
+	void Unload(iResourceBase *apResource);
 
-	private:
-		cGraphics* mpGraphics;
-		cResources* mpResources;
-	};
-
+private:
+	cGraphics *mpGraphics;
+	cResources *mpResources;
 };
+
+};     // namespace hpl
 #endif // HPL_ANIMATION_MANAGER_H
