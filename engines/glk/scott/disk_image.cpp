@@ -666,7 +666,14 @@ int diRawnameFromName(byte *rawname, const char *name) {
 
 /* count number of free blocks */
 int blocksFree(DiskImage* di) {
-	return 0;
+	int blocks = 0;
+
+	for (int track = 1; track <= diTracks(di->_type); ++track) {
+		if (track != di->_dir._track) {
+			blocks += diTrackBlocksFree(di, track);
+		}
+	}
+	return blocks;
 }
 
 /* return write interleave */
