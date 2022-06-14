@@ -382,6 +382,8 @@ struct CastMemberID {
 		return member != c.member || castLib != c.castLib;
 	}
 
+	bool isNull() { return member == 0 && castLib == 0; }
+
 	Common::String asString() const;
 };
 

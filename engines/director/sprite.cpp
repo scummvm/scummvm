@@ -212,6 +212,8 @@ MacShape *Sprite::getShape() {
 	shape->backColor = _backColor;
 	shape->lineSize = _thickness & 0x3;
 	shape->pattern = getPattern();
+	shape->tile = nullptr;
+	shape->tileRect = nullptr;
 
 	if (g_director->getVersion() >= 300 && shape->spriteType == kCastMemberSprite) {
 		if (!_cast) {
@@ -439,10 +441,10 @@ void Sprite::setCast(CastMemberID memberID) {
 	 *   1. The cast member's type
 	 *   2. The sprite's type
 	 * If the two types do not align, the sprite should not render.
-	 * 
+	 *
 	 * Before D4, you needed to manually set a sprite's type along
 	 * with its castNum.
-	 * 
+	 *
 	 * Starting in D4, setting a sprite's castNum also set its type
 	 * to an appropriate default.
 	 */

@@ -1370,7 +1370,7 @@ void Cast::loadVWTL(Common::SeekableReadStreamEndian &stream) {
 	uint16 castLibId = 0; // default for pre-D5
 	uint16 memberId;
 
-	for (int i = 0; i < NUMTILEPATTERNS; i++) {
+	for (int i = 0; i < kNumBuiltinTiles; i++) {
 		stream.readUint32(); // unused
 
 		if (_version >= kFileVer500)
@@ -1380,9 +1380,9 @@ void Cast::loadVWTL(Common::SeekableReadStreamEndian &stream) {
 
 		r = Movie::readRect(stream);
 
-		_patterns[i].bitmapId.castLib = castLibId;
-		_patterns[i].bitmapId.member = memberId;
-		_patterns[i].rect = r;
+		_tiles[i].bitmapId.castLib = castLibId;
+		_tiles[i].bitmapId.member = memberId;
+		_tiles[i].rect = r;
 
 		debugC(2, kDebugLoading, "Cast::loadCastDataVWCR(): entry %d - %u:%u [%d, %d, %d, %d]", i, castLibId, memberId,
 				r.left, r.top, r.right, r.bottom);

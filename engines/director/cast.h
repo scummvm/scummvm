@@ -142,6 +142,7 @@ public:
 	Common::Rect _movieRect;
 	uint16 _stageColor;
 	int _defaultPalette;
+	TilePatternEntry _tiles[kNumBuiltinTiles];
 
 	LingoArchive *_lingoArchive;
 
@@ -157,8 +158,6 @@ private:
 	Common::HashMap<uint16, CastMemberInfo *> _castsInfo;
 	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _castsNames;
 	Common::HashMap<uint16, int> _castsScriptIds;
-
-	TilePatternEntry _patterns[NUMTILEPATTERNS];
 };
 
 } // End of namespace Director

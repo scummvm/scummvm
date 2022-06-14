@@ -24,6 +24,9 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
+#include "director/cast.h"
+#include "director/castmember.h"
+#include "director/movie.h"
 #include "director/images.h"
 
 namespace Director {
@@ -51,19 +54,57 @@ void DirectorEngine::loadPatterns() {
 	for (int i = 0; i < ARRAYSIZE(director3QuickDrawPatterns); i++)
 		_director3QuickDrawPatterns.push_back(director3QuickDrawPatterns[i]);
 
+	// We must set it here for correct work of BITDDecoder.
+	// It is set later in Director properly
 	_pixelformat = Graphics::PixelFormat::createFormatCLUT8();
 
 	for (int i = 0; i < ARRAYSIZE(builtinTiles); i++) {
 		Common::MemoryReadStream stream(builtinTiles[i].ptr, builtinTiles[i].size);
 
-		_builtinTiles[i] = new BITDDecoder(builtinTiles[i].w, builtinTiles[i].h, 8, builtinTiles[i].w, macPalette, kFileVer300);
-		_builtinTiles[i]->loadStream(stream);
+		_builtinTiles[i].img = new BITDDecoder(builtinTiles[i].w, builtinTiles[i].h, 8, builtinTiles[i].w, macPalette, kFileVer300);
+		_builtinTiles[i].img->loadStream(stream);
+
+		_builtinTiles[i].rect = Common::Rect(0, 0, builtinTiles[i].w, builtinTiles[i].h);
 	}
 }
 
 Graphics::MacPatterns &DirectorEngine::getPatterns() {
 	// TOOD: implement switch and other version patterns. (use getVersion());
 	return _director3QuickDrawPatterns;
+}
+
+Image::ImageDecoder *DirectorEngine::getTile(int num) {
+	TilePatternEntry *tile = &getCurrentMovie()->getCast()->_tiles[num];
+
+	if (tile->bitmapId.isNull())
+		return _builtinTiles[num].img;
+
+	CastMember *member = getCurrentMovie()->getCastMember(tile->bitmapId);
+
+	if (!member) {
+		warning("BUILDBOT: DirectorEngine::getTile(%d) VWTL refers to non-existing cast %s", num,
+				tile->bitmapId.asString().c_str());
+
+		return _builtinTiles[num].img;
+	}
+
+	if (member->_type != kCastBitmap) {
+		warning("BUILDBOT: DirectorEngine::getTile(%d) VWTL refers to incorrect cast %s type %s", num,
+				tile->bitmapId.asString().c_str(), castTypeToString(member->_type).c_str());
+
+		return _builtinTiles[num].img;
+	}
+
+	return ((BitmapCastMember *)member)->_img;
+}
+
+const Common::Rect &DirectorEngine::getTileRect(int num) {
+	TilePatternEntry *tile = &getCurrentMovie()->getCast()->_tiles[num];
+
+	if (tile->bitmapId.isNull())
+		return _builtinTiles[num].rect;
+
+	return tile->rect;
 }
 
 void DirectorEngine::loadDefaultPalettes() {

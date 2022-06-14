@@ -124,7 +124,15 @@ struct MacShape {
 	int lineSize;
 	uint pattern;
 
+	Image::ImageDecoder *tile;
+	Common::Rect *tileRect;
+
 	Graphics::MacPlotData *pd;
+};
+
+struct PatternTile {
+	Image::ImageDecoder *img;
+	Common::Rect rect;
 };
 
 const int SCALE_THRESHOLD = 0x100;
@@ -178,6 +186,8 @@ public:
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 
 	void loadPatterns();
+	Image::ImageDecoder *getTile(int num);
+	const Common::Rect &getTileRect(int num);
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
 	void setCursor(DirectorCursor type);
@@ -236,10 +246,8 @@ private:
 
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;
-public:
-	Image::ImageDecoder *_builtinTiles[kNumBuiltinTiles];
+	PatternTile _builtinTiles[kNumBuiltinTiles];
 
-private:
 	Common::HashMap<int, PaletteV4> _loadedPalettes;
 
 	Graphics::ManagedSurface *_surface;
