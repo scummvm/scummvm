@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views/locations/training.h"
+#include "mm/mm1/views/locations/blacksmith.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
@@ -30,19 +30,17 @@ namespace MM1 {
 namespace Views {
 namespace Locations {
 
-#define MAX_LEVEL 200
-
-Training::Training() : Location("Training") {
+Blacksmith::Blacksmith() : Location("Blacksmith") {
 }
 
-bool Training::msgFocus(const FocusMessage &msg) {
-	send("View", ValueMessage(LOC_TRAINING));
+bool Blacksmith::msgFocus(const FocusMessage &msg) {
+	send("View", ValueMessage(LOC_BLACKSMITH));
 	changeCharacter(0);
 
 	return true;
 }
 
-bool Training::msgKeypress(const KeypressMessage &msg) {
+bool Blacksmith::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
 	case Common::KEYCODE_ESCAPE:
 		leave();
@@ -62,20 +60,8 @@ bool Training::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
-void Training::changeCharacter(uint index) {
-	Location::changeCharacter(index);
-}
-
-void Training::draw() {
-	Character &c = *g_globals->_currCharacter;
-	Location::draw();
-
-	writeString(18, 1, STRING["dialogs.training.for_level"]);
-	writeNumber(c._nextLevel);
-
-	if (c._nextLevel >= MAX_LEVEL) {
-		writeString(24, 3, STRING["dialogs.training.no_way"]);
-	}
+void Blacksmith::draw() {
+	clearSurface();
 }
 
 } // namespace Locations

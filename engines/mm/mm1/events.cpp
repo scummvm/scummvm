@@ -169,6 +169,10 @@ void UIElement::drawElements() {
 		_children[i]->drawElements();
 }
 
+UIElement *UIElement::findViewGlobally(const Common::String &name) {
+	return g_events->findView(name);
+}
+
 void UIElement::focus() {
 	g_engine->replaceView(this);
 }

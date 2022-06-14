@@ -33,6 +33,7 @@
 #include "mm/mm1/views/quick_ref.h"
 #include "mm/mm1/views/title.h"
 #include "mm/mm1/views/view_characters.h"
+#include "mm/mm1/views/locations/blacksmith.h"
 #include "mm/mm1/views/locations/market.h"
 #include "mm/mm1/views/locations/statue.h"
 #include "mm/mm1/views/locations/tavern.h"
@@ -56,6 +57,7 @@ private:
 	Views::Title _title;
 	Views::ViewCharacters _viewCharacters;
 	Views::ViewCharacter _viewCharacter;
+	Views::Locations::Blacksmith _blacksmith;
 	Views::Locations::Market _market;
 	Views::Locations::Statue _statue;
 	Views::Locations::Tavern _tavern;

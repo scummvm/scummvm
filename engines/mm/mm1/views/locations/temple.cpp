@@ -43,7 +43,7 @@ Temple::Temple() : Location("Temple") {
 }
 
 bool Temple::msgFocus(const FocusMessage &msg) {
-	send("GameView", ValueMessage(LOC_TEMPLE));
+	send("View", ValueMessage(LOC_TEMPLE));
 	changeCharacter(0);
 
 	return true;
