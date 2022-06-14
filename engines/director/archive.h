@@ -76,6 +76,7 @@ public:
 	static uint32 convertTagToUppercase(uint32 tag);
 
 protected:
+	void dumpChunk(Resource &res, Common::DumpFile &out);
 	Common::SeekableReadStream *_stream;
 	typedef Common::HashMap<uint16, Resource> ResourceMap;
 	typedef Common::HashMap<uint32, ResourceMap> TypeMap;
