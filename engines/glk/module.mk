@@ -253,6 +253,9 @@ MODULE_OBJS := \
 	scott/saga_draw.o \
 	scott/scott.o \
 	scott/unp64/unp64.o \
+	scott/unp64/6502_emu.o \
+	scott/unp64/exo_util.o \
+	scott/unp64/scanners/scanners.o \
 	tads/os_banners.o \
 	tads/os_buffer.o \
 	tads/os_glk.o \
