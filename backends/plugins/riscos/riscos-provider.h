@@ -19,34 +19,18 @@
  *
  */
 
-#include "common/scummsys.h"
+#if defined(DYNAMIC_MODULES) && defined(RISCOS)
 
-#if defined(RISCOS)
+#ifndef BACKENDS_PLUGINS_RISCOS_PROVIDER_H
+#define BACKENDS_PLUGINS_RISCOS_PROVIDER_H
 
-#include "backends/platform/sdl/riscos/riscos.h"
-#include "backends/plugins/riscos/riscos-provider.h"
-#include "base/main.h"
+#include "backends/plugins/elf/elf-provider.h"
 
-int main(int argc, char *argv[]) {
+class RiscOSPluginProvider : public ELFPluginProvider {
+public:
+	Plugin *createPlugin(const Common::FSNode &node) const;
+};
 
-	// Create our OSystem instance
-	g_system = new OSystem_RISCOS();
-	assert(g_system);
+#endif // BACKENDS_PLUGINS_RISCOS_PROVIDER_H
 
-	// Pre initialize the backend
-	g_system->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new RiscOSPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	g_system->destroy();
-
-	return res;
-}
-
-#endif
+#endif // defined(DYNAMIC_MODULES) && defined(RISCOS)
