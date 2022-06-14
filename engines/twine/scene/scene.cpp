@@ -455,7 +455,7 @@ void Scene::resetScene() {
 		_engine->_redraw->overlayList[i].info0 = -1;
 	}
 
-	_engine->_screens->_useAlternatePalette = false;
+	_engine->_screens->setNormalPal();
 }
 
 void Scene::reloadCurrentScene() {
@@ -582,7 +582,6 @@ void Scene::changeScene() {
 
 	_engine->_gameState->_inventoryNumKeys = 0;
 	_engine->_disableScreenRecenter = false;
-
 
 	ActorStruct *followedActor = getActor(_currentlyFollowedActor);
 	_engine->_grid->centerOnActor(followedActor);
