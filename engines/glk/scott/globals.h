@@ -30,6 +30,7 @@
 #include "glk/windows.h"
 #include "glk/scott/definitions.h"
 #include "glk/scott/types.h"
+#include "glk/scott/unp64/unp64.h"
 
 namespace Glk {
 namespace Scott {
@@ -155,6 +156,11 @@ public:
 
 	// detect game
 	Common::HashMap<Common::String, int> _md5Index;
+
+	// unp64
+	UnpStr _unp;
+	int _parsePar = 1;
+	int _iter = 0;
 
 public:
 	Globals();
