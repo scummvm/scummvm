@@ -1655,9 +1655,7 @@ void LB::b_alert(int nargs) {
 }
 
 void LB::b_clearGlobals(int nargs) {
-	g_lingo->printSTUBWithArglist("b_clearGlobals", nargs);
-
-	g_lingo->dropStack(nargs);
+	g_lingo->_globalvars.clear();
 }
 
 void LB::b_cursor(int nargs) {
