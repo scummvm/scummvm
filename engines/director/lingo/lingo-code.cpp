@@ -1468,7 +1468,7 @@ void LC::c_callfunc() {
 
 void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 	if (debugChannelSet(3, kDebugLingoExec))
-		g_lingo->printSTUBWithArglist(name.c_str(), nargs, "call:");
+		printWithArgList(name.c_str(), nargs, "call:");
 
 	Symbol funcSym;
 
