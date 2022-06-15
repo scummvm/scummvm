@@ -878,7 +878,8 @@ enum AsylumAction {
 	kAsylumActionQuickSave,
 	kAsylumActionSwitchToSarah,
 	kAsylumActionSwitchToGrimwall,
-	kAsylumActionSwitchToOlmec
+	kAsylumActionSwitchToOlmec,
+	kAsylumActionOpenInventory
 };
 
 //////////////////////////////////////////////////////////////////////////
