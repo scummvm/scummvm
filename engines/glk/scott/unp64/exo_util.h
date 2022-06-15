@@ -64,7 +64,7 @@ struct LoadInfo {
 
 int findSys(const byte *buf, int target);
 
-void loadData(uint8_t *data, size_t dataLength, unsigned char mem[65536], LoadInfo *info);
+void loadData(uint8_t *data, size_t dataLength, byte mem[65536], LoadInfo *info);
 
 int strToInt(const char *str, int *value);
 
