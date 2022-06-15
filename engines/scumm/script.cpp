@@ -677,7 +677,7 @@ void ScummEngine::writeVar(uint var, int value) {
 		// throughout the intro. This does not apply to the VGA talkie
 		// version, because there the fire isn't animated.
 
-		else if (_game.id == GID_LOOM && _game.version < 4 && vm.slot[_currentScript].number == 44 && var == VAR_TIMER_NEXT && _enableEnhancements) {
+		else if (_game.id == GID_LOOM && !(_game.features & GF_DEMO) && _game.version < 4 && vm.slot[_currentScript].number == 44 && var == VAR_TIMER_NEXT && _enableEnhancements) {
 			Actor *a = derefActorSafe(4, "writeVar");
 			if (a) {
 				a->setAnimSpeed((value == 0) ? 6 : 0);
