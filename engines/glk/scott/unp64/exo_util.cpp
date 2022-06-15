@@ -53,7 +53,78 @@ namespace Glk {
 namespace Scott {
 
 int findSys(const byte *buf, int target) {
-	return 0;
+	int outstart = -1;
+	int state = 1;
+	int i = 0;
+	/* skip link and line number */
+	buf += 4;
+	/* iAN: workaround for hidden sysline (1001 cruncher, CFB, etc)*/
+	if (buf[0] == 0) {
+		for (i = 5; i < 32; i++)
+			if (buf[i] == 0x9e && (((buf[i + 1] & 0x30) == 0x30) || ((buf[i + 2] & 0x30) == 0x30)))
+				break;
+	}
+	/* exit loop at line end */
+	while (i < 1000 && buf[i] != '\0') {
+		byte *sysEnd;
+		int c = buf[i];
+		switch (state) {
+			/* look for and consume sys token */
+		case 1:
+			if ((target == -1 && (c == 0x9e)) || c == target) {
+				state = 2;
+			}
+			break;
+			/* skip spaces and left parenthesis, if any */
+		case 2:
+			if (strchr(" (", c) != nullptr)
+				break;
+			/* convert string number to int */
+		case 3:
+			outstart = (int)strtol((char *)(buf + i), (char **)&sysEnd, 10);
+			if ((buf + i) == sysEnd) {
+				/* we got nothing */
+				outstart = -1;
+			} else {
+				c = *sysEnd;
+				if ((c >= 0xaa) && (c <= 0xae)) {
+					i = (int)strtol((char *)(sysEnd + 1), (char **)&sysEnd, 10);
+					switch (c) {
+					case 0xaa:
+						outstart += i;
+						break;
+					case 0xab:
+						outstart -= i;
+						break;
+					case 0xac:
+						outstart *= i;
+						break;
+					case 0xad:
+						if (i > 0)
+							outstart /= i;
+						break;
+					case 0xae:
+						c = outstart;
+						while (--i)
+							outstart *= c;
+						break;
+					}
+				} else if (c == 'E') {
+					i = (int)strtol((char *)(sysEnd + 1), (char **)&sysEnd, 10);
+					i++;
+					while (--i)
+						outstart *= 10;
+				}
+			}
+			state = 4;
+			break;
+		case 4:
+			break;
+		}
+		++i;
+	}
+
+	return outstart;
 }
 
 static void loadPrgData(byte mem[65536], uint8_t *data, size_t dataLength, LoadInfo *info) {
