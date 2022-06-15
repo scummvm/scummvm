@@ -46,6 +46,7 @@
  *
  */
 
+#include "common/util.h"
 #include "glk/scott/unp64/exo_util.h"
 
 namespace Glk {
@@ -55,7 +56,23 @@ int findSys(const byte *buf, int target) {
 	return 0;
 }
 
-void loadData(uint8_t *data, size_t dataLength, unsigned char mem[65536], LoadInfo *info) {
+static void loadPrgData(byte mem[65536], uint8_t *data, size_t dataLength, LoadInfo *info) {
+	int len = MIN(65536 - info->_start, static_cast<int>(dataLength));
+	memcpy(mem + info->_start, data, len);
+
+	info->_end = info->_start + len;
+	info->_basicVarStart = -1;
+	info->_run = -1;
+	if (info->_basicTxtStart >= info->_start && info->_basicTxtStart < info->_end) {
+		info->_basicVarStart = info->_end;
+	}
+}
+
+void loadData(uint8_t *data, size_t dataLength, byte mem[65536], LoadInfo *info) {
+	int load = data[0] + data[1] * 0x100;
+
+	info->_start = load;
+	loadPrgData(mem, data + 2, dataLength - 2, info);
 }
 
 int strToInt(const char *str, int *value) {
