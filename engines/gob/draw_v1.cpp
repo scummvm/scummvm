@@ -122,7 +122,7 @@ void Draw_v1::animateCursor(int16 cursor) {
 				(cursorIndex + 1) * _cursorWidth - 1,
 				_cursorHeight - 1, 0, 0);
 		CursorMan.replaceCursor(_scummvmCursor->getData(),
-				_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0, false, &_vm->getPixelFormat());
+				_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0, false, _vm->getPixelFormat());
 
 		if (_frontSurface != _backSurface) {
 			_showCursor = 3;

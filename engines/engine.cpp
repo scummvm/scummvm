@@ -319,13 +319,13 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 		initCommonGFX();
 #ifdef USE_RGB_COLOR
 		if (format)
-			g_system->initSize(width, height, format);
+			g_system->initSize(width, height, *format);
 		else {
 			Graphics::PixelFormat bestFormat = g_system->getSupportedFormats().front();
-			g_system->initSize(width, height, &bestFormat);
+			g_system->initSize(width, height, bestFormat);
 		}
 #else
-		g_system->initSize(width, height);
+		g_system->initSize(width, height, Graphics::PixelFormat::createFormatCLUT8());
 #endif
 
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
@@ -421,7 +421,7 @@ void initGraphics(int width, int height) {
 void initGraphics3d(int width, int height) {
 	g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(0, OSystem::kGfxModeRender3d);
-		g_system->initSize(width, height);
+		g_system->initSize(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen")); // TODO: Replace this with initCommonGFX()
 		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio")); // TODO: Replace this with initCommonGFX()
 	g_system->endGFXTransaction();
@@ -443,7 +443,7 @@ void GUIErrorMessage(const Common::U32String &msg, const char *url) {
 	g_system->setWindowCaption(_("Error"));
 	g_system->beginGFXTransaction();
 		initCommonGFX();
-		g_system->initSize(320, 200);
+		g_system->initSize(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
 		if (url) {
 			GUI::MessageDialogWithURL dialog(msg, url);

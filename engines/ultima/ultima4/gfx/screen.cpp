@@ -160,7 +160,7 @@ void Screen::loadMouseCursors() {
 		MouseCursorSurface *c = _mouseCursors[MC_DEFAULT];
 		CursorMan.pushCursor(c->getPixels(),
 			MOUSE_CURSOR_SIZE, MOUSE_CURSOR_SIZE,
-			c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, &format);
+			c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, format);
 		CursorMan.showMouse(true);
 
 	} else {
@@ -180,7 +180,7 @@ void Screen::setMouseCursor(MouseCursor cursor) {
 
 		const uint TRANSPARENT = format.RGBToColor(0x80, 0x80, 0x80);
 		CursorMan.replaceCursor(c->getPixels(), MOUSE_CURSOR_SIZE, MOUSE_CURSOR_SIZE,
-		                        c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, &format);
+		                        c->_hotspot.x, c->_hotspot.y, TRANSPARENT, false, format);
 	}
 }
 

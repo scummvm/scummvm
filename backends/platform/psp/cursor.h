@@ -62,8 +62,8 @@ public:
 	void adjustXYForScreenSize(int32 &x, int32 &y);
 	void init();
 	void setHotspot(int32 x, int32 y);
-	void setScreenPaletteScummvmPixelFormat(const Graphics::PixelFormat *format);
-	void setSizeAndScummvmPixelFormat(uint32 widht, uint32 height, const Graphics::PixelFormat *format);
+	void setScreenPaletteScummvmPixelFormat(const Graphics::PixelFormat &format);
+	void setSizeAndScummvmPixelFormat(uint32 widht, uint32 height, const Graphics::PixelFormat &format);
 	void clearKeyColor();
 	void useGlobalScaler(bool val) { _renderer.setUseGlobalScaler(val); }
 	bool allocate();
@@ -71,10 +71,6 @@ public:
 
 private:
 	void setSize(uint32 width, uint32 height);
-	void getPixelFormatsFromScummvmPixelFormat(const Graphics::PixelFormat *format,
-	        PSPPixelFormat::Type &bufferFormat,
-	        PSPPixelFormat::Type &paletteFormat,
-	        uint32 &numOfEntries);
 	void setRendererModePalettized(bool palettized);
 };
 

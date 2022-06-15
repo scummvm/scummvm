@@ -158,13 +158,13 @@ bool OSystem_3DS::getFeatureState(OSystem::Feature f) {
 	}
 }
 
-GraphicsModeID OSystem_3DS::chooseMode(Graphics::PixelFormat *format) {
-	if (format->bytesPerPixel > 2) {
+GraphicsModeID OSystem_3DS::chooseMode(const Graphics::PixelFormat &format) {
+	if (format.bytesPerPixel > 2) {
 		return RGBA8;
-	} else if (format->bytesPerPixel > 1) {
-		if (format->gBits() > 5) {
+	} else if (format.bytesPerPixel > 1) {
+		if (format.gBits() > 5) {
 			return RGB565;
-		} else if (format->aBits() == 0) {
+		} else if (format.aBits() == 0) {
 			return RGB555;
 		} else {
 			return RGB5A1;
@@ -188,8 +188,8 @@ bool OSystem_3DS::setGraphicsMode(GraphicsModeID modeID) {
 }
 
 void OSystem_3DS::initSize(uint width, uint height,
-						   const Graphics::PixelFormat *format) {
-	debug("3ds initsize w:%d h:%d", width, height);
+						   const Graphics::PixelFormat &format) {
+	debug("3ds initsize w:%d h:%d f:%s", width, height, format.toString().c_str());
 	int oldScreen = config.screen;
 	loadConfig();
 	if (config.screen != oldScreen) {
@@ -202,19 +202,14 @@ void OSystem_3DS::initSize(uint width, uint height,
 	_magCenterY = _magHeight / 2;
 
 	_oldPfGame = _pfGame;
-	if (!format) {
-		_pfGame = Graphics::PixelFormat::createFormatCLUT8();
-	} else {
-		debug("pixelformat: %d %d %d %d %d", format->bytesPerPixel, format->rBits(), format->gBits(), format->bBits(), format->aBits());
-		_pfGame = *format;
-	}
+	_pfGame = format;
 
 	/* If the current graphics mode does not fit with the pixel
 	 * format being requested, choose one that does and switch to it */
 	assert(_pfGame.bytesPerPixel > 0);
 	if (_pfGame != _oldPfGame) {
 		assert(_transactionState == kTransactionActive);
-		_gfxState.gfxModeID = chooseMode(&_pfGame);
+		_gfxState.gfxModeID = chooseMode(_pfGame);
 		_transactionDetails.formatChanged = true;
 	}
 
@@ -765,12 +760,12 @@ void OSystem_3DS::setCursorDelta(float deltaX, float deltaY) {
 void OSystem_3DS::setMouseCursor(const void *buf, uint w, uint h,
 								 int hotspotX, int hotspotY,
 								 uint32 keycolor, bool dontScale,
-								 const Graphics::PixelFormat *format) {
+								 const Graphics::PixelFormat &format) {
 	_cursorScalable = !dontScale;
 	_cursorHotspotX = hotspotX;
 	_cursorHotspotY = hotspotY;
 	_cursorKeyColor = keycolor;
-	_pfCursor = !format ? Graphics::PixelFormat::createFormatCLUT8() : *format;
+	_pfCursor = format;
 
 	if (w != (uint)_cursor.w || h != (uint)_cursor.h || _cursor.format != _pfCursor) {
 		_cursor.create(w, h, _pfCursor);

@@ -123,12 +123,13 @@ void ScummEngine::updateCursor() {
 							_cursor.hotspotX, _cursor.hotspotY,
 							(_game.platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
 							(_game.heversion == 70 ? true : false),
-							&format);
+							format);
 #else
 	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY,
 							(_game.platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
-							(_game.heversion == 70 ? true : false));
+							(_game.heversion == 70 ? true : false),
+							Graphics::PixelFormat::createFormatCLUT8());
 #endif
 }
 

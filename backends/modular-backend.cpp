@@ -137,7 +137,7 @@ Common::List<Graphics::PixelFormat> ModularGraphicsBackend::getSupportedFormats(
 
 #endif
 
-void ModularGraphicsBackend::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
+void ModularGraphicsBackend::initSize(uint w, uint h, const Graphics::PixelFormat &format) {
 	_graphicsManager->initSize(w, h, format);
 }
 
@@ -272,7 +272,7 @@ void ModularGraphicsBackend::warpMouse(int x, int y) {
 	_graphicsManager->warpMouse(x, y);
 }
 
-void ModularGraphicsBackend::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
+void ModularGraphicsBackend::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat &format) {
 	_graphicsManager->setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, dontScale, format);
 }
 

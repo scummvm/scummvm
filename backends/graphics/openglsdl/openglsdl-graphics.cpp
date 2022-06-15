@@ -257,7 +257,7 @@ float OpenGLSdlGraphicsManager::getHiDPIScreenFactor() const {
 	return _window->getDpiScalingFactor();
 }
 
-void OpenGLSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
+void OpenGLSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat &format) {
 	// HACK: This is stupid but the SurfaceSDL backend defaults to 2x. This
 	// assures that the launcher (which requests 320x200) has a reasonable
 	// size. It also makes small games have a reasonable size (i.e. at least

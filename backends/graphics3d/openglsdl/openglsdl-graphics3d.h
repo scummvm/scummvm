@@ -69,7 +69,7 @@ public:
 	}
 #endif
 	int getScreenChangeID() const override { return _screenChangeCount; }
-	void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
+	void initSize(uint w, uint h, const Graphics::PixelFormat &format) override;
 	int16 getHeight() const override;
 	int16 getWidth() const override;
 
@@ -100,7 +100,7 @@ public:
 	// GraphicsManager API - Mouse
 	bool showMouse(bool visible) override;
 	void warpMouse(int x, int y) override;
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override {}
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat &format) override {}
 	void setCursorPalette(const byte *colors, uint start, uint num) override {}
 
 	// SdlGraphicsManager API

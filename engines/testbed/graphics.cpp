@@ -914,7 +914,7 @@ TestExitStatus GFXtests::scaledCursors() {
 		g_system->beginGFXTransaction();
 
 			bool isGFXModeSet = g_system->setGraphicsMode(gfxMode->id);
-			g_system->initSize(320, 200);
+			g_system->initSize(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
@@ -951,7 +951,7 @@ TestExitStatus GFXtests::scaledCursors() {
 	g_system->beginGFXTransaction();
 
 		bool isGFXModeSet = g_system->setGraphicsMode(currGFXMode);
-		g_system->initSize(320, 200);
+		g_system->initSize(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 		if (isAspectRatioCorrected) {
 			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, true);
@@ -1335,7 +1335,7 @@ TestExitStatus GFXtests::pixelFormats(Common::List<Graphics::PixelFormat> &pfLis
 
 	// Revert back to 8bpp
 	g_system->beginGFXTransaction();
-		g_system->initSize(320, 200);
+		g_system->initSize(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	g_system->endGFXTransaction();
 	GFXTestSuite::setCustomColor(255, 0, 0);
 	initMousePalette();
@@ -1394,7 +1394,7 @@ void GFXtests::showPixelFormat(const Graphics::PixelFormat &pf, uint aLoss) {
 	// Init screen and working with dstSurface
 
 	g_system->beginGFXTransaction();
-		g_system->initSize(320, 200, &pf);
+		g_system->initSize(320, 200, pf);
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 	if (gfxError) {
 		Testsuite::logPrintf("WARNING! Pixel Format %s is unsupported\n", pf.toString().c_str());

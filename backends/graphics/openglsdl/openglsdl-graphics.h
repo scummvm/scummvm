@@ -38,7 +38,7 @@ public:
 	void setFeatureState(OSystem::Feature f, bool enable) override;
 	bool getFeatureState(OSystem::Feature f) const override;
 
-	void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
+	void initSize(uint w, uint h, const Graphics::PixelFormat &format) override;
 	void updateScreen() override;
 
 	float getHiDPIScreenFactor() const override;

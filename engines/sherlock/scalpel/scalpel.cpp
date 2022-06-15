@@ -258,7 +258,7 @@ void ScalpelEngine::setupGraphics() {
 		// First try for a 640x400 mode
 		g_system->beginGFXTransaction();
 			initCommonGFX();
-			g_system->initSize(640, 400, &pixelFormatRGB565);
+			g_system->initSize(640, 400, pixelFormatRGB565);
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 		if (gfxError == OSystem::kTransactionSuccess) {

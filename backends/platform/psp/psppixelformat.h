@@ -49,7 +49,7 @@ struct PSPPixelFormat {
 
 	PSPPixelFormat() : format(Type_Unknown), bitsPerPixel(0), swapRB(false) {}
 	void set(Type type, bool swap = false);
-	static void convertFromScummvmPixelFormat(const Graphics::PixelFormat *pf,
+	static void convertFromScummvmPixelFormat(const Graphics::PixelFormat &pf,
 	        PSPPixelFormat::Type &bufferType,
 	        PSPPixelFormat::Type &paletteType,
 	        bool &swapRedBlue);

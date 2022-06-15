@@ -129,7 +129,7 @@ public:
 	bool hasFeature(Feature f) override;
 	void setFeatureState(Feature f, bool enable) override;
 	bool getFeatureState(Feature f) override;
-	void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;
+	void initSize(uint width, uint height, const Graphics::PixelFormat &format) override;
 
 	void beginGFXTransaction() override;
 	TransactionError endGFXTransaction() override;
@@ -173,7 +173,7 @@ public:
 	bool showMouse(bool visible) override;
 
 	void warpMouse(int x, int y) override;
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 255, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override;
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat &format) override;
 	void setCursorPalette(const byte *colors, uint start, uint num) override;
 
 	bool pollEvent(Common::Event &event) override;

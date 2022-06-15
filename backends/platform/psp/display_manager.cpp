@@ -308,9 +308,9 @@ void DisplayManager::init() {
 	_overlay->allocate();
 }
 
-void DisplayManager::setSizeAndPixelFormat(uint width, uint height, const Graphics::PixelFormat *format) {
+void DisplayManager::setSizeAndPixelFormat(uint width, uint height, const Graphics::PixelFormat &format) {
 	DEBUG_ENTER_FUNC();
-	PSP_DEBUG_PRINT("w[%u], h[%u], pformat[%p]\n", width, height, format);
+	PSP_DEBUG_PRINT("w[%u], h[%u], format[%s]\n", width, height, format.toString().c_str());
 
 	_screen->deallocate();
 

@@ -126,7 +126,7 @@ public:
 	void setKeyboard(PSPKeyboard *keyboard) { _keyboard = keyboard; }
 	void setImageViewer(ImageViewer *imageViewer) { _imageViewer = imageViewer; }
 
-	void setSizeAndPixelFormat(uint width, uint height, const Graphics::PixelFormat *format);
+	void setSizeAndPixelFormat(uint width, uint height, const Graphics::PixelFormat &format);
 
 	// Getters
 	float getScaleX() const { return _displayParams.scaleX; }

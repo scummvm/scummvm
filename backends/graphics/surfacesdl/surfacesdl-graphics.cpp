@@ -692,7 +692,7 @@ int SurfaceSdlGraphicsManager::getStretchMode() const {
 }
 #endif
 
-void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
+void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat &format) {
 	assert(_transactionMode == kTransactionActive);
 
 	_gameScreenShakeXOffset = 0;
@@ -700,11 +700,7 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 
 #ifdef USE_RGB_COLOR
 	//avoid redundant format changes
-	Graphics::PixelFormat newFormat;
-	if (!format)
-		newFormat = Graphics::PixelFormat::createFormatCLUT8();
-	else
-		newFormat = *format;
+	Graphics::PixelFormat newFormat = format;
 
 	assert(newFormat.bytesPerPixel > 0);
 
@@ -1791,23 +1787,16 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, in
 #pragma mark --- Mouse ---
 #pragma mark -
 
-void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keyColor, bool dontScale, const Graphics::PixelFormat *format) {
+void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keyColor, bool dontScale, const Graphics::PixelFormat &format) {
 	bool formatChanged = false;
 
-	if (format) {
 #ifndef USE_RGB_COLOR
-		assert(format->bytesPerPixel == 1);
+	assert(format.bytesPerPixel == 1);
 #endif
-		if (format->bytesPerPixel != _cursorFormat.bytesPerPixel) {
-			formatChanged = true;
-		}
-		_cursorFormat = *format;
-	} else {
-		if (_cursorFormat.bytesPerPixel != 1) {
-			formatChanged = true;
-		}
-		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
+	if (format.bytesPerPixel != _cursorFormat.bytesPerPixel) {
+		formatChanged = true;
 	}
+	_cursorFormat = format;
 
 	if (_cursorFormat.bytesPerPixel < 4) {
 		assert(keyColor < 1U << (_cursorFormat.bytesPerPixel * 8));
@@ -1847,11 +1836,11 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 			assert(!_mouseSurface);
 			assert(!_mouseOrigSurface);
 
-			const Uint32 rMask = ((0xFF >> format->rLoss) << format->rShift);
-			const Uint32 gMask = ((0xFF >> format->gLoss) << format->gShift);
-			const Uint32 bMask = ((0xFF >> format->bLoss) << format->bShift);
-			const Uint32 aMask = ((0xFF >> format->aLoss) << format->aShift);
-			_mouseSurface = _mouseOrigSurface = SDL_CreateRGBSurfaceFrom(const_cast<void *>(buf), w, h, format->bytesPerPixel * 8, w * format->bytesPerPixel, rMask, gMask, bMask, aMask);
+			const Uint32 rMask = ((0xFF >> format.rLoss) << format.rShift);
+			const Uint32 gMask = ((0xFF >> format.gLoss) << format.gShift);
+			const Uint32 bMask = ((0xFF >> format.bLoss) << format.bShift);
+			const Uint32 aMask = ((0xFF >> format.aLoss) << format.aShift);
+			_mouseSurface = _mouseOrigSurface = SDL_CreateRGBSurfaceFrom(const_cast<void *>(buf), w, h, format.bytesPerPixel * 8, w * format.bytesPerPixel, rMask, gMask, bMask, aMask);
 		} else {
 			assert(!_mouseOrigSurface);
 
