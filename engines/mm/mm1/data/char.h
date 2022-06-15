@@ -72,7 +72,7 @@ struct Character {
 	uint8 _endBase = 0, _spdBase = 0, _acyBase = 0;
 	uint8 _lucBase = 0;
 
-	uint8 _nextLevel = 0;
+	uint8 _levelBase = 0;
 	uint8 _level = 0;
 	uint8 _age = 0;
 	uint8 _field26 = 0;

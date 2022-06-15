@@ -22,6 +22,7 @@
 #ifndef MM1_VIEWS_LOCATIONS_TRAINING_H
 #define MM1_VIEWS_LOCATIONS_TRAINING_H
 
+#include "mm/mm1/data/char.h"
 #include "mm/mm1/views/locations/location.h"
 
 namespace MM {
@@ -30,6 +31,15 @@ namespace Views {
 namespace Locations {
 
 class Training : public Location {
+private:
+	int _currLevel = 0;
+	CharacterClass _class = KNIGHT;
+	int _expTotal = 0;
+	int _remainingExp = 0;
+	int _expAmount = 0;
+	int _cost = 0, _cost2;
+	bool _canTrain = false;
+	bool _canAfford = false;
 protected:
 	/**
 	 * Change character

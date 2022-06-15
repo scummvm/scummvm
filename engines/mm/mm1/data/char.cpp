@@ -48,7 +48,7 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_lucBase);
 	s.syncAsByte(_luc);
 
-	s.syncAsByte(_nextLevel);
+	s.syncAsByte(_levelBase);
 	s.syncAsByte(_level);
 	s.syncAsByte(_age);
 	s.syncAsByte(_field26);

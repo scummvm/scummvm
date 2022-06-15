@@ -32,6 +32,13 @@ namespace Locations {
 
 #define MAX_LEVEL 200
 
+const int TRAINING_COSTS1[7] = {
+	25, 50, 100, 200, 400, 800, 1500
+};
+const int TRAINING_COSTS2[7] = {
+	40, 75, 150, 300, 600, 1200, 2500
+};
+
 Training::Training() : Location("Training") {
 }
 
@@ -64,17 +71,69 @@ bool Training::msgKeypress(const KeypressMessage &msg) {
 
 void Training::changeCharacter(uint index) {
 	Location::changeCharacter(index);
+	Character &c = *g_globals->_currCharacter;
+
+	_currLevel = c._levelBase;
+	if (_currLevel >= MAX_LEVEL)
+		return;
+
+	// Initialize fields
+	_expTotal = 0;
+	_remainingExp = 0;
+	_expAmount = 0;
+	_cost = _cost2 = 0;
+	_canTrain = false;
+	_canAfford = false;
+	_class = c._class;
+
+	if (_class == KNIGHT || _class == CLERIC || _class == ROBBER) {
+		_expTotal = 1500;
+		_expAmount = 150000;
+
+		if (_currLevel != 0) {
+			_cost = _currLevel >= 8 ? 3000 :
+				TRAINING_COSTS1[_currLevel - 1];
+		}
+	} else {
+		_expTotal = 2000;
+		_expAmount = 200000;
+		_cost = _currLevel >= 8 ? 4000 :
+			TRAINING_COSTS2[_currLevel - 1];
+	}
+
+	for (int level = _currLevel - 1, ctr = 0; level > 0; --level) {
+		_expTotal *= 16;
+
+		if (++ctr >= 7) {
+			while (--level > 0)
+				_expTotal += _expAmount;
+			break;
+		}
+	}
+
+	_remainingExp = _expTotal - c._exp;
+	_canTrain = _remainingExp > 0;
+	_canAfford = (int)c._gold >= _cost;
 }
 
 void Training::draw() {
-	Character &c = *g_globals->_currCharacter;
 	Location::draw();
 
 	writeString(18, 1, STRING["dialogs.training.for_level"]);
-	writeNumber(c._nextLevel);
+	writeNumber(_currLevel + 1);
 
-	if (c._nextLevel >= MAX_LEVEL) {
+	if (_currLevel >= MAX_LEVEL) {
 		writeString(24, 3, STRING["dialogs.training.no_way"]);
+
+	} else if (_remainingExp > 0) {
+		writeString(21, 3, Common::String::format(
+			STRING["dialogs.training.need"].c_str(), _remainingExp));
+		writeString(20, 5, STRING["dialogs.training.xp"]);
+
+	} else {
+		writeString(21, 3, Common::String::format(
+			STRING["dialogs.training.cost"].c_str(), _cost));
+		writeString(18, 5, STRING["dialogs.training.cost"]);
 	}
 }
 
