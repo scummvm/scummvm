@@ -93,6 +93,7 @@ struct InfoMessage : public Message {
 	Common::Array<Line> _lines;
 	YNCallback _ynCallback = nullptr;
 	KeyCallback _keyCallback = nullptr;
+	bool _largeMessage = false;
 
 	InfoMessage();
 	InfoMessage(const Common::String &str);

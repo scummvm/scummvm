@@ -94,11 +94,7 @@ void Location::changeCharacter(uint index) {
 }
 
 void Location::leave() {
-	SWAP(g_maps->_forwardMask, g_maps->_backwardsMask);
-	SWAP(g_maps->_leftMask, g_maps->_rightMask);
-	SWAP(g_maps->_forwardOffset, g_maps->_backwardsOffset);
-	SWAP(g_maps->_leftOffset, g_maps->_rightOffset);
-
+	g_maps->turnAround();
 	close();
 	g_events->redraw();
 }

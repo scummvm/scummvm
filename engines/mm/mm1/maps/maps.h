@@ -136,6 +136,11 @@ public:
 	void turnRight();
 
 	/**
+	 * Turn around
+	 */
+	void turnAround();
+
+	/**
 	 * Move a step
 	 */
 	void step(const Common::Point &delta);

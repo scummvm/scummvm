@@ -295,9 +295,8 @@ uint Maps::getIndex(uint16 id, byte section) {
 	uint idx = LOOKUPS_START[section];
 
 	// Find map by Id
-	for (; id != _maps[idx]->getId(); ++idx) {
-		assert(idx < _maps.size());
-	}
+	for (; idx < _maps.size() && id != _maps[idx]->getId(); ++idx) {}
+	assert(idx < _maps.size());
 
 	_colorOffset = COLOR_OFFSET[idx];
 	return idx;
@@ -384,6 +383,13 @@ void Maps::turnRight() {
 	_forwardOffset = _rightOffset;
 	_rightOffset = _backwardsOffset;
 	_backwardsOffset = tempOffset;
+}
+
+void Maps::turnAround() {
+	SWAP(g_maps->_forwardMask, g_maps->_backwardsMask);
+	SWAP(g_maps->_leftMask, g_maps->_rightMask);
+	SWAP(g_maps->_forwardOffset, g_maps->_backwardsOffset);
+	SWAP(g_maps->_leftOffset, g_maps->_rightOffset);
 }
 
 void Maps::step(const Common::Point &delta) {
