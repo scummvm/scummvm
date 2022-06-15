@@ -28,6 +28,7 @@
 #include "director/castmember.h"
 #include "director/movie.h"
 #include "director/images.h"
+#include "director/window.h"
 
 namespace Director {
 
@@ -415,9 +416,17 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		break;
 	}
 
+	Common::Point wpos;
+	Movie *movie = g_director->getCurrentMovie();
+
+	if (g_director->_wm->_mode & Graphics::kWMModeNoDesktop)
+		wpos = Common::Point(movie->getCast()->_movieRect.left, movie->getCast()->_movieRect.top);
+	else
+		wpos = movie->getWindow()->getAbsolutePos();
+
 	Common::Rect fillAreaRect((int)srcRect.width(), (int)srcRect.height());
 	fillAreaRect.moveTo(srcRect.left, srcRect.top);
-	Graphics::MacPlotData plotFill(dst, nullptr, &d->getPatterns(), ms->pattern, srcRect.left, srcRect.top, 1, ms->backColor);
+	Graphics::MacPlotData plotFill(dst, nullptr, &d->getPatterns(), ms->pattern, srcRect.left + wpos.x, srcRect.top + wpos.y, 1, ms->backColor);
 
 	uint strokePattern = 1;
 
@@ -427,7 +436,7 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 
 	Common::Rect strokeRect(MAX((int)srcRect.width() - ms->lineSize, 0), MAX((int)srcRect.height() - ms->lineSize, 0));
 	strokeRect.moveTo(srcRect.left, srcRect.top);
-	Graphics::MacPlotData plotStroke(dst, nullptr, &d->getPatterns(), strokePattern, strokeRect.left, strokeRect.top, ms->lineSize, ms->backColor);
+	Graphics::MacPlotData plotStroke(dst, nullptr, &d->getPatterns(), strokePattern, strokeRect.left + wpos.x, strokeRect.top + wpos.y, ms->lineSize, ms->backColor);
 
 	switch (ms->spriteType) {
 	case kRectangleSprite:
