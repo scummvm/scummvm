@@ -59,7 +59,41 @@ void loadData(uint8_t *data, size_t dataLength, unsigned char mem[65536], LoadIn
 }
 
 int strToInt(const char *str, int *value) {
-	return 0;
+	int status = 0;
+	do {
+		char *strEnd;
+		long lval;
+
+		/* base 0 is auto detect */
+		int base = 0;
+
+		if (*str == '\0') {
+			/* no string to parse */
+			status = 1;
+			break;
+		}
+
+		if (*str == '$') {
+			/* a $ prefix specifies base 16 */
+			++str;
+			base = 16;
+		}
+
+		lval = strtol(str, &strEnd, base);
+
+		if (*strEnd != '\0') {
+			/* there is garbage in the string */
+			status = 1;
+			break;
+		}
+
+		if (value != nullptr) {
+			/* all is well, set the out parameter */
+			*value = static_cast<int>(lval);
+		}
+	} while (0);
+
+	return status;
 }
 
 } // End of namespace Scott
