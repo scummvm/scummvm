@@ -279,10 +279,10 @@ void unload_old_room() {
 
 	for (ff = 0; ff < _G(croom)->numobj; ff++) {
 		// un-export the object's script object
-		if (_G(objectScriptObjNames)[ff].IsEmpty())
+		if (_GP(thisroom).Objects[ff].ScriptName.IsEmpty())
 			continue;
 
-		ccRemoveExternalSymbol(_G(objectScriptObjNames)[ff]);
+		ccRemoveExternalSymbol(_GP(thisroom).Objects[ff].ScriptName);
 	}
 
 	for (ff = 0; ff < MAX_ROOM_HOTSPOTS; ff++) {
@@ -622,16 +622,11 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	_G(objs) = &_G(croom)->obj[0];
 
-	for (cc = 0; cc < MAX_ROOM_OBJECTS; cc++) {
-		_G(objectScriptObjNames)[cc].Free();
-	}
-
 	for (cc = 0; cc < _G(croom)->numobj; cc++) {
 		// export the object's script object
 		if (_GP(thisroom).Objects[cc].ScriptName.IsEmpty())
 			continue;
-		_G(objectScriptObjNames)[cc] = _GP(thisroom).Objects[cc].ScriptName;
-		ccAddExternalDynamicObject(_G(objectScriptObjNames)[cc], &_G(scrObj)[cc], &_GP(ccDynamicObject));
+		ccAddExternalDynamicObject(_GP(thisroom).Objects[cc].ScriptName, &_G(scrObj)[cc], &_GP(ccDynamicObject));
 	}
 
 	for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++) {

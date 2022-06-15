@@ -106,7 +106,6 @@ void InitAndRegisterAudioObjects(GameSetupStruct &game) {
 
 // Initializes characters and registers them in the script system
 void InitAndRegisterCharacters(GameSetupStruct &game) {
-	_GP(characterScriptObjNames).resize(game.numcharacters);
 	for (int i = 0; i < game.numcharacters; ++i) {
 		game.chars[i].walking = 0;
 		game.chars[i].animating = 0;
@@ -124,8 +123,7 @@ void InitAndRegisterCharacters(GameSetupStruct &game) {
 		ccRegisterManagedObject(&game.chars[i], &_GP(ccDynamicCharacter));
 
 		// export the character's script object
-		_GP(characterScriptObjNames)[i] = game.chars[i].scrname;
-		ccAddExternalDynamicObject(_GP(characterScriptObjNames)[i], &game.chars[i], &_GP(ccDynamicCharacter));
+		ccAddExternalDynamicObject(game.chars[i].scrname, &game.chars[i], &_GP(ccDynamicCharacter));
 	}
 }
 
@@ -159,7 +157,6 @@ HError InitAndRegisterGUI(GameSetupStruct &game) {
 		_G(scrGui)[i].id = -1;
 	}
 
-	_GP(guiScriptObjNames).resize(game.numgui);
 	for (int i = 0; i < game.numgui; ++i) {
 		// link controls to their parent guis
 		HError err = _GP(guis)[i].RebuildArray();
@@ -167,11 +164,8 @@ HError InitAndRegisterGUI(GameSetupStruct &game) {
 			return err;
 		// export all the GUI's controls
 		export_gui_controls(i);
-		// copy the script name to its own memory location
-		// because ccAddExtSymbol only keeps a reference
-		_GP(guiScriptObjNames)[i] = _GP(guis)[i].Name;
 		_G(scrGui)[i].id = i;
-		ccAddExternalDynamicObject(_GP(guiScriptObjNames)[i], &_G(scrGui)[i], &_GP(ccDynamicGUI));
+		ccAddExternalDynamicObject(_GP(guis)[i].Name, &_G(scrGui)[i], &_GP(ccDynamicGUI));
 		ccRegisterManagedObject(&_G(scrGui)[i], &_GP(ccDynamicGUI));
 	}
 	return HError::None();

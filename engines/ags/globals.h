@@ -1267,12 +1267,6 @@ public:
 	std::vector<RuntimeScriptValue> *_moduleRepExecAddr;
 	size_t _numScriptModules = 0;
 
-	// TODO: find out if these extra arrays are really necessary. This may be remains from the
-	// time when the symbol import table was holding raw pointers to char array.
-	std::vector<String> *_characterScriptObjNames;
-	String *_objectScriptObjNames;
-	std::vector<String> *_guiScriptObjNames;
-
 	/**@}*/
 
 	/**

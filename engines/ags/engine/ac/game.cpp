@@ -361,7 +361,6 @@ void unload_game_file() {
 
 	_GP(play).FreeViewportsAndCameras();
 
-	_GP(characterScriptObjNames).clear();
 	_GP(charextra).clear();
 	_GP(mls).clear();
 
@@ -426,7 +425,6 @@ void unload_game_file() {
 	delete[] _G(scrDialog);
 	_G(scrDialog) = nullptr;
 
-	_GP(guiScriptObjNames).clear();
 	_GP(guis).clear();
 	free(_G(scrGui));
 
