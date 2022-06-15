@@ -419,9 +419,15 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 	fillAreaRect.moveTo(srcRect.left, srcRect.top);
 	Graphics::MacPlotData plotFill(dst, nullptr, &d->getPatterns(), ms->pattern, srcRect.left, srcRect.top, 1, ms->backColor);
 
+	uint strokePattern = 1;
+
+	if (ms->spriteType == kOutlinedRectangleSprite || ms->spriteType == kOutlinedRoundedRectangleSprite
+			|| ms->spriteType == kOutlinedOvalSprite)
+		strokePattern = ms->pattern;
+
 	Common::Rect strokeRect(MAX((int)srcRect.width() - ms->lineSize, 0), MAX((int)srcRect.height() - ms->lineSize, 0));
 	strokeRect.moveTo(srcRect.left, srcRect.top);
-	Graphics::MacPlotData plotStroke(dst, nullptr, &d->getPatterns(), 1, strokeRect.left, strokeRect.top, ms->lineSize, ms->backColor);
+	Graphics::MacPlotData plotStroke(dst, nullptr, &d->getPatterns(), strokePattern, strokeRect.left, strokeRect.top, ms->lineSize, ms->backColor);
 
 	switch (ms->spriteType) {
 	case kRectangleSprite:
