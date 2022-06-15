@@ -1680,7 +1680,16 @@ void LB::b_put(int nargs) {
 }
 
 void LB::b_showGlobals(int nargs) {
-	warning("STUB: b_showGlobals");
+	b_version(0);
+	Datum ver = g_lingo->pop();
+	Common::String global_out = "-- Global Variables --\nversion = ";
+	global_out += ver.asString() + "\n";
+	if (g_lingo->_globalvars.size()) {
+		for (auto it = g_lingo->_globalvars.begin(); it != g_lingo->_globalvars.end(); it++) {
+			global_out += it->_key + " = " + it->_value.asString() + "\n";
+		}
+	}
+	g_debugger->debugPrintf("%s", global_out.c_str());
 }
 
 void LB::b_showLocals(int nargs) {
