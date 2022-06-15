@@ -86,12 +86,18 @@ void reinitUnp(void) {
 	_G(_unp)._mon1st = 0;
 }
 
-int IsBasicRun1(int pc) {
-	return 0;
+int isBasicRun1(int pc) {
+	if (pc == 0xa7ae || pc == 0xa7ea || pc == 0xa7b1 || pc == 0xa474 || pc == 0xa533 || pc == 0xa871 || pc == 0xa888 || pc == 0xa8bc)
+		return 1;
+	else
+		return 0;
 }
 
-int IsBasicRun2(int pc) {
-	return 0;
+int isBasicRun2(int pc) {
+	if (isBasicRun1(pc) || ((pc >= 0xA57C) && (pc <= 0xA659)) || pc == 0xa660 || pc == 0xa68e)
+		return 1;
+	else
+		return 0;
 }
 
 int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t *finalLength, char *settings[], int numSettings) {
@@ -370,7 +376,7 @@ int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t
 				break;
 			}
 
-			if (IsBasicRun1(r->_pc)) {
+			if (isBasicRun1(r->_pc)) {
 				info->_run = findSys(mem + info->_basicTxtStart, 0x9e);
 				if (info->_run > 0) {
 					r->_sp = 0xf6;
@@ -474,7 +480,7 @@ int unp64(uint8_t *compressed, size_t length, uint8_t *destinationBuffer, size_t
 		}
 
 		if ((r->_pc >= 0xa000) && (r->_pc <= 0xbfff) && ((mem[1] & 0x7) == 7)) {
-			if (IsBasicRun2(r->_pc)) {
+			if (isBasicRun2(r->_pc)) {
 				r->_pc = 0xa7ae;
 				break;
 			} else {
