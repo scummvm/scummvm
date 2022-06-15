@@ -223,7 +223,7 @@ public:
 	 * @param menuSettings menu settings array with the information to build the menu options
 	 * @return pressed menu button identification
 	 */
-	int32 processMenu(MenuSettings *menuSettings, bool showCredits = true);
+	int32 processMenu(MenuSettings *menuSettings);
 
 	bool init();
 
