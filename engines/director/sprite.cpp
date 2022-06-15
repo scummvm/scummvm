@@ -215,6 +215,11 @@ MacShape *Sprite::getShape() {
 	shape->tile = nullptr;
 	shape->tileRect = nullptr;
 
+	if (shape->pattern > 56 && shape->pattern <= 64) {
+		shape->tile = g_director->getTile(shape->pattern - 57);
+		shape->tileRect = &g_director->getTileRect(shape->pattern - 57);
+	}
+
 	if (g_director->getVersion() >= 300 && shape->spriteType == kCastMemberSprite) {
 		if (!_cast) {
 			warning("Sprite::getShape(): kCastMemberSprite has no cast defined");
