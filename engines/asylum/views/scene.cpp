@@ -517,10 +517,6 @@ bool Scene::key(const AsylumEvent &evt) {
 			getActor()->setLastScreenUpdate(_vm->screenUpdateCount);
 		}
 		break;
-
-	case Common::KEYCODE_m:
-		g_debugScrolling = !g_debugScrolling;
-		break;
 	}
 
 	return true;
