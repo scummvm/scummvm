@@ -173,7 +173,7 @@ void CreateCharacters::NewCharacter::setSP(int amount) {
 		level = 1;
 
 	re._sp = re._spMax = level + 3;
-	re._sp1 = re._sp2 = 1;
+	re._maxSpellLevel = re._sp2 = 1;
 }
 
 /*------------------------------------------------------------------------*/

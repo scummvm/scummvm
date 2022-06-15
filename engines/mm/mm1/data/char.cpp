@@ -55,7 +55,7 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_sp);
 	s.syncAsUint16LE(_spMax);
 	s.syncAsByte(_sp2);
-	s.syncAsByte(_sp1);
+	s.syncAsByte(_maxSpellLevel);
 	s.syncAsUint16LE(_gems);
 	s.syncAsUint16LE(_hp);
 	s.syncAsUint16LE(_hp2);
@@ -86,7 +86,7 @@ void Character::clear() {
 	_age = 0;
 	_exp = 0;
 	_sp = _spMax = 0;
-	_sp1 = _sp2 = 0;
+	_maxSpellLevel = _sp2 = 0;
 	_gems = 0;
 	_hp = _hp2 = _hpMax = 0;
 	_gold = 0;
