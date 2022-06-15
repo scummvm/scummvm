@@ -349,8 +349,7 @@ public:
 	// Room entities
 	size_t                  HotspotCount;
 	RoomHotspot             Hotspots[MAX_ROOM_HOTSPOTS];
-	size_t                  ObjectCount;
-	RoomObjectInfo          Objects[MAX_ROOM_OBJECTS];
+	std::vector<RoomObjectInfo> Objects;
 	size_t                  RegionCount;
 	RoomRegion              Regions[MAX_ROOM_REGIONS];
 	size_t                  WalkAreaCount;

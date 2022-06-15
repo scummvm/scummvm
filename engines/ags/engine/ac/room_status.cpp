@@ -73,23 +73,28 @@ void RoomStatus::FreeProperties() {
 	for (int i = 0; i < MAX_ROOM_HOTSPOTS; ++i) {
 		hsProps[i].clear();
 	}
-	for (int i = 0; i < MAX_ROOM_OBJECTS; ++i) {
-		objProps[i].clear();
-	}
+	objProps.clear();
 }
 
 void RoomStatus::ReadFromFile_v321(Stream *in) {
+	FreeScriptData();
+	FreeProperties();
+
 	beenhere = in->ReadInt32();
 	numobj = in->ReadInt32();
+	obj.resize(numobj);
+	objProps.resize(numobj);
+	intrObject.resize(numobj);
 	ReadRoomObjects_Aligned(in);
+
 	in->Seek(MAX_LEGACY_ROOM_FLAGS * sizeof(int16_t)); // flagstates (OBSOLETE)
 	tsdatasize = in->ReadInt32();
 	in->ReadInt32(); // tsdata
 	for (int i = 0; i < MAX_ROOM_HOTSPOTS; ++i) {
 		intrHotspot[i].ReadFromSavedgame_v321(in);
 	}
-	for (int i = 0; i < MAX_ROOM_OBJECTS; ++i) {
-		intrObject[i].ReadFromSavedgame_v321(in);
+	for (auto &intr : intrObject) {
+		intr.ReadFromSavedgame_v321(in);
 	}
 	for (int i = 0; i < MAX_ROOM_REGIONS; ++i) {
 		intrRegion[i].ReadFromSavedgame_v321(in);
@@ -106,16 +111,16 @@ void RoomStatus::ReadFromFile_v321(Stream *in) {
 		for (int i = 0; i < MAX_ROOM_HOTSPOTS; ++i) {
 			Properties::ReadValues(hsProps[i], in);
 		}
-		for (int i = 0; i < MAX_ROOM_OBJECTS; ++i) {
-			Properties::ReadValues(objProps[i], in);
+		for (auto &props : objProps) {
+			Properties::ReadValues(props, in);
 		}
 	}
 }
 
 void RoomStatus::ReadRoomObjects_Aligned(Shared::Stream *in) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
-	for (int i = 0; i < MAX_ROOM_OBJECTS; ++i) {
-		obj[i].ReadFromSavegame(&align_s, 0);
+	for (auto &o : obj) {
+		o.ReadFromSavegame(&align_s, 0);
 		align_s.Reset();
 	}
 }
@@ -126,7 +131,10 @@ void RoomStatus::ReadFromSavegame(Stream *in, int save_ver) {
 
 	beenhere = in->ReadInt8();
 	numobj = in->ReadInt32();
-	for (int i = 0; i < numobj; ++i) {
+	obj.resize(numobj);
+	objProps.resize(numobj);
+	intrObject.resize(numobj);
+	for (size_t i = 0; i < numobj; ++i) {
 		obj[i].ReadFromSavegame(in, save_ver);
 		Properties::ReadValues(objProps[i], in);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
@@ -163,7 +171,7 @@ void RoomStatus::ReadFromSavegame(Stream *in, int save_ver) {
 void RoomStatus::WriteToSavegame(Stream *out) const {
 	out->WriteInt8(beenhere);
 	out->WriteInt32(numobj);
-	for (int i = 0; i < numobj; ++i) {
+	for (size_t i = 0; i < numobj; ++i) {
 		obj[i].WriteToSavegame(out);
 		Properties::WriteValues(objProps[i], out);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)

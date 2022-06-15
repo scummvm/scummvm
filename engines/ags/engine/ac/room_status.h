@@ -52,17 +52,17 @@ struct HotspotState {
 struct RoomStatus {
 	int   beenhere = 0;
 	int   numobj = 0;
-	RoomObject obj[MAX_ROOM_OBJECTS];
+	std::vector<RoomObject> obj;
 	int   tsdatasize = 0;
 	char *tsdata = nullptr;
 	Interaction intrHotspot[MAX_ROOM_HOTSPOTS];
-	Interaction intrObject[MAX_ROOM_OBJECTS];
+	std::vector<Interaction> intrObject;
 	Interaction intrRegion[MAX_ROOM_REGIONS];
 	Interaction intrRoom;
 
 	Shared::StringIMap roomProps;
 	Shared::StringIMap hsProps[MAX_ROOM_HOTSPOTS];
-	Shared::StringIMap objProps[MAX_ROOM_OBJECTS];
+	std::vector<Shared::StringIMap> objProps;
 	HotspotState hotspot[MAX_ROOM_HOTSPOTS];
 	int8  region_enabled[MAX_ROOM_REGIONS];
 	short walkbehind_base[MAX_WALK_BEHINDS];

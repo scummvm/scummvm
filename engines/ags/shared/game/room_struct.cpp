@@ -112,10 +112,7 @@ void RoomStruct::Free() {
 		Hotspots[i].Interaction.reset();
 		Hotspots[i].Properties.clear();
 	}
-	for (size_t i = 0; i < (size_t)MAX_ROOM_OBJECTS; ++i) {
-		Objects[i].Interaction.reset();
-		Objects[i].Properties.clear();
-	}
+	Objects.clear();
 	for (size_t i = 0; i < (size_t)MAX_ROOM_REGIONS; ++i) {
 		Regions[i].Interaction.reset();
 		Regions[i].Properties.clear();
@@ -139,8 +136,8 @@ void RoomStruct::FreeScripts() {
 	EventHandlers.reset();
 	for (size_t i = 0; i < HotspotCount; ++i)
 		Hotspots[i].EventHandlers.reset();
-	for (size_t i = 0; i < ObjectCount; ++i)
-		Objects[i].EventHandlers.reset();
+	for (auto &obj : Objects)
+		obj.EventHandlers.reset();
 	for (size_t i = 0; i < RegionCount; ++i)
 		Regions[i].EventHandlers.reset();
 }
@@ -159,7 +156,6 @@ void RoomStruct::InitDefaults() {
 
 	BgFrameCount = 1;
 	HotspotCount = 0;
-	ObjectCount = 0;
 	RegionCount = 0;
 	WalkAreaCount = 0;
 	WalkBehindCount = 0;
@@ -167,8 +163,6 @@ void RoomStruct::InitDefaults() {
 
 	for (size_t i = 0; i < (size_t)MAX_ROOM_HOTSPOTS; ++i)
 		Hotspots[i] = RoomHotspot();
-	for (size_t i = 0; i < (size_t)MAX_ROOM_OBJECTS; ++i)
-		Objects[i] = RoomObjectInfo();
 	for (size_t i = 0; i < (size_t)MAX_ROOM_REGIONS; ++i)
 		Regions[i] = RoomRegion();
 	for (size_t i = 0; i <= (size_t)MAX_WALK_AREAS; ++i)

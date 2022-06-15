@@ -314,11 +314,11 @@ void convert_room_coordinates_to_data_res(RoomStruct *rstruc) {
 		return;
 
 	const int mul = _GP(game).GetDataUpscaleMult();
-	for (size_t i = 0; i < rstruc->ObjectCount; ++i) {
-		rstruc->Objects[i].X /= mul;
-		rstruc->Objects[i].Y /= mul;
-		if (rstruc->Objects[i].Baseline > 0) {
-			rstruc->Objects[i].Baseline /= mul;
+	for (auto &obj : rstruc->Objects) {
+		obj.X /= mul;
+		obj.Y /= mul;
+		if (obj.Baseline > 0) {
+			obj.Baseline /= mul;
 		}
 	}
 
@@ -405,8 +405,6 @@ HError LoadRoomScript(RoomStruct *room, int newnum) {
 }
 
 static void reset_temp_room() {
-	_GP(troom).FreeScriptData();
-	_GP(troom).FreeProperties();
 	_GP(troom) = RoomStatus();
 }
 
@@ -537,7 +535,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 			_GP(thisroom).Interaction->CopyTimesRun(_G(croom)->intrRoom);
 			for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
 				_GP(thisroom).Hotspots[cc].Interaction->CopyTimesRun(_G(croom)->intrHotspot[cc]);
-			for (cc = 0; cc < MAX_ROOM_OBJECTS; cc++)
+			for (cc = 0; cc < _GP(thisroom).Objects.size(); cc++)
 				_GP(thisroom).Objects[cc].Interaction->CopyTimesRun(_G(croom)->intrObject[cc]);
 			for (cc = 0; cc < MAX_ROOM_REGIONS; cc++)
 				_GP(thisroom).Regions[cc].Interaction->CopyTimesRun(_G(croom)->intrRegion[cc]);
@@ -547,39 +545,44 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 		// Always copy object and hotspot names for < 3.6.0 games, because they were not settable
 		if (_G(loaded_game_file_version) < kGameVersion_360_16) {
-			for (cc = 0; cc < _G(croom)->numobj; ++cc)
+			for (cc = 0; cc < _GP(thisroom).Objects.size(); ++cc)
 				_G(croom)->obj[cc].name = _GP(thisroom).Objects[cc].Name;
 			for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
 				_G(croom)->hotspot[cc].Name = _GP(thisroom).Hotspots[cc].Name;
 		}
 	} else {
 		// If we have not been in this room before, then copy necessary fields from _GP(thisroom)
-		_G(croom)->numobj = _GP(thisroom).ObjectCount;
+		_G(croom)->numobj = _GP(thisroom).Objects.size();
 		_G(croom)->tsdatasize = 0;
+		_G(croom)->obj.resize(_G(croom)->numobj);
+		_G(croom)->objProps.resize(_G(croom)->numobj);
+		_G(croom)->intrObject.resize(_G(croom)->numobj);
 		for (cc = 0; cc < _G(croom)->numobj; cc++) {
-			_G(croom)->obj[cc].x = _GP(thisroom).Objects[cc].X;
-			_G(croom)->obj[cc].y = _GP(thisroom).Objects[cc].Y;
-			_G(croom)->obj[cc].num = Math::InRangeOrDef<uint16_t>(_GP(thisroom).Objects[cc].Sprite, 0);
-			_G(croom)->obj[cc].on = _GP(thisroom).Objects[cc].IsOn;
-			_G(croom)->obj[cc].view = RoomObject::NoView;
-			_G(croom)->obj[cc].loop = 0;
-			_G(croom)->obj[cc].frame = 0;
-			_G(croom)->obj[cc].wait = 0;
-			_G(croom)->obj[cc].transparent = 0;
-			_G(croom)->obj[cc].moving = -1;
-			_G(croom)->obj[cc].flags = _GP(thisroom).Objects[cc].Flags;
-			_G(croom)->obj[cc].baseline = -1;
-			_G(croom)->obj[cc].zoom = 100;
-			_G(croom)->obj[cc].last_width = 0;
-			_G(croom)->obj[cc].last_height = 0;
-			_G(croom)->obj[cc].blocking_width = 0;
-			_G(croom)->obj[cc].blocking_height = 0;
-			_G(croom)->obj[cc].name = _GP(thisroom).Objects[cc].Name;
-			if (_GP(thisroom).Objects[cc].Baseline >= 0)
-				_G(croom)->obj[cc].baseline = _GP(thisroom).Objects[cc].Baseline;
-			if (_GP(thisroom).Objects[cc].Sprite > UINT16_MAX)
+			const auto &trobj = _GP(thisroom).Objects[cc];
+			auto &crobj = _G(croom)->obj[cc];
+			crobj.x = trobj.X;
+			crobj.y = trobj.Y;
+			crobj.num = Math::InRangeOrDef<uint16_t>(trobj.Sprite, 0);
+			crobj.on = trobj.IsOn;
+			crobj.view = RoomObject::NoView;
+			crobj.loop = 0;
+			crobj.frame = 0;
+			crobj.wait = 0;
+			crobj.transparent = 0;
+			crobj.moving = -1;
+			crobj.flags = trobj.Flags;
+			crobj.baseline = -1;
+			crobj.zoom = 100;
+			crobj.last_width = 0;
+			crobj.last_height = 0;
+			crobj.blocking_width = 0;
+			crobj.blocking_height = 0;
+			crobj.name = trobj.Name;
+			if (trobj.Baseline >= 0)
+				crobj.baseline = trobj.Baseline;
+			if (trobj.Sprite > UINT16_MAX)
 				debug_script_warn("Warning: object's (id %d) sprite %d outside of internal range (%d), reset to 0",
-				                  cc, _GP(thisroom).Objects[cc].Sprite, UINT16_MAX);
+				                  cc, trobj.Sprite, UINT16_MAX);
 		}
 		for (size_t i = 0; i < (size_t)MAX_WALK_BEHINDS; ++i)
 			_G(croom)->walkbehind_base[i] = _GP(thisroom).WalkBehinds[i].Baseline;
@@ -614,13 +617,13 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		_G(croom)->intrRoom = *_GP(thisroom).Interaction;
 		for (cc = 0; cc < MAX_ROOM_HOTSPOTS; cc++)
 			_G(croom)->intrHotspot[cc] = *_GP(thisroom).Hotspots[cc].Interaction;
-		for (cc = 0; cc < MAX_ROOM_OBJECTS; cc++)
+		for (cc = 0; cc < _GP(thisroom).Objects.size(); cc++)
 			_G(croom)->intrObject[cc] = *_GP(thisroom).Objects[cc].Interaction;
 		for (cc = 0; cc < MAX_ROOM_REGIONS; cc++)
 			_G(croom)->intrRegion[cc] = *_GP(thisroom).Regions[cc].Interaction;
 	}
 
-	_G(objs) = &_G(croom)->obj[0];
+	_G(objs) = _G(croom)->obj.size() > 0 ? &_G(croom)->obj[0] : nullptr;
 
 	for (cc = 0; cc < _G(croom)->numobj; cc++) {
 		// export the object's script object
