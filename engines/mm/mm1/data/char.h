@@ -74,13 +74,13 @@ struct Character {
 
 	uint8 _levelBase = 0;
 	uint8 _level = 0;
+	uint8 _ageBase = 0;
 	uint8 _age = 0;
-	uint8 _field26 = 0;
 	uint32 _exp = 0;
 	uint16 _sp = 0, _spMax = 0;
 	uint8 _sp2 = 0, _maxSpellLevel = 0;
 	uint16 _gems = 0;
-	uint16 _hp = 0, _hp2 = 0, _hpMax = 0;
+	uint16 _hpBase = 0, _hp = 0, _hpMax = 0;
 	uint32 _gold = 0;
 	byte _ac = 0;
 	uint8 _food = 0;
