@@ -52,7 +52,12 @@ Savegame::Savegame(AsylumEngine *engine) : _vm(engine), _index(0) {
 	memset(&_moviesViewed, 0, sizeof(_moviesViewed));
 	memset(&_savegames, 0, sizeof(_savegames));
 	memset(&_savegameToScene, 0, sizeof(_savegameToScene));
-	_build = 0;
+	resetVersion();
+}
+
+void Savegame::resetVersion() {
+	_version = savegame_version;
+	_build   = SAVEGAME_BUILD;
 }
 
 bool Savegame::hasSavegames() const {

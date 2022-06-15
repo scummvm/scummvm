@@ -71,6 +71,7 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 
 	_savedScreen.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 
+	_debugShowVersion = false;
 	g_debugActors = 0;
 	g_debugObjects  = 0;
 	g_debugPolygons  = 0;
@@ -423,7 +424,7 @@ bool Scene::update() {
 bool Scene::action(AsylumAction a) {
 	switch (a) {
 	case kAsylumActionShowVersion:
-		// TODO show version!
+		_debugShowVersion = !_debugShowVersion;
 		break;
 
 	case kAsylumActionQuickLoad:
@@ -641,6 +642,13 @@ bool Scene::updateScreen() {
 	getActor()->drawNumber();
 
 	// Original handle all debug commands here (we do it as part of each update command)
+	if (_debugShowVersion) {
+		getText()->setPosition(Common::Point(0, 0));
+		getText()->loadFont(_ws->font1);
+		getText()->draw(Common::String::format("Version %s / Build %d",
+												getSaveLoad()->getVersion(),
+												getSaveLoad()->getBuild()).c_str());
+	}
 
 	if (getSharedData()->getFlag(kFlagScene1)) {
 		getScreen()->clear();
