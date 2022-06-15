@@ -166,6 +166,10 @@ dialogs:
 	training:
 		for_level: "TRAINING FOR LEVEL "
 		no_way: "NO WAY!"
+		need: "NEED %d MORE"
+		cost: "COST %d GOLD"
+		xp: "EXPERIENCE POINTS"
+		commence: "A) COMMENCE TRAINING"
 	view_characters:
 		title: "VIEW ALL CHARACTERS"
 		legend1: "'A'-'%c' TO VIEW A CHARACTER"
