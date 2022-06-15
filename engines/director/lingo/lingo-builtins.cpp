@@ -1693,7 +1693,13 @@ void LB::b_showGlobals(int nargs) {
 }
 
 void LB::b_showLocals(int nargs) {
-	warning("STUB: b_showLocals");
+	Common::String local_out = "-- Local Variables --\n";
+	if (g_lingo->_localvars) {
+		for (auto it = g_lingo->_localvars->begin(); it != g_lingo->_localvars->end(); it++) {
+			local_out += it->_key + " = " + it->_value.asString() + "\n";
+		}
+	}
+	g_debugger->debugPrintf("%s", local_out.c_str());
 }
 
 ///////////////////
