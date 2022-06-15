@@ -348,7 +348,7 @@ void loadVectorData(GameInfo info, uint8_t *ptr) {
 		do {
 			byte = *(ptr++);
 			if (ptr > _G(_entireFile) && static_cast<size_t>(ptr - _G(_entireFile)) >= _G(_fileLength)) {
-				error("loadVectorData: Error! Image data for image %d cut off", ct);
+				warning("loadVectorData: Error! Image data for image %d cut off", ct);
 				if (_G(_gameHeader)->_numRooms - ct > 1)
 					g_scott->display(_G(_bottomWindow), "[This copy has %d broken or missing pictures. These have been patched out.]\n\n", _G(_gameHeader)->_numRooms - ct);
 				if (lp->_data >= ptr)
