@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-15 12:39+0000\n"
-"PO-Revision-Date: 2022-06-14 17:50+0000\n"
+"PO-Revision-Date: 2022-06-15 23:28+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -4378,10 +4378,8 @@ msgid "Switch to Olmec"
 msgstr "Alternar para Olmec"
 
 #: engines/asylum/metaengine.cpp:144
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open character inventory"
-msgstr "Abrir/Fechar Inventário"
+msgstr "Abrir inventário do personagem"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
