@@ -101,8 +101,8 @@ enum RoomFlags {
 
 #define MAX_ROOM_BGFRAMES  5   // max number of frames in animating bg scene
 
-#define MAX_ROOM_HOTSPOTS  50  // v2.62 increased from 20 to 30; v2.8 to 50
-#define MAX_ROOM_OBJECTS   40
+#define MAX_ROOM_HOTSPOTS  50  // v2.62: 20 -> 30; v2.8: -> 50
+#define MAX_ROOM_OBJECTS   256 // v3.6.0: 40 -> 256 (now limited by room format)
 #define MAX_ROOM_REGIONS   16
 // TODO: this is remains of the older code, MAX_WALK_AREAS = real number - 1, where
 // -1 is for the solid wall. When fixing this you need to be careful, because some

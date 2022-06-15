@@ -1141,7 +1141,6 @@ static bool scale_and_flip_sprite(int useindx, int sppic, int newwidth, int newh
 // returns 1 if nothing at all has changed and actsps is still
 // intact from last time; 0 otherwise
 int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware) {
-	int useindx = aa;
 	bool hardwareAccelerated = !alwaysUseSoftware && _G(gfxDriver)->HasAcceleratedTransform();
 
 	if (_GP(spriteset)[_G(objs)[aa].num] == nullptr)
@@ -1215,6 +1214,7 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 		isMirrored = true;
 	}
 
+	const int useindx = aa; // actsps array index
 	auto &actsp = _GP(actsps)[useindx];
 	actsp.SpriteID = _G(objs)[aa].num; // for texture sharing
 	if ((hardwareAccelerated) &&
@@ -1322,10 +1322,10 @@ void prepare_objects_for_drawing() {
 		if ((_G(objs)[aa].x >= _GP(thisroom).Width) || (_G(objs)[aa].y < 1))
 			continue;
 
-		const int useindx = aa;
 		int tehHeight;
 		int actspsIntact = construct_object_gfx(aa, nullptr, &tehHeight, false);
 
+		const int useindx = aa; // actsps array index
 		auto &actsp = _GP(actsps)[useindx];
 
 		// update the cache for next time
@@ -1437,7 +1437,6 @@ void prepare_characters_for_drawing() {
 		if (_GP(game).chars[aa].on == 0) continue;
 		if (_GP(game).chars[aa].room != _G(displayed_room)) continue;
 		_G(eip_guinum) = aa;
-		const int useindx = aa + MAX_ROOM_OBJECTS;
 
 		CharacterInfo *chin = &_GP(game).chars[aa];
 		_G(our_eip) = 330;
@@ -1512,6 +1511,7 @@ void prepare_characters_for_drawing() {
 
 		_G(our_eip) = 3331;
 
+		const int useindx = aa + ACTSP_OBJSOFF; // actsps array index
 		auto &actsp = _GP(actsps)[useindx];
 		actsp.SpriteID = sppic; // for texture sharing
 
@@ -1666,7 +1666,7 @@ void prepare_characters_for_drawing() {
 }
 
 Bitmap *get_cached_character_image(int charid) {
-	return _GP(actsps)[charid + MAX_ROOM_OBJECTS].Bmp.get();
+	return _GP(actsps)[charid + ACTSP_OBJSOFF].Bmp.get();
 }
 
 Bitmap *get_cached_object_image(int objid) {

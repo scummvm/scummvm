@@ -175,7 +175,6 @@ static void ReadMoveList_Aligned(Stream *in) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < _GP(game).numcharacters + MAX_ROOM_OBJECTS + 1; ++i) {
 		_GP(mls)[i].ReadFromFile_Legacy(&align_s);
-
 		align_s.Reset();
 	}
 }
