@@ -101,7 +101,7 @@ void Map00::special03() {
 	send(InfoMessage(
 		STRING["maps.map00.market_inside"],
 		[]() {
-			g_events->addView("MARKET");
+			g_events->addView("Market");
 		}
 	));
 }
@@ -122,7 +122,7 @@ void Map00::special05() {
 	send(InfoMessage(
 		STRING["maps.map00.tavern_inside"],
 		[]() {
-			g_events->addView("TAVERN");
+			g_events->addView("Tavern");
 		}
 	));
 }
@@ -132,13 +132,19 @@ void Map00::special06() {
 	send(InfoMessage(
 		STRING["maps.map00.temple_inside"],
 		[]() {
-			g_events->addView("TEMPLE");
+			g_events->addView("Temple");
 		}
 	));
 }
 
 void Map00::special07() {
-	warning("special07");
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.map00.training_inside"],
+		[]() {
+			g_events->addView("Training");
+		}
+	));
 }
 
 void Map00::special08() {

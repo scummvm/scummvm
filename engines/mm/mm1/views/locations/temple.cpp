@@ -168,8 +168,8 @@ void Temple::restoreHealth() {
 
 		if (_isEradicated) {
 			c._age += 10;
-			if (c._end2)
-				c._end = --c._end2;
+			if (c._endBase)
+				c._end = --c._endBase;
 		}
 
 		redraw();
@@ -182,7 +182,7 @@ void Temple::uncurseItems() {
 		for (int i = 0; i < INVENTORY_COUNT; ++i) {
 			if (c._equipped[i]) {
 				getItem(c._equipped[i]);
-				if (c._field11 == 0xff)
+				if (g_globals->_currItem._field10 == 0xff)
 					c._equipped[i] = 0;
 			}
 		}
