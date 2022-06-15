@@ -422,7 +422,7 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 	return mouseActiveButton;
 }
 
-int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
+int32 Menu::processMenu(MenuSettings *menuSettings) {
 	int16 currentButton = menuSettings->getActiveButton();
 	bool buttonsNeedRedraw = true;
 	const int32 numEntry = menuSettings->getButtonCount();
@@ -613,7 +613,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 			}
 			startMillis = loopMillis;
 		}
-		if (showCredits && loopMillis - startMillis > 11650) {
+		if (!_engine->_scene->isGameRunning() && loopMillis - startMillis > 11650) {
 			// TODO: lba2 only show the credits only in the main menu and you could force it by pressing shift+c
 			// TODO: lba2 has a cd audio track (2) for the credits
 			_engine->_menuOptions->showCredits();

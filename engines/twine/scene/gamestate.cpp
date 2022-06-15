@@ -459,7 +459,7 @@ void GameState::processGameChoices(TextId choiceIdx) {
 
 	_engine->_text->drawAskQuestion(choiceIdx);
 
-	_engine->_menu->processMenu(&_gameChoicesSettings, false);
+	_engine->_menu->processMenu(&_gameChoicesSettings);
 	const int16 activeButton = _gameChoicesSettings.getActiveButton();
 	_choiceAnswer = _gameChoices[activeButton];
 
