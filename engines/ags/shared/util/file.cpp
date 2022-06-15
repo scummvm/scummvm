@@ -145,12 +145,9 @@ String File::GetCMode(FileOpenMode open_mode, FileWorkMode work_mode) {
 }
 
 Stream *File::OpenFile(const String &filename, FileOpenMode open_mode, FileWorkMode work_mode) {
-	FileStream *fs = nullptr;
+	Stream *fs = nullptr;
 	//  try {
-	if (work_mode == kFile_Read) // NOTE: BufferedStream does not work correctly in the write mode
-		fs = new BufferedStream(filename, open_mode, work_mode);
-	else
-		fs = new FileStream(filename, open_mode, work_mode);
+	fs = new BufferedStream(filename, open_mode, work_mode);
 	if (fs != nullptr && !fs->IsValid()) {
 		delete fs;
 		fs = nullptr;

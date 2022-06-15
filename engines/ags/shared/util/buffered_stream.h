@@ -48,9 +48,17 @@ public:
 	// - could not determine the length of the stream
 	// It is recommended to use File::OpenFile to safely construct this object.
 	BufferedStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess = kLittleEndian);
+	~BufferedStream();
 
-	bool    EOS() const override; ///< Is end of stream
-	soff_t  GetPosition() const override; ///< Current position (if known)
+	// Is end of stream
+	bool    EOS() const override;
+	// Total length of stream (if known)
+	soff_t  GetLength() const override;
+	// Current position (if known)
+	soff_t  GetPosition() const override;
+
+	void    Close() override;
+	bool    Flush() override;
 
 	size_t  Read(void *buffer, size_t size) override;
 	int32_t ReadByte() override;
@@ -60,14 +68,17 @@ public:
 	bool    Seek(soff_t offset, StreamSeek origin) override;
 
 protected:
-	soff_t _start = 0;
-	soff_t _end = -1;
+	soff_t _start = 0; // valid section starting offset
+	soff_t _end = -1; // valid section ending offset
 
 private:
+	// Reads a chunk of file into the buffer, starting from the given offset
 	void FillBufferFromPosition(soff_t position);
+	// Writes a buffer into the file, and reposition to the new offset
+	void FlushBuffer(soff_t position);
 
-	soff_t _position = 0;
-	soff_t _bufferPosition = 0;
+	soff_t _position = 0; // absolute read/write offset
+	soff_t _bufferPosition = 0; // buffer's location relative to file
 	std::vector<uint8_t> _buffer;
 };
 
@@ -77,9 +88,6 @@ class BufferedSectionStream : public BufferedStream {
 public:
 	BufferedSectionStream(const String &file_name, soff_t start_pos, soff_t end_pos,
 		FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess = kLittleEndian);
-
-	soff_t  GetPosition() const override;
-	soff_t  GetLength() const override;
 };
 
 } // namespace Shared

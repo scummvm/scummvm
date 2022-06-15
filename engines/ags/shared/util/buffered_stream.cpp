@@ -50,47 +50,75 @@ BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, 
 	}
 }
 
+BufferedStream::~BufferedStream() {
+	Close();
+}
+
 void BufferedStream::FillBufferFromPosition(soff_t position) {
 	FileStream::Seek(position, kSeekBegin);
-
 	_buffer.resize(BufferSize);
 	auto sz = FileStream::Read(_buffer.data(), BufferSize);
 	_buffer.resize(sz);
-
 	_bufferPosition = position;
+}
+
+void BufferedStream::FlushBuffer(soff_t position) {
+	size_t sz = _buffer.size() > 0 ? FileStream::Write(_buffer.data(), _buffer.size()) : 0u;
+	_buffer.clear(); // will start from the clean buffer next time
+	_bufferPosition += sz;
+	if (position != _bufferPosition) {
+		FileStream::Seek(position, kSeekBegin);
+		_bufferPosition = position;
+	}
 }
 
 bool BufferedStream::EOS() const {
 	return _position == _end;
 }
 
-soff_t BufferedStream::GetPosition() const {
-	return _position;
+soff_t BufferedStream::GetLength() const {
+	return _end - _start;
 }
 
-size_t BufferedStream::Read(void *toBuffer, size_t toSize) {
-	auto to = static_cast<char *>(toBuffer);
+soff_t BufferedStream::GetPosition() const {
+	return _position - _start;
+}
 
-	while (toSize > 0) {
+void BufferedStream::Close() {
+	if (GetWorkMode() == kFile_Write)
+		FlushBuffer(_position);
+	FileStream::Close();
+}
+
+bool BufferedStream::Flush() {
+	if (GetWorkMode() == kFile_Write)
+		FlushBuffer(_position);
+	return FileStream::Flush();
+}
+
+size_t BufferedStream::Read(void *buffer, size_t size) {
+	auto to = static_cast<uint8_t*>(buffer);
+
+	while(size > 0) {
 		if (_position < _bufferPosition || _position >= _bufferPosition + _buffer.size()) {
 			FillBufferFromPosition(_position);
 		}
 		if (_buffer.empty()) { break; } // reached EOS
-		assert(_position >= _bufferPosition && _position < _bufferPosition + _buffer.size());  // sanity check only, should be checked by above.
+		assert(_position >= _bufferPosition && _position < _bufferPosition + _buffer.size());
 
 		soff_t bufferOffset = _position - _bufferPosition;
 		assert(bufferOffset >= 0);
 		size_t bytesLeft = _buffer.size() - (size_t)bufferOffset;
-		size_t chunkSize = MIN<size_t>(bytesLeft, toSize);
+		size_t chunkSize = MIN<size_t>(bytesLeft, size);
 
 		memcpy(to, _buffer.data() + bufferOffset, chunkSize);
 
 		to += chunkSize;
 		_position += chunkSize;
-		toSize -= chunkSize;
+		size -= chunkSize;
 	}
 
-	return to - (char *)toBuffer;
+	return to - static_cast<uint8_t*>(buffer);
 }
 
 int32_t BufferedStream::ReadByte() {
@@ -103,12 +131,24 @@ int32_t BufferedStream::ReadByte() {
 }
 
 size_t BufferedStream::Write(const void *buffer, size_t size) {
-	FileStream::Seek(_position, kSeekBegin);
-	auto sz = FileStream::Write(buffer, size);
-	if (_position == _end)
-		_end += sz;
-	_position += sz;
-	return sz;
+	const uint8_t *from = static_cast<const uint8_t*>(buffer);
+	while (size > 0) {
+		if (_position < _bufferPosition || _position >= _bufferPosition + BufferSize) {
+			FlushBuffer(_position);
+		}
+		size_t pos_in_buff = static_cast<size_t>(_position - _bufferPosition);
+		size_t chunk_sz = std::min(size, BufferSize - pos_in_buff);
+		if (_buffer.size() < pos_in_buff + chunk_sz)
+			_buffer.resize(pos_in_buff + chunk_sz);
+		memcpy(_buffer.data() + pos_in_buff, from, chunk_sz);
+		_position += chunk_sz;
+		from += chunk_sz;
+		size -= chunk_sz;
+	}
+
+	_end = std::max(_end, _position);
+	return from - static_cast<const uint8_t*>(buffer);
+
 }
 
 int32_t BufferedStream::WriteByte(uint8_t val) {
@@ -147,13 +187,6 @@ BufferedSectionStream::BufferedSectionStream(const String &file_name, soff_t sta
 	Seek(0, kSeekBegin);
 }
 
-soff_t BufferedSectionStream::GetPosition() const {
-	return BufferedStream::GetPosition() - _start;
-}
-
-soff_t BufferedSectionStream::GetLength() const {
-	return _end - _start;
-}
 
 } // namespace Shared
 } // namespace AGS

@@ -41,6 +41,8 @@ public:
 			   DataEndianess stream_endianess = kLittleEndian);
 	~FileStream() override;
 
+	FileWorkMode GetWorkMode() const { return _workMode; }
+
 	bool HasErrors() const override;
 	void Close() override;
 	bool Flush() override;
