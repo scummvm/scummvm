@@ -63,6 +63,11 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 	_ynCallback = msg._ynCallback;
 	_keyCallback = msg._keyCallback;
 
+	if (msg._largeMessage)
+		_bounds = getLineBounds(17, 24);
+	else
+		_bounds = getLineBounds(21, 24);
+
 	redraw();
 	return true;
 }
