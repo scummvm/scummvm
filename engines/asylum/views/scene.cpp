@@ -445,6 +445,16 @@ bool Scene::action(AsylumAction a) {
 		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2206 + a - kAsylumActionSwitchToSarah)]->scriptIndex,
 								 getSharedData()->getPlayerIndex());
 		break;
+
+	case kAsylumActionOpenInventory:
+		if (getActor()->inventory[0] && getActor()->getStatus() == kActorStatusEnabled) {
+			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 2));
+			getActor()->changeStatus(kActorStatusShowingInventory);
+		} else if (getActor()->getStatus() == kActorStatusShowingInventory || getActor()->getStatus() == kActorStatus10) {
+			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
+			getActor()->changeStatus(kActorStatusEnabled);
+		}
+		break;
 	}
 
 	return true;
