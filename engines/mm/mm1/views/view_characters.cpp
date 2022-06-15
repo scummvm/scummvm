@@ -120,7 +120,7 @@ void CharacterStats::printStats() {
 	writeNumber(re._spMax);
 	_textPos.x = 22;
 	writeChar('(');
-	writeNumber(re._sp1);
+	writeNumber(re._maxSpellLevel);
 	writeChar(')');
 	_textPos.x = 26;
 	writeString(STRING["stats.attributes.gems"]);
