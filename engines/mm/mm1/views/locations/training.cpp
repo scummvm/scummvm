@@ -32,11 +32,14 @@ namespace Locations {
 
 #define MAX_LEVEL 200
 
-const int TRAINING_COSTS1[7] = {
+static const int TRAINING_COSTS1[7] = {
 	25, 50, 100, 200, 400, 800, 1500
 };
-const int TRAINING_COSTS2[7] = {
+static const int TRAINING_COSTS2[7] = {
 	40, 75, 150, 300, 600, 1200, 2500
+};
+static const int CLASS_HP_PER_LEVEL[6] = {
+	12, 10, 10, 8, 6, 8
 };
 
 Training::Training() : Location("Training") {
@@ -45,26 +48,6 @@ Training::Training() : Location("Training") {
 bool Training::msgFocus(const FocusMessage &msg) {
 	send("View", ValueMessage(LOC_TRAINING));
 	changeCharacter(0);
-
-	return true;
-}
-
-bool Training::msgKeypress(const KeypressMessage &msg) {
-	switch (msg.keycode) {
-	case Common::KEYCODE_ESCAPE:
-		leave();
-		break;
-	case Common::KEYCODE_1:
-	case Common::KEYCODE_2:
-	case Common::KEYCODE_3:
-	case Common::KEYCODE_4:
-	case Common::KEYCODE_5:
-	case Common::KEYCODE_6:
-		changeCharacter(msg.keycode - Common::KEYCODE_1);
-		break;
-	default:
-		break;
-	}
 
 	return true;
 }
@@ -135,6 +118,99 @@ void Training::draw() {
 			STRING["dialogs.training.cost"].c_str(), _cost));
 		writeString(18, 5, STRING["dialogs.training.cost"]);
 	}
+}
+
+bool Training::msgKeypress(const KeypressMessage &msg) {
+	switch (msg.keycode) {
+	case Common::KEYCODE_ESCAPE:
+		leave();
+		break;
+	case Common::KEYCODE_a:
+		if (_canTrain)
+			train();
+		break;
+	case Common::KEYCODE_g:
+		gatherGold();
+		redraw();
+		break;
+	case Common::KEYCODE_1:
+	case Common::KEYCODE_2:
+	case Common::KEYCODE_3:
+	case Common::KEYCODE_4:
+	case Common::KEYCODE_5:
+	case Common::KEYCODE_6:
+		changeCharacter(msg.keycode - Common::KEYCODE_1);
+		break;
+	default:
+		break;
+	}
+
+	return true;
+}
+
+void Training::train() {
+	Character &c = *g_globals->_currCharacter;
+
+	if (c._condition) {
+		Sound::sound(SOUND_3);
+		clearSurface();
+		writeString(8, 5, STRING["dialogs.training.condition"]);
+		_timeoutCtr = 3 * FRAME_RATE;
+
+	} else if (!_canAfford) {
+		notEnoughGold();
+
+	} else {
+		// Do the actual training
+		c._gold -= _cost;
+		doTraining();
+	}
+}
+
+void Training::doTraining() {
+	Character &c = *g_globals->_currCharacter;
+	c._level = ++c._levelBase;
+	c._age = ++c._ageBase;
+	if (c._ageBase > 220)
+		c._ageBase = 220;
+	c._v6c += 2;
+
+	int classNum = c._class == NONE ? ROBBER : c._class;
+	int newHP = g_engine->getRandomNumber(CLASS_HP_PER_LEVEL[classNum - 1]);
+
+	if (c._endBase >= 40)
+		newHP += 10;
+	else if (c._endBase >= 35)
+		newHP += 9;
+	else if (c._endBase >= 30)
+		newHP += 8;
+	else if (c._endBase >= 27)
+		newHP += 7;
+	else if (c._endBase >= 24)
+		newHP += 6;
+	else if (c._endBase >= 21)
+		newHP += 5;
+	else if (c._endBase >= 19)
+		newHP += 4;
+	else if (c._endBase >= 17)
+		newHP += 3;
+	else if (c._endBase >= 15)
+		newHP += 2;
+	else if (c._endBase >= 13)
+		newHP += 1;
+	else if (c._endBase >= 9)
+		newHP += 0;
+	else if (c._endBase >= 7)
+		newHP = MAX(newHP - 1, 1);
+	else if (c._endBase >= 5)
+		newHP = MAX(newHP - 2, 1);
+	else
+		newHP = MAX(newHP - 3, 1);
+
+	c._hpBase += newHP;
+	c._hp = c._hpMax = c._hpBase;
+
+	// TODO: Remaining stuff
 }
 
 } // namespace Locations

@@ -40,6 +40,16 @@ private:
 	int _cost = 0, _cost2;
 	bool _canTrain = false;
 	bool _canAfford = false;
+private:
+	/**
+	 * Validates if training is allowed, then trains.
+	 */
+	void train();
+
+	/**
+	 * Handles training
+	 */
+	void doTraining();
 protected:
 	/**
 	 * Change character
