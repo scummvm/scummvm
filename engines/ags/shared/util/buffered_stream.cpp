@@ -133,7 +133,10 @@ int32_t BufferedStream::ReadByte() {
 size_t BufferedStream::Write(const void *buffer, size_t size) {
 	const uint8_t *from = static_cast<const uint8_t*>(buffer);
 	while (size > 0) {
-		if (_position < _bufferPosition || _position >= _bufferPosition + BufferSize) {
+		if (_position < _bufferPosition || // seeked before buffer pos
+			_position > _bufferPosition + _buffer.size() || // seeked beyond buffer pos
+			_position >= _bufferPosition + BufferSize) // seeked, or exceeded buffer limit
+		{
 			FlushBuffer(_position);
 		}
 		size_t pos_in_buff = static_cast<size_t>(_position - _bufferPosition);
