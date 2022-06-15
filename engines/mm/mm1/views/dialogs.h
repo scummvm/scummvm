@@ -62,6 +62,7 @@ private:
 	Views::Locations::Statue _statue;
 	Views::Locations::Tavern _tavern;
 	Views::Locations::Temple _temple;
+	Views::Locations::Training _training;
 
 public:
 	Dialogs() {}

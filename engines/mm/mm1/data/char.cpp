@@ -32,25 +32,26 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_alignment);
 	s.syncAsByte(_race);
 	s.syncAsByte(_class);
-	s.skip(1);
-	s.syncAsByte(_int);
-	s.skip(1);
-	s.syncAsByte(_mgt);
-	s.skip(1);
-	s.syncAsByte(_per);
-	s.skip(1);
-	s.syncAsByte(_end);
-	s.skip(1);
-	s.syncAsByte(_spd);
-	s.skip(1);
-	s.syncAsByte(_acy);
-	s.skip(1);
-	s.syncAsByte(_luc);
-	s.skip(1);
 
+	s.syncAsByte(_intBase);
+	s.syncAsByte(_int);
+	s.syncAsByte(_mgtBase);
+	s.syncAsByte(_mgt);
+	s.syncAsByte(_perBase);
+	s.syncAsByte(_per);
+	s.syncAsByte(_endBase);
+	s.syncAsByte(_end);
+	s.syncAsByte(_spdBase);
+	s.syncAsByte(_spd);
+	s.syncAsByte(_acyBase);
+	s.syncAsByte(_acy);
+	s.syncAsByte(_lucBase);
+	s.syncAsByte(_luc);
+
+	s.syncAsByte(_nextLevel);
 	s.syncAsByte(_level);
 	s.syncAsByte(_age);
-	s.skip(1);
+	s.syncAsByte(_field26);
 	s.syncAsUint32LE(_exp);
 	s.syncAsUint16LE(_sp);
 	s.syncAsUint16LE(_spMax);
@@ -96,7 +97,8 @@ void Character::clear() {
 	Common::fill(_equipped, _equipped + INVENTORY_COUNT, 0);
 	Common::fill(_backpack, _backpack + INVENTORY_COUNT, 0);
 
-	_field11 = 0;
+	_alignmentInitial = GOOD;
+	_alignment = GOOD;
 	_v58 = _v59 = _v62 = _v63 = _v64 = _v65 = 0;
 	_v66 = _v67 = _v6c = _v6f = 0;
 }

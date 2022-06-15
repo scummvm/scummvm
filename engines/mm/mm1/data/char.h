@@ -61,20 +61,24 @@ enum Town {
 struct Character {
 	char _name[16] = { 0 };
 	Sex _sex = MALE;
-	int _field11 = 0;
 	Alignment _alignmentInitial = GOOD;
 	Alignment _alignment = GOOD;
 	Race _race = HUMAN;
 	CharacterClass _class = NONE;
+
 	uint8 _int = 0, _mgt = 0, _per = 0, _end = 0;
 	uint8 _spd = 0, _acy = 0, _luc = 0;
-	uint8 _end2 = 0;
+	uint8 _intBase = 0, _mgtBase = 0, _perBase = 0;
+	uint8 _endBase = 0, _spdBase = 0, _acyBase = 0;
+	uint8 _lucBase = 0;
+
 	uint8 _nextLevel = 0;
 	uint8 _level = 0;
 	uint8 _age = 0;
+	uint8 _field26 = 0;
 	uint32 _exp = 0;
 	uint16 _sp = 0, _spMax = 0;
-	uint8 _maxSpellLevel = 0, _sp2 = 0;
+	uint8 _sp2 = 0, _maxSpellLevel = 0;
 	uint16 _gems = 0;
 	uint16 _hp = 0, _hp2 = 0, _hpMax = 0;
 	uint32 _gold = 0;
