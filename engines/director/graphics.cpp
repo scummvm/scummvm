@@ -449,8 +449,10 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 
 	uint strokePattern = 1;
 
-	if (ms->spriteType == kOutlinedRectangleSprite || ms->spriteType == kOutlinedRoundedRectangleSprite
-			|| ms->spriteType == kOutlinedOvalSprite)
+	bool outline = (ms->spriteType == kOutlinedRectangleSprite || ms->spriteType == kOutlinedRoundedRectangleSprite
+			|| ms->spriteType == kOutlinedOvalSprite);
+
+	if (outline)
 		strokePattern = ms->pattern;
 
 	Common::Rect strokeRect(MAX((int)srcRect.width() - ms->lineSize, 0), MAX((int)srcRect.height() - ms->lineSize, 0));
@@ -467,6 +469,10 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		if (ms->lineSize <= 0)
 			break;
 		ms->pd = &plotStroke;
+
+		if (!outline)
+			ms->tile = nullptr;
+
 		Graphics::drawRect(strokeRect, ms->foreColor, d->getInkDrawPixel(), this);
 		break;
 	case kRoundedRectangleSprite:
@@ -477,6 +483,10 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		if (ms->lineSize <= 0)
 			break;
 		ms->pd = &plotStroke;
+
+		if (!outline)
+			ms->tile = nullptr;
+
 		Graphics::drawRoundRect(strokeRect, 12, ms->foreColor, false, d->getInkDrawPixel(), this);
 		break;
 	case kOvalSprite:
@@ -487,6 +497,10 @@ void DirectorPlotData::inkBlitShape(Common::Rect &srcRect) {
 		if (ms->lineSize <= 0)
 			break;
 		ms->pd = &plotStroke;
+
+		if (!outline)
+			ms->tile = nullptr;
+
 		Graphics::drawEllipse(strokeRect.left, strokeRect.top, strokeRect.right, strokeRect.bottom, ms->foreColor, false, d->getInkDrawPixel(), this);
 		break;
 	case kLineTopBottomSprite:
