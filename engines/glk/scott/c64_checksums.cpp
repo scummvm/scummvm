@@ -244,7 +244,16 @@ int detectC64(uint8_t **sf, size_t *extent) {
 }
 
 size_t copyData(size_t dest, size_t source, uint8_t** data, size_t dataSize, size_t bytesToMove) {
-	return 0;
+	if (source > dataSize || *data == nullptr)
+		return 0;
+
+	size_t newSize = MAX(dest + bytesToMove, dataSize);
+	uint8_t *megaBuf = new uint8_t[newSize];
+	memcpy(megaBuf, *data, dataSize);
+	memcpy(megaBuf + dest, *data + source, bytesToMove);
+	delete[] *data;
+	*data = megaBuf;
+	return newSize;
 }
 
 int decrunchC64(uint8_t **sf, size_t *extent, C64Rec record) {
