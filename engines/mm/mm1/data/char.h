@@ -28,6 +28,7 @@ namespace MM {
 namespace MM1 {
 
 #define INVENTORY_COUNT 6
+#define MAX_LEVEL 200
 
 enum CharacterClass {
 	KNIGHT = 1, PALADIN = 2, ARCHER = 3, CLERIC = 4,
@@ -95,8 +96,20 @@ struct Character {
 	// Non persistent fields
 	byte _numDrinks = 0;
 
+	/**
+	 * Handles save/loading a character
+	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Clearing the character
+	 */
 	void clear();
+
+	/**
+	 * Increase the character's level by 1 at a trainer
+	 */
+	void increaseLevel();
 };
 
 } // namespace MM1
