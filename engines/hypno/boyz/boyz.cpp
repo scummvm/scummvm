@@ -262,10 +262,16 @@ void BoyzEngine::loadAssets() {
 
 	loadArcadeLevel("c41.mi_", "c42.mi_", "<retry_menu>", "");
 	loadArcadeLevel("c42.mi_", "<territory_5>", "<retry_menu>", "");
+	ar = (ArcadeShooting *) _levels["c42.mi_"];
+	// We remove the last element, which plays c4/c4bro8s.smk
+	// This transition is too close to the end of the level
+	// and will likely not be executed
+	ar->transitions.pop_back();
 
 	Transition *territory_5 = new Transition("<check_c5>");
 	territory_5->intros.push_back("warnings/w16s.smk");
 	territory_5->intros.push_back("c5/c5t01.smk");
+	territory_5->intros.push_back("c5/c5intras.smk");
 	_levels["<territory_5>"] = territory_5;
 
 	loadArcadeLevel("c51.mi_", "<check_c5>", "<retry_menu>", "");

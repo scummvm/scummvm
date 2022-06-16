@@ -110,6 +110,12 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 			}
 		}
 		return;
+	} else {
+		if (_levelId == 42) {
+			disableCursor();
+			MVideo video("c4/c4bro8s.smk", Common::Point(0, 0), false, true, false);
+			runIntro(video);
+		}
 	}
 
 	if (_currentLevel == lastLevelTerritory(_currentLevel)) {
@@ -120,9 +126,10 @@ void BoyzEngine::runAfterArcade(ArcadeShooting *arc) {
 		drawImage(*stats, 0, 0, true);
 		stats->free();
 		delete stats;
-		uint32 enemyAvailable = _stats.targetsDestroyed + _stats.targetsMissed;
-		drawString("scifi08.fgx", Common::String::format("%d", enemyAvailable), 240, 40, 0, kHypnoColorWhiteOrBlue);
-		drawString("scifi08.fgx", Common::String::format("%d%%", 100 * _stats.targetsDestroyed / enemyAvailable), 240, 54, 0, kHypnoColorWhiteOrBlue);
+		uint32 enemiesAvailable = _stats.targetsDestroyed + _stats.targetsMissed;
+		drawString("scifi08.fgx", Common::String::format("%d", enemiesAvailable), 240, 40, 0, kHypnoColorWhiteOrBlue);
+		uint32 killRatio = enemiesAvailable > 0 ? 100 * _stats.targetsDestroyed / enemiesAvailable : 0;
+		drawString("scifi08.fgx", Common::String::format("%d%%", killRatio), 240, 54, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d", _stats.shootsFired), 240, 77, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d%%", accuracyRatio()), 240, 92, 0, kHypnoColorWhiteOrBlue);
 		drawString("scifi08.fgx", Common::String::format("%d", -uint32(-1) - _lives), 240, 117, 0, kHypnoColorWhiteOrBlue);
