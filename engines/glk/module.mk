@@ -265,6 +265,7 @@ MODULE_OBJS := \
 	scott/unp64/scanners/exomizer.o \
 	scott/unp64/scanners/expert.o \
 	scott/unp64/scanners/master_compressor.o \
+	scott/unp64/scanners/megabyte.o \
 	tads/os_banners.o \
 	tads/os_buffer.o \
 	tads/os_glk.o \
