@@ -22,24 +22,20 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
-#include <ctype.h>
-
-#ifdef TIXML_USE_STL
-#include <iostream>
-#include <sstream>
-#endif
-
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
+#include "common/file.h"
+#include "common/debug.h"
+#include "hpl1/detection.h"
 
 bool TiXmlBase::condenseWhiteSpace = true;
 
 void TiXmlBase::PutString(const TIXML_STRING &str, TIXML_STRING *outString) {
 	int i = 0;
 
-	while (i < (int)str.length()) {
+	while (i < (int)str.size()) {
 		unsigned char c = (unsigned char)str[i];
 
-		if (c == '&' && i < ((int)str.length() - 2) && str[i + 1] == '#' && str[i + 2] == 'x') {
+		if (c == '&' && i < ((int)str.size() - 2) && str[i + 1] == '#' && str[i + 2] == 'x') {
 			// Hexadecimal character reference.
 			// Pass through unchanged.
 			// &#xA9;	-- copyright symbol, for example.
@@ -50,46 +46,34 @@ void TiXmlBase::PutString(const TIXML_STRING &str, TIXML_STRING *outString) {
 			// while fails (error case) and break (semicolon found).
 			// However, there is no mechanism (currently) for
 			// this function to return an error.
-			while (i < (int)str.length() - 1) {
-				outString->append(str.c_str() + i, 1);
+			while (i < (int)str.size() - 1) {
+				(*outString) += Common::String(str.c_str() + i, 1);
 				++i;
 				if (str[i] == ';')
 					break;
 			}
 		} else if (c == '&') {
-			outString->append(entity[0].str, entity[0].strLength);
+			(*outString) += Common::String(entity[0].str, entity[0].strLength);
 			++i;
 		} else if (c == '<') {
-			outString->append(entity[1].str, entity[1].strLength);
+			(*outString) += Common::String(entity[1].str, entity[1].strLength);
 			++i;
 		} else if (c == '>') {
-			outString->append(entity[2].str, entity[2].strLength);
+			(*outString) += Common::String(entity[2].str, entity[2].strLength);
 			++i;
 		} else if (c == '\"') {
-			outString->append(entity[3].str, entity[3].strLength);
+			(*outString) += Common::String(entity[3].str, entity[3].strLength);
 			++i;
 		} else if (c == '\'') {
-			outString->append(entity[4].str, entity[4].strLength);
+			(*outString) += Common::String(entity[4].str, entity[4].strLength);
 			++i;
 		} else if (c < 32) {
 			// Easy pass at non-alpha/numeric/symbol
 			// Below 32 is symbolic.
-			char buf[32];
-
-#if defined(TIXML_SNPRINTF)
-			TIXML_SNPRINTF(buf, sizeof(buf), "&#x%02X;", (unsigned)(c & 0xff));
-#else
-			sprintf(buf, "&#x%02X;", (unsigned)(c & 0xff));
-#endif
-
-			//*ME:	warning C4267: convert 'size_t' to 'int'
-			//*ME:	Int-Cast to make compiler happy ...
-			outString->append(buf, (int)strlen(buf));
+			(*outString) += Common::String::format("&#x%02X;", (unsigned)(c & 0xff));
 			++i;
 		} else {
-			// char realc = (char) c;
-			// outString->append( &realc, 1 );
-			*outString += (char)c; // somewhat more efficient function call.
+			(*outString) += (char)c;
 			++i;
 		}
 	}
@@ -607,19 +591,18 @@ void TiXmlElement::SetAttribute(const std::string &name, const std::string &_val
 }
 #endif
 
-void TiXmlElement::Print(FILE *cfile, int depth) const {
+void TiXmlElement::Print(Common::DumpFile &file, int depth) const {
 	int i;
-	assert(cfile);
 	for (i = 0; i < depth; i++) {
-		fprintf(cfile, "    ");
+		file.writeString("    ");
 	}
 
-	fprintf(cfile, "<%s", value.c_str());
+	file.writeString("<" + value);
 
 	const TiXmlAttribute *attrib;
 	for (attrib = attributeSet.First(); attrib; attrib = attrib->Next()) {
-		fprintf(cfile, " ");
-		attrib->Print(cfile, depth);
+		file.writeString(" "); 
+		attrib->Print(file, depth);
 	}
 
 	// There are 3 different formatting approaches:
@@ -628,25 +611,25 @@ void TiXmlElement::Print(FILE *cfile, int depth) const {
 	// 3) An element with children is printed on multiple lines.
 	TiXmlNode *node;
 	if (!firstChild) {
-		fprintf(cfile, " />");
+		file.writeString(" />");
 	} else if (firstChild == lastChild && firstChild->ToText()) {
-		fprintf(cfile, ">");
-		firstChild->Print(cfile, depth + 1);
-		fprintf(cfile, "</%s>", value.c_str());
+		file.writeString(">");
+		firstChild->Print(file, depth + 1);
+		file.writeString("</" + value + ">");
 	} else {
-		fprintf(cfile, ">");
+		file.writeString(">");
 
 		for (node = firstChild; node; node = node->NextSibling()) {
 			if (!node->ToText()) {
-				fprintf(cfile, "\n");
+				file.writeString("\n");
 			}
-			node->Print(cfile, depth + 1);
+			node->Print(file, depth + 1);
 		}
-		fprintf(cfile, "\n");
+		file.writeString("\n");
 		for (i = 0; i < depth; ++i) {
-			fprintf(cfile, "    ");
+			file.writeString("    ");
 		}
-		fprintf(cfile, "</%s>", value.c_str());
+		file.writeString("</" + value + ">");
 	}
 }
 
@@ -748,7 +731,7 @@ bool TiXmlDocument::SaveFile() const {
 	return SaveFile(Value());
 }
 
-bool TiXmlDocument::LoadFile(const char *_filename, TiXmlEncoding encoding) {
+bool TiXmlDocument::LoadFile(const char *filename, TiXmlEncoding encoding) {
 	// There was a really terrifying little bug here. The code:
 	//		value = filename
 	// in the STL case, cause the assignment method of the std::string to
@@ -756,24 +739,25 @@ bool TiXmlDocument::LoadFile(const char *_filename, TiXmlEncoding encoding) {
 	// address as it's c_str() method, and so bad things happen. Looks
 	// like a bug in the Microsoft STL implementation.
 	// Add an extra string to avoid the crash.
-	TIXML_STRING filename(_filename);
 	value = filename;
 
 	// reading in binary mode so that tinyxml can normalize the EOL
-	FILE *file = fopen(value.c_str(), "rb");
-
-	if (file) {
+	Common::File file; 
+	file.open(value); 
+	
+	if (file.isOpen()) {
 		bool result = LoadFile(file, encoding);
-		fclose(file);
 		return result;
 	} else {
+		debugC(Hpl1::kDebugFilePath, "file %s not found", value.c_str()); 
 		SetError(TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN);
 		return false;
 	}
 }
 
-bool TiXmlDocument::LoadFile(FILE *file, TiXmlEncoding encoding) {
-	if (!file) {
+bool TiXmlDocument::LoadFile(Common::File &file, TiXmlEncoding encoding) {
+	if (file.err()) {
+		debugC(Hpl1::kDebugResourceLoading, "file %s could not be read", file.getName()); 
 		SetError(TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN);
 		return false;
 	}
@@ -783,10 +767,7 @@ bool TiXmlDocument::LoadFile(FILE *file, TiXmlEncoding encoding) {
 	location.Clear();
 
 	// Get the file size, so we can pre-allocate the string. HUGE speed impact.
-	long length = 0;
-	fseek(file, 0, SEEK_END);
-	length = ftell(file);
-	fseek(file, 0, SEEK_SET);
+	long length = file.size();
 
 	// Strange case, but good to handle up front.
 	if (length == 0) {
@@ -797,7 +778,6 @@ bool TiXmlDocument::LoadFile(FILE *file, TiXmlEncoding encoding) {
 	// If we have a file, assume it is all one big XML file, and read it in.
 	// The document parser may decide the document ends sooner than the entire file, however.
 	TIXML_STRING data;
-	data.reserve(length);
 
 	// Subtle bug here. TinyXml did use fgets. But from the XML spec:
 	// 2.11 End-of-Line Handling
@@ -823,7 +803,9 @@ bool TiXmlDocument::LoadFile(FILE *file, TiXmlEncoding encoding) {
 	char *buf = new char[length + 1];
 	buf[0] = 0;
 
-	if (fread(buf, length, 1, file) != 1) {
+	file.read(buf, length); 
+	if (file.err()) {
+		debugC(Hpl1::kDebugResourceLoading, "file read for %s failed", file.getName()); 
 		delete[] buf;
 		SetError(TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN);
 		return false;
@@ -838,7 +820,7 @@ bool TiXmlDocument::LoadFile(FILE *file, TiXmlEncoding encoding) {
 		if (*p == 0xa) {
 			// Newline character. No special rules for this. Append all the characters
 			// since the last string, and include the newline.
-			data.append(lastPos, (p - lastPos + 1)); // append, include the newline
+			data += Common::String(lastPos, (p - lastPos + 1)); // append, include the newline
 			++p;                                     // move past the newline
 			lastPos = p;                             // and point to the new buffer (may be 0)
 			assert(p <= (buf + length));
@@ -846,7 +828,7 @@ bool TiXmlDocument::LoadFile(FILE *file, TiXmlEncoding encoding) {
 			// Carriage return. Append what we have so far, then
 			// handle moving forward in the buffer.
 			if ((p - lastPos) > 0) {
-				data.append(lastPos, p - lastPos); // do not add the CR
+				data += Common::String(lastPos, p - lastPos); // do not add the CR
 			}
 			data += (char)0xa; // a proper newline
 
@@ -867,7 +849,7 @@ bool TiXmlDocument::LoadFile(FILE *file, TiXmlEncoding encoding) {
 	}
 	// Handle any left over characters.
 	if (p - lastPos) {
-		data.append(lastPos, p - lastPos);
+		data += Common::String(lastPos, p - lastPos);
 	}
 	delete[] buf;
 	buf = 0;
@@ -882,27 +864,27 @@ bool TiXmlDocument::LoadFile(FILE *file, TiXmlEncoding encoding) {
 
 bool TiXmlDocument::SaveFile(const char *filename) const {
 	// The old c stuff lives on...
-	FILE *fp = fopen(filename, "w");
-	if (fp) {
-		bool result = SaveFile(fp);
-		fclose(fp);
+	Common::DumpFile df;
+	df.open(filename); 
+	if (df.isOpen()) {
+		bool result = SaveFile(df);
 		return result;
 	}
+	debugC(Hpl1::kDebugFilePath, "file %s not found", value.c_str());
 	return false;
 }
 
-bool TiXmlDocument::SaveFile(FILE *fp) const {
+bool TiXmlDocument::SaveFile(Common::DumpFile &fp) const {
 	if (useMicrosoftBOM) {
 		const unsigned char TIXML_UTF_LEAD_0 = 0xefU;
 		const unsigned char TIXML_UTF_LEAD_1 = 0xbbU;
 		const unsigned char TIXML_UTF_LEAD_2 = 0xbfU;
-
-		fputc(TIXML_UTF_LEAD_0, fp);
-		fputc(TIXML_UTF_LEAD_1, fp);
-		fputc(TIXML_UTF_LEAD_2, fp);
+		fp.writeByte(TIXML_UTF_LEAD_0); 
+		fp.writeByte(TIXML_UTF_LEAD_1); 
+		fp.writeByte(TIXML_UTF_LEAD_2); 
 	}
 	Print(fp, 0);
-	return (ferror(fp) == 0);
+	return fp.err();
 }
 
 void TiXmlDocument::CopyTo(TiXmlDocument *target) const {
@@ -926,11 +908,10 @@ TiXmlNode *TiXmlDocument::Clone() const {
 	return clone;
 }
 
-void TiXmlDocument::Print(FILE *cfile, int depth) const {
-	assert(cfile);
+void TiXmlDocument::Print(Common::DumpFile &cfile, int depth) const {
 	for (const TiXmlNode *node = FirstChild(); node; node = node->NextSibling()) {
 		node->Print(cfile, depth);
-		fprintf(cfile, "\n");
+		cfile.writeString("\n"); 
 	}
 }
 
@@ -982,7 +963,7 @@ TiXmlAttribute* TiXmlAttribute::Previous()
 }
 */
 
-void TiXmlAttribute::Print(FILE *cfile, int /*depth*/, TIXML_STRING *str) const {
+void TiXmlAttribute::Print(Common::DumpFile *cfile, int /*depth*/, TIXML_STRING *str) const {
 	TIXML_STRING n, v;
 
 	PutString(name, &n);
@@ -990,7 +971,7 @@ void TiXmlAttribute::Print(FILE *cfile, int /*depth*/, TIXML_STRING *str) const 
 
 	if (value.find('\"') == TIXML_STRING::npos) {
 		if (cfile) {
-			fprintf(cfile, "%s=\"%s\"", n.c_str(), v.c_str());
+			cfile->writeString(n + "=\"" + v + "\"");
 		}
 		if (str) {
 			(*str) += n;
@@ -1000,7 +981,7 @@ void TiXmlAttribute::Print(FILE *cfile, int /*depth*/, TIXML_STRING *str) const 
 		}
 	} else {
 		if (cfile) {
-			fprintf(cfile, "%s='%s'", n.c_str(), v.c_str());
+			cfile->writeString(n + "='" + v + "'");
 		}
 		if (str) {
 			(*str) += n;
@@ -1060,12 +1041,11 @@ void TiXmlComment::operator=(const TiXmlComment &base) {
 	base.CopyTo(this);
 }
 
-void TiXmlComment::Print(FILE *cfile, int depth) const {
-	assert(cfile);
+void TiXmlComment::Print(Common::DumpFile &cfile, int depth) const {
 	for (int i = 0; i < depth; i++) {
-		fprintf(cfile, "    ");
+		cfile.writeString("    ");
 	}
-	fprintf(cfile, "<!--%s-->", value.c_str());
+	cfile.writeString("<!--" + value + "-->");
 }
 
 void TiXmlComment::CopyTo(TiXmlComment *target) const {
@@ -1086,19 +1066,18 @@ TiXmlNode *TiXmlComment::Clone() const {
 	return clone;
 }
 
-void TiXmlText::Print(FILE *cfile, int depth) const {
-	assert(cfile);
+void TiXmlText::Print(Common::DumpFile &cfile, int depth) const {
 	if (cdata) {
 		int i;
-		fprintf(cfile, "\n");
+		cfile.writeString("\n");
 		for (i = 0; i < depth; i++) {
-			fprintf(cfile, "    ");
+			cfile.writeString("    ");
 		}
-		fprintf(cfile, "<![CDATA[%s]]>\n", value.c_str()); // unformatted output
+		cfile.writeString("<![CDATA[" + value + "]]>\n"); // unformatted output
 	} else {
 		TIXML_STRING buffer;
 		PutString(value, &buffer);
-		fprintf(cfile, "%s", buffer.c_str());
+		cfile.writeString(buffer);
 	}
 }
 
@@ -1152,15 +1131,15 @@ void TiXmlDeclaration::operator=(const TiXmlDeclaration &copy) {
 	copy.CopyTo(this);
 }
 
-void TiXmlDeclaration::Print(FILE *cfile, int /*depth*/, TIXML_STRING *str) const {
+void TiXmlDeclaration::Print(Common::DumpFile *cfile, int /*depth*/, TIXML_STRING *str) const {
 	if (cfile)
-		fprintf(cfile, "<?xml ");
+		cfile->writeString("<?xml ");
 	if (str)
 		(*str) += "<?xml ";
 
 	if (!version.empty()) {
 		if (cfile)
-			fprintf(cfile, "version=\"%s\" ", version.c_str());
+			cfile->writeString("version=\"" + version + "\" ");
 		if (str) {
 			(*str) += "version=\"";
 			(*str) += version;
@@ -1169,7 +1148,7 @@ void TiXmlDeclaration::Print(FILE *cfile, int /*depth*/, TIXML_STRING *str) cons
 	}
 	if (!encoding.empty()) {
 		if (cfile)
-			fprintf(cfile, "encoding=\"%s\" ", encoding.c_str());
+			cfile->writeString("encoding=\"" + encoding + "\" ");
 		if (str) {
 			(*str) += "encoding=\"";
 			(*str) += encoding;
@@ -1178,7 +1157,7 @@ void TiXmlDeclaration::Print(FILE *cfile, int /*depth*/, TIXML_STRING *str) cons
 	}
 	if (!standalone.empty()) {
 		if (cfile)
-			fprintf(cfile, "standalone=\"%s\" ", standalone.c_str());
+			cfile->writeString("standalone=\"" + standalone + "\" ");
 		if (str) {
 			(*str) += "standalone=\"";
 			(*str) += standalone;
@@ -1186,7 +1165,7 @@ void TiXmlDeclaration::Print(FILE *cfile, int /*depth*/, TIXML_STRING *str) cons
 		}
 	}
 	if (cfile)
-		fprintf(cfile, "?>");
+		cfile->writeString("?>");
 	if (str)
 		(*str) += "?>";
 }
@@ -1213,10 +1192,10 @@ TiXmlNode *TiXmlDeclaration::Clone() const {
 	return clone;
 }
 
-void TiXmlUnknown::Print(FILE *cfile, int depth) const {
+void TiXmlUnknown::Print(Common::DumpFile &cfile, int depth) const {
 	for (int i = 0; i < depth; i++)
-		fprintf(cfile, "    ");
-	fprintf(cfile, "<%s>", value.c_str());
+		cfile.writeString("    ");
+	cfile.writeString("<" + value + ">");
 }
 
 void TiXmlUnknown::CopyTo(TiXmlUnknown *target) const {

@@ -28,7 +28,6 @@
 #ifndef PLATFORM_H_
 #define PLATFORM_H_
 #include "hpl1/engine/system/String.h"
-#include <stdio.h>
 
 namespace hpl {
 class Platform {

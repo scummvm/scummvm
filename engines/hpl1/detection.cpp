@@ -31,10 +31,8 @@
 
 const DebugChannelDef Hpl1MetaEngineDetection::debugFlagList[] = {
 	{ Hpl1::kDebugGraphics, "Graphics", "Graphics debug level" },
-	{ Hpl1::kDebugPath, "Path", "Pathfinding debug level" },
-	{ Hpl1::kDebugFilePath, "FilePath", "File path debug level" },
-	{ Hpl1::kDebugScan, "Scan", "Scan for unrecognised games" },
-	{ Hpl1::kDebugScript, "Script", "Enable debug script dump" },
+	{ Hpl1::kDebugResourceLoading, "ResourceLoading", "Resource loading debug level" },
+	{ Hpl1::kDebugFilePath, "FilePath", "File path debug level" }, 
 	DEBUG_CHANNEL_END
 };
 

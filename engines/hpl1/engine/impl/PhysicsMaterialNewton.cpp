@@ -32,7 +32,7 @@
 #include "hpl1/engine/physics/SurfaceData.h"
 
 #include "hpl1/engine/system/LowLevelSystem.h"
-#include <algorithm>
+//#include <algorithm>
 
 namespace hpl {
 

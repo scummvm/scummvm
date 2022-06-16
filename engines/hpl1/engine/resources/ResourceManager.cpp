@@ -34,7 +34,7 @@
 
 #include "hpl1/engine/system/LowLevelSystem.h"
 
-#include <algorithm>
+//#include <algorithm>
 
 namespace hpl {
 
@@ -133,8 +133,9 @@ void iResourceManager::DestroyUnused(int alMaxToKeep) {
 	}
 
 	// Sort the sounds according to num of users and then time.
+	#if 0
 	std::sort(vResources.begin(), vResources.end(), cSortResources());
-
+	#endif
 	// Log("-------------Num: %d-----------------\n",vResources.size());
 	for (size_t i = alMaxToKeep; i < vResources.size(); ++i) {
 		iResourceBase *pRes = vResources[i];
