@@ -12,7 +12,7 @@
 # This file contains tests. They can be run with:
 #  $ pytest dumper-companion.py
 #
-# Code is formatted with `black `
+# Code is formatted with `black`
 
 import argparse
 import io
@@ -462,12 +462,12 @@ def collect_forks(args: argparse.Namespace) -> int:
 
                 # Get info on creator and type
                 try:
-                    finderInfo = xattr.xattr(filepath)["com.apple.FinderInfo"][0:8]
+                    finderInfo = xattr.xattr(filepath)["com.apple.FinderInfo"][0:9]
                 except (IOError, OSError) as e:
                     print(f"Error getting type and creator for: {filename}")
                     return 1
 
-                file.type, file.creator = unpack("4s4s", finderInfo)
+                file.type, file.creator, file.flags = unpack("4s4sB", finderInfo)
 
                 with open(resourcepath, "rb") as rsrc:
                     file.rsrc = rsrc.read()
