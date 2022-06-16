@@ -159,13 +159,11 @@ def file_to_macbin(f: machfs.File, name: ByteString) -> bytes:
     macbin += pack(">H2x", crc_hqx(macbin, 0))
     if f.data:
         macbin += f.data
-        if len(f.data) % 128:
-            macbin += b"\x00" * (128 - len(f.data) % 128)
+        macbin += b"\x00" * (-len(f.data) % 128)
 
     if f.rsrc:
         macbin += f.rsrc
-        if len(f.rsrc) % 128:
-            macbin += b"\x00" * (128 - len(f.rsrc) % 128)
+        macbin += b"\x00" * (-len(f.rsrc) % 128)
 
     return macbin
 
@@ -273,7 +271,7 @@ def generate_punyencoded_path(destination_dir: Path, hpath: Tuple[str]) -> Path:
 
 
 def extract_volume(args: argparse.Namespace) -> int:
-    """Extract an mac iso"""
+    """Extract an HFS volume"""
     source_volume: Path = args.src
     destination_dir: Path = args.dir
     punify: bool = args.punycode
@@ -501,14 +499,14 @@ def generate_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
-    parser_iso = subparsers.add_parser("iso", help="Dump hfs isos")
+    parser_iso = subparsers.add_parser("iso", help="Dump HFS isos")
 
     parser_iso.add_argument("src", metavar="INPUT", type=Path, help="Disk image")
     parser_iso.add_argument(
         "--punycode", action="store_true", help="encode pathnames into punycode"
     )
     parser_iso.add_argument(
-        "--japanese", action="store_true", help="read mac_japanese hfs+"
+        "--japanese", action="store_true", help="read mac-japanese HFS"
     )
     parser_iso.add_argument(
         "dir", metavar="OUTPUT", type=Path, help="Destination folder"
