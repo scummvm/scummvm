@@ -30,7 +30,7 @@ namespace MM1 {
 namespace Views {
 namespace Locations {
 
-#define PAGE1_DELAY (10 * FRAME_RATE)
+#define PAGE1_SECONDS 10
 
 Statue::Statue() : Location("Statue") {
 }
@@ -60,7 +60,7 @@ void Statue::draw() {
 		writeString(STRING["dialogs.statues.plaque"]);
 
 		++_pageNum;
-		_timeoutCtr = PAGE1_DELAY;
+		delaySeconds(PAGE1_SECONDS);
 		redraw();
 		break;
 
