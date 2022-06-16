@@ -32,7 +32,7 @@
 #include <map>
 #include <math.h>
 #include <stdlib.h>
-#include <time.h>
+//#include <time.h>
 
 namespace hpl {
 
@@ -83,11 +83,13 @@ cColor cMath::RandRectColor(const cColor &aMin, const cColor &aMax) {
 //-----------------------------------------------------------------------
 
 void cMath::Randomize(int alSeed) {
+#if 0
 	if (alSeed == -1) {
 		srand((unsigned)time(NULL));
 	} else {
 		srand(alSeed);
 	}
+#endif
 }
 //-----------------------------------------------------------------------
 

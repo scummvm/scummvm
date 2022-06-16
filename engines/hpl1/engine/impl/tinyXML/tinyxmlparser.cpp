@@ -22,10 +22,8 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
-#include <ctype.h>
-#include <stddef.h>
-
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
+#include "common/util.h"
 
 //#define DEBUG_PARSER
 #if defined(DEBUG_PARSER)
@@ -132,7 +130,7 @@ void TiXmlBase::ConvertUTF32ToUTF8(unsigned long input, char *output, int *lengt
 	//	if ( encoding == TIXML_ENCODING_UTF8 )
 	//	{
 	if (anyByte < 127)
-		return isalpha(anyByte);
+		return Common::isAlpha(anyByte);
 	else
 		return 1; // What else to do? The unicode set is huge...get the english ones right.
 	//	}
@@ -151,7 +149,7 @@ void TiXmlBase::ConvertUTF32ToUTF8(unsigned long input, char *output, int *lengt
 	//	if ( encoding == TIXML_ENCODING_UTF8 )
 	//	{
 	if (anyByte < 127)
-		return isalnum(anyByte);
+		return Common::isAlnum(anyByte);
 	else
 		return 1; // What else to do? The unicode set is huge...get the english ones right.
 	//	}
@@ -381,7 +379,7 @@ const char *TiXmlBase::ReadName(const char *p, TIXML_STRING *name, TiXmlEncoding
 			++p;
 		}
 		if (p - start > 0) {
-			name->assign(start, p - start);
+			(*name) += Common::String(start, p - start);
 		}
 		return p;
 	}
@@ -523,7 +521,7 @@ const char *TiXmlBase::ReadText(const char *p,
 			int len;
 			char cArr[4] = {0, 0, 0, 0};
 			p = GetChar(p, cArr, &len, encoding);
-			text->append(cArr, len);
+			(*text) += Common::String(cArr, len);
 		}
 	} else {
 		bool whitespace = false;
@@ -550,7 +548,7 @@ const char *TiXmlBase::ReadText(const char *p,
 				if (len == 1)
 					(*text) += cArr[0]; // more efficient
 				else
-					text->append(cArr, len);
+					(*text) += Common::String(cArr, len);
 			}
 		}
 	}
@@ -974,7 +972,7 @@ const char *TiXmlElement::Parse(const char *p, TiXmlParsingData *data, TiXmlEnco
 
 			// We should find the end tag now
 			if (StringEqual(p, endTag.c_str(), false, encoding)) {
-				p += endTag.length();
+				p += endTag.size();
 				return p;
 			} else {
 				if (document)
@@ -1379,7 +1377,7 @@ const char *TiXmlDeclaration::Parse(const char *p, TiXmlParsingData *data, TiXml
 }
 
 bool TiXmlText::Blank() const {
-	for (unsigned i = 0; i < value.length(); i++)
+	for (unsigned i = 0; i < value.size(); i++)
 		if (!IsWhiteSpace(value[i]))
 			return false;
 	return true;

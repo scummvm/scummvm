@@ -60,6 +60,7 @@ cConfigFile::~cConfigFile() {
 //-----------------------------------------------------------------------
 
 bool cConfigFile::Load() {
+#if 0
 #ifdef WIN32
 	FILE *pFile = _wfopen(msFile.c_str(), _W("rb"));
 #else
@@ -72,11 +73,14 @@ bool cConfigFile::Load() {
 		fclose(pFile);
 
 	return bRet;
+#endif
+	return false; 
 }
 
 //-----------------------------------------------------------------------
 
 bool cConfigFile::Save() {
+#if 0
 #ifdef WIN32
 	FILE *pFile = _wfopen(msFile.c_str(), _W("w+"));
 #else
@@ -89,6 +93,8 @@ bool cConfigFile::Save() {
 		fclose(pFile);
 
 	return bRet;
+#endif
+	return false;
 }
 
 //-----------------------------------------------------------------------

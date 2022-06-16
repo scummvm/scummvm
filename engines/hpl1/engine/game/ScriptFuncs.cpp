@@ -29,7 +29,7 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include <time.h>
+//#include <time.h>
 
 #include "hpl1/engine/game/Game.h"
 #include "hpl1/engine/graphics/Beam.h"

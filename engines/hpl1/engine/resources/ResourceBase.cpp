@@ -39,7 +39,7 @@ bool iResourceBase::mbLogCreateAndDelete = false;
 
 //-----------------------------------------------------------------------
 iResourceBase::iResourceBase(tString asName, unsigned long alPrio) {
-	mlTime = (unsigned long)time(NULL);
+	mlTime = 0; //(unsigned long)time(NULL);
 	mlPrio = alPrio;
 	mlHandle = 0;
 	mlUserCount = 0;
@@ -55,7 +55,7 @@ iResourceBase::~iResourceBase() {
 
 void iResourceBase::IncUserCount() {
 	mlUserCount++;
-	mlTime = (unsigned long)time(NULL);
+	mlTime = 0; //(unsigned long)time(NULL);
 }
 
 //-----------------------------------------------------------------------

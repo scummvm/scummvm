@@ -190,6 +190,7 @@ void cSerializeClass::PrintMembers(iSerializable *apData) {
 //-----------------------------------------------------------------------
 
 bool cSerializeClass::SaveToFile(iSerializable *apData, const tWString &asFile, const tString &asRoot) {
+#if 0
 	SetUpData();
 
 	glTabs = 0;
@@ -218,6 +219,8 @@ bool cSerializeClass::SaveToFile(iSerializable *apData, const tWString &asFile, 
 
 	hplDelete(pXmlDoc);
 	return bRet;
+#endif
+	return false; 
 }
 
 //-----------------------------------------------------------------------
@@ -278,6 +281,7 @@ void cSerializeClass::SaveToElement(iSerializable *apData, const tString &asName
 //-----------------------------------------------------------------------
 
 bool cSerializeClass::LoadFromFile(iSerializable *apData, const tWString &asFile) {
+#if 0
 	SetUpData();
 
 	glTabs = 0;
@@ -312,6 +316,8 @@ bool cSerializeClass::LoadFromFile(iSerializable *apData, const tWString &asFile
 
 	hplDelete(pXmlDoc);
 	return true;
+#endif
+	return false; 
 }
 
 //-----------------------------------------------------------------------

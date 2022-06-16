@@ -48,7 +48,7 @@
 #include <stdlib.h>
 #include <string>
 #include <sys/stat.h>
-#include <time.h>
+//#include <time.h>
 
 #include "hpl1/engine/impl/LowLevelSystemSDL.h"
 #include "hpl1/engine/impl/SqScript.h"
@@ -57,7 +57,6 @@
 
 #include "hpl1/engine/impl/scriptstring.h"
 #include "hpl1/engine/impl/stdstring.h"
-
 #include "hpl1/engine/system/String.h"
 
 #include <clocale>
@@ -71,7 +70,7 @@ int WINAPI WinMain(	HINSTANCE hInstance,  HINSTANCE hPrevInstance,LPSTR	lpCmdLin
 {
 	return hplMain(lpCmdLine);
 }
-#else
+
 int main(int argc, char *argv[]) {
 	if (!std::setlocale(LC_CTYPE, "")) {
 		fprintf(stderr, "Can't set the specified locale! Check LANG, LC_CTYPE, LC_ALL.\n");
@@ -108,11 +107,14 @@ cLogWriter::cLogWriter(const tWString &asFileName) {
 }
 
 cLogWriter::~cLogWriter() {
+#if 0
 	if (mpFile)
 		fclose(mpFile);
+#endif
 }
 
 void cLogWriter::Write(const tString &asMessage) {
+#if 0
 	if (!mpFile)
 		ReopenFile();
 
@@ -120,12 +122,15 @@ void cLogWriter::Write(const tString &asMessage) {
 		fprintf(mpFile, asMessage.c_str());
 		fflush(mpFile);
 	}
+#endif
 }
 
 void cLogWriter::Clear() {
+#if 0
 	ReopenFile();
 	if (mpFile)
 		fflush(mpFile);
+#endif
 }
 
 //-----------------------------------------------------------------------
