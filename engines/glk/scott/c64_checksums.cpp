@@ -240,7 +240,7 @@ int detectC64(uint8_t **sf, size_t *extent) {
 	} else if (g_C64Registry[index]._id == FEASIBILITY_C64) {
 		return mysteriousMenu2(sf, extent, index);
 	}
-	return decrunchC64(sf, extent, g_C64Registry[index]);
+	return UNKNOWN_GAME;
 }
 
 size_t copyData(size_t dest, size_t source, uint8_t** data, size_t dataSize, size_t bytesToMove) {
@@ -297,9 +297,8 @@ int decrunchC64(uint8_t **sf, size_t *extent, C64Rec record) {
 	}
 
 	for (int i = 0; i < NUMGAMES; i++) {
-		if (g_games[i]._gameID == record._id) {
-			delete _G(_game);
-			_G(_game) = &g_games[i];
+		if (_G(_games)[i]._gameID == record._id) {
+			_G(_game) = &_G(_games)[i];
 			break;
 		}
 	}
