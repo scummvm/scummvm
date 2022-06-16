@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-16 21:46+0100\n"
-"PO-Revision-Date: 2022-06-09 17:48+0000\n"
+"PO-Revision-Date: 2022-06-16 23:21+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -987,7 +987,7 @@ msgstr "Усі"
 
 #: gui/launcher.cpp:1596
 msgid "Icons per row:"
-msgstr ""
+msgstr "Іконок на рядок:"
 
 #: gui/massadd.cpp:75 gui/massadd.cpp:78
 msgid "... progress ..."
@@ -4336,9 +4336,8 @@ msgid "Switch to Olmec"
 msgstr "Переключитися на Ольмека"
 
 #: engines/asylum/metaengine.cpp:144
-#, fuzzy
 msgid "Open character inventory"
-msgstr "Відкрити/закрити інвентар"
+msgstr "Відкрити інвентар героя"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
@@ -7810,7 +7809,6 @@ msgid "Could not quick load the saved game #%d"
 msgstr "Не вдалося завантажити збережену гру №%d"
 
 #: engines/toon/toon.cpp:1502
-#, fuzzy
 msgid "Are you sure you want to exit?"
 msgstr "Ви упевнені, що хочете вийти?"
 
