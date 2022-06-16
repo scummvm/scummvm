@@ -520,13 +520,8 @@ int TiXmlElement::QueryDoubleAttribute(const std::string &name, double *dval) co
 #endif
 
 void TiXmlElement::SetAttribute(const char *name, int val) {
-	char buf[64];
-#if defined(TIXML_SNPRINTF)
-	TIXML_SNPRINTF(buf, sizeof(buf), "%d", val);
-#else
-	sprintf(buf, "%d", val);
-#endif
-	SetAttribute(name, buf);
+	Common::String sval = Common::String::format("%d", val); 
+	SetAttribute(name, sval.c_str());
 }
 
 #ifdef TIXML_USE_STL
@@ -538,13 +533,8 @@ void TiXmlElement::SetAttribute(const std::string &name, int val) {
 #endif
 
 void TiXmlElement::SetDoubleAttribute(const char *name, double val) {
-	char buf[256];
-#if defined(TIXML_SNPRINTF)
-	TIXML_SNPRINTF(buf, sizeof(buf), "%f", val);
-#else
-	sprintf(buf, "%f", val);
-#endif
-	SetAttribute(name, buf);
+	Common::String sval = Common::String::format("%f", val); 
+	SetAttribute(name, sval.c_str());
 }
 
 void TiXmlElement::SetAttribute(const char *cname, const char *cvalue) {
@@ -1005,23 +995,13 @@ int TiXmlAttribute::QueryDoubleValue(double *dval) const {
 }
 
 void TiXmlAttribute::SetIntValue(int _value) {
-	char buf[64];
-#if defined(TIXML_SNPRINTF)
-	TIXML_SNPRINTF(buf, sizeof(buf), "%d", _value);
-#else
-	sprintf(buf, "%d", _value);
-#endif
-	SetValue(buf);
+	Common::String sval = Common::String::format("%d", _value); 
+	SetValue(sval.c_str());
 }
 
 void TiXmlAttribute::SetDoubleValue(double _value) {
-	char buf[256];
-#if defined(TIXML_SNPRINTF)
-	TIXML_SNPRINTF(buf, sizeof(buf), "%lf", _value);
-#else
-	sprintf(buf, "%lf", _value);
-#endif
-	SetValue(buf);
+	Common::String sval = Common::String::format("%f", _value); 
+	SetValue(sval.c_str());
 }
 
 int TiXmlAttribute::IntValue() const {
