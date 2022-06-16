@@ -30,9 +30,10 @@ namespace Views {
 namespace Locations {
 
 class Location : public TextView {
+private:
+	int _timeoutCtr = 0;
 protected:
 	Common::String _modeString;
-	int _timeoutCtr;
 protected:
 	/**
 	 * Clears the bottom part of the window and
@@ -69,9 +70,20 @@ protected:
 	void notEnoughGold();
 
 	/**
+	 * Set a delay countdown
+	 */
+	void delaySeconds(uint seconds);
+
+	/**
 	 * Change character
 	 */
 	virtual void changeCharacter(uint index);
+
+	/**
+	 * Called when an active timeout countdown expired
+	 */
+	virtual void timeout();
+
 public:
 	Location(const Common::String &name);
 	virtual ~Location() {}
@@ -81,6 +93,9 @@ public:
 	 */
 	void draw() override;
 
+	/**
+	 * Frame tick
+	 */
 	bool tick() override;
 };
 

@@ -108,7 +108,7 @@ void Character::clear() {
 	_v66 = _v67 = _v6c = _v6f = 0;
 }
 
-void Character::increaseLevel() {
+Character::LevelIncrease Character::increaseLevel() {
 	_level = ++_levelBase;
 	_age = ++_ageBase;
 	if (_ageBase > 220)
@@ -150,7 +150,37 @@ void Character::increaseLevel() {
 	_hpBase += newHP;
 	_hp = _hpMax = _hpBase;
 
-	// TODO: Remaining stuff
+	int gainedSpells = 0;
+	if (classNum < ARCHER) {
+		if (_levelBase < 7)
+			gainedSpells = 0;
+		else if (_levelBase == 7)
+			gainedSpells = 1;
+		else if (_levelBase == 9)
+			gainedSpells = 2;
+		else if (_levelBase == 11)
+			gainedSpells = 3;
+		else if (_levelBase == 13)
+			gainedSpells = 4;
+	} else if (classNum < SORCERER) {
+		if (_levelBase == 3)
+			gainedSpells = 2;
+		else if (_levelBase == 5)
+			gainedSpells = 3;
+		else if (_levelBase == 7)
+			gainedSpells = 4;
+		else if (_levelBase == 9)
+			gainedSpells = 5;
+		else if (_levelBase == 11)
+			gainedSpells = 6;
+		else if (_levelBase == 13)
+			gainedSpells = 7;
+	}
+
+	LevelIncrease result;
+	result._numHP = newHP;
+	result._numSpells = gainedSpells;
+	return result;
 }
 
 } // namespace MM1

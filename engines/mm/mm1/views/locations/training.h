@@ -42,6 +42,11 @@ private:
 	bool _canAfford = false;
 private:
 	/**
+	 * Checks whether a character can train
+	 */
+	void checkCharacter();
+
+	/**
 	 * Validates if training is allowed, then trains.
 	 */
 	void train();
@@ -51,6 +56,11 @@ protected:
 	 * Change character
 	 */
 	void changeCharacter(uint index) override;
+
+	/**
+	 * Called when an active timeout countdown expired
+	 */
+	void timeout() override;
 
 public:
 	Training();

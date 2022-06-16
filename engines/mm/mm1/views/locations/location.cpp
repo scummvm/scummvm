@@ -29,7 +29,7 @@ namespace MM1 {
 namespace Views {
 namespace Locations {
 
-#define DISPLAY_TIMEOUT (5 * FRAME_RATE)
+#define DISPLAY_SECONDS 5
 
 Location::Location(const Common::String &name) : TextView(name) {
 	_bounds = getLineBounds(17, 24);
@@ -51,7 +51,7 @@ void Location::draw() {
 void Location::displayMessage(int x, const Common::String &msg) {
 	clearLines(3, 7);
 	writeString(x, 5, msg);
-	_timeoutCtr = DISPLAY_TIMEOUT;
+	delaySeconds(DISPLAY_SECONDS);
 }
 
 void Location::newLine() {
@@ -85,6 +85,10 @@ void Location::notEnoughGold() {
 	displayMessage(STRING["dialogs.misc.not_enough_gold"]);
 }
 
+void Location::delaySeconds(uint seconds) {
+	_timeoutCtr = seconds * FRAME_RATE;
+}
+
 void Location::changeCharacter(uint index) {
 	if (index >= g_globals->_party.size())
 		return;
@@ -101,10 +105,14 @@ void Location::leave() {
 
 bool Location::tick() {
 	if (_timeoutCtr && --_timeoutCtr == 0) {
-		redraw();
+		timeout();
 	}
 
 	return TextView::tick();
+}
+
+void Location::timeout() {
+	redraw();
 }
 
 } // namespace Locations

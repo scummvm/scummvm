@@ -48,6 +48,15 @@ bool Training::msgFocus(const FocusMessage &msg) {
 
 void Training::changeCharacter(uint index) {
 	Location::changeCharacter(index);
+	checkCharacter();
+}
+
+void Training::timeout() {
+	checkCharacter();
+	Location::timeout();
+}
+
+void Training::checkCharacter() {
 	Character &c = *g_globals->_currCharacter;
 
 	_currLevel = c._levelBase;
@@ -89,7 +98,7 @@ void Training::changeCharacter(uint index) {
 	}
 
 	_remainingExp = _expTotal - c._exp;
-	_canTrain = _remainingExp > 0;
+	_canTrain = _remainingExp <= 0;
 	_canAfford = (int)c._gold >= _cost;
 }
 
@@ -149,7 +158,7 @@ void Training::train() {
 		Sound::sound(SOUND_3);
 		clearSurface();
 		writeString(8, 5, STRING["dialogs.training.condition"]);
-		_timeoutCtr = 3 * FRAME_RATE;
+		delaySeconds(3);
 
 	} else if (!_canAfford) {
 		notEnoughGold();
@@ -157,7 +166,21 @@ void Training::train() {
 	} else {
 		// Do the actual training
 		c._gold -= _cost;
-		c.increaseLevel();
+		Character::LevelIncrease lvl = c.increaseLevel();
+		Sound::sound(SOUND_2);
+
+		clearSurface();
+		writeString(0, 3, STRING["dialogs.training.congrats"]);
+		writeNumber(c._levelBase);
+
+		writeString(7, 5, Common::String::format(
+			STRING["dialogs.training.hp"].c_str(), lvl._numHP));
+
+		if (lvl._numSpells != 0)
+			writeString(7, 6, STRING["dialogs.training.new_spells"]);
+
+		Sound::sound(SOUND_2);
+		delaySeconds(10);
 	}
 }
 

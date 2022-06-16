@@ -109,7 +109,11 @@ struct Character {
 	/**
 	 * Increase the character's level by 1 at a trainer
 	 */
-	void increaseLevel();
+	struct LevelIncrease {
+		int _numHP;
+		int _numSpells;
+	};
+	LevelIncrease increaseLevel();
 };
 
 } // namespace MM1
