@@ -281,7 +281,28 @@ def extract_volume(args: argparse.Namespace) -> int:
 
     print(f"Loading {source_volume} ...")
     vol = machfs.Volume()
-    vol.read(source_volume.read_bytes())
+    with source_volume.open(mode='rb') as f:
+        f.seek(0x200)
+        if f.read(4) == b'PM\0\0':
+            partition_num = 1
+            partition_type = ''
+            while partition_type != 'Apple_HFS':
+                num_partitions, partition_start, partition_size = unpack('>III', f.read(12))
+                f.seek(32, 1)
+                partition_type = f.read(32).decode('ascii').strip('\0')
+                if partition_num <= num_partitions and partition_type != 'Apple_HFS':
+                    # Move onto the next partition
+                    partition_num += 1
+                    f.seek(partition_num * 0x200 + 4)
+                else:
+                    # We found the one we want or there's none
+                    break
+
+            f.seek(partition_start * 0x200)
+            vol.read(f.read(partition_size * 0x200))
+        else:
+            f.seek(0)
+            vol.read(f.read())
 
     destination_dir.mkdir(parents=True, exist_ok=True)
     for hpath, obj in vol.iter_paths():
@@ -302,15 +323,22 @@ def extract_volume(args: argparse.Namespace) -> int:
             os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
         else:
             print(upath)
-            file = obj.data
-            if obj.rsrc:
-                file = file_to_macbin(obj, hpath[-1].encode("mac_roman"))
-            upath.write_bytes(file)
+            if obj.data and not obj.rsrc:
+                upath.write_bytes(obj.data)
+
+            elif obj.rsrc:
+                upath.write_bytes(file_to_macbin(obj, hpath[-1].encode('mac_roman')))
+
+            elif not obj.data and not obj.rsrc:
+                upath.touch()
+
             os.utime(upath, (obj.mddate - 2082844800, obj.mddate - 2082844800))
             # This needs to be done after writing files as writing files resets
             # the parent folder's modified time that was set before
-            parent_folder_modtime = vol.get(hpath[:-1]).mddate - 2082844800
-            os.utime(upath.parent, (parent_folder_modtime, parent_folder_modtime))
+            if len(hpath) > 1:
+                for i in range(len(hpath), 0, -1):
+                    parent_folder_modtime = vol.get(hpath[:i]).mddate - 2082844800
+                    os.utime(Path(*(upath.parts[:i])), (parent_folder_modtime, parent_folder_modtime))
     return 0
 
 
