@@ -168,6 +168,8 @@ public:
 	bool _timeOutMouse;
 	bool _timeOutPlay;
 
+	bool _isBeepOn;
+
 private:
 	Window *_window;
 	DirectorEngine *_vm;

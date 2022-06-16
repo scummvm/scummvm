@@ -87,6 +87,8 @@ Movie::Movie(Window *window) {
 	_timeOutKeyDown = true;
 	_timeOutMouse = true;
 	_timeOutPlay = false;
+
+	_isBeepOn = false;
 }
 
 Movie::~Movie() {

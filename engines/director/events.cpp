@@ -190,6 +190,10 @@ bool Movie::processEvent(Common::Event &event) {
 			// Even in D4, `the clickOn` uses the old "active" sprite instead of mouse sprite.
 			_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
 
+			if (!spriteId && _isBeepOn) {
+				g_lingo->func_beep(1);
+			}
+
 			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite()) {
 				_currentHiliteChannelId = spriteId;
 				g_director->_wm->_hilitingWidget = true;

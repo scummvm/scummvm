@@ -377,7 +377,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = g_lingo->_actorList;
 		break;
 	case kTheBeepOn:
-		getTheEntitySTUB(kTheBeepOn);
+		d.type = INT;
+		d.u.i = (int)g_director->getCurrentMovie()->_isBeepOn;
 		break;
 	case kTheButtonStyle:
 		d.type = INT;
@@ -940,7 +941,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		g_lingo->_actorList = d;
 		break;
 	case kTheBeepOn:
-		setTheEntitySTUB(kTheBeepOn);
+		g_director->getCurrentMovie()->_isBeepOn = (bool)d.u.i;
 		break;
 	case kTheButtonStyle:
 		if (d.asInt())
