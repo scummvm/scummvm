@@ -19,7 +19,7 @@
  *
  */
 
-#include "mm/mm1/views/locations/blacksmith.h"
+#include "mm/mm1/views/locations/blacksmith_buy_armor.h"
 #include "mm/mm1/events.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
@@ -30,71 +30,34 @@ namespace MM1 {
 namespace Views {
 namespace Locations {
 
-Blacksmith::Blacksmith() : Location("Blacksmith") {
+BlacksmithBuyArmor::BlacksmithBuyArmor() :
+		Location("BlacksmithBuyArmor") {
+	_modeString = STRING["dialogs.location.buy"];
 }
 
-bool Blacksmith::msgFocus(const FocusMessage &msg) {
-	send("View", ValueMessage(LOC_BLACKSMITH));
-	changeCharacter(0);
-
-	return true;
-}
-
-void Blacksmith::draw() {
+void BlacksmithBuyArmor::draw() {
 	Location::draw();
 
-	writeString(22, 1, STRING["dialogs.blacksmith.a"]);
-	writeString(22, 2, STRING["dialogs.blacksmith.b"]);
-	writeString(22, 3, STRING["dialogs.blacksmith.c"]);
-	writeString(22, 4, STRING["dialogs.blacksmith.d"]);
+	writeString(23, 1, STRING["dialogs.blacksmith.buy.title"]);
 }
 
-bool Blacksmith::msgKeypress(const KeypressMessage &msg) {
+bool BlacksmithBuyArmor::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
 	case Common::KEYCODE_ESCAPE:
-		leave();
-		break;
-	case Common::KEYCODE_1:
-	case Common::KEYCODE_2:
-	case Common::KEYCODE_3:
-	case Common::KEYCODE_4:
-	case Common::KEYCODE_5:
-	case Common::KEYCODE_6:
-		changeCharacter(msg.keycode - Common::KEYCODE_1);
+		close();
 		break;
 	case Common::KEYCODE_a:
-		_buyWeapons.addView();
-		break;
 	case Common::KEYCODE_b:
-		buyArmor();
-		break;
 	case Common::KEYCODE_c:
-		buyMisc();
-		break;
 	case Common::KEYCODE_d:
-		sellItem();
+	case Common::KEYCODE_e:
+	case Common::KEYCODE_f:
 		break;
 	default:
 		break;
 	}
 
 	return true;
-}
-
-void Blacksmith::buyWeapons() {
-	
-}
-
-void Blacksmith::buyArmor() {
-
-}
-
-void Blacksmith::buyMisc() {
-
-}
-
-void Blacksmith::sellItem() {
-
 }
 
 } // namespace Locations

@@ -19,54 +19,23 @@
  *
  */
 
-#ifndef MM1_VIEWS_LOCATIONS_BLACKSMITH_H
-#define MM1_VIEWS_LOCATIONS_BLACKSMITH_H
+#ifndef MM1_VIEWS_LOCATIONS_BLACKSMITH_BUY_ARMOR_H
+#define MM1_VIEWS_LOCATIONS_BLACKSMITH_BUY_ARMOR_H
 
 #include "mm/mm1/views/locations/location.h"
-#include "mm/mm1/views/locations/blacksmith_buy_weapons.h"
-#include "mm/mm1/views/locations/blacksmith_buy_armor.h"
-#include "mm/mm1/views/locations/blacksmith_buy_misc.h"
-#include "mm/mm1/views/locations/blacksmith_sell_item.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Locations {
 
-class Blacksmith : public Location {
-private:
-	BlacksmithBuyWeapons _buyWeapons;
-	BlacksmithBuyArmor _buyArmor;
-	BlacksmithBuyMisc _buyMisc;
-	BlacksmithSellItem _sellItem;
-private:
-	/**
-	 * Buy weapons
-	 */
-	void buyWeapons();
-
-	/**
-	 * Buy armor
-	 */
-	void buyArmor();
-
-	/**
-	 * Buy misc items
-	 */
-	void buyMisc();
-
-	/**
-	 * Sell an item
-	 */
-	void sellItem();
-
+class BlacksmithBuyArmor : public Location {
 public:
-	Blacksmith();
-	virtual ~Blacksmith() {}
+	BlacksmithBuyArmor();
+	virtual ~BlacksmithBuyArmor() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Locations
