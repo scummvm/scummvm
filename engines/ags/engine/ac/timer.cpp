@@ -30,7 +30,7 @@
 namespace AGS3 {
 
 namespace {
-const auto MAXIMUM_FALL_BEHIND = 3;
+const auto MAXIMUM_FALL_BEHIND = 3; // number of full frames
 }
 
 std::chrono::microseconds GetFrameDuration() {
@@ -46,8 +46,8 @@ int setTimerFps(int new_fps) {
 	_G(framerate) = new_fps;
 	_G(framerate_maxed) = new_fps >= 1000;
 
-	_G(last_tick_time) = AGS_Clock::now();
-	_G(next_frame_timestamp) = AGS_Clock::now();
+	// Update next frame time
+	_G(next_frame_timestamp) = _G(last_tick_time) + _G(tick_duration);
 	return old_fps;
 }
 
@@ -56,11 +56,12 @@ bool isTimerFpsMaxed() {
 }
 
 void WaitForNextFrame() {
-	auto now = AGS_Clock::now();
-	auto frameDuration = GetFrameDuration();
+	const auto now = AGS_Clock::now();
+	const auto frameDuration = GetFrameDuration();
 
 	// early exit if we're trying to maximise framerate
 	if (frameDuration <= std::chrono::milliseconds::zero()) {
+		_G(last_tick_time) = _G(next_frame_timestamp);
 		_G(next_frame_timestamp) = now;
 		// suspend while the game is being switched out
 		while (_G(game_update_suspend) && !_G(want_exit) && !_G(abort_engine)) {
@@ -80,6 +81,7 @@ void WaitForNextFrame() {
 		std::this_thread::sleep_for(frame_time_remaining);
 	}
 
+	_G(last_tick_time) = _G(next_frame_timestamp);
 	_G(next_frame_timestamp) += frameDuration;
 
 	// suspend while the game is being switched out
