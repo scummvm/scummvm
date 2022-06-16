@@ -364,6 +364,8 @@ void apply_config(const ConfigTree &cfg) {
 			_GP(usetup).override_script_os = eOS_Mac;
 		}
 		_GP(usetup).override_upscale = CfgReadBoolInt(cfg, "override", "upscale", _GP(usetup).override_upscale);
+		_GP(usetup).key_save_game = CfgReadInt(cfg, "override", "save_game_key", 0);
+		_GP(usetup).key_restore_game = CfgReadInt(cfg, "override", "restore_game_key", 0);
 	}
 
 	// Apply logging configuration

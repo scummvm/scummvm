@@ -100,6 +100,12 @@ struct GameSetup {
 	DisplayModeSetup Screen;
 	String software_render_driver;
 
+	// Optional keys for calling built-in save/restore dialogs;
+	// primarily meant for the test runs of the games where save functionality
+	// is not implemented (or does not work correctly).
+	int   key_save_game = 0;
+	int   key_restore_game = 0;
+
 	GameSetup();
 };
 
