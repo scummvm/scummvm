@@ -104,15 +104,17 @@ def decode_macjapanese(text: ByteString) -> str:
             lo = next(i_text, None)
             if lo is None:
                 print(f"WARNING: Mac Japanese sequence missing second byte 0x{hi:02x}")
-                return text.decode('mac-roman')
-            hi_key = f'{hi:02x}'
+                return text.decode("mac-roman")
+            hi_key = f"{hi:02x}"
             lo_key = lo - 0x40
             if lo_key < 0:
                 print(f"WARNING: second byte out of range 0x{lo:02x}")
-                return text.decode('mac-roman')
+                return text.decode("mac-roman")
             elif decode_map.get(hi_key) is None or decode_map[hi_key][lo_key] is None:
-                print(f"WARNING: No mapping for MacJapanese sequence 0x{hi_key}{lo:02x}")
-                return text.decode('mac-roman')
+                print(
+                    f"WARNING: No mapping for MacJapanese sequence 0x{hi_key}{lo:02x}"
+                )
+                return text.decode("mac-roman")
             assert_tmp = decode_map[hi_key][lo_key]
             assert assert_tmp  # mypy assert
             res += assert_tmp
@@ -279,16 +281,18 @@ def extract_volume(args: argparse.Namespace) -> int:
 
     print(f"Loading {source_volume} ...")
     vol = machfs.Volume()
-    with source_volume.open(mode='rb') as f:
+    with source_volume.open(mode="rb") as f:
         f.seek(0x200)
-        if f.read(4) == b'PM\0\0':
+        if f.read(4) == b"PM\0\0":
             partition_num = 1
-            partition_type = ''
-            while partition_type != 'Apple_HFS':
-                num_partitions, partition_start, partition_size = unpack('>III', f.read(12))
+            partition_type = ""
+            while partition_type != "Apple_HFS":
+                num_partitions, partition_start, partition_size = unpack(
+                    ">III", f.read(12)
+                )
                 f.seek(32, 1)
-                partition_type = f.read(32).decode('ascii').strip('\0')
-                if partition_num <= num_partitions and partition_type != 'Apple_HFS':
+                partition_type = f.read(32).decode("ascii").strip("\0")
+                if partition_num <= num_partitions and partition_type != "Apple_HFS":
                     # Move onto the next partition
                     partition_num += 1
                     f.seek(partition_num * 0x200 + 4)
@@ -325,7 +329,7 @@ def extract_volume(args: argparse.Namespace) -> int:
                 upath.write_bytes(obj.data)
 
             elif obj.rsrc:
-                upath.write_bytes(file_to_macbin(obj, hpath[-1].encode('mac_roman')))
+                upath.write_bytes(file_to_macbin(obj, hpath[-1].encode("mac_roman")))
 
             elif not obj.data and not obj.rsrc:
                 upath.touch()
@@ -336,16 +340,23 @@ def extract_volume(args: argparse.Namespace) -> int:
             if len(hpath) > 1:
                 for i in range(len(hpath), 0, -1):
                     parent_folder_modtime = vol.get(hpath[:i]).mddate - 2082844800
-                    os.utime(Path(*(upath.parts[:i])), (parent_folder_modtime, parent_folder_modtime))
+                    os.utime(
+                        Path(*(upath.parts[:i])),
+                        (parent_folder_modtime, parent_folder_modtime),
+                    )
     return 0
 
 
-def punyencode_paths(paths: List[Path], verbose: bool = False, source_encoding: str = None) -> int:
+def punyencode_paths(
+    paths: List[Path], verbose: bool = False, source_encoding: str = None
+) -> int:
     """Rename filepaths to their punyencoded names"""
     count = 0
     for path in paths:
         if source_encoding is not None:
-            new_name = punyencode(demojibake_hfs_bytestring(bytes(path.name, "utf8"), source_encoding))
+            new_name = punyencode(
+                demojibake_hfs_bytestring(bytes(path.name, "utf8"), source_encoding)
+            )
         else:
             new_name = punyencode(path.name)
         if path.stem != new_name:
@@ -376,8 +387,8 @@ def demojibake_hfs_bytestring(s: ByteString, encoding: str):
         # macOS renders paths as NFD, but to correctly translate
         # this back to the original MacRoman, we first have to
         # renormalize it to NFC.
-        unicodedata.normalize('NFC', s.decode('utf8')).encode('macroman'),
-        encoding
+        unicodedata.normalize("NFC", s.decode("utf8")).encode("macroman"),
+        encoding,
     )
 
 
@@ -395,7 +406,9 @@ def punyencode_arg(args: argparse.Namespace) -> int:
     return 0
 
 
-def punyencode_dir(directory: Path, verbose: bool = False, source_encoding: str = None) -> int:
+def punyencode_dir(
+    directory: Path, verbose: bool = False, source_encoding: str = None
+) -> int:
     """
     Recursively punyencode all directory and filenames
 
@@ -482,7 +495,9 @@ def collect_forks(args: argparse.Namespace) -> int:
                         (info.st_mtime, info.st_mtime),
                     )
     if punify:
-        count_renames = punyencode_dir(directory, verbose=True, source_encoding=args.source_encoding)
+        count_renames = punyencode_dir(
+            directory, verbose=True, source_encoding=args.source_encoding
+        )
 
     print(f"Macbinary {count_resources}, Renamed {count_renames} files")
     return 0
@@ -583,9 +598,7 @@ def test_decode_mac_japanese():
             b"QuickTime\xfe \x89\xb9\x90F\x91\xce\x89\x9e\x95\\",
             "QuickTime™ 音色対応表",
         ],
-        [
-            b"Asant\x8e", "Asanté"
-        ]
+        [b"Asant\x8e", "Asanté"],
     ]
     for input, expected in checks:
         assert decode_macjapanese(input) == expected
@@ -626,9 +639,12 @@ def test_decode_name():
         ["Jönssonligan går på djupet.exe", "xn--Jnssonligan gr p djupet.exe-glcd70c"],
         ["Jönssonligan.exe", "xn--Jnssonligan.exe-8sb"],
         ["G3フォルダ", "xn--G3-3g4axdtexf"],
-        ["Where \\ Do <you> Want / To: G* ? ;Unless=nowhere,or|\"(everything)/\":*|\\?%<>,;=", "xn--Where  Do you Want  To G  ;Unless=nowhere,or(everything),;=-5baedgdcbtamaaaaaaaaa99woa3wnnmb82aqb71ekb9g3c1f1cyb7bx6rfcv2pxa"],
+        [
+            'Where \\ Do <you> Want / To: G* ? ;Unless=nowhere,or|"(everything)/":*|\\?%<>,;=',
+            "xn--Where  Do you Want  To G  ;Unless=nowhere,or(everything),;=-5baedgdcbtamaaaaaaaaa99woa3wnnmb82aqb71ekb9g3c1f1cyb7bx6rfcv2pxa",
+        ],
         ["Buried in Timeｪ Demo", "xn--Buried in Time Demo-yp97h"],
-        ["ぱそすけPPC", "xn--PPC-873bpbxa3l"]
+        ["ぱそすけPPC", "xn--PPC-873bpbxa3l"],
     ]
     for input, output in checks:
         assert punyencode(input) == output
@@ -642,7 +658,7 @@ def test_needs_punyencoding():
         ["バッドデイ(Power PC)", False],
         ["ends_with_dot .", True],
         ["ends_with_space ", True],
-        ["Big[test]", False]
+        ["Big[test]", False],
     ]
     for input, expected in checks:
         assert needs_punyencoding(input) == expected
