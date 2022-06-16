@@ -28,6 +28,7 @@
 #include "common/util.h"
 #include "hpl1/detection.h"
 #include "hpl1/detection_tables.h"
+#include "hpl1/debug.h"
 
 const DebugChannelDef Hpl1MetaEngineDetection::debugFlagList[] = {
 	{ Hpl1::kDebugGraphics, "Graphics", "Graphics debug level" },

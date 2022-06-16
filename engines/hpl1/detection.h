@@ -26,12 +26,6 @@
 
 namespace Hpl1 {
 
-enum Hpl1DebugChannels {
-	kDebugGraphics = 1 << 0,
-	kDebugResourceLoading = 1 << 1, 
-	kDebugFilePath = 1 << 2
-};
-
 extern const PlainGameDescriptor GAME_NAMES[];
 
 extern const ADGameDescription GAME_DESCRIPTIONS[];
