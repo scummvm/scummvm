@@ -387,7 +387,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheCast(id, field);
 		break;
 	case kTheCastMembers:
-		warning("STUB: Lingo::getTheEntity(): Unprocessed getting field %s of entity %s", field2str(field), entity2str(entity));
+		{
+			d.type = INT;
+			Movie *movie = g_director->getCurrentMovie();
+			d.u.i = movie->getCast()->_loadedCast->size() + movie->_sharedCast->_loadedCast->size();
+		}
 		break;
 	case kTheCenterStage:
 		d.type = INT;
