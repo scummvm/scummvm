@@ -257,6 +257,7 @@ MODULE_OBJS := \
 	scott/unp64/exo_util.o \
 	scott/unp64/scanners/scanners.o \
 	scott/unp64/scanners/action_packer.o \
+	scott/unp64/scanners/byte_boiler.o \
 	tads/os_banners.o \
 	tads/os_buffer.o \
 	tads/os_glk.o \
