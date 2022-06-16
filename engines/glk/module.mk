@@ -263,6 +263,7 @@ MODULE_OBJS := \
 	scott/unp64/scanners/cruel.o \
 	scott/unp64/scanners/eca.o \
 	scott/unp64/scanners/exomizer.o \
+	scott/unp64/scanners/expert.o \
 	tads/os_banners.o \
 	tads/os_buffer.o \
 	tads/os_glk.o \
