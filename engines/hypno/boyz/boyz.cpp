@@ -434,6 +434,9 @@ void BoyzEngine::loadAssets() {
 	sc = (Scene *) _levels["<select_c5>"];
 	sc->resolution = "320x200";
 
+	Code *alarm_c5 = new Code("<alarm_c5>");
+	_levels["<alarm_c5>"] = alarm_c5;
+
 	hl = new Highlight("GS_SEQ_51");
 	sc->hots[1].actions.push_back(hl);
 	gl = new Global("GS_SEQ_51", "NCHECK");
@@ -454,6 +457,24 @@ void BoyzEngine::loadAssets() {
 	sc->hots[3].actions.push_back(gl);
 	cl = new ChangeLevel("c53.mi_");
 	sc->hots[3].actions.push_back(cl);
+
+	hl = new Highlight("GS_SWITCH7");
+	sc->hots[4].actions.push_back(hl);
+	gl = new Global("GS_SWITCH7", "NCHECK");
+	sc->hots[4].actions.push_back(gl);
+	gl = new Global("GS_SWITCH7", "TURNON");
+	sc->hots[4].actions.push_back(gl);
+	cl = new ChangeLevel("<alarm_c5>");
+	sc->hots[4].actions.push_back(cl);
+
+	hl = new Highlight("GS_SWITCH8");
+	sc->hots[5].actions.push_back(hl);
+	gl = new Global("GS_SWITCH8", "NCHECK");
+	sc->hots[5].actions.push_back(gl);
+	gl = new Global("GS_SWITCH8", "TURNON");
+	sc->hots[5].actions.push_back(gl);
+	cl = new ChangeLevel("<alarm_c5>");
+	sc->hots[5].actions.push_back(cl);
 
 	for (int t = 1; t <= 5; t++) {
 		Common::String fterrMis = Common::String::format(fterr, t);

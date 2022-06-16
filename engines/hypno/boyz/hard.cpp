@@ -42,6 +42,8 @@ void BoyzEngine::runCode(Code *code) {
 		runCheckHo(code);
 	else if (code->name == "<check_c5>")
 		runCheckC5(code);
+	else if (code->name == "<alarm_c5>")
+		runAlarmC5(code);
 	else if (code->name == "<credits>")
 		endCredits(code);
 	else
@@ -285,6 +287,19 @@ void BoyzEngine::runRetryMenu(Code *code) {
 	menu->free();
 	delete menu;
 }
+
+void BoyzEngine::runAlarmC5(Code *code) {
+	MVideo video1("misc/alrm_c5s.smk", Common::Point(0, 0), false, true, false);
+	disableCursor();
+	runIntro(video1);
+
+	MVideo video2("preload/deathn4s.smk", Common::Point(0, 0), false, true, false);
+	disableCursor();
+	runIntro(video2);
+
+	_nextLevel = "<check_c5>";
+}
+
 
 void BoyzEngine::runCheckC5(Code *code) {
 	if (_sceneState["GS_C5MAP"]) {
