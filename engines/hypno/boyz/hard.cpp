@@ -317,6 +317,9 @@ void BoyzEngine::runCheckC5(Code *code) {
 	if (_sceneState["GS_SEQ_51"] &&
 		_sceneState["GS_SEQ_52"] &&\
 		_sceneState["GS_SEQ_53"]) {
+		MVideo video("c5/c5intrbs.smk", Common::Point(0, 0), false, true, false);
+		disableCursor();
+		runIntro(video);
 		nextLevel = "c54.mi_";
 	}
 
