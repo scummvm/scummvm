@@ -326,7 +326,7 @@ void apply_config(const ConfigTree &cfg) {
 
 		int cache_size_kb = CfgReadInt(cfg, "misc", "cachemax", DEFAULTCACHESIZE_KB);
 		if (cache_size_kb > 0)
-			_GP(spriteset).SetMaxCacheSize((size_t)cache_size_kb * 1024);
+			_GP(usetup).SpriteCacheSize = cache_size_kb * 1024;
 
 		_GP(usetup).mouse_auto_lock = CfgReadBoolInt(cfg, "mouse", "auto_lock");
 

@@ -509,7 +509,6 @@ void show_preload() {
 
 int engine_init_sprites() {
 	Debug::Printf(kDbgMsg_Info, "Initialize sprites");
-
 	HError err = _GP(spriteset).InitFile(SpriteFile::DefaultSpriteFileName, SpriteFile::DefaultSpriteIndexName);
 	if (!err) {
 		sys_main_shutdown();
@@ -521,6 +520,8 @@ int engine_init_sprites() {
 		return EXIT_ERROR;
 	}
 
+	if (_GP(usetup).SpriteCacheSize > 0)
+		_GP(spriteset).SetMaxCacheSize(_GP(usetup).SpriteCacheSize);
 	return 0;
 }
 
