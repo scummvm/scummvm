@@ -97,7 +97,16 @@ bool BufferedStream::Flush() {
 }
 
 size_t BufferedStream::Read(void *buffer, size_t size) {
-	auto to = static_cast<uint8_t*>(buffer);
+	// If the read size is larger than the internal buffer size,
+	// then read directly into the user buffer and bail out.
+	if (size >= BufferSize) {
+		FileStream::Seek(_position, kSeekBegin);
+		size_t sz = FileStream::Read(buffer, size);
+		_position += sz;
+		return sz;
+	}
+
+	auto *to = static_cast<uint8_t*>(buffer);
 
 	while(size > 0) {
 		if (_position < _bufferPosition || _position >= _bufferPosition + _buffer.size()) {
@@ -117,7 +126,6 @@ size_t BufferedStream::Read(void *buffer, size_t size) {
 		_position += chunkSize;
 		size -= chunkSize;
 	}
-
 	return to - static_cast<uint8_t*>(buffer);
 }
 
