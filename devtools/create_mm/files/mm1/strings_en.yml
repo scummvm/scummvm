@@ -10,6 +10,13 @@ dialogs:
 		buy: "'A'-'F' TO BUY\r(- = CANT USE)"
 		sell: "'A'-'F' TO SELL"
 		gather: "'G' GATHER GOLD\r'#' OTHER CHAR"
+	blacksmith:
+		a: "A) BUY WEAPONS"
+		b: "B) BUY ARMOR"
+		c: "C) BUY MISC"
+		d: "D) SELL ITEM"
+		buy:
+			title: "WEAPONS     PRICE"
 	create_characters:
 		title: "CREATE NEW CHARACTERS"
 		intellect: "INTELLECT...="
