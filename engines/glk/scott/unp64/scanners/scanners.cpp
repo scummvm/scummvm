@@ -24,8 +24,48 @@
 namespace Glk {
 namespace Scott {
 
-void scanners(UnpStr* unp) {
+void scnECA(UnpStr *unp);
+void scnExpert(UnpStr *unp);
+void scnCruel(UnpStr *unp);
+void scnPuCrunch(UnpStr *unp);
+void scnByteBoiler(UnpStr *unp);
+void scnMasterCompressor(UnpStr *unp);
+void scnTCScrunch(UnpStr *unp);
+void scnTBCMultiComp(UnpStr *unp);
+void scnXTC(UnpStr *unp);
+void scnCCS(UnpStr *unp);
+void scnMegabyte(UnpStr *unp);
+void scnSection8(UnpStr *unp);
+void scnCaution(UnpStr *unp);
+void scnActionPacker(UnpStr *unp);
+void scnExomizer(UnpStr *unp);
 
+Scnptr g_scanFunc[] = {
+	scnECA,
+	scnExpert,
+	scnCruel,
+	scnPuCrunch,
+	scnByteBoiler,
+	scnMasterCompressor,
+	scnTCScrunch,
+	scnTBCMultiComp,
+	scnXTC,
+	scnCCS,
+	scnMegabyte,
+	scnSection8,
+	scnCaution,
+	scnActionPacker,
+	scnExomizer
+};
+
+void scanners(UnpStr* unp) {
+	int x, y;
+	y = sizeof(g_scanFunc) / sizeof(*g_scanFunc);
+	for (x = 0; x < y; x++) {
+		(g_scanFunc[x])(unp);
+		if (unp->_idFlag)
+			break;
+	}
 }
 
 } // End of namespace Scott

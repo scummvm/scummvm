@@ -61,6 +61,8 @@ struct UnpStr {
 	CpuCtx *_r;      /* pointer to the registers struct */
 };
 
+typedef void (*Scnptr)(UnpStr *);
+
 #define EA_USE_A 0x01000000
 #define EA_USE_X 0x00100000
 #define EA_USE_Y 0x00010000
