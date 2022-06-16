@@ -46,10 +46,6 @@ private:
 	 */
 	void train();
 
-	/**
-	 * Handles training
-	 */
-	void doTraining();
 protected:
 	/**
 	 * Change character

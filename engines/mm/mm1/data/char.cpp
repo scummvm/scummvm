@@ -21,9 +21,14 @@
 
 #include "common/algorithm.h"
 #include "mm/mm1/data/char.h"
+#include "mm/mm1/mm1.h"
 
 namespace MM {
 namespace MM1 {
+
+static const int CLASS_HP_PER_LEVEL[6] = {
+	12, 10, 10, 8, 6, 8
+};
 
 void Character::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, 16);
@@ -101,6 +106,51 @@ void Character::clear() {
 	_alignment = GOOD;
 	_v58 = _v59 = _v62 = _v63 = _v64 = _v65 = 0;
 	_v66 = _v67 = _v6c = _v6f = 0;
+}
+
+void Character::increaseLevel() {
+	_level = ++_levelBase;
+	_age = ++_ageBase;
+	if (_ageBase > 220)
+		_ageBase = 220;
+	_v6c += 2;
+
+	int classNum = _class == NONE ? ROBBER : _class;
+	int newHP = g_engine->getRandomNumber(CLASS_HP_PER_LEVEL[classNum - 1]);
+
+	if (_endBase >= 40)
+		newHP += 10;
+	else if (_endBase >= 35)
+		newHP += 9;
+	else if (_endBase >= 30)
+		newHP += 8;
+	else if (_endBase >= 27)
+		newHP += 7;
+	else if (_endBase >= 24)
+		newHP += 6;
+	else if (_endBase >= 21)
+		newHP += 5;
+	else if (_endBase >= 19)
+		newHP += 4;
+	else if (_endBase >= 17)
+		newHP += 3;
+	else if (_endBase >= 15)
+		newHP += 2;
+	else if (_endBase >= 13)
+		newHP += 1;
+	else if (_endBase >= 9)
+		newHP += 0;
+	else if (_endBase >= 7)
+		newHP = MAX(newHP - 1, 1);
+	else if (_endBase >= 5)
+		newHP = MAX(newHP - 2, 1);
+	else
+		newHP = MAX(newHP - 3, 1);
+
+	_hpBase += newHP;
+	_hp = _hpMax = _hpBase;
+
+	// TODO: Remaining stuff
 }
 
 } // namespace MM1
