@@ -269,6 +269,7 @@ MODULE_OBJS := \
 	scott/unp64/scanners/pu_crunch.o \
 	scott/unp64/scanners/section8.o \
 	scott/unp64/scanners/tbc_multicomp.o \
+	scott/unp64/scanners/tcs_crunch.o \
 	tads/os_banners.o \
 	tads/os_buffer.o \
 	tads/os_glk.o \
