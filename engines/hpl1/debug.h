@@ -32,6 +32,12 @@ enum DebugChannels {
 	kDebugFilePath = 1 << 2
 };
 
+enum DebugLevels {
+	kDebugLevelError = 1, 
+	kDebugLevelWarning = 2, 
+	kDebugLevelLog = 3
+}; 
+
 }
 
 #endif
