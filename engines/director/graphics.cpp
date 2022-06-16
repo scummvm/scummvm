@@ -203,20 +203,39 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 	dst = (T)p->dst->getBasePtr(x, y);
 
 	if (p->ms) {
+		if (p->ms->pd->thickness > 1) {
+			int prevThickness = p->ms->pd->thickness;
+			int x1 = x;
+			int x2 = x1 + prevThickness;
+			int y1 = y;
+			int y2 = y1 + prevThickness;
+
+			p->ms->pd->thickness = 1;	// We do not want recursive loops
+
+			for (y = y1; y < y2; y++)
+				for (x = x1; x < x2; x++)
+					if (x >= 0 && x < p->ms->pd->surface->w && y >= 0 && y < p->ms->pd->surface->h) {
+						inkDrawPixel<T>(x, y, src, data);
+					}
+
+			p->ms->pd->thickness = prevThickness;
+			return;
+		}
+
 		if (p->ms->tile) {
 			int x1 = p->ms->tileRect->left + (p->ms->pd->fillOriginX + x) % p->ms->tileRect->width();
 			int y1 = p->ms->tileRect->top  + (p->ms->pd->fillOriginY + y) % p->ms->tileRect->height();
 
-			*dst = p->ms->tile->getSurface()->getPixel(x1, y1);
-			return;
-		}
-		// Get the pixel that macDrawPixel will give us, but store it to apply the
-		// ink later
-		tmpDst = *dst;
-		(wm->getDrawPixel())(x, y, src, p->ms->pd);
-		src = *dst;
+			src = p->ms->tile->getSurface()->getPixel(x1, y1);
+		} else {
+			// Get the pixel that macDrawPixel will give us, but store it to apply the
+			// ink later
+			tmpDst = *dst;
+			(wm->getDrawPixel())(x, y, src, p->ms->pd);
+			src = *dst;
 
-		*dst = tmpDst;
+			*dst = tmpDst;
+		}
 	} else if (p->alpha) {
 		// Sprite blend does not respect colourization; defaults to matte ink
 		byte rSrc, gSrc, bSrc;
