@@ -2221,10 +2221,9 @@ int GUI_LoL::runMenu(Menu &menu) {
 	int fW = (d->w << 3) - wW;
 	int fC = 0;
 
-	// LoL doesn't have default higlighted items. No item should be
-	// highlighted when entering a new menu.
-	// Instead, the respevtive struct entry is used to determine whether
-	// a menu has scroll buttons or slider bars.
+	// LoL doesn't have default highlighted items. No item should be highlighted when
+	// entering a new menu. Instead, the respective struct entry is used to determine
+	// whether a menu has scroll buttons or slider bars.
 	uint8 hasSpecialButtons = 0;
 	_saveSlotsListUpdateNeeded = true;
 

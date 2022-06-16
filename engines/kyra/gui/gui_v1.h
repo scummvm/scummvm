@@ -125,6 +125,7 @@ protected:
 
 	virtual uint8 defaultColor1() const = 0;
 	virtual uint8 defaultColor2() const = 0;
+	virtual uint8 menuItemLabelColor() const = 0;
 
 	virtual Common::String getMenuTitle(const Menu &menu) = 0;
 	virtual Common::String getMenuItemTitle(const MenuItem &menuItem) = 0;
