@@ -287,6 +287,17 @@ void BoyzEngine::runRetryMenu(Code *code) {
 }
 
 void BoyzEngine::runCheckC5(Code *code) {
+	if (_sceneState["GS_C5MAP"]) {
+		if (!_sceneState["GS_MINEMAP_VIEWED"]) {
+			MVideo video("c5/c5_maps.smk", Common::Point(0, 0), false, true, false);
+			disableCursor();
+			runIntro(video);
+			defaultCursor();
+			waitForUserClick(1);
+			_sceneState["GS_MINEMAP_VIEWED"] = true;
+		}
+	}
+
 	Common::String nextLevel;
 	if (_sceneState["GS_SEQ_51"] &&
 		_sceneState["GS_SEQ_52"] &&\
