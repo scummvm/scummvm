@@ -141,6 +141,7 @@ private:
 
 	uint8 defaultColor1() const override { return 0xFE; }
 	uint8 defaultColor2() const override { return 0x00; }
+	uint8 menuItemLabelColor() const override { return 0xCC; }
 
 	Common::String getMenuTitle(const Menu &menu) override;
 	Common::String getMenuItemTitle(const MenuItem &menuItem) override;
