@@ -24,8 +24,7 @@ distribution.
 
 #include "hpl1/engine/impl/tinyXML/tinyxml.h"
 #include "common/file.h"
-#include "common/debug.h"
-#include "hpl1/detection.h"
+#include "hpl1/debug.h"
 
 bool TiXmlBase::condenseWhiteSpace = true;
 
