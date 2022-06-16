@@ -30,7 +30,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	 nullptr,
 	 AD_ENTRY1s("Penumbra.exe", nullptr, -1),
 	 Common::Language::EN_ANY,
-	 Common::Platform::kPlatformDOS,
+	 Common::Platform::kPlatformWindows,
 	 ADGF_UNSTABLE,
 	 GUIO1(GUIO_NONE)},
 
