@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-06-05 16:22+0000\n"
+"POT-Creation-Date: 2022-06-16 21:46+0100\n"
 "PO-Revision-Date: 2022-06-03 20:16+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -24,7 +24,6 @@ msgstr ""
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
 #, fuzzy, c-format
-#| msgid "(built on %s)"
 msgid "(built on %s with %s)"
 msgstr "(bygd den %s)"
 
@@ -62,7 +61,7 @@ msgstr "Oppover"
 #: gui/editgamedialog.cpp:384 gui/editrecorddialog.cpp:66
 #: gui/filebrowser-dialog.cpp:68 gui/fluidsynth-dialog.cpp:152
 #: gui/massadd.cpp:91 gui/options.cpp:2193 gui/predictivedialog.cpp:68
-#: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:154
+#: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:213
 #: gui/remotebrowser.cpp:59 gui/saveload-dialog.cpp:62
 #: gui/saveload-dialog.cpp:406 gui/saveload-dialog.cpp:477
 #: gui/saveload-dialog.cpp:779 gui/saveload-dialog.cpp:1172
@@ -97,7 +96,7 @@ msgstr "Vel"
 msgid "Select directory where to download game data"
 msgstr "Vel mappe med speldata"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:583 gui/launcher.cpp:274
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:583 gui/launcher.cpp:275
 msgid "Select directory with game data"
 msgstr "Vel mappe med speldata"
 
@@ -135,28 +134,28 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:398 gui/launcher.cpp:427 gui/launcher.cpp:470
+#: gui/launcher.cpp:399 gui/launcher.cpp:428 gui/launcher.cpp:471
 #: gui/options.cpp:3138 gui/options.cpp:3176
 #: backends/events/default/default-events.cpp:194 engines/buried/buried.cpp:580
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:145
-#: engines/sci/graphics/controls32.cpp:927
+#: engines/sci/graphics/controls32.cpp:929 engines/toon/toon.cpp:1502
 msgid "Yes"
 msgstr "Ja"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
-#: gui/launcher.cpp:398 gui/launcher.cpp:427 gui/launcher.cpp:470
+#: gui/launcher.cpp:399 gui/launcher.cpp:428 gui/launcher.cpp:471
 #: gui/options.cpp:3138 gui/options.cpp:3176 engines/buried/buried.cpp:580
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:357
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
 #: engines/parallaction/metaengine.cpp:151
-#: engines/sci/graphics/controls32.cpp:927
+#: engines/sci/graphics/controls32.cpp:929 engines/toon/toon.cpp:1502
 msgid "No"
 msgstr "Nei"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:567
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:573
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM kunne ikkje åpne den velde mappa!"
 
@@ -168,7 +167,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:385
 #: gui/editrecorddialog.cpp:67 gui/fluidsynth-dialog.cpp:153
-#: gui/launcher.cpp:526 gui/launcher.cpp:530 gui/massadd.cpp:88
+#: gui/launcher.cpp:527 gui/launcher.cpp:531 gui/massadd.cpp:88
 #: gui/options.cpp:2195 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1173 engines/engine.cpp:525 engines/engine.cpp:549
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
@@ -177,7 +176,7 @@ msgstr ""
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:652 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:270 engines/saga/music.cpp:99
-#: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:924
+#: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
 #: engines/scumm/dialogs.cpp:180 engines/scumm/scumm.cpp:1048
 #: engines/scumm/scumm.cpp:1074 engines/scumm/scumm.cpp:1096
 #: engines/scumm/scumm.cpp:1375 engines/scumm/scumm.cpp:1846
@@ -741,7 +740,6 @@ msgstr "Neste"
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
 #, fuzzy
-#| msgid "Engine"
 msgctxt "group"
 msgid "Engine"
 msgstr "Motor"
@@ -755,7 +753,6 @@ msgstr ""
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:107
 #, fuzzy
-#| msgid "Unknown Author"
 msgctxt "group"
 msgid "Publisher"
 msgstr "Ukjend Forfattar"
@@ -763,7 +760,6 @@ msgstr "Ukjend Forfattar"
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
 #, fuzzy
-#| msgid "Language:"
 msgctxt "group"
 msgid "Language"
 msgstr "Språk:"
@@ -771,109 +767,105 @@ msgstr "Språk:"
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
 #, fuzzy
-#| msgid "Platform:"
 msgctxt "group"
 msgid "Platform"
 msgstr "Plattform:"
 
-#: gui/launcher.cpp:210
+#: gui/launcher.cpp:211
 msgid "Select Group by"
 msgstr ""
 
-#: gui/launcher.cpp:215
+#: gui/launcher.cpp:216
 msgid "Group by: "
 msgstr ""
 
-#: gui/launcher.cpp:217
+#: gui/launcher.cpp:218
 msgid "Select a criteria to group the entries"
 msgstr ""
 
-#: gui/launcher.cpp:240 engines/dialogs.cpp:94
+#: gui/launcher.cpp:241 engines/dialogs.cpp:94
 msgid "~Q~uit"
 msgstr "~A~vslutt"
 
-#: gui/launcher.cpp:240 backends/platform/sdl/macosx/appmenu_osx.mm:229
+#: gui/launcher.cpp:241 backends/platform/sdl/macosx/appmenu_osx.mm:229
 msgid "Quit ScummVM"
 msgstr "Avslutt ScummVM"
 
-#: gui/launcher.cpp:242
+#: gui/launcher.cpp:243
 #, fuzzy
-#| msgid "A~b~out..."
 msgid "A~b~out"
 msgstr "~O~m..."
 
-#: gui/launcher.cpp:242 backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: gui/launcher.cpp:243 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
 msgstr "Om ScummVM"
 
-#: gui/launcher.cpp:243
+#: gui/launcher.cpp:244
 #, fuzzy
-#| msgid "~O~ptions..."
 msgid "Global ~O~ptions..."
 msgstr "~V~al..."
 
-#: gui/launcher.cpp:243
+#: gui/launcher.cpp:244
 msgid "Change global ScummVM options"
 msgstr "Endre globale ScummVM-instillingar"
 
-#: gui/launcher.cpp:243
+#: gui/launcher.cpp:244
 #, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "Global ~O~pts..."
 msgstr "~V~al..."
 
-#: gui/launcher.cpp:247
+#: gui/launcher.cpp:248
 msgid "~A~dd Game..."
 msgstr "~L~egg til spel..."
 
-#: gui/launcher.cpp:247
+#: gui/launcher.cpp:248
 msgid "Add games to the list"
 msgstr ""
 
-#: gui/launcher.cpp:247
+#: gui/launcher.cpp:248
 msgctxt "lowres"
 msgid "~A~dd Game..."
 msgstr "~L~egg til spel..."
 
-#: gui/launcher.cpp:250
+#: gui/launcher.cpp:251
 msgid "~R~emove Game"
 msgstr "~F~jern spel"
 
-#: gui/launcher.cpp:250
+#: gui/launcher.cpp:251
 msgid "Remove game from the list. The game data files stay intact"
 msgstr "Fjern spel frå lista. Speldataene forblir intakte"
 
-#: gui/launcher.cpp:250
+#: gui/launcher.cpp:251
 msgctxt "lowres"
 msgid "~R~emove Game"
 msgstr "~F~jern spel"
 
-#: gui/launcher.cpp:252
+#: gui/launcher.cpp:253
 msgid "Mass Add..."
 msgstr "Legg til fleire..."
 
-#: gui/launcher.cpp:254
+#: gui/launcher.cpp:255
 msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "Legg til fleire..."
 
-#: gui/launcher.cpp:262
+#: gui/launcher.cpp:263
 msgid "Search in game list"
 msgstr "Søk i spelliste"
 
-#: gui/launcher.cpp:266 gui/launcher.cpp:774
+#: gui/launcher.cpp:267 gui/launcher.cpp:780
 msgid "Search:"
 msgstr "Søk:"
 
-#: gui/launcher.cpp:277 engines/dialogs.cpp:97 engines/engine.cpp:884
+#: gui/launcher.cpp:278 engines/dialogs.cpp:97 engines/engine.cpp:884
 #: engines/pegasus/pegasus.cpp:383 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load game:"
 msgstr "Åpne spel:"
 
-#: gui/launcher.cpp:277 engines/dialogs.cpp:97 engines/engine.cpp:884
+#: gui/launcher.cpp:278 engines/dialogs.cpp:97 engines/engine.cpp:884
 #: engines/parallaction/metaengine.cpp:127
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
 #: engines/scumm/dialogs.cpp:176 engines/trecision/saveload.cpp:253
@@ -882,133 +874,134 @@ msgstr "Åpne spel:"
 msgid "Load"
 msgstr "Åpne"
 
-#: gui/launcher.cpp:386
+#: gui/launcher.cpp:387
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 
-#: gui/launcher.cpp:397
+#: gui/launcher.cpp:398
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
 
-#: gui/launcher.cpp:427
+#: gui/launcher.cpp:428
 msgid "Do you really want to remove this game configuration?"
 msgstr "Vil du verkeleg fjerne denne spelkonfigurasjonen?"
 
-#: gui/launcher.cpp:469
+#: gui/launcher.cpp:470
 msgid "Do you want to load saved game?"
 msgstr "Vil du laste det lagra spelet?"
 
-#: gui/launcher.cpp:526
+#: gui/launcher.cpp:527
 msgid "This game does not support loading games from the launcher."
 msgstr "Dette spelet støttar ikkje åpning av lagra spel frå oppstartaren."
 
-#: gui/launcher.cpp:530
+#: gui/launcher.cpp:531
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "ScummVM kunne ikkje finne nokon motor som var i stand til å køyre det velde "
 "spelet!"
 
-#: gui/launcher.cpp:586
+#: gui/launcher.cpp:592
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM kunne ikkje finne noko spel i den velde mappa!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:602
+#: gui/launcher.cpp:608
 #, fuzzy
 msgid "Unknown variant"
 msgstr "Ukjend feil"
 
-#: gui/launcher.cpp:608
+#: gui/launcher.cpp:614
 msgid "Pick the game:"
 msgstr "Vel spelet:"
 
-#: gui/launcher.cpp:783
+#: gui/launcher.cpp:789
 msgid "Group by:"
 msgstr ""
 
-#: gui/launcher.cpp:823 gui/saveload-dialog.cpp:355
+#: gui/launcher.cpp:829 gui/saveload-dialog.cpp:355
 msgid "List view"
 msgstr "Listevisning"
 
-#: gui/launcher.cpp:824 gui/saveload-dialog.cpp:356
+#: gui/launcher.cpp:830 gui/saveload-dialog.cpp:356
 msgid "Grid view"
 msgstr "Rutenettvisning"
 
-#: gui/launcher.cpp:978
+#: gui/launcher.cpp:1004
 msgid "~S~tart"
 msgstr "~S~tart"
 
-#: gui/launcher.cpp:978
+#: gui/launcher.cpp:1004
 msgid "Start selected game"
 msgstr "Start det velde spelet"
 
-#: gui/launcher.cpp:981
+#: gui/launcher.cpp:1007
 msgid "~L~oad..."
 msgstr "~Å~pne..."
 
-#: gui/launcher.cpp:981
+#: gui/launcher.cpp:1007
 msgid "Load saved game for selected game"
 msgstr "Åpne eit lagra spel for the velde spelet"
 
-#: gui/launcher.cpp:983
+#: gui/launcher.cpp:1009
 msgid "Record..."
 msgstr ""
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:1015
 msgid "~G~ame Options..."
 msgstr "Spel~v~al..."
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:1015
 msgid "Change game options"
 msgstr "Endre spelinstillingar"
 
-#: gui/launcher.cpp:989
+#: gui/launcher.cpp:1015
 #, fuzzy
-#| msgid "~O~ptions..."
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "~V~al..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
-#: gui/launcher.cpp:1110 gui/launcher.cpp:1305
+#: gui/launcher.cpp:1136 gui/launcher.cpp:1331
 #, fuzzy
 msgid "Unknown Engine"
 msgstr "Ukjend feil"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1128 gui/launcher.cpp:1337
+#: gui/launcher.cpp:1154 gui/launcher.cpp:1363
 #, fuzzy
-#| msgid "Unknown Author"
 msgid "Unknown Publisher"
 msgstr "Ukjend Forfattar"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1146 gui/launcher.cpp:1323
+#: gui/launcher.cpp:1172 gui/launcher.cpp:1349
 msgid "No Series"
 msgstr ""
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1161 gui/launcher.cpp:1356
+#: gui/launcher.cpp:1187 gui/launcher.cpp:1382
 msgid "Language not detected"
 msgstr ""
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1176 gui/launcher.cpp:1371
+#: gui/launcher.cpp:1202 gui/launcher.cpp:1397
 msgid "Platform not detected"
 msgstr ""
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1382 gui/widgets/groupedlist.cpp:80
+#: gui/launcher.cpp:1408 gui/widgets/groupedlist.cpp:80
 #, fuzzy
-#| msgid "Alt"
 msgid "All"
 msgstr "Alt"
+
+#: gui/launcher.cpp:1596
+msgid "Icons per row:"
+msgstr ""
 
 #: gui/massadd.cpp:75 gui/massadd.cpp:78
 msgid "... progress ..."
@@ -1967,7 +1960,6 @@ msgstr "Vel ei mappe for GUI-tema"
 
 #: gui/options.cpp:2943
 #, fuzzy
-#| msgid "Select directory for GUI themes"
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "Vel ei mappe for GUI-tema"
 
@@ -2043,7 +2035,6 @@ msgstr ""
 
 #: gui/predictivedialog.cpp:66
 #, fuzzy
-#| msgid "Enter"
 msgid "Enter Text"
 msgstr "Enter"
 
@@ -2080,44 +2071,44 @@ msgstr "*  Tal"
 msgid "*  Abc"
 msgstr "*  Abc"
 
-#: gui/recorderdialog.cpp:61
+#: gui/recorderdialog.cpp:67
 msgid "Recorder or Playback Gameplay"
 msgstr ""
 
-#: gui/recorderdialog.cpp:66 gui/recorderdialog.cpp:154
+#: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:213
 #: gui/saveload-dialog.cpp:410 gui/saveload-dialog.cpp:477
 msgid "Delete"
 msgstr "Slett"
 
-#: gui/recorderdialog.cpp:68
+#: gui/recorderdialog.cpp:74
 msgid "Record"
 msgstr ""
 
-#: gui/recorderdialog.cpp:69
+#: gui/recorderdialog.cpp:75
 #, fuzzy
 msgid "Playback"
 msgstr "Spel"
 
-#: gui/recorderdialog.cpp:71 gui/widgets/grid.cpp:224
+#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:224
 msgid "Edit"
 msgstr "Rediger"
 
-#: gui/recorderdialog.cpp:83 gui/recorderdialog.cpp:240
-#: gui/recorderdialog.cpp:250
+#: gui/recorderdialog.cpp:143 gui/recorderdialog.cpp:302
+#: gui/recorderdialog.cpp:309
 msgid "Author: "
 msgstr "Forfattar: "
 
-#: gui/recorderdialog.cpp:84 gui/recorderdialog.cpp:241
-#: gui/recorderdialog.cpp:251
+#: gui/recorderdialog.cpp:145 gui/recorderdialog.cpp:303
+#: gui/recorderdialog.cpp:310
 msgid "Notes: "
 msgstr "Notatar: "
 
-#: gui/recorderdialog.cpp:153
+#: gui/recorderdialog.cpp:212
 #, fuzzy
 msgid "Do you really want to delete this record?"
 msgstr "Vil du verkeleg slette det lagra spelet?"
 
-#: gui/recorderdialog.cpp:170
+#: gui/recorderdialog.cpp:229
 msgid "Unknown Author"
 msgstr "Ukjend Forfattar"
 
@@ -2285,7 +2276,6 @@ msgstr "Spel"
 
 #: gui/widgets/grid.cpp:221
 #, fuzzy
-#| msgid "Save"
 msgid "Saves"
 msgstr "Lagre"
 
@@ -2434,7 +2424,6 @@ msgstr ""
 #. I18N: Abbreviation for 'megabytes' as data size
 #: common/util.cpp:194
 #, fuzzy
-#| msgid "SMB"
 msgid "MB"
 msgstr "SMB"
 
@@ -2530,7 +2519,7 @@ msgstr "Tilbake til Oppsta~r~tar"
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:742
 #: engines/sci/engine/kfile.cpp:1079 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3405
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3763
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:628
 #: engines/wage/saveload.cpp:751 engines/xeen/saves.cpp:276
 #: engines/zvision/file/save_manager.cpp:48
@@ -2553,7 +2542,7 @@ msgstr "Lagra spel:"
 #: engines/sci/engine/kfile.cpp:1079 engines/scumm/dialogs.cpp:175
 #: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3405
+#: engines/toltecs/menu.cpp:302 engines/toon/toon.cpp:3763
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:628
 #: engines/wage/saveload.cpp:751 engines/xeen/saves.cpp:276
 #: engines/zvision/file/save_manager.cpp:48 engines/zvision/metaengine.cpp:193
@@ -4110,7 +4099,7 @@ msgstr "SJå etter oppdateringar..."
 #: engines/hugo/hugo.cpp:424 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:301 engines/sky/compact.cpp:130
 #: engines/supernova/supernova.cpp:464 engines/teenagent/resources.cpp:97
-#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:4999
+#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5357
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr ""
@@ -4118,7 +4107,7 @@ msgstr ""
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:949
 #: engines/hugo/hugo.cpp:436 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:309 engines/supernova/supernova.cpp:469
-#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5012
+#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5370
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr ""
@@ -4126,7 +4115,7 @@ msgstr ""
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:960
 #: engines/hugo/hugo.cpp:446 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:319 engines/tony/tony.cpp:211
-#: engines/toon/toon.cpp:5023
+#: engines/toon/toon.cpp:5381
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -4257,7 +4246,7 @@ msgstr ""
 #: engines/sci/engine/guest_additions.cpp:745 engines/sci/engine/kfile.cpp:1206
 #: engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3499
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3857
 #: engines/zvision/file/save_manager.cpp:61
 msgid "Restore game:"
 msgstr "Gjenopprett spel:"
@@ -4276,7 +4265,7 @@ msgstr "Gjenopprett spel:"
 #: engines/sci/engine/guest_additions.cpp:746 engines/sci/engine/kfile.cpp:1206
 #: engines/sherlock/scalpel/scalpel.cpp:1262
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3499
+#: engines/toltecs/menu.cpp:272 engines/toon/toon.cpp:3857
 #: engines/zvision/file/save_manager.cpp:61 engines/zvision/metaengine.cpp:198
 msgid "Restore"
 msgstr "Gjenopprett"
@@ -4366,13 +4355,11 @@ msgstr "GUI-språk:"
 
 #: engines/ags/dialogs.cpp:58
 #, fuzzy
-#| msgid "AdLib is used for music in many games"
 msgid "Language to use for multilingual games"
 msgstr "AdLib nyttast til musikk i mange spel"
 
 #: engines/ags/dialogs.cpp:78
 #, fuzzy
-#| msgid "Antialiased"
 msgid "Force antialiased text"
 msgstr "Kantutjevna"
 
@@ -4421,6 +4408,11 @@ msgstr "Bytt til spel"
 #, fuzzy
 msgid "Switch to Olmec"
 msgstr "Bytt til spel"
+
+#: engines/asylum/metaengine.cpp:144
+#, fuzzy
+msgid "Open character inventory"
+msgstr "Inventar"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
@@ -4543,7 +4535,6 @@ msgstr ""
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:109
 #, fuzzy
-#| msgid "Main game controls:"
 msgid "main game shortcuts"
 msgstr "Hovedkontrollar for spel:"
 
@@ -4845,7 +4836,7 @@ msgstr ""
 #: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
-#: engines/twine/detection.cpp:873
+#: engines/twine/detection.cpp:922
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
@@ -5082,7 +5073,6 @@ msgstr "Kunne ikkje endre videomodus."
 
 #: engines/grim/inputdialog.cpp:79
 #, fuzzy
-#| msgid "Input"
 msgid "Input text"
 msgstr "Input"
 
@@ -5618,7 +5608,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr ""
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
-#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:872
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:921
 msgid "TTS Narrator"
 msgstr ""
 
@@ -6487,7 +6477,7 @@ msgstr ""
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 
-#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:366
+#: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:368
 #, fuzzy
 msgid "(Autosave)"
 msgstr "Autolagre:"
@@ -6497,23 +6487,23 @@ msgstr "Autolagre:"
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
 
-#: engines/sci/engine/kmisc.cpp:857
+#: engines/sci/engine/kmisc.cpp:846
 msgid ""
 "The Poker logic is hardcoded in an external DLL, and is not implemented yet. "
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1453
+#: engines/sci/engine/savegame.cpp:1458
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1455
+#: engines/sci/engine/savegame.cpp:1460
 #, fuzzy, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "Spel ID ikkje støtta"
 
-#: engines/sci/engine/savegame.cpp:1466
+#: engines/sci/engine/savegame.cpp:1471
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
@@ -6525,7 +6515,7 @@ msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr ""
 
-#: engines/sci/metaengine.cpp:298
+#: engines/sci/metaengine.cpp:300
 #, fuzzy
 msgid "SCI32 support not compiled in"
 msgstr "Funksjonar innkompilert:"
@@ -7754,31 +7744,36 @@ msgstr "Spel ID ikkje støtta"
 msgid "Font variant not present in '%s' engine data file."
 msgstr ""
 
-#: engines/toon/toon.cpp:215
+#: engines/toon/toon.cpp:244
 #, fuzzy, c-format
 msgid "Saved game in slot #%d "
 msgstr ""
 "Kan ikkje lagre spel i spor %i\n"
 "\n"
 
-#: engines/toon/toon.cpp:219
+#: engines/toon/toon.cpp:248
 #, fuzzy, c-format
 msgid "Could not quick save into slot #%d"
 msgstr "Vil du laste det lagra spelet?"
 
-#: engines/toon/toon.cpp:232
+#: engines/toon/toon.cpp:261
 #, fuzzy, c-format
 msgid "Saved game #%d quick loaded"
 msgstr ""
 "Kan ikkje lagre spel i spor %i\n"
 "\n"
 
-#: engines/toon/toon.cpp:236
+#: engines/toon/toon.cpp:265
 #, fuzzy, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Vil du laste det lagra spelet?"
 
-#: engines/toon/toon.cpp:1563
+#: engines/toon/toon.cpp:1502
+#, fuzzy
+msgid "Are you sure you want to exit?"
+msgstr "   Er du sikker på at du vil avslutte?   "
+
+#: engines/toon/toon.cpp:1906
 #, fuzzy, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "Klarte ikkje slette fil."
@@ -7787,107 +7782,107 @@ msgstr "Klarte ikkje slette fil."
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
 
-#: engines/twine/detection.cpp:771
+#: engines/twine/detection.cpp:820
 msgid "Enable wall collisions"
 msgstr ""
 
-#: engines/twine/detection.cpp:772
+#: engines/twine/detection.cpp:821
 msgid "Enable the original wall collision damage"
 msgstr ""
 
-#: engines/twine/detection.cpp:781
+#: engines/twine/detection.cpp:830
 #, fuzzy
 msgid "Disable save menu"
 msgstr "Klarte ikkje lagre spel"
 
-#: engines/twine/detection.cpp:782
+#: engines/twine/detection.cpp:831
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 
-#: engines/twine/detection.cpp:790
+#: engines/twine/detection.cpp:839
 #, fuzzy
 msgid "Enable debug mode"
 msgstr "Slå på heliummodus"
 
-#: engines/twine/detection.cpp:791
+#: engines/twine/detection.cpp:840
 #, fuzzy
 msgid "Enable the debug mode"
 msgstr "Slå på heliummodus"
 
-#: engines/twine/detection.cpp:799
+#: engines/twine/detection.cpp:848
 #, fuzzy
 msgid "Enable audio CD"
 msgstr "Aktiver studiopublikum"
 
-#: engines/twine/detection.cpp:800
+#: engines/twine/detection.cpp:849
 msgid "Enable the original audio cd track"
 msgstr ""
 
-#: engines/twine/detection.cpp:808
+#: engines/twine/detection.cpp:857
 #, fuzzy
 msgid "Enable sound"
 msgstr "Aktiver studiopublikum"
 
-#: engines/twine/detection.cpp:809
+#: engines/twine/detection.cpp:858
 #, fuzzy
 msgid "Enable the sound for the game"
 msgstr "Full speltittel"
 
-#: engines/twine/detection.cpp:817
+#: engines/twine/detection.cpp:866
 #, fuzzy
 msgid "Enable voices"
 msgstr "Slå på Venus"
 
-#: engines/twine/detection.cpp:818
+#: engines/twine/detection.cpp:867
 #, fuzzy
 msgid "Enable the voices for the game"
 msgstr "Slå på Venus-hjelpesystemet"
 
-#: engines/twine/detection.cpp:826
+#: engines/twine/detection.cpp:875
 #, fuzzy
 msgid "Enable text"
 msgstr "Aktiver studiopublikum"
 
-#: engines/twine/detection.cpp:827
+#: engines/twine/detection.cpp:876
 #, fuzzy
 msgid "Enable the text for the game"
 msgstr "Full speltittel"
 
-#: engines/twine/detection.cpp:835
+#: engines/twine/detection.cpp:884
 #, fuzzy
 msgid "Enable movies"
 msgstr "Slå på Venus"
 
-#: engines/twine/detection.cpp:836
+#: engines/twine/detection.cpp:885
 #, fuzzy
 msgid "Enable the cutscenes for the game"
 msgstr "Slå på Venus-hjelpesystemet"
 
-#: engines/twine/detection.cpp:844
+#: engines/twine/detection.cpp:893
 #, fuzzy
 msgid "Enable mouse"
 msgstr "Slå på Venus"
 
-#: engines/twine/detection.cpp:845
+#: engines/twine/detection.cpp:894
 #, fuzzy
 msgid "Enable the mouse for the UI"
 msgstr "Full speltittel"
 
-#: engines/twine/detection.cpp:853
+#: engines/twine/detection.cpp:902
 msgid "Use the USA version"
 msgstr ""
 
-#: engines/twine/detection.cpp:854
+#: engines/twine/detection.cpp:903
 msgid "Enable the USA specific version flags"
 msgstr ""
 
-#: engines/twine/detection.cpp:862 engines/ultima/detection.cpp:92
+#: engines/twine/detection.cpp:911 engines/ultima/detection.cpp:92
 #, fuzzy
 msgid "Enable high resolution"
 msgstr "Nytt høgoppløyseleg grafikk"
 
-#: engines/twine/detection.cpp:863 engines/ultima/detection.cpp:93
+#: engines/twine/detection.cpp:912 engines/ultima/detection.cpp:93
 #, fuzzy
 msgid "Enable a higher resolution for the game"
 msgstr "Full speltittel"
@@ -8982,6 +8977,23 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~| msgid "Enable Venus"
+#~ msgid "In menus"
+#~ msgstr "Slå på Venus"
+
+#, fuzzy
+#~ msgid "Touchpad emulation"
+#~ msgstr "MT-32 Emulator"
+
+#, fuzzy
+#~ msgid "Direct mouse"
+#~ msgstr "Skli til Høyre"
+
+#, fuzzy
+#~ msgid "Gamepad emulation"
+#~ msgstr "MT-32 Emulator"
 
 #, fuzzy
 #~ msgid "Light has run out! "
