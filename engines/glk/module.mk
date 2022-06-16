@@ -267,6 +267,7 @@ MODULE_OBJS := \
 	scott/unp64/scanners/master_compressor.o \
 	scott/unp64/scanners/megabyte.o \
 	scott/unp64/scanners/pu_crunch.o \
+	scott/unp64/scanners/section8.o \
 	tads/os_banners.o \
 	tads/os_buffer.o \
 	tads/os_glk.o \
