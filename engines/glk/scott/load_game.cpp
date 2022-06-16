@@ -58,9 +58,8 @@ void loadZXSpectrum(Common::SeekableReadStream *f, Common::String md5) {
 		return;
 
 	int index = _G(_md5Index)[md5];
-	if (tryLoading(g_games[index], offset, 0)) {
-		delete _G(_game);
-		_G(_game) = &g_games[index];
+	if (tryLoading(_G(_games)[index], offset, 0)) {
+		_G(_game) = &_G(_games)[index];
 	}
 }
 
@@ -70,7 +69,7 @@ void loadC64(Common::SeekableReadStream* f, Common::String md5) {
 	if (result != _G(_fileLength))
 		g_scott->fatal("File empty or read error!");
 
-	CURRENT_GAME = static_cast<GameIDType>(detectC64(&_G(_entireFile), &_G(_fileLength)));
+	_G(_fallbackGame)._gameID = static_cast<GameIDType>(detectC64(&_G(_entireFile), &_G(_fileLength)));
 }
 
 void loadGameFile(Common::SeekableReadStream *f) {
@@ -86,7 +85,7 @@ void loadGameFile(Common::SeekableReadStream *f) {
 
 	_G(_fileLength) = f->size();
 
-	_G(_game) = new GameInfo;
+	_G(_game) = &_G(_fallbackGame);
 
 	Common::String md5 = g_vm->getGameMD5();
 	const GlkDetectionEntry *p = SCOTT_GAMES;
@@ -94,11 +93,14 @@ void loadGameFile(Common::SeekableReadStream *f) {
 	while (p->_md5) {
 		if (md5.equalsC(p->_md5)) {
 			if (!scumm_stricmp(p->_extra, "")) {
-				CURRENT_GAME = SCOTTFREE;
+				_G(_fallbackGame)._gameID = SCOTTFREE;
+				break;
 			} else if (!scumm_stricmp(p->_extra, "ZXSpectrum")) {
 				loadZXSpectrum(f, md5);
+				break;
 			} else if (!scumm_stricmp(p->_extra, "C64")) {
 				loadC64(f, md5);
+				break;
 			}
 			// TODO
 			// TI99/4A Detection
