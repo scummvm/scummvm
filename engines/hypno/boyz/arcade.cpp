@@ -738,7 +738,7 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		else if (territory <= 4)
 			path = "misc/alrm_mbs.smk";
 		else
-			path = "misc/alrm_c5.smk";
+			path = "misc/alrm_c5s.smk";
 
 		disableCursor();
 		MVideo alarmVideo(path, Common::Point(0, 0), false, true, false);
