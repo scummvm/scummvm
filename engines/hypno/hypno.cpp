@@ -32,6 +32,7 @@
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "common/substream.h"
 #include "common/timer.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -54,8 +55,8 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _playerFrameIdx(0), _playerFrameSep(0), _refreshConversation(false),
 	  _countdown(0), _timerStarted(false), _score(0), _bonus(0), _lives(0),
 	  _defaultCursor(""), _defaultCursorIdx(0),  _skipDefeatVideo(false),
-	  _background(nullptr), _masks(nullptr), _musicRate(0), _skipNextVideo(false),
-	  _additionalVideo(nullptr), _ammo(0), _maxAmmo(0),
+	  _background(nullptr), _masks(nullptr), _musicRate(0), _musicStereo(false),
+	  _additionalVideo(nullptr), _ammo(0), _maxAmmo(0), _skipNextVideo(false),
 	  _doNotStopSounds(false), _screenW(0), _screenH(0) { // Every games initializes its own resolution
 	_rnd = new Common::RandomSource("hypno");
 	_checkpoint = "";
@@ -540,14 +541,24 @@ void HypnoEngine::skipVideo(MVideo &video) {
 
 // Sound handling
 
-void HypnoEngine::playSound(const Common::String &filename, uint32 loops, uint32 sampleRate) {
+void HypnoEngine::playSound(const Common::String &filename, uint32 loops, uint32 sampleRate, bool stereo) {
 	debugC(1, kHypnoDebugMedia, "%s(%s, %d, %d)", __FUNCTION__, filename.c_str(), loops, sampleRate);
 	Common::String name = convertPath(filename);
 
 	Audio::LoopingAudioStream *stream = nullptr;
 	Common::File *file = new Common::File();
 	if (file->open(name)) {
-		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, sampleRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
+		uint32 flags = Audio::FLAG_UNSIGNED;
+
+		Common::SeekableSubReadStream *sub;
+		if (stereo) {
+			sub = new Common::SeekableSubReadStream(file, 0, file->size() - (file->size() % 2), DisposeAfterUse::YES);
+			flags = flags | Audio::FLAG_STEREO;
+		} else {
+			sub = new Common::SeekableSubReadStream(file, 0, file->size(), DisposeAfterUse::YES);
+		}
+
+		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(sub, sampleRate, flags, DisposeAfterUse::YES), loops);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 	} else {
 		if (!_prefixDir.empty())

@@ -237,8 +237,9 @@ public:
 	Filename _soundPath;
 	Filename _music;
 	int _musicRate;
+	bool _musicStereo;
 	bool _doNotStopSounds;
-	void playSound(const Filename &filename, uint32 loops, uint32 sampleRate = 22050);
+	void playSound(const Filename &filename, uint32 loops, uint32 sampleRate = 22050, bool stereo = false);
 	void stopSound();
 
 	// Arcade

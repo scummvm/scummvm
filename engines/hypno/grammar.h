@@ -376,6 +376,7 @@ public:
 		type = CodeLevel;
 		musicRate = 22050;
 		playMusicDuringIntro = false;
+		musicStereo = false;
 	}
 	virtual ~Level() {} // needed to make Level polymorphic
 	LevelType type;
@@ -386,6 +387,7 @@ public:
 	bool playMusicDuringIntro;
 	Filename music;
 	uint32 musicRate;
+	bool musicStereo;
 };
 
 class Scene : public Level {
