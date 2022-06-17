@@ -27,6 +27,10 @@
 namespace MM {
 namespace MM1 {
 
+struct BlacksmithData {
+
+};
+
 struct MarketData {
 	const byte FOOD_COST[4] = { 5, 10, 20, 200 };
 };
