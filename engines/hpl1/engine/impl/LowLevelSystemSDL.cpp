@@ -52,6 +52,7 @@
 
 #include "hpl1/engine/impl/LowLevelSystemSDL.h"
 #include "hpl1/engine/impl/SqScript.h"
+#include "hpl1/debug.h"
 
 //#include "SDL/SDL.h"
 
@@ -210,67 +211,31 @@ void SetLogFile(const tWString &asFile) {
 //-----------------------------------------------------------------------
 
 void FatalError(const char *fmt, ...) {
-#if 0
-  		char text[2048];
-		va_list ap;
-		if (fmt == NULL)
-			return;
-		va_start(ap, fmt);
-			vsprintf(text, fmt, ap);
-		va_end(ap);
-
-		tString sMess = "FATAL ERROR: ";
-		sMess += text;
-		gLogWriter.Write(sMess);
-
-#ifdef WIN32
-		MessageBox( NULL, cString::To16Char(text).c_str(), _W("FATAL ERROR"), MB_ICONERROR);
-#endif
-
-		exit(1);
-#endif
+	va_list vl; 
+	va_start(vl, fmt); 
+	error(fmt, vl); 
+	va_end(vl); 
 }
 
 void Error(const char *fmt, ...) {
-	char text[2048];
-	va_list ap;
-	if (fmt == NULL)
-		return;
-	va_start(ap, fmt);
-	vsprintf(text, fmt, ap);
-	va_end(ap);
-
-	tString sMess = "ERROR: ";
-	sMess += text;
-	gLogWriter.Write(sMess);
+	va_list vl; 
+	va_start(vl, fmt);
+	debugN(Hpl1::kDebugLevelError, fmt, vl); 
+	va_end(vl); 
 }
 
 void Warning(const char *fmt, ...) {
-	char text[2048];
-	va_list ap;
-	if (fmt == NULL)
-		return;
-	va_start(ap, fmt);
-	vsprintf(text, fmt, ap);
-	va_end(ap);
-
-	tString sMess = "WARNING: ";
-	sMess += text;
-	gLogWriter.Write(sMess);
+	va_list vl;
+	va_start(vl, fmt);
+	debugN(Hpl1::kDebugLevelWarning, fmt, vl);
+	va_end(vl); 
 }
 
 void Log(const char *fmt, ...) {
-	char text[2048];
-	va_list ap;
-	if (fmt == NULL)
-		return;
-	va_start(ap, fmt);
-	vsprintf(text, fmt, ap);
-	va_end(ap);
-
-	tString sMess = "";
-	sMess += text;
-	gLogWriter.Write(sMess);
+	va_list vl;
+	va_start(vl, fmt);
+	debugN(Hpl1::kDebugLevelLog, fmt, vl);
+	va_end(vl);
 }
 
 //-----------------------------------------------------------------------
