@@ -573,6 +573,7 @@ public:
 		palette = palette_;
 		sound = sound_;
 		soundRate = soundRate_;
+		soundStereo = false;
 		loseLevel = false;
 		selection = false;
 		jumpToTime = 0;
@@ -583,6 +584,7 @@ public:
 	Filename palette;
 	Filename sound;
 	uint32 soundRate;
+	bool soundStereo;
 	bool loseLevel;
 	bool selection;
 	uint32 jumpToTime;

@@ -199,10 +199,14 @@ hline: 	CTOK NUM {
 	}
 	| TATOK NUM FILENAME flag enc {
 		uint32 sampleRate = 11025;
+		bool stereo = false;
 		if (Common::String("22K") == $5 || Common::String("22k") == $5)
 			sampleRate = 22050;
+		if (Common::String("STEREO") == $4)
+			stereo = true;
 
 		ArcadeTransition at("", "", $3, sampleRate, $2);
+		at.soundStereo = stereo;
 		g_parsedArc->transitions.push_back(at);
 		debugC(1, kHypnoDebugParser, "Ta %d %s", $2, $3);
 	}

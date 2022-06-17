@@ -363,7 +363,7 @@ bool BoyzEngine::checkTransition(ArcadeTransitions &transitions, ArcadeShooting 
 			drawScreen();
 			drawCursorArcade(g_system->getEventManager()->getMousePos());
 		} else if (!at.sound.empty()) {
-			playSound(at.sound, 1, at.soundRate);
+			playSound(at.sound, 1, at.soundRate, at.soundStereo);
 		} else if (at.jumpToTime > 0) {
 			_background->decoder->forceSeekToFrame(at.jumpToTime);
 			_masks->decoder->forceSeekToFrame(at.jumpToTime);
