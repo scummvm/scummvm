@@ -1117,6 +1117,7 @@ void SpiderEngine::runFuseBox(Code *code) {
 
 		if (hfound && vfound) {
 			_nextLevel = code->levelIfWin;
+			_checkpoint = _nextLevel;
 			return;
 		}
 
