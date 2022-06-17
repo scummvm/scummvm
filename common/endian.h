@@ -583,6 +583,127 @@ inline void WRITE_BE_UINT24(void *ptr, uint32 value) {
 #define WRITE_UINT24(a,b) WRITE_BE_UINT24(a,b)
 #endif
 
+union SwapFloat {
+	float f;
+	uint32 u32;
+};
+
+STATIC_ASSERT(sizeof(float) == sizeof(uint32), Unexpected_size_of_float);
+
+inline float READ_LE_FLOAT32(const void *ptr) {
+	SwapFloat swap;
+	swap.u32 = READ_LE_UINT32(ptr);
+	return swap.f;
+}
+
+inline void WRITE_LE_FLOAT32(void *ptr, float value) {
+	SwapFloat swap;
+	swap.f = value;
+	WRITE_LE_UINT32(ptr, swap.u32);
+}
+
+inline float READ_BE_FLOAT32(const void *ptr) {
+	SwapFloat swap;
+	swap.u32 = READ_BE_UINT32(ptr);
+	return swap.f;
+}
+
+inline void WRITE_BE_FLOAT32(void *ptr, float value) {
+	SwapFloat swap;
+	swap.f = value;
+	WRITE_BE_UINT32(ptr, swap.u32);
+}
+
+#ifdef SCUMM_LITTLE_ENDIAN
+#define READ_FLOAT32(a) READ_LE_FLOAT32(a)
+#define WRITE_FLOAT32(a,b) WRITE_LE_FLOAT32(a,b)
+#else
+#define READ_FLOAT32(a) READ_BE_FLOAT32(a)
+#define WRITE_FLOAT32(a,b) WRITE_BE_FLOAT32(a,b)
+#endif
+
+#ifdef SCUMM_FLOAT_WORD_LITTLE_ENDIAN
+union SwapDouble {
+	double d;
+	uint64 u64;
+	struct {
+		uint32 low, high;
+	} u32;
+};
+#else
+union SwapDouble {
+	double d;
+	uint64 u64;
+	struct {
+		uint32 high, low;
+	} u32;
+};
+#endif
+
+#ifndef __DC__
+STATIC_ASSERT(sizeof(double) == sizeof(uint64), Unexpected_size_of_double);
+#endif
+
+inline double READ_LE_FLOAT64(const void *ptr) {
+	SwapDouble swap;
+	const uint8 *b = (const uint8 *)ptr;
+	swap.u32.low  = READ_LE_UINT32(b);
+	swap.u32.high = READ_LE_UINT32(b + 4);
+	return swap.d;
+}
+
+inline void WRITE_LE_FLOAT64(void *ptr, double value) {
+	SwapDouble swap;
+	swap.d = value;
+	uint8 *b = (uint8 *)ptr;
+	WRITE_LE_UINT32(b,     swap.u32.low);
+	WRITE_LE_UINT32(b + 4, swap.u32.high);
+}
+
+inline double READ_BE_FLOAT64(const void *ptr) {
+	SwapDouble swap;
+	const uint8 *b = (const uint8 *)ptr;
+	swap.u32.high = READ_BE_UINT32(b);
+	swap.u32.low  = READ_BE_UINT32(b + 4);
+	return swap.d;
+}
+
+inline void WRITE_BE_FLOAT64(void *ptr, double value) {
+	SwapDouble swap;
+	swap.d = value;
+	uint8 *b = (uint8 *)ptr;
+	WRITE_BE_UINT32(b,     swap.u32.high);
+	WRITE_BE_UINT32(b + 4, swap.u32.low);
+}
+
+inline double READ_FPA_FLOAT64(const void *ptr) {
+	SwapDouble swap;
+	const uint8 *b = (const uint8 *)ptr;
+	swap.u32.high = READ_LE_UINT32(b);
+	swap.u32.low  = READ_LE_UINT32(b + 4);
+	return swap.d;
+}
+
+inline void WRITE_FPA_FLOAT64(void *ptr, double value) {
+	SwapDouble swap;
+	swap.d = value;
+	uint8 *b = (uint8 *)ptr;
+	WRITE_LE_UINT32(b,     swap.u32.high);
+	WRITE_LE_UINT32(b + 4, swap.u32.low);
+}
+
+inline double READ_FLOAT64(const void *ptr) {
+	SwapDouble swap;
+	swap.u64 = READ_UINT64(ptr);
+	return swap.d;
+}
+
+inline void WRITE_FLOAT64(void *ptr, double value) {
+	SwapDouble swap;
+	swap.d = value;
+	WRITE_UINT64(ptr, swap.u64);
+}
+
 inline int16 READ_LE_INT16(const void *ptr) {
 	return static_cast<int16>(READ_LE_UINT16(ptr));
 }

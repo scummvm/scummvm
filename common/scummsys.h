@@ -300,6 +300,28 @@
 	#endif
 #endif
 
+#if !defined(SCUMM_FLOAT_WORD_LITTLE_ENDIAN) && !defined(SCUMM_FLOAT_WORD_BIG_ENDIAN)
+
+	#if defined(__ORDER_LITTLE_ENDIAN__) && defined(__ORDER_BIG_ENDIAN__) && defined(__FLOAT_WORD_ORDER__)
+
+		#if (__FLOAT_WORD_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+			#define SCUMM_FLOAT_WORD_LITTLE_ENDIAN
+		#elif (__FLOAT_WORD_ORDER__ == __ORDER_BIG_ENDIAN__)
+			#define SCUMM_FLOAT_WORD_BIG_ENDIAN
+		#else
+			#error Unsupported endianness
+		#endif
+
+	#else
+		#ifdef SCUMM_LITTLE_ENDIAN
+			#define SCUMM_FLOAT_WORD_LITTLE_ENDIAN
+		#else
+			#define SCUMM_FLOAT_WORD_BIG_ENDIAN
+		#endif
+
+	#endif
+#endif
+
 //
 // Some more system specific settings.
 // TODO/FIXME: All of these should be moved to backend specific files (such as portdefs.h)
