@@ -899,7 +899,7 @@ int tryLoading(GameInfo info, int dictStart, int loud) {
 			_G(_messages)[ct] = decompressText(ptr, ct);
 			if (loud)
 				debug("Message %d: \"%s\"\n", ct, _G(_messages)[ct].c_str());
-			if (_G(_messages)[ct] == nullptr)
+			if (_G(_messages)[ct].size() == 0)
 				return 0;
 			ct++;
 		}

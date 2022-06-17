@@ -1019,4 +1019,91 @@ const GameInfo _games[NUMGAMES] = {
 			 43,     // number_of_pictures;
 			 ZXOPT,  // palette
 			 0,      // picture_format_version;
-			 0)};
+			 0),
+	GameInfo("Robin of Sherwood",
+			 ROBIN_OF_SHERWOOD,
+			 SHERWOOD_VARIANT,       // type
+			 ENGLISH,                // subtype
+			 FOUR_LETTER_COMPRESSED, // dictionary type
+
+			 87,  // Number of items
+			 295, // Number of actions
+			 114, // Number of words
+			 93,  // Number of rooms
+			 10,  // Max carried items
+			 4,   // Word length
+			 98,  // Number of messages
+
+			 115, // number_of_verbs
+			 109, // number_of_nouns;
+
+			 0x3b5a, // header
+			 LATE,   // header style
+
+			 0,       // 0x3d99 room images, zero because it needs custom handling
+			 0x3db8,  // item flags
+			 FOLLOWS, // item images
+
+			 0x409b, // actions
+			 COMPRESSED,
+			 0x4dc3, // dictionary
+			 0,      // 0x9b53 start_of_room_descriptions, zero because of custom handling
+			 0x3e67, // start_of_room_connections
+			 0x5147, // start_of_messages
+			 0x5d65, // start_of_item_descriptions
+			 0x4d6b, // start_of_item_locations
+
+			 0x250b, // start_of_system_messages
+			 0x26b5, // start of directions
+
+			 0x614f, // start_of_characters
+			 0x66bf, // start_of_image_data
+			 0x6765, // image_address_offset
+			 83,     // number_of_pictures
+			 ZXOPT,  // palette
+			 4,      // picture_format_version
+			 0),
+	GameInfo("Robin of Sherwood C64",
+			 ROBIN_OF_SHERWOOD_C64,
+			 SHERWOOD_VARIANT,                    // type
+			 static_cast<Subtype>(ENGLISH | C64), // subtype
+			 FOUR_LETTER_COMPRESSED,              // dictionary type
+
+			 87,  // Number of items
+			 296, // Number of actions
+			 114, // Number of words
+			 93,  // Number of rooms
+			 10,  // Max carried items
+			 4,   // Word length
+			 98,  // Number of messages
+
+			 115, // number_of_verbs
+			 109, // number_of_nouns;
+
+			 0x1f85,           // header
+			 ROBIN_C64_HEADER, // header style
+
+			 0,       // room images, zero because it needs custom handling
+			 0x201c,  // item flags
+			 FOLLOWS, // item images
+
+			 0x252b, // actions
+			 COMPRESSED,
+			 0x320a, // dictionary
+			 0,      // 0x9b53 start_of_room_descriptions, zero because of custom handling
+			 0x20cc, // start_of_room_connections
+			 0x358e, // start_of_messages
+			 0x4215, // start_of_item_descriptions
+			 0x1fa5, // start_of_item_locations
+
+			 0x428, // start_of_system_messages
+			 0x428, // start of directions
+
+			 0x45ff, // start_of_characters
+			 0x4b6f, // start_of_image_data
+			 0x4c23, // image_address_offset
+			 90,     // number_of_pictures
+			 C64B,   // palette
+			 4,      // picture_format_version
+			 0)
+};

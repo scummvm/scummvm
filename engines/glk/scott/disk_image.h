@@ -135,6 +135,7 @@ void diAllocTs(DiskImage *di, TrackSector ts);
 
 int diRawnameFromName(byte *rawname, const char *name);
 
+RawDirEntry *findLargestFileEntry(DiskImage *di);
 DiskImage *diCreateFromData(uint8_t *data, int length);
 
 } // End of namespace Scott

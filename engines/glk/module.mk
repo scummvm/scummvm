@@ -250,6 +250,7 @@ MODULE_OBJS := \
 	scott/resource.o \
 	scott/restore_state.o \
 	scott/ring_buffer.o \
+	scott/robin_of_sherwood.o \
 	scott/saga_draw.o \
 	scott/scott.o \
 	scott/unp64/unp64.o \

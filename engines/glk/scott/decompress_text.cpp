@@ -59,7 +59,8 @@ int decompressOne(uint8_t *bytes) {
 
 char *decompressText(uint8_t *source, int stringIndex) {
 	// Lookup table
-	Common::String alphabet = " abcdefghijklmnopqrstuvwxyz'\x01,.\x00";
+	const char *alphabet = " abcdefghijklmnopqrstuvwxyz'\x01,.\x00";
+	//Common::String alphabet = " abcdefghijklmnopqrstuvwxyz'\x01,.\x00";
 
 	int pos, c, uppercase, i, j;
 	uint8_t decompressed[256];

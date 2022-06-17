@@ -338,6 +338,12 @@ void drawSagaPictureNumber(int pictureNumber) {
 	drawSagaPictureFromData(img._imageData, img._width, img._height, img._xOff, img._yOff);
 }
 
+void drawSagaPictureAtPos(int pictureNumber, int x, int y) {
+	Image img = _G(_images)[pictureNumber];
+
+	drawSagaPictureFromData(img._imageData, img._width, img._height, x, y);
+}
+
 void sagaSetup(size_t imgOffset) {
 	int32_t i, y;
 
@@ -466,6 +472,22 @@ void rectFill(int32_t x, int32_t y, int32_t width, int32_t height, int32_t color
 
 	g_scott->glk_window_fill_rect(_G(_graphics), glk_color, x * _G(_pixelSize) + _G(_xOffset),
 							   y * _G(_pixelSize) + yOffset, width * _G(_pixelSize), height * _G(_pixelSize));
+}
+
+void switchPalettes(int pal1, int pal2) {
+	uint8_t temp[3];
+
+	temp[0] = _G(_pal)[pal1][0];
+	temp[1] = _G(_pal)[pal1][1];
+	temp[2] = _G(_pal)[pal1][2];
+
+	_G(_pal)[pal1][0] = _G(_pal)[pal2][0];
+	_G(_pal)[pal1][1] = _G(_pal)[pal2][1];
+	_G(_pal)[pal1][2] = _G(_pal)[pal2][2];
+
+	_G(_pal)[pal2][0] = temp[0];
+	_G(_pal)[pal2][1] = temp[1];
+	_G(_pal)[pal2][2] = temp[2];
 }
 
 void setColor(int32_t index, RGB *colour) {
