@@ -93,74 +93,6 @@ int main(int argc, char *argv[]) {
 namespace hpl {
 
 //////////////////////////////////////////////////////////////////////////
-// LOG WRITER
-//////////////////////////////////////////////////////////////////////////
-
-//-----------------------------------------------------------------------
-
-static cLogWriter gLogWriter(_W("hpl.log"));
-static cLogWriter gUpdateLogWriter(_W("hpl_update.log"));
-
-//-----------------------------------------------------------------------
-
-cLogWriter::cLogWriter(const tWString &asFileName) {
-	msFileName = asFileName;
-}
-
-cLogWriter::~cLogWriter() {
-#if 0
-	if (mpFile)
-		fclose(mpFile);
-#endif
-}
-
-void cLogWriter::Write(const tString &asMessage) {
-#if 0
-	if (!mpFile)
-		ReopenFile();
-
-	if (mpFile) {
-		fprintf(mpFile, asMessage.c_str());
-		fflush(mpFile);
-	}
-#endif
-}
-
-void cLogWriter::Clear() {
-#if 0
-	ReopenFile();
-	if (mpFile)
-		fflush(mpFile);
-#endif
-}
-
-//-----------------------------------------------------------------------
-
-void cLogWriter::SetFileName(const tWString &asFile) {
-	if (msFileName == asFile)
-		return;
-
-	msFileName = asFile;
-	ReopenFile();
-}
-
-//-----------------------------------------------------------------------
-
-void cLogWriter::ReopenFile() {
-#if 0
-  		if(mpFile) fclose(mpFile);
-
-#ifdef WIN32
-			mpFile = _wfopen(msFileName.c_str(),_W("w"));
-#else
-			mpFile = fopen(cString::To8Char(msFileName).c_str(),"w");
-#endif
-#endif
-}
-
-//-----------------------------------------------------------------------
-
-//////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS
 //////////////////////////////////////////////////////////////////////////
 
@@ -204,12 +136,6 @@ cLowLevelSystemSDL::~cLowLevelSystemSDL() {
 
 //-----------------------------------------------------------------------
 
-void SetLogFile(const tWString &asFile) {
-	gLogWriter.SetFileName(asFile);
-}
-
-//-----------------------------------------------------------------------
-
 void FatalError(const char *fmt, ...) {
 	va_list vl; 
 	va_start(vl, fmt); 
@@ -241,22 +167,12 @@ void Log(const char *fmt, ...) {
 //-----------------------------------------------------------------------
 
 static bool gbUpdateLogIsActive;
-void SetUpdateLogFile(const tWString &asFile) {
-	gUpdateLogWriter.SetFileName(asFile);
-}
-
-void ClearUpdateLogFile() {
-	if (!gbUpdateLogIsActive)
-		return;
-
-	gUpdateLogWriter.Clear();
-}
-
 void SetUpdateLogActive(bool abX) {
 	gbUpdateLogIsActive = abX;
 }
 
 void LogUpdate(const char *fmt, ...) {
+#if 0
 	if (!gbUpdateLogIsActive)
 		return;
 
@@ -271,6 +187,7 @@ void LogUpdate(const char *fmt, ...) {
 	tString sMess = "";
 	sMess += text;
 	gUpdateLogWriter.Write(sMess);
+#endif
 }
 
 //-----------------------------------------------------------------------
