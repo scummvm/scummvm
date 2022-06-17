@@ -38,16 +38,43 @@ BlacksmithSellItem::BlacksmithSellItem() :
 void BlacksmithSellItem::draw() {
 	Location::draw();
 
-	writeString(23, 1, STRING["dialogs.blacksmith.backpack"]);
+	writeString(22, 1, STRING["dialogs.blacksmith.backpack"]);
 	drawItems();
 }
 
 void BlacksmithSellItem::drawItems() {
-	// TODO
+	// TODO: List items to sell
+	for (int idx = 0; idx < INVENTORY_COUNT; ++idx) {
+
+	}
 }
 
 void BlacksmithSellItem::selectItem(uint index) {
-	// TODO
+	Character &c = *g_globals->_currCharacter;
+	int itemIndex = index;
+
+	// Some slots may be empty, so we need to iterate
+	// until we found the index'ed filled in slot
+	for (index = 0; index < INVENTORY_COUNT ; ++index) {
+		if (c._backpack[index]) {
+			if (--itemIndex == 0)
+				break;
+		}
+	}
+	if (index == INVENTORY_COUNT)
+		return;
+
+	// Clear the slot
+	int itemId = c._backpack[index];
+	c._backpack[index] = 0;
+	int v14 = c._backpack14[index];
+	c._backpack14[index] = 0;
+
+	getItem(itemId);
+	if (!v14 && g_globals->_currItem._field14)
+		g_globals->_currItem._cost /= 2;
+
+	c._gold += g_globals->_currItem._cost / 2;
 }
 
 } // namespace Locations
