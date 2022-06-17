@@ -1422,10 +1422,6 @@ void ScummEngine_v5::o5_getDist() {
 	if (_game.id == GID_MONKEY2 && vm.slot[_currentScript].number == 40 && r < 60)
 		r = 60;
 
-	// WORKAROUND bug #1194
-	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_PASS) && o1 == 1 && o2 == 307 && vm.slot[_currentScript].number == 205 && r == 2)
-		r = 3;
-
 	setResult(r);
 }
 
