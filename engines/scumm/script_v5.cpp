@@ -1404,9 +1404,22 @@ void ScummEngine_v5::o5_isEqual() {
 	// are only played on type 5 soundcards. However, there is at least one
 	// other sound effect (the bartender spitting) which is only played on
 	// type 3 soundcards.
-
 	if (_game.id == GID_MONKEY2 && var == VAR_SOUNDCARD && b == 5)
 		b = a;
+
+	// WORKAROUND: The Ultimate Talkie edition of Monkey Island 2 doesn't
+	// check the proper objects when you sell back the hub cap and the
+	// pirate hat to the antique dealer on Booty Island, making Guybrush
+	// silent when he asks about these two particular objects.
+	//
+	// Not using `_enableEnhancements`, since this small oversight only
+	// exists in this fan-made edition which was made for enhancements.
+	if (_game.id == GID_MONKEY2 && _roomResource == 48 && vm.slot[_currentScript].number == 215 && a == vm.localvar[_currentScript][0] && strcmp(_game.variant, "SE Talkie") == 0) {
+		if (a == 550 && b == 530)
+			b = 550;
+		else if (a == 549 && b == 529)
+			b = 549;
+	}
 
 	// HACK: To allow demo script of Maniac Mansion V2
 	// The camera x position is only 100, instead of 180, after game title name scrolls.
