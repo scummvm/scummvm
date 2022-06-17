@@ -418,6 +418,8 @@ def punyencode_dir(
     dirs: List[Path] = []
     if source_encoding is not None:
         directory = Path(demojibake_hfs_bytestring(directory, source_encoding))
+    else:
+        directory = Path(os.fsdecode(directory))
     path_glob = directory.glob("**/*")
     for item in path_glob:
         if item.is_file():
