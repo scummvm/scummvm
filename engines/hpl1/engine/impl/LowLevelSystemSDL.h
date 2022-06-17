@@ -35,23 +35,6 @@ namespace hpl {
 
 //------------------------------------------------------
 
-class cLogWriter {
-public:
-	cLogWriter(const tWString &asDefaultFile);
-	~cLogWriter();
-
-	void Write(const tString &asMessage);
-	void Clear();
-
-	void SetFileName(const tWString &asFile);
-
-private:
-	void ReopenFile();
-	tWString msFileName;
-};
-
-//------------------------------------------------------
-
 class cScriptOutput // : public  asIOutputStream
 {
 public:

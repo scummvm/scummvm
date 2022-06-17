@@ -373,10 +373,6 @@ void cGame::Run() {
 			mbIsUpdated = true;
 
 			glClearUpdateCheck++;
-			if (glClearUpdateCheck % 500 == 0) {
-				if (mpUpdater->GetCurrentContainerName() == "Default")
-					ClearUpdateLogFile();
-			}
 
 			mfGameTime += GetStepSize();
 		}

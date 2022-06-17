@@ -61,8 +61,6 @@ extern void Error(const char *fmt, ...);
 extern void Warning(const char *fmt, ...);
 extern void Log(const char *fmt, ...);
 
-extern void SetUpdateLogFile(const tWString &asFile);
-extern void ClearUpdateLogFile();
 extern void SetUpdateLogActive(bool abX);
 extern void LogUpdate(const char *fmt, ...);
 
