@@ -30,7 +30,8 @@
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/LowLevelSystem.h"
 #include "hpl1/engine/system/String.h"
-#include <stdio.h>
+#include "common/file.h"
+#include "hpl1/debug.h"
 
 namespace hpl {
 
@@ -155,19 +156,23 @@ bool cSqScript::Run(int alHandle) {
 //-----------------------------------------------------------------------
 
 char *cSqScript::LoadCharBuffer(const tString &asFileName, int &alLength) {
-	FILE *pFile = fopen(asFileName.c_str(), "rb");
-	if (pFile == NULL) {
-		return NULL;
+	Common::File file; 
+	//FIXME: use proper string types
+	file.open(asFileName.c_str());
+	if(!file.isOpen()) {
+		debugCN(Hpl1::kDebugLevelError, Hpl1::kDebugFilePath, 
+			"script file at %s could not be opened", asFileName.c_str()); 
+		return nullptr;
 	}
-
-	int lLength = (int)Platform::FileLength(pFile);
-	alLength = lLength;
-
-	char *pBuffer = hplNewArray(char, lLength);
-	fread(pBuffer, lLength, 1, pFile);
-
-	fclose(pFile);
-
+	
+	alLength = file.size(); 
+	char *pBuffer = hplNewArray(char, alLength);
+	file.read(pBuffer, alLength);
+	if(file.err()) {
+		debugCN(Hpl1::kDebugLevelError, Hpl1::kDebugResourceLoading, 
+			"error in reading script file %s", asFileName.c_str()); 
+		return nullptr; 
+	}
 	return pBuffer;
 }
 
