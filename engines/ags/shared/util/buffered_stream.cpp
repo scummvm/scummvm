@@ -143,7 +143,7 @@ size_t BufferedStream::Write(const void *buffer, size_t size) {
 	while (size > 0) {
 		if (_position < _bufferPosition || // seeked before buffer pos
 			_position > _bufferPosition + _buffer.size() || // seeked beyond buffer pos
-			_position >= _bufferPosition + BufferSize) // seeked, or exceeded buffer limit
+			_position >= _bufferPosition + (soff_t) BufferSize) // seeked, or exceeded buffer limit
 		{
 			FlushBuffer(_position);
 		}

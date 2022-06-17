@@ -766,7 +766,7 @@ void draw_sprite_slot_support_alpha(Bitmap *ds, bool ds_has_alpha, int xpos, int
 	                          blend_mode, alpha);
 }
 
-Engine::IDriverDependantBitmap* recycle_ddb_sprite(Engine::IDriverDependantBitmap *ddb, int sprite_id, Shared::Bitmap *source, bool has_alpha, bool opaque) {
+Engine::IDriverDependantBitmap* recycle_ddb_sprite(Engine::IDriverDependantBitmap *ddb, uint32 sprite_id, Shared::Bitmap *source, bool has_alpha, bool opaque) {
 	// no ddb, - get or create shared object
 	if (!ddb)
 		return _G(gfxDriver)->GetSharedDDB(sprite_id, source, has_alpha, opaque);
