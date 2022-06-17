@@ -94,6 +94,8 @@ bool QuickRef::msgAction(const ActionMessage &msg) {
 	case KEYBIND_QUICKREF:
 		addView();
 		return true;
+	default:
+		break;
 	}
 
 	return false;

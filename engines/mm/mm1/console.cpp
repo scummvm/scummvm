@@ -131,7 +131,7 @@ bool Console::cmdMapString(int argc, const char **argv) {
 	Common::File f;
 
 	if (argc != 3) {
-		debugPrintf("%s <map Id> <offset>\n");
+		debugPrintf("%s <map Id> <offset>\n", argv[0]);
 	} else {
 		int mapId = strToInt(argv[1]);
 		Maps::Map *map = g_globals->_maps.getMap(mapId);
