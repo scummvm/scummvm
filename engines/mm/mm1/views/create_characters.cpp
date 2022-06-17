@@ -100,6 +100,8 @@ void CreateCharacters::NewCharacter::save() {
 		setHP(8);
 		re._v6c = 50;
 		break;
+	default:
+		break;
 	}
 
 	switch (_race) {

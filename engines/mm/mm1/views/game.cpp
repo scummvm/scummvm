@@ -55,6 +55,8 @@ bool Game::msgAction(const ActionMessage &msg) {
 	case KEYBIND_SEARCH:
 		MM1::Game::Search::execute();
 		break;
+	default:
+		break;
 	}
 
 	return TextView::msgAction(msg);
