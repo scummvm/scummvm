@@ -68,6 +68,22 @@ public:
 	reverse_iterator rend() {
 		return reverse_iterator(Common::List<T>::end());
 	}
+
+	void splice(typename Common::List<T>::iterator pos, list<T>& /*other*/, typename Common::List<T>::iterator it ) {
+		// We insert it before pos in this list
+		typename Common::List<T>::NodeBase *n = static_cast<typename Common::List<T>::NodeBase *>(it._node);
+		typename Common::List<T>::NodeBase *nPos = static_cast<typename Common::List<T>::NodeBase*>(pos._node);
+		if (n == nPos || n->_next == nPos)
+			return;
+		// Remove from current position
+		n->_prev->_next = n->_next;
+		n->_next->_prev = n->_prev;
+		// Insert in new position
+		n->_next = nPos;
+		n->_prev = nPos->_prev;
+		n->_prev->_next = n;
+		n->_next->_prev = n;
+	}
 };
 
 } // namespace std
