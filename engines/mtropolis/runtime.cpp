@@ -3937,8 +3937,8 @@ void Runtime::executeLowLevelSceneStateTransition(const LowLevelSceneStateTransi
 }
 
 void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structural> &targetScene) {
-	if (targetScene == _activeMainScene)
-		return;
+	// NOTE: Transitioning to the same scene is allowed, Obsidian relies on this to avoid getting stuck
+	// after going up the wrong side in the Bureau chapter final area (i.e. after reaching the sky face).
 
 	if (_sceneStack.size() == 0)
 		_sceneStack.resize(1);	// Reserve shared scene slot
@@ -3954,18 +3954,15 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 	bool sceneAlreadyInStack = false;
 	for (size_t i = _sceneStack.size() - 1; i > 0; i--) {
 		Common::SharedPtr<Structural> stackedScene = _sceneStack[i].scene;
-		if (stackedScene == targetScene) {
-			sceneAlreadyInStack = true;
-		} else {
-			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), true, true);
-			queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
-			_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
 
-			if (stackedScene == targetSharedScene)
-				error("Transitioned to a shared scene which was already on the stack as a normal scene.  This is not supported.");
+		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneEnded, 0), _activeMainScene.get(), true, true);
+		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentDisabled, 0), _activeMainScene.get(), true, true);
+		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeMainScene, LowLevelSceneStateTransitionAction::kUnload));
 
-			_sceneStack.remove_at(i);
-		}
+		if (stackedScene == targetSharedScene)
+			error("Transitioned to a shared scene which was already on the stack as a normal scene.  This is not supported.");
+
+		_sceneStack.remove_at(i);
 	}
 
 	if (targetSharedScene != _activeSharedScene) {
@@ -3985,7 +3982,7 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 		_sceneStack[0] = sharedSceneEntry;
 	}
 
-	if (!sceneAlreadyInStack) {
+	{
 		_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetScene, LowLevelSceneStateTransitionAction::kLoad));
 		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kParentEnabled, 0), targetScene.get(), true, true);
 		queueEventAsLowLevelSceneStateTransitionAction(Event::create(EventIDs::kSceneStarted, 0), targetScene.get(), true, true);
@@ -4049,7 +4046,7 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 	case HighLevelSceneTransition::kTypeChangeToScene: {
 			const Common::SharedPtr<Structural> targetScene = transition.scene;
 
-			if (transition.addToDestinationScene || !transition.addToReturnList) {
+			if (transition.addToDestinationScene || transition.addToReturnList) {
 				SceneReturnListEntry returnListEntry;
 				returnListEntry.isAddToDestinationSceneTransition = transition.addToDestinationScene;
 				returnListEntry.scene = _activeMainScene;
