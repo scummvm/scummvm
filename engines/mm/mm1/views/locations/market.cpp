@@ -33,8 +33,6 @@ namespace Locations {
 #define TOTAL_FOOD 40
 #define DISPLAY_TIMEOUT (3 * FRAME_RATE)
 
-static const byte FOOD_COST[4] = { 5, 10, 20, 200 };
-
 Market::Market() : Location("Market") {
 	_bounds = getLineBounds(21, 24);
 }

@@ -29,13 +29,6 @@ namespace MM1 {
 namespace Views {
 namespace Locations {
 
-static const int TRAINING_COSTS1[7] = {
-	25, 50, 100, 200, 400, 800, 1500
-};
-static const int TRAINING_COSTS2[7] = {
-	40, 75, 150, 300, 600, 1200, 2500
-};
-
 Training::Training() : Location("Training") {
 }
 

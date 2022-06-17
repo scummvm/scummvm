@@ -24,13 +24,14 @@
 
 #include "mm/mm1/data/char.h"
 #include "mm/mm1/views/locations/location.h"
+#include "mm/mm1/data/locations.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Locations {
 
-class Training : public Location {
+class Training : public Location, public TrainingData {
 private:
 	int _currLevel = 0;
 	CharacterClass _class = KNIGHT;

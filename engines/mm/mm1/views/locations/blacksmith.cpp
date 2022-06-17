@@ -66,35 +66,19 @@ bool Blacksmith::msgKeypress(const KeypressMessage &msg) {
 		_buyWeapons.addView();
 		break;
 	case Common::KEYCODE_b:
-		buyArmor();
+		_buyArmor.addView();
 		break;
 	case Common::KEYCODE_c:
-		buyMisc();
+		_buyMisc.addView();
 		break;
 	case Common::KEYCODE_d:
-		sellItem();
+		_sellItem.addView();
 		break;
 	default:
 		break;
 	}
 
 	return true;
-}
-
-void Blacksmith::buyWeapons() {
-	
-}
-
-void Blacksmith::buyArmor() {
-
-}
-
-void Blacksmith::buyMisc() {
-
-}
-
-void Blacksmith::sellItem() {
-
 }
 
 } // namespace Locations

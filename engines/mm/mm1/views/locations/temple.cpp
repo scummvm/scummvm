@@ -30,15 +30,6 @@ namespace MM1 {
 namespace Views {
 namespace Locations {
 
-static const uint16 HEAL_COST1[5] = { 2000, 5000, 5000, 2000, 8000 };
-static const uint16 HEAL_COST2[5] = { 200, 500, 500, 200, 1000 };
-static const uint16 HEAL_COST3[5] = { 25, 50, 50, 25, 100 };
-static const uint16 UNCURSE_COST[5] = { 500, 1000, 1000, 1012, 1500 };
-static const uint16 ALIGNMENT_COST[5] = { 250, 200, 200, 200, 250 };
-static const uint16 DONATE_COST[5] = { 100, 100, 100, 25, 200 };
-static const byte ALIGNMENT_VALS[3] = { 8, 0x10, 0x18 };
-static const byte DONATE_VALS[5] = { 1, 2, 4, 8, 0x10 };
-
 Temple::Temple() : Location("Temple") {
 }
 

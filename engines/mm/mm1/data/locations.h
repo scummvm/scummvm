@@ -19,45 +19,38 @@
  *
  */
 
-#ifndef MM1_VIEWS_LOCATIONS_TEMPLE_H
-#define MM1_VIEWS_LOCATIONS_TEMPLE_H
+#ifndef MM1_DATA_LOCATIONS_H
+#define MM1_DATA_LOCATIONS_H
 
-#include "mm/mm1/views/locations/location.h"
-#include "mm/mm1/data/locations.h"
+#include "common/serializer.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
-namespace Locations {
 
-class Temple : public Location, public TempleData {
-private:
-	bool _isEradicated = false;
-	int _healCost = 0, _uncurseCost = 0;
-	int _alignmentCost = 0, _donateCost = 0;
-private:
-	void restoreHealth();
-	void uncurseItems();
-	void restoreAlignment();
-	void donate();
-
-protected:
-	/**
-	 * Change character
-	 */
-	void changeCharacter(uint index) override;
-
-public:
-	Temple();
-	virtual ~Temple() {}
-
-	bool msgFocus(const FocusMessage &msg) override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-	void draw() override;
+struct MarketData {
+	const byte FOOD_COST[4] = { 5, 10, 20, 200 };
 };
 
-} // namespace Locations
-} // namespace Views
+struct TempleData {
+	const uint16 HEAL_COST1[5] = { 2000, 5000, 5000, 2000, 8000 };
+	const uint16 HEAL_COST2[5] = { 200, 500, 500, 200, 1000 };
+	const uint16 HEAL_COST3[5] = { 25, 50, 50, 25, 100 };
+	const uint16 UNCURSE_COST[5] = { 500, 1000, 1000, 1012, 1500 };
+	const uint16 ALIGNMENT_COST[5] = { 250, 200, 200, 200, 250 };
+	const uint16 DONATE_COST[5] = { 100, 100, 100, 25, 200 };
+	const byte ALIGNMENT_VALS[3] = { 8, 0x10, 0x18 };
+	const byte DONATE_VALS[5] = { 1, 2, 4, 8, 0x10 };
+};
+
+struct TrainingData {
+	const int TRAINING_COSTS1[7] = {
+		25, 50, 100, 200, 400, 800, 1500
+	};
+	const int TRAINING_COSTS2[7] = {
+		40, 75, 150, 300, 600, 1200, 2500
+	};
+};
+
 } // namespace MM1
 } // namespace MM
 
