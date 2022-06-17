@@ -87,8 +87,8 @@ struct InfoMessage : public Message {
 		Line() {}
 		Line(const Common::String &text) :
 			Common::Point(-1, -1), _text(text) {}
-		Line(int x, int y, const Common::String &text) :
-			Common::Point(x, y), _text(text) {}
+		Line(int x1, int y1, const Common::String &text) :
+			Common::Point(x1, y1), _text(text) {}
 	};
 	Common::Array<Line> _lines;
 	YNCallback _ynCallback = nullptr;
