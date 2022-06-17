@@ -791,6 +791,10 @@ void BoyzEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
 		_background->decoder->forceSeekToFrame(missedAnimation);
 		_masks->decoder->forceSeekToFrame(missedAnimation);
 	}
+
+	if (s->attackFrames.size() > 0 && s->attackFrames.front() == 0)
+		return;
+
 	if (!s->nonHostile)
 		hitPlayer();
 }
