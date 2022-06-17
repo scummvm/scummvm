@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-16 21:46+0100\n"
-"PO-Revision-Date: 2022-06-16 20:53+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2022-06-17 12:28+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -4372,7 +4372,7 @@ msgstr "Incarner Olmec"
 
 #: engines/asylum/metaengine.cpp:144
 msgid "Open character inventory"
-msgstr "Ouvrir l'inventaire"
+msgstr "Ouvrir l'inventaire du personnage"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
