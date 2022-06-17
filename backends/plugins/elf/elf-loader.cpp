@@ -171,7 +171,7 @@ bool DLObject::loadSegment(Elf32_Phdr *phdr) {
 	_segment = (byte *)allocateMemory(phdr->p_align, phdr->p_memsz);
 
 	if (!_segment) {
-		warning("elfloader: Out of memory.");
+		warning("elfloader: Could not allocate %d bytes for the segment", phdr->p_memsz);
 		return false;
 	}
 
@@ -209,7 +209,7 @@ Elf32_Shdr * DLObject::loadSectionHeaders(Elf32_Ehdr *ehdr) {
 
 	// Allocate memory for section headers
 	if (!(shdr = (Elf32_Shdr *)malloc(ehdr->e_shnum * sizeof(*shdr)))) {
-		warning("elfloader: Out of memory.");
+		warning("elfloader: Could not allocate %ld bytes for the section headers", ehdr->e_shnum * sizeof(*shdr));
 		return 0;
 	}
 
@@ -258,7 +258,7 @@ int DLObject::loadSymbolTable(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 
 	// Allocate memory for symbol table
 	if (!(_symtab = (Elf32_Sym *)malloc(shdr[_symtab_sect].sh_size))) {
-		warning("elfloader: Out of memory.");
+		warning("elfloader: Could not allocate %d bytes for the symbol table", shdr[_symtab_sect].sh_size);
 		return -1;
 	}
 
@@ -286,7 +286,7 @@ bool DLObject::loadStringTable(Elf32_Shdr *shdr) {
 
 	// Allocate memory for string table
 	if (!(_strtab = (char *)malloc(shdr[string_sect].sh_size))) {
-		warning("elfloader: Out of memory.");
+		warning("elfloader: Could not allocate %d bytes for the string table", shdr[string_sect].sh_size);
 		return false;
 	}
 

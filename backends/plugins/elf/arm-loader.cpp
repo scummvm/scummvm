@@ -32,7 +32,7 @@ bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 
 	// Allocate memory for relocation table
 	if (!(rel = (Elf32_Rel *)malloc(size))) {
-		warning("elfloader: Out of memory.");
+		warning("elfloader: Could not allocate %d bytes for the relocation table", size);
 		return false;
 	}
 
