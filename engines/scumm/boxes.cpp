@@ -543,13 +543,13 @@ bool ScummEngine::checkXYInBoxBounds(int boxnum, int x, int y) {
 	// Corner case: If the box is a simple line segment, we consider the
 	// point to be contained "in" (or rather, lying on) the line if it
 	// is very close to its projection to the line segment.
-	// Update: It can cause bugs like #13366 if used for games where this
-	// code isn't actually present in the original interpreter. I have
+	// Update: It can cause bugs like #1194/#13366 if used for games where
+	// this code isn't actually present in the original interpreter. I have
 	// checked disasm for LOOM FM-TOWNS and DOS EGA, ZAK FM-TOWNS, INDY3
 	// FM-TOWNS and DOS VGA and also LOOM DOS VGA (v4). MI2 does have the
 	// these lines, so that's probably the origin of our code. So it seems
 	// safe to assume that it does not belong in any game before SCUMM5.
-	// I have also checked ZAK DOS to verify that the earliy games don't
+	// I have also checked ZAK DOS to verify that the early games don't
 	// even have/use the whole function checkXYInBoxBounds(), so we're
 	// doing that correctly.
 	if (_game.version > 4) {
