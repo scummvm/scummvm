@@ -4237,38 +4237,40 @@ void Runtime::recursiveFindMouseCollision(Structural *&bestResult, int32 &bestLa
 		Element *element = static_cast<Element *>(candidate);
 		if (element->isVisual()) {
 			VisualElement *visual = static_cast<VisualElement *>(candidate);
-			int layer = visual->getLayer();
-			bool isDirect = visual->isDirectToScreen();
 
-			// Layering priority:
-			bool isInFront = false;
-			if (isDirect && !bestDirect)
-				isInFront = true;
-			else if (isDirect == bestDirect) {
-				if (layer > bestLayer)
+			if (visual->isVisible()) {
+				int layer = visual->getLayer();
+				bool isDirect = visual->isDirectToScreen();
+
+				// Layering priority:
+				bool isInFront = false;
+				if (isDirect && !bestDirect)
 					isInFront = true;
-				else if (layer == bestLayer) {
-					if (stackHeight > bestStackHeight)
+				else if (isDirect == bestDirect) {
+					if (layer > bestLayer)
 						isInFront = true;
+					else if (layer == bestLayer) {
+						if (stackHeight > bestStackHeight)
+							isInFront = true;
+					}
+				}
+
+				if (isInFront && visual->isMouseInsideBox(relativeX, relativeY) && isStructuralMouseInteractive(visual, testType) && visual->isMouseCollisionAtPoint(relativeX, relativeY)) {
+					bestResult = candidate;
+					bestLayer = layer;
+					bestStackHeight = stackHeight;
+					bestDirect = isDirect;
 				}
 			}
 
-			if (isInFront && visual->isMouseInsideBox(relativeX, relativeY) && isStructuralMouseInteractive(visual, testType) && visual->isMouseCollisionAtPoint(relativeX, relativeY)) {
-				bestResult = candidate;
-				bestLayer = layer;
-				bestStackHeight = stackHeight;
-				bestDirect = isDirect;
-			}
-
+			// Need to check: Does hiding an element also hide its children?
 			childRelativeX -= visual->getRelativeRect().left;
 			childRelativeY -= visual->getRelativeRect().top;
 		}
 	}
 
-
-	for (const Common::SharedPtr<Structural> &child : candidate->getChildren()) {
+	for (const Common::SharedPtr<Structural> &child : candidate->getChildren())
 		recursiveFindMouseCollision(bestResult, bestLayer, bestStackHeight, bestDirect, child.get(), stackHeight, childRelativeX, childRelativeY, testType);
-	}
 }
 
 void Runtime::queueEventAsLowLevelSceneStateTransitionAction(const Event &evt, Structural *root, bool cascade, bool relay) {
