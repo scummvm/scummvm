@@ -86,7 +86,6 @@ Controls can also be manually configured in the :doc:`Keymaps tab <../settings/k
         Short press system Back button, "Skip, or Cancel/Quit in the Launcher"
         Long press system Menu button, Opens/closes Virtual keyboard
         Short press system Menu button, Opens Global Main Menu
-        Small keyboard icon (top right), Opens/closes Virtual keyboard
         D-pad up/down/left/right, Mouse movement
         D-pad center, Left mouse button click
         Trackball movement, Mouse movement
@@ -94,11 +93,17 @@ Controls can also be manually configured in the :doc:`Keymaps tab <../settings/k
 
 Touch controls
 ****************
-The touch control scheme can be switched in the global settings. From the Launcher, go to **Options > Backend > Touchpad mouse mode**.
+The touch control scheme can be configured in the global settings. From the Launcher, go to **Options > Backend > Choose the preferred touch mode**.
+It's possible to configure the touch mode for three situations (ScummVM menus, 2D games and 3D games) and choose one of the three possible modes:
 
-    - When touchpad mouse mode is off (default), the touch controls are direct. The pointer jumps to where the finger touches the screen.
-    - When touchpad mouse mode is on, the touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad.
+    - Direct mouse, the touch controls are direct. The pointer jumps to where the finger touches the screen (default for menus).
+    - Touchpad emulation, the touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad.
+    - Gamepad emulation, the touch controls don't move any mouse. The fingers must be placed on lower left and right of the screen and respectively emulate a directional pad and action buttons.
     - The pointer speed setting in the :doc:`Controls tab <../settings/control>` affects how far the pointer moves in response to a finger movement.
+
+The touch mode can be switched at anytime by tapping on the controller icon, next to the menu icon at the top right of the screen.
+
+To display or hide the small controller icon, from the Launcher select **Options** and then the **Backend** tab. Tick the **Show on-screen control** box to enable the controller icon.
 
 Two finger tap
 ^^^^^^^^^^^^^^^^^
@@ -125,10 +130,7 @@ To display or hide the small menu icon, from the Launcher select **Options** and
 Virtual keyboard
 ^^^^^^^^^^^^^^^^^^^^^
 
-To open the virtual keyboard, tap on the small keyboard icon at the top right of the screen, or tap on any editable text field. To hide the virtual keyboard, tap the small keyboard icon again, or tap outside the text field.
-
-To display or hide the small keyboard icon, from the Launcher select **Options** and then the **Backend** tab. Tick the **Show on-screen control** box to enable the keyboard icon.
-
+To open the virtual keyboard, long press on the small controller icon at the top right of the screen, or tap on any editable text field. To hide the virtual keyboard, tap the small controller icon (which became a keyboard one) again, or tap outside the text field.
 
 Paths
 =======
