@@ -3951,7 +3951,6 @@ void Runtime::executeCompleteTransitionToScene(const Common::SharedPtr<Structura
 	if (_activeMainScene == targetSharedScene)
 		error("Transitioned into scene currently being used as a target scene, this is not supported");
 
-	bool sceneAlreadyInStack = false;
 	for (size_t i = _sceneStack.size() - 1; i > 0; i--) {
 		Common::SharedPtr<Structural> stackedScene = _sceneStack[i].scene;
 
