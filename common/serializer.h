@@ -128,8 +128,9 @@ public:
 	SYNC_AS(Sint32BE, int32, 4)
 	SYNC_AS(FloatLE, float, 4)
 	SYNC_AS(FloatBE, float, 4)
-	SYNC_AS(DoubleLE, double, 4)
-	SYNC_AS(DoubleBE, double, 4)
+
+	SYNC_AS(DoubleLE, double, 8)
+	SYNC_AS(DoubleBE, double, 8)
 
 	/**
 	 * Returns true if an I/O failure occurred.
