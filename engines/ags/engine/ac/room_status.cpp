@@ -134,7 +134,7 @@ void RoomStatus::ReadFromSavegame(Stream *in, int save_ver) {
 	obj.resize(numobj);
 	objProps.resize(numobj);
 	intrObject.resize(numobj);
-	for (size_t i = 0; i < numobj; ++i) {
+	for (int i = 0; i < numobj; ++i) {
 		obj[i].ReadFromSavegame(in, save_ver);
 		Properties::ReadValues(objProps[i], in);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
@@ -171,7 +171,7 @@ void RoomStatus::ReadFromSavegame(Stream *in, int save_ver) {
 void RoomStatus::WriteToSavegame(Stream *out) const {
 	out->WriteInt8(beenhere);
 	out->WriteInt32(numobj);
-	for (size_t i = 0; i < numobj; ++i) {
+	for (int i = 0; i < numobj; ++i) {
 		obj[i].WriteToSavegame(out);
 		Properties::WriteValues(objProps[i], out);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
