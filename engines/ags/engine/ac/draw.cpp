@@ -766,7 +766,7 @@ void draw_sprite_slot_support_alpha(Bitmap *ds, bool ds_has_alpha, int xpos, int
 	                          blend_mode, alpha);
 }
 
-Engine::IDriverDependantBitmap* recycle_ddb_sprite(Engine::IDriverDependantBitmap *ddb, uint32 sprite_id, Shared::Bitmap *source, bool has_alpha, bool opaque) {
+Engine::IDriverDependantBitmap* recycle_ddb_sprite(Engine::IDriverDependantBitmap *ddb, uint32_t sprite_id, Shared::Bitmap *source, bool has_alpha, bool opaque) {
 	// no ddb, - get or create shared object
 	if (!ddb)
 		return _G(gfxDriver)->GetSharedDDB(sprite_id, source, has_alpha, opaque);
@@ -1316,7 +1316,7 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 void prepare_objects_for_drawing() {
 	_G(our_eip) = 32;
 
-	for (int aa = 0; aa < _G(croom)->numobj; aa++) {
+	for (uint32_t aa = 0; aa < _G(croom)->numobj; aa++) {
 		if (_G(objs)[aa].on != 1) continue;
 		// offscreen, don't draw
 		if ((_G(objs)[aa].x >= _GP(thisroom).Width) || (_G(objs)[aa].y < 1))
@@ -1724,7 +1724,7 @@ void prepare_room_sprites() {
 			_G(our_eip) = 34;
 
 			if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
-				for (int wb = 1 /* 0 is "no area" */;
+				for (size_t wb = 1 /* 0 is "no area" */;
 					(wb < MAX_WALK_BEHINDS) && (wb < (int)_GP(walkbehindobj).size()); ++wb) {
 					const auto &wbobj = _GP(walkbehindobj)[wb];
 					if (wbobj.Ddb) {

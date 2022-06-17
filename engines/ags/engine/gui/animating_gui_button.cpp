@@ -66,7 +66,7 @@ void AnimatingGUIButton::WriteToSavegame(Stream *out) {
 	out->WriteInt16(speed);
 	out->WriteInt16(anim_flags); // was repeat (0,1)
 	out->WriteInt16(wait);
-	out->WriteInt8(volume);
+	out->WriteInt8(static_cast<uint8_t>(volume));
 	out->WriteInt8(0); // reserved to fill int32
 	out->WriteInt8(0);
 	out->WriteInt8(0);

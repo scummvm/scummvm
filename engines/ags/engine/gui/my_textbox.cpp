@@ -67,10 +67,10 @@ int MyTextBox::processmessage(int mcode, int wParam, NumberPtr lParam) {
 		strcpy((char *)lParam._ptr, text); // FIXME! dangerous
 	else if (mcode == CTB_KEYPRESS) {
 		// NOTE: this deprecated control does not support UTF-8
-		//int key = wParam;
+		int key = wParam;
 		int uchar = lParam;
 		size_t len = strlen(text);
-		if (wParam == eAGSKeyCodeBackspace) {
+		if (key == eAGSKeyCodeBackspace) {
 			if (len > 0)
 				text[len - 1] = 0;
 			drawandmouse();

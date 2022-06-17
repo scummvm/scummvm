@@ -179,7 +179,7 @@ public:
 	void UpdateDDBFromBitmap(IDriverDependantBitmap *ddb, Bitmap *bitmap, bool hasAlpha) override;
 	void DestroyDDB(IDriverDependantBitmap *ddb) override;
 
-	IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id,
+	IDriverDependantBitmap *GetSharedDDB(uint32_t /*sprite_id*/,
 		Bitmap *bitmap, bool hasAlpha, bool opaque) override {
 		// Software renderer does not require a texture cache, because it uses bitmaps directly
 		return CreateDDBFromBitmap(bitmap, hasAlpha, opaque);

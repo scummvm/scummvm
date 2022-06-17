@@ -134,10 +134,9 @@ Bitmap *prepare_walkable_areas(int sourceChar) {
 	else if (_GP(game).chars[sourceChar].flags & CHF_NOBLOCKING)
 		return _G(walkable_areas_temp);
 
-	int ww;
 	// for each character in the current room, make the area under
 	// them unwalkable
-	for (ww = 0; ww < _GP(game).numcharacters; ww++) {
+	for (int ww = 0; ww < _GP(game).numcharacters; ww++) {
 		if (_GP(game).chars[ww].on != 1) continue;
 		if (_GP(game).chars[ww].room != _G(displayed_room)) continue;
 		if (ww == sourceChar) continue;
@@ -159,7 +158,7 @@ Bitmap *prepare_walkable_areas(int sourceChar) {
 
 	// check for any blocking objects in the room, and deal with them
 	// as well
-	for (ww = 0; ww < _G(croom)->numobj; ww++) {
+	for (uint32_t ww = 0; ww < _G(croom)->numobj; ww++) {
 		if (_G(objs)[ww].on != 1) continue;
 		if ((_G(objs)[ww].flags & OBJF_SOLID) == 0)
 			continue;

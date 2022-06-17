@@ -61,7 +61,7 @@ bool GUISlider::IsOverControl(int x, int y, int leeway) const {
 	return _cachedHandle.IsInside(Point(x, y));
 }
 
-Rect GUISlider::CalcGraphicRect(bool clipped) {
+Rect GUISlider::CalcGraphicRect(bool /*clipped*/) {
 	// Sliders are never clipped as of 3.6.0
 	// TODO: precalculate everything on width/height/graphic change!!
 	UpdateMetrics();

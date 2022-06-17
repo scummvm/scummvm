@@ -341,14 +341,13 @@ bool run_service_key_controls(KeyInput &out_key) {
 	if ((agskey == eAGSKeyCodeCtrlD) && (_GP(play).debug_mode > 0)) {
 		// ctrl+D - show info
 		char infobuf[900];
-		int ff;
 		sprintf(infobuf, "In room %d %s[Player at %d, %d (view %d, loop %d, frame %d)%s%s%s",
 		        _G(displayed_room), (_G(noWalkBehindsAtAll) ? "(has no walk-behinds)" : ""), _G(playerchar)->x, _G(playerchar)->y,
 		        _G(playerchar)->view + 1, _G(playerchar)->loop, _G(playerchar)->frame,
 		        (IsGamePaused() == 0) ? "" : "[Game paused.",
 		        (_GP(play).ground_level_areas_disabled == 0) ? "" : "[Ground areas disabled.",
 		        (IsInterfaceEnabled() == 0) ? "[Game in Wait state" : "");
-		for (ff = 0; ff < _G(croom)->numobj; ff++) {
+		for (uint32_t ff = 0; ff < _G(croom)->numobj; ff++) {
 			if (ff >= 8) break; // buffer not big enough for more than 7
 			sprintf(&infobuf[strlen(infobuf)],
 			        "[Object %d: (%d,%d) size (%d x %d) on:%d moving:%s animating:%d slot:%d trnsp:%d clkble:%d",
@@ -363,7 +362,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 		Display(infobuf);
 		int chd = _GP(game).playercharacter;
 		char bigbuffer[STD_BUFFER_SIZE] = "CHARACTERS IN THIS ROOM:[";
-		for (ff = 0; ff < _GP(game).numcharacters; ff++) {
+		for (int ff = 0; ff < _GP(game).numcharacters; ff++) {
 			if (_GP(game).chars[ff].room != _G(displayed_room)) continue;
 			if (strlen(bigbuffer) > 430) {
 				strcat(bigbuffer, "and more...");

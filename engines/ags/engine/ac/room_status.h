@@ -51,7 +51,7 @@ struct HotspotState {
 // a room that could change
 struct RoomStatus {
 	int   beenhere = 0;
-	int   numobj = 0;
+	uint32_t numobj = 0;
 	std::vector<RoomObject> obj;
 	int   tsdatasize = 0;
 	char *tsdata = nullptr;

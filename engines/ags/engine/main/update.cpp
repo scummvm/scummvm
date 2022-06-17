@@ -179,7 +179,7 @@ void update_script_timers() {
 
 void update_cycling_views() {
 	// update graphics for object if cycling view
-	for (int i = 0; i < _G(croom)->numobj; ++i) {
+	for (uint32_t  i = 0; i < _G(croom)->numobj; ++i) {
 		_G(objs)[i].UpdateCyclingView(i);
 	}
 }
