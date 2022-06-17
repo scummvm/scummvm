@@ -216,7 +216,7 @@ Bitmap *SpriteCache::operator [] (sprkey_t index) {
 }
 
 void SpriteCache::FreeMem(size_t threshold) {
-	for (int tries = 0; (_mru.size() > 0) && (_cacheSize >= _maxCacheSize); ++tries) {
+	for (int tries = 0; (_mru.size() > 0) && (_cacheSize >= threshold); ++tries) {
 		DisposeOldest();
 		if (tries > 1000) { // ???
 			Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "RUNTIME CACHE ERROR: STUCK IN FREE_UP_MEM; RESETTING CACHE");
