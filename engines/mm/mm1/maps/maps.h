@@ -32,8 +32,8 @@ namespace MM1 {
 namespace Maps {
 
 enum TownId {
-	SORPIGAL = 1, PORTSMITH = 2, ALGARY = 3,
-	DUSK = 4, ERLIQUIN = 5
+	NO_TOWN = 0, SORPIGAL = 1, PORTSMITH = 2,
+	ALGARY = 3, DUSK = 4, ERLIQUIN = 5
 };
 
 enum DirMask {

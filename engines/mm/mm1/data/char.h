@@ -54,11 +54,6 @@ enum Condition {
 	DISEASED = 8,  SILENCED = 4, BLINDED = 2, ASLEEP = 1
 };
 
-enum Town {
-	NO_TOWN = 0, SORPIGAL = 1, PORTSMITH = 2, ALGARY = 3,
-	DUSK = 4, ERLIQUIN = 5
-};
-
 struct Character {
 	char _name[16] = { 0 };
 	Sex _sex = MALE;
