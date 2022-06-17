@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-06-16 21:46+0100\n"
-"PO-Revision-Date: 2022-06-14 17:59+0000\n"
+"PO-Revision-Date: 2022-06-17 14:04+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -4403,9 +4403,8 @@ msgid "Switch to Olmec"
 msgstr "Εναλλαγή σε Olmec"
 
 #: engines/asylum/metaengine.cpp:144
-#, fuzzy
 msgid "Open character inventory"
-msgstr "Άνοιγμα/Κλείσιμο Υπαρχόντων"
+msgstr "Άνοιγμα Υπαρχόντων"
 
 #. I18N: Warn user about loading potentially incompatible saved game
 #: engines/asylum/asylum.cpp:200
