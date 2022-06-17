@@ -30,8 +30,7 @@
 #include "hpl1/engine/resources/FileSearcher.h"
 #include "hpl1/engine/system/LowLevelSystem.h"
 #include "hpl1/engine/system/String.h"
-
-#include <stdio.h>
+#include "common/file.h"
 
 namespace hpl {
 
@@ -60,41 +59,19 @@ cConfigFile::~cConfigFile() {
 //-----------------------------------------------------------------------
 
 bool cConfigFile::Load() {
-#if 0
-#ifdef WIN32
-	FILE *pFile = _wfopen(msFile.c_str(), _W("rb"));
-#else
-	FILE *pFile = fopen(cString::To8Char(msFile).c_str(), "rb");
-#endif
-
-	bool bRet = mpXmlDoc->LoadFile(pFile);
-
-	if (pFile)
-		fclose(pFile);
-
-	return bRet;
-#endif
-	return false; 
+	Common::File cf;
+	//FIXME: use proper string types
+	cf.open(cString::To8Char(msFile).c_str()); 
+	return mpXmlDoc->LoadFile(cf);;
 }
 
 //-----------------------------------------------------------------------
 
 bool cConfigFile::Save() {
-#if 0
-#ifdef WIN32
-	FILE *pFile = _wfopen(msFile.c_str(), _W("w+"));
-#else
-	FILE *pFile = fopen(cString::To8Char(msFile).c_str(), "w+");
-#endif
-
-	bool bRet = mpXmlDoc->SaveFile(pFile);
-
-	if (pFile)
-		fclose(pFile);
-
-	return bRet;
-#endif
-	return false;
+	Common::DumpFile cf; 
+	//FIXME: use proper string types
+	cf.open(cString::To8Char(msFile).c_str()); 
+	return mpXmlDoc->SaveFile(cf);
 }
 
 //-----------------------------------------------------------------------
