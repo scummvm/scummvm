@@ -70,6 +70,11 @@ protected:
 	void notEnoughGold();
 
 	/**
+	 * Displays backpack is full
+	 */
+	void backpackFull();
+
+	/**
 	 * Set a delay countdown
 	 */
 	void delaySeconds(uint seconds);

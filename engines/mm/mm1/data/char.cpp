@@ -183,5 +183,28 @@ Character::LevelIncrease Character::increaseLevel() {
 	return result;
 }
 
+Character::BuyResult Character::buyItem(byte itemId) {
+	getItem(itemId);
+
+	// Check if backpack is full
+	int slotIndex = 0;
+	while (slotIndex < INVENTORY_COUNT && _backpack[slotIndex])
+		++slotIndex;
+	if (slotIndex == INVENTORY_COUNT)
+		return BUY_BACKPACK_FULL;
+
+	// Check character has enough gold
+	Item &item = g_globals->_currItem;
+	if (_gold < item._cost)
+		return BUY_NOT_ENOUGH_GOLD;
+
+	// Add the item
+	_gold -= item._cost;
+	_backpack[slotIndex] = itemId;
+	_backpack14[slotIndex] = item._field14;
+
+	return BUY_SUCCESS;
+}
+
 } // namespace MM1
 } // namespace MM

@@ -39,27 +39,6 @@ private:
 	BlacksmithBuyArmor _buyArmor;
 	BlacksmithBuyMisc _buyMisc;
 	BlacksmithSellItem _sellItem;
-private:
-	/**
-	 * Buy weapons
-	 */
-	void buyWeapons();
-
-	/**
-	 * Buy armor
-	 */
-	void buyArmor();
-
-	/**
-	 * Buy misc items
-	 */
-	void buyMisc();
-
-	/**
-	 * Sell an item
-	 */
-	void sellItem();
-
 public:
 	Blacksmith();
 	virtual ~Blacksmith() {}

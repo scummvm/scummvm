@@ -29,7 +29,13 @@ namespace MM1 {
 
 struct Item {
 	Common::String _name;
+	byte _enablement;
 	byte _field10;
+	byte _field11;
+	byte _field14;
+	uint16 _cost;
+	byte _field17;
+	byte _field18;
 };
 
 extern const Item ITEMS1[];

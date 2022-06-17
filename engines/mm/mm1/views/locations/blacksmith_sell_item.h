@@ -22,20 +22,27 @@
 #ifndef MM1_VIEWS_LOCATIONS_BLACKSMITH_SELL_ITEM_H
 #define MM1_VIEWS_LOCATIONS_BLACKSMITH_SELL_ITEM_H
 
-#include "mm/mm1/views/locations/location.h"
+#include "mm/mm1/views/locations/blacksmith_subview.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Locations {
 
-class BlacksmithSellItem : public Location {
+class BlacksmithSellItem : public BlacksmithSubview {
+private:
+	void drawItems();
+protected:
+	/**
+	 * Selects an item from the list
+	 */
+	void selectItem(uint index) override;
+
 public:
 	BlacksmithSellItem();
 	virtual ~BlacksmithSellItem() {}
 
 	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Locations

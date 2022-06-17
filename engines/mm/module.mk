@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	mm1/utils/strings.o \
 	mm1/views/locations/location.o \
 	mm1/views/locations/blacksmith.o \
+	mm1/views/locations/blacksmith_subview.o \
 	mm1/views/locations/blacksmith_buy_weapons.o \
 	mm1/views/locations/blacksmith_buy_armor.o \
 	mm1/views/locations/blacksmith_buy_misc.o \

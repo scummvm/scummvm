@@ -15,8 +15,11 @@ dialogs:
 		b: "B) BUY ARMOR"
 		c: "C) BUY MISC"
 		d: "D) SELL ITEM"
-		buy:
-			title: "WEAPONS     PRICE"
+		armor: "ARMOR      PRICE"
+		weapons: "WEAPONS     PRICE"
+		misc: "MISC       PRICE"
+		backpack: "BACKPACK     PRICE"
+		thankyou: "THANK YOU!"
 	create_characters:
 		title: "CREATE NEW CHARACTERS"
 		intellect: "INTELLECT...="
@@ -215,6 +218,7 @@ dialogs:
 		no_characters: "NO AVAILABLE CHARACTERS"
 		some_characters: "AVAILABLE CHARACTERS"
 		not_enough_gold: "*** NOT ENOUGH GOLD ***"
+		full: "*** BACKPACK FULL ***"
 stats:
 	none: "NONE"
 	inventory: "-----<EQUIPPED>----------<BACKPACK>----".

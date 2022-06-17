@@ -19,38 +19,45 @@
  *
  */
 
-#include "mm/mm1/views/locations/blacksmith_sell_item.h"
-#include "mm/mm1/events.h"
-#include "mm/mm1/globals.h"
-#include "mm/mm1/mm1.h"
-#include "mm/mm1/sound.h"
+#ifndef MM1_VIEWS_LOCATIONS_BLACKSMITH_SUBVIEW_H
+#define MM1_VIEWS_LOCATIONS_BLACKSMITH_SUBVIEW_H
+
+#include "mm/mm1/views/locations/location.h"
+#include "mm/mm1/data/locations.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Locations {
 
-BlacksmithSellItem::BlacksmithSellItem() :
-	BlacksmithSubview("BlacksmithSellItem") {
-	_modeString = STRING["dialogs.location.sell"];
-}
+class BlacksmithSubview : public Location, public BlacksmithData {
+protected:
+	const byte *_items = nullptr;
+private:
+	/**
+	 * For an item draws the character if the item is
+	 * not allowed for the character's class
+	 */
+	void drawIsAllowed();
+protected:
+	/**
+	 * Draws a list of items
+	 */
+	void drawItems();
 
-void BlacksmithSellItem::draw() {
-	Location::draw();
+	/**
+	 * Selects an item from the list
+	 */
+	virtual void selectItem(uint index);
+public:
+	BlacksmithSubview(const Common::String &name) : Location(name) {}
 
-	writeString(23, 1, STRING["dialogs.blacksmith.backpack"]);
-	drawItems();
-}
-
-void BlacksmithSellItem::drawItems() {
-	// TODO
-}
-
-void BlacksmithSellItem::selectItem(uint index) {
-	// TODO
-}
+	bool msgKeypress(const KeypressMessage &msg) override;
+};
 
 } // namespace Locations
 } // namespace Views
 } // namespace MM1
 } // namespace MM
+
+#endif

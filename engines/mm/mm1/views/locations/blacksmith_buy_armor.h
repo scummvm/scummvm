@@ -22,20 +22,21 @@
 #ifndef MM1_VIEWS_LOCATIONS_BLACKSMITH_BUY_ARMOR_H
 #define MM1_VIEWS_LOCATIONS_BLACKSMITH_BUY_ARMOR_H
 
-#include "mm/mm1/views/locations/location.h"
+#include "mm/mm1/views/locations/blacksmith_subview.h"
+#include "mm/mm1/data/locations.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Locations {
 
-class BlacksmithBuyArmor : public Location {
+class BlacksmithBuyArmor : public BlacksmithSubview, public BuyArmorData {
 public:
 	BlacksmithBuyArmor();
 	virtual ~BlacksmithBuyArmor() {}
 
 	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgFocus(const FocusMessage &msg) override;
 };
 
 } // namespace Locations
