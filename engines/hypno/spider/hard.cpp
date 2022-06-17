@@ -179,6 +179,7 @@ void SpiderEngine::runMatrix(Code *code) {
 			}
 
 			_nextLevel = code->levelIfWin;
+			_checkpoint = _nextLevel;
 			return;
 		}
 
@@ -509,6 +510,7 @@ void SpiderEngine::runNote(Code *code) {
 			}
 
 			_nextLevel = code->levelIfWin;
+			_checkpoint = _nextLevel;
 			return;
 		}
 
@@ -894,8 +896,10 @@ void SpiderEngine::runLock(Code *code) {
 				} else if (act.contains(mousePos)) {
 					if (_sceneState["GS_PUZZLELEVEL"] == 0 && comb[0] == 4 && comb[1] == 0 && comb[2] == 3 && comb[3] == 1 && comb[4] == 2) {
 						_nextLevel = code->levelIfWin;
+						_checkpoint = _nextLevel;
 					} else if (_sceneState["GS_PUZZLELEVEL"] == 1 && comb[0] == 1 && comb[1] == 3 && comb[2] == 4 && comb[3] == 2 && comb[4] == 0) {
 					 	_nextLevel = code->levelIfWin;
+						_checkpoint = _nextLevel;
 					}
 				}
 
