@@ -1368,7 +1368,8 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
 		break;
 	case kTheScriptNum:
-		warning("STUB: Lingo::getTheSprite(): Unprocessed getting field \"%s\" of sprite", field2str(field));
+		d.type = INT;
+		d.u.i = sprite->_scriptId.member;
 		break;
 	case kTheStartTime:
 		d.u.i = channel->_startTime;
