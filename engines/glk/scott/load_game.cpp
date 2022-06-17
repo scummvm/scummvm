@@ -46,6 +46,7 @@
 #include "glk/scott/game_specific.h"
 #include "glk/scott/resource.h"
 #include "glk/scott/load_game.h"
+#include "glk/scott/robin_of_sherwood.h"
 
 namespace Glk {
 namespace Scott {
@@ -128,6 +129,12 @@ void loadGameFile(Common::SeekableReadStream *f) {
 	}
 
 	switch (CURRENT_GAME) {
+	case ROBIN_OF_SHERWOOD:
+		loadExtraSherwoodData();
+		break;
+	case ROBIN_OF_SHERWOOD_C64:
+		loadExtraSherwoodData64();
+		break;
 	case HULK_C64:
 	case HULK:
 		for (int i = 0; i < 6; i++) {

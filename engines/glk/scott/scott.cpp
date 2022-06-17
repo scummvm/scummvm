@@ -45,6 +45,7 @@
 #include "glk/scott/line_drawing.h"
 #include "glk/scott/saga_draw.h"
 #include "glk/scott/restore_state.h"
+#include "glk/scott/robin_of_sherwood.h"
 
 namespace Glk {
 namespace Scott {
@@ -285,8 +286,7 @@ void Scott::updates(event_t ev) {
 	} else if (ev.type == evtype_Timer) {
 		switch (_G(_game->_type)) {
 		case SHERWOOD_VARIANT:
-			// TODO
-			// UpdateRobinOfSherwoodAnimations();
+			updateRobinOfSherwoodAnimations();
 			break;
 		case GREMLINS_VARIANT:
 			// TODO
@@ -1130,8 +1130,7 @@ ActionResultType Scott::performLine(int ct) {
 					break;
 				case ROBIN_OF_SHERWOOD:
 				case ROBIN_OF_SHERWOOD_C64:
-					// TODO
-					// SherwoodAction(p);
+					sherwoodAction(p);
 					break;
 				case GREMLINS:
 				case GREMLINS_SPANISH:
@@ -1727,8 +1726,7 @@ void Scott::drawRoomImage() {
 		return;
 	case ROBIN_OF_SHERWOOD:
 	case ROBIN_OF_SHERWOOD_C64:
-		// TODO
-		// RobinOfSherwoodLook();
+		robinOfSherwoodLook();
 		return;
 	case HULK:
 	case HULK_C64:

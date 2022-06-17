@@ -84,10 +84,34 @@ static C64Rec g_C64Registry[] = {
 	{ WAXWORKS_C64,		0x2ab00, 0x9eaa, TYPE_D64, 0 },
 	{ BATON_C64,		0x2ab00, 0x9dca, TYPE_D64, 2 },
 
+	{ ROBIN_OF_SHERWOOD_C64, 0x2ab00, 0xcf9e, TYPE_D64, 1, nullptr, nullptr, 0, 0x1802, 0xbd27, 0x2000 }, // Robin Of Sherwood D64 * unknown packer
+	{ ROBIN_OF_SHERWOOD_C64, 0xb2ef,  0x7c44, TYPE_T64, 1, nullptr, nullptr, 0, 0x9702, 0x9627, 0x2000 }, // Robin Of Sherwood C64 (T64) * TCS Cruncher v2.0
+	{ ROBIN_OF_SHERWOOD_C64, 0xb690,  0x7b61, TYPE_T64, 1, nullptr, nullptr, 0, 0x9702, 0x9627, 0x2000 }, // Robin Of Sherwood C64 (T64) alt * TCS Cruncher v2.0
+	{ ROBIN_OF_SHERWOOD_C64, 0x8db6,  0x7853, TYPE_T64, 1, nullptr, nullptr, 0, 0xd7fb, 0xbd20, 0x2000 }, // Robin Of Sherwood T64 alt 2 * PUCrunch
+
 	{ UNKNOWN_GAME, 0, 0, UNKNOWN_FILE_TYPE, 0, nullptr, nullptr, 0, 0, 0, 0 }
 };
 
 int decrunchC64(uint8_t **sf, size_t *extent, C64Rec entry);
+
+uint8_t *getLargestFile(uint8_t *data, int length, int *newlength) {
+	uint8_t *file = NULL;
+	*newlength = 0;
+	DiskImage *d64 = diCreateFromData(data, length);
+	if (d64) {
+		RawDirEntry *largest = findLargestFileEntry(d64);
+		if (largest) {
+			ImageFile *c64file = diOpen(d64, largest->_rawname, largest->_type, "rb");
+			if (c64file) {
+				int expectedsize = largest->_sizelo + largest->_sizehi * 0x100;
+				file = new uint8_t[expectedsize];
+				*newlength = diRead(c64file, file, 0xffff);
+			}
+		}
+		//di_free_image(d64);
+	}
+	return file;
+}
 
 uint8_t *getFileNamed(uint8_t* data, int length, int* newLength, const char* name) {
 	uint8_t *file = nullptr;
@@ -251,7 +275,49 @@ int detectC64(uint8_t **sf, size_t *extent) {
 	} else if (g_C64Registry[index]._id == FEASIBILITY_C64) {
 		return mysteriousMenu2(sf, extent, index);
 	}
-	return UNKNOWN_GAME;
+	if (g_C64Registry[index]._type == TYPE_D64) {
+		int newlength;
+		uint8_t *largest_file = getLargestFile(*sf, *extent, &newlength);
+		uint8_t *appendix = nullptr;
+		int appendixlen = 0;
+
+		if (g_C64Registry[index]._appendFile != nullptr) {
+			appendix = getFileNamed(*sf, *extent, &appendixlen, g_C64Registry[index]._appendFile);
+			if (appendix == nullptr)
+				error("detectC64(): Appending file failed");
+			appendixlen -= 2;
+		}
+
+		uint8_t *megabuf = new uint8_t[newlength + appendixlen];
+		memcpy(megabuf, largest_file, newlength);
+		if (appendix != nullptr) {
+			memcpy(megabuf + newlength + g_C64Registry[index]._parameter, appendix + 2, appendixlen);
+			newlength += appendixlen;
+		}
+
+		if (largest_file) {
+			*sf = megabuf;
+			*extent = newlength;
+		}
+
+	} else if (g_C64Registry[index]._type == TYPE_T64) {
+		uint8_t *file_records = *sf + 64;
+		int number_of_records = READ_LE_UINT16(&(*sf)[36]);
+		int offset = READ_LE_UINT16(&file_records[8]);
+		int start_addr = READ_LE_UINT16(&file_records[2]);
+		int end_addr = READ_LE_UINT16(&file_records[4]);
+		int size;
+		if (number_of_records == 1)
+			size = *extent - offset;
+		else
+			size = end_addr - start_addr;
+		uint8_t *first_file = new uint8_t[size + 2];
+		memcpy(first_file + 2, *sf + offset, size);
+		memcpy(first_file, file_records + 2, 2);
+		*sf = first_file;
+		*extent = size + 2;
+	}
+	return decrunchC64(sf, extent, g_C64Registry[index]);
 }
 
 size_t copyData(size_t dest, size_t source, uint8_t** data, size_t dataSize, size_t bytesToMove) {

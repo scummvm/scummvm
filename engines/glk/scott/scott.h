@@ -173,7 +173,6 @@ private:
 	Common::String readString(Common::SeekableReadStream *f);
 	void loadDatabase(Common::SeekableReadStream *f, bool loud);
 	void outputNumber(int a);
-	void look(void);
 	int whichWord(const char *word, const Common::StringArray &list);
 
 	ActionResultType performLine(int ct);
@@ -187,9 +186,7 @@ private:
 	void listExitsSpectrumStyle();
 	void listInventoryInUpperWindow();
 	int itemEndsWithPeriod(int item);
-	void closeGraphicsWindow();
 	winid_t findGlkWindowWithRock(glui32 rock);
-	void openGraphicsWindow();
 	glui32 optimalPictureSize(uint *width, uint *height);
 	void openTopWindow();
 	void cleanupAndExit();
@@ -227,6 +224,9 @@ public:
 	void updates(event_t ev);
 	const char *mapSynonym(int noun);
 	int performExtraCommand(int extraStopTime);
+	void look(void);
+	void openGraphicsWindow();
+	void closeGraphicsWindow();
 
 public:
 	/**

@@ -95,6 +95,7 @@ public:
 	int _roomSaved[16];   ///< Range unknown
 	uint32 _bitFlags = 0; ///< Might be >32 flags - I haven't seen >32 yet
 	int _autoInventory = 0;
+	int _animationFlag = 0;
 
 	// sagadraw
 	int _drawToBuffer = 0;
@@ -177,6 +178,9 @@ public:
 	int _byted011[2] = {0, 0};
 	int _retfire = 0xff;
 	int _retspace = 0xff;
+
+	// robin of sherwood]
+	uint8_t *_forestImages = nullptr;
 
 public:
 	Globals();

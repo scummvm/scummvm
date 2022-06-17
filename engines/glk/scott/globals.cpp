@@ -90,6 +90,8 @@ Globals::Globals() : _sys(MAX_SYSMESS), _directions(NUMBER_OF_DIRECTIONS), _extr
 	_md5Index.setVal("0eec511d3cde815c73e5464ab0cdbef9" ,22); // marveladventure
 	_md5Index.setVal("ce5a68cf43b2f29d99c0135b89f4fe31",  0); // misadv1
 	_md5Index.setVal("1e1ff48f80a8220f5ab9d14c975197b8",  6); // midadv2
+	_md5Index.setVal("6bf95a48f366bdf8af3a198c7b723c77", 12); // robin of sherwood
+	_md5Index.setVal("552c95ec15d750cbfa02c1f11dcbca1e", 15); // robin of sherwood
 }
 
 Globals::~Globals() {

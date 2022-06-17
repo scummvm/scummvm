@@ -39,24 +39,25 @@ namespace Scott {
 
 const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	// Scott Adams games
-	{ "adventureland",     "Adventureland" },
-	{ "pirateadventure",   "Pirate Adventure" },
-	{ "missionimpossible", "Mission Impossible" },
-	{ "voodoocastle",      "Voodoo Castle" },
-	{ "thecount",          "The Count" },
-	{ "strangeodyssey",    "Strange Odyssey" },
-	{ "mysteryfunhouse",   "Mystery Fun House" },
-	{ "pyramidofdoom",     "Pyramid Of Doom" },
-	{ "ghosttown",         "Ghost Town" },
-	{ "savageisland1",     "Savage Island, Part 1" },
-	{ "savageisland2",     "Savage Island, Part 2" },
-	{ "goldenvoyage",      "The Golden Voyage" },
-	{ "claymorguesorcerer","Sorcerer of Claymorgue Castle" },
-	{ "pirateisle",        "Return to Pirate Isle" },
-	{ "buckaroobanzai",    "Buckaroo Banzai" },
-	{ "marveladventure",   "Marvel Adventure #1" },
-	{ "marveladventure2",  "Marvel Adventure #2" },
-	{ "scottsampler",      "Adventure International's Mini-Adventure Sampler" },
+	{ "adventureland",		"Adventureland" },
+	{ "pirateadventure",	"Pirate Adventure" },
+	{ "missionimpossible",	"Mission Impossible" },
+	{ "voodoocastle",		"Voodoo Castle" },
+	{ "thecount",			"The Count" },
+	{ "strangeodyssey",		"Strange Odyssey" },
+	{ "mysteryfunhouse",	"Mystery Fun House" },
+	{ "pyramidofdoom",		"Pyramid Of Doom" },
+	{ "ghosttown",			"Ghost Town" },
+	{ "savageisland1",		"Savage Island, Part 1" },
+	{ "savageisland2",		"Savage Island, Part 2" },
+	{ "goldenvoyage",		"The Golden Voyage" },
+	{ "claymorguesorcerer",	"Sorcerer of Claymorgue Castle" },
+	{ "pirateisle",			"Return to Pirate Isle" },
+	{ "buckaroobanzai",		"Buckaroo Banzai" },
+	{ "marveladventure",	"Marvel Adventure #1" },
+	{ "marveladventure2",	"Marvel Adventure #2" },
+	{ "scottsampler",		"Adventure International's Mini-Adventure Sampler" },
+	{ "robinofsherwood",	"Robin Of Sherwood" },
 
 	// 11 Mysterious Adventures by Brian Howarth
 	{ "goldenbaton", "Mysterious Adventures 1: The Golden Baton" },
@@ -177,6 +178,8 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRY1("waxworks11",		"ZXSpectrum", "6c6fbbbb50032463a6ea71c6750ea1f5", 32662),
 
 	// C64 Games
+	DT_ENTRY1("robinofsherwood", "C64", "6bf95a48f366bdf8af3a198c7b723c77", 174848),
+	DT_ENTRY1("robinofsherwood", "C64", "552c95ec15d750cbfa02c1f11dcbca1e", 36278),
 	// 11 Mysterious Adventures
 	DT_ENTRY1("mysadv1", "C64", "ce5a68cf43b2f29d99c0135b89f4fe31", 174848),
 	DT_ENTRY1("mysadv2", "C64", "1e1ff48f80a8220f5ab9d14c975197b8", 174848),
