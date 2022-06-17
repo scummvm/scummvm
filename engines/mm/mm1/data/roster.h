@@ -24,6 +24,7 @@
 
 #include "common/serializer.h"
 #include "mm/mm1/data/char.h"
+#include "mm/mm1/maps/maps.h"
 
 namespace MM {
 namespace MM1 {
@@ -35,7 +36,7 @@ private:
 	Common::String rosterSaveName() const;
 public:
 	Character _items[ROSTER_COUNT];
-	Town _towns[ROSTER_COUNT] = { NO_TOWN };
+	Maps::TownId _towns[ROSTER_COUNT] = { Maps::NO_TOWN };
 
 	Character &operator[](uint idx) {
 		assert(idx < ROSTER_COUNT);

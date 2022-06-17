@@ -70,7 +70,7 @@ void Roster::remove(Character *entry) {
 	entry->clear();
 
 	size_t idx = entry - _items;
-	_towns[idx] = NO_TOWN;
+	_towns[idx] = Maps::NO_TOWN;
 }
 
 bool Roster::empty() const {

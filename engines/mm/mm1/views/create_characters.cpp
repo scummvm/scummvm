@@ -62,7 +62,7 @@ void CreateCharacters::NewCharacter::save() {
 	while (i < ROSTER_COUNT && g_globals->_roster._towns[i])
 		++i;
 
-	g_globals->_roster._towns[i] = SORPIGAL;
+	g_globals->_roster._towns[i] = Maps::SORPIGAL;
 	g_globals->_currCharacter = &g_globals->_roster[i];
 	Character &re = *g_globals->_currCharacter;
 	re.clear();
