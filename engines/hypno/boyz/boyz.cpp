@@ -980,6 +980,11 @@ void BoyzEngine::drawString(const Common::String &font, const Common::String &st
 }
 
 void BoyzEngine::saveProfile(const Common::String &name, int levelId) {
+	if (name.empty()) {
+		debugC(1, kHypnoDebugMedia, "WARNING: refusing to save at last level %d with an empty name", _lastLevel);
+		return;
+	}
+
 	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
 
 	// Find the correct level index to before saving

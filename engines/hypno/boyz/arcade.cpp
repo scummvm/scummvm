@@ -29,9 +29,10 @@ namespace Hypno {
 void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
 	_checkpoint = _currentLevel;
 	_lastStats = _stats;
-	if (!_name.empty() && !_flashbackMode) {
-		// if name is empty or we are flashback mode,
+	if (!_flashbackMode) {
+		// if we are flashback mode,
 		// then we are testing some level
+		// and we should not save
 		saveProfile(_name, int(arc->id));
 	}
 
